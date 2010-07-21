@@ -26,24 +26,44 @@
 package tom.engine;
 
 import tom.platform.BasicFormatter;
-import tom.platform.PlatformMessage;
+import tom.platform.BasicPlatformMessage;
 import tom.platform.PlatformLogRecord;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+import java.lang.reflect.*;
 /**
  * The TomMessage class is a container for error messages, using the
  * typesafe enum pattern
  */
 
-public class TomMessage implements PlatformMessage {
-  private final String message;
-
-  private static BasicFormatter formatter;
-
+public class TomMessage extends BasicPlatformMessage {
   private TomMessage(String message) {
-    this.message = message;
-    this.formatter = new BasicFormatter();
+    super(message);
+  }
+
+  /*
+   * in a first step the TomMessage class is initialized (each fieldName field is set to null)
+   * the initMessageName() method iterates over the static fields
+   * and for each of them we set the slot "fieldName" of the corresponding TomMessage
+   *
+   * this method is called from a static block (end of file)
+   */
+  public static void initMessageName() {
+    try {
+      Field[] fields = java.lang.Class.forName("tom.engine.TomMessage").getDeclaredFields();
+      for(Field f:fields) {
+        int mod=f.getModifiers();
+        if(Modifier.isStatic(mod)) {
+          Object o = f.get(null);
+          if(o instanceof TomMessage) {
+            TomMessage msg = (TomMessage) o;
+            msg.setMessageName(f.getName());
+            //System.out.println(" --> " + msg.getMessageName());
+          }
+        }
+      }
+    } catch(java.lang.Exception e) {
+      throw new tom.engine.exception.TomRuntimeException(e.getMessage());
+    }
   }
 
   public static final TomMessage loggingInitializationFailure =
@@ -78,13 +98,18 @@ public class TomMessage implements PlatformMessage {
       new TomMessage("TomOptionManager: No file to compile");
   public static final TomMessage outputWithMultipleCompilation =
       new TomMessage("TomOptionManager: Cannot specify --output with multiple compilation inputs");
+  public static final TomMessage notReturnedPluginOption =
+    new TomMessage("TomOptionManager: getOptionFromName did not return a PluginOption");
   // Debug messages
   public static final TomMessage setValue              =
       new TomMessage("TomOptionManager: Set ''{0}'' to ''{1}'' (old value : ''{2}'')");
   // Warnings
   public static final TomMessage optimizerModifiesLineNumbers              =
-    new TomMessage("WARNING: The optimizer has activated the option pretty and line numbers are not preserved in the generated code." +
+    new TomMessage("The optimizer has activated the option pretty and line numbers are not preserved in the generated code." +
                 " Please disable the optimizer if you need correct line numbers.");
+
+  public static final TomMessage optimizerNotActive              =
+    new TomMessage("The optimizer is not activated and thus WILL NOT RUN");
 
   // TomPluginFactory
   public static final TomMessage classNotAPlugin       =
@@ -102,6 +127,10 @@ public class TomMessage implements PlatformMessage {
   public static final TomMessage invalidPluginArgument =
     new TomMessage("{0}.setArg expecting {1} but {2} argument");
 
+  //TomStreamManager
+  public static final TomMessage expectingOOptionWhenStdin =
+    new TomMessage("Expecting use of \"-o file\" when using stdin");
+
   // parser.TomParserPlugin
   public static final TomMessage fileNotFound          =
       new TomMessage("File ''{0}'' not found");
@@ -109,6 +138,12 @@ public class TomMessage implements PlatformMessage {
       new TomMessage("TokenStreamException catched: {0}");
   public static final TomMessage recognitionException  =
       new TomMessage("RecognitionException catched: {0}");
+
+  public static final TomMessage parserNotUsed =
+    new TomMessage("The parser is not in use.");
+  public static final TomMessage newParserNotUsed =
+    new TomMessage("The new parser is not in use.");
+
   // parser.TomParser
   // TODO : simplify the message in using PlatformLogRecord with detail
   // As these messages are propagated via an exception in TomLanguage.g.t, it is not trivial
@@ -307,8 +342,6 @@ public class TomMessage implements PlatformMessage {
       new TomMessage("Single list variable ''{0}'' is not allowed on top of ''match'' pattern");
   public static final TomMessage wrongMatchArgumentTypeInPattern=
       new TomMessage("Wrong type for slot {0,number,integer}:Type ''{1}'' required but Type ''{2}'' found");
-  public static final TomMessage unknownSymbol=
-      new TomMessage("Unknown symbol ''{0}''");
   public static final TomMessage unknownSymbolInDisjunction=
       new TomMessage("Unknown symbol ''{0}'' not allowed in disjunction");
   public static final TomMessage unknownUnamedList       =
@@ -335,6 +368,12 @@ public class TomMessage implements PlatformMessage {
       new TomMessage("{0} is a constructor and cannot be a variable. Add () to denote the constructor.");
   public static final TomMessage IsSortNotDefined =
       new TomMessage("IsSort(t) is not defined for {0}");
+
+  //typer.NewKernelTyper
+  public static final TomMessage incompatibleTypes   =
+    new TomMessage("Incompatible types ''{0}'' and ''{1}'' for symbol ''{2}''.");
+  public static final TomMessage unknownSymbol=
+      new TomMessage("Unknown symbol ''{0}''");
 
   //strategy
   public static final TomMessage invalidStrategyName =
@@ -379,37 +418,33 @@ public class TomMessage implements PlatformMessage {
   public static final TomMessage unknownVariableInWhen   =
       new TomMessage("''{0}'' is not a variable and is not a constructor");
 
-  public String toString() {
-    return message;
-  }
+  public static final TomMessage ioExceptionTempGom=
+      new TomMessage("IO Exception when creating gom temp file: ''{0}''");
 
+  public static final TomMessage writingExceptionTempGom=
+      new TomMessage("Writing temp file for gom: ''{0}''");
+
+  public static final TomMessage writingFailureTempGom=
+      new TomMessage("Failed writing gom temp file: ''{0}''");
+  
+  public static final TomMessage typerNotUsed =
+      new TomMessage("The default typer is not in use");
+  public static final TomMessage newTyperNotUsed =
+    new TomMessage("The new typer is not in use.");
+
+  /*
+   * FINER
+   */
+  public static final TomMessage failGetCanonicalPath =
+      new TomMessage("Failed to get canonical path for ''{0}''");
 
   // Message level
   public static final int TOM_INFO = 0;
-  // Default error line
-  public static final int DEFAULT_ERROR_LINE_NUMBER = 1;
 
-  public String getMessage() {
-    return message;
+  /*
+   * static block: should stay at the end of the file  (after the initialization of static fields)
+   */
+  static {
+    TomMessage.initMessageName();
   }
-
-
-  public static void error(Logger logger, String fileName, int errorLine, PlatformMessage msg, Object msgArgs) {
-    error(logger, fileName, errorLine, msg, new Object[] { msgArgs } );
-  }
-
-  public static void error(Logger logger, String fileName, int errorLine, PlatformMessage msg, Object[] msgArgs) {
-    logger.log(Level.SEVERE, formatter.format(new PlatformLogRecord(Level.SEVERE, msg, msgArgs,fileName, errorLine)));
-    //logger.log(new PlatformLogRecord(Level.SEVERE, msg, msgArgs,fileName, errorLine));
-  }
-
-  public static void warning(Logger logger, String fileName, int errorLine, PlatformMessage msg, Object msgArg) {
-    warning(logger,fileName,errorLine,msg, new Object[] { msgArg } );
-  }
-
-  public static void warning(Logger logger, String fileName, int errorLine, PlatformMessage msg, Object[] msgArgs) {
-    logger.log(Level.WARNING, formatter.format(new PlatformLogRecord(Level.WARNING, msg, msgArgs,fileName, errorLine)));
-    //logger.log(new PlatformLogRecord(Level.WARNING, msg, msgArgs,fileName, errorLine));
-  }
-
 }

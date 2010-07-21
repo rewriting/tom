@@ -36,17 +36,13 @@ public class PlatformLogRecord extends LogRecord {
   private String filePath;
   private PlatformMessage message;
 
-  public PlatformLogRecord(Level level, PlatformMessage message, String filePath, int line) {
-    this(level, message, new Object[]{} , filePath, line);
-  }
-
-  public PlatformLogRecord(Level level, PlatformMessage message, Object detail, String filePath, int line) {
-    this(level, message, new Object[]{detail}, filePath, line);
-  }
-
   public PlatformLogRecord(Level level, PlatformMessage message, Object[] detail, String filePath, int line) {
     super(level, message.getMessage());
-    super.setParameters(detail);
+    if(detail==null) {
+      super.setParameters(new Object[]{});
+    } else {
+      super.setParameters(detail);
+    }
     this.filePath =filePath;
     this.line = line;
     this.message = message;

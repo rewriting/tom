@@ -272,7 +272,7 @@ public class Viewer {
           } else {
             int ndeep = deep + `name.length() + 3;
             %match (ATermList list) {
-              (first,l*,last) -> {
+              concATerm(first,l*,last) -> {
                 // first child
                 w.write("─" + `name + "─┬");
                 context.push(ndeep-1);
@@ -282,7 +282,7 @@ public class Viewer {
 
                 // 2 ... n-1
                 %match (ATermList l) {
-                  (_*,c,_*) -> {
+                  concATerm(_*,c,_*) -> {
                     writeContext(w,context,ndeep-1);
                     w.write("├");
                     context.push(ndeep-1);

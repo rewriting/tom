@@ -1,28 +1,28 @@
 /*
- *
- * TOM - To One Matching Compiler
- * 
- * Copyright (c) 2000-2010, INPL, INRIA
- * Nancy, France.
- * 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
- * 
- * Claudia Tavares  e-mail: Claudia.Tavares@loria.fr
- * Jean-Christophe Bach e-mail: Jeanchristophe.Bach@loria.fr
- *
- **/
+*
+* TOM - To One Matching Compiler
+* 
+* Copyright (c) 2000-2010, INPL, INRIA
+* Nancy, France.
+* 
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation; either version 2 of the License, or
+* (at your option) any later version.
+* 
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+* 
+* You should have received a copy of the GNU General Public License
+* along with this program; if not, write to the Free Software
+* Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+* 
+* Claudia Tavares  e-mail: Claudia.Tavares@loria.fr
+* Jean-Christophe Bach e-mail: Jeanchristophe.Bach@loria.fr
+*
+**/
 
 
 
@@ -30,6 +30,9 @@ package tom.engine.typer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.logging.Logger;
+import java.lang.Class;
+import java.lang.reflect.*;
 
 import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomconstraint.types.*;
@@ -54,988 +57,4202 @@ import tom.engine.tools.ASTFactory;
 import tom.library.sl.*;
 
 public class NewKernelTyper {
-          private static   tom.library.sl.Strategy  tom_append_list_Sequence( tom.library.sl.Strategy  l1,  tom.library.sl.Strategy  l2) {     if(( l1 == null )) {       return l2;     } else if(( l2 == null )) {       return l1;     } else if(( (l1 instanceof tom.library.sl.Sequence) )) {       if(( ( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Sequence.THEN) ) == null )) {         return ( (l2==null)?( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Sequence.FIRST) ):new tom.library.sl.Sequence(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Sequence.FIRST) ),l2) );       } else {         return ( (tom_append_list_Sequence(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Sequence.THEN) ),l2)==null)?( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Sequence.FIRST) ):new tom.library.sl.Sequence(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Sequence.FIRST) ),tom_append_list_Sequence(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Sequence.THEN) ),l2)) );       }     } else {       return ( (l2==null)?l1:new tom.library.sl.Sequence(l1,l2) );     }   }   private static   tom.library.sl.Strategy  tom_get_slice_Sequence( tom.library.sl.Strategy  begin,  tom.library.sl.Strategy  end, tom.library.sl.Strategy  tail) {     if( (begin.equals(end)) ) {       return tail;     } else if( (end.equals(tail))  && (( end == null ) ||  (end.equals(( null ))) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return ( (( tom.library.sl.Strategy )tom_get_slice_Sequence(((( (begin instanceof tom.library.sl.Sequence) ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.Sequence.THEN) ):( null )),end,tail)==null)?((( (begin instanceof tom.library.sl.Sequence) ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.Sequence.FIRST) ):begin):new tom.library.sl.Sequence(((( (begin instanceof tom.library.sl.Sequence) ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.Sequence.FIRST) ):begin),( tom.library.sl.Strategy )tom_get_slice_Sequence(((( (begin instanceof tom.library.sl.Sequence) ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.Sequence.THEN) ):( null )),end,tail)) );   }      private static   tom.library.sl.Strategy  tom_append_list_Choice( tom.library.sl.Strategy  l1,  tom.library.sl.Strategy  l2) {     if(( l1 ==null )) {       return l2;     } else if(( l2 ==null )) {       return l1;     } else if(( (l1 instanceof tom.library.sl.Choice) )) {       if(( ( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Choice.THEN) ) ==null )) {         return ( (l2==null)?( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Choice.FIRST) ):new tom.library.sl.Choice(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Choice.FIRST) ),l2) );       } else {         return ( (tom_append_list_Choice(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Choice.THEN) ),l2)==null)?( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Choice.FIRST) ):new tom.library.sl.Choice(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Choice.FIRST) ),tom_append_list_Choice(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Choice.THEN) ),l2)) );       }     } else {       return ( (l2==null)?l1:new tom.library.sl.Choice(l1,l2) );     }   }   private static   tom.library.sl.Strategy  tom_get_slice_Choice( tom.library.sl.Strategy  begin,  tom.library.sl.Strategy  end, tom.library.sl.Strategy  tail) {     if( (begin.equals(end)) ) {       return tail;     } else if( (end.equals(tail))  && (( end ==null ) ||  (end.equals(( null ))) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return ( (( tom.library.sl.Strategy )tom_get_slice_Choice(((( (begin instanceof tom.library.sl.Choice) ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.Choice.THEN) ):( null )),end,tail)==null)?((( (begin instanceof tom.library.sl.Choice) ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.Choice.FIRST) ):begin):new tom.library.sl.Choice(((( (begin instanceof tom.library.sl.Choice) ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.Choice.FIRST) ):begin),( tom.library.sl.Strategy )tom_get_slice_Choice(((( (begin instanceof tom.library.sl.Choice) ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.Choice.THEN) ):( null )),end,tail)) );   }      private static   tom.library.sl.Strategy  tom_append_list_SequenceId( tom.library.sl.Strategy  l1,  tom.library.sl.Strategy  l2) {     if(( l1 == null )) {       return l2;     } else if(( l2 == null )) {       return l1;     } else if(( (l1 instanceof tom.library.sl.SequenceId) )) {       if(( ( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.SequenceId.THEN) ) == null )) {         return ( (l2==null)?( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.SequenceId.FIRST) ):new tom.library.sl.SequenceId(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.SequenceId.FIRST) ),l2) );       } else {         return ( (tom_append_list_SequenceId(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.SequenceId.THEN) ),l2)==null)?( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.SequenceId.FIRST) ):new tom.library.sl.SequenceId(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.SequenceId.FIRST) ),tom_append_list_SequenceId(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.SequenceId.THEN) ),l2)) );       }     } else {       return ( (l2==null)?l1:new tom.library.sl.SequenceId(l1,l2) );     }   }   private static   tom.library.sl.Strategy  tom_get_slice_SequenceId( tom.library.sl.Strategy  begin,  tom.library.sl.Strategy  end, tom.library.sl.Strategy  tail) {     if( (begin.equals(end)) ) {       return tail;     } else if( (end.equals(tail))  && (( end == null ) ||  (end.equals(( null ))) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return ( (( tom.library.sl.Strategy )tom_get_slice_SequenceId(((( (begin instanceof tom.library.sl.SequenceId) ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.SequenceId.THEN) ):( null )),end,tail)==null)?((( (begin instanceof tom.library.sl.SequenceId) ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.SequenceId.FIRST) ):begin):new tom.library.sl.SequenceId(((( (begin instanceof tom.library.sl.SequenceId) ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.SequenceId.FIRST) ):begin),( tom.library.sl.Strategy )tom_get_slice_SequenceId(((( (begin instanceof tom.library.sl.SequenceId) ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.SequenceId.THEN) ):( null )),end,tail)) );   }      private static   tom.library.sl.Strategy  tom_append_list_ChoiceId( tom.library.sl.Strategy  l1,  tom.library.sl.Strategy  l2) {     if(( l1 ==null )) {       return l2;     } else if(( l2 ==null )) {       return l1;     } else if(( (l1 instanceof tom.library.sl.ChoiceId) )) {       if(( ( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.ChoiceId.THEN) ) ==null )) {         return ( (l2==null)?( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.ChoiceId.FIRST) ):new tom.library.sl.ChoiceId(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.ChoiceId.FIRST) ),l2) );       } else {         return ( (tom_append_list_ChoiceId(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.ChoiceId.THEN) ),l2)==null)?( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.ChoiceId.FIRST) ):new tom.library.sl.ChoiceId(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.ChoiceId.FIRST) ),tom_append_list_ChoiceId(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.ChoiceId.THEN) ),l2)) );       }     } else {       return ( (l2==null)?l1:new tom.library.sl.ChoiceId(l1,l2) );     }   }   private static   tom.library.sl.Strategy  tom_get_slice_ChoiceId( tom.library.sl.Strategy  begin,  tom.library.sl.Strategy  end, tom.library.sl.Strategy  tail) {     if( (begin.equals(end)) ) {       return tail;     } else if( (end.equals(tail))  && (( end ==null ) ||  (end.equals(( null ))) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return ( (( tom.library.sl.Strategy )tom_get_slice_ChoiceId(((( (begin instanceof tom.library.sl.ChoiceId) ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.ChoiceId.THEN) ):( null )),end,tail)==null)?((( (begin instanceof tom.library.sl.ChoiceId) ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.ChoiceId.FIRST) ):begin):new tom.library.sl.ChoiceId(((( (begin instanceof tom.library.sl.ChoiceId) ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.ChoiceId.FIRST) ):begin),( tom.library.sl.Strategy )tom_get_slice_ChoiceId(((( (begin instanceof tom.library.sl.ChoiceId) ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.ChoiceId.THEN) ):( null )),end,tail)) );   }      private static  tom.library.sl.Strategy  tom_make_AUCtl( tom.library.sl.Strategy  s1,  tom.library.sl.Strategy  s2) { return ( ( new tom.library.sl.Mu(( new tom.library.sl.MuVar("x") ),( (( (( null )==null)?( (( (( null )==null)?( new tom.library.sl.One(( new tom.library.sl.Identity() )) ):new tom.library.sl.Sequence(( new tom.library.sl.One(( new tom.library.sl.Identity() )) ),( null )) )==null)?( (( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ),( null )) )==null)?s1:new tom.library.sl.Sequence(s1,( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ),( null )) )) ):new tom.library.sl.Sequence(( (( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ),( null )) )==null)?s1:new tom.library.sl.Sequence(s1,( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ),( null )) )) ),( (( null )==null)?( new tom.library.sl.One(( new tom.library.sl.Identity() )) ):new tom.library.sl.Sequence(( new tom.library.sl.One(( new tom.library.sl.Identity() )) ),( null )) )) ):new tom.library.sl.Choice(( (( (( null )==null)?( new tom.library.sl.One(( new tom.library.sl.Identity() )) ):new tom.library.sl.Sequence(( new tom.library.sl.One(( new tom.library.sl.Identity() )) ),( null )) )==null)?( (( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ),( null )) )==null)?s1:new tom.library.sl.Sequence(s1,( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ),( null )) )) ):new tom.library.sl.Sequence(( (( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ),( null )) )==null)?s1:new tom.library.sl.Sequence(s1,( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ),( null )) )) ),( (( null )==null)?( new tom.library.sl.One(( new tom.library.sl.Identity() )) ):new tom.library.sl.Sequence(( new tom.library.sl.One(( new tom.library.sl.Identity() )) ),( null )) )) ),( null )) )==null)?s2:new tom.library.sl.Choice(s2,( (( null )==null)?( (( (( null )==null)?( new tom.library.sl.One(( new tom.library.sl.Identity() )) ):new tom.library.sl.Sequence(( new tom.library.sl.One(( new tom.library.sl.Identity() )) ),( null )) )==null)?( (( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ),( null )) )==null)?s1:new tom.library.sl.Sequence(s1,( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ),( null )) )) ):new tom.library.sl.Sequence(( (( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ),( null )) )==null)?s1:new tom.library.sl.Sequence(s1,( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ),( null )) )) ),( (( null )==null)?( new tom.library.sl.One(( new tom.library.sl.Identity() )) ):new tom.library.sl.Sequence(( new tom.library.sl.One(( new tom.library.sl.Identity() )) ),( null )) )) ):new tom.library.sl.Choice(( (( (( null )==null)?( new tom.library.sl.One(( new tom.library.sl.Identity() )) ):new tom.library.sl.Sequence(( new tom.library.sl.One(( new tom.library.sl.Identity() )) ),( null )) )==null)?( (( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ),( null )) )==null)?s1:new tom.library.sl.Sequence(s1,( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ),( null )) )) ):new tom.library.sl.Sequence(( (( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ),( null )) )==null)?s1:new tom.library.sl.Sequence(s1,( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ),( null )) )) ),( (( null )==null)?( new tom.library.sl.One(( new tom.library.sl.Identity() )) ):new tom.library.sl.Sequence(( new tom.library.sl.One(( new tom.library.sl.Identity() )) ),( null )) )) ),( null )) )) )) ) );}private static  tom.library.sl.Strategy  tom_make_EUCtl( tom.library.sl.Strategy  s1,  tom.library.sl.Strategy  s2) { return ( ( new tom.library.sl.Mu(( new tom.library.sl.MuVar("x") ),( (( (( null )==null)?( (( (( null )==null)?( new tom.library.sl.One(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.One(( new tom.library.sl.MuVar("x") )) ),( null )) )==null)?s1:new tom.library.sl.Sequence(s1,( (( null )==null)?( new tom.library.sl.One(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.One(( new tom.library.sl.MuVar("x") )) ),( null )) )) ):new tom.library.sl.Choice(( (( (( null )==null)?( new tom.library.sl.One(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.One(( new tom.library.sl.MuVar("x") )) ),( null )) )==null)?s1:new tom.library.sl.Sequence(s1,( (( null )==null)?( new tom.library.sl.One(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.One(( new tom.library.sl.MuVar("x") )) ),( null )) )) ),( null )) )==null)?s2:new tom.library.sl.Choice(s2,( (( null )==null)?( (( (( null )==null)?( new tom.library.sl.One(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.One(( new tom.library.sl.MuVar("x") )) ),( null )) )==null)?s1:new tom.library.sl.Sequence(s1,( (( null )==null)?( new tom.library.sl.One(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.One(( new tom.library.sl.MuVar("x") )) ),( null )) )) ):new tom.library.sl.Choice(( (( (( null )==null)?( new tom.library.sl.One(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.One(( new tom.library.sl.MuVar("x") )) ),( null )) )==null)?s1:new tom.library.sl.Sequence(s1,( (( null )==null)?( new tom.library.sl.One(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.One(( new tom.library.sl.MuVar("x") )) ),( null )) )) ),( null )) )) )) ));} private static  tom.library.sl.Strategy  tom_make_Try( tom.library.sl.Strategy  s) { return ( ( (( (( null )==null)?( new tom.library.sl.Identity() ):new tom.library.sl.Choice(( new tom.library.sl.Identity() ),( null )) )==null)?s:new tom.library.sl.Choice(s,( (( null )==null)?( new tom.library.sl.Identity() ):new tom.library.sl.Choice(( new tom.library.sl.Identity() ),( null )) )) ) );}private static  tom.library.sl.Strategy  tom_make_Repeat( tom.library.sl.Strategy  s) { return ( ( new tom.library.sl.Mu(( new tom.library.sl.MuVar("_x") ),( (( (( null )==null)?( new tom.library.sl.Identity() ):new tom.library.sl.Choice(( new tom.library.sl.Identity() ),( null )) )==null)?( (( (( null )==null)?( new tom.library.sl.MuVar("_x") ):new tom.library.sl.Sequence(( new tom.library.sl.MuVar("_x") ),( null )) )==null)?s:new tom.library.sl.Sequence(s,( (( null )==null)?( new tom.library.sl.MuVar("_x") ):new tom.library.sl.Sequence(( new tom.library.sl.MuVar("_x") ),( null )) )) ):new tom.library.sl.Choice(( (( (( null )==null)?( new tom.library.sl.MuVar("_x") ):new tom.library.sl.Sequence(( new tom.library.sl.MuVar("_x") ),( null )) )==null)?s:new tom.library.sl.Sequence(s,( (( null )==null)?( new tom.library.sl.MuVar("_x") ):new tom.library.sl.Sequence(( new tom.library.sl.MuVar("_x") ),( null )) )) ),( (( null )==null)?( new tom.library.sl.Identity() ):new tom.library.sl.Choice(( new tom.library.sl.Identity() ),( null )) )) )) ) );}private static  tom.library.sl.Strategy  tom_make_TopDown( tom.library.sl.Strategy  v) { return ( ( new tom.library.sl.Mu(( new tom.library.sl.MuVar("_x") ),( (( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("_x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.All(( new tom.library.sl.MuVar("_x") )) ),( null )) )==null)?v:new tom.library.sl.Sequence(v,( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("_x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.All(( new tom.library.sl.MuVar("_x") )) ),( null )) )) )) ) );}private static  tom.library.sl.Strategy  tom_make_TopDownCollect( tom.library.sl.Strategy  v) { return ( ( new tom.library.sl.Mu(( new tom.library.sl.MuVar("_x") ),tom_make_Try(( (( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("_x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.All(( new tom.library.sl.MuVar("_x") )) ),( null )) )==null)?v:new tom.library.sl.Sequence(v,( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("_x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.All(( new tom.library.sl.MuVar("_x") )) ),( null )) )) ))) ) );}private static  tom.library.sl.Strategy  tom_make_OnceTopDown( tom.library.sl.Strategy  v) { return ( ( new tom.library.sl.Mu(( new tom.library.sl.MuVar("_x") ),( (( (( null )==null)?( new tom.library.sl.One(( new tom.library.sl.MuVar("_x") )) ):new tom.library.sl.Choice(( new tom.library.sl.One(( new tom.library.sl.MuVar("_x") )) ),( null )) )==null)?v:new tom.library.sl.Choice(v,( (( null )==null)?( new tom.library.sl.One(( new tom.library.sl.MuVar("_x") )) ):new tom.library.sl.Choice(( new tom.library.sl.One(( new tom.library.sl.MuVar("_x") )) ),( null )) )) )) ) );}private static  tom.library.sl.Strategy  tom_make_RepeatId( tom.library.sl.Strategy  v) { return ( ( new tom.library.sl.Mu(( new tom.library.sl.MuVar("_x") ),( (( (( null )==null)?( new tom.library.sl.MuVar("_x") ):new tom.library.sl.SequenceId(( new tom.library.sl.MuVar("_x") ),( null )) )==null)?v:new tom.library.sl.SequenceId(v,( (( null )==null)?( new tom.library.sl.MuVar("_x") ):new tom.library.sl.SequenceId(( new tom.library.sl.MuVar("_x") ),( null )) )) )) ) );}private static  tom.library.sl.Strategy  tom_make_OnceTopDownId( tom.library.sl.Strategy  v) { return ( ( new tom.library.sl.Mu(( new tom.library.sl.MuVar("_x") ),( (( (( null )==null)?( new tom.library.sl.OneId(( new tom.library.sl.MuVar("_x") )) ):new tom.library.sl.ChoiceId(( new tom.library.sl.OneId(( new tom.library.sl.MuVar("_x") )) ),( null )) )==null)?v:new tom.library.sl.ChoiceId(v,( (( null )==null)?( new tom.library.sl.OneId(( new tom.library.sl.MuVar("_x") )) ):new tom.library.sl.ChoiceId(( new tom.library.sl.OneId(( new tom.library.sl.MuVar("_x") )) ),( null )) )) )) ) );}      private static   tom.engine.adt.typeconstraints.types.TypeConstraintList  tom_append_list_concTypeConstraint( tom.engine.adt.typeconstraints.types.TypeConstraintList l1,  tom.engine.adt.typeconstraints.types.TypeConstraintList  l2) {     if( l1.isEmptyconcTypeConstraint() ) {       return l2;     } else if( l2.isEmptyconcTypeConstraint() ) {       return l1;     } else if(  l1.getTailconcTypeConstraint() .isEmptyconcTypeConstraint() ) {       return  tom.engine.adt.typeconstraints.types.typeconstraintlist.ConsconcTypeConstraint.make( l1.getHeadconcTypeConstraint() ,l2) ;     } else {       return  tom.engine.adt.typeconstraints.types.typeconstraintlist.ConsconcTypeConstraint.make( l1.getHeadconcTypeConstraint() ,tom_append_list_concTypeConstraint( l1.getTailconcTypeConstraint() ,l2)) ;     }   }   private static   tom.engine.adt.typeconstraints.types.TypeConstraintList  tom_get_slice_concTypeConstraint( tom.engine.adt.typeconstraints.types.TypeConstraintList  begin,  tom.engine.adt.typeconstraints.types.TypeConstraintList  end, tom.engine.adt.typeconstraints.types.TypeConstraintList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyconcTypeConstraint()  ||  (end== tom.engine.adt.typeconstraints.types.typeconstraintlist.EmptyconcTypeConstraint.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.engine.adt.typeconstraints.types.typeconstraintlist.ConsconcTypeConstraint.make( begin.getHeadconcTypeConstraint() ,( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom_get_slice_concTypeConstraint( begin.getTailconcTypeConstraint() ,end,tail)) ;   }      private static   tom.engine.adt.tomterm.types.TomList  tom_append_list_concTomTerm( tom.engine.adt.tomterm.types.TomList l1,  tom.engine.adt.tomterm.types.TomList  l2) {     if( l1.isEmptyconcTomTerm() ) {       return l2;     } else if( l2.isEmptyconcTomTerm() ) {       return l1;     } else if(  l1.getTailconcTomTerm() .isEmptyconcTomTerm() ) {       return  tom.engine.adt.tomterm.types.tomlist.ConsconcTomTerm.make( l1.getHeadconcTomTerm() ,l2) ;     } else {       return  tom.engine.adt.tomterm.types.tomlist.ConsconcTomTerm.make( l1.getHeadconcTomTerm() ,tom_append_list_concTomTerm( l1.getTailconcTomTerm() ,l2)) ;     }   }   private static   tom.engine.adt.tomterm.types.TomList  tom_get_slice_concTomTerm( tom.engine.adt.tomterm.types.TomList  begin,  tom.engine.adt.tomterm.types.TomList  end, tom.engine.adt.tomterm.types.TomList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyconcTomTerm()  ||  (end== tom.engine.adt.tomterm.types.tomlist.EmptyconcTomTerm.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.engine.adt.tomterm.types.tomlist.ConsconcTomTerm.make( begin.getHeadconcTomTerm() ,( tom.engine.adt.tomterm.types.TomList )tom_get_slice_concTomTerm( begin.getTailconcTomTerm() ,end,tail)) ;   }      private static   tom.engine.adt.tomtype.types.TomTypeList  tom_append_list_concTomType( tom.engine.adt.tomtype.types.TomTypeList l1,  tom.engine.adt.tomtype.types.TomTypeList  l2) {     if( l1.isEmptyconcTomType() ) {       return l2;     } else if( l2.isEmptyconcTomType() ) {       return l1;     } else if(  l1.getTailconcTomType() .isEmptyconcTomType() ) {       return  tom.engine.adt.tomtype.types.tomtypelist.ConsconcTomType.make( l1.getHeadconcTomType() ,l2) ;     } else {       return  tom.engine.adt.tomtype.types.tomtypelist.ConsconcTomType.make( l1.getHeadconcTomType() ,tom_append_list_concTomType( l1.getTailconcTomType() ,l2)) ;     }   }   private static   tom.engine.adt.tomtype.types.TomTypeList  tom_get_slice_concTomType( tom.engine.adt.tomtype.types.TomTypeList  begin,  tom.engine.adt.tomtype.types.TomTypeList  end, tom.engine.adt.tomtype.types.TomTypeList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyconcTomType()  ||  (end== tom.engine.adt.tomtype.types.tomtypelist.EmptyconcTomType.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.engine.adt.tomtype.types.tomtypelist.ConsconcTomType.make( begin.getHeadconcTomType() ,( tom.engine.adt.tomtype.types.TomTypeList )tom_get_slice_concTomType( begin.getTailconcTomType() ,end,tail)) ;   }      private static   tom.engine.adt.code.types.CodeList  tom_append_list_concCode( tom.engine.adt.code.types.CodeList l1,  tom.engine.adt.code.types.CodeList  l2) {     if( l1.isEmptyconcCode() ) {       return l2;     } else if( l2.isEmptyconcCode() ) {       return l1;     } else if(  l1.getTailconcCode() .isEmptyconcCode() ) {       return  tom.engine.adt.code.types.codelist.ConsconcCode.make( l1.getHeadconcCode() ,l2) ;     } else {       return  tom.engine.adt.code.types.codelist.ConsconcCode.make( l1.getHeadconcCode() ,tom_append_list_concCode( l1.getTailconcCode() ,l2)) ;     }   }   private static   tom.engine.adt.code.types.CodeList  tom_get_slice_concCode( tom.engine.adt.code.types.CodeList  begin,  tom.engine.adt.code.types.CodeList  end, tom.engine.adt.code.types.CodeList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyconcCode()  ||  (end== tom.engine.adt.code.types.codelist.EmptyconcCode.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.engine.adt.code.types.codelist.ConsconcCode.make( begin.getHeadconcCode() ,( tom.engine.adt.code.types.CodeList )tom_get_slice_concCode( begin.getTailconcCode() ,end,tail)) ;   }      private static   tom.engine.adt.code.types.BQTermList  tom_append_list_concBQTerm( tom.engine.adt.code.types.BQTermList l1,  tom.engine.adt.code.types.BQTermList  l2) {     if( l1.isEmptyconcBQTerm() ) {       return l2;     } else if( l2.isEmptyconcBQTerm() ) {       return l1;     } else if(  l1.getTailconcBQTerm() .isEmptyconcBQTerm() ) {       return  tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make( l1.getHeadconcBQTerm() ,l2) ;     } else {       return  tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make( l1.getHeadconcBQTerm() ,tom_append_list_concBQTerm( l1.getTailconcBQTerm() ,l2)) ;     }   }   private static   tom.engine.adt.code.types.BQTermList  tom_get_slice_concBQTerm( tom.engine.adt.code.types.BQTermList  begin,  tom.engine.adt.code.types.BQTermList  end, tom.engine.adt.code.types.BQTermList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyconcBQTerm()  ||  (end== tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make( begin.getHeadconcBQTerm() ,( tom.engine.adt.code.types.BQTermList )tom_get_slice_concBQTerm( begin.getTailconcBQTerm() ,end,tail)) ;   }      private static   tom.engine.adt.tominstruction.types.InstructionList  tom_append_list_concInstruction( tom.engine.adt.tominstruction.types.InstructionList l1,  tom.engine.adt.tominstruction.types.InstructionList  l2) {     if( l1.isEmptyconcInstruction() ) {       return l2;     } else if( l2.isEmptyconcInstruction() ) {       return l1;     } else if(  l1.getTailconcInstruction() .isEmptyconcInstruction() ) {       return  tom.engine.adt.tominstruction.types.instructionlist.ConsconcInstruction.make( l1.getHeadconcInstruction() ,l2) ;     } else {       return  tom.engine.adt.tominstruction.types.instructionlist.ConsconcInstruction.make( l1.getHeadconcInstruction() ,tom_append_list_concInstruction( l1.getTailconcInstruction() ,l2)) ;     }   }   private static   tom.engine.adt.tominstruction.types.InstructionList  tom_get_slice_concInstruction( tom.engine.adt.tominstruction.types.InstructionList  begin,  tom.engine.adt.tominstruction.types.InstructionList  end, tom.engine.adt.tominstruction.types.InstructionList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyconcInstruction()  ||  (end== tom.engine.adt.tominstruction.types.instructionlist.EmptyconcInstruction.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.engine.adt.tominstruction.types.instructionlist.ConsconcInstruction.make( begin.getHeadconcInstruction() ,( tom.engine.adt.tominstruction.types.InstructionList )tom_get_slice_concInstruction( begin.getTailconcInstruction() ,end,tail)) ;   }      private static   tom.engine.adt.tominstruction.types.ConstraintInstructionList  tom_append_list_concConstraintInstruction( tom.engine.adt.tominstruction.types.ConstraintInstructionList l1,  tom.engine.adt.tominstruction.types.ConstraintInstructionList  l2) {     if( l1.isEmptyconcConstraintInstruction() ) {       return l2;     } else if( l2.isEmptyconcConstraintInstruction() ) {       return l1;     } else if(  l1.getTailconcConstraintInstruction() .isEmptyconcConstraintInstruction() ) {       return  tom.engine.adt.tominstruction.types.constraintinstructionlist.ConsconcConstraintInstruction.make( l1.getHeadconcConstraintInstruction() ,l2) ;     } else {       return  tom.engine.adt.tominstruction.types.constraintinstructionlist.ConsconcConstraintInstruction.make( l1.getHeadconcConstraintInstruction() ,tom_append_list_concConstraintInstruction( l1.getTailconcConstraintInstruction() ,l2)) ;     }   }   private static   tom.engine.adt.tominstruction.types.ConstraintInstructionList  tom_get_slice_concConstraintInstruction( tom.engine.adt.tominstruction.types.ConstraintInstructionList  begin,  tom.engine.adt.tominstruction.types.ConstraintInstructionList  end, tom.engine.adt.tominstruction.types.ConstraintInstructionList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyconcConstraintInstruction()  ||  (end== tom.engine.adt.tominstruction.types.constraintinstructionlist.EmptyconcConstraintInstruction.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.engine.adt.tominstruction.types.constraintinstructionlist.ConsconcConstraintInstruction.make( begin.getHeadconcConstraintInstruction() ,( tom.engine.adt.tominstruction.types.ConstraintInstructionList )tom_get_slice_concConstraintInstruction( begin.getTailconcConstraintInstruction() ,end,tail)) ;   }      private static   tom.engine.adt.tomname.types.TomNameList  tom_append_list_concTomName( tom.engine.adt.tomname.types.TomNameList l1,  tom.engine.adt.tomname.types.TomNameList  l2) {     if( l1.isEmptyconcTomName() ) {       return l2;     } else if( l2.isEmptyconcTomName() ) {       return l1;     } else if(  l1.getTailconcTomName() .isEmptyconcTomName() ) {       return  tom.engine.adt.tomname.types.tomnamelist.ConsconcTomName.make( l1.getHeadconcTomName() ,l2) ;     } else {       return  tom.engine.adt.tomname.types.tomnamelist.ConsconcTomName.make( l1.getHeadconcTomName() ,tom_append_list_concTomName( l1.getTailconcTomName() ,l2)) ;     }   }   private static   tom.engine.adt.tomname.types.TomNameList  tom_get_slice_concTomName( tom.engine.adt.tomname.types.TomNameList  begin,  tom.engine.adt.tomname.types.TomNameList  end, tom.engine.adt.tomname.types.TomNameList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyconcTomName()  ||  (end== tom.engine.adt.tomname.types.tomnamelist.EmptyconcTomName.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.engine.adt.tomname.types.tomnamelist.ConsconcTomName.make( begin.getHeadconcTomName() ,( tom.engine.adt.tomname.types.TomNameList )tom_get_slice_concTomName( begin.getTailconcTomName() ,end,tail)) ;   }      private static   tom.engine.adt.tomslot.types.SlotList  tom_append_list_concSlot( tom.engine.adt.tomslot.types.SlotList l1,  tom.engine.adt.tomslot.types.SlotList  l2) {     if( l1.isEmptyconcSlot() ) {       return l2;     } else if( l2.isEmptyconcSlot() ) {       return l1;     } else if(  l1.getTailconcSlot() .isEmptyconcSlot() ) {       return  tom.engine.adt.tomslot.types.slotlist.ConsconcSlot.make( l1.getHeadconcSlot() ,l2) ;     } else {       return  tom.engine.adt.tomslot.types.slotlist.ConsconcSlot.make( l1.getHeadconcSlot() ,tom_append_list_concSlot( l1.getTailconcSlot() ,l2)) ;     }   }   private static   tom.engine.adt.tomslot.types.SlotList  tom_get_slice_concSlot( tom.engine.adt.tomslot.types.SlotList  begin,  tom.engine.adt.tomslot.types.SlotList  end, tom.engine.adt.tomslot.types.SlotList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyconcSlot()  ||  (end== tom.engine.adt.tomslot.types.slotlist.EmptyconcSlot.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.engine.adt.tomslot.types.slotlist.ConsconcSlot.make( begin.getHeadconcSlot() ,( tom.engine.adt.tomslot.types.SlotList )tom_get_slice_concSlot( begin.getTailconcSlot() ,end,tail)) ;   }      private static   tom.engine.adt.tomslot.types.PairNameDeclList  tom_append_list_concPairNameDecl( tom.engine.adt.tomslot.types.PairNameDeclList l1,  tom.engine.adt.tomslot.types.PairNameDeclList  l2) {     if( l1.isEmptyconcPairNameDecl() ) {       return l2;     } else if( l2.isEmptyconcPairNameDecl() ) {       return l1;     } else if(  l1.getTailconcPairNameDecl() .isEmptyconcPairNameDecl() ) {       return  tom.engine.adt.tomslot.types.pairnamedecllist.ConsconcPairNameDecl.make( l1.getHeadconcPairNameDecl() ,l2) ;     } else {       return  tom.engine.adt.tomslot.types.pairnamedecllist.ConsconcPairNameDecl.make( l1.getHeadconcPairNameDecl() ,tom_append_list_concPairNameDecl( l1.getTailconcPairNameDecl() ,l2)) ;     }   }   private static   tom.engine.adt.tomslot.types.PairNameDeclList  tom_get_slice_concPairNameDecl( tom.engine.adt.tomslot.types.PairNameDeclList  begin,  tom.engine.adt.tomslot.types.PairNameDeclList  end, tom.engine.adt.tomslot.types.PairNameDeclList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyconcPairNameDecl()  ||  (end== tom.engine.adt.tomslot.types.pairnamedecllist.EmptyconcPairNameDecl.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.engine.adt.tomslot.types.pairnamedecllist.ConsconcPairNameDecl.make( begin.getHeadconcPairNameDecl() ,( tom.engine.adt.tomslot.types.PairNameDeclList )tom_get_slice_concPairNameDecl( begin.getTailconcPairNameDecl() ,end,tail)) ;   }      private static   tom.engine.adt.tomconstraint.types.Constraint  tom_append_list_AndConstraint( tom.engine.adt.tomconstraint.types.Constraint  l1,  tom.engine.adt.tomconstraint.types.Constraint  l2) {     if( l1.isEmptyAndConstraint() ) {       return l2;     } else if( l2.isEmptyAndConstraint() ) {       return l1;     } else if( ((l1 instanceof tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint) || (l1 instanceof tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint)) ) {       if(  l1.getTailAndConstraint() .isEmptyAndConstraint() ) {         return  tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make( l1.getHeadAndConstraint() ,l2) ;       } else {         return  tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make( l1.getHeadAndConstraint() ,tom_append_list_AndConstraint( l1.getTailAndConstraint() ,l2)) ;       }     } else {       return  tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make(l1,l2) ;     }   }   private static   tom.engine.adt.tomconstraint.types.Constraint  tom_get_slice_AndConstraint( tom.engine.adt.tomconstraint.types.Constraint  begin,  tom.engine.adt.tomconstraint.types.Constraint  end, tom.engine.adt.tomconstraint.types.Constraint  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyAndConstraint()  ||  (end== tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make((( ((begin instanceof tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint) || (begin instanceof tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint)) )? begin.getHeadAndConstraint() :begin),( tom.engine.adt.tomconstraint.types.Constraint )tom_get_slice_AndConstraint((( ((begin instanceof tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint) || (begin instanceof tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint)) )? begin.getTailAndConstraint() : tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint.make() ),end,tail)) ;   }      private static   tom.engine.adt.tomconstraint.types.Constraint  tom_append_list_OrConstraint( tom.engine.adt.tomconstraint.types.Constraint  l1,  tom.engine.adt.tomconstraint.types.Constraint  l2) {     if( l1.isEmptyOrConstraint() ) {       return l2;     } else if( l2.isEmptyOrConstraint() ) {       return l1;     } else if( ((l1 instanceof tom.engine.adt.tomconstraint.types.constraint.ConsOrConstraint) || (l1 instanceof tom.engine.adt.tomconstraint.types.constraint.EmptyOrConstraint)) ) {       if(  l1.getTailOrConstraint() .isEmptyOrConstraint() ) {         return  tom.engine.adt.tomconstraint.types.constraint.ConsOrConstraint.make( l1.getHeadOrConstraint() ,l2) ;       } else {         return  tom.engine.adt.tomconstraint.types.constraint.ConsOrConstraint.make( l1.getHeadOrConstraint() ,tom_append_list_OrConstraint( l1.getTailOrConstraint() ,l2)) ;       }     } else {       return  tom.engine.adt.tomconstraint.types.constraint.ConsOrConstraint.make(l1,l2) ;     }   }   private static   tom.engine.adt.tomconstraint.types.Constraint  tom_get_slice_OrConstraint( tom.engine.adt.tomconstraint.types.Constraint  begin,  tom.engine.adt.tomconstraint.types.Constraint  end, tom.engine.adt.tomconstraint.types.Constraint  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyOrConstraint()  ||  (end== tom.engine.adt.tomconstraint.types.constraint.EmptyOrConstraint.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.engine.adt.tomconstraint.types.constraint.ConsOrConstraint.make((( ((begin instanceof tom.engine.adt.tomconstraint.types.constraint.ConsOrConstraint) || (begin instanceof tom.engine.adt.tomconstraint.types.constraint.EmptyOrConstraint)) )? begin.getHeadOrConstraint() :begin),( tom.engine.adt.tomconstraint.types.Constraint )tom_get_slice_OrConstraint((( ((begin instanceof tom.engine.adt.tomconstraint.types.constraint.ConsOrConstraint) || (begin instanceof tom.engine.adt.tomconstraint.types.constraint.EmptyOrConstraint)) )? begin.getTailOrConstraint() : tom.engine.adt.tomconstraint.types.constraint.EmptyOrConstraint.make() ),end,tail)) ;   }      private static   tom.engine.adt.tomconstraint.types.ConstraintList  tom_append_list_concConstraint( tom.engine.adt.tomconstraint.types.ConstraintList l1,  tom.engine.adt.tomconstraint.types.ConstraintList  l2) {     if( l1.isEmptyconcConstraint() ) {       return l2;     } else if( l2.isEmptyconcConstraint() ) {       return l1;     } else if(  l1.getTailconcConstraint() .isEmptyconcConstraint() ) {       return  tom.engine.adt.tomconstraint.types.constraintlist.ConsconcConstraint.make( l1.getHeadconcConstraint() ,l2) ;     } else {       return  tom.engine.adt.tomconstraint.types.constraintlist.ConsconcConstraint.make( l1.getHeadconcConstraint() ,tom_append_list_concConstraint( l1.getTailconcConstraint() ,l2)) ;     }   }   private static   tom.engine.adt.tomconstraint.types.ConstraintList  tom_get_slice_concConstraint( tom.engine.adt.tomconstraint.types.ConstraintList  begin,  tom.engine.adt.tomconstraint.types.ConstraintList  end, tom.engine.adt.tomconstraint.types.ConstraintList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyconcConstraint()  ||  (end== tom.engine.adt.tomconstraint.types.constraintlist.EmptyconcConstraint.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.engine.adt.tomconstraint.types.constraintlist.ConsconcConstraint.make( begin.getHeadconcConstraint() ,( tom.engine.adt.tomconstraint.types.ConstraintList )tom_get_slice_concConstraint( begin.getTailconcConstraint() ,end,tail)) ;   }    
 
 
-
-
-
-
-
-  private int freshTypeVarCounter = 0;
-  /*
-   * pem: why use a state variable here ?
-   */
-  // List for variables of pattern (match constraints)
-  private TomList varPatternList;
-  // List for variables of subject and of numeric constraints
-  private BQTermList varList;
-  /*
-   * pem: why use a state variable here ?
-   */
-  // List for type constraints (for fresh type variables)
-  private TypeConstraintList typeConstraints;
-  // Set of pairs (freshVar,groundVar)
-  private HashMap<TomType,TomType> substitutions;
-
-  private SymbolTable symbolTable;
-
-  public void setSymbolTable(SymbolTable symbolTable) {
-    this.symbolTable = symbolTable;
-  }
-
-  protected SymbolTable getSymbolTable() {
-    return symbolTable;
-  }
-
-  protected TomType getCodomain(TomSymbol tSymbol) {
-    //DEBUG System.out.println("getCodomain = " + TomBase.getSymbolCodomain(tSymbol));
-    return TomBase.getSymbolCodomain(tSymbol);
-  }
-
-  protected TomSymbol getSymbolFromTerm(TomTerm tTerm) {
-    return TomBase.getSymbolFromTerm(tTerm, getSymbolTable());
-   }
-
-  protected TomSymbol getSymbolFromTerm(BQTerm bqTerm) {
-    return TomBase.getSymbolFromTerm(bqTerm,getSymbolTable());
-  }
-
-  protected TomSymbol getSymbolFromName(String tName) {
-    return TomBase.getSymbolFromName(tName, getSymbolTable());
-   }
-
-  protected TomSymbol getSymbolFromType(TomType tType) {
-    {{if ( (tType instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )tType) instanceof tom.engine.adt.tomtype.types.tomtype.TypeWithSymbol) ) {
-
-         return TomBase.getSymbolFromType( tom.engine.adt.tomtype.types.tomtype.Type.make( (( tom.engine.adt.tomtype.types.TomType )tType).getTomType() ,  (( tom.engine.adt.tomtype.types.TomType )tType).getTlType() ) , getSymbolTable()); 
-       }}}}
-
-    return TomBase.getSymbolFromType(tType,getSymbolTable()); 
-   }
-
-  protected TomType getType(String tName) {
-    return getSymbolTable().getType(tName); 
-   }
-
-  protected TomType getType(TomTerm tTerm) {
-    {{if ( (tTerm instanceof tom.engine.adt.tomterm.types.TomTerm) ) {boolean tomMatch2_3= false ; tom.engine.adt.tomtype.types.TomType  tomMatch2_1= null ;if ( ((( tom.engine.adt.tomterm.types.TomTerm )tTerm) instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) {{tomMatch2_3= true ;tomMatch2_1= (( tom.engine.adt.tomterm.types.TomTerm )tTerm).getAstType() ;}} else {if ( ((( tom.engine.adt.tomterm.types.TomTerm )tTerm) instanceof tom.engine.adt.tomterm.types.tomterm.VariableStar) ) {{tomMatch2_3= true ;tomMatch2_1= (( tom.engine.adt.tomterm.types.TomTerm )tTerm).getAstType() ;}}}if (tomMatch2_3) {
- return tomMatch2_1; }}}{if ( (tTerm instanceof tom.engine.adt.tomterm.types.TomTerm) ) {if ( ((( tom.engine.adt.tomterm.types.TomTerm )tTerm) instanceof tom.engine.adt.tomterm.types.tomterm.RecordAppl) ) { tom.engine.adt.tomname.types.TomNameList  tomMatch2_5= (( tom.engine.adt.tomterm.types.TomTerm )tTerm).getNameList() ;if ( ((tomMatch2_5 instanceof tom.engine.adt.tomname.types.tomnamelist.ConsconcTomName) || (tomMatch2_5 instanceof tom.engine.adt.tomname.types.tomnamelist.EmptyconcTomName)) ) {if (!( tomMatch2_5.isEmptyconcTomName() )) { tom.engine.adt.tomname.types.TomName  tomMatch2_11= tomMatch2_5.getHeadconcTomName() ;if ( (tomMatch2_11 instanceof tom.engine.adt.tomname.types.tomname.Name) ) { String  tom_name= tomMatch2_11.getString() ;
-
-
-        if(tom_name.equals("")) {
-          // Maybe we need to discover the symbol using the context type
-          // information (i.e. the type of subject)
-          throw new TomRuntimeException("No symbol found because there is no name.");
-        }
-        //DEBUG System.out.println("\n------- getType : name = " + `name +'\n');
-        TomSymbol tSymbol = getSymbolFromName(tom_name);
-        //DEBUG System.out.println("\n------- after getSymbolFromName");
-        return getCodomain(tSymbol);
-      }}}}}}{if ( (tTerm instanceof tom.engine.adt.tomterm.types.TomTerm) ) {if ( ((( tom.engine.adt.tomterm.types.TomTerm )tTerm) instanceof tom.engine.adt.tomterm.types.tomterm.AntiTerm) ) {
- return getType( (( tom.engine.adt.tomterm.types.TomTerm )tTerm).getTomTerm() ); }}}}
- 
-    throw new TomRuntimeException("getType(TomTerm): should not be here.");
-  }
-
-  protected TomType getType(BQTerm bqTerm) {
-    {{if ( (bqTerm instanceof tom.engine.adt.code.types.BQTerm) ) {boolean tomMatch3_3= false ; tom.engine.adt.tomtype.types.TomType  tomMatch3_1= null ;if ( ((( tom.engine.adt.code.types.BQTerm )bqTerm) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {{tomMatch3_3= true ;tomMatch3_1= (( tom.engine.adt.code.types.BQTerm )bqTerm).getAstType() ;}} else {if ( ((( tom.engine.adt.code.types.BQTerm )bqTerm) instanceof tom.engine.adt.code.types.bqterm.BQVariableStar) ) {{tomMatch3_3= true ;tomMatch3_1= (( tom.engine.adt.code.types.BQTerm )bqTerm).getAstType() ;}} else {if ( ((( tom.engine.adt.code.types.BQTerm )bqTerm) instanceof tom.engine.adt.code.types.bqterm.BuildReducedTerm) ) {{tomMatch3_3= true ;tomMatch3_1= (( tom.engine.adt.code.types.BQTerm )bqTerm).getAstType() ;}}}}if (tomMatch3_3) {
-
-        return tomMatch3_1;
-      }}}{if ( (bqTerm instanceof tom.engine.adt.code.types.BQTerm) ) {boolean tomMatch3_9= false ; tom.engine.adt.tomname.types.TomName  tomMatch3_5= null ;if ( ((( tom.engine.adt.code.types.BQTerm )bqTerm) instanceof tom.engine.adt.code.types.bqterm.BQAppl) ) {{tomMatch3_9= true ;tomMatch3_5= (( tom.engine.adt.code.types.BQTerm )bqTerm).getAstName() ;}} else {if ( ((( tom.engine.adt.code.types.BQTerm )bqTerm) instanceof tom.engine.adt.code.types.bqterm.FunctionCall) ) {{tomMatch3_9= true ;tomMatch3_5= (( tom.engine.adt.code.types.BQTerm )bqTerm).getAstName() ;}} else {if ( ((( tom.engine.adt.code.types.BQTerm )bqTerm) instanceof tom.engine.adt.code.types.bqterm.BuildConstant) ) {{tomMatch3_9= true ;tomMatch3_5= (( tom.engine.adt.code.types.BQTerm )bqTerm).getAstName() ;}}}}if (tomMatch3_9) {if ( (tomMatch3_5 instanceof tom.engine.adt.tomname.types.tomname.Name) ) { String  tom_name= tomMatch3_5.getString() ;
-
-
-
-        if(tom_name.equals("")) {
-          // Maybe we need to discover the symbol using the context type
-          // information (i.e. the type of subject)
-          throw new TomRuntimeException("No symbol found because there is no name.");
-        }
-        TomSymbol tSymbol = getSymbolFromName(tom_name);
-        return getCodomain(tSymbol);
-      }}}}}
- 
-    throw new TomRuntimeException("getType(BQTerm): should not be here.");
-  }
-/* TO REPLACE getFreshTypeVar()
-  protected int getFreshTlTIndex() {
-    return freshTypeVarCounter++;
-   }
-*/
-  protected TargetLanguageType getFreshTypeVar() {
-    return  tom.engine.adt.tomtype.types.targetlanguagetype.TypeVar.make(freshTypeVarCounter++) ;
-  }
-
-/* TO REPLACE getUnknownFreshTypeVar()  
-   protected TomType getUnknownFreshTypeVar() {
-    TomType tType = symbolTable.UNKNOWN_TYPE;
-    %match(tType) {
-      Type[TomType=tomType] -> { return `TypeVar(tomType,getFreshTlTIndex())}
+  private static   tom.library.sl.Strategy  tom_append_list_Sequence( tom.library.sl.Strategy  l1,  tom.library.sl.Strategy  l2) {
+    if(( l1 == null )) {
+      return l2;
+    } else if(( l2 == null )) {
+      return l1;
+    } else if(( (l1 instanceof tom.library.sl.Sequence) )) {
+      if(( ( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Sequence.THEN) ) == null )) {
+        return ( (l2==null)?( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Sequence.FIRST) ):new tom.library.sl.Sequence(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Sequence.FIRST) ),l2) );
+      } else {
+        return ( (tom_append_list_Sequence(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Sequence.THEN) ),l2)==null)?( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Sequence.FIRST) ):new tom.library.sl.Sequence(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Sequence.FIRST) ),tom_append_list_Sequence(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Sequence.THEN) ),l2)) );
+      }
+    } else {
+      return ( (l2==null)?l1:new tom.library.sl.Sequence(l1,l2) );
     }
-    throw new TomRuntimeException("getUnknownFreshTypeVar: should not be here.");
-   }
-*/
-
-  protected TomType getUnknownFreshTypeVar() {
-    return  tom.engine.adt.tomtype.types.tomtype.Type.make("unknown type",  tom.engine.adt.tomtype.types.targetlanguagetype.TypeVar.make(freshTypeVarCounter++) ) ;
   }
-
-  /*
-     * pem: use if(...==... && typeConstraints.contains(...))
-     */
-  protected void addConstraint(TypeConstraint tConstraint) {
-    {{if ( (typeConstraints instanceof tom.engine.adt.typeconstraints.types.TypeConstraintList) ) {if ( (tConstraint instanceof tom.engine.adt.typeconstraints.types.TypeConstraint) ) {boolean tomMatch4_9= false ;if ( (((( tom.engine.adt.typeconstraints.types.TypeConstraintList )typeConstraints) instanceof tom.engine.adt.typeconstraints.types.typeconstraintlist.ConsconcTypeConstraint) || ((( tom.engine.adt.typeconstraints.types.TypeConstraintList )typeConstraints) instanceof tom.engine.adt.typeconstraints.types.typeconstraintlist.EmptyconcTypeConstraint)) ) { tom.engine.adt.typeconstraints.types.TypeConstraintList  tomMatch4__end__5=(( tom.engine.adt.typeconstraints.types.TypeConstraintList )typeConstraints);do {{if (!( tomMatch4__end__5.isEmptyconcTypeConstraint() )) {if ( ((( tom.engine.adt.typeconstraints.types.TypeConstraint )tConstraint)== tomMatch4__end__5.getHeadconcTypeConstraint() ) ) {tomMatch4_9= true ;}}if ( tomMatch4__end__5.isEmptyconcTypeConstraint() ) {tomMatch4__end__5=(( tom.engine.adt.typeconstraints.types.TypeConstraintList )typeConstraints);} else {tomMatch4__end__5= tomMatch4__end__5.getTailconcTypeConstraint() ;}}} while(!( (tomMatch4__end__5==(( tom.engine.adt.typeconstraints.types.TypeConstraintList )typeConstraints)) ));}if (!(tomMatch4_9)) {
-
-
-        typeConstraints =  tom.engine.adt.typeconstraints.types.typeconstraintlist.ConsconcTypeConstraint.make(tConstraint,tom_append_list_concTypeConstraint(typeConstraints, tom.engine.adt.typeconstraints.types.typeconstraintlist.EmptyconcTypeConstraint.make() )) ;
-      }}}}}
-
-  }
-
-  protected void addTomTerm(TomTerm tTerm) {
-    varPatternList =  tom.engine.adt.tomterm.types.tomlist.ConsconcTomTerm.make(tTerm,tom_append_list_concTomTerm(varPatternList, tom.engine.adt.tomterm.types.tomlist.EmptyconcTomTerm.make() )) ;
-   }
-
-  protected void addBQTerm(BQTerm bqTerm) {
-    varList =  tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make(bqTerm,tom_append_list_concBQTerm(varList, tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() )) ;
-   }
-
-  /**
-   * The method <code>resetVarPatternList</code> empties varPatternList after
-   * checking if <code>varList</code> contains
-   * a corresponding BQTerm in order to remove it from <code>varList</code. too
-   */
-  protected void resetVarPatternList() {
-    for(TomTerm tTerm: varPatternList.getCollectionconcTomTerm()) {
-      {{if ( (tTerm instanceof tom.engine.adt.tomterm.types.TomTerm) ) {boolean tomMatch5_14= false ; tom.engine.adt.tomname.types.TomName  tomMatch5_2= null ;if ( ((( tom.engine.adt.tomterm.types.TomTerm )tTerm) instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) {{tomMatch5_14= true ;tomMatch5_2= (( tom.engine.adt.tomterm.types.TomTerm )tTerm).getAstName() ;}} else {if ( ((( tom.engine.adt.tomterm.types.TomTerm )tTerm) instanceof tom.engine.adt.tomterm.types.tomterm.VariableStar) ) {{tomMatch5_14= true ;tomMatch5_2= (( tom.engine.adt.tomterm.types.TomTerm )tTerm).getAstName() ;}}}if (tomMatch5_14) {if ( (varList instanceof tom.engine.adt.code.types.BQTermList) ) {if ( (((( tom.engine.adt.code.types.BQTermList )varList) instanceof tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm) || ((( tom.engine.adt.code.types.BQTermList )varList) instanceof tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm)) ) { tom.engine.adt.code.types.BQTermList  tomMatch5__end__7=(( tom.engine.adt.code.types.BQTermList )varList);do {{if (!( tomMatch5__end__7.isEmptyconcBQTerm() )) { tom.engine.adt.code.types.BQTerm  tomMatch5_11= tomMatch5__end__7.getHeadconcBQTerm() ;boolean tomMatch5_13= false ; tom.engine.adt.tomname.types.TomName  tomMatch5_10= null ;if ( (tomMatch5_11 instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {{tomMatch5_13= true ;tomMatch5_10= tomMatch5_11.getAstName() ;}} else {if ( (tomMatch5_11 instanceof tom.engine.adt.code.types.bqterm.BQVariableStar) ) {{tomMatch5_13= true ;tomMatch5_10= tomMatch5_11.getAstName() ;}}}if (tomMatch5_13) {if ( (tomMatch5_2==tomMatch5_10) ) {
-
-
-            varList = tom_append_list_concBQTerm(tom_get_slice_concBQTerm((( tom.engine.adt.code.types.BQTermList )varList),tomMatch5__end__7, tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() ),tom_append_list_concBQTerm( tomMatch5__end__7.getTailconcBQTerm() , tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() ));
-          }}}if ( tomMatch5__end__7.isEmptyconcBQTerm() ) {tomMatch5__end__7=(( tom.engine.adt.code.types.BQTermList )varList);} else {tomMatch5__end__7= tomMatch5__end__7.getTailconcBQTerm() ;}}} while(!( (tomMatch5__end__7==(( tom.engine.adt.code.types.BQTermList )varList)) ));}}}}}}
-
+  private static   tom.library.sl.Strategy  tom_get_slice_Sequence( tom.library.sl.Strategy  begin,  tom.library.sl.Strategy  end, tom.library.sl.Strategy  tail) {
+    if( (begin.equals(end)) ) {
+      return tail;
+    } else if( (end.equals(tail))  && (( end == null ) ||  (end.equals(( null ))) )) {
+      /* code to avoid a call to make, and thus to avoid looping during list-matching */
+      return begin;
     }
-    varPatternList =  tom.engine.adt.tomterm.types.tomlist.EmptyconcTomTerm.make() ;
+    return ( (( tom.library.sl.Strategy )tom_get_slice_Sequence(((( (begin instanceof tom.library.sl.Sequence) ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.Sequence.THEN) ):( null )),end,tail)==null)?((( (begin instanceof tom.library.sl.Sequence) ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.Sequence.FIRST) ):begin):new tom.library.sl.Sequence(((( (begin instanceof tom.library.sl.Sequence) ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.Sequence.FIRST) ):begin),( tom.library.sl.Strategy )tom_get_slice_Sequence(((( (begin instanceof tom.library.sl.Sequence) ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.Sequence.THEN) ):( null )),end,tail)) );
   }
-
-  /**
-   * The method <code>init</code> empties all global lists and hashMaps which means to
-   * empty <code>varPatternList</code>, <code>varList</code>,
-   * <code>typeConstraints</code> and <code>substitutions</code>
-   */
-  private void init() {
-    varPatternList =  tom.engine.adt.tomterm.types.tomlist.EmptyconcTomTerm.make() ;
-    varList =  tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() ;
-    typeConstraints =  tom.engine.adt.typeconstraints.types.typeconstraintlist.EmptyconcTypeConstraint.make() ;
-    substitutions = new HashMap<TomType,TomType>();
-  }
-
-  /**
-   * The method <code>inferCode</code> starts inference process which takes one
-   * <code>%match</code> instruction ("InstructionToCode(Match(...))") at a time
-   * <ul>
-   *  <li> each "constraintInstructionList" element corresponds to a pair
-   *  "condition -> action"
-   *  <li> each pair is traversed in order to generate type constraints
-   *  <li> the type constraints of "typeConstraints" list are solved at the end
-   *        of the current <code>%match</code> instruction generating a mapping (a set of
-   *        substitutions for each type variable)
-   *  <li> the mapping is applied over the whole <code>%match</code> instruction
-   *  <li> all lists and hashMaps are reset
-   * </ul>
-   * @param code  the tom code to be type inferred
-   * @return      the tom typed code
-   */
-  public Code inferCode(Code code) {
-    init();
-    //DEBUG System.out.println("\n Original Code = \n" + code + '\n');
-    {{if ( (code instanceof tom.engine.adt.code.types.Code) ) {if ( ((( tom.engine.adt.code.types.Code )code) instanceof tom.engine.adt.code.types.code.Tom) ) { tom.engine.adt.code.types.CodeList  tomMatch6_1= (( tom.engine.adt.code.types.Code )code).getCodeList() ;if ( ((tomMatch6_1 instanceof tom.engine.adt.code.types.codelist.ConsconcCode) || (tomMatch6_1 instanceof tom.engine.adt.code.types.codelist.EmptyconcCode)) ) {if (!( tomMatch6_1.isEmptyconcCode() )) {
-
-        boolean flagInnerMatch = false;
-        CodeList codeResult =  tom.engine.adt.code.types.codelist.EmptyconcCode.make() ;
-        for(Code headCodeList : tomMatch6_1.getCollectionconcCode()) {
-          {{if ( (headCodeList instanceof tom.engine.adt.code.types.Code) ) {if ( ((( tom.engine.adt.code.types.Code )headCodeList) instanceof tom.engine.adt.code.types.code.InstructionToCode) ) { tom.engine.adt.tominstruction.types.Instruction  tomMatch7_1= (( tom.engine.adt.code.types.Code )headCodeList).getAstInstruction() ;if ( (tomMatch7_1 instanceof tom.engine.adt.tominstruction.types.instruction.Match) ) {
-
-              try {
-                flagInnerMatch = false;
-                //DEBUG System.out.println("\n Test pour inferCode -- ligne 1.");
-                // Generate type constraints for a %match
-                //DEBUG System.out.println("CIList avant = " + `constraintInstructionList);
-                inferConstraintInstructionList( tomMatch7_1.getConstraintInstructionList() ,flagInnerMatch);
-                //DEBUG System.out.println("CIList apr?s= " + result + "\n\n");
-                //DEBUG System.out.println("\n Test pour inferCode -- ligne 2.");
-                //DEBUG System.out.println("\n typeConstraints before solve = " + typeConstraints);
-                typeConstraints = tom_make_RepeatId(tom_make_solveConstraints(this)).visitLight(typeConstraints);
-                //DEBUG System.out.println("\n typeConstraints aftersolve = " + typeConstraints);
-                System.out.println("\n substitutions= " + substitutions);
-                //DEBUG printGeneratedConstraints(typeConstraints);
-                //DEBUG System.out.println("\n Test pour inferCode -- ligne 5.");
-              } catch(tom.library.sl.VisitFailure e) {
-                throw new TomRuntimeException("inferCode: failure on " +
-                    headCodeList);
-              } 
-            }}}}}
-
-          Code headCodeResult = replaceInCode(headCodeList);
-          codeResult = tom_append_list_concCode(codeResult, tom.engine.adt.code.types.codelist.ConsconcCode.make(headCodeResult, tom.engine.adt.code.types.codelist.EmptyconcCode.make() ) );
-          replaceInSymbolTable();
-          init();
-        }
-        return  tom.engine.adt.code.types.code.Tom.make(codeResult) ;
-      }}}}}}
-
-    // If it is a ill-formed code (different from "Tom(...)")
-    return code;
-  }
-
-  /**
-   * The method <code>inferConstraintInstructionList</code> applies rule CT-RULE
-   * to a pair "condition -> action" in order to collect all variables occurring
-   * in the condition and put them into <code>varPatternList</code> (for those
-   * variables occurring in match constraints) and <code>varList</code> (for
-   * those variables occurring in numeric constraints) to be able to handle non-linearity.
-   * The condition (left-hand side) is traversed and then the action (right-hand
-   * side) is traversed in order to generate type constraints.
-   * <p>
-   * CT-RULE rule:
-   * IF found "cond --> (e1,...,en)" where "ei" are backquote terms composing
-   * the action
-   * THEN infers types of condition (by calling <code>inferConstraint</code>
-   * method) and action (by calling <code>inferConstraintList</code> for each
-   * match constraint occurring in the action) 
-   * @param ciList  the pair "condition -> action" to be type inferred 
-   */
-  private void inferConstraintInstructionList(ConstraintInstructionList ciList,
-      boolean flagInnerMatch) {
-    //DEBUG System.out.println("\n Test pour inferConstraintInstructionList -- ligne 1.");
-    {{if ( (ciList instanceof tom.engine.adt.tominstruction.types.ConstraintInstructionList) ) {if ( (((( tom.engine.adt.tominstruction.types.ConstraintInstructionList )ciList) instanceof tom.engine.adt.tominstruction.types.constraintinstructionlist.ConsconcConstraintInstruction) || ((( tom.engine.adt.tominstruction.types.ConstraintInstructionList )ciList) instanceof tom.engine.adt.tominstruction.types.constraintinstructionlist.EmptyconcConstraintInstruction)) ) {if (!( (( tom.engine.adt.tominstruction.types.ConstraintInstructionList )ciList).isEmptyconcConstraintInstruction() )) { tom.engine.adt.tominstruction.types.ConstraintInstruction  tomMatch8_7= (( tom.engine.adt.tominstruction.types.ConstraintInstructionList )ciList).getHeadconcConstraintInstruction() ;if ( (tomMatch8_7 instanceof tom.engine.adt.tominstruction.types.constraintinstruction.ConstraintInstruction) ) { tom.engine.adt.tominstruction.types.ConstraintInstruction  tom_headCIList= (( tom.engine.adt.tominstruction.types.ConstraintInstructionList )ciList).getHeadconcConstraintInstruction() ;
-
-        try {
-          //DEBUG System.out.println("\n Test pour inferConstraintInstructionList dans un match -- ligne 4.");
-          //DEBUG System.out.println("\n Test pour inferConstraintInstructionList dans un match -- ligne 2.");
-          // Collect variables and type them with fresh type variables
-          // Rename variables of pattern that already exist in varPatternList
-          //DEBUG System.out.println("\n Test pour inferConstraintInstructionList dans un match -- ligne 3.");
-          //DEBUG System.out.println("\n varPatternList = " + `varPatternList);
-          //DEBUG System.out.println("\n varList = " + `varList);
-          //DEBUG System.out.println("\n Constraints = " + typeConstraints);
-          inferConstraint( tomMatch8_7.getConstraint() );
-          inferAction( tomMatch8_7.getAction() );
-          if (!flagInnerMatch) {
-            tom_make_TopDownCollect(tom_make_CollectVars(this)).visitLight(tom_headCIList);
-            //DEBUG System.out.println("\n Test pour inferConstraintInstructionList apr?s reset.");
-            //DEBUG System.out.println("\n varPatternList avant = " + `varPatternList);
-            //DEBUG System.out.println("\n varList avant = " + `varList); 
-            resetVarPatternList();
-            //DEBUG System.out.println("\n varPatternList apr?s = " + `varPatternList);
-            //DEBUG System.out.println("\n varList apr?s = " + `varList);
-          }
-          inferConstraintInstructionList( (( tom.engine.adt.tominstruction.types.ConstraintInstructionList )ciList).getTailconcConstraintInstruction() ,flagInnerMatch);
-        } catch(tom.library.sl.VisitFailure e) {
-          throw new TomRuntimeException("inferConstraintInstructionList: failure on " + tom_headCIList);
-        }
-      }}}}}}
-
-  }
-
-  private void inferAction(Instruction action) {
-    {{if ( (action instanceof tom.engine.adt.tominstruction.types.Instruction) ) {if ( ((( tom.engine.adt.tominstruction.types.Instruction )action) instanceof tom.engine.adt.tominstruction.types.instruction.RawAction) ) { tom.engine.adt.tominstruction.types.Instruction  tomMatch9_1= (( tom.engine.adt.tominstruction.types.Instruction )action).getAstInstruction() ;if ( (tomMatch9_1 instanceof tom.engine.adt.tominstruction.types.instruction.AbstractBlock) ) { tom.engine.adt.tominstruction.types.InstructionList  tomMatch9_3= tomMatch9_1.getInstList() ;if ( ((tomMatch9_3 instanceof tom.engine.adt.tominstruction.types.instructionlist.ConsconcInstruction) || (tomMatch9_3 instanceof tom.engine.adt.tominstruction.types.instructionlist.EmptyconcInstruction)) ) {if (!( tomMatch9_3.isEmptyconcInstruction() )) {
-
-        boolean flagInnerMatch = true;
-        for(Instruction headInstruction : tomMatch9_3.getCollectionconcInstruction()) {
-          {{if ( (headInstruction instanceof tom.engine.adt.tominstruction.types.Instruction) ) {if ( ((( tom.engine.adt.tominstruction.types.Instruction )headInstruction) instanceof tom.engine.adt.tominstruction.types.instruction.Match) ) {
-
-              flagInnerMatch = true; 
-              // Generate type constraints for a %match in action side
-              inferConstraintInstructionList( (( tom.engine.adt.tominstruction.types.Instruction )headInstruction).getConstraintInstructionList() ,flagInnerMatch);
-              //DEBUG printGeneratedConstraints(typeConstraints);
-            }}}}
-
-
-        }  
-      }}}}}}}
-
-  }
-
-
-
-  /**
-   * The class <code>CollectVars</code> is generated from a strategy which
-   * search for variables occurring in a condition:
-   * <ul>
-   * <li> variables of type "TomTerm" are adedd to the <code>varPatternList</code> (for those
-   * variables occurring in match constraints) if they have not yet been added
-   * there; otherwise, a type constraint is added to
-   * <code>typeConstraints</code> to ensure that both variables have same type
-   * (this happens in case of non-linearity)
-   * <li> variables of type "BQTerm" are added to the <code>varList</code> (for
-   * those variables occurring in numeric constraints) if they have been added
-   * neither in <code>varPatternList</code> nor <code>varList</code> (since a
-   * BQVariable/BQVariableStar can have occurred in a previous match constraint
-   * as a Variable/VariableStar, in the case of a composed condition);
-   * otherwise, a type constraint is added to
-   * <code>typeConstraints</code> to ensure that both variables have same type
-   * (this happens in case of non-linearity)
-   * </ul>
-   */
-
-  /*
-   * pem: simplify the following code to do only one loop
-   */
-  public static class CollectVars extends tom.library.sl.AbstractStrategyBasic {private  NewKernelTyper  nkt;public CollectVars( NewKernelTyper  nkt) {super(( new tom.library.sl.Identity() ));this.nkt=nkt;}public  NewKernelTyper  getnkt() {return nkt;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];stratChilds[0] = super.getChildAt(0);return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() {return 1;}public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}@SuppressWarnings("unchecked")public  tom.engine.adt.tomterm.types.TomTerm  visit_TomTerm( tom.engine.adt.tomterm.types.TomTerm  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if ( (tom__arg instanceof tom.engine.adt.tomterm.types.TomTerm) ) { tom.engine.adt.tomterm.types.TomTerm  tom_var=(( tom.engine.adt.tomterm.types.TomTerm )tom__arg);{{if ( (tom_var instanceof tom.engine.adt.tomterm.types.TomTerm) ) {if ( ((( tom.engine.adt.tomterm.types.TomTerm )tom_var) instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) { tom.engine.adt.tomtype.types.TomType  tom_aType1= (( tom.engine.adt.tomterm.types.TomTerm )tom_var).getAstType() ;if ( (nkt.varPatternList instanceof tom.engine.adt.tomterm.types.TomList) ) {if ( (((( tom.engine.adt.tomterm.types.TomList )nkt.varPatternList) instanceof tom.engine.adt.tomterm.types.tomlist.ConsconcTomTerm) || ((( tom.engine.adt.tomterm.types.TomList )nkt.varPatternList) instanceof tom.engine.adt.tomterm.types.tomlist.EmptyconcTomTerm)) ) { tom.engine.adt.tomterm.types.TomList  tomMatch12__end__8=(( tom.engine.adt.tomterm.types.TomList )nkt.varPatternList);do {{if (!( tomMatch12__end__8.isEmptyconcTomTerm() )) { tom.engine.adt.tomterm.types.TomTerm  tomMatch12_13= tomMatch12__end__8.getHeadconcTomTerm() ;boolean tomMatch12_18= false ; tom.engine.adt.tomname.types.TomName  tomMatch12_11= null ; tom.engine.adt.tomtype.types.TomType  tomMatch12_12= null ;if ( (tomMatch12_13 instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) {{tomMatch12_18= true ;tomMatch12_11= tomMatch12_13.getAstName() ;tomMatch12_12= tomMatch12_13.getAstType() ;}} else {if ( (tomMatch12_13 instanceof tom.engine.adt.tomterm.types.tomterm.VariableStar) ) {{tomMatch12_18= true ;tomMatch12_11= tomMatch12_13.getAstName() ;tomMatch12_12= tomMatch12_13.getAstType() ;}}}if (tomMatch12_18) {if ( ( (( tom.engine.adt.tomterm.types.TomTerm )tom_var).getAstName() ==tomMatch12_11) ) { tom.engine.adt.tomtype.types.TomType  tom_aType2=tomMatch12_12;boolean tomMatch12_17= false ;if ( (tom_aType1==tomMatch12_12) ) {if ( (tom_aType2==tomMatch12_12) ) {tomMatch12_17= true ;}}if (!(tomMatch12_17)) {
-
-
-
-
-
-
-
-              //maybe this is not necessary since the variable generated has aType2
-              nkt.addConstraint( tom.engine.adt.typeconstraints.types.typeconstraint.Equation.make(tom_aType1, tom_aType2) );
-              //DEBUG System.out.println("CollectVars -- constraint = " + `aType1
-              //+ " = " + `aType2);
-            }}}}if ( tomMatch12__end__8.isEmptyconcTomTerm() ) {tomMatch12__end__8=(( tom.engine.adt.tomterm.types.TomList )nkt.varPatternList);} else {tomMatch12__end__8= tomMatch12__end__8.getTailconcTomTerm() ;}}} while(!( (tomMatch12__end__8==(( tom.engine.adt.tomterm.types.TomList )nkt.varPatternList)) ));}}}}}{if ( (tom_var instanceof tom.engine.adt.tomterm.types.TomTerm) ) {if ( ((( tom.engine.adt.tomterm.types.TomTerm )tom_var) instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) {if ( (nkt.varPatternList instanceof tom.engine.adt.tomterm.types.TomList) ) {boolean tomMatch12_32= false ;if ( (((( tom.engine.adt.tomterm.types.TomList )nkt.varPatternList) instanceof tom.engine.adt.tomterm.types.tomlist.ConsconcTomTerm) || ((( tom.engine.adt.tomterm.types.TomList )nkt.varPatternList) instanceof tom.engine.adt.tomterm.types.tomlist.EmptyconcTomTerm)) ) { tom.engine.adt.tomterm.types.TomList  tomMatch12__end__26=(( tom.engine.adt.tomterm.types.TomList )nkt.varPatternList);do {{if (!( tomMatch12__end__26.isEmptyconcTomTerm() )) { tom.engine.adt.tomterm.types.TomTerm  tomMatch12_30= tomMatch12__end__26.getHeadconcTomTerm() ;boolean tomMatch12_33= false ; tom.engine.adt.tomname.types.TomName  tomMatch12_29= null ;if ( (tomMatch12_30 instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) {{tomMatch12_33= true ;tomMatch12_29= tomMatch12_30.getAstName() ;}} else {if ( (tomMatch12_30 instanceof tom.engine.adt.tomterm.types.tomterm.VariableStar) ) {{tomMatch12_33= true ;tomMatch12_29= tomMatch12_30.getAstName() ;}}}if (tomMatch12_33) {if ( ( (( tom.engine.adt.tomterm.types.TomTerm )tom_var).getAstName() ==tomMatch12_29) ) {tomMatch12_32= true ;}}}if ( tomMatch12__end__26.isEmptyconcTomTerm() ) {tomMatch12__end__26=(( tom.engine.adt.tomterm.types.TomList )nkt.varPatternList);} else {tomMatch12__end__26= tomMatch12__end__26.getTailconcTomTerm() ;}}} while(!( (tomMatch12__end__26==(( tom.engine.adt.tomterm.types.TomList )nkt.varPatternList)) ));}if (!(tomMatch12_32)) {
-
-
-
-
-
-            nkt.addTomTerm(tom_var);
-          }}}}}{if ( (tom_var instanceof tom.engine.adt.tomterm.types.TomTerm) ) {if ( ((( tom.engine.adt.tomterm.types.TomTerm )tom_var) instanceof tom.engine.adt.tomterm.types.tomterm.VariableStar) ) { tom.engine.adt.tomtype.types.TomType  tom_aType1= (( tom.engine.adt.tomterm.types.TomTerm )tom_var).getAstType() ;if ( (nkt.varPatternList instanceof tom.engine.adt.tomterm.types.TomList) ) {if ( (((( tom.engine.adt.tomterm.types.TomList )nkt.varPatternList) instanceof tom.engine.adt.tomterm.types.tomlist.ConsconcTomTerm) || ((( tom.engine.adt.tomterm.types.TomList )nkt.varPatternList) instanceof tom.engine.adt.tomterm.types.tomlist.EmptyconcTomTerm)) ) { tom.engine.adt.tomterm.types.TomList  tomMatch12__end__42=(( tom.engine.adt.tomterm.types.TomList )nkt.varPatternList);do {{if (!( tomMatch12__end__42.isEmptyconcTomTerm() )) { tom.engine.adt.tomterm.types.TomTerm  tomMatch12_47= tomMatch12__end__42.getHeadconcTomTerm() ;boolean tomMatch12_52= false ; tom.engine.adt.tomtype.types.TomType  tomMatch12_46= null ; tom.engine.adt.tomname.types.TomName  tomMatch12_45= null ;if ( (tomMatch12_47 instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) {{tomMatch12_52= true ;tomMatch12_45= tomMatch12_47.getAstName() ;tomMatch12_46= tomMatch12_47.getAstType() ;}} else {if ( (tomMatch12_47 instanceof tom.engine.adt.tomterm.types.tomterm.VariableStar) ) {{tomMatch12_52= true ;tomMatch12_45= tomMatch12_47.getAstName() ;tomMatch12_46= tomMatch12_47.getAstType() ;}}}if (tomMatch12_52) {if ( ( (( tom.engine.adt.tomterm.types.TomTerm )tom_var).getAstName() ==tomMatch12_45) ) { tom.engine.adt.tomtype.types.TomType  tom_aType2=tomMatch12_46;boolean tomMatch12_51= false ;if ( (tom_aType1==tomMatch12_46) ) {if ( (tom_aType2==tomMatch12_46) ) {tomMatch12_51= true ;}}if (!(tomMatch12_51)) {
-
-
-
-
-
-            nkt.addConstraint( tom.engine.adt.typeconstraints.types.typeconstraint.Equation.make(tom_aType1, tom_aType2) );
-            //DEBUG System.out.println("CollectVars -- constraint = " + `type1 + " = " + `type2);
-          }}}}if ( tomMatch12__end__42.isEmptyconcTomTerm() ) {tomMatch12__end__42=(( tom.engine.adt.tomterm.types.TomList )nkt.varPatternList);} else {tomMatch12__end__42= tomMatch12__end__42.getTailconcTomTerm() ;}}} while(!( (tomMatch12__end__42==(( tom.engine.adt.tomterm.types.TomList )nkt.varPatternList)) ));}}}}}{if ( (tom_var instanceof tom.engine.adt.tomterm.types.TomTerm) ) {if ( ((( tom.engine.adt.tomterm.types.TomTerm )tom_var) instanceof tom.engine.adt.tomterm.types.tomterm.VariableStar) ) {if ( (nkt.varPatternList instanceof tom.engine.adt.tomterm.types.TomList) ) {boolean tomMatch12_66= false ;if ( (((( tom.engine.adt.tomterm.types.TomList )nkt.varPatternList) instanceof tom.engine.adt.tomterm.types.tomlist.ConsconcTomTerm) || ((( tom.engine.adt.tomterm.types.TomList )nkt.varPatternList) instanceof tom.engine.adt.tomterm.types.tomlist.EmptyconcTomTerm)) ) { tom.engine.adt.tomterm.types.TomList  tomMatch12__end__60=(( tom.engine.adt.tomterm.types.TomList )nkt.varPatternList);do {{if (!( tomMatch12__end__60.isEmptyconcTomTerm() )) { tom.engine.adt.tomterm.types.TomTerm  tomMatch12_64= tomMatch12__end__60.getHeadconcTomTerm() ;boolean tomMatch12_67= false ; tom.engine.adt.tomname.types.TomName  tomMatch12_63= null ;if ( (tomMatch12_64 instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) {{tomMatch12_67= true ;tomMatch12_63= tomMatch12_64.getAstName() ;}} else {if ( (tomMatch12_64 instanceof tom.engine.adt.tomterm.types.tomterm.VariableStar) ) {{tomMatch12_67= true ;tomMatch12_63= tomMatch12_64.getAstName() ;}}}if (tomMatch12_67) {if ( ( (( tom.engine.adt.tomterm.types.TomTerm )tom_var).getAstName() ==tomMatch12_63) ) {tomMatch12_66= true ;}}}if ( tomMatch12__end__60.isEmptyconcTomTerm() ) {tomMatch12__end__60=(( tom.engine.adt.tomterm.types.TomList )nkt.varPatternList);} else {tomMatch12__end__60= tomMatch12__end__60.getTailconcTomTerm() ;}}} while(!( (tomMatch12__end__60==(( tom.engine.adt.tomterm.types.TomList )nkt.varPatternList)) ));}if (!(tomMatch12_66)) {
-
-
-
-
-            nkt.addTomTerm(tom_var);
-          }}}}}}
-
-      }}}return _visit_TomTerm(tom__arg,introspector);}@SuppressWarnings("unchecked")public  tom.engine.adt.code.types.BQTerm  visit_BQTerm( tom.engine.adt.code.types.BQTerm  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if ( (tom__arg instanceof tom.engine.adt.code.types.BQTerm) ) { tom.engine.adt.code.types.BQTerm  tom_bqvar=(( tom.engine.adt.code.types.BQTerm )tom__arg);
-
-
-
-
-        BQTerm newBQVar = tom_bqvar;
-        {{if ( (tom_bqvar instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )tom_bqvar) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) { tom.engine.adt.tomoption.types.OptionList  tom_option= (( tom.engine.adt.code.types.BQTerm )tom_bqvar).getOption() ; tom.engine.adt.tomname.types.TomName  tom_aName= (( tom.engine.adt.code.types.BQTerm )tom_bqvar).getAstName() ; tom.engine.adt.tomtype.types.TomType  tom_aType1= (( tom.engine.adt.code.types.BQTerm )tom_bqvar).getAstType() ;if ( (nkt.varList instanceof tom.engine.adt.code.types.BQTermList) ) {if ( (((( tom.engine.adt.code.types.BQTermList )nkt.varList) instanceof tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm) || ((( tom.engine.adt.code.types.BQTermList )nkt.varList) instanceof tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm)) ) { tom.engine.adt.code.types.BQTermList  tomMatch14__end__10=(( tom.engine.adt.code.types.BQTermList )nkt.varList);do {{if (!( tomMatch14__end__10.isEmptyconcBQTerm() )) { tom.engine.adt.code.types.BQTerm  tomMatch14_21= tomMatch14__end__10.getHeadconcBQTerm() ;boolean tomMatch14_32= false ; tom.engine.adt.tomname.types.TomName  tomMatch14_19= null ; tom.engine.adt.tomtype.types.TomType  tomMatch14_20= null ;if ( (tomMatch14_21 instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {{tomMatch14_32= true ;tomMatch14_19= tomMatch14_21.getAstName() ;tomMatch14_20= tomMatch14_21.getAstType() ;}} else {if ( (tomMatch14_21 instanceof tom.engine.adt.code.types.bqterm.BQVariableStar) ) {{tomMatch14_32= true ;tomMatch14_19= tomMatch14_21.getAstName() ;tomMatch14_20= tomMatch14_21.getAstType() ;}}}if (tomMatch14_32) {if ( (tom_aName==tomMatch14_19) ) { tom.engine.adt.tomtype.types.TomType  tom_aType2=tomMatch14_20;boolean tomMatch14_31= false ;if ( (tom_aType1==tomMatch14_20) ) {if ( (tom_aType2==tomMatch14_20) ) {tomMatch14_31= true ;}}if (!(tomMatch14_31)) {
-
-
-
-
-
-
-            nkt.addConstraint( tom.engine.adt.typeconstraints.types.typeconstraint.Equation.make(tom_aType1, tom_aType2) );
-            newBQVar =  tom.engine.adt.code.types.bqterm.BQVariable.make(tom_option, tom_aName, tom_aType2) ;
-         }}}}if ( tomMatch14__end__10.isEmptyconcBQTerm() ) {tomMatch14__end__10=(( tom.engine.adt.code.types.BQTermList )nkt.varList);} else {tomMatch14__end__10= tomMatch14__end__10.getTailconcBQTerm() ;}}} while(!( (tomMatch14__end__10==(( tom.engine.adt.code.types.BQTermList )nkt.varList)) ));}}if ( (nkt.varPatternList instanceof tom.engine.adt.tomterm.types.TomList) ) {if ( (((( tom.engine.adt.tomterm.types.TomList )nkt.varPatternList) instanceof tom.engine.adt.tomterm.types.tomlist.ConsconcTomTerm) || ((( tom.engine.adt.tomterm.types.TomList )nkt.varPatternList) instanceof tom.engine.adt.tomterm.types.tomlist.EmptyconcTomTerm)) ) { tom.engine.adt.tomterm.types.TomList  tomMatch14__end__16=(( tom.engine.adt.tomterm.types.TomList )nkt.varPatternList);do {{if (!( tomMatch14__end__16.isEmptyconcTomTerm() )) { tom.engine.adt.tomterm.types.TomTerm  tomMatch14_24= tomMatch14__end__16.getHeadconcTomTerm() ;boolean tomMatch14_34= false ; tom.engine.adt.tomtype.types.TomType  tomMatch14_23= null ; tom.engine.adt.tomname.types.TomName  tomMatch14_22= null ;if ( (tomMatch14_24 instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) {{tomMatch14_34= true ;tomMatch14_22= tomMatch14_24.getAstName() ;tomMatch14_23= tomMatch14_24.getAstType() ;}} else {if ( (tomMatch14_24 instanceof tom.engine.adt.tomterm.types.tomterm.VariableStar) ) {{tomMatch14_34= true ;tomMatch14_22= tomMatch14_24.getAstName() ;tomMatch14_23= tomMatch14_24.getAstType() ;}}}if (tomMatch14_34) {if ( (tom_aName==tomMatch14_22) ) { tom.engine.adt.tomtype.types.TomType  tom_aType2=tomMatch14_23;boolean tomMatch14_33= false ;if ( (tom_aType1==tomMatch14_23) ) {if ( (tom_aType2==tomMatch14_23) ) {tomMatch14_33= true ;}}if (!(tomMatch14_33)) {             nkt.addConstraint( tom.engine.adt.typeconstraints.types.typeconstraint.Equation.make(tom_aType1, tom_aType2) );             newBQVar =  tom.engine.adt.code.types.bqterm.BQVariable.make(tom_option, tom_aName, tom_aType2) ;          }}}}if ( tomMatch14__end__16.isEmptyconcTomTerm() ) {tomMatch14__end__16=(( tom.engine.adt.tomterm.types.TomList )nkt.varPatternList);} else {tomMatch14__end__16= tomMatch14__end__16.getTailconcTomTerm() ;}}} while(!( (tomMatch14__end__16==(( tom.engine.adt.tomterm.types.TomList )nkt.varPatternList)) ));}}}}}{if ( (tom_bqvar instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )tom_bqvar) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) { tom.engine.adt.tomname.types.TomName  tom_aName= (( tom.engine.adt.code.types.BQTerm )tom_bqvar).getAstName() ;if ( (nkt.varList instanceof tom.engine.adt.code.types.BQTermList) ) {if ( (nkt.varPatternList instanceof tom.engine.adt.tomterm.types.TomList) ) {boolean tomMatch14_60= false ;if ( (((( tom.engine.adt.code.types.BQTermList )nkt.varList) instanceof tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm) || ((( tom.engine.adt.code.types.BQTermList )nkt.varList) instanceof tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm)) ) { tom.engine.adt.code.types.BQTermList  tomMatch14__end__43=(( tom.engine.adt.code.types.BQTermList )nkt.varList);do {{if (!( tomMatch14__end__43.isEmptyconcBQTerm() )) { tom.engine.adt.code.types.BQTerm  tomMatch14_53= tomMatch14__end__43.getHeadconcBQTerm() ;boolean tomMatch14_61= false ; tom.engine.adt.tomname.types.TomName  tomMatch14_52= null ;if ( (tomMatch14_53 instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {{tomMatch14_61= true ;tomMatch14_52= tomMatch14_53.getAstName() ;}} else {if ( (tomMatch14_53 instanceof tom.engine.adt.code.types.bqterm.BQVariableStar) ) {{tomMatch14_61= true ;tomMatch14_52= tomMatch14_53.getAstName() ;}}}if (tomMatch14_61) {if ( (tom_aName==tomMatch14_52) ) {tomMatch14_60= true ;}}}if ( tomMatch14__end__43.isEmptyconcBQTerm() ) {tomMatch14__end__43=(( tom.engine.adt.code.types.BQTermList )nkt.varList);} else {tomMatch14__end__43= tomMatch14__end__43.getTailconcBQTerm() ;}}} while(!( (tomMatch14__end__43==(( tom.engine.adt.code.types.BQTermList )nkt.varList)) ));}if (!(tomMatch14_60)) {boolean tomMatch14_58= false ;if ( (((( tom.engine.adt.tomterm.types.TomList )nkt.varPatternList) instanceof tom.engine.adt.tomterm.types.tomlist.ConsconcTomTerm) || ((( tom.engine.adt.tomterm.types.TomList )nkt.varPatternList) instanceof tom.engine.adt.tomterm.types.tomlist.EmptyconcTomTerm)) ) { tom.engine.adt.tomterm.types.TomList  tomMatch14__end__49=(( tom.engine.adt.tomterm.types.TomList )nkt.varPatternList);do {{if (!( tomMatch14__end__49.isEmptyconcTomTerm() )) { tom.engine.adt.tomterm.types.TomTerm  tomMatch14_55= tomMatch14__end__49.getHeadconcTomTerm() ;boolean tomMatch14_59= false ; tom.engine.adt.tomname.types.TomName  tomMatch14_54= null ;if ( (tomMatch14_55 instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) {{tomMatch14_59= true ;tomMatch14_54= tomMatch14_55.getAstName() ;}} else {if ( (tomMatch14_55 instanceof tom.engine.adt.tomterm.types.tomterm.VariableStar) ) {{tomMatch14_59= true ;tomMatch14_54= tomMatch14_55.getAstName() ;}}}if (tomMatch14_59) {if ( (tom_aName==tomMatch14_54) ) {tomMatch14_58= true ;}}}if ( tomMatch14__end__49.isEmptyconcTomTerm() ) {tomMatch14__end__49=(( tom.engine.adt.tomterm.types.TomList )nkt.varPatternList);} else {tomMatch14__end__49= tomMatch14__end__49.getTailconcTomTerm() ;}}} while(!( (tomMatch14__end__49==(( tom.engine.adt.tomterm.types.TomList )nkt.varPatternList)) ));}if (!(tomMatch14_58)) {
-
-
-
-
-
-            nkt.addBQTerm(tom_bqvar);
-          }}}}}}}{if ( (tom_bqvar instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )tom_bqvar) instanceof tom.engine.adt.code.types.bqterm.BQVariableStar) ) { tom.engine.adt.tomoption.types.OptionList  tom_option= (( tom.engine.adt.code.types.BQTerm )tom_bqvar).getOption() ; tom.engine.adt.tomname.types.TomName  tom_aName= (( tom.engine.adt.code.types.BQTerm )tom_bqvar).getAstName() ; tom.engine.adt.tomtype.types.TomType  tom_aType1= (( tom.engine.adt.code.types.BQTerm )tom_bqvar).getAstType() ;if ( (nkt.varList instanceof tom.engine.adt.code.types.BQTermList) ) {if ( (((( tom.engine.adt.code.types.BQTermList )nkt.varList) instanceof tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm) || ((( tom.engine.adt.code.types.BQTermList )nkt.varList) instanceof tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm)) ) { tom.engine.adt.code.types.BQTermList  tomMatch14__end__72=(( tom.engine.adt.code.types.BQTermList )nkt.varList);do {{if (!( tomMatch14__end__72.isEmptyconcBQTerm() )) { tom.engine.adt.code.types.BQTerm  tomMatch14_83= tomMatch14__end__72.getHeadconcBQTerm() ;boolean tomMatch14_94= false ; tom.engine.adt.tomname.types.TomName  tomMatch14_81= null ; tom.engine.adt.tomtype.types.TomType  tomMatch14_82= null ;if ( (tomMatch14_83 instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {{tomMatch14_94= true ;tomMatch14_81= tomMatch14_83.getAstName() ;tomMatch14_82= tomMatch14_83.getAstType() ;}} else {if ( (tomMatch14_83 instanceof tom.engine.adt.code.types.bqterm.BQVariableStar) ) {{tomMatch14_94= true ;tomMatch14_81= tomMatch14_83.getAstName() ;tomMatch14_82= tomMatch14_83.getAstType() ;}}}if (tomMatch14_94) {if ( (tom_aName==tomMatch14_81) ) { tom.engine.adt.tomtype.types.TomType  tom_aType2=tomMatch14_82;boolean tomMatch14_93= false ;if ( (tom_aType1==tomMatch14_82) ) {if ( (tom_aType2==tomMatch14_82) ) {tomMatch14_93= true ;}}if (!(tomMatch14_93)) {
-
-
-
-
-
-
-
-            nkt.addConstraint( tom.engine.adt.typeconstraints.types.typeconstraint.Equation.make(tom_aType1, tom_aType2) );
-            newBQVar =  tom.engine.adt.code.types.bqterm.BQVariable.make(tom_option, tom_aName, tom_aType2) ;
-          }}}}if ( tomMatch14__end__72.isEmptyconcBQTerm() ) {tomMatch14__end__72=(( tom.engine.adt.code.types.BQTermList )nkt.varList);} else {tomMatch14__end__72= tomMatch14__end__72.getTailconcBQTerm() ;}}} while(!( (tomMatch14__end__72==(( tom.engine.adt.code.types.BQTermList )nkt.varList)) ));}}if ( (nkt.varPatternList instanceof tom.engine.adt.tomterm.types.TomList) ) {if ( (((( tom.engine.adt.tomterm.types.TomList )nkt.varPatternList) instanceof tom.engine.adt.tomterm.types.tomlist.ConsconcTomTerm) || ((( tom.engine.adt.tomterm.types.TomList )nkt.varPatternList) instanceof tom.engine.adt.tomterm.types.tomlist.EmptyconcTomTerm)) ) { tom.engine.adt.tomterm.types.TomList  tomMatch14__end__78=(( tom.engine.adt.tomterm.types.TomList )nkt.varPatternList);do {{if (!( tomMatch14__end__78.isEmptyconcTomTerm() )) { tom.engine.adt.tomterm.types.TomTerm  tomMatch14_86= tomMatch14__end__78.getHeadconcTomTerm() ;boolean tomMatch14_96= false ; tom.engine.adt.tomtype.types.TomType  tomMatch14_85= null ; tom.engine.adt.tomname.types.TomName  tomMatch14_84= null ;if ( (tomMatch14_86 instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) {{tomMatch14_96= true ;tomMatch14_84= tomMatch14_86.getAstName() ;tomMatch14_85= tomMatch14_86.getAstType() ;}} else {if ( (tomMatch14_86 instanceof tom.engine.adt.tomterm.types.tomterm.VariableStar) ) {{tomMatch14_96= true ;tomMatch14_84= tomMatch14_86.getAstName() ;tomMatch14_85= tomMatch14_86.getAstType() ;}}}if (tomMatch14_96) {if ( (tom_aName==tomMatch14_84) ) { tom.engine.adt.tomtype.types.TomType  tom_aType2=tomMatch14_85;boolean tomMatch14_95= false ;if ( (tom_aType1==tomMatch14_85) ) {if ( (tom_aType2==tomMatch14_85) ) {tomMatch14_95= true ;}}if (!(tomMatch14_95)) {             nkt.addConstraint( tom.engine.adt.typeconstraints.types.typeconstraint.Equation.make(tom_aType1, tom_aType2) );             newBQVar =  tom.engine.adt.code.types.bqterm.BQVariable.make(tom_option, tom_aName, tom_aType2) ;           }}}}if ( tomMatch14__end__78.isEmptyconcTomTerm() ) {tomMatch14__end__78=(( tom.engine.adt.tomterm.types.TomList )nkt.varPatternList);} else {tomMatch14__end__78= tomMatch14__end__78.getTailconcTomTerm() ;}}} while(!( (tomMatch14__end__78==(( tom.engine.adt.tomterm.types.TomList )nkt.varPatternList)) ));}}}}}{if ( (tom_bqvar instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )tom_bqvar) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) { tom.engine.adt.tomname.types.TomName  tom_aName= (( tom.engine.adt.code.types.BQTerm )tom_bqvar).getAstName() ;if ( (nkt.varList instanceof tom.engine.adt.code.types.BQTermList) ) {if ( (nkt.varPatternList instanceof tom.engine.adt.tomterm.types.TomList) ) {boolean tomMatch14_122= false ;if ( (((( tom.engine.adt.code.types.BQTermList )nkt.varList) instanceof tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm) || ((( tom.engine.adt.code.types.BQTermList )nkt.varList) instanceof tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm)) ) { tom.engine.adt.code.types.BQTermList  tomMatch14__end__105=(( tom.engine.adt.code.types.BQTermList )nkt.varList);do {{if (!( tomMatch14__end__105.isEmptyconcBQTerm() )) { tom.engine.adt.code.types.BQTerm  tomMatch14_115= tomMatch14__end__105.getHeadconcBQTerm() ;boolean tomMatch14_123= false ; tom.engine.adt.tomname.types.TomName  tomMatch14_114= null ;if ( (tomMatch14_115 instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {{tomMatch14_123= true ;tomMatch14_114= tomMatch14_115.getAstName() ;}} else {if ( (tomMatch14_115 instanceof tom.engine.adt.code.types.bqterm.BQVariableStar) ) {{tomMatch14_123= true ;tomMatch14_114= tomMatch14_115.getAstName() ;}}}if (tomMatch14_123) {if ( (tom_aName==tomMatch14_114) ) {tomMatch14_122= true ;}}}if ( tomMatch14__end__105.isEmptyconcBQTerm() ) {tomMatch14__end__105=(( tom.engine.adt.code.types.BQTermList )nkt.varList);} else {tomMatch14__end__105= tomMatch14__end__105.getTailconcBQTerm() ;}}} while(!( (tomMatch14__end__105==(( tom.engine.adt.code.types.BQTermList )nkt.varList)) ));}if (!(tomMatch14_122)) {boolean tomMatch14_120= false ;if ( (((( tom.engine.adt.tomterm.types.TomList )nkt.varPatternList) instanceof tom.engine.adt.tomterm.types.tomlist.ConsconcTomTerm) || ((( tom.engine.adt.tomterm.types.TomList )nkt.varPatternList) instanceof tom.engine.adt.tomterm.types.tomlist.EmptyconcTomTerm)) ) { tom.engine.adt.tomterm.types.TomList  tomMatch14__end__111=(( tom.engine.adt.tomterm.types.TomList )nkt.varPatternList);do {{if (!( tomMatch14__end__111.isEmptyconcTomTerm() )) { tom.engine.adt.tomterm.types.TomTerm  tomMatch14_117= tomMatch14__end__111.getHeadconcTomTerm() ;boolean tomMatch14_121= false ; tom.engine.adt.tomname.types.TomName  tomMatch14_116= null ;if ( (tomMatch14_117 instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) {{tomMatch14_121= true ;tomMatch14_116= tomMatch14_117.getAstName() ;}} else {if ( (tomMatch14_117 instanceof tom.engine.adt.tomterm.types.tomterm.VariableStar) ) {{tomMatch14_121= true ;tomMatch14_116= tomMatch14_117.getAstName() ;}}}if (tomMatch14_121) {if ( (tom_aName==tomMatch14_116) ) {tomMatch14_120= true ;}}}if ( tomMatch14__end__111.isEmptyconcTomTerm() ) {tomMatch14__end__111=(( tom.engine.adt.tomterm.types.TomList )nkt.varPatternList);} else {tomMatch14__end__111= tomMatch14__end__111.getTailconcTomTerm() ;}}} while(!( (tomMatch14__end__111==(( tom.engine.adt.tomterm.types.TomList )nkt.varPatternList)) ));}if (!(tomMatch14_120)) {
-
-
-
-
-
-            nkt.addBQTerm(tom_bqvar);
-          }}}}}}}}
-
-        return newBQVar;
-      }}}return _visit_BQTerm(tom__arg,introspector);}@SuppressWarnings("unchecked")public  tom.engine.adt.tomterm.types.TomTerm  _visit_TomTerm( tom.engine.adt.tomterm.types.TomTerm  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!(( null  == environment))) {return (( tom.engine.adt.tomterm.types.TomTerm )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);}}@SuppressWarnings("unchecked")public  tom.engine.adt.code.types.BQTerm  _visit_BQTerm( tom.engine.adt.code.types.BQTerm  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!(( null  == environment))) {return (( tom.engine.adt.code.types.BQTerm )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);}}@SuppressWarnings("unchecked")public <T> T visitLight(T v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.engine.adt.tomterm.types.TomTerm) ) {return ((T)visit_TomTerm((( tom.engine.adt.tomterm.types.TomTerm )v),introspector));}if ( (v instanceof tom.engine.adt.code.types.BQTerm) ) {return ((T)visit_BQTerm((( tom.engine.adt.code.types.BQTerm )v),introspector));}if (!(( null  == environment))) {return ((T)any.visit(environment,introspector));} else {return any.visitLight(v,introspector);}}}private static  tom.library.sl.Strategy  tom_make_CollectVars( NewKernelTyper  t0) { return new CollectVars(t0);}
-
-
-
-  /**
-   * The method <code>inferConstraint</code> applies rule CT-MATCH, CT-EQ, CT-CONJ,
-   * or CT-DISJ to a "condition" in order to infer its type.
-   * <p>
-   * CT-MATCH rule:
-   * IF found "e1 << [T] e2" 
-   * THEN infers type of e1 and e2 and add a type constraint "T1 = T2", where
-   * "Ti" is a fresh type variable generated to "ei" (by
-   * <code>inferBQTerm</code>, a type constraint "T = T2" will be added)
-   * <p>
-   * CT-EQ rule:
-   * IF found "e1 == e2", "e1 <= e2", "e1 < e2", "e1 >= e2" or "e1 > e2"
-   * THEN infers type of e1 and e2 and add a type constraint "T1 = T2", where
-   * "Ti" is a fresh type variable generated to "ei"  
-   * <p>
-   * CT-CONJ rule (resp. CT-DISJ):
-   * IF found "cond1 && cond2" (resp. "cond1 || cond2")
-   * THEN infers type of cond1 and cond2 (by calling
-   * <code>inferConstraint</code> for each condition)
-   * @param constraint the "condition" to be type inferred 
-   */
-  private void inferConstraint(Constraint constraint) {
-    {{if ( (constraint instanceof tom.engine.adt.tomconstraint.types.Constraint) ) {if ( ((( tom.engine.adt.tomconstraint.types.Constraint )constraint) instanceof tom.engine.adt.tomconstraint.types.constraint.MatchConstraint) ) {
- 
-        //DEBUG System.out.println("inferConstraint l1 -- subject = " + `subject);
-        TomType freshType1 = getUnknownFreshTypeVar();
-        TomType freshType2 = getUnknownFreshTypeVar();
-        //DEBUG System.out.println("inferConstraint : " + freshType1 + " = " + freshType2);
-        addConstraint( tom.engine.adt.typeconstraints.types.typeconstraint.Equation.make(freshType1, freshType2) );
-        inferTomTerm( (( tom.engine.adt.tomconstraint.types.Constraint )constraint).getPattern() ,freshType1);
-        inferBQTerm( (( tom.engine.adt.tomconstraint.types.Constraint )constraint).getSubject() ,freshType2);
-      }}}{if ( (constraint instanceof tom.engine.adt.tomconstraint.types.Constraint) ) {if ( ((( tom.engine.adt.tomconstraint.types.Constraint )constraint) instanceof tom.engine.adt.tomconstraint.types.constraint.NumericConstraint) ) {
-
-
-        TomType freshType1 = getUnknownFreshTypeVar();
-        TomType freshType2 = getUnknownFreshTypeVar();
-        // It will be useful for subtyping
-        // TomType freshType3 = getUnknownFreshTypeVar();
-        //addConstraint(`Equation(freshType1,getType(left)));
-        //DEBUG System.out.println("inferConstraint l1 - typeConstraints = " + typeConstraints);
-        //addConstraint(`Equation(freshType2,getType(right)));
-        //DEBUG System.out.println("inferConstraint l2 - typeConstraints = " + typeConstraints);
-        addConstraint( tom.engine.adt.typeconstraints.types.typeconstraint.Equation.make(freshType1, freshType2) );
-        inferBQTerm( (( tom.engine.adt.tomconstraint.types.Constraint )constraint).getLeft() ,freshType1);
-        inferBQTerm( (( tom.engine.adt.tomconstraint.types.Constraint )constraint).getRight() ,freshType2);
-      }}}{if ( (constraint instanceof tom.engine.adt.tomconstraint.types.Constraint) ) {if ( (((( tom.engine.adt.tomconstraint.types.Constraint )constraint) instanceof tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint) || ((( tom.engine.adt.tomconstraint.types.Constraint )constraint) instanceof tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint)) ) {if (!( (  (( tom.engine.adt.tomconstraint.types.Constraint )constraint).isEmptyAndConstraint()  ||  ((( tom.engine.adt.tomconstraint.types.Constraint )constraint)== tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint.make() )  ) )) {
-
-
-        ConstraintList cList =  tom.engine.adt.tomconstraint.types.constraintlist.ConsconcConstraint.make((( (((( tom.engine.adt.tomconstraint.types.Constraint )constraint) instanceof tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint) || ((( tom.engine.adt.tomconstraint.types.Constraint )constraint) instanceof tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint)) )?( (( tom.engine.adt.tomconstraint.types.Constraint )constraint).getHeadAndConstraint() ):((( tom.engine.adt.tomconstraint.types.Constraint )constraint))), tom.engine.adt.tomconstraint.types.constraintlist.ConsconcConstraint.make((( (((( tom.engine.adt.tomconstraint.types.Constraint )constraint) instanceof tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint) || ((( tom.engine.adt.tomconstraint.types.Constraint )constraint) instanceof tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint)) )?( (( tom.engine.adt.tomconstraint.types.Constraint )constraint).getTailAndConstraint() ):( tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint.make() )), tom.engine.adt.tomconstraint.types.constraintlist.EmptyconcConstraint.make() ) ) ;
-        while(!cList.isEmptyconcConstraint()) {
-          inferConstraint(cList.getHeadconcConstraint());
-          cList = cList.getTailconcConstraint();
-        }
-      }}}}{if ( (constraint instanceof tom.engine.adt.tomconstraint.types.Constraint) ) {if ( (((( tom.engine.adt.tomconstraint.types.Constraint )constraint) instanceof tom.engine.adt.tomconstraint.types.constraint.ConsOrConstraint) || ((( tom.engine.adt.tomconstraint.types.Constraint )constraint) instanceof tom.engine.adt.tomconstraint.types.constraint.EmptyOrConstraint)) ) {if (!( (  (( tom.engine.adt.tomconstraint.types.Constraint )constraint).isEmptyOrConstraint()  ||  ((( tom.engine.adt.tomconstraint.types.Constraint )constraint)== tom.engine.adt.tomconstraint.types.constraint.EmptyOrConstraint.make() )  ) )) {
-
-
-        ConstraintList cList =  tom.engine.adt.tomconstraint.types.constraintlist.ConsconcConstraint.make((( (((( tom.engine.adt.tomconstraint.types.Constraint )constraint) instanceof tom.engine.adt.tomconstraint.types.constraint.ConsOrConstraint) || ((( tom.engine.adt.tomconstraint.types.Constraint )constraint) instanceof tom.engine.adt.tomconstraint.types.constraint.EmptyOrConstraint)) )?( (( tom.engine.adt.tomconstraint.types.Constraint )constraint).getHeadOrConstraint() ):((( tom.engine.adt.tomconstraint.types.Constraint )constraint))), tom.engine.adt.tomconstraint.types.constraintlist.ConsconcConstraint.make((( (((( tom.engine.adt.tomconstraint.types.Constraint )constraint) instanceof tom.engine.adt.tomconstraint.types.constraint.ConsOrConstraint) || ((( tom.engine.adt.tomconstraint.types.Constraint )constraint) instanceof tom.engine.adt.tomconstraint.types.constraint.EmptyOrConstraint)) )?( (( tom.engine.adt.tomconstraint.types.Constraint )constraint).getTailOrConstraint() ):( tom.engine.adt.tomconstraint.types.constraint.EmptyOrConstraint.make() )), tom.engine.adt.tomconstraint.types.constraintlist.EmptyconcConstraint.make() ) ) ;
-        while(!cList.isEmptyconcConstraint()) {
-          inferConstraint(cList.getHeadconcConstraint());
-          cList = cList.getTailconcConstraint();
-        }
-      }}}}}
-
-  }
-
-  /**
-   * The method <code>inferTomTerm</code> applies rule CT-ANTI, CT-VAR, CT-SVAR, CT-FUN,
-   * CT-EMPTY, CT-ELEM, CT-MERGE or CT-STAR to a "pattern" (a TomTerm) in order
-   * to infer its type.
-   * <p>
-   * CT-ANTI rule:
-   * IF found "!(e):A"
-   * THEN infers type of e
-   * <p>
-   * CT-VAR rule (resp. CT-SVAR): 
-   * IF found "x:A" (resp. "x*:A") and "x:T" (resp. "x*:T") already exists in SymbolTable 
-   * THEN add a type constraint "A = T"
-   * <p>
-   * CT-FUN rule:
-   * IF found "f(e1,...,en):A" and "f:T1,...,Tn->T" exists in SymbolTable
-   * THEN infers type of arguments and add a type constraint "A = T" and
-   *      calls the TypeVariableList method which adds a type constraint "Ai =
-   *      Ti" for each argument, where Ai is a fresh type variable
-   * <p>
-   * CT-EMPTY rule:
-   * IF found "l():AA" and "l:T*->TT" exists in SymbolTable
-   * THEN add a type constraint "AA = TT"       
-   * <p>
-   * CT-ELEM rule:
-   * IF found "l(e1,...,en,e):AA" and "l:T*->TT" exists in SymbolTable
-   * THEN infers type of both sublist "l(e1,...,en)" and last argument
-   *      "e" and adds a type constraint "AA = TT" and calls the
-   *      TypeVariableList method which adds a type constraint "A =T"
-   *      for the last argument, where A is a fresh type variable and
-   *      "e" does not represent a list with head symbol "l"
-   * <p>
-   * CT-MERGE rule:
-   * IF found "l(e1,...,en,e):AA" and "l:T*->TT" exists in SymbolTable
-   * THEN infers type of both sublist "l(e1,...,en)" and last argument
-   *      "e" and adds a type constraint "AA = TT" and calls the
-   *      TypeVariableList method, where "e" represents a list with
-   *      head symbol "l"
-   * <p>
-   * CT-STAR rule:
-   * Equals to CT-MERGE but with a star variable "x*" instead of "e"
-   * This rule is necessary because it differed from CT-MERGE in the
-   * sense of the type of the last argument ("x*" here) is unknown 
-   * @param tTerm      the TomTerm to be inferred
-   * @param freshType the fresh generated previously and attributed to the TomTerm
-   */
-  private void inferTomTerm(TomTerm tTerm, TomType freshType) {
-    //DEBUG System.out.println("inferTomTerm -- tTerm: " + tTerm);
-    //DEBUG System.out.println("\n Test pour inferTomTerm. Term = " + tTerm);
-    {{if ( (tTerm instanceof tom.engine.adt.tomterm.types.TomTerm) ) {if ( ((( tom.engine.adt.tomterm.types.TomTerm )tTerm) instanceof tom.engine.adt.tomterm.types.tomterm.AntiTerm) ) {
- inferTomTerm( (( tom.engine.adt.tomterm.types.TomTerm )tTerm).getTomTerm() ,freshType); }}}{if ( (tTerm instanceof tom.engine.adt.tomterm.types.TomTerm) ) {boolean tomMatch16_7= false ; tom.engine.adt.tomconstraint.types.ConstraintList  tomMatch16_5= null ; tom.engine.adt.tomtype.types.TomType  tomMatch16_4= null ;if ( ((( tom.engine.adt.tomterm.types.TomTerm )tTerm) instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) {{tomMatch16_7= true ;tomMatch16_4= (( tom.engine.adt.tomterm.types.TomTerm )tTerm).getAstType() ;tomMatch16_5= (( tom.engine.adt.tomterm.types.TomTerm )tTerm).getConstraints() ;}} else {if ( ((( tom.engine.adt.tomterm.types.TomTerm )tTerm) instanceof tom.engine.adt.tomterm.types.tomterm.VariableStar) ) {{tomMatch16_7= true ;tomMatch16_4= (( tom.engine.adt.tomterm.types.TomTerm )tTerm).getAstType() ;tomMatch16_5= (( tom.engine.adt.tomterm.types.TomTerm )tTerm).getConstraints() ;}}}if (tomMatch16_7) { tom.engine.adt.tomconstraint.types.ConstraintList  tom_constraintList=tomMatch16_5;
-
-
-        addConstraint( tom.engine.adt.typeconstraints.types.typeconstraint.Equation.make(tomMatch16_4, freshType) );  
-        //DEBUG System.out.println("InferTomTerm -- constraint = " + `type + " = " + freshType);
-        {{if ( (tom_constraintList instanceof tom.engine.adt.tomconstraint.types.ConstraintList) ) {if ( (((( tom.engine.adt.tomconstraint.types.ConstraintList )tom_constraintList) instanceof tom.engine.adt.tomconstraint.types.constraintlist.ConsconcConstraint) || ((( tom.engine.adt.tomconstraint.types.ConstraintList )tom_constraintList) instanceof tom.engine.adt.tomconstraint.types.constraintlist.EmptyconcConstraint)) ) {if (!( (( tom.engine.adt.tomconstraint.types.ConstraintList )tom_constraintList).isEmptyconcConstraint() )) { tom.engine.adt.tomconstraint.types.Constraint  tomMatch17_4= (( tom.engine.adt.tomconstraint.types.ConstraintList )tom_constraintList).getHeadconcConstraint() ;if ( (tomMatch17_4 instanceof tom.engine.adt.tomconstraint.types.constraint.AliasTo) ) {if (  (( tom.engine.adt.tomconstraint.types.ConstraintList )tom_constraintList).getTailconcConstraint() .isEmptyconcConstraint() ) {
-
-
-            //DEBUG System.out.println("InferTomTerm -- constraint = " +
-            //DEBUG     getType(`boundTerm) + " = " + `freshType);
-            addConstraint( tom.engine.adt.typeconstraints.types.typeconstraint.Equation.make(getType( tomMatch17_4.getVar() ), freshType) ); }}}}}}}
-
-      }}}{if ( (tTerm instanceof tom.engine.adt.tomterm.types.TomTerm) ) {if ( ((( tom.engine.adt.tomterm.types.TomTerm )tTerm) instanceof tom.engine.adt.tomterm.types.tomterm.RecordAppl) ) { tom.engine.adt.tomname.types.TomNameList  tomMatch16_9= (( tom.engine.adt.tomterm.types.TomTerm )tTerm).getNameList() ;if ( ((tomMatch16_9 instanceof tom.engine.adt.tomname.types.tomnamelist.ConsconcTomName) || (tomMatch16_9 instanceof tom.engine.adt.tomname.types.tomnamelist.EmptyconcTomName)) ) {if (!( tomMatch16_9.isEmptyconcTomName() )) { tom.engine.adt.tomname.types.TomName  tomMatch16_17= tomMatch16_9.getHeadconcTomName() ;if ( (tomMatch16_17 instanceof tom.engine.adt.tomname.types.tomname.Name) ) { tom.engine.adt.tomslot.types.SlotList  tom_slotList= (( tom.engine.adt.tomterm.types.TomTerm )tTerm).getSlots() ; tom.engine.adt.tomconstraint.types.ConstraintList  tom_constraintList= (( tom.engine.adt.tomterm.types.TomTerm )tTerm).getConstraints() ;
-
-
-
-
-        // Do we need to test if the nameList is equal to ""???
-        //DEBUG System.out.println("\n Test pour inferTomTerm in RecordAppl. tomName = " + `tomName);
-        TomSymbol tSymbol = getSymbolFromName( tomMatch16_17.getString() );
-        //DEBUG System.out.println("\n Test pour inferTomTerm in RecordAppl.
-        //tSymbol = " + tSymbol);
   
-        {{if ( (tom_constraintList instanceof tom.engine.adt.tomconstraint.types.ConstraintList) ) {if ( (((( tom.engine.adt.tomconstraint.types.ConstraintList )tom_constraintList) instanceof tom.engine.adt.tomconstraint.types.constraintlist.ConsconcConstraint) || ((( tom.engine.adt.tomconstraint.types.ConstraintList )tom_constraintList) instanceof tom.engine.adt.tomconstraint.types.constraintlist.EmptyconcConstraint)) ) {if (!( (( tom.engine.adt.tomconstraint.types.ConstraintList )tom_constraintList).isEmptyconcConstraint() )) { tom.engine.adt.tomconstraint.types.Constraint  tomMatch18_4= (( tom.engine.adt.tomconstraint.types.ConstraintList )tom_constraintList).getHeadconcConstraint() ;if ( (tomMatch18_4 instanceof tom.engine.adt.tomconstraint.types.constraint.AliasTo) ) {if (  (( tom.engine.adt.tomconstraint.types.ConstraintList )tom_constraintList).getTailconcConstraint() .isEmptyconcConstraint() ) {
-
-
-            //DEBUG System.out.println("InferTomTerm -- constraint = " +
-            //DEBUG     getType(`boundTerm) + " = " + freshType);
-            addConstraint( tom.engine.adt.typeconstraints.types.typeconstraint.Equation.make(getType( tomMatch18_4.getVar() ), freshType) ); }}}}}}}
-
-
-        TomType codomain = getCodomain(tSymbol);
-        //DEBUG System.out.println("\n Test pour inferTomTerm in RecordAppl. codomain = " + codomain);
-        //DEBUG System.out.println("inferTomTerm: " + `codomain + " = " + freshType);
-        addConstraint( tom.engine.adt.typeconstraints.types.typeconstraint.Equation.make(codomain, freshType) );
-        //DEBUG System.out.println("InferTomTerm -- constraint = " + codomain + " = " + freshType);
-        if (!tom_slotList.isEmptyconcSlot()) {
-          inferSlotList(tom_slotList,tSymbol,freshType);
-        }
-      }}}}}}}
-
+  private static   tom.library.sl.Strategy  tom_append_list_Choice( tom.library.sl.Strategy  l1,  tom.library.sl.Strategy  l2) {
+    if(( l1 ==null )) {
+      return l2;
+    } else if(( l2 ==null )) {
+      return l1;
+    } else if(( (l1 instanceof tom.library.sl.Choice) )) {
+      if(( ( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Choice.THEN) ) ==null )) {
+        return ( (l2==null)?( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Choice.FIRST) ):new tom.library.sl.Choice(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Choice.FIRST) ),l2) );
+      } else {
+        return ( (tom_append_list_Choice(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Choice.THEN) ),l2)==null)?( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Choice.FIRST) ):new tom.library.sl.Choice(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Choice.FIRST) ),tom_append_list_Choice(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Choice.THEN) ),l2)) );
+      }
+    } else {
+      return ( (l2==null)?l1:new tom.library.sl.Choice(l1,l2) );
+    }
   }
-
-  private void inferBQTerm(BQTerm bqTerm, TomType freshType) {
-    //DEBUG System.out.println("inferBQTerm -- bqTerm: " + bqTerm);
-    {{if ( (bqTerm instanceof tom.engine.adt.code.types.BQTerm) ) {boolean tomMatch19_3= false ; tom.engine.adt.tomtype.types.TomType  tomMatch19_1= null ;if ( ((( tom.engine.adt.code.types.BQTerm )bqTerm) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {{tomMatch19_3= true ;tomMatch19_1= (( tom.engine.adt.code.types.BQTerm )bqTerm).getAstType() ;}} else {if ( ((( tom.engine.adt.code.types.BQTerm )bqTerm) instanceof tom.engine.adt.code.types.bqterm.BQVariableStar) ) {{tomMatch19_3= true ;tomMatch19_1= (( tom.engine.adt.code.types.BQTerm )bqTerm).getAstType() ;}}}if (tomMatch19_3) {
-
-        //DEBUG System.out.println("inferBQTerm: " + `aType + " = " + freshType);
-        addConstraint( tom.engine.adt.typeconstraints.types.typeconstraint.Equation.make(tomMatch19_1, freshType) );  
-        //DEBUG System.out.println("InferBQTerm -- constraint = " + `aType + " = " + freshType);
-      }}}{if ( (bqTerm instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )bqTerm) instanceof tom.engine.adt.code.types.bqterm.BQAppl) ) { tom.engine.adt.tomname.types.TomName  tomMatch19_6= (( tom.engine.adt.code.types.BQTerm )bqTerm).getAstName() ; tom.engine.adt.code.types.BQTermList  tomMatch19_7= (( tom.engine.adt.code.types.BQTerm )bqTerm).getArgs() ;if ( (tomMatch19_6 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {if ( "realMake".equals( tomMatch19_6.getString() ) ) {if ( ((tomMatch19_7 instanceof tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm) || (tomMatch19_7 instanceof tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm)) ) {if (!( tomMatch19_7.isEmptyconcBQTerm() )) { tom.engine.adt.code.types.BQTerm  tomMatch19_16= tomMatch19_7.getHeadconcBQTerm() ;if ( (tomMatch19_16 instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) { tom.engine.adt.tomname.types.TomName  tomMatch19_15= tomMatch19_16.getAstName() ;if ( (tomMatch19_15 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {if ( "head".equals( tomMatch19_15.getString() ) ) { tom.engine.adt.code.types.BQTermList  tomMatch19_13= tomMatch19_7.getTailconcBQTerm() ;if (!( tomMatch19_13.isEmptyconcBQTerm() )) { tom.engine.adt.code.types.BQTerm  tomMatch19_21= tomMatch19_13.getHeadconcBQTerm() ;if ( (tomMatch19_21 instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) { tom.engine.adt.tomname.types.TomName  tomMatch19_20= tomMatch19_21.getAstName() ;if ( (tomMatch19_20 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {if ( "tail".equals( tomMatch19_20.getString() ) ) {if (  tomMatch19_13.getTailconcBQTerm() .isEmptyconcBQTerm() ) {
-
-
-
-
-
-
-          TomSymbol tSymbol = getSymbolFromName("realMake");
-          if (tSymbol == null) {
-            tSymbol =
-               tom.engine.adt.tomsignature.types.tomsymbol.Symbol.make(tomMatch19_6,  tom.engine.adt.tomtype.types.tomtype.TypesToType.make( tom.engine.adt.tomtype.types.tomtypelist.ConsconcTomType.make(freshType, tom.engine.adt.tomtype.types.tomtypelist.EmptyconcTomType.make() ) , freshType) ,  tom.engine.adt.tomslot.types.pairnamedecllist.EmptyconcPairNameDecl.make() ,  (( tom.engine.adt.code.types.BQTerm )bqTerm).getOption() ) ;
-            getSymbolTable().putSymbol("realMake",tSymbol);
-          }
-        }}}}}}}}}}}}}}}{if ( (bqTerm instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )bqTerm) instanceof tom.engine.adt.code.types.bqterm.BQAppl) ) { tom.engine.adt.tomname.types.TomName  tomMatch19_26= (( tom.engine.adt.code.types.BQTerm )bqTerm).getAstName() ;if ( (tomMatch19_26 instanceof tom.engine.adt.tomname.types.tomname.Name) ) { tom.engine.adt.code.types.BQTermList  tom_bqTList= (( tom.engine.adt.code.types.BQTerm )bqTerm).getArgs() ;
-
-
-        //DEBUG System.out.println("\n Test pour inferBQTerm in BQAppl. tomName = " + `tomName);
-        TomSymbol tSymbol = getSymbolFromName( tomMatch19_26.getString() );
-        //DEBUG System.out.println("\n Test pour inferBQTerm in BQAppl. tSymbol=
-        //" + `tSymbol);
-        TomType codomain = getCodomain(tSymbol);
-        //DEBUG System.out.println("\n Test pour inferBQTerm in BQAppl. codomain = " + codomain + '\n');
-        //DEBUG System.out.println("\n Test pour inferBQTerm in BQAppl. freshType = " + freshType + '\n');
-        //DEBUG System.out.println("inferBQTerm: " + `codomain + " = " + freshType);
-        addConstraint( tom.engine.adt.typeconstraints.types.typeconstraint.Equation.make(codomain, freshType) );
-        //DEBUG System.out.println("InferBQTerm -- constraint = " + `codomain + " = " + freshType);
-        if (!tom_bqTList.isEmptyconcBQTerm()) {
-          inferBQTermList(tom_bqTList,tSymbol,freshType);
-        }
-      }}}}}
-
+  private static   tom.library.sl.Strategy  tom_get_slice_Choice( tom.library.sl.Strategy  begin,  tom.library.sl.Strategy  end, tom.library.sl.Strategy  tail) {
+    if( (begin.equals(end)) ) {
+      return tail;
+    } else if( (end.equals(tail))  && (( end ==null ) ||  (end.equals(( null ))) )) {
+      /* code to avoid a call to make, and thus to avoid looping during list-matching */
+      return begin;
+    }
+    return ( (( tom.library.sl.Strategy )tom_get_slice_Choice(((( (begin instanceof tom.library.sl.Choice) ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.Choice.THEN) ):( null )),end,tail)==null)?((( (begin instanceof tom.library.sl.Choice) ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.Choice.FIRST) ):begin):new tom.library.sl.Choice(((( (begin instanceof tom.library.sl.Choice) ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.Choice.FIRST) ):begin),( tom.library.sl.Strategy )tom_get_slice_Choice(((( (begin instanceof tom.library.sl.Choice) ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.Choice.THEN) ):( null )),end,tail)) );
   }
-
-  private void inferSlotList(SlotList slotList, TomSymbol tSymbol, TomType freshType) {
-    {{if ( (slotList instanceof tom.engine.adt.tomslot.types.SlotList) ) {if ( (((( tom.engine.adt.tomslot.types.SlotList )slotList) instanceof tom.engine.adt.tomslot.types.slotlist.ConsconcSlot) || ((( tom.engine.adt.tomslot.types.SlotList )slotList) instanceof tom.engine.adt.tomslot.types.slotlist.EmptyconcSlot)) ) {if (!( (( tom.engine.adt.tomslot.types.SlotList )slotList).isEmptyconcSlot() )) { tom.engine.adt.tomslot.types.Slot  tomMatch20_18= (( tom.engine.adt.tomslot.types.SlotList )slotList).getHeadconcSlot() ;if ( (tomMatch20_18 instanceof tom.engine.adt.tomslot.types.slot.PairSlotAppl) ) { tom.engine.adt.tomterm.types.TomTerm  tom_tTerm= tomMatch20_18.getAppl() ;if ( (tSymbol instanceof tom.engine.adt.tomsignature.types.TomSymbol) ) {if ( ((( tom.engine.adt.tomsignature.types.TomSymbol )tSymbol) instanceof tom.engine.adt.tomsignature.types.tomsymbol.Symbol) ) { tom.engine.adt.tomtype.types.TomType  tomMatch20_3= (( tom.engine.adt.tomsignature.types.TomSymbol )tSymbol).getTypesToType() ;if ( (tomMatch20_3 instanceof tom.engine.adt.tomtype.types.tomtype.TypesToType) ) { tom.engine.adt.tomtype.types.TomTypeList  tomMatch20_5= tomMatch20_3.getDomain() ; tom.engine.adt.tomtype.types.TomType  tomMatch20_6= tomMatch20_3.getCodomain() ;if ( ((tomMatch20_5 instanceof tom.engine.adt.tomtype.types.tomtypelist.ConsconcTomType) || (tomMatch20_5 instanceof tom.engine.adt.tomtype.types.tomtypelist.EmptyconcTomType)) ) {if (!( tomMatch20_5.isEmptyconcTomType() )) {if ( (tomMatch20_6 instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {
-
-        TomType argFreshType = freshType;
-        // In case of a list
-        if(TomBase.isListOperator(tSymbol) || TomBase.isArrayOperator(tSymbol)) {
-          TomSymbol argSymb = getSymbolFromTerm(tom_tTerm);
-          if(!(TomBase.isListOperator(argSymb) || TomBase.isArrayOperator(argSymb))) {
-            /**
-             * Continuation of CT-ELEM rule (applying to premises which are
-             * not lists):
-             * IF found "l(e1,...en,e):AA" and "l:T*->TT" exists in SymbolTable
-             * THEN infers type of both sublist "l(e1,...,en)" and last argument
-             *      "e" and adds a type constraint "A = T" for the last
-             *      argument, where "A" is a fresh type variable  and
-             *      "e" does not represent a list with head symbol "l"
-             */
-            argFreshType = getUnknownFreshTypeVar();
-            addConstraint( tom.engine.adt.typeconstraints.types.typeconstraint.Equation.make(argFreshType,  tomMatch20_5.getHeadconcTomType() ) );
-            //DEBUG System.out.println("InferSlotList CT-ELEM -- constraint = " + argFreshType +
-            //DEBUG     " = " + `headTTList);
-          }
-          
-          /**
-           * Continuation of CT-STAR rule (applying to premises):
-           * IF found "l(e1,...,en,x*):AA" and "l:T*->TT" exists in SymbolTable
-           * THEN infers type of both sublist "l(e1,...,en)" and last argument
-           *      "x", where "x" represents a list with
-           *      head symbol "l"
-           */
-          TomTerm newTerm = tom_tTerm;
-          {{if ( (tom_tTerm instanceof tom.engine.adt.tomterm.types.TomTerm) ) {if ( ((( tom.engine.adt.tomterm.types.TomTerm )tom_tTerm) instanceof tom.engine.adt.tomterm.types.tomterm.VariableStar) ) {
-
-              newTerm =
-                 tom.engine.adt.tomterm.types.tomterm.VariableStar.make( (( tom.engine.adt.tomterm.types.TomTerm )tom_tTerm).getOption() ,  (( tom.engine.adt.tomterm.types.TomTerm )tom_tTerm).getAstName() ,  tom.engine.adt.tomtype.types.tomtype.TypeWithSymbol.make( tomMatch20_6.getTomType() ,  tomMatch20_6.getTlType() ,  (( tom.engine.adt.tomsignature.types.TomSymbol )tSymbol).getAstName() ) ,  (( tom.engine.adt.tomterm.types.TomTerm )tom_tTerm).getConstraints() ) ;  
-            }}}}
-
-          /**
-           * Continuation of CT-MERGE rule (applying to premises):
-           * IF found "l(e1,...,en,e):AA" and "l:T*->TT" exists in SymbolTable
-           * THEN infers type of both sublist "l(e1,...,en)" and last argument
-           *      "e", where "e" represents a list with
-           *      head symbol "l"
-           */
-          inferTomTerm(newTerm,argFreshType);
-          inferSlotList( (( tom.engine.adt.tomslot.types.SlotList )slotList).getTailconcSlot() ,tSymbol,freshType);
-        } else {
-          // In case of a function
-          TomType argType;
-          TomTerm argTerm;
-          TomTypeList symDomain = tomMatch20_5;
-          /**
-           * Continuation of CT-FUN rule (applying to premises):
-           * IF found "f(e1,...,en):A" and "f:T1,...,Tn->T" exists in SymbolTable
-           * THEN infers type of arguments and adds a type constraint "Ai =
-           *      Ti" for each argument, where "Ai" is a fresh type variable
-           */
-          for(Slot arg : slotList.getCollectionconcSlot()) {
-            argTerm = arg.getAppl();
-            argType = symDomain.getHeadconcTomType();
-            argFreshType = getUnknownFreshTypeVar();
-            addConstraint( tom.engine.adt.typeconstraints.types.typeconstraint.Equation.make(argFreshType, argType) );
-            //DEBUG System.out.println("InferSlotList CT-FUN -- constraint = " + argFreshType +
-            //DEBUG     " = " + argType);
-            inferTomTerm(argTerm,argFreshType);
-            symDomain = symDomain.getTailconcTomType();
-          }
-        }
-      }}}}}}}}}}}}
-
+  
+  private static   tom.library.sl.Strategy  tom_append_list_SequenceId( tom.library.sl.Strategy  l1,  tom.library.sl.Strategy  l2) {
+    if(( l1 == null )) {
+      return l2;
+    } else if(( l2 == null )) {
+      return l1;
+    } else if(( (l1 instanceof tom.library.sl.SequenceId) )) {
+      if(( ( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.SequenceId.THEN) ) == null )) {
+        return ( (l2==null)?( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.SequenceId.FIRST) ):new tom.library.sl.SequenceId(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.SequenceId.FIRST) ),l2) );
+      } else {
+        return ( (tom_append_list_SequenceId(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.SequenceId.THEN) ),l2)==null)?( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.SequenceId.FIRST) ):new tom.library.sl.SequenceId(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.SequenceId.FIRST) ),tom_append_list_SequenceId(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.SequenceId.THEN) ),l2)) );
+      }
+    } else {
+      return ( (l2==null)?l1:new tom.library.sl.SequenceId(l1,l2) );
+    }
   }
-
-  private void inferBQTermList(BQTermList bqTList, TomSymbol tSymbol, TomType
-      freshType) {
-matchL:    {{if ( (bqTList instanceof tom.engine.adt.code.types.BQTermList) ) {if ( (((( tom.engine.adt.code.types.BQTermList )bqTList) instanceof tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm) || ((( tom.engine.adt.code.types.BQTermList )bqTList) instanceof tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm)) ) {if (!( (( tom.engine.adt.code.types.BQTermList )bqTList).isEmptyconcBQTerm() )) { tom.engine.adt.code.types.BQTerm  tomMatch22_11= (( tom.engine.adt.code.types.BQTermList )bqTList).getHeadconcBQTerm() ;if ( (tomMatch22_11 instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) { tom.engine.adt.tomname.types.TomName  tomMatch22_10= tomMatch22_11.getAstName() ;if ( (tomMatch22_10 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {if ( "head".equals( tomMatch22_10.getString() ) ) { tom.engine.adt.code.types.BQTermList  tomMatch22_8= (( tom.engine.adt.code.types.BQTermList )bqTList).getTailconcBQTerm() ;if (!( tomMatch22_8.isEmptyconcBQTerm() )) { tom.engine.adt.code.types.BQTerm  tomMatch22_16= tomMatch22_8.getHeadconcBQTerm() ;if ( (tomMatch22_16 instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) { tom.engine.adt.tomname.types.TomName  tomMatch22_15= tomMatch22_16.getAstName() ;if ( (tomMatch22_15 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {if ( "tail".equals( tomMatch22_15.getString() ) ) {if (  tomMatch22_8.getTailconcBQTerm() .isEmptyconcBQTerm() ) {if ( (tSymbol instanceof tom.engine.adt.tomsignature.types.TomSymbol) ) {if ( ((( tom.engine.adt.tomsignature.types.TomSymbol )tSymbol) instanceof tom.engine.adt.tomsignature.types.tomsymbol.Symbol) ) { tom.engine.adt.tomname.types.TomName  tomMatch22_2= (( tom.engine.adt.tomsignature.types.TomSymbol )tSymbol).getAstName() ;if ( (tomMatch22_2 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {if ( "realMake".equals( tomMatch22_2.getString() ) ) {
-
-
-
-          //DEBUG System.out.println("What???? headBQTerm = " + `headBQTerm);
-          inferBQTerm( (( tom.engine.adt.code.types.BQTermList )bqTList).getHeadconcBQTerm() ,freshType);
-          //DEBUG System.out.println("What???? tailBQTerm = " + `tailBQTerm);
-          inferBQTerm( tomMatch22_8.getHeadconcBQTerm() ,freshType);
-          break matchL;
-        }}}}}}}}}}}}}}}}{if ( (bqTList instanceof tom.engine.adt.code.types.BQTermList) ) {if ( (((( tom.engine.adt.code.types.BQTermList )bqTList) instanceof tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm) || ((( tom.engine.adt.code.types.BQTermList )bqTList) instanceof tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm)) ) {if (!( (( tom.engine.adt.code.types.BQTermList )bqTList).isEmptyconcBQTerm() )) { tom.engine.adt.code.types.BQTerm  tom_bqTerm= (( tom.engine.adt.code.types.BQTermList )bqTList).getHeadconcBQTerm() ;if ( (tSymbol instanceof tom.engine.adt.tomsignature.types.TomSymbol) ) {if ( ((( tom.engine.adt.tomsignature.types.TomSymbol )tSymbol) instanceof tom.engine.adt.tomsignature.types.tomsymbol.Symbol) ) { tom.engine.adt.tomtype.types.TomType  tomMatch22_23= (( tom.engine.adt.tomsignature.types.TomSymbol )tSymbol).getTypesToType() ;if ( (tomMatch22_23 instanceof tom.engine.adt.tomtype.types.tomtype.TypesToType) ) { tom.engine.adt.tomtype.types.TomTypeList  tomMatch22_25= tomMatch22_23.getDomain() ; tom.engine.adt.tomtype.types.TomType  tomMatch22_26= tomMatch22_23.getCodomain() ;if ( ((tomMatch22_25 instanceof tom.engine.adt.tomtype.types.tomtypelist.ConsconcTomType) || (tomMatch22_25 instanceof tom.engine.adt.tomtype.types.tomtypelist.EmptyconcTomType)) ) {if (!( tomMatch22_25.isEmptyconcTomType() )) {if ( (tomMatch22_26 instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {
-
-
-        TomType argFreshType = freshType;
-        // In case of a list
-        if(TomBase.isListOperator(tSymbol) || TomBase.isArrayOperator(tSymbol)) {
-          TomSymbol argSymb = getSymbolFromTerm(tom_bqTerm);
-          if(!(TomBase.isListOperator(argSymb) || TomBase.isArrayOperator(argSymb))) {
-            argFreshType = getUnknownFreshTypeVar();
-            addConstraint( tom.engine.adt.typeconstraints.types.typeconstraint.Equation.make(argFreshType,  tomMatch22_25.getHeadconcTomType() ) );
-            //DEBUG System.out.println("InferBQTermList -- constraint = " + argFreshType +
-            //DEBUG     " = " + `headTTList);
-          }
-          BQTerm newTerm = tom_bqTerm;
-          {{if ( (tom_bqTerm instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )tom_bqTerm) instanceof tom.engine.adt.code.types.bqterm.BQVariableStar) ) {
-
-              newTerm =
-                 tom.engine.adt.code.types.bqterm.BQVariableStar.make( (( tom.engine.adt.code.types.BQTerm )tom_bqTerm).getOption() ,  (( tom.engine.adt.code.types.BQTerm )tom_bqTerm).getAstName() ,  tom.engine.adt.tomtype.types.tomtype.TypeWithSymbol.make( tomMatch22_26.getTomType() ,  tomMatch22_26.getTlType() ,  (( tom.engine.adt.tomsignature.types.TomSymbol )tSymbol).getAstName() ) ) ;  
-            }}}}inferBQTerm(tom_bqTerm,argFreshType)
+  private static   tom.library.sl.Strategy  tom_get_slice_SequenceId( tom.library.sl.Strategy  begin,  tom.library.sl.Strategy  end, tom.library.sl.Strategy  tail) {
+    if( (begin.equals(end)) ) {
+      return tail;
+    } else if( (end.equals(tail))  && (( end == null ) ||  (end.equals(( null ))) )) {
+      /* code to avoid a call to make, and thus to avoid looping during list-matching */
+      return begin;
+    }
+    return ( (( tom.library.sl.Strategy )tom_get_slice_SequenceId(((( (begin instanceof tom.library.sl.SequenceId) ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.SequenceId.THEN) ):( null )),end,tail)==null)?((( (begin instanceof tom.library.sl.SequenceId) ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.SequenceId.FIRST) ):begin):new tom.library.sl.SequenceId(((( (begin instanceof tom.library.sl.SequenceId) ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.SequenceId.FIRST) ):begin),( tom.library.sl.Strategy )tom_get_slice_SequenceId(((( (begin instanceof tom.library.sl.SequenceId) ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.SequenceId.THEN) ):( null )),end,tail)) );
+  }
+  
+  private static   tom.library.sl.Strategy  tom_append_list_ChoiceId( tom.library.sl.Strategy  l1,  tom.library.sl.Strategy  l2) {
+    if(( l1 ==null )) {
+      return l2;
+    } else if(( l2 ==null )) {
+      return l1;
+    } else if(( (l1 instanceof tom.library.sl.ChoiceId) )) {
+      if(( ( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.ChoiceId.THEN) ) ==null )) {
+        return ( (l2==null)?( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.ChoiceId.FIRST) ):new tom.library.sl.ChoiceId(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.ChoiceId.FIRST) ),l2) );
+      } else {
+        return ( (tom_append_list_ChoiceId(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.ChoiceId.THEN) ),l2)==null)?( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.ChoiceId.FIRST) ):new tom.library.sl.ChoiceId(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.ChoiceId.FIRST) ),tom_append_list_ChoiceId(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.ChoiceId.THEN) ),l2)) );
+      }
+    } else {
+      return ( (l2==null)?l1:new tom.library.sl.ChoiceId(l1,l2) );
+    }
+  }
+  private static   tom.library.sl.Strategy  tom_get_slice_ChoiceId( tom.library.sl.Strategy  begin,  tom.library.sl.Strategy  end, tom.library.sl.Strategy  tail) {
+    if( (begin.equals(end)) ) {
+      return tail;
+    } else if( (end.equals(tail))  && (( end ==null ) ||  (end.equals(( null ))) )) {
+      /* code to avoid a call to make, and thus to avoid looping during list-matching */
+      return begin;
+    }
+    return ( (( tom.library.sl.Strategy )tom_get_slice_ChoiceId(((( (begin instanceof tom.library.sl.ChoiceId) ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.ChoiceId.THEN) ):( null )),end,tail)==null)?((( (begin instanceof tom.library.sl.ChoiceId) ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.ChoiceId.FIRST) ):begin):new tom.library.sl.ChoiceId(((( (begin instanceof tom.library.sl.ChoiceId) ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.ChoiceId.FIRST) ):begin),( tom.library.sl.Strategy )tom_get_slice_ChoiceId(((( (begin instanceof tom.library.sl.ChoiceId) ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.ChoiceId.THEN) ):( null )),end,tail)) );
+  }
+  private static  tom.library.sl.Strategy  tom_make_AUCtl( tom.library.sl.Strategy  s1,  tom.library.sl.Strategy  s2) { 
+return ( 
+( new tom.library.sl.Mu(( new tom.library.sl.MuVar("x") ),( (( (( null )==null)?( (( (( null )==null)?( new tom.library.sl.One(( new tom.library.sl.Identity() )) ):new tom.library.sl.Sequence(( new tom.library.sl.One(( new tom.library.sl.Identity() )) ),( null )) )==null)?( (( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ),( null )) )==null)?s1:new tom.library.sl.Sequence(s1,( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ),( null )) )) ):new tom.library.sl.Sequence(( (( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ),( null )) )==null)?s1:new tom.library.sl.Sequence(s1,( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ),( null )) )) ),( (( null )==null)?( new tom.library.sl.One(( new tom.library.sl.Identity() )) ):new tom.library.sl.Sequence(( new tom.library.sl.One(( new tom.library.sl.Identity() )) ),( null )) )) ):new tom.library.sl.Choice(( (( (( null )==null)?( new tom.library.sl.One(( new tom.library.sl.Identity() )) ):new tom.library.sl.Sequence(( new tom.library.sl.One(( new tom.library.sl.Identity() )) ),( null )) )==null)?( (( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ),( null )) )==null)?s1:new tom.library.sl.Sequence(s1,( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ),( null )) )) ):new tom.library.sl.Sequence(( (( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ),( null )) )==null)?s1:new tom.library.sl.Sequence(s1,( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ),( null )) )) ),( (( null )==null)?( new tom.library.sl.One(( new tom.library.sl.Identity() )) ):new tom.library.sl.Sequence(( new tom.library.sl.One(( new tom.library.sl.Identity() )) ),( null )) )) ),( null )) )==null)?s2:new tom.library.sl.Choice(s2,( (( null )==null)?( (( (( null )==null)?( new tom.library.sl.One(( new tom.library.sl.Identity() )) ):new tom.library.sl.Sequence(( new tom.library.sl.One(( new tom.library.sl.Identity() )) ),( null )) )==null)?( (( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ),( null )) )==null)?s1:new tom.library.sl.Sequence(s1,( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ),( null )) )) ):new tom.library.sl.Sequence(( (( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ),( null )) )==null)?s1:new tom.library.sl.Sequence(s1,( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ),( null )) )) ),( (( null )==null)?( new tom.library.sl.One(( new tom.library.sl.Identity() )) ):new tom.library.sl.Sequence(( new tom.library.sl.One(( new tom.library.sl.Identity() )) ),( null )) )) ):new tom.library.sl.Choice(( (( (( null )==null)?( new tom.library.sl.One(( new tom.library.sl.Identity() )) ):new tom.library.sl.Sequence(( new tom.library.sl.One(( new tom.library.sl.Identity() )) ),( null )) )==null)?( (( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ),( null )) )==null)?s1:new tom.library.sl.Sequence(s1,( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ),( null )) )) ):new tom.library.sl.Sequence(( (( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ),( null )) )==null)?s1:new tom.library.sl.Sequence(s1,( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ),( null )) )) ),( (( null )==null)?( new tom.library.sl.One(( new tom.library.sl.Identity() )) ):new tom.library.sl.Sequence(( new tom.library.sl.One(( new tom.library.sl.Identity() )) ),( null )) )) ),( null )) )) )) ))
 
 ;
-          inferBQTermList( (( tom.engine.adt.code.types.BQTermList )bqTList).getTailconcBQTerm() ,tSymbol,freshType);
-        } else {
-          // In case of a function
-          TomType argType;
-          TomTypeList symDomain = tomMatch22_25;
-          for(BQTerm arg : bqTList.getCollectionconcBQTerm()) {
-            argType = symDomain.getHeadconcTomType();
-            argFreshType = getUnknownFreshTypeVar();
-            addConstraint( tom.engine.adt.typeconstraints.types.typeconstraint.Equation.make(argFreshType, argType) );
-            //DEBUG System.out.println("InferBQTermList -- constraint = " + argFreshType +
-            //DEBUG     " = " + argType);
-            inferBQTerm(arg,argFreshType);
-            symDomain = symDomain.getTailconcTomType();
-          }
-        }
-      }}}}}}}}}}}
-
-  }
-
-
-  public static class solveConstraints extends tom.library.sl.AbstractStrategyBasic {private  NewKernelTyper  nkt;public solveConstraints( NewKernelTyper  nkt) {super(( new tom.library.sl.Identity() ));this.nkt=nkt;}public  NewKernelTyper  getnkt() {return nkt;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];stratChilds[0] = super.getChildAt(0);return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() {return 1;}public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}@SuppressWarnings("unchecked")public  tom.engine.adt.typeconstraints.types.TypeConstraintList  visit_TypeConstraintList( tom.engine.adt.typeconstraints.types.TypeConstraintList  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if ( (tom__arg instanceof tom.engine.adt.typeconstraints.types.TypeConstraintList) ) {if ( (((( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg) instanceof tom.engine.adt.typeconstraints.types.typeconstraintlist.ConsconcTypeConstraint) || ((( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg) instanceof tom.engine.adt.typeconstraints.types.typeconstraintlist.EmptyconcTypeConstraint)) ) { tom.engine.adt.typeconstraints.types.TypeConstraintList  tomMatch24__end__4=(( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg);do {{if (!( tomMatch24__end__4.isEmptyconcTypeConstraint() )) { tom.engine.adt.typeconstraints.types.TypeConstraint  tomMatch24_9= tomMatch24__end__4.getHeadconcTypeConstraint() ;if ( (tomMatch24_9 instanceof tom.engine.adt.typeconstraints.types.typeconstraint.Equation) ) { tom.engine.adt.tomtype.types.TomType  tomMatch24_7= tomMatch24_9.getType1() ; tom.engine.adt.tomtype.types.TomType  tomMatch24_8= tomMatch24_9.getType2() ;boolean tomMatch24_17= false ; String  tomMatch24_10= "" ;if ( (tomMatch24_7 instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {{tomMatch24_17= true ;tomMatch24_10= tomMatch24_7.getTomType() ;}} else {if ( (tomMatch24_7 instanceof tom.engine.adt.tomtype.types.tomtype.TypeWithSymbol) ) {{tomMatch24_17= true ;tomMatch24_10= tomMatch24_7.getTomType() ;}}}if (tomMatch24_17) { String  tom_tName1=tomMatch24_10;if ( (tomMatch24_8 instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) { String  tomMatch24_12= tomMatch24_8.getTomType() ; String  tom_tName2=tomMatch24_12;boolean tomMatch24_16= false ;if ( tom_tName1.equals(tomMatch24_12) ) {if ( tom_tName2.equals(tomMatch24_12) ) {tomMatch24_16= true ;}}if (!(tomMatch24_16)) {if (!( "unknown type".equals(tom_tName1) )) {if (!( "unknown type".equals(tom_tName2) )) {
-
-
-
-
-
-
-
-
-
-
-        throw new RuntimeException("solveConstraints: failure on " + tomMatch24_7
-+ " = " + tomMatch24_8);
-      }}}}}}}if ( tomMatch24__end__4.isEmptyconcTypeConstraint() ) {tomMatch24__end__4=(( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg);} else {tomMatch24__end__4= tomMatch24__end__4.getTailconcTypeConstraint() ;}}} while(!( (tomMatch24__end__4==(( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg)) ));}}}{if ( (tom__arg instanceof tom.engine.adt.typeconstraints.types.TypeConstraintList) ) {if ( (((( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg) instanceof tom.engine.adt.typeconstraints.types.typeconstraintlist.ConsconcTypeConstraint) || ((( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg) instanceof tom.engine.adt.typeconstraints.types.typeconstraintlist.EmptyconcTypeConstraint)) ) { tom.engine.adt.typeconstraints.types.TypeConstraintList  tomMatch24__end__22=(( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg);do {{if (!( tomMatch24__end__22.isEmptyconcTypeConstraint() )) { tom.engine.adt.typeconstraints.types.TypeConstraint  tomMatch24_27= tomMatch24__end__22.getHeadconcTypeConstraint() ;if ( (tomMatch24_27 instanceof tom.engine.adt.typeconstraints.types.typeconstraint.Equation) ) { tom.engine.adt.tomtype.types.TomType  tomMatch24_25= tomMatch24_27.getType1() ; tom.engine.adt.tomtype.types.TomType  tomMatch24_26= tomMatch24_27.getType2() ;if ( (tomMatch24_25 instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) { String  tom_tName1= tomMatch24_25.getTomType() ;boolean tomMatch24_35= false ; String  tomMatch24_30= "" ;if ( (tomMatch24_26 instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {{tomMatch24_35= true ;tomMatch24_30= tomMatch24_26.getTomType() ;}} else {if ( (tomMatch24_26 instanceof tom.engine.adt.tomtype.types.tomtype.TypeWithSymbol) ) {{tomMatch24_35= true ;tomMatch24_30= tomMatch24_26.getTomType() ;}}}if (tomMatch24_35) { String  tom_tName2=tomMatch24_30;boolean tomMatch24_34= false ;if ( tom_tName1.equals(tomMatch24_30) ) {if ( tom_tName2.equals(tomMatch24_30) ) {tomMatch24_34= true ;}}if (!(tomMatch24_34)) {if (!( "unknown type".equals(tom_tName1) )) {if (!( "unknown type".equals(tom_tName2) )) {
-
-
-
-
-
-
-
-
-
-
-        throw new RuntimeException("solveConstraints: failure on " + tomMatch24_25
-+ " = " + tomMatch24_26);
-      }}}}}}}if ( tomMatch24__end__22.isEmptyconcTypeConstraint() ) {tomMatch24__end__22=(( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg);} else {tomMatch24__end__22= tomMatch24__end__22.getTailconcTypeConstraint() ;}}} while(!( (tomMatch24__end__22==(( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg)) ));}}}{if ( (tom__arg instanceof tom.engine.adt.typeconstraints.types.TypeConstraintList) ) {if ( (((( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg) instanceof tom.engine.adt.typeconstraints.types.typeconstraintlist.ConsconcTypeConstraint) || ((( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg) instanceof tom.engine.adt.typeconstraints.types.typeconstraintlist.EmptyconcTypeConstraint)) ) { tom.engine.adt.typeconstraints.types.TypeConstraintList  tomMatch24__end__40=(( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg);do {{if (!( tomMatch24__end__40.isEmptyconcTypeConstraint() )) { tom.engine.adt.typeconstraints.types.TypeConstraint  tomMatch24_45= tomMatch24__end__40.getHeadconcTypeConstraint() ;if ( (tomMatch24_45 instanceof tom.engine.adt.typeconstraints.types.typeconstraint.Equation) ) { tom.engine.adt.tomtype.types.TomType  tomMatch24_43= tomMatch24_45.getType1() ; tom.engine.adt.tomtype.types.TomType  tomMatch24_44= tomMatch24_45.getType2() ;boolean tomMatch24_54= false ; tom.engine.adt.tomtype.types.TargetLanguageType  tomMatch24_46= null ;if ( (tomMatch24_43 instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {{tomMatch24_54= true ;tomMatch24_46= tomMatch24_43.getTlType() ;}} else {if ( (tomMatch24_43 instanceof tom.engine.adt.tomtype.types.tomtype.TypeWithSymbol) ) {{tomMatch24_54= true ;tomMatch24_46= tomMatch24_43.getTlType() ;}}}if (tomMatch24_54) {if ( (tomMatch24_46 instanceof tom.engine.adt.tomtype.types.targetlanguagetype.TLType) ) {if ( (tomMatch24_44 instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) { tom.engine.adt.tomtype.types.TargetLanguageType  tomMatch24_50= tomMatch24_44.getTlType() ;if ( (tomMatch24_50 instanceof tom.engine.adt.tomtype.types.targetlanguagetype.TLType) ) {if (!( (tomMatch24_50==tomMatch24_46) )) {
-
-
-
-
-
-
-
-
-
-
-
-        throw new RuntimeException("solveConstraints: failure on " + tomMatch24_43
-+ " = " + tomMatch24_44);
-      }}}}}}}if ( tomMatch24__end__40.isEmptyconcTypeConstraint() ) {tomMatch24__end__40=(( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg);} else {tomMatch24__end__40= tomMatch24__end__40.getTailconcTypeConstraint() ;}}} while(!( (tomMatch24__end__40==(( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg)) ));}}}{if ( (tom__arg instanceof tom.engine.adt.typeconstraints.types.TypeConstraintList) ) {if ( (((( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg) instanceof tom.engine.adt.typeconstraints.types.typeconstraintlist.ConsconcTypeConstraint) || ((( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg) instanceof tom.engine.adt.typeconstraints.types.typeconstraintlist.EmptyconcTypeConstraint)) ) { tom.engine.adt.typeconstraints.types.TypeConstraintList  tomMatch24__end__59=(( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg);do {{if (!( tomMatch24__end__59.isEmptyconcTypeConstraint() )) { tom.engine.adt.typeconstraints.types.TypeConstraint  tomMatch24_64= tomMatch24__end__59.getHeadconcTypeConstraint() ;if ( (tomMatch24_64 instanceof tom.engine.adt.typeconstraints.types.typeconstraint.Equation) ) { tom.engine.adt.tomtype.types.TomType  tomMatch24_62= tomMatch24_64.getType1() ; tom.engine.adt.tomtype.types.TomType  tomMatch24_63= tomMatch24_64.getType2() ;if ( (tomMatch24_62 instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) { tom.engine.adt.tomtype.types.TargetLanguageType  tomMatch24_65= tomMatch24_62.getTlType() ;if ( (tomMatch24_65 instanceof tom.engine.adt.tomtype.types.targetlanguagetype.TLType) ) {boolean tomMatch24_73= false ; tom.engine.adt.tomtype.types.TargetLanguageType  tomMatch24_69= null ;if ( (tomMatch24_63 instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {{tomMatch24_73= true ;tomMatch24_69= tomMatch24_63.getTlType() ;}} else {if ( (tomMatch24_63 instanceof tom.engine.adt.tomtype.types.tomtype.TypeWithSymbol) ) {{tomMatch24_73= true ;tomMatch24_69= tomMatch24_63.getTlType() ;}}}if (tomMatch24_73) {if ( (tomMatch24_69 instanceof tom.engine.adt.tomtype.types.targetlanguagetype.TLType) ) {if (!( (tomMatch24_69==tomMatch24_65) )) {
-
-
-
-
-
-
-
-
-
-
-
-        throw new RuntimeException("solveConstraints: failure on " + tomMatch24_62
-+ " = " + tomMatch24_63);
-      }}}}}}}if ( tomMatch24__end__59.isEmptyconcTypeConstraint() ) {tomMatch24__end__59=(( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg);} else {tomMatch24__end__59= tomMatch24__end__59.getTailconcTypeConstraint() ;}}} while(!( (tomMatch24__end__59==(( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg)) ));}}}{if ( (tom__arg instanceof tom.engine.adt.typeconstraints.types.TypeConstraintList) ) {if ( (((( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg) instanceof tom.engine.adt.typeconstraints.types.typeconstraintlist.ConsconcTypeConstraint) || ((( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg) instanceof tom.engine.adt.typeconstraints.types.typeconstraintlist.EmptyconcTypeConstraint)) ) { tom.engine.adt.typeconstraints.types.TypeConstraintList  tomMatch24__end__78=(( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg);do {{if (!( tomMatch24__end__78.isEmptyconcTypeConstraint() )) { tom.engine.adt.typeconstraints.types.TypeConstraint  tomMatch24_83= tomMatch24__end__78.getHeadconcTypeConstraint() ;if ( (tomMatch24_83 instanceof tom.engine.adt.typeconstraints.types.typeconstraint.Equation) ) { tom.engine.adt.tomtype.types.TomType  tomMatch24_81= tomMatch24_83.getType1() ; tom.engine.adt.tomtype.types.TomType  tomMatch24_82= tomMatch24_83.getType2() ;if ( (tomMatch24_81 instanceof tom.engine.adt.tomtype.types.tomtype.TypeWithSymbol) ) { tom.engine.adt.tomtype.types.TomType  tom_tLType1=tomMatch24_81;if ( (tomMatch24_82 instanceof tom.engine.adt.tomtype.types.tomtype.TypeWithSymbol) ) { tom.engine.adt.tomtype.types.TomType  tom_tLType2=tomMatch24_82;if (!( (tom_tLType2==tom_tLType1) )) {
-
-
-
-
-
-
-
-
-
-          throw new RuntimeException("solveConstraints: failure on " + tom_tLType1
-+ " = " + tom_tLType2);
-        }}}}}if ( tomMatch24__end__78.isEmptyconcTypeConstraint() ) {tomMatch24__end__78=(( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg);} else {tomMatch24__end__78= tomMatch24__end__78.getTailconcTypeConstraint() ;}}} while(!( (tomMatch24__end__78==(( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg)) ));}}}{if ( (tom__arg instanceof tom.engine.adt.typeconstraints.types.TypeConstraintList) ) {if ( (((( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg) instanceof tom.engine.adt.typeconstraints.types.typeconstraintlist.ConsconcTypeConstraint) || ((( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg) instanceof tom.engine.adt.typeconstraints.types.typeconstraintlist.EmptyconcTypeConstraint)) ) { tom.engine.adt.typeconstraints.types.TypeConstraintList  tomMatch24__end__96=(( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg);do {{ tom.engine.adt.typeconstraints.types.TypeConstraintList  tom_leftTCList=tom_get_slice_concTypeConstraint((( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg),tomMatch24__end__96, tom.engine.adt.typeconstraints.types.typeconstraintlist.EmptyconcTypeConstraint.make() );if (!( tomMatch24__end__96.isEmptyconcTypeConstraint() )) { tom.engine.adt.typeconstraints.types.TypeConstraint  tomMatch24_101= tomMatch24__end__96.getHeadconcTypeConstraint() ;if ( (tomMatch24_101 instanceof tom.engine.adt.typeconstraints.types.typeconstraint.Equation) ) { tom.engine.adt.tomtype.types.TomType  tomMatch24_99= tomMatch24_101.getType1() ; tom.engine.adt.tomtype.types.TomType  tomMatch24_100= tomMatch24_101.getType2() ;boolean tomMatch24_109= false ; tom.engine.adt.tomtype.types.TargetLanguageType  tomMatch24_102= null ;if ( (tomMatch24_99 instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {{tomMatch24_109= true ;tomMatch24_102= tomMatch24_99.getTlType() ;}} else {if ( (tomMatch24_99 instanceof tom.engine.adt.tomtype.types.tomtype.TypeWithSymbol) ) {{tomMatch24_109= true ;tomMatch24_102= tomMatch24_99.getTlType() ;}}}if (tomMatch24_109) {if ( (tomMatch24_102 instanceof tom.engine.adt.tomtype.types.targetlanguagetype.TypeVar) ) { tom.engine.adt.tomtype.types.TomType  tom_typeVar=tomMatch24_99; tom.engine.adt.tomtype.types.TomType  tom_type=tomMatch24_100; tom.engine.adt.typeconstraints.types.TypeConstraintList  tom_rightTCList= tomMatch24__end__96.getTailconcTypeConstraint() ;boolean tomMatch24_108= false ;if ( (tom_typeVar==tomMatch24_100) ) {if ( (tom_type==tomMatch24_100) ) {tomMatch24_108= true ;}}if (!(tomMatch24_108)) {
-
-
-
-
-
-
-
-
-
-
-        nkt.substitutions.put(tom_typeVar,tom_type);
-        {{if ( (tom_leftTCList instanceof tom.engine.adt.typeconstraints.types.TypeConstraintList) ) {boolean tomMatch25_2= false ;if ( (((( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom_leftTCList) instanceof tom.engine.adt.typeconstraints.types.typeconstraintlist.ConsconcTypeConstraint) || ((( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom_leftTCList) instanceof tom.engine.adt.typeconstraints.types.typeconstraintlist.EmptyconcTypeConstraint)) ) {if ( (( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom_leftTCList).isEmptyconcTypeConstraint() ) {tomMatch25_2= true ;}}if (!(tomMatch25_2)) {
-
-            if(nkt.findTypeVars(tom_typeVar,tom_leftTCList)) {
-              tom_leftTCList= nkt.applySubstitution(tom_typeVar,tom_type,tom_leftTCList);
-            }
-          }}}{if ( (tom_rightTCList instanceof tom.engine.adt.typeconstraints.types.TypeConstraintList) ) {boolean tomMatch25_5= false ;if ( (((( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom_rightTCList) instanceof tom.engine.adt.typeconstraints.types.typeconstraintlist.ConsconcTypeConstraint) || ((( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom_rightTCList) instanceof tom.engine.adt.typeconstraints.types.typeconstraintlist.EmptyconcTypeConstraint)) ) {if ( (( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom_rightTCList).isEmptyconcTypeConstraint() ) {tomMatch25_5= true ;}}if (!(tomMatch25_5)) {
-
-
-            if(nkt.findTypeVars(tom_typeVar,tom_rightTCList)) {
-              tom_rightTCList= nkt.applySubstitution(tom_typeVar,tom_type,tom_rightTCList);
-            }
-          }}}}
-
-        return tom_append_list_concTypeConstraint(tom_leftTCList, tom.engine.adt.typeconstraints.types.typeconstraintlist.ConsconcTypeConstraint.make( tom.engine.adt.typeconstraints.types.typeconstraint.Equation.make(tom_type, tom_type) ,tom_append_list_concTypeConstraint(tom_rightTCList, tom.engine.adt.typeconstraints.types.typeconstraintlist.EmptyconcTypeConstraint.make() )) );
-      }}}}}if ( tomMatch24__end__96.isEmptyconcTypeConstraint() ) {tomMatch24__end__96=(( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg);} else {tomMatch24__end__96= tomMatch24__end__96.getTailconcTypeConstraint() ;}}} while(!( (tomMatch24__end__96==(( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg)) ));}}}{if ( (tom__arg instanceof tom.engine.adt.typeconstraints.types.TypeConstraintList) ) {if ( (((( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg) instanceof tom.engine.adt.typeconstraints.types.typeconstraintlist.ConsconcTypeConstraint) || ((( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg) instanceof tom.engine.adt.typeconstraints.types.typeconstraintlist.EmptyconcTypeConstraint)) ) { tom.engine.adt.typeconstraints.types.TypeConstraintList  tomMatch24__end__114=(( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg);do {{ tom.engine.adt.typeconstraints.types.TypeConstraintList  tom_leftTCList=tom_get_slice_concTypeConstraint((( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg),tomMatch24__end__114, tom.engine.adt.typeconstraints.types.typeconstraintlist.EmptyconcTypeConstraint.make() );if (!( tomMatch24__end__114.isEmptyconcTypeConstraint() )) { tom.engine.adt.typeconstraints.types.TypeConstraint  tomMatch24_119= tomMatch24__end__114.getHeadconcTypeConstraint() ;if ( (tomMatch24_119 instanceof tom.engine.adt.typeconstraints.types.typeconstraint.Equation) ) { tom.engine.adt.tomtype.types.TomType  tomMatch24_117= tomMatch24_119.getType1() ; tom.engine.adt.tomtype.types.TomType  tomMatch24_118= tomMatch24_119.getType2() ;boolean tomMatch24_130= false ; tom.engine.adt.tomtype.types.TargetLanguageType  tomMatch24_120= null ;if ( (tomMatch24_117 instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {{tomMatch24_130= true ;tomMatch24_120= tomMatch24_117.getTlType() ;}} else {if ( (tomMatch24_117 instanceof tom.engine.adt.tomtype.types.tomtype.TypeWithSymbol) ) {{tomMatch24_130= true ;tomMatch24_120= tomMatch24_117.getTlType() ;}}}if (tomMatch24_130) { tom.engine.adt.tomtype.types.TomType  tom_type=tomMatch24_117;boolean tomMatch24_129= false ; tom.engine.adt.tomtype.types.TargetLanguageType  tomMatch24_122= null ;if ( (tomMatch24_118 instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {{tomMatch24_129= true ;tomMatch24_122= tomMatch24_118.getTlType() ;}} else {if ( (tomMatch24_118 instanceof tom.engine.adt.tomtype.types.tomtype.TypeWithSymbol) ) {{tomMatch24_129= true ;tomMatch24_122= tomMatch24_118.getTlType() ;}}}if (tomMatch24_129) {if ( (tomMatch24_122 instanceof tom.engine.adt.tomtype.types.targetlanguagetype.TypeVar) ) { tom.engine.adt.tomtype.types.TomType  tom_typeVar=tomMatch24_118; tom.engine.adt.typeconstraints.types.TypeConstraintList  tom_rightTCList= tomMatch24__end__114.getTailconcTypeConstraint() ;boolean tomMatch24_128= false ;if ( (tomMatch24_120 instanceof tom.engine.adt.tomtype.types.targetlanguagetype.TypeVar) ) {tomMatch24_128= true ;}if (!(tomMatch24_128)) {
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        nkt.substitutions.put(tom_typeVar,tom_type);
-        {{if ( (tom_leftTCList instanceof tom.engine.adt.typeconstraints.types.TypeConstraintList) ) {boolean tomMatch26_2= false ;if ( (((( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom_leftTCList) instanceof tom.engine.adt.typeconstraints.types.typeconstraintlist.ConsconcTypeConstraint) || ((( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom_leftTCList) instanceof tom.engine.adt.typeconstraints.types.typeconstraintlist.EmptyconcTypeConstraint)) ) {if ( (( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom_leftTCList).isEmptyconcTypeConstraint() ) {tomMatch26_2= true ;}}if (!(tomMatch26_2)) {
-
-            if(nkt.findTypeVars(tom_typeVar,tom_leftTCList)) {
-              tom_leftTCList= nkt.applySubstitution(tom_typeVar,tom_type,tom_leftTCList);
-            }
-          }}}{if ( (tom_rightTCList instanceof tom.engine.adt.typeconstraints.types.TypeConstraintList) ) {boolean tomMatch26_5= false ;if ( (((( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom_rightTCList) instanceof tom.engine.adt.typeconstraints.types.typeconstraintlist.ConsconcTypeConstraint) || ((( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom_rightTCList) instanceof tom.engine.adt.typeconstraints.types.typeconstraintlist.EmptyconcTypeConstraint)) ) {if ( (( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom_rightTCList).isEmptyconcTypeConstraint() ) {tomMatch26_5= true ;}}if (!(tomMatch26_5)) {
-
-
-            if(nkt.findTypeVars(tom_typeVar,tom_rightTCList)) {
-              tom_rightTCList= nkt.applySubstitution(tom_typeVar,tom_type,tom_rightTCList);
-            }
-          }}}}
-
-        return tom_append_list_concTypeConstraint(tom_leftTCList, tom.engine.adt.typeconstraints.types.typeconstraintlist.ConsconcTypeConstraint.make( tom.engine.adt.typeconstraints.types.typeconstraint.Equation.make(tom_type, tom_type) ,tom_append_list_concTypeConstraint(tom_rightTCList, tom.engine.adt.typeconstraints.types.typeconstraintlist.EmptyconcTypeConstraint.make() )) );
-      }}}}}}if ( tomMatch24__end__114.isEmptyconcTypeConstraint() ) {tomMatch24__end__114=(( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg);} else {tomMatch24__end__114= tomMatch24__end__114.getTailconcTypeConstraint() ;}}} while(!( (tomMatch24__end__114==(( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg)) ));}}}}return _visit_TypeConstraintList(tom__arg,introspector);}@SuppressWarnings("unchecked")public  tom.engine.adt.typeconstraints.types.TypeConstraintList  _visit_TypeConstraintList( tom.engine.adt.typeconstraints.types.TypeConstraintList  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!(( null  == environment))) {return (( tom.engine.adt.typeconstraints.types.TypeConstraintList )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);}}@SuppressWarnings("unchecked")public <T> T visitLight(T v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.engine.adt.typeconstraints.types.TypeConstraintList) ) {return ((T)visit_TypeConstraintList((( tom.engine.adt.typeconstraints.types.TypeConstraintList )v),introspector));}if (!(( null  == environment))) {return ((T)any.visit(environment,introspector));} else {return any.visitLight(v,introspector);}}}private static  tom.library.sl.Strategy  tom_make_solveConstraints( NewKernelTyper  t0) { return new solveConstraints(t0);}
-
-
-
-  private boolean findTypeVars(TomType typeVar, TypeConstraintList
-      tcList) {
-    //DEBUG System.out.println("\n Test pour findTypeVars -- ligne 1.");
-    {{if ( (tcList instanceof tom.engine.adt.typeconstraints.types.TypeConstraintList) ) {if ( (((( tom.engine.adt.typeconstraints.types.TypeConstraintList )tcList) instanceof tom.engine.adt.typeconstraints.types.typeconstraintlist.ConsconcTypeConstraint) || ((( tom.engine.adt.typeconstraints.types.TypeConstraintList )tcList) instanceof tom.engine.adt.typeconstraints.types.typeconstraintlist.EmptyconcTypeConstraint)) ) { tom.engine.adt.typeconstraints.types.TypeConstraintList  tomMatch27__end__4=(( tom.engine.adt.typeconstraints.types.TypeConstraintList )tcList);do {{if (!( tomMatch27__end__4.isEmptyconcTypeConstraint() )) { tom.engine.adt.typeconstraints.types.TypeConstraint  tomMatch27_9= tomMatch27__end__4.getHeadconcTypeConstraint() ;if ( (tomMatch27_9 instanceof tom.engine.adt.typeconstraints.types.typeconstraint.Equation) ) {if ( (typeVar== tomMatch27_9.getType1() ) ) {
-
-
-        return true;
-      }if ( (typeVar== tomMatch27_9.getType2() ) ) {         return true;       }}}if ( tomMatch27__end__4.isEmptyconcTypeConstraint() ) {tomMatch27__end__4=(( tom.engine.adt.typeconstraints.types.TypeConstraintList )tcList);} else {tomMatch27__end__4= tomMatch27__end__4.getTailconcTypeConstraint() ;}}} while(!( (tomMatch27__end__4==(( tom.engine.adt.typeconstraints.types.TypeConstraintList )tcList)) ));}}}}
-
-    return false;
-  }
-
-  private TypeConstraintList applySubstitution(TomType oldtt, TomType newtt,
-      TypeConstraintList tcList) {
-    
-    try {
-        return (TypeConstraintList)
-          tom_make_TopDown(tom_make_replaceTypeConstraints(oldtt,newtt)).visitLight(tcList);
-    } catch(tom.library.sl.VisitFailure e) {
-      throw new RuntimeException("applySubstitution: should not be here.");
+}
+private static  tom.library.sl.Strategy  tom_make_EUCtl( tom.library.sl.Strategy  s1,  tom.library.sl.Strategy  s2) { 
+return ( 
+( new tom.library.sl.Mu(( new tom.library.sl.MuVar("x") ),( (( (( null )==null)?( (( (( null )==null)?( new tom.library.sl.One(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.One(( new tom.library.sl.MuVar("x") )) ),( null )) )==null)?s1:new tom.library.sl.Sequence(s1,( (( null )==null)?( new tom.library.sl.One(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.One(( new tom.library.sl.MuVar("x") )) ),( null )) )) ):new tom.library.sl.Choice(( (( (( null )==null)?( new tom.library.sl.One(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.One(( new tom.library.sl.MuVar("x") )) ),( null )) )==null)?s1:new tom.library.sl.Sequence(s1,( (( null )==null)?( new tom.library.sl.One(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.One(( new tom.library.sl.MuVar("x") )) ),( null )) )) ),( null )) )==null)?s2:new tom.library.sl.Choice(s2,( (( null )==null)?( (( (( null )==null)?( new tom.library.sl.One(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.One(( new tom.library.sl.MuVar("x") )) ),( null )) )==null)?s1:new tom.library.sl.Sequence(s1,( (( null )==null)?( new tom.library.sl.One(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.One(( new tom.library.sl.MuVar("x") )) ),( null )) )) ):new tom.library.sl.Choice(( (( (( null )==null)?( new tom.library.sl.One(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.One(( new tom.library.sl.MuVar("x") )) ),( null )) )==null)?s1:new tom.library.sl.Sequence(s1,( (( null )==null)?( new tom.library.sl.One(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.One(( new tom.library.sl.MuVar("x") )) ),( null )) )) ),( null )) )) )) ))
+
+;
+}
+private static  tom.library.sl.Strategy  tom_make_Try( tom.library.sl.Strategy  s) { 
+return ( 
+( (( (( null )==null)?( new tom.library.sl.Identity() ):new tom.library.sl.Choice(( new tom.library.sl.Identity() ),( null )) )==null)?s:new tom.library.sl.Choice(s,( (( null )==null)?( new tom.library.sl.Identity() ):new tom.library.sl.Choice(( new tom.library.sl.Identity() ),( null )) )) ))
+
+;
+}
+private static  tom.library.sl.Strategy  tom_make_Repeat( tom.library.sl.Strategy  s) { 
+return ( 
+( new tom.library.sl.Mu(( new tom.library.sl.MuVar("_x") ),( (( (( null )==null)?( new tom.library.sl.Identity() ):new tom.library.sl.Choice(( new tom.library.sl.Identity() ),( null )) )==null)?( (( (( null )==null)?( new tom.library.sl.MuVar("_x") ):new tom.library.sl.Sequence(( new tom.library.sl.MuVar("_x") ),( null )) )==null)?s:new tom.library.sl.Sequence(s,( (( null )==null)?( new tom.library.sl.MuVar("_x") ):new tom.library.sl.Sequence(( new tom.library.sl.MuVar("_x") ),( null )) )) ):new tom.library.sl.Choice(( (( (( null )==null)?( new tom.library.sl.MuVar("_x") ):new tom.library.sl.Sequence(( new tom.library.sl.MuVar("_x") ),( null )) )==null)?s:new tom.library.sl.Sequence(s,( (( null )==null)?( new tom.library.sl.MuVar("_x") ):new tom.library.sl.Sequence(( new tom.library.sl.MuVar("_x") ),( null )) )) ),( (( null )==null)?( new tom.library.sl.Identity() ):new tom.library.sl.Choice(( new tom.library.sl.Identity() ),( null )) )) )) ))
+
+;
+}
+private static  tom.library.sl.Strategy  tom_make_TopDown( tom.library.sl.Strategy  v) { 
+return ( 
+( new tom.library.sl.Mu(( new tom.library.sl.MuVar("_x") ),( (( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("_x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.All(( new tom.library.sl.MuVar("_x") )) ),( null )) )==null)?v:new tom.library.sl.Sequence(v,( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("_x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.All(( new tom.library.sl.MuVar("_x") )) ),( null )) )) )) ))
+
+;
+}
+private static  tom.library.sl.Strategy  tom_make_TopDownCollect( tom.library.sl.Strategy  v) { 
+return ( 
+( new tom.library.sl.Mu(( new tom.library.sl.MuVar("_x") ),tom_make_Try(( (( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("_x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.All(( new tom.library.sl.MuVar("_x") )) ),( null )) )==null)?v:new tom.library.sl.Sequence(v,( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("_x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.All(( new tom.library.sl.MuVar("_x") )) ),( null )) )) ))) ))
+
+;
+}
+private static  tom.library.sl.Strategy  tom_make_TopDownStopOnSuccess( tom.library.sl.Strategy  v) { 
+return (
+( new tom.library.sl.Mu(( new tom.library.sl.MuVar("x") ),( (( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Choice(( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ),( null )) )==null)?v:new tom.library.sl.Choice(v,( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Choice(( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ),( null )) )) )) )) 
+
+;
+}
+private static  tom.library.sl.Strategy  tom_make_TopDownIdStopOnSuccess( tom.library.sl.Strategy  v) { 
+return (
+( new tom.library.sl.Mu(( new tom.library.sl.MuVar("x") ),( (( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.ChoiceId(( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ),( null )) )==null)?v:new tom.library.sl.ChoiceId(v,( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.ChoiceId(( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ),( null )) )) )) )) 
+
+;
+}
+private static  tom.library.sl.Strategy  tom_make_OnceTopDown( tom.library.sl.Strategy  v) { 
+return ( 
+( new tom.library.sl.Mu(( new tom.library.sl.MuVar("_x") ),( (( (( null )==null)?( new tom.library.sl.One(( new tom.library.sl.MuVar("_x") )) ):new tom.library.sl.Choice(( new tom.library.sl.One(( new tom.library.sl.MuVar("_x") )) ),( null )) )==null)?v:new tom.library.sl.Choice(v,( (( null )==null)?( new tom.library.sl.One(( new tom.library.sl.MuVar("_x") )) ):new tom.library.sl.Choice(( new tom.library.sl.One(( new tom.library.sl.MuVar("_x") )) ),( null )) )) )) ))
+
+;
+}
+private static  tom.library.sl.Strategy  tom_make_RepeatId( tom.library.sl.Strategy  v) { 
+return ( 
+( new tom.library.sl.Mu(( new tom.library.sl.MuVar("_x") ),( (( (( null )==null)?( new tom.library.sl.MuVar("_x") ):new tom.library.sl.SequenceId(( new tom.library.sl.MuVar("_x") ),( null )) )==null)?v:new tom.library.sl.SequenceId(v,( (( null )==null)?( new tom.library.sl.MuVar("_x") ):new tom.library.sl.SequenceId(( new tom.library.sl.MuVar("_x") ),( null )) )) )) ))
+
+;
+}
+private static  tom.library.sl.Strategy  tom_make_OnceTopDownId( tom.library.sl.Strategy  v) { 
+return ( 
+( new tom.library.sl.Mu(( new tom.library.sl.MuVar("_x") ),( (( (( null )==null)?( new tom.library.sl.OneId(( new tom.library.sl.MuVar("_x") )) ):new tom.library.sl.ChoiceId(( new tom.library.sl.OneId(( new tom.library.sl.MuVar("_x") )) ),( null )) )==null)?v:new tom.library.sl.ChoiceId(v,( (( null )==null)?( new tom.library.sl.OneId(( new tom.library.sl.MuVar("_x") )) ):new tom.library.sl.ChoiceId(( new tom.library.sl.OneId(( new tom.library.sl.MuVar("_x") )) ),( null )) )) )) ))
+
+;
+}
+
+  private static   tom.engine.adt.typeconstraints.types.TypeConstraintList  tom_append_list_concTypeConstraint( tom.engine.adt.typeconstraints.types.TypeConstraintList l1,  tom.engine.adt.typeconstraints.types.TypeConstraintList  l2) {
+    if( l1.isEmptyconcTypeConstraint() ) {
+      return l2;
+    } else if( l2.isEmptyconcTypeConstraint() ) {
+      return l1;
+    } else if(  l1.getTailconcTypeConstraint() .isEmptyconcTypeConstraint() ) {
+      return  tom.engine.adt.typeconstraints.types.typeconstraintlist.ConsconcTypeConstraint.make( l1.getHeadconcTypeConstraint() ,l2) ;
+    } else {
+      return  tom.engine.adt.typeconstraints.types.typeconstraintlist.ConsconcTypeConstraint.make( l1.getHeadconcTypeConstraint() ,tom_append_list_concTypeConstraint( l1.getTailconcTypeConstraint() ,l2)) ;
     }
   }
-
-  public static class replaceTypeConstraints extends tom.library.sl.AbstractStrategyBasic {private  tom.engine.adt.tomtype.types.TomType  oldtt;private  tom.engine.adt.tomtype.types.TomType  newtt;public replaceTypeConstraints( tom.engine.adt.tomtype.types.TomType  oldtt,  tom.engine.adt.tomtype.types.TomType  newtt) {super(( new tom.library.sl.Identity() ));this.oldtt=oldtt;this.newtt=newtt;}public  tom.engine.adt.tomtype.types.TomType  getoldtt() {return oldtt;}public  tom.engine.adt.tomtype.types.TomType  getnewtt() {return newtt;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];stratChilds[0] = super.getChildAt(0);return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() {return 1;}public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}@SuppressWarnings("unchecked")public  tom.engine.adt.tomtype.types.TomType  visit_TomType( tom.engine.adt.tomtype.types.TomType  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if ( (tom__arg instanceof tom.engine.adt.tomtype.types.TomType) ) {if (((( tom.engine.adt.tomtype.types.TomType )tom__arg) == oldtt)) {
-
-
-          return newtt; 
-      }}}}return _visit_TomType(tom__arg,introspector);}@SuppressWarnings("unchecked")public  tom.engine.adt.tomtype.types.TomType  _visit_TomType( tom.engine.adt.tomtype.types.TomType  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!(( null  == environment))) {return (( tom.engine.adt.tomtype.types.TomType )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);}}@SuppressWarnings("unchecked")public <T> T visitLight(T v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.engine.adt.tomtype.types.TomType) ) {return ((T)visit_TomType((( tom.engine.adt.tomtype.types.TomType )v),introspector));}if (!(( null  == environment))) {return ((T)any.visit(environment,introspector));} else {return any.visitLight(v,introspector);}}}private static  tom.library.sl.Strategy  tom_make_replaceTypeConstraints( tom.engine.adt.tomtype.types.TomType  t0,  tom.engine.adt.tomtype.types.TomType  t1) { return new replaceTypeConstraints(t0,t1);}
-
-
- 
-  private Code replaceInCode(Code code) {
-    Code replacedCode = code;
-    try {
-      replacedCode =
-        tom_make_RepeatId(tom_make_TopDown(tom_make_replaceFreshTypeVar(this))).visitLight(code);
-    } catch(tom.library.sl.VisitFailure e) {
-      throw new TomRuntimeException("replaceInCode: failure on " +
-          replacedCode);
+  private static   tom.engine.adt.typeconstraints.types.TypeConstraintList  tom_get_slice_concTypeConstraint( tom.engine.adt.typeconstraints.types.TypeConstraintList  begin,  tom.engine.adt.typeconstraints.types.TypeConstraintList  end, tom.engine.adt.typeconstraints.types.TypeConstraintList  tail) {
+    if( (begin==end) ) {
+      return tail;
+    } else if( (end==tail)  && ( end.isEmptyconcTypeConstraint()  ||  (end== tom.engine.adt.typeconstraints.types.typeconstraintlist.EmptyconcTypeConstraint.make() ) )) {
+      /* code to avoid a call to make, and thus to avoid looping during list-matching */
+      return begin;
     }
-    return replacedCode;
+    return  tom.engine.adt.typeconstraints.types.typeconstraintlist.ConsconcTypeConstraint.make( begin.getHeadconcTypeConstraint() ,( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom_get_slice_concTypeConstraint( begin.getTailconcTypeConstraint() ,end,tail)) ;
   }
-
-
-  private void replaceInSymbolTable() {
-    for(String tomName:getSymbolTable().keySymbolIterable()) {
-      //DEBUG System.out.println("replaceInSymboltable() - tomName : " + tomName);
-      TomType type = getType(tomName);
-      {{if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )type) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) { tom.engine.adt.tomtype.types.TargetLanguageType  tomMatch29_2= (( tom.engine.adt.tomtype.types.TomType )type).getTlType() ; String  tom_typeName= (( tom.engine.adt.tomtype.types.TomType )type).getTomType() ;if ( (tomMatch29_2 instanceof tom.engine.adt.tomtype.types.targetlanguagetype.TypeVar) ) { tom.engine.adt.tomtype.types.TargetLanguageType  tom_typeVar=tomMatch29_2;
-
-          if (substitutions.containsKey(tom_typeVar)) {
-            type = substitutions.get(tom_typeVar);
-          } else {
-            System.out.println("\n----- There is no mapping for " + tom_typeVar+'\n');
-            type =  tom.engine.adt.tomtype.types.tomtype.Type.make(tom_typeName,  tom.engine.adt.tomtype.types.targetlanguagetype.EmptyTargetLanguageType.make() ) ;
-          }    
-          getSymbolTable().putType(tom_typeName,type);
-        }}}}}
-
+  
+  private static   tom.engine.adt.tomterm.types.TomList  tom_append_list_concTomTerm( tom.engine.adt.tomterm.types.TomList l1,  tom.engine.adt.tomterm.types.TomList  l2) {
+    if( l1.isEmptyconcTomTerm() ) {
+      return l2;
+    } else if( l2.isEmptyconcTomTerm() ) {
+      return l1;
+    } else if(  l1.getTailconcTomTerm() .isEmptyconcTomTerm() ) {
+      return  tom.engine.adt.tomterm.types.tomlist.ConsconcTomTerm.make( l1.getHeadconcTomTerm() ,l2) ;
+    } else {
+      return  tom.engine.adt.tomterm.types.tomlist.ConsconcTomTerm.make( l1.getHeadconcTomTerm() ,tom_append_list_concTomTerm( l1.getTailconcTomTerm() ,l2)) ;
     }
-
-    for(String tomName:symbolTable.keySymbolIterable()) {
-      //DEBUG System.out.println("replaceInSymboltable() - tomName : " + tomName);
-      TomSymbol tSymbol = getSymbolFromName(tomName);
-      //DEBUG System.out.println("replaceInSymboltable() - tSymbol before strategy: "
-      //DEBUG     + tSymbol);
-      try {
-        tSymbol = tom_make_RepeatId(tom_make_TopDown(tom_make_replaceFreshTypeVar(this))).visitLight(tSymbol);
-      } catch(tom.library.sl.VisitFailure e) {
-        throw new TomRuntimeException("replaceInSymbolTable: failure on " +
-            tSymbol);
+  }
+  private static   tom.engine.adt.tomterm.types.TomList  tom_get_slice_concTomTerm( tom.engine.adt.tomterm.types.TomList  begin,  tom.engine.adt.tomterm.types.TomList  end, tom.engine.adt.tomterm.types.TomList  tail) {
+    if( (begin==end) ) {
+      return tail;
+    } else if( (end==tail)  && ( end.isEmptyconcTomTerm()  ||  (end== tom.engine.adt.tomterm.types.tomlist.EmptyconcTomTerm.make() ) )) {
+      /* code to avoid a call to make, and thus to avoid looping during list-matching */
+      return begin;
+    }
+    return  tom.engine.adt.tomterm.types.tomlist.ConsconcTomTerm.make( begin.getHeadconcTomTerm() ,( tom.engine.adt.tomterm.types.TomList )tom_get_slice_concTomTerm( begin.getTailconcTomTerm() ,end,tail)) ;
+  }
+  
+  private static   tom.engine.adt.tomtype.types.TomTypeList  tom_append_list_concTomType( tom.engine.adt.tomtype.types.TomTypeList l1,  tom.engine.adt.tomtype.types.TomTypeList  l2) {
+    if( l1.isEmptyconcTomType() ) {
+      return l2;
+    } else if( l2.isEmptyconcTomType() ) {
+      return l1;
+    } else if(  l1.getTailconcTomType() .isEmptyconcTomType() ) {
+      return  tom.engine.adt.tomtype.types.tomtypelist.ConsconcTomType.make( l1.getHeadconcTomType() ,l2) ;
+    } else {
+      return  tom.engine.adt.tomtype.types.tomtypelist.ConsconcTomType.make( l1.getHeadconcTomType() ,tom_append_list_concTomType( l1.getTailconcTomType() ,l2)) ;
+    }
+  }
+  private static   tom.engine.adt.tomtype.types.TomTypeList  tom_get_slice_concTomType( tom.engine.adt.tomtype.types.TomTypeList  begin,  tom.engine.adt.tomtype.types.TomTypeList  end, tom.engine.adt.tomtype.types.TomTypeList  tail) {
+    if( (begin==end) ) {
+      return tail;
+    } else if( (end==tail)  && ( end.isEmptyconcTomType()  ||  (end== tom.engine.adt.tomtype.types.tomtypelist.EmptyconcTomType.make() ) )) {
+      /* code to avoid a call to make, and thus to avoid looping during list-matching */
+      return begin;
+    }
+    return  tom.engine.adt.tomtype.types.tomtypelist.ConsconcTomType.make( begin.getHeadconcTomType() ,( tom.engine.adt.tomtype.types.TomTypeList )tom_get_slice_concTomType( begin.getTailconcTomType() ,end,tail)) ;
+  }
+  
+  private static   tom.engine.adt.code.types.CodeList  tom_append_list_concCode( tom.engine.adt.code.types.CodeList l1,  tom.engine.adt.code.types.CodeList  l2) {
+    if( l1.isEmptyconcCode() ) {
+      return l2;
+    } else if( l2.isEmptyconcCode() ) {
+      return l1;
+    } else if(  l1.getTailconcCode() .isEmptyconcCode() ) {
+      return  tom.engine.adt.code.types.codelist.ConsconcCode.make( l1.getHeadconcCode() ,l2) ;
+    } else {
+      return  tom.engine.adt.code.types.codelist.ConsconcCode.make( l1.getHeadconcCode() ,tom_append_list_concCode( l1.getTailconcCode() ,l2)) ;
+    }
+  }
+  private static   tom.engine.adt.code.types.CodeList  tom_get_slice_concCode( tom.engine.adt.code.types.CodeList  begin,  tom.engine.adt.code.types.CodeList  end, tom.engine.adt.code.types.CodeList  tail) {
+    if( (begin==end) ) {
+      return tail;
+    } else if( (end==tail)  && ( end.isEmptyconcCode()  ||  (end== tom.engine.adt.code.types.codelist.EmptyconcCode.make() ) )) {
+      /* code to avoid a call to make, and thus to avoid looping during list-matching */
+      return begin;
+    }
+    return  tom.engine.adt.code.types.codelist.ConsconcCode.make( begin.getHeadconcCode() ,( tom.engine.adt.code.types.CodeList )tom_get_slice_concCode( begin.getTailconcCode() ,end,tail)) ;
+  }
+  
+  private static   tom.engine.adt.code.types.BQTermList  tom_append_list_concBQTerm( tom.engine.adt.code.types.BQTermList l1,  tom.engine.adt.code.types.BQTermList  l2) {
+    if( l1.isEmptyconcBQTerm() ) {
+      return l2;
+    } else if( l2.isEmptyconcBQTerm() ) {
+      return l1;
+    } else if(  l1.getTailconcBQTerm() .isEmptyconcBQTerm() ) {
+      return  tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make( l1.getHeadconcBQTerm() ,l2) ;
+    } else {
+      return  tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make( l1.getHeadconcBQTerm() ,tom_append_list_concBQTerm( l1.getTailconcBQTerm() ,l2)) ;
+    }
+  }
+  private static   tom.engine.adt.code.types.BQTermList  tom_get_slice_concBQTerm( tom.engine.adt.code.types.BQTermList  begin,  tom.engine.adt.code.types.BQTermList  end, tom.engine.adt.code.types.BQTermList  tail) {
+    if( (begin==end) ) {
+      return tail;
+    } else if( (end==tail)  && ( end.isEmptyconcBQTerm()  ||  (end== tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() ) )) {
+      /* code to avoid a call to make, and thus to avoid looping during list-matching */
+      return begin;
+    }
+    return  tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make( begin.getHeadconcBQTerm() ,( tom.engine.adt.code.types.BQTermList )tom_get_slice_concBQTerm( begin.getTailconcBQTerm() ,end,tail)) ;
+  }
+  
+  private static   tom.engine.adt.code.types.BQTerm  tom_append_list_Composite( tom.engine.adt.code.types.BQTerm l1,  tom.engine.adt.code.types.BQTerm  l2) {
+    if( l1.isEmptyComposite() ) {
+      return l2;
+    } else if( l2.isEmptyComposite() ) {
+      return l1;
+    } else if(  l1.getTailComposite() .isEmptyComposite() ) {
+      return  tom.engine.adt.code.types.bqterm.ConsComposite.make( l1.getHeadComposite() ,l2) ;
+    } else {
+      return  tom.engine.adt.code.types.bqterm.ConsComposite.make( l1.getHeadComposite() ,tom_append_list_Composite( l1.getTailComposite() ,l2)) ;
+    }
+  }
+  private static   tom.engine.adt.code.types.BQTerm  tom_get_slice_Composite( tom.engine.adt.code.types.BQTerm  begin,  tom.engine.adt.code.types.BQTerm  end, tom.engine.adt.code.types.BQTerm  tail) {
+    if( (begin==end) ) {
+      return tail;
+    } else if( (end==tail)  && ( end.isEmptyComposite()  ||  (end== tom.engine.adt.code.types.bqterm.EmptyComposite.make() ) )) {
+      /* code to avoid a call to make, and thus to avoid looping during list-matching */
+      return begin;
+    }
+    return  tom.engine.adt.code.types.bqterm.ConsComposite.make( begin.getHeadComposite() ,( tom.engine.adt.code.types.BQTerm )tom_get_slice_Composite( begin.getTailComposite() ,end,tail)) ;
+  }
+  
+  private static   tom.engine.adt.tominstruction.types.ConstraintInstructionList  tom_append_list_concConstraintInstruction( tom.engine.adt.tominstruction.types.ConstraintInstructionList l1,  tom.engine.adt.tominstruction.types.ConstraintInstructionList  l2) {
+    if( l1.isEmptyconcConstraintInstruction() ) {
+      return l2;
+    } else if( l2.isEmptyconcConstraintInstruction() ) {
+      return l1;
+    } else if(  l1.getTailconcConstraintInstruction() .isEmptyconcConstraintInstruction() ) {
+      return  tom.engine.adt.tominstruction.types.constraintinstructionlist.ConsconcConstraintInstruction.make( l1.getHeadconcConstraintInstruction() ,l2) ;
+    } else {
+      return  tom.engine.adt.tominstruction.types.constraintinstructionlist.ConsconcConstraintInstruction.make( l1.getHeadconcConstraintInstruction() ,tom_append_list_concConstraintInstruction( l1.getTailconcConstraintInstruction() ,l2)) ;
+    }
+  }
+  private static   tom.engine.adt.tominstruction.types.ConstraintInstructionList  tom_get_slice_concConstraintInstruction( tom.engine.adt.tominstruction.types.ConstraintInstructionList  begin,  tom.engine.adt.tominstruction.types.ConstraintInstructionList  end, tom.engine.adt.tominstruction.types.ConstraintInstructionList  tail) {
+    if( (begin==end) ) {
+      return tail;
+    } else if( (end==tail)  && ( end.isEmptyconcConstraintInstruction()  ||  (end== tom.engine.adt.tominstruction.types.constraintinstructionlist.EmptyconcConstraintInstruction.make() ) )) {
+      /* code to avoid a call to make, and thus to avoid looping during list-matching */
+      return begin;
+    }
+    return  tom.engine.adt.tominstruction.types.constraintinstructionlist.ConsconcConstraintInstruction.make( begin.getHeadconcConstraintInstruction() ,( tom.engine.adt.tominstruction.types.ConstraintInstructionList )tom_get_slice_concConstraintInstruction( begin.getTailconcConstraintInstruction() ,end,tail)) ;
+  }
+  
+  private static   tom.engine.adt.tomname.types.TomNameList  tom_append_list_concTomName( tom.engine.adt.tomname.types.TomNameList l1,  tom.engine.adt.tomname.types.TomNameList  l2) {
+    if( l1.isEmptyconcTomName() ) {
+      return l2;
+    } else if( l2.isEmptyconcTomName() ) {
+      return l1;
+    } else if(  l1.getTailconcTomName() .isEmptyconcTomName() ) {
+      return  tom.engine.adt.tomname.types.tomnamelist.ConsconcTomName.make( l1.getHeadconcTomName() ,l2) ;
+    } else {
+      return  tom.engine.adt.tomname.types.tomnamelist.ConsconcTomName.make( l1.getHeadconcTomName() ,tom_append_list_concTomName( l1.getTailconcTomName() ,l2)) ;
+    }
+  }
+  private static   tom.engine.adt.tomname.types.TomNameList  tom_get_slice_concTomName( tom.engine.adt.tomname.types.TomNameList  begin,  tom.engine.adt.tomname.types.TomNameList  end, tom.engine.adt.tomname.types.TomNameList  tail) {
+    if( (begin==end) ) {
+      return tail;
+    } else if( (end==tail)  && ( end.isEmptyconcTomName()  ||  (end== tom.engine.adt.tomname.types.tomnamelist.EmptyconcTomName.make() ) )) {
+      /* code to avoid a call to make, and thus to avoid looping during list-matching */
+      return begin;
+    }
+    return  tom.engine.adt.tomname.types.tomnamelist.ConsconcTomName.make( begin.getHeadconcTomName() ,( tom.engine.adt.tomname.types.TomNameList )tom_get_slice_concTomName( begin.getTailconcTomName() ,end,tail)) ;
+  }
+  
+  private static   tom.engine.adt.tomslot.types.SlotList  tom_append_list_concSlot( tom.engine.adt.tomslot.types.SlotList l1,  tom.engine.adt.tomslot.types.SlotList  l2) {
+    if( l1.isEmptyconcSlot() ) {
+      return l2;
+    } else if( l2.isEmptyconcSlot() ) {
+      return l1;
+    } else if(  l1.getTailconcSlot() .isEmptyconcSlot() ) {
+      return  tom.engine.adt.tomslot.types.slotlist.ConsconcSlot.make( l1.getHeadconcSlot() ,l2) ;
+    } else {
+      return  tom.engine.adt.tomslot.types.slotlist.ConsconcSlot.make( l1.getHeadconcSlot() ,tom_append_list_concSlot( l1.getTailconcSlot() ,l2)) ;
+    }
+  }
+  private static   tom.engine.adt.tomslot.types.SlotList  tom_get_slice_concSlot( tom.engine.adt.tomslot.types.SlotList  begin,  tom.engine.adt.tomslot.types.SlotList  end, tom.engine.adt.tomslot.types.SlotList  tail) {
+    if( (begin==end) ) {
+      return tail;
+    } else if( (end==tail)  && ( end.isEmptyconcSlot()  ||  (end== tom.engine.adt.tomslot.types.slotlist.EmptyconcSlot.make() ) )) {
+      /* code to avoid a call to make, and thus to avoid looping during list-matching */
+      return begin;
+    }
+    return  tom.engine.adt.tomslot.types.slotlist.ConsconcSlot.make( begin.getHeadconcSlot() ,( tom.engine.adt.tomslot.types.SlotList )tom_get_slice_concSlot( begin.getTailconcSlot() ,end,tail)) ;
+  }
+  
+  private static   tom.engine.adt.tomslot.types.PairNameDeclList  tom_append_list_concPairNameDecl( tom.engine.adt.tomslot.types.PairNameDeclList l1,  tom.engine.adt.tomslot.types.PairNameDeclList  l2) {
+    if( l1.isEmptyconcPairNameDecl() ) {
+      return l2;
+    } else if( l2.isEmptyconcPairNameDecl() ) {
+      return l1;
+    } else if(  l1.getTailconcPairNameDecl() .isEmptyconcPairNameDecl() ) {
+      return  tom.engine.adt.tomslot.types.pairnamedecllist.ConsconcPairNameDecl.make( l1.getHeadconcPairNameDecl() ,l2) ;
+    } else {
+      return  tom.engine.adt.tomslot.types.pairnamedecllist.ConsconcPairNameDecl.make( l1.getHeadconcPairNameDecl() ,tom_append_list_concPairNameDecl( l1.getTailconcPairNameDecl() ,l2)) ;
+    }
+  }
+  private static   tom.engine.adt.tomslot.types.PairNameDeclList  tom_get_slice_concPairNameDecl( tom.engine.adt.tomslot.types.PairNameDeclList  begin,  tom.engine.adt.tomslot.types.PairNameDeclList  end, tom.engine.adt.tomslot.types.PairNameDeclList  tail) {
+    if( (begin==end) ) {
+      return tail;
+    } else if( (end==tail)  && ( end.isEmptyconcPairNameDecl()  ||  (end== tom.engine.adt.tomslot.types.pairnamedecllist.EmptyconcPairNameDecl.make() ) )) {
+      /* code to avoid a call to make, and thus to avoid looping during list-matching */
+      return begin;
+    }
+    return  tom.engine.adt.tomslot.types.pairnamedecllist.ConsconcPairNameDecl.make( begin.getHeadconcPairNameDecl() ,( tom.engine.adt.tomslot.types.PairNameDeclList )tom_get_slice_concPairNameDecl( begin.getTailconcPairNameDecl() ,end,tail)) ;
+  }
+  
+  private static   tom.engine.adt.tomoption.types.OptionList  tom_append_list_concOption( tom.engine.adt.tomoption.types.OptionList l1,  tom.engine.adt.tomoption.types.OptionList  l2) {
+    if( l1.isEmptyconcOption() ) {
+      return l2;
+    } else if( l2.isEmptyconcOption() ) {
+      return l1;
+    } else if(  l1.getTailconcOption() .isEmptyconcOption() ) {
+      return  tom.engine.adt.tomoption.types.optionlist.ConsconcOption.make( l1.getHeadconcOption() ,l2) ;
+    } else {
+      return  tom.engine.adt.tomoption.types.optionlist.ConsconcOption.make( l1.getHeadconcOption() ,tom_append_list_concOption( l1.getTailconcOption() ,l2)) ;
+    }
+  }
+  private static   tom.engine.adt.tomoption.types.OptionList  tom_get_slice_concOption( tom.engine.adt.tomoption.types.OptionList  begin,  tom.engine.adt.tomoption.types.OptionList  end, tom.engine.adt.tomoption.types.OptionList  tail) {
+    if( (begin==end) ) {
+      return tail;
+    } else if( (end==tail)  && ( end.isEmptyconcOption()  ||  (end== tom.engine.adt.tomoption.types.optionlist.EmptyconcOption.make() ) )) {
+      /* code to avoid a call to make, and thus to avoid looping during list-matching */
+      return begin;
+    }
+    return  tom.engine.adt.tomoption.types.optionlist.ConsconcOption.make( begin.getHeadconcOption() ,( tom.engine.adt.tomoption.types.OptionList )tom_get_slice_concOption( begin.getTailconcOption() ,end,tail)) ;
+  }
+  
+  private static   tom.engine.adt.tomconstraint.types.Constraint  tom_append_list_AndConstraint( tom.engine.adt.tomconstraint.types.Constraint  l1,  tom.engine.adt.tomconstraint.types.Constraint  l2) {
+    if( l1.isEmptyAndConstraint() ) {
+      return l2;
+    } else if( l2.isEmptyAndConstraint() ) {
+      return l1;
+    } else if( ((l1 instanceof tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint) || (l1 instanceof tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint)) ) {
+      if(  l1.getTailAndConstraint() .isEmptyAndConstraint() ) {
+        return  tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make( l1.getHeadAndConstraint() ,l2) ;
+      } else {
+        return  tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make( l1.getHeadAndConstraint() ,tom_append_list_AndConstraint( l1.getTailAndConstraint() ,l2)) ;
       }
-      //DEBUG System.out.println("replaceInSymboltable() - tSymbol after strategy: "
-      //DEBUG     + tSymbol);
-      getSymbolTable().putSymbol(tomName,tSymbol);
+    } else {
+      return  tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make(l1,l2) ;
     }
   }
-
-  public static class replaceFreshTypeVar extends tom.library.sl.AbstractStrategyBasic {private  NewKernelTyper  nkt;public replaceFreshTypeVar( NewKernelTyper  nkt) {super(( new tom.library.sl.Identity() ));this.nkt=nkt;}public  NewKernelTyper  getnkt() {return nkt;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];stratChilds[0] = super.getChildAt(0);return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() {return 1;}public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}@SuppressWarnings("unchecked")public  tom.engine.adt.tomtype.types.TomType  visit_TomType( tom.engine.adt.tomtype.types.TomType  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if ( (tom__arg instanceof tom.engine.adt.tomtype.types.TomType) ) { tom.engine.adt.tomtype.types.TomType  tom_typeVar=(( tom.engine.adt.tomtype.types.TomType )tom__arg);if ( (tom_typeVar instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )tom_typeVar) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {if ( ( (( tom.engine.adt.tomtype.types.TomType )tom_typeVar).getTlType()  instanceof tom.engine.adt.tomtype.types.targetlanguagetype.TypeVar) ) {
-
-
-        if (nkt.substitutions.containsKey(tom_typeVar)) {
-          return nkt.substitutions.get(tom_typeVar);
-        } else {
-          System.out.println("\n----- There is no mapping for " + tom_typeVar+'\n');
-          return  tom.engine.adt.tomtype.types.tomtype.Type.make( (( tom.engine.adt.tomtype.types.TomType )tom_typeVar).getTomType() ,  tom.engine.adt.tomtype.types.targetlanguagetype.EmptyTargetLanguageType.make() ) ;
-        }    
-      }}}}}}return _visit_TomType(tom__arg,introspector);}@SuppressWarnings("unchecked")public  tom.engine.adt.tomtype.types.TomType  _visit_TomType( tom.engine.adt.tomtype.types.TomType  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!(( null  == environment))) {return (( tom.engine.adt.tomtype.types.TomType )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);}}@SuppressWarnings("unchecked")public <T> T visitLight(T v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.engine.adt.tomtype.types.TomType) ) {return ((T)visit_TomType((( tom.engine.adt.tomtype.types.TomType )v),introspector));}if (!(( null  == environment))) {return ((T)any.visit(environment,introspector));} else {return any.visitLight(v,introspector);}}}private static  tom.library.sl.Strategy  tom_make_replaceFreshTypeVar( NewKernelTyper  t0) { return new replaceFreshTypeVar(t0);}
-
-
-
-  public void printGeneratedConstraints(TypeConstraintList TCList) {
-    {{if ( (TCList instanceof tom.engine.adt.typeconstraints.types.TypeConstraintList) ) {boolean tomMatch31_2= false ;if ( (((( tom.engine.adt.typeconstraints.types.TypeConstraintList )TCList) instanceof tom.engine.adt.typeconstraints.types.typeconstraintlist.ConsconcTypeConstraint) || ((( tom.engine.adt.typeconstraints.types.TypeConstraintList )TCList) instanceof tom.engine.adt.typeconstraints.types.typeconstraintlist.EmptyconcTypeConstraint)) ) {if ( (( tom.engine.adt.typeconstraints.types.TypeConstraintList )TCList).isEmptyconcTypeConstraint() ) {tomMatch31_2= true ;}}if (!(tomMatch31_2)) {
- 
-        System.out.print("\n------ Type Constraints : \n {");
-        printEachConstraint(TCList);
-        System.out.print("}");
-      }}}}
-
+  private static   tom.engine.adt.tomconstraint.types.Constraint  tom_get_slice_AndConstraint( tom.engine.adt.tomconstraint.types.Constraint  begin,  tom.engine.adt.tomconstraint.types.Constraint  end, tom.engine.adt.tomconstraint.types.Constraint  tail) {
+    if( (begin==end) ) {
+      return tail;
+    } else if( (end==tail)  && ( end.isEmptyAndConstraint()  ||  (end== tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint.make() ) )) {
+      /* code to avoid a call to make, and thus to avoid looping during list-matching */
+      return begin;
+    }
+    return  tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make((( ((begin instanceof tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint) || (begin instanceof tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint)) )? begin.getHeadAndConstraint() :begin),( tom.engine.adt.tomconstraint.types.Constraint )tom_get_slice_AndConstraint((( ((begin instanceof tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint) || (begin instanceof tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint)) )? begin.getTailAndConstraint() : tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint.make() ),end,tail)) ;
   }
-  public void printEachConstraint(TypeConstraintList TCList) {
-    {{if ( (TCList instanceof tom.engine.adt.typeconstraints.types.TypeConstraintList) ) {if ( (((( tom.engine.adt.typeconstraints.types.TypeConstraintList )TCList) instanceof tom.engine.adt.typeconstraints.types.typeconstraintlist.ConsconcTypeConstraint) || ((( tom.engine.adt.typeconstraints.types.TypeConstraintList )TCList) instanceof tom.engine.adt.typeconstraints.types.typeconstraintlist.EmptyconcTypeConstraint)) ) {if (!( (( tom.engine.adt.typeconstraints.types.TypeConstraintList )TCList).isEmptyconcTypeConstraint() )) { tom.engine.adt.typeconstraints.types.TypeConstraint  tomMatch32_6= (( tom.engine.adt.typeconstraints.types.TypeConstraintList )TCList).getHeadconcTypeConstraint() ;if ( (tomMatch32_6 instanceof tom.engine.adt.typeconstraints.types.typeconstraint.Equation) ) { tom.engine.adt.typeconstraints.types.TypeConstraintList  tom_tailTCList= (( tom.engine.adt.typeconstraints.types.TypeConstraintList )TCList).getTailconcTypeConstraint() ;
-
-        printType( tomMatch32_6.getType1() );
-        System.out.print(" = ");
-        printType( tomMatch32_6.getType2() );
-        if (tom_tailTCList!=  tom.engine.adt.typeconstraints.types.typeconstraintlist.EmptyconcTypeConstraint.make() ) {
-            System.out.print(", "); 
-            printEachConstraint(tom_tailTCList);
-        }
-      }}}}}}
-
+  
+  private static   tom.engine.adt.tomconstraint.types.Constraint  tom_append_list_OrConstraint( tom.engine.adt.tomconstraint.types.Constraint  l1,  tom.engine.adt.tomconstraint.types.Constraint  l2) {
+    if( l1.isEmptyOrConstraint() ) {
+      return l2;
+    } else if( l2.isEmptyOrConstraint() ) {
+      return l1;
+    } else if( ((l1 instanceof tom.engine.adt.tomconstraint.types.constraint.ConsOrConstraint) || (l1 instanceof tom.engine.adt.tomconstraint.types.constraint.EmptyOrConstraint)) ) {
+      if(  l1.getTailOrConstraint() .isEmptyOrConstraint() ) {
+        return  tom.engine.adt.tomconstraint.types.constraint.ConsOrConstraint.make( l1.getHeadOrConstraint() ,l2) ;
+      } else {
+        return  tom.engine.adt.tomconstraint.types.constraint.ConsOrConstraint.make( l1.getHeadOrConstraint() ,tom_append_list_OrConstraint( l1.getTailOrConstraint() ,l2)) ;
+      }
+    } else {
+      return  tom.engine.adt.tomconstraint.types.constraint.ConsOrConstraint.make(l1,l2) ;
+    }
   }
-    
-  public void printType(TomType type) {
-    System.out.print(type);
+  private static   tom.engine.adt.tomconstraint.types.Constraint  tom_get_slice_OrConstraint( tom.engine.adt.tomconstraint.types.Constraint  begin,  tom.engine.adt.tomconstraint.types.Constraint  end, tom.engine.adt.tomconstraint.types.Constraint  tail) {
+    if( (begin==end) ) {
+      return tail;
+    } else if( (end==tail)  && ( end.isEmptyOrConstraint()  ||  (end== tom.engine.adt.tomconstraint.types.constraint.EmptyOrConstraint.make() ) )) {
+      /* code to avoid a call to make, and thus to avoid looping during list-matching */
+      return begin;
+    }
+    return  tom.engine.adt.tomconstraint.types.constraint.ConsOrConstraint.make((( ((begin instanceof tom.engine.adt.tomconstraint.types.constraint.ConsOrConstraint) || (begin instanceof tom.engine.adt.tomconstraint.types.constraint.EmptyOrConstraint)) )? begin.getHeadOrConstraint() :begin),( tom.engine.adt.tomconstraint.types.Constraint )tom_get_slice_OrConstraint((( ((begin instanceof tom.engine.adt.tomconstraint.types.constraint.ConsOrConstraint) || (begin instanceof tom.engine.adt.tomconstraint.types.constraint.EmptyOrConstraint)) )? begin.getTailOrConstraint() : tom.engine.adt.tomconstraint.types.constraint.EmptyOrConstraint.make() ),end,tail)) ;
   }
+  
+  private static   tom.engine.adt.tomconstraint.types.ConstraintList  tom_append_list_concConstraint( tom.engine.adt.tomconstraint.types.ConstraintList l1,  tom.engine.adt.tomconstraint.types.ConstraintList  l2) {
+    if( l1.isEmptyconcConstraint() ) {
+      return l2;
+    } else if( l2.isEmptyconcConstraint() ) {
+      return l1;
+    } else if(  l1.getTailconcConstraint() .isEmptyconcConstraint() ) {
+      return  tom.engine.adt.tomconstraint.types.constraintlist.ConsconcConstraint.make( l1.getHeadconcConstraint() ,l2) ;
+    } else {
+      return  tom.engine.adt.tomconstraint.types.constraintlist.ConsconcConstraint.make( l1.getHeadconcConstraint() ,tom_append_list_concConstraint( l1.getTailconcConstraint() ,l2)) ;
+    }
+  }
+  private static   tom.engine.adt.tomconstraint.types.ConstraintList  tom_get_slice_concConstraint( tom.engine.adt.tomconstraint.types.ConstraintList  begin,  tom.engine.adt.tomconstraint.types.ConstraintList  end, tom.engine.adt.tomconstraint.types.ConstraintList  tail) {
+    if( (begin==end) ) {
+      return tail;
+    } else if( (end==tail)  && ( end.isEmptyconcConstraint()  ||  (end== tom.engine.adt.tomconstraint.types.constraintlist.EmptyconcConstraint.make() ) )) {
+      /* code to avoid a call to make, and thus to avoid looping during list-matching */
+      return begin;
+    }
+    return  tom.engine.adt.tomconstraint.types.constraintlist.ConsconcConstraint.make( begin.getHeadconcConstraint() ,( tom.engine.adt.tomconstraint.types.ConstraintList )tom_get_slice_concConstraint( begin.getTailconcConstraint() ,end,tail)) ;
+  }
+  
+
+private static Logger logger = Logger.getLogger("tom.engine.typer.NewKernelTyper");
+
+
+
+
+private int freshTypeVarCounter;
+private int limTVarSymbolTable;
+
+/*
+* pem: why use a state variable here ?
+*/
+// List for variables of pattern (match constraints)
+private TomList varPatternList;
+// List for variables of subject and of numeric constraints
+private BQTermList varList;
+/*
+* pem: why use a state variable here ?
+*/
+// List for type constraints (for fresh type variables)
+private TypeConstraintList typeConstraints;
+// Set of pairs (freshVar,groundVar)
+private HashMap<TomType,TomType> substitutions;
+
+private SymbolTable symbolTable;
+
+private String currentInputFileName;
+private boolean lazyType = false;
+
+protected void setLazyType() {
+lazyType = true;
+}
+
+protected void setSymbolTable(SymbolTable symbolTable) {
+this.symbolTable = symbolTable;
+}
+
+protected SymbolTable getSymbolTable() {
+return symbolTable;
+}
+
+protected void setCurrentInputFileName(String currentInputFileName) {
+this.currentInputFileName = currentInputFileName;
+}
+
+protected String getCurrentInputFileName() {
+return currentInputFileName;
+}
+protected TomType getCodomain(TomSymbol tSymbol) {
+return TomBase.getSymbolCodomain(tSymbol);
+}
+
+protected TomSymbol getSymbolFromTerm(TomTerm tTerm) {
+return TomBase.getSymbolFromTerm(tTerm, symbolTable);
+}
+
+protected TomSymbol getSymbolFromTerm(BQTerm bqTerm) {
+return TomBase.getSymbolFromTerm(bqTerm,symbolTable);
+}
+
+protected TomSymbol getSymbolFromName(String tName) {
+return TomBase.getSymbolFromName(tName, symbolTable);
+}
+
+protected TomSymbol getSymbolFromType(TomType tType) {
+
+{
+{
+if ( (tType instanceof tom.engine.adt.tomtype.types.TomType) ) {
+if ( ((( tom.engine.adt.tomtype.types.TomType )tType) instanceof tom.engine.adt.tomtype.types.tomtype.TypeWithSymbol) ) {
+
+return TomBase.getSymbolFromType(
+ tom.engine.adt.tomtype.types.tomtype.Type.make( (( tom.engine.adt.tomtype.types.TomType )tType).getTomType() ,  (( tom.engine.adt.tomtype.types.TomType )tType).getTlType() ) , symbolTable); 
+
+
+}
+}
+
+}
+
+}
+
+return TomBase.getSymbolFromType(tType,symbolTable); 
+}
+
+// TO VERIFY: how to test if a term has an undeclared type? Maybe verifying if
+// a term has type Type(name,EmptyTargetLanguage()), where name is not
+// UNKNOWN_TYPE. So we verify the subjects of %match but, which BQTerm we need to
+// treat?
+
+protected void hasUndeclaredType(BQTerm subject) {
+String fileName = currentInputFileName;
+int line = 0;
+//DEBUG System.out.println("hasUndeclaredType: subject = " + subject);
+
+{
+{
+if ( (subject instanceof tom.engine.adt.code.types.BQTerm) ) {
+boolean tomMatch284_8= false ;
+ tom.engine.adt.tomoption.types.OptionList  tomMatch284_2= null ;
+ tom.engine.adt.tomtype.types.TomType  tomMatch284_3= null ;
+if ( ((( tom.engine.adt.code.types.BQTerm )subject) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {
+{
+tomMatch284_8= true ;
+tomMatch284_2= (( tom.engine.adt.code.types.BQTerm )subject).getOptions() ;
+tomMatch284_3= (( tom.engine.adt.code.types.BQTerm )subject).getAstType() ;
+
+}
+} else {
+if ( ((( tom.engine.adt.code.types.BQTerm )subject) instanceof tom.engine.adt.code.types.bqterm.BQVariableStar) ) {
+{
+tomMatch284_8= true ;
+tomMatch284_2= (( tom.engine.adt.code.types.BQTerm )subject).getOptions() ;
+tomMatch284_3= (( tom.engine.adt.code.types.BQTerm )subject).getAstType() ;
+
+}
+}
+}
+if (tomMatch284_8) {
+ tom.engine.adt.tomtype.types.TomType  tom_aType=tomMatch284_3;
+if ( (tom_aType instanceof tom.engine.adt.tomtype.types.TomType) ) {
+if ( ((( tom.engine.adt.tomtype.types.TomType )tom_aType) instanceof tom.engine.adt.tomtype.types.tomtype.TypeVar) ) {
+ String  tom_tomType= (( tom.engine.adt.tomtype.types.TomType )tom_aType).getTomType() ;
+if (!( symbolTable.TYPE_UNKNOWN.getTomType().equals(tom_tomType) )) {
+
+Option option = TomBase.findOriginTracking(
+tomMatch284_2);
+
+{
+{
+if ( (option instanceof tom.engine.adt.tomoption.types.Option) ) {
+boolean tomMatch285_2= false ;
+if ( ((( tom.engine.adt.tomoption.types.Option )option) instanceof tom.engine.adt.tomoption.types.option.noOption) ) {
+tomMatch285_2= true ;
+}
+if (!(tomMatch285_2)) {
+
+fileName = option.getFileName();
+line = option.getLine();
+TomMessage.error(logger, fileName, 
+line, TomMessage.unknownSymbol,
+tom_tomType);
+
+
+}
+
+}
+
+}
+
+}
+
+
+
+}
+}
+}
+}
+
+}
+
+}
+
+}
+
+}
+
+
+//TO VERIFY : if we can replace the pattern by a "x" and do
+//"x.getAstName().getString()"
+protected TomType getType(BQTerm bqTerm) {
+
+{
+{
+if ( (bqTerm instanceof tom.engine.adt.code.types.BQTerm) ) {
+boolean tomMatch286_3= false ;
+ tom.engine.adt.tomtype.types.TomType  tomMatch286_1= null ;
+if ( ((( tom.engine.adt.code.types.BQTerm )bqTerm) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {
+{
+tomMatch286_3= true ;
+tomMatch286_1= (( tom.engine.adt.code.types.BQTerm )bqTerm).getAstType() ;
+
+}
+} else {
+if ( ((( tom.engine.adt.code.types.BQTerm )bqTerm) instanceof tom.engine.adt.code.types.bqterm.BQVariableStar) ) {
+{
+tomMatch286_3= true ;
+tomMatch286_1= (( tom.engine.adt.code.types.BQTerm )bqTerm).getAstType() ;
+
+}
+} else {
+if ( ((( tom.engine.adt.code.types.BQTerm )bqTerm) instanceof tom.engine.adt.code.types.bqterm.FunctionCall) ) {
+{
+tomMatch286_3= true ;
+tomMatch286_1= (( tom.engine.adt.code.types.BQTerm )bqTerm).getAstType() ;
+
+}
+}
+}
+}
+if (tomMatch286_3) {
+return 
+tomMatch286_1; 
+
+}
+
+}
+
+}
+{
+if ( (bqTerm instanceof tom.engine.adt.code.types.BQTerm) ) {
+boolean tomMatch286_9= false ;
+ tom.engine.adt.tomname.types.TomName  tomMatch286_5= null ;
+if ( ((( tom.engine.adt.code.types.BQTerm )bqTerm) instanceof tom.engine.adt.code.types.bqterm.BQAppl) ) {
+{
+tomMatch286_9= true ;
+tomMatch286_5= (( tom.engine.adt.code.types.BQTerm )bqTerm).getAstName() ;
+
+}
+} else {
+if ( ((( tom.engine.adt.code.types.BQTerm )bqTerm) instanceof tom.engine.adt.code.types.bqterm.BuildConstant) ) {
+{
+tomMatch286_9= true ;
+tomMatch286_5= (( tom.engine.adt.code.types.BQTerm )bqTerm).getAstName() ;
+
+}
+} else {
+if ( ((( tom.engine.adt.code.types.BQTerm )bqTerm) instanceof tom.engine.adt.code.types.bqterm.BuildTerm) ) {
+{
+tomMatch286_9= true ;
+tomMatch286_5= (( tom.engine.adt.code.types.BQTerm )bqTerm).getAstName() ;
+
+}
+} else {
+if ( ((( tom.engine.adt.code.types.BQTerm )bqTerm) instanceof tom.engine.adt.code.types.bqterm.BuildEmptyList) ) {
+{
+tomMatch286_9= true ;
+tomMatch286_5= (( tom.engine.adt.code.types.BQTerm )bqTerm).getAstName() ;
+
+}
+} else {
+if ( ((( tom.engine.adt.code.types.BQTerm )bqTerm) instanceof tom.engine.adt.code.types.bqterm.BuildConsList) ) {
+{
+tomMatch286_9= true ;
+tomMatch286_5= (( tom.engine.adt.code.types.BQTerm )bqTerm).getAstName() ;
+
+}
+} else {
+if ( ((( tom.engine.adt.code.types.BQTerm )bqTerm) instanceof tom.engine.adt.code.types.bqterm.BuildAppendList) ) {
+{
+tomMatch286_9= true ;
+tomMatch286_5= (( tom.engine.adt.code.types.BQTerm )bqTerm).getAstName() ;
+
+}
+} else {
+if ( ((( tom.engine.adt.code.types.BQTerm )bqTerm) instanceof tom.engine.adt.code.types.bqterm.BuildEmptyArray) ) {
+{
+tomMatch286_9= true ;
+tomMatch286_5= (( tom.engine.adt.code.types.BQTerm )bqTerm).getAstName() ;
+
+}
+} else {
+if ( ((( tom.engine.adt.code.types.BQTerm )bqTerm) instanceof tom.engine.adt.code.types.bqterm.BuildConsArray) ) {
+{
+tomMatch286_9= true ;
+tomMatch286_5= (( tom.engine.adt.code.types.BQTerm )bqTerm).getAstName() ;
+
+}
+} else {
+if ( ((( tom.engine.adt.code.types.BQTerm )bqTerm) instanceof tom.engine.adt.code.types.bqterm.BuildAppendArray) ) {
+{
+tomMatch286_9= true ;
+tomMatch286_5= (( tom.engine.adt.code.types.BQTerm )bqTerm).getAstName() ;
+
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+if (tomMatch286_9) {
+if ( (tomMatch286_5 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+
+TomSymbol tSymbol = getSymbolFromName(
+ tomMatch286_5.getString() );
+return getCodomain(tSymbol);
+
+
+}
+}
+
+}
+
+}
+
+
+}
+
+throw new TomRuntimeException("getType(BQTerm): should not be here.");
+}
+
+protected TomType getType(TomTerm tTerm) {
+
+{
+{
+if ( (tTerm instanceof tom.engine.adt.tomterm.types.TomTerm) ) {
+if ( ((( tom.engine.adt.tomterm.types.TomTerm )tTerm) instanceof tom.engine.adt.tomterm.types.tomterm.AntiTerm) ) {
+return getType(
+ (( tom.engine.adt.tomterm.types.TomTerm )tTerm).getTomTerm() ); 
+
+}
+}
+
+}
+{
+if ( (tTerm instanceof tom.engine.adt.tomterm.types.TomTerm) ) {
+boolean tomMatch287_6= false ;
+ tom.engine.adt.tomtype.types.TomType  tomMatch287_4= null ;
+if ( ((( tom.engine.adt.tomterm.types.TomTerm )tTerm) instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) {
+{
+tomMatch287_6= true ;
+tomMatch287_4= (( tom.engine.adt.tomterm.types.TomTerm )tTerm).getAstType() ;
+
+}
+} else {
+if ( ((( tom.engine.adt.tomterm.types.TomTerm )tTerm) instanceof tom.engine.adt.tomterm.types.tomterm.VariableStar) ) {
+{
+tomMatch287_6= true ;
+tomMatch287_4= (( tom.engine.adt.tomterm.types.TomTerm )tTerm).getAstType() ;
+
+}
+}
+}
+if (tomMatch287_6) {
+return 
+tomMatch287_4; 
+
+}
+
+}
+
+}
+{
+if ( (tTerm instanceof tom.engine.adt.tomterm.types.TomTerm) ) {
+if ( ((( tom.engine.adt.tomterm.types.TomTerm )tTerm) instanceof tom.engine.adt.tomterm.types.tomterm.RecordAppl) ) {
+ tom.engine.adt.tomname.types.TomNameList  tomMatch287_8= (( tom.engine.adt.tomterm.types.TomTerm )tTerm).getNameList() ;
+if ( ((tomMatch287_8 instanceof tom.engine.adt.tomname.types.tomnamelist.ConsconcTomName) || (tomMatch287_8 instanceof tom.engine.adt.tomname.types.tomnamelist.EmptyconcTomName)) ) {
+if (!( tomMatch287_8.isEmptyconcTomName() )) {
+ tom.engine.adt.tomname.types.TomName  tomMatch287_14= tomMatch287_8.getHeadconcTomName() ;
+if ( (tomMatch287_14 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+
+TomSymbol tSymbol = getSymbolFromName(
+ tomMatch287_14.getString() );
+return getCodomain(tSymbol);
+
+
+}
+}
+}
+}
+}
+
+}
+
+
+}
+
+throw new TomRuntimeException("getType(TomTerm): should not be here.");
+}
+
+//TO VERIFY : getAstName and getOption
+protected Info getInfoFromTomTerm(TomTerm tTerm) {
+
+{
+{
+if ( (tTerm instanceof tom.engine.adt.tomterm.types.TomTerm) ) {
+if ( ((( tom.engine.adt.tomterm.types.TomTerm )tTerm) instanceof tom.engine.adt.tomterm.types.tomterm.AntiTerm) ) {
+return getInfoFromTomTerm(
+ (( tom.engine.adt.tomterm.types.TomTerm )tTerm).getTomTerm() ); 
+
+}
+}
+
+}
+{
+if ( (tTerm instanceof tom.engine.adt.tomterm.types.TomTerm) ) {
+boolean tomMatch288_7= false ;
+ tom.engine.adt.tomname.types.TomName  tomMatch288_5= null ;
+ tom.engine.adt.tomoption.types.OptionList  tomMatch288_4= null ;
+if ( ((( tom.engine.adt.tomterm.types.TomTerm )tTerm) instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) {
+{
+tomMatch288_7= true ;
+tomMatch288_4= (( tom.engine.adt.tomterm.types.TomTerm )tTerm).getOptions() ;
+tomMatch288_5= (( tom.engine.adt.tomterm.types.TomTerm )tTerm).getAstName() ;
+
+}
+} else {
+if ( ((( tom.engine.adt.tomterm.types.TomTerm )tTerm) instanceof tom.engine.adt.tomterm.types.tomterm.VariableStar) ) {
+{
+tomMatch288_7= true ;
+tomMatch288_4= (( tom.engine.adt.tomterm.types.TomTerm )tTerm).getOptions() ;
+tomMatch288_5= (( tom.engine.adt.tomterm.types.TomTerm )tTerm).getAstName() ;
+
+}
+}
+}
+if (tomMatch288_7) {
+
+return 
+ tom.engine.adt.typeconstraints.types.info.PairNameOptions.make(tomMatch288_5, tomMatch288_4) ; 
+
+
+}
+
+}
+
+}
+{
+if ( (tTerm instanceof tom.engine.adt.tomterm.types.TomTerm) ) {
+if ( ((( tom.engine.adt.tomterm.types.TomTerm )tTerm) instanceof tom.engine.adt.tomterm.types.tomterm.RecordAppl) ) {
+ tom.engine.adt.tomname.types.TomNameList  tomMatch288_10= (( tom.engine.adt.tomterm.types.TomTerm )tTerm).getNameList() ;
+if ( ((tomMatch288_10 instanceof tom.engine.adt.tomname.types.tomnamelist.ConsconcTomName) || (tomMatch288_10 instanceof tom.engine.adt.tomname.types.tomnamelist.EmptyconcTomName)) ) {
+if (!( tomMatch288_10.isEmptyconcTomName() )) {
+
+return 
+ tom.engine.adt.typeconstraints.types.info.PairNameOptions.make( tomMatch288_10.getHeadconcTomName() ,  (( tom.engine.adt.tomterm.types.TomTerm )tTerm).getOptions() ) ; 
+
+
+}
+}
+}
+}
+
+}
+
+
+}
+
+return 
+ tom.engine.adt.typeconstraints.types.info.PairNameOptions.make( tom.engine.adt.tomname.types.tomname.Name.make("") ,  tom.engine.adt.tomoption.types.optionlist.EmptyconcOption.make() ) ; 
+}
+
+protected Info getInfoFromBQTerm(BQTerm bqTerm) {
+
+{
+{
+if ( (bqTerm instanceof tom.engine.adt.code.types.BQTerm) ) {
+boolean tomMatch289_4= false ;
+ tom.engine.adt.tomoption.types.OptionList  tomMatch289_1= null ;
+ tom.engine.adt.tomname.types.TomName  tomMatch289_2= null ;
+if ( ((( tom.engine.adt.code.types.BQTerm )bqTerm) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {
+{
+tomMatch289_4= true ;
+tomMatch289_1= (( tom.engine.adt.code.types.BQTerm )bqTerm).getOptions() ;
+tomMatch289_2= (( tom.engine.adt.code.types.BQTerm )bqTerm).getAstName() ;
+
+}
+} else {
+if ( ((( tom.engine.adt.code.types.BQTerm )bqTerm) instanceof tom.engine.adt.code.types.bqterm.BQVariableStar) ) {
+{
+tomMatch289_4= true ;
+tomMatch289_1= (( tom.engine.adt.code.types.BQTerm )bqTerm).getOptions() ;
+tomMatch289_2= (( tom.engine.adt.code.types.BQTerm )bqTerm).getAstName() ;
+
+}
+} else {
+if ( ((( tom.engine.adt.code.types.BQTerm )bqTerm) instanceof tom.engine.adt.code.types.bqterm.BQAppl) ) {
+{
+tomMatch289_4= true ;
+tomMatch289_1= (( tom.engine.adt.code.types.BQTerm )bqTerm).getOptions() ;
+tomMatch289_2= (( tom.engine.adt.code.types.BQTerm )bqTerm).getAstName() ;
+
+}
+}
+}
+}
+if (tomMatch289_4) {
+
+return 
+ tom.engine.adt.typeconstraints.types.info.PairNameOptions.make(tomMatch289_2, tomMatch289_1) ; 
+
+
+}
+
+}
+
+}
+
+}
+
+return 
+ tom.engine.adt.typeconstraints.types.info.PairNameOptions.make( tom.engine.adt.tomname.types.tomname.Name.make("") ,  tom.engine.adt.tomoption.types.optionlist.EmptyconcOption.make() ) ; 
+}
+
+protected void setLimTVarSymbolTable(int freshTVarSymbolTable) {
+limTVarSymbolTable = freshTVarSymbolTable;
+}
+
+protected int getFreshTlTIndex() {
+return freshTypeVarCounter++;
+}
+
+protected TomType getUnknownFreshTypeVar() {
+TomType tType = symbolTable.TYPE_UNKNOWN;
+
+{
+{
+if ( (tType instanceof tom.engine.adt.tomtype.types.TomType) ) {
+if ( ((( tom.engine.adt.tomtype.types.TomType )tType) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {
+return 
+ tom.engine.adt.tomtype.types.tomtype.TypeVar.make( (( tom.engine.adt.tomtype.types.TomType )tType).getTomType() , getFreshTlTIndex()) ; 
+
+}
+}
+
+}
+
+}
+
+throw new TomRuntimeException("getUnknownFreshTypeVar: should not be here.");
+}
+
+/*
+* pem: use if(...==... && typeConstraints.contains(...))
+*/
+protected void addConstraint(TypeConstraint tConstraint) {
+
+{
+{
+if ( (typeConstraints instanceof tom.engine.adt.typeconstraints.types.TypeConstraintList) ) {
+if ( (tConstraint instanceof tom.engine.adt.typeconstraints.types.TypeConstraint) ) {
+ tom.engine.adt.typeconstraints.types.TypeConstraint  tom_typeConstraint=(( tom.engine.adt.typeconstraints.types.TypeConstraint )tConstraint);
+boolean tomMatch291_9= false ;
+if ( (((( tom.engine.adt.typeconstraints.types.TypeConstraintList )typeConstraints) instanceof tom.engine.adt.typeconstraints.types.typeconstraintlist.ConsconcTypeConstraint) || ((( tom.engine.adt.typeconstraints.types.TypeConstraintList )typeConstraints) instanceof tom.engine.adt.typeconstraints.types.typeconstraintlist.EmptyconcTypeConstraint)) ) {
+ tom.engine.adt.typeconstraints.types.TypeConstraintList  tomMatch291__end__5=(( tom.engine.adt.typeconstraints.types.TypeConstraintList )typeConstraints);
+do {
+{
+if (!( tomMatch291__end__5.isEmptyconcTypeConstraint() )) {
+if ( (tom_typeConstraint== tomMatch291__end__5.getHeadconcTypeConstraint() ) ) {
+tomMatch291_9= true ;
+}
+}
+if ( tomMatch291__end__5.isEmptyconcTypeConstraint() ) {
+tomMatch291__end__5=(( tom.engine.adt.typeconstraints.types.TypeConstraintList )typeConstraints);
+} else {
+tomMatch291__end__5= tomMatch291__end__5.getTailconcTypeConstraint() ;
+}
+
+}
+} while(!( (tomMatch291__end__5==(( tom.engine.adt.typeconstraints.types.TypeConstraintList )typeConstraints)) ));
+}
+if (!(tomMatch291_9)) {
+{
+{
+if ( (tom_typeConstraint instanceof tom.engine.adt.typeconstraints.types.TypeConstraint) ) {
+if ( ((( tom.engine.adt.typeconstraints.types.TypeConstraint )tom_typeConstraint) instanceof tom.engine.adt.typeconstraints.types.typeconstraint.Equation) ) {
+boolean tomMatch292_7= false ;
+if ( ( (( tom.engine.adt.typeconstraints.types.TypeConstraint )tom_typeConstraint).getType1()  instanceof tom.engine.adt.tomtype.types.tomtype.EmptyType) ) {
+tomMatch292_7= true ;
+}
+if (!(tomMatch292_7)) {
+boolean tomMatch292_6= false ;
+if ( ( (( tom.engine.adt.typeconstraints.types.TypeConstraint )tom_typeConstraint).getType2()  instanceof tom.engine.adt.tomtype.types.tomtype.EmptyType) ) {
+tomMatch292_6= true ;
+}
+if (!(tomMatch292_6)) {
+
+typeConstraints = 
+tom_append_list_concTypeConstraint(typeConstraints, tom.engine.adt.typeconstraints.types.typeconstraintlist.ConsconcTypeConstraint.make(tConstraint, tom.engine.adt.typeconstraints.types.typeconstraintlist.EmptyconcTypeConstraint.make() ) );
+
+
+}
+
+}
+
+}
+}
+
+}
+
+}
+
+
+
+}
+
+}
+}
+
+}
+
+}
+
+}
+
+protected void addTomTerm(TomTerm tTerm) {
+varPatternList = 
+ tom.engine.adt.tomterm.types.tomlist.ConsconcTomTerm.make(tTerm,tom_append_list_concTomTerm(varPatternList, tom.engine.adt.tomterm.types.tomlist.EmptyconcTomTerm.make() )) ;
+}
+
+protected void addTomList(TomList TTList) {
+varPatternList = 
+tom_append_list_concTomTerm(TTList,tom_append_list_concTomTerm(varPatternList, tom.engine.adt.tomterm.types.tomlist.EmptyconcTomTerm.make() ));
+}
+
+protected void addBQTerm(BQTerm bqTerm) {
+varList = 
+ tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make(bqTerm,tom_append_list_concBQTerm(varList, tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() )) ;
+}
+
+protected void addBQTermList(BQTermList BQTList) {
+varList = 
+tom_append_list_concBQTerm(BQTList,tom_append_list_concBQTerm(varList, tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() ));
+}
+
+/**
+* The method <code>resetVarPatternList</code> empties varPatternList after
+* checking if <code>varList</code> contains
+* a corresponding BQTerm in order to remove it from <code>varList</code. too
+*/
+protected void resetVarPatternList() {
+for(TomTerm tTerm: varPatternList.getCollectionconcTomTerm()) {
+
+{
+{
+if ( (tTerm instanceof tom.engine.adt.tomterm.types.TomTerm) ) {
+boolean tomMatch293_14= false ;
+ tom.engine.adt.tomname.types.TomName  tomMatch293_2= null ;
+if ( ((( tom.engine.adt.tomterm.types.TomTerm )tTerm) instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) {
+{
+tomMatch293_14= true ;
+tomMatch293_2= (( tom.engine.adt.tomterm.types.TomTerm )tTerm).getAstName() ;
+
+}
+} else {
+if ( ((( tom.engine.adt.tomterm.types.TomTerm )tTerm) instanceof tom.engine.adt.tomterm.types.tomterm.VariableStar) ) {
+{
+tomMatch293_14= true ;
+tomMatch293_2= (( tom.engine.adt.tomterm.types.TomTerm )tTerm).getAstName() ;
+
+}
+}
+}
+if (tomMatch293_14) {
+if ( (varList instanceof tom.engine.adt.code.types.BQTermList) ) {
+if ( (((( tom.engine.adt.code.types.BQTermList )varList) instanceof tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm) || ((( tom.engine.adt.code.types.BQTermList )varList) instanceof tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm)) ) {
+ tom.engine.adt.code.types.BQTermList  tomMatch293__end__7=(( tom.engine.adt.code.types.BQTermList )varList);
+do {
+{
+if (!( tomMatch293__end__7.isEmptyconcBQTerm() )) {
+ tom.engine.adt.code.types.BQTerm  tomMatch293_11= tomMatch293__end__7.getHeadconcBQTerm() ;
+boolean tomMatch293_13= false ;
+ tom.engine.adt.tomname.types.TomName  tomMatch293_10= null ;
+if ( (tomMatch293_11 instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {
+{
+tomMatch293_13= true ;
+tomMatch293_10= tomMatch293_11.getAstName() ;
+
+}
+} else {
+if ( (tomMatch293_11 instanceof tom.engine.adt.code.types.bqterm.BQVariableStar) ) {
+{
+tomMatch293_13= true ;
+tomMatch293_10= tomMatch293_11.getAstName() ;
+
+}
+}
+}
+if (tomMatch293_13) {
+if ( (tomMatch293_2==tomMatch293_10) ) {
+
+varList = 
+tom_append_list_concBQTerm(tom_get_slice_concBQTerm((( tom.engine.adt.code.types.BQTermList )varList),tomMatch293__end__7, tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() ),tom_append_list_concBQTerm( tomMatch293__end__7.getTailconcBQTerm() , tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() ));
+
+
+}
+}
+
+}
+if ( tomMatch293__end__7.isEmptyconcBQTerm() ) {
+tomMatch293__end__7=(( tom.engine.adt.code.types.BQTermList )varList);
+} else {
+tomMatch293__end__7= tomMatch293__end__7.getTailconcBQTerm() ;
+}
+
+}
+} while(!( (tomMatch293__end__7==(( tom.engine.adt.code.types.BQTermList )varList)) ));
+}
+}
+}
+
+}
+
+}
+
+}
+
+}
+varPatternList = 
+ tom.engine.adt.tomterm.types.tomlist.EmptyconcTomTerm.make() ;
+}
+
+/**
+* The method <code>init</code> empties all global lists and hashMaps which means to
+* empty <code>varPatternList</code>, <code>varList</code>,
+* <code>typeConstraints</code> and <code>substitutions</code>
+*/
+private void init() {
+freshTypeVarCounter = limTVarSymbolTable;
+varPatternList = 
+ tom.engine.adt.tomterm.types.tomlist.EmptyconcTomTerm.make() ;
+varList = 
+ tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() ;
+typeConstraints = 
+ tom.engine.adt.typeconstraints.types.typeconstraintlist.EmptyconcTypeConstraint.make() ;
+substitutions = new HashMap<TomType,TomType>();
+}
+
+private Code collectKnownTypesFromCode(Code subject) {
+try {
+return 
+tom_make_TopDownIdStopOnSuccess(tom_make_CollectKnownTypes(this)).visitLight(subject);
+} catch(tom.library.sl.VisitFailure e) {
+throw new TomRuntimeException("typeUnknownTypes: failure on " + subject);
+}
+}
+
+/*
+* Type(name, EmptyTargetLanguageType()) -> Type(name, foundType) if name in TypeTable
+* Type(name, EmptyTargetLanguageType()) -> TypeVar(name, Index(i)) if name not in TypeTable
+*/
+
+public static class CollectKnownTypes extends tom.library.sl.AbstractStrategyBasic {
+private  NewKernelTyper  nkt;
+public CollectKnownTypes( NewKernelTyper  nkt) {
+super(( new tom.library.sl.Identity() ));
+this.nkt=nkt;
+}
+public  NewKernelTyper  getnkt() {
+return nkt;
+}
+public tom.library.sl.Visitable[] getChildren() {
+tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];
+stratChilds[0] = super.getChildAt(0);
+return stratChilds;}
+public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {
+super.setChildAt(0, children[0]);
+return this;
+}
+public int getChildCount() {
+return 1;
+}
+public tom.library.sl.Visitable getChildAt(int index) {
+switch (index) {
+case 0: return super.getChildAt(0);
+default: throw new IndexOutOfBoundsException();
+}
+}
+public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {
+switch (index) {
+case 0: return super.setChildAt(0, child);
+default: throw new IndexOutOfBoundsException();
+}
+}
+@SuppressWarnings("unchecked")
+public  tom.engine.adt.tomtype.types.TomType  visit_TomType( tom.engine.adt.tomtype.types.TomType  tom__arg, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+{
+{
+if ( (tom__arg instanceof tom.engine.adt.tomtype.types.TomType) ) {
+if ( ((( tom.engine.adt.tomtype.types.TomType )tom__arg) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {
+ String  tom_tomType= (( tom.engine.adt.tomtype.types.TomType )tom__arg).getTomType() ;
+if ( ( (( tom.engine.adt.tomtype.types.TomType )tom__arg).getTlType()  instanceof tom.engine.adt.tomtype.types.targetlanguagetype.EmptyTargetLanguageType) ) {
+
+TomType newType = null;
+newType = nkt.symbolTable.getType(
+tom_tomType);
+if (newType == null) {
+// This happens when :
+// * tomType != unknown type AND (newType == null)
+// * tomType == unknown type
+newType = 
+ tom.engine.adt.tomtype.types.tomtype.TypeVar.make(tom_tomType, nkt.getFreshTlTIndex()) ;
+}
+return newType;
+
+
+}
+}
+}
+
+}
+
+}
+return _visit_TomType(tom__arg,introspector);
+
+}
+@SuppressWarnings("unchecked")
+public  tom.engine.adt.tomtype.types.TomType  _visit_TomType( tom.engine.adt.tomtype.types.TomType  arg, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if (!(( null  == environment))) {
+return (( tom.engine.adt.tomtype.types.TomType )any.visit(environment,introspector));
+} else {
+return any.visitLight(arg,introspector);
+}
+}
+@SuppressWarnings("unchecked")
+public <T> T visitLight(T v, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if ( (v instanceof tom.engine.adt.tomtype.types.TomType) ) {
+return ((T)visit_TomType((( tom.engine.adt.tomtype.types.TomType )v),introspector));
+}
+if (!(( null  == environment))) {
+return ((T)any.visit(environment,introspector));
+} else {
+return any.visitLight(v,introspector);
+}
+
+}
+}
+private static  tom.library.sl.Strategy  tom_make_CollectKnownTypes( NewKernelTyper  t0) { 
+return new CollectKnownTypes(t0);
+}
+
+
+/**
+* The method <code>inferCode</code> starts inference process which takes one
+* <code>%match</code> instruction ("InstructionToCode(Match(...))") at a time
+* <ul>
+*  <li> each "constraintInstructionList" element corresponds to a pair
+*  "condition -> action"
+*  <li> each pair is traversed in order to generate type constraints
+*  <li> the type constraints of "typeConstraints" list are solved at the end
+*        of the current <code>%match</code> instruction generating a mapping (a set of
+*        substitutions for each type variable)
+*  <li> the mapping is applied over the whole <code>%match</code> instruction
+*  <li> all lists and hashMaps are reset
+* </ul>
+* @param code  the tom code to be type inferred
+* @return      the tom typed code
+*/
+public Code inferCode(Code code) {
+init();
+//DEBUG System.out.println("\n Original Code = \n" + code + '\n');
+
+{
+{
+if ( (code instanceof tom.engine.adt.code.types.Code) ) {
+if ( ((( tom.engine.adt.code.types.Code )code) instanceof tom.engine.adt.code.types.code.Tom) ) {
+ tom.engine.adt.code.types.CodeList  tomMatch295_1= (( tom.engine.adt.code.types.Code )code).getCodeList() ;
+if ( ((tomMatch295_1 instanceof tom.engine.adt.code.types.codelist.ConsconcCode) || (tomMatch295_1 instanceof tom.engine.adt.code.types.codelist.EmptyconcCode)) ) {
+if (!( tomMatch295_1.isEmptyconcCode() )) {
+
+CodeList codeResult = 
+ tom.engine.adt.code.types.codelist.EmptyconcCode.make() ;
+for(Code headCodeList : 
+tomMatch295_1.getCollectionconcCode()) {
+//DEBUG System.out.println("In inferCode -- for! headCodeList = " +
+//DEBUG     headCodeList);
+headCodeList = collectKnownTypesFromCode(headCodeList);
+
+{
+{
+if ( (headCodeList instanceof tom.engine.adt.code.types.Code) ) {
+if ( ((( tom.engine.adt.code.types.Code )headCodeList) instanceof tom.engine.adt.code.types.code.InstructionToCode) ) {
+ tom.engine.adt.tominstruction.types.Instruction  tom_instruction= (( tom.engine.adt.code.types.Code )headCodeList).getAstInstruction() ;
+
+try{
+
+tom_instruction= inferAllTypes(
+tom_instruction,getUnknownFreshTypeVar());
+
+headCodeList= 
+ tom.engine.adt.code.types.code.InstructionToCode.make(tom_instruction) ;
+typeConstraints = 
+tom_make_RepeatId(tom_make_solveConstraints(this)).visitLight(typeConstraints);
+} catch(tom.library.sl.VisitFailure e) {
+throw new TomRuntimeException("inferCode: failure on " +
+headCodeList);
+} 
+
+
+}
+}
+
+}
+{
+if ( (headCodeList instanceof tom.engine.adt.code.types.Code) ) {
+if ( ((( tom.engine.adt.code.types.Code )headCodeList) instanceof tom.engine.adt.code.types.code.DeclarationToCode) ) {
+ tom.engine.adt.tomdeclaration.types.Declaration  tom_declaration= (( tom.engine.adt.code.types.Code )headCodeList).getAstDeclaration() ;
+
+try{
+
+tom_declaration= inferAllTypes(
+tom_declaration,getUnknownFreshTypeVar());
+
+headCodeList= 
+ tom.engine.adt.code.types.code.DeclarationToCode.make(tom_declaration) ;
+typeConstraints = 
+tom_make_RepeatId(tom_make_solveConstraints(this)).visitLight(typeConstraints);
+} catch(tom.library.sl.VisitFailure e) {
+throw new TomRuntimeException("inferCode: failure on " +
+headCodeList);
+} 
+
+
+}
+}
+
+}
+
+
+}
+headCodeList= replaceInCode(
+headCodeList);
+codeResult = 
+tom_append_list_concCode(codeResult, tom.engine.adt.code.types.codelist.ConsconcCode.make(headCodeList, tom.engine.adt.code.types.codelist.EmptyconcCode.make() ) );
+replaceInSymbolTable();
+init();
+}
+return 
+ tom.engine.adt.code.types.code.Tom.make(codeResult) ;
+
+
+}
+}
+}
+}
+
+}
+
+}
+
+// If it is a ill-formed code (different from "Tom(...)")
+return code;
+}
+
+private <T extends tom.library.sl.Visitable> T inferAllTypes(T term, TomType
+contextType) {
+try {
+//DEBUG System.out.println("In inferALLTypes with term = " + term);
+return 
+tom_make_TopDownStopOnSuccess(tom_make_inferTypes(contextType,this)).visitLight(term); 
+} catch(tom.library.sl.VisitFailure e) {
+throw new TomRuntimeException("inferAllTypes: failure on " + term);
+}
+
+}
+
+/**
+* The class <code>inferTomTerm</code> is generated from a strategy wich
+* tries to infer types of all variables
+* <p> 
+* It starts by searching for a Instruction
+* <code>Match(constraintInstructionList,option)</code> and calling
+* <code>inferConstraintInstructionList</code> in order to applu rule CT-RULE
+* for each single constraintInstruction
+* <p>
+* It searches for variables and star variables (TomTerms and BQTerms) and
+* applies rule CT-ANTI, CT-VAR, CT-SVAR, CT-FUN,
+* CT-EMPTY, CT-ELEM, CT-MERGE or CT-STAR to a "pattern" (a TomTerm) or a
+* "subject" (a BQTerm) in order to infer its type.
+* <p>
+* CT-ANTI rule:
+* IF found "!(e):A"
+* THEN infers type of e
+* <p>
+* CT-VAR rule (resp. CT-SVAR): 
+* IF found "x:A" (resp. "x*:A") and "x:T" (resp. "x*:T") already exists in SymbolTable 
+* THEN add a type constraint "A = T"
+* <p>
+* CT-FUN rule:
+* IF found "f(e1,...,en):A" and "f:T1,...,Tn->T" exists in SymbolTable
+* THEN infers type of arguments and add a type constraint "A = T" and
+*      calls the TypeVariableList method which adds a type constraint "Ai =
+*      Ti" for each argument, where Ai is a fresh type variable
+* <p>
+* CT-EMPTY rule:
+* IF found "l():AA" and "l:T*->TT" exists in SymbolTable
+* THEN add a type constraint "AA = TT"       
+* <p>
+* CT-ELEM rule:
+* IF found "l(e1,...,en,e):AA" and "l:T*->TT" exists in SymbolTable
+* THEN infers type of both sublist "l(e1,...,en)" and last argument
+*      "e" and adds a type constraint "AA = TT" and calls the
+*      TypeVariableList method which adds a type constraint "A =T"
+*      for the last argument, where A is a fresh type variable and
+*      "e" does not represent a list with head symbol "l"
+* <p>
+* CT-MERGE rule:
+* IF found "l(e1,...,en,e):AA" and "l:T*->TT" exists in SymbolTable
+* THEN infers type of both sublist "l(e1,...,en)" and last argument
+*      "e" and adds a type constraint "AA = TT" and calls the
+*      TypeVariableList method, where "e" represents a list with
+*      head symbol "l"
+* <p>
+* CT-STAR rule:
+* Equals to CT-MERGE but with a star variable "x*" instead of "e"
+* This rule is necessary because it differed from CT-MERGE in the
+* sense of the type of the last argument ("x*" here) is unknown 
+* @param contextType the fresh generated previously and attributed to the term
+* @param nkt an instance of object NewKernelTyper
+*/
+
+public static class inferTypes extends tom.library.sl.AbstractStrategyBasic {
+private  tom.engine.adt.tomtype.types.TomType  contextType;
+private  NewKernelTyper  nkt;
+public inferTypes( tom.engine.adt.tomtype.types.TomType  contextType,  NewKernelTyper  nkt) {
+super(( new tom.library.sl.Fail() ));
+this.contextType=contextType;
+this.nkt=nkt;
+}
+public  tom.engine.adt.tomtype.types.TomType  getcontextType() {
+return contextType;
+}
+public  NewKernelTyper  getnkt() {
+return nkt;
+}
+public tom.library.sl.Visitable[] getChildren() {
+tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];
+stratChilds[0] = super.getChildAt(0);
+return stratChilds;}
+public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {
+super.setChildAt(0, children[0]);
+return this;
+}
+public int getChildCount() {
+return 1;
+}
+public tom.library.sl.Visitable getChildAt(int index) {
+switch (index) {
+case 0: return super.getChildAt(0);
+default: throw new IndexOutOfBoundsException();
+}
+}
+public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {
+switch (index) {
+case 0: return super.setChildAt(0, child);
+default: throw new IndexOutOfBoundsException();
+}
+}
+@SuppressWarnings("unchecked")
+public  tom.engine.adt.tominstruction.types.Instruction  visit_Instruction( tom.engine.adt.tominstruction.types.Instruction  tom__arg, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+{
+{
+if ( (tom__arg instanceof tom.engine.adt.tominstruction.types.Instruction) ) {
+if ( ((( tom.engine.adt.tominstruction.types.Instruction )tom__arg) instanceof tom.engine.adt.tominstruction.types.instruction.Match) ) {
+
+//DEBUG System.out.println("Instruction with term = " + `match);
+BQTermList BQTList = nkt.varList;
+ConstraintInstructionList newCIList =
+nkt.inferConstraintInstructionList(
+ (( tom.engine.adt.tominstruction.types.Instruction )tom__arg).getConstraintInstructionList() );
+nkt.varList = BQTList;
+return 
+ tom.engine.adt.tominstruction.types.instruction.Match.make(newCIList,  (( tom.engine.adt.tominstruction.types.Instruction )tom__arg).getOptions() ) ;
+
+
+}
+}
+
+}
+
+}
+return _visit_Instruction(tom__arg,introspector);
+
+}
+@SuppressWarnings("unchecked")
+public  tom.engine.adt.tomsignature.types.TomVisit  visit_TomVisit( tom.engine.adt.tomsignature.types.TomVisit  tom__arg, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+{
+{
+if ( (tom__arg instanceof tom.engine.adt.tomsignature.types.TomVisit) ) {
+if ( ((( tom.engine.adt.tomsignature.types.TomVisit )tom__arg) instanceof tom.engine.adt.tomsignature.types.tomvisit.VisitTerm) ) {
+
+//DEBUG System.out.println("TomVisit with term = " + `vTerm);
+BQTermList BQTList = nkt.varList;
+ConstraintInstructionList newCIList =
+nkt.inferConstraintInstructionList(
+ (( tom.engine.adt.tomsignature.types.TomVisit )tom__arg).getAstConstraintInstructionList() );
+nkt.varList = BQTList;
+return 
+ tom.engine.adt.tomsignature.types.tomvisit.VisitTerm.make( (( tom.engine.adt.tomsignature.types.TomVisit )tom__arg).getVNode() , newCIList,  (( tom.engine.adt.tomsignature.types.TomVisit )tom__arg).getOptions() ) ;
+
+
+}
+}
+
+}
+
+}
+return _visit_TomVisit(tom__arg,introspector);
+
+}
+@SuppressWarnings("unchecked")
+public  tom.engine.adt.tomterm.types.TomTerm  visit_TomTerm( tom.engine.adt.tomterm.types.TomTerm  tom__arg, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+{
+{
+if ( (tom__arg instanceof tom.engine.adt.tomterm.types.TomTerm) ) {
+if ( ((( tom.engine.adt.tomterm.types.TomTerm )tom__arg) instanceof tom.engine.adt.tomterm.types.tomterm.AntiTerm) ) {
+nkt.inferAllTypes(
+ (( tom.engine.adt.tomterm.types.TomTerm )tom__arg).getTomTerm() ,contextType); 
+
+}
+}
+
+}
+{
+if ( (tom__arg instanceof tom.engine.adt.tomterm.types.TomTerm) ) {
+boolean tomMatch299_9= false ;
+ tom.engine.adt.tomconstraint.types.ConstraintList  tomMatch299_7= null ;
+ tom.engine.adt.tomtype.types.TomType  tomMatch299_6= null ;
+ tom.engine.adt.tomoption.types.OptionList  tomMatch299_4= null ;
+ tom.engine.adt.tomname.types.TomName  tomMatch299_5= null ;
+if ( ((( tom.engine.adt.tomterm.types.TomTerm )tom__arg) instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) {
+{
+tomMatch299_9= true ;
+tomMatch299_4= (( tom.engine.adt.tomterm.types.TomTerm )tom__arg).getOptions() ;
+tomMatch299_5= (( tom.engine.adt.tomterm.types.TomTerm )tom__arg).getAstName() ;
+tomMatch299_6= (( tom.engine.adt.tomterm.types.TomTerm )tom__arg).getAstType() ;
+tomMatch299_7= (( tom.engine.adt.tomterm.types.TomTerm )tom__arg).getConstraints() ;
+
+}
+} else {
+if ( ((( tom.engine.adt.tomterm.types.TomTerm )tom__arg) instanceof tom.engine.adt.tomterm.types.tomterm.VariableStar) ) {
+{
+tomMatch299_9= true ;
+tomMatch299_4= (( tom.engine.adt.tomterm.types.TomTerm )tom__arg).getOptions() ;
+tomMatch299_5= (( tom.engine.adt.tomterm.types.TomTerm )tom__arg).getAstName() ;
+tomMatch299_6= (( tom.engine.adt.tomterm.types.TomTerm )tom__arg).getAstType() ;
+tomMatch299_7= (( tom.engine.adt.tomterm.types.TomTerm )tom__arg).getConstraints() ;
+
+}
+}
+}
+if (tomMatch299_9) {
+ tom.engine.adt.tomconstraint.types.ConstraintList  tom_cList=tomMatch299_7;
+ tom.engine.adt.tomterm.types.TomTerm  tom_var=(( tom.engine.adt.tomterm.types.TomTerm )tom__arg);
+
+//DEBUG System.out.println("InferTypes:TomTerm var = " + `var);
+nkt.checkNonLinearityOfVariables(
+tom_var);
+nkt.addConstraint(
+ tom.engine.adt.typeconstraints.types.typeconstraint.Equation.make(tomMatch299_6, contextType,  tom.engine.adt.typeconstraints.types.info.PairNameOptions.make(tomMatch299_5, tomMatch299_4) ) );  
+//DEBUG System.out.println("InferTypes:TomTerm var -- constraint = " +
+//DEBUG `aType + " = " + contextType);
+
+{
+{
+if ( (tom_cList instanceof tom.engine.adt.tomconstraint.types.ConstraintList) ) {
+if ( (((( tom.engine.adt.tomconstraint.types.ConstraintList )tom_cList) instanceof tom.engine.adt.tomconstraint.types.constraintlist.ConsconcConstraint) || ((( tom.engine.adt.tomconstraint.types.ConstraintList )tom_cList) instanceof tom.engine.adt.tomconstraint.types.constraintlist.EmptyconcConstraint)) ) {
+if (!( (( tom.engine.adt.tomconstraint.types.ConstraintList )tom_cList).isEmptyconcConstraint() )) {
+ tom.engine.adt.tomconstraint.types.Constraint  tomMatch300_4= (( tom.engine.adt.tomconstraint.types.ConstraintList )tom_cList).getHeadconcConstraint() ;
+if ( (tomMatch300_4 instanceof tom.engine.adt.tomconstraint.types.constraint.AliasTo) ) {
+ tom.engine.adt.tomterm.types.TomTerm  tom_boundTerm= tomMatch300_4.getVar() ;
+if (  (( tom.engine.adt.tomconstraint.types.ConstraintList )tom_cList).getTailconcConstraint() .isEmptyconcConstraint() ) {
+
+//DEBUG System.out.println("InferTypes:TomTerm aliasvar -- constraint = " +
+//DEBUG   nkt.getType(`boundTerm) + " = " + `contextType);
+// TODO : boundTerm.getAstType()
+nkt.addConstraint(
+ tom.engine.adt.typeconstraints.types.typeconstraint.Equation.make(nkt.getType(tom_boundTerm), contextType, nkt.getInfoFromTomTerm(tom_boundTerm)) ); 
+
+}
+}
+}
+}
+}
+
+}
+
+}
+
+return 
+tom_var;
+
+
+}
+
+}
+
+}
+{
+if ( (tom__arg instanceof tom.engine.adt.tomterm.types.TomTerm) ) {
+if ( ((( tom.engine.adt.tomterm.types.TomTerm )tom__arg) instanceof tom.engine.adt.tomterm.types.tomterm.RecordAppl) ) {
+ tom.engine.adt.tomname.types.TomNameList  tomMatch299_12= (( tom.engine.adt.tomterm.types.TomTerm )tom__arg).getNameList() ;
+ tom.engine.adt.tomoption.types.OptionList  tom_optionList= (( tom.engine.adt.tomterm.types.TomTerm )tom__arg).getOptions() ;
+if ( ((tomMatch299_12 instanceof tom.engine.adt.tomname.types.tomnamelist.ConsconcTomName) || (tomMatch299_12 instanceof tom.engine.adt.tomname.types.tomnamelist.EmptyconcTomName)) ) {
+ tom.engine.adt.tomname.types.TomNameList  tom_nList=tomMatch299_12;
+if (!( tomMatch299_12.isEmptyconcTomName() )) {
+ tom.engine.adt.tomname.types.TomName  tomMatch299_20= tomMatch299_12.getHeadconcTomName() ;
+if ( (tomMatch299_20 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+ tom.engine.adt.tomslot.types.SlotList  tom_sList= (( tom.engine.adt.tomterm.types.TomTerm )tom__arg).getSlots() ;
+ tom.engine.adt.tomconstraint.types.ConstraintList  tom_cList= (( tom.engine.adt.tomterm.types.TomTerm )tom__arg).getConstraints() ;
+
+// In case of a String, tomName is "" for ("a","b")
+TomSymbol tSymbol = nkt.getSymbolFromName(
+ tomMatch299_20.getString() );
+
+
+// IF_1
+if (tSymbol == null) {
+//The contextType is used here, so it must be a ground type, not a
+//type variable
+//DEBUG System.out.println("visit contextType = " + contextType);
+tSymbol = nkt.getSymbolFromType(contextType);
+
+// IF_2
+if (tSymbol != null) {
+// In case of contextType is "TypeVar(name,i)"
+
+tom_nList= 
+ tom.engine.adt.tomname.types.tomnamelist.ConsconcTomName.make(tSymbol.getAstName(), tom.engine.adt.tomname.types.tomnamelist.EmptyconcTomName.make() ) ;
+} 
+}
+//DEBUG System.out.println("\n Test pour TomTerm-inferTypes in RecordAppl. tSymbol = " + `tSymbol);
+//DEBUG System.out.println("\n Test pour TomTerm-inferTypes in RecordAppl. astName = " +`concTomName(tSymbol.getAstName()));
+//DEBUG System.out.println("\n Test pour TomTerm-inferTypes in RecordAppl.
+//tSymbol = " + tSymbol);
+
+
+{
+{
+if ( (tom_cList instanceof tom.engine.adt.tomconstraint.types.ConstraintList) ) {
+if ( (((( tom.engine.adt.tomconstraint.types.ConstraintList )tom_cList) instanceof tom.engine.adt.tomconstraint.types.constraintlist.ConsconcConstraint) || ((( tom.engine.adt.tomconstraint.types.ConstraintList )tom_cList) instanceof tom.engine.adt.tomconstraint.types.constraintlist.EmptyconcConstraint)) ) {
+if (!( (( tom.engine.adt.tomconstraint.types.ConstraintList )tom_cList).isEmptyconcConstraint() )) {
+ tom.engine.adt.tomconstraint.types.Constraint  tomMatch301_4= (( tom.engine.adt.tomconstraint.types.ConstraintList )tom_cList).getHeadconcConstraint() ;
+if ( (tomMatch301_4 instanceof tom.engine.adt.tomconstraint.types.constraint.AliasTo) ) {
+ tom.engine.adt.tomterm.types.TomTerm  tom_boundTerm= tomMatch301_4.getVar() ;
+if (  (( tom.engine.adt.tomconstraint.types.ConstraintList )tom_cList).getTailconcConstraint() .isEmptyconcConstraint() ) {
+
+//DEBUG System.out.println("InferTypes:TomTerm aliasrecordappl -- constraint = " +
+//DEBUG     nkt.getType(`boundTerm) + " = " + contextType);
+nkt.addConstraint(
+ tom.engine.adt.typeconstraints.types.typeconstraint.Equation.make(nkt.getType(tom_boundTerm), contextType, nkt.getInfoFromTomTerm(tom_boundTerm)) ); 
+
+}
+}
+}
+}
+}
+
+}
+
+}
+
+
+TomType codomain = contextType;
+
+// IF_3
+if (tSymbol == null) {
+//DEBUG System.out.println("tSymbol is still null!");
+tSymbol = 
+ tom.engine.adt.tomsignature.types.tomsymbol.EmptySymbol.make() ;
+} else {
+// This code can not be moved to IF_2 because tSymbol may be not "null
+// since the begginning and then does not enter into neither IF_1 nor
+// IF_2
+codomain = nkt.getCodomain(tSymbol);
+//DEBUG System.out.println("\n Test pour TomTerm-inferTypes in RecordAppl. codomain = " + codomain);
+nkt.addConstraint(
+ tom.engine.adt.typeconstraints.types.typeconstraint.Equation.make(codomain, contextType,  tom.engine.adt.typeconstraints.types.info.PairNameOptions.make( tomMatch299_12.getHeadconcTomName() , tom_optionList) ) );
+//DEBUG System.out.println("InferTypes:TomTerm recordappl -- constraint" + codomain + " = " + contextType);
+}
+
+SlotList newSList = 
+ tom.engine.adt.tomslot.types.slotlist.EmptyconcSlot.make() ;
+if (!
+tom_sList.isEmptyconcSlot()) {
+
+newSList= nkt.inferSlotList(
+tom_sList,tSymbol,codomain);
+}
+return 
+ tom.engine.adt.tomterm.types.tomterm.RecordAppl.make(tom_optionList, tom_nList, newSList, tom_cList) ;
+
+
+}
+}
+}
+}
+}
+
+}
+
+
+}
+return _visit_TomTerm(tom__arg,introspector);
+
+}
+@SuppressWarnings("unchecked")
+public  tom.engine.adt.code.types.BQTerm  visit_BQTerm( tom.engine.adt.code.types.BQTerm  tom__arg, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+{
+{
+if ( (tom__arg instanceof tom.engine.adt.code.types.BQTerm) ) {
+if ( (((( tom.engine.adt.code.types.BQTerm )tom__arg) instanceof tom.engine.adt.code.types.bqterm.ConsComposite) || ((( tom.engine.adt.code.types.BQTerm )tom__arg) instanceof tom.engine.adt.code.types.bqterm.EmptyComposite)) ) {
+contextType = 
+ tom.engine.adt.tomtype.types.tomtype.EmptyType.make() ; 
+
+}
+}
+
+}
+{
+if ( (tom__arg instanceof tom.engine.adt.code.types.BQTerm) ) {
+boolean tomMatch302_8= false ;
+ tom.engine.adt.tomoption.types.OptionList  tomMatch302_4= null ;
+ tom.engine.adt.tomname.types.TomName  tomMatch302_5= null ;
+ tom.engine.adt.tomtype.types.TomType  tomMatch302_6= null ;
+if ( ((( tom.engine.adt.code.types.BQTerm )tom__arg) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {
+{
+tomMatch302_8= true ;
+tomMatch302_4= (( tom.engine.adt.code.types.BQTerm )tom__arg).getOptions() ;
+tomMatch302_5= (( tom.engine.adt.code.types.BQTerm )tom__arg).getAstName() ;
+tomMatch302_6= (( tom.engine.adt.code.types.BQTerm )tom__arg).getAstType() ;
+
+}
+} else {
+if ( ((( tom.engine.adt.code.types.BQTerm )tom__arg) instanceof tom.engine.adt.code.types.bqterm.BQVariableStar) ) {
+{
+tomMatch302_8= true ;
+tomMatch302_4= (( tom.engine.adt.code.types.BQTerm )tom__arg).getOptions() ;
+tomMatch302_5= (( tom.engine.adt.code.types.BQTerm )tom__arg).getAstName() ;
+tomMatch302_6= (( tom.engine.adt.code.types.BQTerm )tom__arg).getAstType() ;
+
+}
+}
+}
+if (tomMatch302_8) {
+ tom.engine.adt.code.types.BQTerm  tom_bqVar=(( tom.engine.adt.code.types.BQTerm )tom__arg);
+
+//DEBUG System.out.println("InferTypes:BQTerm bqVar -- contextType = " +
+//DEBUG     contextType);
+nkt.checkNonLinearityOfBQVariables(
+tom_bqVar);
+nkt.addConstraint(
+ tom.engine.adt.typeconstraints.types.typeconstraint.Equation.make(tomMatch302_6, contextType,  tom.engine.adt.typeconstraints.types.info.PairNameOptions.make(tomMatch302_5, tomMatch302_4) ) );  
+//DEBUG System.out.println("InferTypes:BQTerm bqVar -- constraint = " +
+//DEBUG `aType + " = " + contextType);
+return 
+tom_bqVar;
+
+
+}
+
+}
+
+}
+{
+if ( (tom__arg instanceof tom.engine.adt.code.types.BQTerm) ) {
+if ( ((( tom.engine.adt.code.types.BQTerm )tom__arg) instanceof tom.engine.adt.code.types.bqterm.BQAppl) ) {
+ tom.engine.adt.tomname.types.TomName  tomMatch302_11= (( tom.engine.adt.code.types.BQTerm )tom__arg).getAstName() ;
+ tom.engine.adt.code.types.BQTermList  tomMatch302_12= (( tom.engine.adt.code.types.BQTerm )tom__arg).getArgs() ;
+if ( (tomMatch302_11 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+if ( "realMake".equals( tomMatch302_11.getString() ) ) {
+if ( ((tomMatch302_12 instanceof tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm) || (tomMatch302_12 instanceof tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm)) ) {
+if (!( tomMatch302_12.isEmptyconcBQTerm() )) {
+ tom.engine.adt.code.types.BQTerm  tomMatch302_21= tomMatch302_12.getHeadconcBQTerm() ;
+if ( (tomMatch302_21 instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {
+ tom.engine.adt.tomname.types.TomName  tomMatch302_20= tomMatch302_21.getAstName() ;
+if ( (tomMatch302_20 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+if ( "head".equals( tomMatch302_20.getString() ) ) {
+ tom.engine.adt.code.types.BQTermList  tomMatch302_18= tomMatch302_12.getTailconcBQTerm() ;
+if (!( tomMatch302_18.isEmptyconcBQTerm() )) {
+ tom.engine.adt.code.types.BQTerm  tomMatch302_26= tomMatch302_18.getHeadconcBQTerm() ;
+if ( (tomMatch302_26 instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {
+ tom.engine.adt.tomname.types.TomName  tomMatch302_25= tomMatch302_26.getAstName() ;
+if ( (tomMatch302_25 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+if ( "tail".equals( tomMatch302_25.getString() ) ) {
+if (  tomMatch302_18.getTailconcBQTerm() .isEmptyconcBQTerm() ) {
+
+TomSymbol tSymbol = nkt.getSymbolFromName("realMake");
+if (tSymbol == null) {
+tSymbol =
+
+ tom.engine.adt.tomsignature.types.tomsymbol.Symbol.make(tomMatch302_11,  tom.engine.adt.tomtype.types.tomtype.TypesToType.make( tom.engine.adt.tomtype.types.tomtypelist.ConsconcTomType.make(contextType, tom.engine.adt.tomtype.types.tomtypelist.EmptyconcTomType.make() ) , contextType) ,  tom.engine.adt.tomslot.types.pairnamedecllist.EmptyconcPairNameDecl.make() ,  (( tom.engine.adt.code.types.BQTerm )tom__arg).getOptions() ) ;
+nkt.symbolTable.putSymbol("realMake",tSymbol);
+}
+return 
+(( tom.engine.adt.code.types.BQTerm )tom__arg);
+
+
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+
+}
+{
+if ( (tom__arg instanceof tom.engine.adt.code.types.BQTerm) ) {
+if ( ((( tom.engine.adt.code.types.BQTerm )tom__arg) instanceof tom.engine.adt.code.types.bqterm.BQAppl) ) {
+ tom.engine.adt.tomname.types.TomName  tomMatch302_32= (( tom.engine.adt.code.types.BQTerm )tom__arg).getAstName() ;
+ tom.engine.adt.tomoption.types.OptionList  tom_optionList= (( tom.engine.adt.code.types.BQTerm )tom__arg).getOptions() ;
+if ( (tomMatch302_32 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+ String  tom_name= tomMatch302_32.getString() ;
+ tom.engine.adt.tomname.types.TomName  tom_aName=tomMatch302_32;
+ tom.engine.adt.code.types.BQTermList  tom_bqTList= (( tom.engine.adt.code.types.BQTerm )tom__arg).getArgs() ;
+
+//DEBUG System.out.println("\n Test pour BQTerm-inferTypes in BQAppl. tomName = " + `name);
+TomSymbol tSymbol = nkt.getSymbolFromName(
+tom_name);
+//DEBUG System.out.println("\n Test pour BQTerm-inferTypes in BQAppl. tSymbol = "+ tSymbol);
+if (tSymbol == null) {
+//The contextType is used here, so it must be a ground type, not a
+//type variable
+//DEBUG System.out.println("visit contextType = " + contextType);
+tSymbol = nkt.getSymbolFromType(contextType);
+if (tSymbol != null && 
+tom_name.equals("")) {
+// In case of contextType is "TypeVar(name,i)"
+
+tom_aName= tSymbol.getAstName();
+}
+}
+
+TomType codomain = contextType;
+if (tSymbol == null) {
+tSymbol = 
+ tom.engine.adt.tomsignature.types.tomsymbol.EmptySymbol.make() ;
+} else {
+codomain = nkt.getCodomain(tSymbol);
+nkt.addConstraint(
+ tom.engine.adt.typeconstraints.types.typeconstraint.Equation.make(codomain, contextType,  tom.engine.adt.typeconstraints.types.info.PairNameOptions.make(tom_aName, tom_optionList) ) );
+//DEBUG System.out.println("InferTypes:BQTerm bqappl -- constraint = "
+//DEBUG + `codomain + " = " + contextType);
+}
+
+BQTermList newBQTList = 
+tom_bqTList;
+if (!
+tom_bqTList.isEmptyconcBQTerm()) {
+//DEBUG System.out.println("\n Test pour BQTerm-inferTypes in BQAppl. bqTList = " + `bqTList);
+newBQTList = nkt.inferBQTermList(
+tom_bqTList,
+tSymbol,codomain);
+}
+
+// TO VERIFY
+
+{
+{
+if ( (tSymbol instanceof tom.engine.adt.tomsignature.types.TomSymbol) ) {
+if ( ((( tom.engine.adt.tomsignature.types.TomSymbol )tSymbol) instanceof tom.engine.adt.tomsignature.types.tomsymbol.EmptySymbol) ) {
+
+return 
+ tom.engine.adt.code.types.bqterm.FunctionCall.make(tom_aName, contextType, newBQTList) ; 
+
+
+}
+}
+
+}
+
+}
+
+return 
+ tom.engine.adt.code.types.bqterm.BQAppl.make(tom_optionList, tom_aName, newBQTList) ;
+
+
+}
+}
+}
+
+}
+
+
+}
+return _visit_BQTerm(tom__arg,introspector);
+
+}
+@SuppressWarnings("unchecked")
+public  tom.engine.adt.tominstruction.types.Instruction  _visit_Instruction( tom.engine.adt.tominstruction.types.Instruction  arg, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if (!(( null  == environment))) {
+return (( tom.engine.adt.tominstruction.types.Instruction )any.visit(environment,introspector));
+} else {
+return any.visitLight(arg,introspector);
+}
+}
+@SuppressWarnings("unchecked")
+public  tom.engine.adt.code.types.BQTerm  _visit_BQTerm( tom.engine.adt.code.types.BQTerm  arg, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if (!(( null  == environment))) {
+return (( tom.engine.adt.code.types.BQTerm )any.visit(environment,introspector));
+} else {
+return any.visitLight(arg,introspector);
+}
+}
+@SuppressWarnings("unchecked")
+public  tom.engine.adt.tomterm.types.TomTerm  _visit_TomTerm( tom.engine.adt.tomterm.types.TomTerm  arg, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if (!(( null  == environment))) {
+return (( tom.engine.adt.tomterm.types.TomTerm )any.visit(environment,introspector));
+} else {
+return any.visitLight(arg,introspector);
+}
+}
+@SuppressWarnings("unchecked")
+public  tom.engine.adt.tomsignature.types.TomVisit  _visit_TomVisit( tom.engine.adt.tomsignature.types.TomVisit  arg, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if (!(( null  == environment))) {
+return (( tom.engine.adt.tomsignature.types.TomVisit )any.visit(environment,introspector));
+} else {
+return any.visitLight(arg,introspector);
+}
+}
+@SuppressWarnings("unchecked")
+public <T> T visitLight(T v, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if ( (v instanceof tom.engine.adt.tominstruction.types.Instruction) ) {
+return ((T)visit_Instruction((( tom.engine.adt.tominstruction.types.Instruction )v),introspector));
+}
+if ( (v instanceof tom.engine.adt.code.types.BQTerm) ) {
+return ((T)visit_BQTerm((( tom.engine.adt.code.types.BQTerm )v),introspector));
+}
+if ( (v instanceof tom.engine.adt.tomterm.types.TomTerm) ) {
+return ((T)visit_TomTerm((( tom.engine.adt.tomterm.types.TomTerm )v),introspector));
+}
+if ( (v instanceof tom.engine.adt.tomsignature.types.TomVisit) ) {
+return ((T)visit_TomVisit((( tom.engine.adt.tomsignature.types.TomVisit )v),introspector));
+}
+if (!(( null  == environment))) {
+return ((T)any.visit(environment,introspector));
+} else {
+return any.visitLight(v,introspector);
+}
+
+}
+}
+private static  tom.library.sl.Strategy  tom_make_inferTypes( tom.engine.adt.tomtype.types.TomType  t0,  NewKernelTyper  t1) { 
+return new inferTypes(t0,t1);
+}
+
+
+/**
+* The method <code>checkNonLinearityOfVariables</code> searches for variables
+* occurring more than once in a condition.
+* <p>
+* For each variable of type
+* "TomTerm" that already exists in varPatternList or in varList, a type
+* constraint is added to <code>typeConstraints</code> to ensure that  both
+* variables have same type (this happens in case of non-linearity).
+* <p>
+* OBS.: we also need to check the varList since a Variable/VariableStar can have
+* occurred in a previous condition as a BQVariable/BQVariableStar, in the
+* case of a composed condition
+* e.g. (x < 10 ) && f(x) << e -> { action }
+* @param var the variable to have the linearity checked
+*/
+private void checkNonLinearityOfVariables(TomTerm var) {
+
+{
+{
+if ( (var instanceof tom.engine.adt.tomterm.types.TomTerm) ) {
+boolean tomMatch304_35= false ;
+ tom.engine.adt.tomtype.types.TomType  tomMatch304_5= null ;
+ tom.engine.adt.tomoption.types.OptionList  tomMatch304_3= null ;
+ tom.engine.adt.tomname.types.TomName  tomMatch304_4= null ;
+if ( ((( tom.engine.adt.tomterm.types.TomTerm )var) instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) {
+{
+tomMatch304_35= true ;
+tomMatch304_3= (( tom.engine.adt.tomterm.types.TomTerm )var).getOptions() ;
+tomMatch304_4= (( tom.engine.adt.tomterm.types.TomTerm )var).getAstName() ;
+tomMatch304_5= (( tom.engine.adt.tomterm.types.TomTerm )var).getAstType() ;
+
+}
+} else {
+if ( ((( tom.engine.adt.tomterm.types.TomTerm )var) instanceof tom.engine.adt.tomterm.types.tomterm.VariableStar) ) {
+{
+tomMatch304_35= true ;
+tomMatch304_3= (( tom.engine.adt.tomterm.types.TomTerm )var).getOptions() ;
+tomMatch304_4= (( tom.engine.adt.tomterm.types.TomTerm )var).getAstName() ;
+tomMatch304_5= (( tom.engine.adt.tomterm.types.TomTerm )var).getAstType() ;
+
+}
+}
+}
+if (tomMatch304_35) {
+ tom.engine.adt.tomoption.types.OptionList  tom_optionList=tomMatch304_3;
+ tom.engine.adt.tomname.types.TomName  tom_aName=tomMatch304_4;
+ tom.engine.adt.tomtype.types.TomType  tom_aType1=tomMatch304_5;
+if ( (varPatternList instanceof tom.engine.adt.tomterm.types.TomList) ) {
+if ( (((( tom.engine.adt.tomterm.types.TomList )varPatternList) instanceof tom.engine.adt.tomterm.types.tomlist.ConsconcTomTerm) || ((( tom.engine.adt.tomterm.types.TomList )varPatternList) instanceof tom.engine.adt.tomterm.types.tomlist.EmptyconcTomTerm)) ) {
+ tom.engine.adt.tomterm.types.TomList  tomMatch304__end__10=(( tom.engine.adt.tomterm.types.TomList )varPatternList);
+do {
+{
+if (!( tomMatch304__end__10.isEmptyconcTomTerm() )) {
+ tom.engine.adt.tomterm.types.TomTerm  tomMatch304_21= tomMatch304__end__10.getHeadconcTomTerm() ;
+boolean tomMatch304_32= false ;
+ tom.engine.adt.tomname.types.TomName  tomMatch304_19= null ;
+ tom.engine.adt.tomtype.types.TomType  tomMatch304_20= null ;
+if ( (tomMatch304_21 instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) {
+{
+tomMatch304_32= true ;
+tomMatch304_19= tomMatch304_21.getAstName() ;
+tomMatch304_20= tomMatch304_21.getAstType() ;
+
+}
+} else {
+if ( (tomMatch304_21 instanceof tom.engine.adt.tomterm.types.tomterm.VariableStar) ) {
+{
+tomMatch304_32= true ;
+tomMatch304_19= tomMatch304_21.getAstName() ;
+tomMatch304_20= tomMatch304_21.getAstType() ;
+
+}
+}
+}
+if (tomMatch304_32) {
+if ( (tom_aName==tomMatch304_19) ) {
+ tom.engine.adt.tomtype.types.TomType  tom_aType2=tomMatch304_20;
+boolean tomMatch304_31= false ;
+if ( (tom_aType1==tomMatch304_20) ) {
+if ( (tom_aType2==tomMatch304_20) ) {
+tomMatch304_31= true ;
+}
+}
+if (!(tomMatch304_31)) {
+
+addConstraint(
+ tom.engine.adt.typeconstraints.types.typeconstraint.Equation.make(tom_aType1, tom_aType2,  tom.engine.adt.typeconstraints.types.info.PairNameOptions.make(tom_aName, tom_optionList) ) );
+
+}
+
+}
+}
+
+}
+if ( tomMatch304__end__10.isEmptyconcTomTerm() ) {
+tomMatch304__end__10=(( tom.engine.adt.tomterm.types.TomList )varPatternList);
+} else {
+tomMatch304__end__10= tomMatch304__end__10.getTailconcTomTerm() ;
+}
+
+}
+} while(!( (tomMatch304__end__10==(( tom.engine.adt.tomterm.types.TomList )varPatternList)) ));
+}
+}
+if ( (varList instanceof tom.engine.adt.code.types.BQTermList) ) {
+if ( (((( tom.engine.adt.code.types.BQTermList )varList) instanceof tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm) || ((( tom.engine.adt.code.types.BQTermList )varList) instanceof tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm)) ) {
+ tom.engine.adt.code.types.BQTermList  tomMatch304__end__16=(( tom.engine.adt.code.types.BQTermList )varList);
+do {
+{
+if (!( tomMatch304__end__16.isEmptyconcBQTerm() )) {
+ tom.engine.adt.code.types.BQTerm  tomMatch304_24= tomMatch304__end__16.getHeadconcBQTerm() ;
+boolean tomMatch304_34= false ;
+ tom.engine.adt.tomname.types.TomName  tomMatch304_22= null ;
+ tom.engine.adt.tomtype.types.TomType  tomMatch304_23= null ;
+if ( (tomMatch304_24 instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {
+{
+tomMatch304_34= true ;
+tomMatch304_22= tomMatch304_24.getAstName() ;
+tomMatch304_23= tomMatch304_24.getAstType() ;
+
+}
+} else {
+if ( (tomMatch304_24 instanceof tom.engine.adt.code.types.bqterm.BQVariableStar) ) {
+{
+tomMatch304_34= true ;
+tomMatch304_22= tomMatch304_24.getAstName() ;
+tomMatch304_23= tomMatch304_24.getAstType() ;
+
+}
+}
+}
+if (tomMatch304_34) {
+if ( (tom_aName==tomMatch304_22) ) {
+ tom.engine.adt.tomtype.types.TomType  tom_aType2=tomMatch304_23;
+boolean tomMatch304_33= false ;
+if ( (tom_aType1==tomMatch304_23) ) {
+if ( (tom_aType2==tomMatch304_23) ) {
+tomMatch304_33= true ;
+}
+}
+if (!(tomMatch304_33)) {
+
+addConstraint(
+ tom.engine.adt.typeconstraints.types.typeconstraint.Equation.make(tom_aType1, tom_aType2,  tom.engine.adt.typeconstraints.types.info.PairNameOptions.make(tom_aName, tom_optionList) ) );
+
+}
+
+}
+}
+
+}
+if ( tomMatch304__end__16.isEmptyconcBQTerm() ) {
+tomMatch304__end__16=(( tom.engine.adt.code.types.BQTermList )varList);
+} else {
+tomMatch304__end__16= tomMatch304__end__16.getTailconcBQTerm() ;
+}
+
+}
+} while(!( (tomMatch304__end__16==(( tom.engine.adt.code.types.BQTermList )varList)) ));
+}
+}
+
+}
+
+}
+
+}
+
+}
+
+}
+
+/**
+* The method <code>checkNonLinearityOfBQVariables</code> searches for variables
+* occurring more than once in a condition.
+* <p>
+* For each variable of type
+* "BQTerm" that already exists in varPatternList or in varList, a type
+* constraint is added to <code>typeConstraints</code> to ensure that  both
+* variables have same type (this happens in case of non-linearity).
+* <p>
+* OBS.: we also need to check the varPatternList since a BQVariable/BQVariableStar can have
+* occurred in a previous condition as a Variable/VariableStar, in the
+* case of a composed condition or of a inner match
+* e.g. f(x) << e && (x < 10 ) -> { action } 
+* @param bqvar the variable to have the linearity checked
+*/
+private void checkNonLinearityOfBQVariables(BQTerm bqvar) {
+
+{
+{
+if ( (bqvar instanceof tom.engine.adt.code.types.BQTerm) ) {
+boolean tomMatch305_35= false ;
+ tom.engine.adt.tomtype.types.TomType  tomMatch305_5= null ;
+ tom.engine.adt.tomname.types.TomName  tomMatch305_4= null ;
+ tom.engine.adt.tomoption.types.OptionList  tomMatch305_3= null ;
+if ( ((( tom.engine.adt.code.types.BQTerm )bqvar) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {
+{
+tomMatch305_35= true ;
+tomMatch305_3= (( tom.engine.adt.code.types.BQTerm )bqvar).getOptions() ;
+tomMatch305_4= (( tom.engine.adt.code.types.BQTerm )bqvar).getAstName() ;
+tomMatch305_5= (( tom.engine.adt.code.types.BQTerm )bqvar).getAstType() ;
+
+}
+} else {
+if ( ((( tom.engine.adt.code.types.BQTerm )bqvar) instanceof tom.engine.adt.code.types.bqterm.BQVariableStar) ) {
+{
+tomMatch305_35= true ;
+tomMatch305_3= (( tom.engine.adt.code.types.BQTerm )bqvar).getOptions() ;
+tomMatch305_4= (( tom.engine.adt.code.types.BQTerm )bqvar).getAstName() ;
+tomMatch305_5= (( tom.engine.adt.code.types.BQTerm )bqvar).getAstType() ;
+
+}
+}
+}
+if (tomMatch305_35) {
+ tom.engine.adt.tomoption.types.OptionList  tom_optionList=tomMatch305_3;
+ tom.engine.adt.tomname.types.TomName  tom_aName=tomMatch305_4;
+ tom.engine.adt.tomtype.types.TomType  tom_aType1=tomMatch305_5;
+if ( (varList instanceof tom.engine.adt.code.types.BQTermList) ) {
+if ( (((( tom.engine.adt.code.types.BQTermList )varList) instanceof tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm) || ((( tom.engine.adt.code.types.BQTermList )varList) instanceof tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm)) ) {
+ tom.engine.adt.code.types.BQTermList  tomMatch305__end__10=(( tom.engine.adt.code.types.BQTermList )varList);
+do {
+{
+if (!( tomMatch305__end__10.isEmptyconcBQTerm() )) {
+ tom.engine.adt.code.types.BQTerm  tomMatch305_21= tomMatch305__end__10.getHeadconcBQTerm() ;
+boolean tomMatch305_32= false ;
+ tom.engine.adt.tomname.types.TomName  tomMatch305_19= null ;
+ tom.engine.adt.tomtype.types.TomType  tomMatch305_20= null ;
+if ( (tomMatch305_21 instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {
+{
+tomMatch305_32= true ;
+tomMatch305_19= tomMatch305_21.getAstName() ;
+tomMatch305_20= tomMatch305_21.getAstType() ;
+
+}
+} else {
+if ( (tomMatch305_21 instanceof tom.engine.adt.code.types.bqterm.BQVariableStar) ) {
+{
+tomMatch305_32= true ;
+tomMatch305_19= tomMatch305_21.getAstName() ;
+tomMatch305_20= tomMatch305_21.getAstType() ;
+
+}
+}
+}
+if (tomMatch305_32) {
+if ( (tom_aName==tomMatch305_19) ) {
+ tom.engine.adt.tomtype.types.TomType  tom_aType2=tomMatch305_20;
+boolean tomMatch305_31= false ;
+if ( (tom_aType1==tomMatch305_20) ) {
+if ( (tom_aType2==tomMatch305_20) ) {
+tomMatch305_31= true ;
+}
+}
+if (!(tomMatch305_31)) {
+
+addConstraint(
+ tom.engine.adt.typeconstraints.types.typeconstraint.Equation.make(tom_aType1, tom_aType2,  tom.engine.adt.typeconstraints.types.info.PairNameOptions.make(tom_aName, tom_optionList) ) ); 
+
+}
+
+}
+}
+
+}
+if ( tomMatch305__end__10.isEmptyconcBQTerm() ) {
+tomMatch305__end__10=(( tom.engine.adt.code.types.BQTermList )varList);
+} else {
+tomMatch305__end__10= tomMatch305__end__10.getTailconcBQTerm() ;
+}
+
+}
+} while(!( (tomMatch305__end__10==(( tom.engine.adt.code.types.BQTermList )varList)) ));
+}
+}
+if ( (varPatternList instanceof tom.engine.adt.tomterm.types.TomList) ) {
+if ( (((( tom.engine.adt.tomterm.types.TomList )varPatternList) instanceof tom.engine.adt.tomterm.types.tomlist.ConsconcTomTerm) || ((( tom.engine.adt.tomterm.types.TomList )varPatternList) instanceof tom.engine.adt.tomterm.types.tomlist.EmptyconcTomTerm)) ) {
+ tom.engine.adt.tomterm.types.TomList  tomMatch305__end__16=(( tom.engine.adt.tomterm.types.TomList )varPatternList);
+do {
+{
+if (!( tomMatch305__end__16.isEmptyconcTomTerm() )) {
+ tom.engine.adt.tomterm.types.TomTerm  tomMatch305_24= tomMatch305__end__16.getHeadconcTomTerm() ;
+boolean tomMatch305_34= false ;
+ tom.engine.adt.tomname.types.TomName  tomMatch305_22= null ;
+ tom.engine.adt.tomtype.types.TomType  tomMatch305_23= null ;
+if ( (tomMatch305_24 instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) {
+{
+tomMatch305_34= true ;
+tomMatch305_22= tomMatch305_24.getAstName() ;
+tomMatch305_23= tomMatch305_24.getAstType() ;
+
+}
+} else {
+if ( (tomMatch305_24 instanceof tom.engine.adt.tomterm.types.tomterm.VariableStar) ) {
+{
+tomMatch305_34= true ;
+tomMatch305_22= tomMatch305_24.getAstName() ;
+tomMatch305_23= tomMatch305_24.getAstType() ;
+
+}
+}
+}
+if (tomMatch305_34) {
+if ( (tom_aName==tomMatch305_22) ) {
+ tom.engine.adt.tomtype.types.TomType  tom_aType2=tomMatch305_23;
+boolean tomMatch305_33= false ;
+if ( (tom_aType1==tomMatch305_23) ) {
+if ( (tom_aType2==tomMatch305_23) ) {
+tomMatch305_33= true ;
+}
+}
+if (!(tomMatch305_33)) {
+
+addConstraint(
+ tom.engine.adt.typeconstraints.types.typeconstraint.Equation.make(tom_aType1, tom_aType2,  tom.engine.adt.typeconstraints.types.info.PairNameOptions.make(tom_aName, tom_optionList) ) ); 
+
+}
+
+}
+}
+
+}
+if ( tomMatch305__end__16.isEmptyconcTomTerm() ) {
+tomMatch305__end__16=(( tom.engine.adt.tomterm.types.TomList )varPatternList);
+} else {
+tomMatch305__end__16= tomMatch305__end__16.getTailconcTomTerm() ;
+}
+
+}
+} while(!( (tomMatch305__end__16==(( tom.engine.adt.tomterm.types.TomList )varPatternList)) ));
+}
+}
+
+}
+
+}
+
+}
+
+}
+
+}
+
+/**
+* The method <code>inferConstraintInstructionList</code> applies rule CT-RULE
+* to a pair "condition -> action" in order to collect all variables occurring
+* in the condition and put them into <code>varPatternList</code> (for those
+* variables occurring in match constraints) and <code>varList</code> (for
+* those variables occurring in numeric constraints) to be able to handle
+* non-linearity.
+* <p>
+* The condition (left-hand side) is traversed and then the action (right-hand
+* side) is traversed in order to generate type constraints.
+* <p>
+* CT-RULE rule:
+* IF found "cond --> (e1,...,en)" where "ei" are backquote terms composing
+* the action
+* THEN infers types of condition (by calling <code>inferConstraint</code>
+* method) and action (by calling <code>inferConstraintList</code> for each
+* match constraint occurring in the action) 
+* @param ciList  the pair "condition -> action" to be type inferred 
+*/
+private ConstraintInstructionList inferConstraintInstructionList(ConstraintInstructionList ciList) {
+//DEBUG System.out.println("\n Test pour inferConstraintInstructionList -- ligne 1.");
+
+{
+{
+if ( (ciList instanceof tom.engine.adt.tominstruction.types.ConstraintInstructionList) ) {
+if ( (((( tom.engine.adt.tominstruction.types.ConstraintInstructionList )ciList) instanceof tom.engine.adt.tominstruction.types.constraintinstructionlist.ConsconcConstraintInstruction) || ((( tom.engine.adt.tominstruction.types.ConstraintInstructionList )ciList) instanceof tom.engine.adt.tominstruction.types.constraintinstructionlist.EmptyconcConstraintInstruction)) ) {
+if ( (( tom.engine.adt.tominstruction.types.ConstraintInstructionList )ciList).isEmptyconcConstraintInstruction() ) {
+return 
+ciList; 
+
+}
+}
+}
+
+}
+{
+if ( (ciList instanceof tom.engine.adt.tominstruction.types.ConstraintInstructionList) ) {
+if ( (((( tom.engine.adt.tominstruction.types.ConstraintInstructionList )ciList) instanceof tom.engine.adt.tominstruction.types.constraintinstructionlist.ConsconcConstraintInstruction) || ((( tom.engine.adt.tominstruction.types.ConstraintInstructionList )ciList) instanceof tom.engine.adt.tominstruction.types.constraintinstructionlist.EmptyconcConstraintInstruction)) ) {
+if (!( (( tom.engine.adt.tominstruction.types.ConstraintInstructionList )ciList).isEmptyconcConstraintInstruction() )) {
+ tom.engine.adt.tominstruction.types.ConstraintInstruction  tomMatch306_9= (( tom.engine.adt.tominstruction.types.ConstraintInstructionList )ciList).getHeadconcConstraintInstruction() ;
+if ( (tomMatch306_9 instanceof tom.engine.adt.tominstruction.types.constraintinstruction.ConstraintInstruction) ) {
+ tom.engine.adt.tomconstraint.types.Constraint  tom_constraint= tomMatch306_9.getConstraint() ;
+ tom.engine.adt.tominstruction.types.Instruction  tom_action= tomMatch306_9.getAction() ;
+ tom.engine.adt.tominstruction.types.ConstraintInstructionList  tom_tailCIList= (( tom.engine.adt.tominstruction.types.ConstraintInstructionList )ciList).getTailconcConstraintInstruction() ;
+
+try {
+//DEBUG System.out.println("\n Test pour inferConstraintInstructionList dans un match -- ligne 4.");
+//DEBUG System.out.println("\n Test pour inferConstraintInstructionList dans un match -- ligne 2.");
+//DEBUG System.out.println("\n Test pour inferConstraintInstructionList dans un match -- ligne 3.");
+//DEBUG System.out.println("\n varPatternList = " + `varPatternList);
+//DEBUG System.out.println("\n varList = " + `varList);
+//DEBUG System.out.println("\n Constraints = " + typeConstraints);
+TomList TTList = varPatternList;
+
+tom_make_TopDownCollect(tom_make_CollectVars(this)).visitLight(
+tom_constraint);
+//DEBUG System.out.println("\n varPatternList apres = " + `varPatternList);
+//DEBUG System.out.println("\n varList apres = " + `varList);
+
+tom_constraint= inferConstraint(
+tom_constraint);
+
+tom_action= 
+inferAllTypes(tom_action, tom.engine.adt.tomtype.types.tomtype.EmptyType.make() );
+varPatternList = TTList;
+//DEBUG System.out.println("\n varList apr?s = " + `varList);
+
+tom_tailCIList= inferConstraintInstructionList(
+tom_tailCIList);
+return
+
+ tom.engine.adt.tominstruction.types.constraintinstructionlist.ConsconcConstraintInstruction.make( tom.engine.adt.tominstruction.types.constraintinstruction.ConstraintInstruction.make(tom_constraint, tom_action,  tomMatch306_9.getOptions() ) ,tom_append_list_concConstraintInstruction(tom_tailCIList, tom.engine.adt.tominstruction.types.constraintinstructionlist.EmptyconcConstraintInstruction.make() )) ;
+} catch(tom.library.sl.VisitFailure e) {
+throw new TomRuntimeException("inferConstraintInstructionList: failure on " + 
+ (( tom.engine.adt.tominstruction.types.ConstraintInstructionList )ciList).getHeadconcConstraintInstruction() );
+}
+
+
+}
+}
+}
+}
+
+}
+
+
+}
+
+throw new TomRuntimeException("inferConstraintInstructionList: failure on "
++ 
+ciList);
+}
+
+/**
+* The class <code>CollectVars</code> is generated from a strategy which
+* collect all variables (Variable, VariableStar, BQVariable, BQVariableStar
+* occurring in a condition.
+* @param nkt an instance of object NewKernelTyper
+*/
+
+public static class CollectVars extends tom.library.sl.AbstractStrategyBasic {
+private  NewKernelTyper  nkt;
+public CollectVars( NewKernelTyper  nkt) {
+super(( new tom.library.sl.Identity() ));
+this.nkt=nkt;
+}
+public  NewKernelTyper  getnkt() {
+return nkt;
+}
+public tom.library.sl.Visitable[] getChildren() {
+tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];
+stratChilds[0] = super.getChildAt(0);
+return stratChilds;}
+public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {
+super.setChildAt(0, children[0]);
+return this;
+}
+public int getChildCount() {
+return 1;
+}
+public tom.library.sl.Visitable getChildAt(int index) {
+switch (index) {
+case 0: return super.getChildAt(0);
+default: throw new IndexOutOfBoundsException();
+}
+}
+public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {
+switch (index) {
+case 0: return super.setChildAt(0, child);
+default: throw new IndexOutOfBoundsException();
+}
+}
+@SuppressWarnings("unchecked")
+public  tom.engine.adt.tomterm.types.TomTerm  visit_TomTerm( tom.engine.adt.tomterm.types.TomTerm  tom__arg, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+{
+{
+if ( (tom__arg instanceof tom.engine.adt.tomterm.types.TomTerm) ) {
+boolean tomMatch307_2= false ;
+if ( ((( tom.engine.adt.tomterm.types.TomTerm )tom__arg) instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) {
+tomMatch307_2= true ;
+} else {
+if ( ((( tom.engine.adt.tomterm.types.TomTerm )tom__arg) instanceof tom.engine.adt.tomterm.types.tomterm.VariableStar) ) {
+tomMatch307_2= true ;
+}
+}
+if (tomMatch307_2) {
+nkt.addTomTerm(
+(( tom.engine.adt.tomterm.types.TomTerm )tom__arg)); 
+
+}
+
+}
+
+}
+
+}
+return _visit_TomTerm(tom__arg,introspector);
+
+}
+@SuppressWarnings("unchecked")
+public  tom.engine.adt.code.types.BQTerm  visit_BQTerm( tom.engine.adt.code.types.BQTerm  tom__arg, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+{
+{
+if ( (tom__arg instanceof tom.engine.adt.code.types.BQTerm) ) {
+boolean tomMatch308_2= false ;
+if ( ((( tom.engine.adt.code.types.BQTerm )tom__arg) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {
+tomMatch308_2= true ;
+} else {
+if ( ((( tom.engine.adt.code.types.BQTerm )tom__arg) instanceof tom.engine.adt.code.types.bqterm.BQVariableStar) ) {
+tomMatch308_2= true ;
+}
+}
+if (tomMatch308_2) {
+nkt.addBQTerm(
+(( tom.engine.adt.code.types.BQTerm )tom__arg)); 
+
+}
+
+}
+
+}
+
+}
+return _visit_BQTerm(tom__arg,introspector);
+
+}
+@SuppressWarnings("unchecked")
+public  tom.engine.adt.code.types.BQTerm  _visit_BQTerm( tom.engine.adt.code.types.BQTerm  arg, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if (!(( null  == environment))) {
+return (( tom.engine.adt.code.types.BQTerm )any.visit(environment,introspector));
+} else {
+return any.visitLight(arg,introspector);
+}
+}
+@SuppressWarnings("unchecked")
+public  tom.engine.adt.tomterm.types.TomTerm  _visit_TomTerm( tom.engine.adt.tomterm.types.TomTerm  arg, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if (!(( null  == environment))) {
+return (( tom.engine.adt.tomterm.types.TomTerm )any.visit(environment,introspector));
+} else {
+return any.visitLight(arg,introspector);
+}
+}
+@SuppressWarnings("unchecked")
+public <T> T visitLight(T v, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if ( (v instanceof tom.engine.adt.code.types.BQTerm) ) {
+return ((T)visit_BQTerm((( tom.engine.adt.code.types.BQTerm )v),introspector));
+}
+if ( (v instanceof tom.engine.adt.tomterm.types.TomTerm) ) {
+return ((T)visit_TomTerm((( tom.engine.adt.tomterm.types.TomTerm )v),introspector));
+}
+if (!(( null  == environment))) {
+return ((T)any.visit(environment,introspector));
+} else {
+return any.visitLight(v,introspector);
+}
+
+}
+}
+private static  tom.library.sl.Strategy  tom_make_CollectVars( NewKernelTyper  t0) { 
+return new CollectVars(t0);
+}
+
+
+/**
+* The method <code>inferConstraint</code> applies rule CT-MATCH, CT-EQ, CT-CONJ,
+* or CT-DISJ to a "condition" in order to infer its type.
+* <p>
+* CT-MATCH rule:
+* IF found "e1 << [T] e2" 
+* THEN infers type of e1 and e2 and add a type constraint "T1 = T2", where
+* "Ti" is a fresh type variable generated to "ei" (by
+* <code>inferBQTerm</code>, a type constraint "T = T2" will be added)
+* <p>
+* CT-EQ rule:
+* IF found "e1 == e2", "e1 <= e2", "e1 < e2", "e1 >= e2" or "e1 > e2"
+* THEN infers type of e1 and e2 and add a type constraint "T1 = T2", where
+* "Ti" is a fresh type variable generated to "ei"  
+* <p>
+* CT-CONJ rule (resp. CT-DISJ):
+* IF found "cond1 && cond2" (resp. "cond1 || cond2")
+* THEN infers type of cond1 and cond2 (by calling
+* <code>inferConstraint</code> for each condition)
+* @param constraint the "condition" to be type inferred 
+*/
+private Constraint inferConstraint(Constraint constraint) {
+
+{
+{
+if ( (constraint instanceof tom.engine.adt.tomconstraint.types.Constraint) ) {
+if ( ((( tom.engine.adt.tomconstraint.types.Constraint )constraint) instanceof tom.engine.adt.tomconstraint.types.constraint.MatchConstraint) ) {
+ tom.engine.adt.tomterm.types.TomTerm  tom_pattern= (( tom.engine.adt.tomconstraint.types.Constraint )constraint).getPattern() ;
+ tom.engine.adt.code.types.BQTerm  tom_subject= (( tom.engine.adt.tomconstraint.types.Constraint )constraint).getSubject() ;
+
+//DEBUG System.out.println("inferConstraint l1 -- subject = " + `subject);
+TomType tPattern = getType(
+tom_pattern);
+TomType tSubject = getType(
+tom_subject);
+if (tPattern == null || tPattern == 
+ tom.engine.adt.tomtype.types.tomtype.EmptyType.make() ) {
+tPattern = getUnknownFreshTypeVar();
+}
+if (tSubject == null || tSubject == 
+ tom.engine.adt.tomtype.types.tomtype.EmptyType.make() ) {
+tSubject = getUnknownFreshTypeVar();
+}
+//DEBUG System.out.println("inferConstraint: match -- constraint " +
+//DEBUG     tPattern + " = " + tSubject);
+addConstraint(
+ tom.engine.adt.typeconstraints.types.typeconstraint.Equation.make(tPattern, tSubject, getInfoFromTomTerm(tom_pattern)) );
+
+tom_pattern= 
+inferAllTypes(tom_pattern,tPattern);
+
+tom_subject= 
+inferAllTypes(tom_subject,tSubject);
+hasUndeclaredType(
+tom_subject);
+return 
+ tom.engine.adt.tomconstraint.types.constraint.MatchConstraint.make(tom_pattern, tom_subject) ;
+
+
+}
+}
+
+}
+{
+if ( (constraint instanceof tom.engine.adt.tomconstraint.types.Constraint) ) {
+if ( ((( tom.engine.adt.tomconstraint.types.Constraint )constraint) instanceof tom.engine.adt.tomconstraint.types.constraint.NumericConstraint) ) {
+ tom.engine.adt.code.types.BQTerm  tom_left= (( tom.engine.adt.tomconstraint.types.Constraint )constraint).getLeft() ;
+ tom.engine.adt.code.types.BQTerm  tom_right= (( tom.engine.adt.tomconstraint.types.Constraint )constraint).getRight() ;
+
+TomType tLeft = getType(
+tom_left);
+TomType tRight = getType(
+tom_right);
+if (tLeft == null || tLeft == 
+ tom.engine.adt.tomtype.types.tomtype.EmptyType.make() ) {
+tLeft = getUnknownFreshTypeVar();
+}
+if (tRight == null || tRight == 
+ tom.engine.adt.tomtype.types.tomtype.EmptyType.make() ) {
+tRight = getUnknownFreshTypeVar();
+}
+//DEBUG System.out.println("inferConstraint: match -- constraint " +
+//DEBUG     tLeft + " = " + tRight);
+addConstraint(
+ tom.engine.adt.typeconstraints.types.typeconstraint.Equation.make(tLeft, tRight, getInfoFromBQTerm(tom_left)) );
+
+tom_left= inferAllTypes(
+tom_left,tLeft);
+
+tom_right= inferAllTypes(
+tom_right,tRight);
+hasUndeclaredType(
+tom_left);
+hasUndeclaredType(
+tom_right);
+return 
+ tom.engine.adt.tomconstraint.types.constraint.NumericConstraint.make(tom_left, tom_right,  (( tom.engine.adt.tomconstraint.types.Constraint )constraint).getType() ) ;
+
+
+}
+}
+
+}
+{
+if ( (constraint instanceof tom.engine.adt.tomconstraint.types.Constraint) ) {
+if ( (((( tom.engine.adt.tomconstraint.types.Constraint )constraint) instanceof tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint) || ((( tom.engine.adt.tomconstraint.types.Constraint )constraint) instanceof tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint)) ) {
+if (!( (  (( tom.engine.adt.tomconstraint.types.Constraint )constraint).isEmptyAndConstraint()  ||  ((( tom.engine.adt.tomconstraint.types.Constraint )constraint)== tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint.make() )  ) )) {
+
+ConstraintList cList = 
+ tom.engine.adt.tomconstraint.types.constraintlist.ConsconcConstraint.make((( (((( tom.engine.adt.tomconstraint.types.Constraint )constraint) instanceof tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint) || ((( tom.engine.adt.tomconstraint.types.Constraint )constraint) instanceof tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint)) )?( (( tom.engine.adt.tomconstraint.types.Constraint )constraint).getHeadAndConstraint() ):((( tom.engine.adt.tomconstraint.types.Constraint )constraint))), tom.engine.adt.tomconstraint.types.constraintlist.ConsconcConstraint.make((( (((( tom.engine.adt.tomconstraint.types.Constraint )constraint) instanceof tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint) || ((( tom.engine.adt.tomconstraint.types.Constraint )constraint) instanceof tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint)) )?( (( tom.engine.adt.tomconstraint.types.Constraint )constraint).getTailAndConstraint() ):( tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint.make() )), tom.engine.adt.tomconstraint.types.constraintlist.EmptyconcConstraint.make() ) ) ;
+Constraint cArg;
+Constraint newAConstraint = 
+ tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint.make() ;
+while(!cList.isEmptyconcConstraint()) {
+cArg = inferConstraint(cList.getHeadconcConstraint());
+newAConstraint = 
+ tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make(newAConstraint, tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make(cArg, tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint.make() ) ) ;
+cList = cList.getTailconcConstraint();
+}
+return newAConstraint;
+
+
+}
+}
+}
+
+}
+{
+if ( (constraint instanceof tom.engine.adt.tomconstraint.types.Constraint) ) {
+if ( (((( tom.engine.adt.tomconstraint.types.Constraint )constraint) instanceof tom.engine.adt.tomconstraint.types.constraint.ConsOrConstraint) || ((( tom.engine.adt.tomconstraint.types.Constraint )constraint) instanceof tom.engine.adt.tomconstraint.types.constraint.EmptyOrConstraint)) ) {
+if (!( (  (( tom.engine.adt.tomconstraint.types.Constraint )constraint).isEmptyOrConstraint()  ||  ((( tom.engine.adt.tomconstraint.types.Constraint )constraint)== tom.engine.adt.tomconstraint.types.constraint.EmptyOrConstraint.make() )  ) )) {
+
+ConstraintList cList = 
+ tom.engine.adt.tomconstraint.types.constraintlist.ConsconcConstraint.make((( (((( tom.engine.adt.tomconstraint.types.Constraint )constraint) instanceof tom.engine.adt.tomconstraint.types.constraint.ConsOrConstraint) || ((( tom.engine.adt.tomconstraint.types.Constraint )constraint) instanceof tom.engine.adt.tomconstraint.types.constraint.EmptyOrConstraint)) )?( (( tom.engine.adt.tomconstraint.types.Constraint )constraint).getHeadOrConstraint() ):((( tom.engine.adt.tomconstraint.types.Constraint )constraint))), tom.engine.adt.tomconstraint.types.constraintlist.ConsconcConstraint.make((( (((( tom.engine.adt.tomconstraint.types.Constraint )constraint) instanceof tom.engine.adt.tomconstraint.types.constraint.ConsOrConstraint) || ((( tom.engine.adt.tomconstraint.types.Constraint )constraint) instanceof tom.engine.adt.tomconstraint.types.constraint.EmptyOrConstraint)) )?( (( tom.engine.adt.tomconstraint.types.Constraint )constraint).getTailOrConstraint() ):( tom.engine.adt.tomconstraint.types.constraint.EmptyOrConstraint.make() )), tom.engine.adt.tomconstraint.types.constraintlist.EmptyconcConstraint.make() ) ) ;
+Constraint cArg;
+Constraint newOConstraint = 
+ tom.engine.adt.tomconstraint.types.constraint.EmptyOrConstraint.make() ;
+while(!cList.isEmptyconcConstraint()) {
+cArg = inferConstraint(cList.getHeadconcConstraint());
+newOConstraint = 
+ tom.engine.adt.tomconstraint.types.constraint.ConsOrConstraint.make(newOConstraint, tom.engine.adt.tomconstraint.types.constraint.ConsOrConstraint.make(cArg, tom.engine.adt.tomconstraint.types.constraint.EmptyOrConstraint.make() ) ) ;
+cList = cList.getTailconcConstraint();
+}
+return newOConstraint;
+
+
+}
+}
+}
+
+}
+
+
+}
+
+return constraint;
+}
+
+private SlotList inferSlotList(SlotList sList, TomSymbol tSymbol, TomType
+contextType) {
+
+{
+{
+if ( (sList instanceof tom.engine.adt.tomslot.types.SlotList) ) {
+if ( (((( tom.engine.adt.tomslot.types.SlotList )sList) instanceof tom.engine.adt.tomslot.types.slotlist.ConsconcSlot) || ((( tom.engine.adt.tomslot.types.SlotList )sList) instanceof tom.engine.adt.tomslot.types.slotlist.EmptyconcSlot)) ) {
+if ( (( tom.engine.adt.tomslot.types.SlotList )sList).isEmptyconcSlot() ) {
+if ( (tSymbol instanceof tom.engine.adt.tomsignature.types.TomSymbol) ) {
+if ( ((( tom.engine.adt.tomsignature.types.TomSymbol )tSymbol) instanceof tom.engine.adt.tomsignature.types.tomsymbol.Symbol) ) {
+return 
+sList; 
+
+}
+}
+}
+}
+}
+
+}
+{
+if ( (sList instanceof tom.engine.adt.tomslot.types.SlotList) ) {
+if ( (((( tom.engine.adt.tomslot.types.SlotList )sList) instanceof tom.engine.adt.tomslot.types.slotlist.ConsconcSlot) || ((( tom.engine.adt.tomslot.types.SlotList )sList) instanceof tom.engine.adt.tomslot.types.slotlist.EmptyconcSlot)) ) {
+if ( (( tom.engine.adt.tomslot.types.SlotList )sList).isEmptyconcSlot() ) {
+if ( (tSymbol instanceof tom.engine.adt.tomsignature.types.TomSymbol) ) {
+if ( ((( tom.engine.adt.tomsignature.types.TomSymbol )tSymbol) instanceof tom.engine.adt.tomsignature.types.tomsymbol.EmptySymbol) ) {
+return 
+sList; 
+
+}
+}
+}
+}
+}
+
+}
+{
+if ( (sList instanceof tom.engine.adt.tomslot.types.SlotList) ) {
+if ( (((( tom.engine.adt.tomslot.types.SlotList )sList) instanceof tom.engine.adt.tomslot.types.slotlist.ConsconcSlot) || ((( tom.engine.adt.tomslot.types.SlotList )sList) instanceof tom.engine.adt.tomslot.types.slotlist.EmptyconcSlot)) ) {
+if (!( (( tom.engine.adt.tomslot.types.SlotList )sList).isEmptyconcSlot() )) {
+ tom.engine.adt.tomslot.types.Slot  tomMatch310_16= (( tom.engine.adt.tomslot.types.SlotList )sList).getHeadconcSlot() ;
+if ( (tomMatch310_16 instanceof tom.engine.adt.tomslot.types.slot.PairSlotAppl) ) {
+ tom.engine.adt.tomterm.types.TomTerm  tom_tTerm= tomMatch310_16.getAppl() ;
+if ( (tSymbol instanceof tom.engine.adt.tomsignature.types.TomSymbol) ) {
+if ( ((( tom.engine.adt.tomsignature.types.TomSymbol )tSymbol) instanceof tom.engine.adt.tomsignature.types.tomsymbol.EmptySymbol) ) {
+
+//DEBUG System.out.println("InferSlotList -- sList =" + sList);
+//DEBUG System.out.println("InferSlotList -- tSymbol =" + tSymbol);
+/*
+* if the top symbol is unknown, the subterms
+* are typed in an empty context
+*/
+TomType argType = contextType;
+TomSymbol argSymb = getSymbolFromTerm(
+tom_tTerm);
+if(!(TomBase.isListOperator(
+argSymb) || TomBase.isArrayOperator(
+argSymb))) {
+
+{
+{
+if ( (tom_tTerm instanceof tom.engine.adt.tomterm.types.TomTerm) ) {
+boolean tomMatch311_2= false ;
+if ( ((( tom.engine.adt.tomterm.types.TomTerm )tom_tTerm) instanceof tom.engine.adt.tomterm.types.tomterm.VariableStar) ) {
+tomMatch311_2= true ;
+}
+if (!(tomMatch311_2)) {
+
+//DEBUG System.out.println("InferSlotList CT-ELEM -- tTerm = " + `tTerm);
+argType = getUnknownFreshTypeVar();
+
+}
+
+}
+
+}
+
+}
+
+}
+
+tom_tTerm= 
+inferAllTypes(tom_tTerm,argType);
+SlotList newTail = 
+inferSlotList( (( tom.engine.adt.tomslot.types.SlotList )sList).getTailconcSlot() ,tSymbol,contextType);
+return 
+ tom.engine.adt.tomslot.types.slotlist.ConsconcSlot.make( tom.engine.adt.tomslot.types.slot.PairSlotAppl.make( tomMatch310_16.getSlotName() , tom_tTerm) ,tom_append_list_concSlot(newTail, tom.engine.adt.tomslot.types.slotlist.EmptyconcSlot.make() )) ;
+
+
+}
+}
+}
+}
+}
+}
+
+}
+{
+if ( (sList instanceof tom.engine.adt.tomslot.types.SlotList) ) {
+if ( (((( tom.engine.adt.tomslot.types.SlotList )sList) instanceof tom.engine.adt.tomslot.types.slotlist.ConsconcSlot) || ((( tom.engine.adt.tomslot.types.SlotList )sList) instanceof tom.engine.adt.tomslot.types.slotlist.EmptyconcSlot)) ) {
+if (!( (( tom.engine.adt.tomslot.types.SlotList )sList).isEmptyconcSlot() )) {
+ tom.engine.adt.tomslot.types.Slot  tomMatch310_36= (( tom.engine.adt.tomslot.types.SlotList )sList).getHeadconcSlot() ;
+if ( (tomMatch310_36 instanceof tom.engine.adt.tomslot.types.slot.PairSlotAppl) ) {
+ tom.engine.adt.tomterm.types.TomTerm  tom_tTerm= tomMatch310_36.getAppl() ;
+if ( (tSymbol instanceof tom.engine.adt.tomsignature.types.TomSymbol) ) {
+if ( ((( tom.engine.adt.tomsignature.types.TomSymbol )tSymbol) instanceof tom.engine.adt.tomsignature.types.tomsymbol.Symbol) ) {
+ tom.engine.adt.tomtype.types.TomType  tomMatch310_20= (( tom.engine.adt.tomsignature.types.TomSymbol )tSymbol).getTypesToType() ;
+ tom.engine.adt.tomname.types.TomName  tom_symName= (( tom.engine.adt.tomsignature.types.TomSymbol )tSymbol).getAstName() ;
+if ( (tomMatch310_20 instanceof tom.engine.adt.tomtype.types.tomtype.TypesToType) ) {
+ tom.engine.adt.tomtype.types.TomTypeList  tomMatch310_22= tomMatch310_20.getDomain() ;
+ tom.engine.adt.tomtype.types.TomType  tomMatch310_23= tomMatch310_20.getCodomain() ;
+if ( ((tomMatch310_22 instanceof tom.engine.adt.tomtype.types.tomtypelist.ConsconcTomType) || (tomMatch310_22 instanceof tom.engine.adt.tomtype.types.tomtypelist.EmptyconcTomType)) ) {
+if (!( tomMatch310_22.isEmptyconcTomType() )) {
+ tom.engine.adt.tomtype.types.TomType  tom_headTTList= tomMatch310_22.getHeadconcTomType() ;
+if ( (tomMatch310_23 instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {
+
+TomType argType = contextType;
+// In case of a list
+if(TomBase.isListOperator(
+tSymbol) || TomBase.isArrayOperator(
+tSymbol)) {
+TomSymbol argSymb = getSymbolFromTerm(
+tom_tTerm);
+TomTerm newTerm = 
+tom_tTerm;
+if(!(TomBase.isListOperator(
+argSymb) || TomBase.isArrayOperator(
+argSymb))) {
+
+{
+{
+if ( (tom_tTerm instanceof tom.engine.adt.tomterm.types.TomTerm) ) {
+if ( ((( tom.engine.adt.tomterm.types.TomTerm )tom_tTerm) instanceof tom.engine.adt.tomterm.types.tomterm.VariableStar) ) {
+
+/**
+* Continuation of CT-STAR rule (applying to premises):
+* IF found "l(e1,...,en,x*):AA" and "l:T*->TT" exists in SymbolTable
+* THEN infers type of both sublist "l(e1,...,en)" and last argument
+*      "x", where "x" represents a list with
+*      head symbol "l"
+*/
+argType = 
+ tom.engine.adt.tomtype.types.tomtype.TypeWithSymbol.make( tomMatch310_23.getTomType() ,  tomMatch310_23.getTlType() , tom_symName) ;
+
+
+}
+}
+
+}
+{
+if ( (tom_tTerm instanceof tom.engine.adt.tomterm.types.TomTerm) ) {
+boolean tomMatch312_4= false ;
+if ( ((( tom.engine.adt.tomterm.types.TomTerm )tom_tTerm) instanceof tom.engine.adt.tomterm.types.tomterm.VariableStar) ) {
+tomMatch312_4= true ;
+}
+if (!(tomMatch312_4)) {
+
+//DEBUG System.out.println("InferSlotList CT-ELEM -- tTerm = " + `tTerm);
+/**
+* Continuation of CT-ELEM rule (applying to premises which are
+* not lists):
+* IF found "l(e1,...en,e):AA" and "l:T*->TT" exists in SymbolTable
+* THEN infers type of both sublist "l(e1,...,en)" and last argument
+*      "e" and adds a type constraint "A = T" for the last
+*      argument, where "A" is a fresh type variable  and
+*      "e" does not represent a list with head symbol "l"
+*/
+argType = getUnknownFreshTypeVar();
+//DEBUG System.out.println("inferSlotList: !VariableStar -- constraint "
+//DEBUG     + `headTTList + " = " + argType);
+
+//TODO create a method getAstName which takes an AstName of a
+//RecordAppl
+addConstraint(
+ tom.engine.adt.typeconstraints.types.typeconstraint.Equation.make(argType, tom_headTTList, getInfoFromTomTerm(tom_tTerm)) );
+
+
+}
+
+}
+
+}
+
+
+}
+
+} else if (
+tom_symName!= argSymb.getAstName()) {
+// TODO: improve this code! It is like CT-ELEM
+/*
+* A list with a sublist whose constructor is different
+* e.g. 
+* A = ListA(A*) and B = ListB(A*) | b()
+* ListB(b(),ListA(a()),b())
+*/
+argType = getUnknownFreshTypeVar();
+//DEBUG System.out.println("inferSlotList: symName != argSymbName -- constraint "
+//DEBUG     + `headTTList + " = " + argType);
+addConstraint(
+ tom.engine.adt.typeconstraints.types.typeconstraint.Equation.make(argType, tom_headTTList, getInfoFromTomTerm(tom_tTerm)) );
+}
+
+/**
+* Continuation of CT-MERGE rule (applying to premises):
+* IF found "l(e1,...,en,e):AA" and "l:T*->TT" exists in SymbolTable
+* THEN infers type of both sublist "l(e1,...,en)" and last argument
+*      "e", where "e" represents a list with
+*      head symbol "l"
+*/
+
+newTerm= 
+inferAllTypes(newTerm,argType);
+SlotList newTail = 
+inferSlotList( (( tom.engine.adt.tomslot.types.SlotList )sList).getTailconcSlot() ,tSymbol,contextType);
+return 
+ tom.engine.adt.tomslot.types.slotlist.ConsconcSlot.make( tom.engine.adt.tomslot.types.slot.PairSlotAppl.make( tomMatch310_36.getSlotName() , newTerm) ,tom_append_list_concSlot(newTail, tom.engine.adt.tomslot.types.slotlist.EmptyconcSlot.make() )) ;
+} else {
+// In case of a function
+TomTerm argTerm;
+TomName argName;
+SlotList newSList = 
+ tom.engine.adt.tomslot.types.slotlist.EmptyconcSlot.make() ;
+/**
+* Continuation of CT-FUN rule (applying to premises):
+* IF found "f(e1,...,en):A" and "f:T1,...,Tn->T" exists in SymbolTable
+* THEN infers type of arguments and adds a type constraint "Ai =
+*      Ti" for each argument, where "Ai" is a fresh type variable
+*/
+for(Slot arg : 
+sList.getCollectionconcSlot()) {
+argTerm = arg.getAppl();
+argName = arg.getSlotName();
+//DEBUG System.out.println("InferSlotList CT-FUN -- slotappl in for = " +
+//DEBUG     `argTerm);
+argType = TomBase.getSlotType(tSymbol,argName);
+addConstraint(
+ tom.engine.adt.typeconstraints.types.typeconstraint.Equation.make(getUnknownFreshTypeVar(), argType, getInfoFromTomTerm(argTerm)) );
+
+argTerm= 
+inferAllTypes(argTerm,argType);
+newSList = 
+tom_append_list_concSlot(newSList, tom.engine.adt.tomslot.types.slotlist.ConsconcSlot.make( tom.engine.adt.tomslot.types.slot.PairSlotAppl.make(argName, argTerm) , tom.engine.adt.tomslot.types.slotlist.EmptyconcSlot.make() ) );
+//DEBUG System.out.println("InferSlotList CT-FUN -- end of for with slotappl = " + `argTerm);
+}
+return newSList;
+}
+
+
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+
+}
+
+
+}
+
+throw new TomRuntimeException("inferSlotList: failure on " + 
+sList);
+}
+
+private BQTermList inferBQTermList(BQTermList bqTList, TomSymbol tSymbol, TomType
+contextType) {
+//DEBUG System.out.println("begin of InferBQTermList -- tSymbol'" + tSymbol +
+//DEBUG    "'");
+
+{
+{
+if ( (bqTList instanceof tom.engine.adt.code.types.BQTermList) ) {
+if ( (((( tom.engine.adt.code.types.BQTermList )bqTList) instanceof tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm) || ((( tom.engine.adt.code.types.BQTermList )bqTList) instanceof tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm)) ) {
+if ( (( tom.engine.adt.code.types.BQTermList )bqTList).isEmptyconcBQTerm() ) {
+if ( (tSymbol instanceof tom.engine.adt.tomsignature.types.TomSymbol) ) {
+if ( ((( tom.engine.adt.tomsignature.types.TomSymbol )tSymbol) instanceof tom.engine.adt.tomsignature.types.tomsymbol.Symbol) ) {
+return bqTList; 
+}
+}
+}
+}
+}
+
+}
+{
+if ( (bqTList instanceof tom.engine.adt.code.types.BQTermList) ) {
+if ( (((( tom.engine.adt.code.types.BQTermList )bqTList) instanceof tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm) || ((( tom.engine.adt.code.types.BQTermList )bqTList) instanceof tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm)) ) {
+if (!( (( tom.engine.adt.code.types.BQTermList )bqTList).isEmptyconcBQTerm() )) {
+ tom.engine.adt.code.types.BQTerm  tomMatch313_15= (( tom.engine.adt.code.types.BQTermList )bqTList).getHeadconcBQTerm() ;
+if ( (tomMatch313_15 instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {
+ tom.engine.adt.tomname.types.TomName  tomMatch313_14= tomMatch313_15.getAstName() ;
+if ( (tomMatch313_14 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+if ( "head".equals( tomMatch313_14.getString() ) ) {
+ tom.engine.adt.code.types.BQTerm  tom_headBQTerm= (( tom.engine.adt.code.types.BQTermList )bqTList).getHeadconcBQTerm() ;
+ tom.engine.adt.code.types.BQTermList  tomMatch313_12= (( tom.engine.adt.code.types.BQTermList )bqTList).getTailconcBQTerm() ;
+if (!( tomMatch313_12.isEmptyconcBQTerm() )) {
+ tom.engine.adt.code.types.BQTerm  tomMatch313_20= tomMatch313_12.getHeadconcBQTerm() ;
+if ( (tomMatch313_20 instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {
+ tom.engine.adt.tomname.types.TomName  tomMatch313_19= tomMatch313_20.getAstName() ;
+if ( (tomMatch313_19 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+if ( "tail".equals( tomMatch313_19.getString() ) ) {
+ tom.engine.adt.code.types.BQTerm  tom_tailBQTerm= tomMatch313_12.getHeadconcBQTerm() ;
+if (  tomMatch313_12.getTailconcBQTerm() .isEmptyconcBQTerm() ) {
+if ( (tSymbol instanceof tom.engine.adt.tomsignature.types.TomSymbol) ) {
+if ( ((( tom.engine.adt.tomsignature.types.TomSymbol )tSymbol) instanceof tom.engine.adt.tomsignature.types.tomsymbol.Symbol) ) {
+ tom.engine.adt.tomname.types.TomName  tomMatch313_6= (( tom.engine.adt.tomsignature.types.TomSymbol )tSymbol).getAstName() ;
+if ( (tomMatch313_6 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+if ( "realMake".equals( tomMatch313_6.getString() ) ) {
+
+//DEBUG System.out.println("What???? headBQTerm = " + `headBQTerm);
+
+tom_headBQTerm= inferAllTypes(
+tom_headBQTerm,contextType);
+//DEBUG System.out.println("What???? tailBQTerm = " + `tailBQTerm);
+
+tom_tailBQTerm= inferAllTypes(
+tom_tailBQTerm,contextType);
+return 
+ tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make(tom_headBQTerm, tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make(tom_tailBQTerm, tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() ) ) ;
+
+
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+
+}
+{
+if ( (bqTList instanceof tom.engine.adt.code.types.BQTermList) ) {
+if ( (((( tom.engine.adt.code.types.BQTermList )bqTList) instanceof tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm) || ((( tom.engine.adt.code.types.BQTermList )bqTList) instanceof tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm)) ) {
+if (!( (( tom.engine.adt.code.types.BQTermList )bqTList).isEmptyconcBQTerm() )) {
+if ( (tSymbol instanceof tom.engine.adt.tomsignature.types.TomSymbol) ) {
+if ( ((( tom.engine.adt.tomsignature.types.TomSymbol )tSymbol) instanceof tom.engine.adt.tomsignature.types.tomsymbol.EmptySymbol) ) {
+
+/*
+* if the top symbol is unknown, the subterms
+* are typed in an empty context
+*/
+BQTermList newBQTList = 
+ tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() ;
+for(BQTerm arg : 
+bqTList.getCollectionconcBQTerm()) {
+//DEBUG System.out.println("InferBQTermList will call inferAllTypes with = "
+//DEBUG     + `arg);
+arg = 
+inferAllTypes(arg, tom.engine.adt.tomtype.types.tomtype.EmptyType.make() );
+newBQTList = 
+tom_append_list_concBQTerm(newBQTList, tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make(arg, tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() ) );
+}
+return newBQTList;
+
+
+}
+}
+}
+}
+}
+
+}
+{
+if ( (bqTList instanceof tom.engine.adt.code.types.BQTermList) ) {
+if ( (((( tom.engine.adt.code.types.BQTermList )bqTList) instanceof tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm) || ((( tom.engine.adt.code.types.BQTermList )bqTList) instanceof tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm)) ) {
+if (!( (( tom.engine.adt.code.types.BQTermList )bqTList).isEmptyconcBQTerm() )) {
+ tom.engine.adt.code.types.BQTerm  tom_bqTerm= (( tom.engine.adt.code.types.BQTermList )bqTList).getHeadconcBQTerm() ;
+if ( (tSymbol instanceof tom.engine.adt.tomsignature.types.TomSymbol) ) {
+if ( ((( tom.engine.adt.tomsignature.types.TomSymbol )tSymbol) instanceof tom.engine.adt.tomsignature.types.tomsymbol.Symbol) ) {
+ tom.engine.adt.tomtype.types.TomType  tomMatch313_33= (( tom.engine.adt.tomsignature.types.TomSymbol )tSymbol).getTypesToType() ;
+ tom.engine.adt.tomname.types.TomName  tom_symName= (( tom.engine.adt.tomsignature.types.TomSymbol )tSymbol).getAstName() ;
+if ( (tomMatch313_33 instanceof tom.engine.adt.tomtype.types.tomtype.TypesToType) ) {
+ tom.engine.adt.tomtype.types.TomTypeList  tomMatch313_35= tomMatch313_33.getDomain() ;
+ tom.engine.adt.tomtype.types.TomType  tomMatch313_36= tomMatch313_33.getCodomain() ;
+if ( ((tomMatch313_35 instanceof tom.engine.adt.tomtype.types.tomtypelist.ConsconcTomType) || (tomMatch313_35 instanceof tom.engine.adt.tomtype.types.tomtypelist.EmptyconcTomType)) ) {
+if (!( tomMatch313_35.isEmptyconcTomType() )) {
+ tom.engine.adt.tomtype.types.TomType  tom_headTTList= tomMatch313_35.getHeadconcTomType() ;
+if ( (tomMatch313_36 instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {
+
+TomType argType = contextType;
+// In case of a list
+if(TomBase.isListOperator(
+tSymbol) || TomBase.isArrayOperator(
+tSymbol)) {
+TomSymbol argSymb = getSymbolFromTerm(
+tom_bqTerm);
+BQTerm newTerm = 
+tom_bqTerm;
+//DEBUG System.out.println("InferBQTermList -- bqTerm= " + `bqTerm);
+//DEBUG System.out.println("\n\n" + `bqTerm + " is a list? " +
+//DEBUG     TomBase.isListOperator(`argSymb) + " and " +
+//DEBUG     TomBase.isArrayOperator(`argSymb) + '\n');
+if(!(TomBase.isListOperator(
+argSymb) || TomBase.isArrayOperator(
+argSymb))) {
+
+{
+{
+if ( (tom_bqTerm instanceof tom.engine.adt.code.types.BQTerm) ) {
+if ( ((( tom.engine.adt.code.types.BQTerm )tom_bqTerm) instanceof tom.engine.adt.code.types.bqterm.BQVariableStar) ) {
+
+argType = 
+ tom.engine.adt.tomtype.types.tomtype.TypeWithSymbol.make( tomMatch313_36.getTomType() ,  tomMatch313_36.getTlType() , tom_symName) ;
+
+
+}
+}
+
+}
+{
+if ( (tom_bqTerm instanceof tom.engine.adt.code.types.BQTerm) ) {
+boolean tomMatch314_4= false ;
+if ( ((( tom.engine.adt.code.types.BQTerm )tom_bqTerm) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {
+tomMatch314_4= true ;
+} else {
+if ( ((( tom.engine.adt.code.types.BQTerm )tom_bqTerm) instanceof tom.engine.adt.code.types.bqterm.BQAppl) ) {
+tomMatch314_4= true ;
+}
+}
+if (tomMatch314_4) {
+
+//DEBUG System.out.println("inferBQTermList: bqTerm = " + `bqTerm);
+argType = getUnknownFreshTypeVar();
+//DEBUG System.out.println("inferBQTermList: !BQVariableStar -- constraint "
+//DEBUG     + argType + " = " + `headTTList);
+addConstraint(
+ tom.engine.adt.typeconstraints.types.typeconstraint.Equation.make(argType, tom_headTTList, getInfoFromBQTerm(tom_bqTerm)) );
+//addConstraint(`Equation(getUnknownFreshTypeVar(),argType));
+
+
+}
+
+}
+
+}
+
+
+}
+
+} else if (
+tom_symName!= argSymb.getAstName()) {
+// TODO: improve this code! It is like CT-ELEM
+/*
+* A list with a sublist whose constructor is different
+* e.g. 
+* A = ListA(A*) and B = ListB(A*) | b()
+* ListB(b(),ListA(a()),b())
+*/
+argType = getUnknownFreshTypeVar();
+//DEBUG System.out.println("inferBQTermList: symName != argSymb.getAstName() -- constraint "
+//DEBUG     + argType + " = " + `headTTList);
+addConstraint(
+ tom.engine.adt.typeconstraints.types.typeconstraint.Equation.make(argType, tom_headTTList, getInfoFromBQTerm(tom_bqTerm)) );
+}
+
+newTerm= 
+inferAllTypes(newTerm,argType);
+BQTermList newTail = 
+inferBQTermList( (( tom.engine.adt.code.types.BQTermList )bqTList).getTailconcBQTerm() ,tSymbol,contextType);
+return 
+ tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make(newTerm,tom_append_list_concBQTerm(newTail, tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() )) ;
+} else {
+// In case of a function
+BQTermList newBQTList = 
+ tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() ;
+TomTypeList symDomain = 
+tomMatch313_35;
+for(BQTerm arg : 
+bqTList.getCollectionconcBQTerm()) {
+argType = symDomain.getHeadconcTomType();
+addConstraint(
+ tom.engine.adt.typeconstraints.types.typeconstraint.Equation.make(getUnknownFreshTypeVar(), argType, getInfoFromBQTerm(arg)) );
+arg = 
+inferAllTypes(arg,argType);
+newBQTList = 
+tom_append_list_concBQTerm(newBQTList, tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make(arg, tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() ) );
+symDomain = symDomain.getTailconcTomType();
+}
+return newBQTList;
+}
+
+
+}
+}
+}
+}
+}
+}
+}
+}
+}
+
+}
+
+
+}
+
+throw new TomRuntimeException("inferBQTermList: failure on " + 
+bqTList);
+}
+
+/**
+* The class <code>solveConstraints</code> is generated from a strategy wich
+* tries to solve all type constraints collected during the inference
+* <p> 
+* There exists 3 kinds of types : variable types Ai, ground types Ti and
+* ground types Ti^c which are decorated with a given symbol c. Since a type
+* constraints is a pair (type1,type2) representing an equation relation
+* between two types, them the set of all possibilities of arrangement between
+* types is a sequence with repetition. Then, we have 9 possible case (since
+* 3^2 = 9).
+* <p>
+* CASE 1: Equation(T1 = T2) U TCList and Map
+*  a) --> Fail if T1 is different from T2
+*  b) --> Nothing if T1 is equals to T2
+* <p>
+* CASE 2: Equation(T1 = T2^c) U TCList and Map
+*  a) --> Fail if T1 is different from T2
+*  b) --> Nothing if T1 is equals to T2
+* <p>
+* CASE 3: Equation(T1^c = T2) U TCList and Map
+*  a) --> Fail if T1 is different from T2
+*  b) --> Nothing if T1 is equals to T2
+* <p>
+* CASE 4: Equation(T1^a = T2^b) U TCList and Map
+*  a) --> Fail if T1 is different from T2 and/or "a" is different from "b"
+*  b) --> Nothing if T1 is equals to T2
+* <p>
+* CASE 5: Equation(T = A) U TCList and Map 
+*  --> Equation(T = T) U [A/T]TCList and [A/T]Map
+* <p>
+* CASE 6: Equation(T^c = A) U TCList and Map 
+*  --> Equation(T^c = T^c) U [A/T^c]TCList and [A/T^c]Map
+* <p>
+* CASE 7: Equation(A = T) U TCList and Map 
+*  --> Equation(T = T) U [A/T]TCList and [A/T]Map
+* <p>
+* CASE 8: Equation(A = T^c) U TCList and Map 
+*  --> Equation(T^c = T^c) U [A/T^c]TCList and [A/T^c]Map
+* <p>
+* CASE 9: Equation(A1 = A2) U TCList and Map 
+*  --> Nothing 
+*/   
+
+public static class solveConstraints extends tom.library.sl.AbstractStrategyBasic {
+private  NewKernelTyper  nkt;
+public solveConstraints( NewKernelTyper  nkt) {
+super(( new tom.library.sl.Identity() ));
+this.nkt=nkt;
+}
+public  NewKernelTyper  getnkt() {
+return nkt;
+}
+public tom.library.sl.Visitable[] getChildren() {
+tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];
+stratChilds[0] = super.getChildAt(0);
+return stratChilds;}
+public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {
+super.setChildAt(0, children[0]);
+return this;
+}
+public int getChildCount() {
+return 1;
+}
+public tom.library.sl.Visitable getChildAt(int index) {
+switch (index) {
+case 0: return super.getChildAt(0);
+default: throw new IndexOutOfBoundsException();
+}
+}
+public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {
+switch (index) {
+case 0: return super.setChildAt(0, child);
+default: throw new IndexOutOfBoundsException();
+}
+}
+@SuppressWarnings("unchecked")
+public  tom.engine.adt.typeconstraints.types.TypeConstraintList  visit_TypeConstraintList( tom.engine.adt.typeconstraints.types.TypeConstraintList  tom__arg, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+{
+{
+if ( (tom__arg instanceof tom.engine.adt.typeconstraints.types.TypeConstraintList) ) {
+if ( (((( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg) instanceof tom.engine.adt.typeconstraints.types.typeconstraintlist.ConsconcTypeConstraint) || ((( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg) instanceof tom.engine.adt.typeconstraints.types.typeconstraintlist.EmptyconcTypeConstraint)) ) {
+ tom.engine.adt.typeconstraints.types.TypeConstraintList  tomMatch315__end__4=(( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg);
+do {
+{
+if (!( tomMatch315__end__4.isEmptyconcTypeConstraint() )) {
+ tom.engine.adt.typeconstraints.types.TypeConstraint  tomMatch315_10= tomMatch315__end__4.getHeadconcTypeConstraint() ;
+if ( (tomMatch315_10 instanceof tom.engine.adt.typeconstraints.types.typeconstraint.Equation) ) {
+ tom.engine.adt.tomtype.types.TomType  tomMatch315_7= tomMatch315_10.getType1() ;
+ tom.engine.adt.tomtype.types.TomType  tomMatch315_8= tomMatch315_10.getType2() ;
+boolean tomMatch315_18= false ;
+ String  tomMatch315_11= "" ;
+if ( (tomMatch315_7 instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {
+{
+tomMatch315_18= true ;
+tomMatch315_11= tomMatch315_7.getTomType() ;
+
+}
+} else {
+if ( (tomMatch315_7 instanceof tom.engine.adt.tomtype.types.tomtype.TypeWithSymbol) ) {
+{
+tomMatch315_18= true ;
+tomMatch315_11= tomMatch315_7.getTomType() ;
+
+}
+}
+}
+if (tomMatch315_18) {
+ String  tom_tName1=tomMatch315_11;
+if ( (tomMatch315_8 instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {
+ String  tomMatch315_13= tomMatch315_8.getTomType() ;
+ String  tom_tName2=tomMatch315_13;
+ tom.engine.adt.typeconstraints.types.TypeConstraint  tom_tc= tomMatch315__end__4.getHeadconcTypeConstraint() ;
+boolean tomMatch315_17= false ;
+if ( tom_tName1.equals(tomMatch315_13) ) {
+if ( tom_tName2.equals(tomMatch315_13) ) {
+tomMatch315_17= true ;
+}
+}
+if (!(tomMatch315_17)) {
+if (!( "unknown type".equals(tom_tName1) )) {
+if (!( "unknown type".equals(tom_tName2) )) {
+
+//DEBUG System.out.println("In solveConstraints 1a/3a -- tc = " + `tc);
+nkt.printError(
+tom_tc);
+return 
+tom_append_list_concTypeConstraint(tom_get_slice_concTypeConstraint((( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg),tomMatch315__end__4, tom.engine.adt.typeconstraints.types.typeconstraintlist.EmptyconcTypeConstraint.make() ), tom.engine.adt.typeconstraints.types.typeconstraintlist.ConsconcTypeConstraint.make(tom_tc,tom_append_list_concTypeConstraint( tomMatch315__end__4.getTailconcTypeConstraint() , tom.engine.adt.typeconstraints.types.typeconstraintlist.EmptyconcTypeConstraint.make() )) );
+
+
+}
+}
+}
+
+}
+}
+
+}
+}
+if ( tomMatch315__end__4.isEmptyconcTypeConstraint() ) {
+tomMatch315__end__4=(( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg);
+} else {
+tomMatch315__end__4= tomMatch315__end__4.getTailconcTypeConstraint() ;
+}
+
+}
+} while(!( (tomMatch315__end__4==(( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg)) ));
+}
+}
+
+}
+{
+if ( (tom__arg instanceof tom.engine.adt.typeconstraints.types.TypeConstraintList) ) {
+if ( (((( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg) instanceof tom.engine.adt.typeconstraints.types.typeconstraintlist.ConsconcTypeConstraint) || ((( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg) instanceof tom.engine.adt.typeconstraints.types.typeconstraintlist.EmptyconcTypeConstraint)) ) {
+ tom.engine.adt.typeconstraints.types.TypeConstraintList  tomMatch315__end__23=(( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg);
+do {
+{
+if (!( tomMatch315__end__23.isEmptyconcTypeConstraint() )) {
+ tom.engine.adt.typeconstraints.types.TypeConstraint  tomMatch315_29= tomMatch315__end__23.getHeadconcTypeConstraint() ;
+if ( (tomMatch315_29 instanceof tom.engine.adt.typeconstraints.types.typeconstraint.Equation) ) {
+ tom.engine.adt.tomtype.types.TomType  tomMatch315_26= tomMatch315_29.getType1() ;
+ tom.engine.adt.tomtype.types.TomType  tomMatch315_27= tomMatch315_29.getType2() ;
+if ( (tomMatch315_26 instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {
+ String  tom_tName1= tomMatch315_26.getTomType() ;
+if ( (tomMatch315_27 instanceof tom.engine.adt.tomtype.types.tomtype.TypeWithSymbol) ) {
+ String  tomMatch315_32= tomMatch315_27.getTomType() ;
+ String  tom_tName2=tomMatch315_32;
+ tom.engine.adt.typeconstraints.types.TypeConstraint  tom_tc= tomMatch315__end__23.getHeadconcTypeConstraint() ;
+boolean tomMatch315_36= false ;
+if ( tom_tName1.equals(tomMatch315_32) ) {
+if ( tom_tName2.equals(tomMatch315_32) ) {
+tomMatch315_36= true ;
+}
+}
+if (!(tomMatch315_36)) {
+if (!( "unknown type".equals(tom_tName1) )) {
+if (!( "unknown type".equals(tom_tName2) )) {
+
+//DEBUG System.out.println("In solveConstraints 2a -- tc = " + `tc);
+nkt.printError(
+tom_tc);
+return 
+tom_append_list_concTypeConstraint(tom_get_slice_concTypeConstraint((( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg),tomMatch315__end__23, tom.engine.adt.typeconstraints.types.typeconstraintlist.EmptyconcTypeConstraint.make() ), tom.engine.adt.typeconstraints.types.typeconstraintlist.ConsconcTypeConstraint.make(tom_tc,tom_append_list_concTypeConstraint( tomMatch315__end__23.getTailconcTypeConstraint() , tom.engine.adt.typeconstraints.types.typeconstraintlist.EmptyconcTypeConstraint.make() )) );
+
+
+}
+}
+}
+
+}
+}
+}
+}
+if ( tomMatch315__end__23.isEmptyconcTypeConstraint() ) {
+tomMatch315__end__23=(( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg);
+} else {
+tomMatch315__end__23= tomMatch315__end__23.getTailconcTypeConstraint() ;
+}
+
+}
+} while(!( (tomMatch315__end__23==(( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg)) ));
+}
+}
+
+}
+{
+if ( (tom__arg instanceof tom.engine.adt.typeconstraints.types.TypeConstraintList) ) {
+if ( (((( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg) instanceof tom.engine.adt.typeconstraints.types.typeconstraintlist.ConsconcTypeConstraint) || ((( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg) instanceof tom.engine.adt.typeconstraints.types.typeconstraintlist.EmptyconcTypeConstraint)) ) {
+ tom.engine.adt.typeconstraints.types.TypeConstraintList  tomMatch315__end__41=(( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg);
+do {
+{
+if (!( tomMatch315__end__41.isEmptyconcTypeConstraint() )) {
+ tom.engine.adt.typeconstraints.types.TypeConstraint  tomMatch315_47= tomMatch315__end__41.getHeadconcTypeConstraint() ;
+if ( (tomMatch315_47 instanceof tom.engine.adt.typeconstraints.types.typeconstraint.Equation) ) {
+ tom.engine.adt.tomtype.types.TomType  tomMatch315_44= tomMatch315_47.getType1() ;
+ tom.engine.adt.tomtype.types.TomType  tomMatch315_45= tomMatch315_47.getType2() ;
+if ( (tomMatch315_44 instanceof tom.engine.adt.tomtype.types.tomtype.TypeWithSymbol) ) {
+if ( (tomMatch315_45 instanceof tom.engine.adt.tomtype.types.tomtype.TypeWithSymbol) ) {
+ tom.engine.adt.typeconstraints.types.TypeConstraint  tom_tc= tomMatch315__end__41.getHeadconcTypeConstraint() ;
+if (!( (tomMatch315_45==tomMatch315_44) )) {
+
+//DEBUG System.out.println("In solveConstraints 4a -- tc = " + `tc);
+nkt.printError(
+tom_tc);
+return 
+tom_append_list_concTypeConstraint(tom_get_slice_concTypeConstraint((( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg),tomMatch315__end__41, tom.engine.adt.typeconstraints.types.typeconstraintlist.EmptyconcTypeConstraint.make() ), tom.engine.adt.typeconstraints.types.typeconstraintlist.ConsconcTypeConstraint.make(tom_tc,tom_append_list_concTypeConstraint( tomMatch315__end__41.getTailconcTypeConstraint() , tom.engine.adt.typeconstraints.types.typeconstraintlist.EmptyconcTypeConstraint.make() )) );
+
+
+}
+}
+}
+}
+}
+if ( tomMatch315__end__41.isEmptyconcTypeConstraint() ) {
+tomMatch315__end__41=(( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg);
+} else {
+tomMatch315__end__41= tomMatch315__end__41.getTailconcTypeConstraint() ;
+}
+
+}
+} while(!( (tomMatch315__end__41==(( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg)) ));
+}
+}
+
+}
+{
+if ( (tom__arg instanceof tom.engine.adt.typeconstraints.types.TypeConstraintList) ) {
+if ( (((( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg) instanceof tom.engine.adt.typeconstraints.types.typeconstraintlist.ConsconcTypeConstraint) || ((( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg) instanceof tom.engine.adt.typeconstraints.types.typeconstraintlist.EmptyconcTypeConstraint)) ) {
+ tom.engine.adt.typeconstraints.types.TypeConstraintList  tomMatch315__end__60=(( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg);
+do {
+{
+ tom.engine.adt.typeconstraints.types.TypeConstraintList  tom_leftTCList=tom_get_slice_concTypeConstraint((( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg),tomMatch315__end__60, tom.engine.adt.typeconstraints.types.typeconstraintlist.EmptyconcTypeConstraint.make() );
+if (!( tomMatch315__end__60.isEmptyconcTypeConstraint() )) {
+ tom.engine.adt.typeconstraints.types.TypeConstraint  tomMatch315_66= tomMatch315__end__60.getHeadconcTypeConstraint() ;
+if ( (tomMatch315_66 instanceof tom.engine.adt.typeconstraints.types.typeconstraint.Equation) ) {
+ tom.engine.adt.tomtype.types.TomType  tomMatch315_63= tomMatch315_66.getType1() ;
+ tom.engine.adt.tomtype.types.TomType  tomMatch315_64= tomMatch315_66.getType2() ;
+if ( (tomMatch315_63 instanceof tom.engine.adt.tomtype.types.tomtype.TypeVar) ) {
+ tom.engine.adt.tomtype.types.TomType  tom_typeVar=tomMatch315_63;
+ tom.engine.adt.tomtype.types.TomType  tom_type=tomMatch315_64;
+ tom.engine.adt.typeconstraints.types.TypeConstraintList  tom_rightTCList= tomMatch315__end__60.getTailconcTypeConstraint() ;
+boolean tomMatch315_72= false ;
+if ( (tom_typeVar==tomMatch315_64) ) {
+if ( (tom_type==tomMatch315_64) ) {
+tomMatch315_72= true ;
+}
+}
+if (!(tomMatch315_72)) {
+
+nkt.substitutions.put(
+tom_typeVar,
+tom_type);
+//DEBUG System.out.println("In solveConstraints 7/8 -- tc = " + `tc);
+
+{
+{
+if ( (tom_leftTCList instanceof tom.engine.adt.typeconstraints.types.TypeConstraintList) ) {
+boolean tomMatch316_2= false ;
+if ( (((( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom_leftTCList) instanceof tom.engine.adt.typeconstraints.types.typeconstraintlist.ConsconcTypeConstraint) || ((( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom_leftTCList) instanceof tom.engine.adt.typeconstraints.types.typeconstraintlist.EmptyconcTypeConstraint)) ) {
+if ( (( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom_leftTCList).isEmptyconcTypeConstraint() ) {
+tomMatch316_2= true ;
+}
+}
+if (!(tomMatch316_2)) {
+
+if(nkt.findTypeVars(
+tom_typeVar,
+tom_leftTCList)) {
+
+tom_leftTCList= nkt.applySubstitution(
+tom_typeVar,
+tom_type,
+tom_leftTCList);
+}
+
+
+}
+
+}
+
+}
+{
+if ( (tom_rightTCList instanceof tom.engine.adt.typeconstraints.types.TypeConstraintList) ) {
+boolean tomMatch316_5= false ;
+if ( (((( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom_rightTCList) instanceof tom.engine.adt.typeconstraints.types.typeconstraintlist.ConsconcTypeConstraint) || ((( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom_rightTCList) instanceof tom.engine.adt.typeconstraints.types.typeconstraintlist.EmptyconcTypeConstraint)) ) {
+if ( (( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom_rightTCList).isEmptyconcTypeConstraint() ) {
+tomMatch316_5= true ;
+}
+}
+if (!(tomMatch316_5)) {
+
+if(nkt.findTypeVars(
+tom_typeVar,
+tom_rightTCList)) {
+
+tom_rightTCList= nkt.applySubstitution(
+tom_typeVar,
+tom_type,
+tom_rightTCList);
+}
+
+
+}
+
+}
+
+}
+
+
+}
+
+return 
+tom_append_list_concTypeConstraint(tom_leftTCList, tom.engine.adt.typeconstraints.types.typeconstraintlist.ConsconcTypeConstraint.make( tom.engine.adt.typeconstraints.types.typeconstraint.Equation.make(tom_type, tom_type,  tomMatch315_66.getInfo() ) ,tom_append_list_concTypeConstraint(tom_rightTCList, tom.engine.adt.typeconstraints.types.typeconstraintlist.EmptyconcTypeConstraint.make() )) );
+
+
+}
+
+}
+}
+}
+if ( tomMatch315__end__60.isEmptyconcTypeConstraint() ) {
+tomMatch315__end__60=(( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg);
+} else {
+tomMatch315__end__60= tomMatch315__end__60.getTailconcTypeConstraint() ;
+}
+
+}
+} while(!( (tomMatch315__end__60==(( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg)) ));
+}
+}
+
+}
+{
+if ( (tom__arg instanceof tom.engine.adt.typeconstraints.types.TypeConstraintList) ) {
+if ( (((( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg) instanceof tom.engine.adt.typeconstraints.types.typeconstraintlist.ConsconcTypeConstraint) || ((( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg) instanceof tom.engine.adt.typeconstraints.types.typeconstraintlist.EmptyconcTypeConstraint)) ) {
+ tom.engine.adt.typeconstraints.types.TypeConstraintList  tomMatch315__end__77=(( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg);
+do {
+{
+ tom.engine.adt.typeconstraints.types.TypeConstraintList  tom_leftTCList=tom_get_slice_concTypeConstraint((( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg),tomMatch315__end__77, tom.engine.adt.typeconstraints.types.typeconstraintlist.EmptyconcTypeConstraint.make() );
+if (!( tomMatch315__end__77.isEmptyconcTypeConstraint() )) {
+ tom.engine.adt.typeconstraints.types.TypeConstraint  tomMatch315_83= tomMatch315__end__77.getHeadconcTypeConstraint() ;
+if ( (tomMatch315_83 instanceof tom.engine.adt.typeconstraints.types.typeconstraint.Equation) ) {
+ tom.engine.adt.tomtype.types.TomType  tomMatch315_80= tomMatch315_83.getType1() ;
+ tom.engine.adt.tomtype.types.TomType  tomMatch315_81= tomMatch315_83.getType2() ;
+ tom.engine.adt.tomtype.types.TomType  tom_groundType=tomMatch315_80;
+if ( (tomMatch315_81 instanceof tom.engine.adt.tomtype.types.tomtype.TypeVar) ) {
+ tom.engine.adt.tomtype.types.TomType  tom_typeVar=tomMatch315_81;
+ tom.engine.adt.typeconstraints.types.TypeConstraintList  tom_rightTCList= tomMatch315__end__77.getTailconcTypeConstraint() ;
+boolean tomMatch315_91= false ;
+if ( (tomMatch315_80 instanceof tom.engine.adt.tomtype.types.tomtype.TypeVar) ) {
+if ( (tom_groundType==tomMatch315_80) ) {
+tomMatch315_91= true ;
+}
+}
+if (!(tomMatch315_91)) {
+
+nkt.substitutions.put(
+tom_typeVar,
+tom_groundType);
+//DEBUG System.out.println("In solveConstraints 5/6 -- tc = " + `tc);
+
+{
+{
+if ( (tom_leftTCList instanceof tom.engine.adt.typeconstraints.types.TypeConstraintList) ) {
+boolean tomMatch317_2= false ;
+if ( (((( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom_leftTCList) instanceof tom.engine.adt.typeconstraints.types.typeconstraintlist.ConsconcTypeConstraint) || ((( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom_leftTCList) instanceof tom.engine.adt.typeconstraints.types.typeconstraintlist.EmptyconcTypeConstraint)) ) {
+if ( (( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom_leftTCList).isEmptyconcTypeConstraint() ) {
+tomMatch317_2= true ;
+}
+}
+if (!(tomMatch317_2)) {
+
+if(nkt.findTypeVars(
+tom_typeVar,
+tom_leftTCList)) {
+
+tom_leftTCList= nkt.applySubstitution(
+tom_typeVar,
+tom_groundType,
+tom_leftTCList);
+}
+
+
+}
+
+}
+
+}
+{
+if ( (tom_rightTCList instanceof tom.engine.adt.typeconstraints.types.TypeConstraintList) ) {
+boolean tomMatch317_5= false ;
+if ( (((( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom_rightTCList) instanceof tom.engine.adt.typeconstraints.types.typeconstraintlist.ConsconcTypeConstraint) || ((( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom_rightTCList) instanceof tom.engine.adt.typeconstraints.types.typeconstraintlist.EmptyconcTypeConstraint)) ) {
+if ( (( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom_rightTCList).isEmptyconcTypeConstraint() ) {
+tomMatch317_5= true ;
+}
+}
+if (!(tomMatch317_5)) {
+
+if(nkt.findTypeVars(
+tom_typeVar,
+tom_rightTCList)) {
+
+tom_rightTCList= nkt.applySubstitution(
+tom_typeVar,
+tom_groundType,
+tom_rightTCList);
+}
+
+
+}
+
+}
+
+}
+
+
+}
+
+return
+
+tom_append_list_concTypeConstraint(tom_leftTCList, tom.engine.adt.typeconstraints.types.typeconstraintlist.ConsconcTypeConstraint.make( tom.engine.adt.typeconstraints.types.typeconstraint.Equation.make(tom_groundType, tom_groundType,  tomMatch315_83.getInfo() ) ,tom_append_list_concTypeConstraint(tom_rightTCList, tom.engine.adt.typeconstraints.types.typeconstraintlist.EmptyconcTypeConstraint.make() )) );
+
+
+}
+
+}
+}
+}
+if ( tomMatch315__end__77.isEmptyconcTypeConstraint() ) {
+tomMatch315__end__77=(( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg);
+} else {
+tomMatch315__end__77= tomMatch315__end__77.getTailconcTypeConstraint() ;
+}
+
+}
+} while(!( (tomMatch315__end__77==(( tom.engine.adt.typeconstraints.types.TypeConstraintList )tom__arg)) ));
+}
+}
+
+}
+
+
+}
+return _visit_TypeConstraintList(tom__arg,introspector);
+
+}
+@SuppressWarnings("unchecked")
+public  tom.engine.adt.typeconstraints.types.TypeConstraintList  _visit_TypeConstraintList( tom.engine.adt.typeconstraints.types.TypeConstraintList  arg, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if (!(( null  == environment))) {
+return (( tom.engine.adt.typeconstraints.types.TypeConstraintList )any.visit(environment,introspector));
+} else {
+return any.visitLight(arg,introspector);
+}
+}
+@SuppressWarnings("unchecked")
+public <T> T visitLight(T v, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if ( (v instanceof tom.engine.adt.typeconstraints.types.TypeConstraintList) ) {
+return ((T)visit_TypeConstraintList((( tom.engine.adt.typeconstraints.types.TypeConstraintList )v),introspector));
+}
+if (!(( null  == environment))) {
+return ((T)any.visit(environment,introspector));
+} else {
+return any.visitLight(v,introspector);
+}
+
+}
+}
+private static  tom.library.sl.Strategy  tom_make_solveConstraints( NewKernelTyper  t0) { 
+return new solveConstraints(t0);
+}
+
+
+private void printError(TypeConstraint tConstraint) {
+String fileName = "";
+int line = 0;
+
+{
+{
+if ( (tConstraint instanceof tom.engine.adt.typeconstraints.types.TypeConstraint) ) {
+if ( ((( tom.engine.adt.typeconstraints.types.TypeConstraint )tConstraint) instanceof tom.engine.adt.typeconstraints.types.typeconstraint.Equation) ) {
+ tom.engine.adt.tomtype.types.TomType  tom_tType1= (( tom.engine.adt.typeconstraints.types.TypeConstraint )tConstraint).getType1() ;
+ tom.engine.adt.tomtype.types.TomType  tom_tType2= (( tom.engine.adt.typeconstraints.types.TypeConstraint )tConstraint).getType2() ;
+ tom.engine.adt.typeconstraints.types.Info  tom_info= (( tom.engine.adt.typeconstraints.types.TypeConstraint )tConstraint).getInfo() ;
+if ( (tom_tType1 instanceof tom.engine.adt.tomtype.types.TomType) ) {
+boolean tomMatch318_18= false ;
+ String  tomMatch318_8= "" ;
+if ( ((( tom.engine.adt.tomtype.types.TomType )tom_tType1) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {
+{
+tomMatch318_18= true ;
+tomMatch318_8= (( tom.engine.adt.tomtype.types.TomType )tom_tType1).getTomType() ;
+
+}
+} else {
+if ( ((( tom.engine.adt.tomtype.types.TomType )tom_tType1) instanceof tom.engine.adt.tomtype.types.tomtype.TypeWithSymbol) ) {
+{
+tomMatch318_18= true ;
+tomMatch318_8= (( tom.engine.adt.tomtype.types.TomType )tom_tType1).getTomType() ;
+
+}
+}
+}
+if (tomMatch318_18) {
+if ( (tom_tType2 instanceof tom.engine.adt.tomtype.types.TomType) ) {
+boolean tomMatch318_17= false ;
+ String  tomMatch318_10= "" ;
+if ( ((( tom.engine.adt.tomtype.types.TomType )tom_tType2) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {
+{
+tomMatch318_17= true ;
+tomMatch318_10= (( tom.engine.adt.tomtype.types.TomType )tom_tType2).getTomType() ;
+
+}
+} else {
+if ( ((( tom.engine.adt.tomtype.types.TomType )tom_tType2) instanceof tom.engine.adt.tomtype.types.tomtype.TypeWithSymbol) ) {
+{
+tomMatch318_17= true ;
+tomMatch318_10= (( tom.engine.adt.tomtype.types.TomType )tom_tType2).getTomType() ;
+
+}
+}
+}
+if (tomMatch318_17) {
+if ( (tom_info instanceof tom.engine.adt.typeconstraints.types.Info) ) {
+if ( ((( tom.engine.adt.typeconstraints.types.Info )tom_info) instanceof tom.engine.adt.typeconstraints.types.info.PairNameOptions) ) {
+ tom.engine.adt.tomname.types.TomName  tomMatch318_12= (( tom.engine.adt.typeconstraints.types.Info )tom_info).getAstName() ;
+if ( (tomMatch318_12 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+
+Option option = TomBase.findOriginTracking(
+ (( tom.engine.adt.typeconstraints.types.Info )tom_info).getOptions() );
+
+{
+{
+if ( (option instanceof tom.engine.adt.tomoption.types.Option) ) {
+boolean tomMatch319_2= false ;
+if ( ((( tom.engine.adt.tomoption.types.Option )option) instanceof tom.engine.adt.tomoption.types.option.noOption) ) {
+tomMatch319_2= true ;
+}
+if (!(tomMatch319_2)) {
+
+fileName = option.getFileName();
+line = option.getLine();
+
+}
+
+}
+
+}
+
+}
+
+if(lazyType==false) {
+TomMessage.error(logger,fileName, line,
+TomMessage.incompatibleTypes,
+tomMatch318_8,
+tomMatch318_10,
+ tomMatch318_12.getString() ); 
+}
+
+
+}
+}
+}
+}
+
+}
+}
+
+}
+}
+}
+
+}
+
+}
+
+}
+
+
+private boolean findTypeVars(TomType typeVar, TypeConstraintList
+tcList) {
+//DEBUG System.out.println("\n Test pour findTypeVars -- ligne 1.");
+
+{
+{
+if ( (tcList instanceof tom.engine.adt.typeconstraints.types.TypeConstraintList) ) {
+if ( (((( tom.engine.adt.typeconstraints.types.TypeConstraintList )tcList) instanceof tom.engine.adt.typeconstraints.types.typeconstraintlist.ConsconcTypeConstraint) || ((( tom.engine.adt.typeconstraints.types.TypeConstraintList )tcList) instanceof tom.engine.adt.typeconstraints.types.typeconstraintlist.EmptyconcTypeConstraint)) ) {
+ tom.engine.adt.typeconstraints.types.TypeConstraintList  tomMatch320__end__4=(( tom.engine.adt.typeconstraints.types.TypeConstraintList )tcList);
+do {
+{
+if (!( tomMatch320__end__4.isEmptyconcTypeConstraint() )) {
+ tom.engine.adt.typeconstraints.types.TypeConstraint  tomMatch320_10= tomMatch320__end__4.getHeadconcTypeConstraint() ;
+if ( (tomMatch320_10 instanceof tom.engine.adt.typeconstraints.types.typeconstraint.Equation) ) {
+if ( (typeVar== tomMatch320_10.getType1() ) ) {
+
+return true;
+
+}
+if ( (typeVar== tomMatch320_10.getType2() ) ) {
+
+return true;
+
+}
+
+}
+}
+if ( tomMatch320__end__4.isEmptyconcTypeConstraint() ) {
+tomMatch320__end__4=(( tom.engine.adt.typeconstraints.types.TypeConstraintList )tcList);
+} else {
+tomMatch320__end__4= tomMatch320__end__4.getTailconcTypeConstraint() ;
+}
+
+}
+} while(!( (tomMatch320__end__4==(( tom.engine.adt.typeconstraints.types.TypeConstraintList )tcList)) ));
+}
+}
+
+}
+
+}
+
+return false;
+}
+
+private TypeConstraintList applySubstitution(TomType oldtt, TomType newtt,
+TypeConstraintList tcList) {
+try {
+return (TypeConstraintList)
+
+tom_make_TopDown(tom_make_replaceTypeConstraints(oldtt,newtt)).visitLight(tcList);
+} catch(tom.library.sl.VisitFailure e) {
+throw new RuntimeException("applySubstitution: should not be here.");
+}
+}
+
+
+public static class replaceTypeConstraints extends tom.library.sl.AbstractStrategyBasic {
+private  tom.engine.adt.tomtype.types.TomType  oldtt;
+private  tom.engine.adt.tomtype.types.TomType  newtt;
+public replaceTypeConstraints( tom.engine.adt.tomtype.types.TomType  oldtt,  tom.engine.adt.tomtype.types.TomType  newtt) {
+super(( new tom.library.sl.Identity() ));
+this.oldtt=oldtt;
+this.newtt=newtt;
+}
+public  tom.engine.adt.tomtype.types.TomType  getoldtt() {
+return oldtt;
+}
+public  tom.engine.adt.tomtype.types.TomType  getnewtt() {
+return newtt;
+}
+public tom.library.sl.Visitable[] getChildren() {
+tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];
+stratChilds[0] = super.getChildAt(0);
+return stratChilds;}
+public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {
+super.setChildAt(0, children[0]);
+return this;
+}
+public int getChildCount() {
+return 1;
+}
+public tom.library.sl.Visitable getChildAt(int index) {
+switch (index) {
+case 0: return super.getChildAt(0);
+default: throw new IndexOutOfBoundsException();
+}
+}
+public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {
+switch (index) {
+case 0: return super.setChildAt(0, child);
+default: throw new IndexOutOfBoundsException();
+}
+}
+@SuppressWarnings("unchecked")
+public  tom.engine.adt.tomtype.types.TomType  visit_TomType( tom.engine.adt.tomtype.types.TomType  tom__arg, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+{
+{
+if ( (tom__arg instanceof tom.engine.adt.tomtype.types.TomType) ) {
+if (((( tom.engine.adt.tomtype.types.TomType )tom__arg) == oldtt)) {
+
+return newtt; 
+
+}
+}
+
+}
+
+}
+return _visit_TomType(tom__arg,introspector);
+
+}
+@SuppressWarnings("unchecked")
+public  tom.engine.adt.tomtype.types.TomType  _visit_TomType( tom.engine.adt.tomtype.types.TomType  arg, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if (!(( null  == environment))) {
+return (( tom.engine.adt.tomtype.types.TomType )any.visit(environment,introspector));
+} else {
+return any.visitLight(arg,introspector);
+}
+}
+@SuppressWarnings("unchecked")
+public <T> T visitLight(T v, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if ( (v instanceof tom.engine.adt.tomtype.types.TomType) ) {
+return ((T)visit_TomType((( tom.engine.adt.tomtype.types.TomType )v),introspector));
+}
+if (!(( null  == environment))) {
+return ((T)any.visit(environment,introspector));
+} else {
+return any.visitLight(v,introspector);
+}
+
+}
+}
+private static  tom.library.sl.Strategy  tom_make_replaceTypeConstraints( tom.engine.adt.tomtype.types.TomType  t0,  tom.engine.adt.tomtype.types.TomType  t1) { 
+return new replaceTypeConstraints(t0,t1);
+}
+
+
+private Code replaceInCode(Code code) {
+Code replacedCode = code;
+try {
+replacedCode =
+
+tom_make_RepeatId(tom_make_TopDown(tom_make_replaceFreshTypeVar(this))).visitLight(code);
+} catch(tom.library.sl.VisitFailure e) {
+throw new TomRuntimeException("replaceInCode: failure on " +
+replacedCode);
+}
+return replacedCode;
+}
+
+
+private void replaceInSymbolTable() {
+for(String tomName:symbolTable.keySymbolIterable()) {
+//DEBUG System.out.println("replaceInSymboltable() - tomName : " + tomName);
+TomSymbol tSymbol = getSymbolFromName(tomName);
+//DEBUG System.out.println("replaceInSymboltable() - tSymbol before strategy: "
+//DEBUG     + tSymbol);
+try {
+tSymbol = 
+tom_make_RepeatId(tom_make_TopDown(tom_make_replaceFreshTypeVar(this))).visitLight(tSymbol);
+} catch(tom.library.sl.VisitFailure e) {
+throw new TomRuntimeException("replaceInSymbolTable: failure on " +
+tSymbol);
+}
+//DEBUG System.out.println("replaceInSymboltable() - tSymbol after strategy: "
+//DEBUG     + tSymbol);
+/*
+%match {
+Symbol[AstName=aName@Name(""),TypesToType=TypesToType(concTomType(contextType),contextType),PairNameDeclList=pndList,Options=optionList] << tSymbol -> {
+
+}  
+}*/
+symbolTable.putSymbol(tomName,tSymbol);
+}
+}
+
+
+public static class replaceFreshTypeVar extends tom.library.sl.AbstractStrategyBasic {
+private  NewKernelTyper  nkt;
+public replaceFreshTypeVar( NewKernelTyper  nkt) {
+super(( new tom.library.sl.Identity() ));
+this.nkt=nkt;
+}
+public  NewKernelTyper  getnkt() {
+return nkt;
+}
+public tom.library.sl.Visitable[] getChildren() {
+tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];
+stratChilds[0] = super.getChildAt(0);
+return stratChilds;}
+public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {
+super.setChildAt(0, children[0]);
+return this;
+}
+public int getChildCount() {
+return 1;
+}
+public tom.library.sl.Visitable getChildAt(int index) {
+switch (index) {
+case 0: return super.getChildAt(0);
+default: throw new IndexOutOfBoundsException();
+}
+}
+public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {
+switch (index) {
+case 0: return super.setChildAt(0, child);
+default: throw new IndexOutOfBoundsException();
+}
+}
+@SuppressWarnings("unchecked")
+public  tom.engine.adt.tomtype.types.TomType  visit_TomType( tom.engine.adt.tomtype.types.TomType  tom__arg, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+{
+{
+if ( (tom__arg instanceof tom.engine.adt.tomtype.types.TomType) ) {
+if ( ((( tom.engine.adt.tomtype.types.TomType )tom__arg) instanceof tom.engine.adt.tomtype.types.tomtype.TypeVar) ) {
+ tom.engine.adt.tomtype.types.TomType  tom_typeVar=(( tom.engine.adt.tomtype.types.TomType )tom__arg);
+
+if (nkt.substitutions.containsKey(
+tom_typeVar)) {
+return nkt.substitutions.get(
+tom_typeVar);
+} else {
+//DEBUG System.out.println("\n----- There is no mapping for " + `typeVar +'\n');
+return 
+ tom.engine.adt.tomtype.types.tomtype.Type.make( (( tom.engine.adt.tomtype.types.TomType )tom__arg).getTomType() ,  tom.engine.adt.tomtype.types.targetlanguagetype.EmptyTargetLanguageType.make() ) ;
+}    
+
+
+}
+}
+
+}
+
+}
+return _visit_TomType(tom__arg,introspector);
+
+}
+@SuppressWarnings("unchecked")
+public  tom.engine.adt.tomtype.types.TomType  _visit_TomType( tom.engine.adt.tomtype.types.TomType  arg, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if (!(( null  == environment))) {
+return (( tom.engine.adt.tomtype.types.TomType )any.visit(environment,introspector));
+} else {
+return any.visitLight(arg,introspector);
+}
+}
+@SuppressWarnings("unchecked")
+public <T> T visitLight(T v, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if ( (v instanceof tom.engine.adt.tomtype.types.TomType) ) {
+return ((T)visit_TomType((( tom.engine.adt.tomtype.types.TomType )v),introspector));
+}
+if (!(( null  == environment))) {
+return ((T)any.visit(environment,introspector));
+} else {
+return any.visitLight(v,introspector);
+}
+
+}
+}
+private static  tom.library.sl.Strategy  tom_make_replaceFreshTypeVar( NewKernelTyper  t0) { 
+return new replaceFreshTypeVar(t0);
+}
+
+
+public void printGeneratedConstraints(TypeConstraintList TCList) {
+
+{
+{
+if ( (TCList instanceof tom.engine.adt.typeconstraints.types.TypeConstraintList) ) {
+boolean tomMatch323_2= false ;
+if ( (((( tom.engine.adt.typeconstraints.types.TypeConstraintList )TCList) instanceof tom.engine.adt.typeconstraints.types.typeconstraintlist.ConsconcTypeConstraint) || ((( tom.engine.adt.typeconstraints.types.TypeConstraintList )TCList) instanceof tom.engine.adt.typeconstraints.types.typeconstraintlist.EmptyconcTypeConstraint)) ) {
+if ( (( tom.engine.adt.typeconstraints.types.TypeConstraintList )TCList).isEmptyconcTypeConstraint() ) {
+tomMatch323_2= true ;
+}
+}
+if (!(tomMatch323_2)) {
+
+System.out.print("\n------ Type Constraints : \n {");
+printEachConstraint(TCList);
+System.out.print("}");
+
+}
+
+}
+
+}
+
+}
+
+}
+public void printEachConstraint(TypeConstraintList TCList) {
+
+{
+{
+if ( (TCList instanceof tom.engine.adt.typeconstraints.types.TypeConstraintList) ) {
+if ( (((( tom.engine.adt.typeconstraints.types.TypeConstraintList )TCList) instanceof tom.engine.adt.typeconstraints.types.typeconstraintlist.ConsconcTypeConstraint) || ((( tom.engine.adt.typeconstraints.types.TypeConstraintList )TCList) instanceof tom.engine.adt.typeconstraints.types.typeconstraintlist.EmptyconcTypeConstraint)) ) {
+if (!( (( tom.engine.adt.typeconstraints.types.TypeConstraintList )TCList).isEmptyconcTypeConstraint() )) {
+ tom.engine.adt.typeconstraints.types.TypeConstraint  tomMatch324_7= (( tom.engine.adt.typeconstraints.types.TypeConstraintList )TCList).getHeadconcTypeConstraint() ;
+if ( (tomMatch324_7 instanceof tom.engine.adt.typeconstraints.types.typeconstraint.Equation) ) {
+ tom.engine.adt.typeconstraints.types.TypeConstraintList  tom_tailTCList= (( tom.engine.adt.typeconstraints.types.TypeConstraintList )TCList).getTailconcTypeConstraint() ;
+
+printType(
+ tomMatch324_7.getType1() );
+System.out.print(" = ");
+printType(
+ tomMatch324_7.getType2() );
+if (
+tom_tailTCList!= 
+ tom.engine.adt.typeconstraints.types.typeconstraintlist.EmptyconcTypeConstraint.make() ) {
+System.out.print(", "); 
+printEachConstraint(
+tom_tailTCList);
+}
+
+
+}
+}
+}
+}
+
+}
+
+}
+
+}
+
+public void printType(TomType type) {
+System.out.print(type);
+}
 } // NewKernelTyper

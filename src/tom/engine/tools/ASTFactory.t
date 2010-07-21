@@ -366,7 +366,7 @@ public class ASTFactory {
        */
     TomNameList newNameList = `concTomName();
     %match(term) {
-      RecordAppl[NameList=(_*,Name(name),_*)] -> {
+      RecordAppl[NameList=concTomName(_*,Name(name),_*)] -> {
         newNameList = `concTomName(newNameList*,Name(encodeXMLString(symbolTable,name)));
       }
     }
@@ -383,7 +383,7 @@ public class ASTFactory {
        */
       //System.out.println("metaEncode: " + term);
     %match(term) {
-      RecordAppl[NameList=(Name(tomName))] -> {
+      RecordAppl[NameList=concTomName(Name(tomName))] -> {
           //System.out.println("tomName = " + tomName);
         TomSymbol tomSymbol = symbolTable.getSymbolFromName(`tomName);
         if(tomSymbol != null) {

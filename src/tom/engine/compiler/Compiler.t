@@ -368,6 +368,9 @@ public class Compiler extends TomGenericPlugin {
   public TomType getSlotType(TomName tomName, TomName slotName) {
     String stringName = ((Name)tomName).getString();
     TomSymbol tomSymbol = getSymbolTable().getSymbolFromName(stringName);
+    if(tomSymbol == null) {
+      throw new TomRuntimeException("Unknown symbol:" + stringName);
+    }
     return TomBase.getSlotType(tomSymbol,slotName);    
   } 
 
@@ -535,7 +538,7 @@ public class Compiler extends TomGenericPlugin {
 
   %strategy CollectACSymbols(HashSet bag) extends Identity() {
     visit TomTerm {
-      RecordAppl[NameList=(Name(headName),_*),Options=concOption(_*,MatchingTheory(concElementaryTheory(_*,AC(),_*)),_*)] -> { 
+      RecordAppl[NameList=concTomName(Name(headName),_*),Options=concOption(_*,MatchingTheory(concElementaryTheory(_*,AC(),_*)),_*)] -> { 
         bag.add(`headName);
       }
     }

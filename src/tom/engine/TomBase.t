@@ -556,7 +556,7 @@ public final class TomBase {
 
   public static TomType getTermType(TomTerm t, SymbolTable symbolTable) {
     %match(t) {
-      (TermAppl|RecordAppl)[NameList=(headName,_*)] -> {
+      (TermAppl|RecordAppl)[NameList=concTomName(headName,_*)] -> {
         String tomName = null;
         if(`(headName) instanceof AntiName) {
           tomName = ((AntiName)`headName).getName().getString();
@@ -609,7 +609,7 @@ public final class TomBase {
 
   public static TomSymbol getSymbolFromTerm(TomTerm t, SymbolTable symbolTable) {
     %match(t) {
-      (TermAppl|RecordAppl)[NameList=(headName,_*)] -> {
+      (TermAppl|RecordAppl)[NameList=concTomName(headName,_*)] -> {
         String tomName = null;
         if(`(headName) instanceof AntiName) {
           tomName = ((AntiName)`headName).getName().getString();

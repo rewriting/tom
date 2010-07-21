@@ -70,11 +70,11 @@ public class AdapterPlugin extends GomGenericPlugin {
       hookList = (HookDeclList) arg[1];
       setGomEnvironment((GomEnvironment) arg[2]);
     } else {
-      getLogger().log(Level.SEVERE,
-          GomMessage.invalidPluginArgument.getMessage(),
-          new Object[]{
-            "AntlrAdapter", "[ModuleList,HookDeclList,GomEnvironment]",
-            getArgumentArrayString(arg)});
+      GomMessage.error(getLogger(),null,0,
+          GomMessage.invalidPluginArgument,
+          "AntlrAdapter",
+          "[ModuleList,HookDeclList,GomEnvironment]",
+          getArgumentArrayString(arg));
     }
   }
 
@@ -94,13 +94,14 @@ public class AdapterPlugin extends GomGenericPlugin {
       }
       tomHomePath = new File(tomHome).getCanonicalFile();
     } catch (IOException e) {
-      getLogger().log(Level.FINER,"Failed to get canonical path for " + tomHome);
+      GomMessage.finer(getLogger(), null, 0, 
+          GomMessage.getCanonicalPathFailure, tomHome);
     }
     AdapterGenerator adapter = new AdapterGenerator(tomHomePath, getGomEnvironment());
     adapter.generate(moduleList,hookList);
-    getLogger().info("GOM Antlr Adapter generation phase ("
-        + (System.currentTimeMillis()-startChrono)
-        + " ms)");
+    GomMessage.info(getLogger(), null, 0, 
+        GomMessage.gomAntlrAdapterGenerationPhase, 
+        (System.currentTimeMillis()-startChrono));
     informationTracker.put(KEY_LAST_GEN_MAPPING,getGomEnvironment().getLastGeneratedMapping());
   }
 

@@ -1,4 +1,4 @@
-// $ANTLR 3.1.3 Mar 17, 2009 19:23:44 /Users/pem/workspace/jtom/src/tom/gom/expander/rule/Rule.g 2010-04-14 12:42:56
+// $ANTLR 3.1.3 Mar 17, 2009 19:23:44 /Users/pem/workspace/jtom/src/tom/gom/expander/rule/Rule.g 2010-07-21 12:17:15
 
 package tom.gom.expander.rule;
 
@@ -280,7 +280,7 @@ public class RuleParser extends Parser {
 
 
             // AST REWRITE
-            // elements: pattern, term, term, pattern, cond
+            // elements: term, pattern, pattern, term, cond
             // token labels: 
             // rule labels: retval, cond
             // token list labels: 
@@ -528,7 +528,7 @@ public class RuleParser extends Parser {
 
 
             // AST REWRITE
-            // elements: lhs, cond, rhs, lhs, rhs
+            // elements: rhs, lhs, cond, lhs, rhs
             // token labels: 
             // rule labels: retval, rhs, cond, lhs
             // token list labels: 
@@ -784,7 +784,7 @@ public class RuleParser extends Parser {
 
 
             // AST REWRITE
-            // elements: cond, simplecondition
+            // elements: simplecondition, cond
             // token labels: 
             // rule labels: retval, cond
             // token list labels: 
@@ -1085,7 +1085,7 @@ public class RuleParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: p2, p1, p1, p1, p3, p1, p6, p1, p7, p5, p4, p8, p1, p1
+                    // elements: p7, p6, p1, p2, p1, p5, p4, p8, p3, p1, p1, p1, p1, p1
                     // token labels: 
                     // rule labels: p7, p6, retval, p5, p4, p3, p2, p1, p8
                     // token list labels: 
@@ -1579,7 +1579,7 @@ public class RuleParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: varname, term, funname
+                    // elements: funname, term, varname
                     // token labels: funname, varname
                     // rule labels: retval
                     // token list labels: 

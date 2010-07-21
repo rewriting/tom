@@ -94,17 +94,17 @@ public class Tom {
     // Retrieve the configuration file name
     String configFileName =
       PluginPlatformFactory.getInstance().extractConfigFileName(args);
-    if(configFileName == null) {
+    if (null == configFileName) {
       return 1;
     }
     // Create a ConfigurationManager in order to retrieve the 'global' inputToCompileList
     ConfigurationManager initConfigurationManager = new ConfigurationManager(configFileName);
-    if(initConfigurationManager.initialize(args) == 1) {
+    if (initConfigurationManager.initialize(args) == 1) {
       return 1;
     }
 
     if(((Boolean)initConfigurationManager.getOptionManager().getOptionValue("verbose")).booleanValue()) {
-      logger.log(Level.INFO, TomMessage.tomExec.getMessage(), new Object[] {Arrays.toString(args)});
+      TomMessage.info(logger, null, 0, TomMessage.tomExec, Arrays.toString(args));
     }
 
     // Retrieve the whole fileList that has to be compiled
@@ -234,12 +234,12 @@ public class Tom {
     } else { // custom configuration file for LogManager is used
       LogManager.getLogManager().readConfiguration();
       initTomRootLogger(true);
-      refreshTopLoggerHandlers();
+      PluginPlatformFactory.refreshTopLoggerHandlers();
     }
   }
 
   /**
-   * initTomRootLogger set thee useParentHandlers flad and
+   * initTomRootLogger set the useParentHandlers flag and
    * remove all pre-existing handlers that might exist from prior uses
    * especially for multiple invocation in the same VM
    */
@@ -250,33 +250,4 @@ public class Tom {
       logger.removeHandler(handlers[i]);
     }
   }
-
-  private static void refreshTopLoggerHandlers()
-    throws InstantiationException, ClassNotFoundException,
-           IllegalAccessException {
-    Handler[] handlers = Logger.getLogger("").getHandlers();
-    for(int i = 0; i < handlers.length; i++) {
-      /*
-       * OK, the following code is ugly, I could have made it prettier but
-       * it is more robust that way, since it handles all the basic
-       * handlers as well as the ones that might extend them.
-       * I wrote that because the LogManager won't refresh the formatters,
-       * although its properties are set at the appropriate values.
-       */
-      if( handlers[i] instanceof ConsoleHandler ) {
-        // search for the global console handler
-        consoleHandler = handlers[i];
-        handlers[i].setFormatter((Formatter)Class.forName(LogManager.getLogManager().getProperty("java.util.logging.ConsoleHandler.formatter")).newInstance());
-      } else if( handlers[i] instanceof FileHandler ) {
-        handlers[i].setFormatter((Formatter)Class.forName(LogManager.getLogManager().getProperty("java.util.logging.FileHandler.formatter")).newInstance());
-      } else if( handlers[i] instanceof SocketHandler ) {
-        handlers[i].setFormatter((Formatter)Class.forName(LogManager.getLogManager().getProperty("java.util.logging.SocketHandler.formatter")).newInstance());
-      } else if( handlers[i] instanceof MemoryHandler ) {
-        handlers[i].setFormatter((Formatter)Class.forName(LogManager.getLogManager().getProperty("java.util.logging.MemoryHandler.formatter")).newInstance());
-      } else if( handlers[i] instanceof StreamHandler ) {
-        handlers[i].setFormatter((Formatter)Class.forName(LogManager.getLogManager().getProperty("java.util.logging.StreamHandler.formatter")).newInstance());
-      }
-    }
-  }
-
 }

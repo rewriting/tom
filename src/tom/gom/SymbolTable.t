@@ -295,7 +295,7 @@ public class SymbolTable {
   private void fillFromGomModule(GomModule m) {
     %match(m) {
       GomModule[ModuleName=GomModuleName[Name=n],
-        SectionList=(_*,Public[GrammarList=(_*,g,_*)],_*)] -> {
+        SectionList=ConcSection(_*,Public[GrammarList=ConcGrammar(_*,g,_*)],_*)] -> {
           `fillFromGrammar(n,g);
         }
     }
@@ -303,7 +303,7 @@ public class SymbolTable {
 
   private void fillFromGrammar(String moduleName, Grammar g) {
     %match(g) {
-      Grammar[ProductionList=(_*,p,_*)] -> { `fillFromProduction(moduleName,p); }
+      Grammar[ProductionList=ConcProduction(_*,p,_*)] -> { `fillFromProduction(moduleName,p); }
     }
   }
 
@@ -900,7 +900,7 @@ public class SymbolTable {
             res = `StringList(tyatoms*,res*);
           }
           ConstructorDescription[
-            Fields=(_*,FieldDescription[Sort=ty],_*)] -> {
+            Fields=concFieldDescription(_*,FieldDescription[Sort=ty],_*)] -> {
               StringList tyatoms = getAccessibleAtoms(`ty,visited);
               res = `StringList(tyatoms*,res*);
             }
@@ -931,7 +931,7 @@ public class SymbolTable {
             }
           }
           ConstructorDescription[
-            Fields=(_*,FieldDescription[Sort=ty],_*)] -> {
+            Fields=concFieldDescription(_*,FieldDescription[Sort=ty],_*)] -> {
               if(!getGomEnvironment().isBuiltin(`ty)) {
                 sortDependences.addLink(sort,`ty);
               }

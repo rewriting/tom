@@ -27,6 +27,7 @@ package tom.engine.tools.ant;
 
 import java.io.*;
 import java.util.*;
+import tom.platform.PluginPlatform;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.Project;
@@ -55,6 +56,7 @@ import org.apache.tools.ant.taskdefs.MatchingTask;
  * <li>outputfile</li>
  * <li>import</li>
  * <li>newtyper</li>
+ * <li>newparser</li>
  * <li>optimize</li>
  * <li>optimize2</li>
  * <li>pretty</li>
@@ -91,6 +93,7 @@ public class TomTask extends MatchingTask {
   private boolean nowarn = false;
   private boolean nostatic = false;
   private boolean newtyper = false;
+  private boolean newparser = false;
   private boolean optimize = false;
   private boolean optimize2 = false;
   private boolean pretty = false;
@@ -106,7 +109,7 @@ public class TomTask extends MatchingTask {
   private boolean camlCode = false;
   private File[] compileList = new File[0];
 
-  private Java javaRunner;
+  protected Java javaRunner;
 
   public void init() throws BuildException {
     javaRunner = new Java();
@@ -325,6 +328,18 @@ public class TomTask extends MatchingTask {
 
   public boolean getNewtyper() {
     return newtyper;
+  }
+
+ /**
+   * If true, compiles with new parser enabled.
+   * @param flag if true compile with new parser
+   */
+  public void setNewparser(boolean newparser) {
+    this.newparser = newparser;
+  }
+
+  public boolean getNewparser() {
+    return newparser;
   }
 
   /**
@@ -627,7 +642,11 @@ public class TomTask extends MatchingTask {
       
       if (logPropertiesFile != null) {
         System.out.println("ANT task : properties = " + System.getProperty("java.util.logging.config.file"));
-        System.setProperty("java.util.logging.config.file",logPropertiesFile);
+        System.setProperty(PluginPlatform.LOG_FILE,logPropertiesFile);
+        Variable var = new Variable();
+        var.setKey(PluginPlatform.LOG_FILE);
+        var.setValue(logPropertiesFile);
+        javaRunner.addSysproperty(var);
       }
 
       /* If "tom.home" is defined in the ant project, pass it to tom */
@@ -641,6 +660,26 @@ public class TomTask extends MatchingTask {
       } else {
         log("\"tom.home\" is not defined, some features may not work");
       }
+
+      /* If "tom.platform.error.formatter" is defined in the ant project, pass it as a syst property for java */
+      String platform_formatter = getProject().getProperty(PluginPlatform.FORMATTER);
+      if (platform_formatter != null) {
+        System.setProperty(PluginPlatform.FORMATTER,platform_formatter);
+        Variable var = new Variable();
+        var.setKey(PluginPlatform.FORMATTER);
+        var.setValue(platform_formatter);
+        javaRunner.addSysproperty(var);
+      } 
+
+      /* If "tom.platform.error.logfile" is defined in the ant project, pass it as a syst property for java */
+      String platform_logfile = getProject().getProperty(PluginPlatform.LOG_FILE);
+      if (platform_logfile != null) {
+        System.setProperty(PluginPlatform.LOG_FILE,platform_logfile);
+        Variable var = new Variable();
+        var.setKey(PluginPlatform.LOG_FILE);
+        var.setValue(platform_logfile);
+        javaRunner.addSysproperty(var);
+      } 
 
       if(options != null && getOptions().trim().length() > 0) {
         javaRunner.createArg().setLine(options);
@@ -665,6 +704,9 @@ public class TomTask extends MatchingTask {
       }
       if(newtyper == true) {
         javaRunner.createArg().setValue("--newtyper");
+      }
+      if(newparser == true) {
+        javaRunner.createArg().setValue("--newparser");
       }
       if(optimize == true) {
         javaRunner.createArg().setValue("--optimize");

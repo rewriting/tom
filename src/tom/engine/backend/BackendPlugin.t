@@ -275,18 +275,18 @@ public class BackendPlugin extends TomGenericPlugin {
           try {
             moduleName = stack.peek();
             stack.push(moduleName);
-            //System.out.println("push2: " + moduleName);
+            /*System.out.println("push2: " + moduleName);*/
           } catch (EmptyStackException e) {
             System.out.println("No moduleName in stack");
           }
         } else {
           stack.push(moduleName);
-          //System.out.println("push1: " + moduleName);
+          /*System.out.println("push1: " + moduleName);*/
         }
-        //System.out.println("match -> moduleName = " + moduleName);
+        /*System.out.println("match -> moduleName = " + moduleName);*/
         markStrategy.visitLight(`inst);
-        //String pop = (String) stack.pop();
-        //System.out.println("pop: " + pop);
+        /*String pop = (String) stack.pop();
+          System.out.println("pop: " + pop);*/
         throw new tom.library.sl.VisitFailure();
 
       }
@@ -300,9 +300,9 @@ public class BackendPlugin extends TomGenericPlugin {
     visit Expression {
       (IsEmptyList|IsEmptyArray|GetHead|GetTail|GetSize|GetElement)[Opname=Name(name)] -> {
         try {
-          // System.out.println("list check: " + `name);
+          /*System.out.println("list check: " + `name);*/
           String moduleName = stack.peek();
-          //System.out.println("moduleName: " + moduleName);
+          /*System.out.println("moduleName: " + moduleName);*/
           TomSymbol tomSymbol = TomBase.getSymbolFromName(`name,bp.getSymbolTable(moduleName)); 
           bp.setUsedSymbolConstructor(moduleName,tomSymbol,markStrategy);
         } catch (EmptyStackException e) {
@@ -312,9 +312,9 @@ public class BackendPlugin extends TomGenericPlugin {
       
       IsFsym[AstName=Name(name)] -> {
         try {
-          // System.out.println("list check: " + `name);
+          /*System.out.println("list check: " + `name);*/
           String moduleName = stack.peek();
-          //System.out.println("moduleName: " + moduleName);
+          /*System.out.println("moduleName: " + moduleName);*/
           TomSymbol tomSymbol = TomBase.getSymbolFromName(`name,bp.getSymbolTable(moduleName)); 
           bp.setUsedSymbolDestructor(moduleName,tomSymbol,markStrategy);
         } catch (EmptyStackException e) {
@@ -337,15 +337,17 @@ public class BackendPlugin extends TomGenericPlugin {
     visit TomTerm {
       (TermAppl|RecordAppl)[NameList=nameList] -> {
         TomNameList l = `nameList;
-        // System.out.println("dest " + `l);
+        /*System.out.println("dest " + `l);*/
         while(!l.isEmptyconcTomName()) {
           try {
-            //System.out.println("op: " + l.getHead());
+            /*System.out.println("op: " + l.getHead());*/
             String moduleName = stack.peek();
-            //System.out.println("moduleName: " + moduleName);
+            /*System.out.println("moduleName: " + moduleName);*/
             TomSymbol tomSymbol = TomBase.getSymbolFromName(l.getHeadconcTomName().getString(),bp.getSymbolTable(moduleName)); 
-            //System.out.println("mark: " + tomSymbol);
-            // if it comes from java
+            /*System.out.println("mark: " + tomSymbol);*/
+            /*
+             * if it comes from java
+             */
             if (tomSymbol != null) { bp.setUsedSymbolDestructor(moduleName,tomSymbol,markStrategy);}
           } catch (EmptyStackException e) {
             System.out.println("No moduleName in stack");
@@ -363,9 +365,9 @@ public class BackendPlugin extends TomGenericPlugin {
     visit BQTerm {
       (BuildTerm|BuildEmptyArray)[AstName=Name(name)] -> {
         try {
-          // System.out.println("build: " + `name);
+          /*System.out.println("build: " + `name);*/
           String moduleName = stack.peek();
-          //System.out.println("moduleName: " + moduleName);
+          /*System.out.println("moduleName: " + moduleName);*/
           TomSymbol tomSymbol = TomBase.getSymbolFromName(`name,bp.getSymbolTable(moduleName)); 
           bp.setUsedSymbolConstructor(moduleName,tomSymbol,markStrategy);
         } catch (EmptyStackException e) {
@@ -374,15 +376,17 @@ public class BackendPlugin extends TomGenericPlugin {
       }
       (BuildConsList|BuildEmptyList|BuildAppendList|BuildConsArray|BuildAppendArray)[AstName=Name(name)] -> {
         try {
-          // System.out.println("build: " + `name);
+          /*System.out.println("build: " + `name);*/
           String moduleName = stack.peek();
-          //System.out.println("moduleName: " + moduleName);
+          /*System.out.println("moduleName: " + moduleName);*/
           TomSymbol tomSymbol = TomBase.getSymbolFromName(`name,bp.getSymbolTable(moduleName)); 
           bp.setUsedSymbolConstructor(moduleName,tomSymbol,markStrategy);
           /* XXX: Also mark the destructors as used, since some generated
            * functions will use them */
           bp.setUsedSymbolDestructor(moduleName,tomSymbol,markStrategy);
-          // resolve uses in the symbol declaration
+          /*
+           * resolve uses in the symbol declaration
+           */
         } catch (EmptyStackException e) {
           System.out.println("No moduleName in stack");
         }
@@ -525,7 +529,6 @@ public class BackendPlugin extends TomGenericPlugin {
         try {
           String moduleName = stack.peek();
           TomSymbol tomSymbol = TomBase.getSymbolFromName(`opname,bp.getSymbolTable(moduleName));
-          //System.out.println("SymbolDecl: " + tomSymbol);
           markStrategy.visitLight(tomSymbol);
         } catch (EmptyStackException e) {
           System.out.println("No moduleName in stack");

@@ -1,4 +1,9 @@
-2010-07203 pem
+2010-07-21 pem
+ * removed anonymous op from tom sources
+ * bootstrap
+ * integrated newtyper in tests
+
+2010-07-20 pem
  * removed anonymous operators
  * except in explicit XML notation : <A>(_*,x,_*)</A> for instance
  * ported all tests and examples

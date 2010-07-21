@@ -84,26 +84,26 @@ public class GomStreamManager {
     // fills the local user import list
     String imports = (String)optionManager.getOptionValue("import");
     // paths are separated by ':'
-    StringTokenizer st = new StringTokenizer(imports, ":");
-    while( st.hasMoreTokens() ) {
+    final StringTokenizer st = new StringTokenizer(imports, ":");
+    while (st.hasMoreTokens() ) {
       String next = st.nextToken();
       userImportList.add(new File(next).getAbsoluteFile());
     }
     // computes destdir
     String dest = (String)optionManager.getOptionValue("destdir");
-    if ( dest.length() > 0 ) {
+    if (dest.length() > 0 ) {
       // note : destdir is `.` by default
       setDestDir(dest);
     }
     // package and name for apigen
     String pack = (String)optionManager.getOptionValue("package");
-    if(pack.length() > 0) {
+    if (pack.length() > 0) {
       setDefaultPackagePath(pack);
     }
     // output file name for intermediate
     String intermediateName =
       (String)optionManager.getOptionValue("intermediateName");
-    if(intermediateName.length() > 0) {
+    if (intermediateName.length() > 0) {
       this.intermediateName = intermediateName;
     }
   }
@@ -160,8 +160,8 @@ public class GomStreamManager {
     try {
       this.destDirFile = new File(destDirName).getCanonicalFile();
     } catch (IOException e) {
-      getLogger().log(Level.SEVERE, "IOExceptionManipulation",
-                       new Object[]{destDirFile, e.getMessage()});
+      GomMessage.error(getLogger(), null, 0,
+          GomMessage.iOExceptionManipulation, destDirFile, e.getMessage());
     }
   }
 
@@ -189,15 +189,16 @@ public class GomStreamManager {
             new FileReader(
               new File(inputFileName).getCanonicalFile()));
       } else {
-        getLogger().log(Level.FINER, "gom will use System.in as input");
+        GomMessage.finer(getLogger(), null, 0, GomMessage.systemInAsInput);
         inputReader = new BufferedReader(new InputStreamReader(System.in));
       }
     } catch (FileNotFoundException e) {
-      getLogger().log(Level.SEVERE, GomMessage.fileNotFound.getMessage(),
-          new Object[]{inputFileName});
+      GomMessage.error(getLogger(),null,0, GomMessage.fileNotFound,
+          inputFileName);
     } catch (IOException e) {
-      getLogger().log(Level.SEVERE, "getInputReader:IOExceptionManipulation",
-                      new Object[]{inputFileName, e.getMessage()});
+      GomMessage.error(getLogger(), null, 0,
+          GomMessage.iOExceptionManipulationInputReader,
+          inputFileName, e.getMessage());
     }
     return inputReader;
   }
@@ -210,8 +211,8 @@ public class GomStreamManager {
         parent = rawParent.getCanonicalFile();
       }
     } catch (IOException e) {
-      getLogger().log(Level.SEVERE, "getInputParent:IOExceptionManipulation",
-                      new Object[]{inputFileName, e.getMessage()});
+      GomMessage.error(getLogger(), null, 0, GomMessage.iOExceptionManipulationInputParent, 
+          inputFileName, e.getMessage());
     }
     return parent;
   }

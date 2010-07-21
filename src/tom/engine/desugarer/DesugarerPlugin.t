@@ -173,7 +173,7 @@ public class DesugarerPlugin extends TomGenericPlugin {
 
   private TomSymbol addDefaultIsFsym(TomSymbol tomSymbol) {
     %match(tomSymbol) {
-      Symbol[Options=(_*,DeclarationToOption(IsFsymDecl[]),_*)] -> {
+      Symbol[Options=concOption(_*,DeclarationToOption(IsFsymDecl[]),_*)] -> {
         return tomSymbol;
       }
 
@@ -187,7 +187,7 @@ public class DesugarerPlugin extends TomGenericPlugin {
 
   private TomSymbol addDefaultMake(TomSymbol tomSymbol) {
     %match(tomSymbol) {
-      Symbol[Options=(_*,DeclarationToOption((MakeDecl|MakeEmptyList|MakeEmptyArray|MakeAddList|MakeAddArray|IsFsymDecl|GetImplementationDecl|GetSlotDecl|GetHeadDecl|GetTailDecl|IsEmptyDecl|GetElementDecl|GetSizeDecl)[]),_*)] -> {
+      Symbol[Options=concOption(_*,DeclarationToOption((MakeDecl|MakeEmptyList|MakeEmptyArray|MakeAddList|MakeAddArray|IsFsymDecl|GetImplementationDecl|GetSlotDecl|GetHeadDecl|GetTailDecl|IsEmptyDecl|GetElementDecl|GetSizeDecl)[]),_*)] -> {
         return tomSymbol;
       }
       Symbol(name,t@TypesToType(domain,codomain),l,concOption(X1*,origin@OriginTracking(_,line,file),X2*)) -> {
@@ -420,29 +420,29 @@ matchBlock:
       concTomTerm() -> { return attrList; }
       concTomTerm(X1*,e1,X2*,e2,X3*) -> {
         %match(e1, e2) {
-          TermAppl[Args=concTomTerm(RecordAppl[NameList=(Name(name1))],_*)],
-          TermAppl[Args=concTomTerm(RecordAppl[NameList=(Name(name2))],_*)] -> {
+          TermAppl[Args=concTomTerm(RecordAppl[NameList=concTomName(Name(name1))],_*)],
+          TermAppl[Args=concTomTerm(RecordAppl[NameList=concTomName(Name(name2))],_*)] -> {
               if(`name1.compareTo(`name2) > 0) {
                 return `sortAttributeList(concTomTerm(X1*,e2,X2*,e1,X3*));
               }
             }
 
-          TermAppl[Args=concTomTerm(TermAppl[NameList=(Name(name1))],_*)],
-          TermAppl[Args=concTomTerm(TermAppl[NameList=(Name(name2))],_*)] -> {
+          TermAppl[Args=concTomTerm(TermAppl[NameList=concTomName(Name(name1))],_*)],
+          TermAppl[Args=concTomTerm(TermAppl[NameList=concTomName(Name(name2))],_*)] -> {
               if(`name1.compareTo(`name2) > 0) {
                 return `sortAttributeList(concTomTerm(X1*,e2,X2*,e1,X3*));
               }
             }
 
-          RecordAppl[Slots=concSlot(PairSlotAppl(slotName,RecordAppl[NameList=(Name(name1))]),_*)],
-          RecordAppl[Slots=concSlot(PairSlotAppl(slotName,RecordAppl[NameList=(Name(name2))]),_*)] -> {
+          RecordAppl[Slots=concSlot(PairSlotAppl(slotName,RecordAppl[NameList=concTomName(Name(name1))]),_*)],
+          RecordAppl[Slots=concSlot(PairSlotAppl(slotName,RecordAppl[NameList=concTomName(Name(name2))]),_*)] -> {
               if(`name1.compareTo(`name2) > 0) {
                 return `sortAttributeList(concTomTerm(X1*,e2,X2*,e1,X3*));
               }
             }
 
-          RecordAppl[Slots=concSlot(PairSlotAppl(slotName,TermAppl[NameList=(Name(name1))]),_*)],
-          RecordAppl[Slots=concSlot(PairSlotAppl(slotName,TermAppl[NameList=(Name(name2))]),_*)] -> {
+          RecordAppl[Slots=concSlot(PairSlotAppl(slotName,TermAppl[NameList=concTomName(Name(name1))]),_*)],
+          RecordAppl[Slots=concSlot(PairSlotAppl(slotName,TermAppl[NameList=concTomName(Name(name2))]),_*)] -> {
               if(`name1.compareTo(`name2) > 0) {
                 return `sortAttributeList(concTomTerm(X1*,e2,X2*,e1,X3*));
               }

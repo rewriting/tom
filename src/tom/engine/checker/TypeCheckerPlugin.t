@@ -103,11 +103,11 @@ public class TypeCheckerPlugin extends TomGenericPlugin {
 
   public int getClass(TomTerm term) {
     %match(term) {
-      TermAppl[NameList=(Name(""))] -> { return UNAMED_APPL;}
-      TermAppl[NameList=(Name(_))] -> { return TERM_APPL;}
-      TermAppl[NameList=(Name(_), _*)] -> { return APPL_DISJUNCTION;}
-      RecordAppl[NameList=(Name(_))] -> { return RECORD_APPL;}
-      RecordAppl[NameList=(Name(_), _*)] -> { return RECORD_APPL_DISJUNCTION;}
+      TermAppl[NameList=concTomName(Name(""))] -> { return UNAMED_APPL;}
+      TermAppl[NameList=concTomName(Name(_))] -> { return TERM_APPL;}
+      TermAppl[NameList=concTomName(Name(_), _*)] -> { return APPL_DISJUNCTION;}
+      RecordAppl[NameList=concTomName(Name(_))] -> { return RECORD_APPL;}
+      RecordAppl[NameList=concTomName(Name(_), _*)] -> { return RECORD_APPL_DISJUNCTION;}
       XMLAppl[] -> { return XML_APPL;}
       VariableStar[] -> { return VARIABLE_STAR;}
       Variable[] -> { return VARIABLE;}
@@ -118,7 +118,7 @@ public class TypeCheckerPlugin extends TomGenericPlugin {
   public String getName(TomTerm term) {
     String dijunctionName = "";
     %match(term) {
-      TermAppl[NameList=(Name(name))] -> { return `name;}
+      TermAppl[NameList=concTomName(Name(name))] -> { return `name;}
       TermAppl[NameList=nameList] -> {
         String head;
         dijunctionName = `nameList.getHeadconcTomName().getString();
@@ -129,7 +129,7 @@ public class TypeCheckerPlugin extends TomGenericPlugin {
         }
         return dijunctionName;
       }
-      RecordAppl[NameList=(Name(name))] -> { return `name;}
+      RecordAppl[NameList=concTomName(Name(name))] -> { return `name;}
       RecordAppl[NameList=nameList] -> {
         String head;
         dijunctionName = `nameList.getHeadconcTomName().getString();
@@ -140,7 +140,7 @@ public class TypeCheckerPlugin extends TomGenericPlugin {
         }
         return dijunctionName;
       }
-      XMLAppl[NameList=(Name(name), _*)] ->{ return `name;}
+      XMLAppl[NameList=concTomName(Name(name), _*)] ->{ return `name;}
       XMLAppl[NameList=nameList] -> {
         String head;
         dijunctionName = `nameList.getHeadconcTomName().getString();

@@ -223,7 +223,7 @@ public class KernelTyper {
     }
 
     visit TomTerm {
-      RecordAppl[Options=optionList,NameList=nameList@(Name(tomName),_*),Slots=slotList,Constraints=constraints] -> {
+      RecordAppl[Options=optionList,NameList=nameList@concTomName(Name(tomName),_*),Slots=slotList,Constraints=constraints] -> {
         TomSymbol tomSymbol = kernelTyper.getSymbolFromName(`tomName);
         if(tomSymbol != null) {
           SlotList subterm = kernelTyper.typeVariableList(tomSymbol, `slotList);
@@ -588,7 +588,7 @@ matchL:  %match(subject,s) {
     visit TomTerm {
       subject -> {
         %match(subject, instantiatedVariable) {
-          RecordAppl[NameList=(opNameAST),Slots=concSlot()] , concTomTerm(_*,var@(Variable|VariableStar)[AstName=opNameAST],_*) -> {
+          RecordAppl[NameList=concTomName(opNameAST),Slots=concSlot()] , concTomTerm(_*,var@(Variable|VariableStar)[AstName=opNameAST],_*) -> {
             //System.out.println("RecordAppl, opNameAST = " + `opNameAST);
             return `var;
           }
