@@ -1,4 +1,4 @@
-// $ANTLR 3.1.3 Mar 17, 2009 19:23:44 /Users/pem/workspace/jtom/src/tom/gom/expander/rule/Rule.g 2010-04-14 12:42:57
+// $ANTLR 3.1.3 Mar 17, 2009 19:23:44 /Users/pem/workspace/jtom/src/tom/gom/expander/rule/Rule.g 2010-07-21 12:17:15
 
 package tom.gom.expander.rule;
 

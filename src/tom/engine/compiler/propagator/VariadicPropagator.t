@@ -99,7 +99,7 @@ public class VariadicPropagator implements IBasePropagator {
        * conc(X*,conc(some_pattern),Y*) << t -> conc(X*,Z*,Y*) << t /\ conc(some_pattern) << Z*  
        * 
        */ 
-      m@MatchConstraint(pattern@RecordAppl[NameList=(Name(tomName)),Slots=!concSlot()],_) -> {
+      m@MatchConstraint(pattern@RecordAppl[NameList=concTomName(Name(tomName)),Slots=!concSlot()],_) -> {
         if(TomBase.hasTheory(`pattern,`AC())) {
           return `m;
         }
@@ -125,7 +125,7 @@ public class VariadicPropagator implements IBasePropagator {
        * if the symbol was annotated, annotations are detached: 
        *        a@...b@conc(...) << t -> conc(...) << t /\ a << t /\ ... /\ b << t   
        */
-      m@MatchConstraint(t@RecordAppl(options,nameList@(name@Name(tomName),_*),slots,_),g@!SymbolOf[]) -> {
+      m@MatchConstraint(t@RecordAppl(options,nameList@concTomName(name@Name(tomName),_*),slots,_),g@!SymbolOf[]) -> {
         if(TomBase.hasTheory(`t,`AC())) {
           return `m;
         }

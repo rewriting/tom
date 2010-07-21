@@ -468,7 +468,7 @@ public class FreshExpander {
 
   %strategy AddHook(sort:String,hook:Production) extends Fail() {
     visit ProductionList {
-      (p@SortType[Type=GomType[Name=n]],ps*) -> {
+      ConcProduction(p@SortType[Type=GomType[Name=n]],ps*) -> {
         if(`n.equals(sort)) {
           return `ConcProduction(p,hook,ps*);
         }

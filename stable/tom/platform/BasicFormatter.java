@@ -41,7 +41,7 @@ public class BasicFormatter extends Formatter {
         levelString = level.toString();
       }
       PlatformLogRecord plr  = (PlatformLogRecord)record;
-      return  plr.getFilePath()+":"+plr.getLine()+": "+levelString+": "+formatMessage(plr);//+"\n";
+      return  plr.getFilePath()+":"+plr.getLine()+": "+levelString+": "+formatMessage(plr)+"\n";
     } else {
       return formatMessage(record)+"\n";
     }

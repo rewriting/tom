@@ -1,26 +1,26 @@
 /*
- * Gom
- *
- * Copyright (c) 2006-2010, INPL, INRIA
- * Nancy, France.
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
- *
- * Antoine Reilles  e-mail: Antoine.Reilles@loria.fr
- *
- **/
+* Gom
+*
+* Copyright (c) 2006-2010, INPL, INRIA
+* Nancy, France.
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation; either version 2 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program; if not, write to the Free Software
+* Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+*
+* Antoine Reilles  e-mail: Antoine.Reilles@loria.fr
+*
+**/
 
 package tom.gom.backend.shared;
 
@@ -33,132 +33,231 @@ import tom.gom.adt.objects.types.*;
 import tom.gom.tools.error.GomRuntimeException;
 
 public class MappingTemplate extends MappingTemplateClass {
-  GomClassList sortClasses;
-  GomClassList operatorClasses;
-  TemplateClass strategyMapping;
-
-         private static   tom.gom.adt.objects.types.GomClassList  tom_append_list_ConcGomClass( tom.gom.adt.objects.types.GomClassList l1,  tom.gom.adt.objects.types.GomClassList  l2) {     if( l1.isEmptyConcGomClass() ) {       return l2;     } else if( l2.isEmptyConcGomClass() ) {       return l1;     } else if(  l1.getTailConcGomClass() .isEmptyConcGomClass() ) {       return  tom.gom.adt.objects.types.gomclasslist.ConsConcGomClass.make( l1.getHeadConcGomClass() ,l2) ;     } else {       return  tom.gom.adt.objects.types.gomclasslist.ConsConcGomClass.make( l1.getHeadConcGomClass() ,tom_append_list_ConcGomClass( l1.getTailConcGomClass() ,l2)) ;     }   }   private static   tom.gom.adt.objects.types.GomClassList  tom_get_slice_ConcGomClass( tom.gom.adt.objects.types.GomClassList  begin,  tom.gom.adt.objects.types.GomClassList  end, tom.gom.adt.objects.types.GomClassList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyConcGomClass()  ||  (end== tom.gom.adt.objects.types.gomclasslist.EmptyConcGomClass.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.gom.adt.objects.types.gomclasslist.ConsConcGomClass.make( begin.getHeadConcGomClass() ,( tom.gom.adt.objects.types.GomClassList )tom_get_slice_ConcGomClass( begin.getTailConcGomClass() ,end,tail)) ;   }    
-
-  public MappingTemplate(GomClass gomClass, TemplateClass strategyMapping, GomEnvironment gomEnvironment) {
-    super(gomClass,gomEnvironment);
-    {{if ( (gomClass instanceof tom.gom.adt.objects.types.GomClass) ) {if ( ((( tom.gom.adt.objects.types.GomClass )gomClass) instanceof tom.gom.adt.objects.types.gomclass.TomMapping) ) {
-
-
-        this.sortClasses =  (( tom.gom.adt.objects.types.GomClass )gomClass).getSortClasses() ;
-        this.operatorClasses =  (( tom.gom.adt.objects.types.GomClass )gomClass).getOperatorClasses() ;
-        this.strategyMapping = strategyMapping;
-
-        assert this.templates!=null ;
-        return;
-      }}}}
-
-    throw new GomRuntimeException(
-        "Wrong argument for MappingTemplate: " + gomClass);
-  }
-
-  public GomEnvironment getGomEnvironment() {
-    return this.gomEnvironment;
-  }
-
-  public void generate(java.io.Writer writer) throws java.io.IOException {
-    if(getGomEnvironment().isBuiltinSort("boolean")) {
-      writer.write("\n%include { boolean.tom }\n"
-
-);
-    }
-    if(getGomEnvironment().isBuiltinSort("String")) {
-      writer.write("\n%include { string.tom }\n"
-
-);
-    }
-    if(getGomEnvironment().isBuiltinSort("int")) {
-      writer.write("\n%include { int.tom }\n"
-
-);
-    }
-    if(getGomEnvironment().isBuiltinSort("char")) {
-      writer.write("\n%include { char.tom }\n"
-
-);
-    }
-    if (getGomEnvironment().isBuiltinSort("double")) {
-      writer.write("\n%include { double.tom }\n"
-
-);
-    }
-    if (getGomEnvironment().isBuiltinSort("long")) {
-      writer.write("\n%include { long.tom }\n"
-
-);
-    }
-    if (getGomEnvironment().isBuiltinSort("float")) {
-      writer.write("\n%include { float.tom }\n"
-
-);
-    }
-    if (getGomEnvironment().isBuiltinSort("ATerm")) {
-      writer.write("\n%include { aterm.tom }\n"
-
-);
-    }
-    if (getGomEnvironment().isBuiltinSort("ATermList")) {
-      writer.write("\n%include { aterm.tom }\n"
-
-);
-    }
-
-    // generate a %typeterm for each class
-    {{if ( (sortClasses instanceof tom.gom.adt.objects.types.GomClassList) ) {if ( (((( tom.gom.adt.objects.types.GomClassList )sortClasses) instanceof tom.gom.adt.objects.types.gomclasslist.ConsConcGomClass) || ((( tom.gom.adt.objects.types.GomClassList )sortClasses) instanceof tom.gom.adt.objects.types.gomclasslist.EmptyConcGomClass)) ) { tom.gom.adt.objects.types.GomClassList  tomMatch2__end__4=(( tom.gom.adt.objects.types.GomClassList )sortClasses);do {{if (!( tomMatch2__end__4.isEmptyConcGomClass() )) { tom.gom.adt.objects.types.GomClass  tomMatch2_8= tomMatch2__end__4.getHeadConcGomClass() ;if ( (tomMatch2_8 instanceof tom.gom.adt.objects.types.gomclass.SortClass) ) {
+GomClassList sortClasses;
+GomClassList operatorClasses;
+TemplateClass strategyMapping;
 
 
 
-        (templates.get( tomMatch2_8.getClassName() ))
-          .generateTomMapping(writer);
-      }}if ( tomMatch2__end__4.isEmptyConcGomClass() ) {tomMatch2__end__4=(( tom.gom.adt.objects.types.GomClassList )sortClasses);} else {tomMatch2__end__4= tomMatch2__end__4.getTailConcGomClass() ;}}} while(!( (tomMatch2__end__4==(( tom.gom.adt.objects.types.GomClassList )sortClasses)) ));}}}}
-
-
-    // generate a %op for each operator
-    {{if ( (operatorClasses instanceof tom.gom.adt.objects.types.GomClassList) ) {if ( (((( tom.gom.adt.objects.types.GomClassList )operatorClasses) instanceof tom.gom.adt.objects.types.gomclasslist.ConsConcGomClass) || ((( tom.gom.adt.objects.types.GomClassList )operatorClasses) instanceof tom.gom.adt.objects.types.gomclasslist.EmptyConcGomClass)) ) { tom.gom.adt.objects.types.GomClassList  tomMatch3__end__4=(( tom.gom.adt.objects.types.GomClassList )operatorClasses);do {{if (!( tomMatch3__end__4.isEmptyConcGomClass() )) { tom.gom.adt.objects.types.GomClass  tomMatch3_8= tomMatch3__end__4.getHeadConcGomClass() ;if ( (tomMatch3_8 instanceof tom.gom.adt.objects.types.gomclass.OperatorClass) ) {
-
-
-
-        //System.out.println("templates = " + templates);
-        //System.out.println("opname    = " + `opName);
-        //System.out.println("result    = " + templates.get(`opName));
-        (templates.get( tomMatch3_8.getClassName() ))
-          .generateTomMapping(writer);
-      }}if ( tomMatch3__end__4.isEmptyConcGomClass() ) {tomMatch3__end__4=(( tom.gom.adt.objects.types.GomClassList )operatorClasses);} else {tomMatch3__end__4= tomMatch3__end__4.getTailConcGomClass() ;}}} while(!( (tomMatch3__end__4==(( tom.gom.adt.objects.types.GomClassList )operatorClasses)) ));}}}}
-
-
-    // generate a %oplist for each variadic operator
-    {{if ( (operatorClasses instanceof tom.gom.adt.objects.types.GomClassList) ) {if ( (((( tom.gom.adt.objects.types.GomClassList )operatorClasses) instanceof tom.gom.adt.objects.types.gomclasslist.ConsConcGomClass) || ((( tom.gom.adt.objects.types.GomClassList )operatorClasses) instanceof tom.gom.adt.objects.types.gomclasslist.EmptyConcGomClass)) ) { tom.gom.adt.objects.types.GomClassList  tomMatch4__end__4=(( tom.gom.adt.objects.types.GomClassList )operatorClasses);do {{if (!( tomMatch4__end__4.isEmptyConcGomClass() )) { tom.gom.adt.objects.types.GomClass  tomMatch4_8= tomMatch4__end__4.getHeadConcGomClass() ;if ( (tomMatch4_8 instanceof tom.gom.adt.objects.types.gomclass.VariadicOperatorClass) ) {
-
-
-
-        (templates.get( tomMatch4_8.getClassName() ))
-          .generateTomMapping(writer);
-      }}if ( tomMatch4__end__4.isEmptyConcGomClass() ) {tomMatch4__end__4=(( tom.gom.adt.objects.types.GomClassList )operatorClasses);} else {tomMatch4__end__4= tomMatch4__end__4.getTailConcGomClass() ;}}} while(!( (tomMatch4__end__4==(( tom.gom.adt.objects.types.GomClassList )operatorClasses)) ));}}}}
-
-    /* Include the strategy mapping (_file.tom) if needed */
-    if(strategyMapping != null) {
-      strategyMapping.generateTomMapping(writer);
+  private static   tom.gom.adt.objects.types.GomClassList  tom_append_list_ConcGomClass( tom.gom.adt.objects.types.GomClassList l1,  tom.gom.adt.objects.types.GomClassList  l2) {
+    if( l1.isEmptyConcGomClass() ) {
+      return l2;
+    } else if( l2.isEmptyConcGomClass() ) {
+      return l1;
+    } else if(  l1.getTailConcGomClass() .isEmptyConcGomClass() ) {
+      return  tom.gom.adt.objects.types.gomclasslist.ConsConcGomClass.make( l1.getHeadConcGomClass() ,l2) ;
+    } else {
+      return  tom.gom.adt.objects.types.gomclasslist.ConsConcGomClass.make( l1.getHeadConcGomClass() ,tom_append_list_ConcGomClass( l1.getTailConcGomClass() ,l2)) ;
     }
   }
-
-  protected String fileName() {
-    return fullClassName().replace('.',File.separatorChar)+".tom";
-  }
-
-  protected File fileToGenerate() {
-    GomStreamManager stream = getGomEnvironment().getStreamManager();
-    File output = new File(stream.getDestDir(),fileName());
-    // log the generated mapping file name
-    try {
-      getGomEnvironment()
-        .setLastGeneratedMapping(output.getCanonicalPath());
-    } catch(Exception e) {
-      e.printStackTrace();
+  private static   tom.gom.adt.objects.types.GomClassList  tom_get_slice_ConcGomClass( tom.gom.adt.objects.types.GomClassList  begin,  tom.gom.adt.objects.types.GomClassList  end, tom.gom.adt.objects.types.GomClassList  tail) {
+    if( (begin==end) ) {
+      return tail;
+    } else if( (end==tail)  && ( end.isEmptyConcGomClass()  ||  (end== tom.gom.adt.objects.types.gomclasslist.EmptyConcGomClass.make() ) )) {
+      /* code to avoid a call to make, and thus to avoid looping during list-matching */
+      return begin;
     }
-    return output;
+    return  tom.gom.adt.objects.types.gomclasslist.ConsConcGomClass.make( begin.getHeadConcGomClass() ,( tom.gom.adt.objects.types.GomClassList )tom_get_slice_ConcGomClass( begin.getTailConcGomClass() ,end,tail)) ;
   }
+  
+
+public MappingTemplate(GomClass gomClass, TemplateClass strategyMapping, GomEnvironment gomEnvironment) {
+super(gomClass,gomEnvironment);
+
+{
+{
+if ( (gomClass instanceof tom.gom.adt.objects.types.GomClass) ) {
+if ( ((( tom.gom.adt.objects.types.GomClass )gomClass) instanceof tom.gom.adt.objects.types.gomclass.TomMapping) ) {
+
+this.sortClasses = 
+ (( tom.gom.adt.objects.types.GomClass )gomClass).getSortClasses() ;
+this.operatorClasses = 
+ (( tom.gom.adt.objects.types.GomClass )gomClass).getOperatorClasses() ;
+this.strategyMapping = strategyMapping;
+
+assert this.templates!=null ;
+return;
+
+
+}
+}
+
+}
+
+}
+
+throw new GomRuntimeException(
+"Wrong argument for MappingTemplate: " + gomClass);
+}
+
+public void generate(java.io.Writer writer) throws java.io.IOException {
+if(getGomEnvironment().isBuiltinSort("boolean")) {
+writer.write(
+"\n%include { boolean.tom }\n");
+}
+if(getGomEnvironment().isBuiltinSort("String")) {
+writer.write(
+"\n%include { string.tom }\n");
+}
+if(getGomEnvironment().isBuiltinSort("int")) {
+writer.write(
+"\n%include { int.tom }\n");
+}
+if(getGomEnvironment().isBuiltinSort("char")) {
+writer.write(
+"\n%include { char.tom }\n");
+}
+if (getGomEnvironment().isBuiltinSort("double")) {
+writer.write(
+"\n%include { double.tom }\n");
+}
+if (getGomEnvironment().isBuiltinSort("long")) {
+writer.write(
+"\n%include { long.tom }\n");
+}
+if (getGomEnvironment().isBuiltinSort("float")) {
+writer.write(
+"\n%include { float.tom }\n");
+}
+if (getGomEnvironment().isBuiltinSort("ATerm")) {
+writer.write(
+"\n%include { aterm.tom }\n");
+}
+if (getGomEnvironment().isBuiltinSort("ATermList")) {
+writer.write(
+"\n%include { aterm.tom }\n");
+}
+
+// generate a %typeterm for each class
+
+{
+{
+if ( (sortClasses instanceof tom.gom.adt.objects.types.GomClassList) ) {
+if ( (((( tom.gom.adt.objects.types.GomClassList )sortClasses) instanceof tom.gom.adt.objects.types.gomclasslist.ConsConcGomClass) || ((( tom.gom.adt.objects.types.GomClassList )sortClasses) instanceof tom.gom.adt.objects.types.gomclasslist.EmptyConcGomClass)) ) {
+ tom.gom.adt.objects.types.GomClassList  tomMatch419__end__4=(( tom.gom.adt.objects.types.GomClassList )sortClasses);
+do {
+{
+if (!( tomMatch419__end__4.isEmptyConcGomClass() )) {
+ tom.gom.adt.objects.types.GomClass  tomMatch419_8= tomMatch419__end__4.getHeadConcGomClass() ;
+if ( (tomMatch419_8 instanceof tom.gom.adt.objects.types.gomclass.SortClass) ) {
+
+(templates.get(
+ tomMatch419_8.getClassName() ))
+.generateTomMapping(writer);
+
+
+}
+}
+if ( tomMatch419__end__4.isEmptyConcGomClass() ) {
+tomMatch419__end__4=(( tom.gom.adt.objects.types.GomClassList )sortClasses);
+} else {
+tomMatch419__end__4= tomMatch419__end__4.getTailConcGomClass() ;
+}
+
+}
+} while(!( (tomMatch419__end__4==(( tom.gom.adt.objects.types.GomClassList )sortClasses)) ));
+}
+}
+
+}
+
+}
+
+
+// generate a %op for each operator
+
+{
+{
+if ( (operatorClasses instanceof tom.gom.adt.objects.types.GomClassList) ) {
+if ( (((( tom.gom.adt.objects.types.GomClassList )operatorClasses) instanceof tom.gom.adt.objects.types.gomclasslist.ConsConcGomClass) || ((( tom.gom.adt.objects.types.GomClassList )operatorClasses) instanceof tom.gom.adt.objects.types.gomclasslist.EmptyConcGomClass)) ) {
+ tom.gom.adt.objects.types.GomClassList  tomMatch420__end__4=(( tom.gom.adt.objects.types.GomClassList )operatorClasses);
+do {
+{
+if (!( tomMatch420__end__4.isEmptyConcGomClass() )) {
+ tom.gom.adt.objects.types.GomClass  tomMatch420_8= tomMatch420__end__4.getHeadConcGomClass() ;
+if ( (tomMatch420_8 instanceof tom.gom.adt.objects.types.gomclass.OperatorClass) ) {
+
+//System.out.println("templates = " + templates);
+//System.out.println("opname    = " + `opName);
+//System.out.println("result    = " + templates.get(`opName));
+(templates.get(
+ tomMatch420_8.getClassName() ))
+.generateTomMapping(writer);
+
+
+}
+}
+if ( tomMatch420__end__4.isEmptyConcGomClass() ) {
+tomMatch420__end__4=(( tom.gom.adt.objects.types.GomClassList )operatorClasses);
+} else {
+tomMatch420__end__4= tomMatch420__end__4.getTailConcGomClass() ;
+}
+
+}
+} while(!( (tomMatch420__end__4==(( tom.gom.adt.objects.types.GomClassList )operatorClasses)) ));
+}
+}
+
+}
+
+}
+
+
+// generate a %oplist for each variadic operator
+
+{
+{
+if ( (operatorClasses instanceof tom.gom.adt.objects.types.GomClassList) ) {
+if ( (((( tom.gom.adt.objects.types.GomClassList )operatorClasses) instanceof tom.gom.adt.objects.types.gomclasslist.ConsConcGomClass) || ((( tom.gom.adt.objects.types.GomClassList )operatorClasses) instanceof tom.gom.adt.objects.types.gomclasslist.EmptyConcGomClass)) ) {
+ tom.gom.adt.objects.types.GomClassList  tomMatch421__end__4=(( tom.gom.adt.objects.types.GomClassList )operatorClasses);
+do {
+{
+if (!( tomMatch421__end__4.isEmptyConcGomClass() )) {
+ tom.gom.adt.objects.types.GomClass  tomMatch421_8= tomMatch421__end__4.getHeadConcGomClass() ;
+if ( (tomMatch421_8 instanceof tom.gom.adt.objects.types.gomclass.VariadicOperatorClass) ) {
+
+(templates.get(
+ tomMatch421_8.getClassName() ))
+.generateTomMapping(writer);
+
+
+}
+}
+if ( tomMatch421__end__4.isEmptyConcGomClass() ) {
+tomMatch421__end__4=(( tom.gom.adt.objects.types.GomClassList )operatorClasses);
+} else {
+tomMatch421__end__4= tomMatch421__end__4.getTailConcGomClass() ;
+}
+
+}
+} while(!( (tomMatch421__end__4==(( tom.gom.adt.objects.types.GomClassList )operatorClasses)) ));
+}
+}
+
+}
+
+}
+
+/* Include the strategy mapping (_file.tom) if needed */
+if(strategyMapping != null) {
+strategyMapping.generateTomMapping(writer);
+}
+}
+
+protected String fileName() {
+return fullClassName().replace('.',File.separatorChar)+".tom";
+}
+
+protected File fileToGenerate() {
+GomStreamManager stream = getGomEnvironment().getStreamManager();
+File output = new File(stream.getDestDir(),fileName());
+// log the generated mapping file name
+try {
+getGomEnvironment()
+.setLastGeneratedMapping(output.getCanonicalPath());
+} catch(Exception e) {
+e.printStackTrace();
+}
+return output;
+}
 }

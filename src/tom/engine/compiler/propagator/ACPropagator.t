@@ -92,7 +92,7 @@ public class ACPropagator implements IBasePropagator {
     visit Constraint {
       MatchConstraint(pattern@RecordAppl[
           Options=optWithAC@concOption(T1*,MatchingTheory(concElementaryTheory(T2*,AC(),T3*)),T4*),
-          NameList=namelist@(Name(tomName)), Slots=slots],subject) -> {
+          NameList=namelist@concTomName(Name(tomName)), Slots=slots],subject) -> {
         OptionList optWithoutAC = `concOption(T1*,MatchingTheory(concElementaryTheory(T2*,T3*)),T4*);
 
         %match(slots) {
@@ -142,7 +142,7 @@ public class ACPropagator implements IBasePropagator {
     visit Constraint {
       MatchConstraint(pattern@RecordAppl[
           Options=optWithAC@concOption(_*,MatchingTheory(concElementaryTheory(_*,AC(),_*)),_*),
-          NameList=namelist@(Name[]), Slots=slots],subject) -> {
+          NameList=namelist@concTomName(Name[]), Slots=slots],subject) -> {
         if(`slots.length() > 2) {
           %match(slots) {
             /*
@@ -195,7 +195,7 @@ public class ACPropagator implements IBasePropagator {
        */
       MatchConstraint(RecordAppl[
           Options=concOption(T1*,MatchingTheory(concElementaryTheory(T2*,AC(),T3*)),T4*),
-          NameList=namelist@(Name[]), 
+          NameList=namelist@concTomName(Name[]), 
           Slots=slots],subject) &&
         (concSlot()<<slots || concSlot(PairSlotAppl[Appl=VariableStar[]])<<slots) -> {
           /*System.out.println("case f(X*) <<ac s => f(X*) <<a s");*/

@@ -99,7 +99,7 @@ public class ArrayPropagator implements IBasePropagator {
        * conc(X*,conc(some_pattern),Y*) << t -> conc(X*,Z*,Y*) << t /\ conc(some_pattern) << Z*  
        * 
        */ 
-      m@MatchConstraint(pattern@RecordAppl[NameList=(Name(tomName)),Slots=!concSlot()],_) -> {
+      m@MatchConstraint(pattern@RecordAppl[NameList=concTomName(Name(tomName)),Slots=!concSlot()],_) -> {
         if(TomBase.hasTheory(`pattern,`AC())) {
           return `m;
         }
@@ -118,7 +118,7 @@ public class ArrayPropagator implements IBasePropagator {
          /\ HasElement(fresh_index2,freshSubj) /\ t2=GetElement(fresh_index2,freshSubj)/\ fresh_index3 = fresh_index2 + 1  
          /\ begin2 = fresh_index3  /\ end2 = fresh_index3 /\ Y* = VariableHeadArray(begin2,end2) /\ fresh_index4 = end2
       */
-      m@MatchConstraint(pattern@RecordAppl(options,nameList@(name@Name(tomName),_*),slots,_),g@!SymbolOf[]) -> {      
+      m@MatchConstraint(pattern@RecordAppl(options,nameList@concTomName(name@Name(tomName),_*),slots,_),g@!SymbolOf[]) -> {      
         if(TomBase.hasTheory(`pattern,`AC())) {
           return `m;
         }

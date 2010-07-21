@@ -149,13 +149,13 @@ public class GeneralPurposePropagator implements IBasePropagator {
     SlotList newSlots = `concSlot();
     Constraint constraintList = `AndConstraint();
     %match(constraint) {      
-      MatchConstraint(t@RecordAppl[NameList=(name@Name[]),Slots=slots@!concSlot()],g) -> {
+      MatchConstraint(t@RecordAppl[NameList=concTomName(name@Name[]),Slots=slots@!concSlot()],g) -> {
 
         %match(slots) { 
           concSlot(_*,slot,_*) -> {
 matchSlot:  %match(slot, TomName name) {
               ps@PairSlotAppl[Appl=appl],childName &&  
-                (RecordAppl[NameList=(childName)] << appl || AntiTerm(RecordAppl[NameList=(childName)]) << appl) -> {
+                (RecordAppl[NameList=concTomName(childName)] << appl || AntiTerm(RecordAppl[NameList=concTomName(childName)]) << appl) -> {
                   BQTerm freshVariable = getCompiler().getFreshVariableStar(getCompiler().getTermTypeFromTerm(`t));                
                   constraintList = `AndConstraint(MatchConstraint(appl,freshVariable),constraintList*);
                   newSlots = `concSlot(newSlots*,ps.setAppl(TomBase.convertFromBQVarToVar(freshVariable)));

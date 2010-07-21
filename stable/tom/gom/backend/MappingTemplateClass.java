@@ -36,10 +36,6 @@ public abstract class MappingTemplateClass extends TemplateClass {
   }
   protected Map<ClassName,TemplateClass> templates;
 
-  public GomEnvironment getGomEnvironment() {
-    return this.gomEnvironment;
-  }
-
   public void addTemplates(Map<ClassName,TemplateClass> map) {
     this.templates.putAll(map);
   }

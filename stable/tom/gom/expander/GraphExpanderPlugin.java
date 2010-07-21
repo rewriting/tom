@@ -67,10 +67,9 @@ public class GraphExpanderPlugin extends GomGenericPlugin {
       hookList = (HookDeclList) arg[1];
       setGomEnvironment((GomEnvironment)arg[2]);
     } else {
-      getLogger().log(Level.SEVERE,
-          GomMessage.invalidPluginArgument.getMessage(),
-          new Object[]{"GraphExpander", "[ModuleList,GomEnvironment]",
-            getArgumentArrayString(arg)});
+      GomMessage.error(getLogger(),null,0, GomMessage.invalidPluginArgument,
+          "GraphExpander", "[ModuleList,GomEnvironment]",
+          getArgumentArrayString(arg));
     }
   }
 
@@ -81,18 +80,20 @@ public class GraphExpanderPlugin extends GomGenericPlugin {
   public void run(Map<String,String> informationTracker) {
     if(getOptionBooleanValue("termgraph") || getOptionBooleanValue("termpointer")) {
       boolean intermediate = ((Boolean)getOptionManager().getOptionValue("intermediate")).booleanValue();
-      getLogger().log(Level.INFO, "Extend the signature");
+      GomMessage.info(getLogger(), null, 0, GomMessage.signatureExtension);
       GraphExpander expander = new GraphExpander(getOptionBooleanValue("termgraph"),getGomEnvironment());
       Pair mpair = expander.expand(typedModuleList,hookList);
       referencedModuleList = mpair.getModules();
       referencedHookList = mpair.getHookDecls();
       if(referencedModuleList == null) {
-        getLogger().log(Level.SEVERE,
-            GomMessage.expansionIssue.getMessage(),
-            getStreamManager().getInputFileName());
+        GomMessage.error(getLogger(),
+            getStreamManager().getInputFileName(), 0,
+            GomMessage.expansionIssue);
       } else {
-        getLogger().log(Level.FINE, "Referenced Modules: {0}",referencedModuleList);
-        getLogger().log(Level.INFO, "Signature extension succeeds");
+        GomMessage.fine(getLogger(), null, 0, 
+            GomMessage.referencedModules,referencedModuleList);
+        GomMessage.info(getLogger(), null, 0, 
+            GomMessage.signatureExtensionSuccess);
         if(intermediate) {
           Tools.generateOutput(getStreamManager().getOutputFileName()
               + TYPED_SUFFIX, (aterm.ATerm)referencedModuleList.toATerm());

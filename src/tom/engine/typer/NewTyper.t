@@ -289,7 +289,7 @@ public class NewTyper extends TomGenericPlugin {
    */
   %strategy desugarString(typer:NewTyper) extends Identity() {
     visit TomTerm {
-      appl@RecordAppl[NameList=(Name(tomName),_*),Slots=args] -> {
+      appl@RecordAppl[NameList=concTomName(Name(tomName),_*),Slots=args] -> {
         TomSymbol tSymbol = typer.getSymbolFromName(`tomName);
         //System.out.println("appl = " + subject);
         if(tSymbol != null) {
@@ -316,7 +316,7 @@ public class NewTyper extends TomGenericPlugin {
       Slot head = args.getHeadconcSlot();
       SlotList tail = typeChar(tSymbol,args.getTailconcSlot());
       %match(head) {
-        PairSlotAppl(slotName,RecordAppl[Options=optionList,NameList=(Name(tomName)),Slots=concSlot(),Constraints=constraintList]) -> {
+        PairSlotAppl(slotName,RecordAppl[Options=optionList,NameList=concTomName(Name(tomName)),Slots=concSlot(),Constraints=constraintList]) -> {
           /*
            * ensure that the argument contains at least 1 character and 2 single quotes
            */
