@@ -16,7 +16,7 @@ options {
 }
 
 @lexer::members{
-  public static int bnesting = 0;
+  public static int nesting = 0;
 }
 
 backQuoteConstruct :
@@ -45,18 +45,18 @@ ML_COMMENT :
   { $channel=HIDDEN; }
   ;
 
-LPAREN : '(' { bnesting++; System.out.println("backquote bnesting++ = " + bnesting);}
+LPAREN : '(' { nesting++; System.out.println("backquote nesting++ = " + nesting);}
          ;
 
 RPAREN : ')'
   {
-    if ( bnesting<=0 ) {
+    if ( nesting<=0 ) {
       System.out.println("exit backquote language\n");
       emit(Token.EOF_TOKEN);
     }
     else {
-      bnesting--;
-      System.out.println("backquote bnesting-- = " + bnesting);
+      nesting--;
+      System.out.println("backquote nesting-- = " + nesting);
     }
   }
   ;

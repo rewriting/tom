@@ -19,7 +19,7 @@ options {
 }
 
 @lexer::members{
-  public static int tnesting = 0;
+  public static int nesting = 0;
   public Tree result;
   
   // override standard token emission
@@ -56,13 +56,13 @@ patternActionList :
   ;
 
 patternAction :
-  tomTerm a=ARROWLBRACE-> ^(PatternAction tomTerm ^({((TomToken)$a).getTree()}))
+  tomTerm a=ARROWLBRACE -> ^(PatternAction tomTerm ^({((TomToken)$a).getTree()}))
   ;
 
 ARROWLBRACE : '-> {' /*(options {greedy=false;} : WS )* LBRACE*/
   {
 //    System.out.println("\nbefore new Host*");
-//    System.out.println("in arrowlbrace / tom tnesting = " + tnesting);
+//    System.out.println("in arrowlbrace / tom nesting = " + nesting);
     HostLanguageLexer lexer = new HostLanguageLexer(input);
     CommonTokenStream tokens = new CommonTokenStream(lexer);
 //    System.out.println("tom, tokens = " + tokens.toString() + " /fin");
@@ -75,18 +75,18 @@ ARROWLBRACE : '-> {' /*(options {greedy=false;} : WS )* LBRACE*/
   }
   ;
 
-LBRACE : '{' //{ tnesting++; System.out.println("tom tnesting++ = " + tnesting);}
+LBRACE : '{' //{ nesting++; System.out.println("tom nesting++ = " + nesting);}
          ;
 
 RBRACE : '}'
   {
-    if ( tnesting<=0 ) {
+    if ( nesting<=0 ) {
       emit(Token.EOF_TOKEN);
       //System.out.println("exit tom language\n");
     }
     else {
-      tnesting--;
-      //System.out.println("tom tnesting-- = " + tnesting);
+      nesting--;
+      //System.out.println("tom nesting-- = " + nesting);
     }
   }
   ;
