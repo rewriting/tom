@@ -1,0 +1,157 @@
+//module  Tom
+module  newtom.Tom
+imports int String BackQuote //Host
+abstract syntax
+
+// Temporary starting point
+//TomCompilationUnit = TomCompilationUnit(BlockList:BlockList)
+Program = Program(BlockList:BlockList)
+//Program = Program(Block*)
+
+TomType = Type(Type:String)
+        | EmptyType()
+
+TomTypeList = TomTypeList(TomType*)
+
+TomTerm = Variable(Name:TomName,Type:TomType)
+        | VariableStar(Name:TomName,Type:TomType)
+        | AntiVariable(Name:TomName,Type:TomType)
+        | AntiVariableStar(Name:TomName,Type:TomType)
+        | UnamedVariable() // Underscore()
+        | UnamedVariableStar() // UnderscoreStar()
+        | NamedTermList(Name:TomName,TomTermList:TomTermList)
+        | XMLAttr(Name:TomName,Value:String,Annotation:Annotation)
+        | UnamedXMLAttr(Value:String,Annotation1:Annotation, Annotation2:Annotation)
+//        | AnnotedXMLAttr(Name:TomName,Value:String,Annotation1:String)
+
+TomTermList = TomTermList(TomTerm*)
+            | EmptyList() // should not exist : workarround that we should get rid of
+
+Annotation = Annotation(Annotation:String)
+           | EmptyAnnotation()
+
+TomName = Name(Name:String)
+        | EmptyName()
+
+TomNameList = TomNameList(TomName*)
+
+/*
+Option = 
+
+OptionList = OptionList(Option*)
+*/
+
+Pattern = Pattern(Pattern:PlainPattern)
+        | AnnotedPattern(Pattern:PlainPattern,Annotation:String)
+
+PlainPattern = PlainPattern(Term:TomTerm)
+             | XMLTerm(NameList:TomNameList,Attrs:TomTermList,ChildList:TomTermList) // ?
+             | PPExplicitTermList(PatternList:PatternList)
+             | SymbolList(Head:HeadSymbolList,Tail:TailList)
+             | AntiSymbolList(Head:HeadSymbolList,Tail:TailList)
+
+TailList = ImplicitPairList(PairPatternList:PairPatternList)
+         | ExplicitTermList(PatternList:PatternList)
+
+PairPattern = PairPattern(SlotName:String,Pattern:Pattern)
+
+PairPatternList = PairPatternList( PairPattern* )
+
+HeadSymbolList = HeadSymbolList(HeadSymbol*)
+
+HeadSymbol = HeadSymbol(Name:String)
+           | HeadSymbolQMark(Name:String)
+
+PatternList = PatternList( Pattern* )
+
+PatternAction = PatternAction(Patterns:PatternList,Block:BlockList)
+              | LabelledPatternAction(Patterns:PatternList,BlockList:BlockList,LabelName:String)
+              | EmptyPatternAction()
+
+PatternActionList = PatternActionList(PatternAction*)
+
+ConstraintActionList = ConstraintActionList(ConstraintAction*)
+
+ConstraintAction = ConstraintAction(Constraint:Constraint,Blocklist:BlockList)
+
+Constraint = AndConstraint(Left:Constraint,Right:Constraint)
+           | OrConstraint(Left:Constraint,Right:Constraint)
+           | MatchConstraint(p:Pattern,Subject:TomTerm)
+           | OpConstraint(Pattern:TomTerm,Subject:TomTerm,Op:NumOperator)
+           | ConstraintList(Constraint*)
+
+NumOperator = NumLessOrEqualThan()
+         | NumGreaterOrEqualThan()
+         | NumEqual()
+         | NumDifferent()
+         | NumLessThan()
+         | NumGreaterThan()
+
+Operator = IsFsym(Name:TomName,Block:BlockList)
+         | GetSlot(Name1:TomName,Name2:TomName,Block:BlockList)
+         | Make(NameList:TomNameList,Block:BlockList)
+         | GetHead(Name:TomName,Block:BlockList)
+         | GetTail(Name:TomName,Block:BlockList)
+         | IsEmpty(Name:TomName,Block:BlockList)
+         | MakeEmpty(Name:TomName,Block:BlockList)
+         | MakeEmptyList(Block:BlockList)
+         | MakeInsert(Name1:TomName,Name2:TomName,Block:BlockList)
+         | GetElement(Name1:TomName,Name2:TomName,Block:BlockList)
+         | GetSize(Name:TomName,Block:BlockList)
+         | MakeEmptyArray(Name:TomName,Block:BlockList)
+         | MakeAppend(Name1:TomName,Name2:TomName,Block:BlockList)
+         | Implement(Block:BlockList)
+         | IsSort(Name:TomName,Block:BlockList) //temp - not a goalLanguageBlockList but a goalLanguageSortCheck, maybe different
+         | Equals(Name1:TomName,Name2:TomName,Block:BlockList)
+
+OperatorList = OperatorList(Operator*)
+
+BlockList = BlockList(Block*)
+
+Block = MatchConstruct(MatchArguments:TomTermList,PatternActions:PatternActionList )
+      | MatchConstructWithoutArgs(ConstraintActions:ConstraintActionList )
+      | Operator(Name:TomName,Type:TomType,Args:SlotList/*,Op:Operator*/,OperatorList:OperatorList) // Name - Type -Args - isfsym - OperatorList
+      | OpList(Name:TomName,Type:TomType,Arg:TomType/*,Op:Operator*/,OperatorList:OperatorList)
+      | OpArray(Name:TomName,Type:TomType,Arg:TomType/*,Op:Operator*/,OperatorList:OperatorList)
+      | Strategy(Name:TomName,Extends:TomTerm,VisitList:StrategyVisitList,Arguments:TomTermList) //?
+      | TypeTerm(Type:TomType,Op1:Operator,Op2:Operator,Op3:Operator)
+      | Include(FileName:String)
+//      | RuleConstruct(RType:TomType,FQN:TomName,RuleArguments:TomTermList,BlockList:BlockList)//,ConstraintActions:ConstraintActionList ) //PatternActions:PatternActionList )
+      | BackQuoteConstruct(BackQuoteTerm:BackQuoteTerm) //Term:Term)
+      | Composite(ctl:CompositeList)
+//      | Composite(ct:CompositeTerm)
+
+/*
+CompositeTerm = CompositeTL(tl:TargetLanguage)
+              | CompositeBQT(term:BackQuoteTerm)
+              | CompositeTermList(CompositeTerm*)
+*/
+
+CompositeList = CompositeList(CompositeTerm*)
+
+CompositeTerm = CompositeTL(tl:TargetLanguage)
+              | CompositeBQT(term:BackQuoteTerm)
+
+TargetLanguage = TL(Code:String,Start:TextPosition,End:TextPosition)
+               | ITL(Code:String)
+               | Comment(Code:String)
+               | noTL()
+
+TextPosition = TextPosition(Line:int,Column:int)
+
+SlotList = SlotList(Slot*)
+
+Slot = Slot(SlotName:TomName,Type:TomType)
+
+StrategyVisitList = StrategyVisitList(StrategyVisit*)
+
+StrategyVisit = StrategyVisit(Type:TomType,ActionList:VisitActionList)
+
+VisitAction = VisitActionBL(Patterns:PatternList,BlockList:BlockList)
+            | VisitActionT(Patterns:PatternList,Term:TomTerm)
+            | LabelledVisitActionBL(Patterns:PatternList,BlockList:BlockList,LabelName:String)
+            | LabelledVisitActionT(Patterns:PatternList,Term:TomTerm,LabelName:String)
+            | EmptyVisitAction()
+
+VisitActionList = VisitActionList(VisitAction*)
+
