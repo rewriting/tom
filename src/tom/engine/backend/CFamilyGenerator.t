@@ -413,7 +413,7 @@ public abstract class CFamilyGenerator extends GenericGenerator {
     String glType = TomBase.getTLType(listType);
 
     String utype = glType;
-    if(lazyMode) {
+    if(lazyType) {
       utype = TomBase.getTLType(getUniversalType());
     }
 

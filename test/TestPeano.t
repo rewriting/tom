@@ -1,13 +1,21 @@
 import aterm.*;
 import aterm.pure.*;
-import static org.junit.Assert.*;
 import org.junit.Test;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.AfterClass;
+import static org.junit.Assert.*;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 
 public class TestPeano {
 
-  private static ATermFactory factory;
+  private static ATermFactory factory = SingletonFactory.getInstance();
   private static AFun fzero, fsuc, fplus;
   public ATermAppl tzero;
+
+  private static Logger logger;
+  private static Level level = Level.FINE;
 
   %typeterm term {
     implement { ATerm }
@@ -41,16 +49,26 @@ public class TestPeano {
   }
 
   public static void main(String[] args) {
+    level = Level.INFO;
     org.junit.runner.JUnitCore.main(TestPeano.class.getName());
   }
 
-  public void setUp() {
-    this.factory = new PureFactory(16);
+  @BeforeClass
+  public static void staticSetUp() {
+    logger = Logger.getLogger(TestPeano.class.getName());
+  }
 
+  @Before
+  public void setUp() {
     fzero = factory.makeAFun("zero", 0, false);
     fsuc  = factory.makeAFun("suc" , 1, false);
     fplus = factory.makeAFun("plus", 2, false);
     tzero = factory.makeAppl(fzero);
+  }
+  
+  @AfterClass
+  public static void staticTearDown() {
+    logger = null;
   }
 
   @Test

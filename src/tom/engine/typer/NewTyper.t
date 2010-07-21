@@ -113,6 +113,7 @@ public class NewTyper extends TomGenericPlugin {
     long startChrono = System.currentTimeMillis();
     boolean intermediate = getOptionBooleanValue("intermediate");
     boolean newtyper = getOptionBooleanValue("newtyper");
+    boolean lazyType = getOptionBooleanValue("lazyType");
 
     if(newtyper) {
  
@@ -120,6 +121,9 @@ public class NewTyper extends TomGenericPlugin {
       try {
         newKernelTyper.setSymbolTable(getStreamManager().getSymbolTable()); 
         newKernelTyper.setCurrentInputFileName(getStreamManager().getInputFileName()); 
+        if(lazyType) {
+          newKernelTyper.setLazyType();
+        }
 
         updateSymbolTable();
 
