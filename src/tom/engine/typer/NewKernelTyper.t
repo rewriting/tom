@@ -302,8 +302,7 @@ public class NewKernelTyper {
   %strategy CollectKnownTypes(nkt:NewKernelTyper) extends Identity() {
     visit TomType {
       Type(tomType,EmptyTargetLanguageType()) -> {
-        TomType newType = null;
-        newType = nkt.symbolTable.getType(`tomType);
+        TomType newType = nkt.symbolTable.getType(`tomType);
         if (newType == null) {
           // This happens when :
           // * tomType != unknown type AND (newType == null)
@@ -1087,75 +1086,54 @@ public class NewKernelTyper {
   %strategy solveConstraints(nkt:NewKernelTyper) extends Identity() {
     visit TypeConstraintList {
       // CASES 1a and 3a :
-      concTypeConstraint(leftTCList*,tc@Equation((Type|TypeWithSymbol)[TomType=tName1],Type[TomType=tName2@!tName1],_),rightTCList*) && 
+      subject@concTypeConstraint(leftTCList*,tc@Equation((Type|TypeWithSymbol)[TomType=tName1],Type[TomType=tName2@!tName1],_),rightTCList*) && 
         (tName1 != "unknown type") && (tName2 != "unknown type")  -> {
           //DEBUG System.out.println("In solveConstraints 1a/3a -- tc = " + `tc);
           nkt.printError(`tc);
-          return `concTypeConstraint(leftTCList*,tc,rightTCList*);
+          return `subject;
         }
 
       // CASE 2a :
-      concTypeConstraint(leftTCList*,tc@Equation(Type[TomType=tName1],TypeWithSymbol[TomType=tName2@!tName1],_),rightTCList*) &&
+      subject@concTypeConstraint(leftTCList*,tc@Equation(Type[TomType=tName1],TypeWithSymbol[TomType=tName2@!tName1],_),rightTCList*) &&
         (tName1 != "unknown type") && (tName2 != "unknown type")  -> {
           //DEBUG System.out.println("In solveConstraints 2a -- tc = " + `tc);
           nkt.printError(`tc);
-          return `concTypeConstraint(leftTCList*,tc,rightTCList*);
+          return `subject;
         }
 
       // CASE 4a :  
-      concTypeConstraint(leftTCList*,tc@Equation(tLType1@TypeWithSymbol(_,_,_),tLType2@TypeWithSymbol(_,_,_),_),rightTCList*) &&
+      subject@concTypeConstraint(leftTCList*,tc@Equation(tLType1@TypeWithSymbol(_,_,_),tLType2@TypeWithSymbol(_,_,_),_),rightTCList*) &&
         (tLType1 != tLType2)  -> {
           //DEBUG System.out.println("In solveConstraints 4a -- tc = " + `tc);
           nkt.printError(`tc);
-          return `concTypeConstraint(leftTCList*,tc,rightTCList*);
+          return `subject;
         }
 
       // CASES 7 and 8 :
-      concTypeConstraint(leftTCList*,tc@Equation(typeVar@TypeVar(_,_),groundType@!typeVar,info),rightTCList*) -> {
-        nkt.substitutions.put(`typeVar,`groundType);
-          //DEBUG System.out.println("In solveConstraints 7/8 -- tc = " + `tc);
-        %match {
-          !concTypeConstraint() << leftTCList -> {
-            if(nkt.findTypeVars(`typeVar,`leftTCList)) {
-              `leftTCList = nkt.applySubstitution(`typeVar,`groundType,`leftTCList);
-            }
-          }
-
-          !concTypeConstraint() << rightTCList -> {
-            if(nkt.findTypeVars(`typeVar,`rightTCList)) {
-              `rightTCList = nkt.applySubstitution(`typeVar,`groundType,`rightTCList);
-            }
-          }
-        }
-        return `concTypeConstraint(leftTCList*,Equation(groundType,groundType,info),rightTCList*);
+      concTypeConstraint(leftTCList*,tc@Equation(typeVar@TypeVar(_,_),type@!typeVar,info),rightTCList*) -> {
+        nkt.substitutions.put(`typeVar,`type);
+        //DEBUG System.out.println("In solveConstraints 7/8 -- tc = " + `tc);
+        TypeConstraintList left = (nkt.findTypeVars(`typeVar,`leftTCList))?
+          nkt.applySubstitution(`typeVar,`type,`leftTCList):`leftTCList;
+        TypeConstraintList right = (nkt.findTypeVars(`typeVar,`rightTCList))?
+          nkt.applySubstitution(`typeVar,`type,`rightTCList):`rightTCList;
+        return `concTypeConstraint(left*,Equation(type,type,info),right*);
       }
 
       // CASES 5 and 6 :
       concTypeConstraint(leftTCList*,tc@Equation(groundType@!TypeVar(_,_),typeVar@TypeVar(_,_),info),rightTCList*) -> {
         nkt.substitutions.put(`typeVar,`groundType);
           //DEBUG System.out.println("In solveConstraints 5/6 -- tc = " + `tc);
-        %match {
-          !concTypeConstraint() << leftTCList -> {
-            if(nkt.findTypeVars(`typeVar,`leftTCList)) {
-              `leftTCList = nkt.applySubstitution(`typeVar,`groundType,`leftTCList);
-            }
-          }
-
-          !concTypeConstraint() << rightTCList -> {
-            if(nkt.findTypeVars(`typeVar,`rightTCList)) {
-              `rightTCList = nkt.applySubstitution(`typeVar,`groundType,`rightTCList);
-            }
-          }
-        }
-        return
-          `concTypeConstraint(leftTCList*,Equation(groundType,groundType,info),rightTCList*);
+        TypeConstraintList left = (nkt.findTypeVars(`typeVar,`leftTCList))?
+          nkt.applySubstitution(`typeVar,`groundType,`leftTCList):`leftTCList;
+        TypeConstraintList right = (nkt.findTypeVars(`typeVar,`rightTCList))?
+          nkt.applySubstitution(`typeVar,`groundType,`rightTCList):`rightTCList;
+        return `concTypeConstraint(left*,Equation(groundType,groundType,info),right*);
       }
     }
   }
 
   private void printError(TypeConstraint tConstraint) {
-    String fileName = "";
-    int line = 0;
     %match {
       Equation[Type1=tType1,Type2=tType2,Info=info] << tConstraint &&
         (Type|TypeWithSymbol)[TomType=tName1] << tType1 &&
@@ -1164,19 +1142,16 @@ public class NewKernelTyper {
         -> {
           Option option = TomBase.findOriginTracking(`optionList);
           %match(option) {
-            !noOption() -> {
-              fileName = option.getFileName();
-              line = option.getLine();
+            OriginTracking(_,line,fileName) -> {
+              if(lazyType==false) {
+                TomMessage.error(logger,`fileName, `line,
+                    TomMessage.incompatibleTypes,`tName1,`tName2,`termName); 
+              }
             }
-          }
-          if(lazyType==false) {
-            TomMessage.error(logger,fileName, line,
-                TomMessage.incompatibleTypes,`tName1,`tName2,`termName); 
           }
         }
     }
   }
-
 
   private boolean findTypeVars(TomType typeVar, TypeConstraintList
       tcList) {
@@ -1194,7 +1169,7 @@ public class NewKernelTyper {
       TypeConstraintList tcList) {
     try {
       return (TypeConstraintList)
-        `TopDown(replaceTypeConstraints(oldtt,newtt)).visitLight(tcList);
+        `BottomUp(replaceTypeConstraints(oldtt,newtt)).visitLight(tcList);
     } catch(tom.library.sl.VisitFailure e) {
       throw new RuntimeException("applySubstitution: should not be here.");
     }
@@ -1206,13 +1181,12 @@ public class NewKernelTyper {
           return newtt; 
       }
     }
-  }
- 
+  }     
+
   private Code replaceInCode(Code code) {
     Code replacedCode = code;
     try {
-      replacedCode =
-        `RepeatId(TopDown(replaceFreshTypeVar(this))).visitLight(code);
+      replacedCode = `InnermostId(replaceFreshTypeVar(this)).visitLight(code);
     } catch(tom.library.sl.VisitFailure e) {
       throw new TomRuntimeException("replaceInCode: failure on " +
           replacedCode);
@@ -1228,7 +1202,7 @@ public class NewKernelTyper {
       //DEBUG System.out.println("replaceInSymboltable() - tSymbol before strategy: "
       //DEBUG     + tSymbol);
       try {
-        tSymbol = `RepeatId(TopDown(replaceFreshTypeVar(this))).visitLight(tSymbol);
+        tSymbol = `InnermostId(replaceFreshTypeVar(this)).visitLight(tSymbol);
       } catch(tom.library.sl.VisitFailure e) {
         throw new TomRuntimeException("replaceInSymbolTable: failure on " +
             tSymbol);
@@ -1258,6 +1232,7 @@ public class NewKernelTyper {
       }
     }
   }
+
   public void printEachConstraint(TypeConstraintList TCList) {
     %match(TCList) {
       concTypeConstraint(Equation(type1,type2,_),tailTCList*) -> {
