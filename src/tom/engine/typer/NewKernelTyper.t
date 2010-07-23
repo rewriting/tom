@@ -320,10 +320,10 @@ public class NewKernelTyper {
   }
 
   /**
-    * The method <code>inferAllTypes</code> is the start-up of the inference
-    * process. It is a generic method and it is called for the first time by the
-    * NewTyper
-    */
+   * The method <code>inferAllTypes</code> is the start-up of the inference
+   * process. It is a generic method and it is called for the first time by the
+   * NewTyper
+   */
   public <T extends tom.library.sl.Visitable> T inferAllTypes(T term, TomType
       contextType) {
     try {
@@ -969,17 +969,7 @@ public class NewKernelTyper {
     //DEBUG    "'");
     %match(bqTList,tSymbol) {
       concBQTerm(),Symbol[] -> { return bqTList; }
-      /*
-      concBQTerm(headBQTerm@BQVariable[AstName=Name("head")],tailBQTerm@BQVariable[AstName=Name("tail")]),
-        Symbol[AstName=Name("realMake")]
-          -> {
-            //DEBUG System.out.println("What???? headBQTerm = " + `headBQTerm);
-            `headBQTerm = inferAllTypes(`headBQTerm,contextType);
-            //DEBUG System.out.println("What???? tailBQTerm = " + `tailBQTerm);
-            `tailBQTerm = inferAllTypes(`tailBQTerm,contextType);
-            return `concBQTerm(headBQTerm,tailBQTerm);
-          }
-*/
+
       concBQTerm(_,_*),EmptySymbol() -> {
         /*
          * if the top symbol is unknown, the subterms

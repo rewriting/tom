@@ -141,7 +141,7 @@ public class NewTyper extends TomGenericPlugin {
          */
         //typedCode = newKernelTyper.inferCode((Code)getWorkingTerm());
         typedCode =
-          newKernelTyper.inferAllTypes((Code)getWorkingTerm(),newKernelTyper.getUnknownFreshTypeVar());
+          newKernelTyper.inferAllTypes((Code)getWorkingTerm(),`EmptyType());
         //DEBUG System.out.println("\nCode after type inference before desugarString = \n" + typedCode);
 
         /**
