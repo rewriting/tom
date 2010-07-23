@@ -386,7 +386,7 @@ public class TestAndOr {
   public void test28() {
     Term l = `list(a(),b(),g(a()),c());
     %match(l) {
-      list(X*,b(),Y*) || list(X*,c(),Y*) << l -> {
+      list(_*,b(),_*) || list(_*,c(),_*) << l -> {
         return;
       }
     }
@@ -408,7 +408,7 @@ public class TestAndOr {
   public void test30() {
     Term l = `f(a(),b());
     %match(l) {
-      g(x) || f(x,x)<<l -> {
+      g(_) || f(x,x)<<l -> {
         fail();
       }
     }
