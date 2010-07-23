@@ -139,8 +139,9 @@ public class NewTyper extends TomGenericPlugin {
          * Start by typing variables with fresh type variables
          * Perform type inference over patterns 
          */
-        typedCode = newKernelTyper.inferCode((Code)getWorkingTerm());
-        //typedCode = newKernelTyper.inferCode(typedCode);
+        //typedCode = newKernelTyper.inferCode((Code)getWorkingTerm());
+        typedCode =
+          newKernelTyper.inferAllTypes((Code)getWorkingTerm(),newKernelTyper.getUnknownFreshTypeVar());
         //DEBUG System.out.println("\nCode after type inference before desugarString = \n" + typedCode);
 
         /**
@@ -272,7 +273,7 @@ public class NewTyper extends TomGenericPlugin {
             //DEBUG System.out.println("An array operator '" + `tomName + "' : " +
             //DEBUG     `tSymbol + '\n');
             return ASTFactory.buildArray(`name,args,nkt.getSymbolTable());
-          } else if(TomBase.isDefinedSymbol(tSymbol) || `tomName == "realMake") {
+          } else if(TomBase.isDefinedSymbol(tSymbol)) {
             //DEBUG System.out.println("A defined symbol '" + `tomName + "' : " +
             //DEBUG     `tSymbol + '\n');
             return `FunctionCall(name,TomBase.getSymbolCodomain(tSymbol),args);
