@@ -139,9 +139,17 @@ public class NewTyper extends TomGenericPlugin {
          * Start by typing variables with fresh type variables
          * Perform type inference over patterns 
          */
-        typedCode = newKernelTyper.inferCode((Code)getWorkingTerm());
-        //typedCode = newKernelTyper.inferCode(typedCode);
+        //typedCode = newKernelTyper.inferCode((Code)getWorkingTerm());
+        typedCode =
+          newKernelTyper.inferAllTypes((Code)getWorkingTerm(),`EmptyType());
         //DEBUG System.out.println("\nCode after type inference before desugarString = \n" + typedCode);
+
+        /**
+         * Replace all remains of type variables by
+         * Type(tomType,EmptyTargetLanguageType()) in Code and in SymbolTable
+         */
+        typedCode = replaceInCode(typedCode);
+        replaceInSymbolTable();
 
         /** 
          * TOMOVE to a post phase: 
@@ -178,6 +186,7 @@ public class NewTyper extends TomGenericPlugin {
       TomMessage.info(logger, null, 0, TomMessage.newTyperNotUsed);
     }
   }
+
 
   /*
    * Type unknown types with fresh type variables 
@@ -264,7 +273,7 @@ public class NewTyper extends TomGenericPlugin {
             //DEBUG System.out.println("An array operator '" + `tomName + "' : " +
             //DEBUG     `tSymbol + '\n');
             return ASTFactory.buildArray(`name,args,nkt.getSymbolTable());
-          } else if(TomBase.isDefinedSymbol(tSymbol) || `tomName == "realMake") {
+          } else if(TomBase.isDefinedSymbol(tSymbol)) {
             //DEBUG System.out.println("A defined symbol '" + `tomName + "' : " +
             //DEBUG     `tSymbol + '\n');
             return `FunctionCall(name,TomBase.getSymbolCodomain(tSymbol),args);
@@ -279,6 +288,44 @@ public class NewTyper extends TomGenericPlugin {
           return `FunctionCall(name,EmptyType(),args);
         }
       }
+    }
+  }
+
+  private Code replaceInCode(Code code) {
+    Code replacedCode = code;
+    try {
+      replacedCode =
+        `RepeatId(TopDown(replaceFreshTypeVar())).visitLight(code);
+    } catch(tom.library.sl.VisitFailure e) {
+      throw new TomRuntimeException("replaceInCode: failure on " +
+          replacedCode);
+    }
+    return replacedCode;
+  }
+
+  private void replaceInSymbolTable() {
+    for(String tomName:newKernelTyper.getSymbolTable().keySymbolIterable()) {
+      //DEBUG System.out.println("replaceInSymboltable() - tomName : " + tomName);
+      TomSymbol tSymbol = newKernelTyper.getSymbolFromName(tomName);
+      //DEBUG System.out.println("replaceInSymboltable() - tSymbol before strategy: "
+      //DEBUG     + tSymbol);
+      try {
+        tSymbol = `RepeatId(TopDown(replaceFreshTypeVar())).visitLight(tSymbol);
+      } catch(tom.library.sl.VisitFailure e) {
+        throw new TomRuntimeException("replaceInSymbolTable: failure on " +
+            tSymbol);
+      }
+      //DEBUG System.out.println("replaceInSymboltable() - tSymbol after strategy: "
+      //DEBUG     + tSymbol);
+      newKernelTyper.getSymbolTable().putSymbol(tomName,tSymbol);
+    }
+  }
+
+  %strategy replaceFreshTypeVar() extends Identity() {
+    visit TomType {
+      TypeVar(tomType,_) -> {
+        return `Type(tomType,EmptyTargetLanguageType());
+      }    
     }
   }
 

@@ -1,3 +1,11 @@
+2010-07-23 tavaresc
+ * Remove special treatment for symbols named "realMake" ("rules()" in GOM).
+ * Take the method InferAllTypes as the start-up method instead of inferCode.
+ * Add a visit to the Code of form "Tom(codeList)" or "TomInclude(codeList)" in
+   order to infer types of an included code too.
+ * Now, the inference for the codeList is done by the method inferCodeList which
+   calls the  main strategy inferTypes for whichever kind of code.
+
 2010-07-21 pem
  * removed anonymous op from tom sources
  * bootstrap

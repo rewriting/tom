@@ -365,9 +365,9 @@ public class TestAndOrConstraintOnly {
     int cpt = 0;
     %match {
       (a|b)() << a() -> { cpt++; }
-      (f|g)[t1=a] << g(a()) -> { cpt++; }
+      (f|g)[t1=_] << g(a()) -> { cpt++; }
       ((a|b)() << a()) -> { cpt++; }
-      ((f|g)[t1=a] << g(a())) -> { cpt++; }
+      ((f|g)[t1=_] << g(a())) -> { cpt++; }
     }
     if(cpt!=4) {
       fail();
@@ -391,7 +391,7 @@ public class TestAndOrConstraintOnly {
   @Test
   public void test28() {
     %match {
-      f(x,y) << f(a(),b()) || x << a()  -> {
+      f(x,_) << f(a(),b()) || x << a()  -> {
         Object tmp = `x;
         return;
       }
@@ -417,10 +417,10 @@ public class TestAndOrConstraintOnly {
         Object tmp = `x;
         return;
       }
-      ( f(x,y) << f(a(),b()) && y << b() ) || a() << a()  -> {        
+      ( f(_,y) << f(a(),b()) && y << b() ) || a() << a()  -> {        
         return;
       }
-      ( f(x,y) << f(a(),b()) && y << b() ) || y << a()  -> {
+      ( f(_,y) << f(a(),b()) && y << b() ) || y << a()  -> {
         Object tmp = `y;
         return;
       }
