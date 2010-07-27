@@ -1,3 +1,6 @@
+2010-07-26 tavaresc
+ * Optimize new typer replacing recursive calls by "for" loops.
+
 2010-07-23 tavaresc
  * Remove special treatment for symbols named "realMake" ("rules()" in GOM).
  * Take the method InferAllTypes as the start-up method instead of inferCode.

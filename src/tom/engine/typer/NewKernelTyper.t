@@ -629,26 +629,22 @@ public class NewKernelTyper {
    * @return      the tom typed code list
    */
   private CodeList inferCodeList(CodeList cList) {
-    %match(cList) {
-      concCode() -> { return `cList; }
-      concCode(headCList,tailCList*) -> {
-        try {
-          init();
-          Code newHeadCList = collectKnownTypesFromCode(`headCList);
-          newHeadCList = inferAllTypes(newHeadCList,getUnknownFreshTypeVar());
-          typeConstraints = `RepeatId(solveConstraints(this)).visitLight(typeConstraints);
-          newHeadCList = replaceInCode(newHeadCList);
-          replaceInSymbolTable();
-          CodeList newTailCList = inferCodeList(`tailCList);
-          return `concCode(newHeadCList,newTailCList*);
-        } catch(tom.library.sl.VisitFailure e) {
-          throw new TomRuntimeException("inferCodeList: failure on " +
-              `cList);
-        }
+    CodeList newCList = `concCode();
+    for (Code code : cList.getCollectionconcCode()) {
+      try{
+        init();
+        code =  collectKnownTypesFromCode(`code);
+        code = inferAllTypes(code,getUnknownFreshTypeVar());
+        typeConstraints = `RepeatId(solveConstraints(this)).visitLight(typeConstraints);
+        code = replaceInCode(code);
+        replaceInSymbolTable();
+        newCList = `concCode(code,newCList*);
+      } catch(tom.library.sl.VisitFailure e) {
+        throw new TomRuntimeException("inferCodeList: failure on " +
+            code);
       }
     }
-    throw new TomRuntimeException("inferCodeList: failure on " +
-        `cList);
+    return newCList.reverse();
   }
 
   /**
@@ -671,26 +667,26 @@ public class NewKernelTyper {
    * @param ciList  the pair "condition -> action" to be type inferred 
    */
   private ConstraintInstructionList inferConstraintInstructionList(ConstraintInstructionList ciList) {
-    //DEBUG System.out.println("\n Test pour inferConstraintInstructionList -- ligne 1.");
-    %match(ciList) {
-      concConstraintInstruction() -> { return `ciList; }
-      concConstraintInstruction(headCIList@ConstraintInstruction(constraint,action,optionList),tailCIList*) -> {
-        try {
-          TomList TTList = varPatternList;
-          `TopDownCollect(CollectVars(this)).visitLight(`constraint);
-          `constraint = inferConstraint(`constraint);
-          `action = `inferAllTypes(action,EmptyType());
-          varPatternList = TTList;
-          `tailCIList = inferConstraintInstructionList(`tailCIList);
-          return
-            `concConstraintInstruction(ConstraintInstruction(constraint,action,optionList),tailCIList*);
-        } catch(tom.library.sl.VisitFailure e) {
-          throw new TomRuntimeException("inferConstraintInstructionList: failure on " + `headCIList);
+    ConstraintInstructionList newCIList = `concConstraintInstruction();
+    for (ConstraintInstruction cInst :
+        ciList.getCollectionconcConstraintInstruction()) {
+      try {
+        %match(cInst) {
+          ConstraintInstruction(constraint,action,optionList) -> {
+            TomList TTList = varPatternList;
+            `TopDownCollect(CollectVars(this)).visitLight(`constraint);
+            Constraint newConstraint = inferConstraint(`constraint);
+            Instruction newAction = `inferAllTypes(action,EmptyType());
+            varPatternList = TTList;
+            newCIList =
+              `concConstraintInstruction(ConstraintInstruction(newConstraint,newAction,optionList),newCIList*);
+          } 
         }
+      } catch(tom.library.sl.VisitFailure e) {
+        throw new TomRuntimeException("inferConstraintInstructionList: failure on " + `cInst);
       }
     }
-    throw new TomRuntimeException("inferConstraintInstructionList: failure on "
-        + `ciList);
+    return newCIList.reverse();
   }
 
   /**
@@ -745,10 +741,10 @@ public class NewKernelTyper {
         //DEBUG System.out.println("inferConstraint: match -- constraint " +
         //DEBUG     tPattern + " = " + tSubject);
         addConstraint(`Equation(tPattern,tSubject,getInfoFromTomTerm(pattern)));
-        `pattern = `inferAllTypes(pattern,tPattern);
-        `subject = `inferAllTypes(subject,tSubject);
-        hasUndeclaredType(`subject);
-        return `MatchConstraint(pattern,subject);
+        TomTerm newPattern = `inferAllTypes(pattern,tPattern);
+        BQTerm newSubject = `inferAllTypes(subject,tSubject);
+        hasUndeclaredType(newSubject);
+        return `MatchConstraint(newPattern,newSubject);
       }
 
       NumericConstraint(left,right,type) -> {
@@ -763,33 +759,29 @@ public class NewKernelTyper {
         //DEBUG System.out.println("inferConstraint: match -- constraint " +
         //DEBUG     tLeft + " = " + tRight);
         addConstraint(`Equation(tLeft,tRight,getInfoFromBQTerm(left)));
-        `left = inferAllTypes(`left,tLeft);
-        `right = inferAllTypes(`right,tRight);
-        hasUndeclaredType(`left);
-        hasUndeclaredType(`right);
-        return `NumericConstraint(left,right,type);
+        BQTerm newLeft = inferAllTypes(`left,tLeft);
+        BQTerm newRight = inferAllTypes(`right,tRight);
+        hasUndeclaredType(newLeft);
+        hasUndeclaredType(newRight);
+        return `NumericConstraint(newLeft,newRight,type);
       }
 
       AndConstraint(headCList,tailCList*) -> {
         ConstraintList cList = `concConstraint(headCList,tailCList);
-        Constraint cArg;
         Constraint newAConstraint = `AndConstraint();
-        while(!cList.isEmptyconcConstraint()) {
-          cArg = inferConstraint(cList.getHeadconcConstraint());
+        for (Constraint cArg : cList.getCollectionconcConstraint()) {
+          cArg = inferConstraint(cArg);
           newAConstraint = `AndConstraint(newAConstraint,cArg);
-          cList = cList.getTailconcConstraint();
         }
         return newAConstraint;
       }
 
       OrConstraint(headCList,tailCList*) -> {
         ConstraintList cList = `concConstraint(headCList,tailCList);
-        Constraint cArg;
         Constraint newOConstraint = `OrConstraint();
-        while(!cList.isEmptyconcConstraint()) {
-          cArg = inferConstraint(cList.getHeadconcConstraint());
+        for (Constraint cArg : cList.getCollectionconcConstraint()) {
+          cArg = inferConstraint(cArg);
           newOConstraint = `OrConstraint(newOConstraint,cArg);
-          cList = cList.getTailconcConstraint();
         }
         return newOConstraint;
       }
@@ -836,91 +828,85 @@ public class NewKernelTyper {
    */
   private SlotList inferSlotList(SlotList sList, TomSymbol tSymbol, TomType
       contextType) {
-    %match(sList,tSymbol) {
-      concSlot(),Symbol[] -> { return `sList; }
-      concSlot(),EmptySymbol() -> { return `sList; }
-
-      concSlot(PairSlotAppl[SlotName=sName,Appl=tTerm],tailSList*),EmptySymbol() -> {
-        //DEBUG System.out.println("InferSlotList -- sList =" + sList);
-        //DEBUG System.out.println("InferSlotList -- tSymbol =" + tSymbol);
-        /*
-         * if the top symbol is unknown, the subterms
-         * are typed in an empty context
-         */
-        TomType argType = contextType;
-        TomSymbol argSymb = getSymbolFromTerm(`tTerm);
-        if(!(TomBase.isListOperator(`argSymb) || TomBase.isArrayOperator(`argSymb))) {
-          %match(tTerm) {
-            !VariableStar[] -> { 
-              //DEBUG System.out.println("InferSlotList CT-ELEM -- tTerm = " + `tTerm);
-              argType = getUnknownFreshTypeVar();
+    TomType argType = contextType;
+    SlotList newSList = `concSlot();
+    %match(tSymbol) {
+      EmptySymbol() -> {
+        TomName argName;
+        TomTerm argTerm;
+        TomSymbol argSymb;
+        for (Slot slot : sList.getCollectionconcSlot()) {
+          argName = slot.getSlotName();
+          argTerm = slot.getAppl();
+          argSymb = getSymbolFromTerm(argTerm);
+          if(!(TomBase.isListOperator(`argSymb) || TomBase.isArrayOperator(`argSymb))) {
+            %match(argTerm) {
+              !VariableStar[] -> { 
+                //DEBUG System.out.println("InferSlotList CT-ELEM -- tTerm = " + `tTerm);
+                argType = getUnknownFreshTypeVar();
+              }
             }
           }
+          argTerm = `inferAllTypes(argTerm,argType);
+          newSList = `concSlot(PairSlotAppl(argName,argTerm),newSList*);
         }
-        `tTerm = `inferAllTypes(tTerm,argType);
-        SlotList newTail = `inferSlotList(tailSList,tSymbol,contextType);
-        return `concSlot(PairSlotAppl(sName,tTerm),newTail*);
+        return newSList.reverse(); 
       }
 
-      concSlot(PairSlotAppl[SlotName=sName,Appl=tTerm],tailSList*),Symbol[AstName=symName,TypesToType=TypesToType(concTomType(headTTList,_*),Type(tomCodomain,tlCodomain))] -> {
-        TomType argType = contextType;
-        // In case of a list
-        if(TomBase.isListOperator(`tSymbol) || TomBase.isArrayOperator(`tSymbol)) {
-          TomSymbol argSymb = getSymbolFromTerm(`tTerm);
-          TomTerm newTerm = `tTerm;
-          if(!(TomBase.isListOperator(`argSymb) || TomBase.isArrayOperator(`argSymb))) {
-            %match(tTerm) {
-              VariableStar[] -> {
-                 // Case CT-STAR rule (applying to premises):
-                argType = `TypeWithSymbol(tomCodomain,tlCodomain,symName);
-              }
+      Symbol[AstName=symName,TypesToType=TypesToType(concTomType(headTTList,_*),Type(tomCodomain,tlCodomain))] -> {
+        TomName argName;
+        TomTerm argTerm;
+        TomSymbol argSymb;
+        for (Slot slot : sList.getCollectionconcSlot()) {
+          argName = slot.getSlotName();
+          argTerm = slot.getAppl();
+          argSymb = getSymbolFromTerm(argTerm);
+          if(TomBase.isListOperator(`tSymbol) || TomBase.isArrayOperator(`tSymbol)) {
+            if(!(TomBase.isListOperator(`argSymb) || TomBase.isArrayOperator(`argSymb))) {
+              %match(argTerm) {
+                VariableStar[] -> {
+                  // Case CT-STAR rule (applying to premises):
+                  argType = `TypeWithSymbol(tomCodomain,tlCodomain,symName);
+                }
 
-              !VariableStar[] -> { 
-                // Case CT-ELEM rule (applying to premises which are not lists)
-                argType = getUnknownFreshTypeVar();
-                //DEBUG System.out.println("inferSlotList: !VariableStar -- constraint "
-                //DEBUG     + `headTTList + " = " + argType);
-                addConstraint(`Equation(argType,headTTList,getInfoFromTomTerm(tTerm)));
+                !VariableStar[] -> { 
+                  // Case CT-ELEM rule (applying to premises which are not lists)
+                  //argType = getUnknownFreshTypeVar();
+                  argType = `headTTList;
+                  //DEBUG System.out.println("inferSlotList: !VariableStar -- constraint "
+                  //DEBUG     + `headTTList + " = " + argType);
+                  //addConstraint(`Equation(argType,headTTList,getInfoFromTomTerm(argTerm)));
+                }
               }
+            } else if (`symName != argSymb.getAstName()) {
+              // TODO: improve this code! It is like CT-ELEM
+              /*
+               * Case CT-ELEM rule which premise is a list
+               * A list with a sublist whose constructor is different
+               * e.g. 
+               * A = ListA(A*) and B = ListB(A*) | b()
+               * ListB(ListA(a()))
+               */
+              //argType = getUnknownFreshTypeVar();
+              argType = `headTTList;
+              //DEBUG System.out.println("inferSlotList: symName != argSymbName -- constraint "
+              //DEBUG     + `headTTList + " = " + argType);
+              //addConstraint(`Equation(argType,headTTList,getInfoFromTomTerm(argTerm)));
             }
-          } else if (`symName != argSymb.getAstName()) {
-            // TODO: improve this code! It is like CT-ELEM
-            /*
-             * Case CT-ELEM rule which premise is a list
-             * A list with a sublist whose constructor is different
-             * e.g. 
-             * A = ListA(A*) and B = ListB(A*) | b()
-             * ListB(ListA(a()))
-             */
-            argType = getUnknownFreshTypeVar();
-            //DEBUG System.out.println("inferSlotList: symName != argSymbName -- constraint "
-            //DEBUG     + `headTTList + " = " + argType);
-            addConstraint(`Equation(argType,headTTList,getInfoFromTomTerm(tTerm)));
-          }
 
-          // Case CT-MERGE rule (applying to premises):
-          `newTerm = `inferAllTypes(newTerm,argType);
-          SlotList newTail = `inferSlotList(tailSList,tSymbol,contextType);
-          return `concSlot(PairSlotAppl(sName,newTerm),newTail*);
-        } else {
-          // In case of a function
-          TomTerm argTerm;
-          TomName argName;
-          SlotList newSList = `concSlot();
-          // Case CT-FUN rule (applying to premises):
-          for(Slot arg : `sList.getCollectionconcSlot()) {
-            argTerm = arg.getAppl();
-            argName = arg.getSlotName();
-            //DEBUG System.out.println("InferSlotList CT-FUN -- slotappl in for = " +
-            //DEBUG     `argTerm);
+            // Case CT-MERGE rule (applying to premises):
+            argTerm = `inferAllTypes(argTerm,argType);
+            newSList = `concSlot(PairSlotAppl(argName,argTerm),newSList*);
+          } else {
+            // In case of a function
+            // Case CT-FUN rule (applying to premises):
             argType = TomBase.getSlotType(tSymbol,argName);
-            addConstraint(`Equation(getUnknownFreshTypeVar(),argType,getInfoFromTomTerm(argTerm)));
-            `argTerm = `inferAllTypes(argTerm,argType);
-            newSList = `concSlot(newSList*,PairSlotAppl(argName,argTerm));
+            argTerm = `inferAllTypes(argTerm,argType);
+            newSList = `concSlot(PairSlotAppl(argName,argTerm),newSList*);
             //DEBUG System.out.println("InferSlotList CT-FUN -- end of for with slotappl = " + `argTerm);
           }
-          return newSList;
         }
+        return newSList.reverse(); 
       }
     }
     throw new TomRuntimeException("inferSlotList: failure on " + `sList);
@@ -965,81 +951,70 @@ public class NewKernelTyper {
    */
   private BQTermList inferBQTermList(BQTermList bqTList, TomSymbol tSymbol, TomType
       contextType) {
-    //DEBUG System.out.println("begin of InferBQTermList -- tSymbol'" + tSymbol +
-    //DEBUG    "'");
-    %match(bqTList,tSymbol) {
-      concBQTerm(),Symbol[] -> { return bqTList; }
-
-      concBQTerm(_,_*),EmptySymbol() -> {
-        /*
-         * if the top symbol is unknown, the subterms
-         * are typed in an empty context
-         */
-        BQTermList newBQTList = `concBQTerm();
-        for(BQTerm arg : `bqTList.getCollectionconcBQTerm()) {
-          //DEBUG System.out.println("InferBQTermList will call inferAllTypes with = "
-          //DEBUG     + `arg);
-          arg = `inferAllTypes(arg,EmptyType());
-          newBQTList = `concBQTerm(newBQTList*,arg);
+    TomType argType = contextType;
+    BQTermList newBQTList = `concBQTerm();
+    %match(tSymbol) {
+      EmptySymbol() -> {
+        for (BQTerm argTerm : bqTList.getCollectionconcBQTerm()) {
+          argTerm = `inferAllTypes(argTerm,EmptyType());
+          newBQTList = `concBQTerm(argTerm,newBQTList*);
         }
-        return newBQTList;
+        return newBQTList.reverse(); 
       }
 
-      concBQTerm(bqTerm,tailBQTList*),Symbol[AstName=symName,TypesToType=TypesToType(domain@concTomType(headTTList,_*),Type(tomCodomain,tlCodomain))] -> {
-        TomType argType = contextType;
-        // In case of a list
-        if(TomBase.isListOperator(`tSymbol) || TomBase.isArrayOperator(`tSymbol)) {
-          TomSymbol argSymb = getSymbolFromTerm(`bqTerm);
-          BQTerm newTerm = `bqTerm;
-          if(!(TomBase.isListOperator(`argSymb) || TomBase.isArrayOperator(`argSymb))) {
-            %match(bqTerm) {
-              BQVariableStar[] -> {
-                // Case CT-STAR rule (applying to premises):
-                argType = `TypeWithSymbol(tomCodomain,tlCodomain,symName);
-              }
+      Symbol[AstName=symName,TypesToType=TypesToType(domain@concTomType(headTTList,_*),Type(tomCodomain,tlCodomain))] -> {
+        TomTypeList symDomain = `domain;
+        TomSymbol argSymb;
+        for (BQTerm argTerm : `bqTList.getCollectionconcBQTerm()) {
+          argSymb = getSymbolFromTerm(argTerm);
+          if(TomBase.isListOperator(`tSymbol) || TomBase.isArrayOperator(`tSymbol)) {
+            if(!(TomBase.isListOperator(`argSymb) || TomBase.isArrayOperator(`argSymb))) {
+              %match(argTerm) {
+                BQVariableStar[] -> {
+                  // Case CT-STAR rule (applying to premises):
+                  argType = `TypeWithSymbol(tomCodomain,tlCodomain,symName);
+                }
 
-              //TO VERIFY : which constructors must be tested here?
-              (BQVariable|BQAppl)[] -> {
-                // Case CT-ELEM rule (applying to premises which are not lists)
-                argType = getUnknownFreshTypeVar();
-                //DEBUG System.out.println("inferBQTermList: !BQVariableStar -- constraint "
-                //DEBUG     + argType + " = " + `headTTList);
-                addConstraint(`Equation(argType,headTTList,getInfoFromBQTerm(bqTerm)));
+                //TO VERIFY : which constructors must be tested here?
+                (BQVariable|BQAppl)[] -> {
+                  // Case CT-ELEM rule (applying to premises which are not lists)
+                  //argType = getUnknownFreshTypeVar();
+                  argType = `headTTList;
+                  //DEBUG System.out.println("inferBQTermList: !BQVariableStar -- constraint "
+                  //DEBUG     + argType + " = " + `headTTList);
+                  //addConstraint(`Equation(argType,headTTList,getInfoFromBQTerm(argTerm)));
+                }
               }
+            } else if (`symName != argSymb.getAstName()) {
+              // TODO: improve this code! It is like CT-ELEM
+              /*
+               * Case CT-ELEM rule which premise is a list
+               * A list with a sublist whose constructor is different
+               * e.g. 
+               * A = ListA(A*) and B = ListB(A*) | b()
+               * ListB(ListA(a()))
+               */
+              //argType = getUnknownFreshTypeVar();
+              argType = `headTTList;
+              //DEBUG System.out.println("inferSlotList: symName != argSymbName -- constraint "
+              //DEBUG     + `headTTList + " = " + argType);
+              //addConstraint(`Equation(argType,headTTList,getInfoFromBQTerm(argTerm)));
             }
-          } else if (`symName != argSymb.getAstName()) {
-            // TODO: improve this code! It is like CT-ELEM
-            /*
-             * Case CT-ELEM rule which premise is a list
-             * A list with a sublist whose constructor is different
-             * e.g. 
-             * A = ListA(A*) and B = ListB(A*) | b()
-             * ListB(b(),ListA(a()),b())
-             */
-            argType = getUnknownFreshTypeVar();
-            //DEBUG System.out.println("inferBQTermList: symName != argSymb.getAstName() -- constraint "
-            //DEBUG     + argType + " = " + `headTTList);
-            addConstraint(`Equation(argType,headTTList,getInfoFromBQTerm(bqTerm)));
-          }
 
-          // Case CT-MERGE rule (applying to premises):
-          `newTerm = `inferAllTypes(newTerm,argType);
-          BQTermList newTail = `inferBQTermList(tailBQTList,tSymbol,contextType);
-          return `concBQTerm(newTerm,newTail*);
-        } else {
-          // In case of a function
-          BQTermList newBQTList = `concBQTerm();
-          TomTypeList symDomain = `domain;
-          // Case CT-FUN rule (applying to premises):
-          for(BQTerm arg : `bqTList.getCollectionconcBQTerm()) {
+            // Case CT-MERGE rule (applying to premises):
+            argTerm = `inferAllTypes(argTerm,argType);
+            newBQTList = `concBQTerm(argTerm,newBQTList*);
+          } else {
+            // In case of a function
+            // Case CT-FUN rule (applying to premises):
             argType = symDomain.getHeadconcTomType();
-            addConstraint(`Equation(getUnknownFreshTypeVar(),argType,getInfoFromBQTerm(arg)));
-            arg = `inferAllTypes(arg,argType);
-            newBQTList = `concBQTerm(newBQTList*,arg);
+            argTerm = `inferAllTypes(argTerm,argType);
+            newBQTList = `concBQTerm(argTerm,newBQTList*);
             symDomain = symDomain.getTailconcTomType();
+            //DEBUG System.out.println("InferSlotList CT-FUN -- end of for with slotappl = " + `argTerm);
           }
-          return newBQTList;
         }
+        return newBQTList.reverse(); 
       }
     }
     throw new TomRuntimeException("inferBQTermList: failure on " + `bqTList);
