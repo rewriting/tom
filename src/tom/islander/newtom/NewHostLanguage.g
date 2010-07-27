@@ -192,7 +192,7 @@ matchConstruct :
   ;
 
 //%gom
-/*
+/* // will be different
 gomsignature :
   t=GOM -> ^({((TomToken)$t).getTree()})
   ;*/
@@ -346,6 +346,18 @@ GOM : '%gom'
     )
   ;
 
+/* TO ADD after a first Tom integration
+GOM : '%gom'
+  {
+    GomLanguageLexer lexer = new GomLanguageLexer(input);
+    CommonTokenStream tokens = new CommonTokenStream(lexer);
+    GomLanguageParser parser = new GomLanguageParser(tokens);
+    GomLanguageParser.module_return res = parser.module();
+    result = (Tree)res.getTree();
+  }
+  ;
+*/
+
 // basic tokens
 LBRACE : '{' { nesting++; } {System.out.println("host nesting++ = " + nesting);}
   ;
@@ -489,7 +501,7 @@ ESC
   ;
 
 STRING
-  : '"' (ESC|~('"'|'\\'|'\n'|'\r'))* '"'
+  : '"' (Identifier|ESC|~('"'|'\\'|'\n'|'\r'))* '"'
         {
           System.out.println("!!!!! " + $text  + " !!!!!!");
             target.append(getText());
