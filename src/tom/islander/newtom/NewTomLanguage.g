@@ -24,7 +24,6 @@ grammar NewTomLanguage;
 
 options {
   backtrack=true;
-  memoize=true;
   output=AST;
   ASTLabelType=Tree;
   tokenVocab=TomTokens;
@@ -65,44 +64,10 @@ options {
  * NewTom : the grammar has been written by following the 'official grammar' on the wiki
  */
 
-// my temporary starting point 
-/*tomCompilationUnit :
-  blockList EOF -> ^(TomCompilationUnit blockList)
-  ;*/
-
-blockList :
-  (block)* -> ^(BlockList (block)*)
-  ;
-
-block :
-  matchConstruct
-  | operator
-  | operatorList
-  | operatorArray
-  | typeTerm
-  | includeConstruct
-  | strategyConstruct
-//  | compositeTerm // to modify
-  | LBRACE blockList RBRACE -> blockList
-  ;
-/*
-  | backquoteTerm // compositeTerm
-  | code
-  | gomConstruct // gomsignature
-*/
-
-
-/*
-gomConstruct :
-*/
-/*
-backquoteTerm :
-*/
-
-
 /* '{' BlockList '}' */
 goalLanguageBlock :
-  LBRACE (block)* RBRACE -> ^(BlockList (block)*)  //^(BlockList blockList)
+  g=GOALLBRACE /*RBRACE*/ -> ^({((TomToken)$g).getTree()})
+//  LBRACE (block)* RBRACE -> ^(BlockList (block)*)  //^(BlockList blockList)
   //LBRACE blockList RBRACE -> blockList  //^(BlockList blockList)
   ;
 
@@ -130,10 +95,10 @@ patternActionList :
   (patternAction)* -> ^(PatternActionList (patternAction)*);
 
 patternAction :
-  patternList ARROW LBRACE blockList RBRACE
-    -> ^(PatternAction patternList blockList)
-  | labelName=Identifier COLON patternList ARROW LBRACE blockList RBRACE
-    -> ^(LabelledPatternAction patternList blockList $labelName)
+  patternList a=ARROWLBRACE 
+    -> ^(PatternAction patternList ^({((TomToken)$a).getTree()}))
+  | labelName=Identifier COLON patternList a=ARROWLBRACE 
+    -> ^(LabelledPatternAction patternList ^({((TomToken)$a).getTree()}) $labelName)
   ;
 
 ////compositeTerm :
@@ -179,7 +144,8 @@ plainPattern :
   ;
 
 constraintAction : 
-constraint ARROW LBRACE blockList RBRACE -> ^(ConstraintAction constraint blockList)
+  constraint a=ARROWLBRACE -> ^(ConstraintAction constraint ^({((TomToken)$a).getTree()}))
+//constraint ARROW LBRACE blockList RBRACE -> ^(ConstraintAction constraint blockList)
   ;
 
 constraint : 
@@ -342,7 +308,7 @@ includeConstruct :
 
 //Strategy
 strategyConstruct : 
-  STRATEGY Identifier LPAREN strategyArguments* RPAREN 'extends' term LBRACE strategyVisitList RBRACE -> ^(Strategy ^(Name Identifier) term strategyVisitList strategyArguments* )
+  /*STRATEGY*/ Identifier LPAREN strategyArguments* RPAREN 'extends' term LBRACE strategyVisitList RBRACE -> ^(Strategy ^(Name Identifier) term strategyVisitList strategyArguments* )
   ;
 
 strategyArguments : 
@@ -359,17 +325,21 @@ strategyVisit :
   ;
 
 visitAction :// almost the same as patternAction 
-  label=Identifier COLON patternList ARROW LBRACE blockList RBRACE -> ^(LabelledVisitActionBL patternList blockList $label)
+  //label=Identifier COLON patternList ARROW LBRACE blockList RBRACE -> ^(LabelledVisitActionBL patternList blockList $label)
+  label=Identifier COLON patternList a=ARROWLBRACE -> ^(LabelledVisitActionBL patternList ^({((TomToken)$a).getTree()}) $label)
   | label=Identifier COLON patternList ARROW term -> ^(LabelledVisitActionT patternList term $label)
-  | patternList ARROW LBRACE blockList RBRACE -> ^(VisitActionBL patternList blockList)
+  //| patternList ARROW LBRACE blockList RBRACE -> ^(VisitActionBL patternList blockList)
+  | patternList a=ARROWLBRACE -> ^(VisitActionBL patternList ^({((TomToken)$a).getTree()}))
   | patternList ARROW term -> ^(VisitActionT patternList term)
   ;
 
 //Operator : fix it :  keywordIsFsym is optional since Tom 2.5
 operator : 
-  OPERATOR t=Identifier n=Identifier LPAREN slotList? RPAREN LBRACE /*keywordIsFsym*/ l=listKeywordsOp? /*ol=((keywordMake | keywordGetSlot)+)?*/ RBRACE
-    -> {l!=null}? ^(Operator ^(Name $n) ^(Type $t) slotList? /*keywordIsFsym*/ $l /*^(OperatorList ($l)? )*/)
-    -> ^(Operator ^(Name $n) ^(Type $t) slotList? /*keywordIsFsym*/ ^(OperatorList ))
+  /*OPERATOR*/ t=Identifier n=Identifier LPAREN s=slotList? RPAREN LBRACE l=listKeywordsOp? RBRACE
+    -> {s!=null && l!=null}? ^(Operator ^(Name $n) ^(Type $t) $s $l )
+    -> {s!=null && l==null}? ^(Operator ^(Name $n) ^(Type $t) $s ^(OperatorList ))
+    -> {s==null && l!=null}? ^(Operator ^(Name $n) ^(Type $t) ^(SlotList ) $l)
+    ->                       ^(Operator ^(Name $n) ^(Type $t) ^(SlotList ) ^(OperatorList ))
   ;
 
 /*keywords for %op*/ 
@@ -417,8 +387,19 @@ keywordIsFsym :
   ;
 
 keywordMake : 
-  'make' LPAREN /*nameList*/ l=(Identifier ( COMMA Identifier )* )? RPAREN goalLanguageBlock -> ^(Make /*nameList*/ ^(TomNameList $l? ) goalLanguageBlock)
+  //'make' LPAREN /*nameList*/ l=(Identifier ( COMMA Identifier )* )? RPAREN goalLanguageBlock -> ^(Make /*nameList*/ ^(TomNameList $l? ) goalLanguageBlock)
+  //'make' LPAREN /*nameList*/ l=(identifierToName ( COMMA identifierToName )* )? RPAREN goalLanguageBlock -> ^(Make /*nameList*/ ^(TomNameList $l? ) goalLanguageBlock)
+  'make' LPAREN nameList RPAREN goalLanguageBlock -> ^(Make nameList goalLanguageBlock)
 //  | 'make' LPAREN RPAREN -> ^(Make ^(TomNameList ) goalLanguageBlock)
+  ;
+
+nameList :
+  (id+=identifierToName (COMMA id+=identifierToName)* )?
+  -> {id!=null}? ^(TomNameList $id+)
+  -> ^(TomNameList )
+  ;
+identifierToName :
+  n=Identifier -> ^(Name $n)
   ;
 
 keywordGetSlot : 
@@ -478,19 +459,24 @@ slotList :
 //
 
 operatorList : 
-  OPLIST t=Identifier n=Identifier LPAREN t2=Identifier STAR RPAREN LBRACE /*keywordIsFsym*/ l=listKeywordsOpList? RBRACE
+  /*OPLIST*/ t=Identifier n=Identifier LPAREN t2=Identifier STAR RPAREN LBRACE /*keywordIsFsym*/ l=listKeywordsOpList? RBRACE
     -> {l!=null}? ^(OpList ^(Name $n) ^(Type $t) ^(Type $t2) /*keywordIsFsym*/ $l)
     -> ^(OpArray ^(Name $n) ^(Type $t) ^(Type $t2) /*keywordIsFsym*/ ^(OperatorList ))
   ;
 
 operatorArray : 
-  OPARRAY t=Identifier n=Identifier LPAREN t2=Identifier STAR RPAREN LBRACE /*keywordIsFsym*/ l=listKeywordsOpArray? RBRACE
+  /*OPARRAY*/ t=Identifier n=Identifier LPAREN t2=Identifier STAR RPAREN LBRACE /*keywordIsFsym*/ l=listKeywordsOpArray? RBRACE
     -> {l!=null}? ^(OpArray ^(Name $n) ^(Type $t) ^(Type $t2) /*keywordIsFsym*/ $l)
-    -> ^(OpArray ^(Name $n) ^(Type $t) ^(Type $t2) /*keywordIsFsym*/ ^(OperatorList ))
+    ->            ^(OpArray ^(Name $n) ^(Type $t) ^(Type $t2) /*keywordIsFsym*/ ^(OperatorList ))
   ;
 
+listKeywordsTypeTerm : 
+  k1=keywordImplement (k2=keywordIsSort)? (k3=keywordEquals)? ->  ^(OperatorList $k1 ($k2)? ($k3)? )
+;
+
 typeTerm : 
-  TYPETERM Identifier LBRACE keywordImplement keywordIsSort? keywordEquals? RBRACE ->  ^(TypeTerm  ^(Type Identifier ) keywordImplement keywordIsSort? keywordEquals? )
+  /*TYPETERM*/ //Identifier LBRACE keywordImplement keywordIsSort? keywordEquals? RBRACE ->  ^(TypeTerm  ^(Type Identifier ) keywordImplement keywordIsSort? keywordEquals? )
+  /*TYPETERM*/ Identifier LBRACE listKeywordsTypeTerm  RBRACE ->  ^(TypeTerm  ^(Type Identifier ) listKeywordsTypeTerm   )
   ;
 
 keywordImplement : 
@@ -512,60 +498,68 @@ keywordEquals :
 
 // LEXER
 //keywords
-MATCH       :   '%match'    ;
+//MATCH       :   '%match'    ;
 INCLUDE     :   '%include'  ;
-STRATEGY    :   '%strategy' ;
-OPERATOR    :   '%op'       ;
-OPLIST      :   '%oplist'   ;
-OPARRAY     :   '%oparray'  ;
-TYPETERM    :   '%typeterm' ;
+//STRATEGY    :   '%strategy' ;
+//OPERATOR    :   '%op'       ;
+//OPLIST      :   '%oplist'   ;
+//OPARRAY     :   '%oparray'  ;
+//TYPETERM    :   '%typeterm' ;
 GOM         :   '%gom'      ;
 
-//BACKQUOTE   :   '`'           ;
-
-
-
-
-
-
-// simple symbols
-fragment
-LBRACE : '{' { nesting++; } //{ System.out.println("tom nesting++ = " + nesting);}
-         ;
-
-GOALLBRACE : '{' { nesting++; } //{ System.out.println("tom nesting++ = " + nesting);}
+ARROWLBRACE : '-> {' //(options {greedy=false;} : WS )* LBRACE
   {
+    System.out.println("\nbefore new Host*");
+    System.out.println("in arrowlbrace / tom nesting = " + nesting);
     NewHostLanguageLexer lexer = new NewHostLanguageLexer(input);
     CommonTokenStream tokens = new CommonTokenStream(lexer);
+    System.out.println("tom, tokens = " + tokens.toString() + " /fin");
+    System.out.println("tom, tokens list = " + tokens.getTokens().toString());
     NewHostLanguageParser parser = new NewHostLanguageParser(tokens);
-    NewHostLanguageParser.goalLanguageBlock_return res = parser.goalLanguageBlock();
+    System.out.println("before parser.blockList()");
+    NewHostLanguageParser.blockList_return res = parser.blockList();
+    System.out.println("tom, res.getTree() =\n" + ((Tree)res.getTree()).toStringTree());
     result = (Tree)res.getTree();
+    System.out.println("tom, end, result =\n" + result.toStringTree());
   }
   ;
 
+GOALLBRACE : ': {' /*{ nesting++; }*/ { System.out.println("goallbrace, tom nesting++ = " + nesting);}
+  {
+    System.out.println("\nbefore new Host*");
+    System.out.println("in goallbrace / tom nesting = " + nesting);
+    NewHostLanguageLexer lexer = new NewHostLanguageLexer(input);
+    CommonTokenStream tokens = new CommonTokenStream(lexer);
+    System.out.println("tom, tokens = " + tokens.toString() + " /fin");
+    System.out.println("tom, tokens list = " + tokens.getTokens().toString());
+    NewHostLanguageParser parser = new NewHostLanguageParser(tokens);
+    System.out.println("before parser.goalLanguageBlock()");
+    //NewHostLanguageParser.goalLanguageBlock_return res = parser.goalLanguageBlock();
+    NewHostLanguageParser.blockList_return res = parser.blockList();
+    System.out.println("tom, res.getTree() =\n" + ((Tree)res.getTree()).toStringTree());
+    result = (Tree)res.getTree();
+    System.out.println("tom, end, result =\n" + result.toStringTree());
+  }
+  ;
 
+fragment
+LBRACE : '{' { nesting++; } { System.out.println("tom nesting++ = " + nesting);}
+  ;
+	 
 RBRACE : '}'
   {
     if ( nesting<=0 ) {
       emit(Token.EOF_TOKEN);
-      //System.out.println("exit tom language\n");
+      System.out.println("exit tom language and emit(Token.EOF)\n");
     }
     else {
       nesting--;
-      //System.out.println("tom nesting-- = " + nesting);
+      System.out.println("tom nesting-- = " + nesting);
     }
   }
   ;
 //LBRACE      :   '{' ;
 //RBRACE      :   '}' ;
-
-
-
-
-
-
-
-
 
 
 
@@ -579,7 +573,9 @@ RPAREN      :   ')' ;
 LBRACKET    :   '[' ;
 RBRACKET    :   ']' ;
 COMMA       :   ',' ;
+fragment
 ARROW       :   '->';
+
 DOULEARROW  :   '=>';
 ALTERNATIVE :   '|' ;
 AFFECT      :   ':=';
@@ -675,8 +671,6 @@ CID: ( Identifier | WS | STRING | DOT | LPAREN .* RPAREN /*| LBRACE .* RBRACE*/ 
 
 //fragment
 //XMLID: (Identifier | STRING);
-
-//MiniJava lexer
 
 fragment
 Letter
