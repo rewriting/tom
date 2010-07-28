@@ -631,18 +631,28 @@ public class NewKernelTyper {
   private CodeList inferCodeList(CodeList cList) {
     CodeList newCList = `concCode();
     for (Code code : cList.getCollectionconcCode()) {
-      try{
+      //try{
         init();
         code =  collectKnownTypesFromCode(`code);
         code = inferAllTypes(code,getUnknownFreshTypeVar());
-        typeConstraints = `RepeatId(solveConstraints(this)).visitLight(typeConstraints);
+        //DEBUG System.out.println("\n Substitutions before = " + substitutions);
+        solveConstraints();
+        //DEBUG System.out.println("\n Substitutions after = " + substitutions);
+        
+        if (substitutions.size() > 10) {
+          System.out.println("Code = " + code);
+          System.out.println("\n Substitutions = " + substitutions);
+          System.out.println("\nSize of substitution set = " +
+              substitutions.size());
+        }
+        
         code = replaceInCode(code);
         replaceInSymbolTable();
         newCList = `concCode(code,newCList*);
-      } catch(tom.library.sl.VisitFailure e) {
-        throw new TomRuntimeException("inferCodeList: failure on " +
-            code);
-      }
+      //} catch(tom.library.sl.VisitFailure e) {
+      //  throw new TomRuntimeException("inferCodeList: failure on " +
+      //      code);
+      //}
     }
     return newCList.reverse();
   }
@@ -1040,7 +1050,7 @@ public class NewKernelTyper {
    *  b) --> Nothing if T1 is equals to T2
    * <p>
    * CASE 3: Equation(T1^c = T2) U TCList and Map
-   *  a) --> Fail if T1 is different from T2
+   *  a) --> Fail if 
    *  b) --> Nothing if T1 is equals to T2
    * <p>
    * CASE 4: Equation(T1^a = T2^b) U TCList and Map
@@ -1059,55 +1069,114 @@ public class NewKernelTyper {
    * CASE 8: Equation(A = T^c) U TCList and Map 
    *  --> Equation(T^c = T^c) U [A/T^c]TCList and [A/T^c]Map
    * <p>
-   * CASE 9: Equation(A1 = A2) U TCList and Map 
-   *  --> Nothing 
+   * CASE 9: Equation(A1 = A2) U TCList and Map and newTCList
+   *  a) --> Fail if (A1,T1) and (A2,T2) and newTCList are in Map and T1 is different from T2
+   *  b) --> Equation(T = T) U [A2/T]TCList and [A2/T]Map and newTCList if (A1 = T) is in Map
+   *  c) --> Equation(T = T) U [A1/T]TCList and [A1/T]Map and newTCList if (A2 = T) is in Map
+   *  d) --> TCList and Map and Equation(A1 = A2) U newTCList
+   * <p>
+   * When the algorithm reaches the end of TCList, then it starts to solve newTCList applying cases 9.a, 9.b and 9.c :
+   * CASE 10 : newTCList
+   *  a) --> Fail if (A1,T1) and (A2,T2) and newTCList are in Map and T1 is different from T2
+   *  b) --> Equation(T = T) U [A2/T]TCList and [A2/T]Map and newTCList if (A1 = T) is in Map
+   *  c) --> Equation(T = T) U [A1/T]TCList and [A1/T]Map and newTCList if (A2 = T) is in Map
+   *  d) Nothing if neither (A1,T1) nor (A2,T2) is in Map
    */   
-  %strategy solveConstraints(nkt:NewKernelTyper) extends Identity() {
-    visit TypeConstraintList {
-      // CASES 1a and 3a :
-      subject@concTypeConstraint(_*,tc@Equation((Type|TypeWithSymbol)[TomType=tName1],Type[TomType=tName2@!tName1],_),_*) && 
-        (tName1 != "unknown type") && (tName2 != "unknown type")  -> {
-          //DEBUG System.out.println("In solveConstraints 1a/3a -- tc = " + `tc);
-          nkt.printError(`tc);
-          return `subject;
-        }
+  private void solveConstraints() {
+    TypeConstraintList newTypeConstraints = `concTypeConstraint();
+    for (TypeConstraint tConstraint :
+        typeConstraints.getCollectionconcTypeConstraint()) {
+matchBlockAdd :
+      {
+        %match {
+          // CASE 9 :
+          Equation(typeVar1@TypeVar(_,_),typeVar2@TypeVar(_,_),info) << tConstraint
+            && (typeVar1 != typeVar2) -> {
+              if (substitutions.containsKey(`typeVar1) && substitutions.containsKey(`typeVar2)) {
+                `detectFail(Equation(substitutions.get(typeVar1),substitutions.get(typeVar2),info));
+                break matchBlockAdd;
+              } else if (substitutions.containsKey(`typeVar1)) {
+                substitutions.put(`typeVar2,substitutions.get(`typeVar1));
+                break matchBlockAdd;
+              } else if (substitutions.containsKey(`typeVar2)){
+                substitutions.put(`typeVar1,substitutions.get(`typeVar2));
+                break matchBlockAdd;
+              } else {
+                newTypeConstraints =
+                  `concTypeConstraint(tConstraint,newTypeConstraints*);
+                break matchBlockAdd;
+              }
+            }
 
-      // CASE 2a :
-      subject@concTypeConstraint(_*,tc@Equation(Type[TomType=tName1],TypeWithSymbol[TomType=tName2@!tName1],_),_*) &&
-        (tName1 != "unknown type") && (tName2 != "unknown type")  -> {
-          //DEBUG System.out.println("In solveConstraints 2a -- tc = " + `tc);
-          nkt.printError(`tc);
-          return `subject;
-        }
+          // CASES 5 and 6 :
+          Equation(groundType@!TypeVar(_,_),typeVar@TypeVar(_,_),info) <<
+            tConstraint -> {
+              if (substitutions.containsKey(`typeVar)) {
+                `detectFail(Equation(substitutions.get(typeVar),groundType,info));
+              } else {
+                substitutions.put(`typeVar,`groundType);
+              }
+              break matchBlockAdd;
+            }
 
-      // CASE 4a :  
-      subject@concTypeConstraint(_*,tc@Equation(tLType1@TypeWithSymbol(_,_,_),tLType2@TypeWithSymbol(_,_,_),_),_*) &&
-        (tLType1 != tLType2)  -> {
-          //DEBUG System.out.println("In solveConstraints 4a -- tc = " + `tc);
-          nkt.printError(`tc);
-          return `subject;
+          // CASES 7 and 8 :
+          Equation(typeVar@TypeVar(_,_),groundType@!TypeVar(_,_),info) << tConstraint -> {
+            if (substitutions.containsKey(`typeVar)) {
+              `detectFail(Equation(substitutions.get(typeVar),groundType,info));
+            } else {
+              substitutions.put(`typeVar,`groundType);
+            }
+            break matchBlockAdd;
+          }
         }
-
-      // CASES 7 and 8 :
-      concTypeConstraint(leftTCList*,tc@Equation(typeVar@TypeVar(_,_),type@!typeVar,info),rightTCList*) -> {
-        nkt.substitutions.put(`typeVar,`type);
-        //DEBUG System.out.println("In solveConstraints 7/8 -- tc = " + `tc);
-        TypeConstraintList left = (nkt.findTypeVars(`typeVar,`leftTCList))?
-          nkt.applySubstitution(`typeVar,`type,`leftTCList):`leftTCList;
-        TypeConstraintList right = (nkt.findTypeVars(`typeVar,`rightTCList))?
-          nkt.applySubstitution(`typeVar,`type,`rightTCList):`rightTCList;
-        return `concTypeConstraint(left*,Equation(type,type,info),right*);
       }
+    }
 
-      // CASES 5 and 6 :
-      concTypeConstraint(leftTCList*,tc@Equation(groundType@!TypeVar(_,_),typeVar@TypeVar(_,_),info),rightTCList*) -> {
-        nkt.substitutions.put(`typeVar,`groundType);
-        //DEBUG System.out.println("In solveConstraints 5/6 -- tc = " + `tc);
-        TypeConstraintList left = (nkt.findTypeVars(`typeVar,`leftTCList))?
-          nkt.applySubstitution(`typeVar,`groundType,`leftTCList):`leftTCList;
-        TypeConstraintList right = (nkt.findTypeVars(`typeVar,`rightTCList))?
-          nkt.applySubstitution(`typeVar,`groundType,`rightTCList):`rightTCList;
-        return `concTypeConstraint(left*,Equation(groundType,groundType,info),right*);
+    for (TypeConstraint tConstraint :
+        newTypeConstraints.getCollectionconcTypeConstraint()) {
+      %match {
+        // CASE 10 :
+        Equation(typeVar1@TypeVar(_,_),typeVar2@TypeVar(_,_),info) << tConstraint
+          && (typeVar1 != typeVar2) -> {
+            if (substitutions.containsKey(`typeVar1) && substitutions.containsKey(`typeVar2)) {
+              `detectFail(Equation(substitutions.get(typeVar1),substitutions.get(typeVar2),info));
+            } else if (substitutions.containsKey(`typeVar1)) {
+              substitutions.put(`typeVar2,substitutions.get(`typeVar1));
+            } else if (substitutions.containsKey(`typeVar2)){
+              substitutions.put(`typeVar1,substitutions.get(`typeVar2));
+            } 
+          }
+      }
+    }
+  }
+
+  private void detectFail(TypeConstraint tConstraint) {
+matchBlockFail : 
+    {
+      %match {
+        // CASE 1a and 3a :
+        Equation((Type|TypeWithSymbol)[TomType=tName1],Type[TomType=tName2@!tName1],_)
+          << tConstraint && (tName1 != "unknown type") && (tName2 != "unknown type")  -> {
+            //DEBUG System.out.println("In solveConstraints 1a/3a -- tConstraint  = " + `tConstraint);
+            printError(`tConstraint);
+            break matchBlockFail;
+          }
+
+        // CASE 2a :
+        Equation(Type[TomType=tName1],TypeWithSymbol[TomType=tName2@!tName1],_)
+          << tConstraint && (tName1 != "unknown type") && (tName2 != "unknown type")  -> {
+            //DEBUG System.out.println("In solveConstraints 2a -- tConstraint  = " + `tConstraint);
+            printError(`tConstraint);
+            break matchBlockFail;
+          }
+
+        // CASE 4a :  
+        Equation(tLType1@TypeWithSymbol(_,_,_),tLType2@TypeWithSymbol(_,_,_),_)
+          << tConstraint && (tLType1 != tLType2)  -> {
+            //DEBUG System.out.println("In solveConstraints 4a -- tConstraint  = " + `tConstraint);
+            printError(`tConstraint);
+            break matchBlockFail;
+          }
       }
     }
   }
