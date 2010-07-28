@@ -114,12 +114,15 @@ Block = MatchConstruct(MatchArguments:TomTermList,PatternActions:PatternActionLi
       | OpList(Name:TomName,Type:TomType,Arg:TomType/*,Op:Operator*/,OperatorList:OperatorList)
       | OpArray(Name:TomName,Type:TomType,Arg:TomType/*,Op:Operator*/,OperatorList:OperatorList)
       | Strategy(Name:TomName,Extends:TomTerm,VisitList:StrategyVisitList,Arguments:TomTermList) //?
-      | TypeTerm(Type:TomType,Op1:Operator,Op2:Operator,Op3:Operator)
+      | TypeTerm(Type:TomType,OperatorList:OperatorList) //Op1:Operator,Op2:Operator,Op3:Operator)
       | Include(FileName:String)
 //      | RuleConstruct(RType:TomType,FQN:TomName,RuleArguments:TomTermList,BlockList:BlockList)//,ConstraintActions:ConstraintActionList ) //PatternActions:PatternActionList )
       | BackQuoteConstruct(BackQuoteTerm:BackQuoteTerm) //Term:Term)
       | Composite(ctl:CompositeList)
-//      | Composite(ct:CompositeTerm)
+      | TLCodeBlock(TargetLanguage:TargetLanguage)
+      | BracedBlockList(BlockList:BlockList)
+//      | Comp:w
+//      osite(ct:CompositeTerm)
 
 /*
 CompositeTerm = CompositeTL(tl:TargetLanguage)

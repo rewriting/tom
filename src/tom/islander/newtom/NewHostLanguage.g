@@ -58,7 +58,7 @@ options {
   import org.antlr.runtime.CommonTokenStream;
   import org.antlr.runtime.ANTLRInputStream;
 
-//  import java.lang.StringBuilder;
+  import java.lang.StringBuilder;
 }
 
 @parser::members{
@@ -73,7 +73,6 @@ options {
   }
 
 }
-
 
 @lexer::members{
   public static int nesting = 0;
@@ -92,14 +91,6 @@ options {
     return t;
   }
 
-/*
-  public NewTomLanguageParser parser(ANTLRInputStream input) {
-    NewTomLanguageLexer lexer = new NewTomLanguageLexer(input);
-    CommonTokenStream tokens = new CommonTokenStream(lexer);
-    NewTomLanguageParser parser = new NewTomLanguageParser(tokens);
-    return parser;
-  }
-*/
   public static final int TVALUE_MATCH         = 1;
   public static final int TVALUE_STRATEGY      = 2;
   public static final int TVALUE_OPERATOR      = 3;
@@ -165,15 +156,15 @@ block :
   | operatorArray
   | includeConstruct
   | typeTerm
-  | s=STRING -> ^(TLCodeBlock ^(ITL $s))
-  | LBRACE blockList RBRACE -> blockList
-//  | tlCodeBlock
+  | LBRACE blockList RBRACE -> ^(BracedBlockList blockList)
+//  | s=Identifier /*STRING*/ -> ^(TLCodeBlock ^(ITL $s))
+  | tlCodeBlock
   ;
 
-//tlCodeBlock :
+tlCodeBlock :
 //  s=ID /*STRING*/ -> ^(TLCodeBlock ^(ITL {getCode()}))
-//  s=ALL /*STRING*/ -> ^(TLCodeBlock ^(ITL $s))
-//  ;
+  (s+=Identifier|s+=WS|s+=ESC|s+=SpecialCharacter) /*STRING*/ -> ^(TLCodeBlock ^(ITL $s))
+  ;
 
 goalLanguageBlock :
   // we are here because goalLanguageBlock has been called in
@@ -222,47 +213,6 @@ includeConstruct :
   INCLUDE LBRACE filename=FILENAME RBRACE -> ^(Include $filename)
   ;
 
-Identifier:
-  Letter (Letter|JavaIDDigit)*
-  ;
-
-fragment
-Letter
-    :  '\u0024' |
-       '\u0041'..'\u005a' |
-       '\u005f' |
-       '\u0061'..'\u007a' |
-       '\u00c0'..'\u00d6' |
-       '\u00d8'..'\u00f6' |
-       '\u00f8'..'\u00ff' |
-       '\u0100'..'\u1fff' |
-       '\u3040'..'\u318f' |
-       '\u3300'..'\u337f' |
-       '\u3400'..'\u3d2d' |
-       '\u4e00'..'\u9fff' |
-       '\uf900'..'\ufaff'
-    ;
-
-fragment
-JavaIDDigit
-    :  '\u0030'..'\u0039' |
-       '\u0660'..'\u0669' |
-       '\u06f0'..'\u06f9' |
-       '\u0966'..'\u096f' |
-       '\u09e6'..'\u09ef' |
-       '\u0a66'..'\u0a6f' |
-       '\u0ae6'..'\u0aef' |
-       '\u0b66'..'\u0b6f' |
-       '\u0be7'..'\u0bef' |
-       '\u0c66'..'\u0c6f' |
-       '\u0ce6'..'\u0cef' |
-       '\u0d66'..'\u0d6f' |
-       '\u0e50'..'\u0e59' |
-       '\u0ed0'..'\u0ed9' |
-       '\u1040'..'\u1049'
-   ;
-
-
 
 
 //code :
@@ -297,10 +247,7 @@ BACKQUOTE : '`('
   ;
 
 MATCH : '%match'
-  {
-    //NewTomLanguageParser.matchConstruct_return res = parser(input).matchConstruct();
-    result = (Tree)parser(input, TVALUE_MATCH).getTree();
-  }
+  { result = (Tree)parser(input, TVALUE_MATCH).getTree(); }
   ;
 
 TYPETERM : '%typeterm'
@@ -397,6 +344,51 @@ options{testLiterals = true;}
     ;
 */
 
+Identifier:
+  Letter (Letter|JavaIDDigit)*
+  ;
+
+fragment
+Letter
+    :  '\u0024' |
+       '\u0041'..'\u005a' |
+       '\u005f' |
+       '\u0061'..'\u007a' |
+       '\u00c0'..'\u00d6' |
+       '\u00d8'..'\u00f6' |
+       '\u00f8'..'\u00ff' |
+       '\u0100'..'\u1fff' |
+       '\u3040'..'\u318f' |
+       '\u3300'..'\u337f' |
+       '\u3400'..'\u3d2d' |
+       '\u4e00'..'\u9fff' |
+       '\uf900'..'\ufaff'
+    ;
+
+fragment
+JavaIDDigit
+    :  '\u0030'..'\u0039' |
+       '\u0660'..'\u0669' |
+       '\u06f0'..'\u06f9' |
+       '\u0966'..'\u096f' |
+       '\u09e6'..'\u09ef' |
+       '\u0a66'..'\u0a6f' |
+       '\u0ae6'..'\u0aef' |
+       '\u0b66'..'\u0b6f' |
+       '\u0be7'..'\u0bef' |
+       '\u0c66'..'\u0c6f' |
+       '\u0ce6'..'\u0cef' |
+       '\u0d66'..'\u0d6f' |
+       '\u0e50'..'\u0e59' |
+       '\u0ed0'..'\u0ed9' |
+       '\u1040'..'\u1049'
+   ;
+
+SpecialCharacter
+    : '\u0040' //@
+    | '.' | '(' | ')' | '/' | '\\' | '<' | '>'
+    ;
+
 fragment
 HEX_DIGIT
   : ('0'..'9'|'A'..'F'|'a'..'f')
@@ -453,23 +445,14 @@ SL_COMMENT :
         ']' '%'
 ;*/
 
-
-
 /*
 file is :
-  ./fileName 
-| ./../../fileName
-| ../../fileName
-| fileName
-| path/to/fileName
-| ./path/to/fileName
-| ../../path/to/fileName
+  ./fileName | ./../../fileName | ../../fileName | fileName | path/to/fileName | ./path/to/fileName | ../../path/to/fileName
 
 ./////./../.././././a/b/b/b/.././sl.tom is valid ?
 a.b.c.sl.tom
 
 */
-
 FILENAME : // to modify
   ( './' | '../' | '/' )* (Identifier ( './' | '../' | '/' )+)* Identifier ('.' Identifier)*
   ;
@@ -501,17 +484,16 @@ ESC
   ;
 
 STRING
-  : '"' (Identifier|ESC|~('"'|'\\'|'\n'|'\r'))* '"'
+  : '"' (ESC|~('"'|'\\'|'\n'|'\r'))* '"'
         {
           System.out.println("!!!!! " + $text  + " !!!!!!");
             target.append(getText());
         }
   ;
 
-
 // the rule for the filter: just append the text to the buffer
 //options { filter=true; }
-
+/*
 fragment
 TARGET
   :
@@ -519,9 +501,9 @@ TARGET
 {System.out.println("#### " + $text  + " #####");}
         {target.append(getText());}
   ;
-/*
+*/
+
 fragment
 ALL : ('\u0000'..'\uffff')
-  {target.append(getText());}
+  //{target.append(getText());}
   ;
-*/
