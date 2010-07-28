@@ -509,7 +509,7 @@ LPAREN : '(' { nesting++; } { System.out.println("backquote nesting++ = " + nest
 RPAREN : ')'
   {
     if ( nesting<=0 ) {
-      System.out.println("exit backquote language\n");
+      System.out.println("exit backquote language and emit(Token.EOF)\n");
       emit(Token.EOF_TOKEN);
     }
     else {

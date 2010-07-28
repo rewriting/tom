@@ -19,6 +19,7 @@ public class TomToken extends CommonToken {
   public Tree getTree() {
     return this.tree;
   }
-    
+
   public String toString() { return super.toString()+",tree="+tree; }
+
 }

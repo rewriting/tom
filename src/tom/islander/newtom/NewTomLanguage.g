@@ -65,10 +65,10 @@ options {
  */
 
 /* '{' BlockList '}' */
-goalLanguageBlock :
-  g=GOALLBRACE /*RBRACE*/ -> ^({((TomToken)$g).getTree()})
-//  LBRACE (block)* RBRACE -> ^(BlockList (block)*)  //^(BlockList blockList)
-  //LBRACE blockList RBRACE -> blockList  //^(BlockList blockList)
+goalLanguageBlock 
+@init{ Tree res = null;}
+  :
+  g=GOALLBRACE -> ^({((TomToken)$g).getTree()})
   ;
 
 matchConstruct :
@@ -476,7 +476,7 @@ listKeywordsTypeTerm :
 
 typeTerm : 
   /*TYPETERM*/ //Identifier LBRACE keywordImplement keywordIsSort? keywordEquals? RBRACE ->  ^(TypeTerm  ^(Type Identifier ) keywordImplement keywordIsSort? keywordEquals? )
-  /*TYPETERM*/ Identifier LBRACE listKeywordsTypeTerm  RBRACE ->  ^(TypeTerm  ^(Type Identifier ) listKeywordsTypeTerm   )
+  /*TYPETERM*/ Identifier LBRACE listKeywordsTypeTerm  RBRACE ->  ^(TypeTerm  ^(Type Identifier ) listKeywordsTypeTerm)
   ;
 
 keywordImplement : 
@@ -505,7 +505,7 @@ INCLUDE     :   '%include'  ;
 //OPLIST      :   '%oplist'   ;
 //OPARRAY     :   '%oparray'  ;
 //TYPETERM    :   '%typeterm' ;
-GOM         :   '%gom'      ;
+//GOM         :   '%gom'      ;
 
 ARROWLBRACE : '-> {' //(options {greedy=false;} : WS )* LBRACE
   {
