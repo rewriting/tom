@@ -1050,7 +1050,7 @@ public class NewKernelTyper {
    *  b) --> Nothing if T1 is equals to T2
    * <p>
    * CASE 3: Equation(T1^c = T2) U TCList and Map
-   *  a) --> Fail if 
+   *  a) --> Fail if T1 is different from T2 
    *  b) --> Nothing if T1 is equals to T2
    * <p>
    * CASE 4: Equation(T1^a = T2^b) U TCList and Map
@@ -1089,6 +1089,13 @@ public class NewKernelTyper {
 matchBlockAdd :
       {
         %match {
+          // CASES 1, 2, 3 and 4 :
+          Equation(groundType1@!TypeVar(_,_),groundType2@!TypeVar(_,_),info) <<
+            tConstraint && (groundType1 != groundType2) -> {
+              `detectFail(Equation(groundType1,groundType2,info));
+              break matchBlockAdd;
+            }
+
           // CASE 9 :
           Equation(typeVar1@TypeVar(_,_),typeVar2@TypeVar(_,_),info) << tConstraint
             && (typeVar1 != typeVar2) -> {
