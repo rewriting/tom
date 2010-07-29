@@ -1,7 +1,11 @@
+2010-07-28 tavaresc
+ * Optimize new typer adding new unification algorithm without recursive calls (method
+		 solveConstraints).
+ * Add a method for saturation of the "substitutions" hashMap.
+
 2010-07-27 tavaresc
  * Optimize new typer transforming the strategy "solveConstraints" into a
- 	method with lower algorithmic complexity. (To avoid stack overflow during
-	bootstrap)
+ method. 
 
 2010-07-26 tavaresc
  * Optimize new typer replacing recursive calls by "for" loops.

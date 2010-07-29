@@ -134,6 +134,29 @@ public class NewKernelTyper {
     return TomBase.getSymbolFromType(tType,symbolTable); 
    }
 
+  private void addSubstitution(TomType key, TomType value) {
+     // add(X,Y)   -->  1) put(X,Z) if (Y,Z) is in substitutions
+     //                 2) put(X,Y) otherwise
+    if (substitutions.containsKey(value)) {
+      substitutions.put(key,substitutions.get(value));
+    } else {
+      substitutions.put(key,value);
+    } 
+
+     // add(X,Y)   -->  1) for each (Z,X) in substitutions, put(Z,Y)
+     //                     if there exist (Z,X) in substitutions
+     //                 2) do nothing otherwise
+    if (substitutions.containsValue(key)) {
+      TomType valueOfCurrentKey;
+      for (TomType currentKey : substitutions.keySet()) {
+        valueOfCurrentKey = substitutions.get(currentKey);
+        if (valueOfCurrentKey == key) {
+          substitutions.put(currentKey,value);
+        }
+      }
+    }
+  }
+
   // TO VERIFY: how to test if a term has an undeclared type? Maybe verifying if
   // a term has type Type(name,EmptyTargetLanguage()), where name is not
   // UNKNOWN_TYPE. So we verify the subjects of %match but, which BQTerm we need to
@@ -226,17 +249,54 @@ public class NewKernelTyper {
   /*
      * pem: use if(...==... && typeConstraints.contains(...))
      */
+  /**
+   * The method <code>addConstraint</code> adds an equation (i.e. a type constraint) into the
+   * global list "TypeConstraints" if this equation does not contains
+   * "EmptyTypes". The global list is ordered inserting equations
+   * containing (one or both) ground type(s) into the beginning of the list.
+   * @param tConstraint the equation to be inserted into the list "TypeConstraints"
+   */
   protected void addConstraint(TypeConstraint tConstraint) {
     %match {
       !concTypeConstraint(_*,typeConstraint,_*) << typeConstraints &&
-      typeConstraint << TypeConstraint tConstraint -> {
-        %match(typeConstraint) {
-          Equation[Type1=t1@!EmptyType(),Type2=t2@!EmptyType()] &&
-            (t1 != t2) -> { 
-            typeConstraints = `concTypeConstraint(typeConstraints*,tConstraint);
+        typeConstraint << TypeConstraint tConstraint -> {
+          TypeConstraintList newTypeConstraints = `typeConstraints;
+matchBlock:
+          {
+            %match {
+              // CAS 1 : (X = T) U tConstraint --> insert((X = T),tConstraint)
+              Equation(TypeVar(_,_),typeGround@!TypeVar(_,_),_) << typeConstraint &&
+                (typeGround != EmptyType()) -> {
+                  typeConstraints =
+                    `concTypeConstraint(typeConstraint,newTypeConstraints*);
+                  break matchBlock;
+                } 
+
+              // CAS 2 : (X = Y) U tConstraint --> insert(tConstraint,(X=Y))
+              Equation(typeVar1@TypeVar(_,_),typeVar2@TypeVar(_,_),_) << typeConstraint &&
+                (typeVar1 != typeVar2) -> {
+                  typeConstraints =
+                    `concTypeConstraint(newTypeConstraints*,typeConstraint);
+                  break matchBlock;
+                }
+
+              // CAS 3 : (T = X) U tConstraint --> insert((T = X),tConstraint)
+              // CAS 4 : (T1 = T2) U tConstraint --> insert((T1 = T2),tConstraint)
+              Equation(typeGround@!TypeVar(_,_),type@!EmptyType(),_) << typeConstraint &&
+                (typeGround != type) -> {
+                  typeConstraints =
+                    `concTypeConstraint(typeConstraint,newTypeConstraints*);
+                  break matchBlock;
+                }
+                /*
+                   Equation[Type1=t1@!EmptyType(),Type2=t2@!EmptyType()] &&
+                   (t1 != t2) -> { 
+                   typeConstraints = `concTypeConstraint(typeConstraints*,tConstraint);
+                   }
+                 */
+            }
           }
         }
-      }
     }
   }
 
@@ -631,28 +691,13 @@ public class NewKernelTyper {
   private CodeList inferCodeList(CodeList cList) {
     CodeList newCList = `concCode();
     for (Code code : cList.getCollectionconcCode()) {
-      //try{
-        init();
-        code =  collectKnownTypesFromCode(`code);
-        code = inferAllTypes(code,getUnknownFreshTypeVar());
-        //DEBUG System.out.println("\n Substitutions before = " + substitutions);
-        solveConstraints();
-        //DEBUG System.out.println("\n Substitutions after = " + substitutions);
-        
-        if (substitutions.size() > 10) {
-          System.out.println("Code = " + code);
-          System.out.println("\n Substitutions = " + substitutions);
-          System.out.println("\nSize of substitution set = " +
-              substitutions.size());
-        }
-        
-        code = replaceInCode(code);
-        replaceInSymbolTable();
-        newCList = `concCode(code,newCList*);
-      //} catch(tom.library.sl.VisitFailure e) {
-      //  throw new TomRuntimeException("inferCodeList: failure on " +
-      //      code);
-      //}
+      init();
+      code =  collectKnownTypesFromCode(`code);
+      code = inferAllTypes(code,getUnknownFreshTypeVar());
+      solveConstraints();
+      code = replaceInCode(code);
+      replaceInSymbolTable();
+      newCList = `concCode(code,newCList*);
     }
     return newCList.reverse();
   }
@@ -1070,10 +1115,11 @@ public class NewKernelTyper {
    *  --> Equation(T^c = T^c) U [A/T^c]TCList and [A/T^c]Map
    * <p>
    * CASE 9: Equation(A1 = A2) U TCList and Map and newTCList
-   *  a) --> Fail if (A1,T1) and (A2,T2) and newTCList are in Map and T1 is different from T2
-   *  b) --> Equation(T = T) U [A2/T]TCList and [A2/T]Map and newTCList if (A1 = T) is in Map
-   *  c) --> Equation(T = T) U [A1/T]TCList and [A1/T]Map and newTCList if (A2 = T) is in Map
-   *  d) --> TCList and Map and Equation(A1 = A2) U newTCList
+   *  d) --> [A1/B1,A2/B2]TCList and [A1/B1,A2/B2] U Map and Equation(B1 = B2) U newTCList if (A1,B1) and (A2,B2) are in Map and B1 is different from B2
+   *  a) --> Fail if (A1,T1) and (A2,T2) are in Map and T1 is different from T2
+   *  b) --> Equation(T = T) U [A2/T]TCList and [A2/T] U Map and newTCList if (A1 = T) is in Map
+   *  c) --> Equation(T = T) U [A1/T]TCList and [A1/T] U Map and newTCList if (A2 = T) is in Map
+   *  d) --> TCList and [A1/T] U Map and newTCList
    * <p>
    * When the algorithm reaches the end of TCList, then it starts to solve newTCList applying cases 9.a, 9.b and 9.c :
    * CASE 10 : newTCList
@@ -1081,7 +1127,7 @@ public class NewKernelTyper {
    *  b) --> Equation(T = T) U [A2/T]TCList and [A2/T]Map and newTCList if (A1 = T) is in Map
    *  c) --> Equation(T = T) U [A1/T]TCList and [A1/T]Map and newTCList if (A2 = T) is in Map
    *  d) Nothing if neither (A1,T1) nor (A2,T2) is in Map
-   */   
+   */
   private void solveConstraints() {
     TypeConstraintList newTypeConstraints = `concTypeConstraint();
     for (TypeConstraint tConstraint :
@@ -1095,33 +1141,19 @@ matchBlockAdd :
               `detectFail(Equation(groundType1,groundType2,info));
               break matchBlockAdd;
             }
-
-          // CASE 9 :
-          Equation(typeVar1@TypeVar(_,_),typeVar2@TypeVar(_,_),info) << tConstraint
-            && (typeVar1 != typeVar2) -> {
-              if (substitutions.containsKey(`typeVar1) && substitutions.containsKey(`typeVar2)) {
-                `detectFail(Equation(substitutions.get(typeVar1),substitutions.get(typeVar2),info));
-                break matchBlockAdd;
-              } else if (substitutions.containsKey(`typeVar1)) {
-                substitutions.put(`typeVar2,substitutions.get(`typeVar1));
-                break matchBlockAdd;
-              } else if (substitutions.containsKey(`typeVar2)){
-                substitutions.put(`typeVar1,substitutions.get(`typeVar2));
-                break matchBlockAdd;
-              } else {
-                newTypeConstraints =
-                  `concTypeConstraint(tConstraint,newTypeConstraints*);
-                break matchBlockAdd;
-              }
-            }
-
           // CASES 5 and 6 :
           Equation(groundType@!TypeVar(_,_),typeVar@TypeVar(_,_),info) <<
             tConstraint -> {
               if (substitutions.containsKey(`typeVar)) {
-                `detectFail(Equation(substitutions.get(typeVar),groundType,info));
+                TomType mapTypeVar = substitutions.get(`typeVar);
+                if (!isTypeVar(mapTypeVar)) {
+                  `detectFail(Equation(groundType,mapTypeVar,info));
+                } else {
+                // if (isTypeVar(mapTypeVar))
+                addSubstitution(`mapTypeVar,`groundType);
+                }
               } else {
-                substitutions.put(`typeVar,`groundType);
+                addSubstitution(`typeVar,`groundType);
               }
               break matchBlockAdd;
             }
@@ -1129,30 +1161,47 @@ matchBlockAdd :
           // CASES 7 and 8 :
           Equation(typeVar@TypeVar(_,_),groundType@!TypeVar(_,_),info) << tConstraint -> {
             if (substitutions.containsKey(`typeVar)) {
-              `detectFail(Equation(substitutions.get(typeVar),groundType,info));
+              TomType mapTypeVar = substitutions.get(`typeVar);
+              if (!isTypeVar(mapTypeVar)) {
+                `detectFail(Equation(mapTypeVar,groundType,info));
+              } else {
+                // if (isTypeVar(mapTypeVar))
+                addSubstitution(`mapTypeVar,`groundType);
+              }
             } else {
-              substitutions.put(`typeVar,`groundType);
+              addSubstitution(`typeVar,`groundType);
             }
             break matchBlockAdd;
           }
-        }
-      }
-    }
 
-    for (TypeConstraint tConstraint :
-        newTypeConstraints.getCollectionconcTypeConstraint()) {
-      %match {
-        // CASE 10 :
-        Equation(typeVar1@TypeVar(_,_),typeVar2@TypeVar(_,_),info) << tConstraint
-          && (typeVar1 != typeVar2) -> {
-            if (substitutions.containsKey(`typeVar1) && substitutions.containsKey(`typeVar2)) {
-              `detectFail(Equation(substitutions.get(typeVar1),substitutions.get(typeVar2),info));
-            } else if (substitutions.containsKey(`typeVar1)) {
-              substitutions.put(`typeVar2,substitutions.get(`typeVar1));
-            } else if (substitutions.containsKey(`typeVar2)){
-              substitutions.put(`typeVar1,substitutions.get(`typeVar2));
-            } 
-          }
+          // CASE 9 :
+          Equation(typeVar1@TypeVar(_,_),typeVar2@TypeVar(_,_),info) << tConstraint
+            && (typeVar1 != typeVar2) -> {
+              if (substitutions.containsKey(`typeVar1) && substitutions.containsKey(`typeVar2)) {
+                TomType mapTypeVar1 = substitutions.get(`typeVar1);
+                TomType mapTypeVar2 = substitutions.get(`typeVar2);
+                if (isTypeVar(mapTypeVar1)) {
+                  addSubstitution(mapTypeVar1,mapTypeVar2);
+                } else {
+                  if (isTypeVar(mapTypeVar2)) {
+                    addSubstitution(mapTypeVar2,mapTypeVar1);
+                  } else {
+                    `detectFail(Equation(mapTypeVar1,mapTypeVar2,info));
+                  }
+                }
+                break matchBlockAdd;
+              } else if (substitutions.containsKey(`typeVar1)) {
+                addSubstitution(`typeVar2,substitutions.get(`typeVar1));
+                break matchBlockAdd;
+              } else if (substitutions.containsKey(`typeVar2)){
+                addSubstitution(`typeVar1,substitutions.get(`typeVar2));
+                break matchBlockAdd;
+              } else {
+                addSubstitution(`typeVar1,`typeVar2);
+                break matchBlockAdd;
+              }
+            }
+        }
       }
     }
   }
@@ -1186,6 +1235,13 @@ matchBlockFail :
           }
       }
     }
+  }
+
+  private boolean isTypeVar(TomType type) {
+    %match(type) {
+      TypeVar(_,_) -> { return true; }
+    }
+    return false;
   }
 
   private void printError(TypeConstraint tConstraint) {
