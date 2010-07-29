@@ -137,21 +137,22 @@ public class NewKernelTyper {
   private void addSubstitution(TomType key, TomType value) {
      // add(X,Y)   -->  1) put(X,Z) if (Y,Z) is in substitutions
      //                 2) put(X,Y) otherwise
+    TomType newValue = value;
     if (substitutions.containsKey(value)) {
-      substitutions.put(key,substitutions.get(value));
-    } else {
-      substitutions.put(key,value);
+      newValue = substitutions.get(value); 
     } 
+    substitutions.put(key,newValue);
 
-     // add(X,Y)   -->  1) for each (Z,X) in substitutions, put(Z,Y)
-     //                     if there exist (Z,X) in substitutions
+     // add(X,Y)   -->  1) for each (W,X) in substitutions
+     //                     put(W,Y) (or put(W,Z) for previous case 1)
+     //                     if there exist (W,X) in substitutions
      //                 2) do nothing otherwise
     if (substitutions.containsValue(key)) {
       TomType valueOfCurrentKey;
       for (TomType currentKey : substitutions.keySet()) {
         valueOfCurrentKey = substitutions.get(currentKey);
         if (valueOfCurrentKey == key) {
-          substitutions.put(currentKey,value);
+          substitutions.put(currentKey,newValue);
         }
       }
     }
@@ -456,6 +457,8 @@ matchBlock:
     
     visit Code {
       code@(Tom|TomInclude)[CodeList=cList] -> {
+        //DEBUG System.out.println("Code with term = " + `code + " and contextType = " +
+        //DEBUG     contextType);
         CodeList newCList = nkt.inferCodeList(`cList);
         return `code.setCodeList(newCList);
       }
@@ -463,7 +466,6 @@ matchBlock:
 
     visit Instruction {
       Match[ConstraintInstructionList=ciList,Options=optionList] -> {
-        //DEBUG System.out.println("Instruction with term = " + `match);
         BQTermList BQTList = nkt.varList;
         ConstraintInstructionList newCIList =
           nkt.inferConstraintInstructionList(`ciList);
@@ -474,7 +476,6 @@ matchBlock:
     
     visit TomVisit {
       VisitTerm[VNode=vNode,AstConstraintInstructionList=ciList,Options=optionList] -> {
-        //DEBUG System.out.println("TomVisit with term = " + `vTerm);
         BQTermList BQTList = nkt.varList;
         ConstraintInstructionList newCIList =
           nkt.inferConstraintInstructionList(`ciList);
@@ -693,7 +694,7 @@ matchBlock:
     for (Code code : cList.getCollectionconcCode()) {
       init();
       code =  collectKnownTypesFromCode(`code);
-      code = inferAllTypes(code,getUnknownFreshTypeVar());
+      code = inferAllTypes(code,`EmptyType());
       solveConstraints();
       code = replaceInCode(code);
       replaceInSymbolTable();
