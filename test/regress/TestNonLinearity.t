@@ -1,4 +1,4 @@
-import testnonlinearity.test.types.*;
+import regress.testnonlinearity.test.types.*;
 public class TestNonLinearity {
   %gom {
     module Test
