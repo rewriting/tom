@@ -3,18 +3,21 @@
 */
 //test SL_COMMENT
 
+//unauthorized constructions
 //`x                                                            //unauthorized
-//`(x)
 //`(`x)                                                         //unauthorized
 //`(`(x))                                                       //unauthorized
-//`(x())
-//`(x*)
-//`(f(x))
 //`x*                                                           //unauthorized
 //`x()                                                          //unauthorized
+//`()                                                           //unauthorized
+
+
+//`(x)
+//`(x())
+`(x*)
+//`(f(x))
 //`(this.get())
 //`(this.get(i).function())
-//`()                                                           //unauthorized
 //`(a?b:c)
 //`((a.getVar().getToto().getCond()?thenVar:elseVar))
 //`((ff(x,y+1)))
@@ -34,4 +37,4 @@
 //`(Toto(x*,y.get(3)))
 //`(Toto(y.get(3),x*))
 //`(f(x*,a.x(),x,f(x,x)))
-`(f(new Foo(g(x*))))
+//`(f(new Foo(g(x*))))                                            //seems ok

@@ -52,46 +52,7 @@ options {
 
 //Starting point
 
-backQuoteTerm : '`(' compositeTerm ')' -> ^(BackQuoteTerm compositeTerm) ;
-
-compositeTerm :
-  id=Identifier '*' -> ^(VariableStar $id) // x*
-//  | id=Identifier ('()')? -> ^(Variable $id )  // x and x()
-//  | name=Identifier '(' termList ')' -> ^(NamedVariable $name termList) //  //f(...)
-  | name=Identifier '(' cl=compositeList ')' -> ^(Composite $name $cl) // f(...)
-  | expression -> ^(Expression expression)
-  ;
-
-compositeList : 
-  compositeTerm (',' compositeTerm)* -> ^(CompositeList compositeTerm+)
-  ;
-
-/*
-compositeTerm :
-  term -> ^(TomVariable term)
-  //| expression* -> ^(Expression ^(ExpressionList expression*))
-  | expression -> ^(Expression expression)
-//  | xmlTerm
-  ;
-
-compositeList : 
-  //c1=(term|expression) (',' c2+=(term|expression))* -> ^(CompositeList $c1 $c2)
-  compositeTerm (',' compositeTerm)* -> ^(CompositeList compositeTerm+)
-  ;
-
-term : // x, x*, x(), x(...)
-   id=Identifier '*' -> ^(VariableStar $id)
-  | id=Identifier -> ^(Variable $id )
-  | id=Identifier '('')' -> ^(Variable $id)
-//  | name=Identifier '(' termList ')' -> ^(NamedVariable $name termList)
-  | name=Identifier '(' cl=compositeList ')' -> ^(Composite $name $cl)
-//  | termList
-  ;
-*/
-
-/*termList :
-  term (',' term)* -> ^(TermList term+)
-  ;*/
+backQuoteTerm : '`(' expression ')' -> ^(BackQuoteTerm expression ) ;
 
 /**
  * Partial Java
@@ -363,7 +324,8 @@ identifierSuffix :
       ->  ThisSuffix
   | '.' 'super' arguments
       ->  ^(SuperSuffix ^(SuperConstruction arguments))
-/*    |   '.'! 'new'! innerCreator */
+  | '*'
+      -> ^(VarStarSuffix )
     ;
 
 explicitGenericInvocation : 

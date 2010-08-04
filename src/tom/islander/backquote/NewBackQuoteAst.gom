@@ -2,29 +2,7 @@ module backquote.NewBackQuoteAst
 imports int String
 abstract syntax
 
-BackQuoteTerm = BackQuoteTerm(CompositeTerm:CompositeTerm) //Term:Term)
-/*CompositeTerm = TomVariable(Term:Term)
-              | Expression(Expr:Expression)
-              //| XMLTerm()
-
-CompositeList = CompositeList(CompositeTerm*)
-
-Term = Variable(Name:String)
-     | VariableStar(Name:String)
-     //| NamedVariable(Name:String,tl:TermList)
-     | Composite(Name:String,cl:CompositeList)*/
-
-
-CompositeTerm = Expression(Expr:Expression) // ~expression java
-         //     | Variable(Name:String) // x x()
-              | VariableStar(Name:String) //x*
-              | UnamedVariable() // _
-              | UnamedVariableStar() // _*
-              | Composite(Name:String,cl:CompositeList) //f(...)
-
-CompositeList = CompositeList(CompositeTerm*)
-
-//TermList = TermList(Term*)
+BackQuoteTerm = BackQuoteTerm(Expr:Expression)
 
 Type = ArrayType( type:Type, dimensions:int )
      | ClassOrInterfaceType( classorinterfacetype:ClassOrInterfaceType )
@@ -176,6 +154,7 @@ Suffix = ArrayClassSuffix( dimension:int )
        /*| InnerCreator( typearguments:TypeList, class_:Type, arguments:ExpressionList, body:Body )*/
        | ArrayIndexSuffix( position:ExpressionList )
        | EmptySuffix()
+       | VarStarSuffix()
 
 Super_ =
        | SuperConstruction( arguments:ExpressionList )
