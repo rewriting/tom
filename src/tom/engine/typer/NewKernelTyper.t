@@ -130,38 +130,52 @@ public class NewKernelTyper {
        TypeWithSymbol[TomType=tomType, TlType=tlType] -> {
          return TomBase.getSymbolFromType(`Type(tomType,tlType), symbolTable); 
        }
-     }
+    }
     return TomBase.getSymbolFromType(tType,symbolTable); 
-   }
+  }
 
+  /**
+   * The method <code>addSubstitution</code> adds a substitutions (i.e. a pair
+   * (type1,type2) where type2 is the substitution for type1) into the
+   * global list "substitutions" and saturate it.
+   * For example, to add a pair (X,T) where X is a type variable and T is a type
+   * which can be a type variable or a ground type, we follow two steps:
+   * <p>
+   * STEP 1:  a) put(X,Z) if (Y,Z) is in substitutions or
+   *          b) put(X,Y) otherwise
+   * <p>
+   * STEP 2:  a) put(W,Z) after step 1.a or put(W,Y) after step 1.b
+   *             if there exist (W,X) in substitutions for each (W,X) in substitutions
+   *          b) do nothing otherwise
+   * @param key   the first argument of the pair to be inserted (i.e. the type1) 
+   * @param value the second argument of the pair to be inserted (i.e. the type2) 
+   */
   private void addSubstitution(TomType key, TomType value) {
-     // add(X,Y)   -->  1) put(X,Z) if (Y,Z) is in substitutions
-     //                 2) put(X,Y) otherwise
+    // STEP 1  
+    TomType newValue = value;
     if (substitutions.containsKey(value)) {
-      substitutions.put(key,substitutions.get(value));
-    } else {
-      substitutions.put(key,value);
+      newValue = substitutions.get(value); 
     } 
+    substitutions.put(key,newValue);
 
-     // add(X,Y)   -->  1) for each (Z,X) in substitutions, put(Z,Y)
-     //                     if there exist (Z,X) in substitutions
-     //                 2) do nothing otherwise
+    // STEP 2
     if (substitutions.containsValue(key)) {
       TomType valueOfCurrentKey;
       for (TomType currentKey : substitutions.keySet()) {
         valueOfCurrentKey = substitutions.get(currentKey);
         if (valueOfCurrentKey == key) {
-          substitutions.put(currentKey,value);
+          substitutions.put(currentKey,newValue);
         }
       }
     }
   }
 
-  // TO VERIFY: how to test if a term has an undeclared type? Maybe verifying if
-  // a term has type Type(name,EmptyTargetLanguage()), where name is not
-  // UNKNOWN_TYPE. So we verify the subjects of %match but, which BQTerm we need to
-  // treat?
-  
+  /**
+   * The method <code>hasUndeclaredType</code> checks if a term has an
+   * undeclared type by verifying if a term has type
+   * Type(name,EmptyTargetLanguage()), where name is not
+   * UNKNOWN_TYPE.
+   */
   protected void hasUndeclaredType(BQTerm subject) {
     String fileName = currentInputFileName;
     int line = 0;
@@ -172,19 +186,15 @@ public class NewKernelTyper {
         (tomType != symbolTable.TYPE_UNKNOWN.getTomType()) -> {
           Option option = TomBase.findOriginTracking(`oList);
           %match(option) {
-            !noOption() -> {
-              fileName = option.getFileName();
-              line = option.getLine();
-              TomMessage.error(logger, fileName, 
-                  line, TomMessage.unknownSymbol,`tomType);
+            OriginTracking(_,line,fileName) -> {
+              TomMessage.error(logger,`fileName, `line,
+                  TomMessage.unknownSymbol,`tomType); 
             }
           }
         }
     }
   }
  
-  //TO VERIFY : if we can replace the pattern by a "x" and do
-  //"x.getAstName().getString()"
   protected TomType getType(BQTerm bqTerm) {
     %match(bqTerm) {
       (BQVariable|BQVariableStar|FunctionCall)[AstType=aType] -> { return `aType; }
@@ -456,6 +466,8 @@ matchBlock:
     
     visit Code {
       code@(Tom|TomInclude)[CodeList=cList] -> {
+        //DEBUG System.out.println("Code with term = " + `code + " and contextType = " +
+        //DEBUG     contextType);
         CodeList newCList = nkt.inferCodeList(`cList);
         return `code.setCodeList(newCList);
       }
@@ -463,7 +475,6 @@ matchBlock:
 
     visit Instruction {
       Match[ConstraintInstructionList=ciList,Options=optionList] -> {
-        //DEBUG System.out.println("Instruction with term = " + `match);
         BQTermList BQTList = nkt.varList;
         ConstraintInstructionList newCIList =
           nkt.inferConstraintInstructionList(`ciList);
@@ -474,7 +485,6 @@ matchBlock:
     
     visit TomVisit {
       VisitTerm[VNode=vNode,AstConstraintInstructionList=ciList,Options=optionList] -> {
-        //DEBUG System.out.println("TomVisit with term = " + `vTerm);
         BQTermList BQTList = nkt.varList;
         ConstraintInstructionList newCIList =
           nkt.inferConstraintInstructionList(`ciList);
@@ -693,7 +703,7 @@ matchBlock:
     for (Code code : cList.getCollectionconcCode()) {
       init();
       code =  collectKnownTypesFromCode(`code);
-      code = inferAllTypes(code,getUnknownFreshTypeVar());
+      code = inferAllTypes(code,`EmptyType());
       solveConstraints();
       code = replaceInCode(code);
       replaceInSymbolTable();
@@ -1076,57 +1086,69 @@ matchBlock:
   }
 
   /**
-   * The class <code>solveConstraints</code> is generated from a strategy wich
-   * tries to solve all type constraints collected during the inference
+   * The method <code>solveConstraints</code> tries to solve all type
+   * constraints collected during the inference
    * <p> 
    * There exists 3 kinds of types : variable types Ai, ground types Ti and
    * ground types Ti^c which are decorated with a given symbol c. Since a type
    * constraints is a pair (type1,type2) representing an equation relation
    * between two types, them the set of all possibilities of arrangement between
-   * types is a sequence with repetition. Then, we have 9 possible case (since
+   * types is a sequence with repetition. Then, we have 9 possible cases (since
    * 3^2 = 9).
    * <p>
-   * CASE 1: Equation(T1 = T2) U TCList and Map
-   *  a) --> Fail if T1 is different from T2
-   *  b) --> Nothing if T1 is equals to T2
+   * CASE 1: TCList = {(T1 = T2),...)} and Map
+   *  --> detectFail(T1 = T2) to verify if T1 is equals to T2 
    * <p>
-   * CASE 2: Equation(T1 = T2^c) U TCList and Map
-   *  a) --> Fail if T1 is different from T2
-   *  b) --> Nothing if T1 is equals to T2
+   * CASE 2: TCList = {(T1 = T2^c),...)} and Map
+   *  --> detectFail(T1 = T2^c) to verify if T1 is equals to T2 
    * <p>
-   * CASE 3: Equation(T1^c = T2) U TCList and Map
-   *  a) --> Fail if T1 is different from T2 
-   *  b) --> Nothing if T1 is equals to T2
+   * CASE 3: TCList = {(T1^c = T2),...)} and Map
+   *  --> detectFail(T1^c = T2) to verify if T1 is equals to T2 
    * <p>
-   * CASE 4: Equation(T1^a = T2^b) U TCList and Map
-   *  a) --> Fail if T1 is different from T2 and/or "a" is different from "b"
-   *  b) --> Nothing if T1 is equals to T2
+   * CASE 4: TCList = {(T1^a = T2^b),...)} and Map
+   *  --> detectFail(T1^a = T2^b) to verify if T1^a is equals to T2^b 
    * <p>
-   * CASE 5: Equation(T = A) U TCList and Map 
-   *  --> Equation(T = T) U [A/T]TCList and [A/T]Map
+   * CASE 5: TCList = {(T1 = A1),...)} and Map 
+   *  a) Map(A1) does not exist   --> (A,T1) U Map 
+   *  b) Map(A1) = T2             --> detectFail(T1 = T2)
+   *  c) Map(A1) = A2             --> (A2,T1) U Map, since Map is saturated and
+   *                                  then Map(A2) does not exist 
    * <p>
-   * CASE 6: Equation(T^c = A) U TCList and Map 
-   *  --> Equation(T^c = T^c) U [A/T^c]TCList and [A/T^c]Map
+   * CASE 6: TCList = {(T1^c = A1),...)} and Map 
+   *  a) Map(A1) does not exist   --> (A1,T1^c) U Map 
+   *  b) Map(A1) = T2 (or T2^b)   --> detectFail(T1^c = T2) (or detectFail(T1^c = T2^b))
+   *  c) Map(A1) = A2             --> (A2,T1^c) U Map, since Map is saturated and
+   *                                  then Map(A2) does not exist 
    * <p>
-   * CASE 7: Equation(A = T) U TCList and Map 
-   *  --> Equation(T = T) U [A/T]TCList and [A/T]Map
+   * CASE 7: TCList = {(A1 = T1),...)} and Map 
+   *  a) Map(A1) does not exist   --> (A1,T1) U Map 
+   *  b) Map(A1) = T2             --> detectFail(T1 = T2)
+   *  c) Map(A1) = A2             --> (A2,A1) U Map, since Map is saturated and
+   *                                  then Map(A2) does not exist 
    * <p>
-   * CASE 8: Equation(A = T^c) U TCList and Map 
-   *  --> Equation(T^c = T^c) U [A/T^c]TCList and [A/T^c]Map
+   * CASE 8: TCList = {(A1 = T1^c),...)} and Map 
+   *  a) Map(A1) does not exist   --> (A1,T1^c) U Map 
+   *  b) Map(A1) = T2 (or T2^b)   --> detectFail(T1^c = T2) (or detectFail(T1^c = T2^b))
+   *  c) Map(A1) = A2             --> (A2,T1^c) U Map, since Map is saturated and
+   *                                  then Map(A2) does not exist 
    * <p>
-   * CASE 9: Equation(A1 = A2) U TCList and Map and newTCList
-   *  d) --> [A1/B1,A2/B2]TCList and [A1/B1,A2/B2] U Map and Equation(B1 = B2) U newTCList if (A1,B1) and (A2,B2) are in Map and B1 is different from B2
-   *  a) --> Fail if (A1,T1) and (A2,T2) are in Map and T1 is different from T2
-   *  b) --> Equation(T = T) U [A2/T]TCList and [A2/T] U Map and newTCList if (A1 = T) is in Map
-   *  c) --> Equation(T = T) U [A1/T]TCList and [A1/T] U Map and newTCList if (A2 = T) is in Map
-   *  d) --> TCList and [A1/T] U Map and newTCList
-   * <p>
-   * When the algorithm reaches the end of TCList, then it starts to solve newTCList applying cases 9.a, 9.b and 9.c :
-   * CASE 10 : newTCList
-   *  a) --> Fail if (A1,T1) and (A2,T2) and newTCList are in Map and T1 is different from T2
-   *  b) --> Equation(T = T) U [A2/T]TCList and [A2/T]Map and newTCList if (A1 = T) is in Map
-   *  c) --> Equation(T = T) U [A1/T]TCList and [A1/T]Map and newTCList if (A2 = T) is in Map
-   *  d) Nothing if neither (A1,T1) nor (A2,T2) is in Map
+   * CASE 9: TCList = {(A1 = A2),...)} and Map
+   *  a) Map(A1) = T1 (or T1^a) and
+   *    i)    Map(A2) does not exist    --> (A2,T1) U Map (or (A2,T1^a) U Map) 
+   *    ii)   Map(A2) = T2 (or T2^b)    --> detectFail(T1 = T2) (or detectFail(T1^a = T2^b))
+   *    iii)  Map(A2) = A3              --> (A3,T1) U Map (or (A3,T1^a) U Map), since Map is saturated and
+   *                                        then Map(A3) does not exist 
+   *
+   *  b) Map(A1) = A3 and
+   *    i)    Map(A2) does not exist    --> (A2,A3) U Map 
+   *    ii)   Map(A2) = T2 (or T2^b)    --> (A3,T2) U Map, since Map is saturated and
+   *                                        then Map(A3) does not exist 
+   *    iii)  Map(A2) = A4              --> (A3,A4) U Map, since Map is saturated and
+   *                                        then Map(A3) does not exist 
+   *  c) Map(A1) does not exist and
+   *    i)    Map(A2) does not exist    --> (A1,A2) U Map
+   *    ii)   Map(A2) = T1 (or T1^a)    --> (A1,T1) U Map (or (A1,T1^a) U Map)
+   *    iii)  Map(A2) = A3              --> (A1,A3) U Map 
    */
   private void solveConstraints() {
     TypeConstraintList newTypeConstraints = `concTypeConstraint();
@@ -1206,6 +1228,35 @@ matchBlockAdd :
     }
   }
 
+  /**
+   * The method <code>detectFail</code> is generated from a strategy wich
+   * tries to solve all type constraints collected during the inference
+   * <p> 
+   * There exists 3 kinds of types : variable types Ai, ground types Ti and
+   * ground types Ti^c which are decorated with a given symbol c. Since a type
+   * constraints is a pair (type1,type2) representing an equation relation
+   * between two types, them the set of all possibilities of arrangement between
+   * ground types is a sequence with repetition. Then, we have 4 possible cases (since
+   * 2^2 = 4).
+   * <p>
+   * CASE 1: TCList = {(T1 = T2),...)} and Map
+   *  a) --> Fail if T1 is different from T2
+   *  b) --> Nothing if T1 is equals to T2
+   * <p>
+   * CASE 2: TCList = {(T1 = T2^c),...)} and Map
+   *  a) --> Fail if T1 is different from T2
+   *  b) --> Nothing if T1 is equals to T2
+   * <p>
+   * CASE 3: TCList = {(T1^c = T2),...)} and Map
+   *  a) --> Fail if T1 is different from T2
+   *  b) --> Nothing if T1 is equals to T2
+   * <p>
+   * CASE 4: TCList = {(T1^a = T2^b),...)} and Map
+   *  a) --> Fail if T1 is different from T2 and/or "a" is different from "b"
+   *  b) --> Nothing if T1 is equals to T2
+   * <p>
+   * @param tConstraint the type constraint to be verified 
+   */
   private void detectFail(TypeConstraint tConstraint) {
 matchBlockFail : 
     {
@@ -1264,36 +1315,6 @@ matchBlockFail :
     }
   }
 
-  private boolean findTypeVars(TomType typeVar, TypeConstraintList
-      tcList) {
-    //DEBUG System.out.println("\n Test pour findTypeVars -- ligne 1.");
-    %match {
-      concTypeConstraint(_*,Equation(type1,type2,_),_*) << tcList &&
-      (type1 == typeVar || type2 == typeVar) -> {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  private TypeConstraintList applySubstitution(TomType oldtt, TomType newtt,
-      TypeConstraintList tcList) {
-    try {
-      return (TypeConstraintList)
-        `BottomUp(replaceTypeConstraints(oldtt,newtt)).visitLight(tcList);
-    } catch(tom.library.sl.VisitFailure e) {
-      throw new RuntimeException("applySubstitution: should not be here.");
-    }
-  }
-
-  %strategy replaceTypeConstraints(oldtt:TomType, newtt:TomType) extends Identity() {
-    visit TomType {
-      typeVar && (oldtt == typeVar) -> {
-          return newtt; 
-      }
-    }
-  }     
-
   private Code replaceInCode(Code code) {
     Code replacedCode = code;
     try {
@@ -1304,7 +1325,6 @@ matchBlockFail :
     }
     return replacedCode;
   }
-
 
   private void replaceInSymbolTable() {
     for(String tomName:symbolTable.keySymbolIterable()) {
