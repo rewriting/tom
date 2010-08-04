@@ -58,8 +58,6 @@ compositeTerm :
   id=Identifier '*' -> ^(VariableStar $id) // x*
 //  | id=Identifier ('()')? -> ^(Variable $id )  // x and x()
 //  | name=Identifier '(' termList ')' -> ^(NamedVariable $name termList) //  //f(...)
-  | '_' -> ^(UnamedVariable )
-  | '_*' -> ^(UnamedVariableStar )
   | name=Identifier '(' cl=compositeList ')' -> ^(Composite $name $cl) // f(...)
   | expression -> ^(Expression expression)
   ;
