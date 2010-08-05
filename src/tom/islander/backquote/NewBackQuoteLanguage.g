@@ -326,7 +326,7 @@ identifierSuffix :
       ->  ^(SuperSuffix ^(SuperConstruction arguments))
   | '*'
       -> ^(VarStarSuffix )
-    ;
+  ;
 
 explicitGenericInvocation : 
   nonWildcardTypeArguments Identifier arguments

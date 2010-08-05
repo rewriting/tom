@@ -1,59 +1,88 @@
-/*
- test ML_COMMENT
-*/
+/* test ML_COMMENT */
 //test SL_COMMENT
-
 //backquote
-//`(x)
-`(x())
-`(y)
-{`(z*)}
-
 //`(f(a,b))
 //`(x.get(calc(3)))
+//`(x())
 
-/*
-%match (MyType subject) { 
-  a -> { `(x) }
-  mylabel:b -> { `(f(x,x))  }
-}
-*/
+//Tom
+
+//%include { mon/mapping.tom }
+
+/*%match (MyType subject, MySecondType s2) {
+  pattern1 -> { `(something1) }
+  pattern2 -> { `(somethingElse) }
+}*/
 
 /*
 %match (MyType subject, MySecondType s2) { 
-  a -> {  }
+  pattern -> {
+    %match (A a1) { 
+     pe1 -> {            
+       %match (A a2) { 
+         pe2 -> { `(b1) }
+       }
+     }
+   }
+  }
 }
 */
+
+
+//pattern2 -> { }
+`(x())
+`(f(new Foo(g(x*))))
+
+
+//ici on trouve un bloc de code
+//@Annotation
+//public String fonction(int value) {
+//  return value.toString() //"var("+value+")";
+//}
 
 /*
 %typeterm TomPerson {
-  implement { someCompositeTerm }
-  is_sort(t) { someCompositeTerm }
-  equals(t1,t2) { someCompositeTerm }
+  implement : { `(someCompositeTerm) }
+  is_sort(t) : { `(someCompositeTerm) }
+  equals(t1,t2) : { `(someCompositeTerm) }
 }
 */
 
 /*
-%op TomPerson person(name:String,age:int) {
-  is_fsym(t) { $s }
-  make(t1,t2) { someCompositeTerm }
-  get_slot(name,t) { someCompositeTerm }
-  get_slot(age,t) { someCompositeTerm }
+%op TomPerson person() { //name:String,age:int) {
+  is_fsym(t) : { `(s) }
+  make(t1,t2) : { `(someCompositeTerm) }
+  get_slot(name,t) : { `(someCompositeTerm) }
+  get_slot(age,t) : { `(someCompositeTerm) }
 }
 */
 
 /*
 %op TomPerson2 person2(name2:String,age2:int) {
-  is_fsym(t) { someCompositeTerm }
+  is_fsym(t) : { {{`(aaa)}} }
+}
+*/
+
+/*$s @Test get*/ 
+
+/*
+%oparray TomList conc(Object*){
+  is_fsym(t) : { someCompositeTerm }
+  make_empty(n) : { someCompositeTerm }
+  make_append(e,l) : { someCompositeTerm }
+  get_element(l,n) : { someCompositeTerm }
+  get_size(l) : { someCompositeTerm }
 }
 */
 
 /*
-%oparray TomList conc(Object*){
-  is_fsym(t) { someCompositeTerm }
-  make_empty(n) { someCompositeTerm }
-  make_append(e,l) { someCompositeTerm }
-  get_element(l,n) { someCompositeTerm }
-  get_size(l){ someCompositeTerm }
+%oplist TomList concT(T*){
+  is_fsym(t) : { someCompositeTerm }
+  make_empty() : { someCompositeTerm }
+  make_insert(t1,t2) : { someCompositeTerm }
+  get_head(t) : { someCompositeTerm }
+  get_tail(t) : { someCompositeTerm }
+  is_empty(t) : { someCompositeTerm }
 }
 */
+

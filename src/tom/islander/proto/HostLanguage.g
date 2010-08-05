@@ -93,7 +93,7 @@ ID  : ('a'..'z'|'A'..'Z')+ ;
 INT : ('0'..'9')+ ;
 
 LBRACE : '{' { nesting++; } //{System.out.println("host nesting++ = " + nesting);}
-         ;
+ ;
 
 RBRACE : '}'
   {
