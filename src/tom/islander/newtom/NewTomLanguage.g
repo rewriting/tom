@@ -39,6 +39,7 @@ options {
   package newtom;
   //package tom.engine.parser;
   import org.antlr.runtime.tree.Tree;
+  import org.antlr.runtime.ParserRuleReturnScope;
 }
 
 @lexer::members{
@@ -65,9 +66,7 @@ options {
  */
 
 /* '{' BlockList '}' */
-goalLanguageBlock 
-@init{ Tree res = null;}
-  :
+goalLanguageBlock :
   g=GOALLBRACE -> ^({((TomToken)$g).getTree()})
   ;
 
@@ -94,10 +93,12 @@ constraintActionList :
 patternActionList :
   (patternAction)* -> ^(PatternActionList (patternAction)*);
 
-patternAction :
+patternAction :/*@init{ int value=1; }*/ 
   patternList a=ARROWLBRACE 
+  //patternList ARROW a=LBRACE[1] 
     -> ^(PatternAction patternList ^({((TomToken)$a).getTree()}))
   | labelName=Identifier COLON patternList a=ARROWLBRACE 
+  //| labelName=Identifier COLON patternList ARROW a=LBRACE[1] 
     -> ^(LabelledPatternAction patternList ^({((TomToken)$a).getTree()}) $labelName)
   ;
 
@@ -145,6 +146,7 @@ plainPattern :
 
 constraintAction : 
   constraint a=ARROWLBRACE -> ^(ConstraintAction constraint ^({((TomToken)$a).getTree()}))
+  //constraint ARROW a=LBRACE[1] -> ^(ConstraintAction constraint ^({((TomToken)$a).getTree()}))
 //constraint ARROW LBRACE blockList RBRACE -> ^(ConstraintAction constraint blockList)
   ;
 
@@ -302,9 +304,9 @@ pairPattern :
   ;
 
 //Include
-includeConstruct : 
-  INCLUDE LBRACE /*(f=FILENAME | f=FQN | f=)*/Identifier RBRACE -> ^(Include Identifier) 
-  ;
+//includeConstruct : 
+//  /*INCLUDE*/ LBRACE /*(f=FILENAME | f=FQN | f=)*/Identifier RBRACE -> ^(Include Identifier) 
+//  ;
 
 //Strategy
 strategyConstruct : 
@@ -326,9 +328,11 @@ strategyVisit :
 
 visitAction :// almost the same as patternAction 
   //label=Identifier COLON patternList ARROW LBRACE blockList RBRACE -> ^(LabelledVisitActionBL patternList blockList $label)
+  //label=Identifier COLON patternList ARROW a=LBRACE[0] -> ^(LabelledVisitActionBL patternList ^({((TomToken)$a).getTree()}) $label)
   label=Identifier COLON patternList a=ARROWLBRACE -> ^(LabelledVisitActionBL patternList ^({((TomToken)$a).getTree()}) $label)
   | label=Identifier COLON patternList ARROW term -> ^(LabelledVisitActionT patternList term $label)
   //| patternList ARROW LBRACE blockList RBRACE -> ^(VisitActionBL patternList blockList)
+  ///| patternList ARROW a=LBRACE[0] -> ^(VisitActionBL patternList ^({((TomToken)$a).getTree()}))
   | patternList a=ARROWLBRACE -> ^(VisitActionBL patternList ^({((TomToken)$a).getTree()}))
   | patternList ARROW term -> ^(VisitActionT patternList term)
   ;
@@ -396,8 +400,9 @@ keywordMake :
 nameList :
   (id+=identifierToName (COMMA id+=identifierToName)* )?
   -> {id!=null}? ^(TomNameList $id+)
-  -> ^(TomNameList )
+  ->             ^(TomNameList )
   ;
+
 identifierToName :
   n=Identifier -> ^(Name $n)
   ;
@@ -456,18 +461,17 @@ slot :
 slotList : 
   slot ( COMMA slot )* -> ^(SlotList slot+)
   ;
-//
 
 operatorList : 
-  /*OPLIST*/ t=Identifier n=Identifier LPAREN t2=Identifier STAR RPAREN LBRACE /*keywordIsFsym*/ l=listKeywordsOpList? RBRACE
-    -> {l!=null}? ^(OpList ^(Name $n) ^(Type $t) ^(Type $t2) /*keywordIsFsym*/ $l)
-    -> ^(OpArray ^(Name $n) ^(Type $t) ^(Type $t2) /*keywordIsFsym*/ ^(OperatorList ))
+  /*OPLIST*/ t=Identifier n=Identifier LPAREN t2=Identifier STAR RPAREN LBRACE l=listKeywordsOpList? RBRACE
+    -> {l!=null}? ^(OpList ^(Name $n) ^(Type $t) ^(Type $t2) $l)
+    ->            ^(OpList ^(Name $n) ^(Type $t) ^(Type $t2) ^(OperatorList ))
   ;
 
 operatorArray : 
-  /*OPARRAY*/ t=Identifier n=Identifier LPAREN t2=Identifier STAR RPAREN LBRACE /*keywordIsFsym*/ l=listKeywordsOpArray? RBRACE
-    -> {l!=null}? ^(OpArray ^(Name $n) ^(Type $t) ^(Type $t2) /*keywordIsFsym*/ $l)
-    ->            ^(OpArray ^(Name $n) ^(Type $t) ^(Type $t2) /*keywordIsFsym*/ ^(OperatorList ))
+  /*OPARRAY*/ t=Identifier n=Identifier LPAREN t2=Identifier STAR RPAREN LBRACE l=listKeywordsOpArray? RBRACE
+    -> {l!=null}? ^(OpArray ^(Name $n) ^(Type $t) ^(Type $t2) $l)
+    ->            ^(OpArray ^(Name $n) ^(Type $t) ^(Type $t2) ^(OperatorList ))
   ;
 
 listKeywordsTypeTerm : 
@@ -497,9 +501,9 @@ keywordEquals :
 //Minitom lexer
 
 // LEXER
-//keywords
+//keywords <- now useless since they are in Host
 //MATCH       :   '%match'    ;
-INCLUDE     :   '%include'  ;
+//INCLUDE     :   '%include'  ;
 //STRATEGY    :   '%strategy' ;
 //OPERATOR    :   '%op'       ;
 //OPLIST      :   '%oplist'   ;
@@ -507,8 +511,9 @@ INCLUDE     :   '%include'  ;
 //TYPETERM    :   '%typeterm' ;
 //GOM         :   '%gom'      ;
 
-ARROWLBRACE : '-> {' //(options {greedy=false;} : WS )* LBRACE
-  {
+//ARROWLBRACE : '-> {' //(options {greedy=false;} : WS )* LBRACE
+ARROWLBRACE : '->' (options {greedy=false;} : WS )* LBRACE[1] //(options {greedy=false;} : WS )* LBRACE
+  /*
     System.out.println("\nbefore new Host*");
     System.out.println("in arrowlbrace / tom nesting = " + nesting);
     NewHostLanguageLexer lexer = new NewHostLanguageLexer(input);
@@ -521,11 +526,13 @@ ARROWLBRACE : '-> {' //(options {greedy=false;} : WS )* LBRACE
     System.out.println("tom, res.getTree() =\n" + ((Tree)res.getTree()).toStringTree());
     result = (Tree)res.getTree();
     System.out.println("tom, end, result =\n" + result.toStringTree());
-  }
+  }*/
   ;
 
-GOALLBRACE : ': {' /*{ nesting++; }*/ { System.out.println("goallbrace, tom nesting++ = " + nesting);}
-  {
+//GOALLBRACE : ': {' /*{ nesting++; }*/ { System.out.println("goallbrace, tom nesting++ = " + nesting);}
+/// GOALLBRACE : ':' (options {greedy=false;} : WS )* LBRACE[2] /*{ nesting++; }*/ { System.out.println("goallbrace, tom nesting++ = " + nesting);}
+GOALLBRACE : ':' WS* LBRACE[1] /*{ nesting++; }*/ { System.out.println("goallbrace, tom nesting++ = " + nesting);}
+  /*{
     System.out.println("\nbefore new Host*");
     System.out.println("in goallbrace / tom nesting = " + nesting);
     NewHostLanguageLexer lexer = new NewHostLanguageLexer(input);
@@ -539,11 +546,48 @@ GOALLBRACE : ': {' /*{ nesting++; }*/ { System.out.println("goallbrace, tom nest
     System.out.println("tom, res.getTree() =\n" + ((Tree)res.getTree()).toStringTree());
     result = (Tree)res.getTree();
     System.out.println("tom, end, result =\n" + result.toStringTree());
-  }
+  }*/
   ;
 
 fragment
-LBRACE : '{' { nesting++; } { System.out.println("tom nesting++ = " + nesting);}
+//LBRACE : '{' { nesting++; } { System.out.println("tom nesting++ = " + nesting);}
+LBRACE[int lbtype] : '{'
+  {
+    System.out.println("\nbefore new Host*");
+    System.out.println("in arrowlbrace / tom nesting = " + nesting);
+    NewHostLanguageLexer lexer = new NewHostLanguageLexer(input);
+    CommonTokenStream tokens = new CommonTokenStream(lexer);
+    System.out.println("tom, tokens = " + tokens.toString() + " /fin");
+    System.out.println("tom, tokens list = " + tokens.getTokens().toString());
+    NewHostLanguageParser parser = new NewHostLanguageParser(tokens);
+ParserRuleReturnScope res;
+    switch(lbtype) {
+      case 0:
+        System.out.println("(NewTomLanguage) case : " + lbtype);
+        nesting++;
+        System.out.println("tom nesting++ = " + nesting);
+        break;
+      case 1:
+        System.out.println("(NewTomLanguage) case : " + lbtype);
+        System.out.println("before parser.blockList()");
+        res = parser.blockList(); //blockList_return 
+        System.out.println("tom, res.getTree() =\n" + ((Tree)res.getTree()).toStringTree());
+        result = (Tree)res.getTree();
+        System.out.println("tom, end, result =\n" + result.toStringTree());
+       break;
+      case 2:
+        System.out.println("(NewTomLanguage) case : " + lbtype);
+        System.out.println("before parser.goalLanguageBlock()");
+        //res = parser.goalLanguageBlock(); // NewHostLanguageParser.goalLanguageBlock_return 
+        res = parser.blockList();//NewHostLanguageParser.blockList_return 
+        System.out.println("tom, res.getTree() =\n" + ((Tree)res.getTree()).toStringTree());
+        result = (Tree)res.getTree();
+        System.out.println("tom, end, result =\n" + result.toStringTree());
+        break;
+      default:
+        nesting++;break;
+    }
+  }
   ;
 	 
 RBRACE : '}'
@@ -562,12 +606,7 @@ RBRACE : '}'
 //RBRACE      :   '}' ;
 
 
-
-
-
 //
-
-
 LPAREN      :   '(' ;
 RPAREN      :   ')' ;
 LBRACKET    :   '[' ;

@@ -62,7 +62,6 @@ options {
 }
 
 @parser::members{
-
   NewHostLanguageLexer targetlexer = new NewHostLanguageLexer();
 
   // returns the current goal language code
@@ -102,7 +101,7 @@ options {
     NewTomLanguageLexer lexer = new NewTomLanguageLexer(input);
     CommonTokenStream tokens = new CommonTokenStream(lexer);
     NewTomLanguageParser parser = new NewTomLanguageParser(tokens);
-    ParserRuleReturnScope res = null;//init, to avoid a warning
+    ParserRuleReturnScope res = null;
     try{
     switch(tvalue) {
       case TVALUE_MATCH:
@@ -163,14 +162,16 @@ block :
 
 tlCodeBlock :
 //  s=ID /*STRING*/ -> ^(TLCodeBlock ^(ITL {getCode()}))
-  (s+=Identifier|s+=WS|s+=ESC|s+=SpecialCharacter) /*STRING*/ -> ^(TLCodeBlock ^(ITL $s))
+  s=Identifier /*s=IDCODE+*/ /*STRING*/ -> ^(TLCodeBlock ^(ITL $s))
+//  (s+=Identifier|s+=WS|s+=ESC|s+=SpecialCharacters) /*s=IDCODE+*/ /*STRING*/ -> ^(TLCodeBlock ^(ITL ($s)+))// {getCode()}
+  //s=POMP -> ^(TLCodeBlock ^(ITL $s))// {getCode()}
   ;
 
-goalLanguageBlock :
+//goalLanguageBlock :
   // we are here because goalLanguageBlock has been called in
   // NewTomLanguageParser. cf. GOALLBRACE <-> '{' with some java code
-  /*LBRACE*/ blockList RBRACE -> blockList  //^(BlockList blockList)
-  ;
+  /*LBRACE*/ //blockList RBRACE -> blockList  //^(BlockList blockList)
+//  ;
 
 // the %strategy construct
 strategyConstruct :
@@ -213,8 +214,6 @@ includeConstruct :
   INCLUDE LBRACE filename=FILENAME RBRACE -> ^(Include $filename)
   ;
 
-
-
 //code :
 //  t=CODE -> ^({((TomToken)$t).getTree()})
 //  ;
@@ -224,8 +223,11 @@ typeTerm :
   t=TYPETERM -> ^({((TomToken)$t).getTree()})
   ;
 
-// here begins the lexer
 
+
+// LEXER
+
+//options { filter=true; }
 // here begins tokens definition
 // the following tokens are keywords for tom constructs
 // when read, we switch lexers to tom
@@ -239,7 +241,8 @@ BACKQUOTE : '`('
 //    System.out.println("host, tokens list = " + tokens.getTokens().toString());
     NewBackQuoteLanguageParser parser = new NewBackQuoteLanguageParser(tokens);
 //    System.out.println("before parser.backQuoteConstruct()");
-    NewBackQuoteLanguageParser.backQuoteTerm_return res = parser.backQuoteTerm();
+//OJD    NewBackQuoteLanguageParser.backQuoteTerm_return res = parser.backQuoteTerm();
+    NewBackQuoteLanguageParser.expression_return res = parser.expression();
 //    System.out.println("(host - bq) res.getTree() =\n" + ((Tree)res.getTree()).toStringTree());
     result = (Tree)res.getTree();
 //    System.out.println("(host - bq) end, result =\n" + result.toStringTree());
@@ -326,7 +329,6 @@ RBRACE : '}'
 ID : ('a'..'z' | 'A'..'Z')
      ('a'..'z' | 'A'..'Z' | '0'..'9' | '_' | '-')* ;
 */
-
 /*
 fragment LETTER    :   ('a'..'z' | 'A'..'Z')   ;
 fragment DIGIT     :   ('0'..'9')  ;
@@ -342,6 +344,14 @@ options{testLiterals = true;}
             target.append($getText);
         }
     ;
+*/
+
+/*
+fragment
+POMP : POM+ ;
+
+fragment
+POM: (Identifier|WS|SpecialCharacters);
 */
 
 Identifier:
@@ -384,10 +394,11 @@ JavaIDDigit
        '\u1040'..'\u1049'
    ;
 
-SpecialCharacter
-    : '\u0040' //@
-    | '.' | '(' | ')' | '/' | '\\' | '<' | '>'
-    ;
+//fragment
+//SpecialCharacters
+//    : /*'@'*/ '\u0040' | '\u0021'..'\u002f' /*'\u002ea' | '(' | ')' | '/'*/ | '\\' | '<' | '>' //| '{' | '}'
+    //'\u0021'..'\u002f'
+//    ;
 
 fragment
 HEX_DIGIT
@@ -449,14 +460,14 @@ SL_COMMENT :
 file is :
   ./fileName | ./../../fileName | ../../fileName | fileName | path/to/fileName | ./path/to/fileName | ../../path/to/fileName
 
-./////./../.././././a/b/b/b/.././sl.tom is valid ?
+./////./../.././././a/b/b/b/.././sl.tom is valid ? => yes
 a.b.c.sl.tom
-
 */
 FILENAME : // to modify
   ( './' | '../' | '/' )* (Identifier ( './' | '../' | '/' )+)* Identifier ('.' Identifier)*
   ;
 
+/*
 fragment
 ESC
   : '\\'
@@ -482,7 +493,9 @@ ESC
       )?
     )
   ;
+*/
 
+/*
 STRING
   : '"' (ESC|~('"'|'\\'|'\n'|'\r'))* '"'
         {
@@ -490,20 +503,19 @@ STRING
             target.append(getText());
         }
   ;
-
-// the rule for the filter: just append the text to the buffer
-//options { filter=true; }
-/*
-fragment
-TARGET
-  :
-    ( . )
-{System.out.println("#### " + $text  + " #####");}
-        {target.append(getText());}
-  ;
 */
 
+// the rule for the filter: just append the text to the buffer
 fragment
+TARGET :
+  (.)
+  {System.out.println("#### " + $text  + " #####");}
+  {target.append(getText());}
+  ;
+
+//IDCODE : Identifier| WS | ESC | SpecialCharacters;
+
+/*fragment
 ALL : ('\u0000'..'\uffff')
   //{target.append(getText());}
-  ;
+  ;*/

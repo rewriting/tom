@@ -3,30 +3,7 @@ module newtom.BackQuote
 imports int String Tom //Host
 abstract syntax
 
-//BackQuoteTerm = BackQuoteTerm(CompositeTerm:CompositeTerm) //Term:Term)
-/*CompositeTerm = TomVariable(Term:Term)
-              | Expression(Expr:Expression)
-              //| XMLTerm()
-
-CompositeList = CompositeList(CompositeTerm*)
-
-Term = Variable(Name:String)
-     | VariableStar(Name:String)
-     //| NamedVariable(Name:String,tl:TermList)
-     | Composite(Name:String,cl:CompositeList)*/
-
-
-BackQuoteTerm = BQExpression(Expr:Expression) // ~expression java
-         //     | Variable(Name:String) // x x()
-              | BQVariableStar(Name:String) //x*
-              | BQUnamedVariable() // _
-              | BQUnamedVariableStar() // _*
-              | BQNamedComposite(Name:String,cl:CompositeList) //f(...)
-              | BQComposite(cl:CompositeList)
-
-//CompositeList = CompositeList(CompositeTerm*) // CompositeList and CompositeTerm are in NewTomAst.gom
-
-//TermList = TermList(Term*)
+BackQuoteTerm = BackQuoteTerm(Expr:Expression)
 
 Type = ArrayType( type:Type, dimensions:int )
      | ClassOrInterfaceType( classorinterfacetype:ClassOrInterfaceType )
@@ -177,6 +154,7 @@ Suffix = ArrayClassSuffix( dimension:int )
        | SuperSuffix( super_:Super_ )
        | ArrayIndexSuffix( position:ExpressionList )
        | EmptySuffix()
+       | VarStarSuffix()
 
 Super_ =
        | SuperConstruction( arguments:ExpressionList )

@@ -48,23 +48,26 @@ options {
 
 
 //Starting point
+//backQuoteTerm : '`(' expression ')' -> ^(BackQuoteTerm expression ) ;
 //backQuoteConstruct : '`(' backQuoteTerm ')' -> ^(BackQuoteConstruct backQuoteTerm) ;
 
-backQuoteTerm :
-  id=Identifier '*' -> ^(BQVariableStar $id) // x*
-//  | id=Identifier ('()')? -> ^(Variable $id )  // x and x()
-//  | name=Identifier LPAREN termList RPAREN -> ^(NamedVariable $name termList) //  //f(...)
-  | '_' -> ^(BQUnamedVariable )
-  | '_*' -> ^(BQUnamedVariableStar )
-  | name=Identifier LPAREN cl=compositeList RPAREN -> ^(BQNamedComposite $name $cl) // f(...)
-  | expression -> ^(BQExpression expression)
+//backQuoteTerm :
+//  id=Identifier '*' -> ^(BQVariableStar $id) // x*
+//  | name=Identifier LPAREN cl=compositeList RPAREN -> ^(BQNamedComposite $name $cl) // f(...)
+//  | expression -> ^(BQExpression expression)
 // to add
 //  | cl=compositeList -> ^(BQComposite $cl)  //BQComposite(cl:CompositeList)
-  ;
+//  ;
 
+///
+/*
 compositeList : 
   backQuoteTerm (',' backQuoteTerm)* -> ^(CompositeList backQuoteTerm+)
   ;
+///*/
+
+
+
 // in TomLanguage.g
 //compositeList
 //compositeTerm
@@ -340,8 +343,9 @@ identifierSuffix :
       ->  ThisSuffix
   | '.' 'super' arguments
       ->  ^(SuperSuffix ^(SuperConstruction arguments))
-/*    |   '.'! 'new'! innerCreator */
-    ;
+  | '*'
+      -> ^(VarStarSuffix )
+  ;
 
 explicitGenericInvocation : 
   nonWildcardTypeArguments Identifier arguments

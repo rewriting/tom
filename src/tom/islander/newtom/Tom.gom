@@ -110,20 +110,17 @@ BlockList = BlockList(Block*)
 
 Block = MatchConstruct(MatchArguments:TomTermList,PatternActions:PatternActionList )
       | MatchConstructWithoutArgs(ConstraintActions:ConstraintActionList )
-      | Operator(Name:TomName,Type:TomType,Args:SlotList/*,Op:Operator*/,OperatorList:OperatorList) // Name - Type -Args - isfsym - OperatorList
-      | OpList(Name:TomName,Type:TomType,Arg:TomType/*,Op:Operator*/,OperatorList:OperatorList)
-      | OpArray(Name:TomName,Type:TomType,Arg:TomType/*,Op:Operator*/,OperatorList:OperatorList)
+      | Operator(Name:TomName,Type:TomType,Args:SlotList,OperatorList:OperatorList)
+      | OpList(Name:TomName,Type:TomType,Arg:TomType,OperatorList:OperatorList)
+      | OpArray(Name:TomName,Type:TomType,Arg:TomType,OperatorList:OperatorList)
       | Strategy(Name:TomName,Extends:TomTerm,VisitList:StrategyVisitList,Arguments:TomTermList) //?
       | TypeTerm(Type:TomType,OperatorList:OperatorList) //Op1:Operator,Op2:Operator,Op3:Operator)
       | Include(FileName:String)
 //      | RuleConstruct(RType:TomType,FQN:TomName,RuleArguments:TomTermList,BlockList:BlockList)//,ConstraintActions:ConstraintActionList ) //PatternActions:PatternActionList )
-      | BackQuoteConstruct(BackQuoteTerm:BackQuoteTerm) //Term:Term)
+      | BackQuoteConstruct(BackQuoteTerm:Expression) //BackQuoteTerm) //Term:Term)
       | Composite(ctl:CompositeList)
       | TLCodeBlock(TargetLanguage:TargetLanguage)
       | BracedBlockList(BlockList:BlockList)
-//      | Comp:w
-//      osite(ct:CompositeTerm)
-
 /*
 CompositeTerm = CompositeTL(tl:TargetLanguage)
               | CompositeBQT(term:BackQuoteTerm)
