@@ -44,6 +44,7 @@ options {
 
 @lexer::members{
   public static int nesting = 0;
+  public boolean isBlockLbrace = false;
   public Tree result;
   
   // override standard token emission
@@ -67,7 +68,7 @@ options {
 
 /* '{' BlockList '}' */
 goalLanguageBlock :
-  g=GOALLBRACE -> ^({((TomToken)$g).getTree()})
+  g=LBRACE /*g=GOALLBRACE*/ -> ^({((TomToken)$g).getTree()})
   ;
 
 matchConstruct :
@@ -110,15 +111,6 @@ patternAction :/*@init{ int value=1; }*/
 /*  : cu=(matchConstruct* javaCompilationUnit (matchConstruct|javaCompilationUnit)*) -> ^(CompositeTerm ^(CompilationUnit $cu )) */
 //  cu=compilationUnitList /*(ct=compilationUnit)**/ -> ^(CompositeTerm
 //  compilationUnitList /*^(BlockList ($ct)* )*/) /*(compilationUnit)* ))*/
-//  ;
-
-//compilationUnitList :
-//  (l=compilationUnit+)? -> ^(BlockList $l? )
-//  ;
-
-//compilationUnit : 
-//  matchConstruct
-//  | LBRACE blockList RBRACE -> ^(BlockList blockList)
 //  ;
 
 // Is it necessary to create a node for a plainPattern ?
@@ -303,11 +295,6 @@ pairPattern :
   Identifier EQUAL pattern -> ^(PairPattern Identifier ^(Pattern pattern ))
   ;
 
-//Include
-//includeConstruct : 
-//  /*INCLUDE*/ LBRACE /*(f=FILENAME | f=FQN | f=)*/Identifier RBRACE -> ^(Include Identifier) 
-//  ;
-
 //Strategy
 strategyConstruct : 
   /*STRATEGY*/ Identifier LPAREN strategyArguments* RPAREN 'extends' term LBRACE strategyVisitList RBRACE -> ^(Strategy ^(Name Identifier) term strategyVisitList strategyArguments* )
@@ -329,7 +316,7 @@ strategyVisit :
 visitAction :// almost the same as patternAction 
   //label=Identifier COLON patternList ARROW LBRACE blockList RBRACE -> ^(LabelledVisitActionBL patternList blockList $label)
   //label=Identifier COLON patternList ARROW a=LBRACE[0] -> ^(LabelledVisitActionBL patternList ^({((TomToken)$a).getTree()}) $label)
-  label=Identifier COLON patternList a=ARROWLBRACE -> ^(LabelledVisitActionBL patternList ^({((TomToken)$a).getTree()}) $label)
+  label=Identifier COLON patternList ARROWLBRACE -> ^(LabelledVisitActionBL patternList ^({((TomToken)$a).getTree()}) $label)
   | label=Identifier COLON patternList ARROW term -> ^(LabelledVisitActionT patternList term $label)
   //| patternList ARROW LBRACE blockList RBRACE -> ^(VisitActionBL patternList blockList)
   ///| patternList ARROW a=LBRACE[0] -> ^(VisitActionBL patternList ^({((TomToken)$a).getTree()}))
@@ -386,14 +373,14 @@ listKeywordsOpList :
 //
 
 keywordIsFsym : 
-  'is_fsym' LPAREN name=Identifier RPAREN goalLanguageBlock -> ^(IsFsym ^(Name $name) goalLanguageBlock)
+  /*'is_fsym'*/IS_FSYM LPAREN name=Identifier RPAREN goalLanguageBlock -> ^(IsFsym ^(Name $name) goalLanguageBlock)
   //'is_fsym' LPAREN name=Identifier RPAREN t=GOALLBRACE -> ^(IsFsym ^(Name $name) ^({((TomToken)$t).getTree()}))
   ;
 
 keywordMake : 
   //'make' LPAREN /*nameList*/ l=(Identifier ( COMMA Identifier )* )? RPAREN goalLanguageBlock -> ^(Make /*nameList*/ ^(TomNameList $l? ) goalLanguageBlock)
   //'make' LPAREN /*nameList*/ l=(identifierToName ( COMMA identifierToName )* )? RPAREN goalLanguageBlock -> ^(Make /*nameList*/ ^(TomNameList $l? ) goalLanguageBlock)
-  'make' LPAREN nameList RPAREN goalLanguageBlock -> ^(Make nameList goalLanguageBlock)
+  MAKE /*'make'*/ LPAREN nameList RPAREN goalLanguageBlock -> ^(Make nameList goalLanguageBlock)
 //  | 'make' LPAREN RPAREN -> ^(Make ^(TomNameList ) goalLanguageBlock)
   ;
 
@@ -408,43 +395,43 @@ identifierToName :
   ;
 
 keywordGetSlot : 
-  'get_slot' LPAREN n1=Identifier COMMA n2=Identifier RPAREN goalLanguageBlock -> ^(GetSlot ^(Name $n1) ^(Name $n2) goalLanguageBlock)
+  GET_SLOT /*'get_slot'*/ LPAREN n1=Identifier COMMA n2=Identifier RPAREN goalLanguageBlock -> ^(GetSlot ^(Name $n1) ^(Name $n2) goalLanguageBlock)
   ;
 
 keywordGetHead : 
-  'get_head' LPAREN name=Identifier RPAREN goalLanguageBlock -> ^(GetHead ^(Name $name) goalLanguageBlock)
+  GET_HEAD /*'get_head'*/ LPAREN name=Identifier RPAREN goalLanguageBlock -> ^(GetHead ^(Name $name) goalLanguageBlock)
   ;
 
 keywordGetTail : 
-  'get_tail' LPAREN name=Identifier RPAREN goalLanguageBlock -> ^(GetTail ^(Name $name) goalLanguageBlock)
+  GET_TAIL/*'get_tail'*/ LPAREN name=Identifier RPAREN goalLanguageBlock -> ^(GetTail ^(Name $name) goalLanguageBlock)
   ;
 
 keywordIsEmpty : 
-  'is_empty' LPAREN name=Identifier RPAREN goalLanguageBlock -> ^(IsEmpty ^(Name $name) goalLanguageBlock)
+  IS_EMPTY /*'is_empty'*/ LPAREN name=Identifier RPAREN goalLanguageBlock -> ^(IsEmpty ^(Name $name) goalLanguageBlock)
   ;
 
 keywordMakeEmptyList : 
-  'make_empty' LPAREN RPAREN goalLanguageBlock -> ^(MakeEmptyList goalLanguageBlock)
+  MAKE_EMPTY /*'make_empty'*/ LPAREN RPAREN goalLanguageBlock -> ^(MakeEmptyList goalLanguageBlock)
   ;
 
 keywordMakeInsert : 
-  'make_insert' LPAREN n1=Identifier COMMA n2=Identifier RPAREN goalLanguageBlock -> ^(MakeInsert ^(Name $n1) ^(Name $n2) goalLanguageBlock)
+  MAKE_INSERT /*'make_insert'*/ LPAREN n1=Identifier COMMA n2=Identifier RPAREN goalLanguageBlock -> ^(MakeInsert ^(Name $n1) ^(Name $n2) goalLanguageBlock)
   ;
 
 keywordGetElement : 
-  'get_element' LPAREN n1=Identifier COMMA n2=Identifier RPAREN goalLanguageBlock -> ^(GetElement ^(Name $n1) ^(Name $n2) goalLanguageBlock)
+  GET_ELEMENT /*'get_element'*/ LPAREN n1=Identifier COMMA n2=Identifier RPAREN goalLanguageBlock -> ^(GetElement ^(Name $n1) ^(Name $n2) goalLanguageBlock)
   ;
 
 keywordGetSize : 
-  'get_size' LPAREN name=Identifier RPAREN goalLanguageBlock -> ^(GetSize ^(Name $name) goalLanguageBlock)
+  GET_SIZE /*'get_size'*/ LPAREN name=Identifier RPAREN goalLanguageBlock -> ^(GetSize ^(Name $name) goalLanguageBlock)
   ;
 
 keywordMakeEmptyArray : 
-  'make_empty' LPAREN name=Identifier RPAREN goalLanguageBlock -> ^(MakeEmptyArray ^(Name $name) goalLanguageBlock)
+  MAKE_EMPTY /*'make_empty'*/ LPAREN name=Identifier RPAREN goalLanguageBlock -> ^(MakeEmptyArray ^(Name $name) goalLanguageBlock)
   ;
 
 keywordMakeAppend : 
-  'make_append' LPAREN n1=Identifier COMMA n2=Identifier RPAREN goalLanguageBlock -> ^(MakeAppend ^(Name $n1) ^(Name $n2) goalLanguageBlock)
+  MAKE_APPEND /*'make_append'*/ LPAREN n1=Identifier COMMA n2=Identifier RPAREN goalLanguageBlock -> ^(MakeAppend ^(Name $n1) ^(Name $n2) goalLanguageBlock)
   ;
 
 // 
@@ -484,15 +471,15 @@ typeTerm :
   ;
 
 keywordImplement : 
-  'implement' goalLanguageBlock -> ^(Implement goalLanguageBlock )
+  IMPLEMENT /*'implement'*/ goalLanguageBlock -> ^(Implement goalLanguageBlock )
   ;
 
 keywordIsSort : 
-  'is_sort' LPAREN Identifier RPAREN /*goalLanguageSortCheck*/ goalLanguageBlock -> ^(IsSort ^(Name Identifier) goalLanguageBlock ) //temp
+  IS_SORT /*'is_sort'*/ LPAREN Identifier RPAREN /*goalLanguageSortCheck*/ goalLanguageBlock -> ^(IsSort ^(Name Identifier) goalLanguageBlock ) //temp
   ;
 
 keywordEquals : 
-  'equals' LPAREN n1=Identifier COMMA n2=Identifier RPAREN goalLanguageBlock -> ^(Equals ^(Name $n1 ) ^(Name $n2 ) goalLanguageBlock )
+  EQUALS /*'equals'*/ LPAREN n1=Identifier COMMA n2=Identifier RPAREN goalLanguageBlock -> ^(Equals ^(Name $n1 ) ^(Name $n2 ) goalLanguageBlock )
   ;
 
 
@@ -511,9 +498,9 @@ keywordEquals :
 //TYPETERM    :   '%typeterm' ;
 //GOM         :   '%gom'      ;
 
-//ARROWLBRACE : '-> {' //(options {greedy=false;} : WS )* LBRACE
-ARROWLBRACE : '->' (options {greedy=false;} : WS )* LBRACE[1] //(options {greedy=false;} : WS )* LBRACE
-  /*
+ARROWLBRACE : { isBlockLbrace = true; } ARROW WS* LBRACE //[1] //
+/*{ nesting--; System.out.println("tom nesting, arrowlbrace = " + nesting);}//(options {greedy=false;} : WS )* LBRACE
+  {
     System.out.println("\nbefore new Host*");
     System.out.println("in arrowlbrace / tom nesting = " + nesting);
     NewHostLanguageLexer lexer = new NewHostLanguageLexer(input);
@@ -529,10 +516,9 @@ ARROWLBRACE : '->' (options {greedy=false;} : WS )* LBRACE[1] //(options {greedy
   }*/
   ;
 
-//GOALLBRACE : ': {' /*{ nesting++; }*/ { System.out.println("goallbrace, tom nesting++ = " + nesting);}
-/// GOALLBRACE : ':' (options {greedy=false;} : WS )* LBRACE[2] /*{ nesting++; }*/ { System.out.println("goallbrace, tom nesting++ = " + nesting);}
-GOALLBRACE : ':' WS* LBRACE[1] /*{ nesting++; }*/ { System.out.println("goallbrace, tom nesting++ = " + nesting);}
-  /*{
+//GOALLBRACE :  ':' WS*  /*{ isGLlbrace = true; }*/ LBRACE
+/*{ nesting--; System.out.println("tom nesting, goallbrace = " + nesting); }
+  {
     System.out.println("\nbefore new Host*");
     System.out.println("in goallbrace / tom nesting = " + nesting);
     NewHostLanguageLexer lexer = new NewHostLanguageLexer(input);
@@ -541,17 +527,56 @@ GOALLBRACE : ':' WS* LBRACE[1] /*{ nesting++; }*/ { System.out.println("goallbra
     System.out.println("tom, tokens list = " + tokens.getTokens().toString());
     NewHostLanguageParser parser = new NewHostLanguageParser(tokens);
     System.out.println("before parser.goalLanguageBlock()");
-    //NewHostLanguageParser.goalLanguageBlock_return res = parser.goalLanguageBlock();
-    NewHostLanguageParser.blockList_return res = parser.blockList();
+    NewHostLanguageParser.goalLanguageBlock_return res = parser.goalLanguageBlock();
+    //NewHostLanguageParser.blockList_return res = parser.blockList();
     System.out.println("tom, res.getTree() =\n" + ((Tree)res.getTree()).toStringTree());
     result = (Tree)res.getTree();
     System.out.println("tom, end, result =\n" + result.toStringTree());
-  }*/
+  }
+  ;*/
+
+IS_FSYM     : 'is_fsym'     { isBlockLbrace = true; } ;
+MAKE        : 'make'        { isBlockLbrace = true; } ;
+GET_SLOT    : 'get_slot'    { isBlockLbrace = true; } ;
+EQUALS      : 'equals'      { isBlockLbrace = true; } ;
+IS_SORT     : 'is_sort'     { isBlockLbrace = true; } ;
+IMPLEMENT   : 'implement'   { isBlockLbrace = true; } ;
+MAKE_EMPTY  : 'make_empty'  { isBlockLbrace = true; } ;
+MAKE_INSERT : 'make_insert' { isBlockLbrace = true; } ;
+MAKE_APPEND : 'make_append' { isBlockLbrace = true; } ;
+GET_SIZE    : 'get_size'    { isBlockLbrace = true; } ;
+GET_ELEMENT : 'get_element' { isBlockLbrace = true; } ;
+GET_HEAD    : 'get_head'    { isBlockLbrace = true; } ;
+GET_TAIL    : 'get_tail'    { isBlockLbrace = true; } ;
+IS_EMPTY    : 'is_empty'    { isBlockLbrace = true; } ;
+
+//fragment
+LBRACE : '{'
+  {
+    if (isBlockLbrace) {
+      isBlockLbrace = false; // reset isBlockLbrace variable
+      nesting--;
+      //System.out.println("tom nesting, isBlockLbrace = " + nesting); 
+      //System.out.println("\nbefore new Host*");
+      //System.out.println("in goallbrace / tom nesting = " + nesting);
+      NewHostLanguageLexer lexer = new NewHostLanguageLexer(input);
+      CommonTokenStream tokens = new CommonTokenStream(lexer);
+      //System.out.println("tom, tokens = " + tokens.toString() + " /fin");
+      //System.out.println("tom, tokens list = " + tokens.getTokens().toString());
+      NewHostLanguageParser parser = new NewHostLanguageParser(tokens);
+      //System.out.println("before parser.goalLanguageBlock()");
+      NewHostLanguageParser.blockList_return res = parser.blockList();
+      //System.out.println("tom, res.getTree() =\n" + ((Tree)res.getTree()).toStringTree());
+      result = (Tree)res.getTree();
+      //System.out.println("tom, end, result =\n" + result.toStringTree());
+    } else {
+      nesting++;
+    }
+  }
   ;
 
-fragment
-//LBRACE : '{' { nesting++; } { System.out.println("tom nesting++ = " + nesting);}
-LBRACE[int lbtype] : '{'
+
+/*LBRACE[int lbtype] : '{'
   {
     System.out.println("\nbefore new Host*");
     System.out.println("in arrowlbrace / tom nesting = " + nesting);
@@ -578,8 +603,8 @@ ParserRuleReturnScope res;
       case 2:
         System.out.println("(NewTomLanguage) case : " + lbtype);
         System.out.println("before parser.goalLanguageBlock()");
-        //res = parser.goalLanguageBlock(); // NewHostLanguageParser.goalLanguageBlock_return 
-        res = parser.blockList();//NewHostLanguageParser.blockList_return 
+        res = parser.goalLanguageBlock(); // NewHostLanguageParser.goalLanguageBlock_return 
+        //res = parser.blockList();//NewHostLanguageParser.blockList_return 
         System.out.println("tom, res.getTree() =\n" + ((Tree)res.getTree()).toStringTree());
         result = (Tree)res.getTree();
         System.out.println("tom, end, result =\n" + result.toStringTree());
@@ -588,17 +613,18 @@ ParserRuleReturnScope res;
         nesting++;break;
     }
   }
-  ;
+  ;*/
 	 
 RBRACE : '}'
   {
+    isBlockLbrace = false;
     if ( nesting<=0 ) {
       emit(Token.EOF_TOKEN);
-      System.out.println("exit tom language and emit(Token.EOF)\n");
+      //System.out.println("exit tom language and emit(Token.EOF)\n");
     }
     else {
+      //System.out.println("tom nesting before -- = " + nesting);
       nesting--;
-      System.out.println("tom nesting-- = " + nesting);
     }
   }
   ;
@@ -612,7 +638,7 @@ RPAREN      :   ')' ;
 LBRACKET    :   '[' ;
 RBRACKET    :   ']' ;
 COMMA       :   ',' ;
-fragment
+//fragment
 ARROW       :   '->';
 
 DOULEARROW  :   '=>';

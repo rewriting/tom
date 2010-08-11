@@ -101,6 +101,8 @@ options {
     NewTomLanguageLexer lexer = new NewTomLanguageLexer(input);
     CommonTokenStream tokens = new CommonTokenStream(lexer);
     NewTomLanguageParser parser = new NewTomLanguageParser(tokens);
+//    lexer.isGLlbrace = true;//
+//    lexer.isGLlbrace = false;//
     ParserRuleReturnScope res = null;
     try{
     switch(tvalue) {
@@ -142,7 +144,10 @@ options {
 // The grammar starts here
 program : blockList -> ^(Program blockList);
 
-blockList : (block)* -> ^(BlockList (block)* ) ;
+blockList :
+  (block)*  -> ^(BlockList (block)* )
+  | LBRACE (block)* RBRACE -> ^(BlockList (block)* )
+  ;
 
 block :
   backquoteConstruct -> ^(BackQuoteConstruct backquoteConstruct)
@@ -167,11 +172,15 @@ tlCodeBlock :
   //s=POMP -> ^(TLCodeBlock ^(ITL $s))// {getCode()}
   ;
 
-//goalLanguageBlock :
+goalLanguageBlock :
   // we are here because goalLanguageBlock has been called in
   // NewTomLanguageParser. cf. GOALLBRACE <-> '{' with some java code
-  /*LBRACE*/ //blockList RBRACE -> blockList  //^(BlockList blockList)
-//  ;
+  /*{
+    NewHostLanguageLexer.nesting++;
+    System.out.println("goalLanguageBlock, nesting++ = " + NewHostLanguageLexer.nesting);
+  }*/
+  /*LBRACE*/  blockList RBRACE// -> blockList  //^(BlockList blockList)
+  ;
 
 // the %strategy construct
 strategyConstruct :
@@ -222,7 +231,6 @@ includeConstruct :
 typeTerm :
   t=TYPETERM -> ^({((TomToken)$t).getTree()})
   ;
-
 
 
 // LEXER
@@ -309,18 +317,18 @@ GOM : '%gom'
 */
 
 // basic tokens
-LBRACE : '{' { nesting++; } {System.out.println("host nesting++ = " + nesting);}
+LBRACE : '{' { nesting++; } //{System.out.println("host nesting++ = " + nesting);}
   ;
 
 RBRACE : '}'
   {
     if ( nesting<=0 ) {
-      System.out.println("exit embedded hostlanguage and emit(Token.EOF)\n");
+      //System.out.println("exit embedded hostlanguage and emit(Token.EOF)\n");
       emit(Token.EOF_TOKEN);
     }
     else {
       nesting--;
-      System.out.println("host nesting-- = " + nesting);
+      //System.out.println("host nesting-- = " + nesting);
     }
   }
   ;

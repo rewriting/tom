@@ -507,18 +507,18 @@ JavaIDDigit :
   '\u1040'..'\u1049'
   ;
 
-LPAREN : '(' { nesting++; } { System.out.println("backquote nesting++ = " + nesting);}
+LPAREN : '(' { nesting++; } //{ System.out.println("backquote nesting++ = " + nesting);}
   ;
 
 RPAREN : ')'
   {
     if ( nesting<=0 ) {
-      System.out.println("exit backquote language and emit(Token.EOF)\n");
+      //System.out.println("exit backquote language and emit(Token.EOF)\n");
       emit(Token.EOF_TOKEN);
     }
     else {
       nesting--;
-      System.out.println("backquote nesting-- = " + nesting);
+      //System.out.println("backquote nesting-- = " + nesting);
     }
   }
   ;
