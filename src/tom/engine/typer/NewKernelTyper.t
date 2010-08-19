@@ -31,8 +31,6 @@ package tom.engine.typer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Logger;
-import java.lang.Class;
-import java.lang.reflect.*;
 
 import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomconstraint.types.*;
