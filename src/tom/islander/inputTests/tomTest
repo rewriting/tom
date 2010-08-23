@@ -7,14 +7,20 @@
 
 //Tom
 
-//%include { mon/mapping.tom }
+%include { mon/mapping.tom }
 
-/*%match (MyType subject, MySecondType s2) {
-  pattern1 -> { `(something1) }
+`(x*)
+//`(f(new Foo(g(x*))))
+
+%match (MyType subject, MySecondType s2) {
+  pattern1 -> { something1 }
   pattern2 -> { `(somethingElse) }
-}*/
+}
 
-/*
+%op TomPerson2 person2(name2:String,age2:int) {
+  is_fsym(t) { `(aaa) }
+}
+
 %match (MyType subject, MySecondType s2) { 
   pattern -> {
     %match (A a1) { 
@@ -26,13 +32,10 @@
    }
   }
 }
-*/
 
-
-//pattern2 -> { }
-`(x())
-`(f(new Foo(g(x*))))
-
+%op TomPerson2 person2(name2:String,age2:int) {
+  is_fsym(t) { `(aaa) }
+}
 
 //ici on trouve un bloc de code
 //@Annotation
@@ -40,49 +43,35 @@
 //  return value.toString() //"var("+value+")";
 //}
 
-/*
 %typeterm TomPerson {
-  implement : { `(someCompositeTerm) }
-  is_sort(t) : { `(someCompositeTerm) }
-  equals(t1,t2) : { `(someCompositeTerm) }
+  implement { someCompositeTerm01 }
+  is_sort(t) { someCompositeTerm02 }
+  equals(t1,t2) { someCompositeTerm03 }
 }
-*/
 
-/*
 %op TomPerson person() { //name:String,age:int) {
-  is_fsym(t) : { `(s) }
-  make(t1,t2) : { `(someCompositeTerm) }
-  get_slot(name,t) : { `(someCompositeTerm) }
-  get_slot(age,t) : { `(someCompositeTerm) }
+  is_fsym(t) { s }
+  make(t1,t2) { someCompositeTerm04 }
+  get_slot(name,t) { someCompositeTerm05 }
+  get_slot(age,t) { someCompositeTerm06 }
 }
-*/
-
-/*
-%op TomPerson2 person2(name2:String,age2:int) {
-  is_fsym(t) : { {{`(aaa)}} }
-}
-*/
 
 /*$s @Test get*/ 
 
-/*
 %oparray TomList conc(Object*){
-  is_fsym(t) : { someCompositeTerm }
-  make_empty(n) : { someCompositeTerm }
-  make_append(e,l) : { someCompositeTerm }
-  get_element(l,n) : { someCompositeTerm }
-  get_size(l) : { someCompositeTerm }
+  is_fsym(t) { someCompositeTerm07 }
+  make_empty(n) { someCompositeTerm08 }
+  make_append(e,l) { someCompositeTerm09 }
+  get_element(l,n) { someCompositeTerm10 }
+  get_size(l) { someCompositeTerm11 }
 }
-*/
 
-/*
 %oplist TomList concT(T*){
-  is_fsym(t) : { someCompositeTerm }
-  make_empty() : { someCompositeTerm }
-  make_insert(t1,t2) : { someCompositeTerm }
-  get_head(t) : { someCompositeTerm }
-  get_tail(t) : { someCompositeTerm }
-  is_empty(t) : { someCompositeTerm }
+  is_fsym(t) { someCompositeTerm12 }
+  make_empty() { someCompositeTerm13 }
+  make_insert(t1,t2) { someCompositeTerm14 }
+  get_head(t) { someCompositeTerm15 }
+  get_tail(t) { someCompositeTerm16 }
+  is_empty(t) { someCompositeTerm17 }
 }
-*/
 

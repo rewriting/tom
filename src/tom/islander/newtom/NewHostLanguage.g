@@ -28,6 +28,7 @@ options {
   ASTLabelType=Tree;
   //tokenVocab=HostTokens;
   tokenVocab=TomTokens;
+//  filter=true;
 
 //  k=6; // the default lookahead
   // a filter for the target language
@@ -162,7 +163,7 @@ block :
   | typeTerm
   | LBRACE blockList RBRACE -> ^(BracedBlockList blockList)
 //  | s=Identifier /*STRING*/ -> ^(TLCodeBlock ^(ITL $s))
-  | tlCodeBlock
+  | tlCodeBlock //-> ^(TLCodeBlock ^(ITL tlCodeBlock))
   ;
 
 tlCodeBlock :
@@ -172,15 +173,15 @@ tlCodeBlock :
   //s=POMP -> ^(TLCodeBlock ^(ITL $s))// {getCode()}
   ;
 
-goalLanguageBlock :
+//goalLanguageBlock :
   // we are here because goalLanguageBlock has been called in
   // NewTomLanguageParser. cf. GOALLBRACE <-> '{' with some java code
   /*{
     NewHostLanguageLexer.nesting++;
     System.out.println("goalLanguageBlock, nesting++ = " + NewHostLanguageLexer.nesting);
   }*/
-  /*LBRACE*/  blockList RBRACE// -> blockList  //^(BlockList blockList)
-  ;
+//  /*LBRACE*/  blockList RBRACE// -> blockList  //^(BlockList blockList)
+//  ;
 
 // the %strategy construct
 strategyConstruct :
