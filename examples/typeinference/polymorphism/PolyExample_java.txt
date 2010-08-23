@@ -1,0 +1,85 @@
+import polyexample.example.types.*;
+public class PolyExample{
+  private static boolean tom_equal_term_B(Object t1, Object t2) {
+    return  (t1==t2) ;
+  }
+  
+  private static boolean tom_is_sort_B(Object t) {
+    return  (t instanceof polyexample.example.types.B) ;
+  }
+  
+  private static boolean tom_equal_term_A(Object t1, Object t2) {
+    return  (t1==t2) ;
+  }
+  
+  private static boolean tom_is_sort_A(Object t) {
+    return  (t instanceof polyexample.example.types.A) ;
+  }
+  
+  private static boolean tom_is_fun_sym_b1( polyexample.example.types.B  t) {
+    return  (t instanceof polyexample.example.types.b.b1) ;
+  }
+  
+  private static  polyexample.example.types.B  tom_make_b1() { 
+    return  polyexample.example.types.b.b1.make() ;
+  }
+  
+  private static boolean tom_is_fun_sym_b2( polyexample.example.types.B  t) {
+    return  (t instanceof polyexample.example.types.b.b2) ;
+  }
+  
+  private static boolean tom_is_fun_sym_a( polyexample.example.types.A  t) {
+    return  (t instanceof polyexample.example.types.a.a) ;
+  }
+  
+  private static  polyexample.example.types.A  tom_make_a() { 
+    return  polyexample.example.types.a.a.make() ;
+  }  
+
+  public static void main(String[] args) {
+    B tt = tom_make_b1();
+    {
+      {
+        if (tom_is_sort_B(tt)) {
+          if (tom_is_fun_sym_b1((( polyexample.example.types.B )tt))) {
+            System.out.println(tt); 
+          }
+        }
+      }
+      
+      {
+        if (tom_is_sort_B(tt)) {
+          if (tom_is_fun_sym_b2((( polyexample.example.types.B )tt))) {
+            System.out.println(tt); 
+          }
+        }
+      }
+    }
+
+
+    A rr = tom_make_a();
+    {
+      {
+        if (tom_is_sort_A(rr)) {
+          if (tom_is_fun_sym_a((( polyexample.example.types.A )rr))) {
+            System.out.println(rr); 
+          }
+        }
+      }
+    }
+
+/*
+    Exp[B] tt = `f(b1());
+    %match{
+     f(b1()) << Exp[B] tt -> { System.out.println(`tt); }
+     f(b2()) << Exp[B] tt -> { System.out.println(`tt); }
+    }
+    
+    Exp[A] rr = `f(a());
+    %match{
+      f(a()) << Exp[A] rr -> { System.out.println(`rr); }
+    }
+
+*/
+  }
+}

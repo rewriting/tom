@@ -1,0 +1,10 @@
+module polymorphism.Example
+      abstract syntax
+
+      A = a()
+      B = b1()
+        | b2()
+
+/*
+      Exp[C] = f(n:C)
+*/
