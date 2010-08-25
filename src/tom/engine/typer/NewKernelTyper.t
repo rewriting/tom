@@ -75,6 +75,9 @@ public class NewKernelTyper {
   private TomList varPatternList;
   // List for variables of subject and of numeric constraints
   private BQTermList varList;
+
+  //TODO improve detection of errors (when a type is not inferred)
+  //private BQTermList subjects;
   /*
    * pem: why use a state variable here ?
    */
@@ -319,11 +322,11 @@ matchBlock:
   protected void addBQTerm(BQTerm bqTerm) {
     varList = `concBQTerm(bqTerm,varList*);
   }
-
-  protected void addBQTermList(BQTermList BQTList) {
-    varList = `concBQTerm(BQTList*,varList*);
+/*
+  protected void addSubject(BQTerm bqVar) {
+    subjects = `concBQTerm(bqVar,subjects*);
   }
-
+*/
   /**
    * The method <code>resetVarPatternList</code> empties varPatternList after
    * checking if <code>varList</code> contains
@@ -350,6 +353,7 @@ matchBlock:
     freshTypeVarCounter = limTVarSymbolTable;
     varPatternList = `concTomTerm();
     varList = `concBQTerm();
+    //subjects = `concBQTerm();
     typeConstraints = `concTypeConstraint();
     substitutions = new HashMap<TomType,TomType>();
   }
@@ -395,7 +399,6 @@ matchBlock:
   public <T extends tom.library.sl.Visitable> T inferAllTypes(T term, TomType
       contextType) {
     try {
-      //DEBUG System.out.println("In inferALLTypes with term = " + term);
       return `TopDownStopOnSuccess(inferTypes(contextType,this)).visitLight(term); 
     } catch(tom.library.sl.VisitFailure e) {
       throw new TomRuntimeException("inferAllTypes: failure on " + term);
@@ -567,11 +570,6 @@ matchBlock:
     }
 
     visit BQTerm {
-      // We don't know what is into the Composite
-      // It can be a BQVariableStar or a list operator or a list of
-      // CompositeBQTerm or something else
-      Composite(_*) -> { contextType = `EmptyType(); }
-
       bqVar@(BQVariable|BQVariableStar)[Options=optionList,AstName=aName,AstType=aType] -> {
         //DEBUG System.out.println("InferTypes:BQTerm bqVar -- contextType = " +
         //DEBUG     contextType);
@@ -702,8 +700,10 @@ matchBlock:
       init();
       code =  collectKnownTypesFromCode(`code);
       code = inferAllTypes(code,`EmptyType());
+      //DEBUG System.out.println("typeConstraints = "+ typeConstraints);
       solveConstraints();
       code = replaceInCode(code);
+      //checkTypeOfBQVariables();
       replaceInSymbolTable();
       newCList = `concCode(code,newCList*);
     }
@@ -739,6 +739,8 @@ matchBlock:
             TomList TTList = varPatternList;
             `TopDownCollect(CollectVars(this)).visitLight(`constraint);
             Constraint newConstraint = inferConstraint(`constraint);
+            //DEBUG System.out.println("inferConstraintInstructionList: action " +
+            //DEBUG     `action);
             Instruction newAction = `inferAllTypes(action,EmptyType());
             varPatternList = TTList;
             newCIList =
@@ -806,6 +808,11 @@ matchBlock:
         addConstraint(`Equation(tPattern,tSubject,getInfoFromTomTerm(pattern)));
         TomTerm newPattern = `inferAllTypes(pattern,tPattern);
         BQTerm newSubject = `inferAllTypes(subject,tSubject);
+        /*
+        %match(newSubject) {
+          BQVariable[AstType=TypeVar(_,_)] -> { addSubject(newSubject); }
+        }
+        */
         hasUndeclaredType(newSubject);
         return `MatchConstraint(newPattern,newSubject);
       }
@@ -916,7 +923,7 @@ matchBlock:
         return newSList.reverse(); 
       }
 
-      Symbol[AstName=symName,TypesToType=TypesToType(concTomType(headTTList,_*),Type(tomCodomain,tlCodomain)),PairNameDeclList=pNDList,Options=oList] -> {
+      Symbol[AstName=symName,TypesToType=TypesToType(concTomType(headTTList,_*),Type(tomCodomain,tlCodomain))] -> {
         TomTerm argTerm;
         if(TomBase.isListOperator(`tSymbol) || TomBase.isArrayOperator(`tSymbol)) {
           TomSymbol argSymb;
@@ -962,23 +969,14 @@ matchBlock:
         } else {
           // In case of a function
           // Case CT-FUN rule (applying to premises):
-          if(`pNDList.length() != sList.length()) {
-            Option option = TomBase.findOriginTracking(`oList);
-            %match(option) {
-              OriginTracking(_,line,fileName) -> {
-                TomMessage.error(logger,`fileName, `line,
-                    TomMessage.symbolNumberArgument,`symName.getString(),`pNDList.length(),sList.length());
-              }
-            }
-          } else {
-            TomName argName;
-            for (Slot slot : sList.getCollectionconcSlot()) {
-              argName = slot.getSlotName();
-              argType = TomBase.getSlotType(tSymbol,argName);
-              argTerm = `inferAllTypes(slot.getAppl(),argType);
-              newSList = `concSlot(PairSlotAppl(argName,argTerm),newSList*);
-              //DEBUG System.out.println("InferSlotList CT-FUN -- end of for with slotappl = " + `argTerm);
-            }
+
+          TomName argName;
+          for (Slot slot : sList.getCollectionconcSlot()) {
+            argName = slot.getSlotName();
+            argType = TomBase.getSlotType(tSymbol,argName);
+            argTerm = `inferAllTypes(slot.getAppl(),argType);
+            newSList = `concSlot(PairSlotAppl(argName,argTerm),newSList*);
+            //DEBUG System.out.println("InferSlotList CT-FUN -- end of for with slotappl = " + `argTerm);
           }
         }
         return newSList.reverse(); 
@@ -1045,6 +1043,12 @@ matchBlock:
             argSymb = getSymbolFromTerm(argTerm);
             if(!(TomBase.isListOperator(`argSymb) || TomBase.isArrayOperator(`argSymb))) {
               %match(argTerm) {
+                Composite(_*) -> {
+                  // We don't know what is into the Composite
+                  // It can be a BQVariableStar or a list operator or a list of
+                  // CompositeBQTerm or something else
+                  argType = `EmptyType();
+                }
                 BQVariableStar[] -> {
                   // Case CT-STAR rule (applying to premises):
                   argType = `TypeWithSymbol(tomCodomain,tlCodomain,symName);
@@ -1094,6 +1098,8 @@ matchBlock:
           } else {
             for (BQTerm argTerm : bqTList.getCollectionconcBQTerm()) {
               argType = symDomain.getHeadconcTomType();
+              //DEBUG System.out.println("InferBQTermList CT-FUN -- domainType = " +
+              //DEBUG     `argType);
               argTerm = `inferAllTypes(argTerm,argType);
               newBQTList = `concBQTerm(argTerm,newBQTList*);
               symDomain = symDomain.getTailconcTomType();
@@ -1341,6 +1347,7 @@ matchBlockFail :
     Code replacedCode = code;
     try {
       replacedCode = `InnermostId(replaceFreshTypeVar(this)).visitLight(code);
+      //`InnermostId(checkTypeOfBQVariables(this)).visitLight(code);
     } catch(tom.library.sl.VisitFailure e) {
       throw new TomRuntimeException("replaceInCode: failure on " +
           replacedCode);
@@ -1375,6 +1382,38 @@ matchBlockFail :
       }
     }
   }
+/*
+  %strategy checkTypeOfBQVariables(nkt:NewKernelTyper) extends Identity() {
+    visit Constraint {
+      MatchConstraint(_,BQVariable[Options=oList,AstName=Name(name),AstType=TypeVar(_,_)]) -> {
+        Option option = TomBase.findOriginTracking(`oList);
+        %match(option) {
+          OriginTracking(_,line,fileName) -> {
+            TomMessage.error(logger,`fileName, `line,
+                TomMessage.cannotGuessMatchType,`name); 
+          }
+        }
+      }
+    }
+  }
+
+  private void checkTypeOfBQVariables() {
+    for(BQTerm bqTerm : subjects.getCollectionconcBQTerm()) {
+      %match {
+        BQVariable[Options=oList,AstName=Name(name),AstType=typeVar@TypeVar(_,_)]
+          << bqTerm -> {
+            Option option = TomBase.findOriginTracking(`oList);
+            %match(option) {
+              OriginTracking(_,line,fileName) -> {
+                TomMessage.error(logger,`fileName, `line,
+                    TomMessage.cannotGuessMatchType,`name); 
+              }
+            }
+          }
+      }
+    }
+  }
+*/
 
   public void printGeneratedConstraints(TypeConstraintList TCList) {
     %match(TCList) {
