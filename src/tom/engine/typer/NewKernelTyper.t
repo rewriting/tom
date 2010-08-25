@@ -916,15 +916,13 @@ matchBlock:
         return newSList.reverse(); 
       }
 
-      Symbol[AstName=symName,TypesToType=TypesToType(concTomType(headTTList,_*),Type(tomCodomain,tlCodomain))] -> {
-        TomName argName;
+      Symbol[AstName=symName,TypesToType=TypesToType(concTomType(headTTList,_*),Type(tomCodomain,tlCodomain)),PairNameDeclList=pNDList,Options=oList] -> {
         TomTerm argTerm;
-        TomSymbol argSymb;
-        for (Slot slot : sList.getCollectionconcSlot()) {
-          argName = slot.getSlotName();
-          argTerm = slot.getAppl();
-          argSymb = getSymbolFromTerm(argTerm);
-          if(TomBase.isListOperator(`tSymbol) || TomBase.isArrayOperator(`tSymbol)) {
+        if(TomBase.isListOperator(`tSymbol) || TomBase.isArrayOperator(`tSymbol)) {
+          TomSymbol argSymb;
+          for (Slot slot : sList.getCollectionconcSlot()) {
+            argTerm = slot.getAppl();
+            argSymb = getSymbolFromTerm(argTerm);
             if(!(TomBase.isListOperator(`argSymb) || TomBase.isArrayOperator(`argSymb))) {
               %match(argTerm) {
                 VariableStar[] -> {
@@ -959,14 +957,28 @@ matchBlock:
 
             // Case CT-MERGE rule (applying to premises):
             argTerm = `inferAllTypes(argTerm,argType);
-            newSList = `concSlot(PairSlotAppl(argName,argTerm),newSList*);
+            newSList = `concSlot(PairSlotAppl(slot.getSlotName(),argTerm),newSList*);
+          }
+        } else {
+          // In case of a function
+          // Case CT-FUN rule (applying to premises):
+          if(`pNDList.length() != sList.length()) {
+            Option option = TomBase.findOriginTracking(`oList);
+            %match(option) {
+              OriginTracking(_,line,fileName) -> {
+                TomMessage.error(logger,`fileName, `line,
+                    TomMessage.symbolNumberArgument,`symName.getString(),`pNDList.length(),sList.length());
+              }
+            }
           } else {
-            // In case of a function
-            // Case CT-FUN rule (applying to premises):
-            argType = TomBase.getSlotType(tSymbol,argName);
-            argTerm = `inferAllTypes(argTerm,argType);
-            newSList = `concSlot(PairSlotAppl(argName,argTerm),newSList*);
-            //DEBUG System.out.println("InferSlotList CT-FUN -- end of for with slotappl = " + `argTerm);
+            TomName argName;
+            for (Slot slot : sList.getCollectionconcSlot()) {
+              argName = slot.getSlotName();
+              argType = TomBase.getSlotType(tSymbol,argName);
+              argTerm = `inferAllTypes(slot.getAppl(),argType);
+              newSList = `concSlot(PairSlotAppl(argName,argTerm),newSList*);
+              //DEBUG System.out.println("InferSlotList CT-FUN -- end of for with slotappl = " + `argTerm);
+            }
           }
         }
         return newSList.reverse(); 
@@ -1025,12 +1037,12 @@ matchBlock:
         return newBQTList.reverse(); 
       }
 
-      Symbol[AstName=symName,TypesToType=TypesToType(domain@concTomType(headTTList,_*),Type(tomCodomain,tlCodomain))] -> {
+      Symbol[AstName=symName,TypesToType=TypesToType(domain@concTomType(headTTList,_*),Type(tomCodomain,tlCodomain)),PairNameDeclList=pNDList,Options=oList] -> {
         TomTypeList symDomain = `domain;
         TomSymbol argSymb;
-        for (BQTerm argTerm : `bqTList.getCollectionconcBQTerm()) {
-          argSymb = getSymbolFromTerm(argTerm);
-          if(TomBase.isListOperator(`tSymbol) || TomBase.isArrayOperator(`tSymbol)) {
+        if(TomBase.isListOperator(`tSymbol) || TomBase.isArrayOperator(`tSymbol)) {
+          for (BQTerm argTerm : bqTList.getCollectionconcBQTerm()) {
+            argSymb = getSymbolFromTerm(argTerm);
             if(!(TomBase.isListOperator(`argSymb) || TomBase.isArrayOperator(`argSymb))) {
               %match(argTerm) {
                 BQVariableStar[] -> {
@@ -1067,14 +1079,26 @@ matchBlock:
             // Case CT-MERGE rule (applying to premises):
             argTerm = `inferAllTypes(argTerm,argType);
             newBQTList = `concBQTerm(argTerm,newBQTList*);
+          }
+        } else {
+          // In case of a function
+          // Case CT-FUN rule (applying to premises):
+          if(`pNDList.length() != bqTList.length()) {
+            Option option = TomBase.findOriginTracking(`oList);
+            %match(option) {
+              OriginTracking(_,line,fileName) -> {
+                TomMessage.error(logger,`fileName, `line,
+                    TomMessage.symbolNumberArgument,`symName.getString(),`pNDList.length(),bqTList.length());
+              }
+            }
           } else {
-            // In case of a function
-            // Case CT-FUN rule (applying to premises):
-            argType = symDomain.getHeadconcTomType();
-            argTerm = `inferAllTypes(argTerm,argType);
-            newBQTList = `concBQTerm(argTerm,newBQTList*);
-            symDomain = symDomain.getTailconcTomType();
-            //DEBUG System.out.println("InferSlotList CT-FUN -- end of for with slotappl = " + `argTerm);
+            for (BQTerm argTerm : bqTList.getCollectionconcBQTerm()) {
+              argType = symDomain.getHeadconcTomType();
+              argTerm = `inferAllTypes(argTerm,argType);
+              newBQTList = `concBQTerm(argTerm,newBQTList*);
+              symDomain = symDomain.getTailconcTomType();
+              //DEBUG System.out.println("InferBQTermList CT-FUN -- end of for with bqappl = " + `argTerm);
+            }
           }
         }
         return newBQTList.reverse(); 

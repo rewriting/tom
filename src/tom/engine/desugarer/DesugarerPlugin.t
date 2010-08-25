@@ -274,29 +274,21 @@ public class DesugarerPlugin extends TomGenericPlugin {
       }
     } else {
       PairNameDeclList pairNameDeclList = tomSymbol.getPairNameDeclList();
-
-      if(pairNameDeclList.length() != args.length()) {
-        TomMessage.error(logger,getStreamManager().getInputFileName(),TomBase.findOriginTracking(option).getLine(),
-            TomMessage.symbolNumberArgument, opName, pairNameDeclList.length(), args.length());
-      } else {
-
-        for(TomTerm arg:(concTomTerm)args) {
-          try {
-            TomTerm subterm = `TopDownIdStopOnSuccess(replaceTermApplTomSyntax(this)).visitLight(arg);
-            TomName slotName = pairNameDeclList.getHeadconcPairNameDecl().getSlotName();
-            /*
-             * we cannot optimize when subterm.isUnamedVariable
-             * since it can be constrained
-             */	  
-            slotList = `concSlot(slotList*,PairSlotAppl(slotName,subterm));
-            pairNameDeclList = pairNameDeclList.getTailconcPairNameDecl();
-          } catch(tom.library.sl.VisitFailure e) {
-            System.out.println("should not be there");
-          }
+      for(TomTerm arg:(concTomTerm)args) {
+        try {
+          TomTerm subterm = `TopDownIdStopOnSuccess(replaceTermApplTomSyntax(this)).visitLight(arg);
+          TomName slotName = pairNameDeclList.getHeadconcPairNameDecl().getSlotName();
+          /*
+           * we cannot optimize when subterm.isUnamedVariable
+           * since it can be constrained
+           */	  
+          slotList = `concSlot(slotList*,PairSlotAppl(slotName,subterm));
+          pairNameDeclList = pairNameDeclList.getTailconcPairNameDecl();
+        } catch(tom.library.sl.VisitFailure e) {
+          System.out.println("should not be there");
         }
       }
     }
-
     return `RecordAppl(option,nameList,slotList,constraints);
   }
 

@@ -360,8 +360,6 @@ public class TomMessage extends BasicPlatformMessage {
       new TomMessage("[] are not allowed on lists or arrays, see ''{0}''");
   public static final TomMessage slotRepeated=
       new TomMessage("Same slot names can not be used several times in symbol ''{0}'': Repeated slot Name : ''{1}''");
-  public static final TomMessage symbolNumberArgument    =
-      new TomMessage("Bad number of arguments for symbol ''{0}'': {1,number,integer} argument(s) required but {2,number,integer} found");
   public static final TomMessage invalidVariableStarArgument=
     new TomMessage("{0} is not allowed in non list symbol ");
   public static final TomMessage ambigousSymbolWithoutConstructor=
@@ -374,6 +372,8 @@ public class TomMessage extends BasicPlatformMessage {
     new TomMessage("Incompatible types ''{0}'' and ''{1}'' for symbol ''{2}''.");
   public static final TomMessage unknownSymbol=
       new TomMessage("Unknown symbol ''{0}''");
+  public static final TomMessage symbolNumberArgument    =
+      new TomMessage("Bad number of arguments for symbol ''{0}'': {1,number,integer} argument(s) required but {2,number,integer} found");
 
   //strategy
   public static final TomMessage invalidStrategyName =
