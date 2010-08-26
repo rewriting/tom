@@ -76,8 +76,6 @@ public class NewKernelTyper {
   // List for variables of subject and of numeric constraints
   private BQTermList varList;
 
-  //TODO improve detection of errors (when a type is not inferred)
-  //private BQTermList subjects;
   /*
    * pem: why use a state variable here ?
    */
@@ -322,11 +320,7 @@ matchBlock:
   protected void addBQTerm(BQTerm bqTerm) {
     varList = `concBQTerm(bqTerm,varList*);
   }
-/*
-  protected void addSubject(BQTerm bqVar) {
-    subjects = `concBQTerm(bqVar,subjects*);
-  }
-*/
+
   /**
    * The method <code>resetVarPatternList</code> empties varPatternList after
    * checking if <code>varList</code> contains
@@ -353,7 +347,6 @@ matchBlock:
     freshTypeVarCounter = limTVarSymbolTable;
     varPatternList = `concTomTerm();
     varList = `concBQTerm();
-    //subjects = `concBQTerm();
     typeConstraints = `concTypeConstraint();
     substitutions = new HashMap<TomType,TomType>();
   }
@@ -570,6 +563,26 @@ matchBlock:
     }
 
     visit BQTerm {
+      Composite(_*,_,_*,_,_*) -> { 
+        /*
+         * We don't know what is into the Composite
+         * If it is a "composed" Composite with more than one element and
+         * representing the argument of a BQAppl "f", so we can not give the same
+         * type of the domain of "f" for all elements of the Composite
+         * e.g.:
+         *    `b(n.getvalue()) is represented by
+         * BQAppl(
+         *    concOption(...),
+         *    Name("b"),
+         *    concBQTerm(
+         *      Composite(
+         *        CompositeBQTerm(BQVariable(concOption(...),Name("n"),TypeVar("unknown type",0))),
+         *        CompositeTL(ITL(".")),
+         *        CompositeBQTerm(Composite(CompositeBQTerm(BQAppl(concOption(...),Name("getvalue"),concBQTerm())))))))
+         */
+        contextType = `EmptyType(); 
+      }
+
       bqVar@(BQVariable|BQVariableStar)[Options=optionList,AstName=aName,AstType=aType] -> {
         //DEBUG System.out.println("InferTypes:BQTerm bqVar -- contextType = " +
         //DEBUG     contextType);
@@ -583,7 +596,6 @@ matchBlock:
       BQAppl[Options=optionList,AstName=aName@Name(name),Args=bqTList] -> {
         //DEBUG System.out.println("\n Test pour BQTerm-inferTypes in BQAppl. tomName = " + `name);
         TomSymbol tSymbol = nkt.getSymbolFromName(`name);
-        //DEBUG System.out.println("\n Test pour BQTerm-inferTypes in BQAppl. tSymbol = "+ tSymbol);
         if (tSymbol == null) {
           //The contextType is used here, so it must be a ground type, not a
           //type variable
@@ -700,10 +712,8 @@ matchBlock:
       init();
       code =  collectKnownTypesFromCode(`code);
       code = inferAllTypes(code,`EmptyType());
-      //DEBUG System.out.println("typeConstraints = "+ typeConstraints);
       solveConstraints();
       code = replaceInCode(code);
-      //checkTypeOfBQVariables();
       replaceInSymbolTable();
       newCList = `concCode(code,newCList*);
     }
@@ -808,11 +818,6 @@ matchBlock:
         addConstraint(`Equation(tPattern,tSubject,getInfoFromTomTerm(pattern)));
         TomTerm newPattern = `inferAllTypes(pattern,tPattern);
         BQTerm newSubject = `inferAllTypes(subject,tSubject);
-        /*
-        %match(newSubject) {
-          BQVariable[AstType=TypeVar(_,_)] -> { addSubject(newSubject); }
-        }
-        */
         hasUndeclaredType(newSubject);
         return `MatchConstraint(newPattern,newSubject);
       }
@@ -1043,12 +1048,6 @@ matchBlock:
             argSymb = getSymbolFromTerm(argTerm);
             if(!(TomBase.isListOperator(`argSymb) || TomBase.isArrayOperator(`argSymb))) {
               %match(argTerm) {
-                Composite(_*) -> {
-                  // We don't know what is into the Composite
-                  // It can be a BQVariableStar or a list operator or a list of
-                  // CompositeBQTerm or something else
-                  argType = `EmptyType();
-                }
                 BQVariableStar[] -> {
                   // Case CT-STAR rule (applying to premises):
                   argType = `TypeWithSymbol(tomCodomain,tlCodomain,symName);
@@ -1098,8 +1097,6 @@ matchBlock:
           } else {
             for (BQTerm argTerm : bqTList.getCollectionconcBQTerm()) {
               argType = symDomain.getHeadconcTomType();
-              //DEBUG System.out.println("InferBQTermList CT-FUN -- domainType = " +
-              //DEBUG     `argType);
               argTerm = `inferAllTypes(argTerm,argType);
               newBQTList = `concBQTerm(argTerm,newBQTList*);
               symDomain = symDomain.getTailconcTomType();
@@ -1347,7 +1344,7 @@ matchBlockFail :
     Code replacedCode = code;
     try {
       replacedCode = `InnermostId(replaceFreshTypeVar(this)).visitLight(code);
-      //`InnermostId(checkTypeOfBQVariables(this)).visitLight(code);
+      `InnermostId(checkTypeOfBQVariables(this)).visitLight(replacedCode);
     } catch(tom.library.sl.VisitFailure e) {
       throw new TomRuntimeException("replaceInCode: failure on " +
           replacedCode);
@@ -1382,10 +1379,11 @@ matchBlockFail :
       }
     }
   }
-/*
+
+
   %strategy checkTypeOfBQVariables(nkt:NewKernelTyper) extends Identity() {
     visit Constraint {
-      MatchConstraint(_,BQVariable[Options=oList,AstName=Name(name),AstType=TypeVar(_,_)]) -> {
+      MatchConstraint(Variable[],BQVariable[Options=oList,AstName=Name(name),AstType=TypeVar(_,_)]) -> {
         Option option = TomBase.findOriginTracking(`oList);
         %match(option) {
           OriginTracking(_,line,fileName) -> {
@@ -1396,25 +1394,7 @@ matchBlockFail :
       }
     }
   }
-
-  private void checkTypeOfBQVariables() {
-    for(BQTerm bqTerm : subjects.getCollectionconcBQTerm()) {
-      %match {
-        BQVariable[Options=oList,AstName=Name(name),AstType=typeVar@TypeVar(_,_)]
-          << bqTerm -> {
-            Option option = TomBase.findOriginTracking(`oList);
-            %match(option) {
-              OriginTracking(_,line,fileName) -> {
-                TomMessage.error(logger,`fileName, `line,
-                    TomMessage.cannotGuessMatchType,`name); 
-              }
-            }
-          }
-      }
-    }
-  }
-*/
-
+  
   public void printGeneratedConstraints(TypeConstraintList TCList) {
     %match(TCList) {
       !concTypeConstraint() -> { 

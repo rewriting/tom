@@ -4,6 +4,7 @@ module polymorphism.Example
       A = a()
       B = b1()
         | b2()
+      Exp = f(n:A)
 
 /*
       Exp[C] = f(n:C)
