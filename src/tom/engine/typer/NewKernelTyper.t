@@ -563,26 +563,6 @@ matchBlock:
     }
 
     visit BQTerm {
-      Composite(_*,_,_*,_,_*) -> { 
-        /*
-         * We don't know what is into the Composite
-         * If it is a "composed" Composite with more than one element and
-         * representing the argument of a BQAppl "f", so we can not give the same
-         * type of the domain of "f" for all elements of the Composite
-         * e.g.:
-         *    `b(n.getvalue()) is represented by
-         * BQAppl(
-         *    concOption(...),
-         *    Name("b"),
-         *    concBQTerm(
-         *      Composite(
-         *        CompositeBQTerm(BQVariable(concOption(...),Name("n"),TypeVar("unknown type",0))),
-         *        CompositeTL(ITL(".")),
-         *        CompositeBQTerm(Composite(CompositeBQTerm(BQAppl(concOption(...),Name("getvalue"),concBQTerm())))))))
-         */
-        contextType = `EmptyType(); 
-      }
-
       bqVar@(BQVariable|BQVariableStar)[Options=optionList,AstName=aName,AstType=aType] -> {
         //DEBUG System.out.println("InferTypes:BQTerm bqVar -- contextType = " +
         //DEBUG     contextType);
@@ -1048,6 +1028,13 @@ matchBlock:
             argSymb = getSymbolFromTerm(argTerm);
             if(!(TomBase.isListOperator(`argSymb) || TomBase.isArrayOperator(`argSymb))) {
               %match(argTerm) {
+                Composite(_*) -> {
+                  // We don't know what is into the Composite
+                  // It can be a BQVariableStar or a list operator or a list of
+                  // CompositeBQTerm or something else
+                  argType = `EmptyType();
+                }
+
                 BQVariableStar[] -> {
                   // Case CT-STAR rule (applying to premises):
                   argType = `TypeWithSymbol(tomCodomain,tlCodomain,symName);
@@ -1097,6 +1084,25 @@ matchBlock:
           } else {
             for (BQTerm argTerm : bqTList.getCollectionconcBQTerm()) {
               argType = symDomain.getHeadconcTomType();
+              %match(argTerm) {
+                /*
+                 * We don't know what is into the Composite
+                 * If it is a "composed" Composite with more than one element and
+                 * representing the argument of a BQAppl "f", so we can not give the same
+                 * type of the domain of "f" for all elements of the Composite
+                 * e.g.:
+                 *    `b(n.getvalue()) is represented by
+                 * BQAppl(
+                 *    concOption(...),
+                 *    Name("b"),
+                 *    concBQTerm(
+                 *      Composite(
+                 *        CompositeBQTerm(BQVariable(concOption(...),Name("n"),TypeVar("unknown type",0))),
+                 *        CompositeTL(ITL(".")),
+                 *        CompositeBQTerm(Composite(CompositeBQTerm(BQAppl(concOption(...),Name("getvalue"),concBQTerm())))))))
+                 */
+                Composite(_*,_,_*,_,_*) -> { argType = `EmptyType(); }
+              }
               argTerm = `inferAllTypes(argTerm,argType);
               newBQTList = `concBQTerm(argTerm,newBQTList*);
               symDomain = symDomain.getTailconcTomType();
