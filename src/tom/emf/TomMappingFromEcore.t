@@ -82,11 +82,6 @@ public class TomMappingFromEcore {
   private static boolean append = false;
 
   /**
-   * true if the constructor method used by all mappings is already generated
-   */
-  private static boolean constructor = false;
-
-  /**
    * A dictionnary linking a class with his generated type name
    */
   private final static HashMap<Class<?>, String> types = new HashMap<Class<?>, String>();
@@ -135,7 +130,7 @@ public class TomMappingFromEcore {
         String[] decl = getClassDeclarations(eclf); // [canonical name, anonymous generic, generic type]
         out.println(%[
             %typeterm @n@ {
-              implement { @(eclf instanceof EClass && !EObject.class.isAssignableFrom(c) ? "EObject" : decl[0] + decl[2])@ }
+              implement { @(eclf instanceof EClass && !EObject.class.isAssignableFrom(c) ? "org.eclipse.emf.ecore.EObject" : decl[0] + decl[2])@ }
               is_sort(t) { @(c.isPrimitive() ? "true" : "$t instanceof " + decl[0] + decl[1])@ }
               equals(l1,l2) { @(c.isPrimitive() ? "$l1 == $l2" : "$l1.equals($l2)")@ }
             }
@@ -300,37 +295,34 @@ public class TomMappingFromEcore {
         String[] decl = getClassDeclarations(sf.getEType()); // [canonical name, anonymous generic, generic type]
 
         String inst = (EObject.class.isAssignableFrom(sf.getEType()
-            .getInstanceClass()) ? decl[0] + decl[2] : "EObject");
+            .getInstanceClass()) ? decl[0] + decl[2] : "org.eclipse.emf.ecore.EObject");
 
         out.println(%[
             %typeterm @name@ {
-              implement { EList<@inst@> }
-              is_sort(t) { $t instanceof EList<?> && 
-                           (((EList<@inst@>)$t).size() == 0 
-                         || (((EList<@inst@>)$t).size()>0 && ((EList<@inst@>)$t).get(0) instanceof @(decl[0]+decl[1])@)) }
+              implement { org.eclipse.emf.common.util.EList<@inst@> }
+              is_sort(t) { $t instanceof org.eclipse.emf.common.util.EList<?> && 
+                           (((org.eclipse.emf.common.util.EList<@inst@>)$t).size() == 0 
+                         || (((org.eclipse.emf.common.util.EList<@inst@>)$t).size()>0 && ((org.eclipse.emf.common.util.EList<@inst@>)$t).get(0) instanceof @(decl[0]+decl[1])@)) }
               equals(l1,l2) { $l1.equals($l2) }
             }
 
             %oparray @name@ @name@ ( @simplename@* ) {
-              is_fsym(t) { $t instanceof EList<?> 
+              is_fsym(t) { $t instanceof org.eclipse.emf.common.util.EList<?> 
                         && ($t.size() == 0 || ($t.size()>0
                             && $t.get(0) instanceof @(decl[0]+decl[1])@)) }
-              make_empty(n) { new BasicEList<@inst@>($n) }
-              make_append(e,l) { append($e,$l) }
+              make_empty(n) { new org.eclipse.emf.common.util.BasicEList<@inst@>($n) }
+              make_append(e,l) { append@name@($e,$l) }
               get_element(l,n) { $l.get($n) }
               get_size(l)      { $l.size() }
             }
             ]%);
 
-        if(!append) {
           out.println(%[
-              private static <O> EList<O> append(O e,EList<O> l) {
+              private static <O> org.eclipse.emf.common.util.EList<O> append@name@(O e,org.eclipse.emf.common.util.EList<O> l) {
                 l.add(e);
                 return l;
               }
               ]%);
-          append = true;
-        }
 
         lists.add(c);
       }
@@ -447,7 +439,7 @@ public class TomMappingFromEcore {
             s_types.append(sfname + " : " + getType(sf) + ", ");
             String[] decl = getClassDeclarations(type); // [canonical name, anonymous generic, generic type]
             s_types2.append(", "
-                + (sf.isMany() ? "EList<" + decl[0] + decl[2] + ">" : decl[0] + decl[2])
+                + (sf.isMany() ? "org.eclipse.emf.common.util.EList<" + decl[0] + decl[2] + ">" : decl[0] + decl[2])
                 + " " + sfname);
             s.append(", " + sfname);
             s2.append(", $" + sfname);
@@ -455,10 +447,10 @@ public class TomMappingFromEcore {
                 .getCanonicalName();
             if(type instanceof EClass
                 && !EObject.class.isAssignableFrom(type.getInstanceClass())) {
-              na = "EObject";
+              na = "org.eclipse.emf.ecore.EObject";
             }
             if(sf.isMany()) {
-              na = "EList<" + na + ">";
+              na = "org.eclipse.emf.common.util.EList<" + na + ">";
             }
             s_gets.append("  get_slot(" + sfname + ", t)  { (" + na
                 + ")$t.eGet($t.eClass().getEStructuralFeature(\"" + sf.getName()
@@ -484,17 +476,16 @@ public class TomMappingFromEcore {
                 is_fsym(t) { $t instanceof @(decl[0]+decl[1])@ }
                 @s_gets@
                 make(@(s.length() <= 2 ? "" : s.substring(2))@) {
-                  construct((@(EObject.class.isAssignableFrom(ecl.getInstanceClass()) ? 
-                        ecl.getInstanceClass().getCanonicalName() : "EObject")@)
+                  construct@cr@((@(EObject.class.isAssignableFrom(ecl.getInstanceClass()) ? 
+                        ecl.getInstanceClass().getCanonicalName() : "org.eclipse.emf.ecore.EObject")@)
                         @o1@.eINSTANCE.create(
                         (EClass)@o2@.eINSTANCE.getEClassifier("@ecl.getName()@")),
                          new Object[]{ @(s2.length() <= 2 ? "" : s2.substring(2))@ }) }
                 }
                 ]%);
 
-          if(!constructor) {
             out.print(%[
-              public static <O extends EObject> O construct(O o, Object[] objs) {
+              public static <O extends org.eclipse.emf.ecore.EObject> O construct@cr@(O o, Object[] objs) {
                 int i=0;
                 EList<EStructuralFeature> sfes = o.eClass().getEAllStructuralFeatures();
                 for(EStructuralFeature esf : sfes) {
@@ -506,8 +497,6 @@ public class TomMappingFromEcore {
                 return o;
               }
               ]%);
-            constructor = true;
-          }
         }
       } else if(eclf instanceof EEnum) {
         EEnum en = (EEnum) eclf;
@@ -523,7 +512,8 @@ public class TomMappingFromEcore {
 
           out.println(%[
               %op @cr@ @lit.getLiteral()@() {
-                is_fsym(t) { /*enum*/ $t instanceof @(decl[0]+decl[1])@ }
+                is_fsym(t) { t == @(decl[0]+decl[1])@.get("@lit.getLiteral()@") }
+
                 make() { (@(decl[0]+decl[2])@)@o1@.eINSTANCE.createFromString(
                   (EDataType)@o2@.eINSTANCE.get@toUpperName(cr)@(), "@lit.getLiteral()@") }
               }

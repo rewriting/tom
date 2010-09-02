@@ -583,6 +583,7 @@
     <!-- tom library -->
     <jar jarfile="${stable.dist.lib}/runtime/tom-runtime.jar" update="yes">
       <fileset dir="${stable.build}" includes="tom/library/**/*.class"/>
+      <fileset dir="${stable.build}" includes="tom/emf/**/EcoreContainmentIntrospector.class"/>
     </jar>
     <jar jarfile="${stable.dist.lib}/tom/plugin-platform.jar"
       update="yes">
@@ -598,11 +599,6 @@
       update="yes">
       <fileset dir="${stable.build}" includes="tom/gom/**/*.class"/>
       <fileset dir="${stable.src}" includes="tom/gom/**/*.properties"/>
-    </jar>
-    <jar jarfile="${stable.dist.lib}/tom/emf.jar"
-      update="yes">
-      <fileset dir="${stable.build}" includes="tom/emf/**/*.class"/>
-      <fileset dir="${stable.src}" includes="tom/emf/**/*.properties"/>
     </jar>
 
     <!-- tom share -->
@@ -782,6 +778,11 @@
     <jar jarfile="${src.dist.lib}/runtime/Bytecode-${src.version}.jar">
       <fileset dir="${src.build}" includes="tom/library/adt/bytecode/**/*.class"/>
     </jar>
+    <jar jarfile="${src.dist.lib}/runtime/emf-${src.version}.jar"
+      update="yes">
+      <fileset dir="${src.build}" includes="tom/emf/**/*.class"/>
+      <fileset dir="${src.src}" includes="tom/emf/**/*.properties"/>
+    </jar>
 
     <jar jarfile="${src.dist.lib}/tom/TomSignature-${src.version}.jar">
       <fileset dir="${src.build}" includes="tom/engine/adt/**/*.class"/>
@@ -810,11 +811,6 @@
         includes="tom/gom/**/*.class"
         excludes="tom/gom/adt/**/*.class"/>
       <fileset dir="${src.src}" includes="gom/**/*.properties"/>
-    </jar>
-    <jar jarfile="${src.dist.lib}/tom/emf-${src.version}.jar"
-      update="yes">
-      <fileset dir="${src.build}" includes="tom/emf/**/*.class"/>
-      <fileset dir="${src.src}" includes="tom/emf/**/*.properties"/>
     </jar>
     <jar jarfile="${src.dist.lib}/tom/GomADT-${src.version}.jar">
       <fileset dir="${src.build}" includes="tom/gom/adt/**/*.class"/>
