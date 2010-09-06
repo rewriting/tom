@@ -583,7 +583,7 @@
     <!-- tom library -->
     <jar jarfile="${stable.dist.lib}/runtime/tom-runtime.jar" update="yes">
       <fileset dir="${stable.build}" includes="tom/library/**/*.class"/>
-      <fileset dir="${stable.build}" includes="tom/emf/**/EcoreContainmentIntrospector.class"/>
+      <!--fileset dir="${stable.build}" includes="tom/emf/**/EcoreContainmentIntrospector.class"/-->
     </jar>
     <jar jarfile="${stable.dist.lib}/tom/plugin-platform.jar"
       update="yes">
