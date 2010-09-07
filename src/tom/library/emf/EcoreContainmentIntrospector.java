@@ -187,7 +187,9 @@ public class EcoreContainmentIntrospector implements Introspector {
 			if (feature.getUpperBound() == -1) {
 				// in case of a list feature: add each object to its list
 				List<EObject> list = (List<EObject>) eo.eGet(feature);
-				list.add((EObject) objs[i]);
+        if (objs[i]!=null) {
+          list.add((EObject) objs[i]);
+        }
 			} else
 				eo.eSet(l.get(i).eContainingFeature(), objs[i]);
 		}
