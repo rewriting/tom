@@ -60,7 +60,7 @@ public class SymbolTable {
   private final static String TYPE_INT_ARRAY = "intarray";
   private final static String INT_ARRAY_OP   = "concInt";
 
-  public final static TomType TYPE_UNKNOWN   = `Type("unknown type",EmptyTargetLanguageType());
+  public final static TomType TYPE_UNKNOWN   = `Type(concTypeOption(),"unknown type",EmptyTargetLanguageType());
 
   /** associate a symbol to a name */
   private Map<String,TomSymbol> mapSymbolName = null;
@@ -216,19 +216,19 @@ public class SymbolTable {
   }
 
   public TomType getIntType() {
-    return ASTFactory.makeType(TYPE_INT,"int");
+    return ASTFactory.makeType(`concTypeOption(),TYPE_INT,"int");
   }
 
   public TomType getIntArrayType() {
-    return ASTFactory.makeType(TYPE_INT_ARRAY,"int[]");
+    return ASTFactory.makeType(`concTypeOption(),TYPE_INT_ARRAY,"int[]");
   }
 
   public TomType getLongType() {
-    return ASTFactory.makeType(TYPE_LONG,"long");
+    return ASTFactory.makeType(`concTypeOption(),TYPE_LONG,"long");
   }
 
   public TomType getFloatType() {
-    return ASTFactory.makeType(TYPE_FLOAT,"float");
+    return ASTFactory.makeType(`concTypeOption(),TYPE_FLOAT,"float");
   }
 
   public TomType getCharType() {
@@ -236,7 +236,7 @@ public class SymbolTable {
     if(pCode) {
       type = "str";
     }
-    return ASTFactory.makeType(TYPE_CHAR,type);
+    return ASTFactory.makeType(`concTypeOption(),TYPE_CHAR,type);
   }
 
   public TomType getDoubleType() {
@@ -244,7 +244,7 @@ public class SymbolTable {
     if(pCode) {
       type = "float";
     }
-    return ASTFactory.makeType(TYPE_DOUBLE,type);
+    return ASTFactory.makeType(`concTypeOption(),TYPE_DOUBLE,type);
   }
 
   public TomType getBooleanType() {
@@ -256,7 +256,7 @@ public class SymbolTable {
     } else if(pCode) {
       type = "bool";
     } 
-    return ASTFactory.makeType(TYPE_BOOLEAN,type);
+    return ASTFactory.makeType(`concTypeOption(),TYPE_BOOLEAN,type);
   }
 
   public TomType getStringType() {
@@ -266,7 +266,7 @@ public class SymbolTable {
     } else if(pCode) {
       type = "str";
     } 
-    return ASTFactory.makeType(TYPE_STRING,type);
+    return ASTFactory.makeType(`concTypeOption(),TYPE_STRING,type);
   }
 
   public TomType getUniversalType() {
@@ -278,7 +278,7 @@ public class SymbolTable {
     } else if(pCode) {
       type = "None";
     }
-    return ASTFactory.makeType(TYPE_UNIVERSAL,type);
+    return ASTFactory.makeType(`concTypeOption(),TYPE_UNIVERSAL,type);
   }
 
   public TomType getVoidType() {
@@ -288,7 +288,7 @@ public class SymbolTable {
     } else if(pCode) {
       type = "function";
     }
-    return ASTFactory.makeType(TYPE_VOID,type);
+    return ASTFactory.makeType(`concTypeOption(),TYPE_VOID,type);
   }
 
   public boolean isIntType(String type) {
@@ -328,7 +328,7 @@ public class SymbolTable {
   }
   
   public boolean isUnknownType(String type) {
-    return `Type(type,EmptyTargetLanguageType()).equals(TYPE_UNKNOWN);
+    return `Type(concTypeOption(),type,EmptyTargetLanguageType()).equals(TYPE_UNKNOWN);
   }
 
   public String builtinToWrapper(String type) {
@@ -357,7 +357,7 @@ public class SymbolTable {
 
   public boolean isNumericType(TomType type) {    
     %match(type) {
-      Type(str,EmptyTargetLanguageType()) -> {
+      Type[TomType=str,TlType=EmptyTargetLanguageType()] -> {
         return isNumericType(`str);
       }
     }

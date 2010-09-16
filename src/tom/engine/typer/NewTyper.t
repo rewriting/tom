@@ -116,6 +116,7 @@ public class NewTyper extends TomGenericPlugin {
     boolean lazyType = getOptionBooleanValue("lazyType");
 
     if(newtyper) {
+        System.out.println("\nNew typer activated!\n");
  
       Code typedCode = null;
       try {
@@ -133,7 +134,7 @@ public class NewTyper extends TomGenericPlugin {
          */
         //typedCode = collectKnownTypesFromCode((Code)getWorkingTerm());
 
-        //DEBUG System.out.println("\nCode before type inference = \n" + typedCode);
+        System.out.println("\nCode before type inference = \n" + typedCode);
 
         /**
          * Start by typing variables with fresh type variables
@@ -142,7 +143,7 @@ public class NewTyper extends TomGenericPlugin {
         //typedCode = newKernelTyper.inferCode((Code)getWorkingTerm());
         typedCode =
           newKernelTyper.inferAllTypes((Code)getWorkingTerm(),`EmptyType());
-        //DEBUG System.out.println("\nCode after type inference before desugarString = \n" + typedCode);
+        System.out.println("\nCode after type inference before desugarString = \n" + typedCode);
 
         /**
          * Replace all remains of type variables by
@@ -214,7 +215,7 @@ public class NewTyper extends TomGenericPlugin {
    */
   %strategy CollectKnownTypes(typer:NewTyper,nkt:NewKernelTyper) extends Identity() {
     visit TomType {
-      Type(tomType,EmptyTargetLanguageType()) -> {
+      Type[TomType=tomType,TlType=EmptyTargetLanguageType()] -> {
         TomType newType = null;
         newType = nkt.getSymbolTable().getType(`tomType);
         if (newType == null) {
@@ -324,7 +325,7 @@ public class NewTyper extends TomGenericPlugin {
   %strategy replaceFreshTypeVar() extends Identity() {
     visit TomType {
       TypeVar(tomType,_) -> {
-        return `Type(tomType,EmptyTargetLanguageType());
+        return `Type(concTypeOption(),tomType,EmptyTargetLanguageType());
       }    
     }
   }

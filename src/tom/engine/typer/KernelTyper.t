@@ -183,7 +183,7 @@ public class KernelTyper {
 
     visit TomType {
       // Type(_,EmptyTargetLanguageType()) are expanded
-      subject@Type(tomType,EmptyTargetLanguageType()) -> {
+      subject@Type[TomType=tomType,TlType=EmptyTargetLanguageType()] -> {
         TomType type = kernelTyper.getType(`tomType);
         if(type != null) {
           return type;
@@ -243,7 +243,7 @@ public class KernelTyper {
         }
       }
 
-      var@Variable[AstType=Type(tomType,EmptyTargetLanguageType()),Constraints=constraints] -> {
+      var@Variable[AstType=Type[TomType=tomType,TlType=EmptyTargetLanguageType()],Constraints=constraints] -> {
         TomType localType = kernelTyper.getType(`tomType);
         //System.out.println("localType = " + localType);
         if(localType != null) {
@@ -252,13 +252,21 @@ public class KernelTyper {
         }
 
         //System.out.println("contextType = " + contextType);
+        //TODO delete TypeWithSymbol and this variable
         %match(contextType) {
-          (Type|TypeWithSymbol)[TomType=tomType,TlType=tlType] -> {
-            TomType ctype = `Type(tomType,tlType);
+          Type[TypeOptions=tOptions,TomType=tomType,TlType=tlType] -> {
+            TomType ctype = `Type(tOptions,tomType,tlType);
             ConstraintList newConstraints = kernelTyper.typeVariable(ctype,`constraints);
             TomTerm newVar = `var.setAstType(ctype);
             //System.out.println("newVar = " + newVar);
             return newVar.setConstraints(newConstraints);
+          }
+          TypeWithSymbol[TomType=tomType,TlType=tlType] -> {
+              TomType ctype = `Type(concTypeOption(),tomType,tlType);
+              ConstraintList newConstraints = kernelTyper.typeVariable(ctype,`constraints);
+              TomTerm newVar = `var.setAstType(ctype);
+              //System.out.println("newVar = " + newVar);
+              return newVar.setConstraints(newConstraints);
           }
         }
       }
@@ -283,7 +291,7 @@ public class KernelTyper {
         }
       }
 
-      var@BQVariable[AstType=Type(tomType,EmptyTargetLanguageType())] -> {
+      var@BQVariable[AstType=Type[TomType=tomType,TlType=EmptyTargetLanguageType()]] -> {
         TomType localType = kernelTyper.getType(`tomType);
         //System.out.println("localType = " + localType);
         if(localType != null) {
@@ -292,9 +300,14 @@ public class KernelTyper {
         }
 
         //System.out.println("contextType = " + contextType);
+        //TODO delete TypeWithSymbol and this variable
         %match(contextType) {
-          (Type|TypeWithSymbol)[TomType=tomType,TlType=tlType] -> {
-            TomType ctype = `Type(tomType,tlType);
+          Type[TypeOptions=tOptions,TomType=tomType,TlType=tlType] -> {
+            TomType ctype = `Type(tOptions,tomType,tlType);
+            return `var.setAstType(ctype);
+          }
+          TypeWithSymbol[TomType=tomType,TlType=tlType] -> {
+            TomType ctype = `Type(concTypeOption(),tomType,tlType);
             return `var.setAstType(ctype);
           }
         }
@@ -470,7 +483,7 @@ matchL:  %match(subject,s) {
         return `concBQTerm(typeVariable(EmptyType(),head),sl*);
       }
 
-      symb@Symbol[AstName=symbolName,TypesToType=TypesToType(_,Type(tomCodomain,tlCodomain))],
+      symb@Symbol[AstName=symbolName,TypesToType=TypesToType(_,Type[TomType=tomCodomain,TlType=tlCodomain])],
         concBQTerm(head,tail*) -> {
           //System.out.println("codomain = " + `codomain);
           // process a list of subterms and a list of types
@@ -536,7 +549,7 @@ matchL:  %match(subject,s) {
         return `concSlot(PairSlotAppl(slotName,typeVariable(EmptyType(),slotAppl)),sl*);
       }
 
-      symb@Symbol[AstName=symbolName,TypesToType=TypesToType(typelist,codomain@Type(tomCodomain,tlCodomain))],
+      symb@Symbol[AstName=symbolName,TypesToType=TypesToType(typelist,codomain@Type[TomType=tomCodomain,TlType=tlCodomain])],
         concSlot(PairSlotAppl(slotName,slotAppl),tail*) -> {
           //System.out.println("codomain = " + `codomain);
           // process a list of subterms and a list of types

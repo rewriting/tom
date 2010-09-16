@@ -679,7 +679,7 @@ public abstract class AbstractGenerator {
       }
 
       GetImplementationDecl(BQVariable[AstName=Name(name),
-          AstType=Type(type,tlType@TLType[])],
+          AstType=Type[TomType=type,TlType=tlType@TLType[]]],
           instr, _) -> {
         if(getSymbolTable(moduleName).isUsedSymbolDestructor(`name)) {
           `buildGetImplementationDecl(deep, type, name, tlType, instr, moduleName);
@@ -705,8 +705,8 @@ public abstract class AbstractGenerator {
           return;
         }
 
-      EqualTermDecl(BQVariable[AstName=Name(name1), AstType=Type(type1,_)],
-          BQVariable[AstName=Name(name2), AstType=Type(type2,_)],
+      EqualTermDecl(BQVariable[AstName=Name(name1), AstType=Type[TomType=type1]],
+          BQVariable[AstName=Name(name2), AstType=Type[TomType=type2]],
           code, _) -> {
         if(getSymbolTable(moduleName).isUsedType(`type1)) {
           `buildEqualTermDecl(deep, name1, name2, type1, type2, code, moduleName);
@@ -714,7 +714,7 @@ public abstract class AbstractGenerator {
         return;
       }
 
-      IsSortDecl(BQVariable[AstName=Name(varName), AstType=Type(type,_)], expr, _) -> {
+      IsSortDecl(BQVariable[AstName=Name(varName), AstType=Type[TomType=type]], expr, _) -> {
         if(getSymbolTable(moduleName).isUsedType(`type)) {
           `buildIsSortDecl(deep, varName, type, expr, moduleName);
         }
@@ -723,7 +723,8 @@ public abstract class AbstractGenerator {
 
       GetHeadDecl[Opname=opNameAST@Name(opname),
         Codomain=Type[TlType=codomain],
-        Variable=BQVariable[AstName=Name(varName), AstType=Type(suffix,domain@TLType[])],
+        Variable=BQVariable[AstName=Name(varName),
+        AstType=Type[TomType=suffix,TlType=domain@TLType[]]],
         Expr=expr] -> {
           if(getSymbolTable(moduleName).isUsedSymbolConstructor(`opname) 
            ||getSymbolTable(moduleName).isUsedSymbolDestructor(`opname)) {
@@ -733,7 +734,8 @@ public abstract class AbstractGenerator {
         }
 
       GetTailDecl[Opname=opNameAST@Name(opname),
-        Variable=BQVariable[AstName=Name(varName), AstType=Type(type,tlType@TLType[])],
+        Variable=BQVariable[AstName=Name(varName),
+        AstType=Type[TomType=type,TlType=tlType@TLType[]]],
         Expr=expr] -> {
           if(getSymbolTable(moduleName).isUsedSymbolConstructor(`opname) 
               ||getSymbolTable(moduleName).isUsedSymbolDestructor(`opname)) {
@@ -743,7 +745,8 @@ public abstract class AbstractGenerator {
         }
 
       IsEmptyDecl[Opname=opNameAST@Name(opname),
-        Variable=BQVariable[AstName=Name(varName), AstType=Type(type,tlType@TLType[])],
+        Variable=BQVariable[AstName=Name(varName),
+        AstType=Type[TomType=type,TlType=tlType@TLType[]]],
         Expr=expr] -> {
           if(getSymbolTable(moduleName).isUsedSymbolConstructor(`opname) 
               ||getSymbolTable(moduleName).isUsedSymbolDestructor(`opname)) {
@@ -785,7 +788,7 @@ public abstract class AbstractGenerator {
 
       GetSizeDecl[Opname=opNameAST@Name(opname),
         Variable=BQVariable[AstName=Name(name),
-        AstType=Type(type,TLType[])],
+        AstType=Type[TomType=type,TlType=TLType[]]],
         Expr=code] -> {
           if(getSymbolTable(moduleName).isUsedSymbolDestructor(`opname)) {
             `buildGetSizeDecl(deep, opNameAST, name, type, code, moduleName);
