@@ -123,7 +123,7 @@ public class CSharpGenerator extends CFamilyGenerator {
 
       // test if the argument is a Strategy
       %match(type) {
-        Type("Strategy", _) -> {
+        Type[TomType="Strategy"] -> {
           stratChild.add(Integer.valueOf(index));
         }
       }
@@ -134,7 +134,7 @@ public class CSharpGenerator extends CFamilyGenerator {
     output.write(deep, modifier + "class " + tomName);
     //write extends
 		%match(extendsType) {
-			Type(code,EmptyTargetLanguageType()) -> {
+			Type[TomType=code,TlType=EmptyTargetLanguageType()] -> {
 				output.write(deep," : " + `code);
 			}
     }

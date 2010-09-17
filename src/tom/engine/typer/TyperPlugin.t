@@ -178,11 +178,11 @@ public class TyperPlugin extends TomGenericPlugin {
 
   %strategy FindEmptyTLType(typer:TyperPlugin) extends Identity() {
     visit TomType {
-      Type(tomType,EmptyTargetLanguageType()) -> {
+      Type[TomType=tomType,TlType=EmptyTargetLanguageType()] -> {
         TomType newType = null;
         newType = typer.getSymbolTable().getType(`tomType);
         %match(newType) {
-         Type(_,EmptyTargetLanguageType()) -> {
+         Type[TlType=EmptyTargetLanguageType()] -> {
           System.out.println("Found an EmptyTargetLanguageType!!");
 
          }

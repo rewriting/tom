@@ -233,8 +233,8 @@ public class ASTFactory {
     return `OriginTracking(Name(name), line, fileName);
   }
 
-  public static TomType makeType(String typeNameTom, String typeNametGL) {
-    return `Type(typeNameTom,TLType(typeNametGL));
+  public static TomType makeType(TypeOptionList tOptionList, String typeNameTom, String typeNametGL) {
+    return `Type(tOptionList,typeNameTom,TLType(typeNametGL));
   }
 
     /*
@@ -244,9 +244,10 @@ public class ASTFactory {
   private static void makeSortSymbol(SymbolTable symbolTable,
                              String sort,
                              String value, List optionList) {
+    TypeOptionList tOptionList = `concTypeOption();
     TomTypeList typeList = `concTomType();
     PairNameDeclList pairSlotDeclList = `concPairNameDecl();
-    TomSymbol astSymbol = makeSymbol(value,`Type(sort,EmptyTargetLanguageType()),typeList,pairSlotDeclList,optionList);
+    TomSymbol astSymbol = makeSymbol(value,`Type(tOptionList,sort,EmptyTargetLanguageType()),typeList,pairSlotDeclList,optionList);
     symbolTable.putSymbol(value,astSymbol);
   }
 

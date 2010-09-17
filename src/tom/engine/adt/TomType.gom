@@ -8,7 +8,7 @@ TomType =
          * @param TomType the name of the Tom sort name
          * @param TlType either TLType(String) or EmptyType()
          */
-        | Type(TomType:String,TlType:TargetLanguageType)
+        | Type(TypeOptions:TypeOptionList,TomType:String,TlType:TargetLanguageType)
         /**
          * Codomain is used by SymbolTable and TomParserPlugin
          * define a type as the same type as another symbol
@@ -40,6 +40,11 @@ TomType =
          * @param Index the fresh variable to an unknown Tom sort
          */
         | TypeVar(TomType:String,Index:int)
+
+TypeOption = WithSymbol(RootSymbolName:TomName)
+           | Subtype(TomType:String)
+
+TypeOptionList = concTypeOption(TypeOption*)
 
 TargetLanguageType = TLType(String:String)
          | EmptyTargetLanguageType()

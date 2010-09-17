@@ -127,7 +127,7 @@ public class NewKernelTyper {
   protected TomSymbol getSymbolFromType(TomType tType) {
     %match(tType) {
        TypeWithSymbol[TomType=tomType, TlType=tlType] -> {
-         return TomBase.getSymbolFromType(`Type(tomType,tlType), symbolTable); 
+         return TomBase.getSymbolFromType(`Type(concTypeOption(),tomType,tlType), symbolTable); 
        }
     }
     return TomBase.getSymbolFromType(tType,symbolTable); 
@@ -137,7 +137,7 @@ public class NewKernelTyper {
    * The method <code>addSubstitution</code> adds a substitutions (i.e. a pair
    * (type1,type2) where type2 is the substitution for type1) into the
    * global list "substitutions" and saturate it.
-   * For example, to add a pair (X,T) where X is a type variable and T is a type
+   * For example, to add a pair (X,Y) where X is a type variable and Y is a type
    * which can be a type variable or a ground type, we follow two steps:
    * <p>
    * STEP 1:  a) put(X,Z) if (Y,Z) is in substitutions or
@@ -371,7 +371,7 @@ matchBlock:
    */
   %strategy CollectKnownTypes(nkt:NewKernelTyper) extends Identity() {
     visit TomType {
-      Type(tomType,EmptyTargetLanguageType()) -> {
+      Type[TomType=tomType,TlType=EmptyTargetLanguageType()] -> {
         TomType newType = nkt.symbolTable.getType(`tomType);
         if (newType == null) {
           // This happens when :
@@ -908,7 +908,7 @@ matchBlock:
         return newSList.reverse(); 
       }
 
-      Symbol[AstName=symName,TypesToType=TypesToType(concTomType(headTTList,_*),Type(tomCodomain,tlCodomain))] -> {
+      Symbol[AstName=symName,TypesToType=TypesToType(concTomType(headTTList,_*),Type[TomType=tomCodomain,TlType=tlCodomain])] -> {
         TomTerm argTerm;
         if(TomBase.isListOperator(`tSymbol) || TomBase.isArrayOperator(`tSymbol)) {
           TomSymbol argSymb;
@@ -1020,7 +1020,7 @@ matchBlock:
         return newBQTList.reverse(); 
       }
 
-      Symbol[AstName=symName,TypesToType=TypesToType(domain@concTomType(headTTList,_*),Type(tomCodomain,tlCodomain)),PairNameDeclList=pNDList,Options=oList] -> {
+      Symbol[AstName=symName,TypesToType=TypesToType(domain@concTomType(headTTList,_*),Type[TomType=tomCodomain,TlType=tlCodomain]),PairNameDeclList=pNDList,Options=oList] -> {
         TomTypeList symDomain = `domain;
         TomSymbol argSymb;
         if(TomBase.isListOperator(`tSymbol) || TomBase.isArrayOperator(`tSymbol)) {
@@ -1260,7 +1260,7 @@ matchBlockAdd :
   }
 
   /**
-   * The method <code>detectFail</code> is generated from a strategy wich
+   * The method <code>detectFail</code> is generated from a strategy which
    * tries to solve all type constraints collected during the inference
    * <p> 
    * There exists 3 kinds of types : variable types Ai, ground types Ti and

@@ -324,7 +324,7 @@ public class BackendPlugin extends TomGenericPlugin {
     }
 
     visit TomType {
-      Type(type,_) -> {
+      Type[TomType=type] -> {
         try {
           String moduleName = stack.peek();
           bp.setUsedType(moduleName,`type,markStrategy);
@@ -408,7 +408,7 @@ public class BackendPlugin extends TomGenericPlugin {
         }
       }
 
-      IsSortDecl[TermArg=BQVariable[AstType=Type(type,_)],Expr=Code(code)] -> {
+      IsSortDecl[TermArg=BQVariable[AstType=Type[TomType=type]],Expr=Code(code)] -> {
         try {
           String moduleName = stack.peek();
           bp.getSymbolTable(moduleName).putIsSort(`type,`code);
@@ -417,7 +417,7 @@ public class BackendPlugin extends TomGenericPlugin {
         }
       }
 
-      EqualTermDecl[TermArg1=BQVariable[AstType=Type(type,_)],Expr=Code(code)] -> {
+      EqualTermDecl[TermArg1=BQVariable[AstType=Type[TomType=type]],Expr=Code(code)] -> {
         try {
           String moduleName = stack.peek();
           bp.getSymbolTable(moduleName).putEqualTerm(`type,`code);

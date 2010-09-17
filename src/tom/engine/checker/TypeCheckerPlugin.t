@@ -342,7 +342,7 @@ public class TypeCheckerPlugin extends TomGenericPlugin {
       TomMessage.error(getLogger(),null,0,TomMessage.emptyStrategy);
     }
     %match(list) {
-      concTomVisit(_*,VisitTerm(Type(strVisitType,EmptyTargetLanguageType()),_,optionList),_*) -> {
+      concTomVisit(_*,VisitTerm(Type[TomType=strVisitType,TlType=EmptyTargetLanguageType()],_,optionList),_*) -> {
         TomMessage.error(getLogger(),
             findOriginTrackingFileName(`optionList),
             findOriginTrackingLine(`optionList),

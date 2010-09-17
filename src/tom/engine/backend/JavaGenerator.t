@@ -130,7 +130,7 @@ public class JavaGenerator extends CFamilyGenerator {
 
       // test if the argument is a Strategy
       %match(type) {
-        Type("Strategy", _) -> {
+        Type[TomType="Strategy"] -> {
           stratChild.add(Integer.valueOf(index));
         }
       }
@@ -142,12 +142,12 @@ public class JavaGenerator extends CFamilyGenerator {
     //write extends
 matchblock: {
               %match(extendsType) {
-			Type(_,TLType(code)) -> {
+			Type[TlType=TLType(code)] -> {
 				output.write(deep," extends " + `code);
         break matchblock;
 			}
 
-			Type(code,EmptyTargetLanguageType()) -> {
+			Type[TomType=code,TlType=EmptyTargetLanguageType()] -> {
 				output.write(deep," extends " + `code);
         break matchblock;
 			}
@@ -277,12 +277,12 @@ matchblock: {
     output.writeln(deep,")");
 matchblock: {
     %match(throwsType) {
-			Type(_,TLType(code)) -> {
+			Type[TlType=TLType(code)] -> {
 				output.write(deep," throws " + `code);
         break matchblock;
 			}
 
-			Type(code,EmptyTargetLanguageType()) -> {
+			Type[TomType=code,TlType=EmptyTargetLanguageType()] -> {
 				output.write(deep," throws " + `code);
         break matchblock;
 			}
