@@ -346,7 +346,7 @@ public abstract class AbstractGenerator {
         `buildExpEqualBQTerm(deep, type, exp1, exp2, moduleName);
         return;
       }
-      IsSort((Type|TypeWithSymbol)[TomType=type], exp) -> {
+      IsSort(Type[TomType=type], exp) -> {
         `buildExpIsSort(deep,type,exp,moduleName);
         return;
       }
@@ -356,7 +356,7 @@ public abstract class AbstractGenerator {
         return;
       }
 
-      Cast((Type|TypeWithSymbol)[TlType=tlType@TLType[]],exp) -> {
+      Cast(Type[TlType=tlType@TLType[]],exp) -> {
         buildExpCast(deep, `tlType, `exp, moduleName);
         return;
       }
@@ -500,12 +500,12 @@ public abstract class AbstractGenerator {
         return;
       }
 
-      Let(var@(BQVariable|BQVariableStar)[Options=optionList,AstType=(Type|TypeWithSymbol)[TlType=tlType]],exp,body) -> {
+      Let(var@(BQVariable|BQVariableStar)[Options=optionList,AstType=Type[TlType=tlType]],exp,body) -> {
         `buildLet(deep, var, optionList, tlType, exp, body, moduleName);
         return;
       }
 
-      LetRef(var@(BQVariable|BQVariableStar)[Options=optionList,AstType=(Type|TypeWithSymbol)[TlType=tlType]],exp,body) -> {
+      LetRef(var@(BQVariable|BQVariableStar)[Options=optionList,AstType=Type[TlType=tlType]],exp,body) -> {
         `buildLetRef(deep, var, optionList, tlType, exp, body, moduleName);
         return;
       }

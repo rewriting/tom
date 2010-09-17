@@ -28,13 +28,6 @@ TomType =
          */
         | EmptyType()
         /**
-         * TypeWithSymbol
-         * @param TomType the name of the Tom sort name
-         * @param TlType either TLType(String) or EmptyTargetLanguageType()
-         * @param RootSymbolName the name of the head symbol  
-         */
-        | TypeWithSymbol(TomType:String,TlType:TargetLanguageType,RootSymbolName:TomName)
-        /**
          * TypeVar
          * @param TomType the name of the Tom sort name
          * @param Index the fresh variable to an unknown Tom sort

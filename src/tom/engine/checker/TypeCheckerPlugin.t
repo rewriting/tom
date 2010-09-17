@@ -294,7 +294,8 @@ public class TypeCheckerPlugin extends TomGenericPlugin {
         TomTerm var = map.get(name);
         TomType type1 = var.getAstType();
         TomType type2 = variable.getAstType();
-        // we use getTomType because type1 may be a TypeWithSymbol and type2 a TomType
+        // we use getTomType because type1 may be a
+        // Type(concTypeOption(WithSymbol(...)) and type2 a Type
         if(!TomBase.getTomType(type1).equals(TomBase.getTomType(type2))) {
           TomMessage.error(getLogger(),
               findOriginTrackingFileName(variable.getOptions()),
@@ -324,7 +325,8 @@ public class TypeCheckerPlugin extends TomGenericPlugin {
 
   %strategy checkVariableStar(tcp:TypeCheckerPlugin) extends Identity() {
     visit BQTerm {
-      (BuildAppendList|BuildAppendArray)[AstName=Name(listName),HeadTerm=BQVariableStar[Options=optionList,AstName=Name(variableName),AstType=TypeWithSymbol[RootSymbolName=Name(rootName)]]] -> {
+      (BuildAppendList|BuildAppendArray)[AstName=Name(listName),HeadTerm=BQVariableStar[Options=optionList,AstName=Name(variableName),AstType=Type[TypeOptions=tOptions]]]
+        && concTypeOption(_*,WithSymbol[RootSymbolName=Name(rootName)],_*) << tOptions -> {
         if(!`listName.equals(`rootName)) {
           TomMessage.error(tcp.getLogger(),
               tcp.findOriginTrackingFileName(`optionList),
