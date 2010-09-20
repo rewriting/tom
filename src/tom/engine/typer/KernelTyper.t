@@ -233,7 +233,7 @@ public class KernelTyper {
           //System.out.println("contextType = " + contextType);
 
           %match(contextType) {
-            type@(Type|TypeWithSymbol)[] -> {
+            type@Type[] -> {
               SlotList subterm = kernelTyper.typeVariableList(`EmptySymbol(), `slotList);
               ConstraintList newConstraints = kernelTyper.typeVariable(`type,`constraints);
               return `RecordAppl(optionList,nameList,subterm,newConstraints);
@@ -252,7 +252,6 @@ public class KernelTyper {
         }
 
         //System.out.println("contextType = " + contextType);
-        //TODO delete TypeWithSymbol and this variable
         %match(contextType) {
           Type[TypeOptions=tOptions,TomType=tomType,TlType=tlType] -> {
             TomType ctype = `Type(tOptions,tomType,tlType);
@@ -260,13 +259,6 @@ public class KernelTyper {
             TomTerm newVar = `var.setAstType(ctype);
             //System.out.println("newVar = " + newVar);
             return newVar.setConstraints(newConstraints);
-          }
-          TypeWithSymbol[TomType=tomType,TlType=tlType] -> {
-              TomType ctype = `Type(concTypeOption(),tomType,tlType);
-              ConstraintList newConstraints = kernelTyper.typeVariable(ctype,`constraints);
-              TomTerm newVar = `var.setAstType(ctype);
-              //System.out.println("newVar = " + newVar);
-              return newVar.setConstraints(newConstraints);
           }
         }
       }
@@ -283,7 +275,7 @@ public class KernelTyper {
           //System.out.println("contextType = " + contextType);
 
           %match(contextType) {
-            (Type|TypeWithSymbol)[] -> {
+            Type[] -> {
               BQTermList subterm = kernelTyper.typeVariableList(`EmptySymbol(), `args);
               return `BQAppl(optionList,name,subterm);
             }
@@ -300,14 +292,9 @@ public class KernelTyper {
         }
 
         //System.out.println("contextType = " + contextType);
-        //TODO delete TypeWithSymbol and this variable
         %match(contextType) {
           Type[TypeOptions=tOptions,TomType=tomType,TlType=tlType] -> {
             TomType ctype = `Type(tOptions,tomType,tlType);
-            return `var.setAstType(ctype);
-          }
-          TypeWithSymbol[TomType=tomType,TlType=tlType] -> {
-            TomType ctype = `Type(concTypeOption(),tomType,tlType);
             return `var.setAstType(ctype);
           }
         }
@@ -483,7 +470,7 @@ matchL:  %match(subject,s) {
         return `concBQTerm(typeVariable(EmptyType(),head),sl*);
       }
 
-      symb@Symbol[AstName=symbolName,TypesToType=TypesToType(_,Type[TomType=tomCodomain,TlType=tlCodomain])],
+      symb@Symbol[AstName=symbolName,TypesToType=TypesToType(_,Type[TypeOptions=tOptions,TomType=tomCodomain,TlType=tlCodomain])],
         concBQTerm(head,tail*) -> {
           //System.out.println("codomain = " + `codomain);
           // process a list of subterms and a list of types
@@ -506,7 +493,20 @@ matchL:  %match(subject,s) {
             %match(head) {
               BQVariableStar[Options=optionList,AstName=name] -> {
                 BQTermList sl = typeVariableList(`symb,`tail);
-                return `concBQTerm(BQVariableStar(optionList,name,TypeWithSymbol(tomCodomain,tlCodomain,symbolName)),sl*);
+                TypeOptionList newTOptions = `tOptions;
+                %match {
+                  concTypeOption(_*,WithSymbol[RootSymbolName=rsName],_*) <<
+                    tOptions && (rsName != symbolName) -> {
+                      throw new TomRuntimeException("typeVariableList: symbol '"
+                          + `symb + "' with more than one constructor (rootsymbolname)");
+                    }
+                  concTypeOption(_*,!WithSymbol[],_*) << tOptions -> {
+                    newTOptions =
+                      `concTypeOption(WithSymbol(symbolName),tOptions*);
+                  }
+                }
+                return
+                  `concBQTerm(BQVariableStar(optionList,name,Type(newTOptions,tomCodomain,tlCodomain)),sl*);
               }
               _ -> {
                 //we cannot know the type precisely (the var can be of domain or codomain type)
@@ -549,7 +549,7 @@ matchL:  %match(subject,s) {
         return `concSlot(PairSlotAppl(slotName,typeVariable(EmptyType(),slotAppl)),sl*);
       }
 
-      symb@Symbol[AstName=symbolName,TypesToType=TypesToType(typelist,codomain@Type[TomType=tomCodomain,TlType=tlCodomain])],
+      symb@Symbol[AstName=symbolName,TypesToType=TypesToType(typelist,codomain@Type[TypeOptions=tOptions,TomType=tomCodomain,TlType=tlCodomain])],
         concSlot(PairSlotAppl(slotName,slotAppl),tail*) -> {
           //System.out.println("codomain = " + `codomain);
           // process a list of subterms and a list of types
@@ -573,7 +573,20 @@ matchL:  %match(subject,s) {
               VariableStar[Options=optionList,AstName=name,Constraints=constraints] -> {
                 ConstraintList newconstraints = typeVariable(`codomain,`constraints);
                 SlotList sl = typeVariableList(`symb,`tail);
-                return `concSlot(PairSlotAppl(slotName,VariableStar(optionList,name,TypeWithSymbol(tomCodomain,tlCodomain,symbolName),newconstraints)),sl*);
+                TypeOptionList newTOptions = `tOptions;
+                %match {
+                  concTypeOption(_*,WithSymbol[RootSymbolName=rsName],_*) <<
+                    tOptions && (rsName != symbolName) -> {
+                      throw new TomRuntimeException("typeVariableList: symbol '"
+                          + `symb + "' with more than one constructor (rootsymbolname)");
+                    }
+                  concTypeOption(_*,!WithSymbol[],_*) << tOptions -> {
+                    newTOptions =
+                      `concTypeOption(WithSymbol(symbolName),tOptions*);
+                  }
+                }
+                return
+                  `concSlot(PairSlotAppl(slotName,VariableStar(optionList,name,Type(newTOptions,tomCodomain,tlCodomain),newconstraints)),sl*);
               }
 
               _ -> {

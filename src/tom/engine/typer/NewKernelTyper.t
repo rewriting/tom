@@ -125,11 +125,6 @@ public class NewKernelTyper {
    }
 
   protected TomSymbol getSymbolFromType(TomType tType) {
-    %match(tType) {
-       TypeWithSymbol[TomType=tomType, TlType=tlType] -> {
-         return TomBase.getSymbolFromType(`Type(concTypeOption(),tomType,tlType), symbolTable); 
-       }
-    }
     return TomBase.getSymbolFromType(tType,symbolTable); 
   }
 
@@ -908,7 +903,7 @@ matchBlock:
         return newSList.reverse(); 
       }
 
-      Symbol[AstName=symName,TypesToType=TypesToType(concTomType(headTTList,_*),Type[TomType=tomCodomain,TlType=tlCodomain])] -> {
+      Symbol[AstName=symName,TypesToType=TypesToType(concTomType(headTTList,_*),Type[TypeOptions=tOptions,TomType=tomCodomain,TlType=tlCodomain])] -> {
         TomTerm argTerm;
         if(TomBase.isListOperator(`tSymbol) || TomBase.isArrayOperator(`tSymbol)) {
           TomSymbol argSymb;
@@ -918,8 +913,22 @@ matchBlock:
             if(!(TomBase.isListOperator(`argSymb) || TomBase.isArrayOperator(`argSymb))) {
               %match(argTerm) {
                 VariableStar[] -> {
+                  TypeOptionList newTOptions = `tOptions;
+                  // Is this test really necessary?
+                  %match {
+                    concTypeOption(_*,WithSymbol[RootSymbolName=rsName],_*) <<
+                      tOptions && (rsName != symName) -> {
+                        throw new TomRuntimeException("typeVariableList: symbol '"
+                            + `tSymbol+ "' with more than one constructor (rootsymbolname)");
+                      }
+                    concTypeOption(_*,!WithSymbol[],_*) << tOptions -> {
+                      newTOptions =
+                        `concTypeOption(WithSymbol(symName),tOptions*);
+                    }
+                  }
+
                   // Case CT-STAR rule (applying to premises):
-                  argType = `TypeWithSymbol(tomCodomain,tlCodomain,symName);
+                  argType = `Type(newTOptions,tomCodomain,tlCodomain);
                 }
 
                 !VariableStar[] -> { 
@@ -1020,7 +1029,7 @@ matchBlock:
         return newBQTList.reverse(); 
       }
 
-      Symbol[AstName=symName,TypesToType=TypesToType(domain@concTomType(headTTList,_*),Type[TomType=tomCodomain,TlType=tlCodomain]),PairNameDeclList=pNDList,Options=oList] -> {
+      Symbol[AstName=symName,TypesToType=TypesToType(domain@concTomType(headTTList,_*),Type[TypeOptions=tOptions,TomType=tomCodomain,TlType=tlCodomain]),PairNameDeclList=pNDList,Options=oList] -> {
         TomTypeList symDomain = `domain;
         TomSymbol argSymb;
         if(TomBase.isListOperator(`tSymbol) || TomBase.isArrayOperator(`tSymbol)) {
@@ -1036,8 +1045,24 @@ matchBlock:
                 }
 
                 BQVariableStar[] -> {
+                  TypeOptionList newTOptions = `tOptions;
+                  // Is this test really necessary?
+                  %match {
+                    concTypeOption(_*,WithSymbol[RootSymbolName=rsName],_*) <<
+                      tOptions && (rsName != symName) -> {
+                        throw new TomRuntimeException("typeVariableList: symbol '"
+                            + `tSymbol+ "' with more than one constructor (rootsymbolname)");
+                      }
+                    concTypeOption(_*,!WithSymbol[],_*) << tOptions -> {
+                      newTOptions =
+                        `concTypeOption(WithSymbol(symName),tOptions*);
+                    }
+                  }
+
+
+
                   // Case CT-STAR rule (applying to premises):
-                  argType = `TypeWithSymbol(tomCodomain,tlCodomain,symName);
+                  argType = `Type(newTOptions,tomCodomain,tlCodomain);
                 }
 
                 //TO VERIFY : which constructors must be tested here?
@@ -1292,25 +1317,19 @@ matchBlockAdd :
 matchBlockFail : 
     {
       %match {
-        // CASE 1a and 3a :
-        Equation((Type|TypeWithSymbol)[TomType=tName1],Type[TomType=tName2@!tName1],_)
+        // CASE 1a, 2a and 3a :
+        Equation(Type[TomType=tName1],Type[TomType=tName2@!tName1],_)
           << tConstraint && (tName1 != "unknown type") && (tName2 != "unknown type")  -> {
             //DEBUG System.out.println("In solveConstraints 1a/3a -- tConstraint  = " + `tConstraint);
             printError(`tConstraint);
             break matchBlockFail;
           }
 
-        // CASE 2a :
-        Equation(Type[TomType=tName1],TypeWithSymbol[TomType=tName2@!tName1],_)
-          << tConstraint && (tName1 != "unknown type") && (tName2 != "unknown type")  -> {
-            //DEBUG System.out.println("In solveConstraints 2a -- tConstraint  = " + `tConstraint);
-            printError(`tConstraint);
-            break matchBlockFail;
-          }
-
         // CASE 4a :  
-        Equation(tLType1@TypeWithSymbol(_,_,_),tLType2@TypeWithSymbol(_,_,_),_)
-          << tConstraint && (tLType1 != tLType2)  -> {
+        Equation(Type[TypeOptions=tOptions1,TomType=tName1],Type[TypeOptions=tOptions2@!tOptions1,TomType=tName1],_)
+          << tConstraint
+          && concTypeOption(_*,WithSymbol[RootSymbolName=rsName1],_*) << tOptions1
+          && concTypeOption(_*,WithSymbol[RootSymbolName=rsName2@rsName1],_*) << tOptions2 -> {
             //DEBUG System.out.println("In solveConstraints 4a -- tConstraint  = " + `tConstraint);
             printError(`tConstraint);
             break matchBlockFail;
@@ -1329,8 +1348,8 @@ matchBlockFail :
   private void printError(TypeConstraint tConstraint) {
     %match {
       Equation[Type1=tType1,Type2=tType2,Info=info] << tConstraint &&
-        (Type|TypeWithSymbol)[TomType=tName1] << tType1 &&
-        (Type|TypeWithSymbol)[TomType=tName2] << tType2 &&
+        Type[TomType=tName1] << tType1 &&
+        Type[TomType=tName2] << tType2 &&
         PairNameOptions(Name(termName),optionList) << info
         -> {
           Option option = TomBase.findOriginTracking(`optionList);
