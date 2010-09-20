@@ -195,6 +195,8 @@ public class TomMessage extends BasicPlatformMessage {
       new TomMessage("Disjunction of patterns is deprecated and may be removed in a future version. Try to use disjunction of symbols instead ");
   public static final TomMessage invalidConstraintType =
       new TomMessage("Invalid Constraint type ");
+  public static final TomMessage typetermNotDefined =
+      new TomMessage("%typeterm is not defined for {0}");
 
   // checker.TomChecker
   public static final TomMessage findOTL               =

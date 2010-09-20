@@ -35,7 +35,7 @@ TomType =
         | TypeVar(TomType:String,Index:int)
 
 TypeOption = WithSymbol(RootSymbolName:TomName)
-           | Subtype(TomType:String)
+           | SubtypeDecl(TomType:String)
 
 TypeOptionList = concTypeOption(TypeOption*)
 

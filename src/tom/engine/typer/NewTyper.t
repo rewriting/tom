@@ -134,7 +134,7 @@ public class NewTyper extends TomGenericPlugin {
          */
         //typedCode = collectKnownTypesFromCode((Code)getWorkingTerm());
 
-        System.out.println("\nCode before type inference = \n" + typedCode);
+        //DEBUG System.out.println("\nCode before type inference = \n" + typedCode);
 
         /**
          * Start by typing variables with fresh type variables
@@ -143,7 +143,7 @@ public class NewTyper extends TomGenericPlugin {
         //typedCode = newKernelTyper.inferCode((Code)getWorkingTerm());
         typedCode =
           newKernelTyper.inferAllTypes((Code)getWorkingTerm(),`EmptyType());
-        System.out.println("\nCode after type inference before desugarString = \n" + typedCode);
+        //DEBUG System.out.println("\nCode after type inference before desugarString = \n" + typedCode);
 
         /**
          * Replace all remains of type variables by
