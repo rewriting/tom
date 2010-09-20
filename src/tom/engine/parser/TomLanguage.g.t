@@ -100,6 +100,10 @@ options{
         symbolTable.putType(name,type);
     }
 
+    private TomType getType(String name) {
+        return symbolTable.getType(name);
+    }
+
     private void putSymbol(String name, TomSymbol symbol) {
         symbolTable.putSymbol(name,symbol);
     }
@@ -1806,6 +1810,52 @@ operatorArray returns [Declaration result] throws TomException
             selector().pop();
         }
     ;
+
+subtypeConstruct throws TomException
+{
+    Option ot1 = null;
+    Option ot2 = null;
+
+    String subtypeName = null;
+    String supertypeName = null;
+}
+  :
+    subtype:ALL_ID
+    {
+        subtypeName = subtype.getText();
+        ot1 = `OriginTracking(Name(subtypeName), subtype.getLine(),currentFile());
+    }
+    LESS_CONSTRAINT
+    supertype:ALL_ID
+    {
+        supertypeName = supertype.getText();
+        ot2 = `OriginTracking(Name(supertypeName), supertype.getLine(),currentFile());
+    }
+{
+  TomType subAstType = getType(subtypeName);
+  TomType superAstType = getType(supertypeName);
+  if (subAstType != null && superAstType != null) {
+    %match(subAstType) {
+      Type[TypeOptions=tOptions,TlType=tlType] -> {
+        putType(subtypeName,`Type(concTypeOption(SubtypeDecl(supertypeName),tOptions*),subtypeName,tlType)); 
+      }
+    }
+  } else {
+    if (subAstType == null) {
+      TomMessage.error(getLogger(),currentFile(), getLine(),
+                      TomMessage.typetermNotDefined, 
+                      subtypeName); 
+    }
+    if (superAstType == null) {
+      TomMessage.error(getLogger(),currentFile(), getLine(),
+                      TomMessage.typetermNotDefined, 
+                      supertypeName); 
+    }
+  }
+  selector().pop();
+}
+  ;
+    
 
 typeTerm returns [Declaration result] throws TomException
 {
