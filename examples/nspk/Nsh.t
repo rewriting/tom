@@ -286,11 +286,20 @@ public class Nsh {
       // sender waits a message from y(or I) with the nonce N(x,y)(or N(x,I))
 
       // initiator 1
+      /*
       state(
           concAgent(E1*,agent(x,SLEEP(),_),E2*),
           dst@concAgent(_*,agent(y,_,_),_*),
           I,
-          M) && maxMessagesInNetwork > int sizeMessage(M) -> {        
+          M) && maxMessagesInNetwork > int sizeMessage(M) 
+      */
+      // Without explicit type declaration "int" for sizeMessage
+      state(
+          concAgent(E1*,agent(x,SLEEP(),_),E2*),
+          dst@concAgent(_*,agent(y,_,_),_*),
+          I,
+          M) && maxMessagesInNetwork > sizeMessage(M)
+      -> {        
           State state = `state(
               concAgent(E1*,agent(x,WAIT(),N(x,y)),E2*),
               dst,I,
@@ -299,11 +308,20 @@ public class Nsh {
           fire[1]++;        
       } 
       // initiator 1
+      /*
       state(
           concAgent(E1*,agent(x,SLEEP(),_),E2*),
           D, 
           intru@intruder(w,_,_),
-          M) && maxMessagesInNetwork > int sizeMessage(M) -> {
+          M) && maxMessagesInNetwork > int sizeMessage(M)
+          */
+      // Without explicit type declaration "int" for sizeMessage
+     state(
+          concAgent(E1*,agent(x,SLEEP(),_),E2*),
+          D, 
+          intru@intruder(w,_,_),
+          M) && maxMessagesInNetwork > sizeMessage(M)
+       -> {
           State state = `state(
               concAgent(E1*,agent(x,WAIT(),N(x,w)),E2*),
               D,intru,
@@ -444,11 +462,18 @@ public class Nsh {
       //		  (random) agents from E and D
       // !! allow dupplicates in the network (in the list version)
 
+      /*
       state(
           E, D,
           intru@intruder(w,_,concMessage(_*,msg(_,_,K(z),N(n1,n3),N(n2,n4),A(v)),_*)),
           M) && maxMessagesInNetwork > int sizeMessage(M) &&  concAgent(_*,agent(t,_,_),_*) << concAgent(E*,D*)
-        -> {
+      */
+      // Without explicit type declaration "int" for sizeMessage
+      state(
+          E, D,
+          intru@intruder(w,_,concMessage(_*,msg(_,_,K(z),N(n1,n3),N(n2,n4),A(v)),_*)),
+          M) && maxMessagesInNetwork > sizeMessage(M) &&  concAgent(_*,agent(t,_,_),_*) << concAgent(E*,D*)
+      -> {
           //RK
         Message message = `msg(w,t,K(z),N(n1,n3),N(n2,n4),A(v));
         if(!existMessage(message,`M)) {
@@ -468,6 +493,7 @@ public class Nsh {
       //		  (random) address --> A(xadd)
       // !! allow dupplicates in the network (in the list version)
 
+      /*
       state(
           E, D,
           intru@intruder(w,listNonce,_),
@@ -477,6 +503,17 @@ public class Nsh {
              && concAgent(_*,agent(xadd,_,_),_*) <<  subjectED
              && concNonce(_*,init,_*) << listNonce
              && concNonce(_*,resp,_*) << listNonce      
+      */
+      // Without explicit type declaration "int" for sizeMessage
+      state(
+          E, D,
+          intru@intruder(w,listNonce,_),
+          M) && maxMessagesInNetwork > sizeMessage(M) 
+             && subjectED << concAgent(E*,D*)
+             && concAgent(_*,agent(y,_,_),_*) <<  subjectED
+             && concAgent(_*,agent(xadd,_,_),_*) <<  subjectED
+             && concNonce(_*,init,_*) << listNonce
+             && concNonce(_*,resp,_*) << listNonce
           -> {
 //        if(sizeMessage(`M) < maxMessagesInNetwork) {
 //          ListAgent subjectED = `concAgent(E*,D*);
