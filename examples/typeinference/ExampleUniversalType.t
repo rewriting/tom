@@ -10,7 +10,7 @@ public class ExampleUniversalType{
   public static void main(String[] args) {
     ExampleUniversalType test = new ExampleUniversalType();
     %match {
-      a() << B test() -> { System.out.println("test OK!"); }
+      a() << Term test() -> { System.out.println("test OK!"); }
     }
   }
 
