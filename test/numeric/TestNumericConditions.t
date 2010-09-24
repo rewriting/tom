@@ -174,7 +174,9 @@ public class TestNumericConditions {
   @Test
   public void test13() {
     %match(f(a(),6)) {
-      f(_x,y) && y > int getIntegerValue() -> {        
+      //f(_x,y) && y > int getIntegerValue() -> { 
+      // Without explicity type declaration "int" for getIntegerValue
+      f(_x,y) && y > getIntegerValue() -> {        
         return;
       }
     }
@@ -184,7 +186,9 @@ public class TestNumericConditions {
   @Test
   public void test14() {
     %match(f(a(),6)) {
-      f(_x,y) && y == int getIntegerValue() -> {        
+      //f(_x,y) && y == int getIntegerValue() -> {
+      // Without explicity type declaration "int" for getIntegerValue
+      f(_x,y) && y == getIntegerValue()-> {        
         fail();
       }
     }
@@ -195,7 +199,9 @@ public class TestNumericConditions {
   public void test15() {
     int m = 6;
     %match(f(a(),6)) {
-      f(_x,y) && y == int m -> {        
+      //f(_x,y) && y == int m -> {        
+      // Without explicity type declaration "int" for m 
+      f(_x,y) && y == m -> {        
         return;
       }
     }
