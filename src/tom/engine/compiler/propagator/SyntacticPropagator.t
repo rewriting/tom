@@ -95,7 +95,7 @@ public class SyntacticPropagator implements IBasePropagator {
        * if the symbol was annotated, annotations are detached:
        *        a@...b@f(...) << t -> f(...) << t /\ a << t /\ ... /\ b << t
        */
-      m@MatchConstraint(RecordAppl(options,nameList@concTomName(firstName@Name(tomName),_*),slots,_),g@!SymbolOf[]) -> {
+      m@MatchConstraint[Pattern=RecordAppl(options,nameList@concTomName(firstName@Name(tomName),_*),slots,_),Subject=g@!SymbolOf[],AstType=aType] -> {
         // if this a list or array, nothing to do
         if(!TomBase.isSyntacticOperator(
             sp.getCompiler().getSymbolTable().getSymbolFromName(`tomName))) { return `m; }
@@ -110,7 +110,7 @@ public class SyntacticPropagator implements IBasePropagator {
             // store the fresh variable
             freshVarList.add(freshVar);
             // build the last part
-            lastPart.add(`MatchConstraint(appl,freshVar));              
+            lastPart.add(`MatchConstraint(appl,freshVar,aType));              
           }
         }
         BQTerm freshSubject = sp.getCompiler().getFreshVariable(sp.getCompiler().getTermTypeFromTerm(`g));
@@ -121,13 +121,13 @@ public class SyntacticPropagator implements IBasePropagator {
             // the 'and' conjunction for each name
             List<Constraint> andForName = new ArrayList<Constraint>();
             // add condition for symbolOf
-            andForName.add(`MatchConstraint(RecordAppl(options,concTomName(name),concSlot(),concConstraint()),SymbolOf(freshSubject)));
+            andForName.add(`MatchConstraint(RecordAppl(options,concTomName(name),concSlot(),concConstraint()),SymbolOf(freshSubject),aType));
             int counter = 0;          
             // for each slot
             %match(slots) {
               concSlot(_*,PairSlotAppl(slotName,_),_*) -> {                                          
                 BQTerm freshVar = freshVarList.get(counter);          
-                andForName.add(`MatchConstraint(TomBase.convertFromBQVarToVar(freshVar),Subterm(name,slotName,freshSubject)));
+                andForName.add(`MatchConstraint(TomBase.convertFromBQVarToVar(freshVar),Subterm(name,slotName,freshSubject),aType));
                 counter++;
               }
             }// match slots
@@ -135,10 +135,10 @@ public class SyntacticPropagator implements IBasePropagator {
           }
         }
         lastPart.add(0,l);
-        lastPart.add(0,`MatchConstraint(TomBase.convertFromBQVarToVar(freshSubject),g));
+        lastPart.add(0,`MatchConstraint(TomBase.convertFromBQVarToVar(freshSubject),g,aType));
         lastPart.add(sp.getConstraintPropagator().performDetach(`m));
         return ASTFactory.makeAndConstraint(lastPart);
-        //return `AndConstraint(MatchConstraint(freshSubject,g),l,lastPart*,sp.getConstraintPropagator().performDetach(m));
+        //return `AndConstraint(MatchConstraint(freshSubject,g,aType),l,lastPart*,sp.getConstraintPropagator().performDetach(m));
       }      
     }
   }// end %strategy

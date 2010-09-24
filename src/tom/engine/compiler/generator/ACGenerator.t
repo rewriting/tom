@@ -82,7 +82,7 @@ public class ACGenerator implements IBaseGenerator {
    */
   %strategy Generator(acg:ACGenerator) extends Identity() {
     visit Expression {
-      ConstraintToExpression(MatchConstraint(pattern@RecordAppl[NameList=concTomName(Name(symbolName)),Slots=concSlot(PairSlotAppl[Appl=var_x@VariableStar[AstName=Name(name_x)]],tail*)],subject)) -> {
+      ConstraintToExpression(MatchConstraint[Pattern=pattern@RecordAppl[NameList=concTomName(Name(symbolName)),Slots=concSlot(PairSlotAppl[Appl=var_x@VariableStar[AstName=Name(name_x)]],tail*)],Subject=subject]) -> {
         if (TomBase.hasTheory(`pattern,`AC())) {
           int mult_x = 1;
           int mult_y = 0;

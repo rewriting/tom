@@ -170,6 +170,24 @@ public class NewKernelTyper {
    * Type(name,EmptyTargetLanguage()), where name is not
    * UNKNOWN_TYPE.
    */
+  protected void hasUndeclaredType(TomType type, OptionList oList) {
+    String fileName = currentInputFileName;
+    int line = 0;
+    //DEBUG System.out.println("hasUndeclaredType: subject = " + subject);
+    %match {
+      TypeVar(tomType,_) << type &&
+        (tomType != symbolTable.TYPE_UNKNOWN.getTomType()) -> {
+          Option option = TomBase.findOriginTracking(`oList);
+          %match(option) {
+            OriginTracking(_,line,fileName) -> {
+              TomMessage.error(logger,`fileName, `line,
+                  TomMessage.unknownSymbol,`tomType); 
+            }
+          }
+        }
+    }
+  }
+  /*
   protected void hasUndeclaredType(BQTerm subject) {
     String fileName = currentInputFileName;
     int line = 0;
@@ -188,12 +206,15 @@ public class NewKernelTyper {
         }
     }
   }
+  */
  
   protected TomType getType(BQTerm bqTerm) {
     %match(bqTerm) {
       (BQVariable|BQVariableStar|FunctionCall)[AstType=aType] -> { return `aType; }
       (BQAppl|BuildConstant|BuildTerm|BuildEmptyList|BuildConsList|BuildAppendList|BuildEmptyArray|BuildConsArray|BuildAppendArray)[AstName=Name[String=name]] -> {
         TomSymbol tSymbol = getSymbolFromName(`name);
+        //DEBUG System.out.println("In getType with BQAppl " + `bqTerm + "\n");
+        //DEBUG System.out.println("In getType with type " + getCodomain(tSymbol) + "\n");
         return getCodomain(tSymbol);
       }
     } 
@@ -778,7 +799,7 @@ matchBlock:
    */
   private Constraint inferConstraint(Constraint constraint) {
     %match(constraint) {
-      MatchConstraint(pattern,subject) -> { 
+      MatchConstraint[Pattern=pattern,Subject=subject,AstType=aType] -> { 
         //DEBUG System.out.println("inferConstraint l1 -- subject = " + `subject);
         TomType tPattern = getType(`pattern);
         TomType tSubject = getType(`subject);
@@ -790,11 +811,13 @@ matchBlock:
         }
         //DEBUG System.out.println("inferConstraint: match -- constraint " +
         //DEBUG     tPattern + " = " + tSubject);
-        addConstraint(`Equation(tPattern,tSubject,getInfoFromTomTerm(pattern)));
+        addConstraint(`Equation(tPattern,aType,getInfoFromTomTerm(pattern)));
+        addConstraint(`Equation(tSubject,aType,getInfoFromTomTerm(pattern)));
         TomTerm newPattern = `inferAllTypes(pattern,tPattern);
         BQTerm newSubject = `inferAllTypes(subject,tSubject);
-        hasUndeclaredType(newSubject);
-        return `MatchConstraint(newPattern,newSubject);
+        //hasUndeclaredType(newSubject);
+        hasUndeclaredType(`aType,getInfoFromTomTerm(`pattern).getOptions());
+        return `MatchConstraint(newPattern,newSubject,aType);
       }
 
       NumericConstraint(left,right,type) -> {
@@ -811,8 +834,8 @@ matchBlock:
         addConstraint(`Equation(tLeft,tRight,getInfoFromBQTerm(left)));
         BQTerm newLeft = inferAllTypes(`left,tLeft);
         BQTerm newRight = inferAllTypes(`right,tRight);
-        hasUndeclaredType(newLeft);
-        hasUndeclaredType(newRight);
+        //hasUndeclaredType(newLeft);
+        //hasUndeclaredType(newRight);
         return `NumericConstraint(newLeft,newRight,type);
       }
 
@@ -1408,7 +1431,7 @@ matchBlockFail :
 
   %strategy checkTypeOfBQVariables(nkt:NewKernelTyper) extends Identity() {
     visit Constraint {
-      MatchConstraint(Variable[],BQVariable[Options=oList,AstName=Name(name),AstType=TypeVar(_,_)]) -> {
+      MatchConstraint[Pattern=Variable[],Subject=BQVariable[Options=oList,AstName=Name(name),AstType=TypeVar(_,_)]] -> {
         Option option = TomBase.findOriginTracking(`oList);
         %match(option) {
           OriginTracking(_,line,fileName) -> {

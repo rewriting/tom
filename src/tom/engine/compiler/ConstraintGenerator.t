@@ -143,7 +143,7 @@ public class ConstraintGenerator {
         return buildConstraintDisjunction(`conn,action);
       }
       // variables' assignments
-      ConstraintToExpression(MatchConstraint(v@(Variable|VariableStar)[],t)) -> {
+      ConstraintToExpression(MatchConstraint[Pattern=v@(Variable|VariableStar)[],Subject=t]) -> {
         return `LetRef(TomBase.convertFromVarToBQVar(v),BQTermToExpression(t),action);
       }  
       // numeric constraints
@@ -295,7 +295,7 @@ public class ConstraintGenerator {
    */
   %strategy CollectVar(varList:BQTermCollection) extends Identity() {
     visit Constraint {
-      MatchConstraint(v@Variable[],_) -> {
+      MatchConstraint[Pattern=v@Variable[]] -> {
         if(!varList.contains(`v)) { varList.add(TomBase.convertFromVarToBQVar(`v)); }        
       }      
     }// end visit
@@ -306,7 +306,7 @@ public class ConstraintGenerator {
    */
   %strategy CollectFreeVar(varList:BQTermCollection) extends Identity() {     
     visit Expression {
-      ConstraintToExpression(MatchConstraint(v@Variable[],_)) -> {
+      ConstraintToExpression(MatchConstraint[Pattern=v@Variable[]]) -> {
         if(!varList.contains(`v)) { varList.add(TomBase.convertFromVarToBQVar(`v)); }     
         throw new VisitFailure();
       }

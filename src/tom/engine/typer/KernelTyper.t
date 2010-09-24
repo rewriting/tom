@@ -342,14 +342,16 @@ public class KernelTyper {
   %strategy typeConstraint(TomType contextType, Collection lhsVariable,
       Collection matchAndNumericConstraints, KernelTyper kernelTyper) extends Fail() {
     visit Constraint {
-      constraint@MatchConstraint[Pattern=pattern,Subject=subject] -> {
+      constraint@MatchConstraint[Pattern=pattern,Subject=subject,AstType=aType] -> {
         BQTerm newSubject = `subject;
         TomType newSubjectType = `EmptyType();
         %match(subject) {
-          (BQVariable|BQVariableStar)(variableOptions,astName@Name(name),tomType) -> {
+          (BQVariable|BQVariableStar)(variableOptions,astName@Name(name),_) -> {
+            `subject = `subject.setAstType(`aType);
+            newSubject = `subject;
             // tomType may be a Type(_,EmptyTargetLanguageType()) or a type from an typed variable
-            String type = TomBase.getTomType(`tomType);
-            //System.out.println("match type = " + type);
+            String type = TomBase.getTomType(`aType);
+            //System.out.println("match type = " + `subject.getAstType());
             if(kernelTyper.getType(`type) == null) {
               /* the subject is a variable with an unknown type */
               newSubjectType = kernelTyper.guessSubjectType(`subject,matchAndNumericConstraints);
@@ -419,7 +421,7 @@ public class KernelTyper {
   private TomType guessSubjectType(BQTerm subject, Collection matchConstraints) {
     for(Object constr:matchConstraints) {
       %match(constr) {
-        MatchConstraint(pattern,s) -> {
+        MatchConstraint[Pattern=pattern,Subject=s] -> {
           // we want two terms to be equal even if their option is different 
           // ( because of their position for example )
 matchL:  %match(subject,s) {

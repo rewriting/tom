@@ -80,12 +80,12 @@ public class SyntacticGenerator implements IBaseGenerator {
   %strategy Generator(sg:SyntacticGenerator) extends Identity() {
     visit Expression {
       // generate is_fsym(t,f)
-      ConstraintToExpression(MatchConstraint(currentTerm@RecordAppl[NameList=concTomName(name)],SymbolOf(subject))) -> {
+      ConstraintToExpression(MatchConstraint[Pattern=currentTerm@RecordAppl[NameList=concTomName(name)],Subject=SymbolOf(subject)]) -> {
         TomType termType = sg.getCompiler().getTermTypeFromName(`name);
         return sg.buildEqualFunctionSymbol(termType,`subject,`name,TomBase.getTheory(`currentTerm));
       }
       // generate equality test
-      ConstraintToExpression(MatchConstraint(TestVar(v@(Variable|VariableStar)[AstType=type]),t)) -> {
+      ConstraintToExpression(MatchConstraint[Pattern=TestVar(v@(Variable|VariableStar)[AstType=type]),Subject=t]) -> {
         return `EqualBQTerm(type,t,TomBase.convertFromVarToBQVar(v));
       }
     } // end visit

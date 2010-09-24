@@ -99,7 +99,7 @@ public class ArrayPropagator implements IBasePropagator {
        * conc(X*,conc(some_pattern),Y*) << t -> conc(X*,Z*,Y*) << t /\ conc(some_pattern) << Z*  
        * 
        */ 
-      m@MatchConstraint(pattern@RecordAppl[NameList=concTomName(Name(tomName)),Slots=!concSlot()],_) -> {
+      m@MatchConstraint[Pattern=pattern@RecordAppl[NameList=concTomName(Name(tomName)),Slots=!concSlot()]] -> {
         if(TomBase.hasTheory(`pattern,`AC())) {
           return `m;
         }
@@ -118,7 +118,7 @@ public class ArrayPropagator implements IBasePropagator {
          /\ HasElement(fresh_index2,freshSubj) /\ t2=GetElement(fresh_index2,freshSubj)/\ fresh_index3 = fresh_index2 + 1  
          /\ begin2 = fresh_index3  /\ end2 = fresh_index3 /\ Y* = VariableHeadArray(begin2,end2) /\ fresh_index4 = end2
       */
-      m@MatchConstraint(pattern@RecordAppl(options,nameList@concTomName(name@Name(tomName),_*),slots,_),g@!SymbolOf[]) -> {      
+      m@MatchConstraint[Pattern=pattern@RecordAppl(options,nameList@concTomName(name@Name(tomName),_*),slots,_),Subject=g@!SymbolOf[],AstType=aType] -> {      
         if(TomBase.hasTheory(`pattern,`AC())) {
           return `m;
         }
@@ -129,11 +129,14 @@ public class ArrayPropagator implements IBasePropagator {
             TomType termType = ap.getCompiler().getTermTypeFromTerm(`g);            
             BQTerm freshVariable = ap.getCompiler().getFreshVariableStar(termType);
             // g should be only a variable
-            Constraint freshVarDeclaration = `MatchConstraint(TomBase.convertFromBQVarToVar(freshVariable),g);
+            Constraint freshVarDeclaration =
+              `MatchConstraint(TomBase.convertFromBQVarToVar(freshVariable),g,aType);
             
             // declare fresh index = 0            
             BQTerm freshIndex = ap.getFreshIndex();				
-            Constraint freshIndexDeclaration = `MatchConstraint(TomBase.convertFromBQVarToVar(freshIndex), ExpressionToBQTerm(Integer(0)));
+            Constraint freshIndexDeclaration =
+              `MatchConstraint(TomBase.convertFromBQVarToVar(freshIndex),
+                  ExpressionToBQTerm(Integer(0)),aType);
             Constraint l = `AndConstraint();
     match:  %match(slots) {
               concSlot() -> {
@@ -148,23 +151,23 @@ public class ArrayPropagator implements IBasePropagator {
                     if(`X.length() == 0) {
                       // we should only assign it, without generating a loop
                       l = `AndConstraint(l*,MatchConstraint(appl,ExpressionToBQTerm(
-                            GetSliceArray(name,freshVariable,freshIndex,ExpressionToBQTerm(GetSize(name,freshVariable))))));
+                            GetSliceArray(name,freshVariable,freshIndex,ExpressionToBQTerm(GetSize(name,freshVariable)))),aType));
                     } else {
                       BQTerm beginIndex = ap.getBeginIndex();
                       BQTerm endIndex = ap.getEndIndex();
                       l = `AndConstraint(l*,
-                          MatchConstraint(TomBase.convertFromBQVarToVar(beginIndex),freshIndex),
-                          MatchConstraint(TomBase.convertFromBQVarToVar(endIndex),freshIndex),
-                          MatchConstraint(appl,VariableHeadArray(name,freshVariable,beginIndex,endIndex)),
-                          MatchConstraint(TomBase.convertFromBQVarToVar(newFreshIndex),endIndex));     
+                          MatchConstraint(TomBase.convertFromBQVarToVar(beginIndex),freshIndex,aType),
+                          MatchConstraint(TomBase.convertFromBQVarToVar(endIndex),freshIndex,aType),
+                          MatchConstraint(appl,VariableHeadArray(name,freshVariable,beginIndex,endIndex),aType),
+                          MatchConstraint(TomBase.convertFromBQVarToVar(newFreshIndex),endIndex,aType));     
                     }
                     break mAppl;
                   }
                   _ -> {                    
                     l = `AndConstraint(l*,                      
                         Negate(EmptyArrayConstraint(name,freshVariable,freshIndex)),                      
-                        MatchConstraint(appl,ExpressionToBQTerm(GetElement(name,ap.getCompiler().getTermTypeFromTerm(appl),freshVariable,freshIndex))),
-                        MatchConstraint(TomBase.convertFromBQVarToVar(newFreshIndex),ExpressionToBQTerm(AddOne(freshIndex))));
+                        MatchConstraint(appl,ExpressionToBQTerm(GetElement(name,ap.getCompiler().getTermTypeFromTerm(appl),freshVariable,freshIndex)),aType),
+                        MatchConstraint(TomBase.convertFromBQVarToVar(newFreshIndex),ExpressionToBQTerm(AddOne(freshIndex)),aType));
                     // for the last element, we should also check that the list ends
                     if(`X.length() == 0) {                  
                       l = `AndConstraint(l*, EmptyArrayConstraint(name,freshVariable,newFreshIndex));
@@ -175,7 +178,8 @@ public class ArrayPropagator implements IBasePropagator {
               }
             }// end match                        
             // add head equality condition + fresh var declaration + detached constraints
-            l = `AndConstraint(freshVarDeclaration,MatchConstraint(RecordAppl(options,nameList,concSlot(),concConstraint()),SymbolOf(freshVariable)),
+            l =
+              `AndConstraint(freshVarDeclaration,MatchConstraint(RecordAppl(options,nameList,concSlot(),concConstraint()),SymbolOf(freshVariable),aType),
                 freshIndexDeclaration,ap.getConstraintPropagator().performDetach(m),l*);
             return l;
         }

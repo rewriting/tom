@@ -90,9 +90,10 @@ public class ACPropagator implements IBasePropagator {
    */
   %strategy RemoveNonVariableStar(acp: ACPropagator) extends Identity() {
     visit Constraint {
-      MatchConstraint(pattern@RecordAppl[
+      MatchConstraint[Pattern=pattern@RecordAppl[
           Options=optWithAC@concOption(T1*,MatchingTheory(concElementaryTheory(T2*,AC(),T3*)),T4*),
-          NameList=namelist@concTomName(Name(tomName)), Slots=slots],subject) -> {
+          NameList=namelist@concTomName(Name(tomName)),
+          Slots=slots],Subject=subject,AstType=aType] -> {
         OptionList optWithoutAC = `concOption(T1*,MatchingTheory(concElementaryTheory(T2*,T3*)),T4*);
 
         %match(slots) {
@@ -111,7 +112,7 @@ public class ACPropagator implements IBasePropagator {
             Constraint c1 = `MatchConstraint(RecordAppl(optWithoutAC,
                     namelist,
                     concSlot( PairSlotAppl(slotname, TomBase.convertFromBQVarToVar(X1)), slot, PairSlotAppl(slotname, TomBase.convertFromBQVarToVar(X2))),
-                    concConstraint()),subject);
+                    concConstraint()),subject,aType);
 
             //generate f(...) << f(X1*,X2*)
             TomSymbol tomSymbol = acp.getCompiler().getSymbolTable().getSymbolFromName(`tomName);
@@ -121,7 +122,9 @@ public class ACPropagator implements IBasePropagator {
             } else if(TomBase.isArrayOperator(tomSymbol)) {
               newSubject = ASTFactory.buildArray(`Name(tomName),`concBQTerm(X1,X2),acp.getCompiler().getSymbolTable());
             }
-            Constraint c2 = `MatchConstraint(RecordAppl(optWithAC,namelist,concSlot(C1*,C2*),concConstraint()), newSubject);
+            Constraint c2 =
+              `MatchConstraint(RecordAppl(optWithAC,namelist,concSlot(C1*,C2*),concConstraint()),
+                  newSubject,aType);
 
             Constraint result = `AndConstraint(c1,c2);
             /*System.out.println("result: " + result);*/
@@ -140,9 +143,10 @@ public class ACPropagator implements IBasePropagator {
    */
   %strategy PerformAbstraction(acp: ACPropagator) extends Identity() {
     visit Constraint {
-      MatchConstraint(pattern@RecordAppl[
+      MatchConstraint[Pattern=pattern@RecordAppl[
           Options=optWithAC@concOption(_*,MatchingTheory(concElementaryTheory(_*,AC(),_*)),_*),
-          NameList=namelist@concTomName(Name[]), Slots=slots],subject) -> {
+          NameList=namelist@concTomName(Name[]),
+          Slots=slots],Subject=subject,AstType=aType] -> {
         if(`slots.length() > 2) {
           %match(slots) {
             /*
@@ -158,10 +162,10 @@ public class ACPropagator implements IBasePropagator {
               Constraint c1 = 
                 `MatchConstraint(RecordAppl(optWithAC,
                       namelist,concSlot(Z,PairSlotAppl(slotname,TomBase.convertFromBQVarToVar(X1))),
-                      concConstraint()),subject);
+                      concConstraint()),subject,aType);
               //generate: f(...) <<ac X1
               Constraint c2 = `MatchConstraint(RecordAppl(optWithAC,
-                    namelist, concSlot(C1*,C2*), concConstraint()),X1);
+                    namelist, concSlot(C1*,C2*), concConstraint()),X1,aType);
               Constraint result = `AndConstraint(c1,c2);
 
               /*System.out.println("result: " + result);*/
@@ -193,17 +197,17 @@ public class ACPropagator implements IBasePropagator {
        * f()   <<ac s => f() <<a s
        * f(X*) <<ac s => f(X*) <<a s
        */
-      MatchConstraint(RecordAppl[
+      MatchConstraint[Pattern=RecordAppl[
           Options=concOption(T1*,MatchingTheory(concElementaryTheory(T2*,AC(),T3*)),T4*),
           NameList=namelist@concTomName(Name[]), 
-          Slots=slots],subject) &&
+          Slots=slots],Subject=subject,AstType=aType] &&
         (concSlot()<<slots || concSlot(PairSlotAppl[Appl=VariableStar[]])<<slots) -> {
           /*System.out.println("case f(X*) <<ac s => f(X*) <<a s");*/
           /*System.out.println("case f()   <<ac s => f()   <<a s: " + `slots);*/
           OptionList optWithoutAC = `concOption(T1*,MatchingTheory(concElementaryTheory(T2*,T3*)),T4*);
           Constraint result = `MatchConstraint(
               RecordAppl(optWithoutAC, namelist, slots, concConstraint()),
-              subject);
+              subject,aType);
           System.out.println(TomConstraintPrettyPrinter.prettyPrint(result));
           return result;
         }

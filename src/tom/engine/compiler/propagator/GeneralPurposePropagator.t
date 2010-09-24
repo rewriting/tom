@@ -85,9 +85,9 @@ public class GeneralPurposePropagator implements IBasePropagator {
        * an anti-pattern: just transform this into a AntiMatchConstraint and detach the constraints:
        * a@!g(...) << t -> AntiMatch(g(...) << t) /\ a << t 
        */
-      MatchConstraint(AntiTerm(term@(Variable|RecordAppl)[]),s) -> {        
-        return `AndConstraint(AntiMatchConstraint(MatchConstraint(term,s)),
-            gpp.getConstraintPropagator().performDetach(MatchConstraint(term,s)));
+      MatchConstraint[Pattern=AntiTerm(term@(Variable|RecordAppl)[]),Subject=s,AstType=aType] -> {        
+        return `AndConstraint(AntiMatchConstraint(MatchConstraint(term,s,aType)),
+            gpp.getConstraintPropagator().performDetach(MatchConstraint(term,s,aType)));
       }      
       /**
        * SwitchAnti : here is just for efficiency reasons, and not for ordering, 
@@ -118,10 +118,12 @@ public class GeneralPurposePropagator implements IBasePropagator {
        *  
        *  a@...b@f(...) << t -> f(...) << t /\ a << t /\ ... /\ b << t
        */
-      m@MatchConstraint(term@(Variable|VariableStar)[Constraints = !concConstraint()],g) -> {
+      m@MatchConstraint[Pattern=term@(Variable|VariableStar)[Constraints =
+        !concConstraint()],Subject=g,AstType=aType] -> {
         Constraint result = gpp.getConstraintPropagator().performDetach(`m);
         if(`term.isVariable()) {
-          result = `AndConstraint(MatchConstraint(term.setConstraints(concConstraint()),g),result);
+          result =
+            `AndConstraint(MatchConstraint(term.setConstraints(concConstraint()),g,aType),result);
         }
         return result;
       }
@@ -149,7 +151,7 @@ public class GeneralPurposePropagator implements IBasePropagator {
     SlotList newSlots = `concSlot();
     Constraint constraintList = `AndConstraint();
     %match(constraint) {      
-      MatchConstraint(t@RecordAppl[NameList=concTomName(name@Name[]),Slots=slots@!concSlot()],g) -> {
+      MatchConstraint[Pattern=t@RecordAppl[NameList=concTomName(name@Name[]),Slots=slots@!concSlot()],Subject=g,AstType=aType] -> {
 
         %match(slots) { 
           concSlot(_*,slot,_*) -> {
@@ -157,7 +159,8 @@ matchSlot:  %match(slot, TomName name) {
               ps@PairSlotAppl[Appl=appl],childName &&  
                 (RecordAppl[NameList=concTomName(childName)] << appl || AntiTerm(RecordAppl[NameList=concTomName(childName)]) << appl) -> {
                   BQTerm freshVariable = getCompiler().getFreshVariableStar(getCompiler().getTermTypeFromTerm(`t));                
-                  constraintList = `AndConstraint(MatchConstraint(appl,freshVariable),constraintList*);
+                  constraintList =
+                    `AndConstraint(MatchConstraint(appl,freshVariable,aType),constraintList*);
                   newSlots = `concSlot(newSlots*,ps.setAppl(TomBase.convertFromBQVarToVar(freshVariable)));
                   break matchSlot;
                 }
@@ -168,7 +171,7 @@ matchSlot:  %match(slot, TomName name) {
             }
           }
         }
-        return `AndConstraint(MatchConstraint(t.setSlots(newSlots),g),constraintList*);   
+        return `AndConstraint(MatchConstraint(t.setSlots(newSlots),g,aType),constraintList*);   
       }
     }
     // never gets here
@@ -182,9 +185,10 @@ matchSlot:  %match(slot, TomName name) {
     visit Constraint {
       // we can have the same variable both as variableStar and as variable
       // we know that this is ok, because the type checker authorized it
-      MatchConstraint(var@(Variable|VariableStar)[AstName=name,AstType=type],subject) && name == varName -> {        
+      MatchConstraint[Pattern=var@(Variable|VariableStar)[AstName=name,AstType=type],Subject=subject,AstType=aType] && name == varName -> {        
         BQTerm freshVar = `var.isVariable() ? gpp.getCompiler().getFreshVariable(`type) : gpp.getCompiler().getFreshVariableStar(`type);
-        return `AndConstraint(MatchConstraint(TomBase.convertFromBQVarToVar(freshVar),subject),MatchConstraint(TestVar(TomBase.convertFromBQVarToVar(freshVar)),TomBase.convertFromVarToBQVar(var)));
+        return
+          `AndConstraint(MatchConstraint(TomBase.convertFromBQVarToVar(freshVar),subject,aType),MatchConstraint(TestVar(TomBase.convertFromBQVarToVar(freshVar)),TomBase.convertFromVarToBQVar(var),aType));
       }
     }
   }

@@ -177,7 +177,7 @@ loop_j: for(int j=i+1 ; j<array.length ; j++) {
              * z << subterm(i,g) /\ S /\ f = SymbolOf(g) -> f = SymbolOf(g) /\ S /\ z << subterm(i,g)
              *
              */
-            MatchConstraint(_,Subterm[GroundTerm=g]),MatchConstraint(_,SymbolOf(g)) -> {
+            MatchConstraint[Subject=Subterm[GroundTerm=g]],MatchConstraint[Subject=SymbolOf(g)] -> {
               modification |= swap(array,i,j);
               break block;
             }
@@ -188,11 +188,11 @@ loop_j: for(int j=i+1 ; j<array.length ; j++) {
              * A = SymbolOf(g) /\ S /\ g << B -> g << B /\ S /\ A = SymbolOf(g)
              *
              */
-            MatchConstraint(_,SymbolOf(BQVariable[AstName=name])),MatchConstraint(Variable[AstName=name],_) -> {
+            MatchConstraint[Subject=SymbolOf(BQVariable[AstName=name])],MatchConstraint[Pattern=Variable[AstName=name]] -> {
               modification |= swap(array,i,j);
               break block;
             }
-            MatchConstraint(_,SymbolOf(BQVariableStar[AstName=name])),MatchConstraint(VariableStar[AstName=name],_) -> {
+            MatchConstraint[Subject=SymbolOf(BQVariableStar[AstName=name])],MatchConstraint[Pattern=VariableStar[AstName=name]] -> {
               modification |= swap(array,i,j);
               break block;
             }
@@ -215,7 +215,7 @@ loop_j: for(int j=i+1 ; j<array.length ; j++) {
              * EmptyList(z) /\ S /\ z << t -> z << t /\ S /\ EmptyList(z)
              * Negate(EmptyList(z)) /\ S /\ z << t -> z << t /\ S /\ Negate(EmptyList(z))
              */
-            _,MatchConstraint(VariableStar[AstName=name],_)
+            _,MatchConstraint[Pattern=VariableStar[AstName=name]]
               && ( EmptyListConstraint[Variable=BQVariableStar[AstName=name]] << first || Negate(EmptyListConstraint[Variable=BQVariableStar[AstName=name]]) << first ) -> {
                 modification |= swap(array,i,j);
                 break block;
@@ -227,7 +227,7 @@ loop_j: for(int j=i+1 ; j<array.length ; j++) {
              * EmptyArray(z) /\ S /\ z << t -> z << t /\ S /\ EmptyArray(z)
              * Negate(EmptyArray(z)) /\ S /\ z << t -> z << t /\ S /\ Negate(EmptyArray(z))
              */
-            _,MatchConstraint(VariableStar[AstName=name],_)
+            _,MatchConstraint[Pattern=VariableStar[AstName=name]]
               && ( EmptyArrayConstraint[Index=BQVariableStar[AstName=name]] << first || Negate(EmptyArrayConstraint[Index=BQVariableStar[AstName=name]]) << first ) -> {
                 modification |= swap(array,i,j);
                 break block;
@@ -238,7 +238,7 @@ loop_j: for(int j=i+1 ; j<array.length ; j++) {
              * 
              * p << Context[z] /\ S /\ z << t -> z << t /\ S /\ p << Context[z]
              */
-            MatchConstraint[Subject=rhs],MatchConstraint(v@(Variable|VariableStar)[],_) -> {
+            MatchConstraint[Subject=rhs],MatchConstraint[Pattern=v@(Variable|VariableStar)[]] -> {
               try {
                 `TopDown(HasTerm(v)).visitLight(`rhs);
               } catch(VisitFailure ex) {
@@ -247,7 +247,7 @@ loop_j: for(int j=i+1 ; j<array.length ; j++) {
               }
             }
 
-            MatchConstraint[Subject=rhs],OrConstraintDisjunction(AndConstraint?(_*,MatchConstraint(v@(Variable|VariableStar)[],_),_*),_*) -> {
+            MatchConstraint[Subject=rhs],OrConstraintDisjunction(AndConstraint?(_*,MatchConstraint[Pattern=v@(Variable|VariableStar)[]],_*),_*) -> {
               try {
                 `TopDown(HasTerm(v)).visitLight(`rhs);
               } catch(VisitFailure ex) {
@@ -256,7 +256,7 @@ loop_j: for(int j=i+1 ; j<array.length ; j++) {
               }
             }
 
-            NumericConstraint[Right=rhs],MatchConstraint(v@(Variable|VariableStar)[],_) -> {
+            NumericConstraint[Right=rhs],MatchConstraint[Pattern=v@(Variable|VariableStar)[]] -> {
               try {
                 `TopDown(HasTerm(v)).visitLight(`rhs);
               } catch(VisitFailure ex) {
@@ -265,7 +265,7 @@ loop_j: for(int j=i+1 ; j<array.length ; j++) {
               }
             }
 
-            NumericConstraint[Right=rhs],OrConstraintDisjunction(AndConstraint?(_*,MatchConstraint(v@(Variable|VariableStar)[],_),_*),_*) -> {
+            NumericConstraint[Right=rhs],OrConstraintDisjunction(AndConstraint?(_*,MatchConstraint[Pattern=v@(Variable|VariableStar)[]],_*),_*) -> {
               try {
                 `TopDown(HasTerm(v)).visitLight(`rhs);
               } catch(VisitFailure ex) {
@@ -274,7 +274,7 @@ loop_j: for(int j=i+1 ; j<array.length ; j++) {
               }
             }
 
-            NumericConstraint[Left=lhs],MatchConstraint(v@(Variable|VariableStar)[],_) -> {
+            NumericConstraint[Left=lhs],MatchConstraint[Pattern=v@(Variable|VariableStar)[]] -> {
               try {
                 `TopDown(HasTerm(v)).visitLight(`lhs);
               } catch(VisitFailure ex) {
@@ -283,7 +283,7 @@ loop_j: for(int j=i+1 ; j<array.length ; j++) {
               }
             }
 
-            NumericConstraint[Left=lhs],OrConstraintDisjunction(AndConstraint?(_*,MatchConstraint(v@(Variable|VariableStar)[],_),_*),_*) -> {
+            NumericConstraint[Left=lhs],OrConstraintDisjunction(AndConstraint?(_*,MatchConstraint[Pattern=v@(Variable|VariableStar)[]],_*),_*) -> {
               try {
                 `TopDown(HasTerm(v)).visitLight(`lhs);
               } catch(VisitFailure ex) {
@@ -300,7 +300,7 @@ loop_j: for(int j=i+1 ; j<array.length ; j++) {
              * p << ListTail(z) /\ S /\ Empty(z) -> Empty(z) /\ S /\ p << ListTail(z)
              *
              */
-            MatchConstraint(_,(ListHead|ListTail)[Variable=v]),_
+            MatchConstraint[Subject=(ListHead|ListTail)[Variable=v]],_
               && ( Negate(EmptyListConstraint[Variable=v]) << second || EmptyListConstraint[Variable=v] << second ) -> {
                 modification |= swap(array,i,j);
                 break block;
@@ -310,7 +310,7 @@ loop_j: for(int j=i+1 ; j<array.length ; j++) {
              * p << GetElement(z) /\ S /\ Negate(EmptyArray(z)) -> Negate(EmptyArray(z)) /\ S /\ p << GetElement(z)
              * p << GetElement(z) /\ S /\ EmptyArray(z) -> EmptyArray(z) /\ S /\ p << GetElement(z)
              */
-            MatchConstraint(_,ExpressionToBQTerm(GetElement[Variable=v])),_
+            MatchConstraint[Subject=ExpressionToBQTerm(GetElement[Variable=v])],_
               && ( Negate(EmptyArrayConstraint[Index=v]) << second || EmptyArrayConstraint[Index=v] << second ) -> {
                 modification |= swap(array,i,j);
                 break block;
@@ -320,7 +320,7 @@ loop_j: for(int j=i+1 ; j<array.length ; j++) {
              * p << e /\ S /\ VariableHeadList(b,e) -> VariableHeadList(b,e) /\ S /\ p << e
              * p << e /\ S /\ VariableHeadArray(b,e) -> VariableHeadArray(b,e) /\ S /\ p << e
              */
-            MatchConstraint(_,v@BQVariableStar[]),MatchConstraint(_,subjectSecond)
+            MatchConstraint[Subject=v@BQVariableStar[]],MatchConstraint[Subject=subjectSecond]
               && (VariableHeadList[End=v] << subjectSecond || VariableHeadArray[EndIndex=v] << subjectSecond ) -> {
                 modification |= swap(array,i,j);
                 break block;
@@ -375,11 +375,11 @@ loop_j: for(int j=i+1 ; j<array.length ; j++) {
               modification |= swap(array,i,j);
               break block;
             }
-            IsSortConstraint[BQTerm=BQVariable[AstName=name]],MatchConstraint(Variable[AstName=name],_) -> {
+            IsSortConstraint[BQTerm=BQVariable[AstName=name]],MatchConstraint[Pattern=Variable[AstName=name]] -> {
               modification |= swap(array,i,j);
               break block;
             }
-            IsSortConstraint[BQTerm=BQVariableStar[AstName=name]],MatchConstraint(VariableStar[AstName=name],_) -> {
+            IsSortConstraint[BQTerm=BQVariableStar[AstName=name]],MatchConstraint[Pattern=VariableStar[AstName=name]] -> {
               modification |= swap(array,i,j);
               break block;
             }
@@ -389,7 +389,7 @@ loop_j: for(int j=i+1 ; j<array.length ; j++) {
              *
              * tests generated by replace shoud be after the variable has been instanciated
              */
-            MatchConstraint(TestVar(x),_),MatchConstraint(x,_) -> {        
+            MatchConstraint[Pattern=TestVar(x)],MatchConstraint[Pattern=x] -> {        
               modification |= swap(array,i,j);
               break block;
             }

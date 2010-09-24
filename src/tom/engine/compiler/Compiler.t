@@ -270,7 +270,7 @@ public class Compiler extends TomGenericPlugin {
    */
   %strategy renameSubjects(ArrayList subjectList,ArrayList renamedSubjects, Compiler compiler) extends Identity() {
     visit Constraint {
-      constr@MatchConstraint[Pattern=pattern, Subject=subject] -> {
+      constr@MatchConstraint[Pattern=pattern,Subject=subject,AstType=aType] -> {
         if(renamedSubjects.contains(`pattern) || ( `(subject) instanceof BQVariable && renamedSubjects.contains(TomBase.convertFromBQVarToVar(`subject))) ) {
           // make sure we don't process generated contraints
           return `constr; 
@@ -282,9 +282,9 @@ public class Compiler extends TomGenericPlugin {
           TomType freshSubjectType = renamedSubj.getAstType();
           BQTerm freshVar = compiler.getUniversalObjectForSubject(freshSubjectType);
           return `AndConstraint(
-              MatchConstraint(TomBase.convertFromBQVarToVar(freshVar),subject),
+              MatchConstraint(TomBase.convertFromBQVarToVar(freshVar),subject,aType),
               IsSortConstraint(freshSubjectType,freshVar),
-              MatchConstraint(renamedSubj,ExpressionToBQTerm(Cast(freshSubjectType,BQTermToExpression(freshVar)))),
+              MatchConstraint(renamedSubj,ExpressionToBQTerm(Cast(freshSubjectType,BQTermToExpression(freshVar))),aType),
               newConstraint);
         }
         TomNumberList path = compiler.getCompilerEnvironment().getRootpath();
@@ -309,9 +309,9 @@ public class Compiler extends TomGenericPlugin {
         Constraint newConstraint = `constr.setSubject(TomBase.convertFromVarToBQVar(renamedVar));   
         BQTerm freshVar = compiler.getUniversalObjectForSubject(freshSubjectType);
         return `AndConstraint(
-            MatchConstraint(TomBase.convertFromBQVarToVar(freshVar),subject),
+            MatchConstraint(TomBase.convertFromBQVarToVar(freshVar),subject,aType),
             IsSortConstraint(freshSubjectType,freshVar),
-            MatchConstraint(renamedVar,ExpressionToBQTerm(Cast(freshSubjectType,BQTermToExpression(freshVar)))),
+            MatchConstraint(renamedVar,ExpressionToBQTerm(Cast(freshSubjectType,BQTermToExpression(freshVar))),aType),
             newConstraint);
       }
     }
@@ -449,7 +449,7 @@ public class Compiler extends TomGenericPlugin {
 
   %strategy CollectLHSVars(Collection bag, Collection alreadyInRhs) extends Identity() {
     visit Constraint {
-      MatchConstraint(p,s) -> {          
+      MatchConstraint[Pattern=p,Subject=s] -> {          
         
         Map rhsMap = TomBase.collectMultiplicity(`s);
         alreadyInRhs.addAll(rhsMap.keySet());

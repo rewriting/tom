@@ -144,15 +144,19 @@ matchConstruct [Option ot] returns [Instruction result] throws TomException
     result = null;
     OptionList optionList = `concOption(ot,ModuleName(TomBase.DEFAULT_MODULE_NAME));
     List<BQTerm> argumentList = new LinkedList<BQTerm>();
+    List<TomType> subjectTypeList = new LinkedList<TomType>();
     List<ConstraintInstruction> constraintInstructionList = new LinkedList<ConstraintInstruction>();
     BQTermList subjectList = null;
     TomType patternType = SymbolTable.TYPE_UNKNOWN;
 }
   : (
-            LPAREN matchArguments[argumentList] RPAREN
-            LBRACE { subjectList = ASTFactory.makeBQTermList(argumentList); }
+            LPAREN matchArguments[argumentList,subjectTypeList] RPAREN
+            LBRACE 
+            { 
+              subjectList = ASTFactory.makeBQTermList(argumentList); 
+            }
             (
-             patternInstruction[subjectList,constraintInstructionList,patternType]
+             patternInstruction[subjectList,subjectTypeList,constraintInstructionList,patternType]
             )*
             t1:RBRACE
             {
@@ -179,16 +183,15 @@ matchConstruct [Option ot] returns [Instruction result] throws TomException
         )
   ;
 
-matchArguments [List<BQTerm> list] throws TomException
+matchArguments [List<BQTerm> list, List<TomType> typeList] throws TomException
     :
-        ( matchArgument[list] ( COMMA matchArgument[list] )*)
+        ( matchArgument[list,typeList] ( COMMA matchArgument[list,typeList] )*)
     ;
 
-matchArgument [List<BQTerm> list] throws TomException
+matchArgument [List<BQTerm> list, List<TomType> typeList] throws TomException
 {
   BQTerm subject1 = null;
   BQTerm subject2 = null;
-  TomType tomType = null;
 
   String s1 = null;
   String s2 = null;
@@ -201,30 +204,28 @@ matchArgument [List<BQTerm> list] throws TomException
     }
     (BACKQUOTE { text.delete(0, text.length()); } )?
     (subject2 = plainBQTerm { s2 = text.toString(); })?
-{
+    {
       if(subject2==null) {
         // System.out.println("matchArgument = " + subject1);
         list.add(subject1);
+        typeList.add(SymbolTable.TYPE_UNKNOWN);
       } else {
         if(subject1.isBQVariable()) {
-          String type = subject1.getAstName().getString();
+          String typeName = subject1.getAstName().getString();
           %match(subject2) {
-            BQVariable[AstName=name] -> {
-              Option ot = `OriginTracking(name, lastLine, currentFile());
-              list.add(`BQVariable(concOption(ot),name,Type(concTypeOption(),type,EmptyTargetLanguageType())));
+            (BQVariable|BQAppl)[] -> {
+              list.add(subject2);
+              typeList.add(`Type(concTypeOption(),typeName,EmptyTargetLanguageType()));
               return;
-            }
-            t@BQAppl[] -> {
-              list.`add(t); return;
             }
           }
         }
         throw new TomException(TomMessage.invalidMatchSubject, new Object[]{subject1, subject2});
       }
-}
-;
+    }
+    ;
 
-patternInstruction [BQTermList subjectList, List<ConstraintInstruction> list, TomType rhsType] throws TomException
+patternInstruction [BQTermList subjectList, List<TomType> subjectTypeList, List<ConstraintInstruction> list, TomType rhsType] throws TomException
 {
     List<Option> optionListLinked = new LinkedList<Option>();
     List<TomTerm> matchPatternList = new LinkedList<TomTerm>();
@@ -252,7 +253,8 @@ patternInstruction [BQTermList subjectList, List<ConstraintInstruction> list, To
               int counter = 0;
               %match(subjectList) {
                 concBQTerm(_*,subjectAtIndex,_*) -> {
-                constraint = `AndConstraint(constraint,MatchConstraint(matchPatternList.get(counter),subjectAtIndex));
+                constraint =
+                `AndConstraint(constraint,MatchConstraint(matchPatternList.get(counter),subjectAtIndex,subjectTypeList.get(counter)));
                   counter++;
                 }
               }
@@ -306,8 +308,10 @@ visitInstruction [List<ConstraintInstruction> list, TomType rhsType] throws TomE
                 return;
               }
 
-              BQTerm subject = `BQVariable(concOption(),Name("tom__arg"),rhsType);
-              constraint = `AndConstraint(constraint,MatchConstraint(matchPatternList.get(0),subject));
+              BQTerm subject =
+              `BQVariable(concOption(),Name("tom__arg"),SymbolTable.TYPE_UNKNOWN);
+              constraint =
+              `AndConstraint(constraint,MatchConstraint(matchPatternList.get(0),subject,rhsType));
               //optionList = `concOption(option, OriginalText(Name(text.toString())));
 
               matchPatternList.clear();
@@ -463,6 +467,7 @@ matchConstraint [List<Option> optionListLinked] returns [Constraint result] thro
 {
   List<TomTerm> matchPatternList = new LinkedList<TomTerm>();
   List<BQTerm> matchSubjectList = new LinkedList<BQTerm>();
+  List<TomType> matchSubjectTypeList = new LinkedList<TomType>();
   Option option = null;
   result = null;
   int consType = -1;
@@ -470,12 +475,13 @@ matchConstraint [List<Option> optionListLinked] returns [Constraint result] thro
 :
     option = matchPattern[matchPatternList,true]
     MATCH_CONSTRAINT
-    matchArgument[matchSubjectList]
+    matchArgument[matchSubjectList,matchSubjectTypeList]
     {
       optionListLinked.add(option);
       TomTerm left  = matchPatternList.get(0);
       BQTerm right = matchSubjectList.get(0);
-      return `MatchConstraint(left,right);
+      TomType type = matchSubjectTypeList.get(0);
+      return `MatchConstraint(left,right,type);
     }
 ;
 
@@ -487,11 +493,23 @@ numericConstraint returns [Constraint result] throws TomException
   List<BQTerm> matchRhsList = new LinkedList<BQTerm>();
   result = null;
   int consType = -1;
+  BQTerm subject1 = null;
+  BQTerm subject2 = null;
 }
 :
-    matchArgument[matchLhsList]
+    (BACKQUOTE { text.delete(0, text.length()); } )?
+    subject1 = plainBQTerm {
+      text.delete(0, text.length());
+      matchLhsList.add(subject1);
+    }
+
     consType=numconstraintType
-    matchArgument[matchRhsList]
+
+    (BACKQUOTE { text.delete(0, text.length()); } )?
+    subject2 = plainBQTerm {
+      text.delete(0, text.length());
+      matchRhsList.add(subject2);
+    }
     {
       BQTerm left  = matchLhsList.get(0);
       BQTerm right = matchRhsList.get(0);

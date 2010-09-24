@@ -112,23 +112,24 @@ public class ConstraintPropagator {
   public Constraint performDetach(Constraint subject) {    
     Constraint result = `AndConstraint(); 
     %match(subject){
-      MatchConstraint((RecordAppl|Variable)[Constraints=constraints@!concConstraint()],g) -> {
+      MatchConstraint[Pattern=(RecordAppl|Variable)[Constraints=constraints@!concConstraint()],Subject=g,AstType=aType] -> {
         %match(constraints) {
           concConstraint(_*,AliasTo(var),_*) -> {
             // add constraint to the list
-            result = `AndConstraint(MatchConstraint(var,g),result*);
+            result = `AndConstraint(MatchConstraint(var,g,aType),result*);
           }
         }// end match   
       }      
-      MatchConstraint(t@VariableStar[AstType=type,Constraints=constraints@!concConstraint()],g) -> {        
+      MatchConstraint[Pattern=t@VariableStar[AstType=type,Constraints=constraints@!concConstraint()],Subject=g,AstType=aType] -> {        
         BQTerm freshVariable = getCompiler().getFreshVariableStar(`type);
         %match(constraints) {
           concConstraint(_*,AliasTo(var),_*) -> {
-            result = `AndConstraint(MatchConstraint(var,freshVariable),result*);
+            result = `AndConstraint(MatchConstraint(var,freshVariable,aType),result*);
           }
         }// end match   
-        result = `AndConstraint(MatchConstraint(TomBase.convertFromBQVarToVar(freshVariable),g),
-            MatchConstraint(t.setConstraints(concConstraint()),freshVariable),result*);
+        result =
+          `AndConstraint(MatchConstraint(TomBase.convertFromBQVarToVar(freshVariable),g,aType),
+            MatchConstraint(t.setConstraints(concConstraint()),freshVariable,aType),result*);
       }      
     }
     return result;

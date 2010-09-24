@@ -24,7 +24,8 @@ Constraint =
 		   * @param Constraint the list of AndConstraints that are linked by Or
 		   */		   
 			| OrConstraintDisjunction(Constraint*)
-			| MatchConstraint(Pattern:TomTerm, Subject:BQTerm)
+			//MatchConstraint(Pattern:TomTerm, Subject:BQTerm, AstType:TomType)
+			| MatchConstraint(Pattern:TomTerm, Subject:BQTerm, AstType:TomType)
 			| AntiMatchConstraint(Constraint:Constraint)
 			| NumericConstraint(Left:BQTerm, Right:BQTerm, Type:NumericConstraintType)
 			| EmptyListConstraint(Opname:TomName,Variable:BQTerm)

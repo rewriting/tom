@@ -93,11 +93,11 @@ public class TomConstraintPrettyPrinter {
         return "("+prettyPrint(`head)+" | "+prettyPrint(`tail)+")";
       }
 
-      MatchConstraint(Pattern, Subject)-> {
-        if(TomBase.hasTheory(`Pattern,`AC())) {
-          return prettyPrint(`Pattern)+" <<_AC "+prettyPrint(`Subject);
+      MatchConstraint[Pattern=pattern, Subject=subject]-> {
+        if(TomBase.hasTheory(`pattern,`AC())) {
+          return prettyPrint(`pattern)+" <<_AC "+prettyPrint(`subject);
         } else {
-          return prettyPrint(`Pattern)+" << "+prettyPrint(`Subject);
+          return prettyPrint(`pattern)+" << "+prettyPrint(`subject);
         }
       }
 
