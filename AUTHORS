@@ -24,4 +24,4 @@ Other contributors:
     Patrick Viry              Discussions and backquote notation
     Eelco Visser              Discussions and %match construct
     Marian Vittek             Initial design of Tom
-
+    Antoine Floch             Improvment of EcoreContainmentIntrospector

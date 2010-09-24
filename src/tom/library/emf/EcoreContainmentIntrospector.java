@@ -27,8 +27,13 @@
 package tom.library.emf;
 
 import java.util.List;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.common.util.EList;
 
 import tom.library.sl.Introspector;
 
@@ -72,7 +77,8 @@ public class EcoreContainmentIntrospector implements Introspector {
     return null;
   }
 
-  @Override
+  //Original code
+  /*@Override
   public <T> T setChildAt(T o, int i, Object obj) {
     List<Object> l=getList(o);
     if(l!=null){
@@ -80,9 +86,72 @@ public class EcoreContainmentIntrospector implements Introspector {
       return o;
     }
     return null;
-  }
+  }*/
 
-  @Override
+
+  // Antoine Floch's version
+	@SuppressWarnings("unchecked")
+	// XXX: original tom implementation fixed by antoine (need to be extensively
+	// tested)
+	public <T> T setChildAt(T o, int i, Object obj) {
+		EObject eo = (EObject) o;
+
+		// 1) Get the structural feature which has to be modified
+		EStructuralFeature feature = getFeature(eo, i);
+
+		// 2) If feature is a list
+		if (feature.getUpperBound() == -1) {
+			EList<EObject> list = (EList<EObject>) eo.eGet(feature);
+
+			if (list.size() > 0) {
+				// find the position in the list and set it
+				int pos = getPositionInTheContainingList(i, eo, feature);
+				if (pos > list.size())
+					throw new RuntimeException(
+							"Relative position isn't allowed.");
+				else
+					list.set(pos, (EObject) obj);
+			} else {
+				list.add((EObject) obj);
+			}
+
+		} else {
+			// else just set the feature
+			eo.eSet(feature, obj);
+		}
+
+		return o;
+	}
+
+	/**
+	 * Get a position in a feature list from global position in all contents of
+	 * the referencing object.
+	 * 
+	 * @param global
+	 *            position of the object in all contents
+	 * @param referencing
+	 * @param feature
+	 *            target feature
+	 * @return the relative position
+	 */
+	private int getPositionInTheContainingList(int global, EObject referencing,
+			EStructuralFeature feature) {
+		int offset = 0;
+		List<EObject> contents = getList(referencing);
+		while (offset < contents.size()
+				&& contents.get(offset).eContainingFeature() != feature)
+			offset++;
+		return global - offset;
+	}
+
+	private EStructuralFeature getFeature(EObject o, int i) {
+		List<EObject> l = getList(o);
+		return l.get(i).eContainingFeature();
+	}
+///
+
+  //Original code
+  /*@Override
   public <T> T setChildren(T o, Object[] objs) {
     List<Object> l=getList(o);
     if(l!=null){
@@ -92,6 +161,56 @@ public class EcoreContainmentIntrospector implements Introspector {
       return o;
     }
     return null;
-  }
+  }*/
+
+
+  // Antoine Floch's version
+	@SuppressWarnings("unchecked")
+	// XXX: original tom implementation fixed by antoine (need to be extensively
+	// tested)
+	public <T> T setChildren(T o, Object[] objs) {
+		List<EObject> l = getList(o);
+
+		EObject eo = (EObject) o;
+
+		// Memorize all setted features
+		List<EStructuralFeature> settedFeatures = new ArrayList<EStructuralFeature>();
+		for (EObject el : l) {
+			settedFeatures.add(el.eContainingFeature());
+		}
+
+		// Clear list ones
+		clear(eo, new HashSet<EStructuralFeature>(settedFeatures));
+
+		for (int i = 0; i < settedFeatures.size(); i++) {
+			EStructuralFeature feature = settedFeatures.get(i);
+			if (feature.getUpperBound() == -1) {
+				// in case of a list feature: add each object to its list
+				List<EObject> list = (List<EObject>) eo.eGet(feature);
+        if (objs[i]!=null) {
+          list.add((EObject) objs[i]);
+        }
+			} else
+				eo.eSet(l.get(i).eContainingFeature(), objs[i]);
+		}
+
+		return o;
+	}
+
+	/**
+	 * Clear list features of an {@link EObject}.
+	 * 
+	 * @param eo
+	 * @param features
+	 */
+	@SuppressWarnings({ "unchecked" })
+	private void clear(EObject eo, Set<EStructuralFeature> features) {
+		for (EStructuralFeature feature : features) {
+			if (feature.getUpperBound() == -1) {
+				List<EObject> list = (List<EObject>) eo.eGet(feature);
+				list.clear();
+			}
+		}
+	}
 
 }
