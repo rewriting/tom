@@ -186,10 +186,6 @@ public abstract class TemplateHookedClass extends TemplateClass {
 
         int res = tom.engine.Tom.exec(tomParams.toArray(new String[0]));
         tmpFile.deleteOnExit();
-        /*if (!tmpFile.deleteOnExit()) {
-          GomMessage.error(getLogger(),null,0, 
-              GomMessage.impossibleToDeleteTmpFile, tmpFile.getPath());
-        }*/
 
         //int res = tom.engine.Tom.exec(tomParams.toArray(new String[0]),informationTracker);
         if (res != 0 ) {
