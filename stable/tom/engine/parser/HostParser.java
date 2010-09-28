@@ -735,7 +735,7 @@ public HostParser(ParserSharedInputState state) {
 		
 		//5 tom.platform.PluginPlatformFactory.getInstance().getInformationTracker().put(java.lang.Thread.currentThread().getId(),null);
 		res = tom.gom.Gom.exec(params,informationTracker);
-		tmpFile.delete();
+		tmpFile.deleteOnExit();
 		if(res != 0) {
 		TomMessage.error(logger, currentFile, initialGomLine, TomMessage.gomFailure,currentFile,Integer.valueOf(initialGomLine));
 		return;
