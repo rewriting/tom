@@ -699,7 +699,8 @@ public HostParser(ParserSharedInputState state) {
 		
 		final File tmpFile;
 		try {
-		tmpFile = File.createTempFile("tmp", ".gom", getStreamManager().getDestDir()).getCanonicalFile();
+		//tmpFile = File.createTempFile("tmp", ".gom", getStreamManager().getDestDir()).getCanonicalFile();
+		tmpFile = File.createTempFile("tmp", ".gom", null).getCanonicalFile();
 		parameters.add(tmpFile.getPath());
 		} catch (IOException e) {
 		TomMessage.error(logger, null, 0, TomMessage.ioExceptionTempGom,e.getMessage());
