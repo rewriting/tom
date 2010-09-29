@@ -25,7 +25,6 @@ import org.eclipse.emf.ecore.EObject;
  * @generated
  */
 public interface OSTelephone extends EObject {
-
 	/**
 	 * Returns the value of the '<em><b>Version</b></em>' attribute.
 	 * <!-- begin-user-doc -->
@@ -51,4 +50,5 @@ public interface OSTelephone extends EObject {
 	 * @generated
 	 */
 	void setVersion(int value);
+
 } // OSTelephone

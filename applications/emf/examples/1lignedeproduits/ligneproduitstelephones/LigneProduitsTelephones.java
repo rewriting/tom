@@ -60,7 +60,7 @@ public interface LigneProduitsTelephones extends EObject {
 	 * The list contents are of type {@link ligneproduitstelephones.Telephone}.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Telephones</em>' reference list isn't clear,
+	 * If the meaning of the '<em>Telephones</em>' containment reference list isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
@@ -76,7 +76,7 @@ public interface LigneProduitsTelephones extends EObject {
 	 * The list contents are of type {@link ligneproduitstelephones.Marque}.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Marques</em>' reference list isn't clear,
+	 * If the meaning of the '<em>Marques</em>' containment reference list isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->

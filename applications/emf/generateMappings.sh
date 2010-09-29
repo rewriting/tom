@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export ECLIPSE_WORKSPACE=${HOME}/workspace/jtom/journeeRII
+export ECLIPSE_WORKSPACE="/home/jcb/workspace/eclipseProjects"
 
 if [ "$1" = "clean" ]
 then
