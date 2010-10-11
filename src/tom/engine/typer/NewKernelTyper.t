@@ -149,6 +149,8 @@ public class NewKernelTyper {
    * @param value the second argument of the pair to be inserted (i.e. the type2) 
    */
   private void addSubstitution(TomType key, TomType value) {
+    System.out.println("addSubstitution: key = " + key + " and  value = " +
+        value);
     // STEP 1  
     TomType newValue = value;
     if (substitutions.containsKey(value)) {
@@ -290,7 +292,8 @@ public class NewKernelTyper {
         typeConstraint << TypeConstraint tConstraint -> {
           %match {
             Equation[Type1=t1@!EmptyType(),Type2=t2@!EmptyType()] <<
-              typeConstraint && (t1 != t2) -> { 
+              typeConstraint && (t1 != t2) -> {
+                System.out.println("addEqConstraint = " + `typeConstraint);
                 return `concTypeConstraint(typeConstraint,tCList*);
               }
           }
@@ -307,6 +310,7 @@ public class NewKernelTyper {
           %match {
             Subtype[Type1=t1@!EmptyType(),Type2=t2@!EmptyType()] <<
               typeConstraint && (t1 != t2) -> { 
+                System.out.println("addSubConstraint = " + `typeConstraint);
                 return`concTypeConstraint(typeConstraint,tCList*);
                 //return closedForm(tConstraint,closedtCList);
               }
@@ -529,7 +533,7 @@ public class NewKernelTyper {
     visit Code {
       code@(Tom|TomInclude)[CodeList=cList] -> {
         nkt.generateDependencies();
-        System.out.println("Dependencies: " + nkt.dependencies);
+        //DEBUG System.out.println("Dependencies: " + nkt.dependencies);
         //DEBUG System.out.println("Code with term = " + `code + " and contextType = " +
         //DEBUG     contextType);
         CodeList newCList = nkt.inferCodeList(`cList);
@@ -637,7 +641,8 @@ public class NewKernelTyper {
         if (!`sList.isEmptyconcSlot()) {
           // TODO : verify if we pass codomain or contextType
           `newSList =
-            nkt.inferSlotList(`sList,tSymbol,codomain);
+            //nkt.inferSlotList(`sList,tSymbol,codomain);
+            nkt.inferSlotList(`sList,tSymbol,contextType);
         }
         return `RecordAppl(optionList,nList,newSList,newCList);
       }
@@ -685,7 +690,8 @@ public class NewKernelTyper {
           //DEBUG System.out.println("\n Test pour BQTerm-inferTypes in BQAppl. bqTList = " + `bqTList);
           // TODO : verify if we pass codomain or contextType
           newBQTList =
-            nkt.inferBQTermList(`bqTList,`tSymbol,codomain);
+            //nkt.inferBQTermList(`bqTList,`tSymbol,codomain);
+            nkt.inferBQTermList(`bqTList,`tSymbol,contextType);
         }
       
         // TO VERIFY
@@ -781,13 +787,15 @@ public class NewKernelTyper {
     for (Code code : cList.getCollectionconcCode()) {
       init();
       code =  collectKnownTypesFromCode(`code);
-      System.out.println("------------- Code typed with typeVar:\n code = " +
-          `code);
+      //DEBUG System.out.println("------------- Code typed with typeVar:\n code = " +
+      //DEBUG     `code);
       code = inferAllTypes(code,`EmptyType());
       //DEBUG printGeneratedConstraints(subtypingConstraints);
       solveConstraints();
       System.out.println("substitutions = " + substitutions);
       code = replaceInCode(code);
+      System.out.println("------------- Code typed with substitutions:\n code = " +
+          `code);
       replaceInSymbolTable();
       newCList = `concCode(code,newCList*);
     }
@@ -1316,7 +1324,7 @@ public class NewKernelTyper {
       // PHASE 1
       tcl@concTypeConstraint(tcl1*,Subtype[Type1=t1,Type2=t2,Info=info],tcl2*,Subtype[Type1=t2,Type2=t1],tcl3*) -> {
         // TODO : test if Eq(t1,t2,info) already exists in concTypeConstraint
-        System.out.println("\nsolve1: " + `tcl);
+        //DEBUG System.out.println("\nsolve1: " + `tcl);
         return
           nkt.`addEqConstraint(Equation(t1,t2,info),concTypeConstraint(tcl1,tcl2,tcl3));
       }
@@ -1324,20 +1332,22 @@ public class NewKernelTyper {
       // PHASE 2
       tcl@concTypeConstraint(_*,Subtype[Type1=t1,Type2=tVar@TypeVar[],Info=info],_*,Subtype[Type1=tVar,Type2=t2],_*) -> {
         // TODO : test if Sub(t1,t2,info) already exists in concTypeConstraint
-        System.out.println("\nsolve2: " + `tcl);
+        //DEBUG System.out.println("\nsolve2: " + `tcl);
         return
           nkt.`addSubConstraint(Subtype(t1,t2,info),tcl);
       }
 
       // PHASE 3
       tcl@concTypeConstraint(_*,sConstraint@Subtype[Type1=!TypeVar[],Type2=!TypeVar[]],_*) -> {
-        System.out.println("\nsolve3: " + `tcl);
+        //DEBUG System.out.println("\nsolve3: " + `tcl);
         nkt.detectFail(`sConstraint);
       }
       concTypeConstraint(leftTCL*,c1@Subtype[Type1=tVar@TypeVar[],Type2=groundType@!TypeVar[]],rightTCL*) -> {
-        System.out.println("\nsolve4: " + `c1);
+        //DEBUG System.out.println("\nsolve4: " + `c1);
         TypeConstraintList newLeftTCL = `leftTCL;
         TypeConstraintList newRightTCL = `rightTCL;
+        System.out.println("solveSubCosntraints: findVar " + `tVar + " in " +
+            `concTypeConstraint(leftTCL,rightTCL) + " = " + nkt.`findVar(tVar,concTypeConstraint(leftTCL,rightTCL)));
         if (!nkt.`findVar(tVar,concTypeConstraint(leftTCL,rightTCL))) {
           // Same code of cases 7 and 8 of solveEquationConstraints
           nkt.addSubstitution(`tVar,`groundType);
@@ -1345,7 +1355,7 @@ public class NewKernelTyper {
         }
       }
       concTypeConstraint(leftTCL*,c1@Subtype[Type1=groundType@!TypeVar[],Type2=tVar@TypeVar[]],rightTCL*) -> {
-        System.out.println("\nsolve5: " + `c1);
+        //DEBUG System.out.println("\nsolve5: " + `c1);
         TypeConstraintList newLeftTCL = `leftTCL;
         TypeConstraintList newRightTCL = `rightTCL;
         if (!nkt.`findVar(tVar,concTypeConstraint(leftTCL,rightTCL))) {
@@ -1356,10 +1366,10 @@ public class NewKernelTyper {
 
       // PHASE 4
       concTypeConstraint(tcl1*,constraint@Subtype[Type1=tVar@TypeVar[],Type2=t1@!TypeVar[],Info=info],tcl2*,c2@Subtype[Type1=tVar,Type2=t2@!TypeVar[]],tcl3*) -> {
-        System.out.println("\nsolve6: " + `constraint + " and " + `c2);
+        //DEBUG System.out.println("\nsolve6: " + `constraint + " and " + `c2);
         TomType lowerType = nkt.`minType(t1,t2);
-        System.out.println("\nminType(" + `t1.getTomType() + "," +
-            `t2.getTomType() + ") = " + lowerType);
+        //DEBUG System.out.println("\nminType(" + `t1.getTomType() + "," +
+        //DEBUG    `t2.getTomType() + ") = " + lowerType);
 
         if (lowerType == `EmptyType()) {
           // TODO fix print (bad message and arguments)
@@ -1371,10 +1381,10 @@ public class NewKernelTyper {
           nkt.`addSubConstraint(Subtype(tVar,lowerType,info),concTypeConstraint(tcl1,tcl2,tcl3));
       }
       concTypeConstraint(tcl1*,constraint@Subtype[Type1=t1@!TypeVar[],Type2=tVar@TypeVar[],Info=info],tcl2*,c2@Subtype[Type1=t2@!TypeVar[],Type2=tVar],tcl3*) -> {
-        System.out.println("\nsolve7: " + `constraint + " and " + `c2);
+        //DEBUG System.out.println("\nsolve7: " + `constraint + " and " + `c2);
         TomType upperType = nkt.`maxType(t1,t2);
-        System.out.println("\nmaxType(" + `t1.getTomType() + "," +
-            `t2.getTomType() + ") = " + upperType);
+        //DEBUG System.out.println("\nmaxType(" + `t1.getTomType() + "," +
+        //DEBUG    `t2.getTomType() + ") = " + upperType);
 
         if (upperType == `EmptyType()) {
           // TODO fix print (bad message and arguments)
@@ -1444,7 +1454,7 @@ public class NewKernelTyper {
             mapT2 = `t2;
           }
           replacedtCList =
-            `concTypeConstraint(Subtype(mapT1,mapT2,info),replacedtCList*);
+            `addSubConstraint(Subtype(mapT1,mapT2,info),replacedtCList*);
         }
       }
 
@@ -1750,7 +1760,7 @@ matchBlockFail :
 
   %strategy checkTypeOfBQVariables(nkt:NewKernelTyper) extends Identity() {
     visit Constraint {
-      MatchConstraint[Pattern=Variable[],Subject=BQVariable[Options=oList,AstName=Name(name),AstType=TypeVar(_,_)]] -> {
+      MatchConstraint[Pattern=Variable[],Subject=BQVariable[Options=oList,AstName=Name(name),AstType=TypeVar[]]] -> {
         Option option = TomBase.findOriginTracking(`oList);
         %match(option) {
           OriginTracking(_,line,fileName) -> {

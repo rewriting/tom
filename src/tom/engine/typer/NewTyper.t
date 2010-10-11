@@ -143,7 +143,6 @@ public class NewTyper extends TomGenericPlugin {
         //typedCode = newKernelTyper.inferCode((Code)getWorkingTerm());
         typedCode =
           newKernelTyper.inferAllTypes((Code)getWorkingTerm(),`EmptyType());
-        //DEBUG System.out.println("\nCode after type inference before desugarString = \n" + typedCode);
 
         /**
          * Replace all remains of type variables by
@@ -157,11 +156,12 @@ public class NewTyper extends TomGenericPlugin {
          * - transform each BackQuoteTerm into its compiled form
          * - replace 'abc' by concString('a','b','c')
          */
+        //DEBUG System.out.println("\nCode after type inference before desugarString = \n" + typedCode);
         typedCode = `TopDownIdStopOnSuccess(desugarString(this)).visitLight(typedCode);
         typedCode =
           `TopDownIdStopOnSuccess(TransformBQAppl(newKernelTyper)).visitLight(typedCode);
 
-        //DEBUG System.out.println("\nCode after type inference = \n" + typedCode);
+        //DEBUG System.out.println("\nCode after type inference after desugarString = = \n" + typedCode);
 
         setWorkingTerm(typedCode);
 
