@@ -188,7 +188,6 @@ public class Compiler extends TomGenericPlugin {
       //System.out.println("compiledTerm = \n" + compiledTerm);            
       Collection hashSet = new HashSet();
       Code renamedTerm = `TopDownIdStopOnSuccess(findRenameVariable(hashSet)).visitLight(compiledTerm);
-      //DEBUG System.out.println("\nCode after compilateur = \n" + renamedTerm);
       // add the additional functions needed by the AC operators
       //renamedTerm = addACFunctions(renamedTerm);      
       setWorkingTerm(renamedTerm);
@@ -265,66 +264,31 @@ public class Compiler extends TomGenericPlugin {
   /**
    * Takes all MatchConstraints and renames the subjects;
    * (this ensures that the subject is not constructed more than once) 
-   * Match(p,s,t) -> Match(object,s,t) /\ IsSort(t,object) /\
-   * Match(freshSubj,Cast(object),t) /\ Match(p,freshSubj,t) 
+   * Match(p,s) -> Match(object,s) /\ IsSort(object) /\ Match(freshSubj,Cast(object)) /\ Match(p,freshSubj) 
    * 
    * @param subjectList the list of old subjects
    */
   %strategy renameSubjects(ArrayList subjectList,ArrayList renamedSubjects, Compiler compiler) extends Identity() {
     visit Constraint {
-      constr@MatchConstraint[Pattern=pattern,Subject=subject,AstType=castType] -> {
+      constr@MatchConstraint[Pattern=pattern,Subject=subject,AstType=aType] -> {
         if(renamedSubjects.contains(`pattern) || ( `(subject) instanceof BQVariable && renamedSubjects.contains(TomBase.convertFromBQVarToVar(`subject))) ) {
           // make sure we don't process generated contraints
           return `constr; 
         }        
         // test if we already renamed this subject 
-        TomType freshSubjectType = `castType;
-
         if(subjectList.contains(`subject)) {
           TomTerm renamedSubj= (TomTerm) renamedSubjects.get(subjectList.indexOf(`subject));
-          System.out.println("renameSubjects -- renamedSubj = " + renamedSubj);
           Constraint newConstraint = `constr.setSubject(TomBase.convertFromVarToBQVar(renamedSubj));
-          System.out.println("renameSubjects -- newConstraint = " +
-              newConstraint);
-          if (freshSubjectType.getTlType() == compiler.getSymbolTable().TYPE_UNKNOWN.getTlType()) {
-            freshSubjectType = renamedSubj.getAstType();
-          }
-          System.out.println("renameSubjects -- freshSubjectType = " + freshSubjectType);
+          TomType freshSubjectType = renamedSubj.getAstType();
           BQTerm freshVar = compiler.getUniversalObjectForSubject(freshSubjectType);
-          System.out.println("renameSubjects -- freshVar= " + freshVar);
-          /*
           return `AndConstraint(
-              MatchConstraint(TomBase.convertFromBQVarToVar(freshVar),subject,castType),
-              IsSortConstraint(castType,freshVar),
-              MatchConstraint(renamedSubj,ExpressionToBQTerm(Cast(castType,BQTermToExpression(freshVar))),castType),
-              newConstraint);
-          */
-
-          return `AndConstraint(
-              MatchConstraint(TomBase.convertFromBQVarToVar(freshVar),subject,freshSubjectType),
+              MatchConstraint(TomBase.convertFromBQVarToVar(freshVar),subject,aType),
               IsSortConstraint(freshSubjectType,freshVar),
-              MatchConstraint(renamedSubj,ExpressionToBQTerm(Cast(freshSubjectType,BQTermToExpression(freshVar))),freshSubjectType),
+              MatchConstraint(renamedSubj,ExpressionToBQTerm(Cast(freshSubjectType,BQTermToExpression(freshVar))),aType),
               newConstraint);
         }
         TomNumberList path = compiler.getCompilerEnvironment().getRootpath();
         TomName freshSubjectName  = `PositionName(concTomNumber(path*,NameNumber(Name("_freshSubject_" + compiler.getCompilerEnvironment().genFreshSubjectCounter()))));
-        if (freshSubjectType.getTlType() ==
-            compiler.getSymbolTable().TYPE_UNKNOWN.getTlType()) {
-          %match(subject) {
-            (BQVariable|BQVariableStar)[AstType=variableType] -> { 
-              freshSubjectType = `variableType;
-            }          
-            sv@(BuildTerm|FunctionCall|BuildConstant|BuildEmptyList|BuildConsList|BuildAppendList|BuildEmptyArray|BuildConsArray|BuildAppendArray)[AstName=Name(tomName)] -> {
-              TomSymbol tomSymbol = compiler.getSymbolTable().getSymbolFromName(`tomName);                      
-              if(tomSymbol != null) {
-                freshSubjectType = TomBase.getSymbolCodomain(tomSymbol);
-              } else if(`sv.isFunctionCall()) {
-                freshSubjectType =`sv.getAstType();
-              }
-            }
-          } 
-        }
-        /*
         TomType freshSubjectType = `EmptyType();
         %match(subject) {
           (BQVariable|BQVariableStar)[AstType=variableType] -> { 
@@ -339,36 +303,15 @@ public class Compiler extends TomGenericPlugin {
             }
           }
         }
-        */
         TomTerm renamedVar = `Variable(concOption(),freshSubjectName,freshSubjectType,concConstraint());
-        //TomTerm renamedVar = `Variable(concOption(),freshSubjectName,castType,concConstraint());
         subjectList.add(`subject);
         renamedSubjects.add(renamedVar);
         Constraint newConstraint = `constr.setSubject(TomBase.convertFromVarToBQVar(renamedVar));   
         BQTerm freshVar = compiler.getUniversalObjectForSubject(freshSubjectType);
-        //BQTerm freshVar = compiler.getUniversalObjectForSubject(`castType);
-        /*
-        System.out.println("renameSubjects -- return = " + `AndConstraint(
-            MatchConstraint(TomBase.convertFromBQVarToVar(freshVar),subject,castType),
-            IsSortConstraint(castType,freshVar),
-            MatchConstraint(renamedVar,ExpressionToBQTerm(Cast(castType,BQTermToExpression(freshVar))),castType),
-            newConstraint));
         return `AndConstraint(
-            MatchConstraint(TomBase.convertFromBQVarToVar(freshVar),subject,castType),
-            IsSortConstraint(castType,freshVar),
-            MatchConstraint(renamedVar,ExpressionToBQTerm(Cast(castType,BQTermToExpression(freshVar))),castType),
-            newConstraint);
-            */
-        
-        System.out.println("renameSubjects -- return = " + `AndConstraint(
-            MatchConstraint(TomBase.convertFromBQVarToVar(freshVar),subject,freshSubjectType),
+            MatchConstraint(TomBase.convertFromBQVarToVar(freshVar),subject,aType),
             IsSortConstraint(freshSubjectType,freshVar),
-            MatchConstraint(renamedVar,ExpressionToBQTerm(Cast(freshSubjectType,BQTermToExpression(freshVar))),freshSubjectType),
-            newConstraint));
-        return `AndConstraint(
-            MatchConstraint(TomBase.convertFromBQVarToVar(freshVar),subject,freshSubjectType),
-            IsSortConstraint(freshSubjectType,freshVar),
-            MatchConstraint(renamedVar,ExpressionToBQTerm(Cast(freshSubjectType,BQTermToExpression(freshVar))),freshSubjectType),
+            MatchConstraint(renamedVar,ExpressionToBQTerm(Cast(freshSubjectType,BQTermToExpression(freshVar))),aType),
             newConstraint);
       }
     }
