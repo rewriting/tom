@@ -1,1 +1,14 @@
+*.jpg -text
+*.jpeg -text
+*.gif -text
+*.pdf -text
+*.doc -text
+*.bat -text
+*.png -text
+*.jar -text
+*.war -text
+*.tar.gz -text
+*.zip -text
+*.class -text
+*.expectedOutcome -text
 * text=auto
