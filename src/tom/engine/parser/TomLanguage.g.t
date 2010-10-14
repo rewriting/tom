@@ -1843,7 +1843,7 @@ subtypeConstruct throws TomException
         subtypeName = subtype.getText();
         ot1 = `OriginTracking(Name(subtypeName), subtype.getLine(),currentFile());
     }
-    SUBTYPE_CONSTRAINT
+    LESS_CONSTRAINT
     supertype:ALL_ID
     {
         supertypeName = supertype.getText();
@@ -1855,17 +1855,7 @@ subtypeConstruct throws TomException
   if (subAstType != null && superAstType != null) {
     %match(subAstType) {
       Type[TypeOptions=tOptions,TlType=tlType] -> {
-        %match {
-          concTypeOption(_*,SubtypeDecl[TomType=tType],_*) <<
-            subAstType.getTypeOptions() -> {
-            TomMessage.error(getLogger(),currentFile(), getLine(),
-                TomMessage.multipleUpperTypes,`subtypeName,`supertypeName,`tType);
-          }
-
-          !concTypeOption(_*,SubtypeDecl[],_*) << subAstType.getTypeOptions() -> {
-            putType(subtypeName,`Type(concTypeOption(SubtypeDecl(supertypeName),tOptions*),subtypeName,tlType)); 
-          }
-        }
+        putType(subtypeName,`Type(concTypeOption(SubtypeDecl(supertypeName),tOptions*),subtypeName,tlType)); 
       }
     }
   } else {
@@ -2509,7 +2499,7 @@ STRING
 
 ANTI_SYM  : '!';
 MATCH_CONSTRAINT  : "<<";
-SUBTYPE_CONSTRAINT  : "<:";
+LESS_CONSTRAINT  : "<:";
 LESSOREQUAL_CONSTRAINT  : "<=";
 //GREATER_CONSTRAINT  : ":>";
 GREATEROREQUAL_CONSTRAINT  : ">=";
