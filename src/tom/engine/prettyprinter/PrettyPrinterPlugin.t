@@ -113,7 +113,11 @@ public class PrettyPrinterPlugin extends TomGenericPlugin {
 
   private void prettyPrinter(Code code) {
     System.out.println("PrettyPrinter active");
-    // ...
+    %match(code) {
+      Tom(concCode(_*,c,_*)) -> {
+	System.out.println(`c);
+      }
+    }
   }
 
 }
