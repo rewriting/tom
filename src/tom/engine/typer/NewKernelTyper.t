@@ -149,24 +149,20 @@ public class NewKernelTyper {
    * @param value the second argument of the pair to be inserted (i.e. the type2) 
    */
   private void addSubstitution(TomType key, TomType value) {
-    System.out.println("addSubstitution: key = " + key + " and  value = " +
-        value);
-    if (key != value) {
-      // STEP 1  
-      TomType newValue = value;
-      if (substitutions.containsKey(value)) {
-        newValue = substitutions.get(value); 
-      } 
-      substitutions.put(key,newValue);
+    // STEP 1  
+    TomType newValue = value;
+    if (substitutions.containsKey(value)) {
+      newValue = substitutions.get(value); 
+    } 
+    substitutions.put(key,newValue);
 
-      // STEP 2
-      if (substitutions.containsValue(key)) {
-        TomType valueOfCurrentKey;
-        for (TomType currentKey : substitutions.keySet()) {
-          valueOfCurrentKey = substitutions.get(currentKey);
-          if (valueOfCurrentKey == key) {
-            substitutions.put(currentKey,newValue);
-          }
+    // STEP 2
+    if (substitutions.containsValue(key)) {
+      TomType valueOfCurrentKey;
+      for (TomType currentKey : substitutions.keySet()) {
+        valueOfCurrentKey = substitutions.get(currentKey);
+        if (valueOfCurrentKey == key) {
+          substitutions.put(currentKey,newValue);
         }
       }
     }
@@ -294,8 +290,7 @@ public class NewKernelTyper {
         typeConstraint << TypeConstraint tConstraint -> {
           %match {
             Equation[Type1=t1@!EmptyType(),Type2=t2@!EmptyType()] <<
-              typeConstraint && (t1 != t2) -> {
-                System.out.println("addEqConstraint = " + `typeConstraint);
+              typeConstraint && (t1 != t2) -> { 
                 return `concTypeConstraint(typeConstraint,tCList*);
               }
           }
@@ -306,43 +301,12 @@ public class NewKernelTyper {
 
   protected TypeConstraintList addSubConstraint(TypeConstraint tConstraint,
       TypeConstraintList tCList) {
-    System.out.println("In addSubConstraint: tCList = " + tCList);
-    /*
-    %match {
-      Subtype[Type1=t1@!EmptyType(),Type2=t2@!EmptyType()] <<
-        tConstraint && (t1 != t2) -> {
-          %match {
-            concTypeConstraint(_*,Subtype[Type1=type1,Type2=type2],_*) << tCList &&
-              typeConstraint << TypeConstraint tConstraint -> {
-                System.out.println("addSubConstraint = " + `tConstraint);
-                return`concTypeConstraint(tConstraint,tCList*);
-              }
-          }
-        }
-    }
-    %match {
-      Subtype[Type1=t1@!EmptyType(),Type2=t2@!EmptyType()] <<
-        tConstraint && (t1 != t2) -> {
-          TomType type1 = `t1;
-          TomType type2 = `t2;
-          System.out.println("addSubConstraint in first match = " + `tConstraint);
-          %match {
-            concTypeConstraint(_*,!Subtype[Type1=type1,Type2=type2],_*) << tCList -> {
-                System.out.println("addSubConstraint in second match = " + `tConstraint);
-                return`concTypeConstraint(tConstraint,tCList*);
-              }
-          }
-        }
-    }
-   */
-
     %match {
       !concTypeConstraint(_*,typeConstraint,_*) << tCList &&
         typeConstraint << TypeConstraint tConstraint -> {
           %match {
             Subtype[Type1=t1@!EmptyType(),Type2=t2@!EmptyType()] <<
               typeConstraint && (t1 != t2) -> { 
-                System.out.println("addSubConstraint = " + `typeConstraint);
                 return`concTypeConstraint(typeConstraint,tCList*);
                 //return closedForm(tConstraint,closedtCList);
               }
@@ -414,10 +378,6 @@ public class NewKernelTyper {
 
   protected void addTomTerm(TomTerm tTerm) {
     varPatternList = `concTomTerm(tTerm,varPatternList*);
-  }
-
-  protected void addTomList(TomList TTList) {
-    varPatternList = `concTomTerm(TTList*,varPatternList*);
   }
 
   protected void addBQTerm(BQTerm bqTerm) {
@@ -565,7 +525,7 @@ public class NewKernelTyper {
     visit Code {
       code@(Tom|TomInclude)[CodeList=cList] -> {
         nkt.generateDependencies();
-        //DEBUG System.out.println("Dependencies: " + nkt.dependencies);
+        System.out.println("Dependencies: " + nkt.dependencies);
         //DEBUG System.out.println("Code with term = " + `code + " and contextType = " +
         //DEBUG     contextType);
         CodeList newCList = nkt.inferCodeList(`cList);
@@ -603,7 +563,7 @@ public class NewKernelTyper {
         nkt.subtypingConstraints =
           nkt.addSubConstraint(`Subtype(aType,contextType,PairNameOptions(aName,optionList)),newSubConstraints);  
         //DEBUG System.out.println("InferTypes:TomTerm var -- constraint = " +
-        //DEBUG `aType + " <: " + contextType);
+        //DEBUG `aType + " = " + contextType);
         ConstraintList newCList = `cList;
         %match(cList) {
           // How many "AliasTo" constructors can concConstraint have?
@@ -612,8 +572,6 @@ public class NewKernelTyper {
             //DEBUG   nkt.getType(`boundTerm) + " = " + `contextType);
             //nkt.addConstraint(`Equation(nkt.getType(boundTerm),contextType,nkt.getInfoFromTomTerm(boundTerm))); 
             TypeConstraintList newEqConstraints = nkt.equationConstraints;
-            //DEBUG System.out.println("visit TomTerm: addEqConst " +
-            //DEBUG     nkt.getType(`boundTerm) + " = " + `aType);
             nkt.equationConstraints =
               nkt.addEqConstraint(`Equation(nkt.getType(boundTerm),aType,nkt.getInfoFromTomTerm(boundTerm)),newEqConstraints); 
           }
@@ -675,8 +633,7 @@ public class NewKernelTyper {
         if (!`sList.isEmptyconcSlot()) {
           // TODO : verify if we pass codomain or contextType
           `newSList =
-            //nkt.inferSlotList(`sList,tSymbol,codomain);
-            nkt.inferSlotList(`sList,tSymbol,contextType);
+            nkt.inferSlotList(`sList,tSymbol,codomain);
         }
         return `RecordAppl(optionList,nList,newSList,newCList);
       }
@@ -724,8 +681,7 @@ public class NewKernelTyper {
           //DEBUG System.out.println("\n Test pour BQTerm-inferTypes in BQAppl. bqTList = " + `bqTList);
           // TODO : verify if we pass codomain or contextType
           newBQTList =
-            //nkt.inferBQTermList(`bqTList,`tSymbol,codomain);
-            nkt.inferBQTermList(`bqTList,`tSymbol,contextType);
+            nkt.inferBQTermList(`bqTList,`tSymbol,codomain);
         }
       
         // TO VERIFY
@@ -821,11 +777,13 @@ public class NewKernelTyper {
     for (Code code : cList.getCollectionconcCode()) {
       init();
       code =  collectKnownTypesFromCode(`code);
-      //DEBUG System.out.println("------------- Code typed with typeVar:\n code = " +
-      //DEBUG     `code);
+      int limInputTypeVar = freshTypeVarCounter;
+      System.out.println("------------- Code typed with typeVar:\n code = " +
+          `code);
       code = inferAllTypes(code,`EmptyType());
       //DEBUG printGeneratedConstraints(subtypingConstraints);
-      solveConstraints();
+      solveConstraints(limInputTypeVar);
+      System.out.println("limInputTypeVar = " + limInputTypeVar);
       System.out.println("substitutions = " + substitutions);
       code = replaceInCode(code);
       System.out.println("------------- Code typed with substitutions:\n code = " +
@@ -925,19 +883,9 @@ public class NewKernelTyper {
         TomType tSubject = getType(`subject);
         if (tPattern == null || tPattern == `EmptyType()) {
           tPattern = getUnknownFreshTypeVar();
-          /* DEBUG
-          if (tPattern == `TypeVar("unknown type",14)) {
-            System.out.println("inferConstraint l1 -- getUFTVar = " + `tPattern); 
-          }
-          */
         }
         if (tSubject == null || tSubject == `EmptyType()) {
           tSubject = getUnknownFreshTypeVar();
-          /* DEBUG
-          if (tSubject == `TypeVar("unknown type",14)) {
-            System.out.println("inferConstraint l2 -- getUFTVar = " + `tSubject); 
-          }
-          */
         }
         //DEBUG System.out.println("inferConstraint: match -- constraint " +
         //DEBUG     tPattern + " = " + tSubject);
@@ -945,6 +893,7 @@ public class NewKernelTyper {
           TypeVar[TomType=typeName] -> {
             `hasUndeclaredType(typeName,getInfoFromTomTerm(pattern).getOptions()); 
             /* There is no explicit type, so T_pattern = T_subject */
+            // TODO verify if we replace it by same code of case "Type[]"
             TypeConstraintList newEqConstraints = equationConstraints;
             equationConstraints =
               addEqConstraint(`Equation(tPattern,tSubject,getInfoFromTomTerm(pattern)),newEqConstraints);
@@ -969,37 +918,20 @@ public class NewKernelTyper {
         TomType tRight = getType(`right);
         if (tLeft == null || tLeft == `EmptyType()) {
           tLeft = getUnknownFreshTypeVar();
-          /* DEBUG
-          if (tLeft == `TypeVar("unknown type",14)) {
-            System.out.println("inferConstraint l3 -- getUFTVar = " + `tLeft); 
-          }
-          */
         }
         if (tRight == null || tRight == `EmptyType()) {
           tRight = getUnknownFreshTypeVar();
-          /* DEBUG
-          if (tRight == `TypeVar("unknown type",14)) {
-            System.out.println("inferConstraint l4 -- getUFTVar = " + `tRight); 
-          }
-          */
         }
         //DEBUG System.out.println("inferConstraint: match -- constraint " +
         //DEBUG     tLeft + " = " + tRight);
 
         // To represent the relationshipo between both argument types
         TomType lowerType = getUnknownFreshTypeVar();
-        /* DEBUG
-        if (lowerType == `TypeVar("unknown type",14)) {
-            System.out.println("inferConstraint l5 -- getUFTVar = " + `lowerType); 
-          }
-          */
-        
         TypeConstraintList newSubConstraints = subtypingConstraints;
         newSubConstraints =
           addSubConstraint(`Subtype(lowerType,tLeft,getInfoFromBQTerm(left)),newSubConstraints);
         subtypingConstraints =
           addSubConstraint(`Subtype(lowerType,tRight,getInfoFromBQTerm(right)),newSubConstraints);
-
         BQTerm newLeft = inferAllTypes(`left,tLeft);
         BQTerm newRight = inferAllTypes(`right,tRight);
         //hasUndeclaredType(newLeft);
@@ -1085,11 +1017,6 @@ public class NewKernelTyper {
               !VariableStar[] -> { 
                 //DEBUG System.out.println("InferSlotList CT-ELEM -- tTerm = " + `tTerm);
                 argType = getUnknownFreshTypeVar();
-          /* DEBUG
-                if (argType == `TypeVar("unknown type",14)) {
-            System.out.println("inferSlotList l6 -- getUFTVar = " + argType); 
-          }
-          */
               }
             }
           }
@@ -1337,7 +1264,7 @@ public class NewKernelTyper {
     throw new TomRuntimeException("inferBQTermList: failure on " + `bqTList);
   }
 
-  private void solveConstraints() {
+  private void solveConstraints(int limInputTypeVar) {
     try {
       //DEBUG System.out.println("\nsolveConstraints 1:");
       //DEBUG printGeneratedConstraints(equationConstraints);
@@ -1346,9 +1273,10 @@ public class NewKernelTyper {
       TypeConstraintList simplifiedConstraints =
         replaceInSubtypingConstraints(subtypingConstraints);
       //DEBUG System.out.println("\nsolveConstraints 2:");
-      //DEBUG printGeneratedConstraints(simplifiedConstraints);
+      //System.out.println("limTVarSymbolTable = " + limTVarSymbolTable);
+      printGeneratedConstraints(simplifiedConstraints);
       simplifiedConstraints = 
-        `RepeatId(solveSubtypingConstraints(this)).visitLight(simplifiedConstraints);
+        `RepeatId(solveSubtypingConstraints(this,limInputTypeVar)).visitLight(simplifiedConstraints);
       //DEBUG System.out.println("\nsolveConstraints 3:");
       //DEBUG printGeneratedConstraints(simplifiedConstraints);
       
@@ -1373,8 +1301,6 @@ public class NewKernelTyper {
    * tCList = {A1 <:A,A <: A2} U tCList' and Map --> {A1 <: A2} U tCList and Map
    * <p>
    * PHASE 3: Garbage collection:
-   * tCList = {T1 <: T2, T1 <: T2} U tCList' and Map 
-   *   --> {T1 <: T2} U tClist' and Map
    * tCList = {T1 <: T2} U tCList' and Map --> detectFail(T1 <: T2)
    * tCList = {A <: T} U tCList' and Map
    *   --> {A = T} U tCList' and Map if A is not in Var(tCList')
@@ -1387,10 +1313,11 @@ public class NewKernelTyper {
    * tCList = {T1 <: A,T2 <: A} U tCList' and Map
    *   --> {upperType(T1,T2) <: A} U tCList' and Map
    */
-  %strategy solveSubtypingConstraints(nkt:NewKernelTyper) extends Identity() {
+  %strategy solveSubtypingConstraints(nkt:NewKernelTyper,limInputTypeVar:int) extends Identity() {
     visit TypeConstraintList {
       // PHASE 1
       tcl@concTypeConstraint(tcl1*,Subtype[Type1=t1,Type2=t2,Info=info],tcl2*,Subtype[Type1=t2,Type2=t1],tcl3*) -> {
+        // TODO : test if Eq(t1,t2,info) already exists in concTypeConstraint
         System.out.println("\nsolve1: " + `tcl);
         return
           nkt.`addEqConstraint(Equation(t1,t2,info),concTypeConstraint(tcl1,tcl2,tcl3));
@@ -1398,27 +1325,42 @@ public class NewKernelTyper {
 
       // PHASE 2
       tcl@concTypeConstraint(_*,Subtype[Type1=t1,Type2=tVar@TypeVar[],Info=info],_*,Subtype[Type1=tVar,Type2=t2],_*) -> {
+        // TODO : test if Sub(t1,t2,info) already exists in concTypeConstraint
+        System.out.println("\nsolve2: " + `tcl);
+        return
+          nkt.`addSubConstraint(Subtype(t1,t2,info),tcl);
+      }
+      tcl@concTypeConstraint(_*,Subtype[Type1=tVar,Type2=t2,Info=info],_*,Subtype[Type1=t1,Type2=tVar@TypeVar[]],_*) -> {
+        // TODO : test if Sub(t1,t2,info) already exists in concTypeConstraint
         System.out.println("\nsolve2: " + `tcl);
         return
           nkt.`addSubConstraint(Subtype(t1,t2,info),tcl);
       }
 
       // PHASE 3
-      tcl@concTypeConstraint(tcl1*,tc@Subtype[Type1=t1,Type2=t2],tcl2*,Subtype[Type1=t1,Type2=t2],tcl3*) -> {
-        System.out.println("\nsolve3: " + `tcl);
-        return nkt.`addSubConstraint(tc,concTypeConstraint(tcl1,tcl2,tcl3));
-      }
-
       tcl@concTypeConstraint(_*,sConstraint@Subtype[Type1=!TypeVar[],Type2=!TypeVar[]],_*) -> {
-        System.out.println("\nsolve4: " + `tcl);
+        System.out.println("\nsolve3: " + `tcl);
         nkt.detectFail(`sConstraint);
       }
+
+      tcl@concTypeConstraint(_*,Subtype[Type1=tVar@TypeVar[Index=index]],_*) -> {
+        System.out.println("\nsolve4: " + `tcl);
+        if (`index > limInputTypeVar) {
+          return  nkt.`garbageCollect(tVar,tcl);
+        }
+      }
+
+      tcl@concTypeConstraint(_*,Subtype[Type2=tVar@TypeVar[Index=index]],_*) -> {
+        System.out.println("\nsolve5: " + `tcl);
+        if (`index > limInputTypeVar) {
+          return  nkt.`garbageCollect(tVar,tcl);
+        }
+      }
+
       concTypeConstraint(leftTCL*,c1@Subtype[Type1=tVar@TypeVar[],Type2=groundType@!TypeVar[]],rightTCL*) -> {
-        System.out.println("\nsolve5: " + `c1);
+        System.out.println("\nsolve6: " + `c1);
         TypeConstraintList newLeftTCL = `leftTCL;
         TypeConstraintList newRightTCL = `rightTCL;
-        System.out.println("solveSubCosntraints: findVar " + `tVar + " in " +
-            `concTypeConstraint(leftTCL,rightTCL) + " = " + nkt.`findVar(tVar,concTypeConstraint(leftTCL,rightTCL)));
         if (!nkt.`findVar(tVar,concTypeConstraint(leftTCL,rightTCL))) {
           // Same code of cases 7 and 8 of solveEquationConstraints
           nkt.addSubstitution(`tVar,`groundType);
@@ -1426,7 +1368,7 @@ public class NewKernelTyper {
         }
       }
       concTypeConstraint(leftTCL*,c1@Subtype[Type1=groundType@!TypeVar[],Type2=tVar@TypeVar[]],rightTCL*) -> {
-        System.out.println("\nsolve6: " + `c1);
+        System.out.println("\nsolve7: " + `c1);
         TypeConstraintList newLeftTCL = `leftTCL;
         TypeConstraintList newRightTCL = `rightTCL;
         if (!nkt.`findVar(tVar,concTypeConstraint(leftTCL,rightTCL))) {
@@ -1437,10 +1379,10 @@ public class NewKernelTyper {
 
       // PHASE 4
       concTypeConstraint(tcl1*,constraint@Subtype[Type1=tVar@TypeVar[],Type2=t1@!TypeVar[],Info=info],tcl2*,c2@Subtype[Type1=tVar,Type2=t2@!TypeVar[]],tcl3*) -> {
-        System.out.println("\nsolve7: " + `constraint + " and " + `c2);
+        System.out.println("\nsolve8: " + `constraint + " and " + `c2);
         TomType lowerType = nkt.`minType(t1,t2);
-        //DEBUG System.out.println("\nminType(" + `t1.getTomType() + "," +
-        //DEBUG    `t2.getTomType() + ") = " + lowerType);
+        System.out.println("\nminType(" + `t1.getTomType() + "," +
+            `t2.getTomType() + ") = " + lowerType);
 
         if (lowerType == `EmptyType()) {
           // TODO fix print (bad message and arguments)
@@ -1452,10 +1394,10 @@ public class NewKernelTyper {
           nkt.`addSubConstraint(Subtype(tVar,lowerType,info),concTypeConstraint(tcl1,tcl2,tcl3));
       }
       concTypeConstraint(tcl1*,constraint@Subtype[Type1=t1@!TypeVar[],Type2=tVar@TypeVar[],Info=info],tcl2*,c2@Subtype[Type1=t2@!TypeVar[],Type2=tVar],tcl3*) -> {
-        System.out.println("\nsolve8: " + `constraint + " and " + `c2);
+        System.out.println("\nsolve9: " + `constraint + " and " + `c2);
         TomType upperType = nkt.`maxType(t1,t2);
-        //DEBUG System.out.println("\nmaxType(" + `t1.getTomType() + "," +
-        //DEBUG    `t2.getTomType() + ") = " + upperType);
+        System.out.println("\nmaxType(" + `t1.getTomType() + "," +
+            `t2.getTomType() + ") = " + upperType);
 
         if (upperType == `EmptyType()) {
           // TODO fix print (bad message and arguments)
@@ -1467,6 +1409,19 @@ public class NewKernelTyper {
           nkt.`addSubConstraint(Subtype(upperType,tVar,info),concTypeConstraint(tcl1,tcl2,tcl3));
       }
     }
+  }
+
+  private TypeConstraintList garbageCollect(TomType tType, TypeConstraintList tCList) {
+    TypeConstraintList simplifiedTCList = `concTypeConstraint();
+    for (TypeConstraint tConstraint : tCList.getCollectionconcTypeConstraint()) {
+      %match {
+        Subtype[Type1=t1,Type2=t2] << tConstraint && (t1 != tType) && (t2 !=
+            tType) -> {
+          simplifiedTCList = `concTypeConstraint(tConstraint,simplifiedTCList*);
+        } 
+      }
+    }
+    return simplifiedTCList;
   }
 
   private boolean findVar(TomType tVar, TypeConstraintList tCList) {
@@ -1494,9 +1449,6 @@ public class NewKernelTyper {
     return `EmptyType();
   }
 
-
-  // TODO look for the lower supertype between t1 and t2 since both types can
-  // not be comparable
   private TomType maxType(TomType t1, TomType t2) {
     TomTypeList supTypes1 = dependencies.get(t1);
     TomTypeList supTypes2 = dependencies.get(t2);
@@ -1506,6 +1458,9 @@ public class NewKernelTyper {
       }
       concTomType(_*,type,_*) << supTypes2 && (type == t1) -> {
         return t1;
+      }
+      concTomType(_*,type,_*) << supTypes1 && concTomType(_*,type,_*) << supTypes2 -> {
+        return `type;
       }
     }
     return `EmptyType();
@@ -1528,7 +1483,7 @@ public class NewKernelTyper {
             mapT2 = `t2;
           }
           replacedtCList =
-            `addSubConstraint(Subtype(mapT1,mapT2,info),replacedtCList*);
+            `concTypeConstraint(Subtype(mapT1,mapT2,info),replacedtCList*);
         }
       }
 
@@ -1760,6 +1715,7 @@ matchBlockFail :
             printError(`tConstraint);
             break matchBlockFail;
           }
+        // TODO: add treatment to Subtype[]
       }
     }
   }
@@ -1834,7 +1790,7 @@ matchBlockFail :
 
   %strategy checkTypeOfBQVariables(nkt:NewKernelTyper) extends Identity() {
     visit Constraint {
-      MatchConstraint[Pattern=Variable[],Subject=BQVariable[Options=oList,AstName=Name(name),AstType=TypeVar[]]] -> {
+      MatchConstraint[Pattern=Variable[],Subject=BQVariable[Options=oList,AstName=Name(name),AstType=TypeVar(_,_)]] -> {
         Option option = TomBase.findOriginTracking(`oList);
         %match(option) {
           OriginTracking(_,line,fileName) -> {
