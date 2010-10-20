@@ -423,6 +423,8 @@ public class NewKernelTyper {
     }
   }
 
+  // TODO: keep only one CollectKnownTypes method (instead of that from NewTyper
+  // and this one)
   /**
    * The class <code>CollectKnownTypes</code> is generated from a strategy which
    * initially types all terms by using their correspondent type in symbol table
@@ -1343,18 +1345,15 @@ public class NewKernelTyper {
         nkt.detectFail(`sConstraint);
       }
 
-      tcl@concTypeConstraint(_*,Subtype[Type1=tVar@TypeVar[Index=index]],_*) -> {
+      tcl@concTypeConstraint(_*,Subtype[Type1=tVar@TypeVar[Index=index]],_*) &&
+        (index > limInputTypeVar) -> {
         System.out.println("\nsolve4: " + `tcl);
-        if (`index > limInputTypeVar) {
-          return  nkt.`garbageCollect(tVar,tcl);
-        }
+        return  nkt.`garbageCollect(tVar,tcl);
       }
 
-      tcl@concTypeConstraint(_*,Subtype[Type2=tVar@TypeVar[Index=index]],_*) -> {
-        System.out.println("\nsolve5: " + `tcl);
-        if (`index > limInputTypeVar) {
-          return  nkt.`garbageCollect(tVar,tcl);
-        }
+      tcl@concTypeConstraint(_*,Subtype[Type2=tVar@TypeVar[Index=index]],_*) &&
+        (index > limInputTypeVar) -> {
+        return  nkt.`garbageCollect(tVar,tcl);
       }
 
       concTypeConstraint(leftTCL*,c1@Subtype[Type1=tVar@TypeVar[],Type2=groundType@!TypeVar[]],rightTCL*) -> {
@@ -1408,6 +1407,7 @@ public class NewKernelTyper {
         return
           nkt.`addSubConstraint(Subtype(upperType,tVar,info),concTypeConstraint(tcl1,tcl2,tcl3));
       }
+      tcl -> {System.out.println("None of preview. tcl = " + `tcl);}
     }
   }
 
