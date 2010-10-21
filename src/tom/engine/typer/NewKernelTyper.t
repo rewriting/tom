@@ -1327,13 +1327,13 @@ public class NewKernelTyper {
 
       // PHASE 2
       tcl@concTypeConstraint(_*,Subtype[Type1=t1,Type2=tVar@TypeVar[],Info=info],_*,Subtype[Type1=tVar,Type2=t2],_*) -> {
-        // TODO : test if Sub(t1,t2,info) already exists in concTypeConstraint
         System.out.println("\nsolve2: " + `tcl);
         return
           nkt.`addSubConstraint(Subtype(t1,t2,info),tcl);
       }
       tcl@concTypeConstraint(_*,Subtype[Type1=tVar,Type2=t2,Info=info],_*,Subtype[Type1=t1,Type2=tVar@TypeVar[]],_*) -> {
-        // TODO : test if Sub(t1,t2,info) already exists in concTypeConstraint
+        // TODO : verify why the stratgy doesn't continue when addSubConstraint
+        // returns the same typeconstraintlist
         System.out.println("\nsolve2: " + `tcl);
         return
           nkt.`addSubConstraint(Subtype(t1,t2,info),tcl);

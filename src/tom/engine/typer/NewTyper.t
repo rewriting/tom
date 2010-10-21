@@ -209,9 +209,15 @@ public class NewTyper extends TomGenericPlugin {
   }
   */
 
-  /*
-   * Type(name, EmptyTargetLanguageType()) -> Type(name, foundType) if name in TypeTable
-   * Type(name, EmptyTargetLanguageType()) -> TypeVar(name, Index(i)) if name not in TypeTable
+   /**
+   * The class <code>CollectKnownTypes</code> is generated from a strategy which
+   * initially types all terms by using their correspondent type in symbol table
+   * or a fresh type variable :
+   * CASE 1 : Type(name, EmptyTargetLanguageType()) -> Type(name, foundType) if
+   * name is in TypeTable
+   * CASE 2 : Type(name, EmptyTargetLanguageType()) -> TypeVar(name, Index(i))
+   * if name is not in TypeTable
+   * @param nkt an instance of object NewKernelTyper
    */
   %strategy CollectKnownTypes(typer:NewTyper,nkt:NewKernelTyper) extends Identity() {
     visit TomType {
