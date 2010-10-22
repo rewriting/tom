@@ -1344,20 +1344,8 @@ public class NewKernelTyper {
         System.out.println("\nsolve3: " + `tcl);
         nkt.detectFail(`sConstraint);
       }
-
-      tcl@concTypeConstraint(_*,Subtype[Type1=tVar@TypeVar[Index=index]],_*) &&
-        (index > limInputTypeVar) -> {
-        System.out.println("\nsolve4: " + `tcl);
-        return  nkt.`garbageCollect(tVar,tcl);
-      }
-
-      tcl@concTypeConstraint(_*,Subtype[Type2=tVar@TypeVar[Index=index]],_*) &&
-        (index > limInputTypeVar) -> {
-        return  nkt.`garbageCollect(tVar,tcl);
-      }
-
       concTypeConstraint(leftTCL*,c1@Subtype[Type1=tVar@TypeVar[],Type2=groundType@!TypeVar[]],rightTCL*) -> {
-        System.out.println("\nsolve6: " + `c1);
+        System.out.println("\nsolve4: " + `c1);
         TypeConstraintList newLeftTCL = `leftTCL;
         TypeConstraintList newRightTCL = `rightTCL;
         if (!nkt.`findVar(tVar,concTypeConstraint(leftTCL,rightTCL))) {
@@ -1367,7 +1355,7 @@ public class NewKernelTyper {
         }
       }
       concTypeConstraint(leftTCL*,c1@Subtype[Type1=groundType@!TypeVar[],Type2=tVar@TypeVar[]],rightTCL*) -> {
-        System.out.println("\nsolve7: " + `c1);
+        System.out.println("\nsolve5: " + `c1);
         TypeConstraintList newLeftTCL = `leftTCL;
         TypeConstraintList newRightTCL = `rightTCL;
         if (!nkt.`findVar(tVar,concTypeConstraint(leftTCL,rightTCL))) {
@@ -1378,7 +1366,7 @@ public class NewKernelTyper {
 
       // PHASE 4
       concTypeConstraint(tcl1*,constraint@Subtype[Type1=tVar@TypeVar[],Type2=t1@!TypeVar[],Info=info],tcl2*,c2@Subtype[Type1=tVar,Type2=t2@!TypeVar[]],tcl3*) -> {
-        System.out.println("\nsolve8: " + `constraint + " and " + `c2);
+        System.out.println("\nsolve6: " + `constraint + " and " + `c2);
         TomType lowerType = nkt.`minType(t1,t2);
         System.out.println("\nminType(" + `t1.getTomType() + "," +
             `t2.getTomType() + ") = " + lowerType);
@@ -1393,7 +1381,7 @@ public class NewKernelTyper {
           nkt.`addSubConstraint(Subtype(tVar,lowerType,info),concTypeConstraint(tcl1,tcl2,tcl3));
       }
       concTypeConstraint(tcl1*,constraint@Subtype[Type1=t1@!TypeVar[],Type2=tVar@TypeVar[],Info=info],tcl2*,c2@Subtype[Type1=t2@!TypeVar[],Type2=tVar],tcl3*) -> {
-        System.out.println("\nsolve9: " + `constraint + " and " + `c2);
+        System.out.println("\nsolve7: " + `constraint + " and " + `c2);
         TomType upperType = nkt.`maxType(t1,t2);
         System.out.println("\nmaxType(" + `t1.getTomType() + "," +
             `t2.getTomType() + ") = " + upperType);
