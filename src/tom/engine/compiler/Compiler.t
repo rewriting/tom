@@ -282,16 +282,16 @@ public class Compiler extends TomGenericPlugin {
 
         if(subjectList.contains(`subject)) {
           TomTerm renamedSubj= (TomTerm) renamedSubjects.get(subjectList.indexOf(`subject));
-          System.out.println("renameSubjects -- renamedSubj = " + renamedSubj);
+          //DEBUG System.out.println("renameSubjects -- renamedSubj = " + renamedSubj);
           Constraint newConstraint = `constr.setSubject(TomBase.convertFromVarToBQVar(renamedSubj));
-          System.out.println("renameSubjects -- newConstraint = " +
-              newConstraint);
+          //DEBUG System.out.println("renameSubjects -- newConstraint = " +
+          //DEBUG     newConstraint);
           if (freshSubjectType.getTlType() == compiler.getSymbolTable().TYPE_UNKNOWN.getTlType()) {
             freshSubjectType = renamedSubj.getAstType();
           }
-          System.out.println("renameSubjects -- freshSubjectType = " + freshSubjectType);
+          //DEBUG System.out.println("renameSubjects -- freshSubjectType = " + freshSubjectType);
           BQTerm freshVar = compiler.getUniversalObjectForSubject(freshSubjectType);
-          System.out.println("renameSubjects -- freshVar= " + freshVar);
+          //DEBUG System.out.println("renameSubjects -- freshVar= " + freshVar);
           /*
           return `AndConstraint(
               MatchConstraint(TomBase.convertFromBQVarToVar(freshVar),subject,castType),
