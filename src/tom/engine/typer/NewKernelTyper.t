@@ -275,6 +275,24 @@ public class NewKernelTyper {
     throw new TomRuntimeException("getUnknownFreshTypeVar: should not be here.");
    }
 
+  protected boolean containsConstraint(TypeConstraint tConstraint, TypeConstraintList
+      tCList) {
+    %match {
+      Subtype[Type1=t1,Type2=t2] << TypeConstraint tConstraint &&
+        concTypeConstraint(_*,(Subtype|Equation)[Type1=t1,Type2=t2],_*) << tCList 
+        -> { return true; }
+
+      Equation[Type1=t1,Type2=t2] << TypeConstraint tConstraint &&
+        concTypeConstraint(_*,Equation[Type1=t1,Type2=t2],_*) << tCList 
+        -> { return true; }
+
+      Equation[Type1=t1,Type2=t2] << TypeConstraint tConstraint &&
+        concTypeConstraint(_*,Equation[Type1=t2,Type2=t1],_*) << tCList 
+        -> { return true; }
+    }
+    return false;
+  } 
+
   /*
      * pem: use if(...==... && typeConstraints.contains(...))
      */
@@ -287,59 +305,33 @@ public class NewKernelTyper {
    */
   protected TypeConstraintList addEqConstraint(TypeConstraint tConstraint,
       TypeConstraintList tCList) {
-    %match {
-      !concTypeConstraint(_*,typeConstraint,_*) << tCList &&
-        typeConstraint << TypeConstraint tConstraint -> {
-          %match {
-            Equation[Type1=t1@!EmptyType(),Type2=t2@!EmptyType()] <<
-              typeConstraint && (t1 != t2) -> { 
-                return `concTypeConstraint(typeConstraint,tCList*);
-              }
+    if (!containsConstraint(tConstraint,tCList)) {
+      %match {
+        Equation[Type1=t1@!EmptyType(),Type2=t2@!EmptyType()] <<
+          tConstraint && (t1 != t2) -> { 
+            return `concTypeConstraint(tConstraint,tCList*);
           }
-        }
+      }
     }
     return tCList;
   }
 
   protected TypeConstraintList addSubConstraint(TypeConstraint tConstraint,
       TypeConstraintList tCList) {
-    %match {
-      !concTypeConstraint(_*,typeConstraint,_*) << tCList &&
-        typeConstraint << TypeConstraint tConstraint -> {
-          %match {
-            Subtype[Type1=t1@!EmptyType(),Type2=t2@!EmptyType()] <<
-              typeConstraint && (t1 != t2) -> { 
-                if (`t1 == `t2) {
-                  System.out.println("In addSubConstraint with t1 = " + `t1 + " and t2 = " + `t2);
-                }
-                return`concTypeConstraint(typeConstraint,tCList*);
-                //return closedForm(tConstraint,closedtCList);
-              }
+    if (!containsConstraint(tConstraint,tCList)) {
+      %match {
+        Subtype[Type1=t1@!EmptyType(),Type2=t2@!EmptyType()] << tConstraint 
+          && (t1 != t2) -> { 
+            if (`t1 == `t2) {
+              System.out.println("In addSubConstraint with t1 = " + `t1 + " and t2 = " + `t2);
+            }
+            return`concTypeConstraint(tConstraint,tCList*);
           }
-        }
+      }
     }
     return tCList;
   }
-/*
-  protected TypeConstraintList closedForm(TypeConstraint tConstraint,
-  TypeConstraintList tCList) {
-    %match {
-      concTypeConstraint(_*,typeConstraint,_*) << tCList &&
-        Subtype[Type1=t1,Type2=tVar@TypeVar[],Info=info] << tConstraint &&
-        Subtype[Type1=tVar,Type2=t2] << typeConstraint  -> {
-          // TODO : eliminate insertion in queue
-          return `concTypeConstraint(Subtype(t1,t2,info),tCList*);
-        }
 
-      concTypeConstraint(_*,typeConstraint,_*) << tCList &&
-        Subtype[Type1=tVar@TypeVar[],Type2=t2,Info=info] << tConstraint &&
-        Subtype[Type1=t1,Type2=tVar] << typeConstraint  -> {
-          // TODO : eliminate insertion in queue
-          return `concTypeConstraint(Subtype(t1,t2,info),tCList*);
-        }
-    }
-  }
-*/
   protected void generateDependencies() {
     TomTypeList superTypes;
     TomTypeList supOfSubTypes;
@@ -1069,7 +1061,6 @@ public class NewKernelTyper {
                 }
               }
             } else if (`symName != argSymb.getAstName()) {
-              // TODO: improve this code! It is like CT-ELEM
               /*
                * Case CT-ELEM rule which premise is a list
                * A list with a sublist whose constructor is different
@@ -1204,7 +1195,6 @@ public class NewKernelTyper {
                 }
               }
             } else if (`symName != argSymb.getAstName()) {
-              // TODO: improve this code! It is like CT-ELEM
               /*
                * Case CT-ELEM rule which premise is a list
                * A list with a sublist whose constructor is different
@@ -1519,7 +1509,7 @@ matchBlockFail :
           }
           if (mapT1 != mapT2) {
             replacedtCList =
-              `concTypeConstraint(Subtype(mapT1,mapT2,info),replacedtCList*);
+              `addSubConstraint(Subtype(mapT1,mapT2,info),replacedtCList);
           }
         }
       }
@@ -1558,56 +1548,33 @@ matchBlockFail :
     visit TypeConstraintList {
       // PHASE 1
       tcl@concTypeConstraint(tcl1*,Subtype[Type1=t1,Type2=t2,Info=info],tcl2*,Subtype[Type1=t2,Type2=t1],tcl3*) -> {
-        // TODO : test if Eq(t1,t2,info) already exists in concTypeConstraint
         System.out.println("\nsolve1: " + `tcl);
-        // TODO find a better solution instead to add EqConstraint
         nkt.solveEquationConstraints(`concTypeConstraint(Equation(t1,t2,info)));
         return
           nkt.`concTypeConstraint(tcl1,tcl2,tcl3);
       }
 
       // PHASE 2
+      // We test if "t1 <: t2" already exist in tcl to avoid apply the strategy
+      // unnecessarily
       tcl@concTypeConstraint(_*,Subtype[Type1=t1,Type2=tVar@TypeVar[],Info=info],_*,Subtype[Type1=tVar,Type2=t2],_*)
         && !concTypeConstraint(_*,Subtype[Type1=t1,Type2=t2],_*) << tcl -> {
-        System.out.println("\nsolve2a: " + `tcl);
-        return
-          nkt.`addSubConstraint(Subtype(t1,t2,info),tcl);
-      }
+          System.out.println("\nsolve2a: " + `tcl);
+          return
+            nkt.`addSubConstraint(Subtype(t1,t2,info),tcl);
+        }
       tcl@concTypeConstraint(_*,Subtype[Type1=tVar,Type2=t2,Info=info],_*,Subtype[Type1=t1,Type2=tVar@TypeVar[]],_*)
         && !concTypeConstraint(_*,Subtype[Type1=t1,Type2=t2],_*) << tcl -> {
-        // TODO : verify why the stratgy doesn't continue when addSubConstraint
-        // returns the same typeconstraintlist
-        System.out.println("\nsolve2b: " + `tcl);
-        return
-          nkt.`addSubConstraint(Subtype(t1,t2,info),tcl);
-      }
+          System.out.println("\nsolve2b: " + `tcl);
+          return
+            nkt.`addSubConstraint(Subtype(t1,t2,info),tcl);
+        }
 
       // PHASE 3
       tcl@concTypeConstraint(_*,sConstraint@Subtype[Type1=!TypeVar[],Type2=!TypeVar[]],_*) -> {
         System.out.println("\nsolve3: " + `tcl);
         nkt.detectFail(`sConstraint);
       }
-      /*
-      concTypeConstraint(leftTCL*,c1@Subtype[Type1=tVar@TypeVar[],Type2=groundType@!TypeVar[]],rightTCL*) -> {
-        System.out.println("\nsolve4: " + `c1);
-        TypeConstraintList newLeftTCL = `leftTCL;
-        TypeConstraintList newRightTCL = `rightTCL;
-        if (!nkt.`findVar(tVar,concTypeConstraint(leftTCL,rightTCL))) {
-          // Same code of cases 7 and 8 of solveEquationConstraints
-          nkt.addSubstitution(`tVar,`groundType);
-          return `concTypeConstraint(newLeftTCL*,newRightTCL*);
-        }
-      }
-      concTypeConstraint(leftTCL*,c1@Subtype[Type1=groundType@!TypeVar[],Type2=tVar@TypeVar[]],rightTCL*) -> {
-        System.out.println("\nsolve5: " + `c1);
-        TypeConstraintList newLeftTCL = `leftTCL;
-        TypeConstraintList newRightTCL = `rightTCL;
-        if (!nkt.`findVar(tVar,concTypeConstraint(leftTCL,rightTCL))) {
-          nkt.addSubstitution(`tVar,`groundType);
-          return `concTypeConstraint(newLeftTCL*,newRightTCL*);
-        }
-      }
-      */
 
       // PHASE 4
       concTypeConstraint(tcl1*,constraint@Subtype[Type1=tVar@TypeVar[],Type2=t1@!TypeVar[],Info=info],tcl2*,c2@Subtype[Type1=tVar,Type2=t2@!TypeVar[]],tcl3*) -> {
@@ -1682,10 +1649,6 @@ matchBlockFail :
       }
       concTomType(_*,type,_*) << supTypes2 && (type == t1) -> {
         return t1;
-      }
-      // TODO : take the lowest supertype
-      concTomType(_*,type,_*) << supTypes1 && concTomType(_*,type,_*) << supTypes2 -> {
-        return `type;
       }
       !concTomType() << supTypes1 && !concTomType() << supTypes2 -> {
         System.out.println("supTypes1 = " + supTypes1);
