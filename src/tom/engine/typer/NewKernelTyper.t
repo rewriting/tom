@@ -888,7 +888,7 @@ public class NewKernelTyper {
         //DEBUG     tPattern + " = " + tSubject);
         %match(aType) {
           (Type|TypeVar)[TomType=typeName] -> {
-            `hasUndeclaredType(typeName,getInfoFromTomTerm(pattern).getOptions()); 
+            //`hasUndeclaredType(typeName,getInfoFromTomTerm(pattern).getOptions()); 
             // There is no explicit type, so T_pattern = T_subject 
             // TODO verify if we replace it by same code of case "Type[]"
             TypeConstraintList newEqConstraints = equationConstraints;
