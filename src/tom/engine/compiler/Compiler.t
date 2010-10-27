@@ -358,13 +358,13 @@ public class Compiler extends TomGenericPlugin {
             IsSortConstraint(castType,freshVar),
             MatchConstraint(renamedVar,ExpressionToBQTerm(Cast(castType,BQTermToExpression(freshVar))),castType),
             newConstraint);
-            */
         
         System.out.println("renameSubjects -- return = " + `AndConstraint(
             MatchConstraint(TomBase.convertFromBQVarToVar(freshVar),subject,freshSubjectType),
             IsSortConstraint(freshSubjectType,freshVar),
             MatchConstraint(renamedVar,ExpressionToBQTerm(Cast(freshSubjectType,BQTermToExpression(freshVar))),freshSubjectType),
             newConstraint));
+            */
         return `AndConstraint(
             MatchConstraint(TomBase.convertFromBQVarToVar(freshVar),subject,freshSubjectType),
             IsSortConstraint(freshSubjectType,freshVar),
