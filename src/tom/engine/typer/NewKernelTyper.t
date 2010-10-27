@@ -887,22 +887,35 @@ public class NewKernelTyper {
         //DEBUG System.out.println("inferConstraint: match -- constraint " +
         //DEBUG     tPattern + " = " + tSubject);
         %match(aType) {
-          TypeVar[TomType=typeName] -> {
+          (Type|TypeVar)[TomType=typeName] -> {
             `hasUndeclaredType(typeName,getInfoFromTomTerm(pattern).getOptions()); 
-            /* There is no explicit type, so T_pattern = T_subject */
+            // There is no explicit type, so T_pattern = T_subject 
             // TODO verify if we replace it by same code of case "Type[]"
-            TypeConstraintList newEqConstraints = equationConstraints;
-            equationConstraints =
-              addEqConstraint(`Equation(tPattern,tSubject,getInfoFromTomTerm(pattern)),newEqConstraints);
-          }
-          Type[] -> {
-            /* T_pattern = T_cast and T_cast <: T_subject */
             TypeConstraintList newEqConstraints = equationConstraints;
             TypeConstraintList newSubConstraints = subtypingConstraints;
             equationConstraints =
               addEqConstraint(`Equation(tPattern,aType,getInfoFromTomTerm(pattern)),newEqConstraints);
             subtypingConstraints = addSubConstraint(`Subtype(aType,tSubject,getInfoFromBQTerm(subject)),newSubConstraints);
           }
+
+          /*
+          TypeVar[TomType=typeName] -> {
+            `hasUndeclaredType(typeName,getInfoFromTomTerm(pattern).getOptions()); 
+            // There is no explicit type, so T_pattern = T_subject 
+            // TODO verify if we replace it by same code of case "Type[]"
+            TypeConstraintList newEqConstraints = equationConstraints;
+            equationConstraints =
+              addEqConstraint(`Equation(tPattern,tSubject,getInfoFromTomTerm(pattern)),newEqConstraints);
+          }
+          Type[] -> {
+            // T_pattern = T_cast and T_cast <: T_subject 
+            TypeConstraintList newEqConstraints = equationConstraints;
+            TypeConstraintList newSubConstraints = subtypingConstraints;
+            equationConstraints =
+              addEqConstraint(`Equation(tPattern,aType,getInfoFromTomTerm(pattern)),newEqConstraints);
+            subtypingConstraints = addSubConstraint(`Subtype(aType,tSubject,getInfoFromBQTerm(subject)),newSubConstraints);
+          }
+          */
         }
         TomTerm newPattern = `inferAllTypes(pattern,tPattern);
         BQTerm newSubject = `inferAllTypes(subject,tSubject);
