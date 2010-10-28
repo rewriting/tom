@@ -1665,14 +1665,18 @@ matchBlockFail :
       }
       !concTomType() << supTypes1 && !concTomType() << supTypes2 -> {
         System.out.println("supTypes1 = " + supTypes1);
-        Set<TomType> setSupTypes1 = (Set) supTypes1;
-        boolean result = setSupTypes1.retainAll((Collection) supTypes2);
-        int intersectionSize = setSupTypes1.size();
-        for (TomType currentSupType:setSupTypes1) {
-          // The size test is enough since tom doesn't accept multiple
-          // inheritance
-          if (dependencies.get(currentSupType).length() == (intersectionSize-1)) {
-            return currentSupType;
+
+        int st1Size = `supTypes1.length();
+        int st2Size = `supTypes2.length();
+        int intersectionSize = st1Size;
+        if (st2Size < st1Size) {
+          intersectionSize = st2Size;
+        }
+        for (TomType currentType:`supTypes1.getCollectionconcTomType()) {
+          //TODO verify why we can't use "contains" without transforming list in
+          // Collection
+          if(`supTypes2.getCollectionconcTomType().contains(currentType) && dependencies.get(currentType).length() == (intersectionSize-1)) {
+            return currentType;
           }
         }
       }
