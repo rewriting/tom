@@ -306,7 +306,7 @@ public class NewKernelTyper {
    * equation constraints. 
    * @param tConstraint the constraint to be considered
    * @param tCList      the type constraint list to be traversed
-   * @return            'true' if the constraint already exists in the list or
+   * @return            'true' if the constraint already exists in the list
    *                    'false' otherwise            
    */
   protected boolean containsConstraint(TypeConstraint tConstraint, TypeConstraintList
@@ -382,14 +382,14 @@ public class NewKernelTyper {
    * ground type used into a code. The list is obtained by reflexive and
    * transitive closure over the direct supertype relation defined by the user
    * when defining the mappings.
-   * For example, to generate the supertypes of B, where B is a ground type, we
+   * For example, to generate the supertypes of T2, where T2 is a ground type, we
    * follow two steps:
    * <p>
-   * STEP 1:  a) get the list supertypes_C, put(B,({C} U supertype_C)) and go
-   *          to step 2, if there exists a declaration of form B<:C
-   *          b) put(B,{}), otherwise 
+   * STEP 1:  a) get the list supertypes_T3, put(T2,({T3} U supertype_T3)) and go
+   *          to step 2, if there exists a declaration of form T2<:T3
+   *          b) put(T2,{}), otherwise 
    * <p>
-   * STEP 2:  put(A,(supertypes_A U supertypes_B)), for each (A,{...,B,...}) in dependencies
+   * STEP 2:  put(A,(supertypes_T1 U supertypes_T2)), for each (T1,{...,T2,...}) in dependencies
    */
   protected void generateDependencies() {
     TomTypeList superTypes;
@@ -548,49 +548,52 @@ public class NewKernelTyper {
 
   /**
    * The class <code>inferTypes</code> is generated from a strategy which
-   * tries to infer types of all variables
+   * tries to infer types of all variables on a given expression
    * <p> 
-   * It starts by searching for a Instruction
+   * It starts by searching for a Code <code>Tom</code> or
+   * <code>TomInclude</code> and calling <code>inferCodeList</code> in order to
+   * apply rule CT-BLOCK for each block of ConstraintInstruction.
+   * <p>
+   * Then it searches for a Instruction
    * <code>Match(constraintInstructionList,option)</code> and calling
    * <code>inferConstraintInstructionList</code> in order to apply rule CT-RULE
    * for each single constraintInstruction
    * <p>
-   * It searches for variables and star variables (TomTerms and BQTerms) and
-   * applies rule CT-ANTI, CT-VAR, CT-SVAR, CT-FUN,
+   * Then it searches for variables and star variables (TomTerms and BQTerms) and
+   * applies rules CT-ALIAS, CT-ANTI, CT-VAR, CT-SVAR, CT-FUN,
    * CT-EMPTY, CT-ELEM, CT-MERGE or CT-STAR to a "pattern" (a TomTerm) or a
-   * "subject" (a BQTerm) in order to infer its type.
+   * "subject" (a BQTerm) in order to infer types of its variables.
+   * <p>
+   * CT-ALIAS rule:
+   * IF found "x@e:A and "x:T" already exists in context
+   * THEN adds a type constraint "A = T" and infers type of "e:A"
    * <p>
    * CT-ANTI rule:
    * IF found "!(e):A"
-   * THEN infers type of e
+   * THEN infers type of "e:A"
    * <p>
    * CT-VAR rule (resp. CT-SVAR): 
-   * IF found "x:A" (resp. "x*:A") and "x:T" (resp. "x*:T") already exists in SymbolTable 
-   * THEN add a type constraint "A = T"
+   * IF found "x:A" (resp. "x*:A") and "x:A1" (resp. "x*:A1") already exists in
+   *    context 
+   * THEN adds a type constraint "A1 <: A"
    * <p>
    * CT-FUN rule:
    * IF found "f(e1,...,en):A" and "f:T1,...,Tn->T" exists in SymbolTable
-   * THEN infers type of arguments and add a type constraint "A = T" and
-   *      calls the TypeVariableList method which adds a type constraint "Ai =
-   *      Ti" for each argument, where Ai is a fresh type variable
+   * THEN infers type of arguments and add a type constraint "T <:A"
    * <p>
    * CT-EMPTY rule:
-   * IF found "l():AA" and "l:T*->TT" exists in SymbolTable
-   * THEN add a type constraint "AA = TT"       
+   * IF found "l():A" and "l:T1*->T" exists in SymbolTable
+   * THEN adds a type constraint "T <: A"       
    * <p>
    * CT-ELEM rule:
-   * IF found "l(e1,...,en,e):AA" and "l:T*->TT" exists in SymbolTable
+   * IF found "l(e1,...,en,e):A" and "l:T1*->T" exists in SymbolTable
    * THEN infers type of both sublist "l(e1,...,en)" and last argument
-   *      "e" and adds a type constraint "AA = TT" and calls the
-   *      TypeVariableList method which adds a type constraint "A =T"
-   *      for the last argument, where A is a fresh type variable and
-   *      "e" does not represent a list with head symbol "l"
+   *      "e" and adds a type constraint "T <: A", where "e" does not represent a list with head symbol "l"
    * <p>
    * CT-MERGE rule:
-   * IF found "l(e1,...,en,e):AA" and "l:T*->TT" exists in SymbolTable
+   * IF found "l(e1,...,en,e):A" and "l:T1*->T" exists in SymbolTable
    * THEN infers type of both sublist "l(e1,...,en)" and last argument
-   *      "e" and adds a type constraint "AA = TT" and calls the
-   *      TypeVariableList method, where "e" represents a list with
+   *      "e" and adds a type constraint "T <: A", where "e" represents a list with
    *      head symbol "l"
    * <p>
    * CT-STAR rule:
@@ -784,11 +787,12 @@ public class NewKernelTyper {
    * occurring more than once in a condition.
    * <p>
    * For each variable of type
-   * "TomTerm" that already exists in varPatternList or in varList, a type
-   * constraint is added to <code>equationConstraints</code> to ensure that  both
+   * "TomTerm" that already exists in <code>varPatternList</code> or in
+   * <code>varList</code>, a type constraint is added to
+   * <code>equationConstraints</code> to ensure that  both
    * variables have same type (this happens in case of non-linearity).
    * <p>
-   * OBS.: we also need to check the varList since a Variable/VariableStar can have
+   * OBS.: we also need to check the <code>varList</code> since a Variable/VariableStar can have
    * occurred in a previous condition as a BQVariable/BQVariableStar, in the
    * case of a composed condition
    * e.g. (x < 10 ) && f(x) << e -> { action }
@@ -815,13 +819,14 @@ public class NewKernelTyper {
    * occurring more than once in a condition.
    * <p>
    * For each variable of type
-   * "BQTerm" that already exists in varPatternList or in varList, a type
-   * constraint is added to <code>equationConstraints</code> to ensure that  both
+   * "BQTerm" that already exists in <code>varPatternList</code> or in
+   * <code>varList</code>, a type constraint is added to
+   * <code>equationConstraints</code> to ensure that  both
    * variables have same type (this happens in case of non-linearity).
    * <p>
-   * OBS.: we also need to check the varPatternList since a BQVariable/BQVariableStar can have
-   * occurred in a previous condition as a Variable/VariableStar, in the
-   * case of a composed condition or of a inner match
+   * OBS.: we also need to check the <code>varPatternList</code> since a
+   * BQVariable/BQVariableStar can have occurred in a previous condition as a
+   * Variable/VariableStar, in the case of a composed condition or of a inner match
    * e.g. f(x) << e && (x < 10 ) -> { action } 
    * @param bqvar the variable to have the linearity checked
    */
@@ -841,8 +846,8 @@ public class NewKernelTyper {
   }
 
   /**
-   * The method <code>inferCodeList</code> starts inference process which takes one
-   * code at a time
+   * The method <code>inferCodeList</code> applies rule CT-BLOCK. It starts
+   * inference process which takes one code at a time
    * <ul>
    *  <li> all lists and hashMaps are reset
    *  <li> each code is typed with fresh type variables
@@ -853,6 +858,10 @@ public class NewKernelTyper {
    *        substitutions for each type variable)
    *  <li> the mapping is applied over the code and the symbol table
    * </ul>
+   * <p>
+   * CT-BLOCK rule:
+   * IF found "(rule_1,...,rule_n)" where "rule_i" are ConstraintInstructions
+   * THEN infers types of each ConstraintInstruction
    * @param cList the tom code list to be type inferred
    * @return      the tom typed code list
    */
@@ -888,12 +897,12 @@ public class NewKernelTyper {
    * side) is traversed in order to generate type constraints.
    * <p>
    * CT-RULE rule:
-   * IF found "cond --> (e1,...,en)" where "ei" are backquote terms composing
-   * the action
+   * IF found "cond --> action)" where "action" is a list of terms or a code to
+   *    be type inferred
    * THEN infers types of condition (by calling <code>inferConstraint</code>
-   * method) and action (by calling <code>inferConstraintList</code> for each
-   * match constraint occurring in the action) 
-   * @param ciList  the pair "condition -> action" to be type inferred 
+   *      method) and action (by calling <code>inferAllTypes</code>) 
+   * @param ciList  the list of pairs "condition -> action" to be type inferred 
+   * @return        the typed list resulting
    */
   private ConstraintInstructionList inferConstraintInstructionList(ConstraintInstructionList ciList) {
     ConstraintInstructionList newCIList = `concConstraintInstruction();
@@ -937,25 +946,25 @@ public class NewKernelTyper {
   }
 
   /**
-   * The method <code>inferConstraint</code> applies rule CT-MATCH, CT-EQ, CT-CONJ,
-   * or CT-DISJ to a "condition" in order to infer its type.
+   * The method <code>inferConstraint</code> applies rule CT-MATCH, CT-NUM, CT-CONJ,
+   * or CT-DISJ to a "condition" in order to infer the types of its variables.
    * <p>
    * CT-MATCH rule:
-   * IF found "e1 << [T] e2" 
-   * THEN infers type of e1 and e2 and add a type constraint "T1 = T2", where
-   * "Ti" is a fresh type variable generated to "ei" (by
-   * <code>inferBQTerm</code>, a type constraint "T = T2" will be added)
+   * IF found "e1 << [A] e2" 
+   * THEN infers type of e1 and e2 and add the type constraints "T1 = A" and "A
+   * <: T2"
    * <p>
-   * CT-EQ rule:
+   * CT-NUM rule:
    * IF found "e1 == e2", "e1 <= e2", "e1 < e2", "e1 >= e2" or "e1 > e2"
-   * THEN infers type of e1 and e2 and add a type constraint "T1 = T2", where
-   * "Ti" is a fresh type variable generated to "ei"  
+   * THEN infers type of e1 and e2 and add the type constraints "A <:T1" and "A
+   * <: T2", where "A" is a fresh type variable   
    * <p>
    * CT-CONJ rule (resp. CT-DISJ):
    * IF found "cond1 && cond2" (resp. "cond1 || cond2")
    * THEN infers type of cond1 and cond2 (by calling
    * <code>inferConstraint</code> for each condition)
-   * @param constraint the "condition" to be type inferred 
+   * @param constraint  the "condition" to be type inferred 
+   * @return            the typed condition resulting
    */
   private Constraint inferConstraint(Constraint constraint) {
     %match(constraint) {
@@ -974,37 +983,16 @@ public class NewKernelTyper {
         %match(aType) {
           (Type|TypeVar)[TomType=typeName] -> {
             `hasUndeclaredType(aType,getInfoFromTomTerm(pattern).getOptions()); 
-            // There is no explicit type, so T_pattern = T_subject 
-            // TODO verify if we replace it by same code of case "Type[]"
+            /* T_pattern = T_cast and T_cast <: T_subject */
             TypeConstraintList newEqConstraints = equationConstraints;
             TypeConstraintList newSubConstraints = subtypingConstraints;
             equationConstraints =
               addEqConstraint(`Equation(tPattern,aType,getInfoFromTomTerm(pattern)),newEqConstraints);
             subtypingConstraints = addSubConstraint(`Subtype(aType,tSubject,getInfoFromBQTerm(subject)),newSubConstraints);
           }
-
-          /*
-          TypeVar[TomType=typeName] -> {
-            `hasUndeclaredType(typeName,getInfoFromTomTerm(pattern).getOptions()); 
-            // There is no explicit type, so T_pattern = T_subject 
-            // TODO verify if we replace it by same code of case "Type[]"
-            TypeConstraintList newEqConstraints = equationConstraints;
-            equationConstraints =
-              addEqConstraint(`Equation(tPattern,tSubject,getInfoFromTomTerm(pattern)),newEqConstraints);
-          }
-          Type[] -> {
-            // T_pattern = T_cast and T_cast <: T_subject 
-            TypeConstraintList newEqConstraints = equationConstraints;
-            TypeConstraintList newSubConstraints = subtypingConstraints;
-            equationConstraints =
-              addEqConstraint(`Equation(tPattern,aType,getInfoFromTomTerm(pattern)),newEqConstraints);
-            subtypingConstraints = addSubConstraint(`Subtype(aType,tSubject,getInfoFromBQTerm(subject)),newSubConstraints);
-          }
-          */
         }
         TomTerm newPattern = `inferAllTypes(pattern,tPattern);
         BQTerm newSubject = `inferAllTypes(subject,tSubject);
-        //hasUndeclaredType(newSubject);
         return `MatchConstraint(newPattern,newSubject,aType);
       }
 
@@ -1029,8 +1017,6 @@ public class NewKernelTyper {
           addSubConstraint(`Subtype(lowerType,tRight,getInfoFromBQTerm(right)),newSubConstraints);
         BQTerm newLeft = inferAllTypes(`left,tLeft);
         BQTerm newRight = inferAllTypes(`right,tRight);
-        //hasUndeclaredType(newLeft);
-        //hasUndeclaredType(newRight);
         return `NumericConstraint(newLeft,newRight,kind);
       }
 
@@ -1062,37 +1048,35 @@ public class NewKernelTyper {
    * lists and functions (which are TomTerms) 
    * <p> 
    * It continues the application of rules CT-FUN, CT-ELEM, CT-MERGE or CT-STAR
-   * to each argument in order to infer its type.
+   * to each argument in order to infer the types of its variables.
    * <p>
    * Continuation of CT-STAR rule (applying to premises):
-   * IF found "l(e1,...,en,x*):AA" and "l:T*->TT" exists in SymbolTable
+   * IF found "l(e1,...,en,x*):A" and "l:T1*->T" exists in SymbolTable
    * THEN infers type of both sublist "l(e1,...,en)" and last argument
    *      "x", where "x" represents a list with
    *      head symbol "l"
    * <p>
    * Continuation of CT-ELEM rule (applying to premises which are
    * not lists):
-   * IF found "l(e1,...en,e):AA" and "l:T*->TT" exists in SymbolTable
+   * IF found "l(e1,...,en,e):A" and "l:T1*->T" exists in SymbolTable
    * THEN infers type of both sublist "l(e1,...,en)" and last argument
-   *      "e" and adds a type constraint "A = T" for the last
-   *      argument, where "A" is a fresh type variable  and
-   *      "e" does not represent a list with head symbol "l"
+   *      "e" and adds a type constraint "T <: A", where "e" does not represent a list with head symbol "l"
    * <p>
    * Continuation of CT-MERGE rule (applying to premises which are lists with
    * the same operator):
-   * IF found "l(e1,...,en,e):AA" and "l:T*->TT" exists in SymbolTable
+   * IF found "l(e1,...,en,e):A" and "l:T1*->T" exists in SymbolTable
    * THEN infers type of both sublist "l(e1,...,en)" and last argument
-   *      "e", where "e" represents a list with
+   *      "e" and adds a type constraint "T <: A", where "e" represents a list with
    *      head symbol "l"
    * <p>
    * Continuation of CT-FUN rule (applying to premises):
    * IF found "f(e1,...,en):A" and "f:T1,...,Tn->T" exists in SymbolTable
-   * THEN infers type of arguments and adds a type constraint "Ai =
-   *      Ti" for each argument, where "Ai" is a fresh type variable
+   * THEN infers type of arguments and add a type constraint "T <:A"
    * <p>
-   * @param sList a list of arguments of a list/function
-   * @param tSymbol the TomSymbol related to the list/function
+   * @param sList       a list of arguments of a list/function
+   * @param tSymbol     the TomSymbol related to the list/function
    * @param contextType the codomain of the list/function 
+   * @return            the typed list of arguments resulting
    */
   private SlotList inferSlotList(SlotList sList, TomSymbol tSymbol, TomType
       contextType) {
@@ -1132,7 +1116,7 @@ public class NewKernelTyper {
               %match(argTerm) {
                 VariableStar[] -> {
                   TypeOptionList newTOptions = `tOptions;
-                  // Is this test really necessary?
+                  // TODO: Is this match really necessary?
                   %match {
                     concTypeOption(_*,WithSymbol[RootSymbolName=rsName],_*) <<
                       tOptions && (rsName != symName) -> {
@@ -1145,13 +1129,12 @@ public class NewKernelTyper {
                     }
                   }
 
-                  // Case CT-STAR rule (applying to premises):
+                  /* Case CT-STAR rule (applying to premises) */
                   argType = `Type(newTOptions,tomCodomain,tlCodomain);
                 }
 
                 !VariableStar[] -> { 
-                  // Case CT-ELEM rule (applying to premises which are not lists)
-                  //argType = getUnknownFreshTypeVar();
+                  /* Case CT-ELEM rule (applying to premises which are not lists) */
                   argType = `headTTList;
                   //DEBUG System.out.println("inferSlotList: !VariableStar -- constraint "
                   //DEBUG     + `headTTList + " = " + argType);
@@ -1163,24 +1146,18 @@ public class NewKernelTyper {
                * Case CT-ELEM rule which premise is a list
                * A list with a sublist whose constructor is different
                * e.g. 
-               * A = ListA(A*) and B = ListB(A*) | b()
+               * A = ListA(A*) | a() and B = ListB(A*)
                * ListB(ListA(a()))
                */
-              //argType = getUnknownFreshTypeVar();
               argType = `headTTList;
-              //DEBUG System.out.println("inferSlotList: symName != argSymbName -- constraint "
-              //DEBUG     + `headTTList + " = " + argType);
-              //addConstraint(`Equation(argType,headTTList,getInfoFromTomTerm(argTerm)));
             }
 
-            // Case CT-MERGE rule (applying to premises):
+            /* Case CT-MERGE rule (applying to premises) */
             argTerm = `inferAllTypes(argTerm,argType);
             newSList = `concSlot(PairSlotAppl(slot.getSlotName(),argTerm),newSList*);
           }
         } else {
-          // In case of a function
-          // Case CT-FUN rule (applying to premises):
-
+          /* Case CT-FUN rule (applying to premises) */
           TomName argName;
           for (Slot slot : sList.getCollectionconcSlot()) {
             argName = slot.getSlotName();
@@ -1201,37 +1178,35 @@ public class NewKernelTyper {
    * lists, functions and calls of methods (which are BQTerms) 
    * <p> 
    * It continues the application of rules CT-FUN, CT-ELEM, CT-MERGE or CT-STAR
-   * to each argument in order to infer its type.
+   * to each argument in order to infer the types of its variables.
    * <p>
    * Continuation of CT-STAR rule (applying to premises):
-   * IF found "l(e1,...,en,x*):AA" and "l:T*->TT" exists in SymbolTable
+   * IF found "l(e1,...,en,x*):A" and "l:T1*->T" exists in SymbolTable
    * THEN infers type of both sublist "l(e1,...,en)" and last argument
    *      "x", where "x" represents a list with
    *      head symbol "l"
    * <p>
    * Continuation of CT-ELEM rule (applying to premises which are
    * not lists):
-   * IF found "l(e1,...en,e):AA" and "l:T*->TT" exists in SymbolTable
+   * IF found "l(e1,...,en,e):A" and "l:T1*->T" exists in SymbolTable
    * THEN infers type of both sublist "l(e1,...,en)" and last argument
-   *      "e" and adds a type constraint "A = T" for the last
-   *      argument, where "A" is a fresh type variable  and
-   *      "e" does not represent a list with head symbol "l"
+   *      "e" and adds a type constraint "T <: A", where "e" does not represent a list with head symbol "l"
    * <p>
    * Continuation of CT-MERGE rule (applying to premises which are lists with
    * the same operator):
-   * IF found "l(e1,...,en,e):AA" and "l:T*->TT" exists in SymbolTable
+   * IF found "l(e1,...,en,e):A" and "l:T1*->T" exists in SymbolTable
    * THEN infers type of both sublist "l(e1,...,en)" and last argument
-   *      "e", where "e" represents a list with
+   *      "e" and adds a type constraint "T <: A", where "e" represents a list with
    *      head symbol "l"
    * <p>
    * Continuation of CT-FUN rule (applying to premises):
    * IF found "f(e1,...,en):A" and "f:T1,...,Tn->T" exists in SymbolTable
-   * THEN infers type of arguments and adds a type constraint "Ai =
-   *      Ti" for each argument, where "Ai" is a fresh type variable
+   * THEN infers type of arguments and add a type constraint "T <:A"
    * <p>
-   * @param bqList a list of arguments of a list/function/method
-   * @param tSymbol the TomSymbol related to the list/function
+   * @param bqList      a list of arguments of a list/function/method
+   * @param tSymbol     the TomSymbol related to the list/function
    * @param contextType the codomain of the list/function 
+   * @return            the typed list of arguments resulting
    */
   private BQTermList inferBQTermList(BQTermList bqTList, TomSymbol tSymbol, TomType
       contextType) {
@@ -1255,15 +1230,17 @@ public class NewKernelTyper {
             if(!(TomBase.isListOperator(`argSymb) || TomBase.isArrayOperator(`argSymb))) {
               %match(argTerm) {
                 Composite(_*) -> {
-                  // We don't know what is into the Composite
-                  // It can be a BQVariableStar or a list operator or a list of
-                  // CompositeBQTerm or something else
+                  /*
+                   * We don't know what is into the Composite
+                   * It can be a BQVariableStar or a list operator or a list of
+                   * CompositeBQTerm or something else
+                   */
                   argType = `EmptyType();
                 }
 
                 BQVariableStar[] -> {
                   TypeOptionList newTOptions = `tOptions;
-                  // Is this test really necessary?
+                  //TODO: Is this test really necessary?
                   %match {
                     concTypeOption(_*,WithSymbol[RootSymbolName=rsName],_*) <<
                       tOptions && (rsName != symName) -> {
@@ -1278,18 +1255,14 @@ public class NewKernelTyper {
 
 
 
-                  // Case CT-STAR rule (applying to premises):
+                  /* Case CT-STAR rule (applying to premises) */
                   argType = `Type(newTOptions,tomCodomain,tlCodomain);
                 }
 
                 //TO VERIFY : which constructors must be tested here?
+                /* Case CT-ELEM rule (applying to premises which are not lists) */
                 (BQVariable|BQAppl)[] -> {
-                  // Case CT-ELEM rule (applying to premises which are not lists)
-                  //argType = getUnknownFreshTypeVar();
                   argType = `headTTList;
-                  //DEBUG System.out.println("inferBQTermList: !BQVariableStar -- constraint "
-                  //DEBUG     + argType + " = " + `headTTList);
-                  //addConstraint(`Equation(argType,headTTList,getInfoFromBQTerm(argTerm)));
                 }
               }
             } else if (`symName != argSymb.getAstName()) {
@@ -1300,20 +1273,15 @@ public class NewKernelTyper {
                * A = ListA(A*) and B = ListB(A*) | b()
                * ListB(ListA(a()))
                */
-              //argType = getUnknownFreshTypeVar();
               argType = `headTTList;
-              //DEBUG System.out.println("inferSlotList: symName != argSymbName -- constraint "
-              //DEBUG     + `headTTList + " = " + argType);
-              //addConstraint(`Equation(argType,headTTList,getInfoFromBQTerm(argTerm)));
             }
 
-            // Case CT-MERGE rule (applying to premises):
+            /* Case CT-MERGE rule (applying to premises) */
             argTerm = `inferAllTypes(argTerm,argType);
             newBQTList = `concBQTerm(argTerm,newBQTList*);
           }
         } else {
-          // In case of a function
-          // Case CT-FUN rule (applying to premises):
+          /* Case CT-FUN rule (applying to premises) */
           if(`pNDList.length() != bqTList.length()) {
             Option option = TomBase.findOriginTracking(`oList);
             %match(option) {
@@ -1357,6 +1325,13 @@ public class NewKernelTyper {
     throw new TomRuntimeException("inferBQTermList: failure on " + `bqTList);
   }
 
+  /**
+   * The method <code>solveConstraints</code> calls
+   * <code>solveEquationConstraints</code> to solve the list of equation
+   * constraints and generate a set os substitutions for type variables. Then
+   * the substitutions are applied to the list of subtyping constraints and the
+   * method <code>solveEquationConstraints</code> to solve this list. 
+   */
   private void solveConstraints() {
     try {
       //DEBUG System.out.println("\nsolveConstraints 1:");
@@ -1589,6 +1564,12 @@ matchBlockFail :
     }
   }
 
+  /**
+   * The method <code>replaceInSubtypingConstraints</code> applies the
+   * substitutions to a given type constraint list.
+   * @param tCList the type constraint list to be replaced
+   * @return       the type constraint list resulting of replacement
+   */
   private TypeConstraintList replaceInSubtypingConstraints(TypeConstraintList
       tCList) {
     TypeConstraintList replacedtCList = `concTypeConstraint();
@@ -1713,6 +1694,14 @@ matchBlockFail :
     }
   }
 
+  /**
+   * The method <code>findVar</code> checks if a given type variable occurs in
+   * a given type constraint list.
+   * @param tVar   the type variable to be found
+   * @param tCList the type constraint list to be checked
+   * @return        'true' if the type variable occurs in the list
+   *                'false' otherwise
+   */
   private boolean findVar(TomType tVar, TypeConstraintList tCList) {
     %match {
       concTypeConstraint(_*,(Equation|Subtype)[Type1=t1],_*) << tCList &&
@@ -1724,6 +1713,15 @@ matchBlockFail :
     return false;
   }
 
+  /**
+   * The method <code>minType</code> tries to find the common lowertype
+   * between two given types.
+   * @param t1 a type
+   * @param t2 another type
+   * @return    the lowertype between 't1' and 't2' if the subtype relation
+   *            holds between them (since a multiple inheritance is forbidden)
+   *            the 'EmptyType()' otherwise
+   */
   private TomType minType(TomType t1, TomType t2) {
     TomTypeList supTypes1 = dependencies.get(t1);
     TomTypeList supTypes2 = dependencies.get(t2);
@@ -1738,6 +1736,20 @@ matchBlockFail :
     return `EmptyType();
   }
 
+  /**
+   * The method <code>maxType</code> tries to find the lowest common uppertype
+   * of two given types.
+   * OBS.: when the subtype relation does not hold between two types 't1' and
+   * 't2', the method considers the intersection of the supertypes lists
+   * supertypes_t1 and supertypes_t2 and searches for the common supertype 'ti' which
+   * has the bigger supertypes_ti list 
+   * @param t1  a type
+   * @param t2  another type
+   * @return    the uppertype between 't1' and 't2' if the subtype relation
+   *            holds between them or the lowest common uppertype of them if
+   *            they are not in subtype relation 
+   *            the 'EmptyType()' otherwise
+   */
   private TomType maxType(TomType t1, TomType t2) {
     TomTypeList supTypes1 = dependencies.get(t1);
     TomTypeList supTypes2 = dependencies.get(t2);
@@ -1749,8 +1761,6 @@ matchBlockFail :
         return t1;
       }
       !concTomType() << supTypes1 && !concTomType() << supTypes2 -> {
-        //DEBUG System.out.println("supTypes1 = " + supTypes1);
-
         int st1Size = `supTypes1.length();
         int st2Size = `supTypes2.length();
         int intersectionSize = st1Size;
@@ -1758,8 +1768,7 @@ matchBlockFail :
           intersectionSize = st2Size;
         }
         for (TomType currentType:`supTypes1.getCollectionconcTomType()) {
-          //TODO verify why we can't use "contains" without transforming list in
-          // Collection
+          // TODO fix this test to be according to the explanation above
           if(`supTypes2.getCollectionconcTomType().contains(currentType) && dependencies.get(currentType).length() == (intersectionSize-1)) {
             return currentType;
           }
