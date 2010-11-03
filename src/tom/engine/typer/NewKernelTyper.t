@@ -337,7 +337,7 @@ public class NewKernelTyper {
    * @param tConstraint the equation to be inserted into the type constraint list
    * @param tCList      the constraint type list where the constraint will be
    *                    inserted
-   * @return            the list resulting by the insertion
+   * @return            the list resulting of the insertion
    */
   protected TypeConstraintList addEqConstraint(TypeConstraint tConstraint,
       TypeConstraintList tCList) {
@@ -360,7 +360,7 @@ public class NewKernelTyper {
    *                    constraint list
    * @param tCList      the constraint type list where the constraint will be
    *                    inserted
-   * @return            the list resulting by the insertion
+   * @return            the list resulting of the insertion
    */
   protected TypeConstraintList addSubConstraint(TypeConstraint tConstraint,
       TypeConstraintList tCList) {
@@ -377,7 +377,7 @@ public class NewKernelTyper {
 
   /**
    * The method <code>generateDependencies</code> generates a
-   * HashMap called "dependencies" having pairs (type,supertypesList), where
+   * hashMap called "dependencies" having pairs (type,supertypesList), where
    * supertypeslist is a list with all the related proper supertypes for each
    * ground type used into a code. The list is obtained by reflexive and
    * transitive closure over the direct supertype relation defined by the user
@@ -435,18 +435,29 @@ public class NewKernelTyper {
     }
   }
 
+  /**
+   * The method <code>addTomTerm</code> insert a TomTerm into the global
+   * <code>varPatternList</code>.
+   * @param tTerm  the TomTerm to be inserted
+   */
   protected void addTomTerm(TomTerm tTerm) {
     varPatternList = `concTomTerm(tTerm,varPatternList*);
   }
 
+  /**
+   * The method <code>addBQTerm</code> insert a BQTerm into the global
+   * <code>varList</code>.
+   * @param bqTerm  the BQTerm to be inserted
+   */
   protected void addBQTerm(BQTerm bqTerm) {
     varList = `concBQTerm(bqTerm,varList*);
   }
 
   /**
-   * The method <code>resetVarPatternList</code> empties varPatternList after
+   * The method <code>resetVarPatternList</code> empties the
+   * <code>varPatternList</code> after
    * checking if <code>varList</code> contains
-   * a corresponding BQTerm in order to remove it from <code>varList</code. too
+   * a corresponding BQTerm in order to remove it from <code>varList</code> too.
    */
   protected void resetVarPatternList() {
     for(TomTerm tTerm: varPatternList.getCollectionconcTomTerm()) {
@@ -461,7 +472,8 @@ public class NewKernelTyper {
   }
 
   /**
-   * The method <code>init</code> empties all global lists and hashMaps which means to
+   * The method <code>init</code> reset the counter of type variables
+   * <code>freshTypeVarCounter</code> and empties all global lists and hashMaps which means to
    * empty <code>varPatternList</code>, <code>varList</code>,
    * <code>equationConstraints</code>, <code>subtypingConstraints</code> and <code>substitutions</code>
    */
@@ -474,6 +486,13 @@ public class NewKernelTyper {
     substitutions = new HashMap<TomType,TomType>();
   }
 
+  /**
+   * The method <code>collectKnownTypesFromCode</code> creates an instance of
+   * the class <code>CollectKnownTypes</code> and calls its method
+   * <code>visitLight</code> to traverse a code. 
+   * @param  subject the code to be traversed/transformed
+   * @return         the code resulting of a transformation
+   */
   private Code collectKnownTypesFromCode(Code subject) {
     try {
       return `TopDownIdStopOnSuccess(CollectKnownTypes(this)).visitLight(subject);
@@ -493,6 +512,7 @@ public class NewKernelTyper {
    * CASE 2 : Type(name, EmptyTargetLanguageType()) -> TypeVar(name, Index(i))
    * if name is not in TypeTable
    * @param nkt an instance of object NewKernelTyper
+   * @return    the code resulting of a transformation
    */
   %strategy CollectKnownTypes(nkt:NewKernelTyper) extends Identity() {
     visit TomType {
@@ -512,7 +532,10 @@ public class NewKernelTyper {
   /**
    * The method <code>inferAllTypes</code> is the start-up of the inference
    * process. It is a generic method and it is called for the first time by the
-   * NewTyper
+   * NewTyper.
+   * @param term        the expression needing type inference
+   * @param contextType the type related to the current expression
+   * @return            the resulting typed expression 
    */
   public <T extends tom.library.sl.Visitable> T inferAllTypes(T term, TomType contextType) {
     try {
