@@ -173,8 +173,10 @@ public class NewKernelTyper {
   /**
    * The method <code>hasUndeclaredType</code> checks if a term has an
    * undeclared type by verifying if a term has type
-   * Type(name,EmptyTargetLanguage()), where name is not
+   * TypeVar(name,EmptyTargetLanguage()), where name is not
    * UNKNOWN_TYPE.
+   * @param aType the type to be verified
+   * @param oList the informatiosn about file and line
    */
   protected void hasUndeclaredType(TomType aType, OptionList oList) {
     String fileName = currentInputFileName;
@@ -193,28 +195,13 @@ public class NewKernelTyper {
       }
     }
   }
-
-  /*
-  protected void hasUndeclaredType(BQTerm subject) {
-    String fileName = currentInputFileName;
-    int line = 0;
-    //DEBUG System.out.println("hasUndeclaredType: subject = " + subject);
-    %match {
-      (BQVariable|BQVariableStar)[Options=oList,AstType=aType] << subject && 
-        TypeVar(tomType,_) << aType &&
-        (tomType != symbolTable.TYPE_UNKNOWN.getTomType()) -> {
-          Option option = TomBase.findOriginTracking(`oList);
-          %match(option) {
-            OriginTracking(_,line,fileName) -> {
-              TomMessage.error(logger,`fileName, `line,
-                  TomMessage.unknownSymbol,`tomType); 
-            }
-          }
-        }
-    }
-  }
-  */
  
+  /**
+   * The method <code>getType</code> gets the type of a term by consulting the
+   * SymbolTable.
+   * @param bqTerm  the BQTerm requesting a type
+   * @return        the type of the BQTerm
+   */
   protected TomType getType(BQTerm bqTerm) {
     %match(bqTerm) {
       (BQVariable|BQVariableStar|FunctionCall)[AstType=aType] -> { return `aType; }
@@ -228,6 +215,12 @@ public class NewKernelTyper {
     throw new TomRuntimeException("getType(BQTerm): should not be here.");
   }
 
+  /**
+   * The method <code>getType</code> gets the type of a term by consulting the
+   * SymbolTable
+   * @param tTerm the TomTerm requesting a type
+   * @return      the type of the TomTerm
+   */
   protected TomType getType(TomTerm tTerm) {
     %match(tTerm) {
       AntiTerm[TomTerm=atomicTerm] -> { return getType(`atomicTerm); }
@@ -240,6 +233,12 @@ public class NewKernelTyper {
     throw new TomRuntimeException("getType(TomTerm): should not be here.");
   }
 
+  /**
+   * The method <code>getInfoFromTomTerm</code> creates a pair
+   * (name,information) for a given term by consulting its attributes.
+   * @param tTerm  the TomTerm requesting the informations
+   * @return       the information about the TomTerm
+   */
   protected Info getInfoFromTomTerm(TomTerm tTerm) {
     %match(tTerm) {
       AntiTerm[TomTerm=atomicTerm] -> { return getInfoFromTomTerm(`atomicTerm); }
@@ -253,6 +252,12 @@ public class NewKernelTyper {
     return `PairNameOptions(Name(""),concOption()); 
   }
 
+  /**
+   * The method <code>getInfoFromTomTerm</code> creates a pair
+   * (name,information) for a given term by consulting its attributes.
+   * @param bqTerm  the BQTerm requesting the informations
+   * @return       the information about the BQTerm
+   */
   protected Info getInfoFromBQTerm(BQTerm bqTerm) {
     %match(bqTerm) {
       (BQVariable|BQVariableStar|BQAppl)[Options=optionList,AstName=aName] -> { 
@@ -262,14 +267,31 @@ public class NewKernelTyper {
     return `PairNameOptions(Name(""),concOption()); 
   }
 
+  /**
+   * The method <code>setLimTVarSymbolTable</code> sets the lower bound of the
+   * counter of type variables. This methods is called by the TyperPlugin
+   * after replacing all unknown types of the SymbolTable by type variables and
+   * before start the type inference.
+   * @param freshTVarSymbolTable  the lower bound of the counter of type
+   *                              variables
+   */
   protected void setLimTVarSymbolTable(int freshTVarSymbolTable) {
     limTVarSymbolTable = freshTVarSymbolTable;
   }
 
+  /**
+   * The method <code>getFreshTlTIndex</code> increments the counter of type variables. 
+   * @return  the incremented counter of type variables
+   */
   protected int getFreshTlTIndex() {
     return freshTypeVarCounter++;
   }
 
+  /**
+   * The method <code>getUnknownFreshTypeVar</code> generates a fresh type
+   * variable (by considering the global counter of type variables)
+   * @return  a new type variable
+   */
   protected TomType getUnknownFreshTypeVar() {
     TomType tType = symbolTable.TYPE_UNKNOWN;
     %match(tType) {
@@ -278,6 +300,15 @@ public class NewKernelTyper {
     throw new TomRuntimeException("getUnknownFreshTypeVar: should not be here.");
    }
 
+  /**
+   * The method <code>containsConstraint</code> checks if a given constraint
+   * already exists in a constraint type list. The method considers symmetry for
+   * equation constraints. 
+   * @param tConstraint the constraint to be considered
+   * @param tCList      the type constraint list to be traversed
+   * @return            'true' if the constraint already exists in the list or
+   *                    'false' otherwise            
+   */
   protected boolean containsConstraint(TypeConstraint tConstraint, TypeConstraintList
       tCList) {
     %match {
@@ -297,14 +328,16 @@ public class NewKernelTyper {
   } 
 
   /*
-     * pem: use if(...==... && typeConstraints.contains(...))
-     */
+   * pem: use if(...==... && typeConstraints.contains(...))
+   */
   /**
-   * The method <code>addEqConstraint</code> adds an equation (i.e. a type constraint) into the
-   * global list "TypeConstraints" if this equation does not contains
-   * "EmptyTypes". The global list is ordered inserting equations
-   * containing (one or both) ground type(s) into the beginning of the list.
-   * @param tConstraint the equation to be inserted into the list "TypeConstraints"
+   * The method <code>addEqConstraint</code> insert an equation (i.e. a type
+   * constraint) into a given type constraint list only if this constraint does
+   * not yet exist into the list and if it does not contains "EmptyTypes". 
+   * @param tConstraint the equation to be inserted into the type constraint list
+   * @param tCList      the constraint type list where the constraint will be
+   *                    inserted
+   * @return            the list resulting by the insertion
    */
   protected TypeConstraintList addEqConstraint(TypeConstraint tConstraint,
       TypeConstraintList tCList) {
@@ -319,6 +352,16 @@ public class NewKernelTyper {
     return tCList;
   }
 
+  /**
+   * The method <code>addSubConstraint</code> insert an subtyping constraint (i.e. a type
+   * constraint) into a given type constraint list only if this constraint does
+   * not yet exist into the list and if it does not contains "EmptyTypes". 
+   * @param tConstraint the subtyping constraint to be inserted into the type
+   *                    constraint list
+   * @param tCList      the constraint type list where the constraint will be
+   *                    inserted
+   * @return            the list resulting by the insertion
+   */
   protected TypeConstraintList addSubConstraint(TypeConstraint tConstraint,
       TypeConstraintList tCList) {
     if (!containsConstraint(tConstraint,tCList)) {
@@ -332,6 +375,9 @@ public class NewKernelTyper {
     return tCList;
   }
 
+  /**
+    * The method <code>generateDependencies</code> 
+    */
   protected void generateDependencies() {
     TomTypeList superTypes;
     TomTypeList supOfSubTypes;
