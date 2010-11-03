@@ -1,3 +1,67 @@
+2010-11-03 tavaresc
+ * Fix hasUndeclaredType method and call it to test the explicit type of a MatchConstraint.
+
+2010-10-28 tavaresc
+ * Fix "maxType" method in order to obtain an intersection list.
+ * Add subtype examples.
+
+2010-10-27 tavaresc
+ * Do renaming to avoid two different variables have teh same name.
+ * Remove test of undeclared type.
+ * Test new constraint for "MatchConstraint".
+
+2010-10-26 tavaresc
+ * Start rewriting examples using subtypes.
+ * Put some println in comments.
+ * Add method for enumeration of solutions.
+ * Fix verification if a type constraint already exist in a given type constraint list.
+ * Add method for enumeration of solutions.
+
+2010-10-22 tavaresc
+ * Remove bad rules.
+
+2010-10-20 tavaresc
+ * Fix new rules.
+ * Add new subtyping constraint rules.
+
+2010-10-14 tavaresc
+ * New branch to work with subtypes.
+
+2010-10-13 tavaresc
+ * Fix insertion of Subtyping constraintes.
+
+2010-10-11 tavaresc
+ * Treat expansion of "MatchConstraint' in order to enable subtypings.
+
+2010-10-08 tavaresc
+ * Add subtyping constraints resolution.
+
+2010-10-06 tavaresc
+ * Treat multiple upper types.
+
+2010-09-24 tavaresc
+ * Add an argument "TomType" to MatchConstraint and propagate this.
+ * Remove temporary examples.
+
+2010-09-20 tavaresc
+ * Add parsing of %subtype.
+
+2010-09-17 tavaresc
+ * Remove TypeWithSymbol and propagate this.
+
+2010-09-16 tavaresc
+ * Change signature of TomType "Type" and propagate this.
+
+2010-08-26 tavaresc
+ * Fix inference for Composite composed by more then one CompositeBQTerm
+  and/or CompositeTL.
+ * Fix inference for both single and composed "Composite".
+ * Handle errors when typer is not able to infer the type of a subject.
+ * Add verification of function arities.
+
+2010-08-19 tavaresc
+ * Add files to "test" polymorphism.
+
 2010-07-28 tavaresc
  * Optimize new typer adding new unification algorithm without recursive calls (method
 		 solveConstraints).
