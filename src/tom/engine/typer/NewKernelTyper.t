@@ -1660,7 +1660,7 @@ matchBlockFail :
         //DEBUG System.out.println("\nsolve6: " + `constraint + " and " + `c2);
         TomType lowerType = nkt.`minType(t1,t2);
         //DEBUG System.out.println("\nminType(" + `t1.getTomType() + "," +
-            `t2.getTomType() + ") = " + lowerType);
+        //    `t2.getTomType() + ") = " + lowerType);
 
         if (lowerType == `EmptyType()) {
           // TODO fix print (bad message and arguments)
@@ -1675,7 +1675,7 @@ matchBlockFail :
         //DEBUG System.out.println("\nsolve7: " + `constraint + " and " + `c2);
         TomType upperType = nkt.`maxType(t1,t2);
         //DEBUG System.out.println("\nmaxType(" + `t1.getTomType() + "," +
-            `t2.getTomType() + ") = " + upperType);
+        //DEBUG    `t2.getTomType() + ") = " + upperType);
 
         if (upperType == `EmptyType()) {
           // TODO fix print (bad message and arguments)
@@ -1715,7 +1715,7 @@ matchBlockFail :
 
   /**
    * The method <code>minType</code> tries to find the common lowertype
-   * between two given types.
+   * between two given ground types.
    * @param t1 a type
    * @param t2 another type
    * @return    the lowertype between 't1' and 't2' if the subtype relation
@@ -1738,7 +1738,7 @@ matchBlockFail :
 
   /**
    * The method <code>maxType</code> tries to find the lowest common uppertype
-   * of two given types.
+   * of two given ground types.
    * OBS.: when the subtype relation does not hold between two types 't1' and
    * 't2', the method considers the intersection of the supertypes lists
    * supertypes_t1 and supertypes_t2 and searches for the common supertype 'ti' which
@@ -1853,6 +1853,12 @@ matchBlockSolve :
     return tCList;
   }
 
+  /**
+   * The method <code>isTypeVar</code> checks if a given type is a type variable.
+   * @param type the type to be checked
+   * @return     'true' if teh type is a variable type
+   *             'false' otherwise
+   */
   private boolean isTypeVar(TomType type) {
     %match(type) {
       TypeVar(_,_) -> { return true; }
@@ -1860,6 +1866,11 @@ matchBlockSolve :
     return false;
   }
 
+  /**
+   * The method <code>printError</code> prints an 'incompatible types' message
+   * enriched by informations about a given type constraint.
+   * @param tConstraint  the type constraint to be printed
+   */
   private void printError(TypeConstraint tConstraint) {
     %match {
       (Equation|Subtype)[Type1=tType1,Type2=tType2,Info=info] << tConstraint &&
@@ -1880,6 +1891,13 @@ matchBlockSolve :
     }
   }
 
+  /**
+   * The method <code>replaceInCode</code> calls the strategy
+   * <code>replaceFreshTypeVar</code> to apply substitution on each type variable occuring in
+   * a given Code.
+   * @param code the code to be replaced
+   * @return     the replaced code resulting
+   */
   private Code replaceInCode(Code code) {
     Code replacedCode = code;
     try {
@@ -1892,6 +1910,11 @@ matchBlockSolve :
     return replacedCode;
   }
 
+  /**
+   * The method <code>replaceInSymbolTable</code> calls the strategy
+   * <code>replaceFreshTypeVar</code> to apply substitution on each type variable occuring in
+   * the Symbol Table.
+   */
   private void replaceInSymbolTable() {
     for(String tomName:symbolTable.keySymbolIterable()) {
       //DEBUG System.out.println("replaceInSymboltable() - tomName : " + tomName);
@@ -1910,6 +1933,12 @@ matchBlockSolve :
     }
   }
 
+  /**
+   * The class <code>replaceFreshTypeVar</code> is generated from a strategy
+   * which replace each type variable occurring in a given expression by its corresponding substitution. 
+   * @param nkt an instance of object NewKernelTyper
+   * @return    the expression resulting of a transformation
+   */
   %strategy replaceFreshTypeVar(nkt:NewKernelTyper) extends Identity() {
     visit TomType {
       typeVar@TypeVar(_,_) -> {
@@ -1920,7 +1949,12 @@ matchBlockSolve :
     }
   }
 
-
+  /**
+   * The class <code>checkTypeOfBQVariables</code> is generated from a strategy
+   * which checks if all cast type (in a MatchConstraint) have been inferred. In
+   * the negative case, a 'canotGuessMatchType' message error is printed.
+   * @param nkt an instance of object NewKernelTyper
+   */
   %strategy checkTypeOfBQVariables(nkt:NewKernelTyper) extends Identity() {
     visit Constraint {
       MatchConstraint[Pattern=Variable[],Subject=BQVariable[Options=oList,AstName=Name(name),AstType=TypeVar(_,_)]] -> {
@@ -1934,7 +1968,12 @@ matchBlockSolve :
       }
     }
   }
-  
+
+  /**
+   * The method <code>printGeneratedConstraints</code> prints braces and calls the method
+   * <code>printEachConstraint</code> for a given list.
+   * @param tCList the type constraint list to be printed
+   */
   public void printGeneratedConstraints(TypeConstraintList tCList) {
     %match(tCList) {
       !concTypeConstraint() -> { 
@@ -1945,6 +1984,11 @@ matchBlockSolve :
     }
   }
 
+  /**
+   * The method <code>printEachConstraint</code> prints symbols '=' and '<:' and calls the method
+   * <code>printType</code> for each type occurring in a given type constraint.
+   * @param tCList the type constraint list to be printed
+   */
   public void printEachConstraint(TypeConstraintList tCList) {
     %match(tCList) {
       concTypeConstraint(Equation(type1,type2,_),tailtCList*) -> {
@@ -1968,7 +2012,11 @@ matchBlockSolve :
       }
     }
   }
-    
+ 
+  /**
+   * The method <code>printType</code> prints a given type.
+   * @param tCList the type to be printed
+   */   
   public void printType(TomType type) {
     System.out.print(type);
   }
