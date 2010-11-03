@@ -151,14 +151,14 @@ public class NewKernelTyper {
    * @param value the second argument of the pair to be inserted (i.e. the type2) 
    */
   private void addSubstitution(TomType key, TomType value) {
-    // STEP 1  
+    /* STEP 1 */
     TomType newValue = value;
     if (substitutions.containsKey(value)) {
       newValue = substitutions.get(value); 
     } 
     substitutions.put(key,newValue);
 
-    // STEP 2
+    /* STEP 2 */
     if (substitutions.containsValue(key)) {
       TomType valueOfCurrentKey;
       for (TomType currentKey : substitutions.keySet()) {
@@ -255,7 +255,7 @@ public class NewKernelTyper {
   /**
    * The method <code>getInfoFromTomTerm</code> creates a pair
    * (name,information) for a given term by consulting its attributes.
-   * @param bqTerm  the BQTerm requesting the informations
+   * @param bqTerm the BQTerm requesting the informations
    * @return       the information about the BQTerm
    */
   protected Info getInfoFromBQTerm(BQTerm bqTerm) {
@@ -290,7 +290,7 @@ public class NewKernelTyper {
   /**
    * The method <code>getUnknownFreshTypeVar</code> generates a fresh type
    * variable (by considering the global counter of type variables)
-   * @return  a new type variable
+   * @return  a new (fresh) type variable
    */
   protected TomType getUnknownFreshTypeVar() {
     TomType tType = symbolTable.TYPE_UNKNOWN;
@@ -376,8 +376,21 @@ public class NewKernelTyper {
   }
 
   /**
-    * The method <code>generateDependencies</code> 
-    */
+   * The method <code>generateDependencies</code> generates a
+   * HashMap called "dependencies" having pairs (type,supertypesList), where
+   * supertypeslist is a list with all the related proper supertypes for each
+   * ground type used into a code. The list is obtained by reflexive and
+   * transitive closure over the direct supertype relation defined by the user
+   * when defining the mappings.
+   * For example, to generate the supertypes of B, where B is a ground type, we
+   * follow two steps:
+   * <p>
+   * STEP 1:  a) get the list supertypes_C, put(B,({C} U supertype_C)) and go
+   *          to step 2, if there exists a declaration of form B<:C
+   *          b) put(B,{}), otherwise 
+   * <p>
+   * STEP 2:  put(A,(supertypes_A U supertypes_B)), for each (A,{...,B,...}) in dependencies
+   */
   protected void generateDependencies() {
     TomTypeList superTypes;
     TomTypeList supOfSubTypes;
@@ -386,11 +399,11 @@ public class NewKernelTyper {
       //DEBUG System.out.println("In generateDependencies -- for 1 : currentType = " +
       //DEBUG    currentType);
       %match {
+        /* STEP 1 */
         Type[TypeOptions=concTypeOption(_*,SubtypeDecl[TomType=supTypeName],_*)] << currentType -> {
           TomType supType = symbolTable.getType(`supTypeName);
           //DEBUG System.out.println("In generateDependencies -- match : supTypeName = "
-          //DEBUG     + `supTypeName + " and supType = " +
-          //DEBUG    supType);
+          //DEBUG     + `supTypeName + " and supType = " + supType);
           if (dependencies.containsKey(supType)) {
             //DEBUG System.out.println("In generateDependencies -- if : supType = " +
             //DEBUG     supType);
@@ -398,15 +411,18 @@ public class NewKernelTyper {
           }
           superTypes = `concTomType(supType,superTypes*);  
 
+          /* STEP 2 */
           for(TomType subType:dependencies.keySet()) {
             supOfSubTypes = dependencies.get(`subType);
             //DEBUG System.out.println("In generateDependencies -- for 2: supOfSubTypes = " +
             //DEBUG     supOfSubTypes);
             %match {
               concTomType(_*,type,_*) << supOfSubTypes && (type == currentType) -> {
-                // Replace list of superTypes of "subType" by a new one
-                // containing the superTypes of "currentType" which is also a
-                // superType
+                /* 
+                 * Replace list of superTypes of "subType" by a new one
+                 * containing the superTypes of "currentType" which is also a
+                 * superType 
+                 */
                 dependencies.put(subType,`concTomType(supOfSubTypes*,superTypes*));
               }
             }
