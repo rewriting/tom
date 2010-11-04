@@ -1353,8 +1353,8 @@ public class NewKernelTyper {
 
 
   /**
-   * The method <code>solveEquationConstraints</code> tries to solve all type
-   * constraints collected during the inference
+   * The method <code>solveEquationConstraints</code> tries to solve all
+   * equations constraints collected during the inference process.
    * <p> 
    * There exists 3 kinds of types : variable types Ai, ground types Ti and
    * ground types Ti^c which are decorated with a given symbol c. Since a type
@@ -1500,13 +1500,14 @@ matchBlockAdd :
   }
 
   /**
-   * The method <code>detectFail</code> 
-   * tries to solve all type constraints collected during the inference
+   * The method <code>detectFail</code> checks if a type constraint
+   * relating two ground types has a solution. In the negative case, an
+   * 'incompatible types' message error is printed.  
    * <p> 
-   * There exists 3 kinds of types : variable types Ai, ground types Ti and
-   * ground types Ti^c which are decorated with a given symbol c. Since a type
-   * constraints is a pair (type1,type2) representing an equation relation
-   * between two types, them the set of all possibilities of arrangement between
+   * There exists 2 kinds of ground types: ground types Ti and
+   * ground types Ti^c which are decorated with a given symbol c. Considering
+   * type constraints as pairs (type1,type2) representing an equation or
+   * a subtype relation between two ground types, them the set of all possibilities of arrangement between
    * ground types is a sequence with repetition. Then, we have 4 possible cases (since
    * 2^2 = 4).
    * <p>
@@ -1523,16 +1524,32 @@ matchBlockAdd :
    *  b) --> Nothing if T1 is equals to T2
    * <p>
    * CASE 4: tCList = {(T1^a = T2^b),...)} and Map
-   *  a) --> Fail if T1 is different from T2 and/or "a" is different from "b"
-   *  b) --> Nothing if T1 is equals to T2
+   *  a) --> Fail if T1 is different from T2 or 'a' is different from 'b'
+   *  b) --> Nothing if T1 is equals to T2 and 'a' is equals to 'b'
    * <p>
+   * CASE 5: tCList = {(T1 <: T2),...)} and Map
+   *  a) --> Fail if T1 is not subtype of T2
+   *  b) --> Nothing if T1 is subtype of T2
+   * <p>
+   * CASE 6: tCList = {(T1 <: T2^c),...)} and Map
+   *   --> Fail
+   * <p>
+   * CASE 7: tCList = {(T1^c <: T2),...)} and Map
+   *  a) --> Fail if T1 is not subtype of T2
+   *  b) --> Nothing if T1 is subtype of T2
+   * <p>
+   * CASE 8: tCList = {(T1^a <: T2^b),...)} and Map
+   *  a) --> Fail if T1 is not subtype of T2 or 'a' is different from 'b'
+   *  b) --> Nothing if T1 is subtype of T2 and 'a' is equals to 'b'
+   * <p>
+
    * @param tConstraint the type constraint to be verified 
    */
   private void detectFail(TypeConstraint tConstraint) {
 matchBlockFail : 
     {
       %match {
-        // CASE 1a, 2a and 3a :
+        // CASES 1a, 2a and 3a :
         Equation[Type1=Type[TomType=tName1],Type2=Type[TomType=tName2@!tName1]]
           << tConstraint && (tName1 != "unknown type") && (tName2 != "unknown type")  -> {
             //DEBUG System.out.println("In solveConstraints 1a/3a -- tConstraint  = " + `tConstraint);
@@ -1544,13 +1561,26 @@ matchBlockFail :
         Equation[Type1=Type[TypeOptions=tOptions1,TomType=tName1],Type2=Type[TypeOptions=tOptions2@!tOptions1,TomType=tName1]]
           << tConstraint
           && concTypeOption(_*,WithSymbol[RootSymbolName=rsName1],_*) << tOptions1
-          && concTypeOption(_*,WithSymbol[RootSymbolName=rsName2@rsName1],_*) << tOptions2 -> {
+          && concTypeOption(_*,WithSymbol[RootSymbolName=rsName2@!rsName1],_*) << tOptions2 -> {
             //DEBUG System.out.println("In solveConstraints 4a -- tConstraint  = " + `tConstraint);
             printError(`tConstraint);
             break matchBlockFail;
           }
 
-        Subtype[Type1=t1,Type2=t2] << tConstraint -> {
+        // CASES 5a and 7a :
+        Subtype[Type1=t1@Type[TomType=tName1],Type2=t2@Type[TomType=tName2@!tName1]] << tConstraint -> {
+          TomTypeList superTypesT1 = dependencies.get(`t1);
+          %match {
+            !concTomType(_*,type,_*) << superTypesT1 && type << TomType t2 -> {
+              //DEBUG System.out.println("detectFail, superTypesT1 = " + superTypesT1);
+              printError(`tConstraint);
+              break matchBlockFail;
+            }
+          }
+        }
+
+        //TODO CASES 6 and 8a :
+        Subtype[Type1=t1@Type[TomType=tName1],Type2=t2@Type[TomType=tName2@!tName1]] << tConstraint -> {
           TomTypeList superTypesT1 = dependencies.get(`t1);
           %match {
             !concTomType(_*,type,_*) << superTypesT1 && type << TomType t2 -> {
