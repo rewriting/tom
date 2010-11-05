@@ -82,8 +82,8 @@ public class NewKernelTyper {
    */
   // List for equation constraints (for fresh type variables)
   private TypeConstraintList equationConstraints;
-  // List for subtyping constraints (for fresh type variables)
-  private TypeConstraintList subtypingConstraints;
+  // List for subtype constraints (for fresh type variables)
+  private TypeConstraintList subtypeConstraints;
   // Set of pairs (freshVar,type)
   private HashMap<TomType,TomType> substitutions;
   // Set of supertypes for each type
@@ -353,10 +353,10 @@ public class NewKernelTyper {
   }
 
   /**
-   * The method <code>addSubConstraint</code> insert an subtyping constraint (i.e. a type
+   * The method <code>addSubConstraint</code> insert a subtype constraint (i.e. a type
    * constraint) into a given type constraint list only if this constraint does
    * not yet exist into the list and if it does not contains "EmptyTypes". 
-   * @param tConstraint the subtyping constraint to be inserted into the type
+   * @param tConstraint the subtype constraint to be inserted into the type
    *                    constraint list
    * @param tCList      the constraint type list where the constraint will be
    *                    inserted
@@ -475,14 +475,14 @@ public class NewKernelTyper {
    * The method <code>init</code> reset the counter of type variables
    * <code>freshTypeVarCounter</code> and empties all global lists and hashMaps which means to
    * empty <code>varPatternList</code>, <code>varList</code>,
-   * <code>equationConstraints</code>, <code>subtypingConstraints</code> and <code>substitutions</code>
+   * <code>equationConstraints</code>, <code>subtypeConstraints</code> and <code>substitutions</code>
    */
   private void init() {
     freshTypeVarCounter = limTVarSymbolTable;
     varPatternList = `concTomTerm();
     varList = `concBQTerm();
     equationConstraints = `concTypeConstraint();
-    subtypingConstraints = `concTypeConstraint();
+    subtypeConstraints = `concTypeConstraint();
     substitutions = new HashMap<TomType,TomType>();
   }
 
@@ -563,6 +563,8 @@ public class NewKernelTyper {
    * applies rules CT-ALIAS, CT-ANTI, CT-VAR, CT-SVAR, CT-FUN,
    * CT-EMPTY, CT-ELEM, CT-MERGE or CT-STAR to a "pattern" (a TomTerm) or a
    * "subject" (a BQTerm) in order to infer types of its variables.
+   * <p>
+   * Let 'Ai' and 'Ti' be type variables and ground types, respectively:
    * <p>
    * CT-ALIAS rule:
    * IF found "x@e:A and "x:T" already exists in context
@@ -646,8 +648,8 @@ public class NewKernelTyper {
       var@(Variable|VariableStar)[Options=optionList,AstName=aName,AstType=aType,Constraints=cList] -> {
         //DEBUG System.out.println("InferTypes:TomTerm var = " + `var);
         nkt.checkNonLinearityOfVariables(`var);
-        TypeConstraintList newSubConstraints = nkt.subtypingConstraints;
-        nkt.subtypingConstraints =
+        TypeConstraintList newSubConstraints = nkt.subtypeConstraints;
+        nkt.subtypeConstraints =
           nkt.addSubConstraint(`Subtype(aType,contextType,PairNameOptions(aName,optionList)),newSubConstraints);  
         //DEBUG System.out.println("InferTypes:TomTerm var -- constraint = " +
         //DEBUG `aType + " = " + contextType);
@@ -698,8 +700,8 @@ public class NewKernelTyper {
           // IF_2
           codomain = nkt.getCodomain(tSymbol);
           //DEBUG System.out.println("\n Test pour TomTerm-inferTypes in RecordAppl. codomain = " + codomain);
-          TypeConstraintList newSubConstraints = nkt.subtypingConstraints;
-          nkt.subtypingConstraints = nkt.addSubConstraint(`Subtype(codomain,contextType,PairNameOptions(aName,optionList)),newSubConstraints);
+          TypeConstraintList newSubConstraints = nkt.subtypeConstraints;
+          nkt.subtypeConstraints = nkt.addSubConstraint(`Subtype(codomain,contextType,PairNameOptions(aName,optionList)),newSubConstraints);
           //DEBUG System.out.println("InferTypes:TomTerm recordappl -- constraint" + codomain + " = " + contextType);
         }
 
@@ -731,8 +733,8 @@ public class NewKernelTyper {
         //DEBUG System.out.println("InferTypes:BQTerm bqVar -- contextType = " +
         //DEBUG     contextType);
         nkt.checkNonLinearityOfBQVariables(`bqVar);
-        TypeConstraintList newSubConstraints = nkt.subtypingConstraints;
-          nkt.subtypingConstraints = nkt.addSubConstraint(`Subtype(aType,contextType,PairNameOptions(aName,optionList)),newSubConstraints);  
+        TypeConstraintList newSubConstraints = nkt.subtypeConstraints;
+          nkt.subtypeConstraints = nkt.addSubConstraint(`Subtype(aType,contextType,PairNameOptions(aName,optionList)),newSubConstraints);  
         //DEBUG System.out.println("InferTypes:BQTerm bqVar -- constraint = " +
         //DEBUG `aType + " = " + contextType);
         return `bqVar;
@@ -757,8 +759,8 @@ public class NewKernelTyper {
           tSymbol = `EmptySymbol();
         } else {
           codomain = nkt.getCodomain(tSymbol);
-          TypeConstraintList newSubConstraints = nkt.subtypingConstraints;
-          nkt.subtypingConstraints = nkt.addSubConstraint(`Subtype(codomain,contextType,PairNameOptions(aName,optionList)),newSubConstraints);
+          TypeConstraintList newSubConstraints = nkt.subtypeConstraints;
+          nkt.subtypeConstraints = nkt.addSubConstraint(`Subtype(codomain,contextType,PairNameOptions(aName,optionList)),newSubConstraints);
           //DEBUG System.out.println("InferTypes:BQTerm bqappl -- constraint = "
           //DEBUG + `codomain + " = " + contextType);
         }
@@ -853,7 +855,7 @@ public class NewKernelTyper {
    *  <li> each code is typed with fresh type variables
    *  <li> each code is traversed in order to generate type constraints
    *  <li> the type constraints of "equationConstraints" and
-   *        "subtypingConstraints" lists are solved at the end
+   *        "subtypeConstraints" lists are solved at the end
    *        of the current code generating a mapping (a set of
    *        substitutions for each type variable)
    *  <li> the mapping is applied over the code and the symbol table
@@ -873,7 +875,7 @@ public class NewKernelTyper {
       //DEBUG System.out.println("------------- Code typed with typeVar:\n code = " +
       //DEBUG     `code);
       code = inferAllTypes(code,`EmptyType());
-      //DEBUG printGeneratedConstraints(subtypingConstraints);
+      //DEBUG printGeneratedConstraints(subtypeConstraints);
       solveConstraints();
       //DEBUG System.out.println("substitutions = " + substitutions);
       code = replaceInCode(code);
@@ -949,6 +951,8 @@ public class NewKernelTyper {
    * The method <code>inferConstraint</code> applies rule CT-MATCH, CT-NUM, CT-CONJ,
    * or CT-DISJ to a "condition" in order to infer the types of its variables.
    * <p>
+   * Let 'Ai' and 'Ti' be type variables and ground types, respectively:
+   * <p>
    * CT-MATCH rule:
    * IF found "e1 << [A] e2" 
    * THEN infers type of e1 and e2 and add the type constraints "T1 = A" and "A
@@ -985,10 +989,10 @@ public class NewKernelTyper {
             `hasUndeclaredType(aType,getInfoFromTomTerm(pattern).getOptions()); 
             /* T_pattern = T_cast and T_cast <: T_subject */
             TypeConstraintList newEqConstraints = equationConstraints;
-            TypeConstraintList newSubConstraints = subtypingConstraints;
+            TypeConstraintList newSubConstraints = subtypeConstraints;
             equationConstraints =
               addEqConstraint(`Equation(tPattern,aType,getInfoFromTomTerm(pattern)),newEqConstraints);
-            subtypingConstraints = addSubConstraint(`Subtype(aType,tSubject,getInfoFromBQTerm(subject)),newSubConstraints);
+            subtypeConstraints = addSubConstraint(`Subtype(aType,tSubject,getInfoFromBQTerm(subject)),newSubConstraints);
           }
         }
         TomTerm newPattern = `inferAllTypes(pattern,tPattern);
@@ -1010,10 +1014,10 @@ public class NewKernelTyper {
 
         // To represent the relationshipo between both argument types
         TomType lowerType = getUnknownFreshTypeVar();
-        TypeConstraintList newSubConstraints = subtypingConstraints;
+        TypeConstraintList newSubConstraints = subtypeConstraints;
         newSubConstraints =
           addSubConstraint(`Subtype(lowerType,tLeft,getInfoFromBQTerm(left)),newSubConstraints);
-        subtypingConstraints =
+        subtypeConstraints =
           addSubConstraint(`Subtype(lowerType,tRight,getInfoFromBQTerm(right)),newSubConstraints);
         BQTerm newLeft = inferAllTypes(`left,tLeft);
         BQTerm newRight = inferAllTypes(`right,tRight);
@@ -1049,6 +1053,8 @@ public class NewKernelTyper {
    * <p> 
    * It continues the application of rules CT-FUN, CT-ELEM, CT-MERGE or CT-STAR
    * to each argument in order to infer the types of its variables.
+   * <p>
+   * Let 'Ai' and 'Ti' be type variables and ground types, respectively:
    * <p>
    * Continuation of CT-STAR rule (applying to premises):
    * IF found "l(e1,...,en,x*):A" and "l:T1*->T" exists in SymbolTable
@@ -1179,6 +1185,8 @@ public class NewKernelTyper {
    * <p> 
    * It continues the application of rules CT-FUN, CT-ELEM, CT-MERGE or CT-STAR
    * to each argument in order to infer the types of its variables.
+   * <p>
+   * Let 'Ai' and 'Ti' be type variables and ground types, respectively:
    * <p>
    * Continuation of CT-STAR rule (applying to premises):
    * IF found "l(e1,...,en,x*):A" and "l:T1*->T" exists in SymbolTable
@@ -1329,17 +1337,17 @@ public class NewKernelTyper {
    * The method <code>solveConstraints</code> calls
    * <code>solveEquationConstraints</code> to solve the list of equation
    * constraints and generate a set os substitutions for type variables. Then
-   * the substitutions are applied to the list of subtyping constraints and the
+   * the substitutions are applied to the list of subtype constraints and the
    * method <code>solveEquationConstraints</code> to solve this list. 
    */
   private void solveConstraints() {
     try {
       //DEBUG System.out.println("\nsolveConstraints 1:");
       //DEBUG printGeneratedConstraints(equationConstraints);
-      //DEBUG printGeneratedConstraints(subtypingConstraints);
+      //DEBUG printGeneratedConstraints(subtypeConstraints);
       solveEquationConstraints(equationConstraints);
       TypeConstraintList simplifiedConstraints =
-        replaceInSubtypingConstraints(subtypingConstraints);
+        replaceInSubtypingConstraints(subtypeConstraints);
       printGeneratedConstraints(simplifiedConstraints);
       simplifiedConstraints = 
         `RepeatId(solveSubtypingConstraints(this)).visitLight(simplifiedConstraints);
@@ -1347,7 +1355,7 @@ public class NewKernelTyper {
       //DEBUG printGeneratedConstraints(simplifiedConstraints);
     } catch(tom.library.sl.VisitFailure e) {
       throw new TomRuntimeException("solveConstraints: failure on " +
-          subtypingConstraints);
+          subtypeConstraints);
     }
   }
 
@@ -1376,46 +1384,46 @@ public class NewKernelTyper {
    *  --> detectFail(T1^a = T2^b) to verify if T1^a is equals to T2^b 
    * <p>
    * CASE 5: tCList = {(T1 = A1),...)} and Map 
-   *  a) Map(A1) does not exist   --> (A,T1) U Map 
+   *  a) Map(A1) does not exist   --> {(A,T1)} U Map 
    *  b) Map(A1) = T2             --> detectFail(T1 = T2)
-   *  c) Map(A1) = A2             --> (A2,T1) U Map, since Map is saturated and
+   *  c) Map(A1) = A2             --> {(A2,T1)} U Map, since Map is saturated and
    *                                  then Map(A2) does not exist 
    * <p>
    * CASE 6: tCList = {(T1^c = A1),...)} and Map 
-   *  a) Map(A1) does not exist   --> (A1,T1^c) U Map 
+   *  a) Map(A1) does not exist   --> {(A1,T1^c)} U Map 
    *  b) Map(A1) = T2 (or T2^b)   --> detectFail(T1^c = T2) (or detectFail(T1^c = T2^b))
-   *  c) Map(A1) = A2             --> (A2,T1^c) U Map, since Map is saturated and
+   *  c) Map(A1) = A2             --> {(A2,T1^c)} U Map, since Map is saturated and
    *                                  then Map(A2) does not exist 
    * <p>
    * CASE 7: tCList = {(A1 = T1),...)} and Map 
-   *  a) Map(A1) does not exist   --> (A1,T1) U Map 
+   *  a) Map(A1) does not exist   --> {(A1,T1)} U Map 
    *  b) Map(A1) = T2             --> detectFail(T1 = T2)
-   *  c) Map(A1) = A2             --> (A2,A1) U Map, since Map is saturated and
+   *  c) Map(A1) = A2             --> {(A2,A1)} U Map, since Map is saturated and
    *                                  then Map(A2) does not exist 
    * <p>
    * CASE 8: tCList = {(A1 = T1^c),...)} and Map 
-   *  a) Map(A1) does not exist   --> (A1,T1^c) U Map 
+   *  a) Map(A1) does not exist   --> {(A1,T1^c)} U Map 
    *  b) Map(A1) = T2 (or T2^b)   --> detectFail(T1^c = T2) (or detectFail(T1^c = T2^b))
-   *  c) Map(A1) = A2             --> (A2,T1^c) U Map, since Map is saturated and
+   *  c) Map(A1) = A2             --> {(A2,T1^c)} U Map, since Map is saturated and
    *                                  then Map(A2) does not exist 
    * <p>
    * CASE 9: tCList = {(A1 = A2),...)} and Map
    *  a) Map(A1) = T1 (or T1^a) and
-   *    i)    Map(A2) does not exist    --> (A2,T1) U Map (or (A2,T1^a) U Map) 
+   *    i)    Map(A2) does not exist    --> {(A2,T1)} U Map (or {(A2,T1^a)} U Map) 
    *    ii)   Map(A2) = T2 (or T2^b)    --> detectFail(T1 = T2) (or detectFail(T1^a = T2^b))
-   *    iii)  Map(A2) = A3              --> (A3,T1) U Map (or (A3,T1^a) U Map), since Map is saturated and
+   *    iii)  Map(A2) = A3              --> {(A3,T1)} U Map (or {(A3,T1^a)} U Map), since Map is saturated and
    *                                        then Map(A3) does not exist 
    *
    *  b) Map(A1) = A3 and
-   *    i)    Map(A2) does not exist    --> (A2,A3) U Map 
-   *    ii)   Map(A2) = T2 (or T2^b)    --> (A3,T2) U Map, since Map is saturated and
+   *    i)    Map(A2) does not exist    --> {(A2,A3)} U Map 
+   *    ii)   Map(A2) = T2 (or T2^b)    --> {(A3,T2)} U Map, since Map is saturated and
    *                                        then Map(A3) does not exist 
-   *    iii)  Map(A2) = A4              --> (A3,A4) U Map, since Map is saturated and
+   *    iii)  Map(A2) = A4              --> {(A3,A4)} U Map, since Map is saturated and
    *                                        then Map(A3) does not exist 
    *  c) Map(A1) does not exist and
-   *    i)    Map(A2) does not exist    --> (A1,A2) U Map
-   *    ii)   Map(A2) = T1 (or T1^a)    --> (A1,T1) U Map (or (A1,T1^a) U Map)
-   *    iii)  Map(A2) = A3              --> (A1,A3) U Map 
+   *    i)    Map(A2) does not exist    --> {(A1,A2)} U Map
+   *    ii)   Map(A2) = T1 (or T1^a)    --> {(A1,T1)} U Map (or {(A1,T1^a)} U Map)
+   *    iii)  Map(A2) = A3              --> {(A1,A3)} U Map 
    */
   private TypeConstraintList solveEquationConstraints(TypeConstraintList tCList) {
     for (TypeConstraint tConstraint :
@@ -1542,52 +1550,50 @@ matchBlockAdd :
    *  a) --> Fail if T1 is not subtype of T2 or 'a' is different from 'b'
    *  b) --> Nothing if T1 is subtype of T2 and 'a' is equals to 'b'
    * <p>
-
    * @param tConstraint the type constraint to be verified 
    */
   private void detectFail(TypeConstraint tConstraint) {
 matchBlockFail : 
     {
       %match {
-        // CASES 1a, 2a and 3a :
+        /* CASES 1a, 2a and 3a */
         Equation[Type1=Type[TomType=tName1],Type2=Type[TomType=tName2@!tName1]]
           << tConstraint && (tName1 != "unknown type") && (tName2 != "unknown type")  -> {
-            //DEBUG System.out.println("In solveConstraints 1a/3a -- tConstraint  = " + `tConstraint);
             printError(`tConstraint);
             break matchBlockFail;
           }
 
-        // CASE 4a :  
+        /* CASE 4a */  
         Equation[Type1=Type[TypeOptions=tOptions1,TomType=tName1],Type2=Type[TypeOptions=tOptions2@!tOptions1,TomType=tName1]]
           << tConstraint
           && concTypeOption(_*,WithSymbol[RootSymbolName=rsName1],_*) << tOptions1
           && concTypeOption(_*,WithSymbol[RootSymbolName=rsName2@!rsName1],_*) << tOptions2 -> {
-            //DEBUG System.out.println("In solveConstraints 4a -- tConstraint  = " + `tConstraint);
             printError(`tConstraint);
             break matchBlockFail;
           }
 
-        // CASES 5a and 7a :
         Subtype[Type1=t1@Type[TomType=tName1],Type2=t2@Type[TomType=tName2@!tName1]] << tConstraint -> {
           TomTypeList superTypesT1 = dependencies.get(`t1);
           %match {
+            /* CASES 5a and 7a */
             !concTomType(_*,type,_*) << superTypesT1 && type << TomType t2 -> {
-              //DEBUG System.out.println("detectFail, superTypesT1 = " + superTypesT1);
               printError(`tConstraint);
               break matchBlockFail;
             }
-          }
-        }
 
-        //TODO CASES 6 and 8a :
-        Subtype[Type1=t1@Type[TomType=tName1],Type2=t2@Type[TomType=tName2@!tName1]] << tConstraint -> {
-          TomTypeList superTypesT1 = dependencies.get(`t1);
-          %match {
-            !concTomType(_*,type,_*) << superTypesT1 && type << TomType t2 -> {
-              //DEBUG System.out.println("detectFail, superTypesT1 = " + superTypesT1);
-              printError(`tConstraint);
-              break matchBlockFail;
-            }
+            /* CASE 8a */
+            concTypeOption(_*,WithSymbol[RootSymbolName=rsName1],_*) << tOptions1
+              && concTypeOption(_*,WithSymbol[RootSymbolName=rsName2@!rsName1],_*) << tOptions2 -> {
+                printError(`tConstraint);
+                break matchBlockFail;
+              }
+
+            /* CASE 6 */
+            !concTypeOption(_*,WithSymbol[],_*) << tOptions1
+              && concTypeOption(_*,WithSymbol[],_*) << tOptions2 -> {
+                printError(`tConstraint);
+                break matchBlockFail;
+              }
           }
         }
       }
@@ -1629,8 +1635,10 @@ matchBlockFail :
 
   /**
    * The method <code>solveSubtypingConstraints</code> is generated by a
-   * strategy which simplifies subtyping constraints replacing them by equations
-   * or detecting type inconsistency.
+   * strategy which simplifies a subtype constraints list replacing them by equations
+   * or detecting type inconsistencies.
+   * <p>
+   * Let 'Ai' and 'Ti' be type variables and ground types, respectively:
    * <p>
    * PHASE 1: Simplification in equations: 
    * tCList = {T1 <: T2, T2 <: T1} U tCList' and Map -->  {T1 = T2} U tCList' and Map
@@ -1652,10 +1660,15 @@ matchBlockFail :
    *   --> {A <: lowerType(T1,T2)} U tCList' and Map
    * tCList = {T1 <: A,T2 <: A} U tCList' and Map
    *   --> {upperType(T1,T2) <: A} U tCList' and Map
+   * <p>
+   * PHASE 5: Enumerate possible solutions
+   * <p>
+   * @param nkt an instance of object NewKernelTyper
+   * @return    the subtype constraint list resulting
    */
   %strategy solveSubtypingConstraints(nkt:NewKernelTyper) extends Identity() {
     visit TypeConstraintList {
-      // PHASE 1
+      /* PHASE 1 */
       tcl@concTypeConstraint(tcl1*,Subtype[Type1=t1,Type2=t2,Info=info],tcl2*,Subtype[Type1=t2,Type2=t1],tcl3*) -> {
         //DEBUG System.out.println("\nsolve1: " + `tcl);
         nkt.solveEquationConstraints(`concTypeConstraint(Equation(t1,t2,info)));
@@ -1663,9 +1676,11 @@ matchBlockFail :
           nkt.`concTypeConstraint(tcl1,tcl2,tcl3);
       }
 
-      // PHASE 2
-      // We test if "t1 <: t2" already exist in tcl to avoid apply the strategy
-      // unnecessarily
+      /*
+       * We test if "t1 <: t2" already exist in tcl to avoid apply the strategy
+       * unnecessarily
+       */
+      /* PHASE 2 */
       tcl@concTypeConstraint(_*,Subtype[Type1=t1,Type2=tVar@TypeVar[],Info=info],_*,Subtype[Type1=tVar,Type2=t2],_*)
         && !concTypeConstraint(_*,Subtype[Type1=t1,Type2=t2],_*) << tcl -> {
           //DEBUG System.out.println("\nsolve2a: " + `tcl);
@@ -1679,13 +1694,13 @@ matchBlockFail :
             nkt.`addSubConstraint(Subtype(t1,t2,info),tcl);
         }
 
-      // PHASE 3
+      /* PHASE 3 */
       tcl@concTypeConstraint(_*,sConstraint@Subtype[Type1=!TypeVar[],Type2=!TypeVar[]],_*) -> {
         //DEBUG System.out.println("\nsolve3: " + `tcl);
         nkt.detectFail(`sConstraint);
       }
 
-      // PHASE 4
+      /* PHASE 4 */
       concTypeConstraint(tcl1*,constraint@Subtype[Type1=tVar@TypeVar[],Type2=t1@!TypeVar[],Info=info],tcl2*,c2@Subtype[Type1=tVar,Type2=t2@!TypeVar[]],tcl3*) -> {
         //DEBUG System.out.println("\nsolve6: " + `constraint + " and " + `c2);
         TomType lowerType = nkt.`minType(t1,t2);
@@ -1693,7 +1708,6 @@ matchBlockFail :
         //    `t2.getTomType() + ") = " + lowerType);
 
         if (lowerType == `EmptyType()) {
-          // TODO fix print (bad message and arguments)
           nkt.printError(`constraint);
           return `concTypeConstraint(tcl1,tcl2,tcl3); 
         }
@@ -1708,7 +1722,6 @@ matchBlockFail :
         //DEBUG    `t2.getTomType() + ") = " + upperType);
 
         if (upperType == `EmptyType()) {
-          // TODO fix print (bad message and arguments)
           nkt.printError(`constraint);
           return `concTypeConstraint(tcl1,tcl2,tcl3); 
         }
@@ -1717,6 +1730,7 @@ matchBlockFail :
           nkt.`addSubConstraint(Subtype(upperType,tVar,info),concTypeConstraint(tcl1,tcl2,tcl3));
       }
 
+      /* PHASE 5 */
       tcl -> {
         //DEBUG System.out.println("\nsolve8: " + `tcl);
         return nkt.enumerateSolutions(`tcl);
@@ -1808,6 +1822,32 @@ matchBlockFail :
     return `EmptyType();
   }
 
+  /**
+   * The method <code>enumerateSolutions</code> chooses a solution for a subtype
+   * constraint list when many possibilities are available. The algorithm picks
+   * the lowest possible uppertype proposed for each type variable.
+   * <p>
+   * Let 'Ai' and 'Ti' be type variables and ground types, respectively:
+   * <p>
+   * CASE 1:
+   * tCList = {A <: T1, A <: A1} U tCList' and Map 
+   *  -->  tCList = {T1 <: A1} U [A/T1]tCList' and {(A,T1)} U Map
+   * <p>
+   * CASE 2:
+   * tCList = {A <: A1, A <: A2} U tCList' and Map 
+   *  -->  Fail (impossible to guess the right type for java)
+   * <p>
+   * CASE 3:
+   * tCList = {T1 <: A, A1 <: A} U tCList' and Map 
+   *  -->  tCList = {A1 <: T1} U [A/T1]tCList' and {(A,T1)} U Map
+   * <p>
+   * CASE 4:
+   * tCList = {A1 <: A, A2 <: A} U tCList' and Map
+   *  -->  Fail (impossible to guess the right type for java)
+   * <p>
+   * @param nkt an instance of object NewKernelTyper
+   * @return    the subtype constraint list resulting
+   */
   private TypeConstraintList enumerateSolutions(TypeConstraintList tCList) {
 matchBlockSolve :
     {
