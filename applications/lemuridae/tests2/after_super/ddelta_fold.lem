@@ -2,7 +2,7 @@ term modulo { }
 
 prop modulo { }
 
-prop fold { 
+prop fold {
   r : [] A -> A => A
 }
 
