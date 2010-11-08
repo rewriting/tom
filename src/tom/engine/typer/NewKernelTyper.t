@@ -872,8 +872,8 @@ public class NewKernelTyper {
     for (Code code : cList.getCollectionconcCode()) {
       init();
       code =  collectKnownTypesFromCode(`code);
-      //DEBUG System.out.println("------------- Code typed with typeVar:\n code = " +
-      //DEBUG     `code);
+      System.out.println("------------- Code typed with typeVar:\n code = " +
+          `code);
       code = inferAllTypes(code,`EmptyType());
       //DEBUG printGeneratedConstraints(subtypeConstraints);
       solveConstraints();
@@ -978,9 +978,13 @@ public class NewKernelTyper {
         TomType tSubject = getType(`subject);
         if (tPattern == null || tPattern == `EmptyType()) {
           tPattern = getUnknownFreshTypeVar();
+                System.out.println("inferConstraint tPattern = " +
+                    `tPattern);
         }
         if (tSubject == null || tSubject == `EmptyType()) {
           tSubject = getUnknownFreshTypeVar();
+                System.out.println("inferConstraint tSubject = " +
+                    `tSubject);
         }
         //DEBUG System.out.println("inferConstraint: match -- constraint " +
         //DEBUG     tPattern + " = " + tSubject);
@@ -990,8 +994,12 @@ public class NewKernelTyper {
             /* T_pattern = T_cast and T_cast <: T_subject */
             TypeConstraintList newEqConstraints = equationConstraints;
             TypeConstraintList newSubConstraints = subtypeConstraints;
+                System.out.println("inferConstraint before add -- eqCList = " +
+                    `equationConstraints);
             equationConstraints =
               addEqConstraint(`Equation(tPattern,aType,getInfoFromTomTerm(pattern)),newEqConstraints);
+                System.out.println("inferConstraint after add -- eqCList = " +
+                    `equationConstraints);
             subtypeConstraints = addSubConstraint(`Subtype(aType,tSubject,getInfoFromBQTerm(subject)),newSubConstraints);
           }
         }
@@ -1005,15 +1013,21 @@ public class NewKernelTyper {
         TomType tRight = getType(`right);
         if (tLeft == null || tLeft == `EmptyType()) {
           tLeft = getUnknownFreshTypeVar();
+                System.out.println("inferConstraint tLeft = " +
+                    `tLeft);
         }
         if (tRight == null || tRight == `EmptyType()) {
           tRight = getUnknownFreshTypeVar();
+                System.out.println("inferConstraint tRight = " +
+                    `tRight);
         }
         //DEBUG System.out.println("inferConstraint: match -- constraint " +
         //DEBUG     tLeft + " = " + tRight);
 
         // To represent the relationshipo between both argument types
         TomType lowerType = getUnknownFreshTypeVar();
+                System.out.println("inferConstraint lowerType = " +
+                    `lowerType);
         TypeConstraintList newSubConstraints = subtypeConstraints;
         newSubConstraints =
           addSubConstraint(`Subtype(lowerType,tLeft,getInfoFromBQTerm(left)),newSubConstraints);
@@ -1102,6 +1116,8 @@ public class NewKernelTyper {
               !VariableStar[] -> { 
                 //DEBUG System.out.println("InferSlotList CT-ELEM -- tTerm = " + `tTerm);
                 argType = getUnknownFreshTypeVar();
+                System.out.println("InferSlotList getUnknownFreshTypeVar = " +
+                    `argType);
               }
             }
           }
@@ -1261,8 +1277,6 @@ public class NewKernelTyper {
                     }
                   }
 
-
-
                   /* Case CT-STAR rule (applying to premises) */
                   argType = `Type(newTOptions,tomCodomain,tlCodomain);
                 }
@@ -1343,7 +1357,7 @@ public class NewKernelTyper {
   private void solveConstraints() {
     try {
       //DEBUG System.out.println("\nsolveConstraints 1:");
-      //DEBUG printGeneratedConstraints(equationConstraints);
+      printGeneratedConstraints(equationConstraints);
       //DEBUG printGeneratedConstraints(subtypeConstraints);
       solveEquationConstraints(equationConstraints);
       TypeConstraintList simplifiedConstraints =
@@ -1432,8 +1446,10 @@ matchBlockAdd :
       {
         %match {
           // CASES 1, 2, 3 and 4 :
-          eConstraint@Equation[Type1=groundType1@!TypeVar[],Type1=groundType2@!TypeVar[]] <<
+          eConstraint@Equation[Type1=groundType1@!TypeVar[],Type2=groundType2@!TypeVar[]] <<
             tConstraint && (groundType1 != groundType2) -> {
+              System.out.println("In solveEquationConstraints:" + `groundType1 +
+                  " = " + `groundType2);
               `detectFail(eConstraint);
               break matchBlockAdd;
             }
@@ -1559,6 +1575,9 @@ matchBlockFail :
         /* CASES 1a, 2a and 3a */
         Equation[Type1=Type[TomType=tName1],Type2=Type[TomType=tName2@!tName1]]
           << tConstraint && (tName1 != "unknown type") && (tName2 != "unknown type")  -> {
+
+              System.out.println("In detectFail" + `tName1 +
+                  " = " + `tName2);
             printError(`tConstraint);
             break matchBlockFail;
           }
@@ -1572,7 +1591,7 @@ matchBlockFail :
             break matchBlockFail;
           }
 
-        Subtype[Type1=t1@Type[TomType=tName1],Type2=t2@Type[TomType=tName2@!tName1]] << tConstraint -> {
+        Subtype[Type1=t1@Type[TypeOptions=tOptions1,TomType=tName1],Type2=t2@Type[TypeOptions=tOptions2,TomType=tName2@!tName1]] << tConstraint -> {
           TomTypeList superTypesT1 = dependencies.get(`t1);
           %match {
             /* CASES 5a and 7a */
@@ -1714,8 +1733,8 @@ matchBlockFail :
       }
       concTypeConstraint(tcl1*,constraint@Subtype[Type1=t1@!TypeVar[],Type2=tVar@TypeVar[],Info=info],tcl2*,c2@Subtype[Type1=t2@!TypeVar[],Type2=tVar],tcl3*) -> {
         //DEBUG System.out.println("\nsolve7: " + `constraint + " and " + `c2);
-        TomType upperType = nkt.`maxType(t1,t2);
-        //DEBUG System.out.println("\nmaxType(" + `t1.getTomType() + "," +
+        TomType upperType = nkt.`supType(t1,t2);
+        //DEBUG System.out.println("\nsupType(" + `t1.getTomType() + "," +
         //DEBUG    `t2.getTomType() + ") = " + upperType);
 
         if (upperType == `EmptyType()) {
@@ -1778,7 +1797,7 @@ matchBlockFail :
   }
 
   /**
-   * The method <code>maxType</code> tries to find the lowest common uppertype
+   * The method <code>supType</code> tries to find the lowest common uppertype
    * of two given ground types.
    * OBS.: when the subtype relation does not hold between two types 't1' and
    * 't2', the method considers the intersection of the supertypes lists
@@ -1791,7 +1810,7 @@ matchBlockFail :
    *            they are not in subtype relation 
    *            the 'EmptyType()' otherwise
    */
-  private TomType maxType(TomType t1, TomType t2) {
+  private TomType supType(TomType t1, TomType t2) {
     TomTypeList supTypes1 = dependencies.get(t1);
     TomTypeList supTypes2 = dependencies.get(t2);
     %match {
