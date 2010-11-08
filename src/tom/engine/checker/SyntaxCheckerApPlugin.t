@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.logging.Level;
 
 import tom.engine.TomMessage;
+import tom.engine.tools.TomGenericPlugin;
 import tom.engine.exception.TomRuntimeException;
 
 import tom.engine.adt.tomsignature.*;
@@ -65,7 +66,8 @@ public class SyntaxCheckerApPlugin extends SyntaxCheckerPlugin {
   /**
    * Basicaly ignores the anti-symbol
    */
-  public  TermDescription validateTerm(TomTerm term, TomType expectedType, boolean listSymbol, boolean topLevel, boolean permissive) {
+
+  public TermDescription validateTerm(TomTerm term, TomType expectedType, boolean listSymbol, boolean topLevel, boolean permissive) {
     %match(TomTerm term) {
       // validate that after the anti symbol we have a valid term  
       AntiTerm(t@(TermAppl|Variable|RecordAppl|XMLAppl)[Options=options]) -> {
@@ -91,6 +93,7 @@ public class SyntaxCheckerApPlugin extends SyntaxCheckerPlugin {
    * 
    * @param t the term to search
    */
+
   private void checkForAnnotations(TomTerm t, OptionList options) {	  
     String fileName = findOriginTrackingFileName(options);
     int decLine = findOriginTrackingLine(options);
@@ -105,15 +108,13 @@ public class SyntaxCheckerApPlugin extends SyntaxCheckerPlugin {
    * Given a term, it checks if it contains annotations
    * - if the annotations are on head, allow them
    * - error otherwise 
-   */  
+   */ 
+
   %strategy CheckForAnnotations(fileName:String, decLine:int, headTerm: TomTerm, tsca:SyntaxCheckerPlugin) extends Identity() {
     visit TomTerm {
-      /*t@(TermAppl|Variable|RecordAppl|UnamedVariable)[Constraints=concConstraint(_*,AssignTo[],_*)]
-       * -> {*/
-      t@(TermAppl|Variable|RecordAppl)[Constraints=concConstraint(_*,AssignTo[],_*)] -> {
+      t@(TermAppl|Variable|RecordAppl)[Constraints=concConstraint(_*,AliasTo[],_*)] -> {
         if(`t != headTerm) {
-          TomMessage.error(tsca.getLogger(),fileName,decLine,
-              TomMessage.illegalAnnotationInAntiPattern);//, new Object[]{});
+          TomMessage.error(tsca.getLogger(),fileName,decLine,TomMessage.illegalAnnotationInAntiPattern);
         }	
       }
     }

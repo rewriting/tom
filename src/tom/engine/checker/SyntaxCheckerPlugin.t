@@ -30,9 +30,21 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
 
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import tom.engine.TomBase;
 import tom.engine.TomMessage;
+import tom.engine.tools.TomGenericPlugin;
 import tom.engine.exception.TomRuntimeException;
+
+import tom.engine.xml.Constants;
+import tom.platform.OptionParser;
+import tom.platform.adt.platformoption.types.PlatformOptionList;
+import aterm.ATerm;
+import tom.engine.tools.ASTFactory;
+import tom.engine.tools.SymbolTable;
 
 import tom.engine.adt.tomsignature.*;
 import tom.engine.adt.tomsignature.types.*;
@@ -51,12 +63,6 @@ import tom.engine.adt.tomtype.types.*;
 import tom.engine.adt.theory.types.*;
 import tom.engine.adt.code.types.*;
 
-import tom.engine.xml.Constants;
-import tom.platform.OptionParser;
-import tom.platform.adt.platformoption.types.PlatformOptionList;
-import aterm.ATerm;
-import tom.engine.tools.ASTFactory;
-import tom.engine.tools.SymbolTable;
 
 import tom.library.sl.*;
 
@@ -129,10 +135,13 @@ public class SyntaxCheckerPlugin extends TomGenericPlugin {
     reinit();
   }
 
+  protected Logger getLogger() {
+    return Logger.getLogger(getClass().getName());
+  }
   public Option getCurrentTomStructureOrgTrack() {
     return currentTomStructureOrgTrack;
   }
-  
+
   public void setCurrentTomStructureOrgTrack(Option currentTomStructureOrgTrack) {
     this.currentTomStructureOrgTrack = currentTomStructureOrgTrack;
   }
@@ -140,16 +149,16 @@ public class SyntaxCheckerPlugin extends TomGenericPlugin {
   /**
    * inherited from OptionOwner interface (plugin)
    */
-  /*public PlatformOptionList getDeclaredOptionList() {
+  public PlatformOptionList getDeclaredOptionList() {
     return OptionParser.xmlToOptionList(SyntaxCheckerPlugin.DECLARED_OPTIONS);
-  }*/
+  }
 
   protected void reinit() {
     currentTomStructureOrgTrack = null;
     alreadyStudiedTypes   = new ArrayList<String>();
     alreadyStudiedSymbols = new ArrayList<String>();
   }
-////////
+  ////////
   public int getClass(TomTerm term) {
     %match(term) {
       TermAppl[NameList=concTomName(Name(""))] -> { return UNAMED_APPL;}
@@ -207,6 +216,16 @@ public class SyntaxCheckerPlugin extends TomGenericPlugin {
     throw new TomRuntimeException("Invalid Term:" + term);
   }
 
+  public String getName(BQTerm term) {
+    String dijunctionName = "";
+    %match(term) {
+      BQAppl[AstName=Name(name)] -> { return `name;}
+      BQVariable[AstName=Name(name)] -> { return `name;}
+      BQVariableStar[AstName=Name(name)] -> { return `name+"*";}
+    }
+    throw new TomRuntimeException("Invalid Term:" + term);
+  }
+
   /**
    * Shared Functions 
    */
@@ -229,17 +248,8 @@ public class SyntaxCheckerPlugin extends TomGenericPlugin {
     }
     return -1;
   }
-  
-  //not used
-  /*protected void ensureOriginTrackingLine(int line) {
-    if(line < 0) {
-      TomMessage.error(getLogger(),
-          getStreamManager().getInputFileName(), 0,
-          TomMessage.findOTL);
-    }
-  }*/
-////////
 
+  private boolean strictType = true;
   public void run(Map informationTracker) {
     //System.out.println("(debug) I'm in the Tom SyntaxChecker : TSM"+getStreamManager().toString());
     if(isActivated()) {
@@ -250,13 +260,12 @@ public class SyntaxCheckerPlugin extends TomGenericPlugin {
         reinit();
         // perform analyse
         try {
-          `TopDownCollect(checkSyntax(this)).visitLight((TomTerm)getWorkingTerm());
+          `TopDownCollect(checkSyntax(this)).visitLight((Code)getWorkingTerm());
         } catch(tom.library.sl.VisitFailure e) {
           System.out.println("strategy failed");
         }
         // verbose
-        TomMessage.info(getLogger(),null,0,
-            TomMessage.tomSyntaxCheckingPhase.getMessage(),
+        TomMessage.info(getLogger(),null,0,TomMessage.tomSyntaxCheckingPhase,
             Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
       } catch (Exception e) {
         TomMessage.error(getLogger(), 
@@ -269,8 +278,7 @@ public class SyntaxCheckerPlugin extends TomGenericPlugin {
       }
     } else {
       // syntax checker desactivated
-      TomMessage.info(getLogger(),null,0,
-          TomMessage.syntaxCheckerInactivated.getMessage());
+      TomMessage.info(getLogger(),null,0,TomMessage.syntaxCheckerInactivated);
     }
   }
 
@@ -335,7 +343,7 @@ public class SyntaxCheckerPlugin extends TomGenericPlugin {
           subject@BackQuoteAppl[] -> {
           scp.verifyBackQuoteAppl(`subject);
           }
-        }*/
+          }*/
   }
 
   // /////////////////////////////
@@ -354,7 +362,7 @@ public class SyntaxCheckerPlugin extends TomGenericPlugin {
 matchblock:{
              %match(decl) {
                // Common Macro functions
-               EqualTermDecl(Variable[AstName=Name(name1)],Variable[AstName=Name(name2)],_, orgTrack) -> {
+               EqualTermDecl(BQVariable[AstName=Name(name1)],BQVariable[AstName=Name(name2)],_, orgTrack) -> {
                  `checkFieldAndLinearArgs(SyntaxCheckerPlugin.EQUALS,verifyList,orgTrack,name1,name2, declType);
                  break matchblock;
                }
@@ -372,7 +380,7 @@ matchblock:{
                  break matchblock;
                }
                // Array specific Macro functions
-               GetElementDecl[Variable=Variable[AstName=Name(name1)],Index=Variable[AstName=Name(name2)],OrgTrack=orgTrack] -> {
+               GetElementDecl[Variable=BQVariable[AstName=Name(name1)],Index=BQVariable[AstName=Name(name2)],OrgTrack=orgTrack] -> {
                  `checkFieldAndLinearArgs(SyntaxCheckerPlugin.GET_ELEMENT,verifyList,orgTrack,name1,name2, declType);
                  break matchblock;
                }
@@ -441,7 +449,7 @@ matchblock:{
   private void verifySymbol(String symbolType, TomSymbol tomSymbol){
     int domainLength;
     String symbStrName = tomSymbol.getAstName().getString();
-    OptionList optionList = tomSymbol.getOption();
+    OptionList optionList = tomSymbol.getOptions();
     // We save first the origin tracking of the symbol declaration
     setCurrentTomStructureOrgTrack(TomBase.findOriginTracking(optionList));
 
@@ -456,7 +464,7 @@ matchblock:{
   private void verifySymbolCodomain(TomType codomain, String symbName, String symbolType) {
     %match(codomain) {
       Codomain(opName) -> {
-        if(symbolTable().getSymbolFromName(`opName) == null) {
+        if(getSymbolTable().getSymbolFromName(`opName) == null) {
           TomMessage.error(getLogger(), 
               getCurrentTomStructureOrgTrack().getFileName(),
               getCurrentTomStructureOrgTrack().getLine(),
@@ -466,7 +474,7 @@ matchblock:{
         return;
       }
 
-      Type(options,typeName,EmptyType()) -> {
+      Type(options,typeName,EmptyTargetLanguageType()) -> {
         if(!testTypeExistence(`typeName)) {
           TomMessage.error(getLogger(),
               getCurrentTomStructureOrgTrack().getFileName(),
@@ -492,14 +500,14 @@ matchblock:{
         return;
       }
     }
-    throw new TomRuntimeException("Strange codomain "+codomain);
+    throw new TomRuntimeException("Strange codomain " + codomain);
   }
 
   private int verifySymbolDomain(TomTypeList args, String symbName, String symbolType) {
     int position = 1;
     if(symbolType.equals(SyntaxCheckerPlugin.CONSTRUCTOR)) {
       %match(TomTypeList args) {
-        concTomType(_*,  Type(options,typeName,EmptyType()),_*) -> { // for each symbol types
+        concTomType(_*,  Type(options,typeName,EmptyTargetLanguageType()),_*) -> { // for each symbol types
           if(!testTypeExistence(`typeName)) {
             TomMessage.error(getLogger(),
                 getCurrentTomStructureOrgTrack().getFileName(),
@@ -513,7 +521,7 @@ matchblock:{
       return (position-1);
     } else { // OPARRAY and OPLIST
       %match(TomTypeList args) {
-        concTomType(Type(options,typeName,EmptyType())) -> {
+        concTomType(Type(options,typeName,EmptyTargetLanguageType())) -> {
           if(!testTypeExistence(`typeName)) {
             TomMessage.error(getLogger(),
                 getCurrentTomStructureOrgTrack().getFileName(),
@@ -550,7 +558,7 @@ matchblock:{
                  `checkField(SyntaxCheckerPlugin.MAKE_EMPTY,verifyList,orgTrack, symbolType);
                  break matchblock;
                }
-               MakeAddArray[VarList=Variable[AstName=Name(name1)], VarElt=Variable[AstName=Name(name2)], OrgTrack=orgTrack] -> {
+               MakeAddArray[VarList=BQVariable[AstName=Name(name1)], VarElt=BQVariable[AstName=Name(name2)], OrgTrack=orgTrack] -> {
                  `checkFieldAndLinearArgs(SyntaxCheckerPlugin.MAKE_APPEND, verifyList, orgTrack, name1, name2, symbolType);
                  break matchblock;
                }
@@ -559,7 +567,7 @@ matchblock:{
                  `checkField(SyntaxCheckerPlugin.MAKE_EMPTY,verifyList,orgTrack, symbolType);
                  break matchblock;
                }
-               MakeAddList[VarList=Variable[AstName=Name(name1)], VarElt=Variable[AstName=Name(name2)], OrgTrack=orgTrack] -> {
+               MakeAddList[VarList=BQVariable[AstName=Name(name1)], VarElt=BQVariable[AstName=Name(name2)], OrgTrack=orgTrack] -> {
                  `checkFieldAndLinearArgs(SyntaxCheckerPlugin.MAKE_INSERT, verifyList, orgTrack, name1, name2, symbolType);
                  break matchblock;
                }
@@ -584,13 +592,13 @@ matchblock:{
     }
   }  // verifySymbolMacroFunctions
 
-  private void verifyMakeDeclArgs(TomList argsList, int domainLength, Option orgTrack, String symbolType){
+  private void verifyMakeDeclArgs(BQTermList argsList, int domainLength, Option orgTrack, String symbolType) {
     // we test the necessity to use different names for each
     // variable-parameter.
     int nbArgs = 0;
     ArrayList<String> listVar = new ArrayList<String>();
-    %match(TomList argsList) {
-      concTomTerm(_*, Variable[AstName=Name(name)] ,_*) -> { // for each Macro variable
+    %match(BQTErmList argsList) {
+      concBQTerm(_*, BQVariable[AstName=Name(name)] ,_*) -> { // for each Macro variable
         if(listVar.contains(`name)) {
           TomMessage.error(getLogger(),
               orgTrack.getFileName(),orgTrack.getLine(),
@@ -659,7 +667,7 @@ matchblock:{
     `TopDownCollect(CollectConstraints(constraints, tmp, orActionMap)).visitLight(constraintInstructionList);
     TomType typeMatch = null;    
     for(Constraint constr: constraints) {
-matchLbl: %match(constr) {// TODO : add something to test the astTYpe
+matchLbl: %match(constr) {// TODO :�add something to test the astTYpe
             MatchConstraint(pattern,subject,astType) -> {
 
               ArrayList<TomName> patternVars = new ArrayList<TomName>();
@@ -672,10 +680,10 @@ matchLbl: %match(constr) {// TODO : add something to test the astTYpe
               if(typeMatch == null) {
                 Object messageContent = `subject;
                 %match(subject) {
-                  Variable[AstName=Name(stringName)] -> {
+                  BQVariable[AstName=Name(stringName)] -> {
                     messageContent = `stringName;
                   }
-                  TermAppl[NameList=concTomName(Name(stringName),_*)] -> {
+                  BQAppl[AstName=Name(stringName)] -> {
                     messageContent = `stringName;
                   }
                 }
@@ -701,7 +709,7 @@ matchLbl: %match(constr) {// TODO : add something to test the astTYpe
             NumericConstraint[Left=left,Right=right] -> {
               // the lhs and rhs can only be TermAppl or Variable
               %match(left) {
-                !(Variable|TermAppl|BuildReducedTerm)[] -> {              
+                !(BQVariable|BQAppl)[] -> {              
                   TomMessage.error(getLogger(),
                       getCurrentTomStructureOrgTrack().getFileName(),
                       getCurrentTomStructureOrgTrack().getLine(),
@@ -712,7 +720,7 @@ matchLbl: %match(constr) {// TODO : add something to test the astTYpe
               }        
               // the rhs can only be TermAppl or Variable
               %match(right) {
-                !(Variable|TermAppl|BuildReducedTerm)[] -> {
+                !(BQVariable|BQAppl)[] -> {
                   TomMessage.error(getLogger(),
                       getCurrentTomStructureOrgTrack().getFileName(),
                       getCurrentTomStructureOrgTrack().getLine(),
@@ -721,11 +729,9 @@ matchLbl: %match(constr) {// TODO : add something to test the astTYpe
                   return;
                 }
               }
-              `TopDown(CheckNumeric(left,this)).visitLight(`left);
-              `TopDown(CheckNumeric(right,this)).visitLight(`right);
               // if we have the type, check that it is the same
-              TomType leftType = TomBase.getTermType(`left,symbolTable());
-              TomType rightType = TomBase.getTermType(`right,symbolTable());
+              TomType leftType = TomBase.getTermType(`left,getSymbolTable());
+              TomType rightType = TomBase.getTermType(`right,getSymbolTable());
               // if the types are not available, leave the error to be raised by java
               if(leftType != null && leftType != SymbolTable.TYPE_UNKNOWN && leftType != `EmptyType() 
                   && rightType != null && rightType != SymbolTable.TYPE_UNKNOWN && rightType != `EmptyType() 
@@ -862,7 +868,7 @@ matchLbl: %match(constr) {// TODO : add something to test the astTYpe
   %strategy ContainsVariable(TomTerm var) extends Identity() {     
     visit TomTerm {
       v@(Variable|VariableStar)[] -> {
-        TomTerm newvar = `v.setOption(`concOption()); // to avoid problems related to line numbers
+        TomTerm newvar = `v.setOptions(`concOption()); // to avoid problems related to line numbers
         if(`newvar==var) {
           throw new VisitFailure();
         }
@@ -876,7 +882,7 @@ matchLbl: %match(constr) {// TODO : add something to test the astTYpe
   %strategy CollectFreeVar(varList:Collection) extends Identity() {     
     visit TomTerm {
       v@(Variable|VariableStar)[] -> {
-        TomTerm newvar = `v.setOption(`concOption()); // to avoid problems related to line numbers
+        TomTerm newvar = `v.setOptions(`concOption()); // to avoid problems related to line numbers
         if(!varList.contains(newvar)) { 
           varList.add(`v); 
         }
@@ -888,31 +894,8 @@ matchLbl: %match(constr) {// TODO : add something to test the astTYpe
     }
   }
 
-  /**
-   * Check numeric constraint 
-   *     1. no annotations
-   *     2. no annonymous vars
-   *     3. no anti-patterns
-   *     4. implicit notation forbidden  
-   */
-  %strategy CheckNumeric(TomTerm toCheck, SyntaxCheckerPlugin scp) extends Identity() {     
-    visit TomTerm {      
-      RecordAppl[] -> {
-        scp.raiseError(toCheck,TomMessage.forbiddenImplicitNumeric);        
-      }
-      AntiTerm[] -> {
-        scp.raiseError(toCheck,TomMessage.forbiddenAntiTermInNumeric);        
-      }
-      /*(UnamedVariable|UnamedVariableStar)[] -> {
-        scp.raiseError(toCheck,TomMessage.forbiddenAnonymousInNumeric);
-      }*/ 
-      (Variable|TermAppl)[Constraints=!concConstraint()] -> {  
-        scp.raiseError(toCheck,TomMessage.forbiddenAnnotationsNumeric);        
-      }      
-    }
-  }
   private void raiseError(TomTerm arg, TomMessage msg){    
-    TomMessage.error(getLogger(),"tom.engine.checker.SyntaxCheckerPlugin",
+    TomMessage.error(getLogger(),
         getCurrentTomStructureOrgTrack().getFileName(),
         getCurrentTomStructureOrgTrack().getLine(),
         msg,getName(arg));
@@ -935,9 +918,9 @@ matchLbl: %match(constr) {// TODO : add something to test the astTYpe
   /**
    * tries to give the type of the tomTerm received as parameter
    */
-  private TomType getSubjectType(TomTerm subject, ArrayList<Constraint> constraints) {
-    %match(TomTerm subject) {
-      Variable[AstName=Name(name),AstType=tomType@Type(options,type,EmptyType())] -> {        
+  private TomType getSubjectType(BQTerm subject, ArrayList<Constraint> constraints) {
+    %match(BQTerm subject) {
+      BQVariable[AstName=Name(name),AstType=tomType@Type(options,type,EmptyTargetLanguageType())] -> {        
         if(`tomType==SymbolTable.TYPE_UNKNOWN) {
           // try to guess
           return guessSubjectType(`subject,constraints);
@@ -951,7 +934,7 @@ matchLbl: %match(constr) {// TODO : add something to test the astTYpe
               `name, `type);                
         }
       }
-      term@TermAppl[NameList=concTomName(Name(name))] -> {
+      term@BQAppl[AstName=Name(name)] -> {
         TomSymbol symbol = getSymbolFromName(`name);
         if(symbol!=null) {
           TomType type = TomBase.getSymbolCodomain(symbol);
@@ -963,36 +946,12 @@ matchLbl: %match(constr) {// TODO : add something to test the astTYpe
                 TomMessage.unknownMatchArgumentTypeInSignature,
                 `name, typeName);
           }          
-          validateTerm(`term, type, false, true, true);
+          //validateBQTerm(`term, type, false, true, true);
           return type;
         } else {
           // try to guess
           return guessSubjectType(`subject,constraints);
         }
-      }
-      // the user specified the type
-      BuildReducedTerm(TermAppl[NameList=concTomName(Name(name))],userType) -> {
-        TomSymbol symbol = getSymbolFromName(`name);
-        String typeName = TomBase.getTomType(`userType);
-        if(!testTypeExistence(typeName)) {// check that the type exists
-          TomMessage.error(getLogger(),
-              getCurrentTomStructureOrgTrack().getFileName(),
-              getCurrentTomStructureOrgTrack().getLine(),
-              TomMessage.unknownMatchArgumentTypeInSignature,
-              `name, typeName);
-        }          
-        if(symbol != null) { // check that the type provided by the user is consistent
-          TomType type = TomBase.getSymbolCodomain(symbol);
-          if(!`(userType).equals(type)) {
-            TomMessage.error(getLogger(),
-                getCurrentTomStructureOrgTrack().getFileName(),
-                getCurrentTomStructureOrgTrack().getLine(),
-                TomMessage.inconsistentTypes,
-                `name, TomBase.getTomType(type), TomBase.getTomType(`userType));
-          }
-        }
-        // a function call 
-        return `userType;
       }
     }
     return null;
@@ -1004,18 +963,15 @@ matchLbl: %match(constr) {// TODO : add something to test the astTYpe
    * 2. TODO: if the subject is in a constraint with a variable (the pattern is a variable for instance),
    * try to see if a variable with the same name already exists and can be typed, and if yes, get that type
    */
-  private TomType guessSubjectType(TomTerm subject,ArrayList<Constraint> constraints) {
+  private TomType guessSubjectType(BQTerm subject,ArrayList<Constraint> constraints) {
     for(Constraint constr:constraints) {
       %match(Constraint constr) {
         MatchConstraint(patt,s,astType) -> {
           // we want two terms to be equal even if their option is different 
           //( because of their possition for example )
-matchL:  %match(TomTerm subject,BQTerm s) {///
-           Variable[AstName=astName,AstType=tomType],Variable[AstName=astName,AstType=tomType] -> {break matchL;}
-           TermAppl[NameList=tomNameList,Args=tomList],TermAppl[NameList=tomNameList,Args=tomList] -> {break matchL;}
-           RecordAppl[NameList=tomNameList,Slots=slotList],RecordAppl[NameList=tomNameList,Slots=slotList] -> {break matchL;}
-           XMLAppl[NameList=tomNameList,AttrList=tomList,ChildList=tomList],XMLAppl[NameList=tomNameList,AttrList=tomList,ChildList=tomList] -> { break matchL; }
-           BuildReducedTerm(TermAppl[NameList=tomNameList,Args=tomList],type),BuildReducedTerm(TermAppl[NameList=tomNameList,Args=tomList],type) -> {break matchL;}
+matchL:  %match(BQTerm subject,BQTerm s) {///
+           BQVariable[AstName=astName,AstType=tomType],BQVariable[AstName=astName,AstType=tomType] -> {break matchL;}
+           BQAppl[AstName=tomName,Args=tomList],BQAppl[AstName=tomName,Args=tomList] -> {break matchL;}
            _,_ -> { continue; }
          }
          TomTerm pattern = `patt;
@@ -1057,7 +1013,7 @@ matchL:  %match(TomTerm subject,BQTerm s) {///
         //        NumericConstraint[Left=left,Right=right] -> {
         //          // we want two terms to be equal even if their option is different 
         //          //( because of their possition for example )
-        //          if ((`right.setOption(`concOption())) != (subject.setOption(`concOption()))) { continue; }
+        //          if ((`right.setOptions(`concOption())) != (subject.setOptions(`concOption()))) { continue; }
         //          if (`left.isVariable()) {
         //            TomType type = guessVarTypeFromConstraints(var,matchConstraints);
         //            if ( type != null ) {
@@ -1143,7 +1099,6 @@ matchL:  %match(TomTerm subject,BQTerm s) {///
   private void verifyVisit(TomVisit tvisit) throws VisitFailure {
     %match(TomVisit tvisit) {
       VisitTerm(type,constraintInstructionList,option) -> {
-        System.println("(DEBUG) SyntaxCheckerPlugin.verifyVisit / VisitTerm() ");
         ArrayList<MatchConstraint> matchConstraints = new ArrayList<MatchConstraint>();
         %match(constraintInstructionList){
           concConstraintInstruction(_*,ConstraintInstruction[Constraint=constraint],_*) -> {
@@ -1300,10 +1255,10 @@ matchblock:{
                  TomList args = `childList;
                  /*
                   * we cannot use the following expression TomType TNodeType =
-                  * symbolTable().getType(Constants.TNODE); because TNodeType should be
+                  * getSymbolTable().getType(Constants.TNODE); because TNodeType should be
                   * a TomTypeAlone and not an expanded type
                   */
-                 TomType TNodeType = TomBase.getSymbolCodomain(symbolTable().getSymbolFromName(Constants.ELEMENT_NODE));
+                 TomType TNodeType = TomBase.getSymbolCodomain(getSymbolTable().getSymbolFromName(Constants.ELEMENT_NODE));
                  // System.out.println("TNodeType = " + TNodeType);
                  while(!args.isEmptyconcTomTerm()) {
                    // repeat analyse with associated expected type and control arity
@@ -1339,37 +1294,12 @@ matchblock:{
                  break matchblock;
                }
 
-               /*UnamedVariable[Options=options] -> {
-                 termClass = UNAMED_VARIABLE;
-                 fileName = findOriginTrackingFileName(`options);
-                 decLine = findOriginTrackingLine(`options);
-                 type = null;
-                 termName = "_";
-                 if(permissive) {
-                   TomMessage.error(getLogger(), fileName, decLine, TomMessage.incorrectRuleRHSClass, termName);
-                 }
-                 break matchblock;
-               }*/
-
-               /*UnamedVariableStar[Options=options] -> {
-                 termClass = UNAMED_VARIABLE_STAR;
-                 fileName = findOriginTrackingFileName(`options);
-                 decLine = findOriginTrackingLine(`options);
-                 type = null;
-                 termName = "_*";
-                 if(!listSymbol) {
-                   TomMessage.error(getLogger(),fileName,decLine, TomMessage.invalidVariableStarArgument, termName);
-                 }
-                 if(permissive) {
-                   TomMessage.error(getLogger(),fileName,decLine, TomMessage.incorrectRuleRHSClass, termName);
-                 }
-                 break matchblock;
-               }*/
              }
              throw new TomRuntimeException("Strange Term "+term);
            }
            return new TermDescription(termClass, termName, fileName,decLine, type);
   }
+
 
   private void validateTermThrough(TomTerm term, boolean permissive) {
     %match(TomTerm term) {
@@ -1437,21 +1367,21 @@ matchblock:{
                }
                /*UnamedVariable[Options=options] -> {
                  return new TermDescription(UNAMED_VARIABLE, "_",
-                     findOriginTrackingFileName(`options),
-                     findOriginTrackingLine(`options),  null);
-               }*/
+                 findOriginTrackingFileName(`options),
+                 findOriginTrackingLine(`options),  null);
+                 }*/
                /*UnamedVariableStar[Options=options] -> {
                  return new TermDescription(UNAMED_VARIABLE_STAR, "_*",
-                     findOriginTrackingFileName(`options),
-                     findOriginTrackingLine(`options),  null);
-               }*/
+                 findOriginTrackingFileName(`options),
+                 findOriginTrackingLine(`options),  null);
+                 }*/
              }
              throw new TomRuntimeException("Strange Term "+term);
            }
   } //analyseTerm
 
   private TomSymbol ensureValidUnamedList(TomType expectedType, String fileName,int decLine) {
-    TomSymbolList symbolList = symbolTable().getSymbolFromType(expectedType);
+    TomSymbolList symbolList = getSymbolTable().getSymbolFromType(expectedType);
     TomSymbolList filteredList = `concTomSymbol();
     %match(TomSymbolList symbolList) {
       concTomSymbol(_*, symbol , _*) -> {
@@ -1464,7 +1394,7 @@ matchblock:{
     if(filteredList.isEmptyconcTomSymbol()) {
       TomMessage.error(getLogger(), fileName,decLine,
           TomMessage.unknownUnamedList,
-          expectedType.getString());
+          expectedType.getTomType());
       return null;
     } else if(!filteredList.getTailconcTomSymbol().isEmptyconcTomSymbol()) {
       StringBuilder symbolsString = new StringBuilder();
@@ -1474,7 +1404,7 @@ matchblock:{
       }
       TomMessage.error(getLogger(), fileName,decLine,
           TomMessage.ambigousUnamedList,
-          expectedType.getString(), symbolsString.toString());
+          expectedType.getTomType(), symbolsString.toString());
       return null;
     } else {
       return filteredList.getHeadconcTomSymbol();
@@ -1559,7 +1489,7 @@ matchblock:{
     if(currentCodomain != expectedType) {
       // System.out.println(currentCodomain+"!="+expectedType);
       TomMessage.error(getLogger(),fileName,decLine, msg,
-          symbolName, currentCodomain.getString(), expectedType.getString());
+          symbolName, currentCodomain.getTomType(), expectedType.getTomType());
       return false;
     }
     return true;
@@ -1767,7 +1697,7 @@ whileBlock: {
   } //validateListOperatorArgs
 
   private boolean testTypeExistence(String typeName) {
-    return symbolTable().getType(typeName) != null;
+    return getSymbolTable().getType(typeName) != null;
   }
 
   protected class TermDescription {
@@ -1817,29 +1747,29 @@ whileBlock: {
    */
   /*private void verifyBackQuoteAppl(TomTerm subject) throws VisitFailure {
     %match(TomTerm subject) {
-      BackQuoteAppl[Options=options,AstName=Name(name),Args=args] -> {
-        int decLine = findOriginTrackingLine(`options);
-        String fileName = findOriginTrackingFileName(`options);
-        TomSymbol symbol = getSymbolFromName(`name);
-        if(symbol==null) {
-          // cannot repport an error because unknown funtion calls are allowed
-          TomMessage.error(getLogger(), fileName, decLine, TomMessage.unknownSymbol, `name);
-        } else {
-          //System.out.println("symbol = " + symbol);
-          // check the arity (for syntacti operators)
-          if(!TomBase.isArrayOperator(`symbol) && !TomBase.isListOperator(`symbol)) {
-            TomTypeList types = symbol.getTypesToType().getDomain();
-            int nbExpectedArgs = types.length();
-            int nbArgs = `args.length();
-            if(nbArgs != nbExpectedArgs) {
-            TomMessage.error(getLogger(), fileName, decLine,
-            TomMessage.symbolNumberArgument,
-            `name, Integer.valueOf(nbExpectedArgs), Integer.valueOf(nbArgs));
-            }
-          }
-        }
-      }
-    }
+    BackQuoteAppl[Options=options,AstName=Name(name),Args=args] -> {
+    int decLine = findOriginTrackingLine(`options);
+    String fileName = findOriginTrackingFileName(`options);
+    TomSymbol symbol = getSymbolFromName(`name);
+    if(symbol==null) {
+  // cannot repport an error because unknown funtion calls are allowed
+  TomMessage.error(getLogger(), fileName, decLine, TomMessage.unknownSymbol, `name);
+  } else {
+  //System.out.println("symbol = " + symbol);
+  // check the arity (for syntacti operators)
+  if(!TomBase.isArrayOperator(`symbol) && !TomBase.isListOperator(`symbol)) {
+  TomTypeList types = symbol.getTypesToType().getDomain();
+  int nbExpectedArgs = types.length();
+  int nbArgs = `args.length();
+  if(nbArgs != nbExpectedArgs) {
+  TomMessage.error(getLogger(), fileName, decLine,
+  TomMessage.symbolNumberArgument,
+  `name, Integer.valueOf(nbExpectedArgs), Integer.valueOf(nbArgs));
+  }
+  }
+  }
+  }
+  }
   }*/
 
 } //class

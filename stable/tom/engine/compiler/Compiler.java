@@ -1137,6 +1137,9 @@ return getCompilerEnvironment().getSymbolTable();
 public TomType getTermTypeFromName(TomName tomName) {
 String stringName = ((Name)tomName).getString();
 TomSymbol tomSymbol = getSymbolTable().getSymbolFromName(stringName);    
+if(tomSymbol==null) {
+System.out.println("null : stringName = " + stringName);
+}
 return tomSymbol.getTypesToType().getCodomain();
 }
 

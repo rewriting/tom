@@ -53,6 +53,8 @@
       class="tom.engine.parser.NewParserPlugin"/>
     <plugin name="Desugarer"
       class="tom.engine.desugarer.DesugarerPlugin"/>
+    <plugin name="Syntax checker"
+      class="tom.engine.checker.SyntaxCheckerApPlugin"/>
     <plugin name="Typer"
       class="tom.engine.typer.TyperPlugin"/>
     <plugin name="New Typer"
