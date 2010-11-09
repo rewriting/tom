@@ -872,8 +872,8 @@ public class NewKernelTyper {
     for (Code code : cList.getCollectionconcCode()) {
       init();
       code =  collectKnownTypesFromCode(`code);
-      System.out.println("------------- Code typed with typeVar:\n code = " +
-          `code);
+      //DEBUG System.out.println("------------- Code typed with typeVar:\n code = " +
+      //DEBUG     `code);
       code = inferAllTypes(code,`EmptyType());
       //DEBUG printGeneratedConstraints(subtypeConstraints);
       solveConstraints();
@@ -978,13 +978,9 @@ public class NewKernelTyper {
         TomType tSubject = getType(`subject);
         if (tPattern == null || tPattern == `EmptyType()) {
           tPattern = getUnknownFreshTypeVar();
-                System.out.println("inferConstraint tPattern = " +
-                    `tPattern);
         }
         if (tSubject == null || tSubject == `EmptyType()) {
           tSubject = getUnknownFreshTypeVar();
-                System.out.println("inferConstraint tSubject = " +
-                    `tSubject);
         }
         //DEBUG System.out.println("inferConstraint: match -- constraint " +
         //DEBUG     tPattern + " = " + tSubject);
@@ -994,12 +990,8 @@ public class NewKernelTyper {
             /* T_pattern = T_cast and T_cast <: T_subject */
             TypeConstraintList newEqConstraints = equationConstraints;
             TypeConstraintList newSubConstraints = subtypeConstraints;
-                System.out.println("inferConstraint before add -- eqCList = " +
-                    `equationConstraints);
             equationConstraints =
               addEqConstraint(`Equation(tPattern,aType,getInfoFromTomTerm(pattern)),newEqConstraints);
-                System.out.println("inferConstraint after add -- eqCList = " +
-                    `equationConstraints);
             subtypeConstraints = addSubConstraint(`Subtype(aType,tSubject,getInfoFromBQTerm(subject)),newSubConstraints);
           }
         }
@@ -1013,21 +1005,15 @@ public class NewKernelTyper {
         TomType tRight = getType(`right);
         if (tLeft == null || tLeft == `EmptyType()) {
           tLeft = getUnknownFreshTypeVar();
-                System.out.println("inferConstraint tLeft = " +
-                    `tLeft);
         }
         if (tRight == null || tRight == `EmptyType()) {
           tRight = getUnknownFreshTypeVar();
-                System.out.println("inferConstraint tRight = " +
-                    `tRight);
         }
         //DEBUG System.out.println("inferConstraint: match -- constraint " +
         //DEBUG     tLeft + " = " + tRight);
 
         // To represent the relationshipo between both argument types
         TomType lowerType = getUnknownFreshTypeVar();
-                System.out.println("inferConstraint lowerType = " +
-                    `lowerType);
         TypeConstraintList newSubConstraints = subtypeConstraints;
         newSubConstraints =
           addSubConstraint(`Subtype(lowerType,tLeft,getInfoFromBQTerm(left)),newSubConstraints);
@@ -1116,8 +1102,8 @@ public class NewKernelTyper {
               !VariableStar[] -> { 
                 //DEBUG System.out.println("InferSlotList CT-ELEM -- tTerm = " + `tTerm);
                 argType = getUnknownFreshTypeVar();
-                System.out.println("InferSlotList getUnknownFreshTypeVar = " +
-                    `argType);
+                //DEBUG System.out.println("InferSlotList getUnknownFreshTypeVar = " +
+                //DEBUG     `argType);
               }
             }
           }
@@ -1448,8 +1434,8 @@ matchBlockAdd :
           // CASES 1, 2, 3 and 4 :
           eConstraint@Equation[Type1=groundType1@!TypeVar[],Type2=groundType2@!TypeVar[]] <<
             tConstraint && (groundType1 != groundType2) -> {
-              System.out.println("In solveEquationConstraints:" + `groundType1 +
-                  " = " + `groundType2);
+              //DEBUG System.out.println("In solveEquationConstraints:" + `groundType1 +
+              //DEBUG     " = " + `groundType2);
               `detectFail(eConstraint);
               break matchBlockAdd;
             }
@@ -1575,9 +1561,6 @@ matchBlockFail :
         /* CASES 1a, 2a and 3a */
         Equation[Type1=Type[TomType=tName1],Type2=Type[TomType=tName2@!tName1]]
           << tConstraint && (tName1 != "unknown type") && (tName2 != "unknown type")  -> {
-
-              System.out.println("In detectFail" + `tName1 +
-                  " = " + `tName2);
             printError(`tConstraint);
             break matchBlockFail;
           }

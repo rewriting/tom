@@ -90,6 +90,11 @@ public abstract class AbstractGenerator {
   protected TomType getUniversalType() {
     return symbolTable.getUniversalType();
   }
+
+  protected TomType getCodomain(TomSymbol tSymbol) {
+    return TomBase.getSymbolCodomain(tSymbol);
+  }
+
 // ------------------------------------------------------------
   %include { ../adt/tomsignature/TomSignature.tom }
 // ------------------------------------------------------------

@@ -1,3 +1,6 @@
+2010-11-08 tavaresc
+ * Fix code generation for those arguments having type smaller (subtype) than the expected by the tom signature.
+
 2010-11-03 tavaresc
  * Fix hasUndeclaredType method and call it to test the explicit type of a MatchConstraint.
 
