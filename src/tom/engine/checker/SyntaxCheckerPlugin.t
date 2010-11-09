@@ -1138,7 +1138,7 @@ matchblock:{
         TomSymbol symbol = ensureValidApplDisjunction(`symbolNameList, expectedType, fileName, decLine, permissive, topLevel);
 
         if(symbol == null) {
-          validateTermThrough(term,permissive);
+          // null means that an error occured
           break matchblock;
         }
         // Type is OK
@@ -1271,19 +1271,6 @@ matchblock:{
     return new TermDescription(termClass, termName, fileName,decLine, type);
   }
 
-  private void validateTermThrough(TomTerm term, boolean permissive) {
-    %match(TomTerm term) {
-      TermAppl[Args=concTomTerm(_*,child,_*)] -> {
-        TomSymbol sym = getSymbolFromName(getName(`child));
-        if(sym != null) {
-          validateTerm(`child,sym.getTypesToType().getCodomain(),false,false,permissive);
-        } else {
-          validateTermThrough(`child,permissive);
-        }
-      }
-    }
-  }
-
   public TermDescription analyseTerm(TomTerm term) {
 matchblock:{
              %match(TomTerm term) {
@@ -1387,16 +1374,12 @@ matchblock:{
     if(symbolNameList.length()==1) { // Valid but has it a good type?
       String res = symbolNameList.getHeadconcTomName().getString();
       TomSymbol symbol = getSymbolFromName(res);
-      if (symbol == null ) {
-        // this correspond to a term like 'unknown()' or unknown(s1, s2, ...)
-        if(!permissive) {
-          TomMessage.error(getLogger(),fileName,decLine, TomMessage.unknownSymbol, res);
-        } else {
-          TomMessage.warning(getLogger(),fileName,decLine, TomMessage.unknownPermissiveSymbol, res);
-        }
+      if(symbol == null ) {
+        TomMessage.error(getLogger(),fileName,decLine, TomMessage.unknownSymbol, res);
+        return null;
       } else { // known symbol
-        if ( strictType  || !topLevel ) {
-          if (!ensureSymbolCodomain(TomBase.getSymbolCodomain(symbol), expectedType, TomMessage.invalidCodomain, res, fileName,decLine)) {
+        if( strictType  || !topLevel ) {
+          if(!ensureSymbolCodomain(TomBase.getSymbolCodomain(symbol), expectedType, TomMessage.invalidCodomain, res, fileName,decLine)) {
             return null;
           }
         }
@@ -1404,19 +1387,14 @@ matchblock:{
       return symbol;
     } else {
       // this is a disjunction
-      if(permissive) {
-        TomMessage.error(getLogger(),fileName,decLine, TomMessage.impossiblePermissiveAndDisjunction);
-      }
-
       TomSymbol symbol = null;
       TomTypeList domainReference = null;
       PairNameDeclList slotReference = null;
       String nameReference = null;
-      %match(TomNameList symbolNameList) {
+      %match(symbolNameList) {
         concTomName(_*, Name(dijName), _*) -> { // for each SymbolName
-          symbol =  getSymbolFromName(`dijName);
+          symbol = getSymbolFromName(`dijName);
           if(symbol == null) {
-            // In disjunction we can only have known symbols
             TomMessage.error(getLogger(),fileName,decLine, TomMessage.unknownSymbolInDisjunction,`dijName);
             return null;
           }
