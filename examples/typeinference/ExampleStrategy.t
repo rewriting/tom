@@ -1,8 +1,9 @@
 import examplestrategy.examplestrategy.types.*;
+import tom.engine.exception.TomRuntimeException;
+import tom.library.sl.*;
 
 public class ExampleStrategy{
 	%include { sl.tom }
-	%include { java/util/types/HashMap.tom }
 
   %gom {
     module ExampleStrategy
@@ -12,22 +13,27 @@ public class ExampleStrategy{
     abstract syntax
     Expr = Var(name:String) 
          | Cst(val:int) 
-         | Let(name:String, e:Expr, body:Expr) 
+         | Let(name:String, e:Expr, body:Expr)
+         | Test(x:Term)
+
+    Term = a() | b()
   }
   public void run() {
-
     System.out.println("running...");
-    Expr p1 = `Print(Let("a",Cst(1), Var("a")));
+    Expr p1 = `Let("a",Cst(1), Var("a"));
+    Expr new_p1 = propagate(p1);
+    System.out.println(new_p1);
 
-		HashMap env = new HashMap();
+    Expr p2 = `Test(a());
+    propagate(p2);
   }
   
   public final static void main(String[] args) {
-    ExampleStrategy test = new Backquote();
+    ExampleStrategy test = new ExampleStrategy();
     test.run();
   }
 
-	public Expr propagate(HashMap env, Expr expr) {
+	public Expr propagate(Expr expr) {
 		try {
 			return (Expr) `TopDown(Try(RenamedVar())).visitLight(expr);
 		} catch (VisitFailure e) {
@@ -40,5 +46,9 @@ public class ExampleStrategy{
 		visit Expr {
 			v@Var(concString('_',_*)) -> { return `v; }
 		}
+
+    visit Term {
+      a() -> { System.out.println("Test!!"); }
+    }
 	}
 }

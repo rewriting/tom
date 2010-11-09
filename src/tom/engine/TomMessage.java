@@ -290,6 +290,8 @@ public class TomMessage extends BasicPlatformMessage {
       new TomMessage("ClassNotFoundException: You need apigen to use the %vas construct");
   public static final TomMessage apigenInvocationIssue   =
       new TomMessage("Exception occurs while dealing with Apigen: ''{0}''");
+  public static final TomMessage multipleUpperTypes =
+      new TomMessage("Type ''{0}'' cannot have two upper types simultaneously: ''{1}'' and ''{2}''");
 
   // Error messages linked to operator and type definitions
   public static final TomMessage multipleSortDefinitionError=
