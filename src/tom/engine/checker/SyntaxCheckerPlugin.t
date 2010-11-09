@@ -1076,7 +1076,7 @@ matchL:  %match(BQTerm subject,BQTerm s) {///
       // Analyse the term if type != null
       if(type != null) {
         // the type is known and found in the match signature
-        validateTerm(`term, type, false, true, false);
+        validateTerm(`term, type, false, true);
       }
     }
   }
@@ -1121,7 +1121,7 @@ matchL:  %match(BQTerm subject,BQTerm s) {///
   /**
    * Analyse a term given an expected type and re-enter recursively on children
    */
-  public TermDescription validateTerm(TomTerm term, TomType expectedType, boolean listSymbol, boolean topLevel, boolean permissive) {
+  public TermDescription validateTerm(TomTerm term, TomType expectedType, boolean listSymbol, boolean topLevel) {
     String termName = "emptyName";
     TomType type = null;
     int termClass = -1;
@@ -1135,7 +1135,7 @@ matchblock:{
         decLine = findOriginTrackingLine(`options);
         termClass = TERM_APPL;
 
-        TomSymbol symbol = ensureValidApplDisjunction(`symbolNameList, expectedType, fileName, decLine, permissive, topLevel);
+        TomSymbol symbol = ensureValidApplDisjunction(`symbolNameList, expectedType, fileName, decLine,  topLevel);
 
         if(symbol == null) {
           // null means that an error occured
@@ -1154,7 +1154,7 @@ matchblock:{
           // only one element in the Domain
           // - we can also have children that are sublists
           validateListOperatorArgs(`arguments, symbol.getTypesToType().getDomain().getHeadconcTomType(),
-              symbol.getTypesToType().getCodomain(),permissive);
+              symbol.getTypesToType().getCodomain());
         } else {
           // the arity is important also there are different types in Domain
           TomTypeList types = symbol.getTypesToType().getDomain();
@@ -1170,7 +1170,7 @@ matchblock:{
           while(!args.isEmptyconcTomTerm()) {
             // repeat analyse with associated expected type and control
             // arity
-            validateTerm(args.getHeadconcTomTerm(), types.getHeadconcTomType(), listOp/* false */, false, permissive);
+            validateTerm(args.getHeadconcTomTerm(), types.getHeadconcTomType(), listOp/* false */, false);
             args = args.getTailconcTomTerm();
             types = types.getTailconcTomType();
           }
@@ -1179,14 +1179,6 @@ matchblock:{
       }
 
       rec@RecordAppl[Options=options,NameList=symbolNameList,Slots=slotList] -> {
-        if(permissive) {
-          // Record are not allowed in a rhs
-          TomMessage.error(getLogger(),
-              findOriginTrackingFileName(`options),
-              findOriginTrackingLine(`options),
-              TomMessage.incorrectRuleRHSClass,
-              getName(`rec)+"[...]");
-        }
         fileName = findOriginTrackingFileName(`options);
         decLine = findOriginTrackingLine(`options);
         termClass = RECORD_APPL;
@@ -1233,7 +1225,7 @@ matchblock:{
         // System.out.println("TNodeType = " + TNodeType);
         while(!args.isEmptyconcTomTerm()) {
           // repeat analyse with associated expected type and control arity
-          validateTerm(args.getHeadconcTomTerm(), TNodeType, true, false, permissive);
+          validateTerm(args.getHeadconcTomTerm(), TNodeType, true, false);
           args = args.getTailconcTomTerm();
         }
 
@@ -1369,7 +1361,7 @@ matchblock:{
   } //ensureValidUnamedList
 
   private TomSymbol ensureValidApplDisjunction(TomNameList symbolNameList, TomType expectedType, 
-      String fileName, int decLine, boolean permissive, boolean topLevel) {
+      String fileName, int decLine,  boolean topLevel) {
 
     if(symbolNameList.length()==1) { // Valid but has it a good type?
       String res = symbolNameList.getHeadconcTomName().getString();
@@ -1606,7 +1598,7 @@ whileBlock: {
                 Slot pairSlotTerm = listOfPair.getHeadconcSlot();
                 %match(TomName slotName, Slot pairSlotTerm) {
                   Name[String=name1], PairSlotAppl(Name[String=name1],slotSubterm) -> {
-                    validateTerm(`slotSubterm ,expectedType, false, true, false);
+                    validateTerm(`slotSubterm ,expectedType, false, true);
                     break whileBlock;
                   }
                   _ , _ -> {listOfPair = listOfPair.getTailconcSlot();}
@@ -1623,7 +1615,7 @@ whileBlock: {
     }
   } //verifyRecordSlots
 
-  public void validateListOperatorArgs(TomList args, TomType expectedType, TomType parentListCodomain, boolean permissive) {
+  public void validateListOperatorArgs(TomList args, TomType expectedType, TomType parentListCodomain) {
     while(!args.isEmptyconcTomTerm()) {
       TomTerm currentArg = args.getHeadconcTomTerm();      
       TomSymbol argSymbol = getSymbolFromName(getName(currentArg));
@@ -1633,12 +1625,12 @@ whileBlock: {
         // 1. the sublist has the codomain = parentListCodomain
         // 2. the sublist has the codomain = expectedType
         if(argSymbol.getTypesToType().getCodomain() == parentListCodomain) {
-          validateTerm(currentArg, parentListCodomain, true, false, permissive);            
+          validateTerm(currentArg, parentListCodomain, true, false);            
         } else {
-          validateTerm(currentArg, expectedType, true, false, permissive);    
+          validateTerm(currentArg, expectedType, true, false);    
         }        
       } else {
-        validateTerm(currentArg, expectedType, true, false, permissive);
+        validateTerm(currentArg, expectedType, true, false);
       }
       args = args.getTailconcTomTerm();
     }
