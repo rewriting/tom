@@ -9,7 +9,7 @@ public class Example{
   public static void main(String[] args) {
     B tt = `b();
     %match{
-      b() << B tt -> { System.out.println(`tt); }
+      b() << B tt  && (tt == b()) -> { System.out.println(`tt); }
     }
   }
 }
