@@ -349,16 +349,22 @@ public class Compiler extends TomGenericPlugin {
         //BQTerm freshVar = compiler.getUniversalObjectForSubject(`castType);
         /*
         System.out.println("renameSubjects -- return = " + `AndConstraint(
-            MatchConstraint(TomBase.convertFromBQVarToVar(freshVar),subject,castType),
-            IsSortConstraint(castType,freshVar),
-            MatchConstraint(renamedVar,ExpressionToBQTerm(Cast(castType,BQTermToExpression(freshVar))),castType),
-            newConstraint));
+              MatchConstraint(TomBase.convertFromBQVarToVar(freshVar),subject,castType),
+              IsSortConstraint(castType,freshVar),
+              MatchConstraint(renamedVar,ExpressionToBQTerm(Cast(castType,BQTermToExpression(freshVar))),castType),
+              newConstraint));
         return `AndConstraint(
             MatchConstraint(TomBase.convertFromBQVarToVar(freshVar),subject,castType),
             IsSortConstraint(castType,freshVar),
             MatchConstraint(renamedVar,ExpressionToBQTerm(Cast(castType,BQTermToExpression(freshVar))),castType),
             newConstraint);
-            */
+        System.out.println("renameSubjects -- return = " + `AndConstraint(
+              MatchConstraint(TomBase.convertFromBQVarToVar(freshVar),subject,freshSubjectType),
+              IsSortConstraint(freshSubjectType,freshVar),
+              MatchConstraint(renamedVar,ExpressionToBQTerm(Cast(freshSubjectType,BQTermToExpression(freshVar))),freshSubjectType),
+              newConstraint));
+        */
+
         return `AndConstraint(
             MatchConstraint(TomBase.convertFromBQVarToVar(freshVar),subject,freshSubjectType),
             IsSortConstraint(freshSubjectType,freshVar),
