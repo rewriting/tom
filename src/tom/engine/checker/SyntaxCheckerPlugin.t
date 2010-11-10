@@ -219,6 +219,7 @@ public class SyntaxCheckerPlugin extends TomGenericPlugin {
       BQAppl[AstName=Name(name)] -> { return `name;}
       BQVariable[AstName=Name(name)] -> { return `name;}
       BQVariableStar[AstName=Name(name)] -> { return `name+"*";}
+      BuildConstant[AstName=Name(name)] -> { return `name;}
     }
     throw new TomRuntimeException("Invalid Term:" + term);
   }
@@ -671,20 +672,27 @@ matchLbl: %match(constr) {// TODO : add something to test the astType
                 typeMatch = getSubjectType(`subject,constraints);
                 if(typeMatch == null) {
                   //System.out.println("astType = " + `astType);
-                  Object messageContent = `subject;
                   %match(subject) {
                     BQVariable[AstName=Name(stringName)] -> {
-                      messageContent = `stringName;
+                      TomMessage.error(getLogger(),
+                          getCurrentTomStructureOrgTrack().getFileName(),
+                          getCurrentTomStructureOrgTrack().getLine(),
+                          TomMessage.cannotGuessMatchType,
+                          `stringName);
+                      return;
                     }
                     BQAppl[AstName=Name(stringName)] -> {
-                      messageContent = `stringName;
+                      TomMessage.error(getLogger(),
+                          getCurrentTomStructureOrgTrack().getFileName(),
+                          getCurrentTomStructureOrgTrack().getLine(),
+                          TomMessage.cannotGuessMatchType,
+                          `stringName);
+                      return;
+                    }
+                    BuildConstant[AstName=Name(stringName)] -> {
+                      // do not throw an error message because Constant have no type
                     }
                   }
-                  TomMessage.error(getLogger(),
-                      getCurrentTomStructureOrgTrack().getFileName(),
-                      getCurrentTomStructureOrgTrack().getLine(),
-                      TomMessage.cannotGuessMatchType,
-                      `messageContent);
                   return;
                 }
               }
@@ -712,9 +720,9 @@ matchLbl: %match(constr) {// TODO : add something to test the astType
                   return;
                 }
               }        
-              // the rhs can only be TermAppl or Variable
+              // the rhs can only be a BQAppl, a BQVariable, or a BuildConstant
               %match(right) {
-                !(BQVariable|BQAppl)[] -> {
+                !(BQVariable|BQAppl|BuildConstant)[] -> {
                   TomMessage.error(getLogger(),
                       getCurrentTomStructureOrgTrack().getFileName(),
                       getCurrentTomStructureOrgTrack().getLine(),
@@ -815,7 +823,10 @@ matchLbl: %match(constr) {// TODO : add something to test the astType
           AndConstraint(_*,MatchConstraint(pattern,_,_),_*) -> { 
             `TopDownCollect(CollectFreeVar(freeVarList2)).visitLight(`pattern);
           }
-        }        
+        }
+        //System.out.println("freeVar1 = " + freeVarList1);
+        //System.out.println("freeVar2 = " + freeVarList2);
+
         if(!freeVarList1.isEmpty()) {
           for(TomTerm term:freeVarList2) {
             if (!freeVarList1.contains(term)) {
@@ -859,11 +870,13 @@ matchLbl: %match(constr) {// TODO : add something to test the astType
     }
     return false;
   }
+
   %strategy ContainsVariable(TomTerm var) extends Identity() {     
-    visit TomTerm {
-      v@(Variable|VariableStar)[] -> {
-        TomTerm newvar = `v.setOptions(`concOption()); // to avoid problems related to line numbers
-        if(`newvar==var) {
+    visit BQTerm {
+      v@(BQVariable|BQVariableStar)[AstName=name] -> {
+        //System.out.println("name = " + `name);
+        //System.out.println("var.name = " + var.getAstName());
+        if(`name==var.getAstName()) {
           throw new VisitFailure();
         }
       }
@@ -1192,7 +1205,7 @@ matchblock:{
            * We perform tests as we have different RecordAppls: they all must
            * be valid and have the expected return type
            */
-          concTomName(_*, Name(name), _*) -> {
+          concTomName(_*,Name(name), _*) -> {
             verifyRecordStructure(`options, `name, `slotList, fileName,decLine);
           }
         }
@@ -1265,68 +1278,69 @@ matchblock:{
 
   public TermDescription analyseTerm(TomTerm term) {
 matchblock:{
-             %match(TomTerm term) {
-               TermAppl[Options=options, NameList=concTomName(Name(str))] -> {
-                 if (`str.equals("")) {
-                   return new TermDescription(UNAMED_APPL, `str,
-                       findOriginTrackingFileName(`options),
-                       findOriginTrackingLine(`options), 
-                       null);
-                   // TODO
-                 } else {
-                   return new TermDescription(TERM_APPL, `str,
-                       findOriginTrackingFileName(`options),
-                       findOriginTrackingLine(`options),
-                       TomBase.getSymbolCodomain(getSymbolFromName(`str)));
-                 }
-               }
-               TermAppl[Options=options, NameList=concTomName(Name(name), _*)] -> {
-                 return new TermDescription(APPL_DISJUNCTION, `name,
-                     findOriginTrackingFileName(`options),
-                     findOriginTrackingLine(`options),
-                     TomBase.getSymbolCodomain(getSymbolFromName(`name)));
-               }
-               RecordAppl[Options=options,NameList=concTomName(Name(name))] ->{
-                 return new TermDescription(RECORD_APPL, `name,
-                     findOriginTrackingFileName(`options),
-                     findOriginTrackingLine(`options),
-                     TomBase.getSymbolCodomain(getSymbolFromName(`name)));
-               }
-               RecordAppl[Options=options,NameList=concTomName(Name(name), _*)] ->{
-                 return new TermDescription(RECORD_APPL_DISJUNCTION,`name,
-                     findOriginTrackingFileName(`options),
-                     findOriginTrackingLine(`options),
-                     TomBase.getSymbolCodomain(getSymbolFromName(`name)));
-               }
-               XMLAppl[Options=options] -> {
-                 return new TermDescription(XML_APPL, Constants.ELEMENT_NODE,
-                     findOriginTrackingFileName(`options),
-                     findOriginTrackingLine(`options),
-                     TomBase.getSymbolCodomain(getSymbolFromName(Constants.ELEMENT_NODE)));
-               }
-               Variable[Options=options, AstName=Name(name)] -> {
-                 return new TermDescription(VARIABLE, `name,
-                     findOriginTrackingFileName(`options),
-                     findOriginTrackingLine(`options),  null);
-               }
-               VariableStar[Options=options, AstName=Name(name)] -> {
-                 return new TermDescription(VARIABLE_STAR, `name+"*",
-                     findOriginTrackingFileName(`options),
-                     findOriginTrackingLine(`options),  null);
-               }
-               /*UnamedVariable[Options=options] -> {
-                 return new TermDescription(UNAMED_VARIABLE, "_",
-                 findOriginTrackingFileName(`options),
-                 findOriginTrackingLine(`options),  null);
-                 }*/
-               /*UnamedVariableStar[Options=options] -> {
-                 return new TermDescription(UNAMED_VARIABLE_STAR, "_*",
-                 findOriginTrackingFileName(`options),
-                 findOriginTrackingLine(`options),  null);
-                 }*/
-             }
-             throw new TomRuntimeException("Strange Term "+term);
-           }
+  %match(TomTerm term) {
+    TermAppl[Options=options, NameList=concTomName(Name(str))] -> {
+      if (`str.equals("")) {
+        return new TermDescription(UNAMED_APPL, `str,
+            findOriginTrackingFileName(`options),
+            findOriginTrackingLine(`options), 
+            null);
+        // TODO
+      } else {
+        return new TermDescription(TERM_APPL, `str,
+            findOriginTrackingFileName(`options),
+            findOriginTrackingLine(`options),
+            TomBase.getSymbolCodomain(getSymbolFromName(`str)));
+      }
+    }
+    
+    TermAppl[Options=options, NameList=concTomName(Name(name), _*)] -> {
+      return new TermDescription(APPL_DISJUNCTION, `name,
+          findOriginTrackingFileName(`options),
+          findOriginTrackingLine(`options),
+          TomBase.getSymbolCodomain(getSymbolFromName(`name)));
+    }
+    RecordAppl[Options=options,NameList=concTomName(Name(name))] ->{
+      return new TermDescription(RECORD_APPL, `name,
+          findOriginTrackingFileName(`options),
+          findOriginTrackingLine(`options),
+          TomBase.getSymbolCodomain(getSymbolFromName(`name)));
+    }
+    RecordAppl[Options=options,NameList=concTomName(Name(name), _*)] ->{
+      return new TermDescription(RECORD_APPL_DISJUNCTION,`name,
+          findOriginTrackingFileName(`options),
+          findOriginTrackingLine(`options),
+          TomBase.getSymbolCodomain(getSymbolFromName(`name)));
+    }
+    XMLAppl[Options=options] -> {
+      return new TermDescription(XML_APPL, Constants.ELEMENT_NODE,
+          findOriginTrackingFileName(`options),
+          findOriginTrackingLine(`options),
+          TomBase.getSymbolCodomain(getSymbolFromName(Constants.ELEMENT_NODE)));
+    }
+    Variable[Options=options, AstName=Name(name)] -> {
+      return new TermDescription(VARIABLE, `name,
+          findOriginTrackingFileName(`options),
+          findOriginTrackingLine(`options),  null);
+    }
+    VariableStar[Options=options, AstName=Name(name)] -> {
+      return new TermDescription(VARIABLE_STAR, `name+"*",
+          findOriginTrackingFileName(`options),
+          findOriginTrackingLine(`options),  null);
+    }
+    /*UnamedVariable[Options=options] -> {
+      return new TermDescription(UNAMED_VARIABLE, "_",
+      findOriginTrackingFileName(`options),
+      findOriginTrackingLine(`options),  null);
+      }*/
+    /*UnamedVariableStar[Options=options] -> {
+      return new TermDescription(UNAMED_VARIABLE_STAR, "_*",
+      findOriginTrackingFileName(`options),
+      findOriginTrackingLine(`options),  null);
+      }*/
+  }
+  throw new TomRuntimeException("Strange Term "+term);
+  } // end matchblock
   } //analyseTerm
 
   private TomSymbol ensureValidUnamedList(TomType expectedType, String fileName,int decLine) {
@@ -1529,12 +1543,11 @@ matchblock:{
       // constants have an emptyPairNameDeclList
       // the length of the pairNameDeclList corresponds to the arity of the
       // operator
-      // list operator with [] no allowed
-      if(slotList.isEmptyconcSlot() && (TomBase.isListOperator(symbol) ||  TomBase.isArrayOperator(symbol)) ) {
-        TomMessage.error(getLogger(),fileName,decLine,
-            TomMessage.bracketOnListSymbol,
-            tomName);
-      }
+
+      // Note: cannot detect conc[], because the concrete syntax [] is no longer there
+      //if(slotList.isEmptyconcSlot() && (TomBase.isListOperator(symbol) ||  TomBase.isArrayOperator(symbol)) ) {
+      //  TomMessage.error(getLogger(),fileName,decLine, TomMessage.bracketOnListSymbol, tomName);
+      //}
       // TODO verify type
       verifyRecordSlots(slotList,symbol, TomBase.getSymbolDomain(symbol), tomName, fileName, decLine);
     } else {
@@ -1547,12 +1560,12 @@ matchblock:{
   // We test the existence/repetition of slotName contained in pairSlotAppl
   // and then the associated term
   private void verifyRecordSlots(SlotList slotList, TomSymbol tomSymbol, TomTypeList typeList, String methodName, String fileName, int decLine) {
-    TomName pairSlotName = null;
+    //System.out.println("verifyRecordSlot: " + `slotList);
     ArrayList<String> listOfPossibleSlot = null;
     ArrayList<Integer> studiedSlotIndexList = new ArrayList<Integer>();
     // for each pair slotName <=> Appl
     while( !slotList.isEmptyconcSlot() ) {
-      pairSlotName = slotList.getHeadconcSlot().getSlotName();
+      TomName pairSlotName = slotList.getHeadconcSlot().getSlotName();
       // First check for slot name correctness
       int index = TomBase.getSlotIndex(tomSymbol,pairSlotName);
       if(index < 0) {// Error: bad slot name
@@ -1573,15 +1586,16 @@ matchblock:{
             pairSlotName.getString(), methodName, listOfPossibleSlot.toString());
         return; // break analyses
       } else { // then check for repeated good slot name
-        Integer integerIndex = Integer.valueOf(index);
-        if(studiedSlotIndexList.contains(integerIndex)) {
+        //Integer integerIndex = Integer.valueOf(index);
+        if(pairSlotName.isName() && studiedSlotIndexList.contains(index)) {
+          // we are not insterrested in EmptyName (which come from ListOperator with Empty-SlotName)
           // Error: repeated slot
           TomMessage.error(getLogger(),fileName,decLine,
               TomMessage.slotRepeated,
               methodName, pairSlotName.getString());
           return; // break analyses
         }
-        studiedSlotIndexList.add(integerIndex);
+        studiedSlotIndexList.add(index);
       }
 
       // Now analyses associated term
