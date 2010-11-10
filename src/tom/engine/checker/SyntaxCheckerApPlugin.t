@@ -67,15 +67,15 @@ public class SyntaxCheckerApPlugin extends SyntaxCheckerPlugin {
    * Basicaly ignores the anti-symbol
    */
 
-  public TermDescription validateTerm(TomTerm term, TomType expectedType, boolean listSymbol, boolean topLevel, boolean permissive) {
+  public TermDescription validateTerm(TomTerm term, TomType expectedType, boolean listSymbol, boolean topLevel) {
     %match(TomTerm term) {
       // validate that after the anti symbol we have a valid term  
       AntiTerm(t@(TermAppl|Variable|RecordAppl|XMLAppl)[Options=options]) -> {
         checkForAnnotations(`t,`options);
-        return super.validateTerm(`t, expectedType, listSymbol, topLevel, permissive);
+        return super.validateTerm(`t, expectedType, listSymbol, topLevel);
       }
     }
-    return super.validateTerm(term, expectedType, listSymbol, topLevel, permissive);
+    return super.validateTerm(term, expectedType, listSymbol, topLevel);
   }
 
   public TermDescription analyseTerm(TomTerm term) {
