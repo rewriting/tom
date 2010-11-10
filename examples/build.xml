@@ -51,7 +51,7 @@
       
     </subant>
       <!-- Exclude tests that run only with the new typer -->
-      <exclude name="subtypeinference/*"/>
+      <!--exclude name="subtypeinference/*"/-->
   </target>
 
   <target name="examples"

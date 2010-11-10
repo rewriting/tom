@@ -30,12 +30,10 @@ package typeinference;
 
 import typeinference.examplestrategy.examplestrategy.types.*;
 import tom.engine.exception.TomRuntimeException;
-import java.util.*;
 import tom.library.sl.*;
 
 public class ExampleStrategy{
 	%include { sl.tom }
-	%include { util/HashMap.tom }
 
   %gom {
     module ExampleStrategy
@@ -62,11 +60,11 @@ public class ExampleStrategy{
   }
   
   public final static void main(String[] args) {
-    ExampleStrategy test = new Backquote();
+    ExampleStrategy test = new ExampleStrategy();
     test.run();
   }
 
-	public Expr propagate(HashMap env, Expr expr) {
+	public Expr propagate(Expr expr) {
 		try {
 			return (Expr) `TopDown(Try(RenamedVar())).visitLight(expr);
 		} catch (VisitFailure e) {
