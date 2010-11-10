@@ -709,9 +709,9 @@ matchLbl: %match(constr) {// TODO : add something to test the astType
             // 4. no implicit notation
             //NumericConstraint[Pattern=left,Subject=right] -> 
             NumericConstraint[Left=left,Right=right] -> {
-              // the lhs and rhs can only be TermAppl or Variable
+              // the lhs can only be a BQAppl, a BQVariable, or a BuildConstant
               %match(left) {
-                !(BQVariable|BQAppl)[] -> {              
+                !(BQVariable|BQAppl|BuildConstant)[] -> {
                   TomMessage.error(getLogger(),
                       getCurrentTomStructureOrgTrack().getFileName(),
                       getCurrentTomStructureOrgTrack().getLine(),
@@ -927,6 +927,15 @@ matchLbl: %match(constr) {// TODO : add something to test the astType
    */
   private TomType getSubjectType(BQTerm subject, ArrayList<Constraint> constraints) {
     %match(BQTerm subject) {
+      BuildConstant[AstName=Name(name)] -> {        
+        try {
+          Integer.parseInt(`name);
+          return getSymbolTable().getIntType();
+        } catch(java.lang.NumberFormatException e) {
+          return getSymbolTable().getStringType();
+        }
+      }
+
       BQVariable[AstName=Name(name),AstType=tomType@Type(options,type,EmptyTargetLanguageType())] -> {        
         if(`tomType==SymbolTable.TYPE_UNKNOWN) {
           // try to guess
@@ -941,6 +950,7 @@ matchLbl: %match(constr) {// TODO : add something to test the astType
               `name, `type);                
         }
       }
+
       term@BQAppl[AstName=Name(name)] -> {
         TomSymbol symbol = getSymbolFromName(`name);
         if(symbol!=null) {
@@ -975,7 +985,7 @@ matchLbl: %match(constr) {// TODO : add something to test the astType
       %match(Constraint constr) {
         MatchConstraint(patt,s,astType) -> {
           // we want two terms to be equal even if their option is different 
-          //( because of their possition for example )
+          //( because of their position for example )
 matchL:  %match(BQTerm subject,BQTerm s) {///
            BQVariable[AstName=astName,AstType=tomType],BQVariable[AstName=astName,AstType=tomType] -> {break matchL;}
            BQAppl[AstName=tomName,Args=tomList],BQAppl[AstName=tomName,Args=tomList] -> {break matchL;}
@@ -1440,13 +1450,15 @@ matchblock:{
   } //ensureValidApplDisjunction
 
   private boolean ensureSymbolCodomain(TomType currentCodomain, TomType expectedType, TomMessage msg, String symbolName, String fileName,int decLine) {
-    if(currentCodomain != expectedType) {
-      // System.out.println(currentCodomain+"!="+expectedType);
-      TomMessage.error(getLogger(),fileName,decLine, msg,
-          symbolName, currentCodomain.getTomType(), expectedType.getTomType());
-      return false;
+    %match(currentCodomain, expectedType) {
+      Type[TomType=type],Type[TomType=type] -> {
+        return true;
+      }
     }
-    return true;
+    //System.out.println(currentCodomain+"!="+expectedType);
+    TomMessage.error(getLogger(),fileName,decLine, msg,
+        symbolName, currentCodomain.getTomType(), expectedType.getTomType());
+    return false;
   } //ensureSymbolCodomain
 
   private TomSymbol ensureValidRecordDisjunction(TomNameList symbolNameList, SlotList slotList, 
