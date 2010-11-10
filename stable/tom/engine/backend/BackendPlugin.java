@@ -456,6 +456,817 @@ default: throw new IndexOutOfBoundsException();
 }
 }
 @SuppressWarnings("unchecked")
+public <T> T visitLight(T v, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if ( (v instanceof tom.engine.adt.tomexpression.types.Expression) ) {
+return ((T)visit_Expression((( tom.engine.adt.tomexpression.types.Expression )v),introspector));
+}
+if ( (v instanceof tom.engine.adt.tomtype.types.TomType) ) {
+return ((T)visit_TomType((( tom.engine.adt.tomtype.types.TomType )v),introspector));
+}
+if ( (v instanceof tom.engine.adt.tominstruction.types.Instruction) ) {
+return ((T)visit_Instruction((( tom.engine.adt.tominstruction.types.Instruction )v),introspector));
+}
+if ( (v instanceof tom.engine.adt.code.types.BQTerm) ) {
+return ((T)visit_BQTerm((( tom.engine.adt.code.types.BQTerm )v),introspector));
+}
+if ( (v instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {
+return ((T)visit_Declaration((( tom.engine.adt.tomdeclaration.types.Declaration )v),introspector));
+}
+if ( (v instanceof tom.engine.adt.tomterm.types.TomTerm) ) {
+return ((T)visit_TomTerm((( tom.engine.adt.tomterm.types.TomTerm )v),introspector));
+}
+if (!(( null  == environment))) {
+return ((T)any.visit(environment,introspector));
+} else {
+return any.visitLight(v,introspector);
+}
+
+}
+@SuppressWarnings("unchecked")
+public  tom.engine.adt.tomterm.types.TomTerm  _visit_TomTerm( tom.engine.adt.tomterm.types.TomTerm  arg, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if (!(( null  == environment))) {
+return (( tom.engine.adt.tomterm.types.TomTerm )any.visit(environment,introspector));
+} else {
+return any.visitLight(arg,introspector);
+}
+}
+@SuppressWarnings("unchecked")
+public  tom.engine.adt.tomdeclaration.types.Declaration  _visit_Declaration( tom.engine.adt.tomdeclaration.types.Declaration  arg, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if (!(( null  == environment))) {
+return (( tom.engine.adt.tomdeclaration.types.Declaration )any.visit(environment,introspector));
+} else {
+return any.visitLight(arg,introspector);
+}
+}
+@SuppressWarnings("unchecked")
+public  tom.engine.adt.code.types.BQTerm  _visit_BQTerm( tom.engine.adt.code.types.BQTerm  arg, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if (!(( null  == environment))) {
+return (( tom.engine.adt.code.types.BQTerm )any.visit(environment,introspector));
+} else {
+return any.visitLight(arg,introspector);
+}
+}
+@SuppressWarnings("unchecked")
+public  tom.engine.adt.tominstruction.types.Instruction  _visit_Instruction( tom.engine.adt.tominstruction.types.Instruction  arg, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if (!(( null  == environment))) {
+return (( tom.engine.adt.tominstruction.types.Instruction )any.visit(environment,introspector));
+} else {
+return any.visitLight(arg,introspector);
+}
+}
+@SuppressWarnings("unchecked")
+public  tom.engine.adt.tomtype.types.TomType  _visit_TomType( tom.engine.adt.tomtype.types.TomType  arg, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if (!(( null  == environment))) {
+return (( tom.engine.adt.tomtype.types.TomType )any.visit(environment,introspector));
+} else {
+return any.visitLight(arg,introspector);
+}
+}
+@SuppressWarnings("unchecked")
+public  tom.engine.adt.tomexpression.types.Expression  _visit_Expression( tom.engine.adt.tomexpression.types.Expression  arg, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if (!(( null  == environment))) {
+return (( tom.engine.adt.tomexpression.types.Expression )any.visit(environment,introspector));
+} else {
+return any.visitLight(arg,introspector);
+}
+}
+@SuppressWarnings("unchecked")
+public  tom.engine.adt.tomdeclaration.types.Declaration  visit_Declaration( tom.engine.adt.tomdeclaration.types.Declaration  tom__arg, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+{
+{
+if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {
+if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.IsFsymDecl) ) {
+ tom.engine.adt.tomname.types.TomName  tomMatch74_1= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getAstName() ;
+ tom.engine.adt.tomexpression.types.Expression  tomMatch74_2= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getExpr() ;
+if ( (tomMatch74_1 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+if ( (tomMatch74_2 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
+
+try {
+String moduleName = stack.peek();
+bp.getSymbolTable(moduleName).putIsFsym(
+ tomMatch74_1.getString() ,
+ tomMatch74_2.getCode() );
+} catch (EmptyStackException e) {
+System.out.println("No moduleName in stack");
+}
+
+
+}
+}
+}
+}
+
+}
+{
+if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {
+if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.IsSortDecl) ) {
+ tom.engine.adt.code.types.BQTerm  tomMatch74_9= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getTermArg() ;
+ tom.engine.adt.tomexpression.types.Expression  tomMatch74_10= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getExpr() ;
+if ( (tomMatch74_9 instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {
+ tom.engine.adt.tomtype.types.TomType  tomMatch74_12= tomMatch74_9.getAstType() ;
+if ( (tomMatch74_12 instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {
+if ( (tomMatch74_10 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
+
+try {
+String moduleName = stack.peek();
+bp.getSymbolTable(moduleName).putIsSort(
+ tomMatch74_12.getTomType() ,
+ tomMatch74_10.getCode() );
+} catch (EmptyStackException e) {
+System.out.println("No moduleName in stack");
+}
+
+
+}
+}
+}
+}
+}
+
+}
+{
+if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {
+if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.EqualTermDecl) ) {
+ tom.engine.adt.code.types.BQTerm  tomMatch74_19= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getTermArg1() ;
+ tom.engine.adt.tomexpression.types.Expression  tomMatch74_20= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getExpr() ;
+if ( (tomMatch74_19 instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {
+ tom.engine.adt.tomtype.types.TomType  tomMatch74_22= tomMatch74_19.getAstType() ;
+if ( (tomMatch74_22 instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {
+if ( (tomMatch74_20 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
+
+try {
+String moduleName = stack.peek();
+bp.getSymbolTable(moduleName).putEqualTerm(
+ tomMatch74_22.getTomType() ,
+ tomMatch74_20.getCode() );
+} catch (EmptyStackException e) {
+System.out.println("No moduleName in stack");
+}
+
+
+}
+}
+}
+}
+}
+
+}
+{
+if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {
+if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.GetSlotDecl) ) {
+ tom.engine.adt.tomname.types.TomName  tomMatch74_29= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getAstName() ;
+ tom.engine.adt.tomname.types.TomName  tomMatch74_30= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getSlotName() ;
+ tom.engine.adt.tomexpression.types.Expression  tomMatch74_31= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getExpr() ;
+if ( (tomMatch74_29 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+if ( (tomMatch74_30 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+if ( (tomMatch74_31 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
+
+try {
+String moduleName = stack.peek();
+bp.getSymbolTable(moduleName).putGetSlot(
+ tomMatch74_29.getString() ,
+ tomMatch74_30.getString() ,
+ tomMatch74_31.getCode() );
+} catch (EmptyStackException e) {
+System.out.println("No moduleName in stack");
+}
+
+
+}
+}
+}
+}
+}
+
+}
+{
+if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {
+if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.GetHeadDecl) ) {
+ tom.engine.adt.tomname.types.TomName  tomMatch74_40= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getOpname() ;
+ tom.engine.adt.tomexpression.types.Expression  tomMatch74_41= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getExpr() ;
+if ( (tomMatch74_40 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+if ( (tomMatch74_41 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
+
+try {
+String moduleName = stack.peek();
+bp.getSymbolTable(moduleName).putGetHead(
+ tomMatch74_40.getString() ,
+ tomMatch74_41.getCode() );
+} catch (EmptyStackException e) {
+System.out.println("No moduleName in stack");
+}
+
+
+}
+}
+}
+}
+
+}
+{
+if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {
+if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.GetTailDecl) ) {
+ tom.engine.adt.tomname.types.TomName  tomMatch74_48= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getOpname() ;
+ tom.engine.adt.tomexpression.types.Expression  tomMatch74_49= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getExpr() ;
+if ( (tomMatch74_48 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+if ( (tomMatch74_49 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
+
+try {
+String moduleName = stack.peek();
+bp.getSymbolTable(moduleName).putGetTail(
+ tomMatch74_48.getString() ,
+ tomMatch74_49.getCode() );
+} catch (EmptyStackException e) {
+System.out.println("No moduleName in stack");
+}
+
+
+}
+}
+}
+}
+
+}
+{
+if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {
+if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.MakeDecl) ) {
+ tom.engine.adt.tomname.types.TomName  tomMatch74_56= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getAstName() ;
+ tom.engine.adt.tominstruction.types.Instruction  tomMatch74_57= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getInstr() ;
+if ( (tomMatch74_56 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+if ( (tomMatch74_57 instanceof tom.engine.adt.tominstruction.types.instruction.ExpressionToInstruction) ) {
+ tom.engine.adt.tomexpression.types.Expression  tomMatch74_61= tomMatch74_57.getExpr() ;
+if ( (tomMatch74_61 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
+
+try {
+String moduleName = stack.peek();
+bp.getSymbolTable(moduleName).putMake(
+ tomMatch74_56.getString() ,
+ tomMatch74_61.getCode() );
+} catch (EmptyStackException e) {
+System.out.println("No moduleName in stack");
+}
+
+
+}
+}
+}
+}
+}
+
+}
+{
+if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {
+if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.IsEmptyDecl) ) {
+ tom.engine.adt.tomname.types.TomName  tomMatch74_66= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getOpname() ;
+ tom.engine.adt.tomexpression.types.Expression  tomMatch74_67= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getExpr() ;
+if ( (tomMatch74_66 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+if ( (tomMatch74_67 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
+
+try {
+String moduleName = stack.peek();
+bp.getSymbolTable(moduleName).putIsEmptyList(
+ tomMatch74_66.getString() ,
+ tomMatch74_67.getCode() );
+} catch (EmptyStackException e) {
+System.out.println("No moduleName in stack");
+}
+
+
+}
+}
+}
+}
+
+}
+{
+if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {
+if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.MakeEmptyList) ) {
+ tom.engine.adt.tomname.types.TomName  tomMatch74_74= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getAstName() ;
+ tom.engine.adt.tominstruction.types.Instruction  tomMatch74_75= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getInstr() ;
+if ( (tomMatch74_74 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+if ( (tomMatch74_75 instanceof tom.engine.adt.tominstruction.types.instruction.ExpressionToInstruction) ) {
+ tom.engine.adt.tomexpression.types.Expression  tomMatch74_79= tomMatch74_75.getExpr() ;
+if ( (tomMatch74_79 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
+
+try {
+String moduleName = stack.peek();
+bp.getSymbolTable(moduleName).putMakeEmptyList(
+ tomMatch74_74.getString() ,
+ tomMatch74_79.getCode() );
+} catch (EmptyStackException e) {
+System.out.println("No moduleName in stack");
+}
+
+
+}
+}
+}
+}
+}
+
+}
+{
+if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {
+if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.MakeAddList) ) {
+ tom.engine.adt.tomname.types.TomName  tomMatch74_84= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getAstName() ;
+ tom.engine.adt.tominstruction.types.Instruction  tomMatch74_85= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getInstr() ;
+if ( (tomMatch74_84 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+if ( (tomMatch74_85 instanceof tom.engine.adt.tominstruction.types.instruction.ExpressionToInstruction) ) {
+ tom.engine.adt.tomexpression.types.Expression  tomMatch74_89= tomMatch74_85.getExpr() ;
+if ( (tomMatch74_89 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
+
+try {
+String moduleName = stack.peek();
+bp.getSymbolTable(moduleName).putMakeAddList(
+ tomMatch74_84.getString() ,
+ tomMatch74_89.getCode() );
+} catch (EmptyStackException e) {
+System.out.println("No moduleName in stack");
+}
+
+
+}
+}
+}
+}
+}
+
+}
+{
+if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {
+if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.MakeEmptyArray) ) {
+ tom.engine.adt.tomname.types.TomName  tomMatch74_94= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getAstName() ;
+ tom.engine.adt.tominstruction.types.Instruction  tomMatch74_95= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getInstr() ;
+if ( (tomMatch74_94 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+if ( (tomMatch74_95 instanceof tom.engine.adt.tominstruction.types.instruction.ExpressionToInstruction) ) {
+ tom.engine.adt.tomexpression.types.Expression  tomMatch74_99= tomMatch74_95.getExpr() ;
+if ( (tomMatch74_99 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
+
+try {
+String moduleName = stack.peek();
+bp.getSymbolTable(moduleName).putMakeEmptyArray(
+ tomMatch74_94.getString() ,
+ tomMatch74_99.getCode() );
+} catch (EmptyStackException e) {
+System.out.println("No moduleName in stack");
+}
+
+
+}
+}
+}
+}
+}
+
+}
+{
+if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {
+if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.MakeAddArray) ) {
+ tom.engine.adt.tomname.types.TomName  tomMatch74_104= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getAstName() ;
+ tom.engine.adt.tominstruction.types.Instruction  tomMatch74_105= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getInstr() ;
+if ( (tomMatch74_104 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+if ( (tomMatch74_105 instanceof tom.engine.adt.tominstruction.types.instruction.ExpressionToInstruction) ) {
+ tom.engine.adt.tomexpression.types.Expression  tomMatch74_109= tomMatch74_105.getExpr() ;
+if ( (tomMatch74_109 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
+
+try {
+String moduleName = stack.peek();
+bp.getSymbolTable(moduleName).putMakeAddArray(
+ tomMatch74_104.getString() ,
+ tomMatch74_109.getCode() );
+} catch (EmptyStackException e) {
+System.out.println("No moduleName in stack");
+}
+
+
+}
+}
+}
+}
+}
+
+}
+{
+if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {
+if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.GetElementDecl) ) {
+ tom.engine.adt.tomname.types.TomName  tomMatch74_114= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getOpname() ;
+ tom.engine.adt.tomexpression.types.Expression  tomMatch74_115= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getExpr() ;
+if ( (tomMatch74_114 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+if ( (tomMatch74_115 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
+
+try {
+String moduleName = stack.peek();
+bp.getSymbolTable(moduleName).putGetElementArray(
+ tomMatch74_114.getString() ,
+ tomMatch74_115.getCode() );
+} catch (EmptyStackException e) {
+System.out.println("No moduleName in stack");
+}
+
+
+}
+}
+}
+}
+
+}
+{
+if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {
+if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.GetSizeDecl) ) {
+ tom.engine.adt.tomname.types.TomName  tomMatch74_122= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getOpname() ;
+ tom.engine.adt.tomexpression.types.Expression  tomMatch74_123= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getExpr() ;
+if ( (tomMatch74_122 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+if ( (tomMatch74_123 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
+
+try {
+String moduleName = stack.peek();
+bp.getSymbolTable(moduleName).putGetSizeArray(
+ tomMatch74_122.getString() ,
+ tomMatch74_123.getCode() );
+} catch (EmptyStackException e) {
+System.out.println("No moduleName in stack");
+}
+
+
+}
+}
+}
+}
+
+}
+{
+if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {
+boolean tomMatch74_134= false ;
+ tom.engine.adt.tomname.types.TomName  tomMatch74_130= null ;
+if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.SymbolDecl) ) {
+{
+tomMatch74_134= true ;
+tomMatch74_130= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getAstName() ;
+
+}
+} else {
+if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.ListSymbolDecl) ) {
+{
+tomMatch74_134= true ;
+tomMatch74_130= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getAstName() ;
+
+}
+} else {
+if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.ArraySymbolDecl) ) {
+{
+tomMatch74_134= true ;
+tomMatch74_130= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getAstName() ;
+
+}
+}
+}
+}
+if (tomMatch74_134) {
+if ( (tomMatch74_130 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+
+try {
+String moduleName = stack.peek();
+TomSymbol tomSymbol = TomBase.getSymbolFromName(
+ tomMatch74_130.getString() ,bp.getSymbolTable(moduleName));
+markStrategy.visitLight(tomSymbol);
+} catch (EmptyStackException e) {
+System.out.println("No moduleName in stack");
+}
+
+
+}
+}
+
+}
+
+}
+
+
+}
+return _visit_Declaration(tom__arg,introspector);
+
+}
+@SuppressWarnings("unchecked")
+public  tom.engine.adt.code.types.BQTerm  visit_BQTerm( tom.engine.adt.code.types.BQTerm  tom__arg, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+{
+{
+if ( (tom__arg instanceof tom.engine.adt.code.types.BQTerm) ) {
+boolean tomMatch75_5= false ;
+ tom.engine.adt.tomname.types.TomName  tomMatch75_1= null ;
+if ( ((( tom.engine.adt.code.types.BQTerm )tom__arg) instanceof tom.engine.adt.code.types.bqterm.BuildTerm) ) {
+{
+tomMatch75_5= true ;
+tomMatch75_1= (( tom.engine.adt.code.types.BQTerm )tom__arg).getAstName() ;
+
+}
+} else {
+if ( ((( tom.engine.adt.code.types.BQTerm )tom__arg) instanceof tom.engine.adt.code.types.bqterm.BuildEmptyArray) ) {
+{
+tomMatch75_5= true ;
+tomMatch75_1= (( tom.engine.adt.code.types.BQTerm )tom__arg).getAstName() ;
+
+}
+}
+}
+if (tomMatch75_5) {
+if ( (tomMatch75_1 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+
+try {
+/*System.out.println("build: " + `name);*/
+String moduleName = stack.peek();
+/*System.out.println("moduleName: " + moduleName);*/
+TomSymbol tomSymbol = TomBase.getSymbolFromName(
+ tomMatch75_1.getString() ,bp.getSymbolTable(moduleName)); 
+bp.setUsedSymbolConstructor(moduleName,tomSymbol,markStrategy);
+} catch (EmptyStackException e) {
+System.out.println("No moduleName in stack");
+}
+
+
+}
+}
+
+}
+
+}
+{
+if ( (tom__arg instanceof tom.engine.adt.code.types.BQTerm) ) {
+boolean tomMatch75_11= false ;
+ tom.engine.adt.tomname.types.TomName  tomMatch75_7= null ;
+if ( ((( tom.engine.adt.code.types.BQTerm )tom__arg) instanceof tom.engine.adt.code.types.bqterm.BuildConsList) ) {
+{
+tomMatch75_11= true ;
+tomMatch75_7= (( tom.engine.adt.code.types.BQTerm )tom__arg).getAstName() ;
+
+}
+} else {
+if ( ((( tom.engine.adt.code.types.BQTerm )tom__arg) instanceof tom.engine.adt.code.types.bqterm.BuildEmptyList) ) {
+{
+tomMatch75_11= true ;
+tomMatch75_7= (( tom.engine.adt.code.types.BQTerm )tom__arg).getAstName() ;
+
+}
+} else {
+if ( ((( tom.engine.adt.code.types.BQTerm )tom__arg) instanceof tom.engine.adt.code.types.bqterm.BuildAppendList) ) {
+{
+tomMatch75_11= true ;
+tomMatch75_7= (( tom.engine.adt.code.types.BQTerm )tom__arg).getAstName() ;
+
+}
+} else {
+if ( ((( tom.engine.adt.code.types.BQTerm )tom__arg) instanceof tom.engine.adt.code.types.bqterm.BuildConsArray) ) {
+{
+tomMatch75_11= true ;
+tomMatch75_7= (( tom.engine.adt.code.types.BQTerm )tom__arg).getAstName() ;
+
+}
+} else {
+if ( ((( tom.engine.adt.code.types.BQTerm )tom__arg) instanceof tom.engine.adt.code.types.bqterm.BuildAppendArray) ) {
+{
+tomMatch75_11= true ;
+tomMatch75_7= (( tom.engine.adt.code.types.BQTerm )tom__arg).getAstName() ;
+
+}
+}
+}
+}
+}
+}
+if (tomMatch75_11) {
+if ( (tomMatch75_7 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+
+try {
+/*System.out.println("build: " + `name);*/
+String moduleName = stack.peek();
+/*System.out.println("moduleName: " + moduleName);*/
+TomSymbol tomSymbol = TomBase.getSymbolFromName(
+ tomMatch75_7.getString() ,bp.getSymbolTable(moduleName)); 
+bp.setUsedSymbolConstructor(moduleName,tomSymbol,markStrategy);
+/* XXX: Also mark the destructors as used, since some generated
+* functions will use them */
+bp.setUsedSymbolDestructor(moduleName,tomSymbol,markStrategy);
+/*
+* resolve uses in the symbol declaration
+*/
+} catch (EmptyStackException e) {
+System.out.println("No moduleName in stack");
+}
+
+
+}
+}
+
+}
+
+}
+
+
+}
+return _visit_BQTerm(tom__arg,introspector);
+
+}
+@SuppressWarnings("unchecked")
+public  tom.engine.adt.tomterm.types.TomTerm  visit_TomTerm( tom.engine.adt.tomterm.types.TomTerm  tom__arg, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+{
+{
+if ( (tom__arg instanceof tom.engine.adt.tomterm.types.TomTerm) ) {
+boolean tomMatch76_3= false ;
+ tom.engine.adt.tomname.types.TomNameList  tomMatch76_1= null ;
+if ( ((( tom.engine.adt.tomterm.types.TomTerm )tom__arg) instanceof tom.engine.adt.tomterm.types.tomterm.TermAppl) ) {
+{
+tomMatch76_3= true ;
+tomMatch76_1= (( tom.engine.adt.tomterm.types.TomTerm )tom__arg).getNameList() ;
+
+}
+} else {
+if ( ((( tom.engine.adt.tomterm.types.TomTerm )tom__arg) instanceof tom.engine.adt.tomterm.types.tomterm.RecordAppl) ) {
+{
+tomMatch76_3= true ;
+tomMatch76_1= (( tom.engine.adt.tomterm.types.TomTerm )tom__arg).getNameList() ;
+
+}
+}
+}
+if (tomMatch76_3) {
+
+TomNameList l = 
+tomMatch76_1;
+/*System.out.println("dest " + `l);*/
+while(!l.isEmptyconcTomName()) {
+try {
+/*System.out.println("op: " + l.getHead());*/
+String moduleName = stack.peek();
+/*System.out.println("moduleName: " + moduleName);*/
+TomSymbol tomSymbol = TomBase.getSymbolFromName(l.getHeadconcTomName().getString(),bp.getSymbolTable(moduleName)); 
+/*System.out.println("mark: " + tomSymbol);*/
+/*
+* if it comes from java
+*/
+if (tomSymbol != null) { bp.setUsedSymbolDestructor(moduleName,tomSymbol,markStrategy);}
+} catch (EmptyStackException e) {
+System.out.println("No moduleName in stack");
+}
+l = l.getTailconcTomName();
+}
+/*
+* here we can fail because the subterms appear in isFsym tests
+* therefore, they are marked when traversing the compiledAutomata
+*/
+throw new tom.library.sl.VisitFailure();
+
+
+}
+
+}
+
+}
+
+}
+return _visit_TomTerm(tom__arg,introspector);
+
+}
+@SuppressWarnings("unchecked")
+public  tom.engine.adt.tomtype.types.TomType  visit_TomType( tom.engine.adt.tomtype.types.TomType  tom__arg, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+{
+{
+if ( (tom__arg instanceof tom.engine.adt.tomtype.types.TomType) ) {
+if ( ((( tom.engine.adt.tomtype.types.TomType )tom__arg) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {
+
+try {
+String moduleName = stack.peek();
+bp.setUsedType(moduleName,
+ (( tom.engine.adt.tomtype.types.TomType )tom__arg).getTomType() ,markStrategy);
+} catch (EmptyStackException e) {
+System.out.println("No moduleName in stack");
+}
+
+
+}
+}
+
+}
+
+}
+return _visit_TomType(tom__arg,introspector);
+
+}
+@SuppressWarnings("unchecked")
+public  tom.engine.adt.tomexpression.types.Expression  visit_Expression( tom.engine.adt.tomexpression.types.Expression  tom__arg, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+{
+{
+if ( (tom__arg instanceof tom.engine.adt.tomexpression.types.Expression) ) {
+boolean tomMatch78_5= false ;
+ tom.engine.adt.tomname.types.TomName  tomMatch78_1= null ;
+if ( ((( tom.engine.adt.tomexpression.types.Expression )tom__arg) instanceof tom.engine.adt.tomexpression.types.expression.IsEmptyList) ) {
+{
+tomMatch78_5= true ;
+tomMatch78_1= (( tom.engine.adt.tomexpression.types.Expression )tom__arg).getOpname() ;
+
+}
+} else {
+if ( ((( tom.engine.adt.tomexpression.types.Expression )tom__arg) instanceof tom.engine.adt.tomexpression.types.expression.IsEmptyArray) ) {
+{
+tomMatch78_5= true ;
+tomMatch78_1= (( tom.engine.adt.tomexpression.types.Expression )tom__arg).getOpname() ;
+
+}
+} else {
+if ( ((( tom.engine.adt.tomexpression.types.Expression )tom__arg) instanceof tom.engine.adt.tomexpression.types.expression.GetHead) ) {
+{
+tomMatch78_5= true ;
+tomMatch78_1= (( tom.engine.adt.tomexpression.types.Expression )tom__arg).getOpname() ;
+
+}
+} else {
+if ( ((( tom.engine.adt.tomexpression.types.Expression )tom__arg) instanceof tom.engine.adt.tomexpression.types.expression.GetTail) ) {
+{
+tomMatch78_5= true ;
+tomMatch78_1= (( tom.engine.adt.tomexpression.types.Expression )tom__arg).getOpname() ;
+
+}
+} else {
+if ( ((( tom.engine.adt.tomexpression.types.Expression )tom__arg) instanceof tom.engine.adt.tomexpression.types.expression.GetSize) ) {
+{
+tomMatch78_5= true ;
+tomMatch78_1= (( tom.engine.adt.tomexpression.types.Expression )tom__arg).getOpname() ;
+
+}
+} else {
+if ( ((( tom.engine.adt.tomexpression.types.Expression )tom__arg) instanceof tom.engine.adt.tomexpression.types.expression.GetElement) ) {
+{
+tomMatch78_5= true ;
+tomMatch78_1= (( tom.engine.adt.tomexpression.types.Expression )tom__arg).getOpname() ;
+
+}
+}
+}
+}
+}
+}
+}
+if (tomMatch78_5) {
+if ( (tomMatch78_1 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+
+try {
+/*System.out.println("list check: " + `name);*/
+String moduleName = stack.peek();
+/*System.out.println("moduleName: " + moduleName);*/
+TomSymbol tomSymbol = TomBase.getSymbolFromName(
+ tomMatch78_1.getString() ,bp.getSymbolTable(moduleName)); 
+bp.setUsedSymbolConstructor(moduleName,tomSymbol,markStrategy);
+} catch (EmptyStackException e) {
+System.out.println("No moduleName in stack");
+}
+
+
+}
+}
+
+}
+
+}
+{
+if ( (tom__arg instanceof tom.engine.adt.tomexpression.types.Expression) ) {
+if ( ((( tom.engine.adt.tomexpression.types.Expression )tom__arg) instanceof tom.engine.adt.tomexpression.types.expression.IsFsym) ) {
+ tom.engine.adt.tomname.types.TomName  tomMatch78_7= (( tom.engine.adt.tomexpression.types.Expression )tom__arg).getAstName() ;
+if ( (tomMatch78_7 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+
+try {
+/*System.out.println("list check: " + `name);*/
+String moduleName = stack.peek();
+/*System.out.println("moduleName: " + moduleName);*/
+TomSymbol tomSymbol = TomBase.getSymbolFromName(
+ tomMatch78_7.getString() ,bp.getSymbolTable(moduleName)); 
+bp.setUsedSymbolDestructor(moduleName,tomSymbol,markStrategy);
+} catch (EmptyStackException e) {
+System.out.println("No moduleName in stack");
+}
+
+
+}
+}
+}
+
+}
+
+
+}
+return _visit_Expression(tom__arg,introspector);
+
+}
+@SuppressWarnings("unchecked")
 public  tom.engine.adt.tominstruction.types.Instruction  visit_Instruction( tom.engine.adt.tominstruction.types.Instruction  tom__arg, tom.library.sl.Introspector introspector)
  throws tom.library.sl.VisitFailure {
 {
@@ -513,817 +1324,6 @@ throw new tom.library.sl.VisitFailure();
 
 }
 return _visit_Instruction(tom__arg,introspector);
-
-}
-@SuppressWarnings("unchecked")
-public  tom.engine.adt.tomexpression.types.Expression  visit_Expression( tom.engine.adt.tomexpression.types.Expression  tom__arg, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-{
-{
-if ( (tom__arg instanceof tom.engine.adt.tomexpression.types.Expression) ) {
-boolean tomMatch75_5= false ;
- tom.engine.adt.tomname.types.TomName  tomMatch75_1= null ;
-if ( ((( tom.engine.adt.tomexpression.types.Expression )tom__arg) instanceof tom.engine.adt.tomexpression.types.expression.IsEmptyList) ) {
-{
-tomMatch75_5= true ;
-tomMatch75_1= (( tom.engine.adt.tomexpression.types.Expression )tom__arg).getOpname() ;
-
-}
-} else {
-if ( ((( tom.engine.adt.tomexpression.types.Expression )tom__arg) instanceof tom.engine.adt.tomexpression.types.expression.IsEmptyArray) ) {
-{
-tomMatch75_5= true ;
-tomMatch75_1= (( tom.engine.adt.tomexpression.types.Expression )tom__arg).getOpname() ;
-
-}
-} else {
-if ( ((( tom.engine.adt.tomexpression.types.Expression )tom__arg) instanceof tom.engine.adt.tomexpression.types.expression.GetHead) ) {
-{
-tomMatch75_5= true ;
-tomMatch75_1= (( tom.engine.adt.tomexpression.types.Expression )tom__arg).getOpname() ;
-
-}
-} else {
-if ( ((( tom.engine.adt.tomexpression.types.Expression )tom__arg) instanceof tom.engine.adt.tomexpression.types.expression.GetTail) ) {
-{
-tomMatch75_5= true ;
-tomMatch75_1= (( tom.engine.adt.tomexpression.types.Expression )tom__arg).getOpname() ;
-
-}
-} else {
-if ( ((( tom.engine.adt.tomexpression.types.Expression )tom__arg) instanceof tom.engine.adt.tomexpression.types.expression.GetSize) ) {
-{
-tomMatch75_5= true ;
-tomMatch75_1= (( tom.engine.adt.tomexpression.types.Expression )tom__arg).getOpname() ;
-
-}
-} else {
-if ( ((( tom.engine.adt.tomexpression.types.Expression )tom__arg) instanceof tom.engine.adt.tomexpression.types.expression.GetElement) ) {
-{
-tomMatch75_5= true ;
-tomMatch75_1= (( tom.engine.adt.tomexpression.types.Expression )tom__arg).getOpname() ;
-
-}
-}
-}
-}
-}
-}
-}
-if (tomMatch75_5) {
-if ( (tomMatch75_1 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
-
-try {
-/*System.out.println("list check: " + `name);*/
-String moduleName = stack.peek();
-/*System.out.println("moduleName: " + moduleName);*/
-TomSymbol tomSymbol = TomBase.getSymbolFromName(
- tomMatch75_1.getString() ,bp.getSymbolTable(moduleName)); 
-bp.setUsedSymbolConstructor(moduleName,tomSymbol,markStrategy);
-} catch (EmptyStackException e) {
-System.out.println("No moduleName in stack");
-}
-
-
-}
-}
-
-}
-
-}
-{
-if ( (tom__arg instanceof tom.engine.adt.tomexpression.types.Expression) ) {
-if ( ((( tom.engine.adt.tomexpression.types.Expression )tom__arg) instanceof tom.engine.adt.tomexpression.types.expression.IsFsym) ) {
- tom.engine.adt.tomname.types.TomName  tomMatch75_7= (( tom.engine.adt.tomexpression.types.Expression )tom__arg).getAstName() ;
-if ( (tomMatch75_7 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
-
-try {
-/*System.out.println("list check: " + `name);*/
-String moduleName = stack.peek();
-/*System.out.println("moduleName: " + moduleName);*/
-TomSymbol tomSymbol = TomBase.getSymbolFromName(
- tomMatch75_7.getString() ,bp.getSymbolTable(moduleName)); 
-bp.setUsedSymbolDestructor(moduleName,tomSymbol,markStrategy);
-} catch (EmptyStackException e) {
-System.out.println("No moduleName in stack");
-}
-
-
-}
-}
-}
-
-}
-
-
-}
-return _visit_Expression(tom__arg,introspector);
-
-}
-@SuppressWarnings("unchecked")
-public  tom.engine.adt.tomtype.types.TomType  visit_TomType( tom.engine.adt.tomtype.types.TomType  tom__arg, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-{
-{
-if ( (tom__arg instanceof tom.engine.adt.tomtype.types.TomType) ) {
-if ( ((( tom.engine.adt.tomtype.types.TomType )tom__arg) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {
-
-try {
-String moduleName = stack.peek();
-bp.setUsedType(moduleName,
- (( tom.engine.adt.tomtype.types.TomType )tom__arg).getTomType() ,markStrategy);
-} catch (EmptyStackException e) {
-System.out.println("No moduleName in stack");
-}
-
-
-}
-}
-
-}
-
-}
-return _visit_TomType(tom__arg,introspector);
-
-}
-@SuppressWarnings("unchecked")
-public  tom.engine.adt.tomterm.types.TomTerm  visit_TomTerm( tom.engine.adt.tomterm.types.TomTerm  tom__arg, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-{
-{
-if ( (tom__arg instanceof tom.engine.adt.tomterm.types.TomTerm) ) {
-boolean tomMatch77_3= false ;
- tom.engine.adt.tomname.types.TomNameList  tomMatch77_1= null ;
-if ( ((( tom.engine.adt.tomterm.types.TomTerm )tom__arg) instanceof tom.engine.adt.tomterm.types.tomterm.TermAppl) ) {
-{
-tomMatch77_3= true ;
-tomMatch77_1= (( tom.engine.adt.tomterm.types.TomTerm )tom__arg).getNameList() ;
-
-}
-} else {
-if ( ((( tom.engine.adt.tomterm.types.TomTerm )tom__arg) instanceof tom.engine.adt.tomterm.types.tomterm.RecordAppl) ) {
-{
-tomMatch77_3= true ;
-tomMatch77_1= (( tom.engine.adt.tomterm.types.TomTerm )tom__arg).getNameList() ;
-
-}
-}
-}
-if (tomMatch77_3) {
-
-TomNameList l = 
-tomMatch77_1;
-/*System.out.println("dest " + `l);*/
-while(!l.isEmptyconcTomName()) {
-try {
-/*System.out.println("op: " + l.getHead());*/
-String moduleName = stack.peek();
-/*System.out.println("moduleName: " + moduleName);*/
-TomSymbol tomSymbol = TomBase.getSymbolFromName(l.getHeadconcTomName().getString(),bp.getSymbolTable(moduleName)); 
-/*System.out.println("mark: " + tomSymbol);*/
-/*
-* if it comes from java
-*/
-if (tomSymbol != null) { bp.setUsedSymbolDestructor(moduleName,tomSymbol,markStrategy);}
-} catch (EmptyStackException e) {
-System.out.println("No moduleName in stack");
-}
-l = l.getTailconcTomName();
-}
-/*
-* here we can fail because the subterms appear in isFsym tests
-* therefore, they are marked when traversing the compiledAutomata
-*/
-throw new tom.library.sl.VisitFailure();
-
-
-}
-
-}
-
-}
-
-}
-return _visit_TomTerm(tom__arg,introspector);
-
-}
-@SuppressWarnings("unchecked")
-public  tom.engine.adt.code.types.BQTerm  visit_BQTerm( tom.engine.adt.code.types.BQTerm  tom__arg, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-{
-{
-if ( (tom__arg instanceof tom.engine.adt.code.types.BQTerm) ) {
-boolean tomMatch78_5= false ;
- tom.engine.adt.tomname.types.TomName  tomMatch78_1= null ;
-if ( ((( tom.engine.adt.code.types.BQTerm )tom__arg) instanceof tom.engine.adt.code.types.bqterm.BuildTerm) ) {
-{
-tomMatch78_5= true ;
-tomMatch78_1= (( tom.engine.adt.code.types.BQTerm )tom__arg).getAstName() ;
-
-}
-} else {
-if ( ((( tom.engine.adt.code.types.BQTerm )tom__arg) instanceof tom.engine.adt.code.types.bqterm.BuildEmptyArray) ) {
-{
-tomMatch78_5= true ;
-tomMatch78_1= (( tom.engine.adt.code.types.BQTerm )tom__arg).getAstName() ;
-
-}
-}
-}
-if (tomMatch78_5) {
-if ( (tomMatch78_1 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
-
-try {
-/*System.out.println("build: " + `name);*/
-String moduleName = stack.peek();
-/*System.out.println("moduleName: " + moduleName);*/
-TomSymbol tomSymbol = TomBase.getSymbolFromName(
- tomMatch78_1.getString() ,bp.getSymbolTable(moduleName)); 
-bp.setUsedSymbolConstructor(moduleName,tomSymbol,markStrategy);
-} catch (EmptyStackException e) {
-System.out.println("No moduleName in stack");
-}
-
-
-}
-}
-
-}
-
-}
-{
-if ( (tom__arg instanceof tom.engine.adt.code.types.BQTerm) ) {
-boolean tomMatch78_11= false ;
- tom.engine.adt.tomname.types.TomName  tomMatch78_7= null ;
-if ( ((( tom.engine.adt.code.types.BQTerm )tom__arg) instanceof tom.engine.adt.code.types.bqterm.BuildConsList) ) {
-{
-tomMatch78_11= true ;
-tomMatch78_7= (( tom.engine.adt.code.types.BQTerm )tom__arg).getAstName() ;
-
-}
-} else {
-if ( ((( tom.engine.adt.code.types.BQTerm )tom__arg) instanceof tom.engine.adt.code.types.bqterm.BuildEmptyList) ) {
-{
-tomMatch78_11= true ;
-tomMatch78_7= (( tom.engine.adt.code.types.BQTerm )tom__arg).getAstName() ;
-
-}
-} else {
-if ( ((( tom.engine.adt.code.types.BQTerm )tom__arg) instanceof tom.engine.adt.code.types.bqterm.BuildAppendList) ) {
-{
-tomMatch78_11= true ;
-tomMatch78_7= (( tom.engine.adt.code.types.BQTerm )tom__arg).getAstName() ;
-
-}
-} else {
-if ( ((( tom.engine.adt.code.types.BQTerm )tom__arg) instanceof tom.engine.adt.code.types.bqterm.BuildConsArray) ) {
-{
-tomMatch78_11= true ;
-tomMatch78_7= (( tom.engine.adt.code.types.BQTerm )tom__arg).getAstName() ;
-
-}
-} else {
-if ( ((( tom.engine.adt.code.types.BQTerm )tom__arg) instanceof tom.engine.adt.code.types.bqterm.BuildAppendArray) ) {
-{
-tomMatch78_11= true ;
-tomMatch78_7= (( tom.engine.adt.code.types.BQTerm )tom__arg).getAstName() ;
-
-}
-}
-}
-}
-}
-}
-if (tomMatch78_11) {
-if ( (tomMatch78_7 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
-
-try {
-/*System.out.println("build: " + `name);*/
-String moduleName = stack.peek();
-/*System.out.println("moduleName: " + moduleName);*/
-TomSymbol tomSymbol = TomBase.getSymbolFromName(
- tomMatch78_7.getString() ,bp.getSymbolTable(moduleName)); 
-bp.setUsedSymbolConstructor(moduleName,tomSymbol,markStrategy);
-/* XXX: Also mark the destructors as used, since some generated
-* functions will use them */
-bp.setUsedSymbolDestructor(moduleName,tomSymbol,markStrategy);
-/*
-* resolve uses in the symbol declaration
-*/
-} catch (EmptyStackException e) {
-System.out.println("No moduleName in stack");
-}
-
-
-}
-}
-
-}
-
-}
-
-
-}
-return _visit_BQTerm(tom__arg,introspector);
-
-}
-@SuppressWarnings("unchecked")
-public  tom.engine.adt.tomdeclaration.types.Declaration  visit_Declaration( tom.engine.adt.tomdeclaration.types.Declaration  tom__arg, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-{
-{
-if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {
-if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.IsFsymDecl) ) {
- tom.engine.adt.tomname.types.TomName  tomMatch79_1= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getAstName() ;
- tom.engine.adt.tomexpression.types.Expression  tomMatch79_2= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getExpr() ;
-if ( (tomMatch79_1 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
-if ( (tomMatch79_2 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
-
-try {
-String moduleName = stack.peek();
-bp.getSymbolTable(moduleName).putIsFsym(
- tomMatch79_1.getString() ,
- tomMatch79_2.getCode() );
-} catch (EmptyStackException e) {
-System.out.println("No moduleName in stack");
-}
-
-
-}
-}
-}
-}
-
-}
-{
-if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {
-if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.IsSortDecl) ) {
- tom.engine.adt.code.types.BQTerm  tomMatch79_9= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getTermArg() ;
- tom.engine.adt.tomexpression.types.Expression  tomMatch79_10= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getExpr() ;
-if ( (tomMatch79_9 instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {
- tom.engine.adt.tomtype.types.TomType  tomMatch79_12= tomMatch79_9.getAstType() ;
-if ( (tomMatch79_12 instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {
-if ( (tomMatch79_10 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
-
-try {
-String moduleName = stack.peek();
-bp.getSymbolTable(moduleName).putIsSort(
- tomMatch79_12.getTomType() ,
- tomMatch79_10.getCode() );
-} catch (EmptyStackException e) {
-System.out.println("No moduleName in stack");
-}
-
-
-}
-}
-}
-}
-}
-
-}
-{
-if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {
-if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.EqualTermDecl) ) {
- tom.engine.adt.code.types.BQTerm  tomMatch79_20= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getTermArg1() ;
- tom.engine.adt.tomexpression.types.Expression  tomMatch79_21= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getExpr() ;
-if ( (tomMatch79_20 instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {
- tom.engine.adt.tomtype.types.TomType  tomMatch79_23= tomMatch79_20.getAstType() ;
-if ( (tomMatch79_23 instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {
-if ( (tomMatch79_21 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
-
-try {
-String moduleName = stack.peek();
-bp.getSymbolTable(moduleName).putEqualTerm(
- tomMatch79_23.getTomType() ,
- tomMatch79_21.getCode() );
-} catch (EmptyStackException e) {
-System.out.println("No moduleName in stack");
-}
-
-
-}
-}
-}
-}
-}
-
-}
-{
-if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {
-if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.GetSlotDecl) ) {
- tom.engine.adt.tomname.types.TomName  tomMatch79_31= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getAstName() ;
- tom.engine.adt.tomname.types.TomName  tomMatch79_32= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getSlotName() ;
- tom.engine.adt.tomexpression.types.Expression  tomMatch79_33= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getExpr() ;
-if ( (tomMatch79_31 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
-if ( (tomMatch79_32 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
-if ( (tomMatch79_33 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
-
-try {
-String moduleName = stack.peek();
-bp.getSymbolTable(moduleName).putGetSlot(
- tomMatch79_31.getString() ,
- tomMatch79_32.getString() ,
- tomMatch79_33.getCode() );
-} catch (EmptyStackException e) {
-System.out.println("No moduleName in stack");
-}
-
-
-}
-}
-}
-}
-}
-
-}
-{
-if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {
-if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.GetHeadDecl) ) {
- tom.engine.adt.tomname.types.TomName  tomMatch79_42= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getOpname() ;
- tom.engine.adt.tomexpression.types.Expression  tomMatch79_43= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getExpr() ;
-if ( (tomMatch79_42 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
-if ( (tomMatch79_43 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
-
-try {
-String moduleName = stack.peek();
-bp.getSymbolTable(moduleName).putGetHead(
- tomMatch79_42.getString() ,
- tomMatch79_43.getCode() );
-} catch (EmptyStackException e) {
-System.out.println("No moduleName in stack");
-}
-
-
-}
-}
-}
-}
-
-}
-{
-if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {
-if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.GetTailDecl) ) {
- tom.engine.adt.tomname.types.TomName  tomMatch79_50= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getOpname() ;
- tom.engine.adt.tomexpression.types.Expression  tomMatch79_51= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getExpr() ;
-if ( (tomMatch79_50 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
-if ( (tomMatch79_51 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
-
-try {
-String moduleName = stack.peek();
-bp.getSymbolTable(moduleName).putGetTail(
- tomMatch79_50.getString() ,
- tomMatch79_51.getCode() );
-} catch (EmptyStackException e) {
-System.out.println("No moduleName in stack");
-}
-
-
-}
-}
-}
-}
-
-}
-{
-if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {
-if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.MakeDecl) ) {
- tom.engine.adt.tomname.types.TomName  tomMatch79_58= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getAstName() ;
- tom.engine.adt.tominstruction.types.Instruction  tomMatch79_59= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getInstr() ;
-if ( (tomMatch79_58 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
-if ( (tomMatch79_59 instanceof tom.engine.adt.tominstruction.types.instruction.ExpressionToInstruction) ) {
- tom.engine.adt.tomexpression.types.Expression  tomMatch79_63= tomMatch79_59.getExpr() ;
-if ( (tomMatch79_63 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
-
-try {
-String moduleName = stack.peek();
-bp.getSymbolTable(moduleName).putMake(
- tomMatch79_58.getString() ,
- tomMatch79_63.getCode() );
-} catch (EmptyStackException e) {
-System.out.println("No moduleName in stack");
-}
-
-
-}
-}
-}
-}
-}
-
-}
-{
-if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {
-if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.IsEmptyDecl) ) {
- tom.engine.adt.tomname.types.TomName  tomMatch79_68= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getOpname() ;
- tom.engine.adt.tomexpression.types.Expression  tomMatch79_69= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getExpr() ;
-if ( (tomMatch79_68 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
-if ( (tomMatch79_69 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
-
-try {
-String moduleName = stack.peek();
-bp.getSymbolTable(moduleName).putIsEmptyList(
- tomMatch79_68.getString() ,
- tomMatch79_69.getCode() );
-} catch (EmptyStackException e) {
-System.out.println("No moduleName in stack");
-}
-
-
-}
-}
-}
-}
-
-}
-{
-if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {
-if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.MakeEmptyList) ) {
- tom.engine.adt.tomname.types.TomName  tomMatch79_76= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getAstName() ;
- tom.engine.adt.tominstruction.types.Instruction  tomMatch79_77= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getInstr() ;
-if ( (tomMatch79_76 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
-if ( (tomMatch79_77 instanceof tom.engine.adt.tominstruction.types.instruction.ExpressionToInstruction) ) {
- tom.engine.adt.tomexpression.types.Expression  tomMatch79_81= tomMatch79_77.getExpr() ;
-if ( (tomMatch79_81 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
-
-try {
-String moduleName = stack.peek();
-bp.getSymbolTable(moduleName).putMakeEmptyList(
- tomMatch79_76.getString() ,
- tomMatch79_81.getCode() );
-} catch (EmptyStackException e) {
-System.out.println("No moduleName in stack");
-}
-
-
-}
-}
-}
-}
-}
-
-}
-{
-if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {
-if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.MakeAddList) ) {
- tom.engine.adt.tomname.types.TomName  tomMatch79_86= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getAstName() ;
- tom.engine.adt.tominstruction.types.Instruction  tomMatch79_87= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getInstr() ;
-if ( (tomMatch79_86 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
-if ( (tomMatch79_87 instanceof tom.engine.adt.tominstruction.types.instruction.ExpressionToInstruction) ) {
- tom.engine.adt.tomexpression.types.Expression  tomMatch79_91= tomMatch79_87.getExpr() ;
-if ( (tomMatch79_91 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
-
-try {
-String moduleName = stack.peek();
-bp.getSymbolTable(moduleName).putMakeAddList(
- tomMatch79_86.getString() ,
- tomMatch79_91.getCode() );
-} catch (EmptyStackException e) {
-System.out.println("No moduleName in stack");
-}
-
-
-}
-}
-}
-}
-}
-
-}
-{
-if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {
-if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.MakeEmptyArray) ) {
- tom.engine.adt.tomname.types.TomName  tomMatch79_96= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getAstName() ;
- tom.engine.adt.tominstruction.types.Instruction  tomMatch79_97= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getInstr() ;
-if ( (tomMatch79_96 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
-if ( (tomMatch79_97 instanceof tom.engine.adt.tominstruction.types.instruction.ExpressionToInstruction) ) {
- tom.engine.adt.tomexpression.types.Expression  tomMatch79_101= tomMatch79_97.getExpr() ;
-if ( (tomMatch79_101 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
-
-try {
-String moduleName = stack.peek();
-bp.getSymbolTable(moduleName).putMakeEmptyArray(
- tomMatch79_96.getString() ,
- tomMatch79_101.getCode() );
-} catch (EmptyStackException e) {
-System.out.println("No moduleName in stack");
-}
-
-
-}
-}
-}
-}
-}
-
-}
-{
-if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {
-if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.MakeAddArray) ) {
- tom.engine.adt.tomname.types.TomName  tomMatch79_106= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getAstName() ;
- tom.engine.adt.tominstruction.types.Instruction  tomMatch79_107= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getInstr() ;
-if ( (tomMatch79_106 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
-if ( (tomMatch79_107 instanceof tom.engine.adt.tominstruction.types.instruction.ExpressionToInstruction) ) {
- tom.engine.adt.tomexpression.types.Expression  tomMatch79_111= tomMatch79_107.getExpr() ;
-if ( (tomMatch79_111 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
-
-try {
-String moduleName = stack.peek();
-bp.getSymbolTable(moduleName).putMakeAddArray(
- tomMatch79_106.getString() ,
- tomMatch79_111.getCode() );
-} catch (EmptyStackException e) {
-System.out.println("No moduleName in stack");
-}
-
-
-}
-}
-}
-}
-}
-
-}
-{
-if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {
-if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.GetElementDecl) ) {
- tom.engine.adt.tomname.types.TomName  tomMatch79_116= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getOpname() ;
- tom.engine.adt.tomexpression.types.Expression  tomMatch79_117= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getExpr() ;
-if ( (tomMatch79_116 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
-if ( (tomMatch79_117 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
-
-try {
-String moduleName = stack.peek();
-bp.getSymbolTable(moduleName).putGetElementArray(
- tomMatch79_116.getString() ,
- tomMatch79_117.getCode() );
-} catch (EmptyStackException e) {
-System.out.println("No moduleName in stack");
-}
-
-
-}
-}
-}
-}
-
-}
-{
-if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {
-if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.GetSizeDecl) ) {
- tom.engine.adt.tomname.types.TomName  tomMatch79_124= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getOpname() ;
- tom.engine.adt.tomexpression.types.Expression  tomMatch79_125= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getExpr() ;
-if ( (tomMatch79_124 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
-if ( (tomMatch79_125 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
-
-try {
-String moduleName = stack.peek();
-bp.getSymbolTable(moduleName).putGetSizeArray(
- tomMatch79_124.getString() ,
- tomMatch79_125.getCode() );
-} catch (EmptyStackException e) {
-System.out.println("No moduleName in stack");
-}
-
-
-}
-}
-}
-}
-
-}
-{
-if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {
-boolean tomMatch79_136= false ;
- tom.engine.adt.tomname.types.TomName  tomMatch79_132= null ;
-if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.SymbolDecl) ) {
-{
-tomMatch79_136= true ;
-tomMatch79_132= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getAstName() ;
-
-}
-} else {
-if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.ListSymbolDecl) ) {
-{
-tomMatch79_136= true ;
-tomMatch79_132= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getAstName() ;
-
-}
-} else {
-if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.ArraySymbolDecl) ) {
-{
-tomMatch79_136= true ;
-tomMatch79_132= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getAstName() ;
-
-}
-}
-}
-}
-if (tomMatch79_136) {
-if ( (tomMatch79_132 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
-
-try {
-String moduleName = stack.peek();
-TomSymbol tomSymbol = TomBase.getSymbolFromName(
- tomMatch79_132.getString() ,bp.getSymbolTable(moduleName));
-markStrategy.visitLight(tomSymbol);
-} catch (EmptyStackException e) {
-System.out.println("No moduleName in stack");
-}
-
-
-}
-}
-
-}
-
-}
-
-
-}
-return _visit_Declaration(tom__arg,introspector);
-
-}
-@SuppressWarnings("unchecked")
-public  tom.engine.adt.tominstruction.types.Instruction  _visit_Instruction( tom.engine.adt.tominstruction.types.Instruction  arg, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if (!(( null  == environment))) {
-return (( tom.engine.adt.tominstruction.types.Instruction )any.visit(environment,introspector));
-} else {
-return any.visitLight(arg,introspector);
-}
-}
-@SuppressWarnings("unchecked")
-public  tom.engine.adt.tomdeclaration.types.Declaration  _visit_Declaration( tom.engine.adt.tomdeclaration.types.Declaration  arg, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if (!(( null  == environment))) {
-return (( tom.engine.adt.tomdeclaration.types.Declaration )any.visit(environment,introspector));
-} else {
-return any.visitLight(arg,introspector);
-}
-}
-@SuppressWarnings("unchecked")
-public  tom.engine.adt.tomexpression.types.Expression  _visit_Expression( tom.engine.adt.tomexpression.types.Expression  arg, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if (!(( null  == environment))) {
-return (( tom.engine.adt.tomexpression.types.Expression )any.visit(environment,introspector));
-} else {
-return any.visitLight(arg,introspector);
-}
-}
-@SuppressWarnings("unchecked")
-public  tom.engine.adt.code.types.BQTerm  _visit_BQTerm( tom.engine.adt.code.types.BQTerm  arg, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if (!(( null  == environment))) {
-return (( tom.engine.adt.code.types.BQTerm )any.visit(environment,introspector));
-} else {
-return any.visitLight(arg,introspector);
-}
-}
-@SuppressWarnings("unchecked")
-public  tom.engine.adt.tomtype.types.TomType  _visit_TomType( tom.engine.adt.tomtype.types.TomType  arg, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if (!(( null  == environment))) {
-return (( tom.engine.adt.tomtype.types.TomType )any.visit(environment,introspector));
-} else {
-return any.visitLight(arg,introspector);
-}
-}
-@SuppressWarnings("unchecked")
-public  tom.engine.adt.tomterm.types.TomTerm  _visit_TomTerm( tom.engine.adt.tomterm.types.TomTerm  arg, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if (!(( null  == environment))) {
-return (( tom.engine.adt.tomterm.types.TomTerm )any.visit(environment,introspector));
-} else {
-return any.visitLight(arg,introspector);
-}
-}
-@SuppressWarnings("unchecked")
-public <T> T visitLight(T v, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if ( (v instanceof tom.engine.adt.tominstruction.types.Instruction) ) {
-return ((T)visit_Instruction((( tom.engine.adt.tominstruction.types.Instruction )v),introspector));
-}
-if ( (v instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {
-return ((T)visit_Declaration((( tom.engine.adt.tomdeclaration.types.Declaration )v),introspector));
-}
-if ( (v instanceof tom.engine.adt.tomexpression.types.Expression) ) {
-return ((T)visit_Expression((( tom.engine.adt.tomexpression.types.Expression )v),introspector));
-}
-if ( (v instanceof tom.engine.adt.code.types.BQTerm) ) {
-return ((T)visit_BQTerm((( tom.engine.adt.code.types.BQTerm )v),introspector));
-}
-if ( (v instanceof tom.engine.adt.tomtype.types.TomType) ) {
-return ((T)visit_TomType((( tom.engine.adt.tomtype.types.TomType )v),introspector));
-}
-if ( (v instanceof tom.engine.adt.tomterm.types.TomTerm) ) {
-return ((T)visit_TomTerm((( tom.engine.adt.tomterm.types.TomTerm )v),introspector));
-}
-if (!(( null  == environment))) {
-return ((T)any.visit(environment,introspector));
-} else {
-return any.visitLight(v,introspector);
-}
 
 }
 }

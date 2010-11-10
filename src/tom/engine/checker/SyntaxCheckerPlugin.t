@@ -332,11 +332,11 @@ public class SyntaxCheckerPlugin extends TomGenericPlugin {
       }
     }
 
-    /*    visit TomTerm {
-          subject@BackQuoteAppl[] -> {
-          scp.verifyBackQuoteAppl(`subject);
-          }
-          }*/
+    visit BQTerm {
+      subject@BQAppl[] -> {
+        scp.verifyBQAppl(`subject);
+      }
+    }
   }
 
   // /////////////////////////////
@@ -590,7 +590,7 @@ matchblock:{
     // variable-parameter.
     int nbArgs = 0;
     ArrayList<String> listVar = new ArrayList<String>();
-    %match(BQTErmList argsList) {
+    %match(BQTermList argsList) {
       concBQTerm(_*, BQVariable[AstName=Name(name)] ,_*) -> { // for each Macro variable
         if(listVar.contains(`name)) {
           TomMessage.error(getLogger(),
@@ -668,10 +668,12 @@ matchLbl: %match(constr) {// TODO : add something to test the astType
               `TopDownCollect(CollectVariables(patternVars)).visitLight(`pattern);
               `TopDownCollect(CollectVariables(subjectVars)).visitLight(`subject);
               computeDependencies(varRelationsMap,patternVars,subjectVars);
+
+              //System.out.println("astType = " + `astType);
+
               if(`astType == SymbolTable.TYPE_UNKNOWN) {
                 typeMatch = getSubjectType(`subject,constraints);
                 if(typeMatch == null) {
-                  //System.out.println("astType = " + `astType);
                   %match(subject) {
                     BQVariable[AstName=Name(stringName)] -> {
                       TomMessage.error(getLogger(),
@@ -695,7 +697,14 @@ matchLbl: %match(constr) {// TODO : add something to test the astType
                   }
                   return;
                 }
-              }
+              } else if(!testTypeExistence(`astType.getTomType())) {
+                TomMessage.error(getLogger(),
+                    getCurrentTomStructureOrgTrack().getFileName(),
+                    getCurrentTomStructureOrgTrack().getLine(),
+                    TomMessage.unknownType,
+                    `astType.getTomType());
+                return;
+              } 
 
               // we now compare the pattern to its definition
               verifyMatchPattern(`pattern, typeMatch);
@@ -816,12 +825,16 @@ matchLbl: %match(constr) {// TODO : add something to test the astType
         // we collect the free vars only from match constraints
         // and we check these variables for numeric constraints also
         // ex: 'y << a() || x > 3' should generate an error 
+        Strategy collect = `Sequence(
+            TopDownCollect(CollectAliasVar(freeVarList2)),
+            TopDownCollect(CollectFreeVar(freeVarList2)));
+
         %match(Constraint x) {
           MatchConstraint(pattern,_,_) -> { 
-            `TopDownCollect(CollectFreeVar(freeVarList2)).visitLight(`pattern);
+            collect.visitLight(`pattern);
           }
           AndConstraint(_*,MatchConstraint(pattern,_,_),_*) -> { 
-            `TopDownCollect(CollectFreeVar(freeVarList2)).visitLight(`pattern);
+            collect.visitLight(`pattern);
           }
         }
         //System.out.println("freeVar1 = " + freeVarList1);
@@ -829,9 +842,9 @@ matchLbl: %match(constr) {// TODO : add something to test the astType
 
         if(!freeVarList1.isEmpty()) {
           for(TomTerm term:freeVarList2) {
-            if (!freeVarList1.contains(term)) {
+            if(!containsVariable(term,freeVarList1)) {
               if(containsVariable(term, action)) {              
-                String varName = (term instanceof Variable) ? ((Variable)term).getAstName().getString() : ((VariableStar)term).getAstName().getString();  
+                String varName = term.getAstName().getString();
                 TomMessage.error(getLogger(),
                     getCurrentTomStructureOrgTrack().getFileName(),
                     getCurrentTomStructureOrgTrack().getLine(),
@@ -842,9 +855,9 @@ matchLbl: %match(constr) {// TODO : add something to test the astType
             }
           }
           for(TomTerm term:freeVarList1) {
-            if (!freeVarList2.contains(term)) {
+            if(!containsVariable(term,freeVarList2)) {
               if(containsVariable(term, action))  {
-                String varName = (term instanceof Variable) ? ((Variable)term).getAstName().getString() : ((VariableStar)term).getAstName().getString();  
+                String varName = term.getAstName().getString();
                 TomMessage.error(getLogger(),
                     getCurrentTomStructureOrgTrack().getFileName(),
                     getCurrentTomStructureOrgTrack().getLine(),
@@ -860,6 +873,16 @@ matchLbl: %match(constr) {// TODO : add something to test the astType
       }
     }
     return true;
+  }
+
+  private boolean containsVariable(TomTerm var, List<TomTerm> list) {
+    for(TomTerm t:list) {
+      %match(var,t) {
+        Variable[AstName=name], Variable[AstName=name] -> { return true; }
+        VariableStar[AstName=name], VariableStar[AstName=name] -> { return true; }
+      }
+    }
+    return false;
   }
 
   private boolean containsVariable(TomTerm var, Instruction action) {
@@ -896,6 +919,21 @@ matchLbl: %match(constr) {// TODO : add something to test the astType
         throw new VisitFailure();// to stop the top-down
       }
       AntiTerm[] -> {        
+        throw new VisitFailure();// to stop the top-down
+      }
+    }
+  }
+
+  /**
+   * Collect the anoted variables in an constraint (should inspect under a anti)  
+   */
+  %strategy CollectAliasVar(varList:Collection) extends Identity() {     
+    visit Constraint {
+      AliasTo(v@(Variable|VariableStar)[]) -> {
+        TomTerm newvar = `v.setOptions(`concOption()); // to avoid problems related to line numbers
+        if(!varList.contains(newvar)) { 
+          varList.add(`v); 
+        }
         throw new VisitFailure();// to stop the top-down
       }
     }
@@ -1711,31 +1749,31 @@ whileBlock: {
    * @param subject the backquote term
    * 1. arity
    */
-  /*private void verifyBackQuoteAppl(TomTerm subject) throws VisitFailure {
-    %match(TomTerm subject) {
-    BackQuoteAppl[Options=options,AstName=Name(name),Args=args] -> {
-    int decLine = findOriginTrackingLine(`options);
-    String fileName = findOriginTrackingFileName(`options);
-    TomSymbol symbol = getSymbolFromName(`name);
-    if(symbol==null) {
-  // cannot repport an error because unknown funtion calls are allowed
-  TomMessage.error(getLogger(), fileName, decLine, TomMessage.unknownSymbol, `name);
-  } else {
-  //System.out.println("symbol = " + symbol);
-  // check the arity (for syntacti operators)
-  if(!TomBase.isArrayOperator(`symbol) && !TomBase.isListOperator(`symbol)) {
-  TomTypeList types = symbol.getTypesToType().getDomain();
-  int nbExpectedArgs = types.length();
-  int nbArgs = `args.length();
-  if(nbArgs != nbExpectedArgs) {
-  TomMessage.error(getLogger(), fileName, decLine,
-  TomMessage.symbolNumberArgument,
-  `name, Integer.valueOf(nbExpectedArgs), Integer.valueOf(nbArgs));
+  private void verifyBQAppl(BQTerm subject) throws VisitFailure {
+    %match(subject) {
+      BQAppl[Options=options,AstName=Name(name),Args=args] -> {
+        int decLine = findOriginTrackingLine(`options);
+        String fileName = findOriginTrackingFileName(`options);
+        TomSymbol symbol = getSymbolFromName(`name);
+        if(symbol==null) {
+          // cannot report an error because unknown funtion calls are allowed
+          //TomMessage.error(getLogger(), fileName, decLine, TomMessage.unknownSymbol, `name);
+        } else {
+          //System.out.println("symbol = " + symbol);
+          // check the arity (for syntacti operators)
+          if(!TomBase.isArrayOperator(`symbol) && !TomBase.isListOperator(`symbol)) {
+            TomTypeList types = symbol.getTypesToType().getDomain();
+            int nbExpectedArgs = types.length();
+            int nbArgs = `args.length();
+            if(nbArgs != nbExpectedArgs) {
+              TomMessage.error(getLogger(), fileName, decLine,
+                  TomMessage.symbolNumberArgument,
+                  `name, nbExpectedArgs, nbArgs);
+            }
+          }
+        }
+      }
+    }
   }
-  }
-  }
-  }
-  }
-  }*/
 
 } //class

@@ -150,12 +150,16 @@ tryAgain:
 						mOPERATORARRAY(true);
 						theRetToken=_returnToken;
 					}
+					else if ((LA(1)=='%') && (LA(2)=='s') && (LA(3)=='t')) {
+						mSTRATEGY(true);
+						theRetToken=_returnToken;
+					}
 					else if ((LA(1)=='%') && (LA(2)=='o') && (LA(3)=='p') && (true)) {
 						mOPERATOR(true);
 						theRetToken=_returnToken;
 					}
-					else if ((LA(1)=='%') && (LA(2)=='s')) {
-						mSTRATEGY(true);
+					else if ((LA(1)=='%') && (LA(2)=='s') && (LA(3)=='u')) {
+						mSUBTYPE(true);
 						theRetToken=_returnToken;
 					}
 					else if ((LA(1)=='%') && (LA(2)=='m')) {
@@ -281,6 +285,20 @@ tryAgain:
 		_returnToken = _token;
 	}
 	
+	public final void mSUBTYPE(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
+		int _ttype; Token _token=null; int _begin=text.length();
+		_ttype = SUBTYPE;
+		int _saveIndex;
+		
+		match("%subtype");
+		selector().push("tomlexer");
+		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
+			_token = makeToken(_ttype);
+			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));
+		}
+		_returnToken = _token;
+	}
+	
 	public final void mTYPETERM(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
 		int _ttype; Token _token=null; int _begin=text.length();
 		_ttype = TYPETERM;
@@ -301,7 +319,6 @@ tryAgain:
 		int _saveIndex;
 		
 		match("%oplist");
-		
 		selector().push("tomlexer");
 		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
 			_token = makeToken(_ttype);
@@ -348,10 +365,10 @@ tryAgain:
 			{
 			match('(');
 			{
-			_loop32:
+			_loop34:
 			do {
 				// nongreedy exit test
-				if ((LA(1)==')') && (true)) break _loop32;
+				if ((LA(1)==')') && (true)) break _loop34;
 				if ((LA(1)=='\r') && (LA(2)=='\n') && ((LA(3) >= '\u0000' && LA(3) <= '\uffff')) && (true) && (true) && (true)) {
 					match('\r');
 					match('\n');
@@ -371,7 +388,7 @@ tryAgain:
 					newline();
 				}
 				else {
-					break _loop32;
+					break _loop34;
 				}
 				
 			} while (true);
@@ -429,7 +446,7 @@ tryAgain:
 		
 		match('"');
 		{
-		_loop38:
+		_loop40:
 		do {
 			if ((LA(1)=='\\')) {
 				mESC(false);
@@ -440,7 +457,7 @@ tryAgain:
 				}
 			}
 			else {
-				break _loop38;
+				break _loop40;
 			}
 			
 		} while (true);
@@ -507,17 +524,17 @@ tryAgain:
 		case 'u':
 		{
 			{
-			int _cnt42=0;
-			_loop42:
+			int _cnt44=0;
+			_loop44:
 			do {
 				if ((LA(1)=='u')) {
 					match('u');
 				}
 				else {
-					if ( _cnt42>=1 ) { break _loop42; } else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
+					if ( _cnt44>=1 ) { break _loop44; } else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
 				}
 				
-				_cnt42++;
+				_cnt44++;
 			} while (true);
 			}
 			mHEX_DIGIT(false);
@@ -712,7 +729,7 @@ tryAgain:
 		
 		match("//");
 		{
-		_loop56:
+		_loop58:
 		do {
 			if ((_tokenSet_0.member(LA(1)))) {
 				{
@@ -720,7 +737,7 @@ tryAgain:
 				}
 			}
 			else {
-				break _loop56;
+				break _loop58;
 			}
 			
 		} while (true);
@@ -772,10 +789,10 @@ tryAgain:
 		
 		}
 		{
-		_loop62:
+		_loop64:
 		do {
 			// nongreedy exit test
-			if ((LA(1)=='*') && (LA(2)=='/') && (true)) break _loop62;
+			if ((LA(1)=='*') && (LA(2)=='/') && (true)) break _loop64;
 			if ((LA(1)=='\r') && (LA(2)=='\n') && ((LA(3) >= '\u0000' && LA(3) <= '\uffff')) && ((LA(4) >= '\u0000' && LA(4) <= '\uffff')) && (true) && (true)) {
 				match('\r');
 				match('\n');
@@ -796,7 +813,7 @@ tryAgain:
 				newline();if(LA(1)==EOF_CHAR) throw new TokenStreamException("premature EOF");
 			}
 			else {
-				break _loop62;
+				break _loop64;
 			}
 			
 		} while (true);
@@ -833,10 +850,10 @@ tryAgain:
 		
 		}
 		{
-		_loop67:
+		_loop69:
 		do {
 			// nongreedy exit test
-			if ((LA(1)==']') && (LA(2)=='%') && (true)) break _loop67;
+			if ((LA(1)==']') && (LA(2)=='%') && (true)) break _loop69;
 			if ((LA(1)=='\r') && (LA(2)=='\n') && ((LA(3) >= '\u0000' && LA(3) <= '\uffff')) && ((LA(4) >= '\u0000' && LA(4) <= '\uffff')) && (true) && (true)) {
 				match('\r');
 				match('\n');
@@ -856,7 +873,7 @@ tryAgain:
 				newline();
 			}
 			else {
-				break _loop67;
+				break _loop69;
 			}
 			
 		} while (true);

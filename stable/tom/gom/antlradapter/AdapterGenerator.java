@@ -313,9 +313,9 @@ String opkey = entry.getValue().toString();
 {
 if ( (opDecl instanceof tom.gom.adt.gom.types.OperatorDecl) ) {
 if ( ((( tom.gom.adt.gom.types.OperatorDecl )opDecl) instanceof tom.gom.adt.gom.types.operatordecl.OperatorDecl) ) {
- tom.gom.adt.gom.types.TypedProduction  tomMatch388_1= (( tom.gom.adt.gom.types.OperatorDecl )opDecl).getProd() ;
-if ( (tomMatch388_1 instanceof tom.gom.adt.gom.types.typedproduction.Variadic) ) {
- tom.gom.adt.gom.types.SortDecl  tom_domainSort= tomMatch388_1.getSort() ;
+ tom.gom.adt.gom.types.TypedProduction  tomMatch397_1= (( tom.gom.adt.gom.types.OperatorDecl )opDecl).getProd() ;
+if ( (tomMatch397_1 instanceof tom.gom.adt.gom.types.typedproduction.Variadic) ) {
+ tom.gom.adt.gom.types.SortDecl  tom_domainSort= tomMatch397_1.getSort() ;
  tom.gom.adt.gom.types.OperatorDecl  tom_op=(( tom.gom.adt.gom.types.OperatorDecl )opDecl);
 
 Code cast = genGetTerm(
@@ -336,15 +336,15 @@ CodeGen.generateCode(code,writer);
 {
 if ( (opDecl instanceof tom.gom.adt.gom.types.OperatorDecl) ) {
 if ( ((( tom.gom.adt.gom.types.OperatorDecl )opDecl) instanceof tom.gom.adt.gom.types.operatordecl.OperatorDecl) ) {
- tom.gom.adt.gom.types.TypedProduction  tomMatch388_6= (( tom.gom.adt.gom.types.OperatorDecl )opDecl).getProd() ;
- tom.gom.adt.gom.types.TypedProduction  tom_prod=tomMatch388_6;
-boolean tomMatch388_10= false ;
-if ( (tomMatch388_6 instanceof tom.gom.adt.gom.types.typedproduction.Variadic) ) {
-if ( (tom_prod==tomMatch388_6) ) {
-tomMatch388_10= true ;
+ tom.gom.adt.gom.types.TypedProduction  tomMatch397_6= (( tom.gom.adt.gom.types.OperatorDecl )opDecl).getProd() ;
+ tom.gom.adt.gom.types.TypedProduction  tom_prod=tomMatch397_6;
+boolean tomMatch397_10= false ;
+if ( (tomMatch397_6 instanceof tom.gom.adt.gom.types.typedproduction.Variadic) ) {
+if ( (tom_prod==tomMatch397_6) ) {
+tomMatch397_10= true ;
 }
 }
-if (!(tomMatch388_10)) {
+if (!(tomMatch397_10)) {
 
 Code code =
 
@@ -477,6 +477,28 @@ default: throw new IndexOutOfBoundsException();
 }
 }
 @SuppressWarnings("unchecked")
+public <T> T visitLight(T v, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if ( (v instanceof tom.gom.adt.gom.types.OperatorDecl) ) {
+return ((T)visit_OperatorDecl((( tom.gom.adt.gom.types.OperatorDecl )v),introspector));
+}
+if (!(  null ==environment )) {
+return ((T)any.visit(environment,introspector));
+} else {
+return any.visitLight(v,introspector);
+}
+
+}
+@SuppressWarnings("unchecked")
+public  tom.gom.adt.gom.types.OperatorDecl  _visit_OperatorDecl( tom.gom.adt.gom.types.OperatorDecl  arg, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if (!(  null ==environment )) {
+return (( tom.gom.adt.gom.types.OperatorDecl )any.visit(environment,introspector));
+} else {
+return any.visitLight(arg,introspector);
+}
+}
+@SuppressWarnings("unchecked")
 public  tom.gom.adt.gom.types.OperatorDecl  visit_OperatorDecl( tom.gom.adt.gom.types.OperatorDecl  tom__arg, tom.library.sl.Introspector introspector)
  throws tom.library.sl.VisitFailure {
 {
@@ -496,28 +518,6 @@ intref.intValue++;
 
 }
 return _visit_OperatorDecl(tom__arg,introspector);
-
-}
-@SuppressWarnings("unchecked")
-public  tom.gom.adt.gom.types.OperatorDecl  _visit_OperatorDecl( tom.gom.adt.gom.types.OperatorDecl  arg, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if (!(  null ==environment )) {
-return (( tom.gom.adt.gom.types.OperatorDecl )any.visit(environment,introspector));
-} else {
-return any.visitLight(arg,introspector);
-}
-}
-@SuppressWarnings("unchecked")
-public <T> T visitLight(T v, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if ( (v instanceof tom.gom.adt.gom.types.OperatorDecl) ) {
-return ((T)visit_OperatorDecl((( tom.gom.adt.gom.types.OperatorDecl )v),introspector));
-}
-if (!(  null ==environment )) {
-return ((T)any.visit(environment,introspector));
-} else {
-return any.visitLight(v,introspector);
-}
 
 }
 }

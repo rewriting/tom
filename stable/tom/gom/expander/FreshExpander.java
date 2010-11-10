@@ -891,6 +891,28 @@ default: throw new IndexOutOfBoundsException();
 }
 }
 @SuppressWarnings("unchecked")
+public <T> T visitLight(T v, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if ( (v instanceof tom.gom.adt.gom.types.ProductionList) ) {
+return ((T)visit_ProductionList((( tom.gom.adt.gom.types.ProductionList )v),introspector));
+}
+if (!(  null ==environment )) {
+return ((T)any.visit(environment,introspector));
+} else {
+return any.visitLight(v,introspector);
+}
+
+}
+@SuppressWarnings("unchecked")
+public  tom.gom.adt.gom.types.ProductionList  _visit_ProductionList( tom.gom.adt.gom.types.ProductionList  arg, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if (!(  null ==environment )) {
+return (( tom.gom.adt.gom.types.ProductionList )any.visit(environment,introspector));
+} else {
+return any.visitLight(arg,introspector);
+}
+}
+@SuppressWarnings("unchecked")
 public  tom.gom.adt.gom.types.ProductionList  visit_ProductionList( tom.gom.adt.gom.types.ProductionList  tom__arg, tom.library.sl.Introspector introspector)
  throws tom.library.sl.VisitFailure {
 {
@@ -898,13 +920,13 @@ public  tom.gom.adt.gom.types.ProductionList  visit_ProductionList( tom.gom.adt.
 if ( (tom__arg instanceof tom.gom.adt.gom.types.ProductionList) ) {
 if ( (((( tom.gom.adt.gom.types.ProductionList )tom__arg) instanceof tom.gom.adt.gom.types.productionlist.ConsConcProduction) || ((( tom.gom.adt.gom.types.ProductionList )tom__arg) instanceof tom.gom.adt.gom.types.productionlist.EmptyConcProduction)) ) {
 if (!( (( tom.gom.adt.gom.types.ProductionList )tom__arg).isEmptyConcProduction() )) {
- tom.gom.adt.gom.types.Production  tomMatch492_5= (( tom.gom.adt.gom.types.ProductionList )tom__arg).getHeadConcProduction() ;
-if ( (tomMatch492_5 instanceof tom.gom.adt.gom.types.production.SortType) ) {
- tom.gom.adt.gom.types.GomType  tomMatch492_4= tomMatch492_5.getType() ;
-if ( (tomMatch492_4 instanceof tom.gom.adt.gom.types.gomtype.GomType) ) {
+ tom.gom.adt.gom.types.Production  tomMatch501_5= (( tom.gom.adt.gom.types.ProductionList )tom__arg).getHeadConcProduction() ;
+if ( (tomMatch501_5 instanceof tom.gom.adt.gom.types.production.SortType) ) {
+ tom.gom.adt.gom.types.GomType  tomMatch501_4= tomMatch501_5.getType() ;
+if ( (tomMatch501_4 instanceof tom.gom.adt.gom.types.gomtype.GomType) ) {
 
 if(
- tomMatch492_4.getName() .equals(sort)) {
+ tomMatch501_4.getName() .equals(sort)) {
 return 
  tom.gom.adt.gom.types.productionlist.ConsConcProduction.make( (( tom.gom.adt.gom.types.ProductionList )tom__arg).getHeadConcProduction() , tom.gom.adt.gom.types.productionlist.ConsConcProduction.make(hook,tom_append_list_ConcProduction( (( tom.gom.adt.gom.types.ProductionList )tom__arg).getTailConcProduction() , tom.gom.adt.gom.types.productionlist.EmptyConcProduction.make() )) ) ;
 }
@@ -920,28 +942,6 @@ return
 
 }
 return _visit_ProductionList(tom__arg,introspector);
-
-}
-@SuppressWarnings("unchecked")
-public  tom.gom.adt.gom.types.ProductionList  _visit_ProductionList( tom.gom.adt.gom.types.ProductionList  arg, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if (!(  null ==environment )) {
-return (( tom.gom.adt.gom.types.ProductionList )any.visit(environment,introspector));
-} else {
-return any.visitLight(arg,introspector);
-}
-}
-@SuppressWarnings("unchecked")
-public <T> T visitLight(T v, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if ( (v instanceof tom.gom.adt.gom.types.ProductionList) ) {
-return ((T)visit_ProductionList((( tom.gom.adt.gom.types.ProductionList )v),introspector));
-}
-if (!(  null ==environment )) {
-return ((T)any.visit(environment,introspector));
-} else {
-return any.visitLight(v,introspector);
-}
 
 }
 }
@@ -1904,6 +1904,28 @@ default: throw new IndexOutOfBoundsException();
 }
 }
 @SuppressWarnings("unchecked")
+public <T> T visitLight(T v, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if ( (v instanceof tom.gom.adt.gom.types.Grammar) ) {
+return ((T)visit_Grammar((( tom.gom.adt.gom.types.Grammar )v),introspector));
+}
+if (!(  null ==environment )) {
+return ((T)any.visit(environment,introspector));
+} else {
+return any.visitLight(v,introspector);
+}
+
+}
+@SuppressWarnings("unchecked")
+public  tom.gom.adt.gom.types.Grammar  _visit_Grammar( tom.gom.adt.gom.types.Grammar  arg, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if (!(  null ==environment )) {
+return (( tom.gom.adt.gom.types.Grammar )any.visit(environment,introspector));
+} else {
+return any.visitLight(arg,introspector);
+}
+}
+@SuppressWarnings("unchecked")
 public  tom.gom.adt.gom.types.Grammar  visit_Grammar( tom.gom.adt.gom.types.Grammar  tom__arg, tom.library.sl.Introspector introspector)
  throws tom.library.sl.VisitFailure {
 {
@@ -1923,28 +1945,6 @@ return
 
 }
 return _visit_Grammar(tom__arg,introspector);
-
-}
-@SuppressWarnings("unchecked")
-public  tom.gom.adt.gom.types.Grammar  _visit_Grammar( tom.gom.adt.gom.types.Grammar  arg, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if (!(  null ==environment )) {
-return (( tom.gom.adt.gom.types.Grammar )any.visit(environment,introspector));
-} else {
-return any.visitLight(arg,introspector);
-}
-}
-@SuppressWarnings("unchecked")
-public <T> T visitLight(T v, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if ( (v instanceof tom.gom.adt.gom.types.Grammar) ) {
-return ((T)visit_Grammar((( tom.gom.adt.gom.types.Grammar )v),introspector));
-}
-if (!(  null ==environment )) {
-return ((T)any.visit(environment,introspector));
-} else {
-return any.visitLight(v,introspector);
-}
 
 }
 }
@@ -1975,9 +1975,9 @@ ProductionList nps = addRaw(st,
 {
 if ( (tom_p instanceof tom.gom.adt.gom.types.Production) ) {
 if ( ((( tom.gom.adt.gom.types.Production )tom_p) instanceof tom.gom.adt.gom.types.production.SortType) ) {
- tom.gom.adt.gom.types.GomType  tomMatch495_1= (( tom.gom.adt.gom.types.Production )tom_p).getType() ;
-if ( (tomMatch495_1 instanceof tom.gom.adt.gom.types.gomtype.GomType) ) {
- String  tom_n= tomMatch495_1.getName() ;
+ tom.gom.adt.gom.types.GomType  tomMatch504_1= (( tom.gom.adt.gom.types.Production )tom_p).getType() ;
+if ( (tomMatch504_1 instanceof tom.gom.adt.gom.types.gomtype.GomType) ) {
+ String  tom_n= tomMatch504_1.getName() ;
 
 if (st.isFreshType(
 tom_n) && !st.isAtomType(
@@ -2059,6 +2059,60 @@ default: throw new IndexOutOfBoundsException();
 }
 }
 @SuppressWarnings("unchecked")
+public <T> T visitLight(T v, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if ( (v instanceof tom.gom.adt.gom.types.Alternative) ) {
+return ((T)visit_Alternative((( tom.gom.adt.gom.types.Alternative )v),introspector));
+}
+if ( (v instanceof tom.gom.adt.gom.types.GomType) ) {
+return ((T)visit_GomType((( tom.gom.adt.gom.types.GomType )v),introspector));
+}
+if (!(  null ==environment )) {
+return ((T)any.visit(environment,introspector));
+} else {
+return any.visitLight(v,introspector);
+}
+
+}
+@SuppressWarnings("unchecked")
+public  tom.gom.adt.gom.types.GomType  _visit_GomType( tom.gom.adt.gom.types.GomType  arg, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if (!(  null ==environment )) {
+return (( tom.gom.adt.gom.types.GomType )any.visit(environment,introspector));
+} else {
+return any.visitLight(arg,introspector);
+}
+}
+@SuppressWarnings("unchecked")
+public  tom.gom.adt.gom.types.Alternative  _visit_Alternative( tom.gom.adt.gom.types.Alternative  arg, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if (!(  null ==environment )) {
+return (( tom.gom.adt.gom.types.Alternative )any.visit(environment,introspector));
+} else {
+return any.visitLight(arg,introspector);
+}
+}
+@SuppressWarnings("unchecked")
+public  tom.gom.adt.gom.types.Alternative  visit_Alternative( tom.gom.adt.gom.types.Alternative  tom__arg, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+{
+{
+if ( (tom__arg instanceof tom.gom.adt.gom.types.Alternative) ) {
+if ( ((( tom.gom.adt.gom.types.Alternative )tom__arg) instanceof tom.gom.adt.gom.types.alternative.Alternative) ) {
+return 
+(( tom.gom.adt.gom.types.Alternative )tom__arg).setName(st.rawCons(
+ (( tom.gom.adt.gom.types.Alternative )tom__arg).getName() )); 
+
+}
+}
+
+}
+
+}
+return _visit_Alternative(tom__arg,introspector);
+
+}
+@SuppressWarnings("unchecked")
 public  tom.gom.adt.gom.types.GomType  visit_GomType( tom.gom.adt.gom.types.GomType  tom__arg, tom.library.sl.Introspector introspector)
  throws tom.library.sl.VisitFailure {
 {
@@ -2084,60 +2138,6 @@ tom_n)); }
 
 }
 return _visit_GomType(tom__arg,introspector);
-
-}
-@SuppressWarnings("unchecked")
-public  tom.gom.adt.gom.types.Alternative  visit_Alternative( tom.gom.adt.gom.types.Alternative  tom__arg, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-{
-{
-if ( (tom__arg instanceof tom.gom.adt.gom.types.Alternative) ) {
-if ( ((( tom.gom.adt.gom.types.Alternative )tom__arg) instanceof tom.gom.adt.gom.types.alternative.Alternative) ) {
-return 
-(( tom.gom.adt.gom.types.Alternative )tom__arg).setName(st.rawCons(
- (( tom.gom.adt.gom.types.Alternative )tom__arg).getName() )); 
-
-}
-}
-
-}
-
-}
-return _visit_Alternative(tom__arg,introspector);
-
-}
-@SuppressWarnings("unchecked")
-public  tom.gom.adt.gom.types.GomType  _visit_GomType( tom.gom.adt.gom.types.GomType  arg, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if (!(  null ==environment )) {
-return (( tom.gom.adt.gom.types.GomType )any.visit(environment,introspector));
-} else {
-return any.visitLight(arg,introspector);
-}
-}
-@SuppressWarnings("unchecked")
-public  tom.gom.adt.gom.types.Alternative  _visit_Alternative( tom.gom.adt.gom.types.Alternative  arg, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if (!(  null ==environment )) {
-return (( tom.gom.adt.gom.types.Alternative )any.visit(environment,introspector));
-} else {
-return any.visitLight(arg,introspector);
-}
-}
-@SuppressWarnings("unchecked")
-public <T> T visitLight(T v, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if ( (v instanceof tom.gom.adt.gom.types.GomType) ) {
-return ((T)visit_GomType((( tom.gom.adt.gom.types.GomType )v),introspector));
-}
-if ( (v instanceof tom.gom.adt.gom.types.Alternative) ) {
-return ((T)visit_Alternative((( tom.gom.adt.gom.types.Alternative )v),introspector));
-}
-if (!(  null ==environment )) {
-return ((T)any.visit(environment,introspector));
-} else {
-return any.visitLight(v,introspector);
-}
 
 }
 }
@@ -2321,6 +2321,28 @@ default: throw new IndexOutOfBoundsException();
 }
 }
 @SuppressWarnings("unchecked")
+public <T> T visitLight(T v, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if ( (v instanceof tom.gom.adt.gom.types.Production) ) {
+return ((T)visit_Production((( tom.gom.adt.gom.types.Production )v),introspector));
+}
+if (!(  null ==environment )) {
+return ((T)any.visit(environment,introspector));
+} else {
+return any.visitLight(v,introspector);
+}
+
+}
+@SuppressWarnings("unchecked")
+public  tom.gom.adt.gom.types.Production  _visit_Production( tom.gom.adt.gom.types.Production  arg, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if (!(  null ==environment )) {
+return (( tom.gom.adt.gom.types.Production )any.visit(environment,introspector));
+} else {
+return any.visitLight(arg,introspector);
+}
+}
+@SuppressWarnings("unchecked")
 public  tom.gom.adt.gom.types.Production  visit_Production( tom.gom.adt.gom.types.Production  tom__arg, tom.library.sl.Introspector introspector)
  throws tom.library.sl.VisitFailure {
 {
@@ -2342,28 +2364,6 @@ return
 
 }
 return _visit_Production(tom__arg,introspector);
-
-}
-@SuppressWarnings("unchecked")
-public  tom.gom.adt.gom.types.Production  _visit_Production( tom.gom.adt.gom.types.Production  arg, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if (!(  null ==environment )) {
-return (( tom.gom.adt.gom.types.Production )any.visit(environment,introspector));
-} else {
-return any.visitLight(arg,introspector);
-}
-}
-@SuppressWarnings("unchecked")
-public <T> T visitLight(T v, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if ( (v instanceof tom.gom.adt.gom.types.Production) ) {
-return ((T)visit_Production((( tom.gom.adt.gom.types.Production )v),introspector));
-}
-if (!(  null ==environment )) {
-return ((T)any.visit(environment,introspector));
-} else {
-return any.visitLight(v,introspector);
-}
 
 }
 }
@@ -2408,6 +2408,28 @@ default: throw new IndexOutOfBoundsException();
 }
 }
 @SuppressWarnings("unchecked")
+public <T> T visitLight(T v, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if ( (v instanceof tom.gom.adt.gom.types.GomType) ) {
+return ((T)visit_GomType((( tom.gom.adt.gom.types.GomType )v),introspector));
+}
+if (!(  null ==environment )) {
+return ((T)any.visit(environment,introspector));
+} else {
+return any.visitLight(v,introspector);
+}
+
+}
+@SuppressWarnings("unchecked")
+public  tom.gom.adt.gom.types.GomType  _visit_GomType( tom.gom.adt.gom.types.GomType  arg, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if (!(  null ==environment )) {
+return (( tom.gom.adt.gom.types.GomType )any.visit(environment,introspector));
+} else {
+return any.visitLight(arg,introspector);
+}
+}
+@SuppressWarnings("unchecked")
 public  tom.gom.adt.gom.types.GomType  visit_GomType( tom.gom.adt.gom.types.GomType  tom__arg, tom.library.sl.Introspector introspector)
  throws tom.library.sl.VisitFailure {
 {
@@ -2430,28 +2452,6 @@ return
 
 }
 return _visit_GomType(tom__arg,introspector);
-
-}
-@SuppressWarnings("unchecked")
-public  tom.gom.adt.gom.types.GomType  _visit_GomType( tom.gom.adt.gom.types.GomType  arg, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if (!(  null ==environment )) {
-return (( tom.gom.adt.gom.types.GomType )any.visit(environment,introspector));
-} else {
-return any.visitLight(arg,introspector);
-}
-}
-@SuppressWarnings("unchecked")
-public <T> T visitLight(T v, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if ( (v instanceof tom.gom.adt.gom.types.GomType) ) {
-return ((T)visit_GomType((( tom.gom.adt.gom.types.GomType )v),introspector));
-}
-if (!(  null ==environment )) {
-return ((T)any.visit(environment,introspector));
-} else {
-return any.visitLight(v,introspector);
-}
 
 }
 }

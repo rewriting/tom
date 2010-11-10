@@ -427,17 +427,17 @@ this.sortname = sortname;
 {
 if ( (sdecl instanceof tom.gom.adt.gom.types.Decl) ) {
 if ( ((( tom.gom.adt.gom.types.Decl )sdecl) instanceof tom.gom.adt.gom.types.decl.CutSort) ) {
- tom.gom.adt.gom.types.SortDecl  tomMatch541_1= (( tom.gom.adt.gom.types.Decl )sdecl).getSort() ;
-if ( (tomMatch541_1 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) {
- tom.gom.adt.gom.types.ModuleDecl  tomMatch541_3= tomMatch541_1.getModuleDecl() ;
-if ( (tomMatch541_3 instanceof tom.gom.adt.gom.types.moduledecl.ModuleDecl) ) {
- tom.gom.adt.gom.types.GomModuleName  tomMatch541_5= tomMatch541_3.getModuleName() ;
-if ( (tomMatch541_5 instanceof tom.gom.adt.gom.types.gommodulename.GomModuleName) ) {
+ tom.gom.adt.gom.types.SortDecl  tomMatch550_1= (( tom.gom.adt.gom.types.Decl )sdecl).getSort() ;
+if ( (tomMatch550_1 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) {
+ tom.gom.adt.gom.types.ModuleDecl  tomMatch550_3= tomMatch550_1.getModuleDecl() ;
+if ( (tomMatch550_3 instanceof tom.gom.adt.gom.types.moduledecl.ModuleDecl) ) {
+ tom.gom.adt.gom.types.GomModuleName  tomMatch550_5= tomMatch550_3.getModuleName() ;
+if ( (tomMatch550_5 instanceof tom.gom.adt.gom.types.gommodulename.GomModuleName) ) {
 
 this.moduleName = 
- tomMatch541_5.getName() ;
+ tomMatch550_5.getName() ;
 this.pkgName = 
- tomMatch541_3.getPkg() ;
+ tomMatch550_3.getPkg() ;
 
 
 }
@@ -508,23 +508,23 @@ output.append(
 {
 if ( (moduleList instanceof tom.gom.adt.gom.types.ModuleList) ) {
 if ( (((( tom.gom.adt.gom.types.ModuleList )moduleList) instanceof tom.gom.adt.gom.types.modulelist.ConsConcModule) || ((( tom.gom.adt.gom.types.ModuleList )moduleList) instanceof tom.gom.adt.gom.types.modulelist.EmptyConcModule)) ) {
- tom.gom.adt.gom.types.ModuleList  tomMatch542__end__4=(( tom.gom.adt.gom.types.ModuleList )moduleList);
+ tom.gom.adt.gom.types.ModuleList  tomMatch551__end__4=(( tom.gom.adt.gom.types.ModuleList )moduleList);
 do {
 {
-if (!( tomMatch542__end__4.isEmptyConcModule() )) {
- tom.gom.adt.gom.types.Module  tomMatch542_8= tomMatch542__end__4.getHeadConcModule() ;
-if ( (tomMatch542_8 instanceof tom.gom.adt.gom.types.module.Module) ) {
- tom.gom.adt.gom.types.SortList  tomMatch542_7= tomMatch542_8.getSorts() ;
-if ( ((tomMatch542_7 instanceof tom.gom.adt.gom.types.sortlist.ConsConcSort) || (tomMatch542_7 instanceof tom.gom.adt.gom.types.sortlist.EmptyConcSort)) ) {
- tom.gom.adt.gom.types.SortList  tomMatch542__end__12=tomMatch542_7;
+if (!( tomMatch551__end__4.isEmptyConcModule() )) {
+ tom.gom.adt.gom.types.Module  tomMatch551_8= tomMatch551__end__4.getHeadConcModule() ;
+if ( (tomMatch551_8 instanceof tom.gom.adt.gom.types.module.Module) ) {
+ tom.gom.adt.gom.types.SortList  tomMatch551_7= tomMatch551_8.getSorts() ;
+if ( ((tomMatch551_7 instanceof tom.gom.adt.gom.types.sortlist.ConsConcSort) || (tomMatch551_7 instanceof tom.gom.adt.gom.types.sortlist.EmptyConcSort)) ) {
+ tom.gom.adt.gom.types.SortList  tomMatch551__end__12=tomMatch551_7;
 do {
 {
-if (!( tomMatch542__end__12.isEmptyConcSort() )) {
- tom.gom.adt.gom.types.Sort  tomMatch542_16= tomMatch542__end__12.getHeadConcSort() ;
-if ( (tomMatch542_16 instanceof tom.gom.adt.gom.types.sort.Sort) ) {
- tom.gom.adt.gom.types.SortDecl  tomMatch542_15= tomMatch542_16.getDecl() ;
-if ( (tomMatch542_15 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) {
- String  tom_name= tomMatch542_15.getName() ;
+if (!( tomMatch551__end__12.isEmptyConcSort() )) {
+ tom.gom.adt.gom.types.Sort  tomMatch551_16= tomMatch551__end__12.getHeadConcSort() ;
+if ( (tomMatch551_16 instanceof tom.gom.adt.gom.types.sort.Sort) ) {
+ tom.gom.adt.gom.types.SortDecl  tomMatch551_15= tomMatch551_16.getDecl() ;
+if ( (tomMatch551_15 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) {
+ String  tom_name= tomMatch551_15.getName() ;
 
 output.append(
 
@@ -540,25 +540,25 @@ tom_name+
 }
 }
 }
-if ( tomMatch542__end__12.isEmptyConcSort() ) {
-tomMatch542__end__12=tomMatch542_7;
+if ( tomMatch551__end__12.isEmptyConcSort() ) {
+tomMatch551__end__12=tomMatch551_7;
 } else {
-tomMatch542__end__12= tomMatch542__end__12.getTailConcSort() ;
+tomMatch551__end__12= tomMatch551__end__12.getTailConcSort() ;
 }
 
 }
-} while(!( (tomMatch542__end__12==tomMatch542_7) ));
+} while(!( (tomMatch551__end__12==tomMatch551_7) ));
 }
 }
 }
-if ( tomMatch542__end__4.isEmptyConcModule() ) {
-tomMatch542__end__4=(( tom.gom.adt.gom.types.ModuleList )moduleList);
+if ( tomMatch551__end__4.isEmptyConcModule() ) {
+tomMatch551__end__4=(( tom.gom.adt.gom.types.ModuleList )moduleList);
 } else {
-tomMatch542__end__4= tomMatch542__end__4.getTailConcModule() ;
+tomMatch551__end__4= tomMatch551__end__4.getTailConcModule() ;
 }
 
 }
-} while(!( (tomMatch542__end__4==(( tom.gom.adt.gom.types.ModuleList )moduleList)) ));
+} while(!( (tomMatch551__end__4==(( tom.gom.adt.gom.types.ModuleList )moduleList)) ));
 }
 }
 
@@ -576,23 +576,23 @@ output.append(
 {
 if ( (moduleList instanceof tom.gom.adt.gom.types.ModuleList) ) {
 if ( (((( tom.gom.adt.gom.types.ModuleList )moduleList) instanceof tom.gom.adt.gom.types.modulelist.ConsConcModule) || ((( tom.gom.adt.gom.types.ModuleList )moduleList) instanceof tom.gom.adt.gom.types.modulelist.EmptyConcModule)) ) {
- tom.gom.adt.gom.types.ModuleList  tomMatch543__end__4=(( tom.gom.adt.gom.types.ModuleList )moduleList);
+ tom.gom.adt.gom.types.ModuleList  tomMatch552__end__4=(( tom.gom.adt.gom.types.ModuleList )moduleList);
 do {
 {
-if (!( tomMatch543__end__4.isEmptyConcModule() )) {
- tom.gom.adt.gom.types.Module  tomMatch543_8= tomMatch543__end__4.getHeadConcModule() ;
-if ( (tomMatch543_8 instanceof tom.gom.adt.gom.types.module.Module) ) {
- tom.gom.adt.gom.types.SortList  tomMatch543_7= tomMatch543_8.getSorts() ;
-if ( ((tomMatch543_7 instanceof tom.gom.adt.gom.types.sortlist.ConsConcSort) || (tomMatch543_7 instanceof tom.gom.adt.gom.types.sortlist.EmptyConcSort)) ) {
- tom.gom.adt.gom.types.SortList  tomMatch543__end__12=tomMatch543_7;
+if (!( tomMatch552__end__4.isEmptyConcModule() )) {
+ tom.gom.adt.gom.types.Module  tomMatch552_8= tomMatch552__end__4.getHeadConcModule() ;
+if ( (tomMatch552_8 instanceof tom.gom.adt.gom.types.module.Module) ) {
+ tom.gom.adt.gom.types.SortList  tomMatch552_7= tomMatch552_8.getSorts() ;
+if ( ((tomMatch552_7 instanceof tom.gom.adt.gom.types.sortlist.ConsConcSort) || (tomMatch552_7 instanceof tom.gom.adt.gom.types.sortlist.EmptyConcSort)) ) {
+ tom.gom.adt.gom.types.SortList  tomMatch552__end__12=tomMatch552_7;
 do {
 {
-if (!( tomMatch543__end__12.isEmptyConcSort() )) {
- tom.gom.adt.gom.types.Sort  tomMatch543_16= tomMatch543__end__12.getHeadConcSort() ;
-if ( (tomMatch543_16 instanceof tom.gom.adt.gom.types.sort.Sort) ) {
- tom.gom.adt.gom.types.SortDecl  tomMatch543_15= tomMatch543_16.getDecl() ;
-if ( (tomMatch543_15 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) {
- String  tom_name= tomMatch543_15.getName() ;
+if (!( tomMatch552__end__12.isEmptyConcSort() )) {
+ tom.gom.adt.gom.types.Sort  tomMatch552_16= tomMatch552__end__12.getHeadConcSort() ;
+if ( (tomMatch552_16 instanceof tom.gom.adt.gom.types.sort.Sort) ) {
+ tom.gom.adt.gom.types.SortDecl  tomMatch552_15= tomMatch552_16.getDecl() ;
+if ( (tomMatch552_15 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) {
+ String  tom_name= tomMatch552_15.getName() ;
 
 output.append(
 
@@ -606,25 +606,25 @@ tom_name+
 }
 }
 }
-if ( tomMatch543__end__12.isEmptyConcSort() ) {
-tomMatch543__end__12=tomMatch543_7;
+if ( tomMatch552__end__12.isEmptyConcSort() ) {
+tomMatch552__end__12=tomMatch552_7;
 } else {
-tomMatch543__end__12= tomMatch543__end__12.getTailConcSort() ;
+tomMatch552__end__12= tomMatch552__end__12.getTailConcSort() ;
 }
 
 }
-} while(!( (tomMatch543__end__12==tomMatch543_7) ));
+} while(!( (tomMatch552__end__12==tomMatch552_7) ));
 }
 }
 }
-if ( tomMatch543__end__4.isEmptyConcModule() ) {
-tomMatch543__end__4=(( tom.gom.adt.gom.types.ModuleList )moduleList);
+if ( tomMatch552__end__4.isEmptyConcModule() ) {
+tomMatch552__end__4=(( tom.gom.adt.gom.types.ModuleList )moduleList);
 } else {
-tomMatch543__end__4= tomMatch543__end__4.getTailConcModule() ;
+tomMatch552__end__4= tomMatch552__end__4.getTailConcModule() ;
 }
 
 }
-} while(!( (tomMatch543__end__4==(( tom.gom.adt.gom.types.ModuleList )moduleList)) ));
+} while(!( (tomMatch552__end__4==(( tom.gom.adt.gom.types.ModuleList )moduleList)) ));
 }
 }
 
@@ -645,23 +645,23 @@ output.append(
 {
 if ( (moduleList instanceof tom.gom.adt.gom.types.ModuleList) ) {
 if ( (((( tom.gom.adt.gom.types.ModuleList )moduleList) instanceof tom.gom.adt.gom.types.modulelist.ConsConcModule) || ((( tom.gom.adt.gom.types.ModuleList )moduleList) instanceof tom.gom.adt.gom.types.modulelist.EmptyConcModule)) ) {
- tom.gom.adt.gom.types.ModuleList  tomMatch544__end__4=(( tom.gom.adt.gom.types.ModuleList )moduleList);
+ tom.gom.adt.gom.types.ModuleList  tomMatch553__end__4=(( tom.gom.adt.gom.types.ModuleList )moduleList);
 do {
 {
-if (!( tomMatch544__end__4.isEmptyConcModule() )) {
- tom.gom.adt.gom.types.Module  tomMatch544_8= tomMatch544__end__4.getHeadConcModule() ;
-if ( (tomMatch544_8 instanceof tom.gom.adt.gom.types.module.Module) ) {
- tom.gom.adt.gom.types.SortList  tomMatch544_7= tomMatch544_8.getSorts() ;
-if ( ((tomMatch544_7 instanceof tom.gom.adt.gom.types.sortlist.ConsConcSort) || (tomMatch544_7 instanceof tom.gom.adt.gom.types.sortlist.EmptyConcSort)) ) {
- tom.gom.adt.gom.types.SortList  tomMatch544__end__12=tomMatch544_7;
+if (!( tomMatch553__end__4.isEmptyConcModule() )) {
+ tom.gom.adt.gom.types.Module  tomMatch553_8= tomMatch553__end__4.getHeadConcModule() ;
+if ( (tomMatch553_8 instanceof tom.gom.adt.gom.types.module.Module) ) {
+ tom.gom.adt.gom.types.SortList  tomMatch553_7= tomMatch553_8.getSorts() ;
+if ( ((tomMatch553_7 instanceof tom.gom.adt.gom.types.sortlist.ConsConcSort) || (tomMatch553_7 instanceof tom.gom.adt.gom.types.sortlist.EmptyConcSort)) ) {
+ tom.gom.adt.gom.types.SortList  tomMatch553__end__12=tomMatch553_7;
 do {
 {
-if (!( tomMatch544__end__12.isEmptyConcSort() )) {
- tom.gom.adt.gom.types.Sort  tomMatch544_16= tomMatch544__end__12.getHeadConcSort() ;
-if ( (tomMatch544_16 instanceof tom.gom.adt.gom.types.sort.Sort) ) {
- tom.gom.adt.gom.types.SortDecl  tomMatch544_15= tomMatch544_16.getDecl() ;
-if ( (tomMatch544_15 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) {
- String  tom_name= tomMatch544_15.getName() ;
+if (!( tomMatch553__end__12.isEmptyConcSort() )) {
+ tom.gom.adt.gom.types.Sort  tomMatch553_16= tomMatch553__end__12.getHeadConcSort() ;
+if ( (tomMatch553_16 instanceof tom.gom.adt.gom.types.sort.Sort) ) {
+ tom.gom.adt.gom.types.SortDecl  tomMatch553_15= tomMatch553_16.getDecl() ;
+if ( (tomMatch553_15 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) {
+ String  tom_name= tomMatch553_15.getName() ;
 
 output.append(
 
@@ -683,25 +683,25 @@ tom_name+
 }
 }
 }
-if ( tomMatch544__end__12.isEmptyConcSort() ) {
-tomMatch544__end__12=tomMatch544_7;
+if ( tomMatch553__end__12.isEmptyConcSort() ) {
+tomMatch553__end__12=tomMatch553_7;
 } else {
-tomMatch544__end__12= tomMatch544__end__12.getTailConcSort() ;
+tomMatch553__end__12= tomMatch553__end__12.getTailConcSort() ;
 }
 
 }
-} while(!( (tomMatch544__end__12==tomMatch544_7) ));
+} while(!( (tomMatch553__end__12==tomMatch553_7) ));
 }
 }
 }
-if ( tomMatch544__end__4.isEmptyConcModule() ) {
-tomMatch544__end__4=(( tom.gom.adt.gom.types.ModuleList )moduleList);
+if ( tomMatch553__end__4.isEmptyConcModule() ) {
+tomMatch553__end__4=(( tom.gom.adt.gom.types.ModuleList )moduleList);
 } else {
-tomMatch544__end__4= tomMatch544__end__4.getTailConcModule() ;
+tomMatch553__end__4= tomMatch553__end__4.getTailConcModule() ;
 }
 
 }
-} while(!( (tomMatch544__end__4==(( tom.gom.adt.gom.types.ModuleList )moduleList)) ));
+} while(!( (tomMatch553__end__4==(( tom.gom.adt.gom.types.ModuleList )moduleList)) ));
 }
 }
 
@@ -722,27 +722,27 @@ String imports =
 {
 if ( (moduleList instanceof tom.gom.adt.gom.types.ModuleList) ) {
 if ( (((( tom.gom.adt.gom.types.ModuleList )moduleList) instanceof tom.gom.adt.gom.types.modulelist.ConsConcModule) || ((( tom.gom.adt.gom.types.ModuleList )moduleList) instanceof tom.gom.adt.gom.types.modulelist.EmptyConcModule)) ) {
- tom.gom.adt.gom.types.ModuleList  tomMatch545__end__4=(( tom.gom.adt.gom.types.ModuleList )moduleList);
+ tom.gom.adt.gom.types.ModuleList  tomMatch554__end__4=(( tom.gom.adt.gom.types.ModuleList )moduleList);
 do {
 {
-if (!( tomMatch545__end__4.isEmptyConcModule() )) {
- tom.gom.adt.gom.types.Module  tomMatch545_9= tomMatch545__end__4.getHeadConcModule() ;
-if ( (tomMatch545_9 instanceof tom.gom.adt.gom.types.module.Module) ) {
- tom.gom.adt.gom.types.ModuleDecl  tomMatch545_7= tomMatch545_9.getMDecl() ;
- tom.gom.adt.gom.types.SortList  tomMatch545_8= tomMatch545_9.getSorts() ;
-if ( (tomMatch545_7 instanceof tom.gom.adt.gom.types.moduledecl.ModuleDecl) ) {
-if ( ( tomMatch545_7.getModuleName()  instanceof tom.gom.adt.gom.types.gommodulename.GomModuleName) ) {
- String  tom_pkg= tomMatch545_7.getPkg() ;
-if ( ((tomMatch545_8 instanceof tom.gom.adt.gom.types.sortlist.ConsConcSort) || (tomMatch545_8 instanceof tom.gom.adt.gom.types.sortlist.EmptyConcSort)) ) {
- tom.gom.adt.gom.types.SortList  tomMatch545__end__18=tomMatch545_8;
+if (!( tomMatch554__end__4.isEmptyConcModule() )) {
+ tom.gom.adt.gom.types.Module  tomMatch554_9= tomMatch554__end__4.getHeadConcModule() ;
+if ( (tomMatch554_9 instanceof tom.gom.adt.gom.types.module.Module) ) {
+ tom.gom.adt.gom.types.ModuleDecl  tomMatch554_7= tomMatch554_9.getMDecl() ;
+ tom.gom.adt.gom.types.SortList  tomMatch554_8= tomMatch554_9.getSorts() ;
+if ( (tomMatch554_7 instanceof tom.gom.adt.gom.types.moduledecl.ModuleDecl) ) {
+if ( ( tomMatch554_7.getModuleName()  instanceof tom.gom.adt.gom.types.gommodulename.GomModuleName) ) {
+ String  tom_pkg= tomMatch554_7.getPkg() ;
+if ( ((tomMatch554_8 instanceof tom.gom.adt.gom.types.sortlist.ConsConcSort) || (tomMatch554_8 instanceof tom.gom.adt.gom.types.sortlist.EmptyConcSort)) ) {
+ tom.gom.adt.gom.types.SortList  tomMatch554__end__18=tomMatch554_8;
 do {
 {
-if (!( tomMatch545__end__18.isEmptyConcSort() )) {
- tom.gom.adt.gom.types.Sort  tomMatch545_22= tomMatch545__end__18.getHeadConcSort() ;
-if ( (tomMatch545_22 instanceof tom.gom.adt.gom.types.sort.Sort) ) {
- tom.gom.adt.gom.types.SortDecl  tomMatch545_21= tomMatch545_22.getDecl() ;
-if ( (tomMatch545_21 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) {
- String  tom_name= tomMatch545_21.getName() ;
+if (!( tomMatch554__end__18.isEmptyConcSort() )) {
+ tom.gom.adt.gom.types.Sort  tomMatch554_22= tomMatch554__end__18.getHeadConcSort() ;
+if ( (tomMatch554_22 instanceof tom.gom.adt.gom.types.sort.Sort) ) {
+ tom.gom.adt.gom.types.SortDecl  tomMatch554_21= tomMatch554_22.getDecl() ;
+if ( (tomMatch554_21 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) {
+ String  tom_name= tomMatch554_21.getName() ;
 
 
 String prefix = ((
@@ -760,27 +760,27 @@ tom_name+
 }
 }
 }
-if ( tomMatch545__end__18.isEmptyConcSort() ) {
-tomMatch545__end__18=tomMatch545_8;
+if ( tomMatch554__end__18.isEmptyConcSort() ) {
+tomMatch554__end__18=tomMatch554_8;
 } else {
-tomMatch545__end__18= tomMatch545__end__18.getTailConcSort() ;
+tomMatch554__end__18= tomMatch554__end__18.getTailConcSort() ;
 }
 
 }
-} while(!( (tomMatch545__end__18==tomMatch545_8) ));
+} while(!( (tomMatch554__end__18==tomMatch554_8) ));
 }
 }
 }
 }
 }
-if ( tomMatch545__end__4.isEmptyConcModule() ) {
-tomMatch545__end__4=(( tom.gom.adt.gom.types.ModuleList )moduleList);
+if ( tomMatch554__end__4.isEmptyConcModule() ) {
+tomMatch554__end__4=(( tom.gom.adt.gom.types.ModuleList )moduleList);
 } else {
-tomMatch545__end__4= tomMatch545__end__4.getTailConcModule() ;
+tomMatch554__end__4= tomMatch554__end__4.getTailConcModule() ;
 }
 
 }
-} while(!( (tomMatch545__end__4==(( tom.gom.adt.gom.types.ModuleList )moduleList)) ));
+} while(!( (tomMatch554__end__4==(( tom.gom.adt.gom.types.ModuleList )moduleList)) ));
 }
 }
 
@@ -811,33 +811,33 @@ output.append(
 {
 if ( (rulelist instanceof tom.gom.adt.rule.types.RuleList) ) {
 if ( (((( tom.gom.adt.rule.types.RuleList )rulelist) instanceof tom.gom.adt.rule.types.rulelist.ConsRuleList) || ((( tom.gom.adt.rule.types.RuleList )rulelist) instanceof tom.gom.adt.rule.types.rulelist.EmptyRuleList)) ) {
- tom.gom.adt.rule.types.RuleList  tomMatch546__end__4=(( tom.gom.adt.rule.types.RuleList )rulelist);
+ tom.gom.adt.rule.types.RuleList  tomMatch555__end__4=(( tom.gom.adt.rule.types.RuleList )rulelist);
 do {
 {
-if (!( tomMatch546__end__4.isEmptyRuleList() )) {
- tom.gom.adt.rule.types.Rule  tomMatch546_9= tomMatch546__end__4.getHeadRuleList() ;
-boolean tomMatch546_10= false ;
- tom.gom.adt.rule.types.Term  tomMatch546_8= null ;
- tom.gom.adt.rule.types.Term  tomMatch546_7= null ;
-if ( (tomMatch546_9 instanceof tom.gom.adt.rule.types.rule.Rule) ) {
+if (!( tomMatch555__end__4.isEmptyRuleList() )) {
+ tom.gom.adt.rule.types.Rule  tomMatch555_9= tomMatch555__end__4.getHeadRuleList() ;
+boolean tomMatch555_10= false ;
+ tom.gom.adt.rule.types.Term  tomMatch555_7= null ;
+ tom.gom.adt.rule.types.Term  tomMatch555_8= null ;
+if ( (tomMatch555_9 instanceof tom.gom.adt.rule.types.rule.Rule) ) {
 {
-tomMatch546_10= true ;
-tomMatch546_7= tomMatch546_9.getlhs() ;
-tomMatch546_8= tomMatch546_9.getrhs() ;
+tomMatch555_10= true ;
+tomMatch555_7= tomMatch555_9.getlhs() ;
+tomMatch555_8= tomMatch555_9.getrhs() ;
 
 }
 } else {
-if ( (tomMatch546_9 instanceof tom.gom.adt.rule.types.rule.ConditionalRule) ) {
+if ( (tomMatch555_9 instanceof tom.gom.adt.rule.types.rule.ConditionalRule) ) {
 {
-tomMatch546_10= true ;
-tomMatch546_7= tomMatch546_9.getlhs() ;
-tomMatch546_8= tomMatch546_9.getrhs() ;
+tomMatch555_10= true ;
+tomMatch555_7= tomMatch555_9.getlhs() ;
+tomMatch555_8= tomMatch555_9.getrhs() ;
 
 }
 }
 }
-if (tomMatch546_10) {
- tom.gom.adt.rule.types.Term  tom_lhs=tomMatch546_7;
+if (tomMatch555_10) {
+ tom.gom.adt.rule.types.Term  tom_lhs=tomMatch555_7;
 
 //TODO: verify that the lhs of the rules are of the good sort
 //TODO: verify the linearity of lhs and rhs
@@ -851,7 +851,7 @@ tom_lhs)+
 tom_lhs,"root",0)+
 ".normalizeWithLabels();\n                "+fullClassName(abstractType)+
 " labelledRhs = `"+genTermWithExplicitVar(
-tomMatch546_8,"root",0)+
+tomMatch555_8,"root",0)+
 ".normalizeWithLabels();\n\n               /* 3. construct t = SubstTerm(subject',r') */\n                "+fullClassName(abstractType)+
 " rhs = labelledRhs.label2path();\n                "+fullClassName(abstractType)+
 " lhs = labelledLhs.label2path();\n                rhs = `TopDown(FromVarToPath(lhs,omega)).visit(rhs);\n                "+fullClassName(abstractType)+
@@ -862,14 +862,14 @@ tomMatch546_8,"root",0)+
 }
 
 }
-if ( tomMatch546__end__4.isEmptyRuleList() ) {
-tomMatch546__end__4=(( tom.gom.adt.rule.types.RuleList )rulelist);
+if ( tomMatch555__end__4.isEmptyRuleList() ) {
+tomMatch555__end__4=(( tom.gom.adt.rule.types.RuleList )rulelist);
 } else {
-tomMatch546__end__4= tomMatch546__end__4.getTailRuleList() ;
+tomMatch555__end__4= tomMatch555__end__4.getTailRuleList() ;
 }
 
 }
-} while(!( (tomMatch546__end__4==(( tom.gom.adt.rule.types.RuleList )rulelist)) ));
+} while(!( (tomMatch555__end__4==(( tom.gom.adt.rule.types.RuleList )rulelist)) ));
 }
 }
 
@@ -905,25 +905,25 @@ output.append(
 {
 if ( (tom_tail instanceof tom.gom.adt.rule.types.Term) ) {
 if ( (((( tom.gom.adt.rule.types.Term )tom_tail) instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || ((( tom.gom.adt.rule.types.Term )tom_tail) instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
- tom.gom.adt.rule.types.Term  tomMatch548__end__4=(( tom.gom.adt.rule.types.Term )tom_tail);
+ tom.gom.adt.rule.types.Term  tomMatch557__end__4=(( tom.gom.adt.rule.types.Term )tom_tail);
 do {
 {
-if (!( tomMatch548__end__4.isEmptyPathTerm() )) {
+if (!( tomMatch557__end__4.isEmptyPathTerm() )) {
 
 output.append(",");
 output.append(
- tomMatch548__end__4.getHeadPathTerm() );
+ tomMatch557__end__4.getHeadPathTerm() );
 
 
 }
-if ( tomMatch548__end__4.isEmptyPathTerm() ) {
-tomMatch548__end__4=(( tom.gom.adt.rule.types.Term )tom_tail);
+if ( tomMatch557__end__4.isEmptyPathTerm() ) {
+tomMatch557__end__4=(( tom.gom.adt.rule.types.Term )tom_tail);
 } else {
-tomMatch548__end__4= tomMatch548__end__4.getTailPathTerm() ;
+tomMatch557__end__4= tomMatch557__end__4.getTailPathTerm() ;
 }
 
 }
-} while(!( (tomMatch548__end__4==(( tom.gom.adt.rule.types.Term )tom_tail)) ));
+} while(!( (tomMatch557__end__4==(( tom.gom.adt.rule.types.Term )tom_tail)) ));
 }
 }
 
@@ -1167,29 +1167,29 @@ return "";
 {
 if ( (list instanceof tom.gom.adt.rule.types.TermList) ) {
 if ( (((( tom.gom.adt.rule.types.TermList )list) instanceof tom.gom.adt.rule.types.termlist.ConsTermList) || ((( tom.gom.adt.rule.types.TermList )list) instanceof tom.gom.adt.rule.types.termlist.EmptyTermList)) ) {
- tom.gom.adt.rule.types.TermList  tomMatch551__end__6=(( tom.gom.adt.rule.types.TermList )list);
+ tom.gom.adt.rule.types.TermList  tomMatch560__end__6=(( tom.gom.adt.rule.types.TermList )list);
 do {
 {
-if (!( tomMatch551__end__6.isEmptyTermList() )) {
+if (!( tomMatch560__end__6.isEmptyTermList() )) {
 
 output.append(genTermWithExplicitVar(
- tomMatch551__end__6.getHeadTermList() ,fathersymbol,omega));
+ tomMatch560__end__6.getHeadTermList() ,fathersymbol,omega));
 omega++;
 if (!
- tomMatch551__end__6.getTailTermList() .isEmptyTermList()) {
+ tomMatch560__end__6.getTailTermList() .isEmptyTermList()) {
 output.append(", ");
 }
 
 
 }
-if ( tomMatch551__end__6.isEmptyTermList() ) {
-tomMatch551__end__6=(( tom.gom.adt.rule.types.TermList )list);
+if ( tomMatch560__end__6.isEmptyTermList() ) {
+tomMatch560__end__6=(( tom.gom.adt.rule.types.TermList )list);
 } else {
-tomMatch551__end__6= tomMatch551__end__6.getTailTermList() ;
+tomMatch560__end__6= tomMatch560__end__6.getTailTermList() ;
 }
 
 }
-} while(!( (tomMatch551__end__6==(( tom.gom.adt.rule.types.TermList )list)) ));
+} while(!( (tomMatch560__end__6==(( tom.gom.adt.rule.types.TermList )list)) ));
 }
 }
 
@@ -1261,6 +1261,28 @@ default: throw new IndexOutOfBoundsException();
 }
 }
 @SuppressWarnings("unchecked")
+public <T> T visitLight(T v, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if ( (v instanceof tom.gom.adt.rule.types.Term) ) {
+return ((T)visit_Term((( tom.gom.adt.rule.types.Term )v),introspector));
+}
+if (!(  null ==environment )) {
+return ((T)any.visit(environment,introspector));
+} else {
+return any.visitLight(v,introspector);
+}
+
+}
+@SuppressWarnings("unchecked")
+public  tom.gom.adt.rule.types.Term  _visit_Term( tom.gom.adt.rule.types.Term  arg, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if (!(  null ==environment )) {
+return (( tom.gom.adt.rule.types.Term )any.visit(environment,introspector));
+} else {
+return any.visitLight(arg,introspector);
+}
+}
+@SuppressWarnings("unchecked")
 public  tom.gom.adt.rule.types.Term  visit_Term( tom.gom.adt.rule.types.Term  tom__arg, tom.library.sl.Introspector introspector)
  throws tom.library.sl.VisitFailure {
 {
@@ -1297,28 +1319,6 @@ return
 return _visit_Term(tom__arg,introspector);
 
 }
-@SuppressWarnings("unchecked")
-public  tom.gom.adt.rule.types.Term  _visit_Term( tom.gom.adt.rule.types.Term  arg, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if (!(  null ==environment )) {
-return (( tom.gom.adt.rule.types.Term )any.visit(environment,introspector));
-} else {
-return any.visitLight(arg,introspector);
-}
-}
-@SuppressWarnings("unchecked")
-public <T> T visitLight(T v, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if ( (v instanceof tom.gom.adt.rule.types.Term) ) {
-return ((T)visit_Term((( tom.gom.adt.rule.types.Term )v),introspector));
-}
-if (!(  null ==environment )) {
-return ((T)any.visit(environment,introspector));
-} else {
-return any.visitLight(v,introspector);
-}
-
-}
 }
 private static  tom.library.sl.Strategy  tom_make_CollectSubterm( String  t0, Info t1) { 
 return new CollectSubterm(t0,t1);
@@ -1353,6 +1353,28 @@ public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable c
 switch (index) {
 case 0: return super.setChildAt(0, child);
 default: throw new IndexOutOfBoundsException();
+}
+}
+@SuppressWarnings("unchecked")
+public <T> T visitLight(T v, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if ( (v instanceof tom.gom.adt.rule.types.Term) ) {
+return ((T)visit_Term((( tom.gom.adt.rule.types.Term )v),introspector));
+}
+if (!(  null ==environment )) {
+return ((T)any.visit(environment,introspector));
+} else {
+return any.visitLight(v,introspector);
+}
+
+}
+@SuppressWarnings("unchecked")
+public  tom.gom.adt.rule.types.Term  _visit_Term( tom.gom.adt.rule.types.Term  arg, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if (!(  null ==environment )) {
+return (( tom.gom.adt.rule.types.Term )any.visit(environment,introspector));
+} else {
+return any.visitLight(arg,introspector);
 }
 }
 @SuppressWarnings("unchecked")
@@ -1406,28 +1428,6 @@ map.put(
 return _visit_Term(tom__arg,introspector);
 
 }
-@SuppressWarnings("unchecked")
-public  tom.gom.adt.rule.types.Term  _visit_Term( tom.gom.adt.rule.types.Term  arg, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if (!(  null ==environment )) {
-return (( tom.gom.adt.rule.types.Term )any.visit(environment,introspector));
-} else {
-return any.visitLight(arg,introspector);
-}
-}
-@SuppressWarnings("unchecked")
-public <T> T visitLight(T v, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if ( (v instanceof tom.gom.adt.rule.types.Term) ) {
-return ((T)visit_Term((( tom.gom.adt.rule.types.Term )v),introspector));
-}
-if (!(  null ==environment )) {
-return ((T)any.visit(environment,introspector));
-} else {
-return any.visitLight(v,introspector);
-}
-
-}
 }
 private static  tom.library.sl.Strategy  tom_make_NormalizeLabel( java.util.HashMap  t0) { 
 return new NormalizeLabel(t0);
@@ -1478,6 +1478,28 @@ default: throw new IndexOutOfBoundsException();
 }
 }
 @SuppressWarnings("unchecked")
+public <T> T visitLight(T v, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if ( (v instanceof tom.gom.adt.rule.types.Term) ) {
+return ((T)visit_Term((( tom.gom.adt.rule.types.Term )v),introspector));
+}
+if (!(  null ==environment )) {
+return ((T)any.visit(environment,introspector));
+} else {
+return any.visitLight(v,introspector);
+}
+
+}
+@SuppressWarnings("unchecked")
+public  tom.gom.adt.rule.types.Term  _visit_Term( tom.gom.adt.rule.types.Term  arg, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if (!(  null ==environment )) {
+return (( tom.gom.adt.rule.types.Term )any.visit(environment,introspector));
+} else {
+return any.visitLight(arg,introspector);
+}
+}
+@SuppressWarnings("unchecked")
 public  tom.gom.adt.rule.types.Term  visit_Term( tom.gom.adt.rule.types.Term  tom__arg, tom.library.sl.Introspector introspector)
  throws tom.library.sl.VisitFailure {
 {
@@ -1498,28 +1520,6 @@ return
 
 }
 return _visit_Term(tom__arg,introspector);
-
-}
-@SuppressWarnings("unchecked")
-public  tom.gom.adt.rule.types.Term  _visit_Term( tom.gom.adt.rule.types.Term  arg, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if (!(  null ==environment )) {
-return (( tom.gom.adt.rule.types.Term )any.visit(environment,introspector));
-} else {
-return any.visitLight(arg,introspector);
-}
-}
-@SuppressWarnings("unchecked")
-public <T> T visitLight(T v, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if ( (v instanceof tom.gom.adt.rule.types.Term) ) {
-return ((T)visit_Term((( tom.gom.adt.rule.types.Term )v),introspector));
-}
-if (!(  null ==environment )) {
-return ((T)any.visit(environment,introspector));
-} else {
-return any.visitLight(v,introspector);
-}
 
 }
 }
@@ -1554,6 +1554,28 @@ default: throw new IndexOutOfBoundsException();
 }
 }
 @SuppressWarnings("unchecked")
+public <T> T visitLight(T v, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if ( (v instanceof tom.gom.adt.rule.types.Term) ) {
+return ((T)visit_Term((( tom.gom.adt.rule.types.Term )v),introspector));
+}
+if (!(  null ==environment )) {
+return ((T)any.visit(environment,introspector));
+} else {
+return any.visitLight(v,introspector);
+}
+
+}
+@SuppressWarnings("unchecked")
+public  tom.gom.adt.rule.types.Term  _visit_Term( tom.gom.adt.rule.types.Term  arg, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if (!(  null ==environment )) {
+return (( tom.gom.adt.rule.types.Term )any.visit(environment,introspector));
+} else {
+return any.visitLight(arg,introspector);
+}
+}
+@SuppressWarnings("unchecked")
 public  tom.gom.adt.rule.types.Term  visit_Term( tom.gom.adt.rule.types.Term  tom__arg, tom.library.sl.Introspector introspector)
  throws tom.library.sl.VisitFailure {
 {
@@ -1577,48 +1599,48 @@ tom_make_PathForPattern().visit(
 {
 if ( (tom__arg instanceof tom.gom.adt.rule.types.Term) ) {
 if ( (((( tom.gom.adt.rule.types.Term )tom__arg) instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || ((( tom.gom.adt.rule.types.Term )tom__arg) instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
- tom.gom.adt.rule.types.Term  tomMatch555__end__11=(( tom.gom.adt.rule.types.Term )tom__arg);
+ tom.gom.adt.rule.types.Term  tomMatch564__end__11=(( tom.gom.adt.rule.types.Term )tom__arg);
 do {
 {
- tom.gom.adt.rule.types.Term  tomMatch555_7=tom_get_slice_PathTerm((( tom.gom.adt.rule.types.Term )tom__arg),tomMatch555__end__11, tom.gom.adt.rule.types.term.EmptyPathTerm.make() );
-if (!( tomMatch555__end__11.isEmptyPathTerm() )) {
-if ( -1== tomMatch555__end__11.getHeadPathTerm()  ) {
- tom.gom.adt.rule.types.Term  tom_sublist=tomMatch555_7;
+ tom.gom.adt.rule.types.Term  tomMatch564_7=tom_get_slice_PathTerm((( tom.gom.adt.rule.types.Term )tom__arg),tomMatch564__end__11, tom.gom.adt.rule.types.term.EmptyPathTerm.make() );
+if (!( tomMatch564__end__11.isEmptyPathTerm() )) {
+if ( -1== tomMatch564__end__11.getHeadPathTerm()  ) {
+ tom.gom.adt.rule.types.Term  tom_sublist=tomMatch564_7;
 if ( (tom_sublist instanceof tom.gom.adt.rule.types.Term) ) {
-boolean tomMatch555_25= false ;
-if ( ((tomMatch555_7 instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || (tomMatch555_7 instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
-if ( (tom_sublist==tomMatch555_7) ) {
- tom.gom.adt.rule.types.Term  tomMatch555__end__18=tomMatch555_7;
+boolean tomMatch564_25= false ;
+if ( ((tomMatch564_7 instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || (tomMatch564_7 instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
+if ( (tom_sublist==tomMatch564_7) ) {
+ tom.gom.adt.rule.types.Term  tomMatch564__end__18=tomMatch564_7;
 do {
 {
-if (!( tomMatch555__end__18.isEmptyPathTerm() )) {
-boolean tomMatch555_26= false ;
-if ( -2== tomMatch555__end__18.getHeadPathTerm()  ) {
-tomMatch555_26= true ;
+if (!( tomMatch564__end__18.isEmptyPathTerm() )) {
+boolean tomMatch564_26= false ;
+if ( -2== tomMatch564__end__18.getHeadPathTerm()  ) {
+tomMatch564_26= true ;
 }
-if (!(tomMatch555_26)) {
-tomMatch555_25= true ;
+if (!(tomMatch564_26)) {
+tomMatch564_25= true ;
 }
 
 }
-if ( tomMatch555__end__18.isEmptyPathTerm() ) {
-tomMatch555__end__18=tomMatch555_7;
+if ( tomMatch564__end__18.isEmptyPathTerm() ) {
+tomMatch564__end__18=tomMatch564_7;
 } else {
-tomMatch555__end__18= tomMatch555__end__18.getTailPathTerm() ;
+tomMatch564__end__18= tomMatch564__end__18.getTailPathTerm() ;
 }
 
 }
-} while(!( (tomMatch555__end__18==tomMatch555_7) ));
+} while(!( (tomMatch564__end__18==tomMatch564_7) ));
 }
 }
-if (!(tomMatch555_25)) {
-boolean tomMatch555_24= false ;
+if (!(tomMatch564_25)) {
+boolean tomMatch564_24= false ;
 if ( (((( tom.gom.adt.rule.types.Term )tom_sublist) instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || ((( tom.gom.adt.rule.types.Term )tom_sublist) instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
 if ( (( tom.gom.adt.rule.types.Term )tom_sublist).isEmptyPathTerm() ) {
-tomMatch555_24= true ;
+tomMatch564_24= true ;
 }
 }
-if (!(tomMatch555_24)) {
+if (!(tomMatch564_24)) {
 
 //TODO: avoid the compilation warning
 // because it generates a  disjunction which is not fully supported with associative operators
@@ -1626,7 +1648,7 @@ int upcount =
 tom_sublist.length();
 Term newtail = 
 tom_make_PathForPattern().visit(
- tomMatch555__end__11.getTailPathTerm() );
+ tomMatch564__end__11.getTailPathTerm() );
 return 
  tom.gom.adt.rule.types.term.ConsPathTerm.make(-upcount,tom_append_list_PathTerm(newtail, tom.gom.adt.rule.types.term.EmptyPathTerm.make() )) ;
 
@@ -1638,14 +1660,14 @@ return
 }
 }
 }
-if ( tomMatch555__end__11.isEmptyPathTerm() ) {
-tomMatch555__end__11=(( tom.gom.adt.rule.types.Term )tom__arg);
+if ( tomMatch564__end__11.isEmptyPathTerm() ) {
+tomMatch564__end__11=(( tom.gom.adt.rule.types.Term )tom__arg);
 } else {
-tomMatch555__end__11= tomMatch555__end__11.getTailPathTerm() ;
+tomMatch564__end__11= tomMatch564__end__11.getTailPathTerm() ;
 }
 
 }
-} while(!( (tomMatch555__end__11==(( tom.gom.adt.rule.types.Term )tom__arg)) ));
+} while(!( (tomMatch564__end__11==(( tom.gom.adt.rule.types.Term )tom__arg)) ));
 }
 }
 
@@ -1653,51 +1675,51 @@ tomMatch555__end__11= tomMatch555__end__11.getTailPathTerm() ;
 {
 if ( (tom__arg instanceof tom.gom.adt.rule.types.Term) ) {
 if ( (((( tom.gom.adt.rule.types.Term )tom__arg) instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || ((( tom.gom.adt.rule.types.Term )tom__arg) instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
- tom.gom.adt.rule.types.Term  tomMatch555__end__36=(( tom.gom.adt.rule.types.Term )tom__arg);
+ tom.gom.adt.rule.types.Term  tomMatch564__end__36=(( tom.gom.adt.rule.types.Term )tom__arg);
 do {
 {
- tom.gom.adt.rule.types.Term  tomMatch555_32=tom_get_slice_PathTerm((( tom.gom.adt.rule.types.Term )tom__arg),tomMatch555__end__36, tom.gom.adt.rule.types.term.EmptyPathTerm.make() );
- tom.gom.adt.rule.types.Term  tom_tail=tomMatch555__end__36;
- tom.gom.adt.rule.types.Term  tom_sublist=tomMatch555_32;
+ tom.gom.adt.rule.types.Term  tomMatch564_32=tom_get_slice_PathTerm((( tom.gom.adt.rule.types.Term )tom__arg),tomMatch564__end__36, tom.gom.adt.rule.types.term.EmptyPathTerm.make() );
+ tom.gom.adt.rule.types.Term  tom_tail=tomMatch564__end__36;
+ tom.gom.adt.rule.types.Term  tom_sublist=tomMatch564_32;
 if ( (tom_tail instanceof tom.gom.adt.rule.types.Term) ) {
 if ( (((( tom.gom.adt.rule.types.Term )tom_tail) instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || ((( tom.gom.adt.rule.types.Term )tom_tail) instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
 if (!( (( tom.gom.adt.rule.types.Term )tom_tail).isEmptyPathTerm() )) {
 if ( 1== (( tom.gom.adt.rule.types.Term )tom_tail).getHeadPathTerm()  ) {
 if ( (tom_sublist instanceof tom.gom.adt.rule.types.Term) ) {
-boolean tomMatch555_57= false ;
-if ( ((tomMatch555_32 instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || (tomMatch555_32 instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
-if ( (tom_sublist==tomMatch555_32) ) {
- tom.gom.adt.rule.types.Term  tomMatch555__end__50=tomMatch555_32;
+boolean tomMatch564_57= false ;
+if ( ((tomMatch564_32 instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || (tomMatch564_32 instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
+if ( (tom_sublist==tomMatch564_32) ) {
+ tom.gom.adt.rule.types.Term  tomMatch564__end__50=tomMatch564_32;
 do {
 {
-if (!( tomMatch555__end__50.isEmptyPathTerm() )) {
-boolean tomMatch555_58= false ;
-if ( -2== tomMatch555__end__50.getHeadPathTerm()  ) {
-tomMatch555_58= true ;
+if (!( tomMatch564__end__50.isEmptyPathTerm() )) {
+boolean tomMatch564_58= false ;
+if ( -2== tomMatch564__end__50.getHeadPathTerm()  ) {
+tomMatch564_58= true ;
 }
-if (!(tomMatch555_58)) {
-tomMatch555_57= true ;
+if (!(tomMatch564_58)) {
+tomMatch564_57= true ;
 }
 
 }
-if ( tomMatch555__end__50.isEmptyPathTerm() ) {
-tomMatch555__end__50=tomMatch555_32;
+if ( tomMatch564__end__50.isEmptyPathTerm() ) {
+tomMatch564__end__50=tomMatch564_32;
 } else {
-tomMatch555__end__50= tomMatch555__end__50.getTailPathTerm() ;
+tomMatch564__end__50= tomMatch564__end__50.getTailPathTerm() ;
 }
 
 }
-} while(!( (tomMatch555__end__50==tomMatch555_32) ));
+} while(!( (tomMatch564__end__50==tomMatch564_32) ));
 }
 }
-if (!(tomMatch555_57)) {
-boolean tomMatch555_56= false ;
+if (!(tomMatch564_57)) {
+boolean tomMatch564_56= false ;
 if ( (((( tom.gom.adt.rule.types.Term )tom_sublist) instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || ((( tom.gom.adt.rule.types.Term )tom_sublist) instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
 if ( (( tom.gom.adt.rule.types.Term )tom_sublist).isEmptyPathTerm() ) {
-tomMatch555_56= true ;
+tomMatch564_56= true ;
 }
 }
-if (!(tomMatch555_56)) {
+if (!(tomMatch564_56)) {
 
 int downcount = 
 tom_sublist.length();
@@ -1722,40 +1744,40 @@ if ( (((( tom.gom.adt.rule.types.Term )tom_tail) instanceof tom.gom.adt.rule.typ
 if (!( (( tom.gom.adt.rule.types.Term )tom_tail).isEmptyPathTerm() )) {
 if ( 2== (( tom.gom.adt.rule.types.Term )tom_tail).getHeadPathTerm()  ) {
 if ( (tom_sublist instanceof tom.gom.adt.rule.types.Term) ) {
-boolean tomMatch555_57= false ;
-if ( ((tomMatch555_32 instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || (tomMatch555_32 instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
-if ( (tom_sublist==tomMatch555_32) ) {
- tom.gom.adt.rule.types.Term  tomMatch555__end__50=tomMatch555_32;
+boolean tomMatch564_57= false ;
+if ( ((tomMatch564_32 instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || (tomMatch564_32 instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
+if ( (tom_sublist==tomMatch564_32) ) {
+ tom.gom.adt.rule.types.Term  tomMatch564__end__50=tomMatch564_32;
 do {
 {
-if (!( tomMatch555__end__50.isEmptyPathTerm() )) {
-boolean tomMatch555_58= false ;
-if ( -2== tomMatch555__end__50.getHeadPathTerm()  ) {
-tomMatch555_58= true ;
+if (!( tomMatch564__end__50.isEmptyPathTerm() )) {
+boolean tomMatch564_58= false ;
+if ( -2== tomMatch564__end__50.getHeadPathTerm()  ) {
+tomMatch564_58= true ;
 }
-if (!(tomMatch555_58)) {
-tomMatch555_57= true ;
+if (!(tomMatch564_58)) {
+tomMatch564_57= true ;
 }
 
 }
-if ( tomMatch555__end__50.isEmptyPathTerm() ) {
-tomMatch555__end__50=tomMatch555_32;
+if ( tomMatch564__end__50.isEmptyPathTerm() ) {
+tomMatch564__end__50=tomMatch564_32;
 } else {
-tomMatch555__end__50= tomMatch555__end__50.getTailPathTerm() ;
+tomMatch564__end__50= tomMatch564__end__50.getTailPathTerm() ;
 }
 
 }
-} while(!( (tomMatch555__end__50==tomMatch555_32) ));
+} while(!( (tomMatch564__end__50==tomMatch564_32) ));
 }
 }
-if (!(tomMatch555_57)) {
-boolean tomMatch555_56= false ;
+if (!(tomMatch564_57)) {
+boolean tomMatch564_56= false ;
 if ( (((( tom.gom.adt.rule.types.Term )tom_sublist) instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || ((( tom.gom.adt.rule.types.Term )tom_sublist) instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
 if ( (( tom.gom.adt.rule.types.Term )tom_sublist).isEmptyPathTerm() ) {
-tomMatch555_56= true ;
+tomMatch564_56= true ;
 }
 }
-if (!(tomMatch555_56)) {
+if (!(tomMatch564_56)) {
 
 int downcount = 
 tom_sublist.length();
@@ -1779,40 +1801,40 @@ if ( (tom_tail instanceof tom.gom.adt.rule.types.Term) ) {
 if ( (((( tom.gom.adt.rule.types.Term )tom_tail) instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || ((( tom.gom.adt.rule.types.Term )tom_tail) instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
 if ( (( tom.gom.adt.rule.types.Term )tom_tail).isEmptyPathTerm() ) {
 if ( (tom_sublist instanceof tom.gom.adt.rule.types.Term) ) {
-boolean tomMatch555_57= false ;
-if ( ((tomMatch555_32 instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || (tomMatch555_32 instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
-if ( (tom_sublist==tomMatch555_32) ) {
- tom.gom.adt.rule.types.Term  tomMatch555__end__50=tomMatch555_32;
+boolean tomMatch564_57= false ;
+if ( ((tomMatch564_32 instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || (tomMatch564_32 instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
+if ( (tom_sublist==tomMatch564_32) ) {
+ tom.gom.adt.rule.types.Term  tomMatch564__end__50=tomMatch564_32;
 do {
 {
-if (!( tomMatch555__end__50.isEmptyPathTerm() )) {
-boolean tomMatch555_58= false ;
-if ( -2== tomMatch555__end__50.getHeadPathTerm()  ) {
-tomMatch555_58= true ;
+if (!( tomMatch564__end__50.isEmptyPathTerm() )) {
+boolean tomMatch564_58= false ;
+if ( -2== tomMatch564__end__50.getHeadPathTerm()  ) {
+tomMatch564_58= true ;
 }
-if (!(tomMatch555_58)) {
-tomMatch555_57= true ;
+if (!(tomMatch564_58)) {
+tomMatch564_57= true ;
 }
 
 }
-if ( tomMatch555__end__50.isEmptyPathTerm() ) {
-tomMatch555__end__50=tomMatch555_32;
+if ( tomMatch564__end__50.isEmptyPathTerm() ) {
+tomMatch564__end__50=tomMatch564_32;
 } else {
-tomMatch555__end__50= tomMatch555__end__50.getTailPathTerm() ;
+tomMatch564__end__50= tomMatch564__end__50.getTailPathTerm() ;
 }
 
 }
-} while(!( (tomMatch555__end__50==tomMatch555_32) ));
+} while(!( (tomMatch564__end__50==tomMatch564_32) ));
 }
 }
-if (!(tomMatch555_57)) {
-boolean tomMatch555_56= false ;
+if (!(tomMatch564_57)) {
+boolean tomMatch564_56= false ;
 if ( (((( tom.gom.adt.rule.types.Term )tom_sublist) instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || ((( tom.gom.adt.rule.types.Term )tom_sublist) instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
 if ( (( tom.gom.adt.rule.types.Term )tom_sublist).isEmptyPathTerm() ) {
-tomMatch555_56= true ;
+tomMatch564_56= true ;
 }
 }
-if (!(tomMatch555_56)) {
+if (!(tomMatch564_56)) {
 
 int downcount = 
 tom_sublist.length();
@@ -1832,14 +1854,14 @@ return
 }
 }
 
-if ( tomMatch555__end__36.isEmptyPathTerm() ) {
-tomMatch555__end__36=(( tom.gom.adt.rule.types.Term )tom__arg);
+if ( tomMatch564__end__36.isEmptyPathTerm() ) {
+tomMatch564__end__36=(( tom.gom.adt.rule.types.Term )tom__arg);
 } else {
-tomMatch555__end__36= tomMatch555__end__36.getTailPathTerm() ;
+tomMatch564__end__36= tomMatch564__end__36.getTailPathTerm() ;
 }
 
 }
-} while(!( (tomMatch555__end__36==(( tom.gom.adt.rule.types.Term )tom__arg)) ));
+} while(!( (tomMatch564__end__36==(( tom.gom.adt.rule.types.Term )tom__arg)) ));
 }
 }
 
@@ -1847,54 +1869,54 @@ tomMatch555__end__36= tomMatch555__end__36.getTailPathTerm() ;
 {
 if ( (tom__arg instanceof tom.gom.adt.rule.types.Term) ) {
 if ( (((( tom.gom.adt.rule.types.Term )tom__arg) instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || ((( tom.gom.adt.rule.types.Term )tom__arg) instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
- tom.gom.adt.rule.types.Term  tomMatch555__end__65=(( tom.gom.adt.rule.types.Term )tom__arg);
+ tom.gom.adt.rule.types.Term  tomMatch564__end__65=(( tom.gom.adt.rule.types.Term )tom__arg);
 do {
 {
- tom.gom.adt.rule.types.Term  tomMatch555_61=tom_get_slice_PathTerm((( tom.gom.adt.rule.types.Term )tom__arg),tomMatch555__end__65, tom.gom.adt.rule.types.term.EmptyPathTerm.make() );
-if (!( tomMatch555__end__65.isEmptyPathTerm() )) {
-if ( 1== tomMatch555__end__65.getHeadPathTerm()  ) {
- tom.gom.adt.rule.types.Term  tom_sublist=tomMatch555_61;
+ tom.gom.adt.rule.types.Term  tomMatch564_61=tom_get_slice_PathTerm((( tom.gom.adt.rule.types.Term )tom__arg),tomMatch564__end__65, tom.gom.adt.rule.types.term.EmptyPathTerm.make() );
+if (!( tomMatch564__end__65.isEmptyPathTerm() )) {
+if ( 1== tomMatch564__end__65.getHeadPathTerm()  ) {
+ tom.gom.adt.rule.types.Term  tom_sublist=tomMatch564_61;
 if ( (tom_sublist instanceof tom.gom.adt.rule.types.Term) ) {
-boolean tomMatch555_79= false ;
-if ( ((tomMatch555_61 instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || (tomMatch555_61 instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
-if ( (tom_sublist==tomMatch555_61) ) {
- tom.gom.adt.rule.types.Term  tomMatch555__end__72=tomMatch555_61;
+boolean tomMatch564_79= false ;
+if ( ((tomMatch564_61 instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || (tomMatch564_61 instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
+if ( (tom_sublist==tomMatch564_61) ) {
+ tom.gom.adt.rule.types.Term  tomMatch564__end__72=tomMatch564_61;
 do {
 {
-if (!( tomMatch555__end__72.isEmptyPathTerm() )) {
-boolean tomMatch555_80= false ;
-if ( 2== tomMatch555__end__72.getHeadPathTerm()  ) {
-tomMatch555_80= true ;
+if (!( tomMatch564__end__72.isEmptyPathTerm() )) {
+boolean tomMatch564_80= false ;
+if ( 2== tomMatch564__end__72.getHeadPathTerm()  ) {
+tomMatch564_80= true ;
 }
-if (!(tomMatch555_80)) {
-tomMatch555_79= true ;
+if (!(tomMatch564_80)) {
+tomMatch564_79= true ;
 }
 
 }
-if ( tomMatch555__end__72.isEmptyPathTerm() ) {
-tomMatch555__end__72=tomMatch555_61;
+if ( tomMatch564__end__72.isEmptyPathTerm() ) {
+tomMatch564__end__72=tomMatch564_61;
 } else {
-tomMatch555__end__72= tomMatch555__end__72.getTailPathTerm() ;
+tomMatch564__end__72= tomMatch564__end__72.getTailPathTerm() ;
 }
 
 }
-} while(!( (tomMatch555__end__72==tomMatch555_61) ));
+} while(!( (tomMatch564__end__72==tomMatch564_61) ));
 }
 }
-if (!(tomMatch555_79)) {
-boolean tomMatch555_78= false ;
+if (!(tomMatch564_79)) {
+boolean tomMatch564_78= false ;
 if ( (((( tom.gom.adt.rule.types.Term )tom_sublist) instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || ((( tom.gom.adt.rule.types.Term )tom_sublist) instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
 if ( (( tom.gom.adt.rule.types.Term )tom_sublist).isEmptyPathTerm() ) {
-tomMatch555_78= true ;
+tomMatch564_78= true ;
 }
 }
-if (!(tomMatch555_78)) {
+if (!(tomMatch564_78)) {
 
 int downcount = 
 tom_sublist.length();
 Term newtail = 
 tom_make_PathForPattern().visit(
- tomMatch555__end__65.getTailPathTerm() );
+ tomMatch564__end__65.getTailPathTerm() );
 return 
  tom.gom.adt.rule.types.term.ConsPathTerm.make(downcount,tom_append_list_PathTerm(newtail, tom.gom.adt.rule.types.term.EmptyPathTerm.make() )) ;
 
@@ -1906,14 +1928,14 @@ return
 }
 }
 }
-if ( tomMatch555__end__65.isEmptyPathTerm() ) {
-tomMatch555__end__65=(( tom.gom.adt.rule.types.Term )tom__arg);
+if ( tomMatch564__end__65.isEmptyPathTerm() ) {
+tomMatch564__end__65=(( tom.gom.adt.rule.types.Term )tom__arg);
 } else {
-tomMatch555__end__65= tomMatch555__end__65.getTailPathTerm() ;
+tomMatch564__end__65= tomMatch564__end__65.getTailPathTerm() ;
 }
 
 }
-} while(!( (tomMatch555__end__65==(( tom.gom.adt.rule.types.Term )tom__arg)) ));
+} while(!( (tomMatch564__end__65==(( tom.gom.adt.rule.types.Term )tom__arg)) ));
 }
 }
 
@@ -1922,28 +1944,6 @@ tomMatch555__end__65= tomMatch555__end__65.getTailPathTerm() ;
 
 }
 return _visit_Term(tom__arg,introspector);
-
-}
-@SuppressWarnings("unchecked")
-public  tom.gom.adt.rule.types.Term  _visit_Term( tom.gom.adt.rule.types.Term  arg, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if (!(  null ==environment )) {
-return (( tom.gom.adt.rule.types.Term )any.visit(environment,introspector));
-} else {
-return any.visitLight(arg,introspector);
-}
-}
-@SuppressWarnings("unchecked")
-public <T> T visitLight(T v, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if ( (v instanceof tom.gom.adt.rule.types.Term) ) {
-return ((T)visit_Term((( tom.gom.adt.rule.types.Term )v),introspector));
-}
-if (!(  null ==environment )) {
-return ((T)any.visit(environment,introspector));
-} else {
-return any.visitLight(v,introspector);
-}
 
 }
 }
@@ -1978,44 +1978,16 @@ default: throw new IndexOutOfBoundsException();
 }
 }
 @SuppressWarnings("unchecked")
-public  tom.gom.adt.rule.types.Term  visit_Term( tom.gom.adt.rule.types.Term  tom__arg, tom.library.sl.Introspector introspector)
+public <T> T visitLight(T v, tom.library.sl.Introspector introspector)
  throws tom.library.sl.VisitFailure {
-{
-{
-if ( (tom__arg instanceof tom.gom.adt.rule.types.Term) ) {
-if ( (((( tom.gom.adt.rule.types.Term )tom__arg) instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || ((( tom.gom.adt.rule.types.Term )tom__arg) instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
- tom.gom.adt.rule.types.Term  tomMatch556__end__4=(( tom.gom.adt.rule.types.Term )tom__arg);
-do {
-{
-if (!( tomMatch556__end__4.isEmptyPathTerm() )) {
- tom.gom.adt.rule.types.Term  tomMatch556_5= tomMatch556__end__4.getTailPathTerm() ;
-if (!( tomMatch556_5.isEmptyPathTerm() )) {
-
-if (
- tomMatch556__end__4.getHeadPathTerm() ==-
- tomMatch556_5.getHeadPathTerm() ) {
-return 
-tom_append_list_PathTerm(tom_get_slice_PathTerm((( tom.gom.adt.rule.types.Term )tom__arg),tomMatch556__end__4, tom.gom.adt.rule.types.term.EmptyPathTerm.make() ),tom_append_list_PathTerm( tomMatch556_5.getTailPathTerm() , tom.gom.adt.rule.types.term.EmptyPathTerm.make() ));
+if ( (v instanceof tom.gom.adt.rule.types.Term) ) {
+return ((T)visit_Term((( tom.gom.adt.rule.types.Term )v),introspector));
 }
-
-
-}
-}
-if ( tomMatch556__end__4.isEmptyPathTerm() ) {
-tomMatch556__end__4=(( tom.gom.adt.rule.types.Term )tom__arg);
+if (!(  null ==environment )) {
+return ((T)any.visit(environment,introspector));
 } else {
-tomMatch556__end__4= tomMatch556__end__4.getTailPathTerm() ;
+return any.visitLight(v,introspector);
 }
-
-}
-} while(!( (tomMatch556__end__4==(( tom.gom.adt.rule.types.Term )tom__arg)) ));
-}
-}
-
-}
-
-}
-return _visit_Term(tom__arg,introspector);
 
 }
 @SuppressWarnings("unchecked")
@@ -2028,16 +2000,44 @@ return any.visitLight(arg,introspector);
 }
 }
 @SuppressWarnings("unchecked")
-public <T> T visitLight(T v, tom.library.sl.Introspector introspector)
+public  tom.gom.adt.rule.types.Term  visit_Term( tom.gom.adt.rule.types.Term  tom__arg, tom.library.sl.Introspector introspector)
  throws tom.library.sl.VisitFailure {
-if ( (v instanceof tom.gom.adt.rule.types.Term) ) {
-return ((T)visit_Term((( tom.gom.adt.rule.types.Term )v),introspector));
+{
+{
+if ( (tom__arg instanceof tom.gom.adt.rule.types.Term) ) {
+if ( (((( tom.gom.adt.rule.types.Term )tom__arg) instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || ((( tom.gom.adt.rule.types.Term )tom__arg) instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
+ tom.gom.adt.rule.types.Term  tomMatch565__end__4=(( tom.gom.adt.rule.types.Term )tom__arg);
+do {
+{
+if (!( tomMatch565__end__4.isEmptyPathTerm() )) {
+ tom.gom.adt.rule.types.Term  tomMatch565_5= tomMatch565__end__4.getTailPathTerm() ;
+if (!( tomMatch565_5.isEmptyPathTerm() )) {
+
+if (
+ tomMatch565__end__4.getHeadPathTerm() ==-
+ tomMatch565_5.getHeadPathTerm() ) {
+return 
+tom_append_list_PathTerm(tom_get_slice_PathTerm((( tom.gom.adt.rule.types.Term )tom__arg),tomMatch565__end__4, tom.gom.adt.rule.types.term.EmptyPathTerm.make() ),tom_append_list_PathTerm( tomMatch565_5.getTailPathTerm() , tom.gom.adt.rule.types.term.EmptyPathTerm.make() ));
 }
-if (!(  null ==environment )) {
-return ((T)any.visit(environment,introspector));
+
+
+}
+}
+if ( tomMatch565__end__4.isEmptyPathTerm() ) {
+tomMatch565__end__4=(( tom.gom.adt.rule.types.Term )tom__arg);
 } else {
-return any.visitLight(v,introspector);
+tomMatch565__end__4= tomMatch565__end__4.getTailPathTerm() ;
 }
+
+}
+} while(!( (tomMatch565__end__4==(( tom.gom.adt.rule.types.Term )tom__arg)) ));
+}
+}
+
+}
+
+}
+return _visit_Term(tom__arg,introspector);
 
 }
 }
@@ -2074,6 +2074,28 @@ public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable c
 switch (index) {
 case 0: return super.setChildAt(0, child);
 default: throw new IndexOutOfBoundsException();
+}
+}
+@SuppressWarnings("unchecked")
+public <T> T visitLight(T v, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if ( (v instanceof tom.gom.adt.rule.types.Term) ) {
+return ((T)visit_Term((( tom.gom.adt.rule.types.Term )v),introspector));
+}
+if (!(  null ==environment )) {
+return ((T)any.visit(environment,introspector));
+} else {
+return any.visitLight(v,introspector);
+}
+
+}
+@SuppressWarnings("unchecked")
+public  tom.gom.adt.rule.types.Term  _visit_Term( tom.gom.adt.rule.types.Term  arg, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if (!(  null ==environment )) {
+return (( tom.gom.adt.rule.types.Term )any.visit(environment,introspector));
+} else {
+return any.visitLight(arg,introspector);
 }
 }
 @SuppressWarnings("unchecked")
@@ -2114,28 +2136,6 @@ return
 
 }
 return _visit_Term(tom__arg,introspector);
-
-}
-@SuppressWarnings("unchecked")
-public  tom.gom.adt.rule.types.Term  _visit_Term( tom.gom.adt.rule.types.Term  arg, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if (!(  null ==environment )) {
-return (( tom.gom.adt.rule.types.Term )any.visit(environment,introspector));
-} else {
-return any.visitLight(arg,introspector);
-}
-}
-@SuppressWarnings("unchecked")
-public <T> T visitLight(T v, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if ( (v instanceof tom.gom.adt.rule.types.Term) ) {
-return ((T)visit_Term((( tom.gom.adt.rule.types.Term )v),introspector));
-}
-if (!(  null ==environment )) {
-return ((T)any.visit(environment,introspector));
-} else {
-return any.visitLight(v,introspector);
-}
 
 }
 }
