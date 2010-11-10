@@ -50,8 +50,6 @@
       </filelist>
       
     </subant>
-      <!-- Exclude tests that run only with the new typer -->
-      <exclude name="typeinference/Test12.t"/>
   </target>
 
   <target name="examples"
