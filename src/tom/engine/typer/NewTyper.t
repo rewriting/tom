@@ -143,7 +143,6 @@ public class NewTyper extends TomGenericPlugin {
         //typedCode = newKernelTyper.inferCode((Code)getWorkingTerm());
         typedCode =
           newKernelTyper.inferAllTypes((Code)getWorkingTerm(),`EmptyType());
-        //DEBUG System.out.println("\nCode after type inference before desugarString = \n" + typedCode);
 
         /**
          * Replace all remains of type variables by
@@ -157,11 +156,12 @@ public class NewTyper extends TomGenericPlugin {
          * - transform each BackQuoteTerm into its compiled form
          * - replace 'abc' by concString('a','b','c')
          */
+        //DEBUG System.out.println("\nCode after type inference before desugarString = \n" + typedCode);
         typedCode = `TopDownIdStopOnSuccess(desugarString(this)).visitLight(typedCode);
         typedCode =
           `TopDownIdStopOnSuccess(TransformBQAppl(newKernelTyper)).visitLight(typedCode);
 
-        //DEBUG System.out.println("\nCode after type inference = \n" + typedCode);
+        //DEBUG System.out.println("\nCode after type inference after desugarString = = \n" + typedCode);
 
         setWorkingTerm(typedCode);
 
@@ -209,9 +209,15 @@ public class NewTyper extends TomGenericPlugin {
   }
   */
 
-  /*
-   * Type(name, EmptyTargetLanguageType()) -> Type(name, foundType) if name in TypeTable
-   * Type(name, EmptyTargetLanguageType()) -> TypeVar(name, Index(i)) if name not in TypeTable
+   /**
+   * The class <code>CollectKnownTypes</code> is generated from a strategy which
+   * initially types all terms by using their correspondent type in symbol table
+   * or a fresh type variable :
+   * CASE 1 : Type(name, EmptyTargetLanguageType()) -> Type(name, foundType) if
+   * name is in TypeTable
+   * CASE 2 : Type(name, EmptyTargetLanguageType()) -> TypeVar(name, Index(i))
+   * if name is not in TypeTable
+   * @param nkt an instance of object NewKernelTyper
    */
   %strategy CollectKnownTypes(typer:NewTyper,nkt:NewKernelTyper) extends Identity() {
     visit TomType {

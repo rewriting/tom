@@ -7,11 +7,9 @@ abstract syntax
 Info = PairNameOptions(AstName:TomName,Options:OptionList)
 
 TypeConstraint = Equation(Type1: TomType, Type2: TomType, Info: Info)
-               | Subtype(Type1: TomType, Type2: TomType)
+               | Subtype(Type1: TomType, Type2: TomType, Info: Info)
 
 TypeConstraintList = concTypeConstraint(TypeConstraint*)
-                   | FalseTypeConstraint()
-                   | TrueTypeConstraint()
 
 /*
 RichTomType = TypeVariable(Origins:TypeOriginList, TypeName:String,Index:int)
