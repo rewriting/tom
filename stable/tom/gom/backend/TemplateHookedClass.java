@@ -89,28 +89,28 @@ tom_append_list_ConcHook(hooks, tom.gom.adt.objects.types.hooklist.EmptyConcHook
 {
 if ( (h instanceof tom.gom.adt.objects.types.HookList) ) {
 if ( (((( tom.gom.adt.objects.types.HookList )h) instanceof tom.gom.adt.objects.types.hooklist.ConsConcHook) || ((( tom.gom.adt.objects.types.HookList )h) instanceof tom.gom.adt.objects.types.hooklist.EmptyConcHook)) ) {
- tom.gom.adt.objects.types.HookList  tomMatch432__end__4=(( tom.gom.adt.objects.types.HookList )h);
+ tom.gom.adt.objects.types.HookList  tomMatch479__end__4=(( tom.gom.adt.objects.types.HookList )h);
 do {
 {
-if (!( tomMatch432__end__4.isEmptyConcHook() )) {
- tom.gom.adt.objects.types.Hook  tomMatch432_8= tomMatch432__end__4.getHeadConcHook() ;
-if ( (tomMatch432_8 instanceof tom.gom.adt.objects.types.hook.BlockHook) ) {
+if (!( tomMatch479__end__4.isEmptyConcHook() )) {
+ tom.gom.adt.objects.types.Hook  tomMatch479_8= tomMatch479__end__4.getHeadConcHook() ;
+if ( (tomMatch479_8 instanceof tom.gom.adt.objects.types.hook.BlockHook) ) {
 
 res.append(CodeGen.generateCode(
- tomMatch432_8.getCode() ));
+ tomMatch479_8.getCode() ));
 res.append("\n");
 
 
 }
 }
-if ( tomMatch432__end__4.isEmptyConcHook() ) {
-tomMatch432__end__4=(( tom.gom.adt.objects.types.HookList )h);
+if ( tomMatch479__end__4.isEmptyConcHook() ) {
+tomMatch479__end__4=(( tom.gom.adt.objects.types.HookList )h);
 } else {
-tomMatch432__end__4= tomMatch432__end__4.getTailConcHook() ;
+tomMatch479__end__4= tomMatch479__end__4.getTailConcHook() ;
 }
 
 }
-} while(!( (tomMatch432__end__4==(( tom.gom.adt.objects.types.HookList )h)) ));
+} while(!( (tomMatch479__end__4==(( tom.gom.adt.objects.types.HookList )h)) ));
 }
 }
 
@@ -130,28 +130,28 @@ tom_append_list_ConcHook(hooks, tom.gom.adt.objects.types.hooklist.EmptyConcHook
 {
 if ( (h instanceof tom.gom.adt.objects.types.HookList) ) {
 if ( (((( tom.gom.adt.objects.types.HookList )h) instanceof tom.gom.adt.objects.types.hooklist.ConsConcHook) || ((( tom.gom.adt.objects.types.HookList )h) instanceof tom.gom.adt.objects.types.hooklist.EmptyConcHook)) ) {
- tom.gom.adt.objects.types.HookList  tomMatch433__end__4=(( tom.gom.adt.objects.types.HookList )h);
+ tom.gom.adt.objects.types.HookList  tomMatch480__end__4=(( tom.gom.adt.objects.types.HookList )h);
 do {
 {
-if (!( tomMatch433__end__4.isEmptyConcHook() )) {
- tom.gom.adt.objects.types.Hook  tomMatch433_8= tomMatch433__end__4.getHeadConcHook() ;
-if ( (tomMatch433_8 instanceof tom.gom.adt.objects.types.hook.ImportHook) ) {
+if (!( tomMatch480__end__4.isEmptyConcHook() )) {
+ tom.gom.adt.objects.types.Hook  tomMatch480_8= tomMatch480__end__4.getHeadConcHook() ;
+if ( (tomMatch480_8 instanceof tom.gom.adt.objects.types.hook.ImportHook) ) {
 
 res.append(CodeGen.generateCode(
- tomMatch433_8.getCode() ));
+ tomMatch480_8.getCode() ));
 res.append("\n");
 
 
 }
 }
-if ( tomMatch433__end__4.isEmptyConcHook() ) {
-tomMatch433__end__4=(( tom.gom.adt.objects.types.HookList )h);
+if ( tomMatch480__end__4.isEmptyConcHook() ) {
+tomMatch480__end__4=(( tom.gom.adt.objects.types.HookList )h);
 } else {
-tomMatch433__end__4= tomMatch433__end__4.getTailConcHook() ;
+tomMatch480__end__4= tomMatch480__end__4.getTailConcHook() ;
 }
 
 }
-} while(!( (tomMatch433__end__4==(( tom.gom.adt.objects.types.HookList )h)) ));
+} while(!( (tomMatch480__end__4==(( tom.gom.adt.objects.types.HookList )h)) ));
 }
 }
 
@@ -171,29 +171,29 @@ tom_append_list_ConcHook(hooks, tom.gom.adt.objects.types.hooklist.EmptyConcHook
 {
 if ( (h instanceof tom.gom.adt.objects.types.HookList) ) {
 if ( (((( tom.gom.adt.objects.types.HookList )h) instanceof tom.gom.adt.objects.types.hooklist.ConsConcHook) || ((( tom.gom.adt.objects.types.HookList )h) instanceof tom.gom.adt.objects.types.hooklist.EmptyConcHook)) ) {
- tom.gom.adt.objects.types.HookList  tomMatch434__end__4=(( tom.gom.adt.objects.types.HookList )h);
+ tom.gom.adt.objects.types.HookList  tomMatch481__end__4=(( tom.gom.adt.objects.types.HookList )h);
 do {
 {
-if (!( tomMatch434__end__4.isEmptyConcHook() )) {
- tom.gom.adt.objects.types.Hook  tomMatch434_8= tomMatch434__end__4.getHeadConcHook() ;
-if ( (tomMatch434_8 instanceof tom.gom.adt.objects.types.hook.InterfaceHook) ) {
+if (!( tomMatch481__end__4.isEmptyConcHook() )) {
+ tom.gom.adt.objects.types.Hook  tomMatch481_8= tomMatch481__end__4.getHeadConcHook() ;
+if ( (tomMatch481_8 instanceof tom.gom.adt.objects.types.hook.InterfaceHook) ) {
 
 res.append(",");
 res.append(CodeGen.generateCode(
- tomMatch434_8.getCode() ));
+ tomMatch481_8.getCode() ));
 res.append("\n");
 
 
 }
 }
-if ( tomMatch434__end__4.isEmptyConcHook() ) {
-tomMatch434__end__4=(( tom.gom.adt.objects.types.HookList )h);
+if ( tomMatch481__end__4.isEmptyConcHook() ) {
+tomMatch481__end__4=(( tom.gom.adt.objects.types.HookList )h);
 } else {
-tomMatch434__end__4= tomMatch434__end__4.getTailConcHook() ;
+tomMatch481__end__4= tomMatch481__end__4.getTailConcHook() ;
 }
 
 }
-} while(!( (tomMatch434__end__4==(( tom.gom.adt.objects.types.HookList )h)) ));
+} while(!( (tomMatch481__end__4==(( tom.gom.adt.objects.types.HookList )h)) ));
 }
 }
 

@@ -1,3 +1,8 @@
+2010-11-11 pem
+ * make constructors for some strategies (Choice,Sequence, etc.) private such
+   that a make function can be defined to build a list of one element
+ * bootstrap
+
 2010-11-10 pem
  * re-activated TomSyntaxChecker
  * improved the detection of variables not instantiated in a disjunction

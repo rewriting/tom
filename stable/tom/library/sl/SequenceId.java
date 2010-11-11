@@ -41,8 +41,15 @@ package tom.library.sl;
 public class SequenceId   extends AbstractStrategyCombinator {
   public final static int FIRST = 0;
   public final static int THEN = 1;
-  public SequenceId(Strategy first, Strategy then) {
+  private SequenceId(Strategy first, Strategy then) {
     initSubterm(first,then);
+  }
+
+  public static Strategy make(Strategy first, Strategy then) {
+    if(then==null) {
+      return first;
+    }
+    return new SequenceId(first,then);
   }
 
   public <T> T visitLight(T subject, Introspector introspector) throws VisitFailure {
