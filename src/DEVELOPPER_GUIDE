@@ -15,7 +15,8 @@ The compiler is composed of several plugins, which are executed in the following
   call gom
 
 - Syntax Checker
-  verify some syntactic properties an raise an error message when an error is detected
+  verify some syntactic properties an raise an error message when an error is
+  detected
 
 - Desugarer
   update the SymbolTable. For each symbol:
