@@ -343,7 +343,7 @@ public class TomMessage extends BasicPlatformMessage {
   public static final TomMessage badMatchNumberArgument  =
       new TomMessage("Bad number of arguments: {0,number,integer} argument(s) required by match signature but {1,number,integer} found");
   public static final TomMessage incorrectVariableStarInMatch=
-      new TomMessage("Single list variable ''{0}'' is not allowed on top of ''match'' pattern");
+      new TomMessage("Single list variable ''{0}'' is not allowed if not under a list operator");
   public static final TomMessage wrongMatchArgumentTypeInPattern=
       new TomMessage("Wrong type for slot {0,number,integer}:Type ''{1}'' required but Type ''{2}'' found");
   public static final TomMessage unknownSymbolInDisjunction=
