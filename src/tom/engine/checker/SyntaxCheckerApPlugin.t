@@ -78,16 +78,6 @@ public class SyntaxCheckerApPlugin extends SyntaxCheckerPlugin {
     return super.validateTerm(term, expectedType, listSymbol, topLevel);
   }
 
-  public TermDescription analyseTerm(TomTerm term) {
-    %match(TomTerm term) {
-      // for the moment, the anti only on termappl and on named variables
-      AntiTerm(t@(TermAppl|Variable|RecordAppl|XMLAppl)[]) -> {
-    	  return super.analyseTerm(`t);
-      }
-    }
-    return super.analyseTerm(term);
-  }
-
   /**
    * Checks if the given term contains annotations
    * 

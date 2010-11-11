@@ -101,12 +101,12 @@ writer.write("  %include { sl.tom }");
 {
 if ( (operatorClasses instanceof tom.gom.adt.objects.types.GomClassList) ) {
 if ( (((( tom.gom.adt.objects.types.GomClassList )operatorClasses) instanceof tom.gom.adt.objects.types.gomclasslist.ConsConcGomClass) || ((( tom.gom.adt.objects.types.GomClassList )operatorClasses) instanceof tom.gom.adt.objects.types.gomclasslist.EmptyConcGomClass)) ) {
- tom.gom.adt.objects.types.GomClassList  tomMatch478__end__4=(( tom.gom.adt.objects.types.GomClassList )operatorClasses);
+ tom.gom.adt.objects.types.GomClassList  tomMatch487__end__4=(( tom.gom.adt.objects.types.GomClassList )operatorClasses);
 do {
 {
-if (!( tomMatch478__end__4.isEmptyConcGomClass() )) {
-if ( ( tomMatch478__end__4.getHeadConcGomClass()  instanceof tom.gom.adt.objects.types.gomclass.OperatorClass) ) {
- tom.gom.adt.objects.types.GomClass  tom_op= tomMatch478__end__4.getHeadConcGomClass() ;
+if (!( tomMatch487__end__4.isEmptyConcGomClass() )) {
+if ( ( tomMatch487__end__4.getHeadConcGomClass()  instanceof tom.gom.adt.objects.types.gomclass.OperatorClass) ) {
+ tom.gom.adt.objects.types.GomClass  tom_op= tomMatch487__end__4.getHeadConcGomClass() ;
 
 writer.write(
 (new tom.gom.backend.strategy.SOpTemplate(
@@ -121,14 +121,14 @@ tom_op,getGomEnvironment())).generateMapping());
 
 }
 }
-if ( tomMatch478__end__4.isEmptyConcGomClass() ) {
-tomMatch478__end__4=(( tom.gom.adt.objects.types.GomClassList )operatorClasses);
+if ( tomMatch487__end__4.isEmptyConcGomClass() ) {
+tomMatch487__end__4=(( tom.gom.adt.objects.types.GomClassList )operatorClasses);
 } else {
-tomMatch478__end__4= tomMatch478__end__4.getTailConcGomClass() ;
+tomMatch487__end__4= tomMatch487__end__4.getTailConcGomClass() ;
 }
 
 }
-} while(!( (tomMatch478__end__4==(( tom.gom.adt.objects.types.GomClassList )operatorClasses)) ));
+} while(!( (tomMatch487__end__4==(( tom.gom.adt.objects.types.GomClassList )operatorClasses)) ));
 }
 }
 
@@ -136,17 +136,17 @@ tomMatch478__end__4= tomMatch478__end__4.getTailConcGomClass() ;
 {
 if ( (operatorClasses instanceof tom.gom.adt.objects.types.GomClassList) ) {
 if ( (((( tom.gom.adt.objects.types.GomClassList )operatorClasses) instanceof tom.gom.adt.objects.types.gomclasslist.ConsConcGomClass) || ((( tom.gom.adt.objects.types.GomClassList )operatorClasses) instanceof tom.gom.adt.objects.types.gomclasslist.EmptyConcGomClass)) ) {
- tom.gom.adt.objects.types.GomClassList  tomMatch478__end__12=(( tom.gom.adt.objects.types.GomClassList )operatorClasses);
+ tom.gom.adt.objects.types.GomClassList  tomMatch487__end__12=(( tom.gom.adt.objects.types.GomClassList )operatorClasses);
 do {
 {
-if (!( tomMatch478__end__12.isEmptyConcGomClass() )) {
- tom.gom.adt.objects.types.GomClass  tomMatch478_18= tomMatch478__end__12.getHeadConcGomClass() ;
-if ( (tomMatch478_18 instanceof tom.gom.adt.objects.types.gomclass.VariadicOperatorClass) ) {
- tom.gom.adt.objects.types.GomClass  tomMatch478_16= tomMatch478_18.getEmpty() ;
- tom.gom.adt.objects.types.GomClass  tomMatch478_17= tomMatch478_18.getCons() ;
- tom.gom.adt.objects.types.ClassName  tom_vopName= tomMatch478_18.getClassName() ;
-if ( (tomMatch478_16 instanceof tom.gom.adt.objects.types.gomclass.OperatorClass) ) {
-if ( (tomMatch478_17 instanceof tom.gom.adt.objects.types.gomclass.OperatorClass) ) {
+if (!( tomMatch487__end__12.isEmptyConcGomClass() )) {
+ tom.gom.adt.objects.types.GomClass  tomMatch487_18= tomMatch487__end__12.getHeadConcGomClass() ;
+if ( (tomMatch487_18 instanceof tom.gom.adt.objects.types.gomclass.VariadicOperatorClass) ) {
+ tom.gom.adt.objects.types.GomClass  tomMatch487_16= tomMatch487_18.getEmpty() ;
+ tom.gom.adt.objects.types.GomClass  tomMatch487_17= tomMatch487_18.getCons() ;
+ tom.gom.adt.objects.types.ClassName  tom_vopName= tomMatch487_18.getClassName() ;
+if ( (tomMatch487_16 instanceof tom.gom.adt.objects.types.gomclass.OperatorClass) ) {
+if ( (tomMatch487_17 instanceof tom.gom.adt.objects.types.gomclass.OperatorClass) ) {
 
 writer.write(
 "\n  %op Strategy _"+className(
@@ -154,11 +154,11 @@ tom_vopName)+
 "(sub:Strategy) {\n    is_fsym(t) { false }\n    make(sub)  { `mu(MuVar(\"x_"+className(
 tom_vopName)+
 "\"),Choice(_"+className(
- tomMatch478_17.getClassName() )+
+ tomMatch487_17.getClassName() )+
 "(sub,MuVar(\"x_"+className(
 tom_vopName)+
 "\")),_"+className(
- tomMatch478_16.getClassName() )+
+ tomMatch487_16.getClassName() )+
 "())) }\n  }\n  ");
 
 
@@ -166,14 +166,14 @@ tom_vopName)+
 }
 }
 }
-if ( tomMatch478__end__12.isEmptyConcGomClass() ) {
-tomMatch478__end__12=(( tom.gom.adt.objects.types.GomClassList )operatorClasses);
+if ( tomMatch487__end__12.isEmptyConcGomClass() ) {
+tomMatch487__end__12=(( tom.gom.adt.objects.types.GomClassList )operatorClasses);
 } else {
-tomMatch478__end__12= tomMatch478__end__12.getTailConcGomClass() ;
+tomMatch487__end__12= tomMatch487__end__12.getTailConcGomClass() ;
 }
 
 }
-} while(!( (tomMatch478__end__12==(( tom.gom.adt.objects.types.GomClassList )operatorClasses)) ));
+} while(!( (tomMatch487__end__12==(( tom.gom.adt.objects.types.GomClassList )operatorClasses)) ));
 }
 }
 

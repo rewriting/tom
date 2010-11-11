@@ -296,47 +296,6 @@ tom_t, expectedType, listSymbol, topLevel);
 return super.validateTerm(term, expectedType, listSymbol, topLevel);
 }
 
-public TermDescription analyseTerm(TomTerm term) {
-
-{
-{
-if ( (term instanceof tom.engine.adt.tomterm.types.TomTerm) ) {
-if ( ((( tom.engine.adt.tomterm.types.TomTerm )term) instanceof tom.engine.adt.tomterm.types.tomterm.AntiTerm) ) {
- tom.engine.adt.tomterm.types.TomTerm  tomMatch107_1= (( tom.engine.adt.tomterm.types.TomTerm )term).getTomTerm() ;
-boolean tomMatch107_4= false ;
-if ( (tomMatch107_1 instanceof tom.engine.adt.tomterm.types.tomterm.TermAppl) ) {
-tomMatch107_4= true ;
-} else {
-if ( (tomMatch107_1 instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) {
-tomMatch107_4= true ;
-} else {
-if ( (tomMatch107_1 instanceof tom.engine.adt.tomterm.types.tomterm.RecordAppl) ) {
-tomMatch107_4= true ;
-} else {
-if ( (tomMatch107_1 instanceof tom.engine.adt.tomterm.types.tomterm.XMLAppl) ) {
-tomMatch107_4= true ;
-}
-}
-}
-}
-if (tomMatch107_4) {
-
-return super.analyseTerm(
-tomMatch107_1);
-
-
-}
-
-}
-}
-
-}
-
-}
-
-return super.analyseTerm(term);
-}
-
 /**
 * Checks if the given term contains annotations
 * 
@@ -436,38 +395,38 @@ public  tom.engine.adt.tomterm.types.TomTerm  visit_TomTerm( tom.engine.adt.tomt
 {
 {
 if ( (tom__arg instanceof tom.engine.adt.tomterm.types.TomTerm) ) {
-boolean tomMatch108_10= false ;
- tom.engine.adt.tomconstraint.types.ConstraintList  tomMatch108_1= null ;
+boolean tomMatch107_10= false ;
+ tom.engine.adt.tomconstraint.types.ConstraintList  tomMatch107_1= null ;
 if ( ((( tom.engine.adt.tomterm.types.TomTerm )tom__arg) instanceof tom.engine.adt.tomterm.types.tomterm.TermAppl) ) {
 {
-tomMatch108_10= true ;
-tomMatch108_1= (( tom.engine.adt.tomterm.types.TomTerm )tom__arg).getConstraints() ;
+tomMatch107_10= true ;
+tomMatch107_1= (( tom.engine.adt.tomterm.types.TomTerm )tom__arg).getConstraints() ;
 
 }
 } else {
 if ( ((( tom.engine.adt.tomterm.types.TomTerm )tom__arg) instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) {
 {
-tomMatch108_10= true ;
-tomMatch108_1= (( tom.engine.adt.tomterm.types.TomTerm )tom__arg).getConstraints() ;
+tomMatch107_10= true ;
+tomMatch107_1= (( tom.engine.adt.tomterm.types.TomTerm )tom__arg).getConstraints() ;
 
 }
 } else {
 if ( ((( tom.engine.adt.tomterm.types.TomTerm )tom__arg) instanceof tom.engine.adt.tomterm.types.tomterm.RecordAppl) ) {
 {
-tomMatch108_10= true ;
-tomMatch108_1= (( tom.engine.adt.tomterm.types.TomTerm )tom__arg).getConstraints() ;
+tomMatch107_10= true ;
+tomMatch107_1= (( tom.engine.adt.tomterm.types.TomTerm )tom__arg).getConstraints() ;
 
 }
 }
 }
 }
-if (tomMatch108_10) {
-if ( ((tomMatch108_1 instanceof tom.engine.adt.tomconstraint.types.constraintlist.ConsconcConstraint) || (tomMatch108_1 instanceof tom.engine.adt.tomconstraint.types.constraintlist.EmptyconcConstraint)) ) {
- tom.engine.adt.tomconstraint.types.ConstraintList  tomMatch108__end__6=tomMatch108_1;
+if (tomMatch107_10) {
+if ( ((tomMatch107_1 instanceof tom.engine.adt.tomconstraint.types.constraintlist.ConsconcConstraint) || (tomMatch107_1 instanceof tom.engine.adt.tomconstraint.types.constraintlist.EmptyconcConstraint)) ) {
+ tom.engine.adt.tomconstraint.types.ConstraintList  tomMatch107__end__6=tomMatch107_1;
 do {
 {
-if (!( tomMatch108__end__6.isEmptyconcConstraint() )) {
-if ( ( tomMatch108__end__6.getHeadconcConstraint()  instanceof tom.engine.adt.tomconstraint.types.constraint.AliasTo) ) {
+if (!( tomMatch107__end__6.isEmptyconcConstraint() )) {
+if ( ( tomMatch107__end__6.getHeadconcConstraint()  instanceof tom.engine.adt.tomconstraint.types.constraint.AliasTo) ) {
 
 if(
 (( tom.engine.adt.tomterm.types.TomTerm )tom__arg)!= headTerm) {
@@ -477,14 +436,14 @@ TomMessage.error(tsca.getLogger(),fileName,decLine,TomMessage.illegalAnnotationI
 
 }
 }
-if ( tomMatch108__end__6.isEmptyconcConstraint() ) {
-tomMatch108__end__6=tomMatch108_1;
+if ( tomMatch107__end__6.isEmptyconcConstraint() ) {
+tomMatch107__end__6=tomMatch107_1;
 } else {
-tomMatch108__end__6= tomMatch108__end__6.getTailconcConstraint() ;
+tomMatch107__end__6= tomMatch107__end__6.getTailconcConstraint() ;
 }
 
 }
-} while(!( (tomMatch108__end__6==tomMatch108_1) ));
+} while(!( (tomMatch107__end__6==tomMatch107_1) ));
 }
 }
 

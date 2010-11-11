@@ -69,6 +69,7 @@ public class SyntaxCheckerPlugin extends TomGenericPlugin {
   %include { ../adt/tomsignature/TomSignature.tom }
   %include { ../../library/mapping/java/sl.tom }
   %include { ../../library/mapping/java/util/types/Collection.tom}
+  %include { ../../library/mapping/java/util/types/List.tom}
   %include { ../../library/mapping/java/util/types/Map.tom}
 
   %typeterm SyntaxCheckerPlugin { implement { SyntaxCheckerPlugin } }
@@ -266,14 +267,16 @@ public class SyntaxCheckerPlugin extends TomGenericPlugin {
        * %strategy
        * error if there is no visit
        */
-      Strategy[VisitList = list,OrgTrack=origin] -> {
+      s@Strategy[VisitList=list, OrgTrack=origin] -> {
         if(`list.isEmptyconcTomVisit()) {
           %match(origin) {
             OriginTracking[FileName=fileName,Line=line] -> { 
               TomMessage.error(scp.getLogger(), `fileName, `line, TomMessage.emptyStrategy);
+              return `s;
             }
           }
           TomMessage.error(scp.getLogger(), null, -1, TomMessage.emptyStrategy);
+          return `s;
         }
         /* STRATEGY MATCH STRUCTURE */
         scp.verifyStrategy(`list);
@@ -1058,7 +1061,7 @@ matchL:  %match(subject,s) {
   /**
    * Collect the matchConstraints in a list of constraints   
    */
-  %strategy CollectMatchConstraints(constrList:Collection) extends Identity() {
+  %strategy CollectMatchConstraints(constrList:List) extends Identity() {
     visit Constraint {
       m@MatchConstraint[] -> {        
         constrList.add(`m);         
@@ -1122,20 +1125,16 @@ matchL:  %match(subject,s) {
    * verify the structure of a %strategy
    */
   private void verifyStrategy(TomVisitList visitList) throws VisitFailure {
-    for(TomVisit visit:(tom.engine.adt.tomsignature.types.tomvisitlist.concTomVisit)visitList) {
-      verifyVisit(visit);
-    }
-  }
-
-  private void verifyVisit(TomVisit tvisit) throws VisitFailure {
-    %match(TomVisit tvisit) {
-      VisitTerm(type,constraintInstructionList,option) -> {
-        Collection<MatchConstraint> matchConstraints = new HashSet<MatchConstraint>();
+    %match(visitList) {
+      concTomVisit(_*,VisitTerm(type,constraintInstructionList,option),_*) -> {
+        List<MatchConstraint> matchConstraints = new ArrayList<MatchConstraint>();
         %match(constraintInstructionList) {
           concConstraintInstruction(_*,ConstraintInstruction[Constraint=constraint],_*) -> {
             matchConstraints.clear();
             `TopDownCollect(CollectMatchConstraints(matchConstraints)).visitLight(`constraint);   
             // for the first constraint, check that the type is conrform to the type specified in visit
+            // the order is important, this is why we used an ArrayList.
+            // TopDown is supposed to traverse from left-to-right
             MatchConstraint firstMatchConstr = matchConstraints.iterator().next(); 
             verifyMatchPattern(firstMatchConstr.getPattern(), `type);
           }

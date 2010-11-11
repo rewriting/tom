@@ -427,17 +427,17 @@ this.sortname = sortname;
 {
 if ( (sdecl instanceof tom.gom.adt.gom.types.Decl) ) {
 if ( ((( tom.gom.adt.gom.types.Decl )sdecl) instanceof tom.gom.adt.gom.types.decl.CutSort) ) {
- tom.gom.adt.gom.types.SortDecl  tomMatch550_1= (( tom.gom.adt.gom.types.Decl )sdecl).getSort() ;
-if ( (tomMatch550_1 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) {
- tom.gom.adt.gom.types.ModuleDecl  tomMatch550_3= tomMatch550_1.getModuleDecl() ;
-if ( (tomMatch550_3 instanceof tom.gom.adt.gom.types.moduledecl.ModuleDecl) ) {
- tom.gom.adt.gom.types.GomModuleName  tomMatch550_5= tomMatch550_3.getModuleName() ;
-if ( (tomMatch550_5 instanceof tom.gom.adt.gom.types.gommodulename.GomModuleName) ) {
+ tom.gom.adt.gom.types.SortDecl  tomMatch559_1= (( tom.gom.adt.gom.types.Decl )sdecl).getSort() ;
+if ( (tomMatch559_1 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) {
+ tom.gom.adt.gom.types.ModuleDecl  tomMatch559_3= tomMatch559_1.getModuleDecl() ;
+if ( (tomMatch559_3 instanceof tom.gom.adt.gom.types.moduledecl.ModuleDecl) ) {
+ tom.gom.adt.gom.types.GomModuleName  tomMatch559_5= tomMatch559_3.getModuleName() ;
+if ( (tomMatch559_5 instanceof tom.gom.adt.gom.types.gommodulename.GomModuleName) ) {
 
 this.moduleName = 
- tomMatch550_5.getName() ;
+ tomMatch559_5.getName() ;
 this.pkgName = 
- tomMatch550_3.getPkg() ;
+ tomMatch559_3.getPkg() ;
 
 
 }
@@ -508,23 +508,23 @@ output.append(
 {
 if ( (moduleList instanceof tom.gom.adt.gom.types.ModuleList) ) {
 if ( (((( tom.gom.adt.gom.types.ModuleList )moduleList) instanceof tom.gom.adt.gom.types.modulelist.ConsConcModule) || ((( tom.gom.adt.gom.types.ModuleList )moduleList) instanceof tom.gom.adt.gom.types.modulelist.EmptyConcModule)) ) {
- tom.gom.adt.gom.types.ModuleList  tomMatch551__end__4=(( tom.gom.adt.gom.types.ModuleList )moduleList);
+ tom.gom.adt.gom.types.ModuleList  tomMatch560__end__4=(( tom.gom.adt.gom.types.ModuleList )moduleList);
 do {
 {
-if (!( tomMatch551__end__4.isEmptyConcModule() )) {
- tom.gom.adt.gom.types.Module  tomMatch551_8= tomMatch551__end__4.getHeadConcModule() ;
-if ( (tomMatch551_8 instanceof tom.gom.adt.gom.types.module.Module) ) {
- tom.gom.adt.gom.types.SortList  tomMatch551_7= tomMatch551_8.getSorts() ;
-if ( ((tomMatch551_7 instanceof tom.gom.adt.gom.types.sortlist.ConsConcSort) || (tomMatch551_7 instanceof tom.gom.adt.gom.types.sortlist.EmptyConcSort)) ) {
- tom.gom.adt.gom.types.SortList  tomMatch551__end__12=tomMatch551_7;
+if (!( tomMatch560__end__4.isEmptyConcModule() )) {
+ tom.gom.adt.gom.types.Module  tomMatch560_8= tomMatch560__end__4.getHeadConcModule() ;
+if ( (tomMatch560_8 instanceof tom.gom.adt.gom.types.module.Module) ) {
+ tom.gom.adt.gom.types.SortList  tomMatch560_7= tomMatch560_8.getSorts() ;
+if ( ((tomMatch560_7 instanceof tom.gom.adt.gom.types.sortlist.ConsConcSort) || (tomMatch560_7 instanceof tom.gom.adt.gom.types.sortlist.EmptyConcSort)) ) {
+ tom.gom.adt.gom.types.SortList  tomMatch560__end__12=tomMatch560_7;
 do {
 {
-if (!( tomMatch551__end__12.isEmptyConcSort() )) {
- tom.gom.adt.gom.types.Sort  tomMatch551_16= tomMatch551__end__12.getHeadConcSort() ;
-if ( (tomMatch551_16 instanceof tom.gom.adt.gom.types.sort.Sort) ) {
- tom.gom.adt.gom.types.SortDecl  tomMatch551_15= tomMatch551_16.getDecl() ;
-if ( (tomMatch551_15 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) {
- String  tom_name= tomMatch551_15.getName() ;
+if (!( tomMatch560__end__12.isEmptyConcSort() )) {
+ tom.gom.adt.gom.types.Sort  tomMatch560_16= tomMatch560__end__12.getHeadConcSort() ;
+if ( (tomMatch560_16 instanceof tom.gom.adt.gom.types.sort.Sort) ) {
+ tom.gom.adt.gom.types.SortDecl  tomMatch560_15= tomMatch560_16.getDecl() ;
+if ( (tomMatch560_15 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) {
+ String  tom_name= tomMatch560_15.getName() ;
 
 output.append(
 
@@ -540,25 +540,25 @@ tom_name+
 }
 }
 }
-if ( tomMatch551__end__12.isEmptyConcSort() ) {
-tomMatch551__end__12=tomMatch551_7;
+if ( tomMatch560__end__12.isEmptyConcSort() ) {
+tomMatch560__end__12=tomMatch560_7;
 } else {
-tomMatch551__end__12= tomMatch551__end__12.getTailConcSort() ;
+tomMatch560__end__12= tomMatch560__end__12.getTailConcSort() ;
 }
 
 }
-} while(!( (tomMatch551__end__12==tomMatch551_7) ));
+} while(!( (tomMatch560__end__12==tomMatch560_7) ));
 }
 }
 }
-if ( tomMatch551__end__4.isEmptyConcModule() ) {
-tomMatch551__end__4=(( tom.gom.adt.gom.types.ModuleList )moduleList);
+if ( tomMatch560__end__4.isEmptyConcModule() ) {
+tomMatch560__end__4=(( tom.gom.adt.gom.types.ModuleList )moduleList);
 } else {
-tomMatch551__end__4= tomMatch551__end__4.getTailConcModule() ;
+tomMatch560__end__4= tomMatch560__end__4.getTailConcModule() ;
 }
 
 }
-} while(!( (tomMatch551__end__4==(( tom.gom.adt.gom.types.ModuleList )moduleList)) ));
+} while(!( (tomMatch560__end__4==(( tom.gom.adt.gom.types.ModuleList )moduleList)) ));
 }
 }
 
@@ -576,23 +576,23 @@ output.append(
 {
 if ( (moduleList instanceof tom.gom.adt.gom.types.ModuleList) ) {
 if ( (((( tom.gom.adt.gom.types.ModuleList )moduleList) instanceof tom.gom.adt.gom.types.modulelist.ConsConcModule) || ((( tom.gom.adt.gom.types.ModuleList )moduleList) instanceof tom.gom.adt.gom.types.modulelist.EmptyConcModule)) ) {
- tom.gom.adt.gom.types.ModuleList  tomMatch552__end__4=(( tom.gom.adt.gom.types.ModuleList )moduleList);
+ tom.gom.adt.gom.types.ModuleList  tomMatch561__end__4=(( tom.gom.adt.gom.types.ModuleList )moduleList);
 do {
 {
-if (!( tomMatch552__end__4.isEmptyConcModule() )) {
- tom.gom.adt.gom.types.Module  tomMatch552_8= tomMatch552__end__4.getHeadConcModule() ;
-if ( (tomMatch552_8 instanceof tom.gom.adt.gom.types.module.Module) ) {
- tom.gom.adt.gom.types.SortList  tomMatch552_7= tomMatch552_8.getSorts() ;
-if ( ((tomMatch552_7 instanceof tom.gom.adt.gom.types.sortlist.ConsConcSort) || (tomMatch552_7 instanceof tom.gom.adt.gom.types.sortlist.EmptyConcSort)) ) {
- tom.gom.adt.gom.types.SortList  tomMatch552__end__12=tomMatch552_7;
+if (!( tomMatch561__end__4.isEmptyConcModule() )) {
+ tom.gom.adt.gom.types.Module  tomMatch561_8= tomMatch561__end__4.getHeadConcModule() ;
+if ( (tomMatch561_8 instanceof tom.gom.adt.gom.types.module.Module) ) {
+ tom.gom.adt.gom.types.SortList  tomMatch561_7= tomMatch561_8.getSorts() ;
+if ( ((tomMatch561_7 instanceof tom.gom.adt.gom.types.sortlist.ConsConcSort) || (tomMatch561_7 instanceof tom.gom.adt.gom.types.sortlist.EmptyConcSort)) ) {
+ tom.gom.adt.gom.types.SortList  tomMatch561__end__12=tomMatch561_7;
 do {
 {
-if (!( tomMatch552__end__12.isEmptyConcSort() )) {
- tom.gom.adt.gom.types.Sort  tomMatch552_16= tomMatch552__end__12.getHeadConcSort() ;
-if ( (tomMatch552_16 instanceof tom.gom.adt.gom.types.sort.Sort) ) {
- tom.gom.adt.gom.types.SortDecl  tomMatch552_15= tomMatch552_16.getDecl() ;
-if ( (tomMatch552_15 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) {
- String  tom_name= tomMatch552_15.getName() ;
+if (!( tomMatch561__end__12.isEmptyConcSort() )) {
+ tom.gom.adt.gom.types.Sort  tomMatch561_16= tomMatch561__end__12.getHeadConcSort() ;
+if ( (tomMatch561_16 instanceof tom.gom.adt.gom.types.sort.Sort) ) {
+ tom.gom.adt.gom.types.SortDecl  tomMatch561_15= tomMatch561_16.getDecl() ;
+if ( (tomMatch561_15 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) {
+ String  tom_name= tomMatch561_15.getName() ;
 
 output.append(
 
@@ -606,25 +606,25 @@ tom_name+
 }
 }
 }
-if ( tomMatch552__end__12.isEmptyConcSort() ) {
-tomMatch552__end__12=tomMatch552_7;
+if ( tomMatch561__end__12.isEmptyConcSort() ) {
+tomMatch561__end__12=tomMatch561_7;
 } else {
-tomMatch552__end__12= tomMatch552__end__12.getTailConcSort() ;
+tomMatch561__end__12= tomMatch561__end__12.getTailConcSort() ;
 }
 
 }
-} while(!( (tomMatch552__end__12==tomMatch552_7) ));
+} while(!( (tomMatch561__end__12==tomMatch561_7) ));
 }
 }
 }
-if ( tomMatch552__end__4.isEmptyConcModule() ) {
-tomMatch552__end__4=(( tom.gom.adt.gom.types.ModuleList )moduleList);
+if ( tomMatch561__end__4.isEmptyConcModule() ) {
+tomMatch561__end__4=(( tom.gom.adt.gom.types.ModuleList )moduleList);
 } else {
-tomMatch552__end__4= tomMatch552__end__4.getTailConcModule() ;
+tomMatch561__end__4= tomMatch561__end__4.getTailConcModule() ;
 }
 
 }
-} while(!( (tomMatch552__end__4==(( tom.gom.adt.gom.types.ModuleList )moduleList)) ));
+} while(!( (tomMatch561__end__4==(( tom.gom.adt.gom.types.ModuleList )moduleList)) ));
 }
 }
 
@@ -645,23 +645,23 @@ output.append(
 {
 if ( (moduleList instanceof tom.gom.adt.gom.types.ModuleList) ) {
 if ( (((( tom.gom.adt.gom.types.ModuleList )moduleList) instanceof tom.gom.adt.gom.types.modulelist.ConsConcModule) || ((( tom.gom.adt.gom.types.ModuleList )moduleList) instanceof tom.gom.adt.gom.types.modulelist.EmptyConcModule)) ) {
- tom.gom.adt.gom.types.ModuleList  tomMatch553__end__4=(( tom.gom.adt.gom.types.ModuleList )moduleList);
+ tom.gom.adt.gom.types.ModuleList  tomMatch562__end__4=(( tom.gom.adt.gom.types.ModuleList )moduleList);
 do {
 {
-if (!( tomMatch553__end__4.isEmptyConcModule() )) {
- tom.gom.adt.gom.types.Module  tomMatch553_8= tomMatch553__end__4.getHeadConcModule() ;
-if ( (tomMatch553_8 instanceof tom.gom.adt.gom.types.module.Module) ) {
- tom.gom.adt.gom.types.SortList  tomMatch553_7= tomMatch553_8.getSorts() ;
-if ( ((tomMatch553_7 instanceof tom.gom.adt.gom.types.sortlist.ConsConcSort) || (tomMatch553_7 instanceof tom.gom.adt.gom.types.sortlist.EmptyConcSort)) ) {
- tom.gom.adt.gom.types.SortList  tomMatch553__end__12=tomMatch553_7;
+if (!( tomMatch562__end__4.isEmptyConcModule() )) {
+ tom.gom.adt.gom.types.Module  tomMatch562_8= tomMatch562__end__4.getHeadConcModule() ;
+if ( (tomMatch562_8 instanceof tom.gom.adt.gom.types.module.Module) ) {
+ tom.gom.adt.gom.types.SortList  tomMatch562_7= tomMatch562_8.getSorts() ;
+if ( ((tomMatch562_7 instanceof tom.gom.adt.gom.types.sortlist.ConsConcSort) || (tomMatch562_7 instanceof tom.gom.adt.gom.types.sortlist.EmptyConcSort)) ) {
+ tom.gom.adt.gom.types.SortList  tomMatch562__end__12=tomMatch562_7;
 do {
 {
-if (!( tomMatch553__end__12.isEmptyConcSort() )) {
- tom.gom.adt.gom.types.Sort  tomMatch553_16= tomMatch553__end__12.getHeadConcSort() ;
-if ( (tomMatch553_16 instanceof tom.gom.adt.gom.types.sort.Sort) ) {
- tom.gom.adt.gom.types.SortDecl  tomMatch553_15= tomMatch553_16.getDecl() ;
-if ( (tomMatch553_15 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) {
- String  tom_name= tomMatch553_15.getName() ;
+if (!( tomMatch562__end__12.isEmptyConcSort() )) {
+ tom.gom.adt.gom.types.Sort  tomMatch562_16= tomMatch562__end__12.getHeadConcSort() ;
+if ( (tomMatch562_16 instanceof tom.gom.adt.gom.types.sort.Sort) ) {
+ tom.gom.adt.gom.types.SortDecl  tomMatch562_15= tomMatch562_16.getDecl() ;
+if ( (tomMatch562_15 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) {
+ String  tom_name= tomMatch562_15.getName() ;
 
 output.append(
 
@@ -683,25 +683,25 @@ tom_name+
 }
 }
 }
-if ( tomMatch553__end__12.isEmptyConcSort() ) {
-tomMatch553__end__12=tomMatch553_7;
+if ( tomMatch562__end__12.isEmptyConcSort() ) {
+tomMatch562__end__12=tomMatch562_7;
 } else {
-tomMatch553__end__12= tomMatch553__end__12.getTailConcSort() ;
+tomMatch562__end__12= tomMatch562__end__12.getTailConcSort() ;
 }
 
 }
-} while(!( (tomMatch553__end__12==tomMatch553_7) ));
+} while(!( (tomMatch562__end__12==tomMatch562_7) ));
 }
 }
 }
-if ( tomMatch553__end__4.isEmptyConcModule() ) {
-tomMatch553__end__4=(( tom.gom.adt.gom.types.ModuleList )moduleList);
+if ( tomMatch562__end__4.isEmptyConcModule() ) {
+tomMatch562__end__4=(( tom.gom.adt.gom.types.ModuleList )moduleList);
 } else {
-tomMatch553__end__4= tomMatch553__end__4.getTailConcModule() ;
+tomMatch562__end__4= tomMatch562__end__4.getTailConcModule() ;
 }
 
 }
-} while(!( (tomMatch553__end__4==(( tom.gom.adt.gom.types.ModuleList )moduleList)) ));
+} while(!( (tomMatch562__end__4==(( tom.gom.adt.gom.types.ModuleList )moduleList)) ));
 }
 }
 
@@ -722,27 +722,27 @@ String imports =
 {
 if ( (moduleList instanceof tom.gom.adt.gom.types.ModuleList) ) {
 if ( (((( tom.gom.adt.gom.types.ModuleList )moduleList) instanceof tom.gom.adt.gom.types.modulelist.ConsConcModule) || ((( tom.gom.adt.gom.types.ModuleList )moduleList) instanceof tom.gom.adt.gom.types.modulelist.EmptyConcModule)) ) {
- tom.gom.adt.gom.types.ModuleList  tomMatch554__end__4=(( tom.gom.adt.gom.types.ModuleList )moduleList);
+ tom.gom.adt.gom.types.ModuleList  tomMatch563__end__4=(( tom.gom.adt.gom.types.ModuleList )moduleList);
 do {
 {
-if (!( tomMatch554__end__4.isEmptyConcModule() )) {
- tom.gom.adt.gom.types.Module  tomMatch554_9= tomMatch554__end__4.getHeadConcModule() ;
-if ( (tomMatch554_9 instanceof tom.gom.adt.gom.types.module.Module) ) {
- tom.gom.adt.gom.types.ModuleDecl  tomMatch554_7= tomMatch554_9.getMDecl() ;
- tom.gom.adt.gom.types.SortList  tomMatch554_8= tomMatch554_9.getSorts() ;
-if ( (tomMatch554_7 instanceof tom.gom.adt.gom.types.moduledecl.ModuleDecl) ) {
-if ( ( tomMatch554_7.getModuleName()  instanceof tom.gom.adt.gom.types.gommodulename.GomModuleName) ) {
- String  tom_pkg= tomMatch554_7.getPkg() ;
-if ( ((tomMatch554_8 instanceof tom.gom.adt.gom.types.sortlist.ConsConcSort) || (tomMatch554_8 instanceof tom.gom.adt.gom.types.sortlist.EmptyConcSort)) ) {
- tom.gom.adt.gom.types.SortList  tomMatch554__end__18=tomMatch554_8;
+if (!( tomMatch563__end__4.isEmptyConcModule() )) {
+ tom.gom.adt.gom.types.Module  tomMatch563_9= tomMatch563__end__4.getHeadConcModule() ;
+if ( (tomMatch563_9 instanceof tom.gom.adt.gom.types.module.Module) ) {
+ tom.gom.adt.gom.types.ModuleDecl  tomMatch563_7= tomMatch563_9.getMDecl() ;
+ tom.gom.adt.gom.types.SortList  tomMatch563_8= tomMatch563_9.getSorts() ;
+if ( (tomMatch563_7 instanceof tom.gom.adt.gom.types.moduledecl.ModuleDecl) ) {
+if ( ( tomMatch563_7.getModuleName()  instanceof tom.gom.adt.gom.types.gommodulename.GomModuleName) ) {
+ String  tom_pkg= tomMatch563_7.getPkg() ;
+if ( ((tomMatch563_8 instanceof tom.gom.adt.gom.types.sortlist.ConsConcSort) || (tomMatch563_8 instanceof tom.gom.adt.gom.types.sortlist.EmptyConcSort)) ) {
+ tom.gom.adt.gom.types.SortList  tomMatch563__end__18=tomMatch563_8;
 do {
 {
-if (!( tomMatch554__end__18.isEmptyConcSort() )) {
- tom.gom.adt.gom.types.Sort  tomMatch554_22= tomMatch554__end__18.getHeadConcSort() ;
-if ( (tomMatch554_22 instanceof tom.gom.adt.gom.types.sort.Sort) ) {
- tom.gom.adt.gom.types.SortDecl  tomMatch554_21= tomMatch554_22.getDecl() ;
-if ( (tomMatch554_21 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) {
- String  tom_name= tomMatch554_21.getName() ;
+if (!( tomMatch563__end__18.isEmptyConcSort() )) {
+ tom.gom.adt.gom.types.Sort  tomMatch563_22= tomMatch563__end__18.getHeadConcSort() ;
+if ( (tomMatch563_22 instanceof tom.gom.adt.gom.types.sort.Sort) ) {
+ tom.gom.adt.gom.types.SortDecl  tomMatch563_21= tomMatch563_22.getDecl() ;
+if ( (tomMatch563_21 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) {
+ String  tom_name= tomMatch563_21.getName() ;
 
 
 String prefix = ((
@@ -760,27 +760,27 @@ tom_name+
 }
 }
 }
-if ( tomMatch554__end__18.isEmptyConcSort() ) {
-tomMatch554__end__18=tomMatch554_8;
+if ( tomMatch563__end__18.isEmptyConcSort() ) {
+tomMatch563__end__18=tomMatch563_8;
 } else {
-tomMatch554__end__18= tomMatch554__end__18.getTailConcSort() ;
+tomMatch563__end__18= tomMatch563__end__18.getTailConcSort() ;
 }
 
 }
-} while(!( (tomMatch554__end__18==tomMatch554_8) ));
+} while(!( (tomMatch563__end__18==tomMatch563_8) ));
 }
 }
 }
 }
 }
-if ( tomMatch554__end__4.isEmptyConcModule() ) {
-tomMatch554__end__4=(( tom.gom.adt.gom.types.ModuleList )moduleList);
+if ( tomMatch563__end__4.isEmptyConcModule() ) {
+tomMatch563__end__4=(( tom.gom.adt.gom.types.ModuleList )moduleList);
 } else {
-tomMatch554__end__4= tomMatch554__end__4.getTailConcModule() ;
+tomMatch563__end__4= tomMatch563__end__4.getTailConcModule() ;
 }
 
 }
-} while(!( (tomMatch554__end__4==(( tom.gom.adt.gom.types.ModuleList )moduleList)) ));
+} while(!( (tomMatch563__end__4==(( tom.gom.adt.gom.types.ModuleList )moduleList)) ));
 }
 }
 
@@ -811,33 +811,33 @@ output.append(
 {
 if ( (rulelist instanceof tom.gom.adt.rule.types.RuleList) ) {
 if ( (((( tom.gom.adt.rule.types.RuleList )rulelist) instanceof tom.gom.adt.rule.types.rulelist.ConsRuleList) || ((( tom.gom.adt.rule.types.RuleList )rulelist) instanceof tom.gom.adt.rule.types.rulelist.EmptyRuleList)) ) {
- tom.gom.adt.rule.types.RuleList  tomMatch555__end__4=(( tom.gom.adt.rule.types.RuleList )rulelist);
+ tom.gom.adt.rule.types.RuleList  tomMatch564__end__4=(( tom.gom.adt.rule.types.RuleList )rulelist);
 do {
 {
-if (!( tomMatch555__end__4.isEmptyRuleList() )) {
- tom.gom.adt.rule.types.Rule  tomMatch555_9= tomMatch555__end__4.getHeadRuleList() ;
-boolean tomMatch555_10= false ;
- tom.gom.adt.rule.types.Term  tomMatch555_7= null ;
- tom.gom.adt.rule.types.Term  tomMatch555_8= null ;
-if ( (tomMatch555_9 instanceof tom.gom.adt.rule.types.rule.Rule) ) {
+if (!( tomMatch564__end__4.isEmptyRuleList() )) {
+ tom.gom.adt.rule.types.Rule  tomMatch564_9= tomMatch564__end__4.getHeadRuleList() ;
+boolean tomMatch564_10= false ;
+ tom.gom.adt.rule.types.Term  tomMatch564_7= null ;
+ tom.gom.adt.rule.types.Term  tomMatch564_8= null ;
+if ( (tomMatch564_9 instanceof tom.gom.adt.rule.types.rule.Rule) ) {
 {
-tomMatch555_10= true ;
-tomMatch555_7= tomMatch555_9.getlhs() ;
-tomMatch555_8= tomMatch555_9.getrhs() ;
+tomMatch564_10= true ;
+tomMatch564_7= tomMatch564_9.getlhs() ;
+tomMatch564_8= tomMatch564_9.getrhs() ;
 
 }
 } else {
-if ( (tomMatch555_9 instanceof tom.gom.adt.rule.types.rule.ConditionalRule) ) {
+if ( (tomMatch564_9 instanceof tom.gom.adt.rule.types.rule.ConditionalRule) ) {
 {
-tomMatch555_10= true ;
-tomMatch555_7= tomMatch555_9.getlhs() ;
-tomMatch555_8= tomMatch555_9.getrhs() ;
+tomMatch564_10= true ;
+tomMatch564_7= tomMatch564_9.getlhs() ;
+tomMatch564_8= tomMatch564_9.getrhs() ;
 
 }
 }
 }
-if (tomMatch555_10) {
- tom.gom.adt.rule.types.Term  tom_lhs=tomMatch555_7;
+if (tomMatch564_10) {
+ tom.gom.adt.rule.types.Term  tom_lhs=tomMatch564_7;
 
 //TODO: verify that the lhs of the rules are of the good sort
 //TODO: verify the linearity of lhs and rhs
@@ -851,7 +851,7 @@ tom_lhs)+
 tom_lhs,"root",0)+
 ".normalizeWithLabels();\n                "+fullClassName(abstractType)+
 " labelledRhs = `"+genTermWithExplicitVar(
-tomMatch555_8,"root",0)+
+tomMatch564_8,"root",0)+
 ".normalizeWithLabels();\n\n               /* 3. construct t = SubstTerm(subject',r') */\n                "+fullClassName(abstractType)+
 " rhs = labelledRhs.label2path();\n                "+fullClassName(abstractType)+
 " lhs = labelledLhs.label2path();\n                rhs = `TopDown(FromVarToPath(lhs,omega)).visit(rhs);\n                "+fullClassName(abstractType)+
@@ -862,14 +862,14 @@ tomMatch555_8,"root",0)+
 }
 
 }
-if ( tomMatch555__end__4.isEmptyRuleList() ) {
-tomMatch555__end__4=(( tom.gom.adt.rule.types.RuleList )rulelist);
+if ( tomMatch564__end__4.isEmptyRuleList() ) {
+tomMatch564__end__4=(( tom.gom.adt.rule.types.RuleList )rulelist);
 } else {
-tomMatch555__end__4= tomMatch555__end__4.getTailRuleList() ;
+tomMatch564__end__4= tomMatch564__end__4.getTailRuleList() ;
 }
 
 }
-} while(!( (tomMatch555__end__4==(( tom.gom.adt.rule.types.RuleList )rulelist)) ));
+} while(!( (tomMatch564__end__4==(( tom.gom.adt.rule.types.RuleList )rulelist)) ));
 }
 }
 
@@ -905,25 +905,25 @@ output.append(
 {
 if ( (tom_tail instanceof tom.gom.adt.rule.types.Term) ) {
 if ( (((( tom.gom.adt.rule.types.Term )tom_tail) instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || ((( tom.gom.adt.rule.types.Term )tom_tail) instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
- tom.gom.adt.rule.types.Term  tomMatch557__end__4=(( tom.gom.adt.rule.types.Term )tom_tail);
+ tom.gom.adt.rule.types.Term  tomMatch566__end__4=(( tom.gom.adt.rule.types.Term )tom_tail);
 do {
 {
-if (!( tomMatch557__end__4.isEmptyPathTerm() )) {
+if (!( tomMatch566__end__4.isEmptyPathTerm() )) {
 
 output.append(",");
 output.append(
- tomMatch557__end__4.getHeadPathTerm() );
+ tomMatch566__end__4.getHeadPathTerm() );
 
 
 }
-if ( tomMatch557__end__4.isEmptyPathTerm() ) {
-tomMatch557__end__4=(( tom.gom.adt.rule.types.Term )tom_tail);
+if ( tomMatch566__end__4.isEmptyPathTerm() ) {
+tomMatch566__end__4=(( tom.gom.adt.rule.types.Term )tom_tail);
 } else {
-tomMatch557__end__4= tomMatch557__end__4.getTailPathTerm() ;
+tomMatch566__end__4= tomMatch566__end__4.getTailPathTerm() ;
 }
 
 }
-} while(!( (tomMatch557__end__4==(( tom.gom.adt.rule.types.Term )tom_tail)) ));
+} while(!( (tomMatch566__end__4==(( tom.gom.adt.rule.types.Term )tom_tail)) ));
 }
 }
 
@@ -1167,29 +1167,29 @@ return "";
 {
 if ( (list instanceof tom.gom.adt.rule.types.TermList) ) {
 if ( (((( tom.gom.adt.rule.types.TermList )list) instanceof tom.gom.adt.rule.types.termlist.ConsTermList) || ((( tom.gom.adt.rule.types.TermList )list) instanceof tom.gom.adt.rule.types.termlist.EmptyTermList)) ) {
- tom.gom.adt.rule.types.TermList  tomMatch560__end__6=(( tom.gom.adt.rule.types.TermList )list);
+ tom.gom.adt.rule.types.TermList  tomMatch569__end__6=(( tom.gom.adt.rule.types.TermList )list);
 do {
 {
-if (!( tomMatch560__end__6.isEmptyTermList() )) {
+if (!( tomMatch569__end__6.isEmptyTermList() )) {
 
 output.append(genTermWithExplicitVar(
- tomMatch560__end__6.getHeadTermList() ,fathersymbol,omega));
+ tomMatch569__end__6.getHeadTermList() ,fathersymbol,omega));
 omega++;
 if (!
- tomMatch560__end__6.getTailTermList() .isEmptyTermList()) {
+ tomMatch569__end__6.getTailTermList() .isEmptyTermList()) {
 output.append(", ");
 }
 
 
 }
-if ( tomMatch560__end__6.isEmptyTermList() ) {
-tomMatch560__end__6=(( tom.gom.adt.rule.types.TermList )list);
+if ( tomMatch569__end__6.isEmptyTermList() ) {
+tomMatch569__end__6=(( tom.gom.adt.rule.types.TermList )list);
 } else {
-tomMatch560__end__6= tomMatch560__end__6.getTailTermList() ;
+tomMatch569__end__6= tomMatch569__end__6.getTailTermList() ;
 }
 
 }
-} while(!( (tomMatch560__end__6==(( tom.gom.adt.rule.types.TermList )list)) ));
+} while(!( (tomMatch569__end__6==(( tom.gom.adt.rule.types.TermList )list)) ));
 }
 }
 
@@ -1599,48 +1599,48 @@ tom_make_PathForPattern().visit(
 {
 if ( (tom__arg instanceof tom.gom.adt.rule.types.Term) ) {
 if ( (((( tom.gom.adt.rule.types.Term )tom__arg) instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || ((( tom.gom.adt.rule.types.Term )tom__arg) instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
- tom.gom.adt.rule.types.Term  tomMatch564__end__11=(( tom.gom.adt.rule.types.Term )tom__arg);
+ tom.gom.adt.rule.types.Term  tomMatch573__end__11=(( tom.gom.adt.rule.types.Term )tom__arg);
 do {
 {
- tom.gom.adt.rule.types.Term  tomMatch564_7=tom_get_slice_PathTerm((( tom.gom.adt.rule.types.Term )tom__arg),tomMatch564__end__11, tom.gom.adt.rule.types.term.EmptyPathTerm.make() );
-if (!( tomMatch564__end__11.isEmptyPathTerm() )) {
-if ( -1== tomMatch564__end__11.getHeadPathTerm()  ) {
- tom.gom.adt.rule.types.Term  tom_sublist=tomMatch564_7;
+ tom.gom.adt.rule.types.Term  tomMatch573_7=tom_get_slice_PathTerm((( tom.gom.adt.rule.types.Term )tom__arg),tomMatch573__end__11, tom.gom.adt.rule.types.term.EmptyPathTerm.make() );
+if (!( tomMatch573__end__11.isEmptyPathTerm() )) {
+if ( -1== tomMatch573__end__11.getHeadPathTerm()  ) {
+ tom.gom.adt.rule.types.Term  tom_sublist=tomMatch573_7;
 if ( (tom_sublist instanceof tom.gom.adt.rule.types.Term) ) {
-boolean tomMatch564_25= false ;
-if ( ((tomMatch564_7 instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || (tomMatch564_7 instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
-if ( (tom_sublist==tomMatch564_7) ) {
- tom.gom.adt.rule.types.Term  tomMatch564__end__18=tomMatch564_7;
+boolean tomMatch573_25= false ;
+if ( ((tomMatch573_7 instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || (tomMatch573_7 instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
+if ( (tom_sublist==tomMatch573_7) ) {
+ tom.gom.adt.rule.types.Term  tomMatch573__end__18=tomMatch573_7;
 do {
 {
-if (!( tomMatch564__end__18.isEmptyPathTerm() )) {
-boolean tomMatch564_26= false ;
-if ( -2== tomMatch564__end__18.getHeadPathTerm()  ) {
-tomMatch564_26= true ;
+if (!( tomMatch573__end__18.isEmptyPathTerm() )) {
+boolean tomMatch573_26= false ;
+if ( -2== tomMatch573__end__18.getHeadPathTerm()  ) {
+tomMatch573_26= true ;
 }
-if (!(tomMatch564_26)) {
-tomMatch564_25= true ;
+if (!(tomMatch573_26)) {
+tomMatch573_25= true ;
 }
 
 }
-if ( tomMatch564__end__18.isEmptyPathTerm() ) {
-tomMatch564__end__18=tomMatch564_7;
+if ( tomMatch573__end__18.isEmptyPathTerm() ) {
+tomMatch573__end__18=tomMatch573_7;
 } else {
-tomMatch564__end__18= tomMatch564__end__18.getTailPathTerm() ;
+tomMatch573__end__18= tomMatch573__end__18.getTailPathTerm() ;
 }
 
 }
-} while(!( (tomMatch564__end__18==tomMatch564_7) ));
+} while(!( (tomMatch573__end__18==tomMatch573_7) ));
 }
 }
-if (!(tomMatch564_25)) {
-boolean tomMatch564_24= false ;
+if (!(tomMatch573_25)) {
+boolean tomMatch573_24= false ;
 if ( (((( tom.gom.adt.rule.types.Term )tom_sublist) instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || ((( tom.gom.adt.rule.types.Term )tom_sublist) instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
 if ( (( tom.gom.adt.rule.types.Term )tom_sublist).isEmptyPathTerm() ) {
-tomMatch564_24= true ;
+tomMatch573_24= true ;
 }
 }
-if (!(tomMatch564_24)) {
+if (!(tomMatch573_24)) {
 
 //TODO: avoid the compilation warning
 // because it generates a  disjunction which is not fully supported with associative operators
@@ -1648,7 +1648,7 @@ int upcount =
 tom_sublist.length();
 Term newtail = 
 tom_make_PathForPattern().visit(
- tomMatch564__end__11.getTailPathTerm() );
+ tomMatch573__end__11.getTailPathTerm() );
 return 
  tom.gom.adt.rule.types.term.ConsPathTerm.make(-upcount,tom_append_list_PathTerm(newtail, tom.gom.adt.rule.types.term.EmptyPathTerm.make() )) ;
 
@@ -1660,14 +1660,14 @@ return
 }
 }
 }
-if ( tomMatch564__end__11.isEmptyPathTerm() ) {
-tomMatch564__end__11=(( tom.gom.adt.rule.types.Term )tom__arg);
+if ( tomMatch573__end__11.isEmptyPathTerm() ) {
+tomMatch573__end__11=(( tom.gom.adt.rule.types.Term )tom__arg);
 } else {
-tomMatch564__end__11= tomMatch564__end__11.getTailPathTerm() ;
+tomMatch573__end__11= tomMatch573__end__11.getTailPathTerm() ;
 }
 
 }
-} while(!( (tomMatch564__end__11==(( tom.gom.adt.rule.types.Term )tom__arg)) ));
+} while(!( (tomMatch573__end__11==(( tom.gom.adt.rule.types.Term )tom__arg)) ));
 }
 }
 
@@ -1675,51 +1675,51 @@ tomMatch564__end__11= tomMatch564__end__11.getTailPathTerm() ;
 {
 if ( (tom__arg instanceof tom.gom.adt.rule.types.Term) ) {
 if ( (((( tom.gom.adt.rule.types.Term )tom__arg) instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || ((( tom.gom.adt.rule.types.Term )tom__arg) instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
- tom.gom.adt.rule.types.Term  tomMatch564__end__36=(( tom.gom.adt.rule.types.Term )tom__arg);
+ tom.gom.adt.rule.types.Term  tomMatch573__end__36=(( tom.gom.adt.rule.types.Term )tom__arg);
 do {
 {
- tom.gom.adt.rule.types.Term  tomMatch564_32=tom_get_slice_PathTerm((( tom.gom.adt.rule.types.Term )tom__arg),tomMatch564__end__36, tom.gom.adt.rule.types.term.EmptyPathTerm.make() );
- tom.gom.adt.rule.types.Term  tom_tail=tomMatch564__end__36;
- tom.gom.adt.rule.types.Term  tom_sublist=tomMatch564_32;
+ tom.gom.adt.rule.types.Term  tomMatch573_32=tom_get_slice_PathTerm((( tom.gom.adt.rule.types.Term )tom__arg),tomMatch573__end__36, tom.gom.adt.rule.types.term.EmptyPathTerm.make() );
+ tom.gom.adt.rule.types.Term  tom_tail=tomMatch573__end__36;
+ tom.gom.adt.rule.types.Term  tom_sublist=tomMatch573_32;
 if ( (tom_tail instanceof tom.gom.adt.rule.types.Term) ) {
 if ( (((( tom.gom.adt.rule.types.Term )tom_tail) instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || ((( tom.gom.adt.rule.types.Term )tom_tail) instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
 if (!( (( tom.gom.adt.rule.types.Term )tom_tail).isEmptyPathTerm() )) {
 if ( 1== (( tom.gom.adt.rule.types.Term )tom_tail).getHeadPathTerm()  ) {
 if ( (tom_sublist instanceof tom.gom.adt.rule.types.Term) ) {
-boolean tomMatch564_57= false ;
-if ( ((tomMatch564_32 instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || (tomMatch564_32 instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
-if ( (tom_sublist==tomMatch564_32) ) {
- tom.gom.adt.rule.types.Term  tomMatch564__end__50=tomMatch564_32;
+boolean tomMatch573_57= false ;
+if ( ((tomMatch573_32 instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || (tomMatch573_32 instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
+if ( (tom_sublist==tomMatch573_32) ) {
+ tom.gom.adt.rule.types.Term  tomMatch573__end__50=tomMatch573_32;
 do {
 {
-if (!( tomMatch564__end__50.isEmptyPathTerm() )) {
-boolean tomMatch564_58= false ;
-if ( -2== tomMatch564__end__50.getHeadPathTerm()  ) {
-tomMatch564_58= true ;
+if (!( tomMatch573__end__50.isEmptyPathTerm() )) {
+boolean tomMatch573_58= false ;
+if ( -2== tomMatch573__end__50.getHeadPathTerm()  ) {
+tomMatch573_58= true ;
 }
-if (!(tomMatch564_58)) {
-tomMatch564_57= true ;
+if (!(tomMatch573_58)) {
+tomMatch573_57= true ;
 }
 
 }
-if ( tomMatch564__end__50.isEmptyPathTerm() ) {
-tomMatch564__end__50=tomMatch564_32;
+if ( tomMatch573__end__50.isEmptyPathTerm() ) {
+tomMatch573__end__50=tomMatch573_32;
 } else {
-tomMatch564__end__50= tomMatch564__end__50.getTailPathTerm() ;
+tomMatch573__end__50= tomMatch573__end__50.getTailPathTerm() ;
 }
 
 }
-} while(!( (tomMatch564__end__50==tomMatch564_32) ));
+} while(!( (tomMatch573__end__50==tomMatch573_32) ));
 }
 }
-if (!(tomMatch564_57)) {
-boolean tomMatch564_56= false ;
+if (!(tomMatch573_57)) {
+boolean tomMatch573_56= false ;
 if ( (((( tom.gom.adt.rule.types.Term )tom_sublist) instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || ((( tom.gom.adt.rule.types.Term )tom_sublist) instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
 if ( (( tom.gom.adt.rule.types.Term )tom_sublist).isEmptyPathTerm() ) {
-tomMatch564_56= true ;
+tomMatch573_56= true ;
 }
 }
-if (!(tomMatch564_56)) {
+if (!(tomMatch573_56)) {
 
 int downcount = 
 tom_sublist.length();
@@ -1744,40 +1744,40 @@ if ( (((( tom.gom.adt.rule.types.Term )tom_tail) instanceof tom.gom.adt.rule.typ
 if (!( (( tom.gom.adt.rule.types.Term )tom_tail).isEmptyPathTerm() )) {
 if ( 2== (( tom.gom.adt.rule.types.Term )tom_tail).getHeadPathTerm()  ) {
 if ( (tom_sublist instanceof tom.gom.adt.rule.types.Term) ) {
-boolean tomMatch564_57= false ;
-if ( ((tomMatch564_32 instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || (tomMatch564_32 instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
-if ( (tom_sublist==tomMatch564_32) ) {
- tom.gom.adt.rule.types.Term  tomMatch564__end__50=tomMatch564_32;
+boolean tomMatch573_57= false ;
+if ( ((tomMatch573_32 instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || (tomMatch573_32 instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
+if ( (tom_sublist==tomMatch573_32) ) {
+ tom.gom.adt.rule.types.Term  tomMatch573__end__50=tomMatch573_32;
 do {
 {
-if (!( tomMatch564__end__50.isEmptyPathTerm() )) {
-boolean tomMatch564_58= false ;
-if ( -2== tomMatch564__end__50.getHeadPathTerm()  ) {
-tomMatch564_58= true ;
+if (!( tomMatch573__end__50.isEmptyPathTerm() )) {
+boolean tomMatch573_58= false ;
+if ( -2== tomMatch573__end__50.getHeadPathTerm()  ) {
+tomMatch573_58= true ;
 }
-if (!(tomMatch564_58)) {
-tomMatch564_57= true ;
+if (!(tomMatch573_58)) {
+tomMatch573_57= true ;
 }
 
 }
-if ( tomMatch564__end__50.isEmptyPathTerm() ) {
-tomMatch564__end__50=tomMatch564_32;
+if ( tomMatch573__end__50.isEmptyPathTerm() ) {
+tomMatch573__end__50=tomMatch573_32;
 } else {
-tomMatch564__end__50= tomMatch564__end__50.getTailPathTerm() ;
+tomMatch573__end__50= tomMatch573__end__50.getTailPathTerm() ;
 }
 
 }
-} while(!( (tomMatch564__end__50==tomMatch564_32) ));
+} while(!( (tomMatch573__end__50==tomMatch573_32) ));
 }
 }
-if (!(tomMatch564_57)) {
-boolean tomMatch564_56= false ;
+if (!(tomMatch573_57)) {
+boolean tomMatch573_56= false ;
 if ( (((( tom.gom.adt.rule.types.Term )tom_sublist) instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || ((( tom.gom.adt.rule.types.Term )tom_sublist) instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
 if ( (( tom.gom.adt.rule.types.Term )tom_sublist).isEmptyPathTerm() ) {
-tomMatch564_56= true ;
+tomMatch573_56= true ;
 }
 }
-if (!(tomMatch564_56)) {
+if (!(tomMatch573_56)) {
 
 int downcount = 
 tom_sublist.length();
@@ -1801,40 +1801,40 @@ if ( (tom_tail instanceof tom.gom.adt.rule.types.Term) ) {
 if ( (((( tom.gom.adt.rule.types.Term )tom_tail) instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || ((( tom.gom.adt.rule.types.Term )tom_tail) instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
 if ( (( tom.gom.adt.rule.types.Term )tom_tail).isEmptyPathTerm() ) {
 if ( (tom_sublist instanceof tom.gom.adt.rule.types.Term) ) {
-boolean tomMatch564_57= false ;
-if ( ((tomMatch564_32 instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || (tomMatch564_32 instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
-if ( (tom_sublist==tomMatch564_32) ) {
- tom.gom.adt.rule.types.Term  tomMatch564__end__50=tomMatch564_32;
+boolean tomMatch573_57= false ;
+if ( ((tomMatch573_32 instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || (tomMatch573_32 instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
+if ( (tom_sublist==tomMatch573_32) ) {
+ tom.gom.adt.rule.types.Term  tomMatch573__end__50=tomMatch573_32;
 do {
 {
-if (!( tomMatch564__end__50.isEmptyPathTerm() )) {
-boolean tomMatch564_58= false ;
-if ( -2== tomMatch564__end__50.getHeadPathTerm()  ) {
-tomMatch564_58= true ;
+if (!( tomMatch573__end__50.isEmptyPathTerm() )) {
+boolean tomMatch573_58= false ;
+if ( -2== tomMatch573__end__50.getHeadPathTerm()  ) {
+tomMatch573_58= true ;
 }
-if (!(tomMatch564_58)) {
-tomMatch564_57= true ;
+if (!(tomMatch573_58)) {
+tomMatch573_57= true ;
 }
 
 }
-if ( tomMatch564__end__50.isEmptyPathTerm() ) {
-tomMatch564__end__50=tomMatch564_32;
+if ( tomMatch573__end__50.isEmptyPathTerm() ) {
+tomMatch573__end__50=tomMatch573_32;
 } else {
-tomMatch564__end__50= tomMatch564__end__50.getTailPathTerm() ;
+tomMatch573__end__50= tomMatch573__end__50.getTailPathTerm() ;
 }
 
 }
-} while(!( (tomMatch564__end__50==tomMatch564_32) ));
+} while(!( (tomMatch573__end__50==tomMatch573_32) ));
 }
 }
-if (!(tomMatch564_57)) {
-boolean tomMatch564_56= false ;
+if (!(tomMatch573_57)) {
+boolean tomMatch573_56= false ;
 if ( (((( tom.gom.adt.rule.types.Term )tom_sublist) instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || ((( tom.gom.adt.rule.types.Term )tom_sublist) instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
 if ( (( tom.gom.adt.rule.types.Term )tom_sublist).isEmptyPathTerm() ) {
-tomMatch564_56= true ;
+tomMatch573_56= true ;
 }
 }
-if (!(tomMatch564_56)) {
+if (!(tomMatch573_56)) {
 
 int downcount = 
 tom_sublist.length();
@@ -1854,14 +1854,14 @@ return
 }
 }
 
-if ( tomMatch564__end__36.isEmptyPathTerm() ) {
-tomMatch564__end__36=(( tom.gom.adt.rule.types.Term )tom__arg);
+if ( tomMatch573__end__36.isEmptyPathTerm() ) {
+tomMatch573__end__36=(( tom.gom.adt.rule.types.Term )tom__arg);
 } else {
-tomMatch564__end__36= tomMatch564__end__36.getTailPathTerm() ;
+tomMatch573__end__36= tomMatch573__end__36.getTailPathTerm() ;
 }
 
 }
-} while(!( (tomMatch564__end__36==(( tom.gom.adt.rule.types.Term )tom__arg)) ));
+} while(!( (tomMatch573__end__36==(( tom.gom.adt.rule.types.Term )tom__arg)) ));
 }
 }
 
@@ -1869,54 +1869,54 @@ tomMatch564__end__36= tomMatch564__end__36.getTailPathTerm() ;
 {
 if ( (tom__arg instanceof tom.gom.adt.rule.types.Term) ) {
 if ( (((( tom.gom.adt.rule.types.Term )tom__arg) instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || ((( tom.gom.adt.rule.types.Term )tom__arg) instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
- tom.gom.adt.rule.types.Term  tomMatch564__end__65=(( tom.gom.adt.rule.types.Term )tom__arg);
+ tom.gom.adt.rule.types.Term  tomMatch573__end__65=(( tom.gom.adt.rule.types.Term )tom__arg);
 do {
 {
- tom.gom.adt.rule.types.Term  tomMatch564_61=tom_get_slice_PathTerm((( tom.gom.adt.rule.types.Term )tom__arg),tomMatch564__end__65, tom.gom.adt.rule.types.term.EmptyPathTerm.make() );
-if (!( tomMatch564__end__65.isEmptyPathTerm() )) {
-if ( 1== tomMatch564__end__65.getHeadPathTerm()  ) {
- tom.gom.adt.rule.types.Term  tom_sublist=tomMatch564_61;
+ tom.gom.adt.rule.types.Term  tomMatch573_61=tom_get_slice_PathTerm((( tom.gom.adt.rule.types.Term )tom__arg),tomMatch573__end__65, tom.gom.adt.rule.types.term.EmptyPathTerm.make() );
+if (!( tomMatch573__end__65.isEmptyPathTerm() )) {
+if ( 1== tomMatch573__end__65.getHeadPathTerm()  ) {
+ tom.gom.adt.rule.types.Term  tom_sublist=tomMatch573_61;
 if ( (tom_sublist instanceof tom.gom.adt.rule.types.Term) ) {
-boolean tomMatch564_79= false ;
-if ( ((tomMatch564_61 instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || (tomMatch564_61 instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
-if ( (tom_sublist==tomMatch564_61) ) {
- tom.gom.adt.rule.types.Term  tomMatch564__end__72=tomMatch564_61;
+boolean tomMatch573_79= false ;
+if ( ((tomMatch573_61 instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || (tomMatch573_61 instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
+if ( (tom_sublist==tomMatch573_61) ) {
+ tom.gom.adt.rule.types.Term  tomMatch573__end__72=tomMatch573_61;
 do {
 {
-if (!( tomMatch564__end__72.isEmptyPathTerm() )) {
-boolean tomMatch564_80= false ;
-if ( 2== tomMatch564__end__72.getHeadPathTerm()  ) {
-tomMatch564_80= true ;
+if (!( tomMatch573__end__72.isEmptyPathTerm() )) {
+boolean tomMatch573_80= false ;
+if ( 2== tomMatch573__end__72.getHeadPathTerm()  ) {
+tomMatch573_80= true ;
 }
-if (!(tomMatch564_80)) {
-tomMatch564_79= true ;
+if (!(tomMatch573_80)) {
+tomMatch573_79= true ;
 }
 
 }
-if ( tomMatch564__end__72.isEmptyPathTerm() ) {
-tomMatch564__end__72=tomMatch564_61;
+if ( tomMatch573__end__72.isEmptyPathTerm() ) {
+tomMatch573__end__72=tomMatch573_61;
 } else {
-tomMatch564__end__72= tomMatch564__end__72.getTailPathTerm() ;
+tomMatch573__end__72= tomMatch573__end__72.getTailPathTerm() ;
 }
 
 }
-} while(!( (tomMatch564__end__72==tomMatch564_61) ));
+} while(!( (tomMatch573__end__72==tomMatch573_61) ));
 }
 }
-if (!(tomMatch564_79)) {
-boolean tomMatch564_78= false ;
+if (!(tomMatch573_79)) {
+boolean tomMatch573_78= false ;
 if ( (((( tom.gom.adt.rule.types.Term )tom_sublist) instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || ((( tom.gom.adt.rule.types.Term )tom_sublist) instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
 if ( (( tom.gom.adt.rule.types.Term )tom_sublist).isEmptyPathTerm() ) {
-tomMatch564_78= true ;
+tomMatch573_78= true ;
 }
 }
-if (!(tomMatch564_78)) {
+if (!(tomMatch573_78)) {
 
 int downcount = 
 tom_sublist.length();
 Term newtail = 
 tom_make_PathForPattern().visit(
- tomMatch564__end__65.getTailPathTerm() );
+ tomMatch573__end__65.getTailPathTerm() );
 return 
  tom.gom.adt.rule.types.term.ConsPathTerm.make(downcount,tom_append_list_PathTerm(newtail, tom.gom.adt.rule.types.term.EmptyPathTerm.make() )) ;
 
@@ -1928,14 +1928,14 @@ return
 }
 }
 }
-if ( tomMatch564__end__65.isEmptyPathTerm() ) {
-tomMatch564__end__65=(( tom.gom.adt.rule.types.Term )tom__arg);
+if ( tomMatch573__end__65.isEmptyPathTerm() ) {
+tomMatch573__end__65=(( tom.gom.adt.rule.types.Term )tom__arg);
 } else {
-tomMatch564__end__65= tomMatch564__end__65.getTailPathTerm() ;
+tomMatch573__end__65= tomMatch573__end__65.getTailPathTerm() ;
 }
 
 }
-} while(!( (tomMatch564__end__65==(( tom.gom.adt.rule.types.Term )tom__arg)) ));
+} while(!( (tomMatch573__end__65==(( tom.gom.adt.rule.types.Term )tom__arg)) ));
 }
 }
 
@@ -2006,31 +2006,31 @@ public  tom.gom.adt.rule.types.Term  visit_Term( tom.gom.adt.rule.types.Term  to
 {
 if ( (tom__arg instanceof tom.gom.adt.rule.types.Term) ) {
 if ( (((( tom.gom.adt.rule.types.Term )tom__arg) instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || ((( tom.gom.adt.rule.types.Term )tom__arg) instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
- tom.gom.adt.rule.types.Term  tomMatch565__end__4=(( tom.gom.adt.rule.types.Term )tom__arg);
+ tom.gom.adt.rule.types.Term  tomMatch574__end__4=(( tom.gom.adt.rule.types.Term )tom__arg);
 do {
 {
-if (!( tomMatch565__end__4.isEmptyPathTerm() )) {
- tom.gom.adt.rule.types.Term  tomMatch565_5= tomMatch565__end__4.getTailPathTerm() ;
-if (!( tomMatch565_5.isEmptyPathTerm() )) {
+if (!( tomMatch574__end__4.isEmptyPathTerm() )) {
+ tom.gom.adt.rule.types.Term  tomMatch574_5= tomMatch574__end__4.getTailPathTerm() ;
+if (!( tomMatch574_5.isEmptyPathTerm() )) {
 
 if (
- tomMatch565__end__4.getHeadPathTerm() ==-
- tomMatch565_5.getHeadPathTerm() ) {
+ tomMatch574__end__4.getHeadPathTerm() ==-
+ tomMatch574_5.getHeadPathTerm() ) {
 return 
-tom_append_list_PathTerm(tom_get_slice_PathTerm((( tom.gom.adt.rule.types.Term )tom__arg),tomMatch565__end__4, tom.gom.adt.rule.types.term.EmptyPathTerm.make() ),tom_append_list_PathTerm( tomMatch565_5.getTailPathTerm() , tom.gom.adt.rule.types.term.EmptyPathTerm.make() ));
+tom_append_list_PathTerm(tom_get_slice_PathTerm((( tom.gom.adt.rule.types.Term )tom__arg),tomMatch574__end__4, tom.gom.adt.rule.types.term.EmptyPathTerm.make() ),tom_append_list_PathTerm( tomMatch574_5.getTailPathTerm() , tom.gom.adt.rule.types.term.EmptyPathTerm.make() ));
 }
 
 
 }
 }
-if ( tomMatch565__end__4.isEmptyPathTerm() ) {
-tomMatch565__end__4=(( tom.gom.adt.rule.types.Term )tom__arg);
+if ( tomMatch574__end__4.isEmptyPathTerm() ) {
+tomMatch574__end__4=(( tom.gom.adt.rule.types.Term )tom__arg);
 } else {
-tomMatch565__end__4= tomMatch565__end__4.getTailPathTerm() ;
+tomMatch574__end__4= tomMatch574__end__4.getTailPathTerm() ;
 }
 
 }
-} while(!( (tomMatch565__end__4==(( tom.gom.adt.rule.types.Term )tom__arg)) ));
+} while(!( (tomMatch574__end__4==(( tom.gom.adt.rule.types.Term )tom__arg)) ));
 }
 }
 

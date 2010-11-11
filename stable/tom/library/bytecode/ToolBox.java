@@ -365,24 +365,24 @@ map.put(accessObj[i],accessFlags[i]);
 {
 if ( (list instanceof tom.library.adt.bytecode.types.AccessList) ) {
 if ( (((( tom.library.adt.bytecode.types.AccessList )list) instanceof tom.library.adt.bytecode.types.accesslist.ConsAccessList) || ((( tom.library.adt.bytecode.types.AccessList )list) instanceof tom.library.adt.bytecode.types.accesslist.EmptyAccessList)) ) {
- tom.library.adt.bytecode.types.AccessList  tomMatch613__end__4=(( tom.library.adt.bytecode.types.AccessList )list);
+ tom.library.adt.bytecode.types.AccessList  tomMatch622__end__4=(( tom.library.adt.bytecode.types.AccessList )list);
 do {
 {
-if (!( tomMatch613__end__4.isEmptyAccessList() )) {
+if (!( tomMatch622__end__4.isEmptyAccessList() )) {
 
 value = value | (map.get(
- tomMatch613__end__4.getHeadAccessList() )).intValue();
+ tomMatch622__end__4.getHeadAccessList() )).intValue();
 
 
 }
-if ( tomMatch613__end__4.isEmptyAccessList() ) {
-tomMatch613__end__4=(( tom.library.adt.bytecode.types.AccessList )list);
+if ( tomMatch622__end__4.isEmptyAccessList() ) {
+tomMatch622__end__4=(( tom.library.adt.bytecode.types.AccessList )list);
 } else {
-tomMatch613__end__4= tomMatch613__end__4.getTailAccessList() ;
+tomMatch622__end__4= tomMatch622__end__4.getTailAccessList() ;
 }
 
 }
-} while(!( (tomMatch613__end__4==(( tom.library.adt.bytecode.types.AccessList )list)) ));
+} while(!( (tomMatch622__end__4==(( tom.library.adt.bytecode.types.AccessList )list)) ));
 }
 }
 

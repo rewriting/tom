@@ -463,21 +463,21 @@ public  tom.engine.adt.tomexpression.types.Expression  visit_Expression( tom.eng
 {
 if ( (tom__arg instanceof tom.engine.adt.tomexpression.types.Expression) ) {
 if ( ((( tom.engine.adt.tomexpression.types.Expression )tom__arg) instanceof tom.engine.adt.tomexpression.types.expression.ConstraintToExpression) ) {
- tom.engine.adt.tomconstraint.types.Constraint  tomMatch202_1= (( tom.engine.adt.tomexpression.types.Expression )tom__arg).getcons() ;
-if ( (tomMatch202_1 instanceof tom.engine.adt.tomconstraint.types.constraint.MatchConstraint) ) {
- tom.engine.adt.tomterm.types.TomTerm  tomMatch202_3= tomMatch202_1.getPattern() ;
- tom.engine.adt.code.types.BQTerm  tomMatch202_4= tomMatch202_1.getSubject() ;
-if ( (tomMatch202_3 instanceof tom.engine.adt.tomterm.types.tomterm.VariableStar) ) {
- tom.engine.adt.tomterm.types.TomTerm  tom_v=tomMatch202_3;
-if ( (tomMatch202_4 instanceof tom.engine.adt.code.types.bqterm.VariableHeadList) ) {
- tom.engine.adt.code.types.BQTerm  tomMatch202_10= tomMatch202_4.getEnd() ;
- tom.engine.adt.tomname.types.TomName  tom_opName= tomMatch202_4.getOpname() ;
- tom.engine.adt.code.types.BQTerm  tom_begin= tomMatch202_4.getBegin() ;
-if ( (tomMatch202_10 instanceof tom.engine.adt.code.types.bqterm.BQVariableStar) ) {
- tom.engine.adt.code.types.BQTerm  tom_end=tomMatch202_10;
+ tom.engine.adt.tomconstraint.types.Constraint  tomMatch157_1= (( tom.engine.adt.tomexpression.types.Expression )tom__arg).getcons() ;
+if ( (tomMatch157_1 instanceof tom.engine.adt.tomconstraint.types.constraint.MatchConstraint) ) {
+ tom.engine.adt.tomterm.types.TomTerm  tomMatch157_3= tomMatch157_1.getPattern() ;
+ tom.engine.adt.code.types.BQTerm  tomMatch157_4= tomMatch157_1.getSubject() ;
+if ( (tomMatch157_3 instanceof tom.engine.adt.tomterm.types.tomterm.VariableStar) ) {
+ tom.engine.adt.tomterm.types.TomTerm  tom_v=tomMatch157_3;
+if ( (tomMatch157_4 instanceof tom.engine.adt.code.types.bqterm.VariableHeadList) ) {
+ tom.engine.adt.code.types.BQTerm  tomMatch157_10= tomMatch157_4.getEnd() ;
+ tom.engine.adt.tomname.types.TomName  tom_opName= tomMatch157_4.getOpname() ;
+ tom.engine.adt.code.types.BQTerm  tom_begin= tomMatch157_4.getBegin() ;
+if ( (tomMatch157_10 instanceof tom.engine.adt.code.types.bqterm.BQVariableStar) ) {
+ tom.engine.adt.code.types.BQTerm  tom_end=tomMatch157_10;
 
 Expression doWhileTest = 
- tom.engine.adt.tomexpression.types.expression.Negation.make( tom.engine.adt.tomexpression.types.expression.EqualBQTerm.make( tomMatch202_10.getAstType() , tom_end, tom_begin) ) ;
+ tom.engine.adt.tomexpression.types.expression.Negation.make( tom.engine.adt.tomexpression.types.expression.EqualBQTerm.make( tomMatch157_10.getAstType() , tom_end, tom_begin) ) ;
 Expression testEmpty = vg.getConstraintGenerator().genIsEmptyList(
 tom_opName,
 tom_end);
@@ -489,7 +489,7 @@ if (
 tom_v.isVariableStar()) {
 Expression varDeclaration =
 
- tom.engine.adt.tomexpression.types.expression.ConstraintToExpression.make( tom.engine.adt.tomconstraint.types.constraint.MatchConstraint.make(tom_v,  tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make( tom.engine.adt.tomexpression.types.expression.GetSliceList.make(tom_opName, tom_begin, tom_end,  tom.engine.adt.code.types.bqterm.BuildEmptyList.make(tom_opName) ) ) ,  tomMatch202_1.getAstType() ) ) ;
+ tom.engine.adt.tomexpression.types.expression.ConstraintToExpression.make( tom.engine.adt.tomconstraint.types.constraint.MatchConstraint.make(tom_v,  tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make( tom.engine.adt.tomexpression.types.expression.GetSliceList.make(tom_opName, tom_begin, tom_end,  tom.engine.adt.code.types.bqterm.BuildEmptyList.make(tom_opName) ) ) ,  tomMatch157_1.getAstType() ) ) ;
 return 
  tom.engine.adt.tomexpression.types.expression.And.make( tom.engine.adt.tomexpression.types.expression.DoWhileExpression.make(endExpression, doWhileTest) , varDeclaration) ;
 }
