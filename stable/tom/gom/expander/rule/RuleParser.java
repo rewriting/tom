@@ -1,4 +1,4 @@
-// $ANTLR 3.1.3 Mar 17, 2009 19:23:44 /Users/pem/workspace/jtom/src/tom/gom/expander/rule/Rule.g 2010-07-21 12:17:15
+// $ANTLR 3.2 Sep 23, 2009 12:02:23 /Users/pem/workspace/jtom/src/tom/gom/expander/rule/Rule.g 2010-11-11 13:41:40
 
 package tom.gom.expander.rule;
 
@@ -1085,7 +1085,7 @@ public class RuleParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: p7, p6, p1, p2, p1, p5, p4, p8, p3, p1, p1, p1, p1, p1
+                    // elements: p7, p6, p1, p2, p1, p5, p4, p1, p8, p3, p1, p1, p1, p1
                     // token labels: 
                     // rule labels: p7, p6, retval, p5, p4, p3, p2, p1, p8
                     // token list labels: 

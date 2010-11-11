@@ -306,36 +306,58 @@ default: throw new IndexOutOfBoundsException();
 }
 }
 @SuppressWarnings("unchecked")
+public <T> T visitLight(T v, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if ( (v instanceof tom.engine.adt.tomexpression.types.Expression) ) {
+return ((T)visit_Expression((( tom.engine.adt.tomexpression.types.Expression )v),introspector));
+}
+if (!(( null  == environment))) {
+return ((T)any.visit(environment,introspector));
+} else {
+return any.visitLight(v,introspector);
+}
+
+}
+@SuppressWarnings("unchecked")
+public  tom.engine.adt.tomexpression.types.Expression  _visit_Expression( tom.engine.adt.tomexpression.types.Expression  arg, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if (!(( null  == environment))) {
+return (( tom.engine.adt.tomexpression.types.Expression )any.visit(environment,introspector));
+} else {
+return any.visitLight(arg,introspector);
+}
+}
+@SuppressWarnings("unchecked")
 public  tom.engine.adt.tomexpression.types.Expression  visit_Expression( tom.engine.adt.tomexpression.types.Expression  tom__arg, tom.library.sl.Introspector introspector)
  throws tom.library.sl.VisitFailure {
 {
 {
 if ( (tom__arg instanceof tom.engine.adt.tomexpression.types.Expression) ) {
 if ( ((( tom.engine.adt.tomexpression.types.Expression )tom__arg) instanceof tom.engine.adt.tomexpression.types.expression.ConstraintToExpression) ) {
- tom.engine.adt.tomconstraint.types.Constraint  tomMatch150_1= (( tom.engine.adt.tomexpression.types.Expression )tom__arg).getcons() ;
-if ( (tomMatch150_1 instanceof tom.engine.adt.tomconstraint.types.constraint.MatchConstraint) ) {
- tom.engine.adt.tomterm.types.TomTerm  tomMatch150_3= tomMatch150_1.getPattern() ;
-if ( (tomMatch150_3 instanceof tom.engine.adt.tomterm.types.tomterm.RecordAppl) ) {
- tom.engine.adt.tomname.types.TomNameList  tomMatch150_6= tomMatch150_3.getNameList() ;
- tom.engine.adt.tomslot.types.SlotList  tomMatch150_7= tomMatch150_3.getSlots() ;
-if ( ((tomMatch150_6 instanceof tom.engine.adt.tomname.types.tomnamelist.ConsconcTomName) || (tomMatch150_6 instanceof tom.engine.adt.tomname.types.tomnamelist.EmptyconcTomName)) ) {
-if (!( tomMatch150_6.isEmptyconcTomName() )) {
- tom.engine.adt.tomname.types.TomName  tomMatch150_15= tomMatch150_6.getHeadconcTomName() ;
-if ( (tomMatch150_15 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
- String  tom_symbolName= tomMatch150_15.getString() ;
-if (  tomMatch150_6.getTailconcTomName() .isEmptyconcTomName() ) {
-if ( ((tomMatch150_7 instanceof tom.engine.adt.tomslot.types.slotlist.ConsconcSlot) || (tomMatch150_7 instanceof tom.engine.adt.tomslot.types.slotlist.EmptyconcSlot)) ) {
-if (!( tomMatch150_7.isEmptyconcSlot() )) {
- tom.engine.adt.tomslot.types.Slot  tomMatch150_17= tomMatch150_7.getHeadconcSlot() ;
-if ( (tomMatch150_17 instanceof tom.engine.adt.tomslot.types.slot.PairSlotAppl) ) {
- tom.engine.adt.tomterm.types.TomTerm  tomMatch150_16= tomMatch150_17.getAppl() ;
-if ( (tomMatch150_16 instanceof tom.engine.adt.tomterm.types.tomterm.VariableStar) ) {
- tom.engine.adt.tomname.types.TomName  tomMatch150_18= tomMatch150_16.getAstName() ;
-if ( (tomMatch150_18 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
- String  tom_name_x= tomMatch150_18.getString() ;
- tom.engine.adt.tomterm.types.TomTerm  tom_var_x=tomMatch150_16;
- tom.engine.adt.tomterm.types.TomTerm  tom_pattern=tomMatch150_3;
- tom.engine.adt.code.types.BQTerm  tom_subject= tomMatch150_1.getSubject() ;
+ tom.engine.adt.tomconstraint.types.Constraint  tomMatch152_1= (( tom.engine.adt.tomexpression.types.Expression )tom__arg).getcons() ;
+if ( (tomMatch152_1 instanceof tom.engine.adt.tomconstraint.types.constraint.MatchConstraint) ) {
+ tom.engine.adt.tomterm.types.TomTerm  tomMatch152_3= tomMatch152_1.getPattern() ;
+if ( (tomMatch152_3 instanceof tom.engine.adt.tomterm.types.tomterm.RecordAppl) ) {
+ tom.engine.adt.tomname.types.TomNameList  tomMatch152_6= tomMatch152_3.getNameList() ;
+ tom.engine.adt.tomslot.types.SlotList  tomMatch152_7= tomMatch152_3.getSlots() ;
+if ( ((tomMatch152_6 instanceof tom.engine.adt.tomname.types.tomnamelist.ConsconcTomName) || (tomMatch152_6 instanceof tom.engine.adt.tomname.types.tomnamelist.EmptyconcTomName)) ) {
+if (!( tomMatch152_6.isEmptyconcTomName() )) {
+ tom.engine.adt.tomname.types.TomName  tomMatch152_15= tomMatch152_6.getHeadconcTomName() ;
+if ( (tomMatch152_15 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+ String  tom_symbolName= tomMatch152_15.getString() ;
+if (  tomMatch152_6.getTailconcTomName() .isEmptyconcTomName() ) {
+if ( ((tomMatch152_7 instanceof tom.engine.adt.tomslot.types.slotlist.ConsconcSlot) || (tomMatch152_7 instanceof tom.engine.adt.tomslot.types.slotlist.EmptyconcSlot)) ) {
+if (!( tomMatch152_7.isEmptyconcSlot() )) {
+ tom.engine.adt.tomslot.types.Slot  tomMatch152_17= tomMatch152_7.getHeadconcSlot() ;
+if ( (tomMatch152_17 instanceof tom.engine.adt.tomslot.types.slot.PairSlotAppl) ) {
+ tom.engine.adt.tomterm.types.TomTerm  tomMatch152_16= tomMatch152_17.getAppl() ;
+if ( (tomMatch152_16 instanceof tom.engine.adt.tomterm.types.tomterm.VariableStar) ) {
+ tom.engine.adt.tomname.types.TomName  tomMatch152_18= tomMatch152_16.getAstName() ;
+if ( (tomMatch152_18 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+ String  tom_name_x= tomMatch152_18.getString() ;
+ tom.engine.adt.tomterm.types.TomTerm  tom_var_x=tomMatch152_16;
+ tom.engine.adt.tomterm.types.TomTerm  tom_pattern=tomMatch152_3;
+ tom.engine.adt.code.types.BQTerm  tom_subject= tomMatch152_1.getSubject() ;
 
 if (TomBase.hasTheory(
 tom_pattern,
@@ -348,18 +370,18 @@ TomTerm var_y = null;
 //System.out.println("\n *** ACGenerator on: " + `pattern);
 
 for(Slot t:
- tomMatch150_7.getTailconcSlot() .getCollectionconcSlot()) {
+ tomMatch152_7.getTailconcSlot() .getCollectionconcSlot()) {
 
 {
 {
 if ( (t instanceof tom.engine.adt.tomslot.types.Slot) ) {
 if ( ((( tom.engine.adt.tomslot.types.Slot )t) instanceof tom.engine.adt.tomslot.types.slot.PairSlotAppl) ) {
- tom.engine.adt.tomterm.types.TomTerm  tomMatch151_1= (( tom.engine.adt.tomslot.types.Slot )t).getAppl() ;
-if ( (tomMatch151_1 instanceof tom.engine.adt.tomterm.types.tomterm.VariableStar) ) {
- tom.engine.adt.tomname.types.TomName  tomMatch151_3= tomMatch151_1.getAstName() ;
-if ( (tomMatch151_3 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
- String  tom_name= tomMatch151_3.getString() ;
- tom.engine.adt.tomterm.types.TomTerm  tom_var=tomMatch151_1;
+ tom.engine.adt.tomterm.types.TomTerm  tomMatch153_1= (( tom.engine.adt.tomslot.types.Slot )t).getAppl() ;
+if ( (tomMatch153_1 instanceof tom.engine.adt.tomterm.types.tomterm.VariableStar) ) {
+ tom.engine.adt.tomname.types.TomName  tomMatch153_3= tomMatch153_1.getAstName() ;
+if ( (tomMatch153_3 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+ String  tom_name= tomMatch153_3.getString() ;
+ tom.engine.adt.tomterm.types.TomTerm  tom_var=tomMatch153_1;
 
 if (null == name_y && ! (
 tom_name).equals(
@@ -431,28 +453,6 @@ tom_pattern);
 
 }
 return _visit_Expression(tom__arg,introspector);
-
-}
-@SuppressWarnings("unchecked")
-public  tom.engine.adt.tomexpression.types.Expression  _visit_Expression( tom.engine.adt.tomexpression.types.Expression  arg, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if (!(( null  == environment))) {
-return (( tom.engine.adt.tomexpression.types.Expression )any.visit(environment,introspector));
-} else {
-return any.visitLight(arg,introspector);
-}
-}
-@SuppressWarnings("unchecked")
-public <T> T visitLight(T v, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if ( (v instanceof tom.engine.adt.tomexpression.types.Expression) ) {
-return ((T)visit_Expression((( tom.engine.adt.tomexpression.types.Expression )v),introspector));
-}
-if (!(( null  == environment))) {
-return ((T)any.visit(environment,introspector));
-} else {
-return any.visitLight(v,introspector);
-}
 
 }
 }

@@ -160,11 +160,11 @@ matchblock: {
 {
 if ( (extendsType instanceof tom.engine.adt.tomtype.types.TomType) ) {
 if ( ((( tom.engine.adt.tomtype.types.TomType )extendsType) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {
- tom.engine.adt.tomtype.types.TargetLanguageType  tomMatch101_2= (( tom.engine.adt.tomtype.types.TomType )extendsType).getTlType() ;
-if ( (tomMatch101_2 instanceof tom.engine.adt.tomtype.types.targetlanguagetype.TLType) ) {
+ tom.engine.adt.tomtype.types.TargetLanguageType  tomMatch101_1= (( tom.engine.adt.tomtype.types.TomType )extendsType).getTlType() ;
+if ( (tomMatch101_1 instanceof tom.engine.adt.tomtype.types.targetlanguagetype.TLType) ) {
 
 output.write(deep," extends " + 
- tomMatch101_2.getString() );
+ tomMatch101_1.getString() );
 break matchblock;
 
 
@@ -342,11 +342,11 @@ matchblock: {
 {
 if ( (throwsType instanceof tom.engine.adt.tomtype.types.TomType) ) {
 if ( ((( tom.engine.adt.tomtype.types.TomType )throwsType) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {
- tom.engine.adt.tomtype.types.TargetLanguageType  tomMatch103_2= (( tom.engine.adt.tomtype.types.TomType )throwsType).getTlType() ;
-if ( (tomMatch103_2 instanceof tom.engine.adt.tomtype.types.targetlanguagetype.TLType) ) {
+ tom.engine.adt.tomtype.types.TargetLanguageType  tomMatch103_1= (( tom.engine.adt.tomtype.types.TomType )throwsType).getTlType() ;
+if ( (tomMatch103_1 instanceof tom.engine.adt.tomtype.types.targetlanguagetype.TLType) ) {
 
 output.write(deep," throws " + 
- tomMatch103_2.getString() );
+ tomMatch103_1.getString() );
 break matchblock;
 
 
