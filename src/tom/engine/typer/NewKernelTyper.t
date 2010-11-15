@@ -715,13 +715,10 @@ public class NewKernelTyper {
       // the case of a bad order of the conditions of a
       // conjunction/disjunction
       (Variable|VariableStar)[Options=optionList,AstName=aName,AstType=aType1] << var &&
-        (concTomTerm(_*,(Variable|VariableStar)[AstName=aName,AstType=aType2@!aType1],_*)
-         << varPatternList ||
-         concBQTerm(_*,(BQVariable|BQVariableStar)[AstName=aName,AstType=aType2@!aType1],_*)
-         << varList) -> {
-          TypeConstraintList newEqConstraints = equationConstraints;
-          equationConstraints =
-            addEqConstraint(`Equation(aType1,aType2,PairNameOptions(aName,optionList)),newEqConstraints);}
+        (concTomTerm(_*,(Variable|VariableStar)[AstName=aName,AstType=aType2@!aType1],_*) << varPatternList ||
+         concBQTerm(_*,(BQVariable|BQVariableStar)[AstName=aName,AstType=aType2@!aType1],_*) << varList) -> {
+            TypeConstraintList newEqConstraints = equationConstraints;
+            equationConstraints = addEqConstraint(`Equation(aType1,aType2,PairNameOptions(aName,optionList)),newEqConstraints);}
     }
   }
 
@@ -745,10 +742,8 @@ public class NewKernelTyper {
       // If the backquote variable already exists in varPatternList 
       // (in the case of a inner match) or in varList
       (BQVariable|BQVariableStar)[Options=optionList,AstName=aName,AstType=aType1] << bqvar &&
-        (concBQTerm(_*,(BQVariable|BQVariableStar)[AstName=aName,AstType=aType2@!aType1],_*)
-         << varList ||
-         concTomTerm(_*,(Variable|VariableStar)[AstName=aName,AstType=aType2@!aType1],_*)
-         << varPatternList) -> {
+        (concBQTerm(_*,(BQVariable|BQVariableStar)[AstName=aName,AstType=aType2@!aType1],_*) << varList ||
+         concTomTerm(_*,(Variable|VariableStar)[AstName=aName,AstType=aType2@!aType1],_*) << varPatternList) -> {
           TypeConstraintList newEqConstraints = equationConstraints;
           equationConstraints =
             addEqConstraint(`Equation(aType1,aType2,PairNameOptions(aName,optionList)),newEqConstraints); }
@@ -1351,7 +1346,7 @@ matchBlockAdd :
       {
         %match {
           // CASES 1, 2, 3 and 4 :
-          eConstraint@Equation[Type1=groundType1@!TypeVar[],Type1=groundType2@!TypeVar[]] <<
+          eConstraint@Equation[Type1=groundType1@!TypeVar[],Type2=groundType2@!TypeVar[]] <<
             tConstraint && (groundType1 != groundType2) -> {
               `detectFail(eConstraint);
               break matchBlockAdd;

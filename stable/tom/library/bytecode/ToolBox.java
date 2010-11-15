@@ -365,24 +365,24 @@ map.put(accessObj[i],accessFlags[i]);
 {
 if ( (list instanceof tom.library.adt.bytecode.types.AccessList) ) {
 if ( (((( tom.library.adt.bytecode.types.AccessList )list) instanceof tom.library.adt.bytecode.types.accesslist.ConsAccessList) || ((( tom.library.adt.bytecode.types.AccessList )list) instanceof tom.library.adt.bytecode.types.accesslist.EmptyAccessList)) ) {
- tom.library.adt.bytecode.types.AccessList  tomMatch604__end__4=(( tom.library.adt.bytecode.types.AccessList )list);
+ tom.library.adt.bytecode.types.AccessList  tomMatch613__end__4=(( tom.library.adt.bytecode.types.AccessList )list);
 do {
 {
-if (!( tomMatch604__end__4.isEmptyAccessList() )) {
+if (!( tomMatch613__end__4.isEmptyAccessList() )) {
 
 value = value | (map.get(
- tomMatch604__end__4.getHeadAccessList() )).intValue();
+ tomMatch613__end__4.getHeadAccessList() )).intValue();
 
 
 }
-if ( tomMatch604__end__4.isEmptyAccessList() ) {
-tomMatch604__end__4=(( tom.library.adt.bytecode.types.AccessList )list);
+if ( tomMatch613__end__4.isEmptyAccessList() ) {
+tomMatch613__end__4=(( tom.library.adt.bytecode.types.AccessList )list);
 } else {
-tomMatch604__end__4= tomMatch604__end__4.getTailAccessList() ;
+tomMatch613__end__4= tomMatch613__end__4.getTailAccessList() ;
 }
 
 }
-} while(!( (tomMatch604__end__4==(( tom.library.adt.bytecode.types.AccessList )list)) ));
+} while(!( (tomMatch613__end__4==(( tom.library.adt.bytecode.types.AccessList )list)) ));
 }
 }
 
@@ -702,6 +702,91 @@ default: throw new IndexOutOfBoundsException();
 }
 }
 @SuppressWarnings("unchecked")
+public <T> T visitLight(T v, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if ( (v instanceof tom.library.adt.bytecode.types.FieldDescriptor) ) {
+return ((T)visit_FieldDescriptor((( tom.library.adt.bytecode.types.FieldDescriptor )v),introspector));
+}
+if ( (v instanceof tom.library.adt.bytecode.types.ReturnDescriptor) ) {
+return ((T)visit_ReturnDescriptor((( tom.library.adt.bytecode.types.ReturnDescriptor )v),introspector));
+}
+if ( (v instanceof tom.library.adt.bytecode.types.MethodDescriptor) ) {
+return ((T)visit_MethodDescriptor((( tom.library.adt.bytecode.types.MethodDescriptor )v),introspector));
+}
+if (!(( null  == environment))) {
+return ((T)any.visit(environment,introspector));
+} else {
+return any.visitLight(v,introspector);
+}
+
+}
+@SuppressWarnings("unchecked")
+public  tom.library.adt.bytecode.types.MethodDescriptor  _visit_MethodDescriptor( tom.library.adt.bytecode.types.MethodDescriptor  arg, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if (!(( null  == environment))) {
+return (( tom.library.adt.bytecode.types.MethodDescriptor )any.visit(environment,introspector));
+} else {
+return any.visitLight(arg,introspector);
+}
+}
+@SuppressWarnings("unchecked")
+public  tom.library.adt.bytecode.types.ReturnDescriptor  _visit_ReturnDescriptor( tom.library.adt.bytecode.types.ReturnDescriptor  arg, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if (!(( null  == environment))) {
+return (( tom.library.adt.bytecode.types.ReturnDescriptor )any.visit(environment,introspector));
+} else {
+return any.visitLight(arg,introspector);
+}
+}
+@SuppressWarnings("unchecked")
+public  tom.library.adt.bytecode.types.FieldDescriptor  _visit_FieldDescriptor( tom.library.adt.bytecode.types.FieldDescriptor  arg, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if (!(( null  == environment))) {
+return (( tom.library.adt.bytecode.types.FieldDescriptor )any.visit(environment,introspector));
+} else {
+return any.visitLight(arg,introspector);
+}
+}
+@SuppressWarnings("unchecked")
+public  tom.library.adt.bytecode.types.ReturnDescriptor  visit_ReturnDescriptor( tom.library.adt.bytecode.types.ReturnDescriptor  tom__arg, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+{
+{
+if ( (tom__arg instanceof tom.library.adt.bytecode.types.ReturnDescriptor) ) {
+sb.append(')'); 
+}
+
+}
+{
+if ( (tom__arg instanceof tom.library.adt.bytecode.types.ReturnDescriptor) ) {
+if ( ((( tom.library.adt.bytecode.types.ReturnDescriptor )tom__arg) instanceof tom.library.adt.bytecode.types.returndescriptor.Void) ) {
+sb.append('V'); 
+}
+}
+
+}
+
+
+}
+return _visit_ReturnDescriptor(tom__arg,introspector);
+
+}
+@SuppressWarnings("unchecked")
+public  tom.library.adt.bytecode.types.MethodDescriptor  visit_MethodDescriptor( tom.library.adt.bytecode.types.MethodDescriptor  tom__arg, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+{
+{
+if ( (tom__arg instanceof tom.library.adt.bytecode.types.MethodDescriptor) ) {
+sb.append('('); 
+}
+
+}
+
+}
+return _visit_MethodDescriptor(tom__arg,introspector);
+
+}
+@SuppressWarnings("unchecked")
 public  tom.library.adt.bytecode.types.FieldDescriptor  visit_FieldDescriptor( tom.library.adt.bytecode.types.FieldDescriptor  tom__arg, tom.library.sl.Introspector introspector)
  throws tom.library.sl.VisitFailure {
 {
@@ -791,91 +876,6 @@ sb.append('Z');
 
 }
 return _visit_FieldDescriptor(tom__arg,introspector);
-
-}
-@SuppressWarnings("unchecked")
-public  tom.library.adt.bytecode.types.MethodDescriptor  visit_MethodDescriptor( tom.library.adt.bytecode.types.MethodDescriptor  tom__arg, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-{
-{
-if ( (tom__arg instanceof tom.library.adt.bytecode.types.MethodDescriptor) ) {
-sb.append('('); 
-}
-
-}
-
-}
-return _visit_MethodDescriptor(tom__arg,introspector);
-
-}
-@SuppressWarnings("unchecked")
-public  tom.library.adt.bytecode.types.ReturnDescriptor  visit_ReturnDescriptor( tom.library.adt.bytecode.types.ReturnDescriptor  tom__arg, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-{
-{
-if ( (tom__arg instanceof tom.library.adt.bytecode.types.ReturnDescriptor) ) {
-sb.append(')'); 
-}
-
-}
-{
-if ( (tom__arg instanceof tom.library.adt.bytecode.types.ReturnDescriptor) ) {
-if ( ((( tom.library.adt.bytecode.types.ReturnDescriptor )tom__arg) instanceof tom.library.adt.bytecode.types.returndescriptor.Void) ) {
-sb.append('V'); 
-}
-}
-
-}
-
-
-}
-return _visit_ReturnDescriptor(tom__arg,introspector);
-
-}
-@SuppressWarnings("unchecked")
-public  tom.library.adt.bytecode.types.MethodDescriptor  _visit_MethodDescriptor( tom.library.adt.bytecode.types.MethodDescriptor  arg, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if (!(( null  == environment))) {
-return (( tom.library.adt.bytecode.types.MethodDescriptor )any.visit(environment,introspector));
-} else {
-return any.visitLight(arg,introspector);
-}
-}
-@SuppressWarnings("unchecked")
-public  tom.library.adt.bytecode.types.ReturnDescriptor  _visit_ReturnDescriptor( tom.library.adt.bytecode.types.ReturnDescriptor  arg, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if (!(( null  == environment))) {
-return (( tom.library.adt.bytecode.types.ReturnDescriptor )any.visit(environment,introspector));
-} else {
-return any.visitLight(arg,introspector);
-}
-}
-@SuppressWarnings("unchecked")
-public  tom.library.adt.bytecode.types.FieldDescriptor  _visit_FieldDescriptor( tom.library.adt.bytecode.types.FieldDescriptor  arg, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if (!(( null  == environment))) {
-return (( tom.library.adt.bytecode.types.FieldDescriptor )any.visit(environment,introspector));
-} else {
-return any.visitLight(arg,introspector);
-}
-}
-@SuppressWarnings("unchecked")
-public <T> T visitLight(T v, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if ( (v instanceof tom.library.adt.bytecode.types.MethodDescriptor) ) {
-return ((T)visit_MethodDescriptor((( tom.library.adt.bytecode.types.MethodDescriptor )v),introspector));
-}
-if ( (v instanceof tom.library.adt.bytecode.types.ReturnDescriptor) ) {
-return ((T)visit_ReturnDescriptor((( tom.library.adt.bytecode.types.ReturnDescriptor )v),introspector));
-}
-if ( (v instanceof tom.library.adt.bytecode.types.FieldDescriptor) ) {
-return ((T)visit_FieldDescriptor((( tom.library.adt.bytecode.types.FieldDescriptor )v),introspector));
-}
-if (!(( null  == environment))) {
-return ((T)any.visit(environment,introspector));
-} else {
-return any.visitLight(v,introspector);
-}
 
 }
 }

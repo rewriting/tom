@@ -277,33 +277,55 @@ default: throw new IndexOutOfBoundsException();
 }
 }
 @SuppressWarnings("unchecked")
+public <T> T visitLight(T v, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if ( (v instanceof tom.engine.adt.tominstruction.types.Instruction) ) {
+return ((T)visit_Instruction((( tom.engine.adt.tominstruction.types.Instruction )v),introspector));
+}
+if (!(( null  == environment))) {
+return ((T)any.visit(environment,introspector));
+} else {
+return any.visitLight(v,introspector);
+}
+
+}
+@SuppressWarnings("unchecked")
+public  tom.engine.adt.tominstruction.types.Instruction  _visit_Instruction( tom.engine.adt.tominstruction.types.Instruction  arg, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if (!(( null  == environment))) {
+return (( tom.engine.adt.tominstruction.types.Instruction )any.visit(environment,introspector));
+} else {
+return any.visitLight(arg,introspector);
+}
+}
+@SuppressWarnings("unchecked")
 public  tom.engine.adt.tominstruction.types.Instruction  visit_Instruction( tom.engine.adt.tominstruction.types.Instruction  tom__arg, tom.library.sl.Introspector introspector)
  throws tom.library.sl.VisitFailure {
 {
 {
 if ( (tom__arg instanceof tom.engine.adt.tominstruction.types.Instruction) ) {
 if ( ((( tom.engine.adt.tominstruction.types.Instruction )tom__arg) instanceof tom.engine.adt.tominstruction.types.instruction.LetRef) ) {
- tom.engine.adt.code.types.BQTerm  tomMatch140_1= (( tom.engine.adt.tominstruction.types.Instruction )tom__arg).getVariable() ;
-boolean tomMatch140_7= false ;
- tom.engine.adt.tomname.types.TomName  tomMatch140_5= null ;
-if ( (tomMatch140_1 instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {
+ tom.engine.adt.code.types.BQTerm  tomMatch187_1= (( tom.engine.adt.tominstruction.types.Instruction )tom__arg).getVariable() ;
+boolean tomMatch187_7= false ;
+ tom.engine.adt.tomname.types.TomName  tomMatch187_5= null ;
+if ( (tomMatch187_1 instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {
 {
-tomMatch140_7= true ;
-tomMatch140_5= tomMatch140_1.getAstName() ;
+tomMatch187_7= true ;
+tomMatch187_5= tomMatch187_1.getAstName() ;
 
 }
 } else {
-if ( (tomMatch140_1 instanceof tom.engine.adt.code.types.bqterm.BQVariableStar) ) {
+if ( (tomMatch187_1 instanceof tom.engine.adt.code.types.bqterm.BQVariableStar) ) {
 {
-tomMatch140_7= true ;
-tomMatch140_5= tomMatch140_1.getAstName() ;
+tomMatch187_7= true ;
+tomMatch187_5= tomMatch187_1.getAstName() ;
 
 }
 }
 }
-if (tomMatch140_7) {
- tom.engine.adt.tomname.types.TomName  tom_name=tomMatch140_5;
- tom.engine.adt.code.types.BQTerm  tom_var=tomMatch140_1;
+if (tomMatch187_7) {
+ tom.engine.adt.tomname.types.TomName  tom_name=tomMatch187_5;
+ tom.engine.adt.code.types.BQTerm  tom_var=tomMatch187_1;
  tom.engine.adt.tomexpression.types.Expression  tom_exp= (( tom.engine.adt.tominstruction.types.Instruction )tom__arg).getSource() ;
  tom.engine.adt.tominstruction.types.Instruction  tom_body= (( tom.engine.adt.tominstruction.types.Instruction )tom__arg).getAstInstruction() ;
 
@@ -348,28 +370,6 @@ return
 return _visit_Instruction(tom__arg,introspector);
 
 }
-@SuppressWarnings("unchecked")
-public  tom.engine.adt.tominstruction.types.Instruction  _visit_Instruction( tom.engine.adt.tominstruction.types.Instruction  arg, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if (!(( null  == environment))) {
-return (( tom.engine.adt.tominstruction.types.Instruction )any.visit(environment,introspector));
-} else {
-return any.visitLight(arg,introspector);
-}
-}
-@SuppressWarnings("unchecked")
-public <T> T visitLight(T v, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if ( (v instanceof tom.engine.adt.tominstruction.types.Instruction) ) {
-return ((T)visit_Instruction((( tom.engine.adt.tominstruction.types.Instruction )v),introspector));
-}
-if (!(( null  == environment))) {
-return ((T)any.visit(environment,introspector));
-} else {
-return any.visitLight(v,introspector);
-}
-
-}
 }
 private static  tom.library.sl.Strategy  tom_make_ChangeVarDeclarations() { 
 return new ChangeVarDeclarations();
@@ -407,34 +407,56 @@ default: throw new IndexOutOfBoundsException();
 }
 }
 @SuppressWarnings("unchecked")
+public <T> T visitLight(T v, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if ( (v instanceof tom.engine.adt.tominstruction.types.Instruction) ) {
+return ((T)visit_Instruction((( tom.engine.adt.tominstruction.types.Instruction )v),introspector));
+}
+if (!(( null  == environment))) {
+return ((T)any.visit(environment,introspector));
+} else {
+return any.visitLight(v,introspector);
+}
+
+}
+@SuppressWarnings("unchecked")
+public  tom.engine.adt.tominstruction.types.Instruction  _visit_Instruction( tom.engine.adt.tominstruction.types.Instruction  arg, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if (!(( null  == environment))) {
+return (( tom.engine.adt.tominstruction.types.Instruction )any.visit(environment,introspector));
+} else {
+return any.visitLight(arg,introspector);
+}
+}
+@SuppressWarnings("unchecked")
 public  tom.engine.adt.tominstruction.types.Instruction  visit_Instruction( tom.engine.adt.tominstruction.types.Instruction  tom__arg, tom.library.sl.Introspector introspector)
  throws tom.library.sl.VisitFailure {
 {
 {
 if ( (tom__arg instanceof tom.engine.adt.tominstruction.types.Instruction) ) {
 if ( ((( tom.engine.adt.tominstruction.types.Instruction )tom__arg) instanceof tom.engine.adt.tominstruction.types.instruction.LetRef) ) {
- tom.engine.adt.code.types.BQTerm  tomMatch141_1= (( tom.engine.adt.tominstruction.types.Instruction )tom__arg).getVariable() ;
-boolean tomMatch141_5= false ;
- tom.engine.adt.tomname.types.TomName  tomMatch141_3= null ;
-if ( (tomMatch141_1 instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {
+ tom.engine.adt.code.types.BQTerm  tomMatch188_1= (( tom.engine.adt.tominstruction.types.Instruction )tom__arg).getVariable() ;
+boolean tomMatch188_5= false ;
+ tom.engine.adt.tomname.types.TomName  tomMatch188_3= null ;
+if ( (tomMatch188_1 instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {
 {
-tomMatch141_5= true ;
-tomMatch141_3= tomMatch141_1.getAstName() ;
+tomMatch188_5= true ;
+tomMatch188_3= tomMatch188_1.getAstName() ;
 
 }
 } else {
-if ( (tomMatch141_1 instanceof tom.engine.adt.code.types.bqterm.BQVariableStar) ) {
+if ( (tomMatch188_1 instanceof tom.engine.adt.code.types.bqterm.BQVariableStar) ) {
 {
-tomMatch141_5= true ;
-tomMatch141_3= tomMatch141_1.getAstName() ;
+tomMatch188_5= true ;
+tomMatch188_3= tomMatch188_1.getAstName() ;
 
 }
 }
 }
-if (tomMatch141_5) {
+if (tomMatch188_5) {
 
 if(varName == 
-tomMatch141_3) {
+tomMatch188_3) {
 throw new VisitFailure();
 }
 
@@ -448,28 +470,6 @@ throw new VisitFailure();
 
 }
 return _visit_Instruction(tom__arg,introspector);
-
-}
-@SuppressWarnings("unchecked")
-public  tom.engine.adt.tominstruction.types.Instruction  _visit_Instruction( tom.engine.adt.tominstruction.types.Instruction  arg, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if (!(( null  == environment))) {
-return (( tom.engine.adt.tominstruction.types.Instruction )any.visit(environment,introspector));
-} else {
-return any.visitLight(arg,introspector);
-}
-}
-@SuppressWarnings("unchecked")
-public <T> T visitLight(T v, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if ( (v instanceof tom.engine.adt.tominstruction.types.Instruction) ) {
-return ((T)visit_Instruction((( tom.engine.adt.tominstruction.types.Instruction )v),introspector));
-}
-if (!(( null  == environment))) {
-return ((T)any.visit(environment,introspector));
-} else {
-return any.visitLight(v,introspector);
-}
 
 }
 }
@@ -509,50 +509,72 @@ default: throw new IndexOutOfBoundsException();
 }
 }
 @SuppressWarnings("unchecked")
+public <T> T visitLight(T v, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if ( (v instanceof tom.engine.adt.tominstruction.types.Instruction) ) {
+return ((T)visit_Instruction((( tom.engine.adt.tominstruction.types.Instruction )v),introspector));
+}
+if (!(( null  == environment))) {
+return ((T)any.visit(environment,introspector));
+} else {
+return any.visitLight(v,introspector);
+}
+
+}
+@SuppressWarnings("unchecked")
+public  tom.engine.adt.tominstruction.types.Instruction  _visit_Instruction( tom.engine.adt.tominstruction.types.Instruction  arg, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if (!(( null  == environment))) {
+return (( tom.engine.adt.tominstruction.types.Instruction )any.visit(environment,introspector));
+} else {
+return any.visitLight(arg,introspector);
+}
+}
+@SuppressWarnings("unchecked")
 public  tom.engine.adt.tominstruction.types.Instruction  visit_Instruction( tom.engine.adt.tominstruction.types.Instruction  tom__arg, tom.library.sl.Introspector introspector)
  throws tom.library.sl.VisitFailure {
 {
 {
 if ( (tom__arg instanceof tom.engine.adt.tominstruction.types.Instruction) ) {
-boolean tomMatch142_6= false ;
- tom.engine.adt.code.types.BQTerm  tomMatch142_1= null ;
+boolean tomMatch189_6= false ;
+ tom.engine.adt.code.types.BQTerm  tomMatch189_1= null ;
 if ( ((( tom.engine.adt.tominstruction.types.Instruction )tom__arg) instanceof tom.engine.adt.tominstruction.types.instruction.Assign) ) {
 {
-tomMatch142_6= true ;
-tomMatch142_1= (( tom.engine.adt.tominstruction.types.Instruction )tom__arg).getVariable() ;
+tomMatch189_6= true ;
+tomMatch189_1= (( tom.engine.adt.tominstruction.types.Instruction )tom__arg).getVariable() ;
 
 }
 } else {
 if ( ((( tom.engine.adt.tominstruction.types.Instruction )tom__arg) instanceof tom.engine.adt.tominstruction.types.instruction.AssignArray) ) {
 {
-tomMatch142_6= true ;
-tomMatch142_1= (( tom.engine.adt.tominstruction.types.Instruction )tom__arg).getVariable() ;
+tomMatch189_6= true ;
+tomMatch189_1= (( tom.engine.adt.tominstruction.types.Instruction )tom__arg).getVariable() ;
 
 }
 }
 }
-if (tomMatch142_6) {
-boolean tomMatch142_5= false ;
- tom.engine.adt.tomname.types.TomName  tomMatch142_3= null ;
-if ( (tomMatch142_1 instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {
+if (tomMatch189_6) {
+boolean tomMatch189_5= false ;
+ tom.engine.adt.tomname.types.TomName  tomMatch189_3= null ;
+if ( (tomMatch189_1 instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {
 {
-tomMatch142_5= true ;
-tomMatch142_3= tomMatch142_1.getAstName() ;
+tomMatch189_5= true ;
+tomMatch189_3= tomMatch189_1.getAstName() ;
 
 }
 } else {
-if ( (tomMatch142_1 instanceof tom.engine.adt.code.types.bqterm.BQVariableStar) ) {
+if ( (tomMatch189_1 instanceof tom.engine.adt.code.types.bqterm.BQVariableStar) ) {
 {
-tomMatch142_5= true ;
-tomMatch142_3= tomMatch142_1.getAstName() ;
+tomMatch189_5= true ;
+tomMatch189_3= tomMatch189_1.getAstName() ;
 
 }
 }
 }
-if (tomMatch142_5) {
+if (tomMatch189_5) {
 
 if(varName == 
-tomMatch142_3) {
+tomMatch189_3) {
 throw new VisitFailure();
 }
 
@@ -567,28 +589,6 @@ throw new VisitFailure();
 
 }
 return _visit_Instruction(tom__arg,introspector);
-
-}
-@SuppressWarnings("unchecked")
-public  tom.engine.adt.tominstruction.types.Instruction  _visit_Instruction( tom.engine.adt.tominstruction.types.Instruction  arg, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if (!(( null  == environment))) {
-return (( tom.engine.adt.tominstruction.types.Instruction )any.visit(environment,introspector));
-} else {
-return any.visitLight(arg,introspector);
-}
-}
-@SuppressWarnings("unchecked")
-public <T> T visitLight(T v, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if ( (v instanceof tom.engine.adt.tominstruction.types.Instruction) ) {
-return ((T)visit_Instruction((( tom.engine.adt.tominstruction.types.Instruction )v),introspector));
-}
-if (!(( null  == environment))) {
-return ((T)any.visit(environment,introspector));
-} else {
-return any.visitLight(v,introspector);
-}
 
 }
 }

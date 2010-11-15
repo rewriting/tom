@@ -195,6 +195,8 @@ public class TomMessage extends BasicPlatformMessage {
       new TomMessage("Disjunction of patterns is deprecated and may be removed in a future version. Try to use disjunction of symbols instead ");
   public static final TomMessage invalidConstraintType =
       new TomMessage("Invalid Constraint type ");
+  public static final TomMessage typetermNotDefined =
+      new TomMessage("%typeterm is not defined for {0}");
 
   // checker.TomChecker
   public static final TomMessage findOTL               =
@@ -216,7 +218,7 @@ public class TomMessage extends BasicPlatformMessage {
   public static final TomMessage illegalAnnotationInAntiPattern =
       new TomMessage("It is forbidden to make annotations under an anti symbol");
   public static final TomMessage freeVarNotPresentInOr =
-    new TomMessage("Any variable used in the action should be found in all the members of a disjunction. Variable ''{0}'' not found in all disjunctions");
+    new TomMessage("Any variable used in the action should appear in all the members of a disjunction. Variable ''{0}'' not found in all disjunctions");
 
   // compiler
   public static final TomMessage errorMissingSlotDecl =
@@ -288,6 +290,8 @@ public class TomMessage extends BasicPlatformMessage {
       new TomMessage("ClassNotFoundException: You need apigen to use the %vas construct");
   public static final TomMessage apigenInvocationIssue   =
       new TomMessage("Exception occurs while dealing with Apigen: ''{0}''");
+  public static final TomMessage multipleUpperTypes =
+      new TomMessage("Type ''{0}'' cannot have two upper types simultaneously: ''{1}'' and ''{2}''");
 
   // Error messages linked to operator and type definitions
   public static final TomMessage multipleSortDefinitionError=
@@ -360,8 +364,6 @@ public class TomMessage extends BasicPlatformMessage {
       new TomMessage("[] are not allowed on lists or arrays, see ''{0}''");
   public static final TomMessage slotRepeated=
       new TomMessage("Same slot names can not be used several times in symbol ''{0}'': Repeated slot Name : ''{1}''");
-  public static final TomMessage symbolNumberArgument    =
-      new TomMessage("Bad number of arguments for symbol ''{0}'': {1,number,integer} argument(s) required but {2,number,integer} found");
   public static final TomMessage invalidVariableStarArgument=
     new TomMessage("{0} is not allowed in non list symbol ");
   public static final TomMessage ambigousSymbolWithoutConstructor=
@@ -374,6 +376,8 @@ public class TomMessage extends BasicPlatformMessage {
     new TomMessage("Incompatible types ''{0}'' and ''{1}'' for symbol ''{2}''.");
   public static final TomMessage unknownSymbol=
       new TomMessage("Unknown symbol ''{0}''");
+  public static final TomMessage symbolNumberArgument    =
+      new TomMessage("Bad number of arguments for symbol ''{0}'': {1,number,integer} argument(s) required but {2,number,integer} found");
 
   //strategy
   public static final TomMessage invalidStrategyName =

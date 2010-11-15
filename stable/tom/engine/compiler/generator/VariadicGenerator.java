@@ -389,57 +389,38 @@ default: throw new IndexOutOfBoundsException();
 }
 }
 @SuppressWarnings("unchecked")
-public  tom.engine.adt.tomexpression.types.Expression  visit_Expression( tom.engine.adt.tomexpression.types.Expression  tom__arg, tom.library.sl.Introspector introspector)
+public <T> T visitLight(T v, tom.library.sl.Introspector introspector)
  throws tom.library.sl.VisitFailure {
-{
-{
-if ( (tom__arg instanceof tom.engine.adt.tomexpression.types.Expression) ) {
-if ( ((( tom.engine.adt.tomexpression.types.Expression )tom__arg) instanceof tom.engine.adt.tomexpression.types.expression.ConstraintToExpression) ) {
- tom.engine.adt.tomconstraint.types.Constraint  tomMatch154_1= (( tom.engine.adt.tomexpression.types.Expression )tom__arg).getcons() ;
-if ( (tomMatch154_1 instanceof tom.engine.adt.tomconstraint.types.constraint.MatchConstraint) ) {
- tom.engine.adt.tomterm.types.TomTerm  tomMatch154_3= tomMatch154_1.getPattern() ;
- tom.engine.adt.code.types.BQTerm  tomMatch154_4= tomMatch154_1.getSubject() ;
-if ( (tomMatch154_3 instanceof tom.engine.adt.tomterm.types.tomterm.VariableStar) ) {
- tom.engine.adt.tomterm.types.TomTerm  tom_v=tomMatch154_3;
-if ( (tomMatch154_4 instanceof tom.engine.adt.code.types.bqterm.VariableHeadList) ) {
- tom.engine.adt.code.types.BQTerm  tomMatch154_9= tomMatch154_4.getEnd() ;
- tom.engine.adt.tomname.types.TomName  tom_opName= tomMatch154_4.getOpname() ;
- tom.engine.adt.code.types.BQTerm  tom_begin= tomMatch154_4.getBegin() ;
-if ( (tomMatch154_9 instanceof tom.engine.adt.code.types.bqterm.BQVariableStar) ) {
- tom.engine.adt.code.types.BQTerm  tom_end=tomMatch154_9;
-
-Expression doWhileTest = 
- tom.engine.adt.tomexpression.types.expression.Negation.make( tom.engine.adt.tomexpression.types.expression.EqualBQTerm.make( tomMatch154_9.getAstType() , tom_end, tom_begin) ) ;
-Expression testEmpty = vg.getConstraintGenerator().genIsEmptyList(
-tom_opName,
-tom_end);
-Expression endExpression = 
-
- tom.engine.adt.tomexpression.types.expression.TomInstructionToExpression.make( tom.engine.adt.tominstruction.types.instruction.If.make(testEmpty,  tom.engine.adt.tominstruction.types.instruction.Assign.make(tom_end,  tom.engine.adt.tomexpression.types.expression.BQTermToExpression.make(tom_begin) ) ,  tom.engine.adt.tominstruction.types.instruction.Assign.make(tom_end, vg.genGetTail(tom_opName,tom_end)) ) ) ;
-// if we have a varStar, we generate its declaration also
-if (
-tom_v.isVariableStar()) {
-Expression varDeclaration = 
- tom.engine.adt.tomexpression.types.expression.ConstraintToExpression.make( tom.engine.adt.tomconstraint.types.constraint.MatchConstraint.make(tom_v,  tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make( tom.engine.adt.tomexpression.types.expression.GetSliceList.make(tom_opName, tom_begin, tom_end,  tom.engine.adt.code.types.bqterm.BuildEmptyList.make(tom_opName) ) ) ) ) ;
-return 
- tom.engine.adt.tomexpression.types.expression.And.make( tom.engine.adt.tomexpression.types.expression.DoWhileExpression.make(endExpression, doWhileTest) , varDeclaration) ;
+if ( (v instanceof tom.engine.adt.tomexpression.types.Expression) ) {
+return ((T)visit_Expression((( tom.engine.adt.tomexpression.types.Expression )v),introspector));
 }
-return 
- tom.engine.adt.tomexpression.types.expression.DoWhileExpression.make(endExpression, doWhileTest) ;		        		      
-
-
+if ( (v instanceof tom.engine.adt.code.types.BQTerm) ) {
+return ((T)visit_BQTerm((( tom.engine.adt.code.types.BQTerm )v),introspector));
 }
-}
-}
-}
-}
+if (!(( null  == environment))) {
+return ((T)any.visit(environment,introspector));
+} else {
+return any.visitLight(v,introspector);
 }
 
 }
-
+@SuppressWarnings("unchecked")
+public  tom.engine.adt.code.types.BQTerm  _visit_BQTerm( tom.engine.adt.code.types.BQTerm  arg, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if (!(( null  == environment))) {
+return (( tom.engine.adt.code.types.BQTerm )any.visit(environment,introspector));
+} else {
+return any.visitLight(arg,introspector);
 }
-return _visit_Expression(tom__arg,introspector);
-
+}
+@SuppressWarnings("unchecked")
+public  tom.engine.adt.tomexpression.types.Expression  _visit_Expression( tom.engine.adt.tomexpression.types.Expression  arg, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if (!(( null  == environment))) {
+return (( tom.engine.adt.tomexpression.types.Expression )any.visit(environment,introspector));
+} else {
+return any.visitLight(arg,introspector);
+}
 }
 @SuppressWarnings("unchecked")
 public  tom.engine.adt.code.types.BQTerm  visit_BQTerm( tom.engine.adt.code.types.BQTerm  tom__arg, tom.library.sl.Introspector introspector)
@@ -476,37 +457,57 @@ return _visit_BQTerm(tom__arg,introspector);
 
 }
 @SuppressWarnings("unchecked")
-public  tom.engine.adt.tomexpression.types.Expression  _visit_Expression( tom.engine.adt.tomexpression.types.Expression  arg, tom.library.sl.Introspector introspector)
+public  tom.engine.adt.tomexpression.types.Expression  visit_Expression( tom.engine.adt.tomexpression.types.Expression  tom__arg, tom.library.sl.Introspector introspector)
  throws tom.library.sl.VisitFailure {
-if (!(( null  == environment))) {
-return (( tom.engine.adt.tomexpression.types.Expression )any.visit(environment,introspector));
-} else {
-return any.visitLight(arg,introspector);
+{
+{
+if ( (tom__arg instanceof tom.engine.adt.tomexpression.types.Expression) ) {
+if ( ((( tom.engine.adt.tomexpression.types.Expression )tom__arg) instanceof tom.engine.adt.tomexpression.types.expression.ConstraintToExpression) ) {
+ tom.engine.adt.tomconstraint.types.Constraint  tomMatch202_1= (( tom.engine.adt.tomexpression.types.Expression )tom__arg).getcons() ;
+if ( (tomMatch202_1 instanceof tom.engine.adt.tomconstraint.types.constraint.MatchConstraint) ) {
+ tom.engine.adt.tomterm.types.TomTerm  tomMatch202_3= tomMatch202_1.getPattern() ;
+ tom.engine.adt.code.types.BQTerm  tomMatch202_4= tomMatch202_1.getSubject() ;
+if ( (tomMatch202_3 instanceof tom.engine.adt.tomterm.types.tomterm.VariableStar) ) {
+ tom.engine.adt.tomterm.types.TomTerm  tom_v=tomMatch202_3;
+if ( (tomMatch202_4 instanceof tom.engine.adt.code.types.bqterm.VariableHeadList) ) {
+ tom.engine.adt.code.types.BQTerm  tomMatch202_10= tomMatch202_4.getEnd() ;
+ tom.engine.adt.tomname.types.TomName  tom_opName= tomMatch202_4.getOpname() ;
+ tom.engine.adt.code.types.BQTerm  tom_begin= tomMatch202_4.getBegin() ;
+if ( (tomMatch202_10 instanceof tom.engine.adt.code.types.bqterm.BQVariableStar) ) {
+ tom.engine.adt.code.types.BQTerm  tom_end=tomMatch202_10;
+
+Expression doWhileTest = 
+ tom.engine.adt.tomexpression.types.expression.Negation.make( tom.engine.adt.tomexpression.types.expression.EqualBQTerm.make( tomMatch202_10.getAstType() , tom_end, tom_begin) ) ;
+Expression testEmpty = vg.getConstraintGenerator().genIsEmptyList(
+tom_opName,
+tom_end);
+Expression endExpression = 
+
+ tom.engine.adt.tomexpression.types.expression.TomInstructionToExpression.make( tom.engine.adt.tominstruction.types.instruction.If.make(testEmpty,  tom.engine.adt.tominstruction.types.instruction.Assign.make(tom_end,  tom.engine.adt.tomexpression.types.expression.BQTermToExpression.make(tom_begin) ) ,  tom.engine.adt.tominstruction.types.instruction.Assign.make(tom_end, vg.genGetTail(tom_opName,tom_end)) ) ) ;
+// if we have a varStar, we generate its declaration also
+if (
+tom_v.isVariableStar()) {
+Expression varDeclaration =
+
+ tom.engine.adt.tomexpression.types.expression.ConstraintToExpression.make( tom.engine.adt.tomconstraint.types.constraint.MatchConstraint.make(tom_v,  tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make( tom.engine.adt.tomexpression.types.expression.GetSliceList.make(tom_opName, tom_begin, tom_end,  tom.engine.adt.code.types.bqterm.BuildEmptyList.make(tom_opName) ) ) ,  tomMatch202_1.getAstType() ) ) ;
+return 
+ tom.engine.adt.tomexpression.types.expression.And.make( tom.engine.adt.tomexpression.types.expression.DoWhileExpression.make(endExpression, doWhileTest) , varDeclaration) ;
+}
+return 
+ tom.engine.adt.tomexpression.types.expression.DoWhileExpression.make(endExpression, doWhileTest) ;		        		      
+
+
 }
 }
-@SuppressWarnings("unchecked")
-public  tom.engine.adt.code.types.BQTerm  _visit_BQTerm( tom.engine.adt.code.types.BQTerm  arg, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if (!(( null  == environment))) {
-return (( tom.engine.adt.code.types.BQTerm )any.visit(environment,introspector));
-} else {
-return any.visitLight(arg,introspector);
 }
 }
-@SuppressWarnings("unchecked")
-public <T> T visitLight(T v, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if ( (v instanceof tom.engine.adt.tomexpression.types.Expression) ) {
-return ((T)visit_Expression((( tom.engine.adt.tomexpression.types.Expression )v),introspector));
 }
-if ( (v instanceof tom.engine.adt.code.types.BQTerm) ) {
-return ((T)visit_BQTerm((( tom.engine.adt.code.types.BQTerm )v),introspector));
 }
-if (!(( null  == environment))) {
-return ((T)any.visit(environment,introspector));
-} else {
-return any.visitLight(v,introspector);
+
 }
+
+}
+return _visit_Expression(tom__arg,introspector);
 
 }
 }

@@ -53,6 +53,8 @@
       class="tom.engine.parser.NewParserPlugin"/>
     <plugin name="Desugarer"
       class="tom.engine.desugarer.DesugarerPlugin"/>
+    <plugin name="Syntax checker"
+      class="tom.engine.checker.SyntaxCheckerApPlugin"/>
     <plugin name="Typer"
       class="tom.engine.typer.TyperPlugin"/>
     <plugin name="New Typer"
@@ -61,6 +63,8 @@
       class="tom.engine.checker.TypeCheckerPlugin"/>
     <plugin name="Expander"
       class="tom.engine.expander.ExpanderPlugin"/>
+    <plugin name="Pretty Printer"
+      class="tom.engine.prettyprinter.PrettyPrinterPlugin"/>
     <plugin name="Compiler"
       class="tom.engine.compiler.Compiler"/>
     <plugin name="Optimizer"
