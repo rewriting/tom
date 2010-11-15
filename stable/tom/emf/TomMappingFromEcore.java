@@ -1,27 +1,27 @@
 /*
- *
- * TOM - To One Matching Compiler
- *
- * Copyright (c) 2009-2010, INPL, INRIA
- * Nancy, France.
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
- *
- * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
- *
- **/
+*
+* TOM - To One Matching Compiler
+*
+* Copyright (c) 2009-2010, INPL, INRIA
+* Nancy, France.
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation; either version 2 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program; if not, write to the Free Software
+* Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+*
+* Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
+*
+**/
 
 package tom.emf;
 
@@ -59,500 +59,445 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
 
 /**
- * Give a Tom mapping from an EcorePackage
- * 
- * @author Nicolas HENRY
- * 
- */
+* Give a Tom mapping from an EcorePackage
+* 
+* @author Nicolas HENRY (july 2009)
+* 
+*/
 public class TomMappingFromEcore {
 
-  /**
-   * The program output
-   */
-  private static final PrintStream out = System.out;
+/**
+* The program output
+*/
+private static final PrintStream out = System.out;
 
-  /**
-   * List of classes of which the list mappings are already been generated
-   */
-  private final static ArrayList<Class<?>> lists = new ArrayList<Class<?>>();
-  /**
-   * true if the append method used by all list mappings is already generated
-   */
-  private static boolean append = false;
+/**
+* List of classes of which the list mappings are already been generated
+*/
+private final static ArrayList<Class<?>> lists = new ArrayList<Class<?>>();
 
-  /**
-   * true if the constructor method used by all mappings is already generated
-   */
-  private static boolean constructor = false;
-  /**
-   * A dictionnary linking a class with his generated type name
-   */
-  private final static HashMap<Class<?>, String> types = new HashMap<Class<?>, String>();
+/**
+* true if the append method used by all list mappings is already generated
+*/
+private static boolean append = false;
 
-  public static void main(String[] args) {
-    if(args.length != 1) {
-      out.println("usage : java TomMappingFromEcore <EPackageClassName>");
-    } else {
-      try {
-        extract((EPackage) Class.forName(args[0]).getField("eINSTANCE").get(
-            null));
-      } catch(ClassNotFoundException e) {
-        e.printStackTrace();
-      } catch(IllegalArgumentException e) {
-        e.printStackTrace();
-      } catch(SecurityException e) {
-        e.printStackTrace();
-      } catch(IllegalAccessException e) {
-        e.printStackTrace();
-      } catch(NoSuchFieldException e) {
-        e.printStackTrace();
-      }
-    }
-  }
+/**
+* A dictionnary linking a class with his generated type name
+*/
+private final static HashMap<Class<?>, String> types = new HashMap<Class<?>, String>();
 
-  /**
-   * Extract the type term from a classifier
-   * @param eclf the classifier to extract
-   */
-  private static void extractType(EClassifier eclf) {
-    Class<?> c = eclf.getInstanceClass();
-    if(!types.containsKey(c)) {
-      String n = c.getSimpleName();
-      if(c.isArray()) {
-        n = c.getComponentType().getSimpleName() + "array";
-      }
-      String is = "";
-      for(int i = 1; types.containsValue(n + is); i++) {
-        is = String.valueOf(i);
-      }
-      n = n + is;
-      types.put(c, n);
-      if(tomTypes.containsKey(c)) {
-        out.println("%include { " + tomTypes.get(c) + ".tom }");
-      } else {
-        String[] d = getClassDeclarations(eclf);
-        out.println("%typeterm " + n + " {");
-        out
-            .println("  implement { "
-                + (eclf instanceof EClass && !EObject.class.isAssignableFrom(c) ? "EObject"
-                    : d[0] + d[2]) + " }");
-        out.println("  is_sort(t) { "
-            + (c.isPrimitive() ? "true" : "$t instanceof " + d[0] + d[1])
-            + " }");
-        out.println("  equals(l1,l2) { "
-            + (c.isPrimitive() ? "$l1 == $l2" : "$l1.equals($l2)") + " }");
-        out.println("}");
-      }
-    }
-  }
+public static void main(String[] args) {
+if(args.length != 1) {
+//out.println("usage : java TomMappingFromEcore <EPackageClassName>");
+out.println("usage : emf-generate-mappings <EPackageClassName>");
+} else {
+try {
+out.println(
+"/*\n *\n * TOM - To One Matching Compiler\n *\n * Copyright (c) 2009-2010, INPL, INRIA\n * Nancy, France.\n *\n * This program is free software; you can redistribute it and/or modify\n * it under the terms of the GNU General Public License as published by\n * the Free Software Foundation; either version 2 of the License, or\n * (at your option) any later version.\n *\n * This program is distributed in the hope that it will be useful,\n * but WITHOUT ANY WARRANTY; without even the implied warranty of\n * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n * GNU General Public License for more details.\n *\n * You should have received a copy of the GNU General Public License\n * along with this program; if not, write to the Free Software\n * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA\n *\n *\n **/\n          ");
+extractFromEPackage((EPackage) Class.forName(args[0]).getField("eINSTANCE").get(null));
+} catch(ClassNotFoundException e) {
+e.printStackTrace();
+} catch(IllegalArgumentException e) {
+e.printStackTrace();
+} catch(SecurityException e) {
+e.printStackTrace();
+} catch(IllegalAccessException e) {
+e.printStackTrace();
+} catch(NoSuchFieldException e) {
+e.printStackTrace();
+}
+}
+}
 
-  /**
-   * A dictionnary linking standard java classes with the corresponding tom mapping filename 
-   */
-  private final static HashMap<Class<?>, String> tomTypes = new HashMap<Class<?>, String>();
-  static {
-    tomTypes.put(boolean.class, "boolean");
-    tomTypes.put(char.class, "char");
-    tomTypes.put(double.class, "double");
-    tomTypes.put(float.class, "float");
-    tomTypes.put(int.class, "int");
-    tomTypes.put(long.class, "long");
-    tomTypes.put(int[].class, "intarray");
-    tomTypes.put(String.class, "string");
-    tomTypes.put(ArrayList.class, "util/ArrayList");
-    tomTypes.put(HashMap.class, "util/HashMap");
-    tomTypes.put(HashSet.class, "util/HashSet");
-    tomTypes.put(LinkedList.class, "util/LinkedList");
-    tomTypes.put(Object.class, "util/Object");
-    tomTypes.put(TreeMap.class, "util/TreeMap");
-    tomTypes.put(TreeSet.class, "util/TreeSet");
-    tomTypes.put(AbstractCollection.class, "util/types/AbstractCollection");
-    tomTypes.put(AbstractList.class, "util/types/AbstractList");
-    tomTypes.put(AbstractSequentialList.class,
-        "util/types/AbstractSequentialList");
-    tomTypes.put(AbstractSet.class, "util/types/AbstractSet");
-    tomTypes.put(Collection.class, "util/types/Collection");
-    tomTypes.put(LinkedHashSet.class, "util/types/LinkedHashSet");
-    tomTypes.put(List.class, "util/types/List");
-    tomTypes.put(Map.class, "util/types/Map");
-    tomTypes.put(Set.class, "util/types/Set");
-    tomTypes.put(Stack.class, "util/types/Stack");
-    tomTypes.put(Vector.class, "util/types/Vector");
-    tomTypes.put(WeakHashMap.class, "util/types/WeakHashMap");
-  }
+/**
+* Extract the type term from a classifier
+* @param eclf the classifier to extract
+*/
+private static void extractType(EClassifier eclf) {
+Class<?> c = eclf.getInstanceClass();
+if(!types.containsKey(c)) {
+String n = c.getSimpleName();
+if(c.isArray()) {
+n = c.getComponentType().getSimpleName() + "array";
+}
+String is = "";
+for(int i = 1; types.containsValue(n + is); i++) {
+is = String.valueOf(i);
+}
+n = n + is;
+types.put(c, n);
+if(tomTypes.containsKey(c)) {
+out.println("%include { " + tomTypes.get(c) + ".tom }");
+} else {
+String[] decl = getClassDeclarations(eclf); // [canonical name, anonymous generic, generic type]
+out.println(
+"\n%typeterm "+n+
+" {\n  implement { "+(eclf instanceof EClass && !EObject.class.isAssignableFrom(c) ? "org.eclipse.emf.ecore.EObject" : decl[0] + decl[2])+
+" }\n  is_sort(t) { "+(c.isPrimitive() ? "true" : "$t instanceof " + decl[0] + decl[1])+
+" }\n  equals(l1,l2) { "+(c.isPrimitive() ? "$l1 == $l2" : "$l1.equals($l2)")+
+" }\n}");
+}
+}
+}
 
-  /**
-   * A list of java reserved keywords for variable naming
-   */
-  private final static ArrayList<String> keywords = new ArrayList<String>();
-  static {
-    keywords.add("abstract");
-    keywords.add("continue");
-    keywords.add("for");
-    keywords.add("new");
-    keywords.add("switch");
-    keywords.add("assert");
-    keywords.add("default");
-    keywords.add("goto");
-    keywords.add("package");
-    keywords.add("synchronized");
-    keywords.add("boolean");
-    keywords.add("do");
-    keywords.add("if");
-    keywords.add("private");
-    keywords.add("this");
-    keywords.add("break");
-    keywords.add("double");
-    keywords.add("implements");
-    keywords.add("protected");
-    keywords.add("throw");
-    keywords.add("byte");
-    keywords.add("else");
-    keywords.add("import");
-    keywords.add("public");
-    keywords.add("throws");
-    keywords.add("case");
-    keywords.add("enum");
-    keywords.add("instanceof");
-    keywords.add("return");
-    keywords.add("transient");
-    keywords.add("catch");
-    keywords.add("extends");
-    keywords.add("int");
-    keywords.add("short");
-    keywords.add("try");
-    keywords.add("char");
-    keywords.add("final");
-    keywords.add("interface");
-    keywords.add("static");
-    keywords.add("void");
-    keywords.add("class");
-    keywords.add("finally");
-    keywords.add("long");
-    keywords.add("strictfp");
-    keywords.add("volatile");
-    keywords.add("const");
-    keywords.add("float");
-    keywords.add("native");
-    keywords.add("super");
-    keywords.add("while");
-    keywords.add("true");
-    keywords.add("false");
-    keywords.add("null");
-  }
+/**
+* A dictionnary linking standard java classes with the corresponding tom mapping filename 
+*/
+private final static HashMap<Class<?>, String> tomTypes = new HashMap<Class<?>, String>();
+static {
+tomTypes.put(boolean.class, "boolean");
+tomTypes.put(char.class, "char");
+tomTypes.put(double.class, "double");
+tomTypes.put(float.class, "float");
+tomTypes.put(int.class, "int");
+tomTypes.put(long.class, "long");
+tomTypes.put(int[].class, "intarray");
+tomTypes.put(String.class, "string");
+tomTypes.put(ArrayList.class, "util/ArrayList");
+tomTypes.put(HashMap.class, "util/HashMap");
+tomTypes.put(HashSet.class, "util/HashSet");
+tomTypes.put(LinkedList.class, "util/LinkedList");
+tomTypes.put(Object.class, "util/Object");
+tomTypes.put(TreeMap.class, "util/TreeMap");
+tomTypes.put(TreeSet.class, "util/TreeSet");
+tomTypes.put(AbstractCollection.class, "util/types/AbstractCollection");
+tomTypes.put(AbstractList.class, "util/types/AbstractList");
+tomTypes.put(AbstractSequentialList.class, "util/types/AbstractSequentialList");
+tomTypes.put(AbstractSet.class, "util/types/AbstractSet");
+tomTypes.put(Collection.class, "util/types/Collection");
+tomTypes.put(LinkedHashSet.class, "util/types/LinkedHashSet");
+tomTypes.put(List.class, "util/types/List");
+tomTypes.put(Map.class, "util/types/Map");
+tomTypes.put(Set.class, "util/types/Set");
+tomTypes.put(Stack.class, "util/types/Stack");
+tomTypes.put(Vector.class, "util/types/Vector");
+tomTypes.put(WeakHashMap.class, "util/types/WeakHashMap");
+}
 
-  /**
-   * Return an array containing 3 strings from EClassifer :
-   * [0] -> canonical name of the instance class
-   * [1] -> anonymous generic types of the instance class
-   * [2] -> generic types of the instance class
-   * @param ec EClassfier to treat
-   * @return an array containing 3 strings
-   */
-  private static String[] getClassDeclarations(EClassifier ec) {
-    Class<?> c = ec.getInstanceClass();
-    String cn = c.getCanonicalName();
-    StringBuffer ca = new StringBuffer();
-    StringBuffer cb = new StringBuffer();
-    TypeVariable<?>[] tps = c.getTypeParameters();
-    if(tps.length > 0) {
-      ca.append("<");
-      for(int i = 0; i < tps.length; i++) {
-        if(i != 0) {
-          ca.append(", ");
-        }
-        ca.append("?");
-      }
-      ca.append(">");
-      if(c == Entry.class && ec instanceof EClass) {
-        cb.append("<");
-        EList<EAttribute> ats = ((EClass) ec).getEAttributes();
-        ListIterator<EAttribute> it = ats.listIterator();
-        for(int i = 0; i < tps.length; i++) {
-          if(i != 0) {
-            cb.append(", ");
-          }
-          cb.append(it.next().getEAttributeType().getInstanceClass()
-              .getCanonicalName());
+/**
+* A list of java reserved keywords for variable naming
+*/
+private final static ArrayList<String> keywords = new ArrayList<String>();
+static {
+keywords.add("abstract");
+keywords.add("continue");
+keywords.add("for");
+keywords.add("new");
+keywords.add("switch");
+keywords.add("assert");
+keywords.add("default");
+keywords.add("goto");
+keywords.add("package");
+keywords.add("synchronized");
+keywords.add("boolean");
+keywords.add("do");
+keywords.add("if");
+keywords.add("private");
+keywords.add("this");
+keywords.add("break");
+keywords.add("double");
+keywords.add("implements");
+keywords.add("protected");
+keywords.add("throw");
+keywords.add("byte");
+keywords.add("else");
+keywords.add("import");
+keywords.add("public");
+keywords.add("throws");
+keywords.add("case");
+keywords.add("enum");
+keywords.add("instanceof");
+keywords.add("return");
+keywords.add("transient");
+keywords.add("catch");
+keywords.add("extends");
+keywords.add("int");
+keywords.add("short");
+keywords.add("try");
+keywords.add("char");
+keywords.add("final");
+keywords.add("interface");
+keywords.add("static");
+keywords.add("void");
+keywords.add("class");
+keywords.add("finally");
+keywords.add("long");
+keywords.add("strictfp");
+keywords.add("volatile");
+keywords.add("const");
+keywords.add("float");
+keywords.add("native");
+keywords.add("super");
+keywords.add("while");
+keywords.add("true");
+keywords.add("false");
+keywords.add("null");
+}
 
-        }
-        cb.append(">");
-      } else {
-        cb = ca;
-      }
-    }
-    return new String[] { cn, ca.toString(), cb.toString() };
-  }
+/**
+* Return an array containing 3 strings from EClassifer :
+* [0] -> canonical name of the instance class
+* [1] -> anonymous generic types of the instance class
+* [2] -> generic types of the instance class
+* @param ec EClassfier to treat
+* @return an array containing 3 strings
+*/
+private static String[] getClassDeclarations(EClassifier ec) {
+Class<?> c = ec.getInstanceClass();
+String cn = c.getCanonicalName();
+StringBuffer ca = new StringBuffer();
+StringBuffer cb = new StringBuffer();
+TypeVariable<?>[] tps = c.getTypeParameters();
+if(tps.length > 0) {
+ca.append("<");
+for(int i = 0; i < tps.length; i++) {
+if(i != 0) {
+ca.append(", ");
+}
+ca.append("?");
+}
+ca.append(">");
+if(c == Entry.class && ec instanceof EClass) {
+cb.append("<");
+EList<EAttribute> ats = ((EClass) ec).getEAttributes();
+ListIterator<EAttribute> it = ats.listIterator();
+for(int i = 0; i < tps.length; i++) {
+if(i != 0) {
+cb.append(", ");
+}
+cb.append(it.next().getEAttributeType().getInstanceClass()
+.getCanonicalName());
+}
+cb.append(">");
+} else {
+cb = ca;
+}
+}
+return new String[] { cn, ca.toString(), cb.toString() };
+}
 
-  /**
-   * Return type of a EStructuralFeature and generate his list mapping if he is many
-   * @param sf EStructuralFeature to return type
-   * @return type of sf
-   */
-  private static String getType(EStructuralFeature sf) {
+/**
+* Return type of a EStructuralFeature and generate his list mapping if he is many
+* @param sf EStructuralFeature to return type
+* @return type of sf
+*/
+private static String getType(EStructuralFeature sf) {
 
-    Class<?> c = sf.getEType().getInstanceClass();
-    String simplename = types.get(c);
-    String name = simplename;
+Class<?> c = sf.getEType().getInstanceClass();
+String simplename = types.get(c);
+String name = simplename;
+if(sf.isMany()) {
+name += "EList";
+if(!lists.contains(c)) {
 
-    if(sf.isMany()) {
+String[] decl = getClassDeclarations(sf.getEType()); // [canonical name, anonymous generic, generic type]
 
-      name += "EList";
-      if(!lists.contains(c)) {
+String inst = (EObject.class.isAssignableFrom(sf.getEType()
+.getInstanceClass()) ? decl[0] + decl[2] : "org.eclipse.emf.ecore.EObject");
 
-        String[] d = getClassDeclarations(sf.getEType());
+out.println(
+"\n%typeterm "+name+
+" {\n  implement { org.eclipse.emf.common.util.EList<"+inst+
+"> }\n  is_sort(t) { $t instanceof org.eclipse.emf.common.util.EList<?> && (((org.eclipse.emf.common.util.EList<"+inst+
+">)$t).size() == 0 || (((org.eclipse.emf.common.util.EList<"+inst+
+">)$t).size()>0 && ((org.eclipse.emf.common.util.EList<"+inst+
+">)$t).get(0) instanceof "+(decl[0]+decl[1])+
+")) }\n  equals(l1,l2) { $l1.equals($l2) }\n}\n\n%oparray "+name+
+" "+name+
+" ( "+simplename+
+"* ) {\n  is_fsym(t) { $t instanceof org.eclipse.emf.common.util.EList<?> && ($t.size() == 0 || ($t.size()>0 && $t.get(0) instanceof "+(decl[0]+decl[1])+
+")) }\n  make_empty(n) { new org.eclipse.emf.common.util.BasicEList<"+inst+
+">($n) }\n  make_append(e,l) { append"+name+
+"($e,$l) }\n  get_element(l,n) { $l.get($n) }\n  get_size(l)      { $l.size() }\n}\n\nprivate static <O> org.eclipse.emf.common.util.EList<O> append"+name+
+"(O e,org.eclipse.emf.common.util.EList<O> l) {\n  l.add(e);\n  return l;\n}");
+lists.add(c);
+}
+}
+return name;
+}
 
-        String cn = d[0];
-        String ca = d[1];
-        // String cb = d[2];
+/**
+* Generate classifiers and subpackages mappings of a package
+* @param p EPackage to extract
+*/
+private static void extractFromEPackage(EPackage p) {
+for(EClassifier eclf : p.getEClassifiers()) {
+extractFromEClassifier(eclf);
+}
+for(EPackage ep : p.getESubpackages()) {
+extractFromEPackage(ep);
+}
+}
 
-        String inst = (EObject.class.isAssignableFrom(sf.getEType()
-            .getInstanceClass()) ? d[0] + d[2] : "EObject");
+/**
+* A dictonnary containing the matching java boxed class of a java primitive class
+*/
+private final static HashMap<Class<?>, Class<?>> primitiveToBoxed = new HashMap<Class<?>, Class<?>>();
+static {
+primitiveToBoxed.put(Boolean.TYPE, Boolean.class);
+primitiveToBoxed.put(Byte.TYPE, Byte.class);
+primitiveToBoxed.put(Short.TYPE, Short.class);
+primitiveToBoxed.put(Character.TYPE, Character.class);
+primitiveToBoxed.put(Integer.TYPE, Integer.class);
+primitiveToBoxed.put(Long.TYPE, Long.class);
+primitiveToBoxed.put(Float.TYPE, Float.class);
+primitiveToBoxed.put(Double.TYPE, Double.class);
+}
 
-        out.println("%typeterm " + name + " {");
-        out.println("  implement { EList<" + inst + "> }");
-        out.println("  is_sort(t) { " + "$t instanceof EList<?> "
-            + "&& (((EList<" + inst + ">)$t).size() == 0 " + "|| (((EList<"
-            + inst + ">)$t).size()>0 " + "&& ((EList<" + inst
-            + ">)$t).get(0) instanceof " + cn + ca + ")) }");
-        out.println("  equals(l1,l2) { $l1.equals($l2) }");
-        out.println("}");
+/**
+* Return the boxed type of a primitive class (or the same class if not primitive)
+* @param primitiveType the primitive class to box
+* @return the boxed class (or the same class if not primitive)
+*/
+private static Class<?> boxType(Class<?> primitiveType) {
+Class<?> boxedType = (Class<?>) primitiveToBoxed.get(primitiveType);
+if(boxedType != null) {
+return boxedType;
+} else {
+return primitiveType;
+}
+}
 
-        out
-            .println("%oparray " + name + " " + name + "(" + simplename
-                + "*) {");
-        out.println("  is_fsym(t) { $t instanceof EList<?> "
-            + "&& ($t.size() == 0 || ($t.size()>0 "
-            + "&& $t.get(0) instanceof " + cn + ca + ")) }");
-        out.println("  make_empty(n) { new BasicEList<" + inst + ">($n) }");
-        out.println("  make_append(e,l) { append($e,$l) }");
-        out.println("  get_element(l,n) { $l.get($n) }");
-        out.println("  get_size(l)      { $l.size() }");
-        out.println("}");
+//
+// private final static HashMap<Class<?>, Class<?>> boxedToPrimitive = new
+// HashMap<Class<?>, Class<?>>();
+// static {
+// boxedToPrimitive.put(Boolean.class, Boolean.TYPE);
+// boxedToPrimitive.put(Byte.class, Byte.TYPE);
+// boxedToPrimitive.put(Short.class, Short.TYPE);
+// boxedToPrimitive.put(Character.class, Character.TYPE);
+// boxedToPrimitive.put(Integer.class, Integer.TYPE);
+// boxedToPrimitive.put(Long.class, Long.TYPE);
+// boxedToPrimitive.put(Float.class, Float.TYPE);
+// boxedToPrimitive.put(Double.class, Double.TYPE);
+// }
+//
+// private static Class<?> unboxType(Class<?> boxedType) {
+// Class<?> primitiveType = (Class<?>) boxedToPrimitive.get(boxedType);
+// if(primitiveType != null) {
+// return primitiveType;
+// } else {
+// return boxedType;
+// }
+// }
+//
 
-        if(!append) {
-          out.println("private static <O> EList<O> append(O e,EList<O> l) {");
-          out.println("  l.add(e);");
-          out.println("  return l;");
-          out.println("}");
-          append = true;
-        }
+/**
+* List of already generated classifiers
+*/
+private final static ArrayList<EClassifier> classifiers = new ArrayList<EClassifier>();
 
-        lists.add(c);
-      }
-    }
-    return name;
-  }
+/**
+* Make the name with upper first character
+* @param name name to treat
+* @return name treated
+*/
+private static String toUpperName(String name) {
+if(name.length() < 1) {
+throw new IllegalArgumentException(
+"Name must contains at least one character.");
+}
+return name.substring(0, 1).toUpperCase() + name.substring(1);
+}
 
-  /**
-   * Generate classifiers and subpackages mappings of a package
-   * @param p EPackage to extract
-   */
-  private static void extract(EPackage p) {
-    for(EClassifier eclf : p.getEClassifiers()) {
-      extract(eclf);
-    }
-    for(EPackage ep : p.getESubpackages()) {
-      extract(ep);
-    }
-  }
+/**
+* Generate classifier mapping
+* @param eclf classifier to extract
+*/
+private static void extractFromEClassifier(EClassifier eclf) {
+if(!classifiers.contains(eclf)) {
+extractType(eclf);
+classifiers.add(eclf);
+if(eclf instanceof EClass) {
+EClass ecl = (EClass) eclf;
+EList<EStructuralFeature> sfs = ecl.getEAllStructuralFeatures();
+StringBuffer s_types = new StringBuffer();
+StringBuffer s_types2 = new StringBuffer();
+StringBuffer s = new StringBuffer();
+StringBuffer s2 = new StringBuffer();
+StringBuffer s_gets = new StringBuffer();
+for(EStructuralFeature sf : sfs) {
+if(sf.isChangeable()) {
+extractFromEClassifier(sf.getEType());
+EClassifier type = sf.getEType();
+String sfname = (keywords.contains(sf.getName()) ? "_" : "")
++ sf.getName();
+s_types.append(sfname + " : " + getType(sf) + ", ");
+String[] decl = getClassDeclarations(type); // [canonical name, anonymous generic, generic type]
+System.out.println("");
+s_types2.append(", "
++ (sf.isMany() ? "org.eclipse.emf.common.util.EList<" + decl[0] + decl[2] + ">" : decl[0] + decl[2])
++ " " + sfname);
+s.append(", " + sfname);
+s2.append(", $" + sfname);
+String na = boxType(sf.getEType().getInstanceClass())
+.getCanonicalName();
+if(type instanceof EClass
+&& !EObject.class.isAssignableFrom(type.getInstanceClass())) {
+na = "org.eclipse.emf.ecore.EObject";
+}
+if(sf.isMany()) {
+na = "org.eclipse.emf.common.util.EList<" + na + ">";
+}
+s_gets.append("\n  get_slot(" + sfname + ", t)  { (" + na
++ ")$t.eGet($t.eClass().getEStructuralFeature(\"" + sf.getName()
++ "\")) }");
+}
+}
+if(s_types.length() >= 2) {
+s_types.delete(s_types.length() - 2, s_types.length());
+}
+if(!ecl.isAbstract()) {
+String cr = eclf.getName();
+String[] decl = getClassDeclarations(eclf); // [canonical name, anonymous generic, generic type]
+String o1 = ecl.getEPackage().getEFactoryInstance().getClass()
+.getInterfaces()[ecl.getEPackage().getClass()
+.getInterfaces().length - 1].getCanonicalName();
+String o2 = ecl.getEPackage().getClass().getInterfaces()[ecl.getEPackage().getClass().getInterfaces().length - 1]
+.getCanonicalName();
+out.print(
+"%op "+ecl.getInstanceClass().getSimpleName()+
+" "+cr+
+"("+s_types+
+") {\n  is_fsym(t) { $t instanceof "+(decl[0]+decl[1])+
+" }"+s_gets+
+"\n  make("+(s.length() <= 2 ? "" : s.substring(2))+
+") { construct"+cr+
+"(("+(EObject.class.isAssignableFrom(ecl.getInstanceClass()) ? ecl.getInstanceClass().getCanonicalName() : "org.eclipse.emf.ecore.EObject")+
+")"+o1+
+".eINSTANCE.create((EClass)"+o2+
+".eINSTANCE.getEClassifier(\""+ecl.getName()+
+"\")), new Object[]{ "+(s2.length() <= 2 ? "" : s2.substring(2))+
+" }) }\n}\n\npublic static <O extends org.eclipse.emf.ecore.EObject> O construct"+cr+
+"(O o, Object[] objs) {\n  int i=0;\n  EList<EStructuralFeature> sfes = o.eClass().getEAllStructuralFeatures();\n  for(EStructuralFeature esf : sfes) {\n    if(esf.isChangeable()) {\n      o.eSet(esf, objs[i]);\n      i++;\n    }\n  }\n  return o;\n}\n              ");
+}
+} else if(eclf instanceof EEnum) {
+EEnum en = (EEnum) eclf;
+String cr = eclf.getName();
+String[] decl = getClassDeclarations(eclf); // [canonical name, anonymous generic, generic type]
+for(EEnumLiteral lit : en.getELiterals()) {
+String o1 = eclf.getEPackage().getEFactoryInstance().getClass()
+.getInterfaces()[eclf.getEPackage().getClass()
+.getInterfaces().length - 1].getCanonicalName();
+String o2 = eclf.getEPackage().getClass().getInterfaces()[eclf
+.getEPackage().getClass().getInterfaces().length - 1]
+.getCanonicalName();
 
-  /**
-   * A dictonnary containing the matching java boxed class of a java primitive class
-   */
-  private final static HashMap<Class<?>, Class<?>> primitiveToBoxed = new HashMap<Class<?>, Class<?>>();
-  static {
-    primitiveToBoxed.put(Boolean.TYPE, Boolean.class);
-    primitiveToBoxed.put(Byte.TYPE, Byte.class);
-    primitiveToBoxed.put(Short.TYPE, Short.class);
-    primitiveToBoxed.put(Character.TYPE, Character.class);
-    primitiveToBoxed.put(Integer.TYPE, Integer.class);
-    primitiveToBoxed.put(Long.TYPE, Long.class);
-    primitiveToBoxed.put(Float.TYPE, Float.class);
-    primitiveToBoxed.put(Double.TYPE, Double.class);
-  }
+out.println(
+"\n%op "+cr+
+" "+lit.getLiteral()+
+"() {\n  is_fsym(t) { t == "+(decl[0]+decl[1])+
+".get(\""+lit.getLiteral()+
+"\") }\n  make() { ("+(decl[0]+decl[2])+
+")"+o1+
+".eINSTANCE.createFromString( (EDataType)"+o2+
+".eINSTANCE.get"+toUpperName(cr)+
+"(), \""+lit.getLiteral()+
+"\") }\n}");
+}
+}
+}
 
-  /**
-   * Return the boxed type of a primitive class (or the same class if not primitive)
-   * @param primitiveType the primitive class to box
-   * @return the boxed class (or the same class if not primitive)
-   */
-  private static Class<?> boxType(Class<?> primitiveType) {
-    Class<?> boxedType = (Class<?>) primitiveToBoxed.get(primitiveType);
-    if(boxedType != null) {
-      return boxedType;
-    } else {
-      return primitiveType;
-    }
-  }
-
-  //
-  // private final static HashMap<Class<?>, Class<?>> boxedToPrimitive = new
-  // HashMap<Class<?>, Class<?>>();
-  // static {
-  // boxedToPrimitive.put(Boolean.class, Boolean.TYPE);
-  // boxedToPrimitive.put(Byte.class, Byte.TYPE);
-  // boxedToPrimitive.put(Short.class, Short.TYPE);
-  // boxedToPrimitive.put(Character.class, Character.TYPE);
-  // boxedToPrimitive.put(Integer.class, Integer.TYPE);
-  // boxedToPrimitive.put(Long.class, Long.TYPE);
-  // boxedToPrimitive.put(Float.class, Float.TYPE);
-  // boxedToPrimitive.put(Double.class, Double.TYPE);
-  // }
-  //
-  // private static Class<?> unboxType(Class<?> boxedType) {
-  // Class<?> primitiveType = (Class<?>) boxedToPrimitive.get(boxedType);
-  // if(primitiveType != null) {
-  // return primitiveType;
-  // } else {
-  // return boxedType;
-  // }
-  // }
-  //
-
-  /**
-   * List of already generated classifiers
-   */
-  private final static ArrayList<EClassifier> classifiers = new ArrayList<EClassifier>();
-
-  /**
-   * Make the name with upper first character
-   * @param name name to treat
-   * @return name treated
-   */
-  private static String toUpperName(String name) {
-    if(name.length() < 1) {
-      throw new IllegalArgumentException(
-          "Name must contains at least one character.");
-    }
-    return name.substring(0, 1).toUpperCase() + name.substring(1);
-  }
-
-  /**
-   * Generate classifier mapping
-   * @param eclf classifier to extract
-   */
-  private static void extract(EClassifier eclf) {
-    if(!classifiers.contains(eclf)) {
-      String[] dec = getClassDeclarations(eclf);
-      String cr = eclf.getName();
-      extractType(eclf);
-      classifiers.add(eclf);
-      if(eclf instanceof EClass) {
-        EClass ecl = (EClass) eclf;
-        EList<EStructuralFeature> sfs = ecl.getEAllStructuralFeatures();
-        StringBuffer s_types = new StringBuffer();
-        StringBuffer s_types2 = new StringBuffer();
-        StringBuffer s = new StringBuffer();
-        StringBuffer s2 = new StringBuffer();
-        StringBuffer s_gets = new StringBuffer();
-        for(EStructuralFeature sf : sfs) {
-          if(sf.isChangeable()) {
-            extract(sf.getEType());
-            EClassifier type = sf.getEType();
-            String sfname = (keywords.contains(sf.getName()) ? "_" : "")
-                + sf.getName();
-            s_types.append(sfname + " : " + getType(sf) + ", ");
-            String[] d = getClassDeclarations(type);
-            s_types2.append(", "
-                + (sf.isMany() ? "EList<" + d[0] + d[2] + ">" : d[0] + d[2])
-                + " " + sfname);
-            s.append(", " + sfname);
-            s2.append(", $" + sfname);
-            String na = boxType(sf.getEType().getInstanceClass())
-                .getCanonicalName();
-            if(type instanceof EClass
-                && !EObject.class.isAssignableFrom(type.getInstanceClass())) {
-              na = "EObject";
-            }
-            if(sf.isMany()) {
-              na = "EList<" + na + ">";
-            }
-            s_gets.append("  get_slot(" + sfname + ", t)  { (" + na
-                + ")$t.eGet($t.eClass().getEStructuralFeature(\"" + sf.getName()
-                + "\")) }\n");
-          }
-        }
-        if(s_types.length() >= 2) {
-          s_types.delete(s_types.length() - 2, s_types.length());
-        }
-        if(!ecl.isAbstract()) {
-          out.print("%op " + ecl.getInstanceClass().getSimpleName() + " " + cr
-              + "(");
-
-          out.print(s_types);
-
-          out.println(") {");
-
-          out.println("  is_fsym(t) { $t instanceof " + dec[0] + dec[1] + " }");
-
-          out.print(s_gets);
-
-          out
-              .println("  make("
-                  + (s.length() <= 2 ? "" : s.substring(2))
-                  + ") { construct(("
-                  + (EObject.class.isAssignableFrom(ecl.getInstanceClass()) ? ecl
-                      .getInstanceClass().getCanonicalName()
-                      : "EObject")
-                  + ")"
-                  + ecl.getEPackage().getEFactoryInstance().getClass()
-                      .getInterfaces()[ecl.getEPackage().getClass()
-                      .getInterfaces().length - 1].getCanonicalName()
-                  + ".eINSTANCE.create((EClass)"
-                  + ecl.getEPackage().getClass().getInterfaces()[ecl
-                      .getEPackage().getClass().getInterfaces().length - 1]
-                      .getCanonicalName() + ".eINSTANCE.getEClassifier(\""
-                  + ecl.getName() + "\")),new Object[]{"
-                  + (s2.length() <= 2 ? "" : s2.substring(2)) + "}) }");
-
-          out.println("}");
-          if(!constructor) {
-            out
-                .println("public static <O extends EObject> O construct(O o, Object[] objs){");
-
-            out.println("int i=0;");
-            out
-                .println("EList<EStructuralFeature> sfes = o.eClass().getEAllStructuralFeatures();");
-            out.println("for(EStructuralFeature esf : sfes) {");
-            out.println("  if(esf.isChangeable()){");
-            out.println("    o.eSet(esf, objs[i]);");
-            out.println("    i++;");
-            out.println("  }");
-            out.println("}");
-
-            out.println("  return o;");
-            out.println("}");
-            constructor = true;
-          }
-        }
-      } else if(eclf instanceof EEnum) {
-        EEnum en = (EEnum) eclf;
-        for(EEnumLiteral lit : en.getELiterals()) {
-          out.println("%op " + cr + " " + lit.getLiteral() + "() {");
-
-          out.println("  is_fsym(t) { $t instanceof " + dec[0] + dec[1] + " }");
-
-          out.println("  make() { ("
-              + dec[0]
-              + dec[2]
-              + ")"
-              + eclf.getEPackage().getEFactoryInstance().getClass()
-                  .getInterfaces()[eclf.getEPackage().getClass()
-                  .getInterfaces().length - 1].getCanonicalName()
-              + ".eINSTANCE"
-              + ".createFromString((EDataType) "
-              + eclf.getEPackage().getClass().getInterfaces()[eclf
-                  .getEPackage().getClass().getInterfaces().length - 1]
-                  .getCanonicalName() + ".eINSTANCE" + ".get" + toUpperName(cr)
-              + "(), \"" + lit.getLiteral() + "\") }");
-
-          out.println("}");
-
-        }
-      }
-    }
-
-  }
+}
 
 }

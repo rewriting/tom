@@ -46,7 +46,7 @@ public class ChoiceUndet extends AbstractStrategyCombinator {
   int size;
   private static java.util.Random random = null;
 
-  public ChoiceUndet(Strategy[] strategies) {
+  private ChoiceUndet(Strategy[] strategies) {
     initSubterm(strategies);
     this.size = strategies.length;
     if(random == null) {
@@ -54,7 +54,7 @@ public class ChoiceUndet extends AbstractStrategyCombinator {
     }
   }
 
-  public ChoiceUndet(Strategy head, Strategy tail) {
+  private ChoiceUndet(Strategy head, Strategy tail) {
     if (tail instanceof ChoiceUndet) {
       Strategy[] tailstrategies = ((ChoiceUndet)tail).arguments;
       Strategy[] strategies = new Strategy[tailstrategies.length+1];
@@ -71,6 +71,13 @@ public class ChoiceUndet extends AbstractStrategyCombinator {
     if(random == null) {
       random = new java.util.Random();
     }
+  }
+
+  public static Strategy make(Strategy first, Strategy then) {
+    if(then==null) {
+      return first;
+    }
+    return new ChoiceUndet(first,then);
   }
 
   public Strategy getHead() {

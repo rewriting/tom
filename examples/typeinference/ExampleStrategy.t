@@ -1,8 +1,41 @@
-import examplestrategy.examplestrategy.types.*;
+/*
+ * Copyright (c) 2004-2010, INPL, INRIA
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are
+ * met:
+ *  - Redistributions of source code must retain the above copyright
+ *  notice, this list of conditions and the following disclaimer.
+ *  - Redistributions in binary form must reproduce the above copyright
+ *  notice, this list of conditions and the following disclaimer in the
+ *  documentation and/or other materials provided with the distribution.
+ *  - Neither the name of the INRIA nor the names of its
+ *  contributors may be used to endorse or promote products derived from
+ *  this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+package typeinference;
+
+import typeinference.examplestrategy.examplestrategy.types.*;
+import tom.engine.exception.TomRuntimeException;
+import java.util.*;
+import tom.library.sl.*;
 
 public class ExampleStrategy{
 	%include { sl.tom }
-	%include { java/util/types/HashMap.tom }
+	%include { util/HashMap.tom }
 
   %gom {
     module ExampleStrategy
@@ -13,21 +46,26 @@ public class ExampleStrategy{
     Expr = Var(name:String) 
          | Cst(val:int) 
          | Let(name:String, e:Expr, body:Expr) 
+         | Test(x:Term)
+
+    Term = a() | b()
   }
   public void run() {
-
     System.out.println("running...");
-    Expr p1 = `Print(Let("a",Cst(1), Var("a")));
+    Expr p1 = `Let("a",Cst(1), Var("a"));
+    Expr new_p1 = propagate(p1);
+    System.out.println(new_p1);
 
-		HashMap env = new HashMap();
+    Expr p2 = `Test(a());
+    propagate(p2);
   }
   
   public final static void main(String[] args) {
-    ExampleStrategy test = new Backquote();
+    ExampleStrategy test = new ExampleStrategy();
     test.run();
   }
 
-	public Expr propagate(HashMap env, Expr expr) {
+	public Expr propagate(Expr expr) {
 		try {
 			return (Expr) `TopDown(Try(RenamedVar())).visitLight(expr);
 		} catch (VisitFailure e) {
@@ -40,5 +78,9 @@ public class ExampleStrategy{
 		visit Expr {
 			v@Var(concString('_',_*)) -> { return `v; }
 		}
+
+    visit Term {
+      a() -> { System.out.println("Test!!"); }
+    }
 	}
 }

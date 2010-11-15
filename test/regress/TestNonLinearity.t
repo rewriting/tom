@@ -14,13 +14,10 @@ public class TestNonLinearity {
   public static void main(String[] args) {
     A t = `inc(b());
     %match {
-      inc(x) << A t -> {
-        System.out.println("Before the inner match: " + `x);
-        A n = `inc2(a());
-        %match {
-          inc2(x) << n && (x == a()) -> { System.out.println("Match imbriqué: " + `x); } 
-        }
-      }
+      inc(x) << A t 
+        && (inc2(x) << inc2(a()) && (x == a())) -> {
+          System.out.println("Match imbrique: " + `x);
+        } 
     }
   }
 }

@@ -115,6 +115,7 @@ public class PrettyPrinterPlugin extends TomGenericPlugin {
   private void prettyPrinter(Code code) {
 //    %include { string.tom }
     System.out.println("PrettyPrinter active");
+/*
     Map<Float,String> anOrganizer = new TreeMap<Float,String>();
     try {
       FileWriter log = new FileWriter("log.t");
@@ -136,11 +137,12 @@ public class PrettyPrinterPlugin extends TomGenericPlugin {
     catch(Exception e) {
       System.out.println("little problem while writing the log file");
     }
-
+*/
     //System.out.println(intermediaryCode);
     //System.out.println(codeToGive);
   }
-  
+ 
+/* 
   private float getPosition(TextPosition tp) {
     float f;
     %match(tp) {
@@ -148,5 +150,5 @@ public class PrettyPrinterPlugin extends TomGenericPlugin {
     }
   return -1;
   }
-
+*/
 }

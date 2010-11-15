@@ -60,11 +60,11 @@
   make(s1,s2) {( `mu(MuVar("x"),Choice(s2,Sequence(s1,One(MuVar("x"))))))}
 }
 
-%op Strategy TrueCtl(){
+%op Strategy TrueCtl() {
   make() {`Identity() }
 }
 
-%op Strategy FalseCtl(){
+%op Strategy FalseCtl() {
   make() {`Fail() }
 }
 
