@@ -1,0 +1,6 @@
+- Fichier .g qui reconnait l'expression :
+%match(){ <chaine de caractères> }
+- Fichier main pour tester le parser
+(doit prendre un fichier ou une chaine en entrée)
+- script pour compiler/exécuter tout
+- parser Host en java
