@@ -115,6 +115,7 @@ public class PrettyPrinterPlugin extends TomGenericPlugin {
   private void prettyPrinter(Code code) {
 //    %include { string.tom }
     System.out.println("PrettyPrinter active");
+
 /*
     Map<Float,String> anOrganizer = new TreeMap<Float,String>();
     try {
