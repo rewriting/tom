@@ -409,21 +409,21 @@ public void fill(GomModuleList gml) {
 {
 if ( (gml instanceof tom.gom.adt.gom.types.GomModuleList) ) {
 if ( (((( tom.gom.adt.gom.types.GomModuleList )gml) instanceof tom.gom.adt.gom.types.gommodulelist.ConsConcGomModule) || ((( tom.gom.adt.gom.types.GomModuleList )gml) instanceof tom.gom.adt.gom.types.gommodulelist.EmptyConcGomModule)) ) {
- tom.gom.adt.gom.types.GomModuleList  tomMatch341__end__4=(( tom.gom.adt.gom.types.GomModuleList )gml);
+ tom.gom.adt.gom.types.GomModuleList  tomMatch359__end__4=(( tom.gom.adt.gom.types.GomModuleList )gml);
 do {
 {
-if (!( tomMatch341__end__4.isEmptyConcGomModule() )) {
-fillFromGomModule( tomMatch341__end__4.getHeadConcGomModule() ); 
+if (!( tomMatch359__end__4.isEmptyConcGomModule() )) {
+fillFromGomModule( tomMatch359__end__4.getHeadConcGomModule() ); 
 
 }
-if ( tomMatch341__end__4.isEmptyConcGomModule() ) {
-tomMatch341__end__4=(( tom.gom.adt.gom.types.GomModuleList )gml);
+if ( tomMatch359__end__4.isEmptyConcGomModule() ) {
+tomMatch359__end__4=(( tom.gom.adt.gom.types.GomModuleList )gml);
 } else {
-tomMatch341__end__4= tomMatch341__end__4.getTailConcGomModule() ;
+tomMatch359__end__4= tomMatch359__end__4.getTailConcGomModule() ;
 }
 
 }
-} while(!( (tomMatch341__end__4==(( tom.gom.adt.gom.types.GomModuleList )gml)) ));
+} while(!( (tomMatch359__end__4==(( tom.gom.adt.gom.types.GomModuleList )gml)) ));
 }
 }
 
@@ -640,11 +640,11 @@ ConstructorDescription desc = constructors.get(cons);
 {
 if ( (desc instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {
 if ( ((( tom.gom.adt.symboltable.types.ConstructorDescription )desc) instanceof tom.gom.adt.symboltable.types.constructordescription.ConstructorDescription) ) {
-boolean tomMatch345_4= false ;
+boolean tomMatch363_4= false ;
 if ( ( (( tom.gom.adt.symboltable.types.ConstructorDescription )desc).getGenerated()  instanceof tom.gom.adt.symboltable.types.generationinfo.No) ) {
-tomMatch345_4= true ;
+tomMatch363_4= true ;
 }
-if (!(tomMatch345_4)) {
+if (!(tomMatch363_4)) {
 
 return 
 true;
@@ -758,45 +758,45 @@ private void fillFromGomModule(GomModule m) {
 {
 if ( (m instanceof tom.gom.adt.gom.types.GomModule) ) {
 if ( ((( tom.gom.adt.gom.types.GomModule )m) instanceof tom.gom.adt.gom.types.gommodule.GomModule) ) {
- tom.gom.adt.gom.types.GomModuleName  tomMatch348_1= (( tom.gom.adt.gom.types.GomModule )m).getModuleName() ;
- tom.gom.adt.gom.types.SectionList  tomMatch348_2= (( tom.gom.adt.gom.types.GomModule )m).getSectionList() ;
-if ( (tomMatch348_1 instanceof tom.gom.adt.gom.types.gommodulename.GomModuleName) ) {
-if ( ((tomMatch348_2 instanceof tom.gom.adt.gom.types.sectionlist.ConsConcSection) || (tomMatch348_2 instanceof tom.gom.adt.gom.types.sectionlist.EmptyConcSection)) ) {
- tom.gom.adt.gom.types.SectionList  tomMatch348__end__9=tomMatch348_2;
+ tom.gom.adt.gom.types.GomModuleName  tomMatch366_1= (( tom.gom.adt.gom.types.GomModule )m).getModuleName() ;
+ tom.gom.adt.gom.types.SectionList  tomMatch366_2= (( tom.gom.adt.gom.types.GomModule )m).getSectionList() ;
+if ( (tomMatch366_1 instanceof tom.gom.adt.gom.types.gommodulename.GomModuleName) ) {
+if ( ((tomMatch366_2 instanceof tom.gom.adt.gom.types.sectionlist.ConsConcSection) || (tomMatch366_2 instanceof tom.gom.adt.gom.types.sectionlist.EmptyConcSection)) ) {
+ tom.gom.adt.gom.types.SectionList  tomMatch366__end__9=tomMatch366_2;
 do {
 {
-if (!( tomMatch348__end__9.isEmptyConcSection() )) {
- tom.gom.adt.gom.types.Section  tomMatch348_13= tomMatch348__end__9.getHeadConcSection() ;
-if ( (tomMatch348_13 instanceof tom.gom.adt.gom.types.section.Public) ) {
- tom.gom.adt.gom.types.GrammarList  tomMatch348_12= tomMatch348_13.getGrammarList() ;
-if ( ((tomMatch348_12 instanceof tom.gom.adt.gom.types.grammarlist.ConsConcGrammar) || (tomMatch348_12 instanceof tom.gom.adt.gom.types.grammarlist.EmptyConcGrammar)) ) {
- tom.gom.adt.gom.types.GrammarList  tomMatch348__end__17=tomMatch348_12;
+if (!( tomMatch366__end__9.isEmptyConcSection() )) {
+ tom.gom.adt.gom.types.Section  tomMatch366_13= tomMatch366__end__9.getHeadConcSection() ;
+if ( (tomMatch366_13 instanceof tom.gom.adt.gom.types.section.Public) ) {
+ tom.gom.adt.gom.types.GrammarList  tomMatch366_12= tomMatch366_13.getGrammarList() ;
+if ( ((tomMatch366_12 instanceof tom.gom.adt.gom.types.grammarlist.ConsConcGrammar) || (tomMatch366_12 instanceof tom.gom.adt.gom.types.grammarlist.EmptyConcGrammar)) ) {
+ tom.gom.adt.gom.types.GrammarList  tomMatch366__end__17=tomMatch366_12;
 do {
 {
-if (!( tomMatch348__end__17.isEmptyConcGrammar() )) {
-fillFromGrammar( tomMatch348_1.getName() , tomMatch348__end__17.getHeadConcGrammar() );
+if (!( tomMatch366__end__17.isEmptyConcGrammar() )) {
+fillFromGrammar( tomMatch366_1.getName() , tomMatch366__end__17.getHeadConcGrammar() );
 
 
 }
-if ( tomMatch348__end__17.isEmptyConcGrammar() ) {
-tomMatch348__end__17=tomMatch348_12;
+if ( tomMatch366__end__17.isEmptyConcGrammar() ) {
+tomMatch366__end__17=tomMatch366_12;
 } else {
-tomMatch348__end__17= tomMatch348__end__17.getTailConcGrammar() ;
+tomMatch366__end__17= tomMatch366__end__17.getTailConcGrammar() ;
 }
 
 }
-} while(!( (tomMatch348__end__17==tomMatch348_12) ));
+} while(!( (tomMatch366__end__17==tomMatch366_12) ));
 }
 }
 }
-if ( tomMatch348__end__9.isEmptyConcSection() ) {
-tomMatch348__end__9=tomMatch348_2;
+if ( tomMatch366__end__9.isEmptyConcSection() ) {
+tomMatch366__end__9=tomMatch366_2;
 } else {
-tomMatch348__end__9= tomMatch348__end__9.getTailConcSection() ;
+tomMatch366__end__9= tomMatch366__end__9.getTailConcSection() ;
 }
 
 }
-} while(!( (tomMatch348__end__9==tomMatch348_2) ));
+} while(!( (tomMatch366__end__9==tomMatch366_2) ));
 }
 }
 }
@@ -814,23 +814,23 @@ private void fillFromGrammar(String moduleName, Grammar g) {
 {
 if ( (g instanceof tom.gom.adt.gom.types.Grammar) ) {
 if ( ((( tom.gom.adt.gom.types.Grammar )g) instanceof tom.gom.adt.gom.types.grammar.Grammar) ) {
- tom.gom.adt.gom.types.ProductionList  tomMatch349_1= (( tom.gom.adt.gom.types.Grammar )g).getProductionList() ;
-if ( ((tomMatch349_1 instanceof tom.gom.adt.gom.types.productionlist.ConsConcProduction) || (tomMatch349_1 instanceof tom.gom.adt.gom.types.productionlist.EmptyConcProduction)) ) {
- tom.gom.adt.gom.types.ProductionList  tomMatch349__end__6=tomMatch349_1;
+ tom.gom.adt.gom.types.ProductionList  tomMatch367_1= (( tom.gom.adt.gom.types.Grammar )g).getProductionList() ;
+if ( ((tomMatch367_1 instanceof tom.gom.adt.gom.types.productionlist.ConsConcProduction) || (tomMatch367_1 instanceof tom.gom.adt.gom.types.productionlist.EmptyConcProduction)) ) {
+ tom.gom.adt.gom.types.ProductionList  tomMatch367__end__6=tomMatch367_1;
 do {
 {
-if (!( tomMatch349__end__6.isEmptyConcProduction() )) {
-fillFromProduction(moduleName, tomMatch349__end__6.getHeadConcProduction() ); 
+if (!( tomMatch367__end__6.isEmptyConcProduction() )) {
+fillFromProduction(moduleName, tomMatch367__end__6.getHeadConcProduction() ); 
 
 }
-if ( tomMatch349__end__6.isEmptyConcProduction() ) {
-tomMatch349__end__6=tomMatch349_1;
+if ( tomMatch367__end__6.isEmptyConcProduction() ) {
+tomMatch367__end__6=tomMatch367_1;
 } else {
-tomMatch349__end__6= tomMatch349__end__6.getTailConcProduction() ;
+tomMatch367__end__6= tomMatch367__end__6.getTailConcProduction() ;
 }
 
 }
-} while(!( (tomMatch349__end__6==tomMatch349_1) ));
+} while(!( (tomMatch367__end__6==tomMatch367_1) ));
 }
 }
 }
@@ -849,27 +849,27 @@ StringList res =
 {
 if ( (al instanceof tom.gom.adt.gom.types.AlternativeList) ) {
 if ( (((( tom.gom.adt.gom.types.AlternativeList )al) instanceof tom.gom.adt.gom.types.alternativelist.ConsConcAlternative) || ((( tom.gom.adt.gom.types.AlternativeList )al) instanceof tom.gom.adt.gom.types.alternativelist.EmptyConcAlternative)) ) {
- tom.gom.adt.gom.types.AlternativeList  tomMatch350__end__4=(( tom.gom.adt.gom.types.AlternativeList )al);
+ tom.gom.adt.gom.types.AlternativeList  tomMatch368__end__4=(( tom.gom.adt.gom.types.AlternativeList )al);
 do {
 {
-if (!( tomMatch350__end__4.isEmptyConcAlternative() )) {
- tom.gom.adt.gom.types.Alternative  tomMatch350_8= tomMatch350__end__4.getHeadConcAlternative() ;
-if ( (tomMatch350_8 instanceof tom.gom.adt.gom.types.alternative.Alternative) ) {
+if (!( tomMatch368__end__4.isEmptyConcAlternative() )) {
+ tom.gom.adt.gom.types.Alternative  tomMatch368_8= tomMatch368__end__4.getHeadConcAlternative() ;
+if ( (tomMatch368_8 instanceof tom.gom.adt.gom.types.alternative.Alternative) ) {
 
 res = 
- tom.gom.adt.symboltable.types.stringlist.ConsStringList.make( tomMatch350_8.getName() , res) ;
+ tom.gom.adt.symboltable.types.stringlist.ConsStringList.make( tomMatch368_8.getName() , res) ;
 
 
 }
 }
-if ( tomMatch350__end__4.isEmptyConcAlternative() ) {
-tomMatch350__end__4=(( tom.gom.adt.gom.types.AlternativeList )al);
+if ( tomMatch368__end__4.isEmptyConcAlternative() ) {
+tomMatch368__end__4=(( tom.gom.adt.gom.types.AlternativeList )al);
 } else {
-tomMatch350__end__4= tomMatch350__end__4.getTailConcAlternative() ;
+tomMatch368__end__4= tomMatch368__end__4.getTailConcAlternative() ;
 }
 
 }
-} while(!( (tomMatch350__end__4==(( tom.gom.adt.gom.types.AlternativeList )al)) ));
+} while(!( (tomMatch368__end__4==(( tom.gom.adt.gom.types.AlternativeList )al)) ));
 }
 }
 
@@ -921,22 +921,22 @@ if (isGenerated(c)) {
 
 {
 {
-Object tomMatch351_0=getGenerated(c);
-if ( (tomMatch351_0 instanceof tom.gom.adt.symboltable.types.GenerationInfo) ) {
-if ( ((( tom.gom.adt.symboltable.types.GenerationInfo )tomMatch351_0) instanceof tom.gom.adt.symboltable.types.generationinfo.GenCons) ) {
+Object tomMatch369_0=getGenerated(c);
+if ( (tomMatch369_0 instanceof tom.gom.adt.symboltable.types.GenerationInfo) ) {
+if ( ((( tom.gom.adt.symboltable.types.GenerationInfo )tomMatch369_0) instanceof tom.gom.adt.symboltable.types.generationinfo.GenCons) ) {
 return "ConsRaw" + 
- (( tom.gom.adt.symboltable.types.GenerationInfo )tomMatch351_0).getBaseName() ; 
+ (( tom.gom.adt.symboltable.types.GenerationInfo )tomMatch369_0).getBaseName() ; 
 
 }
 }
 
 }
 {
-Object tomMatch351_3=getGenerated(c);
-if ( (tomMatch351_3 instanceof tom.gom.adt.symboltable.types.GenerationInfo) ) {
-if ( ((( tom.gom.adt.symboltable.types.GenerationInfo )tomMatch351_3) instanceof tom.gom.adt.symboltable.types.generationinfo.GenNil) ) {
+Object tomMatch369_3=getGenerated(c);
+if ( (tomMatch369_3 instanceof tom.gom.adt.symboltable.types.GenerationInfo) ) {
+if ( ((( tom.gom.adt.symboltable.types.GenerationInfo )tomMatch369_3) instanceof tom.gom.adt.symboltable.types.generationinfo.GenNil) ) {
 return "EmptyRaw" + 
- (( tom.gom.adt.symboltable.types.GenerationInfo )tomMatch351_3).getBaseName() ; 
+ (( tom.gom.adt.symboltable.types.GenerationInfo )tomMatch369_3).getBaseName() ; 
 
 }
 }
@@ -1021,22 +1021,22 @@ StringList res =
 {
 if ( (al instanceof tom.gom.adt.gom.types.AtomList) ) {
 if ( (((( tom.gom.adt.gom.types.AtomList )al) instanceof tom.gom.adt.gom.types.atomlist.ConsConcAtom) || ((( tom.gom.adt.gom.types.AtomList )al) instanceof tom.gom.adt.gom.types.atomlist.EmptyConcAtom)) ) {
- tom.gom.adt.gom.types.AtomList  tomMatch354__end__4=(( tom.gom.adt.gom.types.AtomList )al);
+ tom.gom.adt.gom.types.AtomList  tomMatch372__end__4=(( tom.gom.adt.gom.types.AtomList )al);
 do {
 {
-if (!( tomMatch354__end__4.isEmptyConcAtom() )) {
+if (!( tomMatch372__end__4.isEmptyConcAtom() )) {
 res = 
- tom.gom.adt.symboltable.types.stringlist.ConsStringList.make( tomMatch354__end__4.getHeadConcAtom() , res) ; 
+ tom.gom.adt.symboltable.types.stringlist.ConsStringList.make( tomMatch372__end__4.getHeadConcAtom() , res) ; 
 
 }
-if ( tomMatch354__end__4.isEmptyConcAtom() ) {
-tomMatch354__end__4=(( tom.gom.adt.gom.types.AtomList )al);
+if ( tomMatch372__end__4.isEmptyConcAtom() ) {
+tomMatch372__end__4=(( tom.gom.adt.gom.types.AtomList )al);
 } else {
-tomMatch354__end__4= tomMatch354__end__4.getTailConcAtom() ;
+tomMatch372__end__4= tomMatch372__end__4.getTailConcAtom() ;
 }
 
 }
-} while(!( (tomMatch354__end__4==(( tom.gom.adt.gom.types.AtomList )al)) ));
+} while(!( (tomMatch372__end__4==(( tom.gom.adt.gom.types.AtomList )al)) ));
 }
 }
 
@@ -1053,10 +1053,10 @@ private void fillFromProduction(String moduleName, Production p) {
 {
 if ( (p instanceof tom.gom.adt.gom.types.Production) ) {
 if ( ((( tom.gom.adt.gom.types.Production )p) instanceof tom.gom.adt.gom.types.production.SortType) ) {
- tom.gom.adt.gom.types.GomType  tomMatch355_1= (( tom.gom.adt.gom.types.Production )p).getType() ;
-if ( (tomMatch355_1 instanceof tom.gom.adt.gom.types.gomtype.GomType) ) {
- tom.gom.adt.gom.types.TypeSpec  tom_spe= tomMatch355_1.getSpecialization() ;
- String  tom_n= tomMatch355_1.getName() ;
+ tom.gom.adt.gom.types.GomType  tomMatch373_1= (( tom.gom.adt.gom.types.Production )p).getType() ;
+if ( (tomMatch373_1 instanceof tom.gom.adt.gom.types.gomtype.GomType) ) {
+ tom.gom.adt.gom.types.TypeSpec  tom_spe= tomMatch373_1.getSpecialization() ;
+ String  tom_n= tomMatch373_1.getName() ;
  tom.gom.adt.gom.types.AlternativeList  tom_al= (( tom.gom.adt.gom.types.Production )p).getAlternativeList() ;
 
 // filling sorts (except AccessibleAtoms)
@@ -1112,21 +1112,21 @@ tom_n,
 {
 if ( (tom_al instanceof tom.gom.adt.gom.types.AlternativeList) ) {
 if ( (((( tom.gom.adt.gom.types.AlternativeList )tom_al) instanceof tom.gom.adt.gom.types.alternativelist.ConsConcAlternative) || ((( tom.gom.adt.gom.types.AlternativeList )tom_al) instanceof tom.gom.adt.gom.types.alternativelist.EmptyConcAlternative)) ) {
- tom.gom.adt.gom.types.AlternativeList  tomMatch357__end__4=(( tom.gom.adt.gom.types.AlternativeList )tom_al);
+ tom.gom.adt.gom.types.AlternativeList  tomMatch375__end__4=(( tom.gom.adt.gom.types.AlternativeList )tom_al);
 do {
 {
-if (!( tomMatch357__end__4.isEmptyConcAlternative() )) {
-fillCons(tom_n, tomMatch357__end__4.getHeadConcAlternative() ); 
+if (!( tomMatch375__end__4.isEmptyConcAlternative() )) {
+fillCons(tom_n, tomMatch375__end__4.getHeadConcAlternative() ); 
 
 }
-if ( tomMatch357__end__4.isEmptyConcAlternative() ) {
-tomMatch357__end__4=(( tom.gom.adt.gom.types.AlternativeList )tom_al);
+if ( tomMatch375__end__4.isEmptyConcAlternative() ) {
+tomMatch375__end__4=(( tom.gom.adt.gom.types.AlternativeList )tom_al);
 } else {
-tomMatch357__end__4= tomMatch357__end__4.getTailConcAlternative() ;
+tomMatch375__end__4= tomMatch375__end__4.getTailConcAlternative() ;
 }
 
 }
-} while(!( (tomMatch357__end__4==(( tom.gom.adt.gom.types.AlternativeList )tom_al)) ));
+} while(!( (tomMatch375__end__4==(( tom.gom.adt.gom.types.AlternativeList )tom_al)) ));
 }
 }
 
@@ -1159,16 +1159,16 @@ if ( ((( tom.gom.adt.gom.types.Alternative )p) instanceof tom.gom.adt.gom.types.
 if ( (tom_dl instanceof tom.gom.adt.gom.types.FieldList) ) {
 if ( (((( tom.gom.adt.gom.types.FieldList )tom_dl) instanceof tom.gom.adt.gom.types.fieldlist.ConsConcField) || ((( tom.gom.adt.gom.types.FieldList )tom_dl) instanceof tom.gom.adt.gom.types.fieldlist.EmptyConcField)) ) {
 if (!( (( tom.gom.adt.gom.types.FieldList )tom_dl).isEmptyConcField() )) {
- tom.gom.adt.gom.types.Field  tomMatch359_5= (( tom.gom.adt.gom.types.FieldList )tom_dl).getHeadConcField() ;
-if ( (tomMatch359_5 instanceof tom.gom.adt.gom.types.field.StarredField) ) {
- tom.gom.adt.gom.types.GomType  tomMatch359_3= tomMatch359_5.getFieldType() ;
-if ( (tomMatch359_3 instanceof tom.gom.adt.gom.types.gomtype.GomType) ) {
+ tom.gom.adt.gom.types.Field  tomMatch377_5= (( tom.gom.adt.gom.types.FieldList )tom_dl).getHeadConcField() ;
+if ( (tomMatch377_5 instanceof tom.gom.adt.gom.types.field.StarredField) ) {
+ tom.gom.adt.gom.types.GomType  tomMatch377_3= tomMatch377_5.getFieldType() ;
+if ( (tomMatch377_3 instanceof tom.gom.adt.gom.types.gomtype.GomType) ) {
 if (  (( tom.gom.adt.gom.types.FieldList )tom_dl).getTailConcField() .isEmptyConcField() ) {
 
 constructors.put(
 tom_n,
 
- tom.gom.adt.symboltable.types.constructordescription.VariadicConstructorDescription.make(codom,  tomMatch359_3.getName() ,  tomMatch359_5.getSpecifier() .isRefresh()) );
+ tom.gom.adt.symboltable.types.constructordescription.VariadicConstructorDescription.make(codom,  tomMatch377_3.getName() ,  tomMatch377_5.getSpecifier() .isRefresh()) );
 return;
 
 
@@ -1216,15 +1216,15 @@ FieldDescriptionList res =
 {
 if ( (dl instanceof tom.gom.adt.gom.types.FieldList) ) {
 if ( (((( tom.gom.adt.gom.types.FieldList )dl) instanceof tom.gom.adt.gom.types.fieldlist.ConsConcField) || ((( tom.gom.adt.gom.types.FieldList )dl) instanceof tom.gom.adt.gom.types.fieldlist.EmptyConcField)) ) {
- tom.gom.adt.gom.types.FieldList  tomMatch360__end__4=(( tom.gom.adt.gom.types.FieldList )dl);
+ tom.gom.adt.gom.types.FieldList  tomMatch378__end__4=(( tom.gom.adt.gom.types.FieldList )dl);
 do {
 {
-if (!( tomMatch360__end__4.isEmptyConcField() )) {
- tom.gom.adt.gom.types.Field  tomMatch360_10= tomMatch360__end__4.getHeadConcField() ;
-if ( (tomMatch360_10 instanceof tom.gom.adt.gom.types.field.NamedField) ) {
- tom.gom.adt.gom.types.GomType  tomMatch360_9= tomMatch360_10.getFieldType() ;
- tom.gom.adt.gom.types.ScopeSpecifier  tom_spe= tomMatch360_10.getSpecifier() ;
-if ( (tomMatch360_9 instanceof tom.gom.adt.gom.types.gomtype.GomType) ) {
+if (!( tomMatch378__end__4.isEmptyConcField() )) {
+ tom.gom.adt.gom.types.Field  tomMatch378_10= tomMatch378__end__4.getHeadConcField() ;
+if ( (tomMatch378_10 instanceof tom.gom.adt.gom.types.field.NamedField) ) {
+ tom.gom.adt.gom.types.GomType  tomMatch378_9= tomMatch378_10.getFieldType() ;
+ tom.gom.adt.gom.types.ScopeSpecifier  tom_spe= tomMatch378_10.getSpecifier() ;
+if ( (tomMatch378_9 instanceof tom.gom.adt.gom.types.gomtype.GomType) ) {
 
 Status st = null;
 
@@ -1285,7 +1285,7 @@ st =
 }
 
 FieldDescription desc = 
- tom.gom.adt.symboltable.types.fielddescription.FieldDescription.make( tomMatch360_10.getName() ,  tomMatch360_9.getName() , st) ;
+ tom.gom.adt.symboltable.types.fielddescription.FieldDescription.make( tomMatch378_10.getName() ,  tomMatch378_9.getName() , st) ;
 res = 
 tom_append_list_concFieldDescription(res, tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription.make(desc, tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription.make() ) );
 
@@ -1293,14 +1293,14 @@ tom_append_list_concFieldDescription(res, tom.gom.adt.symboltable.types.fielddes
 }
 }
 }
-if ( tomMatch360__end__4.isEmptyConcField() ) {
-tomMatch360__end__4=(( tom.gom.adt.gom.types.FieldList )dl);
+if ( tomMatch378__end__4.isEmptyConcField() ) {
+tomMatch378__end__4=(( tom.gom.adt.gom.types.FieldList )dl);
 } else {
-tomMatch360__end__4= tomMatch360__end__4.getTailConcField() ;
+tomMatch378__end__4= tomMatch378__end__4.getTailConcField() ;
 }
 
 }
-} while(!( (tomMatch360__end__4==(( tom.gom.adt.gom.types.FieldList )dl)) ));
+} while(!( (tomMatch378__end__4==(( tom.gom.adt.gom.types.FieldList )dl)) ));
 }
 }
 
@@ -1442,11 +1442,11 @@ FreshSortInfo i = sorts.get(sort).getFreshInfo();
 {
 {
 if ( (i instanceof tom.gom.adt.symboltable.types.FreshSortInfo) ) {
-boolean tomMatch366_2= false ;
+boolean tomMatch384_2= false ;
 if ( ((( tom.gom.adt.symboltable.types.FreshSortInfo )i) instanceof tom.gom.adt.symboltable.types.freshsortinfo.NoFreshSort) ) {
-tomMatch366_2= true ;
+tomMatch384_2= true ;
 }
-if (!(tomMatch366_2)) {
+if (!(tomMatch384_2)) {
 return true; 
 }
 
@@ -1503,29 +1503,38 @@ default: throw new IndexOutOfBoundsException();
 }
 }
 @SuppressWarnings("unchecked")
-public  tom.gom.adt.symboltable.types.FieldDescription  visit_FieldDescription( tom.gom.adt.symboltable.types.FieldDescription  tom__arg, tom.library.sl.Introspector introspector)
+public <T> T visitLight(T v, tom.library.sl.Introspector introspector)
  throws tom.library.sl.VisitFailure {
-{
-{
-if ( (tom__arg instanceof tom.gom.adt.symboltable.types.FieldDescription) ) {
-if ( ((( tom.gom.adt.symboltable.types.FieldDescription )tom__arg) instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) {
-
-if(st.isExpressionType(codom) && st.isPatternType(
- (( tom.gom.adt.symboltable.types.FieldDescription )tom__arg).getSort() )) {
-return 
-(( tom.gom.adt.symboltable.types.FieldDescription )tom__arg).setStatusValue(
- tom.gom.adt.symboltable.types.status.SRefreshPoint.make() );
+if ( (v instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {
+return ((T)visit_ConstructorDescription((( tom.gom.adt.symboltable.types.ConstructorDescription )v),introspector));
 }
-
-
+if ( (v instanceof tom.gom.adt.symboltable.types.FieldDescription) ) {
+return ((T)visit_FieldDescription((( tom.gom.adt.symboltable.types.FieldDescription )v),introspector));
 }
+if (!(  null ==environment )) {
+return ((T)any.visit(environment,introspector));
+} else {
+return any.visitLight(v,introspector);
 }
 
 }
-
+@SuppressWarnings("unchecked")
+public  tom.gom.adt.symboltable.types.FieldDescription  _visit_FieldDescription( tom.gom.adt.symboltable.types.FieldDescription  arg, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if (!(  null ==environment )) {
+return (( tom.gom.adt.symboltable.types.FieldDescription )any.visit(environment,introspector));
+} else {
+return any.visitLight(arg,introspector);
 }
-return _visit_FieldDescription(tom__arg,introspector);
-
+}
+@SuppressWarnings("unchecked")
+public  tom.gom.adt.symboltable.types.ConstructorDescription  _visit_ConstructorDescription( tom.gom.adt.symboltable.types.ConstructorDescription  arg, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if (!(  null ==environment )) {
+return (( tom.gom.adt.symboltable.types.ConstructorDescription )any.visit(environment,introspector));
+} else {
+return any.visitLight(arg,introspector);
+}
 }
 @SuppressWarnings("unchecked")
 public  tom.gom.adt.symboltable.types.ConstructorDescription  visit_ConstructorDescription( tom.gom.adt.symboltable.types.ConstructorDescription  tom__arg, tom.library.sl.Introspector introspector)
@@ -1552,37 +1561,28 @@ return _visit_ConstructorDescription(tom__arg,introspector);
 
 }
 @SuppressWarnings("unchecked")
-public  tom.gom.adt.symboltable.types.ConstructorDescription  _visit_ConstructorDescription( tom.gom.adt.symboltable.types.ConstructorDescription  arg, tom.library.sl.Introspector introspector)
+public  tom.gom.adt.symboltable.types.FieldDescription  visit_FieldDescription( tom.gom.adt.symboltable.types.FieldDescription  tom__arg, tom.library.sl.Introspector introspector)
  throws tom.library.sl.VisitFailure {
-if (!(  null ==environment )) {
-return (( tom.gom.adt.symboltable.types.ConstructorDescription )any.visit(environment,introspector));
-} else {
-return any.visitLight(arg,introspector);
+{
+{
+if ( (tom__arg instanceof tom.gom.adt.symboltable.types.FieldDescription) ) {
+if ( ((( tom.gom.adt.symboltable.types.FieldDescription )tom__arg) instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) {
+
+if(st.isExpressionType(codom) && st.isPatternType(
+ (( tom.gom.adt.symboltable.types.FieldDescription )tom__arg).getSort() )) {
+return 
+(( tom.gom.adt.symboltable.types.FieldDescription )tom__arg).setStatusValue(
+ tom.gom.adt.symboltable.types.status.SRefreshPoint.make() );
+}
+
+
 }
 }
-@SuppressWarnings("unchecked")
-public  tom.gom.adt.symboltable.types.FieldDescription  _visit_FieldDescription( tom.gom.adt.symboltable.types.FieldDescription  arg, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if (!(  null ==environment )) {
-return (( tom.gom.adt.symboltable.types.FieldDescription )any.visit(environment,introspector));
-} else {
-return any.visitLight(arg,introspector);
+
 }
+
 }
-@SuppressWarnings("unchecked")
-public <T> T visitLight(T v, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if ( (v instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {
-return ((T)visit_ConstructorDescription((( tom.gom.adt.symboltable.types.ConstructorDescription )v),introspector));
-}
-if ( (v instanceof tom.gom.adt.symboltable.types.FieldDescription) ) {
-return ((T)visit_FieldDescription((( tom.gom.adt.symboltable.types.FieldDescription )v),introspector));
-}
-if (!(  null ==environment )) {
-return ((T)any.visit(environment,introspector));
-} else {
-return any.visitLight(v,introspector);
-}
+return _visit_FieldDescription(tom__arg,introspector);
 
 }
 }
@@ -1626,18 +1626,18 @@ return
 {
 if ( (c instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {
 if ( ((( tom.gom.adt.symboltable.types.ConstructorDescription )c) instanceof tom.gom.adt.symboltable.types.constructordescription.ConstructorDescription) ) {
- tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch369_4= (( tom.gom.adt.symboltable.types.ConstructorDescription )c).getFields() ;
-if ( ((tomMatch369_4 instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription) || (tomMatch369_4 instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription)) ) {
- tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch369__end__9=tomMatch369_4;
+ tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch387_4= (( tom.gom.adt.symboltable.types.ConstructorDescription )c).getFields() ;
+if ( ((tomMatch387_4 instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription) || (tomMatch387_4 instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription)) ) {
+ tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch387__end__9=tomMatch387_4;
 do {
 {
-if (!( tomMatch369__end__9.isEmptyconcFieldDescription() )) {
- tom.gom.adt.symboltable.types.FieldDescription  tomMatch369_13= tomMatch369__end__9.getHeadconcFieldDescription() ;
-if ( (tomMatch369_13 instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) {
+if (!( tomMatch387__end__9.isEmptyconcFieldDescription() )) {
+ tom.gom.adt.symboltable.types.FieldDescription  tomMatch387_13= tomMatch387__end__9.getHeadconcFieldDescription() ;
+if ( (tomMatch387_13 instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) {
 
 if (count==omega) {
 return 
- tomMatch369_13.getSort() ;
+ tomMatch387_13.getSort() ;
 } else {
 count++;
 }
@@ -1645,14 +1645,14 @@ count++;
 
 }
 }
-if ( tomMatch369__end__9.isEmptyconcFieldDescription() ) {
-tomMatch369__end__9=tomMatch369_4;
+if ( tomMatch387__end__9.isEmptyconcFieldDescription() ) {
+tomMatch387__end__9=tomMatch387_4;
 } else {
-tomMatch369__end__9= tomMatch369__end__9.getTailconcFieldDescription() ;
+tomMatch387__end__9= tomMatch387__end__9.getTailconcFieldDescription() ;
 }
 
 }
-} while(!( (tomMatch369__end__9==tomMatch369_4) ));
+} while(!( (tomMatch387__end__9==tomMatch387_4) ));
 }
 }
 }
@@ -1703,27 +1703,27 @@ FieldDescriptionList l = getFieldList(constructor);
 {
 if ( (l instanceof tom.gom.adt.symboltable.types.FieldDescriptionList) ) {
 if ( (((( tom.gom.adt.symboltable.types.FieldDescriptionList )l) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription) || ((( tom.gom.adt.symboltable.types.FieldDescriptionList )l) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription)) ) {
- tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch370__end__4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);
+ tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch388__end__4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);
 do {
 {
-if (!( tomMatch370__end__4.isEmptyconcFieldDescription() )) {
- tom.gom.adt.symboltable.types.FieldDescription  tomMatch370_8= tomMatch370__end__4.getHeadconcFieldDescription() ;
-if ( (tomMatch370_8 instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) {
+if (!( tomMatch388__end__4.isEmptyconcFieldDescription() )) {
+ tom.gom.adt.symboltable.types.FieldDescription  tomMatch388_8= tomMatch388__end__4.getHeadconcFieldDescription() ;
+if ( (tomMatch388_8 instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) {
 
 result.add(
- tomMatch370_8.getFieldName() );
+ tomMatch388_8.getFieldName() );
 
 
 }
 }
-if ( tomMatch370__end__4.isEmptyconcFieldDescription() ) {
-tomMatch370__end__4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);
+if ( tomMatch388__end__4.isEmptyconcFieldDescription() ) {
+tomMatch388__end__4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);
 } else {
-tomMatch370__end__4= tomMatch370__end__4.getTailconcFieldDescription() ;
+tomMatch388__end__4= tomMatch388__end__4.getTailconcFieldDescription() ;
 }
 
 }
-} while(!( (tomMatch370__end__4==(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) ));
+} while(!( (tomMatch388__end__4==(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) ));
 }
 }
 
@@ -1742,29 +1742,29 @@ FieldDescriptionList l = getFieldList(constructor);
 {
 if ( (l instanceof tom.gom.adt.symboltable.types.FieldDescriptionList) ) {
 if ( (((( tom.gom.adt.symboltable.types.FieldDescriptionList )l) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription) || ((( tom.gom.adt.symboltable.types.FieldDescriptionList )l) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription)) ) {
- tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch371__end__4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);
+ tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch389__end__4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);
 do {
 {
-if (!( tomMatch371__end__4.isEmptyconcFieldDescription() )) {
- tom.gom.adt.symboltable.types.FieldDescription  tomMatch371_9= tomMatch371__end__4.getHeadconcFieldDescription() ;
-if ( (tomMatch371_9 instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) {
-if ( ( tomMatch371_9.getStatusValue()  instanceof tom.gom.adt.symboltable.types.status.SNeutral) ) {
+if (!( tomMatch389__end__4.isEmptyconcFieldDescription() )) {
+ tom.gom.adt.symboltable.types.FieldDescription  tomMatch389_9= tomMatch389__end__4.getHeadconcFieldDescription() ;
+if ( (tomMatch389_9 instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) {
+if ( ( tomMatch389_9.getStatusValue()  instanceof tom.gom.adt.symboltable.types.status.SNeutral) ) {
 
 result.add(
- tomMatch371_9.getFieldName() );
+ tomMatch389_9.getFieldName() );
 
 
 }
 }
 }
-if ( tomMatch371__end__4.isEmptyconcFieldDescription() ) {
-tomMatch371__end__4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);
+if ( tomMatch389__end__4.isEmptyconcFieldDescription() ) {
+tomMatch389__end__4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);
 } else {
-tomMatch371__end__4= tomMatch371__end__4.getTailconcFieldDescription() ;
+tomMatch389__end__4= tomMatch389__end__4.getTailconcFieldDescription() ;
 }
 
 }
-} while(!( (tomMatch371__end__4==(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) ));
+} while(!( (tomMatch389__end__4==(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) ));
 }
 }
 
@@ -1783,29 +1783,29 @@ FieldDescriptionList l = getFieldList(constructor);
 {
 if ( (l instanceof tom.gom.adt.symboltable.types.FieldDescriptionList) ) {
 if ( (((( tom.gom.adt.symboltable.types.FieldDescriptionList )l) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription) || ((( tom.gom.adt.symboltable.types.FieldDescriptionList )l) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription)) ) {
- tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch372__end__4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);
+ tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch390__end__4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);
 do {
 {
-if (!( tomMatch372__end__4.isEmptyconcFieldDescription() )) {
- tom.gom.adt.symboltable.types.FieldDescription  tomMatch372_9= tomMatch372__end__4.getHeadconcFieldDescription() ;
-if ( (tomMatch372_9 instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) {
-if ( ( tomMatch372_9.getStatusValue()  instanceof tom.gom.adt.symboltable.types.status.SPattern) ) {
+if (!( tomMatch390__end__4.isEmptyconcFieldDescription() )) {
+ tom.gom.adt.symboltable.types.FieldDescription  tomMatch390_9= tomMatch390__end__4.getHeadconcFieldDescription() ;
+if ( (tomMatch390_9 instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) {
+if ( ( tomMatch390_9.getStatusValue()  instanceof tom.gom.adt.symboltable.types.status.SPattern) ) {
 
 result.add(
- tomMatch372_9.getFieldName() );
+ tomMatch390_9.getFieldName() );
 
 
 }
 }
 }
-if ( tomMatch372__end__4.isEmptyconcFieldDescription() ) {
-tomMatch372__end__4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);
+if ( tomMatch390__end__4.isEmptyconcFieldDescription() ) {
+tomMatch390__end__4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);
 } else {
-tomMatch372__end__4= tomMatch372__end__4.getTailconcFieldDescription() ;
+tomMatch390__end__4= tomMatch390__end__4.getTailconcFieldDescription() ;
 }
 
 }
-} while(!( (tomMatch372__end__4==(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) ));
+} while(!( (tomMatch390__end__4==(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) ));
 }
 }
 
@@ -1840,34 +1840,34 @@ FieldDescriptionList l = getFieldList(constructor);
 {
 if ( (l instanceof tom.gom.adt.symboltable.types.FieldDescriptionList) ) {
 if ( (((( tom.gom.adt.symboltable.types.FieldDescriptionList )l) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription) || ((( tom.gom.adt.symboltable.types.FieldDescriptionList )l) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription)) ) {
- tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch373__end__4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);
+ tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch391__end__4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);
 do {
 {
-if (!( tomMatch373__end__4.isEmptyconcFieldDescription() )) {
- tom.gom.adt.symboltable.types.FieldDescription  tomMatch373_9= tomMatch373__end__4.getHeadconcFieldDescription() ;
-if ( (tomMatch373_9 instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) {
-boolean tomMatch373_11= false ;
-if ( ( tomMatch373_9.getStatusValue()  instanceof tom.gom.adt.symboltable.types.status.SPattern) ) {
-tomMatch373_11= true ;
+if (!( tomMatch391__end__4.isEmptyconcFieldDescription() )) {
+ tom.gom.adt.symboltable.types.FieldDescription  tomMatch391_9= tomMatch391__end__4.getHeadconcFieldDescription() ;
+if ( (tomMatch391_9 instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) {
+boolean tomMatch391_11= false ;
+if ( ( tomMatch391_9.getStatusValue()  instanceof tom.gom.adt.symboltable.types.status.SPattern) ) {
+tomMatch391_11= true ;
 }
-if (!(tomMatch373_11)) {
+if (!(tomMatch391_11)) {
 
 result.add(
- tomMatch373_9.getFieldName() );
+ tomMatch391_9.getFieldName() );
 
 
 }
 
 }
 }
-if ( tomMatch373__end__4.isEmptyconcFieldDescription() ) {
-tomMatch373__end__4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);
+if ( tomMatch391__end__4.isEmptyconcFieldDescription() ) {
+tomMatch391__end__4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);
 } else {
-tomMatch373__end__4= tomMatch373__end__4.getTailconcFieldDescription() ;
+tomMatch391__end__4= tomMatch391__end__4.getTailconcFieldDescription() ;
 }
 
 }
-} while(!( (tomMatch373__end__4==(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) ));
+} while(!( (tomMatch391__end__4==(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) ));
 }
 }
 
@@ -1886,29 +1886,29 @@ FieldDescriptionList l = getFieldList(constructor);
 {
 if ( (l instanceof tom.gom.adt.symboltable.types.FieldDescriptionList) ) {
 if ( (((( tom.gom.adt.symboltable.types.FieldDescriptionList )l) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription) || ((( tom.gom.adt.symboltable.types.FieldDescriptionList )l) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription)) ) {
- tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch374__end__4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);
+ tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch392__end__4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);
 do {
 {
-if (!( tomMatch374__end__4.isEmptyconcFieldDescription() )) {
- tom.gom.adt.symboltable.types.FieldDescription  tomMatch374_9= tomMatch374__end__4.getHeadconcFieldDescription() ;
-if ( (tomMatch374_9 instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) {
-if ( ( tomMatch374_9.getStatusValue()  instanceof tom.gom.adt.symboltable.types.status.SOuter) ) {
+if (!( tomMatch392__end__4.isEmptyconcFieldDescription() )) {
+ tom.gom.adt.symboltable.types.FieldDescription  tomMatch392_9= tomMatch392__end__4.getHeadconcFieldDescription() ;
+if ( (tomMatch392_9 instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) {
+if ( ( tomMatch392_9.getStatusValue()  instanceof tom.gom.adt.symboltable.types.status.SOuter) ) {
 
 result.add(
- tomMatch374_9.getFieldName() );
+ tomMatch392_9.getFieldName() );
 
 
 }
 }
 }
-if ( tomMatch374__end__4.isEmptyconcFieldDescription() ) {
-tomMatch374__end__4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);
+if ( tomMatch392__end__4.isEmptyconcFieldDescription() ) {
+tomMatch392__end__4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);
 } else {
-tomMatch374__end__4= tomMatch374__end__4.getTailconcFieldDescription() ;
+tomMatch392__end__4= tomMatch392__end__4.getTailconcFieldDescription() ;
 }
 
 }
-} while(!( (tomMatch374__end__4==(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) ));
+} while(!( (tomMatch392__end__4==(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) ));
 }
 }
 
@@ -1927,29 +1927,29 @@ FieldDescriptionList l = getFieldList(constructor);
 {
 if ( (l instanceof tom.gom.adt.symboltable.types.FieldDescriptionList) ) {
 if ( (((( tom.gom.adt.symboltable.types.FieldDescriptionList )l) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription) || ((( tom.gom.adt.symboltable.types.FieldDescriptionList )l) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription)) ) {
- tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch375__end__4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);
+ tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch393__end__4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);
 do {
 {
-if (!( tomMatch375__end__4.isEmptyconcFieldDescription() )) {
- tom.gom.adt.symboltable.types.FieldDescription  tomMatch375_9= tomMatch375__end__4.getHeadconcFieldDescription() ;
-if ( (tomMatch375_9 instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) {
-if ( ( tomMatch375_9.getStatusValue()  instanceof tom.gom.adt.symboltable.types.status.SInner) ) {
+if (!( tomMatch393__end__4.isEmptyconcFieldDescription() )) {
+ tom.gom.adt.symboltable.types.FieldDescription  tomMatch393_9= tomMatch393__end__4.getHeadconcFieldDescription() ;
+if ( (tomMatch393_9 instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) {
+if ( ( tomMatch393_9.getStatusValue()  instanceof tom.gom.adt.symboltable.types.status.SInner) ) {
 
 result.add(
- tomMatch375_9.getFieldName() );
+ tomMatch393_9.getFieldName() );
 
 
 }
 }
 }
-if ( tomMatch375__end__4.isEmptyconcFieldDescription() ) {
-tomMatch375__end__4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);
+if ( tomMatch393__end__4.isEmptyconcFieldDescription() ) {
+tomMatch393__end__4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);
 } else {
-tomMatch375__end__4= tomMatch375__end__4.getTailconcFieldDescription() ;
+tomMatch393__end__4= tomMatch393__end__4.getTailconcFieldDescription() ;
 }
 
 }
-} while(!( (tomMatch375__end__4==(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) ));
+} while(!( (tomMatch393__end__4==(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) ));
 }
 }
 
@@ -1967,28 +1967,28 @@ FieldDescriptionList l = getFieldList(cons);
 {
 if ( (l instanceof tom.gom.adt.symboltable.types.FieldDescriptionList) ) {
 if ( (((( tom.gom.adt.symboltable.types.FieldDescriptionList )l) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription) || ((( tom.gom.adt.symboltable.types.FieldDescriptionList )l) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription)) ) {
- tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch376__end__4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);
+ tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch394__end__4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);
 do {
 {
-if (!( tomMatch376__end__4.isEmptyconcFieldDescription() )) {
- tom.gom.adt.symboltable.types.FieldDescription  tomMatch376_9= tomMatch376__end__4.getHeadconcFieldDescription() ;
-if ( (tomMatch376_9 instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) {
+if (!( tomMatch394__end__4.isEmptyconcFieldDescription() )) {
+ tom.gom.adt.symboltable.types.FieldDescription  tomMatch394_9= tomMatch394__end__4.getHeadconcFieldDescription() ;
+if ( (tomMatch394_9 instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) {
 
 if (
- tomMatch376_9.getFieldName() .equals(field)) { return 
- tomMatch376_9.getSort() ; }
+ tomMatch394_9.getFieldName() .equals(field)) { return 
+ tomMatch394_9.getSort() ; }
 
 
 }
 }
-if ( tomMatch376__end__4.isEmptyconcFieldDescription() ) {
-tomMatch376__end__4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);
+if ( tomMatch394__end__4.isEmptyconcFieldDescription() ) {
+tomMatch394__end__4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);
 } else {
-tomMatch376__end__4= tomMatch376__end__4.getTailconcFieldDescription() ;
+tomMatch394__end__4= tomMatch394__end__4.getTailconcFieldDescription() ;
 }
 
 }
-} while(!( (tomMatch376__end__4==(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) ));
+} while(!( (tomMatch394__end__4==(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) ));
 }
 }
 
@@ -2021,29 +2021,29 @@ return
 {
 if ( (d instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {
 if ( ((( tom.gom.adt.symboltable.types.ConstructorDescription )d) instanceof tom.gom.adt.symboltable.types.constructordescription.ConstructorDescription) ) {
- tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch377_4= (( tom.gom.adt.symboltable.types.ConstructorDescription )d).getFields() ;
-if ( ((tomMatch377_4 instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription) || (tomMatch377_4 instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription)) ) {
- tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch377__end__9=tomMatch377_4;
+ tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch395_4= (( tom.gom.adt.symboltable.types.ConstructorDescription )d).getFields() ;
+if ( ((tomMatch395_4 instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription) || (tomMatch395_4 instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription)) ) {
+ tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch395__end__9=tomMatch395_4;
 do {
 {
-if (!( tomMatch377__end__9.isEmptyconcFieldDescription() )) {
- tom.gom.adt.symboltable.types.FieldDescription  tomMatch377_13= tomMatch377__end__9.getHeadconcFieldDescription() ;
-if ( (tomMatch377_13 instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) {
-if ( ( tomMatch377_13.getStatusValue()  instanceof tom.gom.adt.symboltable.types.status.SRefreshPoint) ) {
+if (!( tomMatch395__end__9.isEmptyconcFieldDescription() )) {
+ tom.gom.adt.symboltable.types.FieldDescription  tomMatch395_13= tomMatch395__end__9.getHeadconcFieldDescription() ;
+if ( (tomMatch395_13 instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) {
+if ( ( tomMatch395_13.getStatusValue()  instanceof tom.gom.adt.symboltable.types.status.SRefreshPoint) ) {
 
 return true;
 
 }
 }
 }
-if ( tomMatch377__end__9.isEmptyconcFieldDescription() ) {
-tomMatch377__end__9=tomMatch377_4;
+if ( tomMatch395__end__9.isEmptyconcFieldDescription() ) {
+tomMatch395__end__9=tomMatch395_4;
 } else {
-tomMatch377__end__9= tomMatch377__end__9.getTailconcFieldDescription() ;
+tomMatch395__end__9= tomMatch395__end__9.getTailconcFieldDescription() ;
 }
 
 }
-} while(!( (tomMatch377__end__9==tomMatch377_4) ));
+} while(!( (tomMatch395__end__9==tomMatch395_4) ));
 }
 }
 }
@@ -2063,16 +2063,16 @@ FieldDescriptionList l = getFieldList(cons);
 {
 if ( (l instanceof tom.gom.adt.symboltable.types.FieldDescriptionList) ) {
 if ( (((( tom.gom.adt.symboltable.types.FieldDescriptionList )l) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription) || ((( tom.gom.adt.symboltable.types.FieldDescriptionList )l) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription)) ) {
- tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch378__end__4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);
+ tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch396__end__4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);
 do {
 {
-if (!( tomMatch378__end__4.isEmptyconcFieldDescription() )) {
- tom.gom.adt.symboltable.types.FieldDescription  tomMatch378_9= tomMatch378__end__4.getHeadconcFieldDescription() ;
-if ( (tomMatch378_9 instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) {
-if ( ( tomMatch378_9.getStatusValue()  instanceof tom.gom.adt.symboltable.types.status.SOuter) ) {
+if (!( tomMatch396__end__4.isEmptyconcFieldDescription() )) {
+ tom.gom.adt.symboltable.types.FieldDescription  tomMatch396_9= tomMatch396__end__4.getHeadconcFieldDescription() ;
+if ( (tomMatch396_9 instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) {
+if ( ( tomMatch396_9.getStatusValue()  instanceof tom.gom.adt.symboltable.types.status.SOuter) ) {
 
 if (
- tomMatch378_9.getFieldName() .equals(field)) {
+ tomMatch396_9.getFieldName() .equals(field)) {
 return true;
 }
 
@@ -2080,14 +2080,14 @@ return true;
 }
 }
 }
-if ( tomMatch378__end__4.isEmptyconcFieldDescription() ) {
-tomMatch378__end__4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);
+if ( tomMatch396__end__4.isEmptyconcFieldDescription() ) {
+tomMatch396__end__4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);
 } else {
-tomMatch378__end__4= tomMatch378__end__4.getTailconcFieldDescription() ;
+tomMatch396__end__4= tomMatch396__end__4.getTailconcFieldDescription() ;
 }
 
 }
-} while(!( (tomMatch378__end__4==(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) ));
+} while(!( (tomMatch396__end__4==(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) ));
 }
 }
 
@@ -2105,16 +2105,16 @@ FieldDescriptionList l = getFieldList(cons);
 {
 if ( (l instanceof tom.gom.adt.symboltable.types.FieldDescriptionList) ) {
 if ( (((( tom.gom.adt.symboltable.types.FieldDescriptionList )l) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription) || ((( tom.gom.adt.symboltable.types.FieldDescriptionList )l) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription)) ) {
- tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch379__end__4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);
+ tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch397__end__4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);
 do {
 {
-if (!( tomMatch379__end__4.isEmptyconcFieldDescription() )) {
- tom.gom.adt.symboltable.types.FieldDescription  tomMatch379_9= tomMatch379__end__4.getHeadconcFieldDescription() ;
-if ( (tomMatch379_9 instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) {
-if ( ( tomMatch379_9.getStatusValue()  instanceof tom.gom.adt.symboltable.types.status.SPattern) ) {
+if (!( tomMatch397__end__4.isEmptyconcFieldDescription() )) {
+ tom.gom.adt.symboltable.types.FieldDescription  tomMatch397_9= tomMatch397__end__4.getHeadconcFieldDescription() ;
+if ( (tomMatch397_9 instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) {
+if ( ( tomMatch397_9.getStatusValue()  instanceof tom.gom.adt.symboltable.types.status.SPattern) ) {
 
 if (
- tomMatch379_9.getFieldName() .equals(field)) {
+ tomMatch397_9.getFieldName() .equals(field)) {
 return true;
 }
 
@@ -2122,14 +2122,14 @@ return true;
 }
 }
 }
-if ( tomMatch379__end__4.isEmptyconcFieldDescription() ) {
-tomMatch379__end__4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);
+if ( tomMatch397__end__4.isEmptyconcFieldDescription() ) {
+tomMatch397__end__4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);
 } else {
-tomMatch379__end__4= tomMatch379__end__4.getTailconcFieldDescription() ;
+tomMatch397__end__4= tomMatch397__end__4.getTailconcFieldDescription() ;
 }
 
 }
-} while(!( (tomMatch379__end__4==(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) ));
+} while(!( (tomMatch397__end__4==(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) ));
 }
 }
 
@@ -2147,16 +2147,16 @@ FieldDescriptionList l = getFieldList(cons);
 {
 if ( (l instanceof tom.gom.adt.symboltable.types.FieldDescriptionList) ) {
 if ( (((( tom.gom.adt.symboltable.types.FieldDescriptionList )l) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription) || ((( tom.gom.adt.symboltable.types.FieldDescriptionList )l) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription)) ) {
- tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch380__end__4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);
+ tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch398__end__4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);
 do {
 {
-if (!( tomMatch380__end__4.isEmptyconcFieldDescription() )) {
- tom.gom.adt.symboltable.types.FieldDescription  tomMatch380_9= tomMatch380__end__4.getHeadconcFieldDescription() ;
-if ( (tomMatch380_9 instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) {
-if ( ( tomMatch380_9.getStatusValue()  instanceof tom.gom.adt.symboltable.types.status.SInner) ) {
+if (!( tomMatch398__end__4.isEmptyconcFieldDescription() )) {
+ tom.gom.adt.symboltable.types.FieldDescription  tomMatch398_9= tomMatch398__end__4.getHeadconcFieldDescription() ;
+if ( (tomMatch398_9 instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) {
+if ( ( tomMatch398_9.getStatusValue()  instanceof tom.gom.adt.symboltable.types.status.SInner) ) {
 
 if (
- tomMatch380_9.getFieldName() .equals(field)) {
+ tomMatch398_9.getFieldName() .equals(field)) {
 return true;
 }
 
@@ -2164,14 +2164,14 @@ return true;
 }
 }
 }
-if ( tomMatch380__end__4.isEmptyconcFieldDescription() ) {
-tomMatch380__end__4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);
+if ( tomMatch398__end__4.isEmptyconcFieldDescription() ) {
+tomMatch398__end__4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);
 } else {
-tomMatch380__end__4= tomMatch380__end__4.getTailconcFieldDescription() ;
+tomMatch398__end__4= tomMatch398__end__4.getTailconcFieldDescription() ;
 }
 
 }
-} while(!( (tomMatch380__end__4==(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) ));
+} while(!( (tomMatch398__end__4==(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) ));
 }
 }
 
@@ -2189,16 +2189,16 @@ FieldDescriptionList l = getFieldList(cons);
 {
 if ( (l instanceof tom.gom.adt.symboltable.types.FieldDescriptionList) ) {
 if ( (((( tom.gom.adt.symboltable.types.FieldDescriptionList )l) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription) || ((( tom.gom.adt.symboltable.types.FieldDescriptionList )l) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription)) ) {
- tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch381__end__4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);
+ tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch399__end__4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);
 do {
 {
-if (!( tomMatch381__end__4.isEmptyconcFieldDescription() )) {
- tom.gom.adt.symboltable.types.FieldDescription  tomMatch381_9= tomMatch381__end__4.getHeadconcFieldDescription() ;
-if ( (tomMatch381_9 instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) {
-if ( ( tomMatch381_9.getStatusValue()  instanceof tom.gom.adt.symboltable.types.status.SNeutral) ) {
+if (!( tomMatch399__end__4.isEmptyconcFieldDescription() )) {
+ tom.gom.adt.symboltable.types.FieldDescription  tomMatch399_9= tomMatch399__end__4.getHeadconcFieldDescription() ;
+if ( (tomMatch399_9 instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) {
+if ( ( tomMatch399_9.getStatusValue()  instanceof tom.gom.adt.symboltable.types.status.SNeutral) ) {
 
 if(
- tomMatch381_9.getFieldName() .equals(field)) {
+ tomMatch399_9.getFieldName() .equals(field)) {
 return true;
 }
 
@@ -2206,14 +2206,14 @@ return true;
 }
 }
 }
-if ( tomMatch381__end__4.isEmptyconcFieldDescription() ) {
-tomMatch381__end__4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);
+if ( tomMatch399__end__4.isEmptyconcFieldDescription() ) {
+tomMatch399__end__4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);
 } else {
-tomMatch381__end__4= tomMatch381__end__4.getTailconcFieldDescription() ;
+tomMatch399__end__4= tomMatch399__end__4.getTailconcFieldDescription() ;
 }
 
 }
-} while(!( (tomMatch381__end__4==(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) ));
+} while(!( (tomMatch399__end__4==(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) ));
 }
 }
 
@@ -2308,16 +2308,16 @@ FieldDescriptionList l = getFieldList(cons);
 {
 if ( (l instanceof tom.gom.adt.symboltable.types.FieldDescriptionList) ) {
 if ( (((( tom.gom.adt.symboltable.types.FieldDescriptionList )l) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription) || ((( tom.gom.adt.symboltable.types.FieldDescriptionList )l) instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription)) ) {
- tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch385__end__4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);
+ tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch403__end__4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);
 do {
 {
-if (!( tomMatch385__end__4.isEmptyconcFieldDescription() )) {
- tom.gom.adt.symboltable.types.FieldDescription  tomMatch385_9= tomMatch385__end__4.getHeadconcFieldDescription() ;
-if ( (tomMatch385_9 instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) {
-if ( ( tomMatch385_9.getStatusValue()  instanceof tom.gom.adt.symboltable.types.status.SRefreshPoint) ) {
+if (!( tomMatch403__end__4.isEmptyconcFieldDescription() )) {
+ tom.gom.adt.symboltable.types.FieldDescription  tomMatch403_9= tomMatch403__end__4.getHeadconcFieldDescription() ;
+if ( (tomMatch403_9 instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) {
+if ( ( tomMatch403_9.getStatusValue()  instanceof tom.gom.adt.symboltable.types.status.SRefreshPoint) ) {
 
 if (
- tomMatch385_9.getFieldName() .equals(field)) {
+ tomMatch403_9.getFieldName() .equals(field)) {
 return true;
 }
 
@@ -2325,14 +2325,14 @@ return true;
 }
 }
 }
-if ( tomMatch385__end__4.isEmptyconcFieldDescription() ) {
-tomMatch385__end__4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);
+if ( tomMatch403__end__4.isEmptyconcFieldDescription() ) {
+tomMatch403__end__4=(( tom.gom.adt.symboltable.types.FieldDescriptionList )l);
 } else {
-tomMatch385__end__4= tomMatch385__end__4.getTailconcFieldDescription() ;
+tomMatch403__end__4= tomMatch403__end__4.getTailconcFieldDescription() ;
 }
 
 }
-} while(!( (tomMatch385__end__4==(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) ));
+} while(!( (tomMatch403__end__4==(( tom.gom.adt.symboltable.types.FieldDescriptionList )l)) ));
 }
 }
 
@@ -2394,31 +2394,31 @@ tom_append_list_StringList(tyatoms,tom_append_list_StringList(res, tom.gom.adt.s
 {
 if ( (cd instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {
 if ( ((( tom.gom.adt.symboltable.types.ConstructorDescription )cd) instanceof tom.gom.adt.symboltable.types.constructordescription.ConstructorDescription) ) {
- tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch386_4= (( tom.gom.adt.symboltable.types.ConstructorDescription )cd).getFields() ;
-if ( ((tomMatch386_4 instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription) || (tomMatch386_4 instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription)) ) {
- tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch386__end__9=tomMatch386_4;
+ tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch404_4= (( tom.gom.adt.symboltable.types.ConstructorDescription )cd).getFields() ;
+if ( ((tomMatch404_4 instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription) || (tomMatch404_4 instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription)) ) {
+ tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch404__end__9=tomMatch404_4;
 do {
 {
-if (!( tomMatch386__end__9.isEmptyconcFieldDescription() )) {
- tom.gom.adt.symboltable.types.FieldDescription  tomMatch386_13= tomMatch386__end__9.getHeadconcFieldDescription() ;
-if ( (tomMatch386_13 instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) {
+if (!( tomMatch404__end__9.isEmptyconcFieldDescription() )) {
+ tom.gom.adt.symboltable.types.FieldDescription  tomMatch404_13= tomMatch404__end__9.getHeadconcFieldDescription() ;
+if ( (tomMatch404_13 instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) {
 
 StringList tyatoms = getAccessibleAtoms(
- tomMatch386_13.getSort() ,visited);
+ tomMatch404_13.getSort() ,visited);
 res = 
 tom_append_list_StringList(tyatoms,tom_append_list_StringList(res, tom.gom.adt.symboltable.types.stringlist.EmptyStringList.make() ));
 
 
 }
 }
-if ( tomMatch386__end__9.isEmptyconcFieldDescription() ) {
-tomMatch386__end__9=tomMatch386_4;
+if ( tomMatch404__end__9.isEmptyconcFieldDescription() ) {
+tomMatch404__end__9=tomMatch404_4;
 } else {
-tomMatch386__end__9= tomMatch386__end__9.getTailconcFieldDescription() ;
+tomMatch404__end__9= tomMatch404__end__9.getTailconcFieldDescription() ;
 }
 
 }
-} while(!( (tomMatch386__end__9==tomMatch386_4) ));
+} while(!( (tomMatch404__end__9==tomMatch404_4) ));
 }
 }
 }
@@ -2468,15 +2468,15 @@ tom_ty);
 {
 if ( (cd instanceof tom.gom.adt.symboltable.types.ConstructorDescription) ) {
 if ( ((( tom.gom.adt.symboltable.types.ConstructorDescription )cd) instanceof tom.gom.adt.symboltable.types.constructordescription.ConstructorDescription) ) {
- tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch387_4= (( tom.gom.adt.symboltable.types.ConstructorDescription )cd).getFields() ;
-if ( ((tomMatch387_4 instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription) || (tomMatch387_4 instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription)) ) {
- tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch387__end__9=tomMatch387_4;
+ tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch405_4= (( tom.gom.adt.symboltable.types.ConstructorDescription )cd).getFields() ;
+if ( ((tomMatch405_4 instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription) || (tomMatch405_4 instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription)) ) {
+ tom.gom.adt.symboltable.types.FieldDescriptionList  tomMatch405__end__9=tomMatch405_4;
 do {
 {
-if (!( tomMatch387__end__9.isEmptyconcFieldDescription() )) {
- tom.gom.adt.symboltable.types.FieldDescription  tomMatch387_13= tomMatch387__end__9.getHeadconcFieldDescription() ;
-if ( (tomMatch387_13 instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) {
- String  tom_ty= tomMatch387_13.getSort() ;
+if (!( tomMatch405__end__9.isEmptyconcFieldDescription() )) {
+ tom.gom.adt.symboltable.types.FieldDescription  tomMatch405_13= tomMatch405__end__9.getHeadconcFieldDescription() ;
+if ( (tomMatch405_13 instanceof tom.gom.adt.symboltable.types.fielddescription.FieldDescription) ) {
+ String  tom_ty= tomMatch405_13.getSort() ;
 
 if(!getGomEnvironment().isBuiltin(
 tom_ty)) {
@@ -2487,14 +2487,14 @@ tom_ty);
 
 }
 }
-if ( tomMatch387__end__9.isEmptyconcFieldDescription() ) {
-tomMatch387__end__9=tomMatch387_4;
+if ( tomMatch405__end__9.isEmptyconcFieldDescription() ) {
+tomMatch405__end__9=tomMatch405_4;
 } else {
-tomMatch387__end__9= tomMatch387__end__9.getTailconcFieldDescription() ;
+tomMatch405__end__9= tomMatch405__end__9.getTailconcFieldDescription() ;
 }
 
 }
-} while(!( (tomMatch387__end__9==tomMatch387_4) ));
+} while(!( (tomMatch405__end__9==tomMatch405_4) ));
 }
 }
 }

@@ -218,7 +218,7 @@ public class TomMessage extends BasicPlatformMessage {
   public static final TomMessage illegalAnnotationInAntiPattern =
       new TomMessage("It is forbidden to make annotations under an anti symbol");
   public static final TomMessage freeVarNotPresentInOr =
-    new TomMessage("Any variable used in the action should be found in all the members of a disjunction. Variable ''{0}'' not found in all disjunctions");
+    new TomMessage("Any variable used in the action should appear in all the members of a disjunction. Variable ''{0}'' not found in all disjunctions");
 
   // compiler
   public static final TomMessage errorMissingSlotDecl =
@@ -343,7 +343,7 @@ public class TomMessage extends BasicPlatformMessage {
   public static final TomMessage badMatchNumberArgument  =
       new TomMessage("Bad number of arguments: {0,number,integer} argument(s) required by match signature but {1,number,integer} found");
   public static final TomMessage incorrectVariableStarInMatch=
-      new TomMessage("Single list variable ''{0}'' is not allowed on top of ''match'' pattern");
+      new TomMessage("Single list variable ''{0}'' is not allowed if not under a list operator");
   public static final TomMessage wrongMatchArgumentTypeInPattern=
       new TomMessage("Wrong type for slot {0,number,integer}:Type ''{1}'' required but Type ''{2}'' found");
   public static final TomMessage unknownSymbolInDisjunction=
@@ -376,6 +376,8 @@ public class TomMessage extends BasicPlatformMessage {
     new TomMessage("Incompatible types ''{0}'' and ''{1}'' for symbol ''{2}''.");
   public static final TomMessage unknownSymbol=
       new TomMessage("Unknown symbol ''{0}''");
+  public static final TomMessage unknownType=
+      new TomMessage("Unknown type ''{0}''");
   public static final TomMessage symbolNumberArgument    =
       new TomMessage("Bad number of arguments for symbol ''{0}'': {1,number,integer} argument(s) required but {2,number,integer} found");
 

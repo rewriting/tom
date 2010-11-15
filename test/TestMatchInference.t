@@ -17,7 +17,7 @@ public class TestMatchInference {
 
   @Test
   public void test1() {
-    %match(5) {
+    %match(int 5) {
       4 -> { fail("4 does not match"); }
       5 -> { return; }
       6 -> { fail("6 does not match"); }

@@ -326,11 +326,11 @@ Map declToClassName) {
 {
 if ( (declList instanceof tom.gom.adt.gom.types.HookDeclList) ) {
 if ( (((( tom.gom.adt.gom.types.HookDeclList )declList) instanceof tom.gom.adt.gom.types.hookdecllist.ConsConcHookDecl) || ((( tom.gom.adt.gom.types.HookDeclList )declList) instanceof tom.gom.adt.gom.types.hookdecllist.EmptyConcHookDecl)) ) {
- tom.gom.adt.gom.types.HookDeclList  tomMatch483__end__4=(( tom.gom.adt.gom.types.HookDeclList )declList);
+ tom.gom.adt.gom.types.HookDeclList  tomMatch501__end__4=(( tom.gom.adt.gom.types.HookDeclList )declList);
 do {
 {
-if (!( tomMatch483__end__4.isEmptyConcHookDecl() )) {
- tom.gom.adt.gom.types.HookDecl  tom_hook= tomMatch483__end__4.getHeadConcHookDecl() ;
+if (!( tomMatch501__end__4.isEmptyConcHookDecl() )) {
+ tom.gom.adt.gom.types.HookDecl  tom_hook= tomMatch501__end__4.getHeadConcHookDecl() ;
 
 Decl decl = 
 tom_hook.getPointcut();
@@ -444,14 +444,14 @@ throw new GomRuntimeException("Unexpected strategy failure!");
 
 
 }
-if ( tomMatch483__end__4.isEmptyConcHookDecl() ) {
-tomMatch483__end__4=(( tom.gom.adt.gom.types.HookDeclList )declList);
+if ( tomMatch501__end__4.isEmptyConcHookDecl() ) {
+tomMatch501__end__4=(( tom.gom.adt.gom.types.HookDeclList )declList);
 } else {
-tomMatch483__end__4= tomMatch483__end__4.getTailConcHookDecl() ;
+tomMatch501__end__4= tomMatch501__end__4.getTailConcHookDecl() ;
 }
 
 }
-} while(!( (tomMatch483__end__4==(( tom.gom.adt.gom.types.HookDeclList )declList)) ));
+} while(!( (tomMatch501__end__4==(( tom.gom.adt.gom.types.HookDeclList )declList)) ));
 }
 }
 
@@ -507,6 +507,28 @@ default: throw new IndexOutOfBoundsException();
 }
 }
 @SuppressWarnings("unchecked")
+public <T> T visitLight(T v, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if ( (v instanceof tom.gom.adt.objects.types.GomClass) ) {
+return ((T)visit_GomClass((( tom.gom.adt.objects.types.GomClass )v),introspector));
+}
+if (!(  null ==environment )) {
+return ((T)any.visit(environment,introspector));
+} else {
+return any.visitLight(v,introspector);
+}
+
+}
+@SuppressWarnings("unchecked")
+public  tom.gom.adt.objects.types.GomClass  _visit_GomClass( tom.gom.adt.objects.types.GomClass  arg, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if (!(  null ==environment )) {
+return (( tom.gom.adt.objects.types.GomClass )any.visit(environment,introspector));
+} else {
+return any.visitLight(arg,introspector);
+}
+}
+@SuppressWarnings("unchecked")
 public  tom.gom.adt.objects.types.GomClass  visit_GomClass( tom.gom.adt.objects.types.GomClass  tom__arg, tom.library.sl.Introspector introspector)
  throws tom.library.sl.VisitFailure {
 {
@@ -532,28 +554,6 @@ return
 
 }
 return _visit_GomClass(tom__arg,introspector);
-
-}
-@SuppressWarnings("unchecked")
-public  tom.gom.adt.objects.types.GomClass  _visit_GomClass( tom.gom.adt.objects.types.GomClass  arg, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if (!(  null ==environment )) {
-return (( tom.gom.adt.objects.types.GomClass )any.visit(environment,introspector));
-} else {
-return any.visitLight(arg,introspector);
-}
-}
-@SuppressWarnings("unchecked")
-public <T> T visitLight(T v, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if ( (v instanceof tom.gom.adt.objects.types.GomClass) ) {
-return ((T)visit_GomClass((( tom.gom.adt.objects.types.GomClass )v),introspector));
-}
-if (!(  null ==environment )) {
-return ((T)any.visit(environment,introspector));
-} else {
-return any.visitLight(v,introspector);
-}
 
 }
 }
@@ -607,6 +607,28 @@ default: throw new IndexOutOfBoundsException();
 }
 }
 @SuppressWarnings("unchecked")
+public <T> T visitLight(T v, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if ( (v instanceof tom.gom.adt.objects.types.GomClass) ) {
+return ((T)visit_GomClass((( tom.gom.adt.objects.types.GomClass )v),introspector));
+}
+if (!(  null ==environment )) {
+return ((T)any.visit(environment,introspector));
+} else {
+return any.visitLight(v,introspector);
+}
+
+}
+@SuppressWarnings("unchecked")
+public  tom.gom.adt.objects.types.GomClass  _visit_GomClass( tom.gom.adt.objects.types.GomClass  arg, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if (!(  null ==environment )) {
+return (( tom.gom.adt.objects.types.GomClass )any.visit(environment,introspector));
+} else {
+return any.visitLight(arg,introspector);
+}
+}
+@SuppressWarnings("unchecked")
 public  tom.gom.adt.objects.types.GomClass  visit_GomClass( tom.gom.adt.objects.types.GomClass  tom__arg, tom.library.sl.Introspector introspector)
  throws tom.library.sl.VisitFailure {
 {
@@ -632,28 +654,6 @@ return
 
 }
 return _visit_GomClass(tom__arg,introspector);
-
-}
-@SuppressWarnings("unchecked")
-public  tom.gom.adt.objects.types.GomClass  _visit_GomClass( tom.gom.adt.objects.types.GomClass  arg, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if (!(  null ==environment )) {
-return (( tom.gom.adt.objects.types.GomClass )any.visit(environment,introspector));
-} else {
-return any.visitLight(arg,introspector);
-}
-}
-@SuppressWarnings("unchecked")
-public <T> T visitLight(T v, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if ( (v instanceof tom.gom.adt.objects.types.GomClass) ) {
-return ((T)visit_GomClass((( tom.gom.adt.objects.types.GomClass )v),introspector));
-}
-if (!(  null ==environment )) {
-return ((T)any.visit(environment,introspector));
-} else {
-return any.visitLight(v,introspector);
-}
 
 }
 }
@@ -700,6 +700,28 @@ public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable c
 switch (index) {
 case 0: return super.setChildAt(0, child);
 default: throw new IndexOutOfBoundsException();
+}
+}
+@SuppressWarnings("unchecked")
+public <T> T visitLight(T v, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if ( (v instanceof tom.gom.adt.objects.types.GomClass) ) {
+return ((T)visit_GomClass((( tom.gom.adt.objects.types.GomClass )v),introspector));
+}
+if (!(  null ==environment )) {
+return ((T)any.visit(environment,introspector));
+} else {
+return any.visitLight(v,introspector);
+}
+
+}
+@SuppressWarnings("unchecked")
+public  tom.gom.adt.objects.types.GomClass  _visit_GomClass( tom.gom.adt.objects.types.GomClass  arg, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if (!(  null ==environment )) {
+return (( tom.gom.adt.objects.types.GomClass )any.visit(environment,introspector));
+} else {
+return any.visitLight(arg,introspector);
 }
 }
 @SuppressWarnings("unchecked")
@@ -807,28 +829,6 @@ return
 
 }
 return _visit_GomClass(tom__arg,introspector);
-
-}
-@SuppressWarnings("unchecked")
-public  tom.gom.adt.objects.types.GomClass  _visit_GomClass( tom.gom.adt.objects.types.GomClass  arg, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if (!(  null ==environment )) {
-return (( tom.gom.adt.objects.types.GomClass )any.visit(environment,introspector));
-} else {
-return any.visitLight(arg,introspector);
-}
-}
-@SuppressWarnings("unchecked")
-public <T> T visitLight(T v, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if ( (v instanceof tom.gom.adt.objects.types.GomClass) ) {
-return ((T)visit_GomClass((( tom.gom.adt.objects.types.GomClass )v),introspector));
-}
-if (!(  null ==environment )) {
-return ((T)any.visit(environment,introspector));
-} else {
-return any.visitLight(v,introspector);
-}
 
 }
 }

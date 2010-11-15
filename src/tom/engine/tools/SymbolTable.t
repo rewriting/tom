@@ -60,7 +60,7 @@ public class SymbolTable {
   private final static String TYPE_INT_ARRAY = "intarray";
   private final static String INT_ARRAY_OP   = "concInt";
 
-  public final static TomType TYPE_UNKNOWN   = `Type(concTypeOption(),"unknown type",EmptyTargetLanguageType());
+  public final static TomType TYPE_UNKNOWN = `Type(concTypeOption(),"unknown type",EmptyTargetLanguageType());
 
   /** associate a symbol to a name */
   private Map<String,TomSymbol> mapSymbolName = null;

@@ -14,6 +14,10 @@ The compiler is composed of several plugins, which are executed in the following
   parse the input file
   call gom
 
+- Syntax Checker
+  verify some syntactic properties an raise an error message when an error is
+  detected
+
 - Desugarer
   update the SymbolTable. For each symbol:
     add default IsFsym and default Make to symbols

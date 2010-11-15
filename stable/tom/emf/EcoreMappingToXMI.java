@@ -197,7 +197,6 @@ return o;
     return result;
   }
 
-
 /**
 * Return XML string matching the object
 * @param eo EPackage to match

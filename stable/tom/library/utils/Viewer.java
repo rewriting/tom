@@ -448,9 +448,9 @@ throws java.io.IOException {
 {
 if ( term instanceof aterm.ATerm ) {
 if ( (( aterm.ATerm )term) instanceof aterm.ATermAppl ) {
- aterm.AFun  tomMatch613_1= ((aterm.ATermAppl)(( aterm.ATerm )term)).getAFun() ;
-if ( tomMatch613_1 instanceof aterm.AFun ) {
- String  tom_name= tomMatch613_1.getName() ;
+ aterm.AFun  tomMatch631_1= ((aterm.ATermAppl)(( aterm.ATerm )term)).getAFun() ;
+if ( tomMatch631_1 instanceof aterm.AFun ) {
+ String  tom_name= tomMatch631_1.getName() ;
  aterm.ATermList  tom_list= ((aterm.ATermAppl)(( aterm.ATerm )term)).getArguments() ;
 
 aterm.ATermAppl a = (aterm.ATermAppl) term;
@@ -477,13 +477,13 @@ tom_name.length() + 3;
 if ( tom_list instanceof aterm.ATermList ) {
 if ( (( aterm.ATermList )tom_list) instanceof aterm.ATermList ) {
 if (!( (( aterm.ATermList )tom_list).isEmpty() )) {
- aterm.ATermList  tomMatch614_2= (( aterm.ATermList )tom_list).getNext() ;
- aterm.ATermList  tomMatch614__end__5=tomMatch614_2;
+ aterm.ATermList  tomMatch632_2= (( aterm.ATermList )tom_list).getNext() ;
+ aterm.ATermList  tomMatch632__end__5=tomMatch632_2;
 do {
 {
- aterm.ATermList  tom_l=tom_get_slice_concATerm(tomMatch614_2,tomMatch614__end__5, aterm.pure.SingletonFactory.getInstance().makeList() );
-if (!( tomMatch614__end__5.isEmpty() )) {
-if (  tomMatch614__end__5.getNext() .isEmpty() ) {
+ aterm.ATermList  tom_l=tom_get_slice_concATerm(tomMatch632_2,tomMatch632__end__5, aterm.pure.SingletonFactory.getInstance().makeList() );
+if (!( tomMatch632__end__5.isEmpty() )) {
+if (  tomMatch632__end__5.getNext() .isEmpty() ) {
 
 // first child
 w.write("─" + 
@@ -500,29 +500,29 @@ w.write('\n');
 {
 if ( tom_l instanceof aterm.ATermList ) {
 if ( (( aterm.ATermList )tom_l) instanceof aterm.ATermList ) {
- aterm.ATermList  tomMatch615__end__4=(( aterm.ATermList )tom_l);
+ aterm.ATermList  tomMatch633__end__4=(( aterm.ATermList )tom_l);
 do {
 {
-if (!( tomMatch615__end__4.isEmpty() )) {
+if (!( tomMatch633__end__4.isEmpty() )) {
 
 writeContext(w,context,ndeep-1);
 w.write("├");
 context.push(ndeep-1);
 ATermToTree(
- tomMatch615__end__4.getFirst() ,w,context,ndeep);
+ tomMatch633__end__4.getFirst() ,w,context,ndeep);
 context.pop();
 w.write('\n');
 
 
 }
-if ( tomMatch615__end__4.isEmpty() ) {
-tomMatch615__end__4=(( aterm.ATermList )tom_l);
+if ( tomMatch633__end__4.isEmpty() ) {
+tomMatch633__end__4=(( aterm.ATermList )tom_l);
 } else {
-tomMatch615__end__4= tomMatch615__end__4.getNext() ;
+tomMatch633__end__4= tomMatch633__end__4.getNext() ;
 }
 
 }
-} while(!( tomMatch615__end__4==(( aterm.ATermList )tom_l) ));
+} while(!( tomMatch633__end__4==(( aterm.ATermList )tom_l) ));
 }
 }
 
@@ -534,19 +534,19 @@ tomMatch615__end__4= tomMatch615__end__4.getNext() ;
 writeContext(w,context,ndeep-1);
 w.write("└");
 ATermToTree(
- tomMatch614__end__5.getFirst() ,w,context,ndeep);
+ tomMatch632__end__5.getFirst() ,w,context,ndeep);
 
 
 }
 }
-if ( tomMatch614__end__5.isEmpty() ) {
-tomMatch614__end__5=tomMatch614_2;
+if ( tomMatch632__end__5.isEmpty() ) {
+tomMatch632__end__5=tomMatch632_2;
 } else {
-tomMatch614__end__5= tomMatch614__end__5.getNext() ;
+tomMatch632__end__5= tomMatch632__end__5.getNext() ;
 }
 
 }
-} while(!( tomMatch614__end__5==tomMatch614_2 ));
+} while(!( tomMatch632__end__5==tomMatch632_2 ));
 }
 }
 }
@@ -614,6 +614,28 @@ default: throw new IndexOutOfBoundsException();
 }
 }
 @SuppressWarnings("unchecked")
+public <T> T visitLight(T v, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if ( (v instanceof tom.library.sl.Strategy) ) {
+return ((T)visit_Strategy((( tom.library.sl.Strategy )v),introspector));
+}
+if (!(  null ==environment )) {
+return ((T)any.visit(environment,introspector));
+} else {
+return any.visitLight(v,introspector);
+}
+
+}
+@SuppressWarnings("unchecked")
+public  tom.library.sl.Strategy  _visit_Strategy( tom.library.sl.Strategy  arg, tom.library.sl.Introspector introspector)
+ throws tom.library.sl.VisitFailure {
+if (!(  null ==environment )) {
+return (( tom.library.sl.Strategy )any.visit(environment,introspector));
+} else {
+return any.visitLight(arg,introspector);
+}
+}
+@SuppressWarnings("unchecked")
 public  tom.library.sl.Strategy  visit_Strategy( tom.library.sl.Strategy  tom__arg, tom.library.sl.Introspector introspector)
  throws tom.library.sl.VisitFailure {
 {
@@ -644,28 +666,6 @@ throw new VisitFailure();
 
 }
 return _visit_Strategy(tom__arg,introspector);
-
-}
-@SuppressWarnings("unchecked")
-public  tom.library.sl.Strategy  _visit_Strategy( tom.library.sl.Strategy  arg, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if (!(  null ==environment )) {
-return (( tom.library.sl.Strategy )any.visit(environment,introspector));
-} else {
-return any.visitLight(arg,introspector);
-}
-}
-@SuppressWarnings("unchecked")
-public <T> T visitLight(T v, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if ( (v instanceof tom.library.sl.Strategy) ) {
-return ((T)visit_Strategy((( tom.library.sl.Strategy )v),introspector));
-}
-if (!(  null ==environment )) {
-return ((T)any.visit(environment,introspector));
-} else {
-return any.visitLight(v,introspector);
-}
 
 }
 }

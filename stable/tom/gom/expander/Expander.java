@@ -244,29 +244,29 @@ ImportList imports =
 {
 if ( (module instanceof tom.gom.adt.gom.types.GomModule) ) {
 if ( ((( tom.gom.adt.gom.types.GomModule )module) instanceof tom.gom.adt.gom.types.gommodule.GomModule) ) {
- tom.gom.adt.gom.types.SectionList  tomMatch491_2= (( tom.gom.adt.gom.types.GomModule )module).getSectionList() ;
-if ( ((tomMatch491_2 instanceof tom.gom.adt.gom.types.sectionlist.ConsConcSection) || (tomMatch491_2 instanceof tom.gom.adt.gom.types.sectionlist.EmptyConcSection)) ) {
- tom.gom.adt.gom.types.SectionList  tomMatch491__end__7=tomMatch491_2;
+ tom.gom.adt.gom.types.SectionList  tomMatch509_2= (( tom.gom.adt.gom.types.GomModule )module).getSectionList() ;
+if ( ((tomMatch509_2 instanceof tom.gom.adt.gom.types.sectionlist.ConsConcSection) || (tomMatch509_2 instanceof tom.gom.adt.gom.types.sectionlist.EmptyConcSection)) ) {
+ tom.gom.adt.gom.types.SectionList  tomMatch509__end__7=tomMatch509_2;
 do {
 {
-if (!( tomMatch491__end__7.isEmptyConcSection() )) {
- tom.gom.adt.gom.types.Section  tomMatch491_11= tomMatch491__end__7.getHeadConcSection() ;
-if ( (tomMatch491_11 instanceof tom.gom.adt.gom.types.section.Imports) ) {
+if (!( tomMatch509__end__7.isEmptyConcSection() )) {
+ tom.gom.adt.gom.types.Section  tomMatch509_11= tomMatch509__end__7.getHeadConcSection() ;
+if ( (tomMatch509_11 instanceof tom.gom.adt.gom.types.section.Imports) ) {
 
 imports = 
-tom_append_list_ConcImportedModule( tomMatch491_11.getImportList() ,tom_append_list_ConcImportedModule(imports, tom.gom.adt.gom.types.importlist.EmptyConcImportedModule.make() ));
+tom_append_list_ConcImportedModule( tomMatch509_11.getImportList() ,tom_append_list_ConcImportedModule(imports, tom.gom.adt.gom.types.importlist.EmptyConcImportedModule.make() ));
 
 
 }
 }
-if ( tomMatch491__end__7.isEmptyConcSection() ) {
-tomMatch491__end__7=tomMatch491_2;
+if ( tomMatch509__end__7.isEmptyConcSection() ) {
+tomMatch509__end__7=tomMatch509_2;
 } else {
-tomMatch491__end__7= tomMatch491__end__7.getTailConcSection() ;
+tomMatch509__end__7= tomMatch509__end__7.getTailConcSection() ;
 }
 
 }
-} while(!( (tomMatch491__end__7==tomMatch491_2) ));
+} while(!( (tomMatch509__end__7==tomMatch509_2) ));
 }
 }
 }

@@ -213,7 +213,7 @@ matchArgument [List<BQTerm> list, List<TomType> typeList] throws TomException
         if(subject1.isBQVariable()) {
           String typeName = subject1.getAstName().getString();
           %match(subject2) {
-            (BQVariable|BQAppl)[] -> {
+            (BQVariable|BQAppl|BuildConstant)[] -> {
               list.add(subject2);
               typeList.add(`Type(concTypeOption(),typeName,EmptyTargetLanguageType()));
               return;
