@@ -50,7 +50,6 @@ public class EcoreContainmentIntrospector implements Introspector {
     return null;
   }
   
-  @Override
   public Object getChildAt(Object o, int i) {
     List<Object> l=getList(o);
     if(l!=null){
@@ -59,7 +58,6 @@ public class EcoreContainmentIntrospector implements Introspector {
     return null;
   }
 
-  @Override
   public int getChildCount(Object o) {
     List<Object> l=getList(o);
     if(l!=null){
@@ -68,7 +66,6 @@ public class EcoreContainmentIntrospector implements Introspector {
     return 0;
   }
 
-  @Override
   public Object[] getChildren(Object o) {
     List<Object> l=getList(o);
     if(l!=null){
