@@ -45,8 +45,15 @@ package tom.library.sl;
 public class Choice extends AbstractStrategyCombinator {
   public final static int FIRST = 0;
   public final static int THEN = 1;
-  public Choice(Strategy first, Strategy then) {
+  private Choice(Strategy first, Strategy then) {
     initSubterm(first,then);
+  }
+
+  public static Strategy make(Strategy first, Strategy then) {
+    if(then==null) {
+      return first;
+    }
+    return new Choice(first,then);
   }
 
   public <T> T visitLight(T subject, Introspector introspector) throws VisitFailure {

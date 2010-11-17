@@ -181,24 +181,24 @@ public class GraphRuleExpander {
       return l2;
     } else if(( l2 == null )) {
       return l1;
-    } else if(( (l1 instanceof tom.library.sl.Sequence) )) {
+    } else if(( l1 instanceof tom.library.sl.Sequence )) {
       if(( ( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Sequence.THEN) ) == null )) {
-        return ( (l2==null)?( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Sequence.FIRST) ):new tom.library.sl.Sequence(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Sequence.FIRST) ),l2) );
+        return  tom.library.sl.Sequence.make(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Sequence.FIRST) ),l2) ;
       } else {
-        return ( (tom_append_list_Sequence(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Sequence.THEN) ),l2)==null)?( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Sequence.FIRST) ):new tom.library.sl.Sequence(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Sequence.FIRST) ),tom_append_list_Sequence(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Sequence.THEN) ),l2)) );
+        return  tom.library.sl.Sequence.make(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Sequence.FIRST) ),tom_append_list_Sequence(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Sequence.THEN) ),l2)) ;
       }
     } else {
-      return ( (l2==null)?l1:new tom.library.sl.Sequence(l1,l2) );
+      return  tom.library.sl.Sequence.make(l1,l2) ;
     }
   }
   private static   tom.library.sl.Strategy  tom_get_slice_Sequence( tom.library.sl.Strategy  begin,  tom.library.sl.Strategy  end, tom.library.sl.Strategy  tail) {
     if( (begin.equals(end)) ) {
       return tail;
-    } else if( (end.equals(tail))  && (( end == null ) ||  (end.equals(( null ))) )) {
+    } else if( (end.equals(tail))  && (( end == null ) ||  (end.equals( null )) )) {
       /* code to avoid a call to make, and thus to avoid looping during list-matching */
       return begin;
     }
-    return ( (( tom.library.sl.Strategy )tom_get_slice_Sequence(((( (begin instanceof tom.library.sl.Sequence) ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.Sequence.THEN) ):( null )),end,tail)==null)?((( (begin instanceof tom.library.sl.Sequence) ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.Sequence.FIRST) ):begin):new tom.library.sl.Sequence(((( (begin instanceof tom.library.sl.Sequence) ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.Sequence.FIRST) ):begin),( tom.library.sl.Strategy )tom_get_slice_Sequence(((( (begin instanceof tom.library.sl.Sequence) ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.Sequence.THEN) ):( null )),end,tail)) );
+    return  tom.library.sl.Sequence.make(((( begin instanceof tom.library.sl.Sequence ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.Sequence.FIRST) ):begin),( tom.library.sl.Strategy )tom_get_slice_Sequence(((( begin instanceof tom.library.sl.Sequence ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.Sequence.THEN) ): null ),end,tail)) ;
   }
   
   private static   tom.library.sl.Strategy  tom_append_list_Choice( tom.library.sl.Strategy  l1,  tom.library.sl.Strategy  l2) {
@@ -206,24 +206,24 @@ public class GraphRuleExpander {
       return l2;
     } else if(( l2 ==null )) {
       return l1;
-    } else if(( (l1 instanceof tom.library.sl.Choice) )) {
+    } else if(( l1 instanceof tom.library.sl.Choice )) {
       if(( ( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Choice.THEN) ) ==null )) {
-        return ( (l2==null)?( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Choice.FIRST) ):new tom.library.sl.Choice(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Choice.FIRST) ),l2) );
+        return  tom.library.sl.Choice.make(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Choice.FIRST) ),l2) ;
       } else {
-        return ( (tom_append_list_Choice(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Choice.THEN) ),l2)==null)?( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Choice.FIRST) ):new tom.library.sl.Choice(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Choice.FIRST) ),tom_append_list_Choice(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Choice.THEN) ),l2)) );
+        return  tom.library.sl.Choice.make(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Choice.FIRST) ),tom_append_list_Choice(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Choice.THEN) ),l2)) ;
       }
     } else {
-      return ( (l2==null)?l1:new tom.library.sl.Choice(l1,l2) );
+      return  tom.library.sl.Choice.make(l1,l2) ;
     }
   }
   private static   tom.library.sl.Strategy  tom_get_slice_Choice( tom.library.sl.Strategy  begin,  tom.library.sl.Strategy  end, tom.library.sl.Strategy  tail) {
     if( (begin.equals(end)) ) {
       return tail;
-    } else if( (end.equals(tail))  && (( end ==null ) ||  (end.equals(( null ))) )) {
+    } else if( (end.equals(tail))  && (( end ==null ) ||  (end.equals( null )) )) {
       /* code to avoid a call to make, and thus to avoid looping during list-matching */
       return begin;
     }
-    return ( (( tom.library.sl.Strategy )tom_get_slice_Choice(((( (begin instanceof tom.library.sl.Choice) ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.Choice.THEN) ):( null )),end,tail)==null)?((( (begin instanceof tom.library.sl.Choice) ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.Choice.FIRST) ):begin):new tom.library.sl.Choice(((( (begin instanceof tom.library.sl.Choice) ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.Choice.FIRST) ):begin),( tom.library.sl.Strategy )tom_get_slice_Choice(((( (begin instanceof tom.library.sl.Choice) ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.Choice.THEN) ):( null )),end,tail)) );
+    return  tom.library.sl.Choice.make(((( begin instanceof tom.library.sl.Choice ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.Choice.FIRST) ):begin),( tom.library.sl.Strategy )tom_get_slice_Choice(((( begin instanceof tom.library.sl.Choice ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.Choice.THEN) ): null ),end,tail)) ;
   }
   
   private static   tom.library.sl.Strategy  tom_append_list_SequenceId( tom.library.sl.Strategy  l1,  tom.library.sl.Strategy  l2) {
@@ -231,24 +231,24 @@ public class GraphRuleExpander {
       return l2;
     } else if(( l2 == null )) {
       return l1;
-    } else if(( (l1 instanceof tom.library.sl.SequenceId) )) {
+    } else if(( l1 instanceof tom.library.sl.SequenceId )) {
       if(( ( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.SequenceId.THEN) ) == null )) {
-        return ( (l2==null)?( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.SequenceId.FIRST) ):new tom.library.sl.SequenceId(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.SequenceId.FIRST) ),l2) );
+        return  tom.library.sl.SequenceId.make(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.SequenceId.FIRST) ),l2) ;
       } else {
-        return ( (tom_append_list_SequenceId(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.SequenceId.THEN) ),l2)==null)?( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.SequenceId.FIRST) ):new tom.library.sl.SequenceId(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.SequenceId.FIRST) ),tom_append_list_SequenceId(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.SequenceId.THEN) ),l2)) );
+        return  tom.library.sl.SequenceId.make(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.SequenceId.FIRST) ),tom_append_list_SequenceId(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.SequenceId.THEN) ),l2)) ;
       }
     } else {
-      return ( (l2==null)?l1:new tom.library.sl.SequenceId(l1,l2) );
+      return  tom.library.sl.SequenceId.make(l1,l2) ;
     }
   }
   private static   tom.library.sl.Strategy  tom_get_slice_SequenceId( tom.library.sl.Strategy  begin,  tom.library.sl.Strategy  end, tom.library.sl.Strategy  tail) {
     if( (begin.equals(end)) ) {
       return tail;
-    } else if( (end.equals(tail))  && (( end == null ) ||  (end.equals(( null ))) )) {
+    } else if( (end.equals(tail))  && (( end == null ) ||  (end.equals( null )) )) {
       /* code to avoid a call to make, and thus to avoid looping during list-matching */
       return begin;
     }
-    return ( (( tom.library.sl.Strategy )tom_get_slice_SequenceId(((( (begin instanceof tom.library.sl.SequenceId) ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.SequenceId.THEN) ):( null )),end,tail)==null)?((( (begin instanceof tom.library.sl.SequenceId) ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.SequenceId.FIRST) ):begin):new tom.library.sl.SequenceId(((( (begin instanceof tom.library.sl.SequenceId) ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.SequenceId.FIRST) ):begin),( tom.library.sl.Strategy )tom_get_slice_SequenceId(((( (begin instanceof tom.library.sl.SequenceId) ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.SequenceId.THEN) ):( null )),end,tail)) );
+    return  tom.library.sl.SequenceId.make(((( begin instanceof tom.library.sl.SequenceId ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.SequenceId.FIRST) ):begin),( tom.library.sl.Strategy )tom_get_slice_SequenceId(((( begin instanceof tom.library.sl.SequenceId ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.SequenceId.THEN) ): null ),end,tail)) ;
   }
   
   private static   tom.library.sl.Strategy  tom_append_list_ChoiceId( tom.library.sl.Strategy  l1,  tom.library.sl.Strategy  l2) {
@@ -256,76 +256,76 @@ public class GraphRuleExpander {
       return l2;
     } else if(( l2 ==null )) {
       return l1;
-    } else if(( (l1 instanceof tom.library.sl.ChoiceId) )) {
+    } else if(( l1 instanceof tom.library.sl.ChoiceId )) {
       if(( ( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.ChoiceId.THEN) ) ==null )) {
-        return ( (l2==null)?( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.ChoiceId.FIRST) ):new tom.library.sl.ChoiceId(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.ChoiceId.FIRST) ),l2) );
+        return  tom.library.sl.ChoiceId.make(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.ChoiceId.FIRST) ),l2) ;
       } else {
-        return ( (tom_append_list_ChoiceId(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.ChoiceId.THEN) ),l2)==null)?( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.ChoiceId.FIRST) ):new tom.library.sl.ChoiceId(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.ChoiceId.FIRST) ),tom_append_list_ChoiceId(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.ChoiceId.THEN) ),l2)) );
+        return  tom.library.sl.ChoiceId.make(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.ChoiceId.FIRST) ),tom_append_list_ChoiceId(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.ChoiceId.THEN) ),l2)) ;
       }
     } else {
-      return ( (l2==null)?l1:new tom.library.sl.ChoiceId(l1,l2) );
+      return  tom.library.sl.ChoiceId.make(l1,l2) ;
     }
   }
   private static   tom.library.sl.Strategy  tom_get_slice_ChoiceId( tom.library.sl.Strategy  begin,  tom.library.sl.Strategy  end, tom.library.sl.Strategy  tail) {
     if( (begin.equals(end)) ) {
       return tail;
-    } else if( (end.equals(tail))  && (( end ==null ) ||  (end.equals(( null ))) )) {
+    } else if( (end.equals(tail))  && (( end ==null ) ||  (end.equals( null )) )) {
       /* code to avoid a call to make, and thus to avoid looping during list-matching */
       return begin;
     }
-    return ( (( tom.library.sl.Strategy )tom_get_slice_ChoiceId(((( (begin instanceof tom.library.sl.ChoiceId) ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.ChoiceId.THEN) ):( null )),end,tail)==null)?((( (begin instanceof tom.library.sl.ChoiceId) ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.ChoiceId.FIRST) ):begin):new tom.library.sl.ChoiceId(((( (begin instanceof tom.library.sl.ChoiceId) ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.ChoiceId.FIRST) ):begin),( tom.library.sl.Strategy )tom_get_slice_ChoiceId(((( (begin instanceof tom.library.sl.ChoiceId) ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.ChoiceId.THEN) ):( null )),end,tail)) );
+    return  tom.library.sl.ChoiceId.make(((( begin instanceof tom.library.sl.ChoiceId ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.ChoiceId.FIRST) ):begin),( tom.library.sl.Strategy )tom_get_slice_ChoiceId(((( begin instanceof tom.library.sl.ChoiceId ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.ChoiceId.THEN) ): null ),end,tail)) ;
   }
   private static  tom.library.sl.Strategy  tom_make_AUCtl( tom.library.sl.Strategy  s1,  tom.library.sl.Strategy  s2) { 
 return ( 
-( new tom.library.sl.Mu(( new tom.library.sl.MuVar("x") ),( (( (( null )==null)?( (( (( null )==null)?( new tom.library.sl.One(( new tom.library.sl.Identity() )) ):new tom.library.sl.Sequence(( new tom.library.sl.One(( new tom.library.sl.Identity() )) ),( null )) )==null)?( (( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ),( null )) )==null)?s1:new tom.library.sl.Sequence(s1,( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ),( null )) )) ):new tom.library.sl.Sequence(( (( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ),( null )) )==null)?s1:new tom.library.sl.Sequence(s1,( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ),( null )) )) ),( (( null )==null)?( new tom.library.sl.One(( new tom.library.sl.Identity() )) ):new tom.library.sl.Sequence(( new tom.library.sl.One(( new tom.library.sl.Identity() )) ),( null )) )) ):new tom.library.sl.Choice(( (( (( null )==null)?( new tom.library.sl.One(( new tom.library.sl.Identity() )) ):new tom.library.sl.Sequence(( new tom.library.sl.One(( new tom.library.sl.Identity() )) ),( null )) )==null)?( (( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ),( null )) )==null)?s1:new tom.library.sl.Sequence(s1,( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ),( null )) )) ):new tom.library.sl.Sequence(( (( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ),( null )) )==null)?s1:new tom.library.sl.Sequence(s1,( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ),( null )) )) ),( (( null )==null)?( new tom.library.sl.One(( new tom.library.sl.Identity() )) ):new tom.library.sl.Sequence(( new tom.library.sl.One(( new tom.library.sl.Identity() )) ),( null )) )) ),( null )) )==null)?s2:new tom.library.sl.Choice(s2,( (( null )==null)?( (( (( null )==null)?( new tom.library.sl.One(( new tom.library.sl.Identity() )) ):new tom.library.sl.Sequence(( new tom.library.sl.One(( new tom.library.sl.Identity() )) ),( null )) )==null)?( (( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ),( null )) )==null)?s1:new tom.library.sl.Sequence(s1,( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ),( null )) )) ):new tom.library.sl.Sequence(( (( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ),( null )) )==null)?s1:new tom.library.sl.Sequence(s1,( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ),( null )) )) ),( (( null )==null)?( new tom.library.sl.One(( new tom.library.sl.Identity() )) ):new tom.library.sl.Sequence(( new tom.library.sl.One(( new tom.library.sl.Identity() )) ),( null )) )) ):new tom.library.sl.Choice(( (( (( null )==null)?( new tom.library.sl.One(( new tom.library.sl.Identity() )) ):new tom.library.sl.Sequence(( new tom.library.sl.One(( new tom.library.sl.Identity() )) ),( null )) )==null)?( (( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ),( null )) )==null)?s1:new tom.library.sl.Sequence(s1,( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ),( null )) )) ):new tom.library.sl.Sequence(( (( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ),( null )) )==null)?s1:new tom.library.sl.Sequence(s1,( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ),( null )) )) ),( (( null )==null)?( new tom.library.sl.One(( new tom.library.sl.Identity() )) ):new tom.library.sl.Sequence(( new tom.library.sl.One(( new tom.library.sl.Identity() )) ),( null )) )) ),( null )) )) )) ))
+( new tom.library.sl.Mu(( new tom.library.sl.MuVar("x") ), tom.library.sl.Choice.make(s2, tom.library.sl.Choice.make( tom.library.sl.Sequence.make( tom.library.sl.Sequence.make(s1, tom.library.sl.Sequence.make(( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ), null ) ) , tom.library.sl.Sequence.make(( new tom.library.sl.One(( new tom.library.sl.Identity() )) ), null ) ) , null ) ) ) ))
 
 ;
 }
 private static  tom.library.sl.Strategy  tom_make_EUCtl( tom.library.sl.Strategy  s1,  tom.library.sl.Strategy  s2) { 
 return ( 
-( new tom.library.sl.Mu(( new tom.library.sl.MuVar("x") ),( (( (( null )==null)?( (( (( null )==null)?( new tom.library.sl.One(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.One(( new tom.library.sl.MuVar("x") )) ),( null )) )==null)?s1:new tom.library.sl.Sequence(s1,( (( null )==null)?( new tom.library.sl.One(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.One(( new tom.library.sl.MuVar("x") )) ),( null )) )) ):new tom.library.sl.Choice(( (( (( null )==null)?( new tom.library.sl.One(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.One(( new tom.library.sl.MuVar("x") )) ),( null )) )==null)?s1:new tom.library.sl.Sequence(s1,( (( null )==null)?( new tom.library.sl.One(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.One(( new tom.library.sl.MuVar("x") )) ),( null )) )) ),( null )) )==null)?s2:new tom.library.sl.Choice(s2,( (( null )==null)?( (( (( null )==null)?( new tom.library.sl.One(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.One(( new tom.library.sl.MuVar("x") )) ),( null )) )==null)?s1:new tom.library.sl.Sequence(s1,( (( null )==null)?( new tom.library.sl.One(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.One(( new tom.library.sl.MuVar("x") )) ),( null )) )) ):new tom.library.sl.Choice(( (( (( null )==null)?( new tom.library.sl.One(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.One(( new tom.library.sl.MuVar("x") )) ),( null )) )==null)?s1:new tom.library.sl.Sequence(s1,( (( null )==null)?( new tom.library.sl.One(( new tom.library.sl.MuVar("x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.One(( new tom.library.sl.MuVar("x") )) ),( null )) )) ),( null )) )) )) ))
+( new tom.library.sl.Mu(( new tom.library.sl.MuVar("x") ), tom.library.sl.Choice.make(s2, tom.library.sl.Choice.make( tom.library.sl.Sequence.make(s1, tom.library.sl.Sequence.make(( new tom.library.sl.One(( new tom.library.sl.MuVar("x") )) ), null ) ) , null ) ) ) ))
 
 ;
 }
 private static  tom.library.sl.Strategy  tom_make_Try( tom.library.sl.Strategy  s) { 
 return ( 
-( (( (( null )==null)?( new tom.library.sl.Identity() ):new tom.library.sl.Choice(( new tom.library.sl.Identity() ),( null )) )==null)?s:new tom.library.sl.Choice(s,( (( null )==null)?( new tom.library.sl.Identity() ):new tom.library.sl.Choice(( new tom.library.sl.Identity() ),( null )) )) ))
+ tom.library.sl.Choice.make(s, tom.library.sl.Choice.make(( new tom.library.sl.Identity() ), null ) ) )
 
 ;
 }
 private static  tom.library.sl.Strategy  tom_make_Repeat( tom.library.sl.Strategy  s) { 
 return ( 
-( new tom.library.sl.Mu(( new tom.library.sl.MuVar("_x") ),( (( (( null )==null)?( new tom.library.sl.Identity() ):new tom.library.sl.Choice(( new tom.library.sl.Identity() ),( null )) )==null)?( (( (( null )==null)?( new tom.library.sl.MuVar("_x") ):new tom.library.sl.Sequence(( new tom.library.sl.MuVar("_x") ),( null )) )==null)?s:new tom.library.sl.Sequence(s,( (( null )==null)?( new tom.library.sl.MuVar("_x") ):new tom.library.sl.Sequence(( new tom.library.sl.MuVar("_x") ),( null )) )) ):new tom.library.sl.Choice(( (( (( null )==null)?( new tom.library.sl.MuVar("_x") ):new tom.library.sl.Sequence(( new tom.library.sl.MuVar("_x") ),( null )) )==null)?s:new tom.library.sl.Sequence(s,( (( null )==null)?( new tom.library.sl.MuVar("_x") ):new tom.library.sl.Sequence(( new tom.library.sl.MuVar("_x") ),( null )) )) ),( (( null )==null)?( new tom.library.sl.Identity() ):new tom.library.sl.Choice(( new tom.library.sl.Identity() ),( null )) )) )) ))
+( new tom.library.sl.Mu(( new tom.library.sl.MuVar("_x") ), tom.library.sl.Choice.make( tom.library.sl.Sequence.make(s, tom.library.sl.Sequence.make(( new tom.library.sl.MuVar("_x") ), null ) ) , tom.library.sl.Choice.make(( new tom.library.sl.Identity() ), null ) ) ) ))
 
 ;
 }
 private static  tom.library.sl.Strategy  tom_make_TopDown( tom.library.sl.Strategy  v) { 
 return ( 
-( new tom.library.sl.Mu(( new tom.library.sl.MuVar("_x") ),( (( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("_x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.All(( new tom.library.sl.MuVar("_x") )) ),( null )) )==null)?v:new tom.library.sl.Sequence(v,( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("_x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.All(( new tom.library.sl.MuVar("_x") )) ),( null )) )) )) ))
+( new tom.library.sl.Mu(( new tom.library.sl.MuVar("_x") ), tom.library.sl.Sequence.make(v, tom.library.sl.Sequence.make(( new tom.library.sl.All(( new tom.library.sl.MuVar("_x") )) ), null ) ) ) ))
 
 ;
 }
 private static  tom.library.sl.Strategy  tom_make_OnceTopDown( tom.library.sl.Strategy  v) { 
 return ( 
-( new tom.library.sl.Mu(( new tom.library.sl.MuVar("_x") ),( (( (( null )==null)?( new tom.library.sl.One(( new tom.library.sl.MuVar("_x") )) ):new tom.library.sl.Choice(( new tom.library.sl.One(( new tom.library.sl.MuVar("_x") )) ),( null )) )==null)?v:new tom.library.sl.Choice(v,( (( null )==null)?( new tom.library.sl.One(( new tom.library.sl.MuVar("_x") )) ):new tom.library.sl.Choice(( new tom.library.sl.One(( new tom.library.sl.MuVar("_x") )) ),( null )) )) )) ))
+( new tom.library.sl.Mu(( new tom.library.sl.MuVar("_x") ), tom.library.sl.Choice.make(v, tom.library.sl.Choice.make(( new tom.library.sl.One(( new tom.library.sl.MuVar("_x") )) ), null ) ) ) ))
 
 ;
 }
 private static  tom.library.sl.Strategy  tom_make_RepeatId( tom.library.sl.Strategy  v) { 
 return ( 
-( new tom.library.sl.Mu(( new tom.library.sl.MuVar("_x") ),( (( (( null )==null)?( new tom.library.sl.MuVar("_x") ):new tom.library.sl.SequenceId(( new tom.library.sl.MuVar("_x") ),( null )) )==null)?v:new tom.library.sl.SequenceId(v,( (( null )==null)?( new tom.library.sl.MuVar("_x") ):new tom.library.sl.SequenceId(( new tom.library.sl.MuVar("_x") ),( null )) )) )) ))
+( new tom.library.sl.Mu(( new tom.library.sl.MuVar("_x") ), tom.library.sl.SequenceId.make(v, tom.library.sl.SequenceId.make(( new tom.library.sl.MuVar("_x") ), null ) ) ) ))
 
 ;
 }
 private static  tom.library.sl.Strategy  tom_make_OnceTopDownId( tom.library.sl.Strategy  v) { 
 return ( 
-( new tom.library.sl.Mu(( new tom.library.sl.MuVar("_x") ),( (( (( null )==null)?( new tom.library.sl.OneId(( new tom.library.sl.MuVar("_x") )) ):new tom.library.sl.ChoiceId(( new tom.library.sl.OneId(( new tom.library.sl.MuVar("_x") )) ),( null )) )==null)?v:new tom.library.sl.ChoiceId(v,( (( null )==null)?( new tom.library.sl.OneId(( new tom.library.sl.MuVar("_x") )) ):new tom.library.sl.ChoiceId(( new tom.library.sl.OneId(( new tom.library.sl.MuVar("_x") )) ),( null )) )) )) ))
+( new tom.library.sl.Mu(( new tom.library.sl.MuVar("_x") ), tom.library.sl.ChoiceId.make(v, tom.library.sl.ChoiceId.make(( new tom.library.sl.OneId(( new tom.library.sl.MuVar("_x") )) ), null ) ) ) ))
 
 ;
 }
 private static  tom.library.sl.Strategy  tom_make_InnermostIdSeq( tom.library.sl.Strategy  v) { 
 return ( 
-( new tom.library.sl.Mu(( new tom.library.sl.MuVar("_x") ),( (( (( null )==null)?( (( (( null )==null)?( new tom.library.sl.MuVar("_x") ):new tom.library.sl.SequenceId(( new tom.library.sl.MuVar("_x") ),( null )) )==null)?v:new tom.library.sl.SequenceId(v,( (( null )==null)?( new tom.library.sl.MuVar("_x") ):new tom.library.sl.SequenceId(( new tom.library.sl.MuVar("_x") ),( null )) )) ):new tom.library.sl.Sequence(( (( (( null )==null)?( new tom.library.sl.MuVar("_x") ):new tom.library.sl.SequenceId(( new tom.library.sl.MuVar("_x") ),( null )) )==null)?v:new tom.library.sl.SequenceId(v,( (( null )==null)?( new tom.library.sl.MuVar("_x") ):new tom.library.sl.SequenceId(( new tom.library.sl.MuVar("_x") ),( null )) )) ),( null )) )==null)?( new tom.library.sl.AllSeq(( new tom.library.sl.MuVar("_x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.AllSeq(( new tom.library.sl.MuVar("_x") )) ),( (( null )==null)?( (( (( null )==null)?( new tom.library.sl.MuVar("_x") ):new tom.library.sl.SequenceId(( new tom.library.sl.MuVar("_x") ),( null )) )==null)?v:new tom.library.sl.SequenceId(v,( (( null )==null)?( new tom.library.sl.MuVar("_x") ):new tom.library.sl.SequenceId(( new tom.library.sl.MuVar("_x") ),( null )) )) ):new tom.library.sl.Sequence(( (( (( null )==null)?( new tom.library.sl.MuVar("_x") ):new tom.library.sl.SequenceId(( new tom.library.sl.MuVar("_x") ),( null )) )==null)?v:new tom.library.sl.SequenceId(v,( (( null )==null)?( new tom.library.sl.MuVar("_x") ):new tom.library.sl.SequenceId(( new tom.library.sl.MuVar("_x") ),( null )) )) ),( null )) )) )) ))
+( new tom.library.sl.Mu(( new tom.library.sl.MuVar("_x") ), tom.library.sl.Sequence.make(( new tom.library.sl.AllSeq(( new tom.library.sl.MuVar("_x") )) ), tom.library.sl.Sequence.make( tom.library.sl.SequenceId.make(v, tom.library.sl.SequenceId.make(( new tom.library.sl.MuVar("_x") ), null ) ) , null ) ) ) ))
 
 ;
 }
@@ -427,17 +427,17 @@ this.sortname = sortname;
 {
 if ( (sdecl instanceof tom.gom.adt.gom.types.Decl) ) {
 if ( ((( tom.gom.adt.gom.types.Decl )sdecl) instanceof tom.gom.adt.gom.types.decl.CutSort) ) {
- tom.gom.adt.gom.types.SortDecl  tomMatch559_1= (( tom.gom.adt.gom.types.Decl )sdecl).getSort() ;
-if ( (tomMatch559_1 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) {
- tom.gom.adt.gom.types.ModuleDecl  tomMatch559_3= tomMatch559_1.getModuleDecl() ;
-if ( (tomMatch559_3 instanceof tom.gom.adt.gom.types.moduledecl.ModuleDecl) ) {
- tom.gom.adt.gom.types.GomModuleName  tomMatch559_5= tomMatch559_3.getModuleName() ;
-if ( (tomMatch559_5 instanceof tom.gom.adt.gom.types.gommodulename.GomModuleName) ) {
+ tom.gom.adt.gom.types.SortDecl  tomMatch606_1= (( tom.gom.adt.gom.types.Decl )sdecl).getSort() ;
+if ( (tomMatch606_1 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) {
+ tom.gom.adt.gom.types.ModuleDecl  tomMatch606_3= tomMatch606_1.getModuleDecl() ;
+if ( (tomMatch606_3 instanceof tom.gom.adt.gom.types.moduledecl.ModuleDecl) ) {
+ tom.gom.adt.gom.types.GomModuleName  tomMatch606_5= tomMatch606_3.getModuleName() ;
+if ( (tomMatch606_5 instanceof tom.gom.adt.gom.types.gommodulename.GomModuleName) ) {
 
 this.moduleName = 
- tomMatch559_5.getName() ;
+ tomMatch606_5.getName() ;
 this.pkgName = 
- tomMatch559_3.getPkg() ;
+ tomMatch606_3.getPkg() ;
 
 
 }
@@ -508,23 +508,23 @@ output.append(
 {
 if ( (moduleList instanceof tom.gom.adt.gom.types.ModuleList) ) {
 if ( (((( tom.gom.adt.gom.types.ModuleList )moduleList) instanceof tom.gom.adt.gom.types.modulelist.ConsConcModule) || ((( tom.gom.adt.gom.types.ModuleList )moduleList) instanceof tom.gom.adt.gom.types.modulelist.EmptyConcModule)) ) {
- tom.gom.adt.gom.types.ModuleList  tomMatch560__end__4=(( tom.gom.adt.gom.types.ModuleList )moduleList);
+ tom.gom.adt.gom.types.ModuleList  tomMatch607__end__4=(( tom.gom.adt.gom.types.ModuleList )moduleList);
 do {
 {
-if (!( tomMatch560__end__4.isEmptyConcModule() )) {
- tom.gom.adt.gom.types.Module  tomMatch560_8= tomMatch560__end__4.getHeadConcModule() ;
-if ( (tomMatch560_8 instanceof tom.gom.adt.gom.types.module.Module) ) {
- tom.gom.adt.gom.types.SortList  tomMatch560_7= tomMatch560_8.getSorts() ;
-if ( ((tomMatch560_7 instanceof tom.gom.adt.gom.types.sortlist.ConsConcSort) || (tomMatch560_7 instanceof tom.gom.adt.gom.types.sortlist.EmptyConcSort)) ) {
- tom.gom.adt.gom.types.SortList  tomMatch560__end__12=tomMatch560_7;
+if (!( tomMatch607__end__4.isEmptyConcModule() )) {
+ tom.gom.adt.gom.types.Module  tomMatch607_8= tomMatch607__end__4.getHeadConcModule() ;
+if ( (tomMatch607_8 instanceof tom.gom.adt.gom.types.module.Module) ) {
+ tom.gom.adt.gom.types.SortList  tomMatch607_7= tomMatch607_8.getSorts() ;
+if ( ((tomMatch607_7 instanceof tom.gom.adt.gom.types.sortlist.ConsConcSort) || (tomMatch607_7 instanceof tom.gom.adt.gom.types.sortlist.EmptyConcSort)) ) {
+ tom.gom.adt.gom.types.SortList  tomMatch607__end__12=tomMatch607_7;
 do {
 {
-if (!( tomMatch560__end__12.isEmptyConcSort() )) {
- tom.gom.adt.gom.types.Sort  tomMatch560_16= tomMatch560__end__12.getHeadConcSort() ;
-if ( (tomMatch560_16 instanceof tom.gom.adt.gom.types.sort.Sort) ) {
- tom.gom.adt.gom.types.SortDecl  tomMatch560_15= tomMatch560_16.getDecl() ;
-if ( (tomMatch560_15 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) {
- String  tom_name= tomMatch560_15.getName() ;
+if (!( tomMatch607__end__12.isEmptyConcSort() )) {
+ tom.gom.adt.gom.types.Sort  tomMatch607_16= tomMatch607__end__12.getHeadConcSort() ;
+if ( (tomMatch607_16 instanceof tom.gom.adt.gom.types.sort.Sort) ) {
+ tom.gom.adt.gom.types.SortDecl  tomMatch607_15= tomMatch607_16.getDecl() ;
+if ( (tomMatch607_15 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) {
+ String  tom_name= tomMatch607_15.getName() ;
 
 output.append(
 
@@ -540,25 +540,25 @@ tom_name+
 }
 }
 }
-if ( tomMatch560__end__12.isEmptyConcSort() ) {
-tomMatch560__end__12=tomMatch560_7;
+if ( tomMatch607__end__12.isEmptyConcSort() ) {
+tomMatch607__end__12=tomMatch607_7;
 } else {
-tomMatch560__end__12= tomMatch560__end__12.getTailConcSort() ;
+tomMatch607__end__12= tomMatch607__end__12.getTailConcSort() ;
 }
 
 }
-} while(!( (tomMatch560__end__12==tomMatch560_7) ));
+} while(!( (tomMatch607__end__12==tomMatch607_7) ));
 }
 }
 }
-if ( tomMatch560__end__4.isEmptyConcModule() ) {
-tomMatch560__end__4=(( tom.gom.adt.gom.types.ModuleList )moduleList);
+if ( tomMatch607__end__4.isEmptyConcModule() ) {
+tomMatch607__end__4=(( tom.gom.adt.gom.types.ModuleList )moduleList);
 } else {
-tomMatch560__end__4= tomMatch560__end__4.getTailConcModule() ;
+tomMatch607__end__4= tomMatch607__end__4.getTailConcModule() ;
 }
 
 }
-} while(!( (tomMatch560__end__4==(( tom.gom.adt.gom.types.ModuleList )moduleList)) ));
+} while(!( (tomMatch607__end__4==(( tom.gom.adt.gom.types.ModuleList )moduleList)) ));
 }
 }
 
@@ -576,23 +576,23 @@ output.append(
 {
 if ( (moduleList instanceof tom.gom.adt.gom.types.ModuleList) ) {
 if ( (((( tom.gom.adt.gom.types.ModuleList )moduleList) instanceof tom.gom.adt.gom.types.modulelist.ConsConcModule) || ((( tom.gom.adt.gom.types.ModuleList )moduleList) instanceof tom.gom.adt.gom.types.modulelist.EmptyConcModule)) ) {
- tom.gom.adt.gom.types.ModuleList  tomMatch561__end__4=(( tom.gom.adt.gom.types.ModuleList )moduleList);
+ tom.gom.adt.gom.types.ModuleList  tomMatch608__end__4=(( tom.gom.adt.gom.types.ModuleList )moduleList);
 do {
 {
-if (!( tomMatch561__end__4.isEmptyConcModule() )) {
- tom.gom.adt.gom.types.Module  tomMatch561_8= tomMatch561__end__4.getHeadConcModule() ;
-if ( (tomMatch561_8 instanceof tom.gom.adt.gom.types.module.Module) ) {
- tom.gom.adt.gom.types.SortList  tomMatch561_7= tomMatch561_8.getSorts() ;
-if ( ((tomMatch561_7 instanceof tom.gom.adt.gom.types.sortlist.ConsConcSort) || (tomMatch561_7 instanceof tom.gom.adt.gom.types.sortlist.EmptyConcSort)) ) {
- tom.gom.adt.gom.types.SortList  tomMatch561__end__12=tomMatch561_7;
+if (!( tomMatch608__end__4.isEmptyConcModule() )) {
+ tom.gom.adt.gom.types.Module  tomMatch608_8= tomMatch608__end__4.getHeadConcModule() ;
+if ( (tomMatch608_8 instanceof tom.gom.adt.gom.types.module.Module) ) {
+ tom.gom.adt.gom.types.SortList  tomMatch608_7= tomMatch608_8.getSorts() ;
+if ( ((tomMatch608_7 instanceof tom.gom.adt.gom.types.sortlist.ConsConcSort) || (tomMatch608_7 instanceof tom.gom.adt.gom.types.sortlist.EmptyConcSort)) ) {
+ tom.gom.adt.gom.types.SortList  tomMatch608__end__12=tomMatch608_7;
 do {
 {
-if (!( tomMatch561__end__12.isEmptyConcSort() )) {
- tom.gom.adt.gom.types.Sort  tomMatch561_16= tomMatch561__end__12.getHeadConcSort() ;
-if ( (tomMatch561_16 instanceof tom.gom.adt.gom.types.sort.Sort) ) {
- tom.gom.adt.gom.types.SortDecl  tomMatch561_15= tomMatch561_16.getDecl() ;
-if ( (tomMatch561_15 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) {
- String  tom_name= tomMatch561_15.getName() ;
+if (!( tomMatch608__end__12.isEmptyConcSort() )) {
+ tom.gom.adt.gom.types.Sort  tomMatch608_16= tomMatch608__end__12.getHeadConcSort() ;
+if ( (tomMatch608_16 instanceof tom.gom.adt.gom.types.sort.Sort) ) {
+ tom.gom.adt.gom.types.SortDecl  tomMatch608_15= tomMatch608_16.getDecl() ;
+if ( (tomMatch608_15 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) {
+ String  tom_name= tomMatch608_15.getName() ;
 
 output.append(
 
@@ -606,25 +606,25 @@ tom_name+
 }
 }
 }
-if ( tomMatch561__end__12.isEmptyConcSort() ) {
-tomMatch561__end__12=tomMatch561_7;
+if ( tomMatch608__end__12.isEmptyConcSort() ) {
+tomMatch608__end__12=tomMatch608_7;
 } else {
-tomMatch561__end__12= tomMatch561__end__12.getTailConcSort() ;
+tomMatch608__end__12= tomMatch608__end__12.getTailConcSort() ;
 }
 
 }
-} while(!( (tomMatch561__end__12==tomMatch561_7) ));
+} while(!( (tomMatch608__end__12==tomMatch608_7) ));
 }
 }
 }
-if ( tomMatch561__end__4.isEmptyConcModule() ) {
-tomMatch561__end__4=(( tom.gom.adt.gom.types.ModuleList )moduleList);
+if ( tomMatch608__end__4.isEmptyConcModule() ) {
+tomMatch608__end__4=(( tom.gom.adt.gom.types.ModuleList )moduleList);
 } else {
-tomMatch561__end__4= tomMatch561__end__4.getTailConcModule() ;
+tomMatch608__end__4= tomMatch608__end__4.getTailConcModule() ;
 }
 
 }
-} while(!( (tomMatch561__end__4==(( tom.gom.adt.gom.types.ModuleList )moduleList)) ));
+} while(!( (tomMatch608__end__4==(( tom.gom.adt.gom.types.ModuleList )moduleList)) ));
 }
 }
 
@@ -645,23 +645,23 @@ output.append(
 {
 if ( (moduleList instanceof tom.gom.adt.gom.types.ModuleList) ) {
 if ( (((( tom.gom.adt.gom.types.ModuleList )moduleList) instanceof tom.gom.adt.gom.types.modulelist.ConsConcModule) || ((( tom.gom.adt.gom.types.ModuleList )moduleList) instanceof tom.gom.adt.gom.types.modulelist.EmptyConcModule)) ) {
- tom.gom.adt.gom.types.ModuleList  tomMatch562__end__4=(( tom.gom.adt.gom.types.ModuleList )moduleList);
+ tom.gom.adt.gom.types.ModuleList  tomMatch609__end__4=(( tom.gom.adt.gom.types.ModuleList )moduleList);
 do {
 {
-if (!( tomMatch562__end__4.isEmptyConcModule() )) {
- tom.gom.adt.gom.types.Module  tomMatch562_8= tomMatch562__end__4.getHeadConcModule() ;
-if ( (tomMatch562_8 instanceof tom.gom.adt.gom.types.module.Module) ) {
- tom.gom.adt.gom.types.SortList  tomMatch562_7= tomMatch562_8.getSorts() ;
-if ( ((tomMatch562_7 instanceof tom.gom.adt.gom.types.sortlist.ConsConcSort) || (tomMatch562_7 instanceof tom.gom.adt.gom.types.sortlist.EmptyConcSort)) ) {
- tom.gom.adt.gom.types.SortList  tomMatch562__end__12=tomMatch562_7;
+if (!( tomMatch609__end__4.isEmptyConcModule() )) {
+ tom.gom.adt.gom.types.Module  tomMatch609_8= tomMatch609__end__4.getHeadConcModule() ;
+if ( (tomMatch609_8 instanceof tom.gom.adt.gom.types.module.Module) ) {
+ tom.gom.adt.gom.types.SortList  tomMatch609_7= tomMatch609_8.getSorts() ;
+if ( ((tomMatch609_7 instanceof tom.gom.adt.gom.types.sortlist.ConsConcSort) || (tomMatch609_7 instanceof tom.gom.adt.gom.types.sortlist.EmptyConcSort)) ) {
+ tom.gom.adt.gom.types.SortList  tomMatch609__end__12=tomMatch609_7;
 do {
 {
-if (!( tomMatch562__end__12.isEmptyConcSort() )) {
- tom.gom.adt.gom.types.Sort  tomMatch562_16= tomMatch562__end__12.getHeadConcSort() ;
-if ( (tomMatch562_16 instanceof tom.gom.adt.gom.types.sort.Sort) ) {
- tom.gom.adt.gom.types.SortDecl  tomMatch562_15= tomMatch562_16.getDecl() ;
-if ( (tomMatch562_15 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) {
- String  tom_name= tomMatch562_15.getName() ;
+if (!( tomMatch609__end__12.isEmptyConcSort() )) {
+ tom.gom.adt.gom.types.Sort  tomMatch609_16= tomMatch609__end__12.getHeadConcSort() ;
+if ( (tomMatch609_16 instanceof tom.gom.adt.gom.types.sort.Sort) ) {
+ tom.gom.adt.gom.types.SortDecl  tomMatch609_15= tomMatch609_16.getDecl() ;
+if ( (tomMatch609_15 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) {
+ String  tom_name= tomMatch609_15.getName() ;
 
 output.append(
 
@@ -683,25 +683,25 @@ tom_name+
 }
 }
 }
-if ( tomMatch562__end__12.isEmptyConcSort() ) {
-tomMatch562__end__12=tomMatch562_7;
+if ( tomMatch609__end__12.isEmptyConcSort() ) {
+tomMatch609__end__12=tomMatch609_7;
 } else {
-tomMatch562__end__12= tomMatch562__end__12.getTailConcSort() ;
+tomMatch609__end__12= tomMatch609__end__12.getTailConcSort() ;
 }
 
 }
-} while(!( (tomMatch562__end__12==tomMatch562_7) ));
+} while(!( (tomMatch609__end__12==tomMatch609_7) ));
 }
 }
 }
-if ( tomMatch562__end__4.isEmptyConcModule() ) {
-tomMatch562__end__4=(( tom.gom.adt.gom.types.ModuleList )moduleList);
+if ( tomMatch609__end__4.isEmptyConcModule() ) {
+tomMatch609__end__4=(( tom.gom.adt.gom.types.ModuleList )moduleList);
 } else {
-tomMatch562__end__4= tomMatch562__end__4.getTailConcModule() ;
+tomMatch609__end__4= tomMatch609__end__4.getTailConcModule() ;
 }
 
 }
-} while(!( (tomMatch562__end__4==(( tom.gom.adt.gom.types.ModuleList )moduleList)) ));
+} while(!( (tomMatch609__end__4==(( tom.gom.adt.gom.types.ModuleList )moduleList)) ));
 }
 }
 
@@ -722,27 +722,27 @@ String imports =
 {
 if ( (moduleList instanceof tom.gom.adt.gom.types.ModuleList) ) {
 if ( (((( tom.gom.adt.gom.types.ModuleList )moduleList) instanceof tom.gom.adt.gom.types.modulelist.ConsConcModule) || ((( tom.gom.adt.gom.types.ModuleList )moduleList) instanceof tom.gom.adt.gom.types.modulelist.EmptyConcModule)) ) {
- tom.gom.adt.gom.types.ModuleList  tomMatch563__end__4=(( tom.gom.adt.gom.types.ModuleList )moduleList);
+ tom.gom.adt.gom.types.ModuleList  tomMatch610__end__4=(( tom.gom.adt.gom.types.ModuleList )moduleList);
 do {
 {
-if (!( tomMatch563__end__4.isEmptyConcModule() )) {
- tom.gom.adt.gom.types.Module  tomMatch563_9= tomMatch563__end__4.getHeadConcModule() ;
-if ( (tomMatch563_9 instanceof tom.gom.adt.gom.types.module.Module) ) {
- tom.gom.adt.gom.types.ModuleDecl  tomMatch563_7= tomMatch563_9.getMDecl() ;
- tom.gom.adt.gom.types.SortList  tomMatch563_8= tomMatch563_9.getSorts() ;
-if ( (tomMatch563_7 instanceof tom.gom.adt.gom.types.moduledecl.ModuleDecl) ) {
-if ( ( tomMatch563_7.getModuleName()  instanceof tom.gom.adt.gom.types.gommodulename.GomModuleName) ) {
- String  tom_pkg= tomMatch563_7.getPkg() ;
-if ( ((tomMatch563_8 instanceof tom.gom.adt.gom.types.sortlist.ConsConcSort) || (tomMatch563_8 instanceof tom.gom.adt.gom.types.sortlist.EmptyConcSort)) ) {
- tom.gom.adt.gom.types.SortList  tomMatch563__end__18=tomMatch563_8;
+if (!( tomMatch610__end__4.isEmptyConcModule() )) {
+ tom.gom.adt.gom.types.Module  tomMatch610_9= tomMatch610__end__4.getHeadConcModule() ;
+if ( (tomMatch610_9 instanceof tom.gom.adt.gom.types.module.Module) ) {
+ tom.gom.adt.gom.types.ModuleDecl  tomMatch610_7= tomMatch610_9.getMDecl() ;
+ tom.gom.adt.gom.types.SortList  tomMatch610_8= tomMatch610_9.getSorts() ;
+if ( (tomMatch610_7 instanceof tom.gom.adt.gom.types.moduledecl.ModuleDecl) ) {
+if ( ( tomMatch610_7.getModuleName()  instanceof tom.gom.adt.gom.types.gommodulename.GomModuleName) ) {
+ String  tom_pkg= tomMatch610_7.getPkg() ;
+if ( ((tomMatch610_8 instanceof tom.gom.adt.gom.types.sortlist.ConsConcSort) || (tomMatch610_8 instanceof tom.gom.adt.gom.types.sortlist.EmptyConcSort)) ) {
+ tom.gom.adt.gom.types.SortList  tomMatch610__end__18=tomMatch610_8;
 do {
 {
-if (!( tomMatch563__end__18.isEmptyConcSort() )) {
- tom.gom.adt.gom.types.Sort  tomMatch563_22= tomMatch563__end__18.getHeadConcSort() ;
-if ( (tomMatch563_22 instanceof tom.gom.adt.gom.types.sort.Sort) ) {
- tom.gom.adt.gom.types.SortDecl  tomMatch563_21= tomMatch563_22.getDecl() ;
-if ( (tomMatch563_21 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) {
- String  tom_name= tomMatch563_21.getName() ;
+if (!( tomMatch610__end__18.isEmptyConcSort() )) {
+ tom.gom.adt.gom.types.Sort  tomMatch610_22= tomMatch610__end__18.getHeadConcSort() ;
+if ( (tomMatch610_22 instanceof tom.gom.adt.gom.types.sort.Sort) ) {
+ tom.gom.adt.gom.types.SortDecl  tomMatch610_21= tomMatch610_22.getDecl() ;
+if ( (tomMatch610_21 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) {
+ String  tom_name= tomMatch610_21.getName() ;
 
 
 String prefix = ((
@@ -760,27 +760,27 @@ tom_name+
 }
 }
 }
-if ( tomMatch563__end__18.isEmptyConcSort() ) {
-tomMatch563__end__18=tomMatch563_8;
+if ( tomMatch610__end__18.isEmptyConcSort() ) {
+tomMatch610__end__18=tomMatch610_8;
 } else {
-tomMatch563__end__18= tomMatch563__end__18.getTailConcSort() ;
+tomMatch610__end__18= tomMatch610__end__18.getTailConcSort() ;
 }
 
 }
-} while(!( (tomMatch563__end__18==tomMatch563_8) ));
+} while(!( (tomMatch610__end__18==tomMatch610_8) ));
 }
 }
 }
 }
 }
-if ( tomMatch563__end__4.isEmptyConcModule() ) {
-tomMatch563__end__4=(( tom.gom.adt.gom.types.ModuleList )moduleList);
+if ( tomMatch610__end__4.isEmptyConcModule() ) {
+tomMatch610__end__4=(( tom.gom.adt.gom.types.ModuleList )moduleList);
 } else {
-tomMatch563__end__4= tomMatch563__end__4.getTailConcModule() ;
+tomMatch610__end__4= tomMatch610__end__4.getTailConcModule() ;
 }
 
 }
-} while(!( (tomMatch563__end__4==(( tom.gom.adt.gom.types.ModuleList )moduleList)) ));
+} while(!( (tomMatch610__end__4==(( tom.gom.adt.gom.types.ModuleList )moduleList)) ));
 }
 }
 
@@ -811,33 +811,33 @@ output.append(
 {
 if ( (rulelist instanceof tom.gom.adt.rule.types.RuleList) ) {
 if ( (((( tom.gom.adt.rule.types.RuleList )rulelist) instanceof tom.gom.adt.rule.types.rulelist.ConsRuleList) || ((( tom.gom.adt.rule.types.RuleList )rulelist) instanceof tom.gom.adt.rule.types.rulelist.EmptyRuleList)) ) {
- tom.gom.adt.rule.types.RuleList  tomMatch564__end__4=(( tom.gom.adt.rule.types.RuleList )rulelist);
+ tom.gom.adt.rule.types.RuleList  tomMatch611__end__4=(( tom.gom.adt.rule.types.RuleList )rulelist);
 do {
 {
-if (!( tomMatch564__end__4.isEmptyRuleList() )) {
- tom.gom.adt.rule.types.Rule  tomMatch564_9= tomMatch564__end__4.getHeadRuleList() ;
-boolean tomMatch564_10= false ;
- tom.gom.adt.rule.types.Term  tomMatch564_7= null ;
- tom.gom.adt.rule.types.Term  tomMatch564_8= null ;
-if ( (tomMatch564_9 instanceof tom.gom.adt.rule.types.rule.Rule) ) {
+if (!( tomMatch611__end__4.isEmptyRuleList() )) {
+ tom.gom.adt.rule.types.Rule  tomMatch611_9= tomMatch611__end__4.getHeadRuleList() ;
+boolean tomMatch611_10= false ;
+ tom.gom.adt.rule.types.Term  tomMatch611_7= null ;
+ tom.gom.adt.rule.types.Term  tomMatch611_8= null ;
+if ( (tomMatch611_9 instanceof tom.gom.adt.rule.types.rule.Rule) ) {
 {
-tomMatch564_10= true ;
-tomMatch564_7= tomMatch564_9.getlhs() ;
-tomMatch564_8= tomMatch564_9.getrhs() ;
+tomMatch611_10= true ;
+tomMatch611_7= tomMatch611_9.getlhs() ;
+tomMatch611_8= tomMatch611_9.getrhs() ;
 
 }
 } else {
-if ( (tomMatch564_9 instanceof tom.gom.adt.rule.types.rule.ConditionalRule) ) {
+if ( (tomMatch611_9 instanceof tom.gom.adt.rule.types.rule.ConditionalRule) ) {
 {
-tomMatch564_10= true ;
-tomMatch564_7= tomMatch564_9.getlhs() ;
-tomMatch564_8= tomMatch564_9.getrhs() ;
+tomMatch611_10= true ;
+tomMatch611_7= tomMatch611_9.getlhs() ;
+tomMatch611_8= tomMatch611_9.getrhs() ;
 
 }
 }
 }
-if (tomMatch564_10) {
- tom.gom.adt.rule.types.Term  tom_lhs=tomMatch564_7;
+if (tomMatch611_10) {
+ tom.gom.adt.rule.types.Term  tom_lhs=tomMatch611_7;
 
 //TODO: verify that the lhs of the rules are of the good sort
 //TODO: verify the linearity of lhs and rhs
@@ -851,7 +851,7 @@ tom_lhs)+
 tom_lhs,"root",0)+
 ".normalizeWithLabels();\n                "+fullClassName(abstractType)+
 " labelledRhs = `"+genTermWithExplicitVar(
-tomMatch564_8,"root",0)+
+tomMatch611_8,"root",0)+
 ".normalizeWithLabels();\n\n               /* 3. construct t = SubstTerm(subject',r') */\n                "+fullClassName(abstractType)+
 " rhs = labelledRhs.label2path();\n                "+fullClassName(abstractType)+
 " lhs = labelledLhs.label2path();\n                rhs = `TopDown(FromVarToPath(lhs,omega)).visit(rhs);\n                "+fullClassName(abstractType)+
@@ -862,14 +862,14 @@ tomMatch564_8,"root",0)+
 }
 
 }
-if ( tomMatch564__end__4.isEmptyRuleList() ) {
-tomMatch564__end__4=(( tom.gom.adt.rule.types.RuleList )rulelist);
+if ( tomMatch611__end__4.isEmptyRuleList() ) {
+tomMatch611__end__4=(( tom.gom.adt.rule.types.RuleList )rulelist);
 } else {
-tomMatch564__end__4= tomMatch564__end__4.getTailRuleList() ;
+tomMatch611__end__4= tomMatch611__end__4.getTailRuleList() ;
 }
 
 }
-} while(!( (tomMatch564__end__4==(( tom.gom.adt.rule.types.RuleList )rulelist)) ));
+} while(!( (tomMatch611__end__4==(( tom.gom.adt.rule.types.RuleList )rulelist)) ));
 }
 }
 
@@ -905,25 +905,25 @@ output.append(
 {
 if ( (tom_tail instanceof tom.gom.adt.rule.types.Term) ) {
 if ( (((( tom.gom.adt.rule.types.Term )tom_tail) instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || ((( tom.gom.adt.rule.types.Term )tom_tail) instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
- tom.gom.adt.rule.types.Term  tomMatch566__end__4=(( tom.gom.adt.rule.types.Term )tom_tail);
+ tom.gom.adt.rule.types.Term  tomMatch613__end__4=(( tom.gom.adt.rule.types.Term )tom_tail);
 do {
 {
-if (!( tomMatch566__end__4.isEmptyPathTerm() )) {
+if (!( tomMatch613__end__4.isEmptyPathTerm() )) {
 
 output.append(",");
 output.append(
- tomMatch566__end__4.getHeadPathTerm() );
+ tomMatch613__end__4.getHeadPathTerm() );
 
 
 }
-if ( tomMatch566__end__4.isEmptyPathTerm() ) {
-tomMatch566__end__4=(( tom.gom.adt.rule.types.Term )tom_tail);
+if ( tomMatch613__end__4.isEmptyPathTerm() ) {
+tomMatch613__end__4=(( tom.gom.adt.rule.types.Term )tom_tail);
 } else {
-tomMatch566__end__4= tomMatch566__end__4.getTailPathTerm() ;
+tomMatch613__end__4= tomMatch613__end__4.getTailPathTerm() ;
 }
 
 }
-} while(!( (tomMatch566__end__4==(( tom.gom.adt.rule.types.Term )tom_tail)) ));
+} while(!( (tomMatch613__end__4==(( tom.gom.adt.rule.types.Term )tom_tail)) ));
 }
 }
 
@@ -1167,29 +1167,29 @@ return "";
 {
 if ( (list instanceof tom.gom.adt.rule.types.TermList) ) {
 if ( (((( tom.gom.adt.rule.types.TermList )list) instanceof tom.gom.adt.rule.types.termlist.ConsTermList) || ((( tom.gom.adt.rule.types.TermList )list) instanceof tom.gom.adt.rule.types.termlist.EmptyTermList)) ) {
- tom.gom.adt.rule.types.TermList  tomMatch569__end__6=(( tom.gom.adt.rule.types.TermList )list);
+ tom.gom.adt.rule.types.TermList  tomMatch616__end__6=(( tom.gom.adt.rule.types.TermList )list);
 do {
 {
-if (!( tomMatch569__end__6.isEmptyTermList() )) {
+if (!( tomMatch616__end__6.isEmptyTermList() )) {
 
 output.append(genTermWithExplicitVar(
- tomMatch569__end__6.getHeadTermList() ,fathersymbol,omega));
+ tomMatch616__end__6.getHeadTermList() ,fathersymbol,omega));
 omega++;
 if (!
- tomMatch569__end__6.getTailTermList() .isEmptyTermList()) {
+ tomMatch616__end__6.getTailTermList() .isEmptyTermList()) {
 output.append(", ");
 }
 
 
 }
-if ( tomMatch569__end__6.isEmptyTermList() ) {
-tomMatch569__end__6=(( tom.gom.adt.rule.types.TermList )list);
+if ( tomMatch616__end__6.isEmptyTermList() ) {
+tomMatch616__end__6=(( tom.gom.adt.rule.types.TermList )list);
 } else {
-tomMatch569__end__6= tomMatch569__end__6.getTailTermList() ;
+tomMatch616__end__6= tomMatch616__end__6.getTailTermList() ;
 }
 
 }
-} while(!( (tomMatch569__end__6==(( tom.gom.adt.rule.types.TermList )list)) ));
+} while(!( (tomMatch616__end__6==(( tom.gom.adt.rule.types.TermList )list)) ));
 }
 }
 
@@ -1438,7 +1438,7 @@ public static Term label2path(Term t) {
 java.util.HashMap map = new java.util.HashMap();
 try {
 return 
-( (( (( null )==null)?tom_make_TopDown(tom_make_Label2Path(map)):new tom.library.sl.Sequence(tom_make_TopDown(tom_make_Label2Path(map)),( null )) )==null)?tom_make_RepeatId(tom_make_OnceTopDownId(tom_make_CollectLabels(map))):new tom.library.sl.Sequence(tom_make_RepeatId(tom_make_OnceTopDownId(tom_make_CollectLabels(map))),( (( null )==null)?tom_make_TopDown(tom_make_Label2Path(map)):new tom.library.sl.Sequence(tom_make_TopDown(tom_make_Label2Path(map)),( null )) )) ).visit(t);
+ tom.library.sl.Sequence.make(tom_make_RepeatId(tom_make_OnceTopDownId(tom_make_CollectLabels(map))), tom.library.sl.Sequence.make(tom_make_TopDown(tom_make_Label2Path(map)), null ) ) .visit(t);
 } catch (tom.library.sl.VisitFailure e) {
 throw new tom.gom.tools.error.GomRuntimeException("Unexpected strategy failure!");
 }
@@ -1599,48 +1599,48 @@ tom_make_PathForPattern().visit(
 {
 if ( (tom__arg instanceof tom.gom.adt.rule.types.Term) ) {
 if ( (((( tom.gom.adt.rule.types.Term )tom__arg) instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || ((( tom.gom.adt.rule.types.Term )tom__arg) instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
- tom.gom.adt.rule.types.Term  tomMatch573__end__11=(( tom.gom.adt.rule.types.Term )tom__arg);
+ tom.gom.adt.rule.types.Term  tomMatch620__end__11=(( tom.gom.adt.rule.types.Term )tom__arg);
 do {
 {
- tom.gom.adt.rule.types.Term  tomMatch573_7=tom_get_slice_PathTerm((( tom.gom.adt.rule.types.Term )tom__arg),tomMatch573__end__11, tom.gom.adt.rule.types.term.EmptyPathTerm.make() );
-if (!( tomMatch573__end__11.isEmptyPathTerm() )) {
-if ( -1== tomMatch573__end__11.getHeadPathTerm()  ) {
- tom.gom.adt.rule.types.Term  tom_sublist=tomMatch573_7;
+ tom.gom.adt.rule.types.Term  tomMatch620_7=tom_get_slice_PathTerm((( tom.gom.adt.rule.types.Term )tom__arg),tomMatch620__end__11, tom.gom.adt.rule.types.term.EmptyPathTerm.make() );
+if (!( tomMatch620__end__11.isEmptyPathTerm() )) {
+if ( -1== tomMatch620__end__11.getHeadPathTerm()  ) {
+ tom.gom.adt.rule.types.Term  tom_sublist=tomMatch620_7;
 if ( (tom_sublist instanceof tom.gom.adt.rule.types.Term) ) {
-boolean tomMatch573_25= false ;
-if ( ((tomMatch573_7 instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || (tomMatch573_7 instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
-if ( (tom_sublist==tomMatch573_7) ) {
- tom.gom.adt.rule.types.Term  tomMatch573__end__18=tomMatch573_7;
+boolean tomMatch620_25= false ;
+if ( ((tomMatch620_7 instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || (tomMatch620_7 instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
+if ( (tom_sublist==tomMatch620_7) ) {
+ tom.gom.adt.rule.types.Term  tomMatch620__end__18=tomMatch620_7;
 do {
 {
-if (!( tomMatch573__end__18.isEmptyPathTerm() )) {
-boolean tomMatch573_26= false ;
-if ( -2== tomMatch573__end__18.getHeadPathTerm()  ) {
-tomMatch573_26= true ;
+if (!( tomMatch620__end__18.isEmptyPathTerm() )) {
+boolean tomMatch620_26= false ;
+if ( -2== tomMatch620__end__18.getHeadPathTerm()  ) {
+tomMatch620_26= true ;
 }
-if (!(tomMatch573_26)) {
-tomMatch573_25= true ;
+if (!(tomMatch620_26)) {
+tomMatch620_25= true ;
 }
 
 }
-if ( tomMatch573__end__18.isEmptyPathTerm() ) {
-tomMatch573__end__18=tomMatch573_7;
+if ( tomMatch620__end__18.isEmptyPathTerm() ) {
+tomMatch620__end__18=tomMatch620_7;
 } else {
-tomMatch573__end__18= tomMatch573__end__18.getTailPathTerm() ;
+tomMatch620__end__18= tomMatch620__end__18.getTailPathTerm() ;
 }
 
 }
-} while(!( (tomMatch573__end__18==tomMatch573_7) ));
+} while(!( (tomMatch620__end__18==tomMatch620_7) ));
 }
 }
-if (!(tomMatch573_25)) {
-boolean tomMatch573_24= false ;
+if (!(tomMatch620_25)) {
+boolean tomMatch620_24= false ;
 if ( (((( tom.gom.adt.rule.types.Term )tom_sublist) instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || ((( tom.gom.adt.rule.types.Term )tom_sublist) instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
 if ( (( tom.gom.adt.rule.types.Term )tom_sublist).isEmptyPathTerm() ) {
-tomMatch573_24= true ;
+tomMatch620_24= true ;
 }
 }
-if (!(tomMatch573_24)) {
+if (!(tomMatch620_24)) {
 
 //TODO: avoid the compilation warning
 // because it generates a  disjunction which is not fully supported with associative operators
@@ -1648,7 +1648,7 @@ int upcount =
 tom_sublist.length();
 Term newtail = 
 tom_make_PathForPattern().visit(
- tomMatch573__end__11.getTailPathTerm() );
+ tomMatch620__end__11.getTailPathTerm() );
 return 
  tom.gom.adt.rule.types.term.ConsPathTerm.make(-upcount,tom_append_list_PathTerm(newtail, tom.gom.adt.rule.types.term.EmptyPathTerm.make() )) ;
 
@@ -1660,14 +1660,14 @@ return
 }
 }
 }
-if ( tomMatch573__end__11.isEmptyPathTerm() ) {
-tomMatch573__end__11=(( tom.gom.adt.rule.types.Term )tom__arg);
+if ( tomMatch620__end__11.isEmptyPathTerm() ) {
+tomMatch620__end__11=(( tom.gom.adt.rule.types.Term )tom__arg);
 } else {
-tomMatch573__end__11= tomMatch573__end__11.getTailPathTerm() ;
+tomMatch620__end__11= tomMatch620__end__11.getTailPathTerm() ;
 }
 
 }
-} while(!( (tomMatch573__end__11==(( tom.gom.adt.rule.types.Term )tom__arg)) ));
+} while(!( (tomMatch620__end__11==(( tom.gom.adt.rule.types.Term )tom__arg)) ));
 }
 }
 
@@ -1675,51 +1675,51 @@ tomMatch573__end__11= tomMatch573__end__11.getTailPathTerm() ;
 {
 if ( (tom__arg instanceof tom.gom.adt.rule.types.Term) ) {
 if ( (((( tom.gom.adt.rule.types.Term )tom__arg) instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || ((( tom.gom.adt.rule.types.Term )tom__arg) instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
- tom.gom.adt.rule.types.Term  tomMatch573__end__36=(( tom.gom.adt.rule.types.Term )tom__arg);
+ tom.gom.adt.rule.types.Term  tomMatch620__end__36=(( tom.gom.adt.rule.types.Term )tom__arg);
 do {
 {
- tom.gom.adt.rule.types.Term  tomMatch573_32=tom_get_slice_PathTerm((( tom.gom.adt.rule.types.Term )tom__arg),tomMatch573__end__36, tom.gom.adt.rule.types.term.EmptyPathTerm.make() );
- tom.gom.adt.rule.types.Term  tom_tail=tomMatch573__end__36;
- tom.gom.adt.rule.types.Term  tom_sublist=tomMatch573_32;
+ tom.gom.adt.rule.types.Term  tomMatch620_32=tom_get_slice_PathTerm((( tom.gom.adt.rule.types.Term )tom__arg),tomMatch620__end__36, tom.gom.adt.rule.types.term.EmptyPathTerm.make() );
+ tom.gom.adt.rule.types.Term  tom_tail=tomMatch620__end__36;
+ tom.gom.adt.rule.types.Term  tom_sublist=tomMatch620_32;
 if ( (tom_tail instanceof tom.gom.adt.rule.types.Term) ) {
 if ( (((( tom.gom.adt.rule.types.Term )tom_tail) instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || ((( tom.gom.adt.rule.types.Term )tom_tail) instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
 if (!( (( tom.gom.adt.rule.types.Term )tom_tail).isEmptyPathTerm() )) {
 if ( 1== (( tom.gom.adt.rule.types.Term )tom_tail).getHeadPathTerm()  ) {
 if ( (tom_sublist instanceof tom.gom.adt.rule.types.Term) ) {
-boolean tomMatch573_57= false ;
-if ( ((tomMatch573_32 instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || (tomMatch573_32 instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
-if ( (tom_sublist==tomMatch573_32) ) {
- tom.gom.adt.rule.types.Term  tomMatch573__end__50=tomMatch573_32;
+boolean tomMatch620_57= false ;
+if ( ((tomMatch620_32 instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || (tomMatch620_32 instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
+if ( (tom_sublist==tomMatch620_32) ) {
+ tom.gom.adt.rule.types.Term  tomMatch620__end__50=tomMatch620_32;
 do {
 {
-if (!( tomMatch573__end__50.isEmptyPathTerm() )) {
-boolean tomMatch573_58= false ;
-if ( -2== tomMatch573__end__50.getHeadPathTerm()  ) {
-tomMatch573_58= true ;
+if (!( tomMatch620__end__50.isEmptyPathTerm() )) {
+boolean tomMatch620_58= false ;
+if ( -2== tomMatch620__end__50.getHeadPathTerm()  ) {
+tomMatch620_58= true ;
 }
-if (!(tomMatch573_58)) {
-tomMatch573_57= true ;
+if (!(tomMatch620_58)) {
+tomMatch620_57= true ;
 }
 
 }
-if ( tomMatch573__end__50.isEmptyPathTerm() ) {
-tomMatch573__end__50=tomMatch573_32;
+if ( tomMatch620__end__50.isEmptyPathTerm() ) {
+tomMatch620__end__50=tomMatch620_32;
 } else {
-tomMatch573__end__50= tomMatch573__end__50.getTailPathTerm() ;
+tomMatch620__end__50= tomMatch620__end__50.getTailPathTerm() ;
 }
 
 }
-} while(!( (tomMatch573__end__50==tomMatch573_32) ));
+} while(!( (tomMatch620__end__50==tomMatch620_32) ));
 }
 }
-if (!(tomMatch573_57)) {
-boolean tomMatch573_56= false ;
+if (!(tomMatch620_57)) {
+boolean tomMatch620_56= false ;
 if ( (((( tom.gom.adt.rule.types.Term )tom_sublist) instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || ((( tom.gom.adt.rule.types.Term )tom_sublist) instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
 if ( (( tom.gom.adt.rule.types.Term )tom_sublist).isEmptyPathTerm() ) {
-tomMatch573_56= true ;
+tomMatch620_56= true ;
 }
 }
-if (!(tomMatch573_56)) {
+if (!(tomMatch620_56)) {
 
 int downcount = 
 tom_sublist.length();
@@ -1744,40 +1744,40 @@ if ( (((( tom.gom.adt.rule.types.Term )tom_tail) instanceof tom.gom.adt.rule.typ
 if (!( (( tom.gom.adt.rule.types.Term )tom_tail).isEmptyPathTerm() )) {
 if ( 2== (( tom.gom.adt.rule.types.Term )tom_tail).getHeadPathTerm()  ) {
 if ( (tom_sublist instanceof tom.gom.adt.rule.types.Term) ) {
-boolean tomMatch573_57= false ;
-if ( ((tomMatch573_32 instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || (tomMatch573_32 instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
-if ( (tom_sublist==tomMatch573_32) ) {
- tom.gom.adt.rule.types.Term  tomMatch573__end__50=tomMatch573_32;
+boolean tomMatch620_57= false ;
+if ( ((tomMatch620_32 instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || (tomMatch620_32 instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
+if ( (tom_sublist==tomMatch620_32) ) {
+ tom.gom.adt.rule.types.Term  tomMatch620__end__50=tomMatch620_32;
 do {
 {
-if (!( tomMatch573__end__50.isEmptyPathTerm() )) {
-boolean tomMatch573_58= false ;
-if ( -2== tomMatch573__end__50.getHeadPathTerm()  ) {
-tomMatch573_58= true ;
+if (!( tomMatch620__end__50.isEmptyPathTerm() )) {
+boolean tomMatch620_58= false ;
+if ( -2== tomMatch620__end__50.getHeadPathTerm()  ) {
+tomMatch620_58= true ;
 }
-if (!(tomMatch573_58)) {
-tomMatch573_57= true ;
+if (!(tomMatch620_58)) {
+tomMatch620_57= true ;
 }
 
 }
-if ( tomMatch573__end__50.isEmptyPathTerm() ) {
-tomMatch573__end__50=tomMatch573_32;
+if ( tomMatch620__end__50.isEmptyPathTerm() ) {
+tomMatch620__end__50=tomMatch620_32;
 } else {
-tomMatch573__end__50= tomMatch573__end__50.getTailPathTerm() ;
+tomMatch620__end__50= tomMatch620__end__50.getTailPathTerm() ;
 }
 
 }
-} while(!( (tomMatch573__end__50==tomMatch573_32) ));
+} while(!( (tomMatch620__end__50==tomMatch620_32) ));
 }
 }
-if (!(tomMatch573_57)) {
-boolean tomMatch573_56= false ;
+if (!(tomMatch620_57)) {
+boolean tomMatch620_56= false ;
 if ( (((( tom.gom.adt.rule.types.Term )tom_sublist) instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || ((( tom.gom.adt.rule.types.Term )tom_sublist) instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
 if ( (( tom.gom.adt.rule.types.Term )tom_sublist).isEmptyPathTerm() ) {
-tomMatch573_56= true ;
+tomMatch620_56= true ;
 }
 }
-if (!(tomMatch573_56)) {
+if (!(tomMatch620_56)) {
 
 int downcount = 
 tom_sublist.length();
@@ -1801,40 +1801,40 @@ if ( (tom_tail instanceof tom.gom.adt.rule.types.Term) ) {
 if ( (((( tom.gom.adt.rule.types.Term )tom_tail) instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || ((( tom.gom.adt.rule.types.Term )tom_tail) instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
 if ( (( tom.gom.adt.rule.types.Term )tom_tail).isEmptyPathTerm() ) {
 if ( (tom_sublist instanceof tom.gom.adt.rule.types.Term) ) {
-boolean tomMatch573_57= false ;
-if ( ((tomMatch573_32 instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || (tomMatch573_32 instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
-if ( (tom_sublist==tomMatch573_32) ) {
- tom.gom.adt.rule.types.Term  tomMatch573__end__50=tomMatch573_32;
+boolean tomMatch620_57= false ;
+if ( ((tomMatch620_32 instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || (tomMatch620_32 instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
+if ( (tom_sublist==tomMatch620_32) ) {
+ tom.gom.adt.rule.types.Term  tomMatch620__end__50=tomMatch620_32;
 do {
 {
-if (!( tomMatch573__end__50.isEmptyPathTerm() )) {
-boolean tomMatch573_58= false ;
-if ( -2== tomMatch573__end__50.getHeadPathTerm()  ) {
-tomMatch573_58= true ;
+if (!( tomMatch620__end__50.isEmptyPathTerm() )) {
+boolean tomMatch620_58= false ;
+if ( -2== tomMatch620__end__50.getHeadPathTerm()  ) {
+tomMatch620_58= true ;
 }
-if (!(tomMatch573_58)) {
-tomMatch573_57= true ;
+if (!(tomMatch620_58)) {
+tomMatch620_57= true ;
 }
 
 }
-if ( tomMatch573__end__50.isEmptyPathTerm() ) {
-tomMatch573__end__50=tomMatch573_32;
+if ( tomMatch620__end__50.isEmptyPathTerm() ) {
+tomMatch620__end__50=tomMatch620_32;
 } else {
-tomMatch573__end__50= tomMatch573__end__50.getTailPathTerm() ;
+tomMatch620__end__50= tomMatch620__end__50.getTailPathTerm() ;
 }
 
 }
-} while(!( (tomMatch573__end__50==tomMatch573_32) ));
+} while(!( (tomMatch620__end__50==tomMatch620_32) ));
 }
 }
-if (!(tomMatch573_57)) {
-boolean tomMatch573_56= false ;
+if (!(tomMatch620_57)) {
+boolean tomMatch620_56= false ;
 if ( (((( tom.gom.adt.rule.types.Term )tom_sublist) instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || ((( tom.gom.adt.rule.types.Term )tom_sublist) instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
 if ( (( tom.gom.adt.rule.types.Term )tom_sublist).isEmptyPathTerm() ) {
-tomMatch573_56= true ;
+tomMatch620_56= true ;
 }
 }
-if (!(tomMatch573_56)) {
+if (!(tomMatch620_56)) {
 
 int downcount = 
 tom_sublist.length();
@@ -1854,14 +1854,14 @@ return
 }
 }
 
-if ( tomMatch573__end__36.isEmptyPathTerm() ) {
-tomMatch573__end__36=(( tom.gom.adt.rule.types.Term )tom__arg);
+if ( tomMatch620__end__36.isEmptyPathTerm() ) {
+tomMatch620__end__36=(( tom.gom.adt.rule.types.Term )tom__arg);
 } else {
-tomMatch573__end__36= tomMatch573__end__36.getTailPathTerm() ;
+tomMatch620__end__36= tomMatch620__end__36.getTailPathTerm() ;
 }
 
 }
-} while(!( (tomMatch573__end__36==(( tom.gom.adt.rule.types.Term )tom__arg)) ));
+} while(!( (tomMatch620__end__36==(( tom.gom.adt.rule.types.Term )tom__arg)) ));
 }
 }
 
@@ -1869,54 +1869,54 @@ tomMatch573__end__36= tomMatch573__end__36.getTailPathTerm() ;
 {
 if ( (tom__arg instanceof tom.gom.adt.rule.types.Term) ) {
 if ( (((( tom.gom.adt.rule.types.Term )tom__arg) instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || ((( tom.gom.adt.rule.types.Term )tom__arg) instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
- tom.gom.adt.rule.types.Term  tomMatch573__end__65=(( tom.gom.adt.rule.types.Term )tom__arg);
+ tom.gom.adt.rule.types.Term  tomMatch620__end__65=(( tom.gom.adt.rule.types.Term )tom__arg);
 do {
 {
- tom.gom.adt.rule.types.Term  tomMatch573_61=tom_get_slice_PathTerm((( tom.gom.adt.rule.types.Term )tom__arg),tomMatch573__end__65, tom.gom.adt.rule.types.term.EmptyPathTerm.make() );
-if (!( tomMatch573__end__65.isEmptyPathTerm() )) {
-if ( 1== tomMatch573__end__65.getHeadPathTerm()  ) {
- tom.gom.adt.rule.types.Term  tom_sublist=tomMatch573_61;
+ tom.gom.adt.rule.types.Term  tomMatch620_61=tom_get_slice_PathTerm((( tom.gom.adt.rule.types.Term )tom__arg),tomMatch620__end__65, tom.gom.adt.rule.types.term.EmptyPathTerm.make() );
+if (!( tomMatch620__end__65.isEmptyPathTerm() )) {
+if ( 1== tomMatch620__end__65.getHeadPathTerm()  ) {
+ tom.gom.adt.rule.types.Term  tom_sublist=tomMatch620_61;
 if ( (tom_sublist instanceof tom.gom.adt.rule.types.Term) ) {
-boolean tomMatch573_79= false ;
-if ( ((tomMatch573_61 instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || (tomMatch573_61 instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
-if ( (tom_sublist==tomMatch573_61) ) {
- tom.gom.adt.rule.types.Term  tomMatch573__end__72=tomMatch573_61;
+boolean tomMatch620_79= false ;
+if ( ((tomMatch620_61 instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || (tomMatch620_61 instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
+if ( (tom_sublist==tomMatch620_61) ) {
+ tom.gom.adt.rule.types.Term  tomMatch620__end__72=tomMatch620_61;
 do {
 {
-if (!( tomMatch573__end__72.isEmptyPathTerm() )) {
-boolean tomMatch573_80= false ;
-if ( 2== tomMatch573__end__72.getHeadPathTerm()  ) {
-tomMatch573_80= true ;
+if (!( tomMatch620__end__72.isEmptyPathTerm() )) {
+boolean tomMatch620_80= false ;
+if ( 2== tomMatch620__end__72.getHeadPathTerm()  ) {
+tomMatch620_80= true ;
 }
-if (!(tomMatch573_80)) {
-tomMatch573_79= true ;
+if (!(tomMatch620_80)) {
+tomMatch620_79= true ;
 }
 
 }
-if ( tomMatch573__end__72.isEmptyPathTerm() ) {
-tomMatch573__end__72=tomMatch573_61;
+if ( tomMatch620__end__72.isEmptyPathTerm() ) {
+tomMatch620__end__72=tomMatch620_61;
 } else {
-tomMatch573__end__72= tomMatch573__end__72.getTailPathTerm() ;
+tomMatch620__end__72= tomMatch620__end__72.getTailPathTerm() ;
 }
 
 }
-} while(!( (tomMatch573__end__72==tomMatch573_61) ));
+} while(!( (tomMatch620__end__72==tomMatch620_61) ));
 }
 }
-if (!(tomMatch573_79)) {
-boolean tomMatch573_78= false ;
+if (!(tomMatch620_79)) {
+boolean tomMatch620_78= false ;
 if ( (((( tom.gom.adt.rule.types.Term )tom_sublist) instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || ((( tom.gom.adt.rule.types.Term )tom_sublist) instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
 if ( (( tom.gom.adt.rule.types.Term )tom_sublist).isEmptyPathTerm() ) {
-tomMatch573_78= true ;
+tomMatch620_78= true ;
 }
 }
-if (!(tomMatch573_78)) {
+if (!(tomMatch620_78)) {
 
 int downcount = 
 tom_sublist.length();
 Term newtail = 
 tom_make_PathForPattern().visit(
- tomMatch573__end__65.getTailPathTerm() );
+ tomMatch620__end__65.getTailPathTerm() );
 return 
  tom.gom.adt.rule.types.term.ConsPathTerm.make(downcount,tom_append_list_PathTerm(newtail, tom.gom.adt.rule.types.term.EmptyPathTerm.make() )) ;
 
@@ -1928,14 +1928,14 @@ return
 }
 }
 }
-if ( tomMatch573__end__65.isEmptyPathTerm() ) {
-tomMatch573__end__65=(( tom.gom.adt.rule.types.Term )tom__arg);
+if ( tomMatch620__end__65.isEmptyPathTerm() ) {
+tomMatch620__end__65=(( tom.gom.adt.rule.types.Term )tom__arg);
 } else {
-tomMatch573__end__65= tomMatch573__end__65.getTailPathTerm() ;
+tomMatch620__end__65= tomMatch620__end__65.getTailPathTerm() ;
 }
 
 }
-} while(!( (tomMatch573__end__65==(( tom.gom.adt.rule.types.Term )tom__arg)) ));
+} while(!( (tomMatch620__end__65==(( tom.gom.adt.rule.types.Term )tom__arg)) ));
 }
 }
 
@@ -2006,31 +2006,31 @@ public  tom.gom.adt.rule.types.Term  visit_Term( tom.gom.adt.rule.types.Term  to
 {
 if ( (tom__arg instanceof tom.gom.adt.rule.types.Term) ) {
 if ( (((( tom.gom.adt.rule.types.Term )tom__arg) instanceof tom.gom.adt.rule.types.term.ConsPathTerm) || ((( tom.gom.adt.rule.types.Term )tom__arg) instanceof tom.gom.adt.rule.types.term.EmptyPathTerm)) ) {
- tom.gom.adt.rule.types.Term  tomMatch574__end__4=(( tom.gom.adt.rule.types.Term )tom__arg);
+ tom.gom.adt.rule.types.Term  tomMatch621__end__4=(( tom.gom.adt.rule.types.Term )tom__arg);
 do {
 {
-if (!( tomMatch574__end__4.isEmptyPathTerm() )) {
- tom.gom.adt.rule.types.Term  tomMatch574_5= tomMatch574__end__4.getTailPathTerm() ;
-if (!( tomMatch574_5.isEmptyPathTerm() )) {
+if (!( tomMatch621__end__4.isEmptyPathTerm() )) {
+ tom.gom.adt.rule.types.Term  tomMatch621_5= tomMatch621__end__4.getTailPathTerm() ;
+if (!( tomMatch621_5.isEmptyPathTerm() )) {
 
 if (
- tomMatch574__end__4.getHeadPathTerm() ==-
- tomMatch574_5.getHeadPathTerm() ) {
+ tomMatch621__end__4.getHeadPathTerm() ==-
+ tomMatch621_5.getHeadPathTerm() ) {
 return 
-tom_append_list_PathTerm(tom_get_slice_PathTerm((( tom.gom.adt.rule.types.Term )tom__arg),tomMatch574__end__4, tom.gom.adt.rule.types.term.EmptyPathTerm.make() ),tom_append_list_PathTerm( tomMatch574_5.getTailPathTerm() , tom.gom.adt.rule.types.term.EmptyPathTerm.make() ));
+tom_append_list_PathTerm(tom_get_slice_PathTerm((( tom.gom.adt.rule.types.Term )tom__arg),tomMatch621__end__4, tom.gom.adt.rule.types.term.EmptyPathTerm.make() ),tom_append_list_PathTerm( tomMatch621_5.getTailPathTerm() , tom.gom.adt.rule.types.term.EmptyPathTerm.make() ));
 }
 
 
 }
 }
-if ( tomMatch574__end__4.isEmptyPathTerm() ) {
-tomMatch574__end__4=(( tom.gom.adt.rule.types.Term )tom__arg);
+if ( tomMatch621__end__4.isEmptyPathTerm() ) {
+tomMatch621__end__4=(( tom.gom.adt.rule.types.Term )tom__arg);
 } else {
-tomMatch574__end__4= tomMatch574__end__4.getTailPathTerm() ;
+tomMatch621__end__4= tomMatch621__end__4.getTailPathTerm() ;
 }
 
 }
-} while(!( (tomMatch574__end__4==(( tom.gom.adt.rule.types.Term )tom__arg)) ));
+} while(!( (tomMatch621__end__4==(( tom.gom.adt.rule.types.Term )tom__arg)) ));
 }
 }
 
@@ -2125,7 +2125,7 @@ tom_append_list_PathTerm(path, tom.gom.adt.rule.types.term.ConsPathTerm.make(hea
 }
 //transform the path to obtain the corresponding one in the pattern
 return 
-( (( (( null )==null)?tom_make_RepeatId(tom_make_Normalize()):new tom.library.sl.Sequence(tom_make_RepeatId(tom_make_Normalize()),( null )) )==null)?tom_make_PathForPattern():new tom.library.sl.Sequence(tom_make_PathForPattern(),( (( null )==null)?tom_make_RepeatId(tom_make_Normalize()):new tom.library.sl.Sequence(tom_make_RepeatId(tom_make_Normalize()),( null )) )) ).visitLight(path);
+ tom.library.sl.Sequence.make(tom_make_PathForPattern(), tom.library.sl.Sequence.make(tom_make_RepeatId(tom_make_Normalize()), null ) ) .visitLight(path);
 }
 
 

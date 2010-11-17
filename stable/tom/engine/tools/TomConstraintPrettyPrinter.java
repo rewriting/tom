@@ -678,24 +678,24 @@ String s = "";
 {
 if ( (subject instanceof tom.engine.adt.tomslot.types.SlotList) ) {
 if ( (((( tom.engine.adt.tomslot.types.SlotList )subject) instanceof tom.engine.adt.tomslot.types.slotlist.ConsconcSlot) || ((( tom.engine.adt.tomslot.types.SlotList )subject) instanceof tom.engine.adt.tomslot.types.slotlist.EmptyconcSlot)) ) {
- tom.engine.adt.tomslot.types.SlotList  tomMatch255__end__4=(( tom.engine.adt.tomslot.types.SlotList )subject);
+ tom.engine.adt.tomslot.types.SlotList  tomMatch302__end__4=(( tom.engine.adt.tomslot.types.SlotList )subject);
 do {
 {
-if (!( tomMatch255__end__4.isEmptyconcSlot() )) {
+if (!( tomMatch302__end__4.isEmptyconcSlot() )) {
 
 s += prettyPrint(
- tomMatch255__end__4.getHeadconcSlot() )+",";
+ tomMatch302__end__4.getHeadconcSlot() )+",";
 
 
 }
-if ( tomMatch255__end__4.isEmptyconcSlot() ) {
-tomMatch255__end__4=(( tom.engine.adt.tomslot.types.SlotList )subject);
+if ( tomMatch302__end__4.isEmptyconcSlot() ) {
+tomMatch302__end__4=(( tom.engine.adt.tomslot.types.SlotList )subject);
 } else {
-tomMatch255__end__4= tomMatch255__end__4.getTailconcSlot() ;
+tomMatch302__end__4= tomMatch302__end__4.getTailconcSlot() ;
 }
 
 }
-} while(!( (tomMatch255__end__4==(( tom.engine.adt.tomslot.types.SlotList )subject)) ));
+} while(!( (tomMatch302__end__4==(( tom.engine.adt.tomslot.types.SlotList )subject)) ));
 }
 }
 

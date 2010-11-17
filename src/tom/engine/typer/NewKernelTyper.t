@@ -1574,6 +1574,7 @@ matchBlockFail :
           %match {
             /* CASES 5a and 7a */
             !concTomType(_*,type,_*) << superTypesT1 && type << TomType t2 -> {
+              //DEBUG System.out.println("detectFail, superTypesT1 = " + superTypesT1);
               printError(`tConstraint);
               break matchBlockFail;
             }
@@ -1699,7 +1700,7 @@ matchBlockFail :
         //DEBUG System.out.println("\nsolve6: " + `constraint + " and " + `c2);
         TomType lowerType = nkt.`minType(t1,t2);
         //DEBUG System.out.println("\nminType(" + `t1.getTomType() + "," +
-        //    `t2.getTomType() + ") = " + lowerType);
+        //DEBUG     `t2.getTomType() + ") = " + lowerType);
 
         if (lowerType == `EmptyType()) {
           nkt.printError(`constraint);
@@ -1809,6 +1810,17 @@ matchBlockFail :
           // TODO fix this test to be according to the explanation above
           if(`supTypes2.getCollectionconcTomType().contains(currentType) && dependencies.get(currentType).length() == (intersectionSize-1)) {
             return currentType;
+  /*
+        //DEBUG System.out.println("supTypes1 = " + supTypes1);
+        Set<TomType> setSupTypes1 = (Set) supTypes1;
+        boolean result = setSupTypes1.retainAll((Collection) supTypes2);
+        int intersectionSize = setSupTypes1.size();
+        for (TomType currentSupType:setSupTypes1) {
+          // The size test is enough since tom doesn't accept multiple
+          // inheritance
+          if (dependencies.get(currentSupType).length() == (intersectionSize-1)) {
+            return currentSupType;
+            */
           }
         }
       }

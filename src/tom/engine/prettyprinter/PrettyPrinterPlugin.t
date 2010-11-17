@@ -28,6 +28,7 @@ package tom.engine.prettyprinter;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.io.*;
 
 import tom.engine.exception.TomRuntimeException;
 
@@ -69,7 +70,7 @@ public class PrettyPrinterPlugin extends TomGenericPlugin {
   %include { ../../library/mapping/java/sl.tom }
   %include { ../../library/mapping/java/util/types/Collection.tom}
   %include { ../../library/mapping/java/util/types/Map.tom}
-
+  %include { string.tom }
   %typeterm PrettyPrinterPlugin { implement { PrettyPrinterPlugin } }
 
   private static Logger logger = Logger.getLogger("tom.engine.prettyprinter.PrettyPrinterPlugin");
@@ -112,12 +113,42 @@ public class PrettyPrinterPlugin extends TomGenericPlugin {
   }
 
   private void prettyPrinter(Code code) {
+//    %include { string.tom }
     System.out.println("PrettyPrinter active");
-    %match(code) {
-      Tom(concCode(_*,c,_*)) -> {
-	System.out.println(`c);
+/*
+    Map<Float,String> anOrganizer = new TreeMap<Float,String>();
+    try {
+      FileWriter log = new FileWriter("log.t");
+      FileWriter txt = new FileWriter("log.txt");
+      txt.write(code.toString());
+      txt.close();
+    
+      %match(code) {
+        Tom(concCode(_*,TargetLanguageToCode(TL(a,e,_)),_*))-> { anOrganizer.put(getPosition(`e),`a); }
+        Tom(concCode(_*,TargetLanguageToCode(TL(_,_,e)),BQTermToCode(Composite(CompositeBQTerm(BuildTerm(Name(a),_,_)))),_*))-> { anOrganizer.put(getPosition(`e),"`"+`a+"()"); }
+//          Tom(concCode(t*)) -> { System.out.println(`(t*)); }
       }
+    for (Iterator<Float> i = anOrganizer.keySet().iterator() ; i.hasNext() ; ){
+      log.write(anOrganizer.get(i.next()));
     }
+    
+    log.close();
+    }
+    catch(Exception e) {
+      System.out.println("little problem while writing the log file");
+    }
+*/
+    //System.out.println(intermediaryCode);
+    //System.out.println(codeToGive);
   }
-
+ 
+/* 
+  private float getPosition(TextPosition tp) {
+    float f;
+    %match(tp) {
+      TextPosition(line,column) -> { f = Float.parseFloat(`line+"."+`column); return f; }
+    }
+  return -1;
+  }
+*/
 }

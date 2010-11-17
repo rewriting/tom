@@ -166,9 +166,9 @@ return;
 {
 if ( (n instanceof tom.library.adt.tnode.types.TNode) ) {
 if ( ((( tom.library.adt.tnode.types.TNode )n) instanceof tom.library.adt.tnode.types.tnode.ElementNode) ) {
- tom.library.adt.tnode.types.TNodeList  tomMatch635_15= (( tom.library.adt.tnode.types.TNode )n).getChildList() ;
-if ( ((tomMatch635_15 instanceof tom.library.adt.tnode.types.tnodelist.ConsconcTNode) || (tomMatch635_15 instanceof tom.library.adt.tnode.types.tnodelist.EmptyconcTNode)) ) {
-if ( tomMatch635_15.isEmptyconcTNode() ) {
+ tom.library.adt.tnode.types.TNodeList  tomMatch682_15= (( tom.library.adt.tnode.types.TNode )n).getChildList() ;
+if ( ((tomMatch682_15 instanceof tom.library.adt.tnode.types.tnodelist.ConsconcTNode) || (tomMatch682_15 instanceof tom.library.adt.tnode.types.tnodelist.EmptyconcTNode)) ) {
+if ( tomMatch682_15.isEmptyconcTNode() ) {
 
 write("<"+
  (( tom.library.adt.tnode.types.TNode )n).getName() );

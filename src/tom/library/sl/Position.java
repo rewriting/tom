@@ -301,7 +301,7 @@ public class Position implements Cloneable,Path {
     if(i >= length()-1) {
       return v;
     } else {
-      return new Sequence(new Omega(omega[i],getOmegaPathAux(v,i+1)),v);
+      return Sequence.make(new Omega(omega[i],getOmegaPathAux(v,i+1)),v);
     }
   }
 
