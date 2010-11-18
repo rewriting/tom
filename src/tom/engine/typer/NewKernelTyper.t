@@ -867,15 +867,15 @@ public class NewKernelTyper {
     for (Code code : cList.getCollectionconcCode()) {
       init();
       code =  collectKnownTypesFromCode(`code);
-      //DEBUG System.out.println("------------- Code typed with typeVar:\n code = " +
-      //DEBUG     `code);
+      System.out.println("------------- Code typed with typeVar:\n code = " +
+          `code);
       code = inferAllTypes(code,`EmptyType());
       //DEBUG printGeneratedConstraints(subtypeConstraints);
       solveConstraints();
       //DEBUG System.out.println("substitutions = " + substitutions);
       code = replaceInCode(code);
-      //DEBUG System.out.println("------------- Code typed with substitutions:\n code = " +
-      //DEBUG     `code);
+      System.out.println("------------- Code typed with substitutions:\n code = " +
+          `code);
       replaceInSymbolTable();
       newCList = `concCode(code,newCList*);
     }
@@ -1727,7 +1727,7 @@ matchBlockFail :
 
       /* PHASE 5 */
       tcl -> {
-        //DEBUG System.out.println("\nsolve8: " + `tcl);
+        System.out.println("\nsolve8: " + `tcl);
         return nkt.enumerateSolutions(`tcl);
       }
     }
@@ -1835,9 +1835,9 @@ matchBlockFail :
    * reason, the order of rules is important.
    * <p>
    * A subtype constraint can be written by 3 formats:
-   * 1 - A <: T
-   * 2 - T <: A
-   * 3 - A1 <: A2
+   * F1 - A <: T
+   * F2 - T <: A
+   * F3 - A1 <: A2
    * where 'Ai' and 'Ti' are respectively type variables and ground types (and
    * the constraint 'T1 <: T2' was already handled by garbage collecting in
    * <code>solveSubtypeConstraints</code> method.
@@ -1855,28 +1855,52 @@ matchBlockFail :
    * tCList = {A1 <: A2} U tCList' and Map 
    *  -->  tCList = tCList' and {(A1,A2)} U Map if Ai are not in tCList'
    * <p>
-   * Considering combination of 1 with 3 and 2 with 3:
+   * Considering combination of {F1 x F3}, {F2 x F3}, {F3 x F3} and {F1 x F2} (since 
+   * {F1 x F1} and {F2 x F2} are treated by PHASE 4 of
+   * <code>solveSubtypingConstraints</code> or by previous cases):
    * <p>
-   * CASE 4:
-   *    a) tCList = {A <: T1, A <: A1} U tCList' and Map 
-   *      -->  tCList = {T1 <: A1} U [A/T1]tCList' and {(A,T1)} U Map
-   *    b) tCList = {A <: A1, A <: T1} U tCList' and Map 
-   *      -->  tCList = {T1 <: A1} U [A/T1]tCList' and {(A,T1)} U Map
+   * CASE 4 {F1 x F3} and {F3 x F1}:
+   *    a) tCList = {A <: T, A <: A1} U tCList' and Map
+   *      -->  tCList = {T <: A1} U [A/T]tCList' and {(A,T)} U Map
+   *    b) tCList = {A <: T, A1 <: A} U tCList' and Map 
+   *      --> CASE 3 for A1 <: A 
+   *    c) tCList = {A <: T, A1 <: A2} U tCList' and Map 
+   *      --> CASE 1 for A <: T and CASE 3 for A1 <: A2 
    * <p>
-   * CASE 5:
-   *    a) tCList = {T1 <: A, A1 <: A} U tCList' and Map 
-   *      -->  tCList = {A1 <: T1} U [A/T1]tCList' and {(A,T1)} U Map
-   *    b) tCList = {A1 <: A, T1 <: A} U tCList' and Map 
-   *      -->  tCList = {A1 <: T1} U [A/T1]tCList' and {(A,T1)} U Map
+   * CASE 5 {F2 x F3} and {F3 x F2}:
+   *    a) tCList = {T <: A, A1 <: A} U tCList' and Map 
+   *      -->  tCList = {A1 <: T} U [A/T]tCList' and {(A,T)} U Map
+   *    b) tCList = {T <: A, A <: A1} U tCList' and Map 
+   *      --> CASE 3 for A <: A1 
+   *    c) tCList = {T <: A, A1 <: A2} U tCList' and Map 
+   *      --> CASE 1 for T <: A and CASE 3 for A1 <: A2
    * <p>
-   * CASE 6:
-   * tCList = {A <: A1, A <: A2} U tCList' and Map 
-   *  --> Nothing, java must infer the right type 
+   * CASE 6 {F1 x F2} and {F2 x F1}:
+   *    a) tCList = {A <: T, T <: A1} U tCList' and Map 
+   *      --> CASE 1 for A <: T and CASE 2 for T <: A1 
+   *    b) tCList = {A <: T, T1 <: A1} U tCList' and Map 
+   *      --> CASE 1 for A <: T and CASE 2 for T1 <: A1 
+   *    c) tCList = {A <: T, T1 <: A} U tCList' and Map 
+   *      -->  tCList = {T1 <: T} U [A/T]tCList' and {(A,T)} U Map
+   *     Note: in this case T1 is different from T (since the case where T1 is
+   *     equals to T is treated by PHASE 1 of
+   *     <code>solveSubtypingConstraints</code>.
+   * <p>
+   * CASE 7 {F3 x F3}:
+   *    a) tCList = {A <: A1, A <: A2} U tCList' and Map 
+   *      --> Nothing, java must infer the right type 
+   *    b) tCList = {A <: A1, A2 <: A3} U tCList' and Map 
+   *      --> Nothing, java must infer the right type 
+   *    c) tCList = {A1 <: A, A2 <: A} U tCList' and Map 
+   *      --> Nothing, java must infer the right type 
+   *    d) tCList = {A1 <: A, A <: A2} U tCList' and Map 
+   *      --> Nothing, java must infer the right type 
    * <p>
    * @param nkt an instance of object NewKernelTyper
    * @return    the subtype constraint list resulting
    */
   private TypeConstraintList enumerateSolutions(TypeConstraintList tCList) {
+    TypeConstraintList newtCList = tCList;
 matchBlockSolve :
     {
       %match(tCList) {
@@ -1888,7 +1912,8 @@ matchBlockSolve :
           if (!`findVar(tVar,concTypeConstraint(leftTCL,rightTCL))) {
             // Same code of cases 7 and 8 of solveEquationConstraints
             addSubstitution(`tVar,`groundType);
-            tCList = `concTypeConstraint(newLeftTCL*,newRightTCL*);
+            newtCList =
+              `replaceInSubtypingConstraints(concTypeConstraint(newLeftTCL*,newRightTCL*));
             break matchBlockSolve;
           }
         }
@@ -1900,14 +1925,15 @@ matchBlockSolve :
           TypeConstraintList newRightTCL = `rightTCL;
           if (!`findVar(tVar,concTypeConstraint(leftTCL,rightTCL))) {
             addSubstitution(`tVar,`groundType);
-            tCList = `concTypeConstraint(newLeftTCL*,newRightTCL*);
+            newtCList =
+              `replaceInSubtypingConstraints(concTypeConstraint(newLeftTCL*,newRightTCL*));
             break matchBlockSolve;
           }
         }
 
         /* CASE 3 */
         concTypeConstraint(leftTCL*,c1@Subtype[Type1=tVar1@TypeVar[],Type2=tVar2@TypeVar[]],rightTCL*) -> {
-          //DEBUG System.out.println("\nenumerateSolutions1: " + `c1);
+          //DEBUG System.out.println("\nenumerateSolutions3: " + `c1);
           TypeConstraintList newLeftTCL = `leftTCL;
           TypeConstraintList newRightTCL = `rightTCL;
           if (!`findVar(tVar1,concTypeConstraint(leftTCL,rightTCL)) &&
@@ -1915,49 +1941,74 @@ matchBlockSolve :
             // Same code of cases 7 and 8 of solveEquationConstraints
             // TODO verify if we need to add
             addSubstitution(`tVar1,`tVar2);
-            tCList = `concTypeConstraint(newLeftTCL*,newRightTCL*);
+            newtCList =
+              `replaceInSubtypingConstraints(concTypeConstraint(newLeftTCL*,newRightTCL*));
             break matchBlockSolve;
           }
         }
 
         /* CASE 4a */
         concTypeConstraint(tcl1*,c1@Subtype[Type1=tVar1@TypeVar[],Type2=groundType@!TypeVar[]],tcl2*,c2@Subtype[Type1=tVar1,Type2=tVar2@TypeVar[],Info=info],tcl3*) -> {
-          //DEBUG System.out.println("\nenumerateSolutions3a: " + `c1 + " and " + `c2);
+          //DEBUG System.out.println("\nenumerateSolutions4a: " + `c1 + " and " + `c2);
           addSubstitution(`tVar1,`groundType);
-          tCList =
-            `addSubConstraint(Subtype(groundType,tVar2,info),concTypeConstraint(tcl1*,tcl2*,tcl3*));
+          newtCList =
+            `replaceInSubtypingConstraints(concTypeConstraint(c2,tcl1*,tcl2*,tcl3*));
           break matchBlockSolve;
         }
 
-        /* CASE 4b */
+        /* CASE 4a (symmetric) */
         concTypeConstraint(tcl1*,c1@Subtype[Type1=tVar1,Type2=tVar2@TypeVar[],Info=info],tcl2*,c2@Subtype[Type1=tVar1@TypeVar[],Type2=groundType@!TypeVar[]],tcl3*) -> {
-          //DEBUG System.out.println("\nenumerateSolutions3b: " + `c1 + " and " + `c2);
+          //DEBUG System.out.println("\nenumerateSolutions4a-sym: " + `c1 + " and " + `c2);
           addSubstitution(`tVar1,`groundType);
-          tCList =
-            `addSubConstraint(Subtype(groundType,tVar2,info),concTypeConstraint(tcl1*,tcl2*,tcl3*));
+          newtCList =
+            `replaceInSubtypingConstraints(concTypeConstraint(c1,tcl1*,tcl2*,tcl3*));
           break matchBlockSolve;
         }
 
         /* CASE 5a */
         concTypeConstraint(tcl1*,c1@Subtype[Type1=groundType@!TypeVar[],Type2=tVar1@TypeVar[]],tcl2*,c2@Subtype[Type1=tVar2@TypeVar[],Type2=tVar1,Info=info],tcl3*) -> {
-          //DEBUG System.out.println("\nenumerateSolutions4a: " + `c1 + " and " + `c2);
+          //DEBUG System.out.println("\nenumerateSolutions5a: " + `c1 + " and " + `c2);
           addSubstitution(`tVar1,`groundType);
-          tCList =
-            `addSubConstraint(Subtype(tVar2,groundType,info),concTypeConstraint(tcl1*,tcl2*,tcl3*));
+          newtCList =
+            `replaceInSubtypingConstraints(concTypeConstraint(c2,tcl1*,tcl2*,tcl3*));
           break matchBlockSolve;
         }
 
-        /* CASE 5b */
+        /* CASE 5a (symmetric) */
         concTypeConstraint(tcl1*,c1@Subtype[Type1=tVar2@TypeVar[],Type2=tVar1,Info=info],tcl2*,c2@Subtype[Type1=groundType@!TypeVar[],Type2=tVar1@TypeVar[]],tcl3*) -> {
-          //DEBUG System.out.println("\nenumerateSolutions4b: " + `c1 + " and " + `c2);
+          //DEBUG System.out.println("\nenumerateSolutions5a-sym: " + `c1 + " and " + `c2);
           addSubstitution(`tVar1,`groundType);
-          tCList =
-            `addSubConstraint(Subtype(tVar2,groundType,info),concTypeConstraint(tcl1*,tcl2*,tcl3*));
+          newtCList =
+            `replaceInSubtypingConstraints(concTypeConstraint(c1,tcl1*,tcl2*,tcl3*));
           break matchBlockSolve;
+        }
+
+        /* CASE 6c */
+        concTypeConstraint(tcl1*,c1@Subtype[Type1=tVar@TypeVar[],Type2=groundSupType@!TypeVar[]],tcl2*,c2@Subtype[Type1=groundSubType@!TypeVar[],Type2=tVar,Info=info],tcl3*) -> {
+          //DEBUG System.out.println("\nenumerateSolutions6c: " + `c1 + " and " + `c2);
+          addSubstitution(`tVar,`groundSupType);
+          newtCList =
+            `replaceInSubtypingConstraints(concTypeConstraint(c2,tcl1*,tcl2*,tcl3*));
+          break matchBlockSolve;
+        }
+
+        /* CASE 6c (symmetric) */
+        concTypeConstraint(tcl1*,c1@Subtype[Type1=groundSubType@!TypeVar[],Type2=tVar,Info=info],tcl2*,c2@Subtype[Type1=tVar@TypeVar[],Type2=groundSupType@!TypeVar[]],tcl3*) -> {
+          //DEBUG System.out.println("\nenumerateSolutions6c: " + `c1 + " and " + `c2);
+          addSubstitution(`tVar,`groundSupType);
+          newtCList =
+            `replaceInSubtypingConstraints(concTypeConstraint(c1,tcl1*,tcl2*,tcl3*));
+          break matchBlockSolve;
+        }
+
+        /* CASE 7 */
+        _ -> { 
+          System.out.println("When none of previous rules can be applied!");
+          System.out.println("newtCList = " + `tCList + '\n');
         }
       }
     }
-    return tCList;
+    return newtCList;
   }
 
   /**
