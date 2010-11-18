@@ -867,15 +867,15 @@ public class NewKernelTyper {
     for (Code code : cList.getCollectionconcCode()) {
       init();
       code =  collectKnownTypesFromCode(`code);
-      //DEBUG System.out.println("------------- Code typed with typeVar:\n code = " +
-      //DEBUG     `code);
+      System.out.println("------------- Code typed with typeVar:\n code = " +
+          `code);
       code = inferAllTypes(code,`EmptyType());
       //DEBUG printGeneratedConstraints(subtypeConstraints);
       solveConstraints();
       //DEBUG System.out.println("substitutions = " + substitutions);
       code = replaceInCode(code);
-      //DEBUG System.out.println("------------- Code typed with substitutions:\n code = " +
-      //DEBUG     `code);
+      System.out.println("------------- Code typed with substitutions:\n code = " +
+          `code);
       replaceInSymbolTable();
       newCList = `concCode(code,newCList*);
     }
@@ -1336,22 +1336,27 @@ public class NewKernelTyper {
    * method <code>solveEquationConstraints</code> to solve this list. 
    */
   private void solveConstraints() {
-    try {
-      //DEBUG System.out.println("\nsolveConstraints 1:");
-      printGeneratedConstraints(equationConstraints);
-      //DEBUG printGeneratedConstraints(subtypeConstraints);
-      solveEquationConstraints(equationConstraints);
-      TypeConstraintList simplifiedConstraints =
-        replaceInSubtypingConstraints(subtypeConstraints);
-      printGeneratedConstraints(simplifiedConstraints);
-      simplifiedConstraints = 
-        `RepeatId(solveSubtypingConstraints(this)).visitLight(simplifiedConstraints);
-      //DEBUG System.out.println("\nsolveConstraints 3:");
-      //DEBUG printGeneratedConstraints(simplifiedConstraints);
-    } catch(tom.library.sl.VisitFailure e) {
-      throw new TomRuntimeException("solveConstraints: failure on " +
-          subtypeConstraints);
+    //DEBUG System.out.println("\nsolveConstraints 1:");
+    printGeneratedConstraints(equationConstraints);
+    //DEBUG printGeneratedConstraints(subtypeConstraints);
+    solveEquationConstraints(equationConstraints);
+    %match {
+      !concTypeConstraint() << subtypeConstraints -> {
+        TypeConstraintList simplifiedConstraints =
+          replaceInSubtypingConstraints(subtypeConstraints);
+        //DEBUG printGeneratedConstraints(simplifiedConstraints);
+        try {
+          simplifiedConstraints = 
+            `RepeatId(solveSubtypingConstraints(this)).visitLight(simplifiedConstraints);
+          //DEBUG System.out.println("\nsolveConstraints 3:");
+          //DEBUG printGeneratedConstraints(simplifiedConstraints);
+        } catch(tom.library.sl.VisitFailure e) {
+          throw new TomRuntimeException("solveConstraints: failure on " +
+              subtypeConstraints);
+        }
+      }
     }
+
   }
 
 
