@@ -158,6 +158,16 @@ public class TomMappingFromEcore {
   is_sort(t) { @(c.isPrimitive() ? "true" : "$t instanceof " + decl[0] + decl[1])@ }
   equals(l1,l2) { @(c.isPrimitive() ? "$l1 == $l2" : "$l1.equals($l2)")@ }
 }]%);
+        genSubtype(eclf);
+      }
+    }
+  }
+
+  private static void genSubtype(EClassifier eclf) {
+    if((eclf instanceof EClass) && !((EClass)eclf).getESuperTypes().isEmpty()) {
+      for (EClass supertype:((EClass)eclf).getESuperTypes()) {
+        out.println(%[
+%subtype @eclf.getName()@ <: @supertype.getName()@]%);
       }
     }
   }
