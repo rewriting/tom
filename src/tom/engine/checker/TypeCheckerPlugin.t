@@ -103,9 +103,12 @@ public class TypeCheckerPlugin extends TomGenericPlugin {
 
   public int getClass(TomTerm term) {
     %match(term) {
+      /* TermAppl does not exists after Desugarer phase */
+      /*
       TermAppl[NameList=concTomName(Name(""))] -> { return UNAMED_APPL;}
       TermAppl[NameList=concTomName(Name(_))] -> { return TERM_APPL;}
       TermAppl[NameList=concTomName(Name(_), _*)] -> { return APPL_DISJUNCTION;}
+      */
       RecordAppl[NameList=concTomName(Name(_))] -> { return RECORD_APPL;}
       RecordAppl[NameList=concTomName(Name(_), _*)] -> { return RECORD_APPL_DISJUNCTION;}
       XMLAppl[] -> { return XML_APPL;}
@@ -118,6 +121,8 @@ public class TypeCheckerPlugin extends TomGenericPlugin {
   public String getName(TomTerm term) {
     String dijunctionName = "";
     %match(term) {
+      /* TermAppl does not exists after Desugarer phase */
+      /*
       TermAppl[NameList=concTomName(Name(name))] -> { return `name;}
       TermAppl[NameList=nameList] -> {
         String head;
@@ -129,6 +134,7 @@ public class TypeCheckerPlugin extends TomGenericPlugin {
         }
         return dijunctionName;
       }
+      */
       RecordAppl[NameList=concTomName(Name(name))] -> { return `name;}
       RecordAppl[NameList=nameList] -> {
         String head;
@@ -161,11 +167,6 @@ public class TypeCheckerPlugin extends TomGenericPlugin {
   /**
    * Shared Functions 
    */
-  protected String extractType(TomSymbol symbol) {
-    TomType type = TomBase.getSymbolCodomain(symbol);
-    return TomBase.getTomType(type);
-  }
-
   protected String findOriginTrackingFileName(OptionList optionList) {
     %match(optionList) {
       concOption(_*,OriginTracking[FileName=fileName],_*) -> { return `fileName; }
@@ -178,15 +179,6 @@ public class TypeCheckerPlugin extends TomGenericPlugin {
       concOption(_*,OriginTracking[Line=line],_*) -> { return `line; }
     }
     return -1;
-  }
-
-  protected void ensureOriginTrackingLine(int line) {
-    if(line < 0) {
-      TomMessage.error(getLogger(),
-          getStreamManager().getInputFileName(), 0,
-          TomMessage.findOTL);
-      //System.out.println("findOriginTrackingLine: not found ");
-    }
   }
 
   public void run(Map informationTracker) {
@@ -246,25 +238,6 @@ public class TypeCheckerPlugin extends TomGenericPlugin {
       }
     }
 
-  }
-
-  /* 
-   * Collect unknown (not in symbol table) appls without ()
-   */
-  %strategy collectUnknownAppls(tcp:TypeCheckerPlugin) extends Identity() {
-    visit TomTerm {
-      app@TermAppl[] -> {
-        if(tcp.getSymbolTable().getSymbolFromName(tcp.getName(`app))==null) {
-          TomMessage.error(tcp.getLogger(),
-              tcp.findOriginTrackingFileName(`app.getOptions()),
-              tcp.findOriginTrackingLine(`app.getOptions()),
-              TomMessage.unknownVariableInWhen,
-              tcp.getName(`app));
-        }
-        // else, it's actually app()
-        // else, it's a unknown (ie : java) function
-      }
-    } 
   }
 
   private void verifyMatchVariable(ConstraintInstructionList constraintInstructionList) throws VisitFailure {

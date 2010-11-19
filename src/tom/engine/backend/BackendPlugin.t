@@ -335,7 +335,9 @@ public class BackendPlugin extends TomGenericPlugin {
     }
 
     visit TomTerm {
-      (TermAppl|RecordAppl)[NameList=nameList] -> {
+      /* TermAppl does not exists after Desugarer phase */
+      //(TermAppl|RecordAppl)[NameList=nameList] -> {
+      RecordAppl[NameList=nameList] -> {
         TomNameList l = `nameList;
         /*System.out.println("dest " + `l);*/
         while(!l.isEmptyconcTomName()) {
