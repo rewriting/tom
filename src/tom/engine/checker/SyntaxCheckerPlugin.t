@@ -1324,9 +1324,11 @@ matchblock:{
         TomMessage.error(getLogger(),fileName,decLine, TomMessage.unknownSymbol, res);
         return null;
       } else { // known symbol
-        if( strictType  || !topLevel ) {
-          if(!ensureSymbolCodomain(TomBase.getSymbolCodomain(symbol), expectedType, TomMessage.invalidCodomain, res, fileName,decLine)) {
-            return null;
+        if (!getOptionBooleanValue("newtyper")) {//case of subtyping (-nt option activated)
+          if( strictType  || !topLevel ) {
+            if(!ensureSymbolCodomain(TomBase.getSymbolCodomain(symbol), expectedType, TomMessage.invalidCodomain, res, fileName,decLine)) {
+              return null;
+            }
           }
         }
       }
@@ -1402,9 +1404,11 @@ matchblock:{
         return null;
       } else { // known symbol
         // ensure type correctness if necessary
-        if ( strictType  || !topLevel ) {
-          if (!ensureSymbolCodomain(TomBase.getSymbolCodomain(symbol), expectedType, TomMessage.invalidCodomain, res, fileName,decLine)) {
-            return null;
+        if (!getOptionBooleanValue("newtyper")) {//case of subtyping (-nt option activated)
+          if ( strictType  || !topLevel ) {
+            if (!ensureSymbolCodomain(TomBase.getSymbolCodomain(symbol), expectedType, TomMessage.invalidCodomain, res, fileName,decLine)) {
+              return null;
+            }
           }
         }
       }
