@@ -45,7 +45,6 @@ public class ExampleStrategy{
     Expr = Var(name:String) 
          | Cst(val:int) 
          | Let(name:String, e:Expr, body:Expr) 
-         | Test(x:Term)
 
     Term = a() | b()
   }
@@ -55,7 +54,6 @@ public class ExampleStrategy{
     Expr new_p1 = propagate(p1);
     System.out.println(new_p1);
 
-    Expr p2 = `Test(a());
     propagate(p2);
   }
   
@@ -77,9 +75,5 @@ public class ExampleStrategy{
 		visit Expr {
 			v@Var(concString('_',_*)) -> { return `v; }
 		}
-
-    visit Term {
-      a() -> { System.out.println("Test!!"); }
-    }
 	}
 }
