@@ -684,12 +684,12 @@ public class NewKernelTyper {
     CodeList newCList = `concCode();
     for (Code code : cList.getCollectionconcCode()) {
       init();
-      System.out.println("---------- Code with typeVars: \n" + code + '\n');
+      //DEBUG System.out.println("---------- Code with typeVars: \n" + code + '\n');
       code =  collectKnownTypesFromCode(`code);
       code = inferAllTypes(code,`EmptyType());
       solveConstraints();
       code = replaceInCode(code);
-      System.out.println("---------- Code after inference: \n" + code + '\n');
+      //DEBUG System.out.println("---------- Code after inference: \n" + code + '\n');
       replaceInSymbolTable();
       newCList = `concCode(code,newCList*);
     }
