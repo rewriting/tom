@@ -253,10 +253,6 @@ public class NewKernelTyper {
   protected boolean containsConstraint(TypeConstraint tConstraint, TypeConstraintList
       tCList) {
     %match {
-      Subtype[Type1=t1,Type2=t2] << TypeConstraint tConstraint &&
-        concTypeConstraint(_*,(Subtype|Equation)[Type1=t1,Type2=t2],_*) << tCList 
-        -> { return true; }
-
       Equation[Type1=t1,Type2=t2] << TypeConstraint tConstraint &&
         concTypeConstraint(_*,Equation[Type1=t1,Type2=t2],_*) << tCList 
         -> { return true; }
@@ -272,7 +268,7 @@ public class NewKernelTyper {
      * pem: use if(...==... && typeConstraints.contains(...))
      */
   /**
-   * The method <code>addEqConstraint</code> adds an equation (i.e. a type constraint) into the
+   * The method <code>addConstraint</code> adds an equation (i.e. a type constraint) into the
    * global list "TypeConstraints" if this equation does not contains
    * "EmptyTypes". The global list is ordered inserting equations
    * containing (one or both) ground type(s) into the beginning of the list.
@@ -486,6 +482,7 @@ public class NewKernelTyper {
             //DEBUG System.out.println("InferTypes:TomTerm aliasvar -- constraint = " +
             //DEBUG   nkt.getType(`boundTerm) + " = " + `contextType);
             //nkt.addConstraint(`Equation(nkt.getType(boundTerm),contextType,nkt.getInfoFromTomTerm(boundTerm))); 
+            newTypeConstraints = nkt.typeConstraints;
             nkt.typeConstraints =
               nkt.addConstraint(`Equation(nkt.getType(boundTerm),aType,nkt.getInfoFromTomTerm(boundTerm)),newTypeConstraints); 
           }
@@ -514,7 +511,6 @@ public class NewKernelTyper {
         //tSymbol = " + tSymbol);
 
         TomType codomain = contextType;
-        TypeConstraintList newTypeConstraints = nkt.typeConstraints;
         // IF_3
         if (tSymbol == null) {
           //DEBUG System.out.println("tSymbol is still null!");
@@ -525,7 +521,8 @@ public class NewKernelTyper {
           // IF_2
           codomain = nkt.getCodomain(tSymbol);
           //DEBUG System.out.println("\n Test pour TomTerm-inferTypes in RecordAppl. codomain = " + codomain);
-          nkt.typeConstraints = nkt.addConstraint(`Subtype(codomain,contextType,PairNameOptions(aName,optionList)),newTypeConstraints);
+          TypeConstraintList newTypeConstraints = nkt.typeConstraints;
+          nkt.typeConstraints = nkt.addConstraint(`Equation(codomain,contextType,PairNameOptions(aName,optionList)),newTypeConstraints);
           //DEBUG System.out.println("InferTypes:TomTerm recordappl -- constraint" + codomain + " = " + contextType);
         }
 
@@ -536,6 +533,7 @@ public class NewKernelTyper {
             //DEBUG System.out.println("InferTypes:TomTerm aliasrecordappl -- constraint = " +
             //DEBUG     nkt.getType(`boundTerm) + " = " + contextType);
             //nkt.addConstraint(`Equation(nkt.getType(boundTerm),contextType,nkt.getInfoFromTomTerm(boundTerm))); 
+            TypeConstraintList newTypeConstraints = nkt.typeConstraints;
             nkt.typeConstraints =
               nkt.addConstraint(`Equation(nkt.getType(boundTerm),codomain,nkt.getInfoFromTomTerm(boundTerm)),newTypeConstraints); 
           }
@@ -686,10 +684,12 @@ public class NewKernelTyper {
     CodeList newCList = `concCode();
     for (Code code : cList.getCollectionconcCode()) {
       init();
+      System.out.println("---------- Code with typeVars: \n" + code + '\n');
       code =  collectKnownTypesFromCode(`code);
       code = inferAllTypes(code,`EmptyType());
       solveConstraints();
       code = replaceInCode(code);
+      System.out.println("---------- Code after inference: \n" + code + '\n');
       replaceInSymbolTable();
       newCList = `concCode(code,newCList*);
     }
@@ -1445,16 +1445,6 @@ matchBlockFail :
       concTypeConstraint(Equation(type1,type2,_),tailtCList*) -> {
         printType(`type1);
         System.out.print(" = ");
-        printType(`type2);
-        if (`tailtCList != `concTypeConstraint()) {
-            System.out.print(", "); 
-            printEachConstraint(`tailtCList);
-        }
-      }
-
-      concTypeConstraint(Subtype(type1,type2,_),tailtCList*) -> {
-        printType(`type1);
-        System.out.print(" <: ");
         printType(`type2);
         if (`tailtCList != `concTypeConstraint()) {
             System.out.print(", "); 
