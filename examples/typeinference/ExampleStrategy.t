@@ -34,7 +34,6 @@ import tom.library.sl.*;
 
 public class ExampleStrategy{
 	%include { sl.tom }
-	%include { util/HashMap.tom }
 
   %gom {
     module ExampleStrategy
@@ -45,15 +44,18 @@ public class ExampleStrategy{
     Expr = Var(name:String) 
          | Cst(val:int) 
          | Let(name:String, e:Expr, body:Expr) 
+         | Test(x:Term)
 
     Term = a() | b()
   }
   public void run() {
+
     System.out.println("running...");
     Expr p1 = `Let("a",Cst(1), Var("a"));
     Expr new_p1 = propagate(p1);
     System.out.println(new_p1);
 
+		Expr p2 = `Test(a());
     propagate(p2);
   }
   
@@ -72,8 +74,12 @@ public class ExampleStrategy{
 	}
 
   %strategy RenamedVar() extends `Fail() {
-		visit Expr {
-			v@Var(concString('_',_*)) -> { return `v; }
-		}
-	}
+    visit Expr {
+      v@Var(concString('_',_*)) -> { return `v; }
+    }
+
+    visit Term {
+      a() -> { System.out.println("Test!!"); }
+    }
+  }
 }
