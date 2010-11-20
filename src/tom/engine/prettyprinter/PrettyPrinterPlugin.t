@@ -143,7 +143,7 @@ public class PrettyPrinterPlugin extends TomGenericPlugin {
     //System.out.println(codeToGive);
   }
 
- 
+
 /* 
   private float getPosition(TextPosition tp) {
     float f;
