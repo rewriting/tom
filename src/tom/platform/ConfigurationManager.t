@@ -31,8 +31,6 @@ import java.util.logging.*;
 import aterm.*;
 import aterm.pure.*;
 
-import tom.engine.TomMessage;
-
 import tom.library.adt.tnode.*;
 import tom.library.adt.tnode.types.*;
 import tom.library.xml.*;
@@ -95,10 +93,6 @@ public class ConfigurationManager {
       return 1;
     }    
     if(createOptionManager(configurationNode.getDocElem()) == 1) {     
-      if( ((Boolean)optionManager.getOptionValue("optimize2")).booleanValue()
-          && !(optionManager.getInputToCompileList().size() == 1 && "-".equals((String)optionManager.getInputToCompileList().get(0))) ) {
-        TomMessage.warning(logger, null, 0, TomMessage.optimizerModifiesLineNumbers);
-      }
       return 1;
     }
     return optionManager.initialize(this, commandLine);
