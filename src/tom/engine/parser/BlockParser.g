@@ -1,6 +1,6 @@
 header {
   /*
-   * Gom
+   * Tom
    *
    * Copyright (c) 2010, INPL, INRIA
    * Nancy, France.
@@ -22,7 +22,7 @@ header {
    * Antoine Reilles    e-mail: Antoine.Reilles@loria.fr
    *
    **/
-  package tom.gom.parser;
+  package tom.engine.parser;
 }
 
 {

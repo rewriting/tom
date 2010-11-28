@@ -511,8 +511,8 @@ gomsignature [List<Code> list] throws TomException
   }
   {
     synchronized(Tom.getLock()) {
-    tom.gom.parser.BlockParser blockparser =
-      tom.gom.parser.BlockParser.makeBlockParser(targetlexer.getInputState());
+    BlockParser blockparser =
+      BlockParser.makeBlockParser(targetlexer.getInputState());
     gomCode = cleanCode(blockparser.block().trim());
 
     File config_xml = null;

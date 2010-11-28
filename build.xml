@@ -349,9 +349,8 @@
       <classpath refid="stable.classpath"/>
     </antlr>
 
-    <mkdir dir="${gen.destination}/tom/gom/parser"/>
-    <antlr target="${src.src}/tom/gom/parser/BlockParser.g"
-           outputdirectory="${gen.destination}/tom/gom/parser">
+    <antlr target="${src.src}/tom/engine/parser/BlockParser.g"
+           outputdirectory="${gen.destination}/tom/engine/parser">
       <classpath refid="stable.classpath"/>
     </antlr>
 
@@ -359,6 +358,7 @@
              classname="org.apache.tools.ant.antlr.ANTLR3">
       <classpath refid="stable.classpath"/>
     </taskdef>
+    <mkdir dir="${gen.destination}/tom/gom/parser"/>
     <antlr3 target="${src.src}/tom/gom/parser/GomLanguage.g"
             outputdirectory="${gen.destination}/tom/gom/parser"
             libdirectory="${gen.destination}/tom/gom/adt/gom"
