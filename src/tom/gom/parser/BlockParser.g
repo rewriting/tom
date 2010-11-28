@@ -31,10 +31,6 @@ header {
   import java.util.logging.Logger;
   import java.util.logging.Level;
 
-  import tom.gom.tools.GomEnvironment;
-  import tom.gom.tools.error.GomRuntimeException;
-  import tom.gom.adt.gom.*;
-  import tom.gom.adt.gom.types.*;
   import antlr.LexerSharedInputState;
 }
 class BlockParser extends Parser;
