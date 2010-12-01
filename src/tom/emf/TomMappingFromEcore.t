@@ -82,16 +82,30 @@ public class TomMappingFromEcore {
   private static boolean append = false;
 
   /**
+   * true if '%subtype' keywords hav to be generated ('-nt' option is enabled)
+   */
+  private static boolean useNewTyper = false;
+
+  /**
    * A dictionnary linking a class with his generated type name
    */
   private final static HashMap<Class<?>, String> types = new HashMap<Class<?>, String>();
 
   public static void main(String[] args) {
-    if(args.length != 1) {
-      //out.println("usage : java TomMappingFromEcore <EPackageClassName>");
-      out.println("usage : emf-generate-mappings <EPackageClassName>");
-    } else {
-      try {
+    /*
+     * this way to use options shouldn't be like this : we could add a better
+     * option management system (as in Tom/Gom)
+     * We may also add an --output <file> option
+     */
+      if(args.length < 1) {
+        out.println("No argument has been given !");
+        out.println("usage : emf-generate-mappings [-nt] <EPackageClassName>");
+      } else {
+        String ePackageName = args[0];
+        if (args[0].contentEquals("-nt")) {
+          ePackageName = args[1];
+          useNewTyper = true;
+        }
         out.println(%[/*
  *
  * TOM - To One Matching Compiler
@@ -116,19 +130,21 @@ public class TomMappingFromEcore {
  *
  **/
           ]%);
-        extractFromEPackage((EPackage) Class.forName(args[0]).getField("eINSTANCE").get(null));
-      } catch(ClassNotFoundException e) {
-        e.printStackTrace();
-      } catch(IllegalArgumentException e) {
-        e.printStackTrace();
-      } catch(SecurityException e) {
-        e.printStackTrace();
-      } catch(IllegalAccessException e) {
-        e.printStackTrace();
-      } catch(NoSuchFieldException e) {
-        e.printStackTrace();
+        try {
+          //extractFromEPackage((EPackage) Class.forName(args[0]).getField("eINSTANCE").get(null));
+          extractFromEPackage((EPackage) Class.forName(ePackageName).getField("eINSTANCE").get(null));
+        } catch(ClassNotFoundException e) {
+          e.printStackTrace();
+        } catch(IllegalArgumentException e) {
+          e.printStackTrace();
+        } catch(SecurityException e) {
+          e.printStackTrace();
+        } catch(IllegalAccessException e) {
+          e.printStackTrace();
+        } catch(NoSuchFieldException e) {
+          e.printStackTrace();
+        }
       }
-    }
   }
 
   /**
@@ -158,7 +174,8 @@ public class TomMappingFromEcore {
   is_sort(t) { @(c.isPrimitive() ? "true" : "$t instanceof " + decl[0] + decl[1])@ }
   equals(l1,l2) { @(c.isPrimitive() ? "$l1 == $l2" : "$l1.equals($l2)")@ }
 }]%);
-        genSubtype(eclf);
+        if(useNewTyper) {
+          genSubtype(eclf);}
       }
     }
   }
