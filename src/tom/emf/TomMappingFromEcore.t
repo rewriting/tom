@@ -98,8 +98,11 @@ public class TomMappingFromEcore {
      * We may also add an --output <file> option
      */
       if(args.length < 1) {
-        out.println("No argument has been given !");
-        out.println("usage : emf-generate-mappings [-nt] <EPackageClassName>");
+        out.println("No argument has been given!");
+        out.println("usage: emf-generate-mappings [options] <EPackageClassName>");
+        out.println("options:");
+        out.println("  -nt (allows to generate '%subtype' constructs)");
+        out.println("  any Java options");
       } else {
         String ePackageName = args[0];
         if (args[0].contentEquals("-nt")) {
