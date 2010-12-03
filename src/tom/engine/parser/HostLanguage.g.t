@@ -30,6 +30,7 @@ package tom.engine.parser;
 import java.util.*;
 import java.util.logging.*;
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 
 import tom.engine.Tom;
 import tom.engine.TomStreamManager;
@@ -51,11 +52,8 @@ import tom.engine.adt.tomtype.types.*;
 import tom.engine.adt.code.types.*;
 
 import tom.engine.tools.ASTFactory;
-import aterm.*;
 import antlr.TokenStreamSelector;
 import tom.platform.OptionManager;
-import tom.platform.PluginPlatform;
-import tom.platform.PlatformLogRecord;
 }
 class HostParser extends Parser;
 
@@ -140,12 +138,12 @@ options{
     return currentFile;
   }
 
-  public synchronized SymbolTable getSymbolTable() {
-    return getStreamManager().getSymbolTable();
-  }
-
   public synchronized void updatePosition(){
     updatePosition(getLine(),getColumn());
+  }
+
+  public synchronized SymbolTable getSymbolTable() {
+    return getStreamManager().getSymbolTable();
   }
 
   public void updatePosition(int i, int j){
@@ -589,7 +587,6 @@ gomsignature [List<Code> list] throws TomException
 
     final File tmpFile;
     try {
-      //tmpFile = File.createTempFile("tmp", ".gom", getStreamManager().getDestDir()).getCanonicalFile();
       tmpFile = File.createTempFile("tmp", ".gom", null).getCanonicalFile();
       parameters.add(tmpFile.getPath());
     } catch (IOException e) {
@@ -625,7 +622,18 @@ gomsignature [List<Code> list] throws TomException
     informationTracker.put("inputFileName",getStreamManager().getInputFileName());
 
     //5 tom.platform.PluginPlatformFactory.getInstance().getInformationTracker().put(java.lang.Thread.currentThread().getId(),null);
-    res = tom.gom.Gom.exec(params,informationTracker);
+    //res = tom.gom.Gom.exec(params,informationTracker);
+    try {
+    res = ((Integer) Class.forName("tom.gom.Gom").getDeclaredMethod("exec",new Class[] {params.getClass(), informationTracker.getClass()}).invoke(null, new Object[] {params, informationTracker})).intValue();
+    } catch (ClassNotFoundException cnfe) {
+      TomMessage.error(logger, currentFile, initialGomLine, TomMessage.gomInitFailure,currentFile,Integer.valueOf(initialGomLine), cnfe);
+    } catch (NoSuchMethodException nsme) {
+      TomMessage.error(logger, currentFile, initialGomLine, TomMessage.gomInitFailure,currentFile,Integer.valueOf(initialGomLine), nsme);
+    } catch (InvocationTargetException ite) {
+      TomMessage.error(logger, currentFile, initialGomLine, TomMessage.gomInitFailure,currentFile,Integer.valueOf(initialGomLine), ite);
+    } catch (IllegalAccessException iae) {
+      TomMessage.error(logger, currentFile, initialGomLine, TomMessage.gomInitFailure,currentFile,Integer.valueOf(initialGomLine), iae);
+    }
     tmpFile.deleteOnExit();
     if(res != 0) {
       TomMessage.error(logger, currentFile, initialGomLine, TomMessage.gomFailure,currentFile,Integer.valueOf(initialGomLine));
