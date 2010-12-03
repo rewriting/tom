@@ -217,7 +217,12 @@ public class NewTyper extends TomGenericPlugin {
    * name is in TypeTable
    * CASE 2 : Type(name, EmptyTargetLanguageType()) -> TypeVar(name, Index(i))
    * if name is not in TypeTable
+   * Note that Index(i) is generated based in a counter different from that one
+   * used by <code>CollectKnownTypes</code> in the class
+   * <code>NewKernelTyper</code>.
+   * @param typer an instance of object NewTyper
    * @param nkt an instance of object NewKernelTyper
+   * @return    the code resulting of a transformation
    */
   %strategy CollectKnownTypes(typer:NewTyper,nkt:NewKernelTyper) extends Identity() {
     visit TomType {

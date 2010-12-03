@@ -501,8 +501,6 @@ public class NewKernelTyper {
     }
   }
 
-  // TODO: keep only one CollectKnownTypes method (instead of that from NewTyper
-  // and this one)
   /**
    * The class <code>CollectKnownTypes</code> is generated from a strategy which
    * initially types all terms by using their correspondent type in symbol table
@@ -720,7 +718,6 @@ public class NewKernelTyper {
 
         SlotList newSList = `concSlot();
         if (!`sList.isEmptyconcSlot()) {
-          // TODO : verify if we pass codomain or contextType
           `newSList =
             nkt.inferSlotList(`sList,tSymbol,codomain);
         }
@@ -768,7 +765,6 @@ public class NewKernelTyper {
         BQTermList newBQTList = `bqTList;
         if (!`bqTList.isEmptyconcBQTerm()) {
           //DEBUG System.out.println("\n Test pour BQTerm-inferTypes in BQAppl. bqTList = " + `bqTList);
-          // TODO : verify if we pass codomain or contextType
           newBQTList =
             nkt.inferBQTermList(`bqTList,`tSymbol,codomain);
         }
@@ -1118,19 +1114,7 @@ public class NewKernelTyper {
             if(!(TomBase.isListOperator(`argSymb) || TomBase.isArrayOperator(`argSymb))) {
               %match(argTerm) {
                 VariableStar[] -> {
-                  TypeOptionList newTOptions = `tOptions;
-                  // TODO: Is this match really necessary?
-                  %match {
-                    concTypeOption(_*,WithSymbol[RootSymbolName=rsName],_*) <<
-                      tOptions && (rsName != symName) -> {
-                        throw new TomRuntimeException("typeVariableList: symbol '"
-                            + `tSymbol+ "' with more than one constructor (rootsymbolname)");
-                      }
-                    concTypeOption(_*,!WithSymbol[],_*) << tOptions -> {
-                      newTOptions =
-                        `concTypeOption(WithSymbol(symName),tOptions*);
-                    }
-                  }
+                  TypeOptionList newTOptions = `concTypeOption(WithSymbol(symName),tOptions*);
 
                   /* Case CT-STAR rule (applying to premises) */
                   argType = `Type(newTOptions,tomCodomain,tlCodomain);
@@ -1244,19 +1228,7 @@ public class NewKernelTyper {
                 }
 
                 BQVariableStar[] -> {
-                  TypeOptionList newTOptions = `tOptions;
-                  //TODO: Is this test really necessary?
-                  %match {
-                    concTypeOption(_*,WithSymbol[RootSymbolName=rsName],_*) <<
-                      tOptions && (rsName != symName) -> {
-                        throw new TomRuntimeException("typeVariableList: symbol '"
-                            + `tSymbol+ "' with more than one constructor (rootsymbolname)");
-                      }
-                    concTypeOption(_*,!WithSymbol[],_*) << tOptions -> {
-                      newTOptions =
-                        `concTypeOption(WithSymbol(symName),tOptions*);
-                    }
-                  }
+                  TypeOptionList newTOptions = `concTypeOption(WithSymbol(symName),tOptions*);
 
                   /* Case CT-STAR rule (applying to premises) */
                   argType = `Type(newTOptions,tomCodomain,tlCodomain);
@@ -1807,27 +1779,19 @@ matchBlockFail :
       !concTomType() << supTypes1 && !concTomType() << supTypes2 -> {
         int st1Size = `supTypes1.length();
         int st2Size = `supTypes2.length();
-        int intersectionSize = st1Size;
-        if (st2Size < st1Size) {
-          intersectionSize = st2Size;
-        }
+
+        int currentIntersectionSize = -1;
+        int commonTypeIntersectionSize = -1;
+        TomType lowestCommonType = `EmptyType();
         for (TomType currentType:`supTypes1.getCollectionconcTomType()) {
-          // TODO fix this test to be according to the explanation above
-          if(`supTypes2.getCollectionconcTomType().contains(currentType) && dependencies.get(currentType).length() == (intersectionSize-1)) {
-            return currentType;
-  /*
-        //DEBUG System.out.println("supTypes1 = " + supTypes1);
-        Set<TomType> setSupTypes1 = (Set) supTypes1;
-        boolean result = setSupTypes1.retainAll((Collection) supTypes2);
-        int intersectionSize = setSupTypes1.size();
-        for (TomType currentSupType:setSupTypes1) {
-          // The size test is enough since tom doesn't accept multiple
-          // inheritance
-          if (dependencies.get(currentSupType).length() == (intersectionSize-1)) {
-            return currentSupType;
-            */
+          currentIntersectionSize = dependencies.get(currentType).length();
+          if (`supTypes2.getCollectionconcTomType().contains(currentType) &&
+              (currentIntersectionSize > commonTypeIntersectionSize)) {
+            commonTypeIntersectionSize = currentIntersectionSize;
+            lowestCommonType = currentType;
           }
         }
+        return lowestCommonType;
       }
     }
     return `EmptyType();
@@ -1944,7 +1908,6 @@ matchBlockSolve :
           if (!`findVar(tVar1,concTypeConstraint(leftTCL,rightTCL)) &&
               !`findVar(tVar2,concTypeConstraint(leftTCL,rightTCL))) {
             // Same code of cases 7 and 8 of solveEquationConstraints
-            // TODO verify if we need to add
             addSubstitution(`tVar1,`tVar2);
             newtCList =
               `replaceInSubtypingConstraints(concTypeConstraint(newLeftTCL*,newRightTCL*));
