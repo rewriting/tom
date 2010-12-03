@@ -30,7 +30,6 @@ import java.util.logging.*;
 import aterm.*;
 import aterm.pure.*;
 import tom.library.adt.tnode.*;
-import tom.gom.tools.*;
 
 /**
  * The PluginPlatform manages plugins defined in an xml configuration file.

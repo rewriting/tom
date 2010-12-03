@@ -1,8 +1,14 @@
-//TO COMPLETE
-package ....;
-import ....;
+import org.antlr.runtime.CommonTokenStream;
+import org.antlr.runtime.CharStream;
+import org.antlr.runtime.ANTLRInputStream;
+import org.antlr.runtime.RuleReturnScope;
+import org.antlr.runtime.tree.CommonTree;
 
-public class MainNewTom {
+import java.io.InputStream;
+import java.io.File;
+import java.io.FileInputStream;
+
+public class Main {
 
   public static void main(String[] args) {
     try {
@@ -15,11 +21,15 @@ public class MainNewTom {
         input=System.in;
       }
 
-//TO COMPLETE
-//will look like that : 
-//lexer = new ....
-//tokens = new ....(lexer)
-//parser = new ....(tokens)
+    CharStream charStream = new ANTLRInputStream(input);
+    parsematchLexer lexer = new parsematchLexer(charStream);
+    CommonTokenStream tokens = new CommonTokenStream();
+    tokens.setTokenSource(lexer);
+    parsematchParser parser = new parsematchParser(tokens);
+    RuleReturnScope result= parser.compilationUnit();
+    CommonTree tree=(CommonTree)result.getTree();
+    printTree(tree,1);
+// And now what are wez supposed to do with that parser ?
 
     } catch (Exception e) {
       //System.err.println("exception: " + e);
@@ -27,4 +37,17 @@ public class MainNewTom {
     }
 
   }
+
+  public static void printTree(CommonTree t, int indent) {
+	if ( t != null ) {
+		StringBuffer sb = new StringBuffer(indent);
+		for ( int i = 0; i < indent; i++ )
+			sb = sb.append("   ");
+		for ( int i = 0; i < t.getChildCount(); i++ ) {
+			System.out.println(sb.toString() + t.getChild(i).toString());
+			printTree((CommonTree)t.getChild(i), indent+1);
+		}
+	}
+}
+
 }

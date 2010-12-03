@@ -1,6 +1,6 @@
 header {
   /*
-   * Gom
+   * Tom
    *
    * Copyright (c) 2010, INPL, INRIA
    * Nancy, France.
@@ -22,7 +22,7 @@ header {
    * Antoine Reilles    e-mail: Antoine.Reilles@loria.fr
    *
    **/
-  package tom.gom.parser;
+  package tom.engine.parser;
 }
 
 {
@@ -31,10 +31,6 @@ header {
   import java.util.logging.Logger;
   import java.util.logging.Level;
 
-  import tom.gom.tools.GomEnvironment;
-  import tom.gom.tools.error.GomRuntimeException;
-  import tom.gom.adt.gom.*;
-  import tom.gom.adt.gom.types.*;
   import antlr.LexerSharedInputState;
 }
 class BlockParser extends Parser;
