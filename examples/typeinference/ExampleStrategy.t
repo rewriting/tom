@@ -29,7 +29,6 @@
 package typeinference;
 
 import typeinference.examplestrategy.examplestrategy.types.*;
-import tom.engine.exception.TomRuntimeException;
 import tom.library.sl.*;
 
 public class ExampleStrategy{
