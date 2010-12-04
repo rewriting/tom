@@ -622,9 +622,13 @@ gomsignature [List<Code> list] throws TomException
     informationTracker.put("inputFileName",getStreamManager().getInputFileName());
 
     //5 tom.platform.PluginPlatformFactory.getInstance().getInformationTracker().put(java.lang.Thread.currentThread().getId(),null);
-    //res = tom.gom.Gom.exec(params,informationTracker);
     try {
-    res = ((Integer) Class.forName("tom.gom.Gom").getDeclaredMethod("exec",new Class[] {params.getClass(), informationTracker.getClass()}).invoke(null, new Object[] {params, informationTracker})).intValue();
+    // Call tom.gom.Gom.exec(params,informationTracker) using reflexivity, to
+    // avoid a build time dempendency between tom and gom
+    res = ((Integer) Class.forName("tom.gom.Gom")
+        .getMethod("exec", new Class[] {params.getClass(), Map.class})
+        .invoke(null, new Object[] {params, informationTracker}))
+        .intValue();
     } catch (ClassNotFoundException cnfe) {
       TomMessage.error(logger, currentFile, initialGomLine, TomMessage.gomInitFailure,currentFile,Integer.valueOf(initialGomLine), cnfe);
     } catch (NoSuchMethodException nsme) {
