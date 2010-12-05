@@ -26,7 +26,7 @@ package tom.gom.backend;
 
 import java.io.*;
 import java.util.*;
-import java.util.logging.*;
+import java.util.logging.Logger;
 import tom.gom.Gom;
 import tom.gom.GomMessage;
 import tom.gom.backend.CodeGen;
@@ -199,23 +199,7 @@ public abstract class TemplateHookedClass extends TemplateClass {
       }
 
     } else {
-      try {
-        File output = fileToGenerate();
-        // make sure the directory exists
-        // if creation failed, try again, as this can be a manifestation of a
-        // race condition in mkdirs
-        if (!output.getParentFile().mkdirs()) {
-          output.getParentFile().mkdirs();
-        }
-        Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output)));
-        generate(writer);
-        writer.flush();
-        writer.close();
-      } catch(IOException e) {
-        GomMessage.error(getLogger(),null,0,
-            GomMessage.tomCodeGenerationFailure, e.getMessage());
-        return 1;
-      }
+      return super.generateFile();
     }
     return 0;
   }
