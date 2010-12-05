@@ -162,7 +162,6 @@ public abstract class TemplateHookedClass extends TemplateClass {
     
       final File tmpFile;
       try {
-        //tmpFile = File.createTempFile("tmp", ".t", getGomEnvironment().getStreamManager().getDestDir()).getCanonicalFile();
         tmpFile = File.createTempFile("tmp", ".t", null).getCanonicalFile();
       } catch (IOException e) {
         System.out.println("IO Exception when computing importList");
@@ -213,7 +212,8 @@ public abstract class TemplateHookedClass extends TemplateClass {
         writer.flush();
         writer.close();
       } catch(IOException e) {
-        e.printStackTrace();
+        GomMessage.error(getLogger(),null,0,
+            GomMessage.tomCodeGenerationFailure, e.getMessage());
         return 1;
       }
     }
