@@ -105,7 +105,7 @@ public class Backend {
       }
     }
     // generate a class for each element of the list
-    if(multithread) {
+    if (multithread) {
       while (!classList.isEmptyConcGomClass()) {
         final GomClass gomclass = classList.getHeadConcGomClass();
         classList = classList.getTailConcGomClass();

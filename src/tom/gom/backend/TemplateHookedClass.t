@@ -203,12 +203,16 @@ public abstract class TemplateHookedClass extends TemplateClass {
       try {
         File output = fileToGenerate();
         // make sure the directory exists
-        output.getParentFile().mkdirs();
+        // if creation failed, try again, as this can be a manifestation of a
+        // race condition in mkdirs
+        if (!output.getParentFile().mkdirs()) {
+          output.getParentFile().mkdirs();
+        }
         Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output)));
         generate(writer);
         writer.flush();
         writer.close();
-      } catch(Exception e) {
+      } catch(IOException e) {
         e.printStackTrace();
         return 1;
       }
