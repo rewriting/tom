@@ -26,7 +26,6 @@
 package tom.gom.expander;
 
 import java.util.*;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import tom.gom.GomMessage;
