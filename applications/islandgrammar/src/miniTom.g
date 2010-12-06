@@ -1,4 +1,4 @@
-grammar GParser;
+grammar miniTom;
 options {output=AST;}
 
 tokens {
@@ -21,7 +21,7 @@ statement
 	;
 
 BLANK
-	:	'\r' | '\n' | ' '
+	:	('\r' | '\n' | '\t') {$channel=HIDDEN;}
 	;
 
 LETTER
