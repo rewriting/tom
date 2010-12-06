@@ -40,8 +40,22 @@ public class GomEnvironment {
   private SymbolTable symbolTable;
   // this map is filled by the GomTypeExpander
   private Map<ModuleDecl,ModuleDeclList> importedModules;
-  private Map<String,ClassName> builtinSorts;
   private Map<String,ClassName> usedBuiltinSorts;
+
+  private static final Map<String,ClassName> builtinSorts;
+  static {
+    Map<String,ClassName> localBuiltinSorts = new HashMap<String,ClassName>();
+    localBuiltinSorts.put("boolean",`ClassName("","boolean"));
+    localBuiltinSorts.put("int",`ClassName("","int"));
+    localBuiltinSorts.put("String",`ClassName("","String"));
+    localBuiltinSorts.put("char",`ClassName("","char"));
+    localBuiltinSorts.put("double",`ClassName("","double"));
+    localBuiltinSorts.put("long",`ClassName("","long"));
+    localBuiltinSorts.put("float",`ClassName("","float"));
+    localBuiltinSorts.put("ATerm",`ClassName("aterm","ATerm"));
+    localBuiltinSorts.put("ATermList",`ClassName("aterm","ATermList"));
+    builtinSorts = Collections.unmodifiableMap(localBuiltinSorts);
+  }
 
   /**
    * A private constructor method to defeat instantiation
@@ -49,8 +63,6 @@ public class GomEnvironment {
   public GomEnvironment() {
     streamManager = new GomStreamManager();
     importedModules = new HashMap<ModuleDecl,ModuleDeclList>();
-    builtinSorts = new HashMap<String,ClassName>();
-    initBuiltins();
     usedBuiltinSorts = new HashMap<String,ClassName>();
     symbolTable = new SymbolTable(this);
   }
@@ -75,18 +87,6 @@ public class GomEnvironment {
   }
   public GomStreamManager getStreamManager() {
     return streamManager;
-  }
-
-  public void initBuiltins() {
-    builtinSorts.put("boolean",`ClassName("","boolean"));
-    builtinSorts.put("int",`ClassName("","int"));
-    builtinSorts.put("String",`ClassName("","String"));
-    builtinSorts.put("char",`ClassName("","char"));
-    builtinSorts.put("double",`ClassName("","double"));
-    builtinSorts.put("long",`ClassName("","long"));
-    builtinSorts.put("float",`ClassName("","float"));
-    builtinSorts.put("ATerm",`ClassName("aterm","ATerm"));
-    builtinSorts.put("ATermList",`ClassName("aterm","ATermList"));
   }
 
   /**

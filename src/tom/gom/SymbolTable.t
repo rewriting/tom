@@ -24,8 +24,6 @@
 
 package tom.gom;
 
-import java.util.logging.Level;
-import tom.gom.GomStreamManager;
 import tom.gom.adt.symboltable.types.*;
 import tom.gom.adt.symboltable.*;
 import tom.gom.adt.gom.types.*;
