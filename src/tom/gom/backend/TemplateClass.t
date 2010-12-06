@@ -23,13 +23,16 @@
  **/
 package tom.gom.backend;
 
+import java.io.*;
+import java.util.ArrayList;
+import java.util.logging.Logger;
+
+import tom.gom.GomMessage;
 import tom.gom.GomStreamManager;
 import tom.gom.tools.GomEnvironment;
 import tom.gom.adt.objects.*;
 import tom.gom.adt.objects.types.*;
 import tom.gom.tools.error.GomRuntimeException;
-import java.io.*;
-import java.util.ArrayList;
 
 public abstract class TemplateClass {
   protected GomClass gomClass;
@@ -418,13 +421,18 @@ public abstract class TemplateClass {
     try {
        File output = fileToGenerate();
        // make sure the directory exists
-       output.getParentFile().mkdirs();
+       // if creation failed, try again, as this can be a manifestation of a
+       // race condition in mkdirs
+       if (!output.getParentFile().mkdirs()) {
+         output.getParentFile().mkdirs();
+       }
        Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output)));
        generate(writer);
        writer.flush();
        writer.close();
-    } catch(Exception e) {
-      e.printStackTrace();
+    } catch(IOException e) {
+      GomMessage.error(getLogger(),null,0,
+          GomMessage.tomCodeGenerationFailure, e.getMessage());
       return 1;
     }
     return 0;
@@ -491,6 +499,10 @@ public abstract class TemplateClass {
   public void generateTomMapping(Writer writer)
       throws java.io.IOException {
     return;
+  }
+
+  private Logger getLogger() {
+    return Logger.getLogger(getClass().getName());
   }
 
 }

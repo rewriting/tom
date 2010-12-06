@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<project name="islandgrammar" default="compile">
+	<property environment="env"/>
+	<property name="tom.home" value="${env.TOM_HOME}"/>
+	<property name="antlrjar" value="${tom.home}/src/lib/tools/antlr-3.2.jar"/>
+	<property name="sources" value="src"/>
+	<property name="gramfile" value="miniTom.g"/>
+	<target name="grammar">
+		<java classname="org.antlr.Tool" classpath="${antlrjar}">
+			<arg value="${sources}/${gramfile}"/>
+		</java>
+	</target>
+	<target name="compile">
+		<!--echo>Someday it will compile I swear</echo-->
+		<javac srcdir="${sources}" destdir="build" classpath="${antlrjar}"/>
+	</target>
+</project>

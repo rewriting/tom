@@ -26,7 +26,7 @@ package tom.gom.backend;
 
 import java.io.*;
 import java.util.*;
-import java.util.logging.*;
+import java.util.logging.Logger;
 import tom.gom.Gom;
 import tom.gom.GomMessage;
 import tom.gom.backend.CodeGen;
@@ -162,7 +162,6 @@ public abstract class TemplateHookedClass extends TemplateClass {
     
       final File tmpFile;
       try {
-        //tmpFile = File.createTempFile("tmp", ".t", getGomEnvironment().getStreamManager().getDestDir()).getCanonicalFile();
         tmpFile = File.createTempFile("tmp", ".t", null).getCanonicalFile();
       } catch (IOException e) {
         System.out.println("IO Exception when computing importList");
@@ -200,18 +199,7 @@ public abstract class TemplateHookedClass extends TemplateClass {
       }
 
     } else {
-      try {
-        File output = fileToGenerate();
-        // make sure the directory exists
-        output.getParentFile().mkdirs();
-        Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output)));
-        generate(writer);
-        writer.flush();
-        writer.close();
-      } catch(Exception e) {
-        e.printStackTrace();
-        return 1;
-      }
+      return super.generateFile();
     }
     return 0;
   }
