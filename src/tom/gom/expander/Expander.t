@@ -25,13 +25,10 @@
 package tom.gom.expander;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import tom.gom.GomMessage;
@@ -39,7 +36,6 @@ import tom.gom.GomStreamManager;
 import tom.gom.tools.GomEnvironment;
 import tom.gom.adt.gom.*;
 import tom.gom.adt.gom.types.*;
-import tom.platform.PlatformLogRecord;
 
 import org.antlr.runtime.*;
 import org.antlr.runtime.tree.*;
@@ -49,9 +45,9 @@ import tom.gom.parser.GomLanguageParser;
 import tom.gom.adt.gom.GomAdaptor;
 
 public class Expander {
-  %include { ../adt/gom/Gom.tom}
+  %include { ../adt/gom/Gom.tom }
 
-  private GomEnvironment gomEnvironment;
+  private final GomEnvironment gomEnvironment;
 
   public Expander(GomEnvironment gomEnvironment) {
     this.gomEnvironment = gomEnvironment;

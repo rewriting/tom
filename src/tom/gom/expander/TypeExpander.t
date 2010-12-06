@@ -40,7 +40,7 @@ public class TypeExpander {
 
   %include { ../adt/gom/Gom.tom}
 
-  private GomEnvironment gomEnvironment;
+  private final GomEnvironment gomEnvironment;
 
   public TypeExpander(GomEnvironment gomEnvironment) {
     this.gomEnvironment = gomEnvironment;
