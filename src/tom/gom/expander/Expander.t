@@ -69,7 +69,7 @@ public class Expander {
     Set<GomModuleName> alreadyParsedModule = new HashSet<GomModuleName>();
     alreadyParsedModule.add(module.getModuleName());
     Set<GomModuleName> moduleToAnalyse = generateModuleToAnalyseSet(module, alreadyParsedModule);
-    GomMessage.finer(getLogger(), null, 0, GomMessage.moduleToAnalyse, 
+    GomMessage.finer(getLogger(), null, 0, GomMessage.moduleToAnalyse,
         moduleToAnalyse);
 
     while (!moduleToAnalyse.isEmpty()) {
@@ -115,14 +115,13 @@ public class Expander {
 
   private GomModule parse(String moduleName) {
     GomMessage.fine(getLogger(), null, 0, GomMessage.fileSeeking, moduleName);
-    GomModule result = null;
     File importedModuleFile = findModuleFile(moduleName);
     if (null == importedModuleFile) {
       GomMessage.error(getLogger(),moduleName,0,
           GomMessage.moduleNotFound);
       return null;
     }
-    CharStream inputStream = null;
+    final CharStream inputStream;
     try {
       inputStream = new ANTLRReaderStream(new FileReader(importedModuleFile));
     } catch (FileNotFoundException e) {
@@ -137,6 +136,7 @@ public class Expander {
 		GomLanguageLexer lexer = new GomLanguageLexer(inputStream);
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
 		GomLanguageParser parser = new GomLanguageParser(tokens,getStreamManager());
+    final GomModule result;
     try {
       Tree tree = (Tree) parser.module().getTree();
       result = (GomModule) GomAdaptor.getTerm(tree);
