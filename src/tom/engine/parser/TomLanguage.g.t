@@ -1893,37 +1893,56 @@ subtypeConstruct throws TomException
     TargetLanguage implement = null;
     DeclarationList declarationList = `concDeclaration();
     String s;
+
+    TypeOptionList typeoptionList = `concTypeOption();
+    int currentLine = -1;
+    String supertypeName = null;
+    String currentTypeName = null;
   }
   :   (
       type:ALL_ID
       {
-      ot = `OriginTracking(Name(type.getText()), type.getLine(),currentFile());
+      currentLine = type.getLine();
+      currentTypeName = type.getText();
+      ot = `OriginTracking(Name(currentTypeName),currentLine,currentFile());
       }
+
+
+      (
+         EXTENDS
+        supertype:ALL_ID
+        {
+            supertypeName = supertype.getText();
+            typeoptionList = `concTypeOption(SubtypeDecl(supertypeName));
+        }
+      )?
+
+
+
       LBRACE
 
       implement = keywordImplement
-      (  attribute = keywordEquals[type.getText()]
+      (  attribute = keywordEquals[currentTypeName]
          { declarationList = `concDeclaration(attribute,declarationList*); }
-         |   attribute = keywordIsSort[type.getText()]
+         |   attribute = keywordIsSort[currentTypeName]
          { declarationList = `concDeclaration(attribute,declarationList*); }
-         |   attribute = keywordGetImplementation[type.getText()]
+         |   attribute = keywordGetImplementation[currentTypeName]
          { declarationList = `concDeclaration(attribute,declarationList*); }
       )*
       t:RBRACE
-      )
-  {
-    String currentTypeTerm = type.getText();
-    if (getType(currentTypeTerm) == null) {
-      TomType astType = `Type(concTypeOption(),currentTypeTerm,TLType(implement.getCode()));
-      putType(currentTypeTerm, astType);
-      result = `TypeTermDecl(Name(currentTypeTerm),declarationList,ot);
-      updatePosition(t.getLine(),t.getColumn());
-    } else {
-      TomMessage.error(getLogger(),currentFile(), type.getLine(),
-          TomMessage.typetermAlreadyDefined,currentTypeTerm);
-    }
-    selector().pop();
-  }
+      {
+          if (getType(currentTypeName) == null) {
+            TomType astType = `Type(typeoptionList,currentTypeName,TLType(implement.getCode()));
+            putType(currentTypeName, astType);
+            result = `TypeTermDecl(Name(currentTypeName),declarationList,ot);
+            updatePosition(t.getLine(),t.getColumn());
+          } else {
+            TomMessage.error(getLogger(),currentFile(), currentLine,
+                TomMessage.typetermAlreadyDefined,currentTypeName);
+          }
+          selector().pop();
+        }
+    )
   ;
 
 keywordImplement returns [TargetLanguage tlCode] throws TomException
