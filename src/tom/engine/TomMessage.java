@@ -199,6 +199,8 @@ public class TomMessage extends BasicPlatformMessage {
       new TomMessage("Invalid Constraint type ");
   public static final TomMessage typetermNotDefined =
       new TomMessage("%typeterm is not defined for {0}");
+  public static final TomMessage typetermAlreadyDefined =
+      new TomMessage("%typeterm is already defined for {0}");
 
   // checker.TomChecker
   public static final TomMessage findOTL               =

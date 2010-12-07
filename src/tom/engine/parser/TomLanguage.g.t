@@ -1885,40 +1885,46 @@ subtypeConstruct throws TomException
   ;
     
 
-typeTerm returns [Declaration result] throws TomException
-{
+    typeTerm returns [Declaration result] throws TomException
+  {
     result = null;
     Option ot = null;
     Declaration attribute = null;
     TargetLanguage implement = null;
     DeclarationList declarationList = `concDeclaration();
     String s;
-}
-    :   (
-            type:ALL_ID
-            {
-                ot = `OriginTracking(Name(type.getText()), type.getLine(),currentFile());
-            }
-            LBRACE
+  }
+  :   (
+      type:ALL_ID
+      {
+      ot = `OriginTracking(Name(type.getText()), type.getLine(),currentFile());
+      }
+      LBRACE
 
-            implement = keywordImplement
-            (  attribute = keywordEquals[type.getText()]
-                { declarationList = `concDeclaration(attribute,declarationList*); }
-            |   attribute = keywordIsSort[type.getText()]
-                { declarationList = `concDeclaration(attribute,declarationList*); }
-            |   attribute = keywordGetImplementation[type.getText()]
-                { declarationList = `concDeclaration(attribute,declarationList*); }
-            )*
-            t:RBRACE
-        )
-{
-  TomType astType = `Type(concTypeOption(),type.getText(),TLType(implement.getCode()));
-          putType(type.getText(), astType);
-          result = `TypeTermDecl(Name(type.getText()),declarationList,ot);
-          updatePosition(t.getLine(),t.getColumn());
-          selector().pop();
-        }
-    ;
+      implement = keywordImplement
+      (  attribute = keywordEquals[type.getText()]
+         { declarationList = `concDeclaration(attribute,declarationList*); }
+         |   attribute = keywordIsSort[type.getText()]
+         { declarationList = `concDeclaration(attribute,declarationList*); }
+         |   attribute = keywordGetImplementation[type.getText()]
+         { declarationList = `concDeclaration(attribute,declarationList*); }
+      )*
+      t:RBRACE
+      )
+  {
+    String currentTypeTerm = type.getText();
+    if (getType(currentTypeTerm) == null) {
+      TomType astType = `Type(concTypeOption(),currentTypeTerm,TLType(implement.getCode()));
+      putType(currentTypeTerm, astType);
+      result = `TypeTermDecl(Name(currentTypeTerm),declarationList,ot);
+      updatePosition(t.getLine(),t.getColumn());
+    } else {
+      TomMessage.error(getLogger(),currentFile(), type.getLine(),
+          TomMessage.typetermAlreadyDefined,currentTypeTerm);
+    }
+    selector().pop();
+  }
+  ;
 
 keywordImplement returns [TargetLanguage tlCode] throws TomException
 {

@@ -849,7 +849,9 @@ typeTerm [List<Code> list] throws TomException
             }
             Declaration termdecl = tomparser.typeTerm();
 
-            list.add(`DeclarationToCode(termdecl));
+            if (termdecl != null) {
+              list.add(`DeclarationToCode(termdecl));
+            }
         }
 
     ;
