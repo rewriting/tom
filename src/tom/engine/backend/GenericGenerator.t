@@ -358,11 +358,13 @@ public abstract class GenericGenerator extends AbstractGenerator {
     if(!inline || !code.isCode() || !inlined) {
       TomType returnType = getSymbolTable(moduleName).getBooleanType();
       String argType;
-      if(!lazyType) {
-        argType = TomBase.getTLCode(tlType);
-      } else {
+      // [02/12/2010 pem] precise type is no longer necessary
+
+      //if(!lazyType) {
+      //  argType = TomBase.getTLCode(tlType);
+      //} else {
         argType = TomBase.getTLType(getUniversalType());
-      }
+      //}
 
       genDeclInstr(TomBase.getTLType(returnType), "tom_is_fun_sym", opname,
           new String[] { argType, varname }, `Return(ExpressionToBQTerm(code)),deep,moduleName);
