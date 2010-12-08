@@ -427,7 +427,6 @@ blockList [List<Code> list] throws TomException
         |   operatorList[list]
         |   operatorArray[list]
         |   includeConstruct[list]
-        |   subtypeConstruct[list]
         |   typeTerm[list]
         |   code[list]
         |   STRING
@@ -804,26 +803,6 @@ code [List<Code> list] throws TomException
 }
 ;
 
-subtypeConstruct [List<Code> list] throws TomException
-{
-    TargetLanguage code = null;
-}
-    :
-        t:SUBTYPE
-        {
-            // addPreviousCode...
-            String textCode = getCode();
-            if(isCorrect(textCode)) {
-                code = `TL(
-                    textCode,
-                    TextPosition(currentLine,currentColumn),
-                    TextPosition(t.getLine(),t.getColumn()));
-                list.add(`TargetLanguageToCode(code));
-            }
-            tomparser.subtypeConstruct();
-        }
-    ;
-
 typeTerm [List<Code> list] throws TomException
 {
     TargetLanguage code = null;
@@ -951,9 +930,6 @@ MATCH
     ;
 OPERATOR
     : "%op"   {selector().push("tomlexer");}
-    ;
-SUBTYPE
-    : "%subtype"  {selector().push("tomlexer");}
     ;
 TYPETERM
     : "%typeterm" {selector().push("tomlexer");}

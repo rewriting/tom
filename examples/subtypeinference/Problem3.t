@@ -108,24 +108,21 @@ public class Problem3 {
     is_sort(t) { $t instanceof Exp }
   }
 
-  %typeterm TomBinaryOperator {
+  %typeterm TomBinaryOperator extends TomExp {
     implement { BinaryOperator }
     is_sort(t) { $t instanceof BinaryOperator }
   }
   
-  %typeterm TomUnaryOperator {
+  %typeterm TomUnaryOperator extends TomExp{
     implement { UnaryOperator }
     is_sort(t) { $t instanceof UnaryOperator }
   }
 
-  %typeterm TomCstExp {
+  %typeterm TomCstExp extends TomExp {
     implement { CstExp }
     is_sort(t) { $t instanceof CstExp }
   }
 
-  %subtype TomBinaryOperator <: TomExp
-  %subtype TomUnaryOperator <: TomExp
-  %subtype TomCstExp <: TomExp
     // ------------------------------------------------------------
   
   %op TomBinaryOperator BinaryOperator(first:TomExp, second:TomExp) {

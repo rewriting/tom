@@ -65,7 +65,7 @@ public class ExampleErrors {
   }
   
 // ------------------------------------------------------------
-  %typeterm TomA {
+  %typeterm TomA extends TomC{
     implement { A }
     is_sort(t) { $t instanceof A }
   }
@@ -75,13 +75,10 @@ public class ExampleErrors {
     is_sort(t) { $t instanceof A }
   }
 
-  %typeterm TomB {
+  %typeterm TomB extends TomA{
     implement { B }
     is_sort(t) { $t instanceof B }
   }
-
-  %subtype TomB <: TomA
-  %subtype TomA <: TomC
 
 // ------------------------------------------------------------
   %op TomA a() {
