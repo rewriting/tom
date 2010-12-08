@@ -1,3 +1,6 @@
+2010-12-08 tavaresc
+ * Replace syntax "%subtype A <: B" by "%typeterm A extends B {...}".
+
 2010-12-03 tavaresc
  * Fix supType method in order to take the lowest common upperTypes between two
  given types (in NewKernelTyper).
