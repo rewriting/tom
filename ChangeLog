@@ -1,3 +1,9 @@
+2010-12-09 tavaresc
+ * In SyntaxChecker : 
+  - remove error message for a match constraint whose both subject and explciit type has unknown types;
+  - fix test for undeclared types.
+ * In NewKernelTyper : remove test for undeclared types.
+
 2010-12-08 tavaresc
  * Replace syntax "%subtype A <: B" by "%typeterm A extends B {...}".
 
