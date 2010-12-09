@@ -169,32 +169,6 @@ public class NewKernelTyper {
       }
     }
   }
-
-  /**
-   * The method <code>hasUndeclaredType</code> checks if a term has an
-   * undeclared type by verifying if a term has type
-   * TypeVar(name,EmptyTargetLanguage()), where name is not
-   * UNKNOWN_TYPE.
-   * @param aType the type to be verified
-   * @param oList the informatiosn about file and line
-   */
-  protected void hasUndeclaredType(TomType aType, OptionList oList) {
-    String fileName = currentInputFileName;
-    int line = 0;
-    //DEBUG System.out.println("hasUndeclaredType: subject = " + subject);
-    %match {
-      TypeVar[TomType=typeName] << aType && (typeName !=
-          symbolTable.TYPE_UNKNOWN.getTomType()) -> {
-        Option option = TomBase.findOriginTracking(`oList);
-        %match(option) {
-          OriginTracking(_,line,fileName) -> {
-            TomMessage.error(logger,`fileName, `line,
-                TomMessage.unknownSymbol,`typeName); 
-          }
-        }
-      }
-    }
-  }
  
   /**
    * The method <code>getType</code> gets the type of a term by consulting the
@@ -977,7 +951,6 @@ public class NewKernelTyper {
         //DEBUG     tPattern + " = " + tSubject);
         %match(aType) {
           (Type|TypeVar)[TomType=typeName] -> {
-            `hasUndeclaredType(aType,getInfoFromTomTerm(pattern).getOptions()); 
             /* T_pattern = T_cast and T_cast <: T_subject */
             TypeConstraintList newEqConstraints = equationConstraints;
             TypeConstraintList newSubConstraints = subtypeConstraints;
