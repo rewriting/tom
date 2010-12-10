@@ -1,6 +1,16 @@
+2010-12-10 tavaresc
+ * Fix use of cast type and subject type in method renameSubjects :
+  Match(p,s,castType)
+    -> Match(object,s,castType) /\ IsSort(castType,object) /\
+       Match(freshSubj,Cast(object),freshSubjType) /\ Match(p,freshSubj,castType)
+
+ * But still need to verify the casts done after the compiler.
+ 
 2010-12-09 tavaresc
  * In SyntaxChecker : 
-  - remove error message for a match constraint whose both subject and explciit type has unknown types;
+  - remove error message for a match constraint whose both subject and explicit
+	type has unknown types and consequently remove type inference done during
+	syntax checking;
   - fix test for undeclared types.
  * In NewKernelTyper : remove test for undeclared types.
 
