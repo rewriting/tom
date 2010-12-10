@@ -65,12 +65,7 @@ public class ExampleErrors {
   }
   
 // ------------------------------------------------------------
-  %typeterm TomA extends TomC{
-    implement { A }
-    is_sort(t) { $t instanceof A }
-  }
-
-  %typeterm TomC {
+  %typeterm TomA {
     implement { A }
     is_sort(t) { $t instanceof A }
   }
@@ -118,8 +113,8 @@ public class ExampleErrors {
     A w = `g(b());
     %match {
       //(y == a()) && (g(x) == g(b())) -> { System.out.println("Test 1!"); }
-      //f(b()) << z -> { System.out.println("Test 2!"); }
-      g(x) << w && (f(b()) == createA(x)) -> { System.out.println("Test 3!"); }
+      f(b()) << z -> { System.out.println("Test 2!"); }
+      //g(x) << w && (f(b()) == createA(x)) -> { System.out.println("Test 3!"); }
     }
   }
 
