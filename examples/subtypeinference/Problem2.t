@@ -65,19 +65,16 @@ public class Problem2 {
   }
   
 // ------------------------------------------------------------
-  %typeterm TomA extends TomC{
+  %typeterm TomA {
     implement { A }
     is_sort(t) { $t instanceof A }
-  }
-
-  %typeterm TomC {
-    implement { A }
-    is_sort(t) { $t instanceof A }
+    equals(t1,t2) { $t1 == $t2 }
   }
 
   %typeterm TomB extends TomA {
     implement { B }
     is_sort(t) { $t instanceof B }
+    equals(t1,t2) { $t1 == $t2 }
   }
 
 // ------------------------------------------------------------
@@ -122,13 +119,20 @@ public class Problem2 {
   public void print(A term) {
     String op = term.getOp();
     System.out.print("Term = " + `op);
-    A y = `b();
-    B x = `b();
+    //A y = `b();
+    //B x = `b();
+    A n = `f(a());
+    A m = `a();
+    %match(n,m) {
+      f(x),x -> { System.out.println("Test x = " + `x); }
+    }
+    /*
     %match {
       //x << y && (y == a()) && (g(x) == g(b())) -> { System.out.println("Test!"); }
       g[num2=arg] << TomB term -> { System.out.println("(" + `arg.getOp() + ")"); }
       f[num1=arg] << TomA term -> { System.out.println("(" + `arg.getOp() + ")"); }
     }
+    */
   }
 }
 
