@@ -112,45 +112,321 @@ public class PrettyPrinterPlugin extends TomGenericPlugin {
     return OptionParser.xmlToOptionList(PrettyPrinterPlugin.DECLARED_OPTIONS);
   }
 
-  private void prettyPrinter(Code code) {
-//    %include { string.tom }
+  private void prettyPrinter(Code code) throws IOException {
     System.out.println("PrettyPrinter active");
-
-/*
-    Map<Float,String> anOrganizer = new TreeMap<Float,String>();
-    try {
-      FileWriter log = new FileWriter("log.t");
-      FileWriter txt = new FileWriter("log.txt");
-      txt.write(code.toString());
-      txt.close();
-    
-      %match(code) {
-        Tom(concCode(_*,TargetLanguageToCode(TL(a,e,_)),_*))-> { anOrganizer.put(getPosition(`e),`a); }
-        Tom(concCode(_*,TargetLanguageToCode(TL(_,_,e)),BQTermToCode(Composite(CompositeBQTerm(BuildTerm(Name(a),_,_)))),_*))-> { anOrganizer.put(getPosition(`e),"`"+`a+"()"); }
-//          Tom(concCode(t*)) -> { System.out.println(`(t*)); }
+    generate(0,code,"");
+  }
+  
+  // ------------------------------------------------------------
+  %include { ../adt/tomsignature/TomSignature.tom }
+  // ------------------------------------------------------------
+  
+  static void generateBQTerm(int deep, BQTerm subject, String moduleName) throws IOException {
+    %match (subject) {
+      BuildConstant[AstName=Name(name)] -> {
+      /*  if(`name.charAt(0)=='\'' && `name.charAt(`name.length()-1)=='\'') {
+          String substring = `name.substring(1,`name.length()-1);
+          //System.out.println("BuildConstant: " + substring);
+          substring = substring.replace("\\","\\\\"); // replace backslash by backslash-backslash
+          substring = substring.replace("'","\\'"); // replace quote by backslash-quote
+          output.write("'" + substring + "'");
+          return;
+        }
+        output.write(`name);*/
+	System.out.println(`name);
+        return;
       }
-    for (Iterator<Float> i = anOrganizer.keySet().iterator() ; i.hasNext() ; ){
-      log.write(anOrganizer.get(i.next()));
+
+      BuildTerm(Name(name), argList, myModuleName) -> {
+     //   `buildTerm(deep, name, argList, myModuleName);
+        return;
+      }
+
+      l@(BuildEmptyList|BuildEmptyArray|BuildConsList|BuildAppendList|BuildConsArray|BuildAppendArray)[] -> {
+      //  buildListOrArray(deep, `l, moduleName);
+        return;
+      }
+
+      FunctionCall[AstName=Name(name), Args=argList] -> {
+       // buildFunctionCall(deep,`name, `argList, moduleName);
+        return;
+      }
+
+      var@(BQVariable|BQVariableStar)[] -> {
+        //output.write(deep,getVariableName(`var));
+        return;
+      }
+
+      ExpressionToBQTerm(t) -> {
+        //generateExpression(deep,`t, moduleName);
+        return;
+      }
+
+      Composite(_*,t,_*) -> {
+        %match(t) {
+         /* CompositeTL(target) -> {
+            generateTargetLanguage(deep,`target, moduleName);
+          }
+          CompositeBQTerm(term) -> {
+            generateBQTerm(deep,`term, moduleName);
+          }*/
+        }
+      }
+      Composite(CompositeBQTerm(BuildTerm(Name(t),_,_)))->{
+	System.out.println(`t);
+      }
+      t@!Composite(_*) -> {
+        throw new TomRuntimeException("Cannot generate code for bqterm "+`t);
+      }
+      
+    }
+  }
+  
+  static void generateExpression(int deep, Expression subject, String moduleName) throws IOException {
+    %match(subject) {
+      /*Code(t) -> {
+        //output.write(`t);
+        return;
+      }
+
+      Integer(n) -> {
+        //output.write(`n);
+        return;
+      }
+
+      Negation(exp) -> {
+        //buildExpNegation(deep, `exp, moduleName);
+        return;
+      }
+
+      Conditional(cond,exp1,exp2) -> {
+        //buildExpConditional(deep, `cond, `exp1, `exp2, moduleName);
+        return;
+      }
+
+      And(exp1,exp2) -> {
+        //buildExpAnd(deep, `exp1, `exp2, moduleName);
+        return;
+      }
+
+      Or(exp1,exp2) -> {
+        //buildExpOr(deep, `exp1, `exp2, moduleName);
+        return;
+      }
+
+      GreaterThan(exp1,exp2) -> {
+        //buildExpGreaterThan(deep, `exp1, `exp2, moduleName);
+        return;
+      }
+
+      GreaterOrEqualThan(exp1,exp2) -> {
+        //buildExpGreaterOrEqualThan(deep, `exp1, `exp2, moduleName);
+        return;
+      }
+
+      LessThan(exp1,exp2) -> {
+        //buildExpLessThan(deep, `exp1, `exp2, moduleName);
+        return;
+      }
+
+      LessOrEqualThan(exp1,exp2) -> {
+        //buildExpLessOrEqualThan(deep, `exp1, `exp2, moduleName);
+        return;
+      }
+
+
+      Bottom(tomType) -> {
+        //buildExpBottom(deep,`tomType, moduleName);
+        return;
+      }
+
+      TrueTL() -> {
+        //buildExpTrue(deep);
+        return;
+      }
+
+      FalseTL() -> {
+        //buildExpFalse(deep);
+        return;
+      }
+
+      IsEmptyList(Name(opName), expList) -> {
+        //`buildExpIsEmptyList(deep, opName, getTermType(expList), expList, moduleName);
+        return;
+      }
+
+      IsEmptyArray(opNameAST, expArray, expIndex) -> {
+        //buildExpIsEmptyArray(deep, `opNameAST, getTermType(`expArray), `expIndex, `expArray, moduleName);
+        return;
+      }
+
+      EqualTerm(type,exp1,exp2) -> {
+        //`buildExpEqualTerm(deep, type, exp1, exp2, moduleName);
+        return;
+      }
+      EqualBQTerm(type,exp1,exp2) -> {
+        //`buildExpEqualBQTerm(deep, type, exp1, exp2, moduleName);
+        return;
+      }
+      IsSort(Type[TomType=type], exp) -> {
+        //`buildExpIsSort(deep,type,exp,moduleName);
+        return;
+      }
+
+      IsFsym(Name(opname), exp) -> {
+        //buildExpIsFsym(deep, `opname, `exp, moduleName);
+        return;
+      }
+
+      Cast(Type[TlType=tlType@TLType[]],exp) -> {
+        //buildExpCast(deep, `tlType, `exp, moduleName);
+        return;
+      }
+
+      //Cast(tlType@TLType[],exp) -> {
+      //  buildExpCast(deep, `tlType, `exp, moduleName);
+      //  return;
+      //}
+
+      GetSlot(_,Name(opname),slotName, var@(BQVariable|BuildTerm|ExpressionToBQTerm)[]) -> {    	  
+        //`buildExpGetSlot(deep, opname, slotName, var, moduleName);
+        return;
+      }
+      GetSlot(_,Name(opname),slotName, var@ExpressionToBQTerm(GetSlot[])) -> {    	  
+        //`buildExpGetSlot(deep, opname, slotName, var, moduleName);
+        return;
+      }
+
+      GetHead(Name(opName),codomain,exp) -> {
+        //`buildExpGetHead(deep, opName, getTermType(exp), codomain, exp, moduleName);
+        return;
+      }
+
+      GetTail(Name(opName), exp) -> {
+        //`buildExpGetTail(deep, opName, getTermType(exp), exp, moduleName);
+        return;
+      }
+
+      AddOne(exp) -> {
+        //buildAddOne(deep, `exp, moduleName);
+        return;
+      }
+
+      SubstractOne(exp) -> {
+        //buildSubstractOne(deep, `exp, moduleName);
+        return;
+      }
+
+      Substract(exp1,exp2) -> {
+        //buildSubstract(deep, `exp1, `exp2, moduleName);
+        return;
+      }
+
+      GetSize(opNameAST,exp) -> {
+        //buildExpGetSize(deep,`opNameAST,getTermType(`exp), `exp, moduleName);
+        return;
+      }
+
+      GetElement(opNameAST, _, varName, varIndex) -> {
+        //buildExpGetElement(deep,`opNameAST,getTermType(`varName),`varName, `varIndex, moduleName);
+        return;
+      }
+
+      GetSliceList(Name(name), varBegin, varEnd, tailSlice) -> {
+        //buildExpGetSliceList(deep, `name, `varBegin, `varEnd, `tailSlice,moduleName);
+        return;
+      }
+
+      GetSliceArray(Name(name),varArray,varBegin,expEnd) -> {
+        //buildExpGetSliceArray(deep, `name, `varArray, `varBegin, `expEnd, moduleName);
+        return;
+      }*/
+
+      BQTermToExpression(t) -> {
+        //generateBQTerm(deep,`t, moduleName);
+        return;
+      }      
+
+      TomInstructionToExpression(t) -> {
+        //generateInstruction(deep, `t, moduleName);
+        return;
+      }
+
+      t -> {
+        System.out.println("Cannot generate code for expression: " + `t);
+        throw new TomRuntimeException("Cannot generate code for expression: " + `t);
+      }
+    }
+  }
+  
+  static void generate(int deep, Code subject, String moduleName) throws IOException {    
+    %match(subject) {
+      Tom(l) -> {
+        generateList(deep,`l, moduleName);
+        return;
+      }
+
+      TomInclude(l) -> {
+        //generateListInclude(deep,`l, moduleName);
+        return;
+      }
+
+      BQTermToCode(t) -> {
+        generateBQTerm(deep,`t, moduleName);
+        return;
+      }
+
+      TargetLanguageToCode(t) -> {
+        generateTargetLanguage(deep,`t, moduleName);
+        return;
+      }
+
+      InstructionToCode(t) -> {
+        //generateInstruction(deep,`t, moduleName);
+        return;
+      }
+
+      DeclarationToCode(t) -> {
+        //generateDeclaration(deep,`t, moduleName);
+        return;
+      }
+
+      t -> {
+        System.out.println("Cannot generate code for: " + `t);
+        throw new TomRuntimeException("Cannot generate code for: " + `t);
+      }
+    }
+  }
+  
+  static void generateTargetLanguage(int deep, TargetLanguage subject, String moduleName) throws IOException {
+    %match(subject) {
+      TL(t,TextPosition[Line=startLine], TextPosition[Line=endLine]) -> {
+        //output.write(deep, `t, `startLine, `endLine - `startLine);
+        System.out.println(`t);
+        return;
+      }
+      ITL(t) -> {
+        //output.write(`t);
+        return;
+      }
+      Comment(t) -> {
+        //`buildComment(deep,t);
+        return;
+      }
+      t -> {
+        System.out.println("Cannot generate code for TL: " + `t);
+        throw new TomRuntimeException("Cannot generate code for TL: " + `t);
+      }
+    }
+  }
+  
+  static void generateList(int deep, CodeList subject, String moduleName)
+    throws IOException {
+      /*while(!subject.isEmptyconcCode()) {
+        generate(deep, subject.getHeadconcCode(), moduleName);
+        subject = subject.getTailconcCode();
+      }*/
     }
     
-    log.close();
-    }
-    catch(Exception e) {
-      System.out.println("little problem while writing the log file");
-    }
-*/
-    //System.out.println(intermediaryCode);
-    //System.out.println(codeToGive);
-  }
-
-
-/* 
-  private float getPosition(TextPosition tp) {
-    float f;
-    %match(tp) {
-      TextPosition(line,column) -> { f = Float.parseFloat(`line+"."+`column); return f; }
-    }
-  return -1;
-  }
-*/
 }
+
