@@ -122,6 +122,7 @@ public class PrettyPrinterPlugin extends TomGenericPlugin {
   // ------------------------------------------------------------
   
   static void generateBQTerm(int deep, BQTerm subject, String moduleName) throws IOException {
+    System.out.println("In generateBQTerm");
     %match (subject) {
       BuildConstant[AstName=Name(name)] -> {
       /*  if(`name.charAt(0)=='\'' && `name.charAt(`name.length()-1)=='\'') {
@@ -182,9 +183,83 @@ public class PrettyPrinterPlugin extends TomGenericPlugin {
     }
   }
   
-  static void generateExpression(int deep, Expression subject, String moduleName) throws IOException {
+
+  
+  static void generate(int deep, Code subject, String moduleName) throws IOException {    
     %match(subject) {
-      /*Code(t) -> {
+      Tom(l) -> {
+        generateList(deep,`l, moduleName);
+        return;
+      }
+
+      TomInclude(l) -> {
+        //generateListInclude(deep,`l, moduleName);
+        return;
+      }
+
+      BQTermToCode(t) -> {
+        generateBQTerm(deep,`t, moduleName);
+        return;
+      }
+
+      TargetLanguageToCode(t) -> {
+        generateTargetLanguage(deep,`t, moduleName);
+        return;
+      }
+
+      InstructionToCode(t) -> {
+        //generateInstruction(deep,`t, moduleName);
+        return;
+      }
+
+      DeclarationToCode(t) -> {
+        //generateDeclaration(deep,`t, moduleName);
+        return;
+      }
+
+      t -> {
+        System.out.println("Cannot generate code for: " + `t);
+        throw new TomRuntimeException("Cannot generate code for: " + `t);
+      }
+    }
+  }
+  
+  static void generateTargetLanguage(int deep, TargetLanguage subject, String moduleName) throws IOException {    
+    System.out.println("In generateTargetLanguage");
+    %match(subject) {
+      TL(t,TextPosition[Line=startLine], TextPosition[Line=endLine]) -> {
+        //output.write(deep, `t, `startLine, `endLine - `startLine);
+        return;
+      }
+      ITL(t) -> {
+        //output.write(`t);
+        return;
+      }
+      Comment(t) -> {
+        //`buildComment(deep,t);
+        return;
+      }
+      t -> {
+        System.out.println("Cannot generate code for TL: " + `t);
+        throw new TomRuntimeException("Cannot generate code for TL: " + `t);
+      }
+    }
+  }
+  
+  static void generateList(int deep, CodeList subject, String moduleName)
+    throws IOException {
+    System.out.println("In generateList");
+      /*while(!subject.isEmptyconcCode()) {
+        generate(deep, subject.getHeadconcCode(), moduleName);
+        subject = subject.getTailconcCode();
+      }*/
+    }
+    
+
+  
+  /*static void generateExpression(int deep, Expression subject, String moduleName) throws IOException {
+    %match(subject) {
+      Code(t) -> {
         //output.write(`t);
         return;
       }
@@ -340,7 +415,7 @@ public class PrettyPrinterPlugin extends TomGenericPlugin {
       GetSliceArray(Name(name),varArray,varBegin,expEnd) -> {
         //buildExpGetSliceArray(deep, `name, `varArray, `varBegin, `expEnd, moduleName);
         return;
-      }*/
+      }
 
       BQTermToExpression(t) -> {
         //generateBQTerm(deep,`t, moduleName);
@@ -358,75 +433,5 @@ public class PrettyPrinterPlugin extends TomGenericPlugin {
       }
     }
   }
-  
-  static void generate(int deep, Code subject, String moduleName) throws IOException {    
-    %match(subject) {
-      Tom(l) -> {
-        generateList(deep,`l, moduleName);
-        return;
-      }
-
-      TomInclude(l) -> {
-        //generateListInclude(deep,`l, moduleName);
-        return;
-      }
-
-      BQTermToCode(t) -> {
-        generateBQTerm(deep,`t, moduleName);
-        return;
-      }
-
-      TargetLanguageToCode(t) -> {
-        generateTargetLanguage(deep,`t, moduleName);
-        return;
-      }
-
-      InstructionToCode(t) -> {
-        //generateInstruction(deep,`t, moduleName);
-        return;
-      }
-
-      DeclarationToCode(t) -> {
-        //generateDeclaration(deep,`t, moduleName);
-        return;
-      }
-
-      t -> {
-        System.out.println("Cannot generate code for: " + `t);
-        throw new TomRuntimeException("Cannot generate code for: " + `t);
-      }
-    }
-  }
-  
-  static void generateTargetLanguage(int deep, TargetLanguage subject, String moduleName) throws IOException {
-    %match(subject) {
-      TL(t,TextPosition[Line=startLine], TextPosition[Line=endLine]) -> {
-        //output.write(deep, `t, `startLine, `endLine - `startLine);
-        System.out.println(`t);
-        return;
-      }
-      ITL(t) -> {
-        //output.write(`t);
-        return;
-      }
-      Comment(t) -> {
-        //`buildComment(deep,t);
-        return;
-      }
-      t -> {
-        System.out.println("Cannot generate code for TL: " + `t);
-        throw new TomRuntimeException("Cannot generate code for TL: " + `t);
-      }
-    }
-  }
-  
-  static void generateList(int deep, CodeList subject, String moduleName)
-    throws IOException {
-      /*while(!subject.isEmptyconcCode()) {
-        generate(deep, subject.getHeadconcCode(), moduleName);
-        subject = subject.getTailconcCode();
-      }*/
-    }
-    
+  */
 }
-
