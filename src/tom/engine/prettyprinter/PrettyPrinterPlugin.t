@@ -123,6 +123,9 @@ public class PrettyPrinterPlugin extends TomGenericPlugin {
   
   static void generateBQTerm(int deep, BQTerm subject, String moduleName) throws IOException {
     %match (subject) {
+      BQAppl(anOptionList, aTomName, aBQTermList) -> {
+        return;
+      }
       BuildConstant[AstName=Name(name)] -> {
       /*  if(`name.charAt(0)=='\'' && `name.charAt(`name.length()-1)=='\'') {
           String substring = `name.substring(1,`name.length()-1);
@@ -422,10 +425,10 @@ public class PrettyPrinterPlugin extends TomGenericPlugin {
   
   static void generateList(int deep, CodeList subject, String moduleName)
     throws IOException {
-      /*while(!subject.isEmptyconcCode()) {
+      while(!subject.isEmptyconcCode()) {
         generate(deep, subject.getHeadconcCode(), moduleName);
         subject = subject.getTailconcCode();
-      }*/
+      }
     }
     
 }
