@@ -15,11 +15,11 @@ tokens {
 }
 
 program
-	:	LEFTPAR RIGHTPAR LEFTBR code ';' ? RIGHTBR {System.out.println("C'est gaaaaagné");}
+	:	LEFTPAR RIGHTPAR LEFTBR code RIGHTBR 
 	;
 
 code
-	:	(statement ';')* -> ^(CODE statement*)
+	:	(s=statement {System.out.println($s.text);} ';') -> ^(CODE $s)
 	;
 
 statement

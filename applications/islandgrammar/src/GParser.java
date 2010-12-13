@@ -8,7 +8,7 @@ import java.io.FileInputStream;
 
 public class GParser {
 
-  private RuleReturnScope scope;
+  private miniTomParser.program_return truc;
 
   public GParser(FileInputStream input) {
     try {
@@ -17,14 +17,14 @@ public class GParser {
       CommonTokenStream tokens = new CommonTokenStream();
       tokens.setTokenSource(lexer);
       miniTomParser parser = new miniTomParser(tokens);
-      scope = parser.program();
+	truc = parser.program();
     } catch (Exception e) {
       e.printStackTrace();
     }
 }
  
   public void print() {
-    ((CommonTree)scope.getTree()).toStringTree();
+    ((CommonTree)truc.getTree()).toStringTree();
   }
 
   public static void printTree(CommonTree t, int indent) {
