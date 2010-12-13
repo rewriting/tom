@@ -172,24 +172,22 @@ public class TomMappingFromEcore {
       } else {
         String[] decl = getClassDeclarations(eclf); // [canonical name, anonymous generic, generic type]
         out.println(%[
-%typeterm @n@ {
+%typeterm @n@ @genSubtype(eclf)@ {
   implement { @(eclf instanceof EClass && !EObject.class.isAssignableFrom(c) ? "org.eclipse.emf.ecore.EObject" : decl[0] + decl[2])@ }
   is_sort(t) { @(c.isPrimitive() ? "true" : "$t instanceof " + decl[0] + decl[1])@ }
   equals(l1,l2) { @(c.isPrimitive() ? "$l1 == $l2" : "$l1.equals($l2)")@ }
 }]%);
-        if(useNewTyper) {
-          genSubtype(eclf);}
       }
     }
   }
 
-  private static void genSubtype(EClassifier eclf) {
-    if((eclf instanceof EClass) && !((EClass)eclf).getESuperTypes().isEmpty()) {
-      for (EClass supertype:((EClass)eclf).getESuperTypes()) {
-        out.println(%[
-%subtype @eclf.getName()@ <: @supertype.getName()@]%);
+  private static String genSubtype(EClassifier eclf) {
+    if (useNewTyper) {
+      if((eclf instanceof EClass) && !((EClass)eclf).getESuperTypes().isEmpty()) {
+        return "extends "+((EClass)eclf).getESuperTypes().get(0).getName();
       }
     }
+    return "";
   }
 
   /**
