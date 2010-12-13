@@ -6,23 +6,28 @@
 	<property name="antlrjar" value="${tom.home}/src/lib/tools/antlr-3.2.jar"/>
 	<property name="withAntlr" value="${antlrjar}:${env.CLASSPATH}"/>
 	<property name="src" value="${islgram}/src"/>
+	<property name="build" value="${islgram}/build"/>
 	<property name="input" value="${islgram}/input"/>
-	<property name="gramfile" value="${src}/miniTom.g"/>
+	<property name="gramname" value="miniTom"/>
+	<property name="gramfile" value="${src}/${gramname}.g"/>
 	<target name="grammar">
 		<java classname="org.antlr.Tool" classpath="${withAntlr}">
 			<arg value="${gramfile}"/>
 		</java>
 	</target>
-	<target name="compile">
-		<mkdir dir="build"/>
-		<javac srcdir="${src}" destdir="build" classpath="${withAntlr}"/>
+	<target name="compile" depends="grammar">
+		<mkdir dir="${build}"/>
+		<javac srcdir="${src}" destdir="${build}" classpath="${withAntlr}" includeantruntime="false"/>
 	</target>
-	<target name="test">
-		<java classpath="${withAntlr}:${islgram}/build" classname="Main" fork="true">
+	<target name="test" depends="compile">
+		<java classpath="${withAntlr}:${islgram}/${build}" classname="Main" fork="true">
 			<arg value="${input}/INput"/>
 		</java>
 	</target>
 	<target name="clean">
-		<delete dir="build"/>
+		<delete dir="${build}"/>
+		<delete file="${islgram}/${gramname}.tokens"/>
+		<delete file="${src}/${gramname}Parser.java"/>
+		<delete file="${src}/${gramname}Lexer.java"/>
 	</target>
 </project>

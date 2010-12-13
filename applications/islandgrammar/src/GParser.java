@@ -3,6 +3,7 @@ import org.antlr.runtime.CharStream;
 import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.RuleReturnScope;
 import org.antlr.runtime.tree.CommonTree;
+import org.antlr.runtime.tree.Tree;
 import java.io.FileInputStream;
 
 public class GParser {
@@ -23,8 +24,7 @@ public class GParser {
 }
  
   public void print() {
-    CommonTree tree=(CommonTree)scope.getTree();
-    printTree(tree,1);
+    ((CommonTree)scope.getTree()).toStringTree();
   }
 
   public static void printTree(CommonTree t, int indent) {
@@ -38,6 +38,17 @@ public class GParser {
       }
     }
   }
+/*
+  public static void printTree(CommonTree t) {
+    if( t != null ) {
+      System.out.print(t.getText());
+      for (int i = 0 ; i < t.getChildCount(); i++) {
+        System.out.print("( ");
+	printTree((CommonTree)t.getChild(i));
+	System.out.print(" )");
+      }
+    }
+  }*/
 } 
 
     
