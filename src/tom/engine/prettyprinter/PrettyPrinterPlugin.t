@@ -122,6 +122,7 @@ public class PrettyPrinterPlugin extends TomGenericPlugin {
   // ------------------------------------------------------------
   
   static void generateBQTerm(int deep, BQTerm subject, String moduleName) throws IOException {
+    System.out.println("In generateBQTerm");
     %match (subject) {
       BQAppl(anOptionList, aTomName, aBQTermList) -> {
         return;
@@ -185,182 +186,7 @@ public class PrettyPrinterPlugin extends TomGenericPlugin {
     }
   }
   
-  static void generateExpression(int deep, Expression subject, String moduleName) throws IOException {
-    %match(subject) {
-      /*Code(t) -> {
-        //output.write(`t);
-        return;
-      }
 
-      Integer(n) -> {
-        //output.write(`n);
-        return;
-      }
-
-      Negation(exp) -> {
-        //buildExpNegation(deep, `exp, moduleName);
-        return;
-      }
-
-      Conditional(cond,exp1,exp2) -> {
-        //buildExpConditional(deep, `cond, `exp1, `exp2, moduleName);
-        return;
-      }
-
-      And(exp1,exp2) -> {
-        //buildExpAnd(deep, `exp1, `exp2, moduleName);
-        return;
-      }
-
-      Or(exp1,exp2) -> {
-        //buildExpOr(deep, `exp1, `exp2, moduleName);
-        return;
-      }
-
-      GreaterThan(exp1,exp2) -> {
-        //buildExpGreaterThan(deep, `exp1, `exp2, moduleName);
-        return;
-      }
-
-      GreaterOrEqualThan(exp1,exp2) -> {
-        //buildExpGreaterOrEqualThan(deep, `exp1, `exp2, moduleName);
-        return;
-      }
-
-      LessThan(exp1,exp2) -> {
-        //buildExpLessThan(deep, `exp1, `exp2, moduleName);
-        return;
-      }
-
-      LessOrEqualThan(exp1,exp2) -> {
-        //buildExpLessOrEqualThan(deep, `exp1, `exp2, moduleName);
-        return;
-      }
-
-
-      Bottom(tomType) -> {
-        //buildExpBottom(deep,`tomType, moduleName);
-        return;
-      }
-
-      TrueTL() -> {
-        //buildExpTrue(deep);
-        return;
-      }
-
-      FalseTL() -> {
-        //buildExpFalse(deep);
-        return;
-      }
-
-      IsEmptyList(Name(opName), expList) -> {
-        //`buildExpIsEmptyList(deep, opName, getTermType(expList), expList, moduleName);
-        return;
-      }
-
-      IsEmptyArray(opNameAST, expArray, expIndex) -> {
-        //buildExpIsEmptyArray(deep, `opNameAST, getTermType(`expArray), `expIndex, `expArray, moduleName);
-        return;
-      }
-
-      EqualTerm(type,exp1,exp2) -> {
-        //`buildExpEqualTerm(deep, type, exp1, exp2, moduleName);
-        return;
-      }
-      EqualBQTerm(type,exp1,exp2) -> {
-        //`buildExpEqualBQTerm(deep, type, exp1, exp2, moduleName);
-        return;
-      }
-      IsSort(Type[TomType=type], exp) -> {
-        //`buildExpIsSort(deep,type,exp,moduleName);
-        return;
-      }
-
-      IsFsym(Name(opname), exp) -> {
-        //buildExpIsFsym(deep, `opname, `exp, moduleName);
-        return;
-      }
-
-      Cast(Type[TlType=tlType@TLType[]],exp) -> {
-        //buildExpCast(deep, `tlType, `exp, moduleName);
-        return;
-      }
-
-      //Cast(tlType@TLType[],exp) -> {
-      //  buildExpCast(deep, `tlType, `exp, moduleName);
-      //  return;
-      //}
-
-      GetSlot(_,Name(opname),slotName, var@(BQVariable|BuildTerm|ExpressionToBQTerm)[]) -> {    	  
-        //`buildExpGetSlot(deep, opname, slotName, var, moduleName);
-        return;
-      }
-      GetSlot(_,Name(opname),slotName, var@ExpressionToBQTerm(GetSlot[])) -> {    	  
-        //`buildExpGetSlot(deep, opname, slotName, var, moduleName);
-        return;
-      }
-
-      GetHead(Name(opName),codomain,exp) -> {
-        //`buildExpGetHead(deep, opName, getTermType(exp), codomain, exp, moduleName);
-        return;
-      }
-
-      GetTail(Name(opName), exp) -> {
-        //`buildExpGetTail(deep, opName, getTermType(exp), exp, moduleName);
-        return;
-      }
-
-      AddOne(exp) -> {
-        //buildAddOne(deep, `exp, moduleName);
-        return;
-      }
-
-      SubstractOne(exp) -> {
-        //buildSubstractOne(deep, `exp, moduleName);
-        return;
-      }
-
-      Substract(exp1,exp2) -> {
-        //buildSubstract(deep, `exp1, `exp2, moduleName);
-        return;
-      }
-
-      GetSize(opNameAST,exp) -> {
-        //buildExpGetSize(deep,`opNameAST,getTermType(`exp), `exp, moduleName);
-        return;
-      }
-
-      GetElement(opNameAST, _, varName, varIndex) -> {
-        //buildExpGetElement(deep,`opNameAST,getTermType(`varName),`varName, `varIndex, moduleName);
-        return;
-      }
-
-      GetSliceList(Name(name), varBegin, varEnd, tailSlice) -> {
-        //buildExpGetSliceList(deep, `name, `varBegin, `varEnd, `tailSlice,moduleName);
-        return;
-      }
-
-      GetSliceArray(Name(name),varArray,varBegin,expEnd) -> {
-        //buildExpGetSliceArray(deep, `name, `varArray, `varBegin, `expEnd, moduleName);
-        return;
-      }*/
-
-      BQTermToExpression(t) -> {
-        //generateBQTerm(deep,`t, moduleName);
-        return;
-      }      
-
-      TomInstructionToExpression(t) -> {
-        //generateInstruction(deep, `t, moduleName);
-        return;
-      }
-
-      t -> {
-        System.out.println("Cannot generate code for expression: " + `t);
-        throw new TomRuntimeException("Cannot generate code for expression: " + `t);
-      }
-    }
-  }
   
   static void generate(int deep, Code subject, String moduleName) throws IOException {    
     %match(subject) {
@@ -401,11 +227,11 @@ public class PrettyPrinterPlugin extends TomGenericPlugin {
     }
   }
   
-  static void generateTargetLanguage(int deep, TargetLanguage subject, String moduleName) throws IOException {
+  static void generateTargetLanguage(int deep, TargetLanguage subject, String moduleName) throws IOException {    
+    System.out.println("In generateTargetLanguage");
     %match(subject) {
       TL(t,TextPosition[Line=startLine], TextPosition[Line=endLine]) -> {
         //output.write(deep, `t, `startLine, `endLine - `startLine);
-        System.out.println(`t);
         return;
       }
       ITL(t) -> {
@@ -432,4 +258,3 @@ public class PrettyPrinterPlugin extends TomGenericPlugin {
     }
     
 }
-
