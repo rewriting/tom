@@ -1875,10 +1875,15 @@ typeTerm returns [Declaration result] throws TomException
       )*
       t:RBRACE
       {
-          TomType astType = `Type(typeoptionList,currentTypeName,TLType(implement.getCode()));
-          putType(currentTypeName, astType);
-          result = `TypeTermDecl(Name(currentTypeName),declarationList,ot);
-          updatePosition(t.getLine(),t.getColumn());
+          if (getType(currentTypeName) == null) {
+            TomType astType = `Type(typeoptionList,currentTypeName,TLType(implement.getCode()));
+            putType(currentTypeName, astType);
+            result = `TypeTermDecl(Name(currentTypeName),declarationList,ot);
+            updatePosition(t.getLine(),t.getColumn());
+          } else {
+            TomMessage.error(getLogger(),currentFile(), currentLine,
+                TomMessage.typetermAlreadyDefined,currentTypeName);
+          }
           selector().pop();
         }
     )
