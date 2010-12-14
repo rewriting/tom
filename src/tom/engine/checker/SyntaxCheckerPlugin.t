@@ -383,7 +383,7 @@ matchblock:{
       }
     } else {
       if(alreadyStudiedTypes.contains(name)) {
-        TomMessage.warning(getLogger(),
+        TomMessage.error(getLogger(),
             getCurrentTomStructureOrgTrack().getFileName(),
             getCurrentTomStructureOrgTrack().getLine(),
             TomMessage.multipleSortDefinitionError,
