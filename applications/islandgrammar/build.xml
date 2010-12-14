@@ -8,7 +8,8 @@
 	<property name="src" value="${islgram}/src"/>
 	<property name="build" value="${islgram}/build"/>
 	<property name="input" value="${islgram}/input"/>
-	<property name="gramname" value="miniTom"/>
+	<!--property name="gramname" value="miniTom"/-->
+	<property name="gramname" value="MyminiTom"/>
 	<property name="gramfile" value="${src}/${gramname}.g"/>
 	<target name="grammar">
 		<java classname="org.antlr.Tool" classpath="${withAntlr}">
@@ -20,8 +21,10 @@
 		<javac srcdir="${src}" destdir="${build}" classpath="${withAntlr}" includeantruntime="false"/>
 	</target>
 	<target name="test" depends="compile">
-		<java classpath="${withAntlr}:${islgram}/${build}" classname="Main" fork="true">
-			<arg value="${input}/INput"/>
+		<!--java classpath="${withAntlr}:${islgram}/${build}" classname="Main" fork="true"-->
+		<java classpath="${withAntlr}:${islgram}/${build}" classname="TestAntlr" fork="true">
+			<arg value="${input}/testAntlrInput"/>
+			<!--arg value="${input}/INput"/-->
 		</java>
 	</target>
 	<target name="clean">
