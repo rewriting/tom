@@ -251,9 +251,20 @@ public class NewTyper extends TomGenericPlugin {
       try {
         TomSymbol tSymbol = getSymbolFromName(tomName);
         tSymbol = collectKnownTypesFromTomSymbol(tSymbol);
+
+        if(TomBase.isListOperator(tSymbol) || TomBase.isArrayOperator(tSymbol)) {
+          %match(tSymbol) {
+            Symbol[AstName=symName,TypesToType=TypesToType(domain,Type[TypeOptions=tOptions,TomType=tomCodomain,TlType=tlCodomain]),PairNameDeclList=pndList,Options=options]
+              -> {
+                TypeOptionList newTOptions = `concTypeOption(WithSymbol(symName),tOptions*);
+                tSymbol = `Symbol(symName,TypesToType(domain,Type(newTOptions,tomCodomain,tlCodomain)),pndList,options);
+              }
+          }
+        }
+
         tSymbol =
-          `TopDownIdStopOnSuccess(TransformBQAppl(newKernelTyper)).visitLight(`tSymbol);
-        getSymbolTable().putSymbol(tomName,tSymbol);
+          `TopDownIdStopOnSuccess(TransformBQAppl(newKernelTyper)).visitLight(tSymbol);
+        newKernelTyper.putSymbol(tomName,tSymbol);
         newKernelTyper.setLimTVarSymbolTable(freshTypeVarCounter);
       } catch(tom.library.sl.VisitFailure e) {
         throw new TomRuntimeException("should not be there");

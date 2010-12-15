@@ -1,3 +1,9 @@
+2010-12-15 tavaresc
+ * Add information "WithSymbol" for all list and array operators (in method
+ "UpdateSumbolTable" of Typer)
+ * Fix type constraint for VariableStar ("=" instead of "<:")
+ * Start to fix test of subtyping considering symmetry (test equality).
+
 2010-12-10 tavaresc
  * Fix use of cast type and subject type in method renameSubjects :
   Match(p,s,castType)
