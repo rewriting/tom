@@ -18,6 +18,7 @@ Declaration = TypeTermDecl(AstName:TomName,Declarations:DeclarationList,OrgTrack
             | MakeAddArray(AstName:TomName,VarElt:BQTerm,VarList:BQTerm,Instr:Instruction,OrgTrack:Option)
             | MakeDecl(AstName:TomName,AstType:TomType,Args:BQTermList,Instr:Instruction,OrgTrack:Option)
             | Strategy(SName:TomName,ExtendsTerm:BQTerm,VisitList:TomVisitList,OrgTrack:Option)
+            | Transformation(TName:TomName,WithList:TomWithList,OrgTrack:Option) //Options:OptionList ?
             | FunctionDef(AstName:TomName,ArgumentList:BQTermList,Codomain:TomType,ThrowsType:TomType,Instruction:Instruction)
             | MethodDef(AstName:TomName,ArgumentList:BQTermList,Codomain:TomType,ThrowsType:TomType,Instruction:Instruction)
             /*
