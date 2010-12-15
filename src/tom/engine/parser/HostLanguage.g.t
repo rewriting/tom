@@ -462,7 +462,39 @@ strategyConstruct [List<Code> list] throws TomException
             list.add(`DeclarationToCode(strategy));
         }
     ;
+///
+// the %transformation construct
+transformationConstruct [List<Code> list] throws TomException
+{
+    TargetLanguage code = null;
+}
+    :
+        t:TRANSFORMATION // we switch the lexers here : we are in Tom mode
+        {
+            // add the target code preceeding the construct
+            String textCode = getCode();
 
+            if(isCorrect(textCode)) {
+                code = `TL(
+                    textCode,
+                    TextPosition(currentLine,currentColumn),
+                    TextPosition(t.getLine(),t.getColumn())
+                );
+                list.add(`TargetLanguageToCode(code));
+            }
+
+            Option ot = `OriginTracking( Name("Transformation"), t.getLine(), currentFile);
+
+            // call the tomparser for the construct
+            Declaration transformation = tomparser.transformationConstruct(ot);
+            list.add(`DeclarationToCode(transformation));
+        }
+    ;
+
+
+
+
+///
 matchConstruct [List<Code> list] throws TomException
 {
     TargetLanguage code = null;
@@ -952,6 +984,9 @@ OPERATOR
     ;
 SUBTYPE
     : "%subtype"  {selector().push("tomlexer");}
+    ;
+TRANSFORMATION
+    : "%transformation" {selector().push("tomlexer");}
     ;
 TYPETERM
     : "%typeterm" {selector().push("tomlexer");}
