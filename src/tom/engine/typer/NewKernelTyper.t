@@ -1125,23 +1125,19 @@ public class NewKernelTyper {
         return newSList.reverse(); 
       }
 
-      Symbol[AstName=symName@Name(name),TypesToType=TypesToType(domain@concTomType(headTTList,_*),Type[TypeOptions=tOptions,TomType=tomCodomain,TlType=tlCodomain]),PairNameDeclList=pndList,Options=options] -> {
+      Symbol[AstName=symName@Name(name),TypesToType=TypesToType(concTomType(headTTList,_*),codomain@Type[TypeOptions=tOptions,TomType=tomCodomain,TlType=tlCodomain]),PairNameDeclList=pndList,Options=options] -> {
         TomTerm argTerm;
         if(TomBase.isListOperator(`tSymbol) || TomBase.isArrayOperator(`tSymbol)) {
-          //TypeOptionList newTOptions = `concTypeOption(WithSymbol(symName),tOptions*);
-          //symbolTable.putSymbol(`name,`Symbol(symName,TypesToType(domain,Type(newTOptions,tomCodomain,tlCodomain)),pndList,options));
-
           TomSymbol argSymb;
           for (Slot slot : sList.getCollectionconcSlot()) {
             argTerm = slot.getAppl();
             argSymb = getSymbolFromTerm(argTerm);
             if(!(TomBase.isListOperator(`argSymb) || TomBase.isArrayOperator(`argSymb))) {
               %match(argTerm) {
-                //VariableStar[] -> {
+                VariableStar[] -> {
                   /* Case CT-STAR rule (applying to premises) */
-                  //argType = `Type(newTOptions,tomCodomain,tlCodomain);
-                  //argType = `Type(newTOptions,tomCodomain,tlCodomain);
-                //}
+                  argType = `codomain;
+                }
 
                 !VariableStar[] -> { 
                   /* Case CT-ELEM rule (applying to premises which are not lists) */
@@ -1233,7 +1229,7 @@ public class NewKernelTyper {
         return newBQTList.reverse(); 
       }
 
-      Symbol[AstName=symName,TypesToType=TypesToType(domain@concTomType(headTTList,_*),Type[TypeOptions=tOptions,TomType=tomCodomain,TlType=tlCodomain]),PairNameDeclList=pNDList,Options=oList] -> {
+      Symbol[AstName=symName,TypesToType=TypesToType(domain@concTomType(headTTList,_*),codomain@Type[TypeOptions=tOptions,TomType=tomCodomain,TlType=tlCodomain]),PairNameDeclList=pNDList,Options=oList] -> {
         TomTypeList symDomain = `domain;
         TomSymbol argSymb;
         if(TomBase.isListOperator(`tSymbol) || TomBase.isArrayOperator(`tSymbol)) {
@@ -1250,12 +1246,11 @@ public class NewKernelTyper {
                   argType = `EmptyType();
                 }
 
-                //BQVariableStar[] -> {
-                //  TypeOptionList newTOptions = `concTypeOption(WithSymbol(symName),tOptions*);
+                BQVariableStar[] -> {
 
                   /* Case CT-STAR rule (applying to premises) */
-                //  argType = `Type(newTOptions,tomCodomain,tlCodomain);
-                //}
+                  argType = `codomain;
+                }
 
                 //TO VERIFY : which constructors must be tested here?
                 /* Case CT-ELEM rule (applying to premises which are not lists) */
@@ -1646,7 +1641,7 @@ matchBlockFail :
     visit TypeConstraintList {
       /* PHASE 1 */
       tcl@concTypeConstraint(tcl1*,Subtype[Type1=t1,Type2=t2,Info=info],tcl2*,Subtype[Type1=t2,Type2=t1],tcl3*) -> {
-        //DEBUG System.out.println("\nsolve1: " + `tcl);
+        System.out.println("\nsolve1: " + `tcl);
         nkt.solveEquationConstraints(`concTypeConstraint(Equation(t1,t2,info)));
         return
           nkt.`concTypeConstraint(tcl1,tcl2,tcl3);
@@ -1659,32 +1654,32 @@ matchBlockFail :
       /* PHASE 2 */
       tcl@concTypeConstraint(_*,Subtype[Type1=t1,Type2=tVar@TypeVar[],Info=info],_*,Subtype[Type1=tVar,Type2=t2],_*)
         && !concTypeConstraint(_*,Subtype[Type1=t1,Type2=t2],_*) << tcl -> {
-          //DEBUG System.out.println("\nsolve2a: " + `tcl);
+          System.out.println("\nsolve2a: " + `tcl);
           return
             nkt.`addSubConstraint(Subtype(t1,t2,info),tcl);
         }
       tcl@concTypeConstraint(_*,Subtype[Type1=tVar,Type2=t2,Info=info],_*,Subtype[Type1=t1,Type2=tVar@TypeVar[]],_*)
         && !concTypeConstraint(_*,Subtype[Type1=t1,Type2=t2],_*) << tcl -> {
-          //DEBUG System.out.println("\nsolve2b: " + `tcl);
+          System.out.println("\nsolve2b: " + `tcl);
           return
             nkt.`addSubConstraint(Subtype(t1,t2,info),tcl);
         }
 
       /* PHASE 3 */
       tcl@concTypeConstraint(_*,sConstraint@Subtype[Type1=!TypeVar[],Type2=!TypeVar[]],_*) -> {
-        //DEBUG System.out.println("\nsolve3: " + `tcl);
+        System.out.println("\nsolve3: " + `tcl);
         nkt.detectFail(`sConstraint);
       }
 
       /* PHASE 4 */
       concTypeConstraint(tcl1*,constraint@Subtype[Type1=tVar@TypeVar[],Type2=t1@!TypeVar[],Info=info],tcl2*,c2@Subtype[Type1=tVar,Type2=t2@!TypeVar[]],tcl3*) -> {
-        //DEBUG System.out.println("\nsolve6: " + `constraint + " and " + `c2);
+        System.out.println("\nsolve6: " + `constraint + " and " + `c2);
         TomType lowerType = nkt.`minType(t1,t2);
-        //DEBUG System.out.println("\nminType(" + `t1.getTomType() + "," +
-        //DEBUG     `t2.getTomType() + ") = " + lowerType);
+        System.out.println("\nminType(" + `t1.getTomType() + "," +
+            `t2.getTomType() + ") = " + lowerType);
 
         if (lowerType == `EmptyType()) {
-          nkt.printError(`constraint);
+          nkt.printError(`Subtype(t1,t2,info));
           return `concTypeConstraint(tcl1,tcl2,tcl3); 
         }
 
@@ -1692,13 +1687,13 @@ matchBlockFail :
           nkt.`addSubConstraint(Subtype(tVar,lowerType,info),concTypeConstraint(tcl1,tcl2,tcl3));
       }
       concTypeConstraint(tcl1*,constraint@Subtype[Type1=t1@!TypeVar[],Type2=tVar@TypeVar[],Info=info],tcl2*,c2@Subtype[Type1=t2@!TypeVar[],Type2=tVar],tcl3*) -> {
-        //DEBUG System.out.println("\nsolve7: " + `constraint + " and " + `c2);
+        System.out.println("\nsolve7: " + `constraint + " and " + `c2);
         TomType supType = nkt.`supType(t1,t2);
-        //DEBUG System.out.println("\nsupType(" + `t1.getTomType() + "," +
-        //DEBUG    `t2.getTomType() + ") = " + supType);
+        System.out.println("\nsupType(" + `t1.getTomType() + "," +
+           `t2.getTomType() + ") = " + supType);
 
         if (supType == `EmptyType()) {
-          nkt.printError(`constraint);
+          nkt.printError(`Subtype(t1,t2,info));
           return `concTypeConstraint(tcl1,tcl2,tcl3); 
         }
 
@@ -1708,7 +1703,7 @@ matchBlockFail :
 
       /* PHASE 5 */
       tcl -> {
-        //DEBUG System.out.println("\nsolve8: " + `tcl);
+        System.out.println("\nsolve8: " + `tcl);
         return nkt.enumerateSolutions(`tcl);
       }
     }
@@ -1809,45 +1804,22 @@ matchBlockFail :
    *            the 'EmptyType()' otherwise
    */
   private TomType minType(TomType t1, TomType t2) {
-    TomTypeList supTypes1 = dependencies.get(t1.getTomType());
-    TomTypeList supTypes2 = dependencies.get(t2.getTomType());
-    %match {
-      //TODO : use isSubsortOf
-      Type[TypeOptions=tOptions1,TomType=tName] << t1 
-        && Type[TypeOptions=tOptions2,TomType=tName] << t2 -> {
-          %match {
-            concTypeOption(_*,WithSymbol[RootSymbolName=rsName1],_*) << tOptions1 
-              && concTypeOption(_*,WithSymbol[RootSymbolName=rsName1],_*) <<
-              tOptions2
-              -> { return t1; }
-
-            concTypeOption(_*,WithSymbol[RootSymbolName=rsName1],_*) << tOptions1 
-              && !concTypeOption(_*,WithSymbol[],_*) <<
-              tOptions2
-              -> { return t1; }
-
-            concTypeOption(_*,WithSymbol[RootSymbolName=rsName1],_*) << tOptions2 
-              && !concTypeOption(_*,WithSymbol[],_*) <<
-              tOptions1
-              -> { return t2; }
-          }
-        }
-
-      concTomType(_*,type,_*) << supTypes1 && (type == t2) -> {
-        return t1;
-      }
-      concTomType(_*,type,_*) << supTypes2 && (type == t1) -> {
-        return t2;
-      }
-    }
+    if (isSubtypeOf(t1,t2)) { return t1; } 
+    if (isSubtypeOf(t2,t1)) { return t2; }
     return `EmptyType();
   }
 
   /**
    * The method <code>supType</code> tries to find the lowest common uppertype
    * of two given ground types.
-   * OBS.: when the subtype relation does not hold between two types 't1' and
-   * 't2', the method considers the intersection of the supertypes lists
+   * When the subtype relation does not directly hold between two types 't1' and
+   * 't2', the method considers:
+   * CASE 1 : T1^c1 <: T2^c2
+   *  a) --> True if T1 'a' is equals to 'b' and (T1 == T2 or T1 is a proper
+   *  subtype of T2)
+   *  b) --> False otherwise 
+   *
+   * the intersection of the supertypes lists
    * supertypes_t1 and supertypes_t2 and searches for the common supertype 'ti' which
    * has the bigger supertypes_ti list 
    * @param t1  a type
@@ -1858,15 +1830,22 @@ matchBlockFail :
    *            the 'EmptyType()' otherwise
    */
   private TomType supType(TomType t1, TomType t2) {
+    TomType newt1 = t1;
+    TomType newt2 = t2;
+    %match {
+      Type[TypeOptions=concTypeOption(ltoList1*,WithSymbol[RootSymbolName=rsName1],rtoList1*),TomType=tName1,TlType=tlType1] << t1 
+        &&
+        Type[TypeOptions=concTypeOption(ltoList2*,WithSymbol[RootSymbolName=rsName2],rtoList2*),TomType=tName2,TlType=tltype2] << t2 -> {
+          newt1 = `Type(concTypeOption(ltoList1*,rtoList1*),tName1,tlType1);
+          newt2 = `Type(concTypeOption(ltoList2*,rtoList2*),tName2,tltype2);
+        }
+    }
+    if (isSubtypeOf(newt1,newt2)) { return newt2; } 
+    if (isSubtypeOf(newt2,newt1)) { return newt1; }
+
     TomTypeList supTypes1 = dependencies.get(t1.getTomType());
     TomTypeList supTypes2 = dependencies.get(t2.getTomType());
     %match {
-      concTomType(_*,type,_*) << supTypes1 && (type == t2) -> {
-        return t2;
-      }
-      concTomType(_*,type,_*) << supTypes2 && (type == t1) -> {
-        return t1;
-      }
       !concTomType() << supTypes1 && !concTomType() << supTypes2 -> {
         int st1Size = `supTypes1.length();
         int st2Size = `supTypes2.length();
