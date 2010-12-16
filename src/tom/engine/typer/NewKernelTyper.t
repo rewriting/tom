@@ -1789,11 +1789,10 @@ matchBlockFail :
    * @param t2 another ground (decorated) type
    * @return   true if t1 <: t2 and false otherwise
    */
-  /*
-  private void isSubtypeOf(TomType t1, TomType t2) {
+  private boolean isSubtypeOf(TomType t1, TomType t2) {
     %match {
-      Type1=t1@Type[TypeOptions=tOptions1,TomType=tName1]<< t1 
-        && Type2=t2@Type[TypeOptions=tOptions2,TomType=tName2] << t2 -> {
+      Type[TypeOptions=tOptions1,TomType=tName1] << t1 
+        && Type[TypeOptions=tOptions2,TomType=tName2] << t2 -> {
           %match {
             // CASES 1a and 3a
             !concTypeOption(_*,WithSymbol[],_*) << tOptions2 
@@ -1806,20 +1805,25 @@ matchBlockFail :
                 return true; 
               }
 
-            concTypeOption(_*,WithSymbol[RootSymbolName=rsName1],_*) << tOptions1
-              && concTypeOption(_*,WithSymbol[RootSymbolName=rsName2@!rsName1],_*) << tOptions2 -> {
-                printError(`tConstraint);
-                break matchBlockFail;
+            // CASE 4a
+            concTypeOption(_*,WithSymbol[RootSymbolName=rsName],_*) << tOptions1
+              && concTypeOption(_*,WithSymbol[RootSymbolName=rsName],_*) << tOptions2 
+              && (tName1 == tName2) -> {
+                return true; 
               }
-
-            !concTypeOption(_*,WithSymbol[],_*) << tOptions1
-              && concTypeOption(_*,WithSymbol[],_*) << tOptions2 -> {
-                printError(`tConstraint);
-                break matchBlockFail;
+            concTypeOption(_*,WithSymbol[RootSymbolName=rsName],_*) << tOptions1
+              && concTypeOption(_*,WithSymbol[RootSymbolName=rsName],_*) << tOptions2 
+              && (tName1 == tName2) && concTomType(_*,Type[TomType=tName2],_*) <<
+              dependencies.get(tName1) -> {
+                return true; 
               }
           }
         }
-*/
+    }
+    // Remain cases
+    return false;
+  }
+
   /**
    * The method <code>minType</code> tries to find the common lowertype
    * between two given ground types.
