@@ -1812,14 +1812,8 @@ matchBlockFail :
   /**
    * The method <code>supType</code> tries to find the lowest common uppertype
    * of two given ground types.
-   * When the subtype relation does not directly hold between two types 't1' and
-   * 't2', the method considers:
-   * CASE 1 : T1^c1 <: T2^c2
-   *  a) --> True if T1 'a' is equals to 'b' and (T1 == T2 or T1 is a proper
-   *  subtype of T2)
-   *  b) --> False otherwise 
-   *
-   * the intersection of the supertypes lists
+   * OBS.: when the subtype relation does not hold between two types 't1' and
+   * 't2', the method considers the intersection of the supertypes lists
    * supertypes_t1 and supertypes_t2 and searches for the common supertype 'ti' which
    * has the bigger supertypes_ti list 
    * @param t1  a type
@@ -1830,22 +1824,18 @@ matchBlockFail :
    *            the 'EmptyType()' otherwise
    */
   private TomType supType(TomType t1, TomType t2) {
-    TomType newt1 = t1;
-    TomType newt2 = t2;
-    %match {
-      Type[TypeOptions=concTypeOption(ltoList1*,WithSymbol[RootSymbolName=rsName1],rtoList1*),TomType=tName1,TlType=tlType1] << t1 
-        &&
-        Type[TypeOptions=concTypeOption(ltoList2*,WithSymbol[RootSymbolName=rsName2],rtoList2*),TomType=tName2,TlType=tltype2] << t2 -> {
-          newt1 = `Type(concTypeOption(ltoList1*,rtoList1*),tName1,tlType1);
-          newt2 = `Type(concTypeOption(ltoList2*,rtoList2*),tName2,tltype2);
-        }
-    }
-    if (isSubtypeOf(newt1,newt2)) { return newt2; } 
-    if (isSubtypeOf(newt2,newt1)) { return newt1; }
-
+    if (isSubtypeOf(t1,t2)) { return t2; } 
+    if (isSubtypeOf(t2,t1)) { return t1; }
     TomTypeList supTypes1 = dependencies.get(t1.getTomType());
     TomTypeList supTypes2 = dependencies.get(t2.getTomType());
     %match {
+      Type[TypeOptions=concTypeOption(_*,WithSymbol[RootSymbolName=rsName1],_*),TomType=tName,TlType=tlType1] << t1 
+        &&
+        Type[TypeOptions=concTypeOption(_*,WithSymbol[RootSymbolName=rsName2],_*),TomType=tName] << t2 -> {
+          // Return the equivalent groudn type without decoration
+          return symbolTable.getTypeFromName(`tName); 
+        }
+
       !concTomType() << supTypes1 && !concTomType() << supTypes2 -> {
         int st1Size = `supTypes1.length();
         int st2Size = `supTypes2.length();
