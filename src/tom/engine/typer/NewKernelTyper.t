@@ -1125,7 +1125,7 @@ public class NewKernelTyper {
         return newSList.reverse(); 
       }
 
-      Symbol[AstName=symName@Name(name),TypesToType=TypesToType(concTomType(headTTList,_*),codomain@Type[TypeOptions=tOptions,TomType=tomCodomain,TlType=tlCodomain]),PairNameDeclList=pndList,Options=options] -> {
+      Symbol[AstName=symName@Name(name),TypesToType=TypesToType(concTomType(headTTList,_*),codomain@Type[])] -> {
         TomTerm argTerm;
         if(TomBase.isListOperator(`tSymbol) || TomBase.isArrayOperator(`tSymbol)) {
           TomSymbol argSymb;
@@ -1229,7 +1229,7 @@ public class NewKernelTyper {
         return newBQTList.reverse(); 
       }
 
-      Symbol[AstName=symName,TypesToType=TypesToType(domain@concTomType(headTTList,_*),codomain@Type[TypeOptions=tOptions,TomType=tomCodomain,TlType=tlCodomain]),PairNameDeclList=pNDList,Options=oList] -> {
+      Symbol[AstName=symName,TypesToType=TypesToType(domain@concTomType(headTTList,_*),codomain@Type[]),PairNameDeclList=pNDList,Options=oList] -> {
         TomTypeList symDomain = `domain;
         TomSymbol argSymb;
         if(TomBase.isListOperator(`tSymbol) || TomBase.isArrayOperator(`tSymbol)) {

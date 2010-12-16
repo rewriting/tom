@@ -45,7 +45,7 @@ public class ExampleIf{
   public int plus10(int n) {
     %match{
       x << int n -> { 
-        if (`x>1) {  
+        if (`x<100) {  
           return `plus10(x + 10); 
         }
       }
