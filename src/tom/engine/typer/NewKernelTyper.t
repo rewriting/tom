@@ -1569,35 +1569,10 @@ matchBlockFail :
             break matchBlockFail;
           }
 
-        Subtype[Type1=t1@Type[TypeOptions=tOptions1,TomType=tName1],Type2=t2@Type[TypeOptions=tOptions2,TomType=tName2]] << tConstraint -> {
-          %match {
-            !concTypeOption(_*,WithSymbol[],_*) << tOptions2 
-              && (tName1 != tName2) -> {
-                TomTypeList superTypesT1 = dependencies.get(`tName1);
-                %match {
-                  /* CASES 5a and 7a */
-                  //TODO : use isSubtypeOf()
-                  !concTomType(_*,Type[TomType=supTName],_*) << superTypesT1 
-                    && supTName << String tName2 -> {
-                    printError(`tConstraint);
-                  }
-                }
-                break matchBlockFail;
-              }
-
-            /* CASE 8a */
-            concTypeOption(_*,WithSymbol[RootSymbolName=rsName1],_*) << tOptions1
-              && concTypeOption(_*,WithSymbol[RootSymbolName=rsName2@!rsName1],_*) << tOptions2 -> {
-                printError(`tConstraint);
-                break matchBlockFail;
-              }
-
-            /* CASE 6 */
-            !concTypeOption(_*,WithSymbol[],_*) << tOptions1
-              && concTypeOption(_*,WithSymbol[],_*) << tOptions2 -> {
-                printError(`tConstraint);
-                break matchBlockFail;
-              }
+        Subtype[Type1=t1,Type2=t2@!t1] << tConstraint -> {
+          if (!isSubtypeOf(`t1,`t2)) {
+            printError(`tConstraint);
+            break matchBlockFail;
           }
         }
       }
