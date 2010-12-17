@@ -236,7 +236,7 @@ public class NewKernelTyper {
   }
 
   /**
-   * The method <code>getInfoFromTomTerm</code> creates a pair
+   * The method <code>getInfoFromBQTerm</code> creates a pair
    * (name,information) for a given term by consulting its attributes.
    * @param bqTerm the BQTerm requesting the informations
    * @return       the information about the BQTerm
@@ -598,7 +598,7 @@ public class NewKernelTyper {
     visit Code {
       code@(Tom|TomInclude)[CodeList=cList] -> {
         nkt.generateDependencies();
-        System.out.println("Dependencies: " + nkt.dependencies);
+        //DEBUG System.out.println("Dependencies: " + nkt.dependencies);
         //DEBUG System.out.println("Code with term = " + `code + " and contextType = " +
         //DEBUG     contextType);
         CodeList newCList = nkt.inferCodeList(`cList);
@@ -705,12 +705,21 @@ public class NewKernelTyper {
           // This code can not be moved to IF_2 because tSymbol may don't be
           // "null" since the begginning and then does not enter into neither IF_1 nor
           // IF_2
-          codomain = nkt.getCodomain(tSymbol);
-          //DEBUG System.out.println("\n Test pour TomTerm-inferTypes in RecordAppl. codomain = " + codomain);
+          TomSymbol newtSymbol = tSymbol;
+          %match(newtSymbol) {
+            Symbol[AstName=symName,TypesToType=TypesToType[Domain=domain,Codomain=tsCodomain@Type[TypeOptions=tOptions,TomType=tomCodomain,TlType=tlCodomain]],PairNameDeclList=pndList,Options=options] -> { 
+              codomain = `tsCodomain;
+              if(TomBase.isListOperator(`tSymbol) || TomBase.isArrayOperator(`tSymbol)) {
+                // Apply decoration for types of list operators
+                TypeOptionList newTOptions = `concTypeOption(WithSymbol(symName),tOptions*);
+                codomain = `Type(newTOptions,tomCodomain,tlCodomain);
+                tSymbol =
+                  `Symbol(symName,TypesToType(domain,codomain),pndList,options); 
+              }  
+            }
+          }
           TypeConstraintList newSubConstraints = nkt.subtypeConstraints;
           nkt.subtypeConstraints = nkt.addSubConstraint(`Subtype(codomain,contextType,PairNameOptions(aName,optionList)),newSubConstraints);
-          //DEBUG System.out.println("InferTypes:TomTerm recordappl -- constraint" +
-          //DEBUG     codomain + " <: " + contextType);
         }
 
         ConstraintList newCList = `cList;
@@ -777,13 +786,23 @@ public class NewKernelTyper {
         if (tSymbol == null) {
           tSymbol = `EmptySymbol();
         } else {
-          codomain = nkt.getCodomain(tSymbol);
+          TomSymbol newtSymbol = tSymbol;
+          %match(newtSymbol) {
+            Symbol[AstName=symName,TypesToType=TypesToType[Domain=domain,Codomain=tsCodomain@Type[TypeOptions=tOptions,TomType=tomCodomain,TlType=tlCodomain]],PairNameDeclList=pndList,Options=options] -> { 
+              codomain = `tsCodomain;
+              if(TomBase.isListOperator(`tSymbol) || TomBase.isArrayOperator(`tSymbol)) {
+                // Apply decoration for types of list operators
+                TypeOptionList newTOptions = `concTypeOption(WithSymbol(symName),tOptions*);
+                codomain = `Type(newTOptions,tomCodomain,tlCodomain);
+                tSymbol =
+                  `Symbol(symName,TypesToType(domain,codomain),pndList,options); 
+              }  
+            }
+          }
           TypeConstraintList newSubConstraints = nkt.subtypeConstraints;
           nkt.subtypeConstraints = nkt.addSubConstraint(`Subtype(codomain,contextType,PairNameOptions(aName,optionList)),newSubConstraints);
-          //DEBUG System.out.println("InferTypes:BQTerm bqappl -- constraint = "
-          //DEBUG + `codomain + " = " + contextType);
         }
-        
+               
         BQTermList newBQTList = `bqTList;
         if (!`bqTList.isEmptyconcBQTerm()) {
           //DEBUG System.out.println("\n Test pour BQTerm-inferTypes in BQAppl. bqTList = " + `bqTList);
@@ -1125,53 +1144,53 @@ public class NewKernelTyper {
         return newSList.reverse(); 
       }
 
-      Symbol[AstName=symName@Name(name),TypesToType=TypesToType(concTomType(headTTList,_*),codomain@Type[])] -> {
+      /* Cases CT-STAR, CT-ELEM and CT-MERGE */
+      Symbol[AstName=symName,TypesToType=TypesToType[Domain=concTomType(headTTList,_*),Codomain=codomain@Type[TypeOptions=concTypeOption(_*,WithSymbol[],_*)]]] -> {
         TomTerm argTerm;
-        if(TomBase.isListOperator(`tSymbol) || TomBase.isArrayOperator(`tSymbol)) {
-          TomSymbol argSymb;
-          for (Slot slot : sList.getCollectionconcSlot()) {
-            argTerm = slot.getAppl();
-            argSymb = getSymbolFromTerm(argTerm);
-            if(!(TomBase.isListOperator(`argSymb) || TomBase.isArrayOperator(`argSymb))) {
-              %match(argTerm) {
-                VariableStar[] -> {
-                  /* Case CT-STAR rule (applying to premises) */
-                  argType = `codomain;
-                }
-
-                !VariableStar[] -> { 
-                  /* Case CT-ELEM rule (applying to premises which are not lists) */
-                  argType = `headTTList;
-                  //DEBUG System.out.println("inferSlotList: !VariableStar -- constraint "
-                  //DEBUG     + `headTTList + " = " + argType);
-                  //addConstraint(`Equation(argType,headTTList,getInfoFromTomTerm(argTerm)));
-                }
+        TomSymbol argSymb;
+        for (Slot slot : sList.getCollectionconcSlot()) {
+          argTerm = slot.getAppl();
+          argSymb = getSymbolFromTerm(argTerm);
+          if(!(TomBase.isListOperator(`argSymb) || TomBase.isArrayOperator(`argSymb))) {
+            %match(argTerm) {
+              VariableStar[] -> {
+                /* Case CT-STAR rule (applying to premises) */
+                argType = `codomain;
               }
-            } else if (`symName != argSymb.getAstName()) {
-              /*
-               * Case CT-ELEM rule where premise is a list
-               * A list with a sublist whose constructor is different
-               * e.g. 
-               * A = ListA(A*) | a() and B = ListB(A*)
-               * ListB(ListA(a()))
-               */
-              argType = `headTTList;
-            } 
 
-            /* Case CT-MERGE rule (applying to premises) */
-            argTerm = `inferAllTypes(argTerm,argType);
-            newSList = `concSlot(PairSlotAppl(slot.getSlotName(),argTerm),newSList*);
-          }
-        } else {
-          /* Case CT-FUN rule (applying to premises) */
-          TomName argName;
-          for (Slot slot : sList.getCollectionconcSlot()) {
-            argName = slot.getSlotName();
-            argType = TomBase.getSlotType(tSymbol,argName);
-            argTerm = `inferAllTypes(slot.getAppl(),argType);
-            newSList = `concSlot(PairSlotAppl(argName,argTerm),newSList*);
-            //DEBUG System.out.println("InferSlotList CT-FUN -- end of for with slotappl = " + `argTerm);
-          }
+              !VariableStar[] -> { 
+                /* Case CT-ELEM rule (applying to premises which are not lists) */
+                argType = `headTTList;
+              }
+            }
+          } else if (`symName != argSymb.getAstName()) {
+            /*
+             * Case CT-ELEM rule where premise is a list
+             * A list with a sublist whose constructor is different
+             * e.g. 
+             * A = ListA(A*) | a() and B = ListB(A*)
+             * ListB(ListA(a()))
+             */
+            argType = `headTTList;
+          } 
+
+          /* Case CT-MERGE rule (applying to premises) */
+          argTerm = `inferAllTypes(argTerm,argType);
+          newSList = `concSlot(PairSlotAppl(slot.getSlotName(),argTerm),newSList*);
+        }
+        return newSList.reverse(); 
+      }
+        
+      /* Case CT-FUN rule (applying to premises) */
+      Symbol[TypesToType=TypesToType[Codomain=Type[TypeOptions=!concTypeOption(_*,WithSymbol[],_*)]]] -> {
+        TomTerm argTerm;
+        TomName argName;
+        for (Slot slot : sList.getCollectionconcSlot()) {
+          argName = slot.getSlotName();
+          argType = TomBase.getSlotType(tSymbol,argName);
+          argTerm = `inferAllTypes(slot.getAppl(),argType);
+          newSList = `concSlot(PairSlotAppl(argName,argTerm),newSList*);
+          //DEBUG System.out.println("InferSlotList CT-FUN -- end of for with slotappl = " + `argTerm);
         }
         return newSList.reverse(); 
       }
@@ -1229,87 +1248,88 @@ public class NewKernelTyper {
         return newBQTList.reverse(); 
       }
 
-      Symbol[AstName=symName,TypesToType=TypesToType(domain@concTomType(headTTList,_*),codomain@Type[]),PairNameDeclList=pNDList,Options=oList] -> {
-        TomTypeList symDomain = `domain;
+      /* Cases CT-STAR, CT-ELEM and CT-MERGE */
+      Symbol[AstName=symName,TypesToType=TypesToType[Domain=concTomType(headTTList,_*),Codomain=codomain@Type[TypeOptions=concTypeOption(_*,WithSymbol[],_*)]]] -> {
         TomSymbol argSymb;
-        if(TomBase.isListOperator(`tSymbol) || TomBase.isArrayOperator(`tSymbol)) {
-          for (BQTerm argTerm : bqTList.getCollectionconcBQTerm()) {
-            argSymb = getSymbolFromTerm(argTerm);
-            if(!(TomBase.isListOperator(`argSymb) || TomBase.isArrayOperator(`argSymb))) {
-              %match(argTerm) {
-                Composite(_*) -> {
-                  /*
-                   * We don't know what is into the Composite
-                   * It can be a BQVariableStar or a list operator or a list of
-                   * CompositeBQTerm or something else
-                   */
-                  argType = `EmptyType();
-                }
-
-                BQVariableStar[] -> {
-
-                  /* Case CT-STAR rule (applying to premises) */
-                  argType = `codomain;
-                }
-
-                //TO VERIFY : which constructors must be tested here?
-                /* Case CT-ELEM rule (applying to premises which are not lists) */
-                (BQVariable|BQAppl)[] -> {
-                  argType = `headTTList;
-                }
-              }
-            } else if (`symName != argSymb.getAstName()) {
-              /*
-               * Case CT-ELEM rule which premise is a list
-               * A list with a sublist whose constructor is different
-               * e.g. 
-               * A = ListA(A*) and B = ListB(A*) | b()
-               * ListB(ListA(a()))
-               */
-              argType = `headTTList;
-            }
-
-            /* Case CT-MERGE rule (applying to premises) */
-            argTerm = `inferAllTypes(argTerm,argType);
-            newBQTList = `concBQTerm(argTerm,newBQTList*);
-          }
-        } else {
-          /* Case CT-FUN rule (applying to premises) */
-          if(`pNDList.length() != bqTList.length()) {
-            Option option = TomBase.findOriginTracking(`oList);
-            %match(option) {
-              OriginTracking(_,line,fileName) -> {
-                TomMessage.error(logger,`fileName, `line,
-                    TomMessage.symbolNumberArgument,`symName.getString(),`pNDList.length(),bqTList.length());
-              }
-            }
-          } else {
-            for (BQTerm argTerm : bqTList.getCollectionconcBQTerm()) {
-              argType = symDomain.getHeadconcTomType();
-              %match(argTerm) {
+        for (BQTerm argTerm : bqTList.getCollectionconcBQTerm()) {
+          argSymb = getSymbolFromTerm(argTerm);
+          if(!(TomBase.isListOperator(`argSymb) || TomBase.isArrayOperator(`argSymb))) {
+            %match(argTerm) {
+              Composite(_*) -> {
                 /*
                  * We don't know what is into the Composite
-                 * If it is a "composed" Composite with more than one element and
-                 * representing the argument of a BQAppl "f", so we can not give the same
-                 * type of the domain of "f" for all elements of the Composite
-                 * e.g.:
-                 *    `b(n.getvalue()) is represented by
-                 * BQAppl(
-                 *    concOption(...),
-                 *    Name("b"),
-                 *    concBQTerm(
-                 *      Composite(
-                 *        CompositeBQTerm(BQVariable(concOption(...),Name("n"),TypeVar("unknown type",0))),
-                 *        CompositeTL(ITL(".")),
-                 *        CompositeBQTerm(Composite(CompositeBQTerm(BQAppl(concOption(...),Name("getvalue"),concBQTerm())))))))
+                 * It can be a BQVariableStar or a list operator or a list of
+                 * CompositeBQTerm or something else
                  */
-                Composite(_*,_,_*,_,_*) -> { argType = `EmptyType(); }
+                argType = `EmptyType();
               }
-              argTerm = `inferAllTypes(argTerm,argType);
-              newBQTList = `concBQTerm(argTerm,newBQTList*);
-              symDomain = symDomain.getTailconcTomType();
-              //DEBUG System.out.println("InferBQTermList CT-FUN -- end of for with bqappl = " + `argTerm);
+
+              BQVariableStar[] -> {
+                /* Case CT-STAR rule (applying to premises) */
+                argType = `codomain;
+              }
+
+              //TO VERIFY : which constructors must be tested here?
+              /* Case CT-ELEM rule (applying to premises which are not lists) */
+              (BQVariable|BQAppl)[] -> {
+                argType = `headTTList;
+              }
             }
+          } else if (`symName != argSymb.getAstName()) {
+            /*
+             * Case CT-ELEM rule which premise is a list
+             * A list with a sublist whose constructor is different
+             * e.g. 
+             * A = ListA(A*) and B = ListB(A*) | b()
+             * ListB(ListA(a()))
+             */
+            argType = `headTTList;
+          }
+
+          /* Case CT-MERGE rule (applying to premises) */
+          argTerm = `inferAllTypes(argTerm,argType);
+          newBQTList = `concBQTerm(argTerm,newBQTList*);
+        }
+        return newBQTList.reverse(); 
+      }
+
+      /* Case CT-FUN rule (applying to premises) */
+      Symbol[AstName=symName,TypesToType=TypesToType[Domain=domain,Codomain=Type[TypeOptions=!concTypeOption(_*,WithSymbol[],_*)]],PairNameDeclList=pNDList,Options=oList] -> {
+        TomTypeList symDomain = `domain;
+        if(`pNDList.length() != bqTList.length()) {
+          Option option = TomBase.findOriginTracking(`oList);
+          %match(option) {
+            OriginTracking(_,line,fileName) -> {
+              TomMessage.error(logger,`fileName, `line,
+                  TomMessage.symbolNumberArgument,`symName.getString(),`pNDList.length(),bqTList.length());
+            }
+          }
+        } else {
+          for (BQTerm argTerm : bqTList.getCollectionconcBQTerm()) {
+            argType = symDomain.getHeadconcTomType();
+            %match(argTerm) {
+              /*
+               * We don't know what is into the Composite
+               * If it is a "composed" Composite with more than one element and
+               * representing the argument of a BQAppl "f", so we can not give the same
+               * type of the domain of "f" for all elements of the Composite
+               * e.g.:
+               *    `b(n.getvalue()) is represented by
+               * BQAppl(
+               *    concOption(...),
+               *    Name("b"),
+               *    concBQTerm(
+               *      Composite(
+               *        CompositeBQTerm(BQVariable(concOption(...),Name("n"),TypeVar("unknown type",0))),
+               *        CompositeTL(ITL(".")),
+               *        CompositeBQTerm(Composite(CompositeBQTerm(BQAppl(concOption(...),Name("getvalue"),concBQTerm())))))))
+               */
+              Composite(_*,_,_*,_,_*) -> { argType = `EmptyType(); }
+            }
+            argTerm = `inferAllTypes(argTerm,argType);
+            newBQTList = `concBQTerm(argTerm,newBQTList*);
+            symDomain = symDomain.getTailconcTomType();
+            //DEBUG System.out.println("InferBQTermList CT-FUN -- end of for with bqappl = " + `argTerm);
           }
         }
         return newBQTList.reverse(); 
@@ -1641,7 +1661,7 @@ matchBlockFail :
     visit TypeConstraintList {
       /* PHASE 1 */
       tcl@concTypeConstraint(tcl1*,Subtype[Type1=t1,Type2=t2,Info=info],tcl2*,Subtype[Type1=t2,Type2=t1],tcl3*) -> {
-        System.out.println("\nsolve1: " + `tcl);
+        //DEBUG System.out.println("\nsolve1: " + `tcl);
         nkt.solveEquationConstraints(`concTypeConstraint(Equation(t1,t2,info)));
         return
           nkt.`concTypeConstraint(tcl1,tcl2,tcl3);
@@ -1654,29 +1674,29 @@ matchBlockFail :
       /* PHASE 2 */
       tcl@concTypeConstraint(_*,Subtype[Type1=t1,Type2=tVar@TypeVar[],Info=info],_*,Subtype[Type1=tVar,Type2=t2],_*)
         && !concTypeConstraint(_*,Subtype[Type1=t1,Type2=t2],_*) << tcl -> {
-          System.out.println("\nsolve2a: " + `tcl);
+          //DEBUG System.out.println("\nsolve2a: " + `tcl);
           return
             nkt.`addSubConstraint(Subtype(t1,t2,info),tcl);
         }
       tcl@concTypeConstraint(_*,Subtype[Type1=tVar,Type2=t2,Info=info],_*,Subtype[Type1=t1,Type2=tVar@TypeVar[]],_*)
         && !concTypeConstraint(_*,Subtype[Type1=t1,Type2=t2],_*) << tcl -> {
-          System.out.println("\nsolve2b: " + `tcl);
+          //DEBUG System.out.println("\nsolve2b: " + `tcl);
           return
             nkt.`addSubConstraint(Subtype(t1,t2,info),tcl);
         }
 
       /* PHASE 3 */
       tcl@concTypeConstraint(_*,sConstraint@Subtype[Type1=!TypeVar[],Type2=!TypeVar[]],_*) -> {
-        System.out.println("\nsolve3: " + `tcl);
+        //DEBUG System.out.println("\nsolve3: " + `tcl);
         nkt.detectFail(`sConstraint);
       }
 
       /* PHASE 4 */
       concTypeConstraint(tcl1*,constraint@Subtype[Type1=tVar@TypeVar[],Type2=t1@!TypeVar[],Info=info],tcl2*,c2@Subtype[Type1=tVar,Type2=t2@!TypeVar[]],tcl3*) -> {
-        System.out.println("\nsolve6: " + `constraint + " and " + `c2);
+        //DEBUG System.out.println("\nsolve6: " + `constraint + " and " + `c2);
         TomType lowerType = nkt.`minType(t1,t2);
-        System.out.println("\nminType(" + `t1.getTomType() + "," +
-            `t2.getTomType() + ") = " + lowerType);
+        //DEBUG System.out.println("\nminType(" + `t1.getTomType() + "," +
+        //DEBUG     `t2.getTomType() + ") = " + lowerType);
 
         if (lowerType == `EmptyType()) {
           nkt.printError(`Subtype(t1,t2,info));
@@ -1687,10 +1707,10 @@ matchBlockFail :
           nkt.`addSubConstraint(Subtype(tVar,lowerType,info),concTypeConstraint(tcl1,tcl2,tcl3));
       }
       concTypeConstraint(tcl1*,constraint@Subtype[Type1=t1@!TypeVar[],Type2=tVar@TypeVar[],Info=info],tcl2*,c2@Subtype[Type1=t2@!TypeVar[],Type2=tVar],tcl3*) -> {
-        System.out.println("\nsolve7: " + `constraint + " and " + `c2);
+        //DEBUG System.out.println("\nsolve7: " + `constraint + " and " + `c2);
         TomType supType = nkt.`supType(t1,t2);
-        System.out.println("\nsupType(" + `t1.getTomType() + "," +
-           `t2.getTomType() + ") = " + supType);
+        //DEBUG System.out.println("\nsupType(" + `t1.getTomType() + "," +
+        //DEBUG    `t2.getTomType() + ") = " + supType);
 
         if (supType == `EmptyType()) {
           nkt.printError(`Subtype(t1,t2,info));
@@ -1703,7 +1723,7 @@ matchBlockFail :
 
       /* PHASE 5 */
       tcl -> {
-        System.out.println("\nsolve8: " + `tcl);
+        //DEBUG System.out.println("\nsolve8: " + `tcl);
         return nkt.enumerateSolutions(`tcl);
       }
     }
@@ -1812,10 +1832,39 @@ matchBlockFail :
   /**
    * The method <code>supType</code> tries to find the lowest common uppertype
    * of two given ground types.
-   * OBS.: when the subtype relation does not hold between two types 't1' and
-   * 't2', the method considers the intersection of the supertypes lists
-   * supertypes_t1 and supertypes_t2 and searches for the common supertype 'ti' which
-   * has the bigger supertypes_ti list 
+   * <p>
+   * There exists 2 kinds of ground types: ground types Ti (represented by Ti^?) and
+   * ground types Ti^c which are decorated with a given symbol c. Considering
+   * them by pairs, then the set of all possibilities of arrangement between
+   * ground types is a sequence with repetition. Then, we have 4 possible cases (since
+   * 2^2 = 4).
+   * <p>
+   * CASE 1: T1^? and  T2^?
+   *  a) --> T2^? if T1 is a subtype of T2
+   *  b) --> T1^? if T2 is a subtype of T1
+   *  c) --> emptyType otherwise
+   * <p>
+   * CASE 2: T1^? and T2^c
+   *  a) --> T1^? if T2 is a subtype of T1
+   *  b) --> T3^? if T3 is the join between T1 and T2
+   *  c) --> emptyType otherwise
+   * <p>
+   * CASE 3: T1^c and T2^? 
+   *  similar to CASE 2.
+   * <p>
+   * CASE 4: T1^c1 and T2^c2
+   *  - 4.1 : T1 == T2
+   *      --> T1^?
+   *  - 4.2 : T1 != T2
+   *      a) --> T2^c1 if T1 is a subtype of T2 and c1 == c2
+   *      b) --> T1^c1 if T2 is a subtype of T1 and c1 == c2
+   *      c) --> T3^? if T3 is the join between T1 and T2 
+   *      d) --> emptyType otherwise
+   * <p>
+   * OBS.: when the subtype relation does not hold between two types 'T1' and
+   * 'T2', the method considers the intersection of the supertypes lists
+   * supertypes_T1 and supertypes_T2 and searches for the 'immediate' common
+   * supertype 'Ti' (i.e. the one which has the bigger supertypes_Ti list) 
    * @param t1  a type
    * @param t2  another type
    * @return    the uppertype between 't1' and 't2' if the subtype relation
@@ -1824,11 +1873,13 @@ matchBlockFail :
    *            the 'EmptyType()' otherwise
    */
   private TomType supType(TomType t1, TomType t2) {
+    /* CASES 1a, 1b, 2a, 3a, 4.2a and 4.2b */
     if (isSubtypeOf(t1,t2)) { return t2; } 
     if (isSubtypeOf(t2,t1)) { return t1; }
     TomTypeList supTypes1 = dependencies.get(t1.getTomType());
     TomTypeList supTypes2 = dependencies.get(t2.getTomType());
     %match {
+      /* CASE 4.1 */
       Type[TypeOptions=concTypeOption(_*,WithSymbol[RootSymbolName=rsName1],_*),TomType=tName,TlType=tlType1] << t1 
         &&
         Type[TypeOptions=concTypeOption(_*,WithSymbol[RootSymbolName=rsName2],_*),TomType=tName] << t2 -> {
@@ -1836,6 +1887,7 @@ matchBlockFail :
           return symbolTable.getTypeFromName(`tName); 
         }
 
+      /* CASES 2b, 3b and 4.2c */
       !concTomType() << supTypes1 && !concTomType() << supTypes2 -> {
         int st1Size = `supTypes1.length();
         int st2Size = `supTypes2.length();
@@ -1854,6 +1906,7 @@ matchBlockFail :
         return lowestCommonType;
       }
     }
+    /* Remaining CASES */
     return `EmptyType();
   }
 
