@@ -639,11 +639,44 @@ matchblock:{
     for(Constraint constr: constraints) {
 matchLbl: %match(constr) {// TODO : add something to test the astType
             MatchConstraint(pattern,subject,astType) -> {
+              TomType typeMatch = `astType;
               Collection<TomName> patternVars = new HashSet<TomName>();
               Collection<TomName> subjectVars = new HashSet<TomName>();
               `TopDownCollect(CollectVariables(patternVars)).visitLight(`pattern);
               `TopDownCollect(CollectVariables(subjectVars)).visitLight(`subject);
               computeDependencies(varRelationsMap,patternVars,subjectVars);
+
+              // TODO: remove this test when newtyper will be the only typer
+              if (!getOptionBooleanValue("newtyper")) {//case of subtyping (-nt option activated)
+                if(`astType == SymbolTable.TYPE_UNKNOWN) {
+                  typeMatch = getSubjectType(`subject,constraints);
+                  if(typeMatch == null) {
+                    %match(subject) {
+                      BQVariable[AstName=Name(stringName)] -> {
+                        TomMessage.error(getLogger(),
+                            getCurrentTomStructureOrgTrack().getFileName(),
+                            getCurrentTomStructureOrgTrack().getLine(),
+                            TomMessage.cannotGuessMatchType,
+                            `stringName);
+                        return;
+                      }
+                      BQAppl[AstName=Name(stringName)] -> {
+                        TomMessage.error(getLogger(),
+                            getCurrentTomStructureOrgTrack().getFileName(),
+                            getCurrentTomStructureOrgTrack().getLine(),
+                            TomMessage.cannotGuessMatchType,
+                            `stringName);
+                        return;
+                      }
+                      BuildConstant[AstName=Name(stringName)] -> {
+                        // do not throw an error message because Constant have no type
+                      }
+                    }
+                    return;
+                  }
+                }
+              }
+
               if (`astType != SymbolTable.TYPE_UNKNOWN) {
                 if (!testTypeExistence(`astType.getTomType())) {
                   TomMessage.error(getLogger(),
@@ -653,7 +686,7 @@ matchLbl: %match(constr) {// TODO : add something to test the astType
                       `astType.getTomType());
                 }
                 // we now compare the pattern to its definition
-                verifyMatchPattern(`pattern, `astType);
+                verifyMatchPattern(`pattern, typeMatch);
               } 
             }
 
@@ -896,6 +929,127 @@ matchLbl: %match(constr) {// TODO : add something to test the astType
         throw new VisitFailure();// to stop the top-down
       }
     }
+  }
+
+  /**
+   * tries to give the type of the tomTerm received as parameter
+   */
+  private TomType getSubjectType(BQTerm subject, Collection<Constraint> constraints) {
+    %match(subject) {
+      BuildConstant[AstName=Name(name)] -> {        
+        try {
+          Integer.parseInt(`name);
+          return getSymbolTable().getIntType();
+        } catch(java.lang.NumberFormatException e) {
+          return getSymbolTable().getStringType();
+        }
+      }
+
+      BQVariable[AstName=Name(name),AstType=tomType@Type(options,type,EmptyTargetLanguageType())] -> {        
+        if(`tomType==SymbolTable.TYPE_UNKNOWN) {
+          // try to guess
+          return guessSubjectType(`subject,constraints);
+        } else if(testTypeExistence(`type)) {
+          return `tomType;
+        } else {
+          TomMessage.error(getLogger(),
+              getCurrentTomStructureOrgTrack().getFileName(),
+              getCurrentTomStructureOrgTrack().getLine(),
+              TomMessage.unknownMatchArgumentTypeInSignature,
+              `name, `type);                
+        }
+      }
+
+      term@BQAppl[AstName=Name(name)] -> {
+        TomSymbol symbol = getSymbolFromName(`name);
+        if(symbol!=null) {
+          TomType type = TomBase.getSymbolCodomain(symbol);
+          String typeName = TomBase.getTomType(`type);
+          if(!testTypeExistence(typeName)) {
+            TomMessage.error(getLogger(),
+                getCurrentTomStructureOrgTrack().getFileName(),
+                getCurrentTomStructureOrgTrack().getLine(),
+                TomMessage.unknownMatchArgumentTypeInSignature,
+                `name, typeName);
+          }          
+          //verifyBQAppl(`term);
+          return type;
+        } else {
+          // try to guess
+          return guessSubjectType(`subject,constraints);
+        }
+      }
+    }
+    return null;
+  }
+
+  /**
+   * if a type is not specified 
+   * 1. we look for a type in all match constraints where we can find this subject
+   * 2. TODO: if the subject is in a constraint with a variable (the pattern is a variable for instance),
+   * try to see if a variable with the same name already exists and can be typed, and if yes, get that type
+   */
+  private TomType guessSubjectType(BQTerm subject,Collection<Constraint> constraints) {
+    for(Constraint constr:constraints) {
+      %match(Constraint constr) {
+        MatchConstraint(patt,s,astType) -> {
+          // we want two terms to be equal even if their option is different 
+          //( because of their position for example )
+matchL:  %match(subject,s) {
+           BQVariable[AstName=astName,AstType=tomType],BQVariable[AstName=astName,AstType=tomType] -> {break matchL;}
+           BQAppl[AstName=tomName,Args=tomList],BQAppl[AstName=tomName,Args=tomList] -> {break matchL;}
+           _,_ -> { continue; }
+         }
+         TomTerm pattern = `patt;
+         %match(pattern) {
+           AntiTerm(p) -> { pattern = `p; }
+         }
+         %match(pattern) {
+           (TermAppl|RecordAppl|XMLAppl)[NameList=concTomName(Name(name),_*)] -> {        
+             TomSymbol symbol = null;
+             if(`pattern.isXMLAppl()) {
+               symbol = getSymbolFromName(Constants.ELEMENT_NODE);
+             } else {
+               symbol = getSymbolFromName(`name);
+             }                
+             if(symbol!=null) {
+               TomType type = TomBase.getSymbolCodomain(symbol);
+               // System.out.println("type = " + type);            
+               String typeName = TomBase.getTomType(`type);
+               if(!testTypeExistence(typeName)) {
+                 TomMessage.error(getLogger(),
+                     getCurrentTomStructureOrgTrack().getFileName(),
+                     getCurrentTomStructureOrgTrack().getLine(),
+                     TomMessage.unknownMatchArgumentTypeInSignature,
+                     `name, typeName);
+               }
+               return type;
+             }
+           }
+           // TOBE CONTINUED            
+           //            var@Variable[] -> {
+           //              TomType type = getVarTypeFromConstraints(var,constraints);
+           //              if ( type != null ) {
+           //                return type;
+           //              }
+           //            }
+         }         
+        }
+        // TOBE CONTINUED        
+        //        NumericConstraint[Left=left,Right=right] -> {
+        //          // we want two terms to be equal even if their option is different 
+        //          //( because of their possition for example )
+        //          if ((`right.setOptions(`concOption())) != (subject.setOptions(`concOption()))) { continue; }
+        //          if (`left.isVariable()) {
+        //            TomType type = guessVarTypeFromConstraints(var,matchConstraints);
+        //            if ( type != null ) {
+        //              return type;
+        //            }
+        //          }
+        //        }
+      }
+    }// for    
+    return null;
   }
 
   //  /**
