@@ -1,3 +1,7 @@
+2010-12-21 tavaresc
+ * Update explicit type after type inference (in "old" kernel typer).
+ * Fix a bad modification of compiler concerning explicit types.
+
 2010-12-17 tavaresc
  * Move tests "isListOperator" and "isArrayoperator" to the moment when inferring
  types of a RecordAppl (resp. BQAppl).

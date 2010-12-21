@@ -92,13 +92,11 @@ public class PersonSubtype {
     //equals(t0,t1) { $t0 == $t1 }
   }
 
-  %typeterm Woman {
+  %typeterm Woman extends Person {
     implement { Woman }
     is_sort(t) { $t instanceof Woman }
     //equals(t0,t1) { $t0 == $t1 }
   }
-
-  %subtype Woman <: Person
 
     // ------------------------------------------------------------
   
@@ -122,11 +120,13 @@ public class PersonSubtype {
     //Person p = `person("machin","chose");
     //Person p = `woman("machin","chose","truc");
     %match(p) {
+      /* Comment beacuse of compilation of examples with old typer
       woman(first,last,lastsingle)-> {
         if (`last != `lastsingle) {
         System.out.println("woman"+ `last + " " + `first + " is married.");
         }
       }
+      */
       person(first,last) -> {
         System.out.println("person "+ `last + " " + `first);
       }
