@@ -405,7 +405,8 @@ public class KernelTyper {
         newSubject = kernelTyper.typeVariable(newSubjectType, newSubject);                  
         TomTerm newPattern = kernelTyper.typeVariable(newSubjectType, `pattern);
         TomBase.collectVariable(lhsVariable,newPattern,false);
-        return `constraint.setPattern(newPattern).setSubject(newSubject);               
+        return
+          `constraint.setPattern(newPattern).setSubject(newSubject).setAstType(newSubjectType);               
       }
 
       NumericConstraint[Left=lhs,Right=rhs,Type=nct] -> {

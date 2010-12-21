@@ -1328,7 +1328,7 @@ matchblock:{
       } else { // known symbol
         if (!getOptionBooleanValue("newtyper")) {//case of subtyping (-nt option activated)
           if( strictType  || !topLevel ) {
-            System.out.println("ensureValidApplDisjunction!");
+            //DEBUG System.out.println("ensureValidApplDisjunction!");
             if(!ensureSymbolCodomain(TomBase.getSymbolCodomain(symbol), expectedType, TomMessage.invalidCodomain, res, fileName,decLine)) {
               return null;
             }

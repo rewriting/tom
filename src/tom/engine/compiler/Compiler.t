@@ -281,7 +281,7 @@ public class Compiler extends TomGenericPlugin {
           // make sure we don't process generated contraints
           return `constr; 
         }        
-        TomType freshSubjectType = `EmptyType();
+        TomType freshSubjectType = `castType;
         //DEBUG System.out.println("In renameSubjects - IF 1 - freshSubjectType = " + freshSubjectType);
 
         // IF 2
