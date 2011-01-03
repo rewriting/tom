@@ -421,6 +421,7 @@ blockList [List<Code> list] throws TomException
             // either a tom construct or everything else
             matchConstruct[list]
         |   strategyConstruct[list]
+        |   transformationConstruct[list] 
         |   gomsignature[list]
         |   backquoteTerm[list]
         |   operator[list]
