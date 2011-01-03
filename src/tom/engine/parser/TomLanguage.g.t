@@ -888,7 +888,7 @@ transformationWith [List<TomWith> list] throws TomException
   TomWithTerm wTerm = null;
   //List<Slot> pairSlotList = new LinkedList<Slot>(); //args->no, due to args[]
   List argsList = new LinkedList(); //args
-  List<Instruction> toInstructionList = new LinkedList<Instruction>();
+  List<Code> toInstructionList = new LinkedList<Code>();
   List<Option> argsOptionList = new LinkedList<Option>();
   clearText();
 }
@@ -897,7 +897,7 @@ transformationWith [List<TomWith> list] throws TomException
      "with" term:ALL_ID args[argsList,argsOptionList] /* will be extended*/ "to" /* or '->' ? */ LBRACE
      { wTerm = `WithTerm(Type(concTypeOption(),term.getText(),EmptyTargetLanguageType()),
                          ASTFactory.makeSlotList(argsList),
-                         concTypeOption());
+                         concOption());
      }
      ( toInstruction[toInstructionList] )* /* ,wTerm] */
      RBRACE
@@ -910,7 +910,7 @@ transformationWith [List<TomWith> list] throws TomException
     }
     ;
 
-toInstruction [List<Instruction> list] throws TomException /* , TomWithTerm wTerm] */
+toInstruction [List<Code> list] throws TomException /* , TomWithTerm wTerm] */
 {
     List<Code> blockList = new LinkedList<Code>();
     BQTerm rhsTerm = null;
@@ -929,12 +929,12 @@ toInstruction [List<Instruction> list] throws TomException /* , TomWithTerm wTer
       // target parser finished : pop the target lexer
       selector().pop();
       blockList.add(`TargetLanguageToCode(tlCode));
-      list.add(`AbstractBlock(ASTFactory.makeInstructionList(blockList)));
+      list.add(`InstructionToCode(AbstractBlock(ASTFactory.makeInstructionList(blockList))));
       }
       | rhsTerm = plainBQTerm
       {
       // case where the rhs of a rule is an algebraic term
-      list.add(`Return(rhsTerm));
+      list.add(`InstructionToCode(Return(rhsTerm)));
       }
     )
     ;

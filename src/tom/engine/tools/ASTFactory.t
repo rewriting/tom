@@ -186,6 +186,14 @@ public class ASTFactory {
     return list;
   }
 
+  public static TomWithList makeTomWithList(List<TomWith> argumentList){
+    TomWithList list = `concTomWith();
+    for(int i=argumentList.size()-1; i>=0 ; i--) {
+      list = `concTomWith(argumentList.get(i),list*);
+    }
+    return list;
+  }
+
   public static TomSymbol makeSymbol(String symbolName, TomType resultType, TomTypeList typeList,
       PairNameDeclList pairNameDeclList, List optionList) {
     return `Symbol(Name(symbolName),TypesToType(typeList,resultType),pairNameDeclList,makeOptionList(optionList));
