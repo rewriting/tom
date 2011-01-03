@@ -127,7 +127,7 @@ public class PrettyPrinterPlugin extends TomGenericPlugin {
       BQAppl(anOptionList, aTomName, aBQTermList) -> {
         return;
       }
-      BuildConstant[AstName=Name(name)] -> {
+      a@BuildConstant[AstName=Name(name)] -> {
       /*  if(`name.charAt(0)=='\'' && `name.charAt(`name.length()-1)=='\'') {
           String substring = `name.substring(1,`name.length()-1);
           //System.out.println("BuildConstant: " + substring);
@@ -137,12 +137,14 @@ public class PrettyPrinterPlugin extends TomGenericPlugin {
           return;
         }
         output.write(`name);*/
-	System.out.println(`name);
+	System.out.println(`a+" / "+`name);
         return;
       }
 
       BuildTerm(Name(name), argList, myModuleName) -> {
      //   `buildTerm(deep, name, argList, myModuleName);
+       // System.out.println(`name);
+        generateBQTermList(deep, `argList, moduleName);
         return;
       }
 
@@ -255,6 +257,16 @@ public class PrettyPrinterPlugin extends TomGenericPlugin {
         generate(deep, subject.getHeadconcCode(), moduleName);
         subject = subject.getTailconcCode();
       }
+    }
+
+  static void generateBQTermList(int deep, BQTermList subject, String moduleName)
+    throws IOException {
+      System.out.print("(");
+      while(!subject.isEmptyconcBQTerm()) {
+        generateBQTerm(deep, subject.getHeadconcBQTerm(), moduleName);
+        subject = subject.getTailconcBQTerm();
+      }
+      System.out.println(")");
     }
     
 }
