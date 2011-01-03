@@ -114,159 +114,25 @@ public class PrettyPrinterPlugin extends TomGenericPlugin {
 
   private void prettyPrinter(Code code) throws IOException {
     System.out.println("PrettyPrinter active");
-    generate(0,code,"");
-  }
-  
-  // ------------------------------------------------------------
-  %include { ../adt/tomsignature/TomSignature.tom }
-  // ------------------------------------------------------------
-  
-  static void generateBQTerm(int deep, BQTerm subject, String moduleName) throws IOException {
-    System.out.println("In generateBQTerm");
-    %match (subject) {
-      BQAppl(anOptionList, aTomName, aBQTermList) -> {
-        return;
-      }
-      a@BuildConstant[AstName=Name(name)] -> {
-      /*  if(`name.charAt(0)=='\'' && `name.charAt(`name.length()-1)=='\'') {
-          String substring = `name.substring(1,`name.length()-1);
-          //System.out.println("BuildConstant: " + substring);
-          substring = substring.replace("\\","\\\\"); // replace backslash by backslash-backslash
-          substring = substring.replace("'","\\'"); // replace quote by backslash-quote
-          output.write("'" + substring + "'");
-          return;
-        }
-        output.write(`name);*/
-	System.out.println(`a+" / "+`name);
-        return;
-      }
-
-      BuildTerm(Name(name), argList, myModuleName) -> {
-     //   `buildTerm(deep, name, argList, myModuleName);
-       // System.out.println(`name);
-        generateBQTermList(deep, `argList, moduleName);
-        return;
-      }
-
-      l@(BuildEmptyList|BuildEmptyArray|BuildConsList|BuildAppendList|BuildConsArray|BuildAppendArray)[] -> {
-      //  buildListOrArray(deep, `l, moduleName);
-        return;
-      }
-
-      FunctionCall[AstName=Name(name), Args=argList] -> {
-       // buildFunctionCall(deep,`name, `argList, moduleName);
-        return;
-      }
-
-      var@(BQVariable|BQVariableStar)[] -> {
-        //output.write(deep,getVariableName(`var));
-        return;
-      }
-
-      ExpressionToBQTerm(t) -> {
-        //generateExpression(deep,`t, moduleName);
-        return;
-      }
-
-      Composite(_*,t,_*) -> {
-        %match(t) {
-         /* CompositeTL(target) -> {
-            generateTargetLanguage(deep,`target, moduleName);
-          }
-          CompositeBQTerm(term) -> {
-            generateBQTerm(deep,`term, moduleName);
-          }*/
-        }
-      }
-      Composite(CompositeBQTerm(BuildTerm(Name(t),_,_)))->{
-	System.out.println(`t);
-      }
-      t@!Composite(_*) -> {
-        throw new TomRuntimeException("Cannot generate code for bqterm "+`t);
-      }
-      
-    }
+    printTL(code);
   }
   
 
-  
-  static void generate(int deep, Code subject, String moduleName) throws IOException {    
-    %match(subject) {
-      Tom(l) -> {
-        generateList(deep,`l, moduleName);
-        return;
-      }
-
-      TomInclude(l) -> {
-        //generateListInclude(deep,`l, moduleName);
-        return;
-      }
-
-      BQTermToCode(t) -> {
-        generateBQTerm(deep,`t, moduleName);
-        return;
-      }
-
-      TargetLanguageToCode(t) -> {
-        generateTargetLanguage(deep,`t, moduleName);
-        return;
-      }
-
-      InstructionToCode(t) -> {
-        //generateInstruction(deep,`t, moduleName);
-        return;
-      }
-
-      DeclarationToCode(t) -> {
-        //generateDeclaration(deep,`t, moduleName);
-        return;
-      }
-
-      t -> {
-        System.out.println("Cannot generate code for: " + `t);
-        throw new TomRuntimeException("Cannot generate code for: " + `t);
-      }
+  public static void printTL(Code code) {
+    try {
+      `TopDown(Repeat(stratPrintTL())).visit(code);
+    } catch (VisitFailure e) {
+      System.out.println("strategy failed");
     }
   }
   
-  static void generateTargetLanguage(int deep, TargetLanguage subject, String moduleName) throws IOException {    
-    System.out.println("In generateTargetLanguage");
-    %match(subject) {
-      TL(t,TextPosition[Line=startLine], TextPosition[Line=endLine]) -> {
-        //output.write(deep, `t, `startLine, `endLine - `startLine);
-        return;
-      }
-      ITL(t) -> {
-        //output.write(`t);
-        return;
-      }
-      Comment(t) -> {
-        //`buildComment(deep,t);
-        return;
-      }
-      t -> {
-        System.out.println("Cannot generate code for TL: " + `t);
-        throw new TomRuntimeException("Cannot generate code for TL: " + `t);
-      }
+  %strategy stratPrintTL() extends Fail(){
+    visit TargetLanguage {
+      TL[Code=x] -> {System.out.println(`x);}
+    }
+    visit BQTerm {
+      BuildTerm[AstName=Name(x)] -> {System.out.println(`x);}
     }
   }
-  
-  static void generateList(int deep, CodeList subject, String moduleName)
-    throws IOException {
-      while(!subject.isEmptyconcCode()) {
-        generate(deep, subject.getHeadconcCode(), moduleName);
-        subject = subject.getTailconcCode();
-      }
-    }
 
-  static void generateBQTermList(int deep, BQTermList subject, String moduleName)
-    throws IOException {
-      System.out.print("(");
-      while(!subject.isEmptyconcBQTerm()) {
-        generateBQTerm(deep, subject.getHeadconcBQTerm(), moduleName);
-        subject = subject.getTailconcBQTerm();
-      }
-      System.out.println(")");
-    }
-    
 }
