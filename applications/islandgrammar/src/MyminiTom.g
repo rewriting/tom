@@ -13,7 +13,7 @@ tokens {
 
 /* Parser rules */
 
-program :	LEFTPAR RIGHTPAR LEFTBR code RIGHTBR -> ^(PROGRAM code) ;
+program :	LEFTPAR RIGHTPAR LEFTBR code* RIGHTBR -> ^(PROGRAM code*) ;
 
 code :	(s=statement {System.out.println($s.text);} SEMICOLUMN) -> ^(CODE $s) ;
 
@@ -29,4 +29,6 @@ RIGHTBR    : '}' ;
 SEMICOLUMN : ';' ;
 A          : 'alice' ;
 B          : 'bob' ;
+
+WS	: ('\r' | '\n' | '\t' | ' ' )* { $channel = HIDDEN; };
 

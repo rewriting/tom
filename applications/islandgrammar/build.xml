@@ -22,7 +22,7 @@
 	</target>
 	<target name="test" depends="compile">
 		<!--java classpath="${withAntlr}:${islgram}/${build}" classname="Main" fork="true"-->
-		<java classpath="${withAntlr}:${islgram}/${build}" classname="TestAntlr" fork="true">
+		<java classpath="${withAntlr}:${islgram}/${build}" classname="Main" fork="true">
 			<arg value="${input}/testAntlrInput"/>
 			<!--arg value="${input}/INput"/-->
 		</java>
