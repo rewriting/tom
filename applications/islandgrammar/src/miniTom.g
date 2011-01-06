@@ -1,37 +1,32 @@
 grammar miniTom;
-options {output=AST;}
+options {
+	output=AST;
+	ASTLabelType=CommonTree;
+}
 
 tokens {
 	LEFTPAR='(';
 	RIGHTPAR=')';
 	LEFTBR='{';
 	RIGHTBR='}';
+	CODE;
+	A='alice';
+	B='bob';
 }
 
 program
-	: LEFTPAR subject* RIGHTPAR LEFTBR (statement ';')* RIGHTBR
+	:	LEFTPAR RIGHTPAR LEFTBR code RIGHTBR 
 	;
 
-subject
-	:	Type? ' ' var
+code
+	:	(s=statement {System.out.println($s.text);} ';') -> ^(CODE $s)
 	;
 
 statement
-	:	BLANK* LETTER+ BLANK*
+	:	'a'+
 	;
 
 BLANK
-	:	('\r' | '\n' | '\t') {$channel=HIDDEN;}
-	;
-
-LETTER
-	:	'A'..'Z' | 'a'..'z'|'_'
-	;
-
-Type
-	:	'int' | 'float'|'truc'
-	;
-var
-	:	LETTER+
+	:	('\r' | '\n' | '\r\n'  | '\t' | ' ' ) {$channel=HIDDEN;}
 	;
 

@@ -132,6 +132,7 @@ public class SyntaxCheckerPlugin extends TomGenericPlugin {
   protected Logger getLogger() {
     return Logger.getLogger(getClass().getName());
   }
+
   public Option getCurrentTomStructureOrgTrack() {
     return currentTomStructureOrgTrack;
   }
@@ -446,7 +447,7 @@ matchblock:{
         return;
       }
 
-      Type(options,typeName,EmptyTargetLanguageType()) -> {
+      Type(_,typeName,EmptyTargetLanguageType()) -> {
         if(!testTypeExistence(`typeName)) {
           TomMessage.error(getLogger(),
               getCurrentTomStructureOrgTrack().getFileName(),
@@ -479,7 +480,7 @@ matchblock:{
     int position = 1;
     if(symbolType.equals(SyntaxCheckerPlugin.CONSTRUCTOR)) {
       %match(TomTypeList args) {
-        concTomType(_*,  Type(options,typeName,EmptyTargetLanguageType()),_*) -> { // for each symbol types
+        concTomType(_*,  Type(_,typeName,EmptyTargetLanguageType()),_*) -> { // for each symbol types
           if(!testTypeExistence(`typeName)) {
             TomMessage.error(getLogger(),
                 getCurrentTomStructureOrgTrack().getFileName(),
@@ -493,7 +494,7 @@ matchblock:{
       return (position-1);
     } else { // OPARRAY and OPLIST
       %match(TomTypeList args) {
-        concTomType(Type(options,typeName,EmptyTargetLanguageType())) -> {
+        concTomType(Type(_,typeName,EmptyTargetLanguageType())) -> {
           if(!testTypeExistence(`typeName)) {
             TomMessage.error(getLogger(),
                 getCurrentTomStructureOrgTrack().getFileName(),
@@ -669,7 +670,7 @@ matchLbl: %match(constr) {// TODO : add something to test the astType
                           `stringName);
                       return;
                     }
-                    BuildConstant[AstName=Name(stringName)] -> {
+                    BuildConstant[AstName=Name(_)] -> {
                       // do not throw an error message because Constant have no type
                     }
                   }
@@ -872,7 +873,7 @@ matchLbl: %match(constr) {// TODO : add something to test the astType
 
   %strategy ContainsVariable(TomTerm var) extends Identity() {     
     visit BQTerm {
-      v@(BQVariable|BQVariableStar)[AstName=name] -> {
+      (BQVariable|BQVariableStar)[AstName=name] -> {
         //System.out.println("name = " + `name);
         //System.out.println("var.name = " + var.getAstName());
         if(`name==var.getAstName()) {
@@ -943,7 +944,7 @@ matchLbl: %match(constr) {// TODO : add something to test the astType
         }
       }
 
-      BQVariable[AstName=Name(name),AstType=tomType@Type(options,type,EmptyTargetLanguageType())] -> {        
+      BQVariable[AstName=Name(name),AstType=tomType@Type(_,type,EmptyTargetLanguageType())] -> { 
         if(`tomType==SymbolTable.TYPE_UNKNOWN) {
           // try to guess
           return guessSubjectType(`subject,constraints);
@@ -958,7 +959,7 @@ matchLbl: %match(constr) {// TODO : add something to test the astType
         }
       }
 
-      term@BQAppl[AstName=Name(name)] -> {
+      BQAppl[AstName=Name(name)] -> {
         TomSymbol symbol = getSymbolFromName(`name);
         if(symbol!=null) {
           TomType type = TomBase.getSymbolCodomain(symbol);
@@ -990,7 +991,7 @@ matchLbl: %match(constr) {// TODO : add something to test the astType
   private TomType guessSubjectType(BQTerm subject,Collection<Constraint> constraints) {
     for(Constraint constr:constraints) {
       %match(Constraint constr) {
-        MatchConstraint(patt,s,astType) -> {
+        MatchConstraint(patt,s,_) -> {
           // we want two terms to be equal even if their option is different 
           //( because of their position for example )
 matchL:  %match(subject,s) {
@@ -1205,7 +1206,7 @@ matchblock:{
         break matchblock;
       }
 
-      rec@RecordAppl[Options=options,NameList=symbolNameList,Slots=slotList] -> {
+      RecordAppl[Options=options,NameList=symbolNameList,Slots=slotList] -> {
         fileName = findOriginTrackingFileName(`options);
         decLine = findOriginTrackingLine(`options);
         termClass = RECORD_APPL;
