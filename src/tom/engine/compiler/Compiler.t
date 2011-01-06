@@ -266,7 +266,7 @@ public class Compiler extends TomGenericPlugin {
    * Takes all MatchConstraints and renames the subjects;
    * (this ensures that the subject is not constructed more than once) 
    * Match(p,s,t) -> Match(object,s,t) /\ IsSort(t,object) /\
-   * Match(freshSubj,Cast(object),t) /\ Match(p,freshSubj,t) 
+   *                 Match(freshSubj,Cast(object),t) /\ Match(p,freshSubj,t) 
    * 
    * @param subjectList the list of old subjects
    */

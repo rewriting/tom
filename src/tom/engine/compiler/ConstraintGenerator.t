@@ -144,6 +144,13 @@ public class ConstraintGenerator {
       }
       // variables' assignments
       ConstraintToExpression(MatchConstraint[Pattern=v@(Variable|VariableStar)[],Subject=t]) -> {
+        SymbolTable symbolTable = getCompiler().getSymbolTable();
+        if(TomBase.getTermType(`v,symbolTable) != TomBase.getTermType(`t,symbolTable)) {
+          //System.out.println("type1 = " + TomBase.getTermType(`v,symbolTable));
+          //System.out.println("type2 = " + TomBase.getTermType(`t,symbolTable));
+          // check subtype and add a cast
+          return `LetRef(TomBase.convertFromVarToBQVar(v),Cast(TomBase.getTermType(v,symbolTable),BQTermToExpression(t)),action);
+        }
         return `LetRef(TomBase.convertFromVarToBQVar(v),BQTermToExpression(t),action);
       }  
       // numeric constraints
@@ -302,7 +309,7 @@ public class ConstraintGenerator {
   }// end strategy   
   
   /**
-   * Collect the free variables in an expression (do not inspect under a anti)  
+   * Collect the free variables in an expression (do not inspect under an anti)  
    */
   %strategy CollectFreeVar(varList:BQTermCollection) extends Identity() {     
     visit Expression {

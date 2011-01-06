@@ -229,6 +229,10 @@ public abstract class GenericGenerator extends AbstractGenerator {
       output.writeUnderscore();
       output.write(slotName);
       output.writeOpenBrace();
+      /*
+       * add a cast to ensure correct typing when using subtypes
+       */
+
       generateBQTerm(deep,var,moduleName);
       output.writeCloseBrace();
     }

@@ -607,6 +607,20 @@ public final class TomBase {
     return `EmptyType();
   }
 
+  public static TomType getTermType(Expression t, SymbolTable symbolTable) {
+    %match(t) {
+      (GetHead|GetSlot|GetElement)[Codomain=type] -> { return `type; }
+
+      BQTermToExpression(term) -> { return getTermType(`term, symbolTable); }
+      GetTail[Variable=term] -> { return getTermType(`term, symbolTable); }
+      GetSliceList[VariableBeginAST=term] -> { return getTermType(`term, symbolTable); }
+      GetSliceArray[SubjectListName=term] -> { return getTermType(`term, symbolTable); }
+      Cast[AstType=type] -> { return `type; }
+    }
+    System.out.println("getTermType error on term: " + t);
+    throw new TomRuntimeException("getTermType error on term: " + t);
+  }
+
   public static TomSymbol getSymbolFromTerm(TomTerm t, SymbolTable symbolTable) {
     %match(t) {
       (TermAppl|RecordAppl)[NameList=concTomName(headName,_*)] -> {
@@ -639,19 +653,6 @@ public final class TomBase {
     return null;
   }
 
-  public static TomType getTermType(Expression t, SymbolTable symbolTable) {
-    %match(t) {
-      (GetHead|GetSlot|GetElement)[Codomain=type] -> { return `type; }
-
-      BQTermToExpression(term) -> { return getTermType(`term, symbolTable); }
-      GetTail[Variable=term] -> { return getTermType(`term, symbolTable); }
-      GetSliceList[VariableBeginAST=term] -> { return getTermType(`term, symbolTable); }
-      GetSliceArray[SubjectListName=term] -> { return getTermType(`term, symbolTable); }
-      Cast[AstType=type] -> { return `type; }
-    }
-    System.out.println("getTermType error on term: " + t);
-    throw new TomRuntimeException("getTermType error on term: " + t);
-  }
 
   public static SlotList tomListToSlotList(TomList tomList) {
     return tomListToSlotList(tomList,1);
@@ -728,7 +729,7 @@ public final class TomBase {
         return `VariableStar(optionList, name, type, concConstraint());
       }
     }
-    throw new TomRuntimeException("cannot convert into a variable the term "+variable);
+    throw new TomRuntimeException("cannot convert into a variable the term " + variable);
   }
 
 } // class TomBase
