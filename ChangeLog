@@ -1,3 +1,37 @@
+2010-12-21 tavaresc
+ * Update explicit type after type inference (in "old" kernel typer).
+ * Fix a bad modification of compiler concerning explicit types.
+
+2010-12-17 tavaresc
+ * Move tests "isListOperator" and "isArrayoperator" to the moment when inferring
+ types of a RecordAppl (resp. BQAppl).
+ * Improve javadoc.
+ 
+2010-12-15 tavaresc
+ * Add information "WithSymbol" for all list and array operators (in method
+ "UpdateSumbolTable" of Typer)
+ * Fix type constraint for VariableStar ("=" instead of "<:")
+ * Start to fix test of subtyping considering symmetry (test equality).
+
+2010-12-10 tavaresc
+ * Fix use of cast type and subject type in method renameSubjects :
+  Match(p,s,castType)
+    -> Match(object,s,castType) /\ IsSort(castType,object) /\
+       Match(freshSubj,Cast(object),freshSubjType) /\ Match(p,freshSubj,castType)
+
+ * But still need to verify the casts done after the compiler.
+ 
+2010-12-09 tavaresc
+ * In SyntaxChecker : 
+  - remove error message for a match constraint whose both subject and explicit
+	type has unknown types and consequently remove type inference done during
+	syntax checking;
+  - fix test for undeclared types.
+ * In NewKernelTyper : remove test for undeclared types.
+
+2010-12-08 tavaresc
+ * Replace syntax "%subtype A <: B" by "%typeterm A extends B {...}".
+
 2010-12-03 tavaresc
  * Fix supType method in order to take the lowest common upperTypes between two
  given types (in NewKernelTyper).

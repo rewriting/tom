@@ -252,8 +252,8 @@ public class NewTyper extends TomGenericPlugin {
         TomSymbol tSymbol = getSymbolFromName(tomName);
         tSymbol = collectKnownTypesFromTomSymbol(tSymbol);
         tSymbol =
-          `TopDownIdStopOnSuccess(TransformBQAppl(newKernelTyper)).visitLight(`tSymbol);
-        getSymbolTable().putSymbol(tomName,tSymbol);
+          `TopDownIdStopOnSuccess(TransformBQAppl(newKernelTyper)).visitLight(tSymbol);
+        newKernelTyper.putSymbol(tomName,tSymbol);
         newKernelTyper.setLimTVarSymbolTable(freshTypeVarCounter);
       } catch(tom.library.sl.VisitFailure e) {
         throw new TomRuntimeException("should not be there");

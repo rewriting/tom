@@ -383,7 +383,7 @@ matchblock:{
       }
     } else {
       if(alreadyStudiedTypes.contains(name)) {
-        TomMessage.warning(getLogger(),
+        TomMessage.error(getLogger(),
             getCurrentTomStructureOrgTrack().getFileName(),
             getCurrentTomStructureOrgTrack().getLine(),
             TomMessage.multipleSortDefinitionError,
@@ -640,52 +640,54 @@ matchblock:{
 matchLbl: %match(constr) {// TODO : add something to test the astType
             MatchConstraint(pattern,subject,astType) -> {
               TomType typeMatch = `astType;
-
               Collection<TomName> patternVars = new HashSet<TomName>();
               Collection<TomName> subjectVars = new HashSet<TomName>();
               `TopDownCollect(CollectVariables(patternVars)).visitLight(`pattern);
               `TopDownCollect(CollectVariables(subjectVars)).visitLight(`subject);
               computeDependencies(varRelationsMap,patternVars,subjectVars);
 
-              //System.out.println("astType = " + `astType);
-
-              if(`astType == SymbolTable.TYPE_UNKNOWN) {
-                typeMatch = getSubjectType(`subject,constraints);
-                if(typeMatch == null) {
-                  %match(subject) {
-                    BQVariable[AstName=Name(stringName)] -> {
-                      TomMessage.error(getLogger(),
-                          getCurrentTomStructureOrgTrack().getFileName(),
-                          getCurrentTomStructureOrgTrack().getLine(),
-                          TomMessage.cannotGuessMatchType,
-                          `stringName);
-                      return;
+              // TODO: remove this test when newtyper will be the only typer
+              if (!getOptionBooleanValue("newtyper")) {//case of subtyping (-nt option activated)
+                if(`astType == SymbolTable.TYPE_UNKNOWN) {
+                  typeMatch = getSubjectType(`subject,constraints);
+                  if(typeMatch == null) {
+                    %match(subject) {
+                      BQVariable[AstName=Name(stringName)] -> {
+                        TomMessage.error(getLogger(),
+                            getCurrentTomStructureOrgTrack().getFileName(),
+                            getCurrentTomStructureOrgTrack().getLine(),
+                            TomMessage.cannotGuessMatchType,
+                            `stringName);
+                        return;
+                      }
+                      BQAppl[AstName=Name(stringName)] -> {
+                        TomMessage.error(getLogger(),
+                            getCurrentTomStructureOrgTrack().getFileName(),
+                            getCurrentTomStructureOrgTrack().getLine(),
+                            TomMessage.cannotGuessMatchType,
+                            `stringName);
+                        return;
+                      }
+                      BuildConstant[AstName=Name(stringName)] -> {
+                        // do not throw an error message because Constant have no type
+                      }
                     }
-                    BQAppl[AstName=Name(stringName)] -> {
-                      TomMessage.error(getLogger(),
-                          getCurrentTomStructureOrgTrack().getFileName(),
-                          getCurrentTomStructureOrgTrack().getLine(),
-                          TomMessage.cannotGuessMatchType,
-                          `stringName);
-                      return;
-                    }
-                    BuildConstant[AstName=Name(stringName)] -> {
-                      // do not throw an error message because Constant have no type
-                    }
+                    return;
                   }
-                  return;
                 }
-              } else if(!testTypeExistence(`astType.getTomType())) {
-                TomMessage.error(getLogger(),
-                    getCurrentTomStructureOrgTrack().getFileName(),
-                    getCurrentTomStructureOrgTrack().getLine(),
-                    TomMessage.unknownType,
-                    `astType.getTomType());
-                return;
-              } 
+              }
 
-              // we now compare the pattern to its definition
-              verifyMatchPattern(`pattern, typeMatch);
+              if (`astType != SymbolTable.TYPE_UNKNOWN) {
+                if (!testTypeExistence(`astType.getTomType())) {
+                  TomMessage.error(getLogger(),
+                      getCurrentTomStructureOrgTrack().getFileName(),
+                      getCurrentTomStructureOrgTrack().getLine(),
+                      TomMessage.unknownType,
+                      `astType.getTomType());
+                }
+                // we now compare the pattern to its definition
+                verifyMatchPattern(`pattern, typeMatch);
+              } 
             }
 
             // The lhs or rhs can only be TermAppl or Variable
@@ -1326,6 +1328,7 @@ matchblock:{
       } else { // known symbol
         if (!getOptionBooleanValue("newtyper")) {//case of subtyping (-nt option activated)
           if( strictType  || !topLevel ) {
+            //DEBUG System.out.println("ensureValidApplDisjunction!");
             if(!ensureSymbolCodomain(TomBase.getSymbolCodomain(symbol), expectedType, TomMessage.invalidCodomain, res, fileName,decLine)) {
               return null;
             }

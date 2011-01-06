@@ -74,13 +74,13 @@ public class Problem4{
   }
   
 // ------------------------------------------------------------
-  %typeterm TomA {
+  %typeterm TomA extends TomC{
     implement { A }
     is_sort(t) { $t instanceof A }
     equals(t1,t2) { $t1 == $t2 }
   }
 
-  %typeterm TomB {
+  %typeterm TomB extends TomA{
     implement { B }
     is_sort(t) { $t instanceof B }
     equals(t1,t2) { $t1 == $t2 }
@@ -91,9 +91,6 @@ public class Problem4{
     is_sort(t) { $t instanceof C }
     equals(t1,t2) { $t1 == $t2 }
   }
-
-  %subtype TomB <: TomA
-  %subtype TomA <: TomC
 
 // ------------------------------------------------------------
   %op TomA a() {

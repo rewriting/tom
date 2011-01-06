@@ -1829,96 +1829,60 @@ operatorArray returns [Declaration result] throws TomException
         }
     ;
 
-subtypeConstruct throws TomException
-{
-    Option ot1 = null;
-    Option ot2 = null;
-
-    String subtypeName = null;
-    String supertypeName = null;
-}
-  :
-    subtype:ALL_ID
-    {
-        subtypeName = subtype.getText();
-        ot1 = `OriginTracking(Name(subtypeName), subtype.getLine(),currentFile());
-    }
-    SUBTYPE_CONSTRAINT
-    supertype:ALL_ID
-    {
-        supertypeName = supertype.getText();
-        ot2 = `OriginTracking(Name(supertypeName), supertype.getLine(),currentFile());
-    }
-{
-  TomType subAstType = getType(subtypeName);
-  TomType superAstType = getType(supertypeName);
-  if (subAstType != null && superAstType != null) {
-    %match(subAstType) {
-      Type[TypeOptions=tOptions,TlType=tlType] -> {
-        %match {
-          concTypeOption(_*,SubtypeDecl[TomType=tType],_*) <<
-            subAstType.getTypeOptions() -> {
-            TomMessage.error(getLogger(),currentFile(), getLine(),
-                TomMessage.multipleUpperTypes,`subtypeName,`supertypeName,`tType);
-          }
-
-          !concTypeOption(_*,SubtypeDecl[],_*) << subAstType.getTypeOptions() -> {
-            putType(subtypeName,`Type(concTypeOption(SubtypeDecl(supertypeName),tOptions*),subtypeName,tlType)); 
-          }
-        }
-      }
-    }
-  } else {
-    if (subAstType == null) {
-      TomMessage.error(getLogger(),currentFile(), getLine(),
-                      TomMessage.typetermNotDefined, 
-                      subtypeName); 
-    }
-    if (superAstType == null) {
-      TomMessage.error(getLogger(),currentFile(), getLine(),
-                      TomMessage.typetermNotDefined, 
-                      supertypeName); 
-    }
-  }
-  selector().pop();
-}
-  ;
-    
-
 typeTerm returns [Declaration result] throws TomException
-{
+  {
     result = null;
     Option ot = null;
     Declaration attribute = null;
     TargetLanguage implement = null;
     DeclarationList declarationList = `concDeclaration();
     String s;
-}
-    :   (
-            type:ALL_ID
-            {
-                ot = `OriginTracking(Name(type.getText()), type.getLine(),currentFile());
-            }
-            LBRACE
 
-            implement = keywordImplement
-            (  attribute = keywordEquals[type.getText()]
-                { declarationList = `concDeclaration(attribute,declarationList*); }
-            |   attribute = keywordIsSort[type.getText()]
-                { declarationList = `concDeclaration(attribute,declarationList*); }
-            |   attribute = keywordGetImplementation[type.getText()]
-                { declarationList = `concDeclaration(attribute,declarationList*); }
-            )*
-            t:RBRACE
-        )
-{
-  TomType astType = `Type(concTypeOption(),type.getText(),TLType(implement.getCode()));
-          putType(type.getText(), astType);
-          result = `TypeTermDecl(Name(type.getText()),declarationList,ot);
+    TypeOptionList typeoptionList = `concTypeOption();
+    int currentLine = -1;
+    String supertypeName = null;
+    String currentTypeName = null;
+  }
+  :   (
+      type:ALL_ID
+      {
+      currentLine = type.getLine();
+      currentTypeName = type.getText();
+      ot = `OriginTracking(Name(currentTypeName),currentLine,currentFile());
+      }
+
+
+      (
+         EXTENDS
+        supertype:ALL_ID
+        {
+            supertypeName = supertype.getText();
+            typeoptionList = `concTypeOption(SubtypeDecl(supertypeName));
+        }
+      )?
+
+
+
+      LBRACE
+
+      implement = keywordImplement
+      (  attribute = keywordEquals[currentTypeName]
+         { declarationList = `concDeclaration(attribute,declarationList*); }
+         |   attribute = keywordIsSort[currentTypeName]
+         { declarationList = `concDeclaration(attribute,declarationList*); }
+         |   attribute = keywordGetImplementation[currentTypeName]
+         { declarationList = `concDeclaration(attribute,declarationList*); }
+      )*
+      t:RBRACE
+      {
+          TomType astType = `Type(typeoptionList,currentTypeName,TLType(implement.getCode()));
+          putType(currentTypeName, astType);
+          result = `TypeTermDecl(Name(currentTypeName),declarationList,ot);
           updatePosition(t.getLine(),t.getColumn());
           selector().pop();
         }
-    ;
+    )
+  ;
 
 keywordImplement returns [TargetLanguage tlCode] throws TomException
 {
@@ -2509,7 +2473,6 @@ STRING
 
 ANTI_SYM  : '!';
 MATCH_CONSTRAINT  : "<<";
-SUBTYPE_CONSTRAINT  : "<:";
 LESSOREQUAL_CONSTRAINT  : "<=";
 //GREATER_CONSTRAINT  : ":>";
 GREATEROREQUAL_CONSTRAINT  : ">=";
