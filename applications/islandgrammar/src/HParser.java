@@ -1,4 +1,6 @@
+import org.antlr.runtime.*;
 import java.io.File;
+import java.io.InputStream;
 import java.io.FileInputStream;
 import java.util.List;
 import java.util.LinkedList;
@@ -6,7 +8,7 @@ import java.util.LinkedList;
 public class HParser {
 
   private File file;
-  private FileInputStream inputFile;
+  private InputStream inputFile;
   private LinkedList<String> tokens = new LinkedList<String>();
 
   public HParser(String name) {
@@ -19,10 +21,11 @@ public class HParser {
     }
   }
 
-  public FileInputStream getNextTom() {
+  public CharStream getNextTom() {
     int state = 0;
     String pattern = "%match";
-    StringBuffer read = new StringBuffer();
+    StringBuffer guest = new StringBuffer();
+    StringBuffer host = new StringBuffer();
     char c = '\000';
     while(state != -1) {
       try {
@@ -35,22 +38,53 @@ public class HParser {
       if(c == -1) {
         System.out.println("Fin du fichier atteinte.");
         state = -1;
-        continue;
       }
-      if(c == pattern.charAt(state)) {
+      else if(c == pattern.charAt(state)) {
         state++;
+	guest.append(c);
       }
       else {
+	if(state > 0) {
+	  host.append(guest);
+          guest = new StringBuffer();
+        }
+        host.append(c);
         state = 0;
-        read.append(c);
       }
       if(state == pattern.length())
       {
         state = -1;
       }
     }
-    tokens.add(read.toString());
-    return inputFile;
+    tokens.add(host.toString());
+    return new ANTLRStringStream(getInsideContent(inputFile));
+//    return inputFile;
+  }
+
+  private String getInsideContent(InputStream is) {
+    StringBuffer buffer = new StringBuffer();
+    char c = '\000';
+    int level = 0;
+    boolean inside = true;
+    while(inside) {
+      try {
+        c = (char) is.read();
+        buffer.append(c);
+        if(c == '{') {
+          level++;
+        }
+        else if(c == '}') {
+          level--;
+          if(level < 1) {
+            inside = false;
+          }
+        }
+      }
+      catch (Exception e) {
+        inside = false;
+      }
+    }
+    return buffer.toString();
   }
 
   public List<String> getHostTokens () {

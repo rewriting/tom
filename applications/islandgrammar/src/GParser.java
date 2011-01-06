@@ -8,47 +8,24 @@ import java.io.FileInputStream;
 
 public class GParser {
 
-  private miniTomParser.program_return truc;
+  private MyminiTomParser.program_return truc;
 
-  public GParser(FileInputStream input) {
+  public GParser(CharStream input) {
     try {
-      CharStream charStream = new ANTLRInputStream(input);
-      miniTomLexer lexer = new miniTomLexer(charStream);
+      MyminiTomLexer lexer = new MyminiTomLexer(input);
       CommonTokenStream tokens = new CommonTokenStream();
       tokens.setTokenSource(lexer);
-      miniTomParser parser = new miniTomParser(tokens);
-	truc = parser.program();
+      MyminiTomParser parser = new MyminiTomParser(tokens);
+      truc = parser.program();
     } catch (Exception e) {
       e.printStackTrace();
     }
 }
  
   public void print() {
-    ((CommonTree)truc.getTree()).toStringTree();
+    System.out.println(((Tree)truc.getTree()).toStringTree());
   }
 
-  public static void printTree(CommonTree t, int indent) {
-    if ( t != null ) {
-      StringBuffer sb = new StringBuffer(indent);
-      for ( int i = 0; i < indent; i++ )
-        sb = sb.append("   ");
-      for ( int i = 0; i < t.getChildCount(); i++ ) {
-        System.out.println(sb.toString() + t.getChild(i).toString());
-        printTree((CommonTree)t.getChild(i), indent+1);
-      }
-    }
-  }
-/*
-  public static void printTree(CommonTree t) {
-    if( t != null ) {
-      System.out.print(t.getText());
-      for (int i = 0 ; i < t.getChildCount(); i++) {
-        System.out.print("( ");
-	printTree((CommonTree)t.getChild(i));
-	System.out.print(" )");
-      }
-    }
-  }*/
 } 
 
     
