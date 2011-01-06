@@ -132,6 +132,7 @@ public class SyntaxCheckerPlugin extends TomGenericPlugin {
   protected Logger getLogger() {
     return Logger.getLogger(getClass().getName());
   }
+
   public Option getCurrentTomStructureOrgTrack() {
     return currentTomStructureOrgTrack;
   }
@@ -383,8 +384,7 @@ matchblock:{
       }
     } else {
       if(alreadyStudiedTypes.contains(name)) {
-        //TomMessage.error(getLogger(),
-        TomMessage.warning(getLogger(),
+        TomMessage.error(getLogger(),
             getCurrentTomStructureOrgTrack().getFileName(),
             getCurrentTomStructureOrgTrack().getLine(),
             TomMessage.multipleSortDefinitionError,
