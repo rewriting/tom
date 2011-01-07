@@ -1,3 +1,9 @@
+2011-01-06 tavaresc
+ * Fix conditions for subtype relations and comment printlns.
+
+2011-01-06 pem
+ * Add a cast in the generated code to deal with subtyping.
+
 2010-12-21 tavaresc
  * Update explicit type after type inference (in "old" kernel typer).
  * Fix a bad modification of compiler concerning explicit types.
