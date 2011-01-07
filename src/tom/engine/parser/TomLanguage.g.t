@@ -206,7 +206,6 @@ matchArgument [List<BQTerm> list, List<TomType> typeList] throws TomException
     (subject2 = plainBQTerm { s2 = text.toString(); })?
     {
       if(subject2==null) {
-        // System.out.println("matchArgument = " + subject1);
         list.add(subject1);
         typeList.add(SymbolTable.TYPE_UNKNOWN);
       } else {
@@ -1695,9 +1694,6 @@ operator returns [Declaration result] throws TomException
                * ensure that sName appears in slotNameList, only once
                * ensure that sName has not already been generated
                */
-              //System.out.println("slotNameList = " + slotNameList);
-              //System.out.println("sName      = " + sName);
-
               TomMessage msg = null;
               int index = slotNameList.indexOf(sName);
               if(index == -1) {
@@ -1727,9 +1723,6 @@ operator returns [Declaration result] throws TomException
         t:RBRACE
 	)
         {
-
-          //System.out.println("pairNameDeclList = " + pairNameDeclList);
-
           TomSymbol astSymbol = ASTFactory.makeSymbol(name.getText(), `Type(concTypeOption(),type.getText(),EmptyTargetLanguageType()), types, ASTFactory.makePairNameDeclList(pairNameDeclList), options);
           putSymbol(name.getText(),astSymbol);
           result = `SymbolDecl(astName);
@@ -1850,8 +1843,6 @@ typeTerm returns [Declaration result] throws TomException
       currentTypeName = type.getText();
       ot = `OriginTracking(Name(currentTypeName),currentLine,currentFile());
       }
-
-
       (
          EXTENDS
         supertype:ALL_ID
@@ -1860,11 +1851,7 @@ typeTerm returns [Declaration result] throws TomException
             typeoptionList = `concTypeOption(SubtypeDecl(supertypeName));
         }
       )?
-
-
-
       LBRACE
-
       implement = keywordImplement
       (  attribute = keywordEquals[currentTypeName]
          { declarationList = `concDeclaration(attribute,declarationList*); }
