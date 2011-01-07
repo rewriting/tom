@@ -103,7 +103,7 @@ public class SyntacticPropagator implements IBasePropagator {
           return `m; 
         }
        
-        System.out.println("m = " + `m);
+        //DEBUG System.out.println("m = " + `m);
         List<Constraint> lastPart = new ArrayList<Constraint>();
         ArrayList<BQTerm> freshVarList = new ArrayList<BQTerm>();
         // we build the last part only once, and we store the fresh variables we generate

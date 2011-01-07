@@ -1771,7 +1771,7 @@ matchBlockFail :
    *  b) --> False otherwise
    * <p>
    * CASE 4: T1^c1 <: T2^c2
-   *  a) --> True if T1 'a' is equals to 'b' and (T1 == T2 or T1 is a proper
+   *  a) --> True if 'a' is equals to 'b' and (T1 == T2 or T1 is a proper
    *  subtype of T2)
    *  b) --> False otherwise
    * <p>
@@ -1787,11 +1787,12 @@ matchBlockFail :
             // CASES 1a and 3a
             !concTypeOption(_*,WithSymbol[],_*) << tOptions2 
               && (tName1 == tName2) -> {
+                //DEBUG System.out.println("isSubtypeOf: cases 1a and 3a - i");
                 return true; 
               }
             !concTypeOption(_*,WithSymbol[],_*) << tOptions2
-              && concTomType(_*,Type[TomType=tName2],_*) <<
-              dependencies.get(tName1) -> {
+              && concTomType(_*,Type[TomType=tNameSup],_*) <<
+              dependencies.get(tName1) && (tName2 == tNameSup)-> {
                 return true; 
               }
 
@@ -1799,12 +1800,14 @@ matchBlockFail :
             concTypeOption(_*,WithSymbol[RootSymbolName=rsName],_*) << tOptions1
               && concTypeOption(_*,WithSymbol[RootSymbolName=rsName],_*) << tOptions2 
               && (tName1 == tName2) -> {
+                //DEBUG System.out.println("isSubtypeOf: case 4a - i");
                 return true; 
               }
             concTypeOption(_*,WithSymbol[RootSymbolName=rsName],_*) << tOptions1
               && concTypeOption(_*,WithSymbol[RootSymbolName=rsName],_*) << tOptions2 
-              && (tName1 == tName2) && concTomType(_*,Type[TomType=tName2],_*) <<
-              dependencies.get(tName1) -> {
+              && concTomType(_*,Type[TomType=tNameSup],_*) <<
+              dependencies.get(tName1) && (tName2 == tNameSup) -> {
+                //DEBUG System.out.println("isSubtypeOf: case 4a - ii");
                 return true; 
               }
           }
@@ -1883,6 +1886,7 @@ matchBlockFail :
       Type[TypeOptions=concTypeOption(_*,WithSymbol[RootSymbolName=rsName1],_*),TomType=tName,TlType=tlType1] << t1 
         &&
         Type[TypeOptions=concTypeOption(_*,WithSymbol[RootSymbolName=rsName2],_*),TomType=tName] << t2 -> {
+          //DEBUG System.out.println("\nIn supType: case 4.1");
           // Return the equivalent groudn type without decoration
           return symbolTable.getTypeFromName(`tName); 
         }
@@ -1895,6 +1899,7 @@ matchBlockFail :
         int currentIntersectionSize = -1;
         int commonTypeIntersectionSize = -1;
         TomType lowestCommonType = `EmptyType();
+        //DEBUG System.out.println("\nIn supType: cases 2b, 3b, 4.2c");
         for (TomType currentType:`supTypes1.getCollectionconcTomType()) {
           currentIntersectionSize = dependencies.get(currentType.getTomType()).length();
           if (`supTypes2.getCollectionconcTomType().contains(currentType) &&
