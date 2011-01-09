@@ -7,21 +7,20 @@ import java.util.LinkedList;
 
 public class HParser {
 
-  private File file;
-  private InputStream inputFile;
+  private InputStream inputStream;
+  private boolean finished;
   private LinkedList<String> tokens = new LinkedList<String>();
 
-  public HParser(String name) {
-    try {
-      file = new File(name);
-      inputFile = new FileInputStream(file);
-    }
-    catch (Exception e) {
-      e.printStackTrace();
-    }
+  public HParser(InputStream stream) {
+    finished = false;
+    inputStream = stream;
   }
 
-  public CharStream getNextTom() {
+  public boolean isDone() {
+    return finished;
+  }
+
+  public ANTLRStringStream getNextTom() {
     int state = 0;
     String pattern = "%match";
     StringBuffer guest = new StringBuffer();
@@ -29,14 +28,15 @@ public class HParser {
     char c = '\000';
     while(state != -1) {
       try {
-      c = (char) inputFile.read();
+      c = (char) inputStream.read();
       } catch (Exception e){
-        System.out.println("Impossible de lire à partir du fichier source");
+        System.out.println("Cannot read file");
         e.printStackTrace();
         System.exit(0);
       }
-      if(c == -1) {
-        System.out.println("Fin du fichier atteinte.");
+      if(c == (char) -1) {
+        System.out.println("EOF reached");
+        finished = true;
         state = -1;
       }
       else if(c == pattern.charAt(state)) {
@@ -57,8 +57,13 @@ public class HParser {
       }
     }
     tokens.add(host.toString());
-    return new ANTLRStringStream(getInsideContent(inputFile));
-//    return inputFile;
+    if (finished) {
+/* no need to retrieve a Tom block, send an empty StringStream (that is, with an EOF) */
+      return new ANTLRStringStream("\000");
+    }
+    else {
+      return new ANTLRStringStream(getInsideContent(inputStream));
+    }
   }
 
   private String getInsideContent(InputStream is) {
@@ -78,6 +83,11 @@ public class HParser {
           if(level < 1) {
             inside = false;
           }
+        }
+        else if(c == (char) -1) {
+          System.out.println("EOF reached while flying over Tom content");
+          finished = true;
+          inside = false;
         }
       }
       catch (Exception e) {

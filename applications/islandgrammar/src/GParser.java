@@ -20,8 +20,8 @@ public class GParser {
     } catch (Exception e) {
       e.printStackTrace();
     }
-}
- 
+  }
+
   public void print() {
     System.out.println(((Tree)truc.getTree()).toStringTree());
   }
