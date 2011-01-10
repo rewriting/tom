@@ -83,6 +83,8 @@ public class PrettyPrinterPlugin extends TomGenericPlugin {
     "<boolean name='prettyTOM' altName='pit' description='Pretty print original Tom code (not activated by default)' value='false'/>" +
     "</options>";
 
+  public static PPOutputFormatter aPPOutputFormatter = new PPOutputFormatter();
+
   /** Constructor */
   public PrettyPrinterPlugin() {
     super("PrettyPrinterPlugin");
@@ -120,7 +122,7 @@ public class PrettyPrinterPlugin extends TomGenericPlugin {
 
   public static void printTL(Code code) {
     try {
-      `TopDown(Repeat(stratPrintTL())).visit(code);
+      `TopDown(Repeat(Sequence(Try(changeBQ()),stratPrintTL()))).visit(code);
     } catch (VisitFailure e) {
       System.out.println("strategy failed");
     }
@@ -128,11 +130,23 @@ public class PrettyPrinterPlugin extends TomGenericPlugin {
   
   %strategy stratPrintTL() extends Fail(){
     visit TargetLanguage {
-      TL[Code=x] -> {System.out.println(`x);}
+      TL[Code=x, Start=TextPosition[Line=startLine, Column=startColumn], End=TextPosition[Line=endLine, Column=endColumn]] -> {
+        aPPOutputFormatter.put(`x, new PPTextPosition(`startLine, `startColumn), new PPTextPosition(`endLine, `endColumn));
+      }
     }
     visit BQTerm {
-      BuildTerm[AstName=Name(x)] -> {System.out.println(`x);}
+      BuildConstant[AstName=Name(name)] -> {aPPOutputFormatter.put(`name);}
+      BQAppl[AstName=Name(name)] -> {aPPOutputFormatter.put(`name);}
+      BQVariableStar[AstName=Name(name)] -> {aPPOutputFormatter.put(`name);}
+      BuildTerm[AstName=Name(name), Args=concBQTerm()] -> {aPPOutputFormatter.put(`name+"()");}
     }
   }
+
+  %strategy changeBQ() extends Fail(){
+    visit BQTerm {
+     // BuildTerm[AstName=Name(x),Args=concBQTerm()] -> {return `BuildConstant(Name(x+"()"));}
+    }
+  }
+
 
 }
