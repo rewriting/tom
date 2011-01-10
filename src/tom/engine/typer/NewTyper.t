@@ -270,7 +270,7 @@ public class NewTyper extends TomGenericPlugin {
         //System.out.println("BackQuoteTerm: " + `tomName);
         //System.out.println("tSymbol: " + tSymbol);
         if(TomBase.hasConstant(`optionList)) {
-          return `BuildConstant(name);
+          return `BuildConstant(optionList,name);
         } else if(tSymbol != null) {
           if(TomBase.isListOperator(tSymbol)) {
             //DEBUG System.out.println("A list operator '" + `tomName + "' : " +
