@@ -116,6 +116,7 @@ public class SyntacticPropagator implements IBasePropagator {
             lastPart.add(`MatchConstraint(appl,freshVar,aType));
           }
         }
+        System.out.println("In Syntatic Proagator with g = " + `g + '\n');
         BQTerm freshSubject = sp.getCompiler().getFreshVariable(sp.getCompiler().getTermTypeFromTerm(`g));
             
         // take each symbol and build the disjunction (OrConstraintDisjunction)

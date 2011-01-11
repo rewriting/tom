@@ -611,11 +611,15 @@ public final class TomBase {
     %match(t) {
       (GetHead|GetSlot|GetElement)[Codomain=type] -> { return `type; }
 
-      BQTermToExpression(term) -> { return getTermType(`term, symbolTable); }
+      BQTermToExpression[AstTerm=bqterm] -> { return getTermType(`bqterm, symbolTable); }
+      Conditional[Cond=cond] -> { return getTermType(`cond, symbolTable); } 
+      IsFsym[Variable=bqterm] ->  { return getTermType(`bqterm, symbolTable); }
       GetTail[Variable=term] -> { return getTermType(`term, symbolTable); }
       GetSliceList[VariableBeginAST=term] -> { return getTermType(`term, symbolTable); }
       GetSliceArray[SubjectListName=term] -> { return getTermType(`term, symbolTable); }
       Cast[AstType=type] -> { return `type; }
+      AddOne[Variable=bqterm] -> { return getTermType(`bqterm, symbolTable); }
+      Integer[value=v] -> { return symbolTable.getTypeFromName("int"); }
     }
     System.out.println("getTermType error on term: " + t);
     throw new TomRuntimeException("getTermType error on term: " + t);
