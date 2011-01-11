@@ -389,7 +389,7 @@ public class KernelTyper {
             }                   
           }
 
-          c@BuildConstant(Name(name)) -> {
+          c@BuildConstant[AstName=Name(name)] -> {
             newSubject = `c;
             TomSymbol symbol = kernelTyper.getSymbolFromName(`name);
             TomType type = TomBase.getSymbolCodomain(symbol);

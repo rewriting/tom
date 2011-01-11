@@ -203,7 +203,7 @@ public class TyperPlugin extends TomGenericPlugin {
         //System.out.println("BackQuoteTerm: " + `tomName);
         //System.out.println("tomSymbol: " + tomSymbol);
         if(TomBase.hasConstant(`optionList)) {
-          return `BuildConstant(name);
+          return `BuildConstant(optionList,name);
         } else if(tomSymbol != null) {
           if(TomBase.isListOperator(tomSymbol)) {
             return ASTFactory.buildList(`name,args,typer.getSymbolTable());
@@ -216,7 +216,7 @@ public class TyperPlugin extends TomGenericPlugin {
             if(moduleName==null) {
               moduleName = TomBase.DEFAULT_MODULE_NAME;
             }
-            return `BuildTerm(name,args,moduleName);
+            return `BuildTerm(optionList,name,args,moduleName);
           }
         } else {
           return `FunctionCall(name,EmptyType(),args);

@@ -177,7 +177,7 @@ public abstract class AbstractGenerator {
         return;
       }
 
-      BuildTerm(Name(name), argList, myModuleName) -> {
+      BuildTerm(optionList, Name(name), argList, myModuleName) -> {
         `buildTerm(deep, name, argList, myModuleName);
         return;
       }

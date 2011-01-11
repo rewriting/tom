@@ -206,9 +206,14 @@ matchArgument [List<BQTerm> list, List<TomType> typeList] throws TomException
     (subject2 = plainBQTerm { s2 = text.toString(); })?
     {
       if(subject2==null) {
-        // System.out.println("matchArgument = " + subject1);
-        list.add(subject1);
-        typeList.add(SymbolTable.TYPE_UNKNOWN);
+        %match(subject1) {
+          (BQVariable|BQAppl|BuildConstant)[] -> {
+            // System.out.println("matchArgument = " + subject1);
+            list.add(subject1);
+            typeList.add(SymbolTable.TYPE_UNKNOWN);
+            return;
+          }
+        }
       } else {
         if(subject1.isBQVariable()) {
           String typeName = subject1.getAstName().getString();
@@ -220,8 +225,8 @@ matchArgument [List<BQTerm> list, List<TomType> typeList] throws TomException
             }
           }
         }
-        throw new TomException(TomMessage.invalidMatchSubject, new Object[]{subject1, subject2});
       }
+      throw new TomException(TomMessage.invalidMatchSubject, new Object[]{subject1, subject2});
     }
     ;
 
@@ -912,13 +917,13 @@ plainBQTerm  returns [BQTerm result]
     | number:NUM_INT {
       String val = number.getText();
       ASTFactory.makeIntegerSymbol(symbolTable,val,optionList);
-      result = `BuildConstant(Name(val));
+      result = `BuildConstant(ASTFactory.makeOptionList(optionList),Name(val));
     }
 
     | string:STRING {
       String val = string.getText();
       ASTFactory.makeStringSymbol(symbolTable,val,optionList);
-      result = `BuildConstant(Name(val));
+      result = `BuildConstant(ASTFactory.makeOptionList(optionList),Name(val));
     }
 
     //| name = headConstant[optionList] { result = `BuildConstant(name); }
