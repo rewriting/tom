@@ -116,7 +116,7 @@ public class SyntacticPropagator implements IBasePropagator {
             lastPart.add(`MatchConstraint(appl,freshVar,aType));
           }
         }
-        System.out.println("In Syntatic Proagator with g = " + `g + '\n');
+        //DEBUG System.out.println("In Syntactic Propagator with g = " + `g + '\n');
         BQTerm freshSubject = sp.getCompiler().getFreshVariable(sp.getCompiler().getTermTypeFromTerm(`g));
             
         // take each symbol and build the disjunction (OrConstraintDisjunction)
@@ -132,11 +132,11 @@ public class SyntacticPropagator implements IBasePropagator {
             // introduce an intermediate variable (with another type) to handle subtyping
             TomSymbol symbol = sp.getCompiler().getSymbolTable().getSymbolFromName(`name.getString());
             TomType varType = TomBase.getSymbolCodomain(symbol);
-            //System.out.println("*** " + symbol);
+            //DEBUG System.out.println("*** " + symbol);
             BQTerm freshCastedSubject = sp.getCompiler().getFreshVariable(varType);
             TomTerm var = TomBase.convertFromBQVarToVar(freshCastedSubject);
-            //System.out.println("*** " + var);
-            //System.out.println("--- " + varType);
+            //DEBUG System.out.println("*** " + var);
+            //DEBUG System.out.println("--- " + varType);
             andForName.add(`MatchConstraint(var,freshSubject,varType));
 
             // for each slot

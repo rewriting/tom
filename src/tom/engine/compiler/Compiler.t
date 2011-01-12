@@ -236,11 +236,17 @@ public class Compiler extends TomGenericPlugin {
               // this is performed here, and not above, because in the case of nested matches, we do not want 
               // to go in the action and collect from there              
               Constraint newConstraint = `TopDownIdStopOnSuccess(renameSubjects(subjectList,renamedSubjects,compiler)).visitLight(`constraint);
+              //DEBUG System.out.println("\n In compiler!!");
+              //DEBUG System.out.println("\n newConstraint = " + newConstraint);
 
               Constraint propagationResult = compiler.getCompilerEnvironment().getConstraintPropagator().performPropagations(newConstraint);
+              //DEBUG System.out.println("\n propagationResult = " + propagationResult);
               PreGenerator preGenerator = new PreGenerator(compiler.getCompilerEnvironment().getConstraintGenerator());
+              //DEBUG System.out.println("\n preGenerator = " + preGenerator);
               Expression preGeneratedExpr = preGenerator.performPreGenerationTreatment(propagationResult);
+              //DEBUG System.out.println("\n preGeneratedExpr = " + preGeneratedExpr);
               Instruction matchingAutomata = compiler.getCompilerEnvironment().getConstraintGenerator().performGenerations(preGeneratedExpr, `action);
+              //DEBUG System.out.println("\n matchingAutomata = " + matchingAutomata);
               Instruction postGenerationAutomata = PostGenerator.performPostGenerationTreatment(matchingAutomata);
               TomNumberList path = compiler.getCompilerEnvironment().getRootpath();
               TomNumberList numberList = `concTomNumber(path*,PatternNumber(actionNumber));

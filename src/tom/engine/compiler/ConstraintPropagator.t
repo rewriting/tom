@@ -88,6 +88,8 @@ public class ConstraintPropagator {
     mainLoop: while(true) {
       for(int i=0 ; i < propNb ; i++) {
         result = prop[i].propagate(constraintToCompile);
+        //DEBUG System.out.println("*** prop[i] = " + prop[i] + '\n');
+        //DEBUG System.out.println("*** result = " + result + '\n');
         // if nothing was done, start counting 
         propCounter = (result == constraintToCompile) ? (propCounter+1) : 0;        
         // if we applied all the propagators and nothing changed,
