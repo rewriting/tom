@@ -397,7 +397,7 @@ public class ExpanderPlugin extends TomGenericPlugin {
                             }
                             pairNameDeclList = pairNameDeclList.getTailconcPairNameDecl();
                           }
-                          Instruction inst = `If(IsFsym(symbolName,var),Return(BuildTerm(symbolName,slots,"default")),Nop());
+                          Instruction inst = `If(IsFsym(symbolName,var),Return(BuildTerm(concOption(), symbolName,slots,"default")),Nop());
                           instructionsForSort = `concInstruction(instructionsForSort*,inst);
                         }
                       }

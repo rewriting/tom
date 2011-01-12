@@ -47,8 +47,8 @@ BQTerm = BQAppl(Options:OptionList,AstName:TomName,Args:BQTermList)
        * @param AstType the codomain of the function call, EmptyType if not known
        */
        | FunctionCall(AstName:TomName,AstType:TomType,Args:BQTermList)
-       | BuildConstant(AstName:TomName)
-       | BuildTerm(AstName:TomName,Args:BQTermList,ModuleName:String)
+       | BuildConstant(Options:OptionList,AstName:TomName)
+       | BuildTerm(Options:OptionList,AstName:TomName,Args:BQTermList,ModuleName:String)
        | BuildEmptyList(AstName:TomName)
        | BuildConsList(AstName:TomName,HeadTerm:BQTerm,TailTerm:BQTerm)
        | BuildAppendList(AstName:TomName,HeadTerm:BQTerm,TailTerm:BQTerm)

@@ -123,6 +123,7 @@ public class PrettyPrinterPlugin extends TomGenericPlugin {
   public static void printTL(Code code) {
     try {
       `TopDown(Repeat(stratPrintTL())).visit(code);
+      //System.out.println(code);
     } catch (VisitFailure e) {
       System.out.println("strategy failed");
     }
@@ -141,12 +142,4 @@ public class PrettyPrinterPlugin extends TomGenericPlugin {
       BuildTerm[AstName=Name(name), Args=concBQTerm()] -> {aPPOutputFormatter.put(`name+"()");}
     }
   }
-
-  %strategy changeBQ() extends Fail(){
-    visit BQTerm {
-     // BuildTerm[AstName=Name(x),Args=concBQTerm()] -> {return `BuildConstant(Name(x+"()"));}
-    }
-  }
-
-
 }

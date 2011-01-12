@@ -270,7 +270,7 @@ public class NewTyper extends TomGenericPlugin {
         //System.out.println("BackQuoteTerm: " + `tomName);
         //System.out.println("tSymbol: " + tSymbol);
         if(TomBase.hasConstant(`optionList)) {
-          return `BuildConstant(name);
+          return `BuildConstant(optionList,name);
         } else if(tSymbol != null) {
           if(TomBase.isListOperator(tSymbol)) {
             //DEBUG System.out.println("A list operator '" + `tomName + "' : " +
@@ -289,7 +289,7 @@ public class NewTyper extends TomGenericPlugin {
             if(moduleName==null) {
               moduleName = TomBase.DEFAULT_MODULE_NAME;
             }
-            return `BuildTerm(name,args,moduleName);
+            return `BuildTerm(optionList,name,args,moduleName);
           }
         } else {
           return `FunctionCall(name,EmptyType(),args);
