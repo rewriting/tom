@@ -369,12 +369,12 @@ if ( ((( tom.library.adt.tnode.types.TNode )elt) instanceof tom.library.adt.tnod
 if ( (list instanceof tom.library.adt.tnode.types.TNodeList) ) {
 if ( (((( tom.library.adt.tnode.types.TNodeList )list) instanceof tom.library.adt.tnode.types.tnodelist.ConsconcTNode) || ((( tom.library.adt.tnode.types.TNodeList )list) instanceof tom.library.adt.tnode.types.tnodelist.EmptyconcTNode)) ) {
 if (!( (( tom.library.adt.tnode.types.TNodeList )list).isEmptyconcTNode() )) {
- tom.library.adt.tnode.types.TNode  tomMatch683_13= (( tom.library.adt.tnode.types.TNodeList )list).getHeadconcTNode() ;
-if ( (tomMatch683_13 instanceof tom.library.adt.tnode.types.tnode.AttributeNode) ) {
+ tom.library.adt.tnode.types.TNode  tomMatch668_13= (( tom.library.adt.tnode.types.TNodeList )list).getHeadconcTNode() ;
+if ( (tomMatch668_13 instanceof tom.library.adt.tnode.types.tnode.AttributeNode) ) {
 
 if(
  (( tom.library.adt.tnode.types.TNode )elt).getName() .compareTo(
- tomMatch683_13.getName() ) >= 0) {
+ tomMatch668_13.getName() ) >= 0) {
 TNodeList tl = insertSortedAttribute(elt,
  (( tom.library.adt.tnode.types.TNodeList )list).getTailconcTNode() );
 return 

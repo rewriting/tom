@@ -63,7 +63,7 @@ public class PluginPlatformMessage implements PlatformMessage {
         }
       }
     } catch(java.lang.Exception e) {
-      throw new tom.engine.exception.TomRuntimeException(e.getMessage());
+      throw new PlatformException(e.getMessage());
     }
   }
 

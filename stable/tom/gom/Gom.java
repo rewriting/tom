@@ -35,9 +35,6 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
-import java.util.logging.MemoryHandler;
-import java.util.logging.SocketHandler;
-import java.util.logging.StreamHandler;
 
 import java.text.MessageFormat;
 
@@ -51,7 +48,7 @@ import tom.gom.GomMessage;
 
 public class Gom {
 
-  /** Log radical string*/
+  /** Log radical string */
   public final static String LOGRADICAL = "tom.gom";
 
   /** "java.util.logging.config.file" */
@@ -63,9 +60,6 @@ public class Gom {
   public synchronized static Object getLock() {
     return lockTomExec;
   }*/
-
-  /** The ConfigurationManager */
-  //private static ConfigurationManager configurationManager;
 
   /** The root logger */
   private final static Logger logger = Logger.getLogger(Gom.LOGRADICAL);
@@ -168,7 +162,7 @@ public class Gom {
     //single Platform
     PluginPlatform platform =
       PluginPlatformFactory.getInstance().create(commandLine,Gom.LOGRADICAL,wholeInputToCompileList,informationTracker);
-    if(platform == null) {
+    if (platform == null) {
       return 1;
     }
     platform.run();
@@ -191,7 +185,7 @@ public class Gom {
     if (logger != null && newLevel.intValue() <= Level.WARNING.intValue()) {
       logger.setLevel(newLevel);
     }
-    if(consoleHandler != null && newLevel.intValue() <= Level.WARNING.intValue()) {
+    if (consoleHandler != null && newLevel.intValue() <= Level.WARNING.intValue()) {
       // if we've found a global console handler
       consoleHandler.setLevel(newLevel);
     }
@@ -218,14 +212,14 @@ public class Gom {
   }
 
   /**
-   * initGomRootLogger set thee useParentHandlers flad and
+   * initGomRootLogger set the useParentHandlers flag and
    * remove all pre-existing handlers that might exist from prior uses
    * especially for multiple invication in the same VM
    */
   private static void initGomRootLogger(boolean useParentHandler) {
     logger.setUseParentHandlers(useParentHandler);
     Handler[] handlers = logger.getHandlers();
-    for(int i = 0; i < handlers.length; i++) {
+    for (int i = 0; i < handlers.length; i++) {
       logger.removeHandler(handlers[i]);
     }
   }

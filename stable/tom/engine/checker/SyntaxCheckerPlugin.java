@@ -520,6 +520,7 @@ reinit();
 protected Logger getLogger() {
 return Logger.getLogger(getClass().getName());
 }
+
 public Option getCurrentTomStructureOrgTrack() {
 return currentTomStructureOrgTrack;
 }
@@ -1296,7 +1297,7 @@ alreadyStudiedSymbols.add(name);
 }
 } else {
 if(alreadyStudiedTypes.contains(name)) {
-TomMessage.warning(getLogger(),
+TomMessage.error(getLogger(),
 getCurrentTomStructureOrgTrack().getFileName(),
 getCurrentTomStructureOrgTrack().getLine(),
 TomMessage.multipleSortDefinitionError,

@@ -1,4 +1,4 @@
-// $ANTLR 2.7.7 (20060906): "HostLanguage.g" -> "HostParser.java"$
+// $ANTLR 2.7.7 (20090417): "HostLanguage.g" -> "HostParser.java"$
 /*
  *
  * TOM - To One Matching Compiler
@@ -43,6 +43,7 @@ import antlr.collections.impl.BitSet;
 import java.util.*;
 import java.util.logging.*;
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 
 import tom.engine.Tom;
 import tom.engine.TomStreamManager;
@@ -64,11 +65,8 @@ import tom.engine.adt.tomtype.types.*;
 import tom.engine.adt.code.types.*;
 
 import tom.engine.tools.ASTFactory;
-import aterm.*;
 import antlr.TokenStreamSelector;
 import tom.platform.OptionManager;
-import tom.platform.PluginPlatform;
-import tom.platform.PlatformLogRecord;
 
 public class HostParser extends antlr.LLkParser       implements HostParserTokenTypes
  {
@@ -148,12 +146,12 @@ public class HostParser extends antlr.LLkParser       implements HostParserToken
     return currentFile;
   }
 
-  public synchronized SymbolTable getSymbolTable() {
-    return getStreamManager().getSymbolTable();
-  }
-
   public synchronized void updatePosition(){
     updatePosition(getLine(),getColumn());
+  }
+
+  public synchronized SymbolTable getSymbolTable() {
+    return getStreamManager().getSymbolTable();
   }
 
   public void updatePosition(int i, int j){
@@ -500,11 +498,6 @@ public HostParser(ParserSharedInputState state) {
 				includeConstruct(list);
 				break;
 			}
-			case SUBTYPE:
-			{
-				subtypeConstruct(list);
-				break;
-			}
 			case TYPETERM:
 			{
 				typeTerm(list);
@@ -626,8 +619,8 @@ public HostParser(ParserSharedInputState state) {
 		
 		
 		synchronized(Tom.getLock()) {
-		tom.gom.parser.BlockParser blockparser =
-		tom.gom.parser.BlockParser.makeBlockParser(targetlexer.getInputState());
+		BlockParser blockparser =
+		BlockParser.makeBlockParser(targetlexer.getInputState());
 		gomCode = cleanCode(blockparser.block().trim());
 		
 		File config_xml = null;
@@ -704,7 +697,6 @@ public HostParser(ParserSharedInputState state) {
 		
 		final File tmpFile;
 		try {
-		//tmpFile = File.createTempFile("tmp", ".gom", getStreamManager().getDestDir()).getCanonicalFile();
 		tmpFile = File.createTempFile("tmp", ".gom", null).getCanonicalFile();
 		parameters.add(tmpFile.getPath());
 		} catch (IOException e) {
@@ -740,7 +732,22 @@ public HostParser(ParserSharedInputState state) {
 		informationTracker.put("inputFileName",getStreamManager().getInputFileName());
 		
 		//5 tom.platform.PluginPlatformFactory.getInstance().getInformationTracker().put(java.lang.Thread.currentThread().getId(),null);
-		res = tom.gom.Gom.exec(params,informationTracker);
+		try {
+		// Call tom.gom.Gom.exec(params,informationTracker) using reflexivity, to
+		// avoid a build time dempendency between tom and gom
+		res = ((Integer) Class.forName("tom.gom.Gom")
+		.getMethod("exec", new Class[] {params.getClass(), Map.class})
+		.invoke(null, new Object[] {params, informationTracker}))
+		.intValue();
+		} catch (ClassNotFoundException cnfe) {
+		TomMessage.error(logger, currentFile, initialGomLine, TomMessage.gomInitFailure,currentFile,Integer.valueOf(initialGomLine), cnfe);
+		} catch (NoSuchMethodException nsme) {
+		TomMessage.error(logger, currentFile, initialGomLine, TomMessage.gomInitFailure,currentFile,Integer.valueOf(initialGomLine), nsme);
+		} catch (InvocationTargetException ite) {
+		TomMessage.error(logger, currentFile, initialGomLine, TomMessage.gomInitFailure,currentFile,Integer.valueOf(initialGomLine), ite);
+		} catch (IllegalAccessException iae) {
+		TomMessage.error(logger, currentFile, initialGomLine, TomMessage.gomInitFailure,currentFile,Integer.valueOf(initialGomLine), iae);
+		}
 		tmpFile.deleteOnExit();
 		if(res != 0) {
 		TomMessage.error(logger, currentFile, initialGomLine, TomMessage.gomFailure,currentFile,Integer.valueOf(initialGomLine));
@@ -911,31 +918,6 @@ public HostParser(ParserSharedInputState state) {
 		
 	}
 	
-	public final void subtypeConstruct(
-		List<Code> list
-	) throws RecognitionException, TokenStreamException, TomException {
-		
-		Token  t = null;
-		
-		TargetLanguage code = null;
-		
-		
-		t = LT(1);
-		match(SUBTYPE);
-		
-		// addPreviousCode...
-		String textCode = getCode();
-		if(isCorrect(textCode)) {
-		code = tom_make_TL(textCode,tom_make_TextPosition(currentLine,currentColumn),tom_make_TextPosition(t.getLine(),t.getColumn()))
-		
-		
-		;
-		list.add(tom_make_TargetLanguageToCode(code));
-		}
-		tomparser.subtypeConstruct();
-		
-	}
-	
 	public final void typeTerm(
 		List<Code> list
 	) throws RecognitionException, TokenStreamException, TomException {
@@ -966,7 +948,9 @@ public HostParser(ParserSharedInputState state) {
 		}
 		Declaration termdecl = tomparser.typeTerm();
 		
+		if (termdecl != null) {
 		list.add(tom_make_DeclarationToCode(termdecl));
+		}
 		
 	}
 	
@@ -1076,7 +1060,6 @@ public HostParser(ParserSharedInputState state) {
 		"OPERATORARRAY",
 		"INCLUDE",
 		"CODE",
-		"SUBTYPE",
 		"TYPETERM",
 		"ESC",
 		"HEX_DIGIT",

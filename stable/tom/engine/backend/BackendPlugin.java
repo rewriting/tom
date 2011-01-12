@@ -1080,27 +1080,10 @@ public  tom.engine.adt.tomterm.types.TomTerm  visit_TomTerm( tom.engine.adt.tomt
 {
 {
 if ( (tom__arg instanceof tom.engine.adt.tomterm.types.TomTerm) ) {
-boolean tomMatch76_3= false ;
- tom.engine.adt.tomname.types.TomNameList  tomMatch76_1= null ;
-if ( ((( tom.engine.adt.tomterm.types.TomTerm )tom__arg) instanceof tom.engine.adt.tomterm.types.tomterm.TermAppl) ) {
-{
-tomMatch76_3= true ;
-tomMatch76_1= (( tom.engine.adt.tomterm.types.TomTerm )tom__arg).getNameList() ;
-
-}
-} else {
 if ( ((( tom.engine.adt.tomterm.types.TomTerm )tom__arg) instanceof tom.engine.adt.tomterm.types.tomterm.RecordAppl) ) {
-{
-tomMatch76_3= true ;
-tomMatch76_1= (( tom.engine.adt.tomterm.types.TomTerm )tom__arg).getNameList() ;
-
-}
-}
-}
-if (tomMatch76_3) {
 
 TomNameList l = 
-tomMatch76_1;
+ (( tom.engine.adt.tomterm.types.TomTerm )tom__arg).getNameList() ;
 /*System.out.println("dest " + `l);*/
 while(!l.isEmptyconcTomName()) {
 try {
@@ -1126,7 +1109,6 @@ throw new tom.library.sl.VisitFailure();
 
 
 }
-
 }
 
 }

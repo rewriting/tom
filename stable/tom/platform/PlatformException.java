@@ -30,4 +30,7 @@ package tom.platform;
 public class PlatformException extends java.lang.RuntimeException {
   private static final long serialVersionUID = 1L;
 
+  public PlatformException(String arg0) {
+    super(arg0);
+  }
 }

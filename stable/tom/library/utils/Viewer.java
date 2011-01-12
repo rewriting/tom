@@ -448,9 +448,9 @@ throws java.io.IOException {
 {
 if ( term instanceof aterm.ATerm ) {
 if ( (( aterm.ATerm )term) instanceof aterm.ATermAppl ) {
- aterm.AFun  tomMatch678_1= ((aterm.ATermAppl)(( aterm.ATerm )term)).getAFun() ;
-if ( tomMatch678_1 instanceof aterm.AFun ) {
- String  tom_name= tomMatch678_1.getName() ;
+ aterm.AFun  tomMatch663_1= ((aterm.ATermAppl)(( aterm.ATerm )term)).getAFun() ;
+if ( tomMatch663_1 instanceof aterm.AFun ) {
+ String  tom_name= tomMatch663_1.getName() ;
  aterm.ATermList  tom_list= ((aterm.ATermAppl)(( aterm.ATerm )term)).getArguments() ;
 
 aterm.ATermAppl a = (aterm.ATermAppl) term;
@@ -477,13 +477,13 @@ tom_name.length() + 3;
 if ( tom_list instanceof aterm.ATermList ) {
 if ( (( aterm.ATermList )tom_list) instanceof aterm.ATermList ) {
 if (!( (( aterm.ATermList )tom_list).isEmpty() )) {
- aterm.ATermList  tomMatch679_2= (( aterm.ATermList )tom_list).getNext() ;
- aterm.ATermList  tomMatch679__end__5=tomMatch679_2;
+ aterm.ATermList  tomMatch664_2= (( aterm.ATermList )tom_list).getNext() ;
+ aterm.ATermList  tomMatch664__end__5=tomMatch664_2;
 do {
 {
- aterm.ATermList  tom_l=tom_get_slice_concATerm(tomMatch679_2,tomMatch679__end__5, aterm.pure.SingletonFactory.getInstance().makeList() );
-if (!( tomMatch679__end__5.isEmpty() )) {
-if (  tomMatch679__end__5.getNext() .isEmpty() ) {
+ aterm.ATermList  tom_l=tom_get_slice_concATerm(tomMatch664_2,tomMatch664__end__5, aterm.pure.SingletonFactory.getInstance().makeList() );
+if (!( tomMatch664__end__5.isEmpty() )) {
+if (  tomMatch664__end__5.getNext() .isEmpty() ) {
 
 // first child
 w.write("─" + 
@@ -500,29 +500,29 @@ w.write('\n');
 {
 if ( tom_l instanceof aterm.ATermList ) {
 if ( (( aterm.ATermList )tom_l) instanceof aterm.ATermList ) {
- aterm.ATermList  tomMatch680__end__4=(( aterm.ATermList )tom_l);
+ aterm.ATermList  tomMatch665__end__4=(( aterm.ATermList )tom_l);
 do {
 {
-if (!( tomMatch680__end__4.isEmpty() )) {
+if (!( tomMatch665__end__4.isEmpty() )) {
 
 writeContext(w,context,ndeep-1);
 w.write("├");
 context.push(ndeep-1);
 ATermToTree(
- tomMatch680__end__4.getFirst() ,w,context,ndeep);
+ tomMatch665__end__4.getFirst() ,w,context,ndeep);
 context.pop();
 w.write('\n');
 
 
 }
-if ( tomMatch680__end__4.isEmpty() ) {
-tomMatch680__end__4=(( aterm.ATermList )tom_l);
+if ( tomMatch665__end__4.isEmpty() ) {
+tomMatch665__end__4=(( aterm.ATermList )tom_l);
 } else {
-tomMatch680__end__4= tomMatch680__end__4.getNext() ;
+tomMatch665__end__4= tomMatch665__end__4.getNext() ;
 }
 
 }
-} while(!( tomMatch680__end__4==(( aterm.ATermList )tom_l) ));
+} while(!( tomMatch665__end__4==(( aterm.ATermList )tom_l) ));
 }
 }
 
@@ -534,19 +534,19 @@ tomMatch680__end__4= tomMatch680__end__4.getNext() ;
 writeContext(w,context,ndeep-1);
 w.write("└");
 ATermToTree(
- tomMatch679__end__5.getFirst() ,w,context,ndeep);
+ tomMatch664__end__5.getFirst() ,w,context,ndeep);
 
 
 }
 }
-if ( tomMatch679__end__5.isEmpty() ) {
-tomMatch679__end__5=tomMatch679_2;
+if ( tomMatch664__end__5.isEmpty() ) {
+tomMatch664__end__5=tomMatch664_2;
 } else {
-tomMatch679__end__5= tomMatch679__end__5.getNext() ;
+tomMatch664__end__5= tomMatch664__end__5.getNext() ;
 }
 
 }
-} while(!( tomMatch679__end__5==tomMatch679_2 ));
+} while(!( tomMatch664__end__5==tomMatch664_2 ));
 }
 }
 }
