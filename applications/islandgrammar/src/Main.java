@@ -33,8 +33,6 @@ public class Main {
     catch (Exception e) {
       e.printStackTrace();
     }
-    //    guestParser = new GParser(hostParser.getNextTom());
-    //    guestParser.print();
   }
 
 }

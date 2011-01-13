@@ -7,7 +7,7 @@ t.tttt
 
 
 %match(){ aaa;
-a; aaaa;
+a; aXaa;
 aaaaaaaaaaa; }
 e
 %match() { aaaaaaaaaaaaa; }
