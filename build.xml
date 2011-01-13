@@ -1577,14 +1577,20 @@
     <delete dir="src.doc"/>
   </target>
 
-  <target name="source.distribution"
+<target name="source.distribution"
     description="Creates a  ready to distribute tom-sources.tgz ">
     <mkdir dir="${dist}"/>
     <mkdir dir="${dist}/checkout"/>
-    <exec dir="${dist}/checkout" executable="svn">
-      <arg value="co"/>
+    <!--exec dir="${dist}/checkout" executable="svn"-->
+    <exec dir="${dist}/checkout" executable="git">
+      <!--arg value="co"/>
       <arg value="svn://scm.gforge.inria.fr/svn/tom/jtom/trunk"/>
-      <arg value="jtom"/>
+      <arg value="jtom"/-->
+      <arg value="clone"/>
+      <arg value="git://scm.gforge.inria.fr/tom/tom.git"/>
+      <arg value="--depth"/>
+      <arg value="1"/>
+      <arg value="${dist}/checkout/jtom"/>
     </exec>
     <tar tarfile="${dist}/tom-src-${stable.version}.tar.gz" compression="gzip">
       <tarfileset dir="${dist}/checkout/jtom" prefix="tom-src-${stable.version}" mode="755">
@@ -1598,6 +1604,7 @@
         <exclude name="**/*.exe"/>
         <exclude name="**/*-tom"/>
         <exclude name="**/.svn/**"/>
+        <exclude name="**/.git/**"/>
         <exclude name="applications/**"/>
       </tarfileset>
     </tar>
