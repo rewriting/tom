@@ -1,32 +1,34 @@
 grammar miniTom;
+
 options {
 	output=AST;
-	ASTLabelType=CommonTree;
+  ASTLabelType=Tree;
+  //tokenVocab=IGTokens;
 }
 
 tokens {
-	LEFTPAR='(';
-	RIGHTPAR=')';
-	LEFTBR='{';
-	RIGHTBR='}';
-	CODE;
-	A='alice';
-	B='bob';
+  PROGRAM;
+  CODE;
 }
 
-program
-	:	LEFTPAR RIGHTPAR LEFTBR code RIGHTBR 
-	;
+/* Parser rules */
 
-code
-	:	(s=statement {System.out.println($s.text);} ';') -> ^(CODE $s)
-	;
+program :	LEFTPAR RIGHTPAR LEFTBR code* RIGHTBR -> ^(PROGRAM code*) ;
 
-statement
-	:	'a'+
-	;
+code :	(s=statement {System.out.println($s.text);} SEMICOLUMN) -> ^(CODE $s) ;
 
-BLANK
-	:	('\r' | '\n' | '\r\n'  | '\t' | ' ' ) {$channel=HIDDEN;}
-	;
+statement	:	'a'+ ;
+
+
+/* Lexer rules */
+
+LEFTPAR    : '(' ;
+RIGHTPAR   : ')' ;
+LEFTBR     : '{' ;
+RIGHTBR    : '}' ;
+SEMICOLUMN : ';' ;
+A          : 'alice' ;
+B          : 'bob' ;
+
+WS	: ('\r' | '\n' | '\t' | ' ' )* { $channel = HIDDEN; };
 
