@@ -2,11 +2,11 @@
 public class ConstructWatcher {
 
     private int state;
-    private String keyword;
+    private String[] keywords;
 
-    public ConstructWatcher(String keyword) {
+    public ConstructWatcher(String[] keywords) {
         this.state = 0;
-        this.keyword = keyword;
+        this.keywords = keywords;
     }
 
     public void take(char c) {
@@ -17,4 +17,9 @@ public class ConstructWatcher {
         state = 0;
         return ;
     }
+
+    public String getRead() {
+      return "not yet";
+    }
+
 }
