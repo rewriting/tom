@@ -1,16 +1,29 @@
 import org.antlr.runtime.*;
+import java.lang.StringBuffer;
 
 public class HostParser {
 
   private CharStream input;
+  private StringBuffer hostContent;
 
   public HostParser(CharStream input) {
     this.input = input;
+    hostContent = new StringBuffer();
   }
 
   public void parse() {
-    char truc = (char) input.LT(1);// reads the first character of the given CharStream (illustrates that we'll need to use .LT())
-    System.out.println("I've found "+truc);
+    
+    while(true) {
+      char truc = (char) input.LA(1);
+      if(truc == (char) -1) {
+        break;
+      }
+      hostContent.append(truc);
+      input.consume();
+    }
   }
 
+  public String getCode() {
+    return hostContent.toString();
+  }
 }

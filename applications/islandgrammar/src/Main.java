@@ -12,6 +12,7 @@ public class Main {
       ANTLRFileStream file = new ANTLRFileStream(args[0]);
       HostParser hostParser = new HostParser(file);
       hostParser.parse();
+      System.out.println(hostParser.getCode());
     }
     catch (Exception e) {
       e.printStackTrace();

@@ -1,14 +1,6 @@
-@eitauen
-t.tttt
-
-..
-%truc
- %martc
-
-
+@test
 %match(){ aaa;
-a; aXaa;
-aaaaaaaaaaa; }
+a; }
 e
 %match() { aaaaaaaaaaaaa; }
 
