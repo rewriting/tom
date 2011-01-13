@@ -246,12 +246,14 @@ public class Compiler extends TomGenericPlugin {
               Expression preGeneratedExpr = preGenerator.performPreGenerationTreatment(propagationResult);
               //DEBUG System.out.println("\n preGeneratedExpr = " + preGeneratedExpr);
               Instruction matchingAutomata = compiler.getCompilerEnvironment().getConstraintGenerator().performGenerations(preGeneratedExpr, `action);
-              //DEBUG System.out.println("\n matchingAutomata = " + matchingAutomata);
+              System.out.println("\n matchingAutomata = " + matchingAutomata);
               Instruction postGenerationAutomata = PostGenerator.performPostGenerationTreatment(matchingAutomata);
+              System.out.println("\n postGenerationAutomata = " + postGenerationAutomata);
               TomNumberList path = compiler.getCompilerEnvironment().getRootpath();
               TomNumberList numberList = `concTomNumber(path*,PatternNumber(actionNumber));
               TomTerm automata = `Automata(optionList,newConstraint,numberList,postGenerationAutomata);
               automataList = `concTomTerm(automataList*,automata); //append(automata,automataList);
+              System.out.println("\n automataList = " + automataList);
             } catch(Exception e) {
               e.printStackTrace();
               throw new TomRuntimeException("Propagation or generation exception:" + e);
