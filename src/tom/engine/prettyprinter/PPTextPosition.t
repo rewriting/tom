@@ -9,4 +9,9 @@ public class PPTextPosition {
     line = l;
     column = c;
   }
+
+  public int getLine(){}
+
+  public int getColumn(){}
+
 }
