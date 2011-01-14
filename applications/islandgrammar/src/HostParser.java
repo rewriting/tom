@@ -10,7 +10,8 @@ public class HostParser {
     public HostParser(CharStream input) {
         this.input = input;
         hostContent = new StringBuffer();
-        watcher = new ConstructWatcher({"%match","%op"});
+        String[] constructs = {"%match", "%op"};
+        watcher = new ConstructWatcher(constructs);
 /* to look for another keyword, add it to the previous array, then configure the parser it should trigger in the following function */
     }
 
@@ -36,7 +37,7 @@ public class HostParser {
           }
 /* and then gives hostContent what it should get : usually a single char (read), but sometimes several if the begining of one of the watched keyword exists in the host code */
           else {
-            hostContent.append(watcher.getRead())
+            hostContent.append(watcher.getRead());
           }
           input.consume();
         }
