@@ -4,15 +4,29 @@ import org.antlr.runtime.*;
 public class HostParser {
 
     private CharStream input;
-    private StringBuffer hostContent;
-    private ConstructWatcher watcher;
+
+    private boolean ready;/* whether one of the tokenNames has been found */
+    private int matchedConstruct;/* which one */
+    private StringBuffer read;/* a memory to store characters read before asserting whether they're host content or not */
+    private StringBuffer hostContent;/* the characters that haven't been parsed*/
+    private boolean found;/* this one remembers if something was found during 'take' operation */
+
+/* to look for a keyword, add it to this array, then configure the parser it should trigger in the function parserMap */
+    public static final String[] tokenNames = new String[] {
+      "%match", "%op"
+    };
+    private int[] states;/* the index of current character in each keyword */
 
     public HostParser(CharStream input) {
         this.input = input;
         hostContent = new StringBuffer();
-        String[] constructs = {"%match", "%op"};
-        watcher = new ConstructWatcher(constructs);
-/* to look for another keyword, add it to the previous array, then configure the parser it should trigger in the following function */
+        read = new StringBuffer();
+        states = new int[tokenNames.length];
+        for(int i = 0; i < tokenNames.length ; i++) {
+          states[i] = 0;
+        }
+        found = false;
+        matchedConstruct = -1;
     }
 
     private void parserMap(int i) {
@@ -30,18 +44,51 @@ public class HostParser {
             System.out.println("Fin du fichier");
             break;
           }
-          watcher.take(read);
-/* the watcher acts as an intermediate : it takes the character read, performs the needed operations on the various patterns watched */
-          if(watcher.ready()) {
-            parserMap(watcher.getConstruct());
+          take(read);
+/* the acts as an intermediate : it takes the character read, performs the needed operations on the various patterns watched */
+          if(ready) {
+            ready = false;
+            parserMap(matchedConstruct);
           }
 /* and then gives hostContent what it should get : usually a single char (read), but sometimes several if the begining of one of the watched keyword exists in the host code */
           else {
-            hostContent.append(watcher.getRead());
+            hostContent.append(getRead());
           }
           input.consume();
         }
     }
+
+
+    public void take(char c) {
+      found = true;
+      for(int i = 0; i < tokenNames.length; i++) {
+        if(tokenNames[i].charAt(states[i]) == c) {
+          states[i]++;
+          found = true;
+          if(states[i] == tokenNames[i].length()) {
+            ready = true;
+            matchedConstruct = i;
+            states[i] = 0;
+          }
+        }
+        else {
+          states[i] = 0;
+        }
+      }
+      if(!found) {/* no matching character found among the tokenNames */
+        read.append(c);
+      }
+    }
+
+    public String getRead() {
+      String result = "";
+      if(!found) {
+        result = read.toString();
+        read = new StringBuffer();
+      }
+      return result;
+    }
+
 
     public String getCode() {
         return hostContent.toString();

@@ -1,6 +1,11 @@
 @test
 %match(){ aaa;
 a; }
-e
-%match() { aaaaaaaaaaaaa; }
 
+etisru
+tttd
+
+%op et vlan
+
+truc tout ça
+%match() { voilà} %op ziou
