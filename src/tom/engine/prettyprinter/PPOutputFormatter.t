@@ -4,13 +4,20 @@ import java.io.*;
 
 public class PPOutputFormatter {
 
-  public void put(String s, PPTextPosition start, PPTextPosition end) {
+  private Cursor fileCursor;
+  private File fileToModify;
+  private List<PPText> textToWrite;
+  
+  public void put(String s, PPTextPosition start, PPTextPosition end) {}
 
-    System.out.println(s);
-  }
+  public void put(String s) {}
 
-  public void put(String s) {
+  public void giveFileToCursor(){}
 
-    System.out.println(s);
-  }
+  public void writeFile(){}
+
+  public void giveOnePPTextToPPCursor(PPText t){}
+
+  public void giveAllPPTextToCursor(){}
+
 }
