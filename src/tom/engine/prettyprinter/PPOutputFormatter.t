@@ -3,28 +3,28 @@ package tom.engine.prettyprinter;
 import java.io.*;
 
 /**The PPOutputFormatter class is used to coordinate the different steps 
-*in the processus of a File modification/creation.
+*in the processus of a text file modification/creation.
 *@author
 *@version 1.0 (2011.01.17)
 */
 public class PPOutputFormatter {
 
-/**The Cursor to move whithin the File
+/**The Cursor to move whithin the file.
 */
   private Cursor fileCursor;
-/**The File to modify/create.
+/**The FileWriter to modify/create the file.
 */
-  private File fileToModify;
-/**A List of PPText which can be written in the File.
+  private FileWrite fileToModify;
+/**A List of PPText which can be written in the file.
 */
   private List<PPText> pPTextList;
   
 /**Creates a PPOutputFormatter to coordinate the modification/creation of a File.
 *@param aCursor the Cursor which will move whithin the File
-*@param aFile the File which will be modified/created
-*@param aListOfPPText an intermediate position for text fragments before writing them into the File
+*@param aFileWriter the FileWriter which will modify/create the file
+*@param aListOfPPText an intermediate position for text fragments before writing them into the file
 */
-  public PPOutputFormatter(Cursor aCursor, File aFile, List<PPText> aListOfPPText) {}
+  public PPOutputFormatter(Cursor aCursor, FileWriter aFileWriter) {}
 
 /**Put a new PPText in the pPTextList.
 *@param s the text to stock in a PPText
@@ -33,11 +33,11 @@ public class PPOutputFormatter {
 */ 
   public void put(String s, PPTextPosition start, PPTextPosition end) {}
 
-/**All the text contained in the File is transferred to the Cursor, so that the Cursor can manipulate it.
+/**All the text contained in the file is transferred to the Cursor, so that the Cursor can manipulate it.
 */
   public void giveFileToCursor(){}
 
-/**All the text contained in the Cursor is written into the File.
+/**All the text contained in the Cursor is written into the file.
 */
   public void writeFile(){}
 
@@ -47,6 +47,7 @@ public class PPOutputFormatter {
   public void giveOnePPTextToPPCursor(PPText ppt){}
 
 /**All the PPText stocked in the pPTextList are given to the Cursor.
+*/
   public void giveAllPPTextToCursor(){}
 
 }
