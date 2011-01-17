@@ -97,7 +97,7 @@ public class VariadicGenerator implements IBaseGenerator {
         // if we have a varStar, we generate its declaration also
         if (`v.isVariableStar()) {
           Expression varDeclaration =
-            `ConstraintToExpression(MatchConstraint(v,ExpressionToBQTerm(GetSliceList(opName,begin,end,BuildEmptyList(opName))),aType));
+            `ConstraintToExpression(MatchConstraint(v,ExpressionToBQTerm(GetSliceList(opName,begin,end,BuildEmptyList(concOption(),opName))),aType));
           return `And(DoWhileExpression(endExpression,doWhileTest),varDeclaration);
         }
         return `DoWhileExpression(endExpression,doWhileTest);		        		      
@@ -144,7 +144,7 @@ public class VariadicGenerator implements IBaseGenerator {
     TomType domain = TomBase.getSymbolDomain(tomSymbol).getHeadconcTomType();
     TomType codomain = TomBase.getSymbolCodomain(tomSymbol);
     if(domain==codomain) {
-      return `Conditional(IsFsym(opName,var),GetTail(opName, var), BQTermToExpression(BuildEmptyList(opName)));
+      return `Conditional(IsFsym(opName,var),GetTail(opName, var), BQTermToExpression(BuildEmptyList(concOption(),opName)));
     }
     return `GetTail(opName, var);
   }

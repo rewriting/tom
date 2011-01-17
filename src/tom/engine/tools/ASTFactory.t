@@ -409,7 +409,7 @@ public class ASTFactory {
    
     %match(args) {
       concBQTerm() -> {
-        return `BuildEmptyList(name);
+        return `BuildEmptyList(concOption(),name);
       }
 
       /* buildList "l" [X*,a2,...,an] => append */

@@ -671,7 +671,7 @@ public class Compiler extends TomGenericPlugin {
      * else       => array[0]=1; return array
      */
     Instruction ifList = `
-      If(EqualBQTerm(opType,subject,BuildEmptyList(opName)),Return(mult),
+      If(EqualBQTerm(opType,subject,BuildEmptyList(concOption(),opName)),Return(mult),
       If(IsFsym(opName,subject),
         LetRef(oldElem,GetHead(opName,opType,subject),Nop()),
         AbstractBlock(concInstruction(
@@ -697,7 +697,7 @@ public class Compiler extends TomGenericPlugin {
           AbstractBlock(concInstruction(
               Assign(subject,GetTail(opName,subject)),
               ifEndList)))); // subject is the method's argument     
-    Expression notEmptySubj = `Negation(EqualBQTerm(opType,subject,BuildEmptyList(opName)));
+    Expression notEmptySubj = `Negation(EqualBQTerm(opType,subject,BuildEmptyList(concOption(),opName)));
     Instruction whileLoop = `WhileDo(And(IsFsym(opName,subject),notEmptySubj),whileBlock);
     //old : Instruction whileLoop = `WhileDo(IsFsym(opName,subject),whileBlock);
 
@@ -765,7 +765,7 @@ public class Compiler extends TomGenericPlugin {
               Assign(subject,GetTail(opName,subject)),
               isEndList))
           )); // subject is the method's argument    
-    Expression notEmptySubj = `Negation(EqualBQTerm(opType,subject,BuildEmptyList(opName)));
+    Expression notEmptySubj = `Negation(EqualBQTerm(opType,subject,BuildEmptyList(concOption(),opName)));
     Instruction whileLoop = `WhileDo(And(IsFsym(opName,subject),notEmptySubj),whileBlock);
     //old : Instruction whileLoop = `WhileDo(IsFsym(opName,subject),whileBlock);
 
@@ -853,7 +853,7 @@ public class Compiler extends TomGenericPlugin {
             )),
         AbstractBlock(concInstruction(
             Assign(elem,BQTermToExpression(subject)),
-            Assign(subject,BQTermToExpression(BuildEmptyList(opName))))));
+            Assign(subject,BQTermToExpression(BuildEmptyList(concOption(), opName))))));
     BQTerm tempSolIndex = `BQVariable(concOption(),Name("tempSolIndex"),intType);
     BQTerm old = `BQVariable(concOption(),Name("old"),opType);
     Instruction isNewElem = `If(Negation(EqualBQTerm(opType,elem,old)),
@@ -887,12 +887,12 @@ public class Compiler extends TomGenericPlugin {
         GetElement(intArrayName,intType,tempSol,tempSolIndex),
         UnamedBlock(concInstruction(ifIsComplement,ifTakeElem)));
     // the while
-    Expression notEmptySubj = `Negation(EqualBQTerm(opType,BuildEmptyList(opName), subject));
+    Expression notEmptySubj = `Negation(EqualBQTerm(opType,BuildEmptyList(concOption(),opName), subject));
     Instruction whileBlock = `UnamedBlock(concInstruction(
           isConsOpName,isNewElem,tempSolValBlock));                  
     Instruction whileLoop = `WhileDo(notEmptySubj,whileBlock);
 
-    Instruction functionBody = `LetRef(result,BQTermToExpression(BuildEmptyList(opName)),
+    Instruction functionBody = `LetRef(result,BQTermToExpression(BuildEmptyList(concOption(),opName)),
         LetRef(old,Bottom(opType),
           LetRef(elem,Bottom(opType),
             LetRef(elemCounter,Integer(0),

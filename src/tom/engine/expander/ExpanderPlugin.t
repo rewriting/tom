@@ -354,7 +354,7 @@ public class ExpanderPlugin extends TomGenericPlugin {
                               Instruction inst = 
                                 `If(IsFsym(symbolName,var),
                                     If(BQTermToExpression(Composite(CompositeTL(ITL("children.length==0")))),
-                                      Return(BuildEmptyList(symbolName)),
+                                      Return(BuildEmptyList(concOption(),symbolName)),
                                       Return(BuildConsList(symbolName,ExpressionToBQTerm(Cast(domain,BQTermToExpression(Composite(CompositeTL(ITL("children[0]")))))),ExpressionToBQTerm(Cast(type,BQTermToExpression(Composite(CompositeTL(ITL("children[1]"))))))))
                                       )
                                     ,Nop());

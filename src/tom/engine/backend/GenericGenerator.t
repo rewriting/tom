@@ -713,7 +713,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
 
       protected void buildListOrArray(int deep, BQTerm list, String moduleName) throws IOException {
         %match(list) {
-          BuildEmptyList(Name(name)) -> {
+          BuildEmptyList[AstName=Name(name)] -> {
             String prefix = "tom_empty_list_";
             String template = getSymbolTable(moduleName).getMakeEmptyList(`name);
             if(instantiateTemplate(deep,template,`concBQTerm(),moduleName) == false) {
