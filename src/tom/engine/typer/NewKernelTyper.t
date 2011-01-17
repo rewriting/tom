@@ -1358,8 +1358,8 @@ public class NewKernelTyper {
         try {
           simplifiedConstraints = 
             `RepeatId(solveSubtypingConstraints(this)).visitLight(simplifiedConstraints);
-          //DEBUG System.out.println("\nsolveConstraints 3:");
-          //DEBUG printGeneratedConstraints(simplifiedConstraints);
+          System.out.println("\nResulting subtype constraints!!");
+          printGeneratedConstraints(simplifiedConstraints);
         } catch(tom.library.sl.VisitFailure e) {
           throw new TomRuntimeException("solveConstraints: failure on " +
               subtypeConstraints);
@@ -1644,7 +1644,7 @@ matchBlockFail :
    * tCList = {A1 <:A,A <: A2} U tCList' and Map --> {A1 <: A2} U tCList and Map
    * <p>
    * PHASE 3: Garbage collection:
-   * tCList = {T1 <: T2} U tCList' and Map --> detectFail(T1 <: T2)
+   * tCList = {T1 <: T2} U tCList' and Map --> detectFail(T1 <: T2) and tCList' and Map
    * <p>
    * PHASE 4: Reduction in canonical form:
    * tCList = {A <: T1,A <:T2} U tCList' and Map 
@@ -1686,9 +1686,12 @@ matchBlockFail :
         }
 
       /* PHASE 3 */
-      tcl@concTypeConstraint(_*,sConstraint@Subtype[Type1=!TypeVar[],Type2=!TypeVar[]],_*) -> {
+      tcl@concTypeConstraint(tcl1*,sConstraint@Subtype[Type1=!TypeVar[],Type2=!TypeVar[]],tcl2*) -> {
         //DEBUG System.out.println("\nsolve3: " + `tcl);
         nkt.detectFail(`sConstraint);
+        return
+          nkt.`concTypeConstraint(tcl1,tcl2);
+ 
       }
 
       /* PHASE 4 */
