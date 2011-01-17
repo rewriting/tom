@@ -46,6 +46,8 @@ import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
 import tom.engine.adt.code.types.*;
 
+import tom.engine.prettyprinter.ppeditor.*;
+
 import tom.engine.adt.tominstruction.types.constraintinstructionlist.concConstraintInstruction;
 import tom.engine.adt.tomslot.types.slotlist.concSlot;
 import tom.engine.adt.tomsignature.types.tomvisitlist.concTomVisit;
@@ -83,7 +85,7 @@ public class PrettyPrinterPlugin extends TomGenericPlugin {
     "<boolean name='prettyTOM' altName='pit' description='Pretty print original Tom code (not activated by default)' value='false'/>" +
     "</options>";
 
-  public static PPOutputFormatter aPPOutputFormatter = new PPOutputFormatter();
+//  public static PPOutputFormatter aPPOutputFormatter = new PPOutputFormatter();
 
   /** Constructor */
   public PrettyPrinterPlugin() {
@@ -116,11 +118,11 @@ public class PrettyPrinterPlugin extends TomGenericPlugin {
 
   private void prettyPrinter(Code code) throws IOException {
     System.out.println("PrettyPrinter active");
-    printTL(code);
+//    printTL(code);
   }
   
 
-  public static void printTL(Code code) {
+/*  public static void printTL(Code code) {
     try {
       `TopDown(Repeat(stratPrintTL())).visit(code);
       //System.out.println(code);
@@ -141,5 +143,5 @@ public class PrettyPrinterPlugin extends TomGenericPlugin {
       BQVariableStar[AstName=Name(name)] -> {aPPOutputFormatter.put(`name);}
       BuildTerm[AstName=Name(name), Args=concBQTerm()] -> {aPPOutputFormatter.put(`name+"()");}
     }
-  }
+  }*/
 }
