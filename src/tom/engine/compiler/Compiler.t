@@ -185,7 +185,7 @@ public class Compiler extends TomGenericPlugin {
       // we use TopDown and not TopDownIdStopOnSuccess to compile nested-match
       Code compiledTerm = `TopDown(CompileMatch(this)).visitLight(code);
 
-      //System.out.println("compiledTerm = \n" + compiledTerm);            
+      //DEBUG System.out.println("compiledTerm = \n" + compiledTerm);            
       Collection hashSet = new HashSet();
       Code renamedTerm = `TopDownIdStopOnSuccess(findRenameVariable(hashSet)).visitLight(compiledTerm);
       //DEBUG System.out.println("\nCode after compilateur = \n" + renamedTerm);
@@ -246,14 +246,14 @@ public class Compiler extends TomGenericPlugin {
               Expression preGeneratedExpr = preGenerator.performPreGenerationTreatment(propagationResult);
               //DEBUG System.out.println("\n preGeneratedExpr = " + preGeneratedExpr);
               Instruction matchingAutomata = compiler.getCompilerEnvironment().getConstraintGenerator().performGenerations(preGeneratedExpr, `action);
-              System.out.println("\n matchingAutomata = " + matchingAutomata);
+              //DEBUG System.out.println("\n matchingAutomata = " + matchingAutomata);
               Instruction postGenerationAutomata = PostGenerator.performPostGenerationTreatment(matchingAutomata);
-              System.out.println("\n postGenerationAutomata = " + postGenerationAutomata);
+              //DEBUG System.out.println("\n postGenerationAutomata = " + postGenerationAutomata);
               TomNumberList path = compiler.getCompilerEnvironment().getRootpath();
               TomNumberList numberList = `concTomNumber(path*,PatternNumber(actionNumber));
               TomTerm automata = `Automata(optionList,newConstraint,numberList,postGenerationAutomata);
               automataList = `concTomTerm(automataList*,automata); //append(automata,automataList);
-              System.out.println("\n automataList = " + automataList);
+              //DEBUG System.out.println("\n automataList = " + automataList);
             } catch(Exception e) {
               e.printStackTrace();
               throw new TomRuntimeException("Propagation or generation exception:" + e);
@@ -466,6 +466,7 @@ public class Compiler extends TomGenericPlugin {
     visit BQTerm {
       var@(BQVariable|BQVariableStar)[AstName=astName@Name(name)] -> {
         if(context.contains(`astName)) {          
+          //DEBUG System.out.println("In findRenameVariable in 'if' with var = "  + `var + '\n');
           return `var.setAstName(`Name(ASTFactory.makeTomVariableName(name)));
         }
       }
@@ -487,7 +488,7 @@ public class Compiler extends TomGenericPlugin {
   %strategy CollectLHSVars(Collection bag, Collection alreadyInRhs) extends Identity() {
     visit Constraint {
       MatchConstraint[Pattern=p,Subject=s] -> {          
-        
+        //TODO : checky this code
         Map rhsMap = TomBase.collectMultiplicity(`s);
         alreadyInRhs.addAll(rhsMap.keySet());
         

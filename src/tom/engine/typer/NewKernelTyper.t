@@ -1358,7 +1358,7 @@ public class NewKernelTyper {
         try {
           simplifiedConstraints = 
             `RepeatId(solveSubtypingConstraints(this)).visitLight(simplifiedConstraints);
-          System.out.println("\nResulting subtype constraints!!");
+          //DEBUG System.out.println("\nResulting subtype constraints!!");
           printGeneratedConstraints(simplifiedConstraints);
         } catch(tom.library.sl.VisitFailure e) {
           throw new TomRuntimeException("solveConstraints: failure on " +
@@ -1921,7 +1921,7 @@ matchBlockFail :
   /**
    * The method <code>enumerateSolutions</code> chooses a solution for a subtype
    * constraint list when many possibilities are available. The algorithm picks
-   * the lowest possible uppertype proposed for each type variable. For this
+   * the lowest possible upper bound proposed for each type variable. For this
    * reason, the order of rules is important.
    * <p>
    * A subtype constraint can be written by 3 formats:
@@ -1952,18 +1952,20 @@ matchBlockFail :
    * CASE 4 {F1 x F3} and {F3 x F1}:
    *    a) tCList = {A <: T, A <: A1} U tCList' and Map
    *      -->  tCList = {T <: A1} U [A/T]tCList' and {(A,T)} U Map
+   *    TODO : verify rule b
    *    b) tCList = {A <: T, A1 <: A} U tCList' and Map 
-   *      --> CASE 3 for A1 <: A 
+   *      --> tCList = tClist' and Map or do nothing?
    *    c) tCList = {A <: T, A1 <: A2} U tCList' and Map 
    *      --> CASE 1 for A <: T and CASE 3 for A1 <: A2 
    * <p>
    * CASE 5 {F2 x F3} and {F3 x F2}:
    *    a) tCList = {T <: A, A1 <: A} U tCList' and Map 
    *      -->  tCList = {A1 <: T} U [A/T]tCList' and {(A,T)} U Map
+   *    TODO : verify rule b
    *    b) tCList = {T <: A, A <: A1} U tCList' and Map 
-   *      --> CASE 3 for A <: A1 
+   *      --> tCList = tClist' and Map or do nothing?
    *    c) tCList = {T <: A, A1 <: A2} U tCList' and Map 
-   *      --> CASE 1 for T <: A and CASE 3 for A1 <: A2
+   *      --> CASE 2 for T <: A and CASE 3 for A1 <: A2
    * <p>
    * CASE 6 {F1 x F2} and {F2 x F1}:
    *    a) tCList = {A <: T, T <: A1} U tCList' and Map 

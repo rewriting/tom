@@ -27,8 +27,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 package subtypeinference;
+import tom.library.sl.*;
 
 public class ExampleErrors {
+	%include { sl.tom }
 
   static class A {
     public A num1;
@@ -68,11 +70,13 @@ public class ExampleErrors {
   %typeterm TomA {
     implement { A }
     is_sort(t) { $t instanceof A }
+    equals(t1,t2) { $t1.equals($t2) }
   }
 
   %typeterm TomB extends TomA{
     implement { B }
     is_sort(t) { $t instanceof B }
+    equals(t1,t2) { $t1.equals($t2) }
   }
 
 // ------------------------------------------------------------
@@ -113,7 +117,11 @@ public class ExampleErrors {
     A w = `g(b());
     %match {
       //(y == a()) && (g(x) == g(b())) -> { System.out.println("Test 1!"); }
-      f(b()) << z -> { System.out.println("Test 2!"); }
+      f(b()) << z -> { 
+        System.out.println("Test 2!"); 
+        //A test = propagate(`f(a()));
+        //System.out.println("test = " + test); 
+      }
       //g(x) << w && (f(b()) == createA(x)) -> { System.out.println("Test 3!"); }
     }
   }
@@ -121,5 +129,22 @@ public class ExampleErrors {
   public A createA(B arg) {
     return `f(arg);
   }
+
+  /*
+  public A propagate(A elem) {
+		try {
+			return (A) `TopDown(Try(testSubtype())).visitLight(elem);
+		} catch (VisitFailure e) {
+			System.out.println("strategy failed");
+		}
+		return elem;
+	}
+*/
+
+  %strategy testSubtype() extends `Identity() {
+    visit TomA {
+      f(x) -> { return `g(x); }
+    }
+  } 
 }
 
