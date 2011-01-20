@@ -826,7 +826,7 @@ transformationConstruct [Option orgTrack] returns [Declaration result] throws To
          )? RPAREN
         )
         LBRACE
-        transformationWithList[withList] { astWithList = ASTFactory.makeTomWithList(withList); }
+        transformationWithToList[withList] { astWithList = ASTFactory.makeTomWithList(withList); }
         t:RBRACE
        {
 
@@ -879,11 +879,11 @@ transformationConstruct [Option orgTrack] returns [Declaration result] throws To
      )
     ;
 
-transformationWithList [List<TomWith> list] throws TomException
-    :   ( transformationWith[list] )*
+transformationWithToList [List<TomWith> list] throws TomException
+    :   ( transformationWithTo[list] )*
     ;
 
-transformationWith [List<TomWith> list] throws TomException
+transformationWithTo [List<TomWith> list] throws TomException
 {
   TomWithTerm wTerm = null;
   //List<Slot> pairSlotList = new LinkedList<Slot>(); //args->no, due to args[]
@@ -894,12 +894,12 @@ transformationWith [List<TomWith> list] throws TomException
 }
     :
     (
-     "with" term:ALL_ID args[argsList,argsOptionList] /* will be extended*/ "to" /* or '->' ? */ LBRACE
+     /*"with"*/ term:ALL_ID args[argsList,argsOptionList] /* will be extended */ /*"to"*/ ARROW LBRACE
      { wTerm = `WithTerm(Type(concTypeOption(),term.getText(),EmptyTargetLanguageType()),
                          ASTFactory.makeSlotList(argsList),
                          concOption());
      }
-     ( toInstruction[toInstructionList] )* /* ,wTerm] */
+     ( withToInstruction[toInstructionList] )* /* ,wTerm] */
      RBRACE
     )
     {
@@ -910,12 +910,12 @@ transformationWith [List<TomWith> list] throws TomException
     }
     ;
 
-toInstruction [List<Code> list] throws TomException /* , TomWithTerm wTerm] */
+withToInstruction [List<Code> list] throws TomException /* , TomWithTerm wTerm] */
 {
     List<Code> blockList = new LinkedList<Code>();
     BQTerm rhsTerm = null;
     clearText();
-} /* BlockList or Term ? What do we allow in a "toInstruction" ? */
+} /* BlockList or Term ? What do we allow in a "withToInstruction" ? */
     :
     (
       t:LBRACE
