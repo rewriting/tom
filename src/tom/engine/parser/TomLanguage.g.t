@@ -738,8 +738,8 @@ strategyVisit [List<TomVisit> list] throws TomException
 transformationConstruct [Option orgTrack] returns [Declaration result] throws TomException
 {
   result = null;
-  List<TomWith> withList = new LinkedList<TomWith>();
-  TomWithList astWithList = `concTomWith();
+  List<TomWithTo> withList = new LinkedList<TomWithTo>();
+  TomWithToList astWithToList = `concTomWithTo();
   TomName orgText = null;
   TomTypeList types = `concTomType();
   List<Option> options = new LinkedList<Option>();
@@ -826,7 +826,7 @@ transformationConstruct [Option orgTrack] returns [Declaration result] throws To
          )? RPAREN
         )
         LBRACE
-        transformationWithToList[withList] { astWithList = ASTFactory.makeTomWithList(withList); }
+        transformationWithToList[withList] { astWithToList = ASTFactory.makeTomWithToList(withList); }
         t:RBRACE
        {
 
@@ -872,18 +872,18 @@ transformationConstruct [Option orgTrack] returns [Declaration result] throws To
                                                      options);
          putSymbol(name.getText(),astSymbol);*/
          updatePosition(t.getLine(),t.getColumn());
-         result = `AbstractDecl(concDeclaration(Transformation(Name(name.getText()), astWithList,orgTrack),SymbolDecl(Name(name.getText()))));
+         result = `AbstractDecl(concDeclaration(Transformation(Name(name.getText()),astWithToList,orgTrack),SymbolDecl(Name(name.getText()))));
          // %transformation finished: go back in target parser.
          selector().pop();
        }
      )
     ;
 
-transformationWithToList [List<TomWith> list] throws TomException
+transformationWithToList [List<TomWithTo> list] throws TomException
     :   ( transformationWithTo[list] )*
     ;
 
-transformationWithTo [List<TomWith> list] throws TomException
+transformationWithTo [List<TomWithTo> list] throws TomException
 {
   TomWithTerm wTerm = null;
   //List<Slot> pairSlotList = new LinkedList<Slot>(); //args->no, due to args[]

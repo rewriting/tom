@@ -186,10 +186,10 @@ public class ASTFactory {
     return list;
   }
 
-  public static TomWithList makeTomWithList(List<TomWith> argumentList){
-    TomWithList list = `concTomWith();
+  public static TomWithToList makeTomWithToList(List<TomWithTo> argumentList){
+    TomWithToList list = `concTomWithTo();
     for(int i=argumentList.size()-1; i>=0 ; i--) {
-      list = `concTomWith(argumentList.get(i),list*);
+      list = `concTomWithTo(argumentList.get(i),list*);
     }
     return list;
   }
