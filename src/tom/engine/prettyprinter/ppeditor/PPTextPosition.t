@@ -26,11 +26,15 @@ public class PPTextPosition {
 /**Returns the line position of the PPTextPosition.
 *@return value of the line attribute
 */
-//  public int getLine(){}
+  public int getLine(){
+		return this.line+1;
+  }
 
 /**Returns the column position of the PPTextPosition.
 *@return value of the column attribute
 */
-//  public int getColumn(){}
+  public int getColumn(){
+		return this.column+1;
+	}
 
 }

@@ -118,6 +118,7 @@ public class PrettyPrinterPlugin extends TomGenericPlugin {
 
   private void prettyPrinter(Code code) throws IOException {
     System.out.println("PrettyPrinter active");
+    System.out.println(code);
 //    printTL(code);
   }
   
