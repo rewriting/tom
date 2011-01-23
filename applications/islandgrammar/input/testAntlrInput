@@ -1,5 +1,5 @@
 @test
-%match(){ aaa;
+%math(){ aaa;
 a; }
 
 etisru

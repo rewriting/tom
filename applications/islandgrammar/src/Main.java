@@ -1,4 +1,5 @@
 import org.antlr.runtime.*;
+import org.antlr.runtime.tree.*;
 import java.io.InputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,8 +12,8 @@ public class Main {
     try {
       ANTLRFileStream file = new ANTLRFileStream(args[0]);
       HostParser hostParser = new HostParser(file);
-      hostParser.parse();
-      System.out.println(hostParser.getCode());
+      Tree parsed = hostParser.parse();
+      System.out.println(parsed.toStringTree());
     }
     catch (Exception e) {
       e.printStackTrace();
