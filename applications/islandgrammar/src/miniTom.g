@@ -3,6 +3,7 @@ grammar miniTom;
 options {
 	output=AST;
   ASTLabelType=Tree;
+  backtrack=true;
   //tokenVocab=IGTokens;
 }
 
@@ -17,15 +18,15 @@ program :	LEFTPAR RIGHTPAR LEFTBR code* RIGHTBR -> ^(PROGRAM code*) ;
 
 code :	(s=statement {System.out.println($s.text);} SEMICOLUMN) -> ^(CODE $s) ;
 
-statement	:	'a'+ ;
+statement	:	A+ ;
 
 
 /* Lexer rules */
 
-LEFTPAR    : '(' ;
+LEFTPAR    : '(' {System.out.println("Toto");} ;
 RIGHTPAR   : ')' ;
 LEFTBR     : '{' ;
-RIGHTBR    : '}' ;
+RIGHTBR    : '}' {emit(Token.EOF_TOKEN);} ;
 SEMICOLUMN : ';' ;
 A          : 'alice' ;
 B          : 'bob' ;

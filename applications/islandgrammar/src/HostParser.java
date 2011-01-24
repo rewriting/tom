@@ -35,14 +35,23 @@ public class HostParser {
 
     private void parserMap(int i) {
       /* prepare a tree for the host content */
-      CommonToken tokenizedHostContent = new CommonToken(1,(hostContent.toString()+"||"));
+      CommonToken tokenizedHostContent = new CommonToken(1,("("+hostContent.toString()+")\n"));
       CommonTree treedHostContent = new CommonTree(tokenizedHostContent);
       arbre.addChild(treedHostContent);
       /* forget the savedContent, which is currently one of the tokens */
       savedContent.setLength(0);
       switch(i)
       {
-        case 0: System.out.println("match found");break;
+        case 0:
+          try {
+            miniTomLexer lexer = new miniTomLexer(input);//new ANTLRStringStream("() { aa; aaaa; }"));
+            System.out.println("truc");
+            CommonTokenStream tokens = new CommonTokenStream(lexer);
+            miniTomParser parser = new miniTomParser(tokens);
+            RuleReturnScope result = parser.program();
+            arbre.addChild((Tree) result.getTree());
+          } catch (Exception e) {}
+          break;
         case 1: System.out.println("op found");break;
         default : System.out.println(i + " : this sould not happen");
       }
