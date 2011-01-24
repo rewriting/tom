@@ -6,7 +6,7 @@ import java.util.List;
 */
 public class PPCursor{
 
-/**The PPTextPosition which represent the current position in the file
+/**The PPTextPosition which represents the current position in the file
 */
   private PPTextPosition position;
 /**The way of writing.

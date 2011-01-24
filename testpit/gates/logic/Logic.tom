@@ -1,0 +1,60 @@
+
+%include { int.tom }
+
+%typeterm Bool {
+  implement { gates.logic.types.Bool }
+  is_sort(t) { ($t instanceof gates.logic.types.Bool) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+%op Bool Input(n:int) {
+  is_fsym(t) { ($t instanceof gates.logic.types.bool.Input) }
+  get_slot(n, t) { $t.getn() }
+  make(t0) { gates.logic.types.bool.Input.make($t0) }
+}
+
+%op Bool True() {
+  is_fsym(t) { ($t instanceof gates.logic.types.bool.True) }
+  make() { gates.logic.types.bool.True.make() }
+}
+
+%op Bool False() {
+  is_fsym(t) { ($t instanceof gates.logic.types.bool.False) }
+  make() { gates.logic.types.bool.False.make() }
+}
+
+%op Bool Not(b:Bool) {
+  is_fsym(t) { ($t instanceof gates.logic.types.bool.Not) }
+  get_slot(b, t) { $t.getb() }
+  make(t0) { gates.logic.types.bool.Not.make($t0) }
+}
+
+%op Bool Or(b1:Bool, b2:Bool) {
+  is_fsym(t) { ($t instanceof gates.logic.types.bool.Or) }
+  get_slot(b1, t) { $t.getb1() }
+  get_slot(b2, t) { $t.getb2() }
+  make(t0, t1) { gates.logic.types.bool.Or.make($t0, $t1) }
+}
+
+%op Bool And(b1:Bool, b2:Bool) {
+  is_fsym(t) { ($t instanceof gates.logic.types.bool.And) }
+  get_slot(b1, t) { $t.getb1() }
+  get_slot(b2, t) { $t.getb2() }
+  make(t0, t1) { gates.logic.types.bool.And.make($t0, $t1) }
+}
+
+%op Bool Nand(b1:Bool, b2:Bool) {
+  is_fsym(t) { ($t instanceof gates.logic.types.bool.Nand) }
+  get_slot(b1, t) { $t.getb1() }
+  get_slot(b2, t) { $t.getb2() }
+  make(t0, t1) { gates.logic.types.bool.Nand.make($t0, $t1) }
+}
+
+%op Bool Xor(b1:Bool, b2:Bool) {
+  is_fsym(t) { ($t instanceof gates.logic.types.bool.Xor) }
+  get_slot(b1, t) { $t.getb1() }
+  get_slot(b2, t) { $t.getb2() }
+  make(t0, t1) { gates.logic.types.bool.Xor.make($t0, $t1) }
+}
+
