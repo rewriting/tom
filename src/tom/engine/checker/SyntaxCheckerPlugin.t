@@ -378,7 +378,10 @@ matchblock:{
     List list;
     if(OperatorOrType.equals(SyntaxCheckerPlugin.OPERATOR)) {
       if(alreadyStudiedSymbols.contains(name)) {
-        TomMessage.error(getLogger(), getCurrentTomStructureOrgTrack().getFileName(), getCurrentTomStructureOrgTrack().getLine(), TomMessage.multipleSymbolDefinitionError);
+        TomMessage.error(getLogger(),
+            getCurrentTomStructureOrgTrack().getFileName(),
+            getCurrentTomStructureOrgTrack().getLine(),
+            TomMessage.multipleSymbolDefinitionError, name);
       } else {
         alreadyStudiedSymbols.add(name);
       }
