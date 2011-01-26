@@ -2168,7 +2168,7 @@ keywordGetSlot [TomName astName, String type, String genericType] returns [Decla
                 selector().push("targetlexer");
                 TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList<Code>());
                 selector().pop();
-                System.out.println("DEBUG : tlCode = " + tlCode);
+                //DEBUG System.out.println("DEBUG : tlCode = " + tlCode);
                 String code;
                 if (genericType != null) {
                   code =
