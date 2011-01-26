@@ -28,11 +28,13 @@
  */
 package subtypeinference;
 import tom.library.sl.*;
+import subtypeinference.*; 
 
 public class ExampleErrors {
 	%include { sl.tom }
-
-  static class A {
+	%include { HandMapping.tom }
+/*
+  static class A implements Visitable {
     public A num1;
     public A() {}
     public A(A num1) { this.num1 = num1; }
@@ -67,43 +69,43 @@ public class ExampleErrors {
   }
   
 // ------------------------------------------------------------
-  %typeterm TomA {
+  %typeterm A {
     implement { A }
     is_sort(t) { $t instanceof A }
     equals(t1,t2) { $t1.equals($t2) }
   }
 
-  %typeterm TomB extends TomA{
+  %typeterm B extends A{
     implement { B }
     is_sort(t) { $t instanceof B }
     equals(t1,t2) { $t1.equals($t2) }
   }
 
 // ------------------------------------------------------------
-  %op TomA a() {
+  %op A a() {
     is_fsym(t) { $t instanceof Javaa }
     make() { new Javaa() }
   }
 
-  %op TomA f(num1:TomA) {
+  %op A f(num1:A) {
     is_fsym(t) { $t instanceof Javaf }
     make(t) { new Javaf($t) }
     get_slot(num1,t) { ((Javaf)$t).num1 }
   }
 
-  %op TomB b() {
+  %op B b() {
     is_fsym(t) { $t instanceof Javab }
     make() { new Javab() }
   }
 
-  %op TomB g(num2:TomB) {
+  %op B g(num2:B) {
     is_fsym(t) { $t instanceof Javag }
     make(t) { new Javag($t) }
     get_slot(num2,t) { ((Javag)$t).num2 }
   }
 
 // ------------------------------------------------------------
-
+*/
   public final static void main(String[] args) {
     ExampleErrors test = new ExampleErrors();
     test.testSubtype();
@@ -142,7 +144,7 @@ public class ExampleErrors {
 */
 
   %strategy testSubtype() extends `Identity() {
-    visit TomA {
+    visit A {
       f(x) -> { return `g(x); }
     }
   } 
