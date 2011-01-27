@@ -7,14 +7,18 @@
 
 //Tom
 
+//public class MyTestClass extends TestClass {
+
 %include { mon/mapping.tom }
 
 `(x*)
 //`(f(new Foo(g(x*))))
 
+//String machaine;
+
 %match (MyType subject, MySecondType s2) {
-  pattern1 -> { something1 }
   pattern2 -> { `(somethingElse) }
+  pattern1 -> { something1 }
 }
 
 %op TomPerson2 person2(name2:String,age2:int) {
@@ -49,7 +53,7 @@
   equals(t1,t2) { someCompositeTerm03 }
 }
 
-%op TomPerson person() { //name:String,age:int) {
+%op TomPerson person(name:String,age:int) {
   is_fsym(t) { s }
   make(t1,t2) { someCompositeTerm04 }
   get_slot(name,t) { someCompositeTerm05 }
@@ -75,3 +79,4 @@
   is_empty(t) { someCompositeTerm17 }
 }
 
+//}
