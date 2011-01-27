@@ -1,7 +1,7 @@
 /*
  * TOM - To One Matching Compiler
  *
- * Copyright (c) 2007-2010, INPL, INRIA
+ * Copyright (c) 2007-2011, INPL, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -123,16 +123,26 @@ patternList :
   pattern (COMMA pattern)* -> ^(PatternList pattern+)
   ;
 
-plainPattern : 
-  UNDERSCORE STAR -> ^(PlainPattern ^(UnamedVariableStar ) )
+plainPattern :
+/*
+  Identifier STAR -> ^(PlainPattern ^(VariableStar ^(Name Identifier )  ^(EmptyType )) )
+  | Identifier -> ^(PlainPattern ^(Variable ^(Name Identifier )  ^(EmptyType )) )
+  | UNDERSCORE STAR -> ^(PlainPattern ^(UnamedVariableStar ) )
   | UNDERSCORE -> ^(PlainPattern ^(UnamedVariable ) )
+  | ANTI_SYM headSymbolList tail -> ^(AntiSymbolList headSymbolList tail)
 //  | ANTI_SYM Identifier STAR -> ^(PlainPattern ^(AntiVariableStar ^(Name Identifier)  ^(EmptyType )) )
   | ANTI_SYM Identifier -> ^(PlainPattern ^(AntiVariable ^(Name Identifier)  ^(EmptyType )) )
-  | Identifier STAR -> ^(PlainPattern ^(VariableStar ^(Name Identifier )  ^(EmptyType )) )
-  | Identifier -> ^(PlainPattern ^(Variable ^(Name Identifier )  ^(EmptyType )) )
-  | ANTI_SYM headSymbolList tail -> ^(AntiSymbolList headSymbolList tail)
-  | headSymbolList tail -> ^(SymbolList headSymbolList tail)
-  | explicitTermList -> ^(ExplicitTermList explicitTermList ) //^(PPExplicitTermList explicitTermList )
+*/
+  ANTI_SYM (
+      Identifier -> ^(PlainPattern ^(AntiVariable ^(Name Identifier)  ^(EmptyType )) )
+      | headSymbolList tail -> ^(AntiSymbolList headSymbolList tail)
+      )
+  | Identifier s=STAR?
+    -> {s!=null}? ^(PlainPattern ^(VariableStar ^(Name Identifier )  ^(EmptyType )) )
+    ->            ^(PlainPattern ^(Variable ^(Name Identifier )  ^(EmptyType )) )
+  | UNDERSCORE s=STAR?
+    -> {s!=null}? ^(PlainPattern ^(UnamedVariableStar ) )
+    ->            ^(PlainPattern ^(UnamedVariable ) )
   | xmlTerm
   ;
 
@@ -498,42 +508,7 @@ keywordEquals :
 //TYPETERM    :   '%typeterm' ;
 //GOM         :   '%gom'      ;
 
-ARROWLBRACE : { isBlockLbrace = true; } ARROW WS* LBRACE //[1] //
-/*{ nesting--; System.out.println("tom nesting, arrowlbrace = " + nesting);}//(options {greedy=false;} : WS )* LBRACE
-  {
-    System.out.println("\nbefore new Host*");
-    System.out.println("in arrowlbrace / tom nesting = " + nesting);
-    NewHostLanguageLexer lexer = new NewHostLanguageLexer(input);
-    CommonTokenStream tokens = new CommonTokenStream(lexer);
-    System.out.println("tom, tokens = " + tokens.toString() + " /fin");
-    System.out.println("tom, tokens list = " + tokens.getTokens().toString());
-    NewHostLanguageParser parser = new NewHostLanguageParser(tokens);
-    System.out.println("before parser.blockList()");
-    NewHostLanguageParser.blockList_return res = parser.blockList();
-    System.out.println("tom, res.getTree() =\n" + ((Tree)res.getTree()).toStringTree());
-    result = (Tree)res.getTree();
-    System.out.println("tom, end, result =\n" + result.toStringTree());
-  }*/
-  ;
-
-//GOALLBRACE :  ':' WS*  /*{ isGLlbrace = true; }*/ LBRACE
-/*{ nesting--; System.out.println("tom nesting, goallbrace = " + nesting); }
-  {
-    System.out.println("\nbefore new Host*");
-    System.out.println("in goallbrace / tom nesting = " + nesting);
-    NewHostLanguageLexer lexer = new NewHostLanguageLexer(input);
-    CommonTokenStream tokens = new CommonTokenStream(lexer);
-    System.out.println("tom, tokens = " + tokens.toString() + " /fin");
-    System.out.println("tom, tokens list = " + tokens.getTokens().toString());
-    NewHostLanguageParser parser = new NewHostLanguageParser(tokens);
-    System.out.println("before parser.goalLanguageBlock()");
-    NewHostLanguageParser.goalLanguageBlock_return res = parser.goalLanguageBlock();
-    //NewHostLanguageParser.blockList_return res = parser.blockList();
-    System.out.println("tom, res.getTree() =\n" + ((Tree)res.getTree()).toStringTree());
-    result = (Tree)res.getTree();
-    System.out.println("tom, end, result =\n" + result.toStringTree());
-  }
-  ;*/
+ARROWLBRACE : { isBlockLbrace = true; } ARROW WS* LBRACE;
 
 IS_FSYM     : 'is_fsym'     { isBlockLbrace = true; } ;
 MAKE        : 'make'        { isBlockLbrace = true; } ;
@@ -575,46 +550,6 @@ LBRACE : '{'
   }
   ;
 
-
-/*LBRACE[int lbtype] : '{'
-  {
-    System.out.println("\nbefore new Host*");
-    System.out.println("in arrowlbrace / tom nesting = " + nesting);
-    NewHostLanguageLexer lexer = new NewHostLanguageLexer(input);
-    CommonTokenStream tokens = new CommonTokenStream(lexer);
-    System.out.println("tom, tokens = " + tokens.toString() + " /fin");
-    System.out.println("tom, tokens list = " + tokens.getTokens().toString());
-    NewHostLanguageParser parser = new NewHostLanguageParser(tokens);
-ParserRuleReturnScope res;
-    switch(lbtype) {
-      case 0:
-        System.out.println("(NewTomLanguage) case : " + lbtype);
-        nesting++;
-        System.out.println("tom nesting++ = " + nesting);
-        break;
-      case 1:
-        System.out.println("(NewTomLanguage) case : " + lbtype);
-        System.out.println("before parser.blockList()");
-        res = parser.blockList(); //blockList_return 
-        System.out.println("tom, res.getTree() =\n" + ((Tree)res.getTree()).toStringTree());
-        result = (Tree)res.getTree();
-        System.out.println("tom, end, result =\n" + result.toStringTree());
-       break;
-      case 2:
-        System.out.println("(NewTomLanguage) case : " + lbtype);
-        System.out.println("before parser.goalLanguageBlock()");
-        res = parser.goalLanguageBlock(); // NewHostLanguageParser.goalLanguageBlock_return 
-        //res = parser.blockList();//NewHostLanguageParser.blockList_return 
-        System.out.println("tom, res.getTree() =\n" + ((Tree)res.getTree()).toStringTree());
-        result = (Tree)res.getTree();
-        System.out.println("tom, end, result =\n" + result.toStringTree());
-        break;
-      default:
-        nesting++;break;
-    }
-  }
-  ;*/
-	 
 RBRACE : '}'
   {
     isBlockLbrace = false;

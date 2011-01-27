@@ -2,7 +2,7 @@
  *
  * TOM - To One Matching Compiler
  *
- * Copyright (c) 2000-2010, INPL, INRIA
+ * Copyright (c) 2000-2011, INPL, INRIA
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

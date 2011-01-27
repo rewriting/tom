@@ -9,9 +9,9 @@ public class HostParser {
 
     private boolean ready;/* whether one of the tokenNames has been found */
     private int matchedConstruct;/* which one */
-    private StringBuffer read;/* a memory to store characters read before asserting whether they're host content or not */
+    private StringBuffer savedContent;/* a memory to store characters read before asserting whether they're host content or not */
     private StringBuffer hostContent;/* the characters that haven't been parsed*/
-    private boolean found;/* this one remembers if something was found during 'take' operation */
+    private boolean found;/* this one remembers if something was found during last 'take' operation */
     private Tree arbre;
 /* to look for a keyword, add it to this array, then configure the parser it should trigger in the function parserMap */
     public static final String[] tokenNames = new String[] {
@@ -24,7 +24,7 @@ public class HostParser {
         arbre=new CommonTree(name);
         this.input = input;
         hostContent = new StringBuffer();
-        read = new StringBuffer();
+        savedContent = new StringBuffer();
         states = new int[tokenNames.length];
         for(int i = 0; i < tokenNames.length ; i++) {
           states[i] = 0;
@@ -34,35 +34,44 @@ public class HostParser {
     }
 
     private void parserMap(int i) {
-      CommonToken hostcontenttokenized = new CommonToken(1,hostContent.toString());
-      CommonTree hostcontenttree= new CommonTree(hostcontenttokenized);
-     arbre.addChild(hostcontenttree);
+      /* prepare a tree for the host content */
+      CommonToken tokenizedHostContent = new CommonToken(1,(hostContent.toString()+"||"));
+      CommonTree treedHostContent = new CommonTree(tokenizedHostContent);
+      arbre.addChild(treedHostContent);
+      /* forget the savedContent, which is currently one of the tokens */
+      savedContent.setLength(0);
+      switch(i)
+      {
+        case 0: System.out.println("match found");break;
+        case 1: System.out.println("op found");break;
+        default : System.out.println(i + " : this sould not happen");
+      }
     }
 
-    public void parse() {
+    public Tree parse() {
         while (true) {
           char read = (char) input.LA(1);
           if (read == (char) -1) {
-            System.out.println("Fin du fichier");
-      System.out.print(arbre.toStringTree());
             break;
           }
           take(read);
- hostContent.append(read);
+          if(!found) {
+            hostContent.append(savedContent);
+            savedContent.setLength(0);
+          }
           input.consume();
-/* the acts as an intermediate : it takes the character read, performs the needed operations on the various patterns watched */
           if(ready) {
             ready = false;   
-     parserMap(matchedConstruct);
-    hostContent.setLength(0);;
+            parserMap(matchedConstruct);
+            hostContent.setLength(0);;
           }
-/* and then gives hostContent what it should get : usually a single char (read), but sometimes several if the begining of one of the watched keyword exists in the host code */          
         }
+        return arbre;
     }
 
 
     public void take(char c) {
-      found = true;
+      found = false;
       for(int i = 0; i < tokenNames.length; i++) {
         if(tokenNames[i].charAt(states[i]) == c) {
           states[i]++;
@@ -77,22 +86,7 @@ public class HostParser {
           states[i] = 0;
         }
       }
-      if(!found) {/* no matching character found among the tokenNames */
-        read.append(c);
-      }
+      savedContent.append(c);
     }
 
-    public String getRead() {
-      String result = "";
-      if(!found) {
-        result = read.toString();
-        read = new StringBuffer();
-      }
-      return result;
-    }
-
-
-    public String getCode() {
-        return hostContent.toString();
-    }
 }

@@ -2,7 +2,7 @@
  *
  * TOM - To One Matching Compiler
  *
- * Copyright (c) 2000-2010, INRIA
+ * Copyright (c) 2000-2011, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -378,7 +378,10 @@ matchblock:{
     List list;
     if(OperatorOrType.equals(SyntaxCheckerPlugin.OPERATOR)) {
       if(alreadyStudiedSymbols.contains(name)) {
-        TomMessage.error(getLogger(), getCurrentTomStructureOrgTrack().getFileName(), getCurrentTomStructureOrgTrack().getLine(), TomMessage.multipleSymbolDefinitionError);
+        TomMessage.error(getLogger(),
+            getCurrentTomStructureOrgTrack().getFileName(),
+            getCurrentTomStructureOrgTrack().getLine(),
+            TomMessage.multipleSymbolDefinitionError, name);
       } else {
         alreadyStudiedSymbols.add(name);
       }
