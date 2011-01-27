@@ -53,15 +53,13 @@ public class ExamplePolymorphism{
     public f(T t) { nType = t; }
     public T getnType() { return nType; }
     public String symbolName() { return "f"; }
-    public void toStringBuilder(java.lang.StringBuilder buffer) {
-    buffer.append("f(");
-    
-    buffer.append(")");
-  }
+    public String toString() { return "f(" + nType + ")"; }
   }
 
   public static class a extends First { 
     public a() { } 
+   
+    public String toString() { return "a()"; }
   }
 
   %typeterm Type<T> {

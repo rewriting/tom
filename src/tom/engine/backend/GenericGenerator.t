@@ -383,6 +383,23 @@ public abstract class GenericGenerator extends AbstractGenerator {
       // perform the instantiation
       String ocode = code.getCode();
       String ncode = ocode.replace("{0}",varname);
+      String newcode = ncode;
+      %match(newcode) {
+        concString(_*,type@concString('{',genType,'}'),_*) -> {
+          String toInstantiate = `genType+"";
+          TomType instantiatedType =
+            getSymbolTable(moduleName).getType(toInstantiate);
+          if (instantiatedType != null) {
+            //TODO: check if instantiatedType != EmptyType()
+            //DEBUG System.out.println("I have a type for '" + toInstantiate + "'");
+            //DEBUG System.out.println("It is '" + instantiatedType + "'");
+            //DEBUG System.out.println("Code before = " + `newcode);
+            ncode = `newcode.replace(`type,instantiatedType.getTomType());
+            //DEBUG System.out.println("Code after = " + ncode);
+            //TODO: raise an exception message when null is found
+          } 
+        } 
+      }
       if(!ncode.equals(ocode)) {
         inlined = true;
         code = code.setCode(ncode);

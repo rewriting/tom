@@ -393,6 +393,9 @@ public class SymbolTable {
   public Iterable<String> keySymbolIterable() {
     return mapSymbolName.keySet();
   }
+  public Iterable<String> keyTypeIterable() {
+    return mapTypeName.keySet();
+  }
 
   public Iterator<String> keySymbolIterator() {
     Set<String> keys = mapSymbolName.keySet();

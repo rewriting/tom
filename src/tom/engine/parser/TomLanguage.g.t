@@ -2169,13 +2169,11 @@ keywordGetSlot [TomName astName, String type, String genericType] returns [Decla
                 TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList<Code>());
                 selector().pop();
                 //DEBUG System.out.println("DEBUG : tlCode = " + tlCode);
-                String code;
+                String code = ASTFactory.abstractCode(tlCode.getCode(),name.getText());
                 if (genericType != null) {
                   code =
-                  ASTFactory.abstractCode(tlCode.getCode(),name.getText(),genericType);
-                } else {
-                  code = ASTFactory.abstractCode(tlCode.getCode(),name.getText());
-                }
+                  ASTFactory.replaceGenericTypes(code,genericType);
+                } 
                 result = `GetSlotDecl(astName,
                     Name(slotName.getText()),
                     BQVariable(option,Name(name.getText()),Type(concTypeOption(),type,EmptyTargetLanguageType())),
