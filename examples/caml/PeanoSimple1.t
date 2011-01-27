@@ -1,6 +1,6 @@
 (* vim: set filetype=ocaml : *)
 (*
- * Copyright (c) 2004-2010, INPL, INRIA
+ * Copyright (c) 2004-2011, INPL, INRIA
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
