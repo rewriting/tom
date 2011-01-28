@@ -213,6 +213,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
         s = "tom_is_fun_sym_" + opname + "(";
       }
       output.write(s);
+      //DEBUG System.out.println("generate BQTerm for '" + exp + "'");
       generateBQTerm(deep,exp,moduleName);
       output.write(")");
     }
@@ -363,12 +364,15 @@ public abstract class GenericGenerator extends AbstractGenerator {
       TomType returnType = getSymbolTable(moduleName).getBooleanType();
       String argType;
       // [02/12/2010 pem] precise type is no longer necessary
+      // [28/01/2011 tavaresc] we need precise types for those methods
+      // automatically generated for mappings (e.g. tom_is_fun_sym_toto) when
+      // using builtin types (e.g. boolean)
 
-      //if(!lazyType) {
-      //  argType = TomBase.getTLCode(tlType);
-      //} else {
+      if(!lazyType) {
+        argType = TomBase.getTLCode(tlType);
+      } else {
         argType = TomBase.getTLType(getUniversalType());
-      //}
+      }
 
       genDeclInstr(TomBase.getTLType(returnType), "tom_is_fun_sym", opname,
           new String[] { argType, varname }, `Return(ExpressionToBQTerm(code)),deep,moduleName);

@@ -1359,7 +1359,7 @@ public class NewKernelTyper {
           simplifiedConstraints = 
             `RepeatId(solveSubtypingConstraints(this)).visitLight(simplifiedConstraints);
           //DEBUG System.out.println("\nResulting subtype constraints!!");
-          printGeneratedConstraints(simplifiedConstraints);
+          //DEBUG printGeneratedConstraints(simplifiedConstraints);
         } catch(tom.library.sl.VisitFailure e) {
           throw new TomRuntimeException("solveConstraints: failure on " +
               subtypeConstraints);

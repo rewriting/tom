@@ -149,8 +149,8 @@ public class ConstraintGenerator {
         //DEBUG System.out.println("In Constraint Generator with v = " + `v + '\n');
         //DEBUG System.out.println("In Constraint Generator with t = " + `t + '\n');
         if(TomBase.getTermType(`v,symbolTable) != TomBase.getTermType(`t,symbolTable)) {
-          //System.out.println("type1 = " + TomBase.getTermType(`v,symbolTable));
-          //System.out.println("type2 = " + TomBase.getTermType(`t,symbolTable));
+          //DEBUG System.out.println("type1 = " + TomBase.getTermType(`v,symbolTable));
+          //DEBUG System.out.println("type2 = " + TomBase.getTermType(`t,symbolTable));
           // check subtype and add a cast
           return `LetRef(TomBase.convertFromVarToBQVar(v),Cast(TomBase.getTermType(v,symbolTable),BQTermToExpression(t)),action);
         }

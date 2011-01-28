@@ -235,6 +235,7 @@ public class Compiler extends TomGenericPlugin {
               // get the new names for subjects and generates casts -- needed especially for lists
               // this is performed here, and not above, because in the case of nested matches, we do not want 
               // to go in the action and collect from there              
+              //DEBUG System.out.println("\n constraint = " + `constraint);
               Constraint newConstraint = `TopDownIdStopOnSuccess(renameSubjects(subjectList,renamedSubjects,compiler)).visitLight(`constraint);
               //DEBUG System.out.println("\n In compiler!!");
               //DEBUG System.out.println("\n newConstraint = " + newConstraint);
