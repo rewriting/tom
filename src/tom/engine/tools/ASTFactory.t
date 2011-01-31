@@ -598,4 +598,15 @@ public class ASTFactory {
     return code;
   }
 
+  /*
+   * transform a string "...$t...$u..." into "...{t}...{u}..."
+   * where t,...,u represent generic types
+   */
+  public static String replaceGenericTypes(String code, String... vars) {
+    for(String var:vars) {
+      code = code.replace("$"+var,"{"+var+"}");
+    }
+    return code;
+  }
+
 }

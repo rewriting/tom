@@ -1403,6 +1403,22 @@ matchBlockFail :
       //DEBUG     + tSymbol);
       symbolTable.putSymbol(tomName,tSymbol);
     }
+
+    for(String tomName:symbolTable.keyTypeIterable()) {
+      //DEBUG System.out.println("replaceInSymboltable() - tomName : " + tomName);
+      TomType tType = symbolTable.getType(tomName);
+      //DEBUG System.out.println("replaceInSymboltable() - tSymbol before strategy: "
+      //DEBUG     + tSymbol);
+      try {
+        tType = `InnermostId(replaceFreshTypeVar(this)).visitLight(tType);
+      } catch(tom.library.sl.VisitFailure e) {
+        throw new TomRuntimeException("replaceInSymbolTable: failure on " +
+            tType);
+      }
+      //DEBUG System.out.println("replaceInSymboltable() - tSymbol after strategy: "
+      //DEBUG     + tSymbol);
+      symbolTable.putType(tomName,tType);
+    }
   }
 
   %strategy replaceFreshTypeVar(nkt:NewKernelTyper) extends Identity() {

@@ -1644,9 +1644,21 @@ operator returns [Declaration result] throws TomException
     TomName astName = null;
     String stringSlotName = null;
     Declaration attribute;
+    String genericTypeName = null;
 }
     :
-      type:ALL_ID name:ALL_ID
+      type:ALL_ID
+      
+      (
+      XML_START 
+       generictype:ALL_ID
+       {
+          genericTypeName = generictype.getText();
+       }
+       XML_CLOSE
+      )?
+
+      name:ALL_ID
         {
             ot = `OriginTracking(Name(name.getText()),name.getLine(),currentFile());
             options.add(ot);
@@ -1658,7 +1670,11 @@ operator returns [Declaration result] throws TomException
                 astName = `Name(stringSlotName);
                 slotNameList.add(astName);
                 pairNameDeclList.add(`PairNameDecl(astName,EmptyDeclaration()));
-                types = `concTomType(types*,Type(concTypeOption(),typeArg.getText(),EmptyTargetLanguageType()));
+                if (typeArg.getText() == genericTypeName) {
+                  types = `concTomType(types*,getType(genericTypeName));
+                } else {
+                  types = `concTomType(types*,Type(concTypeOption(),typeArg.getText(),EmptyTargetLanguageType()));
+                }
             }
             (
                 COMMA
@@ -1687,7 +1703,7 @@ operator returns [Declaration result] throws TomException
             attribute = keywordMake[name.getText(),`Type(concTypeOption(),type.getText(),EmptyTargetLanguageType()),types]
             { options.add(`DeclarationToOption(attribute)); }
 
-        |   attribute = keywordGetSlot[astName,type.getText()]
+        |   attribute = keywordGetSlot[astName,type.getText(),genericTypeName]
             {
               TomName sName = attribute.getSlotName();
               /*
@@ -1835,6 +1851,7 @@ typeTerm returns [Declaration result] throws TomException
     int currentLine = -1;
     String supertypeName = null;
     String currentTypeName = null;
+    String genericTypeName = null;
   }
   :   (
       type:ALL_ID
@@ -1843,6 +1860,16 @@ typeTerm returns [Declaration result] throws TomException
       currentTypeName = type.getText();
       ot = `OriginTracking(Name(currentTypeName),currentLine,currentFile());
       }
+
+      (
+      XML_START 
+       generictype:ALL_ID
+       {
+          genericTypeName = generictype.getText();
+       }
+       XML_CLOSE
+      )?
+
       (
          EXTENDS
         supertype:ALL_ID
@@ -1862,6 +1889,10 @@ typeTerm returns [Declaration result] throws TomException
       )*
       t:RBRACE
       {
+          if (genericTypeName != null) {
+            //TODO : create a counter to type variables
+            putType(genericTypeName,`TypeVar(genericTypeName,-1));
+          }
           TomType astType = `Type(typeoptionList,currentTypeName,TLType(implement.getCode()));
           putType(currentTypeName, astType);
           result = `TypeTermDecl(Name(currentTypeName),declarationList,ot);
@@ -2120,7 +2151,7 @@ keywordGetImplementation [String typeString] returns [Declaration result] throws
     ;
 
 
-keywordGetSlot [TomName astName, String type] returns [Declaration result] throws TomException
+keywordGetSlot [TomName astName, String type, String genericType] returns [Declaration result] throws TomException
 {
     result = null;
     Option ot = null;
@@ -2137,7 +2168,12 @@ keywordGetSlot [TomName astName, String type] returns [Declaration result] throw
                 selector().push("targetlexer");
                 TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList<Code>());
                 selector().pop();
+                //DEBUG System.out.println("DEBUG : tlCode = " + tlCode);
                 String code = ASTFactory.abstractCode(tlCode.getCode(),name.getText());
+                if (genericType != null) {
+                  code =
+                  ASTFactory.replaceGenericTypes(code,genericType);
+                } 
                 result = `GetSlotDecl(astName,
                     Name(slotName.getText()),
                     BQVariable(option,Name(name.getText()),Type(concTypeOption(),type,EmptyTargetLanguageType())),
