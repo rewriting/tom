@@ -31,37 +31,41 @@ package subtypeinference;
 public class Problem2 {
 
   static class A {
-    public A num1;
     public A() {}
-    public A(A num1) { this.num1 = num1; }
     public String getOp() { return ""; }
   }
 
   static class Javaa extends A {
-    public Javaa() { super(); }
+    public Javaa() { }
     public String getOp() { return "a"; }
+    public String toString() { return "a()"; }
   }
 
   static class Javaf extends A {
-    public Javaf(A num1) { super(num1); }
+    public A num1;
+    public Javaf(A num1) { this.num1 = num1; }
+    public A getnum1() { return num1; }
     public String getOp() { return "f"; }
+    public String toString() { return "g(" + num1 + ")"; }
   }
 
   static class B extends A {
-    public B num2;
     public B() {}
-    public B(B num2) { this.num2 = num2; }
     public String getOp() { return ""; }
   }
   
   static class Javab extends B {
-    public Javab() { super(); }
+    public Javab() { }
     public String getOp() { return "b"; }
+    public String toString() { return "b()"; }
   }
 
   static class Javag extends B {
-    public Javag(B num2) { super(num2); }
+    public B num2;
+    public Javag(B num2) { this.num2 = num2; }
+    public B getnum2() { return num2; }
     public String getOp() { return "g"; }
+    public String toString() { return "g(" + num2 + ")"; }
   }
   
 // ------------------------------------------------------------
@@ -86,7 +90,7 @@ public class Problem2 {
   %op TomA f(num1:TomA) {
     is_fsym(t) { $t instanceof Javaf }
     make(t) { new Javaf($t) }
-    get_slot(num1,t) { ((Javaf)$t).num1 }
+    get_slot(num1,t) { ((Javaf)$t).getnum1() }
   }
 
   %op TomB b() {
@@ -97,7 +101,7 @@ public class Problem2 {
   %op TomB g(num2:TomB) {
     is_fsym(t) { $t instanceof Javag }
     make(t) { new Javag($t) }
-    get_slot(num2,t) { ((Javag)$t).num2 }
+    get_slot(num2,t) { ((Javag)$t).getnum2() }
   }
 
 // ------------------------------------------------------------
@@ -119,20 +123,20 @@ public class Problem2 {
   public void print(A term) {
     String op = term.getOp();
     System.out.print("Term = " + `op);
-    //A y = `b();
+    A y = `b();
     //B x = `b();
+    
+    %match {
+      //x << y && (y == b()) && (g(x) == g(b())) -> { System.out.println("Test!"); }
+      g[num2=arg] << TomB term -> { System.out.println("(" + `arg.getOp() + ")"); }
+      f[num1=arg] << TomA term -> { System.out.println("(" + `arg.getOp() + ")"); }
+    }
+
     A n = `f(a());
     A m = `a();
     %match(n,m) {
       f(x),x -> { System.out.println("Test x = " + `x); }
     }
-    /*
-    %match {
-      //x << y && (y == a()) && (g(x) == g(b())) -> { System.out.println("Test!"); }
-      g[num2=arg] << TomB term -> { System.out.println("(" + `arg.getOp() + ")"); }
-      f[num1=arg] << TomA term -> { System.out.println("(" + `arg.getOp() + ")"); }
-    }
-    */
   }
 }
 

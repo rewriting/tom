@@ -118,6 +118,7 @@ public class SyntacticPropagator implements IBasePropagator {
         }
         //DEBUG System.out.println("In Syntactic Propagator with g = " + `g + '\n');
         BQTerm freshSubject = sp.getCompiler().getFreshVariable(sp.getCompiler().getTermTypeFromTerm(`g));
+        //DEBUG System.out.println("--- VARIAAAAAAAABLE freshSubject" + freshSubject);
             
         // take each symbol and build the disjunction (OrConstraintDisjunction)
         Constraint l = `OrConstraintDisjunction();
@@ -152,6 +153,8 @@ public class SyntacticPropagator implements IBasePropagator {
         }
         lastPart.add(0,l);
         lastPart.add(0,`MatchConstraint(TomBase.convertFromBQVarToVar(freshSubject),g,aType));
+        //DEBUG System.out.println("ATTENTION -- " + `MatchConstraint(TomBase.convertFromBQVarToVar(freshSubject),g,aType));
+        //DEBUG System.out.println("In Syntactic Propagator: lastPart = " + lastPart);
         lastPart.add(sp.getConstraintPropagator().performDetach(`m));
         return ASTFactory.makeAndConstraint(lastPart);
       }      
