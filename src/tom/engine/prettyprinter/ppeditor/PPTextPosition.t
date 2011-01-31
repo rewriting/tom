@@ -18,7 +18,7 @@ public class PPTextPosition {
 *@param line line position of the PPTextPosition
 *@param column column position of the PPTextPosition
 */
-  public PPTextPosition(int line,int column){
+  public PPTextPosition(int line,int column) {
     this.line = line;
     this.column = column;
   }
@@ -26,15 +26,15 @@ public class PPTextPosition {
 /**Returns the line position of the PPTextPosition.
 *@return value of the line attribute
 */
-  public int getLine(){
-		return this.line+1;
+  public int getLine() {
+		return this.line;
   }
 
 /**Returns the column position of the PPTextPosition.
 *@return value of the column attribute
 */
-  public int getColumn(){
-		return this.column+1;
+  public int getColumn() {
+		return this.column;
 	}
 
 }
