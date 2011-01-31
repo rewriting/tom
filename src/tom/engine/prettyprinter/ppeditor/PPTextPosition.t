@@ -35,6 +35,6 @@ public class PPTextPosition {
 */
   public int getColumn() {
 		return this.column;
-	}
+  }
 
 }

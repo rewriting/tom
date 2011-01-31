@@ -1,0 +1,7 @@
+#!/bin/bash
+for i in *.t
+do
+  echo ----------------;
+  echo test de \"$i\";
+  tom -pit $i;
+done
