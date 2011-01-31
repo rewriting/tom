@@ -9,32 +9,38 @@ public class PPCursor {
 /**The PPTextPosition which represents the current position in the file
 */
   private PPTextPosition position;
+
 /**The way of writing.
-*If true the writeText method insert the text, else the writeText method replaces the text.
+*If true the writeText method inserts the text, else the writeText method replaces the text.
 */
   private boolean insertion;
+
 /**A list of StringBuffer used as a local copy of the file
 */
-  private List<StringBuffer> fileBuffer;
+  private ArrayList<StringBuffer> fileBuffer;
 
-/**Create a PPCursor
+/**Creates a PPCursor
 */
   public PPCursor() {}
 
-/**Move the PPCursor
+/**Moves the PPCursor to an absolute position
 *@param p the PPTextPosition to place the PPCursor
 */
+
   public void setPosition(PPTextPosition p) {
 
     this.position = p;
   }
 
-/**Move the PPCursor
-*@param p the PPTextPosition to add to the current PPTextPosition
+/**Moves the PPCursor to a relative position from the current position
+*@param delta the PPTextPosition to add to the current position
 */
-  public void move(PPTextPosition p) {}
+  public void move(PPTextPosition delta) {
 
-/**Change the way of writing
+    position.add(delta);
+  }
+
+/**Changes the way of writing
 *@param b the boolean to set the attribute insertion to
 */
   public void setInsertion(boolean b) {
@@ -42,7 +48,7 @@ public class PPCursor {
     this.insertion = b;
   }
 
-/**Get the position attribute 
+/**Gets the position attribute 
 *@return value of the position attribute
 */
   public PPTextPosition getPosition() {
@@ -50,7 +56,7 @@ public class PPCursor {
     return position;
   }
 
-/**Get the insertion attribute
+/**Gets the insertion attribute
 *@return value of the insertion attribute
 */
   public boolean isInsertion() {
@@ -58,13 +64,13 @@ public class PPCursor {
     return insertion;
   }
 
-/**Read a sequence of the fileBuffer attribute, from the current position to a given PPTextPosition
+/**Reads a sequence of the fileBuffer attribute, from the current position to a given PPTextPosition
 *@param p the PPTextPosition to stop to
 *@return the string between the current position and the given PPTextPosition 
 */
 //  public String readFileBuffer(PPTextPosition p) {}
 
-/**Write a string at the current position
+/**Writes a string at the current position
 *The way of writing (insertion or replacement) is given by the insertion attribute
 *@param s the string to write
 */
@@ -74,18 +80,30 @@ public class PPCursor {
     
   }
 
-/**Erase one character
-*@param n number of character to erase
+/**Erases one character
 */
-  public void erase() {}
+  public void erase() {
+		fileBuffer.get(position.getLine()).delete(position.getColumn());
+  }
 
-/**Reinitialize the fileBuffer attribute to an empty List<StringBuffer>
+/**Reinitializes the fileBuffer attribute to an empty List<StringBuffer>
 */
-//  public void eraseAll() {}
+  public void eraseAll() {
+		fileBuffer.clear();
+  }
 
-/**Read all text
-*@return a String which represents the content of the file
+/**Creates a text file with the fileBuffer as a content.
+*@param fileName the name of the file created.
+*@return a StringBuffer which represents the content of the file created
 */
-  public StringBuffer dump() {}
+  public StringBuffer dump(String fileName) {
+    StringBuffer content;
+    for(int i=0,i<fileBuffer.size()-1,i++){
+      content.appends(fileBuffer.get(i)+"\n");
+    }
+    content.appends(fileBuffer.get(fileBuffer.size()-1));
+    FileWriter textFile = new FileWriter(fileName);
+    textFile.write(content.toString);
+  }
 
 }
