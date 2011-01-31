@@ -23,7 +23,7 @@ statement	:	A+ ;
 
 /* Lexer rules */
 
-LEFTPAR    : '('  ;
+LEFTPAR    : '(' ;
 RIGHTPAR   : ')' ;
 LEFTBR     : '{' {
 		     levelcounter++;
