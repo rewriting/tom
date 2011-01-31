@@ -11,7 +11,7 @@ tokens {
   PROGRAM;
   CODE;
 }
-
+@lexer::members{int levelcounter=0;}
 /* Parser rules */
 
 program :	LEFTPAR RIGHTPAR LEFTBR code* RIGHTBR -> ^(PROGRAM code*) ;
@@ -23,10 +23,16 @@ statement	:	A+ ;
 
 /* Lexer rules */
 
-LEFTPAR    : '(' {System.out.println("Toto");} ;
+LEFTPAR    : '('  ;
 RIGHTPAR   : ')' ;
-LEFTBR     : '{' ;
-RIGHTBR    : '}' {emit(Token.EOF_TOKEN);} ;
+LEFTBR     : '{' {
+		     levelcounter++;
+	     };
+RIGHTBR    : '}'{ if(levelcounter==0)
+{
+	emit(Token.EOF_TOKEN);} else {
+		levelcounter-=1;}
+		} ;
 SEMICOLUMN : ';' ;
 A          : 'alice' ;
 B          : 'bob' ;
