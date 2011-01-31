@@ -16,7 +16,7 @@
   <property name="build.sysclasspath" value="ignore" />
 
   <!-- current version of TOM -->
-  <property name="stable.version" value="2.8rc1"/>
+  <property name="stable.version" value="2.8rc2"/>
   <tstamp/>
   <property name="src.version"    value="${DSTAMP}"/>
 
@@ -48,6 +48,7 @@
   <property name="src.dist"       location="${src.src}/dist"/>
   <property name="src.doc"        location="${src.src}/doc"/>
   <property name="src.doc.adt"    location="${src.src}/doc/adt"/>
+  <property name="src.doc.engine"    location="${src.src}/doc/engine"/>
   <property name="src.lib"        location="${src.src}/lib"/>
   <property name="src.config"     location="${src.src}/config"/>
 
@@ -1534,9 +1535,9 @@
     </javadoc>
   </target>
 
-  <!-- adt javadoc -->
+  <!-- Tom signature javadoc -->
   <target name="src.doc.tomsignature"
-    description="Build adt javadoc for src"
+    description="Build Tom signature javadoc for src"
     depends="src">
     <mkdir dir="${src.doc.adt}"/>
     <javadoc destdir="${src.doc.adt}"
@@ -1550,6 +1551,24 @@
       <link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
     </javadoc>
   </target>
+
+  <!-- engine javadoc -->
+  <target name="src.doc.engine"
+    description="Build engine javadoc for src"
+    depends="src">
+    <mkdir dir="${src.doc.engine}"/>
+    <javadoc destdir="${src.doc.engine}"
+      windowtitle="Tom engine documentation"
+      breakiterator="yes" private="yes">
+      <classpath refid="src.classpath"/>
+      <fileset dir="${src.gen}">
+        <include name="tom/engine/**/*.java"/>
+      </fileset>
+      <link href="http://tom.loria.fr/api/" />
+      <link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
+    </javadoc>
+  </target>
+
 
   <target name="src.www"
     description="Upload javadoc for src"

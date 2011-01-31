@@ -12,7 +12,11 @@
   <property name="v3.tomast"   value="${v3.package}/Tom"/>
   <property name="v3.backquoteast"   value="${v3.package}/BackQuote"/>
   <property name="v3.newhostgrammarname"  value="NewHostLanguage"/>
+  <!--property name="v3.newhostgrammarnamep"  value="NewHostLanguage"/>
+  <property name="v3.newhostgrammarnamel"  value="NewHostLanguageLexer"/-->
   <property name="v3.newhostgrammar"  value="${v3.package}/${v3.newhostgrammarname}"/>
+  <!--property name="v3.newhostgrammarp"  value="${v3.package}/${v3.newhostgrammarnamep}"/>
+  <property name="v3.newhostgrammarl"  value="${v3.package}/${v3.newhostgrammarnamel}"/-->
   <property name="v3.newtomgrammarname"  value="NewTomLanguage"/>
   <property name="v3.newtomgrammar"  value="${v3.package}/${v3.newtomgrammarname}"/>
   <property name="v3.newbackquotegrammarname"  value="NewBackQuoteLanguage"/>
@@ -79,6 +83,17 @@
             outputdirectory="${v3.gen}/${v3.package}"
 	    libdirectory="${v3.gen}/${v3.package}/tom"
 	    />
+
+   <!-- test split -->
+   <!--antlr3 target="${v3.src}/${v3.newhostgrammarl}.g"
+	   outputdirectory="${v3.gen}/${v3.package}/"
+	    libdirectory="${v3.gen}/${v3.package}/tom"
+	    />
+    <antlr3 target="${v3.src}/${v3.newhostgrammarp}.g"
+	    outputdirectory="${v3.gen}/${v3.package}/"
+	    libdirectory="${v3.gen}/${v3.package}/tom"
+	    /-->
+    <!-- /test split -->
 
     <!--antlr3 target="${v3.src}/${v3.newtomgrammar}.g"
             outputdirectory="${v3.gen}"

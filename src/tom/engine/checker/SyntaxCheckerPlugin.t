@@ -2,7 +2,7 @@
  *
  * TOM - To One Matching Compiler
  *
- * Copyright (c) 2000-2010, INRIA
+ * Copyright (c) 2000-2011, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -378,7 +378,10 @@ matchblock:{
     List list;
     if(OperatorOrType.equals(SyntaxCheckerPlugin.OPERATOR)) {
       if(alreadyStudiedSymbols.contains(name)) {
-        TomMessage.error(getLogger(), getCurrentTomStructureOrgTrack().getFileName(), getCurrentTomStructureOrgTrack().getLine(), TomMessage.multipleSymbolDefinitionError);
+        TomMessage.error(getLogger(),
+            getCurrentTomStructureOrgTrack().getFileName(),
+            getCurrentTomStructureOrgTrack().getLine(),
+            TomMessage.multipleSymbolDefinitionError, name);
       } else {
         alreadyStudiedSymbols.add(name);
       }
@@ -650,43 +653,48 @@ matchLbl: %match(constr) {// TODO : add something to test the astType
 
               //System.out.println("astType = " + `astType);
 
-              if(`astType == SymbolTable.TYPE_UNKNOWN) {
-                typeMatch = getSubjectType(`subject,constraints);
-                if(typeMatch == null) {
-                  %match(subject) {
-                    BQVariable[AstName=Name(stringName)] -> {
-                      TomMessage.error(getLogger(),
-                          getCurrentTomStructureOrgTrack().getFileName(),
-                          getCurrentTomStructureOrgTrack().getLine(),
-                          TomMessage.cannotGuessMatchType,
-                          `stringName);
-                      return;
+              // TODO: remove this test when newtyper will be the only typer
+              if (!getOptionBooleanValue("newtyper")) {//case of subtyping (-nt option activated)
+                if(`astType == SymbolTable.TYPE_UNKNOWN) {
+                  typeMatch = getSubjectType(`subject,constraints);
+                  if(typeMatch == null) {
+                    %match(subject) {
+                      BQVariable[AstName=Name(stringName)] -> {
+                        TomMessage.error(getLogger(),
+                            getCurrentTomStructureOrgTrack().getFileName(),
+                            getCurrentTomStructureOrgTrack().getLine(),
+                            TomMessage.cannotGuessMatchType,
+                            `stringName);
+                        return;
+                      }
+                      BQAppl[AstName=Name(stringName)] -> {
+                        TomMessage.error(getLogger(),
+                            getCurrentTomStructureOrgTrack().getFileName(),
+                            getCurrentTomStructureOrgTrack().getLine(),
+                            TomMessage.cannotGuessMatchType,
+                            `stringName);
+                        return;
+                      }
+                      BuildConstant[AstName=Name(_)] -> {
+                        // do not throw an error message because Constant have no type
+                      }
                     }
-                    BQAppl[AstName=Name(stringName)] -> {
-                      TomMessage.error(getLogger(),
-                          getCurrentTomStructureOrgTrack().getFileName(),
-                          getCurrentTomStructureOrgTrack().getLine(),
-                          TomMessage.cannotGuessMatchType,
-                          `stringName);
-                      return;
-                    }
-                    BuildConstant[AstName=Name(_)] -> {
-                      // do not throw an error message because Constant have no type
-                    }
+                    return;
                   }
-                  return;
                 }
-              } else if(!testTypeExistence(`astType.getTomType())) {
-                TomMessage.error(getLogger(),
-                    getCurrentTomStructureOrgTrack().getFileName(),
-                    getCurrentTomStructureOrgTrack().getLine(),
-                    TomMessage.unknownType,
-                    `astType.getTomType());
-                return;
-              } 
+              }
 
-              // we now compare the pattern to its definition
-              verifyMatchPattern(`pattern, typeMatch);
+              if (`astType != SymbolTable.TYPE_UNKNOWN) {
+                if (!testTypeExistence(`astType.getTomType())) {
+                  TomMessage.error(getLogger(),
+                      getCurrentTomStructureOrgTrack().getFileName(),
+                      getCurrentTomStructureOrgTrack().getLine(),
+                      TomMessage.unknownType,
+                      `astType.getTomType());
+                }
+                // we now compare the pattern to its definition
+                verifyMatchPattern(`pattern, typeMatch);
+              } 
             }
 
             // The lhs or rhs can only be TermAppl or Variable
@@ -1325,9 +1333,11 @@ matchblock:{
         TomMessage.error(getLogger(),fileName,decLine, TomMessage.unknownSymbol, res);
         return null;
       } else { // known symbol
-        if( strictType  || !topLevel ) {
-          if(!ensureSymbolCodomain(TomBase.getSymbolCodomain(symbol), expectedType, TomMessage.invalidCodomain, res, fileName,decLine)) {
-            return null;
+        if (!getOptionBooleanValue("newtyper")) {//case of subtyping (-nt option activated)
+          if( strictType  || !topLevel ) {
+            if(!ensureSymbolCodomain(TomBase.getSymbolCodomain(symbol), expectedType, TomMessage.invalidCodomain, res, fileName,decLine)) {
+              return null;
+            }
           }
         }
       }
@@ -1403,9 +1413,11 @@ matchblock:{
         return null;
       } else { // known symbol
         // ensure type correctness if necessary
-        if ( strictType  || !topLevel ) {
-          if (!ensureSymbolCodomain(TomBase.getSymbolCodomain(symbol), expectedType, TomMessage.invalidCodomain, res, fileName,decLine)) {
-            return null;
+        if (!getOptionBooleanValue("newtyper")) {//case of subtyping (-nt option activated)
+          if ( strictType  || !topLevel ) {
+            if (!ensureSymbolCodomain(TomBase.getSymbolCodomain(symbol), expectedType, TomMessage.invalidCodomain, res, fileName,decLine)) {
+              return null;
+            }
           }
         }
       }

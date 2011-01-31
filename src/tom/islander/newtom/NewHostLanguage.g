@@ -1,7 +1,7 @@
 /*
  * TOM - To One Matching Compiler
  *
- * Copyright (c) 2000-2010, INPL, INRIA
+ * Copyright (c) 2000-2011, INPL, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,6 +24,7 @@ grammar NewHostLanguage;
 
 options {
   backtrack=true;
+  memoize=true;
   output=AST;
   ASTLabelType=Tree;
   //tokenVocab=HostTokens;
@@ -64,6 +65,9 @@ options {
 
 @parser::members{
   NewHostLanguageLexer targetlexer = new NewHostLanguageLexer();
+  private String currentFile = null;
+  private int currentLine = 1;
+  private int currentColumn = 1;
 
   // returns the current goal language code
   private String getCode() {
@@ -71,6 +75,35 @@ options {
     targetlexer.clearTarget();
     return result;
   }
+
+  public /*synchronized*/ void updatePosition(){
+    updatePosition(getLine(),getColumn());
+  }
+
+  public void updatePosition(int i, int j){
+    currentLine = i;
+    currentColumn = j;
+  }
+
+  public int currentLine(){
+    return currentLine;
+  }
+
+  public int currentColumn(){
+    return currentColumn;
+  }
+
+  // returns the current line number
+  public int getLine(){
+    return targetlexer.getLine();
+  }
+
+  // returns the current column number
+  public int getColumn(){
+    return targetlexer.getCharPositionInLine(); //getColumn();
+  }
+
+
 
 }
 
@@ -161,17 +194,32 @@ block :
   | operatorArray
   | includeConstruct
   | typeTerm
-  | LBRACE blockList RBRACE -> ^(BracedBlockList blockList)
-//  | s=Identifier /*STRING*/ -> ^(TLCodeBlock ^(ITL $s))
+//  | LBRACE blockList RBRACE -> ^(BracedBlockList blockList)
   | tlCodeBlock //-> ^(TLCodeBlock ^(ITL tlCodeBlock))
   ;
 
+//to test other constructs & tree :
 tlCodeBlock :
-//  s=ID /*STRING*/ -> ^(TLCodeBlock ^(ITL {getCode()}))
-  s=Identifier /*s=IDCODE+*/ /*STRING*/ -> ^(TLCodeBlock ^(ITL $s))
-//  (s+=Identifier|s+=WS|s+=ESC|s+=SpecialCharacters) /*s=IDCODE+*/ /*STRING*/ -> ^(TLCodeBlock ^(ITL ($s)+))// {getCode()}
-  //s=POMP -> ^(TLCodeBlock ^(ITL $s))// {getCode()}
+  s=Identifier  -> ^(TLCodeBlock ^(ITL $s))
+  //s=Identifier //{System.out.println("Line / column = " + $s.getLine() + " / " + $s.getCharPositionInLine() + " // stop - start = "+ (((TomToken)$s).getStop() - ((TomToken)$s).getStart()));}
+//  -> ^(TLCodeBlock ^(TL $s ^(TextPosition Identifier[""+currentLine()] Identifier[""+currentColumn()]) ^(TextPosition Identifier[""+$s.getLine()] Identifier[""+$s.getCharPositionInLine()])))
+
+/*  -> ^(TLCodeBlock ^(TL $s
+  ^(TextPosition Identifier[""+$s.getLine()] Identifier[""+($s.getCharPositionInLine()+1)])
+  ^(TextPosition Identifier[""+input.LT(1).getLine()] Identifier[""+input.LT(1).getCharPositionInLine()])
+    )
+  )*/
   ;
+
+//tlCodeBlock
+/*@init{
+String code = getCode();
+}*/
+//:
+//  s=Identifier /*ID*/ /*STRING*/ -> ^(TLCodeBlock ^(ITL {getCode()}))
+//s=NotSpecificConstruct  /*s=Identifier*/ /*s=IDCODE+*/ /*STRING*/ -> ^(TLCodeBlock ^(ITL $s)) // Identifier[code])) 
+//  (s+=Identifier|s+=WS|s+=ESC|s+=SpecialCharacters) /*s=IDCODE+*/ /*STRING*/ -> ^(TLCodeBlock ^(ITL ($s)+))// {getCode()}
+//  ;
 
 //goalLanguageBlock :
   // we are here because goalLanguageBlock has been called in
@@ -221,7 +269,8 @@ operatorArray :
 
 //%include
 includeConstruct :
-  INCLUDE LBRACE filename=FILENAME RBRACE -> ^(Include $filename)
+  t=INCLUDE LBRACE filename=FILENAME RBRACE -> ^(Include $filename)
+//  ^(OriginTracking Identifier["Include"] Identifier[""+$t.getLine()] Identifier[])) //name line filenam
   ;
 
 //code :
@@ -285,6 +334,8 @@ OPERATORARRAY : '%oparray'
 // following tokens are keyword for tom constructs
 // do not need to switch lexers
 INCLUDE : '%include' ;
+
+//METAQUOTE : '%[' s=.* ']%' ;
 
 GOM : '%gom'
   (
@@ -409,10 +460,12 @@ JavaIDDigit
     //'\u0021'..'\u002f'
 //    ;
 
+/*
 fragment
 HEX_DIGIT
   : ('0'..'9'|'A'..'F'|'a'..'f')
   ;
+*/
 
 // tokens to skip : white spaces
 WS : ( ' '
@@ -515,16 +568,31 @@ STRING
 */
 
 // the rule for the filter: just append the text to the buffer
-fragment
-TARGET :
+/*TARGET :
   (.)
+//  ('\u0000'..'\uffff')
+//  { $channel=HIDDEN; }
   {System.out.println("#### " + $text  + " #####");}
   {target.append(getText());}
-  ;
+  ;*/
 
 //IDCODE : Identifier| WS | ESC | SpecialCharacters;
 
-/*fragment
-ALL : ('\u0000'..'\uffff')
-  //{target.append(getText());}
-  ;*/
+//KEYWORDS : (BACKQUOTE | INCLUDE | OPERATOR | OPERATORLIST | OPERATORARRAY | MATCH | TYPETERM | STRATEGY | GOM) ;
+
+/*
+ALL : //('\u0000'..'\uffff')
+  ~KEYWORDS // ~(BACKQUOTE | INCLUDE | OPERATOR | OPERATORLIST | OPERATORARRAY | MATCH | TYPETERM | STRATEGY | GOM)
+//  { $channel=HIDDEN; }
+  {target.append(getText());}
+  ;
+*/
+
+/*
+NotSpecificConstruct : ~('`'|'%')
+  {
+    target.append(getText());
+  }
+  ;
+*/
+

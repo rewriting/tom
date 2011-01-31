@@ -20,6 +20,15 @@ public class TomToken extends CommonToken {
     return this.tree;
   }
 
+/*
+public int getStart() {
+  return start;
+}
+public int getStop() {
+  return stop;
+}
+*/
+
   public String toString() { return super.toString()+",tree="+tree; }
 
 }

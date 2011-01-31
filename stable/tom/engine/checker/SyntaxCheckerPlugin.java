@@ -2,7 +2,7 @@
 *
 * TOM - To One Matching Compiler
 *
-* Copyright (c) 2000-2010, INRIA
+* Copyright (c) 2000-2011, INRIA
 * Nancy, France.
 *
 * This program is free software; you can redistribute it and/or modify
@@ -1291,7 +1291,10 @@ private void verifyMultipleDefinition(String name, String symbolType, String Ope
 List list;
 if(OperatorOrType.equals(SyntaxCheckerPlugin.OPERATOR)) {
 if(alreadyStudiedSymbols.contains(name)) {
-TomMessage.error(getLogger(), getCurrentTomStructureOrgTrack().getFileName(), getCurrentTomStructureOrgTrack().getLine(), TomMessage.multipleSymbolDefinitionError);
+TomMessage.error(getLogger(),
+getCurrentTomStructureOrgTrack().getFileName(),
+getCurrentTomStructureOrgTrack().getLine(),
+TomMessage.multipleSymbolDefinitionError, name);
 } else {
 alreadyStudiedSymbols.add(name);
 }
@@ -1825,6 +1828,8 @@ computeDependencies(varRelationsMap,patternVars,subjectVars);
 
 //System.out.println("astType = " + `astType);
 
+// TODO: remove this test when newtyper will be the only typer
+if (!getOptionBooleanValue("newtyper")) {//case of subtyping (-nt option activated)
 if(
 tom_astType== SymbolTable.TYPE_UNKNOWN) {
 typeMatch = getSubjectType(
@@ -1890,7 +1895,12 @@ if ( ( (( tom.engine.adt.code.types.BQTerm )tom_subject).getAstName()  instanceo
 
 return;
 }
-} else if(!testTypeExistence(
+}
+}
+
+if (
+tom_astType!= SymbolTable.TYPE_UNKNOWN) {
+if (!testTypeExistence(
 tom_astType.getTomType())) {
 TomMessage.error(getLogger(),
 getCurrentTomStructureOrgTrack().getFileName(),
@@ -1898,12 +1908,11 @@ getCurrentTomStructureOrgTrack().getLine(),
 TomMessage.unknownType,
 
 tom_astType.getTomType());
-return;
-} 
-
+}
 // we now compare the pattern to its definition
 verifyMatchPattern(
 tom_pattern, typeMatch);
+} 
 
 
 }
@@ -3682,9 +3691,11 @@ if(symbol == null ) {
 TomMessage.error(getLogger(),fileName,decLine, TomMessage.unknownSymbol, res);
 return null;
 } else { // known symbol
+if (!getOptionBooleanValue("newtyper")) {//case of subtyping (-nt option activated)
 if( strictType  || !topLevel ) {
 if(!ensureSymbolCodomain(TomBase.getSymbolCodomain(symbol), expectedType, TomMessage.invalidCodomain, res, fileName,decLine)) {
 return null;
+}
 }
 }
 }
@@ -3810,9 +3821,11 @@ TomMessage.error(getLogger(),fileName,decLine, TomMessage.unknownSymbol, res);
 return null;
 } else { // known symbol
 // ensure type correctness if necessary
+if (!getOptionBooleanValue("newtyper")) {//case of subtyping (-nt option activated)
 if ( strictType  || !topLevel ) {
 if (!ensureSymbolCodomain(TomBase.getSymbolCodomain(symbol), expectedType, TomMessage.invalidCodomain, res, fileName,decLine)) {
 return null;
+}
 }
 }
 }
