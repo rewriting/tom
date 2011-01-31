@@ -23,7 +23,7 @@ statement	:	A+ ;
 
 /* Lexer rules */
 
-LEFTPAR    : '(' {System.out.println("Toto");} ;
+LEFTPAR    : '(' ;
 RIGHTPAR   : ')' ;
 LEFTBR     : '{' ;
 RIGHTBR    : '}' {emit(Token.EOF_TOKEN);} ;

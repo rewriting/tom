@@ -1,11 +1,5 @@
-@test
-%math(){ aaa;
-a; }
-
-etisru
-tttd
-
-%op et vlan
-
-truc tout ça
-%match() { aliCce alice; } %op ziou
+ici
+%match() { 
+alice alice;
+ } 
+%op ziou

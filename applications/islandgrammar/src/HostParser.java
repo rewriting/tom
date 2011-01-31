@@ -35,7 +35,7 @@ public class HostParser {
 
     private void parserMap(int i) {
       /* prepare a tree for the host content */
-      CommonToken tokenizedHostContent = new CommonToken(1,("("+hostContent.toString()+")\n"));
+      CommonToken tokenizedHostContent = new CommonToken(1,("|\n("+hostContent.toString()+")\n"));
       CommonTree treedHostContent = new CommonTree(tokenizedHostContent);
       arbre.addChild(treedHostContent);
       /* forget the savedContent, which is currently one of the tokens */
@@ -44,8 +44,7 @@ public class HostParser {
       {
         case 0:
           try {
-            miniTomLexer lexer = new miniTomLexer(input);//new ANTLRStringStream("() { aa; aaaa; }"));
-            System.out.println("truc");
+            miniTomLexer lexer = new miniTomLexer(input);//new ANTLRStringStream("() { alX; alice; }"));
             CommonTokenStream tokens = new CommonTokenStream(lexer);
             miniTomParser parser = new miniTomParser(tokens);
             RuleReturnScope result = parser.program();
