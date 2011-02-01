@@ -53,12 +53,6 @@ public class Problem3 {
     }
   }
   
-  class StringExp extends CstExp {
-    public StringExp(String value) {
-      super(value);
-    }
-  }
-
   class UnaryOperator extends Exp {
     public Exp first;
     public UnaryOperator(Exp first) {
@@ -142,11 +136,6 @@ public class Problem3 {
    %op TomCstExp IntExp(value:int) {
     is_fsym(t) { $t instanceof IntExp }
     get_slot(value,t) { ((Integer)((IntExp)$t).value) }
-  }
-
-  %op TomCstExp StringExp(value:String) {
-    is_fsym(t) { $t instanceof StringExp }
-    get_slot(value,t) { ((String)((StringExp)$t).value) }
   }
 
     // ------------------------------------------------------------
@@ -250,15 +239,14 @@ public class Problem3 {
     return "error";
   }
 
-/*
   public Exp traversalSimplify(Exp t) {
-    %match(TomExp t) {
-      UnaryOperator[first=e1] -> {
+    %match(t) {
+      Uminus[first=e1] -> {
         ((UnaryOperator)t).first  = traversalSimplify(`e1);
         return simplify(t);
       }
       
-      BinaryOperator[first=e1, second=e2] -> {
+      (Plus|Mult)[first=e1, second=e2] -> {
         ((BinaryOperator)t).first  = traversalSimplify(`e1);
         ((BinaryOperator)t).second = traversalSimplify(`e2);
         return simplify(t);
@@ -266,16 +254,15 @@ public class Problem3 {
     }
     return t;
   }
-*/
-/*
+
   public Exp simplify(Exp t) {
-    %match(TomBinaryOperator t) {
+    %match(t) {
       Plus[first=IntExp(v1), second=IntExp(v2)] -> {
-        return new IntExp(`v1.intValue() + `v2.intValue());
+        return new IntExp(`v1 + `v2);
       }
 
-      Plus[first=e1, second=IntExp(zero())] -> { return `e1; }
-      Plus[second=e1, first=IntExp(zero())] -> { return `e1; }
+      Plus[first=e1, second=IntExp(0)] -> { return `e1; }
+      Plus[second=e1, first=IntExp(0)] -> { return `e1; }
 
       Plus[first=e1, second=Uminus(e2)] -> {
         if(myEquals(`e1,`e2)) {
@@ -286,38 +273,36 @@ public class Problem3 {
       }
 
       Mult[first=IntExp(v1), second=IntExp(v2)] -> {
-        return new IntExp(`v1.intValue() * `v2.intValue());
+        return new IntExp(`v1 * `v2);
       }
       
-      Mult[first=e1, second=IntExp(suc(zero()))] -> { return `e1; }
-      Mult[second=e1, first=IntExp(suc(zero()))] -> { return `e1; }
+      Mult[first=e1, second=IntExp(1)] -> { return `e1; }
+      Mult[second=e1, first=IntExp(1)] -> { return `e1; }
     }
     return t;
   }
-  */
-/*
+
   public boolean myEquals(Exp t1, Exp t2) {
     %match(t1,t2) {
       
-      CstExp[value=e1], CstExp[value=e2]       -> { return `e1.equals(`e2); }
+      IntExp[value=e1], IntExp[value=e2]       -> { return `e1 == `e2; }
       
-      UnaryOperator[first=e1], UnaryOperator[first=f1] -> {
-        return t1.getOperator().equals(t2.getOperator()) && myEquals(`e1,`f1);
+      Uminus[first=e1], Uminus[first=f1] -> {
+        return myEquals(`e1,`f1);
       }
       
-      BinaryOperator[first=e1, second=e2], BinaryOperator[first=f1, second=f2] -> {
+      (Plus|Mult)[first=e1, second=e2], (Plus|Mult)[first=f1, second=f2] -> {
         return t1.getOperator().equals(t2.getOperator()) && myEquals(`e1,`f1) && myEquals(`e2,`f2);
       }
 
     }
     return false;
   }
-  
+
   static void  assertTrue(boolean condition) {
     if(!condition) {
       throw new RuntimeException("assertion failed.");
     }
   }
-  */
 }
 
