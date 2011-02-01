@@ -70,8 +70,16 @@ public class PPCursor {
 */
   public void write(String s) {
 
-    String[] toWrite = s.split('\n');
-    
+    int currentLine = this.getPosition().getLine();
+    for(int i = 0; i<s.length(); i++) {
+
+      if(s.charAt(i)!='\n') {
+        fileBuffer[currentLine].append(s.charAt(i));
+      }else {
+        fileBuffer.add(i, new StringBuffer());
+        currentLine++;
+      }
+    }
   }
 
 /**Erase one character
