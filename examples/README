@@ -1,3 +1,25 @@
+acmatching
+bdd
+cps
+csharp
+debugger
+deepmatch
+gasel
+generics
+labyrinth
+lazyml
+modeltrans
+multigraph
+miniml
+parser
+python
+servlet
+tomjastadd
+why
+xquery
+
+
+
 Tom is a language extension which adds pattern matching facilities to
 C, Java or Caml. Therefore, Tom is a multi-purpose programming
 language.
@@ -118,11 +140,6 @@ To relax, take a look at quine example
       it only responds `True or `False, without giving the substitution when it
       exists
 
-* antiptest
- Antipatterns Test
- Some example of antipatterns
- Concepts: antipatterns
-
 * appletxml
   XML Transformation
   This examples contains an applet with is similar to the one in the Tom
@@ -180,6 +197,11 @@ To relax, take a look at quine example
 * expression
   Simplification of algebraic expressions
   Concepts: complex object mapping, lazy-type
+
+* freshgom
+  An extension of gom which adds capabilities very similar to that of Caml
+  A good explanation is provided in the documentation.
+  Concepts: system F, gom, name bindings
 
 * gom
   gom usage demonstration
@@ -298,6 +320,14 @@ To relax, take a look at quine example
   Calculus of strutures
   Concepts: complex list-matching, exploration strategies
 
+* subtyping
+  Prototypes for type checking and type inference
+  Concepts: type systems, constraint resolution
+  ** checking: implementation of type checking rules for Var, Fun and List
+  ** inference: implementation of constraint-based type inference rules for 
+     Var, Fun and List and an algorithm of constraint resolution considering
+     equality and subtyping constraints  
+
 * tactics
   Implementation of classical theorem prover tactics with the strategy language
   Concepts: Tom strategies
@@ -314,6 +344,49 @@ To relax, take a look at quine example
 * tutorial
   Examples introduced in the tutorial
   Concepts: string matching, XML
+
+* typeinference
+  Various simple examples to test Tom's typer
+  Concepts: list matching 
+  Files' description:
+  Example 
+    - an example with a matching constraint and explicit type cast 
+    - tests to better unsderstant type relation of 'equalsTo' method and '=='
+  Example1 
+    - anexample with a matching constraint and implicit type cast 
+  Example2 
+    - an example with two matching constraints and explicit type cast 
+  Example3 
+    - an example with two matching constraints and implicit type cast 
+  Example4 
+    - an example with two matching constraints and implicit type cast
+      using list-matching 
+  Example5 
+    - an example with two matching constraints and implicit type cast
+      using antipatterns 
+  Example6 
+    - an example with two matching constraints and implicit type cast
+      using disjunction of constructors 
+  Example7 
+    - an example with a conjunction of matching constraints and implicit type cast
+  Example8 
+    - an example with a disjunction of matching constraints and implicit type cast
+  Example9 
+    - an example with a conjunction of a matching constraint and a numeric constraint 
+  Example10 
+    - an example with a matching constraint using an alias 
+  Example11 
+    - an example with a matching constraint where the first one has variables as 
+      pattern and subject 
+  Example13 
+    - an example with two separated match blocks  
+  Example14 
+    - an example with two embedded match blocks  
+  Example15 
+    - an example with conjunctions and disjuctions of matching constraints 
+  Example16 
+    - an example with embedded and separated match blocks  
+  The remaining examples are described by their file names
 
 * xml
   XML manipulation based on TNode
