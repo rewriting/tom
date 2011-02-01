@@ -323,7 +323,8 @@ public class TomOptionManager implements OptionManager, OptionOwner {
     TreeMap<String,PlatformOption> treeMap = new TreeMap<String,PlatformOption>(mapNameToOption);
     for (PlatformOption h : treeMap.values()) {
       %match(h) {
-        PluginOption[Name=name, AltName=altName, Description=description, AttrName=attrName] -> {
+        PluginOption[Name=name, AltName=altName, Description=description,
+          AttrName=attrName] && (name!="newparser")-> {
           buffer.append("\t--" + `name);
           if(`attrName.length() > 0) {
             buffer.append(" <" + `attrName + ">");
