@@ -201,7 +201,7 @@ To relax, take a look at quine example
 * freshgom
   An extension of gom which adds capabilities very similar to that of Caml
   A good explanation is provided in the documentation.
-  Concepts: gom, name bindings
+  Concepts: system F, gom, name bindings
 
 * gom
   gom usage demonstration
