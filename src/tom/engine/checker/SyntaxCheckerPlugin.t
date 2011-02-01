@@ -232,7 +232,9 @@ public class SyntaxCheckerPlugin extends TomGenericPlugin {
         reinit();
         // perform analyse
         try {
-          `TopDownCollect(CheckSyntax(this)).visitLight((Code)getWorkingTerm());
+          Code code = (Code)getWorkingTerm();
+          //System.out.println("code = " + code);
+          `TopDownCollect(CheckSyntax(this)).visitLight(code);
         } catch(tom.library.sl.VisitFailure e) {
           System.out.println("strategy failed");
         }
@@ -684,6 +686,9 @@ matchLbl: %match(constr) {// TODO : add something to test the astType
                 }
               }
 
+              //System.out.println("verifyMatch: " + `pattern);
+              //System.out.println("astType: " + `astType);
+              //System.out.println("typeMatch: " + typeMatch);
               if (`astType != SymbolTable.TYPE_UNKNOWN) {
                 if (!testTypeExistence(`astType.getTomType())) {
                   TomMessage.error(getLogger(),
@@ -692,9 +697,9 @@ matchLbl: %match(constr) {// TODO : add something to test the astType
                       TomMessage.unknownType,
                       `astType.getTomType());
                 }
-                // we now compare the pattern to its definition
-                verifyMatchPattern(`pattern, typeMatch);
               } 
+              // we now compare the pattern to its definition
+              verifyMatchPattern(`pattern, typeMatch);
             }
 
             // The lhs or rhs can only be TermAppl or Variable
@@ -1108,6 +1113,9 @@ matchL:  %match(subject,s) {
    */
   private void verifyMatchPattern(TomTerm term, TomType type) {      
     // the term cannot be a Var* nor a _*
+    
+    //System.out.println("verifyMatchPattern: " + term);
+
     %match(term) {
       VariableStar[Options=options, AstName=EmptyName()] -> {
         String fileName = findOriginTrackingFileName(`options);
@@ -1164,6 +1172,9 @@ matchL:  %match(subject,s) {
     String fileName = "unknown";
     int decLine = -1;
     Option orgTrack;
+
+    //System.out.println("validateTerm: " + term);
+
 matchblock:{
     %match(term) {
       TermAppl[Options=options, NameList=symbolNameList, Args=arguments] -> {
@@ -1326,9 +1337,14 @@ matchblock:{
   private TomSymbol ensureValidApplDisjunction(TomNameList symbolNameList, TomType expectedType, 
       String fileName, int decLine,  boolean topLevel) {
 
+    //System.out.println("symbolNameList = " + symbolNameList);
+
     if(symbolNameList.length()==1) { // Valid but has it a good type?
       String res = symbolNameList.getHeadconcTomName().getString();
       TomSymbol symbol = getSymbolFromName(res);
+
+      //System.out.println("symbol = " + symbol);
+
       if(symbol == null ) {
         TomMessage.error(getLogger(),fileName,decLine, TomMessage.unknownSymbol, res);
         return null;
