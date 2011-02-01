@@ -48,13 +48,13 @@ To relax, take a look at quine example
 ------------------------
   Compilation:
     - To compile all examples, run the script 'build.sh' from directory
-    'examples', assuming Ant is installed. To compile a specific example,
-    specify the example name.
-    For instance, to compile example 'peano' only, run
-    'build.sh -Dexample=peano build'.
-    Another possibility is to go into the directory and call 'ant':
-    'cd peano'
-    'ant'
+      'examples', assuming Ant is installed. To compile a specific example,
+      specify the example name.
+      For instance, to compile example 'peano' only, run
+      'build.sh -Dexample=peano build'.
+      Another possibility is to go into the directory and call 'ant':
+      'cd peano'
+      'ant'
 
   Execution:
     - To run a specific example, go to directory examples/build/ and execute
@@ -62,11 +62,8 @@ To relax, take a look at quine example
       instance, to run 'Peano1', simply run 'java peano.Peano1'.
 
 
-* Note about ApiGen/Vas/Gom:
-------------------------
-  Vas is build on top of ApiGen and both are deprecated. You may now use
-  Gom for all your applications (see user manual).
-
+* Note about Gom:
+-----------------
   Gom is a system which takes a many-sorted signature as input, and
   generates a concrete implementation for such an abstract data-type.
   In addition, Gom automatically generates a mapping for Tom.
