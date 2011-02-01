@@ -239,11 +239,15 @@ public class NewParserPlugin extends TomGenericPlugin {
   }
   
   /**
-   * inherited from OptionOwner interface (plugin) 
+   * inherited from OptionOwner interface (plugin)
+   * Disabled for stable version - To enable again when a new parser will be
+   * included
    */
+  /*
   public PlatformOptionList getDeclaredOptionList() {
     return OptionParser.xmlToOptionList(NewParserPlugin.DECLARED_OPTIONS);
   }
+  */
 
   /**
    * return the last line number
