@@ -6,7 +6,7 @@ import org.junit.Test;
 public class TestPPTextPosition{
 
   PPTextPosition pptextposition;
-  
+
   public static void main(String[] args) {
     org.junit.runner.JUnitCore.main(TestPPTextPosition.class.getName());
   }
@@ -19,6 +19,10 @@ public class TestPPTextPosition{
   @After
   public void end() {}
 
+  @After
+  public void endTest() {
+  }
+
   @Test
   public void testGetLine() {
     Assert.assertEquals("Line is 14", 14, pptextposition.getLine());
@@ -28,5 +32,5 @@ public class TestPPTextPosition{
   public void testGetColumn() {
     Assert.assertEquals("Column is 8", 8, pptextposition.getColumn());
   }
-  
+
 }

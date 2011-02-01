@@ -4,7 +4,7 @@ import java.io.*;
 import java.util.List;
 
 /**The PPOutputFormatter class is used to coordinate the different steps 
-*in the processus of a text file modification/creation.
+*in the processus of a text file's modification/creation.
 *@author
 *@version 1.0 (2011.01.17)
 */
@@ -18,7 +18,7 @@ public class PPOutputFormatter {
   private FileWriter fileToModify;
 /**A List of PPText which can be written in the file.
 */
-  private List<PPText> pPTextList;
+  private List<PPText> ppTextList;
   
 /**Creates a PPOutputFormatter to coordinate the modification/creation of a File.
 *@param aPPCursor the PPCursor which will move whithin the File
@@ -29,10 +29,8 @@ public class PPOutputFormatter {
 
 /**Put a new PPText in the pPTextList.
 *@param s the text to stock in a PPText
-*@param start the start position of the created PPText
-*@param end the end position of the created PPText
 */ 
-  public void put(String s, PPTextPosition start, PPTextPosition end) {}
+  public void put(PPText pptext) {}
 
 /**All the text contained in the file is transferred to the PPCursor, so that the Cursor can manipulate it.
 */
@@ -47,8 +45,13 @@ public class PPOutputFormatter {
 */
   public void giveOnePPTextToPPCursor(PPText ppt){}
 
-/**All the PPText stocked in the pPTextList are given to the PPCursor.
+/**All the PPText stocked in the ppTextList are given to the PPCursor.
 */
   public void giveAllPPTextToPPCursor(){}
+
+/**Returns the PPOutputFormatter's PPCursor.
+*/
+	/*public PPCursor getPPCursor(){
+	}*/
 
 }
