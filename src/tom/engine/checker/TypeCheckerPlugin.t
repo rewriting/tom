@@ -104,11 +104,6 @@ public class TypeCheckerPlugin extends TomGenericPlugin {
   public int getClass(TomTerm term) {
     %match(term) {
       /* TermAppl does not exists after Desugarer phase */
-      /*
-      TermAppl[NameList=concTomName(Name(""))] -> { return UNAMED_APPL;}
-      TermAppl[NameList=concTomName(Name(_))] -> { return TERM_APPL;}
-      TermAppl[NameList=concTomName(Name(_), _*)] -> { return APPL_DISJUNCTION;}
-      */
       RecordAppl[NameList=concTomName(Name(_))] -> { return RECORD_APPL;}
       RecordAppl[NameList=concTomName(Name(_), _*)] -> { return RECORD_APPL_DISJUNCTION;}
       XMLAppl[] -> { return XML_APPL;}
@@ -122,19 +117,6 @@ public class TypeCheckerPlugin extends TomGenericPlugin {
     String dijunctionName = "";
     %match(term) {
       /* TermAppl does not exists after Desugarer phase */
-      /*
-      TermAppl[NameList=concTomName(Name(name))] -> { return `name;}
-      TermAppl[NameList=nameList] -> {
-        String head;
-        dijunctionName = `nameList.getHeadconcTomName().getString();
-        while(!`nameList.isEmptyconcTomName()) {
-          head = `nameList.getHeadconcTomName().getString();
-          dijunctionName = ( dijunctionName.compareTo(head) > 0)?dijunctionName:head;
-          `nameList = `nameList.getTailconcTomName();
-        }
-        return dijunctionName;
-      }
-      */
       RecordAppl[NameList=concTomName(Name(name))] -> { return `name;}
       RecordAppl[NameList=nameList] -> {
         String head;
@@ -312,7 +294,7 @@ public class TypeCheckerPlugin extends TomGenericPlugin {
   }
 
   private void verifyStrategyVariable(TomVisitList list) {
-    /* %strategy : error if there is no visit */
+    /* %strategy: error if there is no visit */
     if(`list.isEmptyconcTomVisit()) {
       TomMessage.error(getLogger(),null,0,TomMessage.emptyStrategy);
     }

@@ -85,7 +85,7 @@ public class SyntaxCheckerPlugin extends TomGenericPlugin {
   protected final static int UNAMED_VARIABLE         = 8;
   protected final static int UNAMED_VARIABLE_STAR    = 9;
 
-  protected Option currentTomStructureOrgTrack;
+  private Option currentTomStructureOrgTrack;
 
   /** the declared options string */
   public static final String DECLARED_OPTIONS = 
@@ -133,11 +133,11 @@ public class SyntaxCheckerPlugin extends TomGenericPlugin {
     return Logger.getLogger(getClass().getName());
   }
 
-  public Option getCurrentTomStructureOrgTrack() {
+  private Option getCurrentTomStructureOrgTrack() {
     return currentTomStructureOrgTrack;
   }
 
-  public void setCurrentTomStructureOrgTrack(Option currentTomStructureOrgTrack) {
+  private void setCurrentTomStructureOrgTrack(Option currentTomStructureOrgTrack) {
     this.currentTomStructureOrgTrack = currentTomStructureOrgTrack;
   }
 
@@ -154,55 +154,6 @@ public class SyntaxCheckerPlugin extends TomGenericPlugin {
     alreadyStudiedSymbols = new HashSet<String>();
   }
   
-  public String getName(TomTerm term) {
-    %match(term) {
-      TermAppl[NameList=concTomName(Name(name))] -> { return `name;}
-      TermAppl[NameList=nameList] -> {
-        String dijunctionName = `nameList.getHeadconcTomName().getString();
-        while(!`nameList.isEmptyconcTomName()) {
-          String head = `nameList.getHeadconcTomName().getString();
-          dijunctionName = ( dijunctionName.compareTo(head) > 0)?dijunctionName:head;
-          `nameList = `nameList.getTailconcTomName();
-        }
-        return dijunctionName;
-      }
-      RecordAppl[NameList=concTomName(Name(name))] -> { return `name;}
-      RecordAppl[NameList=nameList] -> {
-        String dijunctionName = `nameList.getHeadconcTomName().getString();
-        while(!`nameList.isEmptyconcTomName()) {
-          String head = `nameList.getHeadconcTomName().getString();
-          dijunctionName = ( dijunctionName.compareTo(head) > 0)?dijunctionName:head;
-          `nameList = `nameList.getTailconcTomName();
-        }
-        return dijunctionName;
-      }
-      XMLAppl[NameList=concTomName(Name(name), _*)] ->{ return `name;}
-      XMLAppl[NameList=nameList] -> {
-        String dijunctionName = `nameList.getHeadconcTomName().getString();
-        while(!`nameList.isEmptyconcTomName()) {
-          String head = `nameList.getHeadconcTomName().getString();
-          dijunctionName = ( dijunctionName.compareTo(head) > 0)?dijunctionName:head;
-          `nameList = `nameList.getTailconcTomName();
-        }
-        return dijunctionName;
-      }
-      Variable[AstName=Name(name)] -> { return `name;}
-      VariableStar[AstName=Name(name)] -> { return `name+"*";}
-      AntiTerm(t) -> { return getName(`t); }
-    }
-    throw new TomRuntimeException("Invalid Term:" + term);
-  }
-
-  public String getName(BQTerm term) {
-    %match(term) {
-      BQAppl[AstName=Name(name)] -> { return `name;}
-      BQVariable[AstName=Name(name)] -> { return `name;}
-      BQVariableStar[AstName=Name(name)] -> { return `name+"*";}
-      BuildConstant[AstName=Name(name)] -> { return `name;}
-    }
-    throw new TomRuntimeException("Invalid Term:" + term);
-  }
-
   /**
    * Shared Functions 
    */
@@ -222,6 +173,7 @@ public class SyntaxCheckerPlugin extends TomGenericPlugin {
   }
 
   private boolean strictType = true;
+
   public void run(Map informationTracker) {
     //System.out.println("(debug) I'm in the Tom SyntaxChecker : TSM"+getStreamManager().toString());
     if(isActivated()) {
@@ -645,7 +597,6 @@ matchblock:{
     for(Constraint constr: constraints) {
 matchLbl: %match(constr) {// TODO : add something to test the astType
             MatchConstraint(pattern,subject,astType) -> {
-              TomType typeMatch = `astType;
 
               Collection<TomName> patternVars = new HashSet<TomName>();
               Collection<TomName> subjectVars = new HashSet<TomName>();
@@ -655,10 +606,11 @@ matchLbl: %match(constr) {// TODO : add something to test the astType
 
               //System.out.println("astType = " + `astType);
 
-              // TODO: remove this test when newtyper will be the only typer
-              if (!getOptionBooleanValue("newtyper")) {//case of subtyping (-nt option activated)
-                if(`astType == SymbolTable.TYPE_UNKNOWN) {
-                  typeMatch = getSubjectType(`subject,constraints);
+              if(`astType == SymbolTable.TYPE_UNKNOWN) {
+
+                if (!getOptionBooleanValue("newtyper")) {//case of subtyping (-nt option activated)
+                  // TODO: remove this test when newtyper will be the only typer
+                  TomType typeMatch = getSubjectType(`subject,constraints);
                   if(typeMatch == null) {
                     %match(subject) {
                       BQVariable[AstName=Name(stringName)] -> {
@@ -684,12 +636,10 @@ matchLbl: %match(constr) {// TODO : add something to test the astType
                     return;
                   }
                 }
-              }
 
-              //System.out.println("verifyMatch: " + `pattern);
-              //System.out.println("astType: " + `astType);
-              //System.out.println("typeMatch: " + typeMatch);
-              if (`astType != SymbolTable.TYPE_UNKNOWN) {
+                verifyMatchPattern(`pattern, getPatternType(`pattern));
+              } else {
+                // astType is known
                 if (!testTypeExistence(`astType.getTomType())) {
                   TomMessage.error(getLogger(),
                       getCurrentTomStructureOrgTrack().getFileName(),
@@ -697,9 +647,10 @@ matchLbl: %match(constr) {// TODO : add something to test the astType
                       TomMessage.unknownType,
                       `astType.getTomType());
                 }
-              } 
-              // we now compare the pattern to its definition
-              verifyMatchPattern(`pattern, typeMatch);
+
+                // we now compare the pattern to its definition
+                verifyMatchPattern(`pattern, `astType);
+              }
             }
 
             // The lhs or rhs can only be TermAppl or Variable
@@ -995,6 +946,56 @@ matchLbl: %match(constr) {// TODO : add something to test the astType
     return null;
   }
 
+  private TomType getPatternType(TomTerm pattern) {
+    %match(pattern) {
+      AntiTerm(p) -> { pattern = `p; }
+    }
+    %match(pattern) {
+      (TermAppl|RecordAppl|XMLAppl)[NameList=concTomName(Name(name),_*)] -> {        
+        TomSymbol symbol = null;
+        if(`pattern.isXMLAppl()) {
+          symbol = getSymbolFromName(Constants.ELEMENT_NODE);
+        } else {
+          symbol = getSymbolFromName(`name);
+        }                
+        if(symbol!=null) {
+          TomType type = TomBase.getSymbolCodomain(symbol);
+          // System.out.println("type = " + type);            
+          String typeName = TomBase.getTomType(`type);
+          if(!testTypeExistence(typeName)) {
+            TomMessage.error(getLogger(),
+                getCurrentTomStructureOrgTrack().getFileName(),
+                getCurrentTomStructureOrgTrack().getLine(),
+                TomMessage.unknownMatchArgumentTypeInSignature,
+                `name, typeName);
+          }
+          return type;
+        }
+      }
+      // TOBE CONTINUED            
+      //            var@Variable[] -> {
+      //              TomType type = getVarTypeFromConstraints(var,constraints);
+      //              if ( type != null ) {
+      //                return type;
+      //              }
+      //            }
+      // TOBE CONTINUED        
+      //        NumericConstraint[Left=left,Right=right] -> {
+      //          // we want two terms to be equal even if their option is different 
+      //          //( because of their possition for example )
+      //          if ((`right.setOptions(`concOption())) != (subject.setOptions(`concOption()))) { continue; }
+      //          if (`left.isVariable()) {
+      //            TomType type = guessVarTypeFromConstraints(var,matchConstraints);
+      //            if ( type != null ) {
+      //              return type;
+      //            }
+      //          }
+      //        }
+    }
+
+    return null;
+  }
+
   /**
    * if a type is not specified 
    * 1. we look for a type in all match constraints where we can find this subject
@@ -1012,53 +1013,12 @@ matchL:  %match(subject,s) {
            BQAppl[AstName=tomName,Args=tomList],BQAppl[AstName=tomName,Args=tomList] -> {break matchL;}
            _,_ -> { continue; }
          }
-         TomTerm pattern = `patt;
-         %match(pattern) {
-           AntiTerm(p) -> { pattern = `p; }
+
+         TomType type = getPatternType(`patt);
+         if(type!=null) {
+           return type;
          }
-         %match(pattern) {
-           (TermAppl|RecordAppl|XMLAppl)[NameList=concTomName(Name(name),_*)] -> {        
-             TomSymbol symbol = null;
-             if(`pattern.isXMLAppl()) {
-               symbol = getSymbolFromName(Constants.ELEMENT_NODE);
-             } else {
-               symbol = getSymbolFromName(`name);
-             }                
-             if(symbol!=null) {
-               TomType type = TomBase.getSymbolCodomain(symbol);
-               // System.out.println("type = " + type);            
-               String typeName = TomBase.getTomType(`type);
-               if(!testTypeExistence(typeName)) {
-                 TomMessage.error(getLogger(),
-                     getCurrentTomStructureOrgTrack().getFileName(),
-                     getCurrentTomStructureOrgTrack().getLine(),
-                     TomMessage.unknownMatchArgumentTypeInSignature,
-                     `name, typeName);
-               }
-               return type;
-             }
-           }
-           // TOBE CONTINUED            
-           //            var@Variable[] -> {
-           //              TomType type = getVarTypeFromConstraints(var,constraints);
-           //              if ( type != null ) {
-           //                return type;
-           //              }
-           //            }
-         }         
         }
-        // TOBE CONTINUED        
-        //        NumericConstraint[Left=left,Right=right] -> {
-        //          // we want two terms to be equal even if their option is different 
-        //          //( because of their possition for example )
-        //          if ((`right.setOptions(`concOption())) != (subject.setOptions(`concOption()))) { continue; }
-        //          if (`left.isVariable()) {
-        //            TomType type = guessVarTypeFromConstraints(var,matchConstraints);
-        //            if ( type != null ) {
-        //              return type;
-        //            }
-        //          }
-        //        }
       }
     }// for    
     return null;
@@ -1697,4 +1657,52 @@ whileBlock: {
     }
   }
 
+  private String getName(TomTerm term) {
+    %match(term) {
+      TermAppl[NameList=concTomName(Name(name))] -> { return `name;}
+      TermAppl[NameList=nameList] -> {
+        String dijunctionName = `nameList.getHeadconcTomName().getString();
+        while(!`nameList.isEmptyconcTomName()) {
+          String head = `nameList.getHeadconcTomName().getString();
+          dijunctionName = ( dijunctionName.compareTo(head) > 0)?dijunctionName:head;
+          `nameList = `nameList.getTailconcTomName();
+        }
+        return dijunctionName;
+      }
+      RecordAppl[NameList=concTomName(Name(name))] -> { return `name;}
+      RecordAppl[NameList=nameList] -> {
+        String dijunctionName = `nameList.getHeadconcTomName().getString();
+        while(!`nameList.isEmptyconcTomName()) {
+          String head = `nameList.getHeadconcTomName().getString();
+          dijunctionName = ( dijunctionName.compareTo(head) > 0)?dijunctionName:head;
+          `nameList = `nameList.getTailconcTomName();
+        }
+        return dijunctionName;
+      }
+      XMLAppl[NameList=concTomName(Name(name), _*)] ->{ return `name;}
+      XMLAppl[NameList=nameList] -> {
+        String dijunctionName = `nameList.getHeadconcTomName().getString();
+        while(!`nameList.isEmptyconcTomName()) {
+          String head = `nameList.getHeadconcTomName().getString();
+          dijunctionName = ( dijunctionName.compareTo(head) > 0)?dijunctionName:head;
+          `nameList = `nameList.getTailconcTomName();
+        }
+        return dijunctionName;
+      }
+      Variable[AstName=Name(name)] -> { return `name;}
+      VariableStar[AstName=Name(name)] -> { return `name+"*";}
+      AntiTerm(t) -> { return getName(`t); }
+    }
+    throw new TomRuntimeException("Invalid Term:" + term);
+  }
+
+  private String getName(BQTerm term) {
+    %match(term) {
+      BQAppl[AstName=Name(name)] -> { return `name;}
+      BQVariable[AstName=Name(name)] -> { return `name;}
+      BQVariableStar[AstName=Name(name)] -> { return `name+"*";}
+      BuildConstant[AstName=Name(name)] -> { return `name;}
+    }
+    throw new TomRuntimeException("Invalid Term:" + term);
+  }
 } //class
