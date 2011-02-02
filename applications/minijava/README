@@ -1,0 +1,7 @@
+gom -d gen parser/Rec.gom 
+gomantlradaptor -d gen -p parser parser/Rec.gom
+java org.antlr.Tool -o gen -lib gen/parser/rec parser/Rec.g  
+tom -d gen parser/Main.t
+cd gen
+javac parser/Main.java
+

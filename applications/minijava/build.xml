@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the parser" default="build" basedir=".">
+
+  <property environment="env"/>
+  <!--<property name="tom.home"        value="/Users/pem/tmp/tom-2.8rc2"/>-->
+  <property name="tom.home"        value="${env.TOM_HOME}"/>
+  <import file="${tom.home}/lib/tom-common.xml"/>
+
+  <property name="src" location="src"/>
+  <property name="gen" location="gen"/>
+  <property name="build" location="build"/>
+  <property name="parser" value="parser"/>
+
+  <target name="clean" description="Cleans gen and build directory">
+    <delete dir="${gen}"/>
+    <delete dir="${build}"/>
+  </target>
+
+  <target name="build" depends="tom.init">
+    <mkdir dir="${gen}"/>
+
+    <gom.preset srcdir="${src}"
+      destdir="${gen}">
+      <include name="${parser}/Rec.gom"/>
+    </gom.preset>	
+
+    <gomantlradapter.preset
+      srcdir="${src}"
+      destdir="${gen}"
+      package="${parser}">
+      <include name="${parser}/**/Rec.gom"/>
+    </gomantlradapter.preset>
+
+    <taskdef name="antlr3"
+      classname="org.apache.tools.ant.antlr.ANTLR3">
+      <classpath refid="tom.classpath"/>
+    </taskdef>
+    <antlr3 target="${src}/${parser}/Rec.g"
+      outputdirectory="${gen}/${parser}"
+      libdirectory="${gen}/${parser}/rec"
+      multithreaded="true">
+      <classpath refid="tom.classpath"/>
+    </antlr3>
+
+    <tom.preset srcdir="${src}"  		        
+      destdir="${gen}">          
+    </tom.preset>
+
+    <mkdir dir="${build}"/>
+    <javac.preset
+      includeantruntime="false"
+      destdir="${build}">
+      <src path="${src}"/>
+      <src path="${gen}"/>
+      <classpath refid="tom.classpath"/>
+    </javac.preset>
+  </target>
+
+</project>
