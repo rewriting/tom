@@ -103,8 +103,8 @@ public class SyntacticPropagator implements IBasePropagator {
           return `m; 
         }
        
-        System.out.println("m = " + `m);
-        System.out.println("aType = " + `aType);
+        //DEBUG System.out.println("m = " + `m);
+        //DEBUG System.out.println("aType = " + `aType);
         List<Constraint> lastPart = new ArrayList<Constraint>();
         ArrayList<BQTerm> freshVarList = new ArrayList<BQTerm>();
         // we build the last part only once, and we store the fresh variables we generate
@@ -112,14 +112,14 @@ public class SyntacticPropagator implements IBasePropagator {
           concSlot(_*,PairSlotAppl(slotName,appl),_*) -> {
             TomType slotType =
               sp.getCompiler().getSlotType(`firstName,`slotName);
-            System.out.println("slotType = " + slotType);
-            System.out.println("slotName= " + `slotName);
+            //DEBUG System.out.println("slotType = " + slotType);
+            //DEBUG System.out.println("slotName= " + `slotName);
             BQTerm freshVar = sp.getCompiler().getFreshVariable(slotType);
             // store the fresh variable
             freshVarList.add(freshVar);
             // build the last part
             lastPart.add(`MatchConstraint(appl,freshVar,slotType));
-            System.out.println("Match#1= " + `MatchConstraint(appl,freshVar,slotType));
+            //DEBUG System.out.println("Match#1= " + `MatchConstraint(appl,freshVar,slotType));
           }
         }
         // introduce an intermediate variable (with another type) to handle subtyping
@@ -154,7 +154,7 @@ public class SyntacticPropagator implements IBasePropagator {
                 TomType slotType =
                   sp.getCompiler().getSlotType(`name,`slotName); 
                 andForName.add(`MatchConstraint(TomBase.convertFromBQVarToVar(freshVar),Subterm(name,slotName,freshCastedSubject),slotType));
-                System.out.println("Match#2= " + `MatchConstraint(TomBase.convertFromBQVarToVar(freshVar),Subterm(name,slotName,freshCastedSubject),slotType));
+                //DEBUG System.out.println("Match#2= " + `MatchConstraint(TomBase.convertFromBQVarToVar(freshVar),Subterm(name,slotName,freshCastedSubject),slotType));
                 counter++;
                 //DEBUG System.out.println("Type slot = " + slotType);
                 //DEBUG System.out.println("--- aType =  " + `aType);
@@ -165,9 +165,9 @@ public class SyntacticPropagator implements IBasePropagator {
         }
         lastPart.add(0,l);
         lastPart.add(0,`MatchConstraint(TomBase.convertFromBQVarToVar(freshSubject),g,pType));
-        System.out.println("Match = " +
-            `MatchConstraint(TomBase.convertFromBQVarToVar(freshSubject),g,pType));
-        System.out.println("In Syntactic Propagator: lastPart = " + lastPart);
+        //DEBUG System.out.println("Match = " +
+        //DEBUG     `MatchConstraint(TomBase.convertFromBQVarToVar(freshSubject),g,pType));
+        //DEBUG System.out.println("In Syntactic Propagator: lastPart = " + lastPart);
         lastPart.add(sp.getConstraintPropagator().performDetach(`m));
         return ASTFactory.makeAndConstraint(lastPart);
       }      

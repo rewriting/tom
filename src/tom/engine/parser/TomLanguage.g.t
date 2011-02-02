@@ -87,6 +87,8 @@ options{
 
     private SymbolTable symbolTable;
 
+    private HashMap<String,String> usedSlots = new HashMap<String,String>();
+
     public TomParser(ParserSharedInputState state, HostParser target,
                      OptionManager optionManager) {
         this(state);
@@ -94,6 +96,14 @@ options{
         this.tomlexer = (TomLexer) selector().getStream("tomlexer");
         this.symbolTable = target.getSymbolTable();
         this.bqparser = new BackQuoteParser(state,this);
+    }
+
+    private void putSlot(String sName, String sType) {
+      usedSlots.put(sName,sType);
+    }
+
+    private String getSlotType(String sName) {
+      return usedSlots.get(sName);
     }
 
     private void putType(String name, TomType type) {
@@ -1656,10 +1666,18 @@ operator returns [Declaration result] throws TomException
             LPAREN (slotName:ALL_ID COLON typeArg:ALL_ID
             {
                 stringSlotName = slotName.getText();
-                astName = `Name(stringSlotName);
+                astName = ASTFactory.makeName(stringSlotName);
                 slotNameList.add(astName);
                 pairNameDeclList.add(`PairNameDecl(astName,EmptyDeclaration()));
                 types = `concTomType(types*,Type(concTypeOption(),typeArg.getText(),EmptyTargetLanguageType()));
+                String typeOfSlot = getSlotType(stringSlotName);
+                String typeOfArg= typeArg.getText();
+                if (typeOfSlot != null && !typeOfSlot.equals(typeOfArg)) {
+                  TomMessage.error(getLogger(),currentFile(), getLine(),
+                    TomMessage.slotIncompatibleTypes,stringSlotName,typeOfArg,typeOfSlot);
+                } else {
+                  putSlot(stringSlotName,typeOfArg);
+                }
             }
             (
                 COMMA
@@ -1675,6 +1693,14 @@ operator returns [Declaration result] throws TomException
                     slotNameList.add(astName);
                     pairNameDeclList.add(`PairNameDecl(Name(stringSlotName),EmptyDeclaration()));
                     types = `concTomType(types*,Type(concTypeOption(),typeArg2.getText(),EmptyTargetLanguageType()));
+                    String typeOfSlot = getSlotType(stringSlotName);
+                    String typeOfArg= typeArg2.getText();
+                    if (typeOfSlot != null && !typeOfSlot.equals(typeOfArg)) {
+                      TomMessage.error(getLogger(),currentFile(), getLine(),
+                        TomMessage.slotIncompatibleTypes,stringSlotName,typeOfArg,typeOfSlot);
+                    } else {
+                      putSlot(stringSlotName,typeOfArg);
+                    }
                 }
             )*
             )? RPAREN
