@@ -1,3 +1,11 @@
+version 2.8:
+  (administrative release)
+  - improved the organization of the Tom compiler itself
+  - compilation of multiple files in parallel
+  - integrate support for AC (Associative-Commutative) matching
+  - integrate a new type-inference engine
+
+
 version 2.7:
   - Gom has a new option: --fresh, to generate support for syntax involving
     alpha-convertible names and binding operations
