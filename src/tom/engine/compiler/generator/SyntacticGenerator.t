@@ -103,7 +103,8 @@ public class SyntacticGenerator implements IBaseGenerator {
     } else if(TomBase.hasTheory(theory, `AU())) {
       return `IsSort(type,subject);
     }
+    // TODO Claudia
     return
-      `IsFsym(name,subject);
+      `IsFsym(name,ExpressionToBQTerm(Cast(type,BQTermToExpression(subject))));
   }
 }

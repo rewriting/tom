@@ -153,6 +153,7 @@ public class ConstraintGenerator {
           System.out.println("type t = " + TomBase.getTermType(`t,symbolTable));
           System.out.println("aType = " + `aType);
           // check subtype and add a cast
+          // TODO Claudia : check if this test IF is necessary
           return
             `If(IsSort(aType,t),LetRef(TomBase.convertFromVarToBQVar(v),Cast(TomBase.getTermType(v,symbolTable),BQTermToExpression(t)),action),Nop());
         }

@@ -141,6 +141,7 @@ public class SyntacticPropagator implements IBasePropagator {
             // the 'and' conjunction for each name
             List<Constraint> andForName = new ArrayList<Constraint>();
             // add condition for symbolOf
+            //TODO andForName.add(`IsSortConstraint(aType,freshSubject));
             andForName.add(`MatchConstraint(RecordAppl(options,concTomName(name),concSlot(),concConstraint()),SymbolOf(freshSubject),aType));
             System.out.println("Match#2= " + `MatchConstraint(RecordAppl(options,concTomName(name),concSlot(),concConstraint()),SymbolOf(freshSubject),aType));
             int counter = 0;
