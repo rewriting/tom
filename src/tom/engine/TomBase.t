@@ -619,7 +619,7 @@ public final class TomBase {
       GetSliceArray[SubjectListName=term] -> { return getTermType(`term, symbolTable); }
       Cast[AstType=type] -> { return `type; }
       AddOne[Variable=bqterm] -> { return getTermType(`bqterm, symbolTable); }
-      Integer[value=v] -> { return symbolTable.getTypeFromName("int"); }
+      Integer[value=v] -> { return symbolTable.getType("int"); }
     }
     System.out.println("getTermType error on term: " + t);
     throw new TomRuntimeException("getTermType error on term: " + t);

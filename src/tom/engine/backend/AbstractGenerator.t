@@ -366,11 +366,6 @@ public abstract class AbstractGenerator {
         return;
       }
 
-      //Cast(tlType@TLType[],exp) -> {
-      //  buildExpCast(deep, `tlType, `exp, moduleName);
-      //  return;
-      //}
-
       GetSlot(_,Name(opname),slotName, var@(BQVariable|BuildTerm|ExpressionToBQTerm)[]) -> {    	  
         `buildExpGetSlot(deep, opname, slotName, var, moduleName);
         return;

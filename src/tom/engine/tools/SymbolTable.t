@@ -101,10 +101,6 @@ public class SymbolTable {
     }
   }
 
-  public TomType getTypeFromName(String name) {
-    return mapTypeName.get(name);
-  }
-
   public void putSymbol(String name, TomSymbol astSymbol) {
     TomSymbol result = mapSymbolName.put(name,astSymbol);
   }

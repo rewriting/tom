@@ -1,3 +1,9 @@
+2011-02-02 tavaresc
+ * Detect when a slot has been declared with two different sorts.
+
+2011-02-01 tavaresc
+ * Fix cast type for slots of a RecordAppl.
+
 2011-01-31 tavaresc
  * Fix cast type in code generation of "MatchConstraint".
 

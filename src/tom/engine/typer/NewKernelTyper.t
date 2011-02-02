@@ -1891,7 +1891,7 @@ matchBlockFail :
         Type[TypeOptions=concTypeOption(_*,WithSymbol[RootSymbolName=rsName2],_*),TomType=tName] << t2 -> {
           //DEBUG System.out.println("\nIn supType: case 4.1");
           // Return the equivalent groudn type without decoration
-          return symbolTable.getTypeFromName(`tName); 
+          return symbolTable.getType(`tName); 
         }
 
       /* CASES 2b, 3b and 4.2c */

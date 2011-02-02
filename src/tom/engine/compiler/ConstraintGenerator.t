@@ -143,16 +143,18 @@ public class ConstraintGenerator {
         return buildConstraintDisjunction(`conn,action);
       }
       // variables' assignments
-      ConstraintToExpression(MatchConstraint[Pattern=v@(Variable|VariableStar)[],Subject=t]) -> {
+      ConstraintToExpression(MatchConstraint[Pattern=v@(Variable|VariableStar)[],Subject=t,AstType=aType]) -> {
         SymbolTable symbolTable = getCompiler().getSymbolTable();
 
-        //DEBUG System.out.println("In Constraint Generator with v = " + `v + '\n');
-        //DEBUG System.out.println("In Constraint Generator with t = " + `t + '\n');
+        System.out.println("In Constraint Generator with v = " + `v + '\n');
+        System.out.println("In Constraint Generator with t = " + `t + '\n');
         if(TomBase.getTermType(`v,symbolTable) != TomBase.getTermType(`t,symbolTable)) {
-          //DEBUG System.out.println("type1 = " + TomBase.getTermType(`v,symbolTable));
-          //DEBUG System.out.println("type2 = " + TomBase.getTermType(`t,symbolTable));
+          System.out.println("type v = " + TomBase.getTermType(`v,symbolTable));
+          System.out.println("type t = " + TomBase.getTermType(`t,symbolTable));
+          System.out.println("aType = " + `aType);
           // check subtype and add a cast
-          return `LetRef(TomBase.convertFromVarToBQVar(v),Cast(TomBase.getTermType(v,symbolTable),BQTermToExpression(t)),action);
+          return
+            `If(IsSort(aType,t),LetRef(TomBase.convertFromVarToBQVar(v),Cast(TomBase.getTermType(v,symbolTable),BQTermToExpression(t)),action),Nop());
         }
         return `LetRef(TomBase.convertFromVarToBQVar(v),BQTermToExpression(t),action);
       }  

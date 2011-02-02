@@ -48,11 +48,17 @@ public class Problem3 {
   }
 
   class IntExp extends CstExp {
-    public IntExp(int value) {
-      super(value);
+    public IntExp(int ivalue) {
+      super(new Integer(ivalue));
     }
   }
   
+  class StringExp extends CstExp {
+    public StringExp(String svalue) {
+      super(svalue);
+    }
+  }
+
   class UnaryOperator extends Exp {
     public Exp first;
     public UnaryOperator(Exp first) {
@@ -92,8 +98,12 @@ public class Problem3 {
     public String getOperator() { return "Uminus"; }
   }
 
-    // ------------------------------------------------------------
-  
+  // ------------------------------------------------------------
+  %typeterm TomInteger {
+    implement { Integer }
+    is_sort(t) { $t instanceof Integer }
+  }
+
   %typeterm TomExp {
     implement { Exp }
     is_sort(t) { $t instanceof Exp }
@@ -103,7 +113,7 @@ public class Problem3 {
     implement { BinaryOperator }
     is_sort(t) { $t instanceof BinaryOperator }
   }
-  
+
   %typeterm TomUnaryOperator extends TomExp{
     implement { UnaryOperator }
     is_sort(t) { $t instanceof UnaryOperator }
@@ -116,6 +126,15 @@ public class Problem3 {
 
     // ------------------------------------------------------------
   
+  %op TomInteger zero() {
+    is_fsym(t) { (((Integer)$t).intValue()==0) }
+  }
+
+  %op TomInteger suc(p:TomInteger) {
+    is_fsym(t) { (((Integer)$t).intValue()!=0) }
+    get_slot(p,t) { new Integer(((Integer)$t).intValue()-1) }
+  }
+
   %op TomBinaryOperator Plus(first:TomExp, second:TomExp) {
     is_fsym(t) { $t instanceof Plus }
     get_slot(first,t) { ((Plus)$t).first }
@@ -133,25 +152,29 @@ public class Problem3 {
     get_slot(first,t) { ((Uminus)$t).first }
   }
 
-   %op TomCstExp IntExp(value:int) {
+   %op TomCstExp IntExp(ivalue:TomInteger) {
     is_fsym(t) { $t instanceof IntExp }
-    get_slot(value,t) { ((Integer)((IntExp)$t).value) }
+    get_slot(ivalue,t) { ((Integer)((IntExp)$t).value) }
+  }
+
+  %op TomCstExp StringExp(svalue:String) {
+    is_fsym(t) { $t instanceof StringExp }
+    get_slot(svalue,t) { ((String)((StringExp)$t).value) }
   }
 
     // ------------------------------------------------------------
  
   public final static void main(String[] args) {
     Problem3 test = new Problem3();
-    test.test1();
+    //test.test1();
     //test.test2();
-    //test.test3();
+    test.test3();
   }
 
   public BinaryOperator buildExp1() {
     return new Mult(new Plus(new IntExp(2), new IntExp(3)), new IntExp(4));
   }
 
-/*
   public BinaryOperator buildExp2() {
     return new Mult(new Plus(new StringExp("a"), new IntExp(0)), new IntExp(1));
   }
@@ -159,50 +182,40 @@ public class Problem3 {
   public BinaryOperator buildExp3() {
     return new Plus(buildExp2(), new Uminus(new StringExp("a")));
   }
-  public CstExp simplifiedExp1() {
-    return new IntExp(20);
-  }
-  
-  public CstExp simplifiedExp2() {
-    return new StringExp("a");
-  }
 
-  public CstExp simplifiedExp3() {
-    return new IntExp(0);
-  }
-*/
+/*
   public void test1() {
     Exp e = buildExp1();
     String s1 = prettyPrint(e);
     String s2 = prettyPrintInv(e);
-    //String s3 = prettyPrint(traversalSimplify(e));
-    //assertTrue( s1.equals("Mult(Plus(2,3),4)") );
-    //assertTrue( s2.equals("2 3 Plus 4 Mult") );
-    //assertTrue( s3.equals("20") );
+    String s3 = prettyPrint(traversalSimplify(e));
+    assertTrue( s1.equals("Mult(Plus(2,3),4)") );
+    assertTrue( s2.equals("2 3 Plus 4 Mult") );
+    assertTrue( s3.equals("20") );
     System.out.println(s1);
     System.out.println(s2);
   }
-  /*
+  
   public void test2() {
     Exp e = buildExp2();
     String s1 = prettyPrint(e);
-    //String s2 = prettyPrintInv(e);
-    //String s3 = prettyPrint(traversalSimplify(e));
-    //assertTrue( s1.equals("Mult(Plus(a,0),1)") );
-    //assertTrue( s2.equals("a 0 Plus 1 Mult") );
-    //assertTrue( s3.equals("a") );
+    String s2 = prettyPrintInv(e);
+    String s3 = prettyPrint(traversalSimplify(e));
+    assertTrue( s1.equals("Mult(Plus(a,0),1)") );
+    assertTrue( s2.equals("a 0 Plus 1 Mult") );
+    assertTrue( s3.equals("a") );
   }
-
+*/
   public void test3() {
     Exp e = buildExp3();
-    String s1 = prettyPrint(e);
+    //String s1 = prettyPrint(e);
     //String s2 = prettyPrintInv(e);
-    //String s3 = prettyPrint(traversalSimplify(e));
+    String s3 = prettyPrint(traversalSimplify(e));
     //assertTrue( s1.equals("Plus(Mult(Plus(a,0),1),Uminus(a))") );
     //assertTrue( s2.equals("a 0 Plus 1 Mult a Uminus Plus") );
     //assertTrue( s3.equals("0") );
   }
-*/
+
   /* An example with explicit declaration of subject's type */
   public String prettyPrint(Exp t) {
     String op = t.getOperator();
@@ -222,23 +235,24 @@ public class Problem3 {
   }
 
   /* An example without declaration of subject's type */
+  /*
   public String prettyPrintInv(Exp t) {
     String op = t.getOperator();
     %match(t) {
       (Plus|Mult)[first=e1,second=e2] -> {
-        return "(" + prettyPrintInv(`e1) + "," + prettyPrintInv(`e2) + ")" + op;
+        return prettyPrintInv(`e1) + " " + prettyPrintInv(`e2) + " " + op;
       }
 
       Uminus[first=e1] -> {
-        return "(" + prettyPrintInv(`e1) + ")" + op;
+        return prettyPrintInv(`e1) + " " + op;
       }
 
-      IntExp[]  -> { return op; }
+      (IntExp|StringExp)[]  -> { return op; }
       
     }
     return "error";
   }
-
+*/
   public Exp traversalSimplify(Exp t) {
     %match(t) {
       Uminus[first=e1] -> {
@@ -257,13 +271,15 @@ public class Problem3 {
 
   public Exp simplify(Exp t) {
     %match(t) {
+      /*
       Plus[first=IntExp(v1), second=IntExp(v2)] -> {
-        return new IntExp(`v1 + `v2);
+        return new IntExp(`v1.intValue() + `v2.intValue());
       }
+*/
+      //Plus[first=e1, second=IntExp(zero())] -> { return `e1; }
+      //Plus[second=e1, first=IntExp(zero())] -> { return `e1; }
 
-      Plus[first=e1, second=IntExp(0)] -> { return `e1; }
-      Plus[second=e1, first=IntExp(0)] -> { return `e1; }
-
+      /*
       Plus[first=e1, second=Uminus(e2)] -> {
         if(myEquals(`e1,`e2)) {
           return new IntExp(0);
@@ -271,13 +287,13 @@ public class Problem3 {
           return t;
         }
       }
-
+*/
       Mult[first=IntExp(v1), second=IntExp(v2)] -> {
-        return new IntExp(`v1 * `v2);
+        //return new IntExp(`v1.intValue() * `v2.intValue());
       }
       
-      Mult[first=e1, second=IntExp(1)] -> { return `e1; }
-      Mult[second=e1, first=IntExp(1)] -> { return `e1; }
+      Mult[first=e1, second=IntExp(suc(zero()))] -> { return `e1; }
+      Mult[second=e1, first=IntExp(suc(zero()))] -> { return `e1; }
     }
     return t;
   }
@@ -285,11 +301,11 @@ public class Problem3 {
   public boolean myEquals(Exp t1, Exp t2) {
     %match(t1,t2) {
       
-      IntExp[value=e1], IntExp[value=e2]       -> { return `e1 == `e2; }
+      IntExp[ivalue=e1], IntExp[ivalue=e2] -> { return `e1.equals(`e2); }
       
-      Uminus[first=e1], Uminus[first=f1] -> {
-        return myEquals(`e1,`f1);
-      }
+      StringExp[svalue=e1], StringExp[svalue=e2] -> { return `e1.equals(`e2); }
+
+      Uminus[first=e1], Uminus[first=f1] -> { return myEquals(`e1,`f1); }
       
       (Plus|Mult)[first=e1, second=e2], (Plus|Mult)[first=f1, second=f2] -> {
         return t1.getOperator().equals(t2.getOperator()) && myEquals(`e1,`f1) && myEquals(`e2,`f2);
@@ -298,11 +314,12 @@ public class Problem3 {
     }
     return false;
   }
-
+  /*
   static void  assertTrue(boolean condition) {
     if(!condition) {
       throw new RuntimeException("assertion failed.");
     }
   }
+  */
 }
 
