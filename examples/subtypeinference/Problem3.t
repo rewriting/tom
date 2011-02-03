@@ -166,8 +166,8 @@ public class Problem3 {
  
   public final static void main(String[] args) {
     Problem3 test = new Problem3();
-    //test.test1();
-    //test.test2();
+    test.test1();
+    test.test2();
     test.test3();
   }
 
@@ -183,7 +183,7 @@ public class Problem3 {
     return new Plus(buildExp2(), new Uminus(new StringExp("a")));
   }
 
-/*
+
   public void test1() {
     Exp e = buildExp1();
     String s1 = prettyPrint(e);
@@ -194,6 +194,7 @@ public class Problem3 {
     assertTrue( s3.equals("20") );
     System.out.println(s1);
     System.out.println(s2);
+    System.out.println(s3);
   }
   
   public void test2() {
@@ -204,16 +205,22 @@ public class Problem3 {
     assertTrue( s1.equals("Mult(Plus(a,0),1)") );
     assertTrue( s2.equals("a 0 Plus 1 Mult") );
     assertTrue( s3.equals("a") );
+    System.out.println(s1);
+    System.out.println(s2);
+    System.out.println(s3);
   }
-*/
+
   public void test3() {
     Exp e = buildExp3();
-    //String s1 = prettyPrint(e);
-    //String s2 = prettyPrintInv(e);
+    String s1 = prettyPrint(e);
+    String s2 = prettyPrintInv(e);
     String s3 = prettyPrint(traversalSimplify(e));
-    //assertTrue( s1.equals("Plus(Mult(Plus(a,0),1),Uminus(a))") );
-    //assertTrue( s2.equals("a 0 Plus 1 Mult a Uminus Plus") );
-    //assertTrue( s3.equals("0") );
+    assertTrue( s1.equals("Plus(Mult(Plus(a,0),1),Uminus(a))") );
+    assertTrue( s2.equals("a 0 Plus 1 Mult a Uminus Plus") );
+    assertTrue( s3.equals("0") );
+    System.out.println(s1);
+    System.out.println(s2);
+    System.out.println(s3);
   }
 
   /* An example with explicit declaration of subject's type */
@@ -235,7 +242,7 @@ public class Problem3 {
   }
 
   /* An example without declaration of subject's type */
-  /*
+  
   public String prettyPrintInv(Exp t) {
     String op = t.getOperator();
     %match(t) {
@@ -252,7 +259,7 @@ public class Problem3 {
     }
     return "error";
   }
-*/
+
   public Exp traversalSimplify(Exp t) {
     %match(t) {
       Uminus[first=e1] -> {
@@ -271,15 +278,15 @@ public class Problem3 {
 
   public Exp simplify(Exp t) {
     %match(t) {
-      /*
+      
       Plus[first=IntExp(v1), second=IntExp(v2)] -> {
         return new IntExp(`v1.intValue() + `v2.intValue());
       }
-*/
-      //Plus[first=e1, second=IntExp(zero())] -> { return `e1; }
-      //Plus[second=e1, first=IntExp(zero())] -> { return `e1; }
 
-      /*
+      Plus[first=e1, second=IntExp(zero())] -> { return `e1; }
+      Plus[second=e1, first=IntExp(zero())] -> { return `e1; }
+
+      
       Plus[first=e1, second=Uminus(e2)] -> {
         if(myEquals(`e1,`e2)) {
           return new IntExp(0);
@@ -287,9 +294,9 @@ public class Problem3 {
           return t;
         }
       }
-*/
+
       Mult[first=IntExp(v1), second=IntExp(v2)] -> {
-        //return new IntExp(`v1.intValue() * `v2.intValue());
+        return new IntExp(`v1.intValue() * `v2.intValue());
       }
       
       Mult[first=e1, second=IntExp(suc(zero()))] -> { return `e1; }
@@ -314,12 +321,12 @@ public class Problem3 {
     }
     return false;
   }
-  /*
+  
   static void  assertTrue(boolean condition) {
     if(!condition) {
       throw new RuntimeException("assertion failed.");
     }
   }
-  */
+  
 }
 

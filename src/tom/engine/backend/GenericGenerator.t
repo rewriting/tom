@@ -206,10 +206,6 @@ public abstract class GenericGenerator extends AbstractGenerator {
     if(instantiateTemplate(deep,template,`concBQTerm(exp),moduleName) == false) {
       String s = isFsymMap.get(opname);
       if(s == null) {
-        // TODO Claudia : verify if the Cast is needed here
-        /*s = "tom_is_fun_sym_" + opname + "( ( " +
-          getCodomain(getSymbolFromName(opname)).getTlType().getString() + " )" ;
-        isFsymMap.put(opname,s);*/
         s = "tom_is_fun_sym_" + opname + "(";
       }
       output.write(s);

@@ -1673,7 +1673,7 @@ operator returns [Declaration result] throws TomException
                 String typeOfSlot = getSlotType(stringSlotName);
                 String typeOfArg= typeArg.getText();
                 if (typeOfSlot != null && !typeOfSlot.equals(typeOfArg)) {
-                  TomMessage.error(getLogger(),currentFile(), getLine(),
+                  TomMessage.warning(getLogger(),currentFile(), getLine(),
                     TomMessage.slotIncompatibleTypes,stringSlotName,typeOfArg,typeOfSlot);
                 } else {
                   putSlot(stringSlotName,typeOfArg);
@@ -1696,7 +1696,7 @@ operator returns [Declaration result] throws TomException
                     String typeOfSlot = getSlotType(stringSlotName);
                     String typeOfArg= typeArg2.getText();
                     if (typeOfSlot != null && !typeOfSlot.equals(typeOfArg)) {
-                      TomMessage.error(getLogger(),currentFile(), getLine(),
+                      TomMessage.warning(getLogger(),currentFile(), getLine(),
                         TomMessage.slotIncompatibleTypes,stringSlotName,typeOfArg,typeOfSlot);
                     } else {
                       putSlot(stringSlotName,typeOfArg);

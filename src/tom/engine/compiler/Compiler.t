@@ -283,7 +283,7 @@ public class Compiler extends TomGenericPlugin {
     visit Constraint {
       constr@MatchConstraint[Pattern=pattern,Subject=subject,AstType=castType] -> {
         // IF 1
-        System.out.println("\n\nIn renameSubjects - constr = " + `constr);
+        //DEBUG System.out.println("\n\nIn renameSubjects - constr = " + `constr);
         //DEBUG System.out.println("\n -------- In renameSubjects - subjectList = " + subjectList);
         //DEBUG System.out.println("In renameSubjects - renamedSubjects = " + renamedSubjects);
         if(renamedSubjects.contains(`pattern) || ( `(subject) instanceof BQVariable && renamedSubjects.contains(TomBase.convertFromBQVarToVar(`subject))) ) {

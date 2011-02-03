@@ -104,6 +104,6 @@ public class SyntacticGenerator implements IBaseGenerator {
       return `IsSort(type,subject);
     }
     return
-      `IsFsym(name,subject);
+      `IsFsym(name,ExpressionToBQTerm(Cast(type,BQTermToExpression(subject))));
   }
 }
