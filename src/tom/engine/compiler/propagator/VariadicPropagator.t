@@ -116,7 +116,7 @@ public class VariadicPropagator implements IBasePropagator {
 
       /**    
        * conc(t1:S,X*:T',t2:S,Y*:T'):T' << T' g:U 
-       * -> fresh_var:T' << T' g:4 
+       * -> fresh_var:T' << T' g:U 
        *    /\ conc():T' << T' SymbolOf(fresh_var:T')  
        *    /\ NotEmpty(fresh_Var:T')  
        *    /\ t1:S << S ListHead(fresh_var:T'):T 

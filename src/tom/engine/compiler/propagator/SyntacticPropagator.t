@@ -85,6 +85,7 @@ public class SyntacticPropagator implements IBasePropagator {
        * 
        * f1:castType[slot1:T1=t1:S1,...,slotn:Tn=tn:Sn] << castType g:S 
        * -> freshSubject:S << S g:S 
+       *    /\ IsSort(castType,freshSubject)
        *    /\ f1:castType << castType SymbolOf(freshSubject:S) 
        *    /\ freshVar1:T1 << T1 subterm1_f(freshSubject:S):T1 
        *    /\ ... 
