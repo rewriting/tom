@@ -115,8 +115,8 @@ public class VariadicPropagator implements IBasePropagator {
       }
 
       /**    
-       * conc(t1:S,X*:T',t2:S,Y*:T'):T' << T' g:T' 
-       * -> fresh_var:T' << T' g:T' 
+       * conc(t1:S,X*:T',t2:S,Y*:T'):T' << T' g:U 
+       * -> fresh_var:T' << T' g:4 
        *    /\ conc():T' << T' SymbolOf(fresh_var:T')  
        *    /\ NotEmpty(fresh_Var:T')  
        *    /\ t1:S << S ListHead(fresh_var:T'):T 
@@ -132,8 +132,7 @@ public class VariadicPropagator implements IBasePropagator {
        *    /\ end2;T' << T' fresh_var3:T' 
        *    /\ Y*:T'<< T' VariableHeadList(begin2:T',end2:T'):T' 
        *    /\ fresh_var4:T' << T' end2:T'
-       * where conc: T* -> T' and S is a subtype of T
-       *
+       * where conc: T* -> T' and S is a subtype of T and T' is a subtype of U
        * conc(t1,X*,t2,Y*) = g -> fresh_var = g /\ conc=SymbolOf(fresh_var)  
        * 
        * if the symbol was annotated, annotations are detached: 

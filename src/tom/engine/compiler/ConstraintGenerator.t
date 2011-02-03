@@ -143,7 +143,7 @@ public class ConstraintGenerator {
         return buildConstraintDisjunction(`conn,action);
       }
       // variables' assignments
-      ConstraintToExpression(MatchConstraint[Pattern=v@(Variable|VariableStar)[],Subject=t,AstType=aType]) -> {
+      ConstraintToExpression(MatchConstraint[Pattern=v@(Variable|VariableStar)[],Subject=t]) -> {
         SymbolTable symbolTable = getCompiler().getSymbolTable();
 
         //DEBUG System.out.println("In Constraint Generator with v = " + `v + '\n');

@@ -112,8 +112,8 @@ public class ArrayPropagator implements IBasePropagator {
       }      
 
       /**
-       * array[t1:S,X*:T',t2:S,Y*:T']:T' << T' g:T'
-       * -> freshSubj:T' << T' g:T' 
+       * array[t1:S,X*:T',t2:S,Y*:T']:T' << T' g:U
+       * -> freshSubj:T' << T' g:U 
        *    /\ array:T' << T' SymbolOf(freshSubj:T') 
        *    /\ fresh_index:int << int 0:int 
        *    /\ HasElement(fresh_index:int,freshSubj:T'):T  
@@ -130,7 +130,7 @@ public class ArrayPropagator implements IBasePropagator {
        *    /\ end2:int << int fresh_index3 
        *    /\ Y*:T' << T' VariableHeadArray(begin2:int,end2:int):T'
        *    /\ fresh_index4:int << int end2:int
-       * where array: T* -> T' and S is a subtype of T and fresh_index: Integer* -> T' 
+       * where array: T* -> T' and S is a subtype of T and T' is a subtype of U and fresh_index: Integer* -> T' 
        */
       m@MatchConstraint[Pattern=pattern@RecordAppl(options,nameList@concTomName(name@Name(tomName),_*),slots,_),Subject=g@!SymbolOf[],AstType=aType] -> {      
         if(TomBase.hasTheory(`pattern,`AC())) {
