@@ -83,10 +83,17 @@ public class SyntacticPropagator implements IBasePropagator {
       /**
        * Decompose
        * 
-       * f1:castType(t1:T1,...,tn:Tn) << castType g:S 
-       * -> freshSubject: g /\ f1 = SymbolOf(freshSubject) /\ freshVar1=subterm1_f(freshSubject) /\ ... /\ freshVarn=subterm1_f(freshSubject) 
-       *                /\ t1=freshVar1 /\ ... /\ tn=freshVarn
-       * 
+       * f1:castType[slot1:T1=t1:S1,...,slotn:Tn=tn:Sn] << castType g:S 
+       * -> freshSubject:S << S g:S 
+       *    /\ f1:castType << castType SymbolOf(freshSubject:S) 
+       *    /\ freshVar1:T1 << T1 subterm1_f(freshSubject:S):T1 
+       *    /\ ... 
+       *    /\ freshVarn:Tn << Tn subtermn_f(freshSubject:S):Tn 
+       *    /\ t1:S1 << S1 freshVar1:T1
+       *    /\ ... 
+       *    /\ tn:Sn << Sn freshVarn:Tn
+       * where castType is a subtype of S and Si is a subype of Ti for i in [i,n] 
+       *
        * if f has multiple names (from f1|f2): 
        * (f1|f2)(t1,...,tn) = g 
        * -> freshSubject = g /\ ( (f1 = SymbolOf(freshSubject) /\ freshVar1=subterm1_f1(freshSubject) /\ ... /\ freshVarn=subtermn_f1(freshSubject)) 

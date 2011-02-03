@@ -113,14 +113,28 @@ public class VariadicPropagator implements IBasePropagator {
           return detachedConstr; 
         }
       }
-      
+
       /**    
+       * conc(t1:S,X*:T',t2:S,Y*:T'):T' << T' g:T' 
+       * -> fresh_var:T' << T' g:T' 
+       *    /\ conc():T' << T' SymbolOf(fresh_var:T')  
+       *    /\ NotEmpty(fresh_Var:T')  
+       *    /\ t1:S << S ListHead(fresh_var:T'):T 
+       *    /\ fresh_var1:T' << T' ListTail(fresh_var:T'):T' 
+       *    /\ begin1:T' << T' fresh_var1:T'  
+       *    /\ end1:T' << T' fresh_var1:T' 
+       *    /\ X*:T' << T' VariableHeadList(begin1:T',end1:T'):T' 
+       *    /\ fresh_var2:T' << T' end1:T'
+       *    /\ NotEmpty(fresh_Var2:T') 
+       *    /\ t2:S < S ListHead(fresh_var2:T'):T 
+       *    /\ fresh_var3:T' << T' ListTail(fresh_var2:T'):T'  
+       *    /\ begin2:T' << T' fresh_var3:T'  
+       *    /\ end2;T' << T' fresh_var3:T' 
+       *    /\ Y*:T'<< T' VariableHeadList(begin2:T',end2:T'):T' 
+       *    /\ fresh_var4:T' << T' end2:T'
+       * where conc: T* -> T' and S is a subtype of T
+       *
        * conc(t1,X*,t2,Y*) = g -> fresh_var = g /\ conc=SymbolOf(fresh_var)  
-       * /\ NotEmpty(fresh_Var)  /\ t1=ListHead(fresh_var) /\ fresh_var1 = ListTail(fresh_var) 
-       * /\ begin1 = fresh_var1  /\ end1 = fresh_var1 /\ X* = VariableHeadList(begin1,end1) /\ fresh_var2 = end1
-       * /\ NotEmpty(fresh_Var2) /\ t2=ListHead(fresh_var2) /\ fresh_var3 = ListTail(fresh_var2)  
-       * /\ begin2 = fresh_var3  /\ end2 = fresh_var3 /\ Y* = VariableHeadList(begin2,end2) /\ fresh_var4 = end2
-       * 
        * 
        * if the symbol was annotated, annotations are detached: 
        *        a@...b@conc(...) << t -> conc(...) << t /\ a << t /\ ... /\ b << t   
@@ -135,8 +149,9 @@ public class VariadicPropagator implements IBasePropagator {
           return `m;
         }        
         // declare fresh variable
-        TomType listType = vp.getCompiler().getTermTypeFromTerm(`t);
-        BQTerm freshVariable = vp.getCompiler().getFreshVariableStar(listType);
+        TomType slotType =
+                  symb.getTypesToType().getDomain().getHeadconcTomType();
+        BQTerm freshVariable = vp.getCompiler().getFreshVariableStar(`aType);
         Constraint freshVarDeclaration =
           `MatchConstraint(TomBase.convertFromBQVarToVar(freshVariable),g,aType);
         Constraint isSymbolConstr =
@@ -147,7 +162,7 @@ public class VariadicPropagator implements IBasePropagator {
             l.add(`EmptyListConstraint(name,freshVariable));
           }
           concSlot(_*,PairSlotAppl[Appl=appl],X*) -> {
-            BQTerm newFreshVarList = vp.getCompiler().getFreshVariableStar(listType);            
+            BQTerm newFreshVarList = vp.getCompiler().getFreshVariableStar(`aType);            
 mAppl:      %match(appl) {
               // if we have a variable star
               VariableStar[] -> {                
@@ -156,8 +171,8 @@ mAppl:      %match(appl) {
                   // we should only assign it, without generating a loop
                   l.add(`MatchConstraint(appl,freshVariable,aType));
                 } else {
-                  BQTerm beginSublist = vp.getCompiler().getBeginVariableStar(listType);
-                  BQTerm endSublist = vp.getCompiler().getEndVariableStar(listType);              
+                  BQTerm beginSublist = vp.getCompiler().getBeginVariableStar(`aType);
+                  BQTerm endSublist = vp.getCompiler().getEndVariableStar(`aType);              
                   l.add(`MatchConstraint(TomBase.convertFromBQVarToVar(beginSublist),freshVariable,aType));
                   l.add(`MatchConstraint(TomBase.convertFromBQVarToVar(endSublist),freshVariable,aType));
                   l.add(`MatchConstraint(appl,VariableHeadList(name,beginSublist,endSublist),aType));
@@ -166,8 +181,9 @@ mAppl:      %match(appl) {
                 break mAppl;
               }
               _ -> {
+                TomType applType = vp.getCompiler().getTermTypeFromTerm(`appl);
                 l.add(`Negate(EmptyListConstraint(name,freshVariable)));
-                l.add(`MatchConstraint(appl,ListHead(name,vp.getCompiler().getTermTypeFromTerm(appl),freshVariable),aType));
+                l.add(`MatchConstraint(appl,ListHead(name,slotType,freshVariable),applType));
                 l.add(`MatchConstraint(TomBase.convertFromBQVarToVar(newFreshVarList),ListTail(name,freshVariable),aType));
                 // for the last element, we should also check that the list ends
                 if(`X.length() == 0) {                  
