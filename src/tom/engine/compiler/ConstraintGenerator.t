@@ -146,15 +146,16 @@ public class ConstraintGenerator {
       ConstraintToExpression(MatchConstraint[Pattern=v@(Variable|VariableStar)[],Subject=t,AstType=aType]) -> {
         SymbolTable symbolTable = getCompiler().getSymbolTable();
 
-        System.out.println("In Constraint Generator with v = " + `v + '\n');
-        System.out.println("In Constraint Generator with t = " + `t + '\n');
+        //DEBUG System.out.println("In Constraint Generator with v = " + `v + '\n');
+        //DEBUG System.out.println("In Constraint Generator with t = " + `t + '\n');
         if(TomBase.getTermType(`v,symbolTable) != TomBase.getTermType(`t,symbolTable)) {
-          System.out.println("type v = " + TomBase.getTermType(`v,symbolTable));
-          System.out.println("type t = " + TomBase.getTermType(`t,symbolTable));
-          System.out.println("aType = " + `aType);
+          //DEBUG System.out.println("type v = " + TomBase.getTermType(`v,symbolTable));
+          //DEBUG System.out.println("type t = " + TomBase.getTermType(`t,symbolTable));
+          //DEBUG System.out.println("aType = " + `aType);
           // check subtype and add a cast
           return
-            `If(IsSort(aType,t),LetRef(TomBase.convertFromVarToBQVar(v),Cast(TomBase.getTermType(v,symbolTable),BQTermToExpression(t)),action),Nop());
+            `LetRef(TomBase.convertFromVarToBQVar(v),Cast(TomBase.getTermType(v,symbolTable),BQTermToExpression(t)),action);
+            //`If(IsSort(aType,t),LetRef(TomBase.convertFromVarToBQVar(v),Cast(TomBase.getTermType(v,symbolTable),BQTermToExpression(t)),action),Nop());
         }
         return `LetRef(TomBase.convertFromVarToBQVar(v),BQTermToExpression(t),action);
       }  
@@ -268,7 +269,13 @@ public class ConstraintGenerator {
       OrExpressionDisjunction() -> {
         return `Nop();
       }
+      OrExpressionDisjunction(And(check@IsSort[],assign),X*) -> {
+        return
+          `If(check,buildDisjunctionIfElse(OrExpressionDisjunction(assign,X*),assignFlagTrue),Nop());
+      }
+
       OrExpressionDisjunction(And(check,assign),X*) -> {        
+        //DEBUG System.out.println("orDisjunction = " + `orDisjunction);
         Instruction subtest = buildDisjunctionIfElse(`OrExpressionDisjunction(X*),assignFlagTrue);
         return `If(check,UnamedBlock(concInstruction(assignFlagTrue,generateAutomata(assign,Nop()))),subtest);
       }
