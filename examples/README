@@ -1,5 +1,3 @@
-acmatching
-bdd
 cps
 csharp
 debugger
@@ -11,7 +9,6 @@ lazyml
 modeltrans
 multigraph
 miniml
-parser
 python
 servlet
 tomjastadd
@@ -97,6 +94,10 @@ To relax, take a look at quine example
 
 * Included examples:
 --------------------
+* acmatching
+  Small program to show how to use AC (Associative-Commutative) matching
+  Concepts: ac-matching, gom
+
 * addressbook
   Small implementation of a database
   Concepts: apigen, list-matching, gom
@@ -146,6 +147,9 @@ To relax, take a look at quine example
   web site: the author page. It aims to show how to combine applet, xml and tom
   to complete web design technologies.
   Concepts: XML pattern matching
+
+* bdd
+  Resolution of the N-Queens chess problem, using BDDs (Binary Decision Diagrams)
 
 * bpel
   transformation of BPEL specification
@@ -268,6 +272,10 @@ To relax, take a look at quine example
   Implementation of a web policy, using XML
   Concepts: XML
 
+* parser
+  An example to show how to use Gom + ANTLR
+  Concepts: gomantlradaptor
+
 * peano
   Computation with Peano integers
   Concepts: simple mapping, apigen, Tom notation
@@ -331,10 +339,6 @@ To relax, take a look at quine example
 * tactics
   Implementation of classical theorem prover tactics with the strategy language
   Concepts: Tom strategies
-
-* ted
-  Toolbox for live aterms manipulation/representation
-  Concepts: mapping to predefined java type
 
 * termgraph
   Pattern matching on graphs
