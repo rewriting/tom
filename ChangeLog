@@ -46,9 +46,9 @@
 
 2010-11-18 tavaresc
  * Add case 6 {Var1 <: TClos1, TClos2 <: Var2} for enumerationSolutions method in
- NewKernelTyper.
+   NewKernelTyper.
  * Add test before call solveSubConstraints (test if the constraint list is not
- empty) in NewKernelTyper.
+   empty) in NewKernelTyper.
 
 2010-11-10 pem
  * re-activated TomSyntaxChecker
@@ -59,10 +59,12 @@
  * bootstrap
 
 2010-11-08 tavaresc
- * Fix code generation for those arguments having type smaller (subtype) than the expected by the tom signature.
+ * Fix code generation for those arguments having type smaller (subtype) than
+   the expected by the tom signature.
 
 2010-11-03 tavaresc
- * Fix hasUndeclaredType method and call it to test the explicit type of a MatchConstraint.
+ * Fix hasUndeclaredType method and call it to test the explicit type of a
+   MatchConstraint.
 
 2010-10-28 tavaresc
  * Fix "maxType" method in order to obtain an intersection list.
@@ -184,13 +186,13 @@
    its tomName nor its Type.
 
 2010-06-23 tavaresc
- * Finish adding tasks "junitnt" and "testnt" as targets into the build.xml to compile the directory "test" using the new
- typer.
+ * Finish adding tasks "junitnt" and "testnt" as targets into the build.xml to
+   compile the directory "test" using the new typer.
  * Fix message error for undeclared types.
 
 2010-06-22 tavaresc
  * Add a target into the build.xml to compile the directory "test" using the new
- typer. Must to be continued.
+   typer. Must to be continued.
  * Fix some test files in order to successfully compile.
  * Comment the method of message error for undeclared types.
 
@@ -226,8 +228,8 @@
 
 2010-04-23 tavaresc
  * New version of the new typer: since terms are modified during the inference
- (e.g. "concString" is added to a string which does not have a constructor), now
- methods have no more type "void".
+   (e.g. "concString" is added to a string which does not have a constructor), now
+   methods have no more type "void".
 
  2010-04-20 jcb
  * tom/engine log system should be completely ported
@@ -304,7 +306,7 @@
  * improve code (formatting, cosmetics, etc.)
 
 2010-03-03 tavares
- * dislunction, numeric match and alias in the new typer
+ * disjunction, numeric match and alias in the new typer
 
 2010-02-18 tonio
  * use jar instead of zip to build jars
@@ -312,7 +314,7 @@
 
 2010-02-17 radu
  * fix bug #8955 (which was caused by having the same variable both as subject
-	 and tom variable)
+   and tom variable)
 
 2010-02-17 balland
  * fix package name in examples
@@ -392,7 +394,7 @@
 
 2010-01-08 jcb
  * bootstrap with Gom multithread option activated (to be able to use Tom
-	 multithread multithread option)
+   multithread multithread option)
  * activate both Gom and Tom multithread option
 
 2009-12-30 tonio

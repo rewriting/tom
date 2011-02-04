@@ -5,6 +5,7 @@ version 2.8:
   - integrate support for AC (Associative-Commutative) matching
   - integrate a new type-inference engine
   - integrate a new tool to connect Tom with EMF
+  - several bugfixes
 
 version 2.7:
   - Gom has a new option: --fresh, to generate support for syntax involving
