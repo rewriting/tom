@@ -130,6 +130,7 @@
     <element name="srcelements" implicit="yes"/>
     <sequential>
       <javac destdir="@{destdir}"
+             includeantruntime="false"
              debug=  "@{debug}"
              verbose="@{verbose}"
              fork=   "@{fork}"

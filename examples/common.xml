@@ -104,7 +104,8 @@
     </macrodef>
     <macrodef name="javacompile">
       <sequential>
-        <javac.preset destdir="${examples.build}" >
+        <javac.preset destdir="${examples.build}" 
+          includeantruntime="false">
           <src path="${examples.dir}"/>
           <src path="${examples.gen}"/>
           <include name="${example}/**/*.java"/>
