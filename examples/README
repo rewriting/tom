@@ -1,11 +1,7 @@
-cps
-csharp
 debugger
 deepmatch
 gasel
-generics
 labyrinth
-lazyml
 modeltrans
 multigraph
 miniml
@@ -14,8 +10,6 @@ servlet
 tomjastadd
 why
 xquery
-
-
 
 Tom is a language extension which adds pattern matching facilities to
 C, Java or Caml. Therefore, Tom is a multi-purpose programming
@@ -190,6 +184,13 @@ To relax, take a look at quine example
   Cellular automata
   Concepts: pattern matching
 
+* cps
+  Example encoding the first-order one-pass (and two-pass) CPS transformation
+  Concepts: using ANTLR with tom, strategies, matching
+
+* csharp
+  Early test of the Tom C# compiler
+
 * csmaca
   Simulation of the network protocol CSMA/CA
   Concepts: probabilistic strategies
@@ -206,6 +207,9 @@ To relax, take a look at quine example
   An extension of gom which adds capabilities very similar to that of Caml
   A good explanation is provided in the documentation.
   Concepts: system F, gom, name bindings
+
+* generics
+  Implementation of %typeterm, %op and %oplist with generics
 
 * gom
   gom usage demonstration
@@ -237,6 +241,9 @@ To relax, take a look at quine example
   - BarendregtConvention: 
       One hook maintains Barendregt's convention.
       Beta-reduction is then described in 2 lines.
+
+* lazyml
+  Mini ML to Java compiler, with optional lazy behaviour.
 
 * list
   Introduction to list-matching
