@@ -1,6 +1,8 @@
 package tom.engine.prettyprinter.ppeditor;
 
-import java.util.List;
+import java.util.*;
+import java.lang.*;
+import java.io.*;
 
 /**The PPCursor class is used to organize the file in columns and lines 
 */
@@ -75,6 +77,30 @@ public class PPCursor {
 *@param s the string to write
 */
   public void write(String s) {
+    if(position.getLine()>fileBuffer.size()){
+      for(int l=fileBuffer.size();l<position.getLine()+1;l++){
+        fileBuffer.add(new StringBuffer(""));
+      }
+    }
+    for(int i=0;i<s.length();i++){
+          if(s.charAt(i)!='\\'){
+          fileBuffer.get(position.getLine()).insert(position.getColumn(),new StringBuffer(s.charAt(i)));
+        if(!insertion){
+          fileBuffer.get(position.getLine()).deleteCharAt(position.getColumn()+1);
+        }
+        position.add(new PPTextPosition(1,0));
+      }else if(s.charAt(i+1)=='n'){
+        i++;
+        if(insertion){
+          fileBuffer.add(position.getLine()+1, new StringBuffer(fileBuffer.get(position.getLine()).subSequence(position.getColumn(), fileBuffer.get(position.getLine()).length()-1)));
+        }else if(fileBuffer.size()==position.getLine()+1){
+          fileBuffer.add(new StringBuffer(""));
+        }
+        position.set(position.getLine()+1,0);
+
+      }
+    }
+
 
     int currentLine = this.getPosition().getLine();
     for(int i = 0; i<s.length(); i++) {
@@ -86,12 +112,13 @@ public class PPCursor {
         currentLine++;
       }
     }
+
   }
 
 /**Erases one character
 */
   public void erase() {
-		fileBuffer.get(position.getLine()).delete(position.getColumn());
+		fileBuffer.get(position.getLine()).deleteCharAt(position.getColumn());
   }
 
 /**Reinitializes the fileBuffer attribute to an empty List<StringBuffer>
@@ -105,13 +132,18 @@ public class PPCursor {
 *@return a StringBuffer which represents the content of the file created
 */
   public StringBuffer dump(String fileName) {
-    StringBuffer content;
-    for(int i=0,i<fileBuffer.size()-1,i++){
-      content.appends(fileBuffer.get(i)+"\n");
+    StringBuffer content = new StringBuffer("");
+    for(int i=0;i<fileBuffer.size()-1;i++){
+      content.append(fileBuffer.get(i)+"\n");
     }
-    content.appends(fileBuffer.get(fileBuffer.size()-1));
-    FileWriter textFile = new FileWriter(fileName);
-    textFile.write(content.toString);
+    content.append(fileBuffer.get(fileBuffer.size()-1));
+    try{
+      FileWriter textFile = new FileWriter(fileName);
+      textFile.write(content.toString());
+    }catch(IOException ioe){
+      System.out.println("Writing failed.");
+    }
+    return content;
   }
 
 }

@@ -48,4 +48,11 @@ public class PPTextPosition {
     this.column+=p.getColumn();
   }
 
+/**
+*/
+  public void set(int l, int c){
+    this.line=l;
+    this.column=c;
+  }
+
 }
