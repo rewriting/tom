@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Build the labyrinth example" default="build" basedir="..">
   <import file="../common.xml"/>
-  <property name="example" value="labyrinth"/>
+  <property name="example" value="boulderdash"/>
   <target name="build" depends="init">
     <gomcompile/>
     <!--
@@ -21,7 +21,7 @@
       </fileset>
     </copy>
     <!-- Create a jar for the applet -->
-    <jar jarfile="${examples.build}/${example}/labyrinth.jar">
+    <jar jarfile="${examples.build}/${example}/boulder.jar">
       <fileset dir="${examples.build}">
         <include name="${example}/**/*.class"/>
         <include name="${example}/**/*.gif"/>
