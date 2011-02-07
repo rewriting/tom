@@ -1,13 +1,6 @@
 debugger
-deepmatch
 gasel
-labyrinth
-modeltrans
-multigraph
-miniml
-python
 servlet
-tomjastadd
 why
 xquery
 
@@ -232,6 +225,9 @@ To relax, take a look at quine example
     Library
   Concepts: mapping, complex mapping on builtin
 
+* labyrinth
+  Example based on boulderdash example code.
+
 * lambdacalculi
   Several implementations of betareduction, one per tom file
    - LambdaUpsilon : 
@@ -267,6 +263,14 @@ To relax, take a look at quine example
   dynamical systems simulations
   (collaboration with the MGS group)
   ArrayBeadSort, BeadSort and  BoulderDash
+
+* miniml
+  miniml compiler written in Tom
+  Concepts: using ANTLR with Tom, writing a compiler
+
+* modeltrans
+  Graphical view of a model using termgraph
+  Concepts: termgraph, gom, model
 
 * nspk
   Verification of the Needham-Schroeder Public-Key protocol
@@ -307,6 +311,9 @@ To relax, take a look at quine example
 * propp
   Propositional prover
   Concepts: using ANTLR with tom
+
+* python
+  Tree drawing in Tom-Python
 
 * quine
   Example of small self-reproducing Tom program
@@ -351,6 +358,9 @@ To relax, take a look at quine example
   Pattern matching on graphs
   Shows how to perform pattern matching on graphs coded by terms
   using ref visitors provided by tom library
+
+* tomjastadd
+  Use of Jastadd with Tom
 
 * tutorial
   Examples introduced in the tutorial
