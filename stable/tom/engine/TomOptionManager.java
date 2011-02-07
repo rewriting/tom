@@ -428,11 +428,13 @@ for (PlatformOption h : treeMap.values()) {
 {
 if ( (h instanceof tom.platform.adt.platformoption.types.PlatformOption) ) {
 if ( ((( tom.platform.adt.platformoption.types.PlatformOption )h) instanceof tom.platform.adt.platformoption.types.platformoption.PluginOption) ) {
+ String  tom_name= (( tom.platform.adt.platformoption.types.PlatformOption )h).getName() ;
  String  tom_altName= (( tom.platform.adt.platformoption.types.PlatformOption )h).getAltName() ;
  String  tom_attrName= (( tom.platform.adt.platformoption.types.PlatformOption )h).getAttrName() ;
+if (!( "newparser".equals(tom_name) )) {
 
 buffer.append("\t--" + 
- (( tom.platform.adt.platformoption.types.PlatformOption )h).getName() );
+tom_name);
 if(
 tom_attrName.length() > 0) {
 buffer.append(" <" + 
@@ -448,6 +450,7 @@ buffer.append(":\t" +
 buffer.append("\n");
 
 
+}
 }
 }
 
