@@ -1,9 +1,3 @@
-debugger
-gasel
-servlet
-why
-xquery
-
 Tom is a language extension which adds pattern matching facilities to
 C, Java or Caml. Therefore, Tom is a multi-purpose programming
 language.
@@ -188,6 +182,9 @@ To relax, take a look at quine example
   Simulation of the network protocol CSMA/CA
   Concepts: probabilistic strategies
 
+* debugger
+  A small debugger for strategies
+
 * dom
   XML manipulation based on DOM
   Concepts: XML, list-matching, DOM
@@ -200,6 +197,9 @@ To relax, take a look at quine example
   An extension of gom which adds capabilities very similar to that of Caml
   A good explanation is provided in the documentation.
   Concepts: system F, gom, name bindings
+
+* gasel
+  Modelisation of a chemical process.
 
 * generics
   Implementation of %typeterm, %op and %oplist with generics
@@ -323,6 +323,10 @@ To relax, take a look at quine example
   Red-Black Tree algorithm
   Concepts: apigen, disjunction of patterns
 
+* servlet
+  Implementation of a simple RSS viewer
+  Concepts: xml library, 
+
 * strategy
   Show how to use the MuTraveler strategy language
   Concepts: strategies
@@ -412,3 +416,7 @@ To relax, take a look at quine example
 * xml
   XML manipulation based on TNode
   Concepts: XML, list-matching, TNode
+
+* xquery
+  Implementation of XQuery requests in Tom
+  Concepts: XML
