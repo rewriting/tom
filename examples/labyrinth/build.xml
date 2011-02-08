@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="Build the boulderdash example" default="build" basedir="..">
+<project name="Build the labyrinth example" default="build" basedir="..">
   <import file="../common.xml"/>
   <property name="example" value="boulderdash"/>
   <target name="build" depends="init">

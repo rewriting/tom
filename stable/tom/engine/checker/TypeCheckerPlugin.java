@@ -1032,7 +1032,7 @@ return new checkVariableStar(t0);
 
 
 private void verifyStrategyVariable(TomVisitList list) {
-/* %strategy : error if there is no visit */
+/* %strategy: error if there is no visit */
 if(
 list.isEmptyconcTomVisit()) {
 TomMessage.error(getLogger(),null,0,TomMessage.emptyStrategy);
