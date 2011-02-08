@@ -1,7 +1,12 @@
 #!/bin/sh
 
 HERE=`pwd`
-LOCALCLASSPATH=`echo ${HERE}/stable/lib/tools/junit.jar ${HERE}/stable/lib/tools/ant-antlr.jar | tr ' ' ':'`
-#CLASSPATH=${LOCALCLASSPATH} ANT_OPTS="-Xmx1024m -XX:PermSize=128m -XX:MaxPermSize=128m" ant with.clover $*
-CLASSPATH=${LOCALCLASSPATH} ANT_OPTS="-Xmx512m -XX:PermSize=128m -XX:MaxPermSize=128m" ant $*
-#CLASSPATH=${LOCALCLASSPATH} ANT_OPTS="-Xms512m -Xmx2048m -XX:PermSize=512m -XX:MaxPermSize=1024" ant $*
+LOCALCLASSPATH=`echo ${HERE}/stable/lib/compiletime/junit.jar ${HERE}/stable/lib/compiletime/ant-launcher.jar ${HERE}/stable/lib/compiletime/ant-nodeps.jar ${HERE}/stable/lib/compiletime/ant.jar ${HERE}/stable/lib/compiletime/ant-antlr.jar ${HERE}/stable/lib/compiletime/antlr3.jar ${HERE}/stable/lib/compiletime/ant-junit.jar| tr ' ' ':'`
+
+#CLASSPATH=${LOCALCLASSPATH} ANT_OPTS="-Xmx512m -XX:PermSize=128m -XX:MaxPermSize=128m" ant $*
+
+ANT_OPTS="-Xmx512m -XX:PermSize=128m -XX:MaxPermSize=128m"
+ant_exec_command="exec java $ANT_OPTS -classpath \"$LOCALCLASSPATH\" -Dant.library.dir=\"${HERE}/stable/lib/compiletime\" org.apache.tools.ant.launch.Launcher $ANT_ARGS -cp \"$CLASSPATH\""
+
+eval $ant_exec_command $*
+

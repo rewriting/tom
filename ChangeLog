@@ -1,3 +1,8 @@
+2011-02-08 pem
+ * remove ant*.jar from lib/tools (and tom-runtime-full.jar)
+ * update ant*.jar to version 1.7.1 (moved to lib/compiletime)
+ * bumped to version 2.8rc3
+
 2011-01-06
  * fix bug #8467
  * fix bug #8430

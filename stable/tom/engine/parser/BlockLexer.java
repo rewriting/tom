@@ -1,4 +1,4 @@
-// $ANTLR 2.7.7 (20090417): "BlockParser.g" -> "BlockLexer.java"$
+// $ANTLR 2.7.7 (20060906): "BlockParser.g" -> "BlockLexer.java"$
 
   /*
    * Tom

@@ -153,15 +153,16 @@ public class HookTypeExpander {
           hookList = `ConcHookDecl(newDeclList*,hookList*);
         }
       }
+
       /* check domain and codomain are equals */
       Alternative(opName,ConcField(StarredField(codomain,_)),codomain,_),
       /* check there is a make_insert or a rule hooks and no theory associated */
       ConcHookDecl(_*,MakeHookDecl[HookType=HookKind[kind="make_insert"|"make_empty"|"rules"]],_*) -> {
         if (!examinedOps.contains(`opName)) {
           examinedOps.add(`opName);
-          %match(hookList) {
+          %match(hookList,String opName) {
             /* check there is no associated theory */
-            !ConcHookDecl(_*, MakeHookDecl[Pointcut=CutOperator[ODecl=OperatorDecl[Name=opName]],HookType=HookKind[kind="Free"|"FL"|"AU"|"AC"|"ACU"]], _*) -> {
+            !ConcHookDecl(_*, MakeHookDecl[Pointcut=CutOperator[ODecl=OperatorDecl[Name=x]],HookType=HookKind[kind="Free"|"FL"|"AU"|"AC"|"ACU"]], _*), x -> {
               /* generate an error to make users specify the theory */
               GomMessage.error(getLogger(), null, 0, 
                   GomMessage.mustSpecifyAssociatedTheoryForVarOp,`opName);

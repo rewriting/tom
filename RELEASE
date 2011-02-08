@@ -8,7 +8,7 @@ How to prepare a release:
 - ./build.sh bootstrap
 - ./build.sh bootinstall
 - ./build.sh all
-- svn commit
+- git commit/push
 
 - update the version of the manual
 - update the date of the manual

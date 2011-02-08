@@ -16,7 +16,7 @@
   <property name="build.sysclasspath" value="ignore" />
 
   <!-- current version of TOM -->
-  <property name="stable.version" value="2.8"/>
+  <property name="stable.version" value="2.8rc3"/>
   <tstamp/>
   <property name="src.version"    value="${DSTAMP}"/>
 
@@ -163,6 +163,7 @@
     <mkdir dir="${stable.dist.lib}/tom"/>
     <mkdir dir="${stable.dist.lib}/tools"/>
     <mkdir dir="${stable.dist.lib}/runtime"/>
+    <mkdir dir="${stable.dist.lib}/compiletime"/>
     <mkdir dir="${stable.dist.share}"/>
     <mkdir dir="${stable.dist.share}/contrib"/>
   </target>
@@ -175,6 +176,7 @@
     <mkdir dir="${src.dist.lib}/tom"/>
     <mkdir dir="${src.dist.lib}/tools"/>
     <mkdir dir="${src.dist.lib}/runtime"/>
+    <mkdir dir="${src.dist.lib}/compiletime"/>
     <mkdir dir="${src.dist.share}"/>
     <mkdir dir="${src.dist.share}/contrib"/>
   </target>
@@ -254,15 +256,15 @@
         <classpath refid="tomsrc.classpath"/>
       </tomsrc>
     </presetdef>
-    <presetdef name="gomantlradaptercompile">
-      <gomantlradaptersrc config="${stable.adapterconfig}">
-        <classpath refid="tomsrc.classpath"/>
-      </gomantlradaptersrc>
-    </presetdef>
     <presetdef name="gomcompile">
       <gomsrc config="${src.gomconfigfile}">
         <classpath refid="tomsrc.classpath"/>
       </gomsrc>
+    </presetdef>
+    <presetdef name="gomantlradaptercompile">
+      <gomantlradaptersrc config="${src.adapterconfig}">
+        <classpath refid="tomsrc.classpath"/>
+      </gomantlradaptersrc>
     </presetdef>
   </target>
 
@@ -584,7 +586,7 @@
     </copy>
 
     <!-- tom library -->
-    <jar jarfile="${stable.dist.lib}/runtime/tom-runtime.jar" update="yes">
+    <jar jarfile="${stable.dist.lib}/runtime/tom-library.jar" update="yes">
       <fileset dir="${stable.build}" includes="tom/library/**/*.class"/>
       <!--fileset dir="${stable.build}" includes="tom/emf/**/EcoreContainmentIntrospector.class"/-->
     </jar>
@@ -666,6 +668,7 @@
       </tarfileset>
       <tarfileset dir="${stable.dist}" prefix="tom-${stable.version}" mode="644">
         <include name="**"/>
+        <!-- this includes lib/compiletime -->
         <exclude name="bin/*"/>
         <exclude name="lib/tom/*"/>
         <exclude name="lib/runtime/*"/>
@@ -770,7 +773,7 @@
     </copy>
 
     <!-- tom library -->
-    <jar jarfile="${src.dist.lib}/runtime/tom-runtime.jar">
+    <jar jarfile="${src.dist.lib}/runtime/tom-library.jar">
       <fileset dir="${src.build}"
         includes="tom/library/**/*.class"
         excludes="tom/library/**/adt/**/*.class"/>
@@ -879,11 +882,12 @@
         <include name="bin/*"/>
         <exclude name="bin/*.bat"/>
         <exclude name="bin/tom.src"/>
+        <exclude name="bin/gom.src"/>
       </tarfileset>
-      <tarfileset dir="${src.dist}" prefix="tom-${src.version}">
+      <tarfileset dir="${src.dist}" prefix="tom-${src.version}" mode="644">
         <include name="bin/*.bat"/>
       </tarfileset>
-      <tarfileset dir="${src.dist}" prefix="tom-${src.version}">
+      <tarfileset dir="${src.dist}" prefix="tom-${src.version}" mode="644">
         <include name="**"/>
         <exclude name="bin/*"/>
         <exclude name="lib/tom/*"/>
@@ -1412,6 +1416,10 @@
     <jar jarfile="${stable.lib}/runtime/Bytecode.jar">
       <fileset dir="${src.build}" includes="tom/library/adt/bytecode/**/*.class"/>
     </jar>
+    <jar jarfile="${stable.lib}/runtime/emf.jar">
+      <fileset dir="${src.build}" includes="tom/emf/**/*.class"/>
+      <fileset dir="${src.src}" includes="tom/emf/**/*.properties"/>
+    </jar>
     <antcall target="clean.bootstrap"/>
   </target>
 
@@ -1668,7 +1676,7 @@
       <class location="${src.dist.lib}/tom/tom-${src.version}.jar" />
       <class location="${src.dist.lib}/tom/gom-${src.version}.jar" />
       <class location="${src.dist.lib}/tom/plugin-platform-${src.version}.jar" />
-      <class location="${src.dist.lib}/runtime/tom-runtime.jar" />
+      <class location="${src.dist.lib}/runtime/tom-library.jar" />
     </findbugs>
   </target>
 
