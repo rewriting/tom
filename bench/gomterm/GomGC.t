@@ -32,7 +32,7 @@ import gomterm.gomgc.spec.types.*;
 
 class GomGC {
 
-  %include { mustrategy.tom }
+  %include { sl.tom }
   %gom {
     module spec
     abstract syntax
@@ -66,7 +66,7 @@ class GomGC {
     }
   }
 
-  public static void main(String[] args) {
+  public static void main(String[] args) throws tom.library.sl.VisitFailure {
     
     int intbase = 0;
     try {
@@ -81,7 +81,7 @@ class GomGC {
     Nat post = `F(M(),N(),P(),Zero(),Suc(Zero()));
     while (post != pre) {
       pre = post;
-      post = (Nat) `BottomUp(Rewrite()).apply(post);
+      post = (Nat) `BottomUp(Rewrite()).visit(post);
     }
     System.out.println(intbase+" \t "+
         (System.currentTimeMillis()-startChrono)/1000.);
