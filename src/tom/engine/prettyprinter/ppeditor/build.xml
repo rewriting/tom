@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="monProjet" basedir="." default="compile">
+
+<property name="testsrc.dir" value="${src.dir}/test"/>
+<property name="src.dir" value="src"/>
+<property name="build.dir" value="build"/>
+<property name="app.name" value="ppeditor"/>
+<property name="dist.dir" value="dist"/>
+<property name="testbuild.dir" value="${build.dir}/test"/>
+	
+  <target name="clean">
+    <delete dir="${dist.dir}"/>
+  </target>
+
+  <target name="cleanall" depends="clean">
+    <delete dir="${build.dir}"/>
+  </target>
+
+  <target name="JUNIT" description="Tester si le classpath contient bien le jar de JUnit">
+    <available property="junit.present" classname="junit.framework.TestCase" />
+  </target>
+
+  <target name="jar" depends="clean, compile" description="Créer un jar contenant seulement les classes normales (pas celles de test)">
+<mkdir dir="${dist.dir}"/>
+<jar jarfile="${dist.dir}/${app.name}.jar" basedir="${build.dir}"/>
+  </target>
+
+
+<target name="compiletests" depends="jar" description="Créer le jar de l'application et compiler les tests dans le répertoire ${testbuild.dir}">
+<mkdir dir="${testsrc.dir}"/>
+<javac srcdir="${testsrc.dir}" destdir="${testbuild.dir}">
+<classpath>
+<pathelement location="${dist.dir}/${app.name}.jar" />
+</classpath>
+</javac>
+</target> 
+
+  <target name="cleanall, compile">
+    <mkdir dir="${build.dir}"/>
+    <javac srcdir="${src.dir}" destdir="${build.dir}"/>
+  </target>
+
+  <target name="compile" depends="JUNIT" description="Compiler les sources, sans compiler les tests">
+<mkdir dir="${build.dir}"/>
+<javac srcdir="${src.dir}" destdir="${build.dir}" >
+<!-- Rq : ** pour parcourir tous les sous repertoires -->
+<include name="${src}/*.java"/>
+</javac>
+</target>
+
+</project>

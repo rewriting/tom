@@ -1,4 +1,4 @@
-package tom.engine.prettyprinter.ppeditor;
+package ppeditor;
 
 /**The PPText class is used to bind a string and its position in a certain file.
 *@author 

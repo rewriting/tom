@@ -1,4 +1,4 @@
-package tom.engine.prettyprinter.ppeditor;
+package ppeditor;
 
 import java.util.*;
 import java.lang.*;
@@ -128,8 +128,8 @@ public class PPCursor {
   }
 
 /**Creates a text file with the fileBuffer as a content.
-*@param fileName the name of the file created.
-*@return a StringBuffer which represents the content of the file created
+*@param fileName the name of the created file
+*@return a StringBuffer which represents the content of the created file
 */
   public StringBuffer dump(String fileName) {
     StringBuffer content = new StringBuffer("");

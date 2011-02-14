@@ -1,4 +1,4 @@
-package tom.engine.prettyprinter.ppeditor;
+package ppeditor;
 
 /**An instance of the class PPTextPosition represents a position in a file.
   *@author 
@@ -29,7 +29,7 @@ public class PPTextPosition {
 */
   public int getLine() {
 
-		return this.line;
+    return this.line;
   }
 
 /**Returns the column position of the PPTextPosition.
