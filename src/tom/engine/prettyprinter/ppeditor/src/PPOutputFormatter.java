@@ -1,4 +1,4 @@
-package tom.engine.prettyprinter.ppeditor;
+package ppeditor;
 
 import java.io.*;
 import java.util.List;
