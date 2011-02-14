@@ -1020,7 +1020,6 @@
 
   <target name="test.stable" description="Compile and run acceptance tests with stable"
     depends="stable.dist">
-	<echo>### Dans test.stable</echo>
     <ant dir="${test}" target="build">
       <property name="tom.home" value="${stable.dist}"/>
     </ant>
@@ -1029,7 +1028,6 @@
   <target name="stable.junit"
     description="Runs junit acceptance tests compiled with stable"
     depends="clean.test, test.stable">
-	<echo>### Dans stable.junit</echo>
     <ant dir="${test}" target="junit">
       <property name="tom.home" value="${stable.dist}"/>
     </ant>
@@ -1074,7 +1072,6 @@
   <target name="stable.all" description="cleans, build, test all" depends="clean.stable, clean.stable.dist">
     <antcall target="stable.dist"/>
     <antcall target="clean.test"/>
-    <echo>### Lancement de stable.junit</echo>
 	<antcall target="stable.junit"/>
 
     <echo>Test tom-stable in examples</echo>

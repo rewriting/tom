@@ -14,7 +14,7 @@ if $cygwin ; then
     TOM_HOME=`cygpath --windows "$TOM_HOME"`
 fi
 
-LOCALCLASSPATH=`echo ${TOM_HOME}/lib/compiletime/junit.jar ${TOM_HOME}/lib/compiletime/ant-launcher.jar ${TOM_HOME}/lib/compiletime/ant-nodeps.jar ${TOM_HOME}/lib/compiletime/ant.jar ${TOM_HOME}/lib/compiletime/ant-antlr.jar ${TOM_HOME}/lib/compiletime/antlr3.jar ${TOM_HOME}/lib/compiletime/ant-junit.jar| tr ' ' ':'`
+LOCALCLASSPATH=`echo ${TOM_HOME}/lib/compiletime/junit.jar ${TOM_HOME}/lib/compiletime/ant-launcher.jar ${TOM_HOME}/lib/compiletime/ant.jar ${TOM_HOME}/lib/compiletime/ant-antlr.jar ${TOM_HOME}/lib/compiletime/antlr3.jar ${TOM_HOME}/lib/compiletime/ant-junit.jar| tr ' ' ':'`
 
 ANT_OPTS=""
 ant_exec_command="exec java $ANT_OPTS -classpath \"$LOCALCLASSPATH\" -Dant.library.dir=\"${TOM_HOME}/lib/compiletime\" org.apache.tools.ant.launch.Launcher $ANT_ARGS -cp \"$CLASSPATH\""
