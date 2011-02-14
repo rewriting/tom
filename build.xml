@@ -691,6 +691,11 @@
     <copy tofile="${src.dist}/GomAntlrAdaptor.xml" file="${src.adapterconfig}"/>
     <!-- "tom binary" -->
     <copy todir="${src.dist.bin}" file="${utils}/javac-tom"/>
+	<copy todir="${src.dist.bin}" file="${utils}/tom.bat"/>
+    <copy todir="${src.dist.bin}" file="${utils}/javacForTom.bat"/>
+    <copy todir="${src.dist.bin}" file="${utils}/javaForTom.bat"/>
+    <copy todir="${src.dist.bin}" file="${utils}/gom.bat"/>
+    <copy todir="${src.dist.bin}" file="${utils}/tlappend.bat"/>
     <copy tofile="${src.dist.bin}/tom" file="${utils}/script.in"/>
     <copy tofile="${src.dist.bin}/tom.src" file="${utils}/script.in"/>
     <copy tofile="${src.dist.bin}/emf-generate-mappings" file="${utils}/emf/emf-script.in"/>
@@ -934,7 +939,7 @@
   </target>
 
   <target name="clean.all" description="Cleans everything (stable, src, test, doc, dist)"
-    depends="clean, clean.dist">
+    depends="clean.dist, clean">
   </target>
 
   <target name="clean" description="Cleans everything in the project"
@@ -1016,6 +1021,7 @@
 
   <target name="test.stable" description="Compile and run acceptance tests with stable"
     depends="stable.dist">
+	<echo>### Dans test.stable</echo>
     <ant dir="${test}" target="build">
       <property name="tom.home" value="${stable.dist}"/>
     </ant>
@@ -1024,6 +1030,7 @@
   <target name="stable.junit"
     description="Runs junit acceptance tests compiled with stable"
     depends="clean.test, test.stable">
+	<echo>### Dans stable.junit</echo>
     <ant dir="${test}" target="junit">
       <property name="tom.home" value="${stable.dist}"/>
     </ant>
@@ -1068,7 +1075,8 @@
   <target name="stable.all" description="cleans, build, test all" depends="clean.stable, clean.stable.dist">
     <antcall target="stable.dist"/>
     <antcall target="clean.test"/>
-    <antcall target="stable.junit"/>
+    <echo>### Lancement de stable.junit</echo>
+	<antcall target="stable.junit"/>
 
     <echo>Test tom-stable in examples</echo>
     <ant dir="${examples}" target="clean">
