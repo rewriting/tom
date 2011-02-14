@@ -947,7 +947,7 @@
   </target>
 
   <target name="clean.dist" description="Mr proper" depends="clean.examples, clean.src.dist, clean.stable.dist">
-    <delete dir="${dist}"/>
+    <delete dir="${dist}" deleteonexit="true"/>
   </target>
 
   <target name="clean.examples" description="Clean the examples">
@@ -957,11 +957,11 @@
   </target>
 
   <target name="clean.src.dist" description="Remove the src distribution">
-    <delete dir="${src.dist}"/>
+    <delete dir="${src.dist}" deleteonexit="true"/>
   </target>
 
   <target name="clean.stable.dist" description="Remove the stable distribution">
-    <delete dir="${stable.dist}"/>
+    <delete dir="${stable.dist}" deleteonexit="true"/>
   </target>
 
   <target name="cruisecontrol-stable" description="Compile and run acceptance tests">
