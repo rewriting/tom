@@ -188,7 +188,7 @@
 
   <!-- builds and defines the custom tasks -->
   <!-- tasks for building src -->
-  <target name="init.task.stable"> <!-- depends="stable.dist"-->
+  <target name="init.task.stable" unless="withsource"> <!-- depends="stable.dist"-->
     <path id="tom.classpath">
       <path refid="external.classpath"/>
       <fileset dir="${stable.dist.lib}">
@@ -208,7 +208,7 @@
   </target>
 
   <!-- define task for running tom.src -->
-  <target name="init.task.src"> <!-- depends="src.dist"-->
+  <target name="init.task.src" if="withsource"> <!-- depends="src.dist"-->
     <path id="tomsrc.classpath">
       <path refid="external.classpath"/>
       <fileset dir="${src.dist.lib}">
@@ -249,8 +249,7 @@
     </presetdef>
   </target>
 
-  <target name="-withsrc" if="withsource">
-    <antcall target="init.task.src"/>
+  <target name="-withsrc" if="withsource" depends="init.task.src">
     <presetdef name="tomcompile">
       <tomsrc config="${src.configfile}">
         <classpath refid="tomsrc.classpath"/>

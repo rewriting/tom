@@ -38,7 +38,7 @@ public class GomNshWithCompare {
 
 // ------------------------------------------------------------  
   %include { gomterm/gomterm.tom }
-  %include { mutraveler.tom }
+  %include { sl.tom }
 // ------------------------------------------------------------  
  
   public void run(int nbAgent) {
@@ -279,7 +279,7 @@ public class GomNshWithCompare {
   public void collectOneStep(State state, Collection col) {
     try {
       `OneStep(col).visit(state);
-    } catch (jjtraveler.VisitFailure f) {
+    } catch (tom.library.sl.VisitFailure f) {
       throw new RuntimeException("VisitFailure for "+state);
     }
   }

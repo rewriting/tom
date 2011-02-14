@@ -16,11 +16,6 @@ public class Main {
       gomtest.run(10+i);
     }
     System.out.println();
-    ApiFib apitest = new ApiFib();
-    for (int i = 0; i < max; i++) {
-      apitest.run(10+i);
-    }
-    System.out.println();
     ATermFib atermtest = new ATermFib();
     for (int i = 0; i < max; i++) {
       atermtest.run(10+i);

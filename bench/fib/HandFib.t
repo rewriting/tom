@@ -15,17 +15,18 @@ public class HandFib {
 
   %typeterm Nat {
     implement { Nat }
+    is_sort(t) { $t instanceof Nat }
   }
 
   %op Nat zero() {
-    is_fsym(t) { t instanceof Zero }
+    is_fsym(t) { $t instanceof Zero }
     make() { new Zero() }
   }
   
   %op Nat suc(p:Nat) {
-    is_fsym(t) { t instanceof Suc }
-    get_slot(p,t) { ((Suc)t).getP() }
-    make(t) { new Suc(t) }
+    is_fsym(t) { $t instanceof Suc }
+    get_slot(p,t) { ((Suc)$t).getP() }
+    make(t) { new Suc($t) }
   }
 
   public Nat plus(Nat t1, Nat t2) {
