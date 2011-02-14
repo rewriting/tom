@@ -27,6 +27,9 @@ How to prepare a release:
 - upload manual
 
 - update Changelog, commit, tag the release with
+  git tag tom-2.8
+
+old commands with subversion:
   svn copy $GFORGE/jtom/trunk $GFORGE/jtom/tags/tom-2.7 -m "tag tree"
   svn copy svn+ssh://developername@scm.gforge.inria.fr/svn/tom/jtom/trunk svn+ssh://developername@scm.gforge.inria.fr/svn/tom/jtom/tags/tom-2.7 -m "tag tree"
 
