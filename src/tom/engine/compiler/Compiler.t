@@ -290,9 +290,11 @@ public class Compiler extends TomGenericPlugin {
           // make sure we don't process generated contraints
           //DEBUG System.out.println("A constraint already processed!!");
           return `constr; 
-        }        
-        TomType freshSubjectType = `castType;
-        //DEBUG System.out.println("In renameSubjects - IF 1 - freshSubjectType = " + freshSubjectType);
+        } 
+        TomType freshSubjectType = compiler.getTermTypeFromTerm(`subject);
+        //TomType freshSubjectType = `castType;
+        System.out.println("In renameSubjects - IF 1 - subject = " + `subject);
+        System.out.println("In renameSubjects - IF 1 - freshSubjectType = " + freshSubjectType);
 
         // IF 2
         // test if we already renamed this subject 
@@ -329,7 +331,7 @@ public class Compiler extends TomGenericPlugin {
 
           return `AndConstraint(
               MatchConstraint(TomBase.convertFromBQVarToVar(freshVar),subject,freshSubjectType),
-              IsSortConstraint(freshSubjectType,freshVar),
+              IsSortConstraint(castType,freshVar),
               MatchConstraint(typedRenamedSubj,ExpressionToBQTerm(Cast(freshSubjectType,BQTermToExpression(freshVar))),freshSubjectType),
               newConstraint);
         }
@@ -389,7 +391,7 @@ public class Compiler extends TomGenericPlugin {
 
         return `AndConstraint(
             MatchConstraint(TomBase.convertFromBQVarToVar(freshVar),subject,freshSubjectType),
-            IsSortConstraint(freshSubjectType,freshVar),
+            IsSortConstraint(castType,freshVar),
             MatchConstraint(renamedVar,ExpressionToBQTerm(Cast(freshSubjectType,BQTermToExpression(freshVar))),freshSubjectType),
             newConstraint);
 

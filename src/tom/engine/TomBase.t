@@ -597,10 +597,20 @@ public final class TomBase {
 
       ListTail[Variable=term] -> { return getTermType(`term, symbolTable); }
 
-      Subterm(Name(name), slotName, _) -> {
+      Subterm[AstName=Name(name),SlotName=slotName] -> {
         TomSymbol tomSymbol = symbolTable.getSymbolFromName(`name);
         return getSlotType(tomSymbol, `slotName);
       }
+
+      (BuildConstant|BuildTerm|BuildEmptyList|BuildConsList|BuildAppendList|BuildEmptyArray|BuildConsArray|BuildAppendArray)[AstName=Name(name)]
+        -> {
+          TomSymbol tomSymbol = symbolTable.getSymbolFromName(`name); 
+          if(tomSymbol!=null) {
+            return tomSymbol.getTypesToType().getCodomain();
+          } else {
+            return `EmptyType();
+          }
+        }
    }
     //System.out.println("getTermType error on term: " + t);
     //throw new TomRuntimeException("getTermType error on term: " + t);

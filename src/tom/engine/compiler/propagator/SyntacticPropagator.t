@@ -127,6 +127,9 @@ public class SyntacticPropagator implements IBasePropagator {
             // store the fresh variable
             freshVarList.add(freshVar);
             // build the last part
+            if (applType != slotType){
+              lastPart.add(`IsSortConstraint(applType,freshVar));
+            }
             lastPart.add(`MatchConstraint(appl,freshVar,applType));
             //DEBUG System.out.println("Match#1= " + `MatchConstraint(appl,freshVar,applType));
           }

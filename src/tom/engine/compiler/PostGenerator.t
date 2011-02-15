@@ -84,8 +84,10 @@ public class PostGenerator {
          * when there is an identical LetRef between the root and the current LetRef
          * the current LetRef is replaced by an Assign
          */
+        //DEBUG System.out.println("ChangeVarDeclarations: name = " + `name);
         Visitable root = (Visitable) getEnvironment().getRoot();
         if(getEnvironment().depth()>0) { // we are not at the root
+          //DEBUG System.out.println("ChangeVarDeclarations: root = " + `root);
           try {
             getPosition().getOmegaPath(`CheckLetRefExistence(name)).visit(root); 
           } catch (VisitFailure e) {
@@ -98,6 +100,7 @@ public class PostGenerator {
          * if there is no Assign, not LetRef in the body
          * the current LetRef is replaced by a Let
          */
+          //DEBUG System.out.println("ChangeVarDeclarations: body = " + `body);
         try {
           `Not(TopDown(ChoiceId(CheckAssignExistence(name),CheckLetRefExistence(name)))).visitLight(`body);
         } catch (VisitFailure e) {
@@ -110,7 +113,10 @@ public class PostGenerator {
   %strategy CheckLetRefExistence(varName:TomName) extends Identity() {
     visit Instruction {
       LetRef[Variable=(BQVariable|BQVariableStar)[AstName=name]] -> {
+        //DEBUG System.out.println("CheckLetRefExistence: name = " + `name);
+        //DEBUG System.out.println("CheckLetRefExistence: varName = " + `varName);
         if(varName == `name ) {
+          //DEBUG System.out.println("CheckLetRefExistence: " + `name + " already exists.");
           throw new VisitFailure();
         }
       }

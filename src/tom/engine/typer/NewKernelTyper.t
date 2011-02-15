@@ -1672,17 +1672,17 @@ matchBlockFail :
        * unnecessarily
        */
       /* PHASE 2 */
-      tcl@concTypeConstraint(_*,Subtype[Type1=t1,Type2=tVar@TypeVar[],Info=info],_*,Subtype[Type1=tVar,Type2=t2],_*)
-        && !concTypeConstraint(_*,Subtype[Type1=t1,Type2=t2],_*) << tcl -> {
-          //DEBUG System.out.println("\nsolve2a: " + `tcl);
+      tcl@concTypeConstraint(tcl1*,Subtype[Type1=t1,Type2=tVar@TypeVar[],Info=info],tcl2*,Subtype[Type1=tVar,Type2=t2],tcl3*)
+        && !concTypeConstraint(_*,Subtype[Type1=t1,Type2=t2],_*) <<
+        concTypeConstraint(tcl1,tcl2,tcl3) -> {
           return
-            nkt.`addSubConstraint(Subtype(t1,t2,info),tcl);
+            nkt.`addSubConstraint(Subtype(t1,t2,info),concTypeConstraint(tcl1,tcl2,tcl3));
         }
-      tcl@concTypeConstraint(_*,Subtype[Type1=tVar,Type2=t2,Info=info],_*,Subtype[Type1=t1,Type2=tVar@TypeVar[]],_*)
-        && !concTypeConstraint(_*,Subtype[Type1=t1,Type2=t2],_*) << tcl -> {
+      tcl@concTypeConstraint(tcl1*,Subtype[Type1=tVar,Type2=t2,Info=info],tcl2*,Subtype[Type1=t1,Type2=tVar@TypeVar[]],tcl3*)
+        && !concTypeConstraint(_*,Subtype[Type1=t1,Type2=t2],_*) << concTypeConstraint(tcl1,tcl2,tcl3) -> {
           //DEBUG System.out.println("\nsolve2b: " + `tcl);
           return
-            nkt.`addSubConstraint(Subtype(t1,t2,info),tcl);
+            nkt.`addSubConstraint(Subtype(t1,t2,info),concTypeConstraint(tcl1,tcl2,tcl3));
         }
 
       /* PHASE 3 */
