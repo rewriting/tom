@@ -23,7 +23,7 @@ public class PPCursor {
 
 /**Creates a PPCursor
 */
-  public PPCursor(int l, int c, String fileName) {
+  public PPCursor(int l, int c) {
     
     this.position = new PPTextPosition(l,c);
     insertion=true;

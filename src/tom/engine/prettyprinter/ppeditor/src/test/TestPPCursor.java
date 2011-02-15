@@ -1,8 +1,13 @@
+package ppeditor.test;
+
 import org.junit.Test;
 import org.junit.*;
 import org.junit.Assert.*;
+import ppeditor.*;
+import java.io.*;
+import java.util.ArrayList;
 
-public class TestPPOutputFormatter {
+public class TestPPCursor {
 
   private PPCursor cursor;
 
@@ -18,14 +23,14 @@ public class TestPPOutputFormatter {
 
   @Test
   public void testMove() {
-    cursor.move(2,-3);
+    cursor.move(new PPTextPosition(2,-3));
     Assert.assertEquals("Is the cursor where it should be?", cursor.getPosition(), new PPTextPosition(16,5));
   }
 
   @Test
   public void testWrite1() {
     cursor.write("For great justice!");
-    Assert.assertEquals("Text written on one non-already existing line.", cursor.fileBuffer.get(13), "        For great justice!");
+    Assert.assertEquals("Text written on one non-already existing line.", cursor.getFileBuffer().get(13), "        For great justice!");
   }
 
   @Test
@@ -39,12 +44,12 @@ public class TestPPOutputFormatter {
     cursor.write("All your base are belong to us.\nFor great justice!");
     Assert.assertEquals("Text written on two non-already existing lines.", cursor.getFileBuffer(), expectedBuffer);
   }
+  }
 
   @Test
   public void test(){
-    
+  } 
 
-  }  
 
 
 
