@@ -237,7 +237,6 @@ public class SyntaxCheckerPlugin extends TomGenericPlugin {
         scp.verifyStrategy(`list);
         throw new tom.library.sl.VisitFailure();// stop the top-down
       }
-
       /*
        * %typeterm
        */
@@ -258,6 +257,27 @@ public class SyntaxCheckerPlugin extends TomGenericPlugin {
         scp.verifySymbol(SyntaxCheckerPlugin.OP_LIST, scp.getSymbolFromName(`tomName));
         throw new tom.library.sl.VisitFailure();// stop the top-down
       }
+      /*
+       * %transformation
+       */
+      t@Transformation[TName=name,WithToList=wtlist,OrgTrack=ot] -> {
+        //test if a %transformtion is empty (not valid)
+        if(`wtlist.isEmptyconcTomWithTo()) {
+          %match(ot) {
+            OriginTracking[FileName=fileName,Line=line] -> { 
+              TomMessage.error(scp.getLogger(), `fileName, `line, TomMessage.emptyTransformation);
+              return `t;
+            }
+          }
+          TomMessage.error(scp.getLogger(), null, -1, TomMessage.emptyTransformation);
+          return `t;
+        }
+        //TODO : verify transformation structure ???
+        //scp.verifyTransformation(`wtlist);
+        throw new tom.library.sl.VisitFailure();// stop the top-down
+      }
+
+
     }
 
     visit Instruction {
@@ -1121,6 +1141,15 @@ matchL:  %match(subject,s) {
       }
     }
   }
+
+  /*
+   * Verify structure of a %transformation
+   */
+//  private void verifyTransformation(TomWithToList wtlist) throws VisitFailure {
+    //TODO:
+    // - test if a withTerm exists (+args) -> here ?
+    // - test toTerm structure ?
+//  }
 
   /**
    * Analyse a term given an expected type and re-enter recursively on children

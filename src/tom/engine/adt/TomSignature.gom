@@ -9,7 +9,7 @@ TargetLanguage = TL(Code:String,Start:TextPosition,End:TextPosition)
 TextPosition = TextPosition(Line:int,Column:int)
 TomVisit = VisitTerm(VNode:TomType,AstConstraintInstructionList:ConstraintInstructionList,Options:OptionList)
 TomWithTo = WithToInstruction(With:TomWithTerm,ToInstructionList:InstructionList,Options:OptionList)
-TomWithTerm = WithTerm(WNode:TomType,Args:SlotList,Options:OptionList)
+TomWithTerm = WithTerm(WNode:TomType/*,Args:SlotList*/,Options:OptionList) //lhs of a WithTo
 TomSymbol = EmptySymbol()
           | Symbol(AstName:TomName, TypesToType:TomType, PairNameDeclList:PairNameDeclList, Options:OptionList)
 TomSymbolTable = Table(EntryList:TomEntryList)

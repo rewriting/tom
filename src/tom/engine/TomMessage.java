@@ -395,6 +395,12 @@ public class TomMessage extends BasicPlatformMessage {
   public static final TomMessage emptyStrategy =
       new TomMessage("empty %strategy construct : at least one \"visit\" should be declared");
 
+  //transformation
+  public static final TomMessage emptyTransformation =
+      new TomMessage("empty %transformation construct : at least one \"<with> -> <to>\" should be declared");
+  public static final TomMessage invalidTransformationName =
+      new TomMessage("{0} is not a valid transformation name. Maybe it is already used as a symbol.");
+
   // rule
   public static final TomMessage incorrectRuleLHSClass   =
       new TomMessage("''{0}'': Impossible in rule left hand side");
