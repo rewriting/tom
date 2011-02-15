@@ -36,7 +36,9 @@ How to prepare a release:
 
 - update Changelog, commit, tag the release with
   git tag -a tags/tom-2.8 -m "* version 2.8"
-  git push --tags
+  git push origin tags/tom-2.8 (only one tag)
+  or
+  git push --tags (all tags)
 
 old commands with subversion:
   svn copy $GFORGE/jtom/trunk $GFORGE/jtom/tags/tom-2.7 -m "tag tree"
