@@ -293,8 +293,9 @@ public class Compiler extends TomGenericPlugin {
         } 
         TomType freshSubjectType = compiler.getTermTypeFromTerm(`subject);
         //TomType freshSubjectType = `castType;
-        System.out.println("In renameSubjects - IF 1 - subject = " + `subject);
-        System.out.println("In renameSubjects - IF 1 - freshSubjectType = " + freshSubjectType);
+        //DEBUG System.out.println("In renameSubjects - IF 1 - subject = " + `subject);
+        //DEBUG System.out.println("In renameSubjects - IF 1 - freshSubjectType = " + freshSubjectType);
+        //DEBUG System.out.println("In renameSubjects - IF 1 - castType = " + `castType);
 
         // IF 2
         // test if we already renamed this subject 
