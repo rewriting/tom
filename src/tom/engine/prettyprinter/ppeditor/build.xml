@@ -26,28 +26,29 @@
     <jar jarfile="${dist.dir}/${app.name}.jar" basedir="${build.dir}"/>
   </target>
 
-  <target name="compiletests" depends="jar" description="Créer le jar de l'application et compiler les tests dans le répertoire ${testbuild.dir}">
-    <mkdir dir="${testbuild.dir}"/>
-    <javac srcdir="${testsrc.dir}" destdir="${testbuild.dir}">
-      <classpath>
-        <pathelement location="${dist.dir}/${app.name}.jar" />
-      </classpath>
-    </javac>
-  </target> 
+<target name="compiletests" depends="jar" description="Créer le jar de l'application et compiler les tests dans le répertoire ${testbuild.dir}">
+<mkdir dir="${testbuild.dir}"/>
+<javac srcdir="${testsrc.dir}" destdir="${testbuild.dir}">
+<classpath>
+<pathelement location="${dist.dir}/${app.name}.jar" />
+</classpath>
+</javac>
+</target> 
 
-  <target name="compile" depends="JUNIT">
-    <mkdir dir="${build.dir}"/>
-    <javac srcdir="${src.dir}" destdir="${build.dir}" excludes="test/**"/>
-  </target>
+<target name="compile" depends="JUNIT">
+<mkdir dir="${build.dir}"/>
+<javac srcdir="${src.dir}" destdir="${build.dir}" excludes="test/**"/>
+</target>
 
-  <target name="runtests" depends="compiletests" if="junit.present" description="Compiler l'appli, créer le .jar, compiler les tests et lancer tous les tests du TestSuite *AllTests* en mode console">
-    <java fork="true" classname="junit.textui.TestRunner" taskname="junit" failonerror="true">
-      <arg value="build.test.AllTests"/>
-      <classpath>
-        <pathelement path="${java.class.path}" />
-        <pathelement location="${build.dir}/*.class" />
-      </classpath>
-    </java>
-  </target>
+<target name="runtests" depends="compiletests" if="junit.present" description="Compiler l'appli, créer le .jar, compiler les tests et lancer tous les tests du TestSuite *AllTests* en mode console">
+<java fork="true" classname="junit.textui.TestRunner" taskname="junit" failonerror="true">
+<classpath>
+<pathelement path="${java.class.path}" />
+<pathelement location="${build.dir}/ppeditor" />
+<pathelement location="${testbuild.dir}"/>
+</classpath>
+<arg value="ppeditor.test.AllTests"/>
+</java>
+</target>
 
 </project>
