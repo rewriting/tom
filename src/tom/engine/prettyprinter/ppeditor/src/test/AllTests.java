@@ -1,9 +1,7 @@
 package ppeditor.test;
 
 import junit.framework.Test;
-
 import junit.framework.TestSuite;
-
 
 public class AllTests {
 
@@ -18,7 +16,7 @@ new TestSuite("Suite de test pour les outils de calcul");
 
 suite.addTest(new TestSuite(TestPPCursor.class));
 
-suite.addTest(new TestSuite(TestPPEditor.class));
+suite.addTest(new TestSuite(TestPPTextPosition.class));
 
 //$JUnit-END$
 

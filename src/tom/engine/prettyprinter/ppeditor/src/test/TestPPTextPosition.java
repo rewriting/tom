@@ -1,6 +1,8 @@
+package ppeditor.test;
+
 import org.junit.*;
 import org.junit.Assert.*;
-import ppeditor;
+import ppeditor.*;
 import org.junit.Test;
 
 public class TestPPTextPosition{
