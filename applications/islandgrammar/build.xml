@@ -1,17 +1,34 @@
 <?xml version="1.0"?>
-<project name="islandgrammar" default="compile">
+<project name="islandgrammar" default="compile" basedir=".">
 	<property environment="env"/>
 	<property name="tom.home" value="${env.TOM_HOME}"/>
+	<property name="islgram" value="."/>
 	<property name="antlrjar" value="${tom.home}/src/lib/tools/antlr-3.2.jar"/>
-	<property name="sources" value="src"/>
-	<property name="gramfile" value="miniTom.g"/>
+	<property name="withAntlr" value="${antlrjar}:${env.CLASSPATH}"/>
+	<property name="src" value="${islgram}/src"/>
+	<property name="build" value="${islgram}/build"/>
+	<property name="input" value="${islgram}/input"/>
+	<!--property name="gramname" value="miniTom"/-->
+	<property name="gramname" value="miniTom"/>
+	<property name="gramfile" value="${src}/${gramname}.g"/>
 	<target name="grammar">
-		<java classname="org.antlr.Tool" classpath="${antlrjar}">
-			<arg value="${sources}/${gramfile}"/>
+		<java classname="org.antlr.Tool" classpath="${withAntlr}">
+			<arg value="${gramfile}"/>
 		</java>
 	</target>
-	<target name="compile">
-		<!--echo>Someday it will compile I swear</echo-->
-		<javac srcdir="${sources}" destdir="build" classpath="${antlrjar}"/>
+	<target name="compile"><!-- depends="grammar"-->
+		<mkdir dir="${build}"/>
+		<javac srcdir="${src}" destdir="${build}" classpath="${withAntlr}" includeantruntime="false"/>
+	</target>
+	<target name="test" depends="compile">
+		<java classpath="${withAntlr}:${islgram}/${build}" classname="Main" fork="true">
+			<arg value="${input}/testAntlrInput"/>
+		</java>
+	</target>
+	<target name="clean">
+		<delete dir="${build}"/>
+		<delete file="${islgram}/${gramname}.tokens"/>
+		<delete file="${src}/${gramname}Parser.java"/>
+		<delete file="${src}/${gramname}Lexer.java"/>
 	</target>
 </project>

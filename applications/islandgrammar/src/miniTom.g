@@ -1,37 +1,35 @@
-grammar GParser;
-options {output=AST;}
+grammar miniTom;
 
-tokens {
-	LEFTPAR='(';
-	RIGHTPAR=')';
-	LEFTBR='{';
-	RIGHTBR='}';
+options {
+	output=AST;
+  ASTLabelType=Tree;
+  backtrack=true;
+  //tokenVocab=IGTokens;
 }
 
-program
-	: LEFTPAR subject* RIGHTPAR LEFTBR (statement ';')* RIGHTBR
-	;
+tokens {
+  PROGRAM;
+  CODE;
+}
+@lexer::members{int levelcounter=-1;}
+/* Parser rules */
 
-subject
-	:	Type? ' ' var
-	;
+program :	LEFTPAR RIGHTPAR LEFTBR code* RIGHTBR -> ^(PROGRAM code*) ;
 
-statement
-	:	BLANK* LETTER+ BLANK*
-	;
+code :	(s=statement {System.out.println($s.text);} SEMICOLUMN) -> ^(CODE $s) ;
 
-BLANK
-	:	'\r' | '\n' | ' '
-	;
+statement	:	A+ ;
 
-LETTER
-	:	'A'..'Z' | 'a'..'z'|'_'
-	;
 
-Type
-	:	'int' | 'float'|'truc'
-	;
-var
-	:	LETTER+
-	;
+/* Lexer rules */
+
+LEFTPAR    : '(' ;
+RIGHTPAR   : ')' ;
+LEFTBR     : '{' {levelcounter+=1;System.out.println(+levelcounter);} ;
+RIGHTBR    : '}' {if(levelcounter==0){emit(Token.EOF_TOKEN);} else{levelcounter-=1;}  } ;
+SEMICOLUMN : ';' ;
+A          : 'alice' ;
+B          : 'bob' ;
+
+WS	: ('\r' | '\n' | '\t' | ' ' )* { $channel = HIDDEN; };
 

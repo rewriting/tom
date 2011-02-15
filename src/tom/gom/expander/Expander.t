@@ -1,7 +1,7 @@
 /*
  * Gom
  *
- * Copyright (c) 2006-2010, INPL, INRIA
+ * Copyright (c) 2006-2011, INPL, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -25,13 +25,10 @@
 package tom.gom.expander;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import tom.gom.GomMessage;
@@ -39,7 +36,6 @@ import tom.gom.GomStreamManager;
 import tom.gom.tools.GomEnvironment;
 import tom.gom.adt.gom.*;
 import tom.gom.adt.gom.types.*;
-import tom.platform.PlatformLogRecord;
 
 import org.antlr.runtime.*;
 import org.antlr.runtime.tree.*;
@@ -49,9 +45,9 @@ import tom.gom.parser.GomLanguageParser;
 import tom.gom.adt.gom.GomAdaptor;
 
 public class Expander {
-  %include { ../adt/gom/Gom.tom}
+  %include { ../adt/gom/Gom.tom }
 
-  private GomEnvironment gomEnvironment;
+  private final GomEnvironment gomEnvironment;
 
   public Expander(GomEnvironment gomEnvironment) {
     this.gomEnvironment = gomEnvironment;
@@ -73,7 +69,7 @@ public class Expander {
     Set<GomModuleName> alreadyParsedModule = new HashSet<GomModuleName>();
     alreadyParsedModule.add(module.getModuleName());
     Set<GomModuleName> moduleToAnalyse = generateModuleToAnalyseSet(module, alreadyParsedModule);
-    GomMessage.finer(getLogger(), null, 0, GomMessage.moduleToAnalyse, 
+    GomMessage.finer(getLogger(), null, 0, GomMessage.moduleToAnalyse,
         moduleToAnalyse);
 
     while (!moduleToAnalyse.isEmpty()) {
@@ -119,14 +115,13 @@ public class Expander {
 
   private GomModule parse(String moduleName) {
     GomMessage.fine(getLogger(), null, 0, GomMessage.fileSeeking, moduleName);
-    GomModule result = null;
     File importedModuleFile = findModuleFile(moduleName);
     if (null == importedModuleFile) {
       GomMessage.error(getLogger(),moduleName,0,
           GomMessage.moduleNotFound);
       return null;
     }
-    CharStream inputStream = null;
+    final CharStream inputStream;
     try {
       inputStream = new ANTLRReaderStream(new FileReader(importedModuleFile));
     } catch (FileNotFoundException e) {
@@ -141,6 +136,7 @@ public class Expander {
 		GomLanguageLexer lexer = new GomLanguageLexer(inputStream);
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
 		GomLanguageParser parser = new GomLanguageParser(tokens,getStreamManager());
+    final GomModule result;
     try {
       Tree tree = (Tree) parser.module().getTree();
       result = (GomModule) GomAdaptor.getTerm(tree);

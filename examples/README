@@ -48,13 +48,13 @@ To relax, take a look at quine example
 ------------------------
   Compilation:
     - To compile all examples, run the script 'build.sh' from directory
-    'examples', assuming Ant is installed. To compile a specific example,
-    specify the example name.
-    For instance, to compile example 'peano' only, run
-    'build.sh -Dexample=peano build'.
-    Another possibility is to go into the directory and call 'ant':
-    'cd peano'
-    'ant'
+      'examples', assuming Ant is installed. To compile a specific example,
+      specify the example name.
+      For instance, to compile example 'peano' only, run
+      'build.sh -Dexample=peano build'.
+      Another possibility is to go into the directory and call 'ant':
+      'cd peano'
+      'ant'
 
   Execution:
     - To run a specific example, go to directory examples/build/ and execute
@@ -62,11 +62,8 @@ To relax, take a look at quine example
       instance, to run 'Peano1', simply run 'java peano.Peano1'.
 
 
-* Note about ApiGen/Vas/Gom:
-------------------------
-  Vas is build on top of ApiGen and both are deprecated. You may now use
-  Gom for all your applications (see user manual).
-
+* Note about Gom:
+-----------------
   Gom is a system which takes a many-sorted signature as input, and
   generates a concrete implementation for such an abstract data-type.
   In addition, Gom automatically generates a mapping for Tom.
@@ -78,6 +75,10 @@ To relax, take a look at quine example
 
 * Included examples:
 --------------------
+* acmatching
+  Small program to show how to use AC (Associative-Commutative) matching
+  Concepts: ac-matching, gom
+
 * addressbook
   Small implementation of a database
   Concepts: apigen, list-matching, gom
@@ -121,17 +122,15 @@ To relax, take a look at quine example
       it only responds `True or `False, without giving the substitution when it
       exists
 
-* antiptest
- Antipatterns Test
- Some example of antipatterns
- Concepts: antipatterns
-
 * appletxml
   XML Transformation
   This examples contains an applet with is similar to the one in the Tom
   web site: the author page. It aims to show how to combine applet, xml and tom
   to complete web design technologies.
   Concepts: XML pattern matching
+
+* bdd
+  Resolution of the N-Queens chess problem, using BDDs (Binary Decision Diagrams)
 
 * bpel
   transformation of BPEL specification
@@ -172,9 +171,19 @@ To relax, take a look at quine example
   Cellular automata
   Concepts: pattern matching
 
+* cps
+  Example encoding the first-order one-pass (and two-pass) CPS transformation
+  Concepts: using ANTLR with tom, strategies, matching
+
+* csharp
+  Early test of the Tom C# compiler
+
 * csmaca
   Simulation of the network protocol CSMA/CA
   Concepts: probabilistic strategies
+
+* debugger
+  A small debugger for strategies
 
 * dom
   XML manipulation based on DOM
@@ -183,6 +192,17 @@ To relax, take a look at quine example
 * expression
   Simplification of algebraic expressions
   Concepts: complex object mapping, lazy-type
+
+* freshgom
+  An extension of gom which adds capabilities very similar to that of Caml
+  A good explanation is provided in the documentation.
+  Concepts: system F, gom, name bindings
+
+* gasel
+  Modelisation of a chemical process.
+
+* generics
+  Implementation of %typeterm, %op and %oplist with generics
 
 * gom
   gom usage demonstration
@@ -205,6 +225,9 @@ To relax, take a look at quine example
     Library
   Concepts: mapping, complex mapping on builtin
 
+* labyrinth
+  Example based on boulderdash example code.
+
 * lambdacalculi
   Several implementations of betareduction, one per tom file
    - LambdaUpsilon : 
@@ -214,6 +237,9 @@ To relax, take a look at quine example
   - BarendregtConvention: 
       One hook maintains Barendregt's convention.
       Beta-reduction is then described in 2 lines.
+
+* lazyml
+  Mini ML to Java compiler, with optional lazy behaviour.
 
 * list
   Introduction to list-matching
@@ -238,6 +264,14 @@ To relax, take a look at quine example
   (collaboration with the MGS group)
   ArrayBeadSort, BeadSort and  BoulderDash
 
+* miniml
+  miniml compiler written in Tom
+  Concepts: using ANTLR with Tom, writing a compiler
+
+* modeltrans
+  Graphical view of a model using termgraph
+  Concepts: termgraph, gom, model
+
 * nspk
   Verification of the Needham-Schroeder Public-Key protocol
   Concepts: apigen, complex list-matching, exploration of a search space
@@ -248,6 +282,10 @@ To relax, take a look at quine example
 * p3p
   Implementation of a web policy, using XML
   Concepts: XML
+
+* parser
+  An example to show how to use Gom + ANTLR
+  Concepts: gomantlradaptor
 
 * peano
   Computation with Peano integers
@@ -274,6 +312,9 @@ To relax, take a look at quine example
   Propositional prover
   Concepts: using ANTLR with tom
 
+* python
+  Tree drawing in Tom-Python
+
 * quine
   Example of small self-reproducing Tom program
   Concepts: using % brackets 
@@ -281,6 +322,10 @@ To relax, take a look at quine example
 * rbtree
   Red-Black Tree algorithm
   Concepts: apigen, disjunction of patterns
+
+* servlet
+  Implementation of a simple RSS viewer
+  Concepts: xml library, 
 
 * strategy
   Show how to use the MuTraveler strategy language
@@ -301,23 +346,77 @@ To relax, take a look at quine example
   Calculus of strutures
   Concepts: complex list-matching, exploration strategies
 
+* subtyping
+  Prototypes for type checking and type inference
+  Concepts: type systems, constraint resolution
+  ** checking: implementation of type checking rules for Var, Fun and List
+  ** inference: implementation of constraint-based type inference rules for 
+     Var, Fun and List and an algorithm of constraint resolution considering
+     equality and subtyping constraints  
+
 * tactics
   Implementation of classical theorem prover tactics with the strategy language
   Concepts: Tom strategies
-
-* ted
-  Toolbox for live aterms manipulation/representation
-  Concepts: mapping to predefined java type
 
 * termgraph
   Pattern matching on graphs
   Shows how to perform pattern matching on graphs coded by terms
   using ref visitors provided by tom library
 
+* tomjastadd
+  Use of Jastadd with Tom
+
 * tutorial
   Examples introduced in the tutorial
   Concepts: string matching, XML
 
+* typeinference
+  Various simple examples to test Tom's typer
+  Concepts: list matching 
+  Files' description:
+  Example 
+    - an example with a matching constraint and explicit type cast 
+    - tests to better unsderstant type relation of 'equalsTo' method and '=='
+  Example1 
+    - anexample with a matching constraint and implicit type cast 
+  Example2 
+    - an example with two matching constraints and explicit type cast 
+  Example3 
+    - an example with two matching constraints and implicit type cast 
+  Example4 
+    - an example with two matching constraints and implicit type cast
+      using list-matching 
+  Example5 
+    - an example with two matching constraints and implicit type cast
+      using antipatterns 
+  Example6 
+    - an example with two matching constraints and implicit type cast
+      using disjunction of constructors 
+  Example7 
+    - an example with a conjunction of matching constraints and implicit type cast
+  Example8 
+    - an example with a disjunction of matching constraints and implicit type cast
+  Example9 
+    - an example with a conjunction of a matching constraint and a numeric constraint 
+  Example10 
+    - an example with a matching constraint using an alias 
+  Example11 
+    - an example with a matching constraint where the first one has variables as 
+      pattern and subject 
+  Example13 
+    - an example with two separated match blocks  
+  Example14 
+    - an example with two embedded match blocks  
+  Example15 
+    - an example with conjunctions and disjuctions of matching constraints 
+  Example16 
+    - an example with embedded and separated match blocks  
+  The remaining examples are described by their file names
+
 * xml
   XML manipulation based on TNode
   Concepts: XML, list-matching, TNode
+
+* xquery
+  Implementation of XQuery requests in Tom
+  Concepts: XML

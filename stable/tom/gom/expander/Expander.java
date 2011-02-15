@@ -1,7 +1,7 @@
 /*
 * Gom
 *
-* Copyright (c) 2006-2010, INPL, INRIA
+* Copyright (c) 2006-2011, INPL, INRIA
 * Nancy, France.
 *
 * This program is free software; you can redistribute it and/or modify
@@ -25,13 +25,10 @@
 package tom.gom.expander;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import tom.gom.GomMessage;
@@ -39,7 +36,6 @@ import tom.gom.GomStreamManager;
 import tom.gom.tools.GomEnvironment;
 import tom.gom.adt.gom.*;
 import tom.gom.adt.gom.types.*;
-import tom.platform.PlatformLogRecord;
 
 import org.antlr.runtime.*;
 import org.antlr.runtime.tree.*;
@@ -115,7 +111,7 @@ public class Expander {
   }
   
 
-private GomEnvironment gomEnvironment;
+private final GomEnvironment gomEnvironment;
 
 public Expander(GomEnvironment gomEnvironment) {
 this.gomEnvironment = gomEnvironment;
@@ -138,7 +134,7 @@ GomModuleList result =
 Set<GomModuleName> alreadyParsedModule = new HashSet<GomModuleName>();
 alreadyParsedModule.add(module.getModuleName());
 Set<GomModuleName> moduleToAnalyse = generateModuleToAnalyseSet(module, alreadyParsedModule);
-GomMessage.finer(getLogger(), null, 0, GomMessage.moduleToAnalyse, 
+GomMessage.finer(getLogger(), null, 0, GomMessage.moduleToAnalyse,
 moduleToAnalyse);
 
 while (!moduleToAnalyse.isEmpty()) {
@@ -185,14 +181,13 @@ return moduleToAnalyse;
 
 private GomModule parse(String moduleName) {
 GomMessage.fine(getLogger(), null, 0, GomMessage.fileSeeking, moduleName);
-GomModule result = null;
 File importedModuleFile = findModuleFile(moduleName);
 if (null == importedModuleFile) {
 GomMessage.error(getLogger(),moduleName,0,
 GomMessage.moduleNotFound);
 return null;
 }
-CharStream inputStream = null;
+final CharStream inputStream;
 try {
 inputStream = new ANTLRReaderStream(new FileReader(importedModuleFile));
 } catch (FileNotFoundException e) {
@@ -207,6 +202,7 @@ return null;
 GomLanguageLexer lexer = new GomLanguageLexer(inputStream);
 CommonTokenStream tokens = new CommonTokenStream(lexer);
 GomLanguageParser parser = new GomLanguageParser(tokens,getStreamManager());
+final GomModule result;
 try {
 Tree tree = (Tree) parser.module().getTree();
 result = (GomModule) GomAdaptor.getTerm(tree);
@@ -244,29 +240,29 @@ ImportList imports =
 {
 if ( (module instanceof tom.gom.adt.gom.types.GomModule) ) {
 if ( ((( tom.gom.adt.gom.types.GomModule )module) instanceof tom.gom.adt.gom.types.gommodule.GomModule) ) {
- tom.gom.adt.gom.types.SectionList  tomMatch556_2= (( tom.gom.adt.gom.types.GomModule )module).getSectionList() ;
-if ( ((tomMatch556_2 instanceof tom.gom.adt.gom.types.sectionlist.ConsConcSection) || (tomMatch556_2 instanceof tom.gom.adt.gom.types.sectionlist.EmptyConcSection)) ) {
- tom.gom.adt.gom.types.SectionList  tomMatch556__end__7=tomMatch556_2;
+ tom.gom.adt.gom.types.SectionList  tomMatch544_2= (( tom.gom.adt.gom.types.GomModule )module).getSectionList() ;
+if ( ((tomMatch544_2 instanceof tom.gom.adt.gom.types.sectionlist.ConsConcSection) || (tomMatch544_2 instanceof tom.gom.adt.gom.types.sectionlist.EmptyConcSection)) ) {
+ tom.gom.adt.gom.types.SectionList  tomMatch544__end__7=tomMatch544_2;
 do {
 {
-if (!( tomMatch556__end__7.isEmptyConcSection() )) {
- tom.gom.adt.gom.types.Section  tomMatch556_11= tomMatch556__end__7.getHeadConcSection() ;
-if ( (tomMatch556_11 instanceof tom.gom.adt.gom.types.section.Imports) ) {
+if (!( tomMatch544__end__7.isEmptyConcSection() )) {
+ tom.gom.adt.gom.types.Section  tomMatch544_11= tomMatch544__end__7.getHeadConcSection() ;
+if ( (tomMatch544_11 instanceof tom.gom.adt.gom.types.section.Imports) ) {
 
 imports = 
-tom_append_list_ConcImportedModule( tomMatch556_11.getImportList() ,tom_append_list_ConcImportedModule(imports, tom.gom.adt.gom.types.importlist.EmptyConcImportedModule.make() ));
+tom_append_list_ConcImportedModule( tomMatch544_11.getImportList() ,tom_append_list_ConcImportedModule(imports, tom.gom.adt.gom.types.importlist.EmptyConcImportedModule.make() ));
 
 
 }
 }
-if ( tomMatch556__end__7.isEmptyConcSection() ) {
-tomMatch556__end__7=tomMatch556_2;
+if ( tomMatch544__end__7.isEmptyConcSection() ) {
+tomMatch544__end__7=tomMatch544_2;
 } else {
-tomMatch556__end__7= tomMatch556__end__7.getTailConcSection() ;
+tomMatch544__end__7= tomMatch544__end__7.getTailConcSection() ;
 }
 
 }
-} while(!( (tomMatch556__end__7==tomMatch556_2) ));
+} while(!( (tomMatch544__end__7==tomMatch544_2) ));
 }
 }
 }

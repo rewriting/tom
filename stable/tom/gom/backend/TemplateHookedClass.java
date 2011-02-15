@@ -1,7 +1,7 @@
 /*
 * Gom
 *
-* Copyright (c) 2006-2010, INPL, INRIA
+* Copyright (c) 2006-2011, INPL, INRIA
 * Nancy, France.
 *
 * This program is free software; you can redistribute it and/or modify
@@ -26,7 +26,7 @@ package tom.gom.backend;
 
 import java.io.*;
 import java.util.*;
-import java.util.logging.*;
+import java.util.logging.Logger;
 import tom.gom.Gom;
 import tom.gom.GomMessage;
 import tom.gom.backend.CodeGen;
@@ -89,28 +89,28 @@ tom_append_list_ConcHook(hooks, tom.gom.adt.objects.types.hooklist.EmptyConcHook
 {
 if ( (h instanceof tom.gom.adt.objects.types.HookList) ) {
 if ( (((( tom.gom.adt.objects.types.HookList )h) instanceof tom.gom.adt.objects.types.hooklist.ConsConcHook) || ((( tom.gom.adt.objects.types.HookList )h) instanceof tom.gom.adt.objects.types.hooklist.EmptyConcHook)) ) {
- tom.gom.adt.objects.types.HookList  tomMatch479__end__4=(( tom.gom.adt.objects.types.HookList )h);
+ tom.gom.adt.objects.types.HookList  tomMatch467__end__4=(( tom.gom.adt.objects.types.HookList )h);
 do {
 {
-if (!( tomMatch479__end__4.isEmptyConcHook() )) {
- tom.gom.adt.objects.types.Hook  tomMatch479_8= tomMatch479__end__4.getHeadConcHook() ;
-if ( (tomMatch479_8 instanceof tom.gom.adt.objects.types.hook.BlockHook) ) {
+if (!( tomMatch467__end__4.isEmptyConcHook() )) {
+ tom.gom.adt.objects.types.Hook  tomMatch467_8= tomMatch467__end__4.getHeadConcHook() ;
+if ( (tomMatch467_8 instanceof tom.gom.adt.objects.types.hook.BlockHook) ) {
 
 res.append(CodeGen.generateCode(
- tomMatch479_8.getCode() ));
+ tomMatch467_8.getCode() ));
 res.append("\n");
 
 
 }
 }
-if ( tomMatch479__end__4.isEmptyConcHook() ) {
-tomMatch479__end__4=(( tom.gom.adt.objects.types.HookList )h);
+if ( tomMatch467__end__4.isEmptyConcHook() ) {
+tomMatch467__end__4=(( tom.gom.adt.objects.types.HookList )h);
 } else {
-tomMatch479__end__4= tomMatch479__end__4.getTailConcHook() ;
+tomMatch467__end__4= tomMatch467__end__4.getTailConcHook() ;
 }
 
 }
-} while(!( (tomMatch479__end__4==(( tom.gom.adt.objects.types.HookList )h)) ));
+} while(!( (tomMatch467__end__4==(( tom.gom.adt.objects.types.HookList )h)) ));
 }
 }
 
@@ -130,28 +130,28 @@ tom_append_list_ConcHook(hooks, tom.gom.adt.objects.types.hooklist.EmptyConcHook
 {
 if ( (h instanceof tom.gom.adt.objects.types.HookList) ) {
 if ( (((( tom.gom.adt.objects.types.HookList )h) instanceof tom.gom.adt.objects.types.hooklist.ConsConcHook) || ((( tom.gom.adt.objects.types.HookList )h) instanceof tom.gom.adt.objects.types.hooklist.EmptyConcHook)) ) {
- tom.gom.adt.objects.types.HookList  tomMatch480__end__4=(( tom.gom.adt.objects.types.HookList )h);
+ tom.gom.adt.objects.types.HookList  tomMatch468__end__4=(( tom.gom.adt.objects.types.HookList )h);
 do {
 {
-if (!( tomMatch480__end__4.isEmptyConcHook() )) {
- tom.gom.adt.objects.types.Hook  tomMatch480_8= tomMatch480__end__4.getHeadConcHook() ;
-if ( (tomMatch480_8 instanceof tom.gom.adt.objects.types.hook.ImportHook) ) {
+if (!( tomMatch468__end__4.isEmptyConcHook() )) {
+ tom.gom.adt.objects.types.Hook  tomMatch468_8= tomMatch468__end__4.getHeadConcHook() ;
+if ( (tomMatch468_8 instanceof tom.gom.adt.objects.types.hook.ImportHook) ) {
 
 res.append(CodeGen.generateCode(
- tomMatch480_8.getCode() ));
+ tomMatch468_8.getCode() ));
 res.append("\n");
 
 
 }
 }
-if ( tomMatch480__end__4.isEmptyConcHook() ) {
-tomMatch480__end__4=(( tom.gom.adt.objects.types.HookList )h);
+if ( tomMatch468__end__4.isEmptyConcHook() ) {
+tomMatch468__end__4=(( tom.gom.adt.objects.types.HookList )h);
 } else {
-tomMatch480__end__4= tomMatch480__end__4.getTailConcHook() ;
+tomMatch468__end__4= tomMatch468__end__4.getTailConcHook() ;
 }
 
 }
-} while(!( (tomMatch480__end__4==(( tom.gom.adt.objects.types.HookList )h)) ));
+} while(!( (tomMatch468__end__4==(( tom.gom.adt.objects.types.HookList )h)) ));
 }
 }
 
@@ -171,29 +171,29 @@ tom_append_list_ConcHook(hooks, tom.gom.adt.objects.types.hooklist.EmptyConcHook
 {
 if ( (h instanceof tom.gom.adt.objects.types.HookList) ) {
 if ( (((( tom.gom.adt.objects.types.HookList )h) instanceof tom.gom.adt.objects.types.hooklist.ConsConcHook) || ((( tom.gom.adt.objects.types.HookList )h) instanceof tom.gom.adt.objects.types.hooklist.EmptyConcHook)) ) {
- tom.gom.adt.objects.types.HookList  tomMatch481__end__4=(( tom.gom.adt.objects.types.HookList )h);
+ tom.gom.adt.objects.types.HookList  tomMatch469__end__4=(( tom.gom.adt.objects.types.HookList )h);
 do {
 {
-if (!( tomMatch481__end__4.isEmptyConcHook() )) {
- tom.gom.adt.objects.types.Hook  tomMatch481_8= tomMatch481__end__4.getHeadConcHook() ;
-if ( (tomMatch481_8 instanceof tom.gom.adt.objects.types.hook.InterfaceHook) ) {
+if (!( tomMatch469__end__4.isEmptyConcHook() )) {
+ tom.gom.adt.objects.types.Hook  tomMatch469_8= tomMatch469__end__4.getHeadConcHook() ;
+if ( (tomMatch469_8 instanceof tom.gom.adt.objects.types.hook.InterfaceHook) ) {
 
 res.append(",");
 res.append(CodeGen.generateCode(
- tomMatch481_8.getCode() ));
+ tomMatch469_8.getCode() ));
 res.append("\n");
 
 
 }
 }
-if ( tomMatch481__end__4.isEmptyConcHook() ) {
-tomMatch481__end__4=(( tom.gom.adt.objects.types.HookList )h);
+if ( tomMatch469__end__4.isEmptyConcHook() ) {
+tomMatch469__end__4=(( tom.gom.adt.objects.types.HookList )h);
 } else {
-tomMatch481__end__4= tomMatch481__end__4.getTailConcHook() ;
+tomMatch469__end__4= tomMatch469__end__4.getTailConcHook() ;
 }
 
 }
-} while(!( (tomMatch481__end__4==(( tom.gom.adt.objects.types.HookList )h)) ));
+} while(!( (tomMatch469__end__4==(( tom.gom.adt.objects.types.HookList )h)) ));
 }
 }
 
@@ -270,7 +270,6 @@ tomParams.add(file_path);
 
 final File tmpFile;
 try {
-//tmpFile = File.createTempFile("tmp", ".t", getGomEnvironment().getStreamManager().getDestDir()).getCanonicalFile();
 tmpFile = File.createTempFile("tmp", ".t", null).getCanonicalFile();
 } catch (IOException e) {
 System.out.println("IO Exception when computing importList");
@@ -308,18 +307,7 @@ GomMessage.tomCodeGenerationFailure, e.getMessage());
 }
 
 } else {
-try {
-File output = fileToGenerate();
-// make sure the directory exists
-output.getParentFile().mkdirs();
-Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output)));
-generate(writer);
-writer.flush();
-writer.close();
-} catch(Exception e) {
-e.printStackTrace();
-return 1;
-}
+return super.generateFile();
 }
 return 0;
 }

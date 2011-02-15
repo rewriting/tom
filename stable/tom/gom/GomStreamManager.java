@@ -1,7 +1,7 @@
 /*
  * Gom
  *
- * Copyright (c) 2000-2010, INPL, INRIA
+ * Copyright (c) 2000-2011, INPL, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -35,7 +35,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.StringTokenizer;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import tom.platform.OptionManager;

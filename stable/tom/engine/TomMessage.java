@@ -2,7 +2,7 @@
  *
  * TOM - To One Matching Compiler
  *
- * Copyright (c) 2000-2010, INPL, INRIA
+ * Copyright (c) 2000-2011, INPL, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -170,6 +170,8 @@ public class TomMessage extends BasicPlatformMessage {
       new TomMessage("Exception ''{0}'' occurs in parsing file ''{1}'' included in file {2} at line {3,number,integer}: See stacktrace\n\n{4}");
   public static final TomMessage gomFailure =
       new TomMessage("An error occured dealing with %gom input in ''{0}'' at line {1,number,integer}");
+  public static final TomMessage gomInitFailure =
+      new TomMessage("An error occured initializing gom in ''{0}'' at line {1,number,integer}: {2}");
   public static final TomMessage vasPlatformFailure    =
       new TomMessage("Fail to obtain a Vas PluginPlatform in ''{0}'' at line {1,number,integer}");
   public static final TomMessage vasFailure            =

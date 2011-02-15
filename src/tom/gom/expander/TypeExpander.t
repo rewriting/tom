@@ -2,7 +2,7 @@
  *
  * GOM
  *
- * Copyright (c) 2006-2010, INPL, INRIA
+ * Copyright (c) 2006-2011, INPL, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -26,7 +26,6 @@
 package tom.gom.expander;
 
 import java.util.*;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import tom.gom.GomMessage;
@@ -41,7 +40,7 @@ public class TypeExpander {
 
   %include { ../adt/gom/Gom.tom}
 
-  private GomEnvironment gomEnvironment;
+  private final GomEnvironment gomEnvironment;
 
   public TypeExpander(GomEnvironment gomEnvironment) {
     this.gomEnvironment = gomEnvironment;

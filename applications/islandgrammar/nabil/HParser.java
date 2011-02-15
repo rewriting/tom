@@ -56,5 +56,4 @@ public class HParser {
   public List<String> getHostTokens () {
     return tokens;
   }
-
 }

@@ -59,7 +59,7 @@ patternAction :
   tomTerm a=ARROWLBRACE -> ^(PatternAction tomTerm ^({((TomToken)$a).getTree()}))
   ;
 
-ARROWLBRACE : '-> {' /*(options {greedy=false;} : WS )* LBRACE*/
+ARROWLBRACE : '->' /*{'*/ (options {greedy=false;} : WS )* '{'
   {
 //    System.out.println("\nbefore new Host*");
 //    System.out.println("in arrowlbrace / tom nesting = " + nesting);

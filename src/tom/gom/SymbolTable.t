@@ -1,7 +1,7 @@
 /*
  * Gom
  *
- * Copyright (c) 2000-2010, INPL, INRIA
+ * Copyright (c) 2000-2011, INPL, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,8 +24,6 @@
 
 package tom.gom;
 
-import java.util.logging.Level;
-import tom.gom.GomStreamManager;
 import tom.gom.adt.symboltable.types.*;
 import tom.gom.adt.symboltable.*;
 import tom.gom.adt.gom.types.*;

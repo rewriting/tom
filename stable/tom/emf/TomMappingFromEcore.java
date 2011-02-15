@@ -2,7 +2,7 @@
 *
 * TOM - To One Matching Compiler
 *
-* Copyright (c) 2009-2010, INPL, INRIA
+* Copyright (c) 2009-2011, INPL, INRIA
 * Nancy, France.
 *
 * This program is free software; you can redistribute it and/or modify
@@ -82,19 +82,38 @@ private final static ArrayList<Class<?>> lists = new ArrayList<Class<?>>();
 private static boolean append = false;
 
 /**
+* true if '%subtype' keywords hav to be generated ('-nt' option is enabled)
+*/
+private static boolean useNewTyper = false;
+
+/**
 * A dictionnary linking a class with his generated type name
 */
 private final static HashMap<Class<?>, String> types = new HashMap<Class<?>, String>();
 
 public static void main(String[] args) {
-if(args.length != 1) {
-//out.println("usage : java TomMappingFromEcore <EPackageClassName>");
-out.println("usage : emf-generate-mappings <EPackageClassName>");
+/*
+* this way to use options shouldn't be like this : we could add a better
+* option management system (as in Tom/Gom)
+* We may also add an --output <file> option
+*/
+if(args.length < 1) {
+out.println("No argument has been given!");
+out.println("usage: emf-generate-mappings [options] <EPackageClassName>");
+out.println("options:");
+out.println("  -nt (allows to generate '%subtype' constructs)");
+out.println("  any Java options");
 } else {
-try {
+String ePackageName = args[0];
+if (args[0].contentEquals("-nt")) {
+ePackageName = args[1];
+useNewTyper = true;
+}
 out.println(
-"/*\n *\n * TOM - To One Matching Compiler\n *\n * Copyright (c) 2009-2010, INPL, INRIA\n * Nancy, France.\n *\n * This program is free software; you can redistribute it and/or modify\n * it under the terms of the GNU General Public License as published by\n * the Free Software Foundation; either version 2 of the License, or\n * (at your option) any later version.\n *\n * This program is distributed in the hope that it will be useful,\n * but WITHOUT ANY WARRANTY; without even the implied warranty of\n * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n * GNU General Public License for more details.\n *\n * You should have received a copy of the GNU General Public License\n * along with this program; if not, write to the Free Software\n * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA\n *\n *\n **/\n          ");
-extractFromEPackage((EPackage) Class.forName(args[0]).getField("eINSTANCE").get(null));
+"/*\n *\n * TOM - To One Matching Compiler\n *\n * Copyright (c) 2009-2011, INPL, INRIA\n * Nancy, France.\n *\n * This program is free software; you can redistribute it and/or modify\n * it under the terms of the GNU General Public License as published by\n * the Free Software Foundation; either version 2 of the License, or\n * (at your option) any later version.\n *\n * This program is distributed in the hope that it will be useful,\n * but WITHOUT ANY WARRANTY; without even the implied warranty of\n * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n * GNU General Public License for more details.\n *\n * You should have received a copy of the GNU General Public License\n * along with this program; if not, write to the Free Software\n * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA\n *\n *\n **/\n          ");
+try {
+//extractFromEPackage((EPackage) Class.forName(args[0]).getField("eINSTANCE").get(null));
+extractFromEPackage((EPackage) Class.forName(ePackageName).getField("eINSTANCE").get(null));
 } catch(ClassNotFoundException e) {
 e.printStackTrace();
 } catch(IllegalArgumentException e) {
@@ -136,6 +155,19 @@ out.println(
 " }\n  is_sort(t) { "+(c.isPrimitive() ? "true" : "$t instanceof " + decl[0] + decl[1])+
 " }\n  equals(l1,l2) { "+(c.isPrimitive() ? "$l1 == $l2" : "$l1.equals($l2)")+
 " }\n}");
+if(useNewTyper) {
+genSubtype(eclf);}
+}
+}
+}
+
+private static void genSubtype(EClassifier eclf) {
+if((eclf instanceof EClass) && !((EClass)eclf).getESuperTypes().isEmpty()) {
+for (EClass supertype:((EClass)eclf).getESuperTypes()) {
+out.println(
+"\n%subtype "+eclf.getName()+
+" <: "+supertype.getName()+
+"");
 }
 }
 }

@@ -1,7 +1,7 @@
 /*
  * Gom
  *
- * Copyright (c) 2006-2010, INPL, INRIA
+ * Copyright (c) 2006-2011, INPL, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -101,14 +101,14 @@ public final class @className()@ extends @fullClassName(extendsType)@ implements
 
   private @className()@() {}
   private int hashCode;
-  private static @className()@ proto = new @className()@();
+  private static @className()@ gomProto = new @className()@();
   ]%);
   } else {
     writer.write(%[
 
   private @className()@() {}
   private static int hashCode = hashFunction();
-  private static @className()@ proto = (@className()@) factory.build(new @className()@());
+  private static @className()@ gomProto = (@className()@) factory.build(new @className()@());
   ]%);
   }
 } else {
@@ -1306,13 +1306,13 @@ lbl:ConcHook(_*,MakeHook[HookArguments=args],_*) -> {
       } else {
         writer.write(%[
     // use the proto as a model
-    proto.initHashCode(@childList(slotList)@);
-    return (@className()@) factory.build(proto);
+    gomProto.initHashCode(@childList(slotList)@);
+    return (@className()@) factory.build(gomProto);
 ]%);
       }
     } else {
         writer.write(%[
-    return proto;
+    return gomProto;
 ]%);
     }
     }

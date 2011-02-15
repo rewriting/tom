@@ -2,7 +2,7 @@
 *
 * TOM - To One Matching Compiler
 *
-* Copyright (c) 2000-2010, INPL, INRIA
+* Copyright (c) 2000-2011, INPL, INRIA
 * Nancy, France.
 *
 * This program is free software; you can redistribute it and/or modify
@@ -428,11 +428,13 @@ for (PlatformOption h : treeMap.values()) {
 {
 if ( (h instanceof tom.platform.adt.platformoption.types.PlatformOption) ) {
 if ( ((( tom.platform.adt.platformoption.types.PlatformOption )h) instanceof tom.platform.adt.platformoption.types.platformoption.PluginOption) ) {
+ String  tom_name= (( tom.platform.adt.platformoption.types.PlatformOption )h).getName() ;
  String  tom_altName= (( tom.platform.adt.platformoption.types.PlatformOption )h).getAltName() ;
  String  tom_attrName= (( tom.platform.adt.platformoption.types.PlatformOption )h).getAttrName() ;
+if (!( "newparser".equals(tom_name) )) {
 
 buffer.append("\t--" + 
- (( tom.platform.adt.platformoption.types.PlatformOption )h).getName() );
+tom_name);
 if(
 tom_attrName.length() > 0) {
 buffer.append(" <" + 
@@ -450,6 +452,7 @@ buffer.append("\n");
 
 }
 }
+}
 
 }
 
@@ -464,7 +467,7 @@ System.out.println(buffer.toString());
 */
 public static void displayVersion() {
 System.out.println("\njtom " + Tom.VERSION + "\n" +
-"Copyright (c) 2000-2010, INPL, INRIA, Nancy, France.\n");
+"Copyright (c) 2000-2011, INPL, INRIA, Nancy, France.\n");
 }
 
 /**

@@ -2,7 +2,7 @@
  *
  * TOM - To One Matching Compiler
  *
- * Copyright (c) 2000-2010, INPL, INRIA
+ * Copyright (c) 2000-2011, INPL, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -443,7 +443,6 @@ public final class TomBase {
     ArrayList<String> nameList = new ArrayList<String>();
     while(!pairNameDeclList.isEmptyconcPairNameDecl()) {
       TomName name = pairNameDeclList.getHeadconcPairNameDecl().getSlotName();
-      // System.out.println("index = " + index + " name = " + name);
       if(slotName.equals(name)) {
         return index;
       }
@@ -451,11 +450,6 @@ public final class TomBase {
       pairNameDeclList = pairNameDeclList.getTailconcPairNameDecl();
       index++;
     }
-    TomMessage.error(logger, null, 0, TomMessage.badSlotName, 
-        slotName.getString(), tomSymbol, nameList.toArray());
-/*    throw new TomRuntimeException("getSlotIndex: bad slotName error. Found '"
-        + slotName.getString() + "' but expected one of the following names: "
-        + Arrays.toString(nameList.toArray()) + ".");*/
     return -1;
   }
 

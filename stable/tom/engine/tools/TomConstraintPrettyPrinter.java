@@ -2,7 +2,7 @@
 * 
 * TOM - To One Matching Compiler
 * 
-* Copyright (c) 2000-2010, INPL, INRIA
+* Copyright (c) 2000-2011, INPL, INRIA
 * Nancy, France.
 * 
 * This program is free software; you can redistribute it and/or modify
@@ -678,24 +678,24 @@ String s = "";
 {
 if ( (subject instanceof tom.engine.adt.tomslot.types.SlotList) ) {
 if ( (((( tom.engine.adt.tomslot.types.SlotList )subject) instanceof tom.engine.adt.tomslot.types.slotlist.ConsconcSlot) || ((( tom.engine.adt.tomslot.types.SlotList )subject) instanceof tom.engine.adt.tomslot.types.slotlist.EmptyconcSlot)) ) {
- tom.engine.adt.tomslot.types.SlotList  tomMatch302__end__4=(( tom.engine.adt.tomslot.types.SlotList )subject);
+ tom.engine.adt.tomslot.types.SlotList  tomMatch300__end__4=(( tom.engine.adt.tomslot.types.SlotList )subject);
 do {
 {
-if (!( tomMatch302__end__4.isEmptyconcSlot() )) {
+if (!( tomMatch300__end__4.isEmptyconcSlot() )) {
 
 s += prettyPrint(
- tomMatch302__end__4.getHeadconcSlot() )+",";
+ tomMatch300__end__4.getHeadconcSlot() )+",";
 
 
 }
-if ( tomMatch302__end__4.isEmptyconcSlot() ) {
-tomMatch302__end__4=(( tom.engine.adt.tomslot.types.SlotList )subject);
+if ( tomMatch300__end__4.isEmptyconcSlot() ) {
+tomMatch300__end__4=(( tom.engine.adt.tomslot.types.SlotList )subject);
 } else {
-tomMatch302__end__4= tomMatch302__end__4.getTailconcSlot() ;
+tomMatch300__end__4= tomMatch300__end__4.getTailconcSlot() ;
 }
 
 }
-} while(!( (tomMatch302__end__4==(( tom.engine.adt.tomslot.types.SlotList )subject)) ));
+} while(!( (tomMatch300__end__4==(( tom.engine.adt.tomslot.types.SlotList )subject)) ));
 }
 }
 

@@ -1,7 +1,7 @@
 /*
 * Gom
 *
-* Copyright (c) 2006-2010, INPL, INRIA
+* Copyright (c) 2006-2011, INPL, INRIA
 * Nancy, France.
 *
 * This program is free software; you can redistribute it and/or modify
@@ -23,13 +23,16 @@
 **/
 package tom.gom.backend;
 
+import java.io.*;
+import java.util.ArrayList;
+import java.util.logging.Logger;
+
+import tom.gom.GomMessage;
 import tom.gom.GomStreamManager;
 import tom.gom.tools.GomEnvironment;
 import tom.gom.adt.objects.*;
 import tom.gom.adt.objects.types.*;
 import tom.gom.tools.error.GomRuntimeException;
-import java.io.*;
-import java.util.ArrayList;
 
 public abstract class TemplateClass {
 protected GomClass gomClass;
@@ -651,13 +654,18 @@ public int generateFile() {
 try {
 File output = fileToGenerate();
 // make sure the directory exists
+// if creation failed, try again, as this can be a manifestation of a
+// race condition in mkdirs
+if (!output.getParentFile().mkdirs()) {
 output.getParentFile().mkdirs();
+}
 Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output)));
 generate(writer);
 writer.flush();
 writer.close();
-} catch(Exception e) {
-e.printStackTrace();
+} catch(IOException e) {
+GomMessage.error(getLogger(),null,0,
+GomMessage.tomCodeGenerationFailure, e.getMessage());
 return 1;
 }
 return 0;
@@ -687,14 +695,14 @@ if (index>0) { writer.write(", "); }
 {
 if ( (slot instanceof tom.gom.adt.objects.types.SlotField) ) {
 if ( ((( tom.gom.adt.objects.types.SlotField )slot) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) {
- tom.gom.adt.objects.types.ClassName  tomMatch478_2= (( tom.gom.adt.objects.types.SlotField )slot).getDomain() ;
-if ( (tomMatch478_2 instanceof tom.gom.adt.objects.types.classname.ClassName) ) {
+ tom.gom.adt.objects.types.ClassName  tomMatch466_2= (( tom.gom.adt.objects.types.SlotField )slot).getDomain() ;
+if ( (tomMatch466_2 instanceof tom.gom.adt.objects.types.classname.ClassName) ) {
 
 writer.write(
  (( tom.gom.adt.objects.types.SlotField )slot).getName() );
 writer.write(":");
 writer.write(
- tomMatch478_2.getName() );
+ tomMatch466_2.getName() );
 index++;
 
 
@@ -740,6 +748,10 @@ index++;
 public void generateTomMapping(Writer writer)
 throws java.io.IOException {
 return;
+}
+
+private Logger getLogger() {
+return Logger.getLogger(getClass().getName());
 }
 
 }
