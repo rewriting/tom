@@ -42,9 +42,7 @@
 
   <target name="compile" depends="JUNIT" description="Compiler les sources, sans compiler les tests">
 <mkdir dir="${build.dir}"/>
-<javac srcdir="${src.dir}" destdir="${build.dir}" >
-<!-- Rq : ** pour parcourir tous les sous repertoires -->
-<include name="${src}/*.java"/>
+<javac srcdir="${src.dir}" destdir="${build.dir}" excludes="test/**">
 </javac>
 </target>
 
