@@ -13,7 +13,7 @@ public class PPCursor {
   private PPTextPosition position;
 
 /**The way of writing.
-*If true the writeText method inserts the text, else the writeText method replaces the text.
+*If true the writeText method inserts the new text inside the existing text, else the writeText method replaces the original text.
 */
   private boolean insertion;
 
@@ -23,7 +23,13 @@ public class PPCursor {
 
 /**Creates a PPCursor
 */
-  public PPCursor() {}
+  public PPCursor(int l, int c, String fileName) {
+    
+    this.position = new PPTextPosition(l,c);
+    insertion=true;
+    fileBuffer = new ArrayList<StringBuffer>();
+    fileBuffer.add(new StringBuffer(""));
+  }
 
 /**Moves the PPCursor to an absolute position
 *@param p the PPTextPosition to place the PPCursor
@@ -65,6 +71,14 @@ public class PPCursor {
 
     return insertion;
   }
+
+/**For debug purpose. Returns the fileBuffer of this PPCursor.
+*@return the fileBuffer of this PPCursor
+*/
+  public ArrayList<StringBuffer> getFileBuffer() {
+
+    return this.fileBuffer;
+}
 
 /**Reads a sequence of the fileBuffer attribute, from the current position to a given PPTextPosition
 *@param p the PPTextPosition to stop to

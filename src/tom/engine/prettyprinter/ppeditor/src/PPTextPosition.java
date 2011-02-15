@@ -44,8 +44,10 @@ public class PPTextPosition {
 */
   public void add(PPTextPosition p){
 
-    this.line+=p.getLine();
+    this.line = p.getLine();
+    if(this.line < 0) {this.line = 0;}
     this.column+=p.getColumn();
+    if(this.column< 0) {this.column = 0;}
   }
 
 /**
