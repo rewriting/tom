@@ -1,8 +1,8 @@
-1. Se débarasser de GParser pour utiliser directement les parsers générés par Tom.
+Done XX. Se débarasser de GParser pour utiliser directement les parsers générés par Tom.
 2. Unifier les outils : faire que HParser, qui lui est une bidouille à nous, ressemble aux parsers de tom
 3. Tester si nous arrivons à faire s'appeler entre eux ces différents parser.
 
 
 + DOC
-+ NETTOYAGE
+Done XX NETTOYAGE
 
