@@ -1,0 +1,25 @@
+module parser.Rec 
+imports int String
+abstract syntax
+  Stm = Seq(Stm*)
+      | Assign(Name:String, Exp:Exp)	
+      | Print(List:ExpList)
+      | If(cond:Exp, s1:Stm, s2:Stm)
+      | While(cond:Exp, s1:Stm)  
+           
+  Exp = Id(Name:String)
+      | Num(Value:int)
+      | OpExp(Exp1:Exp,Op:Op,Exp2:Exp)
+      | SeqExp(Stm:Stm,Exp:Exp)
+      | True()
+      | False()
+      | NotExp(Exp1:Exp)
+            
+  ExpList = ExpList(Exp*)
+      
+  Op = Plus() | Minus() | Times() | Div() | And() | Or() | Equal()
+  
+  Table = Table(Name:String,Value:int,Tail:Table)
+        | EmptyTable()
+      
+  Pair = Pair(Value:int,Table:Table)

@@ -1,7 +1,7 @@
 /*
 * Gom
 *
-* Copyright (c) 2000-2010, INPL, INRIA
+* Copyright (c) 2000-2011, INPL, INRIA
 * Nancy, France.
 *
 * This program is free software; you can redistribute it and/or modify
@@ -41,8 +41,31 @@ private String lastGeneratedMapping;
 private SymbolTable symbolTable;
 // this map is filled by the GomTypeExpander
 private Map<ModuleDecl,ModuleDeclList> importedModules;
-private Map<String,ClassName> builtinSorts;
 private Map<String,ClassName> usedBuiltinSorts;
+
+private static final Map<String,ClassName> builtinSorts;
+static {
+Map<String,ClassName> localBuiltinSorts = new HashMap<String,ClassName>();
+localBuiltinSorts.put("boolean",
+ tom.gom.adt.objects.types.classname.ClassName.make("", "boolean") );
+localBuiltinSorts.put("int",
+ tom.gom.adt.objects.types.classname.ClassName.make("", "int") );
+localBuiltinSorts.put("String",
+ tom.gom.adt.objects.types.classname.ClassName.make("", "String") );
+localBuiltinSorts.put("char",
+ tom.gom.adt.objects.types.classname.ClassName.make("", "char") );
+localBuiltinSorts.put("double",
+ tom.gom.adt.objects.types.classname.ClassName.make("", "double") );
+localBuiltinSorts.put("long",
+ tom.gom.adt.objects.types.classname.ClassName.make("", "long") );
+localBuiltinSorts.put("float",
+ tom.gom.adt.objects.types.classname.ClassName.make("", "float") );
+localBuiltinSorts.put("ATerm",
+ tom.gom.adt.objects.types.classname.ClassName.make("aterm", "ATerm") );
+localBuiltinSorts.put("ATermList",
+ tom.gom.adt.objects.types.classname.ClassName.make("aterm", "ATermList") );
+builtinSorts = Collections.unmodifiableMap(localBuiltinSorts);
+}
 
 /**
 * A private constructor method to defeat instantiation
@@ -50,8 +73,6 @@ private Map<String,ClassName> usedBuiltinSorts;
 public GomEnvironment() {
 streamManager = new GomStreamManager();
 importedModules = new HashMap<ModuleDecl,ModuleDeclList>();
-builtinSorts = new HashMap<String,ClassName>();
-initBuiltins();
 usedBuiltinSorts = new HashMap<String,ClassName>();
 symbolTable = new SymbolTable(this);
 }
@@ -76,27 +97,6 @@ this.streamManager = stream;
 }
 public GomStreamManager getStreamManager() {
 return streamManager;
-}
-
-public void initBuiltins() {
-builtinSorts.put("boolean",
- tom.gom.adt.objects.types.classname.ClassName.make("", "boolean") );
-builtinSorts.put("int",
- tom.gom.adt.objects.types.classname.ClassName.make("", "int") );
-builtinSorts.put("String",
- tom.gom.adt.objects.types.classname.ClassName.make("", "String") );
-builtinSorts.put("char",
- tom.gom.adt.objects.types.classname.ClassName.make("", "char") );
-builtinSorts.put("double",
- tom.gom.adt.objects.types.classname.ClassName.make("", "double") );
-builtinSorts.put("long",
- tom.gom.adt.objects.types.classname.ClassName.make("", "long") );
-builtinSorts.put("float",
- tom.gom.adt.objects.types.classname.ClassName.make("", "float") );
-builtinSorts.put("ATerm",
- tom.gom.adt.objects.types.classname.ClassName.make("aterm", "ATerm") );
-builtinSorts.put("ATermList",
- tom.gom.adt.objects.types.classname.ClassName.make("aterm", "ATermList") );
 }
 
 /**

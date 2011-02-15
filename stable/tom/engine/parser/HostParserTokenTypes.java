@@ -3,7 +3,7 @@
  *
  * TOM - To One Matching Compiler
  *
- * Copyright (c) 2000-2010, INPL, INRIA
+ * Copyright (c) 2000-2011, INPL, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -41,13 +41,12 @@ public interface HostParserTokenTypes {
 	int OPERATORARRAY = 13;
 	int INCLUDE = 14;
 	int CODE = 15;
-	int SUBTYPE = 16;
-	int TYPETERM = 17;
-	int ESC = 18;
-	int HEX_DIGIT = 19;
-	int WS = 20;
-	int COMMENT = 21;
-	int SL_COMMENT = 22;
-	int ML_COMMENT = 23;
-	int TARGET = 24;
+	int TYPETERM = 16;
+	int ESC = 17;
+	int HEX_DIGIT = 18;
+	int WS = 19;
+	int COMMENT = 20;
+	int SL_COMMENT = 21;
+	int ML_COMMENT = 22;
+	int TARGET = 23;
 }

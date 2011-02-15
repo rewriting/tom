@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2010, INPL, INRIA
+ * Copyright (c) 2004-2011, INPL, INRIA
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -32,12 +32,7 @@ package gomterm;
 import gomterm.stratid.term.*;
 import gomterm.stratid.term.types.*;
 
-import jjtraveler.reflective.VisitableVisitor;
-import jjtraveler.VisitFailure;
-import jjtraveler.Visitable;
-import tom.library.strategy.mutraveler.MuTraveler;
-import tom.library.strategy.mutraveler.Position;
-import tom.library.strategy.mutraveler.AbstractMuStrategy;
+import tom.library.sl.*;
 
 import java.util.*;
 
@@ -57,9 +52,9 @@ public class StratId {
   %typeterm Collection {
     implement { Collection }
   }
-  %include { mustrategy.tom }
+  %include { sl.tom }
 
-  public final static void main(String[] args) {
+  public final static void main(String[] args) throws tom.library.sl.VisitFailure {
     StratId test = new StratId();
 
     int heightmax = 0;
@@ -79,23 +74,23 @@ public class StratId {
     }
   }
 
-  public void benchInnermost(int baobabHeight, int count) {
+  public void benchInnermost(int baobabHeight, int count) throws tom.library.sl.VisitFailure {
     Term subject = baobab(baobabHeight);
     System.out.print(baobabHeight);
 		long startChrono = System.currentTimeMillis();
     for(int i=0; i<count; i++) {
-      `Innermost(RedFail()).apply(subject);
+      `Innermost(RedFail()).visit(subject);
     }
 		long stopChrono = System.currentTimeMillis();
 		System.out.println("\t" + (stopChrono-startChrono)/1000.);
   }
 
-  public void benchInnermostId(int baobabHeight, int count) {
+  public void benchInnermostId(int baobabHeight, int count) throws tom.library.sl.VisitFailure {
     Term subject = baobab(baobabHeight);
     System.out.print(baobabHeight);
 		long startChrono = System.currentTimeMillis();
     for(int i=0; i<count; i++) {
-      `InnermostId(RedId()).apply(subject);
+      `InnermostId(RedId()).visit(subject);
     }
 		long stopChrono = System.currentTimeMillis();
 		System.out.println("\t" + (stopChrono-startChrono)/1000.);

@@ -2,7 +2,7 @@ header{/*
  *
  * TOM - To One Matching Compiler
  *
- * Copyright (c) 2000-2010, INPL, INRIA
+ * Copyright (c) 2000-2011, INPL, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -428,7 +428,6 @@ blockList [List<Code> list] throws TomException
         |   operatorList[list]
         |   operatorArray[list]
         |   includeConstruct[list]
-        |   subtypeConstruct[list]
         |   typeTerm[list]
         |   code[list]
         |   STRING
@@ -835,26 +834,6 @@ code [List<Code> list] throws TomException
 }
 ;
 
-subtypeConstruct [List<Code> list] throws TomException
-{
-    TargetLanguage code = null;
-}
-    :
-        t:SUBTYPE
-        {
-            // addPreviousCode...
-            String textCode = getCode();
-            if(isCorrect(textCode)) {
-                code = `TL(
-                    textCode,
-                    TextPosition(currentLine,currentColumn),
-                    TextPosition(t.getLine(),t.getColumn()));
-                list.add(`TargetLanguageToCode(code));
-            }
-            tomparser.subtypeConstruct();
-        }
-    ;
-
 typeTerm [List<Code> list] throws TomException
 {
     TargetLanguage code = null;
@@ -880,7 +859,9 @@ typeTerm [List<Code> list] throws TomException
             }
             Declaration termdecl = tomparser.typeTerm();
 
-            list.add(`DeclarationToCode(termdecl));
+            if (termdecl != null) {
+              list.add(`DeclarationToCode(termdecl));
+            }
         }
 
     ;
@@ -996,7 +977,6 @@ OPERATORLIST
 OPERATORARRAY
     : "%oparray"  {selector().push("tomlexer");}
     ;
-
 // following tokens are keyword for tom constructs
 // do not need to switch lexers
 INCLUDE

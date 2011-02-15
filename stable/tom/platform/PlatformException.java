@@ -2,7 +2,7 @@
  * 
  * TOM - To One Matching Compiler
  * 
- * Copyright (c) 2000-2010, INPL, INRIA
+ * Copyright (c) 2000-2011, INPL, INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -30,4 +30,7 @@ package tom.platform;
 public class PlatformException extends java.lang.RuntimeException {
   private static final long serialVersionUID = 1L;
 
+  public PlatformException(String arg0) {
+    super(arg0);
+  }
 }

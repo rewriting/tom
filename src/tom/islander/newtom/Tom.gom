@@ -35,11 +35,11 @@ TomName = Name(Name:String)
 
 TomNameList = TomNameList(TomName*)
 
-/*
-Option = 
+//
+Option = OriginTracking(AstName:TomName,Line:int,FileName:String)
 
 OptionList = OptionList(Option*)
-*/
+//
 
 Pattern = Pattern(Pattern:PlainPattern)
         | AnnotedPattern(Pattern:PlainPattern,Annotation:String)
@@ -115,7 +115,7 @@ Block = MatchConstruct(MatchArguments:TomTermList,PatternActions:PatternActionLi
       | OpArray(Name:TomName,Type:TomType,Arg:TomType,OperatorList:OperatorList)
       | Strategy(Name:TomName,Extends:TomTerm,VisitList:StrategyVisitList,Arguments:TomTermList) //?
       | TypeTerm(Type:TomType,OperatorList:OperatorList) //Op1:Operator,Op2:Operator,Op3:Operator)
-      | Include(FileName:String)
+      | Include(FileName:String)//,OrgTrack:Option)
 //      | RuleConstruct(RType:TomType,FQN:TomName,RuleArguments:TomTermList,BlockList:BlockList)//,ConstraintActions:ConstraintActionList ) //PatternActions:PatternActionList )
       | BackQuoteConstruct(BackQuoteTerm:Expression) //BackQuoteTerm) //Term:Term)
       | Composite(ctl:CompositeList)

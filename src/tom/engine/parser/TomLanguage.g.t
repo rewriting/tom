@@ -3,7 +3,7 @@ header{
  *
  * TOM - To One Matching Compiler
  *
- * Copyright (c) 2000-2010, INPL, INRIA
+ * Copyright (c) 2000-2011, INPL, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -206,7 +206,6 @@ matchArgument [List<BQTerm> list, List<TomType> typeList] throws TomException
     (subject2 = plainBQTerm { s2 = text.toString(); })?
     {
       if(subject2==null) {
-        // System.out.println("matchArgument = " + subject1);
         list.add(subject1);
         typeList.add(SymbolTable.TYPE_UNKNOWN);
       } else {
@@ -1906,9 +1905,6 @@ operator returns [Declaration result] throws TomException
                * ensure that sName appears in slotNameList, only once
                * ensure that sName has not already been generated
                */
-              //System.out.println("slotNameList = " + slotNameList);
-              //System.out.println("sName      = " + sName);
-
               TomMessage msg = null;
               int index = slotNameList.indexOf(sName);
               if(index == -1) {
@@ -1938,9 +1934,6 @@ operator returns [Declaration result] throws TomException
         t:RBRACE
 	)
         {
-
-          //System.out.println("pairNameDeclList = " + pairNameDeclList);
-
           TomSymbol astSymbol = ASTFactory.makeSymbol(name.getText(), `Type(concTypeOption(),type.getText(),EmptyTargetLanguageType()), types, ASTFactory.makePairNameDeclList(pairNameDeclList), options);
           putSymbol(name.getText(),astSymbol);
           result = `SymbolDecl(astName);
@@ -2040,96 +2033,54 @@ operatorArray returns [Declaration result] throws TomException
         }
     ;
 
-subtypeConstruct throws TomException
-{
-    Option ot1 = null;
-    Option ot2 = null;
-
-    String subtypeName = null;
-    String supertypeName = null;
-}
-  :
-    subtype:ALL_ID
-    {
-        subtypeName = subtype.getText();
-        ot1 = `OriginTracking(Name(subtypeName), subtype.getLine(),currentFile());
-    }
-    SUBTYPE_CONSTRAINT
-    supertype:ALL_ID
-    {
-        supertypeName = supertype.getText();
-        ot2 = `OriginTracking(Name(supertypeName), supertype.getLine(),currentFile());
-    }
-{
-  TomType subAstType = getType(subtypeName);
-  TomType superAstType = getType(supertypeName);
-  if (subAstType != null && superAstType != null) {
-    %match(subAstType) {
-      Type[TypeOptions=tOptions,TlType=tlType] -> {
-        %match {
-          concTypeOption(_*,SubtypeDecl[TomType=tType],_*) <<
-            subAstType.getTypeOptions() -> {
-            TomMessage.error(getLogger(),currentFile(), getLine(),
-                TomMessage.multipleUpperTypes,`subtypeName,`supertypeName,`tType);
-          }
-
-          !concTypeOption(_*,SubtypeDecl[],_*) << subAstType.getTypeOptions() -> {
-            putType(subtypeName,`Type(concTypeOption(SubtypeDecl(supertypeName),tOptions*),subtypeName,tlType)); 
-          }
-        }
-      }
-    }
-  } else {
-    if (subAstType == null) {
-      TomMessage.error(getLogger(),currentFile(), getLine(),
-                      TomMessage.typetermNotDefined, 
-                      subtypeName); 
-    }
-    if (superAstType == null) {
-      TomMessage.error(getLogger(),currentFile(), getLine(),
-                      TomMessage.typetermNotDefined, 
-                      supertypeName); 
-    }
-  }
-  selector().pop();
-}
-  ;
-    
-
 typeTerm returns [Declaration result] throws TomException
-{
+  {
     result = null;
     Option ot = null;
     Declaration attribute = null;
     TargetLanguage implement = null;
     DeclarationList declarationList = `concDeclaration();
     String s;
-}
-    :   (
-            type:ALL_ID
-            {
-                ot = `OriginTracking(Name(type.getText()), type.getLine(),currentFile());
-            }
-            LBRACE
 
-            implement = keywordImplement
-            (  attribute = keywordEquals[type.getText()]
-                { declarationList = `concDeclaration(attribute,declarationList*); }
-            |   attribute = keywordIsSort[type.getText()]
-                { declarationList = `concDeclaration(attribute,declarationList*); }
-            |   attribute = keywordGetImplementation[type.getText()]
-                { declarationList = `concDeclaration(attribute,declarationList*); }
-            )*
-            t:RBRACE
-        )
-{
-  TomType astType = `Type(concTypeOption(),type.getText(),TLType(implement.getCode()));
-          putType(type.getText(), astType);
-          result = `TypeTermDecl(Name(type.getText()),declarationList,ot);
+    TypeOptionList typeoptionList = `concTypeOption();
+    int currentLine = -1;
+    String supertypeName = null;
+    String currentTypeName = null;
+  }
+  :   (
+      type:ALL_ID
+      {
+      currentLine = type.getLine();
+      currentTypeName = type.getText();
+      ot = `OriginTracking(Name(currentTypeName),currentLine,currentFile());
+      }
+      (
+         EXTENDS
+        supertype:ALL_ID
+        {
+            supertypeName = supertype.getText();
+            typeoptionList = `concTypeOption(SubtypeDecl(supertypeName));
+        }
+      )?
+      LBRACE
+      implement = keywordImplement
+      (  attribute = keywordEquals[currentTypeName]
+         { declarationList = `concDeclaration(attribute,declarationList*); }
+         |   attribute = keywordIsSort[currentTypeName]
+         { declarationList = `concDeclaration(attribute,declarationList*); }
+         |   attribute = keywordGetImplementation[currentTypeName]
+         { declarationList = `concDeclaration(attribute,declarationList*); }
+      )*
+      t:RBRACE
+      {
+          TomType astType = `Type(typeoptionList,currentTypeName,TLType(implement.getCode()));
+          putType(currentTypeName, astType);
+          result = `TypeTermDecl(Name(currentTypeName),declarationList,ot);
           updatePosition(t.getLine(),t.getColumn());
           selector().pop();
         }
-    ;
+    )
+  ;
 
 keywordImplement returns [TargetLanguage tlCode] throws TomException
 {
@@ -2720,7 +2671,6 @@ STRING
 
 ANTI_SYM  : '!';
 MATCH_CONSTRAINT  : "<<";
-SUBTYPE_CONSTRAINT  : "<:";
 LESSOREQUAL_CONSTRAINT  : "<=";
 //GREATER_CONSTRAINT  : ":>";
 GREATEROREQUAL_CONSTRAINT  : ">=";

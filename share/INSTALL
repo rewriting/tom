@@ -40,13 +40,13 @@ The binary distribution of Tom consists of the following directory layout:
    +--- share (BSD Licence)
          +--- contrib
          |
-         +--- tom 
-         |     +--- adt
-         |     +--- c
-         |     +--- caml
-         |     +--- java
-         |
          +--- man
+         |
+         +--- tom 
+               +--- adt
+               +--- c
+               +--- caml
+               +--- java
 
 
  Only the bin/ and lib/ directories are required to run Tom.
@@ -86,10 +86,10 @@ environment:
 
 (bash)
   export TOM_HOME=${HOME}/tom
-  export PATH=${PATH}:${TOM_HOME}/bin
+  export PATH=${TOM_HOME}/bin:${PATH}
   export CLASSPATH=${TOM_HOME}/lib/tom-runtime-full.jar:${CLASSPATH}
 
 (csh)
   setenv TOM_HOME ${HOME}/tom
-  set path=( $path $TOM_HOME/bin )
+  set path=( $TOM_HOME/bin $path )
   setenv CLASSPATH ${TOM_HOME}/lib/tom-runtime-full.jar:${CLASSPATH}

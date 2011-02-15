@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2010, INPL, INRIA
+ * Copyright (c) 2004-2011, INPL, INRIA
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -285,7 +285,7 @@ public class GomNsh {
   public void collectOneStep(State state, Collection col) {
     try {
       `OneStep(col).visit(state);
-    } catch (jjtraveler.VisitFailure f) {
+    } catch (tom.library.sl.VisitFailure f) {
       throw new RuntimeException("VisitFailure for "+state);
     }
   }

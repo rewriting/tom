@@ -10,17 +10,18 @@ public class ATermFib {
 
   %typeterm Nat {
     implement { ATermAppl }
+    is_sort(t) { $t instanceof ATermAppl }
   }
 
   %op Nat zero() {
-    is_fsym(t) { (t.getAFun())==fzero }
+    is_fsym(t) { ($t.getAFun())==fzero }
     make() { SingletonFactory.getInstance().makeAppl(fzero) }
   }
   
   %op Nat suc(p:Nat) {
-    is_fsym(t) { (t.getAFun())==fsuc }
-    get_slot(p,t) { (ATermAppl)t.getArgument(0) }
-    make(t) { SingletonFactory.getInstance().makeAppl(fsuc,t) }
+    is_fsym(t) { ($t.getAFun())==fsuc }
+    get_slot(p,t) { (ATermAppl)$t.getArgument(0) }
+    make(t) { SingletonFactory.getInstance().makeAppl(fsuc,$t) }
   }
 
   public ATermAppl plus(ATermAppl t1, ATermAppl t2) {
