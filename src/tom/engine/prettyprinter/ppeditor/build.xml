@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="monProjet" basedir="." default="compile">
 
-<property name="testsrc.dir" value="${src.dir}/test"/>
 <property name="src.dir" value="src"/>
+<property name="testsrc.dir" value="${src.dir}/test"/>
 <property name="build.dir" value="build"/>
 <property name="app.name" value="ppeditor"/>
 <property name="dist.dir" value="dist"/>
 <property name="testbuild.dir" value="${build.dir}/test"/>
-<property name="java.class.path" value=""/>
-<property name="jar.junit" value="C:\Program Files\eclipse\plugins\org.junit_3.8.1\junit.jar"/>
+<property name="jar.junit" value="org.junit_3.8.1/junit.jar"/>
 
 	
   <target name="clean">
@@ -42,14 +41,14 @@
     <javac srcdir="${src.dir}" destdir="${build.dir}" excludes="test/**"/>
   </target>
 
-<target name="runtests" depends="compiletests" if="junit.present" description="Compiler l'appli, créer le .jar, compiler les tests et lancer tous les tests du TestSuite *AllTests* en mode console">
-<java fork="true" classname="junit.textui.TestRunner" taskname="junit" failonerror="true">
-<arg value="build.test.AllTests"/>
-<classpath>
-<pathelement path="${java.class.path}" />
-<pathelement location="${build.dir}/*.class" />
-</classpath>
-</java>
-</target>
+  <target name="runtests" depends="compiletests" if="junit.present" description="Compiler l'appli, créer le .jar, compiler les tests et lancer tous les tests du TestSuite *AllTests* en mode console">
+    <java fork="true" classname="junit.textui.TestRunner" taskname="junit" failonerror="true">
+      <arg value="build.test.AllTests"/>
+      <classpath>
+        <pathelement path="${java.class.path}" />
+        <pathelement location="${build.dir}/*.class" />
+      </classpath>
+    </java>
+  </target>
 
 </project>
