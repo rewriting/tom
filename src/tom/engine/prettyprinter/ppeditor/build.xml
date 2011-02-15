@@ -28,7 +28,7 @@
 
 <target name="compiletests" depends="jar" description="Créer le jar de l'application et compiler les tests dans le répertoire ${testbuild.dir}">
 <mkdir dir="${testsrc.dir}"/>
-<javac srcdir="${testsrc.dir}" destdir="${testbuild.dir}">
+<javac srcdir="${testsrc.dir}" destdir="${testbuild.dir}" >
 <classpath>
 <pathelement location="${dist.dir}/${app.name}.jar" />
 </classpath>
@@ -42,9 +42,8 @@
 
   <target name="compile" depends="JUNIT" description="Compiler les sources, sans compiler les tests">
 <mkdir dir="${build.dir}"/>
-<javac srcdir="${src.dir}" destdir="${build.dir}" >
+<javac srcdir="${src.dir}" destdir="${build.dir}" excludes="Test/**" >
 <!-- Rq : ** pour parcourir tous les sous repertoires -->
-<include name="${src}/*.java"/>
 </javac>
 </target>
 
