@@ -533,16 +533,10 @@
     <!-- "tom binary" -->
     <copy todir="${stable.dist.bin}" file="${utils}/javac-tom"/>
     <copy todir="${stable.dist.bin}" file="${utils}/tom.bat"/>
+    <copy todir="${stable.dist.bin}" file="${utils}/gom.bat"/>
     <copy todir="${stable.dist.bin}" file="${utils}/javacForTom.bat"/>
     <copy todir="${stable.dist.bin}" file="${utils}/javaForTom.bat"/>
-    <copy todir="${stable.dist.bin}" file="${utils}/gom.bat"/>
     <copy todir="${stable.dist.bin}" file="${utils}/tlappend.bat"/>
-    <copy tofile="${stable.dist.bin}/tom" file="${utils}/script.in"/>
-    <copy tofile="${stable.dist.bin}/gom" file="${utils}/script.in"/>
-    <copy tofile="${stable.dist.bin}/emf-generate-mappings" file="${utils}/emf/emf-script.in"/>
-    <copy tofile="${stable.dist.bin}/emf-generate-xmi" file="${utils}/emf/emf-script.in"/>
-    <copy tofile="${stable.dist.bin}/emf-generate-mappings.bat" file="${utils}/emf/emf-script.bat.in"/>
-    <copy tofile="${stable.dist.bin}/emf-generate-xmi.bat" file="${utils}/emf/emf-script.bat.in"/>
     <copy todir="${stable.dist.bin}" file="${utils}/pytom"/>
     <copy todir="${stable.dist.bin}" file="${utils}/pindent.py"/>
     <copy todir="${stable.dist.bin}" file="${utils}/tom-server/tom-server.py"/>
@@ -553,12 +547,14 @@
       <replaceFilter token="@CONFIG_FILE@" value="Tom.xml"/>
       <replaceFilter token="@INCLUDES_DIR@" value="share/tom"/>
     </replace>
+    <copy tofile="${stable.dist.bin}/tom" file="${utils}/script.in"/>
     <replace file="${stable.dist.bin}/tom">
       <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
       <replaceFilter token="@MAIN_CLASS@" value="tom.engine.Tom"/>
       <replaceFilter token="@CONFIG_FILE@" value="Tom.xml"/>
       <replaceFilter token="@INCLUDES_DIR@" value="share/tom"/>
     </replace>
+    <copy tofile="${stable.dist.bin}/gom" file="${utils}/script.in"/>
     <replace file="${stable.dist.bin}/gom">
       <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
       <replaceFilter token="@MAIN_CLASS@" value="tom.gom.Gom"/>
@@ -571,22 +567,27 @@
       <replaceFilter token="@MAIN_CLASS@" value="tom.gom.Gom"/>
       <replaceFilter token="@CONFIG_FILE@" value="GomAntlrAdaptor.xml"/>
       <replaceFilter token="@INCLUDES_DIR@" value="share/gom"/>
-      </replace>
+    </replace>
+    <copy todir="${stable.dist.bin}" file="${utils}/gomantlradaptor.bat"/>
+    <copy tofile="${stable.dist.bin}/emf-generate-mappings" file="${utils}/emf/emf-script.in"/>
     <replace file="${stable.dist.bin}/emf-generate-mappings">
       <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
       <replaceFilter token="@MAIN_CLASS@" value="tom.emf.TomMappingFromEcore"/>
       <replaceFilter token="@CONFIG_FILE@" value=""/>
       <replaceFilter token="@INCLUDES_DIR@" value=""/>
     </replace>
+    <copy tofile="${stable.dist.bin}/emf-generate-xmi" file="${utils}/emf/emf-script.in"/>
     <replace file="${stable.dist.bin}/emf-generate-xmi">
       <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
       <replaceFilter token="@MAIN_CLASS@" value="tom.emf.EcoreMappingToXMI"/>
       <replaceFilter token="@CONFIG_FILE@" value=""/>
       <replaceFilter token="@INCLUDES_DIR@" value=""/>
       </replace>
+    <copy tofile="${stable.dist.bin}/emf-generate-mappings.bat" file="${utils}/emf/emf-script.bat.in"/>
     <replace file="${stable.dist.bin}/emf-generate-mappings.bat">
       <replaceFilter token="@MAIN_CLASS@" value="tom.emf.TomMappingFromEcore"/>
     </replace>
+    <copy tofile="${stable.dist.bin}/emf-generate-xmi.bat" file="${utils}/emf/emf-script.bat.in"/>
     <replace file="${stable.dist.bin}/emf-generate-xmi.bat">
       <replaceFilter token="@MAIN_CLASS@" value="tom.emf.EcoreMappingToXMI"/>
     </replace>
@@ -711,39 +712,29 @@
     <copy tofile="${src.dist}/GomAntlrAdaptor.xml" file="${src.adapterconfig}"/>
     <!-- "tom binary" -->
     <copy todir="${src.dist.bin}" file="${utils}/javac-tom"/>
-	<copy todir="${src.dist.bin}" file="${utils}/tom.bat"/>
+    <copy todir="${src.dist.bin}" file="${utils}/tom.bat"/>
+    <copy todir="${src.dist.bin}" file="${utils}/gom.bat"/>
     <copy todir="${src.dist.bin}" file="${utils}/javacForTom.bat"/>
     <copy todir="${src.dist.bin}" file="${utils}/javaForTom.bat"/>
-    <copy todir="${src.dist.bin}" file="${utils}/gom.bat"/>
     <copy todir="${src.dist.bin}" file="${utils}/tlappend.bat"/>
-    <copy tofile="${src.dist.bin}/tom" file="${utils}/script.in"/>
-    <copy tofile="${src.dist.bin}/tom.src" file="${utils}/script.in"/>
-    <copy tofile="${src.dist.bin}/emf-generate-mappings" file="${utils}/emf/emf-script.in"/>
-    <copy tofile="${src.dist.bin}/emf-generate-xmi" file="${utils}/emf/emf-script.in"/>
-    <copy tofile="${src.dist.bin}/emf-generate-mappings.bat" file="${utils}/emf/emf-script.bat.in"/>
-    <copy tofile="${src.dist.bin}/emf-generate-xmi.bat" file="${utils}/emf/emf-script.bat.in"/>
     <copy todir="${src.dist.bin}" file="${utils}/pytom"/>
     <copy todir="${src.dist.bin}" file="${utils}/pindent.py"/>
     <copy todir="${src.dist.bin}" file="${utils}/tom-server/tom-server.py"/>
-    <copy tofile="${src.dist.bin}/tom-server" file="${utils}/tom-server/script.in"/>
     <copy tofile="${src.dist.bin}/tom-client" file="${utils}/tom-server/tom-client.py"/>
+    <copy tofile="${src.dist.bin}/tom-server" file="${utils}/tom-server/script.in"/>
     <replace file="${src.dist.bin}/tom-server">
       <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
       <replaceFilter token="@CONFIG_FILE@" value="Tom.xml"/>
       <replaceFilter token="@INCLUDES_DIR@" value="share/tom"/>
     </replace>
+    <copy tofile="${src.dist.bin}/tom" file="${utils}/script.in"/>
     <replace file="${src.dist.bin}/tom">
       <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
       <replaceFilter token="@MAIN_CLASS@" value="tom.engine.Tom"/>
       <replaceFilter token="@CONFIG_FILE@" value="Tom.xml"/>
       <replaceFilter token="@INCLUDES_DIR@" value="share/tom"/>
     </replace>
-    <replace file="${src.dist.bin}/tom">
-      <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
-      <replaceFilter token="@MAIN_CLASS@" value="tom.engine.Tom"/>
-      <replaceFilter token="@CONFIG_FILE@" value="Tom.xml"/>
-      <replaceFilter token="@INCLUDES_DIR@" value="share/tom"/>
-    </replace>
+    <copy tofile="${src.dist.bin}/tom.src" file="${utils}/script.in"/>
     <replace file="${src.dist.bin}/tom.src">
       <replaceFilter token="@TOM_HOME@" value="TOM_SRC_HOME"/>
       <replaceFilter token="@MAIN_CLASS@" value="tom.engine.Tom"/>
@@ -751,13 +742,13 @@
       <replaceFilter token="@INCLUDES_DIR@" value="share/tom"/>
     </replace>
     <copy tofile="${src.dist.bin}/gom" file="${utils}/script.in"/>
-    <copy tofile="${src.dist.bin}/gom.src" file="${utils}/script.in"/>
     <replace file="${src.dist.bin}/gom">
       <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
       <replaceFilter token="@MAIN_CLASS@" value="tom.gom.Gom"/>
       <replaceFilter token="@CONFIG_FILE@" value="Gom.xml"/>
       <replaceFilter token="@INCLUDES_DIR@" value="share/gom"/>
     </replace>
+    <copy tofile="${src.dist.bin}/gom.src" file="${utils}/script.in"/>
     <replace file="${src.dist.bin}/gom.src">
       <replaceFilter token="@TOM_HOME@" value="TOM_SRC_HOME"/>
       <replaceFilter token="@MAIN_CLASS@" value="tom.gom.Gom"/>
@@ -771,21 +762,26 @@
       <replaceFilter token="@CONFIG_FILE@" value="GomAntlrAdaptor.xml"/>
       <replaceFilter token="@INCLUDES_DIR@" value="share/gom"/>
     </replace>
+    <copy todir="${src.dist.bin}" file="${utils}/gomantlradaptor.bat"/>
+    <copy tofile="${src.dist.bin}/emf-generate-mappings" file="${utils}/emf/emf-script.in"/>
     <replace file="${src.dist.bin}/emf-generate-mappings">
       <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
       <replaceFilter token="@MAIN_CLASS@" value="tom.emf.TomMappingFromEcore"/>
       <replaceFilter token="@CONFIG_FILE@" value=""/>
       <replaceFilter token="@INCLUDES_DIR@" value=""/>
     </replace>
+    <copy tofile="${src.dist.bin}/emf-generate-xmi" file="${utils}/emf/emf-script.in"/>
     <replace file="${src.dist.bin}/emf-generate-xmi">
       <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
       <replaceFilter token="@MAIN_CLASS@" value="tom.emf.EcoreMappingToXMI"/>
       <replaceFilter token="@CONFIG_FILE@" value=""/>
       <replaceFilter token="@INCLUDES_DIR@" value=""/>
       </replace>
+    <copy tofile="${src.dist.bin}/emf-generate-mappings.bat" file="${utils}/emf/emf-script.bat.in"/>
     <replace file="${src.dist.bin}/emf-generate-mappings.bat">
       <replaceFilter token="@MAIN_CLASS@" value="tom.emf.TomMappingFromEcore"/>
     </replace>
+    <copy tofile="${src.dist.bin}/emf-generate-xmi.bat" file="${utils}/emf/emf-script.bat.in"/>
     <replace file="${src.dist.bin}/emf-generate-xmi.bat">
       <replaceFilter token="@MAIN_CLASS@" value="tom.emf.EcoreMappingToXMI"/>
     </replace>
