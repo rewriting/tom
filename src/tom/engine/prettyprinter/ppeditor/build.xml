@@ -43,11 +43,12 @@
 
 <target name="runtests" depends="compiletests" if="junit.present" description="Compiler l'appli, créer le .jar, compiler les tests et lancer tous les tests du TestSuite *AllTests* en mode console">
 <java fork="true" classname="junit.textui.TestRunner" taskname="junit" failonerror="true">
-<arg value="build/test/AllTests.class"/>
 <classpath>
 <pathelement path="${java.class.path}" />
 <pathelement location="${build.dir}/ppeditor" />
+<pathelement location="${testbuild.dir}"/>
 </classpath>
+<arg value="ppeditor.test.AllTests"/>
 </java>
 </target>
 
