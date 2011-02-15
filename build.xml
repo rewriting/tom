@@ -541,6 +541,8 @@
     <copy tofile="${stable.dist.bin}/gom" file="${utils}/script.in"/>
     <copy tofile="${stable.dist.bin}/emf-generate-mappings" file="${utils}/emf/emf-script.in"/>
     <copy tofile="${stable.dist.bin}/emf-generate-xmi" file="${utils}/emf/emf-script.in"/>
+    <copy tofile="${stable.dist.bin}/emf-generate-mappings.bat" file="${utils}/emf/emf-script.bat.in"/>
+    <copy tofile="${stable.dist.bin}/emf-generate-xmi.bat" file="${utils}/emf/emf-script.bat.in"/>
     <copy todir="${stable.dist.bin}" file="${utils}/pytom"/>
     <copy todir="${stable.dist.bin}" file="${utils}/pindent.py"/>
     <copy todir="${stable.dist.bin}" file="${utils}/tom-server/tom-server.py"/>
@@ -569,7 +571,26 @@
       <replaceFilter token="@MAIN_CLASS@" value="tom.gom.Gom"/>
       <replaceFilter token="@CONFIG_FILE@" value="GomAntlrAdaptor.xml"/>
       <replaceFilter token="@INCLUDES_DIR@" value="share/gom"/>
+      </replace>
+    <replace file="${stable.dist.bin}/emf-generate-mappings">
+      <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
+      <replaceFilter token="@MAIN_CLASS@" value="tom.emf.TomMappingFromEcore"/>
+      <replaceFilter token="@CONFIG_FILE@" value=""/>
+      <replaceFilter token="@INCLUDES_DIR@" value=""/>
     </replace>
+    <replace file="${stable.dist.bin}/emf-generate-xmi">
+      <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
+      <replaceFilter token="@MAIN_CLASS@" value="tom.emf.EcoreMappingToXMI"/>
+      <replaceFilter token="@CONFIG_FILE@" value=""/>
+      <replaceFilter token="@INCLUDES_DIR@" value=""/>
+      </replace>
+    <replace file="${stable.dist.bin}/emf-generate-mappings.bat">
+      <replaceFilter token="@MAIN_CLASS@" value="tom.emf.TomMappingFromEcore"/>
+    </replace>
+    <replace file="${stable.dist.bin}/emf-generate-xmi.bat">
+      <replaceFilter token="@MAIN_CLASS@" value="tom.emf.EcoreMappingToXMI"/>
+    </replace>
+
     <chmod dir="${stable.dist.bin}" perm="ugo+rx">
       <include name="*"/>
       <exclude name="*.bat"/>
@@ -699,6 +720,8 @@
     <copy tofile="${src.dist.bin}/tom.src" file="${utils}/script.in"/>
     <copy tofile="${src.dist.bin}/emf-generate-mappings" file="${utils}/emf/emf-script.in"/>
     <copy tofile="${src.dist.bin}/emf-generate-xmi" file="${utils}/emf/emf-script.in"/>
+    <copy tofile="${src.dist.bin}/emf-generate-mappings.bat" file="${utils}/emf/emf-script.bat.in"/>
+    <copy tofile="${src.dist.bin}/emf-generate-xmi.bat" file="${utils}/emf/emf-script.bat.in"/>
     <copy todir="${src.dist.bin}" file="${utils}/pytom"/>
     <copy todir="${src.dist.bin}" file="${utils}/pindent.py"/>
     <copy todir="${src.dist.bin}" file="${utils}/tom-server/tom-server.py"/>
@@ -759,7 +782,14 @@
       <replaceFilter token="@MAIN_CLASS@" value="tom.emf.EcoreMappingToXMI"/>
       <replaceFilter token="@CONFIG_FILE@" value=""/>
       <replaceFilter token="@INCLUDES_DIR@" value=""/>
+      </replace>
+    <replace file="${src.dist.bin}/emf-generate-mappings.bat">
+      <replaceFilter token="@MAIN_CLASS@" value="tom.emf.TomMappingFromEcore"/>
     </replace>
+    <replace file="${src.dist.bin}/emf-generate-xmi.bat">
+      <replaceFilter token="@MAIN_CLASS@" value="tom.emf.EcoreMappingToXMI"/>
+    </replace>
+
     <chmod dir="${src.dist.bin}" perm="ugo+rx">
       <include name="*"/>
       <exclude name="*.bat"/>
