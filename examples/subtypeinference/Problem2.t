@@ -28,115 +28,300 @@
  */
 package subtypeinference;
 
-public class Problem2 {
+public class Problem2{
+  /*
+  %gom {
+    module Example
+      abstract syntax
+      tNat = zero()
+          | one()
+          | two()
+          | suc(m:tNat)
+          | square(n:tInt)
+          | mult(m1:tNat,m2:tNat)
 
-  static class A {
-    public A() {}
-    public String getOp() { return ""; }
-  }
+      natList = nList(tNat*)
 
-  static class Javaa extends A {
-    public Javaa() { }
-    public String getOp() { return "a"; }
-    public String toString() { return "a()"; }
-  }
+      tInt = uminus(m:tNat)
+          | plus(n1:tInt,n2:tInt)
 
-  static class Javaf extends A {
-    public A num1;
-    public Javaf(A num1) { this.num1 = num1; }
-    public A getnum1() { return num1; }
-    public String getOp() { return "f"; }
-    public String toString() { return "g(" + num1 + ")"; }
-  }
+      tFloat = div(n1:tInt,n2:tInt)
 
-  static class B extends A {
-    public B() {}
-    public String getOp() { return ""; }
+      tNat <: tInt
+      tInt <: tFloat
   }
+  */
   
-  static class Javab extends B {
-    public Javab() { }
-    public String getOp() { return "b"; }
-    public String toString() { return "b()"; }
-  }
-
-  static class Javag extends B {
-    public B num2;
-    public Javag(B num2) { this.num2 = num2; }
-    public B getnum2() { return num2; }
-    public String getOp() { return "g"; }
-    public String toString() { return "g(" + num2 + ")"; }
-  }
-  
-// ------------------------------------------------------------
-  %typeterm TomA {
-    implement { A }
-    is_sort(t) { $t instanceof A }
-    equals(t1,t2) { $t1 == $t2 }
-  }
-
-  %typeterm TomB extends TomA {
-    implement { B }
-    is_sort(t) { $t instanceof B }
-    equals(t1,t2) { $t1 == $t2 }
-  }
-
-// ------------------------------------------------------------
-  %op TomA a() {
-    is_fsym(t) { $t instanceof Javaa }
-    make() { new Javaa() }
-  }
-
-  %op TomA f(num1:TomA) {
-    is_fsym(t) { $t instanceof Javaf }
-    make(t) { new Javaf($t) }
-    get_slot(num1,t) { ((Javaf)$t).getnum1() }
-  }
-
-  %op TomB b() {
-    is_fsym(t) { $t instanceof Javab }
-    make() { new Javab() }
-  }
-
-  %op TomB g(num2:TomB) {
-    is_fsym(t) { $t instanceof Javag }
-    make(t) { new Javag($t) }
-    get_slot(num2,t) { ((Javag)$t).getnum2() }
-  }
-
-// ------------------------------------------------------------
-
-  public final static void main(String[] args) {
-    Problem2 test = new Problem2();
-    test.buildExpA();
-    test.buildExpB();
-  }
-
-  public void buildExpA() {
-    print(`f(a()));
-  } 
-
-  public void buildExpB() {
-    print(`g(b()));
-  } 
-
-  public void print(A term) {
-    String op = term.getOp();
-    System.out.print("Term = " + `op);
-    A y = `b();
-    //B x = `b();
-    
-    %match {
-      //x << y && (y == b()) && (g(x) == g(b())) -> { System.out.println("Test!"); }
-      g[num2=arg] << TomB term -> { System.out.println("(" + `arg.getOp() + ")"); }
-      f[num1=arg] << TomA term -> { System.out.println("(" + `arg.getOp() + ")"); }
+  //-------- Java classes -----------
+  static class tFloat {
+    public String getOperator(){
+      return "";
     }
+  }
 
-    A n = `f(a());
-    A m = `a();
-    %match(n,m) {
-      f(x),x -> { System.out.println("Test x = " + `x); }
+  static class div extends tFloat {
+    public tInt n1;
+    public tInt n2;
+    public div(tInt nn1, tInt nn2) {
+      n1 = nn1;
+      n2 = nn2;
+    }
+    public String getOperator() {
+      return "div";
+    }
+    public String toString(){
+      return "div(" + n1 + "," + n2 + ")";
+    }
+  } 
+
+  static class tInt extends tFloat{
+    public String getOperator(){
+      return "";
+    }
+  }
+
+  static class uminus extends tInt {
+    public tNat m;
+    public uminus(tNat mm) {
+      m = mm;
+    }
+    public String getOperator() {
+      return "uminus";
+    }
+    public String toString(){
+      return "uminus(" + m + ")";
+    }
+  } 
+
+  static class plus extends tInt {
+    public tInt n1;
+    public tInt n2;
+    public plus(tInt nn1, tInt nn2) {
+      n1 = nn1;
+      n2 = nn2;
+    }
+    public String getOperator() {
+      return "plus";
+    }
+    public String toString(){
+      return "plus(" + n1 + "," + n2 + ")";
+    }
+  } 
+
+  static class tNat extends tInt{
+    public String getOperator(){
+      return "";
+    }
+  }
+
+  static class zero extends tNat {
+    public zero() {}
+    public String getOperator() {
+      return "zero";
+    }
+    public String toString() {
+      return "zero()";
+    }
+  }
+
+  static class one extends tNat {
+    public one() {}
+    public String getOperator() {
+      return "one";
+    }
+    public String toString() {
+      return "one()";
+    }
+  }
+
+  static class two extends tNat {
+    public two() {}
+    public String getOperator() {
+      return "two";
+    }
+    public String toString() {
+      return "two()";
+    }
+  }
+
+  static class suc extends tNat {
+    public tNat m;
+    public suc(tNat mm) {
+      m = mm;
+    }
+    public String getOperator() {
+      return "suc";
+    }
+    public String toString(){
+      return "suc(" + m + ")";
+    }
+  } 
+
+  static class square extends tNat {
+    public tInt n;
+    public square(tInt nn) {
+      n = nn;
+    }
+    public String getOperator() {
+      return "square";
+    }
+    public String toString(){
+      return "square(" + n + ")";
+    }
+  }
+
+  static class mult extends tNat {
+    public tNat m1;
+    public tNat m2;
+    public mult(tNat mm1, tNat mm2) {
+      m1 = mm1;
+      m2 = mm2;
+    }
+    public String getOperator() {
+      return "mult";
+    }
+    public String toString(){
+      return "mult(" + m1 + "," + m2 + ")";
+    }
+  }
+
+  static class natList {
+    public String getOperator() {
+      return "";
+    }
+  }
+
+  static class nList extends natList {
+    public tNat headnList;
+    public natList tailnList;
+    public nList() {
+      headnList = null;
+      tailnList = null;
+    }
+    public nList(tNat headnnList, natList tailnnList) {
+      headnList = headnnList;
+      tailnList = tailnnList;
+    }
+    public boolean isEmpty() {
+      return (headnList == null && tailnList == null);
+    }
+    public String getOperator() {
+      return "nList";
+    }
+    public String toString(){
+      String result = "nList(";
+      if (headnList != null) {
+        result += headnList;
+      }
+      if (tailnList != null) {
+        result += ("," + tailnList);
+      }
+      result += ")";
+      return result;
+    }
+  }
+  //-------- Tom mappings -----------
+  %typeterm tFloat {
+    implement { tFloat }
+    is_sort(t) { ($t instanceof tFloat) }
+
+    equals(t1,t2) { ($t1.getClass()==$t2.getClass()) }
+
+  }
+
+  %typeterm tInt extends tFloat {
+    implement { tInt }
+    is_sort(t) { ($t instanceof tInt) }
+
+    equals(t1,t2) { ($t1.getClass()==$t2.getClass()) }
+
+  }
+
+  %typeterm tNat extends tInt {
+    implement { tNat }
+    is_sort(t) { ($t instanceof tNat) }
+
+    equals(t1,t2) { ($t1.getClass()==$t2.getClass()) }
+
+  }
+
+  %typeterm natList {
+    implement { natList }
+    is_sort(t) { ($t instanceof natList) }
+
+    equals(t1,t2) { ($t1==$t2) }
+
+  }
+
+  %oplist natList nList( tNat* ) {
+    is_fsym(t)         { ($t instanceof nList) }
+    get_head(l)        { ((nList)$l).headnList }
+    get_tail(l)        { ((nList)$l).tailnList }
+    is_empty(l)        { ((nList)$l).isEmpty() }
+    make_empty()       { new nList() }
+    make_insert(e,l)   { new nList(e,l) }
+  }
+
+  %op tNat zero() {
+    is_fsym(t) { ($t instanceof zero) }
+    make() { new zero() }
+  }
+
+  %op tNat one() {
+    is_fsym(t) { ($t instanceof one) }
+    make() { new one() }
+  }
+
+  %op tNat two() {
+    is_fsym(t) { ($t instanceof two) }
+    make() { new two() }
+  }
+
+  %op tNat suc(m:tNat) {
+    is_fsym(t) { ($t instanceof suc) }
+    get_slot(m, t) { ((suc)$t).m }
+    make(t0) { new suc($t0) }
+  }
+
+  %op tNat square(n:tInt) {
+    is_fsym(t) { ($t instanceof square) }
+    get_slot(n, t) { ((square)$t).n }
+    make(t0) {  new square($t0) }
+  }
+
+  %op tNat mult(m1:tNat, m2:tNat) {
+    is_fsym(t) { ($t instanceof mult) }
+    get_slot(m1, t) { ((mult)$t).m1 }
+    get_slot(m2, t) { ((mult)$t).m2 }
+    make(t0, t1) { new mult($t0, $t1) }
+  }
+
+  %op tInt uminus(m:tNat) {
+    is_fsym(t) { ($t instanceof uminus) }
+    get_slot(m, t) { ((uminus)$t).m }
+    make(t0) { new uminus($t0) }
+  }
+
+  %op tInt plus(n1:tInt, n2:tInt) {
+    is_fsym(t) { ($t instanceof plus) }
+    get_slot(n1, t) { ((plus)$t).n1 }
+    get_slot(n2, t) { ((plus)$t).n2 }
+    make(t0, t1) { new plus($t0, $t1) }
+  }
+
+  %op tFloat div(n1:tInt, n2:tInt) {
+    is_fsym(t) { ($t instanceof div) }
+    get_slot(n1, t) { ((div)$t).n1 }
+    get_slot(n2, t) { ((div)$t).n2 }
+    make(t0, t1) { new div($t0, $t1) }
+  }
+
+  //---------------------------------
+  public static void main(String[] args) {
+    tFloat subject = `suc(zero());
+    %match {
+      suc(x) << subject -> { System.out.println("x = " +`x); }
+
     }
   }
 }
-

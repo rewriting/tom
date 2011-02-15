@@ -28,86 +28,87 @@
  */
 package subtypeinference;
 import tom.library.sl.*;
-import subtypeinference.*; 
 
-public class ExampleErrors {
+public class ProblemStrategy {
 	%include { sl.tom }
-	%include { HandMapping.tom }
-/*
-  static class A implements Visitable {
-    public A num1;
+
+  static class A {
     public A() {}
-    public A(A num1) { this.num1 = num1; }
     public String getOp() { return ""; }
   }
 
   static class Javaa extends A {
-    public Javaa() { super(); }
+    public Javaa() { }
     public String getOp() { return "a"; }
+    public String toString() { return "a()"; }
   }
 
   static class Javaf extends A {
-    public Javaf(A num1) { super(num1); }
+    public A num1;
+    public Javaf(A num1) { this.num1 = num1; }
+    public A getnum1() { return num1; }
     public String getOp() { return "f"; }
+    public String toString() { return "g(" + num1 + ")"; }
   }
 
   static class B extends A {
-    public B num2;
     public B() {}
-    public B(B num2) { this.num2 = num2; }
     public String getOp() { return ""; }
   }
   
   static class Javab extends B {
-    public Javab() { super(); }
+    public Javab() { }
     public String getOp() { return "b"; }
+    public String toString() { return "b()"; }
   }
 
   static class Javag extends B {
-    public Javag(B num2) { super(num2); }
+    public B num2;
+    public Javag(B num2) { this.num2 = num2; }
+    public B getnum2() { return num2; }
     public String getOp() { return "g"; }
+    public String toString() { return "g(" + num2 + ")"; }
   }
   
 // ------------------------------------------------------------
-  %typeterm A {
+  %typeterm TomA {
     implement { A }
     is_sort(t) { $t instanceof A }
-    equals(t1,t2) { $t1.equals($t2) }
+    equals(t1,t2) { $t1 == $t2 }
   }
 
-  %typeterm B extends A{
+  %typeterm TomB extends TomA {
     implement { B }
     is_sort(t) { $t instanceof B }
-    equals(t1,t2) { $t1.equals($t2) }
+    equals(t1,t2) { $t1 == $t2 }
   }
 
 // ------------------------------------------------------------
-  %op A a() {
+  %op TomA a() {
     is_fsym(t) { $t instanceof Javaa }
     make() { new Javaa() }
   }
 
-  %op A f(num1:A) {
+  %op TomA f(num1:TomA) {
     is_fsym(t) { $t instanceof Javaf }
     make(t) { new Javaf($t) }
-    get_slot(num1,t) { ((Javaf)$t).num1 }
+    get_slot(num1,t) { ((Javaf)$t).getnum1() }
   }
 
-  %op B b() {
+  %op TomB b() {
     is_fsym(t) { $t instanceof Javab }
     make() { new Javab() }
   }
 
-  %op B g(num2:B) {
+  %op TomB g(num2:TomB) {
     is_fsym(t) { $t instanceof Javag }
     make(t) { new Javag($t) }
-    get_slot(num2,t) { ((Javag)$t).num2 }
+    get_slot(num2,t) { ((Javag)$t).getnum2() }
   }
 
 // ------------------------------------------------------------
-*/
   public final static void main(String[] args) {
-    ExampleErrors test = new ExampleErrors();
+    ProblemStrategy test = new ProblemStrategy();
     test.testSubtype();
   }
 
@@ -118,13 +119,13 @@ public class ExampleErrors {
     A z = `f(b());
     A w = `g(b());
     %match {
-      //(y == a()) && (g(x) == g(b())) -> { System.out.println("Test 1!"); }
+      (y == a()) && (g(x) == g(b())) -> { System.out.println("Test 1!"); }
       f(b()) << z -> { 
         System.out.println("Test 2!"); 
         //A test = propagate(`f(a()));
         //System.out.println("test = " + test); 
       }
-      //g(x) << w && (f(b()) == createA(x)) -> { System.out.println("Test 3!"); }
+      g(x) << w && (f(b()) == createA(x)) -> { System.out.println("Test 3!"); }
     }
   }
 
@@ -144,7 +145,7 @@ public class ExampleErrors {
 */
 
   %strategy testSubtype() extends `Identity() {
-    visit A {
+    visit TomA {
       f(x) -> { return `g(x); }
     }
   } 

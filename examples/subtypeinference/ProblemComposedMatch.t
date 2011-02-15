@@ -28,7 +28,7 @@
  */
 package subtypeinference;
 
-public class Problem4{
+public class ProblemComposedMatch{
   /*
   %gom {
     module Example
@@ -318,9 +318,24 @@ public class Problem4{
 
   //---------------------------------
   public static void main(String[] args) {
-    tFloat subject = `mult(zero(),suc(zero()));
     %match {
-      mult(x,suc(x)) << subject -> { System.out.println("x = " +`x); }
+      div(x,y) << div(zero(),uminus(zero()))
+        && (x != y) -> { System.out.println("#1: x = " +`x); }
+
+      div(x,y) << div(uminus(zero()),zero())
+        && suc(zero()) << suc(x) -> { 
+          System.out.println("#2: x = " +`x + ", y = " + `y);
+        } 
+
+      suc(zero()) << suc(x)
+        && div(x,y) << div(uminus(zero()),zero()) -> {
+          System.out.println("#3: x = " +`x + ", y = " + `y);
+        }
+
+      (x << suc(zero()) || x << suc(suc(zero())))
+        && (zero() != x) -> {
+          System.out.println("#3: x = " +`x); 
+        }
     }
   }
 }

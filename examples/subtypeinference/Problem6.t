@@ -28,7 +28,7 @@
  */
 package subtypeinference;
 
-public class Problem4{
+public class Problem6{
   /*
   %gom {
     module Example
@@ -318,9 +318,9 @@ public class Problem4{
 
   //---------------------------------
   public static void main(String[] args) {
-    tFloat subject = `mult(zero(),suc(zero()));
+    tFloat subject = `suc(zero());
     %match {
-      mult(x,suc(x)) << subject -> { System.out.println("x = " +`x); }
+      x@suc(zero()) << subject -> { System.out.println("x = " +`x); }
     }
   }
 }

@@ -28,305 +28,300 @@
  */
 package subtypeinference;
 
-public class Problem3 {
-  %include{ int.tom }
-  %include{ String.tom }
+public class Problem3{
+  /*
+  %gom {
+    module Example
+      abstract syntax
+      tNat = zero()
+          | one()
+          | two()
+          | suc(m:tNat)
+          | square(n:tInt)
+          | mult(m1:tNat,m2:tNat)
 
-    // ------------------------------------------------------------
-  abstract class Exp {
-    public abstract String getOperator();
+      natList = nList(tNat*)
+
+      tInt = uminus(m:tNat)
+          | plus(n1:tInt,n2:tInt)
+
+      tFloat = div(n1:tInt,n2:tInt)
+
+      tNat <: tInt
+      tInt <: tFloat
   }
-   
-  class CstExp extends Exp {
-    public Object value;
-    public CstExp(Object value) {
-      this.value = value;
+  */
+  
+  //-------- Java classes -----------
+  static class tFloat {
+    public String getOperator(){
+      return "";
+    }
+  }
+
+  static class div extends tFloat {
+    public tInt n1;
+    public tInt n2;
+    public div(tInt nn1, tInt nn2) {
+      n1 = nn1;
+      n2 = nn2;
     }
     public String getOperator() {
-      return "" + value;
+      return "div";
+    }
+    public String toString(){
+      return "div(" + n1 + "," + n2 + ")";
+    }
+  } 
+
+  static class tInt extends tFloat{
+    public String getOperator(){
+      return "";
     }
   }
 
-  class IntExp extends CstExp {
-    public IntExp(int ivalue) {
-      super(new Integer(ivalue));
+  static class uminus extends tInt {
+    public tNat m;
+    public uminus(tNat mm) {
+      m = mm;
+    }
+    public String getOperator() {
+      return "uminus";
+    }
+    public String toString(){
+      return "uminus(" + m + ")";
+    }
+  } 
+
+  static class plus extends tInt {
+    public tInt n1;
+    public tInt n2;
+    public plus(tInt nn1, tInt nn2) {
+      n1 = nn1;
+      n2 = nn2;
+    }
+    public String getOperator() {
+      return "plus";
+    }
+    public String toString(){
+      return "plus(" + n1 + "," + n2 + ")";
+    }
+  } 
+
+  static class tNat extends tInt{
+    public String getOperator(){
+      return "";
     }
   }
-  
-  class StringExp extends CstExp {
-    public StringExp(String svalue) {
-      super(svalue);
+
+  static class zero extends tNat {
+    public zero() {}
+    public String getOperator() {
+      return "zero";
+    }
+    public String toString() {
+      return "zero()";
     }
   }
 
-  class UnaryOperator extends Exp {
-    public Exp first;
-    public UnaryOperator(Exp first) {
-      this.first = first;
-    } 
-    public String getOperator() { return ""; }
-  }
-
-  class BinaryOperator extends Exp {
-    public Exp first;
-    public Exp second;
-    public BinaryOperator(Exp first, Exp second) {
-      this.first = first;
-      this.second = second;
+  static class one extends tNat {
+    public one() {}
+    public String getOperator() {
+      return "one";
     }
-    public String getOperator() { return ""; }
-  }
-  
-  class Plus extends BinaryOperator {
-    public Plus(Exp first, Exp second) {
-      super(first,second);
+    public String toString() {
+      return "one()";
     }
-    public String getOperator() { return "Plus"; }
   }
 
-  class Mult extends BinaryOperator {
-    public Mult(Exp first, Exp second) {
-      super(first,second);
+  static class two extends tNat {
+    public two() {}
+    public String getOperator() {
+      return "two";
     }
-    public String getOperator() { return "Mult"; }
-  }
-  
-  class Uminus extends UnaryOperator {
-    public Uminus(Exp first) {
-      super(first);
+    public String toString() {
+      return "two()";
     }
-    public String getOperator() { return "Uminus"; }
   }
 
-  // ------------------------------------------------------------
-  %typeterm TomInteger {
-    implement { Integer }
-    is_sort(t) { $t instanceof Integer }
+  static class suc extends tNat {
+    public tNat m;
+    public suc(tNat mm) {
+      m = mm;
+    }
+    public String getOperator() {
+      return "suc";
+    }
+    public String toString(){
+      return "suc(" + m + ")";
+    }
+  } 
+
+  static class square extends tNat {
+    public tInt n;
+    public square(tInt nn) {
+      n = nn;
+    }
+    public String getOperator() {
+      return "square";
+    }
+    public String toString(){
+      return "square(" + n + ")";
+    }
   }
 
-  %typeterm TomExp {
-    implement { Exp }
-    is_sort(t) { $t instanceof Exp }
+  static class mult extends tNat {
+    public tNat m1;
+    public tNat m2;
+    public mult(tNat mm1, tNat mm2) {
+      m1 = mm1;
+      m2 = mm2;
+    }
+    public String getOperator() {
+      return "mult";
+    }
+    public String toString(){
+      return "mult(" + m1 + "," + m2 + ")";
+    }
   }
 
-  %typeterm TomBinaryOperator extends TomExp {
-    implement { BinaryOperator }
-    is_sort(t) { $t instanceof BinaryOperator }
+  static class natList {
+    public String getOperator() {
+      return "";
+    }
   }
 
-  %typeterm TomUnaryOperator extends TomExp{
-    implement { UnaryOperator }
-    is_sort(t) { $t instanceof UnaryOperator }
+  static class nList extends natList {
+    public tNat headnList;
+    public natList tailnList;
+    public nList() {
+      headnList = null;
+      tailnList = null;
+    }
+    public nList(tNat headnnList, natList tailnnList) {
+      headnList = headnnList;
+      tailnList = tailnnList;
+    }
+    public boolean isEmpty() {
+      return (headnList == null && tailnList == null);
+    }
+    public String getOperator() {
+      return "nList";
+    }
+    public String toString(){
+      String result = "nList(";
+      if (headnList != null) {
+        result += headnList;
+      }
+      if (tailnList != null) {
+        result += ("," + tailnList);
+      }
+      result += ")";
+      return result;
+    }
+  }
+  //-------- Tom mappings -----------
+  %typeterm tFloat {
+    implement { tFloat }
+    is_sort(t) { ($t instanceof tFloat) }
+
+    equals(t1,t2) { ($t1.getClass()==$t2.getClass()) }
+
   }
 
-  %typeterm TomCstExp extends TomExp {
-    implement { CstExp }
-    is_sort(t) { $t instanceof CstExp }
+  %typeterm tInt extends tFloat {
+    implement { tInt }
+    is_sort(t) { ($t instanceof tInt) }
+
+    equals(t1,t2) { ($t1.getClass()==$t2.getClass()) }
+
   }
 
-    // ------------------------------------------------------------
-  
-  %op TomInteger zero() {
-    is_fsym(t) { (((Integer)$t).intValue()==0) }
+  %typeterm tNat extends tInt {
+    implement { tNat }
+    is_sort(t) { ($t instanceof tNat) }
+
+    equals(t1,t2) { ($t1.getClass()==$t2.getClass()) }
+
   }
 
-  %op TomInteger suc(p:TomInteger) {
-    is_fsym(t) { (((Integer)$t).intValue()!=0) }
-    get_slot(p,t) { new Integer(((Integer)$t).intValue()-1) }
+  %typeterm natList {
+    implement { natList }
+    is_sort(t) { ($t instanceof natList) }
+
+    equals(t1,t2) { ($t1==$t2) }
+
   }
 
-  %op TomBinaryOperator Plus(first:TomExp, second:TomExp) {
-    is_fsym(t) { $t instanceof Plus }
-    get_slot(first,t) { ((Plus)$t).first }
-    get_slot(second,t) { ((Plus)$t).second }
+  %oplist natList nList( tNat* ) {
+    is_fsym(t)         { ($t instanceof nList) }
+    get_head(l)        { ((nList)$l).headnList }
+    get_tail(l)        { ((nList)$l).tailnList }
+    is_empty(l)        { ((nList)$l).isEmpty() }
+    make_empty()       { new nList() }
+    make_insert(e,l)   { new nList(e,l) }
   }
 
-  %op TomBinaryOperator Mult(first:TomExp, second:TomExp) {
-    is_fsym(t) { $t instanceof Mult }
-    get_slot(first,t) { ((Mult)$t).first }
-    get_slot(second,t) { ((Mult)$t).second }
+  %op tNat zero() {
+    is_fsym(t) { ($t instanceof zero) }
+    make() { new zero() }
   }
 
-  %op TomUnaryOperator Uminus(first:TomExp) {
-    is_fsym(t) { $t instanceof Uminus }
-    get_slot(first,t) { ((Uminus)$t).first }
+  %op tNat one() {
+    is_fsym(t) { ($t instanceof one) }
+    make() { new one() }
   }
 
-   %op TomCstExp IntExp(ivalue:TomInteger) {
-    is_fsym(t) { $t instanceof IntExp }
-    get_slot(ivalue,t) { ((Integer)((IntExp)$t).value) }
+  %op tNat two() {
+    is_fsym(t) { ($t instanceof two) }
+    make() { new two() }
   }
 
-  %op TomCstExp StringExp(svalue:String) {
-    is_fsym(t) { $t instanceof StringExp }
-    get_slot(svalue,t) { ((String)((StringExp)$t).value) }
+  %op tNat suc(m:tNat) {
+    is_fsym(t) { ($t instanceof suc) }
+    get_slot(m, t) { ((suc)$t).m }
+    make(t0) { new suc($t0) }
   }
 
-    // ------------------------------------------------------------
- 
-  public final static void main(String[] args) {
-    Problem3 test = new Problem3();
-    test.test1();
-    test.test2();
-    test.test3();
+  %op tNat square(n:tInt) {
+    is_fsym(t) { ($t instanceof square) }
+    get_slot(n, t) { ((square)$t).n }
+    make(t0) {  new square($t0) }
   }
 
-  public BinaryOperator buildExp1() {
-    return new Mult(new Plus(new IntExp(2), new IntExp(3)), new IntExp(4));
+  %op tNat mult(m1:tNat, m2:tNat) {
+    is_fsym(t) { ($t instanceof mult) }
+    get_slot(m1, t) { ((mult)$t).m1 }
+    get_slot(m2, t) { ((mult)$t).m2 }
+    make(t0, t1) { new mult($t0, $t1) }
   }
 
-  public BinaryOperator buildExp2() {
-    return new Mult(new Plus(new StringExp("a"), new IntExp(0)), new IntExp(1));
+  %op tInt uminus(m:tNat) {
+    is_fsym(t) { ($t instanceof uminus) }
+    get_slot(m, t) { ((uminus)$t).m }
+    make(t0) { new uminus($t0) }
   }
 
-  public BinaryOperator buildExp3() {
-    return new Plus(buildExp2(), new Uminus(new StringExp("a")));
+  %op tInt plus(n1:tInt, n2:tInt) {
+    is_fsym(t) { ($t instanceof plus) }
+    get_slot(n1, t) { ((plus)$t).n1 }
+    get_slot(n2, t) { ((plus)$t).n2 }
+    make(t0, t1) { new plus($t0, $t1) }
   }
 
-
-  public void test1() {
-    Exp e = buildExp1();
-    String s1 = prettyPrint(e);
-    String s2 = prettyPrintInv(e);
-    String s3 = prettyPrint(traversalSimplify(e));
-    assertTrue( s1.equals("Mult(Plus(2,3),4)") );
-    assertTrue( s2.equals("2 3 Plus 4 Mult") );
-    assertTrue( s3.equals("20") );
-    System.out.println(s1);
-    System.out.println(s2);
-    System.out.println(s3);
-  }
-  
-  public void test2() {
-    Exp e = buildExp2();
-    String s1 = prettyPrint(e);
-    String s2 = prettyPrintInv(e);
-    String s3 = prettyPrint(traversalSimplify(e));
-    assertTrue( s1.equals("Mult(Plus(a,0),1)") );
-    assertTrue( s2.equals("a 0 Plus 1 Mult") );
-    assertTrue( s3.equals("a") );
-    System.out.println(s1);
-    System.out.println(s2);
-    System.out.println(s3);
+  %op tFloat div(n1:tInt, n2:tInt) {
+    is_fsym(t) { ($t instanceof div) }
+    get_slot(n1, t) { ((div)$t).n1 }
+    get_slot(n2, t) { ((div)$t).n2 }
+    make(t0, t1) { new div($t0, $t1) }
   }
 
-  public void test3() {
-    Exp e = buildExp3();
-    String s1 = prettyPrint(e);
-    String s2 = prettyPrintInv(e);
-    String s3 = prettyPrint(traversalSimplify(e));
-    assertTrue( s1.equals("Plus(Mult(Plus(a,0),1),Uminus(a))") );
-    assertTrue( s2.equals("a 0 Plus 1 Mult a Uminus Plus") );
-    assertTrue( s3.equals("0") );
-    System.out.println(s1);
-    System.out.println(s2);
-    System.out.println(s3);
-  }
+  //---------------------------------
+  public static void main(String[] args) {
+    tFloat subject = `plus(zero(),uminus(zero()));
 
-  /* An example with explicit declaration of subject's type */
-  public String prettyPrint(Exp t) {
-    String op = t.getOperator();
     %match {
-      (Plus|Mult)[first=e1,second=e2] << TomBinaryOperator t-> {
-        return op + "(" + prettyPrint(`e1) + "," + prettyPrint(`e2) + ")";
-      }
-
-      Uminus[first=e1] << TomUnaryOperator t -> {
-        return op + "(" + prettyPrint(`e1) + ")";
-      }
-
-      _ << TomCstExp t -> { return op; }
-
-    }
-    return "error";
-  }
-
-  /* An example without declaration of subject's type */
-  
-  public String prettyPrintInv(Exp t) {
-    String op = t.getOperator();
-    %match(t) {
-      (Plus|Mult)[first=e1,second=e2] -> {
-        return prettyPrintInv(`e1) + " " + prettyPrintInv(`e2) + " " + op;
-      }
-
-      Uminus[first=e1] -> {
-        return prettyPrintInv(`e1) + " " + op;
-      }
-
-      (IntExp|StringExp)[]  -> { return op; }
-      
-    }
-    return "error";
-  }
-
-  public Exp traversalSimplify(Exp t) {
-    %match(t) {
-      Uminus[first=e1] -> {
-        ((UnaryOperator)t).first  = traversalSimplify(`e1);
-        return simplify(t);
-      }
-      
-      (Plus|Mult)[first=e1, second=e2] -> {
-        ((BinaryOperator)t).first  = traversalSimplify(`e1);
-        ((BinaryOperator)t).second = traversalSimplify(`e2);
-        return simplify(t);
-      }
-    }
-    return t;
-  }
-
-  public Exp simplify(Exp t) {
-    %match(t) {
-      
-      Plus[first=IntExp(v1), second=IntExp(v2)] -> {
-        return new IntExp(`v1.intValue() + `v2.intValue());
-      }
-
-      Plus[first=e1, second=IntExp(zero())] -> { return `e1; }
-      Plus[second=e1, first=IntExp(zero())] -> { return `e1; }
-
-      
-      Plus[first=e1, second=Uminus(e2)] -> {
-        if(myEquals(`e1,`e2)) {
-          return new IntExp(0);
-        } else {
-          return t;
-        }
-      }
-
-      Mult[first=IntExp(v1), second=IntExp(v2)] -> {
-        return new IntExp(`v1.intValue() * `v2.intValue());
-      }
-      
-      Mult[first=e1, second=IntExp(suc(zero()))] -> { return `e1; }
-      Mult[second=e1, first=IntExp(suc(zero()))] -> { return `e1; }
-    }
-    return t;
-  }
-
-  public boolean myEquals(Exp t1, Exp t2) {
-    %match(t1,t2) {
-      
-      IntExp[ivalue=e1], IntExp[ivalue=e2] -> { return `e1.equals(`e2); }
-      
-      StringExp[svalue=e1], StringExp[svalue=e2] -> { return `e1.equals(`e2); }
-
-      Uminus[first=e1], Uminus[first=f1] -> { return myEquals(`e1,`f1); }
-      
-      (Plus|Mult)[first=e1, second=e2], (Plus|Mult)[first=f1, second=f2] -> {
-        return t1.getOperator().equals(t2.getOperator()) && myEquals(`e1,`f1) && myEquals(`e2,`f2);
-      }
-
-    }
-    return false;
-  }
-  
-  static void  assertTrue(boolean condition) {
-    if(!condition) {
-      throw new RuntimeException("assertion failed.");
+      plus(x,uminus(x)) << subject -> { System.out.println("x = " +`x); }
     }
   }
-  
 }
-
