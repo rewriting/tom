@@ -37,7 +37,7 @@
 
 <target name="compile" depends="JUNIT">
 <mkdir dir="${build.dir}"/>
-<javac srcdir="${src.dir}" destdir="${build.dir}" excludes="test/** Main.java"/>
+<javac srcdir="${src.dir}" destdir="${build.dir}" excludes="test/**"/>
 </target>
 
 <target name="runtests" depends="compiletests" if="junit.present" description="Compiler l'appli, créer le .jar, compiler les tests et lancer tous les tests du TestSuite *AllTests* en mode console">
