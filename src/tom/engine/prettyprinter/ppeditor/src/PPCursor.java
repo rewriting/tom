@@ -103,13 +103,16 @@ System.out.println(s.charAt(i));
         }
         position.add(new PPTextPosition(0,1));
       }else{
-        i++;
-        if(insertion){
+        if(insertion && position.getColumn()<fileBuffer.get(position.getLine()).length()-1){
+System.out.println(fileBuffer.get(position.getLine()).length());
+System.out.println(s.charAt(i));
+
           fileBuffer.add(position.getLine()+1, new StringBuffer(fileBuffer.get(position.getLine()).subSequence(position.getColumn(), fileBuffer.get(position.getLine()).length()-1)));
-        }else if(fileBuffer.size()==position.getLine()+1){
+
+        }else if(fileBuffer.size()-1 == position.getLine()){
           fileBuffer.add(new StringBuffer(""));
         }
-        position.set(position.getLine()+1,0);
+        position.set(new PPTextPosition(position.getLine()+1,0));
 
       }
     }
