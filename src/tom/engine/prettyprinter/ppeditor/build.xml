@@ -6,7 +6,6 @@
 <property name="build.dir" value="build"/>
 <property name="app.name" value="ppeditor"/>
 <property name="dist.dir" value="dist"/>
-<property name="testbuild.dir" value="${build.dir}/test"/>
 <property name="jar.junit" value="/usr/share/java/junit.jar"/>
 	
   <target name="clean">
@@ -18,7 +17,7 @@
   </target>
 
   <target name="JUNIT" description="Tester si le classpath contient bien le jar de JUnit">
-    <available property="junit.present" classname="junit.framework.TestCase" />
+    <available property="junit.present" classname="org.junit.Test" />
   </target>
 
   <target name="jar" depends="clean, compile" description="Créer un jar contenant seulement les classes normales (pas celles de test)">
@@ -27,10 +26,11 @@
   </target>
 
 <target name="compiletests" depends="jar" description="Créer le jar de l'application et compiler les tests dans le répertoire ${testbuild.dir}">
-<mkdir dir="${testbuild.dir}"/>
-<javac srcdir="${testsrc.dir}" destdir="${testbuild.dir}">
+<javac srcdir="${testsrc.dir}" destdir="${build.dir}">
 <classpath>
 <pathelement location="${dist.dir}/${app.name}.jar" />
+<pathelement location="${jar.junit}"/>
+
 </classpath>
 </javac>
 </target> 
@@ -41,7 +41,7 @@
 </target>
 
 <target name="runtests" depends="compiletests" if="junit.present" description="Compiler l'appli, créer le .jar, compiler les tests et lancer tous les tests du TestSuite *AllTests* en mode console">
-<java fork="true" classname="junit.textui.TestRunner" taskname="junit" failonerror="true">
+<java fork="true" classname="org.junit.runner.JUnitCore" taskname="junit" failonerror="false">
 <classpath>
 <pathelement path="${java.class.path}" />
 <pathelement location="${build.dir}/ppeditor" />
