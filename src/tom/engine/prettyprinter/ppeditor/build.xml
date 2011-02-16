@@ -6,7 +6,6 @@
 <property name="build.dir" value="build"/>
 <property name="app.name" value="ppeditor"/>
 <property name="dist.dir" value="dist"/>
-<property name="testbuild.dir" value="${build.dir}/test"/>
 <property name="jar.junit" value="/usr/share/java/junit.jar"/>
 	
   <target name="clean">
@@ -28,28 +27,45 @@
 
 
 <target name="compiletests" depends="jar" description="Créer le jar de l'application et compiler les tests dans le répertoire ${testbuild.dir}">
-<mkdir dir="${testbuild.dir}"/>
-<javac srcdir="${testsrc.dir}" destdir="${testbuild.dir}">
+<javac srcdir="${src.dir}" destdir="${build.dir}" excludes="Main.java">
 <classpath>
 <pathelement location="${dist.dir}/${app.name}.jar" />
+<pathelement location="${jar.junit}"/>
 </classpath>
 </javac>
 </target> 
 
 <target name="compile" depends="JUNIT">
 <mkdir dir="${build.dir}"/>
-<javac srcdir="${src.dir}" destdir="${build.dir}" excludes="test/**"/>
+<javac srcdir="${src.dir}" destdir="${build.dir}" excludes="test/** Main.java"/>
 </target>
 
 <target name="runtests" depends="compiletests" if="junit.present" description="Compiler l'appli, créer le .jar, compiler les tests et lancer tous les tests du TestSuite *AllTests* en mode console">
-<java fork="true" classname="junit.textui.TestRunner" taskname="junit" failonerror="true">
+<java fork="true" classname="junit.textui.TestRunner" taskname="junit" failonerror="false">
 <classpath>
 <pathelement path="${java.class.path}" />
 <pathelement location="${build.dir}/ppeditor" />
-<pathelement location="${testbuild.dir}"/>
+<pathelement location="${build.dir}"/>
 </classpath>
 <arg value="ppeditor.test.AllTests"/>
 </java>
 </target>
+
+<target name="ppmain" depends="main">
+<java classname="ppeditor.Main">
+<classpath>
+<pathelement location="${build.dir}"/>
+<pathelement path="${java.class.path}" />
+</classpath>
+</java>
+</target>
+
+<target name="main">
+<delete file="build/Main.class"/>
+<javac srcdir="${src.dir}" destdir="${build.dir}" includes="Main.java" >
+</javac>
+</target>
+
+
 
 </project>

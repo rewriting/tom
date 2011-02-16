@@ -1,11 +1,11 @@
 package ppeditor.test;
 
-import org.junit.*;
 import org.junit.Assert.*;
+import org.junit.*;
 import ppeditor.*;
 import org.junit.Test;
 
-public class TestPPTextPosition{
+public class TestPPTextPosition extends TestCase{
 
   PPTextPosition pptextposition;
 
