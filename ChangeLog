@@ -1,3 +1,14 @@
+2011-02-16 tavaresc
+ * Split strategy solveSubConstraints into separated strategies and methods.
+ * The method detectFail returns a 'boolean' and a new kind of constraint
+ 'False()' is added into the set constraint. (NewKernelTyper)
+
+2011-02-15 tavaresc
+ * Set type of new subject with the type of old subject (in compiler).
+ * Fix the insertion of subtyping constraints.
+ * Handle others Code's constructors in TomBase.
+
+
 2011-02-02 tavaresc
  * Detect when a slot has been declared with two different sorts.
 

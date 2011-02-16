@@ -905,15 +905,15 @@ public class NewKernelTyper {
     for (Code code : cList.getCollectionconcCode()) {
       init();
       code =  collectKnownTypesFromCode(`code);
-      System.out.println("------------- Code typed with typeVar:\n code = " +
-          `code);
+      //DEBUG System.out.println("------------- Code typed with typeVar:\n code = " +
+      //DEBUG     `code);
       code = inferAllTypes(code,`EmptyType());
       //DEBUG printGeneratedConstraints(subtypeConstraints);
       solveConstraints();
       //DEBUG System.out.println("substitutions = " + substitutions);
       code = replaceInCode(code);
-      //DEBUG System.out.println("------------- Code typed with substitutions:\n code = " +
-      //DEBUG     `code);
+      System.out.println("------------- Code typed with substitutions:\n code = " +
+          `code);
       replaceInSymbolTable();
       newCList = `concCode(code,newCList*);
     }
@@ -1346,6 +1346,7 @@ public class NewKernelTyper {
    * the substitutions are applied to the list of subtype constraints and the
    * method <code>solveEquationConstraints</code> to solve this list. 
    */
+  /*
   private void solveConstraints() {
     //DEBUG System.out.println("\nsolveConstraints 1:");
     //DEBUG printGeneratedConstraints(equationConstraints);
@@ -1355,7 +1356,7 @@ public class NewKernelTyper {
       !concTypeConstraint() << subtypeConstraints -> {
         TypeConstraintList simplifiedConstraints =
           replaceInSubtypingConstraints(subtypeConstraints);
-        printGeneratedConstraints(simplifiedConstraints);
+        //DEBUG printGeneratedConstraints(simplifiedConstraints);
         try {
           simplifiedConstraints = 
             `RepeatId(solveSubtypingConstraints(this)).visitLight(simplifiedConstraints);
@@ -1369,7 +1370,27 @@ public class NewKernelTyper {
     }
 
   }
+   */
+  private void solveConstraints() {
+    //DEBUG System.out.println("\nsolveConstraints 1:");
+    //DEBUG printGeneratedConstraints(equationConstraints);
+    //DEBUG printGeneratedConstraints(subtypeConstraints);
+    boolean errorFound = solveEquationConstraints(equationConstraints);
+    if (!errorFound) {
+      %match {
+        !concTypeConstraint() << subtypeConstraints -> {
+          TypeConstraintList simplifiedConstraints =
+            replaceInSubtypingConstraints(subtypeConstraints);
+          //DEBUG printGeneratedConstraints(simplifiedConstraints);
+          simplifiedConstraints = 
+            solveSubtypingConstraints(simplifiedConstraints);
+          //DEBUG System.out.println("\nResulting subtype constraints!!");
+          //DEBUG printGeneratedConstraints(simplifiedConstraints);
 
+        }
+      }
+    }
+  }
 
   /**
    * The method <code>solveEquationConstraints</code> tries to solve all
@@ -1436,6 +1457,7 @@ public class NewKernelTyper {
    *    ii)   Map(A2) = T1 (or T1^a)    --> {(A1,T1)} U Map (or {(A1,T1^a)} U Map)
    *    iii)  Map(A2) = A3              --> {(A1,A3)} U Map 
    */
+  /*
   private TypeConstraintList solveEquationConstraints(TypeConstraintList tCList) {
     for (TypeConstraint tConstraint :
         tCList.getCollectionconcTypeConstraint()) {
@@ -1519,6 +1541,95 @@ matchBlockAdd :
     }
     return tCList;
   }
+*/
+
+  private boolean solveEquationConstraints(TypeConstraintList tCList) {
+    boolean errorFound = false;
+    for (TypeConstraint tConstraint :
+        tCList.getCollectionconcTypeConstraint()) {
+matchBlockAdd :
+      {
+        %match {
+          // CASES 1, 2, 3 and 4 :
+          eConstraint@Equation[Type1=groundType1@!TypeVar[],Type2=groundType2@!TypeVar[]] <<
+            tConstraint && (groundType1 != groundType2) -> {
+              //DEBUG System.out.println("In solveEquationConstraints:" + `groundType1 +
+              //DEBUG     " = " + `groundType2);
+              errorFound = (errorFound && `detectFail(eConstraint));
+              break matchBlockAdd;
+            }
+          // CASES 5 and 6 :
+          Equation[Type1=groundType@!TypeVar[],Type2=typeVar@TypeVar[],Info=info] <<
+            tConstraint -> {
+              if (substitutions.containsKey(`typeVar)) {
+                TomType mapTypeVar = substitutions.get(`typeVar);
+                if (!isTypeVar(mapTypeVar)) {
+                  errorFound = (errorFound &&
+                      `detectFail(Equation(groundType,mapTypeVar,info)));
+                } else {
+                // if (isTypeVar(mapTypeVar))
+                addSubstitution(mapTypeVar,`groundType);
+                }
+              } else {
+                addSubstitution(`typeVar,`groundType);
+              }
+              break matchBlockAdd;
+            }
+
+          // CASES 7 and 8 :
+          Equation[Type1=typeVar@TypeVar[],Type2=groundType@!TypeVar[],Info=info] << tConstraint -> {
+            if (substitutions.containsKey(`typeVar)) {
+              TomType mapTypeVar = substitutions.get(`typeVar);
+              if (!isTypeVar(mapTypeVar)) {
+                errorFound = (errorFound &&
+                    `detectFail(Equation(mapTypeVar,groundType,info)));
+              } else {
+                // if (isTypeVar(mapTypeVar))
+                addSubstitution(mapTypeVar,`groundType);
+              }
+            } else {
+              addSubstitution(`typeVar,`groundType);
+            }
+            break matchBlockAdd;
+          }
+
+          // CASE 9 :
+          Equation[Type1=typeVar1@TypeVar[],Type2=typeVar2@TypeVar[],Info=info] << tConstraint
+            && (typeVar1 != typeVar2) -> {
+              TomType mapTypeVar1;
+              TomType mapTypeVar2;
+              if (substitutions.containsKey(`typeVar1) && substitutions.containsKey(`typeVar2)) {
+                mapTypeVar1 = substitutions.get(`typeVar1);
+                mapTypeVar2 = substitutions.get(`typeVar2);
+                if (isTypeVar(mapTypeVar1)) {
+                  addSubstitution(mapTypeVar1,mapTypeVar2);
+                } else {
+                  if (isTypeVar(mapTypeVar2)) {
+                    addSubstitution(mapTypeVar2,mapTypeVar1);
+                  } else {
+                    errorFound = (errorFound &&
+                        `detectFail(Equation(mapTypeVar1,mapTypeVar2,info)));
+                  }
+                }
+                break matchBlockAdd;
+              } else if (substitutions.containsKey(`typeVar1)) {
+                mapTypeVar1 = substitutions.get(`typeVar1);
+                addSubstitution(`typeVar2,mapTypeVar1);
+                break matchBlockAdd;
+              } else if (substitutions.containsKey(`typeVar2)){
+                mapTypeVar2 = substitutions.get(`typeVar2);
+                addSubstitution(`typeVar1,mapTypeVar2);
+                break matchBlockAdd;
+              } else {
+                addSubstitution(`typeVar1,`typeVar2);
+                break matchBlockAdd;
+              }
+            }
+        }
+      }
+    }
+    return errorFound;
+  }
 
   /**
    * The method <code>detectFail</code> checks if a type constraint
@@ -1565,18 +1676,19 @@ matchBlockAdd :
    * <p>
    * @param tConstraint the type constraint to be verified 
    */
+/*
   private void detectFail(TypeConstraint tConstraint) {
 matchBlockFail : 
     {
       %match {
-        /* CASES 1a, 2a and 3a */
+        // CASES 1a, 2a and 3a 
         Equation[Type1=Type[TomType=tName1],Type2=Type[TomType=tName2@!tName1]]
           << tConstraint && (tName1 != "unknown type") && (tName2 != "unknown type")  -> {
             printError(`tConstraint);
             break matchBlockFail;
           }
 
-        /* CASE 4a */  
+        // CASE 4a   
         Equation[Type1=Type[TypeOptions=tOptions1,TomType=tName1],Type2=Type[TypeOptions=tOptions2@!tOptions1,TomType=tName1]]
           << tConstraint
           && concTypeOption(_*,WithSymbol[RootSymbolName=rsName1],_*) << tOptions1
@@ -1593,6 +1705,38 @@ matchBlockFail :
         }
       }
     }
+  }
+*/
+
+  private boolean detectFail(TypeConstraint tConstraint) {
+matchBlockFail : 
+    {
+      %match {
+        /* CASES 1a, 2a and 3a */
+        Equation[Type1=Type[TomType=tName1],Type2=Type[TomType=tName2@!tName1]]
+          << tConstraint && (tName1 != "unknown type") && (tName2 != "unknown type")  -> {
+            printError(`tConstraint);
+            return true;
+          }
+
+        /* CASE 4a */  
+        Equation[Type1=Type[TypeOptions=tOptions1,TomType=tName1],Type2=Type[TypeOptions=tOptions2@!tOptions1,TomType=tName1]]
+          << tConstraint
+          && concTypeOption(_*,WithSymbol[RootSymbolName=rsName1],_*) << tOptions1
+          && concTypeOption(_*,WithSymbol[RootSymbolName=rsName2@!rsName1],_*) << tOptions2 -> {
+            printError(`tConstraint);
+            return true;
+          }
+
+        Subtype[Type1=t1,Type2=t2@!t1] << tConstraint -> {
+          if (!isSubtypeOf(`t1,`t2)) {
+            printError(`tConstraint);
+            return true;
+          }
+        }
+      }
+    }
+    return false;
   }
 
   /**
@@ -1628,6 +1772,120 @@ matchBlockFail :
     return replacedtCList;
   }
 
+  private TypeConstraintList solveSubtypingConstraints(TypeConstraintList tCList) {
+    TypeConstraintList solvedConstraints = tCList;
+    TypeConstraintList simplifiedConstraints = tCList;
+    while (!solvedConstraints.isEmptyconcTypeConstraint()){
+      try {
+        simplifiedConstraints = 
+          `RepeatId(normalizeConstraints(this)).visitLight(solvedConstraints);
+        simplifiedConstraints = garbageCollect(simplifiedConstraints);
+        simplifiedConstraints = `RepeatId(applyCanonization(this)).visitLight(simplifiedConstraints);
+        //simplifiedConstraints = simplifyConjunctions(simplifiedConstraints);
+        %match {
+          concTypeConstraint(_*,False(),_*) << simplifiedConstraints -> {
+            return simplifiedConstraints;
+          }
+        }
+        solvedConstraints = generateSolutions(simplifiedConstraints);
+        if (solvedConstraints == simplifiedConstraints) {
+          return simplifiedConstraints;
+        }
+        //DEBUG System.out.println("\nResulting subtype constraints!!");
+        //DEBUG printGeneratedConstraints(simplifiedConstraints);
+      } catch(tom.library.sl.VisitFailure e) {
+        throw new TomRuntimeException("solveSubtypingConstraints: failure on " +
+            simplifiedConstraints);
+      }
+    }
+    return solvedConstraints;
+  }
+
+  %strategy normalizeConstraints(nkt:NewKernelTyper) extends Identity() {
+    visit TypeConstraintList {
+      /* PHASE 1 */
+      tcl@concTypeConstraint(tcl1*,Subtype[Type1=t1,Type2=t2,Info=info],tcl2*,Subtype[Type1=t2,Type2=t1],tcl3*) -> {
+        System.out.println("\nsolve1: " + `tcl);
+        nkt.solveEquationConstraints(`concTypeConstraint(Equation(t1,t2,info)));
+        return
+          nkt.`concTypeConstraint(tcl1,tcl2,tcl3);
+      }
+
+      /*
+       * We test if "t1 <: t2" already exist in tcl to avoid apply the strategy
+       * unnecessarily
+       */
+      /* PHASE 2 */
+      tcl@concTypeConstraint(tcl1*,cons1@Subtype[Type1=t1,Type2=tVar@TypeVar[]],tcl2*,cons2@Subtype[Type1=tVar,Type2=t2,Info=info],tcl3*)
+        && !concTypeConstraint(_*,Subtype[Type1=t1,Type2=t2],_*) << tcl -> {
+          //DEBUG System.out.println("\nsolve2a: tcl =" + `tcl);
+          System.out.println("\nsolve2a: cons1 =" + `cons1);
+          System.out.println("\nsolve2a: cons2 =" + `cons2);
+          return
+            nkt.`addSubConstraint(Subtype(t1,t2,info),tcl);
+        }
+      tcl@concTypeConstraint(tcl1*,cons1@Subtype[Type1=tVar@TypeVar[],Type2=t2,Info=info],tcl2*,cons2@Subtype[Type1=t1,Type2=tVar],tcl3*)
+        && !concTypeConstraint(_*,Subtype[Type1=t1,Type2=t2],_*) << tcl -> {
+          //DEBUG System.out.println("\nsolve2b: tcl = " + `tcl);
+          System.out.println("\nsolve2b: cons1 =" + `cons1);
+          System.out.println("\nsolve2b: cons2 =" + `cons2);
+          return
+            nkt.`addSubConstraint(Subtype(t1,t2,info),tcl);
+        }
+    }
+  }
+  
+  private TypeConstraintList garbageCollect(TypeConstraintList tCList) {
+    boolean errorFound = false;
+    for (TypeConstraint tConstraint :
+        tCList.getCollectionconcTypeConstraint()) {
+      %match {
+        Subtype[Type1=!TypeVar[],Type2=!TypeVar[]] << tConstraint -> {
+          //System.out.println("\nsolve3: sConstraint=" + `sConstraint);
+          //errorFound = (errorFound && detectFail(`tConstraint));
+        }
+      }
+    }
+    if (errorFound) { 
+      return `concTypeConstraint(False(),tCList*);
+    }
+    return tCList;
+  }
+
+  %strategy applyCanonization(nkt:NewKernelTyper) extends Identity() {
+    visit TypeConstraintList {
+      /* PHASE 4 */
+      concTypeConstraint(tcl1*,constraint@Subtype[Type1=tVar@TypeVar[],Type2=t1@!TypeVar[],Info=info],tcl2*,c2@Subtype[Type1=tVar,Type2=t2@!TypeVar[]],tcl3*) -> {
+        System.out.println("\nsolve4a: " + `constraint + " and " + `c2);
+        TomType lowerType = nkt.`minType(t1,t2);
+        //DEBUG System.out.println("\nminType(" + `t1.getTomType() + "," +
+        //DEBUG     `t2.getTomType() + ") = " + lowerType);
+
+        if (lowerType == `EmptyType()) {
+          nkt.printError(`Subtype(t1,t2,info));
+          return `concTypeConstraint(False(),tcl1,tcl2,tcl3); 
+        }
+
+        return
+          nkt.`addSubConstraint(Subtype(tVar,lowerType,info),concTypeConstraint(tcl1,tcl2,tcl3));
+      }
+      concTypeConstraint(tcl1*,constraint@Subtype[Type1=t1@!TypeVar[],Type2=tVar@TypeVar[],Info=info],tcl2*,c2@Subtype[Type1=t2@!TypeVar[],Type2=tVar],tcl3*) -> {
+        System.out.println("\nsolve4b: " + `constraint + " and " + `c2);
+        TomType supType = nkt.`supType(t1,t2);
+        //DEBUG System.out.println("\nsupType(" + `t1.getTomType() + "," +
+        //DEBUG    `t2.getTomType() + ") = " + supType);
+
+        if (supType == `EmptyType()) {
+          nkt.printError(`Subtype(t1,t2,info));
+          return `concTypeConstraint(False(),tcl1,tcl2,tcl3); 
+        }
+
+        return
+          nkt.`addSubConstraint(Subtype(supType,tVar,info),concTypeConstraint(tcl1,tcl2,tcl3));
+      }
+    }
+  }
+
   /**
    * The method <code>solveSubtypingConstraints</code> is generated by a
    * strategy which simplifies a subtype constraints list replacing them by equations
@@ -1658,46 +1916,50 @@ matchBlockFail :
    * @param nkt an instance of object NewKernelTyper
    * @return    the subtype constraint list resulting
    */
+  /*
   %strategy solveSubtypingConstraints(nkt:NewKernelTyper) extends Identity() {
     visit TypeConstraintList {
-      /* PHASE 1 */
+      // PHASE 1 
       tcl@concTypeConstraint(tcl1*,Subtype[Type1=t1,Type2=t2,Info=info],tcl2*,Subtype[Type1=t2,Type2=t1],tcl3*) -> {
-        //DEBUG System.out.println("\nsolve1: " + `tcl);
+        System.out.println("\nsolve1: " + `tcl);
         nkt.solveEquationConstraints(`concTypeConstraint(Equation(t1,t2,info)));
         return
           nkt.`concTypeConstraint(tcl1,tcl2,tcl3);
       }
 
-      /*
-       * We test if "t1 <: t2" already exist in tcl to avoid apply the strategy
-       * unnecessarily
-       */
-      /* PHASE 2 */
-      tcl@concTypeConstraint(tcl1*,Subtype[Type1=t1,Type2=tVar@TypeVar[]],tcl2*,Subtype[Type1=tVar,Type2=t2,Info=info],tcl3*)
+      //  We test if "t1 <: t2" already exist in tcl to avoid apply the strategy unnecessarily
+      // PHASE 2 
+      tcl@concTypeConstraint(tcl1*,cons1@Subtype[Type1=t1,Type2=tVar@TypeVar[]],tcl2*,cons2@Subtype[Type1=tVar,Type2=t2,Info=info],tcl3*)
         && !concTypeConstraint(_*,Subtype[Type1=t1,Type2=t2],_*) << tcl -> {
-          //DEBUG System.out.println("\nsolve2a: " + `tcl);
+          //DEBUG System.out.println("\nsolve2a: tcl =" + `tcl);
+          System.out.println("\nsolve2a: cons1 =" + `cons1);
+          System.out.println("\nsolve2a: cons2 =" + `cons2);
           return
             nkt.`addSubConstraint(Subtype(t1,t2,info),tcl);
         }
-      tcl@concTypeConstraint(tcl1*,Subtype[Type1=tVar@TypeVar[],Type2=t2,Info=info],tcl2*,Subtype[Type1=t1,Type2=tVar],tcl3*)
+      tcl@concTypeConstraint(tcl1*,cons1@Subtype[Type1=tVar@TypeVar[],Type2=t2,Info=info],tcl2*,cons2@Subtype[Type1=t1,Type2=tVar],tcl3*)
         && !concTypeConstraint(_*,Subtype[Type1=t1,Type2=t2],_*) << tcl -> {
-          //DEBUG System.out.println("\nsolve2b: " + `tcl);
+          //DEBUG System.out.println("\nsolve2b: tcl = " + `tcl);
+          System.out.println("\nsolve2b: cons1 =" + `cons1);
+          System.out.println("\nsolve2b: cons2 =" + `cons2);
           return
             nkt.`addSubConstraint(Subtype(t1,t2,info),tcl);
         }
 
-      /* PHASE 3 */
+      // PHASE 3 
       tcl@concTypeConstraint(tcl1*,sConstraint@Subtype[Type1=!TypeVar[],Type2=!TypeVar[]],tcl2*) -> {
-        //DEBUG System.out.println("\nsolve3: " + `tcl);
+        //DEBUG System.out.println("\nsolve3: tcl =" + `tcl);
+        System.out.println("\nsolve3: sConstraint=" + `sConstraint);
         nkt.detectFail(`sConstraint);
-        return
-          nkt.`concTypeConstraint(tcl1,tcl2);
+        return nkt.`addSubConstraint(sConstraint,concTypeConstraint(tcl2,tcl1));
+        //return `concTypeConstraint(sConstraint,tcl1,tcl2);
+        //return nkt.`concTypeConstraint(tcl);
  
       }
 
-      /* PHASE 4 */
+      // PHASE 4 
       concTypeConstraint(tcl1*,constraint@Subtype[Type1=tVar@TypeVar[],Type2=t1@!TypeVar[],Info=info],tcl2*,c2@Subtype[Type1=tVar,Type2=t2@!TypeVar[]],tcl3*) -> {
-        //DEBUG System.out.println("\nsolve4a: " + `constraint + " and " + `c2);
+        System.out.println("\nsolve4a: " + `constraint + " and " + `c2);
         TomType lowerType = nkt.`minType(t1,t2);
         //DEBUG System.out.println("\nminType(" + `t1.getTomType() + "," +
         //DEBUG     `t2.getTomType() + ") = " + lowerType);
@@ -1711,7 +1973,7 @@ matchBlockFail :
           nkt.`addSubConstraint(Subtype(tVar,lowerType,info),concTypeConstraint(tcl1,tcl2,tcl3));
       }
       concTypeConstraint(tcl1*,constraint@Subtype[Type1=t1@!TypeVar[],Type2=tVar@TypeVar[],Info=info],tcl2*,c2@Subtype[Type1=t2@!TypeVar[],Type2=tVar],tcl3*) -> {
-        //DEBUG System.out.println("\nsolve4b: " + `constraint + " and " + `c2);
+        System.out.println("\nsolve4b: " + `constraint + " and " + `c2);
         TomType supType = nkt.`supType(t1,t2);
         //DEBUG System.out.println("\nsupType(" + `t1.getTomType() + "," +
         //DEBUG    `t2.getTomType() + ") = " + supType);
@@ -1725,13 +1987,14 @@ matchBlockFail :
           nkt.`addSubConstraint(Subtype(supType,tVar,info),concTypeConstraint(tcl1,tcl2,tcl3));
       }
 
-      /* PHASE 5 */
+      // PHASE 5 
       tcl -> {
-        //DEBUG System.out.println("\nsolve8: " + `tcl);
-        return nkt.enumerateSolutions(`tcl);
+        System.out.println("\nsolve8: " + `tcl);
+        return nkt.generateSolutions(`tcl);
       }
     }
   }
+*/
 
   /**
    * The method <code>findVar</code> checks if a given type variable occurs in
@@ -1806,6 +2069,7 @@ matchBlockFail :
     %match {
       Type[TypeOptions=tOptions1,TomType=tName1] << t1 
         && Type[TypeOptions=tOptions2,TomType=tName2] << t2 -> {
+          TomTypeList supTypet1 = dependencies.get(`tName1);
           %match {
             // CASES 1a and 3a
             !concTypeOption(_*,WithSymbol[],_*) << tOptions2 
@@ -1815,7 +2079,8 @@ matchBlockFail :
               }
             !concTypeOption(_*,WithSymbol[],_*) << tOptions2
               && concTomType(_*,Type[TomType=tNameSup],_*) <<
-              dependencies.get(tName1) && (tName2 == tNameSup)-> {
+              supTypet1 && (tName2 == tNameSup)-> {
+                System.out.println("isSubtypeOf: cases 1a and 3a - ii");
                 return true; 
               }
 
@@ -1829,11 +2094,12 @@ matchBlockFail :
             concTypeOption(_*,WithSymbol[RootSymbolName=rsName],_*) << tOptions1
               && concTypeOption(_*,WithSymbol[RootSymbolName=rsName],_*) << tOptions2 
               && concTomType(_*,Type[TomType=tNameSup],_*) <<
-              dependencies.get(tName1) && (tName2 == tNameSup) -> {
+              supTypet1 && (tName2 == tNameSup) -> {
                 //DEBUG System.out.println("isSubtypeOf: case 4a - ii");
                 return true; 
               }
           }
+          return false;
         }
     }
     // Remain cases
@@ -1924,7 +2190,7 @@ matchBlockFail :
   }
 
   /**
-   * The method <code>enumerateSolutions</code> chooses a solution for a subtype
+   * The method <code>generateSolutions</code> chooses a solution for a subtype
    * constraint list when many possibilities are available. The algorithm picks
    * the lowest possible upper bound proposed for each type variable. For this
    * reason, the order of rules is important.
@@ -1996,7 +2262,7 @@ matchBlockFail :
    * @param nkt an instance of object NewKernelTyper
    * @return    the subtype constraint list resulting
    */
-  private TypeConstraintList enumerateSolutions(TypeConstraintList tCList) {
+  private TypeConstraintList generateSolutions(TypeConstraintList tCList) {
     TypeConstraintList newtCList = tCList;
 matchBlockSolve :
     {
