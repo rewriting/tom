@@ -51,7 +51,7 @@
 </java>
 </target>
 
-<target name="ppmain" depends="main">
+<target name="ppmain" depends="compile">
 <java classname="ppeditor.Main">
 <classpath>
 <pathelement location="${build.dir}"/>
@@ -59,13 +59,6 @@
 </classpath>
 </java>
 </target>
-
-<target name="main">
-<delete file="build/Main.class"/>
-<javac srcdir="${src.dir}" destdir="${build.dir}" includes="Main.java" >
-</javac>
-</target>
-
 
 
 </project>
