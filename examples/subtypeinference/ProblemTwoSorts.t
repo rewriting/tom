@@ -39,6 +39,12 @@ public class ProblemTwoSorts{
     public Javaa() { }
     public String getOp() { return "a"; }
     public String toString() { return "a()"; }
+    public boolean equals(Object o) {
+      if(o instanceof Javaa) {
+        return true;
+      }
+      return false;
+    }
   }
 
   static class Javaf extends A {
@@ -47,6 +53,13 @@ public class ProblemTwoSorts{
     public A getnum1() { return num1; }
     public String getOp() { return "f"; }
     public String toString() { return "g(" + num1 + ")"; }
+    public boolean equals(Object o) {
+      if(o instanceof Javaf) {
+        Javaf f = (Javaf) o;
+        return num1.equals(f.num1);
+      }
+      return false;
+    }
   }
 
   static class B extends A {
@@ -58,6 +71,12 @@ public class ProblemTwoSorts{
     public Javab() { }
     public String getOp() { return "b"; }
     public String toString() { return "b()"; }
+    public boolean equals(Object o) {
+      if(o instanceof Javab) {
+        return true;
+      }
+      return false;
+    }
   }
 
   static class Javag extends B {
@@ -66,19 +85,26 @@ public class ProblemTwoSorts{
     public B getnum2() { return num2; }
     public String getOp() { return "g"; }
     public String toString() { return "g(" + num2 + ")"; }
+    public boolean equals(Object o) {
+      if(o instanceof Javag) {
+        Javag g = (Javag) o;
+        return num2.equals(g.num2);
+      }
+      return false;
+    }
   }
   
 // ------------------------------------------------------------
   %typeterm TomA {
     implement { A }
     is_sort(t) { $t instanceof A }
-    equals(t1,t2) { $t1 == $t2 }
+    equals(t1,t2) { $t1.equals($t2) }
   }
 
   %typeterm TomB extends TomA {
     implement { B }
     is_sort(t) { $t instanceof B }
-    equals(t1,t2) { $t1 == $t2 }
+    equals(t1,t2) { $t1.equals($t2) }
   }
 
 // ------------------------------------------------------------

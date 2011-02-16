@@ -30,66 +30,104 @@ package subtypeinference;
 
 public class ProblemComposite{
 
-  static class A extends C {
-    public A num1;
+  static class A {
     public A() {}
-    public A(A num1) { this.num1 = num1; }
     public String getOp() { return ""; }
   }
 
   static class Javaa extends A {
-    public Javaa() { super(); }
+    public Javaa() { }
     public String getOp() { return "a"; }
+    public String toString() { return "a()"; }
+    public boolean equals(Object o) {
+      if(o instanceof Javaa) {
+        return true;
+      }
+      return false;
+    }
   }
 
   static class Javaf extends A {
-    public Javaf(A num1) { super(num1); }
+    public A num1;
+    public Javaf(A num1) { this.num1 = num1; }
+    public A getnum1() { return num1; }
     public String getOp() { return "f"; }
+    public String toString() { return "g(" + num1 + ")"; }
+    public boolean equals(Object o) {
+      if(o instanceof Javaf) {
+        Javaf f = (Javaf) o;
+        return num1.equals(f.num1);
+      }
+      return false;
+    }
   }
 
   static class B extends A {
-    public B num2;
     public B() {}
-    public B(B num2) { this.num2 = num2; }
     public String getOp() { return ""; }
   }
   
   static class Javab extends B {
-    public Javab() { super(); }
+    public Javab() { }
     public String getOp() { return "b"; }
+    public String toString() { return "b()"; }
+    public boolean equals(Object o) {
+      if(o instanceof Javab) {
+        return true;
+      }
+      return false;
+    }
   }
 
   static class Javag extends B {
-    public Javag(B num2) { super(num2); }
+    public B num2;
+    public Javag(B num2) { this.num2 = num2; }
+    public B getnum2() { return num2; }
     public String getOp() { return "g"; }
+    public String toString() { return "g(" + num2 + ")"; }
+    public boolean equals(Object o) {
+      if(o instanceof Javag) {
+        Javag g = (Javag) o;
+        return num2.equals(g.num2);
+      }
+      return false;
+    }
   }
 
   static class C {
-    public C num3;
     public C() {}
+    public String getOp() { return ""; }
   }
 
   static class Javac extends C {
     public Javac() { super(); }
+    public String getOp() { return "c"; }
+    public String toString() { return "c()"; }
+    public boolean equals(Object o) {
+      if(o instanceof Javac) {
+        return true;
+      }
+      return false;
+    }
   }
   
 // ------------------------------------------------------------
   %typeterm TomA extends TomC{
     implement { A }
     is_sort(t) { $t instanceof A }
-    equals(t1,t2) { $t1 == $t2 }
+    equals(t1,t2) { $t1.equals($t2) }
   }
 
   %typeterm TomB extends TomA{
     implement { B }
     is_sort(t) { $t instanceof B }
-    equals(t1,t2) { $t1 == $t2 }
+    equals(t1,t2) { $t1.equals($t2) }
   }
 
   %typeterm TomC {
     implement { C }
     is_sort(t) { $t instanceof C }
-    equals(t1,t2) { $t1 == $t2 }
+    equals(t1,t2) { $t1.equals($t2) }
   }
 
 // ------------------------------------------------------------
@@ -136,9 +174,8 @@ public class ProblemComposite{
   } 
 
   public void print(A term) {
-    A y = `g(b());
     %match {
-      g(x) << TomB y && f(b()) << up(x) && f(y) << f(g(b())) -> { System.out.println("x first ligne = " + `x); }
+      g(x) << TomB term && f(b()) << up(x) && f(term) << f(g(b())) -> { System.out.println("x first ligne = " + `x); }
     }
   }
 

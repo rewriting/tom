@@ -53,7 +53,7 @@ public class ProblemComposedMatch{
   */
   
   //-------- Java classes -----------
-  static class tFloat {
+static class tFloat {
     public String getOperator(){
       return "";
     }
@@ -71,6 +71,13 @@ public class ProblemComposedMatch{
     }
     public String toString(){
       return "div(" + n1 + "," + n2 + ")";
+    }
+    public boolean equals(Object o) {
+      if(o instanceof div) {
+        div obj = (div) o;
+        return n1.equals(obj.n1) && n2.equals(obj.n2);
+      }
+      return false;
     }
   } 
 
@@ -91,11 +98,18 @@ public class ProblemComposedMatch{
     public String toString(){
       return "uminus(" + m + ")";
     }
+    public boolean equals(Object o) {
+      if(o instanceof uminus) {
+        uminus obj = (uminus) o;
+        return m.equals(obj.m);
+      }
+      return false;
+    }
   } 
 
   static class plus extends tInt {
-    public tInt n1;
-    public tInt n2;
+    static public tInt n1;
+    static public tInt n2;
     public plus(tInt nn1, tInt nn2) {
       n1 = nn1;
       n2 = nn2;
@@ -105,6 +119,13 @@ public class ProblemComposedMatch{
     }
     public String toString(){
       return "plus(" + n1 + "," + n2 + ")";
+    }
+    public boolean equals(Object o) {
+      if(o instanceof plus) {
+        plus obj = (plus) o;
+        return n1.equals(plus.n1) && n2.equals(plus.n2);
+      }
+      return false;
     }
   } 
 
@@ -122,6 +143,12 @@ public class ProblemComposedMatch{
     public String toString() {
       return "zero()";
     }
+    public boolean equals(Object o) {
+      if(o instanceof zero) {
+        return true;
+      }
+      return false;
+    }
   }
 
   static class one extends tNat {
@@ -132,6 +159,12 @@ public class ProblemComposedMatch{
     public String toString() {
       return "one()";
     }
+    public boolean equals(Object o) {
+      if(o instanceof one) {
+        return true;
+      }
+      return false;
+    }
   }
 
   static class two extends tNat {
@@ -141,6 +174,12 @@ public class ProblemComposedMatch{
     }
     public String toString() {
       return "two()";
+    }
+    public boolean equals(Object o) {
+      if(o instanceof two) {
+        return true;
+      }
+      return false;
     }
   }
 
@@ -155,6 +194,13 @@ public class ProblemComposedMatch{
     public String toString(){
       return "suc(" + m + ")";
     }
+    public boolean equals(Object o) {
+      if(o instanceof suc) {
+        suc obj = (suc) o;
+        return m.equals(obj.m);
+      }
+      return false;
+    }
   } 
 
   static class square extends tNat {
@@ -168,11 +214,18 @@ public class ProblemComposedMatch{
     public String toString(){
       return "square(" + n + ")";
     }
+    public boolean equals(Object o) {
+      if(o instanceof square) {
+        square obj = (square) o;
+        return n.equals(obj.n);
+      }
+      return false;
+    }
   }
 
   static class mult extends tNat {
-    public tNat m1;
-    public tNat m2;
+    static public tNat m1;
+    static public tNat m2;
     public mult(tNat mm1, tNat mm2) {
       m1 = mm1;
       m2 = mm2;
@@ -182,6 +235,13 @@ public class ProblemComposedMatch{
     }
     public String toString(){
       return "mult(" + m1 + "," + m2 + ")";
+    }
+    public boolean equals(Object o) {
+      if(o instanceof mult) {
+        mult obj = (mult) o;
+        return m1.equals(mult.m1) && m2.equals(mult.m2);
+      }
+      return false;
     }
   }
 
@@ -220,12 +280,13 @@ public class ProblemComposedMatch{
       return result;
     }
   }
+
   //-------- Tom mappings -----------
   %typeterm tFloat {
     implement { tFloat }
     is_sort(t) { ($t instanceof tFloat) }
 
-    equals(t1,t2) { ($t1.getClass()==$t2.getClass()) }
+    equals(t1,t2) { ($t1.equals($t2)) }
 
   }
 
@@ -233,7 +294,7 @@ public class ProblemComposedMatch{
     implement { tInt }
     is_sort(t) { ($t instanceof tInt) }
 
-    equals(t1,t2) { ($t1.getClass()==$t2.getClass()) }
+    equals(t1,t2) { ($t1.equals($t2)) }
 
   }
 
@@ -241,7 +302,7 @@ public class ProblemComposedMatch{
     implement { tNat }
     is_sort(t) { ($t instanceof tNat) }
 
-    equals(t1,t2) { ($t1.getClass()==$t2.getClass()) }
+    equals(t1,t2) { ($t1.equals($t2)) }
 
   }
 
@@ -322,6 +383,7 @@ public class ProblemComposedMatch{
       div(x,y) << div(zero(),uminus(zero()))
         && (x != y) -> { System.out.println("#1: x = " +`x); }
 
+      /*
       div(x,y) << div(uminus(zero()),zero())
         && suc(zero()) << suc(x) -> { 
           System.out.println("#2: x = " +`x + ", y = " + `y);
@@ -336,6 +398,7 @@ public class ProblemComposedMatch{
         && (zero() != x) -> {
           System.out.println("#3: x = " +`x); 
         }
+        */
     }
   }
 }
