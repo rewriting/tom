@@ -1346,31 +1346,6 @@ public class NewKernelTyper {
    * the substitutions are applied to the list of subtype constraints and the
    * method <code>solveEquationConstraints</code> to solve this list. 
    */
-  /*
-  private void solveConstraints() {
-    //DEBUG System.out.println("\nsolveConstraints 1:");
-    //DEBUG printGeneratedConstraints(equationConstraints);
-    //DEBUG printGeneratedConstraints(subtypeConstraints);
-    solveEquationConstraints(equationConstraints);
-    %match {
-      !concTypeConstraint() << subtypeConstraints -> {
-        TypeConstraintList simplifiedConstraints =
-          replaceInSubtypingConstraints(subtypeConstraints);
-        //DEBUG printGeneratedConstraints(simplifiedConstraints);
-        try {
-          simplifiedConstraints = 
-            `RepeatId(solveSubtypingConstraints(this)).visitLight(simplifiedConstraints);
-          //DEBUG System.out.println("\nResulting subtype constraints!!");
-          //DEBUG printGeneratedConstraints(simplifiedConstraints);
-        } catch(tom.library.sl.VisitFailure e) {
-          throw new TomRuntimeException("solveConstraints: failure on " +
-              subtypeConstraints);
-        }
-      }
-    }
-
-  }
-   */
   private void solveConstraints() {
     //DEBUG System.out.println("\nsolveConstraints 1:");
     //DEBUG printGeneratedConstraints(equationConstraints);
@@ -1386,7 +1361,6 @@ public class NewKernelTyper {
             solveSubtypingConstraints(simplifiedConstraints);
           //DEBUG System.out.println("\nResulting subtype constraints!!");
           //DEBUG printGeneratedConstraints(simplifiedConstraints);
-
         }
       }
     }
@@ -1456,94 +1430,10 @@ public class NewKernelTyper {
    *    i)    Map(A2) does not exist    --> {(A1,A2)} U Map
    *    ii)   Map(A2) = T1 (or T1^a)    --> {(A1,T1)} U Map (or {(A1,T1^a)} U Map)
    *    iii)  Map(A2) = A3              --> {(A1,A3)} U Map 
+   * @param tCList the equation constraint list to be replaced
+   * @return       the status of the list, if errors were found or not
    */
-  /*
-  private TypeConstraintList solveEquationConstraints(TypeConstraintList tCList) {
-    for (TypeConstraint tConstraint :
-        tCList.getCollectionconcTypeConstraint()) {
-matchBlockAdd :
-      {
-        %match {
-          // CASES 1, 2, 3 and 4 :
-          eConstraint@Equation[Type1=groundType1@!TypeVar[],Type2=groundType2@!TypeVar[]] <<
-            tConstraint && (groundType1 != groundType2) -> {
-              //DEBUG System.out.println("In solveEquationConstraints:" + `groundType1 +
-              //DEBUG     " = " + `groundType2);
-              `detectFail(eConstraint);
-              break matchBlockAdd;
-            }
-          // CASES 5 and 6 :
-          Equation[Type1=groundType@!TypeVar[],Type2=typeVar@TypeVar[],Info=info] <<
-            tConstraint -> {
-              if (substitutions.containsKey(`typeVar)) {
-                TomType mapTypeVar = substitutions.get(`typeVar);
-                if (!isTypeVar(mapTypeVar)) {
-                  `detectFail(Equation(groundType,mapTypeVar,info));
-                } else {
-                // if (isTypeVar(mapTypeVar))
-                addSubstitution(mapTypeVar,`groundType);
-                }
-              } else {
-                addSubstitution(`typeVar,`groundType);
-              }
-              break matchBlockAdd;
-            }
-
-          // CASES 7 and 8 :
-          Equation[Type1=typeVar@TypeVar[],Type2=groundType@!TypeVar[],Info=info] << tConstraint -> {
-            if (substitutions.containsKey(`typeVar)) {
-              TomType mapTypeVar = substitutions.get(`typeVar);
-              if (!isTypeVar(mapTypeVar)) {
-                `detectFail(Equation(mapTypeVar,groundType,info));
-              } else {
-                // if (isTypeVar(mapTypeVar))
-                addSubstitution(mapTypeVar,`groundType);
-              }
-            } else {
-              addSubstitution(`typeVar,`groundType);
-            }
-            break matchBlockAdd;
-          }
-
-          // CASE 9 :
-          Equation[Type1=typeVar1@TypeVar[],Type2=typeVar2@TypeVar[],Info=info] << tConstraint
-            && (typeVar1 != typeVar2) -> {
-              TomType mapTypeVar1;
-              TomType mapTypeVar2;
-              if (substitutions.containsKey(`typeVar1) && substitutions.containsKey(`typeVar2)) {
-                mapTypeVar1 = substitutions.get(`typeVar1);
-                mapTypeVar2 = substitutions.get(`typeVar2);
-                if (isTypeVar(mapTypeVar1)) {
-                  addSubstitution(mapTypeVar1,mapTypeVar2);
-                } else {
-                  if (isTypeVar(mapTypeVar2)) {
-                    addSubstitution(mapTypeVar2,mapTypeVar1);
-                  } else {
-                    `detectFail(Equation(mapTypeVar1,mapTypeVar2,info));
-                  }
-                }
-                break matchBlockAdd;
-              } else if (substitutions.containsKey(`typeVar1)) {
-                mapTypeVar1 = substitutions.get(`typeVar1);
-                addSubstitution(`typeVar2,mapTypeVar1);
-                break matchBlockAdd;
-              } else if (substitutions.containsKey(`typeVar2)){
-                mapTypeVar2 = substitutions.get(`typeVar2);
-                addSubstitution(`typeVar1,mapTypeVar2);
-                break matchBlockAdd;
-              } else {
-                addSubstitution(`typeVar1,`typeVar2);
-                break matchBlockAdd;
-              }
-            }
-        }
-      }
-    }
-    return tCList;
-  }
-*/
-
-  private boolean solveEquationConstraints(TypeConstraintList tCList) {
+    private boolean solveEquationConstraints(TypeConstraintList tCList) {
     boolean errorFound = false;
     for (TypeConstraint tConstraint :
         tCList.getCollectionconcTypeConstraint()) {
@@ -1644,70 +1534,39 @@ matchBlockAdd :
    * 2^2 = 4).
    * <p>
    * CASE 1: tCList = {(T1 = T2),...)} and Map
-   *  a) --> Fail if T1 is different from T2
-   *  b) --> Nothing if T1 is equals to T2
+   *  a) --> true if T1 is different from T2
+   *  b) --> false if T1 is equals to T2
    * <p>
    * CASE 2: tCList = {(T1 = T2^c),...)} and Map
-   *  a) --> Fail if T1 is different from T2
-   *  b) --> Nothing if T1 is equals to T2
+   *  a) --> true if T1 is different from T2
+   *  b) --> false if T1 is equals to T2
    * <p>
    * CASE 3: tCList = {(T1^c = T2),...)} and Map
-   *  a) --> Fail if T1 is different from T2
-   *  b) --> Nothing if T1 is equals to T2
+   *  a) --> true if T1 is different from T2
+   *  b) --> false if T1 is equals to T2
    * <p>
    * CASE 4: tCList = {(T1^a = T2^b),...)} and Map
-   *  a) --> Fail if T1 is different from T2 or 'a' is different from 'b'
-   *  b) --> Nothing if T1 is equals to T2 and 'a' is equals to 'b'
+   *  a) --> true if T1 is different from T2 or 'a' is different from 'b'
+   *  b) --> false if T1 is equals to T2 and 'a' is equals to 'b'
    * <p>
    * CASE 5: tCList = {(T1 <: T2),...)} and Map
-   *  a) --> Fail if T1 is not subtype of T2
-   *  b) --> Nothing if T1 is subtype of T2
+   *  a) --> true if T1 is not subtype of T2
+   *  b) --> false if T1 is subtype of T2
    * <p>
    * CASE 6: tCList = {(T1 <: T2^c),...)} and Map
-   *   --> Fail
+   *   --> true
    * <p>
    * CASE 7: tCList = {(T1^c <: T2),...)} and Map
-   *  a) --> Fail if T1 is not subtype of T2
-   *  b) --> Nothing if T1 is subtype of T2
+   *  a) --> true if T1 is not subtype of T2
+   *  b) --> false if T1 is subtype of T2
    * <p>
    * CASE 8: tCList = {(T1^a <: T2^b),...)} and Map
-   *  a) --> Fail if T1 is not subtype of T2 or 'a' is different from 'b'
-   *  b) --> Nothing if T1 is subtype of T2 and 'a' is equals to 'b'
+   *  a) --> true if T1 is not subtype of T2 or 'a' is different from 'b'
+   *  b) --> false if T1 is subtype of T2 and 'a' is equals to 'b'
    * <p>
    * @param tConstraint the type constraint to be verified 
+   * @return            the status of the list, if errors were found or not
    */
-/*
-  private void detectFail(TypeConstraint tConstraint) {
-matchBlockFail : 
-    {
-      %match {
-        // CASES 1a, 2a and 3a 
-        Equation[Type1=Type[TomType=tName1],Type2=Type[TomType=tName2@!tName1]]
-          << tConstraint && (tName1 != "unknown type") && (tName2 != "unknown type")  -> {
-            printError(`tConstraint);
-            break matchBlockFail;
-          }
-
-        // CASE 4a   
-        Equation[Type1=Type[TypeOptions=tOptions1,TomType=tName1],Type2=Type[TypeOptions=tOptions2@!tOptions1,TomType=tName1]]
-          << tConstraint
-          && concTypeOption(_*,WithSymbol[RootSymbolName=rsName1],_*) << tOptions1
-          && concTypeOption(_*,WithSymbol[RootSymbolName=rsName2@!rsName1],_*) << tOptions2 -> {
-            printError(`tConstraint);
-            break matchBlockFail;
-          }
-
-        Subtype[Type1=t1,Type2=t2@!t1] << tConstraint -> {
-          if (!isSubtypeOf(`t1,`t2)) {
-            printError(`tConstraint);
-            break matchBlockFail;
-          }
-        }
-      }
-    }
-  }
-*/
-
   private boolean detectFail(TypeConstraint tConstraint) {
 matchBlockFail : 
     {
@@ -1772,6 +1631,22 @@ matchBlockFail :
     return replacedtCList;
   }
 
+/**
+   * The method <code>solveSubtypingConstraints</code> do constraint propagation
+   * by calling simplification subtyping constraints algorithms to solve the list of
+   * subtyping constraints. Then if no errors were found, another algorithm is
+   * called in order to generate solutions for the list. This combination of
+   * algorithms is done untill the list is empty.
+   * <p>
+   * Propagation of constraints:
+   *  - Simplification in equantions
+   *  - Reduction in closed form
+   *  - Garbage collecting
+   *  - Canonization
+   * Generation of solutions
+   * @param tCList  the subtyping constraint list to be replaced
+   * @return        the empty solved list or the list that has no solutions
+   */
   private TypeConstraintList solveSubtypingConstraints(TypeConstraintList tCList) {
     TypeConstraintList solvedConstraints = tCList;
     TypeConstraintList simplifiedConstraints = tCList;
@@ -1805,7 +1680,7 @@ matchBlockFail :
     visit TypeConstraintList {
       /* PHASE 1 */
       tcl@concTypeConstraint(tcl1*,Subtype[Type1=t1,Type2=t2,Info=info],tcl2*,Subtype[Type1=t2,Type2=t1],tcl3*) -> {
-        System.out.println("\nsolve1: " + `tcl);
+        //DEBUG System.out.println("\nsolve1: " + `tcl);
         nkt.solveEquationConstraints(`concTypeConstraint(Equation(t1,t2,info)));
         return
           nkt.`concTypeConstraint(tcl1,tcl2,tcl3);
