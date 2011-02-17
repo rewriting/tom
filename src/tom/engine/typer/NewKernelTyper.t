@@ -912,8 +912,8 @@ public class NewKernelTyper {
       solveConstraints();
       //DEBUG System.out.println("substitutions = " + substitutions);
       code = replaceInCode(code);
-      System.out.println("------------- Code typed with substitutions:\n code = " +
-          `code);
+      //DEBUG System.out.println("------------- Code typed with substitutions:\n code = " +
+      //DEBUG     `code);
       replaceInSymbolTable();
       newCList = `concCode(code,newCList*);
     }
@@ -1816,19 +1816,15 @@ matchBlockFail :
        * unnecessarily
        */
       /* PHASE 2 */
-      tcl@concTypeConstraint(tcl1*,cons1@Subtype[Type1=t1,Type2=tVar@TypeVar[]],tcl2*,cons2@Subtype[Type1=tVar,Type2=t2,Info=info],tcl3*)
+      tcl@concTypeConstraint(_*,Subtype[Type1=t1,Type2=tVar@TypeVar[]],_*,Subtype[Type1=tVar,Type2=t2,Info=info],_*)
         && !concTypeConstraint(_*,Subtype[Type1=t1,Type2=t2],_*) << tcl -> {
           //DEBUG System.out.println("\nsolve2a: tcl =" + `tcl);
-          System.out.println("\nsolve2a: cons1 =" + `cons1);
-          System.out.println("\nsolve2a: cons2 =" + `cons2);
           return
             nkt.`addSubConstraint(Subtype(t1,t2,info),tcl);
         }
-      tcl@concTypeConstraint(tcl1*,cons1@Subtype[Type1=tVar@TypeVar[],Type2=t2,Info=info],tcl2*,cons2@Subtype[Type1=t1,Type2=tVar],tcl3*)
+      tcl@concTypeConstraint(_*,Subtype[Type1=tVar@TypeVar[],Type2=t2,Info=info],_*,Subtype[Type1=t1,Type2=tVar],_*)
         && !concTypeConstraint(_*,Subtype[Type1=t1,Type2=t2],_*) << tcl -> {
           //DEBUG System.out.println("\nsolve2b: tcl = " + `tcl);
-          System.out.println("\nsolve2b: cons1 =" + `cons1);
-          System.out.println("\nsolve2b: cons2 =" + `cons2);
           return
             nkt.`addSubConstraint(Subtype(t1,t2,info),tcl);
         }
@@ -2157,9 +2153,9 @@ matchBlockFail :
     TomTypeList supTypes2 = dependencies.get(t2.getTomType());
     %match {
       /* CASE 4.1 */
-      Type[TypeOptions=concTypeOption(_*,WithSymbol[RootSymbolName=rsName1],_*),TomType=tName,TlType=tlType1] << t1 
+      Type[TypeOptions=concTypeOption(_*,WithSymbol[RootSymbolName=rsName1],_*),TomType=tName] << t1 
         &&
-        Type[TypeOptions=concTypeOption(_*,WithSymbol[RootSymbolName=rsName2],_*),TomType=tName] << t2 -> {
+        Type[TypeOptions=concTypeOption(_*,WithSymbol[RootSymbolName=!rsName1],_*),TomType=tName] << t2 -> {
           //DEBUG System.out.println("\nIn supType: case 4.1");
           // Return the equivalent groudn type without decoration
           return symbolTable.getType(`tName); 
@@ -2310,7 +2306,7 @@ matchBlockSolve :
         }
 
         /* CASE 4a */
-        concTypeConstraint(tcl1*,c1@Subtype[Type1=tVar1@TypeVar[],Type2=groundType@!TypeVar[]],tcl2*,c2@Subtype[Type1=tVar1,Type2=tVar2@TypeVar[],Info=info],tcl3*) -> {
+        concTypeConstraint(tcl1*,c1@Subtype[Type1=tVar1@TypeVar[],Type2=groundType@!TypeVar[]],tcl2*,c2@Subtype[Type1=tVar1,Type2=TypeVar[]],tcl3*) -> {
           //DEBUG System.out.println("\nenumerateSolutions4a: " + `c1 + " and " + `c2);
           addSubstitution(`tVar1,`groundType);
           newtCList =
@@ -2319,7 +2315,7 @@ matchBlockSolve :
         }
 
         /* CASE 4a (symmetric) */
-        concTypeConstraint(tcl1*,c1@Subtype[Type1=tVar1,Type2=tVar2@TypeVar[],Info=info],tcl2*,c2@Subtype[Type1=tVar1@TypeVar[],Type2=groundType@!TypeVar[]],tcl3*) -> {
+        concTypeConstraint(tcl1*,c1@Subtype[Type1=tVar1,Type2=TypeVar[]],tcl2*,c2@Subtype[Type1=tVar1@TypeVar[],Type2=groundType@!TypeVar[]],tcl3*) -> {
           //DEBUG System.out.println("\nenumerateSolutions4a-sym: " + `c1 + " and " + `c2);
           addSubstitution(`tVar1,`groundType);
           newtCList =
@@ -2328,7 +2324,7 @@ matchBlockSolve :
         }
 
         /* CASE 5a */
-        concTypeConstraint(tcl1*,c1@Subtype[Type1=groundType@!TypeVar[],Type2=tVar1@TypeVar[]],tcl2*,c2@Subtype[Type1=tVar2@TypeVar[],Type2=tVar1,Info=info],tcl3*) -> {
+        concTypeConstraint(tcl1*,c1@Subtype[Type1=groundType@!TypeVar[],Type2=tVar1@TypeVar[]],tcl2*,c2@Subtype[Type1=TypeVar[],Type2=tVar1],tcl3*) -> {
           //DEBUG System.out.println("\nenumerateSolutions5a: " + `c1 + " and " + `c2);
           addSubstitution(`tVar1,`groundType);
           newtCList =
@@ -2337,7 +2333,7 @@ matchBlockSolve :
         }
 
         /* CASE 5a (symmetric) */
-        concTypeConstraint(tcl1*,c1@Subtype[Type1=tVar2@TypeVar[],Type2=tVar1,Info=info],tcl2*,c2@Subtype[Type1=groundType@!TypeVar[],Type2=tVar1@TypeVar[]],tcl3*) -> {
+        concTypeConstraint(tcl1*,c1@Subtype[Type1=TypeVar[],Type2=tVar1],tcl2*,c2@Subtype[Type1=groundType@!TypeVar[],Type2=tVar1@TypeVar[]],tcl3*) -> {
           //DEBUG System.out.println("\nenumerateSolutions5a-sym: " + `c1 + " and " + `c2);
           addSubstitution(`tVar1,`groundType);
           newtCList =
@@ -2346,7 +2342,7 @@ matchBlockSolve :
         }
 
         /* CASE 6c */
-        concTypeConstraint(tcl1*,c1@Subtype[Type1=tVar@TypeVar[],Type2=groundSupType@!TypeVar[]],tcl2*,c2@Subtype[Type1=groundSubType@!TypeVar[],Type2=tVar,Info=info],tcl3*) -> {
+        concTypeConstraint(tcl1*,c1@Subtype[Type1=tVar@TypeVar[],Type2=groundSupType@!TypeVar[]],tcl2*,c2@Subtype[Type1=groundSubType@!TypeVar[],Type2=tVar],tcl3*) -> {
           //DEBUG System.out.println("\nenumerateSolutions6c: " + `c1 + " and " + `c2);
           addSubstitution(`tVar,`groundSupType);
           newtCList =
@@ -2355,7 +2351,7 @@ matchBlockSolve :
         }
 
         /* CASE 6c (symmetric) */
-        concTypeConstraint(tcl1*,c1@Subtype[Type1=groundSubType@!TypeVar[],Type2=tVar,Info=info],tcl2*,c2@Subtype[Type1=tVar@TypeVar[],Type2=groundSupType@!TypeVar[]],tcl3*) -> {
+        concTypeConstraint(tcl1*,c1@Subtype[Type1=groundSubType@!TypeVar[],Type2=tVar],tcl2*,c2@Subtype[Type1=tVar@TypeVar[],Type2=groundSupType@!TypeVar[]],tcl3*) -> {
           //DEBUG System.out.println("\nenumerateSolutions6c-sym: " + `c1 + " and " + `c2);
           addSubstitution(`tVar,`groundSupType);
           newtCList =
