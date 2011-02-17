@@ -5,7 +5,7 @@ import org.junit.Assert.*;
 import org.junit.*;
 import org.junit.Test;
 
-public class TestPPTextPosition{
+public class TestPPTextPosition {
 
   PPTextPosition pptextposition;
 

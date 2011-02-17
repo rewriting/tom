@@ -17,14 +17,13 @@
   </target>
 
   <target name="JUNIT" description="Tester si le classpath contient bien le jar de JUnit">
-    <available property="junit.present" classname="junit.framework.TestCase" />
+    <available property="junit.present" classname="org.junit.Test" />
   </target>
 
   <target name="jar" depends="clean, compile" description="Créer un jar contenant seulement les classes normales (pas celles de test)">
-<mkdir dir="${dist.dir}"/>
-<jar jarfile="${dist.dir}/${app.name}.jar" basedir="${build.dir}"/>
+    <mkdir dir="${dist.dir}"/>
+    <jar jarfile="${dist.dir}/${app.name}.jar" basedir="${build.dir}"/>
   </target>
-
 
 <target name="compiletests" depends="jar">
 <javac fork="true" srcdir="${src.dir}/test" destdir="${build.dir}" debug="on" includes="*.java">
@@ -32,6 +31,7 @@
 <pathelement path="${java.class.path}" />
 <pathelement location="${build.dir}/ppeditor" />
 <pathelement location="${dist.dir}/${app.name}.jar"/>
+<pathelement location="${jar.junit}"/>
 </classpath>
 </javac>
 </target> 
@@ -41,7 +41,7 @@
 <javac fork="true" srcdir="${src.dir}" destdir="${build.dir}" excludes="test/*.java"/>
 </target>
 
-<target name="runtests" depends="compiletests" if="junit.present">
+<target name="runtests" depends="compiletests">
 <junit haltonfailure="yes">
 <formatter type="plain"/>
 <assertions>
@@ -52,6 +52,7 @@
 <pathelement location="${build.dir}"/>
 <pathelement location="${build.dir}/ppeditor/test"/>
 <pathelement path="${java.class.path}" />
+<pathelement location="${jar.junit}"/>
 </classpath>
   <formatter
     type="brief"
@@ -69,6 +70,5 @@
 </classpath>
 </java>
 </target>
-
 
 </project>
