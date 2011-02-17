@@ -91,26 +91,27 @@ public class PPCursor {
 *@param s the string to write
 */
   public void write(String s) {
-    if(position.getLine()>fileBuffer.size()){
-      for(int l=fileBuffer.size();l<position.getLine()+1;l++){
+    while(position.getLine()>=fileBuffer.size()){
         fileBuffer.add(new StringBuffer(""));
-      }
     }
     for(int i=0;i<s.length();i++){
-          if(s.charAt(i)!='\\'){
-          fileBuffer.get(position.getLine()).insert(position.getColumn(),new StringBuffer(s.charAt(i)));
+          if(s.charAt(i)!='\n'){
+          fileBuffer.get(position.getLine()).insert(position.getColumn(),s.charAt(i));
+
+/*Debug*/System.out.println(s.charAt(i));
+
         if(!insertion){
           fileBuffer.get(position.getLine()).deleteCharAt(position.getColumn()+1);
         }
-        position.add(new PPTextPosition(1,0));
-      }else if(s.charAt(i+1)=='n'){
-        i++;
-        if(insertion){
+        position.add(new PPTextPosition(0,1));
+      }else{
+        if(insertion && position.getColumn()<fileBuffer.get(position.getLine()).length()-1){
           fileBuffer.add(position.getLine()+1, new StringBuffer(fileBuffer.get(position.getLine()).subSequence(position.getColumn(), fileBuffer.get(position.getLine()).length()-1)));
-        }else if(fileBuffer.size()==position.getLine()+1){
+
+        }else if(fileBuffer.size()-1 == position.getLine()){
           fileBuffer.add(new StringBuffer(""));
         }
-        position.set(position.getLine()+1,0);
+        position.set(new PPTextPosition(position.getLine()+1,0));
 
       }
     }
@@ -139,9 +140,13 @@ public class PPCursor {
     }
     content.append(fileBuffer.get(fileBuffer.size()-1));
     try{
+      File aFile = new File(fileName);
+      aFile.createNewFile();
       FileWriter textFile = new FileWriter(fileName);
       textFile.write(content.toString());
+      textFile.close();
     }catch(IOException ioe){
+      ioe.printStackTrace();
       System.out.println("Writing failed.");
     }
     return content;

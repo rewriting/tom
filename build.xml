@@ -51,7 +51,7 @@
   <property name="src.lib"        location="${src.src}/lib"/>
   <property name="src.config"     location="${src.src}/config"/>
 
-  <!-- used for exclusion of islander during ./build.sh src.dist -->
+  <!-- used for exclusion of islander during ./build.sh .dist -->
   <property name="src.islander"   location="${src.src}/tom/islander"/>
 
   <!-- for distribution: top, stable and src -->
