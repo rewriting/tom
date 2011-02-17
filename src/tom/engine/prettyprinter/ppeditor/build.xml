@@ -26,29 +26,39 @@
   </target>
 
 
-<target name="compiletests" depends="jar" description="Créer le jar de l'application et compiler les tests dans le répertoire ${testbuild.dir}">
-<javac srcdir="${src.dir}" destdir="${build.dir}" excludes="Main.java">
+<target name="compiletests" depends="jar">
+<javac fork="true" srcdir="${src.dir}/test" destdir="${build.dir}" debug="on" includes="*.java">
 <classpath>
-<pathelement location="${dist.dir}/${app.name}.jar" />
-<pathelement location="${jar.junit}"/>
+<pathelement path="${java.class.path}" />
+<pathelement location="${build.dir}/ppeditor" />
+<pathelement location="${dist.dir}/${app.name}.jar"/>
 </classpath>
 </javac>
 </target> 
 
 <target name="compile" depends="JUNIT">
 <mkdir dir="${build.dir}"/>
-<javac srcdir="${src.dir}" destdir="${build.dir}" excludes="test/**"/>
+<javac fork="true" srcdir="${src.dir}" destdir="${build.dir}" excludes="test/*.java"/>
 </target>
 
-<target name="runtests" depends="compiletests" if="junit.present" description="Compiler l'appli, créer le .jar, compiler les tests et lancer tous les tests du TestSuite *AllTests* en mode console">
-<java fork="true" classname="junit.textui.TestRunner" taskname="junit" failonerror="false">
+<target name="runtests" depends="compiletests" if="junit.present">
+<junit haltonfailure="yes">
+<formatter type="plain"/>
+<assertions>
+  <enable/>
+</assertions>
 <classpath>
-<pathelement path="${java.class.path}" />
 <pathelement location="${build.dir}/ppeditor" />
 <pathelement location="${build.dir}"/>
+<pathelement location="${build.dir}/ppeditor/test"/>
+<pathelement path="${java.class.path}" />
 </classpath>
-<arg value="ppeditor.test.AllTests"/>
-</java>
+  <formatter
+    type="brief"
+    usefile="false"
+  />
+<test name="ppeditor.test.AllTests"/>
+</junit>
 </target>
 
 <target name="ppmain" depends="compile">
