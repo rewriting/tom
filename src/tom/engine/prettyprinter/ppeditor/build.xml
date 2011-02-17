@@ -41,7 +41,7 @@
 <javac fork="true" srcdir="${src.dir}" destdir="${build.dir}" excludes="test/*.java"/>
 </target>
 
-<target name="runtests" depends="compiletests" if="junit.present">
+<target name="runtests" depends="compiletests">
 <junit haltonfailure="yes">
 <formatter type="plain"/>
 <assertions>
@@ -52,6 +52,7 @@
 <pathelement location="${build.dir}"/>
 <pathelement location="${build.dir}/ppeditor/test"/>
 <pathelement path="${java.class.path}" />
+<pathelement location="${jar.junit}"/>
 </classpath>
   <formatter
     type="brief"
