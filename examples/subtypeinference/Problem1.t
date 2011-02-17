@@ -319,7 +319,7 @@ public class Problem1{
     get_tail(l)        { ((nList)$l).tailnList }
     is_empty(l)        { ((nList)$l).isEmpty() }
     make_empty()       { new nList() }
-    make_insert(e,l)   { new nList(e,l) }
+    make_insert(e,l)   { new nList($e,$l) }
   }
 
   %op tNat zero() {
