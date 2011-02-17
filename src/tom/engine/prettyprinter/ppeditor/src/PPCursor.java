@@ -94,19 +94,16 @@ public class PPCursor {
     while(position.getLine()>=fileBuffer.size()){
       fileBuffer.add(new StringBuffer(""));
     }
-    while(position.getColumn()>=sizeOfCurrentLine()){
+    while(position.getColumn()>sizeOfCurrentLine()){
       lineContent(position.getLine()).append(" ");
     }
     for(int i=0;i<s.length();i++){
       if(s.charAt(i)!='\n'){
-      
         this.lineContent(position.getLine()).insert(position.getColumn(),s.charAt(i));
-
 /*Debug*/System.out.println(s.charAt(i));
-
         position.add(new PPTextPosition(0,1));
         if(!insertion && this.sizeOfCurrentLine()>position.getColumn()+1){
-        this.erase();
+          this.erase();
         }
 
       }else{
@@ -167,6 +164,7 @@ public class PPCursor {
   public StringBuffer lineContent(int l){
     return fileBuffer.get(l);
   }
+
 
 
 }

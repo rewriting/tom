@@ -19,8 +19,8 @@ public class TestPPCursor{
   @Test
   public void testMove() {
     cursor.move(new PPTextPosition(2,-3));
-    //Assert.assertEquals("Is the cursor where it should be?", cursor.getPosition(), new PPTextPosition(16,5));
     Assert.assertEquals("Is the cursor where it should be?", cursor.getPosition(), new PPTextPosition(16,5));
+    //Assert.assertEquals("Is the cursor where it should be?", cursor.getPosition(), new PPTextPosition(1,5));
   }
 
   @Test
