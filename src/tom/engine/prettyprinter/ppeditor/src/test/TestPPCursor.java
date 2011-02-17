@@ -30,7 +30,7 @@ public class TestPPCursor{
   @Test
   public void testWrite1() {
     cursor.write("For great justice!");
-    Assert.assertEquals("Text written on one non-already existing line.", "        For great justice!", cursor.getFileBuffer().get(14));
+    Assert.assertEquals("Text written on one non-already existing line.", "        For great justice!", cursor.getFileBuffer().get(14).toString());
   }
 
   @Test
