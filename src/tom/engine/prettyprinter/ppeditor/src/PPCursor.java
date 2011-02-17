@@ -92,18 +92,23 @@ public class PPCursor {
 */
   public void write(String s) {
     while(position.getLine()>=fileBuffer.size()){
-        fileBuffer.add(new StringBuffer(""));
+      fileBuffer.add(new StringBuffer(""));
+    }
+    while(position.getColumn()>=sizeOfCurrentLine()){
+      lineContent(position.getLine()).append(" ");
     }
     for(int i=0;i<s.length();i++){
-          if(s.charAt(i)!='\n'){
-          fileBuffer.get(position.getLine()).insert(position.getColumn(),s.charAt(i));
+      if(s.charAt(i)!='\n'){
+      
+        this.lineContent(position.getLine()).insert(position.getColumn(),s.charAt(i));
 
 /*Debug*/System.out.println(s.charAt(i));
 
-        if(!insertion){
-          fileBuffer.get(position.getLine()).deleteCharAt(position.getColumn()+1);
-        }
         position.add(new PPTextPosition(0,1));
+        if(!insertion && this.sizeOfCurrentLine()>position.getColumn()+1){
+        this.erase();
+        }
+
       }else{
         if(insertion && position.getColumn()<fileBuffer.get(position.getLine()).length()-1){
           fileBuffer.add(position.getLine()+1, new StringBuffer(fileBuffer.get(position.getLine()).subSequence(position.getColumn(), fileBuffer.get(position.getLine()).length()-1)));
@@ -112,7 +117,6 @@ public class PPCursor {
           fileBuffer.add(new StringBuffer(""));
         }
         position.set(new PPTextPosition(position.getLine()+1,0));
-
       }
     }
   }
@@ -151,5 +155,18 @@ public class PPCursor {
     }
     return content;
   }
+
+  public int sizeOfCurrentLine(){
+    if(fileBuffer.size()<position.getLine()+1){
+      return -1;
+    }else{
+     return fileBuffer.get(position.getLine()).length();
+    }
+  }
+
+  public StringBuffer lineContent(int l){
+    return fileBuffer.get(l);
+  }
+
 
 }

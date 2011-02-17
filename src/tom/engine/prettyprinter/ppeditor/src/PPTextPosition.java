@@ -59,4 +59,22 @@ public class PPTextPosition {
     if(this.column< 0) {this.column = 0;}
   }
 
+
+public boolean equals(Object obj) {
+  if (obj==this) {
+    return true;
+  }
+  if (obj instanceof PPTextPosition) {
+    PPTextPosition other = (PPTextPosition) obj;
+    boolean attEquals = this.line == other.getLine();
+    attEquals &= this.column == other.getColumn();
+    return attEquals;
+  }
+  return false;
+}
+
+public int hashCode(){
+  return this.line+10000*this.column;
+}
+
 }

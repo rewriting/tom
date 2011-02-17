@@ -5,7 +5,10 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({TestPPCursor.class})
-public class AllTests {
-}
+@SuiteClasses({
+  TestPPCursor.class,
+  TestPPTextPosition.class
+})
 
+public class AllTests{
+} 
