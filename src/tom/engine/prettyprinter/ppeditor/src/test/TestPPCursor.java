@@ -7,7 +7,7 @@ import org.junit.Assert.*;
 import java.io.*;
 import java.util.ArrayList;
 
-public class TestPPCursor{
+public class TestPPCursor {
 
   private PPCursor cursor;
 
@@ -28,7 +28,7 @@ public class TestPPCursor{
     cursor.write("For great justice!");
     Assert.assertEquals("Text written on one non-already existing line.", "        For great justice!", cursor.getFileBuffer().get(14).toString());
   }
-/*
+
   @Test
   public void testWrite2() {
     ArrayList<StringBuffer> expectedBuffer = new ArrayList<StringBuffer>();
@@ -39,10 +39,9 @@ public class TestPPCursor{
       expectedBuffer.add(new StringBuffer("For great justice!"));
     cursor.setPosition(new PPTextPosition(10,0));
     cursor.write("All your base are belong to us.\nFor great justice!");
-    Assert.assertEquals("Text written on two non-already existing lines.", expectedBuffer, cursor.getFileBuffer());
+    Assert.assertEquals("Text written on two non-already existing lines.", expectedBuffer.toString(), cursor.getFileBuffer().toString());
   }
 
-*/
   @After
   public void endTest() {
     (new File("./test.txt")).delete();
