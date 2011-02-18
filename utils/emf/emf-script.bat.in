@@ -25,7 +25,7 @@ shift
 goto setArgs
 :doneSetArgs
 
-set JAVA_CP=%JAVA_CP:"=%
+if not ""%JAVA_CP%""=="""" set JAVA_CP=%JAVA_CP:"=%
 
 set TOM_LIB=%TOM_HOME%\lib
 set TOM_JAR=%TOM_LIB%\tom-compiler-full.jar;%TOM_LIB%\tom-runtime-full.jar
