@@ -15,8 +15,16 @@
 
   <import file="${tom.home}/lib/tom-common.xml"/>
 
+    <path id="tom.classpath">
+      <path refid="external.classpath"/>
+      <fileset dir="${tom.home}/lib">
+	<include name="**/*.jar"/>
+      </fileset>
+    </path>
+
   <taskdef name="antlr3"
-           classname="org.apache.tools.ant.antlr.ANTLR3">
+    classname="org.apache.tools.ant.antlr.ANTLR3">
+
     <classpath refid="tom.classpath"/>
   </taskdef>
 
@@ -57,7 +65,8 @@
   </target>
 
   <target name="javac" depends="tom, antlr">
-    <javac.preset destdir="${sa.build}" >
+
+    <javac.preset destdir="${sa.build}" includeantruntime="false">
       <!--<src path="${sa.src}"/>-->
       <src path="${sa.gen}"/>
       <src path="${sa.src}"/>

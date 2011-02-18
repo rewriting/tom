@@ -99,6 +99,7 @@ public class Pretty {
   }
 
   public String toString(Term t) {
+    System.out.println("toString Term: " + t);
     %match(t) {
       Var(n) -> { return `n; }
 
