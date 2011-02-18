@@ -202,11 +202,12 @@ begin
       // if we can get the old classpath
       if RegQueryStringValue(RegistryRoot, RegistryEnvPath, 'CLASSPATH', OldClasspath) then
         begin
-          RegWriteExpandStringValue(RegistryRoot, RegistryEnvPath, 'CLASSPATH', OldClasspath + ';.;%TOM_HOME%\lib\tom-runtime-full.jar;%TOM_HOME%\lib\tools\org.eclipse.emf.*.jar');
+          RegWriteExpandStringValue(RegistryRoot, RegistryEnvPath, 'CLASSPATH',
+	  OldClasspath + ';.;%TOM_HOME%\lib\tom-runtime-full.jar;%TOM_HOME%\lib\tools\org.eclipse.emf.ecore_2.5.0.v200906151043.jar;%TOM_HOME%\lib\tools\org.eclipse.emf.common_2.5.0.v200906151043.jar');
         end
       else
         begin
-          RegWriteExpandStringValue(RegistryRoot, RegistryEnvPath, 'CLASSPATH', '.;%TOM_HOME%\lib\tom-runtime-full.jar;%TOM_HOME%\lib\tools\org.eclipse.emf.*.jar');
+          RegWriteExpandStringValue(RegistryRoot, RegistryEnvPath, 'CLASSPATH', '.;%TOM_HOME%\lib\tom-runtime-full.jar;%TOM_HOME%\lib\tools\org.eclipse.emf.ecore_2.5.0.v200906151043.jar;%TOM_HOME%\lib\tools\org.eclipse.emf.common_2.5.0.v200906151043.jar');
         end
 end;
 
