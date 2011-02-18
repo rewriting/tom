@@ -1682,8 +1682,10 @@ matchBlockAdd :
    * <p>
    * PHASE 1: Simplification in equations (apply anti-symetry of the partial
    * order "<:"): 
-   * tCList = {T1 <: T2, T2 <: T1} U tCList' and Map -->  {T1 = T2} U tCList' and Map
-   * tCList = {A1 <: A2, A2 <: A1} U tCList' and Map -->  {A1 = A2} U tCList' and Map
+   * tCList = {T1 <: T2, T2 <: T1} U tCList' and Map 
+   *  --> solveEquationConstraints(T1 = T2) U tCList' and Map
+   * tCList = {A1 <: A2, A2 <: A1} U tCList' and Map 
+   *  --> solveEquationConstraints(A1 = A2) U tCList' and Map
    * <p>
    * PHASE 2: Reduction in closed form (apply transitivity of the partial
    * order "<:"):
