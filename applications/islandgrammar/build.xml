@@ -16,7 +16,7 @@
 			<arg value="${gramfile}"/>
 		</java>
 	</target>
-	<target name="compile"><!-- depends="grammar"-->
+	<target name="compile" depends="grammar">
 		<mkdir dir="${build}"/>
 		<javac srcdir="${src}" destdir="${build}" classpath="${withAntlr}" includeantruntime="false"/>
 	</target>

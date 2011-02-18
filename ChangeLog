@@ -8,6 +8,14 @@
  * Fix the insertion of subtyping constraints.
  * Handle others Code's constructors in TomBase.
 
+2011-02-08 tonio
+ * Update junit to 4.8.2
+ * Update ant to 1.8.2
+
+2011-02-08 pem
+ * remove ant*.jar from lib/tools (and tom-runtime-full.jar)
+ * update ant*.jar to version 1.7.1 (moved to lib/compiletime)
+ * bumped to version 2.8rc3
 
 2011-02-02 tavaresc
  * Detect when a slot has been declared with two different sorts.
@@ -54,7 +62,7 @@
        Match(freshSubj,Cast(object),freshSubjType) /\ Match(p,freshSubj,castType)
 
  * But still need to verify the casts done after the compiler.
- 
+
 2010-12-09 tavaresc
  * In SyntaxChecker : 
   - remove error message for a match constraint whose both subject and explicit

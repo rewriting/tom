@@ -1,4 +1,4 @@
-// $ANTLR 2.7.7 (20090417): "TomLanguage.g" -> "TomLexer.java"$
+// $ANTLR 2.7.7 (20060906): "TomLanguage.g" -> "TomLexer.java"$
 
 /*
  *

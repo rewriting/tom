@@ -3,12 +3,14 @@ How to prepare a release:
 
 - prepare release note (announce.txt)
 - in build.xml, update the property stable.version
+- in utils/installKit/tomInstallScript.iss, update the version number (twice in
+  [setup] section, l.8 and l.13)
 - ./build.sh clean.all
 - ./build.sh
 - ./build.sh bootstrap
 - ./build.sh bootinstall
 - ./build.sh all
-- svn commit
+- git commit/push
 
 - update the version of the manual
 - update the date of the manual
@@ -17,7 +19,13 @@ How to prepare a release:
 
 (- prepare the eclipse plugin)
 
-- prepare installation kit for windows
+- prepare installation kit for Windows
+  - build.bat clean.all
+  - build.bat
+  - ensure that newly created Tom binary is the good version with the following
+    command: jtom\stable\dist\bin\tom --version
+  - launch utils\installKit\tomInstallScript.iss (by clicking on it if InnoDB is
+    installed)
 
 - create distfiles:
 - ./build.sh dist.all
@@ -27,7 +35,12 @@ How to prepare a release:
 - upload manual
 
 - update Changelog, commit, tag the release with
+  git tag -a tags/tom-2.8 -m "* version 2.8"
+  git push origin tags/tom-2.8 (only one tag)
+  or
+  git push --tags (all tags)
+
+old commands with subversion:
   svn copy $GFORGE/jtom/trunk $GFORGE/jtom/tags/tom-2.7 -m "tag tree"
   svn copy svn+ssh://developername@scm.gforge.inria.fr/svn/tom/jtom/trunk svn+ssh://developername@scm.gforge.inria.fr/svn/tom/jtom/tags/tom-2.7 -m "tag tree"
-
 

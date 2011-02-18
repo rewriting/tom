@@ -68,7 +68,7 @@ public class StringSplit {
 		long startChrono = System.currentTimeMillis();
     for(int j = 0; j < i; j++) {
     %match(String test) {
-      (login*,':',pass*,':',uid*,':',gid*,':',fname*,':',path*,':',shell*) -> {
+      concString(login*,':',pass*,':',uid*,':',gid*,':',fname*,':',path*,':',shell*) -> {
         //mark = `login* + `pass* + `rest*;
       }
     }
@@ -83,7 +83,7 @@ public class StringSplit {
 		long startChrono = System.currentTimeMillis();
     for(int j = 0; j < i; j++) {
     %match(String test) {
-      (login*,x,pass*,x,uid*,x,gid*,x,fname*,x,path*,x,shell*) -> {
+      concString(login*,x,pass*,x,uid*,x,gid*,x,fname*,x,path*,x,shell*) -> {
         //mark = `login* + `pass* + `rest*;
       }
     }
@@ -98,7 +98,7 @@ public class StringSplit {
 		long startChrono = System.currentTimeMillis();
     for(int j = 0; j < i; j++) {
     %match(String test) {
-      (login*,a,pass*,b,uid*,c,gid*,d,fname*,e,path*,f,shell*) -> {
+      concString(login*,a,pass*,b,uid*,c,gid*,d,fname*,e,path*,f,shell*) -> {
         if(`a == `b && `b == `c && `c == `d && `d == `e && `e == `f && `a == ':') {
           //mark = `login* + `pass* + `rest*;
         }

@@ -1,5 +1,3 @@
-import org.antlr.runtime.Token;
-import org.antlr.runtime.CommonToken;
 import org.antlr.runtime.tree.*;
 import org.antlr.runtime.*;
 
@@ -15,7 +13,7 @@ public class HostParser {
     private Tree arbre;
 /* to look for a keyword, add it to this array, then configure the parser it should trigger in the function parserMap */
     public static final String[] tokenNames = new String[] {
-      "%match", "%op"
+      "%match", "%op", "//", "/*"
     };
     private int[] states;/* the index of current character in each keyword */
 
@@ -40,20 +38,34 @@ public class HostParser {
       arbre.addChild(treedHostContent);
       /* forget the savedContent, which is currently one of the tokens */
       savedContent.setLength(0);
+      Tree result = new CommonTree();
       switch(i)
       {
         case 0:
           try {
-            miniTomLexer lexer = new miniTomLexer(input);//new ANTLRStringStream("() { alX; alice; }"));
+            miniTomLexer lexer = new miniTomLexer(input);
             CommonTokenStream tokens = new CommonTokenStream(lexer);
-            miniTomParser parser = new miniTomParser(tokens);
-            RuleReturnScope result = parser.program();
-            arbre.addChild((Tree) result.getTree());
+            miniTomParser parser0 = new miniTomParser(tokens);
+            result = (Tree) parser0.program().getTree();
           } catch (Exception e) {}
           break;
         case 1: System.out.println("op found");break;
+        case 2:
+          CommentParser parser2 = new CommentParser(input);
+          result = parser2.oneLine();
+          break;
+        case 3:
+          try {
+            CommentParser parser3 = new CommentParser(input);
+            result = parser3.regular();
+          } catch (Exception e) {
+            e.printStackTrace();
+          }
+          break;
         default : System.out.println(i + " : this sould not happen");
       }
+      arbre.addChild(result);
+
     }
 
     public Tree parse() {
