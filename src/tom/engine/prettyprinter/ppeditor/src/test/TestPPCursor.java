@@ -39,10 +39,9 @@ public class TestPPCursor{
       expectedBuffer.add(new StringBuffer("For great justice!"));
     cursor.setPosition(new PPTextPosition(10,0));
     cursor.write("All your base are belong to us.\nFor great justice!");
-    Assert.assertEquals("Text written on two non-already existing lines.", expectedBuffer, cursor.getFileBuffer());
+    Assert.assertEquals("Text written on two non-already existing lines.", expectedBuffer.toString(), cursor.getFileBuffer().toString());
   }
   
-
   @Test
   public void test(){
   } 
