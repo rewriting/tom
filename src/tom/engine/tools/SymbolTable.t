@@ -128,7 +128,13 @@ public class SymbolTable {
   }
 
   public TomType getType(String name) {
-    return mapTypeName.get(name);
+    if (mapTypeName.contains(name)) {
+      return mapTypeName.get(name);
+    } else {
+      TomMessage.error(getLogger(),currentFile(), getLine(),
+          TomMessage.typetermNotDefined, 
+          name); 
+    }
   }
 
   public boolean isUsedSymbolConstructor(TomSymbol symbol) {    
