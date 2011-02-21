@@ -128,13 +128,10 @@ public class SymbolTable {
   }
 
   public TomType getType(String name) {
-    if (mapTypeName.contains(name)) {
+    if (mapTypeName.containsKey(name)) {
       return mapTypeName.get(name);
-    } else {
-      TomMessage.error(getLogger(),currentFile(), getLine(),
-          TomMessage.typetermNotDefined, 
-          name); 
     }
+    return null;
   }
 
   public boolean isUsedSymbolConstructor(TomSymbol symbol) {    

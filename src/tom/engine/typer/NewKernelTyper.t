@@ -393,26 +393,30 @@ public class NewKernelTyper {
             superTypes = dependencies.get(`supTypeName); 
           }
           TomType supType = symbolTable.getType(`supTypeName);
-          // TODO : add verification of valid types here
-          superTypes = `concTomType(supType,superTypes*);  
+          if (supType != null) {
+            superTypes = `concTomType(supType,superTypes*);  
 
-          /* STEP 2 */
-          for(String subType:dependencies.keySet()) {
-            supOfSubTypes = dependencies.get(`subType);
-            //DEBUG System.out.println("In generateDependencies -- for 2: supOfSubTypes = " +
-            //DEBUG     supOfSubTypes);
-            %match {
-              // The same tName of currentType
-              concTomType(_*,Type[TomType=suptName],_*) << supOfSubTypes &&
-                (suptName == tName) -> {
-                  /* 
-                   * Replace list of superTypes of "subType" by a new one
-                   * containing the superTypes of "currentType" which is also a
-                   * superType 
-                   */
-                  dependencies.put(subType,`concTomType(supOfSubTypes*,superTypes*));
-                }
+            /* STEP 2 */
+            for(String subType:dependencies.keySet()) {
+              supOfSubTypes = dependencies.get(`subType);
+              //DEBUG System.out.println("In generateDependencies -- for 2: supOfSubTypes = " +
+              //DEBUG     supOfSubTypes);
+              %match {
+                // The same tName of currentType
+                concTomType(_*,Type[TomType=suptName],_*) << supOfSubTypes &&
+                  (suptName == tName) -> {
+                    /* 
+                     * Replace list of superTypes of "subType" by a new one
+                     * containing the superTypes of "currentType" which is also a
+                     * superType 
+                     */
+                    dependencies.put(subType,`concTomType(supOfSubTypes*,superTypes*));
+                  }
+              }
             }
+          } else {
+            TomMessage.error(logger,getCurrentInputFileName(),0,
+                TomMessage.typetermNotDefined,`supTypeName);
           }
         }
       }
