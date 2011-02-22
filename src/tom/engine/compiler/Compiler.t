@@ -443,6 +443,9 @@ public class Compiler extends TomGenericPlugin {
   public TomType getTermTypeFromName(TomName tomName) {
     String stringName = ((Name)tomName).getString();
     TomSymbol tomSymbol = getSymbolTable().getSymbolFromName(stringName);    
+    if(tomSymbol == null) {
+      throw new TomRuntimeException("Unknown symbol:" + stringName);
+    }
     return tomSymbol.getTypesToType().getCodomain();
   }
 

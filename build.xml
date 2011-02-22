@@ -698,10 +698,8 @@
     <!-- generate a single runtime jar -->
     <jar jarfile="${stable.dist}/lib/tom-runtime-full.jar" duplicate="preserve">
       <zipgroupfileset dir="${stable.dist.lib}/runtime" includes="*.jar"/>
-      <zipgroupfileset dir="${stable.dist.lib}/tools" 
-        includes="*.jar"
-        excludes="org.eclipse.*.jar"
-        />
+      <zipgroupfileset dir="${stable.dist.lib}/tools" includes="*.jar" excludes="org.eclipse.*.jar"/>
+      <!--zipgroupfileset dir="${stable.dist.lib}/tools" excludes="META-INF/*" includes="${stable.dist.lib}/tools/org.eclipse.emf.*.jar" /-->
     </jar>
     <jar jarfile="${stable.dist}/lib/tom-compiler-full.jar" duplicate="preserve">
       <zipgroupfileset dir="${stable.dist.lib}/tom" includes="*.jar"/>
@@ -723,6 +721,10 @@
         <exclude name="lib/tom/*"/>
         <exclude name="lib/runtime/*"/>
         <exclude name="lib/tools/*"/>
+      </tarfileset>
+      <!-- to only include emf jar files -->
+      <tarfileset dir="${stable.dist}" prefix="tom-${stable.version}" mode="644">
+        <include name="lib/tools/org.eclipse.emf.*.jar"/>
       </tarfileset>
     </tar>
 
@@ -957,10 +959,8 @@
     <!-- generate a single runtime jar -->
     <jar jarfile="${src.dist}/lib/tom-runtime-full.jar" duplicate="preserve">
       <zipgroupfileset dir="${src.dist.lib}/runtime" includes="*.jar"/>
-      <zipgroupfileset dir="${src.dist.lib}/tools" 
-        includes="*.jar"
-        excludes="org.eclipse.*.jar"
-        />
+      <zipgroupfileset dir="${src.dist.lib}/tools" includes="*.jar" excludes="org.eclipse.*.jar"/>
+      <!--zipgroupfileset dir="${src.dist.lib}/tools" excludes="META-INF/*" includes="${src.dist.lib}/tools/org.eclipse.emf.*.jar" /-->
     </jar>
     <jar jarfile="${src.dist}/lib/tom-compiler-full.jar" duplicate="preserve">
       <zipgroupfileset dir="${src.dist.lib}/tom" includes="*.jar"/>
@@ -983,6 +983,10 @@
         <exclude name="lib/tom/*"/>
         <exclude name="lib/runtime/*"/>
         <exclude name="lib/tools/*"/>
+      </tarfileset>
+      <!-- to only include emf jar files -->
+      <tarfileset dir="${src.dist}" prefix="tom-${src.version}" mode="644">
+        <include name="lib/tools/org.eclipse.emf.*.jar"/>
       </tarfileset>
     </tar>
 

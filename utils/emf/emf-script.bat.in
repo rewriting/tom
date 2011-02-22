@@ -25,20 +25,22 @@ shift
 goto setArgs
 :doneSetArgs
 
-set JAVA_CP=%JAVA_CP:"=%
+if not ""%JAVA_CP%""=="""" set JAVA_CP=%JAVA_CP:"=%
 
 set TOM_LIB=%TOM_HOME%\lib
 set TOM_JAR=%TOM_LIB%\tom-compiler-full.jar;%TOM_LIB%\tom-runtime-full.jar
 
-set TOM_EMF=
-for /f "delims=" %%a in ('dir /b %TOM_LIB%\tools\org.eclipse.emf.*.jar') do (
-  call :SUBROUTINE %%a
-)
+rem This loops doesn't seem to work correctly
+rem set TOM_EMF=
+rem for /f "delims=" %%a in ('dir /b %TOM_LIB%\tools\org.eclipse.emf.*.jar') do (
+rem call :SUBROUTINE %%a
+rem )
 
-set LOCALCLASSPATH=%TOM_JAR%;%JAVA_CP%%TOM_EMF%
+set LOCALCLASSPATH=%TOM_JAR%;%CLASSPATH%
+if not ""%JAVA_CP%""=="""" set LOCALCLASSPATH=%LOCALCLASSPATH%;%JAVA_CP%
 
 java %JAVA_ARGS% -cp "%LOCALCLASSPATH%" -Dtom.home="%TOM_HOME%" @MAIN_CLASS@ %SCRIPT_ARGS%
 goto :eof
 
-:subroutine
-set TOM_EMF=%TOM_EMF%;%TOM_LIB%\tools\%*
+rem :subroutine
+rem set TOM_EMF=%TOM_EMF%;%TOM_LIB%\tools\%*

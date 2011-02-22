@@ -50,6 +50,7 @@ Source: "README";             DestDir: "{app}"; DestName: "README.wri"; Flags: i
 Source: "bin\*";              DestDir: "{app}\bin"
 Source: "lib\*.jar";          DestDir: "{app}\lib"
 Source: "lib\tom-common.xml"; DestDir: "{app}\lib"
+Source: "lib\tools\org.eclipse.emf.*.jar";          DestDir: "{app}\lib\tools"
 Source: "share\*";            DestDir: "{app}\share"; Flags: recursesubdirs createallsubdirs
 
 [Registry]
@@ -201,11 +202,12 @@ begin
       // if we can get the old classpath
       if RegQueryStringValue(RegistryRoot, RegistryEnvPath, 'CLASSPATH', OldClasspath) then
         begin
-          RegWriteExpandStringValue(RegistryRoot, RegistryEnvPath, 'CLASSPATH', OldClasspath + ';.;%TOM_HOME%\lib\tom-runtime-full.jar');
+          RegWriteExpandStringValue(RegistryRoot, RegistryEnvPath, 'CLASSPATH',
+	  OldClasspath + ';.;%TOM_HOME%\lib\tom-runtime-full.jar;%TOM_HOME%\lib\tools\org.eclipse.emf.ecore_2.5.0.v200906151043.jar;%TOM_HOME%\lib\tools\org.eclipse.emf.common_2.5.0.v200906151043.jar');
         end
       else
         begin
-          RegWriteExpandStringValue(RegistryRoot, RegistryEnvPath, 'CLASSPATH', '.;%TOM_HOME%\lib\tom-runtime-full.jar');
+          RegWriteExpandStringValue(RegistryRoot, RegistryEnvPath, 'CLASSPATH', '.;%TOM_HOME%\lib\tom-runtime-full.jar;%TOM_HOME%\lib\tools\org.eclipse.emf.ecore_2.5.0.v200906151043.jar;%TOM_HOME%\lib\tools\org.eclipse.emf.common_2.5.0.v200906151043.jar');
         end
 end;
 
