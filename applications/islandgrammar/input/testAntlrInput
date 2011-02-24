@@ -3,6 +3,7 @@ ici
 %match(){  
 { bob bob
   bob }
+/* test */
 alice alice;
   }@
 %op ziou

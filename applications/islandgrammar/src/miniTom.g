@@ -32,7 +32,11 @@ subcode : LEFTBR inside+ RIGHTBR -> ^(SUBCODE inside+);
 
 inside    : B  ;
 statement	:	A+ ;
-
+comment   : OPENCOM {
+    CommentParser parser = new CommentParser(input);
+    Tree result = parser.oneLine();
+    program_return.addChild(result);
+  };
 
 /* Lexer rules */
 
@@ -41,7 +45,7 @@ RIGHTPAR   : ')' ;
 LEFTBR     : '{' {levelcounter+=1;} ;
 RIGHTBR    : '}' {if(levelcounter==0){emit(Token.EOF_TOKEN);} else{levelcounter-=1;}  } ;
 SEMICOLUMN : ';' ;
-OPENCOM    : '/*' {CommentParser parser = new CommentParser(input);Tree result = parser.oneLine();} ;
+OPENCOM    : '/*'  ;
 A          : 'alice' ;
 B          : 'bob' ;
 
