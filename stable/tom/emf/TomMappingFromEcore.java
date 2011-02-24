@@ -101,7 +101,7 @@ if(args.length < 1) {
 out.println("No argument has been given!");
 out.println("usage: emf-generate-mappings [options] <EPackageClassName>");
 out.println("options:");
-out.println("  -nt (allows to generate '%subtype' constructs)");
+out.println("  -nt (allows to generate constructs with subtyping)");
 out.println("  any Java options");
 } else {
 String ePackageName = args[0];
@@ -151,25 +151,24 @@ out.println("%include { " + tomTypes.get(c) + ".tom }");
 String[] decl = getClassDeclarations(eclf); // [canonical name, anonymous generic, generic type]
 out.println(
 "\n%typeterm "+n+
+" "+(useNewTyper?genSubtype(eclf):"")+
 " {\n  implement { "+(eclf instanceof EClass && !EObject.class.isAssignableFrom(c) ? "org.eclipse.emf.ecore.EObject" : decl[0] + decl[2])+
 " }\n  is_sort(t) { "+(c.isPrimitive() ? "true" : "$t instanceof " + decl[0] + decl[1])+
 " }\n  equals(l1,l2) { "+(c.isPrimitive() ? "$l1 == $l2" : "$l1.equals($l2)")+
 " }\n}");
-if(useNewTyper) {
-genSubtype(eclf);}
 }
 }
 }
 
-private static void genSubtype(EClassifier eclf) {
+private static String genSubtype(EClassifier eclf) {
+String result = "";
 if((eclf instanceof EClass) && !((EClass)eclf).getESuperTypes().isEmpty()) {
+//should be a collection with one and only one element
 for (EClass supertype:((EClass)eclf).getESuperTypes()) {
-out.println(
-"\n%subtype "+eclf.getName()+
-" <: "+supertype.getName()+
-"");
+result = result + "extends " + supertype.getName();
 }
 }
+return result;
 }
 
 /**

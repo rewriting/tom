@@ -636,7 +636,6 @@ matchLbl: %match(constr) {// TODO : add something to test the astType
                     return;
                   }
                 }
-
                 verifyMatchPattern(`pattern, getPatternType(`pattern));
               } else {
                 // astType is known
@@ -1092,10 +1091,10 @@ matchL:  %match(subject,s) {
       }
     }
     // Analyse the term if type != null
-    if(type != null) {
+    //if(type != null) {
       // the type is known and found in the match signature
       validateTerm(`term, type, false, true);
-    }
+    //}
   }
 
   /*
