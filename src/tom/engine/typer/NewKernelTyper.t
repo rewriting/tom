@@ -1789,7 +1789,7 @@ matchBlockAdd :
     visit TypeConstraintList {
       /* PHASE 4 */
       concTypeConstraint(tcl1*,constraint@Subtype[Type1=tVar@TypeVar[],Type2=t1@!TypeVar[],Info=info],tcl2*,c2@Subtype[Type1=tVar,Type2=t2@!TypeVar[]],tcl3*) -> {
-        System.out.println("\nsolve4a: " + `constraint + " and " + `c2);
+        //DEBUG System.out.println("\nsolve4a: " + `constraint + " and " + `c2);
         TomType lowerType = nkt.`minType(t1,t2);
         //DEBUG System.out.println("\nminType(" + `t1.getTomType() + "," +
         //DEBUG     `t2.getTomType() + ") = " + lowerType);
@@ -1803,7 +1803,7 @@ matchBlockAdd :
           nkt.`addSubConstraint(Subtype(tVar,lowerType,info),concTypeConstraint(tcl1,tcl2,tcl3));
       }
       concTypeConstraint(tcl1*,constraint@Subtype[Type1=t1@!TypeVar[],Type2=tVar@TypeVar[],Info=info],tcl2*,c2@Subtype[Type1=t2@!TypeVar[],Type2=tVar],tcl3*) -> {
-        System.out.println("\nsolve4b: " + `constraint + " and " + `c2);
+        //DEBUG System.out.println("\nsolve4b: " + `constraint + " and " + `c2);
         TomType supType = nkt.`supType(t1,t2);
         //DEBUG System.out.println("\nsupType(" + `t1.getTomType() + "," +
         //DEBUG    `t2.getTomType() + ") = " + supType);
@@ -1903,7 +1903,7 @@ matchBlockAdd :
             !concTypeOption(_*,WithSymbol[],_*) << tOptions2
               && concTomType(_*,Type[TomType=tNameSup],_*) <<
               supTypet1 && (tName2 == tNameSup)-> {
-                System.out.println("isSubtypeOf: cases 1a and 3a - ii");
+                //DEBUG System.out.println("isSubtypeOf: cases 1a and 3a - ii");
                 return true; 
               }
 
@@ -2172,6 +2172,8 @@ matchBlockSolve :
           concTypeConstraint(tcl1*,c1@Subtype[Type1=tVar@TypeVar[],Type2=groundSupType@!TypeVar[]],tcl2*,c2@Subtype[Type1=groundSubType@!TypeVar[],Type2=tVar],tcl3*) -> {
             //DEBUG System.out.println("\nenumerateSolutions6c: " + `c1 + " and " + `c2);
             addSubstitution(`tVar,`groundSupType);
+            //TODO Apply replace in concTypeConstraint(tcl1*,tcl2*,tcl3*) since
+            //(groundSubType <: groundSupType) is already in tCList (closed form)
             newtCList =
               `replaceInSubtypingConstraints(concTypeConstraint(c2,tcl1*,tcl2*,tcl3*));
             break matchBlockSolve;
@@ -2181,6 +2183,8 @@ matchBlockSolve :
           concTypeConstraint(tcl1*,c1@Subtype[Type1=groundSubType@!TypeVar[],Type2=tVar],tcl2*,c2@Subtype[Type1=tVar@TypeVar[],Type2=groundSupType@!TypeVar[]],tcl3*) -> {
             //DEBUG System.out.println("\nenumerateSolutions6c-sym: " + `c1 + " and " + `c2);
             addSubstitution(`tVar,`groundSupType);
+            //TODO Apply replace in concTypeConstraint(tcl1*,tcl2*,tcl3*) since
+            //(groundSubType <: groundSupType) is already in tCList (closed form)
             newtCList =
               `replaceInSubtypingConstraints(concTypeConstraint(c1,tcl1*,tcl2*,tcl3*));
             break matchBlockSolve;
