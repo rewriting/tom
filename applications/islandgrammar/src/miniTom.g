@@ -12,6 +12,13 @@ tokens {
   CODE;
   SUBCODE;
 }
+
+@header {
+import org.antlr.runtime.tree.*;
+}
+@lexer::header {
+import org.antlr.runtime.tree.*;
+}
 @lexer::members{int levelcounter=-1;}
 /* Parser rules */
 
@@ -25,15 +32,20 @@ subcode : LEFTBR inside+ RIGHTBR -> ^(SUBCODE inside+);
 
 inside    : B  ;
 statement	:	A+ ;
-
+comment   : OPENCOM {
+    CommentParser parser = new CommentParser(input);
+    Tree result = parser.oneLine();
+    program_return.addChild(result);
+  };
 
 /* Lexer rules */
 
 LEFTPAR    : '(' ;
 RIGHTPAR   : ')' ;
-LEFTBR     : '{' {levelcounter+=1;System.out.println(+levelcounter);} ;
-RIGHTBR    : '}' {if(levelcounter==0){emit(Token.EOF_TOKEN);/*emit(new CommonToken(1,"}"));*/} else{levelcounter-=1;}  } ;
+LEFTBR     : '{' {levelcounter+=1;} ;
+RIGHTBR    : '}' {if(levelcounter==0){emit(Token.EOF_TOKEN);} else{levelcounter-=1;}  } ;
 SEMICOLUMN : ';' ;
+OPENCOM    : '/*'  ;
 A          : 'alice' ;
 B          : 'bob' ;
 
