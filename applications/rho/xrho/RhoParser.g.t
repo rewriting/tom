@@ -50,7 +50,7 @@ options {
 //IL FAUT LA TRANSFORMER POUR QU'ELLE NE PRENNE QU'UN SEUL ARG
  public  RTerm fromAlgebraicApplToFunctionalAppl(ListRTerm listArg, RTerm head){
   	%match(ListRTerm listArg){
- 		(x,XS*) -> {
+ 		and(x,XS*) -> {
 			return `fromAlgebraicApplToFunctionalAppl(XS,app(head,x));
  		}
  		_ -> {return head;}

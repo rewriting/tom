@@ -1,6 +1,9 @@
 @echo off
 setlocal
 
+set TMP_CLASSPATH=%CLASSPATH%
+set CLASSPATH=
+
 set LOCALCLASSPATH=./stable/lib/compiletime/junit.jar;./stable/lib/compiletime/ant-launcher.jar;./stable/lib/compiletime/ant.jar;./stable/lib/compiletime/ant-antlr.jar;./stable/lib/compiletime/antlr3.jar;./stable/lib/compiletime/ant-junit.jar
 
 set ANT_OPTS=-Xmx512m -XX:PermSize=128m -XX:MaxPermSize=128m
@@ -16,6 +19,6 @@ shift
 goto setArgs
 :doneSetArgs
 
+set CLASSPATH=%TMP_CLASSPATH%
 rem echo %CMD_LINE_ARGS%
-
 %CMD_LINE_ARGS%

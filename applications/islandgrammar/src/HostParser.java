@@ -49,7 +49,7 @@ public class HostParser {
             result = (Tree) parser0.program().getTree();
           } catch (Exception e) {}
           break;
-        case 1: System.out.println("op found");break;
+        case 1: break;
         case 2:
           CommentParser parser2 = new CommentParser(input);
           result = parser2.oneLine();

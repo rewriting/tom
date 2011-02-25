@@ -20,9 +20,6 @@ ANT_OPTS=""
 ant_exec_command="exec java $ANT_OPTS -classpath \"$LOCALCLASSPATH\" -Dant.library.dir=\"${TOM_HOME}/lib/compiletime\" org.apache.tools.ant.launch.Launcher $ANT_ARGS -cp \"$CLASSPATH\""
 
 ARGS=$*
-if [ "${ARGS}" -a -d "${ARGS}" ]; then
-  ARGS="-Dexample=$ARGS build"
-fi
 
 eval $ant_exec_command $ARGS
 

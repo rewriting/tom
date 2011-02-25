@@ -1,0 +1,10 @@
+cd build
+java sa/Main -aprove -i ../examples/start
+
+java sa/Main -i ../examples/start -tom Main
+tom Main.t
+javac Main.java
+java Main
+  <enter input term>
+
+

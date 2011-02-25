@@ -4,12 +4,6 @@
     Build script for Tom unit tests
   </description>
   
-  <taskdef resource="net/sf/antcontrib/antlib.xml">
-    <classpath>
-      <pathelement location="${tom.home}/lib/compiletime/ant-contrib-1.0b3.jar"/>
-    </classpath>
-  </taskdef>
-
   <property name="test.src"   location="."/>
   <property name="test.gen"   location="gen"/>
   <property name="test.build" location="build"/>
@@ -24,6 +18,12 @@
   <property name="tom.home"        value="${env.TOM_HOME}"/>
   <property name="tom.common.path" value="${tom.home}/lib"/>
   <import   file="${tom.common.path}/tom-common.xml"/>
+
+  <taskdef resource="net/sf/antcontrib/antlib.xml">
+    <classpath>
+      <pathelement location="${tom.home}/lib/compiletime/ant-contrib-1.0b3.jar"/>
+    </classpath>
+  </taskdef>
 
   <target name="init" depends="tom.init">
     <fail unless="tom.home" message="Property tom.home has to be defined"/>

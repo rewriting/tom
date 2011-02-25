@@ -532,37 +532,53 @@
     <copy tofile="${stable.dist}/GomAntlrAdaptor.xml" file="${stable.adapterconfig}"/>
     <!-- "tom binary" -->
     <copy todir="${stable.dist.bin}" file="${utils}/javac-tom"/>
-    <copy todir="${stable.dist.bin}" file="${utils}/tom.bat"/>
+
+    <!--copy todir="${stable.dist.bin}" file="${utils}/tom.bat"/-->
+    <copy tofile="${stable.dist.bin}/tom.bat" file="${utils}/script.bat.in"/>
+    <replace file="${stable.dist.bin}/tom.bat">
+      <replaceFilter token="@MAIN_CLASS@" value="tom.engine.Tom"/>
+      <replaceFilter token="@CONFIG_FILE@" value="Tom.xml"/>
+      <replaceFilter token="@BAT_FILE@" value="tom.bat"/>
+    </replace>
+
+    <!--copy todir="${stable.dist.bin}" file="${utils}/gom.bat"/-->
+    <copy tofile="${stable.dist.bin}/gom.bat" file="${utils}/script.bat.in"/>
+    <replace file="${stable.dist.bin}/gom.bat">
+      <replaceFilter token="@MAIN_CLASS@" value="tom.gom.Gom"/>
+      <replaceFilter token="@CONFIG_FILE@" value="Gom.xml"/>
+      <replaceFilter token="@BAT_FILE@" value="gom.bat"/>
+    </replace>
+
     <copy todir="${stable.dist.bin}" file="${utils}/javacForTom.bat"/>
     <copy todir="${stable.dist.bin}" file="${utils}/javaForTom.bat"/>
-    <copy todir="${stable.dist.bin}" file="${utils}/gom.bat"/>
     <copy todir="${stable.dist.bin}" file="${utils}/tlappend.bat"/>
-    <copy tofile="${stable.dist.bin}/tom" file="${utils}/script.in"/>
-    <copy tofile="${stable.dist.bin}/gom" file="${utils}/script.in"/>
-    <copy tofile="${stable.dist.bin}/emf-generate-mappings" file="${utils}/emf/emf-script.in"/>
-    <copy tofile="${stable.dist.bin}/emf-generate-xmi" file="${utils}/emf/emf-script.in"/>
     <copy todir="${stable.dist.bin}" file="${utils}/pytom"/>
     <copy todir="${stable.dist.bin}" file="${utils}/pindent.py"/>
     <copy todir="${stable.dist.bin}" file="${utils}/tom-server/tom-server.py"/>
-    <copy tofile="${stable.dist.bin}/tom-server" file="${utils}/tom-server/script.in"/>
     <copy tofile="${stable.dist.bin}/tom-client" file="${utils}/tom-server/tom-client.py"/>
+    <copy tofile="${stable.dist.bin}/tom-server" file="${utils}/tom-server/script.in"/>
     <replace file="${stable.dist.bin}/tom-server">
       <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
       <replaceFilter token="@CONFIG_FILE@" value="Tom.xml"/>
       <replaceFilter token="@INCLUDES_DIR@" value="share/tom"/>
     </replace>
+
+    <copy tofile="${stable.dist.bin}/tom" file="${utils}/script.in"/>
     <replace file="${stable.dist.bin}/tom">
       <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
       <replaceFilter token="@MAIN_CLASS@" value="tom.engine.Tom"/>
       <replaceFilter token="@CONFIG_FILE@" value="Tom.xml"/>
       <replaceFilter token="@INCLUDES_DIR@" value="share/tom"/>
     </replace>
+
+    <copy tofile="${stable.dist.bin}/gom" file="${utils}/script.in"/>
     <replace file="${stable.dist.bin}/gom">
       <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
       <replaceFilter token="@MAIN_CLASS@" value="tom.gom.Gom"/>
       <replaceFilter token="@CONFIG_FILE@" value="Gom.xml"/>
       <replaceFilter token="@INCLUDES_DIR@" value="share/gom"/>
     </replace>
+
     <copy tofile="${stable.dist.bin}/gomantlradaptor" file="${utils}/script.in"/>
     <replace file="${stable.dist.bin}/gomantlradaptor">
       <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
@@ -570,6 +586,41 @@
       <replaceFilter token="@CONFIG_FILE@" value="GomAntlrAdaptor.xml"/>
       <replaceFilter token="@INCLUDES_DIR@" value="share/gom"/>
     </replace>
+
+    <!--copy todir="${stable.dist.bin}" file="${utils}/gomantlradaptor.bat"/-->
+    <copy tofile="${stable.dist.bin}/gomantlradaptor.bat" file="${utils}/script.bat.in"/>
+    <replace file="${stable.dist.bin}/gomantlradaptor.bat">
+      <replaceFilter token="@MAIN_CLASS@" value="tom.gom.Gom"/>
+      <replaceFilter token="@CONFIG_FILE@" value="GomAntlrAdaptor.xml"/>
+      <replaceFilter token="@BAT_FILE@" value="gomantlradaptor.bat"/>
+    </replace>
+
+    <copy tofile="${stable.dist.bin}/emf-generate-mappings" file="${utils}/emf/emf-script.in"/>
+    <replace file="${stable.dist.bin}/emf-generate-mappings">
+      <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
+      <replaceFilter token="@MAIN_CLASS@" value="tom.emf.TomMappingFromEcore"/>
+      <replaceFilter token="@CONFIG_FILE@" value=""/>
+      <replaceFilter token="@INCLUDES_DIR@" value=""/>
+    </replace>
+
+    <copy tofile="${stable.dist.bin}/emf-generate-xmi" file="${utils}/emf/emf-script.in"/>
+    <replace file="${stable.dist.bin}/emf-generate-xmi">
+      <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
+      <replaceFilter token="@MAIN_CLASS@" value="tom.emf.EcoreMappingToXMI"/>
+      <replaceFilter token="@CONFIG_FILE@" value=""/>
+      <replaceFilter token="@INCLUDES_DIR@" value=""/>
+    </replace>
+
+    <copy tofile="${stable.dist.bin}/emf-generate-mappings.bat" file="${utils}/emf/emf-script.bat.in"/>
+    <replace file="${stable.dist.bin}/emf-generate-mappings.bat">
+      <replaceFilter token="@MAIN_CLASS@" value="tom.emf.TomMappingFromEcore"/>
+    </replace>
+
+    <copy tofile="${stable.dist.bin}/emf-generate-xmi.bat" file="${utils}/emf/emf-script.bat.in"/>
+    <replace file="${stable.dist.bin}/emf-generate-xmi.bat">
+      <replaceFilter token="@MAIN_CLASS@" value="tom.emf.EcoreMappingToXMI"/>
+    </replace>
+
     <chmod dir="${stable.dist.bin}" perm="ugo+rx">
       <include name="*"/>
       <exclude name="*.bat"/>
@@ -647,10 +698,8 @@
     <!-- generate a single runtime jar -->
     <jar jarfile="${stable.dist}/lib/tom-runtime-full.jar" duplicate="preserve">
       <zipgroupfileset dir="${stable.dist.lib}/runtime" includes="*.jar"/>
-      <zipgroupfileset dir="${stable.dist.lib}/tools" 
-        includes="*.jar"
-        excludes="org.eclipse.*.jar"
-        />
+      <zipgroupfileset dir="${stable.dist.lib}/tools" includes="*.jar" excludes="org.eclipse.*.jar"/>
+      <!--zipgroupfileset dir="${stable.dist.lib}/tools" excludes="META-INF/*" includes="${stable.dist.lib}/tools/org.eclipse.emf.*.jar" /-->
     </jar>
     <jar jarfile="${stable.dist}/lib/tom-compiler-full.jar" duplicate="preserve">
       <zipgroupfileset dir="${stable.dist.lib}/tom" includes="*.jar"/>
@@ -673,6 +722,10 @@
         <exclude name="lib/runtime/*"/>
         <exclude name="lib/tools/*"/>
       </tarfileset>
+      <!-- to only include emf jar files -->
+      <tarfileset dir="${stable.dist}" prefix="tom-${stable.version}" mode="644">
+        <include name="lib/tools/org.eclipse.emf.*.jar"/>
+      </tarfileset>
     </tar>
 
 
@@ -690,57 +743,70 @@
     <copy tofile="${src.dist}/GomAntlrAdaptor.xml" file="${src.adapterconfig}"/>
     <!-- "tom binary" -->
     <copy todir="${src.dist.bin}" file="${utils}/javac-tom"/>
-	<copy todir="${src.dist.bin}" file="${utils}/tom.bat"/>
+
+    <!--copy todir="${src.dist.bin}" file="${utils}/tom.bat"/-->
+    <copy tofile="${src.dist.bin}/tom.bat" file="${utils}/script.bat.in"/>
+    <replace file="${src.dist.bin}/tom.bat">
+      <replaceFilter token="@MAIN_CLASS@" value="tom.engine.Tom"/>
+      <replaceFilter token="@CONFIG_FILE@" value="Tom.xml"/>
+      <replaceFilter token="@BAT_FILE@" value="tom.bat"/>
+    </replace>
+
+    <!--copy todir="${src.dist.bin}" file="${utils}/gom.bat"/-->
+    <copy tofile="${src.dist.bin}/gom.bat" file="${utils}/script.bat.in"/>
+    <replace file="${src.dist.bin}/gom.bat">
+      <replaceFilter token="@MAIN_CLASS@" value="tom.gom.Gom"/>
+      <replaceFilter token="@CONFIG_FILE@" value="Gom.xml"/>
+      <replaceFilter token="@BAT_FILE@" value="gom.bat"/>
+    </replace>
+
     <copy todir="${src.dist.bin}" file="${utils}/javacForTom.bat"/>
     <copy todir="${src.dist.bin}" file="${utils}/javaForTom.bat"/>
-    <copy todir="${src.dist.bin}" file="${utils}/gom.bat"/>
     <copy todir="${src.dist.bin}" file="${utils}/tlappend.bat"/>
-    <copy tofile="${src.dist.bin}/tom" file="${utils}/script.in"/>
-    <copy tofile="${src.dist.bin}/tom.src" file="${utils}/script.in"/>
-    <copy tofile="${src.dist.bin}/emf-generate-mappings" file="${utils}/emf/emf-script.in"/>
-    <copy tofile="${src.dist.bin}/emf-generate-xmi" file="${utils}/emf/emf-script.in"/>
     <copy todir="${src.dist.bin}" file="${utils}/pytom"/>
     <copy todir="${src.dist.bin}" file="${utils}/pindent.py"/>
     <copy todir="${src.dist.bin}" file="${utils}/tom-server/tom-server.py"/>
-    <copy tofile="${src.dist.bin}/tom-server" file="${utils}/tom-server/script.in"/>
     <copy tofile="${src.dist.bin}/tom-client" file="${utils}/tom-server/tom-client.py"/>
+
+    <copy tofile="${src.dist.bin}/tom-server" file="${utils}/tom-server/script.in"/>
     <replace file="${src.dist.bin}/tom-server">
       <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
       <replaceFilter token="@CONFIG_FILE@" value="Tom.xml"/>
       <replaceFilter token="@INCLUDES_DIR@" value="share/tom"/>
     </replace>
+
+    <copy tofile="${src.dist.bin}/tom" file="${utils}/script.in"/>
     <replace file="${src.dist.bin}/tom">
       <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
       <replaceFilter token="@MAIN_CLASS@" value="tom.engine.Tom"/>
       <replaceFilter token="@CONFIG_FILE@" value="Tom.xml"/>
       <replaceFilter token="@INCLUDES_DIR@" value="share/tom"/>
     </replace>
-    <replace file="${src.dist.bin}/tom">
-      <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
-      <replaceFilter token="@MAIN_CLASS@" value="tom.engine.Tom"/>
-      <replaceFilter token="@CONFIG_FILE@" value="Tom.xml"/>
-      <replaceFilter token="@INCLUDES_DIR@" value="share/tom"/>
-    </replace>
+
+    <copy tofile="${src.dist.bin}/tom.src" file="${utils}/script.in"/>
     <replace file="${src.dist.bin}/tom.src">
       <replaceFilter token="@TOM_HOME@" value="TOM_SRC_HOME"/>
       <replaceFilter token="@MAIN_CLASS@" value="tom.engine.Tom"/>
       <replaceFilter token="@CONFIG_FILE@" value="Tom.xml"/>
       <replaceFilter token="@INCLUDES_DIR@" value="share/tom"/>
     </replace>
+
     <copy tofile="${src.dist.bin}/gom" file="${utils}/script.in"/>
-    <copy tofile="${src.dist.bin}/gom.src" file="${utils}/script.in"/>
     <replace file="${src.dist.bin}/gom">
       <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
       <replaceFilter token="@MAIN_CLASS@" value="tom.gom.Gom"/>
       <replaceFilter token="@CONFIG_FILE@" value="Gom.xml"/>
       <replaceFilter token="@INCLUDES_DIR@" value="share/gom"/>
     </replace>
+
+    <copy tofile="${src.dist.bin}/gom.src" file="${utils}/script.in"/>
     <replace file="${src.dist.bin}/gom.src">
       <replaceFilter token="@TOM_HOME@" value="TOM_SRC_HOME"/>
       <replaceFilter token="@MAIN_CLASS@" value="tom.gom.Gom"/>
       <replaceFilter token="@CONFIG_FILE@" value="Gom.xml"/>
       <replaceFilter token="@INCLUDES_DIR@" value="share/gom"/>
     </replace>
+
     <copy tofile="${src.dist.bin}/gomantlradaptor" file="${utils}/script.in"/>
     <replace file="${src.dist.bin}/gomantlradaptor">
       <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
@@ -748,18 +814,40 @@
       <replaceFilter token="@CONFIG_FILE@" value="GomAntlrAdaptor.xml"/>
       <replaceFilter token="@INCLUDES_DIR@" value="share/gom"/>
     </replace>
+
+    <copy tofile="${src.dist.bin}/gomantlradaptor.bat" file="${utils}/script.bat.in"/>
+    <replace file="${src.dist.bin}/gomantlradaptor.bat">
+      <replaceFilter token="@MAIN_CLASS@" value="tom.gom.Gom"/>
+      <replaceFilter token="@CONFIG_FILE@" value="GomAntlrAdaptor.xml"/>
+      <replaceFilter token="@BAT_FILE@" value="gomantlradaptor.bat"/>
+    </replace>
+
+    <copy tofile="${src.dist.bin}/emf-generate-mappings" file="${utils}/emf/emf-script.in"/>
     <replace file="${src.dist.bin}/emf-generate-mappings">
       <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
       <replaceFilter token="@MAIN_CLASS@" value="tom.emf.TomMappingFromEcore"/>
       <replaceFilter token="@CONFIG_FILE@" value=""/>
       <replaceFilter token="@INCLUDES_DIR@" value=""/>
     </replace>
+
+    <copy tofile="${src.dist.bin}/emf-generate-xmi" file="${utils}/emf/emf-script.in"/>
     <replace file="${src.dist.bin}/emf-generate-xmi">
       <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
       <replaceFilter token="@MAIN_CLASS@" value="tom.emf.EcoreMappingToXMI"/>
       <replaceFilter token="@CONFIG_FILE@" value=""/>
       <replaceFilter token="@INCLUDES_DIR@" value=""/>
     </replace>
+
+    <copy tofile="${src.dist.bin}/emf-generate-mappings.bat" file="${utils}/emf/emf-script.bat.in"/>
+    <replace file="${src.dist.bin}/emf-generate-mappings.bat">
+      <replaceFilter token="@MAIN_CLASS@" value="tom.emf.TomMappingFromEcore"/>
+    </replace>
+
+    <copy tofile="${src.dist.bin}/emf-generate-xmi.bat" file="${utils}/emf/emf-script.bat.in"/>
+    <replace file="${src.dist.bin}/emf-generate-xmi.bat">
+      <replaceFilter token="@MAIN_CLASS@" value="tom.emf.EcoreMappingToXMI"/>
+    </replace>
+
     <chmod dir="${src.dist.bin}" perm="ugo+rx">
       <include name="*"/>
       <exclude name="*.bat"/>
@@ -871,10 +959,8 @@
     <!-- generate a single runtime jar -->
     <jar jarfile="${src.dist}/lib/tom-runtime-full.jar" duplicate="preserve">
       <zipgroupfileset dir="${src.dist.lib}/runtime" includes="*.jar"/>
-      <zipgroupfileset dir="${src.dist.lib}/tools" 
-        includes="*.jar"
-        excludes="org.eclipse.*.jar"
-        />
+      <zipgroupfileset dir="${src.dist.lib}/tools" includes="*.jar" excludes="org.eclipse.*.jar"/>
+      <!--zipgroupfileset dir="${src.dist.lib}/tools" excludes="META-INF/*" includes="${src.dist.lib}/tools/org.eclipse.emf.*.jar" /-->
     </jar>
     <jar jarfile="${src.dist}/lib/tom-compiler-full.jar" duplicate="preserve">
       <zipgroupfileset dir="${src.dist.lib}/tom" includes="*.jar"/>
@@ -897,6 +983,10 @@
         <exclude name="lib/tom/*"/>
         <exclude name="lib/runtime/*"/>
         <exclude name="lib/tools/*"/>
+      </tarfileset>
+      <!-- to only include emf jar files -->
+      <tarfileset dir="${src.dist}" prefix="tom-${src.version}" mode="644">
+        <include name="lib/tools/org.eclipse.emf.*.jar"/>
       </tarfileset>
     </tar>
 
@@ -1490,6 +1580,7 @@
     <delete dir="${bundle.temp.dir}"/>
   </target>
 
+  <!-- -->
   <target name="stable.doc" description="Build javadoc for stable">
     <mkdir dir="${stable.doc}"/>
     <javadoc destdir="${stable.doc}"
@@ -1498,7 +1589,15 @@
       <classpath refid="stable.classpath"/>
       <fileset dir="${stable.src}">
         <include name="tom/library/sl/**/*.java"/>
+        <include name="tom/library/bytecode/**/*.java"/>
+        <include name="tom/library/utils/**/*.java"/>
+        <include name="tom/library/xml/**/*.java"/>
+        <include name="tom/library/emf/**/*.java"/>
+        <include name="tom/library/freshgom/**/*.java"/>
+        <include name="tom/platform/**/*.java"/>
       </fileset>
+      <link href="http://tom.loria.fr/adt/" />
+      <link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
     </javadoc>
   </target>
 
@@ -1516,7 +1615,10 @@
         <include name="tom/library/bytecode/**/*.java"/>
         <include name="tom/library/utils/**/*.java"/>
         <include name="tom/library/xml/**/*.java"/>
+        <include name="tom/library/emf/**/*.java"/>
+        <include name="tom/library/freshgom/**/*.java"/>
         <include name="tom/platform/**/*.java"/>
+        <include name="tom/engine/**/*.java"/>
       </fileset>
       <fileset dir="${src.gen}">
         <include name="tom/library/sl/**/*.java"/>
@@ -1525,6 +1627,7 @@
         <include name="tom/library/xml/**/*.java"/>
         <include name="tom/platform/**/*.java"/>
         <exclude name="**/adt/**/*.java"/>
+        <include name="tom/engine/**/*.java"/>
       </fileset>
       <link href="http://tom.loria.fr/adt/" />
       <link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
@@ -1565,7 +1668,7 @@
     </javadoc>
   </target>
 
-  <!-- engine javadoc -->
+  <!-- src engine javadoc -->
   <target name="src.doc.engine"
     description="Build engine javadoc for src"
     depends="src">

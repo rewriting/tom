@@ -12,7 +12,7 @@ public class Menu {
   %include{adt/tnode/TNode.tom}
 
   %typeterm StringBuffer { implement { StringBuffer } }
-  %typeterm Position { implement { Position } }
+  //%typeterm Position { implement { Position } }
   %typeterm HashSet { implement { HashSet } }
 
   private TNode menu;
@@ -133,7 +133,7 @@ public class Menu {
 
   private static boolean hasLink(TNodeList sub) {
     %match(TNodeList sub) {
-      (_*,<link></link>,_*) -> { 
+      concTNode(_*,<link></link>,_*) -> { 
         return true;
       }
     }
@@ -142,7 +142,7 @@ public class Menu {
 
   private static boolean hasSectionTag(TNodeList sub) {
     %match(TNodeList sub) {
-      (_*,<section></section>,_*) -> { 
+      concTNode(_*,<section></section>,_*) -> { 
         return true;
       }
     }
@@ -178,7 +178,7 @@ public class Menu {
     }
 
     visit TNodeList {
-      (_*,<menu>(sub*)</menu>,footer*) -> {
+      concTNode(_*,<menu>(sub*)</menu>,footer*) -> {
         TNode logo = `xml(<p><a href="http://www.loria.fr/"><img src="images/loria.gif" alt="LORIA" /></a></p>);
         TNode list = `xml(<ul>sub*</ul>);
         TNodeList res = `concTNode(logo,list);
@@ -228,7 +228,7 @@ public class Menu {
 
   private static boolean hasAnchor(TNodeList sub) {
     %match(TNodeList sub) {
-      (_*,<anchor></anchor>,_*) -> { 
+      concTNode(_*,<anchor></anchor>,_*) -> { 
         return true;
       }
     }
