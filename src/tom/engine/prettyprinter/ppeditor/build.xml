@@ -7,7 +7,7 @@
 <property name="app.name" value="ppeditor"/>
 <property name="dist.dir" value="dist"/>
 <property name="jar.junit" value="/usr/share/java/junit.jar"/>
-	
+
   <target name="clean">
     <delete dir="${dist.dir}"/>
   </target>
