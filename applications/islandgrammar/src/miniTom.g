@@ -32,12 +32,14 @@ subcode : LEFTBR inside+ RIGHTBR -> ^(SUBCODE inside+);
 
 inside    : B  ;
 statement	:	A+ ;
-comment   : OPENCOM {
-    CommentParser parser = new CommentParser(input);
-    Tree result = parser.oneline();
-    program_return.addChild(result);
-  };
-
+//comment   : OPENCOM {
+//  try {
+//    CommentParser parser = new CommentParser(input);
+//    Tree result = parser.oneline();
+//    program_return.addChild(result);
+//  } catch (Exception e) {e.printStackTrace();}
+//  };
+//
 /* Lexer rules */
 
 LEFTPAR    : '(' ;

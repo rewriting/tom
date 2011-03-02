@@ -19,7 +19,7 @@ oneline : t=text NEWLINE -> ^(ONELINE $t);
 
 regular : t=text CLOSECOM -> ^(REGULAR $t);
 
-text : .* ;
+text : ANYTHING* ;
 
 CLOSECOM    : '*/'  ;
 NEWLINE     : '\n'  ;

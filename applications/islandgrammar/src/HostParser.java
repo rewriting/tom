@@ -47,20 +47,24 @@ public class HostParser {
             CommonTokenStream tokens = new CommonTokenStream(lexer);
             miniTomParser parser0 = new miniTomParser(tokens);
             result = (Tree) parser0.program().getTree();
-          } catch (Exception e) {}
+          } catch (Exception e) {e.printStackTrace();}
           break;
         case 1: break;
         case 2:
-          CommentParser parser2 = new CommentParser(input);
-          result = parser2.oneline();
+          try {
+            CommentLexer lexer = new CommentLexer(input);
+            CommonTokenStream tokens = new CommonTokenStream(lexer);
+            CommentParser parser = new CommentParser(tokens);
+            result = (Tree) parser.oneline().getTree();
+          } catch (Exception e) {e.printStackTrace();}
           break;
         case 3:
           try {
-            CommentParser parser3 = new CommentParser(input);
-            result = parser3.regular();
-          } catch (Exception e) {
-            e.printStackTrace();
-          }
+            CommentLexer lexer = new CommentLexer(input);
+            CommonTokenStream tokens = new CommonTokenStream(lexer);
+            CommentParser parser = new CommentParser(tokens);
+            result = (Tree) parser.regular().getTree();
+          } catch (Exception e) {e.printStackTrace();}
           break;
         default : System.out.println(i + " : this sould not happen");
       }
