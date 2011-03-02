@@ -52,7 +52,7 @@ public class HostParser {
         case 1: break;
         case 2:
           CommentParser parser2 = new CommentParser(input);
-          result = parser2.oneLine();
+          result = parser2.oneline();
           break;
         case 3:
           try {

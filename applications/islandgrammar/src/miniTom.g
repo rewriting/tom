@@ -34,7 +34,7 @@ inside    : B  ;
 statement	:	A+ ;
 comment   : OPENCOM {
     CommentParser parser = new CommentParser(input);
-    Tree result = parser.oneLine();
+    Tree result = parser.oneline();
     program_return.addChild(result);
   };
 

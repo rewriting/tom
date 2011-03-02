@@ -9,11 +9,14 @@
 	<property name="build" value="${islgram}/build"/>
 	<property name="input" value="${islgram}/input"/>
 	<!--property name="gramname" value="miniTom"/-->
-	<property name="gramname" value="miniTom"/>
-	<property name="gramfile" value="${src}/${gramname}.g"/>
+	<property name="tomgram" value="miniTom"/>
+	<property name="comgram" value="Comment"/>
+	<property name="tomfile" value="${src}/${tomgram}.g"/>
+	<property name="comfile" value="${src}/${comgram}.g"/>
 	<target name="grammar">
 		<java classname="org.antlr.Tool" classpath="${withAntlr}">
-			<arg value="${gramfile}"/>
+			<arg value="${tomfile}"/>
+			<arg value="${comfile}"/>
 		</java>
 	</target>
 	<target name="compile" depends="grammar">
@@ -27,8 +30,11 @@
 	</target>
 	<target name="clean">
 		<delete dir="${build}"/>
-		<delete file="${islgram}/${gramname}.tokens"/>
-		<delete file="${src}/${gramname}Parser.java"/>
-		<delete file="${src}/${gramname}Lexer.java"/>
+		<delete file="${islgram}/${tomgram}.tokens"/>
+		<delete file="${islgram}/${comgram}.tokens"/>
+		<delete file="${src}/${tomgram}Parser.java"/>
+		<delete file="${src}/${comgram}Parser.java"/>
+		<delete file="${src}/${tomgram}Lexer.java"/>
+		<delete file="${src}/${comgram}Lexer.java"/>
 	</target>
 </project>
