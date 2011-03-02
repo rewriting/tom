@@ -6,7 +6,8 @@
 <property name="build.dir" value="build"/>
 <property name="app.name" value="ppeditor"/>
 <property name="dist.dir" value="dist"/>
-<property name="jar.junit" value="/usr/share/java/junit.jar"/>
+<!--<property name="jar.junit" value="/usr/share/java/junit.jar"/>-->
+  
 
   <target name="clean">
     <delete dir="${dist.dir}"/>
@@ -31,7 +32,6 @@
         <pathelement path="${java.class.path}" />
         <pathelement location="${build.dir}/ppeditor" />
         <pathelement location="${dist.dir}/${app.name}.jar"/>
-        <pathelement location="${jar.junit}"/>
       </classpath>
     </javac>
   </target> 
@@ -51,7 +51,6 @@
         <pathelement location="${build.dir}"/>
         <pathelement location="${build.dir}/ppeditor/test"/>
         <pathelement path="${java.class.path}" />
-        <pathelement location="${jar.junit}"/>
       </classpath>
       <formatter
         type="brief"

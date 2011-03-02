@@ -100,12 +100,11 @@ public class PPCursor {
     for(int i=0;i<s.length();i++){
       if(s.charAt(i)!='\n'){
         this.lineContent(position.getLine()).insert(position.getColumn(),s.charAt(i));
-/*Debug*/System.out.println(s.charAt(i));
+/*Debug*///System.out.println(s.charAt(i));
         position.add(new PPTextPosition(0,1));
         if(!insertion && this.sizeOfCurrentLine()>position.getColumn()+1){
           this.erase();
         }
-
       }else{
         if(insertion && position.getColumn()<fileBuffer.get(position.getLine()).length()-1){
           fileBuffer.add(position.getLine()+1, new StringBuffer(fileBuffer.get(position.getLine()).subSequence(position.getColumn(), fileBuffer.get(position.getLine()).length()-1)));

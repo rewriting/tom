@@ -46,7 +46,7 @@ import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
 import tom.engine.adt.code.types.*;
 
-import tom.engine.prettyprinter.ppeditor.*;
+import ppeditor.*;
 
 import tom.engine.adt.tominstruction.types.constraintinstructionlist.concConstraintInstruction;
 import tom.engine.adt.tomslot.types.slotlist.concSlot;
@@ -119,6 +119,8 @@ public class PrettyPrinterPlugin extends TomGenericPlugin {
   private void prettyPrinter(Code code) throws IOException {
     System.out.println("PrettyPrinter active");
     System.out.println(code);
+    OutputFormatter theFormatter = new OutputFormatter("testpit/TestOutput");
+    theFormatter.write("Bla", new PPTextPosition(0,0));
 //    printTL(code);
   }
   
