@@ -185,7 +185,7 @@ public class ASTFactory {
     }
     return list;
   }
-
+///////////
   public static TomWithToList makeTomWithToList(List<TomWithTo> argumentList){
     TomWithToList list = `concTomWithTo();
     for(int i=argumentList.size()-1; i>=0 ; i--) {
@@ -193,6 +193,15 @@ public class ASTFactory {
     }
     return list;
   }
+
+  public static DeclarationList makeDeclarationList(List<Declaration> argumentList){
+    DeclarationList list = `concDeclaration();
+    for(int i=argumentList.size()-1; i>=0 ; i--) {
+      list = `concDeclaration(argumentList.get(i),list*);
+    }
+    return list;
+  }
+//////////
 
   public static TomSymbol makeSymbol(String symbolName, TomType resultType, TomTypeList typeList,
       PairNameDeclList pairNameDeclList, List optionList) {

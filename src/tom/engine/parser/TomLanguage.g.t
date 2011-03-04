@@ -736,15 +736,20 @@ strategyVisit [List<TomVisit> list] throws TomException
 transformationConstruct [Option orgTrack] returns [Declaration result] throws TomException
 {
   result = null;
-  List<TomWithTo> withList = new LinkedList<TomWithTo>();
-  TomWithToList astWithToList = `concTomWithTo();
-  TomName orgText = null;
+//  List<TomWithTo> withList = new LinkedList<TomWithTo>();
+//  TomWithToList astWithToList = `concTomWithTo();
+  List<Declaration> declList = new LinkedList<Declaration>();
+  DeclarationList astDeclarationList = `concDeclaration();
   TomTypeList types = `concTomType();
   List<Option> options = new LinkedList<Option>();
   List<TomName> slotNameList = new LinkedList<TomName>();
   List<PairNameDecl> pairNameDeclList = new LinkedList<PairNameDecl>();
   String stringSlotName = null;
   String stringTypeArg = null;
+
+  //tmp, will probably changed into List<BQTerm>
+  List<String> withNodeList = new LinkedList<String>();
+  List<String> toNodeList = new LinkedList<String>();
 
   clearText();
 }
@@ -801,57 +806,136 @@ transformationConstruct [Option orgTrack] returns [Declaration result] throws To
             }
            )*
          )? RPAREN
+        
+         with:WITH LPAREN
+         withtoNodeList[withNodeList]
+         RPAREN 
+         TO LPAREN 
+         withtoNodeList[toNodeList]
+         RPAREN
+         {
+           int line = with.getLine();
+           Iterator<String> withIt = withNodeList.iterator();
+           while(withIt.hasNext()) {
+             Iterator<String> toIt = toNodeList.iterator();
+             String wName = withIt.next();
+             String canonicalSrcName = "";
+             try {
+               canonicalSrcName = java.lang.Class.forName(wName).getCanonicalName();
+             } catch (Exception e) {
+               e.printStackTrace();
+             }
+             while(toIt.hasNext()) {
+               String tName = toIt.next();
+               String resolveStringName = "Resolve"+ wName + tName;
+
+               String innerClassCode = "\n\nprivate static class " + resolveStringName + " extends ###?FQN.ClassImpl?### {\n  public String name;\n  public " + canonicalSrcName + " o;\n  public " + resolveStringName + "(" + canonicalSrcName + " o, String name) {\n    this.name = name;\n    this.o = o;\n  }\n}\n\n";
+
+               TargetLanguage innerClass = `ITL(innerClassCode);
+
+               DeclarationList resolveTTDecl= `concDeclaration(
+                   IsSortDecl(
+                     BQVariable(
+                       concOption(OriginTracking(Name("t"),line,currentFile())),
+                       Name("t"),
+                       Type(concTypeOption(),resolveStringName,EmptyTargetLanguageType())),
+                     Code(" {0} instanceof " + resolveStringName + " "),
+                     OriginTracking(Name("is_sort"),line,currentFile())
+                     )
+                   );
+
+               TomName resolveName = `Name(resolveStringName);
+               Option resolveOrgTrack = `OriginTracking(resolveName,line,currentFile());
+
+               declList.add(`ResolveClassDecl(CodeToInstruction(TargetLanguageToCode(innerClass))));
+               declList.add(`ResolveTypeTermDecl(resolveName,resolveTTDecl,resolveOrgTrack));
+             }
+           }
+///
+
+
+///
+         }
+ 
         )
         LBRACE
-        transformationWithToList[withList] { astWithToList = ASTFactory.makeTomWithToList(withList); }
+//        transformationWithToList[withList] { astWithToList = ASTFactory.makeTomWithToList(withList); }
+        transformationWithToList[declList, name.getText()] { astDeclarationList = ASTFactory.makeDeclarationList(declList); }
         t:RBRACE
        {
          //
          //todo
          //
          updatePosition(t.getLine(),t.getColumn());
-         result = `AbstractDecl(concDeclaration(Transformation(Name(name.getText()),astWithToList,orgTrack),SymbolDecl(Name(name.getText()))));
+         //on voudrait :
+         
+         //result = `TransformationDecl(
+         //            Name(name.getText()),
+         //            concDeclaration(
+         //              ResolveTypeTermDecl(  ),
+         //              ResolveClassDecl(  ),
+         //              ResolveTypeTermDecl(  ),
+         //              ResolveClassDecl(  ),
+         //              Strategy(  ),
+         //              Strategy(  ),
+         //              Strategy(  Resolve  )
+         //            ),
+         //            orgTrack
+         //          )
+
+         //result =
+         //`AbstractDecl(concDeclaration(Transformation(Name(name.getText()),astWithToList,orgTrack),SymbolDecl(Name(name.getText()))));
+         ////non
+
+         //en cours
+         //result = `TransformationDecl(Name(name.getText()),astDeclarationList,orgTrack);
+         //,SymbolDecl(Name(name.getText()));
+         result = `AbstractDecl(astDeclarationList); //en attendant
          selector().pop();
        }
      )
     ;
 
-transformationWithToList [List<TomWithTo> list] throws TomException
-    :   ( transformationWithTo[list] )*
+withtoNodeList [List<String> list] throws TomException
+    : (withtoNode[list] ( COMMA withtoNode[list] )*)
     ;
 
-transformationWithTo [List<TomWithTo> list] throws TomException
+withtoNode [List<String> list] throws TomException
+    : t:ALL_ID { list.add(t.getText()); }
+    ;
+
+transformationWithToList [List<Declaration> declList, String toname] throws TomException
+    :   ( transformationWithTo[declList, toname] )*
+    ;
+
+transformationWithTo [List<Declaration> declList, String toname] throws TomException
 {
-  TomWithTerm wTerm = null;
+//  TomWithTerm wTerm = null;
   List argsList = new LinkedList(); //args
   List<Code> toInstructionList = new LinkedList<Code>();
   List<Option> argsOptionList = new LinkedList<Option>();
   List<Code> blockList = new LinkedList<Code>(); //for the withToInstruction ('To' part)
-  BQTerm rhsTerm = null; //id
+  BQTerm rhsTerm; //id
   clearText();
   TomTerm lhs;
+
+  TomName sname;
+  List<TomVisit> visitList = new LinkedList<TomVisit>();
+  TomVisitList astVisitList = `concTomVisit();
+  BQTerm extendsTerm;
+  
+  List<ConstraintInstruction> constraintInstructionList = new LinkedList<ConstraintInstruction>();
+  TomType vType = null;
+  clearText();
+  
+  TomName tomTermName = `EmptyName();
+  int lhsLine = 0;
+  Constraint constraint;
+  BQTerm subject;
 }
     :
     (
-     (
-      (ALL_ID AT) => name:ALL_ID AT 
-        /*{
-          text.append(name.getText());
-          text.append('@');
-          annotatedName = `Name(name.getText());
-          line = name.getLine();
-          }*/
-     )?
-     term:ALL_ID /*args[argsList,argsOptionList]*/ /* will be extended */  ARROW
-     {
-      // update for new target block
-      wTerm = `WithTerm(Type(concTypeOption(),term.getText(),EmptyTargetLanguageType()),
-                         concOption());
-                         /*ASTFactory.makeSlotList(argsList),*/
-     }
-
-     //here is the 'To' of 'WithTo'
-     // ( withToInstruction[toInstructionList] )*
+           lhs = annotatedTerm[true] ARROW
      (
       (
        t:LBRACE
@@ -876,10 +960,88 @@ transformationWithTo [List<TomWithTo> list] throws TomException
      )
     )
     {
-      List<Option> withOptionList = new LinkedList<Option>();
-      withOptionList.add(`OriginTracking(Name(term.getText()),term.getLine(),currentFile()));
-      OptionList options = ASTFactory.makeOptionList(withOptionList);
-      list.add(`WithToInstruction(wTerm,ASTFactory.makeInstructionList(toInstructionList),options));
+      //List<Option> withOptionList = new LinkedList<Option>();
+      //withOptionList.add(`OriginTracking(Name(term.getText()),term.getLine(),currentFile()));
+      //OptionList options = ASTFactory.makeOptionList(withOptionList);
+      //list.add(`WithToInstruction(wTerm,ASTFactory.makeInstructionList(toInstructionList),options));
+////
+    //TODO
+    %match(lhs) {
+      Variable(concOption(_*,OriginTracking[Line=line],_*),n,_,_) -> {
+        tomTermName = `n;
+        lhsLine = `line;
+      }
+    }
+    List<Option> optionList = new LinkedList<Option>();
+    //optionList.add(`OriginTracking(Name(toname),term.getLine(),currentFile()));
+    optionList.add(`OriginTracking(tomTermName,lhsLine,currentFile()));
+    OptionList options = ASTFactory.makeOptionList(optionList);
+    
+    vType = `Type(concTypeOption(),
+                  tomTermName.getString(),
+                  EmptyTargetLanguageType());
+
+/*    visitInstruction[constraintInstructionList,vType]*/ 
+    subject = `BQVariable(concOption(),
+                                 Name("tom__arg"),
+                                 SymbolTable.TYPE_UNKNOWN);
+    // why And(True, constraint) ?
+    constraint = `AndConstraint(TrueConstraint(),
+                                MatchConstraint(lhs,subject,vType));
+
+    constraintInstructionList.add(`ConstraintInstruction(
+                                     constraint,
+                                     RawAction(If(
+                                         TrueTL(),
+                                         AbstractBlock(
+                                           ASTFactory.makeInstructionList(blockList)
+                                           ),
+                                         Nop())),
+                                     options));
+    //options will change when conjunction will be added
+
+    visitList.add(`VisitTerm(vType,ASTFactory.makeConstraintInstructionList(constraintInstructionList),options));
+    
+    sname = `Name(tomTermName.getString()+"To"+toname);
+    // le même pour tous
+    //BQTerm extendsTerm = `BQAppl(concOption(`OriginTracking(tomTermName,term.getLine(),currentFile())),Name("Identity"),concBQTerm());
+    extendsTerm = `BQAppl(concOption(OriginTracking(tomTermName,lhsLine,currentFile())),Name("Identity"),concBQTerm());
+    astVisitList = ASTFactory.makeTomVisitList(visitList);
+    Option orgTrack = `OriginTracking(Name("Strategy"), lhsLine, currentFile());
+
+
+////    String resolveStringName = "Resolve"+ tomTermName.getString() + "???";
+////    TomName resolveName = `Name(resolveStringName);
+////    //temporaire, car java dépendant
+////    //après il faudra trouver une construction générique à traiter dans
+////    //le backend
+////    String canonicalSrcName = "";
+////    try {
+////      canonicalSrcName = java.lang.Class.forName(tomTermName.getString()).getCanonicalName();
+////    } catch (Exception e) {
+////      e.printStackTrace();
+////    }
+////    String innerClassCode = "\n\nprivate static class " + resolveStringName + " extends ###?FQN.ClassImpl?### {\n  public String name;\n  public " + canonicalSrcName + " o;\n  public " + resolveStringName + "(" + canonicalSrcName + " o, String name) {\n    this.name = name;\n    this.o = o;\n  }\n}\n\n";
+////
+////    TargetLanguage innerClass = `ITL(innerClassCode);
+////
+////    DeclarationList resolveTTDecl= `concDeclaration(
+////        IsSortDecl(
+////          BQVariable(
+////            concOption(OriginTracking(Name("t"),lhsLine,currentFile())),
+////            Name("t"),
+////            Type(concTypeOption(),resolveStringName,EmptyTargetLanguageType())),
+////          Code(" {0} instanceof " + resolveStringName + " "),
+////          OriginTracking(Name("is_sort"),lhsLine,currentFile())
+////          )
+////        );
+////
+////    Option resolveOrgTrack = `OriginTracking(resolveName,lhsLine,currentFile());
+////
+////    declList.add(`ResolveClassDecl(CodeToInstruction(TargetLanguageToCode(innerClass))));
+////    declList.add(`ResolveTypeTermDecl(resolveName,resolveTTDecl,resolveOrgTrack));
+    declList.add(`Strategy(sname,extendsTerm,astVisitList,orgTrack));
+
     }
     ;
 
@@ -1880,6 +2042,7 @@ operator returns [Declaration result] throws TomException
 	)
         {
           TomSymbol astSymbol = ASTFactory.makeSymbol(name.getText(), `Type(concTypeOption(),type.getText(),EmptyTargetLanguageType()), types, ASTFactory.makePairNameDeclList(pairNameDeclList), options);
+//          System.out.println("(DEBUG) parser - astSymbol = " + astSymbol);
           putSymbol(name.getText(),astSymbol);
           result = `SymbolDecl(astName);
           updatePosition(t.getLine(),t.getColumn());
@@ -2021,6 +2184,7 @@ typeTerm returns [Declaration result] throws TomException
           TomType astType = `Type(typeoptionList,currentTypeName,TLType(implement.getCode()));
           putType(currentTypeName, astType);
           result = `TypeTermDecl(Name(currentTypeName),declarationList,ot);
+//          System.out.println("(DEBUG) parser - TypeTermDecl =\n" + result);
           updatePosition(t.getLine(),t.getColumn());
           selector().pop();
         }
@@ -2528,6 +2692,8 @@ tokens {
     GET_ELEMENT = "get_element";
     GET_SIZE = "get_size";
     WHEN = "when";
+    WITH = "with";
+    TO = "to";
 }
 
 LBRACE      :   '{' ;
