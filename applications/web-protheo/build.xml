@@ -67,12 +67,10 @@
     <property name="tom-library.jar" refid="tom-library.path"/>
     <!-- Put everything in ${build} into the web-protheo.jar file -->
     <jar jarfile="${web-protheo.dist}/web-protheo.jar">
-      <fileset dir="${web-protheo.build}">
-        <include name="**/*.class"/>
-      </fileset> 
-      <zipfileset src="${tom.home}/lib/shared-objects.jar"/>
-      <zipfileset src="${tom.home}/lib/aterm.jar" includes="aterm/**/*"/>
-      <zipfileset src="${tom.home}/lib/jjtraveler.jar" includes="jjtraveler/**/Visit*"/>
+      <fileset dir="${web-protheo.build}" includes="**/*.class"/>
+      <zipfileset src="${tom.home}/lib/runtime/shared-objects.jar"/>
+      <zipfileset src="${tom.home}/lib/runtime/aterm.jar" includes="aterm/**/*"/>
+      <zipfileset src="${tom.home}/lib/runtime/jjtraveler.jar" includes="jjtraveler/**/Visit*"/>
       <zipfileset src="${tom-library.jar}" includes="tom/library/xml/*"/>
       <zipfileset src="${tom-library.jar}" includes="tom/library/sl/**/*"/>  
       <zipfileset src="${tnode.jar}"/>

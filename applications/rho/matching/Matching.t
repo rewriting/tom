@@ -88,7 +88,7 @@ public class Matching {
 		String result="";
 
 		%match(Systems s) {
-			(match(a,b),Y*)->{
+			and(match(a,b),Y*)->{
 				result+=prettyPrinter(`a)+":="+prettyPrinter(`b)+",";
 				result+=`prettyPrinter(Y);
 			}
@@ -110,15 +110,15 @@ public class Matching {
 		Collection c = new HashSet();
 		%match(Systems s) {
 			//Trivial
-			(X*,match(a@constant[],a),Y*) -> {
+			and(X*,match(a@constant[],a),Y*) -> {
 				c.add(`and(X*,Y*));}
-			(X*,match(x@localVar[],x),Y*) -> {
+			and(X*,match(x@localVar[],x),Y*) -> {
 				c.add(`and(X*,Y*));}
 			//Abs
-			(X*,match(abs(x@localVar[],A),abs(x@localVar[],B)),Y*) -> {
+			and(X*,match(abs(x@localVar[],A),abs(x@localVar[],B)),Y*) -> {
 				c.add(`and(X*,match(A,B),Y*));}
 			//Subst
-			l:(X*,match(Z@matchVar[],A),Y*) -> {
+			l:and(X*,match(Z@matchVar[],A),Y*) -> {
 //				System.out.println("subst with X: "+X+"and Y: "+Y);
 				boolean b1=belongsTo(`Z,`and(X*,Y*));
 //				System.out.println("b1="+b1);
@@ -140,15 +140,15 @@ public class Matching {
 				}
 			}
 			//Decompose
-			(X*,match(app(A1,B1),app(A2,B2)),Y*) -> {
+			and(X*,match(app(A1,B1),app(A2,B2)),Y*) -> {
 				c.add(`and(X*,match(A1,A2),match(B1,B2),Y*));}
 			//Proj
-			(X*,match(app(A1,B1),A2),Y*) -> {
+			and(X*,match(app(A1,B1),A2),Y*) -> {
 				//			System.out.println("Proj");
 				c.add(`and(X*,match(A1,abs(localVar("_x"+(++comptVariable)),A2)),Y*));
 			}
 			//Beta-exp
-				(X*,match(app(A1,B1),C),Y*) -> {
+				and(X*,match(app(A1,B1),C),Y*) -> {
 //				System.out.println("Beta-exp");
 					//1. Collection of all the subterms of C
 					Collection collSubTerm=getAllSubterm(`C);
@@ -189,12 +189,12 @@ public class Matching {
 	
 	public boolean testSolvedForm(Systems s){
 		%match(Systems s){
-			(X*,match(matchVar[],A),Y*)->{
+			and(X*,match(matchVar[],A),Y*)->{
 				boolean b1=`testSolvedForm(X*);
 				boolean b2=`testSolvedForm(Y*);
 				return b1&&doesNotContainFreeLocalVar(`A)&&b2;
 			}
-			(X*,match[],Y*)->{
+			and(X*,match[],Y*)->{
 				return false;
 			}
 		}
@@ -209,8 +209,8 @@ public class Matching {
 	}
 	public boolean belongsTo(LamTerm var,Systems s){
 		%match(Systems s){
-			() -> {return false;}
-			(X*,match(A,B),Y*)->{
+			and() -> {return false;}
+			and(X*,match(A,B),Y*)->{
 				boolean resultX=`belongsTo(var,X*);
 				boolean resultY=`belongsTo(var,Y*);
 				return resultX ||belongsTo(var,`A)||resultY;
@@ -250,7 +250,7 @@ public class Matching {
 	}
 	public Collection freeLocalVarAux(Systems s,Collection c){
 		%match(Systems s){
-			(X*,match(A,B),Y*) -> {
+			and(X*,match(A,B),Y*) -> {
 				freeLocalVarAux(`X,c);
 				freeLocalVarAux(`Y,c);
 				freeLocalVarAux(`A,c);
@@ -277,7 +277,7 @@ public class Matching {
 	}
 	public Systems substitute(LamTerm var, LamTerm subject, Systems s){
 		%match(Systems s){
-			(X*,match(A,B),Y*) -> {
+			and(X*,match(A,B),Y*) -> {
 //				System.out.println("premiere subst");
 				Systems newX=`substitute(var,subject,X*);
 //				System.out.println("deuxieme subst");
