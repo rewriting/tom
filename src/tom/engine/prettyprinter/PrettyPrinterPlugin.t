@@ -93,6 +93,7 @@ public class PrettyPrinterPlugin extends TomGenericPlugin {
   }
 
     static OutputFormatter theFormatter = new OutputFormatter("TestOutput.txt");
+
   public void run(Map informationTracker) {
     long startChrono = System.currentTimeMillis();
     boolean prettyTOM = getOptionBooleanValue("prettyTOM");    

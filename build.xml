@@ -282,15 +282,6 @@
       <exclude name="tom/gom/**/*.g.t"/>
       <exclude name="tom/engine/parser/*.g.t"/>
       <exclude name="tom/islander/**/*.g.t"/>
-      <exclude name="tom/engine/prettyprinter/PrettyPrinterPlugin.t"/>
-    </tomcompile>
-
-    <!-- Specific stuff for prettyprinter generation -->
-    <tomcompile fork="no"
-      srcdir="${src.src}"
-      outputfile="${gen.destination}/tom/engine/prettyprinter/PrettyPrinterPlugin.t"
-      import="${src.gen}/tom/engine/prettyprinter/ppeditor/dist/ppeditor.jar">
-      <include name="tom/engine/adt"/>
     </tomcompile>
 
     <!-- Specific stuff for parser generation -->
