@@ -23,7 +23,7 @@ public class OutputFormatter{
 
   public StringBuffer dump(){
 
-    return theCursor.dump("/Users/pierrehuneau/Desktop/"+this.fileName);
+    return theCursor.dump("./"+this.fileName);
   }
 
 } 
