@@ -656,6 +656,7 @@
         includes="*.jar"
         excludes="org.eclipse.*.jar"
         />
+      <zipgroupfileset dir="${src.src}/tom/engine/prettyprinter/ppeditor/dist" includes="*.jar"/>
     </jar>
     <jar jarfile="${stable.dist}/lib/tom-compiler-full.jar" duplicate="preserve">
       <zipgroupfileset dir="${stable.dist.lib}/tom" includes="*.jar"/>
@@ -874,6 +875,7 @@
         includes="*.jar"
         excludes="org.eclipse.*.jar"
         />
+      <zipgroupfileset dir="${src.src}/tom/engine/prettyprinter/ppeditor/dist" includes="*.jar"/>
     </jar>
     <jar jarfile="${src.dist}/lib/tom-compiler-full.jar" duplicate="preserve">
       <zipgroupfileset dir="${src.dist.lib}/tom" includes="*.jar"/>

@@ -92,6 +92,7 @@ public class PrettyPrinterPlugin extends TomGenericPlugin {
     super("PrettyPrinterPlugin");
   }
 
+    static OutputFormatter theFormatter = new OutputFormatter("TestOutput.txt");
   public void run(Map informationTracker) {
     long startChrono = System.currentTimeMillis();
     boolean prettyTOM = getOptionBooleanValue("prettyTOM");    
@@ -118,14 +119,15 @@ public class PrettyPrinterPlugin extends TomGenericPlugin {
 
   private void prettyPrinter(Code code) throws IOException {
     System.out.println("PrettyPrinter active");
-    System.out.println(code);
-    OutputFormatter theFormatter = new OutputFormatter("testpit/TestOutput");
-    theFormatter.write("Bla", new PPTextPosition(0,0));
-//    printTL(code);
+//    System.out.println(code);
+    theFormatter.write("Bla");
+    printTL(code);
+    theFormatter.dump();
   }
   
 
-/*  public static void printTL(Code code) {
+  public static void printTL(Code code) {
+
     try {
       `TopDown(Repeat(stratPrintTL())).visit(code);
       //System.out.println(code);
@@ -137,14 +139,14 @@ public class PrettyPrinterPlugin extends TomGenericPlugin {
   %strategy stratPrintTL() extends Fail(){
     visit TargetLanguage {
       TL[Code=x, Start=TextPosition[Line=startLine, Column=startColumn], End=TextPosition[Line=endLine, Column=endColumn]] -> {
-        aPPOutputFormatter.put(`x, new PPTextPosition(`startLine, `startColumn), new PPTextPosition(`endLine, `endColumn));
+        theFormatter.write(`x);
       }
     }
     visit BQTerm {
-      BuildConstant[AstName=Name(name)] -> {aPPOutputFormatter.put(`name);}
-      BQAppl[AstName=Name(name)] -> {aPPOutputFormatter.put(`name);}
-      BQVariableStar[AstName=Name(name)] -> {aPPOutputFormatter.put(`name);}
-      BuildTerm[AstName=Name(name), Args=concBQTerm()] -> {aPPOutputFormatter.put(`name+"()");}
+      BuildConstant[AstName=Name(name)] -> {theFormatter.write(`name);}
+      BQAppl[AstName=Name(name)] -> {theFormatter.write(`name);}
+      BQVariableStar[AstName=Name(name)] -> {theFormatter.write(`name);}
+      BuildTerm[AstName=Name(name), Args=concBQTerm()] -> {theFormatter.write(`name+"()");}
     }
-  }*/
+  }
 }

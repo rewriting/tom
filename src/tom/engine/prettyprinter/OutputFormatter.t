@@ -1,11 +1,12 @@
 package tom.engine.prettyprinter;
 
 import ppeditor.*;
+import java.lang.StringBuffer;
 
 public class OutputFormatter{
 
-  static String fileName;
-  static PPCursor theCursor;
+  private String fileName;
+  private PPCursor theCursor;
   
   public OutputFormatter(String n) {
 
@@ -14,15 +15,15 @@ public class OutputFormatter{
     this.theCursor.setInsertion(false);
   }
 
-  public void write(String text, PPTextPosition position) {
+  public void write(String text) { // il y aura un autre argumenti
 
-    theCursor.setPosition(position);
+//    theCursor.setPosition(position);
     theCursor.write(text);
   }
 
   public StringBuffer dump(){
 
-    return theCursor.dump("$TOM_HOME"+this.fileName);
+    return theCursor.dump("/Users/pierrehuneau/Desktop/"+this.fileName);
   }
 
 } 

@@ -6,7 +6,7 @@
 <property name="build.dir" value="build"/>
 <property name="app.name" value="ppeditor"/>
 <property name="dist.dir" value="dist"/>
-<!--<property name="jar.junit" value="/usr/share/java/junit.jar"/>-->
+<property name="jar.junit" value="/usr/share/java/junit.jar"/>
   
 
   <target name="clean">
@@ -32,6 +32,7 @@
         <pathelement path="${java.class.path}" />
         <pathelement location="${build.dir}/ppeditor" />
         <pathelement location="${dist.dir}/${app.name}.jar"/>
+        <pathelement location="${jar.junit}"/>
       </classpath>
     </javac>
   </target> 
@@ -50,6 +51,7 @@
         <pathelement location="${build.dir}/ppeditor" />
         <pathelement location="${build.dir}"/>
         <pathelement location="${build.dir}/ppeditor/test"/>
+        <pathelement location="${jar.junit}"/>
         <pathelement path="${java.class.path}" />
       </classpath>
       <formatter
@@ -64,6 +66,7 @@
     <java classname="ppeditor.Main">
       <classpath>
         <pathelement location="${build.dir}"/>
+        <pathelement location="${jar.junit}"/>
         <pathelement path="${java.class.path}" />
       </classpath>
     </java>
