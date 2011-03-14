@@ -381,8 +381,8 @@ static class tFloat {
   public static void main(String[] args) {
     natList subject = `nList(zero());
     %match {
-      /* Weird code
-       (zero() < x) && ( x << suc(zero)|| x << suc(suc(zero()))) -> {
+       /* Weird code
+        (zero() != x) && (x << suc(zero())|| x << suc(suc(zero()))) -> {
          System.out.println("x = " +`x); 
        } 
        */

@@ -153,9 +153,9 @@ public class ProblemTwoSorts{
     //B x = `b();
     
     %match {
-      //x << y && (y == b()) && (g(x) == g(b())) -> { System.out.println("Test!"); }
       g[num2=arg] << TomB term -> { System.out.println("(" + `arg.getOp() + ")"); }
       f[num1=arg] << TomA term -> { System.out.println("(" + `arg.getOp() + ")"); }
+      x << y && (y == b()) && (g(x) == g(b())) -> { System.out.println("Test!"); }
     }
 
     A n = `f(a());

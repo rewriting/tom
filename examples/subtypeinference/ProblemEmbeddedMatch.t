@@ -28,7 +28,7 @@
  */
 package subtypeinference;
 
-public class ProblemComposedMatch{
+public class ProblemEmbeddedMatch{
   /*
   %gom {
     module Example
@@ -379,21 +379,17 @@ static class tFloat {
 
   //---------------------------------
   public static void main(String[] args) {
+    tFloat subject1 = `div(zero(),uminus(zero()));
+    tNat subject2 = `zero();
+
     %match {
-      div(x,y) << div(zero(),uminus(zero()))
-        && (x != y) -> { System.out.println("#1: x = " +`x); }
-
-      div(x,y) << div(uminus(zero()),zero())
-        && suc(zero()) << suc(x) -> { 
-          System.out.println("#2: x = " +`x + ", y = " + `y);
-        } 
-
-      /*
-      suc(zero()) << suc(x)
-        && div(x,y) << div(uminus(zero()),zero()) -> {
-          System.out.println("#3: x = " +`x + ", y = " + `y);
+      div(x,y) << subject1 -> { 
+        /*
+        %match {
+          x << subject2 -> { System.out.println("#1: x = " +`x); }
         }
         */
+      }
     }
   }
 }
