@@ -748,7 +748,7 @@ transformationConstruct [Option orgTrack] returns [Declaration result] throws To
   List<PairNameDecl> pairNameDeclList = new LinkedList<PairNameDecl>();
   String stringSlotName = null;
   String stringTypeArg = null;
-
+  TargetLanguage implement;
   //tmp, will probably changed into List<BQTerm>
   List<String> withNodeList = new LinkedList<String>();
   List<String> toNodeList = new LinkedList<String>();
@@ -843,7 +843,8 @@ transformationConstruct [Option orgTrack] returns [Declaration result] throws To
                //same remark : in the future, we'll have to modify the Code()
                //block since it is java dependant
                //this Code() block should be generated in the backend
-               DeclarationList resolveTTDecl= `concDeclaration(
+               
+ /*              DeclarationList resolveTTDecl= `concDeclaration(
                    IsSortDecl(
                      BQVariable(
                        concOption(OriginTracking(Name("t"),line,currentFile())),
@@ -852,19 +853,39 @@ transformationConstruct [Option orgTrack] returns [Declaration result] throws To
                      Code(" {0} instanceof " + resolveStringName + " "),
                      OriginTracking(Name("is_sort"),line,currentFile())
                      )
+                   );*/
+                
+               DeclarationList resolveTTDecl= `concDeclaration(
+                   ResolveIsSortDecl(
+                     BQVariable(
+                       concOption(OriginTracking(Name("t"),line,currentFile())),
+                       Name("t"),
+                       Type(concTypeOption(),resolveStringName,EmptyTargetLanguageType())),
+                     resolveStringName,
+                     OriginTracking(Name("is_sort"),line,currentFile())
+                     )
                    );
 
+/*
+
+   Here, we have to add the %typeterm implement in the table. How to build it ?
+   TargetLanguage implement = null;
+   TomType astType =
+   `Type(typeoptionList,currentTypeName,TLType(implement.getCode()));
+   putType(currentTypeName, astType);
+
+*/
                TomName resolveName = `Name(resolveStringName);
                Option resolveOrgTrack = `OriginTracking(resolveName,line,currentFile());
 
                // create the %op that corresponds to the inner class
                // has to be changed: it is Java dependant
                TomType wType = `Type(concTypeOption(),wName,EmptyTargetLanguageType());
-               TomType sType = `Type(concTypeOption(),"String",EmptyTargetLanguageType());
+               TomType sType = `Type(concTypeOption(),"String",EmptyTargetLanguageType()); //  /!\ Java dependant
                types = `concTomType(wType,sType);
                
                TomType tType = `Type(concTypeOption(),tName,EmptyTargetLanguageType());
-
+/*
                PairNameDecl objectPNDecl = `PairNameDecl(
                                               Name("o"),
                                               GetSlotDecl(
@@ -893,21 +914,62 @@ transformationConstruct [Option orgTrack] returns [Declaration result] throws To
                                                 OriginTracking(Name("get_slot"),line,currentFile())
                                                 )
                                               );
+*/
+
+               PairNameDecl objectPNDecl = `PairNameDecl(
+                                              Name("o"),
+                                              ResolveGetSlotDecl(
+                                                Name(resolveStringName),
+                                                Name("o"), 
+                                                BQVariable(
+                                                  concOption(OriginTracking(Name("t"),line,currentFile())),
+                                                  Name("t"),
+                                                  tType 
+                                                  ),
+                                                OriginTracking(Name("get_slot"),line,currentFile())
+                                                )
+                                              );
+               PairNameDecl namePNDecl = `PairNameDecl(
+                                              Name("name"),
+                                              ResolveGetSlotDecl(
+                                                Name(resolveStringName),
+                                                Name("name"), 
+                                                BQVariable(
+                                                  concOption(OriginTracking(Name("t"),line,currentFile())),
+                                                  Name("t"),
+                                                  tType 
+                                                  ),
+                                                OriginTracking(Name("get_slot"),line,currentFile())
+                                                )
+                                              );
+
+
+
+
+
                pairNameDeclList.add(objectPNDecl);
                pairNameDeclList.add(namePNDecl);
 
                // has to be changed: it is Java dependant
+/*
                Declaration isfsymDecl = `IsFsymDecl(
                    resolveName,
                    BQVariable(concOption(OriginTracking(Name("t"),line,currentFile())),Name("t"),tType),
                    Code(" {0} instanceof " + resolveStringName + " "),
                    OriginTracking(Name("is_fsym"),line,currentFile())
                    );
-              
+*/
+               Declaration isfsymDecl = `ResolveIsFsymDecl(
+                   resolveName,
+                   BQVariable(concOption(OriginTracking(Name("t"),line,currentFile())),Name("t"),tType),
+                   OriginTracking(Name("is_fsym"),line,currentFile())
+                   );
+             
                BQTermList makeArgs = `concBQTerm(
                    BQVariable(concOption(OriginTracking(Name("o"),line,currentFile())),Name("o"),wType),
                    BQVariable(concOption(OriginTracking(Name("name"),line,currentFile())),Name("name"),sType)
                    );
+/*
                Declaration makeDecl = `MakeDecl(
                    resolveName,
                    tType,
@@ -915,11 +977,19 @@ transformationConstruct [Option orgTrack] returns [Declaration result] throws To
                    ExpressionToInstruction(Code(" new " + resolveStringName + "(o,name) ")),
                    OriginTracking(Name("make"),line,currentFile())
                    );
-//System.out.println("=== (DEBUG) === - TomLanguage - MakeDecl =\n" + makeDecl + "\n");
+*/
+               Declaration makeDecl = `ResolveMakeDecl(
+                   resolveName,
+                   tType,
+                   makeArgs,
+                   OriginTracking(Name("make"),line,currentFile())
+                   );
+
+
                symbolOptions.add(orgTrack);
                symbolOptions.add(`DeclarationToOption(makeDecl));
                symbolOptions.add(`DeclarationToOption(isfsymDecl));
-//System.out.println("=#(DEBUG)#= symbolOptions = " + symbolOptions);
+               
                TomSymbol astSymbol = ASTFactory.makeSymbol(
                    resolveStringName,
                    tType,
@@ -927,15 +997,10 @@ transformationConstruct [Option orgTrack] returns [Declaration result] throws To
                    ASTFactory.makePairNameDeclList(pairNameDeclList),
                    symbolOptions);
 
-               //subDeclList.add(`ResolveClassDecl(CodeToInstruction(TargetLanguageToCode(innerClass))));//inner
-               //subDeclList.add(`ResolveTypeTermDecl(resolveName,resolveTTDecl,resolveOrgTrack));//%typeterm
-               declList.add(`ResolveClassDecl(CodeToInstruction(TargetLanguageToCode(innerClass))));//inner
+               String extendsName = "###?FQN.ClassImpl?###";
+///               declList.add(`ResolveClassDeclInit(CodeToInstruction(TargetLanguageToCode(innerClass)))); //inner
+               declList.add(`ResolveClassDecl(wName, tName, extendsName)); //inner
                declList.add(`ResolveTypeTermDecl(resolveName,resolveTTDecl,resolveOrgTrack));//%typeterm
-               //putSymbol(resolveStringName,astSymbol);
-               //subDeclList.add(`SymbolDecl(resolveName)); //%op
-
-               //declList.add(`AbstractDecl(ASTFactory.makeDeclarationList(subDeclList)));
-               //subDeclList.clear();
              }
            }
          }
@@ -970,7 +1035,6 @@ transformationConstruct [Option orgTrack] returns [Declaration result] throws To
 
          //temporary method
          result = `AbstractDecl(astDeclarationList); //en attendant
-//System.out.println("=== (DEBUG2) === - TomLanguage - astDeclarationList =\n" + astDeclarationList + "\n");
          selector().pop();
        }
      )
@@ -1034,12 +1098,6 @@ transformationWithTo [List<Declaration> declList, String toname] throws TomExcep
      )
     )
     {
-      //old code, for old version. totally DEPRECATED
-      //List<Option> withOptionList = new LinkedList<Option>();
-      //withOptionList.add(`OriginTracking(Name(term.getText()),term.getLine(),currentFile()));
-      //OptionList options = ASTFactory.makeOptionList(withOptionList);
-      //list.add(`WithToInstruction(wTerm,ASTFactory.makeInstructionList(toInstructionList),options));
-////
     //TODO
     %match(lhs) {
       Variable(concOption(_*,OriginTracking[Line=line],_*),n,_,_) -> {
@@ -1083,39 +1141,6 @@ transformationWithTo [List<Declaration> declList, String toname] throws TomExcep
     astVisitList = ASTFactory.makeTomVisitList(visitList);
     Option orgTrack = `OriginTracking(Name("Strategy"), lhsLine, currentFile());
 
-//// This block Code should disappear: it has been moved into an other rule
-//// It remains here for the moment
-////
-////    String resolveStringName = "Resolve"+ tomTermName.getString() + "???";
-////    TomName resolveName = `Name(resolveStringName);
-////    //temporaire, car java dépendant
-////    //après il faudra trouver une construction générique à traiter dans
-////    //le backend
-////    String canonicalSrcName = "";
-////    try {
-////      canonicalSrcName = java.lang.Class.forName(tomTermName.getString()).getCanonicalName();
-////    } catch (Exception e) {
-////      e.printStackTrace();
-////    }
-////    String innerClassCode = "\n\nprivate static class " + resolveStringName + " extends ###?FQN.ClassImpl?### {\n  public String name;\n  public " + canonicalSrcName + " o;\n  public " + resolveStringName + "(" + canonicalSrcName + " o, String name) {\n    this.name = name;\n    this.o = o;\n  }\n}\n\n";
-////
-////    TargetLanguage innerClass = `ITL(innerClassCode);
-////
-////    DeclarationList resolveTTDecl= `concDeclaration(
-////        IsSortDecl(
-////          BQVariable(
-////            concOption(OriginTracking(Name("t"),lhsLine,currentFile())),
-////            Name("t"),
-////            Type(concTypeOption(),resolveStringName,EmptyTargetLanguageType())),
-////          Code(" {0} instanceof " + resolveStringName + " "),
-////          OriginTracking(Name("is_sort"),lhsLine,currentFile())
-////          )
-////        );
-////
-////    Option resolveOrgTrack = `OriginTracking(resolveName,lhsLine,currentFile());
-////
-////    declList.add(`ResolveClassDecl(CodeToInstruction(TargetLanguageToCode(innerClass))));
-////    declList.add(`ResolveTypeTermDecl(resolveName,resolveTTDecl,resolveOrgTrack));
     sname = `Name(tomTermName.getString()+"To"+toname);
     declList.add(`Strategy(sname,extendsTerm,astVisitList,orgTrack));
     //declList.add(`AbstractDecl(concDeclaration(Strategy(sname,extendsTerm,astVisitList,orgTrack), SymbolDecl(sname))));

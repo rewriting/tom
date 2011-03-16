@@ -1,3 +1,4 @@
+
 /*
  *
  * TOM - To One Matching Compiler
@@ -521,11 +522,12 @@ matchblock:{
                  break matchblock;
                }
                // for a symbol
-               MakeDecl[Args=makeArgsList, OrgTrack=og@OriginTracking[FileName=fileName,Line=line]] -> {
+               debug@MakeDecl[Args=makeArgsList, OrgTrack=og@OriginTracking[FileName=fileName,Line=line]] -> {
                  if(!foundOpMake) {
                    foundOpMake = true;
                    `verifyMakeDeclArgs(makeArgsList, domainLength, og, symbolType);
                  } else {
+      System.out.println("=== (DEBUG) === SyntaxChecker - " + `debug);
                    TomMessage.error(getLogger(), `fileName, `line, 
                        TomMessage.macroFunctionRepeated,
                        SyntaxCheckerPlugin.MAKE);

@@ -367,6 +367,33 @@ public abstract class GenericGenerator extends AbstractGenerator {
 
   }
 
+
+  //TODO
+  protected void buildResolveIsFsymDecl(int deep, String tomName, String varname,
+                                 TargetLanguageType tlType, String moduleName) throws IOException {
+    TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(tomName);
+    String opname = tomSymbol.getAstName().getString();
+
+    //language specific
+    Expression code = `Code(genResolveIsFsymCode(tomName, varname));
+
+    if(!inline || !code.isCode()) {
+      TomType returnType = getSymbolTable(moduleName).getBooleanType();
+      String argType;
+      if(!lazyType) {
+        argType = TomBase.getTLCode(tlType);
+      } else {
+        argType = TomBase.getTLType(getUniversalType());
+      }
+
+      genDeclInstr(TomBase.getTLType(returnType), "tom_is_fun_sym", opname,
+          new String[] { argType, varname }, `Return(ExpressionToBQTerm(code)),deep,moduleName);
+    }
+
+  }
+
+  //
+
   protected void buildGetSlotDecl(int deep, String tomName, String varname,
       TargetLanguageType tlType, Expression code, TomName slotName, String moduleName) throws IOException {
     TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(tomName);
@@ -409,6 +436,39 @@ public abstract class GenericGenerator extends AbstractGenerator {
           `Return(ExpressionToBQTerm(code)),deep,moduleName);
     }
   }
+
+
+  //TODO
+  protected void buildResolveGetSlotDecl(int deep, String tomName, String varname,
+      TargetLanguageType tlType, TomName slotName, String moduleName) throws IOException {
+    TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(tomName);
+    String opname = tomSymbol.getAstName().getString();
+    TomTypeList typesList = tomSymbol.getTypesToType().getDomain();
+
+    //language specific
+    Expression code = `Code(genResolveGetSlotCode(tomName, varname, slotName.getString()));
+
+    if(!inline || !code.isCode()) {
+      int slotIndex = TomBase.getSlotIndex(tomSymbol,slotName);
+      TomTypeList l = typesList;
+      for(int index = 0; !l.isEmptyconcTomType() && index<slotIndex ; index++) {
+        l = l.getTailconcTomType();
+      }
+      TomType returnType = l.getHeadconcTomType();
+
+      String argType;
+      if(!lazyType) {
+        argType = TomBase.getTLCode(tlType);
+      } else {
+        argType = TomBase.getTLType(getUniversalType());
+      }
+      genDeclInstr(TomBase.getTLType(returnType),
+          "tom_get_slot", opname  + "_" + slotName.getString(),
+          new String[] { argType, varname },
+          `Return(ExpressionToBQTerm(code)),deep,moduleName);
+    }
+  }
+  //
 
   protected void buildCompareFunctionSymbolDecl(int deep, String name1, String name2,
                                                  String type1, String type2, TargetLanguage tlCode, String moduleName) throws IOException {
@@ -480,6 +540,24 @@ public abstract class GenericGenerator extends AbstractGenerator {
           `Return(ExpressionToBQTerm(code)),deep,moduleName);
     }
   }
+
+  //TODO
+  protected void buildResolveIsSortDecl(int deep, String varName, String type, String resolveStringName, String moduleName) throws IOException {
+    //language specific
+    Expression code = `Code(genResolveIsSortCode(varName, resolveStringName));
+
+    if(!inline) {
+      TomType argType = getUniversalType();
+      if(getSymbolTable(moduleName).isBuiltinType(type)) {
+        argType = getSymbolTable(moduleName).getBuiltinType(type);
+      }
+      genDeclInstr(TomBase.getTLType(getSymbolTable(moduleName).getBooleanType()), "tom_is_sort", type,
+          new String[] { TomBase.getTLType(argType), varName },
+          `Return(ExpressionToBQTerm(code)),deep,moduleName);
+    }
+  }
+//
+
 
   protected void buildGetHeadDecl(int deep, TomName opNameAST, String varName, String suffix, TargetLanguageType domain, TargetLanguageType codomain, Expression code, String moduleName)
     throws IOException {

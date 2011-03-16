@@ -720,6 +720,52 @@ public abstract class AbstractGenerator {
         }
         return;
       }
+      
+      //TODO
+      ResolveIsSortDecl(BQVariable[AstName=Name(varName), AstType=Type[TomType=type]], resolveName, _) -> {
+        if(getSymbolTable(moduleName).isUsedType(`type)) {
+          `buildResolveIsSortDecl(deep, varName, type, resolveName, moduleName);
+        }
+        return;
+      }
+
+      ResolveIsFsymDecl(Name(tomName),
+          BQVariable[AstName=Name(varname), AstType=Type[TlType=tlType@TLType[]]], _) -> {
+        if(getSymbolTable(moduleName).isUsedSymbolDestructor(`tomName)) {
+          `buildResolveIsFsymDecl(deep, tomName, varname, tlType, moduleName);
+        }
+        return;
+      }
+
+      ResolveGetSlotDecl[AstName=Name(tomName),
+        SlotName=slotName,
+        Variable=BQVariable[AstName=Name(name), AstType=Type[TlType=tlType@TLType[]]]] -> {
+          if(getSymbolTable(moduleName).isUsedSymbolDestructor(`tomName)) {
+            `buildResolveGetSlotDecl(deep, tomName, name, tlType, slotName, moduleName);
+          }
+          return;
+        }
+
+      ResolveMakeDecl(Name(opname), returnType, argList, _) -> {
+        if(getSymbolTable(moduleName).isUsedSymbolConstructor(`opname)) {
+          `genResolveDeclMake("tom_make_", opname, returnType, argList, moduleName);
+        }
+        return;
+      }
+
+      //TODO
+      ResolveClassDeclInit[Instr=instruction] -> {
+        generateInstruction(deep, `instruction, moduleName);
+        return;
+      }
+
+      ResolveClassDecl[WithName=wName,ToName=tName,Extends=eName] -> {
+        `buildResolveClass(wName,tName, eName);
+        return;
+      }
+
+
+//////
 
       GetHeadDecl[Opname=opNameAST@Name(opname),
         Codomain=Type[TlType=codomain],
@@ -825,7 +871,7 @@ public abstract class AbstractGenerator {
         return;
       }
 
-      TypeTermDecl[Declarations=declList] -> {
+      (TypeTermDecl|ResolveTypeTermDecl)[Declarations=declList] -> {
         generateDeclarationList(deep, `declList, moduleName);
         return;
       }
@@ -996,4 +1042,15 @@ public abstract class AbstractGenerator {
   protected abstract void buildGetElementDecl(int deep, TomName opNameAST, String name1, String name2, String type1, Expression code, String moduleName) throws IOException;
   protected abstract void buildGetSizeDecl(int deep, TomName opNameAST, String name1, String type, Expression code, String moduleName) throws IOException;
 
+  
+  //TODO: Resolve*
+  protected abstract void buildResolveIsSortDecl(int deep, String name1, String type1, String resolveStringName, String moduleName) throws IOException;
+  protected abstract void buildResolveIsFsymDecl(int deep, String tomName, String name1, TargetLanguageType tlType, String moduleName) throws IOException;
+  protected abstract void buildResolveGetSlotDecl(int deep, String tomName, String name1, TargetLanguageType tlType, TomName slotName, String moduleName) throws IOException;
+  protected abstract void genResolveDeclMake(String prefix, String funName, TomType returnType, BQTermList argList, String moduleName) throws IOException;
+  protected abstract void buildResolveClass(String wName, String tName, String extendsName) throws IOException;
+
+  protected abstract String genResolveIsFsymCode(String tomName, String varname) throws IOException;
+  protected abstract String genResolveGetSlotCode(String tomName, String varname, String slotName) throws IOException;
+  protected abstract String genResolveIsSortCode(String varName, String resolveStringName) throws IOException;
 }

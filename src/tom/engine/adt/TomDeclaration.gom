@@ -19,12 +19,16 @@ Declaration = TypeTermDecl(AstName:TomName,Declarations:DeclarationList,OrgTrack
             | MakeDecl(AstName:TomName,AstType:TomType,Args:BQTermList,Instr:Instruction,OrgTrack:Option)
             | Strategy(SName:TomName,ExtendsTerm:BQTerm,VisitList:TomVisitList,OrgTrack:Option)
             | Transformation(TName:TomName,WithToList:TomWithToList,OrgTrack:Option) //Options:OptionList ?
-//
+///
             | TransformationDecl(TName:TomName,Declarations:DeclarationList,OrgTrack:Option)
             | ResolveTypeTermDecl(AstName:TomName,Declarations:DeclarationList,OrgTrack:Option)
-//            | ResolveClassDecl(???) //all needed information to generate a resolve class
-            | ResolveClassDecl(Instr:Instruction) //CodeToInstruction(TargetLanguageToCode(ITL(BIG_STRING)))
-//
+            | ResolveClassDeclInit(Instr:Instruction) //CodeToInstruction(TargetLanguageToCode(ITL(BIG_STRING)))
+            | ResolveClassDecl(WithName:String,ToName:String,Extends:String)
+            | ResolveIsSortDecl(TermArg:BQTerm,ResolveName:String,OrgTrack:Option)
+            | ResolveIsFsymDecl(AstName:TomName,Variable:BQTerm,OrgTrack:Option)
+            | ResolveGetSlotDecl(AstName:TomName,SlotName:TomName,Variable:BQTerm,OrgTrack:Option)
+            | ResolveMakeDecl(AstName:TomName,AstType:TomType,Args:BQTermList,OrgTrack:Option)
+///
             | FunctionDef(AstName:TomName,ArgumentList:BQTermList,Codomain:TomType,ThrowsType:TomType,Instruction:Instruction)
             | MethodDef(AstName:TomName,ArgumentList:BQTermList,Codomain:TomType,ThrowsType:TomType,Instruction:Instruction)
             /*
