@@ -117,6 +117,7 @@ public class JavaGenerator extends CFamilyGenerator {
   protected void buildResolveClass(String wName, String tName, String extendsName) throws
     IOException {
       String resolveStringName = "Resolve"+wName+tName;
+/*
       output.write("private static class " + resolveStringName + " extends " + extendsName + " {");
       output.write("  public String name;");
       output.write("  public " + wName + " o;"); //problem - canonicalSrcName
@@ -124,6 +125,10 @@ public class JavaGenerator extends CFamilyGenerator {
       output.write("    this.name = name;");
       output.write("    this.o = o;");
       output.write("  }\n}");
+*/
+      output.write("\n\nprivate static class " + resolveStringName + " extends ###?FQN.ClassImpl?### {\n  public String name;\n  public " + wName + " o;\n  public " + resolveStringName + "(" + wName + " o, String name) {\n    this.name = name;\n    this.o = o;\n  }\n}\n\n");        
+
+
 //output.write("\n\nprivate static class " + resolveStringName + " extends ###?FQN.ClassImpl?### {\n  public String name;\n  public " + canonicalSrcName + " o;\n  public " + resolveStringName + "(" + canonicalSrcName + " o, String name) {\n    this.name = name;\n    this.o = o;\n  }\n}\n\n");        
     }
 
