@@ -33,4 +33,96 @@ private static class ResolveWorkDefinitionPlace extends petrinetsemantics.DDMMPe
 =>
 `TargetLanguageToCode(TL("\n\nprivate static class ResolveWorkDefinitionPlace extends petrinetsemantics.DDMMPetriNet.impl.PlaceImpl {\n  public String name;\n  public simplepdl.WorkDefinition o;\n  public ResolveWorkDefinitionPlace(simplepdl.WorkDefinition o, String name) {\n    this.name = name;\n    this.o = o;\n  }\n}\n\n",TextPosition(35,1),TextPosition(46,1)))
 
+////
 
+
+%typeterm ResolveWorkDefinitionPlace {
+  implement { ResolveWorkDefinitionPlace }
+  is_sort(t) { $t instanceof ResolveWorkDefinitionPlace }
+}
+
+private static boolean tom_is_sort_ResolveWorkDefinitionPlace(Object t) {
+return  t instanceof ResolveWorkDefinitionPlace ;
+}
+////
+private static  petrinetsemantics.DDMMPetriNet.Place  tom_make_ResolveWorkDefinitionPlace( SimplePDLSemantics.DDMMSimplePDL.WorkDefinition  o,  String  name) { 
+return  new ResolveWorkDefinitionPlace(o,name) ;
+}
+
+////
+
+  /**
+    *
+    * @param resolveNode temporary ResolveNode that should be replaced
+    * @param newNode node (stored in the HashMap) that will replace the ResolveNode
+    * @param translator the TimplePDLToPetri3
+    */
+  public static void resolveInverseLinks(EObject resolveNode, Node newNode, SimplePDLToPetri translator) {
+    /* collect arcs having ResolveWorkDefinitionPlace and ResolveWorkDefinitionTransition */
+
+    ECrossReferenceAdapter adapter = new ECrossReferenceAdapter(); //create an adapter
+    translator.pn.eAdapters().add(adapter); //attach it to PetriNet
+
+    /*
+     * 'references' will contains a set of objects (i.e.
+     * EStructuralFeature.Setting) from which we can retrieve 
+     * (thanks to getEObject()) objects that
+     * contains references (i.e. pointers) to resolveNode
+     */
+    Collection<EStructuralFeature.Setting> references = adapter.getInverseReferences(resolveNode);
+
+    // for each type of Resolve
+    boolean toSet = (false
+        | resolveNode instanceof ResolveWorkDefinitionPlace 
+        | resolveNode instanceof ResolveWorkDefinitionTransition
+        | resolveNode instanceof ResolveProcessTransition
+        );
+
+    for (EStructuralFeature.Setting setting:references) {
+      // current is an object that references resolveNode
+      EObject current = setting.getEObject();
+      if (current instanceof Arc) {
+        Arc newCurrent = (Arc)current;
+          // for each field of Arc
+        if(newCurrent.getSource().equals(resolveNode) && toSet) {
+          newCurrent.setSource(newNode); 
+        } else if(newCurrent.getTarget().equals(resolveNode) && toSet) {
+          newCurrent.setTarget(newNode); 
+        } else {
+          throw new RuntimeException("should not be there");
+        }
+      }
+    }
+
+  }
+
+
+  /*
+   * Strategy that replaces all Resolve nodes by a normal node
+   */
+  %strategy Resolve(translator:SimplePDLToPetri) extends Identity() {
+    visit Place {
+      pr@ResolveWorkDefinitionPlace[o=o,name=name] -> {
+        Place res = (Place) translator.table.get(`o).get(`name);
+        resolveInverseLinks(`pr, res, translator);
+        return res;
+      }
+    }
+
+    visit Transition {
+      tr@ResolveWorkDefinitionTransition[o=o,name=name] -> {
+        Transition res = (Transition) translator.table.get(`o).get(`name);
+        resolveInverseLinks(`tr, res, translator);
+        return res;
+      }
+      ptr@ResolveProcessTransition[o=o,name=name] -> {
+        Transition res = (Transition) translator.table.get(`o).get(`name);
+        resolveInverseLinks(`ptr, res, translator);
+        return res;
+      }
+
+    }
+
+  }
+
+=>
