@@ -380,6 +380,7 @@ static class tFloat {
   //---------------------------------
   public static void main(String[] args) {
     %match {
+      /*
       div(x,y) << div(zero(),uminus(zero()))
         && (x != y) -> { System.out.println("#1: x = " +`x); }
 
@@ -388,12 +389,11 @@ static class tFloat {
           System.out.println("#2: x = " +`x + ", y = " + `y);
         } 
 
-      /*
+        */
       suc(zero()) << suc(x)
         && div(x,y) << div(uminus(zero()),zero()) -> {
           System.out.println("#3: x = " +`x + ", y = " + `y);
         }
-        */
     }
   }
 }
