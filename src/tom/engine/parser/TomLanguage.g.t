@@ -87,6 +87,8 @@ options{
 
     private SymbolTable symbolTable;
 
+    private OptionManager optionManager;
+
     private HashMap<String,String> usedSlots = new HashMap<String,String>();
 
     public TomParser(ParserSharedInputState state, HostParser target,
@@ -96,6 +98,17 @@ options{
         this.tomlexer = (TomLexer) selector().getStream("tomlexer");
         this.symbolTable = target.getSymbolTable();
         this.bqparser = new BackQuoteParser(state,this);
+        this.optionManager = optionManager;
+    }
+
+    /**
+     * Returns the value of a boolean option.
+     * 
+     * @param optionName the name of the option whose value is seeked
+     * @return a boolean that is the option's value
+     */
+    public boolean getOptionBooleanValue(String optionName) {
+      return ((Boolean)optionManager.getOptionValue(optionName)).booleanValue();
     }
 
     private void putSlot(String sName, String sType) {
@@ -317,10 +330,18 @@ visitInstruction [List<ConstraintInstruction> list, TomType rhsType] throws TomE
                 return;
               }
 
-              BQTerm subject =
-              `BQVariable(concOption(),Name("tom__arg"),SymbolTable.TYPE_UNKNOWN);
-              constraint =
-              `AndConstraint(constraint,MatchConstraint(matchPatternList.get(0),subject,rhsType));
+              BQTerm subject;
+              if (getOptionBooleanValue("newtyper")) {
+                subject = `BQVariable(concOption(),Name("tom__arg"),rhsType);
+                constraint =
+                `AndConstraint(constraint,MatchConstraint(matchPatternList.get(0),subject,SymbolTable.TYPE_UNKNOWN));
+                //optionList = `concOption(option, OriginalText(Name(text.toString())));
+              } else {
+                subject = `BQVariable(concOption(),Name("tom__arg"),rhsType);
+                constraint =
+                  `AndConstraint(constraint,MatchConstraint(matchPatternList.get(0),subject,rhsType));
+              }
+              
               //optionList = `concOption(option, OriginalText(Name(text.toString())));
 
               matchPatternList.clear();

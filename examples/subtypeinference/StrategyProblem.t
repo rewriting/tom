@@ -33,7 +33,6 @@ public class StrategyProblem {
 	%include { sl.tom }
 
   static class A {
-    public A() {}
     public String getOp() { return ""; }
   }
 
@@ -52,9 +51,8 @@ public class StrategyProblem {
   static class Javaf extends A {
     public A num1;
     public Javaf(A num1) { this.num1 = num1; }
-    public A getnum1() { return num1; }
     public String getOp() { return "f"; }
-    public String toString() { return "g(" + num1 + ")"; }
+    public String toString() { return "f(" + num1 + ")"; }
     public boolean equals(Object o) {
       if(o instanceof Javaf) {
         Javaf f = (Javaf) o;
@@ -65,7 +63,6 @@ public class StrategyProblem {
   }
 
   static class B extends A {
-    public B() {}
     public String getOp() { return ""; }
   }
   
@@ -84,7 +81,6 @@ public class StrategyProblem {
   static class Javag extends B {
     public B num2;
     public Javag(B num2) { this.num2 = num2; }
-    public B getnum2() { return num2; }
     public String getOp() { return "g"; }
     public String toString() { return "g(" + num2 + ")"; }
     public boolean equals(Object o) {
@@ -118,7 +114,7 @@ public class StrategyProblem {
   %op TomA f(num1:TomA) {
     is_fsym(t) { $t instanceof Javaf }
     make(t) { new Javaf($t) }
-    get_slot(num1,t) { ((Javaf)$t).getnum1() }
+    get_slot(num1,t) { ((Javaf)$t).num1 }
   }
 
   %op TomB b() {
@@ -129,7 +125,7 @@ public class StrategyProblem {
   %op TomB g(num2:TomB) {
     is_fsym(t) { $t instanceof Javag }
     make(t) { new Javag($t) }
-    get_slot(num2,t) { ((Javag)$t).getnum2() }
+    get_slot(num2,t) { ((Javag)$t).num2 }
   }
 
 // ------------------------------------------------------------
@@ -148,8 +144,8 @@ public class StrategyProblem {
       (y == a()) && (g(x) == g(b())) -> { System.out.println("Test 1!"); }
       f(b()) << z -> { 
         System.out.println("Test 2!"); 
-        //A test = propagate(`f(a()));
-        //System.out.println("test = " + test); 
+        A test = propagate(`g(b()));
+        System.out.println("test = " + test); 
       }
       g(x) << w && (f(b()) == createA(x)) -> { System.out.println("Test 3!"); }
     }
@@ -162,7 +158,7 @@ public class StrategyProblem {
   
   public A propagate(A elem) {
 		try {
-			return (A) `TopDown(Try(testSubtype())).visit(elem, new LocalIntrospector());
+			return (A) `TopDown(Try(testSubtype1())).visit(elem, new LocalIntrospector());
 		} catch (VisitFailure e) {
 			System.out.println("strategy failed");
 		}
@@ -170,10 +166,18 @@ public class StrategyProblem {
 	}
 
 
-  %strategy testSubtype() extends `Identity() {
+  %strategy testSubtype1() extends `Identity() {
     visit TomA {
       f(x) -> { return `g(x); }
+      g(x) -> { return `x; }
     }
   } 
+
+  %strategy testSubtype2() extends `Identity() {
+    visit TomB {
+      g(x) -> { return `x; }
+      //g(x) -> { return `f(x); }
+    }
+  }
 }
 
