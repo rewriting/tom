@@ -57,6 +57,7 @@ Instruction =
  * @param Action the action to execute if the constraints are evaluated to true
  */  
 ConstraintInstruction = ConstraintInstruction(Constraint:Constraint, Action:Instruction, Options:OptionList)  
+                      | ResolveConstraintInstruction(Constraint:Constraint, Options:OptionList)  
 
 ConstraintInstructionList = concConstraintInstruction(ConstraintInstruction*)    
   
