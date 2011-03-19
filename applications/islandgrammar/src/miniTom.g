@@ -2,6 +2,7 @@ grammar miniTom;
 
 options {
 	output=AST;
+//  filter=true;
   ASTLabelType=Tree;
   backtrack=true;
   //tokenVocab=IGTokens;
@@ -11,12 +12,13 @@ tokens {
   PROGRAM;
   CODE;
   SUBCODE;
+  HOST;
 }
 
-@header {
+@lexer::header {
 import org.antlr.runtime.tree.*;
 }
-@lexer::header {
+@parser::header {
 import org.antlr.runtime.tree.*;
 }
 @lexer::members{int levelcounter=-1;}
@@ -27,19 +29,16 @@ program :	LEFTPAR RIGHTPAR LEFTBR code* -> ^(PROGRAM code*) ;
 code :
         s1=statement SEMICOLUMN -> ^(CODE $s1)
       | s2=subcode -> ^(CODE $s2);
+//      | OBRA s3=name RARROW LEFTBR CBRA -> ^(HOST $s3);
 
 subcode : LEFTBR inside+ RIGHTBR -> ^(SUBCODE inside+);
 
 inside    : B  ;
 statement	:	A+ ;
-//comment   : OPENCOM {
-//  try {
-//    CommentParser parser = new CommentParser(input);
-//    Tree result = parser.oneline();
-//    program_return.addChild(result);
-//  } catch (Exception e) {e.printStackTrace();}
-//  };
-//
+
+//name : ('A'..'Z')+('a'..'z' | 'A'..'Z' | '0'..'9')* ;
+//name : LETTER+;
+
 /* Lexer rules */
 
 LEFTPAR    : '(' ;
@@ -50,6 +49,9 @@ SEMICOLUMN : ';' ;
 OPENCOM    : '/*'  ;
 A          : 'alice' ;
 B          : 'bob' ;
-
+OBRA       : '[' ;
+CBRA       : ']' ;
+RARROW     : '->';
+LETTER     : 'A'..'Z' ;
 WS	: ('\r' | '\n' | '\t' | ' ' )* { $channel = HIDDEN; };
 
