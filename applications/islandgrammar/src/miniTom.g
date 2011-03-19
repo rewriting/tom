@@ -2,10 +2,8 @@ grammar miniTom;
 
 options {
 	output=AST;
-//  filter=true;
   ASTLabelType=Tree;
   backtrack=true;
-  //tokenVocab=IGTokens;
 }
 
 tokens {
@@ -21,7 +19,11 @@ import org.antlr.runtime.tree.*;
 @parser::header {
 import org.antlr.runtime.tree.*;
 }
-@lexer::members{int levelcounter=-1;}
+@lexer::members{
+  int levelcounter=-1;
+  Tree subTree;
+}
+
 /* Parser rules */
 
 program :	LEFTPAR RIGHTPAR LEFTBR code* -> ^(PROGRAM code*) ;
@@ -36,9 +38,6 @@ subcode : LEFTBR inside+ RIGHTBR -> ^(SUBCODE inside+);
 inside    : B  ;
 statement	:	A+ ;
 
-//name : ('A'..'Z')+('a'..'z' | 'A'..'Z' | '0'..'9')* ;
-//name : LETTER+;
-
 /* Lexer rules */
 
 LEFTPAR    : '(' ;
@@ -46,7 +45,12 @@ RIGHTPAR   : ')' ;
 LEFTBR     : '{' {levelcounter+=1;} ;
 RIGHTBR    : '}' {if(levelcounter==0){emit(Token.EOF_TOKEN);} else{levelcounter-=1;}  } ;
 SEMICOLUMN : ';' ;
-OPENCOM    : '/*'  ;
+OPENCOM    : '/*' {
+  CommentLexer lexer = new CommentLexer(input);
+  CommonTokenStream tokens = new CommonTokenStream(lexer);
+  CommentParser parser = new CommentParser(tokens);
+  subTree = (Tree) parser.regular().getTree();
+  };
 A          : 'alice' ;
 B          : 'bob' ;
 OBRA       : '[' ;

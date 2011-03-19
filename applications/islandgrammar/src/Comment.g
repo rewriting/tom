@@ -24,11 +24,5 @@ text : ANYTHING* ;
 CLOSECOM    : '*/'  ;
 NEWLINE     : '\n'  ;
 WS          : ('\r' | '\t' | ' ')* { $channel = HIDDEN; };
-ANYTHING    : ( 'a'..'z'
-              | 'A'..'Z'
-              | '0'..'9'
-              | '_'
-              | '*'
-              | '/'
-              );
+ANYTHING    : ( ~CLOSECOM);
 

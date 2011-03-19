@@ -8,7 +8,6 @@
 	<property name="src" value="${islgram}/src"/>
 	<property name="build" value="${islgram}/build"/>
 	<property name="input" value="${islgram}/input"/>
-	<!--property name="gramname" value="miniTom"/-->
 	<property name="tomgram" value="miniTom"/>
 	<property name="comgram" value="Comment"/>
 	<property name="tomfile" value="${src}/${tomgram}.g"/>

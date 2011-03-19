@@ -66,7 +66,7 @@ public class HostParser {
             result = (Tree) parser.regular().getTree();
           } catch (Exception e) {e.printStackTrace();}
           break;
-        default : System.out.println(i + " : this sould not happen");
+        default : System.out.println("Error : pattern #"+i+" was found, but no method was declared in parserMap to handle it");
       }
       arbre.addChild(result);
 

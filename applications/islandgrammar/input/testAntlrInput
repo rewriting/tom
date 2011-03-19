@@ -1,5 +1,6 @@
 ici
-/* et là */
+et là
+//@
 %match(){  
 { bob bob
   bob }
