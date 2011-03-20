@@ -180,11 +180,27 @@ public class TypeCheckerPlugin extends TomGenericPlugin {
     return -1;
   }
 
+  protected int findOriginTrackingColumn(OptionList optionList) {
+    %match(optionList) {
+      concOption(_*,OriginTracking[Column=column],_*) -> { return `line; }
+    }
+    return -1;
+  }
+
   protected void ensureOriginTrackingLine(int line) {
     if(line < 0) {
       TomMessage.error(getLogger(),
           getStreamManager().getInputFileName(), 0,
           TomMessage.findOTL);
+      //System.out.println("findOriginTrackingLine: not found ");
+    }
+  }
+
+  protected void ensureOriginTrackingColumn(int column) {
+    if(line < 0) {
+      TomMessage.error(getLogger(),
+          getStreamManager().getInputFileName(), 0,
+          TomMessage.findOTC);
       //System.out.println("findOriginTrackingLine: not found ");
     }
   }
@@ -258,6 +274,7 @@ public class TypeCheckerPlugin extends TomGenericPlugin {
           TomMessage.error(tcp.getLogger(),
               tcp.findOriginTrackingFileName(`app.getOptions()),
               tcp.findOriginTrackingLine(`app.getOptions()),
+              tcp.findOriginTrackingColumn(`app.getOptions()),
               TomMessage.unknownVariableInWhen,
               tcp.getName(`app));
         }
@@ -300,6 +317,7 @@ public class TypeCheckerPlugin extends TomGenericPlugin {
           TomMessage.error(getLogger(),
               findOriginTrackingFileName(variable.getOptions()),
               findOriginTrackingLine(variable.getOptions()),
+              findOriginTrackingColumn(variable.getOptions()),
               TomMessage.incoherentVariable,
               name.getString(),
               TomBase.getTomType(type1),
@@ -331,6 +349,7 @@ public class TypeCheckerPlugin extends TomGenericPlugin {
           TomMessage.error(tcp.getLogger(),
               tcp.findOriginTrackingFileName(`optionList),
               tcp.findOriginTrackingLine(`optionList),
+              tcp.findOriginTrackingColumn(`optionList),
               TomMessage.incoherentVariableStar,
               `variableName, `rootName, `listName);
         }
@@ -348,6 +367,7 @@ public class TypeCheckerPlugin extends TomGenericPlugin {
         TomMessage.error(getLogger(),
             findOriginTrackingFileName(`optionList),
             findOriginTrackingLine(`optionList),
+            findOriginTrackingColumn(`optionList),
             TomMessage.unknownVisitedType,
             `strVisitType);
       }

@@ -220,6 +220,13 @@ public class SyntaxCheckerPlugin extends TomGenericPlugin {
     return -1;
   }
 
+  protected int findOriginTrackingColumn(OptionList optionList) {
+    %match(optionList) {
+      concOption(_*,OriginTracking[Column=column],_*) -> { return `column; }
+    }
+    return -1;
+  }
+
   private boolean strictType = true;
   public void run(Map informationTracker) {
     //System.out.println("(debug) I'm in the Tom SyntaxChecker : TSM"+getStreamManager().toString());
@@ -270,8 +277,8 @@ public class SyntaxCheckerPlugin extends TomGenericPlugin {
       s@Strategy[VisitList=list, OrgTrack=origin] -> {
         if(`list.isEmptyconcTomVisit()) {
           %match(origin) {
-            OriginTracking[FileName=fileName,Line=line] -> { 
-              TomMessage.error(scp.getLogger(), `fileName, `line, TomMessage.emptyStrategy);
+            OriginTracking[FileName=fileName,Line=line,Column=column] -> { 
+              TomMessage.error(scp.getLogger(), `fileName, `line, `column, TomMessage.emptyStrategy);
               return `s;
             }
           }
@@ -543,7 +550,7 @@ matchblock:{
                  break matchblock;
                }
                // for a symbol
-               MakeDecl[Args=makeArgsList, OrgTrack=og@OriginTracking[FileName=fileName,Line=line]] -> {
+               MakeDecl[Args=makeArgsList, OrgTrack=og@OriginTracking[FileName=fileName,Line=line,Column=column]] -> {
                  if(!foundOpMake) {
                    foundOpMake = true;
                    `verifyMakeDeclArgs(makeArgsList, domainLength, og, symbolType);
@@ -1103,14 +1110,16 @@ matchL:  %match(subject,s) {
       VariableStar[Options=options, AstName=EmptyName()] -> {
         String fileName = findOriginTrackingFileName(`options);
         int decLine = findOriginTrackingLine(`options);
-        TomMessage.error(getLogger(),fileName,decLine, TomMessage.incorrectVariableStarInMatch, "_*");
+        int decColumn = findOriginTrackingColumn(`options);
+        TomMessage.error(getLogger(), fileName, decLine, decColumn, TomMessage.incorrectVariableStarInMatch, "_*");
         return;
       }
 
       VariableStar[Options=options, AstName=Name(name)] -> {
         String fileName = findOriginTrackingFileName(`options);
         int decLine = findOriginTrackingLine(`options);
-        TomMessage.error(getLogger(),fileName,decLine, TomMessage.incorrectVariableStarInMatch, `name);
+        int decColumn = findOriginTrackingColumn(`options);
+        TomMessage.error(getLogger(), fileName, decLine, decColumn, TomMessage.incorrectVariableStarInMatch, `name);
         return;
       }
     }
@@ -1154,15 +1163,17 @@ matchL:  %match(subject,s) {
     int termClass = -1;
     String fileName = "unknown";
     int decLine = -1;
+    int decColumn = -1;
     Option orgTrack;
 matchblock:{
     %match(term) {
       TermAppl[Options=options, NameList=symbolNameList, Args=arguments] -> {
         fileName = findOriginTrackingFileName(`options);
         decLine = findOriginTrackingLine(`options);
+        decColumn = findOriginTrackingColumn(`options);
         termClass = TERM_APPL;
 
-        TomSymbol symbol = ensureValidApplDisjunction(`symbolNameList, expectedType, fileName, decLine,  topLevel);
+        TomSymbol symbol = ensureValidApplDisjunction(`symbolNameList, expectedType, fileName, decLine, decColumn, topLevel);
 
         if(symbol == null) {
           // null means that an error occured
@@ -1189,7 +1200,7 @@ matchblock:{
           int nbExpectedArgs = types.length();
           if(nbArgs != nbExpectedArgs) {
             TomMessage.error(getLogger(),
-                fileName, decLine, TomMessage.symbolNumberArgument,
+                fileName, decLine, decColumn, TomMessage.symbolNumberArgument,
                 termName, Integer.valueOf(nbExpectedArgs), Integer.valueOf(nbArgs));
             break matchblock;
           }
@@ -1208,8 +1219,9 @@ matchblock:{
       rec@RecordAppl[Options=options,NameList=symbolNameList,Slots=slotList] -> {
         fileName = findOriginTrackingFileName(`options);
         decLine = findOriginTrackingLine(`options);
+        decColumn = findOriginTrackingColumn(`options);
         termClass = RECORD_APPL;
-        TomSymbol symbol = ensureValidRecordDisjunction(`symbolNameList, `slotList, expectedType, fileName, decLine, true);
+        TomSymbol symbol = ensureValidRecordDisjunction(`symbolNameList, `slotList, expectedType, fileName, decLine, decColumn, true);
         if(symbol == null) {
           break matchblock;
         }
@@ -1220,7 +1232,7 @@ matchblock:{
            * be valid and have the expected return type
            */
           concTomName(_*,Name(name), _*) -> {
-            verifyRecordStructure(`options, `name, `slotList, fileName,decLine);
+            verifyRecordStructure(`options, `name, `slotList, fileName, decLine, decColumn);
           }
         }
 
@@ -1239,6 +1251,7 @@ matchblock:{
         termClass = XML_APPL;
         fileName = findOriginTrackingFileName(`options);
         decLine = findOriginTrackingLine(`options);
+        decColumn = findOriginTrackingColumn(`options);
         type = TomBase.getSymbolCodomain(getSymbolFromName(Constants.ELEMENT_NODE));
         termName = Constants.ELEMENT_NODE;
 
@@ -1263,6 +1276,7 @@ matchblock:{
         termClass = VARIABLE;
         fileName = findOriginTrackingFileName(`options);
         decLine = findOriginTrackingLine(`options);
+        decColumn = findOriginTrackingColumn(`options);
         type = null;
         termName = `name;
         break matchblock;
@@ -1272,12 +1286,14 @@ matchblock:{
         termClass = VARIABLE_STAR;
         fileName = findOriginTrackingFileName(`options);
         decLine = findOriginTrackingLine(`options);
+        decColumn = findOriginTrackingColumn(`options);
         type = null;
         termName = `name+"*";
         if(!listSymbol) {
           TomMessage.error(getLogger(),
               fileName,
               decLine,
+              decColumn,
               TomMessage.invalidVariableStarArgument,
               termName);
         }
@@ -1287,6 +1303,7 @@ matchblock:{
         termClass = UNAMED_VARIABLE;
         fileName = findOriginTrackingFileName(`options);
         decLine = findOriginTrackingLine(`options);
+        decColumn = findOriginTrackingColumn(`options);
         type = null;
         termName = "unamed";
         break matchblock;
@@ -1296,12 +1313,14 @@ matchblock:{
         termClass = UNAMED_VARIABLE_STAR;
         fileName = findOriginTrackingFileName(`options);
         decLine = findOriginTrackingLine(`options);
+        decColumn = findOriginTrackingColumn(`options);
         type = null;
         termName = "unamed*";
         if(!listSymbol) {
           TomMessage.error(getLogger(),
               fileName,
               decLine,
+              decColumn,
               TomMessage.invalidVariableStarArgument,
               termName);
         }
@@ -1311,21 +1330,21 @@ matchblock:{
     }
     throw new TomRuntimeException("Strange Term "+term);
     } // end matchblock
-    return new TermDescription(termClass, termName, fileName,decLine, type);
+    return new TermDescription(termClass, termName, fileName, decLine, decColumn, type);
   }
 
   private TomSymbol ensureValidApplDisjunction(TomNameList symbolNameList, TomType expectedType, 
-      String fileName, int decLine,  boolean topLevel) {
+      String fileName, int decLine, int decColum, boolean topLevel) {
 
     if(symbolNameList.length()==1) { // Valid but has it a good type?
       String res = symbolNameList.getHeadconcTomName().getString();
       TomSymbol symbol = getSymbolFromName(res);
       if(symbol == null ) {
-        TomMessage.error(getLogger(),fileName,decLine, TomMessage.unknownSymbol, res);
+        TomMessage.error(getLogger(), fileName, decLine, decColumn, TomMessage.unknownSymbol, res);
         return null;
       } else { // known symbol
         if( strictType  || !topLevel ) {
-          if(!ensureSymbolCodomain(TomBase.getSymbolCodomain(symbol), expectedType, TomMessage.invalidCodomain, res, fileName,decLine)) {
+          if(!ensureSymbolCodomain(TomBase.getSymbolCodomain(symbol), expectedType, TomMessage.invalidCodomain, res, fileName, decLine, decColumn)) {
             return null;
           }
         }
@@ -1341,12 +1360,12 @@ matchblock:{
         concTomName(_*, Name(dijName), _*) -> { // for each SymbolName
           symbol = getSymbolFromName(`dijName);
           if(symbol == null) {
-            TomMessage.error(getLogger(),fileName,decLine, TomMessage.unknownSymbolInDisjunction,`dijName);
+            TomMessage.error(getLogger(), fileName, decLine, decColumn, TomMessage.unknownSymbolInDisjunction,`dijName);
             return null;
           }
           if( strictType  || !topLevel ) {
             // ensure codomain is correct
-            if(!ensureSymbolCodomain(TomBase.getSymbolCodomain(symbol), expectedType, TomMessage.invalidDisjunctionCodomain, `dijName, fileName,decLine)) {
+            if(!ensureSymbolCodomain(TomBase.getSymbolCodomain(symbol), expectedType, TomMessage.invalidDisjunctionCodomain, `dijName, fileName, decLine, decColumn)) {
               return null;
             }
           }
@@ -1357,7 +1376,7 @@ matchblock:{
             nameReference = `dijName;
           } else {
             if(TomBase.getSymbolDomain(symbol) != domainReference) {
-              TomMessage.error(getLogger(),fileName,decLine, TomMessage.invalidDisjunctionDomain, nameReference, `dijName);
+              TomMessage.error(getLogger(), fileName, decLine, decColumn, TomMessage.invalidDisjunctionDomain, nameReference, `dijName);
               return null;
             }
             if(symbol.getPairNameDeclList() != slotReference) {
@@ -1365,7 +1384,7 @@ matchblock:{
               PairNameDeclList l2 = symbol.getPairNameDeclList();
               while(!l1.isEmptyconcPairNameDecl()) {
                 if(l1.getHeadconcPairNameDecl().getSlotName() != l2.getHeadconcPairNameDecl().getSlotName()) {
-                  TomMessage.error(getLogger(),fileName,decLine, TomMessage.invalidDisjunctionDomain, nameReference, `dijName);
+                  TomMessage.error(getLogger(), fileName, decLine, decColumn, TomMessage.invalidDisjunctionDomain, nameReference, `dijName);
                   return null;
                 }
                 l1=l1.getTailconcPairNameDecl();
@@ -1379,31 +1398,31 @@ matchblock:{
     }
   } //ensureValidApplDisjunction
 
-  private boolean ensureSymbolCodomain(TomType currentCodomain, TomType expectedType, TomMessage msg, String symbolName, String fileName,int decLine) {
+  private boolean ensureSymbolCodomain(TomType currentCodomain, TomType expectedType, TomMessage msg, String symbolName, String fileName,int decLine, int decColumn) {
     %match(currentCodomain, expectedType) {
       Type[TomType=type],Type[TomType=type] -> {
         return true;
       }
     }
     //System.out.println(currentCodomain+"!="+expectedType);
-    TomMessage.error(getLogger(),fileName,decLine, msg,
+    TomMessage.error(getLogger(), fileName, decLine, decColumn, msg,
         symbolName, currentCodomain.getTomType(), expectedType.getTomType());
     return false;
   } //ensureSymbolCodomain
 
   private TomSymbol ensureValidRecordDisjunction(TomNameList symbolNameList, SlotList slotList, 
-      TomType expectedType, String fileName, int decLine, boolean topLevel) {
+      TomType expectedType, String fileName, int decLine, int decColumn, boolean topLevel) {
     if(symbolNameList.length()==1) { // Valid but has it a good type?
       String res = symbolNameList.getHeadconcTomName().getString();
       TomSymbol symbol =  getSymbolFromName(res);
       if (symbol == null ) { // this correspond to: unknown[]
         // it is not correct to use Record with unknown symbols
-        TomMessage.error(getLogger(),fileName,decLine, TomMessage.unknownSymbol, res);
+        TomMessage.error(getLogger(), fileName, decLine, decColumn, TomMessage.unknownSymbol, res);
         return null;
       } else { // known symbol
         // ensure type correctness if necessary
         if ( strictType  || !topLevel ) {
-          if (!ensureSymbolCodomain(TomBase.getSymbolCodomain(symbol), expectedType, TomMessage.invalidCodomain, res, fileName,decLine)) {
+          if (!ensureSymbolCodomain(TomBase.getSymbolCodomain(symbol), expectedType, TomMessage.invalidCodomain, res, fileName, decLine, decColumn)) {
             return null;
           }
         }
@@ -1419,12 +1438,12 @@ matchblock:{
           symbol =  getSymbolFromName(`dijName);
           if(symbol == null) {
             // In disjunction we can only have known symbols
-            TomMessage.error(getLogger(),fileName,decLine, TomMessage.unknownSymbolInDisjunction, `dijName);
+            TomMessage.error(getLogger(), fileName, decLine, decColumn, TomMessage.unknownSymbolInDisjunction, `dijName);
             return null;
           }
           if( strictType  || !topLevel ) {
             // ensure codomain is correct
-            if (!ensureSymbolCodomain(TomBase.getSymbolCodomain(symbol), expectedType, TomMessage.invalidDisjunctionCodomain, `dijName, fileName,decLine)) {
+            if (!ensureSymbolCodomain(TomBase.getSymbolCodomain(symbol), expectedType, TomMessage.invalidDisjunctionCodomain, `dijName, fileName, decLine, decColumn)) {
               return null;
             }
           }
@@ -1452,17 +1471,17 @@ matchblock:{
               // TomBase.elementAt(referenceDomain,referenceSlotIndex));
 
               if (referenceSlotIndex == -1){
-                TomMessage.error(getLogger(),fileName,decLine, TomMessage.invalidDisjunctionSlotName, referenceName,((Name)slotName).getString());
+                TomMessage.error(getLogger(), fileName, decLine, decColumn, TomMessage.invalidDisjunctionSlotName, referenceName,((Name)slotName).getString());
                 return null;                
               }
 
               if (currentSlotIndex == -1){
-                TomMessage.error(getLogger(),fileName,decLine, TomMessage.invalidDisjunctionSlotName, `dijName,((Name)slotName).getString());
+                TomMessage.error(getLogger(),fileName,decLine, decColumn, TomMessage.invalidDisjunctionSlotName, `dijName,((Name)slotName).getString());
                 return null;                
               }
 
               if(TomBase.elementAt(currentDomain,currentSlotIndex) != TomBase.elementAt(referenceDomain,referenceSlotIndex)) {
-                TomMessage.error(getLogger(),fileName,decLine, TomMessage.invalidDisjunctionDomain, referenceName, `dijName);
+                TomMessage.error(getLogger(),fileName,decLine, decColumn, TomMessage.invalidDisjunctionDomain, referenceName, `dijName);
                 return null;
               }
 
@@ -1479,7 +1498,7 @@ matchblock:{
   // /////////////////////
   // RECORDS CONCERNS ///
   // /////////////////////
-  private void verifyRecordStructure(OptionList option, String tomName, SlotList slotList, String fileName, int decLine)  {
+  private void verifyRecordStructure(OptionList option, String tomName, SlotList slotList, String fileName, int decLine, int decColumn)  {
     TomSymbol symbol = getSymbolFromName(tomName);
     if(symbol != null) {
       // constants have an emptyPairNameDeclList
@@ -1488,12 +1507,15 @@ matchblock:{
 
       // Note: cannot detect conc[], because the concrete syntax [] is no longer there
       //if(slotList.isEmptyconcSlot() && (TomBase.isListOperator(symbol) ||  TomBase.isArrayOperator(symbol)) ) {
-      //  TomMessage.error(getLogger(),fileName,decLine, TomMessage.bracketOnListSymbol, tomName);
+      //  TomMessage.error(getLogger(), fileName, decLine, decColumn, TomMessage.bracketOnListSymbol, tomName);
       //}
       // TODO verify type
-      verifyRecordSlots(slotList,symbol, TomBase.getSymbolDomain(symbol), tomName, fileName, decLine);
+      verifyRecordSlots(slotList,symbol, TomBase.getSymbolDomain(symbol), tomName, fileName, decLine, decColumn);
     } else {
-      TomMessage.error(getLogger(),fileName,decLine,
+      TomMessage.error(getLogger(),
+          fileName,
+          decLine,
+          decColumn,
           TomMessage.unknownSymbol,
           tomName);
     }
@@ -1501,7 +1523,7 @@ matchblock:{
 
   // We test the existence/repetition of slotName contained in pairSlotAppl
   // and then the associated term
-  private void verifyRecordSlots(SlotList slotList, TomSymbol tomSymbol, TomTypeList typeList, String methodName, String fileName, int decLine) {
+  private void verifyRecordSlots(SlotList slotList, TomSymbol tomSymbol, TomTypeList typeList, String methodName, String fileName, int decLine, int decColumn) {
     //System.out.println("verifyRecordSlot: " + `slotList);
     Collection<String> listOfPossibleSlot = null;
     Collection<Integer> studiedSlotIndexList = new HashSet<Integer>();
@@ -1523,7 +1545,10 @@ matchblock:{
             listOfSlots = listOfSlots.getTailconcPairNameDecl();
           }
         }
-        TomMessage.error(getLogger(),fileName,decLine,
+        TomMessage.error(getLogger(),
+            fileName,
+            decLine,
+            decColumn,
             TomMessage.badSlotName,
             pairSlotName.getString(), methodName, listOfPossibleSlot.toString());
         return; // break analyses
@@ -1532,7 +1557,9 @@ matchblock:{
         if(pairSlotName.isName() && studiedSlotIndexList.contains(index)) {
           // we are not insterrested in EmptyName (which come from ListOperator with Empty-SlotName)
           // Error: repeated slot
-          TomMessage.error(getLogger(),fileName,decLine,
+          TomMessage.error(getLogger(), fileName, 
+              decLine, 
+              decColumn,
               TomMessage.slotRepeated,
               methodName, pairSlotName.getString());
           return; // break analyses
@@ -1600,13 +1627,15 @@ whileBlock: {
     private int termClass;
     private String fileName;
     private int decLine;
+    private int decColumn;
     private String name ="";
     private TomType tomType = null;
 
-    public TermDescription(int termClass, String name, String fileName, int decLine, TomType tomType) {
+    public TermDescription(int termClass, String name, String fileName, int decLine, int decColumn, TomType tomType) {
       this.termClass = termClass;
       this.fileName = fileName;
       this.decLine = decLine;
+      this.decColumn = decColumn;
       this.name = name;
       this.tomType = tomType;
     }
@@ -1627,6 +1656,10 @@ whileBlock: {
       return decLine;
     }
 
+    public int getColumn() {
+      return decColumn;
+    }
+
     public TomType getType() {
       if(tomType != null && !tomType.isEmptyType()) {
         return tomType;
@@ -1645,11 +1678,12 @@ whileBlock: {
     %match(subject) {
       BQAppl[Options=options,AstName=Name(name),Args=args] -> {
         int decLine = findOriginTrackingLine(`options);
+        int decColumn = findOriginTrackingColumn(`options);
         String fileName = findOriginTrackingFileName(`options);
         TomSymbol symbol = getSymbolFromName(`name);
         if(symbol==null) {
           // cannot report an error because unknown funtion calls are allowed
-          //TomMessage.error(getLogger(), fileName, decLine, TomMessage.unknownSymbol, `name);
+          //TomMessage.error(getLogger(), fileName, decLine, decColumn, TomMessage.unknownSymbol, `name);
         } else {
           //System.out.println("symbol = " + symbol);
           // check the arity (for syntacti operators)
@@ -1658,7 +1692,9 @@ whileBlock: {
             int nbExpectedArgs = types.length();
             int nbArgs = `args.length();
             if(nbArgs != nbExpectedArgs) {
-              TomMessage.error(getLogger(), fileName, decLine,
+              TomMessage.error(getLogger(), fileName, 
+                  decLine, 
+                  decColumn,
                   TomMessage.symbolNumberArgument,
                   `name, nbExpectedArgs, nbArgs);
             }

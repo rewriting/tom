@@ -201,6 +201,8 @@ public class TomMessage extends BasicPlatformMessage {
   // checker.TomChecker
   public static final TomMessage findOTL               =
     new TomMessage("{0}: findOriginTrackingLine : not found (TomChecker)");
+  public static final TomMessage findOTC               =
+    new TomMessage("{0}: findOriginTrackingColumn : not found (TomChecker)");
   public static final TomMessage syntaxCheckerInactivated=
       new TomMessage("The syntax checker is not activated and thus WILL NOT RUN.");
   public static final TomMessage typeCheckerInactivated=

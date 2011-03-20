@@ -95,7 +95,7 @@ options{
     }
     
    private BQTerm buildBqAppl(Token id, LinkedList<BQTerm> blockList, BQTerm term, boolean composite) {
-     OptionList option = `concOption(OriginTracking(Name(id.getText()),id.getLine(),currentFile()),ModuleName(DEFAULT_ MODULE_NAME));
+     OptionList option = `concOption(OriginTracking(Name(id.getText()), id.getLine(), id.getColumn(), currentFile()), ModuleName(DEFAULT_ MODULE_NAME));
      Composite target = (Composite) ((term==null)?
        `Composite():
        `Composite(CompositeTL(ITL(".")),CompositeBQTerm(term)));
@@ -210,7 +210,7 @@ mainBqTerm [BQTermList context] returns [BQTerm result]
            {LA(1) == BQ_STAR}? BQ_STAR 
            {   
              String name = id.getText();
-             Option ot = `OriginTracking(Name(name), id.getLine(), currentFile());
+             Option ot = `OriginTracking(Name(name), id.getLine(), id.getColumn(), currentFile());
              result = `BQVariableStar(concOption(ot),Name(name),SymbolTable.TYPE_UNKNOWN);  
            }
            // `X*{type}
@@ -219,7 +219,7 @@ mainBqTerm [BQTermList context] returns [BQTerm result]
 
            {   
              String name = id.getText();
-             OptionList ol = `concOption(TypeForVariable(type1.getText()),OriginTracking(Name(name), id.getLine(), currentFile()));
+             OptionList ol = `concOption(TypeForVariable(type1.getText()),OriginTracking(Name(name), id.getLine(), id.getColumn(), currentFile()));
              result = `BQVariableStar(ol,Name(name),SymbolTable.TYPE_UNKNOWN);  
            }
            */
@@ -239,7 +239,7 @@ mainBqTerm [BQTermList context] returns [BQTerm result]
                  | {LA(1) == BQ_LBRACE}? BQ_LBRACE type:BQ_ID BQ_RBRACE
                 {   
                    String name = id.getText();
-                   OptionList ol = `concOption(TypeForVariable(type.getText()), OriginTracking(Name(name), id.getLine(), currentFile()), ModuleName(DEFAULT_MODULE_NAME));
+                   OptionList ol = `concOption(TypeForVariable(type.getText()), OriginTracking(Name(name), id.getLine(), id.getColumn(), currentFile()), ModuleName(DEFAULT_MODULE_NAME));
                    result = `BQVariable(ol,Name(name),SymbolTable.TYPE_UNKNOWN);
                 }
                  // `x
@@ -248,7 +248,7 @@ mainBqTerm [BQTermList context] returns [BQTerm result]
                    //System.out.println("targetCode = " + t);
                    addTargetCode(t);
                    String name = id.getText();
-                   OptionList ol = `concOption(OriginTracking(Name(name), id.getLine(), currentFile()), ModuleName(DEFAULT_MODULE_NAME));
+                   OptionList ol = `concOption(OriginTracking(Name(name), id.getLine(), id.getColumn(), currentFile()), ModuleName(DEFAULT_MODULE_NAME));
                    //result = `BQAppl(ol,Name(name),concBQTerm());
                    result = `BQVariable(ol,Name(name),SymbolTable.TYPE_UNKNOWN);
                  }
@@ -276,7 +276,7 @@ bqTerm [BQTermList context] returns [BQTerm result]
             {LA(1) == BQ_STAR}? BQ_STAR
             {   
               String name = id.getText();
-              Option ot = `OriginTracking(Name(name), id.getLine(), currentFile());
+              Option ot = `OriginTracking(Name(name), id.getLine(), id.getColumn(), currentFile());
               result = `BQVariableStar(concOption(ot),Name(name),SymbolTable.TYPE_UNKNOWN);      
             }
             
@@ -359,7 +359,7 @@ xmlAttributeStringOrBQVariable returns [BQTerm result]
      id:BQ_ID 
 		 {
        String name = id.getText();
-       OptionList ol = `concOption(OriginTracking(Name(name), id.getLine(), currentFile()), ModuleName(DEFAULT_MODULE_NAME));
+       OptionList ol = `concOption(OriginTracking(Name(name), id.getLine(), id.getColumn(), currentFile()), ModuleName(DEFAULT_MODULE_NAME));
        result = `BQVariable(ol,Name(name),SymbolTable.TYPE_UNKNOWN);
 		   //result = `Composite(CompositeTL(ITL(id.getText()))); 
 		 }
