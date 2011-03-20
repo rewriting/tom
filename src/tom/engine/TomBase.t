@@ -512,7 +512,8 @@ public final class TomBase {
 
   /**
    * Return the option containing OriginTracking information
-   */private static  tom.engine.adt.tomoption.types.Option  tom_make_OriginTracking( tom.engine.adt.tomname.types.TomName  t0,  int  t1, int t1bis,  String  t2) { return  tom.engine.adt.tomoption.types.option.OriginTracking.make(t0, t1, t1bis, t2) ;}
+   */
+  private static  tom.engine.adt.tomoption.types.Option  tom_make_OriginTracking( tom.engine.adt.tomname.types.TomName  t0,  int  t1, int t1bis, String  t2) { return  tom.engine.adt.tomoption.types.option.OriginTracking.make(t0, t1, t1bis, t2) ;}
   public static Option findOriginTracking(OptionList optionList) {
     if(optionList.isEmptyconcOption()) {
       return `noOption();

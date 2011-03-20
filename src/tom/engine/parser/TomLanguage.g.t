@@ -751,7 +751,7 @@ annotatedTerm [boolean allowImplicit] returns [TomTerm result] throws TomExcepti
     TomName labeledName = null;
     TomName annotatedName = null;
     int line = 0;
-    int column = 0; //Bla
+    int column = 0;
     boolean anti = false;
 }
     :   (
@@ -762,7 +762,7 @@ annotatedTerm [boolean allowImplicit] returns [TomTerm result] throws TomExcepti
                     text.append(':');
                     labeledName = `Name(lname.getText());
                     line = lname.getLine();
-                    column = lname.getColumn(); //Bla
+                    column = lname.getColumn();
                 }
             )?
             (// @ annotation
@@ -772,7 +772,7 @@ annotatedTerm [boolean allowImplicit] returns [TomTerm result] throws TomExcepti
                     text.append('@');
                     annotatedName = `Name(name.getText());
                     line = name.getLine();
-                    column = name.getColumn();//Bla
+                    column = name.getColumn();
                 }
             )?
             result = plainTerm[labeledName,annotatedName,line,column]
