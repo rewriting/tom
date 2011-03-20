@@ -17,7 +17,7 @@ public class OutputFormatter{
 
   public void write(String text, int ligne, int colonne, boolean insertion) { 
 
-    theCursor.setPosition(new PPTextPosition(ligne,colonne));
+    theCursor.setPosition(new PPTextPosition(ligne-1,colonne-1));
     theCursor.setInsertion(insertion);
     theCursor.write(text);
   }
