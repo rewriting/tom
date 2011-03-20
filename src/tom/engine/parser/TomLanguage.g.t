@@ -113,6 +113,10 @@ options{
         return tomlexer.getLine();
     }
 
+    private int getColumn() {
+        return tomlexer.getColumn();
+    }
+
     public void updatePosition(int i, int j) {
         targetparser.updatePosition(i,j);
     }
@@ -747,7 +751,7 @@ annotatedTerm [boolean allowImplicit] returns [TomTerm result] throws TomExcepti
     TomName labeledName = null;
     TomName annotatedName = null;
     int line = 0;
-    //int column = 0; //Bla
+    int column = 0; //Bla
     boolean anti = false;
 }
     :   (
@@ -758,7 +762,7 @@ annotatedTerm [boolean allowImplicit] returns [TomTerm result] throws TomExcepti
                     text.append(':');
                     labeledName = `Name(lname.getText());
                     line = lname.getLine();
-                    //column = lname.getColumn(); //Bla
+                    column = lname.getColumn(); //Bla
                 }
             )?
             (// @ annotation
@@ -768,14 +772,14 @@ annotatedTerm [boolean allowImplicit] returns [TomTerm result] throws TomExcepti
                     text.append('@');
                     annotatedName = `Name(name.getText());
                     line = name.getLine();
-                    //column = name.getColumn();//Bla
+                    column = name.getColumn();//Bla
                 }
             )?
-            result = plainTerm[labeledName,annotatedName,line]
+            result = plainTerm[labeledName,annotatedName,line,column]
        )
     ;
 
-plainTerm [TomName astLabeledName, TomName astAnnotedName, int line] returns [TomTerm result] throws TomException
+plainTerm [TomName astLabeledName, TomName astAnnotedName, int line, int column] returns [TomTerm result] throws TomException
 {
     List list = new LinkedList();
     List<Option> secondOptionList = new LinkedList<Option>();
@@ -788,10 +792,10 @@ plainTerm [TomName astLabeledName, TomName astAnnotedName, int line] returns [To
     boolean anti = false;
 
     if(astLabeledName != null) {
-      constraintList.add(ASTFactory.makeStorePosition(astLabeledName, line, currentFile()));
+      constraintList.add(ASTFactory.makeStorePosition(astLabeledName, line, column, currentFile()));
     }
     if(astAnnotedName != null) {
-      constraintList.add(ASTFactory.makeAliasTo(astAnnotedName, line, currentFile()));
+      constraintList.add(ASTFactory.makeAliasTo(astAnnotedName, line, column, currentFile()));
     }
 }
     :
@@ -1135,7 +1139,7 @@ xmlAttribute returns [TomTerm result] throws TomException
                 {LA(2) == AT}? anno2:ALL_ID AT
                 {
                     text.append(anno2.getText()+"@");
-                    anno2ConstraintList.add(ASTFactory.makeAliasTo(`Name(anno2.getText()), getLine(), currentFile()));
+                    anno2ConstraintList.add(ASTFactory.makeAliasTo(`Name(anno2.getText()), getLine(), getColumn(), currentFile()));
                 }
             )?
             (a:ANTI_SYM {anti = !anti;} )*
@@ -1150,7 +1154,7 @@ xmlAttribute returns [TomTerm result] throws TomException
                 anno1:ALL_ID AT
                 {
                     text.append(anno1.getText()+"@");
-                    anno1ConstraintList.add(ASTFactory.makeAliasTo(`Name(anno1.getText()), getLine(), currentFile()));
+                    anno1ConstraintList.add(ASTFactory.makeAliasTo(`Name(anno1.getText()), getLine(), getColumn(), currentFile()));
                 }
             )?
             termName = unamedVariable[optionList,anno1ConstraintList]
@@ -1159,7 +1163,7 @@ xmlAttribute returns [TomTerm result] throws TomException
                 {LA(2) == AT}? anno3:ALL_ID AT
                 {
                     text.append(anno3.getText()+"@");
-                    anno2ConstraintList.add(ASTFactory.makeAliasTo(`Name(anno3.getText()), getLine(), currentFile()));
+                    anno2ConstraintList.add(ASTFactory.makeAliasTo(`Name(anno3.getText()), getLine(), getColumn(), currentFile()));
                 }
             )?
             (b:ANTI_SYM {anti = !anti;} )*
@@ -2004,7 +2008,7 @@ keywordIsSort[String type] returns [Declaration result] throws TomException
     :
         (
             t:IS_SORT
-            { ot = `OriginTracking(Name(t.getText()),t.getLine(),t.getcolumn(),currentFile()); }
+            { ot = `OriginTracking(Name(t.getText()),t.getLine(),t.getColumn(),currentFile()); }
             LPAREN name:ALL_ID RPAREN
             {
                 Option info = `OriginTracking(Name(name.getText()),name.getLine(),name.getColumn(),currentFile());
