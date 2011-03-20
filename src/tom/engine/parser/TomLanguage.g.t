@@ -113,6 +113,10 @@ options{
         return tomlexer.getLine();
     }
 
+    private int getColumn() { //Bla
+        return tomlexer.getColumn();
+    }
+
     public void updatePosition(int i, int j) {
         targetparser.updatePosition(i,j);
     }
@@ -2004,7 +2008,7 @@ keywordIsSort[String type] returns [Declaration result] throws TomException
     :
         (
             t:IS_SORT
-            { ot = `OriginTracking(Name(t.getText()),t.getLine(),t.getcolumn(),currentFile()); }
+            { ot = `OriginTracking(Name(t.getText()),t.getLine(),t.getColumn(),currentFile()); }
             LPAREN name:ALL_ID RPAREN
             {
                 Option info = `OriginTracking(Name(name.getText()),name.getLine(),name.getColumn(),currentFile());
