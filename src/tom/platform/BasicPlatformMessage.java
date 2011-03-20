@@ -83,9 +83,27 @@ public class BasicPlatformMessage implements PlatformMessage {
       logger.log(new PlatformLogRecord(level, msg, msgArgs,fileName, errorLine));
     }
   }
+  private static void logMessage(Level level,Logger logger, String fileName, int errorLine, int errorColumn, PlatformMessage msg, Object[] msgArgs) {
+    if (null == msgArgs) {
+      msgArgs = new Object[]{};
+    }
+    if (null == fileName) {
+      fileName=DEFAULT_ERROR_FILE_NAME;
+      errorLine=DEFAULT_ERROR_LINE_NUMBER;
+    }
+
+    if (Level.FINER == level) {
+      logger.log(level, msg.getMessage(), msgArgs);
+    } else {
+      logger.log(new PlatformLogRecord(level, msg, msgArgs,fileName, errorLine));
+    }
+  }
 
   public static void error(Logger logger, String fileName, int errorLine, PlatformMessage msg, Object... msgArgs) {
     logMessage(Level.SEVERE, logger, fileName, errorLine, msg, msgArgs);
+  }
+  public static void error(Logger logger, String fileName, int errorLine, int errorColumn, PlatformMessage msg, Object... msgArgs) {
+    logMessage(Level.SEVERE, logger, fileName, errorLine, errorColumn, msg, msgArgs);
   }
 
   public static void warning(Logger logger, String fileName, int errorLine, PlatformMessage msg, Object... msgArgs) {

@@ -182,7 +182,7 @@ public class TypeCheckerPlugin extends TomGenericPlugin {
 
   protected int findOriginTrackingColumn(OptionList optionList) {
     %match(optionList) {
-      concOption(_*,OriginTracking[Column=column],_*) -> { return `line; }
+      concOption(_*,OriginTracking[Column=column],_*) -> { return `column; }
     }
     return -1;
   }
@@ -197,7 +197,7 @@ public class TypeCheckerPlugin extends TomGenericPlugin {
   }
 
   protected void ensureOriginTrackingColumn(int column) {
-    if(line < 0) {
+    if(column < 0) {
       TomMessage.error(getLogger(),
           getStreamManager().getInputFileName(), 0,
           TomMessage.findOTC);

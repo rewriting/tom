@@ -1334,7 +1334,7 @@ matchblock:{
   }
 
   private TomSymbol ensureValidApplDisjunction(TomNameList symbolNameList, TomType expectedType, 
-      String fileName, int decLine, int decColum, boolean topLevel) {
+      String fileName, int decLine, int decColumn, boolean topLevel) {
 
     if(symbolNameList.length()==1) { // Valid but has it a good type?
       String res = symbolNameList.getHeadconcTomName().getString();
