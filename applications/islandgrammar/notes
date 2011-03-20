@@ -1,0 +1,30 @@
+Initialement, nous avons découvert ANTLR. Notre objectif a été de générer avec ANTLR un bout de code reconnaissant un fichier source très simple.
+
+  -> Premiers échecs :
+    attention à mentionner tous les caractères à ANTLR (newline, tab, EOF…)
+
+Aussitôt après, nous avons taché de faire un petit bout de code en java uniquement reconnaissant quelques motifs, dans l'idée d'appeler ensuite le parser précédent.
+
+Le problème a été de connecter cela avec un parser généré par ANTLR. Juste lire le manuel. L'ensemble était appelé depuis une petite classe Main dont le but est uniquement de déclencher l'appel au parser Hôte (codé en java pur).
+
+  -> Problème : Mais comment ANTLR 'sait' quand sa section s'arrête ?
+    -> réponse : en fait il ne sait pas, et c'est bien le problème…
+    
+  Apparaît la nécessité de donner à TOM ce qu'il faut, ou bien de réussir l'appel à un autre Parser au bon moment. 
+
+Ensuite, nous avons tenté de mettre un peu d'ordre dans le système d'appel de parser ANTLR mais la classe GParser s'est révélée un peu inutile. En fait, c'est le schéma inverse qui a été suivi après, en tâchant  de tout remettre sur le niveau d'ANTLR.
+
+  -> Un système simple a été trouvé pour arrêter un parser généré par ANTLR. Il s'agit d'émettre un EOF_TOKEN. Le système a été raffiné en comptant les '{', de manière à ne terminer le parsing qu'à la fin d'un match construct (même s'il contient à l'intérieur des couples '{','}' (aucun problème technique majeur).
+
+La fonction reconnaissant les motifs déclenchant l'appel au parser ANTLR a été étoffée, et intégrée dans un système permettant de déclencher les appels aux bons parsers (dans des classes générées ou non par ANTLR).
+
+Les problèmes sérieux ont commencé en voulant déclencher des appels entre parsers.
+
+À titre de test, un parser de commentaires a été créé. Il a mis en évidence les vrais problèmes : les différences de type entre les constructeur de Lexer et de Parser. La nécessité de tenir compte du contexte implique qu'on fasse l'appel d'un autre parser dans le Parser, et pas dans le Lexer.
+D'où : mais comment faire pour se repasser un arbre du Lexer au Parser ?
+
+Actuellement, nous réexplorons les possibilités de l'option filter d'une part, et nous essayons aussi de résoudre le problème précédent (ou plutôt de le contourner, en trouvant une solution où on n'ait pas besoin de faire ce passage).
+
+Autre piste de recherche : faire une sorte de micro-parsing au niveau du lexer. De la même façon qu'on a fait quelque chose pour compter les accolades, peut-être faire quelque chose qui repère un minimum le contexte pour pouvoir déclencher le changement de parser sur une accolade ouvrante (parce que les autres règles du lexer permettraient de repérer que c'est bien la bonne accolade).
+
+Problème rencontré en faisant la transition vers le CommentLexer depuis le miniTomLexer (mais probablement pas lié à cette technique) : pourquoi ANTLR s'arrête tout seul sagement lorsqu'une règle contient le '~' (tout sauf le caractère suivant) ? De plus, il semble impossible d'émettre un Token comme cela est fait dans miniTomLexer.

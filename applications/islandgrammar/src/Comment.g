@@ -21,7 +21,7 @@ regular : t=text CLOSECOM -> ^(REGULAR $t);
 
 text : ANYTHING* ;
 
-CLOSECOM    : '*/'  ;
+CLOSECOM    : '*/' ;
 NEWLINE     : '\n'  ;
 WS          : ('\r' | '\t' | ' ')* { $channel = HIDDEN; };
 ANYTHING    : ( ~CLOSECOM);

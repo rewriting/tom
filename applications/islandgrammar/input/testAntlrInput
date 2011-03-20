@@ -1,9 +1,9 @@
 ici
 et là
-//@
+/* truc */
 %match(){  
 { bob bob
   bob }
-alice alice;
+  alice alice;
   }@
 %op ziou
