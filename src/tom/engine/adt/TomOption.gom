@@ -6,7 +6,7 @@ Option =
   | TomNameToOption(AstName:TomName)
   | TomTermToOption(AstTerm:TomTerm)
   | GeneratedMatch()
-  | OriginTracking(AstName:TomName,Line:int,FileName:String)
+  | OriginTracking(AstName:TomName,Line:int,Column:int,FileName:String)
   | OriginalText(AstName:TomName)
   | Constant()
   | MatchingTheory(Theory:Theory)

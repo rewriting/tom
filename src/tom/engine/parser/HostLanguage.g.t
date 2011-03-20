@@ -457,7 +457,7 @@ strategyConstruct [List<Code> list] throws TomException
                 list.add(`TargetLanguageToCode(code));
             }
 
-            Option ot = `OriginTracking( Name("Strategy"), t.getLine(), currentFile);
+            Option ot = `OriginTracking( Name("Strategy"), t.getLine(), t.getColumn(), currentFile);
 
             // call the tomparser for the construct
             Declaration strategy = tomparser.strategyConstruct(ot);
@@ -482,7 +482,7 @@ matchConstruct [List<Code> list] throws TomException
                 list.add(`TargetLanguageToCode(code));
             }
 
-            Option ot = `OriginTracking(Name("Match"),t.getLine(), currentFile);
+            Option ot = `OriginTracking(Name("Match"),t.getLine(), t.getColumn(), currentFile);
 
             Instruction match = tomparser.matchConstruct(ot);
             list.add(`InstructionToCode(match));
@@ -666,7 +666,7 @@ backquoteTerm [List<Code> list]
             list.add(`TargetLanguageToCode(code));
           }
 
-          Option ot = `OriginTracking(Name("Backquote"),t.getLine(), currentFile);
+          Option ot = `OriginTracking(Name("Backquote"),t.getLine(), t.getColumn(), currentFile);
           //BQTerm bqTerm = tomparser.plainBQTerm();
           BQTerm result = bqparser.beginBackquote();
           //System.out.println("parse bqterm \n"+result);

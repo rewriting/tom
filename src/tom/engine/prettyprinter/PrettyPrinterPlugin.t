@@ -120,7 +120,9 @@ public class PrettyPrinterPlugin extends TomGenericPlugin {
 
   private void prettyPrinter(Code code) throws IOException {
     System.out.println("PrettyPrinter active");
-//    System.out.println(code);
+      FileWriter textFile = new FileWriter("code.txt");
+      textFile.write(code.toString());
+      textFile.close();
     theFormatter.write("Bla");
     printTL(code);
     theFormatter.dump();

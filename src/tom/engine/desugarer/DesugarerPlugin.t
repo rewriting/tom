@@ -177,8 +177,8 @@ public class DesugarerPlugin extends TomGenericPlugin {
         return tomSymbol;
       }
 
-      Symbol(name,t@TypesToType(_,codom),l,concOption(X1*,origin@OriginTracking(_,line,file),X2*)) -> {
-        Declaration isfsym = `IsFsymDecl(name,BQVariable(concOption(OriginTracking(Name("t"),line,file)),Name("t"),codom),FalseTL(),OriginTracking(Name("is_fsym"),line,file));
+      Symbol(name,t@TypesToType(_,codom),l,concOption(X1*,origin@OriginTracking(_,line,column,file),X2*)) -> {
+        Declaration isfsym = `IsFsymDecl(name,BQVariable(concOption(OriginTracking(Name("t"),line,column,file)),Name("t"),codom),FalseTL(),OriginTracking(Name("is_fsym"),line,column,file));
         return `Symbol(name,t,l,concOption(X1*,origin,DeclarationToOption(isfsym),X2*));
       }
     }
@@ -190,7 +190,7 @@ public class DesugarerPlugin extends TomGenericPlugin {
       Symbol[Options=concOption(_*,DeclarationToOption((MakeDecl|MakeEmptyList|MakeEmptyArray|MakeAddList|MakeAddArray|IsFsymDecl|GetImplementationDecl|GetSlotDecl|GetHeadDecl|GetTailDecl|IsEmptyDecl|GetElementDecl|GetSizeDecl)[]),_*)] -> {
         return tomSymbol;
       }
-      Symbol(name,t@TypesToType(domain,codomain),l,concOption(X1*,origin@OriginTracking(_,line,file),X2*)) -> {
+      Symbol(name,t@TypesToType(domain,codomain),l,concOption(X1*,origin@OriginTracking(_,line,column,file),X2*)) -> {
         //build variables for make
         BQTermList argsAST = `concBQTerm();
         int index = 0;
@@ -201,7 +201,7 @@ public class DesugarerPlugin extends TomGenericPlugin {
         }
         BQTerm functionCall = `FunctionCall(name,codomain,argsAST);
         Declaration make = `MakeDecl(name,codomain,argsAST,BQTermToInstruction(functionCall),
-            OriginTracking(Name("make"),line,file));
+            OriginTracking(Name("make"),line,column,file));
         return `Symbol(name,t,l,concOption(X1*,origin,DeclarationToOption(make),X2*));
       }
     }
@@ -448,8 +448,8 @@ matchBlock:
   private OptionList convertOriginTracking(String name,OptionList optionList) {
     Option originTracking = TomBase.findOriginTracking(optionList);
     %match(originTracking) {
-      OriginTracking[Line=line, FileName=fileName] -> {
-        return `concOption(OriginTracking(Name(name),line,fileName));
+      OriginTracking[Line=line, Column=column, FileName=fileName] -> {
+        return `concOption(OriginTracking(Name(name),line, column, fileName));
       }
     }
     System.out.println("Warning: no OriginTracking information");

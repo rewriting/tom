@@ -84,6 +84,7 @@ options{
     private StringBuilder text = new StringBuilder();
 
     private int lastLine;
+    private int lastColumn;
 
     private SymbolTable symbolTable;
 
@@ -122,6 +123,10 @@ options{
 
     private void setLastLine(int line) {
         lastLine = line;
+    }
+
+    private void setLastColumn(int column) {
+        lastColumn = column;
     }
 
     private void clearText() {
@@ -567,7 +572,7 @@ matchPattern [List<TomTerm> list, boolean allowImplicit] returns [Option result]
              term = annotatedTerm[allowImplicit]
             {
                 list.add(term);
-                result = `OriginTracking(Name("Pattern"),lastLine,currentFile());
+                result = `OriginTracking(Name("Pattern"),lastLine,lastColumn,currentFile());
             }
             (
                 COMMA {text.append('\n');}
@@ -596,7 +601,7 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
     :(
         name:ALL_ID
         {
-        Option ot = `OriginTracking(Name(name.getText()),name.getLine(),currentFile());
+        Option ot = `OriginTracking(Name(name.getText()),name.getLine(),name.getColumn(),currentFile());
         options.add(ot);
         if(symbolTable.getSymbolFromName(name.getText()) != null) {
           throw new TomException(TomMessage.invalidStrategyName, new Object[]{name.getText()});
@@ -618,7 +623,7 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
                 TomType strategyType = `Type(concTypeOption(),"Strategy",EmptyTargetLanguageType());
 
                 // Define get<slot> method.
-                Option slotOption = `OriginTracking(Name(stringSlotName),firstSlot1.getLine(),currentFile());
+                Option slotOption = `OriginTracking(Name(stringSlotName),firstSlot1.getLine(),firstSlot1.getColumn(),currentFile());
                 String varname = "t";
                 BQTerm slotVar = `BQVariable(concOption(slotOption),Name(varname),strategyType);
                 String code = ASTFactory.abstractCode("((" + name.getText() + ")$"+varname+").get" + stringSlotName + "()",varname);
@@ -648,7 +653,7 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
 
                 TomType strategyType = `Type(concTypeOption(),"Strategy",EmptyTargetLanguageType());
                     // Define get<slot> method.
-                    Option slotOption = `OriginTracking(Name(stringSlotName),firstSlot2.getLine(),currentFile());
+                    Option slotOption = `OriginTracking(Name(stringSlotName),firstSlot2.getLine(),firstSlot2.getColumn(),currentFile());
                     String varname = "t";
                     BQTerm slotVar = `BQVariable(concOption(slotOption),Name(varname),strategyType);
                     String code = ASTFactory.abstractCode("((" + name.getText() + ")$"+varname+").get" + stringSlotName + "()",varname);
@@ -686,12 +691,12 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
 				 makeTlCode += ")";
 
          TomType strategyType = `Type(concTypeOption(),"Strategy",EmptyTargetLanguageType());
-				 Option makeOption = `OriginTracking(Name(name.getText()),t.getLine(),currentFile());
+				 Option makeOption = `OriginTracking(Name(name.getText()),t.getLine(),t.getColumn(),currentFile());
 				 Declaration makeDecl = `MakeDecl(Name(name.getText()), strategyType, makeArgs, CodeToInstruction(TargetLanguageToCode(ITL(makeTlCode))), makeOption);
           options.add(`DeclarationToOption(makeDecl));
 
           // Define the is_fsym method.
-          Option fsymOption = `OriginTracking(Name(name.getText()),t.getLine(),currentFile());
+          Option fsymOption = `OriginTracking(Name(name.getText()),t.getLine(),t.getColumn(),currentFile());
           String varname = "t";
           BQTerm fsymVar = `BQVariable(concOption(fsymOption),Name(varname),strategyType);
           String code = ASTFactory.abstractCode("($"+varname+" instanceof " + name.getText() + ")",varname);
@@ -729,7 +734,7 @@ strategyVisit [List<TomVisit> list] throws TomException
   )
   {
     List<Option> optionList = new LinkedList<Option>();
-    optionList.add(`OriginTracking(Name(type.getText()),type.getLine(),currentFile()));
+    optionList.add(`OriginTracking(Name(type.getText()),type.getLine(),type.getColumn(),currentFile()));
     OptionList options = ASTFactory.makeOptionList(optionList);
     list.add(`VisitTerm(vType,ASTFactory.makeConstraintInstructionList(constraintInstructionList),options));
   }
@@ -1010,7 +1015,7 @@ xmlTerm [List<Option> optionList, List<Constraint> constraintList] returns [TomT
                 keyword = Constants.TEXT_NODE;
                 pairSlotList.add(`PairSlotAppl(Name(Constants.SLOT_DATA),arg1));
 
-                optionList.add(`OriginTracking(Name(keyword),getLine(),currentFile()));
+                optionList.add(`OriginTracking(Name(keyword),getLine(),getColumn(),currentFile()));
                 option = ASTFactory.makeOptionList(optionList);
                 constraint = ASTFactory.makeConstraintList(constraintList);
                 nameList = `concTomName(Name(keyword));
@@ -1025,7 +1030,7 @@ xmlTerm [List<Option> optionList, List<Constraint> constraintList] returns [TomT
                 keyword = Constants.COMMENT_NODE;
                 pairSlotList.add(`PairSlotAppl(Name(Constants.SLOT_DATA),arg1));
 
-                optionList.add(`OriginTracking(Name(keyword),getLine(),currentFile()));
+                optionList.add(`OriginTracking(Name(keyword),getLine(),getColumn(),currentFile()));
                 option = ASTFactory.makeOptionList(optionList);
                 constraint = ASTFactory.makeConstraintList(constraintList);
                 nameList = `concTomName(Name(keyword));
@@ -1043,7 +1048,7 @@ xmlTerm [List<Option> optionList, List<Constraint> constraintList] returns [TomT
                 pairSlotList.add(`PairSlotAppl(Name(Constants.SLOT_TARGET),arg1));
                 pairSlotList.add(`PairSlotAppl(Name(Constants.SLOT_DATA),arg2));
 
-                optionList.add(`OriginTracking(Name(keyword),getLine(),currentFile()));
+                optionList.add(`OriginTracking(Name(keyword),getLine(),getColumn(),currentFile()));
                 option = ASTFactory.makeOptionList(optionList);
                 constraint = ASTFactory.makeConstraintList(constraintList);
                 nameList = `concTomName(Name(keyword));
@@ -1165,13 +1170,13 @@ xmlAttribute returns [TomTerm result] throws TomException
 
                 slotList.add(`PairSlotAppl(Name(Constants.SLOT_NAME),termName));
                 // we add the specif value : _
-                optionList.add(`OriginTracking(Name("_"),getLine(),currentFile()));
+                optionList.add(`OriginTracking(Name("_"),getLine(),getColumn(),currentFile()));
                 option = ASTFactory.makeOptionList(optionList);
                 constraint = ASTFactory.makeConstraintList(constraintList);
                 slotList.add(`PairSlotAppl(Name(Constants.SLOT_SPECIFIED),Variable(option,EmptyName(),SymbolTable.TYPE_UNKNOWN,constraint)));
                 // no longer necessary ot metaEncode Strings in attributes
                 slotList.add(`PairSlotAppl(Name(Constants.SLOT_VALUE),term));
-                optionList.add(`OriginTracking(Name(Constants.ATTRIBUTE_NODE),getLine(),currentFile()));
+                optionList.add(`OriginTracking(Name(Constants.ATTRIBUTE_NODE),getLine(),getColumn(),currentFile()));
                 option = ASTFactory.makeOptionList(optionList);
                 constraint = ASTFactory.makeConstraintList(constraintList);
 
@@ -1189,6 +1194,7 @@ xmlNameList [List<Option> optionList, boolean needOrgTrack] returns [TomNameList
     result = `concTomName();
     StringBuilder xmlName = new StringBuilder();
     int decLine = 0;
+    int decColumn = 0;
     boolean anti = false;
 }
     :
@@ -1199,6 +1205,7 @@ xmlNameList [List<Option> optionList, boolean needOrgTrack] returns [TomNameList
                 text.append(name.getText());
                 xmlName.append(name.getText());
                 decLine = name.getLine();
+                decColumn = name.getColumn();
                 if (anti) {
                   result =  `concTomName(AntiName(Name(name.getText())));
                 } else {
@@ -1210,6 +1217,7 @@ xmlNameList [List<Option> optionList, boolean needOrgTrack] returns [TomNameList
                 text.append(name2.getText());
                 xmlName.append(name2.getText());
                 decLine = name2.getLine();
+                decColumn = name2.getColumn();
                 result = `concTomName(Name(name2.getText()));
             }
         |   LPAREN (b:ANTI_SYM {anti = !anti;} )* name3:ALL_ID
@@ -1217,6 +1225,7 @@ xmlNameList [List<Option> optionList, boolean needOrgTrack] returns [TomNameList
                 text.append(name3.getText());
                 xmlName.append(name3.getText());
                 decLine = name3.getLine();
+                decColumn = name3.getColumn();
                 if (anti) {
                   result =  `concTomName(AntiName(Name(name3.getText())));
                 } else {
@@ -1240,7 +1249,7 @@ xmlNameList [List<Option> optionList, boolean needOrgTrack] returns [TomNameList
         )
         {
             if(needOrgTrack) {
-                optionList.add(`OriginTracking(Name(xmlName.toString()), decLine, currentFile()));
+                optionList.add(`OriginTracking(Name(xmlName.toString()), decLine, decColumn, currentFile()));
             }
         }
     ;
@@ -1257,7 +1266,7 @@ termStringIdentifier [List<Option> options] returns [TomTerm result] throws TomE
             nameID:ALL_ID
             {
                 text.append(nameID.getText());
-                optionList.add(`OriginTracking(Name(nameID.getText()),nameID.getLine(),currentFile()));
+                optionList.add(`OriginTracking(Name(nameID.getText()),nameID.getLine(),nameID.getColumn(),currentFile()));
                 option = ASTFactory.makeOptionList(optionList);
                 result = `Variable(option,Name(nameID.getText()),SymbolTable.TYPE_UNKNOWN,concConstraint());
             }
@@ -1265,7 +1274,7 @@ termStringIdentifier [List<Option> options] returns [TomTerm result] throws TomE
             nameString:STRING
             {
                 text.append(nameString.getText());
-                optionList.add(`OriginTracking(Name(nameString.getText()),nameString.getLine(),currentFile()));
+                optionList.add(`OriginTracking(Name(nameString.getText()),nameString.getLine(),nameString.getColumn(),currentFile()));
                 option = ASTFactory.makeOptionList(optionList);
                 ASTFactory.makeStringSymbol(symbolTable,nameString.getText(),optionList);
                 nameList = `concTomName(Name(nameString.getText()));
@@ -1290,7 +1299,7 @@ unamedVariableOrTermStringIdentifier [List<Option> options, List<Constraint> con
             nameID:ALL_ID
             {
                 text.append(nameID.getText());
-                optionList.add(`OriginTracking(Name(nameID.getText()),nameID.getLine(),currentFile()));
+                optionList.add(`OriginTracking(Name(nameID.getText()),nameID.getLine(),nameID.getColumn(),currentFile()));
                 option = ASTFactory.makeOptionList(optionList);
                 constraints = ASTFactory.makeConstraintList(constraintList);
                 result = `Variable(option,Name(nameID.getText()),SymbolTable.TYPE_UNKNOWN,constraints);
@@ -1299,7 +1308,7 @@ unamedVariableOrTermStringIdentifier [List<Option> options, List<Constraint> con
             nameString:STRING
             {
                 text.append(nameString.getText());
-                optionList.add(`OriginTracking(Name(nameString.getText()),nameString.getLine(),currentFile()));
+                optionList.add(`OriginTracking(Name(nameString.getText()),nameString.getLine(),nameString.getColumn(),currentFile()));
                 option = ASTFactory.makeOptionList(optionList);
                 ASTFactory.makeStringSymbol(symbolTable,nameString.getText(),optionList);
                 nameList = `concTomName(Name(nameString.getText()));
@@ -1351,9 +1360,10 @@ args [List list, List<Option> optionList] returns [boolean result] throws TomExc
                 // setting line number for origin tracking
                 // in %rule construct
                 setLastLine(t2.getLine());
+                setLastColumn(t2.getColumn());
                 text.append(t2.getText());
                 result = false;
-                optionList.add(`OriginTracking(Name(""),t1.getLine(),currentFile()));
+                optionList.add(`OriginTracking(Name(""),t1.getLine(),t1.getColumn(),currentFile()));
             }
 
         |   // [term = term , term = term , ...]
@@ -1364,9 +1374,10 @@ args [List list, List<Option> optionList] returns [boolean result] throws TomExc
                 // setting line number for origin tracking
                 // in %rule construct
                 setLastLine(t4.getLine());
+                setLastColumn(t4.getColumn());
                 text.append(t4.getText());
                 result = true;
-                optionList.add(`OriginTracking(Name(""),t3.getLine(),currentFile()));
+                optionList.add(`OriginTracking(Name(""),t3.getLine(),t3.getColumn(),currentFile()));
             }
         )
     ;
@@ -1420,6 +1431,7 @@ bqVariableStar [List<Option> optionList, List<Constraint> constraintList] return
                 {
                     name = name1.getText();
                     line = name1.getLine();
+                    column = name1.getColumn();
                 }
             )
             t:STAR
@@ -1430,8 +1442,9 @@ bqVariableStar [List<Option> optionList, List<Constraint> constraintList] return
                 // setting line number for origin tracking
                 // in %rule construct
                 setLastLine(t.getLine());
+                setLastColumn(t.getColumn());
 
-                optionList.add(`OriginTracking(Name(name),line,currentFile()));
+                optionList.add(`OriginTracking(Name(name),line,column,currentFile()));
                 options = ASTFactory.makeOptionList(optionList);
                 constraints = ASTFactory.makeConstraintList(constraintList);
                 result = `BQVariableStar(
@@ -1459,11 +1472,13 @@ variableStar [List<Option> optionList, List<Constraint> constraintList] returns 
                 {
                     name = name1.getText();
                     line = name1.getLine();
+                    column = name1.getColumn();
                 }
             |   name2:UNDERSCORE
                 {
                     name = name2.getText();
                     line = name2.getLine();
+                    column = name2.getColumn();
                 }
             )
             t:STAR
@@ -1474,8 +1489,9 @@ variableStar [List<Option> optionList, List<Constraint> constraintList] returns 
                 // setting line number for origin tracking
                 // in %rule construct
                 setLastLine(t.getLine());
+                setLastColumn(t.getColumn());
 
-                optionList.add(`OriginTracking(Name(name),line,currentFile()));
+                optionList.add(`OriginTracking(Name(name),line,column,currentFile()));
                 options = ASTFactory.makeOptionList(optionList);
                 constraints = ASTFactory.makeConstraintList(constraintList);
                 if(name1 == null) {
@@ -1509,8 +1525,9 @@ unamedVariable [List<Option> optionList, List<Constraint> constraintList] return
             {
                 text.append(t.getText());
                 setLastLine(t.getLine());
+                setLastColumn(t.getColumn());
 
-                optionList.add(`OriginTracking(Name(t.getText()),t.getLine(),currentFile()));
+                optionList.add(`OriginTracking(Name(t.getText()),t.getLine(),t.getColumn(),currentFile()));
                 options = ASTFactory.makeOptionList(optionList);
                 constraints = ASTFactory.makeConstraintList(constraintList);
                 result = `Variable(options,EmptyName(),SymbolTable.TYPE_UNKNOWN,constraints);
@@ -1549,6 +1566,7 @@ headSymbolList [List<Option> optionList] returns [TomNameList result]
             {
                 text.append(t.getText());
                 setLastLine(t.getLine());
+                setLastColumn(t.getColumn());
             }
         )
     ;
@@ -1569,10 +1587,12 @@ headSymbol [List<Option> optionList] returns [TomName result]
   {
     String name = i.getText();
 		int line = i.getLine();
+                int column = i.getColumn();
 		text.append(name);
 		setLastLine(line);
+                setLastColumn(column);
 		result = `Name(name);
-		optionList.add(`OriginTracking(result,line, currentFile()));
+		optionList.add(`OriginTracking(result,line,column,currentFile()));
 	}
 	)
 ;
@@ -1612,10 +1632,12 @@ headConstant [List<Option> optionList] returns [TomName result]
 {
 	String name = t.getText();
 	int line = t.getLine();
+	int column = t.getColumn();
 	text.append(name);
 	setLastLine(line);
+        setLastColumn(column);
 	result = `Name(name);
-	optionList.add(`OriginTracking(result,line, currentFile()));
+	optionList.add(`OriginTracking(result,line,column,currentFile()));
 
 	switch(t.getType()) {
 		case NUM_INT:
@@ -1654,7 +1676,7 @@ operator returns [Declaration result] throws TomException
     :
       type:ALL_ID name:ALL_ID
         {
-            ot = `OriginTracking(Name(name.getText()),name.getLine(),currentFile());
+            ot = `OriginTracking(Name(name.getText()),name.getLine(),name.getColumn(),currentFile());
             options.add(ot);
         }
         (
@@ -1755,7 +1777,7 @@ operator returns [Declaration result] throws TomException
         type:ALL_ID name:ALL_ID
         {
 	  opName = name.getText();
-	  Option ot = `OriginTracking(Name(opName),name.getLine(),currentFile());
+	  Option ot = `OriginTracking(Name(opName),name.getLine(),name.getColumn(),currentFile());
 	  options.add(ot);
         }
         LPAREN typeArg:ALL_ID STAR RPAREN
@@ -1800,7 +1822,7 @@ operatorArray returns [Declaration result] throws TomException
         type:ALL_ID name:ALL_ID
         {
 	  opName = name.getText();
-	  Option ot = `OriginTracking(Name(opName),name.getLine(),currentFile());
+	  Option ot = `OriginTracking(Name(opName),name.getLine(),name.getColumn(),currentFile());
 	  options.add(ot);
         }
         LPAREN typeArg:ALL_ID STAR RPAREN
@@ -1846,13 +1868,13 @@ subtypeConstruct throws TomException
     subtype:ALL_ID
     {
         subtypeName = subtype.getText();
-        ot1 = `OriginTracking(Name(subtypeName), subtype.getLine(),currentFile());
+        ot1 = `OriginTracking(Name(subtypeName), subtype.getLine(), subtype.getColumn(), currentFile());
     }
     SUBTYPE_CONSTRAINT
     supertype:ALL_ID
     {
         supertypeName = supertype.getText();
-        ot2 = `OriginTracking(Name(supertypeName), supertype.getLine(),currentFile());
+        ot2 = `OriginTracking(Name(supertypeName), supertype.getLine(), supertype.getColumn(), currentFile());
     }
 {
   TomType subAstType = getType(subtypeName);
@@ -1902,7 +1924,7 @@ typeTerm returns [Declaration result] throws TomException
     :   (
             type:ALL_ID
             {
-                ot = `OriginTracking(Name(type.getText()), type.getLine(),currentFile());
+                ot = `OriginTracking(Name(type.getText()), type.getLine(), type.getColumn(), currentFile());
             }
             LBRACE
 
@@ -1949,11 +1971,11 @@ keywordEquals[String type] returns [Declaration result] throws TomException
     :
         (
             t:EQUALS
-            { ot = `OriginTracking(Name(t.getText()),t.getLine(),currentFile()); }
+            { ot = `OriginTracking(Name(t.getText()),t.getLine(),t.getColumn(),currentFile()); }
             LPAREN name1:ALL_ID COMMA name2:ALL_ID RPAREN
             {
-                Option info1 = `OriginTracking(Name(name1.getText()),name1.getLine(),currentFile());
-                Option info2 = `OriginTracking(Name(name2.getText()),name2.getLine(),currentFile());
+                Option info1 = `OriginTracking(Name(name1.getText()),name1.getLine(),name1.getColumn(),currentFile());
+                Option info2 = `OriginTracking(Name(name2.getText()),name2.getLine(),name2.getColumn(),currentFile());
                 OptionList option1 = `concOption(info1);
                 OptionList option2 = `concOption(info2);
 
@@ -1977,10 +1999,10 @@ keywordIsSort[String type] returns [Declaration result] throws TomException
     :
         (
             t:IS_SORT
-            { ot = `OriginTracking(Name(t.getText()),t.getLine(),currentFile()); }
+            { ot = `OriginTracking(Name(t.getText()),t.getLine(),t.getcolumn(),currentFile()); }
             LPAREN name:ALL_ID RPAREN
             {
-                Option info = `OriginTracking(Name(name.getText()),name.getLine(),currentFile());
+                Option info = `OriginTracking(Name(name.getText()),name.getLine(),name.getColumn(),currentFile());
                 OptionList option = `concOption(info);
 
                 selector().push("targetlexer");
@@ -2003,10 +2025,10 @@ keywordGetHead[TomName opname, String type] returns [Declaration result] throws 
     :
         (
             t:GET_HEAD
-            { ot = `OriginTracking(Name(t.getText()),t.getLine(),currentFile()); }
+            { ot = `OriginTracking(Name(t.getText()),t.getLine(),t.getColumn(),currentFile()); }
             LPAREN name:ALL_ID RPAREN
             {
-                Option info = `OriginTracking(Name(name.getText()),name.getLine(),currentFile());
+                Option info = `OriginTracking(Name(name.getText()),name.getLine(),name.getColumn(),currentFile());
                 OptionList option = `concOption(info);
 
                 selector().push("targetlexer");
@@ -2030,10 +2052,10 @@ keywordGetTail[TomName opname, String type] returns [Declaration result] throws 
     :
         (
             t:GET_TAIL
-            { ot = `OriginTracking(Name(t.getText()),t.getLine(),currentFile()); }
+            { ot = `OriginTracking(Name(t.getText()),t.getLine(),t.getColumn(),currentFile()); }
             LPAREN name:ALL_ID RPAREN
             {
-                Option info = `OriginTracking(Name(name.getText()),name.getLine(),currentFile());
+                Option info = `OriginTracking(Name(name.getText()),name.getLine(),name.getColumn(),currentFile());
                 OptionList option = `concOption(info);
 
                 selector().push("targetlexer");
@@ -2056,10 +2078,10 @@ keywordIsEmpty[TomName opname, String type] returns [Declaration result] throws 
     :
         (
             t:IS_EMPTY
-            { ot = `OriginTracking(Name(t.getText()),t.getLine(),currentFile()); }
+            { ot = `OriginTracking(Name(t.getText()),t.getLine(),t.getColumn(),currentFile()); }
             LPAREN name:ALL_ID RPAREN
             {
-                Option info = `OriginTracking(Name(name.getText()),name.getLine(),currentFile());
+                Option info = `OriginTracking(Name(name.getText()),name.getLine(),name.getColumn(),currentFile());
                 OptionList option = `concOption(info);
 
                 selector().push("targetlexer");
@@ -2082,11 +2104,11 @@ keywordGetElement[TomName opname, String type] returns [Declaration result] thro
     :
         (
             t:GET_ELEMENT
-            { ot = `OriginTracking(Name(t.getText()),t.getLine(),currentFile()); }
+            { ot = `OriginTracking(Name(t.getText()),t.getLine(),t.getColumn(),currentFile()); }
             LPAREN name1:ALL_ID COMMA name2:ALL_ID RPAREN
             {
-                Option info1 = `OriginTracking(Name(name1.getText()),name1.getLine(),currentFile());
-                Option info2 = `OriginTracking(Name(name2.getText()),name2.getLine(),currentFile());
+                Option info1 = `OriginTracking(Name(name1.getText()),name1.getLine(),name1.getColumn(),currentFile());
+                Option info2 = `OriginTracking(Name(name2.getText()),name2.getLine(),name2.getColumn(),currentFile());
                 OptionList option1 = `concOption(info1);
                 OptionList option2 = `concOption(info2);
 
@@ -2110,10 +2132,10 @@ keywordGetSize[TomName opname, String type] returns [Declaration result] throws 
     :
         (
             t:GET_SIZE
-            { ot = `OriginTracking(Name(t.getText()),t.getLine(),currentFile()); }
+            { ot = `OriginTracking(Name(t.getText()),t.getLine(),t.getColumn(),currentFile()); }
             LPAREN name:ALL_ID RPAREN
             {
-                Option info = `OriginTracking(Name(name.getText()),name.getLine(),currentFile());
+                Option info = `OriginTracking(Name(name.getText()),name.getLine(),name.getColumn(),currentFile());
                 OptionList option = `concOption(info);
 
                 selector().push("targetlexer");
@@ -2134,10 +2156,10 @@ keywordIsFsym[TomName astName, String typeString] returns [Declaration result] t
 }
     :
         t:IS_FSYM
-        { ot = `OriginTracking(Name(t.getText()),t.getLine(),currentFile()); }
+        { ot = `OriginTracking(Name(t.getText()),t.getLine(),t.getColumn(),currentFile()); }
         LPAREN name:ALL_ID RPAREN
         {
-            Option info = `OriginTracking(Name(name.getText()),name.getLine(),currentFile());
+            Option info = `OriginTracking(Name(name.getText()),name.getLine(),name.getColumn(),currentFile());
             OptionList option = `concOption(info);
 
             selector().push("targetlexer");
@@ -2158,10 +2180,10 @@ keywordGetImplementation [String typeString] returns [Declaration result] throws
 }
     :
         t:GET_IMPLEMENTATION
-        { ot = `OriginTracking(Name(t.getText()),t.getLine(),currentFile()); }
+        { ot = `OriginTracking(Name(t.getText()),t.getLine(),t.getColumn(),currentFile()); }
         LPAREN name:ALL_ID RPAREN
         {
-            Option info = `OriginTracking(Name(name.getText()),name.getLine(),currentFile());
+            Option info = `OriginTracking(Name(name.getText()),name.getLine(),name.getColumn(),currentFile());
             OptionList option = `concOption(info);
 
             selector().push("targetlexer");
@@ -2182,10 +2204,10 @@ keywordGetSlot [TomName astName, String type] returns [Declaration result] throw
     :
         (
             t:GET_SLOT
-            { ot = `OriginTracking(Name(t.getText()),t.getLine(),currentFile()); }
+            { ot = `OriginTracking(Name(t.getText()),t.getLine(),t.getColumn(),currentFile()); }
             LPAREN slotName:ALL_ID COMMA name:ALL_ID RPAREN
             {
-                Option info = `OriginTracking(Name(name.getText()),name.getLine(),currentFile());
+                Option info = `OriginTracking(Name(name.getText()),name.getLine(),name.getColumn(),currentFile());
                 OptionList option = `concOption(info);
 
                 selector().push("targetlexer");
@@ -2213,7 +2235,7 @@ keywordMake[String opname, TomType returnType, TomTypeList types] returns [Decla
     :
         (
             t:MAKE
-            { ot = `OriginTracking(Name(t.getText()),t.getLine(),currentFile()); }
+            { ot = `OriginTracking(Name(t.getText()),t.getLine(),t.getColumn(),currentFile()); }
                 (LPAREN
                 (
                     nameArg:ALL_ID
@@ -2223,7 +2245,7 @@ keywordMake[String opname, TomType returnType, TomTypeList types] returns [Decla
                         } else {
                             type = TomBase.elementAt(types,index++);
                         }
-                        Option info1 = `OriginTracking(Name(nameArg.getText()),nameArg.getLine(),currentFile());
+                        Option info1 = `OriginTracking(Name(nameArg.getText()),nameArg.getLine(),nameArg.getColumn(),currentFile());
                         OptionList option1 = `concOption(info1);
 
                         args = `concBQTerm(args*,BQVariable(
@@ -2241,7 +2263,7 @@ keywordMake[String opname, TomType returnType, TomTypeList types] returns [Decla
                             } else {
                               type = TomBase.elementAt(types,index++);
                             }
-                            Option info2 = `OriginTracking(Name(nameArg2.getText()),nameArg2.getLine(),currentFile());
+                            Option info2 = `OriginTracking(Name(nameArg2.getText()),nameArg2.getLine(),nameArg2.getColumn(),currentFile());
                             OptionList option2 = `concOption(info2);
 
                             args = `concBQTerm(args*,BQVariable(
@@ -2280,7 +2302,7 @@ keywordMakeEmptyList[String name] returns [Declaration result] throws TomExcepti
 }
     :
         t:MAKE_EMPTY (LPAREN RPAREN)?
-        { ot = `OriginTracking(Name(t.getText()),t.getLine(),currentFile()); }
+        { ot = `OriginTracking(Name(t.getText()),t.getLine(),t.getColumn(),currentFile()); }
 
         LBRACE
         {
@@ -2304,13 +2326,13 @@ keywordMakeAddList[String name, String listType, String elementType] returns [De
 }
     :
         t:MAKE_INSERT
-        {ot = `OriginTracking(Name(t.getText()),t.getLine(),currentFile());}
+        {ot = `OriginTracking(Name(t.getText()),t.getLine(),t.getColumn(),currentFile());}
 
         LPAREN elementName:ALL_ID COMMA listName:ALL_ID RPAREN
         LBRACE
         {
-            Option listInfo = `OriginTracking(Name(listName.getText()),listName.getLine(),currentFile());
-            Option elementInfo = `OriginTracking(Name(elementName.getText()),elementName.getLine(),currentFile());
+            Option listInfo = `OriginTracking(Name(listName.getText()),listName.getLine(),listName.getColumn(),currentFile());
+            Option elementInfo = `OriginTracking(Name(elementName.getText()),elementName.getLine(),elementName.getColumn(),currentFile());
             OptionList listOption = `concOption(listInfo);
             OptionList elementOption = `concOption(elementInfo);
 
@@ -2340,11 +2362,11 @@ keywordMakeEmptyArray[String name, String listType] returns [Declaration result]
     Option ot = null;
 }
     :
-        t:MAKE_EMPTY { ot = `OriginTracking(Name(t.getText()),t.getLine(),currentFile()); }
+        t:MAKE_EMPTY { ot = `OriginTracking(Name(t.getText()),t.getLine(),t.getColumn(),currentFile()); }
         LPAREN listName:ALL_ID RPAREN
         LBRACE
         {
-            Option listInfo = `OriginTracking(Name(listName.getText()),listName.getLine(),currentFile());
+            Option listInfo = `OriginTracking(Name(listName.getText()),listName.getLine(),listName.getColumn(),currentFile());
             OptionList listOption = `concOption(listInfo);
 
             selector().push("targetlexer");
@@ -2370,7 +2392,7 @@ keywordMakeAddArray[String name, String listType, String elementType] returns [D
     Option ot = null;
 }
     :
-        t:MAKE_APPEND { ot = `OriginTracking(Name(t.getText()),t.getLine(),currentFile()); }
+        t:MAKE_APPEND { ot = `OriginTracking(Name(t.getText()),t.getLine(),t.getColumn(),currentFile()); }
           LPAREN elementName:ALL_ID COMMA listName:ALL_ID RPAREN
           LBRACE
         {
@@ -2380,8 +2402,8 @@ keywordMakeAddArray[String name, String listType, String elementType] returns [D
             selector().pop();
             blockList.add(tlCode);
 
-            Option listInfo = `OriginTracking(Name(listName.getText()),listName.getLine(),currentFile());
-            Option elementInfo = `OriginTracking(Name(elementName.getText()),elementName.getLine(),currentFile());
+            Option listInfo = `OriginTracking(Name(listName.getText()),listName.getLine(),listName.getColumn(),currentFile());
+            Option elementInfo = `OriginTracking(Name(elementName.getText()),elementName.getLine(),elementName.getColumn(),currentFile());
             OptionList listOption = `concOption(listInfo);
             OptionList elementOption = `concOption(elementInfo);
             if(blockList.size()==1) {
