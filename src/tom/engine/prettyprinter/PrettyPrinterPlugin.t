@@ -120,10 +120,9 @@ public class PrettyPrinterPlugin extends TomGenericPlugin {
 
   private void prettyPrinter(Code code) throws IOException {
     System.out.println("PrettyPrinter active");
-      FileWriter textFile = new FileWriter("code.txt");
-      textFile.write(code.toString());
-      textFile.close();
-    theFormatter.write("Bla");
+    FileWriter textFile = new FileWriter("code.txt");
+    textFile.write(code.toString());
+    textFile.close();
     printTL(code);
     theFormatter.dump();
   }
@@ -141,14 +140,14 @@ public class PrettyPrinterPlugin extends TomGenericPlugin {
   %strategy stratPrintTL() extends Fail(){
     visit TargetLanguage {
       TL[Code=x, Start=TextPosition[Line=startLine, Column=startColumn], End=TextPosition[Line=endLine, Column=endColumn]] -> {
-        theFormatter.write(`x);
+        theFormatter.write(`x,`startLine,`startColumn,false);
       }
     }
     visit BQTerm {
-      BuildConstant[AstName=Name(name)] -> {theFormatter.write(`name);}
-      BQAppl[AstName=Name(name)] -> {theFormatter.write(`name);}
-      BQVariableStar[AstName=Name(name)] -> {theFormatter.write(`name);}
-      BuildTerm[AstName=Name(name), Args=concBQTerm()] -> {theFormatter.write(`name+"()");}
+     // BuildConstant[Options=OptionList[Line=line, Column=column],AstName=Name(name)] -> {theFormatter.write(`name,`line,`column);}
+      //BQAppl[Options=OptionList[Line=line, Column=column],AstName=Name(name)] -> {theFormatter.write(`name,`line,`column);}
+      //BQVariableStar[Options=OptionList[Line=line, Column=column],AstName=Name(name)] -> {theFormatter.write(`name,`line,`column);}
+      BuildTerm[Options=concOption(_*,OriginTracking[Line=line,Column=column],_*),AstName=Name(name), Args=concBQTerm()] -> {theFormatter.write(`name+"()",`line,`column,false);}
     }
   }
 }

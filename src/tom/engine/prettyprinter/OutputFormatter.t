@@ -15,9 +15,10 @@ public class OutputFormatter{
     this.theCursor.setInsertion(false);
   }
 
-  public void write(String text) { // il y aura un autre argumenti
+  public void write(String text, int ligne, int colonne, boolean insertion) { 
 
-//    theCursor.setPosition(position);
+    theCursor.setPosition(new PPTextPosition(ligne,colonne));
+    theCursor.setInsertion(insertion);
     theCursor.write(text);
   }
 
