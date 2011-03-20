@@ -795,7 +795,7 @@ plainTerm [TomName astLabeledName, TomName astAnnotedName, int line, int column]
       constraintList.add(ASTFactory.makeStorePosition(astLabeledName, line, column, currentFile()));
     }
     if(astAnnotedName != null) {
-      constraintList.add(ASTFactory.makeAliasTo(astAnnotedName, line,column, currentFile()));
+      constraintList.add(ASTFactory.makeAliasTo(astAnnotedName, line, column, currentFile()));
     }
 }
     :
@@ -1139,7 +1139,7 @@ xmlAttribute returns [TomTerm result] throws TomException
                 {LA(2) == AT}? anno2:ALL_ID AT
                 {
                     text.append(anno2.getText()+"@");
-                    anno2ConstraintList.add(ASTFactory.makeAliasTo(`Name(anno2.getText()), getLine(), getColumn(),currentFile()));
+                    anno2ConstraintList.add(ASTFactory.makeAliasTo(`Name(anno2.getText()), getLine(), getColumn(), currentFile()));
                 }
             )?
             (a:ANTI_SYM {anti = !anti;} )*
@@ -1154,7 +1154,7 @@ xmlAttribute returns [TomTerm result] throws TomException
                 anno1:ALL_ID AT
                 {
                     text.append(anno1.getText()+"@");
-                    anno1ConstraintList.add(ASTFactory.makeAliasTo(`Name(anno1.getText()), getLine(), getColumn(),currentFile()));
+                    anno1ConstraintList.add(ASTFactory.makeAliasTo(`Name(anno1.getText()), getLine(), getColumn(), currentFile()));
                 }
             )?
             termName = unamedVariable[optionList,anno1ConstraintList]
