@@ -133,7 +133,6 @@ public class PrettyPrinterPlugin extends TomGenericPlugin {
 
     try {
       `TopDown(Repeat(stratPrintTL())).visit(code);
-      //System.out.println(code);
     } catch (VisitFailure e) {
       System.out.println("strategy failed");
     }

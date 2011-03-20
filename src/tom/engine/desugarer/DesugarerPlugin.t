@@ -177,7 +177,8 @@ public class DesugarerPlugin extends TomGenericPlugin {
         return tomSymbol;
       }
 
-      Symbol(name,t@TypesToType(_,codom),l,concOption(X1*,origin@OriginTracking(_,line,column,file),X2*)) -> {
+
+      Symbol(name,t@TypesToType(_,codom),l,concOption(X1*,origin@OriginTracking[Line=line, Column=column, FileName=file],X2*)) -> {
         Declaration isfsym = `IsFsymDecl(name,BQVariable(concOption(OriginTracking(Name("t"),line,column,file)),Name("t"),codom),FalseTL(),OriginTracking(Name("is_fsym"),line,column,file));
         return `Symbol(name,t,l,concOption(X1*,origin,DeclarationToOption(isfsym),X2*));
       }
@@ -190,7 +191,7 @@ public class DesugarerPlugin extends TomGenericPlugin {
       Symbol[Options=concOption(_*,DeclarationToOption((MakeDecl|MakeEmptyList|MakeEmptyArray|MakeAddList|MakeAddArray|IsFsymDecl|GetImplementationDecl|GetSlotDecl|GetHeadDecl|GetTailDecl|IsEmptyDecl|GetElementDecl|GetSizeDecl)[]),_*)] -> {
         return tomSymbol;
       }
-      Symbol(name,t@TypesToType(domain,codomain),l,concOption(X1*,origin@OriginTracking(_,line,column,file),X2*)) -> {
+      Symbol(name,t@TypesToType(domain,codomain),l,concOption(X1*,origin@OriginTracking[Line=line, Column=column, FileName=file),X2*)) -> {
         //build variables for make
         BQTermList argsAST = `concBQTerm();
         int index = 0;

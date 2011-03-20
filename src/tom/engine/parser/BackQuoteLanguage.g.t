@@ -95,7 +95,7 @@ options{
     }
     
    private BQTerm buildBqAppl(Token id, LinkedList<BQTerm> blockList, BQTerm term, boolean composite) {
-     OptionList option = `concOption(OriginTracking(Name(id.getText()),id.getLine(),id.getColumn(),currentFile()),ModuleName(DEFAULT_ MODULE_NAME)); // Bla : il faut modifier Name ?
+     OptionList option = `concOption(OriginTracking(Name(id.getText()), id.getLine(), id.getColumn(), currentFile()), ModuleName(DEFAULT_ MODULE_NAME));
      Composite target = (Composite) ((term==null)?
        `Composite():
        `Composite(CompositeTL(ITL(".")),CompositeBQTerm(term)));

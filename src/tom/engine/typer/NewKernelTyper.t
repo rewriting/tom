@@ -179,12 +179,13 @@ public class NewKernelTyper {
   protected void hasUndeclaredType(String typeName, OptionList oList) {
     String fileName = currentInputFileName;
     int line = 0;
+    int column = 0;
     //DEBUG System.out.println("hasUndeclaredType: subject = " + subject);
     if (typeName != symbolTable.TYPE_UNKNOWN.getTomType()) {
       Option option = TomBase.findOriginTracking(`oList);
       %match(option) {
-        OriginTracking(_,line,fileName) -> {
-          TomMessage.error(logger,`fileName, `line,
+        OriginTracking[Line=line, Column=column, FileName=fileName] -> {
+          TomMessage.error(logger,`fileName, `line, `column,
               TomMessage.unknownSymbol,`typeName); 
         }
       }
@@ -195,6 +196,7 @@ public class NewKernelTyper {
   protected void hasUndeclaredType(BQTerm subject) {
     String fileName = currentInputFileName;
     int line = 0;
+    int column = 0;
     //DEBUG System.out.println("hasUndeclaredType: subject = " + subject);
     %match {
       (BQVariable|BQVariableStar)[Options=oList,AstType=aType] << subject && 
@@ -202,8 +204,8 @@ public class NewKernelTyper {
         (tomType != symbolTable.TYPE_UNKNOWN.getTomType()) -> {
           Option option = TomBase.findOriginTracking(`oList);
           %match(option) {
-            OriginTracking(_,line,fileName) -> {
-              TomMessage.error(logger,`fileName, `line,
+            OriginTracking[Line=line, Column=column, FileName=fileName] -> {
+              TomMessage.error(logger,`fileName, `line, `column,
                   TomMessage.unknownSymbol,`tomType); 
             }
           }
@@ -1214,8 +1216,8 @@ public class NewKernelTyper {
           if(`pNDList.length() != bqTList.length()) {
             Option option = TomBase.findOriginTracking(`oList);
             %match(option) {
-              OriginTracking(_,line,fileName) -> {
-                TomMessage.error(logger,`fileName, `line,
+              OriginTracking[Line=line, Column=column, FileName=fileName] -> {
+                TomMessage.error(logger,`fileName, `line, `column,
                     TomMessage.symbolNumberArgument,`symName.getString(),`pNDList.length(),bqTList.length());
               }
             }
@@ -1753,9 +1755,9 @@ matchBlockSolve :
         -> {
           Option option = TomBase.findOriginTracking(`optionList);
           %match(option) {
-            OriginTracking(_,line,fileName) -> {
+            OriginTracking[Line=line, Column=column, FileName=fileName] -> {
               if(lazyType==false) {
-                TomMessage.error(logger,`fileName, `line,
+                TomMessage.error(logger,`fileName, `line, `column,
                     TomMessage.incompatibleTypes,`tName1,`tName2,`termName); 
               }
             }
@@ -1810,8 +1812,8 @@ matchBlockSolve :
       MatchConstraint[Pattern=Variable[],Subject=BQVariable[Options=oList,AstName=Name(name),AstType=TypeVar(_,_)]] -> {
         Option option = TomBase.findOriginTracking(`oList);
         %match(option) {
-          OriginTracking(_,line,fileName) -> {
-            TomMessage.error(logger,`fileName, `line,
+          OriginTracking[Line=line, Column=column, FileName=fileName] -> {
+            TomMessage.error(logger,`fileName, `line, `column,
                 TomMessage.cannotGuessMatchType,`name); 
           }
         }

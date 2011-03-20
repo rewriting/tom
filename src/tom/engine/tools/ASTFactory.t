@@ -208,14 +208,14 @@ public class ASTFactory {
   }
 
   public static Constraint makeAliasTo(TomName name,int line, String fileName) {
-    return `AliasTo(Variable(makeOption(makeOriginTracking(name.getString(), line , fileName)),
+    return `AliasTo(Variable(makeOption(makeOriginTracking(name.getString(), line, column, fileName)),
           name,
           SymbolTable.TYPE_UNKNOWN,
           concConstraint()));
   }
 
-  public static Constraint makeStorePosition(TomName name,int line, String fileName) {
-    return `AssignPositionTo(BQVariable(makeOption(makeOriginTracking(name.getString(), line , fileName)),
+  public static Constraint makeStorePosition(TomName name, int line, int column, String fileName) {
+    return `AssignPositionTo(BQVariable(makeOption(makeOriginTracking(name.getString(), line, column, fileName)),
           name,
           SymbolTable.TYPE_UNKNOWN));
   }
@@ -229,8 +229,8 @@ public class ASTFactory {
     return list;
   }
 
-  private static Option makeOriginTracking(String name, int line , String fileName) {
-    return `OriginTracking(Name(name), line, fileName);
+  private static Option makeOriginTracking(String name, int line, int column, String fileName) {
+    return `OriginTracking(Name(name), line, column, fileName);
   }
 
   public static TomType makeType(TypeOptionList tOptionList, String typeNameTom, String typeNametGL) {
@@ -389,7 +389,7 @@ public class ASTFactory {
         TomSymbol tomSymbol = symbolTable.getSymbolFromName(`tomName);
         if(tomSymbol != null) {
           if(symbolTable.isStringType(TomBase.getTomType(TomBase.getSymbolCodomain(tomSymbol)))) {
-            Option info = `OriginTracking(Name(Constants.TEXT_NODE),-1,"unknown filename");
+            Option info = `OriginTracking(Name(Constants.TEXT_NODE), -1, -1, "unknown filename");
             term = `RecordAppl(ASTFactory.makeOption(info),
                                concTomName(Name(Constants.TEXT_NODE)),concSlot(PairSlotAppl(Name(Constants.SLOT_DATA),term)),
                           concConstraint());

@@ -17,7 +17,7 @@ RichTomType = TypeVariable(Origins:TypeOriginList, TypeName:String,Index:int)
             | TypeConstantWithSymbol(Origins:TypeOriginList, ConstantType:TomType, RootSymbolName:TomName)
 
 TypeOrigin = 
-  | TypeOriginTracking(AstName:TomName,Line:int,FileName:String)
+  | TypeOriginTracking(AstName:TomName, Line:int, Column:int, FileName:String)
 // | ...
 
 TypeOriginList = concTypeOrigin(TypeOrigin*)
