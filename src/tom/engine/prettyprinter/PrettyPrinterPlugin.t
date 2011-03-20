@@ -144,10 +144,10 @@ public class PrettyPrinterPlugin extends TomGenericPlugin {
       }
     }
     visit BQTerm {
-     // BuildConstant[Options=OptionList[Line=line, Column=column],AstName=Name(name)] -> {theFormatter.write(`name,`line,`column);}
-      //BQAppl[Options=OptionList[Line=line, Column=column],AstName=Name(name)] -> {theFormatter.write(`name,`line,`column);}
-      //BQVariableStar[Options=OptionList[Line=line, Column=column],AstName=Name(name)] -> {theFormatter.write(`name,`line,`column);}
-      BuildTerm[Options=concOption(_*,OriginTracking[Line=line,Column=column],_*),AstName=Name(name), Args=concBQTerm()] -> {theFormatter.write(`name+"()",`line,`column,false);}
+      BuildConstant[Options=concOption(_*,OriginTracking[Line=line, Column=column],_*),AstName=Name(name)] -> {theFormatter.write(`name,`line,`column,false);}
+      BQAppl[Options=concOption(_*,OriginTracking[Line=line, Column=column],_*),AstName=Name(name)] -> {theFormatter.write(`name,`line,`column,false);}
+      BQVariableStar[Options=concOption(_*,OriginTracking[Line=line, Column=column],_*),AstName=Name(name)] -> {theFormatter.write(`name,`line,`column,false);}
+      BuildTerm[Options=concOption(_*, OriginTracking[Line=line, Column=column] ,_*), AstName=Name(name), Args=concBQTerm()] -> {theFormatter.write(`name+"()",`line,`column,true);}
     }
   }
 }
