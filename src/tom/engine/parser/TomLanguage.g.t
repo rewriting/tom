@@ -1027,9 +1027,9 @@ transformationConstruct [Option orgTrack] returns [Declaration result] throws To
                //constraint = `AndConstraint(TrueConstraint(),MatchConstraint(pattern,subject,tType));
                constraint = `MatchConstraint(pattern,subject,tType);
                //resolveConstraintInstructionList.add(`ResolveConstraintInstruction(constraint,options));
-               resolveConstraintInstructionList.add(`ConstraintInstruction(constraint,ResolveStratInstruction(tType,),options));
+               resolveConstraintInstructionList.add(`ConstraintInstruction(constraint,ResolveStratInstruction(tType),options));
              }
-             resolveVisitList.add(`VisitTerm(tType, 
+             resolveVisitList.add(`VisitTerm(tType,
                    ASTFactory.makeConstraintInstructionList(resolveConstraintInstructionList),
                    concOption(resolveOrgTrack)));
              resolveConstraintInstructionList.clear(); //reset ConstraintInstructionList

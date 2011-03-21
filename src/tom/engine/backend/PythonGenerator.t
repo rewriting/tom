@@ -433,4 +433,25 @@ matchBlock: {
     output.write(";\n");
   } 
 
+  //FIXME
+  //TODO: to implement
+  protected String genResolveIsSortCode(String varName, String
+      resolveStringName) throws IOException {
+    return "";
+  }
+
+  protected String genResolveIsFsymCode(String tomName, String varname) throws IOException {
+    return "";
+  }
+
+  protected String genResolveGetSlotCode(String tomName, String varname, String slotName) throws IOException {
+    return "";
+  }
+  
+  protected void buildResolveClass(String wName, String tName, String extendsName) throws IOException {}
+
+  protected void genResolveDeclMake(String prefix, String funName, TomType returnType, BQTermList argList, String moduleName) throws IOException {}
+  protected void buildResolveStratInstruction(String name) throws IOException {}
+///
+
 }

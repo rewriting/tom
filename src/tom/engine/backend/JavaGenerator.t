@@ -113,6 +113,19 @@ public class JavaGenerator extends CFamilyGenerator {
     output.write(deep,"}");
   }
 
+  //TODO: to move in JavaGenerator
+  protected String genResolveIsSortCode(String resolveStringName,
+                                        String varName) throws IOException {
+    return " "+varName+" instanceof "+resolveStringName+" ";
+  }
+
+  //TODO: to change, to move in JavaGenerator
+  protected String genResolveGetSlotCode(String tomName,
+                                         String varName,
+                                         String slotName) throws IOException {
+    return " (("+tomName+")"+varName+")."+slotName+" ";
+  }
+
   //TODO: retrieve the information about the FQN of wName and extends
   protected void buildResolveClass(String wName, String tName, String extendsName) throws
     IOException {
@@ -127,10 +140,15 @@ public class JavaGenerator extends CFamilyGenerator {
       output.write("  }\n}");
 */
       output.write("\n\nprivate static class " + resolveStringName + " extends ###?FQN.ClassImpl?### {\n  public String name;\n  public " + wName + " o;\n  public " + resolveStringName + "(" + wName + " o, String name) {\n    this.name = name;\n    this.o = o;\n  }\n}\n\n");        
-
-
 //output.write("\n\nprivate static class " + resolveStringName + " extends ###?FQN.ClassImpl?### {\n  public String name;\n  public " + canonicalSrcName + " o;\n  public " + resolveStringName + "(" + canonicalSrcName + " o, String name) {\n    this.name = name;\n    this.o = o;\n  }\n}\n\n");        
     }
+
+  //TODO
+  protected void buildResolveStratInstruction(String name) throws IOException {
+    output.writeln(name+" res = ("+name+") translator.table.get(o).get(name);");
+    output.writeln("resolveInverseLinks(tom__resolve, res, translator);");
+    output.writeln("return res;");
+  }
 
   protected void buildClass(int deep, String tomName, TomType extendsType, BQTerm superTerm, Declaration declaration, String moduleName) throws IOException {
     TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(tomName);

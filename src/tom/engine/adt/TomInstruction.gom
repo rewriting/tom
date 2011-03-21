@@ -49,6 +49,7 @@ Instruction =
    * a RawAction is an action that comes from the original program 
    */
   | RawAction(AstInstruction:Instruction)
+  | ResolveStratInstruction(TargetType:TomType)
 
 /*
  * <code>ConstraintInstruction</code> a line in a match instruction - a tuple (Constraint,Action)

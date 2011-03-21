@@ -490,6 +490,12 @@ public abstract class AbstractGenerator {
         return;
       }
 
+/*      ResolveStratInstruction[TargetType=Type[TomType=name]] -> {*/
+      ResolveStratInstruction(Type(_,name,_)) -> {
+        `buildResolveStratInstruction(name);
+        return;
+      }
+
       Assign(var@(BQVariable|BQVariableStar)[Options=optionList],exp) -> {
         `buildAssign(deep, var, optionList, exp, moduleName);
         return;
@@ -1044,6 +1050,7 @@ public abstract class AbstractGenerator {
 
   
   //TODO: Resolve*
+  protected abstract void buildResolveStratInstruction(String name) throws IOException;
   protected abstract void buildResolveIsSortDecl(int deep, String name1, String type1, String resolveStringName, String moduleName) throws IOException;
   protected abstract void buildResolveIsFsymDecl(int deep, String tomName, String name1, TargetLanguageType tlType, String moduleName) throws IOException;
   protected abstract void buildResolveGetSlotDecl(int deep, String tomName, String name1, TargetLanguageType tlType, TomName slotName, String moduleName) throws IOException;

@@ -391,7 +391,6 @@ public abstract class GenericGenerator extends AbstractGenerator {
     }
 
   }
-
   //
 
   protected void buildGetSlotDecl(int deep, String tomName, String varname,
