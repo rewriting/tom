@@ -1,0 +1,10 @@
+TODO list:
+
+- change parser -> parser + expander
+- change code generation
+  - CGenerator, CSharpGenerator, PythonGenerator, etc.
+  - problems with tom__resolve, tom__arg, etc. => replace them
+  - resolveInverseLinks ?
+  - %strategy Resolve
+- change %typeterm: extend it with a new construction ? (for FQN)
+-
