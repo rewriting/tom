@@ -27,4 +27,10 @@ public class OutputFormatter{
     return theCursor.dump("./"+this.fileName);
   }
 
+  private class nodeList {
+  
+  
+  
+  }
+
 } 

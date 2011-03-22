@@ -148,6 +148,7 @@ public class PrettyPrinterPlugin extends TomGenericPlugin {
       BQAppl[Options=concOption(_*,OriginTracking[Line=line, Column=column],_*),AstName=Name(name)] -> {theFormatter.write(`name,`line,`column,false);}
       BQVariableStar[Options=concOption(_*,OriginTracking[Line=line, Column=column],_*),AstName=Name(name)] -> {theFormatter.write(`name,`line,`column,false);}
       BuildTerm[Options=concOption(_*, OriginTracking[Line=line, Column=column] ,_*), AstName=Name(name), Args=concBQTerm()] -> {theFormatter.write(`name+"()",`line,`column,true);}
+      BuildTerm[Options=concOption(_*, OriginTracking[Line=line, Column=column] ,_*), AstName=Name(name)] -> {theFormatter.write(`name+"()",`line,`column,false);}
     }
   }
 }
