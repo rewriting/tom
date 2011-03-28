@@ -379,12 +379,30 @@ public class Problem12{
   //---------------------------------
   public static void main(String[] args) {
     tFloat subject = `uminus(one());
+    tFloat s1 = `div(two(),plus(zero(),one()));
+    tInt s2 = `uminus(one());
     %match {
+      // "subject" is typed with sort "tInt" and since "uminus" matches
+      // "subject", then it can not be downcasted to sort "tNat"
       uminus(x) << subject -> { /*createNat((tNat) `subject);*/ }
-    }
+
+      // "subject" is typed with sort "tInt" and since the method "createFloat"
+      // expects a tFloat and tInt <: tFloat, then the method is applied
+      // (implicit upcast)
+      uminus(x) << s2 -> { createFloat(`s2); }
+
+      // "x" is typed with sort "tInt" and can be downcasted to sort "tNat"
+      // Question: This cast must be done by Tom code generator?
+      div(x,y) << s1 -> { createNat((tNat) `x); }     }
   }
 
   public static tNat createNat(tNat arg) {
+    System.out.println("In createNat with '" + arg + "'.");
     return `suc(arg);
+  }
+
+  public static tFloat createFloat(tFloat arg) {
+    System.out.println("In createFloat with '" + arg + "'.");
+    return `arg;
   }
 }
