@@ -913,15 +913,15 @@ public class NewKernelTyper {
     for (Code code : cList.getCollectionconcCode()) {
       init();
       code =  collectKnownTypesFromCode(`code);
-      System.out.println("------------- Code typed with typeVar:\n code = " +
-          `code);
+      //DEBUG System.out.println("------------- Code typed with typeVar:\n code = " +
+      //DEBUG     `code);
       code = inferAllTypes(code,`EmptyType());
       //DEBUG printGeneratedConstraints(subtypeConstraints);
       solveConstraints();
       //DEBUG System.out.println("substitutions = " + substitutions);
       code = replaceInCode(code);
-      System.out.println("------------- Code typed with substitutions:\n code = " +
-          `code);
+      //DEBUG System.out.println("------------- Code typed with substitutions:\n code = " +
+      //DEBUG     `code);
       replaceInSymbolTable();
       newCList = `concCode(code,newCList*);
     }
