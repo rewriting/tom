@@ -52,7 +52,7 @@ public class HostParser {
         case 1: break;
         case 2:
           try {
-            CommentLexer lexer = new CommentLexer(input);
+            CommentLexer lexer = new CommentLexer(input, true);
             CommonTokenStream tokens = new CommonTokenStream(lexer);
             CommentParser parser = new CommentParser(tokens);
             result = (Tree) parser.oneline().getTree();

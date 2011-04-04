@@ -13,10 +13,11 @@ tokens {
   HOST;
 }
 
-@lexer::header {
+@parser::header {
 import org.antlr.runtime.tree.*;
 }
-@parser::header {
+
+@lexer::header {
 import org.antlr.runtime.tree.*;
 }
 @lexer::members{
