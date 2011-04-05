@@ -40,18 +40,15 @@ inside    : B  ;
 statement	:	A+ ;
 
 /* Lexer rules */
-
 LEFTPAR    : '(' ;
 RIGHTPAR   : ')' ;
 LEFTBR     : '{' {levelcounter+=1;} ;
 RIGHTBR    : '}' {if(levelcounter==0){emit(Token.EOF_TOKEN);} else{levelcounter-=1;}  } ;
 SEMICOLUMN : ';' ;
-OPENCOM    : '/*' {
-  CommentLexer lexer = new CommentLexer(input);
-  CommonTokenStream tokens = new CommonTokenStream(lexer);
-  CommentParser parser = new CommentParser(tokens);
-  subTree = (Tree) parser.regular().getTree();
-  };
+COMMENT:   '/*' (options {greedy=false;} : . )* '*/'
+{System.out.println("found comment "+getText());}
+;
+
 A          : 'alice' ;
 B          : 'bob' ;
 OBRA       : '[' ;
