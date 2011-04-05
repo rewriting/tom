@@ -121,7 +121,7 @@ public abstract class TemplateHookedClass extends TemplateClass {
 
       try {
         Iterator it = importList.iterator();
-        while(it.hasNext()){
+        while(it.hasNext()) {
           String importPath = ((File)it.next()).getCanonicalPath();
           tomParams.add("--import");
           tomParams.add(importPath);
