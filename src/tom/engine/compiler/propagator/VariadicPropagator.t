@@ -162,6 +162,7 @@ public class VariadicPropagator implements IBasePropagator {
           }
           concSlot(_*,PairSlotAppl[Appl=appl],X*) -> {
             BQTerm newFreshVarList = vp.getCompiler().getFreshVariableStar(`aType);            
+
 mAppl:      %match(appl) {
               // if we have a variable star
               VariableStar[] -> {                

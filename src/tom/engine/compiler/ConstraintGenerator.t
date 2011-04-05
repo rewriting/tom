@@ -148,7 +148,8 @@ public class ConstraintGenerator {
 
         //DEBUG System.out.println("In Constraint Generator with v = " + `v + '\n');
         //DEBUG System.out.println("In Constraint Generator with t = " + `t + '\n');
-        if(TomBase.getTermType(`v,symbolTable) != TomBase.getTermType(`t,symbolTable)) {
+        if(TomBase.getTermType(`v,symbolTable).getTomType() !=
+            TomBase.getTermType(`t,symbolTable).getTomType()) {
           //DEBUG System.out.println("type v = " + TomBase.getTermType(`v,symbolTable));
           //DEBUG System.out.println("type t = " + TomBase.getTermType(`t,symbolTable));
           //DEBUG System.out.println("aType = " + `aType);

@@ -312,7 +312,7 @@ public class Compiler extends TomGenericPlugin {
             //DEBUG System.out.println("\nIn renameSubjects - IF 1 - freshSubjectType is unknown!");
             freshSubjectType = typedRenamedSubj.getAstType();
           } else {
-            typedRenamedSubj = renamedSubj.setAstType(freshSubjectType);
+            typedRenamedSubj = typedRenamedSubj.setAstType(freshSubjectType);
             //DEBUG System.out.println("\nmodified renameSubjects -- typedRenamedSubj = " + typedRenamedSubj + "\n\n");
           }
 
@@ -332,7 +332,7 @@ public class Compiler extends TomGenericPlugin {
 
           return `AndConstraint(
               MatchConstraint(TomBase.convertFromBQVarToVar(freshVar),subject,freshSubjectType),
-              IsSortConstraint(castType,freshVar),
+              IsSortConstraint(freshSubjectType,freshVar),
               MatchConstraint(typedRenamedSubj,ExpressionToBQTerm(Cast(freshSubjectType,BQTermToExpression(freshVar))),freshSubjectType),
               newConstraint);
         }
@@ -392,7 +392,7 @@ public class Compiler extends TomGenericPlugin {
 
         return `AndConstraint(
             MatchConstraint(TomBase.convertFromBQVarToVar(freshVar),subject,freshSubjectType),
-            IsSortConstraint(castType,freshVar),
+            IsSortConstraint(freshSubjectType,freshVar),
             MatchConstraint(renamedVar,ExpressionToBQTerm(Cast(freshSubjectType,BQTermToExpression(freshVar))),freshSubjectType),
             newConstraint);
 

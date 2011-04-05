@@ -103,7 +103,9 @@ public class SyntacticGenerator implements IBaseGenerator {
     } else if(TomBase.hasTheory(theory, `AU())) {
       return `IsSort(type,subject);
     }
+    //DEBUG System.out.println("In buildEqualFunctionSymbol name = " + name);
     return
       `IsFsym(name,ExpressionToBQTerm(Cast(type,BQTermToExpression(subject))));
+      //`IsFsym(name,subject);
   }
 }

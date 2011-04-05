@@ -86,7 +86,7 @@ public class ACPropagator implements IBasePropagator {
 
   /**
    * remove a term which is not a VariableStar
-   * f(t,...) <<ac s -> (X1*,t,X2*) <<a s ^ f(...) <<ac f(X1*,X2*)
+   * f(t,...) <<ac s -> (X1*,t,X2*) <<a s /\ f(...) <<ac f(X1*,X2*)
    */
   %strategy RemoveNonVariableStar(acp: ACPropagator) extends Identity() {
     visit Constraint {
@@ -98,17 +98,21 @@ public class ACPropagator implements IBasePropagator {
 
         %match(slots) {
           /*
-           * f(t,...) <<ac s -> (X1*,t,X2*) <<a s ^ f(...) <<ac f(X1*,X2*)
+           * f(t,...) <<ac s -> (X1*,t,X2*) <<a s /\ f(...) <<ac f(X1*,X2*)
            */
           concSlot(C1*, slot@PairSlotAppl[SlotName=slotname, Appl=!VariableStar[]], C2*) -> {
             /*System.out.println("case F(t,...): " + `slots);*/
             /*System.out.println("slot: " + `slot);*/
 
             //generate f(X1*, slot, X2*) << s and modify s <- f(X1*,X2*)
-            TomType listType = acp.getCompiler().getTermTypeFromTerm(`pattern);
-            BQTerm X1 = acp.getCompiler().getFreshVariableStar(listType);			
-            BQTerm X2 = acp.getCompiler().getFreshVariableStar(listType);
-            BQTerm X3 = acp.getCompiler().getFreshVariableStar(listType);
+            //TomType listType = acp.getCompiler().getTermTypeFromTerm(`pattern);
+            //BQTerm X1 = acp.getCompiler().getFreshVariableStar(listType);			
+            //BQTerm X2 = acp.getCompiler().getFreshVariableStar(listType);
+            //BQTerm X3 = acp.getCompiler().getFreshVariableStar(listType);
+
+            BQTerm X1 = acp.getCompiler().getFreshVariableStar(`aType);			
+            BQTerm X2 = acp.getCompiler().getFreshVariableStar(`aType);
+            BQTerm X3 = acp.getCompiler().getFreshVariableStar(`aType);
             Constraint c1 = `MatchConstraint(RecordAppl(optWithoutAC,
                     namelist,
                     concSlot( PairSlotAppl(slotname, TomBase.convertFromBQVarToVar(X1)), slot, PairSlotAppl(slotname, TomBase.convertFromBQVarToVar(X2))),

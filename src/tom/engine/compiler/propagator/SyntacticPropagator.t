@@ -106,8 +106,7 @@ public class SyntacticPropagator implements IBasePropagator {
        */
       m@MatchConstraint[Pattern=RecordAppl(options,nameList@concTomName(firstName@Name(tomName),_*),slots,_),Subject=g@!SymbolOf[],AstType=aType] -> {
         // if this a list or array, nothing to do
-        if(!TomBase.isSyntacticOperator(
-            sp.getCompiler().getSymbolTable().getSymbolFromName(`tomName))) {
+        if(!TomBase.isSyntacticOperator(sp.getCompiler().getSymbolTable().getSymbolFromName(`tomName))) {
           return `m; 
         }
        
