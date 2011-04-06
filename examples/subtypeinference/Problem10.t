@@ -46,6 +46,7 @@ public class Problem10{
           | plus(n1:tInt,n2:tInt)
 
       tFloat = div(n1:tInt,n2:tInt)
+             | fmult(n1:tInt,n2:tInt)
 
       tNat <: tInt
       tInt <: tFloat
@@ -80,6 +81,28 @@ static class tFloat {
       return false;
     }
   } 
+
+  static class fmult extends tFloat {
+    public tInt n1;
+    public tInt n2;
+    public fmult(tInt nn1, tInt nn2) {
+      n1 = nn1;
+      n2 = nn2;
+    }
+    public String getOperator() {
+      return "fmult";
+    }
+    public String toString(){
+      return "fmult(" + n1 + "," + n2 + ")";
+    }
+    public boolean equals(Object o) {
+      if(o instanceof fmult) {
+        fmult obj = (fmult) o;
+        return n1.equals(obj.n1) && n2.equals(obj.n2);
+      }
+      return false;
+    }
+  }
 
   static class tInt extends tFloat{
     public String getOperator(){
@@ -377,14 +400,36 @@ static class tFloat {
     make(t0, t1) { new div($t0, $t1) }
   }
 
+  %op tFloat fmult(n1:tInt, n2:tInt) {
+    is_fsym(t) { ($t instanceof div) }
+    get_slot(n1, t) { ((fmult)$t).n1 }
+    get_slot(n2, t) { ((fmult)$t).n2 }
+    make(t0, t1) { new fmult($t0, $t1) }
+  }
+
   //---------------------------------
   public static void main(String[] args) {
     natList subject = `nList(zero());
     %match {
-        (zero() != x) && (x << suc(zero())|| x << suc(suc(zero()))) -> {
-         System.out.println("x = " +`x); 
-       } 
-      //z@nList(x) << subject -> { System.out.println("z = " +`z); }
+      /*
+      // Case 1: A list
+      z@nList(x) << subject -> { System.out.println("z = " +`z); }
+
+      // Case 2: NumericConstraint(...) && OrConstraint(...)
+      (zero() != x) && (x << suc(zero())|| x << suc(suc(zero()))) -> {
+      System.out.println("x = " +`x); 
+      } 
+
+      // Case 3: MatchConstraint(...) && OrConstraint(...)
+      suc(zero()) << x && (x << suc(zero())|| x << suc(suc(zero()))) -> {
+      System.out.println("x = " +`x); 
+      }
+       */
+      // Case 4: MatchConstraint(...) && OrConstraintDisjunction(...)
+      zero() << x && (div|fmult)[n1=x] << div(zero(),one()) -> {
+        System.out.println("x = " +`x); 
+      }
+
     }
   }
 }

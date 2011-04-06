@@ -52,7 +52,7 @@ public class ProblemComposite{
     public Javaf(A num1) { this.num1 = num1; }
     public A getnum1() { return num1; }
     public String getOp() { return "f"; }
-    public String toString() { return "g(" + num1 + ")"; }
+    public String toString() { return "f(" + num1 + ")"; }
     public boolean equals(Object o) {
       if(o instanceof Javaf) {
         Javaf f = (Javaf) o;

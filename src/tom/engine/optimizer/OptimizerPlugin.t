@@ -84,7 +84,7 @@ public class OptimizerPlugin extends TomGenericPlugin {
   /** the declared options string*/
   private static final String DECLARED_OPTIONS =
     "<options>" +
-    "<boolean name='optimize' altName='O' description='Optimize generated code: perform inlining' value='false'/>" +
+    "<boolean name='optimize' altName='O' description='Optimize generated code: perform inlining' value='true'/>" +
     "<boolean name='optimize2' altName='O2' description='Optimize generated code: discrimination tree' value='false'/>" +
     "<boolean name='prettyPIL' altName='pil' description='PrettyPrint IL' value='false'/>" +
     "</options>";

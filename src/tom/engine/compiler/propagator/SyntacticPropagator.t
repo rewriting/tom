@@ -127,6 +127,18 @@ public class SyntacticPropagator implements IBasePropagator {
             freshVarList.add(freshVar);
             // build the last part
             if (applType != slotType){
+              /*
+                 This test is important when the type of the argument (appl) is a subtype
+                 of the type expected by the slot
+                 e.g.: assume that f: A -> A and g: B -> B and b(): B and B<:A
+
+                     %match {
+                       f(x) << subject && g(b()) << g(x) -> { System.out.println("x = " +`x); }
+                     }
+
+                     If x has type A in runtime, then javac
+                     generates an exception
+               */
               lastPart.add(`IsSortConstraint(applType,freshVar));
             }
             lastPart.add(`MatchConstraint(appl,freshVar,applType));
