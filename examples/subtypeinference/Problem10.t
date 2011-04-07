@@ -430,6 +430,11 @@ static class tFloat {
         System.out.println("x = " +`x); 
       }
 
+      // Case 5:  NumericConstraint(...) && OrConstraintDisjunction(...)
+      (zero() == x) && (div|fmult)[n1=x] << div(zero(),one()) -> {
+        System.out.println("x = " +`x); 
+      }
+
     }
   }
 }
