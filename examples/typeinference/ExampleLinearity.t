@@ -45,5 +45,17 @@ public class ExampleLinearity {
       g(_) << B tt -> { System.out.println(`tt); }
       f(x) << B tt -> { System.out.println(`x); }
     }
+
+/* Comment code which works only with new typer
+    B t1 = `f(b());
+    B t2 = `b();
+    %match(t1,t2) {
+      f(x),x -> { System.out.println(`x); }
+    }
+
+    %match {
+      f(x) << t1 && x << t2 -> { System.out.println(`x); }
+    }
+*/
   }
 }
