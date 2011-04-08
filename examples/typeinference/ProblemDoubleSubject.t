@@ -95,7 +95,7 @@ public class ProblemDoubleSubject{
   }
   
 // ------------------------------------------------------------
-  %typeterm TomA extends TomC{
+  %typeterm TomA{
     implement { A }
     is_sort(t) { $t instanceof A }
     equals(t1,t2) { $t1.equals($t2) }
@@ -139,7 +139,7 @@ public class ProblemDoubleSubject{
   public void print() {
     A e = `a();
     %match {
-      f(e) << e -> { System.out.println("e first ligne = " + `e); }
+      f(t) << e -> { System.out.println("e first ligne = " + `e); }
     }
   }
 

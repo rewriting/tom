@@ -243,7 +243,9 @@ loop_j: for(int j=i+1 ; j<array.length ; j++) {
             /*
              * SwitchVar
              * 
-             * p << Context[z] /\ S /\ z << t -> z << t /\ S /\ p << Context[z]
+             * t /\ S /\ p << z -> p << z /\ S /\ t 
+             * if p occurs in t when t is a NumericConstraint
+             * or if p occurs in the subject of t when t is a MatchConstraint
              */
             t, MatchConstraint[Pattern=v@(Variable|VariableStar)[]] -> {
               try {
@@ -254,6 +256,13 @@ loop_j: for(int j=i+1 ; j<array.length ; j++) {
               }
             }
 
+            /*
+             * SwitchVar
+             * 
+             * t /\ S /\ (f|g)[arg=p] << z -> (f|g)[arg=p]<< z /\ S /\ t 
+             * if p occurs in t when t is a NumericConstraint
+             * or if p occurs in the subject of t when t is a MatchConstraint
+             */
             t,OrConstraintDisjunction(AndConstraint?(_*,MatchConstraint[Pattern=v@(Variable|VariableStar)[]],_*),_*) -> {
               try {
                 `TopDown(HasBQTerm(v)).visitLight(`t);
@@ -263,6 +272,13 @@ loop_j: for(int j=i+1 ; j<array.length ; j++) {
               }
             }
 
+            /*
+             * SwitchVar
+             * 
+             * t /\ S /\ (p1 << z1 || p2 << z2) -> (p1 << z1 || p2 << z2) /\ S /\ t 
+             * if p1 (or p2) occurs in t when t is a NumericConstraint
+             * or if p1 (or p2) occurs in the subject of t when t is a MatchConstraint
+             */
             t,OrConstraint(AndConstraint?(_*,MatchConstraint[Pattern=v@(Variable|VariableStar)[]],_*),_*) -> {
               try {
                 `TopDown(HasBQTerm(v)).visitLight(`t);
@@ -390,9 +406,9 @@ loop_j: for(int j=i+1 ; j<array.length ; j++) {
 
   %strategy HasBQTerm(term:TomTerm) extends Identity() {
     visit BQTerm {
-      (BQVariable|BQVariableStar)[AstName=name, AstType=type] -> {
+      (BQVariable|BQVariableStar)[AstName=name] -> {
         %match(term) {
-          (Variable|VariableStar)[AstName=n,AstType=t] -> {
+          (Variable|VariableStar)[AstName=n] -> {
             if(`name == `n) {
               throw new VisitFailure();
             }
