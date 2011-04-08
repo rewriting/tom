@@ -20,9 +20,6 @@ public class TestConstraintCombination{
 
       tFloat = div(n1:tInt,n2:tInt)
              | fmult(n1:tInt,n2:tInt)
-
-      tNat <: tInt
-      tInt <: tFloat
   }
   */
   
@@ -77,7 +74,7 @@ static class tFloat {
     }
   }
 
-  static class tInt extends tFloat{
+  static class tInt{
     public String getOperator(){
       return "";
     }
@@ -125,7 +122,7 @@ static class tFloat {
     }
   } 
 
-  static class tNat extends tInt{
+  static class tNat{
     public String getOperator(){
       return "";
     }
@@ -286,7 +283,7 @@ static class tFloat {
 
   }
 
-  %typeterm tInt extends tFloat {
+  %typeterm tInt {
     implement { tInt }
     is_sort(t) { ($t instanceof tInt) }
 
@@ -294,7 +291,7 @@ static class tFloat {
 
   }
 
-  %typeterm tNat extends tInt {
+  %typeterm tNat {
     implement { tNat }
     is_sort(t) { ($t instanceof tNat) }
 
