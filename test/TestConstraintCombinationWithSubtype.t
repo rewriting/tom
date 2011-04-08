@@ -393,25 +393,21 @@ static class tFloat {
       // Case 1: NumericConstraint(...) && OrConstraint(...)
       (zero() != x) && (x << suc(zero())|| x << suc(suc(zero()))) -> {
         nbCasesOK++;
-        //System.out.println("Case 1: x = " +`x); 
       } 
 
       // Case 2: MatchConstraint(...) && OrConstraint(...)
       suc(zero()) << x && (x << suc(zero())|| x << suc(suc(zero()))) -> {
         nbCasesOK++;
-        //System.out.println("Case 2: x = " +`x); 
       }
 
       // Case 3: MatchConstraint(...) && OrConstraintDisjunction(...)
       zero() << x && (div|fmult)[n1=x] << div(zero(),one()) -> {
         nbCasesOK++;
-        //System.out.println("Case 3: x = " +`x); 
       }
 
       // Case 4:  NumericConstraint(...) && OrConstraintDisjunction(...)
       (zero() == x) && (div|fmult)[n1=x] << div(zero(),one()) -> {
         nbCasesOK++;
-        //System.out.println("Case 4: x = " +`x); 
       }
     }
     assertTrue("testCombinations",nbCasesOK==5);

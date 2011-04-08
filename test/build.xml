@@ -64,6 +64,7 @@
       <exclude name="TestRecord.t"/>
       <exclude name="TestOptimizer.t"/>
       <exclude name="TestConstraintCombination.t"/>
+      <exclude name="TestConstraintCombinationWithSubtype.t"/>
 
       <!-- Why to exclude these tests?? -->
       <exclude name="**/error/**"/>
@@ -89,6 +90,7 @@
                 destdir="${test.gen}"
                 options="--newtyper">
     	<include name="TestConstraintCombination.t"/>
+    	<include name="TestConstraintCombinationWithSubtype.t"/>
     </tom.preset>
     <javac.preset destdir="${test.build}" fork="true">
       <src path="${test.src}"/>
