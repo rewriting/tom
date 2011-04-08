@@ -162,9 +162,12 @@ public class TomConstraintPrettyPrinter {
     return subject.toString();
   }
 
-
   public static String prettyPrint(Expression subject) {
     %match(subject) {
+      BQTermToExpression(astTerm) -> {
+        return prettyPrint(`astTerm);
+      }
+
       Cast(AstType,Source) -> {
         return "("+prettyPrint(`AstType)+") "+ prettyPrint(`Source); 
       }
@@ -296,6 +299,26 @@ public class TomConstraintPrettyPrinter {
       VariableHeadArray(Opname,Subject,BeginIndex,EndIndex) -> {
         return "VariableHeadArray("+prettyPrint(`Opname)+","+prettyPrint(`Subject)+","+prettyPrint(`BeginIndex)+","+prettyPrint(`EndIndex)+")";
       }
+
+      BQVariable[AstName=name] -> {
+        return prettyPrint(`name);
+      }
+      BQVariableStar[AstName=name] -> {
+        return prettyPrint(`name);
+      }
+      
+      BuildTerm(AstName,Args,_) -> {
+        String s = "";
+        int min=0;
+        %match(Args) {
+          concBQTerm(_*,x,_*) -> {
+            s += ","+prettyPrint(`x);
+            min=1;
+          }
+        }
+        return prettyPrint(`AstName)+"("+s.substring(min, s.length())+")";
+      }
+
     }
     return subject.toString();
   }

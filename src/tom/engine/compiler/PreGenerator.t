@@ -161,6 +161,7 @@ public class PreGenerator {
     boolean modification = false;
     do {
       //System.out.println("C = " + buildAndConstraintFromArray(array));
+      //System.out.println("C = " + tom.engine.tools.TomConstraintPrettyPrinter.prettyPrint(buildAndConstraintFromArray(array)));
 block: {
       /*
        * first version: 
@@ -174,8 +175,8 @@ block: {
 loop_j: for(int j=i+1 ; j<array.length ; j++) {
           Constraint first = array[i];
           Constraint second = array[j];
-          //DEBUG System.out.println("first  = " + first);
-          //DEBUG System.out.println("second = " + second);
+          //System.out.println("first  = " + first);
+          //System.out.println("second = " + second);
           %match(first,second) {
             /*
              * SwitchSymbolOf
@@ -244,81 +245,27 @@ loop_j: for(int j=i+1 ; j<array.length ; j++) {
              * 
              * p << Context[z] /\ S /\ z << t -> z << t /\ S /\ p << Context[z]
              */
-            MatchConstraint[Subject=rhs],MatchConstraint[Pattern=v@(Variable|VariableStar)[]] -> {
+            t, MatchConstraint[Pattern=v@(Variable|VariableStar)[]] -> {
               try {
-                `TopDown(HasTerm(v)).visitLight(`rhs);
+                `TopDown(HasBQTerm(v)).visitLight(`t);
               } catch(VisitFailure ex) {
                 modification |= buildXjiYZ(array,i,j);
                 break block;
               }
             }
 
-            MatchConstraint[Subject=rhs],OrConstraintDisjunction(AndConstraint?(_*,MatchConstraint[Pattern=v@(Variable|VariableStar)[]],_*),_*) -> {
+            t,OrConstraintDisjunction(AndConstraint?(_*,MatchConstraint[Pattern=v@(Variable|VariableStar)[]],_*),_*) -> {
               try {
-                `TopDown(HasTerm(v)).visitLight(`rhs);
+                `TopDown(HasBQTerm(v)).visitLight(`t);
               } catch(VisitFailure ex) {
                 modification |= buildXjiYZ(array,i,j);
                 break block;
               }
             }
 
-            MatchConstraint[Subject=rhs],OrConstraint(AndConstraint?(_*,MatchConstraint[Pattern=v@(Variable|VariableStar)[]],_*),_*) -> {
+            t,OrConstraint(AndConstraint?(_*,MatchConstraint[Pattern=v@(Variable|VariableStar)[]],_*),_*) -> {
               try {
-                `TopDown(HasTerm(v)).visitLight(`rhs);
-              } catch(VisitFailure ex) {
-                modification |= buildXjiYZ(array,i,j);
-                break block;
-              }
-            }
-
-            NumericConstraint[Right=rhs],MatchConstraint[Pattern=v@(Variable|VariableStar)[]] -> {
-              try {
-                `TopDown(HasTerm(v)).visitLight(`rhs);
-              } catch(VisitFailure ex) {
-                modification |= buildXjiYZ(array,i,j);
-                break block;
-              }
-            }
-
-            NumericConstraint[Right=rhs],OrConstraintDisjunction(AndConstraint?(_*,MatchConstraint[Pattern=v@(Variable|VariableStar)[]],_*),_*) -> {
-              try {
-                `TopDown(HasTerm(v)).visitLight(`rhs);
-              } catch(VisitFailure ex) {
-                modification |= buildXjiYZ(array,i,j);
-                break block;
-              }
-            }
-
-            NumericConstraint[Right=rhs],OrConstraint(AndConstraint?(_*,MatchConstraint[Pattern=v@(Variable|VariableStar)[]],_*),_*) -> {
-              try {
-                `TopDown(HasTerm(v)).visitLight(`rhs);
-              } catch(VisitFailure ex) {
-                modification |= buildXjiYZ(array,i,j);
-                break block;
-              }
-            }
-
-            NumericConstraint[Left=lhs],MatchConstraint[Pattern=v@(Variable|VariableStar)[]] -> {
-              try {
-                `TopDown(HasTerm(v)).visitLight(`lhs);
-              } catch(VisitFailure ex) {
-                modification |= buildXjiYZ(array,i,j);
-                break block;
-              }
-            }
-
-            NumericConstraint[Left=lhs],OrConstraintDisjunction(AndConstraint?(_*,MatchConstraint[Pattern=v@(Variable|VariableStar)[]],_*),_*) -> {
-              try {
-                `TopDown(HasTerm(v)).visitLight(`lhs);
-              } catch(VisitFailure ex) {
-                modification |= buildXjiYZ(array,i,j);
-                break block;
-              }
-            }
-
-            NumericConstraint[Left=lhs],OrConstraint(AndConstraint?(_*,MatchConstraint[Pattern=v@(Variable|VariableStar)[]],_*),_*) -> {
-              try {
-                `TopDown(HasTerm(v)).visitLight(`lhs);
+                `TopDown(HasBQTerm(v)).visitLight(`t);
               } catch(VisitFailure ex) {
                 modification |= buildXjiYZ(array,i,j);
                 break block;
@@ -429,6 +376,8 @@ loop_j: for(int j=i+1 ; j<array.length ; j++) {
           } // end %match
         }
       }
+      //System.out.println("after ordering = " + tom.engine.tools.TomConstraintPrettyPrinter.prettyPrint(buildAndConstraintFromArray(array)));
+
       return buildAndConstraintFromArray(array);
        }// block
     } while (modification == true);
@@ -438,27 +387,13 @@ loop_j: for(int j=i+1 ; j<array.length ; j++) {
   /**
    * Checks to see if the term is inside
    */
-  %strategy HasTerm(term:TomTerm) extends Identity() {
-    visit TomTerm {
-      x -> {
-        if(`x == term) { throw new VisitFailure(); }
-      }
-    }
 
+  %strategy HasBQTerm(term:TomTerm) extends Identity() {
     visit BQTerm {
-      BQVariable[AstName=name, AstType=type] -> {
+      (BQVariable|BQVariableStar)[AstName=name, AstType=type] -> {
         %match(term) {
-          Variable[AstName=n,AstType=t] -> {
-            if (`name == `n && `type == `t) {
-              throw new VisitFailure();
-            }
-          }
-        }
-      }
-      BQVariableStar[AstName=name, AstType=type] -> {
-        %match(term) {
-          VariableStar[AstName=n,AstType=t] -> {
-            if (`name == `n && `type == `t) {
+          (Variable|VariableStar)[AstName=n,AstType=t] -> {
+            if(`name == `n) {
               throw new VisitFailure();
             }
           }

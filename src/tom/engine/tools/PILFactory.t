@@ -272,12 +272,14 @@ public class PILFactory {
       }
       FunctionCall(AstName,_,Args) -> {
         String s = "";
+        int min=0;
         %match(Args) {
           concBQTerm(_*,x,_*) -> {
             s += ","+prettyPrint(`x);
+            min=1;
           }
         }
-        return prettyPrint(`AstName)+"("+s.substring(1, s.length())+")";
+        return prettyPrint(`AstName)+"("+s.substring(min, s.length())+")";
       }
       BuildEmptyArray[AstName=name,Size=size] -> {
         return "new "+prettyPrint(`name)+"["+prettyPrint(`size)+"]";
