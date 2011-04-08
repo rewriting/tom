@@ -63,15 +63,12 @@
       <exclude name="Record.t"/>
       <exclude name="TestRecord.t"/>
       <exclude name="TestOptimizer.t"/>
+      <exclude name="TestConstraintCombination.t"/>
 
       <!-- Why to exclude these tests?? -->
       <exclude name="**/error/**"/>
       <exclude name="**/rule/**"/>
       <exclude name="**/regress/**"/>
-
-      <!-- Exclude temporarily this test to new typer --> 
-      <exclude name="antipatterns/TestAntiPattern.t"/>
-
     </tom.preset>
     <tom.preset srcdir="${test.src}"
                 multithread="${multithread}"
@@ -87,6 +84,11 @@
                 destdir="${test.gen}"
                 options="--optimize">
     	<include name="TestOptimizer.t"/>
+    </tom.preset>
+    <tom.preset srcdir="${test.src}"
+                destdir="${test.gen}"
+                options="--newtyper">
+    	<include name="TestConstraintCombination.t"/>
     </tom.preset>
     <javac.preset destdir="${test.build}" fork="true">
       <src path="${test.src}"/>
