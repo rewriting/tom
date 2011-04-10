@@ -125,6 +125,7 @@ public class PrettyPrinterPlugin extends TomGenericPlugin {
     textFile.close();
     printTL(code);
     theFormatter.dump();
+    theFormatter.printAll();
   }
   
 
@@ -140,15 +141,15 @@ public class PrettyPrinterPlugin extends TomGenericPlugin {
   %strategy stratPrintTL() extends Fail(){
     visit TargetLanguage {
       TL[Code=x, Start=TextPosition[Line=startLine, Column=startColumn], End=TextPosition[Line=endLine, Column=endColumn]] -> {
-        theFormatter.write(`x+ getEnvironment().depth() ,`startLine,`startColumn,false);
+        theFormatter.stock(`x+ "depth= "+ getEnvironment().depth() ,`startLine,`startColumn, 1);
       }
     }
     visit BQTerm {
-      BuildConstant[Options=concOption(_*,OriginTracking[Line=line, Column=column],_*),AstName=Name(name)] -> {theFormatter.write(`name,`line,`column,false);}
-      BQAppl[Options=concOption(_*,OriginTracking[Line=line, Column=column],_*),AstName=Name(name)] -> {theFormatter.write(`name,`line,`column,false);}
-      BQVariableStar[Options=concOption(_*,OriginTracking[Line=line, Column=column],_*),AstName=Name(name)] -> {theFormatter.write(`name,`line,`column,false);}
-      BuildTerm[Options=concOption(_*, OriginTracking[Line=line, Column=column] ,_*), AstName=Name(name), Args=concBQTerm()] -> {theFormatter.write(`name+"()",`line,`column,true);}
-      BuildTerm[Options=concOption(_*, OriginTracking[Line=line, Column=column] ,_*), AstName=Name(name)] -> {theFormatter.write(`name+"()",`line,`column,false);}
+      BuildConstant[Options=concOption(_*,OriginTracking[Line=line, Column=column],_*),AstName=Name(name)] -> {theFormatter.stock(`name+ "depth= "+getEnvironment().depth(), `line, `column,2);}
+      BQAppl[Options=concOption(_*,OriginTracking[Line=line, Column=column],_*),AstName=Name(name)] -> {theFormatter.stock(`name +"depth= "+getEnvironment().depth() ,`line, `column,2);}
+      BQVariableStar[Options=concOption(_*,OriginTracking[Line=line, Column=column],_*),AstName=Name(name)] -> {theFormatter.stock(`name +"depth= "+getEnvironment().depth(), `line,`column,2);}
+      BuildTerm[Options=concOption(_*, OriginTracking[Line=line, Column=column] ,_*), AstName=Name(name), Args=concBQTerm()] -> {theFormatter.stock(`name+"()" +"depth= "+getEnvironment().depth(),`line,`column,2);}
+      BuildTerm[Options=concOption(_*, OriginTracking[Line=line, Column=column] ,_*), AstName=Name(name)] -> {theFormatter.stock(`name+"()" +"depth= "+getEnvironment().depth(),`line,`column,2);}
     }
   }
 }

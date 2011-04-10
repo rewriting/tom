@@ -25,8 +25,17 @@ public class OutputFormatter{
     theCursor.write(text);
   }
 
+  public void printAll() {
+
+    Iterator<Node> iteratorOnNode= this.theNodeList.iterator();
+    while (iteratorOnNode.hasNext()){
+      System.out.println(iteratorOnNode.next().getText());
+    }
+  }
+
   public void stock(String text, int ligne, int colonne, int type) { 
     
+    theNodeList.add(new Node(text, new PPTextPosition(ligne, colonne), type));
   }
 
   public StringBuffer dump() {
@@ -38,10 +47,13 @@ public class OutputFormatter{
   
     private PPTextPosition begin;
     private int type;
+    private String text;
 
-    public Node (PPTextPosition b) {
+    public Node (String txt, PPTextPosition b, int t) {
       
-      this.begin=b;
+      this.begin= b;
+      this.type= t;
+      this.text= txt;
     } 
 
     public PPTextPosition getBegin() {
@@ -49,6 +61,9 @@ public class OutputFormatter{
     }
     public int getType() {
       return this.type;
+    }
+    public String getText() {
+      return this.text;
     }
   
   }
