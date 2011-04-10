@@ -43,21 +43,15 @@ inside    : B  ;
 statement	:	A+ ;
 
 /* Lexer rules */
-
 LEFTPAR    : '(' ;
 RIGHTPAR   : ')' ;
 LEFTBR     : '{' {levelcounter+=1;} ;
 RIGHTBR    : '}' {if(levelcounter==0){emit(Token.EOF_TOKEN);} else{levelcounter-=1;}  } ;
 SEMICOLUMN : ';' ;
-OPENCOM    : '/*' {
-  $channel = HIDDEN;
-  HostParser switcher = new HostParser(input,"*/");
-  if (!SubTrees.offer((Tree) switcher.getTree())) {
-    System.out.println("Achtung ! Could not queue tree");
-  };
-  ClassicToken Voucher = new ClassicToken(14,"alasoupe");
-  emit(Voucher);
-};
+COMMENT:   '/*' (options {greedy=false;} : . )* '*/'
+{System.out.println("found comment "+getText());}
+;
+
 A          : 'alice' ;
 B          : 'bob' ;
 OBRA       : '[' ;

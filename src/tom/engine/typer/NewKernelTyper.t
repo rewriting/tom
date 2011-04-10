@@ -296,20 +296,25 @@ public class NewKernelTyper {
   }
 
   /**
-   * The method <code>resetVarPatternList</code> empties varPatternList after
+   * The method <code>resetLocalList</code> empties the
+   * <code>varPatternList</code> after
    * checking if <code>varList</code> contains
-   * a corresponding BQTerm in order to remove it from <code>varList</code. too
+   * a corresponding BQTerm in order to remove it from <code>varList</code> too.
+   * @param tList   the TomList to be reset
+   * @param bqTList the BQTermList to be reset
+   * @return the resulting bqList
    */
-  protected void resetVarPatternList() {
-    for(TomTerm tTerm: varPatternList.getCollectionconcTomTerm()) {
-      %match(tTerm,varList) {
+  protected BQTermList resetLocalList(TomList tList, BQTermList bqTList) {
+    for(TomTerm tTerm: tList.getCollectionconcTomTerm()) {
+      %match(tTerm,bqTList) {
         (Variable|VariableStar)[AstName=aName],concBQTerm(x*,(BQVariable|BQVariableStar)[AstName=aName],y*)
           -> {
-            varList = `concBQTerm(x*,y*);
+            bqTList = `concBQTerm(x*,y*);
           }
       }
     }
-    varPatternList = `concTomTerm();
+    //tList = `concTomTerm();
+    return bqTList;
   }
 
   /**
@@ -722,13 +727,21 @@ public class NewKernelTyper {
       try {
         %match(cInst) {
           ConstraintInstruction(constraint,action,optionList) -> {
-            TomList TTList = varPatternList;
-            `TopDownCollect(CollectVars(this)).visitLight(`constraint);
+            // Store variable lists in new variables and reinitialize them
+            BQTermList globalVarList = varList;
+            TomList globalVarPatternList = varPatternList;
+
+            BQTermList localVarList = `concBQTerm();
+            TomList localVarPatternList = `concTomTerm();
+            `TopDownCollect(CollectVars(this,localVarList,localVarPatternList)).visitLight(`constraint);
             Constraint newConstraint = inferConstraint(`constraint);
             //DEBUG System.out.println("inferConstraintInstructionList: action " +
             //DEBUG     `action);
             Instruction newAction = `inferAllTypes(action,EmptyType());
-            varPatternList = TTList;
+
+            varPatternList = globalVarPatternList;
+            localVarList = resetLocalList(localVarPatternList,localVarList);
+            varList = `concBQTerm(localVarList*,globalVarList*);
             newCIList =
               `concConstraintInstruction(ConstraintInstruction(newConstraint,newAction,optionList),newCIList*);
           } 
@@ -746,13 +759,20 @@ public class NewKernelTyper {
    * occurring in a condition.
    * @param nkt an instance of object NewKernelTyper
    */
-  %strategy CollectVars(nkt:NewKernelTyper) extends Identity() {
+  %strategy
+    CollectVars(nkt:NewKernelTyper,localVList:BQTermList,localVPList:TomList) extends Identity() {
     visit TomTerm {
-      var@(Variable|VariableStar)[] -> { nkt.addTomTerm(`var); }
+      var@(Variable|VariableStar)[] -> { 
+        nkt.addTomTerm(`var);
+        localVPList = `concTomTerm(var,localVPList*);
+      }
     }
 
     visit BQTerm {
-      bqvar@(BQVariable|BQVariableStar)[] -> { nkt.addBQTerm(`bqvar); }
+      bqvar@(BQVariable|BQVariableStar)[] -> { 
+        nkt.addBQTerm(`bqvar);
+        localVList = `concBQTerm(bqvar,localVList*);
+      }
     }
   }
 
