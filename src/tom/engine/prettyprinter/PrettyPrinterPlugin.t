@@ -140,7 +140,7 @@ public class PrettyPrinterPlugin extends TomGenericPlugin {
   %strategy stratPrintTL() extends Fail(){
     visit TargetLanguage {
       TL[Code=x, Start=TextPosition[Line=startLine, Column=startColumn], End=TextPosition[Line=endLine, Column=endColumn]] -> {
-        theFormatter.write(`x,`startLine,`startColumn,false);
+        theFormatter.write(`x+ getEnvironment().depth() ,`startLine,`startColumn,false);
       }
     }
     visit BQTerm {
