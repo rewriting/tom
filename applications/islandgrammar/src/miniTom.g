@@ -18,11 +18,14 @@ import org.antlr.runtime.tree.*;
 }
 
 @lexer::header {
+import java.util.Queue;
+import java.util.LinkedList;
 import org.antlr.runtime.tree.*;
 }
+
 @lexer::members{
   int levelcounter=-1;
-  Tree subTree;
+  public static Queue<Tree> SubTrees = new LinkedList<Tree>();
 }
 
 /* Parser rules */
@@ -47,11 +50,14 @@ LEFTBR     : '{' {levelcounter+=1;} ;
 RIGHTBR    : '}' {if(levelcounter==0){emit(Token.EOF_TOKEN);} else{levelcounter-=1;}  } ;
 SEMICOLUMN : ';' ;
 OPENCOM    : '/*' {
-  CommentLexer lexer = new CommentLexer(input);
-  CommonTokenStream tokens = new CommonTokenStream(lexer);
-  CommentParser parser = new CommentParser(tokens);
-  subTree = (Tree) parser.regular().getTree();
+  $channel = HIDDEN;
+  HostParser switcher = new HostParser(input,"*/");
+  if (!SubTrees.offer((Tree) switcher.getTree())) {
+    System.out.println("Achtung ! Could not queue tree");
   };
+  ClassicToken Voucher = new ClassicToken(14,"alasoupe");
+  emit(Voucher);
+};
 A          : 'alice' ;
 B          : 'bob' ;
 OBRA       : '[' ;
