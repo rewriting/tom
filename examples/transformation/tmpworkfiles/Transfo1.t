@@ -20,15 +20,15 @@
 
 /* DEBUG2 */
 
-/*%include { sl.tom }
+%include { sl.tom }
 
-%strategy RRR() extends Identity() {
+/*%strategy RRR() extends Identity() {
   visit T1 {
     a() -> { System.out.println("rrr"); }
   }
-}
+}*/
 
-%strategy SSS() extends Identity() {
+/*%strategy SSS() extends Identity() {
   visit T1 {
     b() -> { System.out.println("sss"); }
   }
@@ -49,3 +49,14 @@
   }
 
 }
+
+/*DEBUG4*/
+  %strategy Resolve() extends Identity() {
+    visit Place {
+      pr@ResolveWorkDefinitionPlace[o=o,name=name] -> {
+        Place res = (Place) translator.table.get(`o).get(`name);
+        resolveInverseLinks(`pr, res, translator);
+        return res;
+      }
+    }
+
