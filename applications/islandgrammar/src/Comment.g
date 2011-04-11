@@ -28,7 +28,7 @@ oneline : t=ANYTHING -> ^(ONELINE $t);
 
 regular  : t=ANYTHING -> ^(REGULAR $t);
 
-CLOSECOM    : '*/' {if(!oneline){emit(Token.EOF_TOKEN);}};
-NEWLINE     : '\n' {if( oneline){emit(Token.EOF_TOKEN);}};
-WS          : ('\r' | '\t' | ' ')* { $channel = HIDDEN; };
-ANYTHING    : ('a'..'z'|' '|'/')*;
+CLOSECOM : '*/' { if(!oneline) { emit(Token.EOF_TOKEN); } };
+NEWLINE  : '\n' { if( oneline) { emit(Token.EOF_TOKEN); } };
+WS       : ('\r' | '\t' | ' ')* { $channel = HIDDEN; };
+ANYTHING : ('a'..'z'|' '|'/')*;
