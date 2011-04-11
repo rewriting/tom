@@ -6,29 +6,38 @@ public class HostParser {
     private CharStream input;
 
     private boolean ready;/* whether one of the tokenNames has been found */
+    private boolean quit;
     private int matchedConstruct;/* which one */
     private StringBuffer savedContent;/* a memory to store characters read before asserting whether they're host content or not */
-    private StringBuffer hostContent;/* the characters that haven't been parsed*/
+    private StringBuffer hostContent;/* the characters that haven't been parsed */
     private boolean found;/* this one remembers if something was found during last 'take' operation */
+    private final char EndOfFile = (char) -1;/* an alias to clarify the interpretation of LA(int i) method */
     private Tree arbre;
-/* to look for a keyword, add it to this array, then configure the parser it should trigger in the function parserMap */
-    public static final String[] tokenNames = new String[] {
-      "%match", "%op", "//", "/*"
-    };
-    private int[] states;/* the index of current character in each keyword */
+    private String[] Tokens;/* This array will contain the keywords that trigger the calling to another parser */
+    private String StopToken;/* A keyword to watch for special instances (which are supposed to stop after a certain keyword is encountered) */
+    private int[] states;/* index of current character in each keyword */
 
     public HostParser(CharStream input) {
-        Token name=new CommonToken(1,"Papyrus");
-        arbre=new CommonTree(name);
-        this.input = input;
-        hostContent = new StringBuffer();
-        savedContent = new StringBuffer();
-        states = new int[tokenNames.length];
-        for(int i = 0; i < tokenNames.length ; i++) {
-          states[i] = 0;
-        }
-        found = false;
-        matchedConstruct = -1;
+      Token name=new CommonToken(1,"Papyrus");
+      arbre=new CommonTree(name);
+      this.input = input;
+      hostContent = new StringBuffer();
+      savedContent = new StringBuffer();
+      Tokens = new String[] {
+        "%match", "%op", "//", "/*"
+      };
+      states = new int[Tokens.length+1]; /* the additional box will be used to store the state of the StopToken */
+      /* Put the state of each keyword to 0 (no character read yet) */
+      for(int i = 0; i < states.length ; i++) {
+        states[i] = 0;
+      }
+      found = false;
+      matchedConstruct = -1;
+    }
+
+    public HostParser(CharStream input, String StopToken) {
+      this(input);
+      this.StopToken = StopToken;
     }
 
     private void parserMap(int i) {
@@ -72,10 +81,10 @@ public class HostParser {
 
     }
 
-    public Tree parse() {
+    public Tree getTree() {
         while (true) {
           char read = (char) input.LA(1);
-          if (read == (char) -1) {
+          if (read == EndOfFile) {
             break;
           }
           take(read);
@@ -89,6 +98,9 @@ public class HostParser {
             parserMap(matchedConstruct);
             hostContent.setLength(0);;
           }
+          if(quit) {
+            break;
+          }
         }
         return arbre;
     }
@@ -96,11 +108,11 @@ public class HostParser {
 
     public void take(char c) {
       found = false;
-      for(int i = 0; i < tokenNames.length; i++) {
-        if(tokenNames[i].charAt(states[i]) == c) {
+      for(int i = 0; i < Tokens.length; i++) {
+        if(Tokens[i].charAt(states[i]) == c) {
           states[i]++;
           found = true;
-          if(states[i] == tokenNames[i].length()) {
+          if(states[i] == Tokens[i].length()) {
             ready = true;
             matchedConstruct = i;
             states[i] = 0;
@@ -108,6 +120,20 @@ public class HostParser {
         }
         else {
           states[i] = 0;
+        }
+      }
+      if(StopToken != null) {
+        /* The same for the StopToken now */
+        if(StopToken.charAt(states[states.length-1]) == c) {
+          states[states.length-1]++;
+          found = true;
+          if(states[states.length-1] == StopToken.length()) {
+            quit = true;
+            states[states.length-1] = 0;
+          }
+        }
+        else {
+          states[states.length-1] = 0;
         }
       }
       savedContent.append(c);

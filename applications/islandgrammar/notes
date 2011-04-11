@@ -28,3 +28,7 @@ Actuellement, nous réexplorons les possibilités de l'option filter d'une part,
 Autre piste de recherche : faire une sorte de micro-parsing au niveau du lexer. De la même façon qu'on a fait quelque chose pour compter les accolades, peut-être faire quelque chose qui repère un minimum le contexte pour pouvoir déclencher le changement de parser sur une accolade ouvrante (parce que les autres règles du lexer permettraient de repérer que c'est bien la bonne accolade).
 
 Problème rencontré en faisant la transition vers le CommentLexer depuis le miniTomLexer (mais probablement pas lié à cette technique) : pourquoi ANTLR s'arrête tout seul sagement lorsqu'une règle contient le '~' (tout sauf le caractère suivant) ? De plus, il semble impossible d'émettre un Token comme cela est fait dans miniTomLexer.
+
+Idée pour la suite : Quand on rencontre une construction spéciale dans miniTomLexer, on repasse la main à HostParser. Pour ce faire, on a un constructeur spécial prenant un caractère de fin à surveiller. Reste la question de savoir comment on va repasser au Parser l'arbre obtenu lors du Lexing.
+
+Le fichier $GRAMNAME.tokens était toujours resté très mystérieux a enfin révélé son utilité : il permet d'émettre un Token de la sorte que l'on veut. Grâce à cela, on peut passer une info arbitraire du Lexer au Parser. Problème : comment savoir à l'avance quel numéro sera attribué à quel token ?

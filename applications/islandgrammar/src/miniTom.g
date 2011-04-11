@@ -18,11 +18,14 @@ import org.antlr.runtime.tree.*;
 }
 
 @lexer::header {
+import java.util.Queue;
+import java.util.LinkedList;
 import org.antlr.runtime.tree.*;
 }
+
 @lexer::members{
   int levelcounter=-1;
-  Tree subTree;
+  public static Queue<Tree> SubTrees = new LinkedList<Tree>();
 }
 
 /* Parser rules */
