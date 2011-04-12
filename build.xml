@@ -1580,6 +1580,7 @@
     <delete dir="${bundle.temp.dir}"/>
   </target>
 
+  <!-- -->
   <target name="stable.doc" description="Build javadoc for stable">
     <mkdir dir="${stable.doc}"/>
     <javadoc destdir="${stable.doc}"
@@ -1588,7 +1589,15 @@
       <classpath refid="stable.classpath"/>
       <fileset dir="${stable.src}">
         <include name="tom/library/sl/**/*.java"/>
+        <include name="tom/library/bytecode/**/*.java"/>
+        <include name="tom/library/utils/**/*.java"/>
+        <include name="tom/library/xml/**/*.java"/>
+        <include name="tom/library/emf/**/*.java"/>
+        <include name="tom/library/freshgom/**/*.java"/>
+        <include name="tom/platform/**/*.java"/>
       </fileset>
+      <link href="http://tom.loria.fr/adt/" />
+      <link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
     </javadoc>
   </target>
 
@@ -1606,7 +1615,10 @@
         <include name="tom/library/bytecode/**/*.java"/>
         <include name="tom/library/utils/**/*.java"/>
         <include name="tom/library/xml/**/*.java"/>
+        <include name="tom/library/emf/**/*.java"/>
+        <include name="tom/library/freshgom/**/*.java"/>
         <include name="tom/platform/**/*.java"/>
+        <include name="tom/engine/**/*.java"/>
       </fileset>
       <fileset dir="${src.gen}">
         <include name="tom/library/sl/**/*.java"/>
@@ -1615,6 +1627,7 @@
         <include name="tom/library/xml/**/*.java"/>
         <include name="tom/platform/**/*.java"/>
         <exclude name="**/adt/**/*.java"/>
+        <include name="tom/engine/**/*.java"/>
       </fileset>
       <link href="http://tom.loria.fr/adt/" />
       <link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
@@ -1655,7 +1668,7 @@
     </javadoc>
   </target>
 
-  <!-- engine javadoc -->
+  <!-- src engine javadoc -->
   <target name="src.doc.engine"
     description="Build engine javadoc for src"
     depends="src">

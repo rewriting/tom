@@ -182,7 +182,7 @@ System.out.println(stringInfix((RTerm)currentStrategy.visit(subject)));}
 					return `appS(andS(l*,result*),N);}
 				//ALPHA-CONV
 				/* Garbage collector */
-				appC((_*,matchKO(),_*),_) -> {return `stk();}
+				appC(andC(_*,matchKO(),_*),_) -> {return `stk();}
 				app(stk(),A) -> {return `stk();}
 				struct(A,stk()) -> {return `A;}
 				struct(stk(),A) -> {return `A;}
@@ -217,43 +217,43 @@ System.out.println(stringInfix((RTerm)currentStrategy.visit(subject)));}
 		}
 		visit ListConstraint {
 	/*Decompose n = m = 0*/
-				(X*,match(f@Const[],f),Y*) -> {return `andC(X*,Y*);}
+				andC(X*,match(f@Const[],f),Y*) -> {return `andC(X*,Y*);}
 				
 				/*Decompose_ng n = m = 0*/
 				//si j'arrive dans la regle suivant c'est que les Const sont diff
-				(X*,match(Const[],Const[]),Y*) -> {return `andC(X*,matchKO(),Y*);}
+				andC(X*,match(Const[],Const[]),Y*) -> {return `andC(X*,matchKO(),Y*);}
 				
 				/*Decompose et Decompose_ng min(n,m) > 0 */
-				l: (X*,m@match(app[],app[]),Y*) -> {
+				l: andC(X*,m@match(app[],app[]),Y*) -> {
 					ListConstraint head_is_constant = `headIsConstant(m);
 					%match(ListConstraint head_is_constant) {
-						(match[]) -> { break l; }
-						(matchKO()) -> { return `andC(X*,matchKO(),Y*); }
+						andC(match[]) -> { break l; }
+						andC(matchKO()) -> { return `andC(X*,matchKO(),Y*); }
 					}
 					ListConstraint result = `computeMatch(andC(m));
 					return `andC(X*,result*,Y*);
 				}
-				l: (X*,m@match(app[],Const[]),Y*)  -> {
+				l: andC(X*,m@match(app[],Const[]),Y*)  -> {
 					ListConstraint head_is_constant = `headIsConstant(m);
 					%match(ListConstraint head_is_constant) {
-						(match[]) -> { break l; }
-						(matchKO()) -> { return `andC(X*,matchKO(),Y*); }
+						andC(match[]) -> { break l; }
+						andC(matchKO()) -> { return `andC(X*,matchKO(),Y*); }
 					}
 					ListConstraint result = `computeMatch(andC(m));
 					return `andC(X*,result*,Y*);
 				}
-				l: (X*,m@match(Const[],app[]),Y*) -> {
+				l: andC(X*,m@match(Const[],app[]),Y*) -> {
 					ListConstraint head_is_constant = `headIsConstant(m);
 					%match(ListConstraint head_is_constant) {
-						(match[]) -> { break l; }
-						(matchKO()) -> { return `andC(X*,matchKO(),Y*); }
+						andC(match[]) -> { break l; }
+						andC(matchKO()) -> { return `andC(X*,matchKO(),Y*); }
 					}
 					ListConstraint result = `computeMatch(andC(m));
 					return `andC(X*,result*,Y*);
 				}
 				
 				/*Decompose Struct */
-				(X*,match(struct(M1,M2),struct(N1,N2)),Y*) ->{
+				andC(X*,match(struct(M1,M2),struct(N1,N2)),Y*) ->{
 					return `andC(X*,match(M1,N1),match(M2,N2),Y*);
 				}
 		}
@@ -337,8 +337,8 @@ System.out.println(stringInfix((RTerm)currentStrategy.visit(subject)));}
 	}
 	protected static ListConstraint computeMatch(ListConstraint l){
 		%match(ListConstraint l){
-			(match(app(f@Const[],A),app(f,B))) -> {return `andC(match(A,B));}
-			(match(app(A1,B1),app(A2,B2))) -> {
+			andC(match(app(f@Const[],A),app(f,B))) -> {return `andC(match(A,B));}
+			andC(match(app(A1,B1),app(A2,B2))) -> {
 				ListConstraint result = `computeMatch(andC(match(A1,A2)));
 				return `andC(result*,match(B1,B2));}
 			_ -> {return `l;}
@@ -348,7 +348,7 @@ System.out.println(stringInfix((RTerm)currentStrategy.visit(subject)));}
 	}
 	protected static ListConstraint mapC(ListConstraint list, ListSubst phi, ListConstraint result){
 		%match(ListConstraint list) {
- 	    (match(P,M),_*) ->{
+ 	    andC(match(P,M),_*) ->{
 				return `mapC(list.getTailandC(),phi,andC(match(P,appS(phi,M)),result*));}
  	    _ -> {return `result;}
 		}
@@ -356,7 +356,7 @@ System.out.println(stringInfix((RTerm)currentStrategy.visit(subject)));}
 	} 
 	protected static ListSubst mapS(ListSubst list, ListSubst phi, ListSubst result){
 		%match(ListSubst list) {
-			(eq(X,M),_*) ->{
+			andS(eq(X,M),_*) ->{
 				return `mapS(list.getTailandS(),phi,andS(eq(X,appS(phi,M)),result*));}
  	    _ -> {return `result;}
     }	 
