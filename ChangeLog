@@ -1,3 +1,8 @@
+2011-04-13 pem
+ * handle non linear AC pattern
+   f(C*,X1*,X1*,X2*,X2*) -> ...
+   do not yet handle f(X1*,X1*,X2*,X2*) -> ...
+
 2011-02-16 tavaresc
  * Split strategy solveSubConstraints into separated strategies and methods.
  * The method detectFail returns a 'boolean' and a new kind of constraint

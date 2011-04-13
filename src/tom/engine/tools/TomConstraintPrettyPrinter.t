@@ -319,6 +319,17 @@ public class TomConstraintPrettyPrinter {
         return prettyPrint(`AstName)+"("+s.substring(min, s.length())+")";
       }
 
+      BuildEmptyList(AstName) -> {
+        return prettyPrint(`AstName)+"()";
+      }
+
+      BuildConsList(AstName,HeadTerm,TailTerm) -> {
+        return prettyPrint(`AstName)+"(" + prettyPrint(`HeadTerm) + ", " + prettyPrint(`TailTerm) +")";
+      }
+      BuildAppendList(AstName,HeadTerm,TailTerm) -> {
+        return prettyPrint(`AstName)+"(" + prettyPrint(`TailTerm) + ", " + prettyPrint(`HeadTerm) +")";
+      }
+
     }
     return subject.toString();
   }

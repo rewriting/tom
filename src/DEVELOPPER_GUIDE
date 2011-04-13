@@ -51,6 +51,14 @@ The compiler is composed of several plugins, which are executed in the following
     generate visitLight and visit
 
 - Compiler
+  ACPropagator: transform to compile AC matching
+  - remove a term which is not a VariableStar
+  - use abstraction to compile  
+  - use abstraction to compile non-linear variables
+  - transform AC matching into A matching when the pattern is reduced to 
+    an empty-list or a single variable
+
+
 
 - Optimizer
 

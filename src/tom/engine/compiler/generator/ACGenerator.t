@@ -72,7 +72,9 @@ public class ACGenerator implements IBaseGenerator {
   }
  
   public Expression generate(Expression expression) throws VisitFailure {
-    return `TopDownIdStopOnSuccess(Generator(this)).visitLight(expression);
+    //System.out.println("\n *** generate: " + expression);
+    //return `TopDownIdStopOnSuccess(Generator(this)).visitLight(expression);
+    return `TopDown(Generator(this)).visitLight(expression);
   }
 
   /**
@@ -82,19 +84,19 @@ public class ACGenerator implements IBaseGenerator {
    */
   %strategy Generator(acg:ACGenerator) extends Identity() {
     visit Expression {
-      ConstraintToExpression(MatchConstraint[Pattern=pattern@RecordAppl[NameList=concTomName(Name(symbolName)),Slots=concSlot(PairSlotAppl[Appl=var_x@VariableStar[AstName=Name(name_x)]],tail*)],Subject=subject]) -> {
+      ConstraintToExpression(MatchConstraint[Pattern=pattern@RecordAppl[NameList=concTomName(Name(symbolName)),Slots=concSlot(PairSlotAppl[Appl=var_x@VariableStar[AstName=name_x]],tail*)],Subject=subject]) -> {
         if (TomBase.hasTheory(`pattern,`AC())) {
           int mult_x = 1;
           int mult_y = 0;
-          String name_y = null;
+          TomName name_y = null;
           TomTerm var_y = null;
 
           //System.out.println("\n *** ACGenerator on: " + `pattern);
 
           for(Slot t:`tail.getCollectionconcSlot()) {
             %match(t) {
-              PairSlotAppl[Appl=var@VariableStar[AstName=Name(name)]] -> {
-                if (null == name_y && ! (`name).equals(`name_x)) {
+              PairSlotAppl[Appl=var@VariableStar[AstName=name]] -> {
+                if (null == name_y && ! `name.equals(`name_x)) {
                   name_y = `name;
                   var_y = `var;
                 }
@@ -103,9 +105,9 @@ public class ACGenerator implements IBaseGenerator {
                 //System.out.println("name_x = " + `name_x);
                 //System.out.println("name_y = " + name_y);
 
-                if ((`name).equals(`name_x)) {
+                if (`name.equals(`name_x)) {
                   mult_x++;
-                } else if ((`name).equals(name_y)) {
+                } else if (`name.equals(name_y)) {
                   mult_y++;
                 } else {
                   throw new TomRuntimeException("Bad VariableStar: " + `var);
