@@ -1,3 +1,7 @@
+2011-04-13 jcb
+ * add mappings generation for several EPackage at once in Tom-EMF
+ * change Tom-EMF mappings generation (into files instead of stdout)
+
 2011-02-08 tonio
  * Update junit to 4.8.2
  * Update ant to 1.8.2
