@@ -66,6 +66,9 @@
       <exclude name="TestConstraintCombination.t"/>
       <exclude name="TestConstraintCombinationWithSubtype.t"/>
 
+      <!-- Exclude weird tests -->
+      <exclude name="TestDoubleSubject.t"/>
+
       <!-- Why to exclude these tests?? -->
       <exclude name="**/error/**"/>
       <exclude name="**/rule/**"/>

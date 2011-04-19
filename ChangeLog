@@ -3,15 +3,36 @@
    f(C*,X1*,X1*,X2*,X2*) -> ...
    do not yet handle f(X1*,X1*,X2*,X2*) -> ...
 
-2011-02-16 tavaresc
+2011-04-08 pem
+ * improved pretty-printer for BQTerm
+ * relax constraint on HasTerm (only the name is considered)
+ * improved the ordering constraints algorithm
+
+2011-04-08 tavaresc
+ * Set optimizer to true in OptimizerPlugin..
+ * Add a rule to order (MatchConstraint,OrConstraint) in PreGenerator.
+ * Improve test of different types in ConstraintGenerator (since it can
+   be null, it's better to use %match then if).
+
+2011-04-01 tavaresc
+ * Fix problem of context of patterns and subjects (reset list of patterns per
+   rule).
+
+2011-03-18 tavaresc
+ * Add a test in order to well type a "visit".
+   2011-02-16 tavaresc
  * Split strategy solveSubConstraints into separated strategies and methods.
  * The method detectFail returns a 'boolean' and a new kind of constraint
- 'False()' is added into the set constraint. (NewKernelTyper)
+   'False()' is added into the set constraint. (NewKernelTyper)
 
 2011-02-15 tavaresc
  * Set type of new subject with the type of old subject (in compiler).
  * Fix the insertion of subtyping constraints.
  * Handle others Code's constructors in TomBase.
+
+2011-04-13 jcb
+ * add mappings generation for several EPackage at once in Tom-EMF
+ * change Tom-EMF mappings generation (into files instead of stdout)
 
 2011-02-08 tonio
  * Update junit to 4.8.2

@@ -13,6 +13,11 @@ public class CommentParser
     stringBuffer = new StringBuffer();
   }
 
+  public CommentParser(TokenStream cs)
+  {
+    
+  }
+
   public Tree oneLine() {
     boolean insideComment = true;
     while (insideComment) {
