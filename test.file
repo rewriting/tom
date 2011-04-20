@@ -1,6 +1,6 @@
 git test
-
 test2
-
 diff test3 in master
 diff test4 in master - another conf
+
+test diff mail - subtype
