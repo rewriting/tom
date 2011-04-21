@@ -154,8 +154,7 @@ public class TomMappingFromEcore {
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  *
  *
- **/
-          ]%);
+ **/]%);
   }
 
   /**
@@ -176,10 +175,11 @@ public class TomMappingFromEcore {
       n = n + is;
       types.put(c, n);
       if(tomTypes.containsKey(c)) {
-        writer.write("%include { " + tomTypes.get(c) + ".tom }");
+        writer.write("\n\n%include { " + tomTypes.get(c) + ".tom }");
       } else {
         String[] decl = getClassDeclarations(eclf); // [canonical name, anonymous generic, generic type]
         writer.write(%[
+
 %typeterm @n@ @(useNewTyper?genSubtype(eclf):"")@ {
   implement { @(eclf instanceof EClass && !EObject.class.isAssignableFrom(c) ? "org.eclipse.emf.ecore.EObject" : decl[0] + decl[2])@ }
   is_sort(t) { @(c.isPrimitive() ? "true" : "$t instanceof " + decl[0] + decl[1])@ }
@@ -308,6 +308,7 @@ public class TomMappingFromEcore {
             .getInstanceClass()) ? decl[0] + decl[2] : "org.eclipse.emf.ecore.EObject");
 
         writer.write(%[
+
 %typeterm @name@ {
   implement { org.eclipse.emf.common.util.EList<@inst@> }
   is_sort(t) { $t instanceof org.eclipse.emf.common.util.EList<?> && (((org.eclipse.emf.common.util.EList<@inst@>)$t).size() == 0 || (((org.eclipse.emf.common.util.EList<@inst@>)$t).size()>0 && ((org.eclipse.emf.common.util.EList<@inst@>)$t).get(0) instanceof @(decl[0]+decl[1])@)) }
@@ -471,8 +472,9 @@ private static <O> org.eclipse.emf.common.util.EList<O> append@name@(O e,org.ecl
             .getInterfaces().length - 1].getCanonicalName();
           String o2 = ecl.getEPackage().getClass().getInterfaces()[ecl.getEPackage().getClass().getInterfaces().length - 1]
             .getCanonicalName();
-          writer.write(
-%[%op @ecl.getInstanceClass().getSimpleName()@ @cr@(@s_types@) {
+          writer.write(%[
+
+%op @ecl.getInstanceClass().getSimpleName()@ @cr@(@s_types@) {
   is_fsym(t) { $t instanceof @(decl[0]+decl[1])@ }@s_gets@
   make(@(s.length() <= 2 ? "" : s.substring(2))@) { construct@cr@((@(EObject.class.isAssignableFrom(ecl.getInstanceClass()) ? ecl.getInstanceClass().getCanonicalName() : "org.eclipse.emf.ecore.EObject")@)@o1@.eINSTANCE.create((EClass)@o2@.eINSTANCE.getEClassifier("@ecl.getName()@")), new Object[]{ @(s2.length() <= 2 ? "" : s2.substring(2))@ }) }
 }
@@ -487,8 +489,7 @@ public static <O extends org.eclipse.emf.ecore.EObject> O construct@cr@(O o, Obj
     }
   }
   return o;
-}
-              ]%);
+}]%);
         }
       } else if(eclf instanceof EEnum) {
         EEnum en = (EEnum) eclf;
@@ -503,6 +504,7 @@ public static <O extends org.eclipse.emf.ecore.EObject> O construct@cr@(O o, Obj
             .getCanonicalName();
 
           writer.write(%[
+
 %op @cr@ @lit.getLiteral()@() {
   is_fsym(t) { t == @(decl[0]+decl[1])@.get("@lit.getLiteral()@") }
   make() { (@(decl[0]+decl[2])@)@o1@.eINSTANCE.createFromString( (EDataType)@o2@.eINSTANCE.get@toUpperName(cr)@(), "@lit.getLiteral()@") }
