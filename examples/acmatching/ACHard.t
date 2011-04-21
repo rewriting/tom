@@ -36,26 +36,29 @@ public class ACHard {
   %include{ int.tom }
   %include{ intarray.tom }
 
+  private static int nbCall=0;
   private Nat eval(Nat t) {
-    System.out.println("t = " + t);
+    nbCall++;
+    //System.out.println("t = " + t);
     %match(t) {
-      f??(T1*,X,g(Y)) -> {
-        System.out.println("T1=" + `T1 + " X=" + `X);
-        System.out.println("eval(X) = " + eval(`X));
-        System.out.println("eval(Y) = " + eval(`Y));
+      f??(T1*,X*,g(Y)) -> {
+        //System.out.println("T1=" + `T1 + " X=" + `X);
+        //System.out.println("eval(X) = " + eval(`X));
+        //System.out.println("eval(Y) = " + eval(`Y));
         if(eval(`X)==eval(`Y)) {
           return `b();
         }
-      } 
-    } 
+      }
+    }
     return t;
   }
 
   public final static void main(String[] args) {
-    ACHard a = new ACHard();
-    Nat t = `f(a(),g(a())); 
-    Nat res = a.eval(t);
-    System.out.println("res = " + res);
+    ACHard problem = new ACHard();
+    Nat t = `f(a(),a(),a(),a(),a(),a(), a(),a(),a(),a(),a(),a(),
+               g(a()),g(a()),g(a()),g(a()),g(a()),g(a()),g(a()),g(a()),g(a()),g(a()) ); //,g(a()),g(a())); 
+    Nat res = problem.eval(t);
+    System.out.println("res = " + res + " in " + nbCall + " calls");
 
   } 
 }   
