@@ -50,7 +50,7 @@ public class TestAC {
       | g(T*)
 
       f:AC{}
-g:AC{}
+      g:AC{}
 
   }
 
@@ -132,5 +132,21 @@ g:AC{}
       assertTrue("f(a(),a()) is solution of Y",bagY.contains(`f(a(),a())));
       assertEquals("bagX.size==2",bagX.size(),2);
       assertEquals("bagY.size==2",bagY.size(),2);
+    }
+
+  @Test
+    public void test4() {
+      T t1 = `f(a(),b(),b(),a());
+      Set<T> bagX = new HashSet<T>();
+
+      %match(t1) {
+        f??(X*,Y*) && X==Y -> { 
+          bagX.add(`X);
+        }
+      }
+
+      assertTrue("f(a(),b()) is solution of X",bagX.contains(`f(a(),b())));
+      assertTrue("f(b(),a()) is solution of X",bagX.contains(`f(b(),a())));
+      assertEquals("bagX.size==1",bagX.size(),1);
     }
 }
