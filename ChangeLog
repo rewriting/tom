@@ -1,3 +1,7 @@
+2011-04-22 tavaresc
+ * Fix collect of variables in NewKernelTyper (now the varList are correctly
+   updated after call of strategy).
+
 2011-04-13 pem
  * handle non linear AC pattern
    f(C*,X1*,X1*,X2*,X2*) -> ...

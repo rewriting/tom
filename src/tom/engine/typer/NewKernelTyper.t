@@ -445,25 +445,23 @@ public class NewKernelTyper {
   }
 
   /**
-   * The method <code>resetLocalList</code> empties the
-   * <code>varPatternList</code> after
-   * checking if <code>varList</code> contains
-   * a corresponding BQTerm in order to remove it from <code>varList</code> too.
-   * @param tList   the TomList to be reset
-   * @param bqTList the BQTermList to be reset
-   * @return the resulting bqList
+   * The method <code>resetVarList</code> checks if <code>varList</code> contains
+   * a BQTerm which is in the <code>localVarPatternList</code> but is not in
+   * <code>varPatternList</code> (i.e. the globalVarPatternList</code>. Then,
+   * this BQTerm is removed from <code>varList</code>.
+   * @param localVarPatternList   the TomList to be reset
    */
-  protected BQTermList resetLocalList(TomList tList, BQTermList bqTList) {
-    for(TomTerm tTerm: tList.getCollectionconcTomTerm()) {
-      %match(tTerm,bqTList) {
-        (Variable|VariableStar)[AstName=aName],concBQTerm(x*,(BQVariable|BQVariableStar)[AstName=aName],y*)
+  protected void resetVarList(TomList localVarPatternList) {
+    BQTermList bqTList = varList;
+    for(TomTerm tTerm: varPatternList.getCollectionconcTomTerm()) {
+      %match(tTerm,localVarPatternList,bqTList) {
+        test@(Variable|VariableStar)[AstName=aName],!concTomTerm(_*,test,_*),concBQTerm(x*,(BQVariable|BQVariableStar)[AstName=aName],y*)
           -> {
             bqTList = `concBQTerm(x*,y*);
           }
       }
     }
-    //tList = `concTomTerm();
-    return bqTList;
+    varList = bqTList;
   }
 
   /**
@@ -914,14 +912,14 @@ public class NewKernelTyper {
       init();
       code =  collectKnownTypesFromCode(`code);
       //DEBUG System.out.println("------------- Code typed with typeVar:\n code = " +
-      //DEBUG     `code);
+      //DEBUG    `code);
       code = inferAllTypes(code,`EmptyType());
       //DEBUG printGeneratedConstraints(subtypeConstraints);
       solveConstraints();
       //DEBUG System.out.println("substitutions = " + substitutions);
       code = replaceInCode(code);
       //DEBUG System.out.println("------------- Code typed with substitutions:\n code = " +
-      //DEBUG     `code);
+      //DEBUG `code);
       replaceInSymbolTable();
       newCList = `concCode(code,newCList*);
     }
@@ -958,17 +956,15 @@ public class NewKernelTyper {
             BQTermList globalVarList = varList;
             TomList globalVarPatternList = varPatternList;
 
-            BQTermList localVarList = `concBQTerm();
-            TomList localVarPatternList = `concTomTerm();
-            `TopDownCollect(CollectVars(this,localVarList,localVarPatternList)).visitLight(`constraint);
+            `TopDownCollect(CollectVars(this)).visitLight(`constraint);
+
             Constraint newConstraint = inferConstraint(`constraint);
             //DEBUG System.out.println("inferConstraintInstructionList: action " +
             //DEBUG     `action);
             Instruction newAction = `inferAllTypes(action,EmptyType());
 
             varPatternList = globalVarPatternList;
-            localVarList = resetLocalList(localVarPatternList,localVarList);
-            varList = `concBQTerm(localVarList*,globalVarList*);
+            resetVarList(globalVarPatternList);
             newCIList =
               `concConstraintInstruction(ConstraintInstruction(newConstraint,newAction,optionList),newCIList*);
           } 
@@ -987,18 +983,18 @@ public class NewKernelTyper {
    * @param nkt an instance of object NewKernelTyper
    */
   %strategy
-    CollectVars(nkt:NewKernelTyper,localVList:BQTermList,localVPList:TomList) extends Identity() {
+    CollectVars(nkt:NewKernelTyper) extends Identity() {
     visit TomTerm {
       var@(Variable|VariableStar)[] -> { 
         nkt.addTomTerm(`var);
-        localVPList = `concTomTerm(var,localVPList*);
+        //localVPList = `concTomTerm(var,localVPList*);
       }
     }
 
     visit BQTerm {
       bqvar@(BQVariable|BQVariableStar)[] -> { 
         nkt.addBQTerm(`bqvar);
-        localVList = `concBQTerm(bqvar,localVList*);
+        //localVList = `concBQTerm(bqvar,localVList*);
       }
     }
   }
@@ -1183,6 +1179,7 @@ public class NewKernelTyper {
               }
 
               !VariableStar[] -> { 
+                //DEBUG System.out.println("InferSlotList CT-ELEM -- tTerm = " + `tTerm);
                 /* Case CT-ELEM rule (applying to premises which are not lists) */
                 argType = `headTTList;
               }
@@ -1680,6 +1677,7 @@ matchBlockAdd :
         //simplifiedConstraints = simplifyConjunctions(simplifiedConstraints);
         %match {
           concTypeConstraint(_*,FalseTypeConstraint(),_*) << simplifiedConstraints -> {
+            System.out.println("Error!!");
             return simplifiedConstraints;
           }
         }
@@ -1768,7 +1766,7 @@ matchBlockAdd :
       %match {
         Subtype[Type1=!TypeVar[],Type2=!TypeVar[]] << tConstraint -> {
           //System.out.println("\nsolve3: sConstraint=" + `sConstraint);
-          //errorFound = (errorFound && detectFail(`tConstraint));
+          errorFound = (errorFound && detectFail(`tConstraint));
         }
       }
     }
