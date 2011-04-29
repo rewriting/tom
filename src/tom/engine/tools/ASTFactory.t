@@ -194,6 +194,22 @@ public class ASTFactory {
     return list;
   }
 
+  public static ResolveStratElementList makeResolveStratElementList(List<ResolveStratElement> argumentList){
+    ResolveStratElementList list = `concResolveStratElement();
+    for(int i=argumentList.size()-1; i>=0 ; i--) {
+      list = `concResolveStratElement(argumentList.get(i),list*);
+    }
+    return list;
+  }
+
+  public static ResolveStratBlockList makeResolveStratBlockList(List<ResolveStratBlock> argumentList){
+    ResolveStratBlockList list = `concResolveStratBlock();
+    for(int i=argumentList.size()-1; i>=0 ; i--) {
+      list = `concResolveStratBlock(argumentList.get(i),list*);
+    }
+    return list;
+  }
+
   public static DeclarationList makeDeclarationList(List<Declaration> argumentList){
     DeclarationList list = `concDeclaration();
     for(int i=argumentList.size()-1; i>=0 ; i--) {

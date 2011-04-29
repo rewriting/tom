@@ -260,6 +260,8 @@ public class TomMessage extends BasicPlatformMessage {
       new TomMessage("TOM parsing phase ({0,number,integer} ms)");
   public static final TomMessage tomSyntaxCheckingPhase =
       new TomMessage("TOM syntax checking phase ({0,number,integer} ms)");
+  public static final TomMessage tomTransformingPhase =
+      new TomMessage("TOM transforming phase ({0,number,integer} ms)");
   public static final TomMessage tomDesugaringPhase =
       new TomMessage("TOM desugaring phase ({0,number,integer} ms)");
   public static final TomMessage tomTypingPhase =
