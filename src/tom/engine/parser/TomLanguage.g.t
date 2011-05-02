@@ -1031,9 +1031,10 @@ transformationConstruct [Option orgTrack] returns [Declaration result] throws To
 
          //temporary method
          //result = `AbstractDecl(astDeclarationList); //en attendant
-         result = `AbstractDecl(concDeclaration(TransformationDecl(
-                 Name(name.getText()),astDeclarationList,orgTrack),
-               SymbolDecl(Name(name.getText()))));
+//         result = `AbstractDecl(concDeclaration(
+             result = `TransformationDecl(
+                 Name(name.getText()),astDeclarationList,orgTrack);//)); //,
+//               SymbolDecl(Name(name.getText()))));
          selector().pop();
        }
      )
