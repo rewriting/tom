@@ -121,53 +121,65 @@ public class TransformerPlugin extends TomGenericPlugin {
 
   private tom.library.sl.Visitable process(tom.library.sl.Visitable subject) {
     try {
-      return `TopDownIdStopOnSuccess(ProcessTransformation(this)).visitLight(subject);
+      //return `TopDownIdStopOnSuccess(ProcessTransformation(this)).visitLight(subject);
+      return `TopDown(ProcessTransformation()).visitLight(subject);
     } catch(VisitFailure e) {
-      throw new TomRuntimeException("TransformerPlugin.expand: fail on " + subject);
+      throw new TomRuntimeException("TransformerPlugin.process: fail on " + subject);
     }
   }
 
 
-  %strategy ProcessTransformation(transformer:TransformerPlugin) extends Identity() {
+  %strategy ProcessTransformation() extends Identity() {
     /* 
      * Compilation of %transformation
      */
-    //TransformationDecl(TName:TomName,Declarations:DeclarationList,OrgTrack:Option)
     visit Declaration {
       TransformationDecl(toName,declList,orgTrack) -> {
-// orgTrack no longer needed ?
-        %match(declList) {
-          concDeclaration(_*,ResolveStratDecl[ResList=reslist,OriginTracking=ot],_*) -> {
-            return buildResolveStrat(`toName, `reslist, `ot);
-          }
-          concDeclaration(_*,TransfoStratDecl[TSName=wName,Term=term,Instructions=instr,Options=options,OrgTrack=ot],_*) -> {
-            return buildTransfoStrat(`toName, `wName, `term, `instr, `options, `ot);
-          }
-        }
+        // orgTrack no longer needed ?
+        return `AbstractDecl(processSubDecl(toName,declList));
       }
     }
   }
-  
+
+  private static DeclarationList processSubDecl(TomName toname, DeclarationList declList) {
+    try {
+      return `TopDownIdStopOnSuccess(ProcessSubTransformation(toname)).visitLight(declList);
+    } catch(VisitFailure e) {
+      throw new TomRuntimeException("TransformerPlugin.processSubDecl: fail on " + declList);
+    }
+  }
+
+  %strategy ProcessSubTransformation(toName:TomName) extends Identity() {
+    visit Declaration {
+      TransfoStratDecl[TSName=wName,Term=term,Instructions=instr,Options=options,OrgTrack=ot] -> {
+        return buildTransfoStrat(`toName, `wName, `term, `instr, `options, `ot);
+      }
+      ResolveStratDecl[ResList=reslist,OriginTracking=ot] -> {
+        return buildResolveStrat(`toName, `reslist, `ot);
+      }
+    }
+  }
+
   //TODO
-/*
+  /*
 Rappel :
 ResolveStratElement = ResolveStratElement(WithName:String, ResolveOrgTrack:Option)
 ResolveStratElementList = concResolveStratElement(ResolveStratElement*)
 ResolveStratBlock = ResolveStratBlock(ToName:String, resolveStratElementList:ResolveStratElementList)
 ResolveStratBlockList = concResolveStratBlock(ResolveStratBlock*)
-*/
+   */
   private static Declaration buildResolveStrat(TomName toname, ResolveStratBlockList
       rsbList, Option ot) {
 
     BQTerm subject = `BQVariable(concOption(),Name("tom__arg"),
         SymbolTable.TYPE_UNKNOWN);
     List<TomVisit> visitList = new LinkedList<TomVisit>();
-    
+
     %match(rsbList) {
       concResolveStratBlock(_*,ResolveStratBlock(tname,rseList),_*) -> {
         TomType ttype = `Type(concTypeOption(),tname,EmptyTargetLanguageType());
         List<ConstraintInstruction> ciList = new LinkedList<ConstraintInstruction>();
-        
+
         %match(rseList) {
           // "wName" is no longer useful -> signature to change
           concResolveStratElement(_*,ResolveStratElement(wname,rot),_*) -> {
@@ -210,13 +222,13 @@ ResolveStratBlockList = concResolveStratBlock(ResolveStratBlock*)
     BQTerm extendsTerm = `BQAppl(concOption(ot),Name("Identity"),concBQTerm());
     TomVisitList astVisitList = `ASTFactory.makeTomVisitList(visitList);
     Option orgTrack = `OriginTracking(Name("Strategy"),
-                                      ot.getLine(),
-                                      ot.getFileName());
+        ot.getLine(),
+        ot.getFileName());
     Declaration resolve = `Strategy(rsname,extendsTerm,astVisitList,orgTrack);
 
     return `AbstractDecl(concDeclaration(resolve,SymbolDecl(rsname)));
   }
-  
+
   //TODO
   private static Declaration buildTransfoStrat(TomName toname, TomName wname, TomTerm
       lhs, InstructionList instr, OptionList options, Option orgTrack) {
