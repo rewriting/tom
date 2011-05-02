@@ -37,10 +37,13 @@
 /* DEBUG3 */
 
 //%transformation SimplePDL2Petrinet() {
+//%op PetriNet PetriNet(nodes : NodeEList, arcs : ArcEList, name : String) {
+
 %transformation Petrinet() with (Process,WorkDefinition,WorkSequence) to (Place,Transition,Arc) {
   p@Process -> { 
     System.out.println("a"); 
-    Node p_ready  = `Place("name_ready", PetriNet(), ArcEList(), ArcEList(), 1);
+    Node p_ready  = `Place("name_ready", PetriNet(NodeElist(), ArcEList(),
+          "petrinetname"), ArcEList(), ArcEList(), 1);
     ResolveProcessTransition source = `ResolveProcessTransition(parent, "t_start");
   }
   WorkDefinition -> { 
@@ -51,7 +54,7 @@
 }
 
 /*DEBUG4*/
-  %strategy Resolve() extends Identity() {
+/*  %strategy Resolve() extends Identity() {
     visit Place {
       pr@ResolveWorkDefinitionPlace[o=o,name=name] -> {
         Place res = (Place) translator.table.get(`o).get(`name);
@@ -59,4 +62,4 @@
         return res;
       }
     }
-
+  }*/
