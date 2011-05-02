@@ -52,6 +52,7 @@ syn keyword tomOpkey            get_size make_empty
 syn keyword tomOpkey            make_insert make_append
 syn keyword tomOpkey            get_slot
 syn keyword tomOpkey            make
+syn keyword tomOpkey            visit
 
 syn cluster javaTop add=tomMetaQuote
 
