@@ -391,7 +391,6 @@ public class Problem1{
   //---------------------------------
   public static void main(String[] args) {
     tFloat subject = `zero();
-    natList list = `nList(zero(),suc(zero()));
     %match {
       x << tNat subject -> { System.out.println("x = " +`x); }
     }

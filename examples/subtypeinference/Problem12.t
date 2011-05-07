@@ -239,7 +239,7 @@ public class Problem12{
     public boolean equals(Object o) {
       if(o instanceof mult) {
         mult obj = (mult) o;
-        return m1.equals(mult.m1) && m2.equals(mult.m2);
+        return m1.equals(obj.m1) && m2.equals(obj.m2);
       }
       return false;
     }
@@ -279,6 +279,18 @@ public class Problem12{
       result += ")";
       return result;
     }
+    public boolean equals(Object o) {
+      if (o instanceof nList) {
+        nList obj = (nList) o;
+        if (this.isEmpty() && obj.isEmpty()) {
+          return true;
+        } else if (!this.isEmpty() && !obj.isEmpty()) {
+          return 
+            headnList.equals(obj.headnList) && tailnList.equals(obj.tailnList);
+        }
+      }
+      return false;
+    } 
   }
   //-------- Tom mappings -----------
   %typeterm tFloat {
@@ -309,7 +321,7 @@ public class Problem12{
     implement { natList }
     is_sort(t) { ($t instanceof natList) }
 
-    equals(t1,t2) { ($t1==$t2) }
+    equals(t1,t2) { ($t1.equals($t2)) }
 
   }
 

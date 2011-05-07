@@ -28,7 +28,7 @@
  */
 package subtypeinference;
 
-public class Problem5{
+public class ProblemListEquality{
   /*
   %gom {
     module Example
@@ -53,7 +53,7 @@ public class Problem5{
   */
   
   //-------- Java classes -----------
-static class tFloat {
+  static class tFloat {
     public String getOperator(){
       return "";
     }
@@ -292,7 +292,6 @@ static class tFloat {
       return false;
     } 
   }
-
   //-------- Tom mappings -----------
   %typeterm tFloat {
     implement { tFloat }
@@ -391,9 +390,15 @@ static class tFloat {
 
   //---------------------------------
   public static void main(String[] args) {
-    tFloat subject = `mult(zero(),square(zero()));
+    tFloat subject = `zero();
+    natList nList = `nList(zero(),suc(zero()));
     %match {
-      mult(x,square(x)) << subject -> { System.out.println("x = " +`x); }
+      nList(zero(),suc(zero())) << nList -> { 
+        System.out.println("This must be printed!"); 
+      }
+      (nList(zero(),suc(zero())) != nList) -> { 
+        System.out.println("This must not be printed!"); 
+      }
     }
   }
 }
