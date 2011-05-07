@@ -152,7 +152,7 @@ public class TomConstraintPrettyPrinter {
       }
 
       VariableStar(_,name,_,_) -> {
-        return prettyPrint(`name);
+        return prettyPrint(`name) + "*";
       }
 
       RecordAppl[NameList=nameList,Slots=slots] ->{

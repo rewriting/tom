@@ -231,7 +231,8 @@ public class TomMessage extends BasicPlatformMessage {
       new TomMessage("The match with ''{0}'' is always unsuccessful. No code for the correspondent action will be generated");
   public static final TomMessage circularReferences =
       new TomMessage("A circular reference was detected for the variable ''{0}''. For instance x << Context[x] is a circular reference.");
-
+  public static final TomMessage cannotCompileACPattern =
+      new TomMessage("Cannot compile this AC pattern: ''{0}''. There should be at least one linear variable");
 
   // optimizer.TomOptimizer
   public static final TomMessage tomOptimizationType =

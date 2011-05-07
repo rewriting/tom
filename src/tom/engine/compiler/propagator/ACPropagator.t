@@ -249,7 +249,6 @@ public class ACPropagator implements IBasePropagator {
     }
   }
 
-
   /**
    * transform AC matching into A matching when the pattern is reduced to 
    * an empty-list or a single variable

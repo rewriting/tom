@@ -56,7 +56,7 @@ public class ACHard {
   public final static void main(String[] args) {
     ACHard problem = new ACHard();
     Nat t = `f(a(),a(),a(),a(),a(),a(), a(),a(),a(),a(),a(),a(),
-               g(a()),g(a()),g(a()),g(a()),g(a()),g(a()),g(a()),g(a()),g(a()),g(a()) ); //,g(a()),g(a())); 
+               g(a()),g(a()),g(a()),g(a()),g(a()),g(a()),g(a()),g(a()),g(a()),g(a()),g(a()) ); //,g(a()),g(a())); 
     Nat res = problem.eval(t);
     System.out.println("res = " + res + " in " + nbCall + " calls");
 
