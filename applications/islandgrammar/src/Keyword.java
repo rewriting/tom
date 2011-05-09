@@ -12,6 +12,7 @@ public abstract class Keyword {
  ** @return : whether c was accepted by this Keyword
  **/
   public boolean take(char c) {
+    /*System.out.print(pattern + "  : ");*/
     if(regExp) {
       /* The regexp mode is only a joke now, but it could become cool someday
         Currently only support special characters '.' and '^' (for respectively any char and not following character) */
@@ -24,24 +25,25 @@ public abstract class Keyword {
       if (pattern.charAt(cursor) == c) {
         cursor++;
         matched = (cursor == pattern.length());
+        /*System.out.println(" Miam !");*/
         return true;
       } else {
+        /*System.out.println(" Beurk !");*/
         reset();
         return false;
       }
     }
   }
 
-  protected boolean isReady() {
+  public boolean isReady() {
     return matched;
   }
 
-  protected void reset() {
+  public void reset() {
     cursor = 0;
     matched = false;
   }
 
-  //protected abstract void stallHook();
-  protected abstract void action();
+  protected abstract void action() throws org.antlr.runtime.RecognitionException;
 
 }

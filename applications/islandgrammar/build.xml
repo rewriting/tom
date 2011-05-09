@@ -22,9 +22,14 @@
 		<mkdir dir="${build}"/>
 		<javac srcdir="${src}" destdir="${build}" classpath="${withAntlr}" includeantruntime="false"/>
 	</target>
-	<target name="test" depends="compile">
+	<target name="test" >
 		<java classpath="${withAntlr}:${islgram}/${build}" classname="Main" fork="true">
-			<arg value="${input}/testAntlrInput"/>
+			<arg value="${input}/${testfile}"/>
+		</java>
+	</target>
+	<target name="retest" depends="compile">
+		<java classpath="${withAntlr}:${islgram}/${build}" classname="Main" fork="true">
+			<arg value="${input}/${testfile}"/>
 		</java>
 	</target>
 	<target name="clean">

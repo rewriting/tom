@@ -7,10 +7,9 @@ options {
 }
 
 tokens {
-  PROGRAM;
-  CODE;
-  SUBCODE;
-  HOST;
+  MATCH;
+  TYPETERM;
+  PATTERNACTION;
 }
 
 @parser::header {
@@ -30,34 +29,47 @@ public static Queue<Tree> SubTrees = new LinkedList<Tree>();
 
 /* Parser rules */
 
-program :	LEFTPAR RIGHTPAR LEFTBR code* -> ^(PROGRAM code*) ;
 
-code :
-        s1=statement SEMICOLUMN -> ^(CODE $s1)
-      | s2=subcode -> ^(CODE $s2)
-      | s3=reccall -> ^($s3);
-//      | OBRA s3=name RARROW LEFTBR CBRA -> ^(HOST $s3);
+typetermconstruct : STRING LEFTBR implementKword (issortKword)? (equalsKword)? -> ^(TYPETERM);
 
-subcode : LEFTBR inside+ RIGHTBR -> ^(SUBCODE inside+);
-reccall : SUBCODE -> {miniTomLexer.SubTrees.poll()};
-inside    : B  ;
-statement	:	A+ ;
+implementKword : IMPLEMENT LEFTBR s1=innerBlock RIGHTBR -> ^(HOSTBLOCK $s1) ;
+issortKword : ISSORT LEFTPAR s1=STRING RIGHTPAR LEFTBR s2=innerBlock RIGHTBR -> ^(HOSTBLOCK $s2) ;
+equalsKword : EQUALS LEFTPAR s1=STRING COMMA s2=STRING LEFTBR s3=innerBlock RIGHTBR -> ^(HOSTBLOCK $s3) ;
+
+matchconstruct :	LEFTPAR RIGHTPAR LEFTBR patternaction* -> ^(MATCH patternaction*) ;
+
+patternaction : (s1=STRING)  s2=innerBlock  -> ^(PATTERNACTION $s1 $s2);
+
+innerBlock : ARROWBR -> {miniTomLexer.SubTrees.poll()};
 
 /* Lexer rules */
-SUBCODE    : ;
+HOSTBLOCK  : ;
 LEFTPAR    : '(' ;
 RIGHTPAR   : ')' ;
-LEFTBR     : '{' {levelcounter+=1;} ;
+LEFTBR     : '{' {levelcounter++;};
 RIGHTBR    : '}' {if(levelcounter==0){emit(Token.EOF_TOKEN);} else{levelcounter-=1;}  } ;
 SEMICOLUMN : ';' ;
+COMMA      : ',' ;
+IMPLEMENT  : 'implement' ;
+ISSORT     : 'is_sort' ;
+EQUALS     : 'equals' ;
+ARROWBR     : '-> {' {
+  levelcounter+=0;
+//  input.rewind();
+  HostParser switcher = new HostParser(input,"}");
+  if(!SubTrees.offer((Tree) switcher.getTree())) {
+    System.out.println("Achtung ! Could not queue '{' tree");
+  }
+  emit(new ClassicToken(miniTomLexer.ARROWBR));
+//  emit(new ClassicToken(miniTomLexer.HOSTBLOCK));
+} ;
 OPENCOM    : '/*' {
-  //$channel = HIDDEN;
   input.rewind();
   HostParser switcher = new HostParser(input,"*/");
   if (!SubTrees.offer((Tree) switcher.getTree())) {
     System.out.println("Achtung ! Could not queue tree");
   };
-  ClassicToken Voucher = new ClassicToken(6);
+  ClassicToken Voucher = new ClassicToken(miniTomLexer.HOSTBLOCK);
   emit(Voucher);
 };
 A          : 'alice' ;
@@ -65,6 +77,8 @@ B          : 'bob' ;
 OBRA       : '[' ;
 CBRA       : ']' ;
 RARROW     : '->';
-LETTER     : 'A'..'Z' ;
+LETTER     : 'A'..'Z' | 'a'..'z';
+DIGIT      : '0'..'9';
+STRING     : LETTER (LETTER | DIGIT)*;
 WS	: ('\r' | '\n' | '\t' | ' ' )* { $channel = HIDDEN; };
 

@@ -1,0 +1,17 @@
+import Truc.Bidule.*;
+
+// this is some random junk to test
+int a = 4;
+
+/* and now some TOM ! */
+%match () {
+  toto -> { System.out.println("Hello, World !");}
+}
+
+System.out.println("This is no real code, you know");
+
+%typeterm TomType {
+  implement {int}
+  equals( t1, t2) { t1 == t2 }
+}
+

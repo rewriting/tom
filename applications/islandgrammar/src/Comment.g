@@ -26,9 +26,15 @@ public CommentLexer(CharStream input, boolean b) {
 
 oneline : t=ANYTHING -> ^(ONELINE $t);
 
-regular : t=ANYTHING -> ^(REGULAR $t);
+regular : t=text -> ^(REGULAR $t);
 
-CLOSECOM    : '*/' {input.rewind();if(!oneline){emit(Token.EOF_TOKEN);}};
+text : (NEWLINE | ANYTHING)*;
+
+CLOSECOM    : '*/' {if(!oneline){emit(Token.EOF_TOKEN);}};
 NEWLINE     : '\n' {if( oneline){emit(Token.EOF_TOKEN);}};
 WS          : ('\r' | '\t' | ' ')* { $channel = HIDDEN; };
-ANYTHING    : ('a'..'z'|'A'..'Z'|' '|'/')*;
+ANYTHING    : ('a'..'z'
+              | 'A'..'Z'
+              | ' '
+              | '/'
+              | '!' )* ;
