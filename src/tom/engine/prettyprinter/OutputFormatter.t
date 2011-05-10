@@ -73,9 +73,11 @@ public class OutputFormatter{
     public int compare(Node n1, Node n2) {
       if (n1.getBegin().getLine()!=n2.getBegin().getLine()){
         return n1.getBegin().getLine()-n2.getBegin().getLine();
-      }else{
+      }
+      else if(n1.getBegin().getColumn()!=-n2.getBegin().getColumn()){
         return n1.getBegin().getColumn()-n2.getBegin().getColumn();
       }
+      else{ return -1;}
     }
     public boolean equals(Object o) {
       return false;

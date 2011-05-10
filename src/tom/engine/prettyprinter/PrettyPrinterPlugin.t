@@ -132,24 +132,35 @@ public class PrettyPrinterPlugin extends TomGenericPlugin {
   public static void printTL(Code code) {
 
     try {
-      `TopDown(Repeat(stratPrintTL())).visit(code);
+      `TopDownStopOnSuccess(stratPrintTL()).visit(code);
     } catch (VisitFailure e) {
       System.out.println("strategy failed");
     }
   }
   
-  %strategy stratPrintTL() extends Fail(){
-    visit TargetLanguage {
+  %strategy stratPrintTL() extends Fail() {
+   /* visit TargetLanguage {
       TL[Code=x, Start=TextPosition[Line=startLine, Column=startColumn], End=TextPosition[Line=endLine, Column=endColumn]] -> {
-        theFormatter.stock(`x+ "depth= "+ getEnvironment().depth() ,`startLine,`startColumn, 1);
+      theFormatter.stock(`x+ "TL= "+ getEnvironment().depth()+"||" ,`startLine,`startColumn, 1);
       }
     }
+    visit Code {
+      Tom[] -> {theFormatter.stock("Tom a une profondeur de : "+getEnvironment().depth()+" || ",1,1,2);}
+    }
+    visit CodeList {
+      concCode[] -> {theFormatter.stock("Premier noeud sous Tom : "+getEnvironment().depth()+" ||",1,2,2);
+System.out.println("concCode: "+getEnvironment().depth());}
+    }
     visit BQTerm {
-      BuildConstant[Options=concOption(_*,OriginTracking[Line=line, Column=column],_*),AstName=Name(name)] -> {theFormatter.stock(`name+ "depth= "+getEnvironment().depth(), `line, `column,2);}
-      BQAppl[Options=concOption(_*,OriginTracking[Line=line, Column=column],_*),AstName=Name(name)] -> {theFormatter.stock(`name +"depth= "+getEnvironment().depth() ,`line, `column,2);}
-      BQVariableStar[Options=concOption(_*,OriginTracking[Line=line, Column=column],_*),AstName=Name(name)] -> {theFormatter.stock(`name +"depth= "+getEnvironment().depth(), `line,`column,2);}
-      BuildTerm[Options=concOption(_*, OriginTracking[Line=line, Column=column] ,_*), AstName=Name(name), Args=concBQTerm()] -> {theFormatter.stock(`name+"()" +"depth= "+getEnvironment().depth(),`line,`column,2);}
-      BuildTerm[Options=concOption(_*, OriginTracking[Line=line, Column=column] ,_*), AstName=Name(name)] -> {theFormatter.stock(`name+"()" +"depth= "+getEnvironment().depth(),`line,`column,2);}
+      BuildConstant[Options=concOption(_*,OriginTracking[Line=line, Column=column],_*),AstName=Name(name)] -> {theFormatter.stock(`name+ "BuildConstant= "+getEnvironment().depth()+" ||", `line, `column,2);}
+      BQAppl[Options=concOption(_*,OriginTracking[Line=line, Column=column],_*),AstName=Name(name)] -> {theFormatter.stock(`name +"BQAppl= "+getEnvironment().depth()+"  ||" ,`line, `column,2);}
+      BQVariableStar[Options=concOption(_*,OriginTracking[Line=line, Column=column],_*),AstName=Name(name)] -> {theFormatter.stock(`name +"BQVariable= "+getEnvironment().depth()+" ||", `line,`column,2);}
+      BuildTerm[Options=concOption(_*, OriginTracking[Line=line, Column=column] ,_*), AstName=Name(name), Args=concBQTerm()] -> {theFormatter.stock(`name+"()" +"BuildTerm2= "+getEnvironment().depth()+" ||",`line,`column,2);}
+      BuildTerm[Options=concOption(_*, OriginTracking[Line=line, Column=column] ,_*), AstName=Name(name)] -> {theFormatter.stock(`name+"()" +"BuildTerm= "+getEnvironment().depth()+" ||",`line,`column,2);}
+    }*/
+
+    visit BQTerm {
+      BuildTerm[AstName=a] -> {System.out.println(`a+"");}
     }
   }
 }
