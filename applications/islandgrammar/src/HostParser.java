@@ -7,6 +7,14 @@ public class HostParser {
  * Definition of the keyword classes used in the rest
  */
 
+  public class Watcher extends Keyword {
+    public Watcher(String pattern) {
+      this.pattern = pattern;
+    }
+
+    public void action() {}
+  }
+
   public class ExitKeyword extends Keyword {
     public ExitKeyword() {
       this.pattern = String.valueOf((char) CharStream.EOF);
@@ -73,6 +81,38 @@ public class HostParser {
     }
   }
 
+/* Next one is a tool to use two Keywords at the same time with a 'level' to count the number of { and } for instance (but it can be used with any pattern you like) */
+  public abstract class DoubleKeyword extends Keyword {
+    private Keyword openKeyword;
+    private Keyword closeKeyword;
+    private int level = 0;
+    protected String pattern = null;
+
+    public DoubleKeyword(Keyword anOpenKeyword, Keyword aCloseKeyword) {
+      openKeyword = anOpenKeyword;
+      closeKeyword = aCloseKeyword;
+    }
+
+    public boolean take(char c) {
+      boolean oAnswer = openKeyword.take(c);
+      boolean cAnswer = closeKeyword.take(c);
+      return oAnswer || cAnswer;
+    }
+
+    protected void action() throws org.antlr.runtime.RecognitionException {
+      if(openKeyword.isReady()) {
+        level++;
+        openKeyword.reset();
+      } else if (level > 0) {
+        level--;
+        closeKeyword.reset();
+      } else {
+        closeKeyword.action();
+        closeKeyword.reset();
+      }
+    }
+
+  }
 /*
 ** Fields definition
 */
@@ -85,7 +125,7 @@ public class HostParser {
   private StringBuffer hostContent;/* the characters that remain uninterpreted */
   
   private Tree arbre;
-  private Keyword[] Keywords;/* This array will contain the keywords that trigger various events */
+  private Keyword[] keywords;/* This array will contain the keywords that trigger various events */
 
 /*
 ** Constructors
@@ -101,7 +141,7 @@ public class HostParser {
     hostContent = new StringBuffer();
 
     arbre = new CommonTree(new CommonToken(1,"HostBlock"));
-    Keywords = new Keyword[] {
+    keywords = new Keyword[] {
       (new ExitKeyword()),
       (new MatchConstruct()),
       (new Comment()),
@@ -113,7 +153,7 @@ public class HostParser {
   /* another one : HostParser stops at StopToken */
   public HostParser(CharStream input, String StopToken) {
     this(input);
-    Keywords[0] = new ExitKeyword(StopToken);
+    keywords[0] = new ExitKeyword(StopToken);
   }
 
 /*
@@ -123,10 +163,10 @@ public class HostParser {
     while (alive) {
       char read = (char) input.LA(1);
       boolean found = false;
-      System.out.println(read);
-      for(int i = 0; i < Keywords.length; i++) {
-/* Warning ! Logic is lazy in Java ! had we written 'found || Keywords…', Keywords wouldn't be fed 'read' when one was ok */
-        found =  Keywords[i].take(read) || found;
+//      System.out.println(read);
+      for(Keyword k : keywords) {
+/* Warning ! Logic is lazy in Java ! had we written 'found || keywords…', keywords left wouldn't be fed 'read' as soon as one of them was ok */
+        found =  k.take(read) || found;
       }
       savedContent.append(read);
       input.consume();
@@ -134,11 +174,11 @@ public class HostParser {
         hostContent.append(savedContent);
         savedContent.setLength(0);
       }
-      for(int i = 0; i < Keywords.length; i++) {
-        if(Keywords[i].isReady()) {
+      for(Keyword k : keywords) {
+        if(k.isReady()) {
           try {
-            Keywords[i].action();
-            Keywords[i].reset();
+            k.action();
+            k.reset();
           } catch (Exception e) {e.printStackTrace();}
         }
       }

@@ -3,7 +3,8 @@ import Truc.Bidule.*;
 // this is some random junk to test
 int a = 4;
 
-/* and now some TOM ! */
+/* and now
+some TOM ! */
 %match () {
   toto -> { System.out.println("Hello, World !");}
 }
