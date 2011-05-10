@@ -207,7 +207,7 @@ public class PrettyPrinterPlugin extends TomGenericPlugin {
         if(isNotFirst) {
           result+=", ";
         }
-        generateBuildTerm(`b, `btName);
+//        generateBuildTerm(`b, `btName);
         isNotFirst = true;
       }    
     }
