@@ -82,20 +82,21 @@ public class HostParser {
   }
 
 /* Next one is a tool to use two Keywords at the same time with a 'level' to count the number of { and } for instance (but it can be used with any pattern you like) */
-  public abstract class DoubleKeyword extends Keyword {
+  public class DoubleKeyword extends Keyword {
     private Keyword openKeyword;
     private Keyword closeKeyword;
     private int level = 0;
     protected String pattern = null;
 
-    public DoubleKeyword(Keyword anOpenKeyword, Keyword aCloseKeyword) {
-      openKeyword = anOpenKeyword;
-      closeKeyword = aCloseKeyword;
+    public DoubleKeyword(Keyword openKeyword, Keyword closeKeyword) {
+      this.openKeyword = openKeyword;
+      this.closeKeyword = closeKeyword;
     }
 
     public boolean take(char c) {
       boolean oAnswer = openKeyword.take(c);
       boolean cAnswer = closeKeyword.take(c);
+      matched = openKeyword.isReady() || closeKeyword.isReady();
       return oAnswer || cAnswer;
     }
 
@@ -154,6 +155,11 @@ public class HostParser {
   public HostParser(CharStream input, String StopToken) {
     this(input);
     keywords[0] = new ExitKeyword(StopToken);
+  }
+
+  public HostParser(CharStream input, String OpenToken, String CloseToken) {
+    this(input);
+    keywords[0] = new DoubleKeyword(new Watcher(OpenToken), new ExitKeyword(CloseToken));
   }
 
 /*

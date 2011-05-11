@@ -5,7 +5,7 @@ public abstract class Keyword {
   protected String pattern;
   protected boolean regExp = false;
   private int cursor = 0;
-  private boolean matched;
+  protected boolean matched;
 
 /**
  ** @param  : a character proposed to this Keyword for recognition

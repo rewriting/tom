@@ -1,0 +1,14 @@
+import Truc.Bidule.*;
+
+// this is some random junk to test
+int a = 4;
+
+/* and now %match
+some TOM ! */
+%match () {
+  toto -> { %match () { motif -> { Un {au{{}tr}e} contenu ; } } System.out.println("Hello, World !");}
+}
+
+System.out.println("This is no real code, you know");
+
+

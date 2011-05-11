@@ -52,7 +52,7 @@ LEFTBR     : '{' {
   if(! miniTomLexer.switchUponBrace) {
     levelcounter++;
   } else {
-    HostParser switcher = new HostParser(input,"}");
+    HostParser switcher = new HostParser(input,"{","}");
     if(!SubTrees.offer((Tree) switcher.getTree())) {
       System.out.println("Achtung ! Could not queue '{' tree");
     }
@@ -68,7 +68,7 @@ EQUALS     : 'equals' {miniTomLexer.switchUponBrace = true; };
 ARROWBR     : '-> {' {
 //  levelcounter+=0;
 //  input.rewind();
-  HostParser switcher = new HostParser(input,"}");
+  HostParser switcher = new HostParser(input,"{","}");
   if(!SubTrees.offer((Tree) switcher.getTree())) {
     System.out.println("Achtung ! Could not queue '{' tree");
   }
