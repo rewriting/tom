@@ -125,6 +125,7 @@ public class PrettyPrinterPlugin extends TomGenericPlugin {
     textFile.close();
     printTL(code);
     theFormatter.dump();
+    System.out.println ("===========================================================");
     theFormatter.printAll();
   }
   
@@ -150,7 +151,7 @@ public class PrettyPrinterPlugin extends TomGenericPlugin {
       //BQAppl[Options=concOption(_*,OriginTracking[Line=line, Column=column],_*),AstName=Name(name)] -> {theFormatter.stock(`name +"depth= "+getEnvironment().depth() ,`line, `column,2);}
       //BQVariableStar[Options=concOption(_*,OriginTracking[Line=line, Column=column],_*),AstName=Name(name)] -> {theFormatter.stock(`name +"depth= "+getEnvironment().depth(), `line,`column,2);}
       //BuildTerm[Options=concOption(_*, OriginTracking[Line=line, Column=column] ,_*), AstName=Name(name), Args=concBQTerm()] -> {compteur+=100;theFormatter.stock(`name+"()" +compteur,`line,`column,2);}
-      x@BuildTerm[Options=concOption(_*, OriginTracking[Line=line, Column=column] ,_*), AstName=Name(name)] -> {theFormatter.stock(generateBuildTerm(`x, `name, true),`line,`column,2);return `x;}
+      x@BuildTerm[Options=concOption(_*, OriginTracking[Line=line, Column=column] ,_*), AstName=Name(name)] -> {theFormatter.stock(generateBuildTerm(`x, `name, true),`line,`column-1,2);return `x;}
 
 /*
       BuildTerm[Options=concOption(_*,OriginTracking[Line=line, Column=column],_*), AstName=Name(name), argList, myModuleName] -> {
@@ -211,7 +212,7 @@ public class PrettyPrinterPlugin extends TomGenericPlugin {
       BuildTerm[Args=concBQTerm(_*,Composite(CompositeBQTerm(bq@BuildTerm[AstName=Name(btName)])),_*)] -> {
        // System.out.println("Bla");
         if(isNotFirst) {
-          result+=", ";
+          result+=",";
         }
         result+=generateBuildTerm(`bq, `btName,false);
         isNotFirst = true;

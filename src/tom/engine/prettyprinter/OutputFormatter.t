@@ -30,7 +30,7 @@ public class OutputFormatter{
 
     Iterator<Node> iteratorOnNode= this.theNodeList.iterator();
     while (iteratorOnNode.hasNext()){
-      System.out.println(iteratorOnNode.next().getText());
+      System.out.println("->"+iteratorOnNode.next().getText());
     }
   }
 
@@ -41,6 +41,15 @@ public class OutputFormatter{
 
   public StringBuffer dump() {
 
+    Iterator<Node> iteratorOnNode= this.theNodeList.iterator();
+    Node aNode;
+    boolean type;
+    while (iteratorOnNode.hasNext()){
+      aNode=iteratorOnNode.next();
+      type=(aNode.getType()==1);
+      System.out.println(aNode.getBegin().getColumn());
+      this.write(aNode.getText(),aNode.getBegin().getLine(), aNode.getBegin().getColumn(),type);
+    }
     return theCursor.dump("./"+this.fileName);
   }
 
