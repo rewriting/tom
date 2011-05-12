@@ -3,6 +3,7 @@ package tom.engine.prettyprinter;
 import ppeditor.*;
 import java.lang.StringBuffer;
 import java.util.*;
+import java.util.Comparator;
 
 public class OutputFormatter{
 
@@ -65,7 +66,7 @@ public class OutputFormatter{
     public String getText() {
       return this.text;
     }
-  
+   
   }
 
   public class ComparatorOnNode implements Comparator<Node> {

@@ -128,39 +128,99 @@ public class PrettyPrinterPlugin extends TomGenericPlugin {
     theFormatter.printAll();
   }
   
-
   public static void printTL(Code code) {
 
     try {
-      `TopDownStopOnSuccess(stratPrintTL()).visit(code);
+      `TopDownStopOnSuccess(stratPrintTL()).visitLight(code);
     } catch (VisitFailure e) {
       System.out.println("strategy failed");
     }
   }
   
-  %strategy stratPrintTL() extends Fail() {
-   /* visit TargetLanguage {
+  %strategy stratPrintTL() extends Fail(){
+
+    visit TargetLanguage {
       TL[Code=x, Start=TextPosition[Line=startLine, Column=startColumn], End=TextPosition[Line=endLine, Column=endColumn]] -> {
-      theFormatter.stock(`x+ "TL= "+ getEnvironment().depth()+"||" ,`startLine,`startColumn, 1);
+        theFormatter.stock(`x,`startLine,`startColumn, 1);
       }
     }
-    visit Code {
-      Tom[] -> {theFormatter.stock("Tom a une profondeur de : "+getEnvironment().depth()+" || ",1,1,2);}
-    }
-    visit CodeList {
-      concCode[] -> {theFormatter.stock("Premier noeud sous Tom : "+getEnvironment().depth()+" ||",1,2,2);
-System.out.println("concCode: "+getEnvironment().depth());}
-    }
-    visit BQTerm {
-      BuildConstant[Options=concOption(_*,OriginTracking[Line=line, Column=column],_*),AstName=Name(name)] -> {theFormatter.stock(`name+ "BuildConstant= "+getEnvironment().depth()+" ||", `line, `column,2);}
-      BQAppl[Options=concOption(_*,OriginTracking[Line=line, Column=column],_*),AstName=Name(name)] -> {theFormatter.stock(`name +"BQAppl= "+getEnvironment().depth()+"  ||" ,`line, `column,2);}
-      BQVariableStar[Options=concOption(_*,OriginTracking[Line=line, Column=column],_*),AstName=Name(name)] -> {theFormatter.stock(`name +"BQVariable= "+getEnvironment().depth()+" ||", `line,`column,2);}
-      BuildTerm[Options=concOption(_*, OriginTracking[Line=line, Column=column] ,_*), AstName=Name(name), Args=concBQTerm()] -> {theFormatter.stock(`name+"()" +"BuildTerm2= "+getEnvironment().depth()+" ||",`line,`column,2);}
-      BuildTerm[Options=concOption(_*, OriginTracking[Line=line, Column=column] ,_*), AstName=Name(name)] -> {theFormatter.stock(`name+"()" +"BuildTerm= "+getEnvironment().depth()+" ||",`line,`column,2);}
-    }*/
 
     visit BQTerm {
-      BuildTerm[AstName=a] -> {System.out.println(`a+"");}
+      //BuildConstant[Options=concOption(_*,OriginTracking[Line=line, Column=column],_*),AstName=Name(name)] -> {theFormatter.stock(`name+ "depth= "+getEnvironment().depth(), `line, `column,2);}
+      //BQAppl[Options=concOption(_*,OriginTracking[Line=line, Column=column],_*),AstName=Name(name)] -> {theFormatter.stock(`name +"depth= "+getEnvironment().depth() ,`line, `column,2);}
+      //BQVariableStar[Options=concOption(_*,OriginTracking[Line=line, Column=column],_*),AstName=Name(name)] -> {theFormatter.stock(`name +"depth= "+getEnvironment().depth(), `line,`column,2);}
+      //BuildTerm[Options=concOption(_*, OriginTracking[Line=line, Column=column] ,_*), AstName=Name(name), Args=concBQTerm()] -> {compteur+=100;theFormatter.stock(`name+"()" +compteur,`line,`column,2);}
+      x@BuildTerm[Options=concOption(_*, OriginTracking[Line=line, Column=column] ,_*), AstName=Name(name)] -> {theFormatter.stock(generateBuildTerm(`x, `name, true),`line,`column,2);return `x;}
+
+/*
+      BuildTerm[Options=concOption(_*,OriginTracking[Line=line, Column=column],_*), AstName=Name(name), argList, myModuleName] -> {
+        `buildTerm(deep, name, argList, myModuleName);
+        return;
+      }
+
+      l@(BuildEmptyList|BuildEmptyArray|BuildConsList|BuildAppendList|BuildConsArray|BuildAppendArray)[] -> {
+        buildListOrArray(deep, `l, moduleName);
+        return;
+      }
+
+      FunctionCall[AstName=Name(name), Args=argList] -> {
+        buildFunctionCall(deep,`name, `argList, moduleName);
+        return;
+      }
+
+      var@(BQVariable|BQVariableStar)[] -> { // utile ?
+        output.write(deep,getVariableName(`var));
+        return;
+      }
+
+      ExpressionToBQTerm(t) -> {
+        generateExpression(deep,`t, moduleName);
+        return;
+      }
+
+      Composite(_*,t,_*) -> {
+        %match(t) {
+          CompositeTL(target) -> {
+            // on ne fait rien ici
+          }
+          CompositeBQTerm(term) -> {
+            generateBQTerm(deep,`term, moduleName);
+          }
+        }
+      }
+      t@!Composite(_*) -> {
+        throw new TomRuntimeException("Cannot generate code for bqterm "+`t);
+      }
+*/
     }
+  }
+//  public void buildTerm(int deep, String name, BQTermList argList, String moduleName) throws IOException;
+//  public void buildListOrArray(int deep, BQTerm list, String moduleName) throws IOException;
+//  public void buildFunctionCall(int deep, String name, BQTermList argList, String moduleName)  throws IOException;
+  public static String generateBuildTerm(BQTerm bq, String name, boolean trunk) {
+
+    String result;
+    if (trunk){
+      result = "`"+name+"(";
+    }else{
+      result = name+"(";
+    }
+    boolean isNotFirst = false;
+    %match(bq) {
+
+      BuildTerm[Args=concBQTerm(_*,Composite(CompositeBQTerm(bq@BuildTerm[AstName=Name(btName)])),_*)] -> {
+       // System.out.println("Bla");
+        if(isNotFirst) {
+          result+=", ";
+        }
+        result+=generateBuildTerm(`bq, `btName,false);
+        isNotFirst = true;
+      }    
+    }
+    result+=")";
+   // if (trunk) {
+   //   result+=";";
+   // }
+    return result;
   }
 }
