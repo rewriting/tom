@@ -1,0 +1,4 @@
+git branch -a : liste des branches
+git checkout <branch> : pour passer dans la branch
+git checkout -b <branch> origin/<branch> : pour creer la branche en local
+
