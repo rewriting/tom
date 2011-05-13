@@ -146,12 +146,12 @@ public class ConstraintGenerator {
       ConstraintToExpression(MatchConstraint[Pattern=v@(Variable|VariableStar)[],Subject=t]) -> {
         SymbolTable symbolTable = getCompiler().getSymbolTable();
 
-        //DEBUG System.out.println("In Constraint Generator with v = " + `v + '\n');
-        //DEBUG System.out.println("In Constraint Generator with t = " + `t + '\n');
+        //System.out.println("In Constraint Generator with v = " + `v + '\n');
+        //System.out.println("In Constraint Generator with t = " + `t + '\n');
         TomType pType = TomBase.getTermType(`v,symbolTable);
         TomType sType = TomBase.getTermType(`t,symbolTable);
-        //DEBUG System.out.println("pType = " + pType);
-        //DEBUG System.out.println("sType = " + sType);
+        //System.out.println("pType = " + pType);
+        //System.out.println("sType = " + sType);
         %match(pType,sType) {
           Type[TomType=tType],Type[TomType=!tType] -> {
             return
