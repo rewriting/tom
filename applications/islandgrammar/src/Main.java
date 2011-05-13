@@ -12,8 +12,8 @@ public class Main {
     try {
       ANTLRFileStream file = new ANTLRFileStream(args[0]);
       HostParser hostParser = new HostParser(file);
-      Tree parsed = hostParser.parse();
-      System.out.println(parsed.toStringTree());
+      Tree result = hostParser.getTree();
+      System.out.println(result.toStringTree());
     }
     catch (Exception e) {
       e.printStackTrace();

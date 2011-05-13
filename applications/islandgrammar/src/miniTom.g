@@ -4,52 +4,92 @@ options {
 	output=AST;
   ASTLabelType=Tree;
   backtrack=true;
-  //tokenVocab=IGTokens;
 }
 
 tokens {
-  PROGRAM;
-  CODE;
-  SUBCODE;
+  HOSTBLOCK;
+  MATCH;
+  TYPETERM;
+  PATTERNACTION;
 }
 
-@header {
+@parser::header {
 import org.antlr.runtime.tree.*;
 }
+
 @lexer::header {
+import java.util.Queue;
+import java.util.LinkedList;
 import org.antlr.runtime.tree.*;
 }
-@lexer::members{int levelcounter=-1;}
+
+@lexer::members{
+int levelcounter=-1;
+public static Queue<Tree> SubTrees = new LinkedList<Tree>();
+public static boolean switchUponBrace = false;
+}
+
 /* Parser rules */
 
-program :	LEFTPAR RIGHTPAR LEFTBR code* -> ^(PROGRAM code*) ;
 
-code :
-        s1=statement SEMICOLUMN -> ^(CODE $s1)
-      | s2=subcode -> ^(CODE $s2);
+typetermconstruct : STRING LEFTBR implementKword (issortKword)? (equalsKword)? -> ^(TYPETERM);
 
-subcode : LEFTBR inside+ RIGHTBR -> ^(SUBCODE inside+);
+implementKword : IMPLEMENT  s1=innerBlock -> ^(HOSTBLOCK $s1) ;
+issortKword : ISSORT LEFTPAR s1=STRING RIGHTPAR LEFTBR s2=innerBlock -> ^(HOSTBLOCK $s2) ;
+equalsKword : EQUALS LEFTPAR s1=STRING COMMA s2=STRING LEFTBR s3=innerBlock -> ^(HOSTBLOCK $s3) ;
 
-inside    : B  ;
-statement	:	A+ ;
-//comment   : OPENCOM {
-//  try {
-//    CommentParser parser = new CommentParser(input);
-//    Tree result = parser.oneline();
-//    program_return.addChild(result);
-//  } catch (Exception e) {e.printStackTrace();}
-//  };
-//
+matchconstruct :	LEFTPAR RIGHTPAR LEFTBR patternaction* -> ^(MATCH patternaction*) ;
+
+patternaction : (s1=STRING)  s2=innerBlock  -> ^(PATTERNACTION $s1 $s2);
+
+innerBlock : VOUCHER {miniTomLexer.switchUponBrace = false;} -> { miniTomLexer.SubTrees.poll()};
+
 /* Lexer rules */
-
+VOUCHER  : ;
 LEFTPAR    : '(' ;
 RIGHTPAR   : ')' ;
-LEFTBR     : '{' {levelcounter+=1;} ;
+LEFTBR     : '{' {
+  if(! miniTomLexer.switchUponBrace) {
+    levelcounter++;
+  } else {
+    HostParser switcher = new HostParser(input,"}");
+    if(!SubTrees.offer((Tree) switcher.getTree())) {
+      System.out.println("Achtung ! Could not queue '{' tree");
+    }
+    emit(new ClassicToken(miniTomLexer.VOUCHER));
+  }
+};
 RIGHTBR    : '}' {if(levelcounter==0){emit(Token.EOF_TOKEN);} else{levelcounter-=1;}  } ;
 SEMICOLUMN : ';' ;
-OPENCOM    : '/*'  ;
+COMMA      : ',' ;
+IMPLEMENT  : 'implement' {miniTomLexer.switchUponBrace = true; } ;
+ISSORT     : 'is_sort' {miniTomLexer.switchUponBrace = true; };
+EQUALS     : 'equals' {miniTomLexer.switchUponBrace = true; };
+ARROWBR     : '-> {' {
+//  levelcounter+=0;
+//  input.rewind();
+  HostParser switcher = new HostParser(input,"}");
+  if(!SubTrees.offer((Tree) switcher.getTree())) {
+    System.out.println("Achtung ! Could not queue '{' tree");
+  }
+  emit(new ClassicToken(miniTomLexer.VOUCHER));
+} ;
+OPENCOM    : '/*' {
+  input.rewind();
+  HostParser switcher = new HostParser(input,"*/");
+  if (!SubTrees.offer((Tree) switcher.getTree())) {
+    System.out.println("Achtung ! Could not queue tree");
+  };
+  ClassicToken Voucher = new ClassicToken(miniTomLexer.VOUCHER);
+  emit(Voucher);
+};
 A          : 'alice' ;
 B          : 'bob' ;
-
+OBRA       : '[' ;
+CBRA       : ']' ;
+RARROW     : '->';
+LETTER     : 'A'..'Z' | 'a'..'z';
+DIGIT      : '0'..'9';
+STRING     : LETTER (LETTER | DIGIT)*;
 WS	: ('\r' | '\n' | '\t' | ' ' )* { $channel = HIDDEN; };
 

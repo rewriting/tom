@@ -1,8 +1,6 @@
-Done XX. Se débarasser de GParser pour utiliser directement les parsers générés par Tom.
-2. Unifier les outils : faire que HParser, qui lui est une bidouille à nous, ressemble aux parsers de tom
-3. Tester si nous arrivons à faire s'appeler entre eux ces différents parser.
-
-
-+ DOC
-Done XX NETTOYAGE
+- Doc du code
+- Poursuivre l'historique des étapes du projet (fichier notes)
+- Finir de statuer sur l'utilisation ou non de l'option 'filter=true'
+- Contourner le problème Débrayage au niveau du Parser / Flot de données au
+  niveau du Lexer
 

@@ -15,20 +15,27 @@ tokens {
 import org.antlr.runtime.tree.*;
 }
 
-oneline : t=text NEWLINE -> ^(ONELINE $t);
+@lexer::members {
+public boolean oneline = false;
+  
+public CommentLexer(CharStream input, boolean b) {
+  this(input,new RecognizerSharedState());
+  oneline = b;
+}
+}
 
-regular : t=text CLOSECOM -> ^(REGULAR $t);
+oneline : t=ANYTHING -> ^(ONELINE $t);
 
-text : ANYTHING* ;
+regular : t=text -> ^(REGULAR $t);
 
-CLOSECOM    : '*/'  ;
-NEWLINE     : '\n'  ;
+text : (NEWLINE | ANYTHING)*;
+
+CLOSECOM    : '*/' {if(!oneline){emit(Token.EOF_TOKEN);}};
+NEWLINE     : '\n' {if( oneline){emit(Token.EOF_TOKEN);}};
 WS          : ('\r' | '\t' | ' ')* { $channel = HIDDEN; };
-ANYTHING    : ( 'a'..'z'
+ANYTHING    : ('a'..'z'
               | 'A'..'Z'
-              | '0'..'9'
-              | '_'
-              | '*'
+              | ' '
               | '/'
-              );
-
+              | '!'
+              | '%' )* ;
