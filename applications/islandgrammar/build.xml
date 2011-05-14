@@ -15,7 +15,7 @@
 	<target name="grammar">
 		<java classname="org.antlr.Tool" classpath="${withAntlr}">
 			<arg value="${tomfile}"/>
-			<arg value="${comfile}"/>
+			<!--arg value="${comfile}"/-->
 		</java>
 	</target>
 	<target name="compile" depends="grammar">

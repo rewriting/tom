@@ -97,6 +97,34 @@ public class HostParser {
     }
   }
 
+  public class HostString extends Keyword {
+    public HostString() {
+      this.pattern = "\"";
+    }
+    protected void action() throws org.antlr.runtime.RecognitionException {
+      while((char) input.LA(1) != '"') {
+        savedContent.append((char) input.LA(1));
+        input.consume();
+      }
+      savedContent.append((char) input.LA(1));
+      input.consume();
+    }
+  }
+
+  public class HostCharacter extends Keyword {
+    public HostCharacter() {
+      this.pattern = "'";
+    }
+    protected void action() throws org.antlr.runtime.RecognitionException {
+      while((char) input.LA(1) != '\'') {
+        savedContent.append((char) input.LA(1));
+        input.consume();
+      }
+      savedContent.append((char) input.LA(1));
+      input.consume();
+    }
+  }
+
 /* Next one is a tool to use two Keywords at the same time with a 'level' to count the number of { and } for instance (but it can be used with any pattern you like) */
   public class DoubleKeyword extends Keyword {
     private Keyword openKeyword;
@@ -161,9 +189,11 @@ public class HostParser {
     keywords = new Keyword[] {
       (new ExitKeyword()),
       (new MatchConstruct()),
+      (new TypeTermConstruct()),
       (new Comment()),
       (new OLComment()),
-      (new TypeTermConstruct())
+      (new HostString()),
+      (new HostCharacter())
     };
   }
 
