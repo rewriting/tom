@@ -142,16 +142,16 @@ public class PrettyPrinterPlugin extends TomGenericPlugin {
 
     visit TargetLanguage {
       TL[Code=x, Start=TextPosition[Line=startLine, Column=startColumn], End=TextPosition[Line=endLine, Column=endColumn]] -> {
-        theFormatter.stock(`x,`startLine,`startColumn, 1);
+        theFormatter.stock(`x,`startLine,`startColumn, 2); System.out.println ("==>"+`x+"l "+`startLine+ " &&& c "+`startColumn);
       }
     }
 
     visit BQTerm {
       //BuildConstant[Options=concOption(_*,OriginTracking[Line=line, Column=column],_*),AstName=Name(name)] -> {theFormatter.stock(`name+ "depth= "+getEnvironment().depth(), `line, `column,2);}
       //BQAppl[Options=concOption(_*,OriginTracking[Line=line, Column=column],_*),AstName=Name(name)] -> {theFormatter.stock(`name +"depth= "+getEnvironment().depth() ,`line, `column,2);}
-      //BQVariableStar[Options=concOption(_*,OriginTracking[Line=line, Column=column],_*),AstName=Name(name)] -> {theFormatter.stock(`name +"depth= "+getEnvironment().depth(), `line,`column,2);}
+    //  x@BQVariable[Options=concOption(_*,OriginTracking[Line=line, Column=column],_*),AstName=Name(name)] -> {theFormatter.stock("`"+`name, `line,`column-1,1); return `x;}
       //BuildTerm[Options=concOption(_*, OriginTracking[Line=line, Column=column] ,_*), AstName=Name(name), Args=concBQTerm()] -> {compteur+=100;theFormatter.stock(`name+"()" +compteur,`line,`column,2);}
-      x@BuildTerm[Options=concOption(_*, OriginTracking[Line=line, Column=column] ,_*), AstName=Name(name)] -> {theFormatter.stock(generateBuildTerm(`x, `name, true),`line,`column-1,2);return `x;}
+    //  x@BuildTerm[Options=concOption(_*, OriginTracking[Line=line, Column=column] ,_*), AstName=Name(name)] -> {theFormatter.stock(generateBuildTerm(`x, `name, true),`line,`column-1,1); return `x;}
 
 /*
       BuildTerm[Options=concOption(_*,OriginTracking[Line=line, Column=column],_*), AstName=Name(name), argList, myModuleName] -> {

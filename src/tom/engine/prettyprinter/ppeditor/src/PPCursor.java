@@ -25,7 +25,7 @@ public class PPCursor {
 */
   public PPCursor(int l, int c) {
     
-    this.position = new PPTextPosition(l,c);
+    this.position = new PPTextPosition(Math.max(l,0),Math.max(c,0));
     insertion=true;
     fileBuffer = new ArrayList<StringBuffer>();
     fileBuffer.add(new StringBuffer(""));
@@ -37,7 +37,7 @@ public class PPCursor {
 
   public void setPosition(PPTextPosition p) {
 
-    this.position = p;
+    this.position = new PPTextPosition(Math.max(p.getLine(),0),Math.max(p.getColumn(),0));
   }
 
 /**Moves the PPCursor to a relative position from the current position
@@ -126,7 +126,7 @@ public class PPCursor {
 /**Reinitializes the fileBuffer attribute to an empty List<StringBuffer>
 */
   public void eraseAll() {
-		fileBuffer.clear();
+    fileBuffer.clear();
   }
 
 /**Creates a text file with the fileBuffer as a content.
@@ -163,7 +163,6 @@ public class PPCursor {
   public StringBuffer lineContent(int l){
     return fileBuffer.get(l);
   }
-
 
 
 }
