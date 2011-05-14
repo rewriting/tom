@@ -1093,6 +1093,7 @@ matchL:  %match(subject,s) {
     // Analyse the term if type != null
     //if(type != null) {
       // the type is known and found in the match signature
+    // 'type' may be null
       validateTerm(`term, type, false, true);
     //}
   }
@@ -1381,7 +1382,7 @@ matchblock:{
       TomType expectedType, String fileName, int decLine, boolean topLevel) {
     if(symbolNameList.length()==1) { // Valid but has it a good type?
       String res = symbolNameList.getHeadconcTomName().getString();
-      TomSymbol symbol =  getSymbolFromName(res);
+      TomSymbol symbol = getSymbolFromName(res);
       if (symbol == null ) { // this correspond to: unknown[]
         // it is not correct to use Record with unknown symbols
         TomMessage.error(getLogger(),fileName,decLine, TomMessage.unknownSymbol, res);
