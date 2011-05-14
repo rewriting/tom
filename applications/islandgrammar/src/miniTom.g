@@ -80,4 +80,8 @@ LETTER     : 'A'..'Z' | 'a'..'z';
 DIGIT      : '0'..'9';
 STRING     : LETTER (LETTER | DIGIT)*;
 WS	: ('\r' | '\n' | '\t' | ' ' )* { $channel = HIDDEN; };
+SL_COMMENT : '//' (~('\n'|'\r'))* ('\n'|'\r'('\n')?)?
+  { $channel=HIDDEN; } ;
+ML_COMMENT : '/*' ( options {greedy=false;} : . )* '*/'
+  { $channel=HIDDEN; } ;
 

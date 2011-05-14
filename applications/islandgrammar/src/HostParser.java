@@ -60,11 +60,21 @@ public class HostParser {
       this.pattern = "/*";
     }
     protected void action() throws org.antlr.runtime.RecognitionException {
-      packHostContent();
+      savedContent.setLength(0);
+      boolean found = false;
+      while(!found) {
+        if((char) input.LA(1) == '*' ) {
+          found = (char) input.LA(2) == '/';
+        }
+        input.consume();
+      }
+      input.consume();
+/*      packHostContent();
       CommentLexer lexer = new CommentLexer(input);
       CommonTokenStream tokens = new CommonTokenStream(lexer);
       CommentParser parser = new CommentParser(tokens);
-      arbre.addChild((Tree) parser.regular().getTree());
+      parser.prog();
+//      arbre.addChild((Tree) parser.regular().getTree());*/
     }
   }
 
@@ -73,11 +83,17 @@ public class HostParser {
       this.pattern = "//";
     }
     protected void action() throws org.antlr.runtime.RecognitionException {
-      packHostContent();
-      CommentLexer lexer = new CommentLexer(input, true);
+      savedContent.setLength(0);
+      while((char) input.LA(1) != '\n') {
+        input.consume();
+      }
+      input.consume();
+/*      packHostContent();
+      CommentLexer lexer = new CommentLexer(input);
       CommonTokenStream tokens = new CommonTokenStream(lexer);
       CommentParser parser = new CommentParser(tokens);
-      arbre.addChild((Tree) parser.oneline().getTree());
+      parser.prog();
+//      arbre.addChild((Tree) parser.oneline().getTree());*/
     }
   }
 
