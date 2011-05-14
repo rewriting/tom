@@ -25,31 +25,31 @@ import org.antlr.runtime.tree.*;
 
 @lexer::members{
 int levelcounter=-1;
+int currentToken = 0;
 public static Queue<Tree> SubTrees = new LinkedList<Tree>();
-public static boolean switchUponBrace = false;
 }
 
 /* Parser rules */
 
 
-typetermconstruct : STRING LEFTBR implementKword (issortKword)? (equalsKword)? -> ^(TYPETERM);
+typetermconstruct : STRING LEFTBR implementKword (issortKword)? (equalsKword)? -> ^(TYPETERM implementKword (issortKword)? (equalsKword)?);
 
-implementKword : IMPLEMENT  s1=innerBlock -> ^(HOSTBLOCK $s1) ;
-issortKword : ISSORT LEFTPAR s1=STRING RIGHTPAR LEFTBR s2=innerBlock -> ^(HOSTBLOCK $s2) ;
-equalsKword : EQUALS LEFTPAR s1=STRING COMMA s2=STRING LEFTBR s3=innerBlock -> ^(HOSTBLOCK $s3) ;
+implementKword : IMPLEMENT s1=innerBlock -> ^(IMPLEMENT $s1) ;
+issortKword : ISSORT LEFTPAR s1=STRING RIGHTPAR s2=innerBlock -> ^(ISSORT $s2) ;
+equalsKword : EQUALS LEFTPAR s1=STRING COMMA s2=STRING LEFTBR s3=innerBlock -> ^(EQUALS $s3) ;
 
-matchconstruct :	LEFTPAR RIGHTPAR LEFTBR patternaction* -> ^(MATCH patternaction*) ;
+matchconstruct : LEFTPAR RIGHTPAR LEFTBR patternaction*  -> ^(MATCH patternaction*) ;
 
-patternaction : (s1=STRING)  s2=innerBlock  -> ^(PATTERNACTION $s1 $s2);
+patternaction : (s1=STRING) RARROW s2=innerBlock  -> ^(PATTERNACTION $s1 $s2);
 
-innerBlock : VOUCHER {miniTomLexer.switchUponBrace = false;} -> { miniTomLexer.SubTrees.poll()};
+innerBlock : VOUCHER -> { miniTomLexer.SubTrees.poll()};
 
 /* Lexer rules */
 VOUCHER  : ;
 LEFTPAR    : '(' ;
 RIGHTPAR   : ')' ;
 LEFTBR     : '{' {
-  if(! miniTomLexer.switchUponBrace) {
+  if(currentToken == 0) {
     levelcounter++;
   } else {
     HostParser switcher = new HostParser(input,"{","}");
@@ -58,36 +58,24 @@ LEFTBR     : '{' {
     }
     emit(new ClassicToken(miniTomLexer.VOUCHER));
   }
-};
-RIGHTBR    : '}' {if(levelcounter==0){emit(Token.EOF_TOKEN);} else{levelcounter-=1;}  } ;
+} ;
+RIGHTBR    : '}' {
+  if(levelcounter<=0){emit(Token.EOF_TOKEN);} else{levelcounter-=1;}
+} ;
 SEMICOLUMN : ';' ;
 COMMA      : ',' ;
-IMPLEMENT  : 'implement' {miniTomLexer.switchUponBrace = true; } ;
-ISSORT     : 'is_sort' {miniTomLexer.switchUponBrace = true; };
-EQUALS     : 'equals' {miniTomLexer.switchUponBrace = true; };
-ARROWBR     : '-> {' {
-//  levelcounter+=0;
-//  input.rewind();
-  HostParser switcher = new HostParser(input,"{","}");
-  if(!SubTrees.offer((Tree) switcher.getTree())) {
-    System.out.println("Achtung ! Could not queue '{' tree");
-  }
-  emit(new ClassicToken(miniTomLexer.VOUCHER));
+RARROW     : '->' {
+  currentToken = miniTomLexer.RARROW ;
 } ;
-OPENCOM    : '/*' {
-  input.rewind();
-  HostParser switcher = new HostParser(input,"*/");
-  if (!SubTrees.offer((Tree) switcher.getTree())) {
-    System.out.println("Achtung ! Could not queue tree");
-  };
-  ClassicToken Voucher = new ClassicToken(miniTomLexer.VOUCHER);
-  emit(Voucher);
+IMPLEMENT  : 'implement' {
+  currentToken = miniTomLexer.IMPLEMENT ;
+} ;
+ISSORT     : 'is_sort' {
+  currentToken = miniTomLexer.ISSORT ;
+} ;
+EQUALS     : 'equals' {
+  currentToken = miniTomLexer.EQUALS ;
 };
-A          : 'alice' ;
-B          : 'bob' ;
-OBRA       : '[' ;
-CBRA       : ']' ;
-RARROW     : '->';
 LETTER     : 'A'..'Z' | 'a'..'z';
 DIGIT      : '0'..'9';
 STRING     : LETTER (LETTER | DIGIT)*;
