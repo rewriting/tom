@@ -1766,7 +1766,7 @@ matchBlockAdd :
       %match {
         Subtype[Type1=!TypeVar[],Type2=!TypeVar[]] << tConstraint -> {
           //System.out.println("\nsolve3: sConstraint=" + `sConstraint);
-          errorFound = (errorFound && detectFail(`tConstraint));
+          errorFound = (errorFound || detectFail(`tConstraint));
         }
       }
     }
