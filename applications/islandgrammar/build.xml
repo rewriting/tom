@@ -15,16 +15,21 @@
 	<target name="grammar">
 		<java classname="org.antlr.Tool" classpath="${withAntlr}">
 			<arg value="${tomfile}"/>
-			<arg value="${comfile}"/>
+			<!--arg value="${comfile}"/-->
 		</java>
 	</target>
 	<target name="compile" depends="grammar">
 		<mkdir dir="${build}"/>
 		<javac srcdir="${src}" destdir="${build}" classpath="${withAntlr}" includeantruntime="false"/>
 	</target>
-	<target name="test" depends="compile">
+	<target name="test" >
 		<java classpath="${withAntlr}:${islgram}/${build}" classname="Main" fork="true">
-			<arg value="${input}/testAntlrInput"/>
+			<arg value="${input}/${testfile}"/>
+		</java>
+	</target>
+	<target name="retest" depends="compile">
+		<java classpath="${withAntlr}:${islgram}/${build}" classname="Main" fork="true">
+			<arg value="${input}/${testfile}"/>
 		</java>
 	</target>
 	<target name="clean">

@@ -28,6 +28,8 @@ The compiler is composed of several plugins, which are executed in the following
     replaces 'TermAppl' by its 'RecordAppl' form
     replaces 'XMLAppl' by its 'RecordAppl' form
 
+- Transformer
+
 - Typer
   update the SymbolTable. For each symbol and for the input term:
     typeVariable:

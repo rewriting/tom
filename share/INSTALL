@@ -7,11 +7,21 @@ The binary distribution of Tom consists of the following directory layout:
    +--- bin (BSD Licence)
    |
    +--- lib 
+   |     +--- compiletime (not developed by the Tom project)
+   |     |     +--- ant-antlr          // ant task for antlr
+   |     |     +--- ant-contrib        // ant task for running regress tests
+   |     |     +--- ant-junit          
+   |     |     +--- ant-launcher
+   |     |     +--- ant                // to compile the project
+   |     |     +--- antlr3             // ant plugin for v3
+   |     |     +--- junit              // to test the system
+   |     |
    |     +--- runtime (BSD Licence)
    |     |     +--- shared-objects     // Factory of shared objects
    |     |     +--- jjtraveler         // Visitable interface
    |     |     +--- aterm              // ATerm library
-   |     |     +--- tom-runtime        // support for strategies, bytecode, viewer, and xml 
+   |     |     +--- tom-library        // support for strategies, bytecode, viewer, and xml 
+   |     |     +--- emf                // support for Eclipse Modelling Framework
    |     |     +--- Bytecode           // ADT for ASM Bytecode library
    |     |     +--- TNode              // ADT for XML
    |     |
@@ -25,17 +35,14 @@ The binary distribution of Tom consists of the following directory layout:
    |     |     +--- PlatformOption     // platform options
    |     |
    |     +--- tools (not needed by the runtime, unless you use bytecode, term viewer, or xml supports)
-   |     |     +--- ant                // to compile the project
-   |     |     +--- ant-antlr          // ant task for antlr
    |     |     +--- antlr-2.7.7        // to compile the Tom parser
-   |     |     +--- antlr-3.1.3        // to compile the Gom parser
-   |     |     +--- antlr3             // ant plugin 
+   |     |     +--- antlr-3.2          // to compile the Gom parser
    |     |     +--- asm-3.0            // to manipulate bytecode
    |     |     +--- grappa1_2          // to visualize terms
-   |     |     +--- junit              // to test the system
    |     |     +--- xercesImpl         // for XML
    |     |     +--- xml-apis           // for XML
    |     |     +--- args4j-2.0.10      // for command line parsing
+   |     |     +--- commons-lang-2.4
    |     
    +--- share (BSD Licence)
          +--- contrib

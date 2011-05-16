@@ -69,3 +69,7 @@ Le fichier $GRAMNAME.tokens était toujours resté très mystérieux a enfin ré
 son utilité : il permet d'émettre un Token de la sorte que l'on veut. Grâce à
 cela, on peut passer une info arbitraire du Lexer au Parser. Problème : comment
 savoir à l'avance quel numéro sera attribué à quel token ?
+
+La réponse apparaît d'elle-même après quelques tests ! On ne peut pas car cela change à chaque essai. En revanche, toutes ces constantes entières sont déclarées publiquement dans la classe lexer. Donc un appel à miniTomLexer.LENOMDUTOKEN suffit ! Bonne nouvelle.
+
+
