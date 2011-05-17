@@ -169,7 +169,7 @@ public class StrategyProblem {
   %strategy testSubtype1() extends `Identity() {
     visit TomA {
       f(x) -> { return `g(x); }
-      g(x) -> { return `x; }
+      //g(x) -> { return `x; }
     }
   } 
 

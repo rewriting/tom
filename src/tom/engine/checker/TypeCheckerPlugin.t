@@ -282,6 +282,9 @@ public class TypeCheckerPlugin extends TomGenericPlugin {
     visit BQTerm {
       (BuildAppendList|BuildAppendArray)[AstName=Name(listName),HeadTerm=BQVariableStar[Options=optionList,AstName=Name(variableName),AstType=Type[TypeOptions=tOptions]]]
         && concTypeOption(_*,WithSymbol[RootSymbolName=Name(rootName)],_*) << tOptions -> {
+        /* This error is equivalent to the "invalidVariableStarArgument"
+         * signaled by the SyntaxCheckerPlugin 
+         */
         if(!`listName.equals(`rootName)) {
           TomMessage.error(tcp.getLogger(),
               tcp.findOriginTrackingFileName(`optionList),
@@ -298,6 +301,9 @@ public class TypeCheckerPlugin extends TomGenericPlugin {
     if(`list.isEmptyconcTomVisit()) {
       TomMessage.error(getLogger(),null,0,TomMessage.emptyStrategy);
     }
+        /* This error is alreay signaled by the SyntaxCheckerPlugin with error
+         * "unknownType
+         */
     %match(list) {
       concTomVisit(_*,VisitTerm(Type[TomType=strVisitType,TlType=EmptyTargetLanguageType()],_,optionList),_*) -> {
         TomMessage.error(getLogger(),

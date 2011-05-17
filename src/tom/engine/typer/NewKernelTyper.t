@@ -625,6 +625,9 @@ public class NewKernelTyper {
 
     visit TomVisit {
       VisitTerm[VNode=vNode,AstConstraintInstructionList=ciList,Options=optionList] -> {
+        //DEBUG System.out.println("vnode = " + `vNode);
+        //DEBUG System.out.println("ciList= " + `ciList);
+
         BQTermList BQTList = nkt.varList;
         ConstraintInstructionList newCIList =
           nkt.inferConstraintInstructionList(`ciList);
@@ -1465,7 +1468,7 @@ matchBlockAdd :
             tConstraint && (groundType1 != groundType2) -> {
               //DEBUG System.out.println("In solveEquationConstraints:" + `groundType1 +
               //DEBUG     " = " + `groundType2);
-              errorFound = (errorFound && `detectFail(eConstraint));
+              errorFound = (errorFound || `detectFail(eConstraint));
               break matchBlockAdd;
             }
           // CASES 5 and 6 :
@@ -1474,7 +1477,7 @@ matchBlockAdd :
               if (substitutions.containsKey(`typeVar)) {
                 TomType mapTypeVar = substitutions.get(`typeVar);
                 if (!isTypeVar(mapTypeVar)) {
-                  errorFound = (errorFound &&
+                  errorFound = (errorFound || 
                       `detectFail(Equation(groundType,mapTypeVar,info)));
                 } else {
                   // if (isTypeVar(mapTypeVar))
@@ -1491,7 +1494,7 @@ matchBlockAdd :
             if (substitutions.containsKey(`typeVar)) {
               TomType mapTypeVar = substitutions.get(`typeVar);
               if (!isTypeVar(mapTypeVar)) {
-                errorFound = (errorFound &&
+                errorFound = (errorFound || 
                     `detectFail(Equation(mapTypeVar,groundType,info)));
               } else {
                 // if (isTypeVar(mapTypeVar))
@@ -1517,7 +1520,7 @@ matchBlockAdd :
                   if (isTypeVar(mapTypeVar2)) {
                     addSubstitution(mapTypeVar2,mapTypeVar1);
                   } else {
-                    errorFound = (errorFound &&
+                    errorFound = (errorFound || 
                         `detectFail(Equation(mapTypeVar1,mapTypeVar2,info)));
                   }
                 }
@@ -1765,7 +1768,7 @@ matchBlockAdd :
         tCList.getCollectionconcTypeConstraint()) {
       %match {
         Subtype[Type1=!TypeVar[],Type2=!TypeVar[]] << tConstraint -> {
-          //System.out.println("\nsolve3: sConstraint=" + `sConstraint);
+          //DEBUG System.out.println("\nsolve3: tConstraint=" + `tConstraint);
           errorFound = (errorFound || detectFail(`tConstraint));
         }
       }
