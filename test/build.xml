@@ -158,6 +158,8 @@
       <path id="regresstests">
         <fileset dir="regress" casesensitive="yes">
           <include name="**/*.t"/>
+          <!-- This file produces an error only if compiled with option -newtyper -->
+          <exclude name="**/BadBackquote.t"/>
         </fileset>
       </path>
       <pathconvert targetos="unix" 
