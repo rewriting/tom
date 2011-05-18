@@ -231,6 +231,15 @@ public abstract class GenericGenerator extends AbstractGenerator {
     }
   }
 
+  protected void buildExpGetDefault(int deep, String opname, String slotName, String moduleName) throws IOException {
+    output.write("tom_get_default_");
+    output.write(opname);
+    output.writeUnderscore();
+    output.write(slotName);
+    output.writeOpenBrace();
+    output.writeCloseBrace();
+  }
+
   protected void buildExpGetHead(int deep, String opName, TomType domain, TomType codomain, BQTerm var, String moduleName) throws IOException {
     String template = getSymbolTable(moduleName).getGetHead(opName);
     if(instantiateTemplate(deep,template,`concBQTerm(var),moduleName) == false) {
@@ -408,6 +417,25 @@ public abstract class GenericGenerator extends AbstractGenerator {
           new String[] { argType, varname },
           `Return(ExpressionToBQTerm(code)),deep,moduleName);
     }
+  }
+
+  protected void buildGetDefaultDecl(int deep, String tomName, 
+      Expression code, TomName slotName, String moduleName) throws IOException {
+    TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(tomName);
+    String opname = tomSymbol.getAstName().getString();
+    TomTypeList typesList = tomSymbol.getTypesToType().getDomain();
+
+      int slotIndex = TomBase.getSlotIndex(tomSymbol,slotName);
+      TomTypeList l = typesList;
+      for(int index = 0; !l.isEmptyconcTomType() && index<slotIndex ; index++) {
+        l = l.getTailconcTomType();
+      }
+      TomType returnType = l.getHeadconcTomType();
+
+      genDeclInstr(TomBase.getTLType(returnType),
+          "tom_get_default", opname  + "_" + slotName.getString(),
+          new String[] { },
+          `Return(ExpressionToBQTerm(code)),deep,moduleName);
   }
 
   protected void buildCompareFunctionSymbolDecl(int deep, String name1, String name2,
@@ -782,8 +810,16 @@ public abstract class GenericGenerator extends AbstractGenerator {
       protected void buildFunctionCall(int deep, String name, BQTermList argList, String moduleName) throws IOException {
         output.write(name);
         output.writeOpenBrace();
+        int index=0;
         while(!argList.isEmptyconcBQTerm()) {
-          generateBQTerm(deep,argList.getHeadconcBQTerm(),moduleName);
+          BQTerm bqt = argList.getHeadconcBQTerm();
+          if(bqt.isBQDefault()) {
+            TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(name);
+            String slotName = TomBase.getSlotName(tomSymbol,index).getString();
+            buildExpGetDefault(deep, name, slotName, moduleName);
+          } else {
+            generateBQTerm(deep,bqt,moduleName);
+          }
           argList = argList.getTailconcBQTerm();
           if(!argList.isEmptyconcBQTerm()) {
             output.writeComa();

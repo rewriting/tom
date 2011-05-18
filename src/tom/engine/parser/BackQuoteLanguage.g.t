@@ -326,7 +326,10 @@ basicTerm [BQTermList context] returns [BQTerm result]
             { localContext = ASTFactory.makeBQTermList(blockList); }
             result = bqTerm[localContext]
             BQ_RPAREN
-            
+        | BQ_UNDERSCORE
+        { 
+          result = `BQDefault();
+        }
         |   BQ_LPAREN ws ( termList[blockList,context] )? BQ_RPAREN
             {
               Composite compositeList = ASTFactory.makeComposite(blockList);
@@ -585,6 +588,7 @@ BQ_RBRACE      :    "}"   ;
 BQ_COMMA       :    ','   ;
 BQ_STAR        :    '*'   ;
 BQ_BACKQUOTE   :   "`" ;
+BQ_UNDERSCORE  :   "_" ;
 
 //XML Tokens
 XML_EQUAL   :   '=' ;
@@ -671,8 +675,8 @@ BQ_MINUS   :   '-'  ;
 protected
 BQ_DIGIT   :   ('0'..'9')  ;
 
-protected 
-BQ_UNDERSCORE : {!Character.isJavaIdentifierPart(LA(2))}? '_' ;
+//protected 
+//BQ_UNDERSCORE : {!Character.isJavaIdentifierPart(LA(2))}? '_' ;
 
 protected
 BQ_ESC

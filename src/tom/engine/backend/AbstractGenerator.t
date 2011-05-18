@@ -705,6 +705,13 @@ public abstract class AbstractGenerator {
           return;
         }
 
+      GetDefaultDecl[AstName=Name(tomName), SlotName=slotName, Expr=code] -> {
+          if(getSymbolTable(moduleName).isUsedSymbolDestructor(`tomName)) {
+            `buildGetDefaultDecl(deep, tomName, code, slotName, moduleName);
+          }
+          return;
+        }
+
       EqualTermDecl(BQVariable[AstName=Name(name1), AstType=Type[TomType=type1]],
           BQVariable[AstName=Name(name2), AstType=Type[TomType=type2]],
           code, _) -> {
@@ -986,6 +993,8 @@ public abstract class AbstractGenerator {
       TargetLanguageType tlType, Expression code, String moduleName) throws IOException;
   protected abstract void buildGetSlotDecl(int deep, String tomName, String name1,
       TargetLanguageType tlType, Expression code, TomName slotName, String moduleName) throws IOException;
+  protected abstract void buildGetDefaultDecl(int deep, String tomName, 
+       Expression code, TomName slotName, String moduleName) throws IOException;
   protected abstract void buildEqualTermDecl(int deep, String name1, String name2, String type1, String type2, Expression code, String moduleName) throws IOException;
   protected abstract void buildIsSortDecl(int deep, String name1, 
       String type1, Expression expr, String moduleName) throws IOException;

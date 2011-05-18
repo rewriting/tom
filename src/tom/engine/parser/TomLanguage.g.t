@@ -1717,6 +1717,24 @@ operator returns [Declaration result] throws TomException
                 pairNameDeclList.set(index,`PairNameDecl(sName,attribute));
               }
             }
+        |   attribute = keywordGetDefault[astName,type.getText()]
+            {
+              TomName sName = attribute.getSlotName();
+              /*
+               * ensure that sName appears in slotNameList
+               */
+              TomMessage msg = null;
+              int index = slotNameList.indexOf(sName);
+              if(index == -1) {
+                msg = TomMessage.errorIncompatibleSlotDecl;
+              } 
+              if(msg != null) {
+                TomMessage.error(getLogger(),currentFile(), getLine(),
+                  msg,
+                  currentFile(), Integer.valueOf(attribute.getOrgTrack().getLine()),
+                  "%op "+type.getText(), Integer.valueOf(ot.getLine()), sName.getString());
+              }
+            }
         |   attribute = keywordIsFsym[astName,type.getText()]
             { options.add(`DeclarationToOption(attribute)); }
         )*
@@ -2146,6 +2164,29 @@ keywordGetSlot [TomName astName, String type] returns [Declaration result] throw
         )
     ;
 
+keywordGetDefault [TomName astName, String type] returns [Declaration result] throws TomException
+{
+    result = null;
+    Option ot = null;
+}
+    :
+        (
+            t:GET_DEFAULT
+            { ot = `OriginTracking(Name(t.getText()),t.getLine(),currentFile()); }
+            LPAREN slotName:ALL_ID RPAREN
+            {
+                Option info = `OriginTracking(Name(slotName.getText()),slotName.getLine(),currentFile());
+                OptionList option = `concOption(info);
+
+                selector().push("targetlexer");
+                TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList<Code>());
+                selector().pop();
+                String code = ASTFactory.abstractCode(tlCode.getCode(),slotName.getText());
+                result = `GetDefaultDecl(astName, Name(slotName.getText()), Code(code), ot);
+            }
+        )
+    ;
+
 keywordMake[String opname, TomType returnType, TomTypeList types] returns [Declaration result] throws TomException
 {
     result = null;
@@ -2361,6 +2402,7 @@ tokens {
     MAKE_APPEND = "make_append";
     MAKE = "make";
     GET_SLOT = "get_slot";
+    GET_DEFAULT = "get_default";
     IS_FSYM = "is_fsym";
     GET_IMPLEMENTATION = "get_implementation";
     EQUALS = "equals";
