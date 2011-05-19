@@ -83,10 +83,39 @@ public abstract class GenericGenerator extends AbstractGenerator {
    */
 
   protected void buildTerm(int deep, String opname, BQTermList argList, String moduleName) throws IOException {
-    String prefix = "tom_make_";
     String template = getSymbolTable(moduleName).getMake(opname);
     if(instantiateTemplate(deep,template,argList,moduleName) == false) {
-      buildFunctionCall(deep, prefix+opname, argList, moduleName);
+      String prefix = "tom_make_";
+        output.write(prefix+opname);
+        output.writeOpenBrace();
+        int index=1;
+        while(!argList.isEmptyconcBQTerm()) {
+          BQTerm bqt = argList.getHeadconcBQTerm();
+          //System.out.println("bqt = " + bqt);
+          boolean generatebqt = true;
+          %match(bqt) {
+            Composite(CompositeBQTerm(BQDefault()),_) -> { 
+              TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(opname);
+              //System.out.println("name = " + opname);
+              //System.out.println("symbol = " + tomSymbol);
+              TomName slotName = TomBase.getSlotName(tomSymbol,index);
+              //System.out.println("slotname = " + slotName);
+              buildExpGetDefault(deep, opname, slotName.getString(), moduleName);
+              generatebqt = false;
+            } 
+          }
+
+          if(generatebqt) {
+            generateBQTerm(deep,bqt,moduleName);
+          }
+
+          argList = argList.getTailconcBQTerm();
+          if(!argList.isEmptyconcBQTerm()) {
+            output.writeComa();
+          }
+        }
+        output.writeCloseBrace();
+      
     }
   }
 
@@ -810,16 +839,9 @@ public abstract class GenericGenerator extends AbstractGenerator {
       protected void buildFunctionCall(int deep, String name, BQTermList argList, String moduleName) throws IOException {
         output.write(name);
         output.writeOpenBrace();
-        int index=0;
         while(!argList.isEmptyconcBQTerm()) {
           BQTerm bqt = argList.getHeadconcBQTerm();
-          if(bqt.isBQDefault()) {
-            TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(name);
-            String slotName = TomBase.getSlotName(tomSymbol,index).getString();
-            buildExpGetDefault(deep, name, slotName, moduleName);
-          } else {
-            generateBQTerm(deep,bqt,moduleName);
-          }
+          generateBQTerm(deep,bqt,moduleName);
           argList = argList.getTailconcBQTerm();
           if(!argList.isEmptyconcBQTerm()) {
             output.writeComa();
