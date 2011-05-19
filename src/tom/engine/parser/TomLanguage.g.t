@@ -1690,12 +1690,12 @@ operator returns [Declaration result] throws TomException
         |   attribute = keywordGetSlot[astName,type.getText()]
             {
               TomName sName = attribute.getSlotName();
+              int index = slotNameList.indexOf(sName);
               /*
                * ensure that sName appears in slotNameList, only once
                * ensure that sName has not already been generated
                */
               TomMessage msg = null;
-              int index = slotNameList.indexOf(sName);
               if(index == -1) {
                 msg = TomMessage.errorIncompatibleSlotDecl;
               } else {
@@ -1734,6 +1734,7 @@ operator returns [Declaration result] throws TomException
                   currentFile(), Integer.valueOf(attribute.getOrgTrack().getLine()),
                   "%op "+type.getText(), Integer.valueOf(ot.getLine()), sName.getString());
               }
+              options.add(`DeclarationToOption(attribute));
             }
         |   attribute = keywordIsFsym[astName,type.getText()]
             { options.add(`DeclarationToOption(attribute)); }
@@ -2174,15 +2175,22 @@ keywordGetDefault [TomName astName, String type] returns [Declaration result] th
             t:GET_DEFAULT
             { ot = `OriginTracking(Name(t.getText()),t.getLine(),currentFile()); }
             LPAREN slotName:ALL_ID RPAREN
+            l:LBRACE
             {
-                Option info = `OriginTracking(Name(slotName.getText()),slotName.getLine(),currentFile());
-                OptionList option = `concOption(info);
-
+                updatePosition(t.getLine(),t.getColumn());
                 selector().push("targetlexer");
-                TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList<Code>());
+                List<Code> blockList = new LinkedList<Code>();
+                TargetLanguage tlCode = targetparser.targetLanguage(blockList);
                 selector().pop();
-                String code = ASTFactory.abstractCode(tlCode.getCode(),slotName.getText());
-                result = `GetDefaultDecl(astName, Name(slotName.getText()), Code(code), ot);
+                blockList.add(`TargetLanguageToCode(tlCode));
+                if(blockList.size()==1) {
+                  String code = tlCode.getCode();
+                  //System.out.println("keywordGetDefault: " + code);
+                  result = `GetDefaultDecl(astName, Name(slotName.getText()), Code(code), ot);
+                } else {
+                  result = `GetDefaultDecl(astName, Name(slotName.getText()), TomInstructionToExpression(AbstractBlock(ASTFactory.makeInstructionList(blockList))), ot);
+                  //System.out.println("keywordGetDefault result = " + result);
+                }
             }
         )
     ;
@@ -2201,7 +2209,8 @@ keywordMake[String opname, TomType returnType, TomTypeList types] returns [Decla
         (
             t:MAKE
             { ot = `OriginTracking(Name(t.getText()),t.getLine(),currentFile()); }
-                (LPAREN
+                (
+                 LPAREN
                 (
                     nameArg:ALL_ID
                     {
@@ -2240,7 +2249,8 @@ keywordMake[String opname, TomType returnType, TomTypeList types] returns [Decla
                         }
                     )*
                 )?
-                RPAREN )?
+                RPAREN
+                )?
             l:LBRACE
             {
                 updatePosition(t.getLine(),t.getColumn());

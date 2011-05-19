@@ -204,6 +204,11 @@ mainBqTerm [BQTermList context] returns [BQTerm result]
         (
          // xml(...) or (...)
             result = basicTerm[list]            
+        | under:BQ_UNDERSCORE 
+        { 
+          System.out.println(under);
+          result = `BQDefault();
+        }
         | id:BQ_ID
           (
            // `X*
@@ -270,6 +275,10 @@ bqTerm [BQTermList context] returns [BQTerm result]
     :
          // xml(...) or (...)
       result = basicTerm[context]
+        | BQ_UNDERSCORE 
+        { 
+          result = `BQDefault();
+        }
     |   id:BQ_ID
         (
          // X*
@@ -326,11 +335,7 @@ basicTerm [BQTermList context] returns [BQTerm result]
             { localContext = ASTFactory.makeBQTermList(blockList); }
             result = bqTerm[localContext]
             BQ_RPAREN
-        | BQ_UNDERSCORE
-        { 
-          result = `BQDefault();
-        }
-        |   BQ_LPAREN ws ( termList[blockList,context] )? BQ_RPAREN
+        | BQ_LPAREN ws ( termList[blockList,context] )? BQ_RPAREN
             {
               Composite compositeList = ASTFactory.makeComposite(blockList);
                 result = `Composite(
@@ -588,7 +593,8 @@ BQ_RBRACE      :    "}"   ;
 BQ_COMMA       :    ','   ;
 BQ_STAR        :    '*'   ;
 BQ_BACKQUOTE   :   "`" ;
-BQ_UNDERSCORE  :   "_" ;
+BQ_MINUS       :   '-'  ;
+BQ_UNDERSCORE  : {!Character.isJavaIdentifierPart(LA(2))}? '_' ;
 
 //XML Tokens
 XML_EQUAL   :   '=' ;
@@ -624,6 +630,10 @@ XML_SKIP
         }
     ;
 
+BQ_INTEGER :   ( BQ_MINUS )? ( BQ_DIGIT )+     ;
+
+BQ_STRING  :   '"' (BQ_ESC|~('"'|'\\'|'\n'|'\r'))* '"' ;
+
 BQ_ID
 options{ testLiterals = true; }   
     :
@@ -638,9 +648,7 @@ BQ_SIMPLE_ID
 options{ testLiterals = true; }   
     :   ('_')? ('a'..'z' | 'A'..'Z') 
         ( 
-            ('a'..'z' | 'A'..'Z') 
-        |   '_' 
-//        |   BQ_DOT
+            ('a'..'z' | 'A'..'Z' | '_') 
         |   BQ_DIGIT
         )*
     ;
@@ -659,24 +667,9 @@ BQ_MINUS_ID_PART :
   )+ 
 ;
 
-BQ_INTEGER :   ( BQ_MINUS )? ( BQ_DIGIT )+     ;
-
-BQ_STRING  :   '"' (BQ_ESC|~('"'|'\\'|'\n'|'\r'))* '"'
-    ;
-
-ANY 
-options{ testLiterals = true; } 
-//    :   '\u0000'..'\uffff'  
-    :  .
-    ;
-   
-BQ_MINUS   :   '-'  ;
 
 protected
 BQ_DIGIT   :   ('0'..'9')  ;
-
-//protected 
-//BQ_UNDERSCORE : {!Character.isJavaIdentifierPart(LA(2))}? '_' ;
 
 protected
 BQ_ESC
@@ -718,3 +711,8 @@ BQ_HEX_DIGIT
   : ('0'..'9'|'A'..'F'|'a'..'f')
   ;
 
+ANY 
+options{ testLiterals = true; } 
+//    :   '\u0000'..'\uffff'  
+    :  .
+    ;

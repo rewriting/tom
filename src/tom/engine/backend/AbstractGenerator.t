@@ -706,7 +706,7 @@ public abstract class AbstractGenerator {
         }
 
       GetDefaultDecl[AstName=Name(tomName), SlotName=slotName, Expr=code] -> {
-          if(getSymbolTable(moduleName).isUsedSymbolDestructor(`tomName)) {
+          if(getSymbolTable(moduleName).isUsedSymbolConstructor(`tomName)) {
             `buildGetDefaultDecl(deep, tomName, code, slotName, moduleName);
           }
           return;

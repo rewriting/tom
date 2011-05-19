@@ -88,13 +88,13 @@ public abstract class GenericGenerator extends AbstractGenerator {
       String prefix = "tom_make_";
         output.write(prefix+opname);
         output.writeOpenBrace();
-        int index=1;
+        int index=0;
         while(!argList.isEmptyconcBQTerm()) {
           BQTerm bqt = argList.getHeadconcBQTerm();
           //System.out.println("bqt = " + bqt);
           boolean generatebqt = true;
           %match(bqt) {
-            Composite(CompositeBQTerm(BQDefault()),_) -> { 
+            Composite(CompositeBQTerm(BQDefault()),_*) -> {
               TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(opname);
               //System.out.println("name = " + opname);
               //System.out.println("symbol = " + tomSymbol);
@@ -102,7 +102,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
               //System.out.println("slotname = " + slotName);
               buildExpGetDefault(deep, opname, slotName.getString(), moduleName);
               generatebqt = false;
-            } 
+            }
           }
 
           if(generatebqt) {
@@ -113,6 +113,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
           if(!argList.isEmptyconcBQTerm()) {
             output.writeComa();
           }
+          index++;
         }
         output.writeCloseBrace();
       
