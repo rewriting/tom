@@ -64,7 +64,7 @@ public class TestDefaultValue {
 %op Term f(arg1:Term) {
   is_fsym(t) { ($t instanceof backquote.term.types.term.f) }
   get_slot(arg1, t) { $t.getarg1() }
-  get_default(arg1) { `c() }
+  get_default(arg1) { `a() }
   make(t0) { backquote.term.types.term.f.make($t0) }
 }
 
@@ -72,8 +72,8 @@ public class TestDefaultValue {
   is_fsym(t) { ($t instanceof backquote.term.types.term.g) }
   get_slot(arg1, t) { $t.getarg1() }
   get_slot(arg2, t) { $t.getarg2() }
-  get_default(arg1) { `c() }
-  get_default(arg2) { `c() }
+  get_default(arg1) { `a() }
+  get_default(arg2) { `b() }
   make(t0, t1) { backquote.term.types.term.g.make($t0, $t1) }
 }
 
@@ -82,9 +82,9 @@ public class TestDefaultValue {
   get_slot(arg1, t) { $t.getarg1() }
   get_slot(arg2, t) { $t.getarg2() }
   get_slot(arg3, t) { $t.getarg3() }
-  get_default(arg1) { `c() }
-  get_default(arg2) { `c() }
-  get_default(arg3) { `c() }
+  get_default(arg1) { `a() }
+  get_default(arg2) { `g(_,  _ ) }
+  get_default(arg3) { `f( _) }
   make(t0, t1, t2) { backquote.term.types.term.h.make($t0, $t1, $t2) }
 }
 
@@ -119,10 +119,33 @@ public class TestDefaultValue {
   }
 
   @Test
-  public void testDefault1() {    
-    Term result = `g(a(),_);
-    assertEquals( result.getarg1(), `a() );
-    assertEquals( result.getarg2(), `c() );
+  public void testDefault1() {
+    assertEquals( `f(_).getarg1(), `a() );
+    assertEquals( `f( _).getarg1(), `a() );
+    assertEquals( `f(_ ).getarg1(), `a() );
+    assertEquals( `f( _ ).getarg1(), `a() );
   }
 
+  @Test
+  public void testDefault2() {
+    assertEquals( `g(a(),_).getarg1(), `a() );
+    assertEquals( `g(a(),_).getarg2(), `b() );
+    assertEquals( `g(a(), _).getarg2(), `b() );
+    assertEquals( `g(a(),_ ).getarg2(), `b() );
+    assertEquals( `g(a(), _ ).getarg2(), `b() );
+  }
+
+  @Test
+  public void testDefault3() {
+    assertEquals( `h(_,_,_).getarg1(), `a() );
+    assertEquals( `h(_,_,_).getarg2(), `g(_,_) );
+    assertEquals( `h(_,_,_).getarg2(), `g(a(),b()) );
+    assertEquals( `h(_,_,_).getarg3(), `f(_) );
+    assertEquals( `h(_,_,_).getarg3(), `f(a()) );
+  }
+
+  @Test
+  public void testDefault4() {
+    assertEquals( `f(g(_,_)).getarg1(), `g(_,_) );
+  }
 }

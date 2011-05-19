@@ -190,7 +190,7 @@ beginBackquote returns [BQTerm result]
 ws (BQ_BACKQUOTE)? ( result = mainBqTerm[context] ) { selector().pop(); }
 ;
 
-
+// called by beginBacquote
 mainBqTerm [BQTermList context] returns [BQTerm result]
 {
     result = null;
@@ -204,9 +204,8 @@ mainBqTerm [BQTermList context] returns [BQTerm result]
         (
          // xml(...) or (...)
             result = basicTerm[list]            
-        | under:BQ_UNDERSCORE 
+        | BQ_UNDERSCORE 
         { 
-          System.out.println(under);
           result = `BQDefault();
         }
         | id:BQ_ID
@@ -219,21 +218,12 @@ mainBqTerm [BQTermList context] returns [BQTerm result]
              result = `BQVariableStar(concOption(ot),Name(name),SymbolTable.TYPE_UNKNOWN);  
            }
            // `X*{type}
-           /*
-           | {LA(1) == BQ_STAR && LA(2) == BQ_LBRACE}? BQ_STAR BQ_LBRACE type1:BQ_ID BQ_RBRACE
-
-           {   
-             String name = id.getText();
-             OptionList ol = `concOption(TypeForVariable(type1.getText()),OriginTracking(Name(name), id.getLine(), currentFile()));
-             result = `BQVariableStar(ol,Name(name),SymbolTable.TYPE_UNKNOWN);  
-           }
-           */
            | {LA(1) == BQ_RBRACE}?
            {
            // generate an ERROR when a '}' is encoutered
            //System.out.println("ERROR");
            }
-           | ws /*ws*/ 
+           | ws 
                 (
                  // `x(...)
                  {LA(1) == BQ_LPAREN}? BQ_LPAREN ws ( termList[blockList,list] )? BQ_RPAREN 
@@ -254,7 +244,6 @@ mainBqTerm [BQTermList context] returns [BQTerm result]
                    addTargetCode(t);
                    String name = id.getText();
                    OptionList ol = `concOption(OriginTracking(Name(name), id.getLine(), currentFile()), ModuleName(DEFAULT_MODULE_NAME));
-                   //result = `BQAppl(ol,Name(name),concBQTerm());
                    result = `BQVariable(ol,Name(name),SymbolTable.TYPE_UNKNOWN);
                  }
                 )
@@ -262,6 +251,7 @@ mainBqTerm [BQTermList context] returns [BQTerm result]
         )
     ;
 
+    // called internaly by bqTerm and mainBqTerm
 bqTerm [BQTermList context] returns [BQTerm result]
 {
     result = null;
@@ -289,7 +279,7 @@ bqTerm [BQTermList context] returns [BQTerm result]
               result = `BQVariableStar(concOption(ot),Name(name),SymbolTable.TYPE_UNKNOWN);      
             }
             
-            |  ws /*ws*/ 
+            |  ws
             // x(...)
             (
              {LA(1) == BQ_LPAREN}? BQ_LPAREN {arguments = true;} ws (termList[blockList,context])? BQ_RPAREN 
@@ -414,8 +404,6 @@ targetCode returns [Token result]
     |   xc:XML_COMMENT {result = xc;}
     |   xp:XML_PROC {result = xp;}
     ;
-
-
 
 /*
  * XML
