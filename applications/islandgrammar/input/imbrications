@@ -16,7 +16,7 @@ System.out.println("This is no real code, you know");
 }
 
 
-/* and now %match
+/* and now match
 some TOM ! */
 %match () {
   riri ->  { %match () {motif ->{ Un {au{{}tr}e} contenu ; } } System.out.println("Hello, World !");}

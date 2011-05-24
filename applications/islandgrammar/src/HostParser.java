@@ -190,8 +190,8 @@ public class HostParser {
       (new ExitKeyword()),
       (new MatchConstruct()),
       (new TypeTermConstruct()),
-      (new Comment()),
-      (new OLComment()),
+/*      (new Comment()),
+      (new OLComment()),*/
       (new HostString()),
       (new HostCharacter())
     };
