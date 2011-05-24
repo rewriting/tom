@@ -49,7 +49,7 @@ syn keyword tomOpkey            implement is_sort get_fun_sym get_subterm cmp_fu
 syn keyword tomOpkey            equals get_head get_tail is_empty get_element is_fsym 
 syn keyword tomOpkey            get_size make_empty
 syn keyword tomOpkey            make_insert make_append
-syn keyword tomOpkey            get_slot
+syn keyword tomOpkey            get_slot get_default
 syn keyword tomOpkey            make
 syn keyword tomOpkey            visit
 

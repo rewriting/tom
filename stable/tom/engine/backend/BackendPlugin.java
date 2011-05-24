@@ -649,17 +649,45 @@ System.out.println("No moduleName in stack");
 }
 {
 if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {
-if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.GetHeadDecl) ) {
- tom.engine.adt.tomname.types.TomName  tomMatch74_40= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getOpname() ;
- tom.engine.adt.tomexpression.types.Expression  tomMatch74_41= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getExpr() ;
+if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.GetDefaultDecl) ) {
+ tom.engine.adt.tomname.types.TomName  tomMatch74_40= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getAstName() ;
+ tom.engine.adt.tomname.types.TomName  tomMatch74_41= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getSlotName() ;
+ tom.engine.adt.tomexpression.types.Expression  tomMatch74_42= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getExpr() ;
 if ( (tomMatch74_40 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
-if ( (tomMatch74_41 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
+if ( (tomMatch74_41 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+if ( (tomMatch74_42 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
+
+try {
+String moduleName = stack.peek();
+bp.getSymbolTable(moduleName).putGetDefault(
+ tomMatch74_40.getString() ,
+ tomMatch74_41.getString() ,
+ tomMatch74_42.getCode() );
+} catch (EmptyStackException e) {
+System.out.println("No moduleName in stack");
+}
+
+
+}
+}
+}
+}
+}
+
+}
+{
+if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {
+if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.GetHeadDecl) ) {
+ tom.engine.adt.tomname.types.TomName  tomMatch74_51= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getOpname() ;
+ tom.engine.adt.tomexpression.types.Expression  tomMatch74_52= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getExpr() ;
+if ( (tomMatch74_51 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+if ( (tomMatch74_52 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
 
 try {
 String moduleName = stack.peek();
 bp.getSymbolTable(moduleName).putGetHead(
- tomMatch74_40.getString() ,
- tomMatch74_41.getCode() );
+ tomMatch74_51.getString() ,
+ tomMatch74_52.getCode() );
 } catch (EmptyStackException e) {
 System.out.println("No moduleName in stack");
 }
@@ -674,16 +702,16 @@ System.out.println("No moduleName in stack");
 {
 if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {
 if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.GetTailDecl) ) {
- tom.engine.adt.tomname.types.TomName  tomMatch74_48= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getOpname() ;
- tom.engine.adt.tomexpression.types.Expression  tomMatch74_49= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getExpr() ;
-if ( (tomMatch74_48 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
-if ( (tomMatch74_49 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
+ tom.engine.adt.tomname.types.TomName  tomMatch74_59= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getOpname() ;
+ tom.engine.adt.tomexpression.types.Expression  tomMatch74_60= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getExpr() ;
+if ( (tomMatch74_59 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+if ( (tomMatch74_60 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
 
 try {
 String moduleName = stack.peek();
 bp.getSymbolTable(moduleName).putGetTail(
- tomMatch74_48.getString() ,
- tomMatch74_49.getCode() );
+ tomMatch74_59.getString() ,
+ tomMatch74_60.getCode() );
 } catch (EmptyStackException e) {
 System.out.println("No moduleName in stack");
 }
@@ -698,18 +726,18 @@ System.out.println("No moduleName in stack");
 {
 if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {
 if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.MakeDecl) ) {
- tom.engine.adt.tomname.types.TomName  tomMatch74_56= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getAstName() ;
- tom.engine.adt.tominstruction.types.Instruction  tomMatch74_57= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getInstr() ;
-if ( (tomMatch74_56 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
-if ( (tomMatch74_57 instanceof tom.engine.adt.tominstruction.types.instruction.ExpressionToInstruction) ) {
- tom.engine.adt.tomexpression.types.Expression  tomMatch74_61= tomMatch74_57.getExpr() ;
-if ( (tomMatch74_61 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
+ tom.engine.adt.tomname.types.TomName  tomMatch74_67= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getAstName() ;
+ tom.engine.adt.tominstruction.types.Instruction  tomMatch74_68= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getInstr() ;
+if ( (tomMatch74_67 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+if ( (tomMatch74_68 instanceof tom.engine.adt.tominstruction.types.instruction.ExpressionToInstruction) ) {
+ tom.engine.adt.tomexpression.types.Expression  tomMatch74_72= tomMatch74_68.getExpr() ;
+if ( (tomMatch74_72 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
 
 try {
 String moduleName = stack.peek();
 bp.getSymbolTable(moduleName).putMake(
- tomMatch74_56.getString() ,
- tomMatch74_61.getCode() );
+ tomMatch74_67.getString() ,
+ tomMatch74_72.getCode() );
 } catch (EmptyStackException e) {
 System.out.println("No moduleName in stack");
 }
@@ -725,16 +753,16 @@ System.out.println("No moduleName in stack");
 {
 if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {
 if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.IsEmptyDecl) ) {
- tom.engine.adt.tomname.types.TomName  tomMatch74_66= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getOpname() ;
- tom.engine.adt.tomexpression.types.Expression  tomMatch74_67= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getExpr() ;
-if ( (tomMatch74_66 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
-if ( (tomMatch74_67 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
+ tom.engine.adt.tomname.types.TomName  tomMatch74_77= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getOpname() ;
+ tom.engine.adt.tomexpression.types.Expression  tomMatch74_78= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getExpr() ;
+if ( (tomMatch74_77 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+if ( (tomMatch74_78 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
 
 try {
 String moduleName = stack.peek();
 bp.getSymbolTable(moduleName).putIsEmptyList(
- tomMatch74_66.getString() ,
- tomMatch74_67.getCode() );
+ tomMatch74_77.getString() ,
+ tomMatch74_78.getCode() );
 } catch (EmptyStackException e) {
 System.out.println("No moduleName in stack");
 }
@@ -749,18 +777,18 @@ System.out.println("No moduleName in stack");
 {
 if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {
 if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.MakeEmptyList) ) {
- tom.engine.adt.tomname.types.TomName  tomMatch74_74= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getAstName() ;
- tom.engine.adt.tominstruction.types.Instruction  tomMatch74_75= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getInstr() ;
-if ( (tomMatch74_74 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
-if ( (tomMatch74_75 instanceof tom.engine.adt.tominstruction.types.instruction.ExpressionToInstruction) ) {
- tom.engine.adt.tomexpression.types.Expression  tomMatch74_79= tomMatch74_75.getExpr() ;
-if ( (tomMatch74_79 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
+ tom.engine.adt.tomname.types.TomName  tomMatch74_85= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getAstName() ;
+ tom.engine.adt.tominstruction.types.Instruction  tomMatch74_86= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getInstr() ;
+if ( (tomMatch74_85 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+if ( (tomMatch74_86 instanceof tom.engine.adt.tominstruction.types.instruction.ExpressionToInstruction) ) {
+ tom.engine.adt.tomexpression.types.Expression  tomMatch74_90= tomMatch74_86.getExpr() ;
+if ( (tomMatch74_90 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
 
 try {
 String moduleName = stack.peek();
 bp.getSymbolTable(moduleName).putMakeEmptyList(
- tomMatch74_74.getString() ,
- tomMatch74_79.getCode() );
+ tomMatch74_85.getString() ,
+ tomMatch74_90.getCode() );
 } catch (EmptyStackException e) {
 System.out.println("No moduleName in stack");
 }
@@ -776,18 +804,18 @@ System.out.println("No moduleName in stack");
 {
 if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {
 if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.MakeAddList) ) {
- tom.engine.adt.tomname.types.TomName  tomMatch74_84= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getAstName() ;
- tom.engine.adt.tominstruction.types.Instruction  tomMatch74_85= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getInstr() ;
-if ( (tomMatch74_84 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
-if ( (tomMatch74_85 instanceof tom.engine.adt.tominstruction.types.instruction.ExpressionToInstruction) ) {
- tom.engine.adt.tomexpression.types.Expression  tomMatch74_89= tomMatch74_85.getExpr() ;
-if ( (tomMatch74_89 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
+ tom.engine.adt.tomname.types.TomName  tomMatch74_95= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getAstName() ;
+ tom.engine.adt.tominstruction.types.Instruction  tomMatch74_96= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getInstr() ;
+if ( (tomMatch74_95 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+if ( (tomMatch74_96 instanceof tom.engine.adt.tominstruction.types.instruction.ExpressionToInstruction) ) {
+ tom.engine.adt.tomexpression.types.Expression  tomMatch74_100= tomMatch74_96.getExpr() ;
+if ( (tomMatch74_100 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
 
 try {
 String moduleName = stack.peek();
 bp.getSymbolTable(moduleName).putMakeAddList(
- tomMatch74_84.getString() ,
- tomMatch74_89.getCode() );
+ tomMatch74_95.getString() ,
+ tomMatch74_100.getCode() );
 } catch (EmptyStackException e) {
 System.out.println("No moduleName in stack");
 }
@@ -803,18 +831,18 @@ System.out.println("No moduleName in stack");
 {
 if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {
 if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.MakeEmptyArray) ) {
- tom.engine.adt.tomname.types.TomName  tomMatch74_94= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getAstName() ;
- tom.engine.adt.tominstruction.types.Instruction  tomMatch74_95= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getInstr() ;
-if ( (tomMatch74_94 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
-if ( (tomMatch74_95 instanceof tom.engine.adt.tominstruction.types.instruction.ExpressionToInstruction) ) {
- tom.engine.adt.tomexpression.types.Expression  tomMatch74_99= tomMatch74_95.getExpr() ;
-if ( (tomMatch74_99 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
+ tom.engine.adt.tomname.types.TomName  tomMatch74_105= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getAstName() ;
+ tom.engine.adt.tominstruction.types.Instruction  tomMatch74_106= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getInstr() ;
+if ( (tomMatch74_105 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+if ( (tomMatch74_106 instanceof tom.engine.adt.tominstruction.types.instruction.ExpressionToInstruction) ) {
+ tom.engine.adt.tomexpression.types.Expression  tomMatch74_110= tomMatch74_106.getExpr() ;
+if ( (tomMatch74_110 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
 
 try {
 String moduleName = stack.peek();
 bp.getSymbolTable(moduleName).putMakeEmptyArray(
- tomMatch74_94.getString() ,
- tomMatch74_99.getCode() );
+ tomMatch74_105.getString() ,
+ tomMatch74_110.getCode() );
 } catch (EmptyStackException e) {
 System.out.println("No moduleName in stack");
 }
@@ -830,18 +858,18 @@ System.out.println("No moduleName in stack");
 {
 if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {
 if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.MakeAddArray) ) {
- tom.engine.adt.tomname.types.TomName  tomMatch74_104= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getAstName() ;
- tom.engine.adt.tominstruction.types.Instruction  tomMatch74_105= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getInstr() ;
-if ( (tomMatch74_104 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
-if ( (tomMatch74_105 instanceof tom.engine.adt.tominstruction.types.instruction.ExpressionToInstruction) ) {
- tom.engine.adt.tomexpression.types.Expression  tomMatch74_109= tomMatch74_105.getExpr() ;
-if ( (tomMatch74_109 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
+ tom.engine.adt.tomname.types.TomName  tomMatch74_115= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getAstName() ;
+ tom.engine.adt.tominstruction.types.Instruction  tomMatch74_116= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getInstr() ;
+if ( (tomMatch74_115 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+if ( (tomMatch74_116 instanceof tom.engine.adt.tominstruction.types.instruction.ExpressionToInstruction) ) {
+ tom.engine.adt.tomexpression.types.Expression  tomMatch74_120= tomMatch74_116.getExpr() ;
+if ( (tomMatch74_120 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
 
 try {
 String moduleName = stack.peek();
 bp.getSymbolTable(moduleName).putMakeAddArray(
- tomMatch74_104.getString() ,
- tomMatch74_109.getCode() );
+ tomMatch74_115.getString() ,
+ tomMatch74_120.getCode() );
 } catch (EmptyStackException e) {
 System.out.println("No moduleName in stack");
 }
@@ -857,16 +885,16 @@ System.out.println("No moduleName in stack");
 {
 if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {
 if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.GetElementDecl) ) {
- tom.engine.adt.tomname.types.TomName  tomMatch74_114= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getOpname() ;
- tom.engine.adt.tomexpression.types.Expression  tomMatch74_115= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getExpr() ;
-if ( (tomMatch74_114 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
-if ( (tomMatch74_115 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
+ tom.engine.adt.tomname.types.TomName  tomMatch74_125= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getOpname() ;
+ tom.engine.adt.tomexpression.types.Expression  tomMatch74_126= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getExpr() ;
+if ( (tomMatch74_125 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+if ( (tomMatch74_126 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
 
 try {
 String moduleName = stack.peek();
 bp.getSymbolTable(moduleName).putGetElementArray(
- tomMatch74_114.getString() ,
- tomMatch74_115.getCode() );
+ tomMatch74_125.getString() ,
+ tomMatch74_126.getCode() );
 } catch (EmptyStackException e) {
 System.out.println("No moduleName in stack");
 }
@@ -881,16 +909,16 @@ System.out.println("No moduleName in stack");
 {
 if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {
 if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.GetSizeDecl) ) {
- tom.engine.adt.tomname.types.TomName  tomMatch74_122= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getOpname() ;
- tom.engine.adt.tomexpression.types.Expression  tomMatch74_123= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getExpr() ;
-if ( (tomMatch74_122 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
-if ( (tomMatch74_123 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
+ tom.engine.adt.tomname.types.TomName  tomMatch74_133= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getOpname() ;
+ tom.engine.adt.tomexpression.types.Expression  tomMatch74_134= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getExpr() ;
+if ( (tomMatch74_133 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+if ( (tomMatch74_134 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
 
 try {
 String moduleName = stack.peek();
 bp.getSymbolTable(moduleName).putGetSizeArray(
- tomMatch74_122.getString() ,
- tomMatch74_123.getCode() );
+ tomMatch74_133.getString() ,
+ tomMatch74_134.getCode() );
 } catch (EmptyStackException e) {
 System.out.println("No moduleName in stack");
 }
@@ -904,38 +932,38 @@ System.out.println("No moduleName in stack");
 }
 {
 if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {
-boolean tomMatch74_134= false ;
- tom.engine.adt.tomname.types.TomName  tomMatch74_130= null ;
+boolean tomMatch74_145= false ;
+ tom.engine.adt.tomname.types.TomName  tomMatch74_141= null ;
 if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.SymbolDecl) ) {
 {
-tomMatch74_134= true ;
-tomMatch74_130= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getAstName() ;
+tomMatch74_145= true ;
+tomMatch74_141= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getAstName() ;
 
 }
 } else {
 if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.ListSymbolDecl) ) {
 {
-tomMatch74_134= true ;
-tomMatch74_130= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getAstName() ;
+tomMatch74_145= true ;
+tomMatch74_141= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getAstName() ;
 
 }
 } else {
 if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.ArraySymbolDecl) ) {
 {
-tomMatch74_134= true ;
-tomMatch74_130= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getAstName() ;
+tomMatch74_145= true ;
+tomMatch74_141= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getAstName() ;
 
 }
 }
 }
 }
-if (tomMatch74_134) {
-if ( (tomMatch74_130 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+if (tomMatch74_145) {
+if ( (tomMatch74_141 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
 
 try {
 String moduleName = stack.peek();
 TomSymbol tomSymbol = TomBase.getSymbolFromName(
- tomMatch74_130.getString() ,bp.getSymbolTable(moduleName));
+ tomMatch74_141.getString() ,bp.getSymbolTable(moduleName));
 markStrategy.visitLight(tomSymbol);
 } catch (EmptyStackException e) {
 System.out.println("No moduleName in stack");

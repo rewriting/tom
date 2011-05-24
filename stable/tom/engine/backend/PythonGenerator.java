@@ -308,14 +308,14 @@ matchBlock: {
 {
 if ( (arg instanceof tom.engine.adt.code.types.BQTerm) ) {
 if ( ((( tom.engine.adt.code.types.BQTerm )arg) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {
- tom.engine.adt.tomname.types.TomName  tomMatch104_1= (( tom.engine.adt.code.types.BQTerm )arg).getAstName() ;
- tom.engine.adt.tomtype.types.TomType  tomMatch104_2= (( tom.engine.adt.code.types.BQTerm )arg).getAstType() ;
-if ( (tomMatch104_1 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
-if ( (tomMatch104_2 instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {
-if ( ( tomMatch104_2.getTlType()  instanceof tom.engine.adt.tomtype.types.targetlanguagetype.TLType) ) {
+ tom.engine.adt.tomname.types.TomName  tomMatch105_1= (( tom.engine.adt.code.types.BQTerm )arg).getAstName() ;
+ tom.engine.adt.tomtype.types.TomType  tomMatch105_2= (( tom.engine.adt.code.types.BQTerm )arg).getAstType() ;
+if ( (tomMatch105_1 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+if ( (tomMatch105_2 instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {
+if ( ( tomMatch105_2.getTlType()  instanceof tom.engine.adt.tomtype.types.targetlanguagetype.TLType) ) {
 
 s.append(
- tomMatch104_1.getString() );
+ tomMatch105_1.getString() );
 break matchBlock;
 
 

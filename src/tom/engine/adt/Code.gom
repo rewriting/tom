@@ -39,6 +39,7 @@ CompositeMember = CompositeBQTerm(term:BQTerm)
 BQTerm = BQAppl(Options:OptionList,AstName:TomName,Args:BQTermList)
        | BQVariable(Options:OptionList,AstName:TomName,AstType:TomType)
        | BQVariableStar(Options:OptionList,AstName:TomName,AstType:TomType)
+       | BQDefault()
        | Composite(CompositeMember*)
       /**
        * <code>FunctionCall</code> generates a function call

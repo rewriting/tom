@@ -9,6 +9,9 @@ options {
 tokens {
   HOSTBLOCK;
   MATCH;
+  MATCHARG;
+  TYPED;
+  UNTYPED;
   TYPETERM;
   PATTERNACTION;
 }

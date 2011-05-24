@@ -289,6 +289,16 @@ public class TomMappingFromEcore {
   }
 
   /**
+   * Return type of a EStructuralFeature
+   * @param sf EStructuralFeature to return type
+   * @return type of sf
+   */
+  private static String getType(EStructuralFeature sf) throws java.io.IOException {
+    Class<?> c = sf.getEType().getInstanceClass();
+    return types.get(c);
+  }
+
+  /**
    * Return type of a EStructuralFeature and generate his list mapping if he is many
    * @param sf EStructuralFeature to return type
    * @return type of sf
@@ -339,6 +349,7 @@ private static <O> org.eclipse.emf.common.util.EList<O> append@name@(O e,org.ecl
    */
   private static void extractFromEPackage(java.io.Writer writer, EPackage p) throws java.io.IOException {
     for(EClassifier eclf : p.getEClassifiers()) {
+      //System.out.println("(DEBUG) EClassifier.default = " + eclf.getName() + " / " + eclf.getDefaultValue());
       extractFromEClassifier(writer,eclf);
     }
     for(EPackage ep : p.getESubpackages()) {
@@ -418,6 +429,30 @@ private static <O> org.eclipse.emf.common.util.EList<O> append@name@(O e,org.ecl
   }
 
   /**
+   * Generate get_default constructs
+   * @param esf the EStructuralFeature which has a default value
+   * @return get_default construct
+   */
+  private static String genGetDefault(EStructuralFeature esf) throws java.io.IOException {
+    String result = "";
+    String dvalue = ""+esf.getDefaultValue();
+    String esftype = getType(esf);
+    
+    // cases : null, String, `toto(), builtin
+    if (esftype.equals("String")) {
+      dvalue = "\"" + dvalue + "\"";
+    } else if (esftype.equals("boolean") || esftype.equals("int") ||
+        esftype.equals("float") || esftype.equals("double") || 
+        esftype.equals("long") ) {
+      //nothing
+      //dvalue = sf.getDefaultValue();
+    } else {
+      dvalue = "`" + dvalue + "()";
+    }
+    return result+"\n  get_default("+esf.getName()+") { "+dvalue+" }";
+  }
+
+  /**
    * Generate classifier mapping
    * @param eclf classifier to extract
    */
@@ -433,6 +468,7 @@ private static <O> org.eclipse.emf.common.util.EList<O> append@name@(O e,org.ecl
         StringBuffer s = new StringBuffer();
         StringBuffer s2 = new StringBuffer();
         StringBuffer s_gets = new StringBuffer();
+        StringBuffer s_defaults = new StringBuffer();
         for(EStructuralFeature sf : sfs) {
           if(sf.isChangeable()) {
             extractFromEClassifier(writer, sf.getEType());
@@ -456,9 +492,12 @@ private static <O> org.eclipse.emf.common.util.EList<O> append@name@(O e,org.ecl
             if(sf.isMany()) {
               na = "org.eclipse.emf.common.util.EList<" + na + ">";
             }
-            s_gets.append("\n  get_slot(" + sfname + ", t)  { (" + na
+            s_gets.append("\n  get_slot(" + sfname + ", t) { (" + na
                 + ")$t.eGet($t.eClass().getEStructuralFeature(\"" + sf.getName()
                 + "\")) }");
+            if (sf.getDefaultValue()!=null) {
+              s_defaults.append(genGetDefault(sf));
+            }
           }
         }
         if(s_types.length() >= 2) {
@@ -475,7 +514,7 @@ private static <O> org.eclipse.emf.common.util.EList<O> append@name@(O e,org.ecl
           writer.write(%[
 
 %op @ecl.getInstanceClass().getSimpleName()@ @cr@(@s_types@) {
-  is_fsym(t) { $t instanceof @(decl[0]+decl[1])@ }@s_gets@
+  is_fsym(t) { $t instanceof @(decl[0]+decl[1])@ }@s_gets@ @s_defaults@
   make(@(s.length() <= 2 ? "" : s.substring(2))@) { construct@cr@((@(EObject.class.isAssignableFrom(ecl.getInstanceClass()) ? ecl.getInstanceClass().getCanonicalName() : "org.eclipse.emf.ecore.EObject")@)@o1@.eINSTANCE.create((EClass)@o2@.eINSTANCE.getEClassifier("@ecl.getName()@")), new Object[]{ @(s2.length() <= 2 ? "" : s2.substring(2))@ }) }
 }
 

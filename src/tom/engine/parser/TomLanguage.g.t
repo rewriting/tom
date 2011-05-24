@@ -1690,12 +1690,12 @@ operator returns [Declaration result] throws TomException
         |   attribute = keywordGetSlot[astName,type.getText()]
             {
               TomName sName = attribute.getSlotName();
+              int index = slotNameList.indexOf(sName);
               /*
                * ensure that sName appears in slotNameList, only once
                * ensure that sName has not already been generated
                */
               TomMessage msg = null;
-              int index = slotNameList.indexOf(sName);
               if(index == -1) {
                 msg = TomMessage.errorIncompatibleSlotDecl;
               } else {
@@ -1716,6 +1716,25 @@ operator returns [Declaration result] throws TomException
               } else {
                 pairNameDeclList.set(index,`PairNameDecl(sName,attribute));
               }
+            }
+        |   attribute = keywordGetDefault[astName,type.getText()]
+            {
+              TomName sName = attribute.getSlotName();
+              /*
+               * ensure that sName appears in slotNameList
+               */
+              TomMessage msg = null;
+              int index = slotNameList.indexOf(sName);
+              if(index == -1) {
+                msg = TomMessage.errorIncompatibleSlotDecl;
+              } 
+              if(msg != null) {
+                TomMessage.error(getLogger(),currentFile(), getLine(),
+                  msg,
+                  currentFile(), Integer.valueOf(attribute.getOrgTrack().getLine()),
+                  "%op "+type.getText(), Integer.valueOf(ot.getLine()), sName.getString());
+              }
+              options.add(`DeclarationToOption(attribute));
             }
         |   attribute = keywordIsFsym[astName,type.getText()]
             { options.add(`DeclarationToOption(attribute)); }
@@ -2146,6 +2165,36 @@ keywordGetSlot [TomName astName, String type] returns [Declaration result] throw
         )
     ;
 
+keywordGetDefault [TomName astName, String type] returns [Declaration result] throws TomException
+{
+    result = null;
+    Option ot = null;
+}
+    :
+        (
+            t:GET_DEFAULT
+            { ot = `OriginTracking(Name(t.getText()),t.getLine(),currentFile()); }
+            LPAREN slotName:ALL_ID RPAREN
+            l:LBRACE
+            {
+                updatePosition(t.getLine(),t.getColumn());
+                selector().push("targetlexer");
+                List<Code> blockList = new LinkedList<Code>();
+                TargetLanguage tlCode = targetparser.targetLanguage(blockList);
+                selector().pop();
+                blockList.add(`TargetLanguageToCode(tlCode));
+                if(blockList.size()==1) {
+                  String code = tlCode.getCode();
+                  //System.out.println("keywordGetDefault: " + code);
+                  result = `GetDefaultDecl(astName, Name(slotName.getText()), Code(code), ot);
+                } else {
+                  result = `GetDefaultDecl(astName, Name(slotName.getText()), TomInstructionToExpression(AbstractBlock(ASTFactory.makeInstructionList(blockList))), ot);
+                  //System.out.println("keywordGetDefault result = " + result);
+                }
+            }
+        )
+    ;
+
 keywordMake[String opname, TomType returnType, TomTypeList types] returns [Declaration result] throws TomException
 {
     result = null;
@@ -2160,7 +2209,8 @@ keywordMake[String opname, TomType returnType, TomTypeList types] returns [Decla
         (
             t:MAKE
             { ot = `OriginTracking(Name(t.getText()),t.getLine(),currentFile()); }
-                (LPAREN
+                (
+                 LPAREN
                 (
                     nameArg:ALL_ID
                     {
@@ -2199,7 +2249,8 @@ keywordMake[String opname, TomType returnType, TomTypeList types] returns [Decla
                         }
                     )*
                 )?
-                RPAREN )?
+                RPAREN
+                )?
             l:LBRACE
             {
                 updatePosition(t.getLine(),t.getColumn());
@@ -2361,6 +2412,7 @@ tokens {
     MAKE_APPEND = "make_append";
     MAKE = "make";
     GET_SLOT = "get_slot";
+    GET_DEFAULT = "get_default";
     IS_FSYM = "is_fsym";
     GET_IMPLEMENTATION = "get_implementation";
     EQUALS = "equals";

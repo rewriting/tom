@@ -1,3 +1,12 @@
+2011-05-24 pem
+ * bootinstall
+
+2011-05-20 pem
+ * add the possibility to define default-value in a %op
+   get_default(slotname) { ... }
+   use the '_' sign in a backquote to denote a default-value
+   example: `f(a(),_)
+
 2011-04-13 jcb
  * add mappings generation for several EPackage at once in Tom-EMF
  * change Tom-EMF mappings generation (into files instead of stdout)

@@ -326,11 +326,11 @@ Map declToClassName) {
 {
 if ( (declList instanceof tom.gom.adt.gom.types.HookDeclList) ) {
 if ( (((( tom.gom.adt.gom.types.HookDeclList )declList) instanceof tom.gom.adt.gom.types.hookdecllist.ConsConcHookDecl) || ((( tom.gom.adt.gom.types.HookDeclList )declList) instanceof tom.gom.adt.gom.types.hookdecllist.EmptyConcHookDecl)) ) {
- tom.gom.adt.gom.types.HookDeclList  tomMatch536__end__4=(( tom.gom.adt.gom.types.HookDeclList )declList);
+ tom.gom.adt.gom.types.HookDeclList  tomMatch537__end__4=(( tom.gom.adt.gom.types.HookDeclList )declList);
 do {
 {
-if (!( tomMatch536__end__4.isEmptyConcHookDecl() )) {
- tom.gom.adt.gom.types.HookDecl  tom_hook= tomMatch536__end__4.getHeadConcHookDecl() ;
+if (!( tomMatch537__end__4.isEmptyConcHookDecl() )) {
+ tom.gom.adt.gom.types.HookDecl  tom_hook= tomMatch537__end__4.getHeadConcHookDecl() ;
 
 Decl decl = 
 tom_hook.getPointcut();
@@ -444,14 +444,14 @@ throw new GomRuntimeException("Unexpected strategy failure!");
 
 
 }
-if ( tomMatch536__end__4.isEmptyConcHookDecl() ) {
-tomMatch536__end__4=(( tom.gom.adt.gom.types.HookDeclList )declList);
+if ( tomMatch537__end__4.isEmptyConcHookDecl() ) {
+tomMatch537__end__4=(( tom.gom.adt.gom.types.HookDeclList )declList);
 } else {
-tomMatch536__end__4= tomMatch536__end__4.getTailConcHookDecl() ;
+tomMatch537__end__4= tomMatch537__end__4.getTailConcHookDecl() ;
 }
 
 }
-} while(!( (tomMatch536__end__4==(( tom.gom.adt.gom.types.HookDeclList )declList)) ));
+} while(!( (tomMatch537__end__4==(( tom.gom.adt.gom.types.HookDeclList )declList)) ));
 }
 }
 
