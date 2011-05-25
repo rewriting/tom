@@ -1,5 +1,13 @@
+2011-05-25 tavaresc
+ * NewKernelTyper: add a list with type variables occurring in pattern (to decide if all
+   "important" tom types were inferred.
+ * NewKernelTyper: separate phases of constraint resolution and eliminate
+   unnecessary rules. (except for normalization, all other phases reduces or
+   maintain the size of the constraint list).
+ * Revert to older version of Syntactic Propagator.
+
 2011-04-22 tavaresc
- * Fix collect of variables in NewKernelTyper (now the varList are correctly
+ * Fix collect of variables in NewKernelTyper (now the varList is correctly
    updated after call of strategy).
 
 2011-04-13 pem

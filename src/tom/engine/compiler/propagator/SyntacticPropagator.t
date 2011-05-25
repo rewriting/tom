@@ -145,13 +145,7 @@ public class SyntacticPropagator implements IBasePropagator {
             //DEBUG System.out.println("Match#1= " + `MatchConstraint(appl,freshVar,applType));
           }
         }
-        // introduce an intermediate variable (with another type) to handle subtyping
-        TomSymbol symbol =
-          sp.getCompiler().getSymbolTable().getSymbolFromName(`tomName);
-        //TomType pType = TomBase.getSymbolCodomain(symbol);
-        //DEBUG System.out.println("*** pType = " + `pType);
         //DEBUG System.out.println("*** aType = " + `aType);
-        //DEBUG System.out.println("*** " + symbol);
         BQTerm freshSubject =
           //sp.getCompiler().getFreshVariable(aType);
           sp.getCompiler().getFreshVariable(sp.getCompiler().getTermTypeFromTerm(`g));
@@ -194,7 +188,7 @@ public class SyntacticPropagator implements IBasePropagator {
           }
         }
         lastPart.add(0,l);
-        lastPart.add(0,`MatchConstraint(TomBase.convertFromBQVarToVar(freshSubject),g,sp.getCompiler().getTermTypeFromTerm(g)));
+        lastPart.add(0,`MatchConstraint(TomBase.convertFromBQVarToVar(freshSubject),g,aType));
         //DEBUG System.out.println("Match#5 = " +
         //DEBUG     `MatchConstraint(TomBase.convertFromBQVarToVar(freshSubject),g,sp.getCompiler().getTermTypeFromTerm(g)));
         //DEBUG System.out.println("\n\n\nIn Syntactic Propagator: lastPart = " +

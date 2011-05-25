@@ -5,16 +5,17 @@
 
   <target name="build" depends="init">
     <tom.preset srcdir="${examples.dir}"
-                destdir="${examples.gen}"
-                options="--genIntrospector --newtyper">
-      <include name="${example}/**/StrategyProblem.t"/>
+      destdir="${examples.gen}"
+      options="--newtyper">
+      <include name="${example}/**/Problem*"/>
+      <exclude name="${example}/**/StrategyProblem.t"/>
     </tom.preset>
     <tom.preset srcdir="${examples.dir}"
-                destdir="${examples.gen}"
-                options="--newtyper">
-      <include name="${example}/**/"/>
-      <exclude name="${example}/**/Problem*.t"/>
+      destdir="${examples.gen}"
+      options="--genIntrospector --newtyper">
+      <include name="${example}/**/StrategyProblem.t"/>
     </tom.preset>
+
     <javacompile/>
   </target>
   <property name="distribute" value="yes"/>

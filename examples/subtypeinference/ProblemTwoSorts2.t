@@ -147,8 +147,8 @@ public class ProblemTwoSorts2{
     B e = `g(g(b()));
     %match {
       f(_) << n -> { System.out.println("First rule: n = " + n); }
-      g(n) << e  && (n != b())-> { System.out.println("Second rule: n = " + `n); }
-      g(n) << e  && (n != b())-> { System.out.println("Third rule: n = " + n); }
+      //g(n) << e  && (n != b())-> { System.out.println("Second rule: n = " + `n); }
+      //g(n) << e  && (n != b())-> { System.out.println("Third rule: n = " + n); }
     }
   }
 }
