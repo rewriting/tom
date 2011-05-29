@@ -146,12 +146,22 @@ public class PrettyPrinterPlugin extends TomGenericPlugin {
       }
     }
 
+    visit Declaration {
+      x@EqualTermDecl[]-> {return `x;}
+      x@IsSortDecl[]-> {return `x;}
+    }
+
+    visit Expression {
+      x@IsSort[]-> {return `x;}
+    }
+
     visit BQTerm {
-      //BuildConstant[Options=concOption(_*,OriginTracking[Line=line, Column=column],_*),AstName=Name(name)] -> {theFormatter.stock(`name+ "depth= "+getEnvironment().depth(), `line, `column,2);}
+      x@BuildConstant[Options=concOption(_*,OriginTracking[Line=line, Column=column],_*),AstName=Name(name)] -> {theFormatter.stock("`"+`name, `line, `column-1,2); return `x;}
       //BQAppl[Options=concOption(_*,OriginTracking[Line=line, Column=column],_*),AstName=Name(name)] -> {theFormatter.stock(`name +"depth= "+getEnvironment().depth() ,`line, `column,2);}
-    //  x@BQVariable[Options=concOption(_*,OriginTracking[Line=line, Column=column],_*),AstName=Name(name)] -> {theFormatter.stock("`"+`name, `line,`column-1,1); return `x;}
+      x@BQVariable[Options=concOption(_*,OriginTracking[Line=line, Column=column],_*),AstName=Name(name)] -> {theFormatter.stock("`"+`name, `line,`column-1,2); return `x;}
       //BuildTerm[Options=concOption(_*, OriginTracking[Line=line, Column=column] ,_*), AstName=Name(name), Args=concBQTerm()] -> {compteur+=100;theFormatter.stock(`name+"()" +compteur,`line,`column,2);}
-    //  x@BuildTerm[Options=concOption(_*, OriginTracking[Line=line, Column=column] ,_*), AstName=Name(name)] -> {theFormatter.stock(generateBuildTerm(`x, `name, true),`line,`column-1,1); return `x;}
+      x@BuildTerm[Options=concOption(_*, OriginTracking[Line=line, Column=column] ,_*), AstName=Name(name)] -> {theFormatter.stock(generateBuildTerm(`x, `name, true),`line,`column-1,2); return `x;}
+      Composite(CompositeBQTerm(x@BuildConsArray[AstName=Name(name)])) -> {generateAndStockBuildConsArray(`x, "", 0, 0, `name);System.out.println("ZZZZZZZZZZZZZ"); return `x;}
 
 /*
       BuildTerm[Options=concOption(_*,OriginTracking[Line=line, Column=column],_*), AstName=Name(name), argList, myModuleName] -> {
@@ -209,19 +219,81 @@ public class PrettyPrinterPlugin extends TomGenericPlugin {
     boolean isNotFirst = false;
     %match(bq) {
 
-      BuildTerm[Args=concBQTerm(_*,Composite(CompositeBQTerm(bq@BuildTerm[AstName=Name(btName)])),_*)] -> {
+      BuildTerm[Args=concBQTerm(_*,Composite(comp@CompositeMember),_*)] -> {
+        if(isNotFirst) {
+          result+=",";
+        }
+        result+=generateComposite(`comp, isNotFirst);
+        isNotFirst = true;
+      }
+      /*BuildTerm[Args=concBQTerm(_*,Composite(CompositeBQTerm(bq@BuildTerm[AstName=Name(btName)])),_*)] -> {
        // System.out.println("Bla");
         if(isNotFirst) {
           result+=",";
         }
         result+=generateBuildTerm(`bq, `btName,false);
         isNotFirst = true;
-      }    
+      }
+
+      
+      BuildTerm[Args=concBQTerm(_*,Composite(CompositeTL(ITL(itl))),_*)] -> {
+       // System.out.println("Bla");
+        if(isNotFirst) {
+          result+=",";
+        }
+        result+=`itl;
+        //result+=generateBuildTerm(`bq, `btName,false);
+        isNotFirst = true;
+      }*/
+
     }
     result+=")";
-   // if (trunk) {
-   //   result+=";";
-   // }
+    
     return result;
+  }
+
+  public static String generateComposite(CompositeMember comp, boolean isNotFirst){
+  
+    String result="";
+    
+    %match(comp) {
+
+      CompositeBQTerm(bq@BuildTerm[Options=concOption(_*, OriginTracking[Line=line, Column=column] ,_*), AstName=Name(name)]) -> {
+        result+=generateBuildTerm(`bq, `name,false);
+      }
+      
+      CompositeTL(ITL(itl)) -> {
+        result+=`itl;
+      }
+
+      CompositeBQTerm(BuildEmptyList[AstName=Name(name)]) -> {
+        result+=`name+"()";
+      }
+
+    }
+
+    return result;
+  }
+
+  public static void generateAndStockBuildConsArray(BQTerm currentBca, String bcaSoFar, int line, int column, String bcaName){
+
+    boolean isLast=true;
+    String allBca=bcaSoFar;
+    %match(currentBca){
+    
+      BuildConsArray[HeadTerm=Composite(CompositeBQTerm(BuildTerm[Options=concOption(_*, OriginTracking[Line=line, Column=column] ,_*), AstName=Name(name)])),TailTerm=bca@BuildConsArray]->{
+    
+      isLast=false;
+      allBca=`name+"()"+","+bcaSoFar;
+      isLast=false;
+      generateAndStockBuildConsArray(`bca, allBca, `line, `column, bcaName);
+      }
+    }
+
+    if(isLast){
+
+      theFormatter.stock("`"+bcaName+"("+allBca+")",line-bcaName.length(),column,2);
+    }
+  
   }
 }
