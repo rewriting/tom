@@ -47,21 +47,31 @@ public class OutputFormatter{
     while (iteratorOnNode.hasNext()){
       aNode=iteratorOnNode.next();
       type=(aNode.getType()==1);
-      System.out.println(aNode.getBegin().getColumn());
-      this.write(aNode.getText(),aNode.getBegin().getLine(), aNode.getBegin().getColumn(),type);
-    }
+//      System.out.println(aNode.getBegin().getColumn());
+/*      if(aNode.getBegin().getLine() <= this.theCursor.getPosition().getLine()+1 && aNode.getBegin().getColumn() < this.theCursor.getPosition().getColumn()+1) {
+          System.out.println("Position curseur : "+(this.theCursor.getPosition().getLine()+1)+" et "+(this.theCursor.getPosition().getColumn()+1));
+          System.out.println("Position node : "+(aNode.getBegin().getLine())+" et "+(aNode.getBegin().getColumn())+"\n");
+          this.write(aNode.getText(),this.theCursor.getPosition().getLine()+1, this.theCursor.getPosition().getColumn()+1,type);
+      } else {
+        this.write(aNode.getText(),aNode.getBegin().getLine(), aNode.getBegin().getColumn(),type);
+      }*/
+     this.write(aNode.getText(),aNode.getBegin().getLine(), aNode.getBegin().getColumn(),type);   
+     }
     return theCursor.dump("./"+this.fileName);
   }
 
   public class Node {
   
     private PPTextPosition begin;
+//    private PPTextPosition end; //endPosition
     private int type;
     private String text;
 
     public Node (String txt, PPTextPosition b, int t) {
+//    public Node (String txt, PPTextPosition b, PPTextPosition e, int t) { //endPosition
       
       this.begin= b;
+//      this.end= e; //endPosition
       this.type= t;
       this.text= txt;
     } 
@@ -69,6 +79,9 @@ public class OutputFormatter{
     public PPTextPosition getBegin() {
       return this.begin;
     }
+/*    public PPTextPosition getEnd() { //endPosition
+      return this.end;
+    }*/
     public int getType() {
       return this.type;
     }

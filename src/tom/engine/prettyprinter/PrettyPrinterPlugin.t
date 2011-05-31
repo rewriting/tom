@@ -119,14 +119,16 @@ public class PrettyPrinterPlugin extends TomGenericPlugin {
   }
 
   private void prettyPrinter(Code code) throws IOException {
-    System.out.println("PrettyPrinter active");
+  //  System.out.println("PrettyPrinter active");
     FileWriter textFile = new FileWriter("code.txt");
+    FileWriter indente = new FileWriter("codeIndente.txt");
     textFile.write(code.toString());
     textFile.close();
     printTL(code);
     theFormatter.dump();
     System.out.println ("===========================================================");
     theFormatter.printAll();
+    tom.library.utils.Viewer.toTree(code, indente);
   }
   
   public static void printTL(Code code) {
@@ -146,12 +148,18 @@ public class PrettyPrinterPlugin extends TomGenericPlugin {
       }
     }
 
+    visit Declaration {
+
+      y@EqualTermDecl[] -> {return `y;}
+      y@IsSortDecl[] -> {return `y;}
+    }
+
     visit BQTerm {
-      //BuildConstant[Options=concOption(_*,OriginTracking[Line=line, Column=column],_*),AstName=Name(name)] -> {theFormatter.stock(`name+ "depth= "+getEnvironment().depth(), `line, `column,2);}
+      BuildConstant[Options=concOption(_*,OriginTracking[Line=line, Column=column],_*),AstName=Name(name)] -> {theFormatter.stock(`name+ "()", `line, `column,2);}
       //BQAppl[Options=concOption(_*,OriginTracking[Line=line, Column=column],_*),AstName=Name(name)] -> {theFormatter.stock(`name +"depth= "+getEnvironment().depth() ,`line, `column,2);}
-    //  x@BQVariable[Options=concOption(_*,OriginTracking[Line=line, Column=column],_*),AstName=Name(name)] -> {theFormatter.stock("`"+`name, `line,`column-1,1); return `x;}
+      x@BQVariable[Options=concOption(_*,OriginTracking[AstName=Name(name), Line=line, Column=column],_*)] -> {theFormatter.stock("`"+`name, `line,`column-1,1); return `x;} // -1 is due to character `
       //BuildTerm[Options=concOption(_*, OriginTracking[Line=line, Column=column] ,_*), AstName=Name(name), Args=concBQTerm()] -> {compteur+=100;theFormatter.stock(`name+"()" +compteur,`line,`column,2);}
-    //  x@BuildTerm[Options=concOption(_*, OriginTracking[Line=line, Column=column] ,_*), AstName=Name(name)] -> {theFormatter.stock(generateBuildTerm(`x, `name, true),`line,`column-1,1); return `x;}
+      x@BuildTerm[Options=concOption(_*, OriginTracking[Line=line, Column=column] ,_*), AstName=Name(name)] -> {theFormatter.stock(generateBuildTerm(`x, `name, true),`line,`column-1,1); return `x;}
 
 /*
       BuildTerm[Options=concOption(_*,OriginTracking[Line=line, Column=column],_*), AstName=Name(name), argList, myModuleName] -> {
