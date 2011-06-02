@@ -160,7 +160,7 @@ public class PrettyPrinterPlugin extends TomGenericPlugin {
     visit BQTerm {
       x@BuildConstant[Options=concOption(_*,OriginTracking[Line=line, Column=column],_*),AstName=Name(name)] -> {theFormatter.stock("`"+`name, `line, `column-1,2); return `x;}
       //BQAppl[Options=concOption(_*,OriginTracking[Line=line, Column=column],_*),AstName=Name(name)] -> {theFormatter.stock(`name +"depth= "+getEnvironment().depth() ,`line, `column,2);}
-      x@BQVariable[Options=concOption(_*,OriginTracking[Line=line, Column=column],_*),AstName=Name(name)] -> {theFormatter.stock("`"+`name, `line,`column-1,2); return `x;}
+      x@BQVariable[Options=concOption(_*,OriginTracking[Line=line, Column=column, AstName=Name(name)],_*)] -> {theFormatter.stock("`"+`name, `line,`column-1,2); return `x;}
       //BuildTerm[Options=concOption(_*, OriginTracking[Line=line, Column=column] ,_*), AstName=Name(name), Args=concBQTerm()] -> {compteur+=100;theFormatter.stock(`name+"()" +compteur,`line,`column,2);}
       x@BuildTerm[Options=concOption(_*, OriginTracking[Line=line, Column=column] ,_*), AstName=Name(name)] -> {theFormatter.stock(generateBuildTerm(`x, `name, true),`line,`column-1,2); return `x;}
       Composite(CompositeBQTerm(x@BuildConsArray[AstName=Name(name)])) -> {generateAndStockBuildConsArray(`x, "", 0, 0, `name);System.out.println("ZZZZZZZZZZZZZ"); return `x;}

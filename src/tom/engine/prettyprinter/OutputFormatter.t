@@ -54,8 +54,9 @@ public class OutputFormatter{
           this.write(aNode.getText(),this.theCursor.getPosition().getLine()+1, this.theCursor.getPosition().getColumn()+1,type);
       } else {
         this.write(aNode.getText(),aNode.getBegin().getLine(), aNode.getBegin().getColumn(),type);
-      }*/
-     this.write(aNode.getText(),aNode.getBegin().getLine(), aNode.getBegin().getColumn(),type);   
+      }i*/
+     this.write(aNode.getText(),aNode.getBegin().getLine(), aNode.getBegin().getColumn(),type);
+     System.out.println("Position début :"+aNode.getBegin().getLine()+" et "+aNode.getBegin().getColumn());
      }
     return theCursor.dump("./"+this.fileName);
   }
