@@ -794,7 +794,6 @@ public HostParser(ParserSharedInputState state) {
 		}
 		
 		Option ot = tom_make_OriginTracking(tom_make_Name("Backquote"),t.getLine(),currentFile);
-		//BQTerm bqTerm = tomparser.plainBQTerm();
 		BQTerm result = bqparser.beginBackquote();
 		//System.out.println("parse bqterm \n"+result);
 		
