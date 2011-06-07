@@ -1,3 +1,6 @@
+2011-06-07 pem
+ * added BQRecordAppl with `f[arg1=a()] syntax
+
 2011-05-24 pem
  * bootinstall
 
