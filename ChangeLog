@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 2011-06-10 pem
  * improved checker to detect circular references
@@ -14,9 +15,18 @@
    get_default(slotname) { ... }
    use the '_' sign in a backquote to denote a default-value
    example: `f(a(),_)
+=======
+2011-05-25 tavaresc
+ * NewKernelTyper: add a list with type variables occurring in pattern (to decide if all
+   "important" tom types were inferred.
+ * NewKernelTyper: separate phases of constraint resolution and eliminate
+   unnecessary rules. (except for normalization, all other phases reduces or
+   maintain the size of the constraint list).
+ * Revert to older version of Syntactic Propagator.
+>>>>>>> 8349bba91eabc0d461fc8beb44d71ac7e52e2c29
 
 2011-04-22 tavaresc
- * Fix collect of variables in NewKernelTyper (now the varList are correctly
+ * Fix collect of variables in NewKernelTyper (now the varList is correctly
    updated after call of strategy).
 
 2011-04-13 pem

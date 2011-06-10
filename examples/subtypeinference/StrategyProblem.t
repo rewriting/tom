@@ -142,12 +142,12 @@ public class StrategyProblem {
     A w = `g(b());
     %match {
       (y == a()) && (g(x) == g(b())) -> { System.out.println("Test 1!"); }
-      f(b()) << z -> { 
+      f(a()) << z -> { 
         System.out.println("Test 2!"); 
         A test = propagate(`g(b()));
         System.out.println("test = " + test); 
       }
-      g(x) << w && (f(b()) == createA(x)) -> { System.out.println("Test 3!"); }
+      g(x) << w && (f(a()) == createA(x)) -> { System.out.println("Test 3!"); }
     }
   }
 
@@ -169,7 +169,7 @@ public class StrategyProblem {
   %strategy testSubtype1() extends `Identity() {
     visit TomA {
       f(x) -> { return `g(x); }
-      g(x) -> { return `x; }
+      //g(x) -> { return `x; }
     }
   } 
 

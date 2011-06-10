@@ -331,16 +331,10 @@ visitInstruction [List<ConstraintInstruction> list, TomType rhsType] throws TomE
               }
 
               BQTerm subject;
-              if (getOptionBooleanValue("newtyper")) {
-                subject = `BQVariable(concOption(),Name("tom__arg"),rhsType);
-                constraint =
-                `AndConstraint(constraint,MatchConstraint(matchPatternList.get(0),subject,SymbolTable.TYPE_UNKNOWN));
-                //optionList = `concOption(option, OriginalText(Name(text.toString())));
-              } else {
+              
                 subject = `BQVariable(concOption(),Name("tom__arg"),rhsType);
                 constraint =
                   `AndConstraint(constraint,MatchConstraint(matchPatternList.get(0),subject,rhsType));
-              }
               
               //optionList = `concOption(option, OriginalText(Name(text.toString())));
 
