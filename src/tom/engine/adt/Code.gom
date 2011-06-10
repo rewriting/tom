@@ -2,6 +2,11 @@ module Code
 imports TomSignature TomName int
 abstract syntax
 
+TargetLanguage = TL(Code:String,Start:TextPosition,End:TextPosition)
+               | ITL(Code:String)
+               | Comment(Code:String)
+               | noTL()
+
 CodeList = concCode(Code*)
 Code =
      | TargetLanguageToCode(Tl:TargetLanguage)
