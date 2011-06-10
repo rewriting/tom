@@ -1,0 +1,31 @@
+import Truc.Bidule.*;
+
+// this is some random junk to test
+int a = 4;
+String matchconstruct = "%match"
+
+%match () {
+  toto -> { System.out.println("Hello, World !");}
+}
+
+System.out.println("This is no real code, you know");
+
+%typeterm TomType {
+  implement {int}
+  is_sort (bob) { Now another one like '%typeterm' }
+}
+
+
+/* and now match
+some TOM ! */
+%match () {
+  riri ->  { %match () {motif ->{ Un {au{{}tr}e} contenu ; } } System.out.println("Hello, World !");}
+  // mon préféré
+  fifi -> { 0 }
+  loulou -> { /* cas par defaut */ 1 }
+/* et
+ on est…
+à la fin */
+}
+
+

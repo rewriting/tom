@@ -59,7 +59,8 @@
 }
 
 /*
- * TopDownStopOnSuccess: perform a top-down and do not go under a node when a transformation is performed
+ * TopDownStopOnSuccess: perform a top-down and do not go under a node when a
+ * transformation is performed (i.e. something which is not a failure)
  * @param s1 a strategy that extends Fail
  */
 %op Strategy TopDownStopOnSuccess(s1:Strategy) {
@@ -67,7 +68,8 @@
 }
 
 /*
- * TopDownIdStopOnSuccess: perform a top-down and do not go under a node when a transformation is performed
+ * TopDownIdStopOnSuccess: perform a top-down and do not go under a node when a
+ * transformation (which is not identity) is performed
  * @param s1 a strategy that extends identity
  */
 %op Strategy TopDownIdStopOnSuccess(s1:Strategy) {

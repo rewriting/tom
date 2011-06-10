@@ -164,8 +164,8 @@ public class TomConstraintPrettyPrinter {
 
   public static String prettyPrint(Expression subject) {
     %match(subject) {
-      BQTermToExpression(astTerm) -> {
-        return prettyPrint(`astTerm);
+      BQTermToExpression(bqterm) -> {
+        return prettyPrint(`bqterm);
       }
 
       Cast(AstType,Source) -> {
@@ -272,6 +272,14 @@ public class TomConstraintPrettyPrinter {
 
   public static String prettyPrint(BQTerm subject) {
     %match(subject) {
+      BQVariable[AstName=name] -> {
+        return prettyPrint(`name);
+      }
+
+      BQVariableStar[AstName=name] -> {
+        return prettyPrint(`name) + "*";
+      }
+
       ExpressionToBQTerm(term) -> {
         return prettyPrint(`term);
       }

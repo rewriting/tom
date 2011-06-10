@@ -26,8 +26,16 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package typeinference;
 
-public class TestDoubleSubject{
+/*
+  A = a()
+    | f(num1:A)
+
+  B = b()
+    | g(num2:B)
+*/
+public class ExampleDoubleVariable {
 
   static class A {
     public A() {}
@@ -94,7 +102,7 @@ public class TestDoubleSubject{
   }
   
 // ------------------------------------------------------------
-  %typeterm TomA{
+  %typeterm TomA {
     implement { A }
     is_sort(t) { $t instanceof A }
     equals(t1,t2) { $t1.equals($t2) }
@@ -115,7 +123,7 @@ public class TestDoubleSubject{
   %op TomA f(num1:TomA) {
     is_fsym(t) { $t instanceof Javaf }
     make(t) { new Javaf($t) }
-    get_slot(num1,t) { ((Javaf)$t).num1 }
+    get_slot(num1,t) { ((Javaf)$t).getnum1() }
   }
 
   %op TomB b() {
@@ -126,19 +134,17 @@ public class TestDoubleSubject{
   %op TomB g(num2:TomB) {
     is_fsym(t) { $t instanceof Javag }
     make(t) { new Javag($t) }
-    get_slot(num2,t) { ((Javag)$t).num2 }
+    get_slot(num2,t) { ((Javag)$t).getnum2() }
   }
+
 // ------------------------------------------------------------
 
   public final static void main(String[] args) {
-    TestDoubleSubject toto = new TestDoubleSubject();
-    toto.print();
-  }
-
-  public void print() {
-    A e = `a();
+    B n = `g(b());
+    B e = `g(g(g(b())));
     %match {
-      f(e) << e -> { System.out.println("e first ligne = " + `e); }
+      g(n) << e  && (n != b())-> { System.out.println("First rule: n = " + `n); }
+      g(n) << e  && (n != b())-> { System.out.println("Second rule: n = " + n); }
     }
   }
 }

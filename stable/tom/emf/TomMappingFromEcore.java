@@ -26,6 +26,12 @@
 package tom.emf;
 
 import java.io.PrintStream;
+import java.io.File;
+import java.io.Writer;
+import java.io.BufferedWriter;
+import java.io.OutputStreamWriter;
+import java.io.FileOutputStream;
+
 import java.lang.reflect.TypeVariable;
 import java.util.AbstractCollection;
 import java.util.AbstractList;
@@ -67,11 +73,6 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 public class TomMappingFromEcore {
 
 /**
-* The program output
-*/
-private static final PrintStream out = System.out;
-
-/**
 * List of classes of which the list mappings are already been generated
 */
 private final static ArrayList<Class<?>> lists = new ArrayList<Class<?>>();
@@ -98,41 +99,48 @@ public static void main(String[] args) {
 * We may also add an --output <file> option
 */
 if(args.length < 1) {
-out.println("No argument has been given!");
-out.println("usage: emf-generate-mappings [options] <EPackageClassName>");
-out.println("options:");
-out.println("  -nt (allows to generate constructs with subtyping)");
-out.println("  any Java options");
+System.out.println("No argument has been given!");
+System.out.println("usage: emf-generate-mappings [options] <EPackageClassName>");
+System.out.println("options:");
+System.out.println("  -nt (allows to generate constructs with subtyping)");
+System.out.println("  any Java options");
 } else {
-String ePackageName = args[0];
+int initindex = 0;
+List<String> ePackageNameList = new ArrayList<String>();
+
 if (args[0].contentEquals("-nt")) {
-ePackageName = args[1];
+initindex = 1;
 useNewTyper = true;
 }
-out.println(
-"/*\n *\n * TOM - To One Matching Compiler\n *\n * Copyright (c) 2009-2011, INPL, INRIA\n * Nancy, France.\n *\n * This program is free software; you can redistribute it and/or modify\n * it under the terms of the GNU General Public License as published by\n * the Free Software Foundation; either version 2 of the License, or\n * (at your option) any later version.\n *\n * This program is distributed in the hope that it will be useful,\n * but WITHOUT ANY WARRANTY; without even the implied warranty of\n * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n * GNU General Public License for more details.\n *\n * You should have received a copy of the GNU General Public License\n * along with this program; if not, write to the Free Software\n * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA\n *\n *\n **/\n          ");
+for(int i=initindex;i<args.length;i++) {
+ePackageNameList.add(args[i]);
+}
+
 try {
-//extractFromEPackage((EPackage) Class.forName(args[0]).getField("eINSTANCE").get(null));
-extractFromEPackage((EPackage) Class.forName(ePackageName).getField("eINSTANCE").get(null));
-} catch(ClassNotFoundException e) {
-e.printStackTrace();
-} catch(IllegalArgumentException e) {
-e.printStackTrace();
-} catch(SecurityException e) {
-e.printStackTrace();
-} catch(IllegalAccessException e) {
-e.printStackTrace();
-} catch(NoSuchFieldException e) {
+for(int i=0;i<ePackageNameList.size();i++) {
+File output = new File(".",ePackageNameList.get(i)+".tom");
+Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output)));
+genLicence(writer);
+extractFromEPackage(writer, (EPackage) Class.forName(ePackageNameList.get(i)).getField("eINSTANCE").get(null));
+writer.flush();
+writer.close();
+}
+} catch (Exception e) {
 e.printStackTrace();
 }
 }
+}
+
+private static void genLicence(java.io.Writer writer) throws java.io.IOException {
+writer.write(
+"/*\n *\n * TOM - To One Matching Compiler\n *\n * Copyright (c) 2009-2011, INPL, INRIA\n * Nancy, France.\n *\n * This program is free software; you can redistribute it and/or modify\n * it under the terms of the GNU General Public License as published by\n * the Free Software Foundation; either version 2 of the License, or\n * (at your option) any later version.\n *\n * This program is distributed in the hope that it will be useful,\n * but WITHOUT ANY WARRANTY; without even the implied warranty of\n * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n * GNU General Public License for more details.\n *\n * You should have received a copy of the GNU General Public License\n * along with this program; if not, write to the Free Software\n * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA\n *\n *\n **/");
 }
 
 /**
 * Extract the type term from a classifier
 * @param eclf the classifier to extract
 */
-private static void extractType(EClassifier eclf) {
+private static void extractType(java.io.Writer writer, EClassifier eclf) throws java.io.IOException {
 Class<?> c = eclf.getInstanceClass();
 if(!types.containsKey(c)) {
 String n = c.getSimpleName();
@@ -146,11 +154,11 @@ is = String.valueOf(i);
 n = n + is;
 types.put(c, n);
 if(tomTypes.containsKey(c)) {
-out.println("%include { " + tomTypes.get(c) + ".tom }");
+writer.write("\n\n%include { " + tomTypes.get(c) + ".tom }");
 } else {
 String[] decl = getClassDeclarations(eclf); // [canonical name, anonymous generic, generic type]
-out.println(
-"\n%typeterm "+n+
+writer.write(
+"\n\n%typeterm "+n+
 " "+(useNewTyper?genSubtype(eclf):"")+
 " {\n  implement { "+(eclf instanceof EClass && !EObject.class.isAssignableFrom(c) ? "org.eclipse.emf.ecore.EObject" : decl[0] + decl[2])+
 " }\n  is_sort(t) { "+(c.isPrimitive() ? "true" : "$t instanceof " + decl[0] + decl[1])+
@@ -205,65 +213,17 @@ tomTypes.put(Vector.class, "util/types/Vector");
 tomTypes.put(WeakHashMap.class, "util/types/WeakHashMap");
 }
 
-/**
-* A list of java reserved keywords for variable naming
+/** A list of java reserved keywords for variable naming
 */
-private final static ArrayList<String> keywords = new ArrayList<String>();
-static {
-keywords.add("abstract");
-keywords.add("continue");
-keywords.add("for");
-keywords.add("new");
-keywords.add("switch");
-keywords.add("assert");
-keywords.add("default");
-keywords.add("goto");
-keywords.add("package");
-keywords.add("synchronized");
-keywords.add("boolean");
-keywords.add("do");
-keywords.add("if");
-keywords.add("private");
-keywords.add("this");
-keywords.add("break");
-keywords.add("double");
-keywords.add("implements");
-keywords.add("protected");
-keywords.add("throw");
-keywords.add("byte");
-keywords.add("else");
-keywords.add("import");
-keywords.add("public");
-keywords.add("throws");
-keywords.add("case");
-keywords.add("enum");
-keywords.add("instanceof");
-keywords.add("return");
-keywords.add("transient");
-keywords.add("catch");
-keywords.add("extends");
-keywords.add("int");
-keywords.add("short");
-keywords.add("try");
-keywords.add("char");
-keywords.add("final");
-keywords.add("interface");
-keywords.add("static");
-keywords.add("void");
-keywords.add("class");
-keywords.add("finally");
-keywords.add("long");
-keywords.add("strictfp");
-keywords.add("volatile");
-keywords.add("const");
-keywords.add("float");
-keywords.add("native");
-keywords.add("super");
-keywords.add("while");
-keywords.add("true");
-keywords.add("false");
-keywords.add("null");
-}
+private final static List<String> keywords = java.util.Arrays.asList(new
+String[] { "abstract", "continue", "for", "new", "switch", "assert",
+"default", "goto", "package", "synchronized", "boolean", "do", "if",
+"private", "this", "break", "double", "implements", "protected", "throw",
+"byte", "else", "import", "public", "throws", "case", "enum",
+"instanceof", "return", "transient", "catch", "extends", "int", "short",
+"try", "char", "final", "interface", "static", "void", "class", "finally",
+"long", "strictfp", "volatile", "const", "float", "native", "super",
+"while", "true", "false", "null" });
 
 /**
 * Return an array containing 3 strings from EClassifer :
@@ -308,11 +268,21 @@ return new String[] { cn, ca.toString(), cb.toString() };
 }
 
 /**
+* Return type of a EStructuralFeature
+* @param sf EStructuralFeature to return type
+* @return type of sf
+*/
+private static String getType(EStructuralFeature sf) throws java.io.IOException {
+Class<?> c = sf.getEType().getInstanceClass();
+return types.get(c);
+}
+
+/**
 * Return type of a EStructuralFeature and generate his list mapping if he is many
 * @param sf EStructuralFeature to return type
 * @return type of sf
 */
-private static String getType(EStructuralFeature sf) {
+private static String getType(java.io.Writer writer, EStructuralFeature sf) throws java.io.IOException {
 
 Class<?> c = sf.getEType().getInstanceClass();
 String simplename = types.get(c);
@@ -326,8 +296,8 @@ String[] decl = getClassDeclarations(sf.getEType()); // [canonical name, anonymo
 String inst = (EObject.class.isAssignableFrom(sf.getEType()
 .getInstanceClass()) ? decl[0] + decl[2] : "org.eclipse.emf.ecore.EObject");
 
-out.println(
-"\n%typeterm "+name+
+writer.write(
+"\n\n%typeterm "+name+
 " {\n  implement { org.eclipse.emf.common.util.EList<"+inst+
 "> }\n  is_sort(t) { $t instanceof org.eclipse.emf.common.util.EList<?> && (((org.eclipse.emf.common.util.EList<"+inst+
 ">)$t).size() == 0 || (((org.eclipse.emf.common.util.EList<"+inst+
@@ -351,12 +321,13 @@ return name;
 * Generate classifiers and subpackages mappings of a package
 * @param p EPackage to extract
 */
-private static void extractFromEPackage(EPackage p) {
+private static void extractFromEPackage(java.io.Writer writer, EPackage p) throws java.io.IOException {
 for(EClassifier eclf : p.getEClassifiers()) {
-extractFromEClassifier(eclf);
+//System.out.println("(DEBUG) EClassifier.default = " + eclf.getName() + " / " + eclf.getDefaultValue());
+extractFromEClassifier(writer,eclf);
 }
 for(EPackage ep : p.getESubpackages()) {
-extractFromEPackage(ep);
+extractFromEPackage(writer,ep);
 }
 }
 
@@ -432,12 +403,36 @@ return name.substring(0, 1).toUpperCase() + name.substring(1);
 }
 
 /**
+* Generate get_default constructs
+* @param esf the EStructuralFeature which has a default value
+* @return get_default construct
+*/
+private static String genGetDefault(EStructuralFeature esf) throws java.io.IOException {
+String result = "";
+String dvalue = ""+esf.getDefaultValue();
+String esftype = getType(esf);
+
+// cases : null, String, `toto(), builtin
+if (esftype.equals("String")) {
+dvalue = "\"" + dvalue + "\"";
+} else if (esftype.equals("boolean") || esftype.equals("int") ||
+esftype.equals("float") || esftype.equals("double") || 
+esftype.equals("long") ) {
+//nothing
+//dvalue = sf.getDefaultValue();
+} else {
+dvalue = "`" + dvalue + "()";
+}
+return result+"\n  get_default("+esf.getName()+") { "+dvalue+" }";
+}
+
+/**
 * Generate classifier mapping
 * @param eclf classifier to extract
 */
-private static void extractFromEClassifier(EClassifier eclf) {
+private static void extractFromEClassifier(java.io.Writer writer, EClassifier eclf) throws java.io.IOException {
 if(!classifiers.contains(eclf)) {
-extractType(eclf);
+extractType(writer,eclf);
 classifiers.add(eclf);
 if(eclf instanceof EClass) {
 EClass ecl = (EClass) eclf;
@@ -447,15 +442,16 @@ StringBuffer s_types2 = new StringBuffer();
 StringBuffer s = new StringBuffer();
 StringBuffer s2 = new StringBuffer();
 StringBuffer s_gets = new StringBuffer();
+StringBuffer s_defaults = new StringBuffer();
 for(EStructuralFeature sf : sfs) {
 if(sf.isChangeable()) {
-extractFromEClassifier(sf.getEType());
+extractFromEClassifier(writer, sf.getEType());
 EClassifier type = sf.getEType();
 String sfname = (keywords.contains(sf.getName()) ? "_" : "")
 + sf.getName();
-s_types.append(sfname + " : " + getType(sf) + ", ");
+s_types.append(sfname + " : " + getType(writer,sf) + ", ");
 String[] decl = getClassDeclarations(type); // [canonical name, anonymous generic, generic type]
-System.out.println("");
+writer.write("");
 s_types2.append(", "
 + (sf.isMany() ? "org.eclipse.emf.common.util.EList<" + decl[0] + decl[2] + ">" : decl[0] + decl[2])
 + " " + sfname);
@@ -470,9 +466,12 @@ na = "org.eclipse.emf.ecore.EObject";
 if(sf.isMany()) {
 na = "org.eclipse.emf.common.util.EList<" + na + ">";
 }
-s_gets.append("\n  get_slot(" + sfname + ", t)  { (" + na
+s_gets.append("\n  get_slot(" + sfname + ", t) { (" + na
 + ")$t.eGet($t.eClass().getEStructuralFeature(\"" + sf.getName()
 + "\")) }");
+if (sf.getDefaultValue()!=null) {
+s_defaults.append(genGetDefault(sf));
+}
 }
 }
 if(s_types.length() >= 2) {
@@ -486,12 +485,13 @@ String o1 = ecl.getEPackage().getEFactoryInstance().getClass()
 .getInterfaces().length - 1].getCanonicalName();
 String o2 = ecl.getEPackage().getClass().getInterfaces()[ecl.getEPackage().getClass().getInterfaces().length - 1]
 .getCanonicalName();
-out.print(
-"%op "+ecl.getInstanceClass().getSimpleName()+
+writer.write(
+"\n\n%op "+ecl.getInstanceClass().getSimpleName()+
 " "+cr+
 "("+s_types+
 ") {\n  is_fsym(t) { $t instanceof "+(decl[0]+decl[1])+
 " }"+s_gets+
+" "+s_defaults+
 "\n  make("+(s.length() <= 2 ? "" : s.substring(2))+
 ") { construct"+cr+
 "(("+(EObject.class.isAssignableFrom(ecl.getInstanceClass()) ? ecl.getInstanceClass().getCanonicalName() : "org.eclipse.emf.ecore.EObject")+
@@ -500,7 +500,7 @@ out.print(
 ".eINSTANCE.getEClassifier(\""+ecl.getName()+
 "\")), new Object[]{ "+(s2.length() <= 2 ? "" : s2.substring(2))+
 " }) }\n}\n\npublic static <O extends org.eclipse.emf.ecore.EObject> O construct"+cr+
-"(O o, Object[] objs) {\n  int i=0;\n  EList<EStructuralFeature> sfes = o.eClass().getEAllStructuralFeatures();\n  for(EStructuralFeature esf : sfes) {\n    if(esf.isChangeable()) {\n      o.eSet(esf, objs[i]);\n      i++;\n    }\n  }\n  return o;\n}\n              ");
+"(O o, Object[] objs) {\n  int i=0;\n  EList<EStructuralFeature> sfes = o.eClass().getEAllStructuralFeatures();\n  for(EStructuralFeature esf : sfes) {\n    if(esf.isChangeable()) {\n      o.eSet(esf, objs[i]);\n      i++;\n    }\n  }\n  return o;\n}");
 }
 } else if(eclf instanceof EEnum) {
 EEnum en = (EEnum) eclf;
@@ -514,8 +514,8 @@ String o2 = eclf.getEPackage().getClass().getInterfaces()[eclf
 .getEPackage().getClass().getInterfaces().length - 1]
 .getCanonicalName();
 
-out.println(
-"\n%op "+cr+
+writer.write(
+"\n\n%op "+cr+
 " "+lit.getLiteral()+
 "() {\n  is_fsym(t) { t == "+(decl[0]+decl[1])+
 ".get(\""+lit.getLiteral()+
@@ -528,7 +528,6 @@ out.println(
 }
 }
 }
-
 }
 
 }

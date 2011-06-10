@@ -106,7 +106,8 @@ output.writeln(");");
 protected void buildExpEqualTerm(int deep, TomType type, BQTerm begin, TomTerm end, String moduleName) throws IOException {
 String sType = TomBase.getTomType(type);    
 String template = getSymbolTable(moduleName).getEqualTerm(sType);
-if(instantiateTemplate(deep,template,
+String opname = "";
+if(instantiateTemplate(deep,template,opname,
  tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make(begin, tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make(TomBase.convertFromVarToBQVar(end), tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() ) ) ,moduleName) == false) {
 // if the type is null, it means that this is from Java
 if(sType == null || getSymbolTable(moduleName).isUnknownType(sType) || getSymbolTable(moduleName).isBooleanType(sType)) {
@@ -128,7 +129,8 @@ output.write(")");
 protected void buildExpEqualBQTerm(int deep, TomType type, BQTerm begin, BQTerm end, String moduleName) throws IOException {
 String sType = TomBase.getTomType(type);    
 String template = getSymbolTable(moduleName).getEqualTerm(sType);
-if(instantiateTemplate(deep,template,
+String opname = "";
+if(instantiateTemplate(deep,template,opname,
  tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make(begin, tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make(end, tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() ) ) ,moduleName) == false) {
 // if the type is null, it means that this is from Java
 if(sType == null || getSymbolTable(moduleName).isUnknownType(sType) || getSymbolTable(moduleName).isBooleanType(sType)) {

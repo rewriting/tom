@@ -40,6 +40,7 @@ import tom.platform.adt.platformoption.types.PlatformOptionList;
 import aterm.ATerm;
 import tom.engine.tools.ASTFactory;
 import tom.engine.tools.SymbolTable;
+import tom.engine.tools.TomConstraintPrettyPrinter;
 
 import tom.engine.adt.tomsignature.*;
 import tom.engine.adt.tomsignature.types.*;
@@ -588,6 +589,7 @@ matchblock:{
    * 3. Verifies that in an OrConstraint, all the members have the same free variables
    */
   private void verifyMatch(ConstraintInstructionList constraintInstructionList, OptionList optionList) throws VisitFailure {
+
     setCurrentTomStructureOrgTrack(TomBase.findOriginTracking(optionList));
     Collection<Constraint> constraints = new HashSet<Constraint>();    
     Map<TomName, Collection<TomName>> varRelationsMap = new HashMap<TomName, Collection<TomName>>();
@@ -602,6 +604,10 @@ matchLbl: %match(constr) {// TODO : add something to test the astType
               `TopDownCollect(CollectVariables(patternVars)).visitLight(`pattern);
               `TopDownCollect(CollectVariables(subjectVars)).visitLight(`subject);
               computeDependencies(varRelationsMap,patternVars,subjectVars);
+
+              //System.out.println("varRelationsMap: " + varRelationsMap);
+              //System.out.println("patternVars: " + patternVars);
+              //System.out.println("subjectVars: " + subjectVars);
 
               if(`astType == SymbolTable.TYPE_UNKNOWN) {
 
@@ -708,7 +714,7 @@ matchLbl: %match(constr) {// TODO : add something to test the astType
   /**
    * Puts all the variables in the list patternVars in relation with all the variables in subjectVars
    */
-  private void computeDependencies(Map<TomName, Collection<TomName>> varRelationsMap, Collection<TomName> patternVars, Collection<TomName> subjectVars){      
+  private void computeDependencies(Map<TomName, Collection<TomName>> varRelationsMap, Collection<TomName> patternVars, Collection<TomName> subjectVars) {
     for(TomName x:patternVars) {      
       if(!varRelationsMap.keySet().contains(x)) {
         varRelationsMap.put(x,subjectVars);
@@ -881,6 +887,14 @@ matchLbl: %match(constr) {// TODO : add something to test the astType
   %strategy CollectVariables(Collection varList) extends Identity() {     
     visit TomTerm {
       (Variable|VariableStar)[AstName=name] -> {        
+        if(!varList.contains(`name)) {
+          varList.add(`name); 
+        }
+        throw new VisitFailure();// to stop the top-down
+      }
+    }
+    visit BQTerm {
+      (BQVariable|BQVariableStar)[AstName=name] -> {        
         if(!varList.contains(`name)) {
           varList.add(`name); 
         }
@@ -1089,6 +1103,7 @@ matchL:  %match(subject,s) {
     // Analyse the term if type != null
     //if(type != null) {
       // the type is known and found in the match signature
+    // 'type' may be null
       validateTerm(`term, type, false, true);
     //}
   }
@@ -1378,7 +1393,7 @@ matchblock:{
       TomType expectedType, String fileName, int decLine, boolean topLevel) {
     if(symbolNameList.length()==1) { // Valid but has it a good type?
       String res = symbolNameList.getHeadconcTomName().getString();
-      TomSymbol symbol =  getSymbolFromName(res);
+      TomSymbol symbol = getSymbolFromName(res);
       if (symbol == null ) { // this correspond to: unknown[]
         // it is not correct to use Record with unknown symbols
         TomMessage.error(getLogger(),fileName,decLine, TomMessage.unknownSymbol, res);

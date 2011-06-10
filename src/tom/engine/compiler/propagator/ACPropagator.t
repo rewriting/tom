@@ -91,7 +91,7 @@ public class ACPropagator implements IBasePropagator {
    */
   %strategy RemoveNonVariableStar(acp: ACPropagator) extends Identity() {
     visit Constraint {
-      MatchConstraint[Pattern=pattern@RecordAppl[
+      MatchConstraint[Pattern=RecordAppl[
           Options=optWithAC@concOption(T1*,MatchingTheory(concElementaryTheory(T2*,AC(),T3*)),T4*),
           NameList=namelist@concTomName(Name(tomName)),
           Slots=slots],Subject=subject,AstType=aType] -> {
@@ -106,11 +106,6 @@ public class ACPropagator implements IBasePropagator {
             /*System.out.println("slot: " + `slot);*/
 
             //generate f(X1*, slot, X2*) << s and modify s <- f(X1*,X2*)
-            //TomType listType = acp.getCompiler().getTermTypeFromTerm(`pattern);
-            //BQTerm X1 = acp.getCompiler().getFreshVariableStar(listType);			
-            //BQTerm X2 = acp.getCompiler().getFreshVariableStar(listType);
-            //BQTerm X3 = acp.getCompiler().getFreshVariableStar(listType);
-
             BQTerm X1 = acp.getCompiler().getFreshVariableStar(`aType);			
             BQTerm X2 = acp.getCompiler().getFreshVariableStar(`aType);
             BQTerm X3 = acp.getCompiler().getFreshVariableStar(`aType);

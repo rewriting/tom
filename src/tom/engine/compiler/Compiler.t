@@ -180,17 +180,16 @@ public class Compiler extends TomGenericPlugin {
       getCompilerEnvironment().setSymbolTable(getStreamManager().getSymbolTable());
 
       Code code = (Code)getWorkingTerm();
+      // add the additional functions needed by the AC operators
       code = addACFunctions(code);      
+
 
       // we use TopDown and not TopDownIdStopOnSuccess to compile nested-match
       Code compiledTerm = `TopDown(CompileMatch(this)).visitLight(code);
 
-      //DEBUG System.out.println("compiledTerm = \n" + compiledTerm);            
+      //System.out.println("compiledTerm = \n" + compiledTerm);            
       Collection hashSet = new HashSet();
       Code renamedTerm = `TopDownIdStopOnSuccess(findRenameVariable(hashSet)).visitLight(compiledTerm);
-      //DEBUG System.out.println("\nCode after compilateur = \n" + renamedTerm);
-      // add the additional functions needed by the AC operators
-      //renamedTerm = addACFunctions(renamedTerm);      
       setWorkingTerm(renamedTerm);
       if(intermediate) {
         Tools.generateOutput(getStreamManager().getOutputFileName() + COMPILED_SUFFIX, renamedTerm);

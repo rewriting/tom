@@ -437,6 +437,15 @@ public class BackendPlugin extends TomGenericPlugin {
         }
       }
 
+      GetDefaultDecl[AstName=Name(opname),SlotName=Name(slotName),Expr=Code(code)] -> {
+        try {
+          String moduleName = stack.peek();
+          bp.getSymbolTable(moduleName).putGetDefault(`opname,`slotName,`code);
+        } catch (EmptyStackException e) {
+          System.out.println("No moduleName in stack");
+        }
+      }
+
       GetHeadDecl[Opname=Name(opname),Expr=Code(code)] -> {
         try {
           String moduleName = stack.peek();
