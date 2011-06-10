@@ -384,7 +384,7 @@ public class ExpanderPlugin extends TomGenericPlugin {
                           int arity = TomBase.getArity(symbol);
                           BQTermList slots = `concBQTerm();
                           PairNameDeclList pairNameDeclList = symbol.getPairNameDeclList();
-                          for(int i=0; i< arity; i++) {
+                          for(int i=0; i<arity; i++) {
                             PairNameDecl pairNameDecl = pairNameDeclList.getHeadconcPairNameDecl();
                             Declaration decl = pairNameDecl.getSlotDecl();
                             TomType slotType = TomBase.getSlotType(symbol,TomBase.getSlotName(symbol,i));

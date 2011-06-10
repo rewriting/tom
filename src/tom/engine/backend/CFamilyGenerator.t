@@ -84,7 +84,8 @@ public abstract class CFamilyGenerator extends GenericGenerator {
   protected void buildExpEqualTerm(int deep, TomType type, BQTerm begin, TomTerm end, String moduleName) throws IOException {
     String sType = TomBase.getTomType(type);    
     String template = getSymbolTable(moduleName).getEqualTerm(sType);
-    if(instantiateTemplate(deep,template,`concBQTerm(begin,TomBase.convertFromVarToBQVar(end)),moduleName) == false) {
+    String opname = "";
+    if(instantiateTemplate(deep,template,opname,`concBQTerm(begin,TomBase.convertFromVarToBQVar(end)),moduleName) == false) {
       // if the type is null, it means that this is from Java
       if(sType == null || getSymbolTable(moduleName).isUnknownType(sType) || getSymbolTable(moduleName).isBooleanType(sType)) {
         output.write("(");
@@ -105,7 +106,8 @@ public abstract class CFamilyGenerator extends GenericGenerator {
   protected void buildExpEqualBQTerm(int deep, TomType type, BQTerm begin, BQTerm end, String moduleName) throws IOException {
     String sType = TomBase.getTomType(type);    
     String template = getSymbolTable(moduleName).getEqualTerm(sType);
-    if(instantiateTemplate(deep,template,`concBQTerm(begin,end),moduleName) == false) {
+    String opname = "";
+    if(instantiateTemplate(deep,template,opname,`concBQTerm(begin,end),moduleName) == false) {
       // if the type is null, it means that this is from Java
       if(sType == null || getSymbolTable(moduleName).isUnknownType(sType) || getSymbolTable(moduleName).isBooleanType(sType)) {
         output.write("(");

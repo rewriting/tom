@@ -5,5 +5,7 @@ abstract syntax
 
 Slot = PairSlotAppl(SlotName:TomName,Appl:TomTerm)
 SlotList = concSlot(Slot*)
+BQSlot = PairSlotBQTerm(SlotName:TomName,Bqterm:BQTerm)
+BQSlotList = concBQSlot(BQSlot*)
 PairNameDecl = PairNameDecl(SlotName:TomName,SlotDecl:Declaration)
 PairNameDeclList = concPairNameDecl(PairNameDecl*)

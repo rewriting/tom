@@ -172,7 +172,7 @@ public class TyperPlugin extends TomGenericPlugin {
         System.out.println("should not be there");
       }
       //System.out.println("symbol = " + tomSymbol);
-      getStreamManager().getSymbolTable().putSymbol(tomName,tomSymbol);
+      getSymbolTable().putSymbol(tomName,tomSymbol);
     }
   }
 
