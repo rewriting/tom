@@ -27,6 +27,7 @@ The compiler is composed of several plugins, which are executed in the following
     replaces  _  by a fresh variable _* by a fresh varstar 
     replaces 'TermAppl' by its 'RecordAppl' form
     replaces 'XMLAppl' by its 'RecordAppl' form
+    replaces 'BQRecordAppl' by its 'BQTermAppl' form
 
 - Transformer
 

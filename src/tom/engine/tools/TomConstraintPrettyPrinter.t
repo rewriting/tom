@@ -165,6 +165,10 @@ public class TomConstraintPrettyPrinter {
 
   public static String prettyPrint(Expression subject) {
     %match(subject) {
+      BQTermToExpression(bqterm) -> {
+        return prettyPrint(`bqterm);
+      }
+
       Cast(AstType,Source) -> {
         return "("+prettyPrint(`AstType)+") "+ prettyPrint(`Source); 
       }
@@ -269,6 +273,14 @@ public class TomConstraintPrettyPrinter {
 
   public static String prettyPrint(BQTerm subject) {
     %match(subject) {
+      BQVariable[AstName=name] -> {
+        return prettyPrint(`name);
+      }
+
+      BQVariableStar[AstName=name] -> {
+        return prettyPrint(`name) + "*";
+      }
+
       ExpressionToBQTerm(term) -> {
         return prettyPrint(`term);
       }
@@ -295,6 +307,16 @@ public class TomConstraintPrettyPrinter {
 
       VariableHeadArray(Opname,Subject,BeginIndex,EndIndex) -> {
         return "VariableHeadArray("+prettyPrint(`Opname)+","+prettyPrint(`Subject)+","+prettyPrint(`BeginIndex)+","+prettyPrint(`EndIndex)+")";
+      }
+
+      BuildEmptyList(name) -> {
+        return prettyPrint(`name) + "()";
+      }
+      BuildConsList(name,head,tail) -> {
+        return prettyPrint(`name) + "(" + prettyPrint(`head) + "," + prettyPrint(`tail) + ")";
+      }
+      BuildAppendList(name,head,tail) -> {
+        return prettyPrint(`name) + "(" + prettyPrint(`tail) + "," + prettyPrint(`head) + ")";
       }
     }
     return subject.toString();

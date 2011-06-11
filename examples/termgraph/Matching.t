@@ -103,7 +103,8 @@ public class Matching {
         int [] destarray = dest.toIntArray(); 
         Pos destconc = `conc();
         for (int k=0; k<dest.length();k++) {
-          destconc = `conc(destconc*,destarray[k]);
+          int tmp=destarray[k];
+          destconc = `conc(destconc*,tmp);
         }
         return `Solve(And(X*,Match(t,refTerm,omega,destconc),Y*),And(context,m));
       }
