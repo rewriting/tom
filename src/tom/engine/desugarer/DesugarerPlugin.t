@@ -112,6 +112,8 @@ public class DesugarerPlugin extends TomGenericPlugin {
       // replace TermAppl and XmlAppl by RecordAppl
       code = `TopDownIdStopOnSuccess(replaceXMLApplTomSyntax(this)).visitLight(code);
       code = `TopDownIdStopOnSuccess(replaceTermApplTomSyntax(this)).visitLight(code);
+      // replace BQRecordAppl by BQTermAppl
+      code = `TopDown(replaceBQRecordApplTomSyntax(this)).visitLight(code);
 
       setWorkingTerm(code);      
 
@@ -147,6 +149,7 @@ public class DesugarerPlugin extends TomGenericPlugin {
    * this is performed by recursively traversing each symbol
    * - default IsFsymDecl and MakeDecl are added
    * - TermAppl are transformed into RecordAppl
+   * - BQRecordAppl are transformed into BQAppl
    */
   public void updateSymbolTable() {
     for(String tomName:getSymbolTable().keySymbolIterable()) {
@@ -163,6 +166,7 @@ public class DesugarerPlugin extends TomGenericPlugin {
       }
       try {
         tomSymbol = `TopDownIdStopOnSuccess(replaceTermApplTomSyntax(this)).visitLight(tomSymbol);
+        tomSymbol = `TopDown(replaceBQRecordApplTomSyntax(this)).visitLight(tomSymbol);
       } catch(tom.library.sl.VisitFailure e) {
         System.out.println("should not be there");
       }
@@ -231,6 +235,19 @@ public class DesugarerPlugin extends TomGenericPlugin {
       XMLAppl[Options=optionList,NameList=nameList,AttrList=list1,ChildList=list2,Constraints=constraints] -> {
         //System.out.println("replaceXML in:\n" + `subject);
         return desugarer.replaceXMLAppl(`optionList, `nameList, `list1, `list2,`constraints);
+      }
+    }
+  }
+  
+  /**
+   * The 'replaceBQRecordApplTomSyntax' phase replaces:
+   * - each 'BQRecordAppl' by its BQTermAppl form:
+   *    BQDefault are added
+   */
+  %strategy replaceBQRecordApplTomSyntax(desugarer:DesugarerPlugin) extends Identity() {
+    visit BQTerm {
+      BQRecordAppl[Options=optionList,AstName=symbolName,Slots=slots] -> {
+        return desugarer.replaceBQRecordAppl(`optionList,`symbolName,`slots);
       }
     }
   }
@@ -455,5 +472,34 @@ matchBlock:
     System.out.println("Warning: no OriginTracking information");
     return `concOption();
   }
-    
+
+  /**
+   * Replace 'BQRecordAppl' by its 'BQTermAppl' form
+   * BQDefault are automatically added
+   */
+  protected BQTerm replaceBQRecordAppl(OptionList option, TomName symbolName, BQSlotList slots) {
+    String opName = symbolName.getString();
+    TomSymbol tomSymbol = getSymbolFromName(opName);
+
+    //System.out.println("replaceBQRecordAppl: " + tomSymbol);
+    int arity = TomBase.getArity(tomSymbol);
+    //System.out.println("arity: " + arity);
+    ArrayList<BQTerm> termArray = new ArrayList<BQTerm>(arity);
+    for(int i=0; i<arity ; i++) {
+      termArray.add(`Composite(CompositeBQTerm(BQDefault())));
+    }
+    for(BQSlot slot:slots.getCollectionconcBQSlot()) {
+      %match(slot) {
+        PairSlotBQTerm(slotName,bqterm) -> {
+          int slotIndex = TomBase.getSlotIndex(tomSymbol,`slotName);
+          //System.out.println("termArray.size(): " + termArray.size());
+          //System.out.println("slotName: " + `slotName);
+          //System.out.println("slotIndex: " + slotIndex);
+          termArray.set(slotIndex,`bqterm);
+        }
+      }
+    }
+    //System.out.println("argList = " +  `ASTFactory.makeBQTermList(termArray));
+    return `BQAppl(option,symbolName,ASTFactory.makeBQTermList(termArray));
+  }    
 }

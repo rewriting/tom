@@ -2,6 +2,7 @@
 <project name="islandgrammar" default="compile" basedir=".">
 	<property environment="env"/>
 	<property name="tom.home" value="${env.TOM_HOME}"/>
+	<property name="tom.classpath" value="${env.TOM_CLASSPATH}"/>
 	<property name="islgram" value="."/>
 	<property name="antlrjar" value="${tom.home}/src/lib/tools/antlr-3.2.jar"/>
 	<property name="withAntlr" value="${antlrjar}:${env.CLASSPATH}"/>
@@ -9,15 +10,30 @@
 	<property name="build" value="${islgram}/build"/>
 	<property name="input" value="${islgram}/input"/>
 	<property name="tomgram" value="miniTom"/>
-	<property name="comgram" value="Comment"/>
 	<property name="tomfile" value="${src}/${tomgram}.g"/>
 	<property name="comfile" value="${src}/${comgram}.g"/>
+
+  <import file="${tom.home}/lib/tom-common.xml"/>
+
+  <target name="debug">
+    <echo message="${tom.classpath}"/>
+    <echo message="${tom.classpath}"/>
+    <echo message="${tom.home}"/>
+    <echo message="${withAntlr}"/>
+    <echo message="${tom.home}/lib/tom-common.xml"/>
+    <echo message="${gomconfigfile}"/>
+  </target>
 	<target name="grammar">
 		<java classname="org.antlr.Tool" classpath="${withAntlr}">
 			<arg value="${tomfile}"/>
 			<!--arg value="${comfile}"/-->
 		</java>
 	</target>
+  <target name="gom">
+    <gom config="${gomconfigfile}" srcdir="${src}" package="ast" destdir="${build}">
+      <include name="${tomgram}.gom"/>
+    </gom>
+  </target>
 	<target name="compile" depends="grammar">
 		<mkdir dir="${build}"/>
 		<javac srcdir="${src}" destdir="${build}" classpath="${withAntlr}" includeantruntime="false"/>
@@ -34,6 +50,7 @@
 	</target>
 	<target name="clean">
 		<delete dir="${build}"/>
+		<delete dir="${tomgram}"/>
 		<delete file="${islgram}/${tomgram}.tokens"/>
 		<delete file="${islgram}/${comgram}.tokens"/>
 		<delete file="${src}/${tomgram}Parser.java"/>
