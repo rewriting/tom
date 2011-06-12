@@ -9,6 +9,7 @@
       options="--newtyper">
       <include name="${example}/**/Example*"/>
       <exclude name="${example}/**/ExampleJavaType.t"/>
+      <exclude name="${example}/**/ExampleAU.t"/>
     </tom.preset>
     <javacompile/>
   </target>

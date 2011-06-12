@@ -29,7 +29,6 @@
 package typeinference;
 
 import typeinference.examplestrategy.examplestrategy.types.*;
-import java.util.*;
 import tom.library.sl.*;
 
 public class ExampleStrategy{
@@ -44,7 +43,7 @@ public class ExampleStrategy{
     Expr = Var(name:String) 
          | Cst(val:int) 
          | Let(name:String, e:Expr, body:Expr) 
-         | Test(x:Term)
+         | If(x:Term)
 
     Term = a() | b()
   }
@@ -55,13 +54,13 @@ public class ExampleStrategy{
     Expr new_p1 = propagate(p1);
     System.out.println(new_p1);
 
-		Expr p2 = `Test(a());
+		Expr p2 = `If(a());
     propagate(p2);
   }
   
   public final static void main(String[] args) {
-    ExampleStrategy test = new ExampleStrategy();
-    test.run();
+    ExampleStrategy ex = new ExampleStrategy();
+    ex.run();
   }
 
 	public Expr propagate(Expr expr) {
@@ -79,7 +78,7 @@ public class ExampleStrategy{
     }
 
     visit Term {
-      a() -> { System.out.println("Test!!"); }
+      a() -> { System.out.println("If!!"); }
     }
   }
 }
