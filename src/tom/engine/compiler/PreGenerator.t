@@ -37,6 +37,7 @@ import tom.engine.adt.tomconstraint.types.*;
 import tom.engine.adt.tomconstraint.types.constraint.*;
 import tom.engine.adt.tomexpression.types.*;
 import tom.engine.tools.SymbolTable;
+import tom.engine.tools.TomConstraintPrettyPrinter;
 import tom.engine.compiler.generator.*;
 import tom.engine.exception.TomRuntimeException;
 import tom.engine.adt.tomsignature.types.*;
