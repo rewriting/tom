@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the typeinference example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <property name="example" value="typeinference"/>
+
+  <target name="build" depends="init">
+    <tom.preset srcdir="${examples.dir}"
+      destdir="${examples.gen}"
+      options="--newtyper">
+      <include name="${example}/**/Example*"/>
+      <exclude name="${example}/**/ExampleJavaType.t"/>
+    </tom.preset>
+    <javacompile/>
+  </target>
+  <property name="distribute" value="yes"/>
+</project>
