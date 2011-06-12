@@ -17,10 +17,14 @@ tokens {
 }
 
 @parser::header {
+package newparser;
+
 import org.antlr.runtime.tree.*;
 }
 
 @lexer::header {
+package newparser;
+
 import java.util.Queue;
 import java.util.LinkedList;
 import org.antlr.runtime.tree.*;
