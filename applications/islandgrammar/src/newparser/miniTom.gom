@@ -1,4 +1,4 @@
-module miniTom
+module newparser.miniTom
 imports String
 abstract syntax
 
