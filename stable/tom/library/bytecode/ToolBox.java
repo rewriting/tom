@@ -344,8 +344,9 @@ AccessList list =
 
 for(int i = 0; i < accessFlags.length; i++) {
 if((access & accessFlags[i]) != 0) {
+Access tmp = accessObj[i];
 list = 
- tom.library.adt.bytecode.types.accesslist.ConsAccessList.make(accessObj[i], list) ;
+ tom.library.adt.bytecode.types.accesslist.ConsAccessList.make(tmp, list) ;
 }
 }
 
@@ -365,24 +366,24 @@ map.put(accessObj[i],accessFlags[i]);
 {
 if ( (list instanceof tom.library.adt.bytecode.types.AccessList) ) {
 if ( (((( tom.library.adt.bytecode.types.AccessList )list) instanceof tom.library.adt.bytecode.types.accesslist.ConsAccessList) || ((( tom.library.adt.bytecode.types.AccessList )list) instanceof tom.library.adt.bytecode.types.accesslist.EmptyAccessList)) ) {
- tom.library.adt.bytecode.types.AccessList  tomMatch657__end__4=(( tom.library.adt.bytecode.types.AccessList )list);
+ tom.library.adt.bytecode.types.AccessList  tomMatch1__end__4=(( tom.library.adt.bytecode.types.AccessList )list);
 do {
 {
-if (!( tomMatch657__end__4.isEmptyAccessList() )) {
+if (!( tomMatch1__end__4.isEmptyAccessList() )) {
 
 value = value | (map.get(
- tomMatch657__end__4.getHeadAccessList() )).intValue();
+ tomMatch1__end__4.getHeadAccessList() )).intValue();
 
 
 }
-if ( tomMatch657__end__4.isEmptyAccessList() ) {
-tomMatch657__end__4=(( tom.library.adt.bytecode.types.AccessList )list);
+if ( tomMatch1__end__4.isEmptyAccessList() ) {
+tomMatch1__end__4=(( tom.library.adt.bytecode.types.AccessList )list);
 } else {
-tomMatch657__end__4= tomMatch657__end__4.getTailAccessList() ;
+tomMatch1__end__4= tomMatch1__end__4.getTailAccessList() ;
 }
 
 }
-} while(!( (tomMatch657__end__4==(( tom.library.adt.bytecode.types.AccessList )list)) ));
+} while(!( (tomMatch1__end__4==(( tom.library.adt.bytecode.types.AccessList )list)) ));
 }
 }
 
@@ -501,9 +502,11 @@ public static StringList buildStringList(String[] array) {
 StringList list = 
  tom.library.adt.bytecode.types.stringlist.EmptyStringList.make() ;
 if(array != null) {
-for(int i = array.length - 1; i >= 0; i--)
+for(int i = array.length - 1; i >= 0; i--) {
+String tmp=array[i];
 list = 
- tom.library.adt.bytecode.types.stringlist.ConsStringList.make(array[i], list) ;
+ tom.library.adt.bytecode.types.stringlist.ConsStringList.make(tmp, list) ;
+}
 }
 
 return list;
@@ -514,8 +517,9 @@ IntList list =
  tom.library.adt.bytecode.types.intlist.EmptyIntList.make() ;
 if(array != null) {
 for(int i = array.length - 1; i >= 0; i--) {
+int tmp=array[i];
 list = 
- tom.library.adt.bytecode.types.intlist.ConsIntList.make(array[i], list) ;
+ tom.library.adt.bytecode.types.intlist.ConsIntList.make(tmp, list) ;
 }
 }
 

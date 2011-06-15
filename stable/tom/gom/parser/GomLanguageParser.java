@@ -1,4 +1,4 @@
-// $ANTLR 3.2 Sep 23, 2009 12:02:23 /Users/pem/workspace/jtom/src/tom/gom/parser/GomLanguage.g 2011-02-22 09:36:41
+// $ANTLR 3.2 Sep 23, 2009 12:02:23 /Users/pem/workspace/jtom/src/tom/gom/parser/GomLanguage.g 2011-06-10 20:27:23
 
 package tom.gom.parser;
 import tom.gom.GomStreamManager;
@@ -255,7 +255,7 @@ public class GomLanguageParser extends Parser {
 
 
             // AST REWRITE
-            // elements: section, modulename, section, imports, modulename
+            // elements: modulename, section, imports, modulename, section
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -981,7 +981,7 @@ public class GomLanguageParser extends Parser {
 
 
             // AST REWRITE
-            // elements: gr2, gr3, gr1
+            // elements: gr2, gr1, gr3
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -1301,7 +1301,7 @@ public class GomLanguageParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: b, palts, ptypename
+                    // elements: palts, b, ptypename
                     // token labels: ptypename
                     // rule labels: retval, b, palts
                     // token list labels: 
@@ -2043,7 +2043,7 @@ public class GomLanguageParser extends Parser {
 
 
             // AST REWRITE
-            // elements: ID, ID, ID, ID, fieldlist, ID, ID, fieldlist, ID
+            // elements: fieldlist, ID, fieldlist, ID, ID, ID, ID, ID, ID
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -2206,7 +2206,7 @@ public class GomLanguageParser extends Parser {
 
 
             // AST REWRITE
-            // elements: ID, ID, ID, pattern_fieldlist
+            // elements: ID, pattern_fieldlist, ID, ID
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -2946,7 +2946,7 @@ public class GomLanguageParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: type, ID
+                    // elements: ID, type
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -3231,7 +3231,7 @@ public class GomLanguageParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: type, ID
+                    // elements: ID, type
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -3287,7 +3287,7 @@ public class GomLanguageParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: ID, type
+                    // elements: type, ID
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -3767,7 +3767,7 @@ public class GomLanguageParser extends Parser {
 
 
             // AST REWRITE
-            // elements: ID, arglist, pointCut, pointCut, ID, arglist, hookType, hookType, hscope, LBRACE, LBRACE
+            // elements: hookType, arglist, pointCut, hookType, hscope, LBRACE, pointCut, LBRACE, ID, arglist, ID
             // token labels: hookType, pointCut
             // rule labels: retval, hscope
             // token list labels: 

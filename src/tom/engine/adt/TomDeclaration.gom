@@ -5,6 +5,7 @@ Declaration = TypeTermDecl(AstName:TomName,Declarations:DeclarationList,OrgTrack
             | GetImplementationDecl(Variable:BQTerm,Instr:Instruction,OrgTrack:Option)
             | IsFsymDecl(AstName:TomName,Variable:BQTerm,Expr:Expression,OrgTrack:Option)
             | GetSlotDecl(AstName:TomName,SlotName:TomName,Variable:BQTerm,Expr:Expression,OrgTrack:Option)
+            | GetDefaultDecl(AstName:TomName,SlotName:TomName,Expr:Expression,OrgTrack:Option)
             | EqualTermDecl(TermArg1:BQTerm,TermArg2:BQTerm,Expr:Expression,OrgTrack:Option)
             | IsSortDecl(TermArg:BQTerm,Expr:Expression,OrgTrack:Option)
             | GetHeadDecl(Opname:TomName, Codomain:TomType,Variable:BQTerm,Expr:Expression,OrgTrack:Option)

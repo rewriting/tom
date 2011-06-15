@@ -37,6 +37,7 @@ import tom.engine.adt.tomconstraint.types.*;
 import tom.engine.adt.tomconstraint.types.constraint.*;
 import tom.engine.adt.tomexpression.types.*;
 import tom.engine.tools.SymbolTable;
+import tom.engine.tools.TomConstraintPrettyPrinter;
 import tom.engine.compiler.generator.*;
 import tom.engine.exception.TomRuntimeException;
 import tom.engine.adt.tomsignature.types.*;
@@ -145,7 +146,8 @@ public class PreGenerator {
   private Constraint buildAndConstraintFromArray(Constraint[] array) {
     Constraint list = `AndConstraint();
     for(int i=array.length-1; i>=0 ; i--) {
-      list = `AndConstraint(array[i],list*);
+      Constraint tmp = array[i];
+      list = `AndConstraint(tmp,list*);
     }
     return list;
   }

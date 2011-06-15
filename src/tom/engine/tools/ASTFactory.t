@@ -69,6 +69,14 @@ public class ASTFactory {
     return list;
   }
 
+  public static BQSlotList makeBQSlotList(Collection<BQSlot> c) {
+    BQSlotList list = `concBQSlot();
+    for(BQSlot slot: c) {
+      list = `concBQSlot(list*,slot);
+    }
+    return list;
+  }
+
   public static Composite makeComposite(Collection<BQTerm> c) {
     BQTerm list = `Composite();
     for(BQTerm term: c) {

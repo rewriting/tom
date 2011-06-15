@@ -453,6 +453,7 @@ public class SymbolTable {
 
   private final static String prefixIsFsym = "is_fsym_";
   private final static String prefixGetSlot = "get_slot_";
+  private final static String prefixGetDefault = "get_default_";
   private final static String prefixGetHead = "get_head_";
   private final static String prefixGetTail = "get_tail_";
   private final static String prefixGetElementArray = "get_element_array_";
@@ -495,6 +496,13 @@ public class SymbolTable {
   }
   public String getGetSlot(String opname, String slotname) {
     return getInliner(prefixGetSlot,opname+slotname);
+  }
+
+  public void putGetDefault(String opname, String slotname, String code) {
+    putInliner(prefixGetDefault,opname+slotname,code);
+  }
+  public String getGetDefault(String opname, String slotname) {
+    return getInliner(prefixGetDefault,opname+slotname);
   }
 
   public void putGetHead(String opname, String code) {

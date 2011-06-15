@@ -28,7 +28,9 @@ package tom.engine.parser;
 }
 
 {
+import java.util.List;
 import java.util.LinkedList;
+import java.util.ArrayList;
 
 import tom.engine.TomBase;
 import tom.engine.xml.Constants;
@@ -94,7 +96,7 @@ options{
       return tomparser.selector();
     }
     
-   private BQTerm buildBqAppl(Token id, LinkedList<BQTerm> blockList, BQTerm term, boolean composite) {
+   private BQTerm buildBqAppl(Token id, List<BQTerm> blockList, BQTerm term, boolean composite) {
      OptionList option = `concOption(OriginTracking(Name(id.getText()),id.getLine(),currentFile()),ModuleName(DEFAULT_ MODULE_NAME));
      Composite target = (Composite) ((term==null)?
        `Composite():
@@ -106,6 +108,20 @@ options{
      } else {
 			 return `Composite(CompositeBQTerm(BQVariable(option,Name(id.getText()),SymbolTable.TYPE_UNKNOWN)),target*);
 		 }
+   }
+
+   private BQTerm buildBqSlotTerm(Token id, List<BQSlot> slotList, BQTerm term, boolean composite) {
+     OptionList option = `concOption(OriginTracking(Name(id.getText()),id.getLine(),currentFile()),ModuleName(DEFAULT_ MODULE_NAME));
+     Composite target = (Composite) ((term==null)?
+       `Composite():
+       `Composite(CompositeTL(ITL(".")),CompositeBQTerm(term)));
+
+     if(composite) {
+			 BQSlotList list = ASTFactory.makeBQSlotList(slotList);
+			 return `Composite(CompositeBQTerm(BQRecordAppl(option,Name(id.getText()),list)),target*);
+     } else {
+			 return `Composite(CompositeBQTerm(BQVariable(option,Name(id.getText()),SymbolTable.TYPE_UNKNOWN)),target*);
+		 }
 
    }
  
@@ -113,15 +129,15 @@ options{
     * add a term to a list of term
     * when newComposite is true, this means that a ',' has been read before the term
     */
-    private void addTerm(LinkedList<BQTerm> list, BQTerm term, boolean newComposite) {
+    private void addTerm(List<BQTerm> list, BQTerm term, boolean newComposite) {
       // if the list is empty put an empty composite in it to simplify the code
       if(list.isEmpty()) {
         list.add(`Composite());
       }
-      BQTerm lastElement = (BQTerm) list.getLast();
+      BQTerm lastElement = list.get(list.size()-1);
       /*
-       * when newComposite is true, we add the term, eventually wrapped by a Composite 
-       * otherwise, the term is inserted (eventually unwrapped) into the last Composite of the list
+       * when newComposite is true, we add the term, potentially wrapped by a Composite 
+       * otherwise, the term is inserted (potentially unwrapped) into the last Composite of the list
        */
       if(newComposite) {
         %match(lastElement, term) {
@@ -147,6 +163,20 @@ options{
         }
       }
     }
+    
+    private void addSlotTerm(List<BQSlot> list, TomName slotName,BQTerm term) {
+      %match(term) {
+        Composite(_*) -> {
+          list.add(`PairSlotBQTerm(slotName,term));
+          return;
+        } 
+
+        _ -> {
+          list.add(`PairSlotBQTerm(slotName,Composite(CompositeBQTerm(term))));
+          return;
+        }
+      }
+    }
 
     // sorts attributes of xml term with lexicographical order
     private BQTermList sortAttributeList(BQTermList list){
@@ -167,7 +197,7 @@ options{
     }
     
     // built a sorted BQTermList from a LinkedList
-    private BQTermList buildAttributeList(LinkedList<BQTerm> list) {
+    private BQTermList buildAttributeList(List<BQTerm> list) {
       return sortAttributeList(ASTFactory.makeBQTermList(list));
     }
     
@@ -190,73 +220,67 @@ beginBackquote returns [BQTerm result]
 ws (BQ_BACKQUOTE)? ( result = mainBqTerm[context] ) { selector().pop(); }
 ;
 
-
+// called by beginBackquote
 mainBqTerm [BQTermList context] returns [BQTerm result]
 {
     result = null;
     BQTerm term = null;
-    BQTermList list = `concBQTerm();
+    BQTermList emptyContext = `concBQTerm();
 
     Token t = null;
-    LinkedList<BQTerm> blockList = new LinkedList<BQTerm>();
+    List<BQTerm> blockList = new LinkedList<BQTerm>();
+    List<BQSlot> slotList = new LinkedList<BQSlot>();
 }
-    :
-        (
-         // xml(...) or (...)
-            result = basicTerm[list]            
-        | id:BQ_ID
-          (
-           // `X*
-           {LA(1) == BQ_STAR}? BQ_STAR 
-           {   
-             String name = id.getText();
-             Option ot = `OriginTracking(Name(name), id.getLine(), currentFile());
-             result = `BQVariableStar(concOption(ot),Name(name),SymbolTable.TYPE_UNKNOWN);  
-           }
-           // `X*{type}
-           /*
-           | {LA(1) == BQ_STAR && LA(2) == BQ_LBRACE}? BQ_STAR BQ_LBRACE type1:BQ_ID BQ_RBRACE
-
-           {   
-             String name = id.getText();
-             OptionList ol = `concOption(TypeForVariable(type1.getText()),OriginTracking(Name(name), id.getLine(), currentFile()));
-             result = `BQVariableStar(ol,Name(name),SymbolTable.TYPE_UNKNOWN);  
-           }
-           */
-           | {LA(1) == BQ_RBRACE}?
-           {
-           // generate an ERROR when a '}' is encoutered
-           //System.out.println("ERROR");
-           }
-           | ws /*ws*/ 
-                (
-                 // `x(...)
-                 {LA(1) == BQ_LPAREN}? BQ_LPAREN ws ( termList[blockList,list] )? BQ_RPAREN 
-                 {   
-                   result = buildBqAppl(id,blockList,term,true);
-                 }
-                 // `X{type}
-                 | {LA(1) == BQ_LBRACE}? BQ_LBRACE type:BQ_ID BQ_RBRACE
-                {   
-                   String name = id.getText();
-                   OptionList ol = `concOption(TypeForVariable(type.getText()), OriginTracking(Name(name), id.getLine(), currentFile()), ModuleName(DEFAULT_MODULE_NAME));
-                   result = `BQVariable(ol,Name(name),SymbolTable.TYPE_UNKNOWN);
-                }
-                 // `x
-                |   t = targetCode 
-                 {
-                   //System.out.println("targetCode = " + t);
-                   addTargetCode(t);
-                   String name = id.getText();
-                   OptionList ol = `concOption(OriginTracking(Name(name), id.getLine(), currentFile()), ModuleName(DEFAULT_MODULE_NAME));
-                   //result = `BQAppl(ol,Name(name),concBQTerm());
-                   result = `BQVariable(ol,Name(name),SymbolTable.TYPE_UNKNOWN);
-                 }
-                )
-            )
-        )
+   :
+   (
+   // xml(...) or (...)
+     result = basicTerm[emptyContext]            
+   | BQ_UNDERSCORE { result = `BQDefault(); }
+   | id:BQ_ID
+     (
+      // `X*
+      {LA(1) == BQ_STAR}? BQ_STAR 
+      {   
+        String name = id.getText();
+        Option ot = `OriginTracking(Name(name), id.getLine(), currentFile());
+        result = `BQVariableStar(concOption(ot),Name(name),SymbolTable.TYPE_UNKNOWN);  
+      }
+      // `X*{type}
+      | {LA(1) == BQ_RBRACE}?
+      {
+      // generate an ERROR when a '}' is encoutered
+      //System.out.println("ERROR");
+      }
+      | ws 
+      (
+        // `x(...)
+        {LA(1) == BQ_LPAREN}? BQ_LPAREN ws ( termList[blockList,emptyContext] )? BQ_RPAREN 
+        { result = buildBqAppl(id,blockList,term,true); }
+        // `x[...]
+      | {LA(1) == BQ_LBRACKET}? BQ_LBRACKET ws ( termSlotList[slotList,emptyContext] )? BQ_RBRACKET 
+        { result = buildBqSlotTerm(id,slotList,term,true); }
+        // `X{type}
+      | {LA(1) == BQ_LBRACE}? BQ_LBRACE type:BQ_ID BQ_RBRACE
+        {   
+          String name = id.getText();
+          OptionList ol = `concOption(TypeForVariable(type.getText()), OriginTracking(Name(name), id.getLine(), currentFile()), ModuleName(DEFAULT_MODULE_NAME));
+          result = `BQVariable(ol,Name(name),SymbolTable.TYPE_UNKNOWN);
+        }
+        // `x
+      | t = targetCode 
+        {
+          //System.out.println("targetCode = " + t);
+          addTargetCode(t);
+          String name = id.getText();
+          OptionList ol = `concOption(OriginTracking(Name(name), id.getLine(), currentFile()), ModuleName(DEFAULT_MODULE_NAME));
+          result = `BQVariable(ol,Name(name),SymbolTable.TYPE_UNKNOWN);
+        }
+      )
+     )
+   )
     ;
 
+    // called internaly by bqTerm and mainBqTerm
 bqTerm [BQTermList context] returns [BQTerm result]
 {
     result = null;
@@ -264,13 +288,15 @@ bqTerm [BQTermList context] returns [BQTerm result]
     BQTermList xmlTermList = `concBQTerm();
 
     Token t = null;
-    LinkedList<BQTerm> blockList = new LinkedList<BQTerm>();
+    List<BQTerm> blockList = new LinkedList<BQTerm>();
+    List<BQSlot> slotList = new LinkedList<BQSlot>();
     boolean arguments = false;
 }
     :
          // xml(...) or (...)
       result = basicTerm[context]
-    |   id:BQ_ID
+    | BQ_UNDERSCORE { result = `BQDefault(); }
+    | id:BQ_ID
         (
          // X*
             {LA(1) == BQ_STAR}? BQ_STAR
@@ -280,20 +306,24 @@ bqTerm [BQTermList context] returns [BQTerm result]
               result = `BQVariableStar(concOption(ot),Name(name),SymbolTable.TYPE_UNKNOWN);      
             }
             
-            |  ws /*ws*/ 
+            |  ws
             // x(...)
             (
              {LA(1) == BQ_LPAREN}? BQ_LPAREN {arguments = true;} ws (termList[blockList,context])? BQ_RPAREN 
-            )?
             ( (BQ_DOT term = bqTerm[null] ) => BQ_DOT term = bqTerm[context] )?
-            {   
-                result = buildBqAppl(id,blockList,term,arguments);
-            }
+            )?
+            { result = buildBqAppl(id,blockList,term,arguments); }
+            |  ws
+            // x[...]
+            (
+             {LA(1) == BQ_LBRACKET}? BQ_LBRACKET {arguments = true;} ws (termSlotList[slotList,context])? BQ_RBRACKET 
+            ( (BQ_DOT term = bqTerm[null] ) => BQ_DOT term = bqTerm[context] )?
+            )?
+            { result = buildBqSlotTerm(id,slotList,term,arguments); }
         )
     |
         // <...> ... </...>
         (xmlTerm[null]) => result = xmlTerm[context]
-        
     |
         // x
         t = target
@@ -314,7 +344,7 @@ basicTerm [BQTermList context] returns [BQTerm result]
     BQTerm term = null;
     BQTermList localContext = `concBQTerm();
 
-    LinkedList<BQTerm> blockList = new LinkedList<BQTerm>();
+    List<BQTerm> blockList = new LinkedList<BQTerm>();
 }
     :
         (
@@ -326,8 +356,7 @@ basicTerm [BQTermList context] returns [BQTerm result]
             { localContext = ASTFactory.makeBQTermList(blockList); }
             result = bqTerm[localContext]
             BQ_RPAREN
-            
-        |   BQ_LPAREN ws ( termList[blockList,context] )? BQ_RPAREN
+        | BQ_LPAREN ws ( termList[blockList,context] )? BQ_RPAREN
             {
               Composite compositeList = ASTFactory.makeComposite(blockList);
                 result = `Composite(
@@ -340,16 +369,30 @@ basicTerm [BQTermList context] returns [BQTerm result]
     ;
 
 /*
- * termList parses a list of terms, eventually separated by a comma
+ * termList parses a list of terms, potentially separated by a comma
  */
-termList [LinkedList<BQTerm> list,BQTermList context]
+termList [List<BQTerm> list,BQTermList context]
 {
     BQTerm term = null;
 }
     :
       term = bqTerm[context] /*ws*/ { addTerm(list,term,false); }
-        ( ( c:BQ_COMMA  ws )? term = bqTerm[context] /*ws*/
-        { addTerm(list,term, (c!=null)); c = null; }
+        ( ( c:BQ_COMMA  ws )? 
+      term = bqTerm[context] /*ws*/ { addTerm(list,term, (c!=null)); c = null; }
+        )*
+    ;
+
+/*
+ * termSlotList parses a list of pairs slot-terms, separated by a comma
+ */
+termSlotList [List<BQSlot> list, BQTermList context]
+{
+    BQTerm term = null;
+}
+    :
+      slot1:BQ_ID EQUAL ws term = bqTerm[context] ws { addSlotTerm(list,`Name(slot1.getText()),term); }
+        ( c:BQ_COMMA  ws
+      slot2:BQ_ID EQUAL ws term = bqTerm[context] ws { addSlotTerm(list,`Name(slot2.getText()),term); }
         )*
     ;
 
@@ -386,7 +429,7 @@ target returns [Token result]
     |   d:BQ_DOT {result = d;} 
     |   dq:DOUBLE_QUOTE {result = dq;}
     |   xs:XML_START {result = xs;}
-    |   xe:XML_EQUAL {result = xe;}
+    |   xe:EQUAL {result = xe;}
     |   xc:XML_CLOSE  {result = xc;}
     |   a:ANY {result = a;}
     ;
@@ -400,14 +443,13 @@ targetCode returns [Token result]
     |   c:BQ_COMMA {result = c;}   
     |   i:BQ_ID {result = i;} 
     |   r:BQ_RPAREN {result = r;}
+    |   rb:BQ_RBRACKET {result = rb;}
     |   t:XML_START_ENDING    {result = t;}
     |   xcs:XML_CLOSE_SINGLETON {result = xcs;}
     |   xt:XML_TEXT {result = xt;}
     |   xc:XML_COMMENT {result = xc;}
     |   xp:XML_PROC {result = xp;}
     ;
-
-
 
 /*
  * XML
@@ -422,7 +464,7 @@ xmlAttribute [BQTermList context] returns [BQTerm result]
         (
             id:BQ_ID
             (
-                ws XML_EQUAL ws value = xmlAttributeStringOrBQVariable
+                ws EQUAL ws value = xmlAttributeStringOrBQVariable
                 {
                     BQTermList args = `concBQTerm(
                         BQAppl(
@@ -438,7 +480,7 @@ xmlAttribute [BQTermList context] returns [BQTerm result]
                         value
                     );
 		    if(context != null) {
-		    args = `concBQTerm(context*,args*);
+		      args = `concBQTerm(context*,args*);
 		    }
 		    result = `BQAppl(
 		      concOption(ModuleName(TNODE_MODULE_NAME)),
@@ -456,7 +498,7 @@ xmlAttribute [BQTermList context] returns [BQTerm result]
         )
     ;
 
-xmlAttributeList [LinkedList<BQTerm> attributeList, BQTermList context]
+xmlAttributeList [List<BQTerm> attributeList, BQTermList context]
 {
     BQTerm term = null;
 }
@@ -469,7 +511,7 @@ xmlAttributeList [LinkedList<BQTerm> attributeList, BQTermList context]
         )*
     ;
 
-xmlChildren[LinkedList<BQTerm> children, BQTermList context]
+xmlChildren[List<BQTerm> children, BQTermList context]
 {
     BQTerm term = null;
 }
@@ -488,8 +530,8 @@ xmlTerm[BQTermList context] returns [BQTerm result]
     BQTermList childrenBQTermList = `concBQTerm();
     BQTerm term = null;
 
-    LinkedList<BQTerm> attributes = new LinkedList<BQTerm>();
-    LinkedList<BQTerm> children = new LinkedList<BQTerm>();
+    List<BQTerm> attributes = new LinkedList<BQTerm>();
+    List<BQTerm> children = new LinkedList<BQTerm>();
 }
     :
         (
@@ -536,9 +578,7 @@ xmlTerm[BQTermList context] returns [BQTerm result]
 											result = `BQAppl(
 													concOption(ModuleName(TNODE_MODULE_NAME)),
 													Name(Constants.ELEMENT_NODE),
-													concBQTerm(
-														context*,
-														args*)
+													concBQTerm( context*, args*)
                         );
                     }
 
@@ -549,16 +589,11 @@ xmlTerm[BQTermList context] returns [BQTerm result]
                 result = `BQAppl(
 										concOption(ModuleName(TNODE_MODULE_NAME)),
                     Name(Constants.TEXT_NODE),
-                    concBQTerm(
-                        context*,
-                        term
-                    )
+                    concBQTerm( context*, term)
                 );
             }
         )
-        
     ;
-
 
 class BackQuoteLexer extends Lexer;
 options {
@@ -571,23 +606,25 @@ tokens {
 }
 
 {
-  public void uponEOF()
-    throws TokenStreamException, CharStreamException
-    {
+  public void uponEOF() throws TokenStreamException, CharStreamException {
       throw new TokenStreamException("Premature EOF");
-    }
+  }
 }
 
 BQ_LPAREN      :    '('   ;
 BQ_RPAREN      :    ')'   ;
+BQ_LBRACKET    :    '['   ;
+BQ_RBRACKET    :    ']'   ;
 BQ_LBRACE      :    "{"   ;
 BQ_RBRACE      :    "}"   ;
 BQ_COMMA       :    ','   ;
 BQ_STAR        :    '*'   ;
-BQ_BACKQUOTE   :   "`" ;
+BQ_BACKQUOTE   :    "`"   ;
+BQ_MINUS       :    '-'   ;
+BQ_UNDERSCORE  : {!Character.isJavaIdentifierPart(LA(2))}? '_' ;
 
 //XML Tokens
-XML_EQUAL   :   '=' ;
+EQUAL   :   '=' ;
 XML_START_ENDING    : "</" ;
 XML_CLOSE_SINGLETON : "/>" ;  
 XML_START   :   '<';
@@ -620,6 +657,10 @@ XML_SKIP
         }
     ;
 
+BQ_INTEGER :   ( BQ_MINUS )? ( BQ_DIGIT )+     ;
+
+BQ_STRING  :   '"' (BQ_ESC|~('"'|'\\'|'\n'|'\r'))* '"' ;
+
 BQ_ID
 options{ testLiterals = true; }   
     :
@@ -634,9 +675,7 @@ BQ_SIMPLE_ID
 options{ testLiterals = true; }   
     :   ('_')? ('a'..'z' | 'A'..'Z') 
         ( 
-            ('a'..'z' | 'A'..'Z') 
-        |   '_' 
-//        |   BQ_DOT
+            ('a'..'z' | 'A'..'Z' | '_') 
         |   BQ_DIGIT
         )*
     ;
@@ -655,24 +694,9 @@ BQ_MINUS_ID_PART :
   )+ 
 ;
 
-BQ_INTEGER :   ( BQ_MINUS )? ( BQ_DIGIT )+     ;
-
-BQ_STRING  :   '"' (BQ_ESC|~('"'|'\\'|'\n'|'\r'))* '"'
-    ;
-
-ANY 
-options{ testLiterals = true; } 
-//    :   '\u0000'..'\uffff'  
-    :  .
-    ;
-   
-BQ_MINUS   :   '-'  ;
 
 protected
 BQ_DIGIT   :   ('0'..'9')  ;
-
-protected 
-BQ_UNDERSCORE : {!Character.isJavaIdentifierPart(LA(2))}? '_' ;
 
 protected
 BQ_ESC
@@ -714,3 +738,8 @@ BQ_HEX_DIGIT
   : ('0'..'9'|'A'..'F'|'a'..'f')
   ;
 
+ANY 
+options{ testLiterals = true; } 
+//    :   '\u0000'..'\uffff'  
+    :  .
+    ;

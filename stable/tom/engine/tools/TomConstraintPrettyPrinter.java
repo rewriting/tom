@@ -415,6 +415,18 @@ public static String prettyPrint(Expression subject) {
 {
 {
 if ( (subject instanceof tom.engine.adt.tomexpression.types.Expression) ) {
+if ( ((( tom.engine.adt.tomexpression.types.Expression )subject) instanceof tom.engine.adt.tomexpression.types.expression.BQTermToExpression) ) {
+
+return prettyPrint(
+ (( tom.engine.adt.tomexpression.types.Expression )subject).getAstTerm() );
+
+
+}
+}
+
+}
+{
+if ( (subject instanceof tom.engine.adt.tomexpression.types.Expression) ) {
 if ( ((( tom.engine.adt.tomexpression.types.Expression )subject) instanceof tom.engine.adt.tomexpression.types.expression.Cast) ) {
 
 return "("+prettyPrint(
@@ -678,24 +690,24 @@ String s = "";
 {
 if ( (subject instanceof tom.engine.adt.tomslot.types.SlotList) ) {
 if ( (((( tom.engine.adt.tomslot.types.SlotList )subject) instanceof tom.engine.adt.tomslot.types.slotlist.ConsconcSlot) || ((( tom.engine.adt.tomslot.types.SlotList )subject) instanceof tom.engine.adt.tomslot.types.slotlist.EmptyconcSlot)) ) {
- tom.engine.adt.tomslot.types.SlotList  tomMatch300__end__4=(( tom.engine.adt.tomslot.types.SlotList )subject);
+ tom.engine.adt.tomslot.types.SlotList  tomMatch304__end__4=(( tom.engine.adt.tomslot.types.SlotList )subject);
 do {
 {
-if (!( tomMatch300__end__4.isEmptyconcSlot() )) {
+if (!( tomMatch304__end__4.isEmptyconcSlot() )) {
 
 s += prettyPrint(
- tomMatch300__end__4.getHeadconcSlot() )+",";
+ tomMatch304__end__4.getHeadconcSlot() )+",";
 
 
 }
-if ( tomMatch300__end__4.isEmptyconcSlot() ) {
-tomMatch300__end__4=(( tom.engine.adt.tomslot.types.SlotList )subject);
+if ( tomMatch304__end__4.isEmptyconcSlot() ) {
+tomMatch304__end__4=(( tom.engine.adt.tomslot.types.SlotList )subject);
 } else {
-tomMatch300__end__4= tomMatch300__end__4.getTailconcSlot() ;
+tomMatch304__end__4= tomMatch304__end__4.getTailconcSlot() ;
 }
 
 }
-} while(!( (tomMatch300__end__4==(( tom.engine.adt.tomslot.types.SlotList )subject)) ));
+} while(!( (tomMatch304__end__4==(( tom.engine.adt.tomslot.types.SlotList )subject)) ));
 }
 }
 
@@ -711,6 +723,30 @@ return subject.toString();
 public static String prettyPrint(BQTerm subject) {
 
 {
+{
+if ( (subject instanceof tom.engine.adt.code.types.BQTerm) ) {
+if ( ((( tom.engine.adt.code.types.BQTerm )subject) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {
+
+return prettyPrint(
+ (( tom.engine.adt.code.types.BQTerm )subject).getAstName() );
+
+
+}
+}
+
+}
+{
+if ( (subject instanceof tom.engine.adt.code.types.BQTerm) ) {
+if ( ((( tom.engine.adt.code.types.BQTerm )subject) instanceof tom.engine.adt.code.types.bqterm.BQVariableStar) ) {
+
+return prettyPrint(
+ (( tom.engine.adt.code.types.BQTerm )subject).getAstName() ) + "*";
+
+
+}
+}
+
+}
 {
 if ( (subject instanceof tom.engine.adt.code.types.BQTerm) ) {
 if ( ((( tom.engine.adt.code.types.BQTerm )subject) instanceof tom.engine.adt.code.types.bqterm.ExpressionToBQTerm) ) {
@@ -796,6 +832,46 @@ return "VariableHeadArray("+prettyPrint(
  (( tom.engine.adt.code.types.BQTerm )subject).getSubject() )+","+prettyPrint(
  (( tom.engine.adt.code.types.BQTerm )subject).getBeginIndex() )+","+prettyPrint(
  (( tom.engine.adt.code.types.BQTerm )subject).getEndIndex() )+")";
+
+
+}
+}
+
+}
+{
+if ( (subject instanceof tom.engine.adt.code.types.BQTerm) ) {
+if ( ((( tom.engine.adt.code.types.BQTerm )subject) instanceof tom.engine.adt.code.types.bqterm.BuildEmptyList) ) {
+
+return prettyPrint(
+ (( tom.engine.adt.code.types.BQTerm )subject).getAstName() ) + "()";
+
+
+}
+}
+
+}
+{
+if ( (subject instanceof tom.engine.adt.code.types.BQTerm) ) {
+if ( ((( tom.engine.adt.code.types.BQTerm )subject) instanceof tom.engine.adt.code.types.bqterm.BuildConsList) ) {
+
+return prettyPrint(
+ (( tom.engine.adt.code.types.BQTerm )subject).getAstName() ) + "(" + prettyPrint(
+ (( tom.engine.adt.code.types.BQTerm )subject).getHeadTerm() ) + "," + prettyPrint(
+ (( tom.engine.adt.code.types.BQTerm )subject).getTailTerm() ) + ")";
+
+
+}
+}
+
+}
+{
+if ( (subject instanceof tom.engine.adt.code.types.BQTerm) ) {
+if ( ((( tom.engine.adt.code.types.BQTerm )subject) instanceof tom.engine.adt.code.types.bqterm.BuildAppendList) ) {
+
+return prettyPrint(
+ (( tom.engine.adt.code.types.BQTerm )subject).getAstName() ) + "(" + prettyPrint(
+ (( tom.engine.adt.code.types.BQTerm )subject).getTailTerm() ) + "," + prettyPrint(
+ (( tom.engine.adt.code.types.BQTerm )subject).getHeadTerm() ) + ")";
 
 
 }

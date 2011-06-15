@@ -106,7 +106,8 @@ output.writeln(");");
 protected void buildExpEqualTerm(int deep, TomType type, BQTerm begin, TomTerm end, String moduleName) throws IOException {
 String sType = TomBase.getTomType(type);    
 String template = getSymbolTable(moduleName).getEqualTerm(sType);
-if(instantiateTemplate(deep,template,
+String opname = "";
+if(instantiateTemplate(deep,template,opname,
  tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make(begin, tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make(TomBase.convertFromVarToBQVar(end), tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() ) ) ,moduleName) == false) {
 // if the type is null, it means that this is from Java
 if(sType == null || getSymbolTable(moduleName).isUnknownType(sType) || getSymbolTable(moduleName).isBooleanType(sType)) {
@@ -128,7 +129,8 @@ output.write(")");
 protected void buildExpEqualBQTerm(int deep, TomType type, BQTerm begin, BQTerm end, String moduleName) throws IOException {
 String sType = TomBase.getTomType(type);    
 String template = getSymbolTable(moduleName).getEqualTerm(sType);
-if(instantiateTemplate(deep,template,
+String opname = "";
+if(instantiateTemplate(deep,template,opname,
  tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make(begin, tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make(end, tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() ) ) ,moduleName) == false) {
 // if the type is null, it means that this is from Java
 if(sType == null || getSymbolTable(moduleName).isUnknownType(sType) || getSymbolTable(moduleName).isBooleanType(sType)) {
@@ -285,10 +287,10 @@ String returnValue = getSymbolTable(moduleName).isVoidType(returnType)?tlCode.ge
 
 {
 {
-if ( (tlCode instanceof tom.engine.adt.tomsignature.types.TargetLanguage) ) {
-if ( ((( tom.engine.adt.tomsignature.types.TargetLanguage )tlCode) instanceof tom.engine.adt.tomsignature.types.targetlanguage.TL) ) {
- tom.engine.adt.tomsignature.types.TextPosition  tomMatch80_2= (( tom.engine.adt.tomsignature.types.TargetLanguage )tlCode).getStart() ;
- tom.engine.adt.tomsignature.types.TextPosition  tomMatch80_3= (( tom.engine.adt.tomsignature.types.TargetLanguage )tlCode).getEnd() ;
+if ( (tlCode instanceof tom.engine.adt.code.types.TargetLanguage) ) {
+if ( ((( tom.engine.adt.code.types.TargetLanguage )tlCode) instanceof tom.engine.adt.code.types.targetlanguage.TL) ) {
+ tom.engine.adt.tomsignature.types.TextPosition  tomMatch80_2= (( tom.engine.adt.code.types.TargetLanguage )tlCode).getStart() ;
+ tom.engine.adt.tomsignature.types.TextPosition  tomMatch80_3= (( tom.engine.adt.code.types.TargetLanguage )tlCode).getEnd() ;
 if ( (tomMatch80_2 instanceof tom.engine.adt.tomsignature.types.textposition.TextPosition) ) {
  int  tom_startLine= tomMatch80_2.getLine() ;
 if ( (tomMatch80_3 instanceof tom.engine.adt.tomsignature.types.textposition.TextPosition) ) {
@@ -307,8 +309,8 @@ return;
 
 }
 {
-if ( (tlCode instanceof tom.engine.adt.tomsignature.types.TargetLanguage) ) {
-if ( ((( tom.engine.adt.tomsignature.types.TargetLanguage )tlCode) instanceof tom.engine.adt.tomsignature.types.targetlanguage.ITL) ) {
+if ( (tlCode instanceof tom.engine.adt.code.types.TargetLanguage) ) {
+if ( ((( tom.engine.adt.code.types.TargetLanguage )tlCode) instanceof tom.engine.adt.code.types.targetlanguage.ITL) ) {
 
 output.write(returnValue);
 return;

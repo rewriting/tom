@@ -404,21 +404,21 @@ return buildConstraintDisjunction(
 {
 if ( (expression instanceof tom.engine.adt.tomexpression.types.Expression) ) {
 if ( ((( tom.engine.adt.tomexpression.types.Expression )expression) instanceof tom.engine.adt.tomexpression.types.expression.ConstraintToExpression) ) {
- tom.engine.adt.tomconstraint.types.Constraint  tomMatch176_8= (( tom.engine.adt.tomexpression.types.Expression )expression).getcons() ;
-if ( (tomMatch176_8 instanceof tom.engine.adt.tomconstraint.types.constraint.MatchConstraint) ) {
- tom.engine.adt.tomterm.types.TomTerm  tomMatch176_10= tomMatch176_8.getPattern() ;
-boolean tomMatch176_14= false ;
-if ( (tomMatch176_10 instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) {
-tomMatch176_14= true ;
+ tom.engine.adt.tomconstraint.types.Constraint  tomMatch178_8= (( tom.engine.adt.tomexpression.types.Expression )expression).getcons() ;
+if ( (tomMatch178_8 instanceof tom.engine.adt.tomconstraint.types.constraint.MatchConstraint) ) {
+ tom.engine.adt.tomterm.types.TomTerm  tomMatch178_10= tomMatch178_8.getPattern() ;
+boolean tomMatch178_14= false ;
+if ( (tomMatch178_10 instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) {
+tomMatch178_14= true ;
 } else {
-if ( (tomMatch176_10 instanceof tom.engine.adt.tomterm.types.tomterm.VariableStar) ) {
-tomMatch176_14= true ;
+if ( (tomMatch178_10 instanceof tom.engine.adt.tomterm.types.tomterm.VariableStar) ) {
+tomMatch178_14= true ;
 }
 }
-if (tomMatch176_14) {
+if (tomMatch178_14) {
 
 return 
- tom.engine.adt.tominstruction.types.instruction.LetRef.make(TomBase.convertFromVarToBQVar(tomMatch176_10),  tom.engine.adt.tomexpression.types.expression.BQTermToExpression.make( tomMatch176_8.getSubject() ) , action) ;
+ tom.engine.adt.tominstruction.types.instruction.LetRef.make(TomBase.convertFromVarToBQVar(tomMatch178_10),  tom.engine.adt.tomexpression.types.expression.BQTermToExpression.make( tomMatch178_8.getSubject() ) , action) ;
 
 
 }
@@ -431,11 +431,11 @@ return
 {
 if ( (expression instanceof tom.engine.adt.tomexpression.types.Expression) ) {
 if ( ((( tom.engine.adt.tomexpression.types.Expression )expression) instanceof tom.engine.adt.tomexpression.types.expression.ConstraintToExpression) ) {
- tom.engine.adt.tomconstraint.types.Constraint  tomMatch176_16= (( tom.engine.adt.tomexpression.types.Expression )expression).getcons() ;
-if ( (tomMatch176_16 instanceof tom.engine.adt.tomconstraint.types.constraint.NumericConstraint) ) {
+ tom.engine.adt.tomconstraint.types.Constraint  tomMatch178_16= (( tom.engine.adt.tomexpression.types.Expression )expression).getcons() ;
+if ( (tomMatch178_16 instanceof tom.engine.adt.tomconstraint.types.constraint.NumericConstraint) ) {
 
 return buildNumericCondition(
-tomMatch176_16,action);
+tomMatch178_16,action);
 
 
 }
@@ -587,16 +587,16 @@ public  tom.engine.adt.code.types.BQTerm  visit_BQTerm( tom.engine.adt.code.type
 {
 if ( (tom__arg instanceof tom.engine.adt.code.types.BQTerm) ) {
 if ( ((( tom.engine.adt.code.types.BQTerm )tom__arg) instanceof tom.engine.adt.code.types.bqterm.Subterm) ) {
- tom.engine.adt.tomname.types.TomName  tomMatch177_1= (( tom.engine.adt.code.types.BQTerm )tom__arg).getAstName() ;
-if ( (tomMatch177_1 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+ tom.engine.adt.tomname.types.TomName  tomMatch179_1= (( tom.engine.adt.code.types.BQTerm )tom__arg).getAstName() ;
+if ( (tomMatch179_1 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
  tom.engine.adt.tomname.types.TomName  tom_slotName= (( tom.engine.adt.code.types.BQTerm )tom__arg).getSlotName() ;
 
 TomSymbol tomSymbol = cg.getCompiler().getSymbolTable().getSymbolFromName(
- tomMatch177_1.getString() );
+ tomMatch179_1.getString() );
 TomType subtermType = TomBase.getSlotType(tomSymbol, 
 tom_slotName);	        	
 return 
- tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make( tom.engine.adt.tomexpression.types.expression.GetSlot.make(subtermType, tomMatch177_1, tom_slotName.getString(),  (( tom.engine.adt.code.types.BQTerm )tom__arg).getGroundTerm() ) ) ;
+ tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make( tom.engine.adt.tomexpression.types.expression.GetSlot.make(subtermType, tomMatch179_1, tom_slotName.getString(),  (( tom.engine.adt.code.types.BQTerm )tom__arg).getGroundTerm() ) ) ;
 
 
 }
@@ -713,13 +713,13 @@ return
 if ( (orDisjunction instanceof tom.engine.adt.tomexpression.types.Expression) ) {
 if ( (((( tom.engine.adt.tomexpression.types.Expression )orDisjunction) instanceof tom.engine.adt.tomexpression.types.expression.ConsOrExpressionDisjunction) || ((( tom.engine.adt.tomexpression.types.Expression )orDisjunction) instanceof tom.engine.adt.tomexpression.types.expression.EmptyOrExpressionDisjunction)) ) {
 if (!( (  (( tom.engine.adt.tomexpression.types.Expression )orDisjunction).isEmptyOrExpressionDisjunction()  ||  ((( tom.engine.adt.tomexpression.types.Expression )orDisjunction)== tom.engine.adt.tomexpression.types.expression.EmptyOrExpressionDisjunction.make() )  ) )) {
- tom.engine.adt.tomexpression.types.Expression  tomMatch179_8=(( (((( tom.engine.adt.tomexpression.types.Expression )orDisjunction) instanceof tom.engine.adt.tomexpression.types.expression.ConsOrExpressionDisjunction) || ((( tom.engine.adt.tomexpression.types.Expression )orDisjunction) instanceof tom.engine.adt.tomexpression.types.expression.EmptyOrExpressionDisjunction)) )?( (( tom.engine.adt.tomexpression.types.Expression )orDisjunction).getHeadOrExpressionDisjunction() ):((( tom.engine.adt.tomexpression.types.Expression )orDisjunction)));
-if ( (tomMatch179_8 instanceof tom.engine.adt.tomexpression.types.expression.And) ) {
+ tom.engine.adt.tomexpression.types.Expression  tomMatch181_8=(( (((( tom.engine.adt.tomexpression.types.Expression )orDisjunction) instanceof tom.engine.adt.tomexpression.types.expression.ConsOrExpressionDisjunction) || ((( tom.engine.adt.tomexpression.types.Expression )orDisjunction) instanceof tom.engine.adt.tomexpression.types.expression.EmptyOrExpressionDisjunction)) )?( (( tom.engine.adt.tomexpression.types.Expression )orDisjunction).getHeadOrExpressionDisjunction() ):((( tom.engine.adt.tomexpression.types.Expression )orDisjunction)));
+if ( (tomMatch181_8 instanceof tom.engine.adt.tomexpression.types.expression.And) ) {
 
 Instruction subtest = buildDisjunctionIfElse(
 tom_append_list_OrExpressionDisjunction((( (((( tom.engine.adt.tomexpression.types.Expression )orDisjunction) instanceof tom.engine.adt.tomexpression.types.expression.ConsOrExpressionDisjunction) || ((( tom.engine.adt.tomexpression.types.Expression )orDisjunction) instanceof tom.engine.adt.tomexpression.types.expression.EmptyOrExpressionDisjunction)) )?( (( tom.engine.adt.tomexpression.types.Expression )orDisjunction).getTailOrExpressionDisjunction() ):( tom.engine.adt.tomexpression.types.expression.EmptyOrExpressionDisjunction.make() )), tom.engine.adt.tomexpression.types.expression.EmptyOrExpressionDisjunction.make() ),assignFlagTrue);
 return 
- tom.engine.adt.tominstruction.types.instruction.If.make( tomMatch179_8.getArg1() ,  tom.engine.adt.tominstruction.types.instruction.UnamedBlock.make( tom.engine.adt.tominstruction.types.instructionlist.ConsconcInstruction.make(assignFlagTrue, tom.engine.adt.tominstruction.types.instructionlist.ConsconcInstruction.make(generateAutomata( tomMatch179_8.getArg2() , tom.engine.adt.tominstruction.types.instruction.Nop.make() ), tom.engine.adt.tominstruction.types.instructionlist.EmptyconcInstruction.make() ) ) ) , subtest) ;
+ tom.engine.adt.tominstruction.types.instruction.If.make( tomMatch181_8.getArg1() ,  tom.engine.adt.tominstruction.types.instruction.UnamedBlock.make( tom.engine.adt.tominstruction.types.instructionlist.ConsconcInstruction.make(assignFlagTrue, tom.engine.adt.tominstruction.types.instructionlist.ConsconcInstruction.make(generateAutomata( tomMatch181_8.getArg2() , tom.engine.adt.tominstruction.types.instruction.Nop.make() ), tom.engine.adt.tominstruction.types.instructionlist.EmptyconcInstruction.make() ) ) ) , subtest) ;
 
 
 }
@@ -840,9 +840,9 @@ public  tom.engine.adt.tomconstraint.types.Constraint  visit_Constraint( tom.eng
 {
 if ( (tom__arg instanceof tom.engine.adt.tomconstraint.types.Constraint) ) {
 if ( ((( tom.engine.adt.tomconstraint.types.Constraint )tom__arg) instanceof tom.engine.adt.tomconstraint.types.constraint.MatchConstraint) ) {
- tom.engine.adt.tomterm.types.TomTerm  tomMatch180_1= (( tom.engine.adt.tomconstraint.types.Constraint )tom__arg).getPattern() ;
-if ( (tomMatch180_1 instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) {
- tom.engine.adt.tomterm.types.TomTerm  tom_v=tomMatch180_1;
+ tom.engine.adt.tomterm.types.TomTerm  tomMatch182_1= (( tom.engine.adt.tomconstraint.types.Constraint )tom__arg).getPattern() ;
+if ( (tomMatch182_1 instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) {
+ tom.engine.adt.tomterm.types.TomTerm  tom_v=tomMatch182_1;
 
 if(!varList.contains(
 tom_v)) { varList.add(TomBase.convertFromVarToBQVar(
@@ -930,11 +930,11 @@ public  tom.engine.adt.tomexpression.types.Expression  visit_Expression( tom.eng
 {
 if ( (tom__arg instanceof tom.engine.adt.tomexpression.types.Expression) ) {
 if ( ((( tom.engine.adt.tomexpression.types.Expression )tom__arg) instanceof tom.engine.adt.tomexpression.types.expression.ConstraintToExpression) ) {
- tom.engine.adt.tomconstraint.types.Constraint  tomMatch181_1= (( tom.engine.adt.tomexpression.types.Expression )tom__arg).getcons() ;
-if ( (tomMatch181_1 instanceof tom.engine.adt.tomconstraint.types.constraint.MatchConstraint) ) {
- tom.engine.adt.tomterm.types.TomTerm  tomMatch181_3= tomMatch181_1.getPattern() ;
-if ( (tomMatch181_3 instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) {
- tom.engine.adt.tomterm.types.TomTerm  tom_v=tomMatch181_3;
+ tom.engine.adt.tomconstraint.types.Constraint  tomMatch183_1= (( tom.engine.adt.tomexpression.types.Expression )tom__arg).getcons() ;
+if ( (tomMatch183_1 instanceof tom.engine.adt.tomconstraint.types.constraint.MatchConstraint) ) {
+ tom.engine.adt.tomterm.types.TomTerm  tomMatch183_3= tomMatch183_1.getPattern() ;
+if ( (tomMatch183_3 instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) {
+ tom.engine.adt.tomterm.types.TomTerm  tom_v=tomMatch183_3;
 
 if(!varList.contains(
 tom_v)) { varList.add(TomBase.convertFromVarToBQVar(

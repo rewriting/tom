@@ -709,7 +709,6 @@ backquoteTerm [List<Code> list]
           }
 
           Option ot = `OriginTracking(Name("Backquote"),t.getLine(), currentFile);
-          //BQTerm bqTerm = tomparser.plainBQTerm();
           BQTerm result = bqparser.beginBackquote();
           //System.out.println("parse bqterm \n"+result);
 

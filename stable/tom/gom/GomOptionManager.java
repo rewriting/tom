@@ -196,9 +196,9 @@ if(option != null) {
 {
 if ( (option instanceof tom.platform.adt.platformoption.types.PlatformOption) ) {
 if ( ((( tom.platform.adt.platformoption.types.PlatformOption )option) instanceof tom.platform.adt.platformoption.types.platformoption.PluginOption) ) {
- tom.platform.adt.platformoption.types.PlatformValue  tomMatch389_1= (( tom.platform.adt.platformoption.types.PlatformOption )option).getValue() ;
-if ( (tomMatch389_1 instanceof tom.platform.adt.platformoption.types.platformvalue.BooleanValue) ) {
-if ( ( tomMatch389_1.getBooleanValue()  instanceof tom.platform.adt.platformoption.types.platformboolean.True) ) {
+ tom.platform.adt.platformoption.types.PlatformValue  tomMatch393_1= (( tom.platform.adt.platformoption.types.PlatformOption )option).getValue() ;
+if ( (tomMatch393_1 instanceof tom.platform.adt.platformoption.types.platformvalue.BooleanValue) ) {
+if ( ( tomMatch393_1.getBooleanValue()  instanceof tom.platform.adt.platformoption.types.platformboolean.True) ) {
 return Boolean.valueOf(true); 
 }
 }
@@ -209,9 +209,9 @@ return Boolean.valueOf(true);
 {
 if ( (option instanceof tom.platform.adt.platformoption.types.PlatformOption) ) {
 if ( ((( tom.platform.adt.platformoption.types.PlatformOption )option) instanceof tom.platform.adt.platformoption.types.platformoption.PluginOption) ) {
- tom.platform.adt.platformoption.types.PlatformValue  tomMatch389_7= (( tom.platform.adt.platformoption.types.PlatformOption )option).getValue() ;
-if ( (tomMatch389_7 instanceof tom.platform.adt.platformoption.types.platformvalue.BooleanValue) ) {
-if ( ( tomMatch389_7.getBooleanValue()  instanceof tom.platform.adt.platformoption.types.platformboolean.False) ) {
+ tom.platform.adt.platformoption.types.PlatformValue  tomMatch393_7= (( tom.platform.adt.platformoption.types.PlatformOption )option).getValue() ;
+if ( (tomMatch393_7 instanceof tom.platform.adt.platformoption.types.platformvalue.BooleanValue) ) {
+if ( ( tomMatch393_7.getBooleanValue()  instanceof tom.platform.adt.platformoption.types.platformboolean.False) ) {
 return Boolean.valueOf(false); 
 }
 }
@@ -222,10 +222,10 @@ return Boolean.valueOf(false);
 {
 if ( (option instanceof tom.platform.adt.platformoption.types.PlatformOption) ) {
 if ( ((( tom.platform.adt.platformoption.types.PlatformOption )option) instanceof tom.platform.adt.platformoption.types.platformoption.PluginOption) ) {
- tom.platform.adt.platformoption.types.PlatformValue  tomMatch389_13= (( tom.platform.adt.platformoption.types.PlatformOption )option).getValue() ;
-if ( (tomMatch389_13 instanceof tom.platform.adt.platformoption.types.platformvalue.IntegerValue) ) {
+ tom.platform.adt.platformoption.types.PlatformValue  tomMatch393_13= (( tom.platform.adt.platformoption.types.PlatformOption )option).getValue() ;
+if ( (tomMatch393_13 instanceof tom.platform.adt.platformoption.types.platformvalue.IntegerValue) ) {
 return Integer.valueOf(
- tomMatch389_13.getIntegerValue() ); 
+ tomMatch393_13.getIntegerValue() ); 
 
 }
 }
@@ -235,10 +235,10 @@ return Integer.valueOf(
 {
 if ( (option instanceof tom.platform.adt.platformoption.types.PlatformOption) ) {
 if ( ((( tom.platform.adt.platformoption.types.PlatformOption )option) instanceof tom.platform.adt.platformoption.types.platformoption.PluginOption) ) {
- tom.platform.adt.platformoption.types.PlatformValue  tomMatch389_18= (( tom.platform.adt.platformoption.types.PlatformOption )option).getValue() ;
-if ( (tomMatch389_18 instanceof tom.platform.adt.platformoption.types.platformvalue.StringValue) ) {
+ tom.platform.adt.platformoption.types.PlatformValue  tomMatch393_18= (( tom.platform.adt.platformoption.types.PlatformOption )option).getValue() ;
+if ( (tomMatch393_18 instanceof tom.platform.adt.platformoption.types.platformvalue.StringValue) ) {
 return 
- tomMatch389_18.getStringValue() ; 
+ tomMatch393_18.getStringValue() ; 
 
 }
 }
@@ -465,10 +465,10 @@ return true;
 if ( (requiredOptions instanceof tom.platform.adt.platformoption.types.PlatformOptionList) ) {
 if ( (((( tom.platform.adt.platformoption.types.PlatformOptionList )requiredOptions) instanceof tom.platform.adt.platformoption.types.platformoptionlist.ConsconcPlatformOption) || ((( tom.platform.adt.platformoption.types.PlatformOptionList )requiredOptions) instanceof tom.platform.adt.platformoption.types.platformoptionlist.EmptyconcPlatformOption)) ) {
 if (!( (( tom.platform.adt.platformoption.types.PlatformOptionList )requiredOptions).isEmptyconcPlatformOption() )) {
- tom.platform.adt.platformoption.types.PlatformOption  tomMatch392_8= (( tom.platform.adt.platformoption.types.PlatformOptionList )requiredOptions).getHeadconcPlatformOption() ;
-if ( (tomMatch392_8 instanceof tom.platform.adt.platformoption.types.platformoption.PluginOption) ) {
- String  tom_name= tomMatch392_8.getName() ;
- tom.platform.adt.platformoption.types.PlatformValue  tom_value= tomMatch392_8.getValue() ;
+ tom.platform.adt.platformoption.types.PlatformOption  tomMatch396_8= (( tom.platform.adt.platformoption.types.PlatformOptionList )requiredOptions).getHeadconcPlatformOption() ;
+if ( (tomMatch396_8 instanceof tom.platform.adt.platformoption.types.platformoption.PluginOption) ) {
+ String  tom_name= tomMatch396_8.getName() ;
+ tom.platform.adt.platformoption.types.PlatformValue  tom_value= tomMatch396_8.getValue() ;
 
 PlatformOption option = getOptionFromName(
 tom_name);
