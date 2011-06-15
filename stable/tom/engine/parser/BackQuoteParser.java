@@ -41,7 +41,9 @@ import antlr.SemanticException;
 import antlr.ParserSharedInputState;
 import antlr.collections.impl.BitSet;
 
+import java.util.List;
 import java.util.LinkedList;
+import java.util.ArrayList;
 
 import tom.engine.TomBase;
 import tom.engine.xml.Constants;
@@ -70,7 +72,7 @@ public class BackQuoteParser extends antlr.LLkParser       implements BackQuoteP
 
 	private final static String DEFAULT_MODULE_NAME = "default";
 	private final static String TNODE_MODULE_NAME = "tnode";
-    private static boolean tom_equal_term_char(char t1, char t2) {return  t1==t2 ;}private static boolean tom_is_sort_char(char t) {return  true ;} private static boolean tom_equal_term_String(String t1, String t2) {return  t1.equals(t2) ;}private static boolean tom_is_sort_String(String t) {return  t instanceof String ;} private static boolean tom_equal_term_int(int t1, int t2) {return  t1==t2 ;}private static boolean tom_is_sort_int(int t) {return  true ;} private static boolean tom_equal_term_TomSymbolTable(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TomSymbolTable(Object t) {return  (t instanceof tom.engine.adt.tomsignature.types.TomSymbolTable) ;}private static boolean tom_equal_term_TomSymbol(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TomSymbol(Object t) {return  (t instanceof tom.engine.adt.tomsignature.types.TomSymbol) ;}private static boolean tom_equal_term_TomStructureTable(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TomStructureTable(Object t) {return  (t instanceof tom.engine.adt.tomsignature.types.TomStructureTable) ;}private static boolean tom_equal_term_TargetLanguage(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TargetLanguage(Object t) {return  (t instanceof tom.engine.adt.tomsignature.types.TargetLanguage) ;}private static boolean tom_equal_term_TomEntryList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TomEntryList(Object t) {return  (t instanceof tom.engine.adt.tomsignature.types.TomEntryList) ;}private static boolean tom_equal_term_TomEntry(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TomEntry(Object t) {return  (t instanceof tom.engine.adt.tomsignature.types.TomEntry) ;}private static boolean tom_equal_term_TomVisitList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TomVisitList(Object t) {return  (t instanceof tom.engine.adt.tomsignature.types.TomVisitList) ;}private static boolean tom_equal_term_TomSymbolList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TomSymbolList(Object t) {return  (t instanceof tom.engine.adt.tomsignature.types.TomSymbolList) ;}private static boolean tom_equal_term_TextPosition(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TextPosition(Object t) {return  (t instanceof tom.engine.adt.tomsignature.types.TextPosition) ;}private static boolean tom_equal_term_TomVisit(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TomVisit(Object t) {return  (t instanceof tom.engine.adt.tomsignature.types.TomVisit) ;}private static boolean tom_equal_term_KeyEntry(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_KeyEntry(Object t) {return  (t instanceof tom.engine.adt.tomsignature.types.KeyEntry) ;}private static boolean tom_equal_term_TypeConstraint(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TypeConstraint(Object t) {return  (t instanceof tom.engine.adt.typeconstraints.types.TypeConstraint) ;}private static boolean tom_equal_term_TypeConstraintList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TypeConstraintList(Object t) {return  (t instanceof tom.engine.adt.typeconstraints.types.TypeConstraintList) ;}private static boolean tom_equal_term_Info(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_Info(Object t) {return  (t instanceof tom.engine.adt.typeconstraints.types.Info) ;}private static boolean tom_equal_term_Expression(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_Expression(Object t) {return  (t instanceof tom.engine.adt.tomexpression.types.Expression) ;}private static boolean tom_equal_term_TomList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TomList(Object t) {return  (t instanceof tom.engine.adt.tomterm.types.TomList) ;}private static boolean tom_equal_term_TomTerm(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TomTerm(Object t) {return  (t instanceof tom.engine.adt.tomterm.types.TomTerm) ;}private static boolean tom_equal_term_Declaration(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_Declaration(Object t) {return  (t instanceof tom.engine.adt.tomdeclaration.types.Declaration) ;}private static boolean tom_equal_term_DeclarationList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_DeclarationList(Object t) {return  (t instanceof tom.engine.adt.tomdeclaration.types.DeclarationList) ;}private static boolean tom_equal_term_TypeOption(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TypeOption(Object t) {return  (t instanceof tom.engine.adt.tomtype.types.TypeOption) ;}private static boolean tom_equal_term_TomType(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TomType(Object t) {return  (t instanceof tom.engine.adt.tomtype.types.TomType) ;}private static boolean tom_equal_term_TomTypeList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TomTypeList(Object t) {return  (t instanceof tom.engine.adt.tomtype.types.TomTypeList) ;}private static boolean tom_equal_term_TypeOptionList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TypeOptionList(Object t) {return  (t instanceof tom.engine.adt.tomtype.types.TypeOptionList) ;}private static boolean tom_equal_term_TargetLanguageType(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TargetLanguageType(Object t) {return  (t instanceof tom.engine.adt.tomtype.types.TargetLanguageType) ;}private static boolean tom_equal_term_CodeList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_CodeList(Object t) {return  (t instanceof tom.engine.adt.code.types.CodeList) ;}private static boolean tom_equal_term_CompositeMember(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_CompositeMember(Object t) {return  (t instanceof tom.engine.adt.code.types.CompositeMember) ;}private static boolean tom_equal_term_BQTermList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_BQTermList(Object t) {return  (t instanceof tom.engine.adt.code.types.BQTermList) ;}private static boolean tom_equal_term_BQTerm(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_BQTerm(Object t) {return  (t instanceof tom.engine.adt.code.types.BQTerm) ;}private static boolean tom_equal_term_Code(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_Code(Object t) {return  (t instanceof tom.engine.adt.code.types.Code) ;}private static boolean tom_equal_term_ConstraintInstruction(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_ConstraintInstruction(Object t) {return  (t instanceof tom.engine.adt.tominstruction.types.ConstraintInstruction) ;}private static boolean tom_equal_term_Instruction(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_Instruction(Object t) {return  (t instanceof tom.engine.adt.tominstruction.types.Instruction) ;}private static boolean tom_equal_term_InstructionList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_InstructionList(Object t) {return  (t instanceof tom.engine.adt.tominstruction.types.InstructionList) ;}private static boolean tom_equal_term_ConstraintInstructionList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_ConstraintInstructionList(Object t) {return  (t instanceof tom.engine.adt.tominstruction.types.ConstraintInstructionList) ;}private static boolean tom_equal_term_TomNumber(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TomNumber(Object t) {return  (t instanceof tom.engine.adt.tomname.types.TomNumber) ;}private static boolean tom_equal_term_TomNameList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TomNameList(Object t) {return  (t instanceof tom.engine.adt.tomname.types.TomNameList) ;}private static boolean tom_equal_term_TomNumberList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TomNumberList(Object t) {return  (t instanceof tom.engine.adt.tomname.types.TomNumberList) ;}private static boolean tom_equal_term_TomName(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TomName(Object t) {return  (t instanceof tom.engine.adt.tomname.types.TomName) ;}private static boolean tom_equal_term_Slot(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_Slot(Object t) {return  (t instanceof tom.engine.adt.tomslot.types.Slot) ;}private static boolean tom_equal_term_SlotList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_SlotList(Object t) {return  (t instanceof tom.engine.adt.tomslot.types.SlotList) ;}private static boolean tom_equal_term_PairNameDecl(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_PairNameDecl(Object t) {return  (t instanceof tom.engine.adt.tomslot.types.PairNameDecl) ;}private static boolean tom_equal_term_PairNameDeclList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_PairNameDeclList(Object t) {return  (t instanceof tom.engine.adt.tomslot.types.PairNameDeclList) ;}private static boolean tom_equal_term_OptionList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_OptionList(Object t) {return  (t instanceof tom.engine.adt.tomoption.types.OptionList) ;}private static boolean tom_equal_term_Option(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_Option(Object t) {return  (t instanceof tom.engine.adt.tomoption.types.Option) ;}private static boolean tom_equal_term_NumericConstraintType(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_NumericConstraintType(Object t) {return  (t instanceof tom.engine.adt.tomconstraint.types.NumericConstraintType) ;}private static boolean tom_equal_term_Constraint(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_Constraint(Object t) {return  (t instanceof tom.engine.adt.tomconstraint.types.Constraint) ;}private static boolean tom_equal_term_ConstraintList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_ConstraintList(Object t) {return  (t instanceof tom.engine.adt.tomconstraint.types.ConstraintList) ;}private static boolean tom_equal_term_Theory(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_Theory(Object t) {return  (t instanceof tom.engine.adt.theory.types.Theory) ;}private static boolean tom_equal_term_ElementaryTheory(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_ElementaryTheory(Object t) {return  (t instanceof tom.engine.adt.theory.types.ElementaryTheory) ;}private static  tom.engine.adt.tomsignature.types.TargetLanguage  tom_make_ITL( String  t0) { return  tom.engine.adt.tomsignature.types.targetlanguage.ITL.make(t0) ;}private static  tom.engine.adt.code.types.CompositeMember  tom_make_CompositeBQTerm( tom.engine.adt.code.types.BQTerm  t0) { return  tom.engine.adt.code.types.compositemember.CompositeBQTerm.make(t0) ;}private static  tom.engine.adt.code.types.CompositeMember  tom_make_CompositeTL( tom.engine.adt.tomsignature.types.TargetLanguage  t0) { return  tom.engine.adt.code.types.compositemember.CompositeTL.make(t0) ;}private static boolean tom_is_fun_sym_BQAppl( tom.engine.adt.code.types.BQTerm  t) {return  (t instanceof tom.engine.adt.code.types.bqterm.BQAppl) ;}private static  tom.engine.adt.code.types.BQTerm  tom_make_BQAppl( tom.engine.adt.tomoption.types.OptionList  t0,  tom.engine.adt.tomname.types.TomName  t1,  tom.engine.adt.code.types.BQTermList  t2) { return  tom.engine.adt.code.types.bqterm.BQAppl.make(t0, t1, t2) ;}private static  tom.engine.adt.tomoption.types.OptionList  tom_get_slot_BQAppl_Options( tom.engine.adt.code.types.BQTerm  t) {return  t.getOptions() ;}private static  tom.engine.adt.tomname.types.TomName  tom_get_slot_BQAppl_AstName( tom.engine.adt.code.types.BQTerm  t) {return  t.getAstName() ;}private static  tom.engine.adt.code.types.BQTermList  tom_get_slot_BQAppl_Args( tom.engine.adt.code.types.BQTerm  t) {return  t.getArgs() ;}private static  tom.engine.adt.code.types.BQTerm  tom_make_BQVariable( tom.engine.adt.tomoption.types.OptionList  t0,  tom.engine.adt.tomname.types.TomName  t1,  tom.engine.adt.tomtype.types.TomType  t2) { return  tom.engine.adt.code.types.bqterm.BQVariable.make(t0, t1, t2) ;}private static  tom.engine.adt.code.types.BQTerm  tom_make_BQVariableStar( tom.engine.adt.tomoption.types.OptionList  t0,  tom.engine.adt.tomname.types.TomName  t1,  tom.engine.adt.tomtype.types.TomType  t2) { return  tom.engine.adt.code.types.bqterm.BQVariableStar.make(t0, t1, t2) ;}private static  tom.engine.adt.code.types.BQTerm  tom_make_BQDefault() { return  tom.engine.adt.code.types.bqterm.BQDefault.make() ;}private static boolean tom_is_fun_sym_Name( tom.engine.adt.tomname.types.TomName  t) {return  (t instanceof tom.engine.adt.tomname.types.tomname.Name) ;}private static  tom.engine.adt.tomname.types.TomName  tom_make_Name( String  t0) { return  tom.engine.adt.tomname.types.tomname.Name.make(t0) ;}private static  String  tom_get_slot_Name_String( tom.engine.adt.tomname.types.TomName  t) {return  t.getString() ;}private static  tom.engine.adt.tomoption.types.Option  tom_make_OriginTracking( tom.engine.adt.tomname.types.TomName  t0,  int  t1,  String  t2) { return  tom.engine.adt.tomoption.types.option.OriginTracking.make(t0, t1, t2) ;}private static  tom.engine.adt.tomoption.types.Option  tom_make_Constant() { return  tom.engine.adt.tomoption.types.option.Constant.make() ;}private static  tom.engine.adt.tomoption.types.Option  tom_make_ModuleName( String  t0) { return  tom.engine.adt.tomoption.types.option.ModuleName.make(t0) ;}private static  tom.engine.adt.tomoption.types.Option  tom_make_TypeForVariable( String  t0) { return  tom.engine.adt.tomoption.types.option.TypeForVariable.make(t0) ;}private static boolean tom_is_fun_sym_concBQTerm( tom.engine.adt.code.types.BQTermList  t) {return  ((t instanceof tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm) || (t instanceof tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm)) ;}private static  tom.engine.adt.code.types.BQTermList  tom_empty_list_concBQTerm() { return  tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() ;}private static  tom.engine.adt.code.types.BQTermList  tom_cons_list_concBQTerm( tom.engine.adt.code.types.BQTerm  e,  tom.engine.adt.code.types.BQTermList  l) { return  tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make(e,l) ;}private static  tom.engine.adt.code.types.BQTerm  tom_get_head_concBQTerm_BQTermList( tom.engine.adt.code.types.BQTermList  l) {return  l.getHeadconcBQTerm() ;}private static  tom.engine.adt.code.types.BQTermList  tom_get_tail_concBQTerm_BQTermList( tom.engine.adt.code.types.BQTermList  l) {return  l.getTailconcBQTerm() ;}private static boolean tom_is_empty_concBQTerm_BQTermList( tom.engine.adt.code.types.BQTermList  l) {return  l.isEmptyconcBQTerm() ;}   private static   tom.engine.adt.code.types.BQTermList  tom_append_list_concBQTerm( tom.engine.adt.code.types.BQTermList l1,  tom.engine.adt.code.types.BQTermList  l2) {     if( l1.isEmptyconcBQTerm() ) {       return l2;     } else if( l2.isEmptyconcBQTerm() ) {       return l1;     } else if(  l1.getTailconcBQTerm() .isEmptyconcBQTerm() ) {       return  tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make( l1.getHeadconcBQTerm() ,l2) ;     } else {       return  tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make( l1.getHeadconcBQTerm() ,tom_append_list_concBQTerm( l1.getTailconcBQTerm() ,l2)) ;     }   }   private static   tom.engine.adt.code.types.BQTermList  tom_get_slice_concBQTerm( tom.engine.adt.code.types.BQTermList  begin,  tom.engine.adt.code.types.BQTermList  end, tom.engine.adt.code.types.BQTermList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyconcBQTerm()  ||  (end==tom_empty_list_concBQTerm()) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make( begin.getHeadconcBQTerm() ,( tom.engine.adt.code.types.BQTermList )tom_get_slice_concBQTerm( begin.getTailconcBQTerm() ,end,tail)) ;   }   private static boolean tom_is_fun_sym_Composite( tom.engine.adt.code.types.BQTerm  t) {return  ((t instanceof tom.engine.adt.code.types.bqterm.ConsComposite) || (t instanceof tom.engine.adt.code.types.bqterm.EmptyComposite)) ;}private static  tom.engine.adt.code.types.BQTerm  tom_empty_list_Composite() { return  tom.engine.adt.code.types.bqterm.EmptyComposite.make() ;}private static  tom.engine.adt.code.types.BQTerm  tom_cons_list_Composite( tom.engine.adt.code.types.CompositeMember  e,  tom.engine.adt.code.types.BQTerm  l) { return  tom.engine.adt.code.types.bqterm.ConsComposite.make(e,l) ;}private static  tom.engine.adt.code.types.CompositeMember  tom_get_head_Composite_BQTerm( tom.engine.adt.code.types.BQTerm  l) {return  l.getHeadComposite() ;}private static  tom.engine.adt.code.types.BQTerm  tom_get_tail_Composite_BQTerm( tom.engine.adt.code.types.BQTerm  l) {return  l.getTailComposite() ;}private static boolean tom_is_empty_Composite_BQTerm( tom.engine.adt.code.types.BQTerm  l) {return  l.isEmptyComposite() ;}   private static   tom.engine.adt.code.types.BQTerm  tom_append_list_Composite( tom.engine.adt.code.types.BQTerm l1,  tom.engine.adt.code.types.BQTerm  l2) {     if( l1.isEmptyComposite() ) {       return l2;     } else if( l2.isEmptyComposite() ) {       return l1;     } else if(  l1.getTailComposite() .isEmptyComposite() ) {       return  tom.engine.adt.code.types.bqterm.ConsComposite.make( l1.getHeadComposite() ,l2) ;     } else {       return  tom.engine.adt.code.types.bqterm.ConsComposite.make( l1.getHeadComposite() ,tom_append_list_Composite( l1.getTailComposite() ,l2)) ;     }   }   private static   tom.engine.adt.code.types.BQTerm  tom_get_slice_Composite( tom.engine.adt.code.types.BQTerm  begin,  tom.engine.adt.code.types.BQTerm  end, tom.engine.adt.code.types.BQTerm  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyComposite()  ||  (end==tom_empty_list_Composite()) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.engine.adt.code.types.bqterm.ConsComposite.make( begin.getHeadComposite() ,( tom.engine.adt.code.types.BQTerm )tom_get_slice_Composite( begin.getTailComposite() ,end,tail)) ;   }   private static boolean tom_is_fun_sym_concOption( tom.engine.adt.tomoption.types.OptionList  t) {return  ((t instanceof tom.engine.adt.tomoption.types.optionlist.ConsconcOption) || (t instanceof tom.engine.adt.tomoption.types.optionlist.EmptyconcOption)) ;}private static  tom.engine.adt.tomoption.types.OptionList  tom_empty_list_concOption() { return  tom.engine.adt.tomoption.types.optionlist.EmptyconcOption.make() ;}private static  tom.engine.adt.tomoption.types.OptionList  tom_cons_list_concOption( tom.engine.adt.tomoption.types.Option  e,  tom.engine.adt.tomoption.types.OptionList  l) { return  tom.engine.adt.tomoption.types.optionlist.ConsconcOption.make(e,l) ;}private static  tom.engine.adt.tomoption.types.Option  tom_get_head_concOption_OptionList( tom.engine.adt.tomoption.types.OptionList  l) {return  l.getHeadconcOption() ;}private static  tom.engine.adt.tomoption.types.OptionList  tom_get_tail_concOption_OptionList( tom.engine.adt.tomoption.types.OptionList  l) {return  l.getTailconcOption() ;}private static boolean tom_is_empty_concOption_OptionList( tom.engine.adt.tomoption.types.OptionList  l) {return  l.isEmptyconcOption() ;}   private static   tom.engine.adt.tomoption.types.OptionList  tom_append_list_concOption( tom.engine.adt.tomoption.types.OptionList l1,  tom.engine.adt.tomoption.types.OptionList  l2) {     if( l1.isEmptyconcOption() ) {       return l2;     } else if( l2.isEmptyconcOption() ) {       return l1;     } else if(  l1.getTailconcOption() .isEmptyconcOption() ) {       return  tom.engine.adt.tomoption.types.optionlist.ConsconcOption.make( l1.getHeadconcOption() ,l2) ;     } else {       return  tom.engine.adt.tomoption.types.optionlist.ConsconcOption.make( l1.getHeadconcOption() ,tom_append_list_concOption( l1.getTailconcOption() ,l2)) ;     }   }   private static   tom.engine.adt.tomoption.types.OptionList  tom_get_slice_concOption( tom.engine.adt.tomoption.types.OptionList  begin,  tom.engine.adt.tomoption.types.OptionList  end, tom.engine.adt.tomoption.types.OptionList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyconcOption()  ||  (end==tom_empty_list_concOption()) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.engine.adt.tomoption.types.optionlist.ConsconcOption.make( begin.getHeadconcOption() ,( tom.engine.adt.tomoption.types.OptionList )tom_get_slice_concOption( begin.getTailconcOption() ,end,tail)) ;   }    
+    private static boolean tom_equal_term_char(char t1, char t2) {return  t1==t2 ;}private static boolean tom_is_sort_char(char t) {return  true ;} private static boolean tom_equal_term_String(String t1, String t2) {return  t1.equals(t2) ;}private static boolean tom_is_sort_String(String t) {return  t instanceof String ;} private static boolean tom_equal_term_int(int t1, int t2) {return  t1==t2 ;}private static boolean tom_is_sort_int(int t) {return  true ;} private static boolean tom_equal_term_TomSymbolTable(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TomSymbolTable(Object t) {return  (t instanceof tom.engine.adt.tomsignature.types.TomSymbolTable) ;}private static boolean tom_equal_term_TomSymbol(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TomSymbol(Object t) {return  (t instanceof tom.engine.adt.tomsignature.types.TomSymbol) ;}private static boolean tom_equal_term_TomStructureTable(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TomStructureTable(Object t) {return  (t instanceof tom.engine.adt.tomsignature.types.TomStructureTable) ;}private static boolean tom_equal_term_TomEntryList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TomEntryList(Object t) {return  (t instanceof tom.engine.adt.tomsignature.types.TomEntryList) ;}private static boolean tom_equal_term_TomEntry(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TomEntry(Object t) {return  (t instanceof tom.engine.adt.tomsignature.types.TomEntry) ;}private static boolean tom_equal_term_TomVisitList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TomVisitList(Object t) {return  (t instanceof tom.engine.adt.tomsignature.types.TomVisitList) ;}private static boolean tom_equal_term_TomSymbolList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TomSymbolList(Object t) {return  (t instanceof tom.engine.adt.tomsignature.types.TomSymbolList) ;}private static boolean tom_equal_term_TextPosition(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TextPosition(Object t) {return  (t instanceof tom.engine.adt.tomsignature.types.TextPosition) ;}private static boolean tom_equal_term_TomVisit(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TomVisit(Object t) {return  (t instanceof tom.engine.adt.tomsignature.types.TomVisit) ;}private static boolean tom_equal_term_KeyEntry(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_KeyEntry(Object t) {return  (t instanceof tom.engine.adt.tomsignature.types.KeyEntry) ;}private static boolean tom_equal_term_TypeConstraint(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TypeConstraint(Object t) {return  (t instanceof tom.engine.adt.typeconstraints.types.TypeConstraint) ;}private static boolean tom_equal_term_TypeConstraintList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TypeConstraintList(Object t) {return  (t instanceof tom.engine.adt.typeconstraints.types.TypeConstraintList) ;}private static boolean tom_equal_term_Info(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_Info(Object t) {return  (t instanceof tom.engine.adt.typeconstraints.types.Info) ;}private static boolean tom_equal_term_Expression(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_Expression(Object t) {return  (t instanceof tom.engine.adt.tomexpression.types.Expression) ;}private static boolean tom_equal_term_TomList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TomList(Object t) {return  (t instanceof tom.engine.adt.tomterm.types.TomList) ;}private static boolean tom_equal_term_TomTerm(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TomTerm(Object t) {return  (t instanceof tom.engine.adt.tomterm.types.TomTerm) ;}private static boolean tom_equal_term_Declaration(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_Declaration(Object t) {return  (t instanceof tom.engine.adt.tomdeclaration.types.Declaration) ;}private static boolean tom_equal_term_DeclarationList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_DeclarationList(Object t) {return  (t instanceof tom.engine.adt.tomdeclaration.types.DeclarationList) ;}private static boolean tom_equal_term_TypeOption(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TypeOption(Object t) {return  (t instanceof tom.engine.adt.tomtype.types.TypeOption) ;}private static boolean tom_equal_term_TomType(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TomType(Object t) {return  (t instanceof tom.engine.adt.tomtype.types.TomType) ;}private static boolean tom_equal_term_TomTypeList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TomTypeList(Object t) {return  (t instanceof tom.engine.adt.tomtype.types.TomTypeList) ;}private static boolean tom_equal_term_TypeOptionList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TypeOptionList(Object t) {return  (t instanceof tom.engine.adt.tomtype.types.TypeOptionList) ;}private static boolean tom_equal_term_TargetLanguageType(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TargetLanguageType(Object t) {return  (t instanceof tom.engine.adt.tomtype.types.TargetLanguageType) ;}private static boolean tom_equal_term_CodeList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_CodeList(Object t) {return  (t instanceof tom.engine.adt.code.types.CodeList) ;}private static boolean tom_equal_term_CompositeMember(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_CompositeMember(Object t) {return  (t instanceof tom.engine.adt.code.types.CompositeMember) ;}private static boolean tom_equal_term_BQTermList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_BQTermList(Object t) {return  (t instanceof tom.engine.adt.code.types.BQTermList) ;}private static boolean tom_equal_term_BQTerm(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_BQTerm(Object t) {return  (t instanceof tom.engine.adt.code.types.BQTerm) ;}private static boolean tom_equal_term_TargetLanguage(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TargetLanguage(Object t) {return  (t instanceof tom.engine.adt.code.types.TargetLanguage) ;}private static boolean tom_equal_term_Code(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_Code(Object t) {return  (t instanceof tom.engine.adt.code.types.Code) ;}private static boolean tom_equal_term_ConstraintInstruction(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_ConstraintInstruction(Object t) {return  (t instanceof tom.engine.adt.tominstruction.types.ConstraintInstruction) ;}private static boolean tom_equal_term_Instruction(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_Instruction(Object t) {return  (t instanceof tom.engine.adt.tominstruction.types.Instruction) ;}private static boolean tom_equal_term_InstructionList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_InstructionList(Object t) {return  (t instanceof tom.engine.adt.tominstruction.types.InstructionList) ;}private static boolean tom_equal_term_ConstraintInstructionList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_ConstraintInstructionList(Object t) {return  (t instanceof tom.engine.adt.tominstruction.types.ConstraintInstructionList) ;}private static boolean tom_equal_term_TomNumber(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TomNumber(Object t) {return  (t instanceof tom.engine.adt.tomname.types.TomNumber) ;}private static boolean tom_equal_term_TomNameList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TomNameList(Object t) {return  (t instanceof tom.engine.adt.tomname.types.TomNameList) ;}private static boolean tom_equal_term_TomNumberList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TomNumberList(Object t) {return  (t instanceof tom.engine.adt.tomname.types.TomNumberList) ;}private static boolean tom_equal_term_TomName(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TomName(Object t) {return  (t instanceof tom.engine.adt.tomname.types.TomName) ;}private static boolean tom_equal_term_Slot(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_Slot(Object t) {return  (t instanceof tom.engine.adt.tomslot.types.Slot) ;}private static boolean tom_equal_term_BQSlotList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_BQSlotList(Object t) {return  (t instanceof tom.engine.adt.tomslot.types.BQSlotList) ;}private static boolean tom_equal_term_SlotList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_SlotList(Object t) {return  (t instanceof tom.engine.adt.tomslot.types.SlotList) ;}private static boolean tom_equal_term_BQSlot(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_BQSlot(Object t) {return  (t instanceof tom.engine.adt.tomslot.types.BQSlot) ;}private static boolean tom_equal_term_PairNameDecl(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_PairNameDecl(Object t) {return  (t instanceof tom.engine.adt.tomslot.types.PairNameDecl) ;}private static boolean tom_equal_term_PairNameDeclList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_PairNameDeclList(Object t) {return  (t instanceof tom.engine.adt.tomslot.types.PairNameDeclList) ;}private static boolean tom_equal_term_OptionList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_OptionList(Object t) {return  (t instanceof tom.engine.adt.tomoption.types.OptionList) ;}private static boolean tom_equal_term_Option(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_Option(Object t) {return  (t instanceof tom.engine.adt.tomoption.types.Option) ;}private static boolean tom_equal_term_NumericConstraintType(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_NumericConstraintType(Object t) {return  (t instanceof tom.engine.adt.tomconstraint.types.NumericConstraintType) ;}private static boolean tom_equal_term_Constraint(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_Constraint(Object t) {return  (t instanceof tom.engine.adt.tomconstraint.types.Constraint) ;}private static boolean tom_equal_term_ConstraintList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_ConstraintList(Object t) {return  (t instanceof tom.engine.adt.tomconstraint.types.ConstraintList) ;}private static boolean tom_equal_term_Theory(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_Theory(Object t) {return  (t instanceof tom.engine.adt.theory.types.Theory) ;}private static boolean tom_equal_term_ElementaryTheory(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_ElementaryTheory(Object t) {return  (t instanceof tom.engine.adt.theory.types.ElementaryTheory) ;}private static  tom.engine.adt.code.types.CompositeMember  tom_make_CompositeBQTerm( tom.engine.adt.code.types.BQTerm  t0) { return  tom.engine.adt.code.types.compositemember.CompositeBQTerm.make(t0) ;}private static  tom.engine.adt.code.types.CompositeMember  tom_make_CompositeTL( tom.engine.adt.code.types.TargetLanguage  t0) { return  tom.engine.adt.code.types.compositemember.CompositeTL.make(t0) ;}private static boolean tom_is_fun_sym_BQAppl( tom.engine.adt.code.types.BQTerm  t) {return  (t instanceof tom.engine.adt.code.types.bqterm.BQAppl) ;}private static  tom.engine.adt.code.types.BQTerm  tom_make_BQAppl( tom.engine.adt.tomoption.types.OptionList  t0,  tom.engine.adt.tomname.types.TomName  t1,  tom.engine.adt.code.types.BQTermList  t2) { return  tom.engine.adt.code.types.bqterm.BQAppl.make(t0, t1, t2) ;}private static  tom.engine.adt.tomoption.types.OptionList  tom_get_slot_BQAppl_Options( tom.engine.adt.code.types.BQTerm  t) {return  t.getOptions() ;}private static  tom.engine.adt.tomname.types.TomName  tom_get_slot_BQAppl_AstName( tom.engine.adt.code.types.BQTerm  t) {return  t.getAstName() ;}private static  tom.engine.adt.code.types.BQTermList  tom_get_slot_BQAppl_Args( tom.engine.adt.code.types.BQTerm  t) {return  t.getArgs() ;}private static  tom.engine.adt.code.types.BQTerm  tom_make_BQRecordAppl( tom.engine.adt.tomoption.types.OptionList  t0,  tom.engine.adt.tomname.types.TomName  t1,  tom.engine.adt.tomslot.types.BQSlotList  t2) { return  tom.engine.adt.code.types.bqterm.BQRecordAppl.make(t0, t1, t2) ;}private static  tom.engine.adt.code.types.BQTerm  tom_make_BQVariable( tom.engine.adt.tomoption.types.OptionList  t0,  tom.engine.adt.tomname.types.TomName  t1,  tom.engine.adt.tomtype.types.TomType  t2) { return  tom.engine.adt.code.types.bqterm.BQVariable.make(t0, t1, t2) ;}private static  tom.engine.adt.code.types.BQTerm  tom_make_BQVariableStar( tom.engine.adt.tomoption.types.OptionList  t0,  tom.engine.adt.tomname.types.TomName  t1,  tom.engine.adt.tomtype.types.TomType  t2) { return  tom.engine.adt.code.types.bqterm.BQVariableStar.make(t0, t1, t2) ;}private static  tom.engine.adt.code.types.BQTerm  tom_make_BQDefault() { return  tom.engine.adt.code.types.bqterm.BQDefault.make() ;}private static  tom.engine.adt.code.types.TargetLanguage  tom_make_ITL( String  t0) { return  tom.engine.adt.code.types.targetlanguage.ITL.make(t0) ;}private static boolean tom_is_fun_sym_Name( tom.engine.adt.tomname.types.TomName  t) {return  (t instanceof tom.engine.adt.tomname.types.tomname.Name) ;}private static  tom.engine.adt.tomname.types.TomName  tom_make_Name( String  t0) { return  tom.engine.adt.tomname.types.tomname.Name.make(t0) ;}private static  String  tom_get_slot_Name_String( tom.engine.adt.tomname.types.TomName  t) {return  t.getString() ;}private static  tom.engine.adt.tomslot.types.BQSlot  tom_make_PairSlotBQTerm( tom.engine.adt.tomname.types.TomName  t0,  tom.engine.adt.code.types.BQTerm  t1) { return  tom.engine.adt.tomslot.types.bqslot.PairSlotBQTerm.make(t0, t1) ;}private static  tom.engine.adt.tomoption.types.Option  tom_make_OriginTracking( tom.engine.adt.tomname.types.TomName  t0,  int  t1,  String  t2) { return  tom.engine.adt.tomoption.types.option.OriginTracking.make(t0, t1, t2) ;}private static  tom.engine.adt.tomoption.types.Option  tom_make_Constant() { return  tom.engine.adt.tomoption.types.option.Constant.make() ;}private static  tom.engine.adt.tomoption.types.Option  tom_make_ModuleName( String  t0) { return  tom.engine.adt.tomoption.types.option.ModuleName.make(t0) ;}private static  tom.engine.adt.tomoption.types.Option  tom_make_TypeForVariable( String  t0) { return  tom.engine.adt.tomoption.types.option.TypeForVariable.make(t0) ;}private static boolean tom_is_fun_sym_concBQTerm( tom.engine.adt.code.types.BQTermList  t) {return  ((t instanceof tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm) || (t instanceof tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm)) ;}private static  tom.engine.adt.code.types.BQTermList  tom_empty_list_concBQTerm() { return  tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() ;}private static  tom.engine.adt.code.types.BQTermList  tom_cons_list_concBQTerm( tom.engine.adt.code.types.BQTerm  e,  tom.engine.adt.code.types.BQTermList  l) { return  tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make(e,l) ;}private static  tom.engine.adt.code.types.BQTerm  tom_get_head_concBQTerm_BQTermList( tom.engine.adt.code.types.BQTermList  l) {return  l.getHeadconcBQTerm() ;}private static  tom.engine.adt.code.types.BQTermList  tom_get_tail_concBQTerm_BQTermList( tom.engine.adt.code.types.BQTermList  l) {return  l.getTailconcBQTerm() ;}private static boolean tom_is_empty_concBQTerm_BQTermList( tom.engine.adt.code.types.BQTermList  l) {return  l.isEmptyconcBQTerm() ;}   private static   tom.engine.adt.code.types.BQTermList  tom_append_list_concBQTerm( tom.engine.adt.code.types.BQTermList l1,  tom.engine.adt.code.types.BQTermList  l2) {     if( l1.isEmptyconcBQTerm() ) {       return l2;     } else if( l2.isEmptyconcBQTerm() ) {       return l1;     } else if(  l1.getTailconcBQTerm() .isEmptyconcBQTerm() ) {       return  tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make( l1.getHeadconcBQTerm() ,l2) ;     } else {       return  tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make( l1.getHeadconcBQTerm() ,tom_append_list_concBQTerm( l1.getTailconcBQTerm() ,l2)) ;     }   }   private static   tom.engine.adt.code.types.BQTermList  tom_get_slice_concBQTerm( tom.engine.adt.code.types.BQTermList  begin,  tom.engine.adt.code.types.BQTermList  end, tom.engine.adt.code.types.BQTermList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyconcBQTerm()  ||  (end==tom_empty_list_concBQTerm()) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make( begin.getHeadconcBQTerm() ,( tom.engine.adt.code.types.BQTermList )tom_get_slice_concBQTerm( begin.getTailconcBQTerm() ,end,tail)) ;   }   private static boolean tom_is_fun_sym_Composite( tom.engine.adt.code.types.BQTerm  t) {return  ((t instanceof tom.engine.adt.code.types.bqterm.ConsComposite) || (t instanceof tom.engine.adt.code.types.bqterm.EmptyComposite)) ;}private static  tom.engine.adt.code.types.BQTerm  tom_empty_list_Composite() { return  tom.engine.adt.code.types.bqterm.EmptyComposite.make() ;}private static  tom.engine.adt.code.types.BQTerm  tom_cons_list_Composite( tom.engine.adt.code.types.CompositeMember  e,  tom.engine.adt.code.types.BQTerm  l) { return  tom.engine.adt.code.types.bqterm.ConsComposite.make(e,l) ;}private static  tom.engine.adt.code.types.CompositeMember  tom_get_head_Composite_BQTerm( tom.engine.adt.code.types.BQTerm  l) {return  l.getHeadComposite() ;}private static  tom.engine.adt.code.types.BQTerm  tom_get_tail_Composite_BQTerm( tom.engine.adt.code.types.BQTerm  l) {return  l.getTailComposite() ;}private static boolean tom_is_empty_Composite_BQTerm( tom.engine.adt.code.types.BQTerm  l) {return  l.isEmptyComposite() ;}   private static   tom.engine.adt.code.types.BQTerm  tom_append_list_Composite( tom.engine.adt.code.types.BQTerm l1,  tom.engine.adt.code.types.BQTerm  l2) {     if( l1.isEmptyComposite() ) {       return l2;     } else if( l2.isEmptyComposite() ) {       return l1;     } else if(  l1.getTailComposite() .isEmptyComposite() ) {       return  tom.engine.adt.code.types.bqterm.ConsComposite.make( l1.getHeadComposite() ,l2) ;     } else {       return  tom.engine.adt.code.types.bqterm.ConsComposite.make( l1.getHeadComposite() ,tom_append_list_Composite( l1.getTailComposite() ,l2)) ;     }   }   private static   tom.engine.adt.code.types.BQTerm  tom_get_slice_Composite( tom.engine.adt.code.types.BQTerm  begin,  tom.engine.adt.code.types.BQTerm  end, tom.engine.adt.code.types.BQTerm  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyComposite()  ||  (end==tom_empty_list_Composite()) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.engine.adt.code.types.bqterm.ConsComposite.make( begin.getHeadComposite() ,( tom.engine.adt.code.types.BQTerm )tom_get_slice_Composite( begin.getTailComposite() ,end,tail)) ;   }   private static boolean tom_is_fun_sym_concOption( tom.engine.adt.tomoption.types.OptionList  t) {return  ((t instanceof tom.engine.adt.tomoption.types.optionlist.ConsconcOption) || (t instanceof tom.engine.adt.tomoption.types.optionlist.EmptyconcOption)) ;}private static  tom.engine.adt.tomoption.types.OptionList  tom_empty_list_concOption() { return  tom.engine.adt.tomoption.types.optionlist.EmptyconcOption.make() ;}private static  tom.engine.adt.tomoption.types.OptionList  tom_cons_list_concOption( tom.engine.adt.tomoption.types.Option  e,  tom.engine.adt.tomoption.types.OptionList  l) { return  tom.engine.adt.tomoption.types.optionlist.ConsconcOption.make(e,l) ;}private static  tom.engine.adt.tomoption.types.Option  tom_get_head_concOption_OptionList( tom.engine.adt.tomoption.types.OptionList  l) {return  l.getHeadconcOption() ;}private static  tom.engine.adt.tomoption.types.OptionList  tom_get_tail_concOption_OptionList( tom.engine.adt.tomoption.types.OptionList  l) {return  l.getTailconcOption() ;}private static boolean tom_is_empty_concOption_OptionList( tom.engine.adt.tomoption.types.OptionList  l) {return  l.isEmptyconcOption() ;}   private static   tom.engine.adt.tomoption.types.OptionList  tom_append_list_concOption( tom.engine.adt.tomoption.types.OptionList l1,  tom.engine.adt.tomoption.types.OptionList  l2) {     if( l1.isEmptyconcOption() ) {       return l2;     } else if( l2.isEmptyconcOption() ) {       return l1;     } else if(  l1.getTailconcOption() .isEmptyconcOption() ) {       return  tom.engine.adt.tomoption.types.optionlist.ConsconcOption.make( l1.getHeadconcOption() ,l2) ;     } else {       return  tom.engine.adt.tomoption.types.optionlist.ConsconcOption.make( l1.getHeadconcOption() ,tom_append_list_concOption( l1.getTailconcOption() ,l2)) ;     }   }   private static   tom.engine.adt.tomoption.types.OptionList  tom_get_slice_concOption( tom.engine.adt.tomoption.types.OptionList  begin,  tom.engine.adt.tomoption.types.OptionList  end, tom.engine.adt.tomoption.types.OptionList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyconcOption()  ||  (end==tom_empty_list_concOption()) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.engine.adt.tomoption.types.optionlist.ConsconcOption.make( begin.getHeadconcOption() ,( tom.engine.adt.tomoption.types.OptionList )tom_get_slice_concOption( begin.getTailconcOption() ,end,tail)) ;   }    
     
     // the lexer for backquote language
     BackQuoteLexer bqlexer = null;
@@ -100,7 +102,7 @@ public class BackQuoteParser extends antlr.LLkParser       implements BackQuoteP
       return tomparser.selector();
     }
     
-   private BQTerm buildBqAppl(Token id, LinkedList<BQTerm> blockList, BQTerm term, boolean composite) {
+   private BQTerm buildBqAppl(Token id, List<BQTerm> blockList, BQTerm term, boolean composite) {
      OptionList option = tom_cons_list_concOption(tom_make_OriginTracking(tom_make_Name(id.getText()),id.getLine(),currentFile()),tom_cons_list_concOption(tom_make_ModuleName(DEFAULT_MODULE_NAME),tom_empty_list_concOption()));
      Composite target = (Composite) ((term==null)?
        tom_empty_list_Composite():
@@ -112,6 +114,20 @@ public class BackQuoteParser extends antlr.LLkParser       implements BackQuoteP
      } else {
 			 return tom_cons_list_Composite(tom_make_CompositeBQTerm(tom_make_BQVariable(option,tom_make_Name(id.getText()),SymbolTable.TYPE_UNKNOWN)),tom_append_list_Composite(target,tom_empty_list_Composite()));
 		 }
+   }
+
+   private BQTerm buildBqSlotTerm(Token id, List<BQSlot> slotList, BQTerm term, boolean composite) {
+     OptionList option = tom_cons_list_concOption(tom_make_OriginTracking(tom_make_Name(id.getText()),id.getLine(),currentFile()),tom_cons_list_concOption(tom_make_ModuleName(DEFAULT_MODULE_NAME),tom_empty_list_concOption()));
+     Composite target = (Composite) ((term==null)?
+       tom_empty_list_Composite():
+       tom_cons_list_Composite(tom_make_CompositeTL(tom_make_ITL(".")),tom_cons_list_Composite(tom_make_CompositeBQTerm(term),tom_empty_list_Composite())));
+
+     if(composite) {
+			 BQSlotList list = ASTFactory.makeBQSlotList(slotList);
+			 return tom_cons_list_Composite(tom_make_CompositeBQTerm(tom_make_BQRecordAppl(option,tom_make_Name(id.getText()),list)),tom_append_list_Composite(target,tom_empty_list_Composite()));
+     } else {
+			 return tom_cons_list_Composite(tom_make_CompositeBQTerm(tom_make_BQVariable(option,tom_make_Name(id.getText()),SymbolTable.TYPE_UNKNOWN)),tom_append_list_Composite(target,tom_empty_list_Composite()));
+		 }
 
    }
  
@@ -119,15 +135,15 @@ public class BackQuoteParser extends antlr.LLkParser       implements BackQuoteP
     * add a term to a list of term
     * when newComposite is true, this means that a ',' has been read before the term
     */
-    private void addTerm(LinkedList<BQTerm> list, BQTerm term, boolean newComposite) {
+    private void addTerm(List<BQTerm> list, BQTerm term, boolean newComposite) {
       // if the list is empty put an empty composite in it to simplify the code
       if(list.isEmpty()) {
         list.add(tom_empty_list_Composite());
       }
-      BQTerm lastElement = (BQTerm) list.getLast();
+      BQTerm lastElement = list.get(list.size()-1);
       /*
-       * when newComposite is true, we add the term, eventually wrapped by a Composite 
-       * otherwise, the term is inserted (eventually unwrapped) into the last Composite of the list
+       * when newComposite is true, we add the term, potentially wrapped by a Composite 
+       * otherwise, the term is inserted (potentially unwrapped) into the last Composite of the list
        */
       if(newComposite) {
         {{if (tom_is_sort_BQTerm(lastElement)) {if (tom_is_fun_sym_Composite((( tom.engine.adt.code.types.BQTerm )lastElement))) {if (tom_is_sort_BQTerm(term)) {if (tom_is_fun_sym_Composite((( tom.engine.adt.code.types.BQTerm )term))) {
@@ -153,27 +169,41 @@ public class BackQuoteParser extends antlr.LLkParser       implements BackQuoteP
 
       }
     }
+    
+    private void addSlotTerm(List<BQSlot> list, TomName slotName,BQTerm term) {
+      {{if (tom_is_sort_BQTerm(term)) {if (tom_is_fun_sym_Composite((( tom.engine.adt.code.types.BQTerm )term))) {
+
+          list.add(tom_make_PairSlotBQTerm(slotName,term));
+          return;
+        }}}{if (tom_is_sort_BQTerm(term)) {
+
+
+          list.add(tom_make_PairSlotBQTerm(slotName,tom_cons_list_Composite(tom_make_CompositeBQTerm(term),tom_empty_list_Composite())));
+          return;
+        }}}
+
+    }
 
     // sorts attributes of xml term with lexicographical order
     private BQTermList sortAttributeList(BQTermList list){
       {{if (tom_is_sort_BQTermList(list)) {if (tom_is_fun_sym_concBQTerm((( tom.engine.adt.code.types.BQTermList )list))) {if (tom_is_empty_concBQTerm_BQTermList((( tom.engine.adt.code.types.BQTermList )list))) {
- return list; }}}}{if (tom_is_sort_BQTermList(list)) {if (tom_is_fun_sym_concBQTerm((( tom.engine.adt.code.types.BQTermList )list))) { tom.engine.adt.code.types.BQTermList  tomMatch3__end__6=(( tom.engine.adt.code.types.BQTermList )list);do {{if (!(tom_is_empty_concBQTerm_BQTermList(tomMatch3__end__6))) { tom.engine.adt.code.types.BQTerm  tom_e1=tom_get_head_concBQTerm_BQTermList(tomMatch3__end__6); tom.engine.adt.code.types.BQTermList  tomMatch3_7=tom_get_tail_concBQTerm_BQTermList(tomMatch3__end__6); tom.engine.adt.code.types.BQTermList  tomMatch3__end__10=tomMatch3_7;do {{if (!(tom_is_empty_concBQTerm_BQTermList(tomMatch3__end__10))) { tom.engine.adt.code.types.BQTerm  tom_e2=tom_get_head_concBQTerm_BQTermList(tomMatch3__end__10);{{if (tom_is_sort_BQTerm(tom_e1)) {if (tom_is_fun_sym_BQAppl((( tom.engine.adt.code.types.BQTerm )tom_e1))) { tom.engine.adt.code.types.BQTermList  tomMatch4_2=tom_get_slot_BQAppl_Args((( tom.engine.adt.code.types.BQTerm )tom_e1));if (tom_is_fun_sym_concBQTerm(tomMatch4_2)) {if (!(tom_is_empty_concBQTerm_BQTermList(tomMatch4_2))) { tom.engine.adt.code.types.BQTerm  tomMatch4_13=tom_get_head_concBQTerm_BQTermList(tomMatch4_2);if (tom_is_fun_sym_BQAppl(tomMatch4_13)) { tom.engine.adt.tomname.types.TomName  tomMatch4_12=tom_get_slot_BQAppl_AstName(tomMatch4_13);if (tom_is_fun_sym_Name(tomMatch4_12)) {if (tom_is_sort_BQTerm(tom_e2)) {if (tom_is_fun_sym_BQAppl((( tom.engine.adt.code.types.BQTerm )tom_e2))) { tom.engine.adt.code.types.BQTermList  tomMatch4_4=tom_get_slot_BQAppl_Args((( tom.engine.adt.code.types.BQTerm )tom_e2));if (tom_is_fun_sym_concBQTerm(tomMatch4_4)) {if (!(tom_is_empty_concBQTerm_BQTermList(tomMatch4_4))) { tom.engine.adt.code.types.BQTerm  tomMatch4_17=tom_get_head_concBQTerm_BQTermList(tomMatch4_4);if (tom_is_fun_sym_BQAppl(tomMatch4_17)) { tom.engine.adt.tomname.types.TomName  tomMatch4_16=tom_get_slot_BQAppl_AstName(tomMatch4_17);if (tom_is_fun_sym_Name(tomMatch4_16)) {
+ return list; }}}}{if (tom_is_sort_BQTermList(list)) {if (tom_is_fun_sym_concBQTerm((( tom.engine.adt.code.types.BQTermList )list))) { tom.engine.adt.code.types.BQTermList  tomMatch4__end__6=(( tom.engine.adt.code.types.BQTermList )list);do {{if (!(tom_is_empty_concBQTerm_BQTermList(tomMatch4__end__6))) { tom.engine.adt.code.types.BQTerm  tom_e1=tom_get_head_concBQTerm_BQTermList(tomMatch4__end__6); tom.engine.adt.code.types.BQTermList  tomMatch4_7=tom_get_tail_concBQTerm_BQTermList(tomMatch4__end__6); tom.engine.adt.code.types.BQTermList  tomMatch4__end__10=tomMatch4_7;do {{if (!(tom_is_empty_concBQTerm_BQTermList(tomMatch4__end__10))) { tom.engine.adt.code.types.BQTerm  tom_e2=tom_get_head_concBQTerm_BQTermList(tomMatch4__end__10);{{if (tom_is_sort_BQTerm(tom_e1)) {if (tom_is_fun_sym_BQAppl((( tom.engine.adt.code.types.BQTerm )tom_e1))) { tom.engine.adt.code.types.BQTermList  tomMatch5_2=tom_get_slot_BQAppl_Args((( tom.engine.adt.code.types.BQTerm )tom_e1));if (tom_is_fun_sym_concBQTerm(tomMatch5_2)) {if (!(tom_is_empty_concBQTerm_BQTermList(tomMatch5_2))) { tom.engine.adt.code.types.BQTerm  tomMatch5_13=tom_get_head_concBQTerm_BQTermList(tomMatch5_2);if (tom_is_fun_sym_BQAppl(tomMatch5_13)) { tom.engine.adt.tomname.types.TomName  tomMatch5_12=tom_get_slot_BQAppl_AstName(tomMatch5_13);if (tom_is_fun_sym_Name(tomMatch5_12)) {if (tom_is_sort_BQTerm(tom_e2)) {if (tom_is_fun_sym_BQAppl((( tom.engine.adt.code.types.BQTerm )tom_e2))) { tom.engine.adt.code.types.BQTermList  tomMatch5_4=tom_get_slot_BQAppl_Args((( tom.engine.adt.code.types.BQTerm )tom_e2));if (tom_is_fun_sym_concBQTerm(tomMatch5_4)) {if (!(tom_is_empty_concBQTerm_BQTermList(tomMatch5_4))) { tom.engine.adt.code.types.BQTerm  tomMatch5_17=tom_get_head_concBQTerm_BQTermList(tomMatch5_4);if (tom_is_fun_sym_BQAppl(tomMatch5_17)) { tom.engine.adt.tomname.types.TomName  tomMatch5_16=tom_get_slot_BQAppl_AstName(tomMatch5_17);if (tom_is_fun_sym_Name(tomMatch5_16)) {
 
 
 
 
-              if(tom_get_slot_Name_String(tomMatch4_12).compareTo(tom_get_slot_Name_String(tomMatch4_16)) > 0) {
-                return sortAttributeList(tom_append_list_concBQTerm(tom_get_slice_concBQTerm((( tom.engine.adt.code.types.BQTermList )list),tomMatch3__end__6,tom_empty_list_concBQTerm()),tom_cons_list_concBQTerm(tom_e2,tom_append_list_concBQTerm(tom_get_slice_concBQTerm(tomMatch3_7,tomMatch3__end__10,tom_empty_list_concBQTerm()),tom_cons_list_concBQTerm(tom_e1,tom_append_list_concBQTerm(tom_get_tail_concBQTerm_BQTermList(tomMatch3__end__10),tom_empty_list_concBQTerm()))))));
+              if(tom_get_slot_Name_String(tomMatch5_12).compareTo(tom_get_slot_Name_String(tomMatch5_16)) > 0) {
+                return sortAttributeList(tom_append_list_concBQTerm(tom_get_slice_concBQTerm((( tom.engine.adt.code.types.BQTermList )list),tomMatch4__end__6,tom_empty_list_concBQTerm()),tom_cons_list_concBQTerm(tom_e2,tom_append_list_concBQTerm(tom_get_slice_concBQTerm(tomMatch4_7,tomMatch4__end__10,tom_empty_list_concBQTerm()),tom_cons_list_concBQTerm(tom_e1,tom_append_list_concBQTerm(tom_get_tail_concBQTerm_BQTermList(tomMatch4__end__10),tom_empty_list_concBQTerm()))))));
               }
             }}}}}}}}}}}}}}
 
-        }if (tom_is_empty_concBQTerm_BQTermList(tomMatch3__end__10)) {tomMatch3__end__10=tomMatch3_7;} else {tomMatch3__end__10=tom_get_tail_concBQTerm_BQTermList(tomMatch3__end__10);}}} while(!(tom_equal_term_BQTermList(tomMatch3__end__10, tomMatch3_7)));}if (tom_is_empty_concBQTerm_BQTermList(tomMatch3__end__6)) {tomMatch3__end__6=(( tom.engine.adt.code.types.BQTermList )list);} else {tomMatch3__end__6=tom_get_tail_concBQTerm_BQTermList(tomMatch3__end__6);}}} while(!(tom_equal_term_BQTermList(tomMatch3__end__6, (( tom.engine.adt.code.types.BQTermList )list))));}}}}
+        }if (tom_is_empty_concBQTerm_BQTermList(tomMatch4__end__10)) {tomMatch4__end__10=tomMatch4_7;} else {tomMatch4__end__10=tom_get_tail_concBQTerm_BQTermList(tomMatch4__end__10);}}} while(!(tom_equal_term_BQTermList(tomMatch4__end__10, tomMatch4_7)));}if (tom_is_empty_concBQTerm_BQTermList(tomMatch4__end__6)) {tomMatch4__end__6=(( tom.engine.adt.code.types.BQTermList )list);} else {tomMatch4__end__6=tom_get_tail_concBQTerm_BQTermList(tomMatch4__end__6);}}} while(!(tom_equal_term_BQTermList(tomMatch4__end__6, (( tom.engine.adt.code.types.BQTermList )list))));}}}}
 
       return list;
     }
     
     // built a sorted BQTermList from a LinkedList
-    private BQTermList buildAttributeList(LinkedList<BQTerm> list) {
+    private BQTermList buildAttributeList(List<BQTerm> list) {
       return sortAttributeList(ASTFactory.makeBQTermList(list));
     }
     
@@ -248,13 +278,13 @@ public BackQuoteParser(ParserSharedInputState state) {
 		
 		
 		{
-		_loop33:
+		_loop42:
 		do {
 			if ((LA(1)==BQ_WS)) {
 				match(BQ_WS);
 			}
 			else {
-				break _loop33;
+				break _loop42;
 			}
 			
 		} while (true);
@@ -271,10 +301,11 @@ public BackQuoteParser(ParserSharedInputState state) {
 		
 		result = null;
 		BQTerm term = null;
-		BQTermList list = tom_empty_list_concBQTerm();
+		BQTermList emptyContext = tom_empty_list_concBQTerm();
 		
 		Token t = null;
-		LinkedList<BQTerm> blockList = new LinkedList<BQTerm>();
+		List<BQTerm> blockList = new LinkedList<BQTerm>();
+		List<BQSlot> slotList = new LinkedList<BQSlot>();
 		
 		
 		{
@@ -282,16 +313,14 @@ public BackQuoteParser(ParserSharedInputState state) {
 		case BQ_LPAREN:
 		case XML:
 		{
-			result=basicTerm(list);
+			result=basicTerm(emptyContext);
 			break;
 		}
 		case BQ_UNDERSCORE:
 		{
 			match(BQ_UNDERSCORE);
 			if ( inputState.guessing==0 ) {
-				
 				result = tom_make_BQDefault();
-				
 			}
 			break;
 		}
@@ -332,18 +361,18 @@ public BackQuoteParser(ParserSharedInputState state) {
 					case BQ_LPAREN:
 					case BQ_DOT:
 					case XML:
+					case EQUAL:
 					case BQ_STRING:
 					case BQ_WS:
 					case BQ_INTEGER:
 					case BQ_MINUS:
 					case DOUBLE_QUOTE:
 					case XML_START:
-					case XML_EQUAL:
 					case XML_CLOSE:
 					case ANY:
 					case XML_TEXT:
 					{
-						termList(blockList,list);
+						termList(blockList,emptyContext);
 						break;
 					}
 					case BQ_RPAREN:
@@ -358,9 +387,32 @@ public BackQuoteParser(ParserSharedInputState state) {
 					}
 					match(BQ_RPAREN);
 					if ( inputState.guessing==0 ) {
-						
 						result = buildBqAppl(id,blockList,term,true);
-						
+					}
+				}
+				else if (((LA(1)==BQ_LBRACKET))&&(LA(1) == BQ_LBRACKET)) {
+					match(BQ_LBRACKET);
+					ws();
+					{
+					switch ( LA(1)) {
+					case BQ_ID:
+					{
+						termSlotList(slotList,emptyContext);
+						break;
+					}
+					case BQ_RBRACKET:
+					{
+						break;
+					}
+					default:
+					{
+						throw new NoViableAltException(LT(1), getFilename());
+					}
+					}
+					}
+					match(BQ_RBRACKET);
+					if ( inputState.guessing==0 ) {
+						result = buildBqSlotTerm(id,slotList,term,true);
 					}
 				}
 				else if (((LA(1)==BQ_LBRACE))&&(LA(1) == BQ_LBRACE)) {
@@ -420,7 +472,7 @@ public BackQuoteParser(ParserSharedInputState state) {
 		BQTerm term = null;
 		BQTermList localContext = tom_empty_list_concBQTerm();
 		
-		LinkedList<BQTerm> blockList = new LinkedList<BQTerm>();
+		List<BQTerm> blockList = new LinkedList<BQTerm>();
 		
 		
 		{
@@ -432,12 +484,12 @@ public BackQuoteParser(ParserSharedInputState state) {
 			match(BQ_LPAREN);
 			ws();
 			{
-			_loop23:
+			_loop29:
 			do {
-				boolean synPredMatched22 = false;
+				boolean synPredMatched28 = false;
 				if (((_tokenSet_2.member(LA(1))))) {
-					int _m22 = mark();
-					synPredMatched22 = true;
+					int _m28 = mark();
+					synPredMatched28 = true;
 					inputState.guessing++;
 					try {
 						{
@@ -446,12 +498,12 @@ public BackQuoteParser(ParserSharedInputState state) {
 						}
 					}
 					catch (RecognitionException pe) {
-						synPredMatched22 = false;
+						synPredMatched28 = false;
 					}
-					rewind(_m22);
+					rewind(_m28);
 inputState.guessing--;
 				}
-				if ( synPredMatched22 ) {
+				if ( synPredMatched28 ) {
 					term=bqTerm(context);
 					match(BQ_COMMA);
 					ws();
@@ -460,7 +512,7 @@ inputState.guessing--;
 					}
 				}
 				else {
-					break _loop23;
+					break _loop29;
 				}
 				
 			} while (true);
@@ -484,13 +536,13 @@ inputState.guessing--;
 			case BQ_LPAREN:
 			case BQ_DOT:
 			case XML:
+			case EQUAL:
 			case BQ_STRING:
 			case BQ_WS:
 			case BQ_INTEGER:
 			case BQ_MINUS:
 			case DOUBLE_QUOTE:
 			case XML_START:
-			case XML_EQUAL:
 			case XML_CLOSE:
 			case ANY:
 			case XML_TEXT:
@@ -532,7 +584,7 @@ inputState.guessing--;
 	}
 	
 	public final void termList(
-		LinkedList<BQTerm> list,BQTermList context
+		List<BQTerm> list,BQTermList context
 	) throws RecognitionException, TokenStreamException {
 		
 		Token  c = null;
@@ -545,7 +597,7 @@ inputState.guessing--;
 			addTerm(list,term,false);
 		}
 		{
-		_loop28:
+		_loop34:
 		do {
 			if ((_tokenSet_3.member(LA(1)))) {
 				{
@@ -563,13 +615,13 @@ inputState.guessing--;
 				case BQ_LPAREN:
 				case BQ_DOT:
 				case XML:
+				case EQUAL:
 				case BQ_STRING:
 				case BQ_WS:
 				case BQ_INTEGER:
 				case BQ_MINUS:
 				case DOUBLE_QUOTE:
 				case XML_START:
-				case XML_EQUAL:
 				case XML_CLOSE:
 				case ANY:
 				case XML_TEXT:
@@ -588,7 +640,52 @@ inputState.guessing--;
 				}
 			}
 			else {
-				break _loop28;
+				break _loop34;
+			}
+			
+		} while (true);
+		}
+	}
+	
+	public final void termSlotList(
+		List<BQSlot> list, BQTermList context
+	) throws RecognitionException, TokenStreamException {
+		
+		Token  slot1 = null;
+		Token  c = null;
+		Token  slot2 = null;
+		
+		BQTerm term = null;
+		
+		
+		slot1 = LT(1);
+		match(BQ_ID);
+		match(EQUAL);
+		ws();
+		term=bqTerm(context);
+		ws();
+		if ( inputState.guessing==0 ) {
+			addSlotTerm(list,tom_make_Name(slot1.getText()),term);
+		}
+		{
+		_loop37:
+		do {
+			if ((LA(1)==BQ_COMMA)) {
+				c = LT(1);
+				match(BQ_COMMA);
+				ws();
+				slot2 = LT(1);
+				match(BQ_ID);
+				match(EQUAL);
+				ws();
+				term=bqTerm(context);
+				ws();
+				if ( inputState.guessing==0 ) {
+					addSlotTerm(list,tom_make_Name(slot2.getText()),term);
+				}
+			}
+			else {
+				break _loop37;
 			}
 			
 		} while (true);
@@ -601,6 +698,7 @@ inputState.guessing--;
 		Token  c = null;
 		Token  i = null;
 		Token  r = null;
+		Token  rb = null;
 		Token  t = null;
 		Token  xcs = null;
 		Token  xt = null;
@@ -613,13 +711,13 @@ inputState.guessing--;
 		switch ( LA(1)) {
 		case BQ_STAR:
 		case BQ_DOT:
+		case EQUAL:
 		case BQ_STRING:
 		case BQ_WS:
 		case BQ_INTEGER:
 		case BQ_MINUS:
 		case DOUBLE_QUOTE:
 		case XML_START:
-		case XML_EQUAL:
 		case XML_CLOSE:
 		case ANY:
 		{
@@ -650,6 +748,15 @@ inputState.guessing--;
 			match(BQ_RPAREN);
 			if ( inputState.guessing==0 ) {
 				result = r;
+			}
+			break;
+		}
+		case BQ_RBRACKET:
+		{
+			rb = LT(1);
+			match(BQ_RBRACKET);
+			if ( inputState.guessing==0 ) {
+				result = rb;
 			}
 			break;
 		}
@@ -718,7 +825,8 @@ inputState.guessing--;
 		BQTermList xmlTermList = tom_empty_list_concBQTerm();
 		
 		Token t = null;
-		LinkedList<BQTerm> blockList = new LinkedList<BQTerm>();
+		List<BQTerm> blockList = new LinkedList<BQTerm>();
+		List<BQSlot> slotList = new LinkedList<BQSlot>();
 		boolean arguments = false;
 		
 		
@@ -733,9 +841,7 @@ inputState.guessing--;
 		{
 			match(BQ_UNDERSCORE);
 			if ( inputState.guessing==0 ) {
-				
 				result = tom_make_BQDefault();
-				
 			}
 			break;
 		}
@@ -771,13 +877,13 @@ inputState.guessing--;
 					case BQ_LPAREN:
 					case BQ_DOT:
 					case XML:
+					case EQUAL:
 					case BQ_STRING:
 					case BQ_WS:
 					case BQ_INTEGER:
 					case BQ_MINUS:
 					case DOUBLE_QUOTE:
 					case XML_START:
-					case XML_EQUAL:
 					case XML_CLOSE:
 					case ANY:
 					case XML_TEXT:
@@ -796,35 +902,35 @@ inputState.guessing--;
 					}
 					}
 					match(BQ_RPAREN);
-				}
-				else if ((_tokenSet_4.member(LA(1)))) {
-				}
-				else {
-					throw new NoViableAltException(LT(1), getFilename());
-				}
-				
-				}
-				{
-				boolean synPredMatched15 = false;
-				if (((LA(1)==BQ_DOT))) {
-					int _m15 = mark();
-					synPredMatched15 = true;
-					inputState.guessing++;
-					try {
-						{
-						match(BQ_DOT);
-						term=bqTerm(null);
+					{
+					boolean synPredMatched16 = false;
+					if (((LA(1)==BQ_DOT))) {
+						int _m16 = mark();
+						synPredMatched16 = true;
+						inputState.guessing++;
+						try {
+							{
+							match(BQ_DOT);
+							term=bqTerm(null);
+							}
 						}
-					}
-					catch (RecognitionException pe) {
-						synPredMatched15 = false;
-					}
-					rewind(_m15);
+						catch (RecognitionException pe) {
+							synPredMatched16 = false;
+						}
+						rewind(_m16);
 inputState.guessing--;
-				}
-				if ( synPredMatched15 ) {
-					match(BQ_DOT);
-					term=bqTerm(context);
+					}
+					if ( synPredMatched16 ) {
+						match(BQ_DOT);
+						term=bqTerm(context);
+					}
+					else if ((_tokenSet_4.member(LA(1)))) {
+					}
+					else {
+						throw new NoViableAltException(LT(1), getFilename());
+					}
+					
+					}
 				}
 				else if ((_tokenSet_4.member(LA(1)))) {
 				}
@@ -834,9 +940,75 @@ inputState.guessing--;
 				
 				}
 				if ( inputState.guessing==0 ) {
-					
 					result = buildBqAppl(id,blockList,term,arguments);
+				}
+			}
+			else if ((_tokenSet_5.member(LA(1)))) {
+				ws();
+				{
+				if (((LA(1)==BQ_LBRACKET))&&(LA(1) == BQ_LBRACKET)) {
+					match(BQ_LBRACKET);
+					if ( inputState.guessing==0 ) {
+						arguments = true;
+					}
+					ws();
+					{
+					switch ( LA(1)) {
+					case BQ_ID:
+					{
+						termSlotList(slotList,context);
+						break;
+					}
+					case BQ_RBRACKET:
+					{
+						break;
+					}
+					default:
+					{
+						throw new NoViableAltException(LT(1), getFilename());
+					}
+					}
+					}
+					match(BQ_RBRACKET);
+					{
+					boolean synPredMatched21 = false;
+					if (((LA(1)==BQ_DOT))) {
+						int _m21 = mark();
+						synPredMatched21 = true;
+						inputState.guessing++;
+						try {
+							{
+							match(BQ_DOT);
+							term=bqTerm(null);
+							}
+						}
+						catch (RecognitionException pe) {
+							synPredMatched21 = false;
+						}
+						rewind(_m21);
+inputState.guessing--;
+					}
+					if ( synPredMatched21 ) {
+						match(BQ_DOT);
+						term=bqTerm(context);
+					}
+					else if ((_tokenSet_4.member(LA(1)))) {
+					}
+					else {
+						throw new NoViableAltException(LT(1), getFilename());
+					}
 					
+					}
+				}
+				else if ((_tokenSet_4.member(LA(1)))) {
+				}
+				else {
+					throw new NoViableAltException(LT(1), getFilename());
+				}
+				
+				}
+				if ( inputState.guessing==0 ) {
+					result = buildBqSlotTerm(id,slotList,term,arguments);
 				}
 			}
 			else {
@@ -847,10 +1019,10 @@ inputState.guessing--;
 			break;
 		}
 		default:
-			boolean synPredMatched17 = false;
+			boolean synPredMatched23 = false;
 			if (((LA(1)==XML_START||LA(1)==XML_TEXT))) {
-				int _m17 = mark();
-				synPredMatched17 = true;
+				int _m23 = mark();
+				synPredMatched23 = true;
 				inputState.guessing++;
 				try {
 					{
@@ -858,15 +1030,15 @@ inputState.guessing--;
 					}
 				}
 				catch (RecognitionException pe) {
-					synPredMatched17 = false;
+					synPredMatched23 = false;
 				}
-				rewind(_m17);
+				rewind(_m23);
 inputState.guessing--;
 			}
-			if ( synPredMatched17 ) {
+			if ( synPredMatched23 ) {
 				result=xmlTerm(context);
 			}
-			else if ((_tokenSet_5.member(LA(1)))) {
+			else if ((_tokenSet_6.member(LA(1)))) {
 				t=target();
 				if ( inputState.guessing==0 ) {
 					
@@ -894,8 +1066,8 @@ inputState.guessing--;
 		BQTermList childrenBQTermList = tom_empty_list_concBQTerm();
 		BQTerm term = null;
 		
-		LinkedList<BQTerm> attributes = new LinkedList<BQTerm>();
-		LinkedList<BQTerm> children = new LinkedList<BQTerm>();
+		List<BQTerm> attributes = new LinkedList<BQTerm>();
+		List<BQTerm> children = new LinkedList<BQTerm>();
 		
 		
 		{
@@ -979,8 +1151,6 @@ inputState.guessing--;
 				
 				
 				
-				
-				
 				;
 				}
 				
@@ -998,9 +1168,6 @@ inputState.guessing--;
 				
 				result = tom_make_BQAppl(tom_cons_list_concOption(tom_make_ModuleName(TNODE_MODULE_NAME),tom_empty_list_concOption()),tom_make_Name(Constants.TEXT_NODE),tom_append_list_concBQTerm(context,tom_cons_list_concBQTerm(term,tom_empty_list_concBQTerm()))
 				)
-				
-				
-				
 				
 				
 				
@@ -1109,10 +1276,10 @@ inputState.guessing--;
 			}
 			break;
 		}
-		case XML_EQUAL:
+		case EQUAL:
 		{
 			xe = LT(1);
-			match(XML_EQUAL);
+			match(EQUAL);
 			if ( inputState.guessing==0 ) {
 				result = xe;
 			}
@@ -1203,11 +1370,11 @@ inputState.guessing--;
 		match(BQ_ID);
 		{
 		switch ( LA(1)) {
+		case EQUAL:
 		case BQ_WS:
-		case XML_EQUAL:
 		{
 			ws();
-			match(XML_EQUAL);
+			match(EQUAL);
 			ws();
 			value=xmlAttributeStringOrBQVariable();
 			if ( inputState.guessing==0 ) {
@@ -1228,7 +1395,7 @@ inputState.guessing--;
 				
 				;
 						    if(context != null) {
-						    args = tom_append_list_concBQTerm(context,tom_append_list_concBQTerm(args,tom_empty_list_concBQTerm()));
+						      args = tom_append_list_concBQTerm(context,tom_append_list_concBQTerm(args,tom_empty_list_concBQTerm()));
 						    }
 						    result = tom_make_BQAppl(tom_cons_list_concOption(tom_make_ModuleName(TNODE_MODULE_NAME),tom_empty_list_concOption()),tom_make_Name(Constants.ATTRIBUTE_NODE),args)
 				
@@ -1262,7 +1429,7 @@ inputState.guessing--;
 	}
 	
 	public final void xmlAttributeList(
-		LinkedList<BQTerm> attributeList, BQTermList context
+		List<BQTerm> attributeList, BQTermList context
 	) throws RecognitionException, TokenStreamException {
 		
 		
@@ -1270,7 +1437,7 @@ inputState.guessing--;
 		
 		
 		{
-		_loop41:
+		_loop50:
 		do {
 			if ((LA(1)==BQ_ID)) {
 				term=xmlAttribute(context);
@@ -1282,7 +1449,7 @@ inputState.guessing--;
 				}
 			}
 			else {
-				break _loop41;
+				break _loop50;
 			}
 			
 		} while (true);
@@ -1290,7 +1457,7 @@ inputState.guessing--;
 	}
 	
 	public final void xmlChildren(
-		LinkedList<BQTerm> children, BQTermList context
+		List<BQTerm> children, BQTermList context
 	) throws RecognitionException, TokenStreamException {
 		
 		
@@ -1298,7 +1465,7 @@ inputState.guessing--;
 		
 		
 		{
-		_loop44:
+		_loop53:
 		do {
 			if (((_tokenSet_2.member(LA(1))))&&(LA(1) != XML_START_ENDING && LA(1) != XML_CLOSE)) {
 				term=bqTerm(context);
@@ -1307,7 +1474,7 @@ inputState.guessing--;
 				}
 			}
 			else {
-				break _loop44;
+				break _loop53;
 			}
 			
 		} while (true);
@@ -1326,18 +1493,20 @@ inputState.guessing--;
 		"BQ_STAR",
 		"BQ_LPAREN",
 		"BQ_RPAREN",
+		"BQ_LBRACKET",
+		"BQ_RBRACKET",
 		"BQ_LBRACE",
 		"BQ_RBRACE",
 		"BQ_DOT",
 		"\"xml\"",
 		"BQ_COMMA",
+		"EQUAL",
 		"BQ_STRING",
 		"BQ_WS",
 		"BQ_INTEGER",
 		"BQ_MINUS",
 		"DOUBLE_QUOTE",
 		"XML_START",
-		"XML_EQUAL",
 		"XML_CLOSE",
 		"ANY",
 		"XML_START_ENDING",
@@ -1355,34 +1524,39 @@ inputState.guessing--;
 	};
 	
 	private static final long[] mk_tokenSet_0() {
-		long[] data = { 536860608L, 0L};
+		long[] data = { 2147442624L, 0L};
 		return data;
 	}
 	public static final BitSet _tokenSet_0 = new BitSet(mk_tokenSet_0());
 	private static final long[] mk_tokenSet_1() {
-		long[] data = { 536859328L, 0L};
+		long[] data = { 2147437248L, 0L};
 		return data;
 	}
 	public static final BitSet _tokenSet_1 = new BitSet(mk_tokenSet_1());
 	private static final long[] mk_tokenSet_2() {
-		long[] data = { 83866080L, 0L};
+		long[] data = { 335462880L, 0L};
 		return data;
 	}
 	public static final BitSet _tokenSet_2 = new BitSet(mk_tokenSet_2());
 	private static final long[] mk_tokenSet_3() {
-		long[] data = { 83882464L, 0L};
+		long[] data = { 335528416L, 0L};
 		return data;
 	}
 	public static final BitSet _tokenSet_3 = new BitSet(mk_tokenSet_3());
 	private static final long[] mk_tokenSet_4() {
-		long[] data = { 100660192L, 0L};
+		long[] data = { 402639840L, 0L};
 		return data;
 	}
 	public static final BitSet _tokenSet_4 = new BitSet(mk_tokenSet_4());
 	private static final long[] mk_tokenSet_5() {
-		long[] data = { 16748672L, 0L};
+		long[] data = { 402640864L, 0L};
 		return data;
 	}
 	public static final BitSet _tokenSet_5 = new BitSet(mk_tokenSet_5());
+	private static final long[] mk_tokenSet_6() {
+		long[] data = { 66994304L, 0L};
+		return data;
+	}
+	public static final BitSet _tokenSet_6 = new BitSet(mk_tokenSet_6());
 	
 	}

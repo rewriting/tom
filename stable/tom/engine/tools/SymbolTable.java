@@ -609,16 +609,16 @@ public TomSymbol updateConstrainedSymbolCodomain(TomSymbol symbol, SymbolTable s
 {
 if ( (symbol instanceof tom.engine.adt.tomsignature.types.TomSymbol) ) {
 if ( ((( tom.engine.adt.tomsignature.types.TomSymbol )symbol) instanceof tom.engine.adt.tomsignature.types.tomsymbol.Symbol) ) {
- tom.engine.adt.tomtype.types.TomType  tomMatch290_2= (( tom.engine.adt.tomsignature.types.TomSymbol )symbol).getTypesToType() ;
+ tom.engine.adt.tomtype.types.TomType  tomMatch293_2= (( tom.engine.adt.tomsignature.types.TomSymbol )symbol).getTypesToType() ;
  tom.engine.adt.tomname.types.TomName  tom_name= (( tom.engine.adt.tomsignature.types.TomSymbol )symbol).getAstName() ;
-if ( (tomMatch290_2 instanceof tom.engine.adt.tomtype.types.tomtype.TypesToType) ) {
- tom.engine.adt.tomtype.types.TomType  tomMatch290_7= tomMatch290_2.getCodomain() ;
-if ( (tomMatch290_7 instanceof tom.engine.adt.tomtype.types.tomtype.Codomain) ) {
+if ( (tomMatch293_2 instanceof tom.engine.adt.tomtype.types.tomtype.TypesToType) ) {
+ tom.engine.adt.tomtype.types.TomType  tomMatch293_7= tomMatch293_2.getCodomain() ;
+if ( (tomMatch293_7 instanceof tom.engine.adt.tomtype.types.tomtype.Codomain) ) {
  tom.engine.adt.tomoption.types.OptionList  tom_options= (( tom.engine.adt.tomsignature.types.TomSymbol )symbol).getOptions() ;
 
 //System.out.println("depend from : " + `opName);
 TomSymbol dependSymbol = symbolTable.getSymbolFromName(
- tomMatch290_7.getAstName() );
+ tomMatch293_7.getAstName() );
 //System.out.println("1st depend codomain: " + TomBase.getSymbolCodomain(dependSymbol));
 dependSymbol = updateConstrainedSymbolCodomain(dependSymbol,symbolTable);
 TomType codomain = TomBase.getSymbolCodomain(dependSymbol);
@@ -630,35 +630,35 @@ tom_options;
 {
 if ( (tom_options instanceof tom.engine.adt.tomoption.types.OptionList) ) {
 if ( (((( tom.engine.adt.tomoption.types.OptionList )tom_options) instanceof tom.engine.adt.tomoption.types.optionlist.ConsconcOption) || ((( tom.engine.adt.tomoption.types.OptionList )tom_options) instanceof tom.engine.adt.tomoption.types.optionlist.EmptyconcOption)) ) {
- tom.engine.adt.tomoption.types.OptionList  tomMatch291__end__4=(( tom.engine.adt.tomoption.types.OptionList )tom_options);
+ tom.engine.adt.tomoption.types.OptionList  tomMatch294__end__4=(( tom.engine.adt.tomoption.types.OptionList )tom_options);
 do {
 {
-if (!( tomMatch291__end__4.isEmptyconcOption() )) {
- tom.engine.adt.tomoption.types.Option  tomMatch291_8= tomMatch291__end__4.getHeadconcOption() ;
-if ( (tomMatch291_8 instanceof tom.engine.adt.tomoption.types.option.DeclarationToOption) ) {
- tom.engine.adt.tomdeclaration.types.Declaration  tomMatch291_7= tomMatch291_8.getAstDeclaration() ;
-if ( (tomMatch291_7 instanceof tom.engine.adt.tomdeclaration.types.declaration.MakeDecl) ) {
-if ( ( tomMatch291_7.getAstType()  instanceof tom.engine.adt.tomtype.types.tomtype.Codomain) ) {
+if (!( tomMatch294__end__4.isEmptyconcOption() )) {
+ tom.engine.adt.tomoption.types.Option  tomMatch294_8= tomMatch294__end__4.getHeadconcOption() ;
+if ( (tomMatch294_8 instanceof tom.engine.adt.tomoption.types.option.DeclarationToOption) ) {
+ tom.engine.adt.tomdeclaration.types.Declaration  tomMatch294_7= tomMatch294_8.getAstDeclaration() ;
+if ( (tomMatch294_7 instanceof tom.engine.adt.tomdeclaration.types.declaration.MakeDecl) ) {
+if ( ( tomMatch294_7.getAstType()  instanceof tom.engine.adt.tomtype.types.tomtype.Codomain) ) {
 
 Declaration newMake = 
-tomMatch291_7.setAstType(codomain);
+tomMatch294_7.setAstType(codomain);
 //System.out.println("newMake: " + newMake);
 newOptions = 
-tom_append_list_concOption(tom_get_slice_concOption((( tom.engine.adt.tomoption.types.OptionList )tom_options),tomMatch291__end__4, tom.engine.adt.tomoption.types.optionlist.EmptyconcOption.make() ),tom_append_list_concOption( tomMatch291__end__4.getTailconcOption() , tom.engine.adt.tomoption.types.optionlist.ConsconcOption.make( tom.engine.adt.tomoption.types.option.DeclarationToOption.make(newMake) , tom.engine.adt.tomoption.types.optionlist.EmptyconcOption.make() ) ));
+tom_append_list_concOption(tom_get_slice_concOption((( tom.engine.adt.tomoption.types.OptionList )tom_options),tomMatch294__end__4, tom.engine.adt.tomoption.types.optionlist.EmptyconcOption.make() ),tom_append_list_concOption( tomMatch294__end__4.getTailconcOption() , tom.engine.adt.tomoption.types.optionlist.ConsconcOption.make( tom.engine.adt.tomoption.types.option.DeclarationToOption.make(newMake) , tom.engine.adt.tomoption.types.optionlist.EmptyconcOption.make() ) ));
 
 
 }
 }
 }
 }
-if ( tomMatch291__end__4.isEmptyconcOption() ) {
-tomMatch291__end__4=(( tom.engine.adt.tomoption.types.OptionList )tom_options);
+if ( tomMatch294__end__4.isEmptyconcOption() ) {
+tomMatch294__end__4=(( tom.engine.adt.tomoption.types.OptionList )tom_options);
 } else {
-tomMatch291__end__4= tomMatch291__end__4.getTailconcOption() ;
+tomMatch294__end__4= tomMatch294__end__4.getTailconcOption() ;
 }
 
 }
-} while(!( (tomMatch291__end__4==(( tom.engine.adt.tomoption.types.OptionList )tom_options)) ));
+} while(!( (tomMatch294__end__4==(( tom.engine.adt.tomoption.types.OptionList )tom_options)) ));
 }
 }
 
@@ -667,7 +667,7 @@ tomMatch291__end__4= tomMatch291__end__4.getTailconcOption() ;
 }
 
 TomSymbol newSymbol = 
- tom.engine.adt.tomsignature.types.tomsymbol.Symbol.make(tom_name,  tom.engine.adt.tomtype.types.tomtype.TypesToType.make( tomMatch290_2.getDomain() , codomain) ,  (( tom.engine.adt.tomsignature.types.TomSymbol )symbol).getPairNameDeclList() , newOptions) ;
+ tom.engine.adt.tomsignature.types.tomsymbol.Symbol.make(tom_name,  tom.engine.adt.tomtype.types.tomtype.TypesToType.make( tomMatch293_2.getDomain() , codomain) ,  (( tom.engine.adt.tomsignature.types.TomSymbol )symbol).getPairNameDeclList() , newOptions) ;
 //System.out.println("newSymbol: " + newSymbol);
 symbolTable.putSymbol(
 tom_name.getString(),newSymbol);

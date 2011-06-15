@@ -296,10 +296,10 @@ s.append(") = " + tlCode.getCode() + " ");
 
 {
 {
-if ( (tlCode instanceof tom.engine.adt.tomsignature.types.TargetLanguage) ) {
-if ( ((( tom.engine.adt.tomsignature.types.TargetLanguage )tlCode) instanceof tom.engine.adt.tomsignature.types.targetlanguage.TL) ) {
- tom.engine.adt.tomsignature.types.TextPosition  tomMatch87_2= (( tom.engine.adt.tomsignature.types.TargetLanguage )tlCode).getStart() ;
- tom.engine.adt.tomsignature.types.TextPosition  tomMatch87_3= (( tom.engine.adt.tomsignature.types.TargetLanguage )tlCode).getEnd() ;
+if ( (tlCode instanceof tom.engine.adt.code.types.TargetLanguage) ) {
+if ( ((( tom.engine.adt.code.types.TargetLanguage )tlCode) instanceof tom.engine.adt.code.types.targetlanguage.TL) ) {
+ tom.engine.adt.tomsignature.types.TextPosition  tomMatch87_2= (( tom.engine.adt.code.types.TargetLanguage )tlCode).getStart() ;
+ tom.engine.adt.tomsignature.types.TextPosition  tomMatch87_3= (( tom.engine.adt.code.types.TargetLanguage )tlCode).getEnd() ;
 if ( (tomMatch87_2 instanceof tom.engine.adt.tomsignature.types.textposition.TextPosition) ) {
  int  tom_startLine= tomMatch87_2.getLine() ;
 if ( (tomMatch87_3 instanceof tom.engine.adt.tomsignature.types.textposition.TextPosition) ) {
@@ -318,8 +318,8 @@ return;
 
 }
 {
-if ( (tlCode instanceof tom.engine.adt.tomsignature.types.TargetLanguage) ) {
-if ( ((( tom.engine.adt.tomsignature.types.TargetLanguage )tlCode) instanceof tom.engine.adt.tomsignature.types.targetlanguage.ITL) ) {
+if ( (tlCode instanceof tom.engine.adt.code.types.TargetLanguage) ) {
+if ( ((( tom.engine.adt.code.types.TargetLanguage )tlCode) instanceof tom.engine.adt.code.types.targetlanguage.ITL) ) {
 
 output.write(s);
 return;

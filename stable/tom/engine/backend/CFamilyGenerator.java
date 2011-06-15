@@ -287,10 +287,10 @@ String returnValue = getSymbolTable(moduleName).isVoidType(returnType)?tlCode.ge
 
 {
 {
-if ( (tlCode instanceof tom.engine.adt.tomsignature.types.TargetLanguage) ) {
-if ( ((( tom.engine.adt.tomsignature.types.TargetLanguage )tlCode) instanceof tom.engine.adt.tomsignature.types.targetlanguage.TL) ) {
- tom.engine.adt.tomsignature.types.TextPosition  tomMatch80_2= (( tom.engine.adt.tomsignature.types.TargetLanguage )tlCode).getStart() ;
- tom.engine.adt.tomsignature.types.TextPosition  tomMatch80_3= (( tom.engine.adt.tomsignature.types.TargetLanguage )tlCode).getEnd() ;
+if ( (tlCode instanceof tom.engine.adt.code.types.TargetLanguage) ) {
+if ( ((( tom.engine.adt.code.types.TargetLanguage )tlCode) instanceof tom.engine.adt.code.types.targetlanguage.TL) ) {
+ tom.engine.adt.tomsignature.types.TextPosition  tomMatch80_2= (( tom.engine.adt.code.types.TargetLanguage )tlCode).getStart() ;
+ tom.engine.adt.tomsignature.types.TextPosition  tomMatch80_3= (( tom.engine.adt.code.types.TargetLanguage )tlCode).getEnd() ;
 if ( (tomMatch80_2 instanceof tom.engine.adt.tomsignature.types.textposition.TextPosition) ) {
  int  tom_startLine= tomMatch80_2.getLine() ;
 if ( (tomMatch80_3 instanceof tom.engine.adt.tomsignature.types.textposition.TextPosition) ) {
@@ -309,8 +309,8 @@ return;
 
 }
 {
-if ( (tlCode instanceof tom.engine.adt.tomsignature.types.TargetLanguage) ) {
-if ( ((( tom.engine.adt.tomsignature.types.TargetLanguage )tlCode) instanceof tom.engine.adt.tomsignature.types.targetlanguage.ITL) ) {
+if ( (tlCode instanceof tom.engine.adt.code.types.TargetLanguage) ) {
+if ( ((( tom.engine.adt.code.types.TargetLanguage )tlCode) instanceof tom.engine.adt.code.types.targetlanguage.ITL) ) {
 
 output.write(returnValue);
 return;
