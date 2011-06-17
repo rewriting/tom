@@ -1,5 +1,5 @@
 done ! build.xml
-- renommer CloseToken en StopToken
+done ! renommer CloseToken en StopToken
 - intégrer les commentaires de HostParser
 - rapport
 - présentation
