@@ -4,48 +4,42 @@ import org.antlr.runtime.tree.*;
 
 public abstract class Keyword {
 
-  protected String pattern;
-  protected boolean regExp = false;
-  private int cursor = 0;
-  protected boolean matched;
+/** The pattern this Keyword looks for */
+  protected String pattern; /* this is protected because it's supposed to be modified by all inheriting classes (the actual Keyword ) */
+/** Index of next character to compare */
+  private int cursor = 0; /* this is private because we'll surely want to change the recognition mechanism one day (to introduce reg. exp. based Keyword ?) and don't want to break existing code */
+/** A flag to tell whether or not the pattern has been found */
+  protected boolean matched; /* in this implementation it will equal (cursor == pattern.length), but what about more complex recognition mechanism ? (reg. exp. for instance) */
 
 /**
  ** @param  : a character proposed to this Keyword for recognition
  ** @return : whether c was accepted by this Keyword
  **/
   public boolean take(char c) {
-    /*System.out.print(pattern + "  : ");*/
-    if(regExp) {
-      /* The regexp mode is only a joke now, but it could become cool someday
-        Currently only support special characters '.' and '^' (for respectively any char and not following character) */
-      switch(pattern.charAt(cursor)) {
-        case '.':return true;
-        case '^':return (c != pattern.charAt(++cursor));
-        default: return (c == pattern.charAt(cursor));
-      }
+    if (pattern.charAt(cursor) == c) {
+/* Character is accepted */
+      cursor++;
+      matched = (cursor == pattern.length());
+      return true;
     } else {
-      if (pattern.charAt(cursor) == c) {
-        cursor++;
-        matched = (cursor == pattern.length());
-        /*System.out.println(" Miam !");*/
-        return true;
-      } else {
-        /*System.out.println(" Beurk !");*/
-        reset();
-        return false;
-      }
+/* Character is refused */
+      reset();
+      return false;
     }
   }
 
+/** A simple getter on boolean 'matched' */
   public boolean isReady() {
     return matched;
   }
 
+/** Puts the Keyword in it's original state */
   public void reset() {
     cursor = 0;
     matched = false;
   }
 
+/** The action the Keyword is supposed to do when its pattern is matched */
   protected abstract void action() throws org.antlr.runtime.RecognitionException;
 
 }
