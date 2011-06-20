@@ -45,6 +45,10 @@ public class HostParser {
 		actionsMapping.put(
 		  new DelimitedSequenceDetector("/*", "*/"),
 		  ParserAction.SKIP_DELIMITED_SEQUENCE);
+		  // match construct
+		actionsMapping.put(
+		  new KeywordDetector("%match"),
+		  ParserAction.PARSE_MATCH_CONSTRUCT);
 	}
 	
 	public HostParser(){

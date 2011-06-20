@@ -1,7 +1,15 @@
 package newparser;
 
 import org.antlr.runtime.CharStream;
+import org.antlr.runtime.ClassicToken;
+import org.antlr.runtime.CommonTokenStream;
+import org.antlr.runtime.RecognitionException;
+import org.antlr.runtime.tree.CommonTree;
+import org.antlr.runtime.tree.CommonTreeAdaptor;
 import org.antlr.runtime.tree.Tree;
+
+import antlr.CommonToken;
+import antlr.Token;
 
 import streamanalysis.DelimitedSequenceDetector;
 import streamanalysis.StreamAnalyst;
@@ -10,7 +18,7 @@ public abstract class ParserAction{
 
   // static fields with cool ParserActions
   public static final SkipDelimitedSequence SKIP_DELIMITED_SEQUENCE = new SkipDelimitedSequence();
-  
+  public static final ParseMatchConstruct PARSE_MATCH_CONSTRUCT = new ParseMatchConstruct();
   
   
   
@@ -62,13 +70,54 @@ public abstract class ParserAction{
 		input.consume();
 		
 		while(analyst.readChar(input)){ // readChar update and return "foundness" value
-			
-	        System.out.println("skipped : '"+(char)input.LA(1)+"'");
-	        
 	        hostCharsBuffer.append((char)input.LA(1)); // save host code char for later use
 	        input.consume();
 	    }
 	}
+  }
+  
+  public static class ParseMatchConstruct extends ParserAction{
+
+    // not instanciable
+    private ParseMatchConstruct(){;}
+    
+    public ParseMatchConstruct getInstance(){
+      return ParserAction.PARSE_MATCH_CONSTRUCT;
+    }
+    
+    @Override
+    public void doAction(CharStream input, StringBuffer hostCharsBuffer,
+        Tree tree, StreamAnalyst analyst) {
+    
+      packHostContent(hostCharsBuffer, tree);
+      
+      // consume 'h' of %match
+      input.consume();
+      
+      try{
+      miniTomLexer lexer = new miniTomLexer(input);
+      CommonTokenStream tokenStream = new CommonTokenStream(lexer);
+      miniTomParser parser = new miniTomParser(tokenStream);
+      tree.addChild((Tree)parser.matchconstruct().getTree());
+      }catch(Exception e){
+        // XXX poorly handled exception
+        e.printStackTrace();
+      }
+    }
+    
+  }
+  
+  private static void packHostContent(StringBuffer hostCharsBuffer,
+        Tree tree) {
+    
+    CommonTreeAdaptor adaptor = new CommonTreeAdaptor();
+    
+    // XXX is it REALLY the clearest way to do that ?
+    Tree child = (Tree) adaptor.nil();
+    child = (Tree)adaptor.becomeRoot((Tree)adaptor.create(miniTomParser.HOSTBLOCK, hostCharsBuffer.toString()), child);
+    
+    tree.addChild(child);
+
   }
   
 }
