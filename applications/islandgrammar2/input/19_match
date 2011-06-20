@@ -1,0 +1,8 @@
+some host code
+
+%match(){
+	bli -> {doBli}
+	blo -> {doBlo}
+}
+
+some more host code

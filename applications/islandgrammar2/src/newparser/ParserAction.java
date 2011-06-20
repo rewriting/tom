@@ -83,6 +83,9 @@ public abstract class ParserAction{
     public void doAction(CharStream input, StringBuffer hostCharsBuffer,
         Tree tree, StreamAnalyst analyst) {
     
+      // remove "%matc" from hostCharsBuffer
+      hostCharsBuffer.setLength(hostCharsBuffer.length()-analyst.getOffsetAtMatch());	
+    	
       packHostContent(hostCharsBuffer, tree);
       
       // consume 'h' of %match
@@ -103,15 +106,15 @@ public abstract class ParserAction{
   
   private static void packHostContent(StringBuffer hostCharsBuffer,
         Tree tree) {
+    if(hostCharsBuffer.length()<0){
+      CommonTreeAdaptor adaptor = new CommonTreeAdaptor();
     
-    CommonTreeAdaptor adaptor = new CommonTreeAdaptor();
+      // XXX is it REALLY the clearest way to do that ?
+      Tree child = (Tree) adaptor.nil();
+      child = (Tree)adaptor.becomeRoot((Tree)adaptor.create(miniTomParser.HOSTBLOCK, hostCharsBuffer.toString()), child);
     
-    // XXX is it REALLY the clearest way to do that ?
-    Tree child = (Tree) adaptor.nil();
-    child = (Tree)adaptor.becomeRoot((Tree)adaptor.create(miniTomParser.HOSTBLOCK, hostCharsBuffer.toString()), child);
-    
-    tree.addChild(child);
-
+      tree.addChild(child);
+    }
   }
   
 }

@@ -1,0 +1,23 @@
+some host code
+
+%match(){
+	bli -> {
+		/* very usefull for blining */
+		doBli
+		%match(){
+			bli1->{first case}
+			bli2->{other case}
+		}}
+	blo -> {
+		//comment
+		%match(){
+			blo1->{first case}
+			blo2->{other case}
+		}
+		
+		// comment
+		}
+	}
+}
+
+some more host code
