@@ -17,12 +17,30 @@ public class DelimitedSequenceDetector extends StreamAnalyst{
   private boolean inside; // inside delimited sequence
   private boolean escaped;
   
-  public DelimitedSequenceDetector(String openingKeyword, String closingKeyword, char escapeChar) {
-    this.openingKeyword = new KeywordDetector(openingKeyword);
-    this.closingKeyword = new KeywordDetector(closingKeyword);
+  public DelimitedSequenceDetector(KeywordDetector openingKeywordDetector,
+                                   KeywordDetector closingKeywordDetector,
+                                   char escapeChar){
+    this.openingKeyword = openingKeywordDetector;
+    this.closingKeyword = closingKeywordDetector;
     this.escapeChar = escapeChar;
     this.escaped = false;
     this.inside = false;
+  }
+  
+  public DelimitedSequenceDetector(KeywordDetector openingKeyword,
+                                   KeywordDetector closingKeyword) {
+    this(openingKeyword, closingKeyword, (char)CharStream.EOF);
+  }
+  
+  public DelimitedSequenceDetector(String openingKeyword, String closingKeyword, char escapeChar) {
+    this(new KeywordDetector(openingKeyword),
+         new KeywordDetector(closingKeyword),
+         escapeChar);
+  }
+  
+  public DelimitedSequenceDetector(String openingKeyword, String closingKeyword) {
+    this(new KeywordDetector(openingKeyword),
+         new KeywordDetector(closingKeyword));
   }
   
   @Override

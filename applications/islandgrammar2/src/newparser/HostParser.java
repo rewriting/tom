@@ -8,6 +8,7 @@ import org.antlr.runtime.tree.CommonTree;
 import org.antlr.runtime.tree.Tree;
 
 import streamanalysis.DelimitedSequenceDetector;
+import streamanalysis.EOLdetector;
 import streamanalysis.KeywordDetector;
 import streamanalysis.StreamAnalyst;
 
@@ -28,14 +29,22 @@ public class HostParser {
 		actionsMapping = new HashMap<StreamAnalyst, ParserAction>();
 		
 		// create analysts and associated actions
+		  // host strings
 		actionsMapping.put(
 		  new DelimitedSequenceDetector("\"", "\"", '\\'),
 		  ParserAction.SKIP_DELIMITED_SEQUENCE);
-		
+		  // host chars
 		actionsMapping.put(
 		  new DelimitedSequenceDetector("\'", "\'", '\\'),
 		  ParserAction.SKIP_DELIMITED_SEQUENCE);
-		
+		  // one line comments
+		actionsMapping.put(
+		  new DelimitedSequenceDetector(new KeywordDetector("//"), new EOLdetector()),
+		  ParserAction.SKIP_DELIMITED_SEQUENCE);
+		  // multi line comments
+		actionsMapping.put(
+		  new DelimitedSequenceDetector("/*", "*/"),
+		  ParserAction.SKIP_DELIMITED_SEQUENCE);
 	}
 	
 	public HostParser(){

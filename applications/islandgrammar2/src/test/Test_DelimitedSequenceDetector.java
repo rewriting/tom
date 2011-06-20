@@ -8,6 +8,8 @@ import org.antlr.runtime.CharStream;
 import org.junit.Test;
 
 import streamanalysis.DelimitedSequenceDetector;
+import streamanalysis.EOLdetector;
+import streamanalysis.KeywordDetector;
 import streamanalysis.StreamAnalyst;
 import static org.junit.Assert.*;
 
@@ -36,7 +38,92 @@ public class Test_DelimitedSequenceDetector {
       
       testStream.consume();
     }
-    
   }
   
+  @Test
+  public void test_OneLineComment_macOs() {
+    
+    CharStream testStream = new ANTLRStringStream("0//34\r6789ABCFED");
+    List<Integer> matchIndexes = Arrays.asList(2, 3, 4, 5);
+    
+    StreamAnalyst olColCommentDetector =
+      new DelimitedSequenceDetector(new KeywordDetector("//"), new EOLdetector());
+    
+    while(testStream.LA(1)!=CharStream.EOF){
+      
+      olColCommentDetector.readChar(testStream);
+      
+      assertEquals("index="+testStream.index(),
+                   matchIndexes.contains(testStream.index()),
+                   olColCommentDetector.match());
+      
+      testStream.consume();
+    
+    }
+  }
+    
+  @Test
+  public void test_OneLineComment_win() {
+      
+    CharStream testStream = new ANTLRStringStream("0//34\r\n789ABCFED");
+    List<Integer> matchIndexes = Arrays.asList(2, 3, 4, 5, 6);
+      
+    StreamAnalyst olCommentDetector =
+      new DelimitedSequenceDetector(new KeywordDetector("//"), new EOLdetector());
+      
+    while(testStream.LA(1)!=CharStream.EOF){
+        
+      olCommentDetector.readChar(testStream);
+
+      assertEquals("index="+testStream.index(),
+                     matchIndexes.contains(testStream.index()),
+                     olCommentDetector.match());
+        
+      testStream.consume();
+      
+    }
+  }
+      
+  @Test
+  public void test_OneLineComment_linux() {
+      
+    CharStream testStream = new ANTLRStringStream("0//34\n6789ABCFED");
+    List<Integer> matchIndexes = Arrays.asList(2, 3, 4, 5);
+      
+    StreamAnalyst olCommentDetector =
+      new DelimitedSequenceDetector(new KeywordDetector("//"), new EOLdetector());
+      
+    while(testStream.LA(1)!=CharStream.EOF){
+        
+      olCommentDetector.readChar(testStream);
+
+      assertEquals("index="+testStream.index(),
+                     matchIndexes.contains(testStream.index()),
+                     olCommentDetector.match());
+        
+      testStream.consume();
+      
+    }
+  }
+  
+  @Test
+  public void test_MultilineComment(){
+    CharStream testStream = new ANTLRStringStream("0/*34\n6*/9ABCFED");
+    List<Integer> matchIndexes = Arrays.asList(2, 3, 4, 5, 6, 7, 8);
+      
+    StreamAnalyst mlCommentDetector =
+      new DelimitedSequenceDetector("/*", "*/");
+      
+    while(testStream.LA(1)!=CharStream.EOF){
+        
+      mlCommentDetector.readChar(testStream);
+
+      assertEquals("index="+testStream.index(),
+                     matchIndexes.contains(testStream.index()),
+                     mlCommentDetector.match());
+        
+      testStream.consume();
+      
+    }
+  }
 }

@@ -2,7 +2,7 @@ package streamanalysis;
 
 import org.antlr.runtime.CharStream;
 
-public class EOLdetector extends StreamAnalyst{
+public class EOLdetector extends KeywordDetector{
 
   private boolean match;
   private int offset;
@@ -10,6 +10,7 @@ public class EOLdetector extends StreamAnalyst{
   private char lastChar;
   
   public EOLdetector(){
+    super(""); //TODO change inheritance scheme to avoid this ugly trick
     match = false;
     lastChar = (char)-1;
     offset = -1;
@@ -43,15 +44,23 @@ public class EOLdetector extends StreamAnalyst{
         // linux's new line
         offset = 0;
       }
-    // \r means macOS' new line
+      
+    // \r means macOS' new line or beginning of windows' new line
     }else if(newChar=='\r'){
-      match = true;
-      offset = 0;
+      
+      if((char)input.LA(2)=='\n'){
+        match = false;
+      }else{
+        match = true;
+        offset = 0;
+      }
+    }else{
+      match = false;
     }
     
     lastChar = newChar;
     
-    return false;
+    return match();
   }
 
   @Override
