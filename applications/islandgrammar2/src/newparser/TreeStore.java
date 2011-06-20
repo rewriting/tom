@@ -1,13 +1,13 @@
 package newparser;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import org.antlr.runtime.tree.Tree;
 
 public class TreeStore {
 
-  private Map<Object, Tree> store = null; 
+  private Queue<Tree> store = null; 
   
   // this is a singleton ===================
   private static TreeStore instance = null;
@@ -21,16 +21,16 @@ public class TreeStore {
   }
   
   private TreeStore(){
-    store = new HashMap<Object, Tree>();
+    store = new LinkedList<Tree>();
   }
   // =======================================
   
 
-  public void storeTree(Object key,Tree tree){
-    store.put(key, tree);
+  public void storeTree(Tree tree){
+    store.add(tree);
   }
   
-  public Tree pickTree(Object key){
-    return store.get(key);
+  public Tree getTree(){
+    return store.poll();
   }
 }

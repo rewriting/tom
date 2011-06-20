@@ -26,7 +26,7 @@ public class ANTLRTreeDrawer {
     dotWriter.close();
     
     Runtime.getRuntime().exec("dot -Tpng "+dotFilename+" -o "+filename);
-    Runtime.getRuntime().exec("rm "+dotFilename);
+    //Runtime.getRuntime().exec("rm "+dotFilename);
   }
   
 }

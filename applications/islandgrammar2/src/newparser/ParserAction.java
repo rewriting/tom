@@ -1,15 +1,9 @@
 package newparser;
 
 import org.antlr.runtime.CharStream;
-import org.antlr.runtime.ClassicToken;
 import org.antlr.runtime.CommonTokenStream;
-import org.antlr.runtime.RecognitionException;
-import org.antlr.runtime.tree.CommonTree;
 import org.antlr.runtime.tree.CommonTreeAdaptor;
 import org.antlr.runtime.tree.Tree;
-
-import antlr.CommonToken;
-import antlr.Token;
 
 import streamanalysis.DelimitedSequenceDetector;
 import streamanalysis.StreamAnalyst;

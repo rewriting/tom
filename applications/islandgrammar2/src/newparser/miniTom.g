@@ -38,7 +38,7 @@ import org.antlr.runtime.tree.Tree;
 /* parser rules */
 matchconstruct : LPAR RPAR LBR patternaction* RBR -> ^(MATCH patternaction*) ;
 
-patternaction :  STRING HostBlockOpen StoredTree  RBR -> ^(PATTERNACTION);  // pick stored tree and insert
+patternaction :  (s=STRING) HostBlockOpen  RBR {System.out.println("Joie récursive !");}-> ^(PATTERNACTION $s {TreeStore.getInstance().getTree()});  // pick stored tree and insert
 
 HostBlockOpen : '->' ( options {greedy=true;} : WS) '{'
 {
@@ -47,13 +47,10 @@ TreeStore store = TreeStore.getInstance();
 HostParser parser = new HostParser(new NegativeImbricationDetector('{', '}', 0));
 Tree tree = parser.parse(input);
 
-//int key = store.storeTree( $HostBlockOpen.index , tree);
+store.storeTree(tree);
 
 //XXX
 System.out.println("Joie !");
-
-setText("bli!!!");
-
 }
 ;
 
