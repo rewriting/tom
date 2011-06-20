@@ -1,7 +1,6 @@
 package test;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.IOException;
 
 import newparser.HostParser;
@@ -42,10 +41,10 @@ public class Test_ParseAndDrawTrees {
 		for(int i=0; i<testedFiles.length; i++){
 		  if(!testedFiles[i].startsWith("_")){
 		  
-			  String inputFileName = INPUT_DIR+testedFiles[i];
-		  String outputFileName = OUTPUT_DIR+testedFiles[i];
+		  String inputFileName = INPUT_DIR+testedFiles[i];
+		  String outputFileName = OUTPUT_DIR+testedFiles[i]+".png";
 		
-		  System.out.println("\n> Now parsing "+testedFiles[i]+" .");
+		  System.out.println("\n> Now parsing "+testedFiles[i]);
 		  
 		  CharStream input = new ANTLRFileStream(inputFileName);
 		  Tree tree = new HostParser().parse(input);

@@ -98,6 +98,8 @@ public class HostParser {
 			
 		} // while
 		
+		ParserAction.PACK_HOST_CONTENT.doAction(input, hostCharsBuffer, tree, null);
+		
 		return tree;
 	}
 	

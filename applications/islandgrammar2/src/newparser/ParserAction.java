@@ -14,7 +14,7 @@ public abstract class ParserAction{
   public static final SkipDelimitedSequence SKIP_DELIMITED_SEQUENCE = new SkipDelimitedSequence();
   public static final ParseMatchConstruct PARSE_MATCH_CONSTRUCT = new ParseMatchConstruct();
   
-  
+  public static final PackHostContent PACK_HOST_CONTENT = new PackHostContent();
   
   /**
    * Implementations of ParserAction.doAction should check
@@ -58,13 +58,18 @@ public abstract class ParserAction{
 		}
 		
 		// skip one char, this is last char of opening sequence
-		// forget to kip it would make analyst state wrong if
+		// forget to keep it would make analyst state wrong if
 		// delimiter sequence is only one char long
 		hostCharsBuffer.append((char)input.LA(1));
 		input.consume();
 		
 		while(analyst.readChar(input)){ // readChar update and return "foundness" value
-	        hostCharsBuffer.append((char)input.LA(1)); // save host code char for later use
+	        if(input.LA(1)==CharStream.EOF) {
+	        	System.err.println("Unexpected EndOfFile"); //TODO handle nicely
+	        	return;
+	        }
+			
+			hostCharsBuffer.append((char)input.LA(1)); // save host code char for later use
 	        input.consume();
 	    }
 	}
@@ -86,7 +91,7 @@ public abstract class ParserAction{
       // remove "%matc" from hostCharsBuffer
       hostCharsBuffer.setLength(hostCharsBuffer.length()-analyst.getOffsetAtMatch());	
     	
-      packHostContent(hostCharsBuffer, tree);
+      PACK_HOST_CONTENT.doAction(input, hostCharsBuffer, tree, analyst);
       
       // consume 'h' of %match
       input.consume();
@@ -104,17 +109,28 @@ public abstract class ParserAction{
     
   }
   
-  private static void packHostContent(StringBuffer hostCharsBuffer,
-        Tree tree) {
-    if(hostCharsBuffer.length()<0){
-      CommonTreeAdaptor adaptor = new CommonTreeAdaptor();
+  public static class PackHostContent extends ParserAction {
     
-      // XXX is it REALLY the clearest way to do that ?
-      Tree child = (Tree) adaptor.nil();
-      child = (Tree)adaptor.becomeRoot((Tree)adaptor.create(miniTomParser.HOSTBLOCK, hostCharsBuffer.toString()), child);
+    // not instanciable
+    private PackHostContent(){;}
     
-      tree.addChild(child);
+    public PackHostContent getInstance(){
+    	return ParserAction.PACK_HOST_CONTENT;
     }
+
+	@Override
+	public void doAction(CharStream input, StringBuffer hostCharsBuffer,
+			Tree tree, StreamAnalyst analyst) {
+		
+	  if(hostCharsBuffer.length()>0){
+	    CommonTreeAdaptor adaptor = new CommonTreeAdaptor();
+		    
+		// XXX is it REALLY the clearest way to do that ?
+		Tree child = (Tree) adaptor.nil();
+		child = (Tree)adaptor.becomeRoot((Tree)adaptor.create(miniTomParser.HOSTBLOCK, hostCharsBuffer.toString()), child);
+		    
+	    tree.addChild(child);
+	  }
+	}
   }
-  
 }
