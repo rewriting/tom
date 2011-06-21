@@ -5,9 +5,33 @@ import org.antlr.runtime.CharStream;
 public class ANTLRCharStreamPrint {
 
   public static String getLA1Visual(CharStream input){
-    
-    String beforeLA1 = input.substring(input.index()-5, input.index()-1);
-    String LA1andAfter = input.substring(input.index(), input.index()+5);
+	  return getLA1Visual(input, 5, 5);
+  }
+	
+  public static String getLA1Visual(CharStream input, int charsbeforeLA1, int charsafterLA1){
+	  
+	String beforeLA1 = "";
+	String LA1andAfter = "";
+	
+	
+	// using home made loop instead of substring to always "stay in" CharStream 
+	int tmpChar;
+	int offset;
+	
+	tmpChar = -1;
+	offset = 0;
+	while((tmpChar=input.LA(-1-offset))!=-1 && offset<charsbeforeLA1){
+		beforeLA1 = (char)tmpChar + beforeLA1;
+		offset++;
+	}
+	
+	// because we need 'charsafterLA1+1' chars (this loop read LA1)
+	tmpChar = -1;
+	offset = 0;
+	while((tmpChar=input.LA(1+offset))!=-1 && offset<=charsafterLA1){
+		LA1andAfter = LA1andAfter+(char)tmpChar;
+		offset++;
+	}
     
     beforeLA1 = beforeLA1.replaceAll("\n", "\\\\n");
     beforeLA1 = beforeLA1.replaceAll("\r", "\\\\r");
