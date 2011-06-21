@@ -2,6 +2,8 @@ package futil;
 
 public class StringIndent {
 
+  private StringIndent(){;}
+  
   public static String indent(String input, int level, int spaces){
     String res = "";
     

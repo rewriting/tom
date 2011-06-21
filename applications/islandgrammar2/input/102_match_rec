@@ -3,7 +3,12 @@
         %match(){
             bli2 -> {
                 %match(){
-                    bli21->{ bli21content }
+                    bli21->{
+                        %match(){
+                        bli211->{ bli211content }
+                        bli212->{ bli212content }
+                        }
+                    }
                     bli22->{ bli22content }
                 }
             }

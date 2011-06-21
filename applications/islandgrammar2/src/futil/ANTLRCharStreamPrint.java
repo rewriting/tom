@@ -4,6 +4,8 @@ import org.antlr.runtime.CharStream;
 
 public class ANTLRCharStreamPrint {
 
+  private ANTLRCharStreamPrint(){;}
+  
   public static String getLA1Visual(CharStream input){
     
     String beforeLA1 = input.substring(input.index()-5, input.index()-1);
