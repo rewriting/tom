@@ -9,18 +9,28 @@ import org.antlr.runtime.ANTLRFileStream;
 import org.antlr.runtime.CharStream;
 import org.antlr.runtime.tree.Tree;
 
+import debug.HostParserDebugger;
+
 public class Test_ParseAndDrawTrees {
 
 	public static void main(String args[]) throws IOException{
 		
+    HostParserDebugger.turnOn();
+	  
+	  
+	  if(System.getenv("TOM_HOME")==null){
+	     throw new RuntimeException("$TOM_HOME is not set...");
+	  }
+	  
 		final String TOM_HOME = System.getenv("TOM_HOME")+"/"; 
-		if(TOM_HOME==null){
-			throw new RuntimeException("$TOM_HOME is not set...");
-		}
 		final String RLT_PATH = "../../applications/islandgrammar2/";
 		
 		final String OUTPUT_DIR = TOM_HOME+RLT_PATH+"output/";
 		final String INPUT_DIR = TOM_HOME+RLT_PATH+"input/";
+		
+		// create output folder if it doesn't exists
+		Runtime.getRuntime().exec(
+		    "echo \"if [ ! -d output ]; then mkdir output; fi\" | bash");
 		
 		String testedFiles[];
 		

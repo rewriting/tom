@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.antlr.runtime.CharStream;
-import org.antlr.runtime.tree.CommonTree;
+import org.antlr.runtime.tree.CommonTreeAdaptor;
 import org.antlr.runtime.tree.Tree;
 
 import streamanalysis.DelimitedSequenceDetector;
@@ -57,8 +57,16 @@ public class HostParser {
 	
 	public Tree parse(CharStream input){
 		
-		Tree tree = new CommonTree();
-		StringBuffer hostCharsBuffer = new StringBuffer();
+	  StringBuffer hostCharsBuffer = new StringBuffer();
+		Tree tree;
+		
+		CommonTreeAdaptor adaptor = new CommonTreeAdaptor();
+		// XXX maybe there is a simpler way...
+	  tree = (Tree) adaptor.nil();
+    tree = (Tree)adaptor.becomeRoot((Tree)adaptor.create(miniTomParser.HOSTBLOCK, "HostBlock"), tree);
+		
+		
+		
 		
 		while(! stopCondition.readChar(input)){ // readChar() updates internal state
 												// and return found()
@@ -136,4 +144,10 @@ public class HostParser {
 	
     return null;
   }
+  
+  // === DEBUG =========================== //
+  public String getClassDesc(){
+    return "HostParser";
+  }
+
 }

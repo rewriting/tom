@@ -1,0 +1,25 @@
+some host code
+
+%match(){
+	bli -> {
+		/* very usefull for bliing */
+		doBli
+		%match(){
+			bli1 -> { bli.bli1 }
+			bli2 -> { bli.bli2 }
+		}//end l2 match
+	}// end bli
+	
+	blo -> {
+		//comment
+		%match(){
+			blo1->{blo.blo1}
+			blo2->{blo.blo2}
+		}// end l2 match
+		
+		// comment
+	}// end blo
+	
+}// end match
+
+some more host code

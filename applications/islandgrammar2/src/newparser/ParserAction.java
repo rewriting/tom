@@ -5,6 +5,8 @@ import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.tree.CommonTreeAdaptor;
 import org.antlr.runtime.tree.Tree;
 
+import debug.HostParserDebugger;
+
 import streamanalysis.DelimitedSequenceDetector;
 import streamanalysis.StreamAnalyst;
 
@@ -95,12 +97,29 @@ public abstract class ParserAction{
       
       // consume 'h' of %match
       input.consume();
-      
+                   
       try{
       miniTomLexer lexer = new miniTomLexer(input);
+      
+      // XXX DEBUG ===
+      if(HostParserDebugger.isOn()){
+        HostParserDebugger.getInstance()
+        .debugNewCall(lexer.getClassDesc(), input, "matchconstruct");
+      }
+      // == /DEBUG ===
+      
       CommonTokenStream tokenStream = new CommonTokenStream(lexer);
       miniTomParser parser = new miniTomParser(tokenStream);
+      
       tree.addChild((Tree)parser.matchconstruct().getTree());
+      
+      // XXX DEBUG ===
+      if(HostParserDebugger.isOn()){
+        HostParserDebugger.getInstance()
+        .debugReturnedCall(lexer.getClassDesc(), input, "matchconstruct");
+      }
+      // == /DEBUG ===
+      
       }catch(Exception e){
         // XXX poorly handled exception
         e.printStackTrace();
@@ -131,6 +150,9 @@ public abstract class ParserAction{
 		    
 	    tree.addChild(child);
 	  }
+	  
+	  hostCharsBuffer.setLength(0);
 	}
   }
+  
 }
