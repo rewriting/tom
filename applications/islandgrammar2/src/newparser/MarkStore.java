@@ -3,6 +3,13 @@ package newparser;
 import java.util.Map;
 import java.util.TreeMap;
 
+/**
+ * This class provide a way to store ANTLRCharStream's marck at lexing time and
+ * to get them back parsing time.<br/>
+ * TODO : the singleton aspect will be problematic if several files are parsed
+ * at the same time or one after the other. Mark should maybe be identified by
+ * filename to.
+ */
 public class MarkStore {
 
   private Map<String, Integer> store = null; 

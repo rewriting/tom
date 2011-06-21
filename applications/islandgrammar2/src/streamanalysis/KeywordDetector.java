@@ -4,8 +4,7 @@ import org.antlr.runtime.CharStream;
 /**
  * Detected property : some keyword have been found</br>
  * found() returns true when input.index() is last char of the keyword index.</br>
- * So if you readChar then consume then test, test result tells you if you just
- * passed the keyword you're looking for.
+ * @see StreamAnalyst
  */
 public class KeywordDetector extends StreamAnalyst {
 

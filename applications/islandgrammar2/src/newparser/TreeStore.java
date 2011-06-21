@@ -5,6 +5,11 @@ import java.util.Queue;
 
 import org.antlr.runtime.tree.Tree;
 
+/**
+ * Used to store tree from lexer and get them back from parser.
+ * TODO : it uses a Queue, that idea comes from islandgrammar (first episode),
+ * and it seems to work well. Will it ALWAYS work ?
+ */
 public class TreeStore {
 
   private Queue<Tree> store = null; 

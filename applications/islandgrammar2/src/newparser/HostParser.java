@@ -12,6 +12,11 @@ import streamanalysis.EOLdetector;
 import streamanalysis.KeywordDetector;
 import streamanalysis.StreamAnalyst;
 
+
+/**
+ * 
+ * @see ParserAction
+ */
 public class HostParser {
 	
 	private StreamAnalyst stopCondition;
@@ -22,7 +27,7 @@ public class HostParser {
 	 * Defautl stopCondition is EOF.
 	 * @param stopCondition
 	 */
-	public HostParser(StreamAnalyst stopCondition){
+	public HostParser(StreamAnalyst stopCondition) {
 		
 		this.stopCondition = stopCondition;
 		
@@ -51,28 +56,29 @@ public class HostParser {
 		  ParserAction.PARSE_MATCH_CONSTRUCT);
 	}
 	
-	public HostParser(){
+	public HostParser() {
 		this(new KeywordDetector(""+(char)CharStream.EOF));
 	}
 	
-	public Tree parse(CharStream input){
+	public Tree parse(CharStream input) {
 		
+	  // this string buffer will contain chars read from input that are part of
+	  // "Host Language" code. They will be added to the tree as late as possible
+	  // using ParserAction.packHostContent.
 	  StringBuffer hostCharsBuffer = new StringBuffer();
-		Tree tree;
+	  Tree tree;
 		
 		CommonTreeAdaptor adaptor = new CommonTreeAdaptor();
 		// XXX maybe there is a simpler way...
 	  tree = (Tree) adaptor.nil();
-    tree = (Tree)adaptor.becomeRoot((Tree)adaptor.create(miniTomParser.HOSTBLOCK, "HostBlock"), tree);
+	  tree = (Tree)adaptor.becomeRoot((Tree)adaptor.create(miniTomParser.HOSTBLOCK, "HostBlock"), tree);
 		
 		
-		
-		
-		while(! stopCondition.readChar(input)){ // readChar() updates internal state
-												// and return found()
+		while(! stopCondition.readChar(input)) { // readChar() updates internal state
+												 // and return match()
 			
 			// update state of all analysts
-			for(StreamAnalyst analyst : actionsMapping.keySet()){
+			for(StreamAnalyst analyst : actionsMapping.keySet()) {
 				analyst.readChar(input);
 			}
 
@@ -96,7 +102,7 @@ public class HostParser {
 				action.doAction(input, hostCharsBuffer, tree, analyst);
 				
 				// doAction is allowed to modify its parameters
-				// especially doAction can consume chars from input
+				// especially, doAction can consume chars from input
 				// so every StreamAnalyst needs to start fresh.
 				resetAllAnalysts();
 				
@@ -111,17 +117,17 @@ public class HostParser {
 		return tree;
 	}
 	
-	private void resetAllAnalysts(){
+	private void resetAllAnalysts() {
 		stopCondition.reset();
 		for(StreamAnalyst analyst : actionsMapping.keySet()){
 			analyst.reset();
 		}
 	}
 	
-	private int matchingAnalystsCount(){
+	private int matchingAnalystsCount() {
 		int res = 0;
 		
-		for(StreamAnalyst analyst : actionsMapping.keySet()){
+		for(StreamAnalyst analyst : actionsMapping.keySet()) {
 			if(analyst.match()) {
 				res++;
 			}
@@ -136,7 +142,7 @@ public class HostParser {
    */
   private Map.Entry<StreamAnalyst, ParserAction> getFirstMathingEntry() {
 		
-    for(Map.Entry<StreamAnalyst, ParserAction> entry : actionsMapping.entrySet()){
+    for(Map.Entry<StreamAnalyst, ParserAction> entry : actionsMapping.entrySet()) {
       if(entry.getKey().match()){
     	  return entry;
       }

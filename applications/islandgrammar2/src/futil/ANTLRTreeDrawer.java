@@ -8,6 +8,9 @@ import java.io.IOException;
 import org.antlr.runtime.tree.DOTTreeGenerator;
 import org.antlr.runtime.tree.Tree;
 
+/**
+ * Provide a function that generate png files from ANTLRTrees.
+ */
 public class ANTLRTreeDrawer {
 
   private ANTLRTreeDrawer(){;}

@@ -2,12 +2,36 @@ package futil;
 
 import org.antlr.runtime.CharStream;
 
+/**
+ * Provide a function that print ANTLR's CharStream state.
+ * (in a "digest" way)
+ */
 public class ANTLRCharStreamPrint {
 
+  /**
+   * Same behavior that {@link #getLA1Visual(CharStream, int, int)}.
+   * Use 5 as value for 2nd and 3rd parameter (respectively chardbeforeLA1
+   * and charsafterLA1).
+   * 
+   * @param input
+   * @return
+   * @see #getLA1Visual(CharStream, int, int)
+   */
   public static String getLA1Visual(CharStream input){
 	  return getLA1Visual(input, 5, 5);
   }
-	
+
+  /**
+   * Create a String containing a line withsome chars around input.LA(1),
+   * a line of spaces with a '^' under LA(1) char and line and position
+   * in line of LA(1).
+   * 
+   * @param input
+   * @param charsbeforeLA1
+   * @param charsafterLA1
+   * @return
+   * @see #getLA1Visual(CharStream)
+   */
   public static String getLA1Visual(CharStream input, int charsbeforeLA1, int charsafterLA1){
 	  
 	String beforeLA1 = "";
