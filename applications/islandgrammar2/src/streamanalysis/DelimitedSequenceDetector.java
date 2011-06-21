@@ -4,10 +4,8 @@ import org.antlr.runtime.CharStream;
 /**
  * Detected property : specific delimited sequences like double quoted strings</br>
  * found() returns true when input.index() is in the sequence (from last char of
- * opening sequence to last char of closing sequence).</br>
- * So if you readChar then consume then test, test result will become true when index
- * is pointing to the first inner char and go back to false when it's pointing to the
- * first outer char.</br>
+ * opening sequence to last char of closing sequence included).</br>
+ *
  */
 public class DelimitedSequenceDetector extends StreamAnalyst{
 

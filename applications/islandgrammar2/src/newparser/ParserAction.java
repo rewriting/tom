@@ -10,6 +10,10 @@ import debug.HostParserDebugger;
 import streamanalysis.DelimitedSequenceDetector;
 import streamanalysis.StreamAnalyst;
 
+/**
+ * 
+ * @see HostParser
+ */
 public abstract class ParserAction{
 
   // static fields with cool ParserActions
@@ -23,12 +27,12 @@ public abstract class ParserAction{
    * runtime type of analyst.
    * 
    * doAction should be called right after analyst found something.
-   * char that made it match should accessible using input.LA(1)
+   * char that made it match should be accessible using input.LA(1)
    * 
    * if matched keyword is more that 1 char long, previous chars
    * are at the end of hostCharBuffer.
    * 
-   * doAction will terminate in such way that you don't need to
+   * doAction will terminate in such way that there is no need to
    * call input.consume(). 
    * 
    * @param input
@@ -116,9 +120,11 @@ HostParserDebugger.getInstance()
       
       tree.addChild((Tree)matchconstructReturnedValue.getTree());
       
+      // CharStream is marked AFTER '}' and we got line and position in line
+      // from the equivalent token which point AT '}', so we need to add one.
       rewindCharStreamTo(input,
                          matchconstructReturnedValue.closingBracketLine,
-                         matchconstructReturnedValue.closingBracketPosInLine);
+                         matchconstructReturnedValue.closingBracketPosInLine+1);
       
 // XXX DEBUG ===
 if(HostParserDebugger.isOn()){
@@ -179,7 +185,7 @@ HostParserDebugger.getInstance()
     MarkStore markStore = MarkStore.getInstance();
     
     while(!(input.getLine()==line && input.getCharPositionInLine()== posInLine)){
-      int mark = markStore.getMark();
+      int mark = markStore.getMark(line, posInLine);
       
       input.rewind(mark);
       input.release(mark);

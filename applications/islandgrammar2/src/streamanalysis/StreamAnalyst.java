@@ -7,14 +7,6 @@ import org.antlr.runtime.CharStream;
  * <b>StreamAnalyst</b> :</br>
  * Detect and locate some properties of charStream.<br/>
  * 
- * <i>Typical use</i> :</br>
- * input : CharStream<br/>
- * analysts : StreamAnalyst[0..*]<br/>
- * foreach ( sa : StreamAnalyst in analysts )</br>
- * | sa.readChar(input)</br>
- * input.consume()</br>
- * // test analysts values and react
- * 
  */
 public abstract class StreamAnalyst extends Observable{
   

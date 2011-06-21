@@ -1,9 +1,21 @@
 package futil;
 
+/**
+ * add a visible indentation to a String.
+ */
 public class StringIndent {
 
   private StringIndent(){;}
   
+  /**
+   * Return a String where each line from input is prefixed whith
+   * "level" '|' chars, separated by "spaces" '_' chars.
+   * 
+   * @param input
+   * @param level
+   * @param spaces
+   * @return
+   */
   public static String indent(String input, int level, int spaces){
     String res = "";
     

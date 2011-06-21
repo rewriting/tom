@@ -85,17 +85,12 @@ store.storeTree(tree);
 ;
 
 RBR :
-{
-// we want to rewind to a point where
-// input.LA(1) is a '}'
-// we need to perform mark BEFORE
-// match('}') is called, because match
-// call consume on success.
 
-MarkStore.getInstance().storeMark(input.mark());
-System.out.println("ONE MORE MARK !");
-}
  '}'
+ {
+MarkStore.getInstance().storeMark(input.mark(), getLine(), getCharPositionInLine());
+System.out.println("ONE MORE MARK ! at "+getLine()+":"+(getCharPositionInLine()));
+}
 ;
 
 LBR                : '{';
