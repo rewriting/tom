@@ -1,11 +1,11 @@
 package newparser;
 
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class MarkStore {
 
-  private Queue<Integer> store = null; 
+  private Map<String, Integer> store = null; 
   
   // this is a singleton ===================
   private static MarkStore instance = null;
@@ -19,17 +19,17 @@ public class MarkStore {
   }
   
   private MarkStore(){
-    store = new LinkedList<Integer>();
+    store = new TreeMap<String, Integer>();
   }
   // =======================================
   
 
-  public void storeMark(Integer mark){
-    store.add(mark);
+  public void storeMark(int mark, int line, int posInLine){
+    store.put(""+line+":"+posInLine, mark);
   }
   
-  public Integer getMark(){
-    return store.poll();
+  public int getMark(int line, int posInLine){
+    return store.remove(""+line+":"+posInLine);
   }
   
 }

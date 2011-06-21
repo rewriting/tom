@@ -7,13 +7,73 @@
                     bli22->{ bli22content }
                 }
             }
+            
             bli3 -> { }
             bli4 -> { }
         }
     }
     blo -> { bliblibli }
-    blu -> { /* %match(){} */}
+    blu -> {
+// big one for fun
+%match ( ) {
+    bli1 -> {
+        %match(){
+            bli2 -> {
+                %match(){
+                    bli21->{ bli21content }
+                    bli22->{ bli22content }
+                }
+            }
+            
+            bli3 -> { }
+            bli4 -> { }
+        }
+    }
+    blo -> { bliblibli }
+    blu -> {
+ // one more level
+ %match ( ) {
+    bli1 -> {
+        %match(){
+            bli2 -> {
+                %match(){
+                    bli21->{ bli21content }
+                    bli22->{ bli22content }
+                }
+            }
+            
+            bli3 -> { }
+            bli4 -> { }
+        }
+    }
+    blo -> { bliblibli }
+    blu -> { /* %match(){}*/ }
+}   
+    }
+}
+    
+    }
 }
 
-
 blablabla
+
+
+%match ( ) {
+    bli1 -> {
+        %match(){
+            bli2 -> {
+                %match(){
+                    bli21->{ bli21content }
+                    bli22->{ bli22content }
+                }
+            }
+            
+            bli3 -> { }
+            bli4 -> { }
+        }
+    }
+    blo -> { bliblibli }
+    blu -> { /* %match(){}*/ }
+}
+
+// blabla to avoid dummy error

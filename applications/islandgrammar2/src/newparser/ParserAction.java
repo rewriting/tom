@@ -116,9 +116,11 @@ HostParserDebugger.getInstance()
       
       tree.addChild((Tree)matchconstructReturnedValue.getTree());
       
+      // CharStream is marked AFTER '}' and we got line and position in line
+      // from the equivalent token which point AT '}', so we need to add one.
       rewindCharStreamTo(input,
                          matchconstructReturnedValue.closingBracketLine,
-                         matchconstructReturnedValue.closingBracketPosInLine);
+                         matchconstructReturnedValue.closingBracketPosInLine+1);
       
 // XXX DEBUG ===
 if(HostParserDebugger.isOn()){
@@ -179,7 +181,7 @@ HostParserDebugger.getInstance()
     MarkStore markStore = MarkStore.getInstance();
     
     while(!(input.getLine()==line && input.getCharPositionInLine()== posInLine)){
-      int mark = markStore.getMark();
+      int mark = markStore.getMark(line, posInLine);
       
       input.rewind(mark);
       input.release(mark);
