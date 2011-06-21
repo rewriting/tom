@@ -46,7 +46,12 @@ import org.antlr.runtime.tree.Tree;
 }
 
 /* parser rules */
-matchconstruct : LPAR RPAR LBR patternaction* RBR -> ^(MATCH patternaction*) ;
+matchconstruct
+returns [int closingBracketLine, int closingBracketPosInLine]
+:LPAR RPAR LBR patternaction* RBR
+{$closingBracketLine = $RBR.line; $closingBracketPosInLine = $RBR.pos;}
+-> ^(MATCH patternaction*) 
+;
 
 patternaction :  (pattern=STRING)  HostBlockOpen RBR
  -> ^(PATTERNACTION $pattern {TreeStore.getInstance().getTree()});
@@ -79,11 +84,20 @@ store.storeTree(tree);
 }
 ;
 
+RBR :
+{
+// we want to rewind to a point where
+// input.LA(1) is a '}'
+// we need to perform mark BEFORE
+// match('}') is called, because match
+// call consume on success.
 
-//HostBlockClose : '}';
+MarkStore.getInstance().storeMark(input.mark());
+System.out.println("ONE MORE MARK !");
+}
+ '}'
+;
 
-//RARROW 	: '->';
-RBR	: '}';
 LBR                : '{';
 RPAR 	: ')';
 LPAR	: '(';

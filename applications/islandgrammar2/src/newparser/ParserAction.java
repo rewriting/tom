@@ -101,24 +101,31 @@ public abstract class ParserAction{
       try{
       miniTomLexer lexer = new miniTomLexer(input);
       
-      // XXX DEBUG ===
-      if(HostParserDebugger.isOn()){
-        HostParserDebugger.getInstance()
-        .debugNewCall(lexer.getClassDesc(), input, "matchconstruct");
-      }
-      // == /DEBUG ===
+// XXX DEBUG ===
+if(HostParserDebugger.isOn()){
+HostParserDebugger.getInstance()
+ .debugNewCall(lexer.getClassDesc(), input, "matchconstruct");
+}
+// == /DEBUG ===
       
       CommonTokenStream tokenStream = new CommonTokenStream(lexer);
       miniTomParser parser = new miniTomParser(tokenStream);
       
-      tree.addChild((Tree)parser.matchconstruct().getTree());
+      miniTomParser.matchconstruct_return
+        matchconstructReturnedValue = parser.matchconstruct();
       
-      // XXX DEBUG ===
-      if(HostParserDebugger.isOn()){
-        HostParserDebugger.getInstance()
-        .debugReturnedCall(lexer.getClassDesc(), input, "matchconstruct");
-      }
-      // == /DEBUG ===
+      tree.addChild((Tree)matchconstructReturnedValue.getTree());
+      
+      rewindCharStreamTo(input,
+                         matchconstructReturnedValue.closingBracketLine,
+                         matchconstructReturnedValue.closingBracketPosInLine);
+      
+// XXX DEBUG ===
+if(HostParserDebugger.isOn()){
+HostParserDebugger.getInstance()
+ .debugReturnedCall(lexer.getClassDesc(), input, "matchconstruct");
+}
+// == /DEBUG ===
       
       }catch(Exception e){
         // XXX poorly handled exception
@@ -153,6 +160,33 @@ public abstract class ParserAction{
 	  
 	  hostCharsBuffer.setLength(0);
 	}
+  }
+  
+  /**
+   * Every ParserAction must return with a clean 'input' state.
+   * ANTLR generated parser tends to read and consume chars in advance,
+   * so it's necessary to rewind CharStream after a call to such parser.
+   * @param line
+   * @param posInLine
+   */
+  private static void rewindCharStreamTo(CharStream input, int line, int posInLine){
+    
+    // TODO anticipate problems like infinite rewind caused by bad
+    // line/posInLine couple
+    
+    System.out.println("REWINDING NOW ! (target = "+line+":"+posInLine+")");
+    
+    MarkStore markStore = MarkStore.getInstance();
+    
+    while(!(input.getLine()==line && input.getCharPositionInLine()== posInLine)){
+      int mark = markStore.getMark();
+      
+      input.rewind(mark);
+      input.release(mark);
+      
+      System.out.println("Now at : "+input.getLine()+":"+input.getCharPositionInLine());
+    }
+    
   }
   
 }
