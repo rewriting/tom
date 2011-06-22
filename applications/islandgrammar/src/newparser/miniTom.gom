@@ -11,7 +11,7 @@ ProgramUnit = HostBlock(hContent:String)
 MatchArgList = MatchArgList(MatchArg*)
 
 MatchArg = WithType(aType:String, aTerm:String)
-        | NoType(aTerm:String)
+         | NoType(aTerm:String)
 
 PatternActionList = PatternActionList(PatternAction*)
 
