@@ -36,7 +36,7 @@ public abstract class Keyword {
       }
     }
   }
-
+ 
   public boolean isReady() {
     return matched;
   }
