@@ -72,4 +72,6 @@ savoir à l'avance quel numéro sera attribué à quel token ?
 
 La réponse apparaît d'elle-même après quelques tests ! On ne peut pas car cela change à chaque essai. En revanche, toutes ces constantes entières sont déclarées publiquement dans la classe lexer. Donc un appel à miniTomLexer.LENOMDUTOKEN suffit ! Bonne nouvelle.
 
+schéma de couleur pour l'artwork :
+#3A3C94 (blue / purple ), blanc et réhaut #ff6600
 
