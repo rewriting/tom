@@ -27,27 +27,27 @@ public class KeywordDetector extends StreamAnalyst {
   public boolean readChar(CharStream input) {
     char nextChar = (char)input.LA(1);
     
-    if(match()){
+    if(match()) {
       reset();
     }
     
     //TODO check EOF
     if(keyword.charAt(cursor)==nextChar) {
       cursor++;
-    }else{
+      if(cursor==keyword.length()) {
+        matched = true;
+        cursor = 0;
+
+        // don't forget Observable features
+        setChanged();
+        notifyObservers();
+      }
+      return matched;
+    } else {
       cursor = 0;
     }
     
-    if(cursor==keyword.length()){
-      matched = true;
-      cursor = 0;
-      
-      // don't forget Observable features
-      setChanged();
-      notifyObservers();
-    }
-    
-    return match();
+    return matched;
   }
 
   @Override

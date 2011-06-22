@@ -4,7 +4,7 @@ import org.antlr.runtime.CharStream;
 
 /**
  * Detected property : imbrication level (relative to init</br>
- * found() returns true when input.index() is level-closing char index.</br>
+ * match() returns true when input.index() is level-closing char index.</br>
  * So if you readChar then consume then test, test result tells you if you just
  * entered -1 imbrication level.
  * You may need to rewind CharStream to allow nice parsing of this block.
@@ -47,16 +47,16 @@ public class NegativeImbricationDetector extends StreamAnalyst {
     
     char nextChar = (char)input.LA(1);
     
-    if(nextChar==levelOpeningChar){
+    if(nextChar==levelOpeningChar) {
       imbricationLevel++;
     }
     
-    if(nextChar==levelClosingChar){
+    if(nextChar==levelClosingChar) {
       imbricationLevel--;
     }
     
     // don't forget Observable features
-    if(oldFoundValue!=match()){
+    if(oldFoundValue!=match()) {
       setChanged();
       notifyObservers();
     }

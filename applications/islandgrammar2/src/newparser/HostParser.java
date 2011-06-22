@@ -12,7 +12,6 @@ import streamanalysis.EOLdetector;
 import streamanalysis.KeywordDetector;
 import streamanalysis.StreamAnalyst;
 
-
 /**
  * 
  * @see ParserAction
@@ -71,43 +70,35 @@ public class HostParser {
 		CommonTreeAdaptor adaptor = new CommonTreeAdaptor();
 		// XXX maybe there is a simpler way...
 	  tree = (Tree) adaptor.nil();
-	  tree = (Tree)adaptor.becomeRoot((Tree)adaptor.create(miniTomParser.HOSTBLOCK, "HostBlock"), tree);
-		
+	  tree = (Tree) adaptor.becomeRoot((Tree)adaptor.create(miniTomParser.HOSTBLOCK, "HostBlock"), tree);
 		
 		while(! stopCondition.readChar(input)) { // readChar() updates internal state
 												 // and return match()
 			
 			// update state of all analysts
+      //
+      StreamAnalyst recognized = null;
 			for(StreamAnalyst analyst : actionsMapping.keySet()) {
-				analyst.readChar(input);
+				boolean matched = analyst.readChar(input);
+        if(matched) {
+          if(recognized!=null) {
+            // can't be two recognized keywords
+            throw new RuntimeException("Unconsistent HostParser state");
+          }
+          recognized = analyst;
+        }
 			}
 
-			int matchCount = matchingAnalystsCount();
-			
-			if(matchCount==0){
+			if(recognized==null) {
 				hostCharsBuffer.append((char)input.LA(1));
 				input.consume();
-				
-			} else if(matchCount==1){
-				
-				Map.Entry<StreamAnalyst, ParserAction> entry;
-				ParserAction action;
-				StreamAnalyst analyst;
-				
-				entry = getFirstMathingEntry();
-				action = entry.getValue();
-				analyst = entry.getKey();
-				
-				
-				action.doAction(input, hostCharsBuffer, tree, analyst);
-				
+			} else {
+				ParserAction action = actionsMapping.get(recognized);
+				action.doAction(input, hostCharsBuffer, tree, recognized);
 				// doAction is allowed to modify its parameters
 				// especially, doAction can consume chars from input
 				// so every StreamAnalyst needs to start fresh.
 				resetAllAnalysts();
-				
-			} else if(matchCount > 1){
-				throw new RuntimeException("Unconsistent HostParser state");
 			}
 			
 		} // while
@@ -119,40 +110,13 @@ public class HostParser {
 	
 	private void resetAllAnalysts() {
 		stopCondition.reset();
-		for(StreamAnalyst analyst : actionsMapping.keySet()){
+		for(StreamAnalyst analyst : actionsMapping.keySet()) {
 			analyst.reset();
 		}
 	}
 	
-	private int matchingAnalystsCount() {
-		int res = 0;
-		
-		for(StreamAnalyst analyst : actionsMapping.keySet()) {
-			if(analyst.match()) {
-				res++;
-			}
-		}
-		
-		return res;
-	}
-
-  /**
-   * 
-   * @return null if no such entry
-   */
-  private Map.Entry<StreamAnalyst, ParserAction> getFirstMathingEntry() {
-		
-    for(Map.Entry<StreamAnalyst, ParserAction> entry : actionsMapping.entrySet()) {
-      if(entry.getKey().match()){
-    	  return entry;
-      }
-    }
-	
-    return null;
-  }
-  
   // === DEBUG =========================== //
-  public String getClassDesc(){
+  public String getClassDesc() {
     return "HostParser";
   }
 
