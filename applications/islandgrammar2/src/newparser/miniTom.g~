@@ -80,8 +80,7 @@ returns [int closingBracketLine, int closingBracketPosInLine]
 -> ^(MATCH patternaction*) 
 ;
 
-patternaction :
- ((pattern=STRING) | (pattern=LETTER))  HostBlockOpen RBR
+patternaction :  ((pattern=STRING) | (pattern=LETTER))  HostBlockOpen HostBlockClose RBR
  -> ^(PATTERNACTION $pattern {TreeStore.getInstance().getTree()});
 
 HostBlockOpen : ( options {greedy=true;} : '->' WS '{')
@@ -109,6 +108,8 @@ Tree tree = parser.parse(input);
 
 store.storeTree(tree);
 
+emit(new ClassicToken(miniTomLexer.HostBlockClose));
+
 }
 ;
 
@@ -129,7 +130,6 @@ DIGIT      : '0'..'9';
 STRING     : LETTER (LETTER | DIGIT)*;
 WS	: ('\r' | '\n' | '\t' | ' ' )* { $channel = HIDDEN; };
 
-NONEOFANTLRSBUSINESS : '%' {$channel = HIDDEN;};
 
 SL_COMMENT : '//' (~('\n'|'\r'))* ('\n'|'\r'('\n')?)?
   { $channel=HIDDEN; } ;

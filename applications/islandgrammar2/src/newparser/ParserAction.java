@@ -17,10 +17,9 @@ import streamanalysis.StreamAnalyst;
 public abstract class ParserAction {
 
   // static fields with cool ParserActions
-  public static final SkipDelimitedSequence SKIP_DELIMITED_SEQUENCE = SkipDelimitedSequence.getInstance();
-  public static final ParseMatchConstruct PARSE_MATCH_CONSTRUCT = new ParseMatchConstruct();
-  
-  public static final PackHostContent PACK_HOST_CONTENT = new PackHostContent();
+  public static final SkipDelimitedSequence SKIP_DELIMITED_SEQUENCE= SkipDelimitedSequence.getInstance();
+  public static final ParseMatchConstruct PARSE_MATCH_CONSTRUCT= ParseMatchConstruct.getInstance();
+  public static final PackHostContent PACK_HOST_CONTENT= PackHostContent.getInstance();
   
   /**
    * Implementations of ParserAction.doAction should check
@@ -47,9 +46,9 @@ public abstract class ParserAction {
 
   
   public static class SkipDelimitedSequence extends ParserAction {
+    
     private static final SkipDelimitedSequence instance = new SkipDelimitedSequence();
-
-    // not instanciable
+    
     private SkipDelimitedSequence() {}
 
     public static SkipDelimitedSequence getInstance() {
@@ -84,11 +83,12 @@ public abstract class ParserAction {
   
   public static class ParseMatchConstruct extends ParserAction {
 
-    // not instanciable
+    private static final ParseMatchConstruct instance = new ParseMatchConstruct();
+
     private ParseMatchConstruct(){;}
     
-    public ParseMatchConstruct getInstance() {
-      return ParserAction.PARSE_MATCH_CONSTRUCT;
+    public static ParseMatchConstruct getInstance() {
+      return instance;
     }
     
     @Override
@@ -144,11 +144,12 @@ HostParserDebugger.getInstance()
   
   public static class PackHostContent extends ParserAction {
     
-    // not instanciable
+    private static final PackHostContent instance = new PackHostContent();
+    
     private PackHostContent(){;}
     
-    public PackHostContent getInstance(){
-    	return ParserAction.PACK_HOST_CONTENT;
+    public static PackHostContent getInstance(){
+    	return instance;
     }
 
 	@Override
