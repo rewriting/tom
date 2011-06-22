@@ -16,9 +16,8 @@ import org.antlr.runtime.CharStream;
  * <li>It wont work if several HostParsers are working at the same time (but is it useful ?)</li>
  * <li>Request a lot (not that much, but still..) to be added in HostParser and ANTLR generated Parser</li>
  * </ul>
- * <b>ADDITIONAL FEATURES :</b>
+ * <b>ADDITIONAL FEATURES / CHANGES:</b>
  * <ul>
- * <li>it could be useful to print infos about what action is performed at current indent level</li>
  * <li>maybe a "multiton" based on parsed file name could be usefull</li>
  * <li>could be nice to create an HostParserDebuggable Interface</li>
  * </ul>
@@ -90,8 +89,8 @@ public class HostParserDebugger {
          +"--- charstream after ----\n"
          +"-------------------------\n"
          +futil.ANTLRCharStreamPrint.getLA1Visual(input)+"\n"
-         +"[<<"+classDesc+"] ("+additionnalInfos+")"+"\n"
-         +"-------------------------\n",
+         +"-------------------------\n"
+         +"[<<"+classDesc+"] ("+additionnalInfos+")"+"\n",
           imbricationLevel+1,
           2)
      +futil.StringIndent.indent(
@@ -101,5 +100,15 @@ public class HostParserDebugger {
     
     
     System.out.print(infoString);
+  }
+  
+  public void printAtCurrentImbricationLevel(String message){
+    System.out.print(
+        futil.StringIndent.indent(
+            "["+message+"]",
+            imbricationLevel,
+            2
+        )
+    );
   }
 }

@@ -73,7 +73,7 @@ Remarks :
 */
 matchconstruct
 returns [int closingBracketLine, int closingBracketPosInLine]
-:LPAR RPAR LBR patternaction* RBR
+:LPAR RPAR LBR (patternaction)* RBR
 {$closingBracketLine = $RBR.line; $closingBracketPosInLine = $RBR.pos;}
 -> ^(MATCH patternaction*) 
 ;
@@ -125,6 +125,7 @@ LETTER     : 'A'..'Z' | 'a'..'z';
 DIGIT      : '0'..'9';
 STRING     : LETTER (LETTER | DIGIT)*;
 WS	: ('\r' | '\n' | '\t' | ' ' )* { $channel = HIDDEN; };
+
 
 SL_COMMENT : '//' (~('\n'|'\r'))* ('\n'|'\r'('\n')?)?
   { $channel=HIDDEN; } ;

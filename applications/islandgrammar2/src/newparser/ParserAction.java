@@ -177,6 +177,13 @@ HostParserDebugger.getInstance()
    */
   private static void rewindCharStreamTo(CharStream input, int line, int posInLine){
 
+    if(HostParserDebugger.isOn()){
+      HostParserDebugger.getInstance()
+       .printAtCurrentImbricationLevel(
+         "rewinding to : "+line+":"+posInLine  
+       );
+    }
+    
     MarkStore markStore = MarkStore.getInstance();
     
     Integer markIdentifier = markStore.getMark(line, posInLine);
