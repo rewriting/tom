@@ -1,0 +1,13 @@
+%match(){
+    blu -> {doBlu}
+    bla -> {doBla}
+}
+
+// this comment seems to be a problem...
+
+%match(){
+    blu -> {doBlu}
+    bla -> {doBla}
+}
+
+bonjour

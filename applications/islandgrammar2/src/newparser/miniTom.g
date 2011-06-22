@@ -78,7 +78,7 @@ returns [int closingBracketLine, int closingBracketPosInLine]
 -> ^(MATCH patternaction*) 
 ;
 
-patternaction :  (pattern=STRING)  HostBlockOpen RBR
+patternaction :  ((pattern=STRING) | (pattern=LETTER))  HostBlockOpen RBR
  -> ^(PATTERNACTION $pattern {TreeStore.getInstance().getTree()});
 
 HostBlockOpen : ( options {greedy=true;} : '->' WS '{')
