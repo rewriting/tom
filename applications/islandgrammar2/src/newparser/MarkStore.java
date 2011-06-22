@@ -35,7 +35,7 @@ public class MarkStore {
     store.put(""+line+":"+posInLine, mark);
   }
   
-  public int getMark(int line, int posInLine){
+  public Integer getMark(int line, int posInLine){
     return store.remove(""+line+":"+posInLine);
   }
   

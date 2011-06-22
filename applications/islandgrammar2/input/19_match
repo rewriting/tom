@@ -8,8 +8,8 @@ some host code
 some more host code
 
 %match(){
-    bli -> {doBli}
-    blo -> {doBlo}
+    blu -> {doBlu}
+    bla -> {doBla}
 }
 
 some blabla

@@ -1,0 +1,5 @@
+%match(){
+	p1 -> {while(A){doB()}}
+	p2 -> {{{{verybracketted}}}}
+	p3 -> { {{ {} %match(){} {} }} }
+}

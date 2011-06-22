@@ -1,6 +1,0 @@
-// some comment
-
-%match ( ) {
-	bli -> { bliblibli }
-	blo -> { bliblibli }
-}

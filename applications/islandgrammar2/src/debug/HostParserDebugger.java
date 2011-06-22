@@ -35,6 +35,10 @@ public class HostParserDebugger {
     getInstance();
   }
   
+  public static void reset(){
+    instance = new HostParserDebugger();
+  }
+  
   // singleton =============================
   private static HostParserDebugger instance = null;
   

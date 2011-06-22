@@ -51,6 +51,9 @@ public class Test_ParseAndDrawTrees {
 		for(int i=0; i<testedFiles.length; i++){
 		  if(!testedFiles[i].startsWith("_")){
 		  
+		  // useless if previous parsing ended well
+		  HostParserDebugger.reset();
+		    
 		  String inputFileName = INPUT_DIR+testedFiles[i];
 		  String outputFileName = OUTPUT_DIR+testedFiles[i]+".png";
 		
