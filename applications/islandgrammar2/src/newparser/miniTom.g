@@ -89,7 +89,7 @@ TreeStore store = TreeStore.getInstance();
 HostParser parser = new HostParser(new NegativeImbricationDetector('{', '}', 0));
 
       // XXX DEBUG ===
-      if(HostParserDebugger.isOn()){
+      if(HostParserDebugger.isOn()) {
         HostParserDebugger.getInstance()
         .debugNewCall(parser.getClassDesc(), input, "");
       }

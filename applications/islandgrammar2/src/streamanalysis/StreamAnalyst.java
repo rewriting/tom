@@ -15,6 +15,7 @@ public abstract class StreamAnalyst extends Observable{
   public abstract boolean match();
   
   /**
+   * Read (in advance) a single character
    * Have no side effect on input.
    * @param input
    * @return whether 'something' was found
