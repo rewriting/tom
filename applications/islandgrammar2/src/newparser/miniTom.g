@@ -14,8 +14,6 @@ tokens {
   UNTYPED;
   TYPETERM;
   PATTERNACTION;
-  
-  HostBlockClose;
 }
 
 @parser::header {
@@ -120,7 +118,7 @@ MarkStore.getInstance().storeMark(input.mark(), getLine(), getCharPositionInLine
 }
 ;
 
-LBR                : '{';
+LBR     : '{';
 RPAR 	: ')';
 LPAR	: '(';
 
@@ -128,10 +126,16 @@ LETTER     : 'A'..'Z' | 'a'..'z';
 DIGIT      : '0'..'9';
 STRING     : LETTER (LETTER | DIGIT)*;
 WS	: ('\r' | '\n' | '\t' | ' ' )* { $channel = HIDDEN; };
-
+/*
 NONEOFANTLRSBUSINESS : '%' {$channel = HIDDEN;};
+*/
 
 SL_COMMENT : '//' (~('\n'|'\r'))* ('\n'|'\r'('\n')?)?
   { $channel=HIDDEN; } ;
 ML_COMMENT : '/*' ( options {greedy=false;} : . )* '*/'
   { $channel=HIDDEN; } ;
+
+// lexer need a rule for every input
+// even for chars we don't use
+DEFAULT : . { $channel=HIDDEN;};
+
