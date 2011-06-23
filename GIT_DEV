@@ -42,6 +42,7 @@ git checkout -b <branch> origin/<branch> : pour creer la branche en local
 git merge <branch> : pour fusionner la branche <branch> dans la branche
 courante
 
+git checkout HEAD <file> : pour recuperer un fichier de la branche courante qui a ete efface
 git pull : pour recuperer la version du depot distant (/!\ la recuperation ne
 concerne que la branche courante)
 

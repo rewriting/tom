@@ -107,7 +107,7 @@ LEFTBR     : '{' {
   }
 } ;
 RIGHTBR    : '}' {
-  if(levelcounter<=0){emit(Token.EOF_TOKEN);} else{levelcounter-=1;}
+  if(levelcounter<=0) { emit(Token.EOF_TOKEN); } else { levelcounter-=1; }
 } ;
 SEMICOLUMN : ';' ;
 COMMA      : ',' ;
