@@ -1,13 +1,13 @@
 %match(){
-    blu -> {doBlu}
-    bla -> {doBla}
+    case1-> {action1}
+    case2 -> {action2}
 }
 
 $
 
 %match(){
-    blu -> {doBlu}
-    bla -> {doBla}
+    case3 -> {action3}
+    case3 -> {action4}
 }
 
 bonjour

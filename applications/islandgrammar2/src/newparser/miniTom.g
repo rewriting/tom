@@ -139,3 +139,7 @@ ML_COMMENT : '/*' ( options {greedy=false;} : . )* '*/'
 // even for chars we don't use
 DEFAULT : . { $channel=HIDDEN;};
 
+// the solution below doesn't seems better
+// it's just more painful to write...
+//DEFAULT : ~('('|')'|'{'|'}'|'\r'|'\n'|'\t'|' '|'A'..'Z'|'a'..'z'|'0'..'9') { $channel=HIDDEN; };
+

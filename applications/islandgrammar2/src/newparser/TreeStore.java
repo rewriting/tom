@@ -36,6 +36,6 @@ public class TreeStore {
   }
   
   public Tree getTree(){
-    return store.poll();
+    return store.remove();
   }
 }
