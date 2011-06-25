@@ -95,13 +95,14 @@ $marker = ((CustomToken)$RBR).getPayload(Integer.class);
 
 patternaction :
  ((pattern=STRING) | (pattern=LETTER))  HostBlockOpen RBR
- -> ^(PATTERNACTION $pattern {TreeStore.getInstance().getTree()});
+ -> ^(PATTERNACTION $pattern
+ {//TreeStore.getInstance().getTree()
+ 
+ ((CustomToken)$HostBlockOpen).getPayload(Tree.class)
+ });
 
 HostBlockOpen : ( options {greedy=true;} : '->' WS '{')
 {
-
-TreeStore store = TreeStore.getInstance();
-
 HostParser parser = new HostParser(new NegativeImbricationDetector('{', '}', 0));
 
       // XXX DEBUG ===
@@ -119,8 +120,8 @@ Tree tree = parser.parse(input);
         .debugReturnedCall(parser.getClassDesc(), input, "");
       }
       // === DEBUG ===
-
-store.storeTree(tree);
+      
+tokenCustomizer.prepareNextToken(tree);
 
 }
 ;
@@ -130,7 +131,7 @@ RBR :
 {
 // every token generated bay antlr pass throw our
 // tokenCustomizer.customize(Token). Next emitted
-// token, this RBR token will be "customized" with
+// token, this RBR token, will be "customized" with
 // with input.mark() return value as payload
 tokenCustomizer.prepareNextToken(input.mark());
 }
