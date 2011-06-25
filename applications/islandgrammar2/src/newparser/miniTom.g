@@ -40,6 +40,15 @@ import org.antlr.runtime.tree.Tree;
      // call each other. We don't need to make a
      // difference between ANTLR's Parser and Lexer
   }
+  
+  private final TokenCustomizer tokenCustomizer = new TokenCustomizer();
+ 
+  // add custom fields to ANTLR generated Tokens
+  @Override 
+  public void emit(Token t){
+    super.emit(tokenCustomizer.customize(t));
+  }
+  
 }
 
 /* parser rules */
@@ -72,10 +81,16 @@ Remarks :
  in line of the mark we want to rewind to.
 */
 matchconstruct
-returns [int closingBracketLine, int closingBracketPosInLine]
+returns [int marker]
 :LPAR RPAR LBR (patternaction)* RBR
-{$closingBracketLine = $RBR.line; $closingBracketPosInLine = $RBR.pos;}
--> ^(MATCH patternaction*) 
+{
+// set returned value marker
+// allows caller to rewind input
+// every RBR Token is actually a
+// CustomToken.
+$marker = ((CustomToken)$RBR).getPayload(Integer.class);
+}
+-> ^(MATCH patternaction*)
 ;
 
 patternaction :
@@ -113,8 +128,11 @@ store.storeTree(tree);
 RBR :
  '}'
 {
-// mark CharStream to allow rewind to this point.
-MarkStore.getInstance().storeMark(input.mark(), getLine(), getCharPositionInLine());
+// every token generated bay antlr pass throw our
+// tokenCustomizer.customize(Token). Next emitted
+// token, this RBR token will be "customized" with
+// with input.mark() return value as payload
+tokenCustomizer.prepareNextToken(input.mark());
 }
 ;
 
@@ -126,9 +144,6 @@ LETTER     : 'A'..'Z' | 'a'..'z';
 DIGIT      : '0'..'9';
 STRING     : LETTER (LETTER | DIGIT)*;
 WS	: ('\r' | '\n' | '\t' | ' ' )* { $channel = HIDDEN; };
-/*
-NONEOFANTLRSBUSINESS : '%' {$channel = HIDDEN;};
-*/
 
 SL_COMMENT : '//' (~('\n'|'\r'))* ('\n'|'\r'('\n')?)?
   { $channel=HIDDEN; } ;

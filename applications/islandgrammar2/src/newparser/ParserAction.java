@@ -121,11 +121,9 @@ HostParserDebugger.getInstance()
       
       tree.addChild((Tree)matchconstructReturnedValue.getTree());
       
-      // CharStream is marked AFTER '}' and we got line and position in line
-      // from the equivalent token which point AT '}', so we need to add 1.
-      rewindCharStreamTo(input,
-                         matchconstructReturnedValue.closingBracketLine,
-                         matchconstructReturnedValue.closingBracketPosInLine+1);
+      // allow action to return with a "clean" input state
+      // (input.LA(1) is char after '}')
+      input.rewind(matchconstructReturnedValue.marker);
       
 // XXX DEBUG ===
 if(HostParserDebugger.isOn()){
@@ -169,31 +167,4 @@ HostParserDebugger.getInstance()
 	  hostCharsBuffer.setLength(0);
 	}
   }
-  
-  /**
-   * Every ParserAction must return with a clean 'input' state.
-   * ANTLR generated parser tends to read and consume chars in advance,
-   * so it's necessary to rewind CharStream after a call to such a parser.
-   * @param line
-   * @param posInLine
-   */
-  private static void rewindCharStreamTo(CharStream input, int line, int posInLine){
-
-    if(HostParserDebugger.isOn()){
-      HostParserDebugger.getInstance()
-       .printAtCurrentImbricationLevel(
-         "rewinding to : "+line+":"+posInLine  
-       );
-    }
-    
-    MarkStore markStore = MarkStore.getInstance();
-    
-    Integer markIdentifier = markStore.getMark(line, posInLine);
-    if(markIdentifier==null){
-      throw new RuntimeException("Can't rewind to non existing mark.");
-    }
-    
-    input.rewind(markIdentifier);
-  }
-  
 }
