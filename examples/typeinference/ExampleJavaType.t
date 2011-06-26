@@ -34,13 +34,34 @@ public class ExampleJavaType {
     module Example
       abstract syntax
       B = b()
+        | f(n:B)
+        | g(n1:B,n2:B)
   }
 
   public static void main(String[] args) {
     int x = 10;
+    B y = `b();
+    B w = `f(b());
     %match{
       b() << x -> { System.out.println("Line 1: " + x); }
       b() << x -> { System.out.println("Line 2: " + `x); }
+      b() << y -> { System.out.println("Line 3: " + `createF(y)); }
+      b() << y -> { System.out.println("Line 4: " + createF(`y)); }
+      f(a) << w -> { System.out.println("Line 5: " + createG(`a,y)); }
+      z@f(b()) << createF(y) -> { System.out.println("Line 6: " + `z); }
+      z@f(b()) << createF(b()) -> { System.out.println("Line 7: " + `z); }
+      b() << y -> { System.out.println("Line 8: " + `f(createF(y))); }
+      b() << y -> { System.out.println("Line 9: " + `f(createG(w,y))); }
     }
+  }
+
+  public static B createF(B arg) {
+    System.out.println("In createF with '" + arg + "'.");
+    return `f(arg);
+  }
+
+  public static B createG(B arg1, B arg2) {
+    System.out.println("In createG with '" + arg1 + "' and '" + arg2 + "'.");
+    return `g(arg1,arg2);
   }
 }
