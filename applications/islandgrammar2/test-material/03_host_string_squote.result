@@ -1,0 +1,2 @@
+(HostBlock String s = "String with a ' in it";
+)

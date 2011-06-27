@@ -1,0 +1,6 @@
+Tests :
+
+test-material contains some input files (*.input) and files containing what CommonTree.toStringTree() should output if parsing is succesful (*.result). This is not a really efficient test because there is a lot of equivalent trees for a given input. It is still useful anyway, because as long as tests pass, we can be sure that previously implemented feature's behaviour have not been changed while implementing new features.
+
+to use it :
+build with ant then lauch java test/Test in build.

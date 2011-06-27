@@ -2,3 +2,5 @@ build
 gen
 output
 *~
+*.dot
+*.png

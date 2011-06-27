@@ -7,6 +7,7 @@ import newparser.HostParser;
 
 import org.antlr.runtime.ANTLRFileStream;
 import org.antlr.runtime.CharStream;
+import org.antlr.runtime.tree.CommonTree;
 import org.antlr.runtime.tree.Tree;
 
 import debug.HostParserDebugger;
@@ -63,6 +64,8 @@ public class Test_ParseAndDrawTrees {
 		  Tree tree = new HostParser().parse(input);
 			
 			futil.ANTLRTreeDrawer.draw(outputFileName, tree);
+			
+			System.out.println(((CommonTree)tree).toStringTree());
 			
 		  }
 		}
