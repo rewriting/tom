@@ -1,0 +1,6 @@
+#>
+#description simple pattern
+#test-type TomPattern
+#<
+
+f(g(h),_*)

@@ -1,7 +1,0 @@
-(HostBlock (MATCH (PATTERNACTION blu (HostBlock doBlu)) (PATTERNACTION bla (HostBlock doBla))) 
-
-// this comment seems to be a problem... (not anymore)
-
- (MATCH (PATTERNACTION blu (HostBlock doBlu)) (PATTERNACTION bla (HostBlock doBla))) 
-
-bonjour)

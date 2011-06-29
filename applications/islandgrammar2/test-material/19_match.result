@@ -1,9 +1,0 @@
-(HostBlock some host code
-
- (MATCH (PATTERNACTION bli (HostBlock doBli)) (PATTERNACTION blo (HostBlock doBlo))) 
-
-some more host code
-
- (MATCH (PATTERNACTION blu (HostBlock doBlu)) (PATTERNACTION bla (HostBlock doBla))) 
-
-some blabla)

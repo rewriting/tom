@@ -1,7 +1,0 @@
-(HostBlock (MATCH (PATTERNACTION blu (HostBlock doBlu)) (PATTERNACTION bla (HostBlock doBla))) 
-
-+ print(a + b);
-
- (MATCH (PATTERNACTION blu (HostBlock doBlu)) (PATTERNACTION bla (HostBlock doBla))) 
-
-bonjour)

@@ -1,7 +1,0 @@
-(HostBlock (MATCH (PATTERNACTION case1 (HostBlock action1)) (PATTERNACTION case2 (HostBlock action2))) 
-
-$
-
- (MATCH (PATTERNACTION case3 (HostBlock action3)) (PATTERNACTION case3 (HostBlock action4))) 
-
-bonjour)

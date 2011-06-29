@@ -1,13 +1,13 @@
 %match(){
-    case1-> {action1}
-    case2 -> {action2}
+    case1()-> {action1}
+    case2() -> {action2}
 }
 
 $
 
 %match(){
-    case3 -> {action3}
-    case3 -> {action4}
+    case3() -> {action3}
+    case3() -> {action4}
 }
 
 bonjour

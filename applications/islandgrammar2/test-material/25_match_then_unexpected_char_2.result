@@ -1,7 +1,0 @@
-(HostBlock (MATCH (PATTERNACTION blu (HostBlock doBlu)) (PATTERNACTION bla (HostBlock doBla))) 
-
-(a==b) ? print(texts.true()) : print(texts.false());  
-
- (MATCH (PATTERNACTION blu (HostBlock doBlu)) (PATTERNACTION bla (HostBlock doBla))) 
-
-bonjour)

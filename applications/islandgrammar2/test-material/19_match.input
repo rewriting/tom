@@ -1,15 +1,15 @@
 some host code
 
 %match(){
-	bli -> {doBli}
-	blo -> {doBlo}
+	bli()-> {doBli}
+	blo()-> {doBlo}
 }
 
 some more host code
 
 %match(){
-    blu -> {doBlu}
-    bla -> {doBla}
+    blu()-> {doBlu}
+    bla()-> {doBla}
 }
 
 some blabla

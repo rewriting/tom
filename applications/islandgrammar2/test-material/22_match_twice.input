@@ -1,13 +1,13 @@
 %match(){
-    blu -> {doBlu}
-    bla -> {doBla}
+    blu() -> {doBlu}
+    bla() -> {doBla}
 }
 
 // this comment seems to be a problem... (not anymore)
 
 %match(){
-    blu -> {doBlu}
-    bla -> {doBla}
+    blu() -> {doBlu}
+    bla() -> {doBla}
 }
 
 bonjour

@@ -116,8 +116,8 @@ HostParserDebugger.getInstance()
       CommonTokenStream tokenStream = new CommonTokenStream(lexer);
       miniTomParser parser = new miniTomParser(tokenStream);
       
-      miniTomParser.matchconstruct_return
-        matchconstructReturnedValue = parser.matchconstruct();
+      miniTomParser.matchConstruct_return
+        matchconstructReturnedValue = parser.matchConstruct();
       
       tree.addChild((Tree)matchconstructReturnedValue.getTree());
       

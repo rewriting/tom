@@ -25,7 +25,7 @@ public class Test {
     //private boolean debug = false;
     boolean resetResultFiles = false;
     //private boolean initResultFiles = false;
-    boolean drawTrees = false;
+    boolean drawTrees = true;
     
     int testsCount = 0;
     int failureCount = 0;

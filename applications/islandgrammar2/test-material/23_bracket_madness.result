@@ -1,1 +1,0 @@
-(HostBlock (MATCH (PATTERNACTION p1 (HostBlock while(A){doB()})) (PATTERNACTION p2 (HostBlock {{{verybracketted}}})) (PATTERNACTION p3 (HostBlock  {{ {}  MATCH  {} }} ))))
