@@ -11,7 +11,7 @@ import org.antlr.runtime.tree.Tree;
 
 public class PatternTestParser extends TestParser{
 
-  public PatternTestParser(){;}
+  public PatternTestParser() {;}
   
   @Override
   public void parse(String stringInput) {

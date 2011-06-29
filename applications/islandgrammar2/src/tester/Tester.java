@@ -63,61 +63,41 @@ public class Tester {
   }
   
   private void testAndOtherThings(boolean drawTree){
-    int testCount = 0;
-    int successCount = 0;
-    StringBuilder failedTests = new StringBuilder();
-    
+	TestResult result = new TestResult();  
+
     for(TestFile tFile : TestFileList){
       TestParser parser = TestParser.getInstance(tFile.getParserType());
       parser.parse(tFile.getActualContent());
       
       
-      // test success
+      // success related actions
+      if(parser.isParsingASuccess()){
         String expectedResult = readFile(tFile.getOutputFile());
         String actualResult = parser.getParsingResultAsString();
         
-      
-        boolean success = parser.isParsingASuccess() && expectedResult.equals(actualResult);
-       
-        if(success){
-          successCount++;
-          
-          if(drawTree){
-            if(!drawTree(tFile.getImgFile(), parser.getTree())){
-              System.out.println("Couldn't draw Tree");
-            }
-          }
-          
-        }else{
-          failedTests.append(tFile.getPath()).append("\n");
+        if(expectedResult.equals(actualResult)){
+        // save result
+        result.addResult(tFile, TestResult.TestIssue.PASSED,actualResult, expectedResult);
+        }
+        else {	
+        result.addResult(tFile, TestResult.TestIssue.BAD_TREE, actualResult, expectedResult);
         }
         
-        testCount++;
-      
-      // print
-      System.out.println("=====");
-      System.out.println("testing : "+tFile.getPath()+"\ndescription : "+tFile.getDescription()+"\nresult : "+((success)?"[SUCCESS]":"[FAILURE]"));
-      if(!parser.isParsingASuccess()){
-        System.out.println("> Parsing failed");
-      }else{
-        if(!success){
-          System.out.println("> Result different from expected");
-          System.out.println("> Expected : \n"+expectedResult);
-          System.out.println("> Actual : \n"+actualResult);
+        // optionnal actions
+        if(drawTree){
+          drawTree(tFile.getImgFile(), parser.getTree());
         }
+        
+      }else{
+    	result.addResult(tFile, TestResult.TestIssue.ERROR_WHILE_PARSING, "", "");
       }
-      System.out.println("=====");
-    }
+      
+      
+    }// end foreach
     
-    // print abstract
-    System.out.println("=====================================================");
-    System.out.println("== failed tests list : ==============================");
-    System.out.print(failedTests.toString());
-    System.out.println("=====================================================");
-    System.out.println("== overall test result : ============================");
-    System.out.println(((testCount==successCount)?"[SUCCESS]":"[FAILURE]")+" : "+successCount+"/"+testCount);
-    System.out.println("=====================================================");
-  }
+    System.out.println(result.getTextualAbstract());
+    
+  }// end function
   
   public void initResultsFiles(){
     

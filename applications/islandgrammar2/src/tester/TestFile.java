@@ -114,7 +114,7 @@ public class TestFile {
                 
               }else
               if(line.equals("tompattern")){
-                
+            	  
                 parserType = TestParser.Type.TOMPATTERN;
                 
               }else{
