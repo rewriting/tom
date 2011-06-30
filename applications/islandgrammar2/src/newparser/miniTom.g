@@ -17,12 +17,25 @@ tokens {
 
 // csPattern
   CsPattern;
+  CsPlainPattern;
   CsAnnotation;  
   CsPatternList;
 
+// Pairs
+  CsPairPattern;
+  CsSlotName;
+  CsImplicitPairList;
+
+  CsSymbolList;
+
+  CsHeadSymbol; 
+  CsHeadSymbolQMark;
+  CsHeadSymbolList;
+
 // csTerm
   CsTerm;
-  CsNamedTermList;
+  CsExplicitTermList; // CsNamedTermList;
+ 
   CsTermList;
   CsVariable;
   CsAntiVariable;
@@ -131,22 +144,62 @@ csPatternList :
 ;
 
 csPattern :
- (i=IDENTIFIER AT)? csTerm  
+ (i=IDENTIFIER AT)? csPlainPattern
 
-  -> {i==null}? ^(CsPattern csTerm)
-  ->/*i!=null*/ ^(CsPattern ^(CsAnnotation IDENTIFIER) csTerm)
+  -> {i==null}? ^(CsPattern csPlainPattern)
+  ->/*i!=null*/ ^(CsPattern ^(CsAnnotation IDENTIFIER) csPlainPattern)
 ;
 
-// Terms ======================================================
-csTerm :
- csNamedTermList
-| csVariable 
-| csUnamedVariable
-| csConstant
 
-  -> ^(CsTerm)
+csPlainPattern :
+ //csExplicitTermList // TODO => include in HeadSymbol
+ // -> ^(CsPlainPattern csExplicitTermList)
+ csHeadSymbolList csExplicitTermList
+  -> ^(CsPlainPattern csHeadSymbolList csExplicitTermList)
+|csHeadSymbolList csImplicitPairList
+  -> ^(CsPlainPattern csHeadSymbolList csImplicitPairList)
+|csExplicitTermList
+  -> ^(CsPlainPattern csExplicitTermList)
+|csVariable // produces Cs(Anti)?Variable(Star)?
+  -> ^(CsPlainPattern csVariable)
+|csUnamedVariable // produces CsUnamedVariable(Star)?
+  -> ^(CsPlainPattern csUnamedVariable)
+|csConstant
+  -> ^(CsPlainPattern csConstant)
 ;
 
+csHeadSymbolList :
+  csHeadSymbol
+  -> ^(CsHeadSymbolList csHeadSymbol)
+ | LPAR csHeadSymbol (PIPE csHeadSymbol)* RPAR 
+  -> ^(CsHeadSymbolList	 csHeadSymbol*)
+; 
+
+csHeadSymbol :
+  IDENTIFIER
+  -> ^(CsHeadSymbol IDENTIFIER)
+ |IDENTIFIER QMARK
+  -> ^(CsHeadSymbolQMark IDENTIFIER)
+;
+
+csExplicitTermList : // {System.out.println("Parsing CsNamedTermList");}
+  LPAR (csPattern (COMMA csPattern)*)? RPAR
+
+ -> ^(CsExplicitTermList csPattern*)
+;
+
+csImplicitPairList :
+  LSQUAREBR (csPairPattern (COMMA csPairPattern)*)?  RSQUAREBR
+
+  -> ^(CsImplicitPairList csPairPattern*)
+;
+
+csPairPattern :
+ IDENTIFIER EQUAL csPattern
+
+ -> ^(CsPairPattern ^(CsSlotName IDENTIFIER) csPattern)
+;
+	
 csVariable : // {System.out.println("Parsing CsVariable");}
   (a=ANTI)? IDENTIFIER (s=STAR)?
  
@@ -172,11 +225,7 @@ csConstant : // {System.out.println("Parsing CsConstant");}
   ->/*a!=null && s==null*/ ^(CsConstant ^(CsValue IDENTIFIER))
 ;
 
-csNamedTermList : // {System.out.println("Parsing CsNamedTermList");}
-  IDENTIFIER LPAR (csTerm (COMMA csTerm)*)? RPAR
 
- -> ^(CsNamedTermList ^(CsName IDENTIFIER) ^(CsTermList csTerm*))
-;
 
 RBR :  '}'
 {
@@ -188,6 +237,11 @@ tokenCustomizer.prepareNextToken(input.mark());
 }
 ;
 
+PIPE 	: '|';
+QMARK	:'?';
+EQUAL	: '=';
+LSQUAREBR : '[';
+RSQUAREBR : ']';
 LBR     : '{';
 RPAR 	: ')';
 LPAR	: '(';
