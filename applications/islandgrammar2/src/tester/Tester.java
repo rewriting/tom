@@ -66,9 +66,19 @@ public class Tester {
 	TestResult result = new TestResult();  
 
     for(TestFile tFile : TestFileList){
+      
+    // ensure output are readables
+    System.out.flush(); System.err.flush();
+    System.out.println("> Parsing :\n  "+tFile.getPath());
+    System.out.println("----------------------------------------------------------------");
+      
       TestParser parser = TestParser.getInstance(tFile.getParserType());
       parser.parse(tFile.getActualContent());
-      
+    
+    // ensure output are readables
+    System.out.println("----------------------------------------------------------------");
+    System.out.println("<Done\n");
+    System.out.flush(); System.err.flush();
       
       // success related actions
       if(parser.isParsingASuccess()){
@@ -128,7 +138,8 @@ public class Tester {
     File list[] = file.listFiles(new FilenameFilter() {
       @Override
       public boolean accept(File arg0, String arg1) {
-        return !arg1.startsWith("_") && !arg1.startsWith(".");
+        return !arg1.startsWith("_") && !arg1.startsWith(".")
+                && !arg1.endsWith("~");
       }
     });
     

@@ -1,6 +1,0 @@
-#>
-#description simple pattern
-#type TomPattern
-#<
-
-f(g(h),_*)

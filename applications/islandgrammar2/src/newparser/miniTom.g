@@ -204,7 +204,8 @@ BQUTE   : '`';
 IDENTIFIER 	: LETTER(LETTER | DIGIT | '_' | '-')*;
 INTEGER 	: (DIGIT)+;
 DOUBLE	        : (DIGIT)+'.'(DIGIT)* | '.' (DIGIT)+;
-STRING	        : DQUOTE (LETTER | DIGIT)* DQUOTE ;
+//STRING	        : DQUOTE (LETTER | DIGIT)* DQUOTE ;
+STRING		: DQUOTE (~(DQUOTE)|'\\"')* DQUOTE; //"
 //->consider escape sequence (and chars that are not part of LETTER OR DIGIT)
 CHAR		: SQUOTE (LETTER|DIGIT) SQUOTE ;
 // should consider escape sequenes
