@@ -1,0 +1,6 @@
+#>
+#description pattern with ...
+#type TomPattern
+#<
+
+g(h( (1|2|3)[] ))

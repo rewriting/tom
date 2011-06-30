@@ -24,17 +24,23 @@ tokens {
 // Pairs
   CsPairPattern;
   CsSlotName;
-  CsImplicitPairList;
-
+  
   CsSymbolList;
-
+  CsAntiSymbolList;
+  CsHeadSymbolList;
+  CsTailList;  
+ 
   CsHeadSymbol; 
   CsHeadSymbolQMark;
+  CsConstantHeadSymbol;
+  CsConstantHeadSymbolQMark;
   CsHeadSymbolList;
+
+  CsImplicitPairList;
+  CsExplicitTermList;
 
 // csTerm
   CsTerm;
-  CsExplicitTermList; // CsNamedTermList;
  
   CsTermList;
   CsVariable;
@@ -154,18 +160,36 @@ csPattern :
 csPlainPattern :
  //csExplicitTermList // TODO => include in HeadSymbol
  // -> ^(CsPlainPattern csExplicitTermList)
- csHeadSymbolList csExplicitTermList
-  -> ^(CsPlainPattern csHeadSymbolList csExplicitTermList)
-|csHeadSymbolList csImplicitPairList
-  -> ^(CsPlainPattern csHeadSymbolList csImplicitPairList)
-|csExplicitTermList
+ //csHeadSymbolList csExplicitTermList
+ // -> ^(CsPlainPattern csHeadSymbolList csExplicitTermList)
+ //|csHeadSymbolList csImplicitPairList
+ // -> ^(CsPlainPattern csHeadSymbolList csImplicitPairList)
+  csSymbolList
+  -> ^(CsPlainPattern csSymbolList)
+ |csAntiSymbolList
+  -> ^(CsPlainPattern csAntiSymbolList)
+ |csExplicitTermList
   -> ^(CsPlainPattern csExplicitTermList)
-|csVariable // produces Cs(Anti)?Variable(Star)?
+ |csVariable // produces Cs(Anti)?Variable(Star)?
   -> ^(CsPlainPattern csVariable)
-|csUnamedVariable // produces CsUnamedVariable(Star)?
+ |csUnamedVariable // produces CsUnamedVariable(Star)?
   -> ^(CsPlainPattern csUnamedVariable)
-|csConstant
+ |csConstant
   -> ^(CsPlainPattern csConstant)
+;
+
+csSymbolList :
+  csHeadSymbolList csExplicitTermList
+  -> ^(CsSymbolList csHeadSymbolList ^(CsTailList csExplicitTermList))
+ |csHeadSymbolList csImplicitPairList
+  -> ^(CsSymbolList csHeadSymbolList ^(CsTailList csImplicitPairList))
+;
+
+csAntiSymbolList :
+  ANTI csHeadSymbolList csExplicitTermList
+  -> ^(CsAntiSymbolList csHeadSymbolList ^(CsTailList csExplicitTermList))
+ |ANTI csHeadSymbolList csImplicitPairList
+  -> ^(CsAntiSymbolList csHeadSymbolList ^(CsTailList csImplicitPairList))
 ;
 
 csHeadSymbolList :
@@ -180,6 +204,10 @@ csHeadSymbol :
   -> ^(CsHeadSymbol IDENTIFIER)
  |IDENTIFIER QMARK
   -> ^(CsHeadSymbolQMark IDENTIFIER)
+ |csConstantValue 
+ -> ^(CsConstantHeadSymbol csConstantValue)
+ |csConstantValue QMARK
+ -> ^(CsConstantHeadSymbolQMark csConstantValue)
 ;
 
 csExplicitTermList : // {System.out.println("Parsing CsNamedTermList");}
@@ -217,14 +245,24 @@ csUnamedVariable : // {System.out.println("Parsing CsUnamedVariable");}
 ;
         
 csConstant : // {System.out.println("Parsing CsConstant");}
-  (a=ANTI)? (value=(INTEGER|DOUBLE|STRING|CHAR)) (s=STAR)?
+  (a=ANTI)? csConstantValue (s=STAR)?
 
-  -> {a!=null && s!=null}? ^(CsAntiConstantStar ^(CsValue IDENTIFIER))
-  -> {a==null && s!=null}? ^(CsConstantStar ^(CsValue IDENTIFIER))
-  -> {a!=null && s==null}? ^(CsAntiConstant ^(CsValue IDENTIFIER))
-  ->/*a!=null && s==null*/ ^(CsConstant ^(CsValue IDENTIFIER))
+  -> {a!=null && s!=null}? ^(CsAntiConstantStar ^(CsValue csConstantValue))
+  -> {a==null && s!=null}? ^(CsConstantStar ^(CsValue csConstantValue))
+  -> {a!=null && s==null}? ^(CsAntiConstant ^(CsValue csConstantValue))
+  ->/*a!=null && s==null*/ ^(CsConstant ^(CsValue csConstantValue))
 ;
 
+csConstantValue :
+  INTEGER
+// -> $INTEGER.text
+ |DOUBLE
+// -> $DOUBLE.text
+ |STRING
+// -> $STRING.text
+ |CHAR
+// -> $CHAR.text
+;
 
 
 RBR :  '}'
