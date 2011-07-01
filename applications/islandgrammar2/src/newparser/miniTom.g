@@ -33,7 +33,6 @@ tokens {
   CsHeadSymbol; 
   CsHeadSymbolQMark;
   CsConstantHeadSymbol;
-  CsConstantHeadSymbolQMark; // PEM: a enlever
   CsHeadSymbolList;
 
   CsImplicitPairList;
@@ -155,42 +154,41 @@ csPattern :
   ->/*i!=null*/ ^(CsPattern ^(CsAnnotation IDENTIFIER) csPlainPattern)
 ;
 
-csPlainPattern :
-  csSymbolList
-  -> ^(CsPlainPattern csSymbolList)
- |csAntiSymbolList
-  -> ^(CsPlainPattern csAntiSymbolList)
+csPlainPattern
+scope{ boolean anti;}
+@init{ $csPlainPattern::anti = false;}
+:
+  (ANTI {$csPlainPattern::anti=!$csPlainPattern::anti;} )*
+(
+  //(!)* f'('...')'
+  csHeadSymbolList csExplicitTermList
+  -> {$csPlainPattern::anti}? ^(CsPlainPattern ^(CsAntiSymbolList csHeadSymbolList ^(CsTailList csExplicitTermList)))
+  ->         ^(CsPlainPattern ^(CsSymbolList csHeadSymbolList ^(CsTailList csExplicitTermList)))
+ //(!)* f'['...']'
+ |csHeadSymbolList csImplicitPairList
+  -> {$csPlainPattern::anti}? ^(CsPlainPattern ^(CsAntiSymbolList csHeadSymbolList ^(CsTailList csImplicitPairList)))
+  ->         ^(CsPlainPattern ^(CsSymbolList csHeadSymbolList ^(CsTailList csImplicitPairList)))
  |csExplicitTermList
   -> ^(CsPlainPattern csExplicitTermList)
- |csVariable // produces Cs(Anti)?Variable(Star)?
-  -> ^(CsPlainPattern csVariable)
- |csUnamedVariable // produces CsUnamedVariable(Star)?
-  -> ^(CsPlainPattern csUnamedVariable)
+
+ | IDENTIFIER (s=STAR)?
+  -> {$csPlainPattern::anti  && s!=null}? ^(CsPlainPattern ^(CsAntiVariableStar ^(CsName IDENTIFIER)))
+  -> {!$csPlainPattern::anti && s!=null}? ^(CsPlainPattern ^(CsVariableStar ^(CsName IDENTIFIER)))
+  -> {$csPlainPattern::anti  && s==null}? ^(CsPlainPattern ^(CsAntiVariable ^(CsName IDENTIFIER)))
+  ->/*!anti && s==null*/ ^(CsPlainPattern ^(CsVariable ^(CsName IDENTIFIER)))
+ 
+ |UNDERSCORE (s=STAR)? 
+  -> {s!=null}? ^(CsPlainPattern ^(CsUnamedVariableStar))
+  ->/*s==null*/ ^(CsPlainPattern ^(CsUnamedVariable))
  |csConstant
   -> ^(CsPlainPattern csConstant)
-;
-
-// f(...)
-// f[...]
-csSymbolList :
-  csHeadSymbolList csExplicitTermList
-  -> ^(CsSymbolList csHeadSymbolList ^(CsTailList csExplicitTermList))
- |csHeadSymbolList csImplicitPairList
-  -> ^(CsSymbolList csHeadSymbolList ^(CsTailList csImplicitPairList))
-;
-
-csAntiSymbolList :
-  ANTI csHeadSymbolList csExplicitTermList
-  -> ^(CsAntiSymbolList csHeadSymbolList ^(CsTailList csExplicitTermList))
- |ANTI csHeadSymbolList csImplicitPairList
-  -> ^(CsAntiSymbolList csHeadSymbolList ^(CsTailList csImplicitPairList))
+)
 ;
 
 // f
 // (f|g)
 // f?  -- should be --> f{theory:AU}
 // f?? -- shoud be  --> f{theory:AC}
-
 csHeadSymbolList :
   csHeadSymbol
   -> ^(CsHeadSymbolList csHeadSymbol)
@@ -205,12 +203,10 @@ csHeadSymbol :
   -> ^(CsHeadSymbolQMark IDENTIFIER)
  |csConstantValue 
  -> ^(CsConstantHeadSymbol csConstantValue)
- |csConstantValue QMARK // PEM: a enlever
- -> ^(CsConstantHeadSymbolQMark csConstantValue)
 ;
 
-csExplicitTermList : // {System.out.println("Parsing CsNamedTermList");}
-  LPAR (csPattern (COMMA csPattern)*)? RPAR
+csExplicitTermList :
+   LPAR (csPattern (COMMA csPattern)*)? RPAR
 
  -> ^(CsExplicitTermList csPattern*)
 ;
@@ -226,24 +222,8 @@ csPairPattern :
 
  -> ^(CsPairPattern ^(CsSlotName IDENTIFIER) csPattern)
 ;
-	
-csVariable : // {System.out.println("Parsing CsVariable");}
-  (a=ANTI)? IDENTIFIER (s=STAR)?
- 
-  -> {a!=null && s!=null}? ^(CsAntiVariableStar ^(CsName IDENTIFIER))
-  -> {a==null && s!=null}? ^(CsVariableStar ^(CsName IDENTIFIER))
-  -> {a!=null && s==null}? ^(CsAntiVariable ^(CsName IDENTIFIER))
-  ->/*a==null && s==null*/ ^(CsVariable ^(CsName IDENTIFIER))
-;
-
-csUnamedVariable : // {System.out.println("Parsing CsUnamedVariable");}
-  UNDERSCORE (s=STAR)? 
-
-  -> {s!=null}? ^(CsUnamedVariableStar)
-  ->/*s==null*/ ^(CsUnamedVariable)
-;
         
-csConstant : // {System.out.println("Parsing CsConstant");}
+csConstant : 
   (a=ANTI)? csConstantValue (s=STAR)?
 
   -> {a!=null && s!=null}? ^(CsAntiConstantStar ^(CsValue csConstantValue))
