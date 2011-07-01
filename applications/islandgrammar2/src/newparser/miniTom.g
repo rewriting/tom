@@ -60,7 +60,6 @@ tokens {
 
 @parser::header {
 package newparser;
-
 import org.antlr.runtime.tree.Tree;
 }
 
@@ -158,12 +157,6 @@ csPattern :
 
 
 csPlainPattern :
- //csExplicitTermList // TODO => include in HeadSymbol
- // -> ^(CsPlainPattern csExplicitTermList)
- //csHeadSymbolList csExplicitTermList
- // -> ^(CsPlainPattern csHeadSymbolList csExplicitTermList)
- //|csHeadSymbolList csImplicitPairList
- // -> ^(CsPlainPattern csHeadSymbolList csImplicitPairList)
   csSymbolList
   -> ^(CsPlainPattern csSymbolList)
  |csAntiSymbolList
@@ -177,6 +170,7 @@ csPlainPattern :
  |csConstant
   -> ^(CsPlainPattern csConstant)
 ;
+
 
 csSymbolList :
   csHeadSymbolList csExplicitTermList
