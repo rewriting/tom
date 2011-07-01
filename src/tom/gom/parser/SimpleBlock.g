@@ -41,17 +41,20 @@ options {
 
 block :
   rawblocklist
+{ System.out.println("block"); }
   ;
 
 rawblocklist :
   (STRING | LBRACE rawblocklist RBRACE)*
   ;
 
-LBRACE : '{' { nesting++; } ;
+LBRACE : '{' { System.out.println("Simple LBRACE"+nesting); nesting++; } ;
 RBRACE : '}'
   {
+    System.out.println("Simple RBRACE"+nesting);
     if ( nesting<=0 ) {
-      emit(Token.EOF_TOKEN);
+      //emit(Token.EOF_TOKEN);
+      emit(new CommonToken(EOF,"}"));
     }
     else {
       nesting--;

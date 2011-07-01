@@ -176,6 +176,7 @@ arg : ID -> ^(Arg ID);
 
 hookConstruct :
   (hscope=hookScope)? pointCut=ID COLON hookType=ID arglist LBRACE
+{System.out.println("hookConstruct: " + $LBRACE.text); }
   -> {hscope!=null}? ^(Hook $hscope $pointCut ^(HookKind $hookType) arglist LBRACE
                        ^(Origin ID[""+input.LT(1).getLine()]))
   -> ^(Hook ^(KindOperator) $pointCut ^(HookKind $hookType) arglist LBRACE
@@ -219,14 +220,18 @@ RDIPLE   : '>';
 
 LBRACE: '{'
   {
+    System.out.println("GomLanguage LBRACE");
     SimpleBlockLexer lex = new SimpleBlockLexer(input);
     CommonTokenStream tokens = new CommonTokenStream(lex);
     SimpleBlockParser parser = new SimpleBlockParser(tokens);
     parser.block();
+    System.out.println(input.getLine());
   }
   ;
 
-RBRACE: '}';
+RBRACE: '}'
+    { System.out.println("GomLanguage RBRACE"); }
+;
 
 WS : ( ' '
        | '\t'
