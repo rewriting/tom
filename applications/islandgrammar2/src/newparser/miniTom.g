@@ -4,8 +4,11 @@ options {
   output=AST;
   ASTLabelType=Tree;
   backtrack=true;
+  tokenVocab=miniTomTokens;
 }
 
+
+/*
 tokens {
   CsProgram;
 
@@ -58,6 +61,7 @@ tokens {
   CsName;
   CsValue;
 }
+*/
 
 @parser::header {
 package newparser;

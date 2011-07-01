@@ -70,7 +70,7 @@ public class HostParser {
 		CommonTreeAdaptor adaptor = new CommonTreeAdaptor();
 		// XXX maybe there is a simpler way...
 	  tree = (Tree) adaptor.nil();
-	  tree = (Tree) adaptor.becomeRoot((Tree)adaptor.create(miniTomParser.CsProgram, "HOSTBLOCK"), tree);
+	  tree = (Tree) adaptor.becomeRoot((Tree)adaptor.create(miniTomParser.CsProgram, "CsProgram"), tree);
 		
 		while(! stopCondition.readChar(input)) { // readChar() updates internal state
 												 // and return match()

@@ -10,8 +10,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import newparser.minitom.miniTomAdaptor;
+
 import org.antlr.runtime.tree.DOTTreeGenerator;
 import org.antlr.runtime.tree.Tree;
+
+import shared.SharedObject;
+import tester.TestResult.TestIssue;
 
 
 public class Tester {
@@ -54,15 +59,18 @@ public class Tester {
     }
   }
   
+  
+  /*
   public void testAndPrintResult(){
-    testAndOtherThings(false);
+    testAndOtherThings(false, false);
   }
   
-  public void testPrintResultAndDrawTrees(){
-    testAndOtherThings(true);
+  public void testDrawTreesAndPrintResult(){
+    testAndOtherThings(true, false);
   }
+  */
   
-  private void testAndOtherThings(boolean drawTree){
+  public void testAndOtherThings(boolean drawTree, boolean adaptTree){
 	TestResult result = new TestResult();  
 
     for(TestFile tFile : TestFileList){
@@ -80,29 +88,46 @@ public class Tester {
     System.out.println("<Done\n");
     System.out.flush(); System.err.flush();
       
+      boolean success = true;
+      String expectedResult = "";
+      String actualResult = "";
+      TestResult.TestIssue testIssue = TestIssue.INTERNAL_TESTER_PROBLEM;
+      
       // success related actions
       if(parser.isParsingASuccess()){
-        String expectedResult = readFile(tFile.getOutputFile());
-        String actualResult = parser.getParsingResultAsString();
-        
-        if(expectedResult.equals(actualResult)){
-        // save result
-        result.addResult(tFile, TestResult.TestIssue.PASSED,actualResult, expectedResult);
-        }
-        else {	
-        result.addResult(tFile, TestResult.TestIssue.BAD_TREE, actualResult, expectedResult);
-        }
-        
         // optionnal actions
         if(drawTree){
           drawTree(tFile.getImgFile(), parser.getTree());
         }
         
+        
+        expectedResult = readFile(tFile.getOutputFile());
+        actualResult = parser.getParsingResultAsString();
+        
+        if(expectedResult.equals(actualResult)){
+          if(adaptTree) {
+            
+            System.out.println("!!! Hello dear user, I'm now adapting ANTLR Tree");
+            SharedObject adaptedTree = miniTomAdaptor.getTerm(parser.getTree());
+
+            if(adaptedTree==null){
+              testIssue = TestIssue.ERROR_WHILE_ADAPTING;
+            }else{
+              testIssue = TestIssue.PASSED;
+            }
+            
+          } else {  
+            testIssue = TestIssue.PASSED;
+          }
+        }
+        else {  
+          testIssue = TestIssue.BAD_TREE;
+        }
       }else{
-    	result.addResult(tFile, TestResult.TestIssue.ERROR_WHILE_PARSING, "", "");
+         testIssue = TestIssue.ERROR_WHILE_PARSING;
       }
       
-      
+      result.addResult(tFile, testIssue, actualResult, expectedResult);
     }// end foreach
     
     System.out.println(result.getTextualAbstract());
@@ -230,6 +255,7 @@ public class Tester {
   private static final String usage =
     "java tester.Tester [-d] [-init] fileOrFolderName\n" +
     "\n" +
+    "-adapt : Try to create TomTerm from ANTLR Tree\n" +
     "-draw : DrawTrees, will generate png files representing generated trees. Use dot/graphviz.\n" +
     "-init : save currently generated tree and make them new expected result\n";
   
@@ -237,6 +263,7 @@ public class Tester {
     
     boolean drawing = false;
     boolean initializing = false;
+    boolean adapting = false;
     String fileName = null;
     
     // arguments treatment
@@ -248,6 +275,9 @@ public class Tester {
         }else
         if(args[i].startsWith("-init")){
           initializing = true;
+        }else
+        if(args[i].startsWith("-adapt")){
+          adapting = true;
         }else{
           System.out.println("Unknown argument : '"+args[i]);
           System.out.println(usage);
@@ -280,12 +310,8 @@ public class Tester {
       tester.initResultsFiles();
     }
     
-    if(drawing){
-      tester.testPrintResultAndDrawTrees();
-    }else{
-      tester.testAndPrintResult();
-    }
-    
+    tester.testAndOtherThings(drawing, adapting);
+
   }
   
 }

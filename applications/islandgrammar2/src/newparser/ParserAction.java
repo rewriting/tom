@@ -159,8 +159,14 @@ HostParserDebugger.getInstance()
 		    
 		// XXX is it REALLY the clearest way to do that ?
 		Tree child = (Tree) adaptor.nil();
-		child = (Tree)adaptor.becomeRoot((Tree)adaptor.create(miniTomParser.HOSTBLOCK, hostCharsBuffer.toString()), child);
-		    
+		child = (Tree)adaptor.becomeRoot((Tree)adaptor.create(miniTomParser.HOSTBLOCK, "HOSTBLOCK"), child);
+		
+		// XXX maybe define a type for gom's Strings ?
+		Tree hContent = (Tree) adaptor.nil();
+		hContent = (Tree)adaptor.becomeRoot((Tree)adaptor.create(miniTomParser.HostBlockContent, hostCharsBuffer.toString()), hContent);
+		
+		child.addChild(hContent);
+		
 	    tree.addChild(child);
 	  }
 	  

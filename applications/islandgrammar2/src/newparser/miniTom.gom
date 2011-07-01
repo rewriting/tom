@@ -2,14 +2,23 @@ module newparser.miniTom
 imports String
 abstract syntax
 
-gt_Program = CsProgram(gt_HostBlockContent*)
+gt_Program = CsProgram(blist:gt_BlockList)
 
-gt_HostBlockContent = HOSTBLOCK(hContent:String)
-                    | MATCH(gt_PatternActionList*)
+
+gt_BlockList = BlockList(gt_Block*)
+
+
+gt_Block = HOSTBLOCK(hContent:String)
+         | MATCH(gt_PatternActionList*)
 
 gt_PatternActionList = PATTERNACTION(patternList:gt_PatternList, action:gt_Program)
 
 gt_PatternList = CsPatternList(gt_Pattern*)
+
+gt_LiveHappyWithYouANTLR = CsPlainPattern()
+                         | CsAntiSymbolList()
+                         | CsTailList()
+                         | HostBlockContent()                        
 
 /*
 ProgramUnit = HostBlock(hContent:String)

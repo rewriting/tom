@@ -13,9 +13,22 @@ public class TestResult {
 	
   // usefull stuffs
   enum TestIssue{
-    PASSED,
-    ERROR_WHILE_PARSING,
-    BAD_TREE
+    PASSED ("test passed."),
+    ERROR_WHILE_PARSING ("parser failed"),
+    BAD_TREE ("produced tree was different from expected one"),
+    ERROR_WHILE_ADAPTING ("adaptor failed"),
+    INTERNAL_TESTER_PROBLEM ("internal tester problem");
+    
+    private String desc;
+    
+    TestIssue(String desc) {
+      this.desc = desc;
+    }
+    
+    @Override
+    public String toString() {
+      return desc;
+    }
   }
 	
   private static class Entry{
@@ -76,7 +89,7 @@ public class TestResult {
 		  failedCount++;	
 			
 		  failed.append(midLine).append('\n');
-		  failed.append("["+id+"][FAILED] : ").append(e.description).append('\n');
+		  failed.append("["+id+"][FAILED : "+e.issue.toString()+"] : ").append(e.description).append('\n');
 		  failed.append(e.fileAbsPath).append('\n');
 		  failed.append('\n');
 		  failed.append(expected).append('\n');
