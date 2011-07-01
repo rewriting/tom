@@ -33,7 +33,7 @@ tokens {
   CsHeadSymbol; 
   CsHeadSymbolQMark;
   CsConstantHeadSymbol;
-  CsConstantHeadSymbolQMark;
+  CsConstantHeadSymbolQMark; // PEM: a enlever
   CsHeadSymbolList;
 
   CsImplicitPairList;
@@ -156,7 +156,6 @@ csPattern :
   ->/*i!=null*/ ^(CsPattern ^(CsAnnotation IDENTIFIER) csPlainPattern)
 ;
 
-
 csPlainPattern :
  //csExplicitTermList // TODO => include in HeadSymbol
  // -> ^(CsPlainPattern csExplicitTermList)
@@ -178,6 +177,8 @@ csPlainPattern :
   -> ^(CsPlainPattern csConstant)
 ;
 
+// f(...)
+// f[...]
 csSymbolList :
   csHeadSymbolList csExplicitTermList
   -> ^(CsSymbolList csHeadSymbolList ^(CsTailList csExplicitTermList))
@@ -191,6 +192,11 @@ csAntiSymbolList :
  |ANTI csHeadSymbolList csImplicitPairList
   -> ^(CsAntiSymbolList csHeadSymbolList ^(CsTailList csImplicitPairList))
 ;
+
+// f
+// (f|g)
+// f?  -- should be --> f{theory:AU}
+// f?? -- shoud be  --> f{theory:AC}
 
 csHeadSymbolList :
   csHeadSymbol
@@ -206,7 +212,7 @@ csHeadSymbol :
   -> ^(CsHeadSymbolQMark IDENTIFIER)
  |csConstantValue 
  -> ^(CsConstantHeadSymbol csConstantValue)
- |csConstantValue QMARK
+ |csConstantValue QMARK // PEM: a enlever
  -> ^(CsConstantHeadSymbolQMark csConstantValue)
 ;
 
