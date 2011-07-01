@@ -2,8 +2,16 @@ module newparser.miniTom
 imports String
 abstract syntax
 
-Program = Program(ProgramUnit*)
+gt_Program = CsProgram(gt_HostBlockContent*)
 
+gt_HostBlockContent = HOSTBLOCK(hContent:String)
+                    | MATCH(gt_PatternActionList*)
+
+gt_PatternActionList = PATTERNACTION(patternList:gt_PatternList, action:gt_Program)
+
+gt_PatternList = CsPatternList(gt_Pattern*)
+
+/*
 ProgramUnit = HostBlock(hContent:String)
             | Match(mArgs:MatchArgList, pActs:PatternActionList)
             | Typeterm(implProgram:Program, isSort:Sort, equals:EqualCheck)
@@ -15,11 +23,51 @@ MatchArg = WithType(aType:String, aTerm:String)
 
 PatternActionList = PatternActionList(PatternAction*)
 
-PatternAction = PatterAction(aPattern:String, anAction:Program)
+PatternAction = PatterAction(aPattern:gt_Pattern, anAction:Program)
+*/
 
+// Pattern ===========================================================
+
+//nom de   | liste de constructeur|
+//du type  | c'est à dire type de |
+// gom     | noeud ANTRL possibles|
+//         |           ___________|
+//         |          / nom gom    / type gom
+gt_Pattern = CsPattern(annotations:CsAnnotationList, pattern:gt_PlainPattern)
+  CsAnnotationList = concCsAnnotation(CsAnnotation*)
+  CsAnnotation = CsAnnotation(name : String)
+
+               // UniqueVariable(Name:String, Anti:Boolean, Star:Boolean) // Why not ?
+gt_PlainPattern = CsVariable(name : String)
+                | CsAntiVariable(name : String)
+                | CsAntiVariableStar(name : String)
+                | CsUnamedVariable()
+                | CsUnamedVariableStar()
+                | CsSymbolList(headSymbols : gt_HeadSymbolList, tailSymbols : gt_TailSymbolList)
+
+gt_HeadSymbolList = HeadSymbolList(gt_HeadSymbol*)
+  gt_HeadSymbol = CsHeadSymbol(name : String, theory : gt_TheoryType)
+    gt_TheoryType = CsTheoryAU()
+                  | CsTheoryCS()
+                  | CsTheoryDEFAULT()
+
+gt_TailSymbolList = CsExplicitTermList(gt_Pattern*)
+                  | CsImplicitPairList(gt_PairPattern*)
+
+gt_ImplicitPairList = CsImplicitPairList(gt_PairPattern*)
+  gt_PairPattern = CsPairPattern(slotName:String, pattern:gt_Pattern)
+
+
+// Options ===========================================================
+CsOption = annotation(annotationName:String)
+
+CsOptionList = concCsOption(CsOption*)
+
+// ====================================================================
+/*
 Sort = Null()
      | aSort(var:String, checkRoutine:Program)
 
 EqualCheck = Null()
-           | anEqual(lHs:String, rHs:String, equalRoutine:Program)
-
+           | anEqual(lHs:String, rHs:String, equalRoutine:Program)  
+*/

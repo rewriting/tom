@@ -7,12 +7,14 @@ options {
 }
 
 tokens {
+  CsProgram;
+
   HOSTBLOCK;
   MATCH;
-  MATCHARG;
-  TYPED;
-  UNTYPED;
-  TYPETERM;
+//MATCHARG;
+//TYPED;
+//UNTYPED;
+//TYPETERM;
   PATTERNACTION;
 
 // csPattern
