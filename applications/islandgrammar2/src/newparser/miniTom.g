@@ -155,10 +155,10 @@ csPattern :
 ;
 
 csPlainPattern
-scope{ boolean anti;}
-@init{ $csPlainPattern::anti = false;}
+scope{ boolean anti;} @init{ $csPlainPattern::anti = false;}
 :
-  (ANTI {$csPlainPattern::anti=!$csPlainPattern::anti;} )*
+ (ANTI {$csPlainPattern::anti=!$csPlainPattern::anti;} )*
+
 (
   //(!)* f'('...')'
   csHeadSymbolList csExplicitTermList
@@ -167,17 +167,16 @@ scope{ boolean anti;}
  //(!)* f'['...']'
  |csHeadSymbolList csImplicitPairList
   -> {$csPlainPattern::anti}? ^(CsPlainPattern ^(CsAntiSymbolList csHeadSymbolList ^(CsTailList csImplicitPairList)))
-  ->         ^(CsPlainPattern ^(CsSymbolList csHeadSymbolList ^(CsTailList csImplicitPairList)))
- |csExplicitTermList
-  -> ^(CsPlainPattern csExplicitTermList)
+  ->                          ^(CsPlainPattern ^(CsSymbolList csHeadSymbolList ^(CsTailList csImplicitPairList)))
 
- | IDENTIFIER (s=STAR)?
-  -> {$csPlainPattern::anti  && s!=null}? ^(CsPlainPattern ^(CsAntiVariableStar ^(CsName IDENTIFIER)))
-  -> {!$csPlainPattern::anti && s!=null}? ^(CsPlainPattern ^(CsVariableStar ^(CsName IDENTIFIER)))
-  -> {$csPlainPattern::anti  && s==null}? ^(CsPlainPattern ^(CsAntiVariable ^(CsName IDENTIFIER)))
-  ->/*!anti && s==null*/ ^(CsPlainPattern ^(CsVariable ^(CsName IDENTIFIER)))
+ |IDENTIFIER (s=STAR)?
+  ->{$csPlainPattern::anti  && s!=null}? ^(CsPlainPattern ^(CsAntiVariableStar ^(CsName IDENTIFIER)))
+  ->{$csPlainPattern::anti  && s==null}? ^(CsPlainPattern ^(CsAntiVariable ^(CsName IDENTIFIER)))
+  ->{!$csPlainPattern::anti && s!=null}? ^(CsPlainPattern ^(CsVariableStar ^(CsName IDENTIFIER)))
+  ->/*                 anti && s==null*/ ^(CsPlainPattern ^(CsVariable ^(CsName IDENTIFIER)))
  
- |UNDERSCORE (s=STAR)? 
+ |{!$csPlainPattern::anti}?=> // don't allow anti before wildcard
+  UNDERSCORE (s=STAR)? 
   -> {s!=null}? ^(CsPlainPattern ^(CsUnamedVariableStar))
   ->/*s==null*/ ^(CsPlainPattern ^(CsUnamedVariable))
  |csConstant
