@@ -7,62 +7,6 @@ options {
   tokenVocab=miniTomTokens;
 }
 
-
-/*
-tokens {
-  CsProgram;
-
-  HOSTBLOCK;
-  MATCH;
-//MATCHARG;
-//TYPED;
-//UNTYPED;
-//TYPETERM;
-  PATTERNACTION;
-
-// csPattern
-  CsPattern;
-  CsPlainPattern;
-  CsAnnotation;  
-  CsPatternList;
-
-// Pairs
-  CsPairPattern;
-  CsSlotName;
-  
-  CsSymbolList;
-  CsAntiSymbolList;
-  CsHeadSymbolList;
-  CsTailList;  
- 
-  CsHeadSymbol; 
-  CsHeadSymbolQMark;
-  CsConstantHeadSymbol;
-  CsHeadSymbolList;
-
-  CsImplicitPairList;
-  CsExplicitTermList;
-
-// csTerm
-  CsTerm;
- 
-  CsTermList;
-  CsVariable;
-  CsAntiVariable;
-  CsVariableStar;
-  CsAntiVariableStar;
-  CsUnamedVariable;
-  CsUnamedVariableStar;
-  CsConstant;
-  CsAntiConstant;
-  CsConstantStar;
-  CsAntiConstantStar;
-
-  CsName;
-  CsValue;
-}
-*/
-
 @parser::header {
 package newparser;
 import org.antlr.runtime.tree.Tree;
@@ -112,11 +56,9 @@ $marker = ((CustomToken)$RBR).getPayload(Integer.class);
 -> ^(MATCH patternAction*)
 ;
 
-matchArguments : ;
-
-
 patternAction :
  (pattern=csPatternList) HostBlockOpen RBR
+ 
  -> ^(PATTERNACTION $pattern
  {
  ((CustomToken)$HostBlockOpen).getPayload(Tree.class)
@@ -154,10 +96,9 @@ csPatternList :
 ;
 
 csPattern :
- (i=IDENTIFIER AT)? csPlainPattern
+ (i=IDENTIFIER AT)* csPlainPattern
 
-  -> {i==null}? ^(CsPattern csPlainPattern)
-  ->/*i!=null*/ ^(CsPattern ^(CsAnnotation IDENTIFIER) csPlainPattern)
+  -> ^(CsPattern ^(CsAnnotationList IDENTIFIER*) csPlainPattern)
 ;
 
 csPlainPattern
@@ -168,25 +109,29 @@ scope{ boolean anti;} @init{ $csPlainPattern::anti = false;}
 (
   //(!)* f'('...')'
   csHeadSymbolList csExplicitTermList
-  -> {$csPlainPattern::anti}? ^(CsPlainPattern ^(CsAntiSymbolList csHeadSymbolList ^(CsTailList csExplicitTermList)))
-  ->         ^(CsPlainPattern ^(CsSymbolList csHeadSymbolList ^(CsTailList csExplicitTermList)))
+  -> {$csPlainPattern::anti}? ^(CsAntiSymbolList csHeadSymbolList csExplicitTermList)
+  ->                          ^(CsSymbolList csHeadSymbolList csExplicitTermList)
  //(!)* f'['...']'
  |csHeadSymbolList csImplicitPairList
-  -> {$csPlainPattern::anti}? ^(CsPlainPattern ^(CsAntiSymbolList csHeadSymbolList ^(CsTailList csImplicitPairList)))
-  ->                          ^(CsPlainPattern ^(CsSymbolList csHeadSymbolList ^(CsTailList csImplicitPairList)))
+  -> {$csPlainPattern::anti}? ^(CsAntiSymbolList csHeadSymbolList csImplicitPairList)
+  ->                          ^(CsSymbolList csHeadSymbolList csImplicitPairList)
 
  |IDENTIFIER (s=STAR)?
-  ->{$csPlainPattern::anti  && s!=null}? ^(CsPlainPattern ^(CsAntiVariableStar ^(CsName IDENTIFIER)))
-  ->{$csPlainPattern::anti  && s==null}? ^(CsPlainPattern ^(CsAntiVariable ^(CsName IDENTIFIER)))
-  ->{!$csPlainPattern::anti && s!=null}? ^(CsPlainPattern ^(CsVariableStar ^(CsName IDENTIFIER)))
-  ->/*                 anti && s==null*/ ^(CsPlainPattern ^(CsVariable ^(CsName IDENTIFIER)))
+  ->{$csPlainPattern::anti  && s!=null}? ^(CsAntiVariableStar IDENTIFIER)
+  ->{$csPlainPattern::anti  && s==null}? ^(CsAntiVariable IDENTIFIER)
+  ->{!$csPlainPattern::anti && s!=null}? ^(CsVariableStar IDENTIFIER)
+  ->/*                 anti && s==null*/ ^(CsVariable IDENTIFIER)
  
  |{!$csPlainPattern::anti}?=> // don't allow anti before wildcard
   UNDERSCORE (s=STAR)? 
-  -> {s!=null}? ^(CsPlainPattern ^(CsUnamedVariableStar))
-  ->/*s==null*/ ^(CsPlainPattern ^(CsUnamedVariable))
- |csConstant
-  -> ^(CsPlainPattern csConstant)
+  -> {s!=null}? ^(CsUnamedVariableStar)
+  ->/*s==null*/ ^(CsUnamedVariable)
+ 
+ |csConstantValue (s=STAR)?
+  ->{$csPlainPattern::anti  && s!=null}? ^(CsAntiConstantStar csConstantValue)
+  ->{$csPlainPattern::anti  && s==null}? ^(CsAntiConstant csConstantValue)
+  ->{!$csPlainPattern::anti && s!=null}? ^(CsConstantStar csConstantValue)
+  ->/*               anti  && s==null*/ ^(CsConstant csConstantValue)
 )
 ;
 
@@ -203,11 +148,17 @@ csHeadSymbolList :
 
 csHeadSymbol :
   IDENTIFIER
-  -> ^(CsHeadSymbol IDENTIFIER)
+  -> ^(CsHeadSymbol IDENTIFIER ^(CsTheoryDEFAULT))
  |IDENTIFIER QMARK
-  -> ^(CsHeadSymbolQMark IDENTIFIER)
+  -> ^(CsHeadSymbol IDENTIFIER ^(CsTheoryAU))
+ |IDENTIFIER DQMARK
+  -> ^(CsHeadSymbol IDENTIFIER ^(CsTheoryCS))
  |csConstantValue 
- -> ^(CsConstantHeadSymbol csConstantValue)
+ -> ^(CsConstantHeadSymbol csConstantValue ^(CsTheoryDEFAULT))
+ |csConstantValue QMARK
+ -> ^(CsConstantHeadSymbol csConstantValue ^(CsTheoryAU))
+ |csConstantValue DQMARK
+ -> ^(CsConstantHeadSymbol csConstantValue ^(CsTheoryCS))
 ;
 
 csExplicitTermList :
@@ -225,27 +176,11 @@ csImplicitPairList :
 csPairPattern :
  IDENTIFIER EQUAL csPattern
 
- -> ^(CsPairPattern ^(CsSlotName IDENTIFIER) csPattern)
-;
-        
-csConstant : 
-  (a=ANTI)? csConstantValue (s=STAR)?
-
-  -> {a!=null && s!=null}? ^(CsAntiConstantStar ^(CsValue csConstantValue))
-  -> {a==null && s!=null}? ^(CsConstantStar ^(CsValue csConstantValue))
-  -> {a!=null && s==null}? ^(CsAntiConstant ^(CsValue csConstantValue))
-  ->/*a!=null && s==null*/ ^(CsConstant ^(CsValue csConstantValue))
+ -> ^(CsPairPattern IDENTIFIER csPattern)
 ;
 
 csConstantValue :
-  INTEGER
-// -> $INTEGER.text
- |DOUBLE
-// -> $DOUBLE.text
- |STRING
-// -> $STRING.text
- |CHAR
-// -> $CHAR.text
+  INTEGER|DOUBLE|STRING|CHAR
 ;
 
 
@@ -261,6 +196,7 @@ tokenCustomizer.prepareNextToken(input.mark());
 
 PIPE 	: '|';
 QMARK	:'?';
+DQMARK :'??';
 EQUAL	: '=';
 LSQUAREBR : '[';
 RSQUAREBR : ']';
@@ -298,8 +234,3 @@ ML_COMMENT : '/*' ( options {greedy=false;} : . )* '*/'{ $channel=HIDDEN; } ;
 // lexer need a rule for every input
 // even for chars we don't use
 DEFAULT : . { $channel=HIDDEN;};
-
-// the solution below doesn't seems better
-// it's just more painful to write...
-//DEFAULT : ~('('|')'|'{'|'}'|'\r'|'\n'|'\t'|' '|'A'..'Z'|'a'..'z'|'0'..'9') { $channel=HIDDEN; };
-

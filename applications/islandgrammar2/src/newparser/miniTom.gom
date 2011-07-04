@@ -2,11 +2,7 @@ module newparser.miniTom
 imports String
 abstract syntax
 
-gt_Program = CsProgram(blist:gt_BlockList)
-
-
-gt_BlockList = BlockList(gt_Block*)
-
+gt_Program = CsProgram(gt_Block*)
 
 gt_Block = HOSTBLOCK(hContent:String)
          | MATCH(gt_PatternActionList*)
@@ -15,10 +11,6 @@ gt_PatternActionList = PATTERNACTION(patternList:gt_PatternList, action:gt_Progr
 
 gt_PatternList = CsPatternList(gt_Pattern*)
 
-gt_LiveHappyWithYouANTLR = CsPlainPattern()
-                         | CsAntiSymbolList()
-                         | CsTailList()
-                         | HostBlockContent()                        
 
 /*
 ProgramUnit = HostBlock(hContent:String)
@@ -36,26 +28,27 @@ PatternAction = PatterAction(aPattern:gt_Pattern, anAction:Program)
 */
 
 // Pattern ===========================================================
+gt_Pattern = CsPattern(annotations:gt_AnnotationList, pattern:gt_PlainPattern)
+  gt_AnnotationList = CsAnnotationList(String*)
 
-//nom de   | liste de constructeur|
-//du type  | c'est à dire type de |
-// gom     | noeud ANTRL possibles|
-//         |           ___________|
-//         |          / nom gom    / type gom
-gt_Pattern = CsPattern(annotations:CsAnnotationList, pattern:gt_PlainPattern)
-  CsAnnotationList = concCsAnnotation(CsAnnotation*)
-  CsAnnotation = CsAnnotation(name : String)
-
-               // UniqueVariable(Name:String, Anti:Boolean, Star:Boolean) // Why not ?
-gt_PlainPattern = CsVariable(name : String)
+gt_PlainPattern = CsVariable(name : String) 
+                | CsVariableStar(name : String)
                 | CsAntiVariable(name : String)
                 | CsAntiVariableStar(name : String)
+                | CsConstant(value : String)
+                | CsAntiConstant(value : String)
+                | CsConstantStar(value : String)
+                | CsAntiConstantStar(value : String)
                 | CsUnamedVariable()
                 | CsUnamedVariableStar()
                 | CsSymbolList(headSymbols : gt_HeadSymbolList, tailSymbols : gt_TailSymbolList)
+                | CsAntiSymbolList(headSymbols : gt_HeadSymbolList, tailSymbols : gt_TailSymbolList)
 
-gt_HeadSymbolList = HeadSymbolList(gt_HeadSymbol*)
+
+gt_HeadSymbolList = CsHeadSymbolList(gt_HeadSymbol*)
   gt_HeadSymbol = CsHeadSymbol(name : String, theory : gt_TheoryType)
+                | CsConstantHeadSymbol(value : String, theory : gt_TheoryType)
+
     gt_TheoryType = CsTheoryAU()
                   | CsTheoryCS()
                   | CsTheoryDEFAULT()
@@ -63,20 +56,4 @@ gt_HeadSymbolList = HeadSymbolList(gt_HeadSymbol*)
 gt_TailSymbolList = CsExplicitTermList(gt_Pattern*)
                   | CsImplicitPairList(gt_PairPattern*)
 
-gt_ImplicitPairList = CsImplicitPairList(gt_PairPattern*)
-  gt_PairPattern = CsPairPattern(slotName:String, pattern:gt_Pattern)
-
-
-// Options ===========================================================
-CsOption = annotation(annotationName:String)
-
-CsOptionList = concCsOption(CsOption*)
-
-// ====================================================================
-/*
-Sort = Null()
-     | aSort(var:String, checkRoutine:Program)
-
-EqualCheck = Null()
-           | anEqual(lHs:String, rHs:String, equalRoutine:Program)  
-*/
+gt_PairPattern = CsPairPattern(slotName:String, pattern:gt_Pattern)

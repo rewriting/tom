@@ -107,9 +107,11 @@ public class Tester {
         if(expectedResult.equals(actualResult)){
           if(adaptTree) {
             
-            System.out.println("!!! Hello dear user, I'm now adapting ANTLR Tree");
-            SharedObject adaptedTree = miniTomAdaptor.getTerm(parser.getTree());
+            //System.out.println("!!! Hello dear user, I'm now adapting ANTLR Tree");
 
+            SharedObject adaptedTree = miniTomAdaptor.getTerm(parser.getTree());
+            //System.out.println(adaptedTree);
+            
             if(adaptedTree==null){
               testIssue = TestIssue.ERROR_WHILE_ADAPTING;
             }else{
