@@ -27,6 +27,13 @@ PatternActionList = PatternActionList(PatternAction*)
 PatternAction = PatterAction(aPattern:gt_Pattern, anAction:Program)
 */
 
+// Match ============================================================
+//gt_MatchConstruct = CsMatchConstruct(matchArguments:gt_MatchArguments,patterActionList:gt_PatternActionList)
+
+
+
+//TODO change gt_PatternActionList
+
 // Pattern ===========================================================
 gt_Pattern = CsPattern(annotations:gt_AnnotationList, pattern:gt_PlainPattern)
   gt_AnnotationList = CsAnnotationList(String*)

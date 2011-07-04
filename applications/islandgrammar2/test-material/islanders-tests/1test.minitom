@@ -1,5 +1,4 @@
-//%match(MyType subject, otherSubject, MySecondType s2*, s3*, f(a,b)) { 
-%match(){
+%match(MyType subject, otherSubject, MySecondType s2*, s3*, f(a,b)) { 
   _ -> { underscore }
   _* -> { underscoreStar }
   _,_* -> { underscoreUnderscoreStar }
@@ -7,8 +6,6 @@
   myAnnotation@_ -> { annotatedUnderscore}
   anno@!b -> { annoAtAntiB }
 }
-
-
 /*
 %match {
  a*==b -> { test1 }
