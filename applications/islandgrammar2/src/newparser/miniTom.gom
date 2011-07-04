@@ -30,9 +30,30 @@ PatternAction = PatterAction(aPattern:gt_Pattern, anAction:Program)
 // Match ============================================================
 //gt_MatchConstruct = CsMatchConstruct(matchArguments:gt_MatchArguments,patterActionList:gt_PatternActionList)
 
-
-
 //TODO change gt_PatternActionList
+
+
+// Constraints
+gt_Constraint = CsMatchConstraint(object:gt_Pattern, subject:gt_Term)
+              | CsAndConstraint(constraint1:gt_Constraint, constraint2:gt_Constraint)
+              | CsOrConstraint(constraint1:gt_Constraint, constraint2:gt_Constraint)
+              | CsNumLessThan(lefthand:gt_Term, righthand:gt_Term)
+              | CsNumLessOrEqualTo(lefthand:gt_Term, righthand:gt_Term)
+              | CsNumGreaterThan(lefthand:gt_Term, righthand:gt_Term)
+              | CsNumGreaterOrEqualTo(lefthand:gt_Term, righthand:gt_Term)
+              | CsNumEqualTo(lefthand:gt_Term, righthand:gt_Term)
+              | CsNumDifferent(lefthand:gt_Term, rightand:gt_Term)
+              
+              
+
+// ConstraintSubject
+gt_Term = CsVariableName(name : String)
+        | CsVariableNameStar(name : String)
+        | CsTerm(name : String, termList : gt_TermList)
+
+gt_TermList = CsTermList(gt_Term*)
+
+
 
 // Pattern ===========================================================
 gt_Pattern = CsPattern(annotations:gt_AnnotationList, pattern:gt_PlainPattern)

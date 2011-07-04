@@ -117,6 +117,11 @@ public class TestFile {
             	  
                 parserType = TestParser.Type.TOMPATTERN;
                 
+              }else
+              if(line.equals("tomconstraint")){ 
+              
+                parserType = TestParser.Type.TOMCONSTRAINT;
+                
               }else{
                 throw new FormatException("Unknown parser type :'"+line+"' ("+testedFile.getAbsolutePath()+")");
               }

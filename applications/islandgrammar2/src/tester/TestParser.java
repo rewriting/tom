@@ -7,7 +7,8 @@ public abstract class TestParser {
 
   enum Type{
     JAVATOM,
-    TOMPATTERN;
+    TOMPATTERN,
+    TOMCONSTRAINT;
   }
   
   public static TestParser getInstance(Type parserType){
@@ -16,6 +17,8 @@ public abstract class TestParser {
       return new JavaTomTestParser();
     case TOMPATTERN :
       return new PatternTestParser();
+    case TOMCONSTRAINT :
+      return new ConstraintTestParser();
     default :
       throw new RuntimeException("very stupid exception");
     }
