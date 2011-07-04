@@ -85,7 +85,7 @@ try {
     String resultFileName = inputFileName.replace(".input", ".result");
     
     CharStream input = new ANTLRFileStream(inputFileName);
-    Tree tree = new HostParser().parse(input);
+    Tree tree = new HostParser().parseProgram(input);
     
     String actualTreeAsString = ((CommonTree)tree).toStringTree();
     String expectedTreeAsString = readFile(resultFileName);

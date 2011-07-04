@@ -59,19 +59,31 @@ public class HostParser {
 		this(new KeywordDetector(""+(char)CharStream.EOF));
 	}
 	
-	public Tree parse(CharStream input) {
+	public Tree parseProgram(CharStream input){
+	  CommonTreeAdaptor adaptor = new CommonTreeAdaptor();
+	  Tree tree = (Tree) adaptor.nil();
+    tree = (Tree) adaptor.becomeRoot((Tree)adaptor.create(miniTomParser.CsProgram, "CsProgram"), tree);
+    tree.addChild(parse(input));
+    return tree;
+	}
+	
+	public Tree parseBlockList(CharStream input){
+	  return parse(input);
+	}
+	
+	private Tree parse(CharStream input) {
 		
 	  // this string buffer will contain chars read from input that are part of
 	  // "Host Language" code. They will be added to the tree as late as possible
 	  // using ParserAction.packHostContent.
 	  StringBuffer hostCharsBuffer = new StringBuffer();
-	  Tree tree;
 		
 		CommonTreeAdaptor adaptor = new CommonTreeAdaptor();
 		// XXX maybe there is a simpler way...
-	  tree = (Tree) adaptor.nil();
-	  tree = (Tree) adaptor.becomeRoot((Tree)adaptor.create(miniTomParser.CsProgram, "CsProgram"), tree);
-		
+	  Tree tree = (Tree) adaptor.nil();
+    tree = (Tree) adaptor.becomeRoot((Tree)adaptor.create(miniTomParser.CsBlockList, "CsBlockList"), tree);
+	  
+	  
 		while(! stopCondition.readChar(input)) { // readChar() updates internal state
 												 // and return match()
 			

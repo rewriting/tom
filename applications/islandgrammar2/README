@@ -31,7 +31,7 @@ Test files can include a header to add a description used to make nice-looking t
 if file contains a header, everything before it is just ignored.
 #>
 #description "here a description of the test"
-#type [JavaTom | TomPattern]
+#type [JavaTom | TomPattern | TomConstraint]
 #<
 actual code to parse
 more of this code

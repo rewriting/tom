@@ -61,7 +61,7 @@ public class Test_ParseAndDrawTrees {
 		  System.out.println("\n> Now parsing "+testedFiles[i]);
 		  
 		  CharStream input = new ANTLRFileStream(inputFileName);
-		  Tree tree = new HostParser().parse(input);
+		  Tree tree = new HostParser().parseProgram(input);
 			
 			futil.ANTLRTreeDrawer.draw(outputFileName, tree);
 			

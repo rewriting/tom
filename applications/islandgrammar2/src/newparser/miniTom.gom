@@ -2,14 +2,16 @@ module newparser.miniTom
 imports String
 abstract syntax
 
-gt_Program = CsProgram(gt_Block*)
+gt_Program = CsProgram(blocks:gt_BlockList)
+
+gt_BlockList = CsBlockList(gt_Block*)
 
 gt_Block = HOSTBLOCK(hContent:String)
          | MATCH(gt_PatternActionList*)
 
-gt_PatternActionList = PATTERNACTION(patternList:gt_PatternList, action:gt_Program)
+gt_PatternActionList = PATTERNACTION(patternList:gt_PatternList, action:gt_BlockList)
 
-gt_PatternList = CsPatternList(gt_Pattern*)
+
 
 
 /*
@@ -32,6 +34,12 @@ PatternAction = PatterAction(aPattern:gt_Pattern, anAction:Program)
 
 //TODO change gt_PatternActionList
 
+// PatternAction
+gt_PatternAction = CsPatternAction(patternList:gt_PatternList, action:gt_BlockList)
+  gt_PatternList = CsPatternList(gt_Pattern*)
+
+// ConstraintAction
+gt_ConstraintAction = CsConstraintAction(constraint:gt_Constraint, action:gt_BlockList)
 
 // Constraints
 gt_Constraint = CsMatchConstraint(object:gt_Pattern, subject:gt_Term)

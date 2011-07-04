@@ -49,14 +49,14 @@ to rewind stream to the marker returned by matchconstruct.
 */
 matchConstruct
 returns [int marker]
-:LPAR  RPAR LBR (patternAction)* RBR
+:LPAR  RPAR LBR (csPatternAction)* RBR
 {
 $marker = ((CustomToken)$RBR).getPayload(Integer.class);
 }
--> ^(MATCH patternAction*)
+-> ^(MATCH csPatternAction*)
 ;
 
-patternAction :
+csPatternAction :
  (pattern=csPatternList) HostBlockOpen RBR
  
  -> ^(PATTERNACTION $pattern
@@ -75,7 +75,7 @@ HostParser parser = new HostParser(new NegativeImbricationDetector('{', '}', 0))
       }
       // === DEBUG ===
 
-Tree tree = parser.parse(input);
+Tree tree = parser.parseBlockList(input);
 
       // XXX DEBUG ===
       if(HostParserDebugger.isOn()){
