@@ -49,20 +49,39 @@ to rewind stream to the marker returned by matchconstruct.
 */
 matchConstruct
 returns [int marker]
-:LPAR  RPAR LBR (csPatternAction)* RBR
+:LPAR  RPAR LBR (csPatternOrConstraintAction)* RBR
 {
 $marker = ((CustomToken)$RBR).getPayload(Integer.class);
 }
--> ^(MATCH csPatternAction*)
+-> ^(MATCH csPatternOrConstraintAction* )
+;
+
+csPatternOrConstraintAction :
+ csPatternAction | csConstraintAction
 ;
 
 csPatternAction :
- (pattern=csPatternList) HostBlockOpen RBR
+ (pattern=csPatternList) ((and=AND|or=OR) csConstraint)? HostBlockOpen RBR
  
- -> ^(PATTERNACTION $pattern
- {
- ((CustomToken)$HostBlockOpen).getPayload(Tree.class)
- });
+  ->{$and!=null}? ^(CsAndConstraintPatternAction csPatternList csConstraint
+  {((CustomToken)$HostBlockOpen).getPayload(Tree.class)})
+
+  ->{$or!=null}? ^(CsOrConstraintPatternAction csPatternList csConstraint
+  {((CustomToken)$HostBlockOpen).getPayload(Tree.class)})
+
+  -> ^(CsPatternAction $pattern
+  {((CustomToken)$HostBlockOpen).getPayload(Tree.class)})
+;
+
+csConstraintAction :
+  csConstraint HostBlockOpen RBR
+
+  -> ^(CsConstraintAction csConstraint
+  {
+  ((CustomToken)$HostBlockOpen).getPayload(Tree.class)
+  }
+  )
+;
 
 HostBlockOpen : ( options {greedy=true;} : ARROW WS '{')
 {
@@ -87,8 +106,11 @@ Tree tree = parser.parseBlockList(input);
 tokenCustomizer.prepareNextToken(tree);
 }
 ;
-
 // Constraints ===============================================
+
+// csConstraint uses several rules to ensure operators
+// priority is respected. csConstraint_* should not be
+// called from others rules, only csConstraint.
 csConstraint : 
  csConstraint_priority1
 ;
@@ -132,7 +154,6 @@ csConstraint_priority4 :
  |LPAR csConstraint RPAR
  -> csConstraint
 ;
-
 
 // constraint's subject
 csTerm :
