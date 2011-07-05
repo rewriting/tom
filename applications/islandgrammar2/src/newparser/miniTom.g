@@ -50,13 +50,13 @@ to rewind stream to the marker returned by matchconstruct.
 matchConstruct
 returns [int marker]:
 
-  LPAR  RPAR LBR (csPatternAction)* RBR
+  LPAR csMatchArguments  RPAR LBR (csPatternAction)* RBR
   {$marker = ((CustomToken)$RBR).getPayload(Integer.class);}
-  ->^(CsPatternMatch csPatternAction* )
+  ->^(CsPatternMatch csMatchArguments ^(CsPatternActionList csPatternAction* ))
 
  |LBR (csConstraintAction)* RBR
  {$marker = ((CustomToken)$RBR).getPayload(Integer.class);}
- ->^(CsConstraintMatch csConstraintAction* )
+ ->^(CsConstraintMatch ^(CsConstraintActionList csConstraintAction* ))
 
 ;
 
@@ -81,6 +81,11 @@ csConstraintAction :
   ((CustomToken)$HostBlockOpen).getPayload(Tree.class)
   }
   )
+;
+
+csMatchArguments :
+ csTerm (COMMA csTerm)*
+ -> ^(CsMatchArguments csTerm*)
 ;
 
 HostBlockOpen : ( options {greedy=true;} : ARROW WS '{')

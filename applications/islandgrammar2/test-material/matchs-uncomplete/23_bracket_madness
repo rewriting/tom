@@ -1,5 +1,5 @@
-%match(){
-	p1() -> {while(A){doB()}}
-	p2()-> {{{{verybracketted}}}}
-	p3() -> { {{ {} %match(){} {} }} }
+%match(a){
+	p1(b) -> {while(A){doB()}}
+	p2(c)-> {{{{verybracketted}}}}
+	p3(d) -> { {{ {} %match(e){} {} }} }
 }

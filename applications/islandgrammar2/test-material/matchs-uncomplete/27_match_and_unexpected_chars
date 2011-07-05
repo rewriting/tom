@@ -1,27 +1,27 @@
 ^
-%match(){
-    pat1() -> {#}
-    pat2() -> {
+%match(a){
+    pat1(b) -> {#}
+    pat2(c) -> {
         #pragma ^^
-        %match(){}
+        %match(d){}
     }
 }
 
 @Override
 public private bonjour(<? super Foo> f, <? extend Bar> b){
-    %match(){
-        case1() -> {
-            %match(){
-                case11()->{ return Whathever.getInstance();}
-                case12()->{ return new IDontCare();}
+    %match(e){
+        case1(f) -> {
+            %match(g){
+                case11(h)->{ return Whathever.getInstance();}
+                case12(i)->{ return new IDontCare();}
             }
         }
-        case2() -> {return somethingElse;}
+        case2(j) -> {return somethingElse;}
     }
     
     throw new MatchMistakeException("Whyyyyyyyyyyyyyyyyyy ?");
 }
 
-%match(){
+%match(k){
 
 }

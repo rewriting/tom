@@ -1,5 +1,5 @@
 %match{
 
- h[]<<i && j[]<<k || l(m)<<n -> {constraintAction}
+ h[]<<i && j[]<<k || l(m)<<n -> {constraint-action}
 
 }

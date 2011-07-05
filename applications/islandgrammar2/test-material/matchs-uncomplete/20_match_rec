@@ -1,20 +1,20 @@
 some host code
 
-%match(){
-	bli() -> {
+%match(a){
+	bli(b) -> {
 		/* very usefull for bliing */
 		doBli
-		%match(){
-			bli1()-> { bli.bli1 }
-			bli2()-> { bli.bli2 }
+		%match(aa){
+			bli1(c)-> { bli.bli1 }
+			bli2(d)-> { bli.bli2 }
 		}//end l2 match
 	}// end bli
 	
-	blo() -> {
+	blo(e) -> {
 		//comment
-		%match(){
-			blo1()-> {blo.blo1}
-			blo2()-> {blo.blo2}
+		%match(f){
+			blo1(g)-> {blo.blo1}
+			blo2(h)-> {blo.blo2}
 		}// end l2 match
 		
 		// comment

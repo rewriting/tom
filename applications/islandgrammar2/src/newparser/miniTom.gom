@@ -7,8 +7,8 @@ gt_Program = CsProgram(blocks:gt_BlockList)
 gt_BlockList = CsBlockList(gt_Block*)
 
 gt_Block = HOSTBLOCK(hContent:String)
-         | CsPatternMatch(gt_PatternAction*) // add match arguments
-         | CsConstraintMatch(gt_ConstraintAction*)
+         | CsPatternMatch(arguments:gt_MatchArguments,patternActionList:gt_PatternActionList) // add match arguments
+         | CsConstraintMatch(constraintActionList:gt_ConstraintActionList)
 
 /*
 ProgramUnit = HostBlock(hContent:String)
@@ -30,13 +30,20 @@ PatternAction = PatterAction(aPattern:gt_Pattern, anAction:Program)
 
 //TODO change gt_PatternActionList
 
+// MatchArguments
+gt_MatchArguments = CsMatchArguments(gt_Term*)
+
 // PatternAction
+gt_PatternActionList = CsPatternActionList(gt_PatternAction*)
+
 gt_PatternAction = CsPatternAction(patternList:gt_PatternList, action:gt_BlockList)
                  | CsAndConstraintPatternAction(patternList:gt_PatternList, constraint:gt_Constraint, action:gt_BlockList)
                  | CsOrConstraintPatternAction(patternList:gt_PatternList, constraint:gt_Constraint, action:gt_BlockList)
   gt_PatternList = CsPatternList(gt_Pattern*)
 
 // ConstraintAction
+gt_ConstraintActionList = CsConstraintActionList(gt_ConstraintAction*)
+
 gt_ConstraintAction = CsConstraintAction(constraint:gt_Constraint, action:gt_BlockList)
 
 // Constraints

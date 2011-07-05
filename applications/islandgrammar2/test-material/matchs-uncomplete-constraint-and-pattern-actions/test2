@@ -1,4 +1,4 @@
-%match(){
+%match(a){
  f(a), f(b) && a==b -> {patternAndConstraint}
  g(b) || c<d  -> {patternOrConstraint}
 }

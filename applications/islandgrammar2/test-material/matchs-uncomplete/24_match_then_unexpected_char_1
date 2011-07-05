@@ -1,13 +1,13 @@
-%match(){
-    blu() -> {doBlu}
-    bla() -> {doBla}
+%match(a){
+    blu(b) -> {doBlu}
+    bla(c) -> {doBla}
 }
 
 + print(a + b);
 
-%match(){
-    blu() -> {doBlu}
-    bla() -> {doBla}
+%match(d){
+    blu(e) -> {doBlu}
+    bla(f) -> {doBla}
 }
 
 bonjour
