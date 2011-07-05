@@ -84,8 +84,16 @@ csConstraintAction :
 ;
 
 csMatchArguments :
- csTerm (COMMA csTerm)*
- -> ^(CsMatchArguments csTerm*)
+ csMatchArgument (COMMA csMatchArgument)*
+ -> ^(CsMatchArguments csMatchArgument*)
+;
+
+// no 's'
+csMatchArgument :
+  (type=IDENTIFIER)? csTerm
+
+  ->{type!=null}? ^(CsTypedTerm csTerm ^(CsTermType $type))
+  ->              ^(CsTypedTerm csTerm ^(CsTermType ^(CsTermTypeUnknown)))
 ;
 
 HostBlockOpen : ( options {greedy=true;} : ARROW WS '{')
@@ -120,6 +128,54 @@ csConstraint :
  csConstraint_priority1
 ;
 
+csConstraint_priority1 :
+  c1=csConstraint_priority2 (OR c2=csConstraint_priority1)*
+  ->{c2!=null}? ^(CsOrConstraint $c1 $c2)
+  -> csConstraint_priority2
+;
+
+csConstraint_priority2 :
+  c1=csConstraint_priority3 (AND c2=csConstraint_priority2)*
+  ->{c2!=null}? ^(CsAndConstraint $c1 $c2)
+  -> csConstraint_priority3
+;
+
+csConstraint_priority3 :
+ 
+  l=csTerm 
+(
+  GREATERTHAN r=csTerm
+  -> ^(CsNumGreaterThan $l $r)
+ 
+ |GREATEROREQU r=csTerm
+  -> ^(CsNumGreaterOrEqualTo $l $r)
+
+ |LOWERTHAN r=csTerm
+  -> ^(CsNumLessThan $l $r)
+ 
+ |LOWEROREQU r=csTerm
+  -> ^(CsNumLessOrEqualTo $l $r)
+ 
+ |DOUBLEEQUAL r=csTerm
+  -> ^(CsNumEqualTo $l $r)
+
+ |DIFFERENT r=csTerm
+  -> ^(CsNumDifferent $l $r)
+
+)
+
+ | csConstraint_priority4
+ -> csConstraint_priority4
+;
+
+csConstraint_priority4 :
+ csPattern LARROW csTerm
+ -> ^(CsMatchConstraint csPattern csTerm)
+
+ | LPAR csConstraint RPAR
+ -> csConstraint
+;
+/*
 csConstraint_priority1 :
   c1=csConstraint_priority2 OR c2=csConstraint_priority2
   -> ^(CsOrConstraint $c1 $c2)
@@ -159,12 +215,13 @@ csConstraint_priority4 :
  |LPAR csConstraint RPAR
  -> csConstraint
 ;
+*/
 
 // constraint's subject
 csTerm :
-  IDENTIFIER (s=STAR)*
-  -> {s!=null}? ^(CsVariableNameStar IDENTIFIER)
-  ->            ^(CsVariableName IDENTIFIER)
+  IDENTIFIER (s=STAR)?
+  ->{s!=null}? ^(CsVariableNameStar IDENTIFIER )
+  ->           ^(CsVariableName IDENTIFIER)
  
  |IDENTIFIER LPAR (csTerm (COMMA csTerm)*)? RPAR
   -> ^(CsTerm IDENTIFIER ^(CsTermList csTerm*))
@@ -276,14 +333,14 @@ tokenCustomizer.prepareNextToken(input.mark());
 }
 ;
 
-GREATERTHAN : '>';
+LARROW : '<<';
 GREATEROREQU : '>=';
-LOWERTHAN : '<';
 LOWEROREQU : '<=';
+GREATERTHAN : '>';
+LOWERTHAN : '<';
 DOUBLEEQUAL : '==';
 DIFFERENT : '!=';
 
-LARROW : '<<';
 AND : '&&';
 OR : '||';
 

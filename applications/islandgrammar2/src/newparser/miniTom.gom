@@ -31,7 +31,7 @@ PatternAction = PatterAction(aPattern:gt_Pattern, anAction:Program)
 //TODO change gt_PatternActionList
 
 // MatchArguments
-gt_MatchArguments = CsMatchArguments(gt_Term*)
+gt_MatchArguments = CsMatchArguments(gt_TypedTerm*)
 
 // PatternAction
 gt_PatternActionList = CsPatternActionList(gt_PatternAction*)
@@ -66,7 +66,10 @@ gt_Term = CsVariableName(name : String)
 
 gt_TermList = CsTermList(gt_Term*)
 
+gt_TypedTerm = CsTypedTerm(term:gt_Term, type:gt_TermType)
 
+gt_TermType = CsTermType(type:String)
+            | CsTermTypeUnknown()
 
 // Pattern ===========================================================
 gt_Pattern = CsPattern(annotations:gt_AnnotationList, pattern:gt_PlainPattern)
