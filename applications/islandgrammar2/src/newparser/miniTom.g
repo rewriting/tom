@@ -48,16 +48,16 @@ To respect ParserAction.doAction contract, doAction implementation needs
 to rewind stream to the marker returned by matchconstruct.
 */
 matchConstruct
-returns [int marker]
-:LPAR  RPAR LBR (csPatternOrConstraintAction)* RBR
-{
-$marker = ((CustomToken)$RBR).getPayload(Integer.class);
-}
--> ^(MATCH csPatternOrConstraintAction* )
-;
+returns [int marker]:
 
-csPatternOrConstraintAction :
- csPatternAction | csConstraintAction
+  LPAR  RPAR LBR (csPatternAction)* RBR
+  {$marker = ((CustomToken)$RBR).getPayload(Integer.class);}
+  ->^(CsPatternMatch csPatternAction* )
+
+ |LBR (csConstraintAction)* RBR
+ {$marker = ((CustomToken)$RBR).getPayload(Integer.class);}
+ ->^(CsConstraintMatch csConstraintAction* )
+
 ;
 
 csPatternAction :

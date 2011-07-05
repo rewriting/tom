@@ -1,7 +1,5 @@
-%match(){
+%match{
 
- f(a) && a==b -> {patternAndConstraint}
- g(b) || c<d  -> {patternOrConstraint}
  h[]<<i && j[]<<k || l(m)<<n -> {constraintAction}
 
 }
