@@ -7,8 +7,8 @@ gt_Program = CsProgram(blocks:gt_BlockList)
 gt_BlockList = CsBlockList(gt_Block*)
 
 gt_Block = HOSTBLOCK(hContent:String)
-         | CsPatternMatch(arguments:gt_MatchArguments,patternActionList:gt_PatternActionList) // add match arguments
-         | CsConstraintMatch(constraintActionList:gt_ConstraintActionList)
+         | CsPatternMatch(arguments:gt_MatchArguments,patternActionList:gt_PatternActionList)
+         | CsConstraintMatch(constraintActionList:gt_ConstraintActionList) // supprimer
 
 /*
 ProgramUnit = HostBlock(hContent:String)
@@ -36,15 +36,15 @@ gt_MatchArguments = CsMatchArguments(gt_TypedTerm*)
 // PatternAction
 gt_PatternActionList = CsPatternActionList(gt_PatternAction*)
 
-gt_PatternAction = CsPatternAction(patternList:gt_PatternList, action:gt_BlockList)
-                 | CsAndConstraintPatternAction(patternList:gt_PatternList, constraint:gt_Constraint, action:gt_BlockList)
-                 | CsOrConstraintPatternAction(patternList:gt_PatternList, constraint:gt_Constraint, action:gt_BlockList)
+gt_PatternAction = CsPatternAction(patternList:gt_PatternList, action:gt_BlockList) // ajouter slot contrainte
+                 | CsAndConstraintPatternAction(patternList:gt_PatternList, constraint:gt_Constraint, action:gt_BlockList) // supprimer
+                 | CsOrConstraintPatternAction(patternList:gt_PatternList, constraint:gt_Constraint, action:gt_BlockList) // supprimer
   gt_PatternList = CsPatternList(gt_Pattern*)
 
 // ConstraintAction
-gt_ConstraintActionList = CsConstraintActionList(gt_ConstraintAction*)
+gt_ConstraintActionList = CsConstraintActionList(gt_ConstraintAction*) // supprimer
 
-gt_ConstraintAction = CsConstraintAction(constraint:gt_Constraint, action:gt_BlockList)
+gt_ConstraintAction = CsConstraintAction(constraint:gt_Constraint, action:gt_BlockList) // supprimer
 
 // Constraints
 gt_Constraint = CsMatchConstraint(object:gt_Pattern, subject:gt_Term)
@@ -56,7 +56,6 @@ gt_Constraint = CsMatchConstraint(object:gt_Pattern, subject:gt_Term)
               | CsNumGreaterOrEqualTo(lefthand:gt_Term, righthand:gt_Term)
               | CsNumEqualTo(lefthand:gt_Term, righthand:gt_Term)
               | CsNumDifferent(lefthand:gt_Term, rightand:gt_Term)
-              
               
 
 // ConstraintSubject
@@ -73,8 +72,9 @@ gt_TermType = CsTermType(type:String)
 
 // Pattern ===========================================================
 gt_Pattern = CsPattern(annotations:gt_AnnotationList, pattern:gt_PlainPattern)
-  gt_AnnotationList = CsAnnotationList(String*)
+gt_AnnotationList = CsAnnotationList(String*)
 
+// pourquoi pas Anti(pattern:gt_Pattern)
 gt_PlainPattern = CsVariable(name : String) 
                 | CsVariableStar(name : String)
                 | CsAntiVariable(name : String)
@@ -85,7 +85,7 @@ gt_PlainPattern = CsVariable(name : String)
                 | CsAntiConstantStar(value : String)
                 | CsUnamedVariable()
                 | CsUnamedVariableStar()
-                | CsSymbolList(headSymbols : gt_HeadSymbolList, tailSymbols : gt_TailSymbolList)
+                | CsSymbolList(headSymbols : gt_HeadSymbolList, tailSymbols : gt_TailSymbolList) // renomer PatternList
                 | CsAntiSymbolList(headSymbols : gt_HeadSymbolList, tailSymbols : gt_TailSymbolList)
 
 
@@ -94,9 +94,10 @@ gt_HeadSymbolList = CsHeadSymbolList(gt_HeadSymbol*)
                 | CsConstantHeadSymbol(value : String, theory : gt_TheoryType)
 
     gt_TheoryType = CsTheoryAU()
-                  | CsTheoryCS()
+                  | CsTheoryCS() // AC()
                   | CsTheoryDEFAULT()
 
+// renomer en gt_PatternList et CsExpliciterPatternList
 gt_TailSymbolList = CsExplicitTermList(gt_Pattern*)
                   | CsImplicitPairList(gt_PairPattern*)
 
