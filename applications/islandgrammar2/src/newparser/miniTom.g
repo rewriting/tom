@@ -175,47 +175,6 @@ csConstraint_priority4 :
  | LPAR csConstraint RPAR
  -> csConstraint
 ;
-/*
-csConstraint_priority1 :
-  c1=csConstraint_priority2 OR c2=csConstraint_priority2
-  -> ^(CsOrConstraint $c1 $c2)
-  | csConstraint_priority2
-;
-csConstraint_priority2 :
-  c1=csConstraint_priority3 AND c2=csConstraint_priority3
-  -> ^(CsAndConstraint $c1 $c2)
-  | csConstraint_priority3
-;
-
-csConstraint_priority3 :
-  csPattern LARROW csTerm
- -> ^(CsMatchConstraint csPattern csTerm)
- | csConstraint_priority4
-;
-
-csConstraint_priority4 :
-  l=csTerm GREATERTHAN r=csTerm
-  -> ^(CsNumGreaterThan $l $r)
- 
- |l=csTerm GREATEROREQU r=csTerm
-  -> ^(CsNumGreaterOrEqualTo $l $r)
-
- |l=csTerm LOWERTHAN r=csTerm
-  -> ^(CsNumLessThan $l $r)
- 
- |l=csTerm LOWEROREQU r=csTerm
-  -> ^(CsNumLessOrEqualTo $l $r)
- 
- |l=csTerm DOUBLEEQUAL r=csTerm
-  -> ^(CsNumEqualTo $l $r)
-
- |l=csTerm DIFFERENT r=csTerm
-  -> ^(CsNumDifferent $l $r)
-
- |LPAR csConstraint RPAR
- -> csConstraint
-;
-*/
 
 // constraint's subject
 csTerm :

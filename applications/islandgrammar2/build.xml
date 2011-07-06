@@ -61,14 +61,6 @@
     </gom.preset>
   </target>
 
-  <!--target name="tom" depends="init, gom">
-    <tom.preset srcdir="${islgram.src}"
-                destdir="${islgram.gen}"
-                import="${islgram.gen}">
-      <include name="**/*.t"/>
-    </tom.preset>
-  </targeti-->
-
   <target name="gomantlradapter" depends="gom">
     <gomantlradapter.preset srcdir="${islgram.src}"
                             destdir="${islgram.gen}"
@@ -84,7 +76,15 @@
             />
   </target>
 
-  <target name="compile" depends="antlr">
+  <target name="tom" depends="antlr">
+    <tom.preset srcdir="${islgram.src}/${islgram.package}"
+                destdir="${islgram.gen}/${islgram.package}"
+                import="${islgram.gen}/${islgram.package}">
+      <include name="**/*.t"/>
+    </tom.preset>
+  </target>
+
+  <target name="compile" depends="tom">
     <mkdir dir="${islgram.build}"/>
     <javac.preset destdir="${islgram.build}" >
       <src path="${islgram.gen}"/>
