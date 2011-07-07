@@ -36,8 +36,13 @@ public class ExampleJavaType {
       B = b()
         | f(n:B)
         | g(n1:B,n2:B)
+
+      A = h(m1:A,m2:B)
   }
 
+  /**
+   * This example is to check the evaluation of the mix "tom + java"
+  */
   public static void main(String[] args) {
     int x = 10;
     B y = `b();
@@ -50,8 +55,15 @@ public class ExampleJavaType {
       f(a) << w -> { System.out.println("Line 5: " + createG(`a,y)); }
       z@f(b()) << createF(y) -> { System.out.println("Line 6: " + `z); }
       z@f(b()) << createF(b()) -> { System.out.println("Line 7: " + `z); }
-      b() << y -> { System.out.println("Line 8: " + `f(createF(y))); }
+      b() << y -> { System.out.println("Line 8: " + `f(createF(w))); }
       b() << y -> { System.out.println("Line 9: " + `f(createG(w,y))); }
+      f(b()) << createF(y) -> { System.out.println("Line 10: " + `y); }
+      //f(z) << w -> { 
+      //  System.out.println("Line 11: " + `g(createF(z),f(createF(x)))); 
+      //}
+      f(z1) << f(b()) || g(z1,z2) << g(f(b()),b()) -> {
+        System.out.println("Line 12: " + `z1);
+      }
     }
   }
 
