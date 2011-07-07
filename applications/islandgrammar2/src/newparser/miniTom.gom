@@ -7,58 +7,30 @@ gt_Program = CsProgram(blocks:gt_BlockList)
 gt_BlockList = CsBlockList(gt_Block*)
 
 gt_Block = HOSTBLOCK(hContent:String)
-         | CsPatternMatch(arguments:gt_MatchArguments,patternActionList:gt_PatternActionList)
-         | CsConstraintMatch(constraintActionList:gt_ConstraintActionList) // supprimer
+         | CsMatchConstruct(arguments:gt_MatchArgumentList,constraintActionList:gt_ConstraintActionList)
 
-/*
-ProgramUnit = HostBlock(hContent:String)
-            | Match(mArgs:MatchArgList, pActs:PatternActionList)
-            | Typeterm(implProgram:Program, isSort:Sort, equals:EqualCheck)
 
-MatchArgList = MatchArgList(MatchArg*)
+// MatchConstruct =============================================================================================
+gt_MatchArgumentList = CsMatchArgumentList(gt_TypedTerm*)
 
-MatchArg = WithType(aType:String, aTerm:String)
-        | NoType(aTerm:String)
+gt_ConstraintAction = CsConstraintAction(constraint:gt_Constraint, action:gt_BlockList) // supprimer (ou pas...)
+gt_ConstraintActionList = CsConstraintActionList(gt_ConstraintAction*)
 
-PatternActionList = PatternActionList(PatternAction*)
-
-PatternAction = PatterAction(aPattern:gt_Pattern, anAction:Program)
-*/
-
-// Match ============================================================
-//gt_MatchConstruct = CsMatchConstruct(matchArguments:gt_MatchArguments,patterActionList:gt_PatternActionList)
-
-//TODO change gt_PatternActionList
-
-// MatchArguments
-gt_MatchArguments = CsMatchArguments(gt_TypedTerm*)
-
-// PatternAction
-gt_PatternActionList = CsPatternActionList(gt_PatternAction*)
-
-gt_PatternAction = CsPatternAction(patternList:gt_PatternList, action:gt_BlockList) // ajouter slot contrainte
-                 | CsAndConstraintPatternAction(patternList:gt_PatternList, constraint:gt_Constraint, action:gt_BlockList) // supprimer
-                 | CsOrConstraintPatternAction(patternList:gt_PatternList, constraint:gt_Constraint, action:gt_BlockList) // supprimer
-  gt_PatternList = CsPatternList(gt_Pattern*)
-
-// ConstraintAction
-gt_ConstraintActionList = CsConstraintActionList(gt_ConstraintAction*) // supprimer
-
-gt_ConstraintAction = CsConstraintAction(constraint:gt_Constraint, action:gt_BlockList) // supprimer
-
-// Constraints
-gt_Constraint = CsMatchConstraint(object:gt_Pattern, subject:gt_Term)
-              | CsAndConstraint(constraint1:gt_Constraint, constraint2:gt_Constraint)
-              | CsOrConstraint(constraint1:gt_Constraint, constraint2:gt_Constraint)
-              | CsNumLessThan(lefthand:gt_Term, righthand:gt_Term)
-              | CsNumLessOrEqualTo(lefthand:gt_Term, righthand:gt_Term)
-              | CsNumGreaterThan(lefthand:gt_Term, righthand:gt_Term)
-              | CsNumGreaterOrEqualTo(lefthand:gt_Term, righthand:gt_Term)
-              | CsNumEqualTo(lefthand:gt_Term, righthand:gt_Term)
-              | CsNumDifferent(lefthand:gt_Term, rightand:gt_Term)
+gt_Constraint = CsMatchTermConstraint    (object:gt_Pattern, subject:gt_Term)
+              | CsMatchArgumentConstraint(object:gt_Pattern)
+              | CsAndConstraint (gt_Constraint*)
+              | CsOrConstraint  (gt_Constraint*)
+              | CsNumLessThan         (lefthand:gt_Term, righthand:gt_Term)
+              | CsNumLessOrEqualTo    (lefthand:gt_Term, righthand:gt_Term)
+              | CsNumGreaterThan      (lefthand:gt_Term, righthand:gt_Term)
+              | CsNumGreaterOrEqualTo (lefthand:gt_Term, righthand:gt_Term)
+              | CsNumEqualTo          (lefthand:gt_Term, righthand:gt_Term)
+              | CsNumDifferent        (lefthand:gt_Term, righthand:gt_Term)
               
+gt_ConstraintList = CsConstraintList(gt_Constraint*)
 
-// ConstraintSubject
+// gt_Term in CST context is "equivalent" to BQTerm in AST context
+// (it's much simpler because very close to synthax)
 gt_Term = CsVariableName(name : String)
         | CsVariableNameStar(name : String)
         | CsTerm(name : String, termList : gt_TermList)
@@ -66,27 +38,27 @@ gt_Term = CsVariableName(name : String)
 gt_TermList = CsTermList(gt_Term*)
 
 gt_TypedTerm = CsTypedTerm(term:gt_Term, type:gt_TermType)
-
+             
 gt_TermType = CsTermType(type:String)
             | CsTermTypeUnknown()
 
-// Pattern ===========================================================
+// gt_Pattern in CST context is "equivalent" to TomTerm in AST context
 gt_Pattern = CsPattern(annotations:gt_AnnotationList, pattern:gt_PlainPattern)
 gt_AnnotationList = CsAnnotationList(String*)
 
-// pourquoi pas Anti(pattern:gt_Pattern)
-gt_PlainPattern = CsVariable(name : String) 
-                | CsVariableStar(name : String)
-                | CsAntiVariable(name : String)
-                | CsAntiVariableStar(name : String)
-                | CsConstant(value : String)
-                | CsAntiConstant(value : String)
-                | CsConstantStar(value : String)
-                | CsAntiConstantStar(value : String)
-                | CsUnamedVariable()
+
+gt_PlainPattern = CsVariable        (name : String) 
+                | CsVariableStar    (name : String)
+                | CsAntiVariable    (name : String) // ->> Anti(CsVariable(...))
+                | CsAntiVariableStar(name : String) // ->> Anti(CsVariablStar(...))
+                | CsConstant        (value : String)
+                | CsAntiConstant    (value : String) // ->> Anti(...
+                | CsConstantStar    (value : String)
+                | CsAntiConstantStar(value : String) // ->> Anti(...
+                | CsUnamedVariable    ()
                 | CsUnamedVariableStar()
-                | CsSymbolList(headSymbols : gt_HeadSymbolList, tailSymbols : gt_TailSymbolList) // renomer PatternList
-                | CsAntiSymbolList(headSymbols : gt_HeadSymbolList, tailSymbols : gt_TailSymbolList)
+                | CsSymbolList    (headSymbolList : gt_HeadSymbolList, patternList : gt_PatternList)
+                | CsAntiSymbolList(headSymbolList : gt_HeadSymbolList, patternList : gt_PatternList) // ->> Anti(...
 
 
 gt_HeadSymbolList = CsHeadSymbolList(gt_HeadSymbol*)
@@ -97,8 +69,7 @@ gt_HeadSymbolList = CsHeadSymbolList(gt_HeadSymbol*)
                   | CsTheoryCS() // AC()
                   | CsTheoryDEFAULT()
 
-// renomer en gt_PatternList et CsExpliciterPatternList
-gt_TailSymbolList = CsExplicitTermList(gt_Pattern*)
-                  | CsImplicitPairList(gt_PairPattern*)
+gt_PatternList = CsExplicitPatternList(gt_Pattern*)
+               | CsImplicitPairList(gt_PairPattern*)
 
 gt_PairPattern = CsPairPattern(slotName:String, pattern:gt_Pattern)

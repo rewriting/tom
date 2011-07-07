@@ -49,46 +49,51 @@ to rewind stream to the marker returned by matchconstruct.
 */
 matchConstruct
 returns [int marker]:
+  
+  // "%match" already consumed when thid rule is called
 
-  LPAR csMatchArguments  RPAR LBR (csPatternAction)* RBR
+  // with args
+  LPAR csMatchArgument ((COMMA csMatchArgument)*)? (COMMA)? RPAR
+  LBR
+    csExtendedConstraintAction*
+  RBR
+
+  // extract and return CharStream's marker
   {$marker = ((CustomToken)$RBR).getPayload(Integer.class);}
-  ->^(CsPatternMatch csMatchArguments ^(CsPatternActionList csPatternAction* ))
+  
+  -> ^( CsMatchConstruct
+       ^( CsMatchArgumentList csMatchArgument* )
+       ^( CsConstraintActionList csExtendedConstraintAction* )
+      )
 
- |LBR (csConstraintAction)* RBR
- {$marker = ((CustomToken)$RBR).getPayload(Integer.class);}
- ->^(CsConstraintMatch ^(CsConstraintActionList csConstraintAction* ))
+ |
+  // witout args
+  (LPAR (COMMA)? RPAR)?
+  LBR
+    csConstraintAction*
+  RBR
 
+  // extract and return CharStream's marker
+  {$marker = ((CustomToken)$RBR).getPayload(Integer.class);}
+  
+  -> ^( CsMatchConstruct
+       ^( CsMatchArgumentList )
+       ^( CsConstraintActionList csConstraintAction* )
+      )
+  
 ;
 
-csPatternAction :
- (pattern=csPatternList) ((and=AND|or=OR) csConstraint)? HostBlockOpen RBR
- 
-  ->{$and!=null}? ^(CsAndConstraintPatternAction csPatternList csConstraint
-  {((CustomToken)$HostBlockOpen).getPayload(Tree.class)})
-
-  ->{$or!=null}? ^(CsOrConstraintPatternAction csPatternList csConstraint
-  {((CustomToken)$HostBlockOpen).getPayload(Tree.class)})
-
-  -> ^(CsPatternAction $pattern
-  {((CustomToken)$HostBlockOpen).getPayload(Tree.class)})
-;
 
 csConstraintAction :
-  csConstraint HostBlockOpen RBR
-
-  -> ^(CsConstraintAction csConstraint
-  {
-  ((CustomToken)$HostBlockOpen).getPayload(Tree.class)
-  }
-  )
+ csConstraint HostBlockOpen RBR
+ -> ^(CsConstraintAction csConstraint {((CustomToken)$HostBlockOpen).getPayload(Tree.class)})
 ;
 
-csMatchArguments :
- csMatchArgument (COMMA csMatchArgument)*
- -> ^(CsMatchArguments csMatchArgument*)
+csExtendedConstraintAction :
+ csExtendedConstraint HostBlockOpen RBR
+ -> ^(CsConstraintAction csExtendedConstraint {((CustomToken)$HostBlockOpen).getPayload(Tree.class)})
 ;
 
-// no 's'
 csMatchArgument :
   (type=IDENTIFIER)? csTerm
 
@@ -121,6 +126,29 @@ tokenCustomizer.prepareNextToken(tree);
 ;
 // Constraints ===============================================
 
+// allows patterns lists
+
+csExtendedConstraint :
+ csMatchArgumentConstraintList ((a=AND|o=OR) csConstraint)?
+ ->{a!=null}? ^(CsAndConstraint csMatchArgumentConstraintList csConstraint)
+ ->{o!=null}? ^(CsOrConstraint  csMatchArgumentConstraintList csConstraint)
+ ->           csMatchArgumentConstraintList
+
+// |csConstraint
+// -> csConstraint
+;
+
+csMatchArgumentConstraintList :
+  csMatchArgumentConstraint (COMMA c2=csMatchArgumentConstraint)* (COMMA)?
+  ->{c2!=null}? ^(CsAndConstraint csMatchArgumentConstraint*)
+  ->            csMatchArgumentConstraint
+;
+
+csMatchArgumentConstraint :
+  csPattern
+  -> ^(CsMatchArgumentConstraint csPattern)
+;
+
 // csConstraint uses several rules to ensure operators
 // priority is respected. csConstraint_* should not be
 // called from others rules, only csConstraint.
@@ -129,20 +157,20 @@ csConstraint :
 ;
 
 csConstraint_priority1 :
-  c1=csConstraint_priority2 (OR c2=csConstraint_priority1)*
-  ->{c2!=null}? ^(CsOrConstraint $c1 $c2)
+  csConstraint_priority2 (or=OR csConstraint_priority2)*
+  ->{or!=null}? ^(CsOrConstraint csConstraint_priority2*)
   -> csConstraint_priority2
 ;
 
 csConstraint_priority2 :
-  c1=csConstraint_priority3 (AND c2=csConstraint_priority2)*
-  ->{c2!=null}? ^(CsAndConstraint $c1 $c2)
+  csConstraint_priority3 (and=AND csConstraint_priority3)*
+  ->{and!=null}? ^(CsAndConstraint csConstraint_priority3*)
   -> csConstraint_priority3
 ;
 
 csConstraint_priority3 :
  
-  l=csTerm 
+  l=csTerm
 (
   GREATERTHAN r=csTerm
   -> ^(CsNumGreaterThan $l $r)
@@ -170,7 +198,7 @@ csConstraint_priority3 :
 
 csConstraint_priority4 :
  csPattern LARROW csTerm
- -> ^(CsMatchConstraint csPattern csTerm)
+ -> ^(CsMatchTermConstraint csPattern csTerm)
 
  | LPAR csConstraint RPAR
  -> csConstraint
@@ -187,11 +215,13 @@ csTerm :
 ;
 
 // Patterns ===================================================
+/*
 csPatternList :
   csPattern (COMMA csPattern)*
 
   -> ^(CsPatternList csPattern*)
 ;
+*/
 
 csPattern :
  (i=IDENTIFIER AT)* csPlainPattern
@@ -262,7 +292,7 @@ csHeadSymbol :
 csExplicitTermList :
    LPAR (csPattern (COMMA csPattern)*)? RPAR
 
- -> ^(CsExplicitTermList csPattern*)
+ -> ^(CsExplicitPatternList csPattern*)
 ;
 
 csImplicitPairList :
