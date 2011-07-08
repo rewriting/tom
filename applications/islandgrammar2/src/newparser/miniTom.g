@@ -225,44 +225,33 @@ csTerm :
 // Patterns ===================================================
 csPattern :
  (i=IDENTIFIER AT)* csPlainPattern
-
   -> ^(CsPattern ^(CsAnnotationList IDENTIFIER*) csPlainPattern)
 ;
 
-csPlainPattern
-scope{ boolean anti;} @init{ $csPlainPattern::anti = false;}
-:
- (ANTI {$csPlainPattern::anti=!$csPlainPattern::anti;} )*
+csPlainPattern :
+  ANTI csPlainPattern
+  -> ^(CsAnti csPlainPattern)
 
-(
-  //(!)* f'('...')'
-  csHeadSymbolList csExplicitTermList
-  -> {$csPlainPattern::anti}?
-     ^(CsAntiSymbolList csHeadSymbolList csExplicitTermList)
+  //f'('...')'
+ |csHeadSymbolList csExplicitTermList
   -> ^(CsSymbolList csHeadSymbolList csExplicitTermList)
- //(!)* f'['...']'
+ 
+  //f'['...']'
  |csHeadSymbolList csImplicitPairList
-  -> {$csPlainPattern::anti}?
-     ^(CsAntiSymbolList csHeadSymbolList csImplicitPairList)
   -> ^(CsSymbolList csHeadSymbolList csImplicitPairList)
 
  |IDENTIFIER (s=STAR)?
-  ->{$csPlainPattern::anti  && s!=null}? ^(CsAntiVariableStar IDENTIFIER)
-  ->{$csPlainPattern::anti  && s==null}? ^(CsAntiVariable IDENTIFIER)
-  ->{!$csPlainPattern::anti && s!=null}? ^(CsVariableStar IDENTIFIER)
-  ->/*                 anti && s==null*/ ^(CsVariable IDENTIFIER)
+  -> {s!=null}? ^(CsVariableStar IDENTIFIER)
+  ->/*s==null*/ ^(CsVariable IDENTIFIER)
  
- |{!$csPlainPattern::anti}?=> // don't allow anti before wildcard
-  UNDERSCORE (s=STAR)? 
+ |UNDERSCORE (s=STAR)? 
   -> {s!=null}? ^(CsUnamedVariableStar)
   ->/*s==null*/ ^(CsUnamedVariable)
  
  |csConstantValue (s=STAR)?
-  ->{$csPlainPattern::anti  && s!=null}? ^(CsAntiConstantStar csConstantValue)
-  ->{$csPlainPattern::anti  && s==null}? ^(CsAntiConstant csConstantValue)
-  ->{!$csPlainPattern::anti && s!=null}? ^(CsConstantStar csConstantValue)
-  ->/*               anti  && s==null*/ ^(CsConstant csConstantValue)
-)
+  -> {s!=null}? ^(CsConstantStar csConstantValue)
+  ->/*s==null*/ ^(CsConstant csConstantValue)
+
 ;
 
 // f
