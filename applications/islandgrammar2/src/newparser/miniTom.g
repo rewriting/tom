@@ -86,12 +86,16 @@ returns [int marker]:
 
 csConstraintAction :
  csConstraint HostBlockOpen RBR
- -> ^(CsConstraintAction csConstraint {((CustomToken)$HostBlockOpen).getPayload(Tree.class)})
+ -> ^(CsConstraintAction csConstraint
+      {((CustomToken)$HostBlockOpen).getPayload(Tree.class)}
+     )
 ;
 
 csExtendedConstraintAction :
  csExtendedConstraint HostBlockOpen RBR
- -> ^(CsConstraintAction csExtendedConstraint {((CustomToken)$HostBlockOpen).getPayload(Tree.class)})
+ -> ^(CsConstraintAction csExtendedConstraint
+      {((CustomToken)$HostBlockOpen).getPayload(Tree.class)}
+     )
 ;
 
 csMatchArgument :
@@ -103,7 +107,8 @@ csMatchArgument :
 
 HostBlockOpen : ( options {greedy=true;} : ARROW WS '{')
 {
-HostParser parser = new HostParser(new NegativeImbricationDetector('{', '}', 0));
+HostParser parser = new HostParser(
+  new NegativeImbricationDetector('{', '}', 0));
 
       // XXX DEBUG ===
       if(HostParserDebugger.isOn()){
@@ -126,16 +131,19 @@ tokenCustomizer.prepareNextToken(tree);
 ;
 // Constraints ===============================================
 
-// allows patterns lists
+/**
+- pattern list with or without additionnal constraints :
+  pattern (',' pattern )* (('&&'|'||') csontraint)?
 
+everything is then stored in CST as a constraint.
+every pattern in pattern list is seen as a constraint to
+match identicaly positionned matchConstruct's argument.
+*/
 csExtendedConstraint :
  csMatchArgumentConstraintList ((a=AND|o=OR) csConstraint)?
  ->{a!=null}? ^(CsAndConstraint csMatchArgumentConstraintList csConstraint)
  ->{o!=null}? ^(CsOrConstraint  csMatchArgumentConstraintList csConstraint)
  ->           csMatchArgumentConstraintList
-
-// |csConstraint
-// -> csConstraint
 ;
 
 csMatchArgumentConstraintList :
@@ -149,9 +157,18 @@ csMatchArgumentConstraint :
   -> ^(CsMatchArgumentConstraint csPattern)
 ;
 
-// csConstraint uses several rules to ensure operators
-// priority is respected. csConstraint_* should not be
-// called from others rules, only csConstraint.
+/**
+- match constraints :   pattern << term
+- logical operations :  constraint ('&&'|'||') constraint
+- numeric constraints : term ('>'|'<'|'>='|'<='|'=='|'!=') term 
+
+proirity in operators is :
+(from higher to lower)
+ '<<'
+ '>'|'<'|'>='|'<='|'=='|'!='
+ '&&'
+ '||'
+*/
 csConstraint : 
  csConstraint_priority1
 ;
@@ -171,26 +188,17 @@ csConstraint_priority2 :
 csConstraint_priority3 :
  
   l=csTerm
-(
-  GREATERTHAN r=csTerm
-  -> ^(CsNumGreaterThan $l $r)
- 
- |GREATEROREQU r=csTerm
-  -> ^(CsNumGreaterOrEqualTo $l $r)
+  (gt=GREATERTHAN|ge=GREATEROREQU|lt=LOWERTHAN
+  |le=LOWEROREQU |eq=DOUBLEEQUAL |ne=DIFFERENT)
+  r=csTerm
 
- |LOWERTHAN r=csTerm
-  -> ^(CsNumLessThan $l $r)
+ ->{gt!=null}? ^(CsNumGreaterThan      $l $r)
+ ->{ge!=null}? ^(CsNumGreaterOrEqualTo $l $r)
+ ->{lt!=null}? ^(CsNumLessThan         $l $r)
+ ->{le!=null}? ^(CsNumLessOrEqualTo    $l $r)
+ ->{eq!=null}? ^(CsNumEqualTo          $l $r)
+ ->/*ne!=null*/^(CsNumDifferent        $l $r)
  
- |LOWEROREQU r=csTerm
-  -> ^(CsNumLessOrEqualTo $l $r)
- 
- |DOUBLEEQUAL r=csTerm
-  -> ^(CsNumEqualTo $l $r)
-
- |DIFFERENT r=csTerm
-  -> ^(CsNumDifferent $l $r)
-
-)
 
  | csConstraint_priority4
  -> csConstraint_priority4
@@ -204,7 +212,7 @@ csConstraint_priority4 :
  -> csConstraint
 ;
 
-// constraint's subject
+// Terms ======================================================
 csTerm :
   IDENTIFIER (s=STAR)?
   ->{s!=null}? ^(CsVariableNameStar IDENTIFIER )
@@ -215,14 +223,6 @@ csTerm :
 ;
 
 // Patterns ===================================================
-/*
-csPatternList :
-  csPattern (COMMA csPattern)*
-
-  -> ^(CsPatternList csPattern*)
-;
-*/
-
 csPattern :
  (i=IDENTIFIER AT)* csPlainPattern
 
@@ -237,12 +237,14 @@ scope{ boolean anti;} @init{ $csPlainPattern::anti = false;}
 (
   //(!)* f'('...')'
   csHeadSymbolList csExplicitTermList
-  -> {$csPlainPattern::anti}? ^(CsAntiSymbolList csHeadSymbolList csExplicitTermList)
-  ->                          ^(CsSymbolList csHeadSymbolList csExplicitTermList)
+  -> {$csPlainPattern::anti}?
+     ^(CsAntiSymbolList csHeadSymbolList csExplicitTermList)
+  -> ^(CsSymbolList csHeadSymbolList csExplicitTermList)
  //(!)* f'['...']'
  |csHeadSymbolList csImplicitPairList
-  -> {$csPlainPattern::anti}? ^(CsAntiSymbolList csHeadSymbolList csImplicitPairList)
-  ->                          ^(CsSymbolList csHeadSymbolList csImplicitPairList)
+  -> {$csPlainPattern::anti}?
+     ^(CsAntiSymbolList csHeadSymbolList csImplicitPairList)
+  -> ^(CsSymbolList csHeadSymbolList csImplicitPairList)
 
  |IDENTIFIER (s=STAR)?
   ->{$csPlainPattern::anti  && s!=null}? ^(CsAntiVariableStar IDENTIFIER)

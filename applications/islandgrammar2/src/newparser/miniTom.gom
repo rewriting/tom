@@ -2,18 +2,22 @@ module newparser.miniTom
 imports String
 abstract syntax
 
+// Program ===================================================================
 gt_Program = CsProgram(blocks:gt_BlockList)
 
 gt_BlockList = CsBlockList(gt_Block*)
 
 gt_Block = HOSTBLOCK(hContent:String)
-         | CsMatchConstruct(arguments:gt_MatchArgumentList,constraintActionList:gt_ConstraintActionList)
+         | CsMatchConstruct(arguments:gt_MatchArgumentList,
+                            constraintActionList:gt_ConstraintActionList)
 
 
-// MatchConstruct =============================================================================================
+// MatchConstruct ============================================================
 gt_MatchArgumentList = CsMatchArgumentList(gt_TypedTerm*)
 
-gt_ConstraintAction = CsConstraintAction(constraint:gt_Constraint, action:gt_BlockList) // supprimer (ou pas...)
+gt_ConstraintAction =
+  CsConstraintAction(constraint:gt_Constraint, action:gt_BlockList) // supprimer (ou pas...)
+
 gt_ConstraintActionList = CsConstraintActionList(gt_ConstraintAction*)
 
 gt_Constraint = CsMatchTermConstraint    (object:gt_Pattern, subject:gt_Term)
@@ -47,18 +51,19 @@ gt_Pattern = CsPattern(annotations:gt_AnnotationList, pattern:gt_PlainPattern)
 gt_AnnotationList = CsAnnotationList(String*)
 
 
-gt_PlainPattern = CsVariable        (name : String) 
-                | CsVariableStar    (name : String)
-                | CsAntiVariable    (name : String) // ->> Anti(CsVariable(...))
-                | CsAntiVariableStar(name : String) // ->> Anti(CsVariablStar(...))
-                | CsConstant        (value : String)
-                | CsAntiConstant    (value : String) // ->> Anti(...
-                | CsConstantStar    (value : String)
-                | CsAntiConstantStar(value : String) // ->> Anti(...
-                | CsUnamedVariable    ()
-                | CsUnamedVariableStar()
-                | CsSymbolList    (headSymbolList : gt_HeadSymbolList, patternList : gt_PatternList)
-                | CsAntiSymbolList(headSymbolList : gt_HeadSymbolList, patternList : gt_PatternList) // ->> Anti(...
+gt_PlainPattern = 
+  CsVariable        (name : String) 
+| CsVariableStar    (name : String)
+| CsAntiVariable    (name : String) // ->> Anti(CsVariable(...))
+| CsAntiVariableStar(name : String) // ->> Anti(CsVariablStar(...))
+| CsConstant        (value : String)
+| CsAntiConstant    (value : String) // ->> Anti(...
+| CsConstantStar    (value : String)
+| CsAntiConstantStar(value : String) // ->> Anti(...
+| CsUnamedVariable    ()
+| CsUnamedVariableStar()
+| CsSymbolList    (headSymbolList : gt_HeadSymbolList, patternList : gt_PatternList)
+| CsAntiSymbolList(headSymbolList : gt_HeadSymbolList, patternList : gt_PatternList) // ->> Anti(...
 
 
 gt_HeadSymbolList = CsHeadSymbolList(gt_HeadSymbol*)
