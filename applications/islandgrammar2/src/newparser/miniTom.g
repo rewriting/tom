@@ -224,13 +224,13 @@ csTerm :
 
 // Patterns ===================================================
 csPattern :
- (i=IDENTIFIER AT)* csPlainPattern
-  -> ^(CsPattern ^(CsAnnotationList IDENTIFIER*) csPlainPattern)
-;
+  // myA@a(...
+  IDENTIFIER AT csPattern
+  -> ^(CsAnnotatedPattern csPattern IDENTIFIER)
 
-csPlainPattern :
-  ANTI csPlainPattern
-  -> ^(CsAnti csPlainPattern)
+  //!a(...
+ |ANTI csPattern
+  -> ^(CsAnti csPattern)
 
   //f'('...')'
  |csHeadSymbolList csExplicitTermList
@@ -240,18 +240,23 @@ csPlainPattern :
  |csHeadSymbolList csImplicitPairList
   -> ^(CsSymbolList csHeadSymbolList csImplicitPairList)
 
+  // x
+  // x*
  |IDENTIFIER (s=STAR)?
   -> {s!=null}? ^(CsVariableStar IDENTIFIER)
   ->/*s==null*/ ^(CsVariable IDENTIFIER)
- 
+  
+  // _
+  // _*
  |UNDERSCORE (s=STAR)? 
   -> {s!=null}? ^(CsUnamedVariableStar)
   ->/*s==null*/ ^(CsUnamedVariable)
- 
+  
+  // 'a'
+  // 'a'*
  |csConstantValue (s=STAR)?
   -> {s!=null}? ^(CsConstantStar csConstantValue)
   ->/*s==null*/ ^(CsConstant csConstantValue)
-
 ;
 
 // f
@@ -271,13 +276,13 @@ csHeadSymbol :
  |IDENTIFIER QMARK
   -> ^(CsHeadSymbol IDENTIFIER ^(CsTheoryAU))
  |IDENTIFIER DQMARK
-  -> ^(CsHeadSymbol IDENTIFIER ^(CsTheoryCS))
+  -> ^(CsHeadSymbol IDENTIFIER ^(CsTheoryAC))
  |csConstantValue 
  -> ^(CsConstantHeadSymbol csConstantValue ^(CsTheoryDEFAULT))
  |csConstantValue QMARK
  -> ^(CsConstantHeadSymbol csConstantValue ^(CsTheoryAU))
  |csConstantValue DQMARK
- -> ^(CsConstantHeadSymbol csConstantValue ^(CsTheoryCS))
+ -> ^(CsConstantHeadSymbol csConstantValue ^(CsTheoryAC))
 ;
 
 csExplicitTermList :

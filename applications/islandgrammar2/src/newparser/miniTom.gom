@@ -47,12 +47,9 @@ gt_TermType = CsTermType(type:String)
             | CsTermTypeUnknown()
 
 // gt_Pattern in CST context is "equivalent" to TomTerm in AST context
-gt_Pattern = CsPattern(annotations:gt_AnnotationList, pattern:gt_PlainPattern)
-gt_AnnotationList = CsAnnotationList(String*)
-
-
-gt_PlainPattern = 
-  CsAnti(pattern:gt_PlainPattern)
+gt_Pattern = 
+  CsAnti(pattern:gt_Pattern)
+| CsAnnotatedPattern(pattern:gt_Pattern,annotation:String)
 | CsVariable        (name : String) 
 | CsVariableStar    (name : String)
 | CsConstant        (value : String)
@@ -64,11 +61,11 @@ gt_PlainPattern =
 
 
 gt_HeadSymbolList = CsHeadSymbolList(gt_HeadSymbol*)
-  gt_HeadSymbol = CsHeadSymbol(name : String, theory : gt_TheoryType)
-                | CsConstantHeadSymbol(value : String, theory : gt_TheoryType)
+gt_HeadSymbol = CsHeadSymbol(name : String, theory : gt_TheoryType)
+              | CsConstantHeadSymbol(value : String, theory : gt_TheoryType)
 
     gt_TheoryType = CsTheoryAU()
-                  | CsTheoryCS() // AC()
+                  | CsTheoryAC()
                   | CsTheoryDEFAULT()
 
 gt_PatternList = CsExplicitPatternList(gt_Pattern*)
