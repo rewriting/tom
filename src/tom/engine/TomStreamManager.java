@@ -138,6 +138,10 @@ public class TomStreamManager {
       inputSuffix = ".t";
       outputSuffix = ".py";
 			importLanguageSubdir = "java";
+    } else if ( ((Boolean)optionManager.getOptionValue("aCode")).booleanValue() ) {
+      inputSuffix = ".t";
+      outputSuffix = ".adb";
+			importLanguageSubdir = "ada";
     } else {
       throw new TomRuntimeException("No code generator selected");
     }

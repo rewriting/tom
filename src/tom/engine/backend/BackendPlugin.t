@@ -78,6 +78,7 @@ public class BackendPlugin extends TomGenericPlugin {
   public static final String DECLARED_OPTIONS = 
     "<options>" +
     "<boolean name='noOutput' altName=''  description='Do not generate code' value='false'/>" +
+    "<boolean name='aCode'    altName='a'  description='Generate Ada code' value='false'/>" +
     "<boolean name='jCode'    altName='j' description='Generate Java code' value='true'/>" + 
     "<boolean name='csCode'   altName=''  description='Generate C# code' value='false'/>" + 
     "<boolean name='cCode'    altName='c' description='Generate C code' value='false'/>" +
@@ -117,7 +118,9 @@ public class BackendPlugin extends TomGenericPlugin {
             generator = new CamlGenerator(output, getOptionManager(), getSymbolTable());
           } else if(getOptionBooleanValue("pCode")) {
             generator = new PythonGenerator(output, getOptionManager(), getSymbolTable());
-          } else if(getOptionBooleanValue("csCode")) {
+          } else if(getOptionBooleanValue("aCode")) {
+		generator = new AdaGenerator(output, getOptionManager(), getSymbolTable());
+	  } else if(getOptionBooleanValue("csCode")) {
             generator = new CSharpGenerator(output, getOptionManager(), getSymbolTable());
           } else if(getOptionBooleanValue("jCode")) {
             generator = new JavaGenerator(output, getOptionManager(), getSymbolTable());
@@ -170,19 +173,28 @@ public class BackendPlugin extends TomGenericPlugin {
     if(optionName.equals("camlCode") && ((Boolean)optionValue).booleanValue() ) { 
       setOptionValue("jCode", Boolean.FALSE);        
       setOptionValue("cCode", Boolean.FALSE);        
-      setOptionValue("pCode", Boolean.FALSE);        
+      setOptionValue("pCode", Boolean.FALSE);
+      setOptionValue("aCode", Boolean.FALSE);       
     } else if(optionName.equals("cCode") && ((Boolean)optionValue).booleanValue() ) { 
       setOptionValue("jCode", Boolean.FALSE);        
       setOptionValue("camlCode", Boolean.FALSE);        
-      setOptionValue("pCode", Boolean.FALSE);        
+      setOptionValue("pCode", Boolean.FALSE);
+      setOptionValue("aCode", Boolean.FALSE);        
     } else if(optionName.equals("jCode") && ((Boolean)optionValue).booleanValue() ) { 
       setOptionValue("cCode", Boolean.FALSE);        
       setOptionValue("camlCode", Boolean.FALSE);        
-      setOptionValue("pCode", Boolean.FALSE);        
+      setOptionValue("pCode", Boolean.FALSE);
+      setOptionValue("aCode", Boolean.FALSE);        
     } else if(optionName.equals("pCode") && ((Boolean)optionValue).booleanValue() ) { 
       setOptionValue("cCode", Boolean.FALSE);        
       setOptionValue("camlCode", Boolean.FALSE);        
-      setOptionValue("jCode", Boolean.FALSE);        
+      setOptionValue("jCode", Boolean.FALSE);
+      setOptionValue("aCode", Boolean.FALSE);        
+    } else if(optionName.equals("aCode") && ((Boolean)optionValue).booleanValue() ) { 
+      setOptionValue("cCode", Boolean.FALSE);        
+      setOptionValue("camlCode", Boolean.FALSE);        
+      setOptionValue("jCode", Boolean.FALSE);
+      setOptionValue("pCode", Boolean.FALSE);        
     }
   }
 
@@ -432,15 +444,6 @@ public class BackendPlugin extends TomGenericPlugin {
         try {
           String moduleName = stack.peek();
           bp.getSymbolTable(moduleName).putGetSlot(`opname,`slotName,`code);
-        } catch (EmptyStackException e) {
-          System.out.println("No moduleName in stack");
-        }
-      }
-
-      GetDefaultDecl[AstName=Name(opname),SlotName=Name(slotName),Expr=Code(code)] -> {
-        try {
-          String moduleName = stack.peek();
-          bp.getSymbolTable(moduleName).putGetDefault(`opname,`slotName,`code);
         } catch (EmptyStackException e) {
           System.out.println("No moduleName in stack");
         }

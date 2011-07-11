@@ -92,8 +92,16 @@ public class VariadicGenerator implements IBaseGenerator {
       ConstraintToExpression(MatchConstraint[Pattern=v@VariableStar[],Subject=VariableHeadList(opName,begin,end@BQVariableStar[AstType=type]),AstType=aType]) -> {
         Expression doWhileTest = `Negation(EqualBQTerm(type,end,begin));
         Expression testEmpty = vg.getConstraintGenerator().genIsEmptyList(`opName,`end);
-        Expression endExpression = 
-               `TomInstructionToExpression(If(testEmpty,Assign(end,BQTermToExpression(begin)),Assign(end,vg.genGetTail(opName,end))));
+        Expression endExpression = null;
+        
+        //Avoids conditional expressions (unsupported by Ada) 
+        if (vg.getCondition(`opName)) {
+               endExpression =
+               `TomInstructionToExpression(If(testEmpty,Assign(end,BQTermToExpression(begin)),If(IsFsym(opName,end), Assign(end,GetTail(opName, end)), Assign(end,BQTermToExpression(BuildEmptyList(opName))))));
+		} else {
+               endExpression =
+               `TomInstructionToExpression(If(testEmpty,Assign(end,BQTermToExpression(begin)),Assign(end, GetTail(opName, end))));
+		}
         // if we have a varStar, we generate its declaration also
         if (`v.isVariableStar()) {
           Expression varDeclaration =
@@ -114,6 +122,13 @@ public class VariadicGenerator implements IBaseGenerator {
       }
     }
   } // end strategy	
+  
+  private boolean getCondition(TomName opName) {
+    TomSymbol tomSymbol = getCompiler().getSymbolTable().getSymbolFromName(((Name)opName).getString());
+    TomType domain = TomBase.getSymbolDomain(tomSymbol).getHeadconcTomType();
+    TomType codomain = TomBase.getSymbolCodomain(tomSymbol);
+    return (domain==codomain);
+  }
   
   /**
    * return the head of the list
