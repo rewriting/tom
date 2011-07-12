@@ -26,10 +26,10 @@ public abstract class ParserAction {
   public static final ParserAction  SKIP_DELIMITED_SEQUENCE = SkipDelimitedSequence.getInstance();
   public static final ParserAction  PACK_HOST_CONTENT       = PackHostContent.getInstance();
   
-  public static final ParserAction  PARSE_MATCH_CONSTRUCT         = ParseMatchConstruct.getInstance();
-  public static final ParserAction  PARSE_OPERATOR_CONSTRUCT      = ParseOperatorConstruct.getInstance();
-  public static final ParserAction  PARSE_OPERATOR_LIST_CONSTRUCT = ParseOperatorListConstruct.getInstance();
-  public static final ParserAction  PARSE_OPERATOR_ARRAY_CONSTRUCT= ParseOperatorArrayConstruct.getInstance();
+  public static final ParserAction  PARSE_MATCH_CONSTRUCT           = ParseMatchConstruct.getInstance();
+  public static final ParserAction  PARSE_OPERATOR_CONSTRUCT        = ParseOperatorConstruct.getInstance();
+  public static final ParserAction  PARSE_OPERATOR_LIST_CONSTRUCT   = ParseOperatorListConstruct.getInstance();
+  public static final ParserAction  PARSE_OPERATOR_ARRAY_CONSTRUCT  = ParseOperatorArrayConstruct.getInstance();
   
   /**
    * Implementations of ParserAction.doAction should check
@@ -156,7 +156,7 @@ public abstract class ParserAction {
 
     private static final ParseMatchConstruct instance = new ParseMatchConstruct();
     
-    private static ParserAction getInstance(){return instance;}
+    public static ParserAction getInstance(){return instance;}
     
     private ParseMatchConstruct() {;}
     

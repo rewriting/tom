@@ -84,6 +84,16 @@
     </tom.preset>
   </target>
 
+  <!-- for debug !-->
+  <target name="compilegomantlradapteronly" depends="gomantlradapter">
+    <mkdir dir="${islgram.build}"/>
+    <javac.preset destdir="${islgram.build}" >
+      <src path="${islgram.gen}"/>
+      <include name="newparser/**/*.java"/>
+    </javac.preset>
+  </target>
+
+
   <target name="compile" depends="tom">
     <mkdir dir="${islgram.build}"/>
     <javac.preset destdir="${islgram.build}" >

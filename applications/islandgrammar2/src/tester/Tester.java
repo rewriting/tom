@@ -124,6 +124,11 @@ public class Tester {
         }
         else {  
           testIssue = TestIssue.BAD_TREE;
+          
+          // draw anyway if asked but don't change testIssue
+          if(adaptTree){
+            SharedObject adaptedTree = miniTomAdaptor.getTerm(parser.getTree());
+          }
         }
       }else{
          testIssue = TestIssue.ERROR_WHILE_PARSING;

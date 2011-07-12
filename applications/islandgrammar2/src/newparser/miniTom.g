@@ -148,6 +148,7 @@ proirity in operators is :
  '&&'
  '||'
 */
+
 csConstraint : 
  csConstraint_priority1
 ;
@@ -292,8 +293,14 @@ csOperatorConstruct
 returns [int marker] :
 
   //%op already consumed when this rule is called
-  tomTypeName=IDENTIFIER ctorName=IDENTIFIER LPAR csSlotList RPAR
+  tomTypeName=csName ctorName=csName LPAR csSlotList RPAR
   LBR csKeywordList_OperatorConstruct RBR
+
+  {$marker = ((CustomToken)$RBR).getPayload(Integer.class);}
+
+  -> ^(CsOpConstruct
+        $tomTypeName $ctorName csSlotList csKeywordList_OperatorConstruct
+      ) 
 ;
 
 csOperatorArrayConstruct
@@ -303,6 +310,11 @@ returns [int marker] :
   tomTypeName=IDENTIFIER ctorName=IDENTIFIER LPAR csSlotList RPAR
   LBR csKeywordList_OperatorArrayConstruct RBR
 
+  {$marker = ((CustomToken)$RBR).getPayload(Integer.class);}
+
+  -> ^(CsOpArrayConstruct
+        $tomTypeName $ctorName csSlotList csKeywordList_OperatorArrayConstruct  
+      )
 ;
 
 csOperatorListConstruct
@@ -312,18 +324,29 @@ returns [int marker] :
   tomTypeName=IDENTIFIER ctorName=IDENTIFIER LPAR csSlotList RPAR
   LBR csKeywordList_OperatorListConstruct RBR
 
+  {$marker = ((CustomToken)$RBR).getPayload(Integer.class);}
+
+  -> ^(CsOpListConstruct
+        $tomTypeName $ctorName csSlotList csKeywordList_OperatorListConstruct
+      )
 ;
 
 csSlotList :
-  csSlot (COMMA csSlot)*
+  (csSlot (COMMA csSlot)*)?
+
+  -> ^(CsSlotList csSlot*)
 ;
 
 csSlot : 
-  slotName=IDENTIFIER COLON slotType=IDENTIFIER 
+  slotName=csName COLON slotType=csName
+
+  -> ^(CsSlot $slotName $slotType)
 ;
 
 csKeywordList_OperatorConstruct :
   ks+=csKeywordIsFsym (ks+=csKeywordMake | ks+= csKeywordGetSlot)*
+
+  -> ^(CsOperatorList $ks*)
 ;
 
 csKeywordList_OperatorArrayConstruct :
@@ -333,6 +356,8 @@ csKeywordList_OperatorArrayConstruct :
   |ks+=csKeywordGetElement
   |ks+=csKeywordGetSize
  )*
+
+  -> ^(CsOperatorList $ks*)
 ;
 
 csKeywordList_OperatorListConstruct :
@@ -343,77 +368,129 @@ csKeywordList_OperatorListConstruct :
   |ks+=csKeywordGetTail
   |ks+=csKeywordIsEmpty
  )*
+
+  -> ^(CsOperatorList $ks*)
 ;
 
 csKeywordIsFsym :
-  KEYWORD_IS_FSYM LPAR csName RPAR
+  KEYWORD_IS_FSYM LPAR argName=csName RPAR
   LBR /* Host Code doing the test */ RBR
+
+  -> ^(CsIsFsym $argName
+        {((CustomToken)$LBR).getPayload(Tree.class)}
+      )
 ;
 
 csKeywordGetSlot :
- KEYWORD_GET_SLOT LPAR slotName=csName COMMA argName=csName RPAR
- LBR /* Host Code accessing slot content */ RBR
+  KEYWORD_GET_SLOT LPAR slotName=csName COMMA termName=csName RPAR
+  LBR /* Host Code accessing slot content */ RBR
+
+  -> ^(CsGetSlot $slotName $termName
+        {((CustomToken)$LBR).getPayload(Tree.class)}
+      )
 ;
 
 csKeywordMake :
- KEYWORD_MAKE LPAR csNameList RPAR 
- RBR /* Host Code making new object */ LBR
+  KEYWORD_MAKE LPAR argList=csNameList RPAR 
+  LBR /* Host Code making new object */ RBR
+
+  -> ^(CsMake $argList
+        {((CustomToken)$LBR).getPayload(Tree.class)}
+      )
 ;
 
 csKeywprdGetHead :
- KEYWORD_GET_HEAD LPAR argName=csName RPAR 
- LBR /* Host Code accessing list head */ RBR
+  KEYWORD_GET_HEAD LPAR argName=csName RPAR 
+  LBR /* Host Code accessing list head */ RBR
+
+  -> ^(CsGetHead $argName
+        {((CustomToken)$LBR).getPayload(Tree.class)}
+      )
 ;
 
 csKeywordGetTail :
- KEYWORD_GET_TAIL LPAR argName=csName RPAR
- LBR /* Host Code accessing list tail */ RBR
+  KEYWORD_GET_TAIL LPAR argName=csName RPAR
+  LBR /* Host Code accessing list tail */ RBR
+
+  -> ^(CsGetTail $argName
+        {((CustomToken)$LBR).getPayload(Tree.class)}
+      )
 ;
 
 csKeywordIsEmpty :
- KEYWORD_IS_EMPTY LPAR argName=csName RPAR
- LBR /* Host Code emptiness expression */ RBR
+  KEYWORD_IS_EMPTY LPAR argName=csName RPAR
+  LBR /* Host Code emptiness expression */ RBR
+
+  -> ^(CsIsEmpty $argName
+        {((CustomToken)$LBR).getPayload(Tree.class)}
+      )
 ;
 
 csKeywordMakeEmpty_List :
- KEYWORD_MAKE_EMPTY LPAR RPAR
- LBR /* Host Code creating empty list */ RBR
+  KEYWORD_MAKE_EMPTY LPAR RPAR
+  LBR /* Host Code creating empty list */ RBR
+
+  -> ^(CsMakeEmptyList
+        {((CustomToken)$LBR).getPayload(Tree.class)}
+      )
 ;
 
 csKeywordMakeEmpty_Array :
- KEYWORD_MAKE_EMPTY LPAR argName=csName RPAR
- LBR /* Host Code creating empty array */ RBR
+  KEYWORD_MAKE_EMPTY LPAR argName=csName RPAR
+  LBR /* Host Code creating empty array */ RBR
+
+  -> ^(CsMakeEmptyArray $argName
+        {((CustomToken)$LBR).getPayload(Tree.class)}
+      )
 ;
 
 csKeywordMakeInsert :
- KEYWORD_MAKE_INSERT
-   LPAR elementArgName=csName COMMA termArgName=csName RPAR
- LBR /* Host Code making insertion */ RBR
+  KEYWORD_MAKE_INSERT
+    LPAR elementArgName=csName COMMA termArgName=csName RPAR
+  LBR /* Host Code making insertion */ RBR
+
+  -> ^(CsMakeInsert $elementArgName $termArgName
+        {((CustomToken)$LBR).getPayload(Tree.class)}
+      )
 ;
 
 csKeywordGetElement :
- KEYWORD_GET_ELEMENT
-  LPAR termArgName=csName COMMA elementIndexArgName=csName RPAR
- LBR /* Host Code accessing this element */ RBR
+  KEYWORD_GET_ELEMENT
+    LPAR termArgName=csName COMMA elementIndexArgName=csName RPAR
+  LBR /* Host Code accessing this element */ RBR
+
+  -> ^(CsGetElement $termArgName $elementIndexArgName
+        {((CustomToken)$LBR).getPayload(Tree.class)}
+      )
 ;
 
 csKeywordGetSize :
- KEYWORD_GET_SIZE LPAR listArgName=csName RPAR
- LBR /* Host Code accessing size */ RBR
+  KEYWORD_GET_SIZE LPAR termArgName=csName RPAR
+  LBR /* Host Code accessing size */ RBR
+
+  -> ^(CsGetSize $termArgName
+        {((CustomToken)$LBR).getPayload(Tree.class)}
+      )
 ;
 
 csKeywordMakeAppend :
- KEYWORD_MAKE_APPEND 
-   LPAR elementArgName=csName COMMA listArgName=csName RPAR
- LBR /* Host Code appending element */ RBR
+  KEYWORD_MAKE_APPEND 
+    LPAR elementArgName=csName COMMA termArgName=csName RPAR
+  LBR /* Host Code appending element */ RBR
+
+  -> ^(CsMakeAppend $elementArgName $termArgName
+        {((CustomToken)$LBR).getPayload(Tree.class)}
+      )
 ;
 
 csNameList :
- IDENTIFIER (COMMA IDENTIFIER)*
+  (csName (COMMA csName)*)?
+  -> ^(CsNameList csName*)
 ;
 
 csName :
- IDENTIFIER
+  IDENTIFIER
+  -> ^(CsName IDENTIFIER)
 ;
 
 // Lexer Rules =============================================================
