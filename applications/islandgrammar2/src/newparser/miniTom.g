@@ -30,6 +30,8 @@ import org.antlr.runtime.tree.Tree;
      // call each other. We don't need to make a
      // difference between ANTLR's Parser and Lexer
   }
+
+  private boolean opensBlockLBR = false;
   
   private final TokenCustomizer tokenCustomizer = new TokenCustomizer();
  
@@ -41,7 +43,8 @@ import org.antlr.runtime.tree.Tree;
   
 }
 
-/* parser rules */
+
+// MatchConstruct ===========================================================
 /*
 When parsing parser rule ANTLR's Parse tends to consume "to much" chars.
 To respect ParserAction.doAction contract, doAction implementation needs 
@@ -85,16 +88,16 @@ returns [int marker]:
 
 
 csConstraintAction :
- csConstraint HostBlockOpen RBR
+ csConstraint ARROW LBR RBR
  -> ^(CsConstraintAction csConstraint
-      {((CustomToken)$HostBlockOpen).getPayload(Tree.class)}
+      {((CustomToken)$LBR).getPayload(Tree.class)}
      )
 ;
 
 csExtendedConstraintAction :
- csExtendedConstraint HostBlockOpen RBR
+ csExtendedConstraint ARROW LBR RBR
  -> ^(CsConstraintAction csExtendedConstraint
-      {((CustomToken)$HostBlockOpen).getPayload(Tree.class)}
+      {((CustomToken)$LBR).getPayload(Tree.class)}
      )
 ;
 
@@ -105,30 +108,6 @@ csMatchArgument :
   ->              ^(CsTypedTerm csTerm ^(CsTermType ^(CsTermTypeUnknown)))
 ;
 
-HostBlockOpen : ( options {greedy=true;} : ARROW WS '{')
-{
-HostParser parser = new HostParser(
-  new NegativeImbricationDetector('{', '}', 0));
-
-      // XXX DEBUG ===
-      if(HostParserDebugger.isOn()){
-        HostParserDebugger.getInstance()
-        .debugNewCall(parser.getClassDesc(), input, "");
-      }
-      // === DEBUG ===
-
-Tree tree = parser.parseBlockList(input);
-
-      // XXX DEBUG ===
-      if(HostParserDebugger.isOn()){
-        HostParserDebugger.getInstance()
-        .debugReturnedCall(parser.getClassDesc(), input, "");
-      }
-      // === DEBUG ===
-      
-tokenCustomizer.prepareNextToken(tree);
-}
-;
 // Constraints ===============================================
 
 /**
@@ -308,6 +287,162 @@ csConstantValue :
 ;
 
 
+// OperatorConstruct ========================================================
+csOperatorConstruct 
+returns [int marker] :
+
+  //%op already consumed when this rule is called
+  tomTypeName=IDENTIFIER ctorName=IDENTIFIER LPAR csSlotList RPAR
+  LBR csKeywordList_OperatorConstruct RBR
+;
+
+csSlotList :
+  csSlot (COMMA csSlot)*
+;
+
+csSlot : 
+  slotName=IDENTIFIER COLON slotType=IDENTIFIER 
+;
+
+csKeywordList_OperatorConstruct :
+  ks+=csKeywordIsFsym (ks+=csKeywordMake | ks+= csKeywordGetSlot)*
+;
+
+csKeywordList_OperatorArrayConstruct :
+   ks+=csKeywordIsFsym
+ ( ks+=csKeywordMakeEmpty_Array
+  |ks+=csKeywordMakeAppend
+  |ks+=csKeywordGetElement
+  |ks+=csKeywordGetSize
+ )*
+;
+
+csKeywordList_OperatorListConstruct :
+   ks+=csKeywordIsFsym
+ ( ks+=csKeywordMakeEmpty_List
+  |ks+=csKeywordMakeInsert
+  |ks+=csKeywprdGetHead
+  |ks+=csKeywordGetTail
+  |ks+=csKeywordIsEmpty
+ )*
+;
+
+csKeywordIsFsym :
+  KEYWORD_IS_FSYM LPAR csName RPAR
+  LBR /* Host Code doing the test */ RBR
+;
+
+csKeywordGetSlot :
+ KEYWORD_GET_SLOT LPAR slotName=csName COMMA argName=csName RPAR
+ LBR /* Host Code accessing slot content */ RBR
+;
+
+csKeywordMake :
+ KEYWORD_MAKE LPAR csNameList RPAR 
+ RBR /* Host Code making new object */ LBR
+;
+
+csKeywprdGetHead :
+ KEYWORD_GET_HEAD LPAR argName=csName RPAR 
+ LBR /* Host Code accessing list head */ RBR
+;
+
+csKeywordGetTail :
+ KEYWORD_GET_TAIL LPAR argName=csName RPAR
+ LBR /* Host Code accessing list tail */ RBR
+;
+
+csKeywordIsEmpty :
+ KEYWORD_IS_EMPTY LPAR argName=csName RPAR
+ LBR /* Host Code emptiness expression */ RBR
+;
+
+csKeywordMakeEmpty_List :
+ KEYWORD_MAKE_EMPTY LPAR RPAR
+ LBR /* Host Code creating empty list */ RBR
+;
+
+csKeywordMakeEmpty_Array :
+ KEYWORD_MAKE_EMPTY LPAR argName=csName RPAR
+ LBR /* Host Code creating empty array */ RBR
+;
+
+csKeywordMakeInsert :
+ KEYWORD_MAKE_INSERT
+   LPAR elementArgName=csName COMMA listArgName=csName RPAR
+ LBR /* Host Code making insertion */ RBR
+;
+
+csKeywordGetElement :
+ KEYWORD_GET_ELEMENT
+  LPAR listArgName=csName COMMA elementIndexArgName=csName RPAR
+ LBR /* Host Code accessing this element */ RBR
+;
+
+csKeywordGetSize :
+ KEYWORD_GET_SIZE LPAR listArgName=csName RPAR
+ LBR /* Host Code accessing size */ RBR
+;
+
+csKeywordMakeAppend :
+ KEYWORD_MAKE_APPEND 
+   LPAR elementArgName=csName COMMA listArgName=csName RPAR
+ LBR /* Host Code appending element */ RBR
+;
+
+csNameList :
+ IDENTIFIER (COMMA IDENTIFIER)*
+;
+
+csName :
+ IDENTIFIER
+;
+
+// Lexer Rules =============================================================
+
+KEYWORD_IS_FSYM     : 'is_fsym'     { opensBlockLBR = true; };
+KEYWORD_GET_SLOT    : 'get_slot'    { opensBlockLBR = true; };
+KEYWORD_MAKE        : 'make'        { opensBlockLBR = true; };
+KEYWORD_GET_HEAD    : 'get_head'    { opensBlockLBR = true; };
+KEYWORD_GET_TAIL    : 'get_tail'    { opensBlockLBR = true; };
+KEYWORD_IS_EMPTY    : 'is_empty'    { opensBlockLBR = true; };
+KEYWORD_MAKE_EMPTY  : 'make_empty'  { opensBlockLBR = true; };
+KEYWORD_MAKE_INSERT : 'make_insert' { opensBlockLBR = true; };
+KEYWORD_GET_ELEMENT : 'get_element' { opensBlockLBR = true; };
+KEYWORD_GET_SIZE    : 'get_size'    { opensBlockLBR = true; };
+KEYWORD_MAKE_APPEND : 'make_append' { opensBlockLBR = true; };
+
+ARROW	: '->' { opensBlockLBR = true;} ;
+
+LBR     :  '{'
+{
+  if(opensBlockLBR){
+     opensBlockLBR = false;
+
+    HostParser parser = new HostParser(
+    new NegativeImbricationDetector('{', '}', 0));
+
+      // XXX DEBUG ===
+      if(HostParserDebugger.isOn()){
+        HostParserDebugger.getInstance()
+        .debugNewCall(parser.getClassDesc(), input, "");
+      }
+      // === DEBUG ===
+
+    Tree tree = parser.parseBlockList(input);
+
+      // XXX DEBUG ===
+      if(HostParserDebugger.isOn()){
+        HostParserDebugger.getInstance()
+        .debugReturnedCall(parser.getClassDesc(), input, "");
+      }
+      // === DEBUG ===
+      
+    tokenCustomizer.prepareNextToken(tree);
+  }
+}
+;
+
 RBR : '}'
 {
 // every token generated by antlr pass throw our
@@ -328,18 +463,15 @@ DIFFERENT : '!=';
 
 AND : '&&';
 OR : '||';
-
 PIPE 	: '|';
 QMARK	:'?';
 DQMARK :'??';
 EQUAL	: '=';
 LSQUAREBR : '[';
 RSQUAREBR : ']';
-LBR     : '{';
 RPAR 	: ')';
 LPAR	: '(';
 COMMA	: ',';
-ARROW	: '->';
 STAR	: '*';
 UNDERSCORE:'_';
 AT	: '@';
@@ -347,6 +479,7 @@ ANTI	: '!';
 DQUOTE  : '"'; //"
 SQUOTE  : '\'';
 BQUTE   : '`';
+COLON   : ':';
 
 IDENTIFIER 	: LETTER(LETTER | DIGIT | '_' | '-')*;
 INTEGER 	: (DIGIT)+;
