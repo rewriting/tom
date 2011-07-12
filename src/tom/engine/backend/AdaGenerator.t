@@ -82,7 +82,8 @@ public class AdaGenerator extends GenericGenerator {
     }
 
     String template = getSymbolTable(moduleName).getIsSort(type);
-    if(instantiateTemplate(deep,template,`concBQTerm(exp),moduleName) == false) {
+    String opname="";
+    if(instantiateTemplate(deep,template,opname,`concBQTerm(exp),moduleName) == false) {
       output.write("tom_is_sort_" + type + "(");
       generateBQTerm(deep,exp,moduleName);
       output.write("\'Address)");
@@ -110,7 +111,7 @@ public class AdaGenerator extends GenericGenerator {
 
   protected void buildExpIsFsym(int deep, String opname, BQTerm exp, String moduleName) throws IOException {
     String template = getSymbolTable(moduleName).getIsFsym(opname);
-    if(instantiateTemplate(deep,template,`concBQTerm(exp),moduleName) == false) {
+    if(instantiateTemplate(deep,template,opname,`concBQTerm(exp),moduleName) == false) {
       String s = isFsymMap.get(opname);
       if(s == null) {
         s = "tom_is_fun_sym_" + opname + "(";
@@ -591,7 +592,7 @@ matchBlock: {
 	  BuildEmptyList(Name(name)) -> {
 		String prefix = "tom_empty_list_";
 		String template = getSymbolTable(moduleName).getMakeEmptyList(`name);
-		if(instantiateTemplate(deep,template,`concBQTerm(),moduleName) == false) {
+		if(instantiateTemplate(deep,template,`name,`concBQTerm(),moduleName) == false) {
 		  output.write(prefix + `name);
 		}
 		return;
@@ -600,7 +601,7 @@ matchBlock: {
 	  BuildConsList(Name(name), headTerm, tailTerm) -> {
 		String prefix = "tom_cons_list_";
 		String template = getSymbolTable(moduleName).getMakeAddList(`name);
-		if(instantiateTemplate(deep,template,`concBQTerm(headTerm,tailTerm),moduleName) == false) {
+		if(instantiateTemplate(deep,template,`name,`concBQTerm(headTerm,tailTerm),moduleName) == false) {
 		  output.write(prefix + `name + "(");
 		  generateBQTerm(deep,`headTerm,moduleName);
 		  output.write(",");
@@ -622,7 +623,7 @@ matchBlock: {
 	  BuildEmptyArray(Name(name),size) -> {
 		String prefix = "tom_empty_array_";
 		String template = getSymbolTable(moduleName).getMakeEmptyArray(`name);
-		if(instantiateTemplate(deep,template,`concBQTerm(size),moduleName) == false) {
+		if(instantiateTemplate(deep,template,`name,`concBQTerm(size),moduleName) == false) {
 		  output.write(prefix + `name + "(");
 		  generateBQTerm(deep,`size,moduleName);
 		  output.write(")");
@@ -632,7 +633,7 @@ matchBlock: {
 
 	  BuildConsArray(Name(name), headTerm, tailTerm) -> {
 		String template = getSymbolTable(moduleName).getMakeAddArray(`name);
-		if(instantiateTemplate(deep,template,`concBQTerm(headTerm,tailTerm),moduleName) == false) {
+		if(instantiateTemplate(deep,template,`name,`concBQTerm(headTerm,tailTerm),moduleName) == false) {
 		  String prefix = "tom_cons_array_";
 		  output.write(prefix + `name + "(");
 		  generateBQTerm(deep,`headTerm,moduleName);
@@ -769,6 +770,136 @@ matchBlock: {
 	output.write(" return " + TomBase.getTLType(codomain) + " is\nbegin\n");
 	generateInstruction(deep,instruction,moduleName);
 	output.writeln(deep,"\nend " + tomName);
+  }
+  
+  protected void buildClass(int deep, String tomName, TomType extendsType, BQTerm superTerm, Declaration declaration, String moduleName) throws IOException {
+    TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(tomName);
+    TomTypeList tomTypes = TomBase.getSymbolDomain(tomSymbol);
+    ArrayList<String> names = new ArrayList<String>();
+    ArrayList<String> types = new ArrayList<String>();
+    ArrayList<Integer> stratChild = new ArrayList<Integer>(); // child of type Strategy.
+
+    //initialize arrayList with argument names
+    int index = 0;
+    while(!tomTypes.isEmptyconcTomType()) {
+	    TomType type = tomTypes.getHeadconcTomType();
+	    types.add(TomBase.getTLType(type));
+      String name = TomBase.getSlotName(tomSymbol, index).getString();
+      names.add(name);
+
+      // test if the argument is a Strategy
+      %match(type) {
+        Type[TomType="Strategy"] -> {
+          stratChild.add(Integer.valueOf(index));
+        }
+      }
+
+	    tomTypes = tomTypes.getTailconcTomType();
+	    index++;
+    }
+    output.write(deep, stratmodifier + "class " + tomName);
+    //write extends
+matchblock: {
+              %match(extendsType) {
+			Type[TlType=TLType(code)] -> {
+				output.write(deep," extends " + `code);
+        break matchblock;
+			}
+
+			Type[TomType=code,TlType=EmptyTargetLanguageType()] -> {
+				output.write(deep," extends " + `code);
+        break matchblock;
+			}
+    }
+            }
+    output.writeln(deep," {");
+    int args = names.size();
+    //write Declarations
+    for(int i = 0 ; i < args ; i++) {
+      output.writeln(deep, "private " + types.get(i) + " " + names.get(i) + ";");
+    }
+
+    //write constructor
+    output.write(deep, "public " + tomName + "(");
+    //write constructor parameters
+    for(int i = 0 ; i < args ; i++) {
+	    output.write(deep,types.get(i) + " " + names.get(i));
+	    if(i+1<args) {//if many parameters
+		    output.write(deep,", ");
+	    }
+    }
+
+    //write constructor initialization
+    output.writeln(deep,") {");
+    output.write(deep+1,"super(");
+    generateBQTerm(deep,superTerm,moduleName);
+    output.writeln(");");
+
+    //here index represents the parameter number
+    for(int i = 0 ; i < args ; i++) {
+	    String param = names.get(i);
+	    output.writeln(deep+1, "this." + param + "=" + param + ";");
+    }
+    output.writeln(deep,"}");
+
+    // write getters
+    for(int i = 0 ; i < args ; i++) {
+      output.writeln(deep, "public " + types.get(i) + " get" + names.get(i) + "() {");
+      output.writeln(deep+1,"return " + names.get(i) + ";");
+      output.writeln(deep,"}");
+    }
+
+    // write getChildCount (= 1 + stratChildCount because of the %strategy `extends' which is the first child)
+    int stratChildCount = stratChild.size();
+
+    output.writeln(deep, "public tom.library.sl.Visitable[] getChildren() {");
+    output.writeln(deep, "tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];");
+    output.writeln(deep, "stratChilds[0] = super.getChildAt(0);");
+    for(int i = 0; i < stratChildCount; i++) {
+      int j = (stratChild.get(i)).intValue();
+      output.writeln(deep, "stratChilds[" + (i+1) + "] = get" + names.get(j) + "();");
+    }
+    output.writeln(deep, "return stratChilds;}");
+
+    output.writeln(deep, "public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {");
+    output.writeln(deep,"super.setChildAt(0, children[0]);");
+    for(int i = 0; i < stratChildCount; i++) {
+      int j = (stratChild.get(i)).intValue();
+      output.writeln(deep, names.get(j) + " = (" + types.get(j) + ") children[" + (i+1) + "];");
+    }
+    output.writeln(deep, "return this;");
+    output.writeln(deep, "}");
+
+    output.writeln(deep, "public int getChildCount() {");
+    output.writeln(deep, "return " + (stratChildCount + 1) + ";");
+    output.writeln(deep, "}");
+
+    // write getChildAt
+    output.writeln(deep, "public tom.library.sl.Visitable getChildAt(int index) {");
+    output.writeln(deep, "switch (index) {");
+    output.writeln(deep, "case 0: return super.getChildAt(0);");
+    for (int i = 0; i < stratChildCount; i++) {
+      int j = (stratChild.get(i)).intValue();
+      output.writeln(deep, "case " + (i+1) + ": return get" + names.get(j) + "();");
+    }
+    output.writeln(deep, "default: throw new IndexOutOfBoundsException();");
+    output.writeln(deep, "}");
+    output.writeln(deep, "}");
+
+    // write setChildAt
+    output.writeln(deep, "public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {");
+    output.writeln(deep, "switch (index) {");
+    output.writeln(deep, "case 0: return super.setChildAt(0, child);");
+    for (int i = 0; i < stratChildCount; i++) {
+      int j = (stratChild.get(i)).intValue();
+      output.writeln(deep, "case " + (i+1) + ": " + names.get(j) + " = (" + types.get(j) + ")child; return this;");
+    }
+    output.writeln(deep, "default: throw new IndexOutOfBoundsException();");
+    output.writeln(deep, "}");
+    output.writeln(deep, "}");
+
+    generateDeclaration(deep,`declaration,moduleName);
+    output.writeln(deep,"}");
   }
 
 }
