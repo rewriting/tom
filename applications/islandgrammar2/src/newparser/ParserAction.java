@@ -1,7 +1,13 @@
 package newparser;
 
+import newparser.miniTomParser.csOperatorArrayConstruct_return;
+import newparser.miniTomParser.csOperatorConstruct_return;
+import newparser.miniTomParser.csOperatorListConstruct_return;
+import newparser.miniTomParser.matchConstruct_return;
+
 import org.antlr.runtime.CharStream;
 import org.antlr.runtime.CommonTokenStream;
+import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.tree.CommonTreeAdaptor;
 import org.antlr.runtime.tree.Tree;
 
@@ -17,9 +23,13 @@ import streamanalysis.StreamAnalyst;
 public abstract class ParserAction {
 
   // static fields with cool ParserActions
-  public static final SkipDelimitedSequence SKIP_DELIMITED_SEQUENCE= SkipDelimitedSequence.getInstance();
-  public static final ParseMatchConstruct PARSE_MATCH_CONSTRUCT= ParseMatchConstruct.getInstance();
-  public static final PackHostContent PACK_HOST_CONTENT= PackHostContent.getInstance();
+  public static final ParserAction  SKIP_DELIMITED_SEQUENCE = SkipDelimitedSequence.getInstance();
+  public static final ParserAction  PACK_HOST_CONTENT       = PackHostContent.getInstance();
+  
+  public static final ParserAction  PARSE_MATCH_CONSTRUCT         = ParseMatchConstruct.getInstance();
+  public static final ParserAction  PARSE_OPERATOR_CONSTRUCT      = ParseOperatorConstruct.getInstance();
+  public static final ParserAction  PARSE_OPERATOR_LIST_CONSTRUCT = ParseOperatorListConstruct.getInstance();
+  public static final ParserAction  PARSE_OPERATOR_ARRAY_CONSTRUCT= ParseOperatorArrayConstruct.getInstance();
   
   /**
    * Implementations of ParserAction.doAction should check
@@ -43,9 +53,8 @@ public abstract class ParserAction {
 		  				StringBuffer hostCharsBuffer,
 		  				Tree tree,
 		  				StreamAnalyst analyst);
-
   
-  public static class SkipDelimitedSequence extends ParserAction {
+  private static class SkipDelimitedSequence extends ParserAction {
     
     private static final SkipDelimitedSequence instance = new SkipDelimitedSequence();
     
@@ -81,66 +90,165 @@ public abstract class ParserAction {
     }
   }
   
-  public static class ParseMatchConstruct extends ParserAction {
-
-    private static final ParseMatchConstruct instance = new ParseMatchConstruct();
-
-    private ParseMatchConstruct(){;}
-    
-    public static ParseMatchConstruct getInstance() {
-      return instance;
-    }
+  private static abstract class GenericParseConstruct extends ParserAction {
     
     @Override
     public void doAction(CharStream input, StringBuffer hostCharsBuffer,
         Tree tree, StreamAnalyst analyst) {
-    
-      // remove "%matc" (without 'h') from hostCharsBuffer
-      hostCharsBuffer.setLength(hostCharsBuffer.length()-analyst.getOffsetAtMatch());	
-    	
+
+      // remove beginning of the keyword from hostCharBuffer
+      // ("%matc" if keyword is "%match")
+      hostCharsBuffer.setLength(hostCharsBuffer.length()-analyst.getOffsetAtMatch());
+      
       PACK_HOST_CONTENT.doAction(input, hostCharsBuffer, tree, analyst);
       
-      // consume 'h' of %match
+      // consume last chat of the keyword
+      // ("h" if keyword is "%match")
       input.consume();
-                   
+      
       try {
-      miniTomLexer lexer = new miniTomLexer(input);
+        miniTomLexer lexer = new miniTomLexer(input);
+        
+  // XXX DEBUG ===
+  if(HostParserDebugger.isOn()){
+  HostParserDebugger.getInstance()
+   .debugNewCall(lexer.getClassDesc(), input, getConstructName());
+  }
+  // == /DEBUG ===
+        
+        CommonTokenStream tokenStream = new CommonTokenStream(lexer);
+        miniTomParser parser = new miniTomParser(tokenStream);
+        
+        GenericConstruct_return retval = parseSpecificConstruct(parser);
+        
+        tree.addChild((Tree)retval.getTree());
+        
+        // allow action to return with a "clean" input state
+        // (input.LA(1) is char after '}')
+        input.rewind(retval.getMarker());
+        
+  // XXX DEBUG ===
+  if(HostParserDebugger.isOn()){
+  HostParserDebugger.getInstance()
+   .debugReturnedCall(lexer.getClassDesc(), input, getConstructName());
+  }
+  // == /DEBUG ===
+        
+        } catch(Exception e) {
+          // XXX poorly handled exception
+          e.printStackTrace();
+        }
       
-// XXX DEBUG ===
-if(HostParserDebugger.isOn()){
-HostParserDebugger.getInstance()
- .debugNewCall(lexer.getClassDesc(), input, "matchconstruct");
-}
-// == /DEBUG ===
+    }
+
+    
+    /**
+     * used for debug
+     */
+    public abstract String getConstructName();
+    
+    public abstract GenericConstruct_return
+      parseSpecificConstruct(miniTomParser parser) throws RecognitionException;
+    
+  }
+
+  private static class ParseMatchConstruct extends GenericParseConstruct {
+
+    private static final ParseMatchConstruct instance = new ParseMatchConstruct();
+    
+    private static ParserAction getInstance(){return instance;}
+    
+    private ParseMatchConstruct() {;}
+    
+    @Override
+    public String getConstructName() {
+      return "MatchConstruct";
+    }
+
+    @Override
+    public GenericConstruct_return
+      parseSpecificConstruct(miniTomParser parser) throws RecognitionException {
       
-      CommonTokenStream tokenStream = new CommonTokenStream(lexer);
-      miniTomParser parser = new miniTomParser(tokenStream);
-      
-      miniTomParser.matchConstruct_return
-        matchconstructReturnedValue = parser.matchConstruct();
-      
-      tree.addChild((Tree)matchconstructReturnedValue.getTree());
-      
-      // allow action to return with a "clean" input state
-      // (input.LA(1) is char after '}')
-      input.rewind(matchconstructReturnedValue.marker);
-      
-// XXX DEBUG ===
-if(HostParserDebugger.isOn()){
-HostParserDebugger.getInstance()
- .debugReturnedCall(lexer.getClassDesc(), input, "matchconstruct");
-}
-// == /DEBUG ===
-      
-      } catch(Exception e) {
-        // XXX poorly handled exception
-        e.printStackTrace();
-      }
+      matchConstruct_return retval = parser.matchConstruct();
+      return new GenericConstruct_return(retval.tree, retval.marker);
     }
     
   }
   
-  public static class PackHostContent extends ParserAction {
+  private static class ParseOperatorConstruct extends GenericParseConstruct {
+    
+    private static final ParseOperatorConstruct instance = new ParseOperatorConstruct();
+    
+    public static ParserAction getInstance() {
+      return instance;
+    }
+    
+    private ParseOperatorConstruct() {;}
+    
+    @Override
+    public String getConstructName() {
+      return "OperatorConstruct";
+    }
+    
+    @Override
+    public GenericConstruct_return
+      parseSpecificConstruct(miniTomParser parser) throws RecognitionException {
+      
+      csOperatorConstruct_return retval = parser.csOperatorConstruct();
+      return new GenericConstruct_return(retval.tree, retval.marker);
+    }
+  }
+  
+  private static class ParseOperatorArrayConstruct extends GenericParseConstruct {
+    
+    private static final ParseOperatorArrayConstruct instance = new ParseOperatorArrayConstruct();
+    
+    public static ParserAction getInstance() {
+      return instance;
+    }
+    
+    private ParseOperatorArrayConstruct() {;}
+    
+    @Override
+    public String getConstructName() {
+      return "OperatorArrayConstruct";
+    }
+    
+    @Override
+    public GenericConstruct_return
+      parseSpecificConstruct(miniTomParser parser) throws RecognitionException {
+      
+      csOperatorArrayConstruct_return retval = parser.csOperatorArrayConstruct();
+      return new GenericConstruct_return(retval.tree, retval.marker);
+    }
+  }
+  
+  private static class ParseOperatorListConstruct extends GenericParseConstruct {
+    
+    private static final ParseOperatorListConstruct instance = new ParseOperatorListConstruct();
+    
+    public static ParserAction getInstance() {
+      return instance;
+    }
+    
+    private ParseOperatorListConstruct() {;}
+    
+    @Override
+    public String getConstructName(){
+      return "OperatorListConstruct";
+    }
+    
+    @Override
+    public GenericConstruct_return
+      parseSpecificConstruct(miniTomParser parser) throws RecognitionException {
+    
+      csOperatorListConstruct_return retval = parser.csOperatorListConstruct();
+      return new GenericConstruct_return(retval.tree, retval.marker);
+    }
+    
+  }
+  
+  private static class PackHostContent extends ParserAction {
     
     private static final PackHostContent instance = new PackHostContent();
     
@@ -172,5 +280,24 @@ HostParserDebugger.getInstance()
 	  
 	  hostCharsBuffer.setLength(0);
 	}
+  }
+
+  private static class GenericConstruct_return{
+    
+    private Tree tree;
+    private int marker;
+    
+    public GenericConstruct_return(Tree tree, int marker){
+      this.tree = tree;
+      this.marker = marker;
+    }
+    
+    public Tree getTree() {
+      return tree;
+    }
+    
+    public int getMarker() {
+      return marker;
+    }
   }
 }

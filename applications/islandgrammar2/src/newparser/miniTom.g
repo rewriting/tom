@@ -296,6 +296,24 @@ returns [int marker] :
   LBR csKeywordList_OperatorConstruct RBR
 ;
 
+csOperatorArrayConstruct
+returns [int marker] :
+
+  //%oparray already consumed when this rule is called
+  tomTypeName=IDENTIFIER ctorName=IDENTIFIER LPAR csSlotList RPAR
+  LBR csKeywordList_OperatorArrayConstruct RBR
+
+;
+
+csOperatorListConstruct
+returns [int marker] :
+
+  //%oplist already consumed when this rule is called
+  tomTypeName=IDENTIFIER ctorName=IDENTIFIER LPAR csSlotList RPAR
+  LBR csKeywordList_OperatorListConstruct RBR
+
+;
+
 csSlotList :
   csSlot (COMMA csSlot)*
 ;
@@ -369,13 +387,13 @@ csKeywordMakeEmpty_Array :
 
 csKeywordMakeInsert :
  KEYWORD_MAKE_INSERT
-   LPAR elementArgName=csName COMMA listArgName=csName RPAR
+   LPAR elementArgName=csName COMMA termArgName=csName RPAR
  LBR /* Host Code making insertion */ RBR
 ;
 
 csKeywordGetElement :
  KEYWORD_GET_ELEMENT
-  LPAR listArgName=csName COMMA elementIndexArgName=csName RPAR
+  LPAR termArgName=csName COMMA elementIndexArgName=csName RPAR
  LBR /* Host Code accessing this element */ RBR
 ;
 
