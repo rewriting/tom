@@ -7,9 +7,12 @@ gt_Program = CsProgram(blocks:gt_BlockList)
 
 gt_BlockList = CsBlockList(gt_Block*)
 
-gt_Block = HOSTBLOCK(hContent:String)
-         | CsMatchConstruct(arguments:gt_MatchArgumentList,
-                            constraintActionList:gt_ConstraintActionList)
+gt_Block =
+ HOSTBLOCK(hContent:String)
+| CsMatchConstruct(arguments:gt_MatchArgumentList, constraintActionList:gt_ConstraintActionList)
+| CsOpConstruct     (tomTypeName:gt_Name, ctorName:gt_Name, argumentList :gt_SlotList, operatorList :gt_OperatorList)
+| CsOpArrayConstruct(tomTypeName:gt_Name, ctorName:gt_Name, argumentList :gt_SlotList, operatorList :gt_OperatorList)
+| CsOpListConstruct (tomTypeName:gt_Name, ctorName:gt_Name, argumentList :gt_SlotList, operatorList :gt_OperatorList)
 
 
 // MatchConstruct ============================================================
@@ -72,3 +75,28 @@ gt_PatternList = CsExplicitPatternList(gt_Pattern*)
                | CsImplicitPairList(gt_PairPattern*)
 
 gt_PairPattern = CsPairPattern(slotName:String, pattern:gt_Pattern)
+
+// CsOp*Construct ============================================================
+gt_OperatorList = CsOperatorList(gt_Operator*)
+
+gt_Operator =
+ | CsIsFsym (name:gt_Name, block:gt_BlockList)
+ | CsGetSlot(slotName:gt_Name, argName:gt_Name, block:gt_BlockList)
+ | CsMake   (nameList:gt_NameList, block:gt_BlockList)
+ | CsGetHead(argName:gt_Name, block:gt_BlockList)
+ | CsGetTail(nameList:gt_NameList, block:gt_BlockList)
+ | CsIsEmpty(argName:gt_Name, block:gt_BlockList)
+ | CsMakeEmptyList(block:gt_BlockList)
+ | CsMakeEmptyArray(block:gt_BlockList)
+ | CsMakeInsert(eltArgName:gt_Name, termArgName:gt_Name, block:gt_BlockList)
+ | CsGetElement(termArgName:gt_Name, eltIndexArgName:gt_Name, block:gt_BlockList)
+ | CsGetSize(termArgName:gt_Name, block:gt_BlockList)
+ | CsMakeAppend(eltArgName:gt_Name, block:gt_BlockList)
+
+gt_SlotList = CsSlotLost(gt_Slot*)
+
+gt_Slot = CsSlot(slotName:gt_Name, slotTypeName:gt_Name)
+
+// Names
+gt_Name = CsName(name:String)
+gt_NameList = CsNameList(gt_Name*)
