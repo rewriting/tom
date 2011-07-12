@@ -739,7 +739,7 @@ matchBlock: {
   }
   
   private void buildMethod(int deep, String tomName, BQTermList varList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName, String methodModifier) throws IOException {
-	boolean parenthesis = varList.isEmptyconcBQTerm();
+	boolean parenthesis = !varList.isEmptyconcBQTerm();
 	output.write(deep, "function " + tomName);
 	if (parenthesis) { output.write("("); }
 	
