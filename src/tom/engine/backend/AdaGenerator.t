@@ -74,6 +74,52 @@ public class AdaGenerator extends GenericGenerator {
     output.writeln();
   }
   */
+  
+  protected void buildTerm(int deep, String opname, BQTermList argList, String moduleName) throws IOException {
+    String template = getSymbolTable(moduleName).getMake(opname);
+    if(instantiateTemplate(deep,template,opname,argList,moduleName) == false) {
+		boolean parenthesis = !argList.isEmptyconcBQTerm();
+        String prefix = "tom_make_";
+        output.write(prefix+opname);
+        if (parenthesis) { output.writeOpenBrace(); }
+        int index=0;
+        while(!argList.isEmptyconcBQTerm()) {
+          BQTerm bqt = argList.getHeadconcBQTerm();
+          //System.out.println("bqt = " + bqt);
+          boolean generatebqt = true;
+          %match(bqt) {
+            Composite(CompositeBQTerm(BQDefault()),_*) -> {
+              TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(opname);
+              //System.out.println("name = " + opname);
+              //System.out.println("symbol = " + tomSymbol);
+              TomName slotName = TomBase.getSlotName(tomSymbol,index);
+              //System.out.println("slotname = " + slotName);
+              buildExpGetDefault(deep, opname, slotName.getString(), moduleName);
+              generatebqt = false;
+            }
+          }
+
+          if(generatebqt) {
+            generateBQTerm(deep,bqt,moduleName);
+          }
+
+          argList = argList.getTailconcBQTerm();
+          if(!argList.isEmptyconcBQTerm()) {
+            output.writeComa();
+          }
+          index++;
+        }
+        if (parenthesis) { output.writeCloseBrace(); }
+      
+    }
+  }
+  
+  protected void buildExpGetDefault(int deep, String opname, String slotName, String moduleName) throws IOException {
+    output.write("tom_get_default_");
+    output.write(opname);
+    output.writeUnderscore();
+    output.write(slotName);
+  }
 
   protected void buildExpIsSort(int deep, String type, BQTerm exp, String moduleName) throws IOException {
     if(getSymbolTable(moduleName).isBuiltinType(type)) {
