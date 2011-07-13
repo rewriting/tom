@@ -23,11 +23,15 @@ public abstract class ParserAction {
   public static final ParserAction  SKIP_DELIMITED_SEQUENCE = SkipDelimitedSequence.getInstance();
   public static final ParserAction  PACK_HOST_CONTENT       = PackHostContent.getInstance();
   
+  // actions using miniTomParser
   public static final ParserAction  PARSE_MATCH_CONSTRUCT           = ParseMatchConstruct.getInstance();
   public static final ParserAction  PARSE_OPERATOR_CONSTRUCT        = ParseOperatorConstruct.getInstance();
   public static final ParserAction  PARSE_OPERATOR_LIST_CONSTRUCT   = ParseOperatorListConstruct.getInstance();
   public static final ParserAction  PARSE_OPERATOR_ARRAY_CONSTRUCT  = ParseOperatorArrayConstruct.getInstance();
   public static final ParserAction  PARSE_TYPETERM_CONSTRUCT        = ParseTypetermConstruct.getInstance();
+  public static final ParserAction  PARSE_INCLUDE_CONSTRUCT         = ParseIncludeConstruct.getInstance();
+  
+  // independant action 
   public static final ParserAction  PARSE_METAQUOTE_CONSTRUCT       = ParseMetaQuoteConstruct.getInstance();
   
   /**
@@ -169,6 +173,29 @@ public abstract class ParserAction {
       parseSpecificConstruct(miniTomParser parser) throws RecognitionException {
       
       matchConstruct_return retval = parser.matchConstruct();
+      return new GenericConstruct_return(retval.tree, retval.marker);
+    }
+    
+  }
+  
+  private static class ParseIncludeConstruct extends GenericParseConstruct{
+    
+    private static final ParseIncludeConstruct instance = new ParseIncludeConstruct();
+    
+    public static ParserAction getInstance(){return instance;}
+    
+    private ParseIncludeConstruct() {;}
+    
+    @Override
+    public String getConstructName(){
+      return "IncludeConstruct";
+    }
+    
+    @Override
+    public GenericConstruct_return
+      parseSpecificConstruct(miniTomParser parser) throws RecognitionException {
+      
+      csIncludeConstruct_return retval = parser.csIncludeConstruct();
       return new GenericConstruct_return(retval.tree, retval.marker);
     }
     
@@ -324,7 +351,7 @@ public abstract class ParserAction {
       
       PACK_HOST_CONTENT.doAction(input, hostCharsBuffer, tree, analyst);
       
-      // consume last chat of the keyword
+      // consume last char of the keyword
       input.consume();
       
       // consume (and save) all metaquote content
@@ -340,14 +367,13 @@ public abstract class ParserAction {
       
       // build nodes to add to tree
       String metaquoteContent = metaquoteContentBuilder.
-                    substring(0, metaquoteContentBuilder.length()-1-(analyst.getOffsetAtMatch()+1));
+                    substring(0, metaquoteContentBuilder.length()-1-(analyst.getOffsetAtMatch()+1)); //XXX work only because this delimited sequence is symetric
       
       CommonTreeAdaptor adaptor = new CommonTreeAdaptor();
       
       Tree child = (Tree) adaptor.becomeRoot((Tree)adaptor.create(miniTomParser.CsMetaQuoteConstruct, "CsMetaQuoteConsruct"),(Tree) adaptor.nil());
       Tree strTree = (Tree) adaptor.becomeRoot((Tree)adaptor.create(miniTomParser.HOSTBLOCK, metaquoteContent), (Tree) adaptor.nil());
             
-      System.out.println("BONJOUR ! :"+metaquoteContent);
       child.addChild(strTree);
       tree.addChild(child);
     }

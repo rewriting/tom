@@ -43,6 +43,17 @@ import org.antlr.runtime.tree.Tree;
   
 }
 
+// IncludeConstruct
+csIncludeConstruct
+returns [int marker] :
+
+  /* '%include' */ LBR filename=IDENTIFIER RBR
+
+  // extract and return CharStream's marker
+  {$marker = ((CustomToken)$RBR).getPayload(Integer.class);}
+
+  -> ^(CsIncludeConstruct $filename)
+;
 
 // MatchConstruct ===========================================================
 /*
