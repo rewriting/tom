@@ -83,9 +83,7 @@ returns [int marker]:
        ^( CsMatchArgumentList )
        ^( CsConstraintActionList csConstraintAction* )
       )
-  
 ;
-
 
 csConstraintAction :
  csConstraint ARROW LBR RBR
@@ -107,9 +105,7 @@ csMatchArgument :
   ->{type!=null}? ^(CsTypedTerm csTerm ^(CsTermType $type))
   ->              ^(CsTypedTerm csTerm ^(CsTermType ^(CsTermTypeUnknown)))
 ;
-
-// Constraints ===============================================
-
+ // Constraints ===============================================
 /**
 - pattern list with or without additionnal constraints :
   pattern (',' pattern )* (('&&'|'||') csontraint)?
@@ -123,7 +119,7 @@ csExtendedConstraint :
  ->{a!=null}? ^(CsAndConstraint csMatchArgumentConstraintList csConstraint)
  ->{o!=null}? ^(CsOrConstraint  csMatchArgumentConstraintList csConstraint)
  ->           csMatchArgumentConstraintList
-;
+; 
 
 csMatchArgumentConstraintList :
   csMatchArgumentConstraint (COMMA c2=csMatchArgumentConstraint)* (COMMA)?
@@ -148,7 +144,6 @@ proirity in operators is :
  '&&'
  '||'
 */
-
 csConstraint : 
  csConstraint_priority1
 ;
@@ -191,7 +186,6 @@ csConstraint_priority4 :
  | LPAR csConstraint RPAR
  -> csConstraint
 ;
-
 // Terms ======================================================
 csTerm :
   IDENTIFIER (s=STAR)?
@@ -201,7 +195,6 @@ csTerm :
  |IDENTIFIER LPAR (csTerm (COMMA csTerm)*)? RPAR
   -> ^(CsTerm IDENTIFIER ^(CsTermList csTerm*))
 ;
-
 // Patterns ===================================================
 csPattern :
   // myA@a(...
@@ -286,20 +279,20 @@ csPairPattern :
 csConstantValue :
   INTEGER|DOUBLE|STRING|CHAR
 ;
-
-
-// OperatorConstruct ========================================================
+// OperatorConstruct & TypeTermConstruct ====================================
 csOperatorConstruct 
 returns [int marker] :
 
   //%op already consumed when this rule is called
   tomTypeName=csName ctorName=csName LPAR csSlotList RPAR
-  LBR csKeywordList_OperatorConstruct RBR
+  LBR 
+    ks+=csKeywordIsFsym (ks+=csKeywordMake | ks+= csKeywordGetSlot)*
+  RBR
 
   {$marker = ((CustomToken)$RBR).getPayload(Integer.class);}
 
   -> ^(CsOpConstruct
-        $tomTypeName $ctorName csSlotList csKeywordList_OperatorConstruct
+        $tomTypeName $ctorName csSlotList ^(CsOperatorList $ks*)
       ) 
 ;
 
@@ -308,28 +301,64 @@ returns [int marker] :
 
   //%oparray already consumed when this rule is called
   tomTypeName=csName ctorName=csName LPAR typeName=csName STAR RPAR
-  LBR csKeywordList_OperatorArrayConstruct RBR
+  LBR  
+     ks+=csKeywordIsFsym
+   ( ks+=csKeywordMakeEmpty_Array
+    |ks+=csKeywordMakeAppend
+    |ks+=csKeywordGetElement
+    |ks+=csKeywordGetSize
+   )*
+  RBR
 
   {$marker = ((CustomToken)$RBR).getPayload(Integer.class);}
 
   -> ^(CsOpArrayConstruct
-        $tomTypeName $ctorName $typeName csKeywordList_OperatorArrayConstruct  
+        $tomTypeName $ctorName $typeName ^(CsOperatorList $ks*)
       )
-;
+; 
 
 csOperatorListConstruct
 returns [int marker] :
 
   //%oplist already consumed when this rule is called
   tomTypeName=csName ctorName=csName LPAR typeName=csName STAR RPAR
-  LBR csKeywordList_OperatorListConstruct RBR
+  LBR
+     ks+=csKeywordIsFsym
+   ( ks+=csKeywordMakeEmpty_List
+    |ks+=csKeywordMakeInsert
+    |ks+=csKeywordGetHead
+    |ks+=csKeywordGetTail
+    |ks+=csKeywordIsEmpty
+   )*
+  RBR
 
   {$marker = ((CustomToken)$RBR).getPayload(Integer.class);}
 
   -> ^(CsOpListConstruct
-        $tomTypeName $ctorName $typeName csKeywordList_OperatorListConstruct
+        $tomTypeName $ctorName $typeName ^(CsOperatorList $ks*)
       )
+; 
+
+
+csTypetermConstruct
+returns [int marker] :
+
+  //%typeterm already consumed when this rule is called
+  typeName=csName (EXTENDS extend=csName)?
+  LBR
+    ks+=csKeywordImplement (ks+=csKeywordIsSort)? (ks+=csKeywordEquals)?
+  RBR
+
+ {$marker = ((CustomToken)$RBR).getPayload(Integer.class);}
+
+  -> {extend==null}?
+   ^(CsTypetermConstruct $typeName ^(CsEmptyName) ^(CsOperatorList $ks* ))
+
+  -> /*{$extend==null}*/
+   ^(CsTypetermConstruct $typeName $extend ^(CsOperatorList $ks*))
 ;
+
+
 
 csSlotList :
   (csSlot (COMMA csSlot)*)?
@@ -343,35 +372,8 @@ csSlot :
   -> ^(CsSlot $slotName $slotType)
 ;
 
-csKeywordList_OperatorConstruct :
-  ks+=csKeywordIsFsym (ks+=csKeywordMake | ks+= csKeywordGetSlot)*
 
-  -> ^(CsOperatorList $ks*)
-;
-
-csKeywordList_OperatorArrayConstruct :
-   ks+=csKeywordIsFsym
- ( ks+=csKeywordMakeEmpty_Array
-  |ks+=csKeywordMakeAppend
-  |ks+=csKeywordGetElement
-  |ks+=csKeywordGetSize
- )*
-
-  -> ^(CsOperatorList $ks*)
-;
-
-csKeywordList_OperatorListConstruct :
-   ks+=csKeywordIsFsym
- ( ks+=csKeywordMakeEmpty_List
-  |ks+=csKeywordMakeInsert
-  |ks+=csKeywordGetHead
-  |ks+=csKeywordGetTail
-  |ks+=csKeywordIsEmpty
- )*
-
-  -> ^(CsOperatorList $ks*)
-;
-
+// csKeyword* ====
 csKeywordIsFsym :
   KEYWORD_IS_FSYM LPAR argName=csName RPAR
   LBR /* Host Code doing the test */ RBR
@@ -391,7 +393,7 @@ csKeywordGetSlot :
 ;
 
 csKeywordMake :
-  KEYWORD_MAKE LPAR argList=csNameList RPAR 
+  KEYWORD_MAKE LPAR argList=csNameList RPAR
   LBR /* Host Code making new object */ RBR
 
   -> ^(CsMake $argList
@@ -483,6 +485,28 @@ csKeywordMakeAppend :
       )
 ;
 
+csKeywordImplement :
+  KEYWORD_IMPLEMENT LBR /* Host Code implementation name*/ RBR
+
+  -> ^(CsImplement {((CustomToken)$LBR).getPayload(Tree.class)})
+;
+
+csKeywordIsSort :
+  KEYWORD_IS_SORT LPAR argName=csName RPAR
+    LBR /* Host Code boolean expression */ RBR
+
+  -> ^(CsIsSort $argName {((CustomToken)$LBR).getPayload(Tree.class)})
+;
+
+csKeywordEquals :
+  KEYWORD_EQUALS LPAR arg1=csName COMMA arg2=csName RPAR
+    LBR /* Host Code boolean expression */ RBR
+
+  -> ^(CsEquals $arg1 $arg2 
+        {((CustomToken)$LBR).getPayload(Tree.class)}
+      )
+;
+
 csNameList :
   (csName (COMMA csName)*)?
   -> ^(CsNameList csName*)
@@ -495,6 +519,7 @@ csName :
 
 // Lexer Rules =============================================================
 
+// funky ones
 KEYWORD_IS_FSYM     : 'is_fsym'     { opensBlockLBR = true; };
 KEYWORD_GET_SLOT    : 'get_slot'    { opensBlockLBR = true; };
 KEYWORD_MAKE        : 'make'        { opensBlockLBR = true; };
@@ -506,6 +531,9 @@ KEYWORD_MAKE_INSERT : 'make_insert' { opensBlockLBR = true; };
 KEYWORD_GET_ELEMENT : 'get_element' { opensBlockLBR = true; };
 KEYWORD_GET_SIZE    : 'get_size'    { opensBlockLBR = true; };
 KEYWORD_MAKE_APPEND : 'make_append' { opensBlockLBR = true; };
+KEYWORD_IMPLEMENT   : 'implement'   { opensBlockLBR = true; };
+KEYWORD_IS_SORT	    : 'is_sort'     { opensBlockLBR = true; };
+KEYWORD_EQUALS	    : 'equals'      { opensBlockLBR = true; };
 
 ARROW	: '->' { opensBlockLBR = true;} ;
 
@@ -547,6 +575,9 @@ RBR : '}'
 tokenCustomizer.prepareNextToken(input.mark());
 }
 ;
+
+// basic ones
+EXTENDS : 'extends';
 
 LARROW : '<<';
 GREATEROREQU : '>=';

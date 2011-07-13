@@ -65,6 +65,11 @@ public class HostParser {
 		actionsMapping.put(
 		  new KeywordDetector("%oplist "),
 		  ParserAction.PARSE_OPERATOR_LIST_CONSTRUCT);
+      // %typeterm
+    actionsMapping.put(
+      new KeywordDetector("%typeterm "),
+      ParserAction.PARSE_TYPETERM_CONSTRUCT);
+
 	}
 	
 	public HostParser() {

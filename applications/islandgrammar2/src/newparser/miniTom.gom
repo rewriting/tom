@@ -10,10 +10,10 @@ gt_BlockList = CsBlockList(gt_Block*)
 gt_Block =
  HOSTBLOCK(hContent:String)
 | CsMatchConstruct(arguments:gt_MatchArgumentList, constraintActionList:gt_ConstraintActionList)
-| CsOpConstruct     (tomTypeName:gt_Name, ctorName:gt_Name, argumentList :gt_SlotList, operatorList :gt_OperatorList)
-| CsOpArrayConstruct(tomTypeName:gt_Name, ctorName:gt_Name, typeName:gt_Name, operatorList :gt_OperatorList)
-| CsOpListConstruct (tomTypeName:gt_Name, ctorName:gt_Name, typeName:gt_Name, operatorList :gt_OperatorList)
-
+| CsOpConstruct       (tomTypeName:gt_Name, ctorName:gt_Name, argumentList :gt_SlotList, operatorList :gt_OperatorList)
+| CsOpArrayConstruct  (tomTypeName:gt_Name, ctorName:gt_Name, typeName:gt_Name, operatorList:gt_OperatorList)
+| CsOpListConstruct   (tomTypeName:gt_Name, ctorName:gt_Name, typeName:gt_Name, operatorList:gt_OperatorList)
+| CsTypetermConstruct (tomTypeName:gt_Name, extendsTypeName: gt_Name, operatorList:gt_OperatorList)
 
 // MatchConstruct ============================================================
 gt_MatchArgumentList = CsMatchArgumentList(gt_TypedTerm*)
@@ -92,6 +92,9 @@ gt_Operator =
  | CsMakeAppend(argName1:gt_Name, argName2:gt_Name, block:gt_BlockList)
  | CsMake   (nameList:gt_NameList, block:gt_BlockList)
  | CsMakeEmptyList(block:gt_BlockList)
+ | CsImplement(block:gt_BlockList)
+ | CsIsSort (argName:gt_Name, block:gt_BlockList)
+ | CsEquals (argName1:gt_Name, argName2:gt_Name, block:gt_BlockList)
 
 gt_SlotList = CsSlotList(gt_Slot*)
 
@@ -99,4 +102,6 @@ gt_Slot = CsSlot(slotName:gt_Name, slotTypeName:gt_Name)
 
 // Names
 gt_Name = CsName(name:String)
+        | CsEmptyName()
+
 gt_NameList = CsNameList(gt_Name*)

@@ -1,9 +1,6 @@
 package newparser;
 
-import newparser.miniTomParser.csOperatorArrayConstruct_return;
-import newparser.miniTomParser.csOperatorConstruct_return;
-import newparser.miniTomParser.csOperatorListConstruct_return;
-import newparser.miniTomParser.matchConstruct_return;
+import newparser.miniTomParser.*;
 
 import org.antlr.runtime.CharStream;
 import org.antlr.runtime.CommonTokenStream;
@@ -30,7 +27,8 @@ public abstract class ParserAction {
   public static final ParserAction  PARSE_OPERATOR_CONSTRUCT        = ParseOperatorConstruct.getInstance();
   public static final ParserAction  PARSE_OPERATOR_LIST_CONSTRUCT   = ParseOperatorListConstruct.getInstance();
   public static final ParserAction  PARSE_OPERATOR_ARRAY_CONSTRUCT  = ParseOperatorArrayConstruct.getInstance();
-  
+  public static final ParserAction  PARSE_TYPETERM_CONSTRUCT        = ParseTypetermConstruct.getInstance();
+
   /**
    * Implementations of ParserAction.doAction should check
    * runtime type of analyst.
@@ -234,7 +232,7 @@ public abstract class ParserAction {
     private ParseOperatorListConstruct() {;}
     
     @Override
-    public String getConstructName(){
+    public String getConstructName() {
       return "OperatorListConstruct";
     }
     
@@ -247,7 +245,31 @@ public abstract class ParserAction {
     }
     
   }
-  
+
+  private static class ParseTypetermConstruct extends GenericParseConstruct {
+
+    private static final ParseTypetermConstruct instance = new ParseTypetermConstruct();
+    
+    public  static ParserAction getInstance() {
+      return instance;
+    }
+
+    private ParseTypetermConstruct() {;}
+
+    @Override
+    public String getConstructName() {
+      return "TypetermConstruct";
+    }
+
+    @Override
+    public GenericConstruct_return
+      parseSpecificConstruct(miniTomParser parser) throws RecognitionException {
+
+        csTypetermConstruct_return retval = parser.csTypetermConstruct();
+        return new GenericConstruct_return(retval.tree, retval.marker);
+      }
+  }
+
   private static class PackHostContent extends ParserAction {
     
     private static final PackHostContent instance = new PackHostContent();
