@@ -38,6 +38,7 @@ public class ExampleJavaType {
         | g(n1:B,n2:B)
 
       A = h(m1:A,m2:B)
+        | a()
   }
 
   /**
@@ -47,6 +48,7 @@ public class ExampleJavaType {
     int x = 10;
     B y = `b();
     B w = `f(b());
+    A s = `h(a(),b());
     %match{
       b() << x -> { System.out.println("Line 1: " + x); }
       b() << x -> { System.out.println("Line 2: " + `x); }
@@ -63,6 +65,12 @@ public class ExampleJavaType {
       //}
       f(z1) << f(b()) || g(z1,z2) << g(f(b()),b()) -> {
         System.out.println("Line 12: " + `z1);
+      }
+      f(z) << B s -> { System.out.println("Line 13: " + s); }
+      z << B s -> { System.out.println("Line 14: " + s); }
+      z << B s -> { System.out.println("Line 15: " + `z); }
+      z1 << b() && (f(z1) << f(b()) || g(z1,z2) << g(f(b()),b())) -> {
+        System.out.println("Line 16: " + `z1);
       }
     }
   }
