@@ -14,6 +14,7 @@ gt_Block =
 | CsOpArrayConstruct  (tomTypeName:gt_Name, ctorName:gt_Name, typeName:gt_Name, operatorList:gt_OperatorList)
 | CsOpListConstruct   (tomTypeName:gt_Name, ctorName:gt_Name, typeName:gt_Name, operatorList:gt_OperatorList)
 | CsTypetermConstruct (tomTypeName:gt_Name, extendsTypeName: gt_Name, operatorList:gt_OperatorList)
+| CsMetaQuoteConstruct(content:String)
 
 // MatchConstruct ============================================================
 gt_MatchArgumentList = CsMatchArgumentList(gt_TypedTerm*)

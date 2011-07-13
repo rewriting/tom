@@ -28,7 +28,8 @@ public abstract class ParserAction {
   public static final ParserAction  PARSE_OPERATOR_LIST_CONSTRUCT   = ParseOperatorListConstruct.getInstance();
   public static final ParserAction  PARSE_OPERATOR_ARRAY_CONSTRUCT  = ParseOperatorArrayConstruct.getInstance();
   public static final ParserAction  PARSE_TYPETERM_CONSTRUCT        = ParseTypetermConstruct.getInstance();
-
+  public static final ParserAction  PARSE_METAQUOTE_CONSTRUCT       = ParseMetaQuoteConstruct.getInstance();
+  
   /**
    * Implementations of ParserAction.doAction should check
    * runtime type of analyst.
@@ -304,6 +305,55 @@ public abstract class ParserAction {
 	}
   }
 
+  private static class ParseMetaQuoteConstruct extends ParserAction {
+
+    private static ParseMetaQuoteConstruct instance = new ParseMetaQuoteConstruct();
+   
+    public static ParserAction getInstance() {
+      return instance;
+    }
+    
+    private ParseMetaQuoteConstruct() {;}
+    
+    @Override
+    public void doAction(CharStream input, StringBuffer hostCharsBuffer,
+        Tree tree, StreamAnalyst analyst) {
+      
+      // remove beginning of the keyword from hostCharBuffer
+      hostCharsBuffer.setLength(hostCharsBuffer.length()-analyst.getOffsetAtMatch());
+      
+      PACK_HOST_CONTENT.doAction(input, hostCharsBuffer, tree, analyst);
+      
+      // consume last chat of the keyword
+      input.consume();
+      
+      // consume (and save) all metaquote content
+      StringBuilder metaquoteContentBuilder = new StringBuilder();
+      while(analyst.readChar(input)){
+        if(input.LA(1)==CharStream.EOF) {
+          System.err.println("Unexpected EndOfFile"); //TODO handle nicely
+          return;
+        }
+        metaquoteContentBuilder.append((char)input.LA(1));
+        input.consume();
+      }
+      
+      // build nodes to add to tree
+      String metaquoteContent = metaquoteContentBuilder.
+                    substring(0, metaquoteContentBuilder.length()-1-(analyst.getOffsetAtMatch()+1));
+      
+      CommonTreeAdaptor adaptor = new CommonTreeAdaptor();
+      
+      Tree child = (Tree) adaptor.becomeRoot((Tree)adaptor.create(miniTomParser.CsMetaQuoteConstruct, "CsMetaQuoteConsruct"),(Tree) adaptor.nil());
+      Tree strTree = (Tree) adaptor.becomeRoot((Tree)adaptor.create(miniTomParser.HOSTBLOCK, metaquoteContent), (Tree) adaptor.nil());
+            
+      System.out.println("BONJOUR ! :"+metaquoteContent);
+      child.addChild(strTree);
+      tree.addChild(child);
+    }
+    
+  }
+  
   private static class GenericConstruct_return{
     
     private Tree tree;

@@ -69,7 +69,10 @@ public class HostParser {
     actionsMapping.put(
       new KeywordDetector("%typeterm "),
       ParserAction.PARSE_TYPETERM_CONSTRUCT);
-
+      // %[ ]%
+    actionsMapping.put(
+      new DelimitedSequenceDetector("%[", "]%"),
+      ParserAction.PARSE_METAQUOTE_CONSTRUCT);
 	}
 	
 	public HostParser() {
