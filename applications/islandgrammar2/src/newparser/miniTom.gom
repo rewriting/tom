@@ -11,8 +11,8 @@ gt_Block =
  HOSTBLOCK(hContent:String)
 | CsMatchConstruct(arguments:gt_MatchArgumentList, constraintActionList:gt_ConstraintActionList)
 | CsOpConstruct     (tomTypeName:gt_Name, ctorName:gt_Name, argumentList :gt_SlotList, operatorList :gt_OperatorList)
-| CsOpArrayConstruct(tomTypeName:gt_Name, ctorName:gt_Name, argumentList :gt_SlotList, operatorList :gt_OperatorList)
-| CsOpListConstruct (tomTypeName:gt_Name, ctorName:gt_Name, argumentList :gt_SlotList, operatorList :gt_OperatorList)
+| CsOpArrayConstruct(tomTypeName:gt_Name, ctorName:gt_Name, typeName:gt_Name, operatorList :gt_OperatorList)
+| CsOpListConstruct (tomTypeName:gt_Name, ctorName:gt_Name, typeName:gt_Name, operatorList :gt_OperatorList)
 
 
 // MatchConstruct ============================================================
@@ -84,13 +84,13 @@ gt_Operator =
  | CsGetHead        (argName:gt_Name, block:gt_BlockList)
  | CsIsEmpty        (argName:gt_Name, block:gt_BlockList)
  | CsMakeEmptyArray (argName:gt_Name, block:gt_BlockList)
- | CsMakeAppend     (argName:gt_Name, block:gt_BlockList)
  | CsGetSize        (argName:gt_Name, block:gt_BlockList)
+ | CsGetTail        (argName:gt_Name, block:gt_BlockList)
  | CsGetSlot   (argName1:gt_Name, argName2:gt_Name, block:gt_BlockList)
  | CsMakeInsert(argName1:gt_Name, argName2:gt_Name, block:gt_BlockList)
  | CsGetElement(argName1:gt_Name, argName2:gt_Name, block:gt_BlockList)
+ | CsMakeAppend(argName1:gt_Name, argName2:gt_Name, block:gt_BlockList)
  | CsMake   (nameList:gt_NameList, block:gt_BlockList)
- | CsGetTail(nameList:gt_NameList, block:gt_BlockList)
  | CsMakeEmptyList(block:gt_BlockList)
 
 gt_SlotList = CsSlotList(gt_Slot*)

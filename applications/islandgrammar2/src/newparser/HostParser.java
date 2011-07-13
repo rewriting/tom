@@ -55,15 +55,15 @@ public class HostParser {
 		  ParserAction.PARSE_MATCH_CONSTRUCT);
 		  // %op
 		actionsMapping.put(
-		  new KeywordDetector("%op"),
+		  new KeywordDetector("%op "),
 		  ParserAction.PARSE_OPERATOR_CONSTRUCT);
 		  // %oparray
 		actionsMapping.put(
-		  new KeywordDetector("%oparray"),
+		  new KeywordDetector("%oparray "),
 		  ParserAction.PARSE_OPERATOR_ARRAY_CONSTRUCT);
 		  // %oplist
 		actionsMapping.put(
-		  new KeywordDetector("%oplist"),
+		  new KeywordDetector("%oplist "),
 		  ParserAction.PARSE_OPERATOR_LIST_CONSTRUCT);
 	}
 	

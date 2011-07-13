@@ -307,13 +307,13 @@ csOperatorArrayConstruct
 returns [int marker] :
 
   //%oparray already consumed when this rule is called
-  tomTypeName=IDENTIFIER ctorName=IDENTIFIER LPAR csSlotList RPAR
+  tomTypeName=csName ctorName=csName LPAR typeName=csName STAR RPAR
   LBR csKeywordList_OperatorArrayConstruct RBR
 
   {$marker = ((CustomToken)$RBR).getPayload(Integer.class);}
 
   -> ^(CsOpArrayConstruct
-        $tomTypeName $ctorName csSlotList csKeywordList_OperatorArrayConstruct  
+        $tomTypeName $ctorName $typeName csKeywordList_OperatorArrayConstruct  
       )
 ;
 
@@ -321,13 +321,13 @@ csOperatorListConstruct
 returns [int marker] :
 
   //%oplist already consumed when this rule is called
-  tomTypeName=IDENTIFIER ctorName=IDENTIFIER LPAR csSlotList RPAR
+  tomTypeName=csName ctorName=csName LPAR typeName=csName STAR RPAR
   LBR csKeywordList_OperatorListConstruct RBR
 
   {$marker = ((CustomToken)$RBR).getPayload(Integer.class);}
 
   -> ^(CsOpListConstruct
-        $tomTypeName $ctorName csSlotList csKeywordList_OperatorListConstruct
+        $tomTypeName $ctorName $typeName csKeywordList_OperatorListConstruct
       )
 ;
 
@@ -364,7 +364,7 @@ csKeywordList_OperatorListConstruct :
    ks+=csKeywordIsFsym
  ( ks+=csKeywordMakeEmpty_List
   |ks+=csKeywordMakeInsert
-  |ks+=csKeywprdGetHead
+  |ks+=csKeywordGetHead
   |ks+=csKeywordGetTail
   |ks+=csKeywordIsEmpty
  )*
@@ -399,7 +399,7 @@ csKeywordMake :
       )
 ;
 
-csKeywprdGetHead :
+csKeywordGetHead :
   KEYWORD_GET_HEAD LPAR argName=csName RPAR 
   LBR /* Host Code accessing list head */ RBR
 
