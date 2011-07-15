@@ -231,11 +231,11 @@ public class AdaGenerator extends GenericGenerator {
   
   protected void buildEqualTermDecl(int deep, String varname1, String varname2,
                                      String type1, String type2, Expression code, String moduleName) throws IOException {
-	TomType argType1 = null;
+	TomType argType1 = getSymbolTable(moduleName).getType(type1);
 	if(getSymbolTable(moduleName).isBuiltinType(type1)) {
 	  argType1 = getSymbolTable(moduleName).getBuiltinType(type1);
 	}
-	TomType argType2 = null;
+	TomType argType2 = getSymbolTable(moduleName).getType(type2);
 	if(getSymbolTable(moduleName).isBuiltinType(type2)) {
 	  argType2 = getSymbolTable(moduleName).getBuiltinType(type2);
 	}
@@ -252,8 +252,8 @@ public class AdaGenerator extends GenericGenerator {
 	if(!inline || !code.isCode() || !inlined) {
 	  genDeclInstr(TomBase.getTLType(getSymbolTable(moduleName).getBooleanType()), "tom_equal_term", type1,
 		  new String[] {
-		  (argType1 != null) ? TomBase.getTLType(argType1) : type1, varname1,
-		  (argType2 != null) ? TomBase.getTLType(argType2) : type2, varname2
+		  TomBase.getTLType(argType1), varname1,
+		  TomBase.getTLType(argType2), varname2
 		  },
 		  `Return(ExpressionToBQTerm(code)),deep,moduleName);
 	}
