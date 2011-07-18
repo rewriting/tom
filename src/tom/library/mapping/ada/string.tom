@@ -33,7 +33,7 @@
 %typeterm String {
   implement           { access String }
   is_sort(t) { True }
-  equals(t1,t2)       { t1'Length = t2'Length and t1.all = t2.all }
+  equals(t1,t2)       { t1.all = t2.all }
 }
 
 %oplist String concString(char*) {
