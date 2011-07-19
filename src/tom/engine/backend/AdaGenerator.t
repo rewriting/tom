@@ -82,7 +82,10 @@ public class AdaGenerator extends GenericGenerator {
     if(instantiateTemplate(deep,template,opname,`concBQTerm(exp),moduleName) == false) {
 		Expression code = getIsSortExpressionFromType(type);
 
-
+		if (code == null) {
+			buildExpIsSortOriginal(deep, type, exp, moduleName);
+			return;
+		}
 		if(code.isCode()) {
 		  // perform the instantiation
 		  String ocode = code.getCode();
@@ -101,6 +104,43 @@ public class AdaGenerator extends GenericGenerator {
     }
   }
   
+  protected void buildExpIsSortOriginal(int deep, String type, BQTerm exp, String moduleName) throws IOException {
+    if(getSymbolTable(moduleName).isBuiltinType(type)) {
+      generateExpression(deep,`TrueTL(),moduleName);
+      return;
+    }
+
+    String template = getSymbolTable(moduleName).getIsSort(type);
+    String opname="";
+    if(instantiateTemplate(deep,template,opname,`concBQTerm(exp),moduleName) == false) {
+      output.write("tom_is_sort_" + type + "(");
+      generateBQTerm(deep,exp,moduleName);
+      output.write(")");
+    }
+  }
+  
+  protected void buildIsSortDeclOriginal(int deep, String varName, String type, Expression code, String moduleName) throws IOException {
+    boolean inlined = inlineplus;
+    if(code.isCode()) {
+      // perform the instantiation
+      String ocode = code.getCode();
+      String ncode = ocode.replace("{0}",varName);
+      if(!ncode.equals(ocode)) {
+        inlined = true;
+        code = code.setCode(ncode);
+      }
+    }
+    if(!inline || !code.isCode() || !inlined) {
+      TomType argType = getSymbolTable(moduleName).getType(type);
+      if(getSymbolTable(moduleName).isBuiltinType(type)) {
+        argType = getSymbolTable(moduleName).getBuiltinType(type);
+      }
+      genDeclInstr(TomBase.getTLType(getSymbolTable(moduleName).getBooleanType()), "tom_is_sort", type,
+          new String[] { TomBase.getTLType(argType), varName },
+          `Return(ExpressionToBQTerm(code)),deep,moduleName);
+    }
+  }
+  
   protected void buildIsSortDecl(int deep, String varName, String type, Expression code, String moduleName) throws IOException {
 	/*
 	 * Unlike other languages we cannot create easily tom_is_sort functions.
@@ -111,6 +151,7 @@ public class AdaGenerator extends GenericGenerator {
 	 */  
     isSortType.add(type);
     isSortCode.add(code);
+    buildIsSortDeclOriginal(deep, varName, type, code, moduleName);
   }
   
   private Expression getIsSortExpressionFromType(String type) {
@@ -429,7 +470,7 @@ public class AdaGenerator extends GenericGenerator {
     output.write(s);
     output.write("begin\n");
     generateInstruction(deep,instr,moduleName);
-    output.write(" \nend " + declName + "_" + suffix + ";\n");	
+    output.write("end " + declName + "_" + suffix + ";\n");	
     
 	output.write("function tom_equal_term_String(t1: String; t2: access String)");
 	output.write("return Boolean is\n"); 
