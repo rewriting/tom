@@ -1,5 +1,6 @@
 package tom.engine.astprinter;
 
+import tom.platform.OptionManager;
 import tom.engine.tools.TomGenericPlugin;
 import tom.library.utils.Viewer;
 
@@ -13,7 +14,9 @@ public class AstPrinterPlugin extends TomGenericPlugin {
 
   @Override
   public void run(Map informationTracker) {
+  if(((Boolean)getOptionManager().getOptionValue("printast")).booleanValue()){
     Viewer.toTree(term); 
+  }
   }
 
 }

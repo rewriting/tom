@@ -469,9 +469,7 @@
   <target name="src" description="compile the TOM development sources" depends="prepare.src">
     <antcall target="buildtom"/>
     <antcall target="buildparser"/>
-    
-    <!--XXX-->
-    <antcall target="buildparserv3" />
+    <antcall target="buildnewparser" />
     
     <!--<property name="unixpath" refid="src.classpath" />
     <echo>classpath = ${unixpath}</echo>-->
@@ -1837,10 +1835,10 @@
   </target>
   -->
 
-  <target name="buildparserv3" depends="-withstable, -withsrc">
+  <target name="buildnewparser" depends="-withstable, -withsrc">
 
     <property name="tom.home" value="${stable.dist}"/>
-    <property name="parserv3.package" value="tom/engine/parserv3"/>
+    <property name="newparser.package" value="tom/engine/newparser"/>
 
   <taskdef name="antlr3"
            classname="org.apache.tools.ant.antlr.ANTLR3">
@@ -1848,23 +1846,23 @@
 
     <gomcompile srcdir="${src.src}"
       destdir="${src.gen}"
-      package="tom.engine.parserv3.parser">
-      <include name="tom/engine/parserv3/parser/miniTom.gom"/>
+      package="tom.engine.newparser.parser">
+      <include name="tom/engine/newparser/parser/miniTom.gom"/>
     </gomcompile>
 
     <gomantlradaptercompile srcdir="${src.src}"
       destdir="${src.gen}"
-      package="tom.engine.parserv3.parser">
-      <include name="tom/engine/parserv3/parser/miniTom.gom"/>
+      package="tom.engine.newparser.parser">
+      <include name="tom/engine/newparser/parser/miniTom.gom"/>
     </gomantlradaptercompile>
 
-    <antlr3 target="${src.src}/${parserv3.package}/parser/miniTom.g"
-      outputdirectory="${src.gen}/${parserv3.package}/parser"
-      libdirectory="${src.gen}/${parserv3.package}/parser/minitom" />
+    <antlr3 target="${src.src}/${newparser.package}/parser/miniTom.g"
+      outputdirectory="${src.gen}/${newparser.package}/parser"
+      libdirectory="${src.gen}/${newparser.package}/parser/minitom" />
 
 
   </target>
-
+  <!--
   <target name="src.dist.newparser" depends="src.dist">
     <property name="printv2ast.configfilename" value="Tom-printv2ast.xml"/>
     <property name="printv3ast.configfilename" value="Tom-printv3ast.xml"/>
@@ -1895,5 +1893,6 @@
       <include name="tom-printv2ast"/>
     </chmod>
   </target>
+  -->
 
 </project>
