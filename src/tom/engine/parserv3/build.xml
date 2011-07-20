@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="parserv3" default="compile" basedir=".">
+
+  <property environment="env"/>
+
+  <property name="jtom"           location="../../../.."/>
+
+  <property name="tom.home"       location="${jtom}/src/dist"/>
+  <property name="tom.src"        location="${jtom}/src"/>
+  <property name="tom.gen"        location="${jtom}/src/gen"/>
+  <property name="tom.build"      location="${jtom}/src/build"/>
+
+  <property name="parserv3.package" value="tom/engine/parserv3"/>
+
+  <property name="parserv3.src"   location="${tom.src}/${parserv3.package}"/>
+  <property name="parserv3.gen"   location="${tom.gen}/${parserv3.package}"/>
+  <property name="parserv3.build" location="${tom.build}/${parserv3.package}"/> 
+
+  <import file="${tom.home}/lib/tom-common.xml"/>
+
+  <!-- should go in tom-common.xml one of these days -->
+  <taskdef name="antlr3"
+           classname="org.apache.tools.ant.antlr.ANTLR3">
+  </taskdef>
+
+  <target name="makedirs" depends="tom.init">
+    <mkdir dir="${parserv3.gen}"/>
+    <mkdir dir="${parserv3.gen}/parser"/>
+  </target>
+
+  <target name="gom" depends="makedirs">
+    <gom.preset srcdir="${tom.src}"
+               destdir="${tom.gen}">
+      <include name="${parserv3.package}/parser/miniTom.gom"/>
+    </gom.preset>
+  </target>
+
+  <target name="gomantlradapter" depends="gom">
+    <gomantlradapter.preset srcdir="${tom.src}"
+                           destdir="${tom.gen}"
+                           package="${parserv3.package}/parser">
+      <include name="${parserv3.package}/parser/miniTom.gom"/>
+    </gomantlradapter.preset>
+  </target>
+
+  <target name="antlr" depends="gomantlradapter">
+    <antlr3 target="${tom.src}/${parserv3.package}/parser/miniTom.g"
+            outputdirectory="${tom.gen}/${parserv3.package}/parser"
+            libdirectory="${tom.gen}/${parserv3.package}/parser/minitom"
+            />
+  </target>
+
+  <target name="compile" depends="antlr">
+    <mkdir dir="${parserv3.build}"/>
+    <javac.preset destdir="${parserv3.build}" >
+      <src path="${parserv3.gen}"/>
+      <src path="${parserv3.src}"/>
+      <include name="**/*.java"/>
+    </javac.preset>
+  </target>
+
+  <target name="force">
+    <antcall target="clean"/>
+    <antcall target="compile"/>
+  </target>
+
+  <target name="clean">
+    <delete dir="${parserv3.gen}"/>
+    <delete dir="${parserv3.build}"/>
+  </target>
+
+</project>

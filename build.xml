@@ -469,6 +469,10 @@
   <target name="src" description="compile the TOM development sources" depends="prepare.src">
     <antcall target="buildtom"/>
     <antcall target="buildparser"/>
+    
+    <!--XXX-->
+    <antcall target="buildparserv3" />
+    
     <!--<property name="unixpath" refid="src.classpath" />
     <echo>classpath = ${unixpath}</echo>-->
     <copy file="${src.src}/tom/engine/Tom.java.in"
@@ -741,6 +745,7 @@
     <copy tofile="${src.dist}/Tom.xml" file="${src.configfile}"/>
     <copy tofile="${src.dist}/Gom.xml" file="${src.gomconfigfile}"/>
     <copy tofile="${src.dist}/GomAntlrAdaptor.xml" file="${src.adapterconfig}"/>
+
     <!-- "tom binary" -->
     <copy todir="${src.dist.bin}" file="${utils}/javac-tom"/>
 
@@ -854,7 +859,7 @@
     </chmod>
     <copy todir="${src.dist.lib}" file="${src.lib}/tom-common.xml"/>
     <copy todir="${src.dist.lib}/runtime" file="${share}/LICENCE"/>
-
+    
     <!-- some libraries -->
     <copy todir="${src.dist.lib}">
       <!-- we also copy the junit jar which is not really needed
@@ -1831,5 +1836,64 @@
     </exec>
   </target>
   -->
+
+  <target name="buildparserv3" depends="-withstable, -withsrc">
+
+    <property name="tom.home" value="${stable.dist}"/>
+    <property name="parserv3.package" value="tom/engine/parserv3"/>
+
+  <taskdef name="antlr3"
+           classname="org.apache.tools.ant.antlr.ANTLR3">
+  </taskdef>
+
+    <gomcompile srcdir="${src.src}"
+      destdir="${src.gen}"
+      package="tom.engine.parserv3.parser">
+      <include name="tom/engine/parserv3/parser/miniTom.gom"/>
+    </gomcompile>
+
+    <gomantlradaptercompile srcdir="${src.src}"
+      destdir="${src.gen}"
+      package="tom.engine.parserv3.parser">
+      <include name="tom/engine/parserv3/parser/miniTom.gom"/>
+    </gomantlradaptercompile>
+
+    <antlr3 target="${src.src}/${parserv3.package}/parser/miniTom.g"
+      outputdirectory="${src.gen}/${parserv3.package}/parser"
+      libdirectory="${src.gen}/${parserv3.package}/parser/minitom" />
+
+
+  </target>
+
+  <target name="src.dist.newparser" depends="src.dist">
+    <property name="printv2ast.configfilename" value="Tom-printv2ast.xml"/>
+    <property name="printv3ast.configfilename" value="Tom-printv3ast.xml"/>
+
+    <copy tofile="${src.dist}/${printv2ast.configfilename}"
+      file="${src.config}/${printv2ast.configfilename}"/>
+    <copy tofile="${src.dist}/${printv3ast.configfilename}"
+      file="${src.config}/${printv3ast.configfilename}"/>
+
+    <copy tofile="${src.dist.bin}/tom-printv2ast" file="${utils}/script.in"/>
+    <replace file="${src.dist.bin}/tom-printv2ast">
+      <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
+      <replaceFilter token="@MAIN_CLASS@" value="tom.engine.Tom"/>
+      <replaceFilter token="@CONFIG_FILE@" value="${printv2ast.configfilename}"/>
+      <replaceFilter token="@ONCLUDE_DIR@" value="share/tom"/>
+    </replace>
+
+    <copy tofile="${src.dist.bin}/tom-printv3ast" file="${utils}/script.in"/>
+    <replace file="${src.dist.bin}/tom-printv3ast">
+      <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
+      <replaceFilter token="@MAIN_CLASS@" value="tom.engine.Tom"/>
+      <replaceFilter token="@CONFIG_FILE@" value="${printv3ast.configfilename}"/>
+      <replaceFilter token="@ONCLUDE_DIR@" value="share/tom"/>
+    </replace>
+
+    <chmod dir="${src.dist.bin}" perm="ugo+rx">
+      <include name="tom-printv3ast"/>
+      <include name="tom-printv2ast"/>
+    </chmod>
+  </target>
 
 </project>
