@@ -120,8 +120,10 @@ public class TomMessage extends BasicPlatformMessage {
     new TomMessage("{0}: An error occured during the instantiation of class {1}");
 
   // TomGenericPlugin
-  public static final TomMessage tomTermExpected       =
+  pulic static final TomMessage tomTermExpected       =
     new TomMessage("{0}: A TomTerm was expected by the plugin");
+  pulic static final TomMessage codeExpected       =
+    new TomMessage("{0}: A Code was expected by the plugin");
 
   // Plugings common
   public static final TomMessage invalidPluginArgument =

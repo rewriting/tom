@@ -121,7 +121,7 @@ public abstract class TomGenericPlugin implements Plugin {
     if (arg instanceof Code) {
       term = (Code)arg;
     } else {
-      TomMessage.error(getLogger(),null,0,TomMessage.tomTermExpected, pluginName);
+      TomMessage.error(getLogger(),null,0,TomMessage.codeExpected, pluginName);
     }
   }
 
