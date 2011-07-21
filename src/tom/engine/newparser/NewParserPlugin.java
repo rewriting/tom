@@ -23,7 +23,8 @@
 
 package tom.engine.newparser;
 
-import tom.engine.parser.*;
+import tom.engine.newparser.CSTAdaptor;
+import tom.engine.newparser.parser.*;
 
 import java.io.BufferedReader;
 import java.io.Reader;
@@ -52,11 +53,23 @@ import tom.platform.OptionParser;
 import tom.platform.PlatformLogRecord;
 import tom.platform.adt.platformoption.types.PlatformOptionList;
 import tom.engine.adt.tomsignature.types.TomSymbol;
+import tom.engine.adt.code.types.*;
+import tom.engine.adt.tomterm.types.*;
+import tom.engine.newparser.parser.minitom.types.*;
+
+import tom.engine.newparser.parser.minitom.*;
+
 import antlr.RecognitionException;
 import antlr.TokenStreamException;
 import antlr.TokenStreamSelector;
+
+import org.antlr.runtime.ANTLRReaderStream;
+import org.antlr.runtime.CharStream;
+import org.antlr.runtime.tree.Tree;
+
 import aterm.ATerm;
-import tom.engine.adt.code.types.*;
+import shared.*;
+
 
 /**
  * The New Parser "plugin"
@@ -67,8 +80,8 @@ import tom.engine.adt.code.types.*;
 public class NewParserPlugin extends TomGenericPlugin {
   
   /** some output suffixes */
-  public static final String PARSED_SUFFIX = ".tfix.parsed";
-  public static final String PARSED_TABLE_SUFFIX = ".tfix.parsed.table";
+  //public static final String PARSED_SUFFIX = ".tfix.parsed";
+  //public static final String PARSED_TABLE_SUFFIX = ".tfix.parsed.table";
 
   /** the declared options string*/
   public static final String DECLARED_OPTIONS = "<options><boolean name='newparser' altName='np' description='New Parser (deactivated by default)' value='false'/></options>";
@@ -86,6 +99,7 @@ public class NewParserPlugin extends TomGenericPlugin {
   }
   
   //creating a new Host parser
+  /*
   protected static HostParser newParser(Reader reader, String fileName,
                                         OptionManager optionManager,
                                         TomStreamManager tomStreamManager)
@@ -96,7 +110,9 @@ public class NewParserPlugin extends TomGenericPlugin {
                      includedFiles,alreadyParsedFiles,
                      optionManager, tomStreamManager);
   }
-  
+  */
+
+  /*
   protected static HostParser newParser(Reader reader,String fileName,
                                         HashSet<String> includedFiles,
                                         HashSet<String> alreadyParsedFiles,
@@ -122,13 +138,14 @@ public class NewParserPlugin extends TomGenericPlugin {
         includedFiles, alreadyParsedFiles,
         optionManager, tomStreamManager);
   }
+  */
 
   /**
    * inherited from plugin interface
    * arg[0] should contain the StreamManager from which we can get the input
    */
   public void setArgs(Object[] arg){
-    //System.out.println("(DEBUG) NewParser");
+    System.out.println("(DEBUG) NewParser init");
     if (arg[0] instanceof TomStreamManager) {
       setStreamManager((TomStreamManager)arg[0]);
       currentFileName = getStreamManager().getInputFileName();  
@@ -161,23 +178,33 @@ public class NewParserPlugin extends TomGenericPlugin {
   public synchronized void run(Map informationTracker) {
 
     long startChrono = System.currentTimeMillis();
-    boolean intermediate = ((Boolean)getOptionManager().getOptionValue("intermediate")).booleanValue();
-    boolean java         = ((Boolean)getOptionManager().getOptionValue("jCode")).booleanValue();
-    boolean eclipse      = ((Boolean)getOptionManager().getOptionValue("eclipse")).booleanValue();
+    //boolean intermediate = ((Boolean)getOptionManager().getOptionValue("intermediate")).booleanValue();
+    //boolean java         = ((Boolean)getOptionManager().getOptionValue("jCode")).booleanValue();
+      boolean java = true;
+    //boolean eclipse      = ((Boolean)getOptionManager().getOptionValue("eclipse")).booleanValue();
     boolean newparser    = ((Boolean)getOptionManager().getOptionValue("newparser")).booleanValue();
     if (newparser) {
       //System.out.println("(DEBUG) we are using the new parser / newparser = " + newparser);
-      try {
+      System.out.println("(DEBUG) NewParser in use");
+    try {
         // looking for java package
         if(java && (!currentFileName.equals("-"))) {
+
+          HostParser parser = new HostParser();
+          CharStream input = new ANTLRReaderStream(currentReader);
+          Tree programAsAntrlTree = parser.parseProgram(input);
+          gt_Program programAsCST = (gt_Program)miniTomAdaptor.getTerm(programAsAntrlTree);
+          Code programAsAST = CSTAdaptor.adapt(programAsCST);
+          setWorkingTerm(programAsAST);
+
           /* Do not exhaust the stream !! */
-          TomJavaParser javaParser = TomJavaParser.createParser(currentFileName);
+/*        TomJavaParser javaParser = TomJavaParser.createParser(currentFileName);
           String packageName = "";
           try {
             packageName = javaParser.javaPackageDeclaration();
           } catch (TokenStreamException tse) {
             /* no package was found: ignore */
-          }
+/*        }
           // Update streamManager to take into account package information
           getStreamManager().setPackagePath(packageName);
         }
@@ -189,26 +216,30 @@ public class NewParserPlugin extends TomGenericPlugin {
          * we update codomains which are constrained by a symbolName
          * (come from the %strategy operator)
          */
-        SymbolTable symbolTable = getStreamManager().getSymbolTable();
+/*      SymbolTable symbolTable = getStreamManager().getSymbolTable();
         Iterator it = symbolTable.keySymbolIterator();
         while(it.hasNext()) {
           String tomName = (String)it.next();
           TomSymbol tomSymbol = getSymbolFromName(tomName);
           tomSymbol = symbolTable.updateConstrainedSymbolCodomain(tomSymbol, symbolTable);
-        }
+      */}
         // verbose
         TomMessage.info(getLogger(), null, 0, TomMessage.tomParsingPhase,
             Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
-      } catch (TokenStreamException e) {
-        TomMessage.error(getLogger(), currentFileName, getLineFromTomParser(),
+     }catch(IOException e) {
+       TomMessage.error(getLogger(), currentFileName, -1,
+           TomMessage.fileNotFound, e.getMessage());// TODO custom ErrMessage
+     }
+/*    } catch (TokenStreamException e) {
+        TomMessage.error(getLogger(), currentFileName, /*getLineFromTomParser()*//*-1,
             TomMessage.tokenStreamException, e.getMessage());
         return;
       } catch (RecognitionException e){
-        TomMessage.error(getLogger(), currentFileName, getLineFromTomParser(), 
+        TomMessage.error(getLogger(), currentFileName, /*getLineFromTomParser()*//*-1, 
             TomMessage.recognitionException, e.getMessage());
         return;
       } catch (TomException e) {
-        TomMessage.error(getLogger(), currentFileName, getLineFromTomParser(), 
+        TomMessage.error(getLogger(), currentFileName, /*getLineFromTomParser()*//*0, 
             e.getPlatformMessage(), e.getParameters());
         return;
       } catch (FileNotFoundException e) {
@@ -221,7 +252,8 @@ public class NewParserPlugin extends TomGenericPlugin {
             getClass().getName(), currentFileName);
         return;
       }
-      // Some extra stuff
+*/    // Some extra stuff
+      /*
       if(eclipse) {
         String outputFileName = getStreamManager().getInputParentFile()+
           File.separator + "."+
@@ -234,6 +266,7 @@ public class NewParserPlugin extends TomGenericPlugin {
         Tools.generateOutput(getStreamManager().getOutputFileName() 
             + PARSED_TABLE_SUFFIX, getStreamManager().getSymbolTable().toTerm().toATerm());
       }
+      */
     } else {
       // not active plugin
       TomMessage.info(getLogger(), null, 0, TomMessage.newParserNotUsed);
@@ -250,11 +283,11 @@ public class NewParserPlugin extends TomGenericPlugin {
   /**
    * return the last line number
    */
-  private int getLineFromTomParser() {
+/*  private int getLineFromTomParser() {
     if(parser == null) {
       return TomMessage.DEFAULT_ERROR_LINE_NUMBER;
     } 
     return parser.getLine();
   }
-  
+*/
 } //class NewParserPlugin
