@@ -303,7 +303,7 @@ public class SymbolTable {
     } else if(pCode) {
       type = "None";
     } else if(aCode) {
-      type = "Address";
+      type = "UnsupportedUniversalType";
     }
     return ASTFactory.makeType(`concTypeOption(),TYPE_UNIVERSAL,type);
   }

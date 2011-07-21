@@ -340,12 +340,17 @@ public class AdaGenerator extends GenericGenerator {
   }
 
   protected void buildExpCast(int deep, TargetLanguageType tlType, Expression exp, String moduleName) throws IOException {
-    /* If cast are necessary: 
-    output.write(TomBase.getTLCode(tlType) + "(");
-    generateExpression(deep,exp,moduleName);
-    output.write(")");*/
-
-    generateExpression(deep,exp,moduleName);
+    // If cast are necessary: 
+    
+    String cast = TomBase.getTLCode(tlType);
+    String s[] = cast.trim().split("\\s");
+    if (s.length == 1) {
+		output.write(cast + "(");
+		generateExpression(0,exp,moduleName);
+		output.write(")");
+	} else {
+		generateExpression(deep,exp,moduleName);
+	}
   }
 
   protected void buildExpNegation(int deep, Expression exp, String moduleName) throws IOException {
