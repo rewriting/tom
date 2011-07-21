@@ -80,26 +80,29 @@ public class AdaGenerator extends GenericGenerator {
     String template = getSymbolTable(moduleName).getIsSort(type);
     String opname="";
     if(instantiateTemplate(deep,template,opname,`concBQTerm(exp),moduleName) == false) {
+        // We retreive the code saved when the function tom_is_sort was declared
 		Expression code = getIsSortExpressionFromType(type);
 
-		if (code == null) {
+		if (code == null) { // If no such function have been declared
+			// We use the original way of doing things
 			buildExpIsSortOriginal(deep, type, exp, moduleName);
 			return;
 		}
-		if(code.isCode()) {
+		
+		if(code.isCode()) { //if the code of the function use the parameters
 		  // perform the instantiation
 		  String ocode = code.getCode();
 		  String codeTab[] = ocode.split("\\{0\\}");
 		  for(int i = 0 ; i < codeTab.length - 1 ; i++) {
 			code = code.setCode( codeTab[i] );
-			generateBQTerm(deep,`ExpressionToBQTerm(code),moduleName);
-			generateBQTerm(deep,exp,moduleName);
+			generateBQTerm(0,`ExpressionToBQTerm(code),moduleName);
+			generateBQTerm(0,exp,moduleName);
 		  }
 		 code = code.setCode( codeTab[codeTab.length - 1] );
-		  generateBQTerm(deep,`ExpressionToBQTerm(code),moduleName); 
+		  generateBQTerm(0,`ExpressionToBQTerm(code),moduleName); 
 			
 		} else {
-			generateBQTerm(deep,`ExpressionToBQTerm(code),moduleName);
+			generateBQTerm(0,`ExpressionToBQTerm(code),moduleName);
 		}
     }
   }
@@ -114,7 +117,7 @@ public class AdaGenerator extends GenericGenerator {
     String opname="";
     if(instantiateTemplate(deep,template,opname,`concBQTerm(exp),moduleName) == false) {
       output.write("tom_is_sort_" + type + "(");
-      generateBQTerm(deep,exp,moduleName);
+      generateBQTerm(0,exp,moduleName);
       output.write(")");
     }
   }
@@ -149,11 +152,15 @@ public class AdaGenerator extends GenericGenerator {
 	 * identificate it. Hence two vector, the first contains the type, the second
 	 * contains the expression. The index number do the link between both informations.
 	 */  
+	 
+	 //save the code of each tom_is_sort function in memory
     isSortType.add(type);
     isSortCode.add(code);
+    //declare the tom_is_sort function in case something goes wrong, may be suppressed in the future
     buildIsSortDeclOriginal(deep, varName, type, code, moduleName);
   }
   
+  //Retreive the code of tom_is_sort function with the type name
   private Expression getIsSortExpressionFromType(String type) {
     for(int i = 0 ; i < isSortType.size() ; i++) {
 		if ( type.equals( isSortType.get(i) ) ) {
@@ -169,7 +176,7 @@ public class AdaGenerator extends GenericGenerator {
     if(instantiateTemplate(deep,template,opname,argList,moduleName) == false) {
 		boolean parenthesis = !argList.isEmptyconcBQTerm();
         String prefix = "tom_make_";
-        output.write(prefix+opname);
+        output.write(deep, prefix+opname);
         if (parenthesis) { output.writeOpenBrace(); }
         int index=0;
         while(!argList.isEmptyconcBQTerm()) {
@@ -183,13 +190,13 @@ public class AdaGenerator extends GenericGenerator {
               //System.out.println("symbol = " + tomSymbol);
               TomName slotName = TomBase.getSlotName(tomSymbol,index);
               //System.out.println("slotname = " + slotName);
-              buildExpGetDefault(deep, opname, slotName.getString(), moduleName);
+              buildExpGetDefault(0, opname, slotName.getString(), moduleName);
               generatebqt = false;
             }
           }
 
           if(generatebqt) {
-            generateBQTerm(deep,bqt,moduleName);
+            generateBQTerm(0,bqt,moduleName);
           }
 
           argList = argList.getTailconcBQTerm();
@@ -219,63 +226,60 @@ public class AdaGenerator extends GenericGenerator {
         isFsymMap.put(opname,s);
       }
       output.write(s);
-      generateBQTerm(deep,exp,moduleName);
+      generateBQTerm(0,exp,moduleName);
       output.write(")");
     }
   }
 
   protected void buildAssign(int deep, BQTerm var, OptionList optionList, Expression exp, String moduleName) throws IOException {
-    //output.indent(deep);
     generateBQTerm(deep,var,moduleName);
     output.write(":=");
-    generateExpression(deep,exp,moduleName);
-    output.write(";\n");
+    generateExpression(0,exp,moduleName);
+    output.writeln("; ");
   } 
 
   protected void buildComment(int deep, String text) throws IOException {
-    output.write("--" + text.replace("\n","\n--") + "\n");
+    output.write(deep, "--" + text.replace("\n","\n--") + "\n");
   }
  
   protected void buildDoWhile(int deep, Instruction succes, Expression exp, String moduleName) throws IOException {
-    output.write(deep,"loop\n");
-    generateInstruction(deep+1,succes,moduleName);
+    output.writeln(deep,"loop ");
+    generateInstruction(deep,succes,moduleName);
     output.write(deep+1,"exit when not(");
-    generateExpression(deep,exp,moduleName);
-    output.write(");\n");
-    output.write(deep, "end loop;\n");
+    generateExpression(0,exp,moduleName);
+    output.writeln("); ");
+    output.writeln(deep, "end loop; ");
   }
 
   protected void buildExpEqualTerm(int deep, TomType type, BQTerm exp1, TomTerm exp2, String moduleName) throws IOException {
-    if(getSymbolTable(moduleName).isBooleanType(TomBase.getTomType(
-    type))) {
-    output.write("(");
-    generateBQTerm(deep,exp1,moduleName);
-    output.write(" = ");
-    generateTomTerm(deep,exp2,moduleName);
-    output.write(")");
+	if(getSymbolTable(moduleName).isBooleanType(TomBase.getTomType(type))) {
+		output.write("(");
+		generateBQTerm(0,exp1,moduleName);
+		output.write(" = ");
+		generateTomTerm(0,exp2,moduleName);
+		output.write(")");
     } else {
-    output.write("tom_equal_term_" + TomBase.getTomType(type) + "(");
-    generateBQTerm(deep,exp1,moduleName);
-    output.write(", ");
-    generateTomTerm(deep,exp2,moduleName);
-    output.write(")");
+		output.write(deep, "tom_equal_term_" + TomBase.getTomType(type) + "(");
+		generateBQTerm(0,exp1,moduleName);
+		output.write(", ");
+		generateTomTerm(0,exp2,moduleName);
+		output.write(")");
     }
   }
 
   protected void buildExpEqualBQTerm(int deep, TomType type, BQTerm exp1, BQTerm exp2, String moduleName) throws IOException {
-    if(getSymbolTable(moduleName).isBooleanType(TomBase.getTomType(
-    type))) {
-    output.write("(");
-    generateBQTerm(deep,exp1,moduleName);
-    output.write(" = ");
-    generateBQTerm(deep,exp2,moduleName);
-    output.write(")");
+    if(getSymbolTable(moduleName).isBooleanType(TomBase.getTomType(type))) {
+		output.write("(");
+		generateBQTerm(0,exp1,moduleName);
+		output.write(" = ");
+		generateBQTerm(0,exp2,moduleName);
+		output.write(")");
     } else {
-    output.write("tom_equal_term_" + TomBase.getTomType(type) + "(");
-    generateBQTerm(deep,exp1,moduleName);
-    output.write(", ");
-    generateBQTerm(deep,exp2,moduleName);
-    output.write(")");
+		output.write("tom_equal_term_" + TomBase.getTomType(type) + "(");
+		generateBQTerm(0,exp1,moduleName);
+		output.write(", ");
+		generateBQTerm(0,exp2,moduleName);
+		output.write(")");
     }
   }
   
@@ -310,30 +314,29 @@ public class AdaGenerator extends GenericGenerator {
   }
 
   protected void buildExpConditional(int deep, Expression cond,Expression exp1, Expression exp2, String moduleName) throws IOException {
-	System.out.println("WARNING: The use of conditional expressions may be unsupported");
-    output.write("( if ");
-    generateExpression(deep,cond,moduleName);
+    output.write("(if ");
+    generateExpression(0,cond,moduleName);
     output.write(" then ");
-    generateExpression(deep,exp1,moduleName);
+    generateExpression(0,exp1,moduleName);
     output.write(" else ");
-    generateExpression(deep,exp2,moduleName);
+    generateExpression(0,exp2,moduleName);
     output.write(")");
   }
 
   protected void buildExpAnd(int deep, Expression exp1, Expression exp2, String moduleName) throws IOException {
-    output.write(" ( ");
-    generateExpression(deep,exp1,moduleName);
+    output.write("( ");
+    generateExpression(0,exp1,moduleName);
     output.write(" and ");
-    generateExpression(deep,exp2,moduleName);
-    output.write(" ) ");
+    generateExpression(0,exp2,moduleName);
+    output.write(" )");
   }
 
   protected void buildExpOr(int deep, Expression exp1, Expression exp2, String moduleName) throws IOException {
-    output.write(" ( ");
-    generateExpression(deep,exp1,moduleName);
+    output.write("( ");
+    generateExpression(0,exp1,moduleName);
     output.write(" or ");
-    generateExpression(deep,exp2,moduleName);
-    output.write(" ) ");
+    generateExpression(0,exp2,moduleName);
+    output.write(" )");
   }
 
   protected void buildExpCast(int deep, TargetLanguageType tlType, Expression exp, String moduleName) throws IOException {
@@ -347,26 +350,26 @@ public class AdaGenerator extends GenericGenerator {
 
   protected void buildExpNegation(int deep, Expression exp, String moduleName) throws IOException {
     output.write("not (");
-    generateExpression(deep,exp,moduleName);
+    generateExpression(0,exp,moduleName);
     output.write(")");
   }
 
   protected void buildIf(int deep, Expression exp, Instruction succes, String moduleName) throws IOException {
     output.write(deep,"if "); 
-    generateExpression(deep,exp, moduleName); 
-    output.write(" then\n");
+    generateExpression(0,exp, moduleName); 
+    output.writeln(" then ");
     generateInstruction(deep+1,succes, moduleName);
-    output.write(deep,"end if;\n"); 
+    output.writeln(deep,"end if; "); 
   }
 
   protected void buildIfWithFailure(int deep, Expression exp, Instruction succes, Instruction failure, String moduleName) throws IOException {
     output.write(deep,"if "); 
-    generateExpression(deep,exp,moduleName); 
-    output.write(" then\n");
+    generateExpression(0,exp,moduleName); 
+    output.writeln(" then ");
     generateInstruction(deep+1,succes,moduleName);
-    output.write(deep,"else\n");
+    output.writeln(deep,"else ");
     generateInstruction(deep+1,failure,moduleName);
-    output.write(deep,"end if;\n"); 
+    output.writeln(deep,"end if; "); 
   }
 
   protected void buildInstructionSequence(int deep, InstructionList instructionList, String moduleName) throws IOException {
@@ -375,16 +378,15 @@ public class AdaGenerator extends GenericGenerator {
 
   protected void buildLet(int deep, BQTerm var, OptionList optionList, TargetLanguageType tlType, 
   Expression exp, Instruction body, String moduleName) throws IOException {
-    output.write("declare\n");
-    generateBQTerm(deep+1,var,moduleName);
+    output.write(deep, "declare ");
+    generateBQTerm(0,var,moduleName);
     output.write(": ");
-    output.write(deep+1,TomBase.getTLCode(tlType) + ":=");
+    output.write(0,TomBase.getTLCode(tlType) + ":=");
 
-    generateExpression(deep+1,exp,moduleName);
-    output.write(";\n");
-    output.write("begin\n");
+    generateExpression(0,exp,moduleName);
+    output.writeln("; begin ");
     generateInstruction(deep+1,body,moduleName);
-    output.write("end;\n");
+    output.writeln(deep, "end; ");
   }
 
  
@@ -394,22 +396,21 @@ public class AdaGenerator extends GenericGenerator {
   }
  
   protected void buildReturn(int deep, BQTerm exp, String moduleName) throws IOException {
-  output.write(deep,"return ");
-  generateBQTerm(deep,exp,moduleName);
-  output.write(deep,";\n");
+    output.write(deep,"return ");
+    generateBQTerm(0,exp,moduleName);
+    output.writeln("; ");
   }
 
-  /* FIXME */
   protected void buildUnamedBlock(int deep, InstructionList instList, String moduleName) throws IOException {
     generateInstructionList(deep+1,instList, moduleName);
   }
  
   protected void buildWhileDo(int deep, Expression exp, Instruction succes, String moduleName) throws IOException {
-    output.write(deep,"while\n");
-    generateExpression(deep,exp,moduleName);
-    output.write(" loop\n");
-    generateInstruction(deep+1,succes,moduleName);
-    output.write(deep, "end loop;\n");
+    output.writeln(deep,"while ");
+    generateExpression(0,exp,moduleName);
+    output.writeln(" loop ");
+    generateInstruction(deep,succes,moduleName);
+    output.writeln(deep, "end loop; ");
   }
   
 	private boolean isBuiltinType(String type) {
@@ -465,18 +466,17 @@ public class AdaGenerator extends GenericGenerator {
     s.append(")");
     s.append(" return ");
     s.append(returnType);
-    s.append(" is \n");
-
-    output.write(s);
-    output.write("begin\n");
-    generateInstruction(deep,instr,moduleName);
-    output.write("end " + declName + "_" + suffix + ";\n");	
+    output.write(deep, s);
+    output.writeln(" is ");
+    output.writeln(deep, "begin ");
+    generateInstruction(deep+1,instr,moduleName);
+    output.writeln(deep, "end " + declName + "_" + suffix + "; ");	
     
-	output.write("function tom_equal_term_String(t1: String; t2: access String)");
-	output.write("return Boolean is\n"); 
-	output.write("begin\n");
-	output.write(" return t1 = t2.all; \n");
-	output.write("end tom_equal_term_String;\n"); 
+	output.writeln(deep, "function tom_equal_term_String(t1: String; t2: access String) return Boolean is "); 
+	output.writeln(deep, "begin ");
+	output.writeln(deep+1, "return t1 = t2.all; ");
+	output.writeln(deep, "end tom_equal_term_String; ");
+	output.writeln(); 
   }
 
   protected void genDeclInstr(String returnType,
@@ -516,12 +516,14 @@ public class AdaGenerator extends GenericGenerator {
     if (args.length > 0) { s.append(")"); }
     s.append(" return ");
     if (useClassWideAccess) { s.append(getClassWideAccess(returnType)); } else { s.append(returnType); }
-    s.append(" is\n");
+    output.write(deep, s);
+    output.writeln(" is ");
 
-    output.write(s);
-    output.write("begin\n");
-    generateInstruction(deep,instr,moduleName);
-    output.write("end " + declName + "_" + suffix + ";\n");
+    
+    output.writeln(deep,"begin ");
+    generateInstruction(deep+1,instr,moduleName);
+    output.writeln(deep,"end " + declName + "_" + suffix + "; ");
+    output.writeln();
   }
 
   protected void genDeclList(String name, String moduleName) throws IOException {
@@ -529,7 +531,6 @@ public class AdaGenerator extends GenericGenerator {
     TomType listType = TomBase.getSymbolCodomain(tomSymbol);
     TomType eltType = TomBase.getSymbolDomain(tomSymbol).getHeadconcTomType();
 
-    String s = "";
     if(nodeclMode) {
     return;
     }
@@ -550,29 +551,33 @@ public class AdaGenerator extends GenericGenerator {
     String get_head = "tom_get_head_" + name + "_" + tomType;
     String get_tail = "tom_get_tail_" + name + "_" + tomType;
     String get_slice = "tom_get_slice_" + name;
+    
+    int deep = BackendPlugin.defaultDeep;
 
-    s+= "function tom_append_list_" + name +  "(l1: "+ glType+"; l2: "+glType+") return "+ glType + " is\n ";
-    s+= "begin\n";
-    s+= " if " + is_empty + "(l1) then\n ";
-    s+= "  return l2;\n ";  
-    s+= " elsif " + is_empty + "(l2) then\n ";
-    s+= "  return l1;\n ";  
-    s+= " elsif " + is_empty + "(" + get_tail + "(l1)) then\n ";  
-    s+= "  return " + make_insert + "(" + get_head + "(l1),l2);\n ";
-    s+= " else\n ";  
-    s+= "  return " + make_insert + "(" + get_head + "(l1),tom_append_list_" + name +  "(" + get_tail + "(l1),l2));\n ";
-    s+= " end if;\n ";
-    s+= "end tom_append_list_" + name + ";\n ";
+    output.writeln(deep,"function tom_append_list_" + name +  "(l1: "+ glType+"; l2: "+glType+") return "+ glType + " is ");
+    output.writeln(deep,"begin ");
+    output.writeln(deep+1,"if " + is_empty + "(l1) then ");
+    output.writeln(deep+2,"return l2; ");  
+    output.writeln(deep+1,"elsif " + is_empty + "(l2) then ");
+    output.writeln(deep+2,"return l1; ");  
+    output.writeln(deep+1,"elsif " + is_empty + "(" + get_tail + "(l1)) then ");  
+    output.writeln(deep+2,"return " + make_insert + "(" + get_head + "(l1),l2); ");
+    output.writeln(deep+1,"else ");  
+    output.writeln(deep+2,"return " + make_insert + "(" + get_head + "(l1),tom_append_list_" + name +  "(" + get_tail + "(l1),l2)); ");
+    output.writeln(deep+1,"end if; ");
+    output.writeln(deep,"end tom_append_list_" + name + "; ");
+    output.writeln();
 
-	s+= "function tom_get_slice_" + name + "(begining: "+ glType+"; ending: "+ glType+"; tail: "+glType+") return "+ glType + " is\n ";
-	s+= "begin\n";
-	s+= " if " + equal_term + "(begining,ending) then\n";
-	s+= "  return tail;\n ";
-	s+= " else\n ";
-	s+= "  return " +  make_insert + "(" + get_head + "(begining)," +  get_slice + "(" + get_tail + "(begining),ending,tail));\n ";
-	s+= " end if;\n ";
-	s+= "end tom_get_slice_" + name + ";\n ";
-    output.write(s);
+	output.writeln(deep,"function tom_get_slice_" + name + "(begining: "+ glType+"; ending: "+ glType+"; tail: "+glType+") return "+ glType + " is ");
+	output.writeln(deep,"begin ");
+	output.writeln(deep+1,"if " + equal_term + "(begining,ending) then ");
+	output.writeln(deep+2,"return tail; ");
+	output.writeln(deep+1,"else ");
+	output.writeln(deep+2,"return " +  make_insert + "(" + get_head + "(begining)," +  get_slice + "(" + get_tail + "(begining),ending,tail)); ");
+	output.writeln(deep+1,"end if; ");
+	output.writeln(deep,"end tom_get_slice_" + name + "; ");
+	output.writeln();
+    
   }
 
   protected void genDeclMake(String prefix,String funName, TomType returnType, 
@@ -583,6 +588,9 @@ public class AdaGenerator extends GenericGenerator {
 	boolean parenthesis = !argList.isEmptyconcBQTerm();
     boolean inlined = inlineplus;
     boolean isCode = false;
+    
+    int deep = BackendPlugin.defaultDeep;
+    
     %match(instr) {
       ExpressionToInstruction(Code(code)) -> {
         isCode = true;
@@ -627,26 +635,29 @@ matchBlock: {
             }
       }
     if (parenthesis) {	s.append(")"); } 
-    s.append(" return " + getClassWideAccess( TomBase.getTLType(returnType) ) + " is\nbegin\n");
-    output.write(s);
-    output.write(" return ");
+    s.append(" return " + getClassWideAccess( TomBase.getTLType(returnType) ));
+    output.write(deep, s);
+    output.writeln(" is ");
+    output.writeln(deep, "begin ");
+    output.write(deep+1, "return ");
     generateInstruction(0,instr,moduleName);
-    output.write(";\n");
-    output.write("end "+ prefix+funName + ";\n");
+    output.writeln("; ");
+    output.writeln(deep, "end "+ prefix+funName + "; ");
+    output.writeln();
     }
   }
 
   protected void buildNamedBlock(int deep, String blockName, InstructionList instList, String moduleName) throws IOException {
-    output.write("<<"+ blockName + ">>;\n");
+    output.writeln(deep, "<<"+ blockName + ">>; ");
     generateInstructionList(deep+1,instList,moduleName);
   }
 
   protected void buildExpTrue(int deep) throws IOException {
-    output.write(" True ");
+    output.write(deep,"True");
   }
 
   protected void buildExpFalse(int deep) throws IOException {
-    output.write(" False ");
+    output.write(deep, "False");
   }
 
   protected void buildExpBottom(int deep, TomType type, String moduleName) throws IOException {
@@ -655,13 +666,13 @@ matchBlock: {
         || (getSymbolTable(moduleName).getLongType() == type)
         || (getSymbolTable(moduleName).getFloatType() == type)
         || (getSymbolTable(moduleName).getDoubleType() == type)) {
-      output.write(" 0 ");
+      output.write(deep, " 0 ");
     } else if (getSymbolTable(moduleName).getBooleanType() == type) {
-      output.write(" False ");
+      output.write(deep, " False ");
     } else if (getSymbolTable(moduleName).getStringType() == type) {
-      output.write(" \"\" ");
+      output.write(deep, " \"\" ");
     } else {
-      output.write(" null ");
+      output.write(deep, " null ");
     }
   }
   
@@ -671,7 +682,7 @@ matchBlock: {
 		String prefix = "tom_empty_list_";
 		String template = getSymbolTable(moduleName).getMakeEmptyList(`name);
 		if(instantiateTemplate(deep,template,`name,`concBQTerm(),moduleName) == false) {
-		  output.write(prefix + `name);
+		  output.write(deep, prefix + `name);
 		}
 		return;
 	  }
@@ -680,20 +691,20 @@ matchBlock: {
 		String prefix = "tom_cons_list_";
 		String template = getSymbolTable(moduleName).getMakeAddList(`name);
 		if(instantiateTemplate(deep,template,`name,`concBQTerm(headTerm,tailTerm),moduleName) == false) {
-		  output.write(prefix + `name + "(");
-		  generateBQTerm(deep,`headTerm,moduleName);
+		  output.write(deep, prefix + `name + "(");
+		  generateBQTerm(0,`headTerm,moduleName);
 		  output.write(",");
-		  generateBQTerm(deep,`tailTerm,moduleName);
+		  generateBQTerm(0,`tailTerm,moduleName);
 		  output.write(")");
 		}
 		return;
 	  }
 
 	  BuildAppendList(Name(name), headTerm, tailTerm) -> {
-		output.write("tom_append_list_" + `name + "(");
-		generateBQTerm(deep,`headTerm,moduleName);
+		output.write(deep, "tom_append_list_" + `name + "(");
+		generateBQTerm(0,`headTerm,moduleName);
 		output.write(",");
-		generateBQTerm(deep,`tailTerm,moduleName);
+		generateBQTerm(0,`tailTerm,moduleName);
 		output.write(")");
 		return;
 	  }
@@ -702,8 +713,8 @@ matchBlock: {
 		String prefix = "tom_empty_array_";
 		String template = getSymbolTable(moduleName).getMakeEmptyArray(`name);
 		if(instantiateTemplate(deep,template,`name,`concBQTerm(size),moduleName) == false) {
-		  output.write(prefix + `name + "(");
-		  generateBQTerm(deep,`size,moduleName);
+		  output.write(deep, prefix + `name + "(");
+		  generateBQTerm(0,`size,moduleName);
 		  output.write(")");
 		}
 		return;
@@ -713,20 +724,20 @@ matchBlock: {
 		String template = getSymbolTable(moduleName).getMakeAddArray(`name);
 		if(instantiateTemplate(deep,template,`name,`concBQTerm(headTerm,tailTerm),moduleName) == false) {
 		  String prefix = "tom_cons_array_";
-		  output.write(prefix + `name + "(");
-		  generateBQTerm(deep,`headTerm,moduleName);
+		  output.write(deep, prefix + `name + "(");
+		  generateBQTerm(0,`headTerm,moduleName);
 		  output.write(",");
-		  generateBQTerm(deep,`tailTerm,moduleName);
+		  generateBQTerm(0,`tailTerm,moduleName);
 		  output.write(")");
 		}
 		return;
 	  }
 
 	  BuildAppendArray(Name(name), headTerm, tailTerm) -> {
-		output.write("tom_append_array_" + `name + "(");
-		generateBQTerm(deep,`headTerm,moduleName);
+		output.write(deep, "tom_append_array_" + `name + "(");
+		generateBQTerm(0,`headTerm,moduleName);
 		output.write(",");
-		generateBQTerm(deep,`tailTerm,moduleName);
+		generateBQTerm(0,`tailTerm,moduleName);
 		output.write(")");
 		return;
 	  }
@@ -734,7 +745,7 @@ matchBlock: {
   }
   
 	protected void buildFunctionCall(int deep, String name, BQTermList argList, String moduleName) throws IOException {
-		output.write(name);
+		output.write(deep, name);
 		boolean parenthesis = !argList.isEmptyconcBQTerm();
 		if (parenthesis) { output.writeOpenBrace(); }
 		while(!argList.isEmptyconcBQTerm()) {
@@ -759,20 +770,23 @@ matchBlock: {
     }
 
     StringBuilder s = new StringBuilder();
+    int deep = 0;
+    
     s.append(modifier + "function " + declName + suffix);
     if (args.length > 0) { s.append("("); }
     for(int i=0 ; i<args.length ; ) {
-    s.append(args[i+1]); // parameter name
-    s.append(": ");
-    s.append(args[i]); // parameter type
-    i+=2;
-    if(i<args.length) {
-    s.append("; ");
-    }
+		s.append(args[i+1]); // parameter name
+		s.append(": ");
+		s.append(args[i]); // parameter type
+		i+=2;
+		if(i<args.length) { s.append("; "); }
     }
     if (args.length > 0) { s.append(")"); }
-    s.append(" return " + returnType + " is\nbegin\n");
-    output.write(s);
+    s.append(" return " + returnType);
+    output.write(deep, s);
+    output.writeln(" is ");
+        
+    output.writeln(deep, "begin ");
     
     String returnValue = getSymbolTable(moduleName).isVoidType(returnType)?tlCode.getCode():"return " + tlCode.getCode();
     %match(tlCode) {
@@ -782,12 +796,14 @@ matchBlock: {
       }
 
       ITL(_) -> {
-        output.write(returnValue);
+        output.write(deep, returnValue);
         return;
       }
 
     }
-    output.write(";\n end " + declName + suffix + "\n");
+    output.writeln("; ");
+    output.writeln(deep, "end " + declName + suffix + "; ");
+    output.writeln();
   }
 
   protected void buildAssignArray(int deep, BQTerm var, OptionList optionList, BQTerm index, 
@@ -797,11 +813,10 @@ matchBlock: {
 
   protected void buildAssignArrayVar(int deep, BQTerm var, OptionList optionList, BQTerm index, 
       Expression exp, String moduleName) throws IOException {    
-    //output.indent(deep);
     generateArray(deep,var,index,moduleName);
     output.write(":=");
-    generateExpression(deep,exp,moduleName);
-    output.write(";\n");
+    generateExpression(0,exp,moduleName);
+    output.writeln("; ");
   } 
   
   protected void buildFunctionDef(int deep, String tomName, BQTermList argList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName) throws IOException {
@@ -840,11 +855,14 @@ matchBlock: {
     }
     if (parenthesis) { output.write(deep,")"); }
 
-	output.write(" return " + TomBase.getTLType(codomain) + " is\nbegin\n");
-	generateInstruction(deep,instruction,moduleName);
-	output.write(deep,"\nend " + tomName + "\n");
+	output.writeln(" return " + TomBase.getTLType(codomain) + " is ");
+	output.writeln(deep, "begin ");
+	generateInstruction(deep+1,instruction,moduleName);
+	output.writeln(deep,"end " + tomName + "; ");
+	output.writeln();
   }
   
+  // For strategy generation
   protected void buildClass(int deep, String tomName, TomType extendsType, BQTerm superTerm, Declaration declaration, String moduleName) throws IOException {
     TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(tomName);
     TomTypeList tomTypes = TomBase.getSymbolDomain(tomSymbol);
