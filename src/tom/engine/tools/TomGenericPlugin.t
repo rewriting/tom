@@ -113,7 +113,8 @@ public abstract class TomGenericPlugin implements Plugin {
       term = (Code)arg[0];
       streamManager = (TomStreamManager)arg[1];
     } else {
-      TomMessage.error(getLogger(),null,0,TomMessage.invalidPluginArgument, "[Code, TomStreamManager]", getArgumentArrayString(arg));
+      TomMessage.error(getLogger(),null,0,TomMessage.invalidPluginArgument,
+         pluginName, "[Code, TomStreamManager]", getArgumentArrayString(arg));
     }
   }
 
@@ -285,7 +286,11 @@ public abstract class TomGenericPlugin implements Plugin {
   public String getArgumentArrayString(Object[] arg) {
     StringBuilder argString = new StringBuilder("[");
     for(int i=0;i<arg.length;i++) {
-      argString.append(arg[i].getClass().getName());
+      if(arg[i]==null){
+        argString.append("null");
+      } else {
+        argString.append(arg[i].getClass().getName());
+      }
       if (i < arg.length -1) {
         argString.append(",");
       }
