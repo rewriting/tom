@@ -65,14 +65,20 @@ public class AdaGenerator extends GenericGenerator {
   /* to store the link between a Type name and the code of its is_sort function. */
   private Vector<String> isSortType = new Vector<String>(1);
   private Vector<Expression> isSortCode = new Vector<Expression>(1);
-
+  
+  private static final String builtinDescriptor = "builtin";
+  private static final String taggedDescriptor = "tagged";
+  
   public AdaGenerator(OutputCode output, OptionManager optionManager,
                                 SymbolTable symbolTable) {
     super(output, optionManager, symbolTable);
   }
 
   protected void buildExpIsSort(int deep, String type, BQTerm exp, String moduleName) throws IOException {
-    if(getSymbolTable(moduleName).isBuiltinType(type)) {
+	TomType tomType = getSymbolTable(moduleName).getType(type);
+	String declaredType = TomBase.getTLType(tomType);
+	  
+    if(isBuiltinType(declaredType)) {
       generateExpression(deep,`TrueTL(),moduleName);
       return;
     }
@@ -85,7 +91,9 @@ public class AdaGenerator extends GenericGenerator {
 
 		if (code == null) { // If no such function have been declared
 			// We use the original way of doing things
-			buildExpIsSortOriginal(deep, type, exp, moduleName);
+			output.write("tom_is_sort_" + type + "(");
+			generateBQTerm(0,exp,moduleName);
+			output.write(")");
 			return;
 		}
 		
@@ -107,21 +115,6 @@ public class AdaGenerator extends GenericGenerator {
     }
   }
   
-  protected void buildExpIsSortOriginal(int deep, String type, BQTerm exp, String moduleName) throws IOException {
-    if(getSymbolTable(moduleName).isBuiltinType(type)) {
-      generateExpression(deep,`TrueTL(),moduleName);
-      return;
-    }
-
-    String template = getSymbolTable(moduleName).getIsSort(type);
-    String opname="";
-    if(instantiateTemplate(deep,template,opname,`concBQTerm(exp),moduleName) == false) {
-      output.write("tom_is_sort_" + type + "(");
-      generateBQTerm(0,exp,moduleName);
-      output.write(")");
-    }
-  }
-  
   protected void buildIsSortDeclOriginal(int deep, String varName, String type, Expression code, String moduleName) throws IOException {
     boolean inlined = inlineplus;
     if(code.isCode()) {
@@ -135,9 +128,6 @@ public class AdaGenerator extends GenericGenerator {
     }
     if(!inline || !code.isCode() || !inlined) {
       TomType argType = getSymbolTable(moduleName).getType(type);
-      if(getSymbolTable(moduleName).isBuiltinType(type)) {
-        argType = getSymbolTable(moduleName).getBuiltinType(type);
-      }
       genDeclInstr(TomBase.getTLType(getSymbolTable(moduleName).getBooleanType()), "tom_is_sort", type,
           new String[] { TomBase.getTLType(argType), varName },
           `Return(ExpressionToBQTerm(code)),deep,moduleName);
@@ -286,13 +276,8 @@ public class AdaGenerator extends GenericGenerator {
   protected void buildEqualTermDecl(int deep, String varname1, String varname2,
                                      String type1, String type2, Expression code, String moduleName) throws IOException {
 	TomType argType1 = getSymbolTable(moduleName).getType(type1);
-	if(getSymbolTable(moduleName).isBuiltinType(type1)) {
-	  argType1 = getSymbolTable(moduleName).getBuiltinType(type1);
-	}
 	TomType argType2 = getSymbolTable(moduleName).getType(type2);
-	if(getSymbolTable(moduleName).isBuiltinType(type2)) {
-	  argType2 = getSymbolTable(moduleName).getBuiltinType(type2);
-	}
+
 	boolean inlined = inlineplus;
 	if(code.isCode()) {
 	  // perform the instantiation
@@ -338,13 +323,39 @@ public class AdaGenerator extends GenericGenerator {
     generateExpression(0,exp2,moduleName);
     output.write(" )");
   }
+  
+  private String extractImplementedType(String declaredType) throws IOException {
+	  String[] splited = declaredType.split(":");
+	  
+	  if (splited.length == 1) {
+		  return declaredType;
+	  } else if (splited.length == 2) {
+		  return splited[1];
+	  } else {
+		  throw new IOException("':' not expected in '" + declaredType + "'");
+	  }
+  }
+  
+  private String extractDescriptor(String declaredType) throws IOException {
+	  String[] splited = declaredType.split(":");
+	  
+	  if (splited.length == 1) {
+		  return builtinDescriptor;
+	  } else if (splited.length == 2) {
+		  return splited[0];
+	  } else {
+		  throw new IOException("':' not expected in '" + declaredType + "'");
+	  }
+  }
 
+//type
   protected void buildExpCast(int deep, TargetLanguageType tlType, Expression exp, String moduleName) throws IOException {
     // If cast are necessary: 
     
-    String cast = TomBase.getTLCode(tlType);
-    String s[] = cast.trim().split("\\s");
-    if (s.length == 1) {
+    String code = TomBase.getTLCode(tlType);
+    String cast = extractImplementedType(code);
+
+    if (builtinDescriptor.equals( extractDescriptor(code) )) {
 		output.write(cast + "(");
 		generateExpression(0,exp,moduleName);
 		output.write(")");
@@ -352,7 +363,7 @@ public class AdaGenerator extends GenericGenerator {
 		generateExpression(deep,exp,moduleName);
 	}
   }
-
+  
   protected void buildExpNegation(int deep, Expression exp, String moduleName) throws IOException {
     output.write("not (");
     generateExpression(0,exp,moduleName);
@@ -381,12 +392,13 @@ public class AdaGenerator extends GenericGenerator {
     generateInstructionList(deep, instructionList, moduleName);
   }
 
+//type
   protected void buildLet(int deep, BQTerm var, OptionList optionList, TargetLanguageType tlType, 
   Expression exp, Instruction body, String moduleName) throws IOException {
     output.write(deep, "declare ");
     generateBQTerm(0,var,moduleName);
     output.write(": ");
-    output.write(0,TomBase.getTLCode(tlType) + ":=");
+    output.write(0, extractImplementedType(TomBase.getTLCode(tlType)) + ":=");
 
     generateExpression(0,exp,moduleName);
     output.writeln("; begin ");
@@ -417,33 +429,26 @@ public class AdaGenerator extends GenericGenerator {
     generateInstruction(deep,succes,moduleName);
     output.writeln(deep, "end loop; ");
   }
-  
-	private boolean isBuiltinType(String type) {
-		return type.equals("Integer") || type.equals("Long") || type.equals("Character") ||
-		type.equals("String") || type.equals("Boolean") || type.equals("Long_Float") ||
-		type.equals("Float)");
+ 
+ 
+ //type 
+	private boolean isBuiltinType(String type) throws IOException {
+		return builtinDescriptor.equals( extractDescriptor(type).trim() );
 	}
 	
-	private boolean isAccessType(String type) {
-		return type.toLowerCase().startsWith("access");
+	private boolean isTaggedType(String type) throws IOException {
+		return taggedDescriptor.equals( extractDescriptor(type).trim() );
 	}
 	
-	private String getRawType(String type) {
-		if (isAccessType(type))
-			return type.substring(7);
-		else
-			return type;
-	}
-	
-	private String getClassWideAccess(String type) {
-		String rtype = getRawType(type.trim());
-		if (isBuiltinType(rtype)) {
-			return type;
+	private String getClassWideType(String type) throws IOException {
+		if ( isTaggedType(type) ) {
+			return extractImplementedType(type) + "\'Class";
 		} else {
-			return "access " + rtype + "\'Class";
+			return extractImplementedType(type);
 		}
 	}
-	
+
+//type
   protected void genDeclEqualTermString(String returnType,
                          String declName,
                          String suffix,
@@ -460,9 +465,7 @@ public class AdaGenerator extends GenericGenerator {
     for(int i=0 ; i<args.length ; ) {
 		s.append(args[i+1]); // parameter name
 		s.append(": ");
-
-		s.append("access String");
-		//s.append(args[i]); // parameter type
+		s.append(getClassWideType(args[i]));
 		i+=2;
 		if(i<args.length) {
 		s.append("; ");
@@ -470,7 +473,7 @@ public class AdaGenerator extends GenericGenerator {
     }
     s.append(")");
     s.append(" return ");
-    s.append(returnType);
+    s.append(getClassWideType(returnType));
     output.write(deep, s);
     output.writeln(" is ");
     output.writeln(deep, "begin ");
@@ -484,6 +487,7 @@ public class AdaGenerator extends GenericGenerator {
 	output.writeln(); 
   }
 
+//type
   protected void genDeclInstr(String returnType,
                          String declName,
                          String suffix,
@@ -497,22 +501,16 @@ public class AdaGenerator extends GenericGenerator {
 	}
 	
     StringBuilder s = new StringBuilder();
-	boolean useClassWideAccess = "tom_get_slot".equals(declName) || "tom_is_fun_sym".equals(declName) || "tom_equal_term".equals(declName);
     s.append("function ");
     s.append(declName);
     s.append("_");
     s.append(suffix);
 	if (args.length > 0) { s.append("("); }
 
-
     for(int i=0 ; i<args.length ; ) {
 		s.append(args[i+1]); // parameter name
 		s.append(": ");
-		if (useClassWideAccess) {
-			s.append(getClassWideAccess(args[i]));
-		} else {
-			s.append(args[i]); // parameter type
-		}
+		s.append(getClassWideType(args[i]));
 		i+=2;
 		if(i<args.length) {
 		s.append("; ");
@@ -520,7 +518,7 @@ public class AdaGenerator extends GenericGenerator {
     }
     if (args.length > 0) { s.append(")"); }
     s.append(" return ");
-    if (useClassWideAccess) { s.append(getClassWideAccess(returnType)); } else { s.append(returnType); }
+    s.append(getClassWideType(returnType));
     output.write(deep, s);
     output.writeln(" is ");
 
@@ -531,6 +529,7 @@ public class AdaGenerator extends GenericGenerator {
     output.writeln();
   }
 
+//type
   protected void genDeclList(String name, String moduleName) throws IOException {
     TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(name);
     TomType listType = TomBase.getSymbolCodomain(tomSymbol);
@@ -541,13 +540,8 @@ public class AdaGenerator extends GenericGenerator {
     }
 
     String tomType = TomBase.getTomType(listType);
-    String glType = TomBase.getTLType(listType);
-    //String tlEltType = getTLType(eltType);
+    String glType = getClassWideType(TomBase.getTLType(listType));
 
-    //String utype = glType;
-    //if(lazyType) {
-    //  utype = getTLType(getUniversalType());
-    //}
 
     String is_empty = "tom_is_empty_" + name + "_" + tomType;
     String equal_term = "tom_equal_term_" + tomType;
@@ -585,6 +579,7 @@ public class AdaGenerator extends GenericGenerator {
     
   }
 
+//type
   protected void genDeclMake(String prefix,String funName, TomType returnType, 
       BQTermList argList, Instruction instr, String moduleName) throws IOException {
     if(nodeclMode) {
@@ -624,7 +619,7 @@ public class AdaGenerator extends GenericGenerator {
 matchBlock: {
               %match(arg) {
                 BQVariable[AstName=Name(name), AstType=Type[TlType=tlType@TLType[]]] -> {
-                  s.append(`name + ": " + getClassWideAccess( TomBase.getTLCode(`tlType) ));
+                  s.append(`name + ": " + getClassWideType( TomBase.getTLCode(`tlType) ));
                   break matchBlock;
                 }
 
@@ -640,7 +635,7 @@ matchBlock: {
             }
       }
     if (parenthesis) {	s.append(")"); } 
-    s.append(" return " + getClassWideAccess( TomBase.getTLType(returnType) ));
+    s.append(" return " + getClassWideType( TomBase.getTLType(returnType) ));
     output.write(deep, s);
     output.writeln(" is ");
     output.writeln(deep, "begin ");
@@ -665,6 +660,7 @@ matchBlock: {
     output.write(deep, "False");
   }
 
+//TODO
   protected void buildExpBottom(int deep, TomType type, String moduleName) throws IOException {
     if ((getSymbolTable(moduleName).getIntType() == type)
         || (getSymbolTable(moduleName).getCharType() == type)
@@ -763,6 +759,7 @@ matchBlock: {
 		if (parenthesis) { output.writeCloseBrace(); }
 	}
 
+//type
   protected void genDecl(String returnType,
       String declName,
       String suffix,
@@ -782,18 +779,19 @@ matchBlock: {
     for(int i=0 ; i<args.length ; ) {
 		s.append(args[i+1]); // parameter name
 		s.append(": ");
-		s.append(args[i]); // parameter type
+		s.append(getClassWideType( args[i] )); // parameter type
 		i+=2;
 		if(i<args.length) { s.append("; "); }
     }
     if (args.length > 0) { s.append(")"); }
-    s.append(" return " + returnType);
+    s.append(" return " + getClassWideType(returnType));
     output.write(deep, s);
     output.writeln(" is ");
         
     output.writeln(deep, "begin ");
     
     String returnValue = getSymbolTable(moduleName).isVoidType(returnType)?tlCode.getCode():"return " + tlCode.getCode();
+    returnValue = getClassWideType(returnValue);
     %match(tlCode) {
       TL(_,TextPosition[Line=startLine], TextPosition[Line=endLine]) -> {
         output.write(0,returnValue, `startLine, `endLine - `startLine);
@@ -832,6 +830,7 @@ matchBlock: {
     buildMethod(deep,tomName,argList,codomain,throwsType,instruction,moduleName,"public ");
   }
   
+ //type
   private void buildMethod(int deep, String tomName, BQTermList varList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName, String methodModifier) throws IOException {
 	boolean parenthesis = !varList.isEmptyconcBQTerm();
 	output.write(deep, "function " + tomName);
@@ -843,7 +842,7 @@ matchBlock: {
               %match(localVar) {
                 v@BQVariable[AstType=type2] -> {
 				  generateBQTerm(deep,`v,moduleName);
-                  output.write(": " + getClassWideAccess( TomBase.getTLType(`type2) ));
+                  output.write(": " + getClassWideType( TomBase.getTLType(`type2) ));
                   break matchBlock;
                 }
                 _ -> {
@@ -860,7 +859,7 @@ matchBlock: {
     }
     if (parenthesis) { output.write(deep,")"); }
 
-	output.writeln(" return " + TomBase.getTLType(codomain) + " is ");
+	output.writeln(" return " + getClassWideType(TomBase.getTLType(codomain)) + " is ");
 	output.writeln(deep, "begin ");
 	generateInstruction(deep+1,instruction,moduleName);
 	output.writeln(deep,"end " + tomName + "; ");
@@ -869,133 +868,7 @@ matchBlock: {
   
   // For strategy generation
   protected void buildClass(int deep, String tomName, TomType extendsType, BQTerm superTerm, Declaration declaration, String moduleName) throws IOException {
-    TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(tomName);
-    TomTypeList tomTypes = TomBase.getSymbolDomain(tomSymbol);
-    ArrayList<String> names = new ArrayList<String>();
-    ArrayList<String> types = new ArrayList<String>();
-    ArrayList<Integer> stratChild = new ArrayList<Integer>(); // child of type Strategy.
-
-    //initialize arrayList with argument names
-    int index = 0;
-    while(!tomTypes.isEmptyconcTomType()) {
-	    TomType type = tomTypes.getHeadconcTomType();
-	    types.add(TomBase.getTLType(type));
-      String name = TomBase.getSlotName(tomSymbol, index).getString();
-      names.add(name);
-
-      // test if the argument is a Strategy
-      %match(type) {
-        Type[TomType="Strategy"] -> {
-          stratChild.add(Integer.valueOf(index));
-        }
-      }
-
-	    tomTypes = tomTypes.getTailconcTomType();
-	    index++;
-    }
-    output.write(deep, stratmodifier + "class " + tomName);
-    //write extends
-matchblock: {
-              %match(extendsType) {
-			Type[TlType=TLType(code)] -> {
-				output.write(deep," extends " + `code);
-        break matchblock;
-			}
-
-			Type[TomType=code,TlType=EmptyTargetLanguageType()] -> {
-				output.write(deep," extends " + `code);
-        break matchblock;
-			}
-    }
-            }
-    output.writeln(deep," {");
-    int args = names.size();
-    //write Declarations
-    for(int i = 0 ; i < args ; i++) {
-      output.writeln(deep, "private " + types.get(i) + " " + names.get(i) + ";");
-    }
-
-    //write constructor
-    output.write(deep, "public " + tomName + "(");
-    //write constructor parameters
-    for(int i = 0 ; i < args ; i++) {
-	    output.write(deep,types.get(i) + " " + names.get(i));
-	    if(i+1<args) {//if many parameters
-		    output.write(deep,", ");
-	    }
-    }
-
-    //write constructor initialization
-    output.writeln(deep,") {");
-    output.write(deep+1,"super(");
-    generateBQTerm(deep,superTerm,moduleName);
-    output.writeln(");");
-
-    //here index represents the parameter number
-    for(int i = 0 ; i < args ; i++) {
-	    String param = names.get(i);
-	    output.writeln(deep+1, "this." + param + "=" + param + ";");
-    }
-    output.writeln(deep,"}");
-
-    // write getters
-    for(int i = 0 ; i < args ; i++) {
-      output.writeln(deep, "public " + types.get(i) + " get" + names.get(i) + "() {");
-      output.writeln(deep+1,"return " + names.get(i) + ";");
-      output.writeln(deep,"}");
-    }
-
-    // write getChildCount (= 1 + stratChildCount because of the %strategy `extends' which is the first child)
-    int stratChildCount = stratChild.size();
-
-    output.writeln(deep, "public tom.library.sl.Visitable[] getChildren() {");
-    output.writeln(deep, "tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];");
-    output.writeln(deep, "stratChilds[0] = super.getChildAt(0);");
-    for(int i = 0; i < stratChildCount; i++) {
-      int j = (stratChild.get(i)).intValue();
-      output.writeln(deep, "stratChilds[" + (i+1) + "] = get" + names.get(j) + "();");
-    }
-    output.writeln(deep, "return stratChilds;}");
-
-    output.writeln(deep, "public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {");
-    output.writeln(deep,"super.setChildAt(0, children[0]);");
-    for(int i = 0; i < stratChildCount; i++) {
-      int j = (stratChild.get(i)).intValue();
-      output.writeln(deep, names.get(j) + " = (" + types.get(j) + ") children[" + (i+1) + "];");
-    }
-    output.writeln(deep, "return this;");
-    output.writeln(deep, "}");
-
-    output.writeln(deep, "public int getChildCount() {");
-    output.writeln(deep, "return " + (stratChildCount + 1) + ";");
-    output.writeln(deep, "}");
-
-    // write getChildAt
-    output.writeln(deep, "public tom.library.sl.Visitable getChildAt(int index) {");
-    output.writeln(deep, "switch (index) {");
-    output.writeln(deep, "case 0: return super.getChildAt(0);");
-    for (int i = 0; i < stratChildCount; i++) {
-      int j = (stratChild.get(i)).intValue();
-      output.writeln(deep, "case " + (i+1) + ": return get" + names.get(j) + "();");
-    }
-    output.writeln(deep, "default: throw new IndexOutOfBoundsException();");
-    output.writeln(deep, "}");
-    output.writeln(deep, "}");
-
-    // write setChildAt
-    output.writeln(deep, "public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {");
-    output.writeln(deep, "switch (index) {");
-    output.writeln(deep, "case 0: return super.setChildAt(0, child);");
-    for (int i = 0; i < stratChildCount; i++) {
-      int j = (stratChild.get(i)).intValue();
-      output.writeln(deep, "case " + (i+1) + ": " + names.get(j) + " = (" + types.get(j) + ")child; return this;");
-    }
-    output.writeln(deep, "default: throw new IndexOutOfBoundsException();");
-    output.writeln(deep, "}");
-    output.writeln(deep, "}");
-
-    generateDeclaration(deep,`declaration,moduleName);
-    output.writeln(deep,"}");
+		throw new TomRuntimeException("Class building not supported yet");
   }
 
 }

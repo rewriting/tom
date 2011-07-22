@@ -386,26 +386,6 @@ public abstract class GenericGenerator extends AbstractGenerator {
     output.write(" + 1");
   }
 
-  protected void buildGetFunctionSymbolDecl(int deep, String type, String name,
-                                            TargetLanguageType tlType, TargetLanguage tlCode, String moduleName) throws IOException {
-    String args[];
-    if(lazyType) {
-      TomType argType = getUniversalType();
-      if(getSymbolTable(moduleName).isBuiltinType(type)) {
-        argType = getSymbolTable(moduleName).getBuiltinType(type);
-      }
-      args = new String[] { TomBase.getTLType(argType), name };
-    } else {
-      args = new String[] { TomBase.getTLCode(tlType), name };
-    }
-
-    TomType returnType = getUniversalType();
-    if(getSymbolTable(moduleName).isBuiltinType(type)) {
-      returnType = getSymbolTable(moduleName).getBuiltinType(type);
-    }
-    genDecl(TomBase.getTLType(returnType),"tom_get_fun_sym", type,args,tlCode, moduleName);
-  }
-
   protected void buildGetImplementationDecl(int deep, String type, String typename,
                                             TargetLanguageType tlType, Instruction instr, String moduleName) throws IOException {
     String argType;
