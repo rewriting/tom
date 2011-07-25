@@ -145,7 +145,7 @@ public class NewParserPlugin extends TomGenericPlugin {
    * arg[0] should contain the StreamManager from which we can get the input
    */
   public void setArgs(Object[] arg){
-    System.out.println("(DEBUG) NewParser init");
+    //System.out.println("(DEBUG) NewParser init");
     if (arg[0] instanceof TomStreamManager) {
       setStreamManager((TomStreamManager)arg[0]);
       currentFileName = getStreamManager().getInputFileName();  
@@ -185,7 +185,7 @@ public class NewParserPlugin extends TomGenericPlugin {
     boolean newparser    = ((Boolean)getOptionManager().getOptionValue("newparser")).booleanValue();
     if (newparser) {
       //System.out.println("(DEBUG) we are using the new parser / newparser = " + newparser);
-      System.out.println("(DEBUG) NewParser in use");
+      //System.out.println("(DEBUG) NewParser in use");
     try {
         // looking for java package
         if(java && (!currentFileName.equals("-"))) {
