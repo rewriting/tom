@@ -575,17 +575,18 @@ public static <O extends org.eclipse.emf.ecore.EObject> O construct@cr@(O o, Obj
   return o;
 }]%);
           }
-        } else if(eclf instanceof EEnum) {
-          EEnum en = (EEnum) eclf;
-          String cr = eclf.getName();
-          String[] decl = getClassDeclarations(eclf); // [canonical name, anonymous generic, generic type]
-          for(EEnumLiteral lit : en.getELiterals()) {
-            String o1 = eclf.getEPackage().getEFactoryInstance().getClass()
-              .getInterfaces()[eclf.getEPackage().getClass()
-              .getInterfaces().length - 1].getCanonicalName();
-            String o2 = eclf.getEPackage().getClass().getInterfaces()[eclf
-              .getEPackage().getClass().getInterfaces().length - 1]
-              .getCanonicalName();
+        }
+      } else if(eclf instanceof EEnum) {
+        EEnum en = (EEnum) eclf;
+        String cr = eclf.getName();
+        String[] decl = getClassDeclarations(eclf); // [canonical name, anonymous generic, generic type]
+        for(EEnumLiteral lit : en.getELiterals()) {
+          String o1 = eclf.getEPackage().getEFactoryInstance().getClass()
+            .getInterfaces()[eclf.getEPackage().getClass()
+            .getInterfaces().length - 1].getCanonicalName();
+          String o2 = eclf.getEPackage().getClass().getInterfaces()[eclf
+            .getEPackage().getClass().getInterfaces().length - 1]
+            .getCanonicalName();
 
           writer.write(%[
 
@@ -593,7 +594,6 @@ public static <O extends org.eclipse.emf.ecore.EObject> O construct@cr@(O o, Obj
   is_fsym(t) { t == @(decl[0]+decl[1])@.get("@lit.getLiteral()@") }
   make() { (@(decl[0]+decl[2])@)@o1@.eINSTANCE.createFromString( (EDataType)@o2@.eINSTANCE.get@toUpperName(cr)@(), "@lit.getLiteral()@") }
 }]%);
-          }
         }
       }
     }
