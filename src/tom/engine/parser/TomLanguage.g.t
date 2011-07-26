@@ -328,13 +328,12 @@ visitInstruction [List<ConstraintInstruction> list, TomType rhsType] throws TomE
                     TomMessage.badMatchNumberArgument,
                     subjectListLength, Integer.valueOf(matchPatternList.size()));
                 return;
-              }
+                }
 
-              BQTerm subject;
-              
-                subject = `BQVariable(concOption(),Name("tom__arg"),rhsType);
+                BQTerm subject = `BQVariable(concOption(),Name("tom__arg"),rhsType);
+                TomType matchType = (getOptionBooleanValue("newtyper")?SymbolTable.TYPE_UNKNOWN:rhsType);
                 constraint =
-                  `AndConstraint(constraint,MatchConstraint(matchPatternList.get(0),subject,rhsType));
+                    `AndConstraint(constraint,MatchConstraint(matchPatternList.get(0),subject,matchType));
               
               //optionList = `concOption(option, OriginalText(Name(text.toString())));
 

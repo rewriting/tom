@@ -377,6 +377,10 @@ public class NewKernelTyper {
    * <p>
    * STEP 2:  put(T1,(supertypes_T1 U supertypes_T2)), for each (T1,{...,T2,...}) in dependencies
    */
+  // TODO: optimization 1 - add a test before adding a new pair in the hash map "dependencies" 
+  // TODO: optimization 2 - generate the dependencies once at the beginning of
+  // type inference and for all types of symbol table instead of only "used
+  // types".
   protected void generateDependencies() {
     TomTypeList superTypes;
     TomTypeList supOfSubTypes;
