@@ -30,7 +30,7 @@ package subtypeinference;
 
 public class ProblemRecord {
   %include{ int.tom }
-  %include{ String.tom }
+  %include{ string.tom }
 
     // ------------------------------------------------------------
   abstract class Exp {
