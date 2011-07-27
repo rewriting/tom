@@ -19,7 +19,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  *
+ * Nicolas HENRY (july 2009)
  * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
+ * Jean-Christophe Bach   e-mail: jeanchristophe.bach@inria.fr
  *
  **/
 
@@ -66,9 +68,6 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 
 /**
  * Give a Tom mapping from an EcorePackage
- * 
- * @author Nicolas HENRY (july 2009)
- * 
  */
 public class TomMappingFromEcore {
 
@@ -194,10 +193,16 @@ public class TomMappingFromEcore {
 
   private static String genSubtype(EClassifier eclf) {
     String result = "";
-    if((eclf instanceof EClass) && !((EClass)eclf).getESuperTypes().isEmpty()) {
-      //should be a collection with one and only one element
-      for (EClass supertype:((EClass)eclf).getESuperTypes()) {
-        result = result + "extends " + supertype.getName();
+    if((eclf instanceof EClass)) {
+      if(!((EClass)eclf).getESuperTypes().isEmpty()) {
+        //should be a collection with one and only one element
+        for (EClass supertype:((EClass)eclf).getESuperTypes()) {
+          result = result + "extends "+ supertype.getName();
+        }
+      } else {
+        if (!(eclf.getInstanceClassName().equals("EObject"))) {
+          result = result + "extends " + "org.eclipse.emf.ecore.EObject";
+        }
       }
     }
     return result;
@@ -245,7 +250,7 @@ public class TomMappingFromEcore {
     tomEMFTypes.add(org.eclipse.emf.ecore.EAttribute.class);
     tomEMFTypes.add(org.eclipse.emf.ecore.EAnnotation.class);
     tomEMFTypes.add(org.eclipse.emf.ecore.EStructuralFeature.class);
-    tomEMFTypes.add(EObject.class);
+    tomEMFTypes.add(org.eclipse.emf.ecore.EObject.class);
     tomEMFTypes.add(org.eclipse.emf.ecore.EDataType.class);
     tomEMFTypes.add(org.eclipse.emf.ecore.EModelElement.class);
     tomEMFTypes.add(org.eclipse.emf.ecore.EEnumLiteral.class);
