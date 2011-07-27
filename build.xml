@@ -286,6 +286,7 @@
       <exclude name="tom/gom/**/*.g.t"/>
       <exclude name="tom/engine/parser/*.g.t"/>
       <exclude name="tom/islander/**/*.g.t"/>
+      <exclude name="tom/engine/treeprinter/*.t"/> <!-- XXX temp... -->
     </tomcompile>
 
     <!-- Specific stuff for parser generation -->
@@ -1859,6 +1860,15 @@
     <antlr3 target="${src.src}/${newparser.package}/parser/miniTom.g"
       outputdirectory="${src.gen}/${newparser.package}/parser"
       libdirectory="${src.gen}/${newparser.package}/parser/minitom" />
+
+    <!-- XXX temp -->
+    <tomcompile fork="no"
+         srcdir="${src.src}"
+         destdir="${src.gen}"
+         multithread="${multithread}"
+         options="--optimize --pretty --inlineplus">
+      <include name="tom/engine/treeprinter/*.t"/>
+    </tomcompile>
 
 
   </target>

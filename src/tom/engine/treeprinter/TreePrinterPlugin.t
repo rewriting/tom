@@ -1,6 +1,8 @@
 package tom.engine.treeprinter;
 
 import tom.engine.adt.code.types.*;
+import tom.engine.newparser.parser.minitom.types.*;
+
 import tom.platform.OptionManager;
 import tom.engine.TomMessage;
 import tom.engine.TomStreamManager;
@@ -44,6 +46,10 @@ import java.util.ArrayList;
  *
  */
 public class TreePrinterPlugin extends TomGenericPlugin {
+
+  %include {sl.tom}
+  %include {../adt/code/Code.tom}
+  %include {../newparser/parser/minitom/miniTom.tom}
 
   /**
    * stores configuration.
@@ -196,11 +202,22 @@ public class TreePrinterPlugin extends TomGenericPlugin {
       System.out.println(
         "\n== "+ instanceConf.getInfo()
         +" ====================================================");
+     
      if(visitable!=null) {
-       Viewer.toTree(visitable);
+
+       Visitable oneLined = null;
+       try {
+          oneLined = `BottomUp(toSingleLineTargetLanguage()).visit(visitable);
+       } catch (tom.library.sl.VisitFailure e) {
+         System.err.println("VisitFailure Exception"); //XXX handle cleanly
+       }
+      
+      Viewer.toTree(oneLined);
+
      } else {
        System.out.println("Nothing to print (this tree is null)");
      }
+
       System.out.println(
         "== /"+ instanceConf.getInfo()
         +" ===================================================");
@@ -211,5 +228,33 @@ public class TreePrinterPlugin extends TomGenericPlugin {
   @Override 
   public Object[] getArgs() {
     return new Object[]{visitable, streamManager};
+  }
+
+
+  private static String formatTargetLanguageString(String s) {
+    s = s.replaceAll("\n", "\\\\n");
+    s = s.replaceAll("\r", "\\\\r");
+    s = s.replaceAll("\t", "\\\\t");
+    return "["+s+"]";
+  }
+
+  %strategy toSingleLineTargetLanguage() extends Identity() {
+    visit TargetLanguage {
+      TL[Code=code, Start=start, End=end] -> {
+        return `TL(formatTargetLanguageString(code), start, end);
+      }
+      ITL[Code=code] -> {
+        return `ITL(formatTargetLanguageString(code));
+      }
+      Comment[Code=code] -> {
+        return `Comment(formatTargetLanguageString(code));
+      }
+    }
+
+    visit gt_Block {
+      HOSTBLOCK[hContent=code] -> {
+        return `HOSTBLOCK(formatTargetLanguageString(code));
+      }
+    }
   }
 }

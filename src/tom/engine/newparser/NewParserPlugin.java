@@ -92,7 +92,10 @@ public class NewParserPlugin extends TomGenericPlugin {
   
   /** the main HostParser */
   private HostParser parser = null;
-  
+ 
+
+  protected gt_Program cst=null;
+
   /** Constructor */
   public NewParserPlugin() {
     super("NewParserPlugin");
@@ -193,9 +196,9 @@ public class NewParserPlugin extends TomGenericPlugin {
           HostParser parser = new HostParser();
           CharStream input = new ANTLRReaderStream(currentReader);
           Tree programAsAntrlTree = parser.parseProgram(input);
-          gt_Program programAsCST = (gt_Program)miniTomAdaptor.getTerm(programAsAntrlTree);
-          Code programAsAST = CSTAdaptor.adapt(programAsCST);
-          setWorkingTerm(programAsAST);
+          cst = (gt_Program)miniTomAdaptor.getTerm(programAsAntrlTree);
+          //Code programAsAST = CSTAdaptor.adapt(programAsCST);
+          //setWorkingTerm(programAsAST);
 
           /* Do not exhaust the stream !! */
 /*        TomJavaParser javaParser = TomJavaParser.createParser(currentFileName);
@@ -290,4 +293,12 @@ public class NewParserPlugin extends TomGenericPlugin {
     return parser.getLine();
   }
 */
+
+  public Object[] getArgs() {
+    boolean newparser = ((Boolean)getOptionManager().getOptionValue("newparser")).booleanValue();
+
+    return (newparser)? new Object[]{cst, streamManager}
+                      : new Object[]{term, streamManager};
+  }
+  
 } //class NewParserPlugin
