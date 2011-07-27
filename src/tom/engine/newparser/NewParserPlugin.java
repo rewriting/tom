@@ -23,7 +23,6 @@
 
 package tom.engine.newparser;
 
-import tom.engine.newparser.CSTAdaptor;
 import tom.engine.newparser.parser.*;
 
 import java.io.BufferedReader;
@@ -55,9 +54,9 @@ import tom.platform.adt.platformoption.types.PlatformOptionList;
 import tom.engine.adt.tomsignature.types.TomSymbol;
 import tom.engine.adt.code.types.*;
 import tom.engine.adt.tomterm.types.*;
-import tom.engine.newparser.parser.minitom.types.*;
+import tom.engine.adt.cst.types.*;
 
-import tom.engine.newparser.parser.minitom.*;
+import tom.engine.adt.cst.*;
 
 import antlr.RecognitionException;
 import antlr.TokenStreamException;
@@ -196,7 +195,7 @@ public class NewParserPlugin extends TomGenericPlugin {
           HostParser parser = new HostParser();
           CharStream input = new ANTLRReaderStream(currentReader);
           Tree programAsAntrlTree = parser.parseProgram(input);
-          cst = (gt_Program)miniTomAdaptor.getTerm(programAsAntrlTree);
+          cst = (gt_Program)CSTAdaptor.getTerm(programAsAntrlTree);
           //Code programAsAST = CSTAdaptor.adapt(programAsCST);
           //setWorkingTerm(programAsAST);
 

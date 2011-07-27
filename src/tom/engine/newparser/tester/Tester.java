@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import tom.engine.newparser.parser.minitom.miniTomAdaptor;
+import tom.engine.adt.cst.CSTAdaptor;
 
 import org.antlr.runtime.tree.DOTTreeGenerator;
 import org.antlr.runtime.tree.Tree;
@@ -109,7 +109,7 @@ public class Tester {
             
             //System.out.println("!!! Hello dear user, I'm now adapting ANTLR Tree");
 
-            SharedObject adaptedTree = miniTomAdaptor.getTerm(parser.getTree());
+            SharedObject adaptedTree = CSTAdaptor.getTerm(parser.getTree());
             //System.out.println(adaptedTree);
             
             if(adaptedTree==null){
@@ -127,7 +127,7 @@ public class Tester {
           
           // draw anyway if asked but don't change testIssue
           if(adaptTree){
-            SharedObject adaptedTree = miniTomAdaptor.getTerm(parser.getTree());
+            SharedObject adaptedTree = CSTAdaptor.getTerm(parser.getTree());
           }
         }
       }else{

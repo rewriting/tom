@@ -1,7 +1,7 @@
 package tom.engine.treeprinter;
 
 import tom.engine.adt.code.types.*;
-import tom.engine.newparser.parser.minitom.types.*;
+import tom.engine.adt.cst.types.*;
 
 import tom.platform.OptionManager;
 import tom.engine.TomMessage;
@@ -48,8 +48,9 @@ import java.util.ArrayList;
 public class TreePrinterPlugin extends TomGenericPlugin {
 
   %include {sl.tom}
-  %include {../adt/code/Code.tom}
-  %include {../newparser/parser/minitom/miniTom.tom}
+  //%include {../adt/code/Code.tom}
+  //%include {../adt/cst/CST.tom}
+  %include {../adt/tomsignature/TomSignature.tom}
 
   /**
    * stores configuration.

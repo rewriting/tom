@@ -287,6 +287,7 @@
       <exclude name="tom/engine/parser/*.g.t"/>
       <exclude name="tom/islander/**/*.g.t"/>
       <exclude name="tom/engine/treeprinter/*.t"/> <!-- XXX temp... -->
+      <exclude name="tom/engine/treeformatter/*.t"/> <!-- XXX temp... -->
     </tomcompile>
 
     <!-- Specific stuff for parser generation -->
@@ -1841,25 +1842,27 @@
     <property name="tom.home" value="${stable.dist}"/>
     <property name="newparser.package" value="tom/engine/newparser"/>
 
+    <mkdir dir="${src.gen}/${newparser.package}/parser/"/>
+
   <taskdef name="antlr3"
            classname="org.apache.tools.ant.antlr.ANTLR3">
   </taskdef>
 
-    <gomcompile srcdir="${src.src}"
+  <!--<gomcompile srcdir="${src.src}"
       destdir="${src.gen}"
-      package="tom.engine.newparser.parser">
-      <include name="tom/engine/newparser/parser/miniTom.gom"/>
-    </gomcompile>
+      package="tom.engine.adt">
+      <include name="tom/engine/adt/CST.gom"/>
+    </gomcompile> -->
 
     <gomantlradaptercompile srcdir="${src.src}"
       destdir="${src.gen}"
-      package="tom.engine.newparser.parser">
-      <include name="tom/engine/newparser/parser/miniTom.gom"/>
+      package="tom.engine.adt">
+      <include name="tom/engine/adt/CST.gom"/>
     </gomantlradaptercompile>
 
     <antlr3 target="${src.src}/${newparser.package}/parser/miniTom.g"
-      outputdirectory="${src.gen}/${newparser.package}/parser"
-      libdirectory="${src.gen}/${newparser.package}/parser/minitom" />
+      outputdirectory="${src.gen}/${newparser.package}/parser/"
+      libdirectory="${src.gen}/tom/engine/adt/cst" />
 
     <!-- XXX temp -->
     <tomcompile fork="no"
@@ -1868,6 +1871,14 @@
          multithread="${multithread}"
          options="--optimize --pretty --inlineplus">
       <include name="tom/engine/treeprinter/*.t"/>
+    </tomcompile>
+
+    <tomcompile fork="no"
+         srcdir="${src.src}"
+         destdir="${src.gen}"
+         multithread="${multithread}"
+         options="--optimize --pretty --inlineplus">
+      <include name="tom/engine/treeformatter/*.t"/>
     </tomcompile>
 
 

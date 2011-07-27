@@ -4,7 +4,7 @@ options {
   output=AST;
   ASTLabelType=Tree;
   backtrack=true;
-  tokenVocab=miniTomTokens;
+  tokenVocab=CSTTokens;
 }
 
 @parser::header {

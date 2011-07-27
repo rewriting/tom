@@ -1,6 +1,10 @@
-module tom.engine.parserV3.parser.miniTom
-imports String
+module CST
+imports String Code 
 abstract syntax
+
+// Tree Transformation =======================================================
+gt_Block = wrappedCode(wrapped:Code)
+
 
 // Program ===================================================================
 gt_Program = CsProgram(blocks:gt_BlockList)
