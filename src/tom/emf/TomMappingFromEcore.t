@@ -201,7 +201,7 @@ public class TomMappingFromEcore {
         }
       } else {
         if (!(eclf.getInstanceClassName().equals("EObject"))) {
-          result = result + "extends " + "org.eclipse.emf.ecore.EObject";
+          result = result + "extends " + "EObject";
         }
       }
     }
