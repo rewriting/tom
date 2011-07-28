@@ -1,6 +1,8 @@
 package tom.engine.treeformatter;
 
 import java.util.Map;
+import java.util.Collection;
+import java.util.LinkedList;
 
 import tom.engine.Tom;
 import tom.engine.TomMessage;
@@ -18,6 +20,7 @@ import tom.engine.adt.cst.types.*;
 public class TreeFormatterPlugin extends TomGenericPlugin {
 
   %include {sl.tom}
+  %include { util/types/Collection.tom }
   %include {../adt/cst/CST.tom}
 
   protected gt_Program cst;
@@ -44,13 +47,24 @@ public class TreeFormatterPlugin extends TomGenericPlugin {
 
   @Override
   public void run(Map informationTracker){
-/*
-    try {
-    cst = `BottomUp(toAST()).visit(cst);
-    } catch (tom.library.sl.VisitFailure e) {
-      System.err.println("UnexpectedException"); // XXX handle this...
+    
+    boolean pluginIsOn = 
+     ((Boolean)getOptionManager().getOptionValue("newparser")).booleanValue();
+
+    if(pluginIsOn) {
+
+      try {
+      cst = `BottomUp(toAST()).visit(cst);
+      } catch (tom.library.sl.VisitFailure e) {
+        System.err.println("UnexpectedException"); // XXX handle this...
+      }
+
+      %match(cst) {
+        wrappedCodeList(codeList) -> {
+          term = `Tom(codeList);
+        }
+      }
     }
-*/
   }
 
   %strategy toAST() extends Identity() {
@@ -59,6 +73,33 @@ public class TreeFormatterPlugin extends TomGenericPlugin {
         return `wrappedCode(TargetLanguageToCode(TL(code,
                   TextPosition(-1, -1), TextPosition(-1, -1))));
       }
+
+      CsMatchConstruct[] -> {
+        return `wrappedCode(
+                  InstructionToCode(Match(concConstraintInstruction(),
+                                        concOption()))
+                );
+      }
+    }
+
+    visit gt_Program {
+      CsProgram(blocks) -> {
+        Collection<Code> c = new LinkedList<Code>();
+        `TopDown(collectCodes(c)).visit(`blocks);
+        
+        CodeList res = `concCode();
+        for(Code code : c){
+          res = `concCode(res*, code);
+        }
+        
+        return `wrappedCodeList(res);
+      }
+    }
+  }
+
+  %strategy collectCodes(Collection c) extends Identity() {
+    visit Code {
+      x -> { c.add(`x); }
     }
   }
 

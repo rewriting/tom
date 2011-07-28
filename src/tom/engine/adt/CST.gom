@@ -4,7 +4,7 @@ abstract syntax
 
 // Tree Transformation =======================================================
 gt_Block = wrappedCode(wrapped:Code)
-
+gt_Program = wrappedCodeList(wrapped:CodeList)
 
 // Program ===================================================================
 gt_Program = CsProgram(blocks:gt_BlockList)
