@@ -215,6 +215,8 @@ public class TreePrinterPlugin extends TomGenericPlugin {
       
       Viewer.toTree(oneLined);
 
+      System.out.println(oneLined);
+
      } else {
        System.out.println("Nothing to print (this tree is null)");
      }
@@ -253,8 +255,8 @@ public class TreePrinterPlugin extends TomGenericPlugin {
     }
 
     visit gt_Block {
-      HOSTBLOCK[hContent=code] -> {
-        return `HOSTBLOCK(formatTargetLanguageString(code));
+      HOSTBLOCK(code, x, y) -> {
+        return `HOSTBLOCK(formatTargetLanguageString(code), x, y);
       }
     }
   }

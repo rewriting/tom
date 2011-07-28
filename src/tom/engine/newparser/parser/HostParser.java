@@ -97,10 +97,7 @@ public class HostParser {
 	
 	private Tree parse(CharStream input) {
 		
-	  // this string buffer will contain chars read from input that are part of
-	  // "Host Language" code. They will be added to the tree as late as possible
-	  // using ParserAction.packHostContent.
-	  StringBuffer hostCharsBuffer = new StringBuffer();
+	  HostBlockBuilder hostBlockBuilder = new HostBlockBuilder();
 		
 		CommonTreeAdaptor adaptor = new CommonTreeAdaptor();
 		// XXX maybe there is a simpler way...
@@ -126,11 +123,11 @@ public class HostParser {
 			}
 
 			if(recognized==null) {
-				hostCharsBuffer.append((char)input.LA(1));
+			  hostBlockBuilder.readOneChar(input);	
 				input.consume();
 			} else {
 				ParserAction action = actionsMapping.get(recognized);
-				action.doAction(input, hostCharsBuffer, tree, recognized);
+				action.doAction(input, hostBlockBuilder, tree, recognized);
 				// doAction is allowed to modify its parameters
 				// especially, doAction can consume chars from input
 				// so every StreamAnalyst needs to start fresh.
@@ -139,7 +136,7 @@ public class HostParser {
 			
 		} // while
 		
-		ParserAction.PACK_HOST_CONTENT.doAction(input, hostCharsBuffer, tree, null);
+		ParserAction.PACK_HOST_CONTENT.doAction(input, hostBlockBuilder, tree, null);
 		
 		return tree;
 	}

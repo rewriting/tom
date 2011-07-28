@@ -53,7 +53,7 @@ public abstract class ParserAction {
    * @param analyst the analyst that matched (i.e. that fired the action)
    */
   public abstract void doAction(CharStream input,
-		  				StringBuffer hostCharsBuffer,
+		  				HostBlockBuilder hostBlockBuilder,
 		  				Tree tree,
 		  				StreamAnalyst analyst);
   
@@ -68,8 +68,8 @@ public abstract class ParserAction {
     }
 
     @Override
-    public void doAction(CharStream input, StringBuffer hostCharsBuffer, Tree tree,
-        StreamAnalyst analyst) {
+    public void doAction(CharStream input, HostBlockBuilder hostBlockBuilder,
+        Tree tree, StreamAnalyst analyst) {
 
       if(!(analyst instanceof DelimitedSequenceDetector)){
         throw new RuntimeException("Bad StreamAnalyst implementation");
@@ -78,7 +78,7 @@ public abstract class ParserAction {
       // skip one char, this is last char of opening sequence
       // forget to keep it would make analyst state wrong if
       // delimiter sequence is only one char long
-      hostCharsBuffer.append((char)input.LA(1));
+      hostBlockBuilder.readOneChar(input);
       input.consume();
 
       while(analyst.readChar(input)) { // readChar update and return "foundness" value
@@ -87,7 +87,7 @@ public abstract class ParserAction {
           return;
         }
 
-        hostCharsBuffer.append((char)input.LA(1)); // save host code char for later use
+        hostBlockBuilder.readOneChar(input); // save host code char for later use
         input.consume();
       }
     }
@@ -96,14 +96,14 @@ public abstract class ParserAction {
   private static abstract class GenericParseConstruct extends ParserAction {
     
     @Override
-    public void doAction(CharStream input, StringBuffer hostCharsBuffer,
+    public void doAction(CharStream input, HostBlockBuilder hostBlockBuilder,
         Tree tree, StreamAnalyst analyst) {
 
-      // remove beginning of the keyword from hostCharBuffer
+      // remove beginning of the keyword from hostBlockBuilder
       // ("%matc" if keyword is "%match")
-      hostCharsBuffer.setLength(hostCharsBuffer.length()-analyst.getOffsetAtMatch());
+      hostBlockBuilder.removeLastChars(analyst.getOffsetAtMatch());
       
-      PACK_HOST_CONTENT.doAction(input, hostCharsBuffer, tree, analyst);
+      PACK_HOST_CONTENT.doAction(input, hostBlockBuilder, tree, analyst);
       
       // consume last chat of the keyword
       // ("h" if keyword is "%match")
@@ -309,26 +309,13 @@ public abstract class ParserAction {
     }
 
 	@Override
-	public void doAction(CharStream input, StringBuffer hostCharsBuffer,
+	public void doAction(CharStream input, HostBlockBuilder hostBlockBuilder,
 			Tree tree, StreamAnalyst analyst) {
 		
-	  if(hostCharsBuffer.length()>0){
-	    CommonTreeAdaptor adaptor = new CommonTreeAdaptor();
-		    
-		// XXX is it REALLY the clearest way to do that ?
-		Tree child = (Tree) adaptor.nil();
-		child = (Tree)adaptor.becomeRoot((Tree)adaptor.create(miniTomParser.HOSTBLOCK, "HOSTBLOCK"), child);
-		
-		// XXX maybe define a type for gom's Strings ?
-		Tree hContent = (Tree) adaptor.nil();
-		hContent = (Tree)adaptor.becomeRoot((Tree)adaptor.create(miniTomParser.HOSTBLOCK, hostCharsBuffer.toString()), hContent);
-		
-		child.addChild(hContent);
-		
-	    tree.addChild(child);
+	  if(!hostBlockBuilder.isEmpty()){
+	    tree.addChild(hostBlockBuilder.getHostBlock());
+      hostBlockBuilder.reset();
 	  }
-	  
-	  hostCharsBuffer.setLength(0);
 	}
   }
 
@@ -343,13 +330,13 @@ public abstract class ParserAction {
     private ParseMetaQuoteConstruct() {;}
     
     @Override
-    public void doAction(CharStream input, StringBuffer hostCharsBuffer,
+    public void doAction(CharStream input, HostBlockBuilder hostBlockBuilder,
         Tree tree, StreamAnalyst analyst) {
       
-      // remove beginning of the keyword from hostCharBuffer
-      hostCharsBuffer.setLength(hostCharsBuffer.length()-analyst.getOffsetAtMatch());
+      // remove beginning of the keyword from hostBlockBuilder
+      hostBlockBuilder.removeLastChars(analyst.getOffsetAtMatch());
       
-      PACK_HOST_CONTENT.doAction(input, hostCharsBuffer, tree, analyst);
+      PACK_HOST_CONTENT.doAction(input, hostBlockBuilder, tree, analyst);
       
       // consume last char of the keyword
       input.consume();

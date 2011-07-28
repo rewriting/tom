@@ -12,7 +12,7 @@ gt_Program = CsProgram(blocks:gt_BlockList)
 gt_BlockList = CsBlockList(gt_Block*)
 
 gt_Block =
- HOSTBLOCK(hContent:String)
+ HOSTBLOCK(hContent:String, start:gt_TextPosition, end:gt_TextPosition)
 | CsMatchConstruct(arguments:gt_MatchArgumentList, constraintActionList:gt_ConstraintActionList)
 | CsOpConstruct       (tomTypeName:gt_Name, ctorName:gt_Name, argumentList :gt_SlotList, operatorList :gt_OperatorList)
 | CsOpArrayConstruct  (tomTypeName:gt_Name, ctorName:gt_Name, typeName:gt_Name, operatorList:gt_OperatorList)
@@ -110,3 +110,6 @@ gt_Name = CsName(name:String)
         | CsEmptyName()
 
 gt_NameList = CsNameList(gt_Name*)
+
+// DebugDatas ===============================================================
+gt_TextPosition = CsTextPosition(line:int, column:int)
