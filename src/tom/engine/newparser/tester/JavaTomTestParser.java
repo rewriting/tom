@@ -16,7 +16,7 @@ public class JavaTomTestParser extends TestParser{
     
     this.setSuccess(false);
     
-    HostParser parser = new HostParser();
+    HostParser parser = new HostParser(null, null); //XXX
     CharStream input = new ANTLRStringStream(stringInput);
     Tree tree = parser.parseProgram(input);
     

@@ -215,7 +215,7 @@ public class TreePrinterPlugin extends TomGenericPlugin {
       
       Viewer.toTree(oneLined);
 
-      System.out.println(oneLined);
+      //System.out.println(oneLined);
 
      } else {
        System.out.println("Nothing to print (this tree is null)");

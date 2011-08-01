@@ -192,7 +192,8 @@ public class NewParserPlugin extends TomGenericPlugin {
         // looking for java package
         if(java && (!currentFileName.equals("-"))) {
 
-          HostParser parser = new HostParser();
+          HostParser parser =
+            new HostParser(getStreamManager(), getOptionManager());
           CharStream input = new ANTLRReaderStream(currentReader);
           Tree programAsAntrlTree = parser.parseProgram(input);
           cst = (gt_Program)CSTAdaptor.getTerm(programAsAntrlTree);

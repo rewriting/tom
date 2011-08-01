@@ -104,6 +104,10 @@ public class HostBlockBuilder {
     return hostBlock;
   }
 
+  public String getText() {
+    return stringBuilder.toString();
+  }
+
   public boolean isEmpty() {
     return isEmpty;
   }

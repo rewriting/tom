@@ -2,10 +2,15 @@ package tom.engine.newparser.parser;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
 
 import org.antlr.runtime.CharStream;
 import org.antlr.runtime.tree.CommonTreeAdaptor;
 import org.antlr.runtime.tree.Tree;
+
+import tom.platform.OptionManager;
+import tom.engine.TomStreamManager;
 
 import tom.engine.newparser.streamanalysis.DelimitedSequenceDetector;
 import tom.engine.newparser.streamanalysis.EOLdetector;
@@ -20,14 +25,22 @@ public class HostParser {
 	
 	private StreamAnalyst stopCondition;
 	private Map<StreamAnalyst, ParserAction> actionsMapping;
-	
+
+  private OptionManager optionManager;
+  private TomStreamManager streamManager;
+
 	/**
 	 * Create a HostParser untill stopCondition find what it's looking for.
 	 * Defautl stopCondition is EOF.
 	 * @param stopCondition
 	 */
-	public HostParser(StreamAnalyst stopCondition) {
-		
+  // streamManager/optionManager... used only for PARSER_GOM_... need cleaning
+	public HostParser(TomStreamManager streamManager, OptionManager optionManager,
+      StreamAnalyst stopCondition) {
+	
+    this.optionManager = optionManager;
+    this.streamManager = streamManager;
+
 		this.stopCondition = stopCondition;
 		
 		actionsMapping = new HashMap<StreamAnalyst, ParserAction>();
@@ -77,10 +90,14 @@ public class HostParser {
     actionsMapping.put(
       new KeywordDetector("%include"),
       ParserAction.PARSE_INCLUDE_CONSTRUCT);
+      // %gom
+    actionsMapping.put(
+      new KeywordDetector("%gom"),
+      ParserAction.PARSE_GOM_CONSTRUCT);
 	}
 	
-	public HostParser() {
-		this(new KeywordDetector(""+(char)CharStream.EOF));
+	public HostParser(TomStreamManager streamManager, OptionManager optionManager) {
+		this(streamManager, optionManager, new KeywordDetector(""+(char)CharStream.EOF));
 	}
 	
 	public Tree parseProgram(CharStream input){
@@ -95,6 +112,20 @@ public class HostParser {
 	  return parse(input);
 	}
 	
+  // XXX parse should return a list of tree
+  // and parseBlockList should add CsBlockList node
+  public List<Tree> parseListOfBlock(CharStream input){
+    List<Tree> res = new ArrayList<Tree>();
+    
+    Tree blockList = parse(input);
+    int n = blockList.getChildCount();
+    for(int i = 0; i<n; i++){
+      res.add(blockList.getChild(i));
+    }
+
+    return res;
+  }
+
 	private Tree parse(CharStream input) {
 		
 	  HostBlockBuilder hostBlockBuilder = new HostBlockBuilder();
@@ -127,7 +158,8 @@ public class HostParser {
 				input.consume();
 			} else {
 				ParserAction action = actionsMapping.get(recognized);
-				action.doAction(input, hostBlockBuilder, tree, recognized);
+				action.doAction(input, hostBlockBuilder, tree, recognized,
+            getStreamManager(), getOptionManager());
 				// doAction is allowed to modify its parameters
 				// especially, doAction can consume chars from input
 				// so every StreamAnalyst needs to start fresh.
@@ -136,18 +168,28 @@ public class HostParser {
 			
 		} // while
 		
-		ParserAction.PACK_HOST_CONTENT.doAction(input, hostBlockBuilder, tree, null);
+		ParserAction.PACK_HOST_CONTENT.doAction(input, hostBlockBuilder, tree,
+        null, getStreamManager(), getOptionManager()) ;
 		
 		return tree;
 	}
-	
+
 	private void resetAllAnalysts() {
 		stopCondition.reset();
 		for(StreamAnalyst analyst : actionsMapping.keySet()) {
 			analyst.reset();
 		}
 	}
-	
+
+  //XXX synchronized... why ? why not ?
+  private synchronized OptionManager getOptionManager() {
+    return optionManager;
+  }
+
+  private synchronized TomStreamManager getStreamManager() {
+    return streamManager;
+  }
+
   // === DEBUG =========================== //
   public String getClassDesc() {
     return "HostParser";

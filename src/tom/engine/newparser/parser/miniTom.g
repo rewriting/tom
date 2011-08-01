@@ -554,7 +554,7 @@ LBR     :  '{'
      opensBlockLBR = false;
 
     HostParser parser = new HostParser(
-    new NegativeImbricationDetector('{', '}', 0));
+    	null, null, new NegativeImbricationDetector('{', '}', 0));
 
       // XXX DEBUG ===
       if(HostParserDebugger.isOn()){

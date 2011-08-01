@@ -17,7 +17,11 @@ public class KeywordDetector extends StreamAnalyst {
     this.cursor = 0;
     this.matched = false;
   }
-  
+ 
+  public String getKeywordString() {
+    return keyword;
+  }
+
   @Override
   public boolean match() {
     return matched;
@@ -44,7 +48,11 @@ public class KeywordDetector extends StreamAnalyst {
       }
       return matched;
     } else {
-      cursor = 0;
+      if(keyword.charAt(0)==nextChar){
+        cursor = 1;
+      }else {
+        cursor = 0;
+      }
     }
     
     return matched;

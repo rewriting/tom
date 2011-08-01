@@ -40,7 +40,15 @@ public class DelimitedSequenceDetector extends StreamAnalyst{
     this(new KeywordDetector(openingKeyword),
          new KeywordDetector(closingKeyword));
   }
-  
+ 
+  public String getOpeningKeywordString() {
+    return openingKeyword.getKeywordString();
+  }
+
+  public String getClosingKeywordString() {
+    return closingKeyword.getKeywordString();
+  }
+
   @Override
   public boolean match() {
     return inside || closingKeyword.match();
