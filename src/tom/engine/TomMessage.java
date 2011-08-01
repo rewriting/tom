@@ -25,9 +25,7 @@
 
 package tom.engine;
 
-import tom.platform.BasicFormatter;
 import tom.platform.BasicPlatformMessage;
-import tom.platform.PlatformLogRecord;
 
 import java.lang.reflect.*;
 /**

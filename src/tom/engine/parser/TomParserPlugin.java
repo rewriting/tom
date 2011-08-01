@@ -25,22 +25,14 @@
 
 package tom.engine.parser;
 
-import java.io.BufferedReader;
 import java.io.Reader;
-import java.io.InputStreamReader;
-import java.io.FileInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.Map;
 import java.util.HashSet;
-import java.util.logging.Level;
 import java.util.Iterator;
 
-import tom.engine.Tom;
 import tom.engine.TomMessage;
 import tom.engine.TomStreamManager;
 import tom.engine.exception.TomException;
@@ -49,13 +41,11 @@ import tom.engine.tools.Tools;
 import tom.engine.tools.SymbolTable;
 import tom.platform.OptionManager;
 import tom.platform.OptionParser;
-import tom.platform.PlatformLogRecord;
 import tom.platform.adt.platformoption.types.PlatformOptionList;
 import tom.engine.adt.tomsignature.types.TomSymbol;
 import antlr.RecognitionException;
 import antlr.TokenStreamException;
 import antlr.TokenStreamSelector;
-import aterm.ATerm;
 import tom.engine.adt.code.types.*;
 
 /**

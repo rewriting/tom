@@ -31,11 +31,6 @@
 
 package tom.library.sl;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Arrays;
-
-
 /**
  * Object that represents a position in a term
  */
