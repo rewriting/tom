@@ -103,7 +103,8 @@ public class HostParser {
 	public Tree parseProgram(CharStream input){
 	  CommonTreeAdaptor adaptor = new CommonTreeAdaptor();
 	  Tree tree = (Tree) adaptor.nil();
-    tree = (Tree) adaptor.becomeRoot((Tree)adaptor.create(miniTomParser.CsProgram, "CsProgram"), tree);
+    tree = (Tree) adaptor.becomeRoot(
+        (Tree)adaptor.create(miniTomParser.CsProgram, "CsProgram"), tree);
     tree.addChild(parse(input));
     return tree;
 	}
@@ -112,7 +113,7 @@ public class HostParser {
 	  return parse(input);
 	}
 	
-  // XXX parse should return a list of tree
+  // XXX parse() should return a list of tree
   // and parseBlockList should add CsBlockList node
   public List<Tree> parseListOfBlock(CharStream input){
     List<Tree> res = new ArrayList<Tree>();
@@ -133,14 +134,15 @@ public class HostParser {
 		CommonTreeAdaptor adaptor = new CommonTreeAdaptor();
 		// XXX maybe there is a simpler way...
 	  Tree tree = (Tree) adaptor.nil();
-    tree = (Tree) adaptor.becomeRoot((Tree)adaptor.create(miniTomParser.CsBlockList, "CsBlockList"), tree);
+    tree = (Tree) adaptor.becomeRoot(
+        (Tree)adaptor.create(miniTomParser.CsBlockList, "CsBlockList"), tree);
 	  
 	  
-		while(! stopCondition.readChar(input)) { // readChar() updates internal state
-												 // and return match()
+		while(! stopCondition.readChar(input)) { 
+                                    // readChar() updates internal state
+												            // and return match()
 			
 			// update state of all analysts
-      //
       StreamAnalyst recognized = null;
 			for(StreamAnalyst analyst : actionsMapping.keySet()) {
 				boolean matched = analyst.readChar(input);
@@ -166,7 +168,7 @@ public class HostParser {
 				resetAllAnalysts();
 			}
 			
-		} // while
+		} // end while
 		
 		ParserAction.PACK_HOST_CONTENT.doAction(input, hostBlockBuilder, tree,
         null, getStreamManager(), getOptionManager()) ;
@@ -181,12 +183,13 @@ public class HostParser {
 		}
 	}
 
-  //XXX synchronized... why ? why not ?
-  private synchronized OptionManager getOptionManager() {
+  //XXX this is synchronized in "old" parser, maybe it should be here to
+  private OptionManager getOptionManager() {
     return optionManager;
   }
 
-  private synchronized TomStreamManager getStreamManager() {
+  //XXX this is synchronized in "old" parser, maybe it should be here to
+  private TomStreamManager getStreamManager() {
     return streamManager;
   }
 

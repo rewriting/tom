@@ -8,7 +8,7 @@ import org.antlr.runtime.CharStream;
  * Detect and locate some properties of charStream.<br/>
  * 
  */
-public abstract class StreamAnalyst extends Observable{
+public abstract class StreamAnalyst {
   
   public abstract void reset();
   
@@ -17,15 +17,15 @@ public abstract class StreamAnalyst extends Observable{
   /**
    * Read (in advance) a single character
    * Have no side effect on input.
-   * @param input
-   * @return whether 'something' was found
+   * @param CharStream input, what is analysed
+   * @return boolean whether 'something' was found
    */
   public abstract boolean readChar(CharStream input);
   
   /**
    * Number of chars that belong to what StreamAnlyst is looking
-   * that are already consumed when match become true; 
-   * @return
+   * that are already consumed when match become true.
+   * @return int
    */
   public abstract int getOffsetAtMatch();
 }

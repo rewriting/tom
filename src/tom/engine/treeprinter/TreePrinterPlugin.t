@@ -16,9 +16,11 @@ import java.util.List;
 import java.util.ArrayList;
 
 /**
- * This plugin print a representation of current term as previous plugin left it.
- * This term (actually arg[0] from setArgs) may be null or a instance of
- * tom.library.sl.Visitable (most of the time a Code).
+ * This plugin print a representation of current term as previous plugin left
+ * it.
+ * This term (actually arg[0] from setArgs) may be null (in such case will
+ * just say so) or a instance of any kind of tom.library.sl.Visitable
+ * (most of the time a Code).
  *
  * Configuration is done throw xml.
  * A string option named "treeprinterconf" is requested.
@@ -44,19 +46,20 @@ import java.util.ArrayList;
  * "1:printTrees+!finalOnly,SomeTree | 2:printTrees,AnotherOne"
  * "1:ast+!np,OldParserAST | 2:cst+np,NewParserCST | 3:ast+np,NewParserAST"
  *
+ * Remark : This configuration string is pretty sensitive to small changes
+ * (it's easy to crash), but this plugin is of no interest for "real" use of
+ * the compiler, so it's probably not such a big problem.
  */
 public class TreePrinterPlugin extends TomGenericPlugin {
 
   %include {sl.tom}
-  //%include {../adt/code/Code.tom}
-  //%include {../adt/cst/CST.tom}
   %include {../adt/tomsignature/TomSignature.tom}
 
   /**
    * stores configuration.
    */
   private class TreePrinterPluginConf {
-    
+   
     Map<Integer, TreePrinterPluginConfItem> conf =
       new HashMap<Integer, TreePrinterPluginConfItem>();
 
@@ -153,16 +156,14 @@ public class TreePrinterPlugin extends TomGenericPlugin {
     }
   }
 
-  
-
   private static int nextRunCallNumber = 1;
   private static TreePrinterPluginConf conf = null;
 
+  protected Visitable visitable;
+  
   public TreePrinterPlugin() {
     super("astprinterplugin");
   }
-
-  protected Visitable visitable;
 
   /**
    * overriden to accept a null arg[0] and anything visitable
@@ -178,11 +179,16 @@ public class TreePrinterPlugin extends TomGenericPlugin {
       streamManager = (TomStreamManager)arg[1];
     } else {
       TomMessage.error(getLogger(),null,0,TomMessage.invalidPluginArgument,
-         "AstPrinterPlugin", "[Visitable null, TomStreamManager]",
+         "AstPrinterPlugin", "[Visitable or  null, TomStreamManager]",
          getArgumentArrayString(arg));
     }
   }
 
+  /**
+   * Run's behaviour may change each time it's called.
+   * Each execution have a different value of thisRunCallNumber and behaviour
+   * will change according to that number.
+   */
   @Override
   public void run(Map informationTracker) {
 
@@ -234,6 +240,10 @@ public class TreePrinterPlugin extends TomGenericPlugin {
   }
 
 
+  /**
+   * Usefull to print every hostCode on a single line in tree.
+   * Improve readability.
+   */
   private static String formatTargetLanguageString(String s) {
     s = s.replaceAll("\n", "\\\\n");
     s = s.replaceAll("\r", "\\\\r");
@@ -241,6 +251,10 @@ public class TreePrinterPlugin extends TomGenericPlugin {
     return "["+s+"]";
   }
 
+  /**
+   * Change every hostCode block so it's on a single line.
+   * Make printed tree more easily readable.
+   */
   %strategy toSingleLineTargetLanguage() extends Identity() {
     visit TargetLanguage {
       TL[Code=code, Start=start, End=end] -> {

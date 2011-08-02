@@ -66,15 +66,15 @@ public class DelimitedSequenceDetector extends StreamAnalyst{
    * readChar( " ) > true
    * readChar( " ) > true
    * readChar( c ) > false
-   * 
+   *
+   * This method DOESN'T care about EndOfFile. This should be checked
+   * elsewhere.
    */
   @Override
   public boolean readChar(CharStream input) {
     boolean oldFoundValue = match();
     
     char nextChar = (char) input.LA(1);
-    
-    //TODO check EOF
     
     if(inside){
       if(escaped){
@@ -115,12 +115,6 @@ public class DelimitedSequenceDetector extends StreamAnalyst{
       }
     }
     
-    // don't forget Observable features
-    if(oldFoundValue!=match()){
-      setChanged();
-      notifyObservers();
-    }
-    
     return match();
   }
   
@@ -130,10 +124,6 @@ public class DelimitedSequenceDetector extends StreamAnalyst{
     closingKeyword.reset();
     inside = false;
     escaped = false;
-    
-    // don't forget Observable features
-    setChanged();
-    notifyObservers();
   }
 
   @Override

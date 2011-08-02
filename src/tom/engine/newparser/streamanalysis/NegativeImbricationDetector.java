@@ -43,8 +43,6 @@ public class NegativeImbricationDetector extends StreamAnalyst {
     
     boolean oldFoundValue = match();
     
-    // XXX check for EOF
-    
     char nextChar = (char)input.LA(1);
     
     if(nextChar==levelOpeningChar) {
@@ -53,12 +51,6 @@ public class NegativeImbricationDetector extends StreamAnalyst {
     
     if(nextChar==levelClosingChar) {
       imbricationLevel--;
-    }
-    
-    // don't forget Observable features
-    if(oldFoundValue!=match()) {
-      setChanged();
-      notifyObservers();
     }
     
     return match();

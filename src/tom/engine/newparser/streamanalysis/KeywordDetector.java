@@ -2,9 +2,18 @@ package tom.engine.newparser.streamanalysis;
 import org.antlr.runtime.CharStream;
 
 /**
- * Detected property : some keyword have been found</br>
- * found() returns true when input.index() is last char of the keyword index.</br>
- * @see StreamAnalyst
+ * Detect a specific string in a CharStream.
+ * 
+ * Please note that one needs to use CharStream.consume() between two calls to
+ * KeywordDetector.readChar().
+ * 
+ * readChar doesn't consume chars automatically to allow to use several
+ * instances of KeywordDetector.
+ * 
+ * match() will return true after the last keyword's char have been read.
+ *
+ * XXX Could check that every call to readChar reads char right after
+ * previously read char.
  */
 public class KeywordDetector extends StreamAnalyst {
 
@@ -22,11 +31,21 @@ public class KeywordDetector extends StreamAnalyst {
     return keyword;
   }
 
+  // XXX hasMatched would be a better name (?)
+  /**
+   * Return matching status.
+   */
   @Override
   public boolean match() {
     return matched;
   }
 
+  /**
+   * This method read next char in CharStream and update matching status.
+   * This method DOESN'T care about EndOfFile. This should be checked
+   * elsewhere.
+   * @return boolean, new matching status.
+   */
   @Override
   public boolean readChar(CharStream input) {
     char nextChar = (char)input.LA(1);
@@ -35,16 +54,11 @@ public class KeywordDetector extends StreamAnalyst {
       reset();
     }
     
-    //TODO check EOF
     if(keyword.charAt(cursor)==nextChar) {
       cursor++;
       if(cursor==keyword.length()) {
         matched = true;
         cursor = 0;
-
-        // don't forget Observable features
-        setChanged();
-        notifyObservers();
       }
       return matched;
     } else {
@@ -62,10 +76,6 @@ public class KeywordDetector extends StreamAnalyst {
   public void reset() {
     this.cursor = 0;
     this.matched = false;
-    
-    // don't forget Observable features
-    setChanged();
-    notifyObservers();
   }
 
   @Override

@@ -7,7 +7,7 @@ import java.util.LinkedList;
 import tom.engine.Tom;
 import tom.engine.TomMessage;
 import tom.engine.TomStreamManager;
-
+import tom.engine.exception.TomRuntimeException;
 import tom.engine.tools.TomGenericPlugin;
 import tom.engine.adt.code.types.*;
 import tom.engine.adt.tomterm.types.*;
@@ -19,9 +19,9 @@ import tom.engine.adt.cst.types.*;
  */
 public class TreeFormatterPlugin extends TomGenericPlugin {
 
-  %include {sl.tom}
+  %include { sl.tom }
   %include { util/types/Collection.tom }
-  %include {../adt/cst/CST.tom}
+  %include { ../adt/cst/CST.tom }
 
   protected gt_Program cst;
 
@@ -37,6 +37,7 @@ public class TreeFormatterPlugin extends TomGenericPlugin {
     } else
     if (arg[0] instanceof gt_Program && arg[1] instanceof TomStreamManager ) {
       cst = (gt_Program)arg[0];
+      term = null;
       streamManager = (TomStreamManager)arg[1];
     } else {
       TomMessage.error(getLogger(),null,0,TomMessage.invalidPluginArgument,
@@ -56,7 +57,9 @@ public class TreeFormatterPlugin extends TomGenericPlugin {
       try {
       cst = `BottomUp(toAST()).visit(cst);
       } catch (tom.library.sl.VisitFailure e) {
-        System.err.println("UnexpectedException"); // XXX handle this...
+        throw new TomRuntimeException (
+          "tom.engine.treeformatter.TreeFormatter.run strategy "+
+          "failure on "+`cst);
       }
 
       %match(cst) {

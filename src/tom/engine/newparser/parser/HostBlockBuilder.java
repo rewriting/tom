@@ -5,6 +5,9 @@ import org.antlr.runtime.tree.Tree;
 import org.antlr.runtime.tree.CommonTreeAdaptor;
 import org.antlr.runtime.tree.TreeAdaptor;
 
+/**
+ * Stores chars, remembers first and last char position, allows to create
+ */
 public class HostBlockBuilder {
 
   private boolean isEmpty = true;
@@ -38,6 +41,7 @@ public class HostBlockBuilder {
     }
   }
 
+  // XXX this method should update lastCharLine/Column
   public void removeLastChars(int charsToRemove) {
     stringBuilder.setLength(stringBuilder.length()-charsToRemove);
   }
@@ -47,11 +51,15 @@ public class HostBlockBuilder {
     
     // XXX is it REALLY the clearest way to do that ?
 		Tree hostBlock = (Tree) adaptor.nil();
-		hostBlock = (Tree)adaptor.becomeRoot((Tree)adaptor.create(miniTomParser.HOSTBLOCK, "HOSTBLOCK"), hostBlock);
+		hostBlock = 
+      (Tree)adaptor.becomeRoot(
+          (Tree)adaptor.create(
+            miniTomParser.HOSTBLOCK, "HOSTBLOCK"), hostBlock);
 		
-		// XXX maybe define a type for gom's Strings ?
 		Tree hContent = (Tree) adaptor.nil();
-		hContent = (Tree)adaptor.becomeRoot((Tree)adaptor.create(0, stringBuilder.toString()), hContent);
+		hContent = 
+      (Tree)adaptor.becomeRoot(
+          (Tree)adaptor.create(0, stringBuilder.toString()), hContent);
 
     // Start TextPosition
     Tree startTextPosition = (Tree) adaptor.nil();

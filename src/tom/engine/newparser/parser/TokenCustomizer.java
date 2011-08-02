@@ -1,14 +1,12 @@
 package tom.engine.newparser.parser;
-
 import org.antlr.runtime.Token;
+
 
 public class TokenCustomizer {
 
   Object nextTokenPayload = null;
   
-  public TokenCustomizer(){
-    
-  }
+  public TokenCustomizer() {}
   
   public Token customize(Token oldToken){
     if(nextTokenPayload == null) {
