@@ -113,7 +113,6 @@ returns [int marker]:
   -> ^( CsMatchConstruct
        ^( CsMatchArgumentList )
        ^( CsConstraintActionList csConstraintAction* )
-        {extractOptions($RBR)}
       )
 ;
 

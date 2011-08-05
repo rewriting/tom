@@ -1,6 +1,3 @@
-#>
-#description %oplist full
-#<
 
 %oplist TomTrucList conc( Truc * ){
 

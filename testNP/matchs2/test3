@@ -1,4 +1,0 @@
-%match(s) {
-  f(a(), g(y)) && ( y << a() || y << b() ) -> {action1}
-  f(), g() -> {action2}
-}

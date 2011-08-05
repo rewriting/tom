@@ -1,6 +1,3 @@
-#>
-#description %oparray full
-#<
 
 %oparray TomTrucArray conc( Truc * ){
 

@@ -1,0 +1,14 @@
+/*
+%match is a cool feature
+*//*
+multi
+line
+comment
+*//*
+i can put a even number of " in a comment
+*//*
+i can put a odd number of ' in a comment
+*//*
+i can use two / in a multi line comment
+if i // think it s cool
+*/

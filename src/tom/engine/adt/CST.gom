@@ -6,6 +6,10 @@ abstract syntax
 gt_Block = wrappedCode(wrapped:Code)
 gt_Program = wrappedCodeList(wrapped:CodeList)
 
+// Node type for base types ==================================================
+NodeString = NodeString()
+NodeInt = NodeInt()
+
 // Program ===================================================================
 gt_Program = CsProgram(blocks:gt_BlockList)
 

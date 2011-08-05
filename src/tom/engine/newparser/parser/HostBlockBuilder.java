@@ -1,5 +1,8 @@
 package tom.engine.newparser.parser;
 
+import static tom.engine.newparser.util.TreeFactory.*;
+import static tom.engine.newparser.parser.miniTomLexer.*;
+
 import org.antlr.runtime.CharStream;
 import org.antlr.runtime.tree.Tree;
 import org.antlr.runtime.tree.CommonTreeAdaptor;
@@ -47,69 +50,15 @@ public class HostBlockBuilder {
   }
 
   public Tree getHostBlock() {
-    CommonTreeAdaptor adaptor = new CommonTreeAdaptor();
-    
-    // XXX is it REALLY the clearest way to do that ?
-		Tree hostBlock = (Tree) adaptor.nil();
-		hostBlock = 
-      (Tree)adaptor.becomeRoot(
-          (Tree)adaptor.create(
-            miniTomParser.HOSTBLOCK, "HOSTBLOCK"), hostBlock);
-		
-		Tree hContent = (Tree) adaptor.nil();
-		hContent = 
-      (Tree)adaptor.becomeRoot(
-          (Tree)adaptor.create(0, stringBuilder.toString()), hContent);
-
-    // Start TextPosition
-    Tree startTextPosition = (Tree) adaptor.nil();
-    startTextPosition = 
-      (Tree)adaptor.becomeRoot(
-          (Tree)adaptor.create(miniTomParser.CsTextPosition,"TextPosition"),
-          startTextPosition);
-
-    Tree startTextPositionLine = (Tree) adaptor.nil();
-    startTextPositionLine =
-      (Tree)adaptor.becomeRoot(
-          (Tree)adaptor.create(0, ""+firstCharLine),
-           startTextPositionLine);
-
-    Tree startTextPositionColumn = (Tree) adaptor.nil();
-    startTextPositionColumn =
-      (Tree)adaptor.becomeRoot(
-          (Tree)adaptor.create(0, ""+firstCharColumn),
-          startTextPositionColumn);
-
-    startTextPosition.addChild(startTextPositionLine);
-    startTextPosition.addChild(startTextPositionColumn);
-
-    // End TextPosition
-    Tree endTextPosition = (Tree) adaptor.nil();
-    endTextPosition = 
-      (Tree)adaptor.becomeRoot(
-          (Tree)adaptor.create(miniTomParser.CsTextPosition,"TextPosition"),
-          endTextPosition);
-
-    Tree endTextPositionLine = (Tree) adaptor.nil();
-    endTextPositionLine =
-      (Tree)adaptor.becomeRoot(
-          (Tree)adaptor.create(0, ""+lastCharLine),
-          endTextPositionLine);
-
-    Tree endTextPositionColumn = (Tree) adaptor.nil();
-    endTextPositionColumn =
-      (Tree)adaptor.becomeRoot(
-          (Tree)adaptor.create(0, ""+lastCharColumn),
-          endTextPositionColumn);
-
-    endTextPosition.addChild(endTextPositionLine);
-    endTextPosition.addChild(endTextPositionColumn);
-
-		hostBlock.addChild(hContent);
-    hostBlock.addChild(startTextPosition);
-    hostBlock.addChild(endTextPosition);
-
-    return hostBlock;
+    return (Tree)
+      makeTree(HOSTBLOCK, "HostBlock",
+        makeTree(NodeString, stringBuilder.toString()),
+        makeTree(TextPosition, "StartTextPosition",
+          makeTree(NodeInt, ""+firstCharLine),
+          makeTree(NodeInt, ""+firstCharColumn)),
+        makeTree(TextPosition, "EndTextPosition",
+          makeTree(NodeInt, ""+lastCharLine),
+          makeTree(NodeInt, ""+firstCharColumn)));
   }
 
   public String getText() {

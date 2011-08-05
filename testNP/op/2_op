@@ -1,6 +1,0 @@
-#>
-#description %op, is_fsym, 1 arg
-#<
-%op TomTruc truc(someSlot:someType) {
-  is_fsym(a) { $a instanceof Truc }
-}
