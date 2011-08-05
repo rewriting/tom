@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import org.antlr.runtime.CharStream;
 import org.antlr.runtime.tree.CommonTreeAdaptor;
 import org.antlr.runtime.tree.Tree;
+import org.antlr.runtime.tree.BaseTree;
 
 import tom.platform.OptionManager;
 import tom.engine.TomStreamManager;
@@ -17,6 +18,8 @@ import tom.engine.newparser.streamanalysis.EOLdetector;
 import tom.engine.newparser.streamanalysis.KeywordDetector;
 import tom.engine.newparser.streamanalysis.StreamAnalyst;
 
+import static tom.engine.newparser.parser.miniTomLexer.*;
+import static tom.engine.newparser.util.TreeFactory.*;
 /**
  * 
  * @see ParserAction
@@ -101,43 +104,22 @@ public class HostParser {
 	}
 	
 	public Tree parseProgram(CharStream input){
-	  CommonTreeAdaptor adaptor = new CommonTreeAdaptor();
-	  Tree tree = (Tree) adaptor.nil();
-    tree = (Tree) adaptor.becomeRoot(
-        (Tree)adaptor.create(miniTomParser.CsProgram, "CsProgram"), tree);
-    tree.addChild(parse(input));
-    return tree;
+    return makeRootTree(CsProgram, "CsProgram", parseBlockList(input));
 	}
 	
 	public Tree parseBlockList(CharStream input){
 	  return parse(input);
 	}
-	
-  // XXX parse() should return a list of tree
-  // and parseBlockList should add CsBlockList node
-  public List<Tree> parseListOfBlock(CharStream input){
-    List<Tree> res = new ArrayList<Tree>();
-    
-    Tree blockList = parse(input);
-    int n = blockList.getChildCount();
-    for(int i = 0; i<n; i++){
-      res.add(blockList.getChild(i));
-    }
 
-    return res;
+  public List<Tree> parseListOfBlock(CharStream input){
+    return ((BaseTree)parse(input)).getChildren();
   }
 
 	private Tree parse(CharStream input) {
-		
+
 	  HostBlockBuilder hostBlockBuilder = new HostBlockBuilder();
-		
-		CommonTreeAdaptor adaptor = new CommonTreeAdaptor();
-		// XXX maybe there is a simpler way...
-	  Tree tree = (Tree) adaptor.nil();
-    tree = (Tree) adaptor.becomeRoot(
-        (Tree)adaptor.create(miniTomParser.CsBlockList, "CsBlockList"), tree);
-	  
-	  
+    Tree tree = makeTree(CsBlockList, "CsBlockList");
+
 		while(! stopCondition.readChar(input)) { 
                                     // readChar() updates internal state
 												            // and return match()

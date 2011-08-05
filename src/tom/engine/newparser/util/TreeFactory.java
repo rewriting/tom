@@ -7,18 +7,11 @@ public class TreeFactory {
 
   // non-instanciable
   private TreeFactory() {;}
-  
-/*
-  public static Tree makeTree(int type, String text) {
+ 
+  private static CommonTreeAdaptor adaptor = new CommonTreeAdaptor();
 
-
-    return res;
-  }
-*/
   public static Tree makeTree(int type, String text, Tree... childList) {
   
-    CommonTreeAdaptor adaptor = new CommonTreeAdaptor();
-    
     Tree res = (Tree)adaptor.create(type, text);
     adaptor.setParent(res, res);
 
@@ -26,6 +19,12 @@ public class TreeFactory {
       res.addChild(child);
     }
 
+    return res;
+  }
+
+  public static Tree makeRootTree(int type, String text, Tree... childlist) {
+    Tree res = makeTree(type, text, childlist);
+    adaptor.becomeRoot(res, adaptor.nil());
     return res;
   }
 }
