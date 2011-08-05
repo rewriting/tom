@@ -9,6 +9,7 @@ options {
 
 @parser::header {
 package tom.engine.newparser.parser;
+import tom.engine.newparser.parser.miniTomLexer;
 import org.antlr.runtime.tree.Tree;
 }
 
@@ -43,6 +44,25 @@ import org.antlr.runtime.tree.Tree;
   
 }
 
+@parser::members{
+
+  public CommonTree extractOptions(Token t){
+    TreeAdaptor adaptor = new CommonTreeAdaptor();
+
+    CommonTree optionList = (CommonTree)adaptor.create(CstOptionList, "CstOptionList");
+    optionList.addChild(
+      (CommonTree)adaptor.create(CstStartLine,""+t.getLine()));
+    optionList.addChild(
+      (CommonTree)adaptor.create(CstStartColumn, ""+t.getCharPositionInLine()));
+    optionList.addChild(
+      (CommonTree)adaptor.create(CstEndLine, ""+t.getLine()));
+    optionList.addChild(
+      (CommonTree)adaptor.create(CstEndColumn, ""+(t.getCharPositionInLine()+t.getText().length())));
+    return optionList;
+  }
+
+}
+
 // IncludeConstruct
 csIncludeConstruct
 returns [int marker] :
@@ -64,7 +84,7 @@ to rewind stream to the marker returned by matchconstruct.
 matchConstruct
 returns [int marker]:
   
-  // "%match" already consumed when thid rule is called
+  // "%match" already consumed when this rule is called
 
   // with args
   LPAR csMatchArgument ((COMMA csMatchArgument)*)? (COMMA)? RPAR
@@ -93,6 +113,7 @@ returns [int marker]:
   -> ^( CsMatchConstruct
        ^( CsMatchArgumentList )
        ^( CsConstraintActionList csConstraintAction* )
+        {extractOptions($RBR)}
       )
 ;
 
@@ -148,7 +169,7 @@ csMatchArgumentConstraint :
 - logical operations :  constraint ('&&'|'||') constraint
 - numeric constraints : term ('>'|'<'|'>='|'<='|'=='|'!=') term 
 
-proirity in operators is :
+priority in operators is :
 (from higher to lower)
  '<<'
  '>'|'<'|'>='|'<='|'=='|'!='
@@ -246,7 +267,7 @@ csPattern :
 // f
 // (f|g)
 // f?  -- should be --> f{theory:AU}
-// f?? -- shoud be  --> f{theory:AC}
+// f?? -- should be  --> f{theory:AC}
 csHeadSymbolList :
   csHeadSymbol
   -> ^(CsHeadSymbolList csHeadSymbol)

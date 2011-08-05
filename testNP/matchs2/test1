@@ -1,0 +1,5 @@
+%match(s) {
+  f(a(), g(y)) -> {action1}
+  f(x, g(b())) -> {action2}
+  f(x, y)      -> {action3}
+}

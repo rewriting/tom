@@ -113,3 +113,12 @@ gt_NameList = CsNameList(gt_Name*)
 
 // DebugDatas ===============================================================
 gt_TextPosition = CsTextPosition(line:int, column:int)
+
+// Temp ==
+CstOptionList = CstOptionList(CstOption*)
+CstOption = CstSourceFile(sourceFile:String)
+          | CstStartLine(startLine:int)
+          | CstEndLine(endLine:int)
+          | CstStartColumn(startColumn:int)
+          | CstEndColumn(endColumn:int)
+          | CstNoOption()
