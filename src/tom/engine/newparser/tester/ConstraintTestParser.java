@@ -16,7 +16,7 @@ public class ConstraintTestParser extends TestParser{
   
   
   @Override
-  public void parse(String stringInput) {
+  public void parse(String stringInput, String filename) { //filename not used
     
     CharStream input = new ANTLRStringStream(stringInput);
     miniTomLexer lexer = new miniTomLexer(input);

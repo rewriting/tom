@@ -27,7 +27,7 @@ public abstract class TestParser {
   private Tree tree = null;
   private boolean success = false;
   
-  public abstract void parse(String input);
+  public abstract void parse(String input, String fileName);
 
   public boolean isParsingASuccess(){
     return success;

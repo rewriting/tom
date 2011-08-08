@@ -72,14 +72,14 @@ public class TreeFormatterPlugin extends TomGenericPlugin {
 
   %strategy toAST() extends Identity() {
     visit gt_Block {
-      HOSTBLOCK(code,
+      /*HOSTBLOCK(code,
                 CsTextPosition(startLine, startColumn),
                 CsTextPosition(endLine, endColumn)
                ) -> {
         return `wrappedCode(TargetLanguageToCode(TL(code,
                   TextPosition(startLine, startColumn),
                   TextPosition(endLine, endColumn))));
-      }
+      }*/
 
       CsMatchConstruct[] -> {
         return `wrappedCode(

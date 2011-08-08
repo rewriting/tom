@@ -9,8 +9,10 @@ options {
 
 @parser::header {
 package tom.engine.newparser.parser;
-import tom.engine.newparser.parser.miniTomLexer;
+import static tom.engine.newparser.util.TreeFactory.*;
+import static tom.engine.newparser.parser.miniTomLexer.*;
 import org.antlr.runtime.tree.Tree;
+import org.antlr.runtime.CommonToken;
 }
 
 @lexer::header {
@@ -46,21 +48,40 @@ import org.antlr.runtime.tree.Tree;
 
 @parser::members{
 
-  public CommonTree extractOptions(Token t){
-    TreeAdaptor adaptor = new CommonTreeAdaptor();
-
-    CommonTree optionList = (CommonTree)adaptor.create(CstOptionList, "CstOptionList");
-    optionList.addChild(
-      (CommonTree)adaptor.create(CstStartLine,""+t.getLine()));
-    optionList.addChild(
-      (CommonTree)adaptor.create(CstStartColumn, ""+t.getCharPositionInLine()));
-    optionList.addChild(
-      (CommonTree)adaptor.create(CstEndLine, ""+t.getLine()));
-    optionList.addChild(
-      (CommonTree)adaptor.create(CstEndColumn, ""+(t.getCharPositionInLine()+t.getText().length())));
-    return optionList;
+  public static CommonTree extractOptions(CommonToken t){
+    String newline = System.getProperty("line.separator");
+    String lines[] = t.getText().split(newline);
+    
+    int firstCharLine = t.getLine();
+    int firstCharColumn = t.getCharPositionInLine();
+    int lastCharLine = firstCharColumn+lines.length-1;
+    int lastCharColumn;
+    if(lines.length==1) {
+      lastCharColumn = firstCharColumn + lines[0].length();
+    } else {
+      lastCharColumn = lines[lines.length-1].length();
+    }
+  
+    return makeOptions(t.getInputStream().getSourceName(),
+      firstCharLine, firstCharColumn, lastCharLine, lastCharColumn);  
   }
 
+  public static CommonTree extractOptions(CommonToken start, CommonToken end){
+    String newline = System.getProperty("line.separator");
+    String lines[] = end.getText().split(newline);
+
+    int lastCharLine = end.getLine()+lines.length;
+    int lastCharColumn;
+    if(lines.length==1) {
+      lastCharColumn = end.getCharPositionInLine() + lines[0].length();
+    } else {
+      lastCharColumn = lines[lines.length-1].length();
+    }
+
+    return makeOptions(start.getInputStream().getSourceName(),
+      start.getLine(), start.getCharPositionInLine(), lastCharLine,
+      lastCharColumn);
+  }
 }
 
 // IncludeConstruct
@@ -96,6 +117,7 @@ returns [int marker]:
   {$marker = ((CustomToken)$RBR).getPayload(Integer.class);}
   
   -> ^( CsMatchConstruct
+       {extractOptions((CommonToken)$LPAR, (CommonToken)$RBR)}
        ^( CsMatchArgumentList csMatchArgument* )
        ^( CsConstraintActionList csExtendedConstraintAction* )
       )
@@ -111,6 +133,7 @@ returns [int marker]:
   {$marker = ((CustomToken)$RBR).getPayload(Integer.class);}
   
   -> ^( CsMatchConstruct
+      {extractOptions((CommonToken)$LBR, (CommonToken)$RBR)}
        ^( CsMatchArgumentList )
        ^( CsConstraintActionList csConstraintAction* )
       )
@@ -323,6 +346,7 @@ returns [int marker] :
   {$marker = ((CustomToken)$RBR).getPayload(Integer.class);}
 
   -> ^(CsOpConstruct
+        {extractOptions((CommonToken)$tomTypeName.start, (CommonToken)$RBR)}
         $tomTypeName $ctorName csSlotList ^(CsOperatorList $ks*)
       ) 
 ;
@@ -344,6 +368,7 @@ returns [int marker] :
   {$marker = ((CustomToken)$RBR).getPayload(Integer.class);}
 
   -> ^(CsOpArrayConstruct
+        {extractOptions((CommonToken)$tomTypeName.start, (CommonToken)$RBR)}
         $tomTypeName $ctorName $typeName ^(CsOperatorList $ks*)
       )
 ; 
@@ -366,6 +391,7 @@ returns [int marker] :
   {$marker = ((CustomToken)$RBR).getPayload(Integer.class);}
 
   -> ^(CsOpListConstruct
+        {extractOptions((CommonToken)$tomTypeName.start, (CommonToken)$RBR)}
         $tomTypeName $ctorName $typeName ^(CsOperatorList $ks*)
       )
 ; 
@@ -383,10 +409,16 @@ returns [int marker] :
  {$marker = ((CustomToken)$RBR).getPayload(Integer.class);}
 
   -> {extend==null}?
-   ^(CsTypetermConstruct $typeName ^(CsEmptyName) ^(CsOperatorList $ks* ))
+   ^(CsTypetermConstruct
+        {extractOptions((CommonToken)$typeName.start, (CommonToken)$RBR)}
+        $typeName ^(CsEmptyName) ^(CsOperatorList $ks* )
+    )
 
   -> /*{$extend==null}*/
-   ^(CsTypetermConstruct $typeName $extend ^(CsOperatorList $ks*))
+   ^(CsTypetermConstruct
+        {extractOptions((CommonToken)$typeName.start, (CommonToken)$RBR)}
+        $typeName $extend ^(CsOperatorList $ks*)
+    )
 ;
 
 

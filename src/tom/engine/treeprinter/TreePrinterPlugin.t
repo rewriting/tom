@@ -267,11 +267,12 @@ public class TreePrinterPlugin extends TomGenericPlugin {
         return `Comment(formatTargetLanguageString(code));
       }
     }
-
+  /*
     visit gt_Block {
-      HOSTBLOCK(code, x, y) -> {
+      HOSTBLOCK(e, x, y) -> {
         return `HOSTBLOCK(formatTargetLanguageString(code), x, y);
       }
     }
+  */
   }
 }

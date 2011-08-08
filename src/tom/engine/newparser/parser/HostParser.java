@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import org.antlr.runtime.CharStream;
 import org.antlr.runtime.tree.CommonTreeAdaptor;
 import org.antlr.runtime.tree.Tree;
+import org.antlr.runtime.tree.CommonTree;
 import org.antlr.runtime.tree.BaseTree;
 
 import tom.platform.OptionManager;
@@ -103,22 +104,27 @@ public class HostParser {
 		this(streamManager, optionManager, new KeywordDetector(""+(char)CharStream.EOF));
 	}
 	
-	public Tree parseProgram(CharStream input){
+	public CommonTree parseProgram(CharStream input){
     return makeRootTree(CsProgram, "CsProgram", parseBlockList(input));
 	}
 	
-	public Tree parseBlockList(CharStream input){
+	public CommonTree parseBlockList(CharStream input){
 	  return parse(input);
 	}
 
-  public List<Tree> parseListOfBlock(CharStream input){
-    return ((BaseTree)parse(input)).getChildren();
+  public List<CommonTree> parseListOfBlock(CharStream input){
+    return ((CommonTree)parse(input)).getChildren();
   }
 
-	private Tree parse(CharStream input) {
+	private CommonTree parse(CharStream input) {
+
+    if(input.getSourceName()==null){
+      //XXX DEBUG
+      System.out.println("DEBUG : CharStream's sourceName not set");
+    }
 
 	  HostBlockBuilder hostBlockBuilder = new HostBlockBuilder();
-    Tree tree = makeTree(CsBlockList, "CsBlockList");
+    CommonTree tree = makeTree(CsBlockList, "CsBlockList");
 
 		while(! stopCondition.readChar(input)) { 
                                     // readChar() updates internal state

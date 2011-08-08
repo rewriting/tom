@@ -194,7 +194,9 @@ public class NewParserPlugin extends TomGenericPlugin {
 
           HostParser parser =
             new HostParser(getStreamManager(), getOptionManager());
-          CharStream input = new ANTLRReaderStream(currentReader);
+          ANTLRReaderStream input = new ANTLRReaderStream(currentReader);
+          input.name = currentFileName;
+          System.out.println("CurrentFileName : "+currentFileName);
           Tree programAsAntrlTree = parser.parseProgram(input);
           cst = (gt_Program)CSTAdaptor.getTerm(programAsAntrlTree);
           //Code programAsAST = CSTAdaptor.adapt(programAsCST);

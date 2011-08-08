@@ -23,6 +23,7 @@ import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.tree.CommonTreeAdaptor;
 import org.antlr.runtime.tree.Tree;
+import org.antlr.runtime.tree.CommonTree;
 import org.antlr.runtime.ANTLRFileStream;
 
 import tom.platform.OptionManager;
@@ -345,7 +346,7 @@ public abstract class ParserAction {
 
     // XXX streamManager and optionManager should be modified
     HostParser parser = new HostParser(streamManager, optionManager);
-    List<Tree> listOfBlock = parser.parseListOfBlock(tomInput);
+    List<CommonTree> listOfBlock = parser.parseListOfBlock(tomInput);
 
     // insert it in AST
     for(Tree t : listOfBlock) {
@@ -423,7 +424,7 @@ public abstract class ParserAction {
       throw new RuntimeException(e); //XXX
     }
 
-    List<Tree> listOfBlock = parser.parseListOfBlock(tomInput);
+    List<CommonTree> listOfBlock = parser.parseListOfBlock(tomInput);
     for(Tree t : listOfBlock) {
       tree.addChild(t);
     }

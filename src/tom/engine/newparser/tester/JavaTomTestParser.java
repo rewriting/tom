@@ -12,12 +12,14 @@ public class JavaTomTestParser extends TestParser{
   }
   
   @Override
-  public void parse(String stringInput) {
+  public void parse(String stringInput, String fileName) {
     
     this.setSuccess(false);
     
     HostParser parser = new HostParser(null, null); //XXX
-    CharStream input = new ANTLRStringStream(stringInput);
+    ANTLRStringStream input = new ANTLRStringStream(stringInput);
+    input.name = fileName;
+
     Tree tree = parser.parseProgram(input);
     
     this.setSuccess(true);

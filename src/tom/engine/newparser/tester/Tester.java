@@ -81,7 +81,7 @@ public class Tester {
     System.out.println("----------------------------------------------------------------");
       
       TestParser parser = TestParser.getInstance(tFile.getParserType());
-      parser.parse(tFile.getActualContent());
+      parser.parse(tFile.getActualContent(), tFile.getPath());
     
     // ensure output are readables
     System.out.println("----------------------------------------------------------------");
@@ -145,7 +145,7 @@ public class Tester {
     
     for(TestFile tFile : TestFileList){
       TestParser parser = TestParser.getInstance(tFile.getParserType());
-      parser.parse(tFile.getActualContent());
+      parser.parse(tFile.getActualContent(), tFile.getPath());
       
       if(! parser.isParsingASuccess()){
         System.out.println("Parsing failed, can't init output for : "+ tFile.getPath());
