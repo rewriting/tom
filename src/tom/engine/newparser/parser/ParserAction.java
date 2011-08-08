@@ -41,7 +41,8 @@ public abstract class ParserAction {
 
   // static fields with cool ParserActions
   public static final ParserAction
-   SKIP_DELIMITED_SEQUENCE        = SkipDelimitedSequence.getInstance(),
+   SKIP_DELIMITED_SEQUENCE              = new SkipDelimitedSequence(false),
+   SKIP_DELIMITED_SEQUENCE_EOF_TOLERANT = new SkipDelimitedSequence(true),
    PACK_HOST_CONTENT              = PackHostContent.getInstance(),
    PARSE_MATCH_CONSTRUCT          = ParseMatchConstruct.getInstance(),
    PARSE_OPERATOR_CONSTRUCT       = ParseOperatorConstruct.getInstance(),
@@ -80,12 +81,10 @@ public abstract class ParserAction {
   
   private static class SkipDelimitedSequence extends ParserAction {
     
-    private static final ParserAction instance = new SkipDelimitedSequence();
+    private boolean EOFTolerant;
     
-    private SkipDelimitedSequence() {}
-
-    public static ParserAction getInstance() {
-      return instance;
+    private SkipDelimitedSequence(boolean EOFTolerant) {
+      this.EOFTolerant = EOFTolerant;
     }
 
     @Override
@@ -108,15 +107,19 @@ public abstract class ParserAction {
 
       while(analyst.readChar(input)) { // readChar update and return "foundness" value
         if(input.LA(1)==CharStream.EOF) {
-          //System.err.println("Unexpected EndOfFile");
-          throw new RuntimeException( // XXX handle nicely
-           "File :"+input.getSourceName()
-           + " :: unexpected EOF, expecting '"
-           + ((DelimitedSequenceDetector)analyst).getClosingKeywordString()
-           + "' ('"
-           + ((DelimitedSequenceDetector)analyst).getOpeningKeywordString()
-           + "' is at "+startLine+":"+startColumn
+          if(EOFTolerant){
+            return;
+          } else {
+            //System.err.println("Unexpected EndOfFile");
+            throw new RuntimeException( // XXX handle nicely
+             "File :"+input.getSourceName()
+             + " :: unexpected EOF, expecting '"
+             + ((DelimitedSequenceDetector)analyst).getClosingKeywordString()
+             + "' ('"
+             + ((DelimitedSequenceDetector)analyst).getOpeningKeywordString()
+             + "' is at "+startLine+":"+startColumn
           );
+          }
         }
 
         hostBlockBuilder.readOneChar(input); // save host code char for later use

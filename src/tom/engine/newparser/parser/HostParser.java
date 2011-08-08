@@ -61,7 +61,7 @@ public class HostParser {
 		  // one line comments
 		actionsMapping.put(
 		  new DelimitedSequenceDetector(new KeywordDetector("//"), new EOLdetector()),
-		  ParserAction.SKIP_DELIMITED_SEQUENCE);
+		  ParserAction.SKIP_DELIMITED_SEQUENCE_EOF_TOLERANT);
 		  // multi line comments
 		actionsMapping.put(
 		  new DelimitedSequenceDetector("/*", "*/"),
