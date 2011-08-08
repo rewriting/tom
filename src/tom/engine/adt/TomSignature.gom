@@ -4,8 +4,10 @@ imports TomName TomType TomConstraint TomInstruction TomExpression
 abstract syntax
 TextPosition = TextPosition(Line:int,Column:int)
 TomVisit = VisitTerm(VNode:TomType,AstConstraintInstructionList:ConstraintInstructionList,Options:OptionList)
-TomWithTo = WithToInstruction(With:TomWithTerm,ToInstructionList:InstructionList,Options:OptionList)
 
+TomReference = ReferenceTerm(RNode:TomType, AstConstraintInstructionList:ConstraintInstructionList,Options:OptionList)
+TomReferenceList = concTomReference(TomReference*)
+TomWithTo = WithToInstruction(With:TomWithTerm,ToInstructionList:InstructionList,Options:OptionList)
 TomWithTerm = WithTerm(WNode:TomType/*,Args:SlotList*/,Options:OptionList) //lhs of a WithTo
 ResolveStratElement = ResolveStratElement(WithName:String, ResolveOrgTrack:Option)
 ResolveStratElementList = concResolveStratElement(ResolveStratElement*)
