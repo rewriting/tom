@@ -28,19 +28,23 @@ public class TestFile {
       throw new IllegalArgumentException("File should not be a directory");
     }
     
-    testedFile = file.getAbsoluteFile();
+    try {
+      testedFile = file.getCanonicalFile();
+    } catch (Exception e) {
+      throw new RuntimeException("This API s**** !", e);
+    }
     
     // create imgFile Object (may create actual folder file)
     {
       File imgFolder = new File(testedFile.getParent()+"/_imgs");
       if(imgFolder.mkdir()){
-        System.out.println("new folder created : \n    "+imgFolder.getAbsolutePath());
+        System.out.println("new folder created : \n    "+imgFolder.getPath());
       }
       
-      imgFile = new File(imgFolder.getAbsolutePath()+"/"+testedFile.getName()+".png");
+      imgFile = new File(imgFolder.getPath()+"/"+testedFile.getName()+".png");
       try {
         if(!imgFile.exists() && imgFile.createNewFile()){
-          System.out.println("new (empty) file created : \n    "+imgFile.getAbsolutePath());
+          System.out.println("new (empty) file created : \n    "+imgFile.getPath());
         }
       } catch (IOException e) {
         throw new RuntimeException(e);
@@ -52,13 +56,13 @@ public class TestFile {
     {
       File outputFolder = new File(testedFile.getParent()+"/_outputs");
       if(outputFolder.mkdir()){
-        System.out.println("new folder created : \n    "+outputFolder.getAbsolutePath());
+        System.out.println("new folder created : \n    "+outputFolder.getPath());
       }
       
-      outputFile = new File(outputFolder.getAbsolutePath()+"/"+testedFile.getName()+".output");
+      outputFile = new File(outputFolder.getPath()+"/"+testedFile.getName()+".output");
       try {
         if(!outputFile.exists() && outputFile.createNewFile()){
-          System.out.println("new (empty) file created : \n    "+imgFile.getAbsolutePath());
+          System.out.println("new (empty) file created : \n    "+imgFile.getPath());
         }
       } catch (IOException e) {
         throw new RuntimeException(e);
@@ -123,7 +127,7 @@ public class TestFile {
                 parserType = TestParser.Type.TOMCONSTRAINT;
                 
               }else{
-                throw new FormatException("Unknown parser type :'"+line+"' ("+testedFile.getAbsolutePath()+")");
+                throw new FormatException("Unknown parser type :'"+line+"' ("+testedFile.getPath()+")");
               }
             }
           }
@@ -149,7 +153,7 @@ public class TestFile {
       if(hasOuteredHeader){
         actualContent = postHeaderContentBuilder.toString();
       }else{
-        throw new FormatException("Header is never closed ("+testedFile.getAbsolutePath()+")");
+        throw new FormatException("Header is never closed ("+testedFile.getPath()+")");
       }
     }else{
        actualContent = preHeaderContentBuilder.toString();
@@ -164,7 +168,7 @@ public class TestFile {
   }
 
   public String getPath(){
-    return testedFile.getAbsolutePath();
+    return testedFile.getPath();
   }
   
   public TestParser.Type getParserType(){
