@@ -580,6 +580,41 @@ csName :
   -> ^(CsName IDENTIFIER)
 ;
 
+// Bq Terms =================================================================
+/*
+bqConstruct 
+returns [int marker] :
+  /*BQUOTE*/ /*t=csBQTerm
+  -> $t
+;
+
+csBQTerm :
+  csBQVar
+  -> csBQVar
+
+| csBQVarStar
+  -> csBQVarStar
+
+| csBQAppl
+  -> csBQAppl
+
+;
+
+csBQVar :
+  csName
+  -> ^(CsBQVar csName)
+;
+
+csBQVarStar :
+  csName STAR
+  -> ^(CsBQVarStar csName)
+;
+
+csBQAppl :
+  csName LPAR (csBQTerm (COMMA csBQTerm)*)? RPAR
+  -> ^(CsBQAppl csName ^(CsBQTermList csBQTerm*))
+;
+*/
 // Lexer Rules =============================================================
 
 // funky ones
@@ -667,7 +702,7 @@ AT	: '@';
 ANTI	: '!';
 DQUOTE  : '"'; //"
 SQUOTE  : '\'';
-BQUTE   : '`';
+BQUOTE   : '`';
 COLON   : ':';
 
 IDENTIFIER 	: LETTER(LETTER | DIGIT | '_' | '-')*;

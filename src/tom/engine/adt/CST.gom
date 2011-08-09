@@ -109,6 +109,17 @@ gt_SlotList = CsSlotList(gt_Slot*)
 
 gt_Slot = CsSlot(slotName:gt_Name, slotTypeName:gt_Name)
 
+// BQTerms ===================================================================
+CsBQTerm = CsBQAppl(name:gt_Name, bqTermList:CsBQTermList)
+         | CsBQRecordAppl(slotList:CsPairSlotBQTermList)
+         | CsBQVar(name:gt_Name)
+         | CsBQVarStar(name:gt_Name)
+
+CsPairSlotBQTerm = CsPairSlotBQTerm(slotName:gt_Name, term:CsBQTerm)
+
+CsBQTermList = CsBQTermList(CsBQTerm*)
+CsPairSlotBQTermList = CsPairSlotBQTermList(CsPairSlotBQTerm*)
+
 // Names
 gt_Name = CsName(name:String)
         | CsEmptyName()

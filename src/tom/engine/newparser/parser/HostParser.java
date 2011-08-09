@@ -98,6 +98,10 @@ public class HostParser {
     actionsMapping.put(
       new KeywordDetector("%gom"),
       ParserAction.PARSE_GOM_CONSTRUCT);
+      // bqTerms
+    actionsMapping.put(
+      new KeywordDetector("`"),
+      ParserAction.PARSE_BQTERM_CONSTRUCT);
 	}
 	
 	public HostParser(TomStreamManager streamManager, OptionManager optionManager) {

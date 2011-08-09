@@ -17,6 +17,7 @@ import tom.engine.TomStreamManager;
 import tom.engine.TomMessage;
 
 import tom.engine.newparser.parser.miniTomParser.*;
+import tom.engine.newparser.parser.BQTermParser.*;
 
 import org.antlr.runtime.CharStream;
 import org.antlr.runtime.CommonTokenStream;
@@ -51,8 +52,9 @@ public abstract class ParserAction {
    PARSE_TYPETERM_CONSTRUCT       = ParseTypetermConstruct.getInstance(),
    PARSE_INCLUDE_CONSTRUCT        = ParseIncludeConstruct.getInstance(),
    PARSE_METAQUOTE_CONSTRUCT      = ParseMetaQuoteConstruct.getInstance(),
-   PARSE_GOM_CONSTRUCT            = ParseGomConstruct.getInstance(); 
-  
+   PARSE_GOM_CONSTRUCT            = ParseGomConstruct.getInstance(), 
+   PARSE_BQTERM_CONSTRUCT         = ParseBQConstruct.getInstance();
+
   /**
    * Implementations of ParserAction.doAction should check
    * runtime type of analyst.
@@ -519,7 +521,50 @@ public abstract class ParserAction {
     }
     
   }
-  
+ 
+  private static class ParseBQConstruct extends ParserAction {
+
+    private static final ParserAction instance = new ParseBQConstruct();
+    private ParseBQConstruct() { }
+    public static ParserAction getInstance() {
+      return instance;
+    }
+
+    @Override
+    public void doAction(CharStream input, HostBlockBuilder hostBlockBuilder,
+        Tree tree, StreamAnalyst analyst, TomStreamManager streamManager,
+        OptionManager optionManager) {
+     
+      hostBlockBuilder.removeLastChars(analyst.getOffsetAtMatch());
+      
+      PACK_HOST_CONTENT.doAction(input, hostBlockBuilder, tree, analyst,
+          streamManager, optionManager);
+      
+      // consume last chat of the keyword
+      // ("h" if keyword is "%match")
+      input.consume();
+      
+      try {
+        BQTermLexer lexer = new BQTermLexer(input);
+        CommonTokenStream tokenStream = new CommonTokenStream(lexer);
+        BQTermParser parser = new BQTermParser(tokenStream);
+        
+        csBQTerm_return retval =  parser.csBQTerm();
+        
+        tree.addChild((Tree)retval.getTree());
+        
+        // allow action to return with a "clean" input state
+        // (input.LA(1) is char after '}')
+        input.rewind(retval.marker);
+        
+        } catch(Exception e) {
+          // XXX poorly handled exception
+          e.printStackTrace();
+        }
+      
+    }
+  }
+
   private static class ParseOperatorConstruct extends GenericParseConstruct {
     
     private static final ParseOperatorConstruct instance = new ParseOperatorConstruct();

@@ -1,4 +1,0 @@
-/*
-multi line comment should be closed
-
-if they aren t it sa problem, but it shouldn t crash the compiler...

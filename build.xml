@@ -1864,6 +1864,10 @@
       outputdirectory="${src.gen}/${newparser.package}/parser/"
       libdirectory="${src.gen}/tom/engine/adt/cst" />
 
+    <antlr3 target="${src.src}/${newparser.package}/parser/BQTerm.g"
+      outputdirectory="${src.gen}/${newparser.package}/parser/"
+      libdirectory="${src.gen}/tom/engine/adt/cst" />
+
     <!-- XXX temp -->
     <tomcompile fork="no"
          srcdir="${src.src}"
