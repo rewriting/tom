@@ -24,9 +24,9 @@ import tom.engine.newparser.streamanalysis.*;
 import org.antlr.runtime.tree.Tree;
 }
 
-@lexer::members{
+@lexer::members {
   // === DEBUG ============//
-  public String getClassDesc(){
+  public String getClassDesc() {
     return "ANTLRParser";
      // actually this is Lexer but we are interested in
      // the way HostParser and ANTLR generated Parser
@@ -40,15 +40,15 @@ import org.antlr.runtime.tree.Tree;
  
   // add custom fields to ANTLR generated Tokens
   @Override 
-  public void emit(Token t){
+  public void emit(Token t) {
     super.emit(tokenCustomizer.customize(t));
   }
   
 }
 
-@parser::members{
+@parser::members {
 
-  public static CommonTree extractOptions(CommonToken t){
+  public static CommonTree extractOptions(CommonToken t) {
     String newline = System.getProperty("line.separator");
     String lines[] = t.getText().split(newline);
     
@@ -66,7 +66,7 @@ import org.antlr.runtime.tree.Tree;
       firstCharLine, firstCharColumn, lastCharLine, lastCharColumn);  
   }
 
-  public static CommonTree extractOptions(CommonToken start, CommonToken end){
+  public static CommonTree extractOptions(CommonToken start, CommonToken end) {
     String newline = System.getProperty("line.separator");
     String lines[] = end.getText().split(newline);
 
@@ -637,14 +637,14 @@ ARROW	: '->' { opensBlockLBR = true;} ;
 
 LBR     :  '{'
 {
-  if(opensBlockLBR){
+  if(opensBlockLBR) {
      opensBlockLBR = false;
 
     HostParser parser = new HostParser(
     	null, null, new NegativeImbricationDetector('{', '}', 0));
 
       // XXX DEBUG ===
-      if(HostParserDebugger.isOn()){
+      if(HostParserDebugger.isOn()) {
         HostParserDebugger.getInstance()
         .debugNewCall(parser.getClassDesc(), input, "");
       }
@@ -653,7 +653,7 @@ LBR     :  '{'
     Tree tree = parser.parseBlockList(input);
 
       // XXX DEBUG ===
-      if(HostParserDebugger.isOn()){
+      if(HostParserDebugger.isOn()) {
         HostParserDebugger.getInstance()
         .debugReturnedCall(parser.getClassDesc(), input, "");
       }

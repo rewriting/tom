@@ -75,29 +75,29 @@ public abstract class ParserAction {
    * @param optionManager
    */
   public abstract void doAction(CharStream input,
-		  				HostBlockBuilder hostBlockBuilder,
-		  				Tree tree,
-		  				StreamAnalyst analyst,
-              TomStreamManager streamManager,
-              OptionManager optionManager);
-  
+      HostBlockBuilder hostBlockBuilder,
+      Tree tree,
+      StreamAnalyst analyst,
+      TomStreamManager streamManager,
+      OptionManager optionManager);
+
   private static class SkipDelimitedSequence extends ParserAction {
-    
+
     private boolean EOFTolerant;
-    
+
     private SkipDelimitedSequence(boolean EOFTolerant) {
       this.EOFTolerant = EOFTolerant;
     }
 
     @Override
     public void doAction(CharStream input, HostBlockBuilder hostBlockBuilder,
-        Tree tree, StreamAnalyst analyst, TomStreamManager streamManager,
-        OptionManager optionManager) {
+          Tree tree, StreamAnalyst analyst, TomStreamManager streamManager,
+          OptionManager optionManager) {
 
       int startLine = input.getLine();
       int startColumn = input.getCharPositionInLine();
 
-      if(!(analyst instanceof DelimitedSequenceDetector)){
+      if(!(analyst instanceof DelimitedSequenceDetector)) {
         throw new RuntimeException("Bad StreamAnalyst implementation");
       }
 
@@ -109,18 +109,18 @@ public abstract class ParserAction {
 
       while(analyst.readChar(input)) { // readChar update and return "foundness" value
         if(input.LA(1)==CharStream.EOF) {
-          if(EOFTolerant){
+          if(EOFTolerant) {
             return;
           } else {
             //System.err.println("Unexpected EndOfFile");
             throw new RuntimeException( // XXX handle nicely
-             "File :"+input.getSourceName()
-             + " :: unexpected EOF, expecting '"
-             + ((DelimitedSequenceDetector)analyst).getClosingKeywordString()
-             + "' ('"
-             + ((DelimitedSequenceDetector)analyst).getOpeningKeywordString()
-             + "' is at "+startLine+":"+startColumn
-          );
+                "File :"+input.getSourceName()
+                + " :: unexpected EOF, expecting '"
+                + ((DelimitedSequenceDetector)analyst).getClosingKeywordString()
+                + "' ('"
+                + ((DelimitedSequenceDetector)analyst).getOpeningKeywordString()
+                + "' is at "+startLine+":"+startColumn
+                );
           }
         }
 
@@ -129,12 +129,12 @@ public abstract class ParserAction {
       }
     }
   }
- 
+
   private static class ParseGomConstruct extends ParserAction {
 
     private static final ParseGomConstruct instance = new ParseGomConstruct();
     private ParseGomConstruct() {}
-    
+
     public static ParserAction getInstance() {
       return instance;
     }
@@ -144,188 +144,188 @@ public abstract class ParserAction {
         Tree tree, StreamAnalyst analyst, TomStreamManager streamManager,
         OptionManager optionManager) {
 
-    ArrayList<String> parameters = new ArrayList<String>();
-    Logger logger = Logger.getLogger("tom.engine.parser.HostParser");
+      ArrayList<String> parameters = new ArrayList<String>();
+      Logger logger = Logger.getLogger("tom.engine.parser.HostParser");
 
-    String currentFile = input.getSourceName();
+      String currentFile = input.getSourceName();
 
 
-    // remove keyword from stream and hostBlockBuilder and insert previously
-    // consumed hostChars in tree
-    hostBlockBuilder.removeLastChars(analyst.getOffsetAtMatch());
-    PACK_HOST_CONTENT.doAction(input, hostBlockBuilder, tree, analyst,
+      // remove keyword from stream and hostBlockBuilder and insert previously
+      // consumed hostChars in tree
+      hostBlockBuilder.removeLastChars(analyst.getOffsetAtMatch());
+      PACK_HOST_CONTENT.doAction(input, hostBlockBuilder, tree, analyst,
           streamManager, optionManager);
-    input.consume();
-   
-    String gomCode;
-
-// XXX there is a copy of this in ParseIncludeConstruct (need refactoring) ===
-    // consume chars until '{'
-    List<Character> legitChars = Arrays.asList('\n', '\r', '\t', ' ');
-    while(legitChars.contains((char)input.LA(1))) {
       input.consume();
-    }
 
-    char tmp;
-    if((tmp=(char)input.LA(1))!='{'){
-      throw new RuntimeException("Unexpected '"+tmp+"', expecting '{'");//XXX
-    }
-    
-    // get Gom code
-    DelimitedSequenceDetector delimitedSequenceDetector =
-      new DelimitedSequenceDetector("{", "}");
-      
+      String gomCode;
+
+      // XXX there is a copy of this in ParseIncludeConstruct (need refactoring) ===
+      // consume chars until '{'
+      List<Character> legitChars = Arrays.asList('\n', '\r', '\t', ' ');
+      while(legitChars.contains((char)input.LA(1))) {
+        input.consume();
+      }
+
+      char tmp;
+      if((tmp=(char)input.LA(1))!='{') {
+        throw new RuntimeException("Unexpected '"+tmp+"', expecting '{'");//XXX
+      }
+
+      // get Gom code
+      DelimitedSequenceDetector delimitedSequenceDetector =
+        new DelimitedSequenceDetector("{", "}");
+
       delimitedSequenceDetector.readChar(input); // init detector
       input.consume(); // avoid '{' to go in hostBlockBuilder
 
       int initialGomLine = input.getLine();
-     
+
       // read every char and add them to hostBlockBuilder
-    SKIP_DELIMITED_SEQUENCE.doAction(input, hostBlockBuilder, tree,
-        delimitedSequenceDetector, streamManager, optionManager);
-      
+      SKIP_DELIMITED_SEQUENCE.doAction(input, hostBlockBuilder, tree,
+          delimitedSequenceDetector, streamManager, optionManager);
+
       // remove '}' from hostBlockBuilder
       hostBlockBuilder.removeLastChars(1);  
 
       gomCode = hostBlockBuilder.getText();
-//XXX end copy ===============================================================
+      //XXX end copy ===============================================================
 
-    // call Gom Parser
-    
+      // call Gom Parser
+
       // prepare parameters (from parser.HostLanguage.g.t)
-    File config_xml = null;
-        
-    try {
-      String tom_home = System.getProperty("tom.home");
-      if(tom_home != null) {
-        config_xml = new File(tom_home,"Gom.xml");
-      } else {
-        // for the eclipse plugin for example
-        String tom_xml_filename =
-          ((String)optionManager.getOptionValue("X"));
-        config_xml =
-          new File(new File(tom_xml_filename).getParentFile(),"Gom.xml");
-        // pass all the received parameters to gom in the case that it will call tom
-        java.util.List<File> imp = streamManager.getUserImportList();
-        for(File f:imp){
-          parameters.add("--import");
-          parameters.add(f.getCanonicalPath());
+      File config_xml = null;
+
+      try {
+        String tom_home = System.getProperty("tom.home");
+        if(tom_home != null) {
+          config_xml = new File(tom_home,"Gom.xml");
+        } else {
+          // for the eclipse plugin for example
+          String tom_xml_filename =
+            ((String)optionManager.getOptionValue("X"));
+          config_xml =
+            new File(new File(tom_xml_filename).getParentFile(),"Gom.xml");
+          // pass all the received parameters to gom in the case that it will call tom
+          java.util.List<File> imp = streamManager.getUserImportList();
+          for(File f:imp) {
+            parameters.add("--import");
+            parameters.add(f.getCanonicalPath());
+          }
         }
+        config_xml = config_xml.getCanonicalFile();
+      } catch (IOException e) {
+        TomMessage.finer(logger, null, 0, TomMessage.failGetCanonicalPath,config_xml.getPath());
       }
-      config_xml = config_xml.getCanonicalFile();
-    } catch (IOException e) {
-      TomMessage.finer(logger, null, 0, TomMessage.failGetCanonicalPath,config_xml.getPath());
-    }
 
-    String destDir = streamManager.getDestDir().getPath();
-    String packageName = streamManager.getPackagePath().replace(File.separatorChar, '.');
-    String inputFileNameWithoutExtension = streamManager.getRawFileName().toLowerCase();
-    String subPackageName = "";
-    if (packageName.equals("")) {
-      subPackageName = inputFileNameWithoutExtension;
-    } else {
-      subPackageName = packageName + "." + inputFileNameWithoutExtension;
-    }
+      String destDir = streamManager.getDestDir().getPath();
+      String packageName = streamManager.getPackagePath().replace(File.separatorChar, '.');
+      String inputFileNameWithoutExtension = streamManager.getRawFileName().toLowerCase();
+      String subPackageName = "";
+      if (packageName.equals("")) {
+        subPackageName = inputFileNameWithoutExtension;
+      } else {
+        subPackageName = packageName + "." + inputFileNameWithoutExtension;
+      }
 
-    parameters.add("-X");
-    parameters.add(config_xml.getPath());
-    parameters.add("--destdir");
-    parameters.add(destDir);
-    parameters.add("--package");
-    parameters.add(subPackageName);
-    if(optionManager.getOptionValue("wall")==Boolean.TRUE) {
-      parameters.add("--wall");
-    }
-    if(optionManager.getOptionValue("intermediate")==Boolean.TRUE) {
-      parameters.add("--intermediate");
-    }
-    if(Boolean.TRUE == optionManager.getOptionValue("optimize")) {
-      parameters.add("--optimize");
-    }
-    if(Boolean.TRUE == optionManager.getOptionValue("optimize2")) {
-      parameters.add("--optimize2");
-    }
-    if(Boolean.TRUE == optionManager.getOptionValue("newtyper")) {
-      parameters.add("--newtyper");
-    }
-    if(Boolean.TRUE == optionManager.getOptionValue("newparser")) {
-      parameters.add("--newparser");
-    }
-    parameters.add("--intermediateName");
-    parameters.add(streamManager.getRawFileName()+".t.gom");
-    if(optionManager.getOptionValue("verbose")==Boolean.TRUE) {
-      parameters.add("--verbose");
-    }
+      parameters.add("-X");
+      parameters.add(config_xml.getPath());
+      parameters.add("--destdir");
+      parameters.add(destDir);
+      parameters.add("--package");
+      parameters.add(subPackageName);
+      if(optionManager.getOptionValue("wall")==Boolean.TRUE) {
+        parameters.add("--wall");
+      }
+      if(optionManager.getOptionValue("intermediate")==Boolean.TRUE) {
+        parameters.add("--intermediate");
+      }
+      if(Boolean.TRUE == optionManager.getOptionValue("optimize")) {
+        parameters.add("--optimize");
+      }
+      if(Boolean.TRUE == optionManager.getOptionValue("optimize2")) {
+        parameters.add("--optimize2");
+      }
+      if(Boolean.TRUE == optionManager.getOptionValue("newtyper")) {
+        parameters.add("--newtyper");
+      }
+      if(Boolean.TRUE == optionManager.getOptionValue("newparser")) {
+        parameters.add("--newparser");
+      }
+      parameters.add("--intermediateName");
+      parameters.add(streamManager.getRawFileName()+".t.gom");
+      if(optionManager.getOptionValue("verbose")==Boolean.TRUE) {
+        parameters.add("--verbose");
+      }
 
-    /* treat user supplied options */
-    /*if(gomCode.length() > 6) {
-      String[] userOpts = gomCode.substring(5,gomCode.length()-1).split("\\s+");
-      for(int i=0; i < userOpts.length; i++) {
+      /* treat user supplied options */
+      /*if(gomCode.length() > 6) {
+        String[] userOpts = gomCode.substring(5,gomCode.length()-1).split("\\s+");
+        for(int i=0; i < userOpts.length; i++) {
         parameters.add(userOpts[i]);
+        }
+        }*/
+
+      final File tmpFile;
+      try {
+        tmpFile = File.createTempFile("tmp", ".gom", null).getCanonicalFile();
+        parameters.add(tmpFile.getPath());
+      } catch (IOException e) {
+        TomMessage.error(logger, null, 0, TomMessage.ioExceptionTempGom,e.getMessage());
+        e.printStackTrace();
+        return;
       }
-    }*/
 
-    final File tmpFile;
-    try {
-      tmpFile = File.createTempFile("tmp", ".gom", null).getCanonicalFile();
-      parameters.add(tmpFile.getPath());
-    } catch (IOException e) {
-      TomMessage.error(logger, null, 0, TomMessage.ioExceptionTempGom,e.getMessage());
-      e.printStackTrace();
-      return;
-    }
+      TomMessage.fine(logger, null, 0, TomMessage.writingExceptionTempGom,tmpFile.getPath());
 
-    TomMessage.fine(logger, null, 0, TomMessage.writingExceptionTempGom,tmpFile.getPath());
+      try {
+        Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tmpFile)));
+        writer.write(new String(gomCode.getBytes("UTF-8")));
+        writer.flush();
+        writer.close();
+      } catch (IOException e) {
+        TomMessage.error(logger, null, 0, TomMessage.writingFailureTempGom,e.getMessage());
+        return;
+      }
 
-    try {
-      Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tmpFile)));
-      writer.write(new String(gomCode.getBytes("UTF-8")));
-      writer.flush();
-      writer.close();
-    } catch (IOException e) {
-      TomMessage.error(logger, null, 0, TomMessage.writingFailureTempGom,e.getMessage());
-      return;
-    }
+      /* Prepare arguments */
+      Object[] preparams = parameters.toArray();
+      String[] params = new String[preparams.length];
+      for (int i = 0; i < preparams.length; i++) {
+        params[i] = (String)preparams[i];
+      }
 
-    /* Prepare arguments */
-    Object[] preparams = parameters.toArray();
-    String[] params = new String[preparams.length];
-    for (int i = 0; i < preparams.length; i++) {
-      params[i] = (String)preparams[i];
-    }
+      int res = 1;
+      Map<String,String> informationTracker = new HashMap<String,String>();
+      informationTracker.put(tom.engine.tools.TomGenericPlugin.KEY_LAST_GEN_MAPPING,null);
 
-    int res = 1;
-    Map<String,String> informationTracker = new HashMap<String,String>();
-    informationTracker.put(tom.engine.tools.TomGenericPlugin.KEY_LAST_GEN_MAPPING,null);
+      informationTracker.put("gomBegin",""+initialGomLine);
+      informationTracker.put("inputFileName", streamManager.getInputFileName());
 
-    informationTracker.put("gomBegin",""+initialGomLine);
-    informationTracker.put("inputFileName", streamManager.getInputFileName());
-
-    try {
-    // Call tom.gom.Gom.exec(params,informationTracker) using reflexivity, to
-    // avoid a build time dempendency between tom and gom
-    res = ((Integer) Class.forName("tom.gom.Gom")
-        .getMethod("exec", new Class[] {params.getClass(), Map.class})
-        .invoke(null, new Object[] {params, informationTracker}))
-        .intValue();
-    /*
-    } catch (ClassNotFoundException cnfe) {
-      TomMessage.error(logger, currentFile, initialGomLine,
-                       TomMessage.gomInitFailure,currentFile,
-                       Integer.valueOf(initialGomLine), cnfe);
-    } catch (NoSuchMethodException nsme) {
-      TomMessage.error(logger, currentFile, initialGomLine,
-                       TomMessage.gomInitFailure,currentFile,
-                       Integer.valueOf(initialGomLine), nsme);
-    } catch (InvocationTargetException ite) {
-      TomMessage.error(logger, currentFile, initialGomLine,
-                        TomMessage.gomInitFailure,currentFile,
-                        Integer.valueOf(initialGomLine), ite);
-    } catch (IllegalAccessException iae) {
-      TomMessage.error(logger, currentFile, initialGomLine,
-                       TomMessage.gomInitFailure,currentFile,
-                       Integer.valueOf(initialGomLine), iae);
-    }*/
+      try {
+        // Call tom.gom.Gom.exec(params,informationTracker) using reflexivity, to
+        // avoid a build time dempendency between tom and gom
+        res = ((Integer) Class.forName("tom.gom.Gom")
+            .getMethod("exec", new Class[] {params.getClass(), Map.class})
+            .invoke(null, new Object[] {params, informationTracker}))
+          .intValue();
+        /*
+           } catch (ClassNotFoundException cnfe) {
+           TomMessage.error(logger, currentFile, initialGomLine,
+           TomMessage.gomInitFailure,currentFile,
+           Integer.valueOf(initialGomLine), cnfe);
+           } catch (NoSuchMethodException nsme) {
+           TomMessage.error(logger, currentFile, initialGomLine,
+           TomMessage.gomInitFailure,currentFile,
+           Integer.valueOf(initialGomLine), nsme);
+           } catch (InvocationTargetException ite) {
+           TomMessage.error(logger, currentFile, initialGomLine,
+           TomMessage.gomInitFailure,currentFile,
+           Integer.valueOf(initialGomLine), ite);
+           } catch (IllegalAccessException iae) {
+           TomMessage.error(logger, currentFile, initialGomLine,
+           TomMessage.gomInitFailure,currentFile,
+           Integer.valueOf(initialGomLine), iae);
+           }*/
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
@@ -333,8 +333,8 @@ public abstract class ParserAction {
     tmpFile.deleteOnExit();
     if(res != 0) {
       TomMessage.error(logger, currentFile, initialGomLine,
-                       TomMessage.gomFailure,currentFile,
-                       Integer.valueOf(initialGomLine));
+          TomMessage.gomFailure,currentFile,
+          Integer.valueOf(initialGomLine));
       return;
     }
 
@@ -358,13 +358,13 @@ public abstract class ParserAction {
       tree.addChild(t);
     }
 
-    }
   }
+}
 
   private static class ParseIncludeConstruct extends ParserAction {
     
     private static final ParseIncludeConstruct instance = new ParseIncludeConstruct();
-    public static ParserAction getInstance(){return instance;}
+    public static ParserAction getInstance() {return instance;}
     private ParseIncludeConstruct() {;}
     
     @Override
@@ -376,7 +376,6 @@ public abstract class ParserAction {
               OptionManager optionManager) {
 
     String includeName;
-
 
     // treat keyword chars
     hostBlockBuilder.removeLastChars(analyst.getOffsetAtMatch());
@@ -393,7 +392,7 @@ public abstract class ParserAction {
     }
 
     char tmp;
-    if((tmp=(char)input.LA(1))!='{'){
+    if((tmp=(char)input.LA(1))!='{') {
       throw new RuntimeException("Unexpected '"+tmp+"', expecting '{'");//XXX
     }
     
@@ -425,7 +424,7 @@ public abstract class ParserAction {
     CharStream tomInput;
     try{
       tomInput = new ANTLRFileStream(file.getCanonicalPath());
-    } catch (Exception e){
+    } catch (Exception e) {
       throw new RuntimeException(e); //XXX
     }
 
@@ -458,7 +457,7 @@ public abstract class ParserAction {
         miniTomLexer lexer = new miniTomLexer(input);
         
   // XXX DEBUG ===
-  if(HostParserDebugger.isOn()){
+  if(HostParserDebugger.isOn()) {
   HostParserDebugger.getInstance()
    .debugNewCall(lexer.getClassDesc(), input, getConstructName());
   }
@@ -467,7 +466,7 @@ public abstract class ParserAction {
         CommonTokenStream tokenStream = new CommonTokenStream(lexer);
         miniTomParser parser = new miniTomParser(tokenStream);
         
-        GenericConstruct_return retval = parseSpecificConstruct(parser);
+        GenericConstructReturn retval = parseSpecificConstruct(parser);
         
         tree.addChild((Tree)retval.getTree());
         
@@ -476,7 +475,7 @@ public abstract class ParserAction {
         input.rewind(retval.getMarker());
         
   // XXX DEBUG ===
-  if(HostParserDebugger.isOn()){
+  if(HostParserDebugger.isOn()) {
   HostParserDebugger.getInstance()
    .debugReturnedCall(lexer.getClassDesc(), input, getConstructName());
   }
@@ -494,7 +493,7 @@ public abstract class ParserAction {
      */
     public abstract String getConstructName();
     
-    public abstract GenericConstruct_return
+    public abstract GenericConstructReturn
       parseSpecificConstruct(miniTomParser parser) throws RecognitionException;
     
   }
@@ -503,7 +502,7 @@ public abstract class ParserAction {
 
     private static final ParseMatchConstruct instance = new ParseMatchConstruct();
     
-    public static ParserAction getInstance(){return instance;}
+    public static ParserAction getInstance() {return instance;}
     
     private ParseMatchConstruct() {;}
     
@@ -513,11 +512,11 @@ public abstract class ParserAction {
     }
 
     @Override
-    public GenericConstruct_return
+    public GenericConstructReturn
       parseSpecificConstruct(miniTomParser parser) throws RecognitionException {
       
       matchConstruct_return retval = parser.matchConstruct();
-      return new GenericConstruct_return(retval.tree, retval.marker);
+      return new GenericConstructReturn(retval.tree, retval.marker);
     }
     
   }
@@ -581,11 +580,11 @@ public abstract class ParserAction {
     }
     
     @Override
-    public GenericConstruct_return
+    public GenericConstructReturn
       parseSpecificConstruct(miniTomParser parser) throws RecognitionException {
       
       csOperatorConstruct_return retval = parser.csOperatorConstruct();
-      return new GenericConstruct_return(retval.tree, retval.marker);
+      return new GenericConstructReturn(retval.tree, retval.marker);
     }
   }
   
@@ -605,11 +604,11 @@ public abstract class ParserAction {
     }
     
     @Override
-    public GenericConstruct_return
+    public GenericConstructReturn
       parseSpecificConstruct(miniTomParser parser) throws RecognitionException {
       
       csOperatorArrayConstruct_return retval = parser.csOperatorArrayConstruct();
-      return new GenericConstruct_return(retval.tree, retval.marker);
+      return new GenericConstructReturn(retval.tree, retval.marker);
     }
   }
   
@@ -629,11 +628,11 @@ public abstract class ParserAction {
     }
     
     @Override
-    public GenericConstruct_return
+    public GenericConstructReturn
       parseSpecificConstruct(miniTomParser parser) throws RecognitionException {
     
       csOperatorListConstruct_return retval = parser.csOperatorListConstruct();
-      return new GenericConstruct_return(retval.tree, retval.marker);
+      return new GenericConstructReturn(retval.tree, retval.marker);
     }
     
   }
@@ -654,11 +653,11 @@ public abstract class ParserAction {
     }
 
     @Override
-    public GenericConstruct_return
+    public GenericConstructReturn
       parseSpecificConstruct(miniTomParser parser) throws RecognitionException {
 
         csTypetermConstruct_return retval = parser.csTypetermConstruct();
-        return new GenericConstruct_return(retval.tree, retval.marker);
+        return new GenericConstructReturn(retval.tree, retval.marker);
       }
   }
 
@@ -666,22 +665,22 @@ public abstract class ParserAction {
     
     private static final PackHostContent instance = new PackHostContent();
     
-    private PackHostContent(){;}
+    private PackHostContent() {;}
     
-    public static PackHostContent getInstance(){
+    public static PackHostContent getInstance() {
     	return instance;
     }
 
-	@Override
-	public void doAction(CharStream input, HostBlockBuilder hostBlockBuilder,
-			Tree tree, StreamAnalyst analyst, TomStreamManager streamManager,
-      OptionManager optionManager) {
-		
-	  if(!hostBlockBuilder.isEmpty()){
-	    tree.addChild(hostBlockBuilder.getHostBlock());
-      hostBlockBuilder.reset();
-	  }
-	}
+    @Override
+	  public void doAction(CharStream input, HostBlockBuilder hostBlockBuilder,
+        Tree tree, StreamAnalyst analyst, TomStreamManager streamManager,
+        OptionManager optionManager) {
+
+      if(!hostBlockBuilder.isEmpty()) {
+        tree.addChild(hostBlockBuilder.getHostBlock());
+        hostBlockBuilder.reset();
+      }
+    }
   }
 
   private static class ParseMetaQuoteConstruct extends ParserAction {
@@ -710,7 +709,7 @@ public abstract class ParserAction {
       
       // consume (and save) all metaquote content
       StringBuilder metaquoteContentBuilder = new StringBuilder();
-      while(analyst.readChar(input)){
+      while(analyst.readChar(input)) {
         if(input.LA(1)==CharStream.EOF) {
           System.err.println("Unexpected EndOfFile"); //TODO handle nicely
           return;
@@ -734,12 +733,12 @@ public abstract class ParserAction {
     
   }
  
-  private static class GenericConstruct_return{
+  private static class GenericConstructReturn {
     
     private Tree tree;
     private int marker;
     
-    public GenericConstruct_return(Tree tree, int marker){
+    public GenericConstructReturn(Tree tree, int marker) {
       this.tree = tree;
       this.marker = marker;
     }
