@@ -180,99 +180,27 @@ public class NewParserPlugin extends TomGenericPlugin {
   public synchronized void run(Map informationTracker) {
 
     long startChrono = System.currentTimeMillis();
-    //boolean intermediate = ((Boolean)getOptionManager().getOptionValue("intermediate")).booleanValue();
-    //boolean java         = ((Boolean)getOptionManager().getOptionValue("jCode")).booleanValue();
-      boolean java = true;
-    //boolean eclipse      = ((Boolean)getOptionManager().getOptionValue("eclipse")).booleanValue();
     boolean newparser    = ((Boolean)getOptionManager().getOptionValue("newparser")).booleanValue();
     if (newparser) {
-      //System.out.println("(DEBUG) we are using the new parser / newparser = " + newparser);
-      //System.out.println("(DEBUG) NewParser in use");
-    try {
-        // looking for java package
-        if(java && (!currentFileName.equals("-"))) {
-
-          HostParser parser =
+      try {
+        if(!currentFileName.equals("-")) {
+          HostParser parser = 
             new HostParser(getStreamManager(), getOptionManager());
           ANTLRReaderStream input = new ANTLRReaderStream(currentReader);
           input.name = currentFileName;
-          System.out.println("CurrentFileName : "+currentFileName);
+          //System.out.println("CurrentFileName : "+currentFileName);
           Tree programAsAntrlTree = parser.parseProgram(input);
           cst = (gt_Program)CSTAdaptor.getTerm(programAsAntrlTree);
-          //Code programAsAST = CSTAdaptor.adapt(programAsCST);
-          //setWorkingTerm(programAsAST);
-
-          /* Do not exhaust the stream !! */
-/*        TomJavaParser javaParser = TomJavaParser.createParser(currentFileName);
-          String packageName = "";
-          try {
-            packageName = javaParser.javaPackageDeclaration();
-          } catch (TokenStreamException tse) {
-            /* no package was found: ignore */
-/*        }
-          // Update streamManager to take into account package information
-          getStreamManager().setPackagePath(packageName);
         }
-        // getting a parser 
-        parser = newParser(currentReader, currentFileName, getOptionManager(), getStreamManager());
-        // parsing
-        setWorkingTerm(parser.input());
-        /*
-         * we update codomains which are constrained by a symbolName
-         * (come from the %strategy operator)
-         */
-/*      SymbolTable symbolTable = getStreamManager().getSymbolTable();
-        Iterator it = symbolTable.keySymbolIterator();
-        while(it.hasNext()) {
-          String tomName = (String)it.next();
-          TomSymbol tomSymbol = getSymbolFromName(tomName);
-          tomSymbol = symbolTable.updateConstrainedSymbolCodomain(tomSymbol, symbolTable);
-      */}
-        // verbose
-        TomMessage.info(getLogger(), null, 0, TomMessage.tomParsingPhase,
-            Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
-     }catch(IOException e) {
-       TomMessage.error(getLogger(), currentFileName, -1,
-           TomMessage.fileNotFound, e.getMessage());// TODO custom ErrMessage
-     }
-/*    } catch (TokenStreamException e) {
-        TomMessage.error(getLogger(), currentFileName, /*getLineFromTomParser()*//*-1,
-            TomMessage.tokenStreamException, e.getMessage());
-        return;
-      } catch (RecognitionException e){
-        TomMessage.error(getLogger(), currentFileName, /*getLineFromTomParser()*//*-1, 
-            TomMessage.recognitionException, e.getMessage());
-        return;
-      } catch (TomException e) {
-        TomMessage.error(getLogger(), currentFileName, /*getLineFromTomParser()*//*0, 
-            e.getPlatformMessage(), e.getParameters());
-        return;
-      } catch (FileNotFoundException e) {
-        TomMessage.error(getLogger(), currentFileName, 0, TomMessage.fileNotFound); 
-        e.printStackTrace();
-        return;
-      } catch (Exception e) {
-        e.printStackTrace();
-        TomMessage.error(getLogger(), currentFileName, 0, TomMessage.exceptionMessage,
-            getClass().getName(), currentFileName);
-        return;
-      }
-*/    // Some extra stuff
-      /*
-      if(eclipse) {
-        String outputFileName = getStreamManager().getInputParentFile()+
-          File.separator + "."+
-          getStreamManager().getRawFileName()+ PARSED_TABLE_SUFFIX;
-        Tools.generateOutput(outputFileName, getStreamManager().getSymbolTable().toTerm().toATerm());
-      }
-      if(intermediate) {
-        Tools.generateOutput(getStreamManager().getOutputFileName() 
-            + PARSED_SUFFIX, (tom.library.sl.Visitable)getWorkingTerm());
-        Tools.generateOutput(getStreamManager().getOutputFileName() 
-            + PARSED_TABLE_SUFFIX, getStreamManager().getSymbolTable().toTerm().toATerm());
-      }
-      */
-    } else {
+
+          // verbose
+          TomMessage.info(getLogger(), null, 0, TomMessage.tomParsingPhase,
+              Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
+       }catch(IOException e) {
+         TomMessage.error(getLogger(), currentFileName, -1,
+             TomMessage.fileNotFound, e.getMessage());// TODO custom ErrMessage
+       }
+     } else {
       // not active plugin
       TomMessage.info(getLogger(), null, 0, TomMessage.newParserNotUsed);
     }
@@ -284,18 +212,7 @@ public class NewParserPlugin extends TomGenericPlugin {
   public PlatformOptionList getDeclaredOptionList() {
     return OptionParser.xmlToOptionList(NewParserPlugin.DECLARED_OPTIONS);
   }
-
-  /**
-   * return the last line number
-   */
-/*  private int getLineFromTomParser() {
-    if(parser == null) {
-      return TomMessage.DEFAULT_ERROR_LINE_NUMBER;
-    } 
-    return parser.getLine();
-  }
-*/
-
+  
   public Object[] getArgs() {
     boolean newparser = ((Boolean)getOptionManager().getOptionValue("newparser")).booleanValue();
 
