@@ -148,10 +148,11 @@
       <boolean name="printast" altName="ast"
         description="print post-parsing ast"
 	value="false"/>
+      <!--
       <boolean name="newparser" altName="np"
 	description="uses new (experimental) parser"
 	value="false"/>
-
+     -->
       <string name="treeprinterconf"
 	description="defines how and when tree should be printed to stdout (default value is probably just fine)"
 	value="1:ast+!np,OldParserAST | 2:cst+np,NewParserCST | 3:ast+np,NewParserAST"

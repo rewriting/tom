@@ -83,7 +83,17 @@ public class NewParserPlugin extends TomGenericPlugin {
   //public static final String PARSED_TABLE_SUFFIX = ".tfix.parsed.table";
 
   /** the declared options string*/
-  public static final String DECLARED_OPTIONS = "<options><boolean name='newparser' altName='np' description='New Parser (deactivated by default)' value='false'/></options>";
+  public static final String DECLARED_OPTIONS = 
+    "<options>" +
+    "<boolean name='newparser' altName='np' description='New Parser (not activated by default)' value='false'/>" +
+    "</options>";
+  
+  /**
+   * inherited from OptionOwner interface (plugin) 
+   */
+  public PlatformOptionList getDeclaredOptionList() {
+    return OptionParser.xmlToOptionList(NewParserPlugin.DECLARED_OPTIONS);
+  }
   
   /** input file name and stream */
   private String currentFileName;
@@ -91,7 +101,6 @@ public class NewParserPlugin extends TomGenericPlugin {
   
   /** the main HostParser */
   private HostParser parser = null;
- 
 
   protected gt_Program cst=null;
 
@@ -158,14 +167,13 @@ public class NewParserPlugin extends TomGenericPlugin {
        * A parser waits a StreamManager as first (and single) argument
        * (arg[0]) but the NewParser Plugin is called after the TomParserPlugin,
        * —whatever parser plugin is activated, both are called— therefore
-       * it receives two arguments : the parsed code and the StreamManager.
+       * it receives two arguments: the parsed code and the StreamManager.
        */
     } else if (arg[1] instanceof TomStreamManager) {
       term = (Code)arg[0];
       setStreamManager((TomStreamManager)arg[1]);
       currentFileName = getStreamManager().getInputFileName();  
       currentReader = getStreamManager().getInputReader();
-
     } else {
       System.out.println("(debug) erreur new parser");
       TomMessage.error(getLogger(), null, 0, TomMessage.invalidPluginArgument,
@@ -180,10 +188,7 @@ public class NewParserPlugin extends TomGenericPlugin {
   public synchronized void run(Map informationTracker) {
 
     long startChrono = System.currentTimeMillis();
-    //boolean intermediate = ((Boolean)getOptionManager().getOptionValue("intermediate")).booleanValue();
-    //boolean java         = ((Boolean)getOptionManager().getOptionValue("jCode")).booleanValue();
-      boolean java = true;
-    //boolean eclipse      = ((Boolean)getOptionManager().getOptionValue("eclipse")).booleanValue();
+    boolean java         = ((Boolean)getOptionManager().getOptionValue("jCode")).booleanValue();
     boolean newparser    = ((Boolean)getOptionManager().getOptionValue("newparser")).booleanValue();
     if (newparser) {
       //System.out.println("(DEBUG) we are using the new parser / newparser = " + newparser);
@@ -235,56 +240,12 @@ public class NewParserPlugin extends TomGenericPlugin {
        TomMessage.error(getLogger(), currentFileName, -1,
            TomMessage.fileNotFound, e.getMessage());// TODO custom ErrMessage
      }
-/*    } catch (TokenStreamException e) {
-        TomMessage.error(getLogger(), currentFileName, /*getLineFromTomParser()*//*-1,
-            TomMessage.tokenStreamException, e.getMessage());
-        return;
-      } catch (RecognitionException e){
-        TomMessage.error(getLogger(), currentFileName, /*getLineFromTomParser()*//*-1, 
-            TomMessage.recognitionException, e.getMessage());
-        return;
-      } catch (TomException e) {
-        TomMessage.error(getLogger(), currentFileName, /*getLineFromTomParser()*//*0, 
-            e.getPlatformMessage(), e.getParameters());
-        return;
-      } catch (FileNotFoundException e) {
-        TomMessage.error(getLogger(), currentFileName, 0, TomMessage.fileNotFound); 
-        e.printStackTrace();
-        return;
-      } catch (Exception e) {
-        e.printStackTrace();
-        TomMessage.error(getLogger(), currentFileName, 0, TomMessage.exceptionMessage,
-            getClass().getName(), currentFileName);
-        return;
-      }
-*/    // Some extra stuff
-      /*
-      if(eclipse) {
-        String outputFileName = getStreamManager().getInputParentFile()+
-          File.separator + "."+
-          getStreamManager().getRawFileName()+ PARSED_TABLE_SUFFIX;
-        Tools.generateOutput(outputFileName, getStreamManager().getSymbolTable().toTerm().toATerm());
-      }
-      if(intermediate) {
-        Tools.generateOutput(getStreamManager().getOutputFileName() 
-            + PARSED_SUFFIX, (tom.library.sl.Visitable)getWorkingTerm());
-        Tools.generateOutput(getStreamManager().getOutputFileName() 
-            + PARSED_TABLE_SUFFIX, getStreamManager().getSymbolTable().toTerm().toATerm());
-      }
-      */
     } else {
       // not active plugin
       TomMessage.info(getLogger(), null, 0, TomMessage.newParserNotUsed);
     }
   }
   
-  /**
-   * inherited from OptionOwner interface (plugin) 
-   */
-  public PlatformOptionList getDeclaredOptionList() {
-    return OptionParser.xmlToOptionList(NewParserPlugin.DECLARED_OPTIONS);
-  }
-
   /**
    * return the last line number
    */

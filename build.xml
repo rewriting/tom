@@ -278,7 +278,7 @@
          options="--optimize --pretty --inlineplus">
       <include name="tom/emf/**/*.t"/>     	
       <include name="tom/engine/**/*.t"/>
-      <include name="tom/engine/**/**/*.t"/>
+      <include name="tom/engine/newparser/**/*.t"/>
       <include name="tom/library/**/*.t"/>
       <include name="tom/platform/**/*.t"/>
       <include name="tom/gom/**/*.t"/>
@@ -286,8 +286,6 @@
       <exclude name="tom/gom/**/*.g.t"/>
       <exclude name="tom/engine/parser/*.g.t"/>
       <exclude name="tom/islander/**/*.g.t"/>
-      <exclude name="tom/engine/treeprinter/*.t"/> <!-- XXX temp... -->
-      <exclude name="tom/engine/treeformatter/*.t"/> <!-- XXX temp... -->
     </tomcompile>
 
     <!-- Specific stuff for parser generation -->
@@ -363,6 +361,22 @@
              classname="org.apache.tools.ant.antlr.ANTLR3">
       <classpath refid="stable.classpath"/>
     </taskdef>
+
+    <!-- new Tom parser -->
+    <mkdir dir="${gen.destination}/tom/engine/newparser/parser"/>
+    <antlr3 target="${src.src}/tom/engine/newparser/parser/miniTom.g"
+      outputdirectory="${gen.destination}/tom/engine/newparser/parser/"
+      libdirectory="${gen.destination}/tom/engine/adt/cst">
+      <classpath refid="stable.classpath"/>
+    </antlr3>
+
+    <antlr3 target="${src.src}/tom/engine/newparser/parser/BQTerm.g"
+      outputdirectory="${gen.destination}/tom/engine/newparser/parser/"
+      libdirectory="${gen.destination}/tom/engine/adt/cst">
+      <classpath refid="stable.classpath"/>
+    </antlr3>
+
+    <!-- Gom parser -->
     <mkdir dir="${gen.destination}/tom/gom/parser"/>
     <antlr3 target="${src.src}/tom/gom/parser/GomLanguage.g"
             outputdirectory="${gen.destination}/tom/gom/parser"
@@ -448,6 +462,12 @@
       <include name="tom/engine/adt/Zenon.gom"/>
     </gomcompile>
 
+    <gomantlradaptercompile srcdir="${src.src}"
+      package="tom.engine.adt"
+      destdir="${src.gen}">
+      <include name="tom/engine/adt/CST.gom"/>
+    </gomantlradaptercompile>
+
     <!-- adt for gom -->
     <gomcompile srcdir="${src.src}"
       multithread="${gommultithread}"
@@ -471,7 +491,6 @@
   <target name="src" description="compile the TOM development sources" depends="prepare.src">
     <antcall target="buildtom"/>
     <antcall target="buildparser"/>
-    <antcall target="buildnewparser" />
     
     <!--<property name="unixpath" refid="src.classpath" />
     <echo>classpath = ${unixpath}</echo>-->
@@ -1357,6 +1376,7 @@
         <include name="**/*.class"/>
         <exclude name="tom/engine/Tom.class"/>
         <exclude name="tom/engine/parser/*.class"/>
+        <exclude name="tom/engine/newparser/parser/*.class"/>
         <exclude name="tom/gom/parser/*.class"/>
       </fileset>
       <!-- we don't want to check the parser generated files, never ever -->
@@ -1367,6 +1387,10 @@
         <include name="tom/engine/parser/HostParser.class"/>
         <include name="tom/engine/parser/BackQuoteLexer.class"/>
         <include name="tom/engine/parser/BackQuoteParser.class"/>
+        <include name="tom/engine/newparser/parser/miniTomLexer.class"/>
+        <include name="tom/engine/newparser/parser/miniTomParser.class"/>
+        <include name="tom/engine/newparser/parser/BQTermLexer.class"/>
+        <include name="tom/engine/newparser/parser/BQTermParser.class"/>
         <include name="tom/gom/parser/GomParserPlugin.class"/>
       </fileset>
     </concat>
@@ -1375,6 +1399,7 @@
         <include name="**/*.class"/>
         <exclude name="tom/engine/Tom.class"/>
         <exclude name="tom/engine/parser/*.class"/>
+        <exclude name="tom/engine/newparser/parser/*.class"/>
         <exclude name="tom/gom/parser/*.class"/>
       </fileset>
       <!-- we don't want to check the parser generated files, never ever -->
@@ -1385,6 +1410,10 @@
         <include name="tom/engine/parser/HostParser.class"/>
         <include name="tom/engine/parser/BackQuoteLexer.class"/>
         <include name="tom/engine/parser/BackQuoteParser.class"/>
+        <include name="tom/engine/newparser/parser/miniTomLexer.class"/>
+        <include name="tom/engine/newparser/parser/miniTomParser.class"/>
+        <include name="tom/engine/newparser/parser/BQTermLexer.class"/>
+        <include name="tom/engine/newparser/parser/BQTermParser.class"/>
         <include name="tom/gom/parser/GomParserPlugin.class"/>
       </fileset>
     </concat>
@@ -1834,89 +1863,6 @@
       find /Volumes/Home/pem/workspace/jtom/src/tom \( -name "*.t" -o
       -name "*.java" \) | xargs etags - -language=java
     </exec>
-  </target>
-  -->
-
-  <target name="buildnewparser" depends="-withstable, -withsrc">
-
-    <property name="tom.home" value="${stable.dist}"/>
-    <property name="newparser.package" value="tom/engine/newparser"/>
-
-    <mkdir dir="${src.gen}/${newparser.package}/parser/"/>
-
-  <taskdef name="antlr3"
-           classname="org.apache.tools.ant.antlr.ANTLR3">
-  </taskdef>
-
-  <!--<gomcompile srcdir="${src.src}"
-      destdir="${src.gen}"
-      package="tom.engine.adt">
-      <include name="tom/engine/adt/CST.gom"/>
-    </gomcompile> -->
-
-    <gomantlradaptercompile srcdir="${src.src}"
-      destdir="${src.gen}"
-      package="tom.engine.adt">
-      <include name="tom/engine/adt/CST.gom"/>
-    </gomantlradaptercompile>
-
-    <antlr3 target="${src.src}/${newparser.package}/parser/miniTom.g"
-      outputdirectory="${src.gen}/${newparser.package}/parser/"
-      libdirectory="${src.gen}/tom/engine/adt/cst" />
-
-    <antlr3 target="${src.src}/${newparser.package}/parser/BQTerm.g"
-      outputdirectory="${src.gen}/${newparser.package}/parser/"
-      libdirectory="${src.gen}/tom/engine/adt/cst" />
-
-    <!-- XXX temp -->
-    <tomcompile fork="no"
-         srcdir="${src.src}"
-         destdir="${src.gen}"
-         multithread="${multithread}"
-         options="--optimize --pretty --inlineplus">
-      <include name="tom/engine/treeprinter/*.t"/>
-    </tomcompile>
-
-    <tomcompile fork="no"
-         srcdir="${src.src}"
-         destdir="${src.gen}"
-         multithread="${multithread}"
-         options="--optimize --pretty --inlineplus">
-      <include name="tom/engine/treeformatter/*.t"/>
-    </tomcompile>
-
-
-  </target>
-  <!--
-  <target name="src.dist.newparser" depends="src.dist">
-    <property name="printv2ast.configfilename" value="Tom-printv2ast.xml"/>
-    <property name="printv3ast.configfilename" value="Tom-printv3ast.xml"/>
-
-    <copy tofile="${src.dist}/${printv2ast.configfilename}"
-      file="${src.config}/${printv2ast.configfilename}"/>
-    <copy tofile="${src.dist}/${printv3ast.configfilename}"
-      file="${src.config}/${printv3ast.configfilename}"/>
-
-    <copy tofile="${src.dist.bin}/tom-printv2ast" file="${utils}/script.in"/>
-    <replace file="${src.dist.bin}/tom-printv2ast">
-      <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
-      <replaceFilter token="@MAIN_CLASS@" value="tom.engine.Tom"/>
-      <replaceFilter token="@CONFIG_FILE@" value="${printv2ast.configfilename}"/>
-      <replaceFilter token="@ONCLUDE_DIR@" value="share/tom"/>
-    </replace>
-
-    <copy tofile="${src.dist.bin}/tom-printv3ast" file="${utils}/script.in"/>
-    <replace file="${src.dist.bin}/tom-printv3ast">
-      <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
-      <replaceFilter token="@MAIN_CLASS@" value="tom.engine.Tom"/>
-      <replaceFilter token="@CONFIG_FILE@" value="${printv3ast.configfilename}"/>
-      <replaceFilter token="@ONCLUDE_DIR@" value="share/tom"/>
-    </replace>
-
-    <chmod dir="${src.dist.bin}" perm="ugo+rx">
-      <include name="tom-printv3ast"/>
-      <include name="tom-printv2ast"/>
-    </chmod>
   </target>
   -->
 
