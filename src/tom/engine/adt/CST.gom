@@ -114,6 +114,8 @@ CsBQTerm = CsBQAppl(name:gt_Name, bqTermList:CsBQTermList)
          | CsBQRecordAppl(slotList:CsPairSlotBQTermList)
          | CsBQVar(name:gt_Name)
          | CsBQVarStar(name:gt_Name)
+         | CsBQDefault()
+         | CsBQInnerHostCode(code:String)
 
 CsPairSlotBQTerm = CsPairSlotBQTerm(slotName:gt_Name, term:CsBQTerm)
 

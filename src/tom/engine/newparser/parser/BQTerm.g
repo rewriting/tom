@@ -26,18 +26,20 @@ package tom.engine.newparser.parser;
 /* actual backquote already consumed */
 csBQTerm
 returns [int marker] :
-  IDENTIFIER (WS)?
-    LPAR (WS)? (csBQTerm ((WS)? COMMA (WS)? csBQTerm)*)? (WS)? RPAR
+  IDENTIFIER (WS)? LPAR
+    (WS)? (csNonHeadBQTerm ((WS)? COMMA (WS)? csNonHeadBQTerm)*)? (WS)? RPAR
   {$marker = ((CustomToken)$RPAR).getPayload(Integer.class);}
 
   -> ^(CsBQAppl ^(CsName IDENTIFIER)
-                ^(CsBQTermList csBQTerm*))
+                ^(CsBQTermList csNonHeadBQTerm*))
  
  |IDENTIFIER (WS)? LBR
     (WS)? (csPairSlotBQTerm ((WS)? COMMA (WS)? csPairSlotBQTerm)*)? (WS)? RBR
   {$marker = ((CustomToken)$RBR).getPayload(Integer.class);}
   
-  -> ^(CsBQRecordAppl ^(CsPairSlotBQTermList csPairSlotBQTerm*)) 
+  -> ^(CsBQRecordAppl
+     	^(CsName IDENTIFIER)
+        ^(CsPairSlotBQTermList csPairSlotBQTerm*)) 
  
  |IDENTIFIER STAR
   {$marker = ((CustomToken)$STAR).getPayload(Integer.class);}
@@ -48,26 +50,35 @@ returns [int marker] :
   {$marker = ((CustomToken)$IDENTIFIER).getPayload(Integer.class);}
 
   -> ^(CsBQVar ^(CsName IDENTIFIER))
+; 
 
-;
+csNonHeadBQTerm :
+  csBQTerm
+  -> csBQTerm
+
+ |UNDERSCORE
+  -> ^(CsBQDefault)
+; 
 
 csPairSlotBQTerm :
-  IDENTIFIER (WS)? EQUAL (WS)? csBQTerm
-  -> ^(CsPairSlotBQTerm ^(CsName IDENTIFIER) csBQTerm)
+  IDENTIFIER (WS)? EQUAL (WS)? (csNonHeadBQTerm)
+  -> ^(CsPairSlotBQTerm ^(CsName IDENTIFIER) csNonHeadBQTerm)
 ;
 
 // TOKENS
 // XXX dummy mark system
-STAR   : '*' {tokenCustomizer.prepareNextToken(input.mark());};
-COMMA  : ',' {tokenCustomizer.prepareNextToken(input.mark());};
-LPAR   : '(' {tokenCustomizer.prepareNextToken(input.mark());};
-RPAR   : ')' {tokenCustomizer.prepareNextToken(input.mark());};
-LBR    : '[' {tokenCustomizer.prepareNextToken(input.mark());};
-RBR    : ']' {tokenCustomizer.prepareNextToken(input.mark());};
-EQUAL  : '=' {tokenCustomizer.prepareNextToken(input.mark());};
-
 IDENTIFIER : LETTER(LETTER | DIGIT | '_' | '-')*
   {tokenCustomizer.prepareNextToken(input.mark());};
+
+STAR   : '*' {tokenCustomizer.prepareNextToken(input.mark());};
+COMMA  : ',' ;
+LPAR   : '(' ;
+RPAR   : ')' {tokenCustomizer.prepareNextToken(input.mark());};
+LBR    : '[' ;
+RBR    : ']' {tokenCustomizer.prepareNextToken(input.mark());};
+EQUAL  : '=' ;
+UNDERSCORE : '_';
+
 
 
 fragment
