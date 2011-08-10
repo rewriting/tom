@@ -7,6 +7,8 @@ import tom.platform.OptionManager;
 import tom.engine.TomMessage;
 import tom.engine.TomStreamManager;
 import tom.engine.tools.TomGenericPlugin;
+import tom.platform.OptionParser;
+import tom.platform.adt.platformoption.types.PlatformOptionList;
 import tom.library.utils.Viewer;
 import tom.library.sl.Visitable;
 
@@ -54,106 +56,19 @@ public class TreePrinterPlugin extends TomGenericPlugin {
 
   %include {sl.tom}
   %include {../adt/tomsignature/TomSignature.tom}
-
-  /**
-   * stores configuration.
-   */
-  private class TreePrinterPluginConf {
-   
-    Map<Integer, TreePrinterPluginConfItem> conf =
-      new HashMap<Integer, TreePrinterPluginConfItem>();
-
-    TreePrinterPluginConf(String pluginconfstring) {
-      String[] items = pluginconfstring.split("\\|");
-
-      for(String item : items){
-        String[] instancenumbandconf = item.split(":");
-        conf.put(new Integer(instancenumbandconf[0].trim()),
-                new TreePrinterPluginConfItem(instancenumbandconf[1]));
-      }
-    }
-
-    TreePrinterPluginConfItem getConf(int instnumb) {
-      TreePrinterPluginConfItem res = conf.get(new Integer(instnumb));
-      return (res!=null)?res:new TreePrinterPluginConfItem();
-    }
-  }
-
-  private class TreePrinterPluginConfItem {
-
-    private List<String> requestedtrueoptions = new ArrayList<String>();
-    private List<String> requestedfalseoptions = new ArrayList<String>();
-    private String info = "";
-
-    TreePrinterPluginConfItem(){;}
-
-    /**
-     * confstring like :
-     * ((!)?booleanoptionname)('+'((!)?booleanoptionname))* ',' string
-     */
-    TreePrinterPluginConfItem(String confstring) {
-
-      String[] optionsandinfo = confstring.split(",");
-      if(optionsandinfo.length>=2){
-        info=optionsandinfo[1];
-      }
-
-      String[] requestedoptions = optionsandinfo[0].split("\\+");
-      for(String requestedoption : requestedoptions){
-        requestedoption = requestedoption.trim();
-        
-        if(requestedoption.startsWith("!")) {
-          requestedoption = requestedoption.substring(1);
-          requestedfalseoptions.add(requestedoption.trim());
-        } else {
-          requestedtrueoptions.add(requestedoption);
-        }
-      }
-    }
-
-    boolean isActive() {
-      if(requestedtrueoptions.size()==0 && requestedfalseoptions.size()==0) {
-        return true;
-      } else {
-        for(String requestedtrueoption : requestedtrueoptions){
-          if(!((Boolean)getOptionManager().getOptionValue(requestedtrueoption))
-              .booleanValue() ) {
-            return false;
-          }
-        }
-
-        for(String requestedfalseoption : requestedfalseoptions){
-          if(((Boolean)getOptionManager().getOptionValue(requestedfalseoption))
-              .booleanValue() ) {
-            return false;
-          }
-        }
-      }
-
-      return true;
-    }
-
-    String getInfo() {
-      return info;
-    }
-
-    // May help for debug
-    @Override
-    public String toString() {
-       String res = "";
-       res+= "=====================\n";
-       res+= "requested true :";
-       for(String to : requestedtrueoptions)
-         res+=" "+to;
-       res+= "\nrequested false :";
-       for(String fo : requestedfalseoptions)
-         res+=" "+fo;
-       res+= "\ninfo string : "+info+"\n" ;
-       res+= "=====================";
-
-
-       return res;
-    }
+  
+  public static final String DECLARED_OPTIONS = 
+    "<options>" +
+    "<boolean name='printcst' altName='cst' description='print post-parsing cst (only with new parser)' value='false'/>" +
+    "<boolean name='printast' altName='ast' description='print post-parsing ast' value='false'/>" +
+    "<string name='treeprinterconf' altName=''" +
+    "        description='defines how and when tree should be printed to stdout (default value is probably just fine)'" +
+    "        value='1:printast+!newparser,OldParserAST | 2:printcst+newparser,NewParserCST | 3:printast+newparser,NewParserAST'" +
+    "        attrName='treeprinterconf'/>" +
+    "</options>";
+  
+  public PlatformOptionList getDeclaredOptionList() {
+    return OptionParser.xmlToOptionList(TreePrinterPlugin.DECLARED_OPTIONS);
   }
 
   private static int nextRunCallNumber = 1;
@@ -171,15 +86,14 @@ public class TreePrinterPlugin extends TomGenericPlugin {
   @Override
   public void setArgs(Object[] arg) {
 
-    if ( (arg[0]==null ||  arg[0] instanceof Visitable)
+    if( (arg[0]==null || arg[0] instanceof Visitable)
         && (arg[1] instanceof TomStreamManager) ) {
      
       visitable = (Visitable)arg[0];
-
       streamManager = (TomStreamManager)arg[1];
     } else {
       TomMessage.error(getLogger(),null,0,TomMessage.invalidPluginArgument,
-         "AstPrinterPlugin", "[Visitable or  null, TomStreamManager]",
+         "AstPrinterPlugin", "[Visitable or null, TomStreamManager]",
          getArgumentArrayString(arg));
     }
   }
@@ -202,27 +116,20 @@ public class TreePrinterPlugin extends TomGenericPlugin {
               (String)getOptionManager().getOptionValue("treeprinterconf"));
     }
 
-
   TreePrinterPluginConfItem instanceConf = conf.getConf(thisRunCallNumber);
     
    if(instanceConf.isActive()) {
       System.out.println(
-        "\n== "+ instanceConf.getInfo()
-        +" ====================================================");
+        "\n== "+ instanceConf.getInfo() +
+	" ====================================================");
      
      if(visitable!=null) {
-
-       Visitable oneLined = null;
        try {
-          oneLined = `BottomUp(toSingleLineTargetLanguage()).visit(visitable);
+          Visitable oneLined = `BottomUp(toSingleLineTargetLanguage()).visit(visitable);
+	  Viewer.toTree(oneLined);
        } catch (tom.library.sl.VisitFailure e) {
          System.err.println("VisitFailure Exception"); //XXX handle cleanly
        }
-      
-      Viewer.toTree(oneLined);
-
-      //System.out.println(oneLined);
-
      } else {
        System.out.println("Nothing to print (this tree is null)");
      }
@@ -274,5 +181,106 @@ public class TreePrinterPlugin extends TomGenericPlugin {
       }
     }
   */
+  }
+
+  /**
+   * stores configuration.
+   */
+  private class TreePrinterPluginConf {
+   
+    Map<Integer, TreePrinterPluginConfItem> mapconf =
+      new HashMap<Integer, TreePrinterPluginConfItem>();
+
+    public TreePrinterPluginConf(String pluginconfstring) {
+      String[] items = pluginconfstring.split("\\|");
+
+      for(String item : items) {
+        String[] instancenumbandconf = item.split(":");
+        mapconf.put(new Integer(instancenumbandconf[0].trim()),
+                new TreePrinterPluginConfItem(instancenumbandconf[1]));
+      }
+    }
+
+    TreePrinterPluginConfItem getConf(int instnumb) {
+      TreePrinterPluginConfItem res = mapconf.get(new Integer(instnumb));
+      return (res!=null)?res:new TreePrinterPluginConfItem();
+    }
+  }
+
+  private class TreePrinterPluginConfItem {
+
+    private List<String> requestedtrueoptions = new ArrayList<String>();
+    private List<String> requestedfalseoptions = new ArrayList<String>();
+    private String info = "";
+
+    public TreePrinterPluginConfItem(){;}
+
+    /**
+     * confstring like :
+     * ((!)?booleanoptionname)('+'((!)?booleanoptionname))* ',' string
+     */
+    public TreePrinterPluginConfItem(String confstring) {
+
+      String[] optionsandinfo = confstring.split(",");
+      if(optionsandinfo.length>=2) {
+        info=optionsandinfo[1];
+      }
+
+      String[] requestedoptions = optionsandinfo[0].split("\\+");
+      for(String requestedoption : requestedoptions) {
+        requestedoption = requestedoption.trim();
+        
+        if(requestedoption.startsWith("!")) {
+          requestedoption = requestedoption.substring(1);
+          requestedfalseoptions.add(requestedoption.trim());
+        } else {
+          requestedtrueoptions.add(requestedoption);
+        }
+      }
+    }
+
+    boolean isActive() {
+      if(requestedtrueoptions.size()==0 && requestedfalseoptions.size()==0) {
+        return true;
+      } else {
+        for(String requestedtrueoption : requestedtrueoptions) {
+          if(!((Boolean)getOptionManager().getOptionValue(requestedtrueoption))
+              .booleanValue() ) {
+            return false;
+          }
+        }
+
+        for(String requestedfalseoption : requestedfalseoptions) {
+          if(((Boolean)getOptionManager().getOptionValue(requestedfalseoption))
+              .booleanValue() ) {
+            return false;
+          }
+        }
+      }
+
+      return true;
+    }
+
+    String getInfo() {
+      return info;
+    }
+
+    // May help for debug
+    @Override
+    public String toString() {
+       String res = "";
+       res+= "=====================\n";
+       res+= "requested true :";
+       for(String to : requestedtrueoptions)
+         res+=" "+to;
+       res+= "\nrequested false :";
+       for(String fo : requestedfalseoptions)
+         res+=" "+fo;
+       res+= "\ninfo string : "+info+"\n" ;
+       res+= "=====================";
+
+
+       return res;
+    }
   }
 }

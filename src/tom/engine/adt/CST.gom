@@ -24,6 +24,8 @@ gt_Block =
 | CsTypetermConstruct (optionList:CstOptionList, tomTypeName:gt_Name, extendsTypeName: gt_Name, operatorList:gt_OperatorList)
 | CsMetaQuoteConstruct(optionList:CstOptionList, content:String)
 | CsIncludeConstruct  (optionList:CstOptionList, filename:String)
+| CsBQTermToBlock     (bqterm:CsBQTerm)
+
 // MatchConstruct ============================================================
 gt_MatchArgumentList = CsMatchArgumentList(gt_TypedTerm*)
 
@@ -111,7 +113,7 @@ gt_Slot = CsSlot(slotName:gt_Name, slotTypeName:gt_Name)
 
 // BQTerms ===================================================================
 CsBQTerm = CsBQAppl(name:gt_Name, bqTermList:CsBQTermList)
-         | CsBQRecordAppl(slotList:CsPairSlotBQTermList)
+         | CsBQRecordAppl(name:gt_Name, slotList:CsPairSlotBQTermList)
          | CsBQVar(name:gt_Name)
          | CsBQVarStar(name:gt_Name)
          | CsBQDefault()

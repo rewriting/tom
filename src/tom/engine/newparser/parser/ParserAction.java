@@ -18,6 +18,9 @@ import tom.engine.TomMessage;
 
 import tom.engine.newparser.parser.miniTomParser.*;
 import tom.engine.newparser.parser.BQTermParser.*;
+import tom.engine.newparser.parser.miniTomLexer;
+import tom.engine.newparser.parser.BQTermLexer;
+import static tom.engine.newparser.util.TreeFactory.*;
 
 import org.antlr.runtime.CharStream;
 import org.antlr.runtime.CommonTokenStream;
@@ -550,10 +553,11 @@ public abstract class ParserAction {
         
         csBQTerm_return retval =  parser.csBQTerm();
         
-        tree.addChild((Tree)retval.getTree());
+        tree.addChild(
+            makeTree(BQTermLexer.CsBQTermToBlock, "CsBSTermToBlock",
+              (CommonTree)retval.getTree()));
         
         // allow action to return with a "clean" input state
-        // (input.LA(1) is char after '}')
         input.rewind(retval.marker);
         
         } catch(Exception e) {

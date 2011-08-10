@@ -47,25 +47,18 @@
   <plugins>
     <plugin name="Starter"
       class="tom.engine.starter.StarterPlugin"/>
-    
     <plugin name="Parser"
       class="tom.engine.parser.TomParserPlugin"/>
-    
     <plugin name="AST Printer"
       class="tom.engine.treeprinter.TreePrinterPlugin"/>
-    
     <plugin name="New Parser"
       class="tom.engine.newparser.NewParserPlugin"/>
-
     <plugin name="AST Printer"
       class="tom.engine.treeprinter.TreePrinterPlugin"/>
-
     <plugin name="Tree Formatter"
 	    class="tom.engine.treeformatter.TreeFormatterPlugin"/>
-
     <plugin name="AST Printer"
       class="tom.engine.treeprinter.TreePrinterPlugin"/>
-    
     <plugin name="Syntax checker"
       class="tom.engine.checker.SyntaxCheckerApPlugin"/>
     <plugin name="Desugarer"
@@ -141,22 +134,6 @@
       <boolean name="multithread" altName="mt"
         description="Sets the multithread mode"
 	value="false"/>
-
-      <boolean name="printcst" altName="cst"
-	description="print post-parsing cst (only with new parser)"
-	value="false"/>
-      <boolean name="printast" altName="ast"
-        description="print post-parsing ast"
-	value="false"/>
-      <!--
-      <boolean name="newparser" altName="np"
-	description="uses new (experimental) parser"
-	value="false"/>
-     -->
-      <string name="treeprinterconf"
-	description="defines how and when tree should be printed to stdout (default value is probably just fine)"
-	value="1:ast+!np,OldParserAST | 2:cst+np,NewParserCST | 3:ast+np,NewParserAST"
-	attrName="treeprinterconf"/>
     </options>
   </optionmanager>
 
