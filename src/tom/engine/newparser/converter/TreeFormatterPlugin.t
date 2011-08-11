@@ -80,7 +80,7 @@ public class TreeFormatterPlugin extends TomGenericPlugin {
                   TextPosition(endLine, endColumn))));
       }*/
 
-      cst_MatchConstruct[] -> {
+      Cst_MatchConstruct[] -> {
         return `wrappedCode(
                   InstructionToCode(Match(concConstraintInstruction(),
                                         concOption()))
@@ -89,7 +89,7 @@ public class TreeFormatterPlugin extends TomGenericPlugin {
     }
 
     visit CstProgram {
-      cst_Program(blocks) -> {
+      Cst_Program(blocks) -> {
         Collection<Code> c = new LinkedList<Code>();
         `TopDown(collectCodes(c)).visit(`blocks);
         

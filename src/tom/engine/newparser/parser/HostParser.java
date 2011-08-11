@@ -109,7 +109,7 @@ public class HostParser {
 	}
 	
 	public CommonTree parseProgram(CharStream input){
-    return makeRootTree(cst_Program, "cst_Program", parseBlockList(input));
+    return makeRootTree(Cst_Program, "Cst_Program", parseBlockList(input));
 	}
 	
 	public CommonTree parseBlockList(CharStream input){
@@ -128,7 +128,7 @@ public class HostParser {
     }
 
 	  HostBlockBuilder hostBlockBuilder = new HostBlockBuilder();
-    CommonTree tree = makeTree(cst_concCstBlock, "cst_concCstBlock");
+    CommonTree tree = makeTree(Cst_concCstBlock, "Cst_concCstBlock");
 
 		while(! stopCondition.readChar(input)) { 
                                     // readChar() updates internal state

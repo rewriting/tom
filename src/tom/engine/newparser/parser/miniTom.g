@@ -93,7 +93,7 @@ returns [int marker] :
   // extract and return CharStream's marker
   {$marker = ((CustomToken)$RBR).getPayload(Integer.class);}
 
-  -> ^(cst_IncludeConstruct $filename)
+  -> ^(Cst_IncludeConstruct $filename)
 ;
 
 // MatchConstruct ===========================================================
@@ -116,10 +116,10 @@ returns [int marker]:
   // extract and return CharStream's marker
   {$marker = ((CustomToken)$RBR).getPayload(Integer.class);}
   
-  -> ^( cst_MatchConstruct
+  -> ^( Cst_MatchConstruct
        {extractOptions((CommonToken)$LPAR, (CommonToken)$RBR)}
-       ^( cst_concCstTypedTerm csMatchArgument* )
-       ^( cst_concConstraintAction csExtendedConstraintAction* )
+       ^( Cst_concCstTypedTerm csMatchArgument* )
+       ^( Cst_concConstraintAction csExtendedConstraintAction* )
       )
 
  |
@@ -132,23 +132,23 @@ returns [int marker]:
   // extract and return CharStream's marker
   {$marker = ((CustomToken)$RBR).getPayload(Integer.class);}
   
-  -> ^( cst_MatchConstruct
+  -> ^( Cst_MatchConstruct
       {extractOptions((CommonToken)$LBR, (CommonToken)$RBR)}
-       ^( cst_concCstTypedTerm )
-       ^( cst_concConstraintAction csConstraintAction* )
+       ^( Cst_concCstTypedTerm )
+       ^( Cst_concConstraintAction csConstraintAction* )
       )
 ;
 
 csConstraintAction :
  csConstraint ARROW LBR RBR
- -> ^(cst_ConstraintAction csConstraint
+ -> ^(Cst_ConstraintAction csConstraint
       {((CustomToken)$LBR).getPayload(Tree.class)}
      )
 ;
 
 csExtendedConstraintAction :
  csExtendedConstraint ARROW LBR RBR
- -> ^(cst_ConstraintAction csExtendedConstraint
+ -> ^(Cst_ConstraintAction csExtendedConstraint
       {((CustomToken)$LBR).getPayload(Tree.class)}
      )
 ;
@@ -156,8 +156,8 @@ csExtendedConstraintAction :
 csMatchArgument :
   (type=IDENTIFIER)? csTerm
 
-  ->{type!=null}? ^(cst_TypedTerm csTerm ^(cst_TermType $type))
-  ->              ^(cst_TypedTerm csTerm ^(cst_TermType ^(cst_TermTypeUnknown)))
+  ->{type!=null}? ^(Cst_TypedTerm csTerm ^(Cst_TermType $type))
+  ->              ^(Cst_TypedTerm csTerm ^(Cst_TermType ^(Cst_TermTypeUnknown)))
 ;
  // Constraints ===============================================
 /**
@@ -170,20 +170,20 @@ match identicaly positionned matchConstruct's argument.
 */
 csExtendedConstraint :
  csMatchArgumentConstraintList ((a=AND|o=OR) csConstraint)?
- ->{a!=null}? ^(cst_AndConstraint csMatchArgumentConstraintList csConstraint)
- ->{o!=null}? ^(cst_OrConstraint csMatchArgumentConstraintList csConstraint)
+ ->{a!=null}? ^(Cst_AndConstraint csMatchArgumentConstraintList csConstraint)
+ ->{o!=null}? ^(Cst_OrConstraint csMatchArgumentConstraintList csConstraint)
  ->           csMatchArgumentConstraintList
 ; 
 
 csMatchArgumentConstraintList :
   csMatchArgumentConstraint (COMMA c2=csMatchArgumentConstraint)* (COMMA)?
-  ->{c2!=null}? ^(cst_AndConstraint csMatchArgumentConstraint*)
+  ->{c2!=null}? ^(Cst_AndConstraint csMatchArgumentConstraint*)
   ->            csMatchArgumentConstraint
 ;
 
 csMatchArgumentConstraint :
   csPattern
-  -> ^(cst_MatchArgumentConstraint csPattern)
+  -> ^(Cst_MatchArgumentConstraint csPattern)
 ;
 
 /**
@@ -204,13 +204,13 @@ csConstraint :
 
 csConstraint_priority1 :
   csConstraint_priority2 (or=OR csConstraint_priority2)*
-  ->{or!=null}? ^(cst_OrConstraint csConstraint_priority2*)
+  ->{or!=null}? ^(Cst_OrConstraint csConstraint_priority2*)
   -> csConstraint_priority2
 ;
 
 csConstraint_priority2 :
   csConstraint_priority3 (and=AND csConstraint_priority3)*
-  ->{and!=null}? ^(cst_AndConstraint csConstraint_priority3*)
+  ->{and!=null}? ^(Cst_AndConstraint csConstraint_priority3*)
   -> csConstraint_priority3
 ;
 
@@ -221,12 +221,12 @@ csConstraint_priority3 :
   |le=LOWEROREQU |eq=DOUBLEEQUAL |ne=DIFFERENT)
   r=csTerm
 
- ->{gt!=null}? ^(cst_NumGreaterThan      $l $r)
- ->{ge!=null}? ^(cst_NumGreaterOrEqualTo $l $r)
- ->{lt!=null}? ^(cst_NumLessThan         $l $r)
- ->{le!=null}? ^(cst_NumLessOrEqualTo    $l $r)
- ->{eq!=null}? ^(cst_NumEqualTo          $l $r)
- ->/*ne!=null*/^(cst_NumDifferent        $l $r)
+ ->{gt!=null}? ^(Cst_NumGreaterThan      $l $r)
+ ->{ge!=null}? ^(Cst_NumGreaterOrEqualTo $l $r)
+ ->{lt!=null}? ^(Cst_NumLessThan         $l $r)
+ ->{le!=null}? ^(Cst_NumLessOrEqualTo    $l $r)
+ ->{eq!=null}? ^(Cst_NumEqualTo          $l $r)
+ ->/*ne!=null*/^(Cst_NumDifferent        $l $r)
  
 
  | csConstraint_priority4
@@ -235,7 +235,7 @@ csConstraint_priority3 :
 
 csConstraint_priority4 :
  csPattern LARROW csTerm
- -> ^(cst_MatchTermConstraint csPattern csTerm)
+ -> ^(Cst_MatchTermConstraint csPattern csTerm)
 
  | LPAR csConstraint RPAR
  -> csConstraint
@@ -243,47 +243,47 @@ csConstraint_priority4 :
 // Terms ======================================================
 csTerm :
   IDENTIFIER (s=STAR)?
-  ->{s!=null}? ^(cst_VariableNameStar IDENTIFIER )
-  ->           ^(cst_VariableName IDENTIFIER)
+  ->{s!=null}? ^(Cst_VariableNameStar IDENTIFIER )
+  ->           ^(Cst_VariableName IDENTIFIER)
  
  |IDENTIFIER LPAR (csTerm (COMMA csTerm)*)? RPAR
-  -> ^(cst_Term IDENTIFIER ^(cst_concCstTerm csTerm*))
+  -> ^(Cst_Term IDENTIFIER ^(Cst_concCstTerm csTerm*))
 ;
 // Patterns ===================================================
 csPattern :
   // myA@a(...
   IDENTIFIER AT csPattern
-  -> ^(cst_AnnotatedPattern csPattern IDENTIFIER)
+  -> ^(Cst_AnnotatedPattern csPattern IDENTIFIER)
 
   //!a(...
  |ANTI csPattern
-  -> ^(cst_Anti csPattern)
+  -> ^(Cst_Anti csPattern)
 
   //f'('...')'
  |csHeadSymbolList csExplicitTermList
-  -> ^(cst_SymbolList csHeadSymbolList csExplicitTermList)
+  -> ^(Cst_SymbolList csHeadSymbolList csExplicitTermList)
  
   //f'['...']'
  |csHeadSymbolList csImplicitPairList
-  -> ^(cst_SymbolList csHeadSymbolList csImplicitPairList)
+  -> ^(Cst_SymbolList csHeadSymbolList csImplicitPairList)
 
   // x
   // x*
  |IDENTIFIER (s=STAR)?
-  -> {s!=null}? ^(cst_VariableStar IDENTIFIER)
-  ->/*s==null*/ ^(cst_Variable IDENTIFIER)
+  -> {s!=null}? ^(Cst_VariableStar IDENTIFIER)
+  ->/*s==null*/ ^(Cst_Variable IDENTIFIER)
   
   // _
   // _*
  |UNDERSCORE (s=STAR)? 
-  -> {s!=null}? ^(cst_UnamedVariableStar)
-  ->/*s==null*/ ^(cst_UnamedVariable)
+  -> {s!=null}? ^(Cst_UnamedVariableStar)
+  ->/*s==null*/ ^(Cst_UnamedVariable)
   
   // 'a'
   // 'a'*
  |csConstantValue (s=STAR)?
-  -> {s!=null}? ^(cst_ConstantStar csConstantValue)
-  ->/*s==null*/ ^(cst_Constant csConstantValue)
+  -> {s!=null}? ^(Cst_ConstantStar csConstantValue)
+  ->/*s==null*/ ^(Cst_Constant csConstantValue)
 ;
 
 // f
@@ -292,42 +292,42 @@ csPattern :
 // f?? -- should be  --> f{theory:AC}
 csHeadSymbolList :
   csHeadSymbol
-  -> ^(cst_concCstHeadSymbol csHeadSymbol)
+  -> ^(Cst_concCstHeadSymbol csHeadSymbol)
  | LPAR csHeadSymbol (PIPE csHeadSymbol)* RPAR 
-  -> ^(cst_concCstHeadSymbol	 csHeadSymbol*)
+  -> ^(Cst_concCstHeadSymbol	 csHeadSymbol*)
 ; 
 
 csHeadSymbol :
   IDENTIFIER
-  -> ^(cst_HeadSymbol IDENTIFIER ^(cst_TheoryDEFAULT))
+  -> ^(Cst_HeadSymbol IDENTIFIER ^(Cst_TheoryDEFAULT))
  |IDENTIFIER QMARK
-  -> ^(cst_HeadSymbol IDENTIFIER ^(cst_TheoryAU))
+  -> ^(Cst_HeadSymbol IDENTIFIER ^(Cst_TheoryAU))
  |IDENTIFIER DQMARK
-  -> ^(cst_HeadSymbol IDENTIFIER ^(cst_TheoryAC))
+  -> ^(Cst_HeadSymbol IDENTIFIER ^(Cst_TheoryAC))
  |csConstantValue 
- -> ^(cst_ConstantHeadSymbol csConstantValue ^(cst_TheoryDEFAULT))
+ -> ^(Cst_ConstantHeadSymbol csConstantValue ^(Cst_TheoryDEFAULT))
  |csConstantValue QMARK
- -> ^(cst_ConstantHeadSymbol csConstantValue ^(cst_TheoryAU))
+ -> ^(Cst_ConstantHeadSymbol csConstantValue ^(Cst_TheoryAU))
  |csConstantValue DQMARK
- -> ^(cst_ConstantHeadSymbol csConstantValue ^(cst_TheoryAC))
+ -> ^(Cst_ConstantHeadSymbol csConstantValue ^(Cst_TheoryAC))
 ;
 
 csExplicitTermList :
    LPAR (csPattern (COMMA csPattern)*)? RPAR
 
- -> ^(cst_concCstPattern csPattern*)
+ -> ^(Cst_concCstPattern csPattern*)
 ;
 
 csImplicitPairList :
   LSQUAREBR (csPairPattern (COMMA csPairPattern)*)?  RSQUAREBR
 
-  -> ^(cst_concCstPairPattern csPairPattern*)
+  -> ^(Cst_concCstPairPattern csPairPattern*)
 ;
 
 csPairPattern :
  IDENTIFIER EQUAL csPattern
 
- -> ^(cst_PairPattern IDENTIFIER csPattern)
+ -> ^(Cst_PairPattern IDENTIFIER csPattern)
 ;
 
 csConstantValue :
@@ -345,9 +345,9 @@ returns [int marker] :
 
   {$marker = ((CustomToken)$RBR).getPayload(Integer.class);}
 
-  -> ^(cst_OpConstruct
+  -> ^(Cst_OpConstruct
         {extractOptions((CommonToken)$tomTypeName.start, (CommonToken)$RBR)}
-        $tomTypeName $ctorName csSlotList ^(cst_concCstOperator $ks*)
+        $tomTypeName $ctorName csSlotList ^(Cst_concCstOperator $ks*)
       ) 
 ;
 
@@ -367,9 +367,9 @@ returns [int marker] :
 
   {$marker = ((CustomToken)$RBR).getPayload(Integer.class);}
 
-  -> ^(cst_OpArrayConstruct
+  -> ^(Cst_OpArrayConstruct
         {extractOptions((CommonToken)$tomTypeName.start, (CommonToken)$RBR)}
-        $tomTypeName $ctorName $typeName ^(cst_concCstOperator $ks*)
+        $tomTypeName $ctorName $typeName ^(Cst_concCstOperator $ks*)
       )
 ; 
 
@@ -390,9 +390,9 @@ returns [int marker] :
 
   {$marker = ((CustomToken)$RBR).getPayload(Integer.class);}
 
-  -> ^(cst_OpListConstruct
+  -> ^(Cst_OpListConstruct
         {extractOptions((CommonToken)$tomTypeName.start, (CommonToken)$RBR)}
-        $tomTypeName $ctorName $typeName ^(cst_concCstOperator $ks*)
+        $tomTypeName $ctorName $typeName ^(Cst_concCstOperator $ks*)
       )
 ; 
 
@@ -409,15 +409,15 @@ returns [int marker] :
  {$marker = ((CustomToken)$RBR).getPayload(Integer.class);}
 
   -> {extend==null}?
-   ^(cst_TypetermConstruct
+   ^(Cst_TypetermConstruct
         {extractOptions((CommonToken)$typeName.start, (CommonToken)$RBR)}
-        $typeName ^(cst_EmptyName) ^(cst_concCstOperator $ks* )
+        $typeName ^(Cst_EmptyName) ^(Cst_concCstOperator $ks* )
     )
 
   -> /*{$extend==null}*/
-   ^(cst_TypetermConstruct
+   ^(Cst_TypetermConstruct
         {extractOptions((CommonToken)$typeName.start, (CommonToken)$RBR)}
-        $typeName $extend ^(cst_concCstOperator $ks*)
+        $typeName $extend ^(Cst_concCstOperator $ks*)
     )
 ;
 
@@ -426,13 +426,13 @@ returns [int marker] :
 csSlotList :
   (csSlot (COMMA csSlot)*)?
 
-  -> ^(cst_concCstSlot csSlot*)
+  -> ^(Cst_concCstSlot csSlot*)
 ;
 
 csSlot : 
   slotName=csName COLON slotType=csName
 
-  -> ^(cst_Slot $slotName $slotType)
+  -> ^(Cst_Slot $slotName $slotType)
 ;
 
 
@@ -441,7 +441,7 @@ csKeywordIsFsym :
   KEYWORD_IS_FSYM LPAR argName=csName RPAR
   LBR /* Host Code doing the test */ RBR
 
-  -> ^(cst_IsFsym $argName
+  -> ^(Cst_IsFsym $argName
         {((CustomToken)$LBR).getPayload(Tree.class)}
       )
 ;
@@ -450,7 +450,7 @@ csKeywordGetSlot :
   KEYWORD_GET_SLOT LPAR slotName=csName COMMA termName=csName RPAR
   LBR /* Host Code accessing slot content */ RBR
 
-  -> ^(cst_GetSlot $slotName $termName
+  -> ^(Cst_GetSlot $slotName $termName
         {((CustomToken)$LBR).getPayload(Tree.class)}
       )
 ;
@@ -459,7 +459,7 @@ csKeywordMake :
   KEYWORD_MAKE LPAR argList=csNameList RPAR
   LBR /* Host Code making new object */ RBR
 
-  -> ^(cst_Make $argList
+  -> ^(Cst_Make $argList
         {((CustomToken)$LBR).getPayload(Tree.class)}
       )
 ;
@@ -468,7 +468,7 @@ csKeywordGetHead :
   KEYWORD_GET_HEAD LPAR argName=csName RPAR 
   LBR /* Host Code accessing list head */ RBR
 
-  -> ^(cst_GetHead $argName
+  -> ^(Cst_GetHead $argName
         {((CustomToken)$LBR).getPayload(Tree.class)}
       )
 ;
@@ -477,7 +477,7 @@ csKeywordGetTail :
   KEYWORD_GET_TAIL LPAR argName=csName RPAR
   LBR /* Host Code accessing list tail */ RBR
 
-  -> ^(cst_GetTail $argName
+  -> ^(Cst_GetTail $argName
         {((CustomToken)$LBR).getPayload(Tree.class)}
       )
 ;
@@ -486,7 +486,7 @@ csKeywordIsEmpty :
   KEYWORD_IS_EMPTY LPAR argName=csName RPAR
   LBR /* Host Code emptiness expression */ RBR
 
-  -> ^(cst_IsEmpty $argName
+  -> ^(Cst_IsEmpty $argName
         {((CustomToken)$LBR).getPayload(Tree.class)}
       )
 ;
@@ -495,7 +495,7 @@ csKeywordMakeEmpty_List :
   KEYWORD_MAKE_EMPTY LPAR RPAR
   LBR /* Host Code creating empty list */ RBR
 
-  -> ^(cst_MakeEmptyList
+  -> ^(Cst_MakeEmptyList
         {((CustomToken)$LBR).getPayload(Tree.class)}
       )
 ;
@@ -504,7 +504,7 @@ csKeywordMakeEmpty_Array :
   KEYWORD_MAKE_EMPTY LPAR argName=csName RPAR
   LBR /* Host Code creating empty array */ RBR
 
-  -> ^(cst_MakeEmptyArray $argName
+  -> ^(Cst_MakeEmptyArray $argName
         {((CustomToken)$LBR).getPayload(Tree.class)}
       )
 ;
@@ -514,7 +514,7 @@ csKeywordMakeInsert :
     LPAR elementArgName=csName COMMA termArgName=csName RPAR
   LBR /* Host Code making insertion */ RBR
 
-  -> ^(cst_MakeInsert $elementArgName $termArgName
+  -> ^(Cst_MakeInsert $elementArgName $termArgName
         {((CustomToken)$LBR).getPayload(Tree.class)}
       )
 ;
@@ -524,7 +524,7 @@ csKeywordGetElement :
     LPAR termArgName=csName COMMA elementIndexArgName=csName RPAR
   LBR /* Host Code accessing this element */ RBR
 
-  -> ^(cst_GetElement $termArgName $elementIndexArgName
+  -> ^(Cst_GetElement $termArgName $elementIndexArgName
         {((CustomToken)$LBR).getPayload(Tree.class)}
       )
 ;
@@ -533,7 +533,7 @@ csKeywordGetSize :
   KEYWORD_GET_SIZE LPAR termArgName=csName RPAR
   LBR /* Host Code accessing size */ RBR
 
-  -> ^(cst_GetSize $termArgName
+  -> ^(Cst_GetSize $termArgName
         {((CustomToken)$LBR).getPayload(Tree.class)}
       )
 ;
@@ -543,7 +543,7 @@ csKeywordMakeAppend :
     LPAR elementArgName=csName COMMA termArgName=csName RPAR
   LBR /* Host Code appending element */ RBR
 
-  -> ^(cst_MakeAppend $elementArgName $termArgName
+  -> ^(Cst_MakeAppend $elementArgName $termArgName
         {((CustomToken)$LBR).getPayload(Tree.class)}
       )
 ;
@@ -551,33 +551,33 @@ csKeywordMakeAppend :
 csKeywordImplement :
   KEYWORD_IMPLEMENT LBR /* Host Code implementation name*/ RBR
 
-  -> ^(cst_Implement {((CustomToken)$LBR).getPayload(Tree.class)})
+  -> ^(Cst_Implement {((CustomToken)$LBR).getPayload(Tree.class)})
 ;
 
 csKeywordIsSort :
   KEYWORD_IS_SORT LPAR argName=csName RPAR
     LBR /* Host Code boolean expression */ RBR
 
-  -> ^(cst_IsSort $argName {((CustomToken)$LBR).getPayload(Tree.class)})
+  -> ^(Cst_IsSort $argName {((CustomToken)$LBR).getPayload(Tree.class)})
 ;
 
 csKeywordEquals :
   KEYWORD_EQUALS LPAR arg1=csName COMMA arg2=csName RPAR
     LBR /* Host Code boolean expression */ RBR
 
-  -> ^(cst_Equals $arg1 $arg2 
+  -> ^(Cst_Equals $arg1 $arg2 
         {((CustomToken)$LBR).getPayload(Tree.class)}
       )
 ;
 
 csNameList :
   (csName (COMMA csName)*)?
-  -> ^(cst_concCstName csName*)
+  -> ^(Cst_concCstName csName*)
 ;
 
 csName :
   IDENTIFIER
-  -> ^(cst_Name IDENTIFIER)
+  -> ^(Cst_Name IDENTIFIER)
 ;
 
 // Bq Terms =================================================================
@@ -602,17 +602,17 @@ csBQTerm :
 
 csBQVar :
   csName
-  -> ^(cst_BQVar csName)
+  -> ^(Cst_BQVar csName)
 ;
 
 csBQVarStar :
   csName STAR
-  -> ^(cst_BQVarStar csName)
+  -> ^(Cst_BQVarStar csName)
 ;
 
 csBQAppl :
   csName LPAR (csBQTerm (COMMA csBQTerm)*)? RPAR
-  -> ^(cst_BQAppl csName ^(cst_concBQTerm csBQTerm*))
+  -> ^(Cst_BQAppl csName ^(Cst_concBQTerm csBQTerm*))
 ;
 */
 // Lexer Rules =============================================================
