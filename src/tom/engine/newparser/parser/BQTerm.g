@@ -1,4 +1,9 @@
 grammar BQTerm;
+/*
+ * Lexer rules are defined in BQTermLexer.g
+ * Defining it in a different file allows to use the Lexer-only
+ * option 'filter'.
+ */
 options {
   output=AST;
   ASTLabelType=Tree;
@@ -10,7 +15,6 @@ options {
 package tom.engine.newparser.parser;
 }
 
-/* actual backquote already consumed */
 csBQTerm
 returns [int marker] :
   BQID
@@ -18,35 +22,43 @@ returns [int marker] :
 
   -> ^(CsBQVar ^(CsName BQID))
 
- |BQIDPAR (csNonHeadBQTerm (COMMA csNonHeadBQTerm)*)? RPAR
+ |BQIDSTAR
+  {$marker = ((CustomToken)$BQIDSTAR).getPayload(Integer.class);}
+
+  -> ^(CsBQVarStar ^(CsName BQIDSTAR))
+
+ |BQIDPAR (csMainBQTerm (COMMA csMainBQTerm)*)? RPAR
   {$marker = ((CustomToken)$RPAR).getPayload(Integer.class);}
 
   -> ^(CsBQAppl ^(CsName BQIDPAR)
-                ^(CsBQTermList csNonHeadBQTerm*))
+                ^(CsBQTermList csMainBQTerm*))
  
- |BQIDBR (csPairSlotBQTerm (COMMA csPairSlotBQTerm)*)? RBR
+ |BQIDBR (csPairSlotBQTerm (COMMA csMainBQTerm)*)? RBR
   {$marker = ((CustomToken)$RBR).getPayload(Integer.class);}
   
   -> ^(CsBQRecordAppl
      	^(CsName BQIDBR)
         ^(CsPairSlotBQTermList csPairSlotBQTerm*)) 
- 
- |BQIDSTAR
-  {$marker = ((CustomToken)$BQIDSTAR).getPayload(Integer.class);}
-
-  -> ^(CsBQVarStar ^(CsName BQIDSTAR))
- 
 ; 
 
-csNonHeadBQTerm :
-  csBQTerm
-  -> csBQTerm
+csMainBQTerm :
+  UNDERSCORE
+  -> ^(CsBQVar ^(CsName BQID))
 
- |UNDERSCORE
-  -> ^(CsBQDefault)
-; 
+ |IDSTAR
+  -> ^(CsBQVarStar ^(CsName IDSTAR))
+
+ |IDPAR (csMainBQTerm (COMMA csMainBQTerm)*)? RPAR
+  -> ^(CsBQAppl ^(CsName IDPAR)
+                ^(CsBQTermList csMainBQTerm*))
+ 
+ |IDBR (csPairSlotBQTerm (COMMA csMainBQTerm)*)? RBR
+  -> ^(CsBQRecordAppl
+     	^(CsName IDBR)
+        ^(CsPairSlotBQTermList csPairSlotBQTerm*)) 
+;
 
 csPairSlotBQTerm :
-  ID EQUAL (csNonHeadBQTerm)
-  -> ^(CsPairSlotBQTerm ^(CsName ID) csNonHeadBQTerm)
+  ID EQUAL (csMainBQTerm)
+  -> ^(CsPairSlotBQTerm ^(CsName ID) csMainBQTerm)
 ;

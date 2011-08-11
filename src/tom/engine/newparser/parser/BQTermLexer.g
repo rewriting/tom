@@ -10,44 +10,55 @@ package tom.engine.newparser.parser;
 
 @lexer::members {
   private final TokenCustomizer tokenCustomizer = new TokenCustomizer();
+  
   @Override 
   public void emit(Token t){
     super.emit(tokenCustomizer.customize(t));
   }
 }
 
-BQIDPAR  : BQ (WS)* FragID (WS)* '('
-  {System.out.println("Lexed BQIDPAR : '"+$text+"'");}
-  {tokenCustomizer.prepareNextToken(input.mark());};
 
-IDPAR    : FragID (WS)* '(' 
-  {System.out.println("Lexed IDPAR : '"+$text+"'");}
-  {tokenCustomizer.prepareNextToken(input.mark());};
+BQIDPAR  : BQ (WS)* FragID (WS)* '('
+  {state.text = $FragID.text;}
+  {System.out.println("Lexed BQIDPAR : '"+$text+"'");}
+;
 
 BQIDBR   : BQ (WS)* FragID (WS)* '['
+  {state.text = $FragID.text;}
   {System.out.println("Lexed BQIDBR : '"+$text+"'");}
-  {tokenCustomizer.prepareNextToken(input.mark());};
-
-IDBR     : FragID (WS)* '['
-  {System.out.println("Lexed IDBR : '"+$text+"'");}
-  {tokenCustomizer.prepareNextToken(input.mark());};
-
-BQID     : BQ FragID (WS)* '['
-  {System.out.println("Lexed BQID : '"+$text+"'");}
-  {tokenCustomizer.prepareNextToken(input.mark());};
+;
 
 BQIDSTAR : BQ FragID (WS)* '*'
+  {state.text = $FragID.text;}
   {System.out.println("Lexed BQIDSTAR : '"+$text+"'");}
   {tokenCustomizer.prepareNextToken(input.mark());};
 
+BQID     : BQ FragID
+  {state.text = $FragID.text;}
+  {System.out.println("Lexed BQID : '"+$text+"'");}
+  {tokenCustomizer.prepareNextToken(input.mark());};
+
+
+
+IDPAR    : FragID (WS)* '(' 
+  {state.text = $FragID.text;}
+  {System.out.println("Lexed IDPAR : '"+$text+"'");}
+;
+
+IDBR     : FragID (WS)* '['
+  {state.text = $FragID.text;}
+  {System.out.println("Lexed IDBR : '"+$text+"'");}
+;
+
+IDSTAR   : FragID '*'
+  {state.text = $FragID.text;}
+  {System.out.println("Lexed IDSTAR : '"+$text+"'");}
+;
 
 ID       : FragID
   {System.out.println("Lexed ID : '"+$text+"'");}
-  {tokenCustomizer.prepareNextToken(input.mark());};
+;
 
-IDSTAR   : FragID '*'
-  {System.out.println("Lexed IDSTAR : '"+$text+"'");}
-  {tokenCustomizer.prepareNextToken(input.mark());};
 
 COMMA  : ',' ;
 RPAR   : ')' {tokenCustomizer.prepareNextToken(input.mark());};

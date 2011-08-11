@@ -542,9 +542,7 @@ public abstract class ParserAction {
       PACK_HOST_CONTENT.doAction(input, hostBlockBuilder, tree, analyst,
           streamManager, optionManager);
       
-      // consume last chat of the keyword
-      // ("h" if keyword is "%match")
-      input.consume();
+      // for once leave keyword in charStream
       
       try {
         BQTermLexer lexer = new BQTermLexer(input);
