@@ -1,4 +1,4 @@
-package tom.engine.newparser.futil;
+package tom.engine.newparser.debug.futil;
 
 /**
  * add a visible indentation to a String.

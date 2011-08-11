@@ -12,7 +12,6 @@ public class TreeFactory {
   private static CommonTreeAdaptor adaptor = new CommonTreeAdaptor();
 
   public static CommonTree makeTree(int type, String text, CommonTree... childList) {
-  
     CommonTree res = (CommonTree)adaptor.create(type, text);
     adaptor.setParent(res, res);
 

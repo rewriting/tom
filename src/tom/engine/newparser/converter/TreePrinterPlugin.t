@@ -1,4 +1,4 @@
-package tom.engine.treeprinter;
+package tom.engine.newparser.converter;
 
 import tom.engine.adt.code.types.*;
 import tom.engine.adt.cst.types.*;
@@ -55,7 +55,7 @@ import java.util.ArrayList;
 public class TreePrinterPlugin extends TomGenericPlugin {
 
   %include {sl.tom}
-  %include {../adt/tomsignature/TomSignature.tom}
+  %include {../../adt/tomsignature/TomSignature.tom}
   
   public static final String DECLARED_OPTIONS = 
     "<options>" +

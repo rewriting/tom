@@ -1,4 +1,4 @@
-package tom.engine.treeformatter;
+package tom.engine.newparser.converter;
 
 import java.util.Map;
 import java.util.Collection;
@@ -21,7 +21,7 @@ public class TreeFormatterPlugin extends TomGenericPlugin {
 
   %include { sl.tom }
   %include { util/types/Collection.tom }
-  %include { ../adt/cst/CST.tom }
+  %include { ../../adt/cst/CST.tom }
 
   protected gt_Program cst;
 

@@ -50,13 +50,13 @@
     <plugin name="Parser"
       class="tom.engine.parser.TomParserPlugin"/>
     <plugin name="AST Printer"
-      class="tom.engine.treeprinter.TreePrinterPlugin"/>
+      class="tom.engine.newparser.converter.TreePrinterPlugin"/>
     <plugin name="New Parser"
       class="tom.engine.newparser.NewParserPlugin"/>
     <plugin name="AST Printer"
       class="tom.engine.treeprinter.TreePrinterPlugin"/>
     <plugin name="Tree Formatter"
-	    class="tom.engine.treeformatter.TreeFormatterPlugin"/>
+	    class="tom.engine.newparser.converter.TreeFormatterPlugin"/>
     <plugin name="AST Printer"
       class="tom.engine.treeprinter.TreePrinterPlugin"/>
     <plugin name="Syntax checker"

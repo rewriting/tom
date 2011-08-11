@@ -1,4 +1,4 @@
-package tom.engine.newparser.tester;
+package tom.engine.newparser.debug.tester;
 import org.antlr.runtime.tree.CommonTree;
 import org.antlr.runtime.tree.Tree;
 

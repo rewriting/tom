@@ -1,4 +1,4 @@
-package tom.engine.newparser.futil;
+package tom.engine.newparser.debug.futil;
 
 import java.io.BufferedWriter;
 import java.io.File;

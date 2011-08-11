@@ -1,6 +1,6 @@
 package tom.engine.newparser.debug;
 
-import tom.engine.newparser.futil.*;
+import tom.engine.newparser.debug.futil.*;
 
 import org.antlr.runtime.CharStream;
 

@@ -1,4 +1,6 @@
-package tom.engine.newparser.tester;
+package tom.engine.newparser.debug.tester;
+
+import tom.engine.newparser.debug.tester.TestResult.TestIssue;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -16,7 +18,6 @@ import org.antlr.runtime.tree.DOTTreeGenerator;
 import org.antlr.runtime.tree.Tree;
 
 import shared.SharedObject;
-import tom.engine.newparser.tester.TestResult.TestIssue;
 
 
 public class Tester {

@@ -1,4 +1,4 @@
-package tom.engine.newparser.tester;
+package tom.engine.newparser.debug.tester;
 
 public class FormatException extends Exception{
 

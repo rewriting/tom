@@ -1,4 +1,4 @@
-package tom.engine.newparser.tester;
+package tom.engine.newparser.debug.tester;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;

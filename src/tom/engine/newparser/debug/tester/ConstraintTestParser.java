@@ -1,4 +1,4 @@
-package tom.engine.newparser.tester;
+package tom.engine.newparser.debug.tester;
 
 import tom.engine.newparser.parser.HostParser;
 import tom.engine.newparser.parser.miniTomLexer;
