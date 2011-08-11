@@ -99,7 +99,7 @@ public class NewParserPlugin extends TomGenericPlugin {
   private String currentFileName;
   private Reader currentReader;
   
-  protected gt_Program cst=null;
+  protected CstProgram cst=null;
 
   /** Constructor */
   public NewParserPlugin() {
@@ -153,7 +153,7 @@ public class NewParserPlugin extends TomGenericPlugin {
           input.name = currentFileName;
           //System.out.println("CurrentFileName : "+currentFileName);
           Tree programAsAntrlTree = parser.parseProgram(input);
-          cst = (gt_Program)CSTAdaptor.getTerm(programAsAntrlTree);
+          cst = (CstProgram)CSTAdaptor.getTerm(programAsAntrlTree);
         }
 
         // verbose

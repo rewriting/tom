@@ -23,7 +23,7 @@ public class TreeFormatterPlugin extends TomGenericPlugin {
   %include { util/types/Collection.tom }
   %include { ../../adt/cst/CST.tom }
 
-  protected gt_Program cst;
+  protected CstProgram cst;
 
   public TreeFormatterPlugin() {
     super("TreeFormatterPlugin");
@@ -34,8 +34,8 @@ public class TreeFormatterPlugin extends TomGenericPlugin {
       term = (Code)arg[0];
       streamManager = (TomStreamManager)arg[1];
     } else
-    if (arg[0] instanceof gt_Program && arg[1] instanceof TomStreamManager ) {
-      cst = (gt_Program)arg[0];
+    if (arg[0] instanceof CstProgram && arg[1] instanceof TomStreamManager ) {
+      cst = (CstProgram)arg[0];
       term = null;
       streamManager = (TomStreamManager)arg[1];
     } else {
@@ -70,7 +70,7 @@ public class TreeFormatterPlugin extends TomGenericPlugin {
   }
 
   %strategy toAST() extends Identity() {
-    visit gt_Block {
+    visit CstBlock {
       /*HOSTBLOCK(code,
                 CsTextPosition(startLine, startColumn),
                 CsTextPosition(endLine, endColumn)
@@ -80,7 +80,7 @@ public class TreeFormatterPlugin extends TomGenericPlugin {
                   TextPosition(endLine, endColumn))));
       }*/
 
-      CsMatchConstruct[] -> {
+      cst_MatchConstruct[] -> {
         return `wrappedCode(
                   InstructionToCode(Match(concConstraintInstruction(),
                                         concOption()))
@@ -88,8 +88,8 @@ public class TreeFormatterPlugin extends TomGenericPlugin {
       }
     }
 
-    visit gt_Program {
-      CsProgram(blocks) -> {
+    visit CstProgram {
+      cst_Program(blocks) -> {
         Collection<Code> c = new LinkedList<Code>();
         `TopDown(collectCodes(c)).visit(`blocks);
         

@@ -3,138 +3,138 @@ imports String Code
 abstract syntax
 
 // Tree Transformation =======================================================
-gt_Block = wrappedCode(wrapped:Code)
-gt_Program = wrappedCodeList(wrapped:CodeList)
+CstBlock = wrappedCode(wrapped:Code)
+CstProgram = wrappedCodeList(wrapped:CodeList)
 
 // Node type for base types ==================================================
 NodeString = NodeString()
 NodeInt = NodeInt()
 
 // Program ===================================================================
-gt_Program = CsProgram(blocks:gt_BlockList)
+CstProgram = cst_Program(blocks:CstBlockList)
 
-gt_BlockList = CsBlockList(gt_Block*)
+CstBlockList = cst_concCstBlock(CstBlock*)
 
-gt_Block =
+CstBlock =
  HOSTBLOCK(optionList:CstOptionList, hContent:String)
-| CsMatchConstruct(optionList:CstOptionList, arguments:gt_MatchArgumentList, constraintActionList:gt_ConstraintActionList)
-| CsOpConstruct       (optionList:CstOptionList, tomTypeName:gt_Name, ctorName:gt_Name, argumentList :gt_SlotList, operatorList :gt_OperatorList)
-| CsOpArrayConstruct  (optionList:CstOptionList, tomTypeName:gt_Name, ctorName:gt_Name, typeName:gt_Name, operatorList:gt_OperatorList)
-| CsOpListConstruct   (optionList:CstOptionList, tomTypeName:gt_Name, ctorName:gt_Name, typeName:gt_Name, operatorList:gt_OperatorList)
-| CsTypetermConstruct (optionList:CstOptionList, tomTypeName:gt_Name, extendsTypeName: gt_Name, operatorList:gt_OperatorList)
-| CsMetaQuoteConstruct(optionList:CstOptionList, content:String)
-| CsIncludeConstruct  (optionList:CstOptionList, filename:String)
-| CsBQTermToBlock     (bqterm:CsBQTerm)
+| cst_MatchConstruct(optionList:CstOptionList, arguments:CstMatchArgumentList , constraintActionList:CstConstraintActionList)
+| cst_OpConstruct       (optionList:CstOptionList, tomTypeName:CstName, ctorName:CstName, argumentList :CstSlotList, operatorList :CstOperatorList)
+| cst_OpArrayConstruct  (optionList:CstOptionList, tomTypeName:CstName, ctorName:CstName, typeName:CstName, operatorList:CstOperatorList)
+| cst_OpListConstruct   (optionList:CstOptionList, tomTypeName:CstName, ctorName:CstName, typeName:CstName, operatorList:CstOperatorList)
+| cst_TypetermConstruct (optionList:CstOptionList, tomTypeName:CstName, extendsTypeName: CstName, operatorList:CstOperatorList)
+| cst_MetaQuoteConstruct(optionList:CstOptionList, content:String)
+| cst_IncludeConstruct  (optionList:CstOptionList, filename:String)
+| cst_BQTermToBlock     (bqterm:CstBQTerm)
 
 // MatchConstruct ============================================================
-gt_MatchArgumentList = CsMatchArgumentList(gt_TypedTerm*)
+CstMatchArgumentList  = cst_concCstTypedTerm(CstTypedTerm*)
 
-gt_ConstraintAction =
-  CsConstraintAction(constraint:gt_Constraint, action:gt_BlockList) // supprimer (ou pas...)
+CstConstraintAction =
+  cst_ConstraintAction(constraint:CstConstraint , action:CstBlockList) // supprimer (ou pas...)
 
-gt_ConstraintActionList = CsConstraintActionList(gt_ConstraintAction*)
+CstConstraintActionList = cst_concConstraintAction(CstConstraintAction*)
 
-gt_Constraint = CsMatchTermConstraint    (object:gt_Pattern, subject:gt_Term)
-              | CsMatchArgumentConstraint(object:gt_Pattern)
-              | CsAndConstraint (gt_Constraint*)
-              | CsOrConstraint  (gt_Constraint*)
-              | CsNumLessThan         (lefthand:gt_Term, righthand:gt_Term)
-              | CsNumLessOrEqualTo    (lefthand:gt_Term, righthand:gt_Term)
-              | CsNumGreaterThan      (lefthand:gt_Term, righthand:gt_Term)
-              | CsNumGreaterOrEqualTo (lefthand:gt_Term, righthand:gt_Term)
-              | CsNumEqualTo          (lefthand:gt_Term, righthand:gt_Term)
-              | CsNumDifferent        (lefthand:gt_Term, righthand:gt_Term)
+CstConstraint  = cst_MatchTermConstraint    (object:CstPattern, subject:CstTerm)
+              | cst_MatchArgumentConstraint(object:CstPattern)
+              | cst_AndConstraint(CstConstraint*)
+              | cst_OrConstraint(CstConstraint*)
+              | cst_NumLessThan         (lefthand:CstTerm, righthand:CstTerm)
+              | cst_NumLessOrEqualTo    (lefthand:CstTerm, righthand:CstTerm)
+              | cst_NumGreaterThan      (lefthand:CstTerm, righthand:CstTerm)
+              | cst_NumGreaterOrEqualTo (lefthand:CstTerm, righthand:CstTerm)
+              | cst_NumEqualTo          (lefthand:CstTerm, righthand:CstTerm)
+              | cst_NumDifferent        (lefthand:CstTerm, righthand:CstTerm)
               
-gt_ConstraintList = CsConstraintList(gt_Constraint*)
+CstConstraintList = cst_concCstConstraint(CstConstraint*)
 
-// gt_Term in CST context is "equivalent" to BQTerm in AST context
+// CstTerm in CST context is "equivalent" to BQTerm in AST context
 // (it's much simpler because very close to synthax)
-gt_Term = CsVariableName(name : String)
-        | CsVariableNameStar(name : String)
-        | CsTerm(name : String, termList : gt_TermList)
+CstTerm = cst_VariableName(name : String)
+        | cst_VariableNameStar(name : String)
+        | cst_Term(name : String, termList : CstTermList)
 
-gt_TermList = CsTermList(gt_Term*)
+CstTermList = cst_concCstTerm(CstTerm*)
 
-gt_TypedTerm = CsTypedTerm(term:gt_Term, type:gt_TermType)
+CstTypedTerm = cst_TypedTerm(term:CstTerm, type:CstTermType)
              
-gt_TermType = CsTermType(type:String)
-            | CsTermTypeUnknown()
+CstTermType = cst_TermType(type:String)
+            | cst_TermTypeUnknown()
 
-// gt_Pattern in CST context is "equivalent" to TomTerm in AST context
-gt_Pattern = 
-  CsAnti(pattern:gt_Pattern)
-| CsAnnotatedPattern(pattern:gt_Pattern,annotation:String)
-| CsVariable        (name : String) 
-| CsVariableStar    (name : String)
-| CsConstant        (value : String)
-| CsConstantStar    (value : String)
-| CsUnamedVariable    ()
-| CsUnamedVariableStar()
-| CsSymbolList (headSymbolList : gt_HeadSymbolList,
-                patternList    : gt_PatternList)
+// CstPattern in CST context is "equivalent" to TomTerm in AST context
+CstPattern = 
+  cst_Anti(pattern:CstPattern)
+| cst_AnnotatedPattern(pattern:CstPattern,annotation:String)
+| cst_Variable        (name : String) 
+| cst_VariableStar    (name : String)
+| cst_Constant        (value : String)
+| cst_ConstantStar    (value : String)
+| cst_UnamedVariable    ()
+| cst_UnamedVariableStar()
+| cst_SymbolList (headSymbolList : CstHeadSymbolList,
+                patternList    : CstPatternList)
 
 
-gt_HeadSymbolList = CsHeadSymbolList(gt_HeadSymbol*)
-gt_HeadSymbol = CsHeadSymbol(name : String, theory : gt_TheoryType)
-              | CsConstantHeadSymbol(value : String, theory : gt_TheoryType)
+CstHeadSymbolList = cst_concCstHeadSymbol(CstHeadSymbol*)
+CstHeadSymbol = cst_HeadSymbol(name : String, theory : CstTheoryType)
+              | cst_ConstantHeadSymbol(value : String, theory : CstTheoryType)
 
-    gt_TheoryType = CsTheoryAU()
-                  | CsTheoryAC()
-                  | CsTheoryDEFAULT()
+    CstTheoryType = cst_TheoryAU()
+                  | cst_TheoryAC()
+                  | cst_TheoryDEFAULT()
 
-gt_PatternList = CsExplicitPatternList(gt_Pattern*)
-               | CsImplicitPairList(gt_PairPattern*)
+CstPatternList = cst_concCstPattern(CstPattern*)
+               | cst_concCstPairPattern(CstPairPattern*)
 
-gt_PairPattern = CsPairPattern(slotName:String, pattern:gt_Pattern)
+CstPairPattern = cst_PairPattern(slotName:String, pattern:CstPattern)
 
 // CsOp*Construct ============================================================
-gt_OperatorList = CsOperatorList(gt_Operator*)
+CstOperatorList = cst_concCstOperator(CstOperator*)
 
-gt_Operator =
- | CsIsFsym         (argName:gt_Name, block:gt_BlockList)
- | CsGetHead        (argName:gt_Name, block:gt_BlockList)
- | CsIsEmpty        (argName:gt_Name, block:gt_BlockList)
- | CsMakeEmptyArray (argName:gt_Name, block:gt_BlockList)
- | CsGetSize        (argName:gt_Name, block:gt_BlockList)
- | CsGetTail        (argName:gt_Name, block:gt_BlockList)
- | CsGetSlot   (argName1:gt_Name, argName2:gt_Name, block:gt_BlockList)
- | CsMakeInsert(argName1:gt_Name, argName2:gt_Name, block:gt_BlockList)
- | CsGetElement(argName1:gt_Name, argName2:gt_Name, block:gt_BlockList)
- | CsMakeAppend(argName1:gt_Name, argName2:gt_Name, block:gt_BlockList)
- | CsMake   (nameList:gt_NameList, block:gt_BlockList)
- | CsMakeEmptyList(block:gt_BlockList)
- | CsImplement(block:gt_BlockList)
- | CsIsSort (argName:gt_Name, block:gt_BlockList)
- | CsEquals (argName1:gt_Name, argName2:gt_Name, block:gt_BlockList)
+CstOperator =
+ | cst_IsFsym         (argName:CstName, block:CstBlockList)
+ | cst_GetHead        (argName:CstName, block:CstBlockList)
+ | cst_IsEmpty        (argName:CstName, block:CstBlockList)
+ | cst_MakeEmptyArray (argName:CstName, block:CstBlockList)
+ | cst_GetSize        (argName:CstName, block:CstBlockList)
+ | cst_GetTail        (argName:CstName, block:CstBlockList)
+ | cst_GetSlot   (argName1:CstName, argName2:CstName, block:CstBlockList)
+ | cst_MakeInsert(argName1:CstName, argName2:CstName, block:CstBlockList)
+ | cst_GetElement(argName1:CstName, argName2:CstName, block:CstBlockList)
+ | cst_MakeAppend(argName1:CstName, argName2:CstName, block:CstBlockList)
+ | cst_Make   (nameList:CstNameList, block:CstBlockList)
+ | cst_MakeEmptyList(block:CstBlockList)
+ | cst_Implement(block:CstBlockList)
+ | cst_IsSort (argName:CstName, block:CstBlockList)
+ | cst_Equals (argName1:CstName, argName2:CstName, block:CstBlockList)
 
-gt_SlotList = CsSlotList(gt_Slot*)
+CstSlotList = cst_concCstSlot(CstSlot*)
 
-gt_Slot = CsSlot(slotName:gt_Name, slotTypeName:gt_Name)
+CstSlot = cst_Slot(slotName:CstName, slotTypeName:CstName)
 
 // BQTerms ===================================================================
-CsBQTerm = CsBQAppl(name:gt_Name, bqTermList:CsBQTermList)
-         | CsBQRecordAppl(name:gt_Name, slotList:CsPairSlotBQTermList)
-         | CsBQVar(name:gt_Name)
-         | CsBQVarStar(name:gt_Name)
-         | CsBQDefault()
-         | CsBQInnerHostCode(code:String)
+CstBQTerm = cst_BQAppl(name:CstName, bqTermList:CstBQTermList)
+         | cst_BQRecordAppl(name:CstName, slotList:CstPairSlotBQTermList)
+         | cst_BQVar(name:CstName)
+         | cst_BQVarStar(name:CstName)
+         | cst_BQDefault()
+         | cst_BQInnerHostCode(code:String)
 
-CsPairSlotBQTerm = CsPairSlotBQTerm(slotName:gt_Name, term:CsBQTerm)
+CstPairSlotBQTerm  = CstPairSlotBQTerm(slotName:CstName, term:CstBQTerm)
 
-CsBQTermList = CsBQTermList(CsBQTerm*)
-CsPairSlotBQTermList = CsPairSlotBQTermList(CsPairSlotBQTerm*)
+CstBQTermList = cst_concBQTerm(CstBQTerm*)
+CstPairSlotBQTermList = cst_concCstPairSlotBQTerm(CstPairSlotBQTerm*)
 
 // Names
-gt_Name = CsName(name:String)
-        | CsEmptyName()
+CstName = cst_Name(name:String)
+        | cst_EmptyName()
 
-gt_NameList = CsNameList(gt_Name*)
+CstNameList = cst_concCstName(CstName*)
 
 // Options ==
-CstOptionList = CstOptionList(CstOption*)
-CstOption = CstSourceFile(sourceFile:String)
-          | CstStartLine(startLine:int)
-          | CstEndLine(endLine:int)
-          | CstStartColumn(startColumn:int)
-          | CstEndColumn(endColumn:int)
-          | CstNoOption()
+CstOptionList = cst_concCstOption(CstOption*)
+CstOption = cst_SourceFile(sourceFile:String)
+          | cst_StartLine(startLine:int)
+          | cst_EndLine(endLine:int)
+          | cst_StartColumn(startColumn:int)
+          | cst_EndColumn(endColumn:int)
+          | cst_NoOption()

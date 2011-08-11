@@ -32,16 +32,16 @@ public class TreeFactory {
     int firstCharColumn, int lastCharLine, int lastCharColumn) {
 
     return
-    makeTree(CstOptionList, "CstOptionList",
-      makeTree(CstSourceFile, "CstSourceFile",
+    makeTree(cst_concCstOption, "cst_concCstOption",
+      makeTree(cst_SourceFile, "cst_SourceFile",
         makeTree(NodeString, sourceName)),
-      makeTree(CstStartLine, "CstStartLine",
+      makeTree(cst_StartLine, "cst_StartLine",
         makeTree(NodeInt, ""+firstCharLine)),
-      makeTree(CstStartColumn, "CstStartColumn",
+      makeTree(cst_StartColumn, "cst_StartColumn",
         makeTree(NodeInt, ""+firstCharColumn)),
-      makeTree(CstEndLine, "CstEndLine",
+      makeTree(cst_EndLine, "cst_EndLine",
         makeTree(NodeInt,""+lastCharLine)),
-      makeTree(CstEndColumn, "CstEndColumn",
+      makeTree(cst_EndColumn, "cst_EndColumn",
         makeTree(NodeInt,""+lastCharColumn)));
   }
 }

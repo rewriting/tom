@@ -30,26 +30,26 @@ returns [int marker] :
     (WS)? (csNonHeadBQTerm ((WS)? COMMA (WS)? csNonHeadBQTerm)*)? (WS)? RPAR
   {$marker = ((CustomToken)$RPAR).getPayload(Integer.class);}
 
-  -> ^(CsBQAppl ^(CsName IDENTIFIER)
-                ^(CsBQTermList csNonHeadBQTerm*))
+  -> ^(cst_BQAppl ^(cst_Name IDENTIFIER)
+                ^(cst_concBQTerm csNonHeadBQTerm*))
  
  |IDENTIFIER (WS)? LBR
     (WS)? (csPairSlotBQTerm ((WS)? COMMA (WS)? csPairSlotBQTerm)*)? (WS)? RBR
   {$marker = ((CustomToken)$RBR).getPayload(Integer.class);}
   
-  -> ^(CsBQRecordAppl
-     	^(CsName IDENTIFIER)
-        ^(CsPairSlotBQTermList csPairSlotBQTerm*)) 
+  -> ^(cst_BQRecordAppl
+     	^(cst_Name IDENTIFIER)
+        ^(cst_concCstPairSlotBQTerm csPairSlotBQTerm*)) 
  
  |IDENTIFIER STAR
   {$marker = ((CustomToken)$STAR).getPayload(Integer.class);}
 
-  -> ^(CsBQVarStar ^(CsName IDENTIFIER))
+  -> ^(cst_BQVarStar ^(cst_Name IDENTIFIER))
  
  |IDENTIFIER
   {$marker = ((CustomToken)$IDENTIFIER).getPayload(Integer.class);}
 
-  -> ^(CsBQVar ^(CsName IDENTIFIER))
+  -> ^(cst_BQVar ^(cst_Name IDENTIFIER))
 ; 
 
 csNonHeadBQTerm :
@@ -57,12 +57,12 @@ csNonHeadBQTerm :
   -> csBQTerm
 
  |UNDERSCORE
-  -> ^(CsBQDefault)
+  -> ^(cst_BQDefault)
 ; 
 
 csPairSlotBQTerm :
   IDENTIFIER (WS)? EQUAL (WS)? (csNonHeadBQTerm)
-  -> ^(CsPairSlotBQTerm ^(CsName IDENTIFIER) csNonHeadBQTerm)
+  -> ^(CstPairSlotBQTerm  ^(cst_Name IDENTIFIER) csNonHeadBQTerm)
 ;
 
 // TOKENS

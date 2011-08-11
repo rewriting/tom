@@ -554,7 +554,7 @@ public abstract class ParserAction {
         csBQTerm_return retval =  parser.csBQTerm();
         
         tree.addChild(
-            makeTree(BQTermLexer.CsBQTermToBlock, "CsBSTermToBlock",
+            makeTree(BQTermLexer.cst_BQTermToBlock, "CsBSTermToBlock",
               (CommonTree)retval.getTree()));
         
         // allow action to return with a "clean" input state
@@ -728,7 +728,7 @@ public abstract class ParserAction {
       
       CommonTreeAdaptor adaptor = new CommonTreeAdaptor();
       
-      Tree child = (Tree) adaptor.becomeRoot((Tree)adaptor.create(miniTomParser.CsMetaQuoteConstruct, "CsMetaQuoteConsruct"),(Tree) adaptor.nil());
+      Tree child = (Tree) adaptor.becomeRoot((Tree)adaptor.create(miniTomParser.cst_MetaQuoteConstruct, "CsMetaQuoteConsruct"),(Tree) adaptor.nil());
       Tree strTree = (Tree) adaptor.becomeRoot((Tree)adaptor.create(miniTomParser.HOSTBLOCK, metaquoteContent), (Tree) adaptor.nil());
             
       child.addChild(strTree);

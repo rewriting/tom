@@ -175,7 +175,7 @@ public class TreePrinterPlugin extends TomGenericPlugin {
       }
     }
   /*
-    visit gt_Block {
+    visit CstBlock {
       HOSTBLOCK(e, x, y) -> {
         return `HOSTBLOCK(formatTargetLanguageString(code), x, y);
       }
