@@ -121,7 +121,7 @@ CstBQTerm = Cst_BQAppl(name:CstName, bqTermList:CstBQTermList)
 
 CstPairSlotBQTerm  = Cst_PairSlotBQTerm(slotName:CstName, term:CstBQTerm)
 
-CstBQTermList = Cst_concBQTerm(CstBQTerm*)
+CstBQTermList = Cst_concCstBQTerm(CstBQTerm*)
 CstPairSlotBQTermList = Cst_concCstPairSlotBQTerm(CstPairSlotBQTerm*)
 
 // Names

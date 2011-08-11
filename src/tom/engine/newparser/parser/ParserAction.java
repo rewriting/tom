@@ -552,7 +552,7 @@ public abstract class ParserAction {
         csBQTerm_return retval =  parser.csBQTerm();
         
         tree.addChild(
-            makeTree(BQTermLexer.Cst_BQTermToBlock, "CsBSTermToBlock",
+            makeTree(BQTermLexer.Cst_BQTermToBlock, "CsBQTermToBlock",
               (CommonTree)retval.getTree()));
         
         // allow action to return with a "clean" input state

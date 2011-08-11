@@ -31,9 +31,9 @@ returns [int marker] :
   {$marker = ((CustomToken)$RPAR).getPayload(Integer.class);}
 
   -> ^(Cst_BQAppl ^(Cst_Name BQIDPAR)
-                ^(Cst_concBQTerm csMainBQTerm*))
+                ^(Cst_concCstBQTerm csMainBQTerm*))
  
- |BQIDBR (csPairSlotBQTerm (COMMA csMainBQTerm)*)? RBR
+ |BQIDBR (csPairSlotBQTerm (COMMA csPairSlotBQTerm)*)? RBR
   {$marker = ((CustomToken)$RBR).getPayload(Integer.class);}
   
   -> ^(Cst_BQRecordAppl
@@ -43,16 +43,16 @@ returns [int marker] :
 
 csMainBQTerm :
   UNDERSCORE
-  -> ^(Cst_BQVar ^(Cst_Name BQID))
+  -> ^(Cst_BQDefault)
 
  |IDSTAR
   -> ^(Cst_BQVarStar ^(Cst_Name IDSTAR))
 
  |IDPAR (csMainBQTerm (COMMA csMainBQTerm)*)? RPAR
   -> ^(Cst_BQAppl ^(Cst_Name IDPAR)
-                ^(Cst_concBQTerm csMainBQTerm*))
+                ^(Cst_concCstBQTerm csMainBQTerm*))
  
- |IDBR (csPairSlotBQTerm (COMMA csMainBQTerm)*)? RBR
+ |IDBR (csPairSlotBQTerm (COMMA csPairSlotBQTerm)*)? RBR
   -> ^(Cst_BQRecordAppl
      	^(Cst_Name IDBR)
         ^(Cst_concCstPairSlotBQTerm csPairSlotBQTerm*)) 

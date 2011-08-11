@@ -3,6 +3,10 @@ options {
   filter=true;
   tokenVocab=CSTTokens;
 }
+/*
+ * Beware : Due to the use of option filter, rules order matters.
+ */
+
 
 @lexer::header {
 package tom.engine.newparser.parser;
@@ -59,17 +63,22 @@ ID       : FragID
   {System.out.println("Lexed ID : '"+$text+"'");}
 ;
 
+UNDERSCORE : '_';
 
 COMMA  : ',' ;
 RPAR   : ')' {tokenCustomizer.prepareNextToken(input.mark());};
 RBR    : ']' {tokenCustomizer.prepareNextToken(input.mark());};
 EQUAL  : '=' ;
-UNDERSCORE : '_';
+
 
 fragment
 BQ      : '`';
 fragment
-FragID      : ('A'..'Z' | 'a'..'z' |'_') ('A'..'Z' | 'a'..'z' |'_'|'0'..'9')*;
+FragID      :  ('_')?(LETTER|DIGIT|'_')+;
+fragment
+LETTER  : ('A'..'Z' | 'a'..'z');
+fragment
+DIGIT   : '0'..'9';
 fragment
 WS      : ('\r' | '\n' | '\t' | ' ' );
 
