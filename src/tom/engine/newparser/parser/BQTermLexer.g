@@ -24,43 +24,45 @@ package tom.engine.newparser.parser;
 
 BQIDPAR  : BQ (WS)* FragID (WS)* '('
   {state.text = $FragID.text;}
-  {System.out.println("Lexed BQIDPAR : '"+$text+"'");}
+  //{System.out.println("Lexed BQIDPAR : '"+$text+"'");}
 ;
 
 BQIDBR   : BQ (WS)* FragID (WS)* '['
   {state.text = $FragID.text;}
-  {System.out.println("Lexed BQIDBR : '"+$text+"'");}
+  //{System.out.println("Lexed BQIDBR : '"+$text+"'");}
 ;
 
 BQIDSTAR : BQ FragID (WS)* '*'
   {state.text = $FragID.text;}
-  {System.out.println("Lexed BQIDSTAR : '"+$text+"'");}
+  //{System.out.println("Lexed BQIDSTAR : '"+$text+"'");}
   {tokenCustomizer.prepareNextToken(input.mark());};
 
 BQID     : BQ FragID
   {state.text = $FragID.text;}
-  {System.out.println("Lexed BQID : '"+$text+"'");}
+  //{System.out.println("Lexed BQID : '"+$text+"'");}
   {tokenCustomizer.prepareNextToken(input.mark());};
 
-
+BQPAR    : BQ '('
+  //{System.out.println("Lexed BQPAR : '"+$text+"'");}
+;
 
 IDPAR    : FragID (WS)* '(' 
   {state.text = $FragID.text;}
-  {System.out.println("Lexed IDPAR : '"+$text+"'");}
+  //{System.out.println("Lexed IDPAR : '"+$text+"'");}
 ;
 
 IDBR     : FragID (WS)* '['
   {state.text = $FragID.text;}
-  {System.out.println("Lexed IDBR : '"+$text+"'");}
+  //{System.out.println("Lexed IDBR : '"+$text+"'");}
 ;
 
 IDSTAR   : FragID '*'
   {state.text = $FragID.text;}
-  {System.out.println("Lexed IDSTAR : '"+$text+"'");}
+  //{System.out.println("Lexed IDSTAR : '"+$text+"'");}
 ;
 
 ID       : FragID
-  {System.out.println("Lexed ID : '"+$text+"'");}
+  //{System.out.println("Lexed ID : '"+$text+"'");}
 ;
 
 UNDERSCORE : '_';

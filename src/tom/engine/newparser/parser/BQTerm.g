@@ -39,7 +39,7 @@ returns [int marker] :
   -> ^(Cst_BQRecordAppl
      	^(Cst_Name BQIDBR)
         ^(Cst_concCstPairSlotBQTerm csPairSlotBQTerm*)) 
-; 
+ ; 
 
 csMainBQTerm :
   UNDERSCORE
@@ -47,6 +47,9 @@ csMainBQTerm :
 
  |IDSTAR
   -> ^(Cst_BQVarStar ^(Cst_Name IDSTAR))
+
+ |ID
+  -> ^(Cst_BQVar ^(Cst_Name ID))
 
  |IDPAR (csMainBQTerm (COMMA csMainBQTerm)*)? RPAR
   -> ^(Cst_BQAppl ^(Cst_Name IDPAR)
