@@ -1,96 +1,64 @@
 grammar BQTerm;
-
+/*
+ * Lexer rules are defined in BQTermLexer.g
+ * Defining it in a different file allows to use the Lexer-only
+ * option 'filter'.
+ */
 options {
   output=AST;
   ASTLabelType=Tree;
   backtrack=true;
-  tokenVocab=CSTTokens;
+  tokenVocab=BQTermLexer;
 }
 
 @parser::header {
 package tom.engine.newparser.parser;
 }
 
-@lexer::header {
-package tom.engine.newparser.parser;
-}
-
-@lexer::members {
-  private final TokenCustomizer tokenCustomizer = new TokenCustomizer();
-  @Override 
-  public void emit(Token t){
-    super.emit(tokenCustomizer.customize(t));
-  }
-}
-
-/* actual backquote already consumed */
 csBQTerm
 returns [int marker] :
-  IDENTIFIER (WS)? LPAR
-    (WS)? (csNonHeadBQTerm ((WS)? COMMA (WS)? csNonHeadBQTerm)*)? (WS)? RPAR
+  BQID
+  {$marker = ((CustomToken)$BQID).getPayload(Integer.class);}
+
+  -> ^(Cst_BQVar ^(Cst_Name BQID))
+
+ |BQIDSTAR
+  {$marker = ((CustomToken)$BQIDSTAR).getPayload(Integer.class);}
+
+  -> ^(Cst_BQVarStar ^(Cst_Name BQIDSTAR))
+
+ |BQIDPAR (csMainBQTerm (COMMA csMainBQTerm)*)? RPAR
   {$marker = ((CustomToken)$RPAR).getPayload(Integer.class);}
 
-  -> ^(Cst_BQAppl ^(Cst_Name IDENTIFIER)
-                ^(Cst_concBQTerm csNonHeadBQTerm*))
+  -> ^(Cst_BQAppl ^(Cst_Name BQIDPAR)
+                ^(Cst_concBQTerm csMainBQTerm*))
  
- |IDENTIFIER (WS)? LBR
-    (WS)? (csPairSlotBQTerm ((WS)? COMMA (WS)? csPairSlotBQTerm)*)? (WS)? RBR
+ |BQIDBR (csPairSlotBQTerm (COMMA csMainBQTerm)*)? RBR
   {$marker = ((CustomToken)$RBR).getPayload(Integer.class);}
   
   -> ^(Cst_BQRecordAppl
-     	^(Cst_Name IDENTIFIER)
+     	^(Cst_Name BQIDBR)
         ^(Cst_concCstPairSlotBQTerm csPairSlotBQTerm*)) 
- 
- |IDENTIFIER STAR
-  {$marker = ((CustomToken)$STAR).getPayload(Integer.class);}
-
-  -> ^(Cst_BQVarStar ^(Cst_Name IDENTIFIER))
- 
- |IDENTIFIER
-  {$marker = ((CustomToken)$IDENTIFIER).getPayload(Integer.class);}
-
-  -> ^(Cst_BQVar ^(Cst_Name IDENTIFIER))
 ; 
 
-csNonHeadBQTerm :
-  csBQTerm
-  -> csBQTerm
+csMainBQTerm :
+  UNDERSCORE
+  -> ^(Cst_BQVar ^(Cst_Name BQID))
 
- |UNDERSCORE
-  -> ^(Cst_BQDefault)
-; 
+ |IDSTAR
+  -> ^(Cst_BQVarStar ^(Cst_Name IDSTAR))
 
-csPairSlotBQTerm :
-  IDENTIFIER (WS)? EQUAL (WS)? (csNonHeadBQTerm)
-  -> ^(CstPairSlotBQTerm  ^(Cst_Name IDENTIFIER) csNonHeadBQTerm)
+ |IDPAR (csMainBQTerm (COMMA csMainBQTerm)*)? RPAR
+  -> ^(Cst_BQAppl ^(Cst_Name IDPAR)
+                ^(Cst_concBQTerm csMainBQTerm*))
+ 
+ |IDBR (csPairSlotBQTerm (COMMA csMainBQTerm)*)? RBR
+  -> ^(Cst_BQRecordAppl
+     	^(Cst_Name IDBR)
+        ^(Cst_concCstPairSlotBQTerm csPairSlotBQTerm*)) 
 ;
 
-// TOKENS
-// XXX dummy mark system
-IDENTIFIER : LETTER(LETTER | DIGIT | '_' | '-')*
-  {tokenCustomizer.prepareNextToken(input.mark());};
-
-STAR   : '*' {tokenCustomizer.prepareNextToken(input.mark());};
-COMMA  : ',' ;
-LPAR   : '(' ;
-RPAR   : ')' {tokenCustomizer.prepareNextToken(input.mark());};
-LBR    : '[' ;
-RBR    : ']' {tokenCustomizer.prepareNextToken(input.mark());};
-EQUAL  : '=' ;
-UNDERSCORE : '_';
-
-
-
-fragment
-LETTER	: 'A'..'Z' | 'a'..'z';
-fragment
-DIGIT	: '0'..'9';
-
-WS	: ('\r' | '\n' | '\t' | ' ' )*; // needs greedyness ?
-
-SL_COMMENT : '//' (~('\n'|'\r'))* ('\n'|'\r'('\n')?)? { $channel=HIDDEN; } ;
-ML_COMMENT : '/*' ( options {greedy=false;} : . )* '*/'{ $channel=HIDDEN; } ;
-
-// lexer need a rule for every input
-// even for chars we don't use
-DEFAULT : . { $channel=HIDDEN;};
+csPairSlotBQTerm :
+  ID EQUAL (csMainBQTerm)
+  -> ^(Cst_PairSlotBQTerm ^(Cst_Name ID) csMainBQTerm)
+;

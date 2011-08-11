@@ -370,11 +370,18 @@
       <classpath refid="stable.classpath"/>
     </antlr3>
 
-    <antlr3 target="${src.src}/tom/engine/newparser/parser/BQTerm.g"
+    <antlr3 target="${src.src}/tom/engine/newparser/parser/BQTermLexer.g"
       outputdirectory="${gen.destination}/tom/engine/newparser/parser/"
       libdirectory="${gen.destination}/tom/engine/adt/cst">
       <classpath refid="stable.classpath"/>
     </antlr3>
+    
+    <antlr3 target="${src.src}/tom/engine/newparser/parser/BQTerm.g"
+      outputdirectory="${gen.destination}/tom/engine/newparser/parser/"
+      libdirectory="${gen.destination}/tom/engine/newparser/parser">
+      <classpath refid="stable.classpath"/>
+    </antlr3>
+
 
     <!-- Gom parser -->
     <mkdir dir="${gen.destination}/tom/gom/parser"/>

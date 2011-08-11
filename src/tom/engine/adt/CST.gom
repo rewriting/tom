@@ -119,7 +119,7 @@ CstBQTerm = Cst_BQAppl(name:CstName, bqTermList:CstBQTermList)
          | Cst_BQDefault()
          | Cst_BQInnerHostCode(code:String)
 
-CstPairSlotBQTerm  = CstPairSlotBQTerm(slotName:CstName, term:CstBQTerm)
+CstPairSlotBQTerm  = Cst_PairSlotBQTerm(slotName:CstName, term:CstBQTerm)
 
 CstBQTermList = Cst_concBQTerm(CstBQTerm*)
 CstPairSlotBQTermList = Cst_concCstPairSlotBQTerm(CstPairSlotBQTerm*)
