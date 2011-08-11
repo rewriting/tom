@@ -324,7 +324,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
     for (PlatformOption h : treeMap.values()) {
       %match(h) {
         PluginOption[Name=name, AltName=altName, Description=description,
-          AttrName=attrName] && (name!="newparser")-> {
+          AttrName=attrName] -> {
           buffer.append("\t--" + `name);
           if(`attrName.length() > 0) {
             buffer.append(" <" + `attrName + ">");

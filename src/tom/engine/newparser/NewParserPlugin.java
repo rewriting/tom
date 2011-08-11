@@ -83,16 +83,22 @@ public class NewParserPlugin extends TomGenericPlugin {
   //public static final String PARSED_TABLE_SUFFIX = ".tfix.parsed.table";
 
   /** the declared options string*/
-  public static final String DECLARED_OPTIONS = "<options><boolean name='newparser' altName='np' description='New Parser (deactivated by default)' value='false'/></options>";
+  public static final String DECLARED_OPTIONS = 
+    "<options>" +
+    "<boolean name='newparser' altName='np' description='New Parser (not activated by default)' value='false'/>" +
+    "</options>";
+  
+  /**
+   * inherited from OptionOwner interface (plugin) 
+   */
+  public PlatformOptionList getDeclaredOptionList() {
+    return OptionParser.xmlToOptionList(NewParserPlugin.DECLARED_OPTIONS);
+  }
   
   /** input file name and stream */
   private String currentFileName;
   private Reader currentReader;
   
-  /** the main HostParser */
-  private HostParser parser = null;
- 
-
   protected gt_Program cst=null;
 
   /** Constructor */
@@ -100,48 +106,6 @@ public class NewParserPlugin extends TomGenericPlugin {
     super("NewParserPlugin");
   }
   
-  //creating a new Host parser
-  /*
-  protected static HostParser newParser(Reader reader, String fileName,
-                                        OptionManager optionManager,
-                                        TomStreamManager tomStreamManager)
-    throws FileNotFoundException,IOException {
-    HashSet<String> includedFiles = new HashSet<String>();
-    HashSet<String> alreadyParsedFiles = new HashSet<String>();
-    return newParser(reader,fileName,
-                     includedFiles,alreadyParsedFiles,
-                     optionManager, tomStreamManager);
-  }
-  */
-
-  /*
-  protected static HostParser newParser(Reader reader,String fileName,
-                                        HashSet<String> includedFiles,
-                                        HashSet<String> alreadyParsedFiles,
-                                        OptionManager optionManager,
-                                        TomStreamManager tomStreamManager)
-    throws FileNotFoundException,IOException {
-    // a selector to choose the lexer to use
-    TokenStreamSelector selector = new TokenStreamSelector();
-    // create a lexer for target mode
-    HostLexer targetlexer = new HostLexer(reader);
-    // create a lexer for tom mode
-    TomLexer tomlexer = new TomLexer(targetlexer.getInputState());
-    // create a lexer for backquote mode
-    BackQuoteLexer bqlexer = new BackQuoteLexer(targetlexer.getInputState());
-    // notify selector about various lexers
-    selector.addInputStream(targetlexer,"targetlexer");
-    selector.addInputStream(tomlexer, "tomlexer");
-    selector.addInputStream(bqlexer, "bqlexer");
-    selector.select("targetlexer");
-    // create the parser for target mode
-    // also create tom parser and backquote parser
-    return new HostParser(selector, fileName,
-        includedFiles, alreadyParsedFiles,
-        optionManager, tomStreamManager);
-  }
-  */
-
   /**
    * inherited from plugin interface
    * arg[0] should contain the StreamManager from which we can get the input
@@ -158,16 +122,15 @@ public class NewParserPlugin extends TomGenericPlugin {
        * A parser waits a StreamManager as first (and single) argument
        * (arg[0]) but the NewParser Plugin is called after the TomParserPlugin,
        * —whatever parser plugin is activated, both are called— therefore
-       * it receives two arguments : the parsed code and the StreamManager.
+       * it receives two arguments: the parsed code and the StreamManager.
        */
     } else if (arg[1] instanceof TomStreamManager) {
       term = (Code)arg[0];
       setStreamManager((TomStreamManager)arg[1]);
       currentFileName = getStreamManager().getInputFileName();  
       currentReader = getStreamManager().getInputReader();
-
     } else {
-      System.out.println("(debug) erreur new parser");
+      System.out.println("(debug) error new parser");
       TomMessage.error(getLogger(), null, 0, TomMessage.invalidPluginArgument,
           "NewParserPlugin", "[TomStreamManager]", getArgumentArrayString(arg));
     }
@@ -180,7 +143,7 @@ public class NewParserPlugin extends TomGenericPlugin {
   public synchronized void run(Map informationTracker) {
 
     long startChrono = System.currentTimeMillis();
-    boolean newparser    = ((Boolean)getOptionManager().getOptionValue("newparser")).booleanValue();
+    boolean newparser = ((Boolean)getOptionManager().getOptionValue("newparser")).booleanValue();
     if (newparser) {
       try {
         if(!currentFileName.equals("-")) {
@@ -193,10 +156,10 @@ public class NewParserPlugin extends TomGenericPlugin {
           cst = (gt_Program)CSTAdaptor.getTerm(programAsAntrlTree);
         }
 
-          // verbose
-          TomMessage.info(getLogger(), null, 0, TomMessage.tomParsingPhase,
-              Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
-       }catch(IOException e) {
+        // verbose
+        TomMessage.info(getLogger(), null, 0, TomMessage.tomParsingPhase,
+            Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
+      } catch(IOException e) {
          TomMessage.error(getLogger(), currentFileName, -1,
              TomMessage.fileNotFound, e.getMessage());// TODO custom ErrMessage
        }
@@ -204,13 +167,6 @@ public class NewParserPlugin extends TomGenericPlugin {
       // not active plugin
       TomMessage.info(getLogger(), null, 0, TomMessage.newParserNotUsed);
     }
-  }
-  
-  /**
-   * inherited from OptionOwner interface (plugin) 
-   */
-  public PlatformOptionList getDeclaredOptionList() {
-    return OptionParser.xmlToOptionList(NewParserPlugin.DECLARED_OPTIONS);
   }
   
   public Object[] getArgs() {

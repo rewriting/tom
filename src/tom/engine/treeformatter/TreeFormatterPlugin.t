@@ -29,7 +29,6 @@ public class TreeFormatterPlugin extends TomGenericPlugin {
     super("TreeFormatterPlugin");
   }
 
-
   public void setArgs(Object[] arg) {
     if ( arg[0] instanceof Code && arg[1] instanceof TomStreamManager ) {
       term = (Code)arg[0];
