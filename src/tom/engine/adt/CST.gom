@@ -29,8 +29,7 @@ CstBlock =
 // MatchConstruct ============================================================
 CstMatchArgumentList  = Cst_concCstTypedTerm(CstTypedTerm*)
 
-CstConstraintAction =
-  Cst_ConstraintAction(constraint:CstConstraint , action:CstBlockList) // supprimer (ou pas...)
+CstConstraintAction = Cst_ConstraintAction(constraint:CstConstraint , action:CstBlockList) 
 
 CstConstraintActionList = Cst_concConstraintAction(CstConstraintAction*)
 
@@ -55,10 +54,10 @@ CstTerm = Cst_VariableName(name : String)
 
 CstTermList = Cst_concCstTerm(CstTerm*)
 
-CstTypedTerm = Cst_TypedTerm(term:CstTerm, type:CstTermType)
+CstTypedTerm = Cst_TypedTerm(term:CstTerm, type:CstType)
              
-CstTermType = Cst_TermType(type:String)
-            | Cst_TermTypeUnknown()
+CstType = Cst_Type(type:String)
+            | Cst_TypeUnknown()
 
 // CstPattern in CST context is "equivalent" to TomTerm in AST context
 CstPattern = 
@@ -70,20 +69,19 @@ CstPattern =
 | Cst_ConstantStar    (value : String)
 | Cst_UnamedVariable    ()
 | Cst_UnamedVariableStar()
-| Cst_SymbolList (headSymbolList : CstHeadSymbolList,
-                patternList    : CstPatternList)
+| Cst_Appl(headSymbolList : CstSymbolList, patternList    : CstPatternList)
+| Cst_RecordAppl(headSymbolList : CstSymbolList, pairPatternList    : CstPairPatternList)
 
+CstSymbolList = Cst_concCstSymbol(CstSymbol*)
+CstSymbol = Cst_Symbol(name : String, theory : CstTheory)
+          | Cst_ConstantSymbol(value : String, theory : CstTheory)
 
-CstHeadSymbolList = Cst_concCstHeadSymbol(CstHeadSymbol*)
-CstHeadSymbol = Cst_HeadSymbol(name : String, theory : CstTheoryType)
-              | Cst_ConstantHeadSymbol(value : String, theory : CstTheoryType)
-
-    CstTheoryType = Cst_TheoryAU()
-                  | Cst_TheoryAC()
-                  | Cst_TheoryDEFAULT()
+CstTheory = Cst_TheoryAU()
+          | Cst_TheoryAC()
+          | Cst_TheoryDEFAULT()
 
 CstPatternList = Cst_concCstPattern(CstPattern*)
-               | Cst_concCstPairPattern(CstPairPattern*)
+CstPairPatternList = Cst_concCstPairPattern(CstPairPattern*)
 
 CstPairPattern = Cst_PairPattern(slotName:String, pattern:CstPattern)
 

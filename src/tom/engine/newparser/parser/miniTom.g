@@ -156,8 +156,8 @@ csExtendedConstraintAction :
 csMatchArgument :
   (type=IDENTIFIER)? csTerm
 
-  ->{type!=null}? ^(Cst_TypedTerm csTerm ^(Cst_TermType $type))
-  ->              ^(Cst_TypedTerm csTerm ^(Cst_TermType ^(Cst_TermTypeUnknown)))
+  ->{type!=null}? ^(Cst_TypedTerm csTerm ^(Cst_Type $type))
+  ->              ^(Cst_TypedTerm csTerm ^(Cst_Type ^(Cst_TypeUnknown)))
 ;
  // Constraints ===============================================
 /**
@@ -261,11 +261,11 @@ csPattern :
 
   //f'('...')'
  |csHeadSymbolList csExplicitTermList
-  -> ^(Cst_SymbolList csHeadSymbolList csExplicitTermList)
+  -> ^(Cst_Appl csHeadSymbolList csExplicitTermList)
  
   //f'['...']'
  |csHeadSymbolList csImplicitPairList
-  -> ^(Cst_SymbolList csHeadSymbolList csImplicitPairList)
+  -> ^(Cst_RecordAppl csHeadSymbolList csImplicitPairList)
 
   // x
   // x*
@@ -279,11 +279,11 @@ csPattern :
   -> {s!=null}? ^(Cst_UnamedVariableStar)
   ->/*s==null*/ ^(Cst_UnamedVariable)
   
-  // 'a'
+  // 1 | 3.14 | "foo" | 'a'
   // 'a'*
  |csConstantValue (s=STAR)?
   -> {s!=null}? ^(Cst_ConstantStar csConstantValue)
-  ->/*s==null*/ ^(Cst_Constant csConstantValue)
+  ->            ^(Cst_Constant csConstantValue)
 ;
 
 // f
@@ -292,24 +292,24 @@ csPattern :
 // f?? -- should be  --> f{theory:AC}
 csHeadSymbolList :
   csHeadSymbol
-  -> ^(Cst_concCstHeadSymbol csHeadSymbol)
+  -> ^(Cst_concCstSymbol csHeadSymbol)
  | LPAR csHeadSymbol (PIPE csHeadSymbol)* RPAR 
-  -> ^(Cst_concCstHeadSymbol	 csHeadSymbol*)
+  -> ^(Cst_concCstSymbol	 csHeadSymbol*)
 ; 
 
 csHeadSymbol :
   IDENTIFIER
-  -> ^(Cst_HeadSymbol IDENTIFIER ^(Cst_TheoryDEFAULT))
+  -> ^(Cst_Symbol IDENTIFIER ^(Cst_TheoryDEFAULT))
  |IDENTIFIER QMARK
-  -> ^(Cst_HeadSymbol IDENTIFIER ^(Cst_TheoryAU))
+  -> ^(Cst_Symbol IDENTIFIER ^(Cst_TheoryAU))
  |IDENTIFIER DQMARK
-  -> ^(Cst_HeadSymbol IDENTIFIER ^(Cst_TheoryAC))
+  -> ^(Cst_Symbol IDENTIFIER ^(Cst_TheoryAC))
  |csConstantValue 
- -> ^(Cst_ConstantHeadSymbol csConstantValue ^(Cst_TheoryDEFAULT))
+ -> ^(Cst_ConstantSymbol csConstantValue ^(Cst_TheoryDEFAULT))
  |csConstantValue QMARK
- -> ^(Cst_ConstantHeadSymbol csConstantValue ^(Cst_TheoryAU))
+ -> ^(Cst_ConstantSymbol csConstantValue ^(Cst_TheoryAU))
  |csConstantValue DQMARK
- -> ^(Cst_ConstantHeadSymbol csConstantValue ^(Cst_TheoryAC))
+ -> ^(Cst_ConstantSymbol csConstantValue ^(Cst_TheoryAC))
 ;
 
 csExplicitTermList :
