@@ -25,14 +25,18 @@ returns [int marker] :
  |BQPAR csCompositePart* RPAR
   {$marker = ((CustomToken)$RPAR).getPayload(Integer.class);}
 
-  -> ^(Cst_CompositeTerm ^(Cst_ITL BQPAR) csCompositePart* ^(Cst_ITL RPAR))
+  -> ^(Cst_CompositeTerm 
+       ^(Cst_concCstBQTerm
+         ^(Cst_ITL BQPAR) csCompositePart* ^(Cst_ITL RPAR)
+        )
+      )
 
  |BQIDSTAR
   {$marker = ((CustomToken)$BQIDSTAR).getPayload(Integer.class);}
 
   -> ^(Cst_BQVarStar ^(Cst_Name BQIDSTAR))
 
- |BQIDPAR (csMainBQTerm (COMMA csMainBQTerm)*)? RPAR
+ |BQIDPAR (csMainBQTerm[true] (COMMA csMainBQTerm[true])*)? RPAR
   {$marker = ((CustomToken)$RPAR).getPayload(Integer.class);}
 
   -> ^(Cst_BQAppl ^(Cst_Name BQIDPAR)
@@ -46,19 +50,23 @@ returns [int marker] :
         ^(Cst_concCstPairSlotBQTerm csPairSlotBQTerm*)) 
  ; 
 
-csMainBQTerm :
+csMainBQTerm [ boolean compositeAllowed] :
   UNDERSCORE
   -> ^(Cst_BQDefault)
 
  |IDSTAR
   -> ^(Cst_BQVarStar ^(Cst_Name IDSTAR))
 
- |ID c=csCompositePart*
+ |ID {$compositeAllowed}?=> c=csCompositePart*
   -> {c==null}? ^(Cst_BQVar ^(Cst_Name ID))
-  -> ^(Cst_CompositeTerm ^(Cst_BQVar ^(Cst_Name ID)) csCompositePart*)
+  -> ^(Cst_CompositeTerm
+       ^(Cst_concCstBQTerm
+         ^(Cst_BQVar ^(Cst_Name ID)) csCompositePart*
+        )
+      )
 
 
- |IDPAR (csMainBQTerm (COMMA csMainBQTerm)*)? RPAR
+ |IDPAR (csMainBQTerm[true] (COMMA csMainBQTerm[true])*)? RPAR
   -> ^(Cst_BQAppl ^(Cst_Name IDPAR)
                 ^(Cst_concCstBQTerm csMainBQTerm*))
  
@@ -69,7 +77,7 @@ csMainBQTerm :
 ;
 
 csPairSlotBQTerm :
-  ID EQUAL (csMainBQTerm)
+  ID EQUAL csMainBQTerm[false]
   -> ^(Cst_PairSlotBQTerm ^(Cst_Name ID) csMainBQTerm)
 ;
 
@@ -78,6 +86,6 @@ csCompositePart :
   -> ^(Cst_ITL ANY)
  |EQUAL
   -> ^(Cst_ITL EQUAL)
- |csMainBQTerm
+ |csMainBQTerm[true]
   -> csMainBQTerm
 ;

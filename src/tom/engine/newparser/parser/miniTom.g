@@ -705,7 +705,7 @@ SQUOTE  : '\'';
 BQUOTE   : '`';
 COLON   : ':';
 
-IDENTIFIER 	: LETTER(LETTER | DIGIT | '_' | '-')*;
+IDENTIFIER 	: ('_')? LETTER (LETTER | DIGIT | '_')*;
 INTEGER 	: (DIGIT)+;
 DOUBLE	        : (DIGIT)+'.'(DIGIT)* | '.' (DIGIT)+;
 STRING		: DQUOTE (~(DQUOTE)|'\\"')* DQUOTE; //"

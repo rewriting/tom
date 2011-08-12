@@ -77,7 +77,7 @@ EQUAL  : '=' ;
 fragment
 BQ      : '`';
 fragment
-FragID      :  ('_')?(LETTER|DIGIT|'_')+;
+FragID      :  ('_')? LETTER (LETTER|DIGIT|'_')*;
 fragment
 LETTER  : ('A'..'Z' | 'a'..'z');
 fragment
@@ -87,7 +87,6 @@ FragWS      : ('\r' | '\n' | '\t' | ' ' );
 
 WS :
 FragWS {$channel=HIDDEN;} ;
-
 
 SL_COMMENT : '//' (~('\n'|'\r'))* ('\n'|'\r'('\n')?)? { $channel=HIDDEN; } ;
 ML_COMMENT : '/*' ( options {greedy=false;} : . )* '*/'{ $channel=HIDDEN; } ;
