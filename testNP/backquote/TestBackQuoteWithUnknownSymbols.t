@@ -1,9 +1,5 @@
-`f(x.g())
+`(x==y || x==z)
 
-`f(1+x)
+`f(a.doTruc(b))
 
-if(`(x==y || x==z)){
-  doSomething();
-} else {
-  doSomethingElse();
-}
+hostcode

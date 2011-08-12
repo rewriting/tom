@@ -22,6 +22,11 @@ returns [int marker] :
 
   -> ^(Cst_BQVar ^(Cst_Name BQID))
 
+ |BQPAR csCompositePart* RPAR
+  {$marker = ((CustomToken)$RPAR).getPayload(Integer.class);}
+
+  -> ^(Cst_CompositeTerm ^(Cst_ITL BQPAR) csCompositePart* ^(Cst_ITL RPAR))
+
  |BQIDSTAR
   {$marker = ((CustomToken)$BQIDSTAR).getPayload(Integer.class);}
 
@@ -48,8 +53,10 @@ csMainBQTerm :
  |IDSTAR
   -> ^(Cst_BQVarStar ^(Cst_Name IDSTAR))
 
- |ID
-  -> ^(Cst_BQVar ^(Cst_Name ID))
+ |ID c=csCompositePart*
+  -> {c==null}? ^(Cst_BQVar ^(Cst_Name ID))
+  -> ^(Cst_CompositeTerm ^(Cst_BQVar ^(Cst_Name ID)) csCompositePart*)
+
 
  |IDPAR (csMainBQTerm (COMMA csMainBQTerm)*)? RPAR
   -> ^(Cst_BQAppl ^(Cst_Name IDPAR)
@@ -64,4 +71,13 @@ csMainBQTerm :
 csPairSlotBQTerm :
   ID EQUAL (csMainBQTerm)
   -> ^(Cst_PairSlotBQTerm ^(Cst_Name ID) csMainBQTerm)
+;
+
+csCompositePart :
+  ANY
+  -> ^(Cst_ITL ANY)
+ |EQUAL
+  -> ^(Cst_ITL EQUAL)
+ |csMainBQTerm
+  -> csMainBQTerm
 ;

@@ -118,6 +118,8 @@ CstBQTerm = Cst_BQAppl(name:CstName, bqTermList:CstBQTermList)
          | Cst_BQVarStar(name:CstName)
          | Cst_BQDefault()
          | Cst_BQInnerHostCode(code:String)
+         | Cst_CompositeTerm(list:CstBQTermList)
+         | Cst_ITL(code:String)
 
 CstPairSlotBQTerm  = Cst_PairSlotBQTerm(slotName:CstName, term:CstBQTerm)
 

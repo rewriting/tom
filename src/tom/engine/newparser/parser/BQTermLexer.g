@@ -22,17 +22,17 @@ package tom.engine.newparser.parser;
 }
 
 
-BQIDPAR  : BQ (WS)* FragID (WS)* '('
+BQIDPAR  : BQ (FragWS)* FragID (FragWS)* '('
   {state.text = $FragID.text;}
   //{System.out.println("Lexed BQIDPAR : '"+$text+"'");}
 ;
 
-BQIDBR   : BQ (WS)* FragID (WS)* '['
+BQIDBR   : BQ (FragWS)* FragID (FragWS)* '['
   {state.text = $FragID.text;}
   //{System.out.println("Lexed BQIDBR : '"+$text+"'");}
 ;
 
-BQIDSTAR : BQ FragID (WS)* '*'
+BQIDSTAR : BQ FragID (FragWS)* '*'
   {state.text = $FragID.text;}
   //{System.out.println("Lexed BQIDSTAR : '"+$text+"'");}
   {tokenCustomizer.prepareNextToken(input.mark());};
@@ -43,15 +43,16 @@ BQID     : BQ FragID
   {tokenCustomizer.prepareNextToken(input.mark());};
 
 BQPAR    : BQ '('
+  {state.text = "(";}
   //{System.out.println("Lexed BQPAR : '"+$text+"'");}
 ;
 
-IDPAR    : FragID (WS)* '(' 
+IDPAR    : FragID (FragWS)* '(' 
   {state.text = $FragID.text;}
   //{System.out.println("Lexed IDPAR : '"+$text+"'");}
 ;
 
-IDBR     : FragID (WS)* '['
+IDBR     : FragID (FragWS)* '['
   {state.text = $FragID.text;}
   //{System.out.println("Lexed IDBR : '"+$text+"'");}
 ;
@@ -82,12 +83,13 @@ LETTER  : ('A'..'Z' | 'a'..'z');
 fragment
 DIGIT   : '0'..'9';
 fragment
-WS      : ('\r' | '\n' | '\t' | ' ' );
+FragWS      : ('\r' | '\n' | '\t' | ' ' );
+
+WS :
+FragWS {$channel=HIDDEN;} ;
 
 
 SL_COMMENT : '//' (~('\n'|'\r'))* ('\n'|'\r'('\n')?)? { $channel=HIDDEN; } ;
 ML_COMMENT : '/*' ( options {greedy=false;} : . )* '*/'{ $channel=HIDDEN; } ;
 
-// lexer need a rule for every input
-// even for chars we don't use
-DEFAULT : . { $channel=HIDDEN;};
+ANY : . ;
