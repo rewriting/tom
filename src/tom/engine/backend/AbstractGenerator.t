@@ -75,10 +75,6 @@ public abstract class AbstractGenerator {
     return TomBase.getSymbolFromName(tomName, symbolTable);
   }
 
-  protected TomSymbol getSymbolFromType(TomType tomType) {
-    return TomBase.getSymbolFromType(tomType, symbolTable);
-  }
-
   protected TomType getTermType(TomTerm t) {
     return TomBase.getTermType(t, symbolTable);
   }

@@ -528,26 +528,6 @@ public final class TomBase {
     return symbolTable.getSymbolFromName(tomName);
   }
 
-  public static TomSymbol getSymbolFromType(TomType tomType, SymbolTable symbolTable) {
-    if ( SymbolTable.TYPE_UNKNOWN == tomType) { return null; }
-
-    TomSymbolList list = symbolTable.getSymbolFromType(tomType);
-    TomSymbolList filteredList = `concTomSymbol();
-    // Not necessary since checker ensure the uniqueness of the symbol
-    while(!list.isEmptyconcTomSymbol()) {
-      TomSymbol head = list.getHeadconcTomSymbol();
-      if(isArrayOperator(head) || isListOperator(head)) {
-        filteredList = `concTomSymbol(head,filteredList*);
-      }
-      list = list.getTailconcTomSymbol();
-    }
-    if(filteredList.isEmptyconcTomSymbol()) {
-      return null;
-    } else {
-      return filteredList.getHeadconcTomSymbol();
-    }
-  }
-
   public static TomType getTermType(TomTerm t, SymbolTable symbolTable) {
     %match(t) {
       (TermAppl|RecordAppl)[NameList=concTomName(headName,_*)] -> {

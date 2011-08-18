@@ -179,7 +179,7 @@ public class TyperPlugin extends TomGenericPlugin {
          * Replace all remains of type variables by
          * Type(tomType,EmptyTargetLanguageType()) in Code and in SymbolTable
          */
-        typedCode = `(TopDown(removeFreshTypeVar())).visitLight(typedCode);
+        typedCode = `TopDown(removeFreshTypeVar()).visitLight(typedCode);
         replaceInSymbolTableNewTyper();
 
         // replace 'abc' by concString('a','b','c')
@@ -426,7 +426,7 @@ public class TyperPlugin extends TomGenericPlugin {
     try {
       for(String tomName:getSymbolTable().keySymbolIterable()) {
         TomSymbol tSymbol = getSymbolFromName(tomName);
-        tSymbol = `(TopDown(removeFreshTypeVar())).visitLight(tSymbol);
+        tSymbol = `TopDown(removeFreshTypeVar()).visitLight(tSymbol);
         getSymbolTable().putSymbol(tomName,tSymbol);
       }
     } catch(tom.library.sl.VisitFailure e) {

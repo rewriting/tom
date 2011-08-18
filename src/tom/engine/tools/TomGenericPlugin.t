@@ -167,10 +167,6 @@ public abstract class TomGenericPlugin implements Plugin {
     return TomBase.getSymbolFromName(tomName, streamManager.getSymbolTable());
   }
   
-  protected TomSymbol getSymbolFromType(TomType tomType) {
-    return TomBase.getSymbolFromType(tomType, streamManager.getSymbolTable());
-  }
-  
   protected TomType getTermType(BQTerm t) {
     return  TomBase.getTermType(t, streamManager.getSymbolTable());
   }

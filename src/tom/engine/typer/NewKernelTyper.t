@@ -24,8 +24,6 @@
  *
  **/
 
-
-
 package tom.engine.typer;
 
 import java.util.ArrayList;
@@ -66,8 +64,6 @@ public class NewKernelTyper {
     is_sort(t) { ($t instanceof NewKernelTyper) }
   }
 
-  private int limTVarSymbolTable;
-
   /*
    * pem: why use a state variable here ?
    */
@@ -76,9 +72,6 @@ public class NewKernelTyper {
   // List for variables of subject and of numeric constraints
   private BQTermList varList;
 
-  /*
-   * pem: why use a state variable here ?
-   */
   // List for type variables of patterns 
   private TomTypeList positiveTVarList;
   // List for equation constraints (for fresh type variables)
@@ -88,28 +81,19 @@ public class NewKernelTyper {
   // Set of pairs (freshVar,type)
   private HashMap<TomType,TomType> substitutions;
   // Set of supertypes for each type
-  private HashMap<String,TomTypeList> dependencies = new
-    HashMap<String,TomTypeList>();
+  private HashMap<String,TomTypeList> dependencies = new HashMap<String,TomTypeList>();
 
   private SymbolTable symbolTable;
 
   private String currentInputFileName;
-  private boolean lazyType = false;
 
+  private boolean lazyType = false;
   protected void setLazyType() {
     lazyType = true;
   }
 
   protected void setSymbolTable(SymbolTable symbolTable) {
     this.symbolTable = symbolTable;
-  }
-
-  protected void putSymbol(String name, TomSymbol astSymbol) {
-    symbolTable.putSymbol(name,astSymbol);
-  }
-
-  protected SymbolTable getSymbolTable() {
-    return symbolTable;
   }
 
   protected void setCurrentInputFileName(String currentInputFileName) {
@@ -133,15 +117,6 @@ public class NewKernelTyper {
 
   protected TomSymbol getSymbolFromName(String tName) {
     return TomBase.getSymbolFromName(tName, symbolTable);
-  }
-  /*
-     protected TomSymbol getSymbolFromName(String tName) {
-     return symbolTable.getSymbolFromName(tName);
-     }
-   */
-
-  protected TomSymbol getSymbolFromType(TomType tType) {
-    return TomBase.getSymbolFromType(tType,symbolTable); 
   }
 
   /**
@@ -259,6 +234,7 @@ public class NewKernelTyper {
    * @param freshTVarSymbolTable  the lower bound of the counter of type
    *                              variables
    */
+  private int limTVarSymbolTable;
   protected void setLimTVarSymbolTable(int freshTVarSymbolTable) {
     limTVarSymbolTable = freshTVarSymbolTable;
   }
@@ -703,18 +679,6 @@ public class NewKernelTyper {
       RecordAppl[Options=optionList,NameList=nList@concTomName(aName@Name(tomName),_*),Slots=sList,Constraints=cList] -> {
         // In case of a String, tomName is "" for ("a","b")
         TomSymbol tSymbol = nkt.getSymbolFromName(`tomName);
-        // IF_1
-        if (tSymbol == null) {
-          //The contextType is used here, so it must be a ground type, not a
-          //type variable
-          tSymbol = nkt.getSymbolFromType(contextType);
-
-          // IF_2
-          if (tSymbol != null) {
-            // In case of contextType is "TypeVar(name,i)"
-            `nList = `concTomName(tSymbol.getAstName());
-          } 
-        }
         //DEBUG System.out.println("\n Test pour TomTerm-inferTypes in RecordAppl. tSymbol = " + `tSymbol);
         //DEBUG System.out.println("\n Test pour TomTerm-inferTypes in RecordAppl. astName = " +`concTomName(tSymbol.getAstName()));
         //DEBUG System.out.println("\n Test pour TomTerm-inferTypes in RecordAppl.
@@ -796,17 +760,6 @@ public class NewKernelTyper {
       BQAppl[Options=optionList,AstName=aName@Name(name),Args=bqTList] -> {
         //DEBUG System.out.println("\n Test pour BQTerm-inferTypes in BQAppl. tomName = " + `name);
         TomSymbol tSymbol = nkt.getSymbolFromName(`name);
-        if (tSymbol == null) {
-          //The contextType is used here, so it must be a ground type, not a
-          //type variable
-          //DEBUG System.out.println("visit contextType = " + contextType);
-          tSymbol = nkt.getSymbolFromType(contextType);
-          if (tSymbol != null && `name.equals("")) {
-            // In case of contextType is "TypeVar(name,i)"
-            `aName = tSymbol.getAstName();
-          }
-        }
-
         TomType codomain = contextType;
         if (tSymbol == null) {
           tSymbol = `EmptySymbol();
