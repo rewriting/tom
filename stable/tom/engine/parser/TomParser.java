@@ -119,12 +119,14 @@ public class TomParser extends antlr.LLkParser       implements TomParserTokenTy
       return ((Boolean)optionManager.getOptionValue(optionName)).booleanValue();
     }
 
-    private void putSlot(String sName, String sType) {
-      usedSlots.put(sName,sType);
+    private void putSlotType(String codomain, String slotName, String slotType) {
+      String key = codomain+slotName;
+      usedSlots.put(key,slotType);
     }
 
-    private String getSlotType(String sName) {
-      return usedSlots.get(sName);
+    private String getSlotType(String codomain, String slotName) {
+      String key = codomain+slotName;
+      return usedSlots.get(key);
     }
 
     private void putType(String name, TomType type) {
@@ -370,12 +372,12 @@ inputState.guessing--;
 			}
 			
 			int counter = 0;
-			{{if (tom_is_sort_BQTermList(subjectList)) {if (tom_is_fun_sym_concBQTerm((( tom.engine.adt.code.types.BQTermList )subjectList))) { tom.engine.adt.code.types.BQTermList  tomMatch2__end__4=(( tom.engine.adt.code.types.BQTermList )subjectList);do {{if (!(tom_is_empty_concBQTerm_BQTermList(tomMatch2__end__4))) {
+			{{if (tom_is_sort_BQTermList(((Object)subjectList))) {if (tom_is_fun_sym_concBQTerm((( tom.engine.adt.code.types.BQTermList )(( tom.engine.adt.code.types.BQTermList )((Object)subjectList))))) { tom.engine.adt.code.types.BQTermList  tomMatch2__end__4=(( tom.engine.adt.code.types.BQTermList )((Object)subjectList));do {{if (!(tom_is_empty_concBQTerm_BQTermList(tomMatch2__end__4))) {
 			
 			constraint =
 			tom_cons_list_AndConstraint(constraint,tom_cons_list_AndConstraint(tom_make_MatchConstraint(matchPatternList.get(counter),tom_get_head_concBQTerm_BQTermList(tomMatch2__end__4),subjectTypeList.get(counter)),tom_empty_list_AndConstraint()));
 			counter++;
-			}if (tom_is_empty_concBQTerm_BQTermList(tomMatch2__end__4)) {tomMatch2__end__4=(( tom.engine.adt.code.types.BQTermList )subjectList);} else {tomMatch2__end__4=tom_get_tail_concBQTerm_BQTermList(tomMatch2__end__4);}}} while(!(tom_equal_term_BQTermList(tomMatch2__end__4, (( tom.engine.adt.code.types.BQTermList )subjectList))));}}}}
+			}if (tom_is_empty_concBQTerm_BQTermList(tomMatch2__end__4)) {tomMatch2__end__4=(( tom.engine.adt.code.types.BQTermList )((Object)subjectList));} else {tomMatch2__end__4=tom_get_tail_concBQTerm_BQTermList(tomMatch2__end__4);}}} while(!(tom_equal_term_BQTermList(tomMatch2__end__4, (( tom.engine.adt.code.types.BQTermList )((Object)subjectList)))));}}}}
 			
 			
 			optionList = tom_cons_list_concOption(option,tom_cons_list_concOption(tom_make_OriginalText(tom_make_Name(text.toString())),tom_empty_list_concOption()));
@@ -531,7 +533,7 @@ inputState.guessing--;
 			} else {
 			if(subject1.isBQVariable()) {
 			String typeName = subject1.getAstName().getString();
-			{{if (tom_is_sort_BQTerm(subject2)) {boolean tomMatch1_2= false ;if (tom_is_fun_sym_BQVariable((( tom.engine.adt.code.types.BQTerm )subject2))) {tomMatch1_2= true ;} else {if (tom_is_fun_sym_BQAppl((( tom.engine.adt.code.types.BQTerm )subject2))) {tomMatch1_2= true ;} else {if (tom_is_fun_sym_BuildConstant((( tom.engine.adt.code.types.BQTerm )subject2))) {tomMatch1_2= true ;}}}if (tomMatch1_2) {
+			{{if (tom_is_sort_BQTerm(((Object)subject2))) {boolean tomMatch1_5= false ; tom.engine.adt.code.types.BQTerm  tomMatch1_2= null ; tom.engine.adt.code.types.BQTerm  tomMatch1_3= null ; tom.engine.adt.code.types.BQTerm  tomMatch1_4= null ;if (tom_is_sort_BQTerm((( tom.engine.adt.code.types.BQTerm )((Object)subject2)))) {if (tom_is_fun_sym_BQVariable((( tom.engine.adt.code.types.BQTerm )(( tom.engine.adt.code.types.BQTerm )((Object)subject2))))) {{tomMatch1_5= true ;tomMatch1_2=(( tom.engine.adt.code.types.BQTerm )((Object)subject2));}} else {if (tom_is_sort_BQTerm((( tom.engine.adt.code.types.BQTerm )((Object)subject2)))) {if (tom_is_fun_sym_BQAppl((( tom.engine.adt.code.types.BQTerm )(( tom.engine.adt.code.types.BQTerm )((Object)subject2))))) {{tomMatch1_5= true ;tomMatch1_3=(( tom.engine.adt.code.types.BQTerm )((Object)subject2));}} else {if (tom_is_sort_BQTerm((( tom.engine.adt.code.types.BQTerm )((Object)subject2)))) {if (tom_is_fun_sym_BuildConstant((( tom.engine.adt.code.types.BQTerm )(( tom.engine.adt.code.types.BQTerm )((Object)subject2))))) {{tomMatch1_5= true ;tomMatch1_4=(( tom.engine.adt.code.types.BQTerm )((Object)subject2));}}}}}}}if (tomMatch1_5) {
 			
 			list.add(subject2);
 			typeList.add(tom_make_Type(tom_empty_list_concTypeOption(),typeName,tom_make_EmptyTargetLanguageType()));
@@ -3519,6 +3521,7 @@ inputState.guessing--;
 		TomName astName = null;
 		String stringSlotName = null;
 		Declaration attribute;
+		String stringCodomain = "";
 		
 		
 		type = LT(1);
@@ -3529,6 +3532,7 @@ inputState.guessing--;
 			
 			ot = tom_make_OriginTracking(tom_make_Name(name.getText()),name.getLine(),currentFile());
 			options.add(ot);
+			stringCodomain = type.getText();
 			
 		}
 		{
@@ -3549,13 +3553,13 @@ inputState.guessing--;
 				slotNameList.add(astName);
 				pairNameDeclList.add(tom_make_PairNameDecl(astName,tom_make_EmptyDeclaration()));
 				types = tom_append_list_concTomType(types,tom_cons_list_concTomType(tom_make_Type(tom_empty_list_concTypeOption(),typeArg.getText(),tom_make_EmptyTargetLanguageType()),tom_empty_list_concTomType()));
-				String typeOfSlot = getSlotType(stringSlotName);
+				String typeOfSlot = getSlotType(stringCodomain,stringSlotName);
 				String typeOfArg= typeArg.getText();
-				if (typeOfSlot != null && !typeOfSlot.equals(typeOfArg)) {
+				if(typeOfSlot != null && !typeOfSlot.equals(typeOfArg)) {
 				TomMessage.warning(getLogger(),currentFile(), getLine(),
 				TomMessage.slotIncompatibleTypes,stringSlotName,typeOfArg,typeOfSlot);
 				} else {
-				putSlot(stringSlotName,typeOfArg);
+				putSlotType(stringCodomain,stringSlotName,typeOfArg);
 				}
 				
 			}
@@ -3581,13 +3585,13 @@ inputState.guessing--;
 						slotNameList.add(astName);
 						pairNameDeclList.add(tom_make_PairNameDecl(tom_make_Name(stringSlotName),tom_make_EmptyDeclaration()));
 						types = tom_append_list_concTomType(types,tom_cons_list_concTomType(tom_make_Type(tom_empty_list_concTypeOption(),typeArg2.getText(),tom_make_EmptyTargetLanguageType()),tom_empty_list_concTomType()));
-						String typeOfSlot = getSlotType(stringSlotName);
+						String typeOfSlot = getSlotType(stringCodomain,stringSlotName);
 						String typeOfArg= typeArg2.getText();
 						if (typeOfSlot != null && !typeOfSlot.equals(typeOfArg)) {
 						TomMessage.warning(getLogger(),currentFile(), getLine(),
 						TomMessage.slotIncompatibleTypes,stringSlotName,typeOfArg,typeOfSlot);
 						} else {
-						putSlot(stringSlotName,typeOfArg);
+						putSlotType(stringCodomain,stringSlotName,typeOfArg);
 						}
 						
 					}
@@ -3647,12 +3651,12 @@ inputState.guessing--;
 					msg = TomMessage.errorIncompatibleSlotDecl;
 					} else {
 					PairNameDecl pair = pairNameDeclList.get(index);
-					{{if (tom_is_sort_PairNameDecl(pair)) {if (tom_is_fun_sym_PairNameDecl((( tom.engine.adt.tomslot.types.PairNameDecl )pair))) {
+					{{if (tom_is_sort_PairNameDecl(((Object)pair))) {if (tom_is_sort_PairNameDecl((( tom.engine.adt.tomslot.types.PairNameDecl )((Object)pair)))) {if (tom_is_fun_sym_PairNameDecl((( tom.engine.adt.tomslot.types.PairNameDecl )(( tom.engine.adt.tomslot.types.PairNameDecl )((Object)pair))))) {
 					
-					if(tom_get_slot_PairNameDecl_SlotDecl((( tom.engine.adt.tomslot.types.PairNameDecl )pair))!= tom_make_EmptyDeclaration()) {
+					if(tom_get_slot_PairNameDecl_SlotDecl((( tom.engine.adt.tomslot.types.PairNameDecl )((Object)pair)))!= tom_make_EmptyDeclaration()) {
 					msg = TomMessage.errorTwoSameSlotDecl;
 					}
-					}}}}
+					}}}}}
 					
 					}
 					if(msg != null) {

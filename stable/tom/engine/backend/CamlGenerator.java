@@ -296,13 +296,16 @@ s.append(") = " + tlCode.getCode() + " ");
 
 {
 {
-if ( (tlCode instanceof tom.engine.adt.code.types.TargetLanguage) ) {
-if ( ((( tom.engine.adt.code.types.TargetLanguage )tlCode) instanceof tom.engine.adt.code.types.targetlanguage.TL) ) {
- tom.engine.adt.tomsignature.types.TextPosition  tomMatch87_2= (( tom.engine.adt.code.types.TargetLanguage )tlCode).getStart() ;
- tom.engine.adt.tomsignature.types.TextPosition  tomMatch87_3= (( tom.engine.adt.code.types.TargetLanguage )tlCode).getEnd() ;
-if ( (tomMatch87_2 instanceof tom.engine.adt.tomsignature.types.textposition.TextPosition) ) {
+if ( (((Object)tlCode) instanceof tom.engine.adt.code.types.TargetLanguage) ) {
+if ( ((( tom.engine.adt.code.types.TargetLanguage )((Object)tlCode)) instanceof tom.engine.adt.code.types.TargetLanguage) ) {
+if ( ((( tom.engine.adt.code.types.TargetLanguage )(( tom.engine.adt.code.types.TargetLanguage )((Object)tlCode))) instanceof tom.engine.adt.code.types.targetlanguage.TL) ) {
+ tom.engine.adt.tomsignature.types.TextPosition  tomMatch87_2= (( tom.engine.adt.code.types.TargetLanguage )((Object)tlCode)).getStart() ;
+ tom.engine.adt.tomsignature.types.TextPosition  tomMatch87_3= (( tom.engine.adt.code.types.TargetLanguage )((Object)tlCode)).getEnd() ;
+if ( (tomMatch87_2 instanceof tom.engine.adt.tomsignature.types.TextPosition) ) {
+if ( ((( tom.engine.adt.tomsignature.types.TextPosition )tomMatch87_2) instanceof tom.engine.adt.tomsignature.types.textposition.TextPosition) ) {
  int  tom_startLine= tomMatch87_2.getLine() ;
-if ( (tomMatch87_3 instanceof tom.engine.adt.tomsignature.types.textposition.TextPosition) ) {
+if ( (tomMatch87_3 instanceof tom.engine.adt.tomsignature.types.TextPosition) ) {
+if ( ((( tom.engine.adt.tomsignature.types.TextPosition )tomMatch87_3) instanceof tom.engine.adt.tomsignature.types.textposition.TextPosition) ) {
 
 output.write(0,s, 
 tom_startLine, 
@@ -315,15 +318,20 @@ return;
 }
 }
 }
+}
+}
+}
 
 }
 {
-if ( (tlCode instanceof tom.engine.adt.code.types.TargetLanguage) ) {
-if ( ((( tom.engine.adt.code.types.TargetLanguage )tlCode) instanceof tom.engine.adt.code.types.targetlanguage.ITL) ) {
+if ( (((Object)tlCode) instanceof tom.engine.adt.code.types.TargetLanguage) ) {
+if ( ((( tom.engine.adt.code.types.TargetLanguage )((Object)tlCode)) instanceof tom.engine.adt.code.types.TargetLanguage) ) {
+if ( ((( tom.engine.adt.code.types.TargetLanguage )(( tom.engine.adt.code.types.TargetLanguage )((Object)tlCode))) instanceof tom.engine.adt.code.types.targetlanguage.ITL) ) {
 
 output.write(s);
 return;
 
+}
 }
 }
 
@@ -347,10 +355,12 @@ matchBlock: {
 
 {
 {
-if ( (arg instanceof tom.engine.adt.code.types.BQTerm) ) {
-if ( ((( tom.engine.adt.code.types.BQTerm )arg) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {
- tom.engine.adt.tomname.types.TomName  tomMatch88_1= (( tom.engine.adt.code.types.BQTerm )arg).getAstName() ;
-if ( (tomMatch88_1 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+if ( (((Object)arg) instanceof tom.engine.adt.code.types.BQTerm) ) {
+if ( ((( tom.engine.adt.code.types.BQTerm )((Object)arg)) instanceof tom.engine.adt.code.types.BQTerm) ) {
+if ( ((( tom.engine.adt.code.types.BQTerm )(( tom.engine.adt.code.types.BQTerm )((Object)arg))) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {
+ tom.engine.adt.tomname.types.TomName  tomMatch88_1= (( tom.engine.adt.code.types.BQTerm )((Object)arg)).getAstName() ;
+if ( (tomMatch88_1 instanceof tom.engine.adt.tomname.types.TomName) ) {
+if ( ((( tom.engine.adt.tomname.types.TomName )tomMatch88_1) instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
 
 s.append(
  tomMatch88_1.getString() );
@@ -360,10 +370,12 @@ break matchBlock;
 }
 }
 }
+}
+}
 
 }
 {
-if ( (arg instanceof tom.engine.adt.code.types.BQTerm) ) {
+if ( (((Object)arg) instanceof tom.engine.adt.code.types.BQTerm) ) {
 
 System.out.println("genDeclMake: strange term: " + arg);
 throw new TomRuntimeException("genDeclMake: strange term: " + arg);
@@ -494,18 +506,20 @@ public void generateInstruction(int deep, Instruction subject, String moduleName
 
 {
 {
-if ( (subject instanceof tom.engine.adt.tominstruction.types.Instruction) ) {
-if ( ((( tom.engine.adt.tominstruction.types.Instruction )subject) instanceof tom.engine.adt.tominstruction.types.instruction.Nop) ) {
+if ( (((Object)subject) instanceof tom.engine.adt.tominstruction.types.Instruction) ) {
+if ( ((( tom.engine.adt.tominstruction.types.Instruction )((Object)subject)) instanceof tom.engine.adt.tominstruction.types.Instruction) ) {
+if ( ((( tom.engine.adt.tominstruction.types.Instruction )(( tom.engine.adt.tominstruction.types.Instruction )((Object)subject))) instanceof tom.engine.adt.tominstruction.types.instruction.Nop) ) {
 buildNop();
 return;
 
 
 }
 }
+}
 
 }
 {
-if ( (subject instanceof tom.engine.adt.tominstruction.types.Instruction) ) {
+if ( (((Object)subject) instanceof tom.engine.adt.tominstruction.types.Instruction) ) {
 
 super.generateInstruction(deep, subject, moduleName);
 

@@ -146,24 +146,24 @@ public class BackQuoteParser extends antlr.LLkParser       implements BackQuoteP
        * otherwise, the term is inserted (potentially unwrapped) into the last Composite of the list
        */
       if(newComposite) {
-        {{if (tom_is_sort_BQTerm(lastElement)) {if (tom_is_fun_sym_Composite((( tom.engine.adt.code.types.BQTerm )lastElement))) {if (tom_is_sort_BQTerm(term)) {if (tom_is_fun_sym_Composite((( tom.engine.adt.code.types.BQTerm )term))) {
+        {{if (tom_is_sort_BQTerm(((Object)lastElement))) {if (tom_is_fun_sym_Composite((( tom.engine.adt.code.types.BQTerm )(( tom.engine.adt.code.types.BQTerm )((Object)lastElement))))) {if (tom_is_sort_BQTerm(((Object)term))) {if (tom_is_fun_sym_Composite((( tom.engine.adt.code.types.BQTerm )(( tom.engine.adt.code.types.BQTerm )((Object)term))))) {
  
-            list.add((( tom.engine.adt.code.types.BQTerm )term)); 
+            list.add((( tom.engine.adt.code.types.BQTerm )((Object)term))); 
             return; 
-          }}}}}{if (tom_is_sort_BQTerm(lastElement)) {if (tom_is_fun_sym_Composite((( tom.engine.adt.code.types.BQTerm )lastElement))) {if (tom_is_sort_BQTerm(term)) {
+          }}}}}{if (tom_is_sort_BQTerm(((Object)lastElement))) {if (tom_is_fun_sym_Composite((( tom.engine.adt.code.types.BQTerm )(( tom.engine.adt.code.types.BQTerm )((Object)lastElement))))) {if (tom_is_sort_BQTerm(((Object)term))) {
  
-            list.add(tom_cons_list_Composite(tom_make_CompositeBQTerm((( tom.engine.adt.code.types.BQTerm )term)),tom_empty_list_Composite())); 
+            list.add(tom_cons_list_Composite(tom_make_CompositeBQTerm((( tom.engine.adt.code.types.BQTerm )((Object)term))),tom_empty_list_Composite())); 
             return; 
           }}}}}
 
       } else {
-        {{if (tom_is_sort_BQTerm(lastElement)) {if (tom_is_fun_sym_Composite((( tom.engine.adt.code.types.BQTerm )lastElement))) {if (tom_is_sort_BQTerm(term)) {if (tom_is_fun_sym_Composite((( tom.engine.adt.code.types.BQTerm )term))) {
+        {{if (tom_is_sort_BQTerm(((Object)lastElement))) {if (tom_is_fun_sym_Composite((( tom.engine.adt.code.types.BQTerm )(( tom.engine.adt.code.types.BQTerm )((Object)lastElement))))) {if (tom_is_sort_BQTerm(((Object)term))) {if (tom_is_fun_sym_Composite((( tom.engine.adt.code.types.BQTerm )(( tom.engine.adt.code.types.BQTerm )((Object)term))))) {
  
-            list.set(list.size()-1,tom_append_list_Composite((( tom.engine.adt.code.types.BQTerm )lastElement),tom_append_list_Composite((( tom.engine.adt.code.types.BQTerm )term),tom_empty_list_Composite()))); 
+            list.set(list.size()-1,tom_append_list_Composite((( tom.engine.adt.code.types.BQTerm )((Object)lastElement)),tom_append_list_Composite((( tom.engine.adt.code.types.BQTerm )((Object)term)),tom_empty_list_Composite()))); 
             return;
-          }}}}}{if (tom_is_sort_BQTerm(lastElement)) {if (tom_is_fun_sym_Composite((( tom.engine.adt.code.types.BQTerm )lastElement))) {if (tom_is_sort_BQTerm(term)) {
+          }}}}}{if (tom_is_sort_BQTerm(((Object)lastElement))) {if (tom_is_fun_sym_Composite((( tom.engine.adt.code.types.BQTerm )(( tom.engine.adt.code.types.BQTerm )((Object)lastElement))))) {if (tom_is_sort_BQTerm(((Object)term))) {
  
-            list.set(list.size()-1,tom_append_list_Composite((( tom.engine.adt.code.types.BQTerm )lastElement),tom_cons_list_Composite(tom_make_CompositeBQTerm((( tom.engine.adt.code.types.BQTerm )term)),tom_empty_list_Composite()))); 
+            list.set(list.size()-1,tom_append_list_Composite((( tom.engine.adt.code.types.BQTerm )((Object)lastElement)),tom_cons_list_Composite(tom_make_CompositeBQTerm((( tom.engine.adt.code.types.BQTerm )((Object)term))),tom_empty_list_Composite()))); 
             return;
           }}}}}
 
@@ -171,11 +171,11 @@ public class BackQuoteParser extends antlr.LLkParser       implements BackQuoteP
     }
     
     private void addSlotTerm(List<BQSlot> list, TomName slotName,BQTerm term) {
-      {{if (tom_is_sort_BQTerm(term)) {if (tom_is_fun_sym_Composite((( tom.engine.adt.code.types.BQTerm )term))) {
+      {{if (tom_is_sort_BQTerm(((Object)term))) {if (tom_is_fun_sym_Composite((( tom.engine.adt.code.types.BQTerm )(( tom.engine.adt.code.types.BQTerm )((Object)term))))) {
 
           list.add(tom_make_PairSlotBQTerm(slotName,term));
           return;
-        }}}{if (tom_is_sort_BQTerm(term)) {
+        }}}{if (tom_is_sort_BQTerm(((Object)term))) {
 
 
           list.add(tom_make_PairSlotBQTerm(slotName,tom_cons_list_Composite(tom_make_CompositeBQTerm(term),tom_empty_list_Composite())));
@@ -186,18 +186,18 @@ public class BackQuoteParser extends antlr.LLkParser       implements BackQuoteP
 
     // sorts attributes of xml term with lexicographical order
     private BQTermList sortAttributeList(BQTermList list){
-      {{if (tom_is_sort_BQTermList(list)) {if (tom_is_fun_sym_concBQTerm((( tom.engine.adt.code.types.BQTermList )list))) {if (tom_is_empty_concBQTerm_BQTermList((( tom.engine.adt.code.types.BQTermList )list))) {
- return list; }}}}{if (tom_is_sort_BQTermList(list)) {if (tom_is_fun_sym_concBQTerm((( tom.engine.adt.code.types.BQTermList )list))) { tom.engine.adt.code.types.BQTermList  tomMatch4__end__6=(( tom.engine.adt.code.types.BQTermList )list);do {{if (!(tom_is_empty_concBQTerm_BQTermList(tomMatch4__end__6))) { tom.engine.adt.code.types.BQTerm  tom_e1=tom_get_head_concBQTerm_BQTermList(tomMatch4__end__6); tom.engine.adt.code.types.BQTermList  tomMatch4_7=tom_get_tail_concBQTerm_BQTermList(tomMatch4__end__6); tom.engine.adt.code.types.BQTermList  tomMatch4__end__10=tomMatch4_7;do {{if (!(tom_is_empty_concBQTerm_BQTermList(tomMatch4__end__10))) { tom.engine.adt.code.types.BQTerm  tom_e2=tom_get_head_concBQTerm_BQTermList(tomMatch4__end__10);{{if (tom_is_sort_BQTerm(tom_e1)) {if (tom_is_fun_sym_BQAppl((( tom.engine.adt.code.types.BQTerm )tom_e1))) { tom.engine.adt.code.types.BQTermList  tomMatch5_2=tom_get_slot_BQAppl_Args((( tom.engine.adt.code.types.BQTerm )tom_e1));if (tom_is_fun_sym_concBQTerm(tomMatch5_2)) {if (!(tom_is_empty_concBQTerm_BQTermList(tomMatch5_2))) { tom.engine.adt.code.types.BQTerm  tomMatch5_13=tom_get_head_concBQTerm_BQTermList(tomMatch5_2);if (tom_is_fun_sym_BQAppl(tomMatch5_13)) { tom.engine.adt.tomname.types.TomName  tomMatch5_12=tom_get_slot_BQAppl_AstName(tomMatch5_13);if (tom_is_fun_sym_Name(tomMatch5_12)) {if (tom_is_sort_BQTerm(tom_e2)) {if (tom_is_fun_sym_BQAppl((( tom.engine.adt.code.types.BQTerm )tom_e2))) { tom.engine.adt.code.types.BQTermList  tomMatch5_4=tom_get_slot_BQAppl_Args((( tom.engine.adt.code.types.BQTerm )tom_e2));if (tom_is_fun_sym_concBQTerm(tomMatch5_4)) {if (!(tom_is_empty_concBQTerm_BQTermList(tomMatch5_4))) { tom.engine.adt.code.types.BQTerm  tomMatch5_17=tom_get_head_concBQTerm_BQTermList(tomMatch5_4);if (tom_is_fun_sym_BQAppl(tomMatch5_17)) { tom.engine.adt.tomname.types.TomName  tomMatch5_16=tom_get_slot_BQAppl_AstName(tomMatch5_17);if (tom_is_fun_sym_Name(tomMatch5_16)) {
+      {{if (tom_is_sort_BQTermList(((Object)list))) {if (tom_is_fun_sym_concBQTerm((( tom.engine.adt.code.types.BQTermList )(( tom.engine.adt.code.types.BQTermList )((Object)list))))) {if (tom_is_empty_concBQTerm_BQTermList((( tom.engine.adt.code.types.BQTermList )((Object)list)))) {
+ return list; }}}}{if (tom_is_sort_BQTermList(((Object)list))) {if (tom_is_fun_sym_concBQTerm((( tom.engine.adt.code.types.BQTermList )(( tom.engine.adt.code.types.BQTermList )((Object)list))))) { tom.engine.adt.code.types.BQTermList  tomMatch4__end__6=(( tom.engine.adt.code.types.BQTermList )((Object)list));do {{if (!(tom_is_empty_concBQTerm_BQTermList(tomMatch4__end__6))) { tom.engine.adt.code.types.BQTerm  tom_e1=tom_get_head_concBQTerm_BQTermList(tomMatch4__end__6); tom.engine.adt.code.types.BQTermList  tomMatch4_7=tom_get_tail_concBQTerm_BQTermList(tomMatch4__end__6); tom.engine.adt.code.types.BQTermList  tomMatch4__end__10=tomMatch4_7;do {{if (!(tom_is_empty_concBQTerm_BQTermList(tomMatch4__end__10))) { tom.engine.adt.code.types.BQTerm  tom_e2=tom_get_head_concBQTerm_BQTermList(tomMatch4__end__10);{{if (tom_is_sort_BQTerm(((Object)tom_e1))) {if (tom_is_sort_BQTerm((( tom.engine.adt.code.types.BQTerm )((Object)tom_e1)))) {if (tom_is_fun_sym_BQAppl((( tom.engine.adt.code.types.BQTerm )(( tom.engine.adt.code.types.BQTerm )((Object)tom_e1))))) { tom.engine.adt.code.types.BQTermList  tomMatch5_2=tom_get_slot_BQAppl_Args((( tom.engine.adt.code.types.BQTerm )((Object)tom_e1)));if (tom_is_fun_sym_concBQTerm((( tom.engine.adt.code.types.BQTermList )tomMatch5_2))) {if (!(tom_is_empty_concBQTerm_BQTermList(tomMatch5_2))) { tom.engine.adt.code.types.BQTerm  tomMatch5_15=tom_get_head_concBQTerm_BQTermList(tomMatch5_2);if (tom_is_sort_BQTerm(tomMatch5_15)) {if (tom_is_fun_sym_BQAppl((( tom.engine.adt.code.types.BQTerm )tomMatch5_15))) { tom.engine.adt.tomname.types.TomName  tomMatch5_14=tom_get_slot_BQAppl_AstName(tomMatch5_15);if (tom_is_sort_TomName(tomMatch5_14)) {if (tom_is_fun_sym_Name((( tom.engine.adt.tomname.types.TomName )tomMatch5_14))) {if (tom_is_sort_BQTerm(((Object)tom_e2))) {if (tom_is_sort_BQTerm((( tom.engine.adt.code.types.BQTerm )((Object)tom_e2)))) {if (tom_is_fun_sym_BQAppl((( tom.engine.adt.code.types.BQTerm )(( tom.engine.adt.code.types.BQTerm )((Object)tom_e2))))) { tom.engine.adt.code.types.BQTermList  tomMatch5_5=tom_get_slot_BQAppl_Args((( tom.engine.adt.code.types.BQTerm )((Object)tom_e2)));if (tom_is_fun_sym_concBQTerm((( tom.engine.adt.code.types.BQTermList )tomMatch5_5))) {if (!(tom_is_empty_concBQTerm_BQTermList(tomMatch5_5))) { tom.engine.adt.code.types.BQTerm  tomMatch5_21=tom_get_head_concBQTerm_BQTermList(tomMatch5_5);if (tom_is_sort_BQTerm(tomMatch5_21)) {if (tom_is_fun_sym_BQAppl((( tom.engine.adt.code.types.BQTerm )tomMatch5_21))) { tom.engine.adt.tomname.types.TomName  tomMatch5_20=tom_get_slot_BQAppl_AstName(tomMatch5_21);if (tom_is_sort_TomName(tomMatch5_20)) {if (tom_is_fun_sym_Name((( tom.engine.adt.tomname.types.TomName )tomMatch5_20))) {
 
 
 
 
-              if(tom_get_slot_Name_String(tomMatch5_12).compareTo(tom_get_slot_Name_String(tomMatch5_16)) > 0) {
-                return sortAttributeList(tom_append_list_concBQTerm(tom_get_slice_concBQTerm((( tom.engine.adt.code.types.BQTermList )list),tomMatch4__end__6,tom_empty_list_concBQTerm()),tom_cons_list_concBQTerm(tom_e2,tom_append_list_concBQTerm(tom_get_slice_concBQTerm(tomMatch4_7,tomMatch4__end__10,tom_empty_list_concBQTerm()),tom_cons_list_concBQTerm(tom_e1,tom_append_list_concBQTerm(tom_get_tail_concBQTerm_BQTermList(tomMatch4__end__10),tom_empty_list_concBQTerm()))))));
+              if(tom_get_slot_Name_String(tomMatch5_14).compareTo(tom_get_slot_Name_String(tomMatch5_20)) > 0) {
+                return sortAttributeList(tom_append_list_concBQTerm(tom_get_slice_concBQTerm((( tom.engine.adt.code.types.BQTermList )((Object)list)),tomMatch4__end__6,tom_empty_list_concBQTerm()),tom_cons_list_concBQTerm(tom_e2,tom_append_list_concBQTerm(tom_get_slice_concBQTerm(tomMatch4_7,tomMatch4__end__10,tom_empty_list_concBQTerm()),tom_cons_list_concBQTerm(tom_e1,tom_append_list_concBQTerm(tom_get_tail_concBQTerm_BQTermList(tomMatch4__end__10),tom_empty_list_concBQTerm()))))));
               }
-            }}}}}}}}}}}}}}
+            }}}}}}}}}}}}}}}}}}}}
 
-        }if (tom_is_empty_concBQTerm_BQTermList(tomMatch4__end__10)) {tomMatch4__end__10=tomMatch4_7;} else {tomMatch4__end__10=tom_get_tail_concBQTerm_BQTermList(tomMatch4__end__10);}}} while(!(tom_equal_term_BQTermList(tomMatch4__end__10, tomMatch4_7)));}if (tom_is_empty_concBQTerm_BQTermList(tomMatch4__end__6)) {tomMatch4__end__6=(( tom.engine.adt.code.types.BQTermList )list);} else {tomMatch4__end__6=tom_get_tail_concBQTerm_BQTermList(tomMatch4__end__6);}}} while(!(tom_equal_term_BQTermList(tomMatch4__end__6, (( tom.engine.adt.code.types.BQTermList )list))));}}}}
+        }if (tom_is_empty_concBQTerm_BQTermList(tomMatch4__end__10)) {tomMatch4__end__10=tomMatch4_7;} else {tomMatch4__end__10=tom_get_tail_concBQTerm_BQTermList(tomMatch4__end__10);}}} while(!(tom_equal_term_BQTermList(tomMatch4__end__10, tomMatch4_7)));}if (tom_is_empty_concBQTerm_BQTermList(tomMatch4__end__6)) {tomMatch4__end__6=(( tom.engine.adt.code.types.BQTermList )((Object)list));} else {tomMatch4__end__6=tom_get_tail_concBQTerm_BQTermList(tomMatch4__end__6);}}} while(!(tom_equal_term_BQTermList(tomMatch4__end__6, (( tom.engine.adt.code.types.BQTermList )((Object)list)))));}}}}
 
       return list;
     }

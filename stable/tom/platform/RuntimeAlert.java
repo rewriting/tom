@@ -80,26 +80,26 @@ Alert entry =
 
 {
 {
-if ( (entry instanceof tom.platform.adt.platformalert.types.Alert) ) {
-if ( (warnings instanceof tom.platform.adt.platformalert.types.AlertList) ) {
+if ( (((Object)entry) instanceof tom.platform.adt.platformalert.types.Alert) ) {
+if ( (((Object)warnings) instanceof tom.platform.adt.platformalert.types.AlertList) ) {
 boolean tomMatch700_9= false ;
-if ( (((( tom.platform.adt.platformalert.types.AlertList )warnings) instanceof tom.platform.adt.platformalert.types.alertlist.ConsconcAlert) || ((( tom.platform.adt.platformalert.types.AlertList )warnings) instanceof tom.platform.adt.platformalert.types.alertlist.EmptyconcAlert)) ) {
- tom.platform.adt.platformalert.types.AlertList  tomMatch700__end__5=(( tom.platform.adt.platformalert.types.AlertList )warnings);
+if ( (((( tom.platform.adt.platformalert.types.AlertList )(( tom.platform.adt.platformalert.types.AlertList )((Object)warnings))) instanceof tom.platform.adt.platformalert.types.alertlist.ConsconcAlert) || ((( tom.platform.adt.platformalert.types.AlertList )(( tom.platform.adt.platformalert.types.AlertList )((Object)warnings))) instanceof tom.platform.adt.platformalert.types.alertlist.EmptyconcAlert)) ) {
+ tom.platform.adt.platformalert.types.AlertList  tomMatch700__end__5=(( tom.platform.adt.platformalert.types.AlertList )((Object)warnings));
 do {
 {
 if (!( tomMatch700__end__5.isEmptyconcAlert() )) {
-if ( ((( tom.platform.adt.platformalert.types.Alert )entry)== tomMatch700__end__5.getHeadconcAlert() ) ) {
+if ( ((( tom.platform.adt.platformalert.types.Alert )((Object)entry))== tomMatch700__end__5.getHeadconcAlert() ) ) {
 tomMatch700_9= true ;
 }
 }
 if ( tomMatch700__end__5.isEmptyconcAlert() ) {
-tomMatch700__end__5=(( tom.platform.adt.platformalert.types.AlertList )warnings);
+tomMatch700__end__5=(( tom.platform.adt.platformalert.types.AlertList )((Object)warnings));
 } else {
 tomMatch700__end__5= tomMatch700__end__5.getTailconcAlert() ;
 }
 
 }
-} while(!( (tomMatch700__end__5==(( tom.platform.adt.platformalert.types.AlertList )warnings)) ));
+} while(!( (tomMatch700__end__5==(( tom.platform.adt.platformalert.types.AlertList )((Object)warnings))) ));
 }
 if (!(tomMatch700_9)) {
 
@@ -128,26 +128,26 @@ Alert entry =
 
 {
 {
-if ( (entry instanceof tom.platform.adt.platformalert.types.Alert) ) {
-if ( (errors instanceof tom.platform.adt.platformalert.types.AlertList) ) {
+if ( (((Object)entry) instanceof tom.platform.adt.platformalert.types.Alert) ) {
+if ( (((Object)errors) instanceof tom.platform.adt.platformalert.types.AlertList) ) {
 boolean tomMatch701_9= false ;
-if ( (((( tom.platform.adt.platformalert.types.AlertList )errors) instanceof tom.platform.adt.platformalert.types.alertlist.ConsconcAlert) || ((( tom.platform.adt.platformalert.types.AlertList )errors) instanceof tom.platform.adt.platformalert.types.alertlist.EmptyconcAlert)) ) {
- tom.platform.adt.platformalert.types.AlertList  tomMatch701__end__5=(( tom.platform.adt.platformalert.types.AlertList )errors);
+if ( (((( tom.platform.adt.platformalert.types.AlertList )(( tom.platform.adt.platformalert.types.AlertList )((Object)errors))) instanceof tom.platform.adt.platformalert.types.alertlist.ConsconcAlert) || ((( tom.platform.adt.platformalert.types.AlertList )(( tom.platform.adt.platformalert.types.AlertList )((Object)errors))) instanceof tom.platform.adt.platformalert.types.alertlist.EmptyconcAlert)) ) {
+ tom.platform.adt.platformalert.types.AlertList  tomMatch701__end__5=(( tom.platform.adt.platformalert.types.AlertList )((Object)errors));
 do {
 {
 if (!( tomMatch701__end__5.isEmptyconcAlert() )) {
-if ( ((( tom.platform.adt.platformalert.types.Alert )entry)== tomMatch701__end__5.getHeadconcAlert() ) ) {
+if ( ((( tom.platform.adt.platformalert.types.Alert )((Object)entry))== tomMatch701__end__5.getHeadconcAlert() ) ) {
 tomMatch701_9= true ;
 }
 }
 if ( tomMatch701__end__5.isEmptyconcAlert() ) {
-tomMatch701__end__5=(( tom.platform.adt.platformalert.types.AlertList )errors);
+tomMatch701__end__5=(( tom.platform.adt.platformalert.types.AlertList )((Object)errors));
 } else {
 tomMatch701__end__5= tomMatch701__end__5.getTailconcAlert() ;
 }
 
 }
-} while(!( (tomMatch701__end__5==(( tom.platform.adt.platformalert.types.AlertList )errors)) ));
+} while(!( (tomMatch701__end__5==(( tom.platform.adt.platformalert.types.AlertList )((Object)errors))) ));
 }
 if (!(tomMatch701_9)) {
 

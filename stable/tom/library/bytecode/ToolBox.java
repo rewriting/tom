@@ -364,9 +364,9 @@ map.put(accessObj[i],accessFlags[i]);
 
 {
 {
-if ( (list instanceof tom.library.adt.bytecode.types.AccessList) ) {
-if ( (((( tom.library.adt.bytecode.types.AccessList )list) instanceof tom.library.adt.bytecode.types.accesslist.ConsAccessList) || ((( tom.library.adt.bytecode.types.AccessList )list) instanceof tom.library.adt.bytecode.types.accesslist.EmptyAccessList)) ) {
- tom.library.adt.bytecode.types.AccessList  tomMatch684__end__4=(( tom.library.adt.bytecode.types.AccessList )list);
+if ( (((Object)list) instanceof tom.library.adt.bytecode.types.AccessList) ) {
+if ( (((( tom.library.adt.bytecode.types.AccessList )(( tom.library.adt.bytecode.types.AccessList )((Object)list))) instanceof tom.library.adt.bytecode.types.accesslist.ConsAccessList) || ((( tom.library.adt.bytecode.types.AccessList )(( tom.library.adt.bytecode.types.AccessList )((Object)list))) instanceof tom.library.adt.bytecode.types.accesslist.EmptyAccessList)) ) {
+ tom.library.adt.bytecode.types.AccessList  tomMatch684__end__4=(( tom.library.adt.bytecode.types.AccessList )((Object)list));
 do {
 {
 if (!( tomMatch684__end__4.isEmptyAccessList() )) {
@@ -377,13 +377,13 @@ value = value | (map.get(
 
 }
 if ( tomMatch684__end__4.isEmptyAccessList() ) {
-tomMatch684__end__4=(( tom.library.adt.bytecode.types.AccessList )list);
+tomMatch684__end__4=(( tom.library.adt.bytecode.types.AccessList )((Object)list));
 } else {
 tomMatch684__end__4= tomMatch684__end__4.getTailAccessList() ;
 }
 
 }
-} while(!( (tomMatch684__end__4==(( tom.library.adt.bytecode.types.AccessList )list)) ));
+} while(!( (tomMatch684__end__4==(( tom.library.adt.bytecode.types.AccessList )((Object)list))) ));
 }
 }
 
@@ -399,11 +399,13 @@ String sig = null;
 
 {
 {
-if ( (signature instanceof tom.library.adt.bytecode.types.Signature) ) {
-if ( ((( tom.library.adt.bytecode.types.Signature )signature) instanceof tom.library.adt.bytecode.types.signature.Signature) ) {
+if ( (((Object)signature) instanceof tom.library.adt.bytecode.types.Signature) ) {
+if ( ((( tom.library.adt.bytecode.types.Signature )((Object)signature)) instanceof tom.library.adt.bytecode.types.Signature) ) {
+if ( ((( tom.library.adt.bytecode.types.Signature )(( tom.library.adt.bytecode.types.Signature )((Object)signature))) instanceof tom.library.adt.bytecode.types.signature.Signature) ) {
 sig=
- (( tom.library.adt.bytecode.types.Signature )signature).getsig() ;
+ (( tom.library.adt.bytecode.types.Signature )((Object)signature)).getsig() ;
 
+}
 }
 }
 
@@ -442,51 +444,61 @@ public static Object buildConstant(Value value) {
 
 {
 {
-if ( (value instanceof tom.library.adt.bytecode.types.Value) ) {
-if ( ((( tom.library.adt.bytecode.types.Value )value) instanceof tom.library.adt.bytecode.types.value.StringValue) ) {
+if ( (((Object)value) instanceof tom.library.adt.bytecode.types.Value) ) {
+if ( ((( tom.library.adt.bytecode.types.Value )((Object)value)) instanceof tom.library.adt.bytecode.types.Value) ) {
+if ( ((( tom.library.adt.bytecode.types.Value )(( tom.library.adt.bytecode.types.Value )((Object)value))) instanceof tom.library.adt.bytecode.types.value.StringValue) ) {
 return 
- (( tom.library.adt.bytecode.types.Value )value).gets() ;
+ (( tom.library.adt.bytecode.types.Value )((Object)value)).gets() ;
 
+}
 }
 }
 
 }
 {
-if ( (value instanceof tom.library.adt.bytecode.types.Value) ) {
-if ( ((( tom.library.adt.bytecode.types.Value )value) instanceof tom.library.adt.bytecode.types.value.IntValue) ) {
+if ( (((Object)value) instanceof tom.library.adt.bytecode.types.Value) ) {
+if ( ((( tom.library.adt.bytecode.types.Value )((Object)value)) instanceof tom.library.adt.bytecode.types.Value) ) {
+if ( ((( tom.library.adt.bytecode.types.Value )(( tom.library.adt.bytecode.types.Value )((Object)value))) instanceof tom.library.adt.bytecode.types.value.IntValue) ) {
 return Integer.valueOf(
- (( tom.library.adt.bytecode.types.Value )value).geti() );
+ (( tom.library.adt.bytecode.types.Value )((Object)value)).geti() );
 
+}
 }
 }
 
 }
 {
-if ( (value instanceof tom.library.adt.bytecode.types.Value) ) {
-if ( ((( tom.library.adt.bytecode.types.Value )value) instanceof tom.library.adt.bytecode.types.value.LongValue) ) {
+if ( (((Object)value) instanceof tom.library.adt.bytecode.types.Value) ) {
+if ( ((( tom.library.adt.bytecode.types.Value )((Object)value)) instanceof tom.library.adt.bytecode.types.Value) ) {
+if ( ((( tom.library.adt.bytecode.types.Value )(( tom.library.adt.bytecode.types.Value )((Object)value))) instanceof tom.library.adt.bytecode.types.value.LongValue) ) {
 return Long.valueOf(
- (( tom.library.adt.bytecode.types.Value )value).getl() );
+ (( tom.library.adt.bytecode.types.Value )((Object)value)).getl() );
 
+}
 }
 }
 
 }
 {
-if ( (value instanceof tom.library.adt.bytecode.types.Value) ) {
-if ( ((( tom.library.adt.bytecode.types.Value )value) instanceof tom.library.adt.bytecode.types.value.FloatValue) ) {
+if ( (((Object)value) instanceof tom.library.adt.bytecode.types.Value) ) {
+if ( ((( tom.library.adt.bytecode.types.Value )((Object)value)) instanceof tom.library.adt.bytecode.types.Value) ) {
+if ( ((( tom.library.adt.bytecode.types.Value )(( tom.library.adt.bytecode.types.Value )((Object)value))) instanceof tom.library.adt.bytecode.types.value.FloatValue) ) {
 return new Float(
- (( tom.library.adt.bytecode.types.Value )value).getf() );
+ (( tom.library.adt.bytecode.types.Value )((Object)value)).getf() );
 
+}
 }
 }
 
 }
 {
-if ( (value instanceof tom.library.adt.bytecode.types.Value) ) {
-if ( ((( tom.library.adt.bytecode.types.Value )value) instanceof tom.library.adt.bytecode.types.value.DoubleValue) ) {
+if ( (((Object)value) instanceof tom.library.adt.bytecode.types.Value) ) {
+if ( ((( tom.library.adt.bytecode.types.Value )((Object)value)) instanceof tom.library.adt.bytecode.types.Value) ) {
+if ( ((( tom.library.adt.bytecode.types.Value )(( tom.library.adt.bytecode.types.Value )((Object)value))) instanceof tom.library.adt.bytecode.types.value.DoubleValue) ) {
 return new Double(
- (( tom.library.adt.bytecode.types.Value )value).getd() );
+ (( tom.library.adt.bytecode.types.Value )((Object)value)).getd() );
 
+}
 }
 }
 
@@ -756,15 +768,17 @@ public  tom.library.adt.bytecode.types.ReturnDescriptor  visit_ReturnDescriptor(
  throws tom.library.sl.VisitFailure {
 {
 {
-if ( (tom__arg instanceof tom.library.adt.bytecode.types.ReturnDescriptor) ) {
+if ( (((Object)tom__arg) instanceof tom.library.adt.bytecode.types.ReturnDescriptor) ) {
 sb.append(')'); 
 }
 
 }
 {
-if ( (tom__arg instanceof tom.library.adt.bytecode.types.ReturnDescriptor) ) {
-if ( ((( tom.library.adt.bytecode.types.ReturnDescriptor )tom__arg) instanceof tom.library.adt.bytecode.types.returndescriptor.Void) ) {
+if ( (((Object)tom__arg) instanceof tom.library.adt.bytecode.types.ReturnDescriptor) ) {
+if ( ((( tom.library.adt.bytecode.types.ReturnDescriptor )((Object)tom__arg)) instanceof tom.library.adt.bytecode.types.ReturnDescriptor) ) {
+if ( ((( tom.library.adt.bytecode.types.ReturnDescriptor )(( tom.library.adt.bytecode.types.ReturnDescriptor )((Object)tom__arg))) instanceof tom.library.adt.bytecode.types.returndescriptor.Void) ) {
 sb.append('V'); 
+}
 }
 }
 
@@ -780,7 +794,7 @@ public  tom.library.adt.bytecode.types.MethodDescriptor  visit_MethodDescriptor(
  throws tom.library.sl.VisitFailure {
 {
 {
-if ( (tom__arg instanceof tom.library.adt.bytecode.types.MethodDescriptor) ) {
+if ( (((Object)tom__arg) instanceof tom.library.adt.bytecode.types.MethodDescriptor) ) {
 sb.append('('); 
 }
 
@@ -795,83 +809,103 @@ public  tom.library.adt.bytecode.types.FieldDescriptor  visit_FieldDescriptor( t
  throws tom.library.sl.VisitFailure {
 {
 {
-if ( (tom__arg instanceof tom.library.adt.bytecode.types.FieldDescriptor) ) {
-if ( ((( tom.library.adt.bytecode.types.FieldDescriptor )tom__arg) instanceof tom.library.adt.bytecode.types.fielddescriptor.ObjectType) ) {
+if ( (((Object)tom__arg) instanceof tom.library.adt.bytecode.types.FieldDescriptor) ) {
+if ( ((( tom.library.adt.bytecode.types.FieldDescriptor )((Object)tom__arg)) instanceof tom.library.adt.bytecode.types.FieldDescriptor) ) {
+if ( ((( tom.library.adt.bytecode.types.FieldDescriptor )(( tom.library.adt.bytecode.types.FieldDescriptor )((Object)tom__arg))) instanceof tom.library.adt.bytecode.types.fielddescriptor.ObjectType) ) {
 sb.append("L" + 
- (( tom.library.adt.bytecode.types.FieldDescriptor )tom__arg).getclassName() + ";"); 
+ (( tom.library.adt.bytecode.types.FieldDescriptor )((Object)tom__arg)).getclassName() + ";"); 
 
+}
 }
 }
 
 }
 {
-if ( (tom__arg instanceof tom.library.adt.bytecode.types.FieldDescriptor) ) {
-if ( ((( tom.library.adt.bytecode.types.FieldDescriptor )tom__arg) instanceof tom.library.adt.bytecode.types.fielddescriptor.ArrayType) ) {
+if ( (((Object)tom__arg) instanceof tom.library.adt.bytecode.types.FieldDescriptor) ) {
+if ( ((( tom.library.adt.bytecode.types.FieldDescriptor )((Object)tom__arg)) instanceof tom.library.adt.bytecode.types.FieldDescriptor) ) {
+if ( ((( tom.library.adt.bytecode.types.FieldDescriptor )(( tom.library.adt.bytecode.types.FieldDescriptor )((Object)tom__arg))) instanceof tom.library.adt.bytecode.types.fielddescriptor.ArrayType) ) {
 sb.append('['); 
 }
 }
+}
 
 }
 {
-if ( (tom__arg instanceof tom.library.adt.bytecode.types.FieldDescriptor) ) {
-if ( ((( tom.library.adt.bytecode.types.FieldDescriptor )tom__arg) instanceof tom.library.adt.bytecode.types.fielddescriptor.B) ) {
+if ( (((Object)tom__arg) instanceof tom.library.adt.bytecode.types.FieldDescriptor) ) {
+if ( ((( tom.library.adt.bytecode.types.FieldDescriptor )((Object)tom__arg)) instanceof tom.library.adt.bytecode.types.FieldDescriptor) ) {
+if ( ((( tom.library.adt.bytecode.types.FieldDescriptor )(( tom.library.adt.bytecode.types.FieldDescriptor )((Object)tom__arg))) instanceof tom.library.adt.bytecode.types.fielddescriptor.B) ) {
 sb.append('B'); 
 }
 }
+}
 
 }
 {
-if ( (tom__arg instanceof tom.library.adt.bytecode.types.FieldDescriptor) ) {
-if ( ((( tom.library.adt.bytecode.types.FieldDescriptor )tom__arg) instanceof tom.library.adt.bytecode.types.fielddescriptor.C) ) {
+if ( (((Object)tom__arg) instanceof tom.library.adt.bytecode.types.FieldDescriptor) ) {
+if ( ((( tom.library.adt.bytecode.types.FieldDescriptor )((Object)tom__arg)) instanceof tom.library.adt.bytecode.types.FieldDescriptor) ) {
+if ( ((( tom.library.adt.bytecode.types.FieldDescriptor )(( tom.library.adt.bytecode.types.FieldDescriptor )((Object)tom__arg))) instanceof tom.library.adt.bytecode.types.fielddescriptor.C) ) {
 sb.append('C'); 
 }
 }
+}
 
 }
 {
-if ( (tom__arg instanceof tom.library.adt.bytecode.types.FieldDescriptor) ) {
-if ( ((( tom.library.adt.bytecode.types.FieldDescriptor )tom__arg) instanceof tom.library.adt.bytecode.types.fielddescriptor.D) ) {
+if ( (((Object)tom__arg) instanceof tom.library.adt.bytecode.types.FieldDescriptor) ) {
+if ( ((( tom.library.adt.bytecode.types.FieldDescriptor )((Object)tom__arg)) instanceof tom.library.adt.bytecode.types.FieldDescriptor) ) {
+if ( ((( tom.library.adt.bytecode.types.FieldDescriptor )(( tom.library.adt.bytecode.types.FieldDescriptor )((Object)tom__arg))) instanceof tom.library.adt.bytecode.types.fielddescriptor.D) ) {
 sb.append('D'); 
 }
 }
+}
 
 }
 {
-if ( (tom__arg instanceof tom.library.adt.bytecode.types.FieldDescriptor) ) {
-if ( ((( tom.library.adt.bytecode.types.FieldDescriptor )tom__arg) instanceof tom.library.adt.bytecode.types.fielddescriptor.F) ) {
+if ( (((Object)tom__arg) instanceof tom.library.adt.bytecode.types.FieldDescriptor) ) {
+if ( ((( tom.library.adt.bytecode.types.FieldDescriptor )((Object)tom__arg)) instanceof tom.library.adt.bytecode.types.FieldDescriptor) ) {
+if ( ((( tom.library.adt.bytecode.types.FieldDescriptor )(( tom.library.adt.bytecode.types.FieldDescriptor )((Object)tom__arg))) instanceof tom.library.adt.bytecode.types.fielddescriptor.F) ) {
 sb.append('F'); 
 }
 }
+}
 
 }
 {
-if ( (tom__arg instanceof tom.library.adt.bytecode.types.FieldDescriptor) ) {
-if ( ((( tom.library.adt.bytecode.types.FieldDescriptor )tom__arg) instanceof tom.library.adt.bytecode.types.fielddescriptor.I) ) {
+if ( (((Object)tom__arg) instanceof tom.library.adt.bytecode.types.FieldDescriptor) ) {
+if ( ((( tom.library.adt.bytecode.types.FieldDescriptor )((Object)tom__arg)) instanceof tom.library.adt.bytecode.types.FieldDescriptor) ) {
+if ( ((( tom.library.adt.bytecode.types.FieldDescriptor )(( tom.library.adt.bytecode.types.FieldDescriptor )((Object)tom__arg))) instanceof tom.library.adt.bytecode.types.fielddescriptor.I) ) {
 sb.append('I'); 
 }
 }
+}
 
 }
 {
-if ( (tom__arg instanceof tom.library.adt.bytecode.types.FieldDescriptor) ) {
-if ( ((( tom.library.adt.bytecode.types.FieldDescriptor )tom__arg) instanceof tom.library.adt.bytecode.types.fielddescriptor.J) ) {
+if ( (((Object)tom__arg) instanceof tom.library.adt.bytecode.types.FieldDescriptor) ) {
+if ( ((( tom.library.adt.bytecode.types.FieldDescriptor )((Object)tom__arg)) instanceof tom.library.adt.bytecode.types.FieldDescriptor) ) {
+if ( ((( tom.library.adt.bytecode.types.FieldDescriptor )(( tom.library.adt.bytecode.types.FieldDescriptor )((Object)tom__arg))) instanceof tom.library.adt.bytecode.types.fielddescriptor.J) ) {
 sb.append('J'); 
 }
 }
+}
 
 }
 {
-if ( (tom__arg instanceof tom.library.adt.bytecode.types.FieldDescriptor) ) {
-if ( ((( tom.library.adt.bytecode.types.FieldDescriptor )tom__arg) instanceof tom.library.adt.bytecode.types.fielddescriptor.S) ) {
+if ( (((Object)tom__arg) instanceof tom.library.adt.bytecode.types.FieldDescriptor) ) {
+if ( ((( tom.library.adt.bytecode.types.FieldDescriptor )((Object)tom__arg)) instanceof tom.library.adt.bytecode.types.FieldDescriptor) ) {
+if ( ((( tom.library.adt.bytecode.types.FieldDescriptor )(( tom.library.adt.bytecode.types.FieldDescriptor )((Object)tom__arg))) instanceof tom.library.adt.bytecode.types.fielddescriptor.S) ) {
 sb.append('S'); 
 }
 }
+}
 
 }
 {
-if ( (tom__arg instanceof tom.library.adt.bytecode.types.FieldDescriptor) ) {
-if ( ((( tom.library.adt.bytecode.types.FieldDescriptor )tom__arg) instanceof tom.library.adt.bytecode.types.fielddescriptor.Z) ) {
+if ( (((Object)tom__arg) instanceof tom.library.adt.bytecode.types.FieldDescriptor) ) {
+if ( ((( tom.library.adt.bytecode.types.FieldDescriptor )((Object)tom__arg)) instanceof tom.library.adt.bytecode.types.FieldDescriptor) ) {
+if ( ((( tom.library.adt.bytecode.types.FieldDescriptor )(( tom.library.adt.bytecode.types.FieldDescriptor )((Object)tom__arg))) instanceof tom.library.adt.bytecode.types.fielddescriptor.Z) ) {
 sb.append('Z'); 
+}
 }
 }
 

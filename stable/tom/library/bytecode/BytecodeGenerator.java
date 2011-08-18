@@ -194,14 +194,16 @@ public byte[] toByteArray(){
 
 {
 {
-if ( (ast instanceof tom.library.adt.bytecode.types.ClassNode) ) {
-if ( ((( tom.library.adt.bytecode.types.ClassNode )ast) instanceof tom.library.adt.bytecode.types.classnode.Class) ) {
- tom.library.adt.bytecode.types.ClassInfo  tomMatch653_1= (( tom.library.adt.bytecode.types.ClassNode )ast).getinfo() ;
-if ( (tomMatch653_1 instanceof tom.library.adt.bytecode.types.classinfo.ClassInfo) ) {
+if ( (((Object)ast) instanceof tom.library.adt.bytecode.types.ClassNode) ) {
+if ( ((( tom.library.adt.bytecode.types.ClassNode )((Object)ast)) instanceof tom.library.adt.bytecode.types.ClassNode) ) {
+if ( ((( tom.library.adt.bytecode.types.ClassNode )(( tom.library.adt.bytecode.types.ClassNode )((Object)ast))) instanceof tom.library.adt.bytecode.types.classnode.Class) ) {
+ tom.library.adt.bytecode.types.ClassInfo  tomMatch653_1= (( tom.library.adt.bytecode.types.ClassNode )((Object)ast)).getinfo() ;
+if ( (tomMatch653_1 instanceof tom.library.adt.bytecode.types.ClassInfo) ) {
+if ( ((( tom.library.adt.bytecode.types.ClassInfo )tomMatch653_1) instanceof tom.library.adt.bytecode.types.classinfo.ClassInfo) ) {
  tom.library.adt.bytecode.types.InnerClassInfoList  tom_innerClasses= tomMatch653_1.getinnerClasses() ;
  tom.library.adt.bytecode.types.OuterClassInfo  tom_outerClass= tomMatch653_1.getouterClass() ;
- tom.library.adt.bytecode.types.FieldList  tom_fields= (( tom.library.adt.bytecode.types.ClassNode )ast).getfields() ;
- tom.library.adt.bytecode.types.MethodList  tom_methods= (( tom.library.adt.bytecode.types.ClassNode )ast).getmethods() ;
+ tom.library.adt.bytecode.types.FieldList  tom_fields= (( tom.library.adt.bytecode.types.ClassNode )((Object)ast)).getfields() ;
+ tom.library.adt.bytecode.types.MethodList  tom_methods= (( tom.library.adt.bytecode.types.ClassNode )((Object)ast)).getmethods() ;
 
 
 // bytecode for the header
@@ -218,25 +220,27 @@ visit(V1_1, ToolBox.buildAccessValue(
 
 {
 {
-if ( (tom_innerClasses instanceof tom.library.adt.bytecode.types.InnerClassInfoList) ) {
-if ( (((( tom.library.adt.bytecode.types.InnerClassInfoList )tom_innerClasses) instanceof tom.library.adt.bytecode.types.innerclassinfolist.ConsInnerClassInfoList) || ((( tom.library.adt.bytecode.types.InnerClassInfoList )tom_innerClasses) instanceof tom.library.adt.bytecode.types.innerclassinfolist.EmptyInnerClassInfoList)) ) {
- tom.library.adt.bytecode.types.InnerClassInfoList  tomMatch654__end__4=(( tom.library.adt.bytecode.types.InnerClassInfoList )tom_innerClasses);
+if ( (((Object)tom_innerClasses) instanceof tom.library.adt.bytecode.types.InnerClassInfoList) ) {
+if ( (((( tom.library.adt.bytecode.types.InnerClassInfoList )(( tom.library.adt.bytecode.types.InnerClassInfoList )((Object)tom_innerClasses))) instanceof tom.library.adt.bytecode.types.innerclassinfolist.ConsInnerClassInfoList) || ((( tom.library.adt.bytecode.types.InnerClassInfoList )(( tom.library.adt.bytecode.types.InnerClassInfoList )((Object)tom_innerClasses))) instanceof tom.library.adt.bytecode.types.innerclassinfolist.EmptyInnerClassInfoList)) ) {
+ tom.library.adt.bytecode.types.InnerClassInfoList  tomMatch654__end__4=(( tom.library.adt.bytecode.types.InnerClassInfoList )((Object)tom_innerClasses));
 do {
 {
 if (!( tomMatch654__end__4.isEmptyInnerClassInfoList() )) {
  tom.library.adt.bytecode.types.InnerClassInfo  tom_innerClass= tomMatch654__end__4.getHeadInnerClassInfoList() ;
 {
 {
-if ( (tom_innerClass instanceof tom.library.adt.bytecode.types.InnerClassInfo) ) {
-if ( ((( tom.library.adt.bytecode.types.InnerClassInfo )tom_innerClass) instanceof tom.library.adt.bytecode.types.innerclassinfo.InnerClassInfo) ) {
+if ( (((Object)tom_innerClass) instanceof tom.library.adt.bytecode.types.InnerClassInfo) ) {
+if ( ((( tom.library.adt.bytecode.types.InnerClassInfo )((Object)tom_innerClass)) instanceof tom.library.adt.bytecode.types.InnerClassInfo) ) {
+if ( ((( tom.library.adt.bytecode.types.InnerClassInfo )(( tom.library.adt.bytecode.types.InnerClassInfo )((Object)tom_innerClass))) instanceof tom.library.adt.bytecode.types.innerclassinfo.InnerClassInfo) ) {
 
 visitInnerClass(
- (( tom.library.adt.bytecode.types.InnerClassInfo )tom_innerClass).getname() ,
- (( tom.library.adt.bytecode.types.InnerClassInfo )tom_innerClass).getouterName() ,
- (( tom.library.adt.bytecode.types.InnerClassInfo )tom_innerClass).getinnerName() ,ToolBox.buildAccessValue(
- (( tom.library.adt.bytecode.types.InnerClassInfo )tom_innerClass).getaccess() ));
+ (( tom.library.adt.bytecode.types.InnerClassInfo )((Object)tom_innerClass)).getname() ,
+ (( tom.library.adt.bytecode.types.InnerClassInfo )((Object)tom_innerClass)).getouterName() ,
+ (( tom.library.adt.bytecode.types.InnerClassInfo )((Object)tom_innerClass)).getinnerName() ,ToolBox.buildAccessValue(
+ (( tom.library.adt.bytecode.types.InnerClassInfo )((Object)tom_innerClass)).getaccess() ));
 
 
+}
 }
 }
 
@@ -248,13 +252,13 @@ visitInnerClass(
 
 }
 if ( tomMatch654__end__4.isEmptyInnerClassInfoList() ) {
-tomMatch654__end__4=(( tom.library.adt.bytecode.types.InnerClassInfoList )tom_innerClasses);
+tomMatch654__end__4=(( tom.library.adt.bytecode.types.InnerClassInfoList )((Object)tom_innerClasses));
 } else {
 tomMatch654__end__4= tomMatch654__end__4.getTailInnerClassInfoList() ;
 }
 
 }
-} while(!( (tomMatch654__end__4==(( tom.library.adt.bytecode.types.InnerClassInfoList )tom_innerClasses)) ));
+} while(!( (tomMatch654__end__4==(( tom.library.adt.bytecode.types.InnerClassInfoList )((Object)tom_innerClasses))) ));
 }
 }
 
@@ -268,15 +272,17 @@ tomMatch654__end__4= tomMatch654__end__4.getTailInnerClassInfoList() ;
 
 {
 {
-if ( (tom_outerClass instanceof tom.library.adt.bytecode.types.OuterClassInfo) ) {
-if ( ((( tom.library.adt.bytecode.types.OuterClassInfo )tom_outerClass) instanceof tom.library.adt.bytecode.types.outerclassinfo.OuterClassInfo) ) {
+if ( (((Object)tom_outerClass) instanceof tom.library.adt.bytecode.types.OuterClassInfo) ) {
+if ( ((( tom.library.adt.bytecode.types.OuterClassInfo )((Object)tom_outerClass)) instanceof tom.library.adt.bytecode.types.OuterClassInfo) ) {
+if ( ((( tom.library.adt.bytecode.types.OuterClassInfo )(( tom.library.adt.bytecode.types.OuterClassInfo )((Object)tom_outerClass))) instanceof tom.library.adt.bytecode.types.outerclassinfo.OuterClassInfo) ) {
 
 visitOuterClass(
- (( tom.library.adt.bytecode.types.OuterClassInfo )tom_outerClass).getowner() ,
- (( tom.library.adt.bytecode.types.OuterClassInfo )tom_outerClass).getname() ,ToolBox.buildDescriptor(
- (( tom.library.adt.bytecode.types.OuterClassInfo )tom_outerClass).getdesc() ));
+ (( tom.library.adt.bytecode.types.OuterClassInfo )((Object)tom_outerClass)).getowner() ,
+ (( tom.library.adt.bytecode.types.OuterClassInfo )((Object)tom_outerClass)).getname() ,ToolBox.buildDescriptor(
+ (( tom.library.adt.bytecode.types.OuterClassInfo )((Object)tom_outerClass)).getdesc() ));
 
 
+}
 }
 }
 
@@ -290,28 +296,30 @@ visitOuterClass(
 
 {
 {
-if ( (tom_fields instanceof tom.library.adt.bytecode.types.FieldList) ) {
-if ( (((( tom.library.adt.bytecode.types.FieldList )tom_fields) instanceof tom.library.adt.bytecode.types.fieldlist.ConsFieldList) || ((( tom.library.adt.bytecode.types.FieldList )tom_fields) instanceof tom.library.adt.bytecode.types.fieldlist.EmptyFieldList)) ) {
- tom.library.adt.bytecode.types.FieldList  tomMatch657__end__4=(( tom.library.adt.bytecode.types.FieldList )tom_fields);
+if ( (((Object)tom_fields) instanceof tom.library.adt.bytecode.types.FieldList) ) {
+if ( (((( tom.library.adt.bytecode.types.FieldList )(( tom.library.adt.bytecode.types.FieldList )((Object)tom_fields))) instanceof tom.library.adt.bytecode.types.fieldlist.ConsFieldList) || ((( tom.library.adt.bytecode.types.FieldList )(( tom.library.adt.bytecode.types.FieldList )((Object)tom_fields))) instanceof tom.library.adt.bytecode.types.fieldlist.EmptyFieldList)) ) {
+ tom.library.adt.bytecode.types.FieldList  tomMatch657__end__4=(( tom.library.adt.bytecode.types.FieldList )((Object)tom_fields));
 do {
 {
 if (!( tomMatch657__end__4.isEmptyFieldList() )) {
  tom.library.adt.bytecode.types.Field  tom_field= tomMatch657__end__4.getHeadFieldList() ;
 {
 {
-if ( (tom_field instanceof tom.library.adt.bytecode.types.Field) ) {
-if ( ((( tom.library.adt.bytecode.types.Field )tom_field) instanceof tom.library.adt.bytecode.types.field.Field) ) {
+if ( (((Object)tom_field) instanceof tom.library.adt.bytecode.types.Field) ) {
+if ( ((( tom.library.adt.bytecode.types.Field )((Object)tom_field)) instanceof tom.library.adt.bytecode.types.Field) ) {
+if ( ((( tom.library.adt.bytecode.types.Field )(( tom.library.adt.bytecode.types.Field )((Object)tom_field))) instanceof tom.library.adt.bytecode.types.field.Field) ) {
 
 FieldVisitor fw = visitField(ToolBox.buildAccessValue(
- (( tom.library.adt.bytecode.types.Field )tom_field).getaccess() ),
- (( tom.library.adt.bytecode.types.Field )tom_field).getname() ,ToolBox.buildDescriptor(
- (( tom.library.adt.bytecode.types.Field )tom_field).getdesc() ),ToolBox.buildSignature(
- (( tom.library.adt.bytecode.types.Field )tom_field).getsignature() ),ToolBox.buildConstant(
- (( tom.library.adt.bytecode.types.Field )tom_field).getvalue() ));
+ (( tom.library.adt.bytecode.types.Field )((Object)tom_field)).getaccess() ),
+ (( tom.library.adt.bytecode.types.Field )((Object)tom_field)).getname() ,ToolBox.buildDescriptor(
+ (( tom.library.adt.bytecode.types.Field )((Object)tom_field)).getdesc() ),ToolBox.buildSignature(
+ (( tom.library.adt.bytecode.types.Field )((Object)tom_field)).getsignature() ),ToolBox.buildConstant(
+ (( tom.library.adt.bytecode.types.Field )((Object)tom_field)).getvalue() ));
 // we do not visit the annotations and attributes
 fw.visitEnd(); 
 
 
+}
 }
 }
 
@@ -323,13 +331,13 @@ fw.visitEnd();
 
 }
 if ( tomMatch657__end__4.isEmptyFieldList() ) {
-tomMatch657__end__4=(( tom.library.adt.bytecode.types.FieldList )tom_fields);
+tomMatch657__end__4=(( tom.library.adt.bytecode.types.FieldList )((Object)tom_fields));
 } else {
 tomMatch657__end__4= tomMatch657__end__4.getTailFieldList() ;
 }
 
 }
-} while(!( (tomMatch657__end__4==(( tom.library.adt.bytecode.types.FieldList )tom_fields)) ));
+} while(!( (tomMatch657__end__4==(( tom.library.adt.bytecode.types.FieldList )((Object)tom_fields))) ));
 }
 }
 
@@ -343,9 +351,9 @@ tomMatch657__end__4= tomMatch657__end__4.getTailFieldList() ;
 
 {
 {
-if ( (tom_methods instanceof tom.library.adt.bytecode.types.MethodList) ) {
-if ( (((( tom.library.adt.bytecode.types.MethodList )tom_methods) instanceof tom.library.adt.bytecode.types.methodlist.ConsMethodList) || ((( tom.library.adt.bytecode.types.MethodList )tom_methods) instanceof tom.library.adt.bytecode.types.methodlist.EmptyMethodList)) ) {
- tom.library.adt.bytecode.types.MethodList  tomMatch659__end__4=(( tom.library.adt.bytecode.types.MethodList )tom_methods);
+if ( (((Object)tom_methods) instanceof tom.library.adt.bytecode.types.MethodList) ) {
+if ( (((( tom.library.adt.bytecode.types.MethodList )(( tom.library.adt.bytecode.types.MethodList )((Object)tom_methods))) instanceof tom.library.adt.bytecode.types.methodlist.ConsMethodList) || ((( tom.library.adt.bytecode.types.MethodList )(( tom.library.adt.bytecode.types.MethodList )((Object)tom_methods))) instanceof tom.library.adt.bytecode.types.methodlist.EmptyMethodList)) ) {
+ tom.library.adt.bytecode.types.MethodList  tomMatch659__end__4=(( tom.library.adt.bytecode.types.MethodList )((Object)tom_methods));
 do {
 {
 if (!( tomMatch659__end__4.isEmptyMethodList() )) {
@@ -355,12 +363,15 @@ MethodVisitor methodVisitor;
 
 {
 {
-if ( (tom_method instanceof tom.library.adt.bytecode.types.Method) ) {
-if ( ((( tom.library.adt.bytecode.types.Method )tom_method) instanceof tom.library.adt.bytecode.types.method.Method) ) {
- tom.library.adt.bytecode.types.MethodInfo  tomMatch660_1= (( tom.library.adt.bytecode.types.Method )tom_method).getinfo() ;
- tom.library.adt.bytecode.types.MethodCode  tomMatch660_2= (( tom.library.adt.bytecode.types.Method )tom_method).getcode() ;
-if ( (tomMatch660_1 instanceof tom.library.adt.bytecode.types.methodinfo.MethodInfo) ) {
-if ( (tomMatch660_2 instanceof tom.library.adt.bytecode.types.methodcode.MethodCode) ) {
+if ( (((Object)tom_method) instanceof tom.library.adt.bytecode.types.Method) ) {
+if ( ((( tom.library.adt.bytecode.types.Method )((Object)tom_method)) instanceof tom.library.adt.bytecode.types.Method) ) {
+if ( ((( tom.library.adt.bytecode.types.Method )(( tom.library.adt.bytecode.types.Method )((Object)tom_method))) instanceof tom.library.adt.bytecode.types.method.Method) ) {
+ tom.library.adt.bytecode.types.MethodInfo  tomMatch660_1= (( tom.library.adt.bytecode.types.Method )((Object)tom_method)).getinfo() ;
+ tom.library.adt.bytecode.types.MethodCode  tomMatch660_2= (( tom.library.adt.bytecode.types.Method )((Object)tom_method)).getcode() ;
+if ( (tomMatch660_1 instanceof tom.library.adt.bytecode.types.MethodInfo) ) {
+if ( ((( tom.library.adt.bytecode.types.MethodInfo )tomMatch660_1) instanceof tom.library.adt.bytecode.types.methodinfo.MethodInfo) ) {
+if ( (tomMatch660_2 instanceof tom.library.adt.bytecode.types.MethodCode) ) {
+if ( ((( tom.library.adt.bytecode.types.MethodCode )tomMatch660_2) instanceof tom.library.adt.bytecode.types.methodcode.MethodCode) ) {
  tom.library.adt.bytecode.types.InstructionList  tom_code= tomMatch660_2.getinstructions() ;
  tom.library.adt.bytecode.types.LocalVariableList  tom_localVariables= tomMatch660_2.getlocalVariables() ;
  tom.library.adt.bytecode.types.TryCatchBlockList  tom_tryCatchBlockLists= tomMatch660_2.gettryCatchBlocks() ;
@@ -383,14 +394,15 @@ Map<LabelNode,Label> labelmap = new HashMap<LabelNode,Label>();
 
 {
 {
-if ( (tom_code instanceof tom.library.adt.bytecode.types.InstructionList) ) {
-if ( (((( tom.library.adt.bytecode.types.InstructionList )tom_code) instanceof tom.library.adt.bytecode.types.instructionlist.ConsInstructionList) || ((( tom.library.adt.bytecode.types.InstructionList )tom_code) instanceof tom.library.adt.bytecode.types.instructionlist.EmptyInstructionList)) ) {
- tom.library.adt.bytecode.types.InstructionList  tomMatch661__end__4=(( tom.library.adt.bytecode.types.InstructionList )tom_code);
+if ( (((Object)tom_code) instanceof tom.library.adt.bytecode.types.InstructionList) ) {
+if ( (((( tom.library.adt.bytecode.types.InstructionList )(( tom.library.adt.bytecode.types.InstructionList )((Object)tom_code))) instanceof tom.library.adt.bytecode.types.instructionlist.ConsInstructionList) || ((( tom.library.adt.bytecode.types.InstructionList )(( tom.library.adt.bytecode.types.InstructionList )((Object)tom_code))) instanceof tom.library.adt.bytecode.types.instructionlist.EmptyInstructionList)) ) {
+ tom.library.adt.bytecode.types.InstructionList  tomMatch661__end__4=(( tom.library.adt.bytecode.types.InstructionList )((Object)tom_code));
 do {
 {
 if (!( tomMatch661__end__4.isEmptyInstructionList() )) {
  tom.library.adt.bytecode.types.Instruction  tomMatch661_8= tomMatch661__end__4.getHeadInstructionList() ;
-if ( (tomMatch661_8 instanceof tom.library.adt.bytecode.types.instruction.Anchor) ) {
+if ( (tomMatch661_8 instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )tomMatch661_8) instanceof tom.library.adt.bytecode.types.instruction.Anchor) ) {
 
 labelmap.put(
  tomMatch661_8.getlabel() ,new Label());
@@ -398,43 +410,46 @@ labelmap.put(
 
 }
 }
+}
 if ( tomMatch661__end__4.isEmptyInstructionList() ) {
-tomMatch661__end__4=(( tom.library.adt.bytecode.types.InstructionList )tom_code);
+tomMatch661__end__4=(( tom.library.adt.bytecode.types.InstructionList )((Object)tom_code));
 } else {
 tomMatch661__end__4= tomMatch661__end__4.getTailInstructionList() ;
 }
 
 }
-} while(!( (tomMatch661__end__4==(( tom.library.adt.bytecode.types.InstructionList )tom_code)) ));
+} while(!( (tomMatch661__end__4==(( tom.library.adt.bytecode.types.InstructionList )((Object)tom_code))) ));
 }
 }
 
 }
 {
-if ( (tom_code instanceof tom.library.adt.bytecode.types.InstructionList) ) {
-if ( (((( tom.library.adt.bytecode.types.InstructionList )tom_code) instanceof tom.library.adt.bytecode.types.instructionlist.ConsInstructionList) || ((( tom.library.adt.bytecode.types.InstructionList )tom_code) instanceof tom.library.adt.bytecode.types.instructionlist.EmptyInstructionList)) ) {
- tom.library.adt.bytecode.types.InstructionList  tomMatch661__end__13=(( tom.library.adt.bytecode.types.InstructionList )tom_code);
+if ( (((Object)tom_code) instanceof tom.library.adt.bytecode.types.InstructionList) ) {
+if ( (((( tom.library.adt.bytecode.types.InstructionList )(( tom.library.adt.bytecode.types.InstructionList )((Object)tom_code))) instanceof tom.library.adt.bytecode.types.instructionlist.ConsInstructionList) || ((( tom.library.adt.bytecode.types.InstructionList )(( tom.library.adt.bytecode.types.InstructionList )((Object)tom_code))) instanceof tom.library.adt.bytecode.types.instructionlist.EmptyInstructionList)) ) {
+ tom.library.adt.bytecode.types.InstructionList  tomMatch661__end__14=(( tom.library.adt.bytecode.types.InstructionList )((Object)tom_code));
 do {
 {
-if (!( tomMatch661__end__13.isEmptyInstructionList() )) {
- tom.library.adt.bytecode.types.Instruction  tom_inst= tomMatch661__end__13.getHeadInstructionList() ;
+if (!( tomMatch661__end__14.isEmptyInstructionList() )) {
+ tom.library.adt.bytecode.types.Instruction  tom_inst= tomMatch661__end__14.getHeadInstructionList() ;
 {
 {
-if ( (tom_inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )tom_inst) instanceof tom.library.adt.bytecode.types.instruction.Anchor) ) {
+if ( (((Object)tom_inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)tom_inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)tom_inst))) instanceof tom.library.adt.bytecode.types.instruction.Anchor) ) {
 
 methodVisitor.visitLabel(labelmap.get(
- (( tom.library.adt.bytecode.types.Instruction )tom_inst).getlabel() ));
+ (( tom.library.adt.bytecode.types.Instruction )((Object)tom_inst)).getlabel() ));
 
 
+}
 }
 }
 
 }
 {
-if ( (tom_inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( (((Object)tom_inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
 addInstruction(methodVisitor,
-(( tom.library.adt.bytecode.types.Instruction )tom_inst),labelmap);
+(( tom.library.adt.bytecode.types.Instruction )((Object)tom_inst)),labelmap);
 
 }
 
@@ -446,14 +461,14 @@ addInstruction(methodVisitor,
 
 
 }
-if ( tomMatch661__end__13.isEmptyInstructionList() ) {
-tomMatch661__end__13=(( tom.library.adt.bytecode.types.InstructionList )tom_code);
+if ( tomMatch661__end__14.isEmptyInstructionList() ) {
+tomMatch661__end__14=(( tom.library.adt.bytecode.types.InstructionList )((Object)tom_code));
 } else {
-tomMatch661__end__13= tomMatch661__end__13.getTailInstructionList() ;
+tomMatch661__end__14= tomMatch661__end__14.getTailInstructionList() ;
 }
 
 }
-} while(!( (tomMatch661__end__13==(( tom.library.adt.bytecode.types.InstructionList )tom_code)) ));
+} while(!( (tomMatch661__end__14==(( tom.library.adt.bytecode.types.InstructionList )((Object)tom_code))) ));
 }
 }
 
@@ -463,45 +478,50 @@ tomMatch661__end__13= tomMatch661__end__13.getTailInstructionList() ;
 }
 {
 {
-if ( (tom_tryCatchBlockLists instanceof tom.library.adt.bytecode.types.TryCatchBlockList) ) {
-if ( (((( tom.library.adt.bytecode.types.TryCatchBlockList )tom_tryCatchBlockLists) instanceof tom.library.adt.bytecode.types.trycatchblocklist.ConsTryCatchBlockList) || ((( tom.library.adt.bytecode.types.TryCatchBlockList )tom_tryCatchBlockLists) instanceof tom.library.adt.bytecode.types.trycatchblocklist.EmptyTryCatchBlockList)) ) {
- tom.library.adt.bytecode.types.TryCatchBlockList  tomMatch663__end__4=(( tom.library.adt.bytecode.types.TryCatchBlockList )tom_tryCatchBlockLists);
+if ( (((Object)tom_tryCatchBlockLists) instanceof tom.library.adt.bytecode.types.TryCatchBlockList) ) {
+if ( (((( tom.library.adt.bytecode.types.TryCatchBlockList )(( tom.library.adt.bytecode.types.TryCatchBlockList )((Object)tom_tryCatchBlockLists))) instanceof tom.library.adt.bytecode.types.trycatchblocklist.ConsTryCatchBlockList) || ((( tom.library.adt.bytecode.types.TryCatchBlockList )(( tom.library.adt.bytecode.types.TryCatchBlockList )((Object)tom_tryCatchBlockLists))) instanceof tom.library.adt.bytecode.types.trycatchblocklist.EmptyTryCatchBlockList)) ) {
+ tom.library.adt.bytecode.types.TryCatchBlockList  tomMatch663__end__4=(( tom.library.adt.bytecode.types.TryCatchBlockList )((Object)tom_tryCatchBlockLists));
 do {
 {
 if (!( tomMatch663__end__4.isEmptyTryCatchBlockList() )) {
  tom.library.adt.bytecode.types.TryCatchBlock  tomMatch663_10= tomMatch663__end__4.getHeadTryCatchBlockList() ;
-if ( (tomMatch663_10 instanceof tom.library.adt.bytecode.types.trycatchblock.TryCatchBlock) ) {
+if ( (tomMatch663_10 instanceof tom.library.adt.bytecode.types.TryCatchBlock) ) {
+if ( ((( tom.library.adt.bytecode.types.TryCatchBlock )tomMatch663_10) instanceof tom.library.adt.bytecode.types.trycatchblock.TryCatchBlock) ) {
  tom.library.adt.bytecode.types.LabelNode  tom_start= tomMatch663_10.getstart() ;
  tom.library.adt.bytecode.types.LabelNode  tom_end= tomMatch663_10.getend() ;
  tom.library.adt.bytecode.types.Handler  tom_handler= tomMatch663_10.gethandler() ;
 {
 {
-if ( (tom_handler instanceof tom.library.adt.bytecode.types.Handler) ) {
-if ( ((( tom.library.adt.bytecode.types.Handler )tom_handler) instanceof tom.library.adt.bytecode.types.handler.CatchHandler) ) {
+if ( (((Object)tom_handler) instanceof tom.library.adt.bytecode.types.Handler) ) {
+if ( ((( tom.library.adt.bytecode.types.Handler )((Object)tom_handler)) instanceof tom.library.adt.bytecode.types.Handler) ) {
+if ( ((( tom.library.adt.bytecode.types.Handler )(( tom.library.adt.bytecode.types.Handler )((Object)tom_handler))) instanceof tom.library.adt.bytecode.types.handler.CatchHandler) ) {
 
 methodVisitor.visitTryCatchBlock(labelmap.get(
 tom_start),labelmap.get(
 tom_end),labelmap.get(
- (( tom.library.adt.bytecode.types.Handler )tom_handler).gethandler() ),
- (( tom.library.adt.bytecode.types.Handler )tom_handler).gettype() );
+ (( tom.library.adt.bytecode.types.Handler )((Object)tom_handler)).gethandler() ),
+ (( tom.library.adt.bytecode.types.Handler )((Object)tom_handler)).gettype() );
 
 
+}
 }
 }
 
 }
 {
-if ( (tom_handler instanceof tom.library.adt.bytecode.types.Handler) ) {
-if ( ((( tom.library.adt.bytecode.types.Handler )tom_handler) instanceof tom.library.adt.bytecode.types.handler.FinallyHandler) ) {
+if ( (((Object)tom_handler) instanceof tom.library.adt.bytecode.types.Handler) ) {
+if ( ((( tom.library.adt.bytecode.types.Handler )((Object)tom_handler)) instanceof tom.library.adt.bytecode.types.Handler) ) {
+if ( ((( tom.library.adt.bytecode.types.Handler )(( tom.library.adt.bytecode.types.Handler )((Object)tom_handler))) instanceof tom.library.adt.bytecode.types.handler.FinallyHandler) ) {
 
 methodVisitor.visitTryCatchBlock(labelmap.get(
 tom_start),labelmap.get(
 tom_end),labelmap.get(
- (( tom.library.adt.bytecode.types.Handler )tom_handler).gethandler() ),null);
+ (( tom.library.adt.bytecode.types.Handler )((Object)tom_handler)).gethandler() ),null);
 
 
 }
 }
+}
 
 }
 
@@ -510,16 +530,17 @@ tom_end),labelmap.get(
 
 
 
+}
 }
 }
 if ( tomMatch663__end__4.isEmptyTryCatchBlockList() ) {
-tomMatch663__end__4=(( tom.library.adt.bytecode.types.TryCatchBlockList )tom_tryCatchBlockLists);
+tomMatch663__end__4=(( tom.library.adt.bytecode.types.TryCatchBlockList )((Object)tom_tryCatchBlockLists));
 } else {
 tomMatch663__end__4= tomMatch663__end__4.getTailTryCatchBlockList() ;
 }
 
 }
-} while(!( (tomMatch663__end__4==(( tom.library.adt.bytecode.types.TryCatchBlockList )tom_tryCatchBlockLists)) ));
+} while(!( (tomMatch663__end__4==(( tom.library.adt.bytecode.types.TryCatchBlockList )((Object)tom_tryCatchBlockLists))) ));
 }
 }
 
@@ -528,14 +549,15 @@ tomMatch663__end__4= tomMatch663__end__4.getTailTryCatchBlockList() ;
 }
 {
 {
-if ( (tom_localVariables instanceof tom.library.adt.bytecode.types.LocalVariableList) ) {
-if ( (((( tom.library.adt.bytecode.types.LocalVariableList )tom_localVariables) instanceof tom.library.adt.bytecode.types.localvariablelist.ConsLocalVariableList) || ((( tom.library.adt.bytecode.types.LocalVariableList )tom_localVariables) instanceof tom.library.adt.bytecode.types.localvariablelist.EmptyLocalVariableList)) ) {
- tom.library.adt.bytecode.types.LocalVariableList  tomMatch665__end__4=(( tom.library.adt.bytecode.types.LocalVariableList )tom_localVariables);
+if ( (((Object)tom_localVariables) instanceof tom.library.adt.bytecode.types.LocalVariableList) ) {
+if ( (((( tom.library.adt.bytecode.types.LocalVariableList )(( tom.library.adt.bytecode.types.LocalVariableList )((Object)tom_localVariables))) instanceof tom.library.adt.bytecode.types.localvariablelist.ConsLocalVariableList) || ((( tom.library.adt.bytecode.types.LocalVariableList )(( tom.library.adt.bytecode.types.LocalVariableList )((Object)tom_localVariables))) instanceof tom.library.adt.bytecode.types.localvariablelist.EmptyLocalVariableList)) ) {
+ tom.library.adt.bytecode.types.LocalVariableList  tomMatch665__end__4=(( tom.library.adt.bytecode.types.LocalVariableList )((Object)tom_localVariables));
 do {
 {
 if (!( tomMatch665__end__4.isEmptyLocalVariableList() )) {
  tom.library.adt.bytecode.types.LocalVariable  tomMatch665_13= tomMatch665__end__4.getHeadLocalVariableList() ;
-if ( (tomMatch665_13 instanceof tom.library.adt.bytecode.types.localvariable.LocalVariable) ) {
+if ( (tomMatch665_13 instanceof tom.library.adt.bytecode.types.LocalVariable) ) {
+if ( ((( tom.library.adt.bytecode.types.LocalVariable )tomMatch665_13) instanceof tom.library.adt.bytecode.types.localvariable.LocalVariable) ) {
 
 methodVisitor.visitLocalVariable(
  tomMatch665_13.getname() , 
@@ -548,14 +570,15 @@ methodVisitor.visitLocalVariable(
 
 }
 }
+}
 if ( tomMatch665__end__4.isEmptyLocalVariableList() ) {
-tomMatch665__end__4=(( tom.library.adt.bytecode.types.LocalVariableList )tom_localVariables);
+tomMatch665__end__4=(( tom.library.adt.bytecode.types.LocalVariableList )((Object)tom_localVariables));
 } else {
 tomMatch665__end__4= tomMatch665__end__4.getTailLocalVariableList() ;
 }
 
 }
-} while(!( (tomMatch665__end__4==(( tom.library.adt.bytecode.types.LocalVariableList )tom_localVariables)) ));
+} while(!( (tomMatch665__end__4==(( tom.library.adt.bytecode.types.LocalVariableList )((Object)tom_localVariables))) ));
 }
 }
 
@@ -572,6 +595,9 @@ methodVisitor.visitEnd();
 }
 }
 }
+}
+}
+}
 
 }
 
@@ -581,13 +607,13 @@ methodVisitor.visitEnd();
 
 }
 if ( tomMatch659__end__4.isEmptyMethodList() ) {
-tomMatch659__end__4=(( tom.library.adt.bytecode.types.MethodList )tom_methods);
+tomMatch659__end__4=(( tom.library.adt.bytecode.types.MethodList )((Object)tom_methods));
 } else {
 tomMatch659__end__4= tomMatch659__end__4.getTailMethodList() ;
 }
 
 }
-} while(!( (tomMatch659__end__4==(( tom.library.adt.bytecode.types.MethodList )tom_methods)) ));
+} while(!( (tomMatch659__end__4==(( tom.library.adt.bytecode.types.MethodList )((Object)tom_methods))) ));
 }
 }
 
@@ -597,6 +623,8 @@ tomMatch659__end__4= tomMatch659__end__4.getTailMethodList() ;
 
 
 
+}
+}
 }
 }
 }
@@ -614,1663 +642,1972 @@ public void addInstruction(MethodVisitor methodVisitor, Instruction inst, Map<La
 
 {
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Nop) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Nop) ) {
 
 methodVisitor.visitInsn(NOP);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Aconst_null) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Aconst_null) ) {
 
 methodVisitor.visitInsn(ACONST_NULL);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Iconst_m1) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Iconst_m1) ) {
 
 methodVisitor.visitInsn(ICONST_M1);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Iconst_0) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Iconst_0) ) {
 
 methodVisitor.visitInsn(ICONST_0);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Iconst_1) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Iconst_1) ) {
 
 methodVisitor.visitInsn(ICONST_1);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Iconst_2) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Iconst_2) ) {
 
 methodVisitor.visitInsn(ICONST_2);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Iconst_3) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Iconst_3) ) {
 
 methodVisitor.visitInsn(ICONST_3);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Iconst_4) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Iconst_4) ) {
 
 methodVisitor.visitInsn(ICONST_4);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Iconst_5) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Iconst_5) ) {
 
 methodVisitor.visitInsn(ICONST_5);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Lconst_0) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Lconst_0) ) {
 
 methodVisitor.visitInsn(LCONST_0);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Lconst_1) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Lconst_1) ) {
 
 methodVisitor.visitInsn(LCONST_1);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Fconst_0) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Fconst_0) ) {
 
 methodVisitor.visitInsn(FCONST_0);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Fconst_1) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Fconst_1) ) {
 
 methodVisitor.visitInsn(FCONST_1);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Fconst_2) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Fconst_2) ) {
 
 methodVisitor.visitInsn(FCONST_2);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Dconst_0) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Dconst_0) ) {
 
 methodVisitor.visitInsn(DCONST_0);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Dconst_1) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Dconst_1) ) {
 
 methodVisitor.visitInsn(DCONST_1);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Iaload) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Iaload) ) {
 
 methodVisitor.visitInsn(IALOAD);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Laload) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Laload) ) {
 
 methodVisitor.visitInsn(LALOAD);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Faload) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Faload) ) {
 
 methodVisitor.visitInsn(FALOAD);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Daload) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Daload) ) {
 
 methodVisitor.visitInsn(DALOAD);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Aaload) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Aaload) ) {
 
 methodVisitor.visitInsn(AALOAD);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Baload) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Baload) ) {
 
 methodVisitor.visitInsn(BALOAD);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Caload) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Caload) ) {
 
 methodVisitor.visitInsn(CALOAD);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Saload) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Saload) ) {
 
 methodVisitor.visitInsn(SALOAD);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Iastore) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Iastore) ) {
 
 methodVisitor.visitInsn(IASTORE);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Lastore) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Lastore) ) {
 
 methodVisitor.visitInsn(LASTORE);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Fastore) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Fastore) ) {
 
 methodVisitor.visitInsn(FASTORE);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Dastore) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Dastore) ) {
 
 methodVisitor.visitInsn(DASTORE);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Aastore) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Aastore) ) {
 
 methodVisitor.visitInsn(AASTORE);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Bastore) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Bastore) ) {
 
 methodVisitor.visitInsn(BASTORE);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Castore) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Castore) ) {
 
 methodVisitor.visitInsn(CASTORE);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Sastore) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Sastore) ) {
 
 methodVisitor.visitInsn(SASTORE);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Pop) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Pop) ) {
 
 methodVisitor.visitInsn(POP);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Pop2) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Pop2) ) {
 
 methodVisitor.visitInsn(POP2);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Dup) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Dup) ) {
 
 methodVisitor.visitInsn(DUP);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Dup_x1) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Dup_x1) ) {
 
 methodVisitor.visitInsn(DUP_X1);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Dup_x2) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Dup_x2) ) {
 
 methodVisitor.visitInsn(DUP_X2);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Dup2) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Dup2) ) {
 
 methodVisitor.visitInsn(DUP2);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Dup2_x1) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Dup2_x1) ) {
 
 methodVisitor.visitInsn(DUP2_X1);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Dup2_x2) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Dup2_x2) ) {
 
 methodVisitor.visitInsn(DUP2_X2);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Swap) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Swap) ) {
 
 methodVisitor.visitInsn(SWAP);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Iadd) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Iadd) ) {
 
 methodVisitor.visitInsn(IADD);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Ladd) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Ladd) ) {
 
 methodVisitor.visitInsn(LADD);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Fadd) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Fadd) ) {
 
 methodVisitor.visitInsn(FADD);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Dadd) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Dadd) ) {
 
 methodVisitor.visitInsn(DADD);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Isub) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Isub) ) {
 
 methodVisitor.visitInsn(ISUB);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Lsub) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Lsub) ) {
 
 methodVisitor.visitInsn(LSUB);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Fsub) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Fsub) ) {
 
 methodVisitor.visitInsn(FSUB);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Dsub) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Dsub) ) {
 
 methodVisitor.visitInsn(DSUB);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Imul) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Imul) ) {
 
 methodVisitor.visitInsn(IMUL);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Lmul) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Lmul) ) {
 
 methodVisitor.visitInsn(LMUL);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Fmul) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Fmul) ) {
 
 methodVisitor.visitInsn(FMUL);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Dmul) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Dmul) ) {
 
 methodVisitor.visitInsn(DMUL);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Idiv) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Idiv) ) {
 
 methodVisitor.visitInsn(IDIV);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Ldiv) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Ldiv) ) {
 
 methodVisitor.visitInsn(LDIV);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Fdiv) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Fdiv) ) {
 
 methodVisitor.visitInsn(FDIV);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Ddiv) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Ddiv) ) {
 
 methodVisitor.visitInsn(DDIV);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Irem) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Irem) ) {
 
 methodVisitor.visitInsn(IREM);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Lrem) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Lrem) ) {
 
 methodVisitor.visitInsn(LREM);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Frem) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Frem) ) {
 
 methodVisitor.visitInsn(FREM);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Drem) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Drem) ) {
 
 methodVisitor.visitInsn(DREM);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Ineg) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Ineg) ) {
 
 methodVisitor.visitInsn(INEG);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Lneg) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Lneg) ) {
 
 methodVisitor.visitInsn(LNEG);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Fneg) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Fneg) ) {
 
 methodVisitor.visitInsn(FNEG);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Dneg) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Dneg) ) {
 
 methodVisitor.visitInsn(DNEG);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Ishl) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Ishl) ) {
 
 methodVisitor.visitInsn(ISHL);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Lshl) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Lshl) ) {
 
 methodVisitor.visitInsn(LSHL);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Ishr) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Ishr) ) {
 
 methodVisitor.visitInsn(ISHR);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Lshr) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Lshr) ) {
 
 methodVisitor.visitInsn(LSHR);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Iushr) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Iushr) ) {
 
 methodVisitor.visitInsn(IUSHR);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Lushr) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Lushr) ) {
 
 methodVisitor.visitInsn(LUSHR);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Iand) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Iand) ) {
 
 methodVisitor.visitInsn(IAND);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Land) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Land) ) {
 
 methodVisitor.visitInsn(LAND);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Ior) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Ior) ) {
 
 methodVisitor.visitInsn(IOR);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Lor) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Lor) ) {
 
 methodVisitor.visitInsn(LOR);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Ixor) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Ixor) ) {
 
 methodVisitor.visitInsn(IXOR);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Lxor) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Lxor) ) {
 
 methodVisitor.visitInsn(LXOR);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.I2l) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.I2l) ) {
 
 methodVisitor.visitInsn(I2L);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.I2f) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.I2f) ) {
 
 methodVisitor.visitInsn(I2F);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.I2d) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.I2d) ) {
 
 methodVisitor.visitInsn(I2D);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.L2i) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.L2i) ) {
 
 methodVisitor.visitInsn(L2I);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.L2f) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.L2f) ) {
 
 methodVisitor.visitInsn(L2F);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.L2d) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.L2d) ) {
 
 methodVisitor.visitInsn(L2D);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.F2i) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.F2i) ) {
 
 methodVisitor.visitInsn(F2I);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.F2l) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.F2l) ) {
 
 methodVisitor.visitInsn(F2L);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.F2d) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.F2d) ) {
 
 methodVisitor.visitInsn(F2D);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.D2i) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.D2i) ) {
 
 methodVisitor.visitInsn(D2I);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.D2l) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.D2l) ) {
 
 methodVisitor.visitInsn(D2L);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.D2f) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.D2f) ) {
 
 methodVisitor.visitInsn(D2F);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.I2b) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.I2b) ) {
 
 methodVisitor.visitInsn(I2B);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.I2c) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.I2c) ) {
 
 methodVisitor.visitInsn(I2C);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.I2s) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.I2s) ) {
 
 methodVisitor.visitInsn(I2S);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Lcmp) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Lcmp) ) {
 
 methodVisitor.visitInsn(LCMP);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Fcmpl) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Fcmpl) ) {
 
 methodVisitor.visitInsn(FCMPL);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Fcmpg) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Fcmpg) ) {
 
 methodVisitor.visitInsn(FCMPG);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Dcmpl) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Dcmpl) ) {
 
 methodVisitor.visitInsn(DCMPL);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Dcmpg) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Dcmpg) ) {
 
 methodVisitor.visitInsn(DCMPG);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Ireturn) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Ireturn) ) {
 
 methodVisitor.visitInsn(IRETURN);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Lreturn) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Lreturn) ) {
 
 methodVisitor.visitInsn(LRETURN);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Freturn) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Freturn) ) {
 
 methodVisitor.visitInsn(FRETURN);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Dreturn) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Dreturn) ) {
 
 methodVisitor.visitInsn(DRETURN);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Areturn) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Areturn) ) {
 
 methodVisitor.visitInsn(ARETURN);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Return) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Return) ) {
 
 methodVisitor.visitInsn(RETURN);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Arraylength) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Arraylength) ) {
 
 methodVisitor.visitInsn(ARRAYLENGTH);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Athrow) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Athrow) ) {
 
 methodVisitor.visitInsn(ATHROW);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Monitorenter) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Monitorenter) ) {
 
 methodVisitor.visitInsn(MONITORENTER);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Monitorexit) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Monitorexit) ) {
 
 methodVisitor.visitInsn(MONITOREXIT);
 
 }
 }
+}
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Getstatic) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Getstatic) ) {
 
 methodVisitor.visitFieldInsn(GETSTATIC,
- (( tom.library.adt.bytecode.types.Instruction )inst).getowner() ,
- (( tom.library.adt.bytecode.types.Instruction )inst).getname() ,ToolBox.buildDescriptor(
- (( tom.library.adt.bytecode.types.Instruction )inst).getfieldDesc() ));
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getowner() ,
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getname() ,ToolBox.buildDescriptor(
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getfieldDesc() ));
 
 
+}
 }
 }
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Putstatic) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Putstatic) ) {
 
 methodVisitor.visitFieldInsn(PUTSTATIC,
- (( tom.library.adt.bytecode.types.Instruction )inst).getowner() ,
- (( tom.library.adt.bytecode.types.Instruction )inst).getname() ,ToolBox.buildDescriptor(
- (( tom.library.adt.bytecode.types.Instruction )inst).getfieldDesc() ));
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getowner() ,
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getname() ,ToolBox.buildDescriptor(
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getfieldDesc() ));
 
 
+}
 }
 }
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Getfield) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Getfield) ) {
 
 methodVisitor.visitFieldInsn(GETFIELD,
- (( tom.library.adt.bytecode.types.Instruction )inst).getowner() ,
- (( tom.library.adt.bytecode.types.Instruction )inst).getname() ,ToolBox.buildDescriptor(
- (( tom.library.adt.bytecode.types.Instruction )inst).getfieldDesc() ));
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getowner() ,
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getname() ,ToolBox.buildDescriptor(
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getfieldDesc() ));
 
 
+}
 }
 }
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Putfield) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Putfield) ) {
 
 methodVisitor.visitFieldInsn(PUTFIELD,
- (( tom.library.adt.bytecode.types.Instruction )inst).getowner() ,
- (( tom.library.adt.bytecode.types.Instruction )inst).getname() ,ToolBox.buildDescriptor(
- (( tom.library.adt.bytecode.types.Instruction )inst).getfieldDesc() ));
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getowner() ,
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getname() ,ToolBox.buildDescriptor(
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getfieldDesc() ));
 
 
+}
 }
 }
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Bipush) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Bipush) ) {
 
 methodVisitor.visitIntInsn(BIPUSH,
- (( tom.library.adt.bytecode.types.Instruction )inst).getoperand() );
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getoperand() );
 
 
+}
 }
 }
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Sipush) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Sipush) ) {
 
 methodVisitor.visitIntInsn(SIPUSH,
- (( tom.library.adt.bytecode.types.Instruction )inst).getoperand() );
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getoperand() );
 
 
+}
 }
 }
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Newarray) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Newarray) ) {
 
 methodVisitor.visitIntInsn(NEWARRAY,
- (( tom.library.adt.bytecode.types.Instruction )inst).getoperand() );
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getoperand() );
 
 
+}
 }
 }
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Ifeq) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Ifeq) ) {
 
 methodVisitor.visitJumpInsn(IFEQ,labelmap.get(
- (( tom.library.adt.bytecode.types.Instruction )inst).getlabel() ));
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getlabel() ));
 
 
+}
 }
 }
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Ifne) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Ifne) ) {
 
 methodVisitor.visitJumpInsn(IFNE,labelmap.get(
- (( tom.library.adt.bytecode.types.Instruction )inst).getlabel() ));
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getlabel() ));
 
 
+}
 }
 }
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Iflt) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Iflt) ) {
 
 methodVisitor.visitJumpInsn(IFLT,labelmap.get(
- (( tom.library.adt.bytecode.types.Instruction )inst).getlabel() ));
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getlabel() ));
 
 
+}
 }
 }
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Ifge) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Ifge) ) {
 
 methodVisitor.visitJumpInsn(IFGE,labelmap.get(
- (( tom.library.adt.bytecode.types.Instruction )inst).getlabel() ));
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getlabel() ));
 
 
+}
 }
 }
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Ifgt) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Ifgt) ) {
 
 methodVisitor.visitJumpInsn(IFGT,labelmap.get(
- (( tom.library.adt.bytecode.types.Instruction )inst).getlabel() ));
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getlabel() ));
 
 
+}
 }
 }
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Ifle) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Ifle) ) {
 
 methodVisitor.visitJumpInsn(IFLE,labelmap.get(
- (( tom.library.adt.bytecode.types.Instruction )inst).getlabel() ));
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getlabel() ));
 
 
+}
 }
 }
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.If_icmpeq) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.If_icmpeq) ) {
 
 methodVisitor.visitJumpInsn(IF_ICMPEQ,labelmap.get(
- (( tom.library.adt.bytecode.types.Instruction )inst).getlabel() ));
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getlabel() ));
 
 
+}
 }
 }
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.If_icmpne) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.If_icmpne) ) {
 
 methodVisitor.visitJumpInsn(IF_ICMPNE,labelmap.get(
- (( tom.library.adt.bytecode.types.Instruction )inst).getlabel() ));
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getlabel() ));
 
 
+}
 }
 }
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.If_icmplt) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.If_icmplt) ) {
 
 methodVisitor.visitJumpInsn(IF_ICMPLT,labelmap.get(
- (( tom.library.adt.bytecode.types.Instruction )inst).getlabel() ));
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getlabel() ));
 
 
+}
 }
 }
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.If_icmpge) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.If_icmpge) ) {
 
 methodVisitor.visitJumpInsn(IF_ICMPGE,labelmap.get(
- (( tom.library.adt.bytecode.types.Instruction )inst).getlabel() ));
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getlabel() ));
 
 
+}
 }
 }
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.If_icmpgt) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.If_icmpgt) ) {
 
 methodVisitor.visitJumpInsn(IF_ICMPGT,labelmap.get(
- (( tom.library.adt.bytecode.types.Instruction )inst).getlabel() ));
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getlabel() ));
 
 
+}
 }
 }
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.If_icmple) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.If_icmple) ) {
 
 methodVisitor.visitJumpInsn(IF_ICMPLE,labelmap.get(
- (( tom.library.adt.bytecode.types.Instruction )inst).getlabel() ));
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getlabel() ));
 
 
+}
 }
 }
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.If_acmpeq) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.If_acmpeq) ) {
 
 methodVisitor.visitJumpInsn(IF_ACMPEQ,labelmap.get(
- (( tom.library.adt.bytecode.types.Instruction )inst).getlabel() ));
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getlabel() ));
 
 
+}
 }
 }
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.If_acmpne) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.If_acmpne) ) {
 
 methodVisitor.visitJumpInsn(IF_ACMPNE,labelmap.get(
- (( tom.library.adt.bytecode.types.Instruction )inst).getlabel() ));
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getlabel() ));
 
 
+}
 }
 }
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Goto) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Goto) ) {
 
 methodVisitor.visitJumpInsn(GOTO,labelmap.get(
- (( tom.library.adt.bytecode.types.Instruction )inst).getlabel() ));
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getlabel() ));
 
 
+}
 }
 }
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Jsr) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Jsr) ) {
 
 methodVisitor.visitJumpInsn(JSR,labelmap.get(
- (( tom.library.adt.bytecode.types.Instruction )inst).getlabel() ));
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getlabel() ));
 
 
+}
 }
 }
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Ifnull) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Ifnull) ) {
 
 methodVisitor.visitJumpInsn(IFNULL,labelmap.get(
- (( tom.library.adt.bytecode.types.Instruction )inst).getlabel() ));
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getlabel() ));
 
 
+}
 }
 }
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Ifnonnull) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Ifnonnull) ) {
 
 methodVisitor.visitJumpInsn(IFNONNULL,labelmap.get(
- (( tom.library.adt.bytecode.types.Instruction )inst).getlabel() ));
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getlabel() ));
 
 
+}
 }
 }
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Invokevirtual) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Invokevirtual) ) {
 
 methodVisitor.visitMethodInsn(INVOKEVIRTUAL,
- (( tom.library.adt.bytecode.types.Instruction )inst).getowner() ,
- (( tom.library.adt.bytecode.types.Instruction )inst).getname() ,ToolBox.buildDescriptor(
- (( tom.library.adt.bytecode.types.Instruction )inst).getmethodDesc() ));
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getowner() ,
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getname() ,ToolBox.buildDescriptor(
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getmethodDesc() ));
 
 
+}
 }
 }
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Invokespecial) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Invokespecial) ) {
 
 methodVisitor.visitMethodInsn(INVOKESPECIAL,
- (( tom.library.adt.bytecode.types.Instruction )inst).getowner() ,
- (( tom.library.adt.bytecode.types.Instruction )inst).getname() ,ToolBox.buildDescriptor(
- (( tom.library.adt.bytecode.types.Instruction )inst).getmethodDesc() ));
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getowner() ,
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getname() ,ToolBox.buildDescriptor(
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getmethodDesc() ));
 
 
+}
 }
 }
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Invokestatic) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Invokestatic) ) {
 
 methodVisitor.visitMethodInsn(INVOKESTATIC,
- (( tom.library.adt.bytecode.types.Instruction )inst).getowner() ,
- (( tom.library.adt.bytecode.types.Instruction )inst).getname() ,ToolBox.buildDescriptor(
- (( tom.library.adt.bytecode.types.Instruction )inst).getmethodDesc() ));
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getowner() ,
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getname() ,ToolBox.buildDescriptor(
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getmethodDesc() ));
 
 
+}
 }
 }
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Invokeinterface) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Invokeinterface) ) {
 
 methodVisitor.visitMethodInsn(INVOKEINTERFACE,
- (( tom.library.adt.bytecode.types.Instruction )inst).getowner() ,
- (( tom.library.adt.bytecode.types.Instruction )inst).getname() ,ToolBox.buildDescriptor(
- (( tom.library.adt.bytecode.types.Instruction )inst).getmethodDesc() ));
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getowner() ,
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getname() ,ToolBox.buildDescriptor(
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getmethodDesc() ));
 
 
+}
 }
 }
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.New) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.New) ) {
 
 methodVisitor.visitTypeInsn(NEW,
- (( tom.library.adt.bytecode.types.Instruction )inst).gettypeDesc() );
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).gettypeDesc() );
 
 
+}
 }
 }
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Anewarray) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Anewarray) ) {
 
 methodVisitor.visitTypeInsn(ANEWARRAY,
- (( tom.library.adt.bytecode.types.Instruction )inst).gettypeDesc() );
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).gettypeDesc() );
 
 
+}
 }
 }
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Checkcast) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Checkcast) ) {
 
 methodVisitor.visitTypeInsn(CHECKCAST,
- (( tom.library.adt.bytecode.types.Instruction )inst).gettypeDesc() );
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).gettypeDesc() );
 
 
+}
 }
 }
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Instanceof) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Instanceof) ) {
 
 methodVisitor.visitTypeInsn(INSTANCEOF,
- (( tom.library.adt.bytecode.types.Instruction )inst).gettypeDesc() );
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).gettypeDesc() );
 
 
+}
 }
 }
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Iload) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Iload) ) {
 
 methodVisitor.visitVarInsn(ILOAD,
- (( tom.library.adt.bytecode.types.Instruction )inst).getvar() );
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getvar() );
 
 
+}
 }
 }
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Lload) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Lload) ) {
 
 methodVisitor.visitVarInsn(LLOAD,
- (( tom.library.adt.bytecode.types.Instruction )inst).getvar() );
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getvar() );
 
 
+}
 }
 }
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Fload) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Fload) ) {
 
 methodVisitor.visitVarInsn(FLOAD,
- (( tom.library.adt.bytecode.types.Instruction )inst).getvar() );
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getvar() );
 
 
+}
 }
 }
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Dload) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Dload) ) {
 
 methodVisitor.visitVarInsn(DLOAD,
- (( tom.library.adt.bytecode.types.Instruction )inst).getvar() );
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getvar() );
 
 
+}
 }
 }
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Aload) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Aload) ) {
 
 methodVisitor.visitVarInsn(ALOAD,
- (( tom.library.adt.bytecode.types.Instruction )inst).getvar() );
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getvar() );
 
 
+}
 }
 }
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Istore) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Istore) ) {
 
 methodVisitor.visitVarInsn(ISTORE,
- (( tom.library.adt.bytecode.types.Instruction )inst).getvar() );
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getvar() );
 
 
+}
 }
 }
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Lstore) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Lstore) ) {
 
 methodVisitor.visitVarInsn(LSTORE,
- (( tom.library.adt.bytecode.types.Instruction )inst).getvar() );
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getvar() );
 
 
+}
 }
 }
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Fstore) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Fstore) ) {
 
 methodVisitor.visitVarInsn(FSTORE,
- (( tom.library.adt.bytecode.types.Instruction )inst).getvar() );
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getvar() );
 
 
+}
 }
 }
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Dstore) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Dstore) ) {
 
 methodVisitor.visitVarInsn(DSTORE,
- (( tom.library.adt.bytecode.types.Instruction )inst).getvar() );
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getvar() );
 
 
+}
 }
 }
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Astore) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Astore) ) {
 
 methodVisitor.visitVarInsn(ASTORE,
- (( tom.library.adt.bytecode.types.Instruction )inst).getvar() );
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getvar() );
 
 
+}
 }
 }
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Ret) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Ret) ) {
 
 methodVisitor.visitVarInsn(RET,
- (( tom.library.adt.bytecode.types.Instruction )inst).getvar() );
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getvar() );
 
 
+}
 }
 }
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Iinc) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Iinc) ) {
 
 methodVisitor.visitIincInsn(
- (( tom.library.adt.bytecode.types.Instruction )inst).getvar() ,
- (( tom.library.adt.bytecode.types.Instruction )inst).getincr() );
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getvar() ,
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getincr() );
 
 
+}
 }
 }
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Ldc) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Ldc) ) {
 
 methodVisitor.visitLdcInsn(ToolBox.buildConstant(
- (( tom.library.adt.bytecode.types.Instruction )inst).getcst() )); 
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getcst() )); 
 
 
+}
 }
 }
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Multianewarray) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Multianewarray) ) {
 
 methodVisitor.visitMultiANewArrayInsn(
- (( tom.library.adt.bytecode.types.Instruction )inst).gettypeDesc() ,
- (( tom.library.adt.bytecode.types.Instruction )inst).getdims() );
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).gettypeDesc() ,
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getdims() );
 
 
+}
 }
 }
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Tableswitch) ) {
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Tableswitch) ) {
 
 LabelNode[] labelnodes= ((tom.library.adt.bytecode.types.labelnodelist.LabelNodeList)
- (( tom.library.adt.bytecode.types.Instruction )inst).getlabels() ).toArray(new LabelNode[0]);
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getlabels() ).toArray(new LabelNode[0]);
 Label[] labels = null;
 if(labelnodes != null){
 labels = new Label[labelnodes.length];
@@ -2279,22 +2616,24 @@ labels[i] = labelmap.get(labelnodes[i]);
 }
 }
 methodVisitor.visitTableSwitchInsn(
- (( tom.library.adt.bytecode.types.Instruction )inst).getmin() , 
- (( tom.library.adt.bytecode.types.Instruction )inst).getmax() , labelmap.get(
- (( tom.library.adt.bytecode.types.Instruction )inst).getdflt() ), labels);
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getmin() , 
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getmax() , labelmap.get(
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getdflt() ), labels);
 
 
+}
 }
 }
 
 }
 {
-if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Lookupswitch) ) {
- tom.library.adt.bytecode.types.IntList  tom_keys= (( tom.library.adt.bytecode.types.Instruction )inst).getkeys() ;
+if ( (((Object)inst) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)inst)) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)inst))) instanceof tom.library.adt.bytecode.types.instruction.Lookupswitch) ) {
+ tom.library.adt.bytecode.types.IntList  tom_keys= (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getkeys() ;
 
 LabelNode[] labelnodes= ((tom.library.adt.bytecode.types.labelnodelist.LabelNodeList)
- (( tom.library.adt.bytecode.types.Instruction )inst).getlabels() ).toArray(new LabelNode[0]);
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getlabels() ).toArray(new LabelNode[0]);
 Label[] labels = null;
 if(labelnodes != null){
 labels = new Label[labelnodes.length];
@@ -2310,9 +2649,10 @@ for(int i=0 ; it.hasNext() ; i++) {
 array[i] = it.next();
 }
 methodVisitor.visitLookupSwitchInsn(labelmap.get(
- (( tom.library.adt.bytecode.types.Instruction )inst).getdflt() ),array,labels);
+ (( tom.library.adt.bytecode.types.Instruction )((Object)inst)).getdflt() ),array,labels);
 
 
+}
 }
 }
 

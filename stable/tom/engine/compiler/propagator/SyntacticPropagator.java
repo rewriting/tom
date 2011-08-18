@@ -438,32 +438,37 @@ public  tom.engine.adt.tomconstraint.types.Constraint  visit_Constraint( tom.eng
  throws tom.library.sl.VisitFailure {
 {
 {
-if ( (tom__arg instanceof tom.engine.adt.tomconstraint.types.Constraint) ) {
-if ( ((( tom.engine.adt.tomconstraint.types.Constraint )tom__arg) instanceof tom.engine.adt.tomconstraint.types.constraint.MatchConstraint) ) {
- tom.engine.adt.tomterm.types.TomTerm  tomMatch224_1= (( tom.engine.adt.tomconstraint.types.Constraint )tom__arg).getPattern() ;
- tom.engine.adt.code.types.BQTerm  tomMatch224_2= (( tom.engine.adt.tomconstraint.types.Constraint )tom__arg).getSubject() ;
-if ( (tomMatch224_1 instanceof tom.engine.adt.tomterm.types.tomterm.RecordAppl) ) {
- tom.engine.adt.tomname.types.TomNameList  tomMatch224_6= tomMatch224_1.getNameList() ;
-if ( ((tomMatch224_6 instanceof tom.engine.adt.tomname.types.tomnamelist.ConsconcTomName) || (tomMatch224_6 instanceof tom.engine.adt.tomname.types.tomnamelist.EmptyconcTomName)) ) {
- tom.engine.adt.tomname.types.TomNameList  tom_nameList=tomMatch224_6;
-if (!( tomMatch224_6.isEmptyconcTomName() )) {
- tom.engine.adt.tomname.types.TomName  tomMatch224_14= tomMatch224_6.getHeadconcTomName() ;
-if ( (tomMatch224_14 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+if ( (((Object)tom__arg) instanceof tom.engine.adt.tomconstraint.types.Constraint) ) {
+if ( ((( tom.engine.adt.tomconstraint.types.Constraint )((Object)tom__arg)) instanceof tom.engine.adt.tomconstraint.types.Constraint) ) {
+if ( ((( tom.engine.adt.tomconstraint.types.Constraint )(( tom.engine.adt.tomconstraint.types.Constraint )((Object)tom__arg))) instanceof tom.engine.adt.tomconstraint.types.constraint.MatchConstraint) ) {
+ tom.engine.adt.tomterm.types.TomTerm  tomMatch224_1= (( tom.engine.adt.tomconstraint.types.Constraint )((Object)tom__arg)).getPattern() ;
+ tom.engine.adt.code.types.BQTerm  tomMatch224_2= (( tom.engine.adt.tomconstraint.types.Constraint )((Object)tom__arg)).getSubject() ;
+if ( (tomMatch224_1 instanceof tom.engine.adt.tomterm.types.TomTerm) ) {
+if ( ((( tom.engine.adt.tomterm.types.TomTerm )tomMatch224_1) instanceof tom.engine.adt.tomterm.types.tomterm.RecordAppl) ) {
+ tom.engine.adt.tomname.types.TomNameList  tomMatch224_7= tomMatch224_1.getNameList() ;
+if ( (((( tom.engine.adt.tomname.types.TomNameList )tomMatch224_7) instanceof tom.engine.adt.tomname.types.tomnamelist.ConsconcTomName) || ((( tom.engine.adt.tomname.types.TomNameList )tomMatch224_7) instanceof tom.engine.adt.tomname.types.tomnamelist.EmptyconcTomName)) ) {
+ tom.engine.adt.tomname.types.TomNameList  tom_nameList=tomMatch224_7;
+if (!( tomMatch224_7.isEmptyconcTomName() )) {
+ tom.engine.adt.tomname.types.TomName  tomMatch224_16= tomMatch224_7.getHeadconcTomName() ;
+if ( (tomMatch224_16 instanceof tom.engine.adt.tomname.types.TomName) ) {
+if ( ((( tom.engine.adt.tomname.types.TomName )tomMatch224_16) instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
  tom.engine.adt.tomslot.types.SlotList  tom_slots= tomMatch224_1.getSlots() ;
  tom.engine.adt.code.types.BQTerm  tom_g=tomMatch224_2;
- tom.engine.adt.tomtype.types.TomType  tom_aType= (( tom.engine.adt.tomconstraint.types.Constraint )tom__arg).getAstType() ;
- tom.engine.adt.tomconstraint.types.Constraint  tom_m=(( tom.engine.adt.tomconstraint.types.Constraint )tom__arg);
-boolean tomMatch224_17= false ;
-if ( (tomMatch224_2 instanceof tom.engine.adt.code.types.bqterm.SymbolOf) ) {
+ tom.engine.adt.tomtype.types.TomType  tom_aType= (( tom.engine.adt.tomconstraint.types.Constraint )((Object)tom__arg)).getAstType() ;
+ tom.engine.adt.tomconstraint.types.Constraint  tom_m=(( tom.engine.adt.tomconstraint.types.Constraint )((Object)tom__arg));
+boolean tomMatch224_21= false ;
+if ( (tomMatch224_2 instanceof tom.engine.adt.code.types.BQTerm) ) {
+if ( ((( tom.engine.adt.code.types.BQTerm )tomMatch224_2) instanceof tom.engine.adt.code.types.bqterm.SymbolOf) ) {
 if ( (tom_g==tomMatch224_2) ) {
-tomMatch224_17= true ;
+tomMatch224_21= true ;
 }
 }
-if (!(tomMatch224_17)) {
+}
+if (!(tomMatch224_21)) {
 
 // if this a list or array, nothing to do
 if(!TomBase.isSyntacticOperator(sp.getCompiler().getSymbolTable().getSymbolFromName(
- tomMatch224_14.getString() ))) {
+ tomMatch224_16.getString() ))) {
 return 
 tom_m; 
 }
@@ -476,21 +481,22 @@ ArrayList<BQTerm> freshVarList = new ArrayList<BQTerm>();
 
 {
 {
-if ( (tom_slots instanceof tom.engine.adt.tomslot.types.SlotList) ) {
-if ( (((( tom.engine.adt.tomslot.types.SlotList )tom_slots) instanceof tom.engine.adt.tomslot.types.slotlist.ConsconcSlot) || ((( tom.engine.adt.tomslot.types.SlotList )tom_slots) instanceof tom.engine.adt.tomslot.types.slotlist.EmptyconcSlot)) ) {
- tom.engine.adt.tomslot.types.SlotList  tomMatch225__end__4=(( tom.engine.adt.tomslot.types.SlotList )tom_slots);
+if ( (((Object)tom_slots) instanceof tom.engine.adt.tomslot.types.SlotList) ) {
+if ( (((( tom.engine.adt.tomslot.types.SlotList )(( tom.engine.adt.tomslot.types.SlotList )((Object)tom_slots))) instanceof tom.engine.adt.tomslot.types.slotlist.ConsconcSlot) || ((( tom.engine.adt.tomslot.types.SlotList )(( tom.engine.adt.tomslot.types.SlotList )((Object)tom_slots))) instanceof tom.engine.adt.tomslot.types.slotlist.EmptyconcSlot)) ) {
+ tom.engine.adt.tomslot.types.SlotList  tomMatch225__end__4=(( tom.engine.adt.tomslot.types.SlotList )((Object)tom_slots));
 do {
 {
 if (!( tomMatch225__end__4.isEmptyconcSlot() )) {
  tom.engine.adt.tomslot.types.Slot  tomMatch225_9= tomMatch225__end__4.getHeadconcSlot() ;
-if ( (tomMatch225_9 instanceof tom.engine.adt.tomslot.types.slot.PairSlotAppl) ) {
+if ( (tomMatch225_9 instanceof tom.engine.adt.tomslot.types.Slot) ) {
+if ( ((( tom.engine.adt.tomslot.types.Slot )tomMatch225_9) instanceof tom.engine.adt.tomslot.types.slot.PairSlotAppl) ) {
  tom.engine.adt.tomterm.types.TomTerm  tom_appl= tomMatch225_9.getAppl() ;
 
 TomType applType = sp.getCompiler().getTermTypeFromTerm(
 tom_appl);
 TomType slotType =
 sp.getCompiler().getSlotType(
- tomMatch224_6.getHeadconcTomName() ,
+ tomMatch224_7.getHeadconcTomName() ,
  tomMatch225_9.getSlotName() );
 //DEBUG System.out.println("slotType = " + slotType);
 //DEBUG System.out.println("slotName= " + `slotName);
@@ -521,14 +527,15 @@ lastPart.add(
 
 }
 }
+}
 if ( tomMatch225__end__4.isEmptyconcSlot() ) {
-tomMatch225__end__4=(( tom.engine.adt.tomslot.types.SlotList )tom_slots);
+tomMatch225__end__4=(( tom.engine.adt.tomslot.types.SlotList )((Object)tom_slots));
 } else {
 tomMatch225__end__4= tomMatch225__end__4.getTailconcSlot() ;
 }
 
 }
-} while(!( (tomMatch225__end__4==(( tom.engine.adt.tomslot.types.SlotList )tom_slots)) ));
+} while(!( (tomMatch225__end__4==(( tom.engine.adt.tomslot.types.SlotList )((Object)tom_slots))) ));
 }
 }
 
@@ -548,9 +555,9 @@ Constraint l =
 
 {
 {
-if ( (tom_nameList instanceof tom.engine.adt.tomname.types.TomNameList) ) {
-if ( (((( tom.engine.adt.tomname.types.TomNameList )tom_nameList) instanceof tom.engine.adt.tomname.types.tomnamelist.ConsconcTomName) || ((( tom.engine.adt.tomname.types.TomNameList )tom_nameList) instanceof tom.engine.adt.tomname.types.tomnamelist.EmptyconcTomName)) ) {
- tom.engine.adt.tomname.types.TomNameList  tomMatch226__end__4=(( tom.engine.adt.tomname.types.TomNameList )tom_nameList);
+if ( (((Object)tom_nameList) instanceof tom.engine.adt.tomname.types.TomNameList) ) {
+if ( (((( tom.engine.adt.tomname.types.TomNameList )(( tom.engine.adt.tomname.types.TomNameList )((Object)tom_nameList))) instanceof tom.engine.adt.tomname.types.tomnamelist.ConsconcTomName) || ((( tom.engine.adt.tomname.types.TomNameList )(( tom.engine.adt.tomname.types.TomNameList )((Object)tom_nameList))) instanceof tom.engine.adt.tomname.types.tomnamelist.EmptyconcTomName)) ) {
+ tom.engine.adt.tomname.types.TomNameList  tomMatch226__end__4=(( tom.engine.adt.tomname.types.TomNameList )((Object)tom_nameList));
 do {
 {
 if (!( tomMatch226__end__4.isEmptyconcTomName() )) {
@@ -581,14 +588,15 @@ andForName.add(
 
 {
 {
-if ( (tom_slots instanceof tom.engine.adt.tomslot.types.SlotList) ) {
-if ( (((( tom.engine.adt.tomslot.types.SlotList )tom_slots) instanceof tom.engine.adt.tomslot.types.slotlist.ConsconcSlot) || ((( tom.engine.adt.tomslot.types.SlotList )tom_slots) instanceof tom.engine.adt.tomslot.types.slotlist.EmptyconcSlot)) ) {
- tom.engine.adt.tomslot.types.SlotList  tomMatch227__end__4=(( tom.engine.adt.tomslot.types.SlotList )tom_slots);
+if ( (((Object)tom_slots) instanceof tom.engine.adt.tomslot.types.SlotList) ) {
+if ( (((( tom.engine.adt.tomslot.types.SlotList )(( tom.engine.adt.tomslot.types.SlotList )((Object)tom_slots))) instanceof tom.engine.adt.tomslot.types.slotlist.ConsconcSlot) || ((( tom.engine.adt.tomslot.types.SlotList )(( tom.engine.adt.tomslot.types.SlotList )((Object)tom_slots))) instanceof tom.engine.adt.tomslot.types.slotlist.EmptyconcSlot)) ) {
+ tom.engine.adt.tomslot.types.SlotList  tomMatch227__end__4=(( tom.engine.adt.tomslot.types.SlotList )((Object)tom_slots));
 do {
 {
 if (!( tomMatch227__end__4.isEmptyconcSlot() )) {
  tom.engine.adt.tomslot.types.Slot  tomMatch227_9= tomMatch227__end__4.getHeadconcSlot() ;
-if ( (tomMatch227_9 instanceof tom.engine.adt.tomslot.types.slot.PairSlotAppl) ) {
+if ( (tomMatch227_9 instanceof tom.engine.adt.tomslot.types.Slot) ) {
+if ( ((( tom.engine.adt.tomslot.types.Slot )tomMatch227_9) instanceof tom.engine.adt.tomslot.types.slot.PairSlotAppl) ) {
  tom.engine.adt.tomname.types.TomName  tom_slotName= tomMatch227_9.getSlotName() ;
 
 BQTerm freshVar = freshVarList.get(counter);
@@ -606,14 +614,15 @@ counter++;
 
 }
 }
+}
 if ( tomMatch227__end__4.isEmptyconcSlot() ) {
-tomMatch227__end__4=(( tom.engine.adt.tomslot.types.SlotList )tom_slots);
+tomMatch227__end__4=(( tom.engine.adt.tomslot.types.SlotList )((Object)tom_slots));
 } else {
 tomMatch227__end__4= tomMatch227__end__4.getTailconcSlot() ;
 }
 
 }
-} while(!( (tomMatch227__end__4==(( tom.engine.adt.tomslot.types.SlotList )tom_slots)) ));
+} while(!( (tomMatch227__end__4==(( tom.engine.adt.tomslot.types.SlotList )((Object)tom_slots))) ));
 }
 }
 
@@ -627,13 +636,13 @@ tom_append_list_OrConstraintDisjunction(l, tom.engine.adt.tomconstraint.types.co
 
 }
 if ( tomMatch226__end__4.isEmptyconcTomName() ) {
-tomMatch226__end__4=(( tom.engine.adt.tomname.types.TomNameList )tom_nameList);
+tomMatch226__end__4=(( tom.engine.adt.tomname.types.TomNameList )((Object)tom_nameList));
 } else {
 tomMatch226__end__4= tomMatch226__end__4.getTailconcTomName() ;
 }
 
 }
-} while(!( (tomMatch226__end__4==(( tom.engine.adt.tomname.types.TomNameList )tom_nameList)) ));
+} while(!( (tomMatch226__end__4==(( tom.engine.adt.tomname.types.TomNameList )((Object)tom_nameList))) ));
 }
 }
 
@@ -655,6 +664,9 @@ return ASTFactory.makeAndConstraint(lastPart);
 
 }
 
+}
+}
+}
 }
 }
 }

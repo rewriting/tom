@@ -427,25 +427,29 @@ public  tom.engine.adt.code.types.BQTerm  visit_BQTerm( tom.engine.adt.code.type
  throws tom.library.sl.VisitFailure {
 {
 {
-if ( (tom__arg instanceof tom.engine.adt.code.types.BQTerm) ) {
-if ( ((( tom.engine.adt.code.types.BQTerm )tom__arg) instanceof tom.engine.adt.code.types.bqterm.ListHead) ) {
+if ( (((Object)tom__arg) instanceof tom.engine.adt.code.types.BQTerm) ) {
+if ( ((( tom.engine.adt.code.types.BQTerm )((Object)tom__arg)) instanceof tom.engine.adt.code.types.BQTerm) ) {
+if ( ((( tom.engine.adt.code.types.BQTerm )(( tom.engine.adt.code.types.BQTerm )((Object)tom__arg))) instanceof tom.engine.adt.code.types.bqterm.ListHead) ) {
 
 return 
- tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make(vg.genGetHead( (( tom.engine.adt.code.types.BQTerm )tom__arg).getOpname() , (( tom.engine.adt.code.types.BQTerm )tom__arg).getCodomain() , (( tom.engine.adt.code.types.BQTerm )tom__arg).getVariable() )) ;
+ tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make(vg.genGetHead( (( tom.engine.adt.code.types.BQTerm )((Object)tom__arg)).getOpname() , (( tom.engine.adt.code.types.BQTerm )((Object)tom__arg)).getCodomain() , (( tom.engine.adt.code.types.BQTerm )((Object)tom__arg)).getVariable() )) ;
 
 
+}
 }
 }
 
 }
 {
-if ( (tom__arg instanceof tom.engine.adt.code.types.BQTerm) ) {
-if ( ((( tom.engine.adt.code.types.BQTerm )tom__arg) instanceof tom.engine.adt.code.types.bqterm.ListTail) ) {
+if ( (((Object)tom__arg) instanceof tom.engine.adt.code.types.BQTerm) ) {
+if ( ((( tom.engine.adt.code.types.BQTerm )((Object)tom__arg)) instanceof tom.engine.adt.code.types.BQTerm) ) {
+if ( ((( tom.engine.adt.code.types.BQTerm )(( tom.engine.adt.code.types.BQTerm )((Object)tom__arg))) instanceof tom.engine.adt.code.types.bqterm.ListTail) ) {
 
 return 
- tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make(vg.genGetTail( (( tom.engine.adt.code.types.BQTerm )tom__arg).getOpname() , (( tom.engine.adt.code.types.BQTerm )tom__arg).getVariable() )) ;
+ tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make(vg.genGetTail( (( tom.engine.adt.code.types.BQTerm )((Object)tom__arg)).getOpname() , (( tom.engine.adt.code.types.BQTerm )((Object)tom__arg)).getVariable() )) ;
 
 
+}
 }
 }
 
@@ -461,23 +465,28 @@ public  tom.engine.adt.tomexpression.types.Expression  visit_Expression( tom.eng
  throws tom.library.sl.VisitFailure {
 {
 {
-if ( (tom__arg instanceof tom.engine.adt.tomexpression.types.Expression) ) {
-if ( ((( tom.engine.adt.tomexpression.types.Expression )tom__arg) instanceof tom.engine.adt.tomexpression.types.expression.ConstraintToExpression) ) {
- tom.engine.adt.tomconstraint.types.Constraint  tomMatch206_1= (( tom.engine.adt.tomexpression.types.Expression )tom__arg).getcons() ;
-if ( (tomMatch206_1 instanceof tom.engine.adt.tomconstraint.types.constraint.MatchConstraint) ) {
- tom.engine.adt.tomterm.types.TomTerm  tomMatch206_3= tomMatch206_1.getPattern() ;
- tom.engine.adt.code.types.BQTerm  tomMatch206_4= tomMatch206_1.getSubject() ;
-if ( (tomMatch206_3 instanceof tom.engine.adt.tomterm.types.tomterm.VariableStar) ) {
- tom.engine.adt.tomterm.types.TomTerm  tom_v=tomMatch206_3;
-if ( (tomMatch206_4 instanceof tom.engine.adt.code.types.bqterm.VariableHeadList) ) {
- tom.engine.adt.code.types.BQTerm  tomMatch206_10= tomMatch206_4.getEnd() ;
- tom.engine.adt.tomname.types.TomName  tom_opName= tomMatch206_4.getOpname() ;
- tom.engine.adt.code.types.BQTerm  tom_begin= tomMatch206_4.getBegin() ;
-if ( (tomMatch206_10 instanceof tom.engine.adt.code.types.bqterm.BQVariableStar) ) {
- tom.engine.adt.code.types.BQTerm  tom_end=tomMatch206_10;
+if ( (((Object)tom__arg) instanceof tom.engine.adt.tomexpression.types.Expression) ) {
+if ( ((( tom.engine.adt.tomexpression.types.Expression )((Object)tom__arg)) instanceof tom.engine.adt.tomexpression.types.Expression) ) {
+if ( ((( tom.engine.adt.tomexpression.types.Expression )(( tom.engine.adt.tomexpression.types.Expression )((Object)tom__arg))) instanceof tom.engine.adt.tomexpression.types.expression.ConstraintToExpression) ) {
+ tom.engine.adt.tomconstraint.types.Constraint  tomMatch206_1= (( tom.engine.adt.tomexpression.types.Expression )((Object)tom__arg)).getcons() ;
+if ( (tomMatch206_1 instanceof tom.engine.adt.tomconstraint.types.Constraint) ) {
+if ( ((( tom.engine.adt.tomconstraint.types.Constraint )tomMatch206_1) instanceof tom.engine.adt.tomconstraint.types.constraint.MatchConstraint) ) {
+ tom.engine.adt.tomterm.types.TomTerm  tomMatch206_4= tomMatch206_1.getPattern() ;
+ tom.engine.adt.code.types.BQTerm  tomMatch206_5= tomMatch206_1.getSubject() ;
+if ( (tomMatch206_4 instanceof tom.engine.adt.tomterm.types.TomTerm) ) {
+if ( ((( tom.engine.adt.tomterm.types.TomTerm )tomMatch206_4) instanceof tom.engine.adt.tomterm.types.tomterm.VariableStar) ) {
+ tom.engine.adt.tomterm.types.TomTerm  tom_v=tomMatch206_4;
+if ( (tomMatch206_5 instanceof tom.engine.adt.code.types.BQTerm) ) {
+if ( ((( tom.engine.adt.code.types.BQTerm )tomMatch206_5) instanceof tom.engine.adt.code.types.bqterm.VariableHeadList) ) {
+ tom.engine.adt.code.types.BQTerm  tomMatch206_13= tomMatch206_5.getEnd() ;
+ tom.engine.adt.tomname.types.TomName  tom_opName= tomMatch206_5.getOpname() ;
+ tom.engine.adt.code.types.BQTerm  tom_begin= tomMatch206_5.getBegin() ;
+if ( (tomMatch206_13 instanceof tom.engine.adt.code.types.BQTerm) ) {
+if ( ((( tom.engine.adt.code.types.BQTerm )tomMatch206_13) instanceof tom.engine.adt.code.types.bqterm.BQVariableStar) ) {
+ tom.engine.adt.code.types.BQTerm  tom_end=tomMatch206_13;
 
 Expression doWhileTest = 
- tom.engine.adt.tomexpression.types.expression.Negation.make( tom.engine.adt.tomexpression.types.expression.EqualBQTerm.make( tomMatch206_10.getAstType() , tom_end, tom_begin) ) ;
+ tom.engine.adt.tomexpression.types.expression.Negation.make( tom.engine.adt.tomexpression.types.expression.EqualBQTerm.make( tomMatch206_13.getAstType() , tom_end, tom_begin) ) ;
 Expression testEmpty = vg.getConstraintGenerator().genIsEmptyList(
 tom_opName,
 tom_end);
@@ -497,6 +506,11 @@ return
  tom.engine.adt.tomexpression.types.expression.DoWhileExpression.make(endExpression, doWhileTest) ;		        		      
 
 
+}
+}
+}
+}
+}
 }
 }
 }

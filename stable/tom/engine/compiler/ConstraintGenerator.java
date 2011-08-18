@@ -376,25 +376,27 @@ private Instruction generateAutomata(Expression expression, Instruction action) 
 
 {
 {
-if ( (expression instanceof tom.engine.adt.tomexpression.types.Expression) ) {
-if ( ((( tom.engine.adt.tomexpression.types.Expression )expression) instanceof tom.engine.adt.tomexpression.types.expression.And) ) {
+if ( (((Object)expression) instanceof tom.engine.adt.tomexpression.types.Expression) ) {
+if ( ((( tom.engine.adt.tomexpression.types.Expression )((Object)expression)) instanceof tom.engine.adt.tomexpression.types.Expression) ) {
+if ( ((( tom.engine.adt.tomexpression.types.Expression )(( tom.engine.adt.tomexpression.types.Expression )((Object)expression))) instanceof tom.engine.adt.tomexpression.types.expression.And) ) {
 
 Instruction subInstruction = 
-generateAutomata( (( tom.engine.adt.tomexpression.types.Expression )expression).getArg2() ,action);
+generateAutomata( (( tom.engine.adt.tomexpression.types.Expression )((Object)expression)).getArg2() ,action);
 return 
-generateAutomata( (( tom.engine.adt.tomexpression.types.Expression )expression).getArg1() ,subInstruction);
+generateAutomata( (( tom.engine.adt.tomexpression.types.Expression )((Object)expression)).getArg1() ,subInstruction);
 
 
+}
 }
 }
 
 }
 {
-if ( (expression instanceof tom.engine.adt.tomexpression.types.Expression) ) {
-if ( (((( tom.engine.adt.tomexpression.types.Expression )expression) instanceof tom.engine.adt.tomexpression.types.expression.ConsOrConnector) || ((( tom.engine.adt.tomexpression.types.Expression )expression) instanceof tom.engine.adt.tomexpression.types.expression.EmptyOrConnector)) ) {
+if ( (((Object)expression) instanceof tom.engine.adt.tomexpression.types.Expression) ) {
+if ( (((( tom.engine.adt.tomexpression.types.Expression )(( tom.engine.adt.tomexpression.types.Expression )((Object)expression))) instanceof tom.engine.adt.tomexpression.types.expression.ConsOrConnector) || ((( tom.engine.adt.tomexpression.types.Expression )(( tom.engine.adt.tomexpression.types.Expression )((Object)expression))) instanceof tom.engine.adt.tomexpression.types.expression.EmptyOrConnector)) ) {
 
 return buildConstraintDisjunction(
-(( tom.engine.adt.tomexpression.types.Expression )expression),action);
+(( tom.engine.adt.tomexpression.types.Expression )((Object)expression)),action);
 
 
 }
@@ -402,22 +404,38 @@ return buildConstraintDisjunction(
 
 }
 {
-if ( (expression instanceof tom.engine.adt.tomexpression.types.Expression) ) {
-if ( ((( tom.engine.adt.tomexpression.types.Expression )expression) instanceof tom.engine.adt.tomexpression.types.expression.ConstraintToExpression) ) {
- tom.engine.adt.tomconstraint.types.Constraint  tomMatch178_8= (( tom.engine.adt.tomexpression.types.Expression )expression).getcons() ;
-if ( (tomMatch178_8 instanceof tom.engine.adt.tomconstraint.types.constraint.MatchConstraint) ) {
- tom.engine.adt.tomterm.types.TomTerm  tomMatch178_10= tomMatch178_8.getPattern() ;
-boolean tomMatch178_14= false ;
-if ( (tomMatch178_10 instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) {
-tomMatch178_14= true ;
+if ( (((Object)expression) instanceof tom.engine.adt.tomexpression.types.Expression) ) {
+if ( ((( tom.engine.adt.tomexpression.types.Expression )((Object)expression)) instanceof tom.engine.adt.tomexpression.types.Expression) ) {
+if ( ((( tom.engine.adt.tomexpression.types.Expression )(( tom.engine.adt.tomexpression.types.Expression )((Object)expression))) instanceof tom.engine.adt.tomexpression.types.expression.ConstraintToExpression) ) {
+ tom.engine.adt.tomconstraint.types.Constraint  tomMatch178_9= (( tom.engine.adt.tomexpression.types.Expression )((Object)expression)).getcons() ;
+if ( (tomMatch178_9 instanceof tom.engine.adt.tomconstraint.types.Constraint) ) {
+if ( ((( tom.engine.adt.tomconstraint.types.Constraint )tomMatch178_9) instanceof tom.engine.adt.tomconstraint.types.constraint.MatchConstraint) ) {
+ tom.engine.adt.tomterm.types.TomTerm  tomMatch178_12= tomMatch178_9.getPattern() ;
+boolean tomMatch178_19= false ;
+ tom.engine.adt.tomterm.types.TomTerm  tomMatch178_18= null ;
+ tom.engine.adt.tomterm.types.TomTerm  tomMatch178_17= null ;
+if ( (tomMatch178_12 instanceof tom.engine.adt.tomterm.types.TomTerm) ) {
+if ( ((( tom.engine.adt.tomterm.types.TomTerm )tomMatch178_12) instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) {
+{
+tomMatch178_19= true ;
+tomMatch178_17=tomMatch178_12;
+
+}
 } else {
-if ( (tomMatch178_10 instanceof tom.engine.adt.tomterm.types.tomterm.VariableStar) ) {
-tomMatch178_14= true ;
+if ( (tomMatch178_12 instanceof tom.engine.adt.tomterm.types.TomTerm) ) {
+if ( ((( tom.engine.adt.tomterm.types.TomTerm )tomMatch178_12) instanceof tom.engine.adt.tomterm.types.tomterm.VariableStar) ) {
+{
+tomMatch178_19= true ;
+tomMatch178_18=tomMatch178_12;
+
 }
 }
-if (tomMatch178_14) {
- tom.engine.adt.tomterm.types.TomTerm  tom_v=tomMatch178_10;
- tom.engine.adt.code.types.BQTerm  tom_t= tomMatch178_8.getSubject() ;
+}
+}
+}
+if (tomMatch178_19) {
+ tom.engine.adt.tomterm.types.TomTerm  tom_v=tomMatch178_12;
+ tom.engine.adt.code.types.BQTerm  tom_t= tomMatch178_9.getSubject() ;
 
 SymbolTable symbolTable = getCompiler().getSymbolTable();
 
@@ -432,15 +450,17 @@ tom_t,symbolTable);
 
 {
 {
-if ( (pType instanceof tom.engine.adt.tomtype.types.TomType) ) {
-if ( ((( tom.engine.adt.tomtype.types.TomType )pType) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {
-if ( (sType instanceof tom.engine.adt.tomtype.types.TomType) ) {
-if ( ((( tom.engine.adt.tomtype.types.TomType )sType) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {
-boolean tomMatch179_7= false ;
-if (  (( tom.engine.adt.tomtype.types.TomType )pType).getTomType() .equals( (( tom.engine.adt.tomtype.types.TomType )sType).getTomType() ) ) {
-tomMatch179_7= true ;
+if ( (((Object)pType) instanceof tom.engine.adt.tomtype.types.TomType) ) {
+if ( ((( tom.engine.adt.tomtype.types.TomType )((Object)pType)) instanceof tom.engine.adt.tomtype.types.TomType) ) {
+if ( ((( tom.engine.adt.tomtype.types.TomType )(( tom.engine.adt.tomtype.types.TomType )((Object)pType))) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {
+if ( (((Object)sType) instanceof tom.engine.adt.tomtype.types.TomType) ) {
+if ( ((( tom.engine.adt.tomtype.types.TomType )((Object)sType)) instanceof tom.engine.adt.tomtype.types.TomType) ) {
+if ( ((( tom.engine.adt.tomtype.types.TomType )(( tom.engine.adt.tomtype.types.TomType )((Object)sType))) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {
+boolean tomMatch179_9= false ;
+if (  (( tom.engine.adt.tomtype.types.TomType )((Object)pType)).getTomType() .equals( (( tom.engine.adt.tomtype.types.TomType )((Object)sType)).getTomType() ) ) {
+tomMatch179_9= true ;
 }
-if (!(tomMatch179_7)) {
+if (!(tomMatch179_9)) {
 
 return
 
@@ -449,6 +469,8 @@ return
 
 }
 
+}
+}
 }
 }
 }
@@ -467,55 +489,65 @@ return
 }
 }
 }
+}
+}
 
 }
 {
-if ( (expression instanceof tom.engine.adt.tomexpression.types.Expression) ) {
-if ( ((( tom.engine.adt.tomexpression.types.Expression )expression) instanceof tom.engine.adt.tomexpression.types.expression.ConstraintToExpression) ) {
- tom.engine.adt.tomconstraint.types.Constraint  tomMatch178_16= (( tom.engine.adt.tomexpression.types.Expression )expression).getcons() ;
-if ( (tomMatch178_16 instanceof tom.engine.adt.tomconstraint.types.constraint.NumericConstraint) ) {
+if ( (((Object)expression) instanceof tom.engine.adt.tomexpression.types.Expression) ) {
+if ( ((( tom.engine.adt.tomexpression.types.Expression )((Object)expression)) instanceof tom.engine.adt.tomexpression.types.Expression) ) {
+if ( ((( tom.engine.adt.tomexpression.types.Expression )(( tom.engine.adt.tomexpression.types.Expression )((Object)expression))) instanceof tom.engine.adt.tomexpression.types.expression.ConstraintToExpression) ) {
+ tom.engine.adt.tomconstraint.types.Constraint  tomMatch178_21= (( tom.engine.adt.tomexpression.types.Expression )((Object)expression)).getcons() ;
+if ( (tomMatch178_21 instanceof tom.engine.adt.tomconstraint.types.Constraint) ) {
+if ( ((( tom.engine.adt.tomconstraint.types.Constraint )tomMatch178_21) instanceof tom.engine.adt.tomconstraint.types.constraint.NumericConstraint) ) {
 
 return buildNumericCondition(
-tomMatch178_16,action);
+tomMatch178_21,action);
 
 
+}
+}
 }
 }
 }
 
 }
 {
-if ( (expression instanceof tom.engine.adt.tomexpression.types.Expression) ) {
-if ( ((( tom.engine.adt.tomexpression.types.Expression )expression) instanceof tom.engine.adt.tomexpression.types.expression.DoWhileExpression) ) {
+if ( (((Object)expression) instanceof tom.engine.adt.tomexpression.types.Expression) ) {
+if ( ((( tom.engine.adt.tomexpression.types.Expression )((Object)expression)) instanceof tom.engine.adt.tomexpression.types.Expression) ) {
+if ( ((( tom.engine.adt.tomexpression.types.Expression )(( tom.engine.adt.tomexpression.types.Expression )((Object)expression))) instanceof tom.engine.adt.tomexpression.types.expression.DoWhileExpression) ) {
 
 Instruction subInstruction = 
-generateAutomata( (( tom.engine.adt.tomexpression.types.Expression )expression).getEndExpression() , tom.engine.adt.tominstruction.types.instruction.Nop.make() );
+generateAutomata( (( tom.engine.adt.tomexpression.types.Expression )((Object)expression)).getEndExpression() , tom.engine.adt.tominstruction.types.instruction.Nop.make() );
 return 
- tom.engine.adt.tominstruction.types.instruction.DoWhile.make( tom.engine.adt.tominstruction.types.instruction.UnamedBlock.make( tom.engine.adt.tominstruction.types.instructionlist.ConsconcInstruction.make(action, tom.engine.adt.tominstruction.types.instructionlist.ConsconcInstruction.make(subInstruction, tom.engine.adt.tominstruction.types.instructionlist.EmptyconcInstruction.make() ) ) ) ,  (( tom.engine.adt.tomexpression.types.Expression )expression).getLoopCondition() ) ;
+ tom.engine.adt.tominstruction.types.instruction.DoWhile.make( tom.engine.adt.tominstruction.types.instruction.UnamedBlock.make( tom.engine.adt.tominstruction.types.instructionlist.ConsconcInstruction.make(action, tom.engine.adt.tominstruction.types.instructionlist.ConsconcInstruction.make(subInstruction, tom.engine.adt.tominstruction.types.instructionlist.EmptyconcInstruction.make() ) ) ) ,  (( tom.engine.adt.tomexpression.types.Expression )((Object)expression)).getLoopCondition() ) ;
 
 
+}
 }
 }
 
 }
 {
-if ( (expression instanceof tom.engine.adt.tomexpression.types.Expression) ) {
-if ( ((( tom.engine.adt.tomexpression.types.Expression )expression) instanceof tom.engine.adt.tomexpression.types.expression.TomInstructionToExpression) ) {
+if ( (((Object)expression) instanceof tom.engine.adt.tomexpression.types.Expression) ) {
+if ( ((( tom.engine.adt.tomexpression.types.Expression )((Object)expression)) instanceof tom.engine.adt.tomexpression.types.Expression) ) {
+if ( ((( tom.engine.adt.tomexpression.types.Expression )(( tom.engine.adt.tomexpression.types.Expression )((Object)expression))) instanceof tom.engine.adt.tomexpression.types.expression.TomInstructionToExpression) ) {
 
 return 
- (( tom.engine.adt.tomexpression.types.Expression )expression).getInstruction() ;
+ (( tom.engine.adt.tomexpression.types.Expression )((Object)expression)).getInstruction() ;
 
 
+}
 }
 }
 
 }
 {
-if ( (expression instanceof tom.engine.adt.tomexpression.types.Expression) ) {
-if ( (((( tom.engine.adt.tomexpression.types.Expression )expression) instanceof tom.engine.adt.tomexpression.types.expression.ConsOrExpressionDisjunction) || ((( tom.engine.adt.tomexpression.types.Expression )expression) instanceof tom.engine.adt.tomexpression.types.expression.EmptyOrExpressionDisjunction)) ) {
+if ( (((Object)expression) instanceof tom.engine.adt.tomexpression.types.Expression) ) {
+if ( (((( tom.engine.adt.tomexpression.types.Expression )(( tom.engine.adt.tomexpression.types.Expression )((Object)expression))) instanceof tom.engine.adt.tomexpression.types.expression.ConsOrExpressionDisjunction) || ((( tom.engine.adt.tomexpression.types.Expression )(( tom.engine.adt.tomexpression.types.Expression )((Object)expression))) instanceof tom.engine.adt.tomexpression.types.expression.EmptyOrExpressionDisjunction)) ) {
 
 return buildExpressionDisjunction(
-(( tom.engine.adt.tomexpression.types.Expression )expression),action);
+(( tom.engine.adt.tomexpression.types.Expression )((Object)expression)),action);
 
 
 }
@@ -523,34 +555,38 @@ return buildExpressionDisjunction(
 
 }
 {
-if ( (expression instanceof tom.engine.adt.tomexpression.types.Expression) ) {
-if ( ((( tom.engine.adt.tomexpression.types.Expression )expression) instanceof tom.engine.adt.tomexpression.types.expression.AntiMatchExpression) ) {
+if ( (((Object)expression) instanceof tom.engine.adt.tomexpression.types.Expression) ) {
+if ( ((( tom.engine.adt.tomexpression.types.Expression )((Object)expression)) instanceof tom.engine.adt.tomexpression.types.Expression) ) {
+if ( ((( tom.engine.adt.tomexpression.types.Expression )(( tom.engine.adt.tomexpression.types.Expression )((Object)expression))) instanceof tom.engine.adt.tomexpression.types.expression.AntiMatchExpression) ) {
 
 return buildAntiMatchInstruction(
- (( tom.engine.adt.tomexpression.types.Expression )expression).getExpression() ,action);
+ (( tom.engine.adt.tomexpression.types.Expression )((Object)expression)).getExpression() ,action);
 
 
 }
-}
-
-}
-{
-if ( (expression instanceof tom.engine.adt.tomexpression.types.Expression) ) {
-if ( ((( tom.engine.adt.tomexpression.types.Expression )expression) instanceof tom.engine.adt.tomexpression.types.expression.ACMatchLoop) ) {
-
-return 
-buildACMatchLoop( (( tom.engine.adt.tomexpression.types.Expression )expression).getSymbolName() , (( tom.engine.adt.tomexpression.types.Expression )expression).getVariableX() , (( tom.engine.adt.tomexpression.types.Expression )expression).getVariableY() , (( tom.engine.adt.tomexpression.types.Expression )expression).getMultiplicityY() , (( tom.engine.adt.tomexpression.types.Expression )expression).getSubject() ,action);
-
-
 }
 }
 
 }
 {
-if ( (expression instanceof tom.engine.adt.tomexpression.types.Expression) ) {
+if ( (((Object)expression) instanceof tom.engine.adt.tomexpression.types.Expression) ) {
+if ( ((( tom.engine.adt.tomexpression.types.Expression )((Object)expression)) instanceof tom.engine.adt.tomexpression.types.Expression) ) {
+if ( ((( tom.engine.adt.tomexpression.types.Expression )(( tom.engine.adt.tomexpression.types.Expression )((Object)expression))) instanceof tom.engine.adt.tomexpression.types.expression.ACMatchLoop) ) {
 
 return 
- tom.engine.adt.tominstruction.types.instruction.If.make((( tom.engine.adt.tomexpression.types.Expression )expression), action,  tom.engine.adt.tominstruction.types.instruction.Nop.make() ) ;
+buildACMatchLoop( (( tom.engine.adt.tomexpression.types.Expression )((Object)expression)).getSymbolName() , (( tom.engine.adt.tomexpression.types.Expression )((Object)expression)).getVariableX() , (( tom.engine.adt.tomexpression.types.Expression )((Object)expression)).getVariableY() , (( tom.engine.adt.tomexpression.types.Expression )((Object)expression)).getMultiplicityY() , (( tom.engine.adt.tomexpression.types.Expression )((Object)expression)).getSubject() ,action);
+
+
+}
+}
+}
+
+}
+{
+if ( (((Object)expression) instanceof tom.engine.adt.tomexpression.types.Expression) ) {
+
+return 
+ tom.engine.adt.tominstruction.types.instruction.If.make((( tom.engine.adt.tomexpression.types.Expression )((Object)expression)), action,  tom.engine.adt.tominstruction.types.instruction.Nop.make() ) ;
 
 
 }
@@ -626,20 +662,24 @@ public  tom.engine.adt.code.types.BQTerm  visit_BQTerm( tom.engine.adt.code.type
  throws tom.library.sl.VisitFailure {
 {
 {
-if ( (tom__arg instanceof tom.engine.adt.code.types.BQTerm) ) {
-if ( ((( tom.engine.adt.code.types.BQTerm )tom__arg) instanceof tom.engine.adt.code.types.bqterm.Subterm) ) {
- tom.engine.adt.tomname.types.TomName  tomMatch180_1= (( tom.engine.adt.code.types.BQTerm )tom__arg).getAstName() ;
-if ( (tomMatch180_1 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
- tom.engine.adt.tomname.types.TomName  tom_slotName= (( tom.engine.adt.code.types.BQTerm )tom__arg).getSlotName() ;
+if ( (((Object)tom__arg) instanceof tom.engine.adt.code.types.BQTerm) ) {
+if ( ((( tom.engine.adt.code.types.BQTerm )((Object)tom__arg)) instanceof tom.engine.adt.code.types.BQTerm) ) {
+if ( ((( tom.engine.adt.code.types.BQTerm )(( tom.engine.adt.code.types.BQTerm )((Object)tom__arg))) instanceof tom.engine.adt.code.types.bqterm.Subterm) ) {
+ tom.engine.adt.tomname.types.TomName  tomMatch180_1= (( tom.engine.adt.code.types.BQTerm )((Object)tom__arg)).getAstName() ;
+if ( (tomMatch180_1 instanceof tom.engine.adt.tomname.types.TomName) ) {
+if ( ((( tom.engine.adt.tomname.types.TomName )tomMatch180_1) instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+ tom.engine.adt.tomname.types.TomName  tom_slotName= (( tom.engine.adt.code.types.BQTerm )((Object)tom__arg)).getSlotName() ;
 
 TomSymbol tomSymbol = cg.getCompiler().getSymbolTable().getSymbolFromName(
  tomMatch180_1.getString() );
 TomType subtermType = TomBase.getSlotType(tomSymbol, 
 tom_slotName);	        	
 return 
- tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make( tom.engine.adt.tomexpression.types.expression.GetSlot.make(subtermType, tomMatch180_1, tom_slotName.getString(),  (( tom.engine.adt.code.types.BQTerm )tom__arg).getGroundTerm() ) ) ;
+ tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make( tom.engine.adt.tomexpression.types.expression.GetSlot.make(subtermType, tomMatch180_1, tom_slotName.getString(),  (( tom.engine.adt.code.types.BQTerm )((Object)tom__arg)).getGroundTerm() ) ) ;
 
 
+}
+}
 }
 }
 }
@@ -666,12 +706,12 @@ private Instruction buildConstraintDisjunction(Expression orConnector, Instructi
 
 {
 {
-if ( (orConnector instanceof tom.engine.adt.tomexpression.types.Expression) ) {
-if ( (((( tom.engine.adt.tomexpression.types.Expression )orConnector) instanceof tom.engine.adt.tomexpression.types.expression.ConsOrConnector) || ((( tom.engine.adt.tomexpression.types.Expression )orConnector) instanceof tom.engine.adt.tomexpression.types.expression.EmptyOrConnector)) ) {
-if (!( (  (( tom.engine.adt.tomexpression.types.Expression )orConnector).isEmptyOrConnector()  ||  ((( tom.engine.adt.tomexpression.types.Expression )orConnector)== tom.engine.adt.tomexpression.types.expression.EmptyOrConnector.make() )  ) )) {
+if ( (((Object)orConnector) instanceof tom.engine.adt.tomexpression.types.Expression) ) {
+if ( (((( tom.engine.adt.tomexpression.types.Expression )(( tom.engine.adt.tomexpression.types.Expression )((Object)orConnector))) instanceof tom.engine.adt.tomexpression.types.expression.ConsOrConnector) || ((( tom.engine.adt.tomexpression.types.Expression )(( tom.engine.adt.tomexpression.types.Expression )((Object)orConnector))) instanceof tom.engine.adt.tomexpression.types.expression.EmptyOrConnector)) ) {
+if (!( (  (( tom.engine.adt.tomexpression.types.Expression )((Object)orConnector)).isEmptyOrConnector()  ||  ((( tom.engine.adt.tomexpression.types.Expression )((Object)orConnector))== tom.engine.adt.tomexpression.types.expression.EmptyOrConnector.make() )  ) )) {
 
 return 
- tom.engine.adt.tominstruction.types.instruction.AbstractBlock.make( tom.engine.adt.tominstruction.types.instructionlist.ConsconcInstruction.make(generateAutomata((( (((( tom.engine.adt.tomexpression.types.Expression )orConnector) instanceof tom.engine.adt.tomexpression.types.expression.ConsOrConnector) || ((( tom.engine.adt.tomexpression.types.Expression )orConnector) instanceof tom.engine.adt.tomexpression.types.expression.EmptyOrConnector)) )?( (( tom.engine.adt.tomexpression.types.Expression )orConnector).getHeadOrConnector() ):((( tom.engine.adt.tomexpression.types.Expression )orConnector))),action), tom.engine.adt.tominstruction.types.instructionlist.ConsconcInstruction.make(buildConstraintDisjunction((( (((( tom.engine.adt.tomexpression.types.Expression )orConnector) instanceof tom.engine.adt.tomexpression.types.expression.ConsOrConnector) || ((( tom.engine.adt.tomexpression.types.Expression )orConnector) instanceof tom.engine.adt.tomexpression.types.expression.EmptyOrConnector)) )?( (( tom.engine.adt.tomexpression.types.Expression )orConnector).getTailOrConnector() ):( tom.engine.adt.tomexpression.types.expression.EmptyOrConnector.make() )),action)
+ tom.engine.adt.tominstruction.types.instruction.AbstractBlock.make( tom.engine.adt.tominstruction.types.instructionlist.ConsconcInstruction.make(generateAutomata((( (((( tom.engine.adt.tomexpression.types.Expression )((Object)orConnector)) instanceof tom.engine.adt.tomexpression.types.expression.ConsOrConnector) || ((( tom.engine.adt.tomexpression.types.Expression )((Object)orConnector)) instanceof tom.engine.adt.tomexpression.types.expression.EmptyOrConnector)) )?( (( tom.engine.adt.tomexpression.types.Expression )((Object)orConnector)).getHeadOrConnector() ):((( tom.engine.adt.tomexpression.types.Expression )((Object)orConnector)))),action), tom.engine.adt.tominstruction.types.instructionlist.ConsconcInstruction.make(buildConstraintDisjunction((( (((( tom.engine.adt.tomexpression.types.Expression )((Object)orConnector)) instanceof tom.engine.adt.tomexpression.types.expression.ConsOrConnector) || ((( tom.engine.adt.tomexpression.types.Expression )((Object)orConnector)) instanceof tom.engine.adt.tomexpression.types.expression.EmptyOrConnector)) )?( (( tom.engine.adt.tomexpression.types.Expression )((Object)orConnector)).getTailOrConnector() ):( tom.engine.adt.tomexpression.types.expression.EmptyOrConnector.make() )),action)
               , tom.engine.adt.tominstruction.types.instructionlist.EmptyconcInstruction.make() ) ) ) ;
 
 
@@ -737,9 +777,9 @@ throws VisitFailure {
 
 {
 {
-if ( (orDisjunction instanceof tom.engine.adt.tomexpression.types.Expression) ) {
-if ( (((( tom.engine.adt.tomexpression.types.Expression )orDisjunction) instanceof tom.engine.adt.tomexpression.types.expression.ConsOrExpressionDisjunction) || ((( tom.engine.adt.tomexpression.types.Expression )orDisjunction) instanceof tom.engine.adt.tomexpression.types.expression.EmptyOrExpressionDisjunction)) ) {
-if ( (  (( tom.engine.adt.tomexpression.types.Expression )orDisjunction).isEmptyOrExpressionDisjunction()  ||  ((( tom.engine.adt.tomexpression.types.Expression )orDisjunction)== tom.engine.adt.tomexpression.types.expression.EmptyOrExpressionDisjunction.make() )  ) ) {
+if ( (((Object)orDisjunction) instanceof tom.engine.adt.tomexpression.types.Expression) ) {
+if ( (((( tom.engine.adt.tomexpression.types.Expression )(( tom.engine.adt.tomexpression.types.Expression )((Object)orDisjunction))) instanceof tom.engine.adt.tomexpression.types.expression.ConsOrExpressionDisjunction) || ((( tom.engine.adt.tomexpression.types.Expression )(( tom.engine.adt.tomexpression.types.Expression )((Object)orDisjunction))) instanceof tom.engine.adt.tomexpression.types.expression.EmptyOrExpressionDisjunction)) ) {
+if ( (  (( tom.engine.adt.tomexpression.types.Expression )((Object)orDisjunction)).isEmptyOrExpressionDisjunction()  ||  ((( tom.engine.adt.tomexpression.types.Expression )((Object)orDisjunction))== tom.engine.adt.tomexpression.types.expression.EmptyOrExpressionDisjunction.make() )  ) ) {
 
 return 
  tom.engine.adt.tominstruction.types.instruction.Nop.make() ;
@@ -751,19 +791,23 @@ return
 
 }
 {
-if ( (orDisjunction instanceof tom.engine.adt.tomexpression.types.Expression) ) {
-if ( (((( tom.engine.adt.tomexpression.types.Expression )orDisjunction) instanceof tom.engine.adt.tomexpression.types.expression.ConsOrExpressionDisjunction) || ((( tom.engine.adt.tomexpression.types.Expression )orDisjunction) instanceof tom.engine.adt.tomexpression.types.expression.EmptyOrExpressionDisjunction)) ) {
-if (!( (  (( tom.engine.adt.tomexpression.types.Expression )orDisjunction).isEmptyOrExpressionDisjunction()  ||  ((( tom.engine.adt.tomexpression.types.Expression )orDisjunction)== tom.engine.adt.tomexpression.types.expression.EmptyOrExpressionDisjunction.make() )  ) )) {
- tom.engine.adt.tomexpression.types.Expression  tomMatch182_8=(( (((( tom.engine.adt.tomexpression.types.Expression )orDisjunction) instanceof tom.engine.adt.tomexpression.types.expression.ConsOrExpressionDisjunction) || ((( tom.engine.adt.tomexpression.types.Expression )orDisjunction) instanceof tom.engine.adt.tomexpression.types.expression.EmptyOrExpressionDisjunction)) )?( (( tom.engine.adt.tomexpression.types.Expression )orDisjunction).getHeadOrExpressionDisjunction() ):((( tom.engine.adt.tomexpression.types.Expression )orDisjunction)));
-if ( (tomMatch182_8 instanceof tom.engine.adt.tomexpression.types.expression.And) ) {
+if ( (((Object)orDisjunction) instanceof tom.engine.adt.tomexpression.types.Expression) ) {
+if ( (((( tom.engine.adt.tomexpression.types.Expression )(( tom.engine.adt.tomexpression.types.Expression )((Object)orDisjunction))) instanceof tom.engine.adt.tomexpression.types.expression.ConsOrExpressionDisjunction) || ((( tom.engine.adt.tomexpression.types.Expression )(( tom.engine.adt.tomexpression.types.Expression )((Object)orDisjunction))) instanceof tom.engine.adt.tomexpression.types.expression.EmptyOrExpressionDisjunction)) ) {
+if (!( (  (( tom.engine.adt.tomexpression.types.Expression )((Object)orDisjunction)).isEmptyOrExpressionDisjunction()  ||  ((( tom.engine.adt.tomexpression.types.Expression )((Object)orDisjunction))== tom.engine.adt.tomexpression.types.expression.EmptyOrExpressionDisjunction.make() )  ) )) {
+ tom.engine.adt.tomexpression.types.Expression  tomMatch182_8=(( (((( tom.engine.adt.tomexpression.types.Expression )((Object)orDisjunction)) instanceof tom.engine.adt.tomexpression.types.expression.ConsOrExpressionDisjunction) || ((( tom.engine.adt.tomexpression.types.Expression )((Object)orDisjunction)) instanceof tom.engine.adt.tomexpression.types.expression.EmptyOrExpressionDisjunction)) )?( (( tom.engine.adt.tomexpression.types.Expression )((Object)orDisjunction)).getHeadOrExpressionDisjunction() ):((( tom.engine.adt.tomexpression.types.Expression )((Object)orDisjunction))));
+if ( (tomMatch182_8 instanceof tom.engine.adt.tomexpression.types.Expression) ) {
+if ( ((( tom.engine.adt.tomexpression.types.Expression )tomMatch182_8) instanceof tom.engine.adt.tomexpression.types.expression.And) ) {
  tom.engine.adt.tomexpression.types.Expression  tomMatch182_6= tomMatch182_8.getArg1() ;
-if ( (tomMatch182_6 instanceof tom.engine.adt.tomexpression.types.expression.IsSort) ) {
+if ( (tomMatch182_6 instanceof tom.engine.adt.tomexpression.types.Expression) ) {
+if ( ((( tom.engine.adt.tomexpression.types.Expression )tomMatch182_6) instanceof tom.engine.adt.tomexpression.types.expression.IsSort) ) {
 
 return
 
- tom.engine.adt.tominstruction.types.instruction.If.make(tomMatch182_6, buildDisjunctionIfElse( tom.engine.adt.tomexpression.types.expression.ConsOrExpressionDisjunction.make( tomMatch182_8.getArg2() ,tom_append_list_OrExpressionDisjunction((( (((( tom.engine.adt.tomexpression.types.Expression )orDisjunction) instanceof tom.engine.adt.tomexpression.types.expression.ConsOrExpressionDisjunction) || ((( tom.engine.adt.tomexpression.types.Expression )orDisjunction) instanceof tom.engine.adt.tomexpression.types.expression.EmptyOrExpressionDisjunction)) )?( (( tom.engine.adt.tomexpression.types.Expression )orDisjunction).getTailOrExpressionDisjunction() ):( tom.engine.adt.tomexpression.types.expression.EmptyOrExpressionDisjunction.make() )), tom.engine.adt.tomexpression.types.expression.EmptyOrExpressionDisjunction.make() )) ,assignFlagTrue),  tom.engine.adt.tominstruction.types.instruction.Nop.make() ) ;
+ tom.engine.adt.tominstruction.types.instruction.If.make(tomMatch182_6, buildDisjunctionIfElse( tom.engine.adt.tomexpression.types.expression.ConsOrExpressionDisjunction.make( tomMatch182_8.getArg2() ,tom_append_list_OrExpressionDisjunction((( (((( tom.engine.adt.tomexpression.types.Expression )((Object)orDisjunction)) instanceof tom.engine.adt.tomexpression.types.expression.ConsOrExpressionDisjunction) || ((( tom.engine.adt.tomexpression.types.Expression )((Object)orDisjunction)) instanceof tom.engine.adt.tomexpression.types.expression.EmptyOrExpressionDisjunction)) )?( (( tom.engine.adt.tomexpression.types.Expression )((Object)orDisjunction)).getTailOrExpressionDisjunction() ):( tom.engine.adt.tomexpression.types.expression.EmptyOrExpressionDisjunction.make() )), tom.engine.adt.tomexpression.types.expression.EmptyOrExpressionDisjunction.make() )) ,assignFlagTrue),  tom.engine.adt.tominstruction.types.instruction.Nop.make() ) ;
 
 
+}
+}
 }
 }
 }
@@ -772,19 +816,21 @@ return
 
 }
 {
-if ( (orDisjunction instanceof tom.engine.adt.tomexpression.types.Expression) ) {
-if ( (((( tom.engine.adt.tomexpression.types.Expression )orDisjunction) instanceof tom.engine.adt.tomexpression.types.expression.ConsOrExpressionDisjunction) || ((( tom.engine.adt.tomexpression.types.Expression )orDisjunction) instanceof tom.engine.adt.tomexpression.types.expression.EmptyOrExpressionDisjunction)) ) {
-if (!( (  (( tom.engine.adt.tomexpression.types.Expression )orDisjunction).isEmptyOrExpressionDisjunction()  ||  ((( tom.engine.adt.tomexpression.types.Expression )orDisjunction)== tom.engine.adt.tomexpression.types.expression.EmptyOrExpressionDisjunction.make() )  ) )) {
- tom.engine.adt.tomexpression.types.Expression  tomMatch182_16=(( (((( tom.engine.adt.tomexpression.types.Expression )orDisjunction) instanceof tom.engine.adt.tomexpression.types.expression.ConsOrExpressionDisjunction) || ((( tom.engine.adt.tomexpression.types.Expression )orDisjunction) instanceof tom.engine.adt.tomexpression.types.expression.EmptyOrExpressionDisjunction)) )?( (( tom.engine.adt.tomexpression.types.Expression )orDisjunction).getHeadOrExpressionDisjunction() ):((( tom.engine.adt.tomexpression.types.Expression )orDisjunction)));
-if ( (tomMatch182_16 instanceof tom.engine.adt.tomexpression.types.expression.And) ) {
+if ( (((Object)orDisjunction) instanceof tom.engine.adt.tomexpression.types.Expression) ) {
+if ( (((( tom.engine.adt.tomexpression.types.Expression )(( tom.engine.adt.tomexpression.types.Expression )((Object)orDisjunction))) instanceof tom.engine.adt.tomexpression.types.expression.ConsOrExpressionDisjunction) || ((( tom.engine.adt.tomexpression.types.Expression )(( tom.engine.adt.tomexpression.types.Expression )((Object)orDisjunction))) instanceof tom.engine.adt.tomexpression.types.expression.EmptyOrExpressionDisjunction)) ) {
+if (!( (  (( tom.engine.adt.tomexpression.types.Expression )((Object)orDisjunction)).isEmptyOrExpressionDisjunction()  ||  ((( tom.engine.adt.tomexpression.types.Expression )((Object)orDisjunction))== tom.engine.adt.tomexpression.types.expression.EmptyOrExpressionDisjunction.make() )  ) )) {
+ tom.engine.adt.tomexpression.types.Expression  tomMatch182_18=(( (((( tom.engine.adt.tomexpression.types.Expression )((Object)orDisjunction)) instanceof tom.engine.adt.tomexpression.types.expression.ConsOrExpressionDisjunction) || ((( tom.engine.adt.tomexpression.types.Expression )((Object)orDisjunction)) instanceof tom.engine.adt.tomexpression.types.expression.EmptyOrExpressionDisjunction)) )?( (( tom.engine.adt.tomexpression.types.Expression )((Object)orDisjunction)).getHeadOrExpressionDisjunction() ):((( tom.engine.adt.tomexpression.types.Expression )((Object)orDisjunction))));
+if ( (tomMatch182_18 instanceof tom.engine.adt.tomexpression.types.Expression) ) {
+if ( ((( tom.engine.adt.tomexpression.types.Expression )tomMatch182_18) instanceof tom.engine.adt.tomexpression.types.expression.And) ) {
 
 //DEBUG System.out.println("orDisjunction = " + `orDisjunction);
 Instruction subtest = buildDisjunctionIfElse(
-tom_append_list_OrExpressionDisjunction((( (((( tom.engine.adt.tomexpression.types.Expression )orDisjunction) instanceof tom.engine.adt.tomexpression.types.expression.ConsOrExpressionDisjunction) || ((( tom.engine.adt.tomexpression.types.Expression )orDisjunction) instanceof tom.engine.adt.tomexpression.types.expression.EmptyOrExpressionDisjunction)) )?( (( tom.engine.adt.tomexpression.types.Expression )orDisjunction).getTailOrExpressionDisjunction() ):( tom.engine.adt.tomexpression.types.expression.EmptyOrExpressionDisjunction.make() )), tom.engine.adt.tomexpression.types.expression.EmptyOrExpressionDisjunction.make() ),assignFlagTrue);
+tom_append_list_OrExpressionDisjunction((( (((( tom.engine.adt.tomexpression.types.Expression )((Object)orDisjunction)) instanceof tom.engine.adt.tomexpression.types.expression.ConsOrExpressionDisjunction) || ((( tom.engine.adt.tomexpression.types.Expression )((Object)orDisjunction)) instanceof tom.engine.adt.tomexpression.types.expression.EmptyOrExpressionDisjunction)) )?( (( tom.engine.adt.tomexpression.types.Expression )((Object)orDisjunction)).getTailOrExpressionDisjunction() ):( tom.engine.adt.tomexpression.types.expression.EmptyOrExpressionDisjunction.make() )), tom.engine.adt.tomexpression.types.expression.EmptyOrExpressionDisjunction.make() ),assignFlagTrue);
 return 
- tom.engine.adt.tominstruction.types.instruction.If.make( tomMatch182_16.getArg1() ,  tom.engine.adt.tominstruction.types.instruction.UnamedBlock.make( tom.engine.adt.tominstruction.types.instructionlist.ConsconcInstruction.make(assignFlagTrue, tom.engine.adt.tominstruction.types.instructionlist.ConsconcInstruction.make(generateAutomata( tomMatch182_16.getArg2() , tom.engine.adt.tominstruction.types.instruction.Nop.make() ), tom.engine.adt.tominstruction.types.instructionlist.EmptyconcInstruction.make() ) ) ) , subtest) ;
+ tom.engine.adt.tominstruction.types.instruction.If.make( tomMatch182_18.getArg1() ,  tom.engine.adt.tominstruction.types.instruction.UnamedBlock.make( tom.engine.adt.tominstruction.types.instructionlist.ConsconcInstruction.make(assignFlagTrue, tom.engine.adt.tominstruction.types.instructionlist.ConsconcInstruction.make(generateAutomata( tomMatch182_18.getArg2() , tom.engine.adt.tominstruction.types.instruction.Nop.make() ), tom.engine.adt.tominstruction.types.instructionlist.EmptyconcInstruction.make() ) ) ) , subtest) ;
 
 
+}
 }
 }
 }
@@ -792,14 +838,14 @@ return
 
 }
 {
-if ( (orDisjunction instanceof tom.engine.adt.tomexpression.types.Expression) ) {
-if ( (((( tom.engine.adt.tomexpression.types.Expression )orDisjunction) instanceof tom.engine.adt.tomexpression.types.expression.ConsOrExpressionDisjunction) || ((( tom.engine.adt.tomexpression.types.Expression )orDisjunction) instanceof tom.engine.adt.tomexpression.types.expression.EmptyOrExpressionDisjunction)) ) {
-if (!( (  (( tom.engine.adt.tomexpression.types.Expression )orDisjunction).isEmptyOrExpressionDisjunction()  ||  ((( tom.engine.adt.tomexpression.types.Expression )orDisjunction)== tom.engine.adt.tomexpression.types.expression.EmptyOrExpressionDisjunction.make() )  ) )) {
+if ( (((Object)orDisjunction) instanceof tom.engine.adt.tomexpression.types.Expression) ) {
+if ( (((( tom.engine.adt.tomexpression.types.Expression )(( tom.engine.adt.tomexpression.types.Expression )((Object)orDisjunction))) instanceof tom.engine.adt.tomexpression.types.expression.ConsOrExpressionDisjunction) || ((( tom.engine.adt.tomexpression.types.Expression )(( tom.engine.adt.tomexpression.types.Expression )((Object)orDisjunction))) instanceof tom.engine.adt.tomexpression.types.expression.EmptyOrExpressionDisjunction)) ) {
+if (!( (  (( tom.engine.adt.tomexpression.types.Expression )((Object)orDisjunction)).isEmptyOrExpressionDisjunction()  ||  ((( tom.engine.adt.tomexpression.types.Expression )((Object)orDisjunction))== tom.engine.adt.tomexpression.types.expression.EmptyOrExpressionDisjunction.make() )  ) )) {
 
 Instruction subtest = buildDisjunctionIfElse(
-tom_append_list_OrExpressionDisjunction((( (((( tom.engine.adt.tomexpression.types.Expression )orDisjunction) instanceof tom.engine.adt.tomexpression.types.expression.ConsOrExpressionDisjunction) || ((( tom.engine.adt.tomexpression.types.Expression )orDisjunction) instanceof tom.engine.adt.tomexpression.types.expression.EmptyOrExpressionDisjunction)) )?( (( tom.engine.adt.tomexpression.types.Expression )orDisjunction).getTailOrExpressionDisjunction() ):( tom.engine.adt.tomexpression.types.expression.EmptyOrExpressionDisjunction.make() )), tom.engine.adt.tomexpression.types.expression.EmptyOrExpressionDisjunction.make() ),assignFlagTrue);
+tom_append_list_OrExpressionDisjunction((( (((( tom.engine.adt.tomexpression.types.Expression )((Object)orDisjunction)) instanceof tom.engine.adt.tomexpression.types.expression.ConsOrExpressionDisjunction) || ((( tom.engine.adt.tomexpression.types.Expression )((Object)orDisjunction)) instanceof tom.engine.adt.tomexpression.types.expression.EmptyOrExpressionDisjunction)) )?( (( tom.engine.adt.tomexpression.types.Expression )((Object)orDisjunction)).getTailOrExpressionDisjunction() ):( tom.engine.adt.tomexpression.types.expression.EmptyOrExpressionDisjunction.make() )), tom.engine.adt.tomexpression.types.expression.EmptyOrExpressionDisjunction.make() ),assignFlagTrue);
 return 
- tom.engine.adt.tominstruction.types.instruction.If.make((( (((( tom.engine.adt.tomexpression.types.Expression )orDisjunction) instanceof tom.engine.adt.tomexpression.types.expression.ConsOrExpressionDisjunction) || ((( tom.engine.adt.tomexpression.types.Expression )orDisjunction) instanceof tom.engine.adt.tomexpression.types.expression.EmptyOrExpressionDisjunction)) )?( (( tom.engine.adt.tomexpression.types.Expression )orDisjunction).getHeadOrExpressionDisjunction() ):((( tom.engine.adt.tomexpression.types.Expression )orDisjunction))), assignFlagTrue, subtest) ;
+ tom.engine.adt.tominstruction.types.instruction.If.make((( (((( tom.engine.adt.tomexpression.types.Expression )((Object)orDisjunction)) instanceof tom.engine.adt.tomexpression.types.expression.ConsOrExpressionDisjunction) || ((( tom.engine.adt.tomexpression.types.Expression )((Object)orDisjunction)) instanceof tom.engine.adt.tomexpression.types.expression.EmptyOrExpressionDisjunction)) )?( (( tom.engine.adt.tomexpression.types.Expression )((Object)orDisjunction)).getHeadOrExpressionDisjunction() ):((( tom.engine.adt.tomexpression.types.Expression )((Object)orDisjunction)))), assignFlagTrue, subtest) ;
 
 
 }
@@ -901,10 +947,12 @@ public  tom.engine.adt.tomconstraint.types.Constraint  visit_Constraint( tom.eng
  throws tom.library.sl.VisitFailure {
 {
 {
-if ( (tom__arg instanceof tom.engine.adt.tomconstraint.types.Constraint) ) {
-if ( ((( tom.engine.adt.tomconstraint.types.Constraint )tom__arg) instanceof tom.engine.adt.tomconstraint.types.constraint.MatchConstraint) ) {
- tom.engine.adt.tomterm.types.TomTerm  tomMatch183_1= (( tom.engine.adt.tomconstraint.types.Constraint )tom__arg).getPattern() ;
-if ( (tomMatch183_1 instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) {
+if ( (((Object)tom__arg) instanceof tom.engine.adt.tomconstraint.types.Constraint) ) {
+if ( ((( tom.engine.adt.tomconstraint.types.Constraint )((Object)tom__arg)) instanceof tom.engine.adt.tomconstraint.types.Constraint) ) {
+if ( ((( tom.engine.adt.tomconstraint.types.Constraint )(( tom.engine.adt.tomconstraint.types.Constraint )((Object)tom__arg))) instanceof tom.engine.adt.tomconstraint.types.constraint.MatchConstraint) ) {
+ tom.engine.adt.tomterm.types.TomTerm  tomMatch183_1= (( tom.engine.adt.tomconstraint.types.Constraint )((Object)tom__arg)).getPattern() ;
+if ( (tomMatch183_1 instanceof tom.engine.adt.tomterm.types.TomTerm) ) {
+if ( ((( tom.engine.adt.tomterm.types.TomTerm )tomMatch183_1) instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) {
  tom.engine.adt.tomterm.types.TomTerm  tom_v=tomMatch183_1;
 
 if(!varList.contains(
@@ -912,6 +960,8 @@ tom_v)) { varList.add(TomBase.convertFromVarToBQVar(
 tom_v)); }        
 
 
+}
+}
 }
 }
 }
@@ -991,13 +1041,16 @@ public  tom.engine.adt.tomexpression.types.Expression  visit_Expression( tom.eng
  throws tom.library.sl.VisitFailure {
 {
 {
-if ( (tom__arg instanceof tom.engine.adt.tomexpression.types.Expression) ) {
-if ( ((( tom.engine.adt.tomexpression.types.Expression )tom__arg) instanceof tom.engine.adt.tomexpression.types.expression.ConstraintToExpression) ) {
- tom.engine.adt.tomconstraint.types.Constraint  tomMatch184_1= (( tom.engine.adt.tomexpression.types.Expression )tom__arg).getcons() ;
-if ( (tomMatch184_1 instanceof tom.engine.adt.tomconstraint.types.constraint.MatchConstraint) ) {
- tom.engine.adt.tomterm.types.TomTerm  tomMatch184_3= tomMatch184_1.getPattern() ;
-if ( (tomMatch184_3 instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) {
- tom.engine.adt.tomterm.types.TomTerm  tom_v=tomMatch184_3;
+if ( (((Object)tom__arg) instanceof tom.engine.adt.tomexpression.types.Expression) ) {
+if ( ((( tom.engine.adt.tomexpression.types.Expression )((Object)tom__arg)) instanceof tom.engine.adt.tomexpression.types.Expression) ) {
+if ( ((( tom.engine.adt.tomexpression.types.Expression )(( tom.engine.adt.tomexpression.types.Expression )((Object)tom__arg))) instanceof tom.engine.adt.tomexpression.types.expression.ConstraintToExpression) ) {
+ tom.engine.adt.tomconstraint.types.Constraint  tomMatch184_1= (( tom.engine.adt.tomexpression.types.Expression )((Object)tom__arg)).getcons() ;
+if ( (tomMatch184_1 instanceof tom.engine.adt.tomconstraint.types.Constraint) ) {
+if ( ((( tom.engine.adt.tomconstraint.types.Constraint )tomMatch184_1) instanceof tom.engine.adt.tomconstraint.types.constraint.MatchConstraint) ) {
+ tom.engine.adt.tomterm.types.TomTerm  tomMatch184_4= tomMatch184_1.getPattern() ;
+if ( (tomMatch184_4 instanceof tom.engine.adt.tomterm.types.TomTerm) ) {
+if ( ((( tom.engine.adt.tomterm.types.TomTerm )tomMatch184_4) instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) {
+ tom.engine.adt.tomterm.types.TomTerm  tom_v=tomMatch184_4;
 
 if(!varList.contains(
 tom_v)) { varList.add(TomBase.convertFromVarToBQVar(
@@ -1009,14 +1062,19 @@ throw new VisitFailure();
 }
 }
 }
+}
+}
+}
 
 }
 {
-if ( (tom__arg instanceof tom.engine.adt.tomexpression.types.Expression) ) {
-if ( ((( tom.engine.adt.tomexpression.types.Expression )tom__arg) instanceof tom.engine.adt.tomexpression.types.expression.AntiMatchExpression) ) {
+if ( (((Object)tom__arg) instanceof tom.engine.adt.tomexpression.types.Expression) ) {
+if ( ((( tom.engine.adt.tomexpression.types.Expression )((Object)tom__arg)) instanceof tom.engine.adt.tomexpression.types.Expression) ) {
+if ( ((( tom.engine.adt.tomexpression.types.Expression )(( tom.engine.adt.tomexpression.types.Expression )((Object)tom__arg))) instanceof tom.engine.adt.tomexpression.types.expression.AntiMatchExpression) ) {
 
 throw new VisitFailure();
 
+}
 }
 }
 
@@ -1056,11 +1114,12 @@ private Instruction buildNumericCondition(Constraint c, Instruction action) {
 
 {
 {
-if ( (c instanceof tom.engine.adt.tomconstraint.types.Constraint) ) {
-if ( ((( tom.engine.adt.tomconstraint.types.Constraint )c) instanceof tom.engine.adt.tomconstraint.types.constraint.NumericConstraint) ) {
- tom.engine.adt.code.types.BQTerm  tom_left= (( tom.engine.adt.tomconstraint.types.Constraint )c).getLeft() ;
- tom.engine.adt.code.types.BQTerm  tom_right= (( tom.engine.adt.tomconstraint.types.Constraint )c).getRight() ;
- tom.engine.adt.tomconstraint.types.NumericConstraintType  tom_type= (( tom.engine.adt.tomconstraint.types.Constraint )c).getType() ;
+if ( (((Object)c) instanceof tom.engine.adt.tomconstraint.types.Constraint) ) {
+if ( ((( tom.engine.adt.tomconstraint.types.Constraint )((Object)c)) instanceof tom.engine.adt.tomconstraint.types.Constraint) ) {
+if ( ((( tom.engine.adt.tomconstraint.types.Constraint )(( tom.engine.adt.tomconstraint.types.Constraint )((Object)c))) instanceof tom.engine.adt.tomconstraint.types.constraint.NumericConstraint) ) {
+ tom.engine.adt.code.types.BQTerm  tom_left= (( tom.engine.adt.tomconstraint.types.Constraint )((Object)c)).getLeft() ;
+ tom.engine.adt.code.types.BQTerm  tom_right= (( tom.engine.adt.tomconstraint.types.Constraint )((Object)c)).getRight() ;
+ tom.engine.adt.tomconstraint.types.NumericConstraintType  tom_type= (( tom.engine.adt.tomconstraint.types.Constraint )((Object)c)).getType() ;
 
 Expression leftExpr = 
  tom.engine.adt.tomexpression.types.expression.BQTermToExpression.make(tom_left) ;
@@ -1069,48 +1128,57 @@ Expression rightExpr =
 
 {
 {
-if ( (tom_type instanceof tom.engine.adt.tomconstraint.types.NumericConstraintType) ) {
-if ( ((( tom.engine.adt.tomconstraint.types.NumericConstraintType )tom_type) instanceof tom.engine.adt.tomconstraint.types.numericconstrainttype.NumLessThan) ) {
+if ( (((Object)tom_type) instanceof tom.engine.adt.tomconstraint.types.NumericConstraintType) ) {
+if ( ((( tom.engine.adt.tomconstraint.types.NumericConstraintType )((Object)tom_type)) instanceof tom.engine.adt.tomconstraint.types.NumericConstraintType) ) {
+if ( ((( tom.engine.adt.tomconstraint.types.NumericConstraintType )(( tom.engine.adt.tomconstraint.types.NumericConstraintType )((Object)tom_type))) instanceof tom.engine.adt.tomconstraint.types.numericconstrainttype.NumLessThan) ) {
 return 
  tom.engine.adt.tominstruction.types.instruction.If.make( tom.engine.adt.tomexpression.types.expression.LessThan.make(leftExpr, rightExpr) , action,  tom.engine.adt.tominstruction.types.instruction.Nop.make() ) ;
 
 }
 }
+}
 
 }
 {
-if ( (tom_type instanceof tom.engine.adt.tomconstraint.types.NumericConstraintType) ) {
-if ( ((( tom.engine.adt.tomconstraint.types.NumericConstraintType )tom_type) instanceof tom.engine.adt.tomconstraint.types.numericconstrainttype.NumLessOrEqualThan) ) {
+if ( (((Object)tom_type) instanceof tom.engine.adt.tomconstraint.types.NumericConstraintType) ) {
+if ( ((( tom.engine.adt.tomconstraint.types.NumericConstraintType )((Object)tom_type)) instanceof tom.engine.adt.tomconstraint.types.NumericConstraintType) ) {
+if ( ((( tom.engine.adt.tomconstraint.types.NumericConstraintType )(( tom.engine.adt.tomconstraint.types.NumericConstraintType )((Object)tom_type))) instanceof tom.engine.adt.tomconstraint.types.numericconstrainttype.NumLessOrEqualThan) ) {
 return 
  tom.engine.adt.tominstruction.types.instruction.If.make( tom.engine.adt.tomexpression.types.expression.LessOrEqualThan.make(leftExpr, rightExpr) , action,  tom.engine.adt.tominstruction.types.instruction.Nop.make() ) ;
 
 }
 }
+}
 
 }
 {
-if ( (tom_type instanceof tom.engine.adt.tomconstraint.types.NumericConstraintType) ) {
-if ( ((( tom.engine.adt.tomconstraint.types.NumericConstraintType )tom_type) instanceof tom.engine.adt.tomconstraint.types.numericconstrainttype.NumGreaterThan) ) {
+if ( (((Object)tom_type) instanceof tom.engine.adt.tomconstraint.types.NumericConstraintType) ) {
+if ( ((( tom.engine.adt.tomconstraint.types.NumericConstraintType )((Object)tom_type)) instanceof tom.engine.adt.tomconstraint.types.NumericConstraintType) ) {
+if ( ((( tom.engine.adt.tomconstraint.types.NumericConstraintType )(( tom.engine.adt.tomconstraint.types.NumericConstraintType )((Object)tom_type))) instanceof tom.engine.adt.tomconstraint.types.numericconstrainttype.NumGreaterThan) ) {
 return 
  tom.engine.adt.tominstruction.types.instruction.If.make( tom.engine.adt.tomexpression.types.expression.GreaterThan.make(leftExpr, rightExpr) , action,  tom.engine.adt.tominstruction.types.instruction.Nop.make() ) ;
 
 }
 }
+}
 
 }
 {
-if ( (tom_type instanceof tom.engine.adt.tomconstraint.types.NumericConstraintType) ) {
-if ( ((( tom.engine.adt.tomconstraint.types.NumericConstraintType )tom_type) instanceof tom.engine.adt.tomconstraint.types.numericconstrainttype.NumGreaterOrEqualThan) ) {
+if ( (((Object)tom_type) instanceof tom.engine.adt.tomconstraint.types.NumericConstraintType) ) {
+if ( ((( tom.engine.adt.tomconstraint.types.NumericConstraintType )((Object)tom_type)) instanceof tom.engine.adt.tomconstraint.types.NumericConstraintType) ) {
+if ( ((( tom.engine.adt.tomconstraint.types.NumericConstraintType )(( tom.engine.adt.tomconstraint.types.NumericConstraintType )((Object)tom_type))) instanceof tom.engine.adt.tomconstraint.types.numericconstrainttype.NumGreaterOrEqualThan) ) {
 return 
  tom.engine.adt.tominstruction.types.instruction.If.make( tom.engine.adt.tomexpression.types.expression.GreaterOrEqualThan.make(leftExpr, rightExpr) , action,  tom.engine.adt.tominstruction.types.instruction.Nop.make() ) ;
 
 }
 }
+}
 
 }
 {
-if ( (tom_type instanceof tom.engine.adt.tomconstraint.types.NumericConstraintType) ) {
-if ( ((( tom.engine.adt.tomconstraint.types.NumericConstraintType )tom_type) instanceof tom.engine.adt.tomconstraint.types.numericconstrainttype.NumEqual) ) {
+if ( (((Object)tom_type) instanceof tom.engine.adt.tomconstraint.types.NumericConstraintType) ) {
+if ( ((( tom.engine.adt.tomconstraint.types.NumericConstraintType )((Object)tom_type)) instanceof tom.engine.adt.tomconstraint.types.NumericConstraintType) ) {
+if ( ((( tom.engine.adt.tomconstraint.types.NumericConstraintType )(( tom.engine.adt.tomconstraint.types.NumericConstraintType )((Object)tom_type))) instanceof tom.engine.adt.tomconstraint.types.numericconstrainttype.NumEqual) ) {
 TomType tomType = getCompiler().getTermTypeFromTerm(
 tom_left);
 return 
@@ -1118,11 +1186,13 @@ return
 
 }
 }
+}
 
 }
 {
-if ( (tom_type instanceof tom.engine.adt.tomconstraint.types.NumericConstraintType) ) {
-if ( ((( tom.engine.adt.tomconstraint.types.NumericConstraintType )tom_type) instanceof tom.engine.adt.tomconstraint.types.numericconstrainttype.NumDifferent) ) {
+if ( (((Object)tom_type) instanceof tom.engine.adt.tomconstraint.types.NumericConstraintType) ) {
+if ( ((( tom.engine.adt.tomconstraint.types.NumericConstraintType )((Object)tom_type)) instanceof tom.engine.adt.tomconstraint.types.NumericConstraintType) ) {
+if ( ((( tom.engine.adt.tomconstraint.types.NumericConstraintType )(( tom.engine.adt.tomconstraint.types.NumericConstraintType )((Object)tom_type))) instanceof tom.engine.adt.tomconstraint.types.numericconstrainttype.NumDifferent) ) {
 TomType tomType = getCompiler().getTermTypeFromTerm(
 tom_left);
 return 
@@ -1130,6 +1200,7 @@ return
 
 }
 }
+}
 
 }
 
@@ -1138,6 +1209,7 @@ return
 
 
 
+}
 }
 }
 
@@ -1224,12 +1296,12 @@ BQTerm counter, TomType intType, Expression orConnector) throws VisitFailure {
 
 {
 {
-if ( (orConnector instanceof tom.engine.adt.tomexpression.types.Expression) ) {
-if ( (((( tom.engine.adt.tomexpression.types.Expression )orConnector) instanceof tom.engine.adt.tomexpression.types.expression.ConsOrConnector) || ((( tom.engine.adt.tomexpression.types.Expression )orConnector) instanceof tom.engine.adt.tomexpression.types.expression.EmptyOrConnector)) ) {
-if (!( (  (( tom.engine.adt.tomexpression.types.Expression )orConnector).isEmptyOrConnector()  ||  ((( tom.engine.adt.tomexpression.types.Expression )orConnector)== tom.engine.adt.tomexpression.types.expression.EmptyOrConnector.make() )  ) )) {
+if ( (((Object)orConnector) instanceof tom.engine.adt.tomexpression.types.Expression) ) {
+if ( (((( tom.engine.adt.tomexpression.types.Expression )(( tom.engine.adt.tomexpression.types.Expression )((Object)orConnector))) instanceof tom.engine.adt.tomexpression.types.expression.ConsOrConnector) || ((( tom.engine.adt.tomexpression.types.Expression )(( tom.engine.adt.tomexpression.types.Expression )((Object)orConnector))) instanceof tom.engine.adt.tomexpression.types.expression.EmptyOrConnector)) ) {
+if (!( (  (( tom.engine.adt.tomexpression.types.Expression )((Object)orConnector)).isEmptyOrConnector()  ||  ((( tom.engine.adt.tomexpression.types.Expression )((Object)orConnector))== tom.engine.adt.tomexpression.types.expression.EmptyOrConnector.make() )  ) )) {
 
 return 
- tom.engine.adt.tominstruction.types.instruction.If.make( tom.engine.adt.tomexpression.types.expression.And.make( tom.engine.adt.tomexpression.types.expression.GreaterOrEqualThan.make( tom.engine.adt.tomexpression.types.expression.BQTermToExpression.make(counter) ,  tom.engine.adt.tomexpression.types.expression.Integer.make(cnt) ) ,  tom.engine.adt.tomexpression.types.expression.LessOrEqualThan.make( tom.engine.adt.tomexpression.types.expression.BQTermToExpression.make(counter) ,  tom.engine.adt.tomexpression.types.expression.Integer.make(cnt) ) ) , generateAutomata((( (((( tom.engine.adt.tomexpression.types.Expression )orConnector) instanceof tom.engine.adt.tomexpression.types.expression.ConsOrConnector) || ((( tom.engine.adt.tomexpression.types.Expression )orConnector) instanceof tom.engine.adt.tomexpression.types.expression.EmptyOrConnector)) )?( (( tom.engine.adt.tomexpression.types.Expression )orConnector).getHeadOrConnector() ):((( tom.engine.adt.tomexpression.types.Expression )orConnector))),assignFlagTrue), buildTestsInConstraintDisjuction(cnt,assignFlagTrue,counter,intType,tom_append_list_OrConnector((( (((( tom.engine.adt.tomexpression.types.Expression )orConnector) instanceof tom.engine.adt.tomexpression.types.expression.ConsOrConnector) || ((( tom.engine.adt.tomexpression.types.Expression )orConnector) instanceof tom.engine.adt.tomexpression.types.expression.EmptyOrConnector)) )?( (( tom.engine.adt.tomexpression.types.Expression )orConnector).getTailOrConnector() ):( tom.engine.adt.tomexpression.types.expression.EmptyOrConnector.make() )), tom.engine.adt.tomexpression.types.expression.EmptyOrConnector.make() ))) ;        
+ tom.engine.adt.tominstruction.types.instruction.If.make( tom.engine.adt.tomexpression.types.expression.And.make( tom.engine.adt.tomexpression.types.expression.GreaterOrEqualThan.make( tom.engine.adt.tomexpression.types.expression.BQTermToExpression.make(counter) ,  tom.engine.adt.tomexpression.types.expression.Integer.make(cnt) ) ,  tom.engine.adt.tomexpression.types.expression.LessOrEqualThan.make( tom.engine.adt.tomexpression.types.expression.BQTermToExpression.make(counter) ,  tom.engine.adt.tomexpression.types.expression.Integer.make(cnt) ) ) , generateAutomata((( (((( tom.engine.adt.tomexpression.types.Expression )((Object)orConnector)) instanceof tom.engine.adt.tomexpression.types.expression.ConsOrConnector) || ((( tom.engine.adt.tomexpression.types.Expression )((Object)orConnector)) instanceof tom.engine.adt.tomexpression.types.expression.EmptyOrConnector)) )?( (( tom.engine.adt.tomexpression.types.Expression )((Object)orConnector)).getHeadOrConnector() ):((( tom.engine.adt.tomexpression.types.Expression )((Object)orConnector)))),assignFlagTrue), buildTestsInConstraintDisjuction(cnt,assignFlagTrue,counter,intType,tom_append_list_OrConnector((( (((( tom.engine.adt.tomexpression.types.Expression )((Object)orConnector)) instanceof tom.engine.adt.tomexpression.types.expression.ConsOrConnector) || ((( tom.engine.adt.tomexpression.types.Expression )((Object)orConnector)) instanceof tom.engine.adt.tomexpression.types.expression.EmptyOrConnector)) )?( (( tom.engine.adt.tomexpression.types.Expression )((Object)orConnector)).getTailOrConnector() ):( tom.engine.adt.tomexpression.types.expression.EmptyOrConnector.make() )), tom.engine.adt.tomexpression.types.expression.EmptyOrConnector.make() ))) ;        
 
 
 }

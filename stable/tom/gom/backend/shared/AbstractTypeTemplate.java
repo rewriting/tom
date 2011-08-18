@@ -53,14 +53,16 @@ this.maximalsharing = maximalsharing;
 
 {
 {
-if ( (gomClass instanceof tom.gom.adt.objects.types.GomClass) ) {
-if ( ((( tom.gom.adt.objects.types.GomClass )gomClass) instanceof tom.gom.adt.objects.types.gomclass.AbstractTypeClass) ) {
+if ( (((Object)gomClass) instanceof tom.gom.adt.objects.types.GomClass) ) {
+if ( ((( tom.gom.adt.objects.types.GomClass )((Object)gomClass)) instanceof tom.gom.adt.objects.types.GomClass) ) {
+if ( ((( tom.gom.adt.objects.types.GomClass )(( tom.gom.adt.objects.types.GomClass )((Object)gomClass))) instanceof tom.gom.adt.objects.types.gomclass.AbstractTypeClass) ) {
 
 this.sortList = 
- (( tom.gom.adt.objects.types.GomClass )gomClass).getSortList() ;
+ (( tom.gom.adt.objects.types.GomClass )((Object)gomClass)).getSortList() ;
 return;
 
 
+}
 }
 }
 
