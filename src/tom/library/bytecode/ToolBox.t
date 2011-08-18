@@ -92,7 +92,8 @@ public class ToolBox {
 
     for(int i = 0; i < accessFlags.length; i++) {
       if((access & accessFlags[i]) != 0) {
-        list = `ConsAccessList(accessObj[i], list);
+       Access tmp = accessObj[i];
+        list = `ConsAccessList(tmp, list);
       }
     }
 
@@ -156,8 +157,10 @@ public class ToolBox {
   public static StringList buildStringList(String[] array) {
     StringList list = `StringList();
     if(array != null) {
-      for(int i = array.length - 1; i >= 0; i--)
-        list = `ConsStringList(array[i], list);
+      for(int i = array.length - 1; i >= 0; i--) {
+        String tmp=array[i];
+        list = `ConsStringList(tmp, list);
+      }
     }
 
     return list;
@@ -167,7 +170,8 @@ public class ToolBox {
     IntList list = `IntList();
     if(array != null) {
       for(int i = array.length - 1; i >= 0; i--) {
-        list = `ConsIntList(array[i], list);
+        int tmp=array[i];
+        list = `ConsIntList(tmp, list);
       }
     }
 

@@ -1599,16 +1599,16 @@ public void generateTargetLanguage(int deep, TargetLanguage subject, String modu
 
 {
 {
-if ( (subject instanceof tom.engine.adt.tomsignature.types.TargetLanguage) ) {
-if ( ((( tom.engine.adt.tomsignature.types.TargetLanguage )subject) instanceof tom.engine.adt.tomsignature.types.targetlanguage.TL) ) {
- tom.engine.adt.tomsignature.types.TextPosition  tomMatch71_2= (( tom.engine.adt.tomsignature.types.TargetLanguage )subject).getStart() ;
- tom.engine.adt.tomsignature.types.TextPosition  tomMatch71_3= (( tom.engine.adt.tomsignature.types.TargetLanguage )subject).getEnd() ;
+if ( (subject instanceof tom.engine.adt.code.types.TargetLanguage) ) {
+if ( ((( tom.engine.adt.code.types.TargetLanguage )subject) instanceof tom.engine.adt.code.types.targetlanguage.TL) ) {
+ tom.engine.adt.tomsignature.types.TextPosition  tomMatch71_2= (( tom.engine.adt.code.types.TargetLanguage )subject).getStart() ;
+ tom.engine.adt.tomsignature.types.TextPosition  tomMatch71_3= (( tom.engine.adt.code.types.TargetLanguage )subject).getEnd() ;
 if ( (tomMatch71_2 instanceof tom.engine.adt.tomsignature.types.textposition.TextPosition) ) {
  int  tom_startLine= tomMatch71_2.getLine() ;
 if ( (tomMatch71_3 instanceof tom.engine.adt.tomsignature.types.textposition.TextPosition) ) {
 
 output.write(deep, 
- (( tom.engine.adt.tomsignature.types.TargetLanguage )subject).getCode() , 
+ (( tom.engine.adt.code.types.TargetLanguage )subject).getCode() , 
 tom_startLine, 
  tomMatch71_3.getLine() - 
 tom_startLine);
@@ -1622,11 +1622,11 @@ return;
 
 }
 {
-if ( (subject instanceof tom.engine.adt.tomsignature.types.TargetLanguage) ) {
-if ( ((( tom.engine.adt.tomsignature.types.TargetLanguage )subject) instanceof tom.engine.adt.tomsignature.types.targetlanguage.ITL) ) {
+if ( (subject instanceof tom.engine.adt.code.types.TargetLanguage) ) {
+if ( ((( tom.engine.adt.code.types.TargetLanguage )subject) instanceof tom.engine.adt.code.types.targetlanguage.ITL) ) {
 
 output.write(
- (( tom.engine.adt.tomsignature.types.TargetLanguage )subject).getCode() );
+ (( tom.engine.adt.code.types.TargetLanguage )subject).getCode() );
 return;
 
 
@@ -1635,9 +1635,9 @@ return;
 
 }
 {
-if ( (subject instanceof tom.engine.adt.tomsignature.types.TargetLanguage) ) {
-if ( ((( tom.engine.adt.tomsignature.types.TargetLanguage )subject) instanceof tom.engine.adt.tomsignature.types.targetlanguage.Comment) ) {
-buildComment(deep, (( tom.engine.adt.tomsignature.types.TargetLanguage )subject).getCode() );
+if ( (subject instanceof tom.engine.adt.code.types.TargetLanguage) ) {
+if ( ((( tom.engine.adt.code.types.TargetLanguage )subject) instanceof tom.engine.adt.code.types.targetlanguage.Comment) ) {
+buildComment(deep, (( tom.engine.adt.code.types.TargetLanguage )subject).getCode() );
 return;
 
 
@@ -1646,8 +1646,8 @@ return;
 
 }
 {
-if ( (subject instanceof tom.engine.adt.tomsignature.types.TargetLanguage) ) {
- tom.engine.adt.tomsignature.types.TargetLanguage  tom_t=(( tom.engine.adt.tomsignature.types.TargetLanguage )subject);
+if ( (subject instanceof tom.engine.adt.code.types.TargetLanguage) ) {
+ tom.engine.adt.code.types.TargetLanguage  tom_t=(( tom.engine.adt.code.types.TargetLanguage )subject);
 
 System.out.println("Cannot generate code for TL: " + 
 tom_t);

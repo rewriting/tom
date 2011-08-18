@@ -1004,8 +1004,9 @@ LabelNodeList labList =
  tom.library.adt.bytecode.types.labelnodelist.EmptyLabelNodeList.make() ;
 if(labels != null) {
 for(int i = labels.length - 1; i >= 0; i--) {
+Label tmp=labels[i];
 labList = 
- tom.library.adt.bytecode.types.labelnodelist.ConsLabelNodeList.make(buildLabelNode(labels[i]), labList) ;
+ tom.library.adt.bytecode.types.labelnodelist.ConsLabelNodeList.make(buildLabelNode(tmp), labList) ;
 }
 }
 return labList;

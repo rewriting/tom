@@ -313,9 +313,9 @@ String opkey = entry.getValue().toString();
 {
 if ( (opDecl instanceof tom.gom.adt.gom.types.OperatorDecl) ) {
 if ( ((( tom.gom.adt.gom.types.OperatorDecl )opDecl) instanceof tom.gom.adt.gom.types.operatordecl.OperatorDecl) ) {
- tom.gom.adt.gom.types.TypedProduction  tomMatch442_1= (( tom.gom.adt.gom.types.OperatorDecl )opDecl).getProd() ;
-if ( (tomMatch442_1 instanceof tom.gom.adt.gom.types.typedproduction.Variadic) ) {
- tom.gom.adt.gom.types.SortDecl  tom_domainSort= tomMatch442_1.getSort() ;
+ tom.gom.adt.gom.types.TypedProduction  tomMatch445_1= (( tom.gom.adt.gom.types.OperatorDecl )opDecl).getProd() ;
+if ( (tomMatch445_1 instanceof tom.gom.adt.gom.types.typedproduction.Variadic) ) {
+ tom.gom.adt.gom.types.SortDecl  tom_domainSort= tomMatch445_1.getSort() ;
  tom.gom.adt.gom.types.OperatorDecl  tom_op=(( tom.gom.adt.gom.types.OperatorDecl )opDecl);
 
 Code cast = genGetTerm(
@@ -336,15 +336,15 @@ CodeGen.generateCode(code,writer);
 {
 if ( (opDecl instanceof tom.gom.adt.gom.types.OperatorDecl) ) {
 if ( ((( tom.gom.adt.gom.types.OperatorDecl )opDecl) instanceof tom.gom.adt.gom.types.operatordecl.OperatorDecl) ) {
- tom.gom.adt.gom.types.TypedProduction  tomMatch442_6= (( tom.gom.adt.gom.types.OperatorDecl )opDecl).getProd() ;
- tom.gom.adt.gom.types.TypedProduction  tom_prod=tomMatch442_6;
-boolean tomMatch442_10= false ;
-if ( (tomMatch442_6 instanceof tom.gom.adt.gom.types.typedproduction.Variadic) ) {
-if ( (tom_prod==tomMatch442_6) ) {
-tomMatch442_10= true ;
+ tom.gom.adt.gom.types.TypedProduction  tomMatch445_6= (( tom.gom.adt.gom.types.OperatorDecl )opDecl).getProd() ;
+ tom.gom.adt.gom.types.TypedProduction  tom_prod=tomMatch445_6;
+boolean tomMatch445_10= false ;
+if ( (tomMatch445_6 instanceof tom.gom.adt.gom.types.typedproduction.Variadic) ) {
+if ( (tom_prod==tomMatch445_6) ) {
+tomMatch445_10= true ;
 }
 }
-if (!(tomMatch442_10)) {
+if (!(tomMatch445_10)) {
 
 Code code =
 

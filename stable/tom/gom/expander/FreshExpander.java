@@ -920,13 +920,13 @@ public  tom.gom.adt.gom.types.ProductionList  visit_ProductionList( tom.gom.adt.
 if ( (tom__arg instanceof tom.gom.adt.gom.types.ProductionList) ) {
 if ( (((( tom.gom.adt.gom.types.ProductionList )tom__arg) instanceof tom.gom.adt.gom.types.productionlist.ConsConcProduction) || ((( tom.gom.adt.gom.types.ProductionList )tom__arg) instanceof tom.gom.adt.gom.types.productionlist.EmptyConcProduction)) ) {
 if (!( (( tom.gom.adt.gom.types.ProductionList )tom__arg).isEmptyConcProduction() )) {
- tom.gom.adt.gom.types.Production  tomMatch546_5= (( tom.gom.adt.gom.types.ProductionList )tom__arg).getHeadConcProduction() ;
-if ( (tomMatch546_5 instanceof tom.gom.adt.gom.types.production.SortType) ) {
- tom.gom.adt.gom.types.GomType  tomMatch546_4= tomMatch546_5.getType() ;
-if ( (tomMatch546_4 instanceof tom.gom.adt.gom.types.gomtype.GomType) ) {
+ tom.gom.adt.gom.types.Production  tomMatch549_5= (( tom.gom.adt.gom.types.ProductionList )tom__arg).getHeadConcProduction() ;
+if ( (tomMatch549_5 instanceof tom.gom.adt.gom.types.production.SortType) ) {
+ tom.gom.adt.gom.types.GomType  tomMatch549_4= tomMatch549_5.getType() ;
+if ( (tomMatch549_4 instanceof tom.gom.adt.gom.types.gomtype.GomType) ) {
 
 if(
- tomMatch546_4.getName() .equals(sort)) {
+ tomMatch549_4.getName() .equals(sort)) {
 return 
  tom.gom.adt.gom.types.productionlist.ConsConcProduction.make( (( tom.gom.adt.gom.types.ProductionList )tom__arg).getHeadConcProduction() , tom.gom.adt.gom.types.productionlist.ConsConcProduction.make(hook,tom_append_list_ConcProduction( (( tom.gom.adt.gom.types.ProductionList )tom__arg).getTailConcProduction() , tom.gom.adt.gom.types.productionlist.EmptyConcProduction.make() )) ) ;
 }
@@ -1975,9 +1975,9 @@ ProductionList nps = addRaw(st,
 {
 if ( (tom_p instanceof tom.gom.adt.gom.types.Production) ) {
 if ( ((( tom.gom.adt.gom.types.Production )tom_p) instanceof tom.gom.adt.gom.types.production.SortType) ) {
- tom.gom.adt.gom.types.GomType  tomMatch549_1= (( tom.gom.adt.gom.types.Production )tom_p).getType() ;
-if ( (tomMatch549_1 instanceof tom.gom.adt.gom.types.gomtype.GomType) ) {
- String  tom_n= tomMatch549_1.getName() ;
+ tom.gom.adt.gom.types.GomType  tomMatch552_1= (( tom.gom.adt.gom.types.Production )tom_p).getType() ;
+if ( (tomMatch552_1 instanceof tom.gom.adt.gom.types.gomtype.GomType) ) {
+ String  tom_n= tomMatch552_1.getName() ;
 
 if (st.isFreshType(
 tom_n) && !st.isAtomType(

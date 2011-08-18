@@ -728,7 +728,8 @@ public class MethodGenerator implements MethodVisitor {
     LabelNodeList labList = `LabelNodeList();
     if(labels != null) {
       for(int i = labels.length - 1; i >= 0; i--) {
-        labList = `ConsLabelNodeList(buildLabelNode(labels[i]), labList);
+        Label tmp=labels[i];
+        labList = `ConsLabelNodeList(buildLabelNode(tmp), labList);
       }
     }
     return labList;

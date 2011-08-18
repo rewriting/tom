@@ -1,61 +1,108 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
+
 <project name="islandgrammar" default="compile" basedir=".">
-	<property environment="env"/>
-	<property name="tom.home" value="${env.TOM_HOME}"/>
-	<property name="tom.classpath" value="${env.TOM_CLASSPATH}"/>
-	<property name="islgram" value="."/>
-	<property name="antlrjar" value="${tom.home}/src/lib/tools/antlr-3.2.jar"/>
-	<property name="withAntlr" value="${antlrjar}:${env.CLASSPATH}"/>
-	<property name="src" value="${islgram}/src"/>
-	<property name="build" value="${islgram}/build"/>
-	<property name="input" value="${islgram}/input"/>
-	<property name="tomgram" value="miniTom"/>
-	<property name="tomfile" value="${src}/${tomgram}.g"/>
-	<property name="comfile" value="${src}/${comgram}.g"/>
+
+  <property environment="env"/>
+  <property name="tom.home"          location="../../src/dist/"/>
+  <property name="islgram.dir"      location="."/>
+  <property name="islgram.src"      location="${islgram.dir}/src"/>
+  <property name="islgram.gen"      location="${islgram.dir}/gen"/>
+  <property name="islgram.build"    location="${islgram.dir}/build"/>
+  <property name="islgram.doc"    location="${islgram.dir}/doc"/>
+  <property name="islgram.package"  value="newparser"/>
+  <property name="islgram.ast"      value="${islgram.package}/miniTom"/>
+  <property name="islgram.grammarname" value="miniTom"/>
+  <property name="islgram.grammar"  value="${islgram.package}/${islgram.grammarname}"/>
+
+  <!-- some used directory location for stable -->
+  <property name="stable.src"     location="../../stable"/>
+  <property name="stable.dist"    location="${stable.src}/dist"/>
+  <property name="stable.lib"     location="${stable.src}/lib"/>
+  <!--some used directory location  for devel -->
+  <property name="src.src"        location="../../src"/>
+  <property name="src.dist"       location="${src.src}/dist"/>
+  <property name="src.lib"        location="${src.src}/lib"/>
 
   <import file="${tom.home}/lib/tom-common.xml"/>
 
-  <target name="debug">
-    <echo message="${tom.classpath}"/>
-    <echo message="${tom.classpath}"/>
-    <echo message="${tom.home}"/>
-    <echo message="${withAntlr}"/>
-    <echo message="${tom.home}/lib/tom-common.xml"/>
-    <echo message="${gomconfigfile}"/>
+  <path id="external.classpath">
+    <fileset dir="${user.home}">
+      <include name=".ant/lib/*.jar"/>
+    </fileset>
+  </path>
+
+  <path id="stable.classpath">
+    <path refid="external.classpath"/>
+    <!-- stable lib jar files -->
+    <fileset dir="${stable.lib}">
+      <include name="**/*.jar"/>
+    </fileset>
+  </path>
+
+  <!--path id="src.classpath">
+    <path refid="external.classpath"/>
+    <fileset dir="${src.lib}">
+      <include name="**/*.jar"/>
+    </fileset>
+    <pathelement location="${src.build}"/>
+    <pathelement location="${src.src}"/>
+  </path-->
+
+  <taskdef name="antlr3"
+           classname="org.apache.tools.ant.antlr.ANTLR3">
+    <classpath refid="stable.classpath"/>
+  </taskdef>
+
+  <target name="gom" depends="tom.init">
+    <mkdir dir="${islgram.gen}"/>
+    <gom.preset srcdir="${islgram.src}"
+                destdir="${islgram.gen}">
+      <include name="${islgram.ast}.gom"/>
+    </gom.preset>
   </target>
-	<target name="grammar">
-		<java classname="org.antlr.Tool" classpath="${withAntlr}">
-			<arg value="${tomfile}"/>
-			<!--arg value="${comfile}"/-->
-		</java>
-	</target>
-  <target name="gom">
-    <gom config="${gomconfigfile}" srcdir="${src}" package="ast" destdir="${build}">
-      <include name="${tomgram}.gom"/>
-    </gom>
+
+  <!--target name="tom" depends="init, gom">
+    <tom.preset srcdir="${islgram.src}"
+                destdir="${islgram.gen}"
+                import="${islgram.gen}">
+      <include name="**/*.t"/>
+    </tom.preset>
+  </targeti-->
+
+  <target name="gomantlradapter" depends="gom">
+    <gomantlradapter.preset srcdir="${islgram.src}"
+                            destdir="${islgram.gen}"
+                            package="${islgram.package}">
+      <include name="${islgram.ast}.gom"/>
+    </gomantlradapter.preset>
   </target>
-	<target name="compile" depends="grammar">
-		<mkdir dir="${build}"/>
-		<javac srcdir="${src}" destdir="${build}" classpath="${withAntlr}" includeantruntime="false"/>
-	</target>
-	<target name="test" >
-		<java classpath="${withAntlr}:${islgram}/${build}" classname="Main" fork="true">
-			<arg value="${input}/${testfile}"/>
-		</java>
-	</target>
-	<target name="retest" depends="compile">
-		<java classpath="${withAntlr}:${islgram}/${build}" classname="Main" fork="true">
-			<arg value="${input}/${testfile}"/>
-		</java>
-	</target>
-	<target name="clean">
-		<delete dir="${build}"/>
-		<delete dir="${tomgram}"/>
-		<delete file="${islgram}/${tomgram}.tokens"/>
-		<delete file="${islgram}/${comgram}.tokens"/>
-		<delete file="${src}/${tomgram}Parser.java"/>
-		<delete file="${src}/${comgram}Parser.java"/>
-		<delete file="${src}/${tomgram}Lexer.java"/>
-		<delete file="${src}/${comgram}Lexer.java"/>
-	</target>
+
+  <target name="antlr" depends="gomantlradapter">
+    <antlr3 target="${islgram.src}/${islgram.grammar}.g"
+            outputdirectory="${islgram.gen}/${islgram.package}"
+            libdirectory="${islgram.gen}/${islgram.package}/minitom"
+            />
+  </target>
+
+  <target name="compile" depends="antlr">
+    <mkdir dir="${islgram.build}"/>
+    <javac.preset destdir="${islgram.build}" >
+      <src path="${islgram.gen}"/>
+      <src path="${islgram.src}"/>
+      <include name="**/*.java"/>
+    </javac.preset>
+  </target>
+
+  <target name="clean">
+    <delete dir="${islgram.gen}"/>
+    <delete dir="${islgram.build}"/>
+    <delete dir="${islgram.doc}"/>
+  </target>
+
+  <target name="doc" depends="antlr">
+    <javadoc
+      sourcepath="${islgram.gen}:${islgram.src}"
+      destdir="${islgram.doc}"/>
+  </target>
+
 </project>
