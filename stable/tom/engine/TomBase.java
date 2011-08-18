@@ -1919,6 +1919,92 @@ return getSlotType(tomSymbol,
 }
 
 }
+{
+if ( (t instanceof tom.engine.adt.code.types.BQTerm) ) {
+boolean tomMatch47_27= false ;
+ tom.engine.adt.tomname.types.TomName  tomMatch47_23= null ;
+if ( ((( tom.engine.adt.code.types.BQTerm )t) instanceof tom.engine.adt.code.types.bqterm.BuildConstant) ) {
+{
+tomMatch47_27= true ;
+tomMatch47_23= (( tom.engine.adt.code.types.BQTerm )t).getAstName() ;
+
+}
+} else {
+if ( ((( tom.engine.adt.code.types.BQTerm )t) instanceof tom.engine.adt.code.types.bqterm.BuildTerm) ) {
+{
+tomMatch47_27= true ;
+tomMatch47_23= (( tom.engine.adt.code.types.BQTerm )t).getAstName() ;
+
+}
+} else {
+if ( ((( tom.engine.adt.code.types.BQTerm )t) instanceof tom.engine.adt.code.types.bqterm.BuildEmptyList) ) {
+{
+tomMatch47_27= true ;
+tomMatch47_23= (( tom.engine.adt.code.types.BQTerm )t).getAstName() ;
+
+}
+} else {
+if ( ((( tom.engine.adt.code.types.BQTerm )t) instanceof tom.engine.adt.code.types.bqterm.BuildConsList) ) {
+{
+tomMatch47_27= true ;
+tomMatch47_23= (( tom.engine.adt.code.types.BQTerm )t).getAstName() ;
+
+}
+} else {
+if ( ((( tom.engine.adt.code.types.BQTerm )t) instanceof tom.engine.adt.code.types.bqterm.BuildAppendList) ) {
+{
+tomMatch47_27= true ;
+tomMatch47_23= (( tom.engine.adt.code.types.BQTerm )t).getAstName() ;
+
+}
+} else {
+if ( ((( tom.engine.adt.code.types.BQTerm )t) instanceof tom.engine.adt.code.types.bqterm.BuildEmptyArray) ) {
+{
+tomMatch47_27= true ;
+tomMatch47_23= (( tom.engine.adt.code.types.BQTerm )t).getAstName() ;
+
+}
+} else {
+if ( ((( tom.engine.adt.code.types.BQTerm )t) instanceof tom.engine.adt.code.types.bqterm.BuildConsArray) ) {
+{
+tomMatch47_27= true ;
+tomMatch47_23= (( tom.engine.adt.code.types.BQTerm )t).getAstName() ;
+
+}
+} else {
+if ( ((( tom.engine.adt.code.types.BQTerm )t) instanceof tom.engine.adt.code.types.bqterm.BuildAppendArray) ) {
+{
+tomMatch47_27= true ;
+tomMatch47_23= (( tom.engine.adt.code.types.BQTerm )t).getAstName() ;
+
+}
+}
+}
+}
+}
+}
+}
+}
+}
+if (tomMatch47_27) {
+if ( (tomMatch47_23 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+
+TomSymbol tomSymbol = symbolTable.getSymbolFromName(
+ tomMatch47_23.getString() ); 
+if(tomSymbol!=null) {
+return tomSymbol.getTypesToType().getCodomain();
+} else {
+return 
+ tom.engine.adt.tomtype.types.tomtype.EmptyType.make() ;
+}
+
+
+}
+}
+
+}
+
+}
 
 
 }
@@ -1929,189 +2015,39 @@ return
  tom.engine.adt.tomtype.types.tomtype.EmptyType.make() ;
 }
 
-public static TomSymbol getSymbolFromTerm(TomTerm t, SymbolTable symbolTable) {
-
-{
-{
-if ( (t instanceof tom.engine.adt.tomterm.types.TomTerm) ) {
-boolean tomMatch48_6= false ;
- tom.engine.adt.tomname.types.TomNameList  tomMatch48_1= null ;
-if ( ((( tom.engine.adt.tomterm.types.TomTerm )t) instanceof tom.engine.adt.tomterm.types.tomterm.TermAppl) ) {
-{
-tomMatch48_6= true ;
-tomMatch48_1= (( tom.engine.adt.tomterm.types.TomTerm )t).getNameList() ;
-
-}
-} else {
-if ( ((( tom.engine.adt.tomterm.types.TomTerm )t) instanceof tom.engine.adt.tomterm.types.tomterm.RecordAppl) ) {
-{
-tomMatch48_6= true ;
-tomMatch48_1= (( tom.engine.adt.tomterm.types.TomTerm )t).getNameList() ;
-
-}
-}
-}
-if (tomMatch48_6) {
-if ( ((tomMatch48_1 instanceof tom.engine.adt.tomname.types.tomnamelist.ConsconcTomName) || (tomMatch48_1 instanceof tom.engine.adt.tomname.types.tomnamelist.EmptyconcTomName)) ) {
-if (!( tomMatch48_1.isEmptyconcTomName() )) {
- tom.engine.adt.tomname.types.TomName  tom_headName= tomMatch48_1.getHeadconcTomName() ;
-
-String tomName = null;
-if(
-(tom_headName)instanceof AntiName) {
-tomName = ((AntiName)
-tom_headName).getName().getString();
-} else {
-tomName = ((TomName)
-tom_headName).getString();
-}
-return symbolTable.getSymbolFromName(tomName);
-
-
-}
-}
-}
-
-}
-
-}
-{
-if ( (t instanceof tom.engine.adt.tomterm.types.TomTerm) ) {
-boolean tomMatch48_12= false ;
- tom.engine.adt.tomname.types.TomName  tomMatch48_8= null ;
-if ( ((( tom.engine.adt.tomterm.types.TomTerm )t) instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) {
-{
-tomMatch48_12= true ;
-tomMatch48_8= (( tom.engine.adt.tomterm.types.TomTerm )t).getAstName() ;
-
-}
-} else {
-if ( ((( tom.engine.adt.tomterm.types.TomTerm )t) instanceof tom.engine.adt.tomterm.types.tomterm.VariableStar) ) {
-{
-tomMatch48_12= true ;
-tomMatch48_8= (( tom.engine.adt.tomterm.types.TomTerm )t).getAstName() ;
-
-}
-}
-}
-if (tomMatch48_12) {
-if ( (tomMatch48_8 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
-
-return symbolTable.getSymbolFromName(
- tomMatch48_8.getString() );
-
-
-}
-}
-
-}
-
-}
-{
-if ( (t instanceof tom.engine.adt.tomterm.types.TomTerm) ) {
-if ( ((( tom.engine.adt.tomterm.types.TomTerm )t) instanceof tom.engine.adt.tomterm.types.tomterm.AntiTerm) ) {
-return getSymbolFromTerm(
- (( tom.engine.adt.tomterm.types.TomTerm )t).getTomTerm() ,symbolTable);
-
-}
-}
-
-}
-
-
-}
-
-return null;
-}
-
-public static TomSymbol getSymbolFromTerm(BQTerm t, SymbolTable symbolTable) {
-
-{
-{
-if ( (t instanceof tom.engine.adt.code.types.BQTerm) ) {
-boolean tomMatch49_5= false ;
- tom.engine.adt.tomname.types.TomName  tomMatch49_1= null ;
-if ( ((( tom.engine.adt.code.types.BQTerm )t) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {
-{
-tomMatch49_5= true ;
-tomMatch49_1= (( tom.engine.adt.code.types.BQTerm )t).getAstName() ;
-
-}
-} else {
-if ( ((( tom.engine.adt.code.types.BQTerm )t) instanceof tom.engine.adt.code.types.bqterm.BQVariableStar) ) {
-{
-tomMatch49_5= true ;
-tomMatch49_1= (( tom.engine.adt.code.types.BQTerm )t).getAstName() ;
-
-}
-}
-}
-if (tomMatch49_5) {
-if ( (tomMatch49_1 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
-
-return symbolTable.getSymbolFromName(
- tomMatch49_1.getString() );
-
-
-}
-}
-
-}
-
-}
-{
-if ( (t instanceof tom.engine.adt.code.types.BQTerm) ) {
-if ( ((( tom.engine.adt.code.types.BQTerm )t) instanceof tom.engine.adt.code.types.bqterm.FunctionCall) ) {
- tom.engine.adt.tomname.types.TomName  tomMatch49_7= (( tom.engine.adt.code.types.BQTerm )t).getAstName() ;
-if ( (tomMatch49_7 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
-return symbolTable.getSymbolFromName(
- tomMatch49_7.getString() ); 
-
-}
-}
-}
-
-}
-
-
-}
-
-return null;
-}
-
 public static TomType getTermType(Expression t, SymbolTable symbolTable) {
 
 {
 {
 if ( (t instanceof tom.engine.adt.tomexpression.types.Expression) ) {
-boolean tomMatch50_3= false ;
- tom.engine.adt.tomtype.types.TomType  tomMatch50_1= null ;
+boolean tomMatch48_3= false ;
+ tom.engine.adt.tomtype.types.TomType  tomMatch48_1= null ;
 if ( ((( tom.engine.adt.tomexpression.types.Expression )t) instanceof tom.engine.adt.tomexpression.types.expression.GetHead) ) {
 {
-tomMatch50_3= true ;
-tomMatch50_1= (( tom.engine.adt.tomexpression.types.Expression )t).getCodomain() ;
+tomMatch48_3= true ;
+tomMatch48_1= (( tom.engine.adt.tomexpression.types.Expression )t).getCodomain() ;
 
 }
 } else {
 if ( ((( tom.engine.adt.tomexpression.types.Expression )t) instanceof tom.engine.adt.tomexpression.types.expression.GetSlot) ) {
 {
-tomMatch50_3= true ;
-tomMatch50_1= (( tom.engine.adt.tomexpression.types.Expression )t).getCodomain() ;
+tomMatch48_3= true ;
+tomMatch48_1= (( tom.engine.adt.tomexpression.types.Expression )t).getCodomain() ;
 
 }
 } else {
 if ( ((( tom.engine.adt.tomexpression.types.Expression )t) instanceof tom.engine.adt.tomexpression.types.expression.GetElement) ) {
 {
-tomMatch50_3= true ;
-tomMatch50_1= (( tom.engine.adt.tomexpression.types.Expression )t).getCodomain() ;
+tomMatch48_3= true ;
+tomMatch48_1= (( tom.engine.adt.tomexpression.types.Expression )t).getCodomain() ;
 
 }
 }
 }
 }
-if (tomMatch50_3) {
+if (tomMatch48_3) {
 return 
-tomMatch50_1; 
+tomMatch48_1; 
 
 }
 
@@ -2123,6 +2059,26 @@ if ( (t instanceof tom.engine.adt.tomexpression.types.Expression) ) {
 if ( ((( tom.engine.adt.tomexpression.types.Expression )t) instanceof tom.engine.adt.tomexpression.types.expression.BQTermToExpression) ) {
 return getTermType(
  (( tom.engine.adt.tomexpression.types.Expression )t).getAstTerm() , symbolTable); 
+
+}
+}
+
+}
+{
+if ( (t instanceof tom.engine.adt.tomexpression.types.Expression) ) {
+if ( ((( tom.engine.adt.tomexpression.types.Expression )t) instanceof tom.engine.adt.tomexpression.types.expression.Conditional) ) {
+return getTermType(
+ (( tom.engine.adt.tomexpression.types.Expression )t).getCond() , symbolTable); 
+
+}
+}
+
+}
+{
+if ( (t instanceof tom.engine.adt.tomexpression.types.Expression) ) {
+if ( ((( tom.engine.adt.tomexpression.types.Expression )t) instanceof tom.engine.adt.tomexpression.types.expression.IsFsym) ) {
+return getTermType(
+ (( tom.engine.adt.tomexpression.types.Expression )t).getVariable() , symbolTable); 
 
 }
 }
@@ -2168,6 +2124,24 @@ return
 }
 
 }
+{
+if ( (t instanceof tom.engine.adt.tomexpression.types.Expression) ) {
+if ( ((( tom.engine.adt.tomexpression.types.Expression )t) instanceof tom.engine.adt.tomexpression.types.expression.AddOne) ) {
+return getTermType(
+ (( tom.engine.adt.tomexpression.types.Expression )t).getVariable() , symbolTable); 
+
+}
+}
+
+}
+{
+if ( (t instanceof tom.engine.adt.tomexpression.types.Expression) ) {
+if ( ((( tom.engine.adt.tomexpression.types.Expression )t) instanceof tom.engine.adt.tomexpression.types.expression.Integer) ) {
+return symbolTable.getType("int"); 
+}
+}
+
+}
 
 
 }
@@ -2175,6 +2149,157 @@ return
 System.out.println("getTermType error on term: " + t);
 throw new TomRuntimeException("getTermType error on term: " + t);
 }
+
+public static TomSymbol getSymbolFromTerm(TomTerm t, SymbolTable symbolTable) {
+
+{
+{
+if ( (t instanceof tom.engine.adt.tomterm.types.TomTerm) ) {
+boolean tomMatch49_6= false ;
+ tom.engine.adt.tomname.types.TomNameList  tomMatch49_1= null ;
+if ( ((( tom.engine.adt.tomterm.types.TomTerm )t) instanceof tom.engine.adt.tomterm.types.tomterm.TermAppl) ) {
+{
+tomMatch49_6= true ;
+tomMatch49_1= (( tom.engine.adt.tomterm.types.TomTerm )t).getNameList() ;
+
+}
+} else {
+if ( ((( tom.engine.adt.tomterm.types.TomTerm )t) instanceof tom.engine.adt.tomterm.types.tomterm.RecordAppl) ) {
+{
+tomMatch49_6= true ;
+tomMatch49_1= (( tom.engine.adt.tomterm.types.TomTerm )t).getNameList() ;
+
+}
+}
+}
+if (tomMatch49_6) {
+if ( ((tomMatch49_1 instanceof tom.engine.adt.tomname.types.tomnamelist.ConsconcTomName) || (tomMatch49_1 instanceof tom.engine.adt.tomname.types.tomnamelist.EmptyconcTomName)) ) {
+if (!( tomMatch49_1.isEmptyconcTomName() )) {
+ tom.engine.adt.tomname.types.TomName  tom_headName= tomMatch49_1.getHeadconcTomName() ;
+
+String tomName = null;
+if(
+(tom_headName)instanceof AntiName) {
+tomName = ((AntiName)
+tom_headName).getName().getString();
+} else {
+tomName = ((TomName)
+tom_headName).getString();
+}
+return symbolTable.getSymbolFromName(tomName);
+
+
+}
+}
+}
+
+}
+
+}
+{
+if ( (t instanceof tom.engine.adt.tomterm.types.TomTerm) ) {
+boolean tomMatch49_12= false ;
+ tom.engine.adt.tomname.types.TomName  tomMatch49_8= null ;
+if ( ((( tom.engine.adt.tomterm.types.TomTerm )t) instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) {
+{
+tomMatch49_12= true ;
+tomMatch49_8= (( tom.engine.adt.tomterm.types.TomTerm )t).getAstName() ;
+
+}
+} else {
+if ( ((( tom.engine.adt.tomterm.types.TomTerm )t) instanceof tom.engine.adt.tomterm.types.tomterm.VariableStar) ) {
+{
+tomMatch49_12= true ;
+tomMatch49_8= (( tom.engine.adt.tomterm.types.TomTerm )t).getAstName() ;
+
+}
+}
+}
+if (tomMatch49_12) {
+if ( (tomMatch49_8 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+
+return symbolTable.getSymbolFromName(
+ tomMatch49_8.getString() );
+
+
+}
+}
+
+}
+
+}
+{
+if ( (t instanceof tom.engine.adt.tomterm.types.TomTerm) ) {
+if ( ((( tom.engine.adt.tomterm.types.TomTerm )t) instanceof tom.engine.adt.tomterm.types.tomterm.AntiTerm) ) {
+return getSymbolFromTerm(
+ (( tom.engine.adt.tomterm.types.TomTerm )t).getTomTerm() ,symbolTable);
+
+}
+}
+
+}
+
+
+}
+
+return null;
+}
+
+public static TomSymbol getSymbolFromTerm(BQTerm t, SymbolTable symbolTable) {
+
+{
+{
+if ( (t instanceof tom.engine.adt.code.types.BQTerm) ) {
+boolean tomMatch50_5= false ;
+ tom.engine.adt.tomname.types.TomName  tomMatch50_1= null ;
+if ( ((( tom.engine.adt.code.types.BQTerm )t) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {
+{
+tomMatch50_5= true ;
+tomMatch50_1= (( tom.engine.adt.code.types.BQTerm )t).getAstName() ;
+
+}
+} else {
+if ( ((( tom.engine.adt.code.types.BQTerm )t) instanceof tom.engine.adt.code.types.bqterm.BQVariableStar) ) {
+{
+tomMatch50_5= true ;
+tomMatch50_1= (( tom.engine.adt.code.types.BQTerm )t).getAstName() ;
+
+}
+}
+}
+if (tomMatch50_5) {
+if ( (tomMatch50_1 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+
+return symbolTable.getSymbolFromName(
+ tomMatch50_1.getString() );
+
+
+}
+}
+
+}
+
+}
+{
+if ( (t instanceof tom.engine.adt.code.types.BQTerm) ) {
+if ( ((( tom.engine.adt.code.types.BQTerm )t) instanceof tom.engine.adt.code.types.bqterm.FunctionCall) ) {
+ tom.engine.adt.tomname.types.TomName  tomMatch50_7= (( tom.engine.adt.code.types.BQTerm )t).getAstName() ;
+if ( (tomMatch50_7 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+return symbolTable.getSymbolFromName(
+ tomMatch50_7.getString() ); 
+
+}
+}
+}
+
+}
+
+
+}
+
+return null;
+}
+
 
 public static SlotList tomListToSlotList(TomList tomList) {
 return tomListToSlotList(tomList,1);
@@ -2396,7 +2521,7 @@ return
 
 }
 
-throw new TomRuntimeException("cannot convert into a variable the term "+variable);
+throw new TomRuntimeException("cannot convert into a variable the term " + variable);
 }
 
 } // class TomBase

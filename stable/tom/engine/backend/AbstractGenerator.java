@@ -90,6 +90,11 @@ return TomBase.getTermType(t, symbolTable);
 protected TomType getUniversalType() {
 return symbolTable.getUniversalType();
 }
+
+protected TomType getCodomain(TomSymbol tSymbol) {
+return TomBase.getSymbolCodomain(tSymbol);
+}
+
 // ------------------------------------------------------------
 
 

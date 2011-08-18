@@ -416,9 +416,50 @@ tomMatch178_14= true ;
 }
 }
 if (tomMatch178_14) {
+ tom.engine.adt.tomterm.types.TomTerm  tom_v=tomMatch178_10;
+ tom.engine.adt.code.types.BQTerm  tom_t= tomMatch178_8.getSubject() ;
+
+SymbolTable symbolTable = getCompiler().getSymbolTable();
+
+//DEBUG System.out.println("In Constraint Generator with v = " + `v + '\n');
+//DEBUG System.out.println("In Constraint Generator with t = " + `t + '\n');
+TomType pType = TomBase.getTermType(
+tom_v,symbolTable);
+TomType sType = TomBase.getTermType(
+tom_t,symbolTable);
+//DEBUG System.out.println("pType = " + pType);
+//DEBUG System.out.println("sType = " + sType);
+
+{
+{
+if ( (pType instanceof tom.engine.adt.tomtype.types.TomType) ) {
+if ( ((( tom.engine.adt.tomtype.types.TomType )pType) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {
+if ( (sType instanceof tom.engine.adt.tomtype.types.TomType) ) {
+if ( ((( tom.engine.adt.tomtype.types.TomType )sType) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {
+boolean tomMatch179_7= false ;
+if (  (( tom.engine.adt.tomtype.types.TomType )pType).getTomType() .equals( (( tom.engine.adt.tomtype.types.TomType )sType).getTomType() ) ) {
+tomMatch179_7= true ;
+}
+if (!(tomMatch179_7)) {
+
+return
+
+ tom.engine.adt.tominstruction.types.instruction.LetRef.make(TomBase.convertFromVarToBQVar(tom_v),  tom.engine.adt.tomexpression.types.expression.Cast.make(TomBase.getTermType(tom_v,symbolTable),  tom.engine.adt.tomexpression.types.expression.BQTermToExpression.make(tom_t) ) , action) ;
+
+
+}
+
+}
+}
+}
+}
+
+}
+
+}
 
 return 
- tom.engine.adt.tominstruction.types.instruction.LetRef.make(TomBase.convertFromVarToBQVar(tomMatch178_10),  tom.engine.adt.tomexpression.types.expression.BQTermToExpression.make( tomMatch178_8.getSubject() ) , action) ;
+ tom.engine.adt.tominstruction.types.instruction.LetRef.make(TomBase.convertFromVarToBQVar(tom_v),  tom.engine.adt.tomexpression.types.expression.BQTermToExpression.make(tom_t) , action) ;
 
 
 }
@@ -587,16 +628,16 @@ public  tom.engine.adt.code.types.BQTerm  visit_BQTerm( tom.engine.adt.code.type
 {
 if ( (tom__arg instanceof tom.engine.adt.code.types.BQTerm) ) {
 if ( ((( tom.engine.adt.code.types.BQTerm )tom__arg) instanceof tom.engine.adt.code.types.bqterm.Subterm) ) {
- tom.engine.adt.tomname.types.TomName  tomMatch179_1= (( tom.engine.adt.code.types.BQTerm )tom__arg).getAstName() ;
-if ( (tomMatch179_1 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+ tom.engine.adt.tomname.types.TomName  tomMatch180_1= (( tom.engine.adt.code.types.BQTerm )tom__arg).getAstName() ;
+if ( (tomMatch180_1 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
  tom.engine.adt.tomname.types.TomName  tom_slotName= (( tom.engine.adt.code.types.BQTerm )tom__arg).getSlotName() ;
 
 TomSymbol tomSymbol = cg.getCompiler().getSymbolTable().getSymbolFromName(
- tomMatch179_1.getString() );
+ tomMatch180_1.getString() );
 TomType subtermType = TomBase.getSlotType(tomSymbol, 
 tom_slotName);	        	
 return 
- tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make( tom.engine.adt.tomexpression.types.expression.GetSlot.make(subtermType, tomMatch179_1, tom_slotName.getString(),  (( tom.engine.adt.code.types.BQTerm )tom__arg).getGroundTerm() ) ) ;
+ tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make( tom.engine.adt.tomexpression.types.expression.GetSlot.make(subtermType, tomMatch180_1, tom_slotName.getString(),  (( tom.engine.adt.code.types.BQTerm )tom__arg).getGroundTerm() ) ) ;
 
 
 }
@@ -713,13 +754,35 @@ return
 if ( (orDisjunction instanceof tom.engine.adt.tomexpression.types.Expression) ) {
 if ( (((( tom.engine.adt.tomexpression.types.Expression )orDisjunction) instanceof tom.engine.adt.tomexpression.types.expression.ConsOrExpressionDisjunction) || ((( tom.engine.adt.tomexpression.types.Expression )orDisjunction) instanceof tom.engine.adt.tomexpression.types.expression.EmptyOrExpressionDisjunction)) ) {
 if (!( (  (( tom.engine.adt.tomexpression.types.Expression )orDisjunction).isEmptyOrExpressionDisjunction()  ||  ((( tom.engine.adt.tomexpression.types.Expression )orDisjunction)== tom.engine.adt.tomexpression.types.expression.EmptyOrExpressionDisjunction.make() )  ) )) {
- tom.engine.adt.tomexpression.types.Expression  tomMatch181_8=(( (((( tom.engine.adt.tomexpression.types.Expression )orDisjunction) instanceof tom.engine.adt.tomexpression.types.expression.ConsOrExpressionDisjunction) || ((( tom.engine.adt.tomexpression.types.Expression )orDisjunction) instanceof tom.engine.adt.tomexpression.types.expression.EmptyOrExpressionDisjunction)) )?( (( tom.engine.adt.tomexpression.types.Expression )orDisjunction).getHeadOrExpressionDisjunction() ):((( tom.engine.adt.tomexpression.types.Expression )orDisjunction)));
-if ( (tomMatch181_8 instanceof tom.engine.adt.tomexpression.types.expression.And) ) {
+ tom.engine.adt.tomexpression.types.Expression  tomMatch182_8=(( (((( tom.engine.adt.tomexpression.types.Expression )orDisjunction) instanceof tom.engine.adt.tomexpression.types.expression.ConsOrExpressionDisjunction) || ((( tom.engine.adt.tomexpression.types.Expression )orDisjunction) instanceof tom.engine.adt.tomexpression.types.expression.EmptyOrExpressionDisjunction)) )?( (( tom.engine.adt.tomexpression.types.Expression )orDisjunction).getHeadOrExpressionDisjunction() ):((( tom.engine.adt.tomexpression.types.Expression )orDisjunction)));
+if ( (tomMatch182_8 instanceof tom.engine.adt.tomexpression.types.expression.And) ) {
+ tom.engine.adt.tomexpression.types.Expression  tomMatch182_6= tomMatch182_8.getArg1() ;
+if ( (tomMatch182_6 instanceof tom.engine.adt.tomexpression.types.expression.IsSort) ) {
 
+return
+
+ tom.engine.adt.tominstruction.types.instruction.If.make(tomMatch182_6, buildDisjunctionIfElse( tom.engine.adt.tomexpression.types.expression.ConsOrExpressionDisjunction.make( tomMatch182_8.getArg2() ,tom_append_list_OrExpressionDisjunction((( (((( tom.engine.adt.tomexpression.types.Expression )orDisjunction) instanceof tom.engine.adt.tomexpression.types.expression.ConsOrExpressionDisjunction) || ((( tom.engine.adt.tomexpression.types.Expression )orDisjunction) instanceof tom.engine.adt.tomexpression.types.expression.EmptyOrExpressionDisjunction)) )?( (( tom.engine.adt.tomexpression.types.Expression )orDisjunction).getTailOrExpressionDisjunction() ):( tom.engine.adt.tomexpression.types.expression.EmptyOrExpressionDisjunction.make() )), tom.engine.adt.tomexpression.types.expression.EmptyOrExpressionDisjunction.make() )) ,assignFlagTrue),  tom.engine.adt.tominstruction.types.instruction.Nop.make() ) ;
+
+
+}
+}
+}
+}
+}
+
+}
+{
+if ( (orDisjunction instanceof tom.engine.adt.tomexpression.types.Expression) ) {
+if ( (((( tom.engine.adt.tomexpression.types.Expression )orDisjunction) instanceof tom.engine.adt.tomexpression.types.expression.ConsOrExpressionDisjunction) || ((( tom.engine.adt.tomexpression.types.Expression )orDisjunction) instanceof tom.engine.adt.tomexpression.types.expression.EmptyOrExpressionDisjunction)) ) {
+if (!( (  (( tom.engine.adt.tomexpression.types.Expression )orDisjunction).isEmptyOrExpressionDisjunction()  ||  ((( tom.engine.adt.tomexpression.types.Expression )orDisjunction)== tom.engine.adt.tomexpression.types.expression.EmptyOrExpressionDisjunction.make() )  ) )) {
+ tom.engine.adt.tomexpression.types.Expression  tomMatch182_16=(( (((( tom.engine.adt.tomexpression.types.Expression )orDisjunction) instanceof tom.engine.adt.tomexpression.types.expression.ConsOrExpressionDisjunction) || ((( tom.engine.adt.tomexpression.types.Expression )orDisjunction) instanceof tom.engine.adt.tomexpression.types.expression.EmptyOrExpressionDisjunction)) )?( (( tom.engine.adt.tomexpression.types.Expression )orDisjunction).getHeadOrExpressionDisjunction() ):((( tom.engine.adt.tomexpression.types.Expression )orDisjunction)));
+if ( (tomMatch182_16 instanceof tom.engine.adt.tomexpression.types.expression.And) ) {
+
+//DEBUG System.out.println("orDisjunction = " + `orDisjunction);
 Instruction subtest = buildDisjunctionIfElse(
 tom_append_list_OrExpressionDisjunction((( (((( tom.engine.adt.tomexpression.types.Expression )orDisjunction) instanceof tom.engine.adt.tomexpression.types.expression.ConsOrExpressionDisjunction) || ((( tom.engine.adt.tomexpression.types.Expression )orDisjunction) instanceof tom.engine.adt.tomexpression.types.expression.EmptyOrExpressionDisjunction)) )?( (( tom.engine.adt.tomexpression.types.Expression )orDisjunction).getTailOrExpressionDisjunction() ):( tom.engine.adt.tomexpression.types.expression.EmptyOrExpressionDisjunction.make() )), tom.engine.adt.tomexpression.types.expression.EmptyOrExpressionDisjunction.make() ),assignFlagTrue);
 return 
- tom.engine.adt.tominstruction.types.instruction.If.make( tomMatch181_8.getArg1() ,  tom.engine.adt.tominstruction.types.instruction.UnamedBlock.make( tom.engine.adt.tominstruction.types.instructionlist.ConsconcInstruction.make(assignFlagTrue, tom.engine.adt.tominstruction.types.instructionlist.ConsconcInstruction.make(generateAutomata( tomMatch181_8.getArg2() , tom.engine.adt.tominstruction.types.instruction.Nop.make() ), tom.engine.adt.tominstruction.types.instructionlist.EmptyconcInstruction.make() ) ) ) , subtest) ;
+ tom.engine.adt.tominstruction.types.instruction.If.make( tomMatch182_16.getArg1() ,  tom.engine.adt.tominstruction.types.instruction.UnamedBlock.make( tom.engine.adt.tominstruction.types.instructionlist.ConsconcInstruction.make(assignFlagTrue, tom.engine.adt.tominstruction.types.instructionlist.ConsconcInstruction.make(generateAutomata( tomMatch182_16.getArg2() , tom.engine.adt.tominstruction.types.instruction.Nop.make() ), tom.engine.adt.tominstruction.types.instructionlist.EmptyconcInstruction.make() ) ) ) , subtest) ;
 
 
 }
@@ -840,9 +903,9 @@ public  tom.engine.adt.tomconstraint.types.Constraint  visit_Constraint( tom.eng
 {
 if ( (tom__arg instanceof tom.engine.adt.tomconstraint.types.Constraint) ) {
 if ( ((( tom.engine.adt.tomconstraint.types.Constraint )tom__arg) instanceof tom.engine.adt.tomconstraint.types.constraint.MatchConstraint) ) {
- tom.engine.adt.tomterm.types.TomTerm  tomMatch182_1= (( tom.engine.adt.tomconstraint.types.Constraint )tom__arg).getPattern() ;
-if ( (tomMatch182_1 instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) {
- tom.engine.adt.tomterm.types.TomTerm  tom_v=tomMatch182_1;
+ tom.engine.adt.tomterm.types.TomTerm  tomMatch183_1= (( tom.engine.adt.tomconstraint.types.Constraint )tom__arg).getPattern() ;
+if ( (tomMatch183_1 instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) {
+ tom.engine.adt.tomterm.types.TomTerm  tom_v=tomMatch183_1;
 
 if(!varList.contains(
 tom_v)) { varList.add(TomBase.convertFromVarToBQVar(
@@ -866,7 +929,7 @@ return new CollectVar(t0);
 // end strategy   
 
 /**
-* Collect the free variables in an expression (do not inspect under a anti)  
+* Collect the free variables in an expression (do not inspect under an anti)  
 */
 
 public static class CollectFreeVar extends tom.library.sl.AbstractStrategyBasic {
@@ -930,11 +993,11 @@ public  tom.engine.adt.tomexpression.types.Expression  visit_Expression( tom.eng
 {
 if ( (tom__arg instanceof tom.engine.adt.tomexpression.types.Expression) ) {
 if ( ((( tom.engine.adt.tomexpression.types.Expression )tom__arg) instanceof tom.engine.adt.tomexpression.types.expression.ConstraintToExpression) ) {
- tom.engine.adt.tomconstraint.types.Constraint  tomMatch183_1= (( tom.engine.adt.tomexpression.types.Expression )tom__arg).getcons() ;
-if ( (tomMatch183_1 instanceof tom.engine.adt.tomconstraint.types.constraint.MatchConstraint) ) {
- tom.engine.adt.tomterm.types.TomTerm  tomMatch183_3= tomMatch183_1.getPattern() ;
-if ( (tomMatch183_3 instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) {
- tom.engine.adt.tomterm.types.TomTerm  tom_v=tomMatch183_3;
+ tom.engine.adt.tomconstraint.types.Constraint  tomMatch184_1= (( tom.engine.adt.tomexpression.types.Expression )tom__arg).getcons() ;
+if ( (tomMatch184_1 instanceof tom.engine.adt.tomconstraint.types.constraint.MatchConstraint) ) {
+ tom.engine.adt.tomterm.types.TomTerm  tomMatch184_3= tomMatch184_1.getPattern() ;
+if ( (tomMatch184_3 instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) {
+ tom.engine.adt.tomterm.types.TomTerm  tom_v=tomMatch184_3;
 
 if(!varList.contains(
 tom_v)) { varList.add(TomBase.convertFromVarToBQVar(

@@ -695,14 +695,14 @@ if (index>0) { writer.write(", "); }
 {
 if ( (slot instanceof tom.gom.adt.objects.types.SlotField) ) {
 if ( ((( tom.gom.adt.objects.types.SlotField )slot) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) {
- tom.gom.adt.objects.types.ClassName  tomMatch470_2= (( tom.gom.adt.objects.types.SlotField )slot).getDomain() ;
-if ( (tomMatch470_2 instanceof tom.gom.adt.objects.types.classname.ClassName) ) {
+ tom.gom.adt.objects.types.ClassName  tomMatch493_2= (( tom.gom.adt.objects.types.SlotField )slot).getDomain() ;
+if ( (tomMatch493_2 instanceof tom.gom.adt.objects.types.classname.ClassName) ) {
 
 writer.write(
  (( tom.gom.adt.objects.types.SlotField )slot).getName() );
 writer.write(":");
 writer.write(
- tomMatch470_2.getName() );
+ tomMatch493_2.getName() );
 index++;
 
 

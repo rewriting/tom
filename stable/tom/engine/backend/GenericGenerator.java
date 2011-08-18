@@ -361,9 +361,9 @@ if(instantiateTemplate(deep,template,opname,
 String s = isFsymMap.get(opname);
 if(s == null) {
 s = "tom_is_fun_sym_" + opname + "(";
-isFsymMap.put(opname,s);
 }
 output.write(s);
+//DEBUG System.out.println("generate BQTerm for '" + exp + "'");
 generateBQTerm(deep,exp,moduleName);
 output.write(")");
 }
@@ -381,6 +381,10 @@ output.write(opname);
 output.writeUnderscore();
 output.write(slotName);
 output.writeOpenBrace();
+/*
+* add a cast to ensure correct typing when using subtypes
+*/
+
 generateBQTerm(deep,var,moduleName);
 output.writeCloseBrace();
 }
@@ -535,6 +539,11 @@ code = code.setCode(ncode);
 if(!inline || !code.isCode() || !inlined) {
 TomType returnType = getSymbolTable(moduleName).getBooleanType();
 String argType;
+// [02/12/2010 pem] precise type is no longer necessary
+// [28/01/2011 tavaresc] we need precise types for those methods
+// automatically generated for mappings (e.g. tom_is_fun_sym_toto) when
+// using builtin types (e.g. boolean)
+
 if(!lazyType) {
 argType = TomBase.getTLCode(tlType);
 } else {

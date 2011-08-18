@@ -95,6 +95,10 @@ public class TomParser extends antlr.LLkParser       implements TomParserTokenTy
 
     private SymbolTable symbolTable;
 
+    private OptionManager optionManager;
+
+    private HashMap<String,String> usedSlots = new HashMap<String,String>();
+
     public TomParser(ParserSharedInputState state, HostParser target,
                      OptionManager optionManager) {
         this(state);
@@ -102,6 +106,25 @@ public class TomParser extends antlr.LLkParser       implements TomParserTokenTy
         this.tomlexer = (TomLexer) selector().getStream("tomlexer");
         this.symbolTable = target.getSymbolTable();
         this.bqparser = new BackQuoteParser(state,this);
+        this.optionManager = optionManager;
+    }
+
+    /**
+     * Returns the value of a boolean option.
+     * 
+     * @param optionName the name of the option whose value is seeked
+     * @return a boolean that is the option's value
+     */
+    public boolean getOptionBooleanValue(String optionName) {
+      return ((Boolean)optionManager.getOptionValue(optionName)).booleanValue();
+    }
+
+    private void putSlot(String sName, String sType) {
+      usedSlots.put(sName,sType);
+    }
+
+    private String getSlotType(String sName) {
+      return usedSlots.get(sName);
     }
 
     private void putType(String name, TomType type) {
@@ -831,10 +854,11 @@ inputState.guessing--;
 			return;
 			}
 			
-			BQTerm subject =
-			tom_make_BQVariable(tom_empty_list_concOption(),tom_make_Name("tom__arg"),SymbolTable.TYPE_UNKNOWN);
+			BQTerm subject = tom_make_BQVariable(tom_empty_list_concOption(),tom_make_Name("tom__arg"),rhsType);
+			TomType matchType = (getOptionBooleanValue("newtyper")?SymbolTable.TYPE_UNKNOWN:rhsType);
 			constraint =
-			tom_cons_list_AndConstraint(constraint,tom_cons_list_AndConstraint(tom_make_MatchConstraint(matchPatternList.get(0),subject,rhsType),tom_empty_list_AndConstraint()));
+			tom_cons_list_AndConstraint(constraint,tom_cons_list_AndConstraint(tom_make_MatchConstraint(matchPatternList.get(0),subject,matchType),tom_empty_list_AndConstraint()));
+			
 			//optionList = `concOption(option, OriginalText(Name(text.toString())));
 			
 			matchPatternList.clear();
@@ -3521,10 +3545,18 @@ inputState.guessing--;
 			if ( inputState.guessing==0 ) {
 				
 				stringSlotName = slotName.getText();
-				astName = tom_make_Name(stringSlotName);
+				astName = ASTFactory.makeName(stringSlotName);
 				slotNameList.add(astName);
 				pairNameDeclList.add(tom_make_PairNameDecl(astName,tom_make_EmptyDeclaration()));
 				types = tom_append_list_concTomType(types,tom_cons_list_concTomType(tom_make_Type(tom_empty_list_concTypeOption(),typeArg.getText(),tom_make_EmptyTargetLanguageType()),tom_empty_list_concTomType()));
+				String typeOfSlot = getSlotType(stringSlotName);
+				String typeOfArg= typeArg.getText();
+				if (typeOfSlot != null && !typeOfSlot.equals(typeOfArg)) {
+				TomMessage.warning(getLogger(),currentFile(), getLine(),
+				TomMessage.slotIncompatibleTypes,stringSlotName,typeOfArg,typeOfSlot);
+				} else {
+				putSlot(stringSlotName,typeOfArg);
+				}
 				
 			}
 			{
@@ -3549,6 +3581,14 @@ inputState.guessing--;
 						slotNameList.add(astName);
 						pairNameDeclList.add(tom_make_PairNameDecl(tom_make_Name(stringSlotName),tom_make_EmptyDeclaration()));
 						types = tom_append_list_concTomType(types,tom_cons_list_concTomType(tom_make_Type(tom_empty_list_concTypeOption(),typeArg2.getText(),tom_make_EmptyTargetLanguageType()),tom_empty_list_concTomType()));
+						String typeOfSlot = getSlotType(stringSlotName);
+						String typeOfArg= typeArg2.getText();
+						if (typeOfSlot != null && !typeOfSlot.equals(typeOfArg)) {
+						TomMessage.warning(getLogger(),currentFile(), getLine(),
+						TomMessage.slotIncompatibleTypes,stringSlotName,typeOfArg,typeOfSlot);
+						} else {
+						putSlot(stringSlotName,typeOfArg);
+						}
 						
 					}
 				}

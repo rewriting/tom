@@ -581,7 +581,6 @@ Code compiledTerm =
 tom_make_TopDown(tom_make_CompileMatch(this)).visitLight(code);
 
 //System.out.println("compiledTerm = \n" + compiledTerm);            
-
 Collection hashSet = new HashSet();
 Code renamedTerm = 
 tom_make_TopDownIdStopOnSuccess(tom_make_findRenameVariable(hashSet)).visitLight(compiledTerm);
@@ -701,16 +700,24 @@ try {
 // get the new names for subjects and generates casts -- needed especially for lists
 // this is performed here, and not above, because in the case of nested matches, we do not want 
 // to go in the action and collect from there              
+//DEBUG System.out.println("\n constraint = " + `constraint);
 Constraint newConstraint = 
 tom_make_TopDownIdStopOnSuccess(tom_make_renameSubjects(subjectList,renamedSubjects,compiler)).visitLight(
  tomMatch167_10.getConstraint() );
+//DEBUG System.out.println("\n In compiler!!");
+//DEBUG System.out.println("\n newConstraint = " + newConstraint);
 
 Constraint propagationResult = compiler.getCompilerEnvironment().getConstraintPropagator().performPropagations(newConstraint);
+//DEBUG System.out.println("\n propagationResult = " + propagationResult);
 PreGenerator preGenerator = new PreGenerator(compiler.getCompilerEnvironment().getConstraintGenerator());
+//DEBUG System.out.println("\n preGenerator = " + preGenerator);
 Expression preGeneratedExpr = preGenerator.performPreGenerationTreatment(propagationResult);
+//DEBUG System.out.println("\n preGeneratedExpr = " + preGeneratedExpr);
 Instruction matchingAutomata = compiler.getCompilerEnvironment().getConstraintGenerator().performGenerations(preGeneratedExpr, 
  tomMatch167_10.getAction() );
+//DEBUG System.out.println("\n matchingAutomata = " + matchingAutomata);
 Instruction postGenerationAutomata = PostGenerator.performPostGenerationTreatment(matchingAutomata);
+//DEBUG System.out.println("\n postGenerationAutomata = " + postGenerationAutomata);
 TomNumberList path = compiler.getCompilerEnvironment().getRootpath();
 TomNumberList numberList = 
 tom_append_list_concTomNumber(path, tom.engine.adt.tomname.types.tomnumberlist.ConsconcTomNumber.make( tom.engine.adt.tomname.types.tomnumber.PatternNumber.make(actionNumber) , tom.engine.adt.tomname.types.tomnumberlist.EmptyconcTomNumber.make() ) );
@@ -718,6 +725,7 @@ TomTerm automata =
  tom.engine.adt.tomterm.types.tomterm.Automata.make( tomMatch167_10.getOptions() , newConstraint, numberList, postGenerationAutomata) ;
 automataList = 
 tom_append_list_concTomTerm(automataList, tom.engine.adt.tomterm.types.tomlist.ConsconcTomTerm.make(automata, tom.engine.adt.tomterm.types.tomlist.EmptyconcTomTerm.make() ) ); //append(automata,automataList);
+//DEBUG System.out.println("\n automataList = " + automataList);
 } catch(Exception e) {
 e.printStackTrace();
 throw new TomRuntimeException("Propagation or generation exception:" + e);
@@ -768,8 +776,8 @@ return new CompileMatch(t0);
 /**
 * Takes all MatchConstraints and renames the subjects;
 * (this ensures that the subject is not constructed more than once) 
-* Match(p,s,t) -> Match(object,s,t) /\ IsSort(t,object) /\
-* Match(freshSubj,Cast(object),t) /\ Match(p,freshSubj,t) 
+* Match(p,s,castType) -> Match(object,s,castType) /\ IsSort(castType,object) /\
+* Match(freshSubj,Cast(object),castType) /\ Match(p,freshSubj,castType) 
 * 
 * @param subjectList the list of old subjects
 */
@@ -846,51 +854,78 @@ public  tom.engine.adt.tomconstraint.types.Constraint  visit_Constraint( tom.eng
 if ( (tom__arg instanceof tom.engine.adt.tomconstraint.types.Constraint) ) {
 if ( ((( tom.engine.adt.tomconstraint.types.Constraint )tom__arg) instanceof tom.engine.adt.tomconstraint.types.constraint.MatchConstraint) ) {
  tom.engine.adt.code.types.BQTerm  tom_subject= (( tom.engine.adt.tomconstraint.types.Constraint )tom__arg).getSubject() ;
+ tom.engine.adt.tomtype.types.TomType  tom_castType= (( tom.engine.adt.tomconstraint.types.Constraint )tom__arg).getAstType() ;
  tom.engine.adt.tomconstraint.types.Constraint  tom_constr=(( tom.engine.adt.tomconstraint.types.Constraint )tom__arg);
 
+// IF 1
+//DEBUG System.out.println("\n\nIn renameSubjects - constr = " + `constr);
+//DEBUG System.out.println("\n -------- In renameSubjects - subjectList = " + subjectList);
+//DEBUG System.out.println("In renameSubjects - renamedSubjects = " + renamedSubjects);
 if(renamedSubjects.contains(
  (( tom.engine.adt.tomconstraint.types.Constraint )tom__arg).getPattern() ) || ( 
 (tom_subject)instanceof BQVariable && renamedSubjects.contains(TomBase.convertFromBQVarToVar(
 tom_subject))) ) {
 // make sure we don't process generated contraints
+//DEBUG System.out.println("A constraint already processed!!");
 return 
 tom_constr; 
-}        
-// test if we already renamed this subject 
-TomType freshSubjectType = 
- (( tom.engine.adt.tomconstraint.types.Constraint )tom__arg).getAstType() ;
+} 
+TomType freshSubjectType = compiler.getTermTypeFromTerm(
+tom_subject);
+//TomType freshSubjectType = `castType;
+//DEBUG System.out.println("In renameSubjects - IF 1 - subject = " + `subject);
+//DEBUG System.out.println("In renameSubjects - IF 1 - freshSubjectType = " + freshSubjectType);
+//DEBUG System.out.println("In renameSubjects - IF 1 - castType = " + `castType);
 
+// IF 2
+// test if we already renamed this subject 
+
+//DEBUG System.out.println("\nrenameSubjects -- old Subj = " + `subject);
 if(subjectList.contains(
 tom_subject)) {
 TomTerm renamedSubj= (TomTerm) renamedSubjects.get(subjectList.indexOf(
 tom_subject));
-//DEBUG System.out.println("renameSubjects -- renamedSubj = " + renamedSubj);
-Constraint newConstraint = 
-tom_constr.setSubject(TomBase.convertFromVarToBQVar(renamedSubj));
-//DEBUG System.out.println("renameSubjects -- newConstraint = " +
-//DEBUG     newConstraint);
-if (freshSubjectType.getTlType() == compiler.getSymbolTable().TYPE_UNKNOWN.getTlType()) {
-freshSubjectType = renamedSubj.getAstType();
-}
-//DEBUG System.out.println("renameSubjects -- freshSubjectType = " + freshSubjectType);
-BQTerm freshVar = compiler.getUniversalObjectForSubject(freshSubjectType);
+// Create an auxiliary variable because renamedSubj can not be
+// directly modified (I don't know why) 
+TomTerm typedRenamedSubj = renamedSubj;
+
 //DEBUG System.out.println("renameSubjects -- freshVar= " + freshVar);
+if (freshSubjectType.getTlType() == compiler.getSymbolTable().TYPE_UNKNOWN.getTlType()) {
+//DEBUG System.out.println("\nIn renameSubjects - IF 1 - freshSubjectType is unknown!");
+freshSubjectType = typedRenamedSubj.getAstType();
+} else {
+//DEBUG System.out.println("\noriginal renameSubjects -- typedRenamedSubj = " + typedRenamedSubj);
+//DEBUG System.out.println("\nfreshSubjectType = " + freshSubjectType + "\n\n");
+typedRenamedSubj = typedRenamedSubj.setAstType(freshSubjectType);
+//DEBUG System.out.println("\nmodified renameSubjects -- typedRenamedSubj = " + typedRenamedSubj + "\n\n");
+}
+
+BQTerm freshVar = compiler.getUniversalObjectForSubject(freshSubjectType);
 /*
 return `AndConstraint(
 MatchConstraint(TomBase.convertFromBQVarToVar(freshVar),subject,castType),
 IsSortConstraint(castType,freshVar),
-MatchConstraint(renamedSubj,ExpressionToBQTerm(Cast(castType,BQTermToExpression(freshVar))),castType),
+MatchConstraint(typedRenamedSubj,ExpressionToBQTerm(Cast(castType,BQTermToExpression(freshVar))),castType),
 newConstraint);
 */
 
+Constraint newConstraint =
+
+tom_constr.setSubject(TomBase.convertFromVarToBQVar(typedRenamedSubj));
+//DEBUG System.out.println("renameSubjects -- newConstraint = " +
+//DEBUG     newConstraint);
+
 return 
- tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make( tom.engine.adt.tomconstraint.types.constraint.MatchConstraint.make(TomBase.convertFromBQVarToVar(freshVar), tom_subject, freshSubjectType) , tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make( tom.engine.adt.tomconstraint.types.constraint.IsSortConstraint.make(freshSubjectType, freshVar) , tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make( tom.engine.adt.tomconstraint.types.constraint.MatchConstraint.make(renamedSubj,  tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make( tom.engine.adt.tomexpression.types.expression.Cast.make(freshSubjectType,  tom.engine.adt.tomexpression.types.expression.BQTermToExpression.make(freshVar) ) ) , freshSubjectType) , tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make(newConstraint, tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint.make() ) ) ) ) ;
+ tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make( tom.engine.adt.tomconstraint.types.constraint.MatchConstraint.make(TomBase.convertFromBQVarToVar(freshVar), tom_subject, freshSubjectType) , tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make( tom.engine.adt.tomconstraint.types.constraint.IsSortConstraint.make(tom_castType, freshVar) , tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make( tom.engine.adt.tomconstraint.types.constraint.MatchConstraint.make(typedRenamedSubj,  tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make( tom.engine.adt.tomexpression.types.expression.Cast.make(freshSubjectType,  tom.engine.adt.tomexpression.types.expression.BQTermToExpression.make(freshVar) ) ) , freshSubjectType) , tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make(newConstraint, tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint.make() ) ) ) ) ;
 }
+
+
 TomNumberList path = compiler.getCompilerEnvironment().getRootpath();
 TomName freshSubjectName  = 
  tom.engine.adt.tomname.types.tomname.PositionName.make(tom_append_list_concTomNumber(path, tom.engine.adt.tomname.types.tomnumberlist.ConsconcTomNumber.make( tom.engine.adt.tomname.types.tomnumber.NameNumber.make( tom.engine.adt.tomname.types.tomname.Name.make("_freshSubject_" + compiler.getCompilerEnvironment().genFreshSubjectCounter()) ) , tom.engine.adt.tomname.types.tomnumberlist.EmptyconcTomNumber.make() ) )) ;
 if (freshSubjectType.getTlType() ==
 compiler.getSymbolTable().TYPE_UNKNOWN.getTlType()) {
+//DEBUG System.out.println("\nIn renameSubjects - IF 2 - freshSubjectType is unknown!");
 
 {
 {
@@ -1003,7 +1038,7 @@ if ( (tomMatch169_5 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
  tom.engine.adt.code.types.BQTerm  tom_sv=(( tom.engine.adt.code.types.BQTerm )tom_subject);
 
 TomSymbol tomSymbol = compiler.getSymbolTable().getSymbolFromName(
- tomMatch169_5.getString() );                      
+ tomMatch169_5.getString() );
 if(tomSymbol != null) {
 freshSubjectType = TomBase.getSymbolCodomain(tomSymbol);
 } else if(
@@ -1024,30 +1059,22 @@ tom_sv.getAstType();
 }
 
 }
-/*
-TomType freshSubjectType = `EmptyType();
-%match(subject) {
-(BQVariable|BQVariableStar)[AstType=variableType] -> { 
-freshSubjectType = `variableType;
-}          
-sv@(BuildTerm|FunctionCall|BuildConstant|BuildEmptyList|BuildConsList|BuildAppendList|BuildEmptyArray|BuildConsArray|BuildAppendArray)[AstName=Name(tomName)] -> {
-TomSymbol tomSymbol = compiler.getSymbolTable().getSymbolFromName(`tomName);                      
-if(tomSymbol != null) {
-freshSubjectType = TomBase.getSymbolCodomain(tomSymbol);
-} else if(`sv.isFunctionCall()) {
-freshSubjectType =`sv.getAstType();
-}
-}
-}
-*/
+
+//DEBUG System.out.println("\n -------- In renameSubjects - freshSubjectType = "
+//DEBUG     + `freshSubjectType);
+//DEBUG System.out.println("\n -------- In renameSubjects - castType = "
+//DEBUG     + `castType);
 TomTerm renamedVar = 
  tom.engine.adt.tomterm.types.tomterm.Variable.make( tom.engine.adt.tomoption.types.optionlist.EmptyconcOption.make() , freshSubjectName, freshSubjectType,  tom.engine.adt.tomconstraint.types.constraintlist.EmptyconcConstraint.make() ) ;
 //TomTerm renamedVar = `Variable(concOption(),freshSubjectName,castType,concConstraint());
 subjectList.add(
 tom_subject);
+//DEBUG System.out.println("\n -------- In renameSubjects after add - subjectList = " + `subjectList);
 renamedSubjects.add(renamedVar);
 Constraint newConstraint = 
-tom_constr.setSubject(TomBase.convertFromVarToBQVar(renamedVar));   
+tom_constr.setSubject(TomBase.convertFromVarToBQVar(renamedVar));
+//DEBUG System.out.println("renameSubjects -- newConstraint2 = " +
+//DEBUG     newConstraint);
 BQTerm freshVar = compiler.getUniversalObjectForSubject(freshSubjectType);
 //BQTerm freshVar = compiler.getUniversalObjectForSubject(`castType);
 /*
@@ -1069,7 +1096,8 @@ newConstraint));
 */
 
 return 
- tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make( tom.engine.adt.tomconstraint.types.constraint.MatchConstraint.make(TomBase.convertFromBQVarToVar(freshVar), tom_subject, freshSubjectType) , tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make( tom.engine.adt.tomconstraint.types.constraint.IsSortConstraint.make(freshSubjectType, freshVar) , tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make( tom.engine.adt.tomconstraint.types.constraint.MatchConstraint.make(renamedVar,  tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make( tom.engine.adt.tomexpression.types.expression.Cast.make(freshSubjectType,  tom.engine.adt.tomexpression.types.expression.BQTermToExpression.make(freshVar) ) ) , freshSubjectType) , tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make(newConstraint, tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint.make() ) ) ) ) ;
+ tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make( tom.engine.adt.tomconstraint.types.constraint.MatchConstraint.make(TomBase.convertFromBQVarToVar(freshVar), tom_subject, freshSubjectType) , tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make( tom.engine.adt.tomconstraint.types.constraint.IsSortConstraint.make(tom_castType, freshVar) , tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make( tom.engine.adt.tomconstraint.types.constraint.MatchConstraint.make(renamedVar,  tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make( tom.engine.adt.tomexpression.types.expression.Cast.make(freshSubjectType,  tom.engine.adt.tomexpression.types.expression.BQTermToExpression.make(freshVar) ) ) , freshSubjectType) , tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make(newConstraint, tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint.make() ) ) ) ) ;
+
 
 
 }
@@ -1391,6 +1419,7 @@ if ( (tomMatch173_1 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
 
 if(context.contains(
 tomMatch173_1)) {          
+//DEBUG System.out.println("In findRenameVariable in 'if' with var = "  + `var + '\n');
 return 
 (( tom.engine.adt.code.types.BQTerm )tom__arg).setAstName(
  tom.engine.adt.tomname.types.tomname.Name.make(ASTFactory.makeTomVariableName( tomMatch173_1.getString() )) );
@@ -1479,7 +1508,7 @@ public  tom.engine.adt.tomconstraint.types.Constraint  visit_Constraint( tom.eng
 if ( (tom__arg instanceof tom.engine.adt.tomconstraint.types.Constraint) ) {
 if ( ((( tom.engine.adt.tomconstraint.types.Constraint )tom__arg) instanceof tom.engine.adt.tomconstraint.types.constraint.MatchConstraint) ) {
 
-
+//TODO : checky this code
 Map rhsMap = TomBase.collectMultiplicity(
  (( tom.engine.adt.tomconstraint.types.Constraint )tom__arg).getSubject() );
 alreadyInRhs.addAll(rhsMap.keySet());

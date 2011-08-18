@@ -982,6 +982,9 @@ if ( (tomMatch164_22 instanceof tom.engine.adt.tomtype.types.typeoption.WithSymb
 if ( (tomMatch164_21 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
  String  tom_rootName= tomMatch164_21.getString() ;
 
+/* This error is equivalent to the "invalidVariableStarArgument"
+* signaled by the SyntaxCheckerPlugin 
+*/
 if(!
 tom_listName.equals(
 tom_rootName)) {
@@ -1037,6 +1040,9 @@ if(
 list.isEmptyconcTomVisit()) {
 TomMessage.error(getLogger(),null,0,TomMessage.emptyStrategy);
 }
+/* This error is alreay signaled by the SyntaxCheckerPlugin with error
+* "unknownType
+*/
 
 {
 {

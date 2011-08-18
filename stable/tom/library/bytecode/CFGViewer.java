@@ -386,11 +386,11 @@ public  tom.library.adt.bytecode.types.InstructionList  visit_InstructionList( t
 {
 if ( (tom__arg instanceof tom.library.adt.bytecode.types.InstructionList) ) {
 if ( ((( tom.library.adt.bytecode.types.InstructionList )tom__arg) instanceof tom.library.adt.bytecode.types.instructionlist.ConsInstructionList) ) {
- tom.library.adt.bytecode.types.Instruction  tomMatch644_1= (( tom.library.adt.bytecode.types.InstructionList )tom__arg).getHeadInstructionList() ;
-if ( (tomMatch644_1 instanceof tom.library.adt.bytecode.types.instruction.Anchor) ) {
+ tom.library.adt.bytecode.types.Instruction  tomMatch667_1= (( tom.library.adt.bytecode.types.InstructionList )tom__arg).getHeadInstructionList() ;
+if ( (tomMatch667_1 instanceof tom.library.adt.bytecode.types.instruction.Anchor) ) {
 
 m.put(
- tomMatch644_1.getlabel() , getEnvironment().getPosition());
+ tomMatch667_1.getlabel() , getEnvironment().getPosition());
 
 
 }
@@ -477,11 +477,11 @@ public  tom.library.adt.bytecode.types.InstructionList  visit_InstructionList( t
 {
 if ( (tom__arg instanceof tom.library.adt.bytecode.types.InstructionList) ) {
 if ( ((( tom.library.adt.bytecode.types.InstructionList )tom__arg) instanceof tom.library.adt.bytecode.types.instructionlist.ConsInstructionList) ) {
- tom.library.adt.bytecode.types.Instruction  tomMatch645_1= (( tom.library.adt.bytecode.types.InstructionList )tom__arg).getHeadInstructionList() ;
-if ( (tomMatch645_1 instanceof tom.library.adt.bytecode.types.instruction.Goto) ) {
+ tom.library.adt.bytecode.types.Instruction  tomMatch668_1= (( tom.library.adt.bytecode.types.InstructionList )tom__arg).getHeadInstructionList() ;
+if ( (tomMatch668_1 instanceof tom.library.adt.bytecode.types.instruction.Goto) ) {
 
 tom.library.sl.Position p = (tom.library.sl.Position) (m.get(
- tomMatch645_1.getlabel() ));
+ tomMatch668_1.getlabel() ));
 tom.library.sl.Position current = getEnvironment().getPosition();
 getEnvironment().followPath(p.sub(current));
 s.visit(getEnvironment());
@@ -501,125 +501,125 @@ return (InstructionList) getEnvironment().getSubject();
 {
 if ( (tom__arg instanceof tom.library.adt.bytecode.types.InstructionList) ) {
 if ( ((( tom.library.adt.bytecode.types.InstructionList )tom__arg) instanceof tom.library.adt.bytecode.types.instructionlist.ConsInstructionList) ) {
- tom.library.adt.bytecode.types.Instruction  tomMatch645_7= (( tom.library.adt.bytecode.types.InstructionList )tom__arg).getHeadInstructionList() ;
-boolean tomMatch645_12= false ;
- tom.library.adt.bytecode.types.LabelNode  tomMatch645_10= null ;
-if ( (tomMatch645_7 instanceof tom.library.adt.bytecode.types.instruction.Ifeq) ) {
+ tom.library.adt.bytecode.types.Instruction  tomMatch668_7= (( tom.library.adt.bytecode.types.InstructionList )tom__arg).getHeadInstructionList() ;
+boolean tomMatch668_12= false ;
+ tom.library.adt.bytecode.types.LabelNode  tomMatch668_10= null ;
+if ( (tomMatch668_7 instanceof tom.library.adt.bytecode.types.instruction.Ifeq) ) {
 {
-tomMatch645_12= true ;
-tomMatch645_10= tomMatch645_7.getlabel() ;
+tomMatch668_12= true ;
+tomMatch668_10= tomMatch668_7.getlabel() ;
 
 }
 } else {
-if ( (tomMatch645_7 instanceof tom.library.adt.bytecode.types.instruction.Ifne) ) {
+if ( (tomMatch668_7 instanceof tom.library.adt.bytecode.types.instruction.Ifne) ) {
 {
-tomMatch645_12= true ;
-tomMatch645_10= tomMatch645_7.getlabel() ;
+tomMatch668_12= true ;
+tomMatch668_10= tomMatch668_7.getlabel() ;
 
 }
 } else {
-if ( (tomMatch645_7 instanceof tom.library.adt.bytecode.types.instruction.Iflt) ) {
+if ( (tomMatch668_7 instanceof tom.library.adt.bytecode.types.instruction.Iflt) ) {
 {
-tomMatch645_12= true ;
-tomMatch645_10= tomMatch645_7.getlabel() ;
+tomMatch668_12= true ;
+tomMatch668_10= tomMatch668_7.getlabel() ;
 
 }
 } else {
-if ( (tomMatch645_7 instanceof tom.library.adt.bytecode.types.instruction.Ifge) ) {
+if ( (tomMatch668_7 instanceof tom.library.adt.bytecode.types.instruction.Ifge) ) {
 {
-tomMatch645_12= true ;
-tomMatch645_10= tomMatch645_7.getlabel() ;
+tomMatch668_12= true ;
+tomMatch668_10= tomMatch668_7.getlabel() ;
 
 }
 } else {
-if ( (tomMatch645_7 instanceof tom.library.adt.bytecode.types.instruction.Ifgt) ) {
+if ( (tomMatch668_7 instanceof tom.library.adt.bytecode.types.instruction.Ifgt) ) {
 {
-tomMatch645_12= true ;
-tomMatch645_10= tomMatch645_7.getlabel() ;
+tomMatch668_12= true ;
+tomMatch668_10= tomMatch668_7.getlabel() ;
 
 }
 } else {
-if ( (tomMatch645_7 instanceof tom.library.adt.bytecode.types.instruction.Ifle) ) {
+if ( (tomMatch668_7 instanceof tom.library.adt.bytecode.types.instruction.Ifle) ) {
 {
-tomMatch645_12= true ;
-tomMatch645_10= tomMatch645_7.getlabel() ;
+tomMatch668_12= true ;
+tomMatch668_10= tomMatch668_7.getlabel() ;
 
 }
 } else {
-if ( (tomMatch645_7 instanceof tom.library.adt.bytecode.types.instruction.If_icmpeq) ) {
+if ( (tomMatch668_7 instanceof tom.library.adt.bytecode.types.instruction.If_icmpeq) ) {
 {
-tomMatch645_12= true ;
-tomMatch645_10= tomMatch645_7.getlabel() ;
+tomMatch668_12= true ;
+tomMatch668_10= tomMatch668_7.getlabel() ;
 
 }
 } else {
-if ( (tomMatch645_7 instanceof tom.library.adt.bytecode.types.instruction.If_icmpne) ) {
+if ( (tomMatch668_7 instanceof tom.library.adt.bytecode.types.instruction.If_icmpne) ) {
 {
-tomMatch645_12= true ;
-tomMatch645_10= tomMatch645_7.getlabel() ;
+tomMatch668_12= true ;
+tomMatch668_10= tomMatch668_7.getlabel() ;
 
 }
 } else {
-if ( (tomMatch645_7 instanceof tom.library.adt.bytecode.types.instruction.If_icmplt) ) {
+if ( (tomMatch668_7 instanceof tom.library.adt.bytecode.types.instruction.If_icmplt) ) {
 {
-tomMatch645_12= true ;
-tomMatch645_10= tomMatch645_7.getlabel() ;
+tomMatch668_12= true ;
+tomMatch668_10= tomMatch668_7.getlabel() ;
 
 }
 } else {
-if ( (tomMatch645_7 instanceof tom.library.adt.bytecode.types.instruction.If_icmpge) ) {
+if ( (tomMatch668_7 instanceof tom.library.adt.bytecode.types.instruction.If_icmpge) ) {
 {
-tomMatch645_12= true ;
-tomMatch645_10= tomMatch645_7.getlabel() ;
+tomMatch668_12= true ;
+tomMatch668_10= tomMatch668_7.getlabel() ;
 
 }
 } else {
-if ( (tomMatch645_7 instanceof tom.library.adt.bytecode.types.instruction.If_icmpgt) ) {
+if ( (tomMatch668_7 instanceof tom.library.adt.bytecode.types.instruction.If_icmpgt) ) {
 {
-tomMatch645_12= true ;
-tomMatch645_10= tomMatch645_7.getlabel() ;
+tomMatch668_12= true ;
+tomMatch668_10= tomMatch668_7.getlabel() ;
 
 }
 } else {
-if ( (tomMatch645_7 instanceof tom.library.adt.bytecode.types.instruction.If_icmple) ) {
+if ( (tomMatch668_7 instanceof tom.library.adt.bytecode.types.instruction.If_icmple) ) {
 {
-tomMatch645_12= true ;
-tomMatch645_10= tomMatch645_7.getlabel() ;
+tomMatch668_12= true ;
+tomMatch668_10= tomMatch668_7.getlabel() ;
 
 }
 } else {
-if ( (tomMatch645_7 instanceof tom.library.adt.bytecode.types.instruction.If_acmpeq) ) {
+if ( (tomMatch668_7 instanceof tom.library.adt.bytecode.types.instruction.If_acmpeq) ) {
 {
-tomMatch645_12= true ;
-tomMatch645_10= tomMatch645_7.getlabel() ;
+tomMatch668_12= true ;
+tomMatch668_10= tomMatch668_7.getlabel() ;
 
 }
 } else {
-if ( (tomMatch645_7 instanceof tom.library.adt.bytecode.types.instruction.If_acmpne) ) {
+if ( (tomMatch668_7 instanceof tom.library.adt.bytecode.types.instruction.If_acmpne) ) {
 {
-tomMatch645_12= true ;
-tomMatch645_10= tomMatch645_7.getlabel() ;
+tomMatch668_12= true ;
+tomMatch668_10= tomMatch668_7.getlabel() ;
 
 }
 } else {
-if ( (tomMatch645_7 instanceof tom.library.adt.bytecode.types.instruction.Jsr) ) {
+if ( (tomMatch668_7 instanceof tom.library.adt.bytecode.types.instruction.Jsr) ) {
 {
-tomMatch645_12= true ;
-tomMatch645_10= tomMatch645_7.getlabel() ;
+tomMatch668_12= true ;
+tomMatch668_10= tomMatch668_7.getlabel() ;
 
 }
 } else {
-if ( (tomMatch645_7 instanceof tom.library.adt.bytecode.types.instruction.Ifnull) ) {
+if ( (tomMatch668_7 instanceof tom.library.adt.bytecode.types.instruction.Ifnull) ) {
 {
-tomMatch645_12= true ;
-tomMatch645_10= tomMatch645_7.getlabel() ;
+tomMatch668_12= true ;
+tomMatch668_10= tomMatch668_7.getlabel() ;
 
 }
 } else {
-if ( (tomMatch645_7 instanceof tom.library.adt.bytecode.types.instruction.Ifnonnull) ) {
+if ( (tomMatch668_7 instanceof tom.library.adt.bytecode.types.instruction.Ifnonnull) ) {
 {
-tomMatch645_12= true ;
-tomMatch645_10= tomMatch645_7.getlabel() ;
+tomMatch668_12= true ;
+tomMatch668_10= tomMatch668_7.getlabel() ;
 
 }
 }
@@ -639,10 +639,10 @@ tomMatch645_10= tomMatch645_7.getlabel() ;
 }
 }
 }
-if (tomMatch645_12) {
+if (tomMatch668_12) {
 
 tom.library.sl.Position p = (tom.library.sl.Position) (m.get(
-tomMatch645_10));
+tomMatch668_10));
 tom.library.sl.Position current = getEnvironment().getPosition();
 getEnvironment().followPath(p.sub(current));
 s.visit(getEnvironment());
@@ -663,43 +663,43 @@ getEnvironment().followPathLocal(current.sub(p));
 {
 if ( (tom__arg instanceof tom.library.adt.bytecode.types.InstructionList) ) {
 if ( ((( tom.library.adt.bytecode.types.InstructionList )tom__arg) instanceof tom.library.adt.bytecode.types.instructionlist.ConsInstructionList) ) {
- tom.library.adt.bytecode.types.Instruction  tomMatch645_14= (( tom.library.adt.bytecode.types.InstructionList )tom__arg).getHeadInstructionList() ;
-boolean tomMatch645_20= false ;
- tom.library.adt.bytecode.types.LabelNode  tomMatch645_17= null ;
- tom.library.adt.bytecode.types.LabelNodeList  tomMatch645_18= null ;
-if ( (tomMatch645_14 instanceof tom.library.adt.bytecode.types.instruction.Tableswitch) ) {
+ tom.library.adt.bytecode.types.Instruction  tomMatch668_14= (( tom.library.adt.bytecode.types.InstructionList )tom__arg).getHeadInstructionList() ;
+boolean tomMatch668_20= false ;
+ tom.library.adt.bytecode.types.LabelNodeList  tomMatch668_18= null ;
+ tom.library.adt.bytecode.types.LabelNode  tomMatch668_17= null ;
+if ( (tomMatch668_14 instanceof tom.library.adt.bytecode.types.instruction.Tableswitch) ) {
 {
-tomMatch645_20= true ;
-tomMatch645_17= tomMatch645_14.getdflt() ;
-tomMatch645_18= tomMatch645_14.getlabels() ;
+tomMatch668_20= true ;
+tomMatch668_17= tomMatch668_14.getdflt() ;
+tomMatch668_18= tomMatch668_14.getlabels() ;
 
 }
 } else {
-if ( (tomMatch645_14 instanceof tom.library.adt.bytecode.types.instruction.Lookupswitch) ) {
+if ( (tomMatch668_14 instanceof tom.library.adt.bytecode.types.instruction.Lookupswitch) ) {
 {
-tomMatch645_20= true ;
-tomMatch645_17= tomMatch645_14.getdflt() ;
-tomMatch645_18= tomMatch645_14.getlabels() ;
+tomMatch668_20= true ;
+tomMatch668_17= tomMatch668_14.getdflt() ;
+tomMatch668_18= tomMatch668_14.getlabels() ;
 
 }
 }
 }
-if (tomMatch645_20) {
+if (tomMatch668_20) {
 
 LabelNodeList labelList = 
-tomMatch645_18;
+tomMatch668_18;
 
 {
 {
 if ( (labelList instanceof tom.library.adt.bytecode.types.LabelNodeList) ) {
 if ( (((( tom.library.adt.bytecode.types.LabelNodeList )labelList) instanceof tom.library.adt.bytecode.types.labelnodelist.ConsLabelNodeList) || ((( tom.library.adt.bytecode.types.LabelNodeList )labelList) instanceof tom.library.adt.bytecode.types.labelnodelist.EmptyLabelNodeList)) ) {
- tom.library.adt.bytecode.types.LabelNodeList  tomMatch646__end__4=(( tom.library.adt.bytecode.types.LabelNodeList )labelList);
+ tom.library.adt.bytecode.types.LabelNodeList  tomMatch669__end__4=(( tom.library.adt.bytecode.types.LabelNodeList )labelList);
 do {
 {
-if (!( tomMatch646__end__4.isEmptyLabelNodeList() )) {
+if (!( tomMatch669__end__4.isEmptyLabelNodeList() )) {
 
 tom.library.sl.Position p = (tom.library.sl.Position) (m.get(
- tomMatch646__end__4.getHeadLabelNodeList() ));
+ tomMatch669__end__4.getHeadLabelNodeList() ));
 tom.library.sl.Position current = getEnvironment().getPosition();
 getEnvironment().followPath(p.sub(current));
 s.visit(getEnvironment());
@@ -712,14 +712,14 @@ getEnvironment().followPathLocal(current.sub(p));
 
 
 }
-if ( tomMatch646__end__4.isEmptyLabelNodeList() ) {
-tomMatch646__end__4=(( tom.library.adt.bytecode.types.LabelNodeList )labelList);
+if ( tomMatch669__end__4.isEmptyLabelNodeList() ) {
+tomMatch669__end__4=(( tom.library.adt.bytecode.types.LabelNodeList )labelList);
 } else {
-tomMatch646__end__4= tomMatch646__end__4.getTailLabelNodeList() ;
+tomMatch669__end__4= tomMatch669__end__4.getTailLabelNodeList() ;
 }
 
 }
-} while(!( (tomMatch646__end__4==(( tom.library.adt.bytecode.types.LabelNodeList )labelList)) ));
+} while(!( (tomMatch669__end__4==(( tom.library.adt.bytecode.types.LabelNodeList )labelList)) ));
 }
 }
 
@@ -728,7 +728,7 @@ tomMatch646__end__4= tomMatch646__end__4.getTailLabelNodeList() ;
 }
 
 tom.library.sl.Position p = (tom.library.sl.Position) (m.get(
-tomMatch645_17));
+tomMatch668_17));
 tom.library.sl.Position current = getEnvironment().getPosition();
 getEnvironment().followPath(p.sub(current));
 s.visit(getEnvironment());
@@ -750,14 +750,14 @@ getEnvironment().followPathLocal(current.sub(p));
 {
 if ( (tom__arg instanceof tom.library.adt.bytecode.types.InstructionList) ) {
 if ( ((( tom.library.adt.bytecode.types.InstructionList )tom__arg) instanceof tom.library.adt.bytecode.types.instructionlist.ConsInstructionList) ) {
- tom.library.adt.bytecode.types.InstructionList  tomMatch645_23= (( tom.library.adt.bytecode.types.InstructionList )tom__arg).getTailInstructionList() ;
-boolean tomMatch645_26= false ;
-if ( ((tomMatch645_23 instanceof tom.library.adt.bytecode.types.instructionlist.ConsInstructionList) || (tomMatch645_23 instanceof tom.library.adt.bytecode.types.instructionlist.EmptyInstructionList)) ) {
-if ( tomMatch645_23.isEmptyInstructionList() ) {
-tomMatch645_26= true ;
+ tom.library.adt.bytecode.types.InstructionList  tomMatch668_23= (( tom.library.adt.bytecode.types.InstructionList )tom__arg).getTailInstructionList() ;
+boolean tomMatch668_26= false ;
+if ( ((tomMatch668_23 instanceof tom.library.adt.bytecode.types.instructionlist.ConsInstructionList) || (tomMatch668_23 instanceof tom.library.adt.bytecode.types.instructionlist.EmptyInstructionList)) ) {
+if ( tomMatch668_23.isEmptyInstructionList() ) {
+tomMatch668_26= true ;
 }
 }
-if (!(tomMatch645_26)) {
+if (!(tomMatch668_26)) {
 
 getEnvironment().down(2);
 s.visit(getEnvironment());
@@ -846,11 +846,11 @@ public  tom.library.adt.bytecode.types.InstructionList  visit_InstructionList( t
 {
 if ( (tom__arg instanceof tom.library.adt.bytecode.types.InstructionList) ) {
 if ( ((( tom.library.adt.bytecode.types.InstructionList )tom__arg) instanceof tom.library.adt.bytecode.types.instructionlist.ConsInstructionList) ) {
- tom.library.adt.bytecode.types.Instruction  tomMatch647_1= (( tom.library.adt.bytecode.types.InstructionList )tom__arg).getHeadInstructionList() ;
-if ( (tomMatch647_1 instanceof tom.library.adt.bytecode.types.instruction.Goto) ) {
+ tom.library.adt.bytecode.types.Instruction  tomMatch670_1= (( tom.library.adt.bytecode.types.InstructionList )tom__arg).getHeadInstructionList() ;
+if ( (tomMatch670_1 instanceof tom.library.adt.bytecode.types.instruction.Goto) ) {
 
 tom.library.sl.Position p = (tom.library.sl.Position) (m.get(
- tomMatch647_1.getlabel() ));
+ tomMatch670_1.getlabel() ));
 tom.library.sl.Position current = getEnvironment().getPosition();
 getEnvironment().followPath(p.sub(current));
 s.visit(getEnvironment());
@@ -870,125 +870,125 @@ return (InstructionList) getEnvironment().getSubject();
 {
 if ( (tom__arg instanceof tom.library.adt.bytecode.types.InstructionList) ) {
 if ( ((( tom.library.adt.bytecode.types.InstructionList )tom__arg) instanceof tom.library.adt.bytecode.types.instructionlist.ConsInstructionList) ) {
- tom.library.adt.bytecode.types.Instruction  tomMatch647_7= (( tom.library.adt.bytecode.types.InstructionList )tom__arg).getHeadInstructionList() ;
-boolean tomMatch647_12= false ;
- tom.library.adt.bytecode.types.LabelNode  tomMatch647_10= null ;
-if ( (tomMatch647_7 instanceof tom.library.adt.bytecode.types.instruction.Ifeq) ) {
+ tom.library.adt.bytecode.types.Instruction  tomMatch670_7= (( tom.library.adt.bytecode.types.InstructionList )tom__arg).getHeadInstructionList() ;
+boolean tomMatch670_12= false ;
+ tom.library.adt.bytecode.types.LabelNode  tomMatch670_10= null ;
+if ( (tomMatch670_7 instanceof tom.library.adt.bytecode.types.instruction.Ifeq) ) {
 {
-tomMatch647_12= true ;
-tomMatch647_10= tomMatch647_7.getlabel() ;
+tomMatch670_12= true ;
+tomMatch670_10= tomMatch670_7.getlabel() ;
 
 }
 } else {
-if ( (tomMatch647_7 instanceof tom.library.adt.bytecode.types.instruction.Ifne) ) {
+if ( (tomMatch670_7 instanceof tom.library.adt.bytecode.types.instruction.Ifne) ) {
 {
-tomMatch647_12= true ;
-tomMatch647_10= tomMatch647_7.getlabel() ;
+tomMatch670_12= true ;
+tomMatch670_10= tomMatch670_7.getlabel() ;
 
 }
 } else {
-if ( (tomMatch647_7 instanceof tom.library.adt.bytecode.types.instruction.Iflt) ) {
+if ( (tomMatch670_7 instanceof tom.library.adt.bytecode.types.instruction.Iflt) ) {
 {
-tomMatch647_12= true ;
-tomMatch647_10= tomMatch647_7.getlabel() ;
+tomMatch670_12= true ;
+tomMatch670_10= tomMatch670_7.getlabel() ;
 
 }
 } else {
-if ( (tomMatch647_7 instanceof tom.library.adt.bytecode.types.instruction.Ifge) ) {
+if ( (tomMatch670_7 instanceof tom.library.adt.bytecode.types.instruction.Ifge) ) {
 {
-tomMatch647_12= true ;
-tomMatch647_10= tomMatch647_7.getlabel() ;
+tomMatch670_12= true ;
+tomMatch670_10= tomMatch670_7.getlabel() ;
 
 }
 } else {
-if ( (tomMatch647_7 instanceof tom.library.adt.bytecode.types.instruction.Ifgt) ) {
+if ( (tomMatch670_7 instanceof tom.library.adt.bytecode.types.instruction.Ifgt) ) {
 {
-tomMatch647_12= true ;
-tomMatch647_10= tomMatch647_7.getlabel() ;
+tomMatch670_12= true ;
+tomMatch670_10= tomMatch670_7.getlabel() ;
 
 }
 } else {
-if ( (tomMatch647_7 instanceof tom.library.adt.bytecode.types.instruction.Ifle) ) {
+if ( (tomMatch670_7 instanceof tom.library.adt.bytecode.types.instruction.Ifle) ) {
 {
-tomMatch647_12= true ;
-tomMatch647_10= tomMatch647_7.getlabel() ;
+tomMatch670_12= true ;
+tomMatch670_10= tomMatch670_7.getlabel() ;
 
 }
 } else {
-if ( (tomMatch647_7 instanceof tom.library.adt.bytecode.types.instruction.If_icmpeq) ) {
+if ( (tomMatch670_7 instanceof tom.library.adt.bytecode.types.instruction.If_icmpeq) ) {
 {
-tomMatch647_12= true ;
-tomMatch647_10= tomMatch647_7.getlabel() ;
+tomMatch670_12= true ;
+tomMatch670_10= tomMatch670_7.getlabel() ;
 
 }
 } else {
-if ( (tomMatch647_7 instanceof tom.library.adt.bytecode.types.instruction.If_icmpne) ) {
+if ( (tomMatch670_7 instanceof tom.library.adt.bytecode.types.instruction.If_icmpne) ) {
 {
-tomMatch647_12= true ;
-tomMatch647_10= tomMatch647_7.getlabel() ;
+tomMatch670_12= true ;
+tomMatch670_10= tomMatch670_7.getlabel() ;
 
 }
 } else {
-if ( (tomMatch647_7 instanceof tom.library.adt.bytecode.types.instruction.If_icmplt) ) {
+if ( (tomMatch670_7 instanceof tom.library.adt.bytecode.types.instruction.If_icmplt) ) {
 {
-tomMatch647_12= true ;
-tomMatch647_10= tomMatch647_7.getlabel() ;
+tomMatch670_12= true ;
+tomMatch670_10= tomMatch670_7.getlabel() ;
 
 }
 } else {
-if ( (tomMatch647_7 instanceof tom.library.adt.bytecode.types.instruction.If_icmpge) ) {
+if ( (tomMatch670_7 instanceof tom.library.adt.bytecode.types.instruction.If_icmpge) ) {
 {
-tomMatch647_12= true ;
-tomMatch647_10= tomMatch647_7.getlabel() ;
+tomMatch670_12= true ;
+tomMatch670_10= tomMatch670_7.getlabel() ;
 
 }
 } else {
-if ( (tomMatch647_7 instanceof tom.library.adt.bytecode.types.instruction.If_icmpgt) ) {
+if ( (tomMatch670_7 instanceof tom.library.adt.bytecode.types.instruction.If_icmpgt) ) {
 {
-tomMatch647_12= true ;
-tomMatch647_10= tomMatch647_7.getlabel() ;
+tomMatch670_12= true ;
+tomMatch670_10= tomMatch670_7.getlabel() ;
 
 }
 } else {
-if ( (tomMatch647_7 instanceof tom.library.adt.bytecode.types.instruction.If_icmple) ) {
+if ( (tomMatch670_7 instanceof tom.library.adt.bytecode.types.instruction.If_icmple) ) {
 {
-tomMatch647_12= true ;
-tomMatch647_10= tomMatch647_7.getlabel() ;
+tomMatch670_12= true ;
+tomMatch670_10= tomMatch670_7.getlabel() ;
 
 }
 } else {
-if ( (tomMatch647_7 instanceof tom.library.adt.bytecode.types.instruction.If_acmpeq) ) {
+if ( (tomMatch670_7 instanceof tom.library.adt.bytecode.types.instruction.If_acmpeq) ) {
 {
-tomMatch647_12= true ;
-tomMatch647_10= tomMatch647_7.getlabel() ;
+tomMatch670_12= true ;
+tomMatch670_10= tomMatch670_7.getlabel() ;
 
 }
 } else {
-if ( (tomMatch647_7 instanceof tom.library.adt.bytecode.types.instruction.If_acmpne) ) {
+if ( (tomMatch670_7 instanceof tom.library.adt.bytecode.types.instruction.If_acmpne) ) {
 {
-tomMatch647_12= true ;
-tomMatch647_10= tomMatch647_7.getlabel() ;
+tomMatch670_12= true ;
+tomMatch670_10= tomMatch670_7.getlabel() ;
 
 }
 } else {
-if ( (tomMatch647_7 instanceof tom.library.adt.bytecode.types.instruction.Jsr) ) {
+if ( (tomMatch670_7 instanceof tom.library.adt.bytecode.types.instruction.Jsr) ) {
 {
-tomMatch647_12= true ;
-tomMatch647_10= tomMatch647_7.getlabel() ;
+tomMatch670_12= true ;
+tomMatch670_10= tomMatch670_7.getlabel() ;
 
 }
 } else {
-if ( (tomMatch647_7 instanceof tom.library.adt.bytecode.types.instruction.Ifnull) ) {
+if ( (tomMatch670_7 instanceof tom.library.adt.bytecode.types.instruction.Ifnull) ) {
 {
-tomMatch647_12= true ;
-tomMatch647_10= tomMatch647_7.getlabel() ;
+tomMatch670_12= true ;
+tomMatch670_10= tomMatch670_7.getlabel() ;
 
 }
 } else {
-if ( (tomMatch647_7 instanceof tom.library.adt.bytecode.types.instruction.Ifnonnull) ) {
+if ( (tomMatch670_7 instanceof tom.library.adt.bytecode.types.instruction.Ifnonnull) ) {
 {
-tomMatch647_12= true ;
-tomMatch647_10= tomMatch647_7.getlabel() ;
+tomMatch670_12= true ;
+tomMatch670_10= tomMatch670_7.getlabel() ;
 
 }
 }
@@ -1008,10 +1008,10 @@ tomMatch647_10= tomMatch647_7.getlabel() ;
 }
 }
 }
-if (tomMatch647_12) {
+if (tomMatch670_12) {
 
 tom.library.sl.Position p = (tom.library.sl.Position) (m.get(
-tomMatch647_10));
+tomMatch670_10));
 tom.library.sl.Position current = getEnvironment().getPosition();
 getEnvironment().followPath(p.sub(current));
 s.visit(getEnvironment());
@@ -1031,29 +1031,29 @@ getEnvironment().followPathLocal(current.sub(p));
 {
 if ( (tom__arg instanceof tom.library.adt.bytecode.types.InstructionList) ) {
 if ( ((( tom.library.adt.bytecode.types.InstructionList )tom__arg) instanceof tom.library.adt.bytecode.types.instructionlist.ConsInstructionList) ) {
- tom.library.adt.bytecode.types.Instruction  tomMatch647_14= (( tom.library.adt.bytecode.types.InstructionList )tom__arg).getHeadInstructionList() ;
-boolean tomMatch647_20= false ;
- tom.library.adt.bytecode.types.LabelNode  tomMatch647_17= null ;
- tom.library.adt.bytecode.types.LabelNodeList  tomMatch647_18= null ;
-if ( (tomMatch647_14 instanceof tom.library.adt.bytecode.types.instruction.Tableswitch) ) {
+ tom.library.adt.bytecode.types.Instruction  tomMatch670_14= (( tom.library.adt.bytecode.types.InstructionList )tom__arg).getHeadInstructionList() ;
+boolean tomMatch670_20= false ;
+ tom.library.adt.bytecode.types.LabelNodeList  tomMatch670_18= null ;
+ tom.library.adt.bytecode.types.LabelNode  tomMatch670_17= null ;
+if ( (tomMatch670_14 instanceof tom.library.adt.bytecode.types.instruction.Tableswitch) ) {
 {
-tomMatch647_20= true ;
-tomMatch647_17= tomMatch647_14.getdflt() ;
-tomMatch647_18= tomMatch647_14.getlabels() ;
+tomMatch670_20= true ;
+tomMatch670_17= tomMatch670_14.getdflt() ;
+tomMatch670_18= tomMatch670_14.getlabels() ;
 
 }
 } else {
-if ( (tomMatch647_14 instanceof tom.library.adt.bytecode.types.instruction.Lookupswitch) ) {
+if ( (tomMatch670_14 instanceof tom.library.adt.bytecode.types.instruction.Lookupswitch) ) {
 {
-tomMatch647_20= true ;
-tomMatch647_17= tomMatch647_14.getdflt() ;
-tomMatch647_18= tomMatch647_14.getlabels() ;
+tomMatch670_20= true ;
+tomMatch670_17= tomMatch670_14.getdflt() ;
+tomMatch670_18= tomMatch670_14.getlabels() ;
 
 }
 }
 }
-if (tomMatch647_20) {
- tom.library.adt.bytecode.types.LabelNodeList  tom_labels=tomMatch647_18;
+if (tomMatch670_20) {
+ tom.library.adt.bytecode.types.LabelNodeList  tom_labels=tomMatch670_18;
 
 LabelNodeList labels = 
 tom_labels;
@@ -1062,13 +1062,13 @@ tom_labels;
 {
 if ( (tom_labels instanceof tom.library.adt.bytecode.types.LabelNodeList) ) {
 if ( (((( tom.library.adt.bytecode.types.LabelNodeList )tom_labels) instanceof tom.library.adt.bytecode.types.labelnodelist.ConsLabelNodeList) || ((( tom.library.adt.bytecode.types.LabelNodeList )tom_labels) instanceof tom.library.adt.bytecode.types.labelnodelist.EmptyLabelNodeList)) ) {
- tom.library.adt.bytecode.types.LabelNodeList  tomMatch648__end__4=(( tom.library.adt.bytecode.types.LabelNodeList )tom_labels);
+ tom.library.adt.bytecode.types.LabelNodeList  tomMatch671__end__4=(( tom.library.adt.bytecode.types.LabelNodeList )tom_labels);
 do {
 {
-if (!( tomMatch648__end__4.isEmptyLabelNodeList() )) {
+if (!( tomMatch671__end__4.isEmptyLabelNodeList() )) {
 
 tom.library.sl.Position p = (tom.library.sl.Position) (m.get(
- tomMatch648__end__4.getHeadLabelNodeList() ));
+ tomMatch671__end__4.getHeadLabelNodeList() ));
 tom.library.sl.Position current = getEnvironment().getPosition();
 getEnvironment().followPath(current.sub(p));
 s.visit(getEnvironment());
@@ -1080,14 +1080,14 @@ getEnvironment().followPathLocal(current.sub(p));
 
 
 }
-if ( tomMatch648__end__4.isEmptyLabelNodeList() ) {
-tomMatch648__end__4=(( tom.library.adt.bytecode.types.LabelNodeList )tom_labels);
+if ( tomMatch671__end__4.isEmptyLabelNodeList() ) {
+tomMatch671__end__4=(( tom.library.adt.bytecode.types.LabelNodeList )tom_labels);
 } else {
-tomMatch648__end__4= tomMatch648__end__4.getTailLabelNodeList() ;
+tomMatch671__end__4= tomMatch671__end__4.getTailLabelNodeList() ;
 }
 
 }
-} while(!( (tomMatch648__end__4==(( tom.library.adt.bytecode.types.LabelNodeList )tom_labels)) ));
+} while(!( (tomMatch671__end__4==(( tom.library.adt.bytecode.types.LabelNodeList )tom_labels)) ));
 }
 }
 
@@ -1096,7 +1096,7 @@ tomMatch648__end__4= tomMatch648__end__4.getTailLabelNodeList() ;
 }
 
 tom.library.sl.Position p = (tom.library.sl.Position) (m.get(
-tomMatch647_17));
+tomMatch670_17));
 tom.library.sl.Position current = getEnvironment().getPosition();
 getEnvironment().followPath(p.sub(current));
 s.visit(getEnvironment());
@@ -1116,14 +1116,14 @@ getEnvironment().followPathLocal(current.sub(p));
 {
 if ( (tom__arg instanceof tom.library.adt.bytecode.types.InstructionList) ) {
 if ( ((( tom.library.adt.bytecode.types.InstructionList )tom__arg) instanceof tom.library.adt.bytecode.types.instructionlist.ConsInstructionList) ) {
- tom.library.adt.bytecode.types.InstructionList  tomMatch647_23= (( tom.library.adt.bytecode.types.InstructionList )tom__arg).getTailInstructionList() ;
-boolean tomMatch647_26= false ;
-if ( ((tomMatch647_23 instanceof tom.library.adt.bytecode.types.instructionlist.ConsInstructionList) || (tomMatch647_23 instanceof tom.library.adt.bytecode.types.instructionlist.EmptyInstructionList)) ) {
-if ( tomMatch647_23.isEmptyInstructionList() ) {
-tomMatch647_26= true ;
+ tom.library.adt.bytecode.types.InstructionList  tomMatch670_23= (( tom.library.adt.bytecode.types.InstructionList )tom__arg).getTailInstructionList() ;
+boolean tomMatch670_26= false ;
+if ( ((tomMatch670_23 instanceof tom.library.adt.bytecode.types.instructionlist.ConsInstructionList) || (tomMatch670_23 instanceof tom.library.adt.bytecode.types.instructionlist.EmptyInstructionList)) ) {
+if ( tomMatch670_23.isEmptyInstructionList() ) {
+tomMatch670_26= true ;
 }
 }
-if (!(tomMatch647_26)) {
+if (!(tomMatch670_26)) {
 
 getEnvironment().down(2);
 s.visit(getEnvironment());
@@ -1521,38 +1521,38 @@ try {
 {
 {
 if ( (ins instanceof tom.library.adt.bytecode.types.Instruction) ) {
-boolean tomMatch653_3= false ;
- int  tomMatch653_1= 0 ;
+boolean tomMatch676_3= false ;
+ int  tomMatch676_1= 0 ;
 if ( ((( tom.library.adt.bytecode.types.Instruction )ins) instanceof tom.library.adt.bytecode.types.instruction.Bipush) ) {
 {
-tomMatch653_3= true ;
-tomMatch653_1= (( tom.library.adt.bytecode.types.Instruction )ins).getoperand() ;
+tomMatch676_3= true ;
+tomMatch676_1= (( tom.library.adt.bytecode.types.Instruction )ins).getoperand() ;
 
 }
 } else {
 if ( ((( tom.library.adt.bytecode.types.Instruction )ins) instanceof tom.library.adt.bytecode.types.instruction.Sipush) ) {
 {
-tomMatch653_3= true ;
-tomMatch653_1= (( tom.library.adt.bytecode.types.Instruction )ins).getoperand() ;
+tomMatch676_3= true ;
+tomMatch676_1= (( tom.library.adt.bytecode.types.Instruction )ins).getoperand() ;
 
 }
 } else {
 if ( ((( tom.library.adt.bytecode.types.Instruction )ins) instanceof tom.library.adt.bytecode.types.instruction.Newarray) ) {
 {
-tomMatch653_3= true ;
-tomMatch653_1= (( tom.library.adt.bytecode.types.Instruction )ins).getoperand() ;
+tomMatch676_3= true ;
+tomMatch676_1= (( tom.library.adt.bytecode.types.Instruction )ins).getoperand() ;
 
 }
 }
 }
 }
-if (tomMatch653_3) {
+if (tomMatch676_3) {
 
 out.write(
 "\n              "+id+
 " [label=\""+ins.symbolName()+
 "\\noperand : "+Integer.toString(
-tomMatch653_1)+
+tomMatch676_1)+
 "\"];\n              ");
 return;
 
@@ -1600,82 +1600,82 @@ return;
 }
 {
 if ( (ins instanceof tom.library.adt.bytecode.types.Instruction) ) {
-boolean tomMatch653_14= false ;
- int  tomMatch653_12= 0 ;
+boolean tomMatch676_14= false ;
+ int  tomMatch676_12= 0 ;
 if ( ((( tom.library.adt.bytecode.types.Instruction )ins) instanceof tom.library.adt.bytecode.types.instruction.Iload) ) {
 {
-tomMatch653_14= true ;
-tomMatch653_12= (( tom.library.adt.bytecode.types.Instruction )ins).getvar() ;
+tomMatch676_14= true ;
+tomMatch676_12= (( tom.library.adt.bytecode.types.Instruction )ins).getvar() ;
 
 }
 } else {
 if ( ((( tom.library.adt.bytecode.types.Instruction )ins) instanceof tom.library.adt.bytecode.types.instruction.Lload) ) {
 {
-tomMatch653_14= true ;
-tomMatch653_12= (( tom.library.adt.bytecode.types.Instruction )ins).getvar() ;
+tomMatch676_14= true ;
+tomMatch676_12= (( tom.library.adt.bytecode.types.Instruction )ins).getvar() ;
 
 }
 } else {
 if ( ((( tom.library.adt.bytecode.types.Instruction )ins) instanceof tom.library.adt.bytecode.types.instruction.Fload) ) {
 {
-tomMatch653_14= true ;
-tomMatch653_12= (( tom.library.adt.bytecode.types.Instruction )ins).getvar() ;
+tomMatch676_14= true ;
+tomMatch676_12= (( tom.library.adt.bytecode.types.Instruction )ins).getvar() ;
 
 }
 } else {
 if ( ((( tom.library.adt.bytecode.types.Instruction )ins) instanceof tom.library.adt.bytecode.types.instruction.Dload) ) {
 {
-tomMatch653_14= true ;
-tomMatch653_12= (( tom.library.adt.bytecode.types.Instruction )ins).getvar() ;
+tomMatch676_14= true ;
+tomMatch676_12= (( tom.library.adt.bytecode.types.Instruction )ins).getvar() ;
 
 }
 } else {
 if ( ((( tom.library.adt.bytecode.types.Instruction )ins) instanceof tom.library.adt.bytecode.types.instruction.Aload) ) {
 {
-tomMatch653_14= true ;
-tomMatch653_12= (( tom.library.adt.bytecode.types.Instruction )ins).getvar() ;
+tomMatch676_14= true ;
+tomMatch676_12= (( tom.library.adt.bytecode.types.Instruction )ins).getvar() ;
 
 }
 } else {
 if ( ((( tom.library.adt.bytecode.types.Instruction )ins) instanceof tom.library.adt.bytecode.types.instruction.Istore) ) {
 {
-tomMatch653_14= true ;
-tomMatch653_12= (( tom.library.adt.bytecode.types.Instruction )ins).getvar() ;
+tomMatch676_14= true ;
+tomMatch676_12= (( tom.library.adt.bytecode.types.Instruction )ins).getvar() ;
 
 }
 } else {
 if ( ((( tom.library.adt.bytecode.types.Instruction )ins) instanceof tom.library.adt.bytecode.types.instruction.Lstore) ) {
 {
-tomMatch653_14= true ;
-tomMatch653_12= (( tom.library.adt.bytecode.types.Instruction )ins).getvar() ;
+tomMatch676_14= true ;
+tomMatch676_12= (( tom.library.adt.bytecode.types.Instruction )ins).getvar() ;
 
 }
 } else {
 if ( ((( tom.library.adt.bytecode.types.Instruction )ins) instanceof tom.library.adt.bytecode.types.instruction.Fstore) ) {
 {
-tomMatch653_14= true ;
-tomMatch653_12= (( tom.library.adt.bytecode.types.Instruction )ins).getvar() ;
+tomMatch676_14= true ;
+tomMatch676_12= (( tom.library.adt.bytecode.types.Instruction )ins).getvar() ;
 
 }
 } else {
 if ( ((( tom.library.adt.bytecode.types.Instruction )ins) instanceof tom.library.adt.bytecode.types.instruction.Dstore) ) {
 {
-tomMatch653_14= true ;
-tomMatch653_12= (( tom.library.adt.bytecode.types.Instruction )ins).getvar() ;
+tomMatch676_14= true ;
+tomMatch676_12= (( tom.library.adt.bytecode.types.Instruction )ins).getvar() ;
 
 }
 } else {
 if ( ((( tom.library.adt.bytecode.types.Instruction )ins) instanceof tom.library.adt.bytecode.types.instruction.Astore) ) {
 {
-tomMatch653_14= true ;
-tomMatch653_12= (( tom.library.adt.bytecode.types.Instruction )ins).getvar() ;
+tomMatch676_14= true ;
+tomMatch676_12= (( tom.library.adt.bytecode.types.Instruction )ins).getvar() ;
 
 }
 } else {
 if ( ((( tom.library.adt.bytecode.types.Instruction )ins) instanceof tom.library.adt.bytecode.types.instruction.Ret) ) {
 {
-tomMatch653_14= true ;
-tomMatch653_12= (( tom.library.adt.bytecode.types.Instruction )ins).getvar() ;
+tomMatch676_14= true ;
+tomMatch676_12= (( tom.library.adt.bytecode.types.Instruction )ins).getvar() ;
 
 }
 }
@@ -1689,13 +1689,13 @@ tomMatch653_12= (( tom.library.adt.bytecode.types.Instruction )ins).getvar() ;
 }
 }
 }
-if (tomMatch653_14) {
+if (tomMatch676_14) {
 
 out.write(
 "\n              "+id+
 " [label=\""+ins.symbolName()+
 "\\nvar : "+Integer.toString(
-tomMatch653_12)+
+tomMatch676_12)+
 "\"];\n              ");
 return;
 
@@ -1759,42 +1759,42 @@ tom_keys;
 {
 if ( (tom_keys instanceof tom.library.adt.bytecode.types.IntList) ) {
 if ( (((( tom.library.adt.bytecode.types.IntList )tom_keys) instanceof tom.library.adt.bytecode.types.intlist.ConsIntList) || ((( tom.library.adt.bytecode.types.IntList )tom_keys) instanceof tom.library.adt.bytecode.types.intlist.EmptyIntList)) ) {
- tom.library.adt.bytecode.types.IntList  tomMatch654__end__4=(( tom.library.adt.bytecode.types.IntList )tom_keys);
+ tom.library.adt.bytecode.types.IntList  tomMatch677__end__4=(( tom.library.adt.bytecode.types.IntList )tom_keys);
 do {
 {
-if (!( tomMatch654__end__4.isEmptyIntList() )) {
- tom.library.adt.bytecode.types.IntList  tomMatch654_5= tomMatch654__end__4.getTailIntList() ;
- tom.library.adt.bytecode.types.IntList  tomMatch654__end__8=tomMatch654_5;
+if (!( tomMatch677__end__4.isEmptyIntList() )) {
+ tom.library.adt.bytecode.types.IntList  tomMatch677_5= tomMatch677__end__4.getTailIntList() ;
+ tom.library.adt.bytecode.types.IntList  tomMatch677__end__8=tomMatch677_5;
 do {
 {
-if (!( tomMatch654__end__8.isEmptyIntList() )) {
-if (  tomMatch654__end__8.getTailIntList() .isEmptyIntList() ) {
+if (!( tomMatch677__end__8.isEmptyIntList() )) {
+if (  tomMatch677__end__8.getTailIntList() .isEmptyIntList() ) {
 
 out.write(
 ""+Integer.toString(
- tomMatch654__end__4.getHeadIntList() )+
+ tomMatch677__end__4.getHeadIntList() )+
 ", ");
 
 
 }
 }
-if ( tomMatch654__end__8.isEmptyIntList() ) {
-tomMatch654__end__8=tomMatch654_5;
+if ( tomMatch677__end__8.isEmptyIntList() ) {
+tomMatch677__end__8=tomMatch677_5;
 } else {
-tomMatch654__end__8= tomMatch654__end__8.getTailIntList() ;
+tomMatch677__end__8= tomMatch677__end__8.getTailIntList() ;
 }
 
 }
-} while(!( (tomMatch654__end__8==tomMatch654_5) ));
+} while(!( (tomMatch677__end__8==tomMatch677_5) ));
 }
-if ( tomMatch654__end__4.isEmptyIntList() ) {
-tomMatch654__end__4=(( tom.library.adt.bytecode.types.IntList )tom_keys);
+if ( tomMatch677__end__4.isEmptyIntList() ) {
+tomMatch677__end__4=(( tom.library.adt.bytecode.types.IntList )tom_keys);
 } else {
-tomMatch654__end__4= tomMatch654__end__4.getTailIntList() ;
+tomMatch677__end__4= tomMatch677__end__4.getTailIntList() ;
 }
 
 }
-} while(!( (tomMatch654__end__4==(( tom.library.adt.bytecode.types.IntList )tom_keys)) ));
+} while(!( (tomMatch677__end__4==(( tom.library.adt.bytecode.types.IntList )tom_keys)) ));
 }
 }
 
@@ -1802,26 +1802,26 @@ tomMatch654__end__4= tomMatch654__end__4.getTailIntList() ;
 {
 if ( (tom_keys instanceof tom.library.adt.bytecode.types.IntList) ) {
 if ( (((( tom.library.adt.bytecode.types.IntList )tom_keys) instanceof tom.library.adt.bytecode.types.intlist.ConsIntList) || ((( tom.library.adt.bytecode.types.IntList )tom_keys) instanceof tom.library.adt.bytecode.types.intlist.EmptyIntList)) ) {
- tom.library.adt.bytecode.types.IntList  tomMatch654__end__14=(( tom.library.adt.bytecode.types.IntList )tom_keys);
+ tom.library.adt.bytecode.types.IntList  tomMatch677__end__14=(( tom.library.adt.bytecode.types.IntList )tom_keys);
 do {
 {
-if (!( tomMatch654__end__14.isEmptyIntList() )) {
-if (  tomMatch654__end__14.getTailIntList() .isEmptyIntList() ) {
+if (!( tomMatch677__end__14.isEmptyIntList() )) {
+if (  tomMatch677__end__14.getTailIntList() .isEmptyIntList() ) {
 
 out.write(Integer.toString(
- tomMatch654__end__14.getHeadIntList() ));
+ tomMatch677__end__14.getHeadIntList() ));
 
 
 }
 }
-if ( tomMatch654__end__14.isEmptyIntList() ) {
-tomMatch654__end__14=(( tom.library.adt.bytecode.types.IntList )tom_keys);
+if ( tomMatch677__end__14.isEmptyIntList() ) {
+tomMatch677__end__14=(( tom.library.adt.bytecode.types.IntList )tom_keys);
 } else {
-tomMatch654__end__14= tomMatch654__end__14.getTailIntList() ;
+tomMatch677__end__14= tomMatch677__end__14.getTailIntList() ;
 }
 
 }
-} while(!( (tomMatch654__end__14==(( tom.library.adt.bytecode.types.IntList )tom_keys)) ));
+} while(!( (tomMatch677__end__14==(( tom.library.adt.bytecode.types.IntList )tom_keys)) ));
 }
 }
 
@@ -1841,60 +1841,60 @@ return;
 }
 {
 if ( (ins instanceof tom.library.adt.bytecode.types.Instruction) ) {
-boolean tomMatch653_31= false ;
- String  tomMatch653_28= "" ;
- tom.library.adt.bytecode.types.FieldDescriptor  tomMatch653_29= null ;
- String  tomMatch653_27= "" ;
+boolean tomMatch676_31= false ;
+ tom.library.adt.bytecode.types.FieldDescriptor  tomMatch676_29= null ;
+ String  tomMatch676_28= "" ;
+ String  tomMatch676_27= "" ;
 if ( ((( tom.library.adt.bytecode.types.Instruction )ins) instanceof tom.library.adt.bytecode.types.instruction.Getstatic) ) {
 {
-tomMatch653_31= true ;
-tomMatch653_27= (( tom.library.adt.bytecode.types.Instruction )ins).getowner() ;
-tomMatch653_28= (( tom.library.adt.bytecode.types.Instruction )ins).getname() ;
-tomMatch653_29= (( tom.library.adt.bytecode.types.Instruction )ins).getfieldDesc() ;
+tomMatch676_31= true ;
+tomMatch676_27= (( tom.library.adt.bytecode.types.Instruction )ins).getowner() ;
+tomMatch676_28= (( tom.library.adt.bytecode.types.Instruction )ins).getname() ;
+tomMatch676_29= (( tom.library.adt.bytecode.types.Instruction )ins).getfieldDesc() ;
 
 }
 } else {
 if ( ((( tom.library.adt.bytecode.types.Instruction )ins) instanceof tom.library.adt.bytecode.types.instruction.Putstatic) ) {
 {
-tomMatch653_31= true ;
-tomMatch653_27= (( tom.library.adt.bytecode.types.Instruction )ins).getowner() ;
-tomMatch653_28= (( tom.library.adt.bytecode.types.Instruction )ins).getname() ;
-tomMatch653_29= (( tom.library.adt.bytecode.types.Instruction )ins).getfieldDesc() ;
+tomMatch676_31= true ;
+tomMatch676_27= (( tom.library.adt.bytecode.types.Instruction )ins).getowner() ;
+tomMatch676_28= (( tom.library.adt.bytecode.types.Instruction )ins).getname() ;
+tomMatch676_29= (( tom.library.adt.bytecode.types.Instruction )ins).getfieldDesc() ;
 
 }
 } else {
 if ( ((( tom.library.adt.bytecode.types.Instruction )ins) instanceof tom.library.adt.bytecode.types.instruction.Getfield) ) {
 {
-tomMatch653_31= true ;
-tomMatch653_27= (( tom.library.adt.bytecode.types.Instruction )ins).getowner() ;
-tomMatch653_28= (( tom.library.adt.bytecode.types.Instruction )ins).getname() ;
-tomMatch653_29= (( tom.library.adt.bytecode.types.Instruction )ins).getfieldDesc() ;
+tomMatch676_31= true ;
+tomMatch676_27= (( tom.library.adt.bytecode.types.Instruction )ins).getowner() ;
+tomMatch676_28= (( tom.library.adt.bytecode.types.Instruction )ins).getname() ;
+tomMatch676_29= (( tom.library.adt.bytecode.types.Instruction )ins).getfieldDesc() ;
 
 }
 } else {
 if ( ((( tom.library.adt.bytecode.types.Instruction )ins) instanceof tom.library.adt.bytecode.types.instruction.Putfield) ) {
 {
-tomMatch653_31= true ;
-tomMatch653_27= (( tom.library.adt.bytecode.types.Instruction )ins).getowner() ;
-tomMatch653_28= (( tom.library.adt.bytecode.types.Instruction )ins).getname() ;
-tomMatch653_29= (( tom.library.adt.bytecode.types.Instruction )ins).getfieldDesc() ;
+tomMatch676_31= true ;
+tomMatch676_27= (( tom.library.adt.bytecode.types.Instruction )ins).getowner() ;
+tomMatch676_28= (( tom.library.adt.bytecode.types.Instruction )ins).getname() ;
+tomMatch676_29= (( tom.library.adt.bytecode.types.Instruction )ins).getfieldDesc() ;
 
 }
 }
 }
 }
 }
-if (tomMatch653_31) {
+if (tomMatch676_31) {
 
 out.write(
 "\n              "+id+
 " [label=\""+ins.symbolName()+
 "\\nowner : "+
-tomMatch653_27+
+tomMatch676_27+
 "\\nname : "+
-tomMatch653_28+
+tomMatch676_28+
 "\\ndescriptor : "+ToolBox.buildDescriptor(
-tomMatch653_29)+
+tomMatch676_29)+
 "\"];\n              ");
 return;
 
@@ -1906,60 +1906,60 @@ return;
 }
 {
 if ( (ins instanceof tom.library.adt.bytecode.types.Instruction) ) {
-boolean tomMatch653_37= false ;
- String  tomMatch653_34= "" ;
- String  tomMatch653_33= "" ;
- tom.library.adt.bytecode.types.MethodDescriptor  tomMatch653_35= null ;
+boolean tomMatch676_37= false ;
+ String  tomMatch676_34= "" ;
+ tom.library.adt.bytecode.types.MethodDescriptor  tomMatch676_35= null ;
+ String  tomMatch676_33= "" ;
 if ( ((( tom.library.adt.bytecode.types.Instruction )ins) instanceof tom.library.adt.bytecode.types.instruction.Invokevirtual) ) {
 {
-tomMatch653_37= true ;
-tomMatch653_33= (( tom.library.adt.bytecode.types.Instruction )ins).getowner() ;
-tomMatch653_34= (( tom.library.adt.bytecode.types.Instruction )ins).getname() ;
-tomMatch653_35= (( tom.library.adt.bytecode.types.Instruction )ins).getmethodDesc() ;
+tomMatch676_37= true ;
+tomMatch676_33= (( tom.library.adt.bytecode.types.Instruction )ins).getowner() ;
+tomMatch676_34= (( tom.library.adt.bytecode.types.Instruction )ins).getname() ;
+tomMatch676_35= (( tom.library.adt.bytecode.types.Instruction )ins).getmethodDesc() ;
 
 }
 } else {
 if ( ((( tom.library.adt.bytecode.types.Instruction )ins) instanceof tom.library.adt.bytecode.types.instruction.Invokespecial) ) {
 {
-tomMatch653_37= true ;
-tomMatch653_33= (( tom.library.adt.bytecode.types.Instruction )ins).getowner() ;
-tomMatch653_34= (( tom.library.adt.bytecode.types.Instruction )ins).getname() ;
-tomMatch653_35= (( tom.library.adt.bytecode.types.Instruction )ins).getmethodDesc() ;
+tomMatch676_37= true ;
+tomMatch676_33= (( tom.library.adt.bytecode.types.Instruction )ins).getowner() ;
+tomMatch676_34= (( tom.library.adt.bytecode.types.Instruction )ins).getname() ;
+tomMatch676_35= (( tom.library.adt.bytecode.types.Instruction )ins).getmethodDesc() ;
 
 }
 } else {
 if ( ((( tom.library.adt.bytecode.types.Instruction )ins) instanceof tom.library.adt.bytecode.types.instruction.Invokestatic) ) {
 {
-tomMatch653_37= true ;
-tomMatch653_33= (( tom.library.adt.bytecode.types.Instruction )ins).getowner() ;
-tomMatch653_34= (( tom.library.adt.bytecode.types.Instruction )ins).getname() ;
-tomMatch653_35= (( tom.library.adt.bytecode.types.Instruction )ins).getmethodDesc() ;
+tomMatch676_37= true ;
+tomMatch676_33= (( tom.library.adt.bytecode.types.Instruction )ins).getowner() ;
+tomMatch676_34= (( tom.library.adt.bytecode.types.Instruction )ins).getname() ;
+tomMatch676_35= (( tom.library.adt.bytecode.types.Instruction )ins).getmethodDesc() ;
 
 }
 } else {
 if ( ((( tom.library.adt.bytecode.types.Instruction )ins) instanceof tom.library.adt.bytecode.types.instruction.Invokeinterface) ) {
 {
-tomMatch653_37= true ;
-tomMatch653_33= (( tom.library.adt.bytecode.types.Instruction )ins).getowner() ;
-tomMatch653_34= (( tom.library.adt.bytecode.types.Instruction )ins).getname() ;
-tomMatch653_35= (( tom.library.adt.bytecode.types.Instruction )ins).getmethodDesc() ;
+tomMatch676_37= true ;
+tomMatch676_33= (( tom.library.adt.bytecode.types.Instruction )ins).getowner() ;
+tomMatch676_34= (( tom.library.adt.bytecode.types.Instruction )ins).getname() ;
+tomMatch676_35= (( tom.library.adt.bytecode.types.Instruction )ins).getmethodDesc() ;
 
 }
 }
 }
 }
 }
-if (tomMatch653_37) {
+if (tomMatch676_37) {
 
 out.write(
 "\n              "+id+
 " [label=\""+ins.symbolName()+
 "\\nowner : "+
-tomMatch653_33+
+tomMatch676_33+
 "\\nname : "+
-tomMatch653_34+
+tomMatch676_34+
 "\\ndescriptor : "+ToolBox.buildDescriptor(
-tomMatch653_35)+
+tomMatch676_35)+
 "\"];\n              ");
 return;
 
@@ -1971,46 +1971,46 @@ return;
 }
 {
 if ( (ins instanceof tom.library.adt.bytecode.types.Instruction) ) {
-boolean tomMatch653_41= false ;
- String  tomMatch653_39= "" ;
+boolean tomMatch676_41= false ;
+ String  tomMatch676_39= "" ;
 if ( ((( tom.library.adt.bytecode.types.Instruction )ins) instanceof tom.library.adt.bytecode.types.instruction.New) ) {
 {
-tomMatch653_41= true ;
-tomMatch653_39= (( tom.library.adt.bytecode.types.Instruction )ins).gettypeDesc() ;
+tomMatch676_41= true ;
+tomMatch676_39= (( tom.library.adt.bytecode.types.Instruction )ins).gettypeDesc() ;
 
 }
 } else {
 if ( ((( tom.library.adt.bytecode.types.Instruction )ins) instanceof tom.library.adt.bytecode.types.instruction.Anewarray) ) {
 {
-tomMatch653_41= true ;
-tomMatch653_39= (( tom.library.adt.bytecode.types.Instruction )ins).gettypeDesc() ;
+tomMatch676_41= true ;
+tomMatch676_39= (( tom.library.adt.bytecode.types.Instruction )ins).gettypeDesc() ;
 
 }
 } else {
 if ( ((( tom.library.adt.bytecode.types.Instruction )ins) instanceof tom.library.adt.bytecode.types.instruction.Checkcast) ) {
 {
-tomMatch653_41= true ;
-tomMatch653_39= (( tom.library.adt.bytecode.types.Instruction )ins).gettypeDesc() ;
+tomMatch676_41= true ;
+tomMatch676_39= (( tom.library.adt.bytecode.types.Instruction )ins).gettypeDesc() ;
 
 }
 } else {
 if ( ((( tom.library.adt.bytecode.types.Instruction )ins) instanceof tom.library.adt.bytecode.types.instruction.Instanceof) ) {
 {
-tomMatch653_41= true ;
-tomMatch653_39= (( tom.library.adt.bytecode.types.Instruction )ins).gettypeDesc() ;
+tomMatch676_41= true ;
+tomMatch676_39= (( tom.library.adt.bytecode.types.Instruction )ins).gettypeDesc() ;
 
 }
 }
 }
 }
 }
-if (tomMatch653_41) {
+if (tomMatch676_41) {
 
 out.write(
 "\n              "+id+
 " [label=\""+ins.symbolName()+
 "\\ndescriptor : "+
-tomMatch653_39+
+tomMatch676_39+
 "\"];\n              ");
 return;
 
@@ -2152,14 +2152,14 @@ private static void printTryCatchBlocks(TryCatchBlockList list, Map labelMap, Wr
 {
 if ( (list instanceof tom.library.adt.bytecode.types.TryCatchBlockList) ) {
 if ( (((( tom.library.adt.bytecode.types.TryCatchBlockList )list) instanceof tom.library.adt.bytecode.types.trycatchblocklist.ConsTryCatchBlockList) || ((( tom.library.adt.bytecode.types.TryCatchBlockList )list) instanceof tom.library.adt.bytecode.types.trycatchblocklist.EmptyTryCatchBlockList)) ) {
- tom.library.adt.bytecode.types.TryCatchBlockList  tomMatch656__end__4=(( tom.library.adt.bytecode.types.TryCatchBlockList )list);
+ tom.library.adt.bytecode.types.TryCatchBlockList  tomMatch679__end__4=(( tom.library.adt.bytecode.types.TryCatchBlockList )list);
 do {
 {
-if (!( tomMatch656__end__4.isEmptyTryCatchBlockList() )) {
+if (!( tomMatch679__end__4.isEmptyTryCatchBlockList() )) {
 
 try {
 TryCatchBlock block = 
- tomMatch656__end__4.getHeadTryCatchBlockList() ;
+ tomMatch679__end__4.getHeadTryCatchBlockList() ;
 Handler handler = block.gethandler();
 String id = getDotId(block);
 
@@ -2224,14 +2224,14 @@ e.printStackTrace();
 
 
 }
-if ( tomMatch656__end__4.isEmptyTryCatchBlockList() ) {
-tomMatch656__end__4=(( tom.library.adt.bytecode.types.TryCatchBlockList )list);
+if ( tomMatch679__end__4.isEmptyTryCatchBlockList() ) {
+tomMatch679__end__4=(( tom.library.adt.bytecode.types.TryCatchBlockList )list);
 } else {
-tomMatch656__end__4= tomMatch656__end__4.getTailTryCatchBlockList() ;
+tomMatch679__end__4= tomMatch679__end__4.getTailTryCatchBlockList() ;
 }
 
 }
-} while(!( (tomMatch656__end__4==(( tom.library.adt.bytecode.types.TryCatchBlockList )list)) ));
+} while(!( (tomMatch679__end__4==(( tom.library.adt.bytecode.types.TryCatchBlockList )list)) ));
 }
 }
 
@@ -2254,14 +2254,14 @@ private static void printLocalVariables(LocalVariableList list, Map labelMap, Wr
 {
 if ( (list instanceof tom.library.adt.bytecode.types.LocalVariableList) ) {
 if ( (((( tom.library.adt.bytecode.types.LocalVariableList )list) instanceof tom.library.adt.bytecode.types.localvariablelist.ConsLocalVariableList) || ((( tom.library.adt.bytecode.types.LocalVariableList )list) instanceof tom.library.adt.bytecode.types.localvariablelist.EmptyLocalVariableList)) ) {
- tom.library.adt.bytecode.types.LocalVariableList  tomMatch658__end__4=(( tom.library.adt.bytecode.types.LocalVariableList )list);
+ tom.library.adt.bytecode.types.LocalVariableList  tomMatch681__end__4=(( tom.library.adt.bytecode.types.LocalVariableList )list);
 do {
 {
-if (!( tomMatch658__end__4.isEmptyLocalVariableList() )) {
+if (!( tomMatch681__end__4.isEmptyLocalVariableList() )) {
 
 try {
 LocalVariable var = 
- tomMatch658__end__4.getHeadLocalVariableList() ;
+ tomMatch681__end__4.getHeadLocalVariableList() ;
 String id = getDotId(var);
 Position startPosition = (Position) labelMap.get(var.getstart());
 InstructionList startInst = (InstructionList) startPosition.getSubterm().visit(inst);
@@ -2284,14 +2284,14 @@ e.printStackTrace();
 
 
 }
-if ( tomMatch658__end__4.isEmptyLocalVariableList() ) {
-tomMatch658__end__4=(( tom.library.adt.bytecode.types.LocalVariableList )list);
+if ( tomMatch681__end__4.isEmptyLocalVariableList() ) {
+tomMatch681__end__4=(( tom.library.adt.bytecode.types.LocalVariableList )list);
 } else {
-tomMatch658__end__4= tomMatch658__end__4.getTailLocalVariableList() ;
+tomMatch681__end__4= tomMatch681__end__4.getTailLocalVariableList() ;
 }
 
 }
-} while(!( (tomMatch658__end__4==(( tom.library.adt.bytecode.types.LocalVariableList )list)) ));
+} while(!( (tomMatch681__end__4==(( tom.library.adt.bytecode.types.LocalVariableList )list)) ));
 }
 }
 
@@ -2402,11 +2402,11 @@ MethodList methods = ast.getmethods();
 {
 if ( (methods instanceof tom.library.adt.bytecode.types.MethodList) ) {
 if ( (((( tom.library.adt.bytecode.types.MethodList )methods) instanceof tom.library.adt.bytecode.types.methodlist.ConsMethodList) || ((( tom.library.adt.bytecode.types.MethodList )methods) instanceof tom.library.adt.bytecode.types.methodlist.EmptyMethodList)) ) {
- tom.library.adt.bytecode.types.MethodList  tomMatch660__end__4=(( tom.library.adt.bytecode.types.MethodList )methods);
+ tom.library.adt.bytecode.types.MethodList  tomMatch683__end__4=(( tom.library.adt.bytecode.types.MethodList )methods);
 do {
 {
-if (!( tomMatch660__end__4.isEmptyMethodList() )) {
- tom.library.adt.bytecode.types.Method  tom_x= tomMatch660__end__4.getHeadMethodList() ;
+if (!( tomMatch683__end__4.isEmptyMethodList() )) {
+ tom.library.adt.bytecode.types.Method  tom_x= tomMatch683__end__4.getHeadMethodList() ;
 
 try {
 MethodInfo info = 
@@ -2463,14 +2463,14 @@ e.printStackTrace();
 
 
 }
-if ( tomMatch660__end__4.isEmptyMethodList() ) {
-tomMatch660__end__4=(( tom.library.adt.bytecode.types.MethodList )methods);
+if ( tomMatch683__end__4.isEmptyMethodList() ) {
+tomMatch683__end__4=(( tom.library.adt.bytecode.types.MethodList )methods);
 } else {
-tomMatch660__end__4= tomMatch660__end__4.getTailMethodList() ;
+tomMatch683__end__4= tomMatch683__end__4.getTailMethodList() ;
 }
 
 }
-} while(!( (tomMatch660__end__4==(( tom.library.adt.bytecode.types.MethodList )methods)) ));
+} while(!( (tomMatch683__end__4==(( tom.library.adt.bytecode.types.MethodList )methods)) ));
 }
 }
 

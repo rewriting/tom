@@ -305,27 +305,27 @@ public  tom.engine.adt.tominstruction.types.Instruction  visit_Instruction( tom.
 {
 if ( (tom__arg instanceof tom.engine.adt.tominstruction.types.Instruction) ) {
 if ( ((( tom.engine.adt.tominstruction.types.Instruction )tom__arg) instanceof tom.engine.adt.tominstruction.types.instruction.LetRef) ) {
- tom.engine.adt.code.types.BQTerm  tomMatch190_1= (( tom.engine.adt.tominstruction.types.Instruction )tom__arg).getVariable() ;
-boolean tomMatch190_7= false ;
- tom.engine.adt.tomname.types.TomName  tomMatch190_5= null ;
-if ( (tomMatch190_1 instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {
+ tom.engine.adt.code.types.BQTerm  tomMatch191_1= (( tom.engine.adt.tominstruction.types.Instruction )tom__arg).getVariable() ;
+boolean tomMatch191_7= false ;
+ tom.engine.adt.tomname.types.TomName  tomMatch191_5= null ;
+if ( (tomMatch191_1 instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {
 {
-tomMatch190_7= true ;
-tomMatch190_5= tomMatch190_1.getAstName() ;
+tomMatch191_7= true ;
+tomMatch191_5= tomMatch191_1.getAstName() ;
 
 }
 } else {
-if ( (tomMatch190_1 instanceof tom.engine.adt.code.types.bqterm.BQVariableStar) ) {
+if ( (tomMatch191_1 instanceof tom.engine.adt.code.types.bqterm.BQVariableStar) ) {
 {
-tomMatch190_7= true ;
-tomMatch190_5= tomMatch190_1.getAstName() ;
+tomMatch191_7= true ;
+tomMatch191_5= tomMatch191_1.getAstName() ;
 
 }
 }
 }
-if (tomMatch190_7) {
- tom.engine.adt.tomname.types.TomName  tom_name=tomMatch190_5;
- tom.engine.adt.code.types.BQTerm  tom_var=tomMatch190_1;
+if (tomMatch191_7) {
+ tom.engine.adt.tomname.types.TomName  tom_name=tomMatch191_5;
+ tom.engine.adt.code.types.BQTerm  tom_var=tomMatch191_1;
  tom.engine.adt.tomexpression.types.Expression  tom_exp= (( tom.engine.adt.tominstruction.types.Instruction )tom__arg).getSource() ;
  tom.engine.adt.tominstruction.types.Instruction  tom_body= (( tom.engine.adt.tominstruction.types.Instruction )tom__arg).getAstInstruction() ;
 
@@ -333,8 +333,10 @@ if (tomMatch190_7) {
 * when there is an identical LetRef between the root and the current LetRef
 * the current LetRef is replaced by an Assign
 */
+//DEBUG System.out.println("ChangeVarDeclarations: name = " + `name);
 Visitable root = (Visitable) getEnvironment().getRoot();
 if(getEnvironment().depth()>0) { // we are not at the root
+//DEBUG System.out.println("ChangeVarDeclarations: root = " + `root);
 try {
 getPosition().getOmegaPath(
 tom_make_CheckLetRefExistence(tom_name)).visit(root); 
@@ -349,6 +351,7 @@ return
 * if there is no Assign, not LetRef in the body
 * the current LetRef is replaced by a Let
 */
+//DEBUG System.out.println("ChangeVarDeclarations: body = " + `body);
 try {
 
 ( new tom.library.sl.Not(tom_make_TopDown( tom.library.sl.ChoiceId.make(tom_make_CheckAssignExistence(tom_name), tom.library.sl.ChoiceId.make(tom_make_CheckLetRefExistence(tom_name), null ) ) )) ).visitLight(
@@ -435,28 +438,31 @@ public  tom.engine.adt.tominstruction.types.Instruction  visit_Instruction( tom.
 {
 if ( (tom__arg instanceof tom.engine.adt.tominstruction.types.Instruction) ) {
 if ( ((( tom.engine.adt.tominstruction.types.Instruction )tom__arg) instanceof tom.engine.adt.tominstruction.types.instruction.LetRef) ) {
- tom.engine.adt.code.types.BQTerm  tomMatch191_1= (( tom.engine.adt.tominstruction.types.Instruction )tom__arg).getVariable() ;
-boolean tomMatch191_5= false ;
- tom.engine.adt.tomname.types.TomName  tomMatch191_3= null ;
-if ( (tomMatch191_1 instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {
+ tom.engine.adt.code.types.BQTerm  tomMatch192_1= (( tom.engine.adt.tominstruction.types.Instruction )tom__arg).getVariable() ;
+boolean tomMatch192_5= false ;
+ tom.engine.adt.tomname.types.TomName  tomMatch192_3= null ;
+if ( (tomMatch192_1 instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {
 {
-tomMatch191_5= true ;
-tomMatch191_3= tomMatch191_1.getAstName() ;
+tomMatch192_5= true ;
+tomMatch192_3= tomMatch192_1.getAstName() ;
 
 }
 } else {
-if ( (tomMatch191_1 instanceof tom.engine.adt.code.types.bqterm.BQVariableStar) ) {
+if ( (tomMatch192_1 instanceof tom.engine.adt.code.types.bqterm.BQVariableStar) ) {
 {
-tomMatch191_5= true ;
-tomMatch191_3= tomMatch191_1.getAstName() ;
+tomMatch192_5= true ;
+tomMatch192_3= tomMatch192_1.getAstName() ;
 
 }
 }
 }
-if (tomMatch191_5) {
+if (tomMatch192_5) {
 
+//DEBUG System.out.println("CheckLetRefExistence: name = " + `name);
+//DEBUG System.out.println("CheckLetRefExistence: varName = " + `varName);
 if(varName == 
-tomMatch191_3) {
+tomMatch192_3) {
+//DEBUG System.out.println("CheckLetRefExistence: " + `name + " already exists.");
 throw new VisitFailure();
 }
 
@@ -536,45 +542,45 @@ public  tom.engine.adt.tominstruction.types.Instruction  visit_Instruction( tom.
 {
 {
 if ( (tom__arg instanceof tom.engine.adt.tominstruction.types.Instruction) ) {
-boolean tomMatch192_6= false ;
- tom.engine.adt.code.types.BQTerm  tomMatch192_1= null ;
+boolean tomMatch193_6= false ;
+ tom.engine.adt.code.types.BQTerm  tomMatch193_1= null ;
 if ( ((( tom.engine.adt.tominstruction.types.Instruction )tom__arg) instanceof tom.engine.adt.tominstruction.types.instruction.Assign) ) {
 {
-tomMatch192_6= true ;
-tomMatch192_1= (( tom.engine.adt.tominstruction.types.Instruction )tom__arg).getVariable() ;
+tomMatch193_6= true ;
+tomMatch193_1= (( tom.engine.adt.tominstruction.types.Instruction )tom__arg).getVariable() ;
 
 }
 } else {
 if ( ((( tom.engine.adt.tominstruction.types.Instruction )tom__arg) instanceof tom.engine.adt.tominstruction.types.instruction.AssignArray) ) {
 {
-tomMatch192_6= true ;
-tomMatch192_1= (( tom.engine.adt.tominstruction.types.Instruction )tom__arg).getVariable() ;
+tomMatch193_6= true ;
+tomMatch193_1= (( tom.engine.adt.tominstruction.types.Instruction )tom__arg).getVariable() ;
 
 }
 }
 }
-if (tomMatch192_6) {
-boolean tomMatch192_5= false ;
- tom.engine.adt.tomname.types.TomName  tomMatch192_3= null ;
-if ( (tomMatch192_1 instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {
+if (tomMatch193_6) {
+boolean tomMatch193_5= false ;
+ tom.engine.adt.tomname.types.TomName  tomMatch193_3= null ;
+if ( (tomMatch193_1 instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {
 {
-tomMatch192_5= true ;
-tomMatch192_3= tomMatch192_1.getAstName() ;
+tomMatch193_5= true ;
+tomMatch193_3= tomMatch193_1.getAstName() ;
 
 }
 } else {
-if ( (tomMatch192_1 instanceof tom.engine.adt.code.types.bqterm.BQVariableStar) ) {
+if ( (tomMatch193_1 instanceof tom.engine.adt.code.types.bqterm.BQVariableStar) ) {
 {
-tomMatch192_5= true ;
-tomMatch192_3= tomMatch192_1.getAstName() ;
+tomMatch193_5= true ;
+tomMatch193_3= tomMatch193_1.getAstName() ;
 
 }
 }
 }
-if (tomMatch192_5) {
+if (tomMatch193_5) {
 
 if(varName == 
-tomMatch192_3) {
+tomMatch193_3) {
 throw new VisitFailure();
 }
 

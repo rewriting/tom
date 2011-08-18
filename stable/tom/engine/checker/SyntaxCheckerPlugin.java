@@ -1583,7 +1583,6 @@ if ( ((( tom.engine.adt.tomconstraint.types.Constraint )constr) instanceof tom.e
  tom.engine.adt.code.types.BQTerm  tom_subject= (( tom.engine.adt.tomconstraint.types.Constraint )constr).getSubject() ;
  tom.engine.adt.tomtype.types.TomType  tom_astType= (( tom.engine.adt.tomconstraint.types.Constraint )constr).getAstType() ;
 
-
 Collection<TomName> patternVars = new HashSet<TomName>();
 Collection<TomName> subjectVars = new HashSet<TomName>();
 
@@ -1681,7 +1680,6 @@ TomMessage.unknownType,
 
 tom_astType.getTomType());
 }
-
 // we now compare the pattern to its definition
 verifyMatchPattern(
 tom_pattern, 
@@ -3544,6 +3542,7 @@ return null;
 } else { // known symbol
 if (!getOptionBooleanValue("newtyper")) {//case of subtyping (-nt option activated)
 if( strictType  || !topLevel ) {
+//DEBUG System.out.println("ensureValidApplDisjunction!");
 if(!ensureSymbolCodomain(TomBase.getSymbolCodomain(symbol), expectedType, TomMessage.invalidCodomain, res, fileName,decLine)) {
 return null;
 }
