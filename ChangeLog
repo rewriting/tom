@@ -1,5 +1,6 @@
 2011-08-18 pem
 * improve Gom: generate better names for args of congruence strategies
+* merge TyperPlugin with NewTyper
 * bootstrap
 
 2011-06-15 pem

@@ -82,6 +82,7 @@ public class TyperPlugin extends TomGenericPlugin {
   public static final String DECLARED_OPTIONS =
     "<options>" +
     "<boolean name='type' altName='' description='TyperPlugin (activated by default)' value='true'/>" +
+    "<boolean name='newtyper' altName='nt' description='New TyperPlugin (not activated by default)' value='false'/>" +
     "</options>";
 
   /**
@@ -93,11 +94,13 @@ public class TyperPlugin extends TomGenericPlugin {
 
   /** the kernel typer acting at very low level */
   private KernelTyper kernelTyper;
+  private NewKernelTyper newKernelTyper;
 
   /** Constructor*/
   public TyperPlugin() {
     super("TyperPlugin");
     kernelTyper = new KernelTyper();
+    newKernelTyper = new NewKernelTyper();
   }
 
   /**
@@ -107,6 +110,7 @@ public class TyperPlugin extends TomGenericPlugin {
     long startChrono = System.currentTimeMillis();
     boolean intermediate = getOptionBooleanValue("intermediate");
     boolean newtyper = getOptionBooleanValue("newtyper");
+    boolean lazyType = getOptionBooleanValue("lazyType");
 
     if(newtyper==false) {
       Code typedCode = null;
@@ -146,8 +150,64 @@ public class TyperPlugin extends TomGenericPlugin {
             + TYPED_TABLE_SUFFIX, getSymbolTable().toTerm());
       }
     } else {
-      // not active plugin
-      TomMessage.info(logger,null,0,TomMessage.typerNotUsed);
+
+      System.out.println("\nNew typer activated!\n");
+ 
+      Code typedCode = null;
+      try {
+        newKernelTyper.setSymbolTable(getStreamManager().getSymbolTable()); 
+        newKernelTyper.setCurrentInputFileName(getStreamManager().getInputFileName()); 
+        if(lazyType) {
+          newKernelTyper.setLazyType();
+        }
+
+        updateSymbolTableNewTyper();
+
+        /**
+         * Typing variables whose types are unknown with fresh type variables before
+         * start inference
+         */
+
+        /**
+         * Start by typing variables with fresh type variables
+         * Perform type inference over patterns 
+         */
+        typedCode =
+          newKernelTyper.inferAllTypes((Code)getWorkingTerm(),`EmptyType());
+
+        /**
+         * Replace all remains of type variables by
+         * Type(tomType,EmptyTargetLanguageType()) in Code and in SymbolTable
+         */
+        typedCode = `(TopDown(removeFreshTypeVar())).visitLight(typedCode);
+        replaceInSymbolTableNewTyper();
+
+        // replace 'abc' by concString('a','b','c')
+        typedCode = `TopDownIdStopOnSuccess(desugarString(this)).visitLight(typedCode);
+        /* transform each BackQuoteTerm into its compiled form */
+        typedCode = `TopDownIdStopOnSuccess(TransformBQAppl(this)).visitLight(typedCode);
+
+        setWorkingTerm(typedCode);
+
+        // verbose
+        TomMessage.info(logger, null, 0, TomMessage.tomTypingPhase,
+          Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));    
+      } catch (Exception e) {
+        TomMessage.error(logger, newKernelTyper.getCurrentInputFileName(), 
+            0, TomMessage.exceptionMessage, getClass().getName(), 
+            newKernelTyper.getCurrentInputFileName(), e.getMessage());
+        e.printStackTrace();
+        return;
+      }
+      /* Add a suffix for the compilation option --intermediate during typing phase*/
+      if(intermediate) {
+        Tools.generateOutput(getStreamManager().getOutputFileName()
+            + TYPED_SUFFIX, typedCode);
+        Tools.generateOutput(getStreamManager().getOutputFileName()
+            + TYPED_TABLE_SUFFIX, getSymbolTable().toTerm());
+      }
+
+
     }
   }
 
@@ -307,4 +367,79 @@ public class TyperPlugin extends TomGenericPlugin {
         return `concSlot(head,tail*);
       }
     }
+
+    /* utilities for new typer */
+  private int freshTypeVarCounter = 0;
+  private int getFreshTlTIndex() {
+    return freshTypeVarCounter++;
+  }
+   /**
+   * The class <code>UpdateKnownType</code> is generated from a strategy which
+   * initially types all terms by using their correspondent type in symbol table
+   * or a fresh type variable :
+   * CASE 1 : Type(name, EmptyTargetLanguageType()) -> Type(name, foundType) if
+   * name is in TypeTable
+   * CASE 2 : Type(name, EmptyTargetLanguageType()) -> TypeVar(name, Index(i))
+   * if name is not in TypeTable
+   * Note that Index(i) is generated based in a counter different from that one
+   * used by <code>UpdateKnownType</code> in the class
+   * <code>NewKernelTyper</code>.
+   * @param typer an instance of object TyperPlugin
+   * @return    the code resulting of a transformation
+   */
+  %strategy UpdateKnownType(typer:TyperPlugin) extends Identity() {
+    visit TomType {
+      Type[TomType=tomType,TlType=EmptyTargetLanguageType()] -> {
+        TomType newType = typer.getSymbolTable().getType(`tomType);
+        if (newType == null) {
+          // This happens when :
+          // * tomType != unknown type AND (newType == null)
+          // * tomType == unknown type
+          newType = `TypeVar(tomType,typer.getFreshTlTIndex());
+        }
+        return newType;
+      }
+    }
+  }
+
+  /**
+   * updateSymbol is called after a first syntax expansion phase
+   * this phase updates the symbolTable according to the typeTable
+   * this is performed by recursively traversing each symbol
+   * - each Type(name,EmptyTargetLanguageType()) is replaced by TypeVar(name,i)
+   */
+  private void updateSymbolTableNewTyper() {
+    for(String tomName:getSymbolTable().keySymbolIterable()) {      
+      try {
+        TomSymbol tSymbol = getSymbolFromName(tomName);
+        tSymbol = `TopDownIdStopOnSuccess(UpdateKnownType(this)).visitLight(tSymbol);
+        tSymbol = `TopDownIdStopOnSuccess(TransformBQAppl(this)).visitLight(tSymbol);
+        getSymbolTable().putSymbol(tomName,tSymbol);
+        newKernelTyper.setLimTVarSymbolTable(freshTypeVarCounter);
+      } catch(tom.library.sl.VisitFailure e) {
+        throw new TomRuntimeException("should not be there");
+      }
+    }
+  }
+
+  private void replaceInSymbolTableNewTyper() {
+    try {
+      for(String tomName:getSymbolTable().keySymbolIterable()) {
+        TomSymbol tSymbol = getSymbolFromName(tomName);
+        tSymbol = `(TopDown(removeFreshTypeVar())).visitLight(tSymbol);
+        getSymbolTable().putSymbol(tomName,tSymbol);
+      }
+    } catch(tom.library.sl.VisitFailure e) {
+        throw new TomRuntimeException("should not be there");
+    }
+  }
+
+  %strategy removeFreshTypeVar() extends Identity() {
+    visit TomType {
+      TypeVar(tomType,_) -> {
+        return `Type(concTypeOption(),tomType,EmptyTargetLanguageType());
+      }    
+    }
+  }
+
 }

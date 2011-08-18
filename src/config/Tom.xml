@@ -57,8 +57,6 @@
       class="tom.engine.desugarer.DesugarerPlugin"/>
     <plugin name="Typer"
       class="tom.engine.typer.TyperPlugin"/>
-    <plugin name="New Typer"
-      class="tom.engine.typer.NewTyper"/>
     <plugin name="Type checker"
       class="tom.engine.checker.TypeCheckerPlugin"/>
     <plugin name="Expander"

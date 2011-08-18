@@ -66,7 +66,6 @@ public class NewKernelTyper {
     is_sort(t) { ($t instanceof NewKernelTyper) }
   }
 
-  private int freshTypeVarCounter;
   private int limTVarSymbolTable;
 
   /*
@@ -268,7 +267,8 @@ public class NewKernelTyper {
    * The method <code>getFreshTlTIndex</code> increments the counter of type variables. 
    * @return  the incremented counter of type variables
    */
-  protected int getFreshTlTIndex() {
+  private int freshTypeVarCounter;
+  private int getFreshTlTIndex() {
     return freshTypeVarCounter++;
   }
 
