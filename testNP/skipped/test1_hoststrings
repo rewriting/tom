@@ -1,0 +1,4 @@
+String s = "This is a simple host string";
+String s = "String with a \" in it";
+String s = "String with a ' in it";
+String s = " %match "

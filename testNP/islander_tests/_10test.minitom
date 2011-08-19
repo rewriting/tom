@@ -1,0 +1,5 @@
+%match (MyType subject) { 
+  a -> { toto }
+mylabel:b -> { titi }
+}
+

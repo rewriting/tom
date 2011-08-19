@@ -1,0 +1,140 @@
+module CST
+imports String Code 
+abstract syntax
+
+// Tree Transformation =======================================================
+CstBlock = wrappedCode(wrapped:Code)
+CstProgram = wrappedCodeList(wrapped:CodeList)
+
+// Node type for base types ==================================================
+NodeString = NodeString()
+NodeInt = NodeInt()
+
+// Program ===================================================================
+CstProgram = Cst_Program(blocks:CstBlockList)
+
+CstBlockList = Cst_concCstBlock(CstBlock*)
+
+CstBlock =
+ HOSTBLOCK(optionList:CstOptionList, hContent:String)
+| Cst_MatchConstruct(optionList:CstOptionList, arguments:CstMatchArgumentList , constraintActionList:CstConstraintActionList)
+| Cst_OpConstruct       (optionList:CstOptionList, tomTypeName:CstName, ctorName:CstName, argumentList :CstSlotList, operatorList :CstOperatorList)
+| Cst_OpArrayConstruct  (optionList:CstOptionList, tomTypeName:CstName, ctorName:CstName, typeName:CstName, operatorList:CstOperatorList)
+| Cst_OpListConstruct   (optionList:CstOptionList, tomTypeName:CstName, ctorName:CstName, typeName:CstName, operatorList:CstOperatorList)
+| Cst_TypetermConstruct (optionList:CstOptionList, tomTypeName:CstName, extendsTypeName: CstName, operatorList:CstOperatorList)
+| Cst_MetaQuoteConstruct(optionList:CstOptionList, content:String)
+| Cst_IncludeConstruct  (optionList:CstOptionList, filename:String)
+| Cst_BQTermToBlock     (bqterm:CstBQTerm)
+
+// MatchConstruct ============================================================
+CstMatchArgumentList  = Cst_concCstTypedTerm(CstTypedTerm*)
+
+CstConstraintAction = Cst_ConstraintAction(constraint:CstConstraint , action:CstBlockList) 
+
+CstConstraintActionList = Cst_concConstraintAction(CstConstraintAction*)
+
+CstConstraint  = Cst_MatchTermConstraint    (object:CstPattern, subject:CstTerm)
+              | Cst_MatchArgumentConstraint(object:CstPattern)
+              | Cst_AndConstraint(CstConstraint*)
+              | Cst_OrConstraint(CstConstraint*)
+              | Cst_NumLessThan         (lefthand:CstTerm, righthand:CstTerm)
+              | Cst_NumLessOrEqualTo    (lefthand:CstTerm, righthand:CstTerm)
+              | Cst_NumGreaterThan      (lefthand:CstTerm, righthand:CstTerm)
+              | Cst_NumGreaterOrEqualTo (lefthand:CstTerm, righthand:CstTerm)
+              | Cst_NumEqualTo          (lefthand:CstTerm, righthand:CstTerm)
+              | Cst_NumDifferent        (lefthand:CstTerm, righthand:CstTerm)
+              
+CstConstraintList = Cst_concCstConstraint(CstConstraint*)
+
+// CstTerm in CST context is "equivalent" to BQTerm in AST context
+// (it's much simpler because very close to synthax)
+CstTerm = Cst_VariableName(name : String)
+        | Cst_VariableNameStar(name : String)
+        | Cst_Term(name : String, termList : CstTermList)
+
+CstTermList = Cst_concCstTerm(CstTerm*)
+
+CstTypedTerm = Cst_TypedTerm(term:CstTerm, type:CstType)
+             
+CstType = Cst_Type(type:String)
+            | Cst_TypeUnknown()
+
+// CstPattern in CST context is "equivalent" to TomTerm in AST context
+CstPattern = 
+  Cst_Anti(pattern:CstPattern)
+| Cst_AnnotatedPattern(pattern:CstPattern,annotation:String)
+| Cst_Variable        (name : String) 
+| Cst_VariableStar    (name : String)
+| Cst_Constant        (value : String)
+| Cst_ConstantStar    (value : String)
+| Cst_UnamedVariable    ()
+| Cst_UnamedVariableStar()
+| Cst_Appl(headSymbolList : CstSymbolList, patternList    : CstPatternList)
+| Cst_RecordAppl(headSymbolList : CstSymbolList, pairPatternList    : CstPairPatternList)
+
+CstSymbolList = Cst_concCstSymbol(CstSymbol*)
+CstSymbol = Cst_Symbol(name : String, theory : CstTheory)
+          | Cst_ConstantSymbol(value : String, theory : CstTheory)
+
+CstTheory = Cst_TheoryAU()
+          | Cst_TheoryAC()
+          | Cst_TheoryDEFAULT()
+
+CstPatternList = Cst_concCstPattern(CstPattern*)
+CstPairPatternList = Cst_concCstPairPattern(CstPairPattern*)
+
+CstPairPattern = Cst_PairPattern(slotName:String, pattern:CstPattern)
+
+// CsOp*Construct ============================================================
+CstOperatorList = Cst_concCstOperator(CstOperator*)
+
+CstOperator =
+ | Cst_IsFsym         (argName:CstName, block:CstBlockList)
+ | Cst_GetHead        (argName:CstName, block:CstBlockList)
+ | Cst_IsEmpty        (argName:CstName, block:CstBlockList)
+ | Cst_MakeEmptyArray (argName:CstName, block:CstBlockList)
+ | Cst_GetSize        (argName:CstName, block:CstBlockList)
+ | Cst_GetTail        (argName:CstName, block:CstBlockList)
+ | Cst_GetSlot   (argName1:CstName, argName2:CstName, block:CstBlockList)
+ | Cst_MakeInsert(argName1:CstName, argName2:CstName, block:CstBlockList)
+ | Cst_GetElement(argName1:CstName, argName2:CstName, block:CstBlockList)
+ | Cst_MakeAppend(argName1:CstName, argName2:CstName, block:CstBlockList)
+ | Cst_Make   (nameList:CstNameList, block:CstBlockList)
+ | Cst_MakeEmptyList(block:CstBlockList)
+ | Cst_Implement(block:CstBlockList)
+ | Cst_IsSort (argName:CstName, block:CstBlockList)
+ | Cst_Equals (argName1:CstName, argName2:CstName, block:CstBlockList)
+
+CstSlotList = Cst_concCstSlot(CstSlot*)
+
+CstSlot = Cst_Slot(slotName:CstName, slotTypeName:CstName)
+
+// BQTerms ===================================================================
+CstBQTerm = Cst_BQAppl(name:CstName, bqTermList:CstBQTermList)
+         | Cst_BQRecordAppl(name:CstName, slotList:CstPairSlotBQTermList)
+         | Cst_BQVar(name:CstName)
+         | Cst_BQVarStar(name:CstName)
+         | Cst_BQDefault()
+         | Cst_BQInnerHostCode(code:String)
+         | Cst_CompositeTerm(list:CstBQTermList)
+         | Cst_ITL(code:String)
+
+CstPairSlotBQTerm  = Cst_PairSlotBQTerm(slotName:CstName, term:CstBQTerm)
+
+CstBQTermList = Cst_concCstBQTerm(CstBQTerm*)
+CstPairSlotBQTermList = Cst_concCstPairSlotBQTerm(CstPairSlotBQTerm*)
+
+// Names
+CstName = Cst_Name(name:String)
+        | Cst_EmptyName()
+
+CstNameList = Cst_concCstName(CstName*)
+
+// Options ==
+CstOptionList = Cst_concCstOption(CstOption*)
+CstOption = Cst_SourceFile(sourceFile:String)
+          | Cst_StartLine(startLine:int)
+          | Cst_EndLine(endLine:int)
+          | Cst_StartColumn(startColumn:int)
+          | Cst_EndColumn(endColumn:int)
+          | Cst_NoOption()

@@ -1,0 +1,6 @@
+#>
+#description pattern with constants only (2)
+#type TomPattern
+#<
+
+f(g(h(i())), a(), b())

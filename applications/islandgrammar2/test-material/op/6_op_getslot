@@ -1,0 +1,8 @@
+#>
+#description %op, is_fsym, get_slot
+#<
+%op TomTruc truc(a1:t1, a2:t2) {
+  is_fsym(a) { $a instanceof Truc }
+  get_slot(a1, t) { $t.a1 }
+  get_slot(a2, t) { $t.a2 }
+}

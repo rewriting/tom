@@ -1,0 +1,108 @@
+module newparser.miniTom
+imports String
+abstract syntax
+
+// Program ===================================================================
+gt_Program = CsProgram(blocks:gt_BlockList)
+
+gt_BlockList = CsBlockList(gt_Block*)
+
+gt_Block =
+ HOSTBLOCK(hContent:String)
+| CsMatchConstruct(arguments:gt_MatchArgumentList, constraintActionList:gt_ConstraintActionList)
+| CsOpConstruct       (tomTypeName:gt_Name, ctorName:gt_Name, argumentList :gt_SlotList, operatorList :gt_OperatorList)
+| CsOpArrayConstruct  (tomTypeName:gt_Name, ctorName:gt_Name, typeName:gt_Name, operatorList:gt_OperatorList)
+| CsOpListConstruct   (tomTypeName:gt_Name, ctorName:gt_Name, typeName:gt_Name, operatorList:gt_OperatorList)
+| CsTypetermConstruct (tomTypeName:gt_Name, extendsTypeName: gt_Name, operatorList:gt_OperatorList)
+| CsMetaQuoteConstruct(content:String)
+| CsIncludeConstruct  (filename:String)
+// MatchConstruct ============================================================
+gt_MatchArgumentList = CsMatchArgumentList(gt_TypedTerm*)
+
+gt_ConstraintAction =
+  CsConstraintAction(constraint:gt_Constraint, action:gt_BlockList) // supprimer (ou pas...)
+
+gt_ConstraintActionList = CsConstraintActionList(gt_ConstraintAction*)
+
+gt_Constraint = CsMatchTermConstraint    (object:gt_Pattern, subject:gt_Term)
+              | CsMatchArgumentConstraint(object:gt_Pattern)
+              | CsAndConstraint (gt_Constraint*)
+              | CsOrConstraint  (gt_Constraint*)
+              | CsNumLessThan         (lefthand:gt_Term, righthand:gt_Term)
+              | CsNumLessOrEqualTo    (lefthand:gt_Term, righthand:gt_Term)
+              | CsNumGreaterThan      (lefthand:gt_Term, righthand:gt_Term)
+              | CsNumGreaterOrEqualTo (lefthand:gt_Term, righthand:gt_Term)
+              | CsNumEqualTo          (lefthand:gt_Term, righthand:gt_Term)
+              | CsNumDifferent        (lefthand:gt_Term, righthand:gt_Term)
+              
+gt_ConstraintList = CsConstraintList(gt_Constraint*)
+
+// gt_Term in CST context is "equivalent" to BQTerm in AST context
+// (it's much simpler because very close to synthax)
+gt_Term = CsVariableName(name : String)
+        | CsVariableNameStar(name : String)
+        | CsTerm(name : String, termList : gt_TermList)
+
+gt_TermList = CsTermList(gt_Term*)
+
+gt_TypedTerm = CsTypedTerm(term:gt_Term, type:gt_TermType)
+             
+gt_TermType = CsTermType(type:String)
+            | CsTermTypeUnknown()
+
+// gt_Pattern in CST context is "equivalent" to TomTerm in AST context
+gt_Pattern = 
+  CsAnti(pattern:gt_Pattern)
+| CsAnnotatedPattern(pattern:gt_Pattern,annotation:String)
+| CsVariable        (name : String) 
+| CsVariableStar    (name : String)
+| CsConstant        (value : String)
+| CsConstantStar    (value : String)
+| CsUnamedVariable    ()
+| CsUnamedVariableStar()
+| CsSymbolList (headSymbolList : gt_HeadSymbolList,
+                patternList    : gt_PatternList)
+
+
+gt_HeadSymbolList = CsHeadSymbolList(gt_HeadSymbol*)
+gt_HeadSymbol = CsHeadSymbol(name : String, theory : gt_TheoryType)
+              | CsConstantHeadSymbol(value : String, theory : gt_TheoryType)
+
+    gt_TheoryType = CsTheoryAU()
+                  | CsTheoryAC()
+                  | CsTheoryDEFAULT()
+
+gt_PatternList = CsExplicitPatternList(gt_Pattern*)
+               | CsImplicitPairList(gt_PairPattern*)
+
+gt_PairPattern = CsPairPattern(slotName:String, pattern:gt_Pattern)
+
+// CsOp*Construct ============================================================
+gt_OperatorList = CsOperatorList(gt_Operator*)
+
+gt_Operator =
+ | CsIsFsym         (argName:gt_Name, block:gt_BlockList)
+ | CsGetHead        (argName:gt_Name, block:gt_BlockList)
+ | CsIsEmpty        (argName:gt_Name, block:gt_BlockList)
+ | CsMakeEmptyArray (argName:gt_Name, block:gt_BlockList)
+ | CsGetSize        (argName:gt_Name, block:gt_BlockList)
+ | CsGetTail        (argName:gt_Name, block:gt_BlockList)
+ | CsGetSlot   (argName1:gt_Name, argName2:gt_Name, block:gt_BlockList)
+ | CsMakeInsert(argName1:gt_Name, argName2:gt_Name, block:gt_BlockList)
+ | CsGetElement(argName1:gt_Name, argName2:gt_Name, block:gt_BlockList)
+ | CsMakeAppend(argName1:gt_Name, argName2:gt_Name, block:gt_BlockList)
+ | CsMake   (nameList:gt_NameList, block:gt_BlockList)
+ | CsMakeEmptyList(block:gt_BlockList)
+ | CsImplement(block:gt_BlockList)
+ | CsIsSort (argName:gt_Name, block:gt_BlockList)
+ | CsEquals (argName1:gt_Name, argName2:gt_Name, block:gt_BlockList)
+
+gt_SlotList = CsSlotList(gt_Slot*)
+
+gt_Slot = CsSlot(slotName:gt_Name, slotTypeName:gt_Name)
+
+// Names
+gt_Name = CsName(name:String)
+        | CsEmptyName()
+
+gt_NameList = CsNameList(gt_Name*)
