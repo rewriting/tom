@@ -749,41 +749,32 @@ public class NewKernelTyper {
       BQAppl[Options=optionList,AstName=aName@Name(name),Args=bqTList] -> {
         //DEBUG System.out.println("\n Test pour BQTerm-inferTypes in BQAppl. tomName = " + `name);
         TomSymbol tSymbol = nkt.getSymbolFromName(`name);
-        //System.out.println("symbol = " + tSymbol);
         TomType codomain = contextType;
+        //System.out.println("symbol = " + tSymbol);
         if (tSymbol == null) {
           tSymbol = `EmptySymbol();
+          System.out.println("name = " + `name);
+          System.out.println("context = " + contextType);
+          BQTermList newBQTList = nkt.inferBQTermList(`bqTList,`EmptySymbol(),codomain);
+          // PEM: why contextType ?
+          return `FunctionCall(aName,contextType,newBQTList); 
         } else {
-          TomSymbol newtSymbol = tSymbol;
-          %match(newtSymbol) {
+          %match(tSymbol) {
             Symbol[AstName=symName,TypesToType=TypesToType[Domain=domain,Codomain=tsCodomain@Type[TypeOptions=tOptions,TomType=tomCodomain,TlType=tlCodomain]],PairNameDeclList=pndList,Options=options] -> { 
               codomain = `tsCodomain;
-              if(TomBase.isListOperator(`tSymbol) || TomBase.isArrayOperator(`tSymbol)) {
+              if(TomBase.isListOperator(tSymbol) || TomBase.isArrayOperator(tSymbol)) {
                 // Apply decoration for types of list operators
                 TypeOptionList newTOptions = `concTypeOption(WithSymbol(symName),tOptions*);
                 codomain = `Type(newTOptions,tomCodomain,tlCodomain);
-                tSymbol =
-                  `Symbol(symName,TypesToType(domain,codomain),pndList,options); 
+                tSymbol = `Symbol(symName,TypesToType(domain,codomain),pndList,options); 
               }  
             }
           }
           nkt.subtypeConstraints = nkt.addSubConstraint(`Subtype(codomain,contextType,PairNameOptions(aName,optionList)),nkt.subtypeConstraints);
-        }
 
-        // PEM: handle empty list case in inferBQTermList
-        BQTermList newBQTList = `bqTList;
-        if (!`bqTList.isEmptyconcBQTerm()) {
-          //DEBUG System.out.println("\n Test pour BQTerm-inferTypes in BQAppl. bqTList = " + `bqTList);
-          newBQTList = nkt.inferBQTermList(`bqTList,`tSymbol,codomain);
+          BQTermList newBQTList = nkt.inferBQTermList(`bqTList,`tSymbol,codomain);
+          return `BQAppl(optionList,aName,newBQTList);
         }
-
-        // TO VERIFY
-        //%match(tSymbol) {
-        //  EmptySymbol() -> {
-        //    return `FunctionCall(aName,contextType,newBQTList); 
-        //  }
-        //}
-        return `BQAppl(optionList,aName,newBQTList);
       }
     }
   }
@@ -1219,12 +1210,19 @@ public class NewKernelTyper {
    * @param contextType the codomain of the list/function 
    * @return            the typed list of arguments resulting
    */
-  private BQTermList inferBQTermList(BQTermList bqTList, TomSymbol tSymbol, TomType
-      contextType) {
-    TomType argType = contextType;
-    BQTermList newBQTList = `concBQTerm();
+  private BQTermList inferBQTermList(BQTermList bqTList, TomSymbol tSymbol, TomType contextType) {
+
+    if(tSymbol == null) {
+      throw new TomRuntimeException("inferBQTermList: null symbol");
+    }
+
+    if(bqTList.isEmptyconcBQTerm()) {
+      return `concBQTerm();
+    }
+
     %match(tSymbol) {
       EmptySymbol() -> {
+        BQTermList newBQTList = `concBQTerm();
         for (BQTerm argTerm : bqTList.getCollectionconcBQTerm()) {
           argTerm = `inferAllTypes(argTerm,EmptyType());
           newBQTList = `concBQTerm(argTerm,newBQTList*);
@@ -1233,10 +1231,16 @@ public class NewKernelTyper {
       }
 
       /* Cases CT-STAR, CT-ELEM and CT-MERGE */
-      Symbol[AstName=symName,TypesToType=TypesToType[Domain=concTomType(headTTList,_*),Codomain=codomain@Type[TypeOptions=concTypeOption(_*,WithSymbol[],_*)]]] -> {
-        TomSymbol argSymb;
+      Symbol[AstName=symName,TypesToType=TypesToType[Domain=concTomType(headTTList,tailTTList*),Codomain=codomain@Type[TypeOptions=concTypeOption(_*,WithSymbol[],_*)]]] -> {
+
+        if(!`tailTTList.isEmptyconcTomType()) {
+          throw new TomRuntimeException("should be empty list: " + `tailTTList);
+        }
+
+        BQTermList newBQTList = `concBQTerm();
         for (BQTerm argTerm : bqTList.getCollectionconcBQTerm()) {
-          argSymb = getSymbolFromTerm(argTerm);
+          TomSymbol argSymb = getSymbolFromTerm(argTerm);
+          TomType argType = contextType;
           if(!(TomBase.isListOperator(`argSymb) || TomBase.isArrayOperator(`argSymb))) {
             %match(argTerm) {
               Composite(_*) -> {
@@ -1279,7 +1283,6 @@ public class NewKernelTyper {
 
       /* Case CT-FUN rule (applying to premises) */
       Symbol[AstName=symName,TypesToType=TypesToType[Domain=domain,Codomain=Type[TypeOptions=!concTypeOption(_*,WithSymbol[],_*)]],PairNameDeclList=pNDList,Options=oList] -> {
-        TomTypeList symDomain = `domain;
         if(`pNDList.length() != bqTList.length()) {
           Option option = TomBase.findOriginTracking(`oList);
           %match(option) {
@@ -1289,8 +1292,10 @@ public class NewKernelTyper {
             }
           }
         } else {
+          TomTypeList symDomain = `domain;
+          BQTermList newBQTList = `concBQTerm();
           for (BQTerm argTerm : bqTList.getCollectionconcBQTerm()) {
-            argType = symDomain.getHeadconcTomType();
+            TomType argType = symDomain.getHeadconcTomType();
             %match(argTerm) {
               /*
                * We don't know what is into the Composite
@@ -1315,8 +1320,8 @@ public class NewKernelTyper {
             symDomain = symDomain.getTailconcTomType();
             //DEBUG System.out.println("InferBQTermList CT-FUN -- end of for with bqappl = " + `argTerm);
           }
+          return newBQTList.reverse(); 
         }
-        return newBQTList.reverse(); 
       }
     }
     throw new TomRuntimeException("inferBQTermList: failure on " + `bqTList);

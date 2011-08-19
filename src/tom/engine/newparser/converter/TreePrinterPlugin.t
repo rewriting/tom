@@ -105,39 +105,41 @@ public class TreePrinterPlugin extends TomGenericPlugin {
    */
   @Override
   public void run(Map informationTracker) {
+    boolean newparser = ((Boolean)getOptionManager().getOptionValue("newparser")).booleanValue();
+    if(newparser) {
+      int thisRunCallNumber = nextRunCallNumber;
+      nextRunCallNumber++;
 
-    int thisRunCallNumber = nextRunCallNumber;
-    nextRunCallNumber++;
+      // this is done here and not in constructor to be able to access
+      // optionManager
+      if(conf==null) {
+        conf = new TreePrinterPluginConf(
+            (String)getOptionManager().getOptionValue("treeprinterconf"));
+      }
 
-    // this is done here and not in constructor to be able to access
-    // optionManager
-    if(conf==null) {
-       conf = new TreePrinterPluginConf(
-              (String)getOptionManager().getOptionValue("treeprinterconf"));
-    }
+      TreePrinterPluginConfItem instanceConf = conf.getConf(thisRunCallNumber);
 
-  TreePrinterPluginConfItem instanceConf = conf.getConf(thisRunCallNumber);
-    
-   if(instanceConf.isActive()) {
-      System.out.println(
-        "\n== "+ instanceConf.getInfo() +
-	" ====================================================");
-     
-     if(visitable!=null) {
-       try {
-          Visitable oneLined = `BottomUp(toSingleLineTargetLanguage()).visit(visitable);
-	  Viewer.toTree(oneLined);
-       } catch (tom.library.sl.VisitFailure e) {
-         System.err.println("VisitFailure Exception"); //XXX handle cleanly
-       }
-     } else {
-       System.out.println("Nothing to print (this tree is null)");
-     }
+      if(instanceConf.isActive()) {
+        System.out.println(
+            "\n== "+ instanceConf.getInfo() +
+            " ====================================================");
 
-      System.out.println(
-        "== /"+ instanceConf.getInfo()
-        +" ===================================================");
+        if(visitable!=null) {
+          try {
+            Visitable oneLined = `BottomUp(toSingleLineTargetLanguage()).visit(visitable);
+            Viewer.toTree(oneLined);
+          } catch (tom.library.sl.VisitFailure e) {
+            System.err.println("VisitFailure Exception"); //XXX handle cleanly
+          }
+        } else {
+          System.out.println("Nothing to print (this tree is null)");
+        }
 
+        System.out.println(
+            "== /"+ instanceConf.getInfo()
+            +" ===================================================");
+
+      }
     }
   }
 

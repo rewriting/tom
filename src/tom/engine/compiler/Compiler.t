@@ -286,8 +286,8 @@ public class Compiler extends TomGenericPlugin {
           return `constr; 
         } 
         TomType freshSubjectType = compiler.getTermTypeFromTerm(`subject);
-        System.out.println("subject = " + `subject);
-        System.out.println("freshSubjectType = " + freshSubjectType);
+        //System.out.println("subject = " + `subject);
+        //System.out.println("freshSubjectType = " + freshSubjectType);
 
         // test if we already renamed this subject 
         if(subjectList.contains(`subject)) {
