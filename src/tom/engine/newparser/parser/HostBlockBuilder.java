@@ -39,10 +39,10 @@ public class HostBlockBuilder {
     stringBuilder.append((char)input.LA(1));
 
     if(isEmpty) {
-       isEmpty = false;
-       firstCharLine   = lastCharLine;
-       firstCharColumn = lastCharColumn;
-       sourceFileName = input.getSourceName();
+      isEmpty = false;
+      firstCharLine   = lastCharLine;
+      firstCharColumn = lastCharColumn;
+      sourceFileName = input.getSourceName();
     }
   }
 
@@ -52,11 +52,10 @@ public class HostBlockBuilder {
   }
 
   public Tree getHostBlock() {
-    return 
-      makeTree(HOSTBLOCK, "HostBlock",
-        makeOptions(sourceFileName, firstCharLine,
-          firstCharColumn, lastCharLine, lastCharColumn),
-        makeTree(NodeString, getText()));
+    return makeTree(HOSTBLOCK, "HostBlock",
+                    makeOptions(sourceFileName, firstCharLine,
+                                firstCharColumn, lastCharLine, lastCharColumn),
+                    makeTree(NodeString, getText()));
   }
 
   public String getText() {

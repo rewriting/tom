@@ -31,17 +31,16 @@ public class TreeFactory {
   public static CommonTree makeOptions(String sourceName, int firstCharLine,
     int firstCharColumn, int lastCharLine, int lastCharColumn) {
 
-    return
-    makeTree(Cst_concCstOption, "Cst_concCstOption",
-      makeTree(Cst_SourceFile, "Cst_SourceFile",
-        makeTree(NodeString, sourceName)),
-      makeTree(Cst_StartLine, "Cst_StartLine",
-        makeTree(NodeInt, ""+firstCharLine)),
-      makeTree(Cst_StartColumn, "Cst_StartColumn",
-        makeTree(NodeInt, ""+firstCharColumn)),
-      makeTree(Cst_EndLine, "Cst_EndLine",
-        makeTree(NodeInt,""+lastCharLine)),
-      makeTree(Cst_EndColumn, "Cst_EndColumn",
-        makeTree(NodeInt,""+lastCharColumn)));
+    return makeTree(Cst_concCstOption, "Cst_concCstOption",
+                    makeTree(Cst_SourceFile, "Cst_SourceFile",
+                              makeTree(NodeString, sourceName)),
+                    makeTree(Cst_StartLine, "Cst_StartLine",
+                              makeTree(NodeInt, ""+firstCharLine)),
+                    makeTree(Cst_StartColumn, "Cst_StartColumn",
+                              makeTree(NodeInt, ""+firstCharColumn)),
+                    makeTree(Cst_EndLine, "Cst_EndLine",
+                              makeTree(NodeInt,""+lastCharLine)),
+                    makeTree(Cst_EndColumn, "Cst_EndColumn",
+                              makeTree(NodeInt,""+lastCharColumn)));
   }
 }

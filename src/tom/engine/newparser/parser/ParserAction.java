@@ -45,18 +45,18 @@ public abstract class ParserAction {
 
   // static fields with cool ParserActions
   public static final ParserAction
-   SKIP_DELIMITED_SEQUENCE              = new SkipDelimitedSequence(false),
-   SKIP_DELIMITED_SEQUENCE_EOF_TOLERANT = new SkipDelimitedSequence(true),
-   PACK_HOST_CONTENT              = PackHostContent.getInstance(),
-   PARSE_MATCH_CONSTRUCT          = ParseMatchConstruct.getInstance(),
-   PARSE_OPERATOR_CONSTRUCT       = ParseOperatorConstruct.getInstance(),
-   PARSE_OPERATOR_LIST_CONSTRUCT  = ParseOperatorListConstruct.getInstance(),
-   PARSE_OPERATOR_ARRAY_CONSTRUCT = ParseOperatorArrayConstruct.getInstance(),
-   PARSE_TYPETERM_CONSTRUCT       = ParseTypetermConstruct.getInstance(),
-   PARSE_INCLUDE_CONSTRUCT        = ParseIncludeConstruct.getInstance(),
-   PARSE_METAQUOTE_CONSTRUCT      = ParseMetaQuoteConstruct.getInstance(),
-   PARSE_GOM_CONSTRUCT            = ParseGomConstruct.getInstance(), 
-   PARSE_BQTERM_CONSTRUCT         = ParseBQConstruct.getInstance();
+    SKIP_DELIMITED_SEQUENCE               = new SkipDelimitedSequence(false),
+    SKIP_DELIMITED_SEQUENCE_EOF_TOLERANT  = new SkipDelimitedSequence(true),
+    PACK_HOST_CONTENT                     = PackHostContent.getInstance(),
+    PARSE_MATCH_CONSTRUCT                 = ParseMatchConstruct.getInstance(),
+    PARSE_OPERATOR_CONSTRUCT              = ParseOperatorConstruct.getInstance(),
+    PARSE_OPERATOR_LIST_CONSTRUCT         = ParseOperatorListConstruct.getInstance(),
+    PARSE_OPERATOR_ARRAY_CONSTRUCT        = ParseOperatorArrayConstruct.getInstance(),
+    PARSE_TYPETERM_CONSTRUCT              = ParseTypetermConstruct.getInstance(),
+    PARSE_INCLUDE_CONSTRUCT               = ParseIncludeConstruct.getInstance(),
+    PARSE_METAQUOTE_CONSTRUCT             = ParseMetaQuoteConstruct.getInstance(),
+    PARSE_GOM_CONSTRUCT                   = ParseGomConstruct.getInstance(), 
+    PARSE_BQTERM_CONSTRUCT                = ParseBQConstruct.getInstance();
 
   /**
    * Implementations of ParserAction.doAction should check
@@ -78,11 +78,11 @@ public abstract class ParserAction {
    * @param optionManager
    */
   public abstract void doAction(CharStream input,
-      HostBlockBuilder hostBlockBuilder,
-      Tree tree,
-      StreamAnalyst analyst,
-      TomStreamManager streamManager,
-      OptionManager optionManager);
+                                HostBlockBuilder hostBlockBuilder,
+                                Tree tree,
+                                StreamAnalyst analyst,
+                                TomStreamManager streamManager,
+                                OptionManager optionManager);
 
   private static class SkipDelimitedSequence extends ParserAction {
 
@@ -263,10 +263,10 @@ public abstract class ParserAction {
       /* treat user supplied options */
       /*if(gomCode.length() > 6) {
         String[] userOpts = gomCode.substring(5,gomCode.length()-1).split("\\s+");
-        for(int i=0; i < userOpts.length; i++) {
-        parameters.add(userOpts[i]);
-        }
-        }*/
+          for(int i=0; i < userOpts.length; i++) {
+            parameters.add(userOpts[i]);
+          }
+      }*/
 
       final File tmpFile;
       try {
