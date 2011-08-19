@@ -120,7 +120,7 @@ public class TyperPlugin extends TomGenericPlugin {
     }
 
     Code typedCode = (Code)getWorkingTerm();
-    //System.out.println("before: " + typedCode);
+    System.out.println("before: " + typedCode);
 
     if(newtyper==false) {
       try {
@@ -257,9 +257,10 @@ public class TyperPlugin extends TomGenericPlugin {
         BQTermList args  = `TopDownIdStopOnSuccess(TransformBQAppl(typer)).visitLight(`l);
         //System.out.println("BackQuoteTerm: " + `tomName);
         //System.out.println("tomSymbol: " + tomSymbol);
-        if(TomBase.hasConstant(`optionList)) {
-          return `BuildConstant(name);
-        } else if(tomSymbol != null) {
+        //if(TomBase.hasConstant(`optionList)) {
+        //  return `BuildConstant(name);
+        //} else 
+        if(tomSymbol != null) {
           if(TomBase.isListOperator(tomSymbol)) {
             return ASTFactory.buildList(`name,args,typer.getSymbolTable());
           } else if(TomBase.isArrayOperator(tomSymbol)) {

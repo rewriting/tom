@@ -101,6 +101,10 @@ options{
         this.optionManager = optionManager;
     }
 
+    public synchronized SymbolTable getSymbolTable() {
+      return targetparser.getSymbolTable();
+    }
+
     /**
      * Returns the value of a boolean option.
      * 
@@ -837,7 +841,7 @@ plainTerm [TomName astLabeledName, TomName astAnnotedName, int line] returns [To
           {LA(2) != LPAREN && LA(2) != LBRACKET && LA(2) != QMARK && LA(2) != QQMARK}?
           nameList = headConstantList[optionList]
           {
-            optionList.add(`Constant());
+            //optionList.add(`Constant());
             result = `TermAppl(
                 ASTFactory.makeOptionList(optionList),
                 nameList,

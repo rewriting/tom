@@ -390,12 +390,14 @@ public final class TomBase {
     return null;
   }
 
+  /*
   public static boolean hasConstant(OptionList optionList) {
     %match(optionList) {
       concOption(_*,Constant[],_*) -> { return true; }
     }
     return false;
   }
+*/
 
   public static boolean hasDefinedSymbol(OptionList optionList) {
     %match(optionList) {

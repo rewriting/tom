@@ -466,7 +466,11 @@ xmlAttribute [BQTermList context] returns [BQTerm result]
             (
                 ws EQUAL ws value = xmlAttributeStringOrBQVariable
                 {
-                    BQTermList args = `concBQTerm(
+                    String encodedName = encodeName(id.getText());
+                    String encodedTrue = "\"true\"";
+                    ASTFactory.makeStringSymbol(tomparser.getSymbolTable(),encodedName,new LinkedList<Option>());
+                    ASTFactory.makeStringSymbol(tomparser.getSymbolTable(),encodedTrue,new LinkedList<Option>());
+/*
                         BQAppl(
                             concOption(Constant(),ModuleName(TNODE_MODULE_NAME)),
                             Name(encodeName(id.getText())),
@@ -477,6 +481,11 @@ xmlAttribute [BQTermList context] returns [BQTerm result]
                             Name("\"true\""),
                             concBQTerm()
                         ),
+                        */
+
+                    BQTermList args = `concBQTerm(
+                      BuildConstant(Name(encodedName)),
+                      BuildConstant(Name(encodedTrue)),
                         value
                     );
 		    if(context != null) {
@@ -550,12 +559,17 @@ xmlTerm[BQTermList context] returns [BQTerm result]
                     XML_START_ENDING ws BQ_ID ws XML_CLOSE ws
                 )
                 {
-                    BQTermList args = `concBQTerm(
+                    String encodedName = encodeName(id.getText());
+                    ASTFactory.makeStringSymbol(tomparser.getSymbolTable(),encodedName,new LinkedList<Option>());
+                      /*
                         BQAppl(
                             concOption(Constant(),ModuleName(TNODE_MODULE_NAME)),
                             Name(encodeName(id.getText())),
                             concBQTerm()
                         ),
+                        */
+                    BQTermList args = `concBQTerm(
+                      BuildConstant(Name(encodedName)),
                         BQAppl(
                             concOption(ModuleName(TNODE_MODULE_NAME)),
                             Name(Constants.CONC_TNODE),
