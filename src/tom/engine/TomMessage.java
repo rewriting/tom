@@ -122,6 +122,8 @@ public class TomMessage extends BasicPlatformMessage {
   // TomGenericPlugin
   public static final TomMessage tomTermExpected       =
     new TomMessage("{0}: A TomTerm was expected by the plugin");
+  public static final TomMessage codeExpected       =
+    new TomMessage("{0}: A Code was expected by the plugin");
 
   // Plugings common
   public static final TomMessage invalidPluginArgument =

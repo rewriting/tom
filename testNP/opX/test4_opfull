@@ -1,0 +1,8 @@
+%op TomTruc truc(a1:t1, a2:t2) {
+  is_fsym(a) { $a instanceof Truc }
+  make(a1v, a2v) { new Truc($a1v,$a2v) }
+  make(a1v)      { new Truc($a1v,0) }
+  make()         { new Truc(0,0) }
+  get_slot(a1, t) { $t.a1 }
+  get_slot(a2, t) { $t.a2 }
+}

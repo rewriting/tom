@@ -1,0 +1,5 @@
+#>
+#type TomPattern
+#<
+
+conc(_*, p@conc(a(),_*,b()),_*)

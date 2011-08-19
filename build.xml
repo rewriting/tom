@@ -278,7 +278,7 @@
          options="--optimize --pretty --inlineplus">
       <include name="tom/emf/**/*.t"/>     	
       <include name="tom/engine/**/*.t"/>
-      <include name="tom/engine/**/**/*.t"/>
+      <include name="tom/engine/newparser/**/*.t"/>
       <include name="tom/library/**/*.t"/>
       <include name="tom/platform/**/*.t"/>
       <include name="tom/gom/**/*.t"/>
@@ -361,6 +361,29 @@
              classname="org.apache.tools.ant.antlr.ANTLR3">
       <classpath refid="stable.classpath"/>
     </taskdef>
+
+    <!-- new Tom parser -->
+    <mkdir dir="${gen.destination}/tom/engine/newparser/parser"/>
+    <antlr3 target="${src.src}/tom/engine/newparser/parser/miniTom.g"
+      outputdirectory="${gen.destination}/tom/engine/newparser/parser/"
+      libdirectory="${gen.destination}/tom/engine/adt/cst">
+      <classpath refid="stable.classpath"/>
+    </antlr3>
+
+    <antlr3 target="${src.src}/tom/engine/newparser/parser/BQTermLexer.g"
+      outputdirectory="${gen.destination}/tom/engine/newparser/parser/"
+      libdirectory="${gen.destination}/tom/engine/adt/cst">
+      <classpath refid="stable.classpath"/>
+    </antlr3>
+    
+    <antlr3 target="${src.src}/tom/engine/newparser/parser/BQTerm.g"
+      outputdirectory="${gen.destination}/tom/engine/newparser/parser/"
+      libdirectory="${gen.destination}/tom/engine/newparser/parser">
+      <classpath refid="stable.classpath"/>
+    </antlr3>
+
+
+    <!-- Gom parser -->
     <mkdir dir="${gen.destination}/tom/gom/parser"/>
     <antlr3 target="${src.src}/tom/gom/parser/GomLanguage.g"
             outputdirectory="${gen.destination}/tom/gom/parser"
@@ -446,6 +469,12 @@
       <include name="tom/engine/adt/Zenon.gom"/>
     </gomcompile>
 
+    <gomantlradaptercompile srcdir="${src.src}"
+      package="tom.engine.adt"
+      destdir="${src.gen}">
+      <include name="tom/engine/adt/CST.gom"/>
+    </gomantlradaptercompile>
+
     <!-- adt for gom -->
     <gomcompile srcdir="${src.src}"
       multithread="${gommultithread}"
@@ -469,6 +498,7 @@
   <target name="src" description="compile the TOM development sources" depends="prepare.src">
     <antcall target="buildtom"/>
     <antcall target="buildparser"/>
+    
     <!--<property name="unixpath" refid="src.classpath" />
     <echo>classpath = ${unixpath}</echo>-->
     <copy file="${src.src}/tom/engine/Tom.java.in"
@@ -741,6 +771,7 @@
     <copy tofile="${src.dist}/Tom.xml" file="${src.configfile}"/>
     <copy tofile="${src.dist}/Gom.xml" file="${src.gomconfigfile}"/>
     <copy tofile="${src.dist}/GomAntlrAdaptor.xml" file="${src.adapterconfig}"/>
+
     <!-- "tom binary" -->
     <copy todir="${src.dist.bin}" file="${utils}/javac-tom"/>
 
@@ -854,7 +885,7 @@
     </chmod>
     <copy todir="${src.dist.lib}" file="${src.lib}/tom-common.xml"/>
     <copy todir="${src.dist.lib}/runtime" file="${share}/LICENCE"/>
-
+    
     <!-- some libraries -->
     <copy todir="${src.dist.lib}">
       <!-- we also copy the junit jar which is not really needed
@@ -1352,6 +1383,7 @@
         <include name="**/*.class"/>
         <exclude name="tom/engine/Tom.class"/>
         <exclude name="tom/engine/parser/*.class"/>
+        <exclude name="tom/engine/newparser/parser/*.class"/>
         <exclude name="tom/gom/parser/*.class"/>
       </fileset>
       <!-- we don't want to check the parser generated files, never ever -->
@@ -1362,6 +1394,10 @@
         <include name="tom/engine/parser/HostParser.class"/>
         <include name="tom/engine/parser/BackQuoteLexer.class"/>
         <include name="tom/engine/parser/BackQuoteParser.class"/>
+        <include name="tom/engine/newparser/parser/miniTomLexer.class"/>
+        <include name="tom/engine/newparser/parser/miniTomParser.class"/>
+        <include name="tom/engine/newparser/parser/BQTermLexer.class"/>
+        <include name="tom/engine/newparser/parser/BQTermParser.class"/>
         <include name="tom/gom/parser/GomParserPlugin.class"/>
       </fileset>
     </concat>
@@ -1370,6 +1406,7 @@
         <include name="**/*.class"/>
         <exclude name="tom/engine/Tom.class"/>
         <exclude name="tom/engine/parser/*.class"/>
+        <exclude name="tom/engine/newparser/parser/*.class"/>
         <exclude name="tom/gom/parser/*.class"/>
       </fileset>
       <!-- we don't want to check the parser generated files, never ever -->
@@ -1380,6 +1417,10 @@
         <include name="tom/engine/parser/HostParser.class"/>
         <include name="tom/engine/parser/BackQuoteLexer.class"/>
         <include name="tom/engine/parser/BackQuoteParser.class"/>
+        <include name="tom/engine/newparser/parser/miniTomLexer.class"/>
+        <include name="tom/engine/newparser/parser/miniTomParser.class"/>
+        <include name="tom/engine/newparser/parser/BQTermLexer.class"/>
+        <include name="tom/engine/newparser/parser/BQTermParser.class"/>
         <include name="tom/gom/parser/GomParserPlugin.class"/>
       </fileset>
     </concat>
