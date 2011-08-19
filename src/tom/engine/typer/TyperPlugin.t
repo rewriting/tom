@@ -112,25 +112,32 @@ public class TyperPlugin extends TomGenericPlugin {
     boolean newtyper = getOptionBooleanValue("newtyper");
     boolean lazyType = getOptionBooleanValue("lazyType");
 
+    kernelTyper.setSymbolTable(getStreamManager().getSymbolTable());
+    newKernelTyper.setSymbolTable(getStreamManager().getSymbolTable()); 
+    newKernelTyper.setCurrentInputFileName(getStreamManager().getInputFileName()); 
+    if(lazyType) {
+      newKernelTyper.setLazyType();
+    }
+
+    Code typedCode = (Code)getWorkingTerm();
+    System.out.println("before: " + typedCode);
+
     if(newtyper==false) {
-      Code typedCode = null;
       try {
-        kernelTyper.setSymbolTable(getStreamManager().getSymbolTable());
 
         updateSymbolTable();
         //System.out.println("\nCode before type inference = \n" + getWorkingTerm());
 
-        Code variableExpandedCode = (Code) kernelTyper.typeVariable(`EmptyType(), (Code)getWorkingTerm());
+        typedCode = (Code) kernelTyper.typeVariable(`EmptyType(), typedCode);
 
-        typedCode = kernelTyper.propagateVariablesTypes(variableExpandedCode);
+        typedCode = kernelTyper.propagateVariablesTypes(typedCode);
         //DEBUG System.out.println("\nCode after type inference before desugarString = \n" + typedCode);
 
         // replace 'abc' by concString('a','b','c')
         typedCode = `TopDownIdStopOnSuccess(desugarString(this)).visitLight(typedCode);
-
         /* transform each BackQuoteTerm into its compiled form */
         typedCode = `TopDownIdStopOnSuccess(TransformBQAppl(this)).visitLight(typedCode);
-        //DEBUG System.out.println("\nCode after type inference = \n" + typedCode);
+        System.out.println("step2: " + typedCode);
 
         setWorkingTerm(typedCode);      
         // verbose
@@ -143,23 +150,11 @@ public class TyperPlugin extends TomGenericPlugin {
         e.printStackTrace();
         return;
       }
-      if(intermediate) {
-        Tools.generateOutput(getStreamManager().getOutputFileName()
-            + TYPED_SUFFIX, typedCode);
-        Tools.generateOutput(getStreamManager().getOutputFileName()
-            + TYPED_TABLE_SUFFIX, getSymbolTable().toTerm());
-      }
     } else {
 
-      System.out.println("\nNew typer activated!\n");
+      System.out.println("\nNew typer activated!: " + getStreamManager().getInputFileName());
  
-      Code typedCode = null;
       try {
-        newKernelTyper.setSymbolTable(getStreamManager().getSymbolTable()); 
-        newKernelTyper.setCurrentInputFileName(getStreamManager().getInputFileName()); 
-        if(lazyType) {
-          newKernelTyper.setLazyType();
-        }
 
         updateSymbolTableNewTyper();
 
@@ -172,8 +167,7 @@ public class TyperPlugin extends TomGenericPlugin {
          * Start by typing variables with fresh type variables
          * Perform type inference over patterns 
          */
-        typedCode =
-          newKernelTyper.inferAllTypes((Code)getWorkingTerm(),`EmptyType());
+        typedCode = newKernelTyper.inferAllTypes(typedCode,`EmptyType());
 
         /**
          * Replace all remains of type variables by
@@ -186,6 +180,7 @@ public class TyperPlugin extends TomGenericPlugin {
         typedCode = `TopDownIdStopOnSuccess(desugarString(this)).visitLight(typedCode);
         /* transform each BackQuoteTerm into its compiled form */
         typedCode = `TopDownIdStopOnSuccess(TransformBQAppl(this)).visitLight(typedCode);
+        System.out.println("step2: " + typedCode);
 
         setWorkingTerm(typedCode);
 
@@ -200,15 +195,15 @@ public class TyperPlugin extends TomGenericPlugin {
         return;
       }
       /* Add a suffix for the compilation option --intermediate during typing phase*/
-      if(intermediate) {
-        Tools.generateOutput(getStreamManager().getOutputFileName()
-            + TYPED_SUFFIX, typedCode);
-        Tools.generateOutput(getStreamManager().getOutputFileName()
-            + TYPED_TABLE_SUFFIX, getSymbolTable().toTerm());
-      }
-
-
     }
+
+    if(intermediate) {
+      Tools.generateOutput(getStreamManager().getOutputFileName()
+          + TYPED_SUFFIX, typedCode);
+      Tools.generateOutput(getStreamManager().getOutputFileName()
+          + TYPED_TABLE_SUFFIX, getSymbolTable().toTerm());
+    }
+
   }
 
   /*
