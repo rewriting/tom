@@ -184,8 +184,8 @@ options{
         concBQTerm() -> { return list; }
         concBQTerm(X1*,e1,X2*,e2,X3*) -> {
           %match(e1, e2) {
-            BQAppl[Args=concBQTerm(BQAppl[AstName=Name(name1)],_*)],
-            BQAppl[Args=concBQTerm(BQAppl[AstName=Name(name2)],_*)] -> {
+            BQAppl[Args=concBQTerm((BuildConstant|BQAppl)[AstName=Name(name1)],_*)],
+            BQAppl[Args=concBQTerm((BuildConstant|BQAppl)[AstName=Name(name2)],_*)] -> {
               if(`name1.compareTo(`name2) > 0) {
                 return `sortAttributeList(concBQTerm(X1*,e2,X2*,e1,X3*));
               }
@@ -486,7 +486,7 @@ xmlAttribute [BQTermList context] returns [BQTerm result]
                     BQTermList args = `concBQTerm(
                       BuildConstant(Name(encodedName)),
                       BuildConstant(Name(encodedTrue)),
-                        value
+                      value
                     );
 		    if(context != null) {
 		      args = `concBQTerm(context*,args*);

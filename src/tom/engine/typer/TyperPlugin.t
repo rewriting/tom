@@ -120,7 +120,7 @@ public class TyperPlugin extends TomGenericPlugin {
     }
 
     Code typedCode = (Code)getWorkingTerm();
-    System.out.println("before: " + typedCode);
+    //System.out.println("before: " + typedCode);
 
     if(newtyper==false) {
       try {
@@ -180,7 +180,7 @@ public class TyperPlugin extends TomGenericPlugin {
         typedCode = `TopDownIdStopOnSuccess(desugarString(this)).visitLight(typedCode);
         /* transform each BackQuoteTerm into its compiled form */
         typedCode = `TopDownIdStopOnSuccess(TransformBQAppl(this)).visitLight(typedCode);
-        System.out.println("step2: " + typedCode);
+        //System.out.println("step2: " + typedCode);
 
         setWorkingTerm(typedCode);
 

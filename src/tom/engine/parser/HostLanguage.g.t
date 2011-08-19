@@ -251,15 +251,15 @@ options{
       }
       Reader fileReader = new BufferedReader(new FileReader(fileCanonicalName));
 
-      if ((Boolean)optionManager.getOptionValue("newparser")) {
-        parser = NewParserPlugin.newParser(fileReader,fileCanonicalName,
-            includedFileSet,alreadyParsedFileSet,
-            getOptionManager(), getStreamManager());
-      } else {
+      //if ((Boolean)optionManager.getOptionValue("newparser")) {
+      //  parser = NewParserPlugin.newParser(fileReader,fileCanonicalName,
+      //      includedFileSet,alreadyParsedFileSet,
+      //      getOptionManager(), getStreamManager());
+      //} else {
         parser = TomParserPlugin.newParser(fileReader,fileCanonicalName,
             includedFileSet,alreadyParsedFileSet,
             getOptionManager(), getStreamManager());
-      }
+      //}
       parser.setSkipComment();
       astTom = parser.input();
       astTom = `TomInclude(astTom.getCodeList());
@@ -325,13 +325,13 @@ options{
         try {
           Reader codeReader = new BufferedReader(new StringReader(code));
           HostParser parser;
-          if (((Boolean)optionManager.getOptionValue("newparser"))) {
-            parser = NewParserPlugin.newParser(codeReader,getCurrentFile(),
-                getOptionManager(), getStreamManager());
-          } else {
+          //if (((Boolean)optionManager.getOptionValue("newparser"))) {
+          //  parser = NewParserPlugin.newParser(codeReader,getCurrentFile(),
+          //      getOptionManager(), getStreamManager());
+          //} else {
             parser = TomParserPlugin.newParser(codeReader,getCurrentFile(),
                 getOptionManager(), getStreamManager());
-          }
+          //}
           Code astTom = parser.input();
           %match(astTom) {
             Tom(concCode(_*,c,_*)) -> {
