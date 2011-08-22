@@ -13,6 +13,7 @@ import org.antlr.runtime.tree.BaseTree;
 
 import tom.platform.OptionManager;
 import tom.engine.TomStreamManager;
+import tom.engine.exception.TomIncludeException;
 
 import tom.engine.newparser.streamanalysis.DelimitedSequenceDetector;
 import tom.engine.newparser.streamanalysis.EOLdetector;
@@ -152,8 +153,12 @@ public class HostParser {
         input.consume();
       } else {
         ParserAction action = actionsMapping.get(recognized);
-        action.doAction(input, hostBlockBuilder, tree, recognized,
-                        getStreamManager(), getOptionManager());
+        try {
+          action.doAction(input, hostBlockBuilder, tree, recognized,
+              getStreamManager(), getOptionManager());
+        } catch (TomIncludeException e) {
+          e.printStackTrace();
+        }
         // doAction is allowed to modify its parameters
         // especially, doAction can consume chars from input
         // so every StreamAnalyst needs to start fresh.
@@ -162,8 +167,12 @@ public class HostParser {
 
     } // end while
 
-    ParserAction.PACK_HOST_CONTENT.doAction(input, hostBlockBuilder, tree,
-        null, getStreamManager(), getOptionManager()) ;
+    try {
+      ParserAction.PACK_HOST_CONTENT.doAction(input, hostBlockBuilder, tree,
+          null, getStreamManager(), getOptionManager()) ;
+    } catch (TomIncludeException e) {
+      e.printStackTrace();
+    }
 
     return tree;
   }

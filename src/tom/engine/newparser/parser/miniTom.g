@@ -340,7 +340,11 @@ returns [int marker] :
   //%op already consumed when this rule is called
   tomTypeName=csName ctorName=csName LPAR csSlotList RPAR
   LBR 
-    ks+=csKeywordIsFsym (ks+=csKeywordMake | ks+= csKeywordGetSlot)*
+    (  ks+=csKeywordIsFsym
+     | ks+=csKeywordMake
+     | ks+=csKeywordGetSlot
+     | ks+=csKeywordGetDefault
+    )*
   RBR
 
   {$marker = ((CustomToken)$RBR).getPayload(Integer.class);}
@@ -460,6 +464,15 @@ csKeywordMake :
   LBR /* Host Code making new object */ RBR
 
   -> ^(Cst_Make $argList
+        {((CustomToken)$LBR).getPayload(Tree.class)}
+      )
+;
+
+csKeywordGetDefault :
+  KEYWORD_GET_DEFAULT LPAR argName=csName RPAR
+  LBR /* Host Code making new object */ RBR
+
+  -> ^(Cst_GetDefault $argName
         {((CustomToken)$LBR).getPayload(Tree.class)}
       )
 ;
@@ -620,6 +633,7 @@ csBQAppl :
 // funky ones
 KEYWORD_IS_FSYM     : 'is_fsym'     { opensBlockLBR = true; };
 KEYWORD_GET_SLOT    : 'get_slot'    { opensBlockLBR = true; };
+KEYWORD_GET_DEFAULT : 'get_default' { opensBlockLBR = true; };
 KEYWORD_MAKE        : 'make'        { opensBlockLBR = true; };
 KEYWORD_GET_HEAD    : 'get_head'    { opensBlockLBR = true; };
 KEYWORD_GET_TAIL    : 'get_tail'    { opensBlockLBR = true; };

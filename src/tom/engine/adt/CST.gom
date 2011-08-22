@@ -95,6 +95,7 @@ CstOperator =
  | Cst_MakeEmptyArray (argName:CstName, block:CstBlockList)
  | Cst_GetSize        (argName:CstName, block:CstBlockList)
  | Cst_GetTail        (argName:CstName, block:CstBlockList)
+ | Cst_GetDefault     (argName:CstName, block:CstBlockList)
  | Cst_GetSlot   (argName1:CstName, argName2:CstName, block:CstBlockList)
  | Cst_MakeInsert(argName1:CstName, argName2:CstName, block:CstBlockList)
  | Cst_GetElement(argName1:CstName, argName2:CstName, block:CstBlockList)
