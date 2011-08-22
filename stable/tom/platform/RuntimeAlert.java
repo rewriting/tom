@@ -80,28 +80,28 @@ Alert entry =
 
 {
 {
-if ( (entry instanceof tom.platform.adt.platformalert.types.Alert) ) {
-if ( (warnings instanceof tom.platform.adt.platformalert.types.AlertList) ) {
-boolean tomMatch674_9= false ;
-if ( (((( tom.platform.adt.platformalert.types.AlertList )warnings) instanceof tom.platform.adt.platformalert.types.alertlist.ConsconcAlert) || ((( tom.platform.adt.platformalert.types.AlertList )warnings) instanceof tom.platform.adt.platformalert.types.alertlist.EmptyconcAlert)) ) {
- tom.platform.adt.platformalert.types.AlertList  tomMatch674__end__5=(( tom.platform.adt.platformalert.types.AlertList )warnings);
+if ( (((Object)entry) instanceof tom.platform.adt.platformalert.types.Alert) ) {
+if ( (((Object)warnings) instanceof tom.platform.adt.platformalert.types.AlertList) ) {
+boolean tomMatch700_9= false ;
+if ( (((( tom.platform.adt.platformalert.types.AlertList )(( tom.platform.adt.platformalert.types.AlertList )((Object)warnings))) instanceof tom.platform.adt.platformalert.types.alertlist.ConsconcAlert) || ((( tom.platform.adt.platformalert.types.AlertList )(( tom.platform.adt.platformalert.types.AlertList )((Object)warnings))) instanceof tom.platform.adt.platformalert.types.alertlist.EmptyconcAlert)) ) {
+ tom.platform.adt.platformalert.types.AlertList  tomMatch700__end__5=(( tom.platform.adt.platformalert.types.AlertList )((Object)warnings));
 do {
 {
-if (!( tomMatch674__end__5.isEmptyconcAlert() )) {
-if ( ((( tom.platform.adt.platformalert.types.Alert )entry)== tomMatch674__end__5.getHeadconcAlert() ) ) {
-tomMatch674_9= true ;
+if (!( tomMatch700__end__5.isEmptyconcAlert() )) {
+if ( ((( tom.platform.adt.platformalert.types.Alert )((Object)entry))== tomMatch700__end__5.getHeadconcAlert() ) ) {
+tomMatch700_9= true ;
 }
 }
-if ( tomMatch674__end__5.isEmptyconcAlert() ) {
-tomMatch674__end__5=(( tom.platform.adt.platformalert.types.AlertList )warnings);
+if ( tomMatch700__end__5.isEmptyconcAlert() ) {
+tomMatch700__end__5=(( tom.platform.adt.platformalert.types.AlertList )((Object)warnings));
 } else {
-tomMatch674__end__5= tomMatch674__end__5.getTailconcAlert() ;
+tomMatch700__end__5= tomMatch700__end__5.getTailconcAlert() ;
 }
 
 }
-} while(!( (tomMatch674__end__5==(( tom.platform.adt.platformalert.types.AlertList )warnings)) ));
+} while(!( (tomMatch700__end__5==(( tom.platform.adt.platformalert.types.AlertList )((Object)warnings))) ));
 }
-if (!(tomMatch674_9)) {
+if (!(tomMatch700_9)) {
 
 warnings = 
  tom.platform.adt.platformalert.types.alertlist.ConsconcAlert.make(entry,tom_append_list_concAlert(warnings, tom.platform.adt.platformalert.types.alertlist.EmptyconcAlert.make() )) ;
@@ -128,28 +128,28 @@ Alert entry =
 
 {
 {
-if ( (entry instanceof tom.platform.adt.platformalert.types.Alert) ) {
-if ( (errors instanceof tom.platform.adt.platformalert.types.AlertList) ) {
-boolean tomMatch675_9= false ;
-if ( (((( tom.platform.adt.platformalert.types.AlertList )errors) instanceof tom.platform.adt.platformalert.types.alertlist.ConsconcAlert) || ((( tom.platform.adt.platformalert.types.AlertList )errors) instanceof tom.platform.adt.platformalert.types.alertlist.EmptyconcAlert)) ) {
- tom.platform.adt.platformalert.types.AlertList  tomMatch675__end__5=(( tom.platform.adt.platformalert.types.AlertList )errors);
+if ( (((Object)entry) instanceof tom.platform.adt.platformalert.types.Alert) ) {
+if ( (((Object)errors) instanceof tom.platform.adt.platformalert.types.AlertList) ) {
+boolean tomMatch701_9= false ;
+if ( (((( tom.platform.adt.platformalert.types.AlertList )(( tom.platform.adt.platformalert.types.AlertList )((Object)errors))) instanceof tom.platform.adt.platformalert.types.alertlist.ConsconcAlert) || ((( tom.platform.adt.platformalert.types.AlertList )(( tom.platform.adt.platformalert.types.AlertList )((Object)errors))) instanceof tom.platform.adt.platformalert.types.alertlist.EmptyconcAlert)) ) {
+ tom.platform.adt.platformalert.types.AlertList  tomMatch701__end__5=(( tom.platform.adt.platformalert.types.AlertList )((Object)errors));
 do {
 {
-if (!( tomMatch675__end__5.isEmptyconcAlert() )) {
-if ( ((( tom.platform.adt.platformalert.types.Alert )entry)== tomMatch675__end__5.getHeadconcAlert() ) ) {
-tomMatch675_9= true ;
+if (!( tomMatch701__end__5.isEmptyconcAlert() )) {
+if ( ((( tom.platform.adt.platformalert.types.Alert )((Object)entry))== tomMatch701__end__5.getHeadconcAlert() ) ) {
+tomMatch701_9= true ;
 }
 }
-if ( tomMatch675__end__5.isEmptyconcAlert() ) {
-tomMatch675__end__5=(( tom.platform.adt.platformalert.types.AlertList )errors);
+if ( tomMatch701__end__5.isEmptyconcAlert() ) {
+tomMatch701__end__5=(( tom.platform.adt.platformalert.types.AlertList )((Object)errors));
 } else {
-tomMatch675__end__5= tomMatch675__end__5.getTailconcAlert() ;
+tomMatch701__end__5= tomMatch701__end__5.getTailconcAlert() ;
 }
 
 }
-} while(!( (tomMatch675__end__5==(( tom.platform.adt.platformalert.types.AlertList )errors)) ));
+} while(!( (tomMatch701__end__5==(( tom.platform.adt.platformalert.types.AlertList )((Object)errors))) ));
 }
-if (!(tomMatch675_9)) {
+if (!(tomMatch701_9)) {
 
 errors = 
  tom.platform.adt.platformalert.types.alertlist.ConsconcAlert.make(entry,tom_append_list_concAlert(errors, tom.platform.adt.platformalert.types.alertlist.EmptyconcAlert.make() )) ;

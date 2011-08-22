@@ -917,21 +917,25 @@ public  tom.gom.adt.gom.types.ProductionList  visit_ProductionList( tom.gom.adt.
  throws tom.library.sl.VisitFailure {
 {
 {
-if ( (tom__arg instanceof tom.gom.adt.gom.types.ProductionList) ) {
-if ( (((( tom.gom.adt.gom.types.ProductionList )tom__arg) instanceof tom.gom.adt.gom.types.productionlist.ConsConcProduction) || ((( tom.gom.adt.gom.types.ProductionList )tom__arg) instanceof tom.gom.adt.gom.types.productionlist.EmptyConcProduction)) ) {
-if (!( (( tom.gom.adt.gom.types.ProductionList )tom__arg).isEmptyConcProduction() )) {
- tom.gom.adt.gom.types.Production  tomMatch546_5= (( tom.gom.adt.gom.types.ProductionList )tom__arg).getHeadConcProduction() ;
-if ( (tomMatch546_5 instanceof tom.gom.adt.gom.types.production.SortType) ) {
- tom.gom.adt.gom.types.GomType  tomMatch546_4= tomMatch546_5.getType() ;
-if ( (tomMatch546_4 instanceof tom.gom.adt.gom.types.gomtype.GomType) ) {
+if ( (((Object)tom__arg) instanceof tom.gom.adt.gom.types.ProductionList) ) {
+if ( (((( tom.gom.adt.gom.types.ProductionList )(( tom.gom.adt.gom.types.ProductionList )((Object)tom__arg))) instanceof tom.gom.adt.gom.types.productionlist.ConsConcProduction) || ((( tom.gom.adt.gom.types.ProductionList )(( tom.gom.adt.gom.types.ProductionList )((Object)tom__arg))) instanceof tom.gom.adt.gom.types.productionlist.EmptyConcProduction)) ) {
+if (!( (( tom.gom.adt.gom.types.ProductionList )((Object)tom__arg)).isEmptyConcProduction() )) {
+ tom.gom.adt.gom.types.Production  tomMatch572_5= (( tom.gom.adt.gom.types.ProductionList )((Object)tom__arg)).getHeadConcProduction() ;
+if ( (tomMatch572_5 instanceof tom.gom.adt.gom.types.Production) ) {
+if ( ((( tom.gom.adt.gom.types.Production )tomMatch572_5) instanceof tom.gom.adt.gom.types.production.SortType) ) {
+ tom.gom.adt.gom.types.GomType  tomMatch572_4= tomMatch572_5.getType() ;
+if ( (tomMatch572_4 instanceof tom.gom.adt.gom.types.GomType) ) {
+if ( ((( tom.gom.adt.gom.types.GomType )tomMatch572_4) instanceof tom.gom.adt.gom.types.gomtype.GomType) ) {
 
 if(
- tomMatch546_4.getName() .equals(sort)) {
+ tomMatch572_4.getName() .equals(sort)) {
 return 
- tom.gom.adt.gom.types.productionlist.ConsConcProduction.make( (( tom.gom.adt.gom.types.ProductionList )tom__arg).getHeadConcProduction() , tom.gom.adt.gom.types.productionlist.ConsConcProduction.make(hook,tom_append_list_ConcProduction( (( tom.gom.adt.gom.types.ProductionList )tom__arg).getTailConcProduction() , tom.gom.adt.gom.types.productionlist.EmptyConcProduction.make() )) ) ;
+ tom.gom.adt.gom.types.productionlist.ConsConcProduction.make( (( tom.gom.adt.gom.types.ProductionList )((Object)tom__arg)).getHeadConcProduction() , tom.gom.adt.gom.types.productionlist.ConsConcProduction.make(hook,tom_append_list_ConcProduction( (( tom.gom.adt.gom.types.ProductionList )((Object)tom__arg)).getTailConcProduction() , tom.gom.adt.gom.types.productionlist.EmptyConcProduction.make() )) ) ;
 }
 
 
+}
+}
 }
 }
 }
@@ -1930,14 +1934,16 @@ public  tom.gom.adt.gom.types.Grammar  visit_Grammar( tom.gom.adt.gom.types.Gram
  throws tom.library.sl.VisitFailure {
 {
 {
-if ( (tom__arg instanceof tom.gom.adt.gom.types.Grammar) ) {
-if ( ((( tom.gom.adt.gom.types.Grammar )tom__arg) instanceof tom.gom.adt.gom.types.grammar.Grammar) ) {
+if ( (((Object)tom__arg) instanceof tom.gom.adt.gom.types.Grammar) ) {
+if ( ((( tom.gom.adt.gom.types.Grammar )((Object)tom__arg)) instanceof tom.gom.adt.gom.types.Grammar) ) {
+if ( ((( tom.gom.adt.gom.types.Grammar )(( tom.gom.adt.gom.types.Grammar )((Object)tom__arg))) instanceof tom.gom.adt.gom.types.grammar.Grammar) ) {
 
 return 
-(( tom.gom.adt.gom.types.Grammar )tom__arg).setProductionList(fe.addRaw(st,
- (( tom.gom.adt.gom.types.Grammar )tom__arg).getProductionList() ));
+(( tom.gom.adt.gom.types.Grammar )((Object)tom__arg)).setProductionList(fe.addRaw(st,
+ (( tom.gom.adt.gom.types.Grammar )((Object)tom__arg)).getProductionList() ));
 
 
+}
 }
 }
 
@@ -1964,20 +1970,23 @@ private ProductionList addRaw(SymbolTable st, ProductionList pl) {
 
 {
 {
-if ( (pl instanceof tom.gom.adt.gom.types.ProductionList) ) {
-if ( ((( tom.gom.adt.gom.types.ProductionList )pl) instanceof tom.gom.adt.gom.types.productionlist.ConsConcProduction) ) {
- tom.gom.adt.gom.types.Production  tom_p= (( tom.gom.adt.gom.types.ProductionList )pl).getHeadConcProduction() ;
+if ( (((Object)pl) instanceof tom.gom.adt.gom.types.ProductionList) ) {
+if ( ((( tom.gom.adt.gom.types.ProductionList )((Object)pl)) instanceof tom.gom.adt.gom.types.ProductionList) ) {
+if ( ((( tom.gom.adt.gom.types.ProductionList )(( tom.gom.adt.gom.types.ProductionList )((Object)pl))) instanceof tom.gom.adt.gom.types.productionlist.ConsConcProduction) ) {
+ tom.gom.adt.gom.types.Production  tom_p= (( tom.gom.adt.gom.types.ProductionList )((Object)pl)).getHeadConcProduction() ;
 
 ProductionList nps = addRaw(st,
- (( tom.gom.adt.gom.types.ProductionList )pl).getTailConcProduction() );
+ (( tom.gom.adt.gom.types.ProductionList )((Object)pl)).getTailConcProduction() );
 
 {
 {
-if ( (tom_p instanceof tom.gom.adt.gom.types.Production) ) {
-if ( ((( tom.gom.adt.gom.types.Production )tom_p) instanceof tom.gom.adt.gom.types.production.SortType) ) {
- tom.gom.adt.gom.types.GomType  tomMatch549_1= (( tom.gom.adt.gom.types.Production )tom_p).getType() ;
-if ( (tomMatch549_1 instanceof tom.gom.adt.gom.types.gomtype.GomType) ) {
- String  tom_n= tomMatch549_1.getName() ;
+if ( (((Object)tom_p) instanceof tom.gom.adt.gom.types.Production) ) {
+if ( ((( tom.gom.adt.gom.types.Production )((Object)tom_p)) instanceof tom.gom.adt.gom.types.Production) ) {
+if ( ((( tom.gom.adt.gom.types.Production )(( tom.gom.adt.gom.types.Production )((Object)tom_p))) instanceof tom.gom.adt.gom.types.production.SortType) ) {
+ tom.gom.adt.gom.types.GomType  tomMatch575_1= (( tom.gom.adt.gom.types.Production )((Object)tom_p)).getType() ;
+if ( (tomMatch575_1 instanceof tom.gom.adt.gom.types.GomType) ) {
+if ( ((( tom.gom.adt.gom.types.GomType )tomMatch575_1) instanceof tom.gom.adt.gom.types.gomtype.GomType) ) {
+ String  tom_n= tomMatch575_1.getName() ;
 
 if (st.isFreshType(
 tom_n) && !st.isAtomType(
@@ -1987,6 +1996,8 @@ return
 }
 
 
+}
+}
 }
 }
 }
@@ -2001,14 +2012,17 @@ return
 
 }
 }
+}
 
 }
 {
-if ( (pl instanceof tom.gom.adt.gom.types.ProductionList) ) {
-if ( ((( tom.gom.adt.gom.types.ProductionList )pl) instanceof tom.gom.adt.gom.types.productionlist.EmptyConcProduction) ) {
+if ( (((Object)pl) instanceof tom.gom.adt.gom.types.ProductionList) ) {
+if ( ((( tom.gom.adt.gom.types.ProductionList )((Object)pl)) instanceof tom.gom.adt.gom.types.ProductionList) ) {
+if ( ((( tom.gom.adt.gom.types.ProductionList )(( tom.gom.adt.gom.types.ProductionList )((Object)pl))) instanceof tom.gom.adt.gom.types.productionlist.EmptyConcProduction) ) {
 return 
-(( tom.gom.adt.gom.types.ProductionList )pl); 
+(( tom.gom.adt.gom.types.ProductionList )((Object)pl)); 
 
+}
 }
 }
 
@@ -2097,12 +2111,14 @@ public  tom.gom.adt.gom.types.Alternative  visit_Alternative( tom.gom.adt.gom.ty
  throws tom.library.sl.VisitFailure {
 {
 {
-if ( (tom__arg instanceof tom.gom.adt.gom.types.Alternative) ) {
-if ( ((( tom.gom.adt.gom.types.Alternative )tom__arg) instanceof tom.gom.adt.gom.types.alternative.Alternative) ) {
+if ( (((Object)tom__arg) instanceof tom.gom.adt.gom.types.Alternative) ) {
+if ( ((( tom.gom.adt.gom.types.Alternative )((Object)tom__arg)) instanceof tom.gom.adt.gom.types.Alternative) ) {
+if ( ((( tom.gom.adt.gom.types.Alternative )(( tom.gom.adt.gom.types.Alternative )((Object)tom__arg))) instanceof tom.gom.adt.gom.types.alternative.Alternative) ) {
 return 
-(( tom.gom.adt.gom.types.Alternative )tom__arg).setName(st.rawCons(
- (( tom.gom.adt.gom.types.Alternative )tom__arg).getName() )); 
+(( tom.gom.adt.gom.types.Alternative )((Object)tom__arg)).setName(st.rawCons(
+ (( tom.gom.adt.gom.types.Alternative )((Object)tom__arg)).getName() )); 
 
+}
 }
 }
 
@@ -2117,10 +2133,11 @@ public  tom.gom.adt.gom.types.GomType  visit_GomType( tom.gom.adt.gom.types.GomT
  throws tom.library.sl.VisitFailure {
 {
 {
-if ( (tom__arg instanceof tom.gom.adt.gom.types.GomType) ) {
-if ( ((( tom.gom.adt.gom.types.GomType )tom__arg) instanceof tom.gom.adt.gom.types.gomtype.GomType) ) {
- String  tom_n= (( tom.gom.adt.gom.types.GomType )tom__arg).getName() ;
- tom.gom.adt.gom.types.GomType  tom_gt=(( tom.gom.adt.gom.types.GomType )tom__arg);
+if ( (((Object)tom__arg) instanceof tom.gom.adt.gom.types.GomType) ) {
+if ( ((( tom.gom.adt.gom.types.GomType )((Object)tom__arg)) instanceof tom.gom.adt.gom.types.GomType) ) {
+if ( ((( tom.gom.adt.gom.types.GomType )(( tom.gom.adt.gom.types.GomType )((Object)tom__arg))) instanceof tom.gom.adt.gom.types.gomtype.GomType) ) {
+ String  tom_n= (( tom.gom.adt.gom.types.GomType )((Object)tom__arg)).getName() ;
+ tom.gom.adt.gom.types.GomType  tom_gt=(( tom.gom.adt.gom.types.GomType )((Object)tom__arg));
 
 if (st.isAtomType(
 tom_n)) { return 
@@ -2131,6 +2148,7 @@ tom_gt.setName(st.rawSort(
 tom_n)); }
 
 
+}
 }
 }
 
@@ -2347,9 +2365,10 @@ public  tom.gom.adt.gom.types.Production  visit_Production( tom.gom.adt.gom.type
  throws tom.library.sl.VisitFailure {
 {
 {
-if ( (tom__arg instanceof tom.gom.adt.gom.types.Production) ) {
-if ( ((( tom.gom.adt.gom.types.Production )tom__arg) instanceof tom.gom.adt.gom.types.production.AtomDecl) ) {
- String  tom_name= (( tom.gom.adt.gom.types.Production )tom__arg).getName() ;
+if ( (((Object)tom__arg) instanceof tom.gom.adt.gom.types.Production) ) {
+if ( ((( tom.gom.adt.gom.types.Production )((Object)tom__arg)) instanceof tom.gom.adt.gom.types.Production) ) {
+if ( ((( tom.gom.adt.gom.types.Production )(( tom.gom.adt.gom.types.Production )((Object)tom__arg))) instanceof tom.gom.adt.gom.types.production.AtomDecl) ) {
+ String  tom_name= (( tom.gom.adt.gom.types.Production )((Object)tom__arg)).getName() ;
 
 list.add(
 tom_name);
@@ -2357,6 +2376,7 @@ return
  tom.gom.adt.gom.types.production.SortType.make( tom.gom.adt.gom.types.gomtype.GomType.make( tom.gom.adt.gom.types.typespec.AtomType.make() , tom_name) ,  tom.gom.adt.gom.types.atomlist.EmptyConcAtom.make() ,  tom.gom.adt.gom.types.alternativelist.ConsConcAlternative.make( tom.gom.adt.gom.types.alternative.Alternative.make(tom_name,  tom.gom.adt.gom.types.fieldlist.ConsConcField.make( tom.gom.adt.gom.types.field.NamedField.make("n",  tom.gom.adt.gom.types.gomtype.GomType.make( tom.gom.adt.gom.types.typespec.ExpressionType.make() , "int") ,  tom.gom.adt.gom.types.scopespecifier.None.make() ) , tom.gom.adt.gom.types.fieldlist.ConsConcField.make( tom.gom.adt.gom.types.field.NamedField.make("hint",  tom.gom.adt.gom.types.gomtype.GomType.make( tom.gom.adt.gom.types.typespec.ExpressionType.make() , "String") ,  tom.gom.adt.gom.types.scopespecifier.None.make() ) , tom.gom.adt.gom.types.fieldlist.EmptyConcField.make() ) ) ,  tom.gom.adt.gom.types.gomtype.GomType.make( tom.gom.adt.gom.types.typespec.AtomType.make() , tom_name) ,  tom.gom.adt.gom.types.option.Origin.make(-1) ) , tom.gom.adt.gom.types.alternativelist.EmptyConcAlternative.make() ) ) ;
 
 
+}
 }
 }
 
@@ -2434,17 +2454,19 @@ public  tom.gom.adt.gom.types.GomType  visit_GomType( tom.gom.adt.gom.types.GomT
  throws tom.library.sl.VisitFailure {
 {
 {
-if ( (tom__arg instanceof tom.gom.adt.gom.types.GomType) ) {
-if ( ((( tom.gom.adt.gom.types.GomType )tom__arg) instanceof tom.gom.adt.gom.types.gomtype.GomType) ) {
+if ( (((Object)tom__arg) instanceof tom.gom.adt.gom.types.GomType) ) {
+if ( ((( tom.gom.adt.gom.types.GomType )((Object)tom__arg)) instanceof tom.gom.adt.gom.types.GomType) ) {
+if ( ((( tom.gom.adt.gom.types.GomType )(( tom.gom.adt.gom.types.GomType )((Object)tom__arg))) instanceof tom.gom.adt.gom.types.gomtype.GomType) ) {
 
 if (list.contains(
- (( tom.gom.adt.gom.types.GomType )tom__arg).getName() )) {
+ (( tom.gom.adt.gom.types.GomType )((Object)tom__arg)).getName() )) {
 return 
-(( tom.gom.adt.gom.types.GomType )tom__arg).setSpecialization(
+(( tom.gom.adt.gom.types.GomType )((Object)tom__arg)).setSpecialization(
  tom.gom.adt.gom.types.typespec.AtomType.make() );
 }
 
 
+}
 }
 }
 

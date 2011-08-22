@@ -134,12 +134,17 @@ names.add(name);
 
 {
 {
-if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {
-if ( ((( tom.engine.adt.tomtype.types.TomType )type) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {
-if ( "Strategy".equals( (( tom.engine.adt.tomtype.types.TomType )type).getTomType() ) ) {
+if ( (((Object)type) instanceof tom.engine.adt.tomtype.types.TomType) ) {
+if ( ((( tom.engine.adt.tomtype.types.TomType )((Object)type)) instanceof tom.engine.adt.tomtype.types.TomType) ) {
+if ( ((( tom.engine.adt.tomtype.types.TomType )(( tom.engine.adt.tomtype.types.TomType )((Object)type))) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {
+ String  tomMatch101_1= (( tom.engine.adt.tomtype.types.TomType )((Object)type)).getTomType() ;
+if ( true ) {
+if ( "Strategy".equals(tomMatch101_1) ) {
 
 stratChild.add(Integer.valueOf(index));
 
+}
+}
 }
 }
 }
@@ -158,10 +163,12 @@ matchblock: {
 
 {
 {
-if ( (extendsType instanceof tom.engine.adt.tomtype.types.TomType) ) {
-if ( ((( tom.engine.adt.tomtype.types.TomType )extendsType) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {
- tom.engine.adt.tomtype.types.TargetLanguageType  tomMatch102_1= (( tom.engine.adt.tomtype.types.TomType )extendsType).getTlType() ;
-if ( (tomMatch102_1 instanceof tom.engine.adt.tomtype.types.targetlanguagetype.TLType) ) {
+if ( (((Object)extendsType) instanceof tom.engine.adt.tomtype.types.TomType) ) {
+if ( ((( tom.engine.adt.tomtype.types.TomType )((Object)extendsType)) instanceof tom.engine.adt.tomtype.types.TomType) ) {
+if ( ((( tom.engine.adt.tomtype.types.TomType )(( tom.engine.adt.tomtype.types.TomType )((Object)extendsType))) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {
+ tom.engine.adt.tomtype.types.TargetLanguageType  tomMatch102_1= (( tom.engine.adt.tomtype.types.TomType )((Object)extendsType)).getTlType() ;
+if ( (tomMatch102_1 instanceof tom.engine.adt.tomtype.types.TargetLanguageType) ) {
+if ( ((( tom.engine.adt.tomtype.types.TargetLanguageType )tomMatch102_1) instanceof tom.engine.adt.tomtype.types.targetlanguagetype.TLType) ) {
 
 output.write(deep," extends " + 
  tomMatch102_1.getString() );
@@ -171,18 +178,25 @@ break matchblock;
 }
 }
 }
+}
+}
 
 }
 {
-if ( (extendsType instanceof tom.engine.adt.tomtype.types.TomType) ) {
-if ( ((( tom.engine.adt.tomtype.types.TomType )extendsType) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {
-if ( ( (( tom.engine.adt.tomtype.types.TomType )extendsType).getTlType()  instanceof tom.engine.adt.tomtype.types.targetlanguagetype.EmptyTargetLanguageType) ) {
+if ( (((Object)extendsType) instanceof tom.engine.adt.tomtype.types.TomType) ) {
+if ( ((( tom.engine.adt.tomtype.types.TomType )((Object)extendsType)) instanceof tom.engine.adt.tomtype.types.TomType) ) {
+if ( ((( tom.engine.adt.tomtype.types.TomType )(( tom.engine.adt.tomtype.types.TomType )((Object)extendsType))) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {
+ tom.engine.adt.tomtype.types.TargetLanguageType  tomMatch102_9= (( tom.engine.adt.tomtype.types.TomType )((Object)extendsType)).getTlType() ;
+if ( (tomMatch102_9 instanceof tom.engine.adt.tomtype.types.TargetLanguageType) ) {
+if ( ((( tom.engine.adt.tomtype.types.TargetLanguageType )tomMatch102_9) instanceof tom.engine.adt.tomtype.types.targetlanguagetype.EmptyTargetLanguageType) ) {
 
 output.write(deep," extends " + 
- (( tom.engine.adt.tomtype.types.TomType )extendsType).getTomType() );
+ (( tom.engine.adt.tomtype.types.TomType )((Object)extendsType)).getTomType() );
 break matchblock;
 
 
+}
+}
 }
 }
 }
@@ -302,22 +316,24 @@ matchBlock: {
 
 {
 {
-if ( (localVar instanceof tom.engine.adt.code.types.BQTerm) ) {
-if ( ((( tom.engine.adt.code.types.BQTerm )localVar) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {
+if ( (((Object)localVar) instanceof tom.engine.adt.code.types.BQTerm) ) {
+if ( ((( tom.engine.adt.code.types.BQTerm )((Object)localVar)) instanceof tom.engine.adt.code.types.BQTerm) ) {
+if ( ((( tom.engine.adt.code.types.BQTerm )(( tom.engine.adt.code.types.BQTerm )((Object)localVar))) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {
 
 output.write(deep,TomBase.getTLType(
- (( tom.engine.adt.code.types.BQTerm )localVar).getAstType() ) + " ");
+ (( tom.engine.adt.code.types.BQTerm )((Object)localVar)).getAstType() ) + " ");
 generateBQTerm(deep,
-(( tom.engine.adt.code.types.BQTerm )localVar),moduleName);
+(( tom.engine.adt.code.types.BQTerm )((Object)localVar)),moduleName);
 break matchBlock;
 
 
 }
 }
+}
 
 }
 {
-if ( (localVar instanceof tom.engine.adt.code.types.BQTerm) ) {
+if ( (((Object)localVar) instanceof tom.engine.adt.code.types.BQTerm) ) {
 
 System.out.println("MakeFunction: strange term: " + localVar);
 throw new TomRuntimeException("MakeFunction: strange term: " + localVar);
@@ -340,10 +356,12 @@ matchblock: {
 
 {
 {
-if ( (throwsType instanceof tom.engine.adt.tomtype.types.TomType) ) {
-if ( ((( tom.engine.adt.tomtype.types.TomType )throwsType) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {
- tom.engine.adt.tomtype.types.TargetLanguageType  tomMatch104_1= (( tom.engine.adt.tomtype.types.TomType )throwsType).getTlType() ;
-if ( (tomMatch104_1 instanceof tom.engine.adt.tomtype.types.targetlanguagetype.TLType) ) {
+if ( (((Object)throwsType) instanceof tom.engine.adt.tomtype.types.TomType) ) {
+if ( ((( tom.engine.adt.tomtype.types.TomType )((Object)throwsType)) instanceof tom.engine.adt.tomtype.types.TomType) ) {
+if ( ((( tom.engine.adt.tomtype.types.TomType )(( tom.engine.adt.tomtype.types.TomType )((Object)throwsType))) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {
+ tom.engine.adt.tomtype.types.TargetLanguageType  tomMatch104_1= (( tom.engine.adt.tomtype.types.TomType )((Object)throwsType)).getTlType() ;
+if ( (tomMatch104_1 instanceof tom.engine.adt.tomtype.types.TargetLanguageType) ) {
+if ( ((( tom.engine.adt.tomtype.types.TargetLanguageType )tomMatch104_1) instanceof tom.engine.adt.tomtype.types.targetlanguagetype.TLType) ) {
 
 output.write(deep," throws " + 
  tomMatch104_1.getString() );
@@ -353,18 +371,25 @@ break matchblock;
 }
 }
 }
+}
+}
 
 }
 {
-if ( (throwsType instanceof tom.engine.adt.tomtype.types.TomType) ) {
-if ( ((( tom.engine.adt.tomtype.types.TomType )throwsType) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {
-if ( ( (( tom.engine.adt.tomtype.types.TomType )throwsType).getTlType()  instanceof tom.engine.adt.tomtype.types.targetlanguagetype.EmptyTargetLanguageType) ) {
+if ( (((Object)throwsType) instanceof tom.engine.adt.tomtype.types.TomType) ) {
+if ( ((( tom.engine.adt.tomtype.types.TomType )((Object)throwsType)) instanceof tom.engine.adt.tomtype.types.TomType) ) {
+if ( ((( tom.engine.adt.tomtype.types.TomType )(( tom.engine.adt.tomtype.types.TomType )((Object)throwsType))) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {
+ tom.engine.adt.tomtype.types.TargetLanguageType  tomMatch104_9= (( tom.engine.adt.tomtype.types.TomType )((Object)throwsType)).getTlType() ;
+if ( (tomMatch104_9 instanceof tom.engine.adt.tomtype.types.TargetLanguageType) ) {
+if ( ((( tom.engine.adt.tomtype.types.TargetLanguageType )tomMatch104_9) instanceof tom.engine.adt.tomtype.types.targetlanguagetype.EmptyTargetLanguageType) ) {
 
 output.write(deep," throws " + 
- (( tom.engine.adt.tomtype.types.TomType )throwsType).getTomType() );
+ (( tom.engine.adt.tomtype.types.TomType )((Object)throwsType)).getTomType() );
 break matchblock;
 
 
+}
+}
 }
 }
 }

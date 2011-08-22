@@ -266,8 +266,10 @@ public class KernelTyper {
 
     visit BQTerm {
 
-      BQAppl[Options=optionList,AstName=name@Name(tomName),Args=args] -> {
+      bq@BQAppl[Options=optionList,AstName=name@Name(tomName),Args=args] -> {
+        //System.out.println("bq = " + `bq);
         TomSymbol tomSymbol = kernelTyper.getSymbolFromName(`tomName);
+        //System.out.println("symb = " + `tomSymbol);
         if(tomSymbol != null) {
           BQTermList subterm = kernelTyper.typeVariableList(tomSymbol, `args);
           return `BQAppl(optionList,name,subterm);

@@ -77,20 +77,22 @@ this.maximalsharing = maximalsharing;
 
 {
 {
-if ( (gomClass instanceof tom.gom.adt.objects.types.GomClass) ) {
-if ( ((( tom.gom.adt.objects.types.GomClass )gomClass) instanceof tom.gom.adt.objects.types.gomclass.SortClass) ) {
+if ( (((Object)gomClass) instanceof tom.gom.adt.objects.types.GomClass) ) {
+if ( ((( tom.gom.adt.objects.types.GomClass )((Object)gomClass)) instanceof tom.gom.adt.objects.types.GomClass) ) {
+if ( ((( tom.gom.adt.objects.types.GomClass )(( tom.gom.adt.objects.types.GomClass )((Object)gomClass))) instanceof tom.gom.adt.objects.types.gomclass.SortClass) ) {
 
 this.abstractType = 
- (( tom.gom.adt.objects.types.GomClass )gomClass).getAbstractType() ;
+ (( tom.gom.adt.objects.types.GomClass )((Object)gomClass)).getAbstractType() ;
 this.operatorList = 
- (( tom.gom.adt.objects.types.GomClass )gomClass).getOperators() ;
+ (( tom.gom.adt.objects.types.GomClass )((Object)gomClass)).getOperators() ;
 this.variadicOperatorList = 
- (( tom.gom.adt.objects.types.GomClass )gomClass).getVariadicOperators() ;
+ (( tom.gom.adt.objects.types.GomClass )((Object)gomClass)).getVariadicOperators() ;
 this.slotList = 
- (( tom.gom.adt.objects.types.GomClass )gomClass).getSlotFields() ;
+ (( tom.gom.adt.objects.types.GomClass )((Object)gomClass)).getSlotFields() ;
 return;
 
 
+}
 }
 }
 

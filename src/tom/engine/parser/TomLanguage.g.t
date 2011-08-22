@@ -101,6 +101,10 @@ options{
         this.optionManager = optionManager;
     }
 
+    public synchronized SymbolTable getSymbolTable() {
+      return targetparser.getSymbolTable();
+    }
+
     /**
      * Returns the value of a boolean option.
      * 
@@ -111,12 +115,14 @@ options{
       return ((Boolean)optionManager.getOptionValue(optionName)).booleanValue();
     }
 
-    private void putSlot(String sName, String sType) {
-      usedSlots.put(sName,sType);
+    private void putSlotType(String codomain, String slotName, String slotType) {
+      String key = codomain+slotName;
+      usedSlots.put(key,slotType);
     }
 
-    private String getSlotType(String sName) {
-      return usedSlots.get(sName);
+    private String getSlotType(String codomain, String slotName) {
+      String key = codomain+slotName;
+      return usedSlots.get(key);
     }
 
     private void putType(String name, TomType type) {
@@ -328,13 +334,12 @@ visitInstruction [List<ConstraintInstruction> list, TomType rhsType] throws TomE
                     TomMessage.badMatchNumberArgument,
                     subjectListLength, Integer.valueOf(matchPatternList.size()));
                 return;
-              }
+                }
 
-              BQTerm subject;
-              
-                subject = `BQVariable(concOption(),Name("tom__arg"),rhsType);
+                BQTerm subject = `BQVariable(concOption(),Name("tom__arg"),rhsType);
+                TomType matchType = (getOptionBooleanValue("newtyper")?SymbolTable.TYPE_UNKNOWN:rhsType);
                 constraint =
-                  `AndConstraint(constraint,MatchConstraint(matchPatternList.get(0),subject,rhsType));
+                    `AndConstraint(constraint,MatchConstraint(matchPatternList.get(0),subject,matchType));
               
               //optionList = `concOption(option, OriginalText(Name(text.toString())));
 
@@ -836,7 +841,7 @@ plainTerm [TomName astLabeledName, TomName astAnnotedName, int line] returns [To
           {LA(2) != LPAREN && LA(2) != LBRACKET && LA(2) != QMARK && LA(2) != QQMARK}?
           nameList = headConstantList[optionList]
           {
-            optionList.add(`Constant());
+            //optionList.add(`Constant());
             result = `TermAppl(
                 ASTFactory.makeOptionList(optionList),
                 nameList,
@@ -1669,12 +1674,14 @@ operator returns [Declaration result] throws TomException
     TomName astName = null;
     String stringSlotName = null;
     Declaration attribute;
+    String stringCodomain = "";
 }
     :
       type:ALL_ID name:ALL_ID
         {
             ot = `OriginTracking(Name(name.getText()),name.getLine(),currentFile());
             options.add(ot);
+            stringCodomain = type.getText();
         }
         (
             LPAREN (slotName:ALL_ID COLON typeArg:ALL_ID
@@ -1684,13 +1691,13 @@ operator returns [Declaration result] throws TomException
                 slotNameList.add(astName);
                 pairNameDeclList.add(`PairNameDecl(astName,EmptyDeclaration()));
                 types = `concTomType(types*,Type(concTypeOption(),typeArg.getText(),EmptyTargetLanguageType()));
-                String typeOfSlot = getSlotType(stringSlotName);
+                String typeOfSlot = getSlotType(stringCodomain,stringSlotName);
                 String typeOfArg= typeArg.getText();
-                if (typeOfSlot != null && !typeOfSlot.equals(typeOfArg)) {
+                if(typeOfSlot != null && !typeOfSlot.equals(typeOfArg)) {
                   TomMessage.warning(getLogger(),currentFile(), getLine(),
                     TomMessage.slotIncompatibleTypes,stringSlotName,typeOfArg,typeOfSlot);
                 } else {
-                  putSlot(stringSlotName,typeOfArg);
+                  putSlotType(stringCodomain,stringSlotName,typeOfArg);
                 }
             }
             (
@@ -1707,13 +1714,13 @@ operator returns [Declaration result] throws TomException
                     slotNameList.add(astName);
                     pairNameDeclList.add(`PairNameDecl(Name(stringSlotName),EmptyDeclaration()));
                     types = `concTomType(types*,Type(concTypeOption(),typeArg2.getText(),EmptyTargetLanguageType()));
-                    String typeOfSlot = getSlotType(stringSlotName);
+                    String typeOfSlot = getSlotType(stringCodomain,stringSlotName);
                     String typeOfArg= typeArg2.getText();
                     if (typeOfSlot != null && !typeOfSlot.equals(typeOfArg)) {
                       TomMessage.warning(getLogger(),currentFile(), getLine(),
                         TomMessage.slotIncompatibleTypes,stringSlotName,typeOfArg,typeOfSlot);
                     } else {
-                      putSlot(stringSlotName,typeOfArg);
+                      putSlotType(stringCodomain,stringSlotName,typeOfArg);
                     }
                 }
             )*

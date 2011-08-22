@@ -273,36 +273,26 @@ public class Compiler extends TomGenericPlugin {
   /**
    * Takes all MatchConstraints and renames the subjects;
    * (this ensures that the subject is not constructed more than once) 
-   * Match(p,s,castType) -> Match(object,s,castType) /\ IsSort(castType,object) /\
-   * Match(freshSubj,Cast(object),castType) /\ Match(p,freshSubj,castType) 
+   * Match(p,s,castType) -> Match(x,s,castType) /\ IsSort(castType,x) /\
+   * Match(y,Cast(x),castType) /\ Match(p,y,castType) 
    * 
    * @param subjectList the list of old subjects
    */
   %strategy renameSubjects(ArrayList subjectList,ArrayList renamedSubjects, Compiler compiler) extends Identity() {
     visit Constraint {
       constr@MatchConstraint[Pattern=pattern,Subject=subject,AstType=castType] -> {
-        // IF 1
-        //DEBUG System.out.println("\n\nIn renameSubjects - constr = " + `constr);
-        //DEBUG System.out.println("\n -------- In renameSubjects - subjectList = " + subjectList);
-        //DEBUG System.out.println("In renameSubjects - renamedSubjects = " + renamedSubjects);
         if(renamedSubjects.contains(`pattern) || ( `(subject) instanceof BQVariable && renamedSubjects.contains(TomBase.convertFromBQVarToVar(`subject))) ) {
           // make sure we don't process generated contraints
-          //DEBUG System.out.println("A constraint already processed!!");
           return `constr; 
         } 
         TomType freshSubjectType = compiler.getTermTypeFromTerm(`subject);
-        //TomType freshSubjectType = `castType;
-        //DEBUG System.out.println("In renameSubjects - IF 1 - subject = " + `subject);
-        //DEBUG System.out.println("In renameSubjects - IF 1 - freshSubjectType = " + freshSubjectType);
-        //DEBUG System.out.println("In renameSubjects - IF 1 - castType = " + `castType);
+        //System.out.println("subject = " + `subject);
+        //System.out.println("freshSubjectType = " + freshSubjectType);
 
-        // IF 2
         // test if we already renamed this subject 
-
-        //DEBUG System.out.println("\nrenameSubjects -- old Subj = " + `subject);
         if(subjectList.contains(`subject)) {
           TomTerm renamedSubj= (TomTerm) renamedSubjects.get(subjectList.indexOf(`subject));
-          // Create an auxiliary variable because renamedSubj can not be
+          // Create an auxiliary variable because renamedSubj cannot be
           // directly modified (I don't know why) 
           TomTerm typedRenamedSubj = renamedSubj;
 

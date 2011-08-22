@@ -184,8 +184,8 @@ options{
         concBQTerm() -> { return list; }
         concBQTerm(X1*,e1,X2*,e2,X3*) -> {
           %match(e1, e2) {
-            BQAppl[Args=concBQTerm(BQAppl[AstName=Name(name1)],_*)],
-            BQAppl[Args=concBQTerm(BQAppl[AstName=Name(name2)],_*)] -> {
+            BQAppl[Args=concBQTerm((BuildConstant|BQAppl)[AstName=Name(name1)],_*)],
+            BQAppl[Args=concBQTerm((BuildConstant|BQAppl)[AstName=Name(name2)],_*)] -> {
               if(`name1.compareTo(`name2) > 0) {
                 return `sortAttributeList(concBQTerm(X1*,e2,X2*,e1,X3*));
               }
@@ -466,7 +466,11 @@ xmlAttribute [BQTermList context] returns [BQTerm result]
             (
                 ws EQUAL ws value = xmlAttributeStringOrBQVariable
                 {
-                    BQTermList args = `concBQTerm(
+                    String encodedName = encodeName(id.getText());
+                    String encodedTrue = "\"true\"";
+                    ASTFactory.makeStringSymbol(tomparser.getSymbolTable(),encodedName,new LinkedList<Option>());
+                    ASTFactory.makeStringSymbol(tomparser.getSymbolTable(),encodedTrue,new LinkedList<Option>());
+/*
                         BQAppl(
                             concOption(Constant(),ModuleName(TNODE_MODULE_NAME)),
                             Name(encodeName(id.getText())),
@@ -477,7 +481,12 @@ xmlAttribute [BQTermList context] returns [BQTerm result]
                             Name("\"true\""),
                             concBQTerm()
                         ),
-                        value
+                        */
+
+                    BQTermList args = `concBQTerm(
+                      BuildConstant(Name(encodedName)),
+                      BuildConstant(Name(encodedTrue)),
+                      value
                     );
 		    if(context != null) {
 		      args = `concBQTerm(context*,args*);
@@ -550,12 +559,17 @@ xmlTerm[BQTermList context] returns [BQTerm result]
                     XML_START_ENDING ws BQ_ID ws XML_CLOSE ws
                 )
                 {
-                    BQTermList args = `concBQTerm(
+                    String encodedName = encodeName(id.getText());
+                    ASTFactory.makeStringSymbol(tomparser.getSymbolTable(),encodedName,new LinkedList<Option>());
+                      /*
                         BQAppl(
                             concOption(Constant(),ModuleName(TNODE_MODULE_NAME)),
                             Name(encodeName(id.getText())),
                             concBQTerm()
                         ),
+                        */
+                    BQTermList args = `concBQTerm(
+                      BuildConstant(Name(encodedName)),
                         BQAppl(
                             concOption(ModuleName(TNODE_MODULE_NAME)),
                             Name(Constants.CONC_TNODE),

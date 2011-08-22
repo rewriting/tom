@@ -1,0 +1,25 @@
+module newparser.miniTom
+imports String
+abstract syntax
+
+Program = Program(ProgramUnit*)
+
+ProgramUnit = HostBlock(hContent:String)
+            | Match(mArgs:MatchArgList, pActs:PatternActionList)
+            | Typeterm(implProgram:Program, isSort:Sort, equals:EqualCheck)
+
+MatchArgList = MatchArgList(MatchArg*)
+
+MatchArg = WithType(aType:String, aTerm:String)
+         | NoType(aTerm:String)
+
+PatternActionList = PatternActionList(PatternAction*)
+
+PatternAction = PatterAction(aPattern:String, anAction:Program)
+
+Sort = Null()
+     | aSort(var:String, checkRoutine:Program)
+
+EqualCheck = Null()
+           | anEqual(lHs:String, rHs:String, equalRoutine:Program)
+

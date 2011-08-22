@@ -1,0 +1,13 @@
+%match(a){
+    blu(b) -> {doBlu}
+    bla(c) -> {doBla}
+}
+
+(a==b) ? print(texts.true()) : print(texts.false());  
+
+%match(d){
+    blu(e) -> {doBlu}
+    bla(f) -> {doBla}
+}
+
+bonjour

@@ -1,0 +1,6 @@
+#>
+#description pattern with named variables
+#type TomPattern
+#<
+
+f(x, a(y), b(c(z1, z2)))

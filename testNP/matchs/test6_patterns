@@ -1,0 +1,29 @@
+%match(a){
+    pat1(pat11(), pat(), _*) -> {}
+    annotation@_*->{}
+    f(_*, f1, _*, f2, _*) -> {}
+}
+%match(a){
+
+}
+
+%match(a, b, c){
+
+}
+
+%match{
+
+}
+%match{
+
+ h[]<<i && j[]<<k || l(m)<<n -> {constraint-action}
+
+}
+%match(a){
+ f(a), f(b) && a==b -> {patternAndConstraint}
+ g(b) || c<d  -> {patternOrConstraint}
+}
+%match(s) {
+  f(a(), g(y)) && ( y << a() || y << b() ) -> {action1}
+  f(), g() -> {action2}
+}

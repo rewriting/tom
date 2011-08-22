@@ -49,16 +49,22 @@
       class="tom.engine.starter.StarterPlugin"/>
     <plugin name="Parser"
       class="tom.engine.parser.TomParserPlugin"/>
+    <plugin name="AST Printer"
+      class="tom.engine.newparser.converter.TreePrinterPlugin"/>
     <plugin name="New Parser"
-      class="tom.engine.parser.NewParserPlugin"/>
+      class="tom.engine.newparser.NewParserPlugin"/>
+    <plugin name="AST Printer"
+      class="tom.engine.newparser.converter.TreePrinterPlugin"/>
+    <plugin name="Tree Formatter"
+	    class="tom.engine.newparser.converter.TreeFormatterPlugin"/>
+    <plugin name="AST Printer"
+      class="tom.engine.newparser.converter.TreePrinterPlugin"/>
     <plugin name="Syntax checker"
       class="tom.engine.checker.SyntaxCheckerApPlugin"/>
     <plugin name="Desugarer"
       class="tom.engine.desugarer.DesugarerPlugin"/>
     <plugin name="Typer"
       class="tom.engine.typer.TyperPlugin"/>
-    <plugin name="New Typer"
-      class="tom.engine.typer.NewTyper"/>
     <plugin name="Type checker"
       class="tom.engine.checker.TypeCheckerPlugin"/>
     <plugin name="Expander"
@@ -125,7 +131,7 @@
         attrName="charset"/>
       <boolean name="multithread" altName="mt"
         description="Sets the multithread mode"
-        value="false"/>
+	value="false"/>
     </options>
   </optionmanager>
 

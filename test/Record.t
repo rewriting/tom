@@ -128,9 +128,9 @@ public class Record {
     get_slot(value,t) { (((CstExp)$t).value) }
   }
 
-  %op TomCstExp IntExp(value:TomInteger) {
+  %op TomCstExp IntExp(intValue:TomInteger) {
     is_fsym(t) { $t instanceof IntExp }
-    get_slot(value,t) { ((Integer)((IntExp)$t).value) }
+    get_slot(intValue,t) { ((Integer)((IntExp)$t).value) }
   }
 
     // ------------------------------------------------------------

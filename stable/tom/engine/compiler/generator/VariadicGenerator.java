@@ -427,25 +427,29 @@ public  tom.engine.adt.code.types.BQTerm  visit_BQTerm( tom.engine.adt.code.type
  throws tom.library.sl.VisitFailure {
 {
 {
-if ( (tom__arg instanceof tom.engine.adt.code.types.BQTerm) ) {
-if ( ((( tom.engine.adt.code.types.BQTerm )tom__arg) instanceof tom.engine.adt.code.types.bqterm.ListHead) ) {
+if ( (((Object)tom__arg) instanceof tom.engine.adt.code.types.BQTerm) ) {
+if ( ((( tom.engine.adt.code.types.BQTerm )((Object)tom__arg)) instanceof tom.engine.adt.code.types.BQTerm) ) {
+if ( ((( tom.engine.adt.code.types.BQTerm )(( tom.engine.adt.code.types.BQTerm )((Object)tom__arg))) instanceof tom.engine.adt.code.types.bqterm.ListHead) ) {
 
 return 
- tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make(vg.genGetHead( (( tom.engine.adt.code.types.BQTerm )tom__arg).getOpname() , (( tom.engine.adt.code.types.BQTerm )tom__arg).getCodomain() , (( tom.engine.adt.code.types.BQTerm )tom__arg).getVariable() )) ;
+ tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make(vg.genGetHead( (( tom.engine.adt.code.types.BQTerm )((Object)tom__arg)).getOpname() , (( tom.engine.adt.code.types.BQTerm )((Object)tom__arg)).getCodomain() , (( tom.engine.adt.code.types.BQTerm )((Object)tom__arg)).getVariable() )) ;
 
 
+}
 }
 }
 
 }
 {
-if ( (tom__arg instanceof tom.engine.adt.code.types.BQTerm) ) {
-if ( ((( tom.engine.adt.code.types.BQTerm )tom__arg) instanceof tom.engine.adt.code.types.bqterm.ListTail) ) {
+if ( (((Object)tom__arg) instanceof tom.engine.adt.code.types.BQTerm) ) {
+if ( ((( tom.engine.adt.code.types.BQTerm )((Object)tom__arg)) instanceof tom.engine.adt.code.types.BQTerm) ) {
+if ( ((( tom.engine.adt.code.types.BQTerm )(( tom.engine.adt.code.types.BQTerm )((Object)tom__arg))) instanceof tom.engine.adt.code.types.bqterm.ListTail) ) {
 
 return 
- tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make(vg.genGetTail( (( tom.engine.adt.code.types.BQTerm )tom__arg).getOpname() , (( tom.engine.adt.code.types.BQTerm )tom__arg).getVariable() )) ;
+ tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make(vg.genGetTail( (( tom.engine.adt.code.types.BQTerm )((Object)tom__arg)).getOpname() , (( tom.engine.adt.code.types.BQTerm )((Object)tom__arg)).getVariable() )) ;
 
 
+}
 }
 }
 
@@ -461,23 +465,28 @@ public  tom.engine.adt.tomexpression.types.Expression  visit_Expression( tom.eng
  throws tom.library.sl.VisitFailure {
 {
 {
-if ( (tom__arg instanceof tom.engine.adt.tomexpression.types.Expression) ) {
-if ( ((( tom.engine.adt.tomexpression.types.Expression )tom__arg) instanceof tom.engine.adt.tomexpression.types.expression.ConstraintToExpression) ) {
- tom.engine.adt.tomconstraint.types.Constraint  tomMatch204_1= (( tom.engine.adt.tomexpression.types.Expression )tom__arg).getcons() ;
-if ( (tomMatch204_1 instanceof tom.engine.adt.tomconstraint.types.constraint.MatchConstraint) ) {
- tom.engine.adt.tomterm.types.TomTerm  tomMatch204_3= tomMatch204_1.getPattern() ;
- tom.engine.adt.code.types.BQTerm  tomMatch204_4= tomMatch204_1.getSubject() ;
-if ( (tomMatch204_3 instanceof tom.engine.adt.tomterm.types.tomterm.VariableStar) ) {
- tom.engine.adt.tomterm.types.TomTerm  tom_v=tomMatch204_3;
-if ( (tomMatch204_4 instanceof tom.engine.adt.code.types.bqterm.VariableHeadList) ) {
- tom.engine.adt.code.types.BQTerm  tomMatch204_10= tomMatch204_4.getEnd() ;
- tom.engine.adt.tomname.types.TomName  tom_opName= tomMatch204_4.getOpname() ;
- tom.engine.adt.code.types.BQTerm  tom_begin= tomMatch204_4.getBegin() ;
-if ( (tomMatch204_10 instanceof tom.engine.adt.code.types.bqterm.BQVariableStar) ) {
- tom.engine.adt.code.types.BQTerm  tom_end=tomMatch204_10;
+if ( (((Object)tom__arg) instanceof tom.engine.adt.tomexpression.types.Expression) ) {
+if ( ((( tom.engine.adt.tomexpression.types.Expression )((Object)tom__arg)) instanceof tom.engine.adt.tomexpression.types.Expression) ) {
+if ( ((( tom.engine.adt.tomexpression.types.Expression )(( tom.engine.adt.tomexpression.types.Expression )((Object)tom__arg))) instanceof tom.engine.adt.tomexpression.types.expression.ConstraintToExpression) ) {
+ tom.engine.adt.tomconstraint.types.Constraint  tomMatch206_1= (( tom.engine.adt.tomexpression.types.Expression )((Object)tom__arg)).getcons() ;
+if ( (tomMatch206_1 instanceof tom.engine.adt.tomconstraint.types.Constraint) ) {
+if ( ((( tom.engine.adt.tomconstraint.types.Constraint )tomMatch206_1) instanceof tom.engine.adt.tomconstraint.types.constraint.MatchConstraint) ) {
+ tom.engine.adt.tomterm.types.TomTerm  tomMatch206_4= tomMatch206_1.getPattern() ;
+ tom.engine.adt.code.types.BQTerm  tomMatch206_5= tomMatch206_1.getSubject() ;
+if ( (tomMatch206_4 instanceof tom.engine.adt.tomterm.types.TomTerm) ) {
+if ( ((( tom.engine.adt.tomterm.types.TomTerm )tomMatch206_4) instanceof tom.engine.adt.tomterm.types.tomterm.VariableStar) ) {
+ tom.engine.adt.tomterm.types.TomTerm  tom_v=tomMatch206_4;
+if ( (tomMatch206_5 instanceof tom.engine.adt.code.types.BQTerm) ) {
+if ( ((( tom.engine.adt.code.types.BQTerm )tomMatch206_5) instanceof tom.engine.adt.code.types.bqterm.VariableHeadList) ) {
+ tom.engine.adt.code.types.BQTerm  tomMatch206_13= tomMatch206_5.getEnd() ;
+ tom.engine.adt.tomname.types.TomName  tom_opName= tomMatch206_5.getOpname() ;
+ tom.engine.adt.code.types.BQTerm  tom_begin= tomMatch206_5.getBegin() ;
+if ( (tomMatch206_13 instanceof tom.engine.adt.code.types.BQTerm) ) {
+if ( ((( tom.engine.adt.code.types.BQTerm )tomMatch206_13) instanceof tom.engine.adt.code.types.bqterm.BQVariableStar) ) {
+ tom.engine.adt.code.types.BQTerm  tom_end=tomMatch206_13;
 
 Expression doWhileTest = 
- tom.engine.adt.tomexpression.types.expression.Negation.make( tom.engine.adt.tomexpression.types.expression.EqualBQTerm.make( tomMatch204_10.getAstType() , tom_end, tom_begin) ) ;
+ tom.engine.adt.tomexpression.types.expression.Negation.make( tom.engine.adt.tomexpression.types.expression.EqualBQTerm.make( tomMatch206_13.getAstType() , tom_end, tom_begin) ) ;
 Expression testEmpty = vg.getConstraintGenerator().genIsEmptyList(
 tom_opName,
 tom_end);
@@ -489,7 +498,7 @@ if (
 tom_v.isVariableStar()) {
 Expression varDeclaration =
 
- tom.engine.adt.tomexpression.types.expression.ConstraintToExpression.make( tom.engine.adt.tomconstraint.types.constraint.MatchConstraint.make(tom_v,  tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make( tom.engine.adt.tomexpression.types.expression.GetSliceList.make(tom_opName, tom_begin, tom_end,  tom.engine.adt.code.types.bqterm.BuildEmptyList.make(tom_opName) ) ) ,  tomMatch204_1.getAstType() ) ) ;
+ tom.engine.adt.tomexpression.types.expression.ConstraintToExpression.make( tom.engine.adt.tomconstraint.types.constraint.MatchConstraint.make(tom_v,  tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make( tom.engine.adt.tomexpression.types.expression.GetSliceList.make(tom_opName, tom_begin, tom_end,  tom.engine.adt.code.types.bqterm.BuildEmptyList.make(tom_opName) ) ) ,  tomMatch206_1.getAstType() ) ) ;
 return 
  tom.engine.adt.tomexpression.types.expression.And.make( tom.engine.adt.tomexpression.types.expression.DoWhileExpression.make(endExpression, doWhileTest) , varDeclaration) ;
 }
@@ -497,6 +506,11 @@ return
  tom.engine.adt.tomexpression.types.expression.DoWhileExpression.make(endExpression, doWhileTest) ;		        		      
 
 
+}
+}
+}
+}
+}
 }
 }
 }

@@ -155,6 +155,8 @@ public class TomMessage extends BasicPlatformMessage {
     new TomMessage("{0}:{1,number,integer}: In structure {2} declared line {3,number,integer}, get_slot({4},...) is repeated.");
   public static final TomMessage errorIncompatibleSlotDecl =
     new TomMessage("{0}:{1,number,integer}: In structure {2} declared line {3,number,integer}, get_slot: {4} is not known");
+  public static final TomMessage slotIncompatibleTypes =
+    new TomMessage("Slot ''{0}'' has sort {1} but has already been declared with sort {2}");
   // used with TomMessage to format exception messages
   public static final TomMessage missingIncludedFile   =
       new TomMessage("Missing file name in %include structure in file ''{0}'' at line {1,number,integer}");
@@ -229,7 +231,8 @@ public class TomMessage extends BasicPlatformMessage {
       new TomMessage("The match with ''{0}'' is always unsuccessful. No code for the correspondent action will be generated");
   public static final TomMessage circularReferences =
       new TomMessage("A circular reference was detected for the variable ''{0}''. For instance x << Context[x] is a circular reference.");
-
+  public static final TomMessage cannotCompileACPattern =
+      new TomMessage("Cannot compile this AC pattern: ''{0}''. There should be at least one linear variable");
 
   // optimizer.TomOptimizer
   public static final TomMessage tomOptimizationType =

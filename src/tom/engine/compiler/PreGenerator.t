@@ -146,7 +146,8 @@ public class PreGenerator {
   private Constraint buildAndConstraintFromArray(Constraint[] array) {
     Constraint list = `AndConstraint();
     for(int i=array.length-1; i>=0 ; i--) {
-      list = `AndConstraint(array[i],list*);
+      Constraint tmp = array[i];
+      list = `AndConstraint(tmp,list*);
     }
     return list;
   }
