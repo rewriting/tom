@@ -108,7 +108,7 @@ returns [int marker]:
   // "%match" already consumed when this rule is called
 
   // with args
-  LPAR csMatchArgument ((COMMA csMatchArgument)*)? (COMMA)? RPAR
+  LPAR csMatchArgument ((COMMA csMatchArgument)*)? RPAR
   LBR
     csExtendedConstraintAction*
   RBR
@@ -154,11 +154,29 @@ csExtendedConstraintAction :
 ;
 
 csMatchArgument :
-  (type=IDENTIFIER)? csTerm
+  (type=IDENTIFIER)? csBQTerm
 
-  ->{type!=null}? ^(Cst_TypedTerm csTerm ^(Cst_Type $type))
-  ->              ^(Cst_TypedTerm csTerm ^(Cst_Type ^(Cst_TypeUnknown)))
+  ->{type!=null}? ^(Cst_TypedTerm csBQTerm ^(Cst_Type $type))
+  ->              ^(Cst_TypedTerm csBQTerm ^(Cst_Type ^(Cst_TypeUnknown)))
 ;
+
+/*
+ old plainBQTerm, many cases:
+  - name -> Cst_BQVar
+  - name* -> Cst_BQVarStar
+  - name(  ) -> Cst_BQAppl
+  - 5 ->_NUM_INT ->_Cst_BQConstant
+  - "name" -> STRING ->_Cst_BQConstant
+ */
+csBQTerm :
+  IDENTIFIER (s=STAR)?
+  ->{s!=null}? ^(Cst_BQVarStar IDENTIFIER )
+  ->           ^(Cst_BQVar IDENTIFIER)
+  |IDENTIFIER LPAR (a+=csBQTerm (COMMA a+=csBQTerm)*)? RPAR
+  -> ^(Cst_BQAppl ^(Cst_Name IDENTIFIER ) ^(Cst_concCstBQTerm $a*))
+  | csConstantValue -> ^(Cst_BQConstant ^(Cst_Name csConstantValue ))
+;
+
  // Constraints ===============================================
 /**
 - pattern list with or without additionnal constraints :
@@ -720,10 +738,27 @@ BQUOTE   : '`';
 COLON   : ':';
 
 IDENTIFIER 	: ('_')? LETTER (LETTER | DIGIT | '_')*;
+
+/*IDENTIFIER
+options{testLiterals = true;}
+    :
+        ('_')? LETTER
+        (
+            options{greedy = true;}:
+            ( LETTER | DIGIT | '_' | '.' )
+        )*
+    ;*/
+
+
+
+
 INTEGER 	: (DIGIT)+;
 DOUBLE	        : (DIGIT)+'.'(DIGIT)* | '.' (DIGIT)+;
 STRING		: DQUOTE (~(DQUOTE)|'\\"')* DQUOTE; //"
 CHAR		: SQUOTE (LETTER|DIGIT) SQUOTE ;
+//STRING    : '"' (ESC|~('"'|'\\'|'\n'|'\r'))* '"';
+//CHAR      : '\'' ( ESC | ~('\''|'\n'|'\r'|'\\') )+ '\'';
+
 fragment
 LETTER	: 'A'..'Z' | 'a'..'z';
 fragment
@@ -737,3 +772,35 @@ ML_COMMENT : '/*' ( options {greedy=false;} : . )* '*/'{ $channel=HIDDEN; } ;
 // lexer need a rule for every input
 // even for chars we don't use
 DEFAULT : . { $channel=HIDDEN;};
+
+fragment
+ESC
+  : '\\'
+    ( 'n'
+    | 'r'
+    | 't'
+    | 'b'
+    | 'f'
+    | '"'
+    | '\''
+    | '\\'
+    | ('u')+ HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
+    | '0'..'3'
+      (
+        '0'..'7'
+        (
+          '0'..'7'
+        )?
+      )?
+    | '4'..'7'
+      (
+      '0'..'7'
+      )?
+    )
+  ;
+
+fragment
+HEX_DIGIT
+  : ('0'..'9'|'A'..'F'|'a'..'f')
+  ;
+

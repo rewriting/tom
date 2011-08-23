@@ -46,8 +46,9 @@ returns [int marker] :
   {$marker = ((CustomToken)$RBR).getPayload(Integer.class);}
   
   -> ^(Cst_BQRecordAppl
-     	^(Cst_Name BQIDBR)
-        ^(Cst_concCstPairSlotBQTerm csPairSlotBQTerm*)) 
+     	  ^(Cst_Name BQIDBR)
+        ^(Cst_concCstPairSlotBQTerm csPairSlotBQTerm*)
+      ) 
  ; 
 
 csMainBQTerm [ boolean compositeAllowed] :
@@ -72,8 +73,9 @@ csMainBQTerm [ boolean compositeAllowed] :
  
  |IDBR (csPairSlotBQTerm (COMMA csPairSlotBQTerm)*)? RBR
   -> ^(Cst_BQRecordAppl
-     	^(Cst_Name IDBR)
-        ^(Cst_concCstPairSlotBQTerm csPairSlotBQTerm*)) 
+     	  ^(Cst_Name IDBR)
+        ^(Cst_concCstPairSlotBQTerm csPairSlotBQTerm*)
+      ) 
 ;
 
 csPairSlotBQTerm :

@@ -151,7 +151,7 @@ public abstract class ParserAction {
     throws TomIncludeException {
 
       ArrayList<String> parameters = new ArrayList<String>();
-      Logger logger = Logger.getLogger("tom.engine.parser.HostParser");
+      Logger logger = Logger.getLogger("tom.engine.newparser.parser.HostParser");
 
       String currentFile = input.getSourceName();
 
@@ -359,9 +359,11 @@ public abstract class ParserAction {
     HostParser parser = new HostParser(streamManager, optionManager);
     List<CommonTree> listOfBlock = parser.parseListOfBlock(tomInput);
 
-    // insert it in AST
-    for(Tree t : listOfBlock) {
-      tree.addChild(t);
+    if(!(listOfBlock==null || listOfBlock.isEmpty())) {
+      // insert it in AST
+      for(Tree t : listOfBlock) {
+        tree.addChild(t);
+      }
     }
 
   }
