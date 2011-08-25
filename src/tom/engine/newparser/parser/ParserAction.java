@@ -588,7 +588,7 @@ public abstract class ParserAction {
         CommonTokenStream tokenStream = new CommonTokenStream(lexer);
         BQTermParser parser = new BQTermParser(tokenStream);
         
-        csBQTerm_return retval =  parser.csBQTerm();
+        tom.engine.newparser.parser.BQTermParser.csBQTerm_return retval =  parser.csBQTerm();
         
         tree.addChild(
             makeTree(BQTermLexer.Cst_BQTermToBlock, "CsBQTermToBlock",
