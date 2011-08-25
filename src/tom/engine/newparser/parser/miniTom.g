@@ -169,11 +169,11 @@ csMatchArgument :
   - "name" -> STRING ->_Cst_BQConstant
  */
 csBQTerm :
-  IDENTIFIER (s=STAR)?
-  ->{s!=null}? ^(Cst_BQVarStar IDENTIFIER )
-  ->           ^(Cst_BQVar IDENTIFIER)
-  |IDENTIFIER LPAR (a+=csBQTerm (COMMA a+=csBQTerm)*)? RPAR
-  -> ^(Cst_BQAppl ^(Cst_Name IDENTIFIER ) ^(Cst_concCstBQTerm $a*))
+  csName (s=STAR)?
+  ->{s!=null}? ^(Cst_BQVarStar csName )
+  ->           ^(Cst_BQVar csName)
+  |csName LPAR (a+=csBQTerm (COMMA a+=csBQTerm)*)? RPAR
+  -> ^(Cst_BQAppl csName ^(Cst_concCstBQTerm $a*))
   | csConstantValue -> ^(Cst_BQConstant ^(Cst_Name csConstantValue ))
 ;
 
@@ -349,7 +349,7 @@ csPairPattern :
 ;
 
 csConstantValue :
-  INTEGER|DOUBLE|STRING|CHAR
+  INTEGER|DOUBLE|LONG|STRING|CHAR
 ;
 // OperatorConstruct & TypeTermConstruct ====================================
 csOperatorConstruct 
@@ -752,12 +752,42 @@ options{testLiterals = true;}
 
 
 
-INTEGER 	: (DIGIT)+;
-DOUBLE	        : (DIGIT)+'.'(DIGIT)* | '.' (DIGIT)+;
-STRING		: DQUOTE (~(DQUOTE)|'\\"')* DQUOTE; //"
-CHAR		: SQUOTE (LETTER|DIGIT) SQUOTE ;
-//STRING    : '"' (ESC|~('"'|'\\'|'\n'|'\r'))* '"';
-//CHAR      : '\'' ( ESC | ~('\''|'\n'|'\r'|'\\') )+ '\'';
+fragment
+MINUS : '-' ;
+INTEGER : (MINUS)? (DIGIT)+;
+DOUBLE  : (MINUS)? (DIGIT)+'.'(DIGIT)* | '.' (DIGIT)+;
+LONG    : (MINUS)? (DIGIT)+ LONG_SUFFIX;
+/*NUM    : 
+  (MINUS)? ('0' ( 
+                 ( ('x'|'X') HEX_DIGIT+ )
+                |( ('0'..'9')+ (DOT|EXPONENT|FLOAT_SUFFIX) )
+                |( ('0'..'7')+ )
+                )?
+            |('1'..'9') ('0'..'9')*
+           )
+           (
+           ('l'|'L')
+           )?
+  ;*/
+
+/*fragment
+PLUS  : '+' ;
+fragment
+DOT   : '.' ;*/
+
+fragment
+HEX_DIGIT : ('0'..'9'|'A'..'F'|'a'..'f');
+/*fragment
+EXPONENT : ('e'|'E') ( PLUS | MINUS )? ('0'..'9')+ ;
+fragment
+FLOAT_SUFFIX : 'f'|'F'|'d'|'D' ;*/
+fragment
+LONG_SUFFIX : 'l'|'L' ;
+
+//STRING		: DQUOTE (~(DQUOTE)|'\\"')* DQUOTE; //"
+//CHAR		: SQUOTE (LETTER|DIGIT) SQUOTE ;
+STRING  : '"' (ESC|~('"'|'\\'|'\n'|'\r'))* '"';
+CHAR    : '\'' ( ESC | ~('\''|'\n'|'\r'|'\\') )+ '\'';
 
 fragment
 LETTER	: 'A'..'Z' | 'a'..'z';
@@ -798,9 +828,3 @@ ESC
       )?
     )
   ;
-
-fragment
-HEX_DIGIT
-  : ('0'..'9'|'A'..'F'|'a'..'f')
-  ;
-
