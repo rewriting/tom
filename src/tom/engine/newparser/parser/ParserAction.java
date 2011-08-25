@@ -57,6 +57,8 @@ public abstract class ParserAction {
     PARSE_METAQUOTE_CONSTRUCT             = ParseMetaQuoteConstruct.getInstance(),
     PARSE_GOM_CONSTRUCT                   = ParseGomConstruct.getInstance(), 
     PARSE_BQTERM_CONSTRUCT                = ParseBQConstruct.getInstance();
+    PARSE_STRATEGY_CONSTRUCT              = ParseStrategyConstruct.getInstance(),
+
 
   /**
    * Implementations of ParserAction.doAction should check
@@ -562,6 +564,29 @@ public abstract class ParserAction {
     
   }
  
+private static class ParseStrategyConstruct extends GenericParseConstruct {
+
+    private static final ParseStrategyConstruct instance = new ParseStrategyConstruct();
+    
+    public static ParserAction getInstance() {return instance;}
+    
+    private ParseStrategyConstruct() {;}
+    
+    @Override
+    public String getConstructName() {
+      return "StrategyConstruct";
+    }
+
+    @Override
+    public GenericConstructReturn
+      parseSpecificConstruct(miniTomParser parser) throws RecognitionException {
+      
+      strategyConstruct_return retval = parser.strategyConstruct();
+      return new GenericConstructReturn(retval.tree, retval.marker);
+    }
+    
+  }
+
   private static class ParseBQConstruct extends ParserAction {
 
     private static final ParserAction instance = new ParseBQConstruct();

@@ -96,6 +96,45 @@ returns [int marker] :
   -> ^(Cst_IncludeConstruct $filename)
 ;
 
+// StrategyConstruct
+/*strategyConstruct
+return [int marker]:
+
+csStrategyName LPAR csStrategyArguments? RPAR EXTENDS BQUOTE? csTerm LBRACE csStrategyVisitList RBRACE ->
+
+;
+//csName
+csStrategyName : IDENTIFIER -> ^(Cst_Name INDENTIFIER );
+
+csStrategyArguments:
+   subjectName COLON algebraicType (COMMA subjectName COLON algebraicType)*
+  |algebraicType subjectName (COMMA algebraicType subjectName)*
+  ;
+
+csStrategyVisitList :
+  csStrategyVisit* -> ^(Cst_concCstStrategyVisit csStrategyVisit*)
+  ;
+
+csStrategyVisit :
+  VISIT algebraicType LPAR (csVisitAction)* RPAR -> 
+  ;
+
+csVisitAction :
+  (labelName COLON)? (
+      csExtendedConstraintAction -> ^() //handle  toto -> { blocklist }
+      | csExtendedConstraint ARROW csTerm -> ^() //handle toto -> f(a())
+      )
+  ;
+
+// term :;
+
+algebraicType :;
+term:
+  varName STAR?
+  | name LPAR term (COMMA term )* RPAR
+subjectName :;
+*/
+
 // MatchConstruct ===========================================================
 /*
 When parsing parser rule ANTLR's Parse tends to consume "to much" chars.
@@ -708,6 +747,7 @@ tokenCustomizer.prepareNextToken(input.mark());
 
 // basic ones
 EXTENDS : 'extends';
+VISIT   : 'visit';
 
 LARROW : '<<';
 GREATEROREQU : '>=';

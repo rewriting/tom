@@ -71,6 +71,10 @@ public class HostParser {
     actionsMapping.put(
       new KeywordDetector("%match"),
       ParserAction.PARSE_MATCH_CONSTRUCT);
+    // %strategy
+    actionsMapping.put(
+      new KeywordDetector("%strategy "),
+      ParserAction.PARSE_STRATEGY_CONSTRUCT);
     // %op
     actionsMapping.put(
       new KeywordDetector("%op "),
