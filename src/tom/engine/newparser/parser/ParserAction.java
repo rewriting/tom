@@ -56,8 +56,8 @@ public abstract class ParserAction {
     PARSE_INCLUDE_CONSTRUCT               = ParseIncludeConstruct.getInstance(),
     PARSE_METAQUOTE_CONSTRUCT             = ParseMetaQuoteConstruct.getInstance(),
     PARSE_GOM_CONSTRUCT                   = ParseGomConstruct.getInstance(), 
-    PARSE_BQTERM_CONSTRUCT                = ParseBQConstruct.getInstance();
-    PARSE_STRATEGY_CONSTRUCT              = ParseStrategyConstruct.getInstance(),
+    PARSE_BQTERM_CONSTRUCT                = ParseBQConstruct.getInstance(),
+    PARSE_STRATEGY_CONSTRUCT              = ParseStrategyConstruct.getInstance();
 
 
   /**

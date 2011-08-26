@@ -97,123 +97,150 @@ returns [int marker] :
 ;
 
 // StrategyConstruct
-/*strategyConstruct
-return [int marker]:
+strategyConstruct
+returns [int marker]:
+csName LPAR csStrategyArgumentList RPAR EXTENDS BQUOTE? csTerm LBR csStrategyVisitList RBR
 
-csStrategyName LPAR csStrategyArguments? RPAR EXTENDS BQUOTE? csTerm LBRACE csStrategyVisitList RBRACE ->
+{$marker = ((CustomToken)$RBR).getPayload(Integer.class);}
 
-;
-//csName
-csStrategyName : IDENTIFIER -> ^(Cst_Name INDENTIFIER );
+  -> ^(Cst_StrategyConstruct
+            {extractOptions((CommonToken)$LPAR, (CommonToken)$RBR)}
+            csName
+            csStrategyArgumentList
+            csTerm
+            csStrategyVisitList
+      )
+  ;
 
-csStrategyArguments:
-   subjectName COLON algebraicType (COMMA subjectName COLON algebraicType)*
-  |algebraicType subjectName (COMMA algebraicType subjectName)*
+csStrategyArgumentList :
+   (csStrategyArgument (COMMA csStrategyArgument)*)?
+     -> ^(Cst_concCstSlot csStrategyArgument*)
+  ;
+
+csStrategyArgument :
+    /*name=ALL_ID COLON type=ALL_ID -> ^(Cst_Slot $name $type)
+  | type=ALL_ID name=ALL_ID ->  ^(Cst_Slot $name $type)*/
+    name=IDENTIFIER COLON type=IDENTIFIER -> ^(Cst_Slot ^(Cst_Name $name) ^(Cst_Name $type))
+  | type=IDENTIFIER name=IDENTIFIER ->  ^(Cst_Slot ^(Cst_Name $name) ^(Cst_Name $type))
   ;
 
 csStrategyVisitList :
-  csStrategyVisit* -> ^(Cst_concCstStrategyVisit csStrategyVisit*)
+  csStrategyVisit* -> ^(Cst_concCstVisit csStrategyVisit*)
   ;
 
 csStrategyVisit :
-  VISIT algebraicType LPAR (csVisitAction)* RPAR -> 
+  VISIT /*ALL_ID*/ IDENTIFIER LBR (csVisitAction)* RBR
+    -> ^(Cst_VisitTerm 
+          ^(Cst_Type IDENTIFIER /*ALL_ID*/ ) 
+          ^(Cst_concConstraintAction csVisitAction* )
+          {extractOptions((CommonToken)$VISIT, (CommonToken)$RBR)}
+        )
   ;
 
 csVisitAction :
-  (labelName COLON)? (
-      csExtendedConstraintAction -> ^() //handle  toto -> { blocklist }
-      | csExtendedConstraint ARROW csTerm -> ^() //handle toto -> f(a())
-      )
+  (csName l=COLON)? csExtendedConstraint ARROW LBR RBR //handle  toto -> { blocklist }
+    -> {$l!=null}? ^(Cst_ConstraintAction csExtendedConstraint
+                           {((CustomToken)$LBR).getPayload(Tree.class)}
+                           ^(Cst_concCstOption ^(Cst_Label csName))
+                           )
+    ->            ^(Cst_ConstraintAction csExtendedConstraint
+                           {((CustomToken)$LBR).getPayload(Tree.class)}
+                           ^(Cst_concCstOption ^(Cst_NoOption ))
+                     )
+  | (csName l=COLON)? csExtendedConstraint ARROW csTerm //handle toto -> f(a()) - is a BQTerm
+    -> {$l!=null}? ^(Cst_ConstraintActionReturn csExtendedConstraint
+                           /*{((CustomToken)$ARROW).getPayload(Tree.class)}*/
+                           csTerm
+                           ^(Cst_concCstOption ^(Cst_Label csName))
+                   )
+    ->            ^(Cst_ConstraintActionReturn csExtendedConstraint
+                           /*{((CustomToken)$ARROW).getPayload(Tree.class)}*/
+                           csTerm
+                           ^(Cst_concCstOption ^(Cst_NoOption ))
+                   )
   ;
-
-// term :;
-
-algebraicType :;
-term:
-  varName STAR?
-  | name LPAR term (COMMA term )* RPAR
-subjectName :;
-*/
 
 // MatchConstruct ===========================================================
 /*
-When parsing parser rule ANTLR's Parse tends to consume "to much" chars.
-To respect ParserAction.doAction contract, doAction implementation needs 
-to rewind stream to the marker returned by matchconstruct.
-*/
+   When parsing parser rule ANTLR's Parse tends to consume "to much" chars.
+   To respect ParserAction.doAction contract, doAction implementation needs 
+   to rewind stream to the marker returned by matchconstruct.
+ */
 matchConstruct
 returns [int marker]:
-  
-  // "%match" already consumed when this rule is called
 
-  // with args
-  LPAR csMatchArgument ((COMMA csMatchArgument)*)? RPAR
-  LBR
-    csExtendedConstraintAction*
-  RBR
+// "%match" already consumed when this rule is called
 
-  // extract and return CharStream's marker
-  {$marker = ((CustomToken)$RBR).getPayload(Integer.class);}
-  
-  -> ^( Cst_MatchConstruct
-       {extractOptions((CommonToken)$LPAR, (CommonToken)$RBR)}
-       ^( Cst_concCstTypedTerm csMatchArgument* )
-       ^( Cst_concConstraintAction csExtendedConstraintAction* )
-      )
+// with args
+LPAR csMatchArgument ((COMMA csMatchArgument)*)? RPAR
+LBR
+csExtendedConstraintAction*
+RBR
 
- |
-  // witout args
-  (LPAR (COMMA)? RPAR)?
-  LBR
-    csConstraintAction*
-  RBR
+// extract and return CharStream's marker
+{$marker = ((CustomToken)$RBR).getPayload(Integer.class);}
 
-  // extract and return CharStream's marker
-  {$marker = ((CustomToken)$RBR).getPayload(Integer.class);}
-  
-  -> ^( Cst_MatchConstruct
-      {extractOptions((CommonToken)$LBR, (CommonToken)$RBR)}
-       ^( Cst_concCstTypedTerm )
-       ^( Cst_concConstraintAction csConstraintAction* )
-      )
+-> ^( Cst_MatchConstruct
+    {extractOptions((CommonToken)$LPAR, (CommonToken)$RBR)}
+    ^( Cst_concCstTypedTerm csMatchArgument* )
+    ^( Cst_concConstraintAction csExtendedConstraintAction* )
+    )
+
+|
+// witout args
+(LPAR (COMMA)? RPAR)?
+LBR
+csConstraintAction*
+RBR
+
+// extract and return CharStream's marker
+{$marker = ((CustomToken)$RBR).getPayload(Integer.class);}
+
+-> ^( Cst_MatchConstruct
+    {extractOptions((CommonToken)$LBR, (CommonToken)$RBR)}
+    ^( Cst_concCstTypedTerm )
+    ^( Cst_concConstraintAction csConstraintAction* )
+    )
 ;
 
 csConstraintAction :
- csConstraint ARROW LBR RBR
- -> ^(Cst_ConstraintAction csConstraint
+csConstraint ARROW LBR RBR
+  -> ^(Cst_ConstraintAction csConstraint
       {((CustomToken)$LBR).getPayload(Tree.class)}
-     )
-;
+      ^(Cst_concCstOption ^(Cst_NoOption ))
+      )
+  ;
 
 csExtendedConstraintAction :
- csExtendedConstraint ARROW LBR RBR
- -> ^(Cst_ConstraintAction csExtendedConstraint
+csExtendedConstraint ARROW LBR RBR
+  -> ^(Cst_ConstraintAction csExtendedConstraint
       {((CustomToken)$LBR).getPayload(Tree.class)}
-     )
-;
+      ^(Cst_concCstOption ^(Cst_NoOption ))
+      )
+  ;
 
 csMatchArgument :
-  (type=IDENTIFIER)? csBQTerm
+(type=IDENTIFIER)? csBQTerm
 
-  ->{type!=null}? ^(Cst_TypedTerm csBQTerm ^(Cst_Type $type))
-  ->              ^(Cst_TypedTerm csBQTerm ^(Cst_Type ^(Cst_TypeUnknown)))
-;
+->{type!=null}? ^(Cst_TypedTerm csBQTerm ^(Cst_Type $type))
+->              ^(Cst_TypedTerm csBQTerm ^(Cst_Type ^(Cst_TypeUnknown)))
+  ;
 
-/*
- old plainBQTerm, many cases:
-  - name -> Cst_BQVar
-  - name* -> Cst_BQVarStar
-  - name(  ) -> Cst_BQAppl
-  - 5 ->_NUM_INT ->_Cst_BQConstant
-  - "name" -> STRING ->_Cst_BQConstant
- */
+  /*
+     old plainBQTerm, many cases:
+     - name -> Cst_BQVar
+     - name* -> Cst_BQVarStar
+     - name(  ) -> Cst_BQAppl
+     - 5 ->_NUM_INT ->_Cst_BQConstant
+     - "name" -> STRING ->_Cst_BQConstant
+   */
 csBQTerm :
   csName (s=STAR)?
-  ->{s!=null}? ^(Cst_BQVarStar csName )
-  ->           ^(Cst_BQVar csName)
+->{s!=null}? ^(Cst_BQVarStar csName )
+->           ^(Cst_BQVar csName)
   |csName LPAR (a+=csBQTerm (COMMA a+=csBQTerm)*)? RPAR
   -> ^(Cst_BQAppl csName ^(Cst_concCstBQTerm $a*))
-  | csConstantValue -> ^(Cst_BQConstant ^(Cst_Name csConstantValue ))
+| csConstantValue -> ^(Cst_BQConstant ^(Cst_Name csConstantValue ))
 ;
 
  // Constraints ===============================================
@@ -777,7 +804,7 @@ SQUOTE  : '\'';
 BQUOTE   : '`';
 COLON   : ':';
 
-IDENTIFIER 	: ('_')? LETTER (LETTER | DIGIT | '_')*;
+IDENTIFIER 	: ('_')? LETTER (LETTER | DIGIT | '_' | '.' )*;
 
 /*IDENTIFIER
 options{testLiterals = true;}
@@ -813,7 +840,16 @@ LONG    : (MINUS)? (DIGIT)+ LONG_SUFFIX;
 /*fragment
 PLUS  : '+' ;
 fragment
-DOT   : '.' ;*/
+DOT   : '.' ;
+fragment
+ID_MINUS:
+  IDENTIFIER MINUS ('a'..'z'|'A'..'Z') (
+        MINUS ('a'..'z' | 'A'..'Z')
+      | IDENTIFIER
+      )*
+  ;
+
+ALL_ID : ID_MINUS |IDENTIFIER ;*/
 
 fragment
 HEX_DIGIT : ('0'..'9'|'A'..'F'|'a'..'f');
