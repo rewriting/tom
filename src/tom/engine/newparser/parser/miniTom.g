@@ -96,6 +96,45 @@ returns [int marker] :
   -> ^(Cst_IncludeConstruct $filename)
 ;
 
+// StrategyConstruct
+/*strategyConstruct
+return [int marker]:
+
+csStrategyName LPAR csStrategyArguments? RPAR EXTENDS BQUOTE? csTerm LBRACE csStrategyVisitList RBRACE ->
+
+;
+//csName
+csStrategyName : IDENTIFIER -> ^(Cst_Name INDENTIFIER );
+
+csStrategyArguments:
+   subjectName COLON algebraicType (COMMA subjectName COLON algebraicType)*
+  |algebraicType subjectName (COMMA algebraicType subjectName)*
+  ;
+
+csStrategyVisitList :
+  csStrategyVisit* -> ^(Cst_concCstStrategyVisit csStrategyVisit*)
+  ;
+
+csStrategyVisit :
+  VISIT algebraicType LPAR (csVisitAction)* RPAR -> 
+  ;
+
+csVisitAction :
+  (labelName COLON)? (
+      csExtendedConstraintAction -> ^() //handle  toto -> { blocklist }
+      | csExtendedConstraint ARROW csTerm -> ^() //handle toto -> f(a())
+      )
+  ;
+
+// term :;
+
+algebraicType :;
+term:
+  varName STAR?
+  | name LPAR term (COMMA term )* RPAR
+subjectName :;
+*/
+
 // MatchConstruct ===========================================================
 /*
 When parsing parser rule ANTLR's Parse tends to consume "to much" chars.
@@ -108,7 +147,7 @@ returns [int marker]:
   // "%match" already consumed when this rule is called
 
   // with args
-  LPAR csMatchArgument ((COMMA csMatchArgument)*)? (COMMA)? RPAR
+  LPAR csMatchArgument ((COMMA csMatchArgument)*)? RPAR
   LBR
     csExtendedConstraintAction*
   RBR
@@ -154,11 +193,29 @@ csExtendedConstraintAction :
 ;
 
 csMatchArgument :
-  (type=IDENTIFIER)? csTerm
+  (type=IDENTIFIER)? csBQTerm
 
-  ->{type!=null}? ^(Cst_TypedTerm csTerm ^(Cst_Type $type))
-  ->              ^(Cst_TypedTerm csTerm ^(Cst_Type ^(Cst_TypeUnknown)))
+  ->{type!=null}? ^(Cst_TypedTerm csBQTerm ^(Cst_Type $type))
+  ->              ^(Cst_TypedTerm csBQTerm ^(Cst_Type ^(Cst_TypeUnknown)))
 ;
+
+/*
+ old plainBQTerm, many cases:
+  - name -> Cst_BQVar
+  - name* -> Cst_BQVarStar
+  - name(  ) -> Cst_BQAppl
+  - 5 ->_NUM_INT ->_Cst_BQConstant
+  - "name" -> STRING ->_Cst_BQConstant
+ */
+csBQTerm :
+  csName (s=STAR)?
+  ->{s!=null}? ^(Cst_BQVarStar csName )
+  ->           ^(Cst_BQVar csName)
+  |csName LPAR (a+=csBQTerm (COMMA a+=csBQTerm)*)? RPAR
+  -> ^(Cst_BQAppl csName ^(Cst_concCstBQTerm $a*))
+  | csConstantValue -> ^(Cst_BQConstant ^(Cst_Name csConstantValue ))
+;
+
  // Constraints ===============================================
 /**
 - pattern list with or without additionnal constraints :
@@ -331,7 +388,7 @@ csPairPattern :
 ;
 
 csConstantValue :
-  INTEGER|DOUBLE|STRING|CHAR
+  INTEGER|DOUBLE|LONG|STRING|CHAR
 ;
 // OperatorConstruct & TypeTermConstruct ====================================
 csOperatorConstruct 
@@ -340,7 +397,11 @@ returns [int marker] :
   //%op already consumed when this rule is called
   tomTypeName=csName ctorName=csName LPAR csSlotList RPAR
   LBR 
-    ks+=csKeywordIsFsym (ks+=csKeywordMake | ks+= csKeywordGetSlot)*
+    (  ks+=csKeywordIsFsym
+     | ks+=csKeywordMake
+     | ks+=csKeywordGetSlot
+     | ks+=csKeywordGetDefault
+    )*
   RBR
 
   {$marker = ((CustomToken)$RBR).getPayload(Integer.class);}
@@ -460,6 +521,15 @@ csKeywordMake :
   LBR /* Host Code making new object */ RBR
 
   -> ^(Cst_Make $argList
+        {((CustomToken)$LBR).getPayload(Tree.class)}
+      )
+;
+
+csKeywordGetDefault :
+  KEYWORD_GET_DEFAULT LPAR argName=csName RPAR
+  LBR /* Host Code making new object */ RBR
+
+  -> ^(Cst_GetDefault $argName
         {((CustomToken)$LBR).getPayload(Tree.class)}
       )
 ;
@@ -620,6 +690,7 @@ csBQAppl :
 // funky ones
 KEYWORD_IS_FSYM     : 'is_fsym'     { opensBlockLBR = true; };
 KEYWORD_GET_SLOT    : 'get_slot'    { opensBlockLBR = true; };
+KEYWORD_GET_DEFAULT : 'get_default' { opensBlockLBR = true; };
 KEYWORD_MAKE        : 'make'        { opensBlockLBR = true; };
 KEYWORD_GET_HEAD    : 'get_head'    { opensBlockLBR = true; };
 KEYWORD_GET_TAIL    : 'get_tail'    { opensBlockLBR = true; };
@@ -676,6 +747,7 @@ tokenCustomizer.prepareNextToken(input.mark());
 
 // basic ones
 EXTENDS : 'extends';
+VISIT   : 'visit';
 
 LARROW : '<<';
 GREATEROREQU : '>=';
@@ -706,10 +778,57 @@ BQUOTE   : '`';
 COLON   : ':';
 
 IDENTIFIER 	: ('_')? LETTER (LETTER | DIGIT | '_')*;
-INTEGER 	: (DIGIT)+;
-DOUBLE	        : (DIGIT)+'.'(DIGIT)* | '.' (DIGIT)+;
-STRING		: DQUOTE (~(DQUOTE)|'\\"')* DQUOTE; //"
-CHAR		: SQUOTE (LETTER|DIGIT) SQUOTE ;
+
+/*IDENTIFIER
+options{testLiterals = true;}
+    :
+        ('_')? LETTER
+        (
+            options{greedy = true;}:
+            ( LETTER | DIGIT | '_' | '.' )
+        )*
+    ;*/
+
+
+
+
+fragment
+MINUS : '-' ;
+INTEGER : (MINUS)? (DIGIT)+;
+DOUBLE  : (MINUS)? (DIGIT)+'.'(DIGIT)* | '.' (DIGIT)+;
+LONG    : (MINUS)? (DIGIT)+ LONG_SUFFIX;
+/*NUM    : 
+  (MINUS)? ('0' ( 
+                 ( ('x'|'X') HEX_DIGIT+ )
+                |( ('0'..'9')+ (DOT|EXPONENT|FLOAT_SUFFIX) )
+                |( ('0'..'7')+ )
+                )?
+            |('1'..'9') ('0'..'9')*
+           )
+           (
+           ('l'|'L')
+           )?
+  ;*/
+
+/*fragment
+PLUS  : '+' ;
+fragment
+DOT   : '.' ;*/
+
+fragment
+HEX_DIGIT : ('0'..'9'|'A'..'F'|'a'..'f');
+/*fragment
+EXPONENT : ('e'|'E') ( PLUS | MINUS )? ('0'..'9')+ ;
+fragment
+FLOAT_SUFFIX : 'f'|'F'|'d'|'D' ;*/
+fragment
+LONG_SUFFIX : 'l'|'L' ;
+
+//STRING		: DQUOTE (~(DQUOTE)|'\\"')* DQUOTE; //"
+//CHAR		: SQUOTE (LETTER|DIGIT) SQUOTE ;
+STRING  : '"' (ESC|~('"'|'\\'|'\n'|'\r'))* '"';
+CHAR    : '\'' ( ESC | ~('\''|'\n'|'\r'|'\\') )+ '\'';
+
 fragment
 LETTER	: 'A'..'Z' | 'a'..'z';
 fragment
@@ -723,3 +842,29 @@ ML_COMMENT : '/*' ( options {greedy=false;} : . )* '*/'{ $channel=HIDDEN; } ;
 // lexer need a rule for every input
 // even for chars we don't use
 DEFAULT : . { $channel=HIDDEN;};
+
+fragment
+ESC
+  : '\\'
+    ( 'n'
+    | 'r'
+    | 't'
+    | 'b'
+    | 'f'
+    | '"'
+    | '\''
+    | '\\'
+    | ('u')+ HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
+    | '0'..'3'
+      (
+        '0'..'7'
+        (
+          '0'..'7'
+        )?
+      )?
+    | '4'..'7'
+      (
+      '0'..'7'
+      )?
+    )
+  ;

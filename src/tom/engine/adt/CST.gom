@@ -54,7 +54,8 @@ CstTerm = Cst_VariableName(name : String)
 
 CstTermList = Cst_concCstTerm(CstTerm*)
 
-CstTypedTerm = Cst_TypedTerm(term:CstTerm, type:CstType)
+//CstTypedTerm = Cst_TypedTerm(term:CstTerm, type:CstType)
+CstTypedTerm = Cst_TypedTerm(term:CstBQTerm, type:CstType)
              
 CstType = Cst_Type(type:String)
             | Cst_TypeUnknown()
@@ -95,6 +96,7 @@ CstOperator =
  | Cst_MakeEmptyArray (argName:CstName, block:CstBlockList)
  | Cst_GetSize        (argName:CstName, block:CstBlockList)
  | Cst_GetTail        (argName:CstName, block:CstBlockList)
+ | Cst_GetDefault     (argName:CstName, block:CstBlockList)
  | Cst_GetSlot   (argName1:CstName, argName2:CstName, block:CstBlockList)
  | Cst_MakeInsert(argName1:CstName, argName2:CstName, block:CstBlockList)
  | Cst_GetElement(argName1:CstName, argName2:CstName, block:CstBlockList)
@@ -118,6 +120,7 @@ CstBQTerm = Cst_BQAppl(name:CstName, bqTermList:CstBQTermList)
          | Cst_BQInnerHostCode(code:String)
          | Cst_CompositeTerm(list:CstBQTermList)
          | Cst_ITL(code:String)
+         | Cst_BQConstant(name:CstName)
 
 CstPairSlotBQTerm  = Cst_PairSlotBQTerm(slotName:CstName, term:CstBQTerm)
 

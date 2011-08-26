@@ -24,7 +24,7 @@ public class TestPeano {
 
   %op term zero() {
     is_fsym(t) { ((ATermAppl)t).getAFun() == fzero }
-    make { factory.makeAppl(fzero) }
+    make() { factory.makeAppl(fzero) }
   }
   
   %op term suc(pred:term) {

@@ -13,13 +13,19 @@ import java.io.BufferedWriter;
 import java.io.OutputStreamWriter;
 import java.io.FileOutputStream;
 
+import tom.platform.OptionManager;
+
 import tom.engine.TomStreamManager;
 import tom.engine.TomMessage;
+import tom.engine.exception.TomIncludeException;
 
 import tom.engine.newparser.parser.miniTomParser.*;
 import tom.engine.newparser.parser.BQTermParser.*;
 import tom.engine.newparser.parser.miniTomLexer;
 import tom.engine.newparser.parser.BQTermLexer;
+import tom.engine.newparser.debug.HostParserDebugger;
+import tom.engine.newparser.streamanalysis.DelimitedSequenceDetector;
+import tom.engine.newparser.streamanalysis.StreamAnalyst;
 import static tom.engine.newparser.util.TreeFactory.*;
 
 import org.antlr.runtime.CharStream;
@@ -30,12 +36,6 @@ import org.antlr.runtime.tree.Tree;
 import org.antlr.runtime.tree.CommonTree;
 import org.antlr.runtime.ANTLRFileStream;
 
-import tom.platform.OptionManager;
-
-import tom.engine.newparser.debug.HostParserDebugger;
-
-import tom.engine.newparser.streamanalysis.DelimitedSequenceDetector;
-import tom.engine.newparser.streamanalysis.StreamAnalyst;
 
 /**
  * 
@@ -57,6 +57,8 @@ public abstract class ParserAction {
     PARSE_METAQUOTE_CONSTRUCT             = ParseMetaQuoteConstruct.getInstance(),
     PARSE_GOM_CONSTRUCT                   = ParseGomConstruct.getInstance(), 
     PARSE_BQTERM_CONSTRUCT                = ParseBQConstruct.getInstance();
+    PARSE_STRATEGY_CONSTRUCT              = ParseStrategyConstruct.getInstance(),
+
 
   /**
    * Implementations of ParserAction.doAction should check
@@ -82,7 +84,8 @@ public abstract class ParserAction {
                                 Tree tree,
                                 StreamAnalyst analyst,
                                 TomStreamManager streamManager,
-                                OptionManager optionManager);
+                                OptionManager optionManager)
+    throws TomIncludeException;
 
   private static class SkipDelimitedSequence extends ParserAction {
 
@@ -95,7 +98,8 @@ public abstract class ParserAction {
     @Override
     public void doAction(CharStream input, HostBlockBuilder hostBlockBuilder,
           Tree tree, StreamAnalyst analyst, TomStreamManager streamManager,
-          OptionManager optionManager) {
+          OptionManager optionManager)
+    throws TomIncludeException {
 
       int startLine = input.getLine();
       int startColumn = input.getCharPositionInLine();
@@ -145,10 +149,11 @@ public abstract class ParserAction {
     @Override
     public void doAction(CharStream input, HostBlockBuilder hostBlockBuilder,
         Tree tree, StreamAnalyst analyst, TomStreamManager streamManager,
-        OptionManager optionManager) {
+        OptionManager optionManager)
+    throws TomIncludeException {
 
       ArrayList<String> parameters = new ArrayList<String>();
-      Logger logger = Logger.getLogger("tom.engine.parser.HostParser");
+      Logger logger = Logger.getLogger("tom.engine.newparser.parser.HostParser");
 
       String currentFile = input.getSourceName();
 
@@ -356,9 +361,11 @@ public abstract class ParserAction {
     HostParser parser = new HostParser(streamManager, optionManager);
     List<CommonTree> listOfBlock = parser.parseListOfBlock(tomInput);
 
-    // insert it in AST
-    for(Tree t : listOfBlock) {
-      tree.addChild(t);
+    if(!(listOfBlock==null || listOfBlock.isEmpty())) {
+      // insert it in AST
+      for(Tree t : listOfBlock) {
+        tree.addChild(t);
+      }
     }
 
   }
@@ -376,19 +383,20 @@ public abstract class ParserAction {
 		  				Tree tree,
 		  				StreamAnalyst analyst,
               TomStreamManager streamManager,
-              OptionManager optionManager) {
+              OptionManager optionManager)
+    throws TomIncludeException {
 
     String includeName;
 
     // treat keyword chars
     hostBlockBuilder.removeLastChars(analyst.getOffsetAtMatch());
     PACK_HOST_CONTENT.doAction(input, hostBlockBuilder, tree, analyst,
-          streamManager, optionManager);
+        streamManager, optionManager);
     input.consume();
 
     // get file to include name
-// XXX there is a copy of this in ParseGomConstruct (need refactoring) =======
-    
+    // XXX there is a copy of this in ParseGomConstruct (need refactoring) =======
+
     List<Character> legitChars = Arrays.asList('\n', '\r', '\t', ' ');
     while(legitChars.contains((char)input.LA(1))) {
       input.consume();
@@ -398,31 +406,58 @@ public abstract class ParserAction {
     if((tmp=(char)input.LA(1))!='{') {
       throw new RuntimeException("Unexpected '"+tmp+"', expecting '{'");//XXX
     }
-    
-    
+
+
     DelimitedSequenceDetector delimitedSequenceDetector =
       new DelimitedSequenceDetector("{", "}");
-      
-      delimitedSequenceDetector.readChar(input); // init detector
-      input.consume(); // avoid '{' to go in hostBlockBuilder
 
-      int initialGomLine = input.getLine();
-     
-      // read every char and add them to hostBlockBuilder
+    delimitedSequenceDetector.readChar(input); // init detector
+    input.consume(); // avoid '{' to go in hostBlockBuilder
+
+    int initialGomLine = input.getLine();
+
+    // read every char and add them to hostBlockBuilder
     SKIP_DELIMITED_SEQUENCE.doAction(input, hostBlockBuilder, tree,
         delimitedSequenceDetector, streamManager, optionManager);
-      
-      // remove '}' from hostBlockBuilder
-      hostBlockBuilder.removeLastChars(1);  
 
-      includeName = hostBlockBuilder.getText().trim();
-//XXX end copy ===============================================================
+    // remove '}' from hostBlockBuilder
+    hostBlockBuilder.removeLastChars(1);  
+
+    includeName = hostBlockBuilder.getText().trim();
+    //XXX end copy ===============================================================
+
+    //to improve
+    includeName = includeName.replace('/',File.separatorChar);
+    includeName = includeName.replace('\\',File.separatorChar);
+    if(includeName.equals("")) {
+      throw new TomIncludeException(TomMessage.missingIncludedFile,new Object[]{input.getSourceName(), Integer.valueOf(input.getLine())});
+    }
+    File file = new File(includeName);
+    if(file.isAbsolute()) {
+      try {
+        file = file.getCanonicalFile();
+      } catch (IOException e) {
+        System.out.println("IO Exception when computing included file");
+        e.printStackTrace();
+      }
+
+      if(!file.exists()) {
+        file = null;
+      }
+    } else {
+      // StreamManager shall find it
+      file = streamManager.findFile(new File(input.getSourceName()).getParentFile(),includeName);
+    }
+
+    if(file == null) {
+      throw new TomIncludeException(TomMessage.includedFileNotFound,new Object[]{includeName, input.getSourceName(), Integer.valueOf(input.getLine()), input.getSourceName()});
+    }
 
     // include it
     // XXX treat every failure case like in HostLanguage.g.t
-    HostParser parser = new HostParser(streamManager, optionManager);
-    File file = streamManager.findFile(
-      new File(input.getSourceName()).getParentFile(), includeName);
+    //
+///    File file = streamManager.findFile(
+///      new File(input.getSourceName()).getParentFile(), includeName);
 
     CharStream tomInput;
     try{
@@ -431,6 +466,10 @@ public abstract class ParserAction {
       throw new RuntimeException(e); //XXX
     }
 
+    //TODO : add something to test if the included file has already been parsed
+    // list of parsed files or list of included files ?
+
+    HostParser parser = new HostParser(streamManager, optionManager);
     List<CommonTree> listOfBlock = parser.parseListOfBlock(tomInput);
     for(Tree t : listOfBlock) {
       tree.addChild(t);
@@ -443,7 +482,8 @@ public abstract class ParserAction {
     @Override
     public void doAction(CharStream input, HostBlockBuilder hostBlockBuilder,
         Tree tree, StreamAnalyst analyst, TomStreamManager streamManager,
-        OptionManager optionManager) {
+        OptionManager optionManager)
+    throws TomIncludeException {
 
       // remove beginning of the keyword from hostBlockBuilder
       // ("%matc" if keyword is "%match")
@@ -524,6 +564,29 @@ public abstract class ParserAction {
     
   }
  
+private static class ParseStrategyConstruct extends GenericParseConstruct {
+
+    private static final ParseStrategyConstruct instance = new ParseStrategyConstruct();
+    
+    public static ParserAction getInstance() {return instance;}
+    
+    private ParseStrategyConstruct() {;}
+    
+    @Override
+    public String getConstructName() {
+      return "StrategyConstruct";
+    }
+
+    @Override
+    public GenericConstructReturn
+      parseSpecificConstruct(miniTomParser parser) throws RecognitionException {
+      
+      strategyConstruct_return retval = parser.strategyConstruct();
+      return new GenericConstructReturn(retval.tree, retval.marker);
+    }
+    
+  }
+
   private static class ParseBQConstruct extends ParserAction {
 
     private static final ParserAction instance = new ParseBQConstruct();
@@ -535,7 +598,8 @@ public abstract class ParserAction {
     @Override
     public void doAction(CharStream input, HostBlockBuilder hostBlockBuilder,
         Tree tree, StreamAnalyst analyst, TomStreamManager streamManager,
-        OptionManager optionManager) {
+        OptionManager optionManager)
+    throws TomIncludeException {
      
       hostBlockBuilder.removeLastChars(analyst.getOffsetAtMatch());
       
@@ -549,7 +613,7 @@ public abstract class ParserAction {
         CommonTokenStream tokenStream = new CommonTokenStream(lexer);
         BQTermParser parser = new BQTermParser(tokenStream);
         
-        csBQTerm_return retval =  parser.csBQTerm();
+        tom.engine.newparser.parser.BQTermParser.csBQTerm_return retval =  parser.csBQTerm();
         
         tree.addChild(
             makeTree(BQTermLexer.Cst_BQTermToBlock, "CsBQTermToBlock",
@@ -676,7 +740,8 @@ public abstract class ParserAction {
     @Override
 	  public void doAction(CharStream input, HostBlockBuilder hostBlockBuilder,
         Tree tree, StreamAnalyst analyst, TomStreamManager streamManager,
-        OptionManager optionManager) {
+        OptionManager optionManager)
+    throws TomIncludeException {
 
       if(!hostBlockBuilder.isEmpty()) {
         tree.addChild(hostBlockBuilder.getHostBlock());
@@ -698,7 +763,8 @@ public abstract class ParserAction {
     @Override
     public void doAction(CharStream input, HostBlockBuilder hostBlockBuilder,
         Tree tree, StreamAnalyst analyst, TomStreamManager streamManager,
-        OptionManager optionManager) {
+        OptionManager optionManager)
+    throws TomIncludeException {
       
       // remove beginning of the keyword from hostBlockBuilder
       hostBlockBuilder.removeLastChars(analyst.getOffsetAtMatch());

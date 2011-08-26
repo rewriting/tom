@@ -72,16 +72,30 @@ COMMA  : ',' ;
 RPAR   : ')' {tokenCustomizer.prepareNextToken(input.mark());};
 RBR    : ']' {tokenCustomizer.prepareNextToken(input.mark());};
 EQUAL  : '=' ;
+fragment
+MINUS  : '-' ;
 
+//XML_START : '<';
+//XML_CLOSE : '>' ;
+//DOUBLE_QUOTE: '\"';
 
 fragment
 BQ      : '`';
 fragment
 FragID      :  ('_')? LETTER (LETTER|DIGIT|'_')*;
+
+BQSTRING : '"' (~('"'|'\\'|'\n'|'\r'))* '"';
+BQCHAR   : '\'' (~('\''|'\n'|'\r'|'\\') )+ '\'';
+fragment
+INTEGER  : ( MINUS )? ( DIGIT )+ ;
+BQDOT    : '.' ;
+NUM : INTEGER (BQDOT DIGIT*)? ;
+
 fragment
 LETTER  : ('A'..'Z' | 'a'..'z');
 fragment
 DIGIT   : '0'..'9';
+
 fragment
 FragWS      : ('\r' | '\n' | '\t' | ' ' );
 
