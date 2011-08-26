@@ -1,9 +1,11 @@
-A faire 
+TODO
 -------
-%include : attention aux include circulaires
-inclusion et appel de %gom
-parsing de %strategy : ok, changer la version "visit T { p1 -> term }"
-gerer les $nom_variable dans les mappings
-%[..]%
+- %include : attention aux include circulaires
+- inclusion et appel de %gom
+- parsing de %strategy : ok, changer la version "visit T { p1 -> term }"
+- gerer les $nom_variable dans les mappings
+- meta-quote %[..]%
+- ajouter des optionList dans les constructions (pour les numéros de ligne, les
+  noms de fichiers, etc.)
 
 
