@@ -25,11 +25,14 @@ CstBlock =
 | Cst_MetaQuoteConstruct(optionList:CstOptionList, content:String)
 | Cst_IncludeConstruct  (optionList:CstOptionList, filename:String)
 | Cst_BQTermToBlock     (bqterm:CstBQTerm)
+| Cst_StrategyConstruct(optionList:CstOptionList, stratName:CstName, stratArgs:CstSlotList, extendsTerm:CstTerm, visitList:CstVisitList)
 
 // MatchConstruct ============================================================
 CstMatchArgumentList  = Cst_concCstTypedTerm(CstTypedTerm*)
 
-CstConstraintAction = Cst_ConstraintAction(constraint:CstConstraint , action:CstBlockList) 
+CstConstraintAction = Cst_ConstraintAction(constraint:CstConstraint , action:CstBlockList, optionList:CstOptionList) 
+                    | Cst_ConstraintActionReturn(constraint:CstConstraint , term:CstTerm, optionList:CstOptionList) 
+//                    | Cst_LabelledConstraintAction(constraint:CstConstraint , action:CstBlockList, label:CstName) 
 
 CstConstraintActionList = Cst_concConstraintAction(CstConstraintAction*)
 
@@ -113,14 +116,14 @@ CstSlot = Cst_Slot(slotName:CstName, slotTypeName:CstName)
 
 // BQTerms ===================================================================
 CstBQTerm = Cst_BQAppl(name:CstName, bqTermList:CstBQTermList)
-         | Cst_BQRecordAppl(name:CstName, slotList:CstPairSlotBQTermList)
-         | Cst_BQVar(name:CstName)
-         | Cst_BQVarStar(name:CstName)
-         | Cst_BQDefault()
-         | Cst_BQInnerHostCode(code:String)
-         | Cst_CompositeTerm(list:CstBQTermList)
-         | Cst_ITL(code:String)
-         | Cst_BQConstant(name:CstName)
+          | Cst_BQRecordAppl(name:CstName, slotList:CstPairSlotBQTermList)
+          | Cst_BQVar(name:CstName)
+          | Cst_BQVarStar(name:CstName)
+          | Cst_BQDefault()
+          | Cst_BQInnerHostCode(code:String)
+          | Cst_CompositeTerm(list:CstBQTermList)
+          | Cst_ITL(code:String)
+          | Cst_BQConstant(name:CstName)
 
 CstPairSlotBQTerm  = Cst_PairSlotBQTerm(slotName:CstName, term:CstBQTerm)
 
@@ -140,4 +143,10 @@ CstOption = Cst_SourceFile(sourceFile:String)
           | Cst_EndLine(endLine:int)
           | Cst_StartColumn(startColumn:int)
           | Cst_EndColumn(endColumn:int)
+          | Cst_Label(name:CstName)
           | Cst_NoOption()
+
+
+// Strategy
+CstVisit = Cst_VisitTerm(type:CstType,constraintActionList:CstConstraintActionList,optionList:CstOptionList)
+CstVisitList = Cst_concCstVisit(CstVisit*)

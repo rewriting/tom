@@ -1,8 +1,8 @@
 A faire 
 -------
-inclusion de ficher du %include
+%include : attention aux include circulaires
 inclusion et appel de %gom
-parsing de %strategy
+parsing de %strategy : ok, changer la version "visit T { p1 -> term }"
 gerer les $nom_variable dans les mappings
 %[..]%
 
