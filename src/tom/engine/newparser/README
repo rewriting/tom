@@ -1,10 +1,9 @@
 TODO
 -------
-- %include : attention aux include circulaires
+- %include : à tester, normalement OK, semble passer
 - inclusion et appel de %gom
-- parsing de %strategy : ok, changer la version "visit T { p1 -> term }"
+- parsing de %strategy : à tester, semble passer sur plusieurs exemples/tests
 - gerer les $nom_variable dans les mappings
 - meta-quote %[..]%
 - ajouter des optionList dans les constructions (pour les numéros de ligne, les
   noms de fichiers, etc.)
-
