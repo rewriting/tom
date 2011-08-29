@@ -44,7 +44,7 @@ public class PeanoMapping3 {
 
   %op term zero() {
     is_fsym(t) { $t.getName() == "zero" }
-    make { SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun("zero",0,false)) }
+    make() { SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun("zero",0,false)) }
   }
   
   %op term suc(p:term) {

@@ -47,7 +47,7 @@ public class PeanoTestTom {
 
   %op Nat Nat_ConsZero() {
     fsym { fzero }
-    make { factory.makeAppl(fzero) }
+    make() { factory.makeAppl(fzero) }
   }
   
   %op Nat Nat_ConsSuc(pred:Nat) {
