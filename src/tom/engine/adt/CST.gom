@@ -25,13 +25,13 @@ CstBlock =
 | Cst_MetaQuoteConstruct(optionList:CstOptionList, content:String)
 | Cst_IncludeConstruct  (optionList:CstOptionList, filename:String)
 | Cst_BQTermToBlock     (bqterm:CstBQTerm)
-| Cst_StrategyConstruct(optionList:CstOptionList, stratName:CstName, stratArgs:CstSlotList, extendsTerm:CstTerm, visitList:CstVisitList)
+| Cst_StrategyConstruct(optionList:CstOptionList, stratName:CstName, stratArgs:CstSlotList, extendsTerm:CstBQTerm, visitList:CstVisitList)
 
 // MatchConstruct ============================================================
 CstMatchArgumentList  = Cst_concCstTypedTerm(CstTypedTerm*)
 
 CstConstraintAction = Cst_ConstraintAction(constraint:CstConstraint , action:CstBlockList, optionList:CstOptionList) 
-                    | Cst_ConstraintActionReturn(constraint:CstConstraint , term:CstTerm, optionList:CstOptionList) 
+//                    | Cst_ConstraintActionReturn(constraint:CstConstraint , term:CstBQTerm, optionList:CstOptionList) 
 //                    | Cst_LabelledConstraintAction(constraint:CstConstraint , action:CstBlockList, label:CstName) 
 
 CstConstraintActionList = Cst_concConstraintAction(CstConstraintAction*)
