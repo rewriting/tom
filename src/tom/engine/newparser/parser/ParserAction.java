@@ -405,7 +405,6 @@ public abstract class ParserAction {
     throws TomIncludeException, TomException {
 
     String currentFileName = input.getSourceName();
-    System.out.println("(DEBUG) ParseAction - \ncurrentFileName = "+currentFileName+"\nincludedFiles = "+includedFiles);
     testIncludedFile(currentFileName, includedFiles);
     Logger logger = Logger.getLogger("tom.engine.newparser.parser.HostParser");
 
