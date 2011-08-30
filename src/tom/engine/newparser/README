@@ -1,9 +1,35 @@
 TODO
 -------
 - %include : à tester, normalement OK, semble passer
+
 - inclusion et appel de %gom
+
 - parsing de %strategy : à tester, semble passer sur plusieurs exemples/tests
-- gerer les $nom_variable dans les mappings
+
+- gérer les $nom_variable dans les mappings
+  - directement dans le parser ?
+  - plus simple de le faire lors de la transformation des cst : appliquer
+  String tom.engine.tools.ASTFactory.abstractCode(String code, String... vars);
+  à tous les contenus des nœuds Cst_IsFsym, Cst_GetHead, Cst_IsEmpty,
+  Cst_Get_syze, Cst_GetTail, Cst_GetSlot, Cst_GetElement, Cst_Make, Cst_IsSort,
+  Cst_Equals, etc. (liste à compléter si besoin)
+
 - meta-quote %[..]%
+
 - ajouter des optionList dans les constructions (pour les numéros de ligne, les
   noms de fichiers, etc.)
+  il y a une méthode Java « CommonTree extractOptions(CommonToken) » dans
+  miniTomParser qui extrait les options et ajoute un nœud à l'arbre. Pour
+  commencer, ce n'est pas mal, mais il faudra peut-être un peu la
+  modifier/décliner
+
+- changer le parser backquote pour délimiter _explicitement_ les parties
+  backquote et code hôte ("parenthésage" et un "unquote") :
+e.g. : `f(x $+ 42$)`  <- solution qui semble l'une des plus intéressantes
+
+Mais on peut aussi imaginer des syntaxes telles que :
+  `f(x ${+ 42})`  <- très intéressante aussi
+ou `(f(x ${+ 42}))
+ou `f(x '+ 42')`
+
+
