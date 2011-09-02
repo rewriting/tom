@@ -48,7 +48,7 @@ and fsuc  = get_fun_sym(Suc(Zero));;
   
 %op peano zero() {
   is_fsym(t) { get_fun_sym(t) = fzero }
-  make { Zero }
+  make() { Zero }
 }
 
 %op peano suc(pred:peano) {

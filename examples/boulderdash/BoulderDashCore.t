@@ -53,7 +53,7 @@ public class BoulderDashCore {
 
   %op Bead empty() {
     is_fsym(t) { $t==null }
-    make { null }
+    make() { null }
   }
 
   private static int undefined = 0;

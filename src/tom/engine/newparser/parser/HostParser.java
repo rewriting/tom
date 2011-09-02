@@ -1,6 +1,7 @@
 package tom.engine.newparser.parser;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
@@ -34,18 +35,32 @@ public class HostParser {
   private OptionManager optionManager;
   private TomStreamManager streamManager;
 
+  private HashSet<String> includedFileSet = null;
+  private HashSet<String> alreadyParsedFileSet = null;
+  public boolean testIncludedFile(String fileName, HashSet<String> fileSet) {
+    // !(true) if the set did not already contain the specified element.
+    return !fileSet.add(fileName);
+  }
+
   /**
    * Create a HostParser untill stopCondition find what it's looking for.
    * Defautl stopCondition is EOF.
    * @param stopCondition
    */
-  // streamManager/optionManager... used only for PARSER_GOM_... need cleaning
+ // streamManager/optionManager... used only for PARSER_GOM_... need cleaning
   public HostParser(TomStreamManager streamManager, OptionManager optionManager,
+                    HashSet<String> includedFiles, HashSet<String> alreadyParsedFiles,
                     StreamAnalyst stopCondition) {
 
     this.optionManager = optionManager;
     this.streamManager = streamManager;
-
+    
+    this.includedFileSet = new HashSet<String>(includedFiles);
+    this.alreadyParsedFileSet = new HashSet<String>(alreadyParsedFiles);
+    //following test for the case of stopCondition==NegativeImbricationDetector
+    if(streamManager!=null) {
+      testIncludedFile(streamManager.getInputFileName(), includedFileSet);
+    }
     this.stopCondition = stopCondition;
 
     actionsMapping = new HashMap<StreamAnalyst, ParserAction>();
@@ -110,9 +125,22 @@ public class HostParser {
   }
   
   public HostParser(TomStreamManager streamManager, OptionManager optionManager) {
-    this(streamManager, optionManager, new KeywordDetector(""+(char)CharStream.EOF));
+     this(streamManager, optionManager, new HashSet<String>(), new 
+         HashSet<String>(), new KeywordDetector(""+(char)CharStream.EOF));
   }
-  
+ 
+  public HostParser(TomStreamManager streamManager, OptionManager optionManager,
+                    StreamAnalyst stopCondition) {
+     this(streamManager, optionManager, new HashSet<String>(),new HashSet<String>(), stopCondition);
+   }
+
+  public HostParser(TomStreamManager streamManager, OptionManager optionManager,
+                    HashSet<String> includedFiles, 
+                    HashSet<String> alreadyParsedFiles) {
+    this(streamManager, optionManager, includedFiles, alreadyParsedFiles,
+        new KeywordDetector(""+(char)CharStream.EOF));
+  }
+
   public CommonTree parseProgram(CharStream input){
     return makeRootTree(Cst_Program, "Cst_Program", parseBlockList(input));
   }
@@ -159,8 +187,9 @@ public class HostParser {
         ParserAction action = actionsMapping.get(recognized);
         try {
           action.doAction(input, hostBlockBuilder, tree, recognized,
-              getStreamManager(), getOptionManager());
-        } catch (TomIncludeException e) {
+              getStreamManager(), getOptionManager(), includedFileSet,
+              alreadyParsedFileSet);
+        } catch (Exception e) {
           e.printStackTrace();
         }
         // doAction is allowed to modify its parameters
@@ -173,8 +202,9 @@ public class HostParser {
 
     try {
       ParserAction.PACK_HOST_CONTENT.doAction(input, hostBlockBuilder, tree,
-          null, getStreamManager(), getOptionManager()) ;
-    } catch (TomIncludeException e) {
+          null, getStreamManager(), getOptionManager(), includedFileSet,
+          alreadyParsedFileSet);
+    } catch (Exception e) {
       e.printStackTrace();
     }
 

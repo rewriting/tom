@@ -99,7 +99,7 @@ returns [int marker] :
 // StrategyConstruct
 strategyConstruct
 returns [int marker]:
-csName LPAR csStrategyArgumentList RPAR EXTENDS BQUOTE? csTerm LBR csStrategyVisitList RBR
+csName LPAR csStrategyArgumentList RPAR EXTENDS BQUOTE? csBQTerm LBR csStrategyVisitList RBR
 
 {$marker = ((CustomToken)$RBR).getPayload(Integer.class);}
 
@@ -107,7 +107,7 @@ csName LPAR csStrategyArgumentList RPAR EXTENDS BQUOTE? csTerm LBR csStrategyVis
             {extractOptions((CommonToken)$LPAR, (CommonToken)$RBR)}
             csName
             csStrategyArgumentList
-            csTerm
+            csBQTerm
             csStrategyVisitList
       )
   ;
@@ -147,15 +147,17 @@ csVisitAction :
                            {((CustomToken)$LBR).getPayload(Tree.class)}
                            ^(Cst_concCstOption ^(Cst_NoOption ))
                      )
-  | (csName l=COLON)? csExtendedConstraint ARROW csTerm //handle toto -> f(a()) - is a BQTerm
-    -> {$l!=null}? ^(Cst_ConstraintActionReturn csExtendedConstraint
+  | (csName l=COLON)? csExtendedConstraint ARROW csBQTerm //handle toto -> f(a()) - is a BQTerm
+    -> {$l!=null}? ^(Cst_ConstraintAction csExtendedConstraint
                            /*{((CustomToken)$ARROW).getPayload(Tree.class)}*/
-                           csTerm
+                           /*csBQTerm*/
+                           ^(Cst_concCstBlock ^(Cst_BQTermToBlock csBQTerm))
                            ^(Cst_concCstOption ^(Cst_Label csName))
                    )
-    ->            ^(Cst_ConstraintActionReturn csExtendedConstraint
+    ->            ^(Cst_ConstraintAction csExtendedConstraint
                            /*{((CustomToken)$ARROW).getPayload(Tree.class)}*/
-                           csTerm
+                           /*csBQTerm*/
+                           ^(Cst_concCstBlock ^(Cst_BQTermToBlock csBQTerm))
                            ^(Cst_concCstOption ^(Cst_NoOption ))
                    )
   ;
@@ -806,21 +808,9 @@ COLON   : ':';
 
 IDENTIFIER 	: ('_')? LETTER (LETTER | DIGIT | '_' | '.' )*;
 
-/*IDENTIFIER
-options{testLiterals = true;}
-    :
-        ('_')? LETTER
-        (
-            options{greedy = true;}:
-            ( LETTER | DIGIT | '_' | '.' )
-        )*
-    ;*/
-
-
-
-
 fragment
 MINUS : '-' ;
+
 INTEGER : (MINUS)? (DIGIT)+;
 DOUBLE  : (MINUS)? (DIGIT)+'.'(DIGIT)* | '.' (DIGIT)+;
 LONG    : (MINUS)? (DIGIT)+ LONG_SUFFIX;
@@ -840,7 +830,8 @@ LONG    : (MINUS)? (DIGIT)+ LONG_SUFFIX;
 /*fragment
 PLUS  : '+' ;
 fragment
-DOT   : '.' ;
+DOT   : '.' ;*/
+
 fragment
 ID_MINUS:
   IDENTIFIER MINUS ('a'..'z'|'A'..'Z') (
@@ -849,7 +840,7 @@ ID_MINUS:
       )*
   ;
 
-ALL_ID : ID_MINUS |IDENTIFIER ;*/
+ALL_ID : IDENTIFIER | ID_MINUS ;
 
 fragment
 HEX_DIGIT : ('0'..'9'|'A'..'F'|'a'..'f');
