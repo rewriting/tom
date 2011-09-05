@@ -54,12 +54,12 @@ package tom.engine.newparser.parser;
 csMainBQTerm [ boolean compositeAllowed] :
   UNDERSCORE -> ^(Cst_BQDefault)
   | csTL -> ^(Cst_ITL csTL)
-  | IDSTAR -> ^(Cst_BQVarStar ^(Cst_Name IDSTAR))
+  | IDSTAR -> ^(Cst_BQVarStar ^(Cst_Name IDSTAR) ^(Cst_TypeUnknown ))
   | ID {$compositeAllowed}?=> c=csCompositePart*
-    -> {c==null}? ^(Cst_BQVar ^(Cst_Name ID))
+    -> {c==null}? ^(Cst_BQVar ^(Cst_Name ID) ^(Cst_TypeUnknown ))
     -> ^(Cst_CompositeTerm
          ^(Cst_concCstBQTerm
-           ^(Cst_BQVar ^(Cst_Name ID)) csCompositePart*
+           ^(Cst_BQVar ^(Cst_Name ID) ^(Cst_TypeUnknown )) csCompositePart*
           )
         )
 
@@ -80,7 +80,7 @@ returns [int marker] :
  BQID
   {$marker = ((CustomToken)$BQID).getPayload(Integer.class);}
 
-  -> ^(Cst_BQVar ^(Cst_Name BQID))
+  -> ^(Cst_BQVar ^(Cst_Name BQID) ^(Cst_TypeUnknown ))
 
  |BQPAR csCompositePart* RPAR
   {$marker = ((CustomToken)$RPAR).getPayload(Integer.class);}
@@ -94,7 +94,7 @@ returns [int marker] :
  |BQIDSTAR
   {$marker = ((CustomToken)$BQIDSTAR).getPayload(Integer.class);}
 
-  -> ^(Cst_BQVarStar ^(Cst_Name BQIDSTAR))
+  -> ^(Cst_BQVarStar ^(Cst_Name BQIDSTAR) ^(Cst_TypeUnknown ))
 
  |BQIDPAR (csMainBQTerm[true] (COMMA csMainBQTerm[true])*)? RPAR
   {$marker = ((CustomToken)$RPAR).getPayload(Integer.class);}
