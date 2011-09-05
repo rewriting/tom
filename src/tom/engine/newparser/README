@@ -11,6 +11,8 @@ TODO
 
 - labels dans miniTom.g
 
+- patterns dans %match
+
 - gérer les $nom_variable dans les mappings
   - directement dans le parser ?
   - plus simple de le faire lors de la transformation des cst : appliquer
@@ -37,4 +39,6 @@ Mais on peut aussi imaginer des syntaxes telles que :
 ou `(f(x ${+ 42}))
 ou `f(x '+ 42')`
 
-
+- clarifier le nommage des sort et constructeurs : CstTerm ne correspond pas
+  aux TomTerm mais aux BQTerm en plus de CstBQTerm, CstPattern correspond aux
+  TomTerm
