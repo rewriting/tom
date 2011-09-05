@@ -174,7 +174,7 @@ returns [int marker]:
 // "%match" already consumed when this rule is called
 
 // with args
-LPAR csMatchArgument ((COMMA csMatchArgument)*)? RPAR
+LPAR csBQTerm /*csMatchArgument*/ ((COMMA csBQTerm /*csMatchArgument*/)*)? RPAR
 LBR
 csExtendedConstraintAction*
 RBR
@@ -184,7 +184,8 @@ RBR
 
 -> ^( Cst_MatchConstruct
     {extractOptions((CommonToken)$LPAR, (CommonToken)$RBR)}
-    ^( Cst_concCstTypedTerm csMatchArgument* )
+    ^( Cst_concCstBQTerm csBQTerm* /*csMatchArgument* */ )
+    //^( Cst_concCstTypedTerm csMatchArgument* )
     ^( Cst_concConstraintAction csExtendedConstraintAction* )
     )
 
@@ -200,7 +201,8 @@ RBR
 
 -> ^( Cst_MatchConstruct
     {extractOptions((CommonToken)$LBR, (CommonToken)$RBR)}
-    ^( Cst_concCstTypedTerm )
+    ^( Cst_concCstBQTerm )
+    //^( Cst_concCstTypedTerm )
     ^( Cst_concConstraintAction csConstraintAction* )
     )
 ;
@@ -221,12 +223,12 @@ csExtendedConstraint ARROW LBR RBR
       )
   ;
 
-csMatchArgument :
+/*csMatchArgument :
 (type=IDENTIFIER)? csBQTerm
 
 ->{type!=null}? ^(Cst_TypedTerm csBQTerm ^(Cst_Type $type))
-->              ^(Cst_TypedTerm csBQTerm ^(Cst_Type ^(Cst_TypeUnknown)))
-  ;
+->              ^(Cst_TypedTerm csBQTerm ^(Cst_TypeUnknown))
+  ;*/
 
   /*
      old plainBQTerm, many cases:
@@ -236,13 +238,25 @@ csMatchArgument :
      - 5 ->_NUM_INT ->_Cst_BQConstant
      - "name" -> STRING ->_Cst_BQConstant
    */
-csBQTerm :
+/*csBQTerm :
   csName (s=STAR)?
 ->{s!=null}? ^(Cst_BQVarStar csName )
 ->           ^(Cst_BQVar csName)
   |csName LPAR (a+=csBQTerm (COMMA a+=csBQTerm)*)? RPAR
   -> ^(Cst_BQAppl csName ^(Cst_concCstBQTerm $a*))
 | csConstantValue -> ^(Cst_BQConstant ^(Cst_Name csConstantValue ))
+;*/
+
+csBQTerm :
+  (type=IDENTIFIER)? csName (s=STAR)?
+   ->{s!=null && type!=null}? ^(Cst_BQVarStar csName ^(Cst_Type $type))
+   ->{s!=null && type==null}? ^(Cst_BQVarStar csName ^(Cst_TypeUnknown ))
+   ->{s==null && type!=null}? ^(Cst_BQVar csName ^(Cst_Type $type))
+   ->           ^(Cst_BQVar csName ^(Cst_TypeUnknown ))
+   
+  |csName LPAR (a+=csBQTerm (COMMA a+=csBQTerm)*)? RPAR
+   -> ^(Cst_BQAppl csName ^(Cst_concCstBQTerm $a*))
+  | csConstantValue -> ^(Cst_BQConstant ^(Cst_Name csConstantValue ))
 ;
 
  // Constraints ===============================================
@@ -320,8 +334,8 @@ csConstraint_priority3 :
 ;
 
 csConstraint_priority4 :
- csPattern LARROW csTerm
- -> ^(Cst_MatchTermConstraint csPattern csTerm)
+ csPattern LARROW /*csTerm*/ /*csMatchArgument*/ csBQTerm
+ -> ^(Cst_MatchTermConstraint csPattern csBQTerm) /*csTerm)*/
 
  | LPAR csConstraint RPAR
  -> csConstraint
