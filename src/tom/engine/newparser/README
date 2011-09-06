@@ -4,7 +4,8 @@ TODO
   - (JC) à tester, normalement OK, semble passer
 
 - inclusion et appel de %gom
-  - (JC) semble OK, continuer les tests
+  - (JC) gom sans option semble OK, continuer les tests
+  - (JC) gom avec options pose problème -> corrigé, continuer à tester
 
 - parsing de %strategy
   - (JC) à tester, semble passer sur plusieurs exemples/tests
@@ -12,6 +13,7 @@ TODO
 - labels dans miniTom.g
 
 - patterns dans %match
+  - - (JC) p << T x  semble fonctionner, continuer à tester les patterns
 
 - gérer les $nom_variable dans les mappings
   - directement dans le parser ?
@@ -42,3 +44,96 @@ ou `f(x '+ 42')`
 - clarifier le nommage des sort et constructeurs : CstTerm ne correspond pas
   aux TomTerm mais aux BQTerm en plus de CstBQTerm, CstPattern correspond aux
   TomTerm
+
+
+==========================================================
+
+Remaining examples and tests to pass (please remove the appropriate line once
+tested):
+- tests:
+  
+  test/
+  test/backquote
+  test/error
+  test/gom
+  test/numeric
+  test/regress
+  test/rule
+  test/sl
+  test/TestLabel.t
+
+- examples:
+
+  examples/acmatching
+  examples/addressbook
+  examples/analysis
+  examples/antipattern
+  examples/appletxml
+  examples/bdd
+  examples/boulderdash
+  examples/bpel
+  examples/builtin
+  examples/bytecode
+  examples/caml
+  examples/cell
+  examples/cps
+  examples/csharp
+  examples/csmaca
+  examples/debugger
+  examples/deepmatch
+  examples/dist
+  examples/dom
+  examples/expression
+  examples/freshgom
+  examples/gasel
+  examples/generics
+  examples/gom
+  examples/gomoku
+  examples/gterm
+  examples/integerc
+  examples/labyrinth
+  examples/lambdacalculi
+  examples/lazyml
+  examples/lib
+  examples/list
+  examples/lsystems
+  examples/master
+  examples/matching
+  examples/meta
+  examples/mgs
+  examples/miniml
+  examples/modeltrans
+  examples/multigraph
+  examples/nspk
+  examples/old
+  examples/p3p
+  examples/parser
+  examples/peano
+  examples/poly
+  examples/polygraphes
+  examples/prodrule
+  examples/propp
+  examples/python
+  examples/quine
+  examples/rbtree
+  examples/report
+  examples/servlet
+  examples/set
+  examples/strategy
+  examples/strategycompiler
+  examples/strings
+  examples/structure
+  examples/subtypeinference
+  examples/subtyping
+  examples/tactics
+  examples/termgraph
+  examples/TestMatch.t
+  examples/tomjastadd
+  examples/transformation
+  examples/tutorial
+  examples/typeinference
+  examples/who
+  examples/why
+  examples/xml
+  examples/xquery
+
