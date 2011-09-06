@@ -12,6 +12,7 @@ TODO
   - (JC) à tester, semble passer sur plusieurs exemples/tests
 
 - labels dans miniTom.g
+  - (FP) semble fonctionne, continuer à tester
 
 - patterns dans %match
   - - (JC) p << T x  semble fonctionner, continuer à tester les patterns
@@ -41,6 +42,7 @@ Mais on peut aussi imaginer des syntaxes telles que :
   `f(x ${+ 42})`  <- très intéressante aussi
 ou `(f(x ${+ 42}))
 ou `f(x '+ 42')`
+  - parenthésage de backquote en place dans la branche newbackquote, il faut modifier les exemples pour pouvoir le tester pleinement
 
 - clarifier le nommage des sort et constructeurs : CstTerm ne correspond pas
   aux TomTerm mais aux BQTerm en plus de CstBQTerm, CstPattern correspond aux
