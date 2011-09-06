@@ -183,7 +183,7 @@ public abstract class ParserAction {
       input.consume();
 
       // XXX there is a copy of this in ParseIncludeConstruct (need refactoring) ===
-      // consume chars until '{'
+      // consume chars until '('
       List<Character> legitChars = Arrays.asList('\n', '\r', '\t', ' ');
       while(legitChars.contains((char)input.LA(1))) {
         input.consume();
@@ -203,6 +203,11 @@ public abstract class ParserAction {
         input.consume();
       }
       
+      // consume chars until '{'
+      while(legitChars.contains((char)input.LA(1))) {
+        input.consume();
+      }
+
       if ((tmp=(char)input.LA(1))!='{') {
         throw new RuntimeException("Unexpected '"+tmp+"', expecting '{'");//XXX
       }
@@ -226,7 +231,6 @@ public abstract class ParserAction {
 
       String gomCode;
       gomCode = hostBlockBuilder.getText();
-System.out.println("(DEBUG) gomCode =\n" + gomCode);
       //XXX end copy ===============================================================
 
       // call Gom Parser
@@ -296,13 +300,6 @@ System.out.println("(DEBUG) gomCode =\n" + gomCode);
         parameters.add("--verbose");
       }
 
-      /* treat user supplied options */
-      /*if(gomCode.length() > 6) {
-        String[] userOpts = gomCode.substring(5,gomCode.length()-1).split("\\s+");
-          for(int i=0; i < userOpts.length; i++) {
-            parameters.add(userOpts[i]);
-          }
-      }*/
       if(gomOpts.length() > 0) {
         String[] userOpts = gomOpts.split("\\s+");
         for(int i=0; i < userOpts.length; i++) {
