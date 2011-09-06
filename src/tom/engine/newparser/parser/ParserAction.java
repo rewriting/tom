@@ -39,7 +39,6 @@ import org.antlr.runtime.tree.CommonTreeAdaptor;
 import org.antlr.runtime.tree.Tree;
 import org.antlr.runtime.tree.CommonTree;
 import org.antlr.runtime.ANTLRFileStream;
-import org.antlr.runtime.ANTLRStringStream;
 
 
 /**
@@ -553,8 +552,7 @@ public abstract class ParserAction {
 
     }
   }
-    
-  private static abstract class GenericParseConstruct extends ParserAction {
+    private static abstract class GenericParseConstruct extends ParserAction {
     
     @Override
     public void doAction(CharStream input, HostBlockBuilder hostBlockBuilder,
@@ -570,7 +568,7 @@ public abstract class ParserAction {
       PACK_HOST_CONTENT.doAction(input, hostBlockBuilder, tree, analyst,
           streamManager, optionManager, includedFiles, alreadyParsedFiles);
       
-      // consume last char of the keyword
+      // consume last chat of the keyword
       // ("h" if keyword is "%match")
       input.consume();
       
@@ -642,7 +640,7 @@ public abstract class ParserAction {
     
   }
  
-  private static class ParseStrategyConstruct extends GenericParseConstruct {
+private static class ParseStrategyConstruct extends GenericParseConstruct {
 
     private static final ParseStrategyConstruct instance = new ParseStrategyConstruct();
     
@@ -679,34 +677,16 @@ public abstract class ParserAction {
         OptionManager optionManager, HashSet<String> includedFiles,
         HashSet<String> alreadyParsedFiles)
     throws TomIncludeException, TomException {
-       
+     
+      hostBlockBuilder.removeLastChars(analyst.getOffsetAtMatch());
+      
       PACK_HOST_CONTENT.doAction(input, hostBlockBuilder, tree, analyst,
           streamManager, optionManager, includedFiles, alreadyParsedFiles);
       
-      // we leave the opening character (`) and we get the stream between the first and the second `
-      int startLine = input.getLine();
-      int startColumn = input.getCharPositionInLine();
-      String sub_input = ""+(char)input.LA(1); // we put the ` on the sub_input
-      input.consume(); // we consume the `
-      while(analyst.readChar(input)) { // readChar update and return "foundness" value
-    	if(input.LA(1)==CharStream.EOF) {
-          //System.err.println("Unexpected EndOfFile");
-          throw new RuntimeException( // XXX handle nicely
-        		  "File :"+input.getSourceName()
-                  + " :: unexpected EOF, expecting '"
-                  + ((DelimitedSequenceDetector)analyst).getClosingKeywordString()
-                  + "' at line: "+startLine
-                  );
-    	}
-
-        sub_input += (char)input.LA(1);
-        input.consume();
-      }
-      sub_input = sub_input.substring(0, sub_input.length()-1); // we remove the last `
-      ANTLRStringStream bq_input = new ANTLRStringStream(sub_input); // we made a new stream from sub_input
+      // for once leave keyword in charStream
       
       try {
-        BQTermLexer lexer = new BQTermLexer(bq_input);
+        BQTermLexer lexer = new BQTermLexer(input);
         CommonTokenStream tokenStream = new CommonTokenStream(lexer);
         BQTermParser parser = new BQTermParser(tokenStream);
         
@@ -717,8 +697,7 @@ public abstract class ParserAction {
               (CommonTree)retval.getTree()));
         
         // allow action to return with a "clean" input state
-        bq_input.rewind(retval.marker);
-        //input.consume();
+        input.rewind(retval.marker);
         
         } catch(Exception e) {
           // XXX poorly handled exception

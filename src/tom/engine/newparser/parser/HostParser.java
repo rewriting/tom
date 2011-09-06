@@ -120,8 +120,7 @@ public class HostParser {
       ParserAction.PARSE_GOM_CONSTRUCT);
     // bqTerms
     actionsMapping.put(
-      //new KeywordDetector("`"),
-      new DelimitedSequenceDetector("`", "`"),
+      new KeywordDetector("`"),
       ParserAction.PARSE_BQTERM_CONSTRUCT);
   }
   
@@ -178,7 +177,6 @@ public class HostParser {
             throw new RuntimeException("Unconsistent HostParser state");
           }
           recognized = analyst;
-          break;
         }
       }
 

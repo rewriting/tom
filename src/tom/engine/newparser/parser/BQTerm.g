@@ -70,8 +70,8 @@ csMainBQTerm [ boolean compositeAllowed] :
     -> ^(Cst_BQRecordAppl
        	  ^(Cst_Name IDBR)
           ^(Cst_concCstPairSlotBQTerm csPairSlotBQTerm*)
-        )
-  | csTL -> ^(Cst_ITL csTL) 
+        ) 
+  | csTL -> ^(Cst_ITL csTL)
   ;
 
 csBQTerm
