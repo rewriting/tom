@@ -72,6 +72,7 @@ public class DelimitedSequenceDetector extends StreamAnalyst{
    */
   @Override
   public boolean readChar(CharStream input) {
+	
     boolean oldFoundValue = match();
     
     char nextChar = (char) input.LA(1);
@@ -85,8 +86,7 @@ public class DelimitedSequenceDetector extends StreamAnalyst{
         if(nextChar == escapeChar) {
           escaped = true;
           closingKeyword.reset();
-        }
-        if(nextChar != escapeChar) {
+        } else {
           closingKeyword.readChar(input);
           
           if(closingKeyword.match()) {

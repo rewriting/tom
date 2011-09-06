@@ -53,7 +53,6 @@ package tom.engine.newparser.parser;
 
 csMainBQTerm [ boolean compositeAllowed] :
   UNDERSCORE -> ^(Cst_BQDefault)
-  | csTL -> ^(Cst_ITL csTL)
   | IDSTAR -> ^(Cst_BQVarStar ^(Cst_Name IDSTAR) ^(Cst_TypeUnknown ))
   | ID {$compositeAllowed}?=> c=csCompositePart*
     -> {c==null}? ^(Cst_BQVar ^(Cst_Name ID) ^(Cst_TypeUnknown ))
@@ -71,8 +70,8 @@ csMainBQTerm [ boolean compositeAllowed] :
     -> ^(Cst_BQRecordAppl
        	  ^(Cst_Name IDBR)
           ^(Cst_concCstPairSlotBQTerm csPairSlotBQTerm*)
-        ) 
-
+        )
+  | csTL -> ^(Cst_ITL csTL) 
   ;
 
 csBQTerm
