@@ -84,7 +84,33 @@ BQ      : '`';
 fragment
 FragID      :  ('_')? LETTER (LETTER|DIGIT|'_')*;
 
-BQSTRING : '"' (~('"'|'\\'|'\n'|'\r'))* '"';
+fragment
+BQESC : '\\'
+    ( 'n'
+    | 'r'
+    | 't'
+    | 'b'
+    | 'f'
+    | '"'
+    | '\''
+    | '\\'
+    //from older parser: need an adaptation?
+   /* | ('u')+ BQ_HEX_DIGIT BQ_HEX_DIGIT BQ_HEX_DIGIT BQ_HEX_DIGIT
+    | '0'..'3'
+      (
+      '0'..'7'
+        (
+        '0'..'7'
+        )?
+      )?
+    | '4'..'7'
+      (
+      '0'..'7'
+      )?*/
+    )
+  ;
+
+BQSTRING : '"' (BQESC|~('"'|'\\'|'\n'|'\r'))* '"';
 BQCHAR   : '\'' (~('\''|'\n'|'\r'|'\\') )+ '\'';
 fragment
 INTEGER  : ( MINUS )? ( DIGIT )+ ;
