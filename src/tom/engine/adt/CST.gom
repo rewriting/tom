@@ -17,7 +17,8 @@ CstBlockList = Cst_concCstBlock(CstBlock*)
 
 CstBlock =
  HOSTBLOCK(optionList:CstOptionList, hContent:String)
-| Cst_MatchConstruct(optionList:CstOptionList, arguments:CstMatchArgumentList , constraintActionList:CstConstraintActionList)
+| Cst_MatchConstruct(optionList:CstOptionList, arguments:CstBQTermList , constraintActionList:CstConstraintActionList)
+//| Cst_MatchConstruct(optionList:CstOptionList, arguments:CstMatchArgumentList , constraintActionList:CstConstraintActionList)
 | Cst_OpConstruct       (optionList:CstOptionList, tomTypeName:CstName, ctorName:CstName, argumentList :CstSlotList, operatorList :CstOperatorList)
 | Cst_OpArrayConstruct  (optionList:CstOptionList, tomTypeName:CstName, ctorName:CstName, typeName:CstName, operatorList:CstOperatorList)
 | Cst_OpListConstruct   (optionList:CstOptionList, tomTypeName:CstName, ctorName:CstName, typeName:CstName, operatorList:CstOperatorList)
@@ -36,7 +37,7 @@ CstConstraintAction = Cst_ConstraintAction(constraint:CstConstraint , action:Cst
 
 CstConstraintActionList = Cst_concConstraintAction(CstConstraintAction*)
 
-CstConstraint  = Cst_MatchTermConstraint    (object:CstPattern, subject:CstTerm)
+CstConstraint  = Cst_MatchTermConstraint(object:CstPattern, subject:CstBQTerm)
               | Cst_MatchArgumentConstraint(object:CstPattern)
               | Cst_AndConstraint(CstConstraint*)
               | Cst_OrConstraint(CstConstraint*)
@@ -61,7 +62,7 @@ CstTermList = Cst_concCstTerm(CstTerm*)
 CstTypedTerm = Cst_TypedTerm(term:CstBQTerm, type:CstType)
              
 CstType = Cst_Type(type:String)
-            | Cst_TypeUnknown()
+        | Cst_TypeUnknown()
 
 // CstPattern in CST context is "equivalent" to TomTerm in AST context
 CstPattern = 
@@ -117,8 +118,8 @@ CstSlot = Cst_Slot(slotName:CstName, slotTypeName:CstName)
 // BQTerms ===================================================================
 CstBQTerm = Cst_BQAppl(name:CstName, bqTermList:CstBQTermList)
           | Cst_BQRecordAppl(name:CstName, slotList:CstPairSlotBQTermList)
-          | Cst_BQVar(name:CstName)
-          | Cst_BQVarStar(name:CstName)
+          | Cst_BQVar(name:CstName,type:CstType)
+          | Cst_BQVarStar(name:CstName,type:CstType)
           | Cst_BQDefault()
           | Cst_BQInnerHostCode(code:String)
           | Cst_CompositeTerm(list:CstBQTermList)

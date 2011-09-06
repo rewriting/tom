@@ -166,6 +166,7 @@ public abstract class ParserAction {
         OptionManager optionManager, HashSet<String> includedFiles,
         HashSet<String> alreadyParsedFiles)
     throws TomIncludeException, TomException {
+      //System.out.println("(DEBUG1) input = "  + input.substring(0,input.size()-1));
 
       ArrayList<String> parameters = new ArrayList<String>();
       Logger logger = Logger.getLogger("tom.engine.newparser.parser.HostParser");
@@ -175,12 +176,11 @@ public abstract class ParserAction {
 
       // remove keyword from stream and hostBlockBuilder and insert previously
       // consumed hostChars in tree
+      
       hostBlockBuilder.removeLastChars(analyst.getOffsetAtMatch());
       PACK_HOST_CONTENT.doAction(input, hostBlockBuilder, tree, analyst,
           streamManager, optionManager, includedFiles, alreadyParsedFiles);
       input.consume();
-
-      String gomCode;
 
       // XXX there is a copy of this in ParseIncludeConstruct (need refactoring) ===
       // consume chars until '{'
@@ -190,7 +190,20 @@ public abstract class ParserAction {
       }
 
       char tmp;
-      if((tmp=(char)input.LA(1))!='{') {
+      String gomOpts = "";
+      if ((char)input.LA(1)=='(') {
+        //remove the '('
+        input.consume();
+        //build a String containing user options: 'gom(--option1 --option2) {'
+        while((tmp=(char)input.LA(1))!=')') {
+          gomOpts = gomOpts+tmp;
+          input.consume();
+        }
+        //remove the ')'
+        input.consume();
+      }
+      
+      if ((tmp=(char)input.LA(1))!='{') {
         throw new RuntimeException("Unexpected '"+tmp+"', expecting '{'");//XXX
       }
 
@@ -211,7 +224,9 @@ public abstract class ParserAction {
       // remove '}' from hostBlockBuilder
       hostBlockBuilder.removeLastChars(1);  
 
+      String gomCode;
       gomCode = hostBlockBuilder.getText();
+System.out.println("(DEBUG) gomCode =\n" + gomCode);
       //XXX end copy ===============================================================
 
       // call Gom Parser
@@ -288,6 +303,13 @@ public abstract class ParserAction {
             parameters.add(userOpts[i]);
           }
       }*/
+      if(gomOpts.length() > 0) {
+        String[] userOpts = gomOpts.split("\\s+");
+        for(int i=0; i < userOpts.length; i++) {
+        System.out.println("(DEBUG0101) Host - userOpts["+i+"] = " + userOpts[i]);
+          parameters.add(userOpts[i]);
+        }
+      }
 
       final File tmpFile;
       try {
