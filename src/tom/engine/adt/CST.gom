@@ -51,7 +51,7 @@ CstConstraint  = Cst_MatchTermConstraint(object:CstPattern, subject:CstBQTerm)
 CstConstraintList = Cst_concCstConstraint(CstConstraint*)
 
 // CstTerm in CST context is "equivalent" to BQTerm in AST context
-// (it's much simpler because very close to synthax)
+// (it's much simpler because very close to syntax)
 CstTerm = Cst_VariableName(name : String)
         | Cst_VariableNameStar(name : String)
         | Cst_Term(name : String, termList : CstTermList)

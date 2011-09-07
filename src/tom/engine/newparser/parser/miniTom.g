@@ -97,7 +97,7 @@ returns [int marker] :
 ;
 
 // StrategyConstruct
-strategyConstruct
+csStrategyConstruct
 returns [int marker]:
 csName LPAR csStrategyArgumentList RPAR EXTENDS BQUOTE? csBQTerm LBR csStrategyVisitList RBR
 
@@ -168,13 +168,13 @@ csVisitAction :
    To respect ParserAction.doAction contract, doAction implementation needs 
    to rewind stream to the marker returned by matchconstruct.
  */
-matchConstruct
+csMatchConstruct
 returns [int marker]:
 
 // "%match" already consumed when this rule is called
 
 // with args
-LPAR csBQTerm /*csMatchArgument*/ ((COMMA csBQTerm /*csMatchArgument*/)*)? RPAR
+LPAR csBQTerm /*csMatchArgument*/ (COMMA csBQTerm /*csMatchArgument*/)* RPAR
 LBR
 csExtendedConstraintAction*
 RBR
@@ -191,7 +191,7 @@ RBR
 
 |
 // witout args
-(LPAR (COMMA)? RPAR)?
+(LPAR /*(COMMA)? Really usefull ??*/ RPAR)?
 LBR
 csConstraintAction*
 RBR
