@@ -634,7 +634,7 @@ public abstract class ParserAction {
     public GenericConstructReturn
       parseSpecificConstruct(miniTomParser parser) throws RecognitionException {
       
-      matchConstruct_return retval = parser.matchConstruct();
+      csMatchConstruct_return retval = parser.csMatchConstruct();
       return new GenericConstructReturn(retval.tree, retval.marker);
     }
     
@@ -657,7 +657,7 @@ public abstract class ParserAction {
     public GenericConstructReturn
       parseSpecificConstruct(miniTomParser parser) throws RecognitionException {
       
-      strategyConstruct_return retval = parser.strategyConstruct();
+      csStrategyConstruct_return retval = parser.csStrategyConstruct();
       return new GenericConstructReturn(retval.tree, retval.marker);
     }
     
