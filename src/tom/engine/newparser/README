@@ -50,6 +50,7 @@ ou `f(x '+ 42')`
 - clarifier le nommage des sort et constructeurs : CstTerm ne correspond pas
   aux TomTerm mais aux BQTerm en plus de CstBQTerm, CstPattern correspond aux
   TomTerm
+  - (FP) apparemment JC a oublié avoir fait la correction avant de mettre le commentaire
 
 
 ==========================================================
