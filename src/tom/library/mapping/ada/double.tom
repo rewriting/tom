@@ -30,7 +30,7 @@
  **/
 
 %typeterm double {
-  implement           { Long_Float }
-  is_sort(t) { True }
-  equals(t1,t2)       { $t1=$t2 }
+  implement		{Long_Float}
+  is_sort(t) 	{True}
+  equals(t1,t2) {$t1=$t2}
 }

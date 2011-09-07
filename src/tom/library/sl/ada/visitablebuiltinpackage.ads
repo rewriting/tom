@@ -9,8 +9,8 @@ package VisitableBuiltinPackage is
 	
 	
 	function  toString(vb: VisitableBuiltin) return String;
-	procedure setChildren(v: in out VisitableBuiltin ; children : ObjectPtrArray);
-	function  getChildren(v: VisitableBuiltin) return ObjectPtrArray;
+	procedure setChildren(v: in out VisitableBuiltin ; children : ObjectPtrArrayPtr);
+	function  getChildren(v: VisitableBuiltin) return ObjectPtrArrayPtr;
 	function  getChildAt(v: VisitableBuiltin; i : Integer) return Visitable'Class;
 	procedure setChildAt(v: in out VisitableBuiltin; i: in Integer; child: in VisitableBuiltin);
 	function  getChildCount(v: VisitableBuiltin) return Integer;

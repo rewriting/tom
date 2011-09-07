@@ -31,16 +31,16 @@
 
 %include {char.tom}
 %typeterm String {
-  implement           { access String }
-  is_sort(t) { True }
-  equals(t1,t2)       { t1.all = t2.all }
+  implement			{access String}
+  is_sort(t) 		{True}
+  equals(t1,t2)		{$t1.all = $t2.all}
 }
 
 %oplist String concString(char*) {
-  is_fsym(t) { True }
-  make_empty() { new String'("") }
-  make_insert(c,s) { new String'("" & $c & $s.all) }
-  get_head(s) { s(s'First) }
-  get_tail(s) { new String'(s(s'First+1 .. s'Last)) }
-  is_empty(s) { s'Length = 0 }
+  is_fsym(t) 		{True}
+  make_empty()	 	{new String'("")}
+  make_insert(c,s) 	{new String'("" & $c & $s.all)}
+  get_head(s) 		{s(s'First)}
+  get_tail(s) 		{new String'(s(s'First+1 .. s'Last))}
+  is_empty(s) 		{s'Length = 0}
 }

@@ -6,8 +6,8 @@ package VisitablePackage is
 	
 	function  getChildCount(v: Visitable) return Integer is abstract;
 	
-	procedure setChildren(v: in out Visitable ; children : ObjectPtrArray) is abstract;
-	function  getChildren(v: Visitable) return ObjectPtrArray is abstract;
+	procedure setChildren(v: in out Visitable ; children : ObjectPtrArrayPtr) is abstract;
+	function  getChildren(v: Visitable) return ObjectPtrArrayPtr is abstract;
 	
 	function  getChildAt(v: Visitable; i : Integer) return Visitable'Class is abstract;
 	procedure setChildAt(v: in out Visitable; i: in Integer; child: in Visitable'Class) is abstract;

@@ -11,11 +11,11 @@ package AbstractStrategyPackage is
 	----------------------------------------------------------------------------
 	-- Strategy implementation
 	----------------------------------------------------------------------------
-	function  visit(str: access AbstractStrategy; any: Environment) return Visitable'Class;
-	function  visit(str: access AbstractStrategy; any: Visitable'Class) return Visitable'Class;
-	function  visit(str: access AbstractStrategy; envt: Environment; i: access Introspector'Class) return Object'Class;
-	function  visit(str: access AbstractStrategy; any: ObjectPtr; i: access Introspector'Class) return Object'Class;
-	function  visitLight(str: access AbstractStrategy; any: Visitable'Class) return Visitable'Class;
+	function  visit(str: access AbstractStrategy; any: Environment) return VisitablePtr;
+	function  visit(str: access AbstractStrategy; any: Visitable'Class) return VisitablePtr;
+	function  visit(str: access AbstractStrategy; envt: Environment; i: access Introspector'Class) return ObjectPtr;
+	function  visit(str: access AbstractStrategy; any: ObjectPtr; i: access Introspector'Class) return ObjectPtr;
+	function  visitLight(str: access AbstractStrategy; any: Visitable'Class) return VisitablePtr;
 	function  getEnvironment(str: AbstractStrategy) return access Environment;
 	procedure setEnvironment(str: in out AbstractStrategy; env: Environment);
 	----------------------------------------------------------------------------

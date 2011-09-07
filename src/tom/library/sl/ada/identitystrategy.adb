@@ -17,9 +17,9 @@ package body IdentityStrategy is
 	----------------------------------------------------------------------------
 	
 	overriding
-	function visitLight(str:access Identity; any: ObjectPtr; i: access Introspector'Class) return Object'Class is
+	function visitLight(str:access Identity; any: ObjectPtr; i: access Introspector'Class) return ObjectPtr is
 	begin
-		return any.all;
+		return any;
 	end;
 	
 	overriding
@@ -33,6 +33,13 @@ package body IdentityStrategy is
 	procedure makeIdentity(i : in out Identity) is
 	begin
 		initSubterm(i);
+	end;
+	
+	function newIdentity return StrategyPtr is
+		id : StrategyPtr := new Identity;
+	begin
+		makeIdentity(Identity(id.all));
+		return id;
 	end;
 
 	----------------------------------------------------------------------------

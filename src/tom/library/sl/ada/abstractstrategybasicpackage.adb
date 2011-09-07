@@ -7,7 +7,7 @@ package body AbstractStrategyBasicPackage is
 	----------------------------------------------------------------------------
 	overriding
 	function visit(str: access AbstractStrategyBasic; i: access Introspector'Class) return Integer is
-		obj: ObjectPtr := new Object'Class'(visitLight(Strategy'Class(str.all)'Access , EnvironmentPackage.getSubject(str.all.env.all), i));
+		obj: ObjectPtr := visitLight(Strategy'Class(str.all)'Access , EnvironmentPackage.getSubject(str.all.env.all), i);
 	begin
 		EnvironmentPackage.setSubject( str.all.env.all, obj);
 		return EnvironmentPackage.SUCCESS;
@@ -27,15 +27,15 @@ package body AbstractStrategyBasicPackage is
 	end;
 	
 	overriding
-	procedure setChildren(v: in out AbstractStrategyBasic ; children : ObjectPtrArray) is
+	procedure setChildren(v: in out AbstractStrategyBasic ; children : ObjectPtrArrayPtr) is
 	begin
 		v.any := StrategyPtr(children(children'First));
 	end;
 	
 	overriding
-	function getChildren(v: AbstractStrategyBasic) return ObjectPtrArray is
+	function getChildren(v: AbstractStrategyBasic) return ObjectPtrArrayPtr is
 	begin
-		return ObjectPtrArray'( 0 => ObjectPtr(v.any) );
+		return new ObjectPtrArray'( 0 => ObjectPtr(v.any) );
 	end;
 	
 	overriding
@@ -43,7 +43,7 @@ package body AbstractStrategyBasicPackage is
 		IndexOutOfBoundsException : exception;
 	begin
 		if i = 0 then
-			return v.any.all;
+			return Visitable'Class(v.any.all);
 		else
 			raise IndexOutOfBoundsException;
 		end if;
@@ -62,9 +62,13 @@ package body AbstractStrategyBasicPackage is
 	
 	----------------------------------------------------------------------------
 	
-	procedure makeAbstractStrategyBasic(asb : in out AbstractStrategyBasic'Class; s: Strategy'Class) is
+	procedure makeAbstractStrategyBasic(asb : in out AbstractStrategyBasic'Class; s: StrategyPtr) is
 	begin
-		asb.any := new Strategy'Class'(s);
+		if s = null then
+			asb.any := null;
+		else
+			asb.any := new Strategy'Class'(s.all);
+		end if;
 	end;
 	
 	----------------------------------------------------------------------------

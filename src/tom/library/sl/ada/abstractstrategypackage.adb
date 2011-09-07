@@ -6,48 +6,48 @@ package body AbstractStrategyPackage is
 	-- Strategy implementation
 	----------------------------------------------------------------------------
 	overriding
-	function visit(str: access AbstractStrategy; any: Environment) return Visitable'Class is
+	function visit(str: access AbstractStrategy; any: Environment) return VisitablePtr is
 	begin
-		return Visitable'Class( visit(str, any, VisitableIntrospectorPackage.getInstance) );
+		return VisitablePtr( visit(str, any, VisitableIntrospectorPackage.getInstance) );
 	end;
 	
 	overriding
-	function visit(str: access AbstractStrategy; any: Visitable'Class) return Visitable'Class is
+	function visit(str: access AbstractStrategy; any: Visitable'Class) return VisitablePtr is
 		obptr : ObjectPtr := new Object'Class'( Object'Class(any) );
 	begin
-		return Visitable'Class( visit(str, obptr, VisitableIntrospectorPackage.getInstance) );
+		return VisitablePtr( visit(str, obptr, VisitableIntrospectorPackage.getInstance) );
 	end;
 	
 	overriding
-	function visit(str: access AbstractStrategy; envt: Environment; i: access Introspector'Class) return Object'Class is
+	function visit(str: access AbstractStrategy; envt: Environment; i: access Introspector'Class) return ObjectPtr is
 		status : Integer;
 	begin
 		init(str.all, envt);
 		status := visit(Strategy'Class(str.all)'Access, i); -- for dispatching
 		
 		if status = EnvironmentPackage.SUCCESS then
-			return AbstractStrategyPackage.getSubject(str.all).all;
+			return AbstractStrategyPackage.getSubject(str.all);
 		else
 			raise VisitFailure;
 		end if;
 	end;
 	
 	overriding
-	function visitLight(str: access AbstractStrategy; any: Visitable'Class) return Visitable'Class is
+	function visitLight(str: access AbstractStrategy; any: Visitable'Class) return VisitablePtr is
 		obptr : ObjectPtr := new Object'Class'( Object'Class(any) );
 	begin
-		return Visitable'Class( visitLight(Strategy'Class(str.all)'Access, obptr, VisitableIntrospectorPackage.getInstance) );
+		return VisitablePtr( visitLight(Strategy'Class(str.all)'Access, obptr, VisitableIntrospectorPackage.getInstance) );
 	end;
 	
 	overriding
-	function visit(str: access AbstractStrategy; any: ObjectPtr; i: access Introspector'Class) return Object'Class is
+	function visit(str: access AbstractStrategy; any: ObjectPtr; i: access Introspector'Class) return ObjectPtr is
 		status: Integer;
 	begin
 		init(str.all, i.all);
 		AbstractStrategyPackage.setRoot(str.all, any);
 		status := visit(Strategy'Class(str.all)'Access, i);
 		if status = EnvironmentPackage.SUCCESS then
-			return AbstractStrategyPackage.getRoot(str.all).all;
+			return AbstractStrategyPackage.getRoot(str.all);
 		else
 			raise VisitFailure;
 		end if;

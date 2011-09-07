@@ -17,7 +17,7 @@ package SequenceStrategy is
 	-- Strategy implementation
 	----------------------------------------------------------------------------
 	
-	function  visitLight(str:access Sequence; any: ObjectPtr; i: access Introspector'Class) return Object'Class;
+	function  visitLight(str:access Sequence; any: ObjectPtr; i: access Introspector'Class) return ObjectPtr;
 	function  visit(str: access Sequence; i: access Introspector'Class) return Integer;
 	
 	----------------------------------------------------------------------------

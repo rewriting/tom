@@ -30,7 +30,7 @@
  **/
 
 %typeterm long {
-  implement           { Long }
-  is_sort(t) { True }
-  equals(t1,t2)       { $t1=$t2 }
+  implement         {Long}
+  is_sort(t)		{True}
+  equals(t1,t2)		{$t1=$t2}
 }

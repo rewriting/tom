@@ -1,10 +1,10 @@
 package body VisitableIntrospectorPackage is
-	procedure setChildren(intro: in out VisitableIntrospector; o: in out Visitable'Class; children: ObjectPtrArray) is
+	procedure setChildren(intro: in out VisitableIntrospector; o: in out Visitable'Class; children: ObjectPtrArrayPtr) is
 	begin
 		VisitablePackage.setChildren(Visitable'Class(o), children);
 	end;
 	
-	function getChildren(intro: VisitableIntrospector; o: Object'Class) return ObjectPtrArray is
+	function getChildren(intro: VisitableIntrospector; o: Object'Class) return ObjectPtrArrayPtr is
 	begin
 		return VisitablePackage.getChildren(Visitable'Class(o));
 	end;

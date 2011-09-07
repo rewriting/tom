@@ -351,11 +351,11 @@ public class AdaGenerator extends GenericGenerator {
 //type
   protected void buildExpCast(int deep, TargetLanguageType tlType, Expression exp, String moduleName) throws IOException {
     // If cast are necessary: 
-    
     String code = TomBase.getTLCode(tlType);
     String cast = extractImplementedType(code);
+    String[] cut = cast.trim().split(" "); //to avoid bad casting when type is declared with access
 
-    if (builtinDescriptor.equals( extractDescriptor(code) )) {
+    if (cut.length==0 && builtinDescriptor.equals( extractDescriptor(code) )) {
 		output.write(cast + "(");
 		generateExpression(0,exp,moduleName);
 		output.write(")");
@@ -419,14 +419,14 @@ public class AdaGenerator extends GenericGenerator {
   }
 
   protected void buildUnamedBlock(int deep, InstructionList instList, String moduleName) throws IOException {
-    generateInstructionList(deep+1,instList, moduleName);
+    generateInstructionList(deep,instList, moduleName);
   }
  
   protected void buildWhileDo(int deep, Expression exp, Instruction succes, String moduleName) throws IOException {
     output.writeln(deep,"while ");
     generateExpression(0,exp,moduleName);
     output.writeln(" loop ");
-    generateInstruction(deep,succes,moduleName);
+    generateInstruction(deep+1,succes,moduleName);
     output.writeln(deep, "end loop; ");
   }
  
@@ -479,7 +479,7 @@ public class AdaGenerator extends GenericGenerator {
     output.writeln(deep, "begin ");
     generateInstruction(deep+1,instr,moduleName);
     output.writeln(deep, "end " + declName + "_" + suffix + "; ");	
-    
+    output.writeln();
 	output.writeln(deep, "function tom_equal_term_String(t1: String; t2: access String) return Boolean is "); 
 	output.writeln(deep, "begin ");
 	output.writeln(deep+1, "return t1 = t2.all; ");
@@ -494,6 +494,8 @@ public class AdaGenerator extends GenericGenerator {
                          String args[],
                          Instruction instr,
                          int deep, String moduleName) throws IOException {
+	
+	//System.out.println("genDeclInstr(" + declName + "_" + suffix + ")");
 	
 	if ("tom_equal_term_String".equals(declName + "_" + suffix)) {
 		genDeclEqualTermString(returnType, declName, suffix, args, instr, deep, moduleName);
@@ -582,6 +584,7 @@ public class AdaGenerator extends GenericGenerator {
 //type
   protected void genDeclMake(String prefix,String funName, TomType returnType, 
       BQTermList argList, Instruction instr, String moduleName) throws IOException {
+	//System.out.println("genDeclMake(" + prefix + funName + ")");
     if(nodeclMode) {
       return;
     }
@@ -649,7 +652,7 @@ matchBlock: {
 
   protected void buildNamedBlock(int deep, String blockName, InstructionList instList, String moduleName) throws IOException {
     output.writeln(deep, "<<"+ blockName + ">>; ");
-    generateInstructionList(deep+1,instList,moduleName);
+    generateInstructionList(deep,instList,moduleName);
   }
 
   protected void buildExpTrue(int deep) throws IOException {
@@ -766,7 +769,8 @@ matchBlock: {
       String args[],
       TargetLanguage tlCode,
       String moduleName) throws IOException {
-
+		
+	//System.out.println("genDecl(" + declName + suffix + ")");
     if(nodeclMode) {
       return;
     }
@@ -823,16 +827,19 @@ matchBlock: {
   } 
   
   protected void buildFunctionDef(int deep, String tomName, BQTermList argList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName) throws IOException {
-    buildMethod(deep,tomName,argList,codomain,throwsType,instruction,moduleName,this.modifier);
+    buildMethod(deep,tomName,argList,codomain,throwsType,instruction,moduleName,"");
   }
 
   protected void buildMethodDef(int deep, String tomName, BQTermList argList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName) throws IOException {
-    buildMethod(deep,tomName,argList,codomain,throwsType,instruction,moduleName,"public ");
+    buildMethod(deep,tomName,argList,codomain,throwsType,instruction,moduleName,"");
   }
   
  //type
   private void buildMethod(int deep, String tomName, BQTermList varList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName, String methodModifier) throws IOException {
 	boolean parenthesis = !varList.isEmptyconcBQTerm();
+	
+	//System.out.println("buildMethod(" + tomName + ")");
+	
 	output.write(deep, "function " + tomName);
 	if (parenthesis) { output.write("("); }
 	
@@ -841,7 +848,7 @@ matchBlock: {
 	matchBlock: {
               %match(localVar) {
                 v@BQVariable[AstType=type2] -> {
-				  generateBQTerm(deep,`v,moduleName);
+				  generateBQTerm(0,`v,moduleName);
                   output.write(": " + getClassWideType( TomBase.getTLType(`type2) ));
                   break matchBlock;
                 }
@@ -853,11 +860,11 @@ matchBlock: {
             }
             varList = varList.getTailconcBQTerm();
             if(!varList.isEmptyconcBQTerm()) {
-              output.write(deep,", ");
+              output.write(", ");
 
             }
     }
-    if (parenthesis) { output.write(deep,")"); }
+    if (parenthesis) { output.write(")"); }
 
 	output.writeln(" return " + getClassWideType(TomBase.getTLType(codomain)) + " is ");
 	output.writeln(deep, "begin ");
@@ -866,9 +873,212 @@ matchBlock: {
 	output.writeln();
   }
   
-  // For strategy generation
+  protected void buildIntrospectorClass(int deep, String tomName, Declaration declaration, String moduleName) throws IOException {
+    output.writeln(deep, "type " + tomName+ "is new Introspector with null record;");
+    output.writeln(deep, "-- DEBUT DECLARATION");
+    generateDeclaration(deep,`declaration,moduleName);
+    output.writeln(deep,"-- FIN DECLARATION");
+  }
+
   protected void buildClass(int deep, String tomName, TomType extendsType, BQTerm superTerm, Declaration declaration, String moduleName) throws IOException {
-		throw new TomRuntimeException("Class building not supported yet");
+   TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(tomName);
+    TomTypeList tomTypes = TomBase.getSymbolDomain(tomSymbol);
+    ArrayList<String> names = new ArrayList<String>();
+    ArrayList<String> types = new ArrayList<String>();
+    ArrayList<Integer> stratChild = new ArrayList<Integer>(); // child of type Strategy.
+    String inheritedClass = "";
+
+    //initialize arrayList with argument names
+    int index = 0;
+    while(!tomTypes.isEmptyconcTomType()) {
+	    TomType type = tomTypes.getHeadconcTomType();
+	    types.add(TomBase.getTLType(type));
+      String name = TomBase.getSlotName(tomSymbol, index).getString();
+      names.add(name);
+
+      // test if the argument is a Strategy
+      %match(type) {
+        Type[TomType="Strategy"] -> {
+          stratChild.add(Integer.valueOf(index));
+        }
+      }
+
+	    tomTypes = tomTypes.getTailconcTomType();
+	    index++;
+    }
+    output.write(deep, "type " + tomName);
+    
+    //write extends
+	matchblock: {
+		%match(extendsType) {
+			Type[TlType=TLType(code)] -> {
+				inheritedClass = `code;
+				break matchblock;
+			}
+
+			Type[TomType=code,TlType=EmptyTargetLanguageType()] -> {
+				inheritedClass = `code;
+				break matchblock;
+			}
+		}
+	}
+	
+	output.write(" is new " + inheritedClass);
+	
+	//write Declarations
+	
+	int args = names.size();
+	
+	if (args == 0) {
+		output.writeln(" with null record;");
+	} else {    
+		output.writeln(" with");
+		output.writeln(deep, "record");
+		
+		for(int i = 0 ; i < args ; i++) {
+		  output.writeln(deep+1, names.get(i) + " : " + types.get(i) + ";");
+		}
+		output.writeln(deep, "end record;");
+	}
+
+	output.writeln(deep+1, "overriding function  toString(t: " + tomName + ") return String;");
+	output.writeln(deep+1, "overriding function  getChildren(v: " + tomName + ") return ObjectPtrArrayPtr;");
+	output.writeln(deep+1, "overriding procedure setChildren(v: in out " + tomName + " ; children: ObjectPtrArrayPtr);");
+	output.writeln(deep+1, "overriding function  getChildCount(v: " + tomName + ") return Integer;");
+	output.writeln(deep+1, "overriding function  getChildAt(v: " + tomName + "; i : Integer) return Visitable'Class;");
+	output.writeln(deep+1, "overriding procedure setChildAt(v: in out " + tomName + "; i: in Integer; child: in Visitable'Class);");
+	output.writeln(deep+1, "overriding function  visitLight(str:access " + tomName + "; any: ObjectPtr; i: access Introspector'Class) return ObjectPtr;");
+	
+	output.writeln();
+	
+    //write constructor
+    output.write(deep, "function new" + tomName);
+    if (args > 0) { output.write("("); }
+    //write constructor parameters
+    for(int i = 0 ; i < args ; i++) {
+	    output.write(names.get(i) + ": " + types.get(i));
+	    if(i+1<args) {//if many parameters
+		    output.write("; ");
+	    }
+    }
+    
+    if (args > 0) { output.write(")"); }
+
+    //write constructor initialization
+    output.writeln(" return StrategyPtr is");
+    output.write(deep+1, "newStrat : StrategyPtr := new " + tomName);
+    
+    if (args > 0) { output.write("\'("); }
+        
+    //here index represents the parameter number
+    for(int i = 0 ; i < args ; i++) {
+	    String param = names.get(i);
+	    output.write(param + " => " + param);
+	    if(i+1<args) {//if many parameters
+		    output.write(", ");
+	    }
+    }
+	if (args > 0) { output.write(", others => <>)"); }
+	output.writeln(";");
+	output.writeln(deep, "begin");
+    
+    output.write(deep+1,"make" + inheritedClass + "(" + inheritedClass + "\'Class(newStrat.all), ");
+    generateBQTerm(0, superTerm,moduleName);
+    output.writeln(");");
+    
+    output.writeln(deep+1, "return newStrat;");
+    
+    output.writeln(deep,"end new" + tomName + ";");
+    
+    output.writeln();
+    
+    //toString function
+    output.writeln(deep, "function toString(t: " + tomName + ") return String is begin return \"" + tomName + "()\"; end;");
+    
+	output.writeln();
+
+    // write getters
+    for(int i = 0 ; i < args ; i++) {
+      output.writeln(deep, "function get" + names.get(i) + "(s: " + tomName + ") return " + types.get(i) + " is");
+      output.writeln(deep, "begin");
+      output.writeln(deep+1,"return s." + names.get(i) + ";");
+      output.writeln(deep,"end get" + names.get(i) + ";");
+    }
+    
+    output.writeln();
+
+    // write getChildCount (= 1 + stratChildCount because of the %strategy `extends' which is the first child)
+    int stratChildCount = stratChild.size();
+
+	output.writeln(deep, "function  getChildren(v: " + tomName + ") return ObjectPtrArrayPtr is");
+	output.writeln(deep+1, "stratChilds : ObjectPtrArrayPtr := new ObjectPtrArray(0..getChildCount(v));");
+	output.writeln(deep, "begin");
+	output.writeln(deep+1, "stratChilds(0) := new Object'Class'( Object'Class( getChildAt(" + inheritedClass +"(v),0) ) );");
+	for(int i = 0; i < stratChildCount; i++) {
+		int j = (stratChild.get(i)).intValue();
+		output.writeln(deep+1, "stratChilds(" + (i+1) + ") := new Object'Class'(Object'Class( get" + names.get(j) + "(v) ));");
+	}
+	output.writeln(deep+1, "return stratChilds;");
+	output.writeln(deep, "end getChildren;");
+    
+	output.writeln();
+
+    output.writeln(deep, "procedure setChildren(v: in out " + tomName + " ; children: ObjectPtrArrayPtr) is");
+    output.writeln(deep, "begin");
+    output.writeln(deep+1,"setChildAt(v, 0, Visitable'Class(children(0).all));");
+    for(int i = 0; i < stratChildCount; i++) {
+      int j = (stratChild.get(i)).intValue();
+      output.writeln(deep+1, names.get(j) + " := " + types.get(j) + "( children(" + (i+1) + ") );");
+    }
+    output.writeln(deep, "end setChildren;");
+    
+    output.writeln();
+
+	output.writeln(deep, "function getChildCount(v: " + tomName +") return Integer is");
+	output.writeln(deep, "begin");
+	output.writeln(deep+1, "return " + (stratChildCount + 1) + ";");
+	output.writeln(deep, "end getChildCount;");
+    
+	output.writeln();
+
+	// write getChildAt
+	output.writeln(deep, "function getChildAt(v: " + tomName + "; i : Integer) return Visitable'Class is");
+	output.writeln(deep+1, "IndexOutOfBoundsException: exception;");
+	output.writeln(deep, "begin");
+	output.writeln(deep+1, "if i = 0 then");
+	output.writeln(deep+2, "return getChildAt(" + inheritedClass +"(v), 0);");
+	for (int i = 0; i < stratChildCount; i++) {
+		int j = (stratChild.get(i)).intValue();
+		output.writeln(deep+1,"elsif i = " + (i+1) + " then");
+		output.writeln(deep+2, "return Visitable'Class(v." + names.get(j) + ");");
+	}
+	output.writeln(deep+1,"else");
+	output.writeln(deep+2,"raise IndexOutOfBoundsException;");
+	output.writeln(deep+1,"end if;"); 
+	output.writeln(deep, "end getChildAt;");
+
+	output.writeln();
+
+	// write setChildAt
+	output.writeln(deep, "procedure setChildAt(v: in out " + tomName + "; i: in Integer; child: in Visitable'Class) is");
+	output.writeln(deep+1, "IndexOutOfBoundsException: exception;");
+	output.writeln(deep, "begin");
+	output.writeln(deep+1, "if i = 0 then");
+	output.writeln(deep+2, "setChildAt(" + inheritedClass + "(v), 0, child);");
+	for (int i = 0; i < stratChildCount; i++) {
+		int j = (stratChild.get(i)).intValue();
+		output.writeln(deep+1,"elsif i = " + (i+1) + " then");
+		output.writeln(deep+2, "v." + names.get(j) + " := " + types.get(j) + "( child );");
+	}
+	output.writeln(deep+1,"else");
+	output.writeln(deep+2,"raise IndexOutOfBoundsException;");
+	output.writeln(deep+1,"end if;"); 
+	output.writeln(deep, "end setChildAt;");
+	
+	output.writeln();
+	generateDeclaration(deep,`declaration, moduleName);
+
+	output.writeln();
   }
 
 }

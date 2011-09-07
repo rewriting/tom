@@ -15,16 +15,16 @@ package body VisitableBuiltinPackage is
 		return v.builtin;
 	end;
 
-	procedure setChildren(v: in out VisitableBuiltin ; children : ObjectPtrArray) is
+	procedure setChildren(v: in out VisitableBuiltin ; children : ObjectPtrArrayPtr) is
 		error : exception;
 	begin
-		if children'Length > 0 then
+		if children /= null then
 			raise Error;
 		end if;
 	end;
 	
-	function getChildren(v: VisitableBuiltin) return ObjectPtrArray is
-		ret : ObjectPtrArray(0..0);
+	function getChildren(v: VisitableBuiltin) return ObjectPtrArrayPtr is
+		ret : ObjectPtrArrayPtr := new ObjectPtrArray(0..0);
 	begin
 		ret(0) := new VisitableBuiltin;
 		return ret;

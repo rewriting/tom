@@ -19,12 +19,13 @@ package OmegaStrategy is
 	-- Strategy implementation
 	----------------------------------------------------------------------------
 	
-	function  visitLight(str:access Omega; any: ObjectPtr; i: access Introspector'Class) return Object'Class;
+	function  visitLight(str:access Omega; any: ObjectPtr; i: access Introspector'Class) return ObjectPtr;
 	function  visit(str: access Omega; i: access Introspector'Class) return Integer;
 	
 	----------------------------------------------------------------------------
 	
 	procedure makeOmega(om : in out Omega; ip: Integer; v: Strategy'Class);
+	function newOmega(ip: Integer; v: Strategy'Class) return StrategyPtr;
 	function  getPos(om : Omega) return Integer;
 
 end OmegaStrategy;

@@ -30,7 +30,7 @@
  **/
 
 %typeterm char {
-  implement           { Character }
-  is_sort(t) { True }
-  equals(t1,t2)       { $t1=$t2 }
+  implement 	{Character}
+  is_sort(t) 	{True}
+  equals(t1,t2) {$t1=$t2}
 }

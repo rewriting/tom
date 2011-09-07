@@ -1,4 +1,5 @@
-
+with Ada.Text_IO;
+use  Ada.Text_IO;
 package body AbstractStrategyCombinatorPackage is
 
 	procedure initSubterm(sc : in out AbstractStrategyCombinator) is
@@ -60,7 +61,11 @@ package body AbstractStrategyCombinatorPackage is
 	overriding
 	function getChildCount(v: AbstractStrategyCombinator) return Integer is
 	begin
-		return v.arguments'Length;
+		if v.arguments = null then
+			return 0;
+		else
+			return v.arguments'Length;
+		end if;
 	end;
 	
 	overriding
@@ -76,19 +81,23 @@ package body AbstractStrategyCombinatorPackage is
 	end;
 	
 	overriding
-	procedure setChildren(v: in out AbstractStrategyCombinator ; children : ObjectPtrArray) is
+	procedure setChildren(v: in out AbstractStrategyCombinator ; children : ObjectPtrArrayPtr) is
 	begin
-		v.arguments := new ObjectPtrArray(children'range);
-		
-		for i in children'range loop
-			v.arguments(i) := new Object'Class'( children(i).all );
-		end loop;
+		if children /= null then
+			v.arguments := new ObjectPtrArray(children'range);
+			
+			for i in children'range loop
+				v.arguments(i) := new Object'Class'( children(i).all );
+			end loop;
+		else
+			v.arguments := null;
+		end if;
 	end;
 	
 	overriding
-	function getChildren(v: AbstractStrategyCombinator) return ObjectPtrArray is
+	function getChildren(v: AbstractStrategyCombinator) return ObjectPtrArrayPtr is
 	begin
-		return v.arguments.all;
+		return v.arguments;
 	end;
 	
 	----------------------------------------------------------------------------

@@ -17,7 +17,7 @@ package body OmegaStrategy is
 	----------------------------------------------------------------------------
 	
 	overriding
-	function visitLight(str:access Omega; any: ObjectPtr; i: access Introspector'Class) return Object'Class is
+	function visitLight(str:access Omega; any: ObjectPtr; i: access Introspector'Class) return ObjectPtr is
 		sptr : StrategyPtr := StrategyPtr(str.arguments(ARG));
 	begin
 		if str.indexPosition = 0 then
@@ -26,10 +26,10 @@ package body OmegaStrategy is
 			declare
 			childNumber : Integer := str.indexPosition - 1;
 			optr : ObjectPtr := new Object'Class'( IntrospectorPackage.getChildAt(i.all, any.all, childNumber) );
-			newChild : Object'Class := StrategyPackage.visitLight( StrategyPtr(str.arguments(ARG)) , optr , i);
+			newChild : ObjectPtr := StrategyPackage.visitLight( StrategyPtr(str.arguments(ARG)) , optr , i);
 			begin
-				IntrospectorPackage.setChildAt(i.all, Visitable'Class(any.all), childNumber, newChild);
-				return i.all;
+				IntrospectorPackage.setChildAt(i.all, Visitable'Class(any.all), childNumber, newChild.all);
+				return ObjectPtr(i);
 			end;
 		else
 			raise VisitFailure;
@@ -59,6 +59,13 @@ package body OmegaStrategy is
 	begin
 		initSubterm(om, v);
 		om.indexPosition := ip;
+	end;
+	
+	function newOmega(ip: Integer; v: Strategy'Class) return StrategyPtr is
+		ret : StrategyPtr := new Omega;
+	begin
+		makeOmega(Omega(ret.all), ip, v);
+		return ret;
 	end;
 	
 	function getPos(om : Omega) return Integer is

@@ -35,13 +35,13 @@ package EnvironmentPackage is
 	procedure setIntrospector(env: in out Environment; i: IntrospectorPtr);
 	function  getSubOmega(env: Environment) return Integer;
 	function  depth(env: Environment) return Integer;
-	function  getPosition(env: Environment) return PositionPackage.Position;
+	function  getPosition(env: Environment) return Position;
 	procedure up(env: in out Environment);
 	procedure upLocal(env: in out Environment);
 	procedure down(env: in out Environment; n: Integer);
 	procedure followPath(env: in out Environment; p: Path'Class);
 	procedure followPathLocal(env: in out Environment; p: Path'Class);
-	procedure goToPosition(env: in out Environment; p: PositionPackage.Position);
+	procedure goToPosition(env: in out Environment; p: Position);
 
 	function  toString(env: Environment) return String;
 	
@@ -50,7 +50,7 @@ package EnvironmentPackage is
 	procedure ensureLength(env: in out Environment; minLength: Integer);
 	procedure genericFollowPath(env: in out Environment; p: Path'Class; local: Boolean);
 	
-	--type EnvironmentPtr is access all Environment'Class;
+	type EnvironmentPtr is access all Environment'Class;
 
 
 end EnvironmentPackage;

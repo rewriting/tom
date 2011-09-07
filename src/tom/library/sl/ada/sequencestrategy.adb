@@ -17,8 +17,8 @@ package body SequenceStrategy is
 	----------------------------------------------------------------------------
 	
 	overriding
-	function visitLight(str:access Sequence; any: ObjectPtr; i: access Introspector'Class) return Object'Class is
-		op : ObjectPtr := new Object'Class'( visitLight( StrategyPtr(str.arguments(SECOND)), ObjectPtr(str), i) );
+	function visitLight(str:access Sequence; any: ObjectPtr; i: access Introspector'Class) return ObjectPtr is
+		op : ObjectPtr := visitLight( StrategyPtr(str.arguments(SECOND)), ObjectPtr(str), i);
 	begin
 		return visitLight(StrategyPtr(str.arguments(SECOND)), op, i);
 	end;
