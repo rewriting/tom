@@ -550,7 +550,8 @@ public abstract class ParserAction {
 
     }
   }
-    private static abstract class GenericParseConstruct extends ParserAction {
+  
+  private static abstract class GenericParseConstruct extends ParserAction {
     
     @Override
     public void doAction(CharStream input, HostBlockBuilder hostBlockBuilder,
@@ -638,7 +639,7 @@ public abstract class ParserAction {
     
   }
  
-private static class ParseStrategyConstruct extends GenericParseConstruct {
+  private static class ParseStrategyConstruct extends GenericParseConstruct {
 
     private static final ParseStrategyConstruct instance = new ParseStrategyConstruct();
     
@@ -876,8 +877,11 @@ private static class ParseStrategyConstruct extends GenericParseConstruct {
       CommonTreeAdaptor adaptor = new CommonTreeAdaptor();
       
       Tree child = (Tree) adaptor.becomeRoot((Tree)adaptor.create(miniTomParser.Cst_MetaQuoteConstruct, "CsMetaQuoteConsruct"),(Tree) adaptor.nil());
+      
+      Tree optionsListTree = (Tree) adaptor.becomeRoot((Tree)adaptor.create(miniTomParser.Cst_concCstOption, "CsconCstOption"), (Tree) adaptor.nil());
       Tree strTree = (Tree) adaptor.becomeRoot((Tree)adaptor.create(miniTomParser.HOSTBLOCK, metaquoteContent), (Tree) adaptor.nil());
-            
+      
+      child.addChild(optionsListTree);
       child.addChild(strTree);
       tree.addChild(child);
     }
