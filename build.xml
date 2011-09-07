@@ -177,6 +177,7 @@
     <mkdir dir="${src.dist.lib}/tools"/>
     <mkdir dir="${src.dist.lib}/runtime"/>
     <mkdir dir="${src.dist.lib}/compiletime"/>
+    <mkdir dir="${src.dist.lib}/compiletime/sl-ada"/>
     <mkdir dir="${src.dist.share}"/>
     <mkdir dir="${src.dist.share}/contrib"/>
   </target>
@@ -664,7 +665,6 @@
         <include name="c/**/*.tom"/>
         <include name="caml/**/*.tom"/>
         <include name="java/**/*.tom"/>
-        <include name="ada/**/*.tom"/>
       </fileset>
     </copy>
     <copy todir="${stable.dist.share}">
@@ -940,6 +940,14 @@
         <exclude name="**/CVS/**/*"/>
       </fileset>
     </copy>
+    
+	<!-- tom-ada sl library -->
+    <copy todir="${src.dist.lib}/compiletime/sl-ada">
+      <fileset dir="${src.src}/tom/library/sl/ada/">
+        <include name="*"/>
+      </fileset>
+    </copy>
+	
 
     <!-- prepare tom-jar tar file -->
     <tar tarfile="${dist}/tom-jar-${src.version}.tar.gz" compression="gzip">

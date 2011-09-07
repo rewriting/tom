@@ -78,10 +78,10 @@ public class AdaGenerator extends GenericGenerator {
 	TomType tomType = getSymbolTable(moduleName).getType(type);
 	String declaredType = TomBase.getTLType(tomType);
 	  
-    if(isBuiltinType(declaredType)) {
+    /*if(isBuiltinType(declaredType)) {
       generateExpression(deep,`TrueTL(),moduleName);
       return;
-    }
+    }*/
 
     String template = getSymbolTable(moduleName).getIsSort(type);
     String opname="";
@@ -146,6 +146,7 @@ public class AdaGenerator extends GenericGenerator {
 	 //save the code of each tom_is_sort function in memory
     isSortType.add(type);
     isSortCode.add(code);
+
     //declare the tom_is_sort function in case something goes wrong, may be suppressed in the future
     buildIsSortDeclOriginal(deep, varName, type, code, moduleName);
   }
@@ -156,7 +157,7 @@ public class AdaGenerator extends GenericGenerator {
 		if ( type.equals( isSortType.get(i) ) ) {
 			return isSortCode.get(i);
 		}
-	}  
+	} 
 	return null;
   }
 
@@ -354,8 +355,8 @@ public class AdaGenerator extends GenericGenerator {
     String code = TomBase.getTLCode(tlType);
     String cast = extractImplementedType(code);
     String[] cut = cast.trim().split(" "); //to avoid bad casting when type is declared with access
-
-    if (cut.length==0 && builtinDescriptor.equals( extractDescriptor(code) )) {
+    
+	if (cut.length==1 && builtinDescriptor.equals( extractDescriptor(code) )) {
 		output.write(cast + "(");
 		generateExpression(0,exp,moduleName);
 		output.write(")");
@@ -860,7 +861,7 @@ matchBlock: {
             }
             varList = varList.getTailconcBQTerm();
             if(!varList.isEmptyconcBQTerm()) {
-              output.write(", ");
+              output.write("; ");
 
             }
     }
@@ -947,7 +948,7 @@ matchBlock: {
 	output.writeln(deep+1, "overriding function  getChildCount(v: " + tomName + ") return Integer;");
 	output.writeln(deep+1, "overriding function  getChildAt(v: " + tomName + "; i : Integer) return Visitable'Class;");
 	output.writeln(deep+1, "overriding procedure setChildAt(v: in out " + tomName + "; i: in Integer; child: in Visitable'Class);");
-	output.writeln(deep+1, "overriding function  visitLight(str:access " + tomName + "; any: ObjectPtr; i: access Introspector'Class) return ObjectPtr;");
+	output.writeln(deep+1, "overriding function  visitLight(str:access " + tomName + "; v: ObjectPtr; intro: access Introspector'Class) return ObjectPtr;");
 	
 	output.writeln();
 	
