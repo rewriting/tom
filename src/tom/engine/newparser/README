@@ -46,11 +46,14 @@ ou `(f(x ${+ 42}))
 ou `f(x '+ 42')`
   - (FP) parenthésage de backquote en place dans la branche newbackquote, il 
     faut modifier les exemples pour pouvoir le tester pleinement
+  - backquote incomplet : cf. TestFromMethod.t avec float & autres tests à
+    passer (plus bas)
 
-- clarifier le nommage des sort et constructeurs : CstTerm ne correspond pas
+- clarifier le nommage des sortes et constructeurs : CstTerm ne correspond pas
   aux TomTerm mais aux BQTerm en plus de CstBQTerm, CstPattern correspond aux
   TomTerm
-  - (FP) apparemment JC a oublié avoir fait la correction avant de mettre le commentaire
+  - (FP) apparemment JC a oublié avoir fait la correction avant de mettre le
+    commentaire
 
 
 ==========================================================
@@ -59,18 +62,17 @@ Remaining examples and tests to pass (please remove the appropriate line once
 tested):
 - tests:
   
-  test/
-  test/backquote
-  test/error
-  test/gom
-  test/numeric
-  test/regress
-  test/rule
-  test/sl
-  test/TestLabel.t
+  test/error/*
+  test/gom/TestFromMethods.t
+  test/numeric/TestNumericConditions.t
+  test/regress/*
+  test/rule/Peano.t
+  test/rule/TestPeano.t
+  test/rule/TestWhen.t
+  test/rule/TomList.t
+  test/sl/TestSLModes.t
 
 - examples:
-
   examples/acmatching
   examples/addressbook
   examples/analysis
