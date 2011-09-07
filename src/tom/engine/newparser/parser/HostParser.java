@@ -121,7 +121,7 @@ public class HostParser {
     // bqTerms
     actionsMapping.put(
       //new KeywordDetector("`"),
-      new DelimitedSequenceDetector("`", "`"),
+      new DelimitedSequenceDetector("`", "`", '\\'),
       ParserAction.PARSE_BQTERM_CONSTRUCT);
   }
   
