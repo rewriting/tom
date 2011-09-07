@@ -16,6 +16,8 @@ import java.io.BufferedWriter;
 import java.io.OutputStreamWriter;
 import java.io.FileOutputStream;
 
+import java.lang.reflect.InvocationTargetException;
+
 import tom.platform.OptionManager;
 
 import tom.engine.TomStreamManager;
@@ -165,13 +167,11 @@ public abstract class ParserAction {
         OptionManager optionManager, HashSet<String> includedFiles,
         HashSet<String> alreadyParsedFiles)
     throws TomIncludeException, TomException {
-      //System.out.println("(DEBUG1) input = "  + input.substring(0,input.size()-1));
 
       ArrayList<String> parameters = new ArrayList<String>();
       Logger logger = Logger.getLogger("tom.engine.newparser.parser.HostParser");
 
       String currentFile = input.getSourceName();
-
 
       // remove keyword from stream and hostBlockBuilder and insert previously
       // consumed hostChars in tree
@@ -212,8 +212,10 @@ public abstract class ParserAction {
       }
 
       // get Gom code
+      // 'true' means that delimiters allow nesting.
+      // Useful for hooks: %gom{ ... sort Sort:block() { } ... }
       DelimitedSequenceDetector delimitedSequenceDetector =
-        new DelimitedSequenceDetector("{", "}");
+        new DelimitedSequenceDetector("{", "}", true);
 
       delimitedSequenceDetector.readChar(input); // init detector
       input.consume(); // avoid '{' to go in hostBlockBuilder
@@ -302,7 +304,6 @@ public abstract class ParserAction {
       if(gomOpts.length() > 0) {
         String[] userOpts = gomOpts.split("\\s+");
         for(int i=0; i < userOpts.length; i++) {
-        System.out.println("(DEBUG0101) Host - userOpts["+i+"] = " + userOpts[i]);
           parameters.add(userOpts[i]);
         }
       }
@@ -350,27 +351,27 @@ public abstract class ParserAction {
             .getMethod("exec", new Class[] {params.getClass(), Map.class})
             .invoke(null, new Object[] {params, informationTracker}))
           .intValue();
-        /*
-           } catch (ClassNotFoundException cnfe) {
-           TomMessage.error(logger, currentFile, initialGomLine,
-           TomMessage.gomInitFailure,currentFile,
-           Integer.valueOf(initialGomLine), cnfe);
-           } catch (NoSuchMethodException nsme) {
-           TomMessage.error(logger, currentFile, initialGomLine,
-           TomMessage.gomInitFailure,currentFile,
-           Integer.valueOf(initialGomLine), nsme);
-           } catch (InvocationTargetException ite) {
-           TomMessage.error(logger, currentFile, initialGomLine,
+      } catch (ClassNotFoundException cnfe) {
+        TomMessage.error(logger, currentFile, initialGomLine,
+            TomMessage.gomInitFailure,currentFile,
+            Integer.valueOf(initialGomLine), cnfe);
+      } catch (NoSuchMethodException nsme) {
+        TomMessage.error(logger, currentFile, initialGomLine,
+            TomMessage.gomInitFailure,currentFile,
+            Integer.valueOf(initialGomLine), nsme);
+      } catch (InvocationTargetException ite) {
+        TomMessage.error(logger, currentFile, initialGomLine,
            TomMessage.gomInitFailure,currentFile,
            Integer.valueOf(initialGomLine), ite);
-           } catch (IllegalAccessException iae) {
-           TomMessage.error(logger, currentFile, initialGomLine,
-           TomMessage.gomInitFailure,currentFile,
-           Integer.valueOf(initialGomLine), iae);
-           }*/
+      } catch (IllegalAccessException iae) {
+        TomMessage.error(logger, currentFile, initialGomLine,
+            TomMessage.gomInitFailure,currentFile,
+            Integer.valueOf(initialGomLine), iae);
+      }
+      /*
     } catch (Exception e) {
       throw new RuntimeException(e);
-    }
+    }*/
 
     tmpFile.deleteOnExit();
     if(res != 0) {
