@@ -6,7 +6,7 @@ TODO
 - inclusion et appel de %gom
   - (JC) gom sans option semble OK, continuer les tests
   - (JC) gom avec options pose problème -> corrigé, continuer à tester
-  - (JC) theories dans gom semblent poser problème
+  - (JC) gom avec hooks fonctionne maintenant (pb des '{' imbriquées)
 
 - parsing de %strategy
   - (JC) à tester, semble passer sur plusieurs exemples/tests
@@ -14,7 +14,7 @@ TODO
 - labels dans miniTom.g
 
 - patterns dans %match
-  - - (JC) p << T x  semble fonctionner, continuer à tester les patterns
+  - (JC) p << T x  semble fonctionner, continuer à tester les patterns
 
 - gérer les $nom_variable dans les mappings
   - directement dans le parser ?
