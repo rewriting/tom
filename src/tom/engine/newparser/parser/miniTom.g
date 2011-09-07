@@ -208,19 +208,27 @@ RBR
 ;
 
 csConstraintAction :
-csConstraint ARROW LBR RBR
-  -> ^(Cst_ConstraintAction csConstraint
-      {((CustomToken)$LBR).getPayload(Tree.class)}
-      ^(Cst_concCstOption ^(Cst_NoOption ))
-      )
+(csName l=COLON)? csConstraint ARROW LBR RBR
+  -> {$l!=null}? ^(Cst_ConstraintAction csConstraint
+                  {((CustomToken)$LBR).getPayload(Tree.class)}
+                  ^(Cst_concCstOption ^(Cst_Label csName ))
+                 )
+  ->             ^(Cst_ConstraintAction csConstraint
+                  {((CustomToken)$LBR).getPayload(Tree.class)}
+                  ^(Cst_concCstOption ^(Cst_NoOption ))
+                 )
   ;
 
 csExtendedConstraintAction :
-csExtendedConstraint ARROW LBR RBR
-  -> ^(Cst_ConstraintAction csExtendedConstraint
-      {((CustomToken)$LBR).getPayload(Tree.class)}
-      ^(Cst_concCstOption ^(Cst_NoOption ))
-      )
+(csName l=COLON)? csExtendedConstraint ARROW LBR RBR
+  -> {$l!=null}? ^(Cst_ConstraintAction csExtendedConstraint
+                  {((CustomToken)$LBR).getPayload(Tree.class)}
+                  ^(Cst_concCstOption ^(Cst_Label csName ))
+                 )
+  ->             ^(Cst_ConstraintAction csExtendedConstraint
+                  {((CustomToken)$LBR).getPayload(Tree.class)}
+                  ^(Cst_concCstOption ^(Cst_NoOption ))
+                 )
   ;
 
 /*csMatchArgument :

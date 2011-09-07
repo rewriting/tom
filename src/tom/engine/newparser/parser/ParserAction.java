@@ -139,9 +139,7 @@ public abstract class ParserAction {
                 "File :"+input.getSourceName()
                 + " :: unexpected EOF, expecting '"
                 + ((DelimitedSequenceDetector)analyst).getClosingKeywordString()
-                + "' ('"
-                + ((DelimitedSequenceDetector)analyst).getOpeningKeywordString()
-                + "' is at "+startLine+":"+startColumn
+                + "' at line: "+startLine+":"+startColumn
                 );
           }
         }
@@ -553,7 +551,8 @@ public abstract class ParserAction {
 
     }
   }
-    private static abstract class GenericParseConstruct extends ParserAction {
+  
+  private static abstract class GenericParseConstruct extends ParserAction {
     
     @Override
     public void doAction(CharStream input, HostBlockBuilder hostBlockBuilder,
@@ -641,7 +640,7 @@ public abstract class ParserAction {
     
   }
  
-private static class ParseStrategyConstruct extends GenericParseConstruct {
+  private static class ParseStrategyConstruct extends GenericParseConstruct {
 
     private static final ParseStrategyConstruct instance = new ParseStrategyConstruct();
     
@@ -846,6 +845,8 @@ private static class ParseStrategyConstruct extends GenericParseConstruct {
         HashSet<String> alreadyParsedFiles)
     throws TomIncludeException, TomException {
       
+      int startLine = input.getLine();
+    	
       // remove beginning of the keyword from hostBlockBuilder
       hostBlockBuilder.removeLastChars(analyst.getOffsetAtMatch());
       
@@ -859,8 +860,12 @@ private static class ParseStrategyConstruct extends GenericParseConstruct {
       StringBuilder metaquoteContentBuilder = new StringBuilder();
       while(analyst.readChar(input)) {
         if(input.LA(1)==CharStream.EOF) {
-          System.err.println("Unexpected EndOfFile"); //TODO handle nicely
-          return;
+          throw new RuntimeException( // XXX handle nicely
+                    "File :" + input.getSourceName()
+                    + " :: unexpected EOF, expecting '"
+                    + ((DelimitedSequenceDetector)analyst).getClosingKeywordString()
+                    + "' at line: "+startLine
+                    );
         }
         metaquoteContentBuilder.append((char)input.LA(1));
         input.consume();
@@ -873,8 +878,11 @@ private static class ParseStrategyConstruct extends GenericParseConstruct {
       CommonTreeAdaptor adaptor = new CommonTreeAdaptor();
       
       Tree child = (Tree) adaptor.becomeRoot((Tree)adaptor.create(miniTomParser.Cst_MetaQuoteConstruct, "CsMetaQuoteConsruct"),(Tree) adaptor.nil());
+      
+      Tree optionsListTree = (Tree) adaptor.becomeRoot((Tree)adaptor.create(miniTomParser.Cst_concCstOption, "CsconCstOption"), (Tree) adaptor.nil());
       Tree strTree = (Tree) adaptor.becomeRoot((Tree)adaptor.create(miniTomParser.HOSTBLOCK, metaquoteContent), (Tree) adaptor.nil());
-            
+      
+      child.addChild(optionsListTree);
       child.addChild(strTree);
       tree.addChild(child);
     }
