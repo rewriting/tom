@@ -19,8 +19,8 @@ package AbstractStrategyBasicPackage is
 	
 	procedure setChildren(v: in out AbstractStrategyBasic ; children : ObjectPtrArrayPtr);
 	function  getChildren(v: AbstractStrategyBasic) return ObjectPtrArrayPtr;
-	function  getChildAt(v: AbstractStrategyBasic; i : Integer) return Visitable'Class;
-	procedure setChildAt(v: in out AbstractStrategyBasic; i: in Integer; child: in Visitable'Class);
+	function  getChildAt(v: AbstractStrategyBasic; i : Integer) return VisitablePtr;
+	procedure setChildAt(v: in out AbstractStrategyBasic; i: in Integer; child: in VisitablePtr);
 	function  getChildCount(v: AbstractStrategyBasic) return Integer;
 	
 	----------------------------------------------------------------------------

@@ -13,16 +13,16 @@ package AbstractStrategyCombinatorPackage is
 	
 	procedure setChildren(v: in out AbstractStrategyCombinator ; children : ObjectPtrArrayPtr);
 	function  getChildren(v: AbstractStrategyCombinator) return ObjectPtrArrayPtr;
-	function  getChildAt(v: AbstractStrategyCombinator; i : Integer) return Visitable'Class;
-	procedure setChildAt(v: in out AbstractStrategyCombinator; i: in Integer; child: in Visitable'Class);
+	function  getChildAt(v: AbstractStrategyCombinator; i : Integer) return VisitablePtr;
+	procedure setChildAt(v: in out AbstractStrategyCombinator; i: in Integer; child: in VisitablePtr);
 	function  getChildCount(v: AbstractStrategyCombinator) return Integer;
 	
 	----------------------------------------------------------------------------
 	
 	procedure initSubterm(sc : in out AbstractStrategyCombinator);
-	procedure initSubterm(sc : in out AbstractStrategyCombinator; str : Strategy'Class);
-	procedure initSubterm(sc : in out AbstractStrategyCombinator; str1,str2 : Strategy'Class);
-	procedure initSubterm(sc : in out AbstractStrategyCombinator; str1,str2,str3 : Strategy'Class);
+	procedure initSubterm(sc : in out AbstractStrategyCombinator; str : StrategyPtr);
+	procedure initSubterm(sc : in out AbstractStrategyCombinator; str1,str2 : StrategyPtr);
+	procedure initSubterm(sc : in out AbstractStrategyCombinator; str1,str2,str3 : StrategyPtr);
 	procedure initSubterm(sc : in out AbstractStrategyCombinator; str : ObjectPtrArray);
 	function  getVisitors(sc: AbstractStrategyCombinator) return ObjectPtrArray;
 	

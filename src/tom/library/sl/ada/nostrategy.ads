@@ -1,31 +1,28 @@
 with ObjectPack, AbstractStrategyCombinatorPackage, IntrospectorPackage, StrategyPackage;
 use  ObjectPack, AbstractStrategyCombinatorPackage, IntrospectorPackage, StrategyPackage;
-package OmegaStrategy is
+package NoStrategy is
 
 	ARG : constant Integer := 0;
 
-	type Omega is new AbstractStrategyCombinator and Object with
-	record
-		indexPosition: Integer := 0;
-	end record;
+	type No is new AbstractStrategyCombinator and Object with null record;
 
 	----------------------------------------------------------------------------
 	-- Object implementation
 	----------------------------------------------------------------------------
 	
-	function  toString(o: Omega) return String;
+	function toString(n: No) return String;
 	
 	----------------------------------------------------------------------------
 	-- Strategy implementation
 	----------------------------------------------------------------------------
 	
-	function  visitLight(str:access Omega; any: ObjectPtr; i: access Introspector'Class) return ObjectPtr;
-	function  visit(str: access Omega; i: access Introspector'Class) return Integer;
+	function visitLight(str:access No; any: ObjectPtr; i: access Introspector'Class) return ObjectPtr;
+	function visit(str: access No; i: access Introspector'Class) return Integer;
 	
 	----------------------------------------------------------------------------
 	
-	procedure makeOmega(om : in out Omega; ip: Integer; v: StrategyPtr);
-	function newOmega(ip: Integer; v: StrategyPtr) return StrategyPtr;
-	function  getPos(om : Omega) return Integer;
+	procedure makeNo(n : in out No; v : StrategyPtr);
+	function newNo(v : StrategyPtr) return StrategyPtr;
+	----------------------------------------------------------------------------
 
-end OmegaStrategy;
+end NoStrategy;

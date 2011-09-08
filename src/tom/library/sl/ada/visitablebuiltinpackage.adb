@@ -30,15 +30,14 @@ package body VisitableBuiltinPackage is
 		return ret;
 	end;
 	
-	function getChildAt(v: VisitableBuiltin; i : Integer) return VisitableBuiltin is
+	function getChildAt(v: VisitableBuiltin; i : Integer) return VisitablePtr is
 		error : exception;
-		ret : VisitableBuiltin;
 	begin
 		raise Error;
-		return ret;
+		return null;
 	end;
 	
-	procedure setChildAt(v: in out VisitableBuiltin; i: in Integer; child: in VisitableBuiltin) is
+	procedure setChildAt(v: in out VisitableBuiltin; i: in Integer; child: in VisitablePtr) is
 		error : exception;
 	begin
 		raise Error;

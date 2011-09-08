@@ -38,7 +38,7 @@ package body SequenceStrategy is
 
 	procedure makeSequence(s : in out Sequence; str1, str2 : StrategyPtr) is
 	begin
-		initSubterm(s, str1.all, str2.all);
+		initSubterm(s, str1, str2);
 	end;
 
 	function make(str1, str2: StrategyPtr) return StrategyPtr is

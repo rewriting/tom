@@ -29,6 +29,6 @@
 
 %typeterm Strategy {
   implement {StrategyPtr}
-  is_sort(t) {$t=null or else $t.all in Strategy'Class}
-  equals(t1,t2) {($t1/=null and then $t2/=null and then $t1.all=$t2.all)}
+  is_sort(t) {$t.all in Strategy'Class}
+  equals(t1,t2) {$t1.all=$t2.all}
 }

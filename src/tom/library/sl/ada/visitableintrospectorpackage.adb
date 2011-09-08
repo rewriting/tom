@@ -1,27 +1,27 @@
 package body VisitableIntrospectorPackage is
-	procedure setChildren(intro: in out VisitableIntrospector; o: in out Visitable'Class; children: ObjectPtrArrayPtr) is
+	procedure setChildren(intro: access VisitableIntrospector; o: ObjectPtr; children: ObjectPtrArrayPtr) is
 	begin
-		VisitablePackage.setChildren(Visitable'Class(o), children);
+		VisitablePackage.setChildren(Visitable'Class(o.all), children);
 	end;
 	
-	function getChildren(intro: VisitableIntrospector; o: Object'Class) return ObjectPtrArrayPtr is
+	function getChildren(intro: access VisitableIntrospector; o: ObjectPtr) return ObjectPtrArrayPtr is
 	begin
-		return VisitablePackage.getChildren(Visitable'Class(o));
+		return VisitablePackage.getChildren(Visitable'Class(o.all));
 	end;
 	
-	procedure setChildAt(intro: in out VisitableIntrospector; o: in out Visitable'Class; i: Integer; child: Object'Class) is
+	procedure setChildAt(intro: access VisitableIntrospector; o: ObjectPtr; i: Integer; child: ObjectPtr) is
 	begin
-		VisitablePackage.setChildAt(Visitable'Class(o), i, Visitable'Class(child));
+		VisitablePackage.setChildAt(Visitable'Class(o.all), i, VisitablePtr(child));
 	end;
 	
-	function getChildAt(intro: VisitableIntrospector; o: Object'Class; i: Integer) return Object'Class is
+	function getChildAt(intro: access VisitableIntrospector; o: ObjectPtr; i: Integer) return ObjectPtr is
 	begin
-		return VisitablePackage.getChildAt(Visitable'Class(o), i);
+		return ObjectPtr( VisitablePackage.getChildAt(Visitable'Class(o.all), i) );
 	end;
 	
-	function getChildCount(intro: VisitableIntrospector; o: Object'Class) return Integer is
+	function getChildCount(intro: access VisitableIntrospector; o: ObjectPtr) return Integer is
 	begin
-		return VisitablePackage.getChildCount(Visitable'Class(o));
+		return VisitablePackage.getChildCount(Visitable'Class(o.all));
 	end;
 	
 	function getInstance return IntrospectorPtr is
