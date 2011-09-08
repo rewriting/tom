@@ -116,7 +116,7 @@ public class TestBuiltin {
     %match(int t) {
       0 -> { return 1; }
       1 -> { return 1; }
-      n -> { return fib(`n - 1) + fib(`n - 2); }
+      n -> { return fib(`n` - 1) + fib(`n` - 2); }
     }
 		return -1;
   }
@@ -126,9 +126,9 @@ public class TestBuiltin {
       int(0) -> { return 1; }
       int(1) -> { return 1; }
       int(n) -> {
-        int n1 = `n - 1;
-        int n2 = `n - 2;
-        return fibE(`int(n1)) + fibE(`int(n2)); }
+        int n1 = `n` - 1;
+        int n2 = `n` - 2;
+        return fibE(`int(n1)`) + fibE(`int(n2)`); }
     }
     return -1;
   }
@@ -137,7 +137,7 @@ public class TestBuiltin {
     %match(long t) {
       0l -> { return 1; }
       1L -> { return 1; }
-      n -> { return fibLong(`n - 1) + fibLong(`n - 2); }
+      n -> { return fibLong(`n` - 1) + fibLong(`n` - 2); }
     }
 		return -1;
   }

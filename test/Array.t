@@ -79,8 +79,8 @@ public class Array {
   }
 
   public void testArray2() {
-    ArrayList l   = `conc(a(),b(),c(),a(),b(),c(),a());
-    ArrayList res = `conc(a(),b(),c());
+    ArrayList l   = `conc(a(),b(),c(),a(),b(),c(),a())`;
+    ArrayList res = `conc(a(),b(),c())`;
     
     assertTrue(double1(sort1(l)).equals(res));
     assertTrue(double2(sort2(l)).equals(res));
@@ -91,14 +91,14 @@ public class Array {
   public ArrayList sort1(ArrayList l) {
     %match(L l) {
       conc(X1*,x,X2*,y,X3*) -> {
-        String xname = ((ATermAppl)`x).getName();
-        String yname = ((ATermAppl)`y).getName();
+        String xname = ((ATermAppl)`x`).getName();
+        String yname = ((ATermAppl)`y`).getName();
         if(xname.compareTo(yname) > 0) {
-          ArrayList result = `X1;
-          result.add(`y);
-          result.addAll(`X2);
-          result.add(`x);
-          result.addAll(`X3);
+          ArrayList result = `X1`;
+          result.add(`y`);
+          result.addAll(`X2`);
+          result.add(`x`);
+          result.addAll(`X3`);
           return sort1(result);
         }
       }
@@ -109,10 +109,10 @@ public class Array {
   public ArrayList double1(ArrayList l) {
     %match(L l) {
       conc(X1*,x,X2*,x,X3*) -> {
-        ArrayList result = `X1;
-        result.addAll(`X2);
-        result.add(`x);
-        result.addAll(`X3);
+        ArrayList result = `X1`;
+        result.addAll(`X2`);
+        result.add(`x`);
+        result.addAll(`X3`);
         return double1(result);
       }
     }
@@ -122,10 +122,10 @@ public class Array {
   public ArrayList sort2(ArrayList l) {
     %match(L l) {
       conc(X1*,x,X2*,y,X3*) -> {
-        String xname = ((ATermAppl)`x).getName();
-        String yname = ((ATermAppl)`y).getName();
+        String xname = ((ATermAppl)`x`).getName();
+        String yname = ((ATermAppl)`y`).getName();
         if(xname.compareTo(yname) > 0) {
-          return `sort2(conc(X1*,y,X2*,x,X3*));
+          return `sort2(conc(X1*,y,X2*,x,X3*))`;
         }
       }
     }
@@ -135,7 +135,7 @@ public class Array {
   public ArrayList double2(ArrayList l) {
     %match(L l) {
       conc(X1*,x,X2*,x,X3*) -> {
-        return `double2(conc(X1*,X2*,x,X3*));
+        return `double2(conc(X1*,X2*,x,X3*))`;
       }
     }
 		return l; 
@@ -144,16 +144,16 @@ public class Array {
 
   public ArrayList double4(ArrayList l) {
     %match(L l) {
-      conc(X1*,x@_,X2@_*,x,X3@_*) -> { return `double4(conc(X1*,X2*,x,X3*)); }
+      conc(X1*,x@_,X2@_*,x,X3@_*) -> { return `double4(conc(X1*,X2*,x,X3*))`; }
     }
 		return l; 
   }
 
   public ArrayList double5(ArrayList l) {
     %match(L l) {
-      conc(X1*,x@a(),X2*,x@a(),X3*) -> { return `double5(conc(X1*,X2*,x,X3*)); }
-      conc(X1*,x@_,X2*,x@_,X3*) -> { return `double5(conc(X1*,X2*,x,X3*)); }
-      conc(X1*,x@y,X2*,y@x,X3*) -> { return `double5(conc(X1*,X2*,x,X3*)); }
+      conc(X1*,x@a(),X2*,x@a(),X3*) -> { return `double5(conc(X1*,X2*,x,X3*))`; }
+      conc(X1*,x@_,X2*,x@_,X3*) -> { return `double5(conc(X1*,X2*,x,X3*))`; }
+      conc(X1*,x@y,X2*,y@x,X3*) -> { return `double5(conc(X1*,X2*,x,X3*))`; }
     }
 		return l; 
   }

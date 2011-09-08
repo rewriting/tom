@@ -28,11 +28,11 @@ public class TestAlgebraic {
 
   @Test
   public void test1() {
-    T1 res = `f(a());
-    Strategy s = `RepeatId(BottomUp(R()));
+    T1 res = `f(a())`;
+    Strategy s = `RepeatId(BottomUp(R()))`;
     try {
       res = s.visit(res);
-      Assert.assertEquals(res,`f(c()));
+      Assert.assertEquals(res,`f(c())`);
       return;
     } catch(VisitFailure e) {
       System.out.println("Failure");

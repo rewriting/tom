@@ -29,9 +29,9 @@ public class TestArrayNonLinear {
 
   @Test
   public void test1() {
-    ArrayList l1 = `concArrayList(a(),b(),c());
-    ArrayList l2 = `concArrayList(a(),b(),c());
-    ArrayList subject = `concArrayList(F(l1),F(l2));
+    ArrayList l1 = `concArrayList(a(),b(),c())`;
+    ArrayList l2 = `concArrayList(a(),b(),c())`;
+    ArrayList subject = `concArrayList(F(l1),F(l2))`;
     %match(subject) {
       concArrayList(F(concArrayList(_x*,y*)),F(concArrayList(_,y*))) -> {
         return;

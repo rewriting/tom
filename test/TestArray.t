@@ -95,8 +95,8 @@ public class TestArray {
     res.add(tc);
     this.sortedlist = res;
 
-    this.listwithdoubles = `conc(a(),b(),c(),a(),b(),c(),a());
-    this.listwithoutdoubles = `conc(a(),b(),c());
+    this.listwithdoubles = `conc(a(),b(),c(),a(),b(),c(),a())`;
+    this.listwithoutdoubles = `conc(a(),b(),c())`;
   }
 
   @AfterClass
@@ -149,14 +149,14 @@ public class TestArray {
   public ArrayList sort1(ArrayList l) {
     %match(L l) {
       conc(X1*,x,X2*,y,X3*) -> {
-        String xname = ((ATermAppl)`x).getName();
-        String yname = ((ATermAppl)`y).getName();
+        String xname = ((ATermAppl)`x`).getName();
+        String yname = ((ATermAppl)`y`).getName();
         if(xname.compareTo(yname) > 0) {
-          ArrayList result = `X1;
-          result.add(`y);
-          result.addAll(`X2);
-          result.add(`x);
-          result.addAll(`X3);
+          ArrayList result = `X1`;
+          result.add(`y`);
+          result.addAll(`X2`);
+          result.add(`x`);
+          result.addAll(`X3`);
           return sort1(result);
         }
       }
@@ -167,10 +167,10 @@ public class TestArray {
   public ArrayList double1(ArrayList l) {
     %match(L l) {
       conc(X1*,x,X2*,x,X3*) -> {
-        ArrayList result = `X1;
-        result.addAll(`X2);
-        result.add(`x);
-        result.addAll(`X3);
+        ArrayList result = `X1`;
+        result.addAll(`X2`);
+        result.add(`x`);
+        result.addAll(`X3`);
         return double1(result);
       }
     }
@@ -180,10 +180,10 @@ public class TestArray {
   public ArrayList sort2(ArrayList l) {
     %match(L l) {
       conc(X1*,x,X2*,y,X3*) -> {
-        String xname = ((ATermAppl)`x).getName();
-        String yname = ((ATermAppl)`y).getName();
+        String xname = ((ATermAppl)`x`).getName();
+        String yname = ((ATermAppl)`y`).getName();
         if(xname.compareTo(yname) > 0) {
-          return `sort2(conc(X1*,y,X2*,x,X3*));
+          return `sort2(conc(X1*,y,X2*,x,X3*))`;
         }
       }
     }
@@ -193,7 +193,7 @@ public class TestArray {
   public ArrayList double2(ArrayList l) {
     %match(L l) {
       conc(X1*,x,X2*,x,X3*) -> {
-        return `double2(conc(X1*,X2*,x,X3*));
+        return `double2(conc(X1*,X2*,x,X3*))`;
       }
     }
     return l;
@@ -202,16 +202,16 @@ public class TestArray {
 
   public ArrayList double4(ArrayList l) {
     %match(L l) {
-      conc(X1*,x@_,X2@_*,x,X3@_*) -> { return `double4(conc(X1*,X2*,x,X3*)); }
+      conc(X1*,x@_,X2@_*,x,X3@_*) -> { return `double4(conc(X1*,X2*,x,X3*))`; }
     }
     return l;
   }
 
   public ArrayList double5(ArrayList l) {
     %match(L l) {
-      conc(X1*,x@a(),X2*,x@a(),X3*) -> { return `double5(conc(X1*,X2*,x,X3*)); }
-      conc(X1*,x@_,X2*,x@_,X3*) -> { return `double5(conc(X1*,X2*,x,X3*)); }
-      conc(X1*,x@y,X2*,y@x,X3*) -> { return `double5(conc(X1*,X2*,x,X3*)); }
+      conc(X1*,x@a(),X2*,x@a(),X3*) -> { return `double5(conc(X1*,X2*,x,X3*))`; }
+      conc(X1*,x@_,X2*,x@_,X3*) -> { return `double5(conc(X1*,X2*,x,X3*))`; }
+      conc(X1*,x@y,X2*,y@x,X3*) -> { return `double5(conc(X1*,X2*,x,X3*))`; }
     }
     return l;
   }
@@ -219,11 +219,11 @@ public class TestArray {
   @Test
   public void testVariableStar1() {
     int nbSol = 0;
-    ArrayList l = `conc(a(),b());
+    ArrayList l = `conc(a(),b())`;
     %match(L l) {
       conc(X1*,X2*,X3*) -> {
         nbSol++;
-        logger.log(level,"X1 = " + `X1* + " X2 = " + `X2*+ " X3 = " + `X3*);
+        logger.log(level,"X1 = " + `X1*` + " X2 = " + `X2*`+ " X3 = " + `X3*`);
       }
     }
     assertTrue("TestVariableStar1",nbSol==6);

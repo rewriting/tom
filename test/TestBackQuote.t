@@ -18,8 +18,8 @@ public class TestBackQuote {
 	
   @Test
   public void test1() {
-    L l = `conc(a(), b(), c(), a(), b());
-    L l2 = `conc();
+    L l = `conc(a(), b(), c(), a(), b())`;
+    L l2 = `conc()`;
     // do not modify the layout
     // the problem was that space after the 'z*'
     %match(L l) {
@@ -35,7 +35,7 @@ public class TestBackQuote {
                    y*,
                    a(),
                    z*
-             );
+             )`;
       }
     }
     return;
@@ -43,12 +43,12 @@ public class TestBackQuote {
 
   %op L abc() {}
   private static L abc() {
-    return `conc(a(),b(),c());
+    return `conc(a(),b(),c())`;
   }
 
   @Test
   public void test2() {
-    assertEquals(`conc(a(),b(),c()),`conc(abc()));
+    assertEquals(`conc(a(),b(),c())`,`conc(abc())`);
   }
 
 }

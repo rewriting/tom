@@ -68,12 +68,12 @@ public class TestArray2 {
   @Test
   public void testVariableStar1() {
     int nbSol = 0;
-    List l =  `conc(ListElement(conc(a(),b())),a(),b());
+    List l =  `conc(ListElement(conc(a(),b())),a(),b())`;
     %match(jtList l) {
       conc(ListElement(conc(R*,T*)),X1*,u,X2*) -> {
         nbSol++;
         logger.log(level,
-            "R = " + `R* + " T = " + `T*+" X1 = " + `X1* + " u = " + `u + " X2 = " + `X2*);
+            "R = " + `R*` + " T = " + `T*`+" X1 = " + `X1*` + " u = " + `u` + " X2 = " + `X2*`);
       }
     }
     Assert.assertTrue("TestVariableStar1",nbSol==6);
