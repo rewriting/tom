@@ -136,7 +136,7 @@ package body EnvironmentPackage is
 		child : ObjectPtr := env.subterm(env.current);
 	begin
 		env.current := env.current - 1;
-		IntrospectorPackage.setChildAt(env.introspector.all, Visitable'Class(env.subterm(env.current).all) , childIndex, child.all);
+		IntrospectorPackage.setChildAt(env.introspector, env.subterm(env.current) , childIndex, child);
 		env.subterm(env.current) := new Object'Class'( Object'Class(env.introspector.all) );
 	end;
 	
@@ -155,7 +155,7 @@ package body EnvironmentPackage is
 				ensureLength(env, env.current + 1);
 			end if;
 			env.omega(env.current) := n;
-			env.subterm(env.current) := new Object'Class'( getChildAt(env.introspector.all, child.all, n-1) );
+			env.subterm(env.current) := getChildAt(env.introspector, child, n-1);
 		end if;
 	end;
 	
@@ -199,21 +199,28 @@ package body EnvironmentPackage is
 	function toString(env: Environment) return String is
 		str : access String := new String'("[");
 	begin
-		for i in env.omega'Range loop
+		for i in 0..env.current loop
 			str := new String'(str.all & Integer'Image( env.omega(i) ) );
-			if i /= env.omega'Last then
+			
+			if i < env.current then
 				str := new String'(str.all & "," );
 			end if;
 		end loop;
 		
 		str := new String'(str.all & "]" & LF & "[");
 		
-		for i in env.subterm'Range loop
-			str := new String'(str.all & ObjectPack.toString( env.subterm(i).all ) );
-			if i /= env.subterm'Last then
+		for i in 0..env.current loop
+			if env.subterm(i) = null then
+				str := new String'(str.all & "null" );
+			else
+				str := new String'(str.all & ObjectPack.toString( env.subterm(i).all ) );
+			end if;
+			
+			if i < env.current then
 				str := new String'(str.all & "," );
 			end if;
 		end loop;
+		
 		str := new String'(str.all & "]");
 		
 		return str.all;

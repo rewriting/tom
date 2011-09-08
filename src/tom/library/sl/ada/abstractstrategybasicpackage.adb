@@ -7,9 +7,10 @@ package body AbstractStrategyBasicPackage is
 	----------------------------------------------------------------------------
 	overriding
 	function visit(str: access AbstractStrategyBasic; i: access Introspector'Class) return Integer is
-		obj: ObjectPtr := visitLight(Strategy'Class(str.all)'Access , EnvironmentPackage.getSubject(str.all.env.all), i);
+		obj: ObjectPtr := null;
 	begin
-		EnvironmentPackage.setSubject( str.all.env.all, obj);
+		obj :=  visitLight(StrategyPtr(str) , getSubject(str.env.all), i);
+		EnvironmentPackage.setSubject( str.env.all, obj);
 		return EnvironmentPackage.SUCCESS;
 		
 		exception
@@ -39,22 +40,22 @@ package body AbstractStrategyBasicPackage is
 	end;
 	
 	overriding
-	function getChildAt(v: AbstractStrategyBasic; i : Integer) return Visitable'Class is
+	function getChildAt(v: AbstractStrategyBasic; i : Integer) return VisitablePtr is
 		IndexOutOfBoundsException : exception;
 	begin
 		if i = 0 then
-			return Visitable'Class(v.any.all);
+			return VisitablePtr(v.any);
 		else
 			raise IndexOutOfBoundsException;
 		end if;
 	end;
 	
 	overriding
-	procedure setChildAt(v: in out AbstractStrategyBasic; i: in Integer; child: in Visitable'Class) is
+	procedure setChildAt(v: in out AbstractStrategyBasic; i: in Integer; child: in VisitablePtr) is
 		IndexOutOfBoundsException : exception;
 	begin
 		if i = 0 then
-			v.any := new Strategy'Class'(  Strategy'Class(child) );
+			v.any := StrategyPtr(child);
 		else
 			raise IndexOutOfBoundsException;
 		end if;

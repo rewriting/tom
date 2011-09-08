@@ -7,26 +7,20 @@ package body AbstractStrategyCombinatorPackage is
 		sc.arguments := null;
 	end;
 		
-	procedure initSubterm(sc : in out AbstractStrategyCombinator; str : Strategy'Class) is
-		strptr : StrategyPtr := new Strategy'Class'(str);
+	procedure initSubterm(sc : in out AbstractStrategyCombinator; str : StrategyPtr) is
 	begin
-		sc.arguments := new ObjectPtrArray'( 0 => ObjectPtr(strptr) );
+		sc.arguments := new ObjectPtrArray'( 0 => ObjectPtr(str) );
 	end;
 	
-	procedure initSubterm(sc : in out AbstractStrategyCombinator; str1,str2 : Strategy'Class) is
-		strptr1 : StrategyPtr := new Strategy'Class'(str1);
-		strptr2 : StrategyPtr := new Strategy'Class'(str2);
+	procedure initSubterm(sc : in out AbstractStrategyCombinator; str1,str2 : StrategyPtr) is
 	begin
-		sc.arguments := new ObjectPtrArray'( ObjectPtr(strptr1), ObjectPtr(strptr2)  );
+		sc.arguments := new ObjectPtrArray'( ObjectPtr(str1), ObjectPtr(str2)  );
 	end;
 	
 	
-	procedure initSubterm(sc : in out AbstractStrategyCombinator; str1,str2,str3 : Strategy'Class) is
-		strptr1 : StrategyPtr := new Strategy'Class'(str1);
-		strptr2 : StrategyPtr := new Strategy'Class'(str2);
-		strptr3 : StrategyPtr := new Strategy'Class'(str3);
+	procedure initSubterm(sc : in out AbstractStrategyCombinator; str1,str2,str3 : StrategyPtr) is
 	begin
-		sc.arguments := new ObjectPtrArray'( ObjectPtr(strptr1), ObjectPtr(strptr2), ObjectPtr(strptr3)  );
+		sc.arguments := new ObjectPtrArray'( ObjectPtr(str1), ObjectPtr(str2), ObjectPtr(str3)  );
 	end;
 	
 	procedure initSubterm(sc : in out AbstractStrategyCombinator; str : ObjectPtrArray) is
@@ -34,7 +28,7 @@ package body AbstractStrategyCombinatorPackage is
 		sc.arguments := new ObjectPtrArray( str'range );
 		
 		for i in str'range loop
-			sc.arguments(i) := new Object'Class'( str(i).all );
+			sc.arguments(i) := str(i);
 		end loop;
 		
 	end;
@@ -43,7 +37,7 @@ package body AbstractStrategyCombinatorPackage is
 		arr :  ObjectPtrArray(sc.arguments'range);
 	begin
 		for i in arr'range loop
-			arr(i) := new Object'Class'( sc.arguments(i).all );
+			arr(i) := sc.arguments(i);
 		end loop;
 		
 		return arr;
@@ -69,15 +63,15 @@ package body AbstractStrategyCombinatorPackage is
 	end;
 	
 	overriding
-	function getChildAt(v: AbstractStrategyCombinator; i : Integer) return Visitable'Class is
+	function getChildAt(v: AbstractStrategyCombinator; i : Integer) return VisitablePtr is
 	begin
-		return Visitable'Class( v.arguments(i).all );
+		return VisitablePtr(v.arguments(i));
 	end;
 	
 	overriding
-	procedure setChildAt(v: in out AbstractStrategyCombinator; i: in Integer; child: in Visitable'Class) is
+	procedure setChildAt(v: in out AbstractStrategyCombinator; i: in Integer; child: in VisitablePtr) is
 	begin
-		v.arguments(i) := new Object'Class'( Object'Class(child) );
+		v.arguments(i) := ObjectPtr(child);
 	end;
 	
 	overriding

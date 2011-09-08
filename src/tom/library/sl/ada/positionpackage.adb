@@ -269,7 +269,7 @@ package body PositionPackage is
 	begin
 		for i in p.omega'Last..p.omega'First loop
 			tmp := new Omega;
-			makeOmega(Omega(tmp.all), p.omega(i), res.all);
+			makeOmega(Omega(tmp.all), p.omega(i), res);
 			res := tmp;
 		end loop;
 		return res.all;
@@ -282,7 +282,7 @@ package body PositionPackage is
 			return new Strategy'Class'(v);
 		else
 			ptr1 := new Omega;
-			makeOmega(Omega(ptr1.all), pos.omega(i), getOmegaPathAux(pos, v, i+1).all);
+			makeOmega(Omega(ptr1.all), pos.omega(i), getOmegaPathAux(pos, v, i+1));
 			ptr2 := new Strategy'Class'( v );
 			return SequenceStrategy.make(ptr1, ptr2);
 		end if;

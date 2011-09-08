@@ -946,8 +946,8 @@ matchBlock: {
 	output.writeln(deep+1, "overriding function  getChildren(v: " + tomName + ") return ObjectPtrArrayPtr;");
 	output.writeln(deep+1, "overriding procedure setChildren(v: in out " + tomName + " ; children: ObjectPtrArrayPtr);");
 	output.writeln(deep+1, "overriding function  getChildCount(v: " + tomName + ") return Integer;");
-	output.writeln(deep+1, "overriding function  getChildAt(v: " + tomName + "; i : Integer) return Visitable'Class;");
-	output.writeln(deep+1, "overriding procedure setChildAt(v: in out " + tomName + "; i: in Integer; child: in Visitable'Class);");
+	output.writeln(deep+1, "overriding function  getChildAt(v: " + tomName + "; i : Integer) return VisitablePtr;");
+	output.writeln(deep+1, "overriding procedure setChildAt(v: in out " + tomName + "; i: in Integer; child: in VisitablePtr);");
 	output.writeln(deep+1, "overriding function  visitLight(str:access " + tomName + "; v: ObjectPtr; intro: access Introspector'Class) return ObjectPtr;");
 	
 	output.writeln();
@@ -1014,7 +1014,7 @@ matchBlock: {
 	output.writeln(deep, "function  getChildren(v: " + tomName + ") return ObjectPtrArrayPtr is");
 	output.writeln(deep+1, "stratChilds : ObjectPtrArrayPtr := new ObjectPtrArray(0..getChildCount(v));");
 	output.writeln(deep, "begin");
-	output.writeln(deep+1, "stratChilds(0) := new Object'Class'( Object'Class( getChildAt(" + inheritedClass +"(v),0) ) );");
+	output.writeln(deep+1, "stratChilds(0) := ObjectPtr( getChildAt(" + inheritedClass +"(v),0) );");
 	for(int i = 0; i < stratChildCount; i++) {
 		int j = (stratChild.get(i)).intValue();
 		output.writeln(deep+1, "stratChilds(" + (i+1) + ") := new Object'Class'(Object'Class( get" + names.get(j) + "(v) ));");
@@ -1026,7 +1026,7 @@ matchBlock: {
 
     output.writeln(deep, "procedure setChildren(v: in out " + tomName + " ; children: ObjectPtrArrayPtr) is");
     output.writeln(deep, "begin");
-    output.writeln(deep+1,"setChildAt(v, 0, Visitable'Class(children(0).all));");
+    output.writeln(deep+1,"setChildAt(" + inheritedClass + "(v), 0, VisitablePtr(children(0)));");
     for(int i = 0; i < stratChildCount; i++) {
       int j = (stratChild.get(i)).intValue();
       output.writeln(deep+1, names.get(j) + " := " + types.get(j) + "( children(" + (i+1) + ") );");
@@ -1043,7 +1043,7 @@ matchBlock: {
 	output.writeln();
 
 	// write getChildAt
-	output.writeln(deep, "function getChildAt(v: " + tomName + "; i : Integer) return Visitable'Class is");
+	output.writeln(deep, "function getChildAt(v: " + tomName + "; i : Integer) return VisitablePtr is");
 	output.writeln(deep+1, "IndexOutOfBoundsException: exception;");
 	output.writeln(deep, "begin");
 	output.writeln(deep+1, "if i = 0 then");
@@ -1061,7 +1061,7 @@ matchBlock: {
 	output.writeln();
 
 	// write setChildAt
-	output.writeln(deep, "procedure setChildAt(v: in out " + tomName + "; i: in Integer; child: in Visitable'Class) is");
+	output.writeln(deep, "procedure setChildAt(v: in out " + tomName + "; i: in Integer; child: in VisitablePtr) is");
 	output.writeln(deep+1, "IndexOutOfBoundsException: exception;");
 	output.writeln(deep, "begin");
 	output.writeln(deep+1, "if i = 0 then");

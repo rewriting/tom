@@ -22,13 +22,13 @@ package body OmegaStrategy is
 	begin
 		if str.indexPosition = 0 then
 			return StrategyPackage.visitLight(sptr, any, i);
-		elsif str.indexPosition > 0 and then str.indexPosition <= IntrospectorPackage.getChildCount(i.all, any.all) then
+		elsif str.indexPosition > 0 and then str.indexPosition <= IntrospectorPackage.getChildCount(i, any) then
 			declare
 			childNumber : Integer := str.indexPosition - 1;
-			optr : ObjectPtr := new Object'Class'( IntrospectorPackage.getChildAt(i.all, any.all, childNumber) );
+			optr : ObjectPtr := IntrospectorPackage.getChildAt(i, any, childNumber) ;
 			newChild : ObjectPtr := StrategyPackage.visitLight( StrategyPtr(str.arguments(ARG)) , optr , i);
 			begin
-				IntrospectorPackage.setChildAt(i.all, Visitable'Class(any.all), childNumber, newChild.all);
+				IntrospectorPackage.setChildAt(i, any, childNumber, newChild);
 				return ObjectPtr(i);
 			end;
 		else
@@ -43,7 +43,7 @@ package body OmegaStrategy is
 	begin
 		if str.indexPosition = 0 then
 			return StrategyPackage.visit(sptr, i);
-		elsif str.indexPosition > 0 and then str.indexPosition <= IntrospectorPackage.getChildCount(i.all, getSubject(getEnvironment(str.all).all).all) then
+		elsif str.indexPosition > 0 and then str.indexPosition <= IntrospectorPackage.getChildCount(i, getSubject(getEnvironment(str.all).all)) then
 			down(str.env.all, str.indexPosition);
 			status := visit( StrategyPtr(str.arguments(ARG)), i);
 			up ( str.env.all );
@@ -55,13 +55,13 @@ package body OmegaStrategy is
 	
 	----------------------------------------------------------------------------
 	
-	procedure makeOmega(om : in out Omega; ip: Integer; v: Strategy'Class) is
+	procedure makeOmega(om : in out Omega; ip: Integer; v: StrategyPtr) is
 	begin
 		initSubterm(om, v);
 		om.indexPosition := ip;
 	end;
 	
-	function newOmega(ip: Integer; v: Strategy'Class) return StrategyPtr is
+	function newOmega(ip: Integer; v: StrategyPtr) return StrategyPtr is
 		ret : StrategyPtr := new Omega;
 	begin
 		makeOmega(Omega(ret.all), ip, v);

@@ -5,11 +5,11 @@ package VisitableIntrospectorPackage is
 
 	type VisitableIntrospector is new Introspector and Object with null record;
 	
-	procedure setChildren(intro: in out VisitableIntrospector; o: in out Visitable'Class; children: ObjectPtrArrayPtr);
-	function  getChildren(intro: VisitableIntrospector; o: Object'Class) return ObjectPtrArrayPtr;
-	procedure setChildAt(intro: in out VisitableIntrospector; o: in out Visitable'Class; i: Integer; child: Object'Class);
-	function  getChildAt(intro: VisitableIntrospector; o: Object'Class; i: Integer) return Object'Class;
-	function  getChildCount(intro: VisitableIntrospector; o: Object'Class) return Integer;
+	procedure setChildren(intro: access VisitableIntrospector; o: ObjectPtr; children: ObjectPtrArrayPtr);
+	function  getChildren(intro: access VisitableIntrospector; o: ObjectPtr) return ObjectPtrArrayPtr;
+	procedure setChildAt(intro: access VisitableIntrospector; o: ObjectPtr; i: Integer; child: ObjectPtr);
+	function  getChildAt(intro: access VisitableIntrospector; o: ObjectPtr; i: Integer) return ObjectPtr;
+	function  getChildCount(intro: access VisitableIntrospector; o: ObjectPtr) return Integer;
 	
 	function  getInstance return IntrospectorPtr;
 	function  toString(vi : VisitableIntrospector) return String;

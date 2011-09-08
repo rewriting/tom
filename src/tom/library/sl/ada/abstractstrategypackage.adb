@@ -1,5 +1,10 @@
 with VisitableIntrospectorPackage, VisitFailurePackage, Ada.Text_IO;
 use  VisitableIntrospectorPackage, VisitFailurePackage, Ada.Text_IO;
+
+with AbstractStrategyCombinatorPackage;
+use  AbstractStrategyCombinatorPackage;
+
+with Ada.Text_IO; use Ada.Text_IO;
 package body AbstractStrategyPackage is
 
 	----------------------------------------------------------------------------
@@ -43,9 +48,11 @@ package body AbstractStrategyPackage is
 	function visit(str: access AbstractStrategy; any: ObjectPtr; i: access Introspector'Class) return ObjectPtr is
 		status: Integer;
 	begin
+		
 		init(str.all, i.all);
 		AbstractStrategyPackage.setRoot(str.all, any);
-		status := visit(Strategy'Class(str.all)'Access, i);
+		
+		status := visit(StrategyPtr(str), i);
 		if status = EnvironmentPackage.SUCCESS then
 			return AbstractStrategyPackage.getRoot(str.all);
 		else
@@ -121,7 +128,7 @@ package body AbstractStrategyPackage is
 	procedure init(str: in out Strategy'Class; env: Environment) is
 		child : VisitablePtr := null;
 	begin
-		if str in  AbstractStrategy'Class then
+		if str in AbstractStrategy'Class then
 			declare
 				as : AbstractStrategy'Class := AbstractStrategy'Class(str);
 			begin
@@ -130,13 +137,16 @@ package body AbstractStrategyPackage is
 				end if;
 			end;
 		end if;
+
 		setEnvironment(str, env);
+
 		for i in 0..getChildCount(str)-1 loop
-			child := new Visitable'Class'( Visitable'Class( getChildAt(Visitable'Class(str), i) ) );
-			if child /= null and then child.all in Strategy'Class then
+			child := getChildAt(Visitable'Class(str), i);
+			if child.all in Strategy'Class then
 				init(AbstractStrategy(child.all), env);
 			end if;
 		end loop;
+
 	end;
 	
 	
