@@ -36,6 +36,7 @@ public class ExampleListLinearity {
       B = b()
         | f(B*)
         | g(B*)
+        | h(n:B)
   }
 
   public static void main(String[] args) {
@@ -49,6 +50,7 @@ public class ExampleListLinearity {
       f(x*) << tt1 && g(y*) << tt2 && (x == y) -> { System.out.println("Line 3: x = " +`x); }
       f(x*) << tt3 && g(x*) << tt4 -> { System.out.println("Line 4: x = " +`x); }
       f(x*) << tt3 && g(y*) << tt4 && (x == y) -> { System.out.println("Line 5: x = " +`x); }
+      g(x*) << tt2 && h(x) << B tt4 -> { `tt4; }
     }
   }
 }

@@ -253,6 +253,18 @@ public class NewKernelTyper {
   protected boolean containsConstraint(TypeConstraint tConstraint, TypeConstraintList
       tCList) {
     %match {
+      (Equation[Type1=tVar@TypeVar[],Type2=Type[TypeOptions=tOptions,TomType=tType]] << tConstraint ||
+        Equation[Type1=Type[TypeOptions=tOptions,TomType=tType],Type2=tVar@TypeVar[]] << tConstraint) &&
+        !concTypeOption(_*,WithSymbol[],_*) << tOptions &&
+        concTypeConstraint(_*,Equation[Type1=tVar,Type2=Type[TypeOptions=decoratedtOptions,TomType=tType]],_*) << tCList && 
+        concTypeOption(_*,WithSymbol[],_*) << decoratedtOptions -> { return true; }
+
+      (Equation[Type1=tVar@TypeVar[],Type2=Type[TypeOptions=tOptions,TomType=tType]] << tConstraint ||
+        Equation[Type1=Type[TypeOptions=tOptions,TomType=tType],Type2=tVar@TypeVar[]] << tConstraint) &&
+        !concTypeOption(_*,WithSymbol[],_*) << tOptions &&
+        concTypeConstraint(_*,Equation[Type1=Type[TypeOptions=decoratedtOptions,TomType=tType],Type2=tVar],_*) << tCList && 
+        concTypeOption(_*,WithSymbol[],_*) << decoratedtOptions -> { return true; }
+
       Equation[Type1=t1,Type2=t2] << TypeConstraint tConstraint &&
         concTypeConstraint(_*,Equation[Type1=t1,Type2=t2],_*) << tCList 
         -> { return true; }
@@ -469,10 +481,12 @@ public class NewKernelTyper {
 
       var@(Variable|VariableStar)[Options=optionList,AstName=aName,AstType=aType,Constraints=cList] -> {
         //DEBUG System.out.println("InferTypes:TomTerm var = " + `var);
-        nkt.checkNonLinearityOfVariables(`var);
+        //DEBUG System.out.println("InferTypes:TomTerm contextType  = " + `contextType);
         TypeConstraintList newTypeConstraints = nkt.typeConstraints;
         nkt.typeConstraints =
           nkt.addConstraint(`Equation(aType,contextType,PairNameOptions(aName,optionList)),newTypeConstraints);  
+        nkt.checkNonLinearityOfVariables(`var);
+        //DEBUG System.out.println("InferTypes:TomTerm equations  = \n" + nkt.typeConstraints);
         //DEBUG System.out.println("InferTypes:TomTerm var -- constraint = " +
         //DEBUG `aType + " = " + contextType);
         ConstraintList newCList = `cList;
@@ -553,10 +567,10 @@ public class NewKernelTyper {
       bqVar@(BQVariable|BQVariableStar)[Options=optionList,AstName=aName,AstType=aType] -> {
         //DEBUG System.out.println("InferTypes:BQTerm bqVar -- contextType = " +
         //DEBUG     contextType);
-        nkt.checkNonLinearityOfBQVariables(`bqVar);
         TypeConstraintList newTypeConstraints = nkt.typeConstraints;
           nkt.typeConstraints =
             nkt.addConstraint(`Equation(aType,contextType,PairNameOptions(aName,optionList)),newTypeConstraints);  
+        nkt.checkNonLinearityOfBQVariables(`bqVar);
         //DEBUG System.out.println("InferTypes:BQTerm bqVar -- constraint = " +
         //DEBUG `aType + " = " + contextType);
         return `bqVar;
@@ -684,9 +698,10 @@ public class NewKernelTyper {
     CodeList newCList = `concCode();
     for (Code code : cList.getCollectionconcCode()) {
       init();
-      //DEBUG System.out.println("---------- Code with typeVars: \n" + code + '\n');
       code =  collectKnownTypesFromCode(`code);
+      //DEBUG System.out.println("---------- Code with typeVars: \n" + code + '\n');
       code = inferAllTypes(code,`EmptyType());
+      //DEBUG System.out.println("---------- Equations: \n" + typeConstraints + '\n');
       solveConstraints();
       code = replaceInCode(code);
       //DEBUG System.out.println("---------- Code after inference: \n" + code + '\n');
@@ -933,9 +948,10 @@ public class NewKernelTyper {
                         throw new TomRuntimeException("typeVariableList: symbol '"
                             + `tSymbol+ "' with more than one constructor (rootsymbolname)");
                       }
-                    concTypeOption(_*,!WithSymbol[],_*) << tOptions -> {
+                    !concTypeOption(_*,WithSymbol[],_*) << tOptions -> {
                       newTOptions =
                         `concTypeOption(WithSymbol(symName),tOptions*);
+                      //DEBUG System.out.println("inferSlotList: newTOptions " + newTOptions);
                     }
                   }
 
@@ -1339,7 +1355,7 @@ matchBlockFail :
         Equation[Type1=Type[TypeOptions=tOptions1,TomType=tName1],Type2=Type[TypeOptions=tOptions2@!tOptions1,TomType=tName1]]
           << tConstraint
           && concTypeOption(_*,WithSymbol[RootSymbolName=rsName1],_*) << tOptions1
-          && concTypeOption(_*,WithSymbol[RootSymbolName=rsName2@rsName1],_*) << tOptions2 -> {
+          && concTypeOption(_*,WithSymbol[RootSymbolName=rsName2@!rsName1],_*) << tOptions2 -> {
             //DEBUG System.out.println("In solveConstraints 4a -- tConstraint  = " + `tConstraint);
             printError(`tConstraint);
             break matchBlockFail;
