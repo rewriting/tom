@@ -100,7 +100,7 @@ returns [int marker] :
  ; 
 
 csPairSlotBQTerm :
-  ID '=' csMainBQTerm[false]
+  ID EQUAL csMainBQTerm[false]
   -> ^(Cst_PairSlotBQTerm ^(Cst_Name ID) csMainBQTerm)
 ;
 
@@ -111,7 +111,7 @@ csPairSlotBQTerm :
 
 csCompositePart :
    ANY -> ^(Cst_ITL ANY)
-//  | EQUAL -> ^(Cst_ITL EQUAL)
+  | EQUAL -> ^(Cst_ITL EQUAL)
   | NUM -> ^(Cst_ITL NUM)
 //  | MINUS -> ^(Cst_ITL MINUS)
   | BQDOT -> ^(Cst_ITL BQDOT)
