@@ -245,14 +245,16 @@ csExtendedConstraintAction :
 
 csBQTerm :
   (type=IDENTIFIER)? name=IDENTIFIER (s=STAR)?
-   ->{s!=null && type!=null}? ^(Cst_BQVarStar $name ^(Cst_Type $type))
-   ->{s!=null && type==null}? ^(Cst_BQVarStar $name ^(Cst_TypeUnknown ))
-   ->{s==null && type!=null}? ^(Cst_BQVar $name ^(Cst_Type $type))
-   ->                         ^(Cst_BQVar $name ^(Cst_TypeUnknown ))
+   ->{s!=null && type!=null}? ^(Cst_BQVarStar {extractOptions((CommonToken)$name)} $name ^(Cst_Type $type))
+   ->{s!=null && type==null}? ^(Cst_BQVarStar {extractOptions((CommonToken)$name)} $name ^(Cst_TypeUnknown ))
+   ->{s==null && type!=null}? ^(Cst_BQVar {extractOptions((CommonToken)$name)} $name ^(Cst_Type $type))
+   ->                         ^(Cst_BQVar {extractOptions((CommonToken)$name)} $name ^(Cst_TypeUnknown ))
    
   |bqname=IDENTIFIER LPAR (a+=csBQTerm (COMMA a+=csBQTerm)*)? RPAR
-   -> ^(Cst_BQAppl $bqname ^(Cst_concCstBQTerm $a*))
-  | csConstantValue -> ^(Cst_BQConstant csConstantValue )
+   -> ^(Cst_BQAppl {extractOptions((CommonToken)$LPAR, (CommonToken)$RPAR)}
+       $bqname ^(Cst_concCstBQTerm $a*))
+  | csConstantValue -> ^(Cst_BQConstant
+      {extractOptions((CommonToken)$csConstantValue.start, (CommonToken)$csConstantValue.stop)} csConstantValue )
 ;
 
  // Constraints ===============================================
