@@ -72,7 +72,7 @@ COMMA  : ',' ;
 LPAR   : '(' ;
 RPAR   : ')' {tokenCustomizer.prepareNextToken(input.mark());};
 RBR    : ']' {tokenCustomizer.prepareNextToken(input.mark());};
-//EQUAL  : '=' ;
+EQUAL  : '=' ;
 fragment
 MINUS  : '-' ;
 
