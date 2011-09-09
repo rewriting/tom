@@ -55,6 +55,10 @@ ou `f(x '+ 42')`
   - (FP) apparemment JC a oublié avoir fait la correction avant de mettre le
     commentaire
 
+- identification des "types" : actuellement, tout est CstName, ne gagnerait-on
+  pas à déjà différencier ce qui est différenciable facilementi/gratuitement ?
+  ex : %oplist ID ID(ID*) -> ^(OpList ^(Name ) ^(Name ) ^(Name ))
+                          -> ^(OpList ^(Type ) ^(Constructeur ) ^(Type ))
 
 ==========================================================
 

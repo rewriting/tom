@@ -22,7 +22,7 @@ package tom.engine.newparser.parser;
 }
 
 
-BQIDPAR  : BQ (FragWS)* FragID (FragWS)* '('
+BQIDPAR  : BQ (FragWS)* FragID (FragWS)* LPAR //'('
   {state.text = $FragID.text;}
   //{System.out.println("Lexed BQIDPAR : '"+$text+"'");}
 ;
@@ -42,12 +42,12 @@ BQID     : BQ FragID
   //{System.out.println("Lexed BQID : '"+$text+"'");}
   {tokenCustomizer.prepareNextToken(input.mark());};
 
-BQPAR    : BQ '('
+BQPAR    : BQ LPAR //'('
   {state.text = "(";}
   //{System.out.println("Lexed BQPAR : '"+$text+"'");}
 ;
 
-IDPAR    : FragID (FragWS)* '(' 
+IDPAR    : FragID (FragWS)* LPAR //'(' 
   {state.text = $FragID.text;}
   //{System.out.println("Lexed IDPAR : '"+$text+"'");}
 ;
@@ -69,9 +69,10 @@ ID       : FragID
 UNDERSCORE : '_';
 
 COMMA  : ',' ;
+LPAR   : '(' ;
 RPAR   : ')' {tokenCustomizer.prepareNextToken(input.mark());};
 RBR    : ']' {tokenCustomizer.prepareNextToken(input.mark());};
-EQUAL  : '=' ;
+//EQUAL  : '=' ;
 fragment
 MINUS  : '-' ;
 
