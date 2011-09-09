@@ -19,33 +19,30 @@ package tom.engine.newparser.parser;
 
 csMainBQTerm [ boolean compositeAllowed] :
   UNDERSCORE -> ^(Cst_BQDefault)
-  | IDSTAR -> ^(Cst_BQVarStar ^(Cst_Name IDSTAR) ^(Cst_TypeUnknown ))
+  | IDSTAR -> ^(Cst_BQVarStar IDSTAR ^(Cst_TypeUnknown ))
   | ID {$compositeAllowed}?=> c=csCompositePart*
-    -> {c==null}? ^(Cst_BQVar ^(Cst_Name ID) ^(Cst_TypeUnknown ))
+    -> {c==null}? ^(Cst_BQVar ID ^(Cst_TypeUnknown ))
     -> ^(Cst_CompositeTerm
          ^(Cst_concCstBQTerm
-           ^(Cst_BQVar ^(Cst_Name ID) ^(Cst_TypeUnknown )) csCompositePart*
+           ^(Cst_BQVar ID ^(Cst_TypeUnknown )) csCompositePart*
           )
         )
   | LPAR ID RPAR {$compositeAllowed}?=> c=csCompositePart*
-    -> {c==null}? ^(Cst_BQVar ^(Cst_Name ID) ^(Cst_TypeUnknown ))
+    -> {c==null}? ^(Cst_BQVar ID ^(Cst_TypeUnknown ))
     -> ^(Cst_CompositeTerm
          ^(Cst_concCstBQTerm
            ^(Cst_ITL LPAR)
-           ^(Cst_BQVar ^(Cst_Name ID) ^(Cst_TypeUnknown ))
+           ^(Cst_BQVar ID ^(Cst_TypeUnknown ))
            ^(Cst_ITL RPAR)
            csCompositePart*
           )
         )
 
   | IDPAR (csMainBQTerm[true] (COMMA csMainBQTerm[true])*)? RPAR
-    -> ^(Cst_BQAppl ^(Cst_Name IDPAR)
-                ^(Cst_concCstBQTerm csMainBQTerm*))
+    -> ^(Cst_BQAppl IDPAR ^(Cst_concCstBQTerm csMainBQTerm*))
  
   | IDBR (csPairSlotBQTerm (COMMA csPairSlotBQTerm)*)? RBR
-    -> ^(Cst_BQRecordAppl
-       	  ^(Cst_Name IDBR)
-          ^(Cst_concCstPairSlotBQTerm csPairSlotBQTerm*)
+    -> ^(Cst_BQRecordAppl IDBR ^(Cst_concCstPairSlotBQTerm csPairSlotBQTerm*)
         )
   | csTL -> ^(Cst_ITL csTL)
   ;
@@ -68,7 +65,7 @@ returns [int marker] :
  BQID
   {$marker = ((CustomToken)$BQID).getPayload(Integer.class);}
 
-  -> ^(Cst_BQVar ^(Cst_Name BQID) ^(Cst_TypeUnknown ))
+  -> ^(Cst_BQVar BQID ^(Cst_TypeUnknown ))
 
  |BQPAR csCompositePart* RPAR
   {$marker = ((CustomToken)$RPAR).getPayload(Integer.class);}
@@ -82,20 +79,17 @@ returns [int marker] :
  |BQIDSTAR
   {$marker = ((CustomToken)$BQIDSTAR).getPayload(Integer.class);}
 
-  -> ^(Cst_BQVarStar ^(Cst_Name BQIDSTAR) ^(Cst_TypeUnknown ))
+  -> ^(Cst_BQVarStar BQIDSTAR ^(Cst_TypeUnknown ))
 
  |BQIDPAR (csMainBQTerm[true] (COMMA csMainBQTerm[true])*)? RPAR
   {$marker = ((CustomToken)$RPAR).getPayload(Integer.class);}
 
-  -> ^(Cst_BQAppl ^(Cst_Name BQIDPAR)
-                ^(Cst_concCstBQTerm csMainBQTerm*))
+  -> ^(Cst_BQAppl BQIDPAR ^(Cst_concCstBQTerm csMainBQTerm*))
  
  |BQIDBR (csPairSlotBQTerm (COMMA csPairSlotBQTerm)*)? RBR
   {$marker = ((CustomToken)$RBR).getPayload(Integer.class);}
   
-  -> ^(Cst_BQRecordAppl
-     	  ^(Cst_Name BQIDBR)
-        ^(Cst_concCstPairSlotBQTerm csPairSlotBQTerm*)
+  -> ^(Cst_BQRecordAppl BQIDBR ^(Cst_concCstPairSlotBQTerm csPairSlotBQTerm*)
       ) 
  ; 
 

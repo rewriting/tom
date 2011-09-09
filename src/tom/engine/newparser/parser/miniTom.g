@@ -126,21 +126,21 @@ csStrategyVisit :
   ;
 
 csVisitAction :
-  (csName l=COLON)? csExtendedConstraint ARROW LBR RBR //handle  toto -> { blocklist }
+  (IDENTIFIER l=COLON)? csExtendedConstraint ARROW LBR RBR //handle  toto -> { blocklist }
     -> {$l!=null}? ^(Cst_ConstraintAction csExtendedConstraint
                            {((CustomToken)$LBR).getPayload(Tree.class)}
-                           ^(Cst_concCstOption ^(Cst_Label csName))
+                           ^(Cst_concCstOption ^(Cst_Label IDENTIFIER))
                            )
     ->            ^(Cst_ConstraintAction csExtendedConstraint
                            {((CustomToken)$LBR).getPayload(Tree.class)}
                            ^(Cst_concCstOption ^(Cst_NoOption ))
                      )
-  | (csName l=COLON)? csExtendedConstraint ARROW csBQTerm //handle toto -> f(a()) - is a BQTerm
+  | (IDENTIFIER l=COLON)? csExtendedConstraint ARROW csBQTerm //handle toto -> f(a()) - is a BQTerm
     -> {$l!=null}? ^(Cst_ConstraintAction csExtendedConstraint
                            /*{((CustomToken)$ARROW).getPayload(Tree.class)}*/
                            /*csBQTerm*/
                            ^(Cst_concCstBlock ^(Cst_BQTermToBlock csBQTerm))
-                           ^(Cst_concCstOption ^(Cst_Label csName))
+                           ^(Cst_concCstOption ^(Cst_Label IDENTIFIER))
                    )
     ->            ^(Cst_ConstraintAction csExtendedConstraint
                            /*{((CustomToken)$ARROW).getPayload(Tree.class)}*/
@@ -196,10 +196,10 @@ RBR
 ;
 
 csConstraintAction :
-(csName l=COLON)? csConstraint ARROW LBR RBR
+(IDENTIFIER l=COLON)? csConstraint ARROW LBR RBR
   -> {$l!=null}? ^(Cst_ConstraintAction csConstraint
                   {((CustomToken)$LBR).getPayload(Tree.class)}
-                  ^(Cst_concCstOption ^(Cst_Label csName ))
+                  ^(Cst_concCstOption ^(Cst_Label IDENTIFIER ))
                  )
   ->             ^(Cst_ConstraintAction csConstraint
                   {((CustomToken)$LBR).getPayload(Tree.class)}
@@ -208,10 +208,10 @@ csConstraintAction :
   ;
 
 csExtendedConstraintAction :
-(csName l=COLON)? csExtendedConstraint ARROW LBR RBR
+(IDENTIFIER l=COLON)? csExtendedConstraint ARROW LBR RBR
   -> {$l!=null}? ^(Cst_ConstraintAction csExtendedConstraint
                   {((CustomToken)$LBR).getPayload(Tree.class)}
-                  ^(Cst_concCstOption ^(Cst_Label csName ))
+                  ^(Cst_concCstOption ^(Cst_Label IDENTIFIER ))
                  )
   ->             ^(Cst_ConstraintAction csExtendedConstraint
                   {((CustomToken)$LBR).getPayload(Tree.class)}
@@ -244,15 +244,15 @@ csExtendedConstraintAction :
 ;*/
 
 csBQTerm :
-  (type=IDENTIFIER)? csName (s=STAR)?
-   ->{s!=null && type!=null}? ^(Cst_BQVarStar csName ^(Cst_Type $type))
-   ->{s!=null && type==null}? ^(Cst_BQVarStar csName ^(Cst_TypeUnknown ))
-   ->{s==null && type!=null}? ^(Cst_BQVar csName ^(Cst_Type $type))
-   ->           ^(Cst_BQVar csName ^(Cst_TypeUnknown ))
+  (type=IDENTIFIER)? name=IDENTIFIER (s=STAR)?
+   ->{s!=null && type!=null}? ^(Cst_BQVarStar $name ^(Cst_Type $type))
+   ->{s!=null && type==null}? ^(Cst_BQVarStar $name ^(Cst_TypeUnknown ))
+   ->{s==null && type!=null}? ^(Cst_BQVar $name ^(Cst_Type $type))
+   ->                         ^(Cst_BQVar $name ^(Cst_TypeUnknown ))
    
-  |csName LPAR (a+=csBQTerm (COMMA a+=csBQTerm)*)? RPAR
-   -> ^(Cst_BQAppl csName ^(Cst_concCstBQTerm $a*))
-  | csConstantValue -> ^(Cst_BQConstant ^(Cst_Name csConstantValue ))
+  |bqname=IDENTIFIER LPAR (a+=csBQTerm (COMMA a+=csBQTerm)*)? RPAR
+   -> ^(Cst_BQAppl $bqname ^(Cst_concCstBQTerm $a*))
+  | csConstantValue -> ^(Cst_BQConstant csConstantValue )
 ;
 
  // Constraints ===============================================
@@ -522,8 +522,7 @@ returns [int marker] :
 ;
 
 csSlotList :
-  (csSlot (COMMA csSlot)*)?
-  -> ^(Cst_concCstSlot csSlot*)
+  (csSlot (COMMA csSlot)*)?  -> ^(Cst_concCstSlot csSlot*)
 ;
 
 csSlot : 

@@ -54,7 +54,7 @@ CstConstraintList = Cst_concCstConstraint(CstConstraint*)
 // (it's much simpler because very close to syntax)
 CstTerm = Cst_TermVariable(name:String)
         | Cst_TermVariableStar(name:String)
-        | Cst_TermAppl(name:String, termList : CstTermList)
+        | Cst_TermAppl(name:String, termList:CstTermList)
 
 CstTermList = Cst_concCstTerm(CstTerm*)
 
@@ -74,12 +74,12 @@ CstPattern =
 | Cst_ConstantStar    (value:String)
 | Cst_UnamedVariable    ()
 | Cst_UnamedVariableStar()
-| Cst_Appl(headSymbolList : CstSymbolList, patternList    : CstPatternList)
-| Cst_RecordAppl(headSymbolList : CstSymbolList, pairPatternList    : CstPairPatternList)
+| Cst_Appl(headSymbolList:CstSymbolList, patternList:CstPatternList)
+| Cst_RecordAppl(headSymbolList:CstSymbolList, pairPatternList:CstPairPatternList)
 
 CstSymbolList = Cst_concCstSymbol(CstSymbol*)
-CstSymbol = Cst_Symbol(name:String, theory : CstTheory)
-          | Cst_ConstantSymbol(value : String, theory : CstTheory)
+CstSymbol = Cst_Symbol(name:String, theory:CstTheory)
+          | Cst_ConstantSymbol(value:String, theory:CstTheory)
 
 CstTheory = Cst_TheoryAU()
           | Cst_TheoryAC()
@@ -116,15 +116,15 @@ CstSlotList = Cst_concCstSlot(CstSlot*)
 CstSlot = Cst_Slot(slotName:CstName, slotTypeName:CstType)
 
 // BQTerms ===================================================================
-CstBQTerm = Cst_BQAppl(name:CstName, bqTermList:CstBQTermList)
-          | Cst_BQRecordAppl(name:CstName, slotList:CstPairSlotBQTermList)
-          | Cst_BQVar(name:CstName,type:CstType)
-          | Cst_BQVarStar(name:CstName,type:CstType)
+CstBQTerm = Cst_BQAppl(name:String, bqTermList:CstBQTermList)
+          | Cst_BQRecordAppl(name:String, slotList:CstPairSlotBQTermList)
+          | Cst_BQVar(name:String,type:CstType)
+          | Cst_BQVarStar(name:String,type:CstType)
           | Cst_BQDefault()
           | Cst_BQInnerHostCode(code:String)
           | Cst_CompositeTerm(list:CstBQTermList)
           | Cst_ITL(code:String)
-          | Cst_BQConstant(name:CstName)
+          | Cst_BQConstant(name:String)
 
 CstPairSlotBQTerm  = Cst_PairSlotBQTerm(slotName:CstName, term:CstBQTerm)
 
@@ -144,7 +144,7 @@ CstOption = Cst_SourceFile(sourceFile:String)
           | Cst_EndLine(endLine:int)
           | Cst_StartColumn(startColumn:int)
           | Cst_EndColumn(endColumn:int)
-          | Cst_Label(name:CstName)
+          | Cst_Label(name:String)
           | Cst_NoOption()
 
 
