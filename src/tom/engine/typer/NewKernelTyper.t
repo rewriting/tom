@@ -301,6 +301,20 @@ public class NewKernelTyper {
         concTypeConstraint(_*,(Subtype|Equation)[Type1=t1,Type2=t2],_*) << tCList 
         -> { return true; }
 
+      /* add(A = T^?) or add(T^? = A) in {A = T^c} U C' --> C */
+      (Equation[Type1=tVar@TypeVar[],Type2=Type[TypeOptions=tOptions,TomType=tType]] << tConstraint ||
+       Equation[Type1=Type[TypeOptions=tOptions,TomType=tType],Type2=tVar@TypeVar[]] << tConstraint) &&
+        !concTypeOption(_*,WithSymbol[],_*) << tOptions &&
+        concTypeConstraint(_*,Equation[Type1=tVar,Type2=Type[TypeOptions=decoratedtOptions,TomType=tType]],_*) << tCList && 
+        concTypeOption(_*,WithSymbol[],_*) << decoratedtOptions -> { return true; }
+
+      /* add(A = T^?) or add(T^? = A) in {T^c = A} U C' --> C */
+      (Equation[Type1=tVar@TypeVar[],Type2=Type[TypeOptions=tOptions,TomType=tType]] << tConstraint ||
+       Equation[Type1=Type[TypeOptions=tOptions,TomType=tType],Type2=tVar@TypeVar[]] << tConstraint) &&
+        !concTypeOption(_*,WithSymbol[],_*) << tOptions &&
+        concTypeConstraint(_*,Equation[Type1=Type[TypeOptions=decoratedtOptions,TomType=tType],Type2=tVar],_*) << tCList && 
+        concTypeOption(_*,WithSymbol[],_*) << decoratedtOptions -> { return true; }
+
       Equation[Type1=t1,Type2=t2] << TypeConstraint tConstraint &&
         concTypeConstraint(_*,Equation[Type1=t1,Type2=t2],_*) << tCList 
         -> { return true; }
@@ -794,7 +808,7 @@ public class NewKernelTyper {
       }
 
       BQAppl[Options=optionList,AstName=aName@Name(name),Args=bqTList] -> {
-        //DEBUG System.out.println("\n Test pour BQTerm-inferTypes in BQAppl. tomName = " + `name);
+        System.out.println("\n Test pour BQTerm-inferTypes in BQAppl. tomName = " + `name);
         TomSymbol tSymbol = nkt.getSymbolFromName(`name);
         if (tSymbol == null) {
           //The contextType is used here, so it must be a ground type, not a
@@ -838,6 +852,8 @@ public class NewKernelTyper {
         // TO VERIFY
         %match(tSymbol) {
           EmptySymbol() -> {
+        System.out.println("\n Test pour BQTerm-inferTypes in BQAppl. tSymbol = " + `tSymbol);
+        System.out.println("\n FuctionCall = " + `FunctionCall(aName,contextType,newBQTList));
             return `FunctionCall(aName,contextType,newBQTList); 
           }
         }
@@ -936,15 +952,16 @@ public class NewKernelTyper {
     for (Code code : cList.getCollectionconcCode()) {
       init();
       code =  collectKnownTypesFromCode(`code);
-      //DEBUG System.out.println("------------- Code typed with typeVar:\n code = " +
-      //DEBUG    `code);
+      System.out.println("------------- Code typed with typeVar:\n code = " +
+         `code);
       code = inferAllTypes(code,`EmptyType());
       //DEBUG printGeneratedConstraints(subtypeConstraints);
+      printGeneratedConstraints(equationConstraints);
       solveConstraints();
       //DEBUG System.out.println("substitutions = " + substitutions);
       code = replaceInCode(code);
-      //DEBUG System.out.println("------------- Code typed with substitutions:\n code = " +
-      //DEBUG `code);
+      System.out.println("------------- Code typed with substitutions:\n code = " +
+      `code);
       replaceInSymbolTable();
       newCList = `concCode(code,newCList*);
     }
