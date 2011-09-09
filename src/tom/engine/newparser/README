@@ -61,6 +61,10 @@ ou `f(x '+ 42')`
   ex : %oplist ID ID(ID*) -> ^(OpList ^(Name ) ^(Name ) ^(Name ))
                           -> ^(OpList ^(Type ) ^(Constructeur ) ^(Type ))
 
+- problème dans le %gom. Dans exemples/analysis, tom -np -ast -cst affiche son
+  arbre dans la partie ast et non cst et inclue du code venant de fichier
+  temporaire (9800 lignes de java pour TestPico.t)
+
 ==========================================================
 
 Remaining examples and tests to pass (please remove the appropriate line once
@@ -78,8 +82,6 @@ tested):
   test/sl/TestSLModes.t
 
 - examples:
-  examples/acmatching
-  examples/addressbook
   examples/analysis
   examples/antipattern
   examples/appletxml
