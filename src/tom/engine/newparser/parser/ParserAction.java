@@ -220,16 +220,14 @@ public abstract class ParserAction {
 
       int initialGomLine = input.getLine();
 
-      // read every char and add them to hostBlockBuilder
-      SKIP_DELIMITED_SEQUENCE.doAction(input, hostBlockBuilder, tree,
-          delimitedSequenceDetector, streamManager, optionManager,
-          includedFiles, alreadyParsedFiles);
+      // we put the gom code on the gomCode string to give it to Gom later
+      String gomCode = "";
+      while (delimitedSequenceDetector.readChar(input)) {
+    	  gomCode += (char)input.LA(1);
+    	  input.consume();
+      }
+      gomCode = gomCode.substring(0, gomCode.length()-1); // remove the last }
 
-      // remove '}' from hostBlockBuilder
-      hostBlockBuilder.removeLastChars(1);  
-
-      String gomCode;
-      gomCode = hostBlockBuilder.getText();
       //XXX end copy ===============================================================
 
       // call Gom Parser
