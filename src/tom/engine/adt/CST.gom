@@ -19,10 +19,10 @@ CstBlock =
  HOSTBLOCK(optionList:CstOptionList, hContent:String)
 | Cst_MatchConstruct(optionList:CstOptionList, arguments:CstBQTermList , constraintActionList:CstConstraintActionList)
 //| Cst_MatchConstruct(optionList:CstOptionList, arguments:CstMatchArgumentList , constraintActionList:CstConstraintActionList)
-| Cst_OpConstruct       (optionList:CstOptionList, tomTypeName:CstName, ctorName:CstName, argumentList :CstSlotList, operatorList :CstOperatorList)
-| Cst_OpArrayConstruct  (optionList:CstOptionList, tomTypeName:CstName, ctorName:CstName, typeName:CstName, operatorList:CstOperatorList)
-| Cst_OpListConstruct   (optionList:CstOptionList, tomTypeName:CstName, ctorName:CstName, typeName:CstName, operatorList:CstOperatorList)
-| Cst_TypetermConstruct (optionList:CstOptionList, tomTypeName:CstName, extendsTypeName: CstName, operatorList:CstOperatorList)
+| Cst_OpConstruct       (optionList:CstOptionList, codomain:CstType, ctorName:CstName, argumentList:CstSlotList, operatorList:CstOperatorList)
+| Cst_OpArrayConstruct  (optionList:CstOptionList, codomain:CstType, ctorName:CstName, domain:CstType, operatorList:CstOperatorList)
+| Cst_OpListConstruct   (optionList:CstOptionList, codomain:CstType, ctorName:CstName, domain:CstType, operatorList:CstOperatorList)
+| Cst_TypetermConstruct (optionList:CstOptionList, typeName:CstType, extendsTypeName: CstType, operatorList:CstOperatorList)
 | Cst_MetaQuoteConstruct(optionList:CstOptionList, content:String)
 | Cst_IncludeConstruct  (optionList:CstOptionList, filename:String)
 | Cst_BQTermToBlock     (bqterm:CstBQTerm)
@@ -113,7 +113,7 @@ CstOperator =
 
 CstSlotList = Cst_concCstSlot(CstSlot*)
 
-CstSlot = Cst_Slot(slotName:CstName, slotTypeName:CstName)
+CstSlot = Cst_Slot(slotName:CstName, slotTypeName:CstType)
 
 // BQTerms ===================================================================
 CstBQTerm = Cst_BQAppl(name:CstName, bqTermList:CstBQTermList)

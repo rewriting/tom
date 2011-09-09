@@ -99,29 +99,17 @@ returns [int marker] :
 // StrategyConstruct
 csStrategyConstruct
 returns [int marker]:
-csName LPAR csStrategyArgumentList RPAR EXTENDS BQUOTE? csBQTerm LBR csStrategyVisitList RBR
+csName LPAR csSlotList RPAR EXTENDS BQUOTE? csBQTerm LBR csStrategyVisitList RBR
 
 {$marker = ((CustomToken)$RBR).getPayload(Integer.class);}
 
   -> ^(Cst_StrategyConstruct
             {extractOptions((CommonToken)$LPAR, (CommonToken)$RBR)}
             csName
-            csStrategyArgumentList
+            csSlotList
             csBQTerm
             csStrategyVisitList
       )
-  ;
-
-csStrategyArgumentList :
-   (csStrategyArgument (COMMA csStrategyArgument)*)?
-     -> ^(Cst_concCstSlot csStrategyArgument*)
-  ;
-
-csStrategyArgument :
-    /*name=ALL_ID COLON type=ALL_ID -> ^(Cst_Slot $name $type)
-  | type=ALL_ID name=ALL_ID ->  ^(Cst_Slot $name $type)*/
-    name=IDENTIFIER COLON type=IDENTIFIER -> ^(Cst_Slot ^(Cst_Name $name) ^(Cst_Name $type))
-  | type=IDENTIFIER name=IDENTIFIER ->  ^(Cst_Slot ^(Cst_Name $name) ^(Cst_Name $type))
   ;
 
 csStrategyVisitList :
@@ -446,7 +434,7 @@ csOperatorConstruct
 returns [int marker] :
 
   //%op already consumed when this rule is called
-  tomTypeName=csName ctorName=csName LPAR csSlotList RPAR
+  codomain=IDENTIFIER ctorName=csName LPAR csSlotList RPAR
   LBR 
     (  ks+=csKeywordIsFsym
      | ks+=csKeywordMake
@@ -458,8 +446,8 @@ returns [int marker] :
   {$marker = ((CustomToken)$RBR).getPayload(Integer.class);}
 
   -> ^(Cst_OpConstruct
-        {extractOptions((CommonToken)$tomTypeName.start, (CommonToken)$RBR)}
-        $tomTypeName $ctorName csSlotList ^(Cst_concCstOperator $ks*)
+        {extractOptions((CommonToken)$codomain, (CommonToken)$RBR)}
+        ^(Cst_Type $codomain) $ctorName csSlotList ^(Cst_concCstOperator $ks*)
       ) 
 ;
 
@@ -467,7 +455,7 @@ csOperatorArrayConstruct
 returns [int marker] :
 
   //%oparray already consumed when this rule is called
-  tomTypeName=csName ctorName=csName LPAR typeName=csName STAR RPAR
+  codomain=IDENTIFIER ctorName=csName LPAR domain=IDENTIFIER STAR RPAR
   LBR  
      ks+=csKeywordIsFsym
    ( ks+=csKeywordMakeEmpty_Array
@@ -480,8 +468,8 @@ returns [int marker] :
   {$marker = ((CustomToken)$RBR).getPayload(Integer.class);}
 
   -> ^(Cst_OpArrayConstruct
-        {extractOptions((CommonToken)$tomTypeName.start, (CommonToken)$RBR)}
-        $tomTypeName $ctorName $typeName ^(Cst_concCstOperator $ks*)
+        {extractOptions((CommonToken)$codomain, (CommonToken)$RBR)}
+        ^(Cst_Type $codomain) $ctorName ^(Cst_Type $domain) ^(Cst_concCstOperator $ks*)
       )
 ; 
 
@@ -489,7 +477,7 @@ csOperatorListConstruct
 returns [int marker] :
 
   //%oplist already consumed when this rule is called
-  tomTypeName=csName ctorName=csName LPAR typeName=csName STAR RPAR
+  codomain=IDENTIFIER ctorName=csName LPAR domain=IDENTIFIER STAR RPAR
   LBR
      ks+=csKeywordIsFsym
    ( ks+=csKeywordMakeEmpty_List
@@ -503,8 +491,8 @@ returns [int marker] :
   {$marker = ((CustomToken)$RBR).getPayload(Integer.class);}
 
   -> ^(Cst_OpListConstruct
-        {extractOptions((CommonToken)$tomTypeName.start, (CommonToken)$RBR)}
-        $tomTypeName $ctorName $typeName ^(Cst_concCstOperator $ks*)
+        {extractOptions((CommonToken)$codomain, (CommonToken)$RBR)}
+        ^(Cst_Type $codomain) $ctorName ^(Cst_Type $domain) ^(Cst_concCstOperator $ks*)
       )
 ; 
 
@@ -513,7 +501,7 @@ csTypetermConstruct
 returns [int marker] :
 
   //%typeterm already consumed when this rule is called
-  typeName=csName (EXTENDS extend=csName)?
+  typeName=IDENTIFIER (EXTENDS extend=IDENTIFIER)?
   LBR
     ks+=csKeywordImplement (ks+=csKeywordIsSort)? (ks+=csKeywordEquals)?
   RBR
@@ -522,29 +510,25 @@ returns [int marker] :
 
   -> {extend==null}?
    ^(Cst_TypetermConstruct
-        {extractOptions((CommonToken)$typeName.start, (CommonToken)$RBR)}
-        $typeName ^(Cst_EmptyName) ^(Cst_concCstOperator $ks* )
+        {extractOptions((CommonToken)$typeName, (CommonToken)$RBR)}
+        ^(Cst_Type $typeName) ^(Cst_TypeUnknown) ^(Cst_concCstOperator $ks* )
     )
 
   -> /*{$extend==null}*/
    ^(Cst_TypetermConstruct
-        {extractOptions((CommonToken)$typeName.start, (CommonToken)$RBR)}
-        $typeName $extend ^(Cst_concCstOperator $ks*)
+        {extractOptions((CommonToken)$typeName, (CommonToken)$RBR)}
+        ^(Cst_Type $typeName) ^(Cst_Type $extend) ^(Cst_concCstOperator $ks*)
     )
 ;
 
-
-
 csSlotList :
   (csSlot (COMMA csSlot)*)?
-
   -> ^(Cst_concCstSlot csSlot*)
 ;
 
 csSlot : 
-  slotName=csName COLON slotType=csName
-
-  -> ^(Cst_Slot $slotName $slotType)
+    name=IDENTIFIER COLON type=IDENTIFIER -> ^(Cst_Slot ^(Cst_Name $name) ^(Cst_Type $type))
+  | type=IDENTIFIER name=IDENTIFIER ->  ^(Cst_Slot ^(Cst_Name $name) ^(Cst_Type $type))
 ;
 
 
