@@ -52,9 +52,9 @@ CstConstraintList = Cst_concCstConstraint(CstConstraint*)
 
 // CstTerm in CST context is "equivalent" to BQTerm in AST context
 // (it's much simpler because very close to syntax)
-CstTerm = Cst_VariableName(name : String)
-        | Cst_VariableNameStar(name : String)
-        | Cst_Term(name : String, termList : CstTermList)
+CstTerm = Cst_TermVariable(name:String)
+        | Cst_TermVariableStar(name:String)
+        | Cst_TermAppl(name:String, termList : CstTermList)
 
 CstTermList = Cst_concCstTerm(CstTerm*)
 
@@ -68,17 +68,17 @@ CstType = Cst_Type(type:String)
 CstPattern = 
   Cst_Anti(pattern:CstPattern)
 | Cst_AnnotatedPattern(pattern:CstPattern,annotation:String)
-| Cst_Variable        (name : String) 
-| Cst_VariableStar    (name : String)
-| Cst_Constant        (value : String)
-| Cst_ConstantStar    (value : String)
+| Cst_Variable        (name:String) 
+| Cst_VariableStar    (name:String)
+| Cst_Constant        (value:String)
+| Cst_ConstantStar    (value:String)
 | Cst_UnamedVariable    ()
 | Cst_UnamedVariableStar()
 | Cst_Appl(headSymbolList : CstSymbolList, patternList    : CstPatternList)
 | Cst_RecordAppl(headSymbolList : CstSymbolList, pairPatternList    : CstPairPatternList)
 
 CstSymbolList = Cst_concCstSymbol(CstSymbol*)
-CstSymbol = Cst_Symbol(name : String, theory : CstTheory)
+CstSymbol = Cst_Symbol(name:String, theory : CstTheory)
           | Cst_ConstantSymbol(value : String, theory : CstTheory)
 
 CstTheory = Cst_TheoryAU()

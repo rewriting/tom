@@ -288,7 +288,7 @@ options{
 
   /*
    * this function receives a string that comes from %[ ... ]%
-   * @@ corresponds to the char '@', so they a encoded into ]% (which cannot
+   * @@ corresponds to the char '@', so they are encoded into ]% (which cannot
    * appear in the string)
    * then, the string is split around the delimiter @
    * alternatively, each string correspond either to a metaString, or a string

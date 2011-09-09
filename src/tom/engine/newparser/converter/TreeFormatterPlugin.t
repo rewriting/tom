@@ -30,11 +30,11 @@ public class TreeFormatterPlugin extends TomGenericPlugin {
   }
 
   public void setArgs(Object[] arg) {
-    if ( arg[0] instanceof Code && arg[1] instanceof TomStreamManager ) {
+    if( arg[0] instanceof Code && arg[1] instanceof TomStreamManager ) {
       term = (Code)arg[0];
       streamManager = (TomStreamManager)arg[1];
     } else
-    if (arg[0] instanceof CstProgram && arg[1] instanceof TomStreamManager ) {
+    if(arg[0] instanceof CstProgram && arg[1] instanceof TomStreamManager ) {
       cst = (CstProgram)arg[0];
       term = null;
       streamManager = (TomStreamManager)arg[1];
@@ -46,15 +46,14 @@ public class TreeFormatterPlugin extends TomGenericPlugin {
   }
 
   @Override
-  public void run(Map informationTracker){
+  public void run(Map informationTracker) {
     
-    boolean pluginIsOn = 
+    boolean newparser = 
      ((Boolean)getOptionManager().getOptionValue("newparser")).booleanValue();
 
-    if(pluginIsOn) {
-
+    if(newparser) {
       try {
-      cst = `BottomUp(toAST()).visit(cst);
+	cst = `BottomUp(toAST()).visit(cst);
       } catch (tom.library.sl.VisitFailure e) {
         throw new TomRuntimeException (
           "tom.engine.treeformatter.TreeFormatter.run strategy "+

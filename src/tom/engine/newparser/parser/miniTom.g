@@ -351,11 +351,11 @@ csConstraint_priority4 :
 // Terms ======================================================
 csTerm :
   IDENTIFIER (s=STAR)?
-  ->{s!=null}? ^(Cst_VariableNameStar IDENTIFIER )
-  ->           ^(Cst_VariableName IDENTIFIER)
+  ->{s!=null}? ^(Cst_TermVariableStar IDENTIFIER )
+  ->           ^(Cst_TermVariable IDENTIFIER)
  
  |IDENTIFIER LPAR (csTerm (COMMA csTerm)*)? RPAR
-  -> ^(Cst_Term IDENTIFIER ^(Cst_concCstTerm csTerm*))
+  -> ^(Cst_TermAppl IDENTIFIER ^(Cst_concCstTerm csTerm*))
 ;
 // Patterns ===================================================
 csPattern :
