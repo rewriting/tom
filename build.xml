@@ -510,6 +510,7 @@
       <src path="${src.gen}"/>
       <classpath refid="src.classpath"/>
       <include name="tom/**/*.java"/>
+      <exclude name="tom/engine/newparser/**/*.java"/>
       <exclude name="tom/islander/**/*.java"/>
     </tomjavac>
   </target>
@@ -1493,6 +1494,7 @@
       <src path="${destination}/gen"/>
       <classpath refid="src.classpath"/>
       <include name="tom/**/*.java"/>
+      <exclude name="tom/engine/newparser/**/*.java"/>
       <exclude name="tom/islander/**/*.java"/>
     </tomjavac>
   </target>
