@@ -18,6 +18,7 @@ import tom.engine.exception.TomIncludeException;
 
 import static tom.engine.parser.antlr3.TreeFactory.*;
 import static tom.engine.parser.antlr3.miniTomParser.*;
+import tom.engine.parser.antlr3.streamanalysis.*;
 /**
  * 
  * @see ParserAction
@@ -156,7 +157,7 @@ public class HostParser {
     }
 
     HostBlockBuilder hostBlockBuilder = new HostBlockBuilder();
-    CommonTree tree = makeTree(Cst_concCstBlock, "Cst_concCstBlock");
+    CommonTree tree = makeTree(ConcCstBlock, "ConcCstBlock");
 
     while(! stopCondition.readChar(input)) { 
       // readChar() updates internal state

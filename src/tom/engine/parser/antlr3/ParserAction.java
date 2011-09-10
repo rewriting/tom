@@ -36,6 +36,7 @@ import org.antlr.runtime.ANTLRFileStream;
 
 import static tom.engine.parser.antlr3.TreeFactory.*;
 import static tom.engine.parser.antlr3.miniTomParser.*;
+import tom.engine.parser.antlr3.streamanalysis.*;
 
 /**
  * 
@@ -870,7 +871,7 @@ public abstract class ParserAction {
       
       Tree child = (Tree) adaptor.becomeRoot((Tree)adaptor.create(miniTomParser.Cst_MetaQuoteConstruct, "CsMetaQuoteConsruct"),(Tree) adaptor.nil());
       
-      Tree optionsListTree = (Tree) adaptor.becomeRoot((Tree)adaptor.create(miniTomParser.Cst_concCstOption, "CsconCstOption"), (Tree) adaptor.nil());
+      Tree optionsListTree = (Tree) adaptor.becomeRoot((Tree)adaptor.create(miniTomParser.ConcCstOption, "CsconCstOption"), (Tree) adaptor.nil());
       Tree strTree = (Tree) adaptor.becomeRoot((Tree)adaptor.create(miniTomParser.HOSTBLOCK, metaquoteContent), (Tree) adaptor.nil());
       
       child.addChild(optionsListTree);

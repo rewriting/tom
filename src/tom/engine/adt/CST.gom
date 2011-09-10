@@ -9,29 +9,29 @@ NodeInt = NodeInt()
 // Program ===================================================================
 CstProgram = Cst_Program(blocks:CstBlockList)
 
-CstBlockList = Cst_concCstBlock(CstBlock*)
+CstBlockList = ConcCstBlock(CstBlock*)
 
 CstBlock =
- HOSTBLOCK(optionList:CstOptionList, hContent:String)
+ HOSTBLOCK(optionList:CstOptionList, content:String)
 | Cst_MatchConstruct(optionList:CstOptionList, arguments:CstBQTermList , constraintActionList:CstConstraintActionList)
 //| Cst_MatchConstruct(optionList:CstOptionList, arguments:CstMatchArgumentList , constraintActionList:CstConstraintActionList)
 | Cst_OpConstruct       (optionList:CstOptionList, codomain:CstType, ctorName:CstName, argumentList:CstSlotList, operatorList:CstOperatorList)
 | Cst_OpArrayConstruct  (optionList:CstOptionList, codomain:CstType, ctorName:CstName, domain:CstType, operatorList:CstOperatorList)
 | Cst_OpListConstruct   (optionList:CstOptionList, codomain:CstType, ctorName:CstName, domain:CstType, operatorList:CstOperatorList)
-| Cst_TypetermConstruct (optionList:CstOptionList, typeName:CstType, extendsTypeName: CstType, operatorList:CstOperatorList)
+| Cst_TypetermConstruct (optionList:CstOptionList, typeName:CstType, extendsTypeName:CstType, operatorList:CstOperatorList)
 | Cst_MetaQuoteConstruct(optionList:CstOptionList, content:String)
 | Cst_IncludeConstruct  (optionList:CstOptionList, filename:String)
 | Cst_BQTermToBlock     (bqterm:CstBQTerm)
 | Cst_StrategyConstruct(optionList:CstOptionList, stratName:CstName, stratArgs:CstSlotList, extendsTerm:CstBQTerm, visitList:CstVisitList)
 
 // MatchConstruct ============================================================
-CstMatchArgumentList  = Cst_concCstTypedTerm(CstTypedTerm*)
+CstMatchArgumentList  = ConcCstTypedTerm(CstTypedTerm*)
 
 CstConstraintAction = Cst_ConstraintAction(constraint:CstConstraint , action:CstBlockList, optionList:CstOptionList) 
 //                    | Cst_ConstraintActionReturn(constraint:CstConstraint , term:CstBQTerm, optionList:CstOptionList) 
 //                    | Cst_LabelledConstraintAction(constraint:CstConstraint , action:CstBlockList, label:CstName) 
 
-CstConstraintActionList = Cst_concConstraintAction(CstConstraintAction*)
+CstConstraintActionList = ConcCstConstraintAction(CstConstraintAction*)
 
 CstConstraint  = Cst_MatchTermConstraint(object:CstPattern, subject:CstBQTerm)
               | Cst_MatchArgumentConstraint(object:CstPattern)
@@ -44,7 +44,7 @@ CstConstraint  = Cst_MatchTermConstraint(object:CstPattern, subject:CstBQTerm)
               | Cst_NumEqualTo          (lefthand:CstTerm, righthand:CstTerm)
               | Cst_NumDifferent        (lefthand:CstTerm, righthand:CstTerm)
               
-CstConstraintList = Cst_concCstConstraint(CstConstraint*)
+CstConstraintList = ConcCstConstraint(CstConstraint*)
 
 // CstTerm in CST context is "equivalent" to BQTerm in AST context
 // (it's much simpler because very close to syntax)
@@ -52,7 +52,7 @@ CstTerm = Cst_TermVariable(name:String)
         | Cst_TermVariableStar(name:String)
         | Cst_TermAppl(name:String, termList:CstTermList)
 
-CstTermList = Cst_concCstTerm(CstTerm*)
+CstTermList = ConcCstTerm(CstTerm*)
 
 //CstTypedTerm = Cst_TypedTerm(term:CstTerm, type:CstType)
 CstTypedTerm = Cst_TypedTerm(term:CstBQTerm, type:CstType)
@@ -73,7 +73,7 @@ CstPattern =
 | Cst_Appl(headSymbolList:CstSymbolList, patternList:CstPatternList)
 | Cst_RecordAppl(headSymbolList:CstSymbolList, pairPatternList:CstPairPatternList)
 
-CstSymbolList = Cst_concCstSymbol(CstSymbol*)
+CstSymbolList = ConcCstSymbol(CstSymbol*)
 CstSymbol = Cst_Symbol(name:String, theory:CstTheory)
           | Cst_ConstantSymbol(value:String, theory:CstTheory)
 
@@ -81,13 +81,13 @@ CstTheory = Cst_TheoryAU()
           | Cst_TheoryAC()
           | Cst_TheoryDEFAULT()
 
-CstPatternList = Cst_concCstPattern(CstPattern*)
-CstPairPatternList = Cst_concCstPairPattern(CstPairPattern*)
+CstPatternList = ConcCstPattern(CstPattern*)
+CstPairPatternList = ConcCstPairPattern(CstPairPattern*)
 
 CstPairPattern = Cst_PairPattern(slotName:String, pattern:CstPattern)
 
 // CsOp*Construct ============================================================
-CstOperatorList = Cst_concCstOperator(CstOperator*)
+CstOperatorList = ConcCstOperator(CstOperator*)
 
 CstOperator =
  | Cst_IsFsym         (argName:CstName, block:CstBlockList)
@@ -107,7 +107,7 @@ CstOperator =
  | Cst_IsSort (argName:CstName, block:CstBlockList)
  | Cst_Equals (argName1:CstName, argName2:CstName, block:CstBlockList)
 
-CstSlotList = Cst_concCstSlot(CstSlot*)
+CstSlotList = ConcCstSlot(CstSlot*)
 
 CstSlot = Cst_Slot(slotName:CstName, slotTypeName:CstType)
 
@@ -124,17 +124,17 @@ CstBQTerm = Cst_BQAppl(optionList:CstOptionList, name:String, bqTermList:CstBQTe
 
 CstPairSlotBQTerm  = Cst_PairSlotBQTerm(optionList:CstOptionList, slotName:CstName, term:CstBQTerm)
 
-CstBQTermList = Cst_concCstBQTerm(CstBQTerm*)
-CstPairSlotBQTermList = Cst_concCstPairSlotBQTerm(CstPairSlotBQTerm*)
+CstBQTermList = ConcCstBQTerm(CstBQTerm*)
+CstPairSlotBQTermList = ConcCstPairSlotBQTerm(CstPairSlotBQTerm*)
 
 // Names
 CstName = Cst_Name(name:String)
         | Cst_EmptyName()
 
-CstNameList = Cst_concCstName(CstName*)
+CstNameList = ConcCstName(CstName*)
 
 // Options ==
-CstOptionList = Cst_concCstOption(CstOption*)
+CstOptionList = ConcCstOption(CstOption*)
 CstOption = Cst_SourceFile(sourceFile:String)
           | Cst_StartLine(startLine:int)
           | Cst_EndLine(endLine:int)
@@ -146,4 +146,4 @@ CstOption = Cst_SourceFile(sourceFile:String)
 
 // Strategy
 CstVisit = Cst_VisitTerm(type:CstType,constraintActionList:CstConstraintActionList,optionList:CstOptionList)
-CstVisitList = Cst_concCstVisit(CstVisit*)
+CstVisitList = ConcCstVisit(CstVisit*)

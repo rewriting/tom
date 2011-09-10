@@ -170,6 +170,7 @@ public class TomParserPlugin extends TomGenericPlugin {
     boolean printcst     = ((Boolean)getOptionManager().getOptionValue("printcst")).booleanValue();
     boolean printast     = ((Boolean)getOptionManager().getOptionValue("printast")).booleanValue();
 
+    SymbolTable symbolTable = getStreamManager().getSymbolTable();
     if(newparser==false) {
       try {
         // looking for java package
@@ -197,7 +198,6 @@ public class TomParserPlugin extends TomGenericPlugin {
          * we update codomains which are constrained by a symbolName
          * (come from the %strategy operator)
          */
-        SymbolTable symbolTable = getStreamManager().getSymbolTable();
         Iterator it = symbolTable.keySymbolIterator();
         while(it.hasNext()) {
           String tomName = (String)it.next();
@@ -252,7 +252,7 @@ public class TomParserPlugin extends TomGenericPlugin {
             printTree(cst);
           }
 
-          tom.engine.parser.antlr3.CstConverter converter = new tom.engine.parser.antlr3.CstConverter();
+          tom.engine.parser.antlr3.CstConverter converter = new tom.engine.parser.antlr3.CstConverter(symbolTable);
           Code code = converter.convert(cst);
           setWorkingTerm(code);
 

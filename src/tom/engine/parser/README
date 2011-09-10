@@ -1,0 +1,155 @@
+TODO
+-------
+- %include :
+  - (JC) à tester, normalement OK, semble passer
+
+- inclusion et appel de %gom
+  - (JC) gom sans option semble OK, continuer les tests
+  - (JC) gom avec options pose problème -> corrigé, continuer à tester
+  - (JC) gom avec hooks fonctionne maintenant (pb des '{' imbriquées)
+
+- parsing de %strategy
+  - (JC) à tester, semble passer sur plusieurs exemples/tests
+
+- labels dans miniTom.g
+  - (FP) semble fonctionne, continuer à tester
+
+- patterns dans %match
+  - (JC) p << T x  semble fonctionner, continuer à tester les patterns
+
+- gérer les $nom_variable dans les mappings
+  - directement dans le parser ?
+  - plus simple de le faire lors de la transformation des cst : appliquer
+  String tom.engine.tools.ASTFactory.abstractCode(String code, String... vars);
+  à tous les contenus des nœuds Cst_IsFsym, Cst_GetHead, Cst_IsEmpty,
+  Cst_Get_syze, Cst_GetTail, Cst_GetSlot, Cst_GetElement, Cst_Make, Cst_IsSort,
+  Cst_Equals, etc. (liste à compléter si besoin)
+
+- meta-quote %[..]%
+  - (FP) semble fonctionner, l'arbre parait bien. Le cas des @var@ semble plus 
+    simple à gérer durant la transformation des cst, il n'est donc pas traiter
+
+- ajouter des optionList dans les constructions (pour les numéros de ligne, les
+  noms de fichiers, etc.)
+  - (JC) il y a une méthode Java « CommonTree extractOptions(CommonToken) »
+    dans miniTomParser qui extrait les options et ajoute un nœud à l'arbre.
+    Pour commencer, ce n'est pas mal, mais il faudra peut-être un peu la
+    modifier/décliner
+  - souci dans BQTerm.g, règle csBQTerm : le stream est à null, l'extraction
+    d'options ne passe pas. J'ai mis un FIXME (un test dans extract) mais je
+    n'aime pas ça
+
+- changer le parser backquote pour délimiter _explicitement_ les parties
+  backquote et code hôte ("parenthésage" et un "unquote") :
+e.g. : `f(x $+ 42$)`  <- solution qui semble l'une des plus intéressantes
+
+Mais on peut aussi imaginer des syntaxes telles que :
+  `f(x ${+ 42})`  <- très intéressante aussi
+ou `(f(x ${+ 42}))
+ou `f(x '+ 42')`
+  - (FP) parenthésage de backquote en place dans la branche newbackquote, il 
+    faut modifier les exemples pour pouvoir le tester pleinement
+
+- clarifier le nommage des sortes et constructeurs : CstTerm ne correspond pas
+  aux TomTerm mais aux BQTerm en plus de CstBQTerm, CstPattern correspond aux
+  TomTerm
+  - (FP) apparemment JC a oublié avoir fait la correction avant de mettre le
+    commentaire
+
+- identification des "types" : actuellement, tout est CstName, ne gagnerait-on
+  pas à déjà différencier ce qui est différenciable facilementi/gratuitement ?
+  ex : %oplist ID ID(ID*) -> ^(OpList ^(Name ) ^(Name ) ^(Name ))
+                          -> ^(OpList ^(Type ) ^(Constructeur ) ^(Type ))
+
+- problème dans le %gom. Dans exemples/analysis, tom -np -ast -cst affiche son
+  arbre dans la partie ast et non cst et inclue du code venant de fichier
+  temporaire (9800 lignes de java pour TestPico.t)
+
+==========================================================
+
+Remaining examples and tests to pass (please remove the appropriate line once
+tested):
+- tests:
+  
+  test/error/*
+  test/gom/TestFromMethods.t
+  test/numeric/TestNumericConditions.t
+  test/regress/*
+  test/rule/Peano.t
+  test/rule/TestPeano.t
+  test/rule/TestWhen.t
+  test/rule/TomList.t
+  test/sl/TestSLModes.t
+
+- examples:
+  examples/analysis
+  examples/antipattern
+  examples/appletxml
+  examples/bdd
+  examples/boulderdash
+  examples/bpel
+  examples/builtin
+  examples/bytecode
+  examples/caml
+  examples/cell
+  examples/cps
+  examples/csharp
+  examples/csmaca
+  examples/debugger
+  examples/deepmatch
+  examples/dist
+  examples/dom
+  examples/expression
+  examples/freshgom
+  examples/gasel
+  examples/generics
+  examples/gom
+  examples/gomoku
+  examples/gterm
+  examples/integerc
+  examples/labyrinth
+  examples/lambdacalculi
+  examples/lazyml
+  examples/lib
+  examples/list
+  examples/lsystems
+  examples/master
+  examples/matching
+  examples/meta
+  examples/mgs
+  examples/miniml
+  examples/modeltrans
+  examples/multigraph
+  examples/nspk
+  examples/old
+  examples/p3p
+  examples/parser
+  examples/peano
+  examples/poly
+  examples/polygraphes
+  examples/prodrule
+  examples/propp
+  examples/python
+  examples/quine
+  examples/rbtree
+  examples/report
+  examples/servlet
+  examples/set
+  examples/strategy
+  examples/strategycompiler
+  examples/strings
+  examples/structure
+  examples/subtypeinference
+  examples/subtyping
+  examples/tactics
+  examples/termgraph
+  examples/TestMatch.t
+  examples/tomjastadd
+  examples/transformation
+  examples/tutorial
+  examples/typeinference
+  examples/who
+  examples/why
+  examples/xml
+  examples/xquery
+

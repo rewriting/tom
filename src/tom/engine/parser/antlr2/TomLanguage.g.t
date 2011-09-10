@@ -1924,8 +1924,6 @@ typeTerm returns [Declaration result] throws TomException
          { declarationList = `concDeclaration(attribute,declarationList*); }
          |   attribute = keywordIsSort[currentTypeName]
          { declarationList = `concDeclaration(attribute,declarationList*); }
-         |   attribute = keywordGetImplementation[currentTypeName]
-         { declarationList = `concDeclaration(attribute,declarationList*); }
       )*
       t:RBRACE
       {
@@ -2161,28 +2159,6 @@ keywordIsFsym[TomName astName, String typeString] returns [Declaration result] t
             result = `IsFsymDecl(astName,
                 BQVariable(option,Name(name.getText()),Type(concTypeOption(),typeString,EmptyTargetLanguageType())),
                 Code(code),ot);
-        }
-    ;
-
-keywordGetImplementation [String typeString] returns [Declaration result] throws TomException
-{
-    result = null;
-    Option ot = null;
-}
-    :
-        t:GET_IMPLEMENTATION
-        { ot = `OriginTracking(Name(t.getText()),t.getLine(),currentFile()); }
-        LPAREN name:ALL_ID RPAREN
-        {
-            Option info = `OriginTracking(Name(name.getText()),name.getLine(),currentFile());
-            OptionList option = `concOption(info);
-
-            selector().push("targetlexer");
-            TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList<Code>());
-            selector().pop();
-
-            result = `GetImplementationDecl(BQVariable(option,Name(name.getText()),Type(concTypeOption(),typeString,EmptyTargetLanguageType())),
-                Return(Composite(CompositeTL(tlCode))),ot);
         }
     ;
 
@@ -2462,7 +2438,6 @@ tokens {
     GET_SLOT = "get_slot";
     GET_DEFAULT = "get_default";
     IS_FSYM = "is_fsym";
-    GET_IMPLEMENTATION = "get_implementation";
     EQUALS = "equals";
     IS_SORT = "is_sort";
     GET_HEAD = "get_head";

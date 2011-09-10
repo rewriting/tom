@@ -31,7 +31,7 @@ public class TreeFactory {
   public static CommonTree makeOptions(String sourceName, int firstCharLine,
     int firstCharColumn, int lastCharLine, int lastCharColumn) {
 
-    return makeTree(Cst_concCstOption, "Cst_concCstOption",
+    return makeTree(ConcCstOption, "ConcCstOption",
                     makeTree(Cst_SourceFile, "Cst_SourceFile",
                               makeTree(NodeString, sourceName)),
                     makeTree(Cst_StartLine, "Cst_StartLine",

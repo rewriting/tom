@@ -53,8 +53,167 @@ public class CstConverter {
 
   private static Logger logger = Logger.getLogger("tom.engine.typer.CstConverter");
 
+  private SymbolTable symbolTable;
+
+  public CstConverter(SymbolTable st) {
+    this.symbolTable = st;
+  }
+
   public Code convert(CstProgram cst) {
+    %match(cst) {
+      Cst_Program(list) -> { 
+        return `Tom(convert(list));
+      }
+    }
+    throw new TomRuntimeException("convert: strange term: " + cst);
+  }
+
+  public Code convert(CstBlock cst) {
+    %match(cst) {
+      HOSTBLOCK(optionList,content) -> {
+        return `TargetLanguageToCode(TL(content,TextPosition(getStartLine(optionList),getStartColumn(optionList)),TextPosition(getEndLine(optionList),getEndColumn(optionList))));
+      }
+
+      Cst_TypetermConstruct(optionList, Cst_Type(typeName), extendsTypeName, operatorList) -> {
+        TypeOptionList typeoptionList = `concTypeOption();
+        DeclarationList declarationList = `concDeclaration();
+        %match(extendsTypeName) {
+          Cst_Type(supertypeName) -> { typeoptionList = `concTypeOption(SubtypeDecl(supertypeName)); }
+        }
+        %match(operatorList) {
+          ConcCstOperator(_*,operator,_*) -> {
+            %match(operator) {
+              Cst_Equals(Cst_Name(name1),Cst_Name(name2),ConcCstBlock(HOSTBLOCK(optionList2,content))) -> {
+                String code = ASTFactory.abstractCode(`content,`name1,`name2);
+                Declaration attribute = `EqualTermDecl(
+                    BQVariable(concOption(),Name(name1),Type(concTypeOption(),typeName,EmptyTargetLanguageType())),
+                    BQVariable(concOption(),Name(name2),Type(concTypeOption(),typeName,EmptyTargetLanguageType())),
+                    Code(code), 
+                    OriginTracking(Name(typeName),getStartLine(optionList2),getFileName(optionList2))
+                    );
+                declarationList = `concDeclaration(attribute,declarationList*); 
+              }
+
+              Cst_IsSort(Cst_Name(name),ConcCstBlock(HOSTBLOCK(optionList2,content))) -> {
+                String code = ASTFactory.abstractCode(`content,`name);
+                Declaration attribute = `IsSortDecl(
+                    BQVariable(concOption(),Name(name),Type(concTypeOption(),typeName,EmptyTargetLanguageType())),
+                    Code(code), 
+                    OriginTracking(Name(typeName),getStartLine(optionList2),getFileName(optionList2))
+                    );
+                declarationList = `concDeclaration(attribute,declarationList*); 
+              }
+
+              Cst_Implement(ConcCstBlock(HOSTBLOCK(optionList2,content))) -> {
+                TomType astType = `Type(typeoptionList,typeName,TLType(content));
+                symbolTable.putType(`typeName, astType);
+              }
+
+            }
+          }
+        }
+
+        return `DeclarationToCode(TypeTermDecl(
+              Name(typeName),
+              declarationList,
+              OriginTracking(Name(typeName),getStartLine(optionList),getFileName(optionList))
+              ));
+      }
+    }
+
     return `Tom(concCode());
+    //throw new TomRuntimeException("convert: strange term: " + cst);
+  }
+
+  /*
+  public Declaration convert(CstOperator cst) {
+    %match(cst) {
+      Cst_IsSort(arg,blockList) -> {
+        return `IsSortDecl(
+
+              OriginTracking(Name(typeName),getStartLine(optionList),getFileName(optionList))
+            );
+      }
+
+    }
+
+    return `Tom(concCode());
+    //throw new TomRuntimeException("convert: strange term: " + cst);
+  }
+  */
+
+
+  /*
+   * List conversion
+   */
+
+  public CodeList convert(CstBlockList cst) {
+    %match(cst) {
+      ConcCstBlock() -> { 
+        return `concCode();
+      }
+      ConcCstBlock(head,tail*) -> {
+        return `concCode(convert(head),convert*(tail));
+      }
+    }
+    throw new TomRuntimeException("convert: strange term: " + cst);
+  }
+
+  /*
+   * Utilities
+   */
+
+  private int getStartLine(CstOptionList optionlist) {
+    %match(optionlist) {
+      ConcCstOption(_*,Cst_StartLine(value),_*) -> { return `value; }
+    }
+    throw new TomRuntimeException("info not found: " + optionlist);
+  }
+
+  private int getEndLine(CstOptionList optionlist) {
+    %match(optionlist) {
+      ConcCstOption(_*,Cst_EndLine(value),_*) -> { return `value; }
+    }
+    throw new TomRuntimeException("info not found: " + optionlist);
+  }
+
+  private int getStartColumn(CstOptionList optionlist) {
+    %match(optionlist) {
+      ConcCstOption(_*,Cst_StartColumn(value),_*) -> { return `value; }
+    }
+    throw new TomRuntimeException("info not found: " + optionlist);
+  }
+
+  private int getEndColumn(CstOptionList optionlist) {
+    %match(optionlist) {
+      ConcCstOption(_*,Cst_EndColumn(value),_*) -> { return `value; }
+    }
+    throw new TomRuntimeException("info not found: " + optionlist);
+  }
+
+  private String getFileName(CstOptionList optionlist) {
+    %match(optionlist) {
+      ConcCstOption(_*,Cst_SourceFile(value),_*) -> { return `value; }
+    }
+    throw new TomRuntimeException("info not found: " + optionlist);
+  }
+
+  private int[] extractPositionInfo(CstOptionList optionlist) {
+    int startline=0; 
+    int startcolumn=0;
+    int endline=0;
+    int endcolumn=0;
+    %match(optionlist) {
+      ConcCstOption(_*,option,_*) -> {
+        %match(option) {
+          Cst_StartLine(value)   -> { startline = `value; }
+          Cst_StartColumn(value) -> { startcolumn = `value; }
+          Cst_EndLine(value)     -> { endline = `value; }
+          Cst_EndColumn(value)   -> { endcolumn = `value; }
+        }
+      }
+    }
+    return new int[] {startline,startcolumn,endline,endcolumn};
   }
 
 }

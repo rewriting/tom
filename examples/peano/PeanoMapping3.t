@@ -39,7 +39,6 @@ public class PeanoMapping3 {
   %typeterm term {
     implement           { ATermAppl }
     is_sort(t)           { $t instanceof ATermAppl }
-    get_implementation(t) { $t }
   }
 
   %op term zero() {

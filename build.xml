@@ -275,7 +275,7 @@
          srcdir="${src.src}"
          destdir="${gen.destination}"
          multithread="${multithread}"
-         options="--optimize --pretty --inlineplus">
+         options="--optimize --inlineplus">
       <include name="tom/emf/**/*.t"/>     	
       <include name="tom/engine/**/*.t"/>
       <include name="tom/library/**/*.t"/>
