@@ -24,6 +24,7 @@
 package tom.engine.parser.antlr3;
 
 import java.util.logging.Logger;
+import java.util.*;
 
 import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomconstraint.types.*;
@@ -86,8 +87,8 @@ public class CstConverter {
               Cst_Equals(Cst_Name(name1),Cst_Name(name2),ConcCstBlock(HOSTBLOCK(optionList2,content))) -> {
                 String code = ASTFactory.abstractCode(`content,`name1,`name2);
                 Declaration attribute = `EqualTermDecl(
-                    BQVariable(concOption(),Name(name1),Type(concTypeOption(),typeName,EmptyTargetLanguageType())),
-                    BQVariable(concOption(),Name(name2),Type(concTypeOption(),typeName,EmptyTargetLanguageType())),
+                    makeBQVariableFromName(name1,typeName,optionList2),
+                    makeBQVariableFromName(name2,typeName,optionList2),
                     Code(code), 
                     OriginTracking(Name(typeName),getStartLine(optionList2),getFileName(optionList2))
                     );
@@ -97,7 +98,7 @@ public class CstConverter {
               Cst_IsSort(Cst_Name(name),ConcCstBlock(HOSTBLOCK(optionList2,content))) -> {
                 String code = ASTFactory.abstractCode(`content,`name);
                 Declaration attribute = `IsSortDecl(
-                    BQVariable(concOption(),Name(name),Type(concTypeOption(),typeName,EmptyTargetLanguageType())),
+                    makeBQVariableFromName(name,typeName,optionList2),
                     Code(code), 
                     OriginTracking(Name(typeName),getStartLine(optionList2),getFileName(optionList2))
                     );
@@ -118,6 +119,36 @@ public class CstConverter {
               declarationList,
               OriginTracking(Name(typeName),getStartLine(optionList),getFileName(optionList))
               ));
+      }
+
+      Cst_OpConstruct(optionList, Cst_Type(typeName), Cst_Name(opName), slotList, operatorList) -> {
+        DeclarationList declarationList = `concDeclaration();
+        List<PairNameDecl> pairNameDeclList = new LinkedList<PairNameDecl>();
+        List<Option> options = new LinkedList<Option>();
+        TomTypeList types = `concTomType();
+
+        %match(operatorList) {
+          ConcCstOperator(_*,operator,_*) -> {
+            %match(operator) {
+
+              Cst_IsFsym(Cst_Name(name),ConcCstBlock(HOSTBLOCK(optionList2,content))) -> {
+                String code = ASTFactory.abstractCode(`content,`name);
+                Declaration attribute = `IsFsymDecl(
+                    Name(opName),
+                    makeBQVariableFromName(name,typeName,optionList2),
+                    Code(code), 
+                    OriginTracking(Name(typeName),getStartLine(optionList2),getFileName(optionList2))
+                    );
+                options.add(`DeclarationToOption(attribute)); 
+              }
+
+            }
+          }
+        }
+
+        TomSymbol astSymbol = ASTFactory.makeSymbol(`opName, `Type(concTypeOption(),typeName,EmptyTargetLanguageType()), types, ASTFactory.makePairNameDeclList(pairNameDeclList), options);
+        symbolTable.putSymbol(`opName,astSymbol);
+        return `DeclarationToCode(SymbolDecl(Name(opName)));
       }
     }
 
@@ -198,22 +229,12 @@ public class CstConverter {
     throw new TomRuntimeException("info not found: " + optionlist);
   }
 
-  private int[] extractPositionInfo(CstOptionList optionlist) {
-    int startline=0; 
-    int startcolumn=0;
-    int endline=0;
-    int endcolumn=0;
-    %match(optionlist) {
-      ConcCstOption(_*,option,_*) -> {
-        %match(option) {
-          Cst_StartLine(value)   -> { startline = `value; }
-          Cst_StartColumn(value) -> { startcolumn = `value; }
-          Cst_EndLine(value)     -> { endline = `value; }
-          Cst_EndColumn(value)   -> { endcolumn = `value; }
-        }
-      }
-    }
-    return new int[] {startline,startcolumn,endline,endcolumn};
+  private BQTerm makeBQVariableFromName(String name, String type, CstOptionList optionList) {
+    //concOption(OriginTracking(Name(name),getStartLine(optionList),getFileName(optionList))),
+    return `BQVariable(
+        concOption(),
+        Name(name),
+        Type(concTypeOption(),type,EmptyTargetLanguageType()));
   }
 
 }

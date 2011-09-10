@@ -191,9 +191,6 @@ public class TomParserPlugin extends TomGenericPlugin {
         parser = newParser(currentReader, currentFileName, getOptionManager(), getStreamManager());
         // parsing
         setWorkingTerm(parser.input());
-          if(printast) {
-            printTree((Visitable)getWorkingTerm());
-          }
         /*
          * we update codomains which are constrained by a symbolName
          * (come from the %strategy operator)
@@ -203,7 +200,15 @@ public class TomParserPlugin extends TomGenericPlugin {
           String tomName = (String)it.next();
           TomSymbol tomSymbol = getSymbolFromName(tomName);
           tomSymbol = symbolTable.updateConstrainedSymbolCodomain(tomSymbol, symbolTable);
+
+          if(printast) {
+            printTree(tomSymbol);
+          }
         }
+
+          if(printast) {
+            printTree((Visitable)getWorkingTerm());
+          }
 
         // verbose
         TomMessage.info(getLogger(), null, 0, TomMessage.tomParsingPhase,
@@ -255,6 +260,15 @@ public class TomParserPlugin extends TomGenericPlugin {
           tom.engine.parser.antlr3.CstConverter converter = new tom.engine.parser.antlr3.CstConverter(symbolTable);
           Code code = converter.convert(cst);
           setWorkingTerm(code);
+
+          Iterator it = symbolTable.keySymbolIterator();
+          while(it.hasNext()) {
+            String tomName = (String)it.next();
+            TomSymbol tomSymbol = getSymbolFromName(tomName);
+            if(printast) {
+              printTree(tomSymbol);
+            }
+          }
 
           if(printast) {
             printTree((Visitable)getWorkingTerm());
