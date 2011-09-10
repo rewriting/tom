@@ -2,10 +2,6 @@ module CST
 imports String Code 
 abstract syntax
 
-// Tree Transformation =======================================================
-CstBlock = wrappedCode(wrapped:Code)
-CstProgram = wrappedCodeList(wrapped:CodeList)
-
 // Node type for base types ==================================================
 NodeString = NodeString()
 NodeInt = NodeInt()
