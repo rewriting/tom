@@ -12,13 +12,13 @@ options {
 }
 
 @parser::header {
-package tom.engine.newparser.parser;
+package tom.engine.parser.antlr3;
 
-import static tom.engine.newparser.parser.BQTermLexer.*;
-import static tom.engine.newparser.util.TreeFactory.*;
 import org.antlr.runtime.CommonToken;
 import org.antlr.runtime.tree.Tree;
 
+import static tom.engine.parser.antlr3.TreeFactory.*;
+import static tom.engine.parser.antlr3.miniTomParser.*;
 }
 
 @parser::members {

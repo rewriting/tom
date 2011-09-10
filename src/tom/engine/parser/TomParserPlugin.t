@@ -240,8 +240,8 @@ public class TomParserPlugin extends TomGenericPlugin {
     } else {
       try {
         if(!currentFileName.equals("-")) {
-          tom.engine.newparser.parser.HostParser parser = 
-            new tom.engine.newparser.parser.HostParser(getStreamManager(), getOptionManager());
+          tom.engine.parser.antlr3.HostParser parser = 
+            new tom.engine.parser.antlr3.HostParser(getStreamManager(), getOptionManager());
           ANTLRReaderStream input = new ANTLRReaderStream(currentReader);
           input.name = currentFileName;
           //System.out.println("CurrentFileName : "+currentFileName);
