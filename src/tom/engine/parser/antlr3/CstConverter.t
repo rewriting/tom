@@ -40,6 +40,7 @@ import tom.engine.adt.code.types.*;
 import tom.engine.adt.typeconstraints.types.*;
 import tom.engine.adt.cst.types.*;
 
+import tom.engine.TomBase;
 import tom.engine.TomMessage;
 import tom.engine.exception.TomRuntimeException;
 
@@ -53,6 +54,9 @@ public class CstConverter {
   %include { ../../adt/tomsignature/TomSignature.tom }
 
   private static Logger logger = Logger.getLogger("tom.engine.typer.CstConverter");
+  private Logger getLogger() {
+    return Logger.getLogger(getClass().getName());
+  }
 
   private SymbolTable symbolTable;
 
@@ -121,11 +125,35 @@ public class CstConverter {
               ));
       }
 
-      Cst_OpConstruct(optionList, Cst_Type(typeName), Cst_Name(opName), slotList, operatorList) -> {
+      Cst_OpConstruct(optionList, Cst_Type(codomain), Cst_Name(opName), slotList, operatorList) -> {
         DeclarationList declarationList = `concDeclaration();
         List<PairNameDecl> pairNameDeclList = new LinkedList<PairNameDecl>();
+        List<TomName> slotNameList = new LinkedList<TomName>();
         List<Option> options = new LinkedList<Option>();
         TomTypeList types = `concTomType();
+
+        %match(slotList) {
+          ConcCstSlot(_*,Cst_Slot(Cst_Name(slotName),Cst_Type(slotType)),_*) -> {
+            TomName astName = ASTFactory.makeName(`slotName);
+            if(slotNameList.indexOf(astName) != -1) {
+              TomMessage.error(getLogger(),getFileName(`optionList), getStartLine(`optionList),
+                  TomMessage.repeatedSlotName,
+                  `slotName);
+            }
+            slotNameList.add(astName);
+            pairNameDeclList.add(`PairNameDecl(astName,EmptyDeclaration()));
+            types = `concTomType(types*,Type(concTypeOption(),slotType,EmptyTargetLanguageType()));
+            String typeOfSlot = getSlotType(`codomain,`slotName);
+            if(typeOfSlot != null && !typeOfSlot.equals(`slotType)) {
+              TomMessage.warning(getLogger(),getFileName(`optionList), getStartLine(`optionList),
+                  TomMessage.slotIncompatibleTypes,`slotName,`slotType,typeOfSlot);
+            } else {
+              putSlotType(`codomain,`slotName,`slotType);
+            }
+
+          }
+        }
+
 
         %match(operatorList) {
           ConcCstOperator(_*,operator,_*) -> {
@@ -135,23 +163,91 @@ public class CstConverter {
                 String code = ASTFactory.abstractCode(`content,`name);
                 Declaration attribute = `IsFsymDecl(
                     Name(opName),
-                    makeBQVariableFromName(name,typeName,optionList2),
+                    makeBQVariableFromName(name,codomain,optionList2),
                     Code(code), 
-                    OriginTracking(Name(typeName),getStartLine(optionList2),getFileName(optionList2))
+                    OriginTracking(Name(codomain),getStartLine(optionList2),getFileName(optionList2))
                     );
                 options.add(`DeclarationToOption(attribute)); 
               }
 
+              Cst_GetSlot(Cst_Name(slotName),Cst_Name(argName),ConcCstBlock(HOSTBLOCK(optionList2,content))) -> {
+                String code = ASTFactory.abstractCode(`content,`argName);
+                Declaration attribute = `GetSlotDecl(
+                    Name(opName),
+                    Name(slotName),
+                    makeBQVariableFromName(argName,codomain,optionList2),
+                    Code(code), 
+                    OriginTracking(Name(codomain),getStartLine(optionList2),getFileName(optionList2))
+                    );
+
+                TomName sName = attribute.getSlotName();
+                int index = slotNameList.indexOf(sName);
+                /*
+                 * ensure that sName appears in slotNameList, only once
+                 * ensure that sName has not already been generated
+                 */
+                TomMessage msg = null;
+                if(index == -1) {
+                  msg = TomMessage.errorIncompatibleSlotDecl;
+                } else {
+                  PairNameDecl pair = pairNameDeclList.get(index);
+                  %match(pair) {
+                    PairNameDecl[SlotDecl=decl] -> {
+                      if(`decl != `EmptyDeclaration()) {
+                        msg = TomMessage.errorTwoSameSlotDecl;
+                      }
+                    }
+                  }
+                }
+                if(msg != null) {
+                  TomMessage.error(getLogger(),getFileName(`optionList), getStartLine(`optionList),
+                      msg,
+                      getFileName(`optionList2), getStartLine(`optionList2),
+                      "%op "+ `codomain, getStartLine(`optionList),sName.getString());
+                } else {
+                  pairNameDeclList.set(index,`PairNameDecl(sName,attribute));
+                }
+              }
+
+              Cst_Make(nameList,ConcCstBlock(HOSTBLOCK(optionList2,content))) -> {
+                ArrayList<String> varnameList = new ArrayList<String>();
+                BQTermList args = `concBQTerm();
+                int index = 0;
+
+                %match(nameList) {
+                  ConcCstName(_*,Cst_Name(argName),_*) -> {
+                    varnameList.add(`argName);
+                    TomType type = (types.length()>0)?TomBase.elementAt(types,index++):`EmptyType();
+                    args = `concBQTerm(args*, BQVariable(concOption(), Name(argName), type));
+                  }
+                }
+
+                String[] vars = new String[varnameList.size()]; // used only to give a type
+                String code = ASTFactory.abstractCode(`content,varnameList.toArray(vars));
+
+                Declaration attribute = `MakeDecl(
+                    Name(opName),
+                    Type(concTypeOption(),codomain,EmptyTargetLanguageType()),
+                    args,
+                    ExpressionToInstruction(Code(code)),
+                    OriginTracking(Name(codomain),getStartLine(optionList2),getFileName(optionList2))
+                    );
+
+                options.add(`DeclarationToOption(attribute)); 
+              }
+               
+
             }
           }
         }
-
-        TomSymbol astSymbol = ASTFactory.makeSymbol(`opName, `Type(concTypeOption(),typeName,EmptyTargetLanguageType()), types, ASTFactory.makePairNameDeclList(pairNameDeclList), options);
+        TomSymbol astSymbol = ASTFactory.makeSymbol(`opName, `Type(concTypeOption(),codomain,EmptyTargetLanguageType()), types, ASTFactory.makePairNameDeclList(pairNameDeclList), options);
         symbolTable.putSymbol(`opName,astSymbol);
         return `DeclarationToCode(SymbolDecl(Name(opName)));
       }
-    }
 
+
+
+    }
     return `Tom(concCode());
     //throw new TomRuntimeException("convert: strange term: " + cst);
   }
@@ -230,11 +326,21 @@ public class CstConverter {
   }
 
   private BQTerm makeBQVariableFromName(String name, String type, CstOptionList optionList) {
-    //concOption(OriginTracking(Name(name),getStartLine(optionList),getFileName(optionList))),
+    //if more information is needed: concOption(OriginTracking(Name(name),getStartLine(optionList),getFileName(optionList))),
     return `BQVariable(
         concOption(),
         Name(name),
         Type(concTypeOption(),type,EmptyTargetLanguageType()));
   }
 
+  private HashMap<String,String> usedSlots = new HashMap<String,String>();
+  private void putSlotType(String codomain, String slotName, String slotType) {
+    String key = codomain+slotName;
+    usedSlots.put(key,slotType);
+  }
+
+  private String getSlotType(String codomain, String slotName) {
+    String key = codomain+slotName;
+    return usedSlots.get(key);
+  }
 }
