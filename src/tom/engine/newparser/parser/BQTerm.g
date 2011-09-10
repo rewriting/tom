@@ -13,107 +13,152 @@ options {
 
 @parser::header {
 package tom.engine.newparser.parser;
+
+import static tom.engine.newparser.parser.BQTermLexer.*;
+import static tom.engine.newparser.util.TreeFactory.*;
+import org.antlr.runtime.CommonToken;
+import org.antlr.runtime.tree.Tree;
+
 }
 
+@parser::members {
+
+  public static CommonTree extractOptions(CommonToken t) {
+    String newline = System.getProperty("line.separator");
+    String lines[] = t.getText().split(newline);
+    
+    int firstCharLine = t.getLine();
+    int firstCharColumn = t.getCharPositionInLine();
+    int lastCharLine = firstCharColumn+lines.length-1;
+    int lastCharColumn;
+    if(lines.length==1) {
+      lastCharColumn = firstCharColumn + lines[0].length();
+    } else {
+      lastCharColumn = lines[lines.length-1].length();
+    }
+//FIXME
+    return
+      makeOptions(t.getInputStream()!=null?t.getInputStream().getSourceName():"unknown",
+      firstCharLine, firstCharColumn, lastCharLine, lastCharColumn);  
+  }
+
+  public static CommonTree extractOptions(CommonToken start, CommonToken end) {
+    String newline = System.getProperty("line.separator");
+    String lines[] = end.getText().split(newline);
+
+    int lastCharLine = end.getLine()+lines.length;
+    int lastCharColumn;
+    if(lines.length==1) {
+      lastCharColumn = end.getCharPositionInLine() + lines[0].length();
+    } else {
+      lastCharColumn = lines[lines.length-1].length();
+    }
+
+//FIXME
+    return
+      makeOptions(start.getInputStream()!=null?start.getInputStream().getSourceName():"unknown",
+      start.getLine(), start.getCharPositionInLine(), lastCharLine,
+      lastCharColumn);
+  }
+}
 //beginBackQuote
 
 csMainBQTerm [ boolean compositeAllowed] :
-  UNDERSCORE -> ^(Cst_BQDefault)
-  | IDSTAR -> ^(Cst_BQVarStar IDSTAR ^(Cst_TypeUnknown ))
+  UNDERSCORE -> ^(Cst_BQDefault {extractOptions((CommonToken)$UNDERSCORE)})
+  | IDSTAR -> ^(Cst_BQVarStar {extractOptions((CommonToken)$IDSTAR)} IDSTAR ^(Cst_TypeUnknown ))
   | ID {$compositeAllowed}?=> c=csCompositePart*
-    -> {c==null}? ^(Cst_BQVar ID ^(Cst_TypeUnknown ))
+    -> {c==null}? ^(Cst_BQVar {extractOptions((CommonToken)$ID)} 
+        ID ^(Cst_TypeUnknown ))
     -> ^(Cst_CompositeTerm
+         {extractOptions((CommonToken)$ID)}
          ^(Cst_concCstBQTerm
-           ^(Cst_BQVar ID ^(Cst_TypeUnknown )) csCompositePart*
+           ^(Cst_BQVar {extractOptions((CommonToken)$ID)}
+             ID ^(Cst_TypeUnknown )) csCompositePart*
           )
         )
   | LPAR ID RPAR {$compositeAllowed}?=> c=csCompositePart*
-    -> {c==null}? ^(Cst_BQVar ID ^(Cst_TypeUnknown ))
+    -> {c==null}? ^(Cst_BQVar {extractOptions((CommonToken)$ID)}
+        ID ^(Cst_TypeUnknown ))
     -> ^(Cst_CompositeTerm
+         {extractOptions((CommonToken)$LPAR, (CommonToken)$RPAR)}
          ^(Cst_concCstBQTerm
-           ^(Cst_ITL LPAR)
-           ^(Cst_BQVar ID ^(Cst_TypeUnknown ))
-           ^(Cst_ITL RPAR)
+           ^(Cst_ITL {extractOptions((CommonToken)$LPAR)} LPAR)
+           ^(Cst_BQVar {extractOptions((CommonToken)$ID)}
+             ID ^(Cst_TypeUnknown ))
+           ^(Cst_ITL {extractOptions((CommonToken)$RPAR)} RPAR)
            csCompositePart*
           )
         )
 
   | IDPAR (csMainBQTerm[true] (COMMA csMainBQTerm[true])*)? RPAR
-    -> ^(Cst_BQAppl IDPAR ^(Cst_concCstBQTerm csMainBQTerm*))
+    -> ^(Cst_BQAppl {extractOptions((CommonToken)$IDPAR, (CommonToken)$RPAR)}
+        IDPAR ^(Cst_concCstBQTerm csMainBQTerm*))
  
   | IDBR (csPairSlotBQTerm (COMMA csPairSlotBQTerm)*)? RBR
-    -> ^(Cst_BQRecordAppl IDBR ^(Cst_concCstPairSlotBQTerm csPairSlotBQTerm*)
-        )
-  | csTL -> ^(Cst_ITL csTL)
+    -> ^(Cst_BQRecordAppl {extractOptions((CommonToken)$IDBR, (CommonToken)$RBR)}
+        IDBR ^(Cst_concCstPairSlotBQTerm csPairSlotBQTerm*))
+  | csTL -> ^(Cst_ITL {extractOptions((CommonToken)$csTL.start, (CommonToken)$csTL.stop)} csTL)
   ;
-/*   
-  | lp='(' csCompositePart* rp=')'
-    -> ^(Cst_CompositeTerm 
-         ^(Cst_concCstBQTerm
-           ^(Cst_ITL $lp) ^(Cst_CompositeTerm ^(Cst_concCstBQTerm csCompositePart*)) ^(Cst_ITL $rp)
-        )
-      )
-  | lp='(' csTL rp=')' -> ^(Cst_CompositeTerm 
-      ^(Cst_concCstBQTerm ^(Cst_ITL $lp) ^(Cst_ITL csTL) ^(Cst_ITL $rp))
-      )
-
-
- */
 
 csBQTerm
 returns [int marker] :
  BQID
   {$marker = ((CustomToken)$BQID).getPayload(Integer.class);}
-
-  -> ^(Cst_BQVar BQID ^(Cst_TypeUnknown ))
+/*{
+  System.out.println("(DEBUG) P firstL = "+$BQID.getLine());
+  System.out.println("(DEBUG) P firstC = "+$BQID.getCharPositionInLine());
+  System.out.println("(DEBUG) P = "+$BQID.getInputStream().getSourceName());
+}*/
+  //-> ^(Cst_BQVar ^(Cst_concCstOption ^(Cst_NoOption )) BQID ^(Cst_TypeUnknown ))
+  -> ^(Cst_BQVar {extractOptions((CommonToken)$BQID)} BQID ^(Cst_TypeUnknown ))
 
  |BQPAR csCompositePart* RPAR
   {$marker = ((CustomToken)$RPAR).getPayload(Integer.class);}
 
   -> ^(Cst_CompositeTerm 
+       {extractOptions((CommonToken)$BQPAR, (CommonToken)$RPAR)}
        ^(Cst_concCstBQTerm
-         ^(Cst_ITL BQPAR) ^(Cst_CompositeTerm ^(Cst_concCstBQTerm csCompositePart*)) ^(Cst_ITL RPAR)
+         ^(Cst_ITL {extractOptions((CommonToken)$BQPAR)} BQPAR)
+         ^(Cst_CompositeTerm
+           {extractOptions((CommonToken)$csCompositePart.stop)}
+           ^(Cst_concCstBQTerm csCompositePart*))
+         ^(Cst_ITL {extractOptions((CommonToken)$RPAR)} RPAR)
         )
       )
 
  |BQIDSTAR
   {$marker = ((CustomToken)$BQIDSTAR).getPayload(Integer.class);}
 
-  -> ^(Cst_BQVarStar BQIDSTAR ^(Cst_TypeUnknown ))
+  -> ^(Cst_BQVarStar {extractOptions((CommonToken)$BQIDSTAR)} BQIDSTAR ^(Cst_TypeUnknown ))
 
  |BQIDPAR (csMainBQTerm[true] (COMMA csMainBQTerm[true])*)? RPAR
   {$marker = ((CustomToken)$RPAR).getPayload(Integer.class);}
 
-  -> ^(Cst_BQAppl BQIDPAR ^(Cst_concCstBQTerm csMainBQTerm*))
+  -> ^(Cst_BQAppl {extractOptions((CommonToken)$BQIDPAR, (CommonToken)$RPAR)}
+      BQIDPAR ^(Cst_concCstBQTerm csMainBQTerm*))
  
  |BQIDBR (csPairSlotBQTerm (COMMA csPairSlotBQTerm)*)? RBR
   {$marker = ((CustomToken)$RBR).getPayload(Integer.class);}
   
-  -> ^(Cst_BQRecordAppl BQIDBR ^(Cst_concCstPairSlotBQTerm csPairSlotBQTerm*)
-      ) 
+  -> ^(Cst_BQRecordAppl {extractOptions((CommonToken)$BQIDBR, (CommonToken)$RBR)}
+      BQIDBR ^(Cst_concCstPairSlotBQTerm csPairSlotBQTerm*)) 
  ; 
 
 csPairSlotBQTerm :
   ID EQUAL csMainBQTerm[false]
-  -> ^(Cst_PairSlotBQTerm ^(Cst_Name ID) csMainBQTerm)
+  -> ^(Cst_PairSlotBQTerm {extractOptions((CommonToken)$ID)} ^(Cst_Name ID) csMainBQTerm)
 ;
 
-/*csComposite :
-  csCompositePart* -> ^(Cst_CompositeTerm ^(Cst_concCstBQTerm csCompositePart*))
-  | lp='(' csCompositePart* rp=')' -> ^(Cst_CompositeTerm ^(Cst_concCstBQTerm ^(Cst_ITL $lp) csCompositePart* ^(Cst_ITL $rp)))
-  ;*/
-
 csCompositePart :
-   ANY -> ^(Cst_ITL ANY)
-  | EQUAL -> ^(Cst_ITL EQUAL)
-  | NUM -> ^(Cst_ITL NUM)
-//  | MINUS -> ^(Cst_ITL MINUS)
-  | BQDOT -> ^(Cst_ITL BQDOT)
-  | BQSTRING -> ^(Cst_ITL BQSTRING)
-  | BQCHAR -> ^(Cst_ITL BQCHAR)
+   ANY -> ^(Cst_ITL {extractOptions((CommonToken)$ANY)} ANY)
+  | EQUAL -> ^(Cst_ITL {extractOptions((CommonToken)$EQUAL)} EQUAL)
+  | NUM -> ^(Cst_ITL {extractOptions((CommonToken)$NUM)} NUM)
+  | BQDOT -> ^(Cst_ITL {extractOptions((CommonToken)$BQDOT)} BQDOT)
+  | BQSTRING -> ^(Cst_ITL {extractOptions((CommonToken)$BQSTRING)} BQSTRING)
+  | BQCHAR -> ^(Cst_ITL {extractOptions((CommonToken)$BQCHAR)} BQCHAR)
   | csMainBQTerm[true] -> csMainBQTerm
   ;
 
 csTL :
-  BQSTRING | NUM | BQDOT | BQCHAR |/* MINUS |*/ ANY
+  BQSTRING | NUM | BQDOT | BQCHAR |ANY
   ;

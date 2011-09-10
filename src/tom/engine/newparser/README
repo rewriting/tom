@@ -35,6 +35,9 @@ TODO
     dans miniTomParser qui extrait les options et ajoute un nœud à l'arbre.
     Pour commencer, ce n'est pas mal, mais il faudra peut-être un peu la
     modifier/décliner
+  - souci dans BQTerm.g, règle csBQTerm : le stream est à null, l'extraction
+    d'options ne passe pas. J'ai mis un FIXME (un test dans extract) mais je
+    n'aime pas ça
 
 - changer le parser backquote pour délimiter _explicitement_ les parties
   backquote et code hôte ("parenthésage" et un "unquote") :
@@ -46,8 +49,6 @@ ou `(f(x ${+ 42}))
 ou `f(x '+ 42')`
   - (FP) parenthésage de backquote en place dans la branche newbackquote, il 
     faut modifier les exemples pour pouvoir le tester pleinement
-  - backquote incomplet : cf. TestFromMethod.t avec float & autres tests à
-    passer (plus bas)
 
 - clarifier le nommage des sortes et constructeurs : CstTerm ne correspond pas
   aux TomTerm mais aux BQTerm en plus de CstBQTerm, CstPattern correspond aux
@@ -59,6 +60,10 @@ ou `f(x '+ 42')`
   pas à déjà différencier ce qui est différenciable facilementi/gratuitement ?
   ex : %oplist ID ID(ID*) -> ^(OpList ^(Name ) ^(Name ) ^(Name ))
                           -> ^(OpList ^(Type ) ^(Constructeur ) ^(Type ))
+
+- problème dans le %gom. Dans exemples/analysis, tom -np -ast -cst affiche son
+  arbre dans la partie ast et non cst et inclue du code venant de fichier
+  temporaire (9800 lignes de java pour TestPico.t)
 
 ==========================================================
 
@@ -77,8 +82,6 @@ tested):
   test/sl/TestSLModes.t
 
 - examples:
-  examples/acmatching
-  examples/addressbook
   examples/analysis
   examples/antipattern
   examples/appletxml
