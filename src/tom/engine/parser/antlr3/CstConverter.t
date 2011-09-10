@@ -132,6 +132,8 @@ public class CstConverter {
         List<Option> options = new LinkedList<Option>();
         TomTypeList types = `concTomType();
 
+        options.add(`OriginTracking(Name(codomain),getStartLine(optionList),getFileName(optionList)));
+
         %match(slotList) {
           ConcCstSlot(_*,Cst_Slot(Cst_Name(slotName),Cst_Type(slotType)),_*) -> {
             TomName astName = ASTFactory.makeName(`slotName);
