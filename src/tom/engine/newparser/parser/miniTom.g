@@ -1,5 +1,6 @@
 grammar miniTom;
 
+
 options {
   output=AST;
   ASTLabelType=Tree;
