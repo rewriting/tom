@@ -284,27 +284,27 @@
       <include name="tom/gom/**/*.t"/>
 
       <exclude name="tom/gom/**/*.g.t"/>
-      <exclude name="tom/engine/parser/*.g.t"/>
+      <exclude name="tom/engine/parser/**/*.g.t"/>
       <exclude name="tom/islander/**/*.g.t"/>
     </tomcompile>
 
     <!-- Specific stuff for parser generation -->
     <tomcompile fork="no"
       srcdir="${src.src}"
-      outputfile="${gen.destination}/tom/engine/parser/TomLanguage.g"
+      outputfile="${gen.destination}/tom/engine/parser/antlr2/TomLanguage.g"
       import="${src.gen}/tom/engine/adt">
-      <include name="tom/engine/parser/TomLanguage.g.t"/>
+      <include name="tom/engine/parser/antlr2/TomLanguage.g.t"/>
     </tomcompile>
 
     <tomcompile srcdir="${src.src}"
-      outputfile="${gen.destination}/tom/engine/parser/HostLanguage.g"
+      outputfile="${gen.destination}/tom/engine/parser/antlr2/HostLanguage.g"
       import="${src.gen}/tom/engine/adt">
-      <include name="tom/engine/parser/HostLanguage.g.t"/>
+      <include name="tom/engine/parser/antlr2/HostLanguage.g.t"/>
     </tomcompile>
     <tomcompile srcdir="${src.src}"
-      outputfile="${gen.destination}/tom/engine/parser/BackQuoteLanguage.g"
+      outputfile="${gen.destination}/tom/engine/parser/antlr2/BackQuoteLanguage.g"
       import="${src.gen}/tom/engine/adt">
-      <include name="tom/engine/parser/BackQuoteLanguage.g.t"/>
+      <include name="tom/engine/parser/antlr2/BackQuoteLanguage.g.t"/>
     </tomcompile>
   </target>
 
@@ -334,26 +334,26 @@
              classname="org.apache.tools.ant.taskdefs.optional.ANTLR">
       <classpath refid="stable.classpath"/>
     </taskdef>
-    <antlr target="${src.src}/tom/engine/parser/TomJavaParser.g"
-           outputdirectory="${gen.destination}/tom/engine/parser">
+    <antlr target="${src.src}/tom/engine/parser/antlr2/TomJavaParser.g"
+      outputdirectory="${gen.destination}/tom/engine/parser/antlr2">
       <classpath refid="stable.classpath"/>
     </antlr>
 
-    <antlr target="${gen.destination}/tom/engine/parser/TomLanguage.g"
-           outputdirectory="${gen.destination}/tom/engine/parser">
+    <antlr target="${gen.destination}/tom/engine/parser/antlr2/TomLanguage.g"
+      outputdirectory="${gen.destination}/tom/engine/parser/antlr2">
       <classpath refid="stable.classpath"/>
     </antlr>
-    <antlr target="${gen.destination}/tom/engine/parser/HostLanguage.g"
-           outputdirectory="${gen.destination}/tom/engine/parser">
+    <antlr target="${gen.destination}/tom/engine/parser/antlr2/HostLanguage.g"
+      outputdirectory="${gen.destination}/tom/engine/parser/antlr2">
       <classpath refid="stable.classpath"/>
     </antlr>
-    <antlr target="${gen.destination}/tom/engine/parser/BackQuoteLanguage.g"
-           outputdirectory="${gen.destination}/tom/engine/parser">
+    <antlr target="${gen.destination}/tom/engine/parser/antlr2/BackQuoteLanguage.g"
+      outputdirectory="${gen.destination}/tom/engine/parser/antlr2">
       <classpath refid="stable.classpath"/>
     </antlr>
 
-    <antlr target="${src.src}/tom/engine/parser/BlockParser.g"
-           outputdirectory="${gen.destination}/tom/engine/parser">
+    <antlr target="${src.src}/tom/engine/parser/antlr2/BlockParser.g"
+      outputdirectory="${gen.destination}/tom/engine/parser/antlr2">
       <classpath refid="stable.classpath"/>
     </antlr>
 

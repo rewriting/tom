@@ -22,7 +22,7 @@ header {
    * Antoine Reilles    e-mail: Antoine.Reilles@loria.fr
    *
    **/
-  package tom.engine.parser;
+  package tom.engine.parser.antlr2;
 }
 
 {

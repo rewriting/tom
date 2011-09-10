@@ -23,7 +23,7 @@ header{/*
  *
  **/
 
-package tom.engine.parser;
+package tom.engine.parser.antlr2;
 }
 
 {
@@ -256,7 +256,7 @@ options{
       //      includedFileSet,alreadyParsedFileSet,
       //      getOptionManager(), getStreamManager());
       //} else {
-        parser = TomParserPlugin.newParser(fileReader,fileCanonicalName,
+        parser = tom.engine.parser.TomParserPlugin.newParser(fileReader,fileCanonicalName,
             includedFileSet,alreadyParsedFileSet,
             getOptionManager(), getStreamManager());
       //}
@@ -329,7 +329,7 @@ options{
           //  parser = NewParserPlugin.newParser(codeReader,getCurrentFile(),
           //      getOptionManager(), getStreamManager());
           //} else {
-            parser = TomParserPlugin.newParser(codeReader,getCurrentFile(),
+            parser = tom.engine.parser.TomParserPlugin.newParser(codeReader,getCurrentFile(),
                 getOptionManager(), getStreamManager());
           //}
           Code astTom = parser.input();

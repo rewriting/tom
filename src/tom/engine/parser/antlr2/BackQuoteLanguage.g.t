@@ -23,7 +23,7 @@ header{/*
  *
  **/
 
-package tom.engine.parser;
+package tom.engine.parser.antlr2;
   
 }
 
