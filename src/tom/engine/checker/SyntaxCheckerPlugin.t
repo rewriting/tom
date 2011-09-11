@@ -381,8 +381,6 @@ matchblock:{
     int domainLength;
     String symbStrName = tomSymbol.getAstName().getString();
 
-System.out.println("symbol name = " + symbStrName);
-
     OptionList optionList = tomSymbol.getOptions();
     // We save first the origin tracking of the symbol declaration
     setCurrentTomStructureOrgTrack(TomBase.findOriginTracking(optionList));

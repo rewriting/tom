@@ -28,9 +28,18 @@ public class TreeFactory {
     return res;
   }
 
-  public static CommonTree makeOptions(String sourceName, int firstCharLine,
-    int firstCharColumn, int lastCharLine, int lastCharColumn) {
-
+  public static CommonTree makeOptions(String sourceName,
+      int firstCharLine, int firstCharColumn, 
+      int lastCharLine, int lastCharColumn) {
+    return makeTree(ConcCstOption, "ConcCstOption",
+                    makeTree(Cst_OriginTracking, "Cst_OriginTracking", 
+                      makeTree(NodeString, sourceName),
+                      makeTree(NodeInt, ""+firstCharLine),
+                      makeTree(NodeInt, ""+firstCharColumn),
+                      makeTree(NodeInt,""+lastCharLine),
+                      makeTree(NodeInt,""+lastCharColumn)
+                      ));
+/*
     return makeTree(ConcCstOption, "ConcCstOption",
                     makeTree(Cst_SourceFile, "Cst_SourceFile",
                               makeTree(NodeString, sourceName)),
@@ -42,5 +51,6 @@ public class TreeFactory {
                               makeTree(NodeInt,""+lastCharLine)),
                     makeTree(Cst_EndColumn, "Cst_EndColumn",
                               makeTree(NodeInt,""+lastCharColumn)));
+                              */
   }
 }

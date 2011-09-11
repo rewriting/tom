@@ -69,7 +69,7 @@ csMainBQTerm [ boolean compositeAllowed] :
   | ID {$compositeAllowed}?=> c=csCompositePart*
     -> {c==null}? ^(Cst_BQVar {extractOptions((CommonToken)$ID)} 
         ID ^(Cst_TypeUnknown ))
-    -> ^(Cst_CompositeTerm
+    -> ^(Cst_BQComposite
          {extractOptions((CommonToken)$ID)}
          ^(Cst_concCstBQTerm
            ^(Cst_BQVar {extractOptions((CommonToken)$ID)}
@@ -79,7 +79,7 @@ csMainBQTerm [ boolean compositeAllowed] :
   | LPAR ID RPAR {$compositeAllowed}?=> c=csCompositePart*
     -> {c==null}? ^(Cst_BQVar {extractOptions((CommonToken)$ID)}
         ID ^(Cst_TypeUnknown ))
-    -> ^(Cst_CompositeTerm
+    -> ^(Cst_BQComposite
          {extractOptions((CommonToken)$LPAR, (CommonToken)$RPAR)}
          ^(Cst_concCstBQTerm
            ^(Cst_ITL {extractOptions((CommonToken)$LPAR)} LPAR)
@@ -109,11 +109,11 @@ returns [int marker] :
  |BQPAR csCompositePart* RPAR
   {$marker = ((CustomToken)$RPAR).getPayload(Integer.class);}
 
-  -> ^(Cst_CompositeTerm 
+  -> ^(Cst_BQComposite 
        {extractOptions((CommonToken)$BQPAR, (CommonToken)$RPAR)}
        ^(Cst_concCstBQTerm
          ^(Cst_ITL {extractOptions((CommonToken)$BQPAR)} BQPAR)
-         ^(Cst_CompositeTerm
+         ^(Cst_BQComposite
            {extractOptions((CommonToken)$csCompositePart.stop)}
            ^(Cst_concCstBQTerm csCompositePart*))
          ^(Cst_ITL {extractOptions((CommonToken)$RPAR)} RPAR)

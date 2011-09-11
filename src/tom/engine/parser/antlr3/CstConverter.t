@@ -76,10 +76,18 @@ public class CstConverter {
   public Code convert(CstBlock cst) {
     %match(cst) {
       HOSTBLOCK(optionList,content) -> {
-        return `TargetLanguageToCode(TL(content,TextPosition(getStartLine(optionList),getStartColumn(optionList)),TextPosition(getEndLine(optionList),getEndColumn(optionList))));
+        CstOption ot = getOriginTracking(`optionList);
+        return `TargetLanguageToCode(TL(content,
+              TextPosition(ot.getstartLine(),ot.getstartColumn()),
+              TextPosition(ot.getendLine(),ot.getendColumn())));
+      }
+
+      Cst_BQTermToBlock(bqterm) -> {
+        return `BQTermToCode(convert(bqterm));
       }
 
       Cst_TypetermConstruct(optionList, Cst_Type(typeName), extendsTypeName, operatorList) -> {
+        CstOption ot = getOriginTracking(`optionList);
         TypeOptionList typeoptionList = `concTypeOption();
         DeclarationList declarationList = `concDeclaration();
         %match(extendsTypeName) {
@@ -89,22 +97,24 @@ public class CstConverter {
           ConcCstOperator(_*,operator,_*) -> {
             %match(operator) {
               Cst_Equals(Cst_Name(name1),Cst_Name(name2),ConcCstBlock(HOSTBLOCK(optionList2,content))) -> {
+                CstOption ot2 = getOriginTracking(`optionList2);
                 String code = ASTFactory.abstractCode(`content,`name1,`name2);
                 Declaration attribute = `EqualTermDecl(
                     makeBQVariableFromName(name1,typeName,optionList2),
                     makeBQVariableFromName(name2,typeName,optionList2),
                     Code(code), 
-                    OriginTracking(Name(typeName),getStartLine(optionList2),getFileName(optionList2))
+                    OriginTracking(Name(typeName),ot2.getstartLine(),ot2.getfileName())
                     );
                 declarationList = `concDeclaration(attribute,declarationList*); 
               }
 
               Cst_IsSort(Cst_Name(name),ConcCstBlock(HOSTBLOCK(optionList2,content))) -> {
+                CstOption ot2 = getOriginTracking(`optionList2);
                 String code = ASTFactory.abstractCode(`content,`name);
                 Declaration attribute = `IsSortDecl(
                     makeBQVariableFromName(name,typeName,optionList2),
                     Code(code), 
-                    OriginTracking(Name(typeName),getStartLine(optionList2),getFileName(optionList2))
+                    OriginTracking(Name(typeName),ot2.getstartLine(),ot2.getfileName())
                     );
                 declarationList = `concDeclaration(attribute,declarationList*); 
               }
@@ -121,24 +131,25 @@ public class CstConverter {
         return `DeclarationToCode(TypeTermDecl(
               Name(typeName),
               declarationList,
-              OriginTracking(Name(typeName),getStartLine(optionList),getFileName(optionList))
+              OriginTracking(Name(typeName),ot.getstartLine(),ot.getfileName())
               ));
       }
 
       Cst_OpConstruct(optionList, Cst_Type(codomain), Cst_Name(opName), slotList, operatorList) -> {
+        CstOption ot = getOriginTracking(`optionList);
         DeclarationList declarationList = `concDeclaration();
         List<PairNameDecl> pairNameDeclList = new LinkedList<PairNameDecl>();
         List<TomName> slotNameList = new LinkedList<TomName>();
         List<Option> options = new LinkedList<Option>();
         TomTypeList types = `concTomType();
 
-        options.add(`OriginTracking(Name(codomain),getStartLine(optionList),getFileName(optionList)));
+        options.add(`OriginTracking(Name(opName),ot.getstartLine(),ot.getfileName()));
 
         %match(slotList) {
           ConcCstSlot(_*,Cst_Slot(Cst_Name(slotName),Cst_Type(slotType)),_*) -> {
             TomName astName = ASTFactory.makeName(`slotName);
             if(slotNameList.indexOf(astName) != -1) {
-              TomMessage.error(getLogger(),getFileName(`optionList), getStartLine(`optionList),
+              TomMessage.error(getLogger(),ot.getfileName(), ot.getstartLine(),
                   TomMessage.repeatedSlotName,
                   `slotName);
             }
@@ -147,7 +158,7 @@ public class CstConverter {
             types = `concTomType(types*,Type(concTypeOption(),slotType,EmptyTargetLanguageType()));
             String typeOfSlot = getSlotType(`codomain,`slotName);
             if(typeOfSlot != null && !typeOfSlot.equals(`slotType)) {
-              TomMessage.warning(getLogger(),getFileName(`optionList), getStartLine(`optionList),
+              TomMessage.warning(getLogger(),ot.getfileName(), ot.getstartLine(),
                   TomMessage.slotIncompatibleTypes,`slotName,`slotType,typeOfSlot);
             } else {
               putSlotType(`codomain,`slotName,`slotType);
@@ -162,24 +173,26 @@ public class CstConverter {
             %match(operator) {
 
               Cst_IsFsym(Cst_Name(name),ConcCstBlock(HOSTBLOCK(optionList2,content))) -> {
+                CstOption ot2 = getOriginTracking(`optionList2);
                 String code = ASTFactory.abstractCode(`content,`name);
                 Declaration attribute = `IsFsymDecl(
                     Name(opName),
                     makeBQVariableFromName(name,codomain,optionList2),
                     Code(code), 
-                    OriginTracking(Name(codomain),getStartLine(optionList2),getFileName(optionList2))
+                    OriginTracking(Name(opName),ot2.getstartLine(),ot2.getfileName())
                     );
                 options.add(`DeclarationToOption(attribute)); 
               }
 
               Cst_GetSlot(Cst_Name(slotName),Cst_Name(argName),ConcCstBlock(HOSTBLOCK(optionList2,content))) -> {
+                CstOption ot2 = getOriginTracking(`optionList2);
                 String code = ASTFactory.abstractCode(`content,`argName);
                 Declaration attribute = `GetSlotDecl(
                     Name(opName),
                     Name(slotName),
                     makeBQVariableFromName(argName,codomain,optionList2),
                     Code(code), 
-                    OriginTracking(Name(codomain),getStartLine(optionList2),getFileName(optionList2))
+                    OriginTracking(Name(opName),ot2.getstartLine(),ot2.getfileName())
                     );
 
                 TomName sName = attribute.getSlotName();
@@ -202,16 +215,17 @@ public class CstConverter {
                   }
                 }
                 if(msg != null) {
-                  TomMessage.error(getLogger(),getFileName(`optionList), getStartLine(`optionList),
+                  TomMessage.error(getLogger(),ot.getfileName(), ot.getstartLine(),
                       msg,
-                      getFileName(`optionList2), getStartLine(`optionList2),
-                      "%op "+ `codomain, getStartLine(`optionList),sName.getString());
+                      ot2.getfileName(), ot2.getstartLine(),
+                      "%op "+ `codomain, ot.getstartLine(),sName.getString());
                 } else {
                   pairNameDeclList.set(index,`PairNameDecl(sName,attribute));
                 }
               }
 
               Cst_Make(nameList,ConcCstBlock(HOSTBLOCK(optionList2,content))) -> {
+                CstOption ot2 = getOriginTracking(`optionList2);
                 ArrayList<String> varnameList = new ArrayList<String>();
                 BQTermList args = `concBQTerm();
                 int index = 0;
@@ -232,7 +246,7 @@ public class CstConverter {
                     Type(concTypeOption(),codomain,EmptyTargetLanguageType()),
                     args,
                     ExpressionToInstruction(Code(code)),
-                    OriginTracking(Name(codomain),getStartLine(optionList2),getFileName(optionList2))
+                    OriginTracking(Name(opName),ot2.getstartLine(),ot2.getfileName())
                     );
 
                 options.add(`DeclarationToOption(attribute)); 
@@ -250,27 +264,68 @@ public class CstConverter {
 
 
     }
+   
     return `Tom(concCode());
     //throw new TomRuntimeException("convert: strange term: " + cst);
   }
 
-  /*
-  public Declaration convert(CstOperator cst) {
+  public BQTerm convert(CstBQTerm cst) {
     %match(cst) {
-      Cst_IsSort(arg,blockList) -> {
-        return `IsSortDecl(
 
-              OriginTracking(Name(typeName),getStartLine(optionList),getFileName(optionList))
-            );
+      Cst_BQDefault[] -> { 
+        return `BQDefault(); 
       }
 
+      Cst_BQAppl(ol,name,argList) -> {
+        return `BQAppl(addDefaultModule(convert(ol,name)),Name(name),convert(argList));
+      }
+
+      Cst_BQRecordAppl(ol,name,argList) -> {
+        return `BQRecordAppl(addDefaultModule(convert(ol,name)),Name(name),convert(argList));
+      }
+
+      Cst_BQVar(ol,name,Cst_TypeUnknown()) -> {
+        return `BQVariable(addDefaultModule(convert(ol,name)),Name(name),SymbolTable.TYPE_UNKNOWN);
+      }
+
+      Cst_BQVarStar(ol,name,Cst_TypeUnknown()) -> {
+        return `BQVariableStar(addDefaultModule(convert(ol,name)),Name(name),SymbolTable.TYPE_UNKNOWN);
+      }
+
+      Cst_BQComposite(ol,argList) -> {
+        BQTerm composite = `Composite();
+        %match(argList) {
+          ConcCstBQTerm(_*,bqterm,_*) -> {
+            %match(bqterm) {
+              Cst_ITL(ol2,code) -> { composite = `Composite(composite*,CompositeTL(ITL(code))); }
+              !Cst_ITL[]        -> { composite = `Composite(composite*,CompositeBQTerm(convert(bqterm))); }
+            }
+          }
+        }
+        return composite;
+      }
     }
 
-    return `Tom(concCode());
-    //throw new TomRuntimeException("convert: strange term: " + cst);
+    throw new TomRuntimeException("convert: strange term: " + cst);
   }
-  */
 
+  public BQSlot convert(CstPairSlotBQTerm cst) {
+    %match(cst) {
+      Cst_PairSlotBQTerm(ol,Cst_Name(slotName),bqterm) -> {
+        return `PairSlotBQTerm(Name(slotName),convert(bqterm));
+      }
+    }
+    throw new TomRuntimeException("convert: strange term: " + cst);
+  }
+
+  public Option convert(CstOption cst, String subject) {
+    %match(cst) {
+      Cst_OriginTracking[fileName=fileName,startLine=startLine] -> {
+        return `OriginTracking(Name(subject),startLine,fileName);
+      }
+    }
+    throw new TomRuntimeException("convert: strange term: " + cst);
+  }
 
   /*
    * List conversion
@@ -288,41 +343,49 @@ public class CstConverter {
     throw new TomRuntimeException("convert: strange term: " + cst);
   }
 
+  public BQTermList convert(CstBQTermList cst) {
+    %match(cst) {
+      ConcCstBQTerm() -> { 
+        return `concBQTerm();
+      }
+      ConcCstBQTerm(head,tail*) -> {
+        return `concBQTerm(convert(head),convert*(tail));
+      }
+    }
+    throw new TomRuntimeException("convert: strange term: " + cst);
+  }
+
+  public BQSlotList convert(CstPairSlotBQTermList cst) {
+    %match(cst) {
+      ConcCstPairSlotBQTerm() -> { 
+        return `concBQSlot();
+      }
+      ConcCstPairSlotBQTerm(head,tail*) -> {
+        return `concBQSlot(convert(head),convert*(tail));
+      }
+    }
+    throw new TomRuntimeException("convert: strange term: " + cst);
+  }
+
+  public OptionList convert(CstOptionList cst, String subject) {
+    %match(cst) {
+      ConcCstOption() -> { 
+        return `concOption();
+      }
+      ConcCstOption(head,tail*) -> {
+        OptionList ol = convert(`tail,subject);
+        return `concOption(convert(head,subject),ol*);
+      }
+    }
+    throw new TomRuntimeException("convert: strange term: " + cst);
+  }
+
   /*
    * Utilities
    */
-
-  private int getStartLine(CstOptionList optionlist) {
+  private CstOption getOriginTracking(CstOptionList optionlist) {
     %match(optionlist) {
-      ConcCstOption(_*,Cst_StartLine(value),_*) -> { return `value; }
-    }
-    throw new TomRuntimeException("info not found: " + optionlist);
-  }
-
-  private int getEndLine(CstOptionList optionlist) {
-    %match(optionlist) {
-      ConcCstOption(_*,Cst_EndLine(value),_*) -> { return `value; }
-    }
-    throw new TomRuntimeException("info not found: " + optionlist);
-  }
-
-  private int getStartColumn(CstOptionList optionlist) {
-    %match(optionlist) {
-      ConcCstOption(_*,Cst_StartColumn(value),_*) -> { return `value; }
-    }
-    throw new TomRuntimeException("info not found: " + optionlist);
-  }
-
-  private int getEndColumn(CstOptionList optionlist) {
-    %match(optionlist) {
-      ConcCstOption(_*,Cst_EndColumn(value),_*) -> { return `value; }
-    }
-    throw new TomRuntimeException("info not found: " + optionlist);
-  }
-
-  private String getFileName(CstOptionList optionlist) {
-    %match(optionlist) {
-      ConcCstOption(_*,Cst_SourceFile(value),_*) -> { return `value; }
+      ConcCstOption(_*,ot@Cst_OriginTracking[],_*) -> { return `ot; }
     }
     throw new TomRuntimeException("info not found: " + optionlist);
   }
@@ -345,4 +408,9 @@ public class CstConverter {
     String key = codomain+slotName;
     return usedSlots.get(key);
   }
+
+  private OptionList addDefaultModule(OptionList ol) {
+    return `concOption(ol*,ModuleName("default"));
+  }
+
 }

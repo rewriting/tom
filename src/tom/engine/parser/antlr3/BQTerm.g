@@ -28,8 +28,8 @@ import static tom.engine.parser.antlr3.miniTomParser.*;
     String lines[] = t.getText().split(newline);
     
     int firstCharLine = t.getLine();
-    int firstCharColumn = t.getCharPositionInLine();
-    int lastCharLine = firstCharColumn+lines.length-1;
+    int firstCharColumn = t.getCharPositionInLine()+1;
+    int lastCharLine = firstCharLine+lines.length-1;
     int lastCharColumn;
     if(lines.length==1) {
       lastCharColumn = firstCharColumn + lines[0].length();
@@ -57,8 +57,7 @@ import static tom.engine.parser.antlr3.miniTomParser.*;
 //FIXME
     return
       makeOptions(start.getInputStream()!=null?start.getInputStream().getSourceName():"unknown",
-      start.getLine(), start.getCharPositionInLine(), lastCharLine,
-      lastCharColumn);
+      start.getLine(), start.getCharPositionInLine(), lastCharLine, lastCharColumn);
   }
 }
 //beginBackQuote
@@ -69,7 +68,7 @@ csMainBQTerm [ boolean compositeAllowed] :
   | ID {$compositeAllowed}?=> c=csCompositePart*
     -> {c==null}? ^(Cst_BQVar {extractOptions((CommonToken)$ID)} 
         ID ^(Cst_TypeUnknown ))
-    -> ^(Cst_CompositeTerm
+    -> ^(Cst_BQComposite
          {extractOptions((CommonToken)$ID)}
          ^(ConcCstBQTerm
            ^(Cst_BQVar {extractOptions((CommonToken)$ID)}
@@ -79,7 +78,7 @@ csMainBQTerm [ boolean compositeAllowed] :
   | LPAR ID RPAR {$compositeAllowed}?=> c=csCompositePart*
     -> {c==null}? ^(Cst_BQVar {extractOptions((CommonToken)$ID)}
         ID ^(Cst_TypeUnknown ))
-    -> ^(Cst_CompositeTerm
+    -> ^(Cst_BQComposite
          {extractOptions((CommonToken)$LPAR, (CommonToken)$RPAR)}
          ^(ConcCstBQTerm
            ^(Cst_ITL {extractOptions((CommonToken)$LPAR)} LPAR)
@@ -109,11 +108,11 @@ returns [int marker] :
  |BQPAR csCompositePart* RPAR
   {$marker = ((CustomToken)$RPAR).getPayload(Integer.class);}
 
-  -> ^(Cst_CompositeTerm 
+  -> ^(Cst_BQComposite 
        {extractOptions((CommonToken)$BQPAR, (CommonToken)$RPAR)}
        ^(ConcCstBQTerm
          ^(Cst_ITL {extractOptions((CommonToken)$BQPAR)} BQPAR)
-         ^(Cst_CompositeTerm
+         ^(Cst_BQComposite
            {extractOptions((CommonToken)$csCompositePart.stop)}
            ^(ConcCstBQTerm csCompositePart*))
          ^(Cst_ITL {extractOptions((CommonToken)$RPAR)} RPAR)

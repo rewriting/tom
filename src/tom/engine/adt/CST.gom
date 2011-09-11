@@ -117,8 +117,7 @@ CstBQTerm = Cst_BQAppl(optionList:CstOptionList, name:String, bqTermList:CstBQTe
           | Cst_BQVar(optionList:CstOptionList, name:String,type:CstType)
           | Cst_BQVarStar(optionList:CstOptionList, name:String,type:CstType)
           | Cst_BQDefault(optionList:CstOptionList)
-          | Cst_BQInnerHostCode(optionList:CstOptionList, code:String)
-          | Cst_CompositeTerm(optionList:CstOptionList, list:CstBQTermList)
+          | Cst_BQComposite(optionList:CstOptionList, list:CstBQTermList)
           | Cst_ITL(optionList:CstOptionList, code:String)
           | Cst_BQConstant(optionList:CstOptionList, name:String)
 
@@ -135,14 +134,10 @@ CstNameList = ConcCstName(CstName*)
 
 // Options ==
 CstOptionList = ConcCstOption(CstOption*)
-CstOption = Cst_SourceFile(sourceFile:String)
-          | Cst_StartLine(startLine:int)
-          | Cst_EndLine(endLine:int)
-          | Cst_StartColumn(startColumn:int)
-          | Cst_EndColumn(endColumn:int)
+CstOption = 
           | Cst_Label(name:String)
           | Cst_NoOption()
-
+          | Cst_OriginTracking(fileName:String, startLine:int, startColumn:int, endLine:int, endColumn:int)
 
 // Strategy
 CstVisit = Cst_VisitTerm(type:CstType,constraintActionList:CstConstraintActionList,optionList:CstOptionList)

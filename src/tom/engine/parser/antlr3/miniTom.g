@@ -53,8 +53,8 @@ import tom.engine.parser.antlr3.streamanalysis.*;
     String lines[] = t.getText().split(newline);
     
     int firstCharLine = t.getLine();
-    int firstCharColumn = t.getCharPositionInLine();
-    int lastCharLine = firstCharColumn+lines.length-1;
+    int firstCharColumn = t.getCharPositionInLine()+1;
+    int lastCharLine = firstCharLine+lines.length-1;
     int lastCharColumn;
     if(lines.length==1) {
       lastCharColumn = firstCharColumn + lines[0].length();
