@@ -32,8 +32,7 @@ package body OneStrategy is
 		for i in 0..childCount-1 loop
 			noException := tryVisitLight(StrategyPtr(str.arguments(ARG)),  getChildAt(intro, any, i), intro, newChild'Access);
 			if noException then
-				setChildAt(intro, any, i, newChild);
-				return ObjectPtr(intro); 
+				return setChildAt(intro, any, i, newChild);
 			end if;
 		end loop;
 		

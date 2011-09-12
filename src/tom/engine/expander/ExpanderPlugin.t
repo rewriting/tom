@@ -554,7 +554,7 @@ public class ExpanderPlugin extends TomGenericPlugin {
           Instruction return1, return2;
           if ( generateAdaCode ) {
 			environmentVar = `BQVariable(concOption(orgTrack),Name("str.env"),EmptyType());
-			return1 = `Return(ExpressionToBQTerm(Cast(type,TomInstructionToExpression(CodeToInstruction(TargetLanguageToCode(ITL("visit(str.any, str.env.all, intro)")))))));
+			return1 = `Return(ExpressionToBQTerm(Cast(type,TomInstructionToExpression(CodeToInstruction(TargetLanguageToCode(ITL("visit(str.any, str.env, intro)")))))));
 			return2 = `Return(ExpressionToBQTerm(Cast(type,TomInstructionToExpression(CodeToInstruction(TargetLanguageToCode(ITL("visitLight(str.any, ObjectPtr(arg),intro)")))))));
           } else {
 			environmentVar = `BQVariable(concOption(orgTrack),Name("environment"),EmptyType());
@@ -582,7 +582,7 @@ public class ExpanderPlugin extends TomGenericPlugin {
         if (generateAdaCode) {
 			ifList = `concInstruction(ifList*,              
 				If(testEnvNotNull,
-				  Return(ExpressionToBQTerm(Cast(genericType,BQTermToExpression(Composite(CompositeTL(ITL("visit(str.any, str.env.all, intro)"))))))),
+				  Return(ExpressionToBQTerm(Cast(genericType,BQTermToExpression(Composite(CompositeTL(ITL("visit(str.any, str.env, intro)"))))))),
 				  Return(ExpressionToBQTerm(Cast(genericType,BQTermToExpression(Composite(CompositeTL(ITL("visitLight(str.any, v,intro)")))))))));
 		} else {
 			ifList = `concInstruction(ifList*,              

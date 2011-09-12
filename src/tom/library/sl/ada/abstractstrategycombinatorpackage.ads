@@ -11,11 +11,11 @@ package AbstractStrategyCombinatorPackage is
 	-- Visitable implementation
 	----------------------------------------------------------------------------
 	
-	procedure setChildren(v: in out AbstractStrategyCombinator ; children : ObjectPtrArrayPtr);
-	function  getChildren(v: AbstractStrategyCombinator) return ObjectPtrArrayPtr;
-	function  getChildAt(v: AbstractStrategyCombinator; i : Integer) return VisitablePtr;
-	procedure setChildAt(v: in out AbstractStrategyCombinator; i: in Integer; child: in VisitablePtr);
-	function  getChildCount(v: AbstractStrategyCombinator) return Integer;
+	function  setChildren(v: access AbstractStrategyCombinator ; children : ObjectPtrArrayPtr) return VisitablePtr;
+	function  getChildren(v: access AbstractStrategyCombinator) return ObjectPtrArrayPtr;
+	function  getChildAt(v: access AbstractStrategyCombinator; i : Integer) return VisitablePtr;
+	function  setChildAt(v: access AbstractStrategyCombinator; i: in Integer; child: in VisitablePtr) return VisitablePtr;
+	function  getChildCount(v: access AbstractStrategyCombinator) return Integer;
 	
 	----------------------------------------------------------------------------
 	

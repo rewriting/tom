@@ -53,7 +53,7 @@ package body AbstractStrategyCombinatorPackage is
 	----------------------------------------------------------------------------
 	
 	overriding
-	function getChildCount(v: AbstractStrategyCombinator) return Integer is
+	function getChildCount(v: access AbstractStrategyCombinator) return Integer is
 	begin
 		if v.arguments = null then
 			return 0;
@@ -63,33 +63,35 @@ package body AbstractStrategyCombinatorPackage is
 	end;
 	
 	overriding
-	function getChildAt(v: AbstractStrategyCombinator; i : Integer) return VisitablePtr is
+	function getChildAt(v: access AbstractStrategyCombinator; i : Integer) return VisitablePtr is
 	begin
 		return VisitablePtr(v.arguments(i));
 	end;
 	
 	overriding
-	procedure setChildAt(v: in out AbstractStrategyCombinator; i: in Integer; child: in VisitablePtr) is
+	function setChildAt(v: access AbstractStrategyCombinator; i: in Integer; child: in VisitablePtr) return VisitablePtr is
 	begin
 		v.arguments(i) := ObjectPtr(child);
+		return VisitablePtr(v);
 	end;
 	
 	overriding
-	procedure setChildren(v: in out AbstractStrategyCombinator ; children : ObjectPtrArrayPtr) is
+	function setChildren(v: access AbstractStrategyCombinator ; children : ObjectPtrArrayPtr) return VisitablePtr is
 	begin
 		if children /= null then
 			v.arguments := new ObjectPtrArray(children'range);
 			
 			for i in children'range loop
-				v.arguments(i) := new Object'Class'( children(i).all );
+				v.arguments(i) := ObjectPtr( children(i) );
 			end loop;
 		else
 			v.arguments := null;
 		end if;
+		return VisitablePtr(v);
 	end;
 	
 	overriding
-	function getChildren(v: AbstractStrategyCombinator) return ObjectPtrArrayPtr is
+	function getChildren(v: access AbstractStrategyCombinator) return ObjectPtrArrayPtr is
 	begin
 		return v.arguments;
 	end;

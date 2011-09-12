@@ -7,21 +7,23 @@ package AbstractStrategyBasicPackage is
 		any : StrategyPtr := null;
 	end record;
 	
+	type AbstractStrategyBasicPtr is access all AbstractStrategyBasic'Class;
+	
 	----------------------------------------------------------------------------
 	-- Strategy implementation
 	----------------------------------------------------------------------------
 	
-	function  visit(str: access AbstractStrategyBasic; i: access Introspector'Class) return Integer;
+	function visit(str: access AbstractStrategyBasic; i: access Introspector'Class) return Integer;
 
 	----------------------------------------------------------------------------
 	-- Visitable implementation
 	----------------------------------------------------------------------------
 	
-	procedure setChildren(v: in out AbstractStrategyBasic ; children : ObjectPtrArrayPtr);
-	function  getChildren(v: AbstractStrategyBasic) return ObjectPtrArrayPtr;
-	function  getChildAt(v: AbstractStrategyBasic; i : Integer) return VisitablePtr;
-	procedure setChildAt(v: in out AbstractStrategyBasic; i: in Integer; child: in VisitablePtr);
-	function  getChildCount(v: AbstractStrategyBasic) return Integer;
+	function setChildren(v: access AbstractStrategyBasic ; children : ObjectPtrArrayPtr) return VisitablePtr;
+	function getChildren(v: access AbstractStrategyBasic) return ObjectPtrArrayPtr;
+	function getChildAt(v: access AbstractStrategyBasic; i : Integer) return VisitablePtr;
+	function setChildAt(v: access AbstractStrategyBasic; i: in Integer; child: in VisitablePtr) return VisitablePtr;
+	function getChildCount(v: access AbstractStrategyBasic) return Integer;
 	
 	----------------------------------------------------------------------------
 	
