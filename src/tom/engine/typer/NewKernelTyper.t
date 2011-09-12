@@ -250,30 +250,44 @@ public class NewKernelTyper {
     throw new TomRuntimeException("getUnknownFreshTypeVar: should not be here.");
    }
 
-  protected boolean containsConstraint(TypeConstraint tConstraint, TypeConstraintList
+  protected boolean containsConstraintModuloEqDecoratedSort(TypeConstraint tConstraint, TypeConstraintList
       tCList) {
     %match {
-      (Equation[Type1=tVar@TypeVar[],Type2=Type[TypeOptions=tOptions,TomType=tType]] << tConstraint ||
-        Equation[Type1=Type[TypeOptions=tOptions,TomType=tType],Type2=tVar@TypeVar[]] << tConstraint) &&
+      Equation[Type1=tVar@TypeVar[],Type2=Type[TypeOptions=tOptions,TomType=tType]] << tConstraint &&
         !concTypeOption(_*,WithSymbol[],_*) << tOptions &&
         concTypeConstraint(_*,Equation[Type1=tVar,Type2=Type[TypeOptions=decoratedtOptions,TomType=tType]],_*) << tCList && 
         concTypeOption(_*,WithSymbol[],_*) << decoratedtOptions -> { return true; }
 
-      (Equation[Type1=tVar@TypeVar[],Type2=Type[TypeOptions=tOptions,TomType=tType]] << tConstraint ||
-        Equation[Type1=Type[TypeOptions=tOptions,TomType=tType],Type2=tVar@TypeVar[]] << tConstraint) &&
+      Equation[Type1=Type[TypeOptions=tOptions,TomType=tType],Type2=tVar@TypeVar[]] << tConstraint &&
+        !concTypeOption(_*,WithSymbol[],_*) << tOptions &&
+        concTypeConstraint(_*,Equation[Type1=tVar,Type2=Type[TypeOptions=decoratedtOptions,TomType=tType]],_*) << tCList && 
+        concTypeOption(_*,WithSymbol[],_*) << decoratedtOptions -> { return true; }
+
+      Equation[Type1=tVar@TypeVar[],Type2=Type[TypeOptions=tOptions,TomType=tType]] << tConstraint &&
         !concTypeOption(_*,WithSymbol[],_*) << tOptions &&
         concTypeConstraint(_*,Equation[Type1=Type[TypeOptions=decoratedtOptions,TomType=tType],Type2=tVar],_*) << tCList && 
         concTypeOption(_*,WithSymbol[],_*) << decoratedtOptions -> { return true; }
 
+      Equation[Type1=Type[TypeOptions=tOptions,TomType=tType],Type2=tVar@TypeVar[]] << tConstraint &&
+        !concTypeOption(_*,WithSymbol[],_*) << tOptions &&
+        concTypeConstraint(_*,Equation[Type1=Type[TypeOptions=decoratedtOptions,TomType=tType],Type2=tVar],_*) << tCList && 
+        concTypeOption(_*,WithSymbol[],_*) << decoratedtOptions -> { return true; }
+    }
+    return false;
+  }
+
+  protected boolean containsConstraint(TypeConstraint tConstraint, TypeConstraintList
+      tCList) {
+    %match {
       Equation[Type1=t1,Type2=t2] << TypeConstraint tConstraint &&
         concTypeConstraint(_*,Equation[Type1=t1,Type2=t2],_*) << tCList 
-        -> { return true; }
+        -> { System.out.println("YES 4");return true; }
 
       Equation[Type1=t1,Type2=t2] << TypeConstraint tConstraint &&
         concTypeConstraint(_*,Equation[Type1=t2,Type2=t1],_*) << tCList 
-        -> { return true; }
+        -> { System.out.println("YES 5");return true; }
     }
-    return false;
+    return containsConstraintModuloEqDecoratedSort(tConstraint,tCList);
   } 
 
   /*

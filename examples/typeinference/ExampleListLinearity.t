@@ -45,12 +45,8 @@ public class ExampleListLinearity {
     B tt3 = `f();
     B tt4 = `g();
     %match{
-      f(x*) << tt1 && g(x*) << tt2 -> { System.out.println("Line 1: x = " +`x); }
-      f(x*) << tt1 && g(y*) << tt2 -> { System.out.println("Line 2: x = " +`x); }
-      f(x*) << tt1 && g(y*) << tt2 && (x == y) -> { System.out.println("Line 3: x = " +`x); }
-      f(x*) << tt3 && g(x*) << tt4 -> { System.out.println("Line 4: x = " +`x); }
-      f(x*) << tt3 && g(y*) << tt4 && (x == y) -> { System.out.println("Line 5: x = " +`x); }
-      g(x*) << tt2 && h(x) << B tt4 -> { `tt4; }
+      f(x*) << tt1 && g(y*) << tt2 -> { System.out.println("Line 1: x = " +`x); }
+      //g(x*) << tt2 && h(x) << B tt4 -> { System.out.println("Line 2: x = " +`x); }
     }
   }
 }
