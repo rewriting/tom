@@ -1,5 +1,6 @@
 with VisitablePackage, EnvironmentPackage;
 use  VisitablePackage, EnvironmentPackage;
+with Ada.Text_IO; use Ada.Text_IO;
 package body IdentityStrategy is
 
 	----------------------------------------------------------------------------

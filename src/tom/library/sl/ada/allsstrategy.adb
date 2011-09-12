@@ -1,5 +1,7 @@
-with VisitablePackage, EnvironmentPackage;
-use  VisitablePackage, EnvironmentPackage;
+with VisitablePackage, EnvironmentPackage, AbstractStrategyBasicPackage;
+use  VisitablePackage, EnvironmentPackage, AbstractStrategyBasicPackage;
+
+with Ada.Text_IO; use Ada.Text_IO;
 package body AllsStrategy is
 
 	----------------------------------------------------------------------------
@@ -38,8 +40,7 @@ package body AllsStrategy is
 		if childs = null then
 			return any;
 		else
-			setChildren(intro, any, childs);
-			return ObjectPtr( intro );
+			return setChildren(intro, any, childs);
 		end if;
 	end;
 	
@@ -60,9 +61,11 @@ package body AllsStrategy is
 				newChild : ObjectPtr := null;
 				status : Integer;
 			begin
+
 				down(str.env.all, i+1);
-				status := visit(StrategyPtr(str.arguments(ARG)), intro);
 				
+				status := visit(StrategyPtr(str.arguments(ARG)), intro);
+
 				if status /= EnvironmentPackage.SUCCESS then
 					upLocal(str.env.all);
 					return status;
@@ -76,15 +79,16 @@ package body AllsStrategy is
 					childs := getChildren(intro, any);
 					childs(i) := newChild;
 				end if;
+
 				upLocal(str.env.all);
+
 			end;
 		end loop;
 		
 		if childs /= null then
-			setChildren(intro, any, childs);
-			setSubject(str.env.all, ObjectPtr(intro));
+			setSubject(str.env.all, setChildren(intro, any, childs));
 		end if;
-		
+
 		return EnvironmentPackage.SUCCESS;
 		
 	end;

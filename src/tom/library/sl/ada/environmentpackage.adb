@@ -136,8 +136,7 @@ package body EnvironmentPackage is
 		child : ObjectPtr := env.subterm(env.current);
 	begin
 		env.current := env.current - 1;
-		IntrospectorPackage.setChildAt(env.introspector, env.subterm(env.current) , childIndex, child);
-		env.subterm(env.current) := new Object'Class'( Object'Class(env.introspector.all) );
+		env.subterm(env.current) := setChildAt(env.introspector, env.subterm(env.current) , childIndex, child);
 	end;
 	
 	procedure upLocal(env: in out Environment) is
@@ -148,6 +147,7 @@ package body EnvironmentPackage is
 	procedure down(env: in out Environment; n: Integer) is
 		child : ObjectPtr := null;
 	begin
+		--put_line("before down: " & toString(env));
 		if n > 0 then
 			child := env.subterm(env.current);
 			env.current := env.current + 1;
@@ -157,6 +157,7 @@ package body EnvironmentPackage is
 			env.omega(env.current) := n;
 			env.subterm(env.current) := getChildAt(env.introspector, child, n-1);
 		end if;
+		--put_line("after down: " & toString(env));
 	end;
 	
 	--private

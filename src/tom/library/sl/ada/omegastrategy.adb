@@ -28,8 +28,7 @@ package body OmegaStrategy is
 			optr : ObjectPtr := IntrospectorPackage.getChildAt(i, any, childNumber) ;
 			newChild : ObjectPtr := StrategyPackage.visitLight( StrategyPtr(str.arguments(ARG)) , optr , i);
 			begin
-				IntrospectorPackage.setChildAt(i, any, childNumber, newChild);
-				return ObjectPtr(i);
+				return IntrospectorPackage.setChildAt(i, any, childNumber, newChild);
 			end;
 		else
 			raise VisitFailure;

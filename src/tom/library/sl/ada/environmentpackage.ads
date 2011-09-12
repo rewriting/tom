@@ -16,6 +16,8 @@ package EnvironmentPackage is
 		status 			: Integer := EnvironmentPackage.SUCCESS;
 		subterm 		: ObjectPtrArrayPtr := null; --subterms must inherit from Object
 	end record;
+	
+	type EnvironmentPtr is access all Environment;
 
 	procedure makeEnvironment(env: in out Environment);	
 	procedure makeEnvironment(env: in out Environment; intro: Introspector'Class);
@@ -49,8 +51,6 @@ package EnvironmentPackage is
 	procedure makeEnvironment(env: in out Environment; len: Integer ; intro: Introspector'Class);
 	procedure ensureLength(env: in out Environment; minLength: Integer);
 	procedure genericFollowPath(env: in out Environment; p: Path'Class; local: Boolean);
-	
-	type EnvironmentPtr is access all Environment'Class;
 
 
 end EnvironmentPackage;

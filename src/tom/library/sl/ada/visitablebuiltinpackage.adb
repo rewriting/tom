@@ -15,35 +15,37 @@ package body VisitableBuiltinPackage is
 		return v.builtin;
 	end;
 
-	procedure setChildren(v: in out VisitableBuiltin ; children : ObjectPtrArrayPtr) is
-		error : exception;
+	function setChildren(v: access VisitableBuiltin ; children : ObjectPtrArrayPtr) return VisitablePtr is
+		IndexOutOfBoundsException : exception;
 	begin
 		if children /= null then
-			raise Error;
+			raise IndexOutOfBoundsException;
 		end if;
+		return VisitablePtr(v);
 	end;
 	
-	function getChildren(v: VisitableBuiltin) return ObjectPtrArrayPtr is
+	function getChildren(v: access VisitableBuiltin) return ObjectPtrArrayPtr is
 		ret : ObjectPtrArrayPtr := new ObjectPtrArray(0..0);
 	begin
 		ret(0) := new VisitableBuiltin;
 		return ret;
 	end;
 	
-	function getChildAt(v: VisitableBuiltin; i : Integer) return VisitablePtr is
+	function getChildAt(v: access VisitableBuiltin; i : Integer) return VisitablePtr is
 		error : exception;
 	begin
 		raise Error;
 		return null;
 	end;
 	
-	procedure setChildAt(v: in out VisitableBuiltin; i: in Integer; child: in VisitablePtr) is
+	function setChildAt(v: access VisitableBuiltin; i: in Integer; child: in VisitablePtr) return VisitablePtr is
 		error : exception;
 	begin
 		raise Error;
+		return VisitablePtr(v);
 	end;
 	
-	function getChildCount(v: VisitableBuiltin) return Integer is
+	function getChildCount(v: access VisitableBuiltin) return Integer is
 	begin
 		return 0;
 	end;

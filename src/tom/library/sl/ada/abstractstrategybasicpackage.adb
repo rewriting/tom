@@ -1,5 +1,7 @@
 with VisitFailurePackage, EnvironmentPackage;
 use  VisitFailurePackage, EnvironmentPackage;
+
+with Ada.Text_IO; use Ada.Text_IO;
 package body AbstractStrategyBasicPackage is
 
 	----------------------------------------------------------------------------
@@ -22,25 +24,26 @@ package body AbstractStrategyBasicPackage is
 	-- Visitable implementation
 	----------------------------------------------------------------------------
 	overriding
-	function getChildCount(v : AbstractStrategyBasic) return Integer is
+	function getChildCount(v : access AbstractStrategyBasic) return Integer is
 	begin
 		return 1;
 	end;
 	
 	overriding
-	procedure setChildren(v: in out AbstractStrategyBasic ; children : ObjectPtrArrayPtr) is
+	function setChildren(v: access AbstractStrategyBasic ; children : ObjectPtrArrayPtr) return VisitablePtr is
 	begin
 		v.any := StrategyPtr(children(children'First));
+		return VisitablePtr(v);
 	end;
 	
 	overriding
-	function getChildren(v: AbstractStrategyBasic) return ObjectPtrArrayPtr is
+	function getChildren(v: access AbstractStrategyBasic) return ObjectPtrArrayPtr is
 	begin
 		return new ObjectPtrArray'( 0 => ObjectPtr(v.any) );
 	end;
 	
 	overriding
-	function getChildAt(v: AbstractStrategyBasic; i : Integer) return VisitablePtr is
+	function getChildAt(v: access AbstractStrategyBasic; i : Integer) return VisitablePtr is
 		IndexOutOfBoundsException : exception;
 	begin
 		if i = 0 then
@@ -51,7 +54,7 @@ package body AbstractStrategyBasicPackage is
 	end;
 	
 	overriding
-	procedure setChildAt(v: in out AbstractStrategyBasic; i: in Integer; child: in VisitablePtr) is
+	function setChildAt(v: access AbstractStrategyBasic; i: in Integer; child: in VisitablePtr) return VisitablePtr is
 		IndexOutOfBoundsException : exception;
 	begin
 		if i = 0 then
@@ -59,6 +62,8 @@ package body AbstractStrategyBasicPackage is
 		else
 			raise IndexOutOfBoundsException;
 		end if;
+		
+		return VisitablePtr(v);
 	end;
 	
 	----------------------------------------------------------------------------
@@ -68,7 +73,7 @@ package body AbstractStrategyBasicPackage is
 		if s = null then
 			asb.any := null;
 		else
-			asb.any := new Strategy'Class'(s.all);
+			asb.any := s;
 		end if;
 	end;
 	
