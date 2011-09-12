@@ -2,16 +2,16 @@ with VisitFailurePackage, VisitablePackage, EnvironmentPackage;
 use  VisitFailurePackage, VisitablePackage, EnvironmentPackage;
 
 with Ada.Text_IO; use Ada.Text_IO;
-package body ChoiceStrategy is
+package body ChoiceIdStrategy is
 
 	----------------------------------------------------------------------------
 	-- Object implementation
 	----------------------------------------------------------------------------
 	
 	overriding
-	function toString(c: Choice) return String is
+	function toString(c: ChoiceId) return String is
 	begin
-		return "Choice()";
+		return "ChoiceId()";
 	end;
 	
 	----------------------------------------------------------------------------
@@ -19,34 +19,38 @@ package body ChoiceStrategy is
 	----------------------------------------------------------------------------
 	
 	overriding
-	function visitLight(str:access Choice; any: ObjectPtr; i: access Introspector'Class) return ObjectPtr is
-		optr : ObjectPtr := null;
+	function visitLight(str:access ChoiceId; any: ObjectPtr; i: access Introspector'Class) return ObjectPtr is
+		v : ObjectPtr := visitLight(StrategyPtr(str.arguments(FIRST)), any, i);
 	begin
-		optr :=  visitLight(StrategyPtr(str.arguments(FIRST)), any, i);
-		return optr;
-		
-		exception when VisitFailure =>
-				return visitLight(StrategyPtr(str.arguments(SECOND)), any, i);
+		if v = any then
+			return visitLight(StrategyPtr(str.arguments(SECOND)), v, i);
+		else
+			return v;
+		end if;
 	end;
 	
 	overriding
-	function visit(str: access Choice; i: access Introspector'Class) return Integer is
-		subject : ObjectPtr := null;
-		status : Integer := 0;
+	function visit(str: access ChoiceId; i: access Introspector'Class) return Integer is
+		subject : ObjectPtr;
+		status : Integer;
 	begin
 		subject := getSubject(str.env.all);
 		status := visit(StrategyPtr(str.arguments(FIRST)), i);
-		if status = EnvironmentPackage.SUCCESS then
+		if status = EnvironmentPackage.SUCCESS and then getSubject(str.env.all) /= subject then
 			return status;
 		else
 			setSubject(str.env.all, subject);
-			return visit(StrategyPtr(str.arguments(SECOND)), i);
+			if status = EnvironmentPackage.SUCCESS then
+				return visit(StrategyPtr(str.arguments(SECOND)), i);
+			else
+				return status;
+			end if;
 		end if;
 	end;
 	
 	----------------------------------------------------------------------------
 	
-	procedure makeChoice(c : in out Choice; first, second: StrategyPtr) is
+	procedure makeChoiceId(c : in out ChoiceId; first, second: StrategyPtr) is
 	begin
 		initSubterm(c, first, second);
 	end;
@@ -56,15 +60,15 @@ package body ChoiceStrategy is
 		if second = null then
 			return first;
 		else
-			return newChoice(first, second);
+			return newChoiceId(first, second);
 		end if;
 	end;
 	
 
-	function newChoice(first, second: StrategyPtr) return StrategyPtr is
-		ret : StrategyPtr := new Choice;
+	function newChoiceId(first, second: StrategyPtr) return StrategyPtr is
+		ret : StrategyPtr := new ChoiceId;
 	begin
-		makeChoice(Choice(ret.all), first, second);
+		makeChoiceId(ChoiceId(ret.all), first, second);
 		return ret;
 	end;
 
@@ -72,4 +76,4 @@ package body ChoiceStrategy is
 	
 	
 
-end ChoiceStrategy;
+end ChoiceIdStrategy;

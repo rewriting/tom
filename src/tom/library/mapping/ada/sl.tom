@@ -35,4 +35,5 @@
 %include { Position.tom }
 
 %include { sl/basic.tom }
+%include { sl/composed.tom }
 
