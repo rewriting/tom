@@ -281,11 +281,11 @@ public class NewKernelTyper {
     %match {
       Equation[Type1=t1,Type2=t2] << TypeConstraint tConstraint &&
         concTypeConstraint(_*,Equation[Type1=t1,Type2=t2],_*) << tCList 
-        -> { System.out.println("YES 4");return true; }
+        -> { return true; }
 
       Equation[Type1=t1,Type2=t2] << TypeConstraint tConstraint &&
         concTypeConstraint(_*,Equation[Type1=t2,Type2=t1],_*) << tCList 
-        -> { System.out.println("YES 5");return true; }
+        -> { return true; }
     }
     return containsConstraintModuloEqDecoratedSort(tConstraint,tCList);
   } 
