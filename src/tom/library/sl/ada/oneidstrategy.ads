@@ -1,31 +1,27 @@
 with ObjectPack, AbstractStrategyCombinatorPackage, IntrospectorPackage, StrategyPackage;
 use  ObjectPack, AbstractStrategyCombinatorPackage, IntrospectorPackage, StrategyPackage;
-package SequenceStrategy is
+package OneIdStrategy is
+	ARG : constant Integer := 0;
 
-	FIRST  : constant Integer := 0;
-	SECOND : constant Integer := 1;
-
-	type Sequence is new AbstractStrategyCombinator and Object with null record;
+	type OneId is new AbstractStrategyCombinator and Object with null record;
 
 	----------------------------------------------------------------------------
 	-- Object implementation
 	----------------------------------------------------------------------------
 	
-	function  toString(o: Sequence) return String;
+	function toString(o: OneId) return String;
 	
 	----------------------------------------------------------------------------
 	-- Strategy implementation
 	----------------------------------------------------------------------------
 	
-	function  visitLight(str:access Sequence; any: ObjectPtr; i: access Introspector'Class) return ObjectPtr;
-	function  visit(str: access Sequence; i: access Introspector'Class) return Integer;
+	function visitLight(str:access OneId; any: ObjectPtr; intro: access Introspector'Class) return ObjectPtr;
+	function visit(str: access OneId; intro: access Introspector'Class) return Integer;
 	
 	----------------------------------------------------------------------------
 	
-	procedure makeSequence(s : in out Sequence; str1, str2 : StrategyPtr);
-	function  make(str1, str2: StrategyPtr) return StrategyPtr;
-	function newSequence(str1, str2: StrategyPtr) return StrategyPtr;
-	
+	procedure makeOneId(o : in out OneId; v: StrategyPtr);
+	function newOneId(v: StrategyPtr) return StrategyPtr;
 	----------------------------------------------------------------------------
 
-end SequenceStrategy;
+end OneIdStrategy;

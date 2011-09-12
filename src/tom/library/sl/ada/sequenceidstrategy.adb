@@ -1,15 +1,15 @@
 with VisitFailurePackage, VisitablePackage, EnvironmentPackage;
 use  VisitFailurePackage, VisitablePackage, EnvironmentPackage;
-package body SequenceStrategy is
+package body SequenceIdStrategy is
 
 	----------------------------------------------------------------------------
 	-- Object implementation
 	----------------------------------------------------------------------------
 	
 	overriding
-	function toString(o: Sequence) return String is
+	function toString(o: SequenceId) return String is
 	begin
-		return "Sequence()";
+		return "SequenceId()";
 	end;
 	
 	----------------------------------------------------------------------------
@@ -17,17 +17,22 @@ package body SequenceStrategy is
 	----------------------------------------------------------------------------
 	
 	overriding
-	function visitLight(str:access Sequence; any: ObjectPtr; i: access Introspector'Class) return ObjectPtr is
+	function visitLight(str:access SequenceId; any: ObjectPtr; i: access Introspector'Class) return ObjectPtr is
 		op : ObjectPtr := visitLight( StrategyPtr(str.arguments(FIRST)), ObjectPtr(str), i);
 	begin
-		return visitLight(StrategyPtr(str.arguments(SECOND)), op, i);
+		if op /= any then
+			return visitLight(StrategyPtr(str.arguments(SECOND)), op, i);
+		else
+			return op;
+		end if;
 	end;
 	
 	overriding
-	function visit(str: access Sequence; i: access Introspector'Class) return Integer is
-		status : Integer :=  visit(StrategyPtr(str.arguments(FIRST)), i);
+	function visit(str: access SequenceId; i: access Introspector'Class) return Integer is
+		subject : ObjectPtr := getSubject(str.env.all);
+		status : Integer := visit(StrategyPtr(str.arguments(FIRST)), i);
 	begin
-		if status = EnvironmentPackage.SUCCESS then
+		if status = EnvironmentPackage.SUCCESS and then subject /= getSubject(str.env.all) then
 			return visit(StrategyPtr(str.arguments(SECOND)), i);
 		else
 			return status;
@@ -36,7 +41,7 @@ package body SequenceStrategy is
 	
 	----------------------------------------------------------------------------
 
-	procedure makeSequence(s : in out Sequence; str1, str2 : StrategyPtr) is
+	procedure makeSequenceId(s : in out SequenceId; str1, str2 : StrategyPtr) is
 	begin
 		initSubterm(s, str1, str2);
 	end;
@@ -47,16 +52,16 @@ package body SequenceStrategy is
 		if str2 = null then
 			return str1;
 		else
-			ns := new Sequence;
-			makeSequence(Sequence(ns.all), str1, str2);
+			ns := new SequenceId;
+			makeSequenceId(SequenceId(ns.all), str1, str2);
 			return ns;
 		end if;
 	end;
 	
-	function newSequence(str1, str2: StrategyPtr) return StrategyPtr is
+	function newSequenceId(str1, str2: StrategyPtr) return StrategyPtr is
 	begin
-		return SequenceStrategy.make(str1,str2);
+		return SequenceIdStrategy.make(str1,str2);
 	end;
 
 	----------------------------------------------------------------------------
-end SequenceStrategy;
+end SequenceIdStrategy;

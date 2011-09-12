@@ -41,8 +41,8 @@ package body NoStrategy is
 		status : Integer := visit( StrategyPtr( str.arguments(ARG)), i);
 	begin
 		setSubject(str.env.all, subject);
-		if status =  EnvironmentPackage.SUCCESS then
-			return status;
+		if status /=  EnvironmentPackage.SUCCESS then
+			return EnvironmentPackage.SUCCESS;
 		else
 			return EnvironmentPackage.FAILURE;
 		end if;

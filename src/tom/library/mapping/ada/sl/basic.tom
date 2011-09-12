@@ -31,11 +31,17 @@
 %include { int.tom }
 %include { string.tom }
 
+%op Strategy MuVar(var:String) {
+  is_fsym(t) {t.all in MuVar'Class}
+  make(name) {newMuVar($name)}
+  get_slot(var, t) {getName(MuVar($t.all)'Access)}
+}
+
 %op Strategy Omega(position:int, s1:Strategy) {
-  is_fsym(t) {$t=null or else $t.all in Omega'Class}
+  is_fsym(t) {$t.all in Omega'Class}
   make(pos,v) {OmegaStrategy.newOmega($pos,$v)}
-  get_slot(position, t) {getPos(Omega($t))}
-  get_slot(s1, t) {StrategyPtr( getChildAt(Visitable'Class($t), OmegaPackage.ARG) )}
+  get_slot(position, t) {getPos(Omega($t.all))}
+  get_slot(s1, t) {StrategyPtr( getChildAt(VisitablePtr($t), OmegaPackage.ARG) )}
 }
 
 /*
@@ -50,13 +56,13 @@
 %op Strategy One(s1:Strategy) {
   is_fsym(t) {$t.all in One'Class}
   make(v) {OneStrategy.newOne(v)}
-  get_slot(s1, t) {StrategyPtr(getChildAt($t.all, OneStrategy.ARG))}
+  get_slot(s1, t) {StrategyPtr(getChildAt(VisitablePtr($t), OneStrategy.ARG))}
 }
 
 %op Strategy All(s1:Strategy) {
   is_fsym(t) {$t.all in Alls'Class}
   make(v) {AllsStrategy.newAlls($v)}
-  get_slot(s1, t) {StrategyPtr(getChildAt($t.all, AllsStrategy.ARG))}
+  get_slot(s1, t) {StrategyPtr(getChildAt(VisitablePtr($t), AllsStrategy.ARG))}
 }
 
 %op Strategy Fail() {
@@ -67,7 +73,7 @@
 %op Strategy Not(s1:Strategy) {
   is_fsym(t) {$t.all in No'Class}
   make(v) {NoStrategy.newNo($v)}
-  get_slot(s1, t) {StrategyPtr(getChildAt($t.all, NoStrategy.ARG))}
+  get_slot(s1, t) {StrategyPtr(getChildAt(VisitablePtr($t), NoStrategy.ARG))}
 }
 
 %oplist Strategy Sequence(Strategy*) {
@@ -75,8 +81,8 @@
   make_empty() {null}
   /*make_insert(head,tail) {( ($tail==null)?$head:tom.library.sl.Sequence.make($head,$tail) )}*/
   make_insert(head,tail) { SequenceStrategy.make($head,$tail) }
-  get_head(t) {StrategyPtr( getChildAt($t.all, SequenceStrategy.FIRST))}
-  get_tail(t) {StrategyPtr( getChildAt($t.all, SequenceStrategy.SECOND))}
+  get_head(t) {StrategyPtr( getChildAt(VisitablePtr($t), SequenceStrategy.FIRST))}
+  get_tail(t) {StrategyPtr( getChildAt(VisitablePtr($t), SequenceStrategy.SECOND))}
   is_empty(t) {$t = null}
 }
 
@@ -85,7 +91,33 @@
   make_empty() {null}
   /*make_insert(head,tail) {( ($tail==null)?$head:new tom.library.sl.Choice($head,$tail) )}*/
   make_insert(head,tail) { ChoiceStrategy.make($head,$tail) }
-  get_head(t) {StrategyPtr(getChildAt($t.all,ChoiceStrategy.FIRST))}
-  get_tail(t) {StrategyPtr(getChildAt($t.all,ChoiceStrategy.SECOND))}
+  get_head(t) {StrategyPtr(getChildAt(VisitablePtr($t),ChoiceStrategy.FIRST))}
+  get_tail(t) {StrategyPtr(getChildAt(VisitablePtr($t),ChoiceStrategy.SECOND))}
   is_empty(t) {$t = null}
+}
+
+%oplist Strategy SequenceId(Strategy*) {
+  is_fsym(t) {$t.all in SequenceId'Class}
+  make_empty() {null}
+  //make_insert(head,tail) {( ($tail==null)?$head:new tom.library.sl.SequenceId($head,$tail) )}
+  make_insert(head,tail) {SequenceIdStrategy.make($head,$tail)}
+  get_head(t) {StrategyPtr(getChildAt(VisitablePtr($t),ChoiceStrategy.FIRST))}
+  get_tail(t) {StrategyPtr(getChildAt(VisitablePtr($t),ChoiceStrategy.SECOND))}
+  is_empty(t) {$t = null}
+}
+
+%oplist Strategy ChoiceId(Strategy*) {
+  is_fsym(t) {$t.all in ChoiceId'Class}
+  make_empty() {null}
+  //make_insert(head,tail) {( ($tail==null)?$head:new tom.library.sl.ChoiceId($head,$tail) )}
+  make_insert(head,tail) {ChoiceIdStrategy.make($head,$tail)}
+  get_head(t) {StrategyPtr(getChildAt(VisitablePtr($t),ChoiceStrategy.FIRST))}
+  get_tail(t) {StrategyPtr(getChildAt(VisitablePtr($t),ChoiceStrategy.SECOND))}
+  is_empty(t) {$t = null}
+}
+
+%op Strategy OneId(s1:Strategy) {
+  is_fsym(t) {$t.all in OneId'Class}
+  make(v) {newOneId($v)}
+  get_slot(s1, t) {StrategyPtr(getChildAt(VisitablePtr($t), OneIdStrategy.ARG))}
 }
