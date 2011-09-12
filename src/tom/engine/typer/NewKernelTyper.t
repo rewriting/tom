@@ -286,6 +286,48 @@ public class NewKernelTyper {
   }
 
   /**
+   * The method <code>containsConstraintModuloEqDecoratedSort</code> checks if a given constraint
+   * already exists in a constraint type list. The method considers symmetry for
+   * equation constraints and equality of decorated sorts in other to allow teh
+   * following:
+   * insert((A = T^?),C)	->	C,              if (A = T^c) in C \/ (T^c = A) in C 
+   *                      ->  {A = T^?} U C,  otherwise
+   *
+   * insert((T^? = A),C)	->	C,              if (A = T^c) in C \/ (T^c = A) in C 
+   *                      ->  {T^? = A} U C,  otherwise
+   * 
+   * @param tConstraint the constraint to be considered
+   * @param tCList      the type constraint list to be traversed
+   * @return            'true' if an equal constraint modulo EqOfDecSort already exists in the list
+   *                    'false' otherwise            
+   */
+  protected boolean containsConstraintModuloEqDecoratedSort(TypeConstraint tConstraint, TypeConstraintList
+      tCList) {
+    %match {
+      Equation[Type1=tVar@TypeVar[],Type2=Type[TypeOptions=tOptions,TomType=tType]] << tConstraint &&
+        !concTypeOption(_*,WithSymbol[],_*) << tOptions &&
+        concTypeConstraint(_*,Equation[Type1=tVar,Type2=Type[TypeOptions=decoratedtOptions,TomType=tType]],_*) << tCList && 
+        concTypeOption(_*,WithSymbol[],_*) << decoratedtOptions -> { return true; }
+
+      Equation[Type1=Type[TypeOptions=tOptions,TomType=tType],Type2=tVar@TypeVar[]] << tConstraint &&
+        !concTypeOption(_*,WithSymbol[],_*) << tOptions &&
+        concTypeConstraint(_*,Equation[Type1=tVar,Type2=Type[TypeOptions=decoratedtOptions,TomType=tType]],_*) << tCList && 
+        concTypeOption(_*,WithSymbol[],_*) << decoratedtOptions -> { return true; }
+
+      Equation[Type1=tVar@TypeVar[],Type2=Type[TypeOptions=tOptions,TomType=tType]] << tConstraint &&
+        !concTypeOption(_*,WithSymbol[],_*) << tOptions &&
+        concTypeConstraint(_*,Equation[Type1=Type[TypeOptions=decoratedtOptions,TomType=tType],Type2=tVar],_*) << tCList && 
+        concTypeOption(_*,WithSymbol[],_*) << decoratedtOptions -> { return true; }
+
+      Equation[Type1=Type[TypeOptions=tOptions,TomType=tType],Type2=tVar@TypeVar[]] << tConstraint &&
+        !concTypeOption(_*,WithSymbol[],_*) << tOptions &&
+        concTypeConstraint(_*,Equation[Type1=Type[TypeOptions=decoratedtOptions,TomType=tType],Type2=tVar],_*) << tCList && 
+        concTypeOption(_*,WithSymbol[],_*) << decoratedtOptions -> { return true; }
+    }
+    return false;
+  }
+
+  /**
    * The method <code>containsConstraint</code> checks if a given constraint
    * already exists in a constraint type list. The method considers symmetry for
    * equation constraints. 
@@ -301,20 +343,6 @@ public class NewKernelTyper {
         concTypeConstraint(_*,(Subtype|Equation)[Type1=t1,Type2=t2],_*) << tCList 
         -> { return true; }
 
-      /* add(A = T^?) or add(T^? = A) in {A = T^c} U C' --> C */
-      (Equation[Type1=tVar@TypeVar[],Type2=Type[TypeOptions=tOptions,TomType=tType]] << tConstraint ||
-       Equation[Type1=Type[TypeOptions=tOptions,TomType=tType],Type2=tVar@TypeVar[]] << tConstraint) &&
-        !concTypeOption(_*,WithSymbol[],_*) << tOptions &&
-        concTypeConstraint(_*,Equation[Type1=tVar,Type2=Type[TypeOptions=decoratedtOptions,TomType=tType]],_*) << tCList && 
-        concTypeOption(_*,WithSymbol[],_*) << decoratedtOptions -> { return true; }
-
-      /* add(A = T^?) or add(T^? = A) in {T^c = A} U C' --> C */
-      (Equation[Type1=tVar@TypeVar[],Type2=Type[TypeOptions=tOptions,TomType=tType]] << tConstraint ||
-       Equation[Type1=Type[TypeOptions=tOptions,TomType=tType],Type2=tVar@TypeVar[]] << tConstraint) &&
-        !concTypeOption(_*,WithSymbol[],_*) << tOptions &&
-        concTypeConstraint(_*,Equation[Type1=Type[TypeOptions=decoratedtOptions,TomType=tType],Type2=tVar],_*) << tCList && 
-        concTypeOption(_*,WithSymbol[],_*) << decoratedtOptions -> { return true; }
-
       Equation[Type1=t1,Type2=t2] << TypeConstraint tConstraint &&
         concTypeConstraint(_*,Equation[Type1=t1,Type2=t2],_*) << tCList 
         -> { return true; }
@@ -322,9 +350,10 @@ public class NewKernelTyper {
       Equation[Type1=t1,Type2=t2] << TypeConstraint tConstraint &&
         concTypeConstraint(_*,Equation[Type1=t2,Type2=t1],_*) << tCList 
         -> { return true; }
-    }
-    return false;
-  } 
+      }
+      return containsConstraintModuloEqDecoratedSort(tConstraint,tCList);
+      //return false;
+    } 
 
   /*
    * pem: use if(...==... && typeConstraints.contains(...))
@@ -808,7 +837,7 @@ public class NewKernelTyper {
       }
 
       BQAppl[Options=optionList,AstName=aName@Name(name),Args=bqTList] -> {
-        System.out.println("\n Test pour BQTerm-inferTypes in BQAppl. tomName = " + `name);
+        //DEBUG System.out.println("\n Test pour BQTerm-inferTypes in BQAppl. tomName = " + `name);
         TomSymbol tSymbol = nkt.getSymbolFromName(`name);
         if (tSymbol == null) {
           //The contextType is used here, so it must be a ground type, not a
@@ -852,8 +881,8 @@ public class NewKernelTyper {
         // TO VERIFY
         %match(tSymbol) {
           EmptySymbol() -> {
-        System.out.println("\n Test pour BQTerm-inferTypes in BQAppl. tSymbol = " + `tSymbol);
-        System.out.println("\n FuctionCall = " + `FunctionCall(aName,contextType,newBQTList));
+        //DEBUG System.out.println("\n Test pour BQTerm-inferTypes in BQAppl. tSymbol = " + `tSymbol);
+        //DEBUG System.out.println("\n FuctionCall = " + `FunctionCall(aName,contextType,newBQTList));
             return `FunctionCall(aName,contextType,newBQTList); 
           }
         }
@@ -952,16 +981,16 @@ public class NewKernelTyper {
     for (Code code : cList.getCollectionconcCode()) {
       init();
       code =  collectKnownTypesFromCode(`code);
-      System.out.println("------------- Code typed with typeVar:\n code = " +
-         `code);
+      //DEBUG System.out.println("------------- Code typed with typeVar:\n code = " +
+      //DEBUG    `code);
       code = inferAllTypes(code,`EmptyType());
       //DEBUG printGeneratedConstraints(subtypeConstraints);
       printGeneratedConstraints(equationConstraints);
       solveConstraints();
       //DEBUG System.out.println("substitutions = " + substitutions);
       code = replaceInCode(code);
-      System.out.println("------------- Code typed with substitutions:\n code = " +
-      `code);
+      //DEBUG System.out.println("------------- Code typed with substitutions:\n code = " +
+      //DEBUG `code);
       replaceInSymbolTable();
       newCList = `concCode(code,newCList*);
     }
@@ -1762,7 +1791,7 @@ matchBlockAdd :
         simplifiedConstraints = checkInconsistencies(solvedConstraints);
         %match {
           concTypeConstraint(_*,FalseTypeConstraint(),_*) << simplifiedConstraints -> {
-            System.out.println("Error!!");
+            //DEBUG System.out.println("Error!!");
             return simplifiedConstraints;
           }
         }
