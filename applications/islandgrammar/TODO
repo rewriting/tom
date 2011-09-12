@@ -1,6 +1,5 @@
-- Doc du code
-- Poursuivre l'historique des étapes du projet (fichier notes)
-- Finir de statuer sur l'utilisation ou non de l'option 'filter=true'
-- Contourner le problème Débrayage au niveau du Parser / Flot de données au
-  niveau du Lexer
-
+done ! build.xml
+done ! renommer CloseToken en StopToken
+- intégrer les commentaires de HostParser
+- rapport
+- présentation

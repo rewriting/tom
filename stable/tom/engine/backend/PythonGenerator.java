@@ -306,13 +306,18 @@ matchBlock: {
 
 {
 {
-if ( (arg instanceof tom.engine.adt.code.types.BQTerm) ) {
-if ( ((( tom.engine.adt.code.types.BQTerm )arg) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {
- tom.engine.adt.tomname.types.TomName  tomMatch105_1= (( tom.engine.adt.code.types.BQTerm )arg).getAstName() ;
- tom.engine.adt.tomtype.types.TomType  tomMatch105_2= (( tom.engine.adt.code.types.BQTerm )arg).getAstType() ;
-if ( (tomMatch105_1 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
-if ( (tomMatch105_2 instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {
-if ( ( tomMatch105_2.getTlType()  instanceof tom.engine.adt.tomtype.types.targetlanguagetype.TLType) ) {
+if ( (((Object)arg) instanceof tom.engine.adt.code.types.BQTerm) ) {
+if ( ((( tom.engine.adt.code.types.BQTerm )((Object)arg)) instanceof tom.engine.adt.code.types.BQTerm) ) {
+if ( ((( tom.engine.adt.code.types.BQTerm )(( tom.engine.adt.code.types.BQTerm )((Object)arg))) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {
+ tom.engine.adt.tomname.types.TomName  tomMatch105_1= (( tom.engine.adt.code.types.BQTerm )((Object)arg)).getAstName() ;
+ tom.engine.adt.tomtype.types.TomType  tomMatch105_2= (( tom.engine.adt.code.types.BQTerm )((Object)arg)).getAstType() ;
+if ( (tomMatch105_1 instanceof tom.engine.adt.tomname.types.TomName) ) {
+if ( ((( tom.engine.adt.tomname.types.TomName )tomMatch105_1) instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+if ( (tomMatch105_2 instanceof tom.engine.adt.tomtype.types.TomType) ) {
+if ( ((( tom.engine.adt.tomtype.types.TomType )tomMatch105_2) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {
+ tom.engine.adt.tomtype.types.TargetLanguageType  tomMatch105_8= tomMatch105_2.getTlType() ;
+if ( (tomMatch105_8 instanceof tom.engine.adt.tomtype.types.TargetLanguageType) ) {
+if ( ((( tom.engine.adt.tomtype.types.TargetLanguageType )tomMatch105_8) instanceof tom.engine.adt.tomtype.types.targetlanguagetype.TLType) ) {
 
 s.append(
  tomMatch105_1.getString() );
@@ -324,10 +329,14 @@ break matchBlock;
 }
 }
 }
+}
+}
+}
+}
 
 }
 {
-if ( (arg instanceof tom.engine.adt.code.types.BQTerm) ) {
+if ( (((Object)arg) instanceof tom.engine.adt.code.types.BQTerm) ) {
 
 System.out.println("genDeclMake: strange term: " + arg);
 throw new TomRuntimeException("genDeclMake: strange term: " + arg);
@@ -401,21 +410,23 @@ matchBlock: {
 
 {
 {
-if ( (localVar instanceof tom.engine.adt.code.types.BQTerm) ) {
-if ( ((( tom.engine.adt.code.types.BQTerm )localVar) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {
+if ( (((Object)localVar) instanceof tom.engine.adt.code.types.BQTerm) ) {
+if ( ((( tom.engine.adt.code.types.BQTerm )((Object)localVar)) instanceof tom.engine.adt.code.types.BQTerm) ) {
+if ( ((( tom.engine.adt.code.types.BQTerm )(( tom.engine.adt.code.types.BQTerm )((Object)localVar))) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {
 
 //output.write(deep,getTLType(`type2) + " ");
 generateBQTerm(deep,
-(( tom.engine.adt.code.types.BQTerm )localVar),moduleName);
+(( tom.engine.adt.code.types.BQTerm )((Object)localVar)),moduleName);
 break matchBlock;
 
 
 }
 }
+}
 
 }
 {
-if ( (localVar instanceof tom.engine.adt.code.types.BQTerm) ) {
+if ( (((Object)localVar) instanceof tom.engine.adt.code.types.BQTerm) ) {
 
 System.out.println("MakeFunction: strange term: " + localVar);
 throw new TomRuntimeException("MakeFunction: strange term: " + localVar);

@@ -1,0 +1,6 @@
+#>
+#description pattern with ...
+#type TomPattern
+#<
+
+(f|g)[x1=(a|b)[]]

@@ -122,6 +122,8 @@ public class TomMessage extends BasicPlatformMessage {
   // TomGenericPlugin
   public static final TomMessage tomTermExpected       =
     new TomMessage("{0}: A TomTerm was expected by the plugin");
+  public static final TomMessage codeExpected       =
+    new TomMessage("{0}: A Code was expected by the plugin");
 
   // Plugings common
   public static final TomMessage invalidPluginArgument =
@@ -174,6 +176,8 @@ public class TomMessage extends BasicPlatformMessage {
       new TomMessage("An error occured dealing with %gom input in ''{0}'' at line {1,number,integer}");
   public static final TomMessage gomInitFailure =
       new TomMessage("An error occured initializing gom in ''{0}'' at line {1,number,integer}: {2}");
+  public static final TomMessage emptyGomSignature =
+      new TomMessage("A %gom block is empty");
   public static final TomMessage vasPlatformFailure    =
       new TomMessage("Fail to obtain a Vas PluginPlatform in ''{0}'' at line {1,number,integer}");
   public static final TomMessage vasFailure            =
@@ -267,6 +271,8 @@ public class TomMessage extends BasicPlatformMessage {
       new TomMessage("TOM desugaring phase ({0,number,integer} ms)");
   public static final TomMessage tomTypingPhase =
       new TomMessage("TOM typing phase ({0,number,integer} ms)");
+  public static final TomMessage tomFormattingPhase =
+      new TomMessage("TOM formatting phase ({0,number,integer} ms)");
   public static final TomMessage tomExpandingPhase =
       new TomMessage("TOM expanding phase ({0,number,integer} ms)");
   public static final TomMessage tomTypeCheckingPhase =

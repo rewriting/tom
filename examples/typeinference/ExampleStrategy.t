@@ -59,8 +59,8 @@ public class ExampleStrategy{
   }
   
   public final static void main(String[] args) {
-    ExampleStrategy test = new ExampleStrategy();
-    test.run();
+    ExampleStrategy ex = new ExampleStrategy();
+    ex.run();
   }
 
 	public Expr propagate(Expr expr) {

@@ -446,12 +446,14 @@ throws java.io.IOException {
 
 {
 {
-if ( term instanceof aterm.ATerm ) {
-if ( (( aterm.ATerm )term) instanceof aterm.ATermAppl ) {
- aterm.AFun  tomMatch664_1= ((aterm.ATermAppl)(( aterm.ATerm )term)).getAFun() ;
-if ( tomMatch664_1 instanceof aterm.AFun ) {
- String  tom_name= tomMatch664_1.getName() ;
- aterm.ATermList  tom_list= ((aterm.ATermAppl)(( aterm.ATerm )term)).getArguments() ;
+if ( ((Object)term) instanceof aterm.ATerm ) {
+if ( (( aterm.ATerm )((Object)term)) instanceof aterm.ATerm ) {
+if ( (( aterm.ATerm )(( aterm.ATerm )((Object)term))) instanceof aterm.ATermAppl ) {
+ aterm.AFun  tomMatch690_1= ((aterm.ATermAppl)(( aterm.ATerm )((Object)term))).getAFun() ;
+if ( tomMatch690_1 instanceof aterm.AFun ) {
+if ( (( aterm.AFun )tomMatch690_1) instanceof aterm.AFun ) {
+ String  tom_name= tomMatch690_1.getName() ;
+ aterm.ATermList  tom_list= ((aterm.ATermAppl)(( aterm.ATerm )((Object)term))).getArguments() ;
 
 aterm.ATermAppl a = (aterm.ATermAppl) term;
 if (
@@ -474,23 +476,23 @@ tom_name.length() + 3;
 
 {
 {
-if ( tom_list instanceof aterm.ATermList ) {
-if ( (( aterm.ATermList )tom_list) instanceof aterm.ATermList ) {
-if (!( (( aterm.ATermList )tom_list).isEmpty() )) {
- aterm.ATermList  tomMatch665_2= (( aterm.ATermList )tom_list).getNext() ;
- aterm.ATermList  tomMatch665__end__5=tomMatch665_2;
+if ( ((Object)tom_list) instanceof aterm.ATermList ) {
+if ( (( aterm.ATermList )(( aterm.ATermList )((Object)tom_list))) instanceof aterm.ATermList ) {
+if (!( (( aterm.ATermList )((Object)tom_list)).isEmpty() )) {
+ aterm.ATermList  tomMatch691_2= (( aterm.ATermList )((Object)tom_list)).getNext() ;
+ aterm.ATermList  tomMatch691__end__5=tomMatch691_2;
 do {
 {
- aterm.ATermList  tom_l=tom_get_slice_concATerm(tomMatch665_2,tomMatch665__end__5, aterm.pure.SingletonFactory.getInstance().makeList() );
-if (!( tomMatch665__end__5.isEmpty() )) {
-if (  tomMatch665__end__5.getNext() .isEmpty() ) {
+ aterm.ATermList  tom_l=tom_get_slice_concATerm(tomMatch691_2,tomMatch691__end__5, aterm.pure.SingletonFactory.getInstance().makeList() );
+if (!( tomMatch691__end__5.isEmpty() )) {
+if (  tomMatch691__end__5.getNext() .isEmpty() ) {
 
 // first child
 w.write("─" + 
 tom_name+ "─┬");
 context.push(ndeep-1);
 ATermToTree(
- (( aterm.ATermList )tom_list).getFirst() ,w,context,ndeep);
+ (( aterm.ATermList )((Object)tom_list)).getFirst() ,w,context,ndeep);
 context.pop();
 w.write('\n');
 
@@ -498,31 +500,31 @@ w.write('\n');
 
 {
 {
-if ( tom_l instanceof aterm.ATermList ) {
-if ( (( aterm.ATermList )tom_l) instanceof aterm.ATermList ) {
- aterm.ATermList  tomMatch666__end__4=(( aterm.ATermList )tom_l);
+if ( ((Object)tom_l) instanceof aterm.ATermList ) {
+if ( (( aterm.ATermList )(( aterm.ATermList )((Object)tom_l))) instanceof aterm.ATermList ) {
+ aterm.ATermList  tomMatch692__end__4=(( aterm.ATermList )((Object)tom_l));
 do {
 {
-if (!( tomMatch666__end__4.isEmpty() )) {
+if (!( tomMatch692__end__4.isEmpty() )) {
 
 writeContext(w,context,ndeep-1);
 w.write("├");
 context.push(ndeep-1);
 ATermToTree(
- tomMatch666__end__4.getFirst() ,w,context,ndeep);
+ tomMatch692__end__4.getFirst() ,w,context,ndeep);
 context.pop();
 w.write('\n');
 
 
 }
-if ( tomMatch666__end__4.isEmpty() ) {
-tomMatch666__end__4=(( aterm.ATermList )tom_l);
+if ( tomMatch692__end__4.isEmpty() ) {
+tomMatch692__end__4=(( aterm.ATermList )((Object)tom_l));
 } else {
-tomMatch666__end__4= tomMatch666__end__4.getNext() ;
+tomMatch692__end__4= tomMatch692__end__4.getNext() ;
 }
 
 }
-} while(!( tomMatch666__end__4==(( aterm.ATermList )tom_l) ));
+} while(!( tomMatch692__end__4==(( aterm.ATermList )((Object)tom_l)) ));
 }
 }
 
@@ -534,30 +536,32 @@ tomMatch666__end__4= tomMatch666__end__4.getNext() ;
 writeContext(w,context,ndeep-1);
 w.write("└");
 ATermToTree(
- tomMatch665__end__5.getFirst() ,w,context,ndeep);
+ tomMatch691__end__5.getFirst() ,w,context,ndeep);
 
 
 }
 }
-if ( tomMatch665__end__5.isEmpty() ) {
-tomMatch665__end__5=tomMatch665_2;
+if ( tomMatch691__end__5.isEmpty() ) {
+tomMatch691__end__5=tomMatch691_2;
 } else {
-tomMatch665__end__5= tomMatch665__end__5.getNext() ;
+tomMatch691__end__5= tomMatch691__end__5.getNext() ;
 }
 
 }
-} while(!( tomMatch665__end__5==tomMatch665_2 ));
+} while(!( tomMatch691__end__5==tomMatch691_2 ));
 }
 }
-}
-
-}
-
 }
 
 }
 
+}
 
+}
+
+
+}
+}
 }
 }
 }
@@ -640,19 +644,21 @@ public  tom.library.sl.Strategy  visit_Strategy( tom.library.sl.Strategy  tom__a
  throws tom.library.sl.VisitFailure {
 {
 {
-if ( (tom__arg instanceof tom.library.sl.Strategy) ) {
-if (( (( tom.library.sl.Strategy )tom__arg) instanceof tom.library.sl.Mu )) {
+if ( (((Object)tom__arg) instanceof tom.library.sl.Strategy) ) {
+if ( ((( tom.library.sl.Strategy )((Object)tom__arg)) instanceof tom.library.sl.Strategy) ) {
+if (( (( tom.library.sl.Strategy )(( tom.library.sl.Strategy )((Object)tom__arg))) instanceof tom.library.sl.Mu )) {
 
 return 
-( (tom.library.sl.Strategy)(( tom.library.sl.Strategy )tom__arg).getChildAt(tom.library.sl.Mu.V) );
+( (tom.library.sl.Strategy)(( tom.library.sl.Strategy )((Object)tom__arg)).getChildAt(tom.library.sl.Mu.V) );
 
 
+}
 }
 }
 
 }
 {
-if ( (tom__arg instanceof tom.library.sl.Strategy) ) {
+if ( (((Object)tom__arg) instanceof tom.library.sl.Strategy) ) {
 
 if (getEnvironment().getCurrentStack().contains(getEnvironment().getSubject())) {
 //corresponds to a pointer due to MuVar

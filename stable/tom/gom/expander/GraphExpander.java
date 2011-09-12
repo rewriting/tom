@@ -509,17 +509,21 @@ public  tom.gom.adt.gom.types.Module  visit_Module( tom.gom.adt.gom.types.Module
  throws tom.library.sl.VisitFailure {
 {
 {
-if ( (tom__arg instanceof tom.gom.adt.gom.types.Module) ) {
-if ( ((( tom.gom.adt.gom.types.Module )tom__arg) instanceof tom.gom.adt.gom.types.module.Module) ) {
- tom.gom.adt.gom.types.ModuleDecl  tomMatch554_1= (( tom.gom.adt.gom.types.Module )tom__arg).getMDecl() ;
-if ( (tomMatch554_1 instanceof tom.gom.adt.gom.types.moduledecl.ModuleDecl) ) {
+if ( (((Object)tom__arg) instanceof tom.gom.adt.gom.types.Module) ) {
+if ( ((( tom.gom.adt.gom.types.Module )((Object)tom__arg)) instanceof tom.gom.adt.gom.types.Module) ) {
+if ( ((( tom.gom.adt.gom.types.Module )(( tom.gom.adt.gom.types.Module )((Object)tom__arg))) instanceof tom.gom.adt.gom.types.module.Module) ) {
+ tom.gom.adt.gom.types.ModuleDecl  tomMatch580_1= (( tom.gom.adt.gom.types.Module )((Object)tom__arg)).getMDecl() ;
+if ( (tomMatch580_1 instanceof tom.gom.adt.gom.types.ModuleDecl) ) {
+if ( ((( tom.gom.adt.gom.types.ModuleDecl )tomMatch580_1) instanceof tom.gom.adt.gom.types.moduledecl.ModuleDecl) ) {
 
 hookList.add(ge.expHooksModule(
- tomMatch554_1.getModuleName() .getName(),
- (( tom.gom.adt.gom.types.Module )tom__arg).getSorts() ,
-tomMatch554_1,ge.getForTermgraph()));
+ tomMatch580_1.getModuleName() .getName(),
+ (( tom.gom.adt.gom.types.Module )((Object)tom__arg)).getSorts() ,
+tomMatch580_1,ge.getForTermgraph()));
 
 
+}
+}
 }
 }
 }
@@ -598,12 +602,14 @@ public  tom.gom.adt.gom.types.Sort  visit_Sort( tom.gom.adt.gom.types.Sort  tom_
  throws tom.library.sl.VisitFailure {
 {
 {
-if ( (tom__arg instanceof tom.gom.adt.gom.types.Sort) ) {
-if ( ((( tom.gom.adt.gom.types.Sort )tom__arg) instanceof tom.gom.adt.gom.types.sort.Sort) ) {
- tom.gom.adt.gom.types.SortDecl  tomMatch555_1= (( tom.gom.adt.gom.types.Sort )tom__arg).getDecl() ;
-if ( (tomMatch555_1 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) {
- String  tom_sortname= tomMatch555_1.getName() ;
- tom.gom.adt.gom.types.SortDecl  tom_sortdecl=tomMatch555_1;
+if ( (((Object)tom__arg) instanceof tom.gom.adt.gom.types.Sort) ) {
+if ( ((( tom.gom.adt.gom.types.Sort )((Object)tom__arg)) instanceof tom.gom.adt.gom.types.Sort) ) {
+if ( ((( tom.gom.adt.gom.types.Sort )(( tom.gom.adt.gom.types.Sort )((Object)tom__arg))) instanceof tom.gom.adt.gom.types.sort.Sort) ) {
+ tom.gom.adt.gom.types.SortDecl  tomMatch581_1= (( tom.gom.adt.gom.types.Sort )((Object)tom__arg)).getDecl() ;
+if ( (tomMatch581_1 instanceof tom.gom.adt.gom.types.SortDecl) ) {
+if ( ((( tom.gom.adt.gom.types.SortDecl )tomMatch581_1) instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) {
+ String  tom_sortname= tomMatch581_1.getName() ;
+ tom.gom.adt.gom.types.SortDecl  tom_sortdecl=tomMatch581_1;
 
 
 //We add 4 new operators Lab<Sort>,Ref<Sort>,Path<Sort>,Var<Sort>
@@ -635,11 +641,13 @@ tom_sortname,
 hookList.add(ge.pathHooks(pathOp,
 tom_sortdecl));
 return 
-(( tom.gom.adt.gom.types.Sort )tom__arg).setOperatorDecls(
-tom_append_list_ConcOperator( (( tom.gom.adt.gom.types.Sort )tom__arg).getOperatorDecls() , tom.gom.adt.gom.types.operatordecllist.ConsConcOperator.make(labOp, tom.gom.adt.gom.types.operatordecllist.ConsConcOperator.make(refOp, tom.gom.adt.gom.types.operatordecllist.ConsConcOperator.make(pathOp, tom.gom.adt.gom.types.operatordecllist.ConsConcOperator.make(varOp, tom.gom.adt.gom.types.operatordecllist.EmptyConcOperator.make() ) ) ) ) ));
+(( tom.gom.adt.gom.types.Sort )((Object)tom__arg)).setOperatorDecls(
+tom_append_list_ConcOperator( (( tom.gom.adt.gom.types.Sort )((Object)tom__arg)).getOperatorDecls() , tom.gom.adt.gom.types.operatordecllist.ConsConcOperator.make(labOp, tom.gom.adt.gom.types.operatordecllist.ConsConcOperator.make(refOp, tom.gom.adt.gom.types.operatordecllist.ConsConcOperator.make(pathOp, tom.gom.adt.gom.types.operatordecllist.ConsConcOperator.make(varOp, tom.gom.adt.gom.types.operatordecllist.EmptyConcOperator.make() ) ) ) ) ));
 
 
 
+}
+}
 }
 }
 }
@@ -701,34 +709,38 @@ String codeStrategies = getStrategies(sorts);
 
 {
 {
-if ( (sorts instanceof tom.gom.adt.gom.types.SortList) ) {
-if ( (((( tom.gom.adt.gom.types.SortList )sorts) instanceof tom.gom.adt.gom.types.sortlist.ConsConcSort) || ((( tom.gom.adt.gom.types.SortList )sorts) instanceof tom.gom.adt.gom.types.sortlist.EmptyConcSort)) ) {
- tom.gom.adt.gom.types.SortList  tomMatch556__end__4=(( tom.gom.adt.gom.types.SortList )sorts);
+if ( (((Object)sorts) instanceof tom.gom.adt.gom.types.SortList) ) {
+if ( (((( tom.gom.adt.gom.types.SortList )(( tom.gom.adt.gom.types.SortList )((Object)sorts))) instanceof tom.gom.adt.gom.types.sortlist.ConsConcSort) || ((( tom.gom.adt.gom.types.SortList )(( tom.gom.adt.gom.types.SortList )((Object)sorts))) instanceof tom.gom.adt.gom.types.sortlist.EmptyConcSort)) ) {
+ tom.gom.adt.gom.types.SortList  tomMatch582__end__4=(( tom.gom.adt.gom.types.SortList )((Object)sorts));
 do {
 {
-if (!( tomMatch556__end__4.isEmptyConcSort() )) {
- tom.gom.adt.gom.types.Sort  tomMatch556_8= tomMatch556__end__4.getHeadConcSort() ;
-if ( (tomMatch556_8 instanceof tom.gom.adt.gom.types.sort.Sort) ) {
- tom.gom.adt.gom.types.SortDecl  tomMatch556_7= tomMatch556_8.getDecl() ;
-if ( (tomMatch556_7 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) {
+if (!( tomMatch582__end__4.isEmptyConcSort() )) {
+ tom.gom.adt.gom.types.Sort  tomMatch582_8= tomMatch582__end__4.getHeadConcSort() ;
+if ( (tomMatch582_8 instanceof tom.gom.adt.gom.types.Sort) ) {
+if ( ((( tom.gom.adt.gom.types.Sort )tomMatch582_8) instanceof tom.gom.adt.gom.types.sort.Sort) ) {
+ tom.gom.adt.gom.types.SortDecl  tomMatch582_7= tomMatch582_8.getDecl() ;
+if ( (tomMatch582_7 instanceof tom.gom.adt.gom.types.SortDecl) ) {
+if ( ((( tom.gom.adt.gom.types.SortDecl )tomMatch582_7) instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) {
 
 codeImport += 
 "\n          import "+st.getFullConstructorClassName("Path"+
- tomMatch556_7.getName() )+
+ tomMatch582_7.getName() )+
 ";\n        ";
 
 
 }
 }
 }
-if ( tomMatch556__end__4.isEmptyConcSort() ) {
-tomMatch556__end__4=(( tom.gom.adt.gom.types.SortList )sorts);
+}
+}
+if ( tomMatch582__end__4.isEmptyConcSort() ) {
+tomMatch582__end__4=(( tom.gom.adt.gom.types.SortList )((Object)sorts));
 } else {
-tomMatch556__end__4= tomMatch556__end__4.getTailConcSort() ;
+tomMatch582__end__4= tomMatch582__end__4.getTailConcSort() ;
 }
 
 }
-} while(!( (tomMatch556__end__4==(( tom.gom.adt.gom.types.SortList )sorts)) ));
+} while(!( (tomMatch582__end__4==(( tom.gom.adt.gom.types.SortList )((Object)sorts))) ));
 }
 }
 
@@ -762,17 +774,19 @@ String codeBlockTermGraph =
 
 {
 {
-if ( (sorts instanceof tom.gom.adt.gom.types.SortList) ) {
-if ( (((( tom.gom.adt.gom.types.SortList )sorts) instanceof tom.gom.adt.gom.types.sortlist.ConsConcSort) || ((( tom.gom.adt.gom.types.SortList )sorts) instanceof tom.gom.adt.gom.types.sortlist.EmptyConcSort)) ) {
- tom.gom.adt.gom.types.SortList  tomMatch557__end__4=(( tom.gom.adt.gom.types.SortList )sorts);
+if ( (((Object)sorts) instanceof tom.gom.adt.gom.types.SortList) ) {
+if ( (((( tom.gom.adt.gom.types.SortList )(( tom.gom.adt.gom.types.SortList )((Object)sorts))) instanceof tom.gom.adt.gom.types.sortlist.ConsConcSort) || ((( tom.gom.adt.gom.types.SortList )(( tom.gom.adt.gom.types.SortList )((Object)sorts))) instanceof tom.gom.adt.gom.types.sortlist.EmptyConcSort)) ) {
+ tom.gom.adt.gom.types.SortList  tomMatch583__end__4=(( tom.gom.adt.gom.types.SortList )((Object)sorts));
 do {
 {
-if (!( tomMatch557__end__4.isEmptyConcSort() )) {
- tom.gom.adt.gom.types.Sort  tomMatch557_8= tomMatch557__end__4.getHeadConcSort() ;
-if ( (tomMatch557_8 instanceof tom.gom.adt.gom.types.sort.Sort) ) {
- tom.gom.adt.gom.types.SortDecl  tomMatch557_7= tomMatch557_8.getDecl() ;
-if ( (tomMatch557_7 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) {
- String  tom_sortname= tomMatch557_7.getName() ;
+if (!( tomMatch583__end__4.isEmptyConcSort() )) {
+ tom.gom.adt.gom.types.Sort  tomMatch583_8= tomMatch583__end__4.getHeadConcSort() ;
+if ( (tomMatch583_8 instanceof tom.gom.adt.gom.types.Sort) ) {
+if ( ((( tom.gom.adt.gom.types.Sort )tomMatch583_8) instanceof tom.gom.adt.gom.types.sort.Sort) ) {
+ tom.gom.adt.gom.types.SortDecl  tomMatch583_7= tomMatch583_8.getDecl() ;
+if ( (tomMatch583_7 instanceof tom.gom.adt.gom.types.SortDecl) ) {
+if ( ((( tom.gom.adt.gom.types.SortDecl )tomMatch583_7) instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) {
+ String  tom_sortname= tomMatch583_7.getName() ;
 
 codeBlockTermGraph += 
 "\n        visit "+
@@ -795,14 +809,16 @@ tom_sortname+
 }
 }
 }
-if ( tomMatch557__end__4.isEmptyConcSort() ) {
-tomMatch557__end__4=(( tom.gom.adt.gom.types.SortList )sorts);
+}
+}
+if ( tomMatch583__end__4.isEmptyConcSort() ) {
+tomMatch583__end__4=(( tom.gom.adt.gom.types.SortList )((Object)sorts));
 } else {
-tomMatch557__end__4= tomMatch557__end__4.getTailConcSort() ;
+tomMatch583__end__4= tomMatch583__end__4.getTailConcSort() ;
 }
 
 }
-} while(!( (tomMatch557__end__4==(( tom.gom.adt.gom.types.SortList )sorts)) ));
+} while(!( (tomMatch583__end__4==(( tom.gom.adt.gom.types.SortList )((Object)sorts))) ));
 }
 }
 
@@ -818,17 +834,19 @@ codeBlockTermGraph +=
 
 {
 {
-if ( (sorts instanceof tom.gom.adt.gom.types.SortList) ) {
-if ( (((( tom.gom.adt.gom.types.SortList )sorts) instanceof tom.gom.adt.gom.types.sortlist.ConsConcSort) || ((( tom.gom.adt.gom.types.SortList )sorts) instanceof tom.gom.adt.gom.types.sortlist.EmptyConcSort)) ) {
- tom.gom.adt.gom.types.SortList  tomMatch558__end__4=(( tom.gom.adt.gom.types.SortList )sorts);
+if ( (((Object)sorts) instanceof tom.gom.adt.gom.types.SortList) ) {
+if ( (((( tom.gom.adt.gom.types.SortList )(( tom.gom.adt.gom.types.SortList )((Object)sorts))) instanceof tom.gom.adt.gom.types.sortlist.ConsConcSort) || ((( tom.gom.adt.gom.types.SortList )(( tom.gom.adt.gom.types.SortList )((Object)sorts))) instanceof tom.gom.adt.gom.types.sortlist.EmptyConcSort)) ) {
+ tom.gom.adt.gom.types.SortList  tomMatch584__end__4=(( tom.gom.adt.gom.types.SortList )((Object)sorts));
 do {
 {
-if (!( tomMatch558__end__4.isEmptyConcSort() )) {
- tom.gom.adt.gom.types.Sort  tomMatch558_8= tomMatch558__end__4.getHeadConcSort() ;
-if ( (tomMatch558_8 instanceof tom.gom.adt.gom.types.sort.Sort) ) {
- tom.gom.adt.gom.types.SortDecl  tomMatch558_7= tomMatch558_8.getDecl() ;
-if ( (tomMatch558_7 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) {
- String  tom_sortname= tomMatch558_7.getName() ;
+if (!( tomMatch584__end__4.isEmptyConcSort() )) {
+ tom.gom.adt.gom.types.Sort  tomMatch584_8= tomMatch584__end__4.getHeadConcSort() ;
+if ( (tomMatch584_8 instanceof tom.gom.adt.gom.types.Sort) ) {
+if ( ((( tom.gom.adt.gom.types.Sort )tomMatch584_8) instanceof tom.gom.adt.gom.types.sort.Sort) ) {
+ tom.gom.adt.gom.types.SortDecl  tomMatch584_7= tomMatch584_8.getDecl() ;
+if ( (tomMatch584_7 instanceof tom.gom.adt.gom.types.SortDecl) ) {
+if ( ((( tom.gom.adt.gom.types.SortDecl )tomMatch584_7) instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) {
+ String  tom_sortname= tomMatch584_7.getName() ;
 
 codeBlockTermGraph += 
 "\n      visit "+
@@ -853,14 +871,16 @@ tom_sortname+
 }
 }
 }
-if ( tomMatch558__end__4.isEmptyConcSort() ) {
-tomMatch558__end__4=(( tom.gom.adt.gom.types.SortList )sorts);
+}
+}
+if ( tomMatch584__end__4.isEmptyConcSort() ) {
+tomMatch584__end__4=(( tom.gom.adt.gom.types.SortList )((Object)sorts));
 } else {
-tomMatch558__end__4= tomMatch558__end__4.getTailConcSort() ;
+tomMatch584__end__4= tomMatch584__end__4.getTailConcSort() ;
 }
 
 }
-} while(!( (tomMatch558__end__4==(( tom.gom.adt.gom.types.SortList )sorts)) ));
+} while(!( (tomMatch584__end__4==(( tom.gom.adt.gom.types.SortList )((Object)sorts))) ));
 }
 }
 
@@ -875,17 +895,19 @@ codeBlockTermGraph +=
 
 {
 {
-if ( (sorts instanceof tom.gom.adt.gom.types.SortList) ) {
-if ( (((( tom.gom.adt.gom.types.SortList )sorts) instanceof tom.gom.adt.gom.types.sortlist.ConsConcSort) || ((( tom.gom.adt.gom.types.SortList )sorts) instanceof tom.gom.adt.gom.types.sortlist.EmptyConcSort)) ) {
- tom.gom.adt.gom.types.SortList  tomMatch559__end__4=(( tom.gom.adt.gom.types.SortList )sorts);
+if ( (((Object)sorts) instanceof tom.gom.adt.gom.types.SortList) ) {
+if ( (((( tom.gom.adt.gom.types.SortList )(( tom.gom.adt.gom.types.SortList )((Object)sorts))) instanceof tom.gom.adt.gom.types.sortlist.ConsConcSort) || ((( tom.gom.adt.gom.types.SortList )(( tom.gom.adt.gom.types.SortList )((Object)sorts))) instanceof tom.gom.adt.gom.types.sortlist.EmptyConcSort)) ) {
+ tom.gom.adt.gom.types.SortList  tomMatch585__end__4=(( tom.gom.adt.gom.types.SortList )((Object)sorts));
 do {
 {
-if (!( tomMatch559__end__4.isEmptyConcSort() )) {
- tom.gom.adt.gom.types.Sort  tomMatch559_8= tomMatch559__end__4.getHeadConcSort() ;
-if ( (tomMatch559_8 instanceof tom.gom.adt.gom.types.sort.Sort) ) {
- tom.gom.adt.gom.types.SortDecl  tomMatch559_7= tomMatch559_8.getDecl() ;
-if ( (tomMatch559_7 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) {
- String  tom_sortname= tomMatch559_7.getName() ;
+if (!( tomMatch585__end__4.isEmptyConcSort() )) {
+ tom.gom.adt.gom.types.Sort  tomMatch585_8= tomMatch585__end__4.getHeadConcSort() ;
+if ( (tomMatch585_8 instanceof tom.gom.adt.gom.types.Sort) ) {
+if ( ((( tom.gom.adt.gom.types.Sort )tomMatch585_8) instanceof tom.gom.adt.gom.types.sort.Sort) ) {
+ tom.gom.adt.gom.types.SortDecl  tomMatch585_7= tomMatch585_8.getDecl() ;
+if ( (tomMatch585_7 instanceof tom.gom.adt.gom.types.SortDecl) ) {
+if ( ((( tom.gom.adt.gom.types.SortDecl )tomMatch585_7) instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) {
+ String  tom_sortname= tomMatch585_7.getName() ;
 
 codeBlockTermGraph += 
 "\n      visit "+
@@ -900,14 +922,16 @@ tom_sortname+
 }
 }
 }
-if ( tomMatch559__end__4.isEmptyConcSort() ) {
-tomMatch559__end__4=(( tom.gom.adt.gom.types.SortList )sorts);
+}
+}
+if ( tomMatch585__end__4.isEmptyConcSort() ) {
+tomMatch585__end__4=(( tom.gom.adt.gom.types.SortList )((Object)sorts));
 } else {
-tomMatch559__end__4= tomMatch559__end__4.getTailConcSort() ;
+tomMatch585__end__4= tomMatch585__end__4.getTailConcSort() ;
 }
 
 }
-} while(!( (tomMatch559__end__4==(( tom.gom.adt.gom.types.SortList )sorts)) ));
+} while(!( (tomMatch585__end__4==(( tom.gom.adt.gom.types.SortList )((Object)sorts))) ));
 }
 }
 
@@ -965,18 +989,20 @@ NormalizeLabelCode.append(
 
 {
 {
-if ( (sorts instanceof tom.gom.adt.gom.types.SortList) ) {
-if ( (((( tom.gom.adt.gom.types.SortList )sorts) instanceof tom.gom.adt.gom.types.sortlist.ConsConcSort) || ((( tom.gom.adt.gom.types.SortList )sorts) instanceof tom.gom.adt.gom.types.sortlist.EmptyConcSort)) ) {
- tom.gom.adt.gom.types.SortList  tomMatch560__end__4=(( tom.gom.adt.gom.types.SortList )sorts);
+if ( (((Object)sorts) instanceof tom.gom.adt.gom.types.SortList) ) {
+if ( (((( tom.gom.adt.gom.types.SortList )(( tom.gom.adt.gom.types.SortList )((Object)sorts))) instanceof tom.gom.adt.gom.types.sortlist.ConsConcSort) || ((( tom.gom.adt.gom.types.SortList )(( tom.gom.adt.gom.types.SortList )((Object)sorts))) instanceof tom.gom.adt.gom.types.sortlist.EmptyConcSort)) ) {
+ tom.gom.adt.gom.types.SortList  tomMatch586__end__4=(( tom.gom.adt.gom.types.SortList )((Object)sorts));
 do {
 {
-if (!( tomMatch560__end__4.isEmptyConcSort() )) {
- tom.gom.adt.gom.types.Sort  tomMatch560_8= tomMatch560__end__4.getHeadConcSort() ;
-if ( (tomMatch560_8 instanceof tom.gom.adt.gom.types.sort.Sort) ) {
- tom.gom.adt.gom.types.SortDecl  tomMatch560_7= tomMatch560_8.getDecl() ;
-if ( (tomMatch560_7 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) {
- String  tom_sortName= tomMatch560_7.getName() ;
- tom.gom.adt.gom.types.SortDecl  tom_sDecl=tomMatch560_7;
+if (!( tomMatch586__end__4.isEmptyConcSort() )) {
+ tom.gom.adt.gom.types.Sort  tomMatch586_8= tomMatch586__end__4.getHeadConcSort() ;
+if ( (tomMatch586_8 instanceof tom.gom.adt.gom.types.Sort) ) {
+if ( ((( tom.gom.adt.gom.types.Sort )tomMatch586_8) instanceof tom.gom.adt.gom.types.sort.Sort) ) {
+ tom.gom.adt.gom.types.SortDecl  tomMatch586_7= tomMatch586_8.getDecl() ;
+if ( (tomMatch586_7 instanceof tom.gom.adt.gom.types.SortDecl) ) {
+if ( ((( tom.gom.adt.gom.types.SortDecl )tomMatch586_7) instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) {
+ String  tom_sortName= tomMatch586_7.getName() ;
+ tom.gom.adt.gom.types.SortDecl  tom_sDecl=tomMatch586_7;
 
 
 strategiesCode.append(
@@ -1109,14 +1135,16 @@ tom_sortName+
 }
 }
 }
-if ( tomMatch560__end__4.isEmptyConcSort() ) {
-tomMatch560__end__4=(( tom.gom.adt.gom.types.SortList )sorts);
+}
+}
+if ( tomMatch586__end__4.isEmptyConcSort() ) {
+tomMatch586__end__4=(( tom.gom.adt.gom.types.SortList )((Object)sorts));
 } else {
-tomMatch560__end__4= tomMatch560__end__4.getTailConcSort() ;
+tomMatch586__end__4= tomMatch586__end__4.getTailConcSort() ;
 }
 
 }
-} while(!( (tomMatch560__end__4==(( tom.gom.adt.gom.types.SortList )sorts)) ));
+} while(!( (tomMatch586__end__4==(( tom.gom.adt.gom.types.SortList )((Object)sorts))) ));
 }
 }
 

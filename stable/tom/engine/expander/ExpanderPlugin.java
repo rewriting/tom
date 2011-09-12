@@ -598,10 +598,11 @@ public  tom.engine.adt.tomdeclaration.types.Declaration  visit_Declaration( tom.
  throws tom.library.sl.VisitFailure {
 {
 {
-if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {
-if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.Strategy) ) {
- tom.engine.adt.tomsignature.types.TomVisitList  tom_visitList= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getVisitList() ;
- tom.engine.adt.tomoption.types.Option  tom_orgTrack= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getOrgTrack() ;
+if ( (((Object)tom__arg) instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {
+if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )((Object)tom__arg)) instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {
+if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )(( tom.engine.adt.tomdeclaration.types.Declaration )((Object)tom__arg))) instanceof tom.engine.adt.tomdeclaration.types.declaration.Strategy) ) {
+ tom.engine.adt.tomsignature.types.TomVisitList  tom_visitList= (( tom.engine.adt.tomdeclaration.types.Declaration )((Object)tom__arg)).getVisitList() ;
+ tom.engine.adt.tomoption.types.Option  tom_orgTrack= (( tom.engine.adt.tomdeclaration.types.Declaration )((Object)tom__arg)).getOrgTrack() ;
 
 //Generate only one Introspector for a class if at least one  %strategy is found
 Declaration introspectorClass = 
@@ -622,16 +623,17 @@ Collection<TomType> types = symbolTable.getUsedTypes();
 String funcName = "getChildCount";//function name
 //manage null children: return 0
 InstructionList instructions = 
- tom.engine.adt.tominstruction.types.instructionlist.ConsconcInstruction.make( tom.engine.adt.tominstruction.types.instruction.If.make( tom.engine.adt.tomexpression.types.expression.BQTermToExpression.make( tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.tomsignature.types.targetlanguage.ITL.make("o==null") ) , tom.engine.adt.code.types.bqterm.EmptyComposite.make() ) ) ,  tom.engine.adt.tominstruction.types.instruction.Return.make( tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.tomsignature.types.targetlanguage.ITL.make("0") ) , tom.engine.adt.code.types.bqterm.EmptyComposite.make() ) ) ,  tom.engine.adt.tominstruction.types.instruction.Nop.make() ) , tom.engine.adt.tominstruction.types.instructionlist.EmptyconcInstruction.make() ) ;
+ tom.engine.adt.tominstruction.types.instructionlist.ConsconcInstruction.make( tom.engine.adt.tominstruction.types.instruction.If.make( tom.engine.adt.tomexpression.types.expression.BQTermToExpression.make( tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.code.types.targetlanguage.ITL.make("o==null") ) , tom.engine.adt.code.types.bqterm.EmptyComposite.make() ) ) ,  tom.engine.adt.tominstruction.types.instruction.Return.make( tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.code.types.targetlanguage.ITL.make("0") ) , tom.engine.adt.code.types.bqterm.EmptyComposite.make() ) ) ,  tom.engine.adt.tominstruction.types.instruction.Nop.make() ) , tom.engine.adt.tominstruction.types.instructionlist.EmptyconcInstruction.make() ) ;
 for (TomType type:types) {
 InstructionList instructionsForSort = 
  tom.engine.adt.tominstruction.types.instructionlist.EmptyconcInstruction.make() ;
 
 {
 {
-if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {
-if ( ((( tom.engine.adt.tomtype.types.TomType )type) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {
- String  tom_typeName= (( tom.engine.adt.tomtype.types.TomType )type).getTomType() ;
+if ( (((Object)type) instanceof tom.engine.adt.tomtype.types.TomType) ) {
+if ( ((( tom.engine.adt.tomtype.types.TomType )((Object)type)) instanceof tom.engine.adt.tomtype.types.TomType) ) {
+if ( ((( tom.engine.adt.tomtype.types.TomType )(( tom.engine.adt.tomtype.types.TomType )((Object)type))) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {
+ String  tom_typeName= (( tom.engine.adt.tomtype.types.TomType )((Object)type)).getTomType() ;
 
 if(!(symbolTable.isBuiltinType(
 tom_typeName))) {
@@ -641,16 +643,17 @@ TomSymbolList list = symbolTable.getSymbolFromType(type);
 
 {
 {
-if ( (list instanceof tom.engine.adt.tomsignature.types.TomSymbolList) ) {
-if ( (((( tom.engine.adt.tomsignature.types.TomSymbolList )list) instanceof tom.engine.adt.tomsignature.types.tomsymbollist.ConsconcTomSymbol) || ((( tom.engine.adt.tomsignature.types.TomSymbolList )list) instanceof tom.engine.adt.tomsignature.types.tomsymbollist.EmptyconcTomSymbol)) ) {
- tom.engine.adt.tomsignature.types.TomSymbolList  tomMatch236__end__4=(( tom.engine.adt.tomsignature.types.TomSymbolList )list);
+if ( (((Object)list) instanceof tom.engine.adt.tomsignature.types.TomSymbolList) ) {
+if ( (((( tom.engine.adt.tomsignature.types.TomSymbolList )(( tom.engine.adt.tomsignature.types.TomSymbolList )((Object)list))) instanceof tom.engine.adt.tomsignature.types.tomsymbollist.ConsconcTomSymbol) || ((( tom.engine.adt.tomsignature.types.TomSymbolList )(( tom.engine.adt.tomsignature.types.TomSymbolList )((Object)list))) instanceof tom.engine.adt.tomsignature.types.tomsymbollist.EmptyconcTomSymbol)) ) {
+ tom.engine.adt.tomsignature.types.TomSymbolList  tomMatch244__end__4=(( tom.engine.adt.tomsignature.types.TomSymbolList )((Object)list));
 do {
 {
-if (!( tomMatch236__end__4.isEmptyconcTomSymbol() )) {
- tom.engine.adt.tomsignature.types.TomSymbol  tomMatch236_8= tomMatch236__end__4.getHeadconcTomSymbol() ;
-if ( (tomMatch236_8 instanceof tom.engine.adt.tomsignature.types.tomsymbol.Symbol) ) {
- tom.engine.adt.tomname.types.TomName  tom_opName= tomMatch236_8.getAstName() ;
- tom.engine.adt.tomsignature.types.TomSymbol  tom_symbol= tomMatch236__end__4.getHeadconcTomSymbol() ;
+if (!( tomMatch244__end__4.isEmptyconcTomSymbol() )) {
+ tom.engine.adt.tomsignature.types.TomSymbol  tomMatch244_8= tomMatch244__end__4.getHeadconcTomSymbol() ;
+if ( (tomMatch244_8 instanceof tom.engine.adt.tomsignature.types.TomSymbol) ) {
+if ( ((( tom.engine.adt.tomsignature.types.TomSymbol )tomMatch244_8) instanceof tom.engine.adt.tomsignature.types.tomsymbol.Symbol) ) {
+ tom.engine.adt.tomname.types.TomName  tom_opName= tomMatch244_8.getAstName() ;
+ tom.engine.adt.tomsignature.types.TomSymbol  tom_symbol= tomMatch244__end__4.getHeadconcTomSymbol() ;
 
 Instruction inst = 
  tom.engine.adt.tominstruction.types.instruction.Nop.make() ;
@@ -658,14 +661,14 @@ if ( TomBase.isListOperator(
 tom_symbol) ) {
 // manage empty lists and arrays
 inst = 
- tom.engine.adt.tominstruction.types.instruction.If.make( tom.engine.adt.tomexpression.types.expression.IsFsym.make(tom_opName, var) ,  tom.engine.adt.tominstruction.types.instruction.If.make( tom.engine.adt.tomexpression.types.expression.IsEmptyList.make(tom_opName, var) ,  tom.engine.adt.tominstruction.types.instruction.Return.make( tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.tomsignature.types.targetlanguage.ITL.make("0") ) , tom.engine.adt.code.types.bqterm.EmptyComposite.make() ) ) ,  tom.engine.adt.tominstruction.types.instruction.Return.make( tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.tomsignature.types.targetlanguage.ITL.make("2") ) , tom.engine.adt.code.types.bqterm.EmptyComposite.make() ) ) ) ,  tom.engine.adt.tominstruction.types.instruction.Nop.make() ) ;
+ tom.engine.adt.tominstruction.types.instruction.If.make( tom.engine.adt.tomexpression.types.expression.IsFsym.make(tom_opName, var) ,  tom.engine.adt.tominstruction.types.instruction.If.make( tom.engine.adt.tomexpression.types.expression.IsEmptyList.make(tom_opName, var) ,  tom.engine.adt.tominstruction.types.instruction.Return.make( tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.code.types.targetlanguage.ITL.make("0") ) , tom.engine.adt.code.types.bqterm.EmptyComposite.make() ) ) ,  tom.engine.adt.tominstruction.types.instruction.Return.make( tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.code.types.targetlanguage.ITL.make("2") ) , tom.engine.adt.code.types.bqterm.EmptyComposite.make() ) ) ) ,  tom.engine.adt.tominstruction.types.instruction.Nop.make() ) ;
 } else if ( TomBase.isArrayOperator(
 tom_symbol) ) {
 inst = 
- tom.engine.adt.tominstruction.types.instruction.If.make( tom.engine.adt.tomexpression.types.expression.IsFsym.make(tom_opName, var) ,  tom.engine.adt.tominstruction.types.instruction.If.make( tom.engine.adt.tomexpression.types.expression.IsEmptyArray.make(tom_opName, var,  tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make( tom.engine.adt.tomexpression.types.expression.Integer.make(0) ) ) ,  tom.engine.adt.tominstruction.types.instruction.Return.make( tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.tomsignature.types.targetlanguage.ITL.make("0") ) , tom.engine.adt.code.types.bqterm.EmptyComposite.make() ) ) ,  tom.engine.adt.tominstruction.types.instruction.Return.make( tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.tomsignature.types.targetlanguage.ITL.make("2") ) , tom.engine.adt.code.types.bqterm.EmptyComposite.make() ) ) ) ,  tom.engine.adt.tominstruction.types.instruction.Nop.make() ) ;
+ tom.engine.adt.tominstruction.types.instruction.If.make( tom.engine.adt.tomexpression.types.expression.IsFsym.make(tom_opName, var) ,  tom.engine.adt.tominstruction.types.instruction.If.make( tom.engine.adt.tomexpression.types.expression.IsEmptyArray.make(tom_opName, var,  tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make( tom.engine.adt.tomexpression.types.expression.Integer.make(0) ) ) ,  tom.engine.adt.tominstruction.types.instruction.Return.make( tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.code.types.targetlanguage.ITL.make("0") ) , tom.engine.adt.code.types.bqterm.EmptyComposite.make() ) ) ,  tom.engine.adt.tominstruction.types.instruction.Return.make( tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.code.types.targetlanguage.ITL.make("2") ) , tom.engine.adt.code.types.bqterm.EmptyComposite.make() ) ) ) ,  tom.engine.adt.tominstruction.types.instruction.Nop.make() ) ;
 } else {
 inst = 
- tom.engine.adt.tominstruction.types.instruction.If.make( tom.engine.adt.tomexpression.types.expression.IsFsym.make(tom_opName, var) ,  tom.engine.adt.tominstruction.types.instruction.Return.make( tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.tomsignature.types.targetlanguage.ITL.make(""+TomBase.getArity(tom_symbol)) ) , tom.engine.adt.code.types.bqterm.EmptyComposite.make() ) ) ,  tom.engine.adt.tominstruction.types.instruction.Nop.make() ) ;
+ tom.engine.adt.tominstruction.types.instruction.If.make( tom.engine.adt.tomexpression.types.expression.IsFsym.make(tom_opName, var) ,  tom.engine.adt.tominstruction.types.instruction.Return.make( tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.code.types.targetlanguage.ITL.make(""+TomBase.getArity(tom_symbol)) ) , tom.engine.adt.code.types.bqterm.EmptyComposite.make() ) ) ,  tom.engine.adt.tominstruction.types.instruction.Nop.make() ) ;
 } 
 instructionsForSort = 
 tom_append_list_concInstruction(instructionsForSort, tom.engine.adt.tominstruction.types.instructionlist.ConsconcInstruction.make(inst, tom.engine.adt.tominstruction.types.instructionlist.EmptyconcInstruction.make() ) );
@@ -673,14 +676,15 @@ tom_append_list_concInstruction(instructionsForSort, tom.engine.adt.tominstructi
 
 }
 }
-if ( tomMatch236__end__4.isEmptyconcTomSymbol() ) {
-tomMatch236__end__4=(( tom.engine.adt.tomsignature.types.TomSymbolList )list);
+}
+if ( tomMatch244__end__4.isEmptyconcTomSymbol() ) {
+tomMatch244__end__4=(( tom.engine.adt.tomsignature.types.TomSymbolList )((Object)list));
 } else {
-tomMatch236__end__4= tomMatch236__end__4.getTailconcTomSymbol() ;
+tomMatch244__end__4= tomMatch244__end__4.getTailconcTomSymbol() ;
 }
 
 }
-} while(!( (tomMatch236__end__4==(( tom.engine.adt.tomsignature.types.TomSymbolList )list)) ));
+} while(!( (tomMatch244__end__4==(( tom.engine.adt.tomsignature.types.TomSymbolList )((Object)list))) ));
 }
 }
 
@@ -695,6 +699,7 @@ tom_append_list_concInstruction(instructions, tom.engine.adt.tominstruction.type
 
 }
 }
+}
 
 }
 
@@ -703,7 +708,7 @@ tom_append_list_concInstruction(instructions, tom.engine.adt.tominstruction.type
 }
 //default case (for builtins too): return 0
 instructions = 
-tom_append_list_concInstruction(instructions, tom.engine.adt.tominstruction.types.instructionlist.ConsconcInstruction.make( tom.engine.adt.tominstruction.types.instruction.Return.make( tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.tomsignature.types.targetlanguage.ITL.make("0") ) , tom.engine.adt.code.types.bqterm.EmptyComposite.make() ) ) , tom.engine.adt.tominstruction.types.instructionlist.EmptyconcInstruction.make() ) );
+tom_append_list_concInstruction(instructions, tom.engine.adt.tominstruction.types.instructionlist.ConsconcInstruction.make( tom.engine.adt.tominstruction.types.instruction.Return.make( tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.code.types.targetlanguage.ITL.make("0") ) , tom.engine.adt.code.types.bqterm.EmptyComposite.make() ) ) , tom.engine.adt.tominstruction.types.instructionlist.EmptyconcInstruction.make() ) );
 l = 
  tom.engine.adt.tomdeclaration.types.declarationlist.ConsconcDeclaration.make( tom.engine.adt.tomdeclaration.types.declaration.MethodDef.make( tom.engine.adt.tomname.types.tomname.Name.make(funcName) ,  tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make(objectVar, tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() ) , intType,  tom.engine.adt.tomtype.types.tomtype.EmptyType.make() ,  tom.engine.adt.tominstruction.types.instruction.AbstractBlock.make(instructions) ) ,tom_append_list_concDeclaration(l, tom.engine.adt.tomdeclaration.types.declarationlist.EmptyconcDeclaration.make() )) ;
 /**
@@ -720,9 +725,10 @@ InstructionList instructionsForSort =
 
 {
 {
-if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {
-if ( ((( tom.engine.adt.tomtype.types.TomType )type) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {
- String  tom_typeName= (( tom.engine.adt.tomtype.types.TomType )type).getTomType() ;
+if ( (((Object)type) instanceof tom.engine.adt.tomtype.types.TomType) ) {
+if ( ((( tom.engine.adt.tomtype.types.TomType )((Object)type)) instanceof tom.engine.adt.tomtype.types.TomType) ) {
+if ( ((( tom.engine.adt.tomtype.types.TomType )(( tom.engine.adt.tomtype.types.TomType )((Object)type))) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {
+ String  tom_typeName= (( tom.engine.adt.tomtype.types.TomType )((Object)type)).getTomType() ;
 
 if (! symbolTable.isBuiltinType(
 tom_typeName)) {
@@ -733,20 +739,22 @@ for (TomSymbol symbol:list) {
 
 {
 {
-if ( (symbol instanceof tom.engine.adt.tomsignature.types.TomSymbol) ) {
-if ( ((( tom.engine.adt.tomsignature.types.TomSymbol )symbol) instanceof tom.engine.adt.tomsignature.types.tomsymbol.Symbol) ) {
- tom.engine.adt.tomtype.types.TomType  tomMatch238_2= (( tom.engine.adt.tomsignature.types.TomSymbol )symbol).getTypesToType() ;
- tom.engine.adt.tomname.types.TomName  tom_symbolName= (( tom.engine.adt.tomsignature.types.TomSymbol )symbol).getAstName() ;
-if ( (tomMatch238_2 instanceof tom.engine.adt.tomtype.types.tomtype.TypesToType) ) {
- tom.engine.adt.tomtype.types.TomType  tom_codomain= tomMatch238_2.getCodomain() ;
+if ( (((Object)symbol) instanceof tom.engine.adt.tomsignature.types.TomSymbol) ) {
+if ( ((( tom.engine.adt.tomsignature.types.TomSymbol )((Object)symbol)) instanceof tom.engine.adt.tomsignature.types.TomSymbol) ) {
+if ( ((( tom.engine.adt.tomsignature.types.TomSymbol )(( tom.engine.adt.tomsignature.types.TomSymbol )((Object)symbol))) instanceof tom.engine.adt.tomsignature.types.tomsymbol.Symbol) ) {
+ tom.engine.adt.tomtype.types.TomType  tomMatch246_2= (( tom.engine.adt.tomsignature.types.TomSymbol )((Object)symbol)).getTypesToType() ;
+ tom.engine.adt.tomname.types.TomName  tom_symbolName= (( tom.engine.adt.tomsignature.types.TomSymbol )((Object)symbol)).getAstName() ;
+if ( (tomMatch246_2 instanceof tom.engine.adt.tomtype.types.TomType) ) {
+if ( ((( tom.engine.adt.tomtype.types.TomType )tomMatch246_2) instanceof tom.engine.adt.tomtype.types.tomtype.TypesToType) ) {
+ tom.engine.adt.tomtype.types.TomType  tom_codomain= tomMatch246_2.getCodomain() ;
 
 if(TomBase.isListOperator(symbol)) {
 Instruction return_array = 
- tom.engine.adt.tominstruction.types.instruction.CodeToInstruction.make( tom.engine.adt.code.types.code.BQTermToCode.make( tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.tomsignature.types.targetlanguage.ITL.make("return new Object[]{") ) , tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeBQTerm.make( tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make( tom.engine.adt.tomexpression.types.expression.GetHead.make(tom_symbolName,  tomMatch238_2.getDomain() .getHeadconcTomType(), var) ) ) , tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.tomsignature.types.targetlanguage.ITL.make(",") ) , tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeBQTerm.make( tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make( tom.engine.adt.tomexpression.types.expression.GetTail.make(tom_symbolName, var) ) ) , tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.tomsignature.types.targetlanguage.ITL.make("};") ) 
+ tom.engine.adt.tominstruction.types.instruction.CodeToInstruction.make( tom.engine.adt.code.types.code.BQTermToCode.make( tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.code.types.targetlanguage.ITL.make("return new Object[]{") ) , tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeBQTerm.make( tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make( tom.engine.adt.tomexpression.types.expression.GetHead.make(tom_symbolName,  tomMatch246_2.getDomain() .getHeadconcTomType(), var) ) ) , tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.code.types.targetlanguage.ITL.make(",") ) , tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeBQTerm.make( tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make( tom.engine.adt.tomexpression.types.expression.GetTail.make(tom_symbolName, var) ) ) , tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.code.types.targetlanguage.ITL.make("};") ) 
                                   , tom.engine.adt.code.types.bqterm.EmptyComposite.make() ) ) ) ) ) ) ) ;
 //default case (used for builtins too)                     
 Instruction return_emptyArray = 
- tom.engine.adt.tominstruction.types.instruction.CodeToInstruction.make( tom.engine.adt.code.types.code.TargetLanguageToCode.make( tom.engine.adt.tomsignature.types.targetlanguage.ITL.make("return new Object[]{};") ) ) ;
+ tom.engine.adt.tominstruction.types.instruction.CodeToInstruction.make( tom.engine.adt.code.types.code.TargetLanguageToCode.make( tom.engine.adt.code.types.targetlanguage.ITL.make("return new Object[]{};") ) ) ;
 Instruction inst = 
  tom.engine.adt.tominstruction.types.instruction.If.make( tom.engine.adt.tomexpression.types.expression.IsFsym.make(tom_symbolName, var) ,  tom.engine.adt.tominstruction.types.instruction.If.make( tom.engine.adt.tomexpression.types.expression.IsEmptyList.make(tom_symbolName, var) , return_emptyArray, return_array) ,  tom.engine.adt.tominstruction.types.instruction.Nop.make() ) ;
 instructionsForSort = 
@@ -756,13 +764,13 @@ tom_append_list_concInstruction(instructionsForSort, tom.engine.adt.tominstructi
 // we consider that the children of the array are the first element and the tail
 //default case (used for builtins too)                     
 BQTerm emptyArray = 
- tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.tomsignature.types.targetlanguage.ITL.make("new Object[]{}") ) , tom.engine.adt.code.types.bqterm.EmptyComposite.make() ) ;
+ tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.code.types.targetlanguage.ITL.make("new Object[]{}") ) , tom.engine.adt.code.types.bqterm.EmptyComposite.make() ) ;
 //`CodeToInstruction(TargetLanguageToCode(ITL("new Object[]{}")));
 BQTerm tail = 
  tom.engine.adt.code.types.bqterm.BQVariable.make( tom.engine.adt.tomoption.types.optionlist.EmptyconcOption.make() ,  tom.engine.adt.tomname.types.tomname.Name.make("tail") , tom_codomain) ;
 
 CodeList result = 
- tom.engine.adt.code.types.codelist.ConsconcCode.make( tom.engine.adt.code.types.code.BQTermToCode.make( tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.tomsignature.types.targetlanguage.ITL.make("new Object[]{") ) , tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeBQTerm.make( tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make( tom.engine.adt.tomexpression.types.expression.GetElement.make(tom_symbolName, tom_codomain, var,  tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make( tom.engine.adt.tomexpression.types.expression.Integer.make(0) ) ) ) ) , tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.tomsignature.types.targetlanguage.ITL.make(",") ) , tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeBQTerm.make(tail) , tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.tomsignature.types.targetlanguage.ITL.make("}") ) 
+ tom.engine.adt.code.types.codelist.ConsconcCode.make( tom.engine.adt.code.types.code.BQTermToCode.make( tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.code.types.targetlanguage.ITL.make("new Object[]{") ) , tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeBQTerm.make( tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make( tom.engine.adt.tomexpression.types.expression.GetElement.make(tom_symbolName, tom_codomain, var,  tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make( tom.engine.adt.tomexpression.types.expression.Integer.make(0) ) ) ) ) , tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.code.types.targetlanguage.ITL.make(",") ) , tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeBQTerm.make(tail) , tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.code.types.targetlanguage.ITL.make("}") ) 
                                   , tom.engine.adt.code.types.bqterm.EmptyComposite.make() ) ) ) ) ) ) , tom.engine.adt.code.types.codelist.EmptyconcCode.make() ) ;
 
 //Return(ExpressionToBQTerm(TomInstructionToExpression(emptyArray))),
@@ -780,7 +788,7 @@ tom_append_list_concInstruction(instructionsForSort, tom.engine.adt.tominstructi
 } else {
 int arity = TomBase.getArity(symbol);
 BQTerm composite = 
- tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.tomsignature.types.targetlanguage.ITL.make("return new Object[]{") ) , tom.engine.adt.code.types.bqterm.EmptyComposite.make() ) ;
+ tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.code.types.targetlanguage.ITL.make("return new Object[]{") ) , tom.engine.adt.code.types.bqterm.EmptyComposite.make() ) ;
 PairNameDeclList pairNameDeclList = symbol.getPairNameDeclList();
 for(int i=0; i< arity; i++) {
 PairNameDecl pairNameDecl = pairNameDeclList.getHeadconcPairNameDecl();
@@ -788,36 +796,40 @@ Declaration decl = pairNameDecl.getSlotDecl();
 
 {
 {
-if ( (decl instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {
-if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )decl) instanceof tom.engine.adt.tomdeclaration.types.declaration.EmptyDeclaration) ) {
+if ( (((Object)decl) instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {
+if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )((Object)decl)) instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {
+if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )(( tom.engine.adt.tomdeclaration.types.Declaration )((Object)decl))) instanceof tom.engine.adt.tomdeclaration.types.declaration.EmptyDeclaration) ) {
 
 // case of undefined getSlot
 // return null (to be improved)
 composite =  
-tom_append_list_Composite(composite, tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.tomsignature.types.targetlanguage.ITL.make("null") ) , tom.engine.adt.code.types.bqterm.EmptyComposite.make() ) );
+tom_append_list_Composite(composite, tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.code.types.targetlanguage.ITL.make("null") ) , tom.engine.adt.code.types.bqterm.EmptyComposite.make() ) );
 if(i < arity-1) {
 composite =  
-tom_append_list_Composite(composite, tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.tomsignature.types.targetlanguage.ITL.make(",") ) , tom.engine.adt.code.types.bqterm.EmptyComposite.make() ) );
+tom_append_list_Composite(composite, tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.code.types.targetlanguage.ITL.make(",") ) , tom.engine.adt.code.types.bqterm.EmptyComposite.make() ) );
 }
 
 
+}
 }
 }
 
 }
 {
-if ( (decl instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {
-if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )decl) instanceof tom.engine.adt.tomdeclaration.types.declaration.GetSlotDecl) ) {
- tom.engine.adt.tomname.types.TomName  tom_SlotName= (( tom.engine.adt.tomdeclaration.types.Declaration )decl).getSlotName() ;
+if ( (((Object)decl) instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {
+if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )((Object)decl)) instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {
+if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )(( tom.engine.adt.tomdeclaration.types.Declaration )((Object)decl))) instanceof tom.engine.adt.tomdeclaration.types.declaration.GetSlotDecl) ) {
+ tom.engine.adt.tomname.types.TomName  tom_SlotName= (( tom.engine.adt.tomdeclaration.types.Declaration )((Object)decl)).getSlotName() ;
 
 composite = 
-tom_append_list_Composite(composite, tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeBQTerm.make( tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make( tom.engine.adt.tomexpression.types.expression.GetSlot.make(TomBase.getSlotType(symbol,tom_SlotName),  (( tom.engine.adt.tomdeclaration.types.Declaration )decl).getAstName() , tom_SlotName.getString(), var) ) ) , tom.engine.adt.code.types.bqterm.EmptyComposite.make() ) );
+tom_append_list_Composite(composite, tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeBQTerm.make( tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make( tom.engine.adt.tomexpression.types.expression.GetSlot.make(TomBase.getSlotType(symbol,tom_SlotName),  (( tom.engine.adt.tomdeclaration.types.Declaration )((Object)decl)).getAstName() , tom_SlotName.getString(), var) ) ) , tom.engine.adt.code.types.bqterm.EmptyComposite.make() ) );
 if(i < arity-1) {
 composite = 
-tom_append_list_Composite(composite, tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.tomsignature.types.targetlanguage.ITL.make(",") ) , tom.engine.adt.code.types.bqterm.EmptyComposite.make() ) );
+tom_append_list_Composite(composite, tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.code.types.targetlanguage.ITL.make(",") ) , tom.engine.adt.code.types.bqterm.EmptyComposite.make() ) );
 }
 
 
+}
 }
 }
 
@@ -829,7 +841,7 @@ tom_append_list_Composite(composite, tom.engine.adt.code.types.bqterm.ConsCompos
 pairNameDeclList = pairNameDeclList.getTailconcPairNameDecl();
 }
 composite = 
-tom_append_list_Composite(composite, tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.tomsignature.types.targetlanguage.ITL.make("};") ) , tom.engine.adt.code.types.bqterm.EmptyComposite.make() ) );
+tom_append_list_Composite(composite, tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.code.types.targetlanguage.ITL.make("};") ) , tom.engine.adt.code.types.bqterm.EmptyComposite.make() ) );
 Instruction inst = 
  tom.engine.adt.tominstruction.types.instruction.If.make( tom.engine.adt.tomexpression.types.expression.IsFsym.make(tom_symbolName, var) ,  tom.engine.adt.tominstruction.types.instruction.CodeToInstruction.make( tom.engine.adt.code.types.code.BQTermToCode.make(composite) ) ,  tom.engine.adt.tominstruction.types.instruction.Nop.make() ) ;
 instructionsForSort = 
@@ -837,6 +849,8 @@ tom_append_list_concInstruction(instructionsForSort, tom.engine.adt.tominstructi
 }
 
 
+}
+}
 }
 }
 }
@@ -853,6 +867,7 @@ tom_append_list_concInstruction(instructions, tom.engine.adt.tominstruction.type
 
 }
 }
+}
 
 }
 
@@ -861,7 +876,7 @@ tom_append_list_concInstruction(instructions, tom.engine.adt.tominstruction.type
 }
 //default case: return null
 instructions = 
-tom_append_list_concInstruction(instructions, tom.engine.adt.tominstruction.types.instructionlist.ConsconcInstruction.make( tom.engine.adt.tominstruction.types.instruction.Return.make( tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.tomsignature.types.targetlanguage.ITL.make("null") ) , tom.engine.adt.code.types.bqterm.EmptyComposite.make() ) ) , tom.engine.adt.tominstruction.types.instructionlist.EmptyconcInstruction.make() ) );
+tom_append_list_concInstruction(instructions, tom.engine.adt.tominstruction.types.instructionlist.ConsconcInstruction.make( tom.engine.adt.tominstruction.types.instruction.Return.make( tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.code.types.targetlanguage.ITL.make("null") ) , tom.engine.adt.code.types.bqterm.EmptyComposite.make() ) ) , tom.engine.adt.tominstruction.types.instructionlist.EmptyconcInstruction.make() ) );
 l = 
  tom.engine.adt.tomdeclaration.types.declarationlist.ConsconcDeclaration.make( tom.engine.adt.tomdeclaration.types.declaration.MethodDef.make( tom.engine.adt.tomname.types.tomname.Name.make(funcName) ,  tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make(objectVar, tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() ) , objectArrayType,  tom.engine.adt.tomtype.types.tomtype.EmptyType.make() ,  tom.engine.adt.tominstruction.types.instruction.AbstractBlock.make(instructions) ) ,tom_append_list_concDeclaration(l, tom.engine.adt.tomdeclaration.types.declarationlist.EmptyconcDeclaration.make() )) ;
 
@@ -879,9 +894,10 @@ InstructionList instructionsForSort =
 
 {
 {
-if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {
-if ( ((( tom.engine.adt.tomtype.types.TomType )type) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {
- String  tom_typeName= (( tom.engine.adt.tomtype.types.TomType )type).getTomType() ;
+if ( (((Object)type) instanceof tom.engine.adt.tomtype.types.TomType) ) {
+if ( ((( tom.engine.adt.tomtype.types.TomType )((Object)type)) instanceof tom.engine.adt.tomtype.types.TomType) ) {
+if ( ((( tom.engine.adt.tomtype.types.TomType )(( tom.engine.adt.tomtype.types.TomType )((Object)type))) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {
+ String  tom_typeName= (( tom.engine.adt.tomtype.types.TomType )((Object)type)).getTomType() ;
 
 if(! symbolTable.isBuiltinType(
 tom_typeName)) {
@@ -892,31 +908,34 @@ for (TomSymbol symbol:list) {
 
 {
 {
-if ( (symbol instanceof tom.engine.adt.tomsignature.types.TomSymbol) ) {
-if ( ((( tom.engine.adt.tomsignature.types.TomSymbol )symbol) instanceof tom.engine.adt.tomsignature.types.tomsymbol.Symbol) ) {
- tom.engine.adt.tomname.types.TomName  tom_symbolName= (( tom.engine.adt.tomsignature.types.TomSymbol )symbol).getAstName() ;
- tom.engine.adt.tomtype.types.TomType  tom_TypesToType= (( tom.engine.adt.tomsignature.types.TomSymbol )symbol).getTypesToType() ;
+if ( (((Object)symbol) instanceof tom.engine.adt.tomsignature.types.TomSymbol) ) {
+if ( ((( tom.engine.adt.tomsignature.types.TomSymbol )((Object)symbol)) instanceof tom.engine.adt.tomsignature.types.TomSymbol) ) {
+if ( ((( tom.engine.adt.tomsignature.types.TomSymbol )(( tom.engine.adt.tomsignature.types.TomSymbol )((Object)symbol))) instanceof tom.engine.adt.tomsignature.types.tomsymbol.Symbol) ) {
+ tom.engine.adt.tomname.types.TomName  tom_symbolName= (( tom.engine.adt.tomsignature.types.TomSymbol )((Object)symbol)).getAstName() ;
+ tom.engine.adt.tomtype.types.TomType  tom_TypesToType= (( tom.engine.adt.tomsignature.types.TomSymbol )((Object)symbol)).getTypesToType() ;
 
 if (TomBase.isListOperator(symbol)) {
 
 {
 {
-if ( (tom_TypesToType instanceof tom.engine.adt.tomtype.types.TomType) ) {
-if ( ((( tom.engine.adt.tomtype.types.TomType )tom_TypesToType) instanceof tom.engine.adt.tomtype.types.tomtype.TypesToType) ) {
- tom.engine.adt.tomtype.types.TomTypeList  tomMatch242_1= (( tom.engine.adt.tomtype.types.TomType )tom_TypesToType).getDomain() ;
-if ( ((tomMatch242_1 instanceof tom.engine.adt.tomtype.types.tomtypelist.ConsconcTomType) || (tomMatch242_1 instanceof tom.engine.adt.tomtype.types.tomtypelist.EmptyconcTomType)) ) {
-if (!( tomMatch242_1.isEmptyconcTomType() )) {
-if (  tomMatch242_1.getTailconcTomType() .isEmptyconcTomType() ) {
+if ( (((Object)tom_TypesToType) instanceof tom.engine.adt.tomtype.types.TomType) ) {
+if ( ((( tom.engine.adt.tomtype.types.TomType )((Object)tom_TypesToType)) instanceof tom.engine.adt.tomtype.types.TomType) ) {
+if ( ((( tom.engine.adt.tomtype.types.TomType )(( tom.engine.adt.tomtype.types.TomType )((Object)tom_TypesToType))) instanceof tom.engine.adt.tomtype.types.tomtype.TypesToType) ) {
+ tom.engine.adt.tomtype.types.TomTypeList  tomMatch250_1= (( tom.engine.adt.tomtype.types.TomType )((Object)tom_TypesToType)).getDomain() ;
+if ( (((( tom.engine.adt.tomtype.types.TomTypeList )tomMatch250_1) instanceof tom.engine.adt.tomtype.types.tomtypelist.ConsconcTomType) || ((( tom.engine.adt.tomtype.types.TomTypeList )tomMatch250_1) instanceof tom.engine.adt.tomtype.types.tomtypelist.EmptyconcTomType)) ) {
+if (!( tomMatch250_1.isEmptyconcTomType() )) {
+if (  tomMatch250_1.getTailconcTomType() .isEmptyconcTomType() ) {
 
 Instruction inst = 
 
- tom.engine.adt.tominstruction.types.instruction.If.make( tom.engine.adt.tomexpression.types.expression.IsFsym.make(tom_symbolName, var) ,  tom.engine.adt.tominstruction.types.instruction.If.make( tom.engine.adt.tomexpression.types.expression.BQTermToExpression.make( tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.tomsignature.types.targetlanguage.ITL.make("children.length==0") ) , tom.engine.adt.code.types.bqterm.EmptyComposite.make() ) ) ,  tom.engine.adt.tominstruction.types.instruction.Return.make( tom.engine.adt.code.types.bqterm.BuildEmptyList.make(tom_symbolName) ) ,  tom.engine.adt.tominstruction.types.instruction.Return.make( tom.engine.adt.code.types.bqterm.BuildConsList.make(tom_symbolName,  tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make( tom.engine.adt.tomexpression.types.expression.Cast.make( tomMatch242_1.getHeadconcTomType() ,  tom.engine.adt.tomexpression.types.expression.BQTermToExpression.make( tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.tomsignature.types.targetlanguage.ITL.make("children[0]") ) , tom.engine.adt.code.types.bqterm.EmptyComposite.make() ) ) ) ) ,  tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make( tom.engine.adt.tomexpression.types.expression.Cast.make(type,  tom.engine.adt.tomexpression.types.expression.BQTermToExpression.make( tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.tomsignature.types.targetlanguage.ITL.make("children[1]") ) , tom.engine.adt.code.types.bqterm.EmptyComposite.make() ) ) ) ) ) ) 
+ tom.engine.adt.tominstruction.types.instruction.If.make( tom.engine.adt.tomexpression.types.expression.IsFsym.make(tom_symbolName, var) ,  tom.engine.adt.tominstruction.types.instruction.If.make( tom.engine.adt.tomexpression.types.expression.BQTermToExpression.make( tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.code.types.targetlanguage.ITL.make("children.length==0") ) , tom.engine.adt.code.types.bqterm.EmptyComposite.make() ) ) ,  tom.engine.adt.tominstruction.types.instruction.Return.make( tom.engine.adt.code.types.bqterm.BuildEmptyList.make(tom_symbolName) ) ,  tom.engine.adt.tominstruction.types.instruction.Return.make( tom.engine.adt.code.types.bqterm.BuildConsList.make(tom_symbolName,  tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make( tom.engine.adt.tomexpression.types.expression.Cast.make( tomMatch250_1.getHeadconcTomType() ,  tom.engine.adt.tomexpression.types.expression.BQTermToExpression.make( tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.code.types.targetlanguage.ITL.make("children[0]") ) , tom.engine.adt.code.types.bqterm.EmptyComposite.make() ) ) ) ) ,  tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make( tom.engine.adt.tomexpression.types.expression.Cast.make(type,  tom.engine.adt.tomexpression.types.expression.BQTermToExpression.make( tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.code.types.targetlanguage.ITL.make("children[1]") ) , tom.engine.adt.code.types.bqterm.EmptyComposite.make() ) ) ) ) ) ) 
                                       ) 
                                     ,  tom.engine.adt.tominstruction.types.instruction.Nop.make() ) ;
 instructionsForSort = 
 tom_append_list_concInstruction(instructionsForSort, tom.engine.adt.tominstruction.types.instructionlist.ConsconcInstruction.make(inst, tom.engine.adt.tominstruction.types.instructionlist.EmptyconcInstruction.make() ) );
 
 
+}
 }
 }
 }
@@ -932,22 +951,24 @@ tom_append_list_concInstruction(instructionsForSort, tom.engine.adt.tominstructi
 
 {
 {
-if ( (tom_TypesToType instanceof tom.engine.adt.tomtype.types.TomType) ) {
-if ( ((( tom.engine.adt.tomtype.types.TomType )tom_TypesToType) instanceof tom.engine.adt.tomtype.types.tomtype.TypesToType) ) {
- tom.engine.adt.tomtype.types.TomTypeList  tomMatch243_1= (( tom.engine.adt.tomtype.types.TomType )tom_TypesToType).getDomain() ;
-if ( ((tomMatch243_1 instanceof tom.engine.adt.tomtype.types.tomtypelist.ConsconcTomType) || (tomMatch243_1 instanceof tom.engine.adt.tomtype.types.tomtypelist.EmptyconcTomType)) ) {
-if (!( tomMatch243_1.isEmptyconcTomType() )) {
-if (  tomMatch243_1.getTailconcTomType() .isEmptyconcTomType() ) {
+if ( (((Object)tom_TypesToType) instanceof tom.engine.adt.tomtype.types.TomType) ) {
+if ( ((( tom.engine.adt.tomtype.types.TomType )((Object)tom_TypesToType)) instanceof tom.engine.adt.tomtype.types.TomType) ) {
+if ( ((( tom.engine.adt.tomtype.types.TomType )(( tom.engine.adt.tomtype.types.TomType )((Object)tom_TypesToType))) instanceof tom.engine.adt.tomtype.types.tomtype.TypesToType) ) {
+ tom.engine.adt.tomtype.types.TomTypeList  tomMatch251_1= (( tom.engine.adt.tomtype.types.TomType )((Object)tom_TypesToType)).getDomain() ;
+if ( (((( tom.engine.adt.tomtype.types.TomTypeList )tomMatch251_1) instanceof tom.engine.adt.tomtype.types.tomtypelist.ConsconcTomType) || ((( tom.engine.adt.tomtype.types.TomTypeList )tomMatch251_1) instanceof tom.engine.adt.tomtype.types.tomtypelist.EmptyconcTomType)) ) {
+if (!( tomMatch251_1.isEmptyconcTomType() )) {
+if (  tomMatch251_1.getTailconcTomType() .isEmptyconcTomType() ) {
 
 Instruction inst = 
 
- tom.engine.adt.tominstruction.types.instruction.If.make( tom.engine.adt.tomexpression.types.expression.IsFsym.make(tom_symbolName, var) ,  tom.engine.adt.tominstruction.types.instruction.If.make( tom.engine.adt.tomexpression.types.expression.BQTermToExpression.make( tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.tomsignature.types.targetlanguage.ITL.make("children.length==0") ) , tom.engine.adt.code.types.bqterm.EmptyComposite.make() ) ) ,  tom.engine.adt.tominstruction.types.instruction.Return.make( tom.engine.adt.code.types.bqterm.BuildEmptyArray.make(tom_symbolName,  tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make( tom.engine.adt.tomexpression.types.expression.Integer.make(0) ) ) ) ,  tom.engine.adt.tominstruction.types.instruction.Return.make( tom.engine.adt.code.types.bqterm.BuildConsArray.make(tom_symbolName,  tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make( tom.engine.adt.tomexpression.types.expression.Cast.make( tomMatch243_1.getHeadconcTomType() ,  tom.engine.adt.tomexpression.types.expression.BQTermToExpression.make( tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.tomsignature.types.targetlanguage.ITL.make("children[0]") ) , tom.engine.adt.code.types.bqterm.EmptyComposite.make() ) ) ) ) ,  tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make( tom.engine.adt.tomexpression.types.expression.Cast.make(type,  tom.engine.adt.tomexpression.types.expression.BQTermToExpression.make( tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.tomsignature.types.targetlanguage.ITL.make("children[1]") ) , tom.engine.adt.code.types.bqterm.EmptyComposite.make() ) ) ) ) 
+ tom.engine.adt.tominstruction.types.instruction.If.make( tom.engine.adt.tomexpression.types.expression.IsFsym.make(tom_symbolName, var) ,  tom.engine.adt.tominstruction.types.instruction.If.make( tom.engine.adt.tomexpression.types.expression.BQTermToExpression.make( tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.code.types.targetlanguage.ITL.make("children.length==0") ) , tom.engine.adt.code.types.bqterm.EmptyComposite.make() ) ) ,  tom.engine.adt.tominstruction.types.instruction.Return.make( tom.engine.adt.code.types.bqterm.BuildEmptyArray.make(tom_symbolName,  tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make( tom.engine.adt.tomexpression.types.expression.Integer.make(0) ) ) ) ,  tom.engine.adt.tominstruction.types.instruction.Return.make( tom.engine.adt.code.types.bqterm.BuildConsArray.make(tom_symbolName,  tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make( tom.engine.adt.tomexpression.types.expression.Cast.make( tomMatch251_1.getHeadconcTomType() ,  tom.engine.adt.tomexpression.types.expression.BQTermToExpression.make( tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.code.types.targetlanguage.ITL.make("children[0]") ) , tom.engine.adt.code.types.bqterm.EmptyComposite.make() ) ) ) ) ,  tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make( tom.engine.adt.tomexpression.types.expression.Cast.make(type,  tom.engine.adt.tomexpression.types.expression.BQTermToExpression.make( tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.code.types.targetlanguage.ITL.make("children[1]") ) , tom.engine.adt.code.types.bqterm.EmptyComposite.make() ) ) ) ) 
                                           ) ) 
                                       ) ,  tom.engine.adt.tominstruction.types.instruction.Nop.make() ) ;
 instructionsForSort = 
 tom_append_list_concInstruction(instructionsForSort, tom.engine.adt.tominstruction.types.instructionlist.ConsconcInstruction.make(inst, tom.engine.adt.tominstruction.types.instructionlist.EmptyconcInstruction.make() ) );
 
 
+}
 }
 }
 }
@@ -972,10 +993,10 @@ String slotTypeName = slotType.getTomType();
 // manage builtin slots
 if(symbolTable.isBuiltinType(slotTypeName)) {
 slots = 
-tom_append_list_concBQTerm(slots, tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make( tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.tomsignature.types.targetlanguage.ITL.make("("+symbolTable.builtinToWrapper(slotTypeName)+")children["+i+"]") ) , tom.engine.adt.code.types.bqterm.EmptyComposite.make() ) , tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() ) );
+tom_append_list_concBQTerm(slots, tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make( tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.code.types.targetlanguage.ITL.make("("+symbolTable.builtinToWrapper(slotTypeName)+")children["+i+"]") ) , tom.engine.adt.code.types.bqterm.EmptyComposite.make() ) , tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() ) );
 } else {
 slots = 
-tom_append_list_concBQTerm(slots, tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make( tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make( tom.engine.adt.tomexpression.types.expression.Cast.make(slotType,  tom.engine.adt.tomexpression.types.expression.BQTermToExpression.make( tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.tomsignature.types.targetlanguage.ITL.make("children["+i+"]") ) , tom.engine.adt.code.types.bqterm.EmptyComposite.make() ) ) ) ) , tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() ) );
+tom_append_list_concBQTerm(slots, tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make( tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make( tom.engine.adt.tomexpression.types.expression.Cast.make(slotType,  tom.engine.adt.tomexpression.types.expression.BQTermToExpression.make( tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.code.types.targetlanguage.ITL.make("children["+i+"]") ) , tom.engine.adt.code.types.bqterm.EmptyComposite.make() ) ) ) ) , tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() ) );
 }
 pairNameDeclList = pairNameDeclList.getTailconcPairNameDecl();
 }
@@ -986,6 +1007,7 @@ tom_append_list_concInstruction(instructionsForSort, tom.engine.adt.tominstructi
 }
 
 
+}
 }
 }
 
@@ -1000,6 +1022,7 @@ tom_append_list_concInstruction(instructions, tom.engine.adt.tominstruction.type
 }
 
 
+}
 }
 }
 
@@ -1020,7 +1043,7 @@ l =
 */
 funcName = "getChildAt";//function name
 l = 
- tom.engine.adt.tomdeclaration.types.declarationlist.ConsconcDeclaration.make( tom.engine.adt.tomdeclaration.types.declaration.MethodDef.make( tom.engine.adt.tomname.types.tomname.Name.make(funcName) ,  tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make(objectVar, tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make(intVar, tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() ) ) , objectType,  tom.engine.adt.tomtype.types.tomtype.EmptyType.make() ,  tom.engine.adt.tominstruction.types.instruction.Return.make( tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.tomsignature.types.targetlanguage.ITL.make("getChildren(o)[i]") ) , tom.engine.adt.code.types.bqterm.EmptyComposite.make() ) ) ) ,tom_append_list_concDeclaration(l, tom.engine.adt.tomdeclaration.types.declarationlist.EmptyconcDeclaration.make() )) ;
+ tom.engine.adt.tomdeclaration.types.declarationlist.ConsconcDeclaration.make( tom.engine.adt.tomdeclaration.types.declaration.MethodDef.make( tom.engine.adt.tomname.types.tomname.Name.make(funcName) ,  tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make(objectVar, tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make(intVar, tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() ) ) , objectType,  tom.engine.adt.tomtype.types.tomtype.EmptyType.make() ,  tom.engine.adt.tominstruction.types.instruction.Return.make( tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.code.types.targetlanguage.ITL.make("getChildren(o)[i]") ) , tom.engine.adt.code.types.bqterm.EmptyComposite.make() ) ) ) ,tom_append_list_concDeclaration(l, tom.engine.adt.tomdeclaration.types.declarationlist.EmptyconcDeclaration.make() )) ;
 
 /**
 * generate code for:
@@ -1030,7 +1053,7 @@ funcName = "setChildAt";//function name
 String code = 
 "\n            Object[] newChildren = getChildren(o);\n            newChildren[i] = child;\n            return setChildren(o, newChildren);\n          ";
 l = 
- tom.engine.adt.tomdeclaration.types.declarationlist.ConsconcDeclaration.make( tom.engine.adt.tomdeclaration.types.declaration.MethodDef.make( tom.engine.adt.tomname.types.tomname.Name.make(funcName) ,  tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make(objectVar, tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make(intVar, tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make(childVar, tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() ) ) ) , objectType,  tom.engine.adt.tomtype.types.tomtype.EmptyType.make() ,  tom.engine.adt.tominstruction.types.instruction.CodeToInstruction.make( tom.engine.adt.code.types.code.TargetLanguageToCode.make( tom.engine.adt.tomsignature.types.targetlanguage.ITL.make(code) ) ) ) ,tom_append_list_concDeclaration(l, tom.engine.adt.tomdeclaration.types.declarationlist.EmptyconcDeclaration.make() )) ;
+ tom.engine.adt.tomdeclaration.types.declarationlist.ConsconcDeclaration.make( tom.engine.adt.tomdeclaration.types.declaration.MethodDef.make( tom.engine.adt.tomname.types.tomname.Name.make(funcName) ,  tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make(objectVar, tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make(intVar, tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make(childVar, tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() ) ) ) , objectType,  tom.engine.adt.tomtype.types.tomtype.EmptyType.make() ,  tom.engine.adt.tominstruction.types.instruction.CodeToInstruction.make( tom.engine.adt.code.types.code.TargetLanguageToCode.make( tom.engine.adt.code.types.targetlanguage.ITL.make(code) ) ) ) ,tom_append_list_concDeclaration(l, tom.engine.adt.tomdeclaration.types.declarationlist.EmptyconcDeclaration.make() )) ;
 introspectorClass = 
  tom.engine.adt.tomdeclaration.types.declaration.IntrospectorClass.make( tom.engine.adt.tomname.types.tomname.Name.make("LocalIntrospector") ,  tom.engine.adt.tomdeclaration.types.declaration.AbstractDecl.make(l) ) ;
 }
@@ -1044,22 +1067,24 @@ HashMap<TomType,String> dispatchInfo = new HashMap<TomType,String>(); // contain
 
 {
 {
-if ( (tom_visitList instanceof tom.engine.adt.tomsignature.types.TomVisitList) ) {
-if ( (((( tom.engine.adt.tomsignature.types.TomVisitList )tom_visitList) instanceof tom.engine.adt.tomsignature.types.tomvisitlist.ConsconcTomVisit) || ((( tom.engine.adt.tomsignature.types.TomVisitList )tom_visitList) instanceof tom.engine.adt.tomsignature.types.tomvisitlist.EmptyconcTomVisit)) ) {
- tom.engine.adt.tomsignature.types.TomVisitList  tomMatch244__end__4=(( tom.engine.adt.tomsignature.types.TomVisitList )tom_visitList);
+if ( (((Object)tom_visitList) instanceof tom.engine.adt.tomsignature.types.TomVisitList) ) {
+if ( (((( tom.engine.adt.tomsignature.types.TomVisitList )(( tom.engine.adt.tomsignature.types.TomVisitList )((Object)tom_visitList))) instanceof tom.engine.adt.tomsignature.types.tomvisitlist.ConsconcTomVisit) || ((( tom.engine.adt.tomsignature.types.TomVisitList )(( tom.engine.adt.tomsignature.types.TomVisitList )((Object)tom_visitList))) instanceof tom.engine.adt.tomsignature.types.tomvisitlist.EmptyconcTomVisit)) ) {
+ tom.engine.adt.tomsignature.types.TomVisitList  tomMatch252__end__4=(( tom.engine.adt.tomsignature.types.TomVisitList )((Object)tom_visitList));
 do {
 {
-if (!( tomMatch244__end__4.isEmptyconcTomVisit() )) {
- tom.engine.adt.tomsignature.types.TomVisit  tomMatch244_10= tomMatch244__end__4.getHeadconcTomVisit() ;
-if ( (tomMatch244_10 instanceof tom.engine.adt.tomsignature.types.tomvisit.VisitTerm) ) {
- tom.engine.adt.tomtype.types.TomType  tomMatch244_7= tomMatch244_10.getVNode() ;
-if ( (tomMatch244_7 instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {
- tom.engine.adt.tomtype.types.TomType  tom_vType=tomMatch244_7;
+if (!( tomMatch252__end__4.isEmptyconcTomVisit() )) {
+ tom.engine.adt.tomsignature.types.TomVisit  tomMatch252_10= tomMatch252__end__4.getHeadconcTomVisit() ;
+if ( (tomMatch252_10 instanceof tom.engine.adt.tomsignature.types.TomVisit) ) {
+if ( ((( tom.engine.adt.tomsignature.types.TomVisit )tomMatch252_10) instanceof tom.engine.adt.tomsignature.types.tomvisit.VisitTerm) ) {
+ tom.engine.adt.tomtype.types.TomType  tomMatch252_7= tomMatch252_10.getVNode() ;
+if ( (tomMatch252_7 instanceof tom.engine.adt.tomtype.types.TomType) ) {
+if ( ((( tom.engine.adt.tomtype.types.TomType )tomMatch252_7) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {
+ tom.engine.adt.tomtype.types.TomType  tom_vType=tomMatch252_7;
 
 BQTerm arg = 
  tom.engine.adt.code.types.bqterm.BQVariable.make( tom.engine.adt.tomoption.types.optionlist.ConsconcOption.make(tom_orgTrack, tom.engine.adt.tomoption.types.optionlist.EmptyconcOption.make() ) ,  tom.engine.adt.tomname.types.tomname.Name.make("tom__arg") , tom_vType) ;//arg subjectList
 String funcName = "visit_" + 
- tomMatch244_7.getTomType() ; // function name
+ tomMatch252_7.getTomType() ; // function name
 BQTermList subjectListAST = 
  tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make(arg, tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make(introspectorVar, tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() ) ) ;
 //return default strategy.visitLight(arg)
@@ -1067,7 +1092,7 @@ BQTermList subjectListAST =
 Instruction returnStatement = 
  tom.engine.adt.tominstruction.types.instruction.Return.make( tom.engine.adt.code.types.bqterm.FunctionCall.make( tom.engine.adt.tomname.types.tomname.Name.make("_" + funcName) , tom_vType, subjectListAST) ) ;
 Instruction matchStatement = 
- tom.engine.adt.tominstruction.types.instruction.Match.make( tomMatch244_10.getAstConstraintInstructionList() ,  tom.engine.adt.tomoption.types.optionlist.ConsconcOption.make(tom_orgTrack, tom.engine.adt.tomoption.types.optionlist.EmptyconcOption.make() ) ) ;
+ tom.engine.adt.tominstruction.types.instruction.Match.make( tomMatch252_10.getAstConstraintInstructionList() ,  tom.engine.adt.tomoption.types.optionlist.ConsconcOption.make(tom_orgTrack, tom.engine.adt.tomoption.types.optionlist.EmptyconcOption.make() ) ) ;
 InstructionList instructions = 
  tom.engine.adt.tominstruction.types.instructionlist.ConsconcInstruction.make(matchStatement, tom.engine.adt.tominstruction.types.instructionlist.ConsconcInstruction.make(returnStatement, tom.engine.adt.tominstruction.types.instructionlist.EmptyconcInstruction.make() ) ) ;
 l = 
@@ -1079,14 +1104,16 @@ tom_vType,funcName);
 }
 }
 }
-if ( tomMatch244__end__4.isEmptyconcTomVisit() ) {
-tomMatch244__end__4=(( tom.engine.adt.tomsignature.types.TomVisitList )tom_visitList);
+}
+}
+if ( tomMatch252__end__4.isEmptyconcTomVisit() ) {
+tomMatch252__end__4=(( tom.engine.adt.tomsignature.types.TomVisitList )((Object)tom_visitList));
 } else {
-tomMatch244__end__4= tomMatch244__end__4.getTailconcTomVisit() ;
+tomMatch252__end__4= tomMatch252__end__4.getTailconcTomVisit() ;
 }
 
 }
-} while(!( (tomMatch244__end__4==(( tom.engine.adt.tomsignature.types.TomVisitList )tom_visitList)) ));
+} while(!( (tomMatch252__end__4==(( tom.engine.adt.tomsignature.types.TomVisitList )((Object)tom_visitList))) ));
 }
 }
 
@@ -1145,9 +1172,9 @@ BQTerm arg =
 BQTerm environmentVar = 
  tom.engine.adt.code.types.bqterm.BQVariable.make( tom.engine.adt.tomoption.types.optionlist.ConsconcOption.make(tom_orgTrack, tom.engine.adt.tomoption.types.optionlist.EmptyconcOption.make() ) ,  tom.engine.adt.tomname.types.tomname.Name.make("environment") ,  tom.engine.adt.tomtype.types.tomtype.EmptyType.make() ) ;
 Instruction return1 = 
- tom.engine.adt.tominstruction.types.instruction.Return.make( tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make( tom.engine.adt.tomexpression.types.expression.Cast.make(type,  tom.engine.adt.tomexpression.types.expression.TomInstructionToExpression.make( tom.engine.adt.tominstruction.types.instruction.CodeToInstruction.make( tom.engine.adt.code.types.code.TargetLanguageToCode.make( tom.engine.adt.tomsignature.types.targetlanguage.ITL.make("any.visit(environment,introspector)") ) ) ) ) ) ) ;
+ tom.engine.adt.tominstruction.types.instruction.Return.make( tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make( tom.engine.adt.tomexpression.types.expression.Cast.make(type,  tom.engine.adt.tomexpression.types.expression.TomInstructionToExpression.make( tom.engine.adt.tominstruction.types.instruction.CodeToInstruction.make( tom.engine.adt.code.types.code.TargetLanguageToCode.make( tom.engine.adt.code.types.targetlanguage.ITL.make("any.visit(environment,introspector)") ) ) ) ) ) ) ;
 Instruction return2 = 
- tom.engine.adt.tominstruction.types.instruction.Return.make( tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.tomsignature.types.targetlanguage.ITL.make("any.visitLight(arg,introspector)") ) , tom.engine.adt.code.types.bqterm.EmptyComposite.make() ) ) ;
+ tom.engine.adt.tominstruction.types.instruction.Return.make( tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.code.types.targetlanguage.ITL.make("any.visitLight(arg,introspector)") ) , tom.engine.adt.code.types.bqterm.EmptyComposite.make() ) ) ;
 testEnvNotNull = 
  tom.engine.adt.tomexpression.types.expression.Negation.make( tom.engine.adt.tomexpression.types.expression.EqualTerm.make(expander.getStreamManager().getSymbolTable().getBooleanType(),  tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make( tom.engine.adt.tomexpression.types.expression.Bottom.make( tom.engine.adt.tomtype.types.tomtype.Type.make( tom.engine.adt.tomtype.types.typeoptionlist.EmptyconcTypeOption.make() , "Object",  tom.engine.adt.tomtype.types.targetlanguagetype.EmptyTargetLanguageType.make() ) ) ) , TomBase.convertFromBQVarToVar(environmentVar)) ) ;
 Instruction ifThenElse = 
@@ -1156,15 +1183,16 @@ l =
  tom.engine.adt.tomdeclaration.types.declarationlist.ConsconcDeclaration.make( tom.engine.adt.tomdeclaration.types.declaration.MethodDef.make( tom.engine.adt.tomname.types.tomname.Name.make("_" + dispatchInfo.get(type)) ,  tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make(arg, tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make(introspectorVar, tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() ) ) , type, visitfailureType, ifThenElse) ,tom_append_list_concDeclaration(l, tom.engine.adt.tomdeclaration.types.declarationlist.EmptyconcDeclaration.make() )) ;
 }
 ifList = 
-tom_append_list_concInstruction(ifList, tom.engine.adt.tominstruction.types.instructionlist.ConsconcInstruction.make( tom.engine.adt.tominstruction.types.instruction.If.make(testEnvNotNull,  tom.engine.adt.tominstruction.types.instruction.Return.make( tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make( tom.engine.adt.tomexpression.types.expression.Cast.make(genericType,  tom.engine.adt.tomexpression.types.expression.BQTermToExpression.make( tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.tomsignature.types.targetlanguage.ITL.make("any.visit(environment,introspector)") ) , tom.engine.adt.code.types.bqterm.EmptyComposite.make() ) ) ) ) ) ,  tom.engine.adt.tominstruction.types.instruction.Return.make( tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.tomsignature.types.targetlanguage.ITL.make("any.visitLight(v,introspector)") ) , tom.engine.adt.code.types.bqterm.EmptyComposite.make() ) ) ) , tom.engine.adt.tominstruction.types.instructionlist.EmptyconcInstruction.make() ) );
+tom_append_list_concInstruction(ifList, tom.engine.adt.tominstruction.types.instructionlist.ConsconcInstruction.make( tom.engine.adt.tominstruction.types.instruction.If.make(testEnvNotNull,  tom.engine.adt.tominstruction.types.instruction.Return.make( tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make( tom.engine.adt.tomexpression.types.expression.Cast.make(genericType,  tom.engine.adt.tomexpression.types.expression.BQTermToExpression.make( tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.code.types.targetlanguage.ITL.make("any.visit(environment,introspector)") ) , tom.engine.adt.code.types.bqterm.EmptyComposite.make() ) ) ) ) ) ,  tom.engine.adt.tominstruction.types.instruction.Return.make( tom.engine.adt.code.types.bqterm.ConsComposite.make( tom.engine.adt.code.types.compositemember.CompositeTL.make( tom.engine.adt.code.types.targetlanguage.ITL.make("any.visitLight(v,introspector)") ) , tom.engine.adt.code.types.bqterm.EmptyComposite.make() ) ) ) , tom.engine.adt.tominstruction.types.instructionlist.EmptyconcInstruction.make() ) );
 Declaration visitLightDeclaration = 
  tom.engine.adt.tomdeclaration.types.declaration.MethodDef.make( tom.engine.adt.tomname.types.tomname.Name.make("visitLight") ,  tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make(vVar, tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make(introspectorVar, tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() ) ) , methodparameterType, visitfailureType,  tom.engine.adt.tominstruction.types.instruction.AbstractBlock.make(ifList) ) ;
 l = 
  tom.engine.adt.tomdeclaration.types.declarationlist.ConsconcDeclaration.make(visitLightDeclaration,tom_append_list_concDeclaration(l, tom.engine.adt.tomdeclaration.types.declarationlist.EmptyconcDeclaration.make() )) ;
 return (Declaration) expander.expand(
- tom.engine.adt.tomdeclaration.types.declaration.AbstractDecl.make( tom.engine.adt.tomdeclaration.types.declarationlist.ConsconcDeclaration.make(introspectorClass, tom.engine.adt.tomdeclaration.types.declarationlist.ConsconcDeclaration.make( tom.engine.adt.tomdeclaration.types.declaration.Class.make( (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getSName() , basicStratType,  (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getExtendsTerm() ,  tom.engine.adt.tomdeclaration.types.declaration.AbstractDecl.make(l) ) , tom.engine.adt.tomdeclaration.types.declarationlist.EmptyconcDeclaration.make() ) ) ) );
+ tom.engine.adt.tomdeclaration.types.declaration.AbstractDecl.make( tom.engine.adt.tomdeclaration.types.declarationlist.ConsconcDeclaration.make(introspectorClass, tom.engine.adt.tomdeclaration.types.declarationlist.ConsconcDeclaration.make( tom.engine.adt.tomdeclaration.types.declaration.Class.make( (( tom.engine.adt.tomdeclaration.types.Declaration )((Object)tom__arg)).getSName() , basicStratType,  (( tom.engine.adt.tomdeclaration.types.Declaration )((Object)tom__arg)).getExtendsTerm() ,  tom.engine.adt.tomdeclaration.types.declaration.AbstractDecl.make(l) ) , tom.engine.adt.tomdeclaration.types.declarationlist.EmptyconcDeclaration.make() ) ) ) );
 
 
+}
 }
 }
 

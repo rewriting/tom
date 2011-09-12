@@ -358,36 +358,45 @@ new HashMap<OperatorDecl,RuleList>();
 
 {
 {
-if ( (rulelist instanceof tom.gom.adt.rule.types.RuleList) ) {
-if ( (((( tom.gom.adt.rule.types.RuleList )rulelist) instanceof tom.gom.adt.rule.types.rulelist.ConsRuleList) || ((( tom.gom.adt.rule.types.RuleList )rulelist) instanceof tom.gom.adt.rule.types.rulelist.EmptyRuleList)) ) {
- tom.gom.adt.rule.types.RuleList  tomMatch612__end__4=(( tom.gom.adt.rule.types.RuleList )rulelist);
+if ( (((Object)rulelist) instanceof tom.gom.adt.rule.types.RuleList) ) {
+if ( (((( tom.gom.adt.rule.types.RuleList )(( tom.gom.adt.rule.types.RuleList )((Object)rulelist))) instanceof tom.gom.adt.rule.types.rulelist.ConsRuleList) || ((( tom.gom.adt.rule.types.RuleList )(( tom.gom.adt.rule.types.RuleList )((Object)rulelist))) instanceof tom.gom.adt.rule.types.rulelist.EmptyRuleList)) ) {
+ tom.gom.adt.rule.types.RuleList  tomMatch638__end__4=(( tom.gom.adt.rule.types.RuleList )((Object)rulelist));
 do {
 {
-if (!( tomMatch612__end__4.isEmptyRuleList() )) {
- tom.gom.adt.rule.types.Rule  tomMatch612_8= tomMatch612__end__4.getHeadRuleList() ;
-boolean tomMatch612_11= false ;
- tom.gom.adt.rule.types.Term  tomMatch612_7= null ;
-if ( (tomMatch612_8 instanceof tom.gom.adt.rule.types.rule.Rule) ) {
+if (!( tomMatch638__end__4.isEmptyRuleList() )) {
+ tom.gom.adt.rule.types.Rule  tomMatch638_8= tomMatch638__end__4.getHeadRuleList() ;
+boolean tomMatch638_14= false ;
+ tom.gom.adt.rule.types.Rule  tomMatch638_10= null ;
+ tom.gom.adt.rule.types.Rule  tomMatch638_9= null ;
+ tom.gom.adt.rule.types.Term  tomMatch638_7= null ;
+if ( (tomMatch638_8 instanceof tom.gom.adt.rule.types.Rule) ) {
+if ( ((( tom.gom.adt.rule.types.Rule )tomMatch638_8) instanceof tom.gom.adt.rule.types.rule.Rule) ) {
 {
-tomMatch612_11= true ;
-tomMatch612_7= tomMatch612_8.getlhs() ;
+tomMatch638_14= true ;
+tomMatch638_9=tomMatch638_8;
+tomMatch638_7= tomMatch638_9.getlhs() ;
 
 }
 } else {
-if ( (tomMatch612_8 instanceof tom.gom.adt.rule.types.rule.ConditionalRule) ) {
+if ( (tomMatch638_8 instanceof tom.gom.adt.rule.types.Rule) ) {
+if ( ((( tom.gom.adt.rule.types.Rule )tomMatch638_8) instanceof tom.gom.adt.rule.types.rule.ConditionalRule) ) {
 {
-tomMatch612_11= true ;
-tomMatch612_7= tomMatch612_8.getlhs() ;
+tomMatch638_14= true ;
+tomMatch638_10=tomMatch638_8;
+tomMatch638_7= tomMatch638_10.getlhs() ;
 
 }
 }
 }
-if (tomMatch612_11) {
-if ( (tomMatch612_7 instanceof tom.gom.adt.rule.types.term.Appl) ) {
- tom.gom.adt.rule.types.Rule  tom_rl= tomMatch612__end__4.getHeadRuleList() ;
+}
+}
+if (tomMatch638_14) {
+if ( (tomMatch638_7 instanceof tom.gom.adt.rule.types.Term) ) {
+if ( ((( tom.gom.adt.rule.types.Term )tomMatch638_7) instanceof tom.gom.adt.rule.types.term.Appl) ) {
+ tom.gom.adt.rule.types.Rule  tom_rl= tomMatch638__end__4.getHeadRuleList() ;
 
 OperatorDecl decl = getOperatorDecl(
- tomMatch612_7.getsymbol() );
+ tomMatch638_7.getsymbol() );
 if (null != decl) {
 RuleList rules = rulesForOperator.get(decl);
 if (null == rules) {
@@ -406,16 +415,17 @@ GomMessage.discardRuleWarning, /*XXX:prettyprint*/
 
 }
 }
+}
 
 }
-if ( tomMatch612__end__4.isEmptyRuleList() ) {
-tomMatch612__end__4=(( tom.gom.adt.rule.types.RuleList )rulelist);
+if ( tomMatch638__end__4.isEmptyRuleList() ) {
+tomMatch638__end__4=(( tom.gom.adt.rule.types.RuleList )((Object)rulelist));
 } else {
-tomMatch612__end__4= tomMatch612__end__4.getTailRuleList() ;
+tomMatch638__end__4= tomMatch638__end__4.getTailRuleList() ;
 }
 
 }
-} while(!( (tomMatch612__end__4==(( tom.gom.adt.rule.types.RuleList )rulelist)) ));
+} while(!( (tomMatch638__end__4==(( tom.gom.adt.rule.types.RuleList )((Object)rulelist))) ));
 }
 }
 
@@ -429,11 +439,12 @@ TypedProduction prod = opDecl.getProd();
 
 {
 {
-if ( (prod instanceof tom.gom.adt.gom.types.TypedProduction) ) {
-if ( ((( tom.gom.adt.gom.types.TypedProduction )prod) instanceof tom.gom.adt.gom.types.typedproduction.Slots) ) {
+if ( (((Object)prod) instanceof tom.gom.adt.gom.types.TypedProduction) ) {
+if ( ((( tom.gom.adt.gom.types.TypedProduction )((Object)prod)) instanceof tom.gom.adt.gom.types.TypedProduction) ) {
+if ( ((( tom.gom.adt.gom.types.TypedProduction )(( tom.gom.adt.gom.types.TypedProduction )((Object)prod))) instanceof tom.gom.adt.gom.types.typedproduction.Slots) ) {
 
 SlotList args = opArgs(
- (( tom.gom.adt.gom.types.TypedProduction )prod).getSlots() ,1);
+ (( tom.gom.adt.gom.types.TypedProduction )((Object)prod)).getSlots() ,1);
 String hookCode =
 generateHookCode(args, rulesForOperator.get(opDecl));
 hookList =
@@ -443,11 +454,13 @@ tom_append_list_ConcHookDecl(hookList, tom.gom.adt.gom.types.hookdecllist.ConsCo
 
 }
 }
+}
 
 }
 {
-if ( (prod instanceof tom.gom.adt.gom.types.TypedProduction) ) {
-if ( ((( tom.gom.adt.gom.types.TypedProduction )prod) instanceof tom.gom.adt.gom.types.typedproduction.Variadic) ) {
+if ( (((Object)prod) instanceof tom.gom.adt.gom.types.TypedProduction) ) {
+if ( ((( tom.gom.adt.gom.types.TypedProduction )((Object)prod)) instanceof tom.gom.adt.gom.types.TypedProduction) ) {
+if ( ((( tom.gom.adt.gom.types.TypedProduction )(( tom.gom.adt.gom.types.TypedProduction )((Object)prod))) instanceof tom.gom.adt.gom.types.typedproduction.Variadic) ) {
 
 RuleList rules = rulesForOperator.get(opDecl);
 /* Handle rules for empty: there should be at least one */
@@ -456,43 +469,52 @@ RuleList nonEmptyRules = rules;
 
 {
 {
-if ( (rules instanceof tom.gom.adt.rule.types.RuleList) ) {
-if ( (((( tom.gom.adt.rule.types.RuleList )rules) instanceof tom.gom.adt.rule.types.rulelist.ConsRuleList) || ((( tom.gom.adt.rule.types.RuleList )rules) instanceof tom.gom.adt.rule.types.rulelist.EmptyRuleList)) ) {
- tom.gom.adt.rule.types.RuleList  tomMatch614__end__4=(( tom.gom.adt.rule.types.RuleList )rules);
+if ( (((Object)rules) instanceof tom.gom.adt.rule.types.RuleList) ) {
+if ( (((( tom.gom.adt.rule.types.RuleList )(( tom.gom.adt.rule.types.RuleList )((Object)rules))) instanceof tom.gom.adt.rule.types.rulelist.ConsRuleList) || ((( tom.gom.adt.rule.types.RuleList )(( tom.gom.adt.rule.types.RuleList )((Object)rules))) instanceof tom.gom.adt.rule.types.rulelist.EmptyRuleList)) ) {
+ tom.gom.adt.rule.types.RuleList  tomMatch640__end__4=(( tom.gom.adt.rule.types.RuleList )((Object)rules));
 do {
 {
-if (!( tomMatch614__end__4.isEmptyRuleList() )) {
- tom.gom.adt.rule.types.Rule  tomMatch614_8= tomMatch614__end__4.getHeadRuleList() ;
-boolean tomMatch614_12= false ;
- tom.gom.adt.rule.types.Term  tomMatch614_7= null ;
-if ( (tomMatch614_8 instanceof tom.gom.adt.rule.types.rule.Rule) ) {
+if (!( tomMatch640__end__4.isEmptyRuleList() )) {
+ tom.gom.adt.rule.types.Rule  tomMatch640_8= tomMatch640__end__4.getHeadRuleList() ;
+boolean tomMatch640_15= false ;
+ tom.gom.adt.rule.types.Rule  tomMatch640_9= null ;
+ tom.gom.adt.rule.types.Rule  tomMatch640_10= null ;
+ tom.gom.adt.rule.types.Term  tomMatch640_7= null ;
+if ( (tomMatch640_8 instanceof tom.gom.adt.rule.types.Rule) ) {
+if ( ((( tom.gom.adt.rule.types.Rule )tomMatch640_8) instanceof tom.gom.adt.rule.types.rule.Rule) ) {
 {
-tomMatch614_12= true ;
-tomMatch614_7= tomMatch614_8.getlhs() ;
+tomMatch640_15= true ;
+tomMatch640_9=tomMatch640_8;
+tomMatch640_7= tomMatch640_9.getlhs() ;
 
 }
 } else {
-if ( (tomMatch614_8 instanceof tom.gom.adt.rule.types.rule.ConditionalRule) ) {
+if ( (tomMatch640_8 instanceof tom.gom.adt.rule.types.Rule) ) {
+if ( ((( tom.gom.adt.rule.types.Rule )tomMatch640_8) instanceof tom.gom.adt.rule.types.rule.ConditionalRule) ) {
 {
-tomMatch614_12= true ;
-tomMatch614_7= tomMatch614_8.getlhs() ;
+tomMatch640_15= true ;
+tomMatch640_10=tomMatch640_8;
+tomMatch640_7= tomMatch640_10.getlhs() ;
 
 }
 }
 }
-if (tomMatch614_12) {
-if ( (tomMatch614_7 instanceof tom.gom.adt.rule.types.term.Appl) ) {
- tom.gom.adt.rule.types.TermList  tomMatch614_9= tomMatch614_7.getargs() ;
-if ( ((tomMatch614_9 instanceof tom.gom.adt.rule.types.termlist.ConsTermList) || (tomMatch614_9 instanceof tom.gom.adt.rule.types.termlist.EmptyTermList)) ) {
-if ( tomMatch614_9.isEmptyTermList() ) {
+}
+}
+if (tomMatch640_15) {
+if ( (tomMatch640_7 instanceof tom.gom.adt.rule.types.Term) ) {
+if ( ((( tom.gom.adt.rule.types.Term )tomMatch640_7) instanceof tom.gom.adt.rule.types.term.Appl) ) {
+ tom.gom.adt.rule.types.TermList  tomMatch640_11= tomMatch640_7.getargs() ;
+if ( (((( tom.gom.adt.rule.types.TermList )tomMatch640_11) instanceof tom.gom.adt.rule.types.termlist.ConsTermList) || ((( tom.gom.adt.rule.types.TermList )tomMatch640_11) instanceof tom.gom.adt.rule.types.termlist.EmptyTermList)) ) {
+if ( tomMatch640_11.isEmptyTermList() ) {
 
 count++;
 nonEmptyRules = 
-tom_append_list_RuleList(tom_get_slice_RuleList((( tom.gom.adt.rule.types.RuleList )rules),tomMatch614__end__4, tom.gom.adt.rule.types.rulelist.EmptyRuleList.make() ),tom_append_list_RuleList( tomMatch614__end__4.getTailRuleList() , tom.gom.adt.rule.types.rulelist.EmptyRuleList.make() ));
+tom_append_list_RuleList(tom_get_slice_RuleList((( tom.gom.adt.rule.types.RuleList )((Object)rules)),tomMatch640__end__4, tom.gom.adt.rule.types.rulelist.EmptyRuleList.make() ),tom_append_list_RuleList( tomMatch640__end__4.getTailRuleList() , tom.gom.adt.rule.types.rulelist.EmptyRuleList.make() ));
 String hookCode =
 generateHookCode(
  tom.gom.adt.gom.types.slotlist.EmptyConcSlot.make() ,
- tom.gom.adt.rule.types.rulelist.ConsRuleList.make( tomMatch614__end__4.getHeadRuleList() , tom.gom.adt.rule.types.rulelist.EmptyRuleList.make() ) );
+ tom.gom.adt.rule.types.rulelist.ConsRuleList.make( tomMatch640__end__4.getHeadRuleList() , tom.gom.adt.rule.types.rulelist.EmptyRuleList.make() ) );
 hookList =
 
 tom_append_list_ConcHookDecl(hookList, tom.gom.adt.gom.types.hookdecllist.ConsConcHookDecl.make( tom.gom.adt.gom.types.hookdecl.MakeHookDecl.make( tom.gom.adt.gom.types.decl.CutOperator.make(opDecl) ,  tom.gom.adt.gom.types.slotlist.EmptyConcSlot.make() ,  tom.gom.adt.code.types.code.Code.make(hookCode) ,  tom.gom.adt.gom.types.hookkind.HookKind.make("rules") ,  true ) , tom.gom.adt.gom.types.hookdecllist.EmptyConcHookDecl.make() ) );
@@ -502,16 +524,17 @@ tom_append_list_ConcHookDecl(hookList, tom.gom.adt.gom.types.hookdecllist.ConsCo
 }
 }
 }
+}
 
 }
-if ( tomMatch614__end__4.isEmptyRuleList() ) {
-tomMatch614__end__4=(( tom.gom.adt.rule.types.RuleList )rules);
+if ( tomMatch640__end__4.isEmptyRuleList() ) {
+tomMatch640__end__4=(( tom.gom.adt.rule.types.RuleList )((Object)rules));
 } else {
-tomMatch614__end__4= tomMatch614__end__4.getTailRuleList() ;
+tomMatch640__end__4= tomMatch640__end__4.getTailRuleList() ;
 }
 
 }
-} while(!( (tomMatch614__end__4==(( tom.gom.adt.rule.types.RuleList )rules)) ));
+} while(!( (tomMatch640__end__4==(( tom.gom.adt.rule.types.RuleList )((Object)rules))) ));
 }
 }
 
@@ -526,7 +549,7 @@ GomMessage.multipleRulesForEmpty, opDecl.getName());
 /* Then handle rules for insert */
 if (!nonEmptyRules.isEmptyRuleList()) {
 SlotList args = 
- tom.gom.adt.gom.types.slotlist.ConsConcSlot.make( tom.gom.adt.gom.types.slot.Slot.make("head",  (( tom.gom.adt.gom.types.TypedProduction )prod).getSort() ) , tom.gom.adt.gom.types.slotlist.ConsConcSlot.make( tom.gom.adt.gom.types.slot.Slot.make("tail", opDecl.getSort()) , tom.gom.adt.gom.types.slotlist.EmptyConcSlot.make() ) ) ;
+ tom.gom.adt.gom.types.slotlist.ConsConcSlot.make( tom.gom.adt.gom.types.slot.Slot.make("head",  (( tom.gom.adt.gom.types.TypedProduction )((Object)prod)).getSort() ) , tom.gom.adt.gom.types.slotlist.ConsConcSlot.make( tom.gom.adt.gom.types.slot.Slot.make("tail", opDecl.getSort()) , tom.gom.adt.gom.types.slotlist.EmptyConcSlot.make() ) ) ;
 String hookCode =
 generateVariadicHookCode(args, nonEmptyRules);
 hookList =
@@ -535,6 +558,7 @@ tom_append_list_ConcHookDecl(hookList, tom.gom.adt.gom.types.hookdecllist.ConsCo
 }
 
 
+}
 }
 }
 
@@ -556,36 +580,46 @@ ruleList = ruleList.getTailRuleList();
 
 {
 {
-if ( (rule instanceof tom.gom.adt.rule.types.Rule) ) {
-if ( ((( tom.gom.adt.rule.types.Rule )rule) instanceof tom.gom.adt.rule.types.rule.Rule) ) {
-if ( ( (( tom.gom.adt.rule.types.Rule )rule).getlhs()  instanceof tom.gom.adt.rule.types.term.Appl) ) {
+if ( (((Object)rule) instanceof tom.gom.adt.rule.types.Rule) ) {
+if ( ((( tom.gom.adt.rule.types.Rule )((Object)rule)) instanceof tom.gom.adt.rule.types.Rule) ) {
+if ( ((( tom.gom.adt.rule.types.Rule )(( tom.gom.adt.rule.types.Rule )((Object)rule))) instanceof tom.gom.adt.rule.types.rule.Rule) ) {
+ tom.gom.adt.rule.types.Term  tomMatch641_1= (( tom.gom.adt.rule.types.Rule )((Object)rule)).getlhs() ;
+if ( (tomMatch641_1 instanceof tom.gom.adt.rule.types.Term) ) {
+if ( ((( tom.gom.adt.rule.types.Term )tomMatch641_1) instanceof tom.gom.adt.rule.types.term.Appl) ) {
 
 output.append("    return `");
 genTerm(
- (( tom.gom.adt.rule.types.Rule )rule).getrhs() ,output);
+ (( tom.gom.adt.rule.types.Rule )((Object)rule)).getrhs() ,output);
 output.append(";\n");
 
 
 }
 }
 }
+}
+}
 
 }
 {
-if ( (rule instanceof tom.gom.adt.rule.types.Rule) ) {
-if ( ((( tom.gom.adt.rule.types.Rule )rule) instanceof tom.gom.adt.rule.types.rule.ConditionalRule) ) {
-if ( ( (( tom.gom.adt.rule.types.Rule )rule).getlhs()  instanceof tom.gom.adt.rule.types.term.Appl) ) {
+if ( (((Object)rule) instanceof tom.gom.adt.rule.types.Rule) ) {
+if ( ((( tom.gom.adt.rule.types.Rule )((Object)rule)) instanceof tom.gom.adt.rule.types.Rule) ) {
+if ( ((( tom.gom.adt.rule.types.Rule )(( tom.gom.adt.rule.types.Rule )((Object)rule))) instanceof tom.gom.adt.rule.types.rule.ConditionalRule) ) {
+ tom.gom.adt.rule.types.Term  tomMatch641_8= (( tom.gom.adt.rule.types.Rule )((Object)rule)).getlhs() ;
+if ( (tomMatch641_8 instanceof tom.gom.adt.rule.types.Term) ) {
+if ( ((( tom.gom.adt.rule.types.Term )tomMatch641_8) instanceof tom.gom.adt.rule.types.term.Appl) ) {
 
 output.append("    %match{\n");
 genCondition(
- (( tom.gom.adt.rule.types.Rule )rule).getcond() ,output);
+ (( tom.gom.adt.rule.types.Rule )((Object)rule)).getcond() ,output);
 output.append(" -> { return `");
 genTerm(
- (( tom.gom.adt.rule.types.Rule )rule).getrhs() ,output);
+ (( tom.gom.adt.rule.types.Rule )((Object)rule)).getrhs() ,output);
 output.append("; }\n");
 output.append("}\n");
 
 
+}
+}
 }
 }
 }
@@ -607,41 +641,49 @@ ruleList = ruleList.getTailRuleList();
 
 {
 {
-if ( (rule instanceof tom.gom.adt.rule.types.Rule) ) {
-if ( ((( tom.gom.adt.rule.types.Rule )rule) instanceof tom.gom.adt.rule.types.rule.Rule) ) {
- tom.gom.adt.rule.types.Term  tomMatch616_1= (( tom.gom.adt.rule.types.Rule )rule).getlhs() ;
-if ( (tomMatch616_1 instanceof tom.gom.adt.rule.types.term.Appl) ) {
+if ( (((Object)rule) instanceof tom.gom.adt.rule.types.Rule) ) {
+if ( ((( tom.gom.adt.rule.types.Rule )((Object)rule)) instanceof tom.gom.adt.rule.types.Rule) ) {
+if ( ((( tom.gom.adt.rule.types.Rule )(( tom.gom.adt.rule.types.Rule )((Object)rule))) instanceof tom.gom.adt.rule.types.rule.Rule) ) {
+ tom.gom.adt.rule.types.Term  tomMatch642_1= (( tom.gom.adt.rule.types.Rule )((Object)rule)).getlhs() ;
+if ( (tomMatch642_1 instanceof tom.gom.adt.rule.types.Term) ) {
+if ( ((( tom.gom.adt.rule.types.Term )tomMatch642_1) instanceof tom.gom.adt.rule.types.term.Appl) ) {
 
 genTermList(
- tomMatch616_1.getargs() ,output);
+ tomMatch642_1.getargs() ,output);
 output.append(" -> { return `");
 genTerm(
- (( tom.gom.adt.rule.types.Rule )rule).getrhs() ,output);
+ (( tom.gom.adt.rule.types.Rule )((Object)rule)).getrhs() ,output);
 output.append("; }\n");
 
 
+}
+}
 }
 }
 }
 
 }
 {
-if ( (rule instanceof tom.gom.adt.rule.types.Rule) ) {
-if ( ((( tom.gom.adt.rule.types.Rule )rule) instanceof tom.gom.adt.rule.types.rule.ConditionalRule) ) {
- tom.gom.adt.rule.types.Term  tomMatch616_7= (( tom.gom.adt.rule.types.Rule )rule).getlhs() ;
-if ( (tomMatch616_7 instanceof tom.gom.adt.rule.types.term.Appl) ) {
+if ( (((Object)rule) instanceof tom.gom.adt.rule.types.Rule) ) {
+if ( ((( tom.gom.adt.rule.types.Rule )((Object)rule)) instanceof tom.gom.adt.rule.types.Rule) ) {
+if ( ((( tom.gom.adt.rule.types.Rule )(( tom.gom.adt.rule.types.Rule )((Object)rule))) instanceof tom.gom.adt.rule.types.rule.ConditionalRule) ) {
+ tom.gom.adt.rule.types.Term  tomMatch642_9= (( tom.gom.adt.rule.types.Rule )((Object)rule)).getlhs() ;
+if ( (tomMatch642_9 instanceof tom.gom.adt.rule.types.Term) ) {
+if ( ((( tom.gom.adt.rule.types.Term )tomMatch642_9) instanceof tom.gom.adt.rule.types.term.Appl) ) {
 
 genTermList(
- tomMatch616_7.getargs() ,output);
+ tomMatch642_9.getargs() ,output);
 output.append(" && ");
 genCondition(
- (( tom.gom.adt.rule.types.Rule )rule).getcond() ,output);
+ (( tom.gom.adt.rule.types.Rule )((Object)rule)).getcond() ,output);
 output.append(" -> { return `");
 genTerm(
- (( tom.gom.adt.rule.types.Rule )rule).getrhs() ,output);
+ (( tom.gom.adt.rule.types.Rule )((Object)rule)).getrhs() ,output);
 output.append("; }\n");
 
 
+}
+}
 }
 }
 }
@@ -666,50 +708,75 @@ ruleList = ruleList.getTailRuleList();
 
 {
 {
-if ( (rule instanceof tom.gom.adt.rule.types.Rule) ) {
-boolean tomMatch617_11= false ;
- tom.gom.adt.rule.types.Term  tomMatch617_1= null ;
-if ( ((( tom.gom.adt.rule.types.Rule )rule) instanceof tom.gom.adt.rule.types.rule.Rule) ) {
+if ( (((Object)rule) instanceof tom.gom.adt.rule.types.Rule) ) {
+boolean tomMatch643_16= false ;
+ tom.gom.adt.rule.types.Rule  tomMatch643_3= null ;
+ tom.gom.adt.rule.types.Term  tomMatch643_1= null ;
+ tom.gom.adt.rule.types.Rule  tomMatch643_4= null ;
+if ( ((( tom.gom.adt.rule.types.Rule )((Object)rule)) instanceof tom.gom.adt.rule.types.Rule) ) {
+if ( ((( tom.gom.adt.rule.types.Rule )(( tom.gom.adt.rule.types.Rule )((Object)rule))) instanceof tom.gom.adt.rule.types.rule.Rule) ) {
 {
-tomMatch617_11= true ;
-tomMatch617_1= (( tom.gom.adt.rule.types.Rule )rule).getlhs() ;
+tomMatch643_16= true ;
+tomMatch643_3=(( tom.gom.adt.rule.types.Rule )((Object)rule));
+tomMatch643_1= tomMatch643_3.getlhs() ;
 
 }
 } else {
-if ( ((( tom.gom.adt.rule.types.Rule )rule) instanceof tom.gom.adt.rule.types.rule.ConditionalRule) ) {
+if ( ((( tom.gom.adt.rule.types.Rule )((Object)rule)) instanceof tom.gom.adt.rule.types.Rule) ) {
+if ( ((( tom.gom.adt.rule.types.Rule )(( tom.gom.adt.rule.types.Rule )((Object)rule))) instanceof tom.gom.adt.rule.types.rule.ConditionalRule) ) {
 {
-tomMatch617_11= true ;
-tomMatch617_1= (( tom.gom.adt.rule.types.Rule )rule).getlhs() ;
+tomMatch643_16= true ;
+tomMatch643_4=(( tom.gom.adt.rule.types.Rule )((Object)rule));
+tomMatch643_1= tomMatch643_4.getlhs() ;
 
 }
 }
 }
-if (tomMatch617_11) {
-if ( (tomMatch617_1 instanceof tom.gom.adt.rule.types.term.Appl) ) {
- tom.gom.adt.rule.types.TermList  tomMatch617_4= tomMatch617_1.getargs() ;
-if ( ((tomMatch617_4 instanceof tom.gom.adt.rule.types.termlist.ConsTermList) || (tomMatch617_4 instanceof tom.gom.adt.rule.types.termlist.EmptyTermList)) ) {
-if (!( tomMatch617_4.isEmptyTermList() )) {
- tom.gom.adt.rule.types.Term  tomMatch617_9= tomMatch617_4.getHeadTermList() ;
-boolean tomMatch617_10= false ;
-if ( (tomMatch617_9 instanceof tom.gom.adt.rule.types.term.UnnamedVarStar) ) {
-tomMatch617_10= true ;
+}
+}
+if (tomMatch643_16) {
+if ( (tomMatch643_1 instanceof tom.gom.adt.rule.types.Term) ) {
+if ( ((( tom.gom.adt.rule.types.Term )tomMatch643_1) instanceof tom.gom.adt.rule.types.term.Appl) ) {
+ tom.gom.adt.rule.types.TermList  tomMatch643_6= tomMatch643_1.getargs() ;
+if ( (((( tom.gom.adt.rule.types.TermList )tomMatch643_6) instanceof tom.gom.adt.rule.types.termlist.ConsTermList) || ((( tom.gom.adt.rule.types.TermList )tomMatch643_6) instanceof tom.gom.adt.rule.types.termlist.EmptyTermList)) ) {
+if (!( tomMatch643_6.isEmptyTermList() )) {
+ tom.gom.adt.rule.types.Term  tomMatch643_12= tomMatch643_6.getHeadTermList() ;
+boolean tomMatch643_15= false ;
+ tom.gom.adt.rule.types.Term  tomMatch643_14= null ;
+ tom.gom.adt.rule.types.Term  tomMatch643_13= null ;
+if ( (tomMatch643_12 instanceof tom.gom.adt.rule.types.Term) ) {
+if ( ((( tom.gom.adt.rule.types.Term )tomMatch643_12) instanceof tom.gom.adt.rule.types.term.UnnamedVarStar) ) {
+{
+tomMatch643_15= true ;
+tomMatch643_13=tomMatch643_12;
+
+}
 } else {
-if ( (tomMatch617_9 instanceof tom.gom.adt.rule.types.term.VarStar) ) {
-tomMatch617_10= true ;
+if ( (tomMatch643_12 instanceof tom.gom.adt.rule.types.Term) ) {
+if ( ((( tom.gom.adt.rule.types.Term )tomMatch643_12) instanceof tom.gom.adt.rule.types.term.VarStar) ) {
+{
+tomMatch643_15= true ;
+tomMatch643_14=tomMatch643_12;
+
 }
 }
-if (tomMatch617_10) {
- tom.gom.adt.rule.types.Term  tom_var= tomMatch617_4.getHeadTermList() ;
+}
+}
+}
+if (tomMatch643_15) {
+ tom.gom.adt.rule.types.Term  tom_var= tomMatch643_6.getHeadTermList() ;
 
 String varname = "_";
 
 {
 {
-if ( (tom_var instanceof tom.gom.adt.rule.types.Term) ) {
-if ( ((( tom.gom.adt.rule.types.Term )tom_var) instanceof tom.gom.adt.rule.types.term.VarStar) ) {
+if ( (((Object)tom_var) instanceof tom.gom.adt.rule.types.Term) ) {
+if ( ((( tom.gom.adt.rule.types.Term )((Object)tom_var)) instanceof tom.gom.adt.rule.types.Term) ) {
+if ( ((( tom.gom.adt.rule.types.Term )(( tom.gom.adt.rule.types.Term )((Object)tom_var))) instanceof tom.gom.adt.rule.types.term.VarStar) ) {
 varname = 
- (( tom.gom.adt.rule.types.Term )tom_var).getname() ; 
+ (( tom.gom.adt.rule.types.Term )((Object)tom_var)).getname() ; 
 
+}
 }
 }
 
@@ -720,11 +787,12 @@ varname =
 GomMessage.warning(getLogger(),null,0,
 GomMessage.variadicRuleStartingWithStar,
 new Object[]{
-( tomMatch617_1.getsymbol() ),varname});
+( tomMatch643_1.getsymbol() ),varname});
 
 
 }
 
+}
 }
 }
 }
@@ -737,36 +805,40 @@ new Object[]{
 }
 {
 {
-if ( (rule instanceof tom.gom.adt.rule.types.Rule) ) {
-if ( ((( tom.gom.adt.rule.types.Rule )rule) instanceof tom.gom.adt.rule.types.rule.Rule) ) {
+if ( (((Object)rule) instanceof tom.gom.adt.rule.types.Rule) ) {
+if ( ((( tom.gom.adt.rule.types.Rule )((Object)rule)) instanceof tom.gom.adt.rule.types.Rule) ) {
+if ( ((( tom.gom.adt.rule.types.Rule )(( tom.gom.adt.rule.types.Rule )((Object)rule))) instanceof tom.gom.adt.rule.types.rule.Rule) ) {
 
 genTerm(
- (( tom.gom.adt.rule.types.Rule )rule).getlhs() ,output);
+ (( tom.gom.adt.rule.types.Rule )((Object)rule)).getlhs() ,output);
 output.append(" -> { return `");
 genTerm(
- (( tom.gom.adt.rule.types.Rule )rule).getrhs() ,output);
+ (( tom.gom.adt.rule.types.Rule )((Object)rule)).getrhs() ,output);
 output.append("; }\n");
 
 
 }
 }
+}
 
 }
 {
-if ( (rule instanceof tom.gom.adt.rule.types.Rule) ) {
-if ( ((( tom.gom.adt.rule.types.Rule )rule) instanceof tom.gom.adt.rule.types.rule.ConditionalRule) ) {
+if ( (((Object)rule) instanceof tom.gom.adt.rule.types.Rule) ) {
+if ( ((( tom.gom.adt.rule.types.Rule )((Object)rule)) instanceof tom.gom.adt.rule.types.Rule) ) {
+if ( ((( tom.gom.adt.rule.types.Rule )(( tom.gom.adt.rule.types.Rule )((Object)rule))) instanceof tom.gom.adt.rule.types.rule.ConditionalRule) ) {
 
 genTerm(
- (( tom.gom.adt.rule.types.Rule )rule).getlhs() ,output);
+ (( tom.gom.adt.rule.types.Rule )((Object)rule)).getlhs() ,output);
 output.append(" && ");
 genCondition(
- (( tom.gom.adt.rule.types.Rule )rule).getcond() ,output);
+ (( tom.gom.adt.rule.types.Rule )((Object)rule)).getcond() ,output);
 output.append(" -> { return `");
 genTerm(
- (( tom.gom.adt.rule.types.Rule )rule).getrhs() ,output);
+ (( tom.gom.adt.rule.types.Rule )((Object)rule)).getrhs() ,output);
 output.append("; }\n");
 
 
+}
 }
 }
 
@@ -783,9 +855,9 @@ private void genTermList(TermList list, StringBuilder output) {
 
 {
 {
-if ( (list instanceof tom.gom.adt.rule.types.TermList) ) {
-if ( (((( tom.gom.adt.rule.types.TermList )list) instanceof tom.gom.adt.rule.types.termlist.ConsTermList) || ((( tom.gom.adt.rule.types.TermList )list) instanceof tom.gom.adt.rule.types.termlist.EmptyTermList)) ) {
-if ( (( tom.gom.adt.rule.types.TermList )list).isEmptyTermList() ) {
+if ( (((Object)list) instanceof tom.gom.adt.rule.types.TermList) ) {
+if ( (((( tom.gom.adt.rule.types.TermList )(( tom.gom.adt.rule.types.TermList )((Object)list))) instanceof tom.gom.adt.rule.types.termlist.ConsTermList) || ((( tom.gom.adt.rule.types.TermList )(( tom.gom.adt.rule.types.TermList )((Object)list))) instanceof tom.gom.adt.rule.types.termlist.EmptyTermList)) ) {
+if ( (( tom.gom.adt.rule.types.TermList )((Object)list)).isEmptyTermList() ) {
 return; 
 }
 }
@@ -793,13 +865,13 @@ return;
 
 }
 {
-if ( (list instanceof tom.gom.adt.rule.types.TermList) ) {
-if ( (((( tom.gom.adt.rule.types.TermList )list) instanceof tom.gom.adt.rule.types.termlist.ConsTermList) || ((( tom.gom.adt.rule.types.TermList )list) instanceof tom.gom.adt.rule.types.termlist.EmptyTermList)) ) {
-if (!( (( tom.gom.adt.rule.types.TermList )list).isEmptyTermList() )) {
- tom.gom.adt.rule.types.TermList  tom_t= (( tom.gom.adt.rule.types.TermList )list).getTailTermList() ;
+if ( (((Object)list) instanceof tom.gom.adt.rule.types.TermList) ) {
+if ( (((( tom.gom.adt.rule.types.TermList )(( tom.gom.adt.rule.types.TermList )((Object)list))) instanceof tom.gom.adt.rule.types.termlist.ConsTermList) || ((( tom.gom.adt.rule.types.TermList )(( tom.gom.adt.rule.types.TermList )((Object)list))) instanceof tom.gom.adt.rule.types.termlist.EmptyTermList)) ) {
+if (!( (( tom.gom.adt.rule.types.TermList )((Object)list)).isEmptyTermList() )) {
+ tom.gom.adt.rule.types.TermList  tom_t= (( tom.gom.adt.rule.types.TermList )((Object)list)).getTailTermList() ;
 
 genTerm(
- (( tom.gom.adt.rule.types.TermList )list).getHeadTermList() ,output);
+ (( tom.gom.adt.rule.types.TermList )((Object)list)).getHeadTermList() ,output);
 if (!
 tom_t.isEmptyTermList()) {
 output.append(", ");
@@ -823,114 +895,132 @@ private void genTerm(Term termArg, StringBuilder output) {
 
 {
 {
-if ( (termArg instanceof tom.gom.adt.rule.types.Term) ) {
-if ( ((( tom.gom.adt.rule.types.Term )termArg) instanceof tom.gom.adt.rule.types.term.Appl) ) {
+if ( (((Object)termArg) instanceof tom.gom.adt.rule.types.Term) ) {
+if ( ((( tom.gom.adt.rule.types.Term )((Object)termArg)) instanceof tom.gom.adt.rule.types.Term) ) {
+if ( ((( tom.gom.adt.rule.types.Term )(( tom.gom.adt.rule.types.Term )((Object)termArg))) instanceof tom.gom.adt.rule.types.term.Appl) ) {
 
 output.append(
- (( tom.gom.adt.rule.types.Term )termArg).getsymbol() );
+ (( tom.gom.adt.rule.types.Term )((Object)termArg)).getsymbol() );
 output.append("(");
 genTermList(
- (( tom.gom.adt.rule.types.Term )termArg).getargs() , output);
+ (( tom.gom.adt.rule.types.Term )((Object)termArg)).getargs() , output);
 output.append(")");
 
 
 }
 }
+}
 
 }
 {
-if ( (termArg instanceof tom.gom.adt.rule.types.Term) ) {
-if ( ((( tom.gom.adt.rule.types.Term )termArg) instanceof tom.gom.adt.rule.types.term.At) ) {
+if ( (((Object)termArg) instanceof tom.gom.adt.rule.types.Term) ) {
+if ( ((( tom.gom.adt.rule.types.Term )((Object)termArg)) instanceof tom.gom.adt.rule.types.Term) ) {
+if ( ((( tom.gom.adt.rule.types.Term )(( tom.gom.adt.rule.types.Term )((Object)termArg))) instanceof tom.gom.adt.rule.types.term.At) ) {
 
 output.append(
- (( tom.gom.adt.rule.types.Term )termArg).getname() );
+ (( tom.gom.adt.rule.types.Term )((Object)termArg)).getname() );
 output.append("@");
 genTerm(
- (( tom.gom.adt.rule.types.Term )termArg).getterm() ,output);
+ (( tom.gom.adt.rule.types.Term )((Object)termArg)).getterm() ,output);
 
 
+}
 }
 }
 
 }
 {
-if ( (termArg instanceof tom.gom.adt.rule.types.Term) ) {
-if ( ((( tom.gom.adt.rule.types.Term )termArg) instanceof tom.gom.adt.rule.types.term.Anti) ) {
+if ( (((Object)termArg) instanceof tom.gom.adt.rule.types.Term) ) {
+if ( ((( tom.gom.adt.rule.types.Term )((Object)termArg)) instanceof tom.gom.adt.rule.types.Term) ) {
+if ( ((( tom.gom.adt.rule.types.Term )(( tom.gom.adt.rule.types.Term )((Object)termArg))) instanceof tom.gom.adt.rule.types.term.Anti) ) {
 
 output.append("!");
 genTerm(
- (( tom.gom.adt.rule.types.Term )termArg).getterm() ,output);
+ (( tom.gom.adt.rule.types.Term )((Object)termArg)).getterm() ,output);
 
 
+}
 }
 }
 
 }
 {
-if ( (termArg instanceof tom.gom.adt.rule.types.Term) ) {
-if ( ((( tom.gom.adt.rule.types.Term )termArg) instanceof tom.gom.adt.rule.types.term.UnnamedVar) ) {
+if ( (((Object)termArg) instanceof tom.gom.adt.rule.types.Term) ) {
+if ( ((( tom.gom.adt.rule.types.Term )((Object)termArg)) instanceof tom.gom.adt.rule.types.Term) ) {
+if ( ((( tom.gom.adt.rule.types.Term )(( tom.gom.adt.rule.types.Term )((Object)termArg))) instanceof tom.gom.adt.rule.types.term.UnnamedVar) ) {
 
 output.append("_");
 
 }
 }
+}
 
 }
 {
-if ( (termArg instanceof tom.gom.adt.rule.types.Term) ) {
-if ( ((( tom.gom.adt.rule.types.Term )termArg) instanceof tom.gom.adt.rule.types.term.UnnamedVarStar) ) {
+if ( (((Object)termArg) instanceof tom.gom.adt.rule.types.Term) ) {
+if ( ((( tom.gom.adt.rule.types.Term )((Object)termArg)) instanceof tom.gom.adt.rule.types.Term) ) {
+if ( ((( tom.gom.adt.rule.types.Term )(( tom.gom.adt.rule.types.Term )((Object)termArg))) instanceof tom.gom.adt.rule.types.term.UnnamedVarStar) ) {
 
 output.append("_*");
 
 }
 }
-
-}
-{
-if ( (termArg instanceof tom.gom.adt.rule.types.Term) ) {
-if ( ((( tom.gom.adt.rule.types.Term )termArg) instanceof tom.gom.adt.rule.types.term.Var) ) {
-
-output.append(
- (( tom.gom.adt.rule.types.Term )termArg).getname() );
-
-
-}
 }
 
 }
 {
-if ( (termArg instanceof tom.gom.adt.rule.types.Term) ) {
-if ( ((( tom.gom.adt.rule.types.Term )termArg) instanceof tom.gom.adt.rule.types.term.VarStar) ) {
+if ( (((Object)termArg) instanceof tom.gom.adt.rule.types.Term) ) {
+if ( ((( tom.gom.adt.rule.types.Term )((Object)termArg)) instanceof tom.gom.adt.rule.types.Term) ) {
+if ( ((( tom.gom.adt.rule.types.Term )(( tom.gom.adt.rule.types.Term )((Object)termArg))) instanceof tom.gom.adt.rule.types.term.Var) ) {
 
 output.append(
- (( tom.gom.adt.rule.types.Term )termArg).getname() );
+ (( tom.gom.adt.rule.types.Term )((Object)termArg)).getname() );
+
+
+}
+}
+}
+
+}
+{
+if ( (((Object)termArg) instanceof tom.gom.adt.rule.types.Term) ) {
+if ( ((( tom.gom.adt.rule.types.Term )((Object)termArg)) instanceof tom.gom.adt.rule.types.Term) ) {
+if ( ((( tom.gom.adt.rule.types.Term )(( tom.gom.adt.rule.types.Term )((Object)termArg))) instanceof tom.gom.adt.rule.types.term.VarStar) ) {
+
+output.append(
+ (( tom.gom.adt.rule.types.Term )((Object)termArg)).getname() );
 output.append("*");
 
 
 }
 }
-
-}
-{
-if ( (termArg instanceof tom.gom.adt.rule.types.Term) ) {
-if ( ((( tom.gom.adt.rule.types.Term )termArg) instanceof tom.gom.adt.rule.types.term.BuiltinInt) ) {
-
-output.append(
- (( tom.gom.adt.rule.types.Term )termArg).geti() );
-
-
-}
 }
 
 }
 {
-if ( (termArg instanceof tom.gom.adt.rule.types.Term) ) {
-if ( ((( tom.gom.adt.rule.types.Term )termArg) instanceof tom.gom.adt.rule.types.term.BuiltinString) ) {
+if ( (((Object)termArg) instanceof tom.gom.adt.rule.types.Term) ) {
+if ( ((( tom.gom.adt.rule.types.Term )((Object)termArg)) instanceof tom.gom.adt.rule.types.Term) ) {
+if ( ((( tom.gom.adt.rule.types.Term )(( tom.gom.adt.rule.types.Term )((Object)termArg))) instanceof tom.gom.adt.rule.types.term.BuiltinInt) ) {
 
 output.append(
- (( tom.gom.adt.rule.types.Term )termArg).gets() );
+ (( tom.gom.adt.rule.types.Term )((Object)termArg)).geti() );
 
 
+}
+}
+}
+
+}
+{
+if ( (((Object)termArg) instanceof tom.gom.adt.rule.types.Term) ) {
+if ( ((( tom.gom.adt.rule.types.Term )((Object)termArg)) instanceof tom.gom.adt.rule.types.Term) ) {
+if ( ((( tom.gom.adt.rule.types.Term )(( tom.gom.adt.rule.types.Term )((Object)termArg))) instanceof tom.gom.adt.rule.types.term.BuiltinString) ) {
+
+output.append(
+ (( tom.gom.adt.rule.types.Term )((Object)termArg)).gets() );
+
+
+}
 }
 }
 
@@ -945,116 +1035,130 @@ private void genCondition(Condition cond, StringBuilder output) {
 
 {
 {
-if ( (cond instanceof tom.gom.adt.rule.types.Condition) ) {
-if ( ((( tom.gom.adt.rule.types.Condition )cond) instanceof tom.gom.adt.rule.types.condition.CondEquals) ) {
+if ( (((Object)cond) instanceof tom.gom.adt.rule.types.Condition) ) {
+if ( ((( tom.gom.adt.rule.types.Condition )((Object)cond)) instanceof tom.gom.adt.rule.types.Condition) ) {
+if ( ((( tom.gom.adt.rule.types.Condition )(( tom.gom.adt.rule.types.Condition )((Object)cond))) instanceof tom.gom.adt.rule.types.condition.CondEquals) ) {
 
 genTerm(
- (( tom.gom.adt.rule.types.Condition )cond).gett1() ,output);
+ (( tom.gom.adt.rule.types.Condition )((Object)cond)).gett1() ,output);
 output.append(" == ");
 genTerm(
- (( tom.gom.adt.rule.types.Condition )cond).gett2() ,output);
+ (( tom.gom.adt.rule.types.Condition )((Object)cond)).gett2() ,output);
 
 
+}
 }
 }
 
 }
 {
-if ( (cond instanceof tom.gom.adt.rule.types.Condition) ) {
-if ( ((( tom.gom.adt.rule.types.Condition )cond) instanceof tom.gom.adt.rule.types.condition.CondNotEquals) ) {
+if ( (((Object)cond) instanceof tom.gom.adt.rule.types.Condition) ) {
+if ( ((( tom.gom.adt.rule.types.Condition )((Object)cond)) instanceof tom.gom.adt.rule.types.Condition) ) {
+if ( ((( tom.gom.adt.rule.types.Condition )(( tom.gom.adt.rule.types.Condition )((Object)cond))) instanceof tom.gom.adt.rule.types.condition.CondNotEquals) ) {
 
 genTerm(
- (( tom.gom.adt.rule.types.Condition )cond).gett1() ,output);
+ (( tom.gom.adt.rule.types.Condition )((Object)cond)).gett1() ,output);
 output.append(" != ");
 genTerm(
- (( tom.gom.adt.rule.types.Condition )cond).gett2() ,output);
+ (( tom.gom.adt.rule.types.Condition )((Object)cond)).gett2() ,output);
 
 
+}
 }
 }
 
 }
 {
-if ( (cond instanceof tom.gom.adt.rule.types.Condition) ) {
-if ( ((( tom.gom.adt.rule.types.Condition )cond) instanceof tom.gom.adt.rule.types.condition.CondLessEquals) ) {
+if ( (((Object)cond) instanceof tom.gom.adt.rule.types.Condition) ) {
+if ( ((( tom.gom.adt.rule.types.Condition )((Object)cond)) instanceof tom.gom.adt.rule.types.Condition) ) {
+if ( ((( tom.gom.adt.rule.types.Condition )(( tom.gom.adt.rule.types.Condition )((Object)cond))) instanceof tom.gom.adt.rule.types.condition.CondLessEquals) ) {
 
 genTerm(
- (( tom.gom.adt.rule.types.Condition )cond).gett1() ,output);
+ (( tom.gom.adt.rule.types.Condition )((Object)cond)).gett1() ,output);
 output.append(" <= ");
 genTerm(
- (( tom.gom.adt.rule.types.Condition )cond).gett2() ,output);
+ (( tom.gom.adt.rule.types.Condition )((Object)cond)).gett2() ,output);
 
 
+}
 }
 }
 
 }
 {
-if ( (cond instanceof tom.gom.adt.rule.types.Condition) ) {
-if ( ((( tom.gom.adt.rule.types.Condition )cond) instanceof tom.gom.adt.rule.types.condition.CondLessThan) ) {
+if ( (((Object)cond) instanceof tom.gom.adt.rule.types.Condition) ) {
+if ( ((( tom.gom.adt.rule.types.Condition )((Object)cond)) instanceof tom.gom.adt.rule.types.Condition) ) {
+if ( ((( tom.gom.adt.rule.types.Condition )(( tom.gom.adt.rule.types.Condition )((Object)cond))) instanceof tom.gom.adt.rule.types.condition.CondLessThan) ) {
 
 genTerm(
- (( tom.gom.adt.rule.types.Condition )cond).gett1() ,output);
+ (( tom.gom.adt.rule.types.Condition )((Object)cond)).gett1() ,output);
 output.append(" < ");
 genTerm(
- (( tom.gom.adt.rule.types.Condition )cond).gett2() ,output);
+ (( tom.gom.adt.rule.types.Condition )((Object)cond)).gett2() ,output);
 
 
+}
 }
 }
 
 }
 {
-if ( (cond instanceof tom.gom.adt.rule.types.Condition) ) {
-if ( ((( tom.gom.adt.rule.types.Condition )cond) instanceof tom.gom.adt.rule.types.condition.CondGreaterEquals) ) {
+if ( (((Object)cond) instanceof tom.gom.adt.rule.types.Condition) ) {
+if ( ((( tom.gom.adt.rule.types.Condition )((Object)cond)) instanceof tom.gom.adt.rule.types.Condition) ) {
+if ( ((( tom.gom.adt.rule.types.Condition )(( tom.gom.adt.rule.types.Condition )((Object)cond))) instanceof tom.gom.adt.rule.types.condition.CondGreaterEquals) ) {
 
 genTerm(
- (( tom.gom.adt.rule.types.Condition )cond).gett1() ,output);
+ (( tom.gom.adt.rule.types.Condition )((Object)cond)).gett1() ,output);
 output.append(" >= ");
 genTerm(
- (( tom.gom.adt.rule.types.Condition )cond).gett2() ,output);
+ (( tom.gom.adt.rule.types.Condition )((Object)cond)).gett2() ,output);
 
 
+}
 }
 }
 
 }
 {
-if ( (cond instanceof tom.gom.adt.rule.types.Condition) ) {
-if ( ((( tom.gom.adt.rule.types.Condition )cond) instanceof tom.gom.adt.rule.types.condition.CondGreaterThan) ) {
+if ( (((Object)cond) instanceof tom.gom.adt.rule.types.Condition) ) {
+if ( ((( tom.gom.adt.rule.types.Condition )((Object)cond)) instanceof tom.gom.adt.rule.types.Condition) ) {
+if ( ((( tom.gom.adt.rule.types.Condition )(( tom.gom.adt.rule.types.Condition )((Object)cond))) instanceof tom.gom.adt.rule.types.condition.CondGreaterThan) ) {
 
 genTerm(
- (( tom.gom.adt.rule.types.Condition )cond).gett1() ,output);
+ (( tom.gom.adt.rule.types.Condition )((Object)cond)).gett1() ,output);
 output.append(" > ");
 genTerm(
- (( tom.gom.adt.rule.types.Condition )cond).gett2() ,output);
+ (( tom.gom.adt.rule.types.Condition )((Object)cond)).gett2() ,output);
 
 
+}
 }
 }
 
 }
 {
-if ( (cond instanceof tom.gom.adt.rule.types.Condition) ) {
-if ( ((( tom.gom.adt.rule.types.Condition )cond) instanceof tom.gom.adt.rule.types.condition.CondMatch) ) {
+if ( (((Object)cond) instanceof tom.gom.adt.rule.types.Condition) ) {
+if ( ((( tom.gom.adt.rule.types.Condition )((Object)cond)) instanceof tom.gom.adt.rule.types.Condition) ) {
+if ( ((( tom.gom.adt.rule.types.Condition )(( tom.gom.adt.rule.types.Condition )((Object)cond))) instanceof tom.gom.adt.rule.types.condition.CondMatch) ) {
 
 genTerm(
- (( tom.gom.adt.rule.types.Condition )cond).gett1() ,output);
+ (( tom.gom.adt.rule.types.Condition )((Object)cond)).gett1() ,output);
 output.append(" << ");
 genTerm(
- (( tom.gom.adt.rule.types.Condition )cond).gett2() ,output);
+ (( tom.gom.adt.rule.types.Condition )((Object)cond)).gett2() ,output);
 
 
+}
 }
 }
 
 }
 {
-if ( (cond instanceof tom.gom.adt.rule.types.Condition) ) {
-if ( (((( tom.gom.adt.rule.types.Condition )cond) instanceof tom.gom.adt.rule.types.condition.ConsCondAnd) || ((( tom.gom.adt.rule.types.Condition )cond) instanceof tom.gom.adt.rule.types.condition.EmptyCondAnd)) ) {
-if (!( (  (( tom.gom.adt.rule.types.Condition )cond).isEmptyCondAnd()  ||  ((( tom.gom.adt.rule.types.Condition )cond)== tom.gom.adt.rule.types.condition.EmptyCondAnd.make() )  ) )) {
- tom.gom.adt.rule.types.Condition  tom_head=(( (((( tom.gom.adt.rule.types.Condition )cond) instanceof tom.gom.adt.rule.types.condition.ConsCondAnd) || ((( tom.gom.adt.rule.types.Condition )cond) instanceof tom.gom.adt.rule.types.condition.EmptyCondAnd)) )?( (( tom.gom.adt.rule.types.Condition )cond).getHeadCondAnd() ):((( tom.gom.adt.rule.types.Condition )cond)));
- tom.gom.adt.rule.types.Condition  tom_tail=(( (((( tom.gom.adt.rule.types.Condition )cond) instanceof tom.gom.adt.rule.types.condition.ConsCondAnd) || ((( tom.gom.adt.rule.types.Condition )cond) instanceof tom.gom.adt.rule.types.condition.EmptyCondAnd)) )?( (( tom.gom.adt.rule.types.Condition )cond).getTailCondAnd() ):( tom.gom.adt.rule.types.condition.EmptyCondAnd.make() ));
+if ( (((Object)cond) instanceof tom.gom.adt.rule.types.Condition) ) {
+if ( (((( tom.gom.adt.rule.types.Condition )(( tom.gom.adt.rule.types.Condition )((Object)cond))) instanceof tom.gom.adt.rule.types.condition.ConsCondAnd) || ((( tom.gom.adt.rule.types.Condition )(( tom.gom.adt.rule.types.Condition )((Object)cond))) instanceof tom.gom.adt.rule.types.condition.EmptyCondAnd)) ) {
+if (!( (  (( tom.gom.adt.rule.types.Condition )((Object)cond)).isEmptyCondAnd()  ||  ((( tom.gom.adt.rule.types.Condition )((Object)cond))== tom.gom.adt.rule.types.condition.EmptyCondAnd.make() )  ) )) {
+ tom.gom.adt.rule.types.Condition  tom_head=(( (((( tom.gom.adt.rule.types.Condition )((Object)cond)) instanceof tom.gom.adt.rule.types.condition.ConsCondAnd) || ((( tom.gom.adt.rule.types.Condition )((Object)cond)) instanceof tom.gom.adt.rule.types.condition.EmptyCondAnd)) )?( (( tom.gom.adt.rule.types.Condition )((Object)cond)).getHeadCondAnd() ):((( tom.gom.adt.rule.types.Condition )((Object)cond))));
+ tom.gom.adt.rule.types.Condition  tom_tail=(( (((( tom.gom.adt.rule.types.Condition )((Object)cond)) instanceof tom.gom.adt.rule.types.condition.ConsCondAnd) || ((( tom.gom.adt.rule.types.Condition )((Object)cond)) instanceof tom.gom.adt.rule.types.condition.EmptyCondAnd)) )?( (( tom.gom.adt.rule.types.Condition )((Object)cond)).getTailCondAnd() ):( tom.gom.adt.rule.types.condition.EmptyCondAnd.make() ));
 
 if(
 tom_tail!= 
@@ -1078,11 +1182,11 @@ tom_head,output);
 
 }
 {
-if ( (cond instanceof tom.gom.adt.rule.types.Condition) ) {
-if ( (((( tom.gom.adt.rule.types.Condition )cond) instanceof tom.gom.adt.rule.types.condition.ConsCondOr) || ((( tom.gom.adt.rule.types.Condition )cond) instanceof tom.gom.adt.rule.types.condition.EmptyCondOr)) ) {
-if (!( (  (( tom.gom.adt.rule.types.Condition )cond).isEmptyCondOr()  ||  ((( tom.gom.adt.rule.types.Condition )cond)== tom.gom.adt.rule.types.condition.EmptyCondOr.make() )  ) )) {
- tom.gom.adt.rule.types.Condition  tom_head=(( (((( tom.gom.adt.rule.types.Condition )cond) instanceof tom.gom.adt.rule.types.condition.ConsCondOr) || ((( tom.gom.adt.rule.types.Condition )cond) instanceof tom.gom.adt.rule.types.condition.EmptyCondOr)) )?( (( tom.gom.adt.rule.types.Condition )cond).getHeadCondOr() ):((( tom.gom.adt.rule.types.Condition )cond)));
- tom.gom.adt.rule.types.Condition  tom_tail=(( (((( tom.gom.adt.rule.types.Condition )cond) instanceof tom.gom.adt.rule.types.condition.ConsCondOr) || ((( tom.gom.adt.rule.types.Condition )cond) instanceof tom.gom.adt.rule.types.condition.EmptyCondOr)) )?( (( tom.gom.adt.rule.types.Condition )cond).getTailCondOr() ):( tom.gom.adt.rule.types.condition.EmptyCondOr.make() ));
+if ( (((Object)cond) instanceof tom.gom.adt.rule.types.Condition) ) {
+if ( (((( tom.gom.adt.rule.types.Condition )(( tom.gom.adt.rule.types.Condition )((Object)cond))) instanceof tom.gom.adt.rule.types.condition.ConsCondOr) || ((( tom.gom.adt.rule.types.Condition )(( tom.gom.adt.rule.types.Condition )((Object)cond))) instanceof tom.gom.adt.rule.types.condition.EmptyCondOr)) ) {
+if (!( (  (( tom.gom.adt.rule.types.Condition )((Object)cond)).isEmptyCondOr()  ||  ((( tom.gom.adt.rule.types.Condition )((Object)cond))== tom.gom.adt.rule.types.condition.EmptyCondOr.make() )  ) )) {
+ tom.gom.adt.rule.types.Condition  tom_head=(( (((( tom.gom.adt.rule.types.Condition )((Object)cond)) instanceof tom.gom.adt.rule.types.condition.ConsCondOr) || ((( tom.gom.adt.rule.types.Condition )((Object)cond)) instanceof tom.gom.adt.rule.types.condition.EmptyCondOr)) )?( (( tom.gom.adt.rule.types.Condition )((Object)cond)).getHeadCondOr() ):((( tom.gom.adt.rule.types.Condition )((Object)cond))));
+ tom.gom.adt.rule.types.Condition  tom_tail=(( (((( tom.gom.adt.rule.types.Condition )((Object)cond)) instanceof tom.gom.adt.rule.types.condition.ConsCondOr) || ((( tom.gom.adt.rule.types.Condition )((Object)cond)) instanceof tom.gom.adt.rule.types.condition.EmptyCondOr)) )?( (( tom.gom.adt.rule.types.Condition )((Object)cond)).getTailCondOr() ):( tom.gom.adt.rule.types.condition.EmptyCondOr.make() ));
 
 if(
 tom_tail!= 
@@ -1115,9 +1219,9 @@ private void matchArgs(SlotList sl, StringBuilder output, int count) {
 
 {
 {
-if ( (sl instanceof tom.gom.adt.gom.types.SlotList) ) {
-if ( (((( tom.gom.adt.gom.types.SlotList )sl) instanceof tom.gom.adt.gom.types.slotlist.ConsConcSlot) || ((( tom.gom.adt.gom.types.SlotList )sl) instanceof tom.gom.adt.gom.types.slotlist.EmptyConcSlot)) ) {
-if ( (( tom.gom.adt.gom.types.SlotList )sl).isEmptyConcSlot() ) {
+if ( (((Object)sl) instanceof tom.gom.adt.gom.types.SlotList) ) {
+if ( (((( tom.gom.adt.gom.types.SlotList )(( tom.gom.adt.gom.types.SlotList )((Object)sl))) instanceof tom.gom.adt.gom.types.slotlist.ConsConcSlot) || ((( tom.gom.adt.gom.types.SlotList )(( tom.gom.adt.gom.types.SlotList )((Object)sl))) instanceof tom.gom.adt.gom.types.slotlist.EmptyConcSlot)) ) {
+if ( (( tom.gom.adt.gom.types.SlotList )((Object)sl)).isEmptyConcSlot() ) {
 return; 
 }
 }
@@ -1125,37 +1229,46 @@ return;
 
 }
 {
-if ( (sl instanceof tom.gom.adt.gom.types.SlotList) ) {
-if ( (((( tom.gom.adt.gom.types.SlotList )sl) instanceof tom.gom.adt.gom.types.slotlist.ConsConcSlot) || ((( tom.gom.adt.gom.types.SlotList )sl) instanceof tom.gom.adt.gom.types.slotlist.EmptyConcSlot)) ) {
-if (!( (( tom.gom.adt.gom.types.SlotList )sl).isEmptyConcSlot() )) {
- tom.gom.adt.gom.types.Slot  tomMatch623_7= (( tom.gom.adt.gom.types.SlotList )sl).getHeadConcSlot() ;
-if ( (tomMatch623_7 instanceof tom.gom.adt.gom.types.slot.Slot) ) {
- tom.gom.adt.gom.types.SortDecl  tom_sort= tomMatch623_7.getSort() ;
- tom.gom.adt.gom.types.SlotList  tom_t= (( tom.gom.adt.gom.types.SlotList )sl).getTailConcSlot() ;
+if ( (((Object)sl) instanceof tom.gom.adt.gom.types.SlotList) ) {
+if ( (((( tom.gom.adt.gom.types.SlotList )(( tom.gom.adt.gom.types.SlotList )((Object)sl))) instanceof tom.gom.adt.gom.types.slotlist.ConsConcSlot) || ((( tom.gom.adt.gom.types.SlotList )(( tom.gom.adt.gom.types.SlotList )((Object)sl))) instanceof tom.gom.adt.gom.types.slotlist.EmptyConcSlot)) ) {
+if (!( (( tom.gom.adt.gom.types.SlotList )((Object)sl)).isEmptyConcSlot() )) {
+ tom.gom.adt.gom.types.Slot  tomMatch649_7= (( tom.gom.adt.gom.types.SlotList )((Object)sl)).getHeadConcSlot() ;
+if ( (tomMatch649_7 instanceof tom.gom.adt.gom.types.Slot) ) {
+if ( ((( tom.gom.adt.gom.types.Slot )tomMatch649_7) instanceof tom.gom.adt.gom.types.slot.Slot) ) {
+ tom.gom.adt.gom.types.SortDecl  tom_sort= tomMatch649_7.getSort() ;
+ tom.gom.adt.gom.types.SlotList  tom_t= (( tom.gom.adt.gom.types.SlotList )((Object)sl)).getTailConcSlot() ;
 {
 {
-if ( (tom_sort instanceof tom.gom.adt.gom.types.SortDecl) ) {
-boolean tomMatch624_3= false ;
- String  tomMatch624_1= "" ;
-if ( ((( tom.gom.adt.gom.types.SortDecl )tom_sort) instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) {
+if ( (((Object)tom_sort) instanceof tom.gom.adt.gom.types.SortDecl) ) {
+boolean tomMatch650_5= false ;
+ String  tomMatch650_1= "" ;
+ tom.gom.adt.gom.types.SortDecl  tomMatch650_4= null ;
+ tom.gom.adt.gom.types.SortDecl  tomMatch650_3= null ;
+if ( ((( tom.gom.adt.gom.types.SortDecl )((Object)tom_sort)) instanceof tom.gom.adt.gom.types.SortDecl) ) {
+if ( ((( tom.gom.adt.gom.types.SortDecl )(( tom.gom.adt.gom.types.SortDecl )((Object)tom_sort))) instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) {
 {
-tomMatch624_3= true ;
-tomMatch624_1= (( tom.gom.adt.gom.types.SortDecl )tom_sort).getName() ;
+tomMatch650_5= true ;
+tomMatch650_3=(( tom.gom.adt.gom.types.SortDecl )((Object)tom_sort));
+tomMatch650_1= tomMatch650_3.getName() ;
 
 }
 } else {
-if ( ((( tom.gom.adt.gom.types.SortDecl )tom_sort) instanceof tom.gom.adt.gom.types.sortdecl.BuiltinSortDecl) ) {
+if ( ((( tom.gom.adt.gom.types.SortDecl )((Object)tom_sort)) instanceof tom.gom.adt.gom.types.SortDecl) ) {
+if ( ((( tom.gom.adt.gom.types.SortDecl )(( tom.gom.adt.gom.types.SortDecl )((Object)tom_sort))) instanceof tom.gom.adt.gom.types.sortdecl.BuiltinSortDecl) ) {
 {
-tomMatch624_3= true ;
-tomMatch624_1= (( tom.gom.adt.gom.types.SortDecl )tom_sort).getName() ;
+tomMatch650_5= true ;
+tomMatch650_4=(( tom.gom.adt.gom.types.SortDecl )((Object)tom_sort));
+tomMatch650_1= tomMatch650_4.getName() ;
 
 }
 }
 }
-if (tomMatch624_3) {
+}
+}
+if (tomMatch650_5) {
 
 output.append(
-tomMatch624_1);
+tomMatch650_1);
 output.append(" arg_"+count);
 
 
@@ -1179,6 +1292,7 @@ tom_t,output,count+1);
 }
 }
 }
+}
 
 }
 
@@ -1191,9 +1305,9 @@ private SlotList opArgs(SlotList slots, int count) {
 
 {
 {
-if ( (slots instanceof tom.gom.adt.gom.types.SlotList) ) {
-if ( (((( tom.gom.adt.gom.types.SlotList )slots) instanceof tom.gom.adt.gom.types.slotlist.ConsConcSlot) || ((( tom.gom.adt.gom.types.SlotList )slots) instanceof tom.gom.adt.gom.types.slotlist.EmptyConcSlot)) ) {
-if ( (( tom.gom.adt.gom.types.SlotList )slots).isEmptyConcSlot() ) {
+if ( (((Object)slots) instanceof tom.gom.adt.gom.types.SlotList) ) {
+if ( (((( tom.gom.adt.gom.types.SlotList )(( tom.gom.adt.gom.types.SlotList )((Object)slots))) instanceof tom.gom.adt.gom.types.slotlist.ConsConcSlot) || ((( tom.gom.adt.gom.types.SlotList )(( tom.gom.adt.gom.types.SlotList )((Object)slots))) instanceof tom.gom.adt.gom.types.slotlist.EmptyConcSlot)) ) {
+if ( (( tom.gom.adt.gom.types.SlotList )((Object)slots)).isEmptyConcSlot() ) {
 
 return 
  tom.gom.adt.gom.types.slotlist.EmptyConcSlot.make() ;
@@ -1205,18 +1319,20 @@ return
 
 }
 {
-if ( (slots instanceof tom.gom.adt.gom.types.SlotList) ) {
-if ( (((( tom.gom.adt.gom.types.SlotList )slots) instanceof tom.gom.adt.gom.types.slotlist.ConsConcSlot) || ((( tom.gom.adt.gom.types.SlotList )slots) instanceof tom.gom.adt.gom.types.slotlist.EmptyConcSlot)) ) {
-if (!( (( tom.gom.adt.gom.types.SlotList )slots).isEmptyConcSlot() )) {
- tom.gom.adt.gom.types.Slot  tomMatch625_7= (( tom.gom.adt.gom.types.SlotList )slots).getHeadConcSlot() ;
-if ( (tomMatch625_7 instanceof tom.gom.adt.gom.types.slot.Slot) ) {
+if ( (((Object)slots) instanceof tom.gom.adt.gom.types.SlotList) ) {
+if ( (((( tom.gom.adt.gom.types.SlotList )(( tom.gom.adt.gom.types.SlotList )((Object)slots))) instanceof tom.gom.adt.gom.types.slotlist.ConsConcSlot) || ((( tom.gom.adt.gom.types.SlotList )(( tom.gom.adt.gom.types.SlotList )((Object)slots))) instanceof tom.gom.adt.gom.types.slotlist.EmptyConcSlot)) ) {
+if (!( (( tom.gom.adt.gom.types.SlotList )((Object)slots)).isEmptyConcSlot() )) {
+ tom.gom.adt.gom.types.Slot  tomMatch651_7= (( tom.gom.adt.gom.types.SlotList )((Object)slots)).getHeadConcSlot() ;
+if ( (tomMatch651_7 instanceof tom.gom.adt.gom.types.Slot) ) {
+if ( ((( tom.gom.adt.gom.types.Slot )tomMatch651_7) instanceof tom.gom.adt.gom.types.slot.Slot) ) {
 
 SlotList tail = opArgs(
- (( tom.gom.adt.gom.types.SlotList )slots).getTailConcSlot() ,count+1);
+ (( tom.gom.adt.gom.types.SlotList )((Object)slots)).getTailConcSlot() ,count+1);
 return 
- tom.gom.adt.gom.types.slotlist.ConsConcSlot.make( tom.gom.adt.gom.types.slot.Slot.make("arg_"+count,  tomMatch625_7.getSort() ) ,tom_append_list_ConcSlot(tail, tom.gom.adt.gom.types.slotlist.EmptyConcSlot.make() )) ;
+ tom.gom.adt.gom.types.slotlist.ConsConcSlot.make( tom.gom.adt.gom.types.slot.Slot.make("arg_"+count,  tomMatch651_7.getSort() ) ,tom_append_list_ConcSlot(tail, tom.gom.adt.gom.types.slotlist.EmptyConcSlot.make() )) ;
 
 
+}
 }
 }
 }
@@ -1309,16 +1425,18 @@ public  tom.gom.adt.gom.types.OperatorDecl  visit_OperatorDecl( tom.gom.adt.gom.
  throws tom.library.sl.VisitFailure {
 {
 {
-if ( (tom__arg instanceof tom.gom.adt.gom.types.OperatorDecl) ) {
-if ( ((( tom.gom.adt.gom.types.OperatorDecl )tom__arg) instanceof tom.gom.adt.gom.types.operatordecl.OperatorDecl) ) {
+if ( (((Object)tom__arg) instanceof tom.gom.adt.gom.types.OperatorDecl) ) {
+if ( ((( tom.gom.adt.gom.types.OperatorDecl )((Object)tom__arg)) instanceof tom.gom.adt.gom.types.OperatorDecl) ) {
+if ( ((( tom.gom.adt.gom.types.OperatorDecl )(( tom.gom.adt.gom.types.OperatorDecl )((Object)tom__arg))) instanceof tom.gom.adt.gom.types.operatordecl.OperatorDecl) ) {
 
 if (
- (( tom.gom.adt.gom.types.OperatorDecl )tom__arg).getName() .equals(opName)) {
+ (( tom.gom.adt.gom.types.OperatorDecl )((Object)tom__arg)).getName() .equals(opName)) {
 opref.val = 
-(( tom.gom.adt.gom.types.OperatorDecl )tom__arg);
+(( tom.gom.adt.gom.types.OperatorDecl )((Object)tom__arg));
 }
 
 
+}
 }
 }
 

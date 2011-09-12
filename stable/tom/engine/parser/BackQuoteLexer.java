@@ -54,11 +54,9 @@ import antlr.SemanticException;
 public class BackQuoteLexer extends antlr.CharScanner implements BackQuoteParserTokenTypes, TokenStream
  {
 
-  public void uponEOF()
-    throws TokenStreamException, CharStreamException
-    {
+  public void uponEOF() throws TokenStreamException, CharStreamException {
       throw new TokenStreamException("Premature EOF");
-    }
+  }
 public BackQuoteLexer(InputStream in) {
 	this(new ByteBuffer(in));
 }
@@ -73,7 +71,7 @@ public BackQuoteLexer(LexerSharedInputState state) {
 	caseSensitiveLiterals = true;
 	setCaseSensitive(true);
 	literals = new Hashtable();
-	literals.put(new ANTLRHashString("xml", this), new Integer(13));
+	literals.put(new ANTLRHashString("xml", this), new Integer(15));
 }
 
 public Token nextToken() throws TokenStreamException {
@@ -121,6 +119,14 @@ tryAgain:
 					mBQ_RPAREN(true);
 					theRetToken=_returnToken;
 				}
+				else if ((LA(1)=='[') && (true)) {
+					mBQ_LBRACKET(true);
+					theRetToken=_returnToken;
+				}
+				else if ((LA(1)==']') && (true)) {
+					mBQ_RBRACKET(true);
+					theRetToken=_returnToken;
+				}
 				else if ((LA(1)=='{') && (true)) {
 					mBQ_LBRACE(true);
 					theRetToken=_returnToken;
@@ -150,7 +156,7 @@ tryAgain:
 					theRetToken=_returnToken;
 				}
 				else if ((LA(1)=='=') && (true)) {
-					mXML_EQUAL(true);
+					mEQUAL(true);
 					theRetToken=_returnToken;
 				}
 				else if ((LA(1)=='<') && (true)) {
@@ -230,6 +236,32 @@ tryAgain:
 		int _saveIndex;
 		
 		match(')');
+		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
+			_token = makeToken(_ttype);
+			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));
+		}
+		_returnToken = _token;
+	}
+	
+	public final void mBQ_LBRACKET(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
+		int _ttype; Token _token=null; int _begin=text.length();
+		_ttype = BQ_LBRACKET;
+		int _saveIndex;
+		
+		match('[');
+		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
+			_token = makeToken(_ttype);
+			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));
+		}
+		_returnToken = _token;
+	}
+	
+	public final void mBQ_RBRACKET(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
+		int _ttype; Token _token=null; int _begin=text.length();
+		_ttype = BQ_RBRACKET;
+		int _saveIndex;
+		
+		match(']');
 		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
 			_token = makeToken(_ttype);
 			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));
@@ -330,9 +362,9 @@ tryAgain:
 		_returnToken = _token;
 	}
 	
-	public final void mXML_EQUAL(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
+	public final void mEQUAL(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
 		int _ttype; Token _token=null; int _begin=text.length();
-		_ttype = XML_EQUAL;
+		_ttype = EQUAL;
 		int _saveIndex;
 		
 		match('=');
@@ -524,7 +556,7 @@ tryAgain:
 		
 		match("<?");
 		{
-		_loop73:
+		_loop84:
 		do {
 			if ((_tokenSet_4.member(LA(1)))) {
 				{
@@ -532,7 +564,7 @@ tryAgain:
 				}
 			}
 			else {
-				break _loop73;
+				break _loop84;
 			}
 			
 		} while (true);
@@ -575,17 +607,17 @@ tryAgain:
 		}
 		}
 		{
-		int _cnt77=0;
-		_loop77:
+		int _cnt88=0;
+		_loop88:
 		do {
 			if (((LA(1) >= '0' && LA(1) <= '9'))) {
 				mBQ_DIGIT(false);
 			}
 			else {
-				if ( _cnt77>=1 ) { break _loop77; } else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
+				if ( _cnt88>=1 ) { break _loop88; } else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
 			}
 			
-			_cnt77++;
+			_cnt88++;
 		} while (true);
 		}
 		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
@@ -617,7 +649,7 @@ tryAgain:
 		
 		match('"');
 		{
-		_loop81:
+		_loop92:
 		do {
 			if ((LA(1)=='\\')) {
 				mBQ_ESC(false);
@@ -628,7 +660,7 @@ tryAgain:
 				}
 			}
 			else {
-				break _loop81;
+				break _loop92;
 			}
 			
 		} while (true);
@@ -692,17 +724,17 @@ tryAgain:
 		case 'u':
 		{
 			{
-			int _cnt102=0;
-			_loop102:
+			int _cnt113=0;
+			_loop113:
 			do {
 				if ((LA(1)=='u')) {
 					match('u');
 				}
 				else {
-					if ( _cnt102>=1 ) { break _loop102; } else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
+					if ( _cnt113>=1 ) { break _loop113; } else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
 				}
 				
-				_cnt102++;
+				_cnt113++;
 			} while (true);
 			}
 			mBQ_HEX_DIGIT(false);
@@ -773,10 +805,10 @@ tryAgain:
 		int _saveIndex;
 		
 		{
-		boolean synPredMatched85 = false;
+		boolean synPredMatched96 = false;
 		if (((_tokenSet_3.member(LA(1))) && (_tokenSet_6.member(LA(2))))) {
-			int _m85 = mark();
-			synPredMatched85 = true;
+			int _m96 = mark();
+			synPredMatched96 = true;
 			inputState.guessing++;
 			try {
 				{
@@ -784,12 +816,12 @@ tryAgain:
 				}
 			}
 			catch (RecognitionException pe) {
-				synPredMatched85 = false;
+				synPredMatched96 = false;
 			}
-			rewind(_m85);
+			rewind(_m96);
 inputState.guessing--;
 		}
-		if ( synPredMatched85 ) {
+		if ( synPredMatched96 ) {
 			mBQ_MINUS_ID(false);
 		}
 		else if ((_tokenSet_3.member(LA(1))) && (true)) {
@@ -896,7 +928,7 @@ inputState.guessing--;
 		}
 		}
 		{
-		_loop91:
+		_loop102:
 		do {
 			switch ( LA(1)) {
 			case 'A':  case 'B':  case 'C':  case 'D':
@@ -960,7 +992,7 @@ inputState.guessing--;
 			}
 			default:
 			{
-				break _loop91;
+				break _loop102;
 			}
 			}
 		} while (true);
@@ -979,18 +1011,18 @@ inputState.guessing--;
 		int _saveIndex;
 		
 		{
-		int _cnt96=0;
-		_loop96:
+		int _cnt107=0;
+		_loop107:
 		do {
 			if ((LA(1)=='-')) {
 				mBQ_MINUS(false);
 				mBQ_SIMPLE_ID(false);
 			}
 			else {
-				if ( _cnt96>=1 ) { break _loop96; } else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
+				if ( _cnt107>=1 ) { break _loop107; } else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
 			}
 			
-			_cnt96++;
+			_cnt107++;
 		} while (true);
 		}
 		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {

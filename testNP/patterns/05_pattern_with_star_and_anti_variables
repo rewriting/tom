@@ -1,0 +1,6 @@
+#>
+#description pattern with (anti) variables (star)
+#type TomPattern
+#<
+
+f(_*, !ay*,b(c(_*, z2)))

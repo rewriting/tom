@@ -1,0 +1,7 @@
+#>
+#description %op, is_fsym, make
+#<
+%op TomTruc truc(a1:t1, a2:t2) {
+  is_fsym(a) { $a instanceof Truc }
+  make(a1v, a2v) { new Truc($a1v, $a2v) }
+}

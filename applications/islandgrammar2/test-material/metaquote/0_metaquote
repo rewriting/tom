@@ -1,0 +1,2 @@
+String bonjour =
+%[ System.out.println("bonjour"); ]%

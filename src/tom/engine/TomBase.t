@@ -390,12 +390,14 @@ public final class TomBase {
     return null;
   }
 
+  /*
   public static boolean hasConstant(OptionList optionList) {
     %match(optionList) {
       concOption(_*,Constant[],_*) -> { return true; }
     }
     return false;
   }
+*/
 
   public static boolean hasDefinedSymbol(OptionList optionList) {
     %match(optionList) {
@@ -520,32 +522,11 @@ public final class TomBase {
       }
       optionList = optionList.getTailconcOption();
     }
-    System.out.println("findOriginTracking:  not found" + optionList);
-    throw new TomRuntimeException("findOriginTracking:  not found" + optionList);
+    throw new TomRuntimeException("findOriginTracking:  not found: " + optionList);
   }
 
   public static TomSymbol getSymbolFromName(String tomName, SymbolTable symbolTable) {
     return symbolTable.getSymbolFromName(tomName);
-  }
-
-  public static TomSymbol getSymbolFromType(TomType tomType, SymbolTable symbolTable) {
-    if ( SymbolTable.TYPE_UNKNOWN == tomType) { return null; }
-
-    TomSymbolList list = symbolTable.getSymbolFromType(tomType);
-    TomSymbolList filteredList = `concTomSymbol();
-    // Not necessary since checker ensure the uniqueness of the symbol
-    while(!list.isEmptyconcTomSymbol()) {
-      TomSymbol head = list.getHeadconcTomSymbol();
-      if(isArrayOperator(head) || isListOperator(head)) {
-        filteredList = `concTomSymbol(head,filteredList*);
-      }
-      list = list.getTailconcTomSymbol();
-    }
-    if(filteredList.isEmptyconcTomSymbol()) {
-      return null;
-    } else {
-      return filteredList.getHeadconcTomSymbol();
-    }
   }
 
   public static TomType getTermType(TomTerm t, SymbolTable symbolTable) {

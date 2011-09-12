@@ -48,7 +48,7 @@ static AFun f_fib;
 
 %op term zero() {
   is_fsym(t)     { ATisEqualAFun(ATgetAFun(t),f_zero) }
-  make           { make_zero() }
+  make()           { make_zero() }
 }
   
 %op term suc(sl:term) {

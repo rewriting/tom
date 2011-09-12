@@ -1,0 +1,66 @@
+%match(a){
+    blu(b) -> {doBlu}
+    bla(c) -> {doBla}
+}
+
++ print(a + b);
+
+%match(d){
+    blu(e) -> {doBlu}
+    bla(f) -> {doBla}
+}
+
+bonjour
+%match(a){
+    blu(b) -> {doBlu}
+    bla(c) -> {doBla}
+}
+
+(a==b) ? print(texts.true()) : print(texts.false());  
+
+%match(d){
+    blu(e) -> {doBlu}
+    bla(f) -> {doBla}
+}
+
+bonjour
+%match(a){
+    case1(b)-> {action1}
+    case2(c) -> {action2}
+}
+
+$
+
+%match(d){
+    case3(e) -> {action3}
+    case3(f) -> {action4}
+}
+
+bonjour
+^
+%match(a){
+    pat1(b) -> {#}
+    pat2(c) -> {
+        #pragma ^^
+        %match(d){}
+    }
+}
+
+@Override
+public private bonjour(<? super Foo> f, <? extend Bar> b){
+    %match(e){
+        case1(f) -> {
+            %match(g){
+                case11(h)->{ return Whathever.getInstance();}
+                case12(i)->{ return new IDontCare();}
+            }
+        }
+        case2(j) -> {return somethingElse;}
+    }
+    
+    throw new MatchMistakeException("Whyyyyyyyyyyyyyyyyyy ?");
+}
+
+%match(k){
+
+}

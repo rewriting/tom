@@ -1,0 +1,8 @@
+#!/bin/bash
+# This shell script allows to test the project by feeding composite source files to the HostParser via the Main class
+
+while [[ -n $1 ]]
+do
+  java -cp build:$CLASSPATH newparser.Main $1
+  shift
+done

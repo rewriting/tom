@@ -39,12 +39,11 @@ public class PeanoMapping3 {
   %typeterm term {
     implement           { ATermAppl }
     is_sort(t)           { $t instanceof ATermAppl }
-    get_implementation(t) { $t }
   }
 
   %op term zero() {
     is_fsym(t) { $t.getName() == "zero" }
-    make { SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun("zero",0,false)) }
+    make() { SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun("zero",0,false)) }
   }
   
   %op term suc(p:term) {

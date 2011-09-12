@@ -1,0 +1,13 @@
+#>
+#description %oplist full
+#<
+
+%oplist TomTrucList conc( Truc * ){
+
+is_fsym(t)        { $t instanceof SomeKindOfList }
+make_empty()      { new SomeKindOfList($n) }
+make_insert(a,b)  {...}
+get_head(l)       {...}
+get_tail(l)       {...}
+is_empty(l)       { (i++%2)==0 }
+}
