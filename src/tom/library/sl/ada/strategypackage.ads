@@ -19,6 +19,7 @@ package StrategyPackage is
 	function  visit(str: access Strategy; i: access Introspector'Class) return Integer is abstract;
 	
 	type StrategyPtr is access all Strategy'Class;
+	function "<"(Left,Right: StrategyPtr) return Boolean; --used in MuVarStrategy
 		
 end StrategyPackage;
 
