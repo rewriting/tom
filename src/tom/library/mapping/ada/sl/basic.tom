@@ -37,6 +37,13 @@
   get_slot(var, t) {getName(MuVar($t.all)'Access)}
 }
 
+%op Strategy Mu(s1:Strategy, s2:Strategy) {
+  is_fsym(t) {t.all in Mu'Class}
+  make(var, v) {newMu($var, $v)}
+  get_slot(s1, t) {StrategyPtr( getChildAt(VisitablePtr($t), MuStrategy.VAR) )}
+  get_slot(s2, t) {StrategyPtr( getChildAt(VisitablePtr($t), MuStrategy.V) )}
+}
+
 %op Strategy Omega(position:int, s1:Strategy) {
   is_fsym(t) {$t.all in Omega'Class}
   make(pos,v) {OmegaStrategy.newOmega($pos,$v)}

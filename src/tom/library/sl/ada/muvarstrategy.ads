@@ -7,6 +7,8 @@ package MuVarStrategy is
 		instance : StrategyPtr := null;
 		name : access String := null;
 	end record;
+	
+	type MuVarPtr is access all MuVar;
 	----------------------------------------------------------------------------
 	-- Object implementation
 	----------------------------------------------------------------------------
