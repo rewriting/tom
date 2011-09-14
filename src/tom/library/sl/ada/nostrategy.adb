@@ -29,7 +29,7 @@ package body NoStrategy is
 			when VisitFailure =>
 			
 			if exceptionRaised then
-				return ObjectPtr(str);
+				return any;
 			else
 				raise; -- exception propagated
 			end if;
