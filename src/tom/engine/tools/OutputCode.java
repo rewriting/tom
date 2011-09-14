@@ -152,7 +152,7 @@ public class OutputCode {
   
 	if (aCode && pretty) {
       String[] lines = s.split("\n", -1);
-      if(lines.length==0) { //one line
+      if(lines.length==1) { //one line
         String s2 = s.replaceFirst("^\\s+","");
         if (! s2.equals("") ) {
 			write(deep, s);
