@@ -28,7 +28,7 @@ package AbstractStrategyPackage is
 	procedure setSubject(str: in out AbstractStrategy; any: ObjectPtr);
 	function  getPosition(str: AbstractStrategy) return Position;
 	function  getAncestor(str: AbstractStrategy) return ObjectPtr;
-	procedure init(str: in out Strategy'Class; i: Introspector'Class);
+	procedure init(str: in out Strategy'Class; i: IntrospectorPtr);
 	procedure init(str: in out Strategy'Class; env: access Environment);
 	
 	----------------------------------------------------------------------------

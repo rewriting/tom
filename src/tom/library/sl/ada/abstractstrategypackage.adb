@@ -47,7 +47,7 @@ package body AbstractStrategyPackage is
 		status: Integer;
 	begin
 		
-		init(str.all, i.all);
+		init(str.all, IntrospectorPtr(i));
 		AbstractStrategyPackage.setRoot(str.all, any);
 		status := visit(StrategyPtr(str), i);
 		if status = EnvironmentPackage.SUCCESS then
@@ -115,7 +115,7 @@ package body AbstractStrategyPackage is
 		return EnvironmentPackage.getAncestor(getEnvironment(str).all);
 	end;
 	
-	procedure init(str: in out Strategy'Class; i: Introspector'Class) is
+	procedure init(str: in out Strategy'Class; i: IntrospectorPtr) is
 		env : EnvironmentPtr := new Environment;
 	begin
 		makeEnvironment(env.all, i);

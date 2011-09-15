@@ -20,7 +20,10 @@ package EnvironmentPackage is
 	type EnvironmentPtr is access all Environment;
 
 	procedure makeEnvironment(env: in out Environment);	
-	procedure makeEnvironment(env: in out Environment; intro: Introspector'Class);
+	procedure makeEnvironment(env: in out Environment; intro: IntrospectorPtr);
+	
+	function newEnvironment return EnvironmentPtr;	
+	function newEnvironment(intro: IntrospectorPtr) return EnvironmentPtr;
 	
 	function  clone(env: Environment) return Environment;
 	function  equals(env1, env2 : Environment) return Boolean;
@@ -48,7 +51,7 @@ package EnvironmentPackage is
 	function  toString(env: Environment) return String;
 	
 	private
-	procedure makeEnvironment(env: in out Environment; len: Integer ; intro: Introspector'Class);
+	procedure makeEnvironment(env: in out Environment; len: Integer ; intro: IntrospectorPtr);
 	procedure ensureLength(env: in out Environment; minLength: Integer);
 	procedure genericFollowPath(env: in out Environment; p: Path'Class; local: Boolean);
 

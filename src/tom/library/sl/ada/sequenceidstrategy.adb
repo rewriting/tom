@@ -18,7 +18,7 @@ package body SequenceIdStrategy is
 	
 	overriding
 	function visitLight(str:access SequenceId; any: ObjectPtr; i: access Introspector'Class) return ObjectPtr is
-		op : ObjectPtr := visitLight( StrategyPtr(str.arguments(FIRST)), ObjectPtr(str), i);
+		op : ObjectPtr := visitLight( StrategyPtr(str.arguments(FIRST)), ObjectPtr(any), i);
 	begin
 		if op /= any then
 			return visitLight(StrategyPtr(str.arguments(SECOND)), op, i);
