@@ -4,23 +4,37 @@ use  Ada.Text_IO, Ada.Characters.Latin_1, VisitableIntrospectorPackage, Visitabl
 package body EnvironmentPackage is
 
 	--private
-	procedure makeEnvironment(env: in out Environment; len: Integer ; intro: Introspector'Class) is
+	procedure makeEnvironment(env: in out Environment; len: Integer ; intro: IntrospectorPtr) is
 	begin
 		env.omega := new IntArray(0..len);
 		env.subterm := new ObjectPtrArray(0..len);
 		env.current := 0; -- root is in subterm(0)
 		env.omega(0) := 0; -- the first cell is not used
-		env.introspector := new Introspector'Class'(intro);
+		env.introspector := intro;
 	end;
 	
 	procedure makeEnvironment(env: in out Environment) is
 	begin
-		makeEnvironment(env, DEFAULT_LENGTH, getInstance.all);
+		makeEnvironment(env, DEFAULT_LENGTH, getInstance);
 	end;
 	
-	procedure makeEnvironment(env: in out Environment; intro: Introspector'Class) is
+	procedure makeEnvironment(env: in out Environment; intro: IntrospectorPtr) is
 	begin
 		makeEnvironment(env, DEFAULT_LENGTH, intro);
+	end;
+	
+	function newEnvironment return EnvironmentPtr is
+		ret : EnvironmentPtr := new Environment;
+	begin
+		makeEnvironment(ret.all);
+		return ret;
+	end;
+	
+	function newEnvironment(intro: IntrospectorPtr) return EnvironmentPtr is
+		ret : EnvironmentPtr := new Environment;
+	begin
+		makeEnvironment(ret.all, intro);
+		return ret;
 	end;
 	
 	--private

@@ -26,7 +26,8 @@ package body PositionPackage is
 	arr : IntArrayPtr := null;
 	begin
 		if length /= 0 then
-			arr :=  new IntArray'( src(srcIndex .. srcIndex + length-1) );
+			arr := new IntArray(0.. length-1);
+			arr.all := src(srcIndex .. srcIndex + length-1);
 		end if;
 		return makeFromArrayWithoutCopy(arr);
 	end makeFromSubarray;
@@ -170,7 +171,7 @@ package body PositionPackage is
 			put_line("Empty list has no tail");
 			raise IndexOutOfBoundsException;
 		end if;
-		return makeFromSubarray(p.omega, 1, length(p)-1);
+		return makeFromSubarray(p.omega, p.omega'First, length(p)-1);
 	end getTail;
 
 	function conc(p: Position; i: Integer) return Position is
@@ -193,9 +194,9 @@ package body PositionPackage is
 		if len = 0 then
 			return make;
 		end if;
-		
-		stack := new IntArray(0..len-1);
 
+		stack := new IntArray(0..len-1);
+		
 		for i in 0..len-1 loop
 			if top >=0 and then stack(top) = -p.omega(i) then
 				top := top - 1;
@@ -204,7 +205,6 @@ package body PositionPackage is
 				stack(top) := p.omega(i);
 			end if;
 		end loop;
-		
 		return makeFromSubarray(stack, 0, top+1);
 	end getCanonicalPath;
 
