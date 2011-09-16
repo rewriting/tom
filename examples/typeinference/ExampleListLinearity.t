@@ -28,20 +28,25 @@
  */
 package typeinference;
 
-import typeinference.example12.example.types.*;
-public class Example12 {
+import typeinference.examplelistlinearity.example.types.*;
+public class ExampleListLinearity {
   %gom {
     module Example
       abstract syntax
       B = b()
-        | f(n:B)
-        | g(n:B)
+        | f(B*)
+        | g(B*)
+        | h(n:B)
   }
 
   public static void main(String[] args) {
-    B tt = `f(f(b()));
+    B tt1 = `f(f(b()));
+    B tt2 = `g(f(b()));
+    B tt3 = `f();
+    B tt4 = `g();
     %match{
-      x << tt -> { System.out.println("l1 = " + `f(x)); }
+      f(x*) << tt1 && g(y*) << tt2 -> { System.out.println("Line 1: x = " +`x); }
+      //g(x*) << tt2 && h(x) << B tt4 -> { System.out.println("Line 2: x = " +`x); }
     }
   }
-} 
+}

@@ -110,7 +110,7 @@ public class NewParserPlugin extends TomGenericPlugin {
    * inherited from plugin interface
    * arg[0] should contain the StreamManager from which we can get the input
    */
-  public void setArgs(Object[] arg){
+  public void setArgs(Object[] arg) {
     //System.out.println("(DEBUG) NewParser init");
     if (arg[0] instanceof TomStreamManager) {
       setStreamManager((TomStreamManager)arg[0]);
@@ -138,7 +138,7 @@ public class NewParserPlugin extends TomGenericPlugin {
 
   /**
    * inherited from plugin interface
-   * Parse the input ans set the "Working" TomTerm to be compiled.
+   * Parse the input and set the "Working" TomTerm to be compiled.
    */
   public synchronized void run(Map informationTracker) {
 

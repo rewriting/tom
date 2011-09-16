@@ -12,7 +12,7 @@ TODO
   - (JC) à tester, semble passer sur plusieurs exemples/tests
 
 - labels dans miniTom.g
-  - (FP) semble fonctionner, continuer à tester
+  - (FP) semble fonctionne, continuer à tester
 
 - patterns dans %match
   - (JC) p << T x  semble fonctionner, continuer à tester les patterns
@@ -27,7 +27,7 @@ TODO
 
 - meta-quote %[..]%
   - (FP) semble fonctionner, l'arbre parait bien. Le cas des @var@ semble plus 
-    simple à gérer durant la transformation des cst, il n'est donc pas traité
+    simple à gérer durant la transformation des cst, il n'est donc pas traiter
 
 - ajouter des optionList dans les constructions (pour les numéros de ligne, les
   noms de fichiers, etc.)

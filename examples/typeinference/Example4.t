@@ -41,7 +41,7 @@ public class Example4 {
     B tt = `f(f(b()));
     %match{
       b() << tt -> { System.out.println(`tt); }
-      f(x) << tt -> { System.out.println(`x); }
+      f(x*) << tt -> { System.out.println(`x); }
     }
   }
 }

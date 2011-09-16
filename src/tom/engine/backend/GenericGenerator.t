@@ -394,22 +394,6 @@ public abstract class GenericGenerator extends AbstractGenerator {
     genDecl(TomBase.getTLType(returnType),"tom_get_fun_sym", type,args,tlCode, moduleName);
   }
 
-  protected void buildGetImplementationDecl(int deep, String type, String typename,
-                                            TargetLanguageType tlType, Instruction instr, String moduleName) throws IOException {
-    String argType;
-    if(!lazyType) {
-      argType = TomBase.getTLCode(tlType);
-    } else {
-      argType = TomBase.getTLType(getUniversalType());
-    }
-    String returnType = argType;
-
-    genDeclInstr(returnType,
-            "tom_get_implementation", type,
-            new String[] { argType, typename },
-            instr,deep,moduleName);
-  }
-
   /*
    * generate the function declaration when no substituion has been done
    */

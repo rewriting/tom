@@ -23,7 +23,7 @@ header{/*
  *
  **/
 
-package tom.engine.parser;
+package tom.engine.parser.antlr2;
 }
 
 {
@@ -256,7 +256,7 @@ options{
       //      includedFileSet,alreadyParsedFileSet,
       //      getOptionManager(), getStreamManager());
       //} else {
-        parser = TomParserPlugin.newParser(fileReader,fileCanonicalName,
+        parser = tom.engine.parser.TomParserPlugin.newParser(fileReader,fileCanonicalName,
             includedFileSet,alreadyParsedFileSet,
             getOptionManager(), getStreamManager());
       //}
@@ -288,7 +288,7 @@ options{
 
   /*
    * this function receives a string that comes from %[ ... ]%
-   * @@ corresponds to the char '@', so they a encoded into ]% (which cannot
+   * @@ corresponds to the char '@', so they are encoded into ]% (which cannot
    * appear in the string)
    * then, the string is split around the delimiter @
    * alternatively, each string correspond either to a metaString, or a string
@@ -329,7 +329,7 @@ options{
           //  parser = NewParserPlugin.newParser(codeReader,getCurrentFile(),
           //      getOptionManager(), getStreamManager());
           //} else {
-            parser = TomParserPlugin.newParser(codeReader,getCurrentFile(),
+            parser = tom.engine.parser.TomParserPlugin.newParser(codeReader,getCurrentFile(),
                 getOptionManager(), getStreamManager());
           //}
           Code astTom = parser.input();

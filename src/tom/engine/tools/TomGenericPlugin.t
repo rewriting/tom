@@ -119,7 +119,7 @@ public abstract class TomGenericPlugin implements Plugin {
   }
 
   public void setWorkingTerm(Object arg) {
-    if (arg instanceof Code) {
+    if(arg instanceof Code) {
       term = (Code)arg;
     } else {
       TomMessage.error(getLogger(),null,0,TomMessage.codeExpected, pluginName);
@@ -282,7 +282,7 @@ public abstract class TomGenericPlugin implements Plugin {
   public String getArgumentArrayString(Object[] arg) {
     StringBuilder argString = new StringBuilder("[");
     for(int i=0;i<arg.length;i++) {
-      if(arg[i]==null){
+      if(arg[i]==null) {
         argString.append("null");
       } else {
         argString.append(arg[i].getClass().getName());

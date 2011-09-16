@@ -9,7 +9,7 @@ options {
 
 
 @lexer::header {
-package tom.engine.newparser.parser;
+package tom.engine.parser.antlr3;
 }
 
 @lexer::members {

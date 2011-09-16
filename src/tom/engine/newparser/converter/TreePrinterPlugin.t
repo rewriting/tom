@@ -106,7 +106,7 @@ public class TreePrinterPlugin extends TomGenericPlugin {
   @Override
   public void run(Map informationTracker) {
     boolean newparser = ((Boolean)getOptionManager().getOptionValue("newparser")).booleanValue();
-    if(newparser) {
+    if(true || newparser) {
       int thisRunCallNumber = nextRunCallNumber;
       nextRunCallNumber++;
 

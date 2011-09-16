@@ -1,4 +1,4 @@
-package tom.engine.newparser.parser;
+package tom.engine.parser.antlr3;
 
 import java.util.List;
 import java.util.Arrays;
@@ -17,6 +17,7 @@ import java.io.OutputStreamWriter;
 import java.io.FileOutputStream;
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 import tom.platform.OptionManager;
 
@@ -24,15 +25,6 @@ import tom.engine.TomStreamManager;
 import tom.engine.TomMessage;
 import tom.engine.exception.TomIncludeException;
 import tom.engine.exception.TomException;
-
-import tom.engine.newparser.parser.miniTomParser.*;
-import tom.engine.newparser.parser.BQTermParser.*;
-import tom.engine.newparser.parser.miniTomLexer;
-import tom.engine.newparser.parser.BQTermLexer;
-import tom.engine.newparser.debug.HostParserDebugger;
-import tom.engine.newparser.streamanalysis.DelimitedSequenceDetector;
-import tom.engine.newparser.streamanalysis.StreamAnalyst;
-import static tom.engine.newparser.util.TreeFactory.*;
 
 import org.antlr.runtime.CharStream;
 import org.antlr.runtime.CommonTokenStream;
@@ -42,6 +34,9 @@ import org.antlr.runtime.tree.Tree;
 import org.antlr.runtime.tree.CommonTree;
 import org.antlr.runtime.ANTLRFileStream;
 
+import static tom.engine.parser.antlr3.TreeFactory.*;
+import static tom.engine.parser.antlr3.miniTomParser.*;
+import tom.engine.parser.antlr3.streamanalysis.*;
 
 /**
  * 
@@ -167,7 +162,7 @@ public abstract class ParserAction {
     throws TomIncludeException, TomException {
 
       ArrayList<String> parameters = new ArrayList<String>();
-      Logger logger = Logger.getLogger("tom.engine.newparser.parser.HostParser");
+      Logger logger = Logger.getLogger("tom.engine.parser.antlr3.HostParser");
 
       String currentFile = input.getSourceName();
 
@@ -342,27 +337,26 @@ public abstract class ParserAction {
 
       try {
         // Call tom.gom.Gom.exec(params,informationTracker) using reflexivity, to
-        // avoid a build time dempendency between tom and gom
-        res = ((Integer) Class.forName("tom.gom.Gom")
-            .getMethod("exec", new Class[] {params.getClass(), Map.class})
-            .invoke(null, new Object[] {params, informationTracker}))
-          .intValue();
+        // avoid a build time dependency between tom and gom
+       Method method =  java.lang.Class.forName("tom.gom.Gom").getMethod("exec", new Class[] {params.getClass(), Map.class});
+       res = (Integer) method.invoke(null, new Object[] {params, informationTracker});
+
       } catch (ClassNotFoundException cnfe) {
         TomMessage.error(logger, currentFile, initialGomLine,
             TomMessage.gomInitFailure,currentFile,
-            Integer.valueOf(initialGomLine), cnfe);
+            initialGomLine, cnfe);
       } catch (NoSuchMethodException nsme) {
         TomMessage.error(logger, currentFile, initialGomLine,
             TomMessage.gomInitFailure,currentFile,
-            Integer.valueOf(initialGomLine), nsme);
+            initialGomLine, nsme);
       } catch (InvocationTargetException ite) {
         TomMessage.error(logger, currentFile, initialGomLine,
            TomMessage.gomInitFailure,currentFile,
-           Integer.valueOf(initialGomLine), ite);
+           initialGomLine, ite);
       } catch (IllegalAccessException iae) {
         TomMessage.error(logger, currentFile, initialGomLine,
             TomMessage.gomInitFailure,currentFile,
-            Integer.valueOf(initialGomLine), iae);
+            initialGomLine, iae);
       }
       /*
     } catch (Exception e) {
@@ -373,7 +367,7 @@ public abstract class ParserAction {
     if(res != 0) {
       TomMessage.error(logger, currentFile, initialGomLine,
           TomMessage.gomFailure,currentFile,
-          Integer.valueOf(initialGomLine));
+          initialGomLine);
       return;
     }
 
@@ -422,7 +416,7 @@ public abstract class ParserAction {
 
     String currentFileName = input.getSourceName();
     testIncludedFile(currentFileName, includedFiles);
-    Logger logger = Logger.getLogger("tom.engine.newparser.parser.HostParser");
+    Logger logger = Logger.getLogger("tom.engine.parser.antlr3.HostParser");
 
     // treat keyword chars
     hostBlockBuilder.removeLastChars(analyst.getOffsetAtMatch());
@@ -468,7 +462,7 @@ public abstract class ParserAction {
     includeName = includeName.replace('\\',File.separatorChar);
     if(includeName.equals("")) {
       throw new TomIncludeException(TomMessage.missingIncludedFile,
-          new Object[]{currentFileName, Integer.valueOf(input.getLine())});
+          new Object[]{currentFileName, input.getLine()});
     }
     File file = new File(includeName);
     if(file.isAbsolute()) {
@@ -493,7 +487,7 @@ public abstract class ParserAction {
           new Object[]{
             includeName, 
             currentFileName, 
-            Integer.valueOf(input.getLine()), 
+            input.getLine(), 
             currentFileName});
     }
 
@@ -522,7 +516,7 @@ public abstract class ParserAction {
           new Object[]{e.getClass(),
             includeName,
             currentFileName,
-            Integer.valueOf(input.getLine()),
+            input.getLine(),
             sw.toString()
           });
     }
@@ -574,10 +568,10 @@ public abstract class ParserAction {
         miniTomLexer lexer = new miniTomLexer(input);
         
   // XXX DEBUG ===
-  if(HostParserDebugger.isOn()) {
-  HostParserDebugger.getInstance()
-   .debugNewCall(lexer.getClassDesc(), input, getConstructName());
-  }
+  //if(HostParserDebugger.isOn()) {
+  //HostParserDebugger.getInstance()
+  // .debugNewCall(lexer.getClassDesc(), input, getConstructName());
+  //}
   // == /DEBUG ===
         
         CommonTokenStream tokenStream = new CommonTokenStream(lexer);
@@ -592,10 +586,10 @@ public abstract class ParserAction {
         input.rewind(retval.getMarker());
         
   // XXX DEBUG ===
-  if(HostParserDebugger.isOn()) {
-  HostParserDebugger.getInstance()
-   .debugReturnedCall(lexer.getClassDesc(), input, getConstructName());
-  }
+  //if(HostParserDebugger.isOn()) {
+  //HostParserDebugger.getInstance()
+  // .debugReturnedCall(lexer.getClassDesc(), input, getConstructName());
+  //}
   // == /DEBUG ===
         
         } catch(Exception e) {
@@ -688,7 +682,7 @@ public abstract class ParserAction {
         CommonTokenStream tokenStream = new CommonTokenStream(lexer);
         BQTermParser parser = new BQTermParser(tokenStream);
         
-        tom.engine.newparser.parser.BQTermParser.csBQTerm_return retval =  parser.csBQTerm();
+        BQTermParser.csBQTerm_return retval = parser.csBQTerm();
         
         tree.addChild(
             makeTree(BQTermLexer.Cst_BQTermToBlock, "CsBQTermToBlock",
@@ -877,7 +871,7 @@ public abstract class ParserAction {
       
       Tree child = (Tree) adaptor.becomeRoot((Tree)adaptor.create(miniTomParser.Cst_MetaQuoteConstruct, "CsMetaQuoteConsruct"),(Tree) adaptor.nil());
       
-      Tree optionsListTree = (Tree) adaptor.becomeRoot((Tree)adaptor.create(miniTomParser.Cst_concCstOption, "CsconCstOption"), (Tree) adaptor.nil());
+      Tree optionsListTree = (Tree) adaptor.becomeRoot((Tree)adaptor.create(miniTomParser.ConcCstOption, "CsconCstOption"), (Tree) adaptor.nil());
       Tree strTree = (Tree) adaptor.becomeRoot((Tree)adaptor.create(miniTomParser.HOSTBLOCK, metaquoteContent), (Tree) adaptor.nil());
       
       child.addChild(optionsListTree);

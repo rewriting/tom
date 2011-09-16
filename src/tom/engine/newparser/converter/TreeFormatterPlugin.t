@@ -1,5 +1,9 @@
 package tom.engine.newparser.converter;
 
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import java.util.Map;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -9,8 +13,21 @@ import tom.engine.TomMessage;
 import tom.engine.TomStreamManager;
 import tom.engine.exception.TomRuntimeException;
 import tom.engine.tools.TomGenericPlugin;
-import tom.engine.adt.code.types.*;
+import tom.engine.tools.Tools;
+
+import tom.engine.adt.tomsignature.*;
+import tom.engine.adt.tomconstraint.types.*;
+import tom.engine.adt.tomdeclaration.types.*;
+import tom.engine.adt.tomexpression.types.*;
+import tom.engine.adt.tominstruction.types.*;
+import tom.engine.adt.tomname.types.*;
+import tom.engine.adt.tomoption.types.*;
+import tom.engine.adt.tomsignature.types.*;
+import tom.engine.adt.tomsignature.types.tomsymbollist.*;
 import tom.engine.adt.tomterm.types.*;
+import tom.engine.adt.tomslot.types.*;
+import tom.engine.adt.tomtype.types.*;
+import tom.engine.adt.code.types.*;
 import tom.engine.adt.cst.types.*;
 
 /**
@@ -23,90 +40,39 @@ public class TreeFormatterPlugin extends TomGenericPlugin {
   %include { util/types/Collection.tom }
   %include { ../../adt/cst/CST.tom }
 
-  protected CstProgram cst;
+  private static Logger logger = Logger.getLogger("tom.engine.newparser.converter.TreeFormatterPlugin");
+  /** some output suffixes */
+  public static final String FORMATTER_SUFFIX = ".tfix.cstast";
 
   public TreeFormatterPlugin() {
     super("TreeFormatterPlugin");
   }
 
-  public void setArgs(Object[] arg) {
-    if ( arg[0] instanceof Code && arg[1] instanceof TomStreamManager ) {
-      term = (Code)arg[0];
-      streamManager = (TomStreamManager)arg[1];
-    } else
-    if (arg[0] instanceof CstProgram && arg[1] instanceof TomStreamManager ) {
-      cst = (CstProgram)arg[0];
-      term = null;
-      streamManager = (TomStreamManager)arg[1];
-    } else {
-      TomMessage.error(getLogger(),null,0,TomMessage.invalidPluginArgument,
-         "AstPrinterPlugin", "[Code or null, TomStreamManager]",
-         getArgumentArrayString(arg));
-    }
-  }
-
   @Override
-  public void run(Map informationTracker){
-    
-    boolean pluginIsOn = 
-     ((Boolean)getOptionManager().getOptionValue("newparser")).booleanValue();
+  public void run(Map informationTracker) {
+    long startChrono = System.currentTimeMillis();
+    boolean intermediate = getOptionBooleanValue("intermediate");    
+    boolean newparser = ((Boolean)getOptionManager().getOptionValue("newparser")).booleanValue();
 
-    if(pluginIsOn) {
+    try {
+      CstProgram cst = (CstProgram) getWorkingTerm();
+      Code ast = this.convert(cst);
 
-      try {
-      cst = `BottomUp(toAST()).visit(cst);
-      } catch (tom.library.sl.VisitFailure e) {
-        throw new TomRuntimeException (
-          "tom.engine.treeformatter.TreeFormatter.run strategy "+
-          "failure on "+`cst);
+      // verbose
+      TomMessage.info(logger,null,0,TomMessage.tomFormattingPhase, Integer.valueOf((int)(System.currentTimeMillis()-startChrono)) );
+      setWorkingTerm(ast);
+      if(intermediate) {
+        Tools.generateOutput(getStreamManager().getOutputFileName() + FORMATTER_SUFFIX, (Code)getWorkingTerm());
       }
-
-      %match(cst) {
-        wrappedCodeList(codeList) -> {
-          term = `Tom(codeList);
-        }
-      }
+    } catch(Exception e) {
+      TomMessage.error(logger,getStreamManager().getInputFileName(),0,TomMessage.exceptionMessage, e.getMessage());
+      e.printStackTrace();
     }
+
   }
 
-  %strategy toAST() extends Identity() {
-    visit CstBlock {
-      /*HOSTBLOCK(code,
-                CsTextPosition(startLine, startColumn),
-                CsTextPosition(endLine, endColumn)
-               ) -> {
-        return `wrappedCode(TargetLanguageToCode(TL(code,
-                  TextPosition(startLine, startColumn),
-                  TextPosition(endLine, endColumn))));
-      }*/
-
-      Cst_MatchConstruct[] -> {
-        return `wrappedCode(
-                  InstructionToCode(Match(concConstraintInstruction(),
-                                        concOption()))
-                );
-      }
-    }
-
-    visit CstProgram {
-      Cst_Program(blocks) -> {
-        Collection<Code> c = new LinkedList<Code>();
-        `TopDown(collectCodes(c)).visit(`blocks);
-        
-        CodeList res = `concCode();
-        for(Code code : c){
-          res = `concCode(res*, code);
-        }
-        
-        return `wrappedCodeList(res);
-      }
-    }
-  }
-
-  %strategy collectCodes(Collection c) extends Identity() {
-    visit Code {
-      x -> { c.add(`x); }
-    }
+  private Code convert(CstProgram t) {
+    return `Tom(concCode());
   }
 
 }

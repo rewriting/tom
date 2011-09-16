@@ -9,20 +9,19 @@ options {
 }
 
 @parser::header {
-package tom.engine.newparser.parser;
-import static tom.engine.newparser.util.TreeFactory.*;
-import static tom.engine.newparser.parser.miniTomLexer.*;
+package tom.engine.parser.antlr3;
 import org.antlr.runtime.tree.Tree;
 import org.antlr.runtime.CommonToken;
+import static tom.engine.parser.antlr3.TreeFactory.*;
 }
 
 @lexer::header {
-package tom.engine.newparser.parser;
-
-import tom.engine.newparser.debug.*;
-
-import tom.engine.newparser.streamanalysis.*;
+package tom.engine.parser.antlr3;
 import org.antlr.runtime.tree.Tree;
+
+import static tom.engine.parser.antlr3.TreeFactory.*;
+import static tom.engine.parser.antlr3.miniTomParser.*;
+import tom.engine.parser.antlr3.streamanalysis.*;
 }
 
 @lexer::members {
@@ -54,8 +53,8 @@ import org.antlr.runtime.tree.Tree;
     String lines[] = t.getText().split(newline);
     
     int firstCharLine = t.getLine();
-    int firstCharColumn = t.getCharPositionInLine();
-    int lastCharLine = firstCharColumn+lines.length-1;
+    int firstCharColumn = t.getCharPositionInLine()+1;
+    int lastCharLine = firstCharLine+lines.length-1;
     int lastCharColumn;
     if(lines.length==1) {
       lastCharColumn = firstCharColumn + lines[0].length();
@@ -114,14 +113,14 @@ csName LPAR csSlotList RPAR EXTENDS BQUOTE? csBQTerm LBR csStrategyVisitList RBR
   ;
 
 csStrategyVisitList :
-  csStrategyVisit* -> ^(Cst_concCstVisit csStrategyVisit*)
+  csStrategyVisit* -> ^(ConcCstVisit csStrategyVisit*)
   ;
 
 csStrategyVisit :
   VISIT /*ALL_ID*/ IDENTIFIER LBR (csVisitAction)* RBR
     -> ^(Cst_VisitTerm 
           ^(Cst_Type IDENTIFIER /*ALL_ID*/ ) 
-          ^(Cst_concConstraintAction csVisitAction* )
+          ^(ConcCstConstraintAction csVisitAction* )
           {extractOptions((CommonToken)$VISIT, (CommonToken)$RBR)}
         )
   ;
@@ -130,24 +129,24 @@ csVisitAction :
   (IDENTIFIER l=COLON)? csExtendedConstraint ARROW LBR RBR //handle  toto -> { blocklist }
     -> {$l!=null}? ^(Cst_ConstraintAction csExtendedConstraint
                            {((CustomToken)$LBR).getPayload(Tree.class)}
-                           ^(Cst_concCstOption ^(Cst_Label IDENTIFIER))
+                           ^(ConcCstOption ^(Cst_Label IDENTIFIER))
                            )
     ->            ^(Cst_ConstraintAction csExtendedConstraint
                            {((CustomToken)$LBR).getPayload(Tree.class)}
-                           ^(Cst_concCstOption ^(Cst_NoOption ))
+                           ^(ConcCstOption ^(Cst_NoOption ))
                      )
   | (IDENTIFIER l=COLON)? csExtendedConstraint ARROW csBQTerm //handle toto -> f(a()) - is a BQTerm
     -> {$l!=null}? ^(Cst_ConstraintAction csExtendedConstraint
                            /*{((CustomToken)$ARROW).getPayload(Tree.class)}*/
                            /*csBQTerm*/
-                           ^(Cst_concCstBlock ^(Cst_BQTermToBlock csBQTerm))
-                           ^(Cst_concCstOption ^(Cst_Label IDENTIFIER))
+                           ^(ConcCstBlock ^(Cst_BQTermToBlock csBQTerm))
+                           ^(ConcCstOption ^(Cst_Label IDENTIFIER))
                    )
     ->            ^(Cst_ConstraintAction csExtendedConstraint
                            /*{((CustomToken)$ARROW).getPayload(Tree.class)}*/
                            /*csBQTerm*/
-                           ^(Cst_concCstBlock ^(Cst_BQTermToBlock csBQTerm))
-                           ^(Cst_concCstOption ^(Cst_NoOption ))
+                           ^(ConcCstBlock ^(Cst_BQTermToBlock csBQTerm))
+                           ^(ConcCstOption ^(Cst_NoOption ))
                    )
   ;
 
@@ -173,9 +172,9 @@ RBR
 
 -> ^( Cst_MatchConstruct
     {extractOptions((CommonToken)$LPAR, (CommonToken)$RBR)}
-    ^( Cst_concCstBQTerm csBQTerm* /*csMatchArgument* */ )
-    //^( Cst_concCstTypedTerm csMatchArgument* )
-    ^( Cst_concConstraintAction csExtendedConstraintAction* )
+    ^( ConcCstBQTerm csBQTerm* /*csMatchArgument* */ )
+    //^( ConcCstTypedTerm csMatchArgument* )
+    ^( ConcCstConstraintAction csExtendedConstraintAction* )
     )
 
 |
@@ -190,9 +189,9 @@ RBR
 
 -> ^( Cst_MatchConstruct
     {extractOptions((CommonToken)$LBR, (CommonToken)$RBR)}
-    ^( Cst_concCstBQTerm )
-    //^( Cst_concCstTypedTerm )
-    ^( Cst_concConstraintAction csConstraintAction* )
+    ^( ConcCstBQTerm )
+    //^( ConcCstTypedTerm )
+    ^( ConcCstConstraintAction csConstraintAction* )
     )
 ;
 
@@ -200,11 +199,11 @@ csConstraintAction :
 (IDENTIFIER l=COLON)? csConstraint ARROW LBR RBR
   -> {$l!=null}? ^(Cst_ConstraintAction csConstraint
                   {((CustomToken)$LBR).getPayload(Tree.class)}
-                  ^(Cst_concCstOption ^(Cst_Label IDENTIFIER ))
+                  ^(ConcCstOption ^(Cst_Label IDENTIFIER ))
                  )
   ->             ^(Cst_ConstraintAction csConstraint
                   {((CustomToken)$LBR).getPayload(Tree.class)}
-                  ^(Cst_concCstOption ^(Cst_NoOption ))
+                  ^(ConcCstOption ^(Cst_NoOption ))
                  )
   ;
 
@@ -212,11 +211,11 @@ csExtendedConstraintAction :
 (IDENTIFIER l=COLON)? csExtendedConstraint ARROW LBR RBR
   -> {$l!=null}? ^(Cst_ConstraintAction csExtendedConstraint
                   {((CustomToken)$LBR).getPayload(Tree.class)}
-                  ^(Cst_concCstOption ^(Cst_Label IDENTIFIER ))
+                  ^(ConcCstOption ^(Cst_Label IDENTIFIER ))
                  )
   ->             ^(Cst_ConstraintAction csExtendedConstraint
                   {((CustomToken)$LBR).getPayload(Tree.class)}
-                  ^(Cst_concCstOption ^(Cst_NoOption ))
+                  ^(ConcCstOption ^(Cst_NoOption ))
                  )
   ;
 
@@ -240,7 +239,7 @@ csExtendedConstraintAction :
 ->{s!=null}? ^(Cst_BQVarStar csName )
 ->           ^(Cst_BQVar csName)
   |csName LPAR (a+=csBQTerm (COMMA a+=csBQTerm)*)? RPAR
-  -> ^(Cst_BQAppl csName ^(Cst_concCstBQTerm $a*))
+  -> ^(Cst_BQAppl csName ^(ConcCstBQTerm $a*))
 | csConstantValue -> ^(Cst_BQConstant ^(Cst_Name csConstantValue ))
 ;*/
 
@@ -253,7 +252,7 @@ csBQTerm :
    
   |bqname=IDENTIFIER LPAR (a+=csBQTerm (COMMA a+=csBQTerm)*)? RPAR
    -> ^(Cst_BQAppl {extractOptions((CommonToken)$LPAR, (CommonToken)$RPAR)}
-       $bqname ^(Cst_concCstBQTerm $a*))
+       $bqname ^(ConcCstBQTerm $a*))
   | csConstantValue -> ^(Cst_BQConstant
       {extractOptions((CommonToken)$csConstantValue.start, (CommonToken)$csConstantValue.stop)} csConstantValue )
 ;
@@ -346,7 +345,7 @@ csTerm :
   ->           ^(Cst_TermVariable IDENTIFIER)
  
  |IDENTIFIER LPAR (csTerm (COMMA csTerm)*)? RPAR
-  -> ^(Cst_TermAppl IDENTIFIER ^(Cst_concCstTerm csTerm*))
+  -> ^(Cst_TermAppl IDENTIFIER ^(ConcCstTerm csTerm*))
 ;
 // Patterns ===================================================
 csPattern :
@@ -391,9 +390,9 @@ csPattern :
 // f?? -- should be  --> f{theory:AC}
 csHeadSymbolList :
   csHeadSymbol
-  -> ^(Cst_concCstSymbol csHeadSymbol)
+  -> ^(ConcCstSymbol csHeadSymbol)
  | LPAR csHeadSymbol (PIPE csHeadSymbol)* RPAR 
-  -> ^(Cst_concCstSymbol	 csHeadSymbol*)
+  -> ^(ConcCstSymbol	 csHeadSymbol*)
 ; 
 
 csHeadSymbol :
@@ -414,13 +413,13 @@ csHeadSymbol :
 csExplicitTermList :
    LPAR (csPattern (COMMA csPattern)*)? RPAR
 
- -> ^(Cst_concCstPattern csPattern*)
+ -> ^(ConcCstPattern csPattern*)
 ;
 
 csImplicitPairList :
   LSQUAREBR (csPairPattern (COMMA csPairPattern)*)?  RSQUAREBR
 
-  -> ^(Cst_concCstPairPattern csPairPattern*)
+  -> ^(ConcCstPairPattern csPairPattern*)
 ;
 
 csPairPattern :
@@ -450,7 +449,7 @@ returns [int marker] :
 
   -> ^(Cst_OpConstruct
         {extractOptions((CommonToken)$codomain, (CommonToken)$RBR)}
-        ^(Cst_Type $codomain) $ctorName csSlotList ^(Cst_concCstOperator $ks*)
+        ^(Cst_Type $codomain) $ctorName csSlotList ^(ConcCstOperator $ks*)
       ) 
 ;
 
@@ -472,7 +471,7 @@ returns [int marker] :
 
   -> ^(Cst_OpArrayConstruct
         {extractOptions((CommonToken)$codomain, (CommonToken)$RBR)}
-        ^(Cst_Type $codomain) $ctorName ^(Cst_Type $domain) ^(Cst_concCstOperator $ks*)
+        ^(Cst_Type $codomain) $ctorName ^(Cst_Type $domain) ^(ConcCstOperator $ks*)
       )
 ; 
 
@@ -495,7 +494,7 @@ returns [int marker] :
 
   -> ^(Cst_OpListConstruct
         {extractOptions((CommonToken)$codomain, (CommonToken)$RBR)}
-        ^(Cst_Type $codomain) $ctorName ^(Cst_Type $domain) ^(Cst_concCstOperator $ks*)
+        ^(Cst_Type $codomain) $ctorName ^(Cst_Type $domain) ^(ConcCstOperator $ks*)
       )
 ; 
 
@@ -514,18 +513,18 @@ returns [int marker] :
   -> {extend==null}?
    ^(Cst_TypetermConstruct
         {extractOptions((CommonToken)$typeName, (CommonToken)$RBR)}
-        ^(Cst_Type $typeName) ^(Cst_TypeUnknown) ^(Cst_concCstOperator $ks* )
+        ^(Cst_Type $typeName) ^(Cst_TypeUnknown) ^(ConcCstOperator $ks* )
     )
 
   -> /*{$extend==null}*/
    ^(Cst_TypetermConstruct
         {extractOptions((CommonToken)$typeName, (CommonToken)$RBR)}
-        ^(Cst_Type $typeName) ^(Cst_Type $extend) ^(Cst_concCstOperator $ks*)
+        ^(Cst_Type $typeName) ^(Cst_Type $extend) ^(ConcCstOperator $ks*)
     )
 ;
 
 csSlotList :
-  (csSlot (COMMA csSlot)*)?  -> ^(Cst_concCstSlot csSlot*)
+  (csSlot (COMMA csSlot)*)?  -> ^(ConcCstSlot csSlot*)
 ;
 
 csSlot : 
@@ -679,7 +678,7 @@ csKeywordEquals :
 
 csNameList :
   (csName (COMMA csName)*)?
-  -> ^(Cst_concCstName csName*)
+  -> ^(ConcCstName csName*)
 ;
 
 csName :
@@ -719,7 +718,7 @@ csBQVarStar :
 
 csBQAppl :
   csName LPAR (csBQTerm (COMMA csBQTerm)*)? RPAR
-  -> ^(Cst_BQAppl csName ^(Cst_concBQTerm csBQTerm*))
+  -> ^(Cst_BQAppl csName ^(concBQTerm csBQTerm*))
 ;
 */
 // Lexer Rules =============================================================
@@ -752,19 +751,19 @@ LBR     :  '{'
     	null, null, new NegativeImbricationDetector('{', '}', 0));
 
       // XXX DEBUG ===
-      if(HostParserDebugger.isOn()) {
-        HostParserDebugger.getInstance()
-        .debugNewCall(parser.getClassDesc(), input, "");
-      }
+      //if(HostParserDebugger.isOn()) {
+      //  HostParserDebugger.getInstance()
+      //  .debugNewCall(parser.getClassDesc(), input, "");
+      //}
       // === DEBUG ===
 
     Tree tree = parser.parseBlockList(input);
 
       // XXX DEBUG ===
-      if(HostParserDebugger.isOn()) {
-        HostParserDebugger.getInstance()
-        .debugReturnedCall(parser.getClassDesc(), input, "");
-      }
+      //if(HostParserDebugger.isOn()) {
+      //  HostParserDebugger.getInstance()
+      //  .debugReturnedCall(parser.getClassDesc(), input, "");
+     // }
       // === DEBUG ===
       
     tokenCustomizer.prepareNextToken(tree);

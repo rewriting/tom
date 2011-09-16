@@ -522,8 +522,7 @@ public final class TomBase {
       }
       optionList = optionList.getTailconcOption();
     }
-    System.out.println("findOriginTracking:  not found" + optionList);
-    throw new TomRuntimeException("findOriginTracking:  not found" + optionList);
+    throw new TomRuntimeException("findOriginTracking:  not found: " + optionList);
   }
 
   public static TomSymbol getSymbolFromName(String tomName, SymbolTable symbolTable) {
