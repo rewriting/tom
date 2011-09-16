@@ -1671,11 +1671,11 @@ matchBlockAdd :
    * by calling simplification subtyping constraints algorithms to solve the list of
    * subtyping constraints. Then if no errors were found, another algorithm is
    * called in order to generate solutions for the list. This combination of
-   * algorithms is done untill the list is empty.
+   * algorithms is done until the list is empty.
    * Otherwise, the simplification is stopped and all error messages are printed  
    * <p>
    * Propagation of constraints:
-   *  - PHASE 1: Simplification in equantions
+   *  - PHASE 1: Simplification in equations
    *  - PHASE 2: Reduction in closed form
    *  - PHASE 3: Verification of type inconsistencies 
    *  - PHASE 4: Canonization
