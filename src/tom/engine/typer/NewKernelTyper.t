@@ -2426,7 +2426,8 @@ matchBlockSolve :
   public void printGeneratedConstraints(TypeConstraintList tCList) {
     %match(tCList) {
       !concTypeConstraint() -> { 
-        System.out.print("\n------ Type Constraints : \n {");
+        //DEBUG
+        //System.out.print("\n------ Type Constraints : \n {");
         printEachConstraint(tCList);
         System.out.print("}");
       }
