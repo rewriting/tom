@@ -819,7 +819,9 @@ fragment
 MINUS : '-' ;
 
 INTEGER : (MINUS)? (DIGIT)+;
-DOUBLE  : (MINUS)? (DIGIT)+'.'(DIGIT)* | '.' (DIGIT)+;
+fragment
+UNSIGNED_DOUBLE : (DIGIT)+'.'(DIGIT)* | '.' (DIGIT)+;
+DOUBLE  : (MINUS)? UNSIGNED_DOUBLE;
 LONG    : (MINUS)? (DIGIT)+ LONG_SUFFIX;
 /*NUM    : 
   (MINUS)? ('0' ( 
@@ -841,7 +843,7 @@ DOT   : '.' ;*/
 
 fragment
 ID_MINUS:
-  IDENTIFIER MINUS ('a'..'z'|'A'..'Z') (
+  IDENTIFIER MINUS ('a'..'z'|'A'..'Z'|(DIGIT)+|UNSIGNED_DOUBLE) (
         MINUS ('a'..'z' | 'A'..'Z')
       | IDENTIFIER
       )*

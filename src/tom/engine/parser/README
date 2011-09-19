@@ -70,6 +70,8 @@ ou `f(x '+ 42')`
   identifiant-entier (ex: toto-1) provoque une erreur mais l'arbre généré est 
   bon quand même. Le cas est présent dans examples/boulderdash/BoulderDashCore.t
   l.249, 251 et 262 avec SIZE-1
+  - (FP) Problème fixé, apparement le régler dans miniTom.g à réglé le cas pour 
+    le backquote
   
 - `toto("blabla"+x) ne parse pas (ex : examples/bpel/PatterAnalyser.t)
 
