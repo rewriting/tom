@@ -95,8 +95,6 @@ tested):
 - examples:
   examples/appletxml --> xml non géré
   examples/bpel --> xml non géré
-  examples/builtin
-  examples/bytecode
   examples/caml
   examples/cell
   examples/cps
