@@ -96,7 +96,11 @@ csMainBQTerm [ boolean compositeAllowed] :
   | IDBR (csPairSlotBQTerm (COMMA csPairSlotBQTerm)*)? RBR
     -> ^(Cst_BQRecordAppl {extractOptions((CommonToken)$IDBR, (CommonToken)$RBR)}
         IDBR ^(ConcCstPairSlotBQTerm csPairSlotBQTerm*))
-  | csTL -> ^(Cst_ITL {extractOptions((CommonToken)$csTL.start, (CommonToken)$csTL.stop)} csTL)
+  | csTL csMainBQTerm[true]*
+    -> ^(Cst_BQComposite
+         {extractOptions((CommonToken)$csTL.start,(CommonToken)$csTL.stop)}
+         ^(ConcCstBQTerm csTL csMainBQTerm*)
+        )
   ;
 
 csBQTerm
@@ -143,15 +147,15 @@ csPairSlotBQTerm :
 ;
 
 csCompositePart :
-   ANY -> ^(Cst_ITL {extractOptions((CommonToken)$ANY)} ANY)
+   csTL
   | EQUAL -> ^(Cst_ITL {extractOptions((CommonToken)$EQUAL)} EQUAL)
-  | NUM -> ^(Cst_ITL {extractOptions((CommonToken)$NUM)} NUM)
-  | BQDOT -> ^(Cst_ITL {extractOptions((CommonToken)$BQDOT)} BQDOT)
-  | BQSTRING -> ^(Cst_ITL {extractOptions((CommonToken)$BQSTRING)} BQSTRING)
-  | BQCHAR -> ^(Cst_ITL {extractOptions((CommonToken)$BQCHAR)} BQCHAR)
   | csMainBQTerm[true] -> csMainBQTerm
   ;
 
 csTL :
-  BQSTRING | NUM | BQDOT | BQCHAR |ANY
+  BQSTRING -> ^(Cst_ITL {extractOptions((CommonToken)$BQSTRING)} BQSTRING)
+  | NUM -> ^(Cst_ITL {extractOptions((CommonToken)$NUM)} NUM)
+  | BQDOT -> ^(Cst_ITL {extractOptions((CommonToken)$BQDOT)} BQDOT)
+  | BQCHAR -> ^(Cst_ITL {extractOptions((CommonToken)$BQCHAR)} BQCHAR)
+  | ANY -> ^(Cst_ITL {extractOptions((CommonToken)$ANY)} ANY)
   ;

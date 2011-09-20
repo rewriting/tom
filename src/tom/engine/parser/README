@@ -74,6 +74,7 @@ ou `f(x '+ 42')`
     le backquote
   
 - `toto("blabla"+x) ne parse pas (ex : examples/bpel/PatterAnalyser.t)
+  - (FP) problème fixé
 
 ==========================================================
 
@@ -92,9 +93,8 @@ tested):
   test/sl/TestSLModes.t
 
 - examples:
-  examples/appletxml
-    examples/boulderdash --> problème du message lié à SIZE-1 mais arbre correct
-  examples/bpel
+  examples/appletxml --> xml non géré
+  examples/bpel --> xml non géré
   examples/builtin
   examples/bytecode
   examples/caml
