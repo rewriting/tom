@@ -1355,10 +1355,7 @@ public class NewKernelTyper {
           TypeConstraintList simplifiedConstraints =
             replaceInSubtypingConstraints(subtypeConstraints);
           //DEBUG printGeneratedConstraints(simplifiedConstraints);
-          simplifiedConstraints = 
             solveSubtypingConstraints(simplifiedConstraints);
-          //DEBUG System.out.println("\nResulting subtype constraints!!");
-          //DEBUG printGeneratedConstraints(simplifiedConstraints);
         }
       }
     }
@@ -1646,43 +1643,41 @@ matchBlockAdd :
    * @param tCList  the subtyping constraint list to be replaced
    * @return        the empty solved list or the list that has no solutions
    */
-  private TypeConstraintList solveSubtypingConstraints(TypeConstraintList tCList) {
+  private void solveSubtypingConstraints(TypeConstraintList tCList) {
     TypeConstraintList solvedConstraints = tCList;
     TypeConstraintList simplifiedConstraints = `concTypeConstraint();
-    try {
-      solvedConstraints = 
-        `RepeatId(simplificationAndClosure(this)).visitLight(solvedConstraints);
-      //calculatePolarities(simplifiedConstraints);
-      //solvedConstraints = simplifiedConstraints;
-      //while (!solvedConstraints.isEmptyconcTypeConstraint()){
-      while (solvedConstraints != simplifiedConstraints){
-        simplifiedConstraints = incompatibilityDetection(solvedConstraints);
-        %match {
-          concTypeConstraint(_*,FalseTypeConstraint(),_*) << simplifiedConstraints -> {
-            //DEBUG System.out.println("Error!!");
-            return simplifiedConstraints;
+tryBlock:
+    {
+      try {
+        solvedConstraints = 
+          `RepeatId(simplificationAndClosure(this)).visitLight(solvedConstraints);
+        //calculatePolarities(simplifiedConstraints);
+        //solvedConstraints = simplifiedConstraints;
+        //while (!solvedConstraints.isEmptyconcTypeConstraint()){
+        while (solvedConstraints != simplifiedConstraints){
+          simplifiedConstraints = incompatibilityDetection(solvedConstraints);
+          %match {
+            concTypeConstraint(_*,FalseTypeConstraint(),_*) << simplifiedConstraints -> {
+              //DEBUG System.out.println("Error!!");
+              break tryBlock;
+            }
           }
+          simplifiedConstraints = `RepeatId(applyCanonization(this)).visitLight(simplifiedConstraints);
+          //System.out.println("\n\n###### Before ######");
+          //printGeneratedConstraints(simplifiedConstraints);
+          //simplifiedConstraints = garbageCollect(simplifiedConstraints);
+          //System.out.println("\n\n###### After ######");
+          //printGeneratedConstraints(simplifiedConstraints);
+          solvedConstraints = generateSolutions(simplifiedConstraints);
         }
-        simplifiedConstraints = `RepeatId(applyCanonization(this)).visitLight(simplifiedConstraints);
-        //System.out.println("\n\n###### Before ######");
-        //printGeneratedConstraints(simplifiedConstraints);
-        //simplifiedConstraints = garbageCollect(simplifiedConstraints);
-        //System.out.println("\n\n###### After ######");
-        //printGeneratedConstraints(simplifiedConstraints);
-        solvedConstraints = generateSolutions(simplifiedConstraints);
+        garbageCollection(solvedConstraints);
+        //DEBUG System.out.println("\nResulting subtype constraints!!");
+        //DEBUG printGeneratedConstraints(solvedConstraints);
+      } catch(tom.library.sl.VisitFailure e) {
+        throw new TomRuntimeException("solveSubtypingConstraints: failure on " +
+            solvedConstraints);
       }
-      solvedConstraints = garbageCollection(solvedConstraints);
-      //solvedConstraints = generateSolutions(simplifiedConstraints);
-      //if (solvedConstraints == simplifiedConstraints) {
-      //  return simplifiedConstraints;
-      //}
-      //DEBUG System.out.println("\nResulting subtype constraints!!");
-      //DEBUG printGeneratedConstraints(solvedConstraints);
-    } catch(tom.library.sl.VisitFailure e) {
-      throw new TomRuntimeException("solveSubtypingConstraints: failure on " +
-          solvedConstraints);
     }
-    return solvedConstraints;
   }
 
   /**
@@ -2234,7 +2229,7 @@ matchBlockSolve :
       return newtCList;
     }
 
-  private TypeConstraintList garbageCollection(TypeConstraintList tCList) {
+  private void garbageCollection(TypeConstraintList tCList) {
     TypeConstraintList newtCList = tCList;
     %match(tCList) {
       /* CASE 3 */
@@ -2249,7 +2244,6 @@ matchBlockSolve :
         }
       }
     }
-    return newtCList;
   }
 
   private void printErrorGuessMatch(Info info) {
