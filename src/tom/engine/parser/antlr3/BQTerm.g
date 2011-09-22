@@ -62,7 +62,45 @@ import static tom.engine.parser.antlr3.miniTomParser.*;
 }
 //beginBackQuote
 
-csMainBQTerm [ boolean compositeAllowed] :
+csBQTerm
+returns [int marker] :
+ BQID
+  {$marker = ((CustomToken)$BQID).getPayload(Integer.class);}
+  -> ^(Cst_BQVar {extractOptions((CommonToken)$BQID)} BQID ^(Cst_TypeUnknown ))
+
+ |BQPAR csCompositePart* RPAR
+  {$marker = ((CustomToken)$RPAR).getPayload(Integer.class);}
+
+  -> ^(Cst_BQComposite 
+       {extractOptions((CommonToken)$BQPAR, (CommonToken)$RPAR)}
+       ^(ConcCstBQTerm
+         ^(Cst_ITL {extractOptions((CommonToken)$BQPAR)} BQPAR)
+         ^(Cst_BQComposite
+           {extractOptions((CommonToken)$csCompositePart.stop)}
+           ^(ConcCstBQTerm csCompositePart*))
+         ^(Cst_ITL {extractOptions((CommonToken)$RPAR)} RPAR)
+        )
+      )
+
+ |BQIDSTAR
+  {$marker = ((CustomToken)$BQIDSTAR).getPayload(Integer.class);}
+
+  -> ^(Cst_BQVarStar {extractOptions((CommonToken)$BQIDSTAR)} BQIDSTAR ^(Cst_TypeUnknown ))
+
+ |BQIDPAR (csBQTermArgsComposite (COMMA csBQTermArgsComposite)*)? RPAR
+  {$marker = ((CustomToken)$RPAR).getPayload(Integer.class);}
+
+  -> ^(Cst_BQAppl {extractOptions((CommonToken)$BQIDPAR, (CommonToken)$RPAR)}
+      BQIDPAR ^(ConcCstBQTerm csBQTermArgsComposite*))
+ 
+ |BQIDBR (csPairSlotBQTerm (COMMA csPairSlotBQTerm)*)? RBR
+  {$marker = ((CustomToken)$RBR).getPayload(Integer.class);}
+  
+  -> ^(Cst_BQRecordAppl {extractOptions((CommonToken)$BQIDBR, (CommonToken)$RBR)}
+      BQIDBR ^(ConcCstPairSlotBQTerm csPairSlotBQTerm*)) 
+ ;
+
+csBQTermArgs [ boolean compositeAllowed] :
   UNDERSCORE -> ^(Cst_BQDefault {extractOptions((CommonToken)$UNDERSCORE)})
   | IDSTAR -> ^(Cst_BQVarStar {extractOptions((CommonToken)$IDSTAR)} IDSTAR ^(Cst_TypeUnknown ))
   | ID {$compositeAllowed}?=> c=csCompositePart*
@@ -89,67 +127,34 @@ csMainBQTerm [ boolean compositeAllowed] :
           )
         )
 
-  | IDPAR (csMainBQTerm[true] (COMMA csMainBQTerm[true])*)? RPAR
+  | IDPAR (csBQTermArgsComposite (COMMA csBQTermArgsComposite)*)? RPAR
     -> ^(Cst_BQAppl {extractOptions((CommonToken)$IDPAR, (CommonToken)$RPAR)}
-        IDPAR ^(ConcCstBQTerm csMainBQTerm*))
+        IDPAR ^(ConcCstBQTerm csBQTermArgsComposite*))
  
   | IDBR (csPairSlotBQTerm (COMMA csPairSlotBQTerm)*)? RBR
     -> ^(Cst_BQRecordAppl {extractOptions((CommonToken)$IDBR, (CommonToken)$RBR)}
         IDBR ^(ConcCstPairSlotBQTerm csPairSlotBQTerm*))
-  | csTL csMainBQTerm[true]*
-    -> ^(Cst_BQComposite
-         {extractOptions((CommonToken)$csTL.start,(CommonToken)$csTL.stop)}
-         ^(ConcCstBQTerm csTL csMainBQTerm*)
-        )
+  | csTL
   ;
 
-csBQTerm
-returns [int marker] :
- BQID
-  {$marker = ((CustomToken)$BQID).getPayload(Integer.class);}
-  -> ^(Cst_BQVar {extractOptions((CommonToken)$BQID)} BQID ^(Cst_TypeUnknown ))
-
- |BQPAR csCompositePart* RPAR
-  {$marker = ((CustomToken)$RPAR).getPayload(Integer.class);}
-
-  -> ^(Cst_BQComposite 
-       {extractOptions((CommonToken)$BQPAR, (CommonToken)$RPAR)}
-       ^(ConcCstBQTerm
-         ^(Cst_ITL {extractOptions((CommonToken)$BQPAR)} BQPAR)
-         ^(Cst_BQComposite
-           {extractOptions((CommonToken)$csCompositePart.stop)}
-           ^(ConcCstBQTerm csCompositePart*))
-         ^(Cst_ITL {extractOptions((CommonToken)$RPAR)} RPAR)
-        )
+csBQTermArgsComposite :
+  csBQTermArgs[true] csCP=csCompositePart*
+  -> {csCP==null}? csBQTermArgs
+  -> ^(Cst_BQComposite
+       {extractOptions((CommonToken)$csBQTermArgs.start, (CommonToken)$csBQTermArgs.stop)}
+       ^(ConcCstBQTerm csBQTermArgs csCompositePart*)
       )
-
- |BQIDSTAR
-  {$marker = ((CustomToken)$BQIDSTAR).getPayload(Integer.class);}
-
-  -> ^(Cst_BQVarStar {extractOptions((CommonToken)$BQIDSTAR)} BQIDSTAR ^(Cst_TypeUnknown ))
-
- |BQIDPAR (csMainBQTerm[true] (COMMA csMainBQTerm[true])*)? RPAR
-  {$marker = ((CustomToken)$RPAR).getPayload(Integer.class);}
-
-  -> ^(Cst_BQAppl {extractOptions((CommonToken)$BQIDPAR, (CommonToken)$RPAR)}
-      BQIDPAR ^(ConcCstBQTerm csMainBQTerm*))
- 
- |BQIDBR (csPairSlotBQTerm (COMMA csPairSlotBQTerm)*)? RBR
-  {$marker = ((CustomToken)$RBR).getPayload(Integer.class);}
-  
-  -> ^(Cst_BQRecordAppl {extractOptions((CommonToken)$BQIDBR, (CommonToken)$RBR)}
-      BQIDBR ^(ConcCstPairSlotBQTerm csPairSlotBQTerm*)) 
- ; 
+  ;
 
 csPairSlotBQTerm :
-  ID EQUAL csMainBQTerm[false]
-  -> ^(Cst_PairSlotBQTerm {extractOptions((CommonToken)$ID)} ^(Cst_Name ID) csMainBQTerm)
-;
+  ID EQUAL csBQTermArgs[false]
+  -> ^(Cst_PairSlotBQTerm {extractOptions((CommonToken)$ID)} ^(Cst_Name ID) csBQTermArgs)
+  ;
 
 csCompositePart :
    csTL
   | EQUAL -> ^(Cst_ITL {extractOptions((CommonToken)$EQUAL)} EQUAL)
-  | csMainBQTerm[true] -> csMainBQTerm
+  | csBQTermArgs[true] -> csBQTermArgs
   ;
 
 csTL :

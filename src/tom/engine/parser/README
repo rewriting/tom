@@ -95,8 +95,9 @@ tested):
 - examples:
   examples/appletxml --> xml non géré
   examples/bpel --> xml non géré
-  examples/caml
-  examples/cell
+  examples/caml --> commentaire caml non géré (pas de soucis tant qu'il n'y a pas de mot
+                    clef dedans) et les ' autorisés dans les noms de variables sont détectés
+                    comme des ' signalant un char (PeanoMapped.t)
   examples/cps
   examples/csharp
   examples/csmaca
