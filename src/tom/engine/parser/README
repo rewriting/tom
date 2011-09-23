@@ -64,6 +64,14 @@ ou `f(x '+ 42')`
 - problème dans le %gom. Dans exemples/analysis, tom -np -ast -cst affiche son
   arbre dans la partie ast et non cst et inclue du code venant de fichier
   temporaire (9800 lignes de java pour TestPico.t)
+  - (FP) Il n'y a plus le problème mais je n'ai rien touché
+  
+- problème avec "MINUS : '-'" dans miniTom.g et BQTermLexer.g, le cas 
+  identifiant-entier (ex: toto-1) provoque une erreur mais l'arbre généré est 
+  bon quand même. Le cas est présent dans examples/boulderdash/BoulderDashCore.t
+  l.249, 251 et 262 avec SIZE-1
+  
+- `toto("blabla"+x) ne parse pas (ex : examples/bpel/PatterAnalyser.t)
 
 ==========================================================
 
@@ -82,11 +90,8 @@ tested):
   test/sl/TestSLModes.t
 
 - examples:
-  examples/analysis
-  examples/antipattern
   examples/appletxml
-  examples/bdd
-  examples/boulderdash
+    examples/boulderdash --> problème du message lié à SIZE-1 mais arbre correct
   examples/bpel
   examples/builtin
   examples/bytecode

@@ -423,7 +423,7 @@ public abstract class ParserAction {
     String currentFileName = input.getSourceName();
     testIncludedFile(currentFileName, includedFiles);
     Logger logger = Logger.getLogger("tom.engine.newparser.parser.HostParser");
-
+    
     // treat keyword chars
     hostBlockBuilder.removeLastChars(analyst.getOffsetAtMatch());
     PACK_HOST_CONTENT.doAction(input, hostBlockBuilder, tree, analyst,

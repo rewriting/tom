@@ -415,7 +415,7 @@ public abstract class ParserAction {
     throws TomIncludeException, TomException {
 
     String currentFileName = input.getSourceName();
-    testIncludedFile(currentFileName, includedFiles);
+    includedFiles.add(currentFileName);
     Logger logger = Logger.getLogger("tom.engine.parser.antlr3.HostParser");
 
     // treat keyword chars
@@ -431,7 +431,6 @@ public abstract class ParserAction {
     while(legitChars.contains((char)input.LA(1))) {
       input.consume();
     }
-
     char tmp;
     if((tmp=(char)input.LA(1))!='{') {
       throw new RuntimeException("Unexpected '"+tmp+"', expecting '{'");//XXX
