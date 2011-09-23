@@ -52,7 +52,7 @@ public class HostParser {
     this.streamManager = streamManager;
     
     this.includedFileSet = new HashSet<String>(includedFiles);
-    this.alreadyParsedFileSet = new HashSet<String>(alreadyParsedFiles);
+    this.alreadyParsedFileSet = alreadyParsedFiles;
     //following test for the case of stopCondition==NegativeImbricationDetector
     if(streamManager!=null) {
       testIncludedFile(streamManager.getInputFileName(), includedFileSet);

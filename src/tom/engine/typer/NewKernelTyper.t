@@ -73,7 +73,7 @@ public class NewKernelTyper {
   private BQTermList varList;
 
   // List for type variables of patterns 
-  private TomTypeList positiveTVarList;
+  private TomTypeList inputTVarList;
   // List for equation constraints (for fresh type variables)
   private TypeConstraintList equationConstraints;
   // List for subtype constraints (for fresh type variables)
@@ -262,6 +262,48 @@ public class NewKernelTyper {
   }
 
   /**
+   * The method <code>containsConstraintModuloEqDecoratedSort</code> checks if a given constraint
+   * already exists in a constraint type list. The method considers symmetry for
+   * equation constraints and equality of decorated sorts in other to allow teh
+   * following:
+   * insert((A = T^?),C)	->	C,              if (A = T^c) in C \/ (T^c = A) in C 
+   *                      ->  {A = T^?} U C,  otherwise
+   *
+   * insert((T^? = A),C)	->	C,              if (A = T^c) in C \/ (T^c = A) in C 
+   *                      ->  {T^? = A} U C,  otherwise
+   * 
+   * @param tConstraint the constraint to be considered
+   * @param tCList      the type constraint list to be traversed
+   * @return            'true' if an equal constraint modulo EqOfDecSort already exists in the list
+   *                    'false' otherwise            
+   */
+  protected boolean containsConstraintModuloEqDecoratedSort(TypeConstraint tConstraint, TypeConstraintList
+      tCList) {
+    %match {
+      Equation[Type1=tVar@TypeVar[],Type2=Type[TypeOptions=tOptions,TomType=tType]] << tConstraint &&
+        !concTypeOption(_*,WithSymbol[],_*) << tOptions &&
+        concTypeConstraint(_*,Equation[Type1=tVar,Type2=Type[TypeOptions=decoratedtOptions,TomType=tType]],_*) << tCList && 
+        concTypeOption(_*,WithSymbol[],_*) << decoratedtOptions -> { return true; }
+
+      Equation[Type1=Type[TypeOptions=tOptions,TomType=tType],Type2=tVar@TypeVar[]] << tConstraint &&
+        !concTypeOption(_*,WithSymbol[],_*) << tOptions &&
+        concTypeConstraint(_*,Equation[Type1=tVar,Type2=Type[TypeOptions=decoratedtOptions,TomType=tType]],_*) << tCList && 
+        concTypeOption(_*,WithSymbol[],_*) << decoratedtOptions -> { return true; }
+
+      Equation[Type1=tVar@TypeVar[],Type2=Type[TypeOptions=tOptions,TomType=tType]] << tConstraint &&
+        !concTypeOption(_*,WithSymbol[],_*) << tOptions &&
+        concTypeConstraint(_*,Equation[Type1=Type[TypeOptions=decoratedtOptions,TomType=tType],Type2=tVar],_*) << tCList && 
+        concTypeOption(_*,WithSymbol[],_*) << decoratedtOptions -> { return true; }
+
+      Equation[Type1=Type[TypeOptions=tOptions,TomType=tType],Type2=tVar@TypeVar[]] << tConstraint &&
+        !concTypeOption(_*,WithSymbol[],_*) << tOptions &&
+        concTypeConstraint(_*,Equation[Type1=Type[TypeOptions=decoratedtOptions,TomType=tType],Type2=tVar],_*) << tCList && 
+        concTypeOption(_*,WithSymbol[],_*) << decoratedtOptions -> { return true; }
+    }
+    return false;
+  }
+
+  /**
    * The method <code>containsConstraint</code> checks if a given constraint
    * already exists in a constraint type list. The method considers symmetry for
    * equation constraints. 
@@ -284,9 +326,10 @@ public class NewKernelTyper {
       Equation[Type1=t1,Type2=t2] << TypeConstraint tConstraint &&
         concTypeConstraint(_*,Equation[Type1=t2,Type2=t1],_*) << tCList 
         -> { return true; }
-    }
-    return false;
-  } 
+      }
+      return containsConstraintModuloEqDecoratedSort(tConstraint,tCList);
+      //return false;
+    } 
 
   /*
    * pem: use if(...==... && typeConstraints.contains(...))
@@ -410,7 +453,7 @@ public class NewKernelTyper {
 
 
   protected void addPositiveTVar(TomType tType) {
-    positiveTVarList = `concTomType(tType,positiveTVarList*);
+    inputTVarList = `concTomType(tType,inputTVarList*);
   }
 
   /**
@@ -461,7 +504,7 @@ public class NewKernelTyper {
     freshTypeVarCounter = limTVarSymbolTable;
     varPatternList = `concTomTerm();
     varList = `concBQTerm();
-    positiveTVarList = `concTomType();
+    inputTVarList = `concTomType();
     equationConstraints = `concTypeConstraint();
     subtypeConstraints = `concTypeConstraint();
     substitutions = new HashMap<TomType,TomType>();
@@ -722,8 +765,8 @@ public class NewKernelTyper {
         TomType codomain = contextType;
         if (tSymbol == null) {
           tSymbol = `EmptySymbol();
-          System.out.println("name = " + `name);
-          System.out.println("context = " + contextType);
+          //DEBUG System.out.println("name = " + `name);
+          //DEBUG System.out.println("context = " + contextType);
           BQTermList newBQTList = nkt.inferBQTermList(`bqTList,`EmptySymbol(),codomain);
           /* PEM: why contextType ? */
           return `FunctionCall(aName,contextType,newBQTList); 
@@ -840,6 +883,7 @@ public class NewKernelTyper {
       //DEBUG    `code);
       code = inferAllTypes(code,`EmptyType());
       //DEBUG printGeneratedConstraints(subtypeConstraints);
+      //DEBUG printGeneratedConstraints(equationConstraints);
       solveConstraints();
       //DEBUG System.out.println("substitutions = " + substitutions);
       code = replaceInCode(code);
@@ -1310,12 +1354,8 @@ public class NewKernelTyper {
         !concTypeConstraint() << subtypeConstraints -> {
           TypeConstraintList simplifiedConstraints =
             replaceInSubtypingConstraints(subtypeConstraints);
-          replaceInPositiveTVarList();
           //DEBUG printGeneratedConstraints(simplifiedConstraints);
-          simplifiedConstraints = 
             solveSubtypingConstraints(simplifiedConstraints);
-          //DEBUG System.out.println("\nResulting subtype constraints!!");
-          //DEBUG printGeneratedConstraints(simplifiedConstraints);
         }
       }
     }
@@ -1584,102 +1624,64 @@ matchBlockAdd :
     return replacedtCList;
   }
 
-  private void replaceInPositiveTVarList() {
-    TomTypeList replacedPositiveTVarList = `concTomType();
-    TomType mapTVar;
-    for (TomType tVar: positiveTVarList.getCollectionconcTomType()) {
-      mapTVar = substitutions.get(tVar);
-      //DEBUG System.out.println("mapTVar = " + mapTVar);
-      if (mapTVar == null) {
-        mapTVar = tVar;
-      } else {
-        %match(mapTVar) {
-          !TypeVar[] -> { mapTVar = tVar; }
-        }
-      }
-      replacedPositiveTVarList =
-        `concTomType(mapTVar,replacedPositiveTVarList*);
-    }
-    positiveTVarList = replacedPositiveTVarList;
-  }
-
-  /*
-  private void calculatePolarities(TypeConstraintList tCList) {
-    TomTypeList newPTVarList = `concTomType();
-    for (TomType tVar: positiveTVarList.getCollectionconcTomType()) { 
-      %match(tCList) {
-        concTypeConstraint(_*,Subtype[Type1=tVar1@TypeVar[],Type2=tVar2@TypeVar[]],_*)
-          -> {
-            if (tVar == `tVar1) {
-              newPTVarList = `concTomType(tVar2,newPTVarList*);
-            } else if (tVar == `tVar2){
-              newPTVarList = `concTomType(tVar1,newPTVarList*);
-            }
-          }
-      }
-    }
-    positiveTVarList = `concTomType(newPTVarList*,positiveTVarList*);
-  }
-  */
 
   /**
    * The method <code>solveSubtypingConstraints</code> do constraint propagation
    * by calling simplification subtyping constraints algorithms to solve the list of
    * subtyping constraints. Then if no errors were found, another algorithm is
    * called in order to generate solutions for the list. This combination of
-   * algorithms is done untill the list is empty.
+   * algorithms is done until the list is empty.
    * Otherwise, the simplification is stopped and all error messages are printed  
    * <p>
    * Propagation of constraints:
-   *  - PHASE 1: Simplification in equantions
+   *  - PHASE 1: Simplification in equations
    *  - PHASE 2: Reduction in closed form
    *  - PHASE 3: Verification of type inconsistencies 
    *  - PHASE 4: Canonization
    * Generation of solutions
+   * Garbage collection: remove typeVars which are not input types 
    * @param tCList  the subtyping constraint list to be replaced
    * @return        the empty solved list or the list that has no solutions
    */
-  private TypeConstraintList solveSubtypingConstraints(TypeConstraintList tCList) {
+  private void solveSubtypingConstraints(TypeConstraintList tCList) {
     TypeConstraintList solvedConstraints = tCList;
     TypeConstraintList simplifiedConstraints = `concTypeConstraint();
-    try {
-      solvedConstraints = 
-        `RepeatId(normalizeConstraints(this)).visitLight(solvedConstraints);
-      //calculatePolarities(simplifiedConstraints);
-      //solvedConstraints = simplifiedConstraints;
-      //while (!solvedConstraints.isEmptyconcTypeConstraint()){
-      while (solvedConstraints != simplifiedConstraints){
-        simplifiedConstraints = checkInconsistencies(solvedConstraints);
-        %match {
-          concTypeConstraint(_*,FalseTypeConstraint(),_*) << simplifiedConstraints -> {
-            System.out.println("Error!!");
-            return simplifiedConstraints;
+tryBlock:
+    {
+      try {
+        solvedConstraints = 
+          `RepeatId(simplificationAndClosure(this)).visitLight(solvedConstraints);
+        //calculatePolarities(simplifiedConstraints);
+        //solvedConstraints = simplifiedConstraints;
+        //while (!solvedConstraints.isEmptyconcTypeConstraint()){
+        while (solvedConstraints != simplifiedConstraints){
+          simplifiedConstraints = incompatibilityDetection(solvedConstraints);
+          %match {
+            concTypeConstraint(_*,FalseTypeConstraint(),_*) << simplifiedConstraints -> {
+              //DEBUG System.out.println("Error!!");
+              break tryBlock;
+            }
           }
+          simplifiedConstraints = `RepeatId(applyCanonization(this)).visitLight(simplifiedConstraints);
+          //System.out.println("\n\n###### Before ######");
+          //printGeneratedConstraints(simplifiedConstraints);
+          //simplifiedConstraints = garbageCollect(simplifiedConstraints);
+          //System.out.println("\n\n###### After ######");
+          //printGeneratedConstraints(simplifiedConstraints);
+          solvedConstraints = generateSolutions(simplifiedConstraints);
         }
-        simplifiedConstraints = `RepeatId(applyCanonization(this)).visitLight(simplifiedConstraints);
-        //System.out.println("\n\n###### Before ######");
-        //printGeneratedConstraints(simplifiedConstraints);
-        //simplifiedConstraints = garbageCollect(simplifiedConstraints);
-        //System.out.println("\n\n###### After ######");
-        //printGeneratedConstraints(simplifiedConstraints);
-        solvedConstraints = generateSolutions(simplifiedConstraints);
+        garbageCollection(solvedConstraints);
+        //DEBUG System.out.println("\nResulting subtype constraints!!");
+        //DEBUG printGeneratedConstraints(solvedConstraints);
+      } catch(tom.library.sl.VisitFailure e) {
+        throw new TomRuntimeException("solveSubtypingConstraints: failure on " +
+            solvedConstraints);
       }
-      solvedConstraints = analyseRemaining(solvedConstraints);
-      //solvedConstraints = generateSolutions(simplifiedConstraints);
-      //if (solvedConstraints == simplifiedConstraints) {
-      //  return simplifiedConstraints;
-      //}
-      //DEBUG System.out.println("\nResulting subtype constraints!!");
-      //DEBUG printGeneratedConstraints(solvedConstraints);
-    } catch(tom.library.sl.VisitFailure e) {
-      throw new TomRuntimeException("solveSubtypingConstraints: failure on " +
-          solvedConstraints);
     }
-    return solvedConstraints;
   }
 
   /**
-   * The method <code>normalizeConstraints</code> is generated by a
+   * The method <code>simplificationAndClosure</code> is generated by a
    * strategy which simplifies a subtype constraints list.
    * <p>
    * Let 'Ai' and 'Ti' be type variables and ground types, respectively:
@@ -1699,7 +1701,7 @@ matchBlockAdd :
    * @param nkt an instance of object NewKernelTyper
    * @return    the subtype constraint list resulting
    */
-  %strategy normalizeConstraints(nkt:NewKernelTyper) extends Identity() {
+  %strategy simplificationAndClosure(nkt:NewKernelTyper) extends Identity() {
     visit TypeConstraintList {
       /* PHASE 1 */
       tcl@concTypeConstraint(tcl1*,Subtype[Type1=t1,Type2=t2,Info=info],tcl2*,Subtype[Type1=t2,Type2=t1],tcl3*) -> {
@@ -1729,18 +1731,18 @@ matchBlockAdd :
   }
 
   /**
-   * The method <code>checkInconsistencies</code> verify if there are type
+   * The method <code>incompatibilityDetection</code> verify if there are type
    * inconsistencies. This is done for each type constraint of tCList.
    * <p>
    * Let 'Ai' and 'Ti' be type variables and ground types, respectively:
    * tCList = {T1 <: T2} U tCList' and Map --> detectFail(T1 <: T2) U tCList and Map
    * Note that the constraint "{T1 <: T2}" must be keeped in tCList to avoid an
-   * infinity loop when re-applying <code>normalizeConstraints</code> method.
+   * infinity loop when re-applying <code>simplificationAndClosure</code> method.
    * <p>
    * @param nkt an instance of object NewKernelTyper
    * @return    the subtype constraint list resulting
    */
-  private TypeConstraintList checkInconsistencies(TypeConstraintList tCList) {
+  private TypeConstraintList incompatibilityDetection(TypeConstraintList tCList) {
     /* PHASE 3 */
     boolean errorFound = false;
     TypeConstraintList simplifiedtCList = `concTypeConstraint();
@@ -1773,8 +1775,8 @@ matchBlock :
         tCList.getCollectionconcTypeConstraint()) {
       %match {
         Subtype[Type1=t1,Type2=t2] << tConstraint &&
-          (concTomType(_*,t1,_*) << positiveTVarList || 
-           concTomType(_*,t2,_*) << positiveTVarList) -> {
+          (concTomType(_*,t1,_*) << inputTVarList || 
+           concTomType(_*,t2,_*) << inputTVarList) -> {
             simplifiedtCList = `concTypeConstraint(tConstraint,simplifiedtCList*);
           }
       }
@@ -2227,13 +2229,13 @@ matchBlockSolve :
       return newtCList;
     }
 
-  private TypeConstraintList analyseRemaining(TypeConstraintList tCList) {
+  private void garbageCollection(TypeConstraintList tCList) {
     TypeConstraintList newtCList = tCList;
     %match(tCList) {
       /* CASE 3 */
       concTypeConstraint(leftTCL*,Subtype[Type1=tVar1@TypeVar[],Type2=tVar2@TypeVar[],Info=info],rightTCL*) -> {
         %match {
-          concTomType(_*,tVar,_*) << positiveTVarList && 
+          concTomType(_*,tVar,_*) << inputTVarList && 
             (tVar == tVar1 || tVar == tVar2) -> {
             `printErrorGuessMatch(info);
             newtCList =
@@ -2242,7 +2244,6 @@ matchBlockSolve :
         }
       }
     }
-    return newtCList;
   }
 
   private void printErrorGuessMatch(Info info) {
