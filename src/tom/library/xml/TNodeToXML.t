@@ -44,6 +44,8 @@ public class TNodeToXML {
 
   %include{ adt/tnode/TNode.tom }
 
+  public static final String UNDEF = "UNDEF";
+
   private OutputStream out = System.out;
   private Writer writer = null;
 
@@ -95,16 +97,16 @@ public class TNodeToXML {
       }
       DocumentTypeNode(name,publicId,systemId,internalSubset,_,_) -> {
         write("<!DOCTYPE "+`name);
-        if (!`publicId.equals("UNDEF") && !`systemId.equals("UNDEF"))
+        if (!`publicId.equals(TNodeToXML.UNDEF) && !`systemId.equals(TNodeToXML.UNDEF))
           write(" PUBLIC \""+`publicId+"\" \"");
-        else if (!`systemId.equals("UNDEF") && `publicId.equals("UNDEF"))
+        else if (!`systemId.equals(TNodeToXML.UNDEF) && `publicId.equals(TNodeToXML.UNDEF))
           write(" SYSTEM \"");
         else {
           System.out.println("Problem in DocumentTypeNode");
           throw new RuntimeException("Problem in DocumentTypeNode");
         }
         write(`systemId+"\"");
-        if (!`internalSubset.equals("UNDEF")) {
+        if (!`internalSubset.equals(TNodeToXML.UNDEF)) {
           write(" ["+`internalSubset+"]");
         }
         write(">\n");

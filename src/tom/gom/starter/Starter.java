@@ -24,13 +24,10 @@
 
 package tom.gom.starter;
 
-import java.util.logging.Level;
 import java.util.Map;
 
 import tom.gom.GomMessage;
-import tom.gom.GomStreamManager;
 import tom.gom.tools.GomGenericPlugin;
-import tom.gom.tools.GomEnvironment;
 
 
 /**

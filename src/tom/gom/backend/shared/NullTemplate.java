@@ -29,7 +29,6 @@ import tom.gom.tools.GomEnvironment;
 import tom.gom.backend.TemplateClass;
 import java.io.*;
 import tom.gom.adt.objects.types.*;
-import java.util.ArrayList;
 
 public class NullTemplate extends TemplateClass {
 

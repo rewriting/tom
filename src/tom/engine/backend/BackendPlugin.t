@@ -87,6 +87,11 @@ public class BackendPlugin extends TomGenericPlugin {
     "<boolean name='inlineplus'   altName=''  description='Inline mapping' value='false'/>" +
     "</options>";
 
+  public static final String CCODE = "cCode"; 
+  public static final String CAMLCODE = "camlCode"; 
+  public static final String PCODE = "pCode"; 
+  public static final String JCODE = "jCode"; 
+
   /** the generated file name */
   private String generatedFileName = null;
 
@@ -111,15 +116,15 @@ public class BackendPlugin extends TomGenericPlugin {
           OutputCode output = new OutputCode(writer, getOptionManager());
           if(getOptionBooleanValue("noOutput")) {
             throw new TomRuntimeException("Backend activated, but noOutput is set");
-          } else if(getOptionBooleanValue("cCode")) {
+          } else if(getOptionBooleanValue(BackendPlugin.CCODE)) {
             generator = new CGenerator(output, getOptionManager(), getSymbolTable());
-          } else if(getOptionBooleanValue("camlCode")) {
+          } else if(getOptionBooleanValue(BackendPlugin.CAMLCODE)) {
             generator = new CamlGenerator(output, getOptionManager(), getSymbolTable());
-          } else if(getOptionBooleanValue("pCode")) {
+          } else if(getOptionBooleanValue(BackendPlugin.PCODE)) {
             generator = new PythonGenerator(output, getOptionManager(), getSymbolTable());
           } else if(getOptionBooleanValue("csCode")) {
             generator = new CSharpGenerator(output, getOptionManager(), getSymbolTable());
-          } else if(getOptionBooleanValue("jCode")) {
+          } else if(getOptionBooleanValue(BackendPlugin.JCODE)) {
             generator = new JavaGenerator(output, getOptionManager(), getSymbolTable());
           } else {
             throw new TomRuntimeException("no selected language for the Backend");
@@ -167,22 +172,22 @@ public class BackendPlugin extends TomGenericPlugin {
 
   public void optionChanged(String optionName, Object optionValue) {
     //System.out.println("optionChanged: " + optionName + " --> " + optionValue);
-    if(optionName.equals("camlCode") && ((Boolean)optionValue).booleanValue() ) { 
-      setOptionValue("jCode", Boolean.FALSE);        
-      setOptionValue("cCode", Boolean.FALSE);        
-      setOptionValue("pCode", Boolean.FALSE);        
-    } else if(optionName.equals("cCode") && ((Boolean)optionValue).booleanValue() ) { 
-      setOptionValue("jCode", Boolean.FALSE);        
-      setOptionValue("camlCode", Boolean.FALSE);        
-      setOptionValue("pCode", Boolean.FALSE);        
-    } else if(optionName.equals("jCode") && ((Boolean)optionValue).booleanValue() ) { 
-      setOptionValue("cCode", Boolean.FALSE);        
-      setOptionValue("camlCode", Boolean.FALSE);        
-      setOptionValue("pCode", Boolean.FALSE);        
-    } else if(optionName.equals("pCode") && ((Boolean)optionValue).booleanValue() ) { 
-      setOptionValue("cCode", Boolean.FALSE);        
-      setOptionValue("camlCode", Boolean.FALSE);        
-      setOptionValue("jCode", Boolean.FALSE);        
+    if(optionName.equals(BackendPlugin.CAMLCODE) && ((Boolean)optionValue).booleanValue() ) {
+      setOptionValue(BackendPlugin.JCODE, Boolean.FALSE);
+      setOptionValue(BackendPlugin.CCODE, Boolean.FALSE);
+      setOptionValue(BackendPlugin.PCODE, Boolean.FALSE);
+    } else if(optionName.equals(BackendPlugin.CCODE) && ((Boolean)optionValue).booleanValue() ) {
+      setOptionValue(BackendPlugin.JCODE, Boolean.FALSE);
+      setOptionValue(BackendPlugin.CAMLCODE, Boolean.FALSE);
+      setOptionValue(BackendPlugin.PCODE, Boolean.FALSE);
+    } else if(optionName.equals(BackendPlugin.JCODE) && ((Boolean)optionValue).booleanValue() ) {
+      setOptionValue(BackendPlugin.CCODE, Boolean.FALSE);
+      setOptionValue(BackendPlugin.CAMLCODE, Boolean.FALSE);
+      setOptionValue(BackendPlugin.PCODE, Boolean.FALSE);
+    } else if(optionName.equals(BackendPlugin.PCODE) && ((Boolean)optionValue).booleanValue() ) {
+      setOptionValue(BackendPlugin.CCODE, Boolean.FALSE);
+      setOptionValue(BackendPlugin.CAMLCODE, Boolean.FALSE);
+      setOptionValue(BackendPlugin.JCODE, Boolean.FALSE);
     }
   }
 
