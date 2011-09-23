@@ -98,17 +98,8 @@ tested):
   examples/caml --> commentaire caml non géré (pas de soucis tant qu'il n'y a pas de mot
                     clef dedans) et les ' autorisés dans les noms de variables sont détectés
                     comme des ' signalant un char (PeanoMapped.t)
-  examples/cps
-  examples/csharp
-  examples/csmaca
-  examples/debugger
-  examples/deepmatch
-  examples/dist
-  examples/dom
-  examples/expression
-  examples/freshgom
-  examples/gasel
-  examples/generics
+  examples/csharp --> parse mais c'est du C#
+  examples/dom --> xml non géré
   examples/gom
   examples/gomoku
   examples/gterm
