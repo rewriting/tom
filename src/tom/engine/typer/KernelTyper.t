@@ -344,7 +344,7 @@ public class KernelTyper {
             newSubject = `subject;
             /* tomType may be a Type(_,EmptyTargetLanguageType()) or a type from an typed variable */
             String type = TomBase.getTomType(`aType);
-            if(kernelTyper.getType(`type) == null) {
+            if(kernelTyper.getType(type) == null) {
               /* the subject is a variable with an unknown type */
               newSubjectType = kernelTyper.guessSubjectType(`subject,matchAndNumericConstraints);
               if(newSubjectType != null) {

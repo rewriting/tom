@@ -13,8 +13,7 @@ CstBlockList = ConcCstBlock(CstBlock*)
 
 CstBlock =
  HOSTBLOCK(optionList:CstOptionList, content:String)
-| Cst_MatchConstruct(optionList:CstOptionList, arguments:CstBQTermList , constraintActionList:CstConstraintActionList)
-//| Cst_MatchConstruct(optionList:CstOptionList, arguments:CstMatchArgumentList , constraintActionList:CstConstraintActionList)
+| Cst_MatchConstruct(optionList:CstOptionList, subjectList:CstBQTermList , constraintActionList:CstConstraintActionList)
 | Cst_OpConstruct       (optionList:CstOptionList, codomain:CstType, ctorName:CstName, argumentList:CstSlotList, operatorList:CstOperatorList)
 | Cst_OpArrayConstruct  (optionList:CstOptionList, codomain:CstType, ctorName:CstName, domain:CstType, operatorList:CstOperatorList)
 | Cst_OpListConstruct   (optionList:CstOptionList, codomain:CstType, ctorName:CstName, domain:CstType, operatorList:CstOperatorList)
@@ -24,17 +23,14 @@ CstBlock =
 | Cst_BQTermToBlock     (bqterm:CstBQTerm)
 | Cst_StrategyConstruct(optionList:CstOptionList, stratName:CstName, stratArgs:CstSlotList, extendsTerm:CstBQTerm, visitList:CstVisitList)
 
-// MatchConstruct ============================================================
-CstMatchArgumentList  = ConcCstTypedTerm(CstTypedTerm*)
-
-CstConstraintAction = Cst_ConstraintAction(constraint:CstConstraint , action:CstBlockList, optionList:CstOptionList) 
+CstConstraintAction = Cst_ConstraintAction(constraint:CstConstraint , action:CstBlockList, optionList:CstOptionList)
 //                    | Cst_ConstraintActionReturn(constraint:CstConstraint , term:CstBQTerm, optionList:CstOptionList) 
 //                    | Cst_LabelledConstraintAction(constraint:CstConstraint , action:CstBlockList, label:CstName) 
 
 CstConstraintActionList = ConcCstConstraintAction(CstConstraintAction*)
 
-CstConstraint  = Cst_MatchTermConstraint(object:CstPattern, subject:CstBQTerm)
-              | Cst_MatchArgumentConstraint(object:CstPattern)
+CstConstraint  = Cst_MatchTermConstraint(pattern:CstPattern, subject:CstBQTerm)
+              | Cst_MatchArgumentConstraint(pattern:CstPattern)
               | Cst_AndConstraint(CstConstraint*)
               | Cst_OrConstraint(CstConstraint*)
               | Cst_NumLessThan         (lefthand:CstTerm, righthand:CstTerm)
@@ -54,9 +50,6 @@ CstTerm = Cst_TermVariable(name:String)
 
 CstTermList = ConcCstTerm(CstTerm*)
 
-//CstTypedTerm = Cst_TypedTerm(term:CstTerm, type:CstType)
-CstTypedTerm = Cst_TypedTerm(term:CstBQTerm, type:CstType)
-             
 CstType = Cst_Type(type:String)
         | Cst_TypeUnknown()
 
@@ -75,7 +68,11 @@ CstPattern =
 
 CstSymbolList = ConcCstSymbol(CstSymbol*)
 CstSymbol = Cst_Symbol(name:String, theory:CstTheory)
-          | Cst_ConstantSymbol(value:String, theory:CstTheory)
+          | Cst_ConstantInt(value:String)
+          | Cst_ConstantLong(value:String)
+          | Cst_ConstantChar(value:String)
+          | Cst_ConstantDouble(value:String)
+          | Cst_ConstantString(value:String)
 
 CstTheory = Cst_TheoryAU()
           | Cst_TheoryAC()
@@ -136,7 +133,6 @@ CstNameList = ConcCstName(CstName*)
 CstOptionList = ConcCstOption(CstOption*)
 CstOption = 
           | Cst_Label(name:String)
-          | Cst_NoOption()
           | Cst_OriginTracking(fileName:String, startLine:int, startColumn:int, endLine:int, endColumn:int)
 
 // Strategy

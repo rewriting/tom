@@ -56,7 +56,7 @@ Instruction =
  * @param Constraint a constraint (can be a OR or an AND)
  * @param Action the action to execute if the constraints are evaluated to true
  */  
-ConstraintInstruction = ConstraintInstruction(Constraint:Constraint, Action:Instruction, Options:OptionList)  
+ConstraintInstruction = ConstraintInstruction(Constraint:Constraint, Action:Instruction, Options:OptionList)
 
 ConstraintInstructionList = concConstraintInstruction(ConstraintInstruction*)    
   

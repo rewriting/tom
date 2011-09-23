@@ -133,7 +133,7 @@ csVisitAction :
                            )
     ->            ^(Cst_ConstraintAction csExtendedConstraint
                            {((CustomToken)$LBR).getPayload(Tree.class)}
-                           ^(ConcCstOption ^(Cst_NoOption ))
+                           ^(ConcCstOption)
                      )
   | (IDENTIFIER l=COLON)? csExtendedConstraint ARROW csBQTerm //handle toto -> f(a()) - is a BQTerm
     -> {$l!=null}? ^(Cst_ConstraintAction csExtendedConstraint
@@ -146,7 +146,7 @@ csVisitAction :
                            /*{((CustomToken)$ARROW).getPayload(Tree.class)}*/
                            /*csBQTerm*/
                            ^(ConcCstBlock ^(Cst_BQTermToBlock csBQTerm))
-                           ^(ConcCstOption ^(Cst_NoOption ))
+                           ^(ConcCstOption)
                    )
   ;
 
@@ -203,7 +203,7 @@ csConstraintAction :
                  )
   ->             ^(Cst_ConstraintAction csConstraint
                   {((CustomToken)$LBR).getPayload(Tree.class)}
-                  ^(ConcCstOption ^(Cst_NoOption ))
+                  ^(ConcCstOption)
                  )
   ;
 
@@ -215,7 +215,7 @@ csExtendedConstraintAction :
                  )
   ->             ^(Cst_ConstraintAction csExtendedConstraint
                   {((CustomToken)$LBR).getPayload(Tree.class)}
-                  ^(ConcCstOption ^(Cst_NoOption ))
+                  ^(ConcCstOption)
                  )
   ;
 
@@ -259,12 +259,12 @@ csBQTerm :
 
  // Constraints ===============================================
 /**
-- pattern list with or without additionnal constraints :
+- pattern list with or without additionnal constraints:
   pattern (',' pattern )* (('&&'|'||') csontraint)?
 
-everything is then stored in CST as a constraint.
-every pattern in pattern list is seen as a constraint to
-match identicaly positionned matchConstruct's argument.
+  everything is then stored in CST as a constraint.
+  every pattern in pattern list is seen as a constraint to
+  match identically positionned matchConstruct's argument.
 */
 csExtendedConstraint :
  csMatchArgumentConstraintList ((a=AND|o=OR) csConstraint)?
@@ -402,13 +402,21 @@ csHeadSymbol :
   -> ^(Cst_Symbol IDENTIFIER ^(Cst_TheoryAU))
  |IDENTIFIER DQMARK
   -> ^(Cst_Symbol IDENTIFIER ^(Cst_TheoryAC))
- |csConstantValue 
- -> ^(Cst_ConstantSymbol csConstantValue ^(Cst_TheoryDEFAULT))
- |csConstantValue QMARK
- -> ^(Cst_ConstantSymbol csConstantValue ^(Cst_TheoryAU))
- |csConstantValue DQMARK
- -> ^(Cst_ConstantSymbol csConstantValue ^(Cst_TheoryAC))
+ |INTEGER
+  -> ^(Cst_ConstantInt INTEGER)
+ |LONG
+  -> ^(Cst_ConstantLong LONG)
+ |CHAR
+  -> ^(Cst_ConstantChar CHAR)
+ |DOUBLE
+  -> ^(Cst_ConstantDouble DOUBLE)
+ |STRING
+  -> ^(Cst_ConstantString STRING)
 ;
+
+csConstantValue :
+  INTEGER|LONG|CHAR|DOUBLE|STRING
+  ;
 
 csExplicitTermList :
    LPAR (csPattern (COMMA csPattern)*)? RPAR
@@ -428,9 +436,6 @@ csPairPattern :
  -> ^(Cst_PairPattern IDENTIFIER csPattern)
 ;
 
-csConstantValue :
-  INTEGER|DOUBLE|LONG|STRING|CHAR
-;
 // OperatorConstruct & TypeTermConstruct ====================================
 csOperatorConstruct 
 returns [int marker] :

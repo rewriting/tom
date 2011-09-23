@@ -86,6 +86,11 @@ public class CstConverter {
         return `BQTermToCode(convert(bqterm));
       }
 
+      Cst_MatchConstruct(optionList, arguments, constraintActionList) -> {
+        ConstraintInstructionList cil = convert(`constraintActionList,`arguments);
+          return `InstructionToCode(Match(cil,addDefaultModule(convert(optionList,"Match"))));
+      }
+
       Cst_TypetermConstruct(optionList, Cst_Type(typeName), extendsTypeName, operatorList) -> {
         CstOption ot = getOriginTracking(`optionList);
         TypeOptionList typeoptionList = `concTypeOption();
@@ -166,7 +171,6 @@ public class CstConverter {
 
           }
         }
-
 
         %match(operatorList) {
           ConcCstOperator(_*,operator,_*) -> {
@@ -261,9 +265,7 @@ public class CstConverter {
         return `DeclarationToCode(SymbolDecl(Name(opName)));
       }
 
-
-
-    }
+    } // end %match
    
     return `Tom(concCode());
     //throw new TomRuntimeException("convert: strange term: " + cst);
@@ -286,6 +288,10 @@ public class CstConverter {
 
       Cst_BQVar(ol,name,Cst_TypeUnknown()) -> {
         return `BQVariable(addDefaultModule(convert(ol,name)),Name(name),SymbolTable.TYPE_UNKNOWN);
+      }
+
+      Cst_BQVar(ol,name,Cst_Type(typename)) -> {
+        return `BQVariable(addDefaultModule(convert(ol,name)),Name(name),Type(concTypeOption(),typename,EmptyTargetLanguageType()));
       }
 
       Cst_BQVarStar(ol,name,Cst_TypeUnknown()) -> {
@@ -326,6 +332,117 @@ public class CstConverter {
     }
     throw new TomRuntimeException("convert: strange term: " + cst);
   }
+
+  public ConstraintInstruction convert(CstConstraintAction cst, CstBQTermList subjectList) {
+    %match(cst) {
+      Cst_ConstraintAction(constraint, action, optionList) -> {
+        int currentIndex = 0; // index of the current subject of subjectList
+        OptionList newoptionList = convert(`optionList,"ConstraintAction");
+        //newoptionList = `concOption(newoptionList*);
+        return `ConstraintInstruction(
+            convert(constraint,subjectList,currentIndex), 
+            CodeToInstruction(Tom(convert(action))), 
+            newoptionList);
+      }
+    }
+    throw new TomRuntimeException("convert: strange term: " + cst);
+  }
+
+  public Constraint convert(CstConstraint cst, CstBQTermList subjectList, int subjectIndex) {
+    %match(cst) {
+      Cst_MatchArgumentConstraint(pattern) -> {
+        CstBQTermList l = `subjectList;
+        if (0 > subjectIndex || subjectIndex > subjectList.length()) {
+          throw new IllegalArgumentException("illegal list index: " + subjectIndex);
+        }
+        for (int i = 0; i < subjectIndex; i++) {
+          l = l.getTailConcCstBQTerm();
+        }
+        BQTerm currentSubject = convert(l.getHeadConcCstBQTerm());
+        TomType type = getTomType(currentSubject);
+        return `MatchConstraint(convert(pattern), currentSubject, type);
+      }
+
+      Cst_MatchTermConstraint(pattern,subject) -> {
+        BQTerm currentSubject = convert(`subject);
+        TomType type = getTomType(`currentSubject);
+        return `MatchConstraint(convert(pattern), currentSubject , type);
+      }
+
+      Cst_AndConstraint(head,tail*) -> {
+        TomType type = SymbolTable.TYPE_UNKNOWN;
+      }
+
+      Cst_OrConstraint(head,tail*) -> {
+        TomType type = SymbolTable.TYPE_UNKNOWN;
+      }
+
+    }
+    throw new TomRuntimeException("convert: strange term: " + cst);
+  }
+
+  public TomTerm convert(CstPattern cst) {
+    // TODO: define option
+    %match(cst) {
+      Cst_Variable(name) -> {
+        return `Variable(concOption(),Name(name),SymbolTable.TYPE_UNKNOWN,concConstraint());
+      }
+      Cst_VariableStar(name) -> {
+        return `VariableStar(concOption(),Name(name),SymbolTable.TYPE_UNKNOWN,concConstraint());
+      }
+      Cst_UnamedVariable() -> {
+        return `Variable(concOption(),EmptyName(),SymbolTable.TYPE_UNKNOWN,concConstraint());
+      }
+      Cst_UnamedVariableStar() -> {
+        return `VariableStar(concOption(),EmptyName(),SymbolTable.TYPE_UNKNOWN,concConstraint());
+      }
+
+      Cst_Appl(symbolList, patternList) -> {
+        OptionList optionList = `concOption();
+        TomNameList nameList = convert(`symbolList); 
+        TomList argList = convert(`patternList); 
+        ConstraintList constraintList = `concConstraint();
+        return `TermAppl(optionList,nameList,argList,constraintList);
+      }
+
+    }
+
+    throw new TomRuntimeException("convert: strange term: " + cst);
+  }
+
+  public TomName convert(CstSymbol cst) {
+    List optionList = new LinkedList();
+    %match(cst) {
+      Cst_Symbol(name,theory) -> {
+        return `Name(name);
+      }
+
+      Cst_ConstantInt(name) -> {
+        ASTFactory.makeIntegerSymbol(symbolTable,`name,optionList);
+        return `Name(name);
+      }
+      Cst_ConstantLong(name) -> {
+        ASTFactory.makeLongSymbol(symbolTable,`name,optionList);
+        return `Name(name);
+      }
+      Cst_ConstantChar(name) -> {
+        ASTFactory.makeCharSymbol(symbolTable,`name,optionList);
+        return `Name(name);
+      }
+      Cst_ConstantDouble(name) -> {
+        ASTFactory.makeDoubleSymbol(symbolTable,`name,optionList);
+        return `Name(name);
+      }
+      Cst_ConstantString(name) -> {
+        ASTFactory.makeStringSymbol(symbolTable,`name,optionList);
+        return `Name(name);
+      }
+
+    }
+
+    throw new TomRuntimeException("convert: strange term: " + cst);
+  }
+
 
   /*
    * List conversion
@@ -380,6 +497,43 @@ public class CstConverter {
     throw new TomRuntimeException("convert: strange term: " + cst);
   }
 
+  public ConstraintInstructionList convert(CstConstraintActionList cst, CstBQTermList subjectList) {
+    %match(cst) {
+      ConcCstConstraintAction() -> { 
+        return `concConstraintInstruction();
+      }
+      ConcCstConstraintAction(head,tail*) -> {
+        ConstraintInstructionList ol = convert(`tail,subjectList);
+        return `concConstraintInstruction(convert(head,subjectList),ol*);
+      }
+    }
+    throw new TomRuntimeException("convert: strange term: " + cst);
+  }
+
+  public TomNameList convert(CstSymbolList cst) {
+    %match(cst) {
+      ConcCstSymbol() -> { 
+        return `concTomName();
+      }
+      ConcCstSymbol(head,tail*) -> {
+        return `concTomName(convert(head),convert*(tail));
+      }
+    }
+    throw new TomRuntimeException("convert: strange term: " + cst);
+  }
+
+  public TomList convert(CstPatternList cst) {
+    %match(cst) {
+      ConcCstPattern() -> { 
+        return `concTomTerm();
+      }
+      ConcCstPattern(head,tail*) -> {
+        return `concTomTerm(convert(head),convert*(tail));
+      }
+    }
+    throw new TomRuntimeException("convert: strange term: " + cst);
+  }
+
   /*
    * Utilities
    */
@@ -411,6 +565,23 @@ public class CstConverter {
 
   private OptionList addDefaultModule(OptionList ol) {
     return `concOption(ol*,ModuleName("default"));
+  }
+
+  private TomType getTomType(BQTerm bqt) {
+    %match(bqt) {
+      (BQVariable|BQVariableStar)[AstType=type] -> { 
+        return `type; 
+      }
+      
+      (BQAppl|BQRecordAppl)[AstName=Name(name)] -> {
+        TomSymbol symbol = symbolTable.getSymbolFromName(`name);
+        if(symbol!=null) {
+          return symbol.getTypesToType().getCodomain();
+        }
+      }
+
+    }
+    return symbolTable.TYPE_UNKNOWN;
   }
 
 }
