@@ -49,6 +49,9 @@ public class XMLToTNode {
 
   %include{ adt/tnode/TNode.tom }
 
+  public static final String XMLTOTNODE = "XMLToTNode";
+  public static final String UNDEF = "UNDEF";
+
   private TNode nodeTerm = null;
   private boolean deleteWhiteSpaceNodes = false;
   private Hashtable<TNode,Collection<Element> > ht_Nodes =
@@ -121,16 +124,16 @@ public class XMLToTNode {
       DocumentBuilder db = documentFactory.newDocumentBuilder();
       return db.parse(filename);
     } catch (SAXException e) {
-      System.err.println("XMLToTNode: "+ e.getClass() + ": " + e.getMessage());
+      System.err.println(XMLToTNode.XMLTOTNODE + ": "+ e.getClass() + ": " + e.getMessage());
       //e.printStackTrace();
     } catch (IOException e) {
-      System.err.println("XMLToTNode: "+ e.getClass() + ": " + e.getMessage());
+      System.err.println(XMLToTNode.XMLTOTNODE + ": "+ e.getClass() + ": " + e.getMessage());
       //e.printStackTrace();
     } catch (ParserConfigurationException e) {
-      System.err.println("XMLToTNode: "+ e.getClass() + ": " + e.getMessage());
+      System.err.println(XMLToTNode.XMLTOTNODE + ": "+ e.getClass() + ": " + e.getMessage());
       //e.printStackTrace();
     } catch (FactoryConfigurationError e) {
-      System.err.println("XMLToTNode: "+ e.getClass() + ": " + e.getMessage());
+      System.err.println(XMLToTNode.XMLTOTNODE + ": "+ e.getClass() + ": " + e.getMessage());
       //e.printStackTrace();
     }
     return null;
@@ -147,16 +150,16 @@ public class XMLToTNode {
       DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
       return db.parse(is);
     } catch (SAXException e) {
-      System.err.println("XMLToTNode: "+ e.getClass() + ": " + e.getMessage());
+      System.err.println(XMLToTNode.XMLTOTNODE + ": "+ e.getClass() + ": " + e.getMessage());
       //e.printStackTrace();
     } catch (IOException e) {
-      System.err.println("XMLToTNode: "+ e.getClass() + ": " + e.getMessage());
+      System.err.println(XMLToTNode.XMLTOTNODE + ": "+ e.getClass() + ": " + e.getMessage());
       //e.printStackTrace();
     } catch (ParserConfigurationException e) {
-      System.err.println("XMLToTNode: "+ e.getClass() + ": " + e.getMessage());
+      System.err.println(XMLToTNode.XMLTOTNODE + ": "+ e.getClass() + ": " + e.getMessage());
       //e.printStackTrace();
     } catch (FactoryConfigurationError e) {
-      System.err.println("XMLToTNode: "+ e.getClass() + ": " + e.getMessage());
+      System.err.println(XMLToTNode.XMLTOTNODE + ": "+ e.getClass() + ": " + e.getMessage());
       //e.printStackTrace();
     }
     return null;
@@ -274,13 +277,13 @@ public class XMLToTNode {
 
   private TNode makeDocumentTypeNode (DocumentType doctype) {
     String name=doctype.getName();
-    name = (name == null ? "UNDEF" : name);
+    name = (name == null ? XMLToTNode.UNDEF : name);
     String publicId = doctype.getPublicId();
-    publicId = (publicId == null ? "UNDEF" : publicId);
+    publicId = (publicId == null ? XMLToTNode.UNDEF : publicId);
     String systemId = doctype.getSystemId();
-    systemId = (systemId == null ? "UNDEF" : systemId);
+    systemId = (systemId == null ? XMLToTNode.UNDEF : systemId);
     String internalSubset = doctype.getInternalSubset();
-    internalSubset = (internalSubset == null ? "UNDEF" : internalSubset);
+    internalSubset = (internalSubset == null ? XMLToTNode.UNDEF : internalSubset);
     TNodeList entitiesList = namedNodeMapToAterm(doctype.getEntities());
     TNodeList notationsList = namedNodeMapToAterm(doctype.getNotations());
     return `DocumentTypeNode(name,publicId,systemId,
@@ -348,11 +351,11 @@ public class XMLToTNode {
 
   private TNode makeEntityNode(Entity e) {
     String nn= e.getNotationName();
-    nn = (nn == null ? "UNDEF" : nn);
+    nn = (nn == null ? XMLToTNode.UNDEF : nn);
     String publicId = e.getPublicId();
-    publicId = (publicId == null ? "UNDEF" : publicId);
+    publicId = (publicId == null ? XMLToTNode.UNDEF : publicId);
     String systemId = e.getSystemId();
-    systemId = (systemId == null ? "UNDEF" : systemId);
+    systemId = (systemId == null ? XMLToTNode.UNDEF : systemId);
     return `EntityNode(nn,publicId,systemId);
   }
 
@@ -363,9 +366,9 @@ public class XMLToTNode {
 
   private TNode makeNotationNode(Notation notation) {
     String publicId = notation.getPublicId();
-    publicId = (publicId == null ? "UNDEF" : publicId);
+    publicId = (publicId == null ? XMLToTNode.UNDEF : publicId);
     String systemId = notation.getSystemId();
-    systemId = (systemId == null ? "UNDEF" : systemId);
+    systemId = (systemId == null ? XMLToTNode.UNDEF : systemId);
     return `NotationNode(publicId,systemId);
   }
 

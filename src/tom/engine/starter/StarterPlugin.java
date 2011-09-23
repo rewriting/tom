@@ -25,7 +25,6 @@
 
 package tom.engine.starter;
 
-import java.util.logging.Level;
 import java.util.Map;
 
 import tom.engine.TomMessage;

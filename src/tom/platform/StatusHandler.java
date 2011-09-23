@@ -25,7 +25,6 @@
 
 package tom.platform;
 
-import java.io.File;
 import java.util.*;
 import java.util.logging.*;
 

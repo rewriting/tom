@@ -326,10 +326,10 @@ public class NewKernelTyper {
       Equation[Type1=t1,Type2=t2] << TypeConstraint tConstraint &&
         concTypeConstraint(_*,Equation[Type1=t2,Type2=t1],_*) << tCList 
         -> { return true; }
-      }
-      return containsConstraintModuloEqDecoratedSort(tConstraint,tCList);
-      //return false;
-    } 
+    }
+    return containsConstraintModuloEqDecoratedSort(tConstraint,tCList);
+    //return false;
+  } 
 
   /*
    * pem: use if(...==... && typeConstraints.contains(...))
@@ -1141,7 +1141,6 @@ public class NewKernelTyper {
                 /* Case CT-STAR rule (applying to premises) */
                 argType = `codomain;
               }
-
               !VariableStar[] -> { 
                 //DEBUG System.out.println("InferSlotList CT-ELEM -- tTerm = " + `tTerm);
                 /* Case CT-ELEM rule (applying to premises which are not lists) */
