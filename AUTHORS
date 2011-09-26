@@ -17,6 +17,7 @@ Other contributors:
     Mark van den Brand        Discussions
     Guillaume Darmont         XML extension
     Eric Deplagne             first ANTLR plugin
+    Maxime Gabut              New Tom parser using antlr v3
     Stephane Hrvatin          ANTLR based parser
     Anne-Claire Lonchamp      Constraint extension
     Christophe Ringeissen     Initial design of Tom
