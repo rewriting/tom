@@ -260,10 +260,10 @@ public class TomConstraintPrettyPrinter {
 
   public static String prettyPrint(SlotList subject) {
     String s = "";
-    {{if ( (((Object)subject) instanceof tom.engine.adt.tomslot.types.SlotList) ) {if ( (((( tom.engine.adt.tomslot.types.SlotList )(( tom.engine.adt.tomslot.types.SlotList )((Object)subject))) instanceof tom.engine.adt.tomslot.types.slotlist.ConsconcSlot) || ((( tom.engine.adt.tomslot.types.SlotList )(( tom.engine.adt.tomslot.types.SlotList )((Object)subject))) instanceof tom.engine.adt.tomslot.types.slotlist.EmptyconcSlot)) ) { tom.engine.adt.tomslot.types.SlotList  tomMatch338__end__4=(( tom.engine.adt.tomslot.types.SlotList )((Object)subject));do {{if (!( tomMatch338__end__4.isEmptyconcSlot() )) {
+    {{if ( (((Object)subject) instanceof tom.engine.adt.tomslot.types.SlotList) ) {if ( (((( tom.engine.adt.tomslot.types.SlotList )(( tom.engine.adt.tomslot.types.SlotList )((Object)subject))) instanceof tom.engine.adt.tomslot.types.slotlist.ConsconcSlot) || ((( tom.engine.adt.tomslot.types.SlotList )(( tom.engine.adt.tomslot.types.SlotList )((Object)subject))) instanceof tom.engine.adt.tomslot.types.slotlist.EmptyconcSlot)) ) { tom.engine.adt.tomslot.types.SlotList  tomMatch337__end__4=(( tom.engine.adt.tomslot.types.SlotList )((Object)subject));do {{if (!( tomMatch337__end__4.isEmptyconcSlot() )) {
 
-        s += prettyPrint( tomMatch338__end__4.getHeadconcSlot() )+",";
-      }if ( tomMatch338__end__4.isEmptyconcSlot() ) {tomMatch338__end__4=(( tom.engine.adt.tomslot.types.SlotList )((Object)subject));} else {tomMatch338__end__4= tomMatch338__end__4.getTailconcSlot() ;}}} while(!( (tomMatch338__end__4==(( tom.engine.adt.tomslot.types.SlotList )((Object)subject))) ));}}}}
+        s += prettyPrint( tomMatch337__end__4.getHeadconcSlot() )+",";
+      }if ( tomMatch337__end__4.isEmptyconcSlot() ) {tomMatch337__end__4=(( tom.engine.adt.tomslot.types.SlotList )((Object)subject));} else {tomMatch337__end__4= tomMatch337__end__4.getTailconcSlot() ;}}} while(!( (tomMatch337__end__4==(( tom.engine.adt.tomslot.types.SlotList )((Object)subject))) ));}}}}
 
     if (! s.equals("")) { return s.substring(0,s.length()-1); }
 
@@ -318,11 +318,11 @@ public class TomConstraintPrettyPrinter {
 
         String s = "";
         int min=0;
-        {{if ( (((Object)tom_Args) instanceof tom.engine.adt.code.types.BQTermList) ) {if ( (((( tom.engine.adt.code.types.BQTermList )(( tom.engine.adt.code.types.BQTermList )((Object)tom_Args))) instanceof tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm) || ((( tom.engine.adt.code.types.BQTermList )(( tom.engine.adt.code.types.BQTermList )((Object)tom_Args))) instanceof tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm)) ) { tom.engine.adt.code.types.BQTermList  tomMatch340__end__4=(( tom.engine.adt.code.types.BQTermList )((Object)tom_Args));do {{if (!( tomMatch340__end__4.isEmptyconcBQTerm() )) {
+        {{if ( (((Object)tom_Args) instanceof tom.engine.adt.code.types.BQTermList) ) {if ( (((( tom.engine.adt.code.types.BQTermList )(( tom.engine.adt.code.types.BQTermList )((Object)tom_Args))) instanceof tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm) || ((( tom.engine.adt.code.types.BQTermList )(( tom.engine.adt.code.types.BQTermList )((Object)tom_Args))) instanceof tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm)) ) { tom.engine.adt.code.types.BQTermList  tomMatch339__end__4=(( tom.engine.adt.code.types.BQTermList )((Object)tom_Args));do {{if (!( tomMatch339__end__4.isEmptyconcBQTerm() )) {
 
-            s += ","+prettyPrint( tomMatch340__end__4.getHeadconcBQTerm() );
+            s += ","+prettyPrint( tomMatch339__end__4.getHeadconcBQTerm() );
             min=1;
-          }if ( tomMatch340__end__4.isEmptyconcBQTerm() ) {tomMatch340__end__4=(( tom.engine.adt.code.types.BQTermList )((Object)tom_Args));} else {tomMatch340__end__4= tomMatch340__end__4.getTailconcBQTerm() ;}}} while(!( (tomMatch340__end__4==(( tom.engine.adt.code.types.BQTermList )((Object)tom_Args))) ));}}}}
+          }if ( tomMatch339__end__4.isEmptyconcBQTerm() ) {tomMatch339__end__4=(( tom.engine.adt.code.types.BQTermList )((Object)tom_Args));} else {tomMatch339__end__4= tomMatch339__end__4.getTailconcBQTerm() ;}}} while(!( (tomMatch339__end__4==(( tom.engine.adt.code.types.BQTermList )((Object)tom_Args))) ));}}}}
 
         return prettyPrint( (( tom.engine.adt.code.types.BQTerm )((Object)subject)).getAstName() )+"("+s.substring(min, s.length())+")";
       }}}}{if ( (((Object)subject) instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )((Object)subject)) instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )(( tom.engine.adt.code.types.BQTerm )((Object)subject))) instanceof tom.engine.adt.code.types.bqterm.BuildEmptyList) ) {
