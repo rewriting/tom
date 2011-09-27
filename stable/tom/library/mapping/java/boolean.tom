@@ -35,10 +35,10 @@
 
 %op boolean true() {
   is_fsym(t) { $t==true }
-  make { true }
+  make() { true }
 }
 
 %op boolean false() {
   is_fsym(t) { $t==false }
-  make { false }
+  make() { false }
 }

@@ -24,9 +24,7 @@
 
 package tom.gom;
 
-import tom.platform.BasicFormatter;
 import tom.platform.BasicPlatformMessage;
-import tom.platform.PlatformLogRecord;
 
 /**
  * The GomMessage class is a container for error messages, using the
