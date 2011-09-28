@@ -27,7 +27,7 @@ The compiler is composed of several plugins, which are executed in the following
     replaces  _  by a fresh variable _* by a fresh varstar 
     replaces 'TermAppl' by its 'RecordAppl' form
     replaces 'XMLAppl' by its 'RecordAppl' form
-    replaces 'BQRecordAppl' by its 'BQTermAppl' form
+    replaces 'BQRecordAppl' by its 'BQAppl' form
 
 - Transformer
 
@@ -54,6 +54,14 @@ The compiler is composed of several plugins, which are executed in the following
     generate visitLight and visit
 
 - Compiler
+  ACPropagator: transform to compile AC matching
+  - remove a term which is not a VariableStar
+  - use abstraction to compile  
+  - use abstraction to compile non-linear variables
+  - transform AC matching into A matching when the pattern is reduced to 
+    an empty-list or a single variable
+
+
 
 - Optimizer
 

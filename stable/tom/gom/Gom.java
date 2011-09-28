@@ -24,13 +24,11 @@
 
 package tom.gom;
 
-import java.lang.Thread;
-import java.lang.ThreadGroup;
+//import java.lang.Thread;
+//import java.lang.ThreadGroup;
 import java.util.*;
 import java.io.IOException;
 import java.util.logging.ConsoleHandler;
-import java.util.logging.FileHandler;
-import java.util.logging.Formatter;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
@@ -43,7 +41,6 @@ import tom.platform.PluginPlatform;
 import tom.platform.PluginPlatformFactory;
 import tom.platform.ConfigurationManager;
 
-import tom.gom.Gom;
 import tom.gom.GomMessage;
 
 public class Gom {

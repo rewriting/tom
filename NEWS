@@ -1,3 +1,16 @@
+version 2.9:
+  - added bracket notation for backquote-terms: `f[arg1=a()]
+  - add the possibility to define default-value in a %op
+    get_default(slotname) { ... }
+    use the '_' sign in a backquote to denote a default-value
+    example: `f(a(),_)
+  - handle non linear AC patterns
+  - improved EMF mapping generator (use subtyping facilities, generate mappings
+    for several packages, use files instead of stdout)
+  - improved syntax checker, improved error messages
+  - new parser based on antlr v3 (in alpha version)
+  - new type engine with subtype (also in alpha version)
+
 version 2.8:
   (administrative release)
   - improved the organization of the Tom compiler itself

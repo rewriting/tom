@@ -131,7 +131,10 @@ public class SymbolTable {
   }
 
   public TomType getType(String name) {
-    return mapTypeName.get(name);
+    if (mapTypeName.containsKey(name)) {
+      return mapTypeName.get(name);
+    }
+    return null;
   }
 
   public boolean isUsedSymbolConstructor(TomSymbol symbol) {    
@@ -418,7 +421,11 @@ public class SymbolTable {
     System.out.println("Not a builtin type: " + type);
     throw new TomRuntimeException("getBuiltinType error on term: " + type);
   }
-
+/*
+  public Iterable<TomType> entryTypeIterable() {
+    return mapTypeName.entrySet();
+  }
+*/
   public Iterable<String> keySymbolIterable() {
     return mapSymbolName.keySet();
   }
@@ -472,6 +479,22 @@ public class SymbolTable {
     }
     return symbol;
   }
+
+  /*
+  public void checkTomTypes(SymbolTable symbolTable) {
+    for (TomType type : mapTypeName.entrySet()) {
+      %match(type) {
+        Type[TypeOptions=concTypeOption(_*,SubtypeDecl[TomType=supertypeName],_*)] -> {
+          if (!mapTypeName.contains(`supertypeName)) {
+            TomMessage.error(getLogger(),currentFile(), getLine(),
+                TomMessage.typetermNotDefined, 
+                supertypeName);
+          }
+        }
+      }
+    }
+  }
+  */
 
   /*
    * Inlining

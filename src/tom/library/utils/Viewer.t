@@ -259,22 +259,27 @@ public class Viewer {
   private static void ATermToTree(aterm.ATerm term, Writer w, Stack<Integer> context, int deep)
     throws java.io.IOException {
       %match(term) {
-        ATermAppl(AFun[name=name],list) -> {
+        ATermInt(value) -> {
+          w.write("─"+`value);
+          return;
+        }
+        ATermAppl(AFun[name=afunname,quoted=quoted],list) -> {
+          String name = (`quoted)?"\""+`afunname+"\"":`afunname;
           aterm.ATermAppl a = (aterm.ATermAppl) term;
           if (`a.getArity() == 0) {  // no child
-            w.write("─"+`name);
+            w.write("─"+name);
             return;
           } else if (`a.getArity() == 1) {  // only one child
-            w.write("─" + `name + "──");
-            deep = deep + `name.length() + 3;
+            w.write("─" + name + "──");
+            deep = deep + name.length() + 3;
             ATermToTree(`list.getFirst(),w,context,deep);
             return;
           } else {
-            int ndeep = deep + `name.length() + 3;
+            int ndeep = deep + name.length() + 3;
             %match (ATermList list) {
               concATerm(first,l*,last) -> {
                 // first child
-                w.write("─" + `name + "─┬");
+                w.write("─" + name + "─┬");
                 context.push(ndeep-1);
                 ATermToTree(`first,w,context,ndeep);
                 context.pop();

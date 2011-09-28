@@ -75,10 +75,6 @@ public abstract class AbstractGenerator {
     return TomBase.getSymbolFromName(tomName, symbolTable);
   }
 
-  protected TomSymbol getSymbolFromType(TomType tomType) {
-    return TomBase.getSymbolFromType(tomType, symbolTable);
-  }
-
   protected TomType getTermType(TomTerm t) {
     return TomBase.getTermType(t, symbolTable);
   }
@@ -90,6 +86,11 @@ public abstract class AbstractGenerator {
   protected TomType getUniversalType() {
     return symbolTable.getUniversalType();
   }
+
+  protected TomType getCodomain(TomSymbol tSymbol) {
+    return TomBase.getSymbolCodomain(tSymbol);
+  }
+
 // ------------------------------------------------------------
   %include { ../adt/tomsignature/TomSignature.tom }
 // ------------------------------------------------------------
@@ -361,11 +362,6 @@ public abstract class AbstractGenerator {
         buildExpCast(deep, `tlType, `exp, moduleName);
         return;
       }
-
-      //Cast(tlType@TLType[],exp) -> {
-      //  buildExpCast(deep, `tlType, `exp, moduleName);
-      //  return;
-      //}
 
       GetSlot(_,Name(opname),slotName, var@(BQVariable|BuildTerm|ExpressionToBQTerm)[]) -> {    	  
         `buildExpGetSlot(deep, opname, slotName, var, moduleName);
@@ -679,15 +675,6 @@ public abstract class AbstractGenerator {
         return ;
       }
 
-      GetImplementationDecl(BQVariable[AstName=Name(name),
-          AstType=Type[TomType=type,TlType=tlType@TLType[]]],
-          instr, _) -> {
-        if(getSymbolTable(moduleName).isUsedSymbolDestructor(`name)) {
-          `buildGetImplementationDecl(deep, type, name, tlType, instr, moduleName);
-        }
-        return;
-      }
-
       IsFsymDecl(Name(tomName),
           BQVariable[AstName=Name(varname), AstType=Type[TlType=tlType@TLType[]]], code, _) -> {
         if(getSymbolTable(moduleName).isUsedSymbolDestructor(`tomName)) {
@@ -988,8 +975,6 @@ public abstract class AbstractGenerator {
   protected abstract void buildSubstract(int deep, BQTerm var1, BQTerm var2, String moduleName) throws IOException;
   protected abstract void buildReturn(int deep, BQTerm exp, String moduleName) throws IOException ;
   protected abstract void buildSymbolDecl(int deep, String tomName, String moduleName) throws IOException ;
-  protected abstract void buildGetImplementationDecl(int deep, String type, String name,
-      TargetLanguageType tlType, Instruction instr, String moduleName) throws IOException;
 
   protected abstract void buildIsFsymDecl(int deep, String tomName, String name1,
       TargetLanguageType tlType, Expression code, String moduleName) throws IOException;

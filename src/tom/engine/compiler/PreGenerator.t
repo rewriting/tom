@@ -162,11 +162,18 @@ public class PreGenerator {
     array = ((tom.engine.adt.tomconstraint.types.constraint.AndConstraint)constraint).toArray(array);
     boolean modification = false;
     do {
-  //    System.out.println("C = " + buildAndConstraintFromArray(array));
+      //System.out.println("C = " + buildAndConstraintFromArray(array));
+      //System.out.println("C = " + tom.engine.tools.TomConstraintPrettyPrinter.prettyPrint(buildAndConstraintFromArray(array)));
 block: {
-      // start from 1 to ignore the first constraint which is only due to  
-      // renaming subjects 
-      for(int i=1 ; i<array.length-1 ; i++) {
+      /*
+       * first version: 
+       * start from 1 to ignore the first constraint which is only due to renaming subjects
+       * not correct because some %match do not have a subject
+       *
+       * second version:
+       * start from 0
+       */
+      for(int i=0 ; i<array.length-1 ; i++) {
 loop_j: for(int j=i+1 ; j<array.length ; j++) {
           Constraint first = array[i];
           Constraint second = array[j];
@@ -238,56 +245,45 @@ loop_j: for(int j=i+1 ; j<array.length ; j++) {
             /*
              * SwitchVar
              * 
-             * p << Context[z] /\ S /\ z << t -> z << t /\ S /\ p << Context[z]
+             * t /\ S /\ p << z -> p << z /\ S /\ t 
+             * if p occurs in t when t is a NumericConstraint
+             * or if p occurs in the subject of t when t is a MatchConstraint
              */
-            MatchConstraint[Subject=rhs],MatchConstraint[Pattern=v@(Variable|VariableStar)[]] -> {
+            t, MatchConstraint[Pattern=v@(Variable|VariableStar)[]] -> {
               try {
-                `TopDown(HasTerm(v)).visitLight(`rhs);
+                `TopDown(HasBQTerm(v)).visitLight(`t);
               } catch(VisitFailure ex) {
                 modification |= buildXjiYZ(array,i,j);
                 break block;
               }
             }
 
-            MatchConstraint[Subject=rhs],OrConstraintDisjunction(AndConstraint?(_*,MatchConstraint[Pattern=v@(Variable|VariableStar)[]],_*),_*) -> {
+            /*
+             * SwitchVar
+             * 
+             * t /\ S /\ (f|g)[arg=p] << z -> (f|g)[arg=p]<< z /\ S /\ t 
+             * if p occurs in t when t is a NumericConstraint
+             * or if p occurs in the subject of t when t is a MatchConstraint
+             */
+            t,OrConstraintDisjunction(AndConstraint?(_*,MatchConstraint[Pattern=v@(Variable|VariableStar)[]],_*),_*) -> {
               try {
-                `TopDown(HasTerm(v)).visitLight(`rhs);
+                `TopDown(HasBQTerm(v)).visitLight(`t);
               } catch(VisitFailure ex) {
                 modification |= buildXjiYZ(array,i,j);
                 break block;
               }
             }
 
-            NumericConstraint[Right=rhs],MatchConstraint[Pattern=v@(Variable|VariableStar)[]] -> {
+            /*
+             * SwitchVar
+             * 
+             * t /\ S /\ (p1 << z1 || p2 << z2) -> (p1 << z1 || p2 << z2) /\ S /\ t 
+             * if p1 (or p2) occurs in t when t is a NumericConstraint
+             * or if p1 (or p2) occurs in the subject of t when t is a MatchConstraint
+             */
+            t,OrConstraint(AndConstraint?(_*,MatchConstraint[Pattern=v@(Variable|VariableStar)[]],_*),_*) -> {
               try {
-                `TopDown(HasTerm(v)).visitLight(`rhs);
-              } catch(VisitFailure ex) {
-                modification |= buildXjiYZ(array,i,j);
-                break block;
-              }
-            }
-
-            NumericConstraint[Right=rhs],OrConstraintDisjunction(AndConstraint?(_*,MatchConstraint[Pattern=v@(Variable|VariableStar)[]],_*),_*) -> {
-              try {
-                `TopDown(HasTerm(v)).visitLight(`rhs);
-              } catch(VisitFailure ex) {
-                modification |= buildXjiYZ(array,i,j);
-                break block;
-              }
-            }
-
-            NumericConstraint[Left=lhs],MatchConstraint[Pattern=v@(Variable|VariableStar)[]] -> {
-              try {
-                `TopDown(HasTerm(v)).visitLight(`lhs);
-              } catch(VisitFailure ex) {
-                modification |= buildXjiYZ(array,i,j);
-                break block;
-              }
-            }
-
-            NumericConstraint[Left=lhs],OrConstraintDisjunction(AndConstraint?(_*,MatchConstraint[Pattern=v@(Variable|VariableStar)[]],_*),_*) -> {
-              try {
-                `TopDown(HasTerm(v)).visitLight(`lhs);
+                `TopDown(HasBQTerm(v)).visitLight(`t);
               } catch(VisitFailure ex) {
                 modification |= buildXjiYZ(array,i,j);
                 break block;
@@ -398,6 +394,8 @@ loop_j: for(int j=i+1 ; j<array.length ; j++) {
           } // end %match
         }
       }
+      //System.out.println("after ordering = " + tom.engine.tools.TomConstraintPrettyPrinter.prettyPrint(buildAndConstraintFromArray(array)));
+
       return buildAndConstraintFromArray(array);
        }// block
     } while (modification == true);
@@ -407,27 +405,13 @@ loop_j: for(int j=i+1 ; j<array.length ; j++) {
   /**
    * Checks to see if the term is inside
    */
-  %strategy HasTerm(term:TomTerm) extends Identity() {
-    visit TomTerm {
-      x -> {
-        if(`x == term) { throw new VisitFailure(); }
-      }
-    }
 
+  %strategy HasBQTerm(term:TomTerm) extends Identity() {
     visit BQTerm {
-      BQVariable[AstName=name, AstType=type] -> {
+      (BQVariable|BQVariableStar)[AstName=name] -> {
         %match(term) {
-          Variable[AstName=n,AstType=t] -> {
-            if (`name == `n && `type == `t) {
-              throw new VisitFailure();
-            }
-          }
-        }
-      }
-      BQVariableStar[AstName=name, AstType=type] -> {
-        %match(term) {
-          VariableStar[AstName=n,AstType=t] -> {
-            if (`name == `n && `type == `t) {
+          (Variable|VariableStar)[AstName=n] -> {
+            if(`name == `n) {
               throw new VisitFailure();
             }
           }

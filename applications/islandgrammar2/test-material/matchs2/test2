@@ -1,0 +1,5 @@
+%match {
+  f(a(), g(y)) << s -> {action1}
+  f(x, g(b())) << s -> {action2}
+  f(x, y) << s      -> {action3}
+}

@@ -1,3 +1,13 @@
+2011-08-27 pem
+ * bootinstall
+ * integrate subtype and newparser into master
+ * bumped to version 2.9
+
+2011-08-18 pem
+ * improve Gom: generate better names for args of congruence strategies
+ * merge TyperPlugin with NewTyper
+ * bootstrap
+
 2011-06-15 pem
  * bootinstall
 
@@ -8,6 +18,14 @@
 2011-06-07 pem
  * added BQRecordAppl with `f[arg1=a()] syntax
 
+2011-05-25 tavaresc
+ * NewKernelTyper: add a list with type variables occurring in pattern (to decide if all
+   "important" tom types were inferred.
+ * NewKernelTyper: separate phases of constraint resolution and eliminate
+   unnecessary rules. (except for normalization, all other phases reduces or
+   maintain the size of the constraint list).
+ * Revert to older version of Syntactic Propagator.
+
 2011-05-24 pem
  * bootinstall
 
@@ -17,9 +35,46 @@
    use the '_' sign in a backquote to denote a default-value
    example: `f(a(),_)
 
+2011-04-22 tavaresc
+ * Fix collect of variables in NewKernelTyper (now the varList is correctly
+   updated after call of strategy).
+
+2011-04-13 pem
+ * handle non linear AC pattern
+   f(C*,X1*,X1*,X2*,X2*) -> ...
+   do not yet handle f(X1*,X1*,X2*,X2*) -> ...
+
 2011-04-13 jcb
  * add mappings generation for several EPackage at once in Tom-EMF
  * change Tom-EMF mappings generation (into files instead of stdout)
+
+2011-04-08 pem
+ * improved pretty-printer for BQTerm
+ * relax constraint on HasTerm (only the name is considered)
+ * improved the ordering constraints algorithm
+
+2011-04-08 tavaresc
+ * Set optimizer to true in OptimizerPlugin..
+ * Add a rule to order (MatchConstraint,OrConstraint) in PreGenerator.
+ * Improve test of different types in ConstraintGenerator (since it can
+   be null, it's better to use %match then if).
+
+2011-04-01 tavaresc
+ * Fix problem of context of patterns and subjects (reset list of patterns per
+   rule).
+
+2011-03-18 tavaresc
+ * Add a test in order to well type a "visit".
+   2011-02-16 tavaresc
+ * Split strategy solveSubConstraints into separated strategies and methods.
+ * The method detectFail returns a 'boolean' and a new kind of constraint
+   'False()' is added into the set constraint. (NewKernelTyper)
+
+2011-02-15 tavaresc
+ * Set type of new subject with the type of old subject (in compiler).
+ * Fix the insertion of subtyping constraints.
+ * Handle others Code's constructors in TomBase.
+
 
 2011-02-08 tonio
  * Update junit to 4.8.2
@@ -30,7 +85,25 @@
  * update ant*.jar to version 1.7.1 (moved to lib/compiletime)
  * bumped to version 2.8rc3
 
-2011-01-06
+2011-02-02 tavaresc
+ * Detect when a slot has been declared with two different sorts.
+
+2011-02-01 tavaresc
+ * Fix cast type for slots of a RecordAppl.
+
+2011-01-31 tavaresc
+ * Fix cast type in code generation of "MatchConstraint".
+
+2011-01-28 tavaresc
+ * Re-add test for lazyType since bultin types need precise types for automatically generated methods.
+
+2011-01-06 tavaresc
+ * Fix conditions for subtype relations and comment printlns.
+
+2011-01-06 pem
+ * Add a cast in the generated code to deal with subtyping.
+
+2011-01-06 jcb
  * fix bug #8467
  * fix bug #8430
  * fix bug #11538
@@ -78,9 +151,9 @@
 
 2010-11-18 tavaresc
  * Add case 6 {Var1 <: TClos1, TClos2 <: Var2} for enumerationSolutions method in
-   NewKernelTyper.
+ NewKernelTyper.
  * Add test before call solveSubConstraints (test if the constraint list is not
-   empty) in NewKernelTyper.
+ empty) in NewKernelTyper.
 
 2010-11-10 pem
  * re-activated TomSyntaxChecker
@@ -91,8 +164,7 @@
  * bootstrap
 
 2010-11-08 tavaresc
- * Fix code generation for those arguments having type smaller (subtype) than
-   the expected by the tom signature.
+ * Fix code generation for those arguments having type smaller (subtype) than the expected by the tom signature.
 
 2010-11-03 tavaresc
  * Fix hasUndeclaredType method and call it to test the explicit type of a

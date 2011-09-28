@@ -1,0 +1,27 @@
+^
+%match(a){
+    pat1(b) -> {#}
+    pat2(c) -> {
+        #pragma ^^
+        %match(d){}
+    }
+}
+
+@Override
+public private bonjour(<? super Foo> f, <? extend Bar> b){
+    %match(e){
+        case1(f) -> {
+            %match(g){
+                case11(h)->{ return Whathever.getInstance();}
+                case12(i)->{ return new IDontCare();}
+            }
+        }
+        case2(j) -> {return somethingElse;}
+    }
+    
+    throw new MatchMistakeException("Whyyyyyyyyyyyyyyyyyy ?");
+}
+
+%match(k){
+
+}

@@ -86,9 +86,9 @@ public class TestList {
     get_slot(s1,t) { ((ATermAppl)$t).getArgument(0)  }
   }
 
-  %op E l(s1:L) {
+  %op E l(sl:L) {
     is_fsym(t) { ((ATermAppl)$t).getName() == "l" }
-    get_slot(s1,t) { (ATermList) ((ATermAppl)$t).getArgument(0)  }
+    get_slot(sl,t) { (ATermList) ((ATermAppl)$t).getArgument(0)  }
   }
 
   %op E h(s1:E,s2:E) {

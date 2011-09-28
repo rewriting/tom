@@ -25,16 +25,13 @@
 package tom.gom.backend;
 
 import java.util.Map;
-import java.util.logging.Level;
 import java.io.File;
 import java.io.IOException;
 
-import tom.platform.PlatformLogRecord;
 import tom.platform.OptionParser;
 import tom.platform.adt.platformoption.types.PlatformOptionList;
 
 import tom.gom.GomMessage;
-import tom.gom.GomStreamManager;
 import tom.gom.tools.GomGenericPlugin;
 import tom.gom.tools.GomEnvironment;
 

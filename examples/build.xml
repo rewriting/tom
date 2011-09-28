@@ -50,6 +50,8 @@
       </filelist>
       
     </subant>
+      <!-- Exclude tests that run only with the new typer -->
+      <!--exclude name="subtypeinference/*"/-->
   </target>
 
   <target name="examples"

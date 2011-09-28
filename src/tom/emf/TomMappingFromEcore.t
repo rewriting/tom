@@ -19,7 +19,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  *
+ * Nicolas HENRY (july 2009)
  * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
+ * Jean-Christophe Bach   e-mail: jeanchristophe.bach@inria.fr
  *
  **/
 
@@ -66,9 +68,6 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 
 /**
  * Give a Tom mapping from an EcorePackage
- * 
- * @author Nicolas HENRY (july 2009)
- * 
  */
 public class TomMappingFromEcore {
 
@@ -176,6 +175,9 @@ public class TomMappingFromEcore {
       types.put(c, n);
       if(tomTypes.containsKey(c)) {
         writer.write("\n\n%include { " + tomTypes.get(c) + ".tom }");
+      } else if (tomEMFTypes.contains(c)) {
+        //add ecore mappings if needed
+        writer.write("\n\n%include { emf/ecore.tom }");
       } else {
         String[] decl = getClassDeclarations(eclf); // [canonical name, anonymous generic, generic type]
         writer.write(%[
@@ -191,10 +193,16 @@ public class TomMappingFromEcore {
 
   private static String genSubtype(EClassifier eclf) {
     String result = "";
-    if((eclf instanceof EClass) && !((EClass)eclf).getESuperTypes().isEmpty()) {
-      //should be a collection with one and only one element
-      for (EClass supertype:((EClass)eclf).getESuperTypes()) {
-        result = result + "extends " + supertype.getName();
+    if((eclf instanceof EClass)) {
+      if(!((EClass)eclf).getESuperTypes().isEmpty()) {
+        //should be a collection with one and only one element
+        for (EClass supertype:((EClass)eclf).getESuperTypes()) {
+          result = result + "extends "+ supertype.getName();
+        }
+      } else {
+        if (!(eclf.getInstanceClassName().equals("EObject"))) {
+          result = result + "extends " + "EObject";
+        }
       }
     }
     return result;
@@ -233,6 +241,46 @@ public class TomMappingFromEcore {
     tomTypes.put(Vector.class, "util/types/Vector");
     tomTypes.put(WeakHashMap.class, "util/types/WeakHashMap");
   }
+
+/**
+   * A dictionnary linking EMF classes with the corresponding tom mapping filename 
+   */
+  private final static HashSet<Class<?>> tomEMFTypes = new HashSet<Class<?>>();
+  static {
+    tomEMFTypes.add(org.eclipse.emf.ecore.EAttribute.class);
+    tomEMFTypes.add(org.eclipse.emf.ecore.EAnnotation.class);
+    tomEMFTypes.add(org.eclipse.emf.ecore.EStructuralFeature.class);
+    tomEMFTypes.add(org.eclipse.emf.ecore.EObject.class);
+    tomEMFTypes.add(org.eclipse.emf.ecore.EDataType.class);
+    tomEMFTypes.add(org.eclipse.emf.ecore.EModelElement.class);
+    tomEMFTypes.add(org.eclipse.emf.ecore.EEnumLiteral.class);
+    tomEMFTypes.add(org.eclipse.emf.ecore.EClassifier.class);
+    tomEMFTypes.add(org.eclipse.emf.ecore.ETypeParameter.class);
+    tomEMFTypes.add(org.eclipse.emf.ecore.EGenericType.class);
+    tomEMFTypes.add(org.eclipse.emf.ecore.EReference.class);
+    tomEMFTypes.add(org.eclipse.emf.ecore.EPackage.class);
+    tomEMFTypes.add(org.eclipse.emf.ecore.EClass.class);
+    tomEMFTypes.add(org.eclipse.emf.ecore.EParameter.class);
+    tomEMFTypes.add(org.eclipse.emf.ecore.EOperation.class);
+    tomEMFTypes.add(org.eclipse.emf.common.util.EList.class);
+    tomEMFTypes.add(org.eclipse.emf.ecore.ETypedElement.class);
+    tomEMFTypes.add(org.eclipse.emf.ecore.EFactory.class);
+    tomEMFTypes.add(org.eclipse.emf.ecore.EEnum.class);
+    tomEMFTypes.add(org.eclipse.emf.common.util.Enumerator.class);
+    tomEMFTypes.add(org.eclipse.emf.ecore.ENamedElement.class);
+    tomEMFTypes.add(java.math.BigInteger.class);
+    tomEMFTypes.add(java.math.BigDecimal.class);
+    tomEMFTypes.add(org.eclipse.emf.ecore.resource.ResourceSet.class);
+    tomEMFTypes.add(org.eclipse.emf.ecore.util.FeatureMap.Entry.class);
+    tomEMFTypes.add(org.eclipse.emf.ecore.util.FeatureMap.class);
+    tomEMFTypes.add(org.eclipse.emf.common.util.TreeIterator.class);
+    tomEMFTypes.add(org.eclipse.emf.common.util.DiagnosticChain.class);
+    tomEMFTypes.add(org.eclipse.emf.ecore.resource.Resource .class);
+    tomEMFTypes.add(byte.class);
+    tomEMFTypes.add(java.util.Date.class);
+    tomEMFTypes.add(Class.class);
+  }
+
 
   /** A list of java reserved keywords for variable naming
    */
@@ -511,7 +559,9 @@ private static <O> org.eclipse.emf.common.util.EList<O> append@name@(O e,org.ecl
             .getInterfaces().length - 1].getCanonicalName();
           String o2 = ecl.getEPackage().getClass().getInterfaces()[ecl.getEPackage().getClass().getInterfaces().length - 1]
             .getCanonicalName();
-          writer.write(%[
+          //avoid to generate mappings already been defined in ecore.tom
+          if (!tomEMFTypes.contains(eclf.getInstanceClass())) {
+            writer.write(%[
 
 %op @ecl.getInstanceClass().getSimpleName()@ @cr@(@s_types@) {
   is_fsym(t) { $t instanceof @(decl[0]+decl[1])@ }@s_gets@ @s_defaults@
@@ -529,6 +579,7 @@ public static <O extends org.eclipse.emf.ecore.EObject> O construct@cr@(O o, Obj
   }
   return o;
 }]%);
+          }
         }
       } else if(eclf instanceof EEnum) {
         EEnum en = (EEnum) eclf;

@@ -1,10 +1,10 @@
-1. Configuration (l8)
-2. Recuperation de Tom (l20)
-3. Commandes utiles (l26)
-4. Liens utiles (l58)
+1. Configuration (l.8)
+2. Recuperation de Tom (l.20)
+3. Commandes utiles (l.26)
+4. Liens utiles (l.72)
 
 
-
+##########################################
 1. Configuration
 
 git config --global user.name "<Name that should appear in logs and emails>"
@@ -16,42 +16,54 @@ git config --global color.status auto
 git config --global color.branch auto
 
 
-
+##########################################
 2. Recuperation de Tom
 
 git clone ssh://<user>@scm.gforge.inria.fr/git/tom/jtom.git jtom
 
 
-
+##########################################
 3. Commandes utiles
 
 git status, git add/rm
-git commit : pour enregistrer une modification locale
-git push : pour envoyer les modifications locales vers le depot distant (a
-faire apres un ou plusieurs commit)
 
-git branch -a : liste des branches
+git commit : pour enregistrer une modification locale
+
+git push : pour envoyer les modifications locales vers le depot distant (a
+           faire apres un ou plusieurs commit)
+git pull : pour recuperer la version du depot distant (/!\ la recuperation ne
+           concerne que la branche courante)
+
+git branch -a : liste des branches distantes
 
 git checkout <branch> : pour passer dans la branche <branch> (ou recuperer le
-contenu de la branche si on est deja dedans. Ecrase les modifications non
-commitees). /!\ On ne peut pas changer de branche si les modifications n'ont
-pas ete commitees.
+           contenu de la branche si on est deja dedans. Ecrase les modifications non
+           commitees). /!\ On ne peut pas changer de branche si les modifications n'ont
+           pas ete commitees.
 git checkout <branch> -- <file> : pour recuperer le fichier <file> de la branche
 <branch>
-git checkout -b <branch> origin/<branch> : pour creer la branche en local
-git merge <branch> : pour fusionner la branche <branch> dans la branche
-courante
 
-git checkout HEAD <file> : pour recuperer un fichier de la branche courante qui a ete efface
+git checkout -b <branch> origin/<branch> : pour creer la branche en local
+git checkout HEAD <file> : pour recuperer un fichier de la branche courante qui
+a ete efface
+
+git merge <branch> : pour fusionner la branche <branch> dans la branche
+           courante
+git push -u origin <branch> :  pour pusher la branche sur le serveur distant
+
 git pull : pour recuperer la version du depot distant (/!\ la recuperation ne
 concerne que la branche courante)
 
 git cherry-pick $COMMIT_ID_YOU_WANT : applique un commit specifique dans la
-branche courante (utile pour porter un morceau de branche)
+           branche courante (utile pour porter un morceau de branche)
 
 git commit --amend -m "<type here your new message>" : change le message du
 dernier commit. Peut etre un peu decline pour d'autres commits ou des commits
 qui ont deja ete "pushes".
+
+git reset --hard HEAD~1 : supprime le dernier commit (s'il n'a pas ete "pushe",
+sinon il faut utiliser « git revert »). On peut jouer sur le nombre de commits
+sur lequel revenir, ou alors donner le hash SHA-1 à la place de HEAD.
 
 Procedure a suivre lors d'un conflit non resolu automatiquement :
 - resoudre manuellement le confit en editant le fichier fautif
@@ -60,6 +72,7 @@ Procedure a suivre lors d'un conflit non resolu automatiquement :
 - faire le push : git push
 
 
+##########################################
 4. Liens utiles
 
 http://www.unixgarden.com/index.php/administration-systeme/git-pour-les-futurs-barbus
@@ -67,4 +80,4 @@ http://team.gcu.info/~ange/git_article/
 http://www.zorched.net/2008/04/14/start-a-new-branch-on-your-remote-git-repository/
 http://www.gitready.com/beginner/2009/02/02/push-and-delete-branches.html
 
-Livre ProGit (reference complete)
+Livre ProGit (reference complete) : http://progit.org/book/

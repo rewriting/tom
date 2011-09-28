@@ -191,7 +191,7 @@ public class DesugarerPlugin extends TomGenericPlugin {
 
   private TomSymbol addDefaultMake(TomSymbol tomSymbol) {
     %match(tomSymbol) {
-      Symbol[Options=concOption(_*,DeclarationToOption((MakeDecl|MakeEmptyList|MakeEmptyArray|MakeAddList|MakeAddArray|IsFsymDecl|GetImplementationDecl|GetSlotDecl|GetDefaultDecl|GetHeadDecl|GetTailDecl|IsEmptyDecl|GetElementDecl|GetSizeDecl)[]),_*)] -> {
+      Symbol[Options=concOption(_*,DeclarationToOption((MakeDecl|MakeEmptyList|MakeEmptyArray|MakeAddList|MakeAddArray|IsFsymDecl|GetSlotDecl|GetDefaultDecl|GetHeadDecl|GetTailDecl|IsEmptyDecl|GetElementDecl|GetSizeDecl)[]),_*)] -> {
         return tomSymbol;
       }
       Symbol(name,t@TypesToType(domain,codomain),l,concOption(X1*,origin@OriginTracking(_,line,file),X2*)) -> {

@@ -24,7 +24,6 @@
 
 package tom.gom.compiler;
 
-import java.util.logging.Level;
 import java.util.Map;
 
 import tom.engine.tools.Tools;

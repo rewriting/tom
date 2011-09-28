@@ -37,11 +37,9 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.StringTokenizer;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import tom.engine.tools.SymbolTable;
-import tom.engine.tools.ASTFactory;
 import tom.engine.exception.TomRuntimeException;
 import tom.platform.OptionManager;
 

@@ -49,7 +49,7 @@ public class BeadSort {
 
   %op Bead empty() {
     is_fsym(t) { $t==null }
-    make { null }
+    make() { null }
   }
 
     /*

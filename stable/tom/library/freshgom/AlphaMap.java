@@ -25,8 +25,6 @@
 package tom.library.freshgom;
 
 import java.util.Hashtable;
-import java.util.Map;
-import java.util.Collection;
 
 /* stack for exportation (term -> raw term) */
 

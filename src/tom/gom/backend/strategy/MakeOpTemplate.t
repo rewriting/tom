@@ -168,25 +168,26 @@ public class @className()@ implements tom.library.sl.Strategy {
   }
 
   public String generateMapping() {
+    String prefix = className();
     return %[
-  %op Strategy @className()@(@genStratArgs(slotList,"arg")@) {
+  %op Strategy @className()@(@genStratArgs(prefix,slotList,"arg")@) {
     is_fsym(t) { (($t!=null) && ($t instanceof @fullClassName()@)) }
-@genGetSlot(slotList.length(),"arg")@
+@genGetSlot(prefix,slotList.length(),"arg")@
     make(@genMakeArguments(slotList,false)@) { new @fullClassName()@(@genMakeArguments(slotList,true)@) }
   }
 ]%;
   }
 
-private String genGetSlot(int count, String arg) {
+private String genGetSlot(String prefix,int count, String arg) {
   StringBuilder out = new StringBuilder();
   for (int i = 0; i < count; ++i) {
     out.append(%[
-        get_slot(@arg+i@, t) { (tom.library.sl.Strategy)((@fullClassName()@)$t).getChildAt(@i@) }]%);
+        get_slot(@prefix+arg+i@, t) { (tom.library.sl.Strategy)((@fullClassName()@)$t).getChildAt(@i@) }]%);
   }
   return out.toString();
 }
 
-private String genStratArgs(SlotFieldList slots,String arg) {
+private String genStratArgs(String prefix,SlotFieldList slots,String arg) {
     StringBuilder args = new StringBuilder();
     int i = 0;
     while(!slots.isEmptyConcSlotField()) {
@@ -196,6 +197,7 @@ private String genStratArgs(SlotFieldList slots,String arg) {
       %match(head) {
         SlotField[Name=_name,Domain=domain] -> {
           args.append((i==0?"":", "));
+          args.append(prefix);
           args.append(arg);
           args.append(i);
           if (!getGomEnvironment().isBuiltinClass(`domain)) {

@@ -34,13 +34,54 @@ public class ExampleJavaType {
     module Example
       abstract syntax
       B = b()
+        | f(n:B)
+        | g(n1:B,n2:B)
+
+      A = h(m1:A,m2:B)
+        | a()
   }
 
+  /**
+   * This example is to check the evaluation of the mix "tom + java"
+  */
   public static void main(String[] args) {
     int x = 10;
+    B y = `b();
+    B w = `f(b());
+    A s = `h(a(),b());
     %match{
       b() << x -> { System.out.println("Line 1: " + x); }
       b() << x -> { System.out.println("Line 2: " + `x); }
+      b() << y -> { System.out.println("Line 3: " + `createF(y)); }
+      b() << y -> { System.out.println("Line 4: " + createF(`y)); }
+      f(a) << w -> { System.out.println("Line 5: " + createG(`a,y)); }
+      z@f(b()) << createF(y) -> { System.out.println("Line 6: " + `z); }
+      z@f(b()) << createF(b()) -> { System.out.println("Line 7: " + `z); }
+      b() << y -> { System.out.println("Line 8: " + `f(createF(w))); }
+      b() << y -> { System.out.println("Line 9: " + `f(createG(w,y))); }
+      f(b()) << createF(y) -> { System.out.println("Line 10: " + `y); }
+      //f(z) << w -> { 
+      //  System.out.println("Line 11: " + `g(createF(z),f(createF(x)))); 
+      //}
+      f(z1) << f(b()) || g(z1,z2) << g(f(b()),b()) -> {
+        System.out.println("Line 12: " + `z1);
+      }
+      f(z) << B s -> { System.out.println("Line 13: " + s); }
+      z << B s -> { System.out.println("Line 14: " + s); }
+      z << B s -> { System.out.println("Line 15: " + `z); }
+      z1 << b() && (f(z1) << f(b()) || g(z1,z2) << g(f(b()),b())) -> {
+        System.out.println("Line 16: " + `z1);
+      }
     }
+  }
+
+  public static B createF(B arg) {
+    System.out.println("In createF with '" + arg + "'.");
+    return `f(arg);
+  }
+
+  public static B createG(B arg1, B arg2) {
+    System.out.println("In createG with '" + arg1 + "' and '" + arg2 + "'.");
+    return `g(arg1,arg2);
   }
 }

@@ -46,11 +46,11 @@ import tom.engine.compiler.Compiler;
  */
 public class ArrayPropagator implements IBasePropagator {
 
-//--------------------------------------------------------	
+  //--------------------------------------------------------	
   %include { ../../adt/tomsignature/TomSignature.tom }	
   %include { ../../../library/mapping/java/sl.tom }
   %include { constraintstrategies.tom }	
-//--------------------------------------------------------
+  //--------------------------------------------------------
 
   %typeterm ArrayPropagator {
     implement { ArrayPropagator }
@@ -65,7 +65,7 @@ public class ArrayPropagator implements IBasePropagator {
   private Compiler compiler;
   private ConstraintPropagator constraintPropagator; // only present for compatibility 
   private GeneralPurposePropagator generalPurposePropagator;  
- 
+
   public ArrayPropagator(Compiler myCompiler, ConstraintPropagator myConstraintPropagator) {
     this.compiler = myCompiler;
     this.constraintPropagator = myConstraintPropagator; // only present for compatibility 
@@ -75,15 +75,15 @@ public class ArrayPropagator implements IBasePropagator {
   public Compiler getCompiler() {
     return this.compiler;
   }
- 
+
   public GeneralPurposePropagator getGeneralPurposePropagator() {
     return this.generalPurposePropagator;
   }
- 
+
   public ConstraintPropagator getConstraintPropagator() {
     return this.constraintPropagator;
   }
- 
+
   public Constraint propagate(Constraint constraint) throws VisitFailure {
     return `TopDownWhenConstraint(ArrayPatternMatching(this)).visitLight(constraint);		
   }	
@@ -105,84 +105,105 @@ public class ArrayPropagator implements IBasePropagator {
         }
         // if this is not an array, nothing to do
         if(!TomBase.isArrayOperator(ap.getCompiler().getSymbolTable().
-            getSymbolFromName(`tomName))) { return `m; }
+              getSymbolFromName(`tomName))) { return `m; }
         Constraint detachedConstr = ap.getGeneralPurposePropagator().detachSublists(`m);
         // if something changed
         if (detachedConstr != `m) { return detachedConstr; }
       }      
-      
-      /*
-         array[t1,X*,t2,Y*] = g -> freshSubj = g /\ array=SymbolOf(freshSubj) /\ fresh_index = 0 
-         /\ HasElement(fresh_index,freshSubj)  /\ t1=GetElement(fresh_index,freshSubj) /\ fresh_index1 = fresh_index + 1 
-         /\ begin1 = fresh_index1  /\ end1 = fresh_index1 /\ X* = VariableHeadArray(begin1,end1) /\ fresh_index2 = end1
-         /\ HasElement(fresh_index2,freshSubj) /\ t2=GetElement(fresh_index2,freshSubj)/\ fresh_index3 = fresh_index2 + 1  
-         /\ begin2 = fresh_index3  /\ end2 = fresh_index3 /\ Y* = VariableHeadArray(begin2,end2) /\ fresh_index4 = end2
-      */
+
+      /**
+       * array[t1:S,X*:T',t2:S,Y*:T']:T' << T' g:U
+       * -> freshSubj:T' << T' g:U 
+       *    /\ array:T' << T' SymbolOf(freshSubj:T') 
+       *    /\ fresh_index:int << int 0:int 
+       *    /\ HasElement(fresh_index:int,freshSubj:T'):T  
+       *    /\ t1:S << S GetElement(fresh_index:int,freshSubj:T'):T
+       *    /\ fresh_index1:int << int(fresh_index + 1):int
+       *    /\ begin1:int << int fresh_index1:int  
+       *    /\ end1:int << int fresh_index1:int 
+       *    /\ X*:T' << T'VariableHeadArray(begin1:int,end1:int):T'
+       *    /\ fresh_index2:int << int end1:int
+       *    /\ HasElement(fresh_index2:int,freshSubj:T'):T 
+       *    /\ t2:S << S GetElement(fresh_index2:int,freshSubj:T'):T
+       *    /\ fresh_index3:int << int (fresh_index2 + 1):int  
+       *    /\ begin2:int << int fresh_index3:int  
+       *    /\ end2:int << int fresh_index3 
+       *    /\ Y*:T' << T' VariableHeadArray(begin2:int,end2:int):T'
+       *    /\ fresh_index4:int << int end2:int
+       * where array: T* -> T' and S is a subtype of T and T' is a subtype of U and fresh_index: Integer* -> T' 
+       */
       m@MatchConstraint[Pattern=pattern@RecordAppl(options,nameList@concTomName(name@Name(tomName),_*),slots,_),Subject=g@!SymbolOf[],AstType=aType] -> {      
         if(TomBase.hasTheory(`pattern,`AC())) {
           return `m;
         }
-            // if this is not an array, nothing to do
-            if(!TomBase.isArrayOperator(ap.getCompiler().getSymbolTable().
-                getSymbolFromName(`tomName))) {return `m;}        
-            // declare fresh variable            
-            TomType termType = ap.getCompiler().getTermTypeFromTerm(`g);            
-            BQTerm freshVariable = ap.getCompiler().getFreshVariableStar(termType);
-            // g should be only a variable
-            Constraint freshVarDeclaration =
-              `MatchConstraint(TomBase.convertFromBQVarToVar(freshVariable),g,aType);
-            
-            // declare fresh index = 0            
-            BQTerm freshIndex = ap.getFreshIndex();				
-            Constraint freshIndexDeclaration =
-              `MatchConstraint(TomBase.convertFromBQVarToVar(freshIndex),
-                  ExpressionToBQTerm(Integer(0)),aType);
-            Constraint l = `AndConstraint();
-    match:  %match(slots) {
-              concSlot() -> {
-                l = `AndConstraint(l*,EmptyArrayConstraint(name,freshVariable,freshIndex));
-              }
-              concSlot(_*,PairSlotAppl[Appl=appl],X*) -> {
-                BQTerm newFreshIndex = ap.getFreshIndex();                
-          mAppl:%match(appl){
-                  // if we have a variable star
-                  VariableStar[] -> {
-                    // if it is the last element               
-                    if(`X.length() == 0) {
-                      // we should only assign it, without generating a loop
-                      l = `AndConstraint(l*,MatchConstraint(appl,ExpressionToBQTerm(
-                            GetSliceArray(name,freshVariable,freshIndex,ExpressionToBQTerm(GetSize(name,freshVariable)))),aType));
-                    } else {
-                      BQTerm beginIndex = ap.getBeginIndex();
-                      BQTerm endIndex = ap.getEndIndex();
-                      l = `AndConstraint(l*,
-                          MatchConstraint(TomBase.convertFromBQVarToVar(beginIndex),freshIndex,aType),
-                          MatchConstraint(TomBase.convertFromBQVarToVar(endIndex),freshIndex,aType),
-                          MatchConstraint(appl,VariableHeadArray(name,freshVariable,beginIndex,endIndex),aType),
-                          MatchConstraint(TomBase.convertFromBQVarToVar(newFreshIndex),endIndex,aType));     
-                    }
-                    break mAppl;
-                  }
-                  _ -> {                    
-                    l = `AndConstraint(l*,                      
-                        Negate(EmptyArrayConstraint(name,freshVariable,freshIndex)),                      
-                        MatchConstraint(appl,ExpressionToBQTerm(GetElement(name,ap.getCompiler().getTermTypeFromTerm(appl),freshVariable,freshIndex)),aType),
-                        MatchConstraint(TomBase.convertFromBQVarToVar(newFreshIndex),ExpressionToBQTerm(AddOne(freshIndex)),aType));
-                    // for the last element, we should also check that the list ends
-                    if(`X.length() == 0) {                  
-                      l = `AndConstraint(l*, EmptyArrayConstraint(name,freshVariable,newFreshIndex));
-                    }
-                  }
-                }// end match
-                freshIndex = newFreshIndex;
-              }
-            }// end match                        
-            // add head equality condition + fresh var declaration + detached constraints
-            l =
-              `AndConstraint(freshVarDeclaration,MatchConstraint(RecordAppl(options,nameList,concSlot(),concConstraint()),SymbolOf(freshVariable),aType),
-                freshIndexDeclaration,ap.getConstraintPropagator().performDetach(m),l*);
-            return l;
+        TomSymbol symb = ap.getCompiler().getSymbolTable().getSymbolFromName(`tomName);
+
+        // if this is not an array, nothing to do
+        if(!TomBase.isArrayOperator(symb)) {return `m;}        
+
+        TomType slotType =
+          symb.getTypesToType().getDomain().getHeadconcTomType();
+        // declare fresh variable            
+        //TomType termType = ap.getCompiler().getTermTypeFromTerm(`g);            
+        //BQTerm freshVariable = ap.getCompiler().getFreshVariableStar(termType);
+        BQTerm freshVariable = ap.getCompiler().getFreshVariableStar(`aType);
+        // g should be only a variable
+        Constraint freshVarDeclaration =
+          `MatchConstraint(TomBase.convertFromBQVarToVar(freshVariable),g,aType);
+
+        // declare fresh index = 0            
+        BQTerm freshIndex = ap.getFreshIndex();				
+        TomType freshIndexType = ap.getCompiler().getTermTypeFromTerm(freshIndex);
+        Constraint freshIndexDeclaration =
+          `MatchConstraint(TomBase.convertFromBQVarToVar(freshIndex),
+              ExpressionToBQTerm(Integer(0)),freshIndexType);
+        Constraint l = `AndConstraint();
+match:  %match(slots) {
+          concSlot() -> {
+            l = `AndConstraint(l*,EmptyArrayConstraint(name,freshVariable,freshIndex));
+          }
+          concSlot(_*,PairSlotAppl[Appl=appl],X*) -> {
+            BQTerm newFreshIndex = ap.getFreshIndex();                
+mAppl:%match(appl){
+        // if we have a variable star
+        VariableStar[] -> {
+          // if it is the last element               
+          if(`X.length() == 0) {
+            // we should only assign it, without generating a loop
+            l = `AndConstraint(l*,MatchConstraint(appl,ExpressionToBQTerm(
+                    GetSliceArray(name,freshVariable,freshIndex,ExpressionToBQTerm(GetSize(name,freshVariable)))),aType));
+          } else {
+            BQTerm beginIndex = ap.getBeginIndex();
+            BQTerm endIndex = ap.getEndIndex();
+            l = `AndConstraint(l*,
+                MatchConstraint(TomBase.convertFromBQVarToVar(beginIndex),freshIndex,aType),
+                MatchConstraint(TomBase.convertFromBQVarToVar(endIndex),freshIndex,aType),
+                MatchConstraint(appl,VariableHeadArray(name,freshVariable,beginIndex,endIndex),aType),
+                MatchConstraint(TomBase.convertFromBQVarToVar(newFreshIndex),endIndex,aType));     
+          }
+          break mAppl;
         }
+        _ -> {                    
+          TomType applType = ap.getCompiler().getTermTypeFromTerm(`appl);
+          l = `AndConstraint(l*,                      
+              Negate(EmptyArrayConstraint(name,freshVariable,freshIndex)),                      
+              MatchConstraint(appl,ExpressionToBQTerm(GetElement(name,slotType,freshVariable,freshIndex)),applType),
+              MatchConstraint(TomBase.convertFromBQVarToVar(newFreshIndex),ExpressionToBQTerm(AddOne(freshIndex)),freshIndexType));
+          // for the last element, we should also check that the list ends
+          if(`X.length() == 0) {                  
+            l = `AndConstraint(l*, EmptyArrayConstraint(name,freshVariable,newFreshIndex));
+          }
+        }
+      }// end match
+      freshIndex = newFreshIndex;
+          }
+        }// end match                        
+        // add head equality condition + fresh var declaration + detached constraints
+        l =
+          `AndConstraint(freshVarDeclaration,MatchConstraint(RecordAppl(options,nameList,concSlot(),concConstraint()),SymbolOf(freshVariable),aType),
+              freshIndexDeclaration,ap.getConstraintPropagator().performDetach(m),l*);
+        return l;
+      }
     }
   }// end %strategy
 
