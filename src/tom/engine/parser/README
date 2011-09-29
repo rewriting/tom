@@ -100,12 +100,8 @@ tested):
                     comme des ' signalant un char (PeanoMapped.t)
   examples/csharp --> parse mais c'est du C#
   examples/dom --> xml non géré
-  examples/gom
-  examples/gomoku
-  examples/gterm
-  examples/integerc
-  examples/labyrinth
-  examples/lambdacalculi
+  examples/lambdacalculi --> Ne peut pas parser correctement car la phase de transformation 
+                             du CST pour le code Tom dans le %gom plante
   examples/lazyml
   examples/lib
   examples/list
