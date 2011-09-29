@@ -42,6 +42,30 @@ The compiler is composed of several plugins, which are executed in the following
     TransformBQApp: after typing, transform each BackQuoteTerm into its
      compiled form (BuildConstant, BuildList, FunctionCall, BuildTerm)
 
+  * The typer is explained in Claudia Tavares' thesis. However, some optimisation were
+    done during implementation in order to reduce the number of fresh type
+    variables generated. Here we give a brief list of main differences:
+
+    1) methods addEqConstraint and addSubConstraint adds a constraint c in a
+    constraint set C if both types t1 and t2 in c are different from
+    'EmptyType()' AND if t1 is different from t2. In this case, the rule
+        'T = T, err, sigma => err, sigma'
+    of constraint resolution (Section 3.3.5) is not
+    necessary anymore. Correspondingly, the rule
+        '{T <: T} U C', sigma => C', err, sigma'
+    of constraint resolution (Section 4.3.4.1) is not necessary anymore;
+
+    2) method inferConstraint tries to get the type of operators in SymbolTable before to generate
+    type variables. A fresh type variable is generated only if the operator is
+    not in Symboltable.
+
+    The exact implementation of the typer described in Claudia' thesis can be
+    found in:
+    work >> claudia >> thesis >> codes >> typer-versions >> TypingWithSubtypes.t
+
+    %TODO: Talk about CT-VAR, CT-FUN, CT-ELEM and CT-MERGE
+
+
 - Type checker
   traverse the AST and check that variable that appear more than once in the
   LHS have coherent types
