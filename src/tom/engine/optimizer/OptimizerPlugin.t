@@ -223,8 +223,9 @@ public class OptimizerPlugin extends TomGenericPlugin {
                 // verify linearity in case of variables from the pattern
                 // warning to indicate that this var is unused in the rhs
                 Option orgTrack = TomBase.findOriginTracking(`var.getOptions());
-                TomMessage.warning(logger,orgTrack.getFileName(), orgTrack.getLine(),
-                    TomMessage.unusedVariable,varName);
+                TomMessage.warning(logger,(orgTrack instanceof OriginTracking)?orgTrack.getFileName():"unknown file", 
+                  (orgTrack instanceof OriginTracking)?orgTrack.getLine():-1,
+                  TomMessage.unusedVariable,varName);
                 TomMessage.info(logger,null,0,TomMessage.remove,mult,varName);
               }
             }
