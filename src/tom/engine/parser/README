@@ -104,10 +104,9 @@ tested):
   examples/lambdacalculi --> Ne peut pas parser correctement car la phase de 
                              transformation du CST pour le code Tom dans le 
                              %gom plante
-  examples/lazyml --> typer.t est leeeeeeeeeeeeeeeeeeeeent
+  examples/lazyml --> Typer.t ne parse pas, on dirait qu'il boucle
   examples/lsystems --> Ne parse pas mais non conforme à la grammaire Tom. Il 
                         n'y as pas de build.xml de toute façon
-  examples/master
   examples/matching
   examples/meta
   examples/mgs
