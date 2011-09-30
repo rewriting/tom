@@ -1774,7 +1774,7 @@ operator returns [Declaration result] throws TomException
               TomMessage msg = null;
               int index = slotNameList.indexOf(sName);
               if(index == -1) {
-                msg = TomMessage.errorIncompatibleSlotDecl;
+                msg = TomMessage.errorIncompatibleDefaultDecl;
               } 
               if(msg != null) {
                 TomMessage.error(getLogger(),currentFile(), getLine(),
