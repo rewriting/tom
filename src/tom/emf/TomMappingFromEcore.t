@@ -87,6 +87,11 @@ public class TomMappingFromEcore {
   private static boolean useNewTyper = false;
 
   /**
+   * true if the EPackage to generate is EcorePackage itself
+   */
+  private static boolean genEcoreMapping = false;
+
+  /**
    * A dictionnary linking a class with his generated type name
    */
   private final static HashMap<Class<?>, String> types = new HashMap<Class<?>, String>();
@@ -119,10 +124,16 @@ public class TomMappingFromEcore {
           for(int i=0;i<ePackageNameList.size();i++) {
             File output = new File(".",ePackageNameList.get(i)+".tom");
             Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output)));
-            genLicence(writer);
+            //genLicence(writer); //libraries are not necessarily under GPL
+            //specific case of EcorePackage mapping generation
+            if(ePackageNameList.get(i).equals("org.eclipse.emf.ecore.EcorePackage")) {
+              genEcoreMapping = true;
+            }
             extractFromEPackage(writer, (EPackage) Class.forName(ePackageNameList.get(i)).getField("eINSTANCE").get(null));
             writer.flush();
             writer.close();
+            //reset
+            genEcoreMapping = false;
           }
         } catch (Exception e) {
           e.printStackTrace();
@@ -175,8 +186,8 @@ public class TomMappingFromEcore {
       types.put(c, n);
       if(tomTypes.containsKey(c)) {
         writer.write("\n\n%include { " + tomTypes.get(c) + ".tom }");
-      } else if (tomEMFTypes.contains(c)) {
-        //add ecore mappings if needed
+      } else if(tomEMFTypes.contains(c) && !genEcoreMapping) {
+        //add ecore mappings if needed, when not generating the EcorePackage mapping itself
         writer.write("\n\n%include { emf/ecore.tom }");
       } else {
         String[] decl = getClassDeclarations(eclf); // [canonical name, anonymous generic, generic type]
@@ -200,7 +211,7 @@ public class TomMappingFromEcore {
           result = result + "extends "+ supertype.getName();
         }
       } else {
-        if (!(eclf.getInstanceClassName().equals("EObject"))) {
+        if(!(eclf.getInstanceClassName().equals("EObject"))) {
           result = result + "extends " + "EObject";
         }
       }
@@ -487,9 +498,9 @@ private static <O> org.eclipse.emf.common.util.EList<O> append@name@(O e,org.ecl
     String esftype = getType(esf);
     
     // cases : null, String, `toto(), builtin
-    if (esftype.equals("String")) {
+    if(esftype.equals("String")) {
       dvalue = "\"" + dvalue + "\"";
-    } else if (esftype.equals("boolean") || esftype.equals("int") ||
+    } else if(esftype.equals("boolean") || esftype.equals("int") ||
         esftype.equals("float") || esftype.equals("double") || 
         esftype.equals("long") ) {
       //nothing
@@ -543,7 +554,7 @@ private static <O> org.eclipse.emf.common.util.EList<O> append@name@(O e,org.ecl
             s_gets.append("\n  get_slot(" + sfname + ", t) { (" + na
                 + ")$t.eGet($t.eClass().getEStructuralFeature(\"" + sf.getName()
                 + "\")) }");
-            if (sf.getDefaultValue()!=null) {
+            if(sf.getDefaultValue()!=null) {
               s_defaults.append(genGetDefault(sf));
             }
           }
@@ -560,7 +571,8 @@ private static <O> org.eclipse.emf.common.util.EList<O> append@name@(O e,org.ecl
           String o2 = ecl.getEPackage().getClass().getInterfaces()[ecl.getEPackage().getClass().getInterfaces().length - 1]
             .getCanonicalName();
           //avoid to generate mappings already been defined in ecore.tom
-          if (!tomEMFTypes.contains(eclf.getInstanceClass())) {
+          //except if the goal is to generate the EcorePackage mapping itself
+          if(genEcoreMapping || !tomEMFTypes.contains(eclf.getInstanceClass())) {
             writer.write(%[
 
 %op @ecl.getInstanceClass().getSimpleName()@ @cr@(@s_types@) {
