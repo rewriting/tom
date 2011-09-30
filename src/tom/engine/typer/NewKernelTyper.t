@@ -740,7 +740,7 @@ public class NewKernelTyper {
         SlotList newSList = `concSlot();
         if (!`sList.isEmptyconcSlot()) {
           `newSList =
-            nkt.inferSlotList(`sList,tSymbol,codomain);
+            nkt.inferSlotList(`sList,tSymbol,contextType);
         }
         return `RecordAppl(optionList,nList,newSList,newCList);
       }
@@ -767,7 +767,7 @@ public class NewKernelTyper {
           tSymbol = `EmptySymbol();
           //DEBUG System.out.println("name = " + `name);
           //DEBUG System.out.println("context = " + contextType);
-          BQTermList newBQTList = nkt.inferBQTermList(`bqTList,`EmptySymbol(),codomain);
+          BQTermList newBQTList = nkt.inferBQTermList(`bqTList,`EmptySymbol(),contextType);
           /* PEM: why contextType ? */
           return `FunctionCall(aName,contextType,newBQTList); 
         } else {
@@ -784,7 +784,8 @@ public class NewKernelTyper {
           }
           nkt.subtypeConstraints = nkt.addSubConstraint(`Subtype(codomain,contextType,PairNameOptions(aName,optionList)),nkt.subtypeConstraints);
 
-          BQTermList newBQTList = nkt.inferBQTermList(`bqTList,`tSymbol,codomain);
+          BQTermList newBQTList =
+            nkt.inferBQTermList(`bqTList,`tSymbol,contextType);
           return `BQAppl(optionList,aName,newBQTList);
         }
       }

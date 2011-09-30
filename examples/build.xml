@@ -256,7 +256,6 @@
         <exclude name="lambdacalculi/build.xml"/>
         <exclude name="multigraph/build.xml"/>
         <exclude name="set/build.xml"/>
-        <exclude name="gasel/build.xml"/>
         <exclude name="build/**/*"/>
         <exclude name="gen/**/*"/>
         <exclude name="dist/**/*"/>
