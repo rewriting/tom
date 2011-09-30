@@ -185,8 +185,12 @@ public class TyperPlugin extends TomGenericPlugin {
         setWorkingTerm(typedCode);
 
         // verbose
+        int totalNumOfConstraints = newKernelTyper.getEqCounter() +
+          newKernelTyper.getSubCounter(); 
         TomMessage.info(logger, null, 0, TomMessage.tomTypingPhase,
           Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));    
+        TomMessage.info(logger, null, 0, TomMessage.tomTypingPhaseComplement,
+          totalNumOfConstraints,newKernelTyper.getTVarCounter());
       } catch (Exception e) {
         TomMessage.error(logger, newKernelTyper.getCurrentInputFileName(), 
             0, TomMessage.exceptionMessage, getClass().getName(), 
