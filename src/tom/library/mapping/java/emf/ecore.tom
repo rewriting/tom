@@ -272,8 +272,8 @@ private static <O> org.eclipse.emf.common.util.EList<O> appendETypeParameterELis
   get_default(lowerBound) { 0 }
   get_default(upperBound) { 1 }
   get_default(changeable) { true }
-  get_default(volatile) { false }
-  get_default(transient) { false }
+  get_default(_volatile) { false }
+  get_default(_transient) { false }
   get_default(unsettable) { false }
   get_default(derived) { false }
   get_default(iD) { false }
@@ -486,8 +486,8 @@ private static <O> org.eclipse.emf.common.util.EList<O> appendEStructuralFeature
   get_slot(eOperations, t) { (org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EOperation>)$t.eGet($t.eClass().getEStructuralFeature("eOperations")) }
   get_slot(eStructuralFeatures, t) { (org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EStructuralFeature>)$t.eGet($t.eClass().getEStructuralFeature("eStructuralFeatures")) }
   get_slot(eGenericSuperTypes, t) { (org.eclipse.emf.common.util.EList<org.eclipse.emf.ecore.EGenericType>)$t.eGet($t.eClass().getEStructuralFeature("eGenericSuperTypes")) } 
-  get_default(abstract) { false }
-  get_default(interface) { false }
+  get_default(_abstract) { false }
+  get_default(_interface) { false }
   make(eAnnotations, name, instanceClassName, instanceTypeName, eTypeParameters, _abstract, _interface, eSuperTypes, eOperations, eStructuralFeatures, eGenericSuperTypes) { constructEClass((org.eclipse.emf.ecore.EClass)org.eclipse.emf.ecore.EcoreFactory.eINSTANCE.create((EClass)org.eclipse.emf.ecore.EcorePackage.eINSTANCE.getEClassifier("EClass")), new Object[]{ $eAnnotations, $name, $instanceClassName, $instanceTypeName, $eTypeParameters, $_abstract, $_interface, $eSuperTypes, $eOperations, $eStructuralFeatures, $eGenericSuperTypes }) }
 }
 
@@ -748,8 +748,8 @@ private static <O> org.eclipse.emf.common.util.EList<O> appendEAttributeEList(O 
   get_default(lowerBound) { 0 }
   get_default(upperBound) { 1 }
   get_default(changeable) { true }
-  get_default(volatile) { false }
-  get_default(transient) { false }
+  get_default(_volatile) { false }
+  get_default(_transient) { false }
   get_default(unsettable) { false }
   get_default(derived) { false }
   get_default(containment) { false }
