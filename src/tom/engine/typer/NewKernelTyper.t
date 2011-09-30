@@ -237,7 +237,16 @@ public class NewKernelTyper {
   private int limTVarSymbolTable;
   protected void setLimTVarSymbolTable(int freshTVarSymbolTable) {
     limTVarSymbolTable = freshTVarSymbolTable;
+    globalTypeVarCounter = freshTVarSymbolTable; 
   }
+
+  // Counters for verbose mode 
+  private int globalEqConstraintCounter = 0;
+  private int globalSubConstraintCounter = 0;
+  private int globalTypeVarCounter = 0;
+  protected int getEqCounter() { return globalEqConstraintCounter; } 
+  protected int getSubCounter() { return globalSubConstraintCounter; } 
+  protected int getTVarCounter() { return globalTypeVarCounter; }
 
   /**
    * The method <code>getFreshTlTIndex</code> increments the counter of type variables. 
@@ -245,6 +254,7 @@ public class NewKernelTyper {
    */
   private int freshTypeVarCounter;
   private int getFreshTlTIndex() {
+    globalTypeVarCounter++;
     return freshTypeVarCounter++;
   }
 
