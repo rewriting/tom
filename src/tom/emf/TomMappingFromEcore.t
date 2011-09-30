@@ -496,7 +496,7 @@ private static <O> org.eclipse.emf.common.util.EList<O> append@name@(O e,org.ecl
     String result = "";
     String dvalue = ""+esf.getDefaultValue();
     String esftype = getType(esf);
-    
+   
     // cases : null, String, `toto(), builtin
     if(esftype.equals("String")) {
       dvalue = "\"" + dvalue + "\"";
@@ -508,7 +508,9 @@ private static <O> org.eclipse.emf.common.util.EList<O> append@name@(O e,org.ecl
     } else {
       dvalue = "`" + dvalue + "()";
     }
-    return result+"\n  get_default("+esf.getName()+") { "+dvalue+" }";
+    //add a suffix '_' if the name is a reserved keyword
+    String sfname = (keywords.contains(esf.getName()) ? "_" : "")+esf.getName();
+    return result+"\n  get_default("+sfname+") { "+dvalue+" }";
   }
 
   /**
