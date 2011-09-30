@@ -61,7 +61,7 @@ The compiler is composed of several plugins, which are executed in the following
     not in SymbolTable;
 
     3) strategy 'inferTypes' for 'visit TomTerm' and 'visit BQTerm'. In these
-    cases, variables and star variables do not add a constraint 
+    cases, variables do not add a constraint 
         C = {tvar_in_varPatternList = tvar_of_contextType} U C
     as in the thesis, but instead
         C = {tvar_in_varPatternList <: tvar_of_contextType} U C
