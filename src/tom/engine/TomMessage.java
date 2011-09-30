@@ -155,6 +155,8 @@ public class TomMessage extends BasicPlatformMessage {
     new TomMessage("{0}:{1,number,integer}: In structure {2} declared line {3,number,integer}, get_slot({4},...) is repeated.");
   public static final TomMessage errorIncompatibleSlotDecl =
     new TomMessage("{0}:{1,number,integer}: In structure {2} declared line {3,number,integer}, get_slot: {4} is not known");
+  public static final TomMessage errorIncompatibleDefaultDecl =
+    new TomMessage("{0}:{1,number,integer}: In structure {2} declared line {3,number,integer}, get_default: {4} is not known");
   public static final TomMessage slotIncompatibleTypes =
     new TomMessage("Slot ''{0}'' has sort {1} but has already been declared with sort {2}");
   // used with TomMessage to format exception messages
