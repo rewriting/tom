@@ -124,7 +124,9 @@ public class TomMappingFromEcore {
           for(int i=0;i<ePackageNameList.size();i++) {
             File output = new File(".",ePackageNameList.get(i)+".tom");
             Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output)));
-            //genLicence(writer); //libraries are not necessarily under GPL
+            //libraries are not necessarily under GPL
+            //uncomment the following line when re-generating ecore.tom mapping
+            //genLicence(writer);
             //specific case of EcorePackage mapping generation
             if(ePackageNameList.get(i).equals("org.eclipse.emf.ecore.EcorePackage")) {
               genEcoreMapping = true;
