@@ -117,7 +117,7 @@ csStrategyVisitList :
   ;
 
 csStrategyVisit :
-  VISIT IDENTIFIER LBR (csVisitAction)* RBR
+  VISIT /*ALL_ID*/ IDENTIFIER LBR (csVisitAction)* RBR
     -> ^(Cst_VisitTerm 
           ^(Cst_Type IDENTIFIER /*ALL_ID*/ ) 
           ^(ConcCstConstraintAction csVisitAction* )
@@ -162,7 +162,7 @@ returns [int marker]:
 // "%match" already consumed when this rule is called
 
 // with args
-LPAR csBQTerm (COMMA csBQTerm)* RPAR
+LPAR csBQTerm /*csMatchArgument*/ (COMMA csBQTerm /*csMatchArgument*/)* RPAR
 LBR
 csExtendedConstraintAction*
 RBR
@@ -172,7 +172,7 @@ RBR
 
 -> ^( Cst_MatchConstruct
     {extractOptions((CommonToken)$LPAR, (CommonToken)$RBR)}
-    ^( ConcCstBQTerm csBQTerm*
+    ^( ConcCstBQTerm csBQTerm*)
     ^( ConcCstConstraintAction csExtendedConstraintAction* )
     )
 
@@ -217,38 +217,14 @@ csExtendedConstraintAction :
                  )
   ;
 
-/*csMatchArgument :
-(type=IDENTIFIER)? csBQTerm
-
-->{type!=null}? ^(Cst_TypedTerm csBQTerm ^(Cst_Type $type))
-->              ^(Cst_TypedTerm csBQTerm ^(Cst_TypeUnknown))
-  ;*/
-
-  /*
-     old plainBQTerm, many cases:
-     - name -> Cst_BQVar
-     - name* -> Cst_BQVarStar
-     - name(  ) -> Cst_BQAppl
-     - 5 ->_NUM_INT ->_Cst_BQConstant
-     - "name" -> STRING ->_Cst_BQConstant
-   */
-/*csBQTerm :
-  csName (s=STAR)?
-->{s!=null}? ^(Cst_BQVarStar csName )
-->           ^(Cst_BQVar csName)
-  |csName LPAR (a+=csBQTerm (COMMA a+=csBQTerm)*)? RPAR
-  -> ^(Cst_BQAppl csName ^(ConcCstBQTerm $a*))
-| csConstantValue -> ^(Cst_BQConstant ^(Cst_Name csConstantValue ))
-;*/
-
 csBQTerm :
-  (type=IDENTIFIER)? name=IDENTIFIER (s=STAR)?
+  (type=IDENTIFIER)? BQUOTE? name=IDENTIFIER (s=STAR)?
    ->{s!=null && type!=null}? ^(Cst_BQVarStar {extractOptions((CommonToken)$name)} $name ^(Cst_Type $type))
    ->{s!=null && type==null}? ^(Cst_BQVarStar {extractOptions((CommonToken)$name)} $name ^(Cst_TypeUnknown ))
    ->{s==null && type!=null}? ^(Cst_BQVar {extractOptions((CommonToken)$name)} $name ^(Cst_Type $type))
    ->                         ^(Cst_BQVar {extractOptions((CommonToken)$name)} $name ^(Cst_TypeUnknown ))
    
-  |bqname=IDENTIFIER LPAR (a+=csBQTerm (COMMA a+=csBQTerm)*)? RPAR
+  |BQUOTE? bqname=IDENTIFIER LPAR (a+=csBQTerm (COMMA a+=csBQTerm)*)? RPAR
    -> ^(Cst_BQAppl {extractOptions((CommonToken)$LPAR, (CommonToken)$RPAR)}
        $bqname ^(ConcCstBQTerm $a*))
   | csConstantValue -> ^(Cst_BQConstant
