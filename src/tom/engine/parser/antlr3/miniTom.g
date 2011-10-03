@@ -117,7 +117,7 @@ csStrategyVisitList :
   ;
 
 csStrategyVisit :
-  VISIT /*ALL_ID*/ IDENTIFIER LBR (csVisitAction)* RBR
+  VISIT IDENTIFIER LBR (csVisitAction)* RBR
     -> ^(Cst_VisitTerm 
           ^(Cst_Type IDENTIFIER /*ALL_ID*/ ) 
           ^(ConcCstConstraintAction csVisitAction* )
@@ -162,7 +162,7 @@ returns [int marker]:
 // "%match" already consumed when this rule is called
 
 // with args
-LPAR csBQTerm /*csMatchArgument*/ (COMMA csBQTerm /*csMatchArgument*/)* RPAR
+LPAR csBQTerm (COMMA csBQTerm)* RPAR
 LBR
 csExtendedConstraintAction*
 RBR
@@ -172,14 +172,13 @@ RBR
 
 -> ^( Cst_MatchConstruct
     {extractOptions((CommonToken)$LPAR, (CommonToken)$RBR)}
-    ^( ConcCstBQTerm csBQTerm* /*csMatchArgument* */ )
-    //^( ConcCstTypedTerm csMatchArgument* )
+    ^( ConcCstBQTerm csBQTerm*
     ^( ConcCstConstraintAction csExtendedConstraintAction* )
     )
 
 |
 // witout args
-(LPAR /*(COMMA)? Really usefull ??*/ RPAR)?
+(LPAR RPAR)?
 LBR
 csConstraintAction*
 RBR
@@ -190,7 +189,6 @@ RBR
 -> ^( Cst_MatchConstruct
     {extractOptions((CommonToken)$LBR, (CommonToken)$RBR)}
     ^( ConcCstBQTerm )
-    //^( ConcCstTypedTerm )
     ^( ConcCstConstraintAction csConstraintAction* )
     )
 ;
@@ -332,8 +330,8 @@ csConstraint_priority3 :
 ;
 
 csConstraint_priority4 :
- csPattern LARROW /*csTerm*/ /*csMatchArgument*/ csBQTerm
- -> ^(Cst_MatchTermConstraint csPattern csBQTerm) /*csTerm)*/
+ csPattern LARROW csBQTerm
+ -> ^(Cst_MatchTermConstraint csPattern csBQTerm)
 
  | LPAR csConstraint RPAR
  -> csConstraint
@@ -691,41 +689,6 @@ csName :
   -> ^(Cst_Name IDENTIFIER)
 ;
 
-// Bq Terms =================================================================
-/*
-bqConstruct 
-returns [int marker] :
-  /*BQUOTE*/ /*t=csBQTerm
-  -> $t
-;
-
-csBQTerm :
-  csBQVar
-  -> csBQVar
-
-| csBQVarStar
-  -> csBQVarStar
-
-| csBQAppl
-  -> csBQAppl
-
-;
-
-csBQVar :
-  csName
-  -> ^(Cst_BQVar csName)
-;
-
-csBQVarStar :
-  csName STAR
-  -> ^(Cst_BQVarStar csName)
-;
-
-csBQAppl :
-  csName LPAR (csBQTerm (COMMA csBQTerm)*)? RPAR
-  -> ^(Cst_BQAppl csName ^(concBQTerm csBQTerm*))
-;
-*/
 // Lexer Rules =============================================================
 
 // funky ones
@@ -846,18 +809,13 @@ PLUS  : '+' ;
 fragment
 DOT   : '.' ;*/
 
-fragment
+/*fragment
 ID_MINUS:
   IDENTIFIER MINUS ('a'..'z'|'A'..'Z'|(DIGIT)+|UNSIGNED_DOUBLE) (
         MINUS ('a'..'z' | 'A'..'Z')
       | IDENTIFIER
       )*
-  ;
-
-ALL_ID : IDENTIFIER | ID_MINUS ;
-DECREASE_ID : MINUS MINUS IDENTIFIER
-            | IDENTIFIER MINUS MINUS
-            ;
+  ;*/
 
 fragment
 HEX_DIGIT : ('0'..'9'|'A'..'F'|'a'..'f');
