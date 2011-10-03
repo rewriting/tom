@@ -42,6 +42,45 @@ The compiler is composed of several plugins, which are executed in the following
     TransformBQApp: after typing, transform each BackQuoteTerm into its
      compiled form (BuildConstant, BuildList, FunctionCall, BuildTerm)
 
+  * The typer is explained in chapter 4 of Claudia Tavares' thesis. However,
+   some optimization was done during implementation in order to reduce the
+   number of fresh type variables generated. Here we give a brief list of main
+   differences:
+
+    1) methods 'addEqConstraint' and 'addSubConstraint' adds a constraint c in a
+    constraint set C if both types t1 and t2 in c are different from
+    'EmptyType()' AND if t1 is different from t2. In this case, the rule
+        type = type, err, sigma => err, sigma
+    of constraint resolution (Section 3.3.5) is not
+    necessary anymore. Correspondingly, the rule
+        {type <: type} U C', sigma => C', err, sigma
+    of constraint resolution (Section 4.3.4.1) is not necessary anymore;
+
+    2) method 'inferConstraint' tries to get the type of operators in SymbolTable before to generate
+    type variables. A fresh type variable is generated only if the operator is
+    not in SymbolTable;
+
+    3) strategy 'inferTypes' for 'visit TomTerm' and 'visit BQTerm'. In these
+    cases, variables do not add a constraint 
+        C = {tvar_in_varPatternList = tvar_of_contextType} U C
+    as in the thesis, but instead
+        C = {tvar_in_varPatternList <: tvar_of_contextType} U C
+
+    Correspondingly, functions and lists do not add a constraint
+        C = {codomain_in_SymbolTable = tvar_of_contextType} U C
+    as in the thesis, but instead
+        C = {codomain_in_SymbolTable <: tvar_of_contextType} U C;
+
+    4) methods 'inferSlotList' and 'inferBQTermList' responsible for type
+    inference of arguments of functions and lists try to get the type of
+    domain of operators in SymbolTable before to generate type variables. Then
+    the strategy 'inferTypes' is called with contextType set to the ground type
+    of domain and no constraints are added in C.
+
+    The exact implementation of the typer described in chapter 4 of Claudia's
+    thesis (without optimization) can be found in:
+    work >> claudia >> thesis >> codes >> typer-versions >> TypingWithSubtypes.t
+
 - Type checker
   traverse the AST and check that variable that appear more than once in the
   LHS have coherent types

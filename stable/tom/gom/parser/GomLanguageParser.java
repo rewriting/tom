@@ -1,4 +1,4 @@
-// $ANTLR 3.2 Sep 23, 2009 12:02:23 /Users/pem/workspace/jtom/src/tom/gom/parser/GomLanguage.g 2011-08-18 13:58:43
+// $ANTLR 3.2 Sep 23, 2009 12:02:23 /Users/pem/workspace/jtom/src/tom/gom/parser/GomLanguage.g 2011-09-27 14:27:54
 
 package tom.gom.parser;
 import tom.gom.GomStreamManager;
@@ -255,7 +255,7 @@ public class GomLanguageParser extends Parser {
 
 
             // AST REWRITE
-            // elements: section, modulename, section, modulename, imports
+            // elements: modulename, imports, section, section, modulename
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -981,7 +981,7 @@ public class GomLanguageParser extends Parser {
 
 
             // AST REWRITE
-            // elements: gr2, gr3, gr1
+            // elements: gr2, gr1, gr3
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -1222,7 +1222,7 @@ public class GomLanguageParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: alts, typename
+                    // elements: typename, alts
                     // token labels: typename
                     // rule labels: retval, alts
                     // token list labels: 
@@ -1301,7 +1301,7 @@ public class GomLanguageParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: b, palts, ptypename
+                    // elements: b, ptypename, palts
                     // token labels: ptypename
                     // rule labels: retval, b, palts
                     // token list labels: 
@@ -2043,7 +2043,7 @@ public class GomLanguageParser extends Parser {
 
 
             // AST REWRITE
-            // elements: ID, ID, ID, ID, fieldlist, ID, fieldlist, ID, ID
+            // elements: fieldlist, ID, ID, ID, ID, ID, ID, fieldlist, ID
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -2206,7 +2206,7 @@ public class GomLanguageParser extends Parser {
 
 
             // AST REWRITE
-            // elements: pattern_fieldlist, ID, ID, ID
+            // elements: ID, ID, ID, pattern_fieldlist
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -3005,7 +3005,7 @@ public class GomLanguageParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: pattern_type, ID
+                    // elements: ID, pattern_type
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -3231,7 +3231,7 @@ public class GomLanguageParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: type, ID
+                    // elements: ID, type
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -3343,7 +3343,7 @@ public class GomLanguageParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: type, ID
+                    // elements: ID, type
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -3396,7 +3396,7 @@ public class GomLanguageParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: pattern_type, ID
+                    // elements: ID, pattern_type
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -3767,7 +3767,7 @@ public class GomLanguageParser extends Parser {
 
 
             // AST REWRITE
-            // elements: LBRACE, ID, arglist, ID, hookType, hscope, hookType, pointCut, LBRACE, arglist, pointCut
+            // elements: hscope, pointCut, ID, hookType, LBRACE, hookType, LBRACE, arglist, pointCut, ID, arglist
             // token labels: hookType, pointCut
             // rule labels: retval, hscope
             // token list labels: 

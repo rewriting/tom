@@ -1,27 +1,27 @@
 /*
-*
-* TOM - To One Matching Compiler
-*
-* Copyright (c) 2000-2011, INPL, INRIA
-* Nancy, France.
-*
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 2 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program; if not, write to the Free Software
-* Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
-*
-* Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
-*
-**/
+ *
+ * TOM - To One Matching Compiler
+ *
+ * Copyright (c) 2000-2011, INPL, INRIA
+ * Nancy, France.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+ *
+ * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
+ *
+ **/
 
 package tom.engine.backend;
 
@@ -49,276 +49,216 @@ import tom.platform.OptionManager;
 import tom.engine.exception.TomRuntimeException;
 
 public class CSharpGenerator extends CFamilyGenerator {
+  
+  protected String stratmodifier = "";
 
-protected String stratmodifier = "";
+  public CSharpGenerator(OutputCode output, OptionManager optionManager,
+                       SymbolTable symbolTable) {
+    super(output, optionManager, symbolTable);
+    /* Even if this field is not used here, we /must/ initialize it correctly,
+     * as it is used by ImperativeGenerator */
+    if( ((Boolean)optionManager.getOptionValue("protected")).booleanValue() ) {
+      this.stratmodifier += "protected " ;
+    } else {
+      this.stratmodifier += "private " ;
+    }
 
-public CSharpGenerator(OutputCode output, OptionManager optionManager,
-SymbolTable symbolTable) {
-super(output, optionManager, symbolTable);
-/* Even if this field is not used here, we /must/ initialize it correctly,
-* as it is used by ImperativeGenerator */
-if( ((Boolean)optionManager.getOptionValue("protected")).booleanValue() ) {
-this.stratmodifier += "protected " ;
-} else {
-this.stratmodifier += "private " ;
-}
-
-if(!((Boolean)optionManager.getOptionValue("noStatic")).booleanValue()) {
-this.modifier += "static " ;
-this.stratmodifier += "static " ;
-}
-}
-
-// ------------------------------------------------------------
-
+    if(!((Boolean)optionManager.getOptionValue("noStatic")).booleanValue()) {
+      this.modifier += "static " ;
+      this.stratmodifier += "static " ;
+    }
+  }
 
 // ------------------------------------------------------------
+      
+// ------------------------------------------------------------
 
-protected void buildExpBottom(int deep, TomType type, String moduleName) throws IOException {
-String typeName = TomBase.getTomType(type);
-if(getSymbolTable(moduleName).isIntType(typeName)
-|| getSymbolTable(moduleName).isCharType(typeName)
-|| getSymbolTable(moduleName).isLongType(typeName)
-|| getSymbolTable(moduleName).isFloatType(typeName)
-|| getSymbolTable(moduleName).isDoubleType(typeName)
-) {
-output.write(" 0 ");
-} else if(getSymbolTable(moduleName).isBooleanType(typeName)) {
-output.write(" false ");
-} else if(getSymbolTable(moduleName).isStringType(typeName)) {
-output.write(" \"\" ");
-} else {
-output.write(" null ");
-}
-}
+  protected void buildExpBottom(int deep, TomType type, String moduleName) throws IOException {
+    String typeName = TomBase.getTomType(type);
+    if(getSymbolTable(moduleName).isIntType(typeName)
+        || getSymbolTable(moduleName).isCharType(typeName)
+        || getSymbolTable(moduleName).isLongType(typeName)
+        || getSymbolTable(moduleName).isFloatType(typeName)
+        || getSymbolTable(moduleName).isDoubleType(typeName)
+        ) {
+      output.write(" 0 ");
+    } else if(getSymbolTable(moduleName).isBooleanType(typeName)) {
+      output.write(" false ");
+    } else if(getSymbolTable(moduleName).isStringType(typeName)) {
+      output.write(" \"\" ");
+    } else {
+      output.write(" null ");
+    }
+  }
 
-protected void buildExpTrue(int deep) throws IOException {
-output.write(" true ");
-}
+  protected void buildExpTrue(int deep) throws IOException {
+    output.write(" true ");
+  }
 
-protected void buildExpFalse(int deep) throws IOException {
-output.write(" false ");
-}
+  protected void buildExpFalse(int deep) throws IOException {
+    output.write(" false ");
+  }
 
-//FIXME !
-protected void buildNamedBlock(int deep, String blockName, InstructionList instList, String moduleName) throws IOException {
-output.writeln(blockName + ": {");
-generateInstructionList(deep+1,instList,moduleName);
-output.writeln("}");
-}
+  //FIXME !
+  protected void buildNamedBlock(int deep, String blockName, InstructionList instList, String moduleName) throws IOException {
+    output.writeln(blockName + ": {");
+    generateInstructionList(deep+1,instList,moduleName);
+    output.writeln("}");
+  }
 
-protected void buildClass(int deep, String tomName, TomType extendsType, BQTerm superTerm, Declaration declaration, String moduleName) throws IOException {
-TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(tomName);
-TomTypeList tomTypes = TomBase.getSymbolDomain(tomSymbol);
-ArrayList<String> names = new ArrayList<String>();
-ArrayList<String> types = new ArrayList<String>();
-ArrayList<Integer> stratChild = new ArrayList<Integer>(); // child of type Strategy.
+  protected void buildClass(int deep, String tomName, TomType extendsType, BQTerm superTerm, Declaration declaration, String moduleName) throws IOException {
+    TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(tomName);
+    TomTypeList tomTypes = TomBase.getSymbolDomain(tomSymbol);
+    ArrayList<String> names = new ArrayList<String>();
+    ArrayList<String> types = new ArrayList<String>();
+    ArrayList<Integer> stratChild = new ArrayList<Integer>(); // child of type Strategy.
 
-//initialize arrayList with argument names
-int index = 0;
-while(!tomTypes.isEmptyconcTomType()) {
-TomType type = tomTypes.getHeadconcTomType();
-types.add(TomBase.getTLType(type));
-String name = TomBase.getSlotName(tomSymbol, index).getString();
-names.add(name);
+    //initialize arrayList with argument names
+    int index = 0;
+    while(!tomTypes.isEmptyconcTomType()) {
+	    TomType type = tomTypes.getHeadconcTomType();
+	    types.add(TomBase.getTLType(type));
+      String name = TomBase.getSlotName(tomSymbol, index).getString();
+      names.add(name);
 
-// test if the argument is a Strategy
+      // test if the argument is a Strategy
+      {{if ( (((Object)type) instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )((Object)type)) instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )(( tom.engine.adt.tomtype.types.TomType )((Object)type))) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) { String  tomMatch83_1= (( tom.engine.adt.tomtype.types.TomType )((Object)type)).getTomType() ;if ( true ) {if ( "Strategy".equals(tomMatch83_1) ) {
 
-{
-{
-if ( (((Object)type) instanceof tom.engine.adt.tomtype.types.TomType) ) {
-if ( ((( tom.engine.adt.tomtype.types.TomType )((Object)type)) instanceof tom.engine.adt.tomtype.types.TomType) ) {
-if ( ((( tom.engine.adt.tomtype.types.TomType )(( tom.engine.adt.tomtype.types.TomType )((Object)type))) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {
- String  tomMatch84_1= (( tom.engine.adt.tomtype.types.TomType )((Object)type)).getTomType() ;
-if ( true ) {
-if ( "Strategy".equals(tomMatch84_1) ) {
-
-stratChild.add(Integer.valueOf(index));
-
-}
-}
-}
-}
-}
-
-}
-
-}
+          stratChild.add(Integer.valueOf(index));
+        }}}}}}}
 
 
-tomTypes = tomTypes.getTailconcTomType();
-index++;
-}
-output.write(deep, modifier + "class " + tomName);
-//write extends
+	    tomTypes = tomTypes.getTailconcTomType();
+	    index++;
+    }
+    output.write(deep, modifier + "class " + tomName);
+    //write extends
+		{{if ( (((Object)extendsType) instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )((Object)extendsType)) instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )(( tom.engine.adt.tomtype.types.TomType )((Object)extendsType))) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) { tom.engine.adt.tomtype.types.TargetLanguageType  tomMatch84_2= (( tom.engine.adt.tomtype.types.TomType )((Object)extendsType)).getTlType() ;if ( (tomMatch84_2 instanceof tom.engine.adt.tomtype.types.TargetLanguageType) ) {if ( ((( tom.engine.adt.tomtype.types.TargetLanguageType )tomMatch84_2) instanceof tom.engine.adt.tomtype.types.targetlanguagetype.EmptyTargetLanguageType) ) {
 
-{
-{
-if ( (((Object)extendsType) instanceof tom.engine.adt.tomtype.types.TomType) ) {
-if ( ((( tom.engine.adt.tomtype.types.TomType )((Object)extendsType)) instanceof tom.engine.adt.tomtype.types.TomType) ) {
-if ( ((( tom.engine.adt.tomtype.types.TomType )(( tom.engine.adt.tomtype.types.TomType )((Object)extendsType))) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {
- tom.engine.adt.tomtype.types.TargetLanguageType  tomMatch85_2= (( tom.engine.adt.tomtype.types.TomType )((Object)extendsType)).getTlType() ;
-if ( (tomMatch85_2 instanceof tom.engine.adt.tomtype.types.TargetLanguageType) ) {
-if ( ((( tom.engine.adt.tomtype.types.TargetLanguageType )tomMatch85_2) instanceof tom.engine.adt.tomtype.types.targetlanguagetype.EmptyTargetLanguageType) ) {
+				output.write(deep," : " +  (( tom.engine.adt.tomtype.types.TomType )((Object)extendsType)).getTomType() );
+			}}}}}}}
 
-output.write(deep," : " + 
- (( tom.engine.adt.tomtype.types.TomType )((Object)extendsType)).getTomType() );
+    output.write(deep," {");
+    int args = names.size();
+    //write Declarations
+    for (int i = 0 ; i < args ; i++) {
+	    output.write(deep, "private " + types.get(i) + " " + names.get(i) + "; ");
+    }
 
+    //write constructor
+    output.write(deep, "public " + tomName + "(");
+    //write constructor parameters
+    for (int i = 0 ; i < args ; i++){
+	    output.write(deep,types.get(i) + " " + names.get(i));
+	    if (i+1<args) {//if many parameters
+		    output.write(deep,", ");
+	    }
+    }
 
-}
-}
-}
-}
-}
+    //write constructor initialization
+    output.write(deep,") : base(");
+    generateBQTerm(deep,superTerm,moduleName);
+    output.write(deep,") {");
 
-}
+    //here index represents the parameter number
+    for (int i = 0 ; i < args ; i++) {
+	    String param = names.get(i);
+	    output.write(deep, "this." + param + "=" + param + ";");
+    }
+    output.write(deep,"}");
 
-}
+    // write getters
+    for (int i = 0 ; i < args ; i++) {
+      output.write(deep, "public " + types.get(i) + " get" + names.get(i) + "() { return " + names.get(i) + ";}");
+    }
 
-output.write(deep," {");
-int args = names.size();
-//write Declarations
-for (int i = 0 ; i < args ; i++) {
-output.write(deep, "private " + types.get(i) + " " + names.get(i) + "; ");
-}
+    // write getChildCount (= 1 + stratChildCount because of the %strategy `extends' which is the first child)
+    int stratChildCount = stratChild.size();
 
-//write constructor
-output.write(deep, "public " + tomName + "(");
-//write constructor parameters
-for (int i = 0 ; i < args ; i++){
-output.write(deep,types.get(i) + " " + names.get(i));
-if (i+1<args) {//if many parameters
-output.write(deep,", ");
-}
-}
+    output.write(deep, "override public tom.library.sl.Visitable[] getChildren() {");
+    output.write(deep, "tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];");
+    output.write(deep, "for (int i = 0; i < getChildCount(); i++) {");
+    output.write(deep, "stratChilds[i]=getChildAt(i);}");
+    //for (int i = 0; i < stratChildCount; i++) {
+    //  int j = (stratChild.get(i)).intValue();
+    //  output.write(deep, "stratChilds[" + i + "] = get" + names.get(j) + "();");
+    //}
+    output.write(deep, "return stratChilds;}");
 
-//write constructor initialization
-output.write(deep,") : base(");
-generateBQTerm(deep,superTerm,moduleName);
-output.write(deep,") {");
+    output.write(deep, "override public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {");
+    output.write(deep, "for (int i = 0; i < getChildCount(); i++) {");
+    output.write(deep, "setChildAt(i,children[i]);}");
+    //for (int i = 0; i < stratChildCount; i++) {
+    //  int j = (stratChild.get(i)).intValue();
+    //  output.write(deep, names.get(j) + " = (" + types.get(j) + ") children[" + i + "];");
+    //}
+    output.write(deep, "return this;}");
 
-//here index represents the parameter number
-for (int i = 0 ; i < args ; i++) {
-String param = names.get(i);
-output.write(deep, "this." + param + "=" + param + ";");
-}
-output.write(deep,"}");
+    output.write(deep, "override public int getChildCount() { return " + (stratChildCount + 1) + "; }");
 
-// write getters
-for (int i = 0 ; i < args ; i++) {
-output.write(deep, "public " + types.get(i) + " get" + names.get(i) + "() { return " + names.get(i) + ";}");
-}
+    // write getChildAt
+    output.write(deep, "override public tom.library.sl.Visitable getChildAt(int index) {");
+    output.write(deep, "switch (index) {");
+    output.write(deep, "case 0: return base.getChildAt(0);");
+    for (int i = 0; i < stratChildCount; i++) {
+      int j = (stratChild.get(i)).intValue();
+      output.write(deep, "case " + (i+1) + ": return get" + names.get(j) + "();");
+    }
+    output.write(deep, "default: throw new IndexOutOfRangeException();");
+    output.write(deep, "}}");
 
-// write getChildCount (= 1 + stratChildCount because of the %strategy `extends' which is the first child)
-int stratChildCount = stratChild.size();
+    // write setChildAt
+    output.write(deep, "override public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {");
+    output.write(deep, "switch (index) {");
+    output.write(deep, "case 0: return base.setChildAt(0, child);");
+    for (int i = 0; i < stratChildCount; i++) {
+      int j = (stratChild.get(i)).intValue();
+      output.write(deep, "case " + (i+1) + ": " + names.get(j) + " = (" + types.get(j) + ")child; return this;");
+    }
+    output.write(deep, "default: throw new IndexOutOfRangeException();");
+    output.write(deep, "}}");
 
-output.write(deep, "override public tom.library.sl.Visitable[] getChildren() {");
-output.write(deep, "tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];");
-output.write(deep, "for (int i = 0; i < getChildCount(); i++) {");
-output.write(deep, "stratChilds[i]=getChildAt(i);}");
-//for (int i = 0; i < stratChildCount; i++) {
-//  int j = (stratChild.get(i)).intValue();
-//  output.write(deep, "stratChilds[" + i + "] = get" + names.get(j) + "();");
-//}
-output.write(deep, "return stratChilds;}");
+    output.write(deep, "override ");
+    generateDeclaration(deep,declaration,moduleName);
+    output.write(deep,"}");
+  }
 
-output.write(deep, "override public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {");
-output.write(deep, "for (int i = 0; i < getChildCount(); i++) {");
-output.write(deep, "setChildAt(i,children[i]);}");
-//for (int i = 0; i < stratChildCount; i++) {
-//  int j = (stratChild.get(i)).intValue();
-//  output.write(deep, names.get(j) + " = (" + types.get(j) + ") children[" + i + "];");
-//}
-output.write(deep, "return this;}");
+  protected void buildFunctionDef(int deep, String tomName, BQTermList argList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName) throws IOException {
+    buildMethod(deep,tomName,argList,codomain,throwsType,instruction,moduleName,this.modifier);
+  }
 
-output.write(deep, "override public int getChildCount() { return " + (stratChildCount + 1) + "; }");
+  protected void buildMethodDef(int deep, String tomName, BQTermList argList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName) throws IOException {
+    buildMethod(deep,tomName,argList,codomain,throwsType,instruction,moduleName,"public ");
+  }
 
-// write getChildAt
-output.write(deep, "override public tom.library.sl.Visitable getChildAt(int index) {");
-output.write(deep, "switch (index) {");
-output.write(deep, "case 0: return base.getChildAt(0);");
-for (int i = 0; i < stratChildCount; i++) {
-int j = (stratChild.get(i)).intValue();
-output.write(deep, "case " + (i+1) + ": return get" + names.get(j) + "();");
-}
-output.write(deep, "default: throw new IndexOutOfRangeException();");
-output.write(deep, "}}");
+  private void buildMethod(int deep, String tomName, BQTermList varList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName, String methodModifier) throws IOException {
+    output.write(deep, methodModifier + TomBase.getTLType(codomain) + " " + tomName + "(");
+    while(!varList.isEmptyconcBQTerm()) {
+      BQTerm localVar = varList.getHeadconcBQTerm();
+      matchBlock: {
+        {{if ( (((Object)localVar) instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )((Object)localVar)) instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )(( tom.engine.adt.code.types.BQTerm )((Object)localVar))) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {
 
-// write setChildAt
-output.write(deep, "override public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {");
-output.write(deep, "switch (index) {");
-output.write(deep, "case 0: return base.setChildAt(0, child);");
-for (int i = 0; i < stratChildCount; i++) {
-int j = (stratChild.get(i)).intValue();
-output.write(deep, "case " + (i+1) + ": " + names.get(j) + " = (" + types.get(j) + ")child; return this;");
-}
-output.write(deep, "default: throw new IndexOutOfRangeException();");
-output.write(deep, "}}");
+            output.write(deep,TomBase.getTLType( (( tom.engine.adt.code.types.BQTerm )((Object)localVar)).getAstType() ) + " ");
+            generateBQTerm(deep,(( tom.engine.adt.code.types.BQTerm )((Object)localVar)),moduleName);
+            break matchBlock;
+          }}}}{if ( (((Object)localVar) instanceof tom.engine.adt.code.types.BQTerm) ) {
 
-output.write(deep, "override ");
-generateDeclaration(deep,
-declaration,moduleName);
-output.write(deep,"}");
-}
+            System.out.println("MakeFunction: strange term: " + localVar);
+            throw new TomRuntimeException("MakeFunction: strange term: " + localVar);
+          }}}
 
-protected void buildFunctionDef(int deep, String tomName, BQTermList argList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName) throws IOException {
-buildMethod(deep,tomName,argList,codomain,throwsType,instruction,moduleName,this.modifier);
-}
+      }
+      varList = varList.getTailconcBQTerm();
+      if(!varList.isEmptyconcBQTerm()) {
+        output.write(deep,", ");
 
-protected void buildMethodDef(int deep, String tomName, BQTermList argList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName) throws IOException {
-buildMethod(deep,tomName,argList,codomain,throwsType,instruction,moduleName,"public ");
-}
+      }
+    }
+    output.writeln(deep,")");
 
-private void buildMethod(int deep, String tomName, BQTermList varList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName, String methodModifier) throws IOException {
-output.write(deep, methodModifier + TomBase.getTLType(
-codomain) + " " + tomName + "(");
-while(!varList.isEmptyconcBQTerm()) {
-BQTerm localVar = varList.getHeadconcBQTerm();
-matchBlock: {
-
-{
-{
-if ( (((Object)localVar) instanceof tom.engine.adt.code.types.BQTerm) ) {
-if ( ((( tom.engine.adt.code.types.BQTerm )((Object)localVar)) instanceof tom.engine.adt.code.types.BQTerm) ) {
-if ( ((( tom.engine.adt.code.types.BQTerm )(( tom.engine.adt.code.types.BQTerm )((Object)localVar))) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {
-
-output.write(deep,TomBase.getTLType(
- (( tom.engine.adt.code.types.BQTerm )((Object)localVar)).getAstType() ) + " ");
-generateBQTerm(deep,
-(( tom.engine.adt.code.types.BQTerm )((Object)localVar)),moduleName);
-break matchBlock;
-
-
-}
-}
-}
-
-}
-{
-if ( (((Object)localVar) instanceof tom.engine.adt.code.types.BQTerm) ) {
-
-System.out.println("MakeFunction: strange term: " + localVar);
-throw new TomRuntimeException("MakeFunction: strange term: " + localVar);
-
-}
-
-}
-
-
-}
-
-}
-varList = varList.getTailconcBQTerm();
-if(!varList.isEmptyconcBQTerm()) {
-output.write(deep,", ");
-
-}
-}
-output.writeln(deep,")");
-
-output.writeln(" {");
-generateInstruction(deep,instruction,moduleName);
-output.writeln(deep," }");
-}
-
+    output.writeln(" {");
+    generateInstruction(deep,instruction,moduleName);
+    output.writeln(deep," }");
+  }
+	
 }

@@ -237,7 +237,16 @@ public class NewKernelTyper {
   private int limTVarSymbolTable;
   protected void setLimTVarSymbolTable(int freshTVarSymbolTable) {
     limTVarSymbolTable = freshTVarSymbolTable;
+    globalTypeVarCounter = freshTVarSymbolTable; 
   }
+
+  // Counters for verbose mode 
+  private int globalEqConstraintCounter = 0;
+  private int globalSubConstraintCounter = 0;
+  private int globalTypeVarCounter = 0;
+  protected int getEqCounter() { return globalEqConstraintCounter; } 
+  protected int getSubCounter() { return globalSubConstraintCounter; } 
+  protected int getTVarCounter() { return globalTypeVarCounter; }
 
   /**
    * The method <code>getFreshTlTIndex</code> increments the counter of type variables. 
@@ -245,6 +254,7 @@ public class NewKernelTyper {
    */
   private int freshTypeVarCounter;
   private int getFreshTlTIndex() {
+    globalTypeVarCounter++;
     return freshTypeVarCounter++;
   }
 
@@ -740,7 +750,7 @@ public class NewKernelTyper {
         SlotList newSList = `concSlot();
         if (!`sList.isEmptyconcSlot()) {
           `newSList =
-            nkt.inferSlotList(`sList,tSymbol,codomain);
+            nkt.inferSlotList(`sList,tSymbol,contextType);
         }
         return `RecordAppl(optionList,nList,newSList,newCList);
       }
@@ -767,7 +777,7 @@ public class NewKernelTyper {
           tSymbol = `EmptySymbol();
           //DEBUG System.out.println("name = " + `name);
           //DEBUG System.out.println("context = " + contextType);
-          BQTermList newBQTList = nkt.inferBQTermList(`bqTList,`EmptySymbol(),codomain);
+          BQTermList newBQTList = nkt.inferBQTermList(`bqTList,`EmptySymbol(),contextType);
           /* PEM: why contextType ? */
           return `FunctionCall(aName,contextType,newBQTList); 
         } else {
@@ -784,7 +794,8 @@ public class NewKernelTyper {
           }
           nkt.subtypeConstraints = nkt.addSubConstraint(`Subtype(codomain,contextType,PairNameOptions(aName,optionList)),nkt.subtypeConstraints);
 
-          BQTermList newBQTList = nkt.inferBQTermList(`bqTList,`tSymbol,codomain);
+          BQTermList newBQTList =
+            nkt.inferBQTermList(`bqTList,`tSymbol,contextType);
           return `BQAppl(optionList,aName,newBQTList);
         }
       }
