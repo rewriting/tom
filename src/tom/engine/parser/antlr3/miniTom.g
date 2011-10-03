@@ -855,6 +855,9 @@ ID_MINUS:
   ;
 
 ALL_ID : IDENTIFIER | ID_MINUS ;
+DECREASE_ID : MINUS MINUS IDENTIFIER
+            | IDENTIFIER MINUS MINUS
+            ;
 
 fragment
 HEX_DIGIT : ('0'..'9'|'A'..'F'|'a'..'f');
@@ -865,8 +868,6 @@ FLOAT_SUFFIX : 'f'|'F'|'d'|'D' ;*/
 fragment
 LONG_SUFFIX : 'l'|'L' ;
 
-//STRING		: DQUOTE (~(DQUOTE)|'\\"')* DQUOTE; //"
-//CHAR		: SQUOTE (LETTER|DIGIT) SQUOTE ;
 STRING  : '"' (ESC|~('"'|'\\'|'\n'|'\r'))* '"';
 CHAR    : '\'' ( ESC | ~('\''|'\n'|'\r'|'\\') )+ '\'';
 
