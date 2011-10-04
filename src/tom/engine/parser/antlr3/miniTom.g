@@ -99,7 +99,7 @@ returns [int marker] :
 // StrategyConstruct
 csStrategyConstruct
 returns [int marker]:
-csName LPAR csSlotList RPAR EXTENDS BQUOTE? csBQTerm LBR csStrategyVisitList RBR
+csName LPAR csSlotList RPAR EXTENDS BQUOTE? csBQTerm[false] LBR csStrategyVisitList RBR
 
 {$marker = ((CustomToken)$RBR).getPayload(Integer.class);}
 
@@ -117,9 +117,9 @@ csStrategyVisitList :
   ;
 
 csStrategyVisit :
-  VISIT /*ALL_ID*/ IDENTIFIER LBR (csVisitAction)* RBR
+  VISIT IDENTIFIER LBR (csVisitAction)* RBR
     -> ^(Cst_VisitTerm 
-          ^(Cst_Type IDENTIFIER /*ALL_ID*/ ) 
+          ^(Cst_Type IDENTIFIER ) 
           ^(ConcCstConstraintAction csVisitAction* )
           {extractOptions((CommonToken)$VISIT, (CommonToken)$RBR)}
         )
@@ -135,7 +135,7 @@ csVisitAction :
                            {((CustomToken)$LBR).getPayload(Tree.class)}
                            ^(ConcCstOption)
                      )
-  | (IDENTIFIER l=COLON)? csExtendedConstraint ARROW csBQTerm //handle toto -> f(a()) - is a BQTerm
+  | (IDENTIFIER l=COLON)? csExtendedConstraint ARROW csBQTerm[false] //handle toto -> f(a()) - is a BQTerm
     -> {$l!=null}? ^(Cst_ConstraintAction csExtendedConstraint
                            /*{((CustomToken)$ARROW).getPayload(Tree.class)}*/
                            /*csBQTerm*/
@@ -162,7 +162,7 @@ returns [int marker]:
 // "%match" already consumed when this rule is called
 
 // with args
-LPAR csBQTerm /*csMatchArgument*/ (COMMA csBQTerm /*csMatchArgument*/)* RPAR
+LPAR csBQTerm[false] /*csMatchArgument*/ (COMMA csBQTerm[false] /*csMatchArgument*/)* RPAR
 LBR
 csExtendedConstraintAction*
 RBR
@@ -217,16 +217,28 @@ csExtendedConstraintAction :
                  )
   ;
 
-csBQTerm :
-  (type=IDENTIFIER)? BQUOTE? name=IDENTIFIER (s=STAR)?
-   ->{s!=null && type!=null}? ^(Cst_BQVarStar {extractOptions((CommonToken)$name)} $name ^(Cst_Type $type))
-   ->{s!=null && type==null}? ^(Cst_BQVarStar {extractOptions((CommonToken)$name)} $name ^(Cst_TypeUnknown ))
-   ->{s==null && type!=null}? ^(Cst_BQVar {extractOptions((CommonToken)$name)} $name ^(Cst_Type $type))
-   ->                         ^(Cst_BQVar {extractOptions((CommonToken)$name)} $name ^(Cst_TypeUnknown ))
-   
-  |BQUOTE? bqname=IDENTIFIER LPAR (a+=csBQTerm (COMMA a+=csBQTerm)*)? RPAR
-   -> ^(Cst_BQAppl {extractOptions((CommonToken)$LPAR, (CommonToken)$RPAR)}
+csBQTerm [ boolean typedAppl ] :
+  (type=IDENTIFIER)? BQUOTE? bqname=IDENTIFIER LPAR (a+=csBQTerm[false] (COMMA a+=csBQTerm[false])*)? RPAR
+   -> {$typedAppl && type==null}? ^(Cst_BQAppl {extractOptions((CommonToken)$LPAR, (CommonToken)$RPAR)}
+       $bqname ^(ConcCstBQTerm $a*)) ^(Cst_TypeUnknown)
+   -> {$typedAppl && type!=null}? ^(Cst_BQAppl {extractOptions((CommonToken)$LPAR, (CommonToken)$RPAR)}
+       $bqname ^(ConcCstBQTerm $a*)) ^(Cst_Type $type)
+   ->                             ^(Cst_BQAppl {extractOptions((CommonToken)$LPAR, (CommonToken)$RPAR)}
        $bqname ^(ConcCstBQTerm $a*))
+  
+  |(type=IDENTIFIER)? BQUOTE? name=IDENTIFIER (s=STAR)?
+   ->{s!=null && type!=null && $typedAppl}? ^(Cst_BQVarStar {extractOptions((CommonToken)$name)} $name ^(Cst_Type $type)) ^(Cst_Type $type)
+   ->{s!=null && type!=null && !$typedAppl}? ^(Cst_BQVarStar {extractOptions((CommonToken)$name)} $name ^(Cst_Type $type))
+   
+   ->{s!=null && type==null && $typedAppl}? ^(Cst_BQVarStar {extractOptions((CommonToken)$name)} $name ^(Cst_TypeUnknown )) ^(Cst_TypeUnknown)
+   ->{s!=null && type==null && !$typedAppl}? ^(Cst_BQVarStar {extractOptions((CommonToken)$name)} $name ^(Cst_TypeUnknown ))
+   
+   ->{s==null && type!=null && $typedAppl}? ^(Cst_BQVar {extractOptions((CommonToken)$name)} $name ^(Cst_Type $type)) ^(Cst_Type $type)
+   ->{s==null && type!=null && !$typedAppl}? ^(Cst_BQVar {extractOptions((CommonToken)$name)} $name ^(Cst_Type $type))
+   
+   ->{s==null && type==null && $typedAppl}? ^(Cst_BQVar {extractOptions((CommonToken)$name)} $name ^(Cst_TypeUnknown )) ^(Cst_TypeUnknown)
+   ->                                       ^(Cst_BQVar {extractOptions((CommonToken)$name)} $name ^(Cst_TypeUnknown ))
+  
   | csConstantValue -> ^(Cst_BQConstant
       {extractOptions((CommonToken)$csConstantValue.start, (CommonToken)$csConstantValue.stop)} csConstantValue )
 ;
@@ -288,30 +300,26 @@ csConstraint_priority2 :
 
 csConstraint_priority3 :
  
-  l=csTerm
-  (gt=GREATERTHAN|ge=GREATEROREQU|lt=LOWERTHAN
-  |le=LOWEROREQU |eq=DOUBLEEQUAL |ne=DIFFERENT)
-  r=csTerm
-
- ->{gt!=null}? ^(Cst_NumGreaterThan      $l $r)
- ->{ge!=null}? ^(Cst_NumGreaterOrEqualTo $l $r)
- ->{lt!=null}? ^(Cst_NumLessThan         $l $r)
- ->{le!=null}? ^(Cst_NumLessOrEqualTo    $l $r)
- ->{eq!=null}? ^(Cst_NumEqualTo          $l $r)
- ->/*ne!=null*/^(Cst_NumDifferent        $l $r)
+  csPattern LARROW csBQTerm[true]
+  -> ^(Cst_MatchTermConstraint csPattern csBQTerm)
  
+  | l=csTerm 
+    (gt=GREATERTHAN|ge=GREATEROREQU|lt=LOWERTHAN
+    |le=LOWEROREQU |eq=DOUBLEEQUAL |ne=DIFFERENT)
+    r=csTerm
 
- | csConstraint_priority4
- -> csConstraint_priority4
+  ->{gt!=null}? ^(Cst_NumGreaterThan      $l $r)
+  ->{ge!=null}? ^(Cst_NumGreaterOrEqualTo $l $r)
+  ->{lt!=null}? ^(Cst_NumLessThan         $l $r)
+  ->{le!=null}? ^(Cst_NumLessOrEqualTo    $l $r)
+  ->{eq!=null}? ^(Cst_NumEqualTo          $l $r)
+  ->/*ne!=null*/^(Cst_NumDifferent        $l $r)
+ 
+  | LPAR csConstraint RPAR
+  -> csConstraint
+
 ;
 
-csConstraint_priority4 :
- csPattern LARROW csBQTerm
- -> ^(Cst_MatchTermConstraint csPattern csBQTerm)
-
- | LPAR csConstraint RPAR
- -> csConstraint
-;
 // Terms ======================================================
 csTerm :
   IDENTIFIER (s=STAR)?

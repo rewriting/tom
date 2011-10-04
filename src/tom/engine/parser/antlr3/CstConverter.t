@@ -363,9 +363,18 @@ public class CstConverter {
         return `MatchConstraint(convert(pattern), currentSubject, type);
       }
 
-      Cst_MatchTermConstraint(pattern,subject) -> {
+      Cst_MatchTermConstraint(pattern,subject,typeConstraint) -> {
         BQTerm currentSubject = convert(`subject);
-        TomType type = getTomType(`currentSubject);
+        TomType type = null;
+        %match (typeConstraint) {
+          Cst_TypeUnknown -> { type = getTomType(`currentSubject); }
+          Cst_Type(name) -> { 
+            TomSymbol symbol = symbolTable.getSymbolFromName(`name);
+            if(symbol!=null) {
+              type = symbol.getTypesToType().getCodomain();
+            }
+          }
+        }
         return `MatchConstraint(convert(pattern), currentSubject , type);
       }
 

@@ -114,8 +114,7 @@ tested):
   examples/python --> python non géré
   examples/servlet --> xml non géré, ne respecte pas la grammaire
   examples/strategy --> xml non géré dans RewriteXML.t, reste ok
-  examples/subtyping
-  examples/tactics
+  examples/subtyping --> inference/TypeInference.t très lent
   examples/termgraph
   examples/TestMatch.t
   examples/tomjastadd
