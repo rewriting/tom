@@ -222,6 +222,10 @@ public class NewKernelTyper {
       (BQVariable|BQVariableStar|BQAppl)[Options=optionList,AstName=aName] -> { 
         return `PairNameOptions(aName,optionList); 
       }
+
+      Composite(_*,CompositeBQTerm[term=cBQTerm],_*) -> {
+        return getInfoFromBQTerm(`cBQTerm);
+      }
     } 
     return `PairNameOptions(Name(""),concOption()); 
   }
@@ -1310,6 +1314,10 @@ public class NewKernelTyper {
               TomMessage.error(logger,`fileName, `line,
                   TomMessage.symbolNumberArgument,`symName.getString(),`pNDList.length(),bqTList.length());
             }
+            noOption() -> {
+              TomMessage.error(logger,null,0,
+                  TomMessage.symbolNumberArgument,`symName.getString(),`pNDList.length(),bqTList.length());
+            }
           }
         } else {
           TomTypeList symDomain = `domain;
@@ -2265,6 +2273,10 @@ matchBlockSolve :
             TomMessage.error(logger,`fileName, `line,
                 TomMessage.cannotGuessMatchType,`termName); 
           }
+          noOption() -> {
+            TomMessage.error(logger,null,0,
+                TomMessage.cannotGuessMatchType,`termName); 
+          }
         }
       }
     }
@@ -2299,6 +2311,10 @@ matchBlockSolve :
           %match(option) {
             OriginTracking(_,line,fileName) -> {
               TomMessage.error(logger,`fileName, `line,
+                  TomMessage.incompatibleTypes,`tName1,`tName2,`termName); 
+            }
+            noOption()-> {
+              TomMessage.error(logger,null,0,
                   TomMessage.incompatibleTypes,`tName1,`tName2,`termName); 
             }
           }
