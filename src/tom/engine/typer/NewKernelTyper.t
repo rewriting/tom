@@ -1023,7 +1023,7 @@ public class NewKernelTyper {
             /* T_pattern = T_cast and T_cast <: T_subject */
             equationConstraints =
               addEqConstraint(`Equation(tPattern,aType,getInfoFromTomTerm(pattern)),equationConstraints);
-            subtypeConstraints = addSubConstraint(`Subtype(aType,tSubject,getInfoFromBQTerm(subject)),subtypeConstraints);
+            subtypeConstraints = addSubConstraint(`Subtype(tPattern,tSubject,getInfoFromBQTerm(subject)),subtypeConstraints);
           }
         }
         TomTerm newPattern = `inferAllTypes(pattern,tPattern);
