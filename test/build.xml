@@ -35,6 +35,65 @@
     <mkdir dir="${test.report}"/>
   </target>
 
+<target name="build.nt" depends="init,prepare">
+    <gom.preset srcdir="${test.src}"
+                package="sl"
+                termpointer="true"
+                withCongruenceStrategies="true"
+                destdir="${test.gen}">
+         <include name="sl/testsl.gom"/>
+         <exclude name="**/error/**"/>
+      <exclude name="**/regress/**"/>
+    </gom.preset>
+    <gom.preset srcdir="${test.src}"
+                destdir="${test.gen}">
+         <include name="**/*.gom"/>
+         <exclude name="sl/testsl.gom"/>
+         <exclude name="**/error/**"/>
+      <exclude name="**/regress/**"/>
+    </gom.preset>
+    <tom.preset srcdir="${test.src}"
+                multithread="${multithread}"
+                destdir="${test.gen}">
+      <!-- Exclude tests written in C -->
+      <exclude name="cfib1.t"/>
+      <exclude name="loulou.t"/>
+      
+      <!-- Exclude tests called with a special option -->
+      <exclude name="Record.t"/>
+      <exclude name="TestRecord.t"/>
+      <exclude name="TestOptimizer.t"/>
+
+      <!-- Why to exclude these tests?? -->
+      <exclude name="**/error/**"/>
+      <exclude name="**/rule/**"/>
+      <exclude name="**/regress/**"/>
+
+      <!-- Exclude while PreGenerator is not fixed -->
+      <exclude name="TestConstraintCombination.t"/>
+
+    </tom.preset>
+    <tom.preset srcdir="${test.src}"
+                destdir="${test.gen}"
+                options="--optimize">
+    	<include name="TestOptimizer.t"/>
+    </tom.preset>
+    <javac.preset destdir="${test.build}" fork="true">
+      <src path="${test.src}"/>
+      <src path="${test.gen}"/>
+      <exclude name="**/error/**"/>
+      <exclude name="**/rule/**"/>
+      <exclude name="**/regress/**"/>
+      <exclude name="gen/**"/>
+    </javac.preset>
+    <copy todir="${test.build}">
+      <fileset dir="${test.src}">
+        <include name="*/*.xml"/>
+        <include name="*/*.dtd"/>
+      </fileset>
+    </copy>
+  </target>
+
   <target name="build" depends="init,prepare">
     <gom.preset srcdir="${test.src}"
                 package="sl"
@@ -106,6 +165,39 @@
 
   <target name="junit" description="Runs junit acceptance tests"
           depends="build">
+    <tom.junit printsummary="on"
+               fork="on"
+               dir="${test.build}"
+               haltonfailure="false"
+               failureproperty="tests.failed"
+               showoutput="true">
+      <classpath>
+        <path refid="tom.classpath"/>
+        <pathelement location="${test.build}"/>
+      </classpath>
+      <batchtest todir="${test.report}">
+        <fileset dir="${test.gen}">
+          <include name="**/Test*.java"/>
+        </fileset>
+        <fileset dir="${test.src}">
+          <include name="**/Test*.java"/>
+          <exclude name="gen/**/*"/>
+        </fileset>
+      </batchtest>
+      <formatter type="xml" if="test.xmlreport"/>
+    </tom.junit>
+    <fail if="tests.failed">
+      ****************************************************
+      ****************************************************
+      One or more tests failed. Check the output...
+      ****************************************************
+      ****************************************************
+    </fail>
+  </target>
+
+  <target name="junit.nt" description="Runs junit acceptance tests with new
+    typer"
+          depends="build.nt">
     <tom.junit printsummary="on"
                fork="on"
                dir="${test.build}"
