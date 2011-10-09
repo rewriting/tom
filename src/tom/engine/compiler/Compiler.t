@@ -196,6 +196,7 @@ public class Compiler extends TomGenericPlugin {
       }
       TomMessage.info(getLogger(),null,0,TomMessage.tomCompilationPhase,
           Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
+      setTime(Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
     } catch (Exception e) {
       String fileName = getStreamManager().getInputFileName();
         TomMessage.error(getLogger(),

@@ -133,6 +133,7 @@ public class GomParserPlugin extends GomGenericPlugin {
     }
     GomMessage.info(getLogger(), null, 0, GomMessage.parsingPhase, 
         (System.currentTimeMillis()-startChrono));
+    setTime(Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
     if (intermediate) {
       Tools.generateOutput(getStreamManager().getOutputFileName()
                            + PARSED_SUFFIX, (aterm.ATerm)module.toATerm());

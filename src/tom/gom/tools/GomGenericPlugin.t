@@ -37,6 +37,14 @@ import tom.gom.GomStreamManager;
 import tom.gom.tools.GomEnvironment;
 
 public abstract class GomGenericPlugin implements Plugin {
+  protected long totalTime;
+  public void setTime(long time) {
+    totalTime = totalTime + time;
+  }
+
+  public long getTime() {
+    return totalTime;
+  }
 
   public GomGenericPlugin(String name) {
     pluginName = name;

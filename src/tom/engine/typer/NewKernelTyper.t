@@ -239,6 +239,9 @@ public class NewKernelTyper {
    *                              variables
    */
   private int limTVarSymbolTable;
+  private int getLimTVarSymbolTable() {
+    return limTVarSymbolTable;
+  }
   protected void setLimTVarSymbolTable(int freshTVarSymbolTable) {
     limTVarSymbolTable = freshTVarSymbolTable;
     globalTypeVarCounter = freshTVarSymbolTable; 
@@ -250,13 +253,16 @@ public class NewKernelTyper {
   private int globalTypeVarCounter = 0;
   protected int getEqCounter() { return globalEqConstraintCounter; } 
   protected int getSubCounter() { return globalSubConstraintCounter; } 
-  protected int getTVarCounter() { return globalTypeVarCounter; }
+  protected int getTVarCounter() { return globalTypeVarCounter; } 
 
   /**
    * The method <code>getFreshTlTIndex</code> increments the counter of type variables. 
    * @return  the incremented counter of type variables
    */
   private int freshTypeVarCounter;
+  private void resetFreshTypeVarCounter() {
+    freshTypeVarCounter = getLimTVarSymbolTable();
+  }
   private int getFreshTlTIndex() {
     globalTypeVarCounter++;
     return freshTypeVarCounter++;
@@ -267,7 +273,7 @@ public class NewKernelTyper {
    * variable (by considering the global counter of type variables)
    * @return  a new (fresh) type variable
    */
-  protected TomType getUnknownFreshTypeVar() {
+  private TomType getUnknownFreshTypeVar() {
     TomType tType = symbolTable.TYPE_UNKNOWN;
     %match(tType) {
       Type[TomType=tomType] -> { return `TypeVar(tomType,getFreshTlTIndex()); }
@@ -362,7 +368,8 @@ public class NewKernelTyper {
     if (!containsConstraint(tConstraint,tCList)) {
       %match {
         Equation[Type1=t1@!EmptyType(),Type2=t2@!EmptyType()] <<
-          tConstraint && (t1 != t2) -> { 
+          tConstraint -> { 
+            globalEqConstraintCounter++;
             return `concTypeConstraint(tConstraint,tCList*);
           }
       }
@@ -385,8 +392,8 @@ public class NewKernelTyper {
     if (!containsConstraint(tConstraint,tCList)) {
       //DEBUG System.out.println("addSubConstraint: tCList = " + tCList);
       %match {
-        Subtype[Type1=t1@!EmptyType(),Type2=t2@!EmptyType()] << tConstraint 
-          && (t1 != t2) -> { 
+        Subtype[Type1=t1@!EmptyType(),Type2=t2@!EmptyType()] << tConstraint -> { 
+            globalSubConstraintCounter++;
             return`concTypeConstraint(tConstraint,tCList*);
           }
       }
@@ -515,7 +522,7 @@ public class NewKernelTyper {
    * <code>equationConstraints</code>, <code>subtypeConstraints</code> and <code>substitutions</code>
    */
   private void init() {
-    freshTypeVarCounter = limTVarSymbolTable;
+    resetFreshTypeVarCounter();
     varPatternList = `concTomTerm();
     varList = `concBQTerm();
     inputTVarList = `concTomType();
@@ -561,6 +568,7 @@ public class NewKernelTyper {
            * tomType == unknown type
            */
           newType = `TypeVar(tomType,nkt.getFreshTlTIndex());
+          nkt.setLimTVarSymbolTable(nkt.getLimTVarSymbolTable() + 1);
         }
         return newType;
       }
@@ -683,23 +691,8 @@ public class NewKernelTyper {
     visit TomTerm {
       AntiTerm[TomTerm=atomicTerm] -> { nkt.inferAllTypes(`atomicTerm,contextType); }
 
-      var@Variable[Options=optionList,AstName=aName,AstType=aType,Constraints=cList] -> {
+      var@(Variable|VariableStar)[Options=optionList,AstName=aName,AstType=aType,Constraints=cList] -> {
         nkt.checkNonLinearityOfVariables(`var);
-        nkt.subtypeConstraints =
-          nkt.addSubConstraint(`Subtype(aType,contextType,PairNameOptions(aName,optionList)),nkt.subtypeConstraints);  
-        ConstraintList newCList = `cList;
-        %match(cList) {
-          /* How many "AliasTo" constructors can concConstraint have? */
-          concConstraint(AliasTo(boundTerm)) -> {
-            nkt.equationConstraints =
-              nkt.addEqConstraint(`Equation(nkt.getType(boundTerm),aType,nkt.getInfoFromTomTerm(boundTerm)),nkt.equationConstraints); 
-          }
-        }
-        return `var.setConstraints(newCList);
-      }
-
-      varStar@VariableStar[Options=optionList,AstName=aName,AstType=aType,Constraints=cList] -> {
-        nkt.checkNonLinearityOfVariables(`varStar);
         nkt.equationConstraints =
           nkt.addEqConstraint(`Equation(aType,contextType,PairNameOptions(aName,optionList)),nkt.equationConstraints);  
         ConstraintList newCList = `cList;
@@ -710,7 +703,7 @@ public class NewKernelTyper {
               nkt.addEqConstraint(`Equation(nkt.getType(boundTerm),aType,nkt.getInfoFromTomTerm(boundTerm)),nkt.equationConstraints); 
           }
         }
-        return `varStar.setConstraints(newCList);
+        return `var.setConstraints(newCList);
       }
 
       RecordAppl[Options=optionList,NameList=nList@concTomName(aName@Name(tomName),_*),Slots=sList,Constraints=cList] -> {
@@ -739,7 +732,8 @@ public class NewKernelTyper {
               }  
             }
           }
-          nkt.subtypeConstraints = nkt.addSubConstraint(`Subtype(codomain,contextType,PairNameOptions(aName,optionList)),nkt.subtypeConstraints);
+          nkt.equationConstraints =
+            nkt.addEqConstraint(`Equation(codomain,contextType,PairNameOptions(aName,optionList)),nkt.equationConstraints);
         }
 
         ConstraintList newCList = `cList;
@@ -761,17 +755,10 @@ public class NewKernelTyper {
     }
 
     visit BQTerm {
-      bqVar@BQVariable[Options=optionList,AstName=aName,AstType=aType] -> {
+      bqVar@(BQVariable|BQVariableStar)[Options=optionList,AstName=aName,AstType=aType] -> {
         nkt.checkNonLinearityOfBQVariables(`bqVar);
-        nkt.subtypeConstraints = nkt.addSubConstraint(`Subtype(aType,contextType,PairNameOptions(aName,optionList)),nkt.subtypeConstraints);  
+        nkt.equationConstraints = nkt.addEqConstraint(`Equation(aType,contextType,PairNameOptions(aName,optionList)),nkt.equationConstraints);  
         return `bqVar;
-      }
-
-      bqVarStar@BQVariableStar[Options=optionList,AstName=aName,AstType=aType] -> {
-        nkt.checkNonLinearityOfBQVariables(`bqVarStar);
-        nkt.equationConstraints =
-          nkt.addEqConstraint(`Equation(aType,contextType,PairNameOptions(aName,optionList)),nkt.equationConstraints);
-        return `bqVarStar;
       }
 
       BQAppl[Options=optionList,AstName=aName@Name(name),Args=bqTList] -> {
@@ -779,9 +766,7 @@ public class NewKernelTyper {
         TomType codomain = contextType;
         if (tSymbol == null) {
           tSymbol = `EmptySymbol();
-          //DEBUG System.out.println("name = " + `name);
-          //DEBUG System.out.println("context = " + contextType);
-          BQTermList newBQTList = nkt.inferBQTermList(`bqTList,`EmptySymbol(),contextType);
+          BQTermList newBQTList = nkt.inferBQTermList(`bqTList,`EmptySymbol(),codomain);
           /* PEM: why contextType ? */
           return `FunctionCall(aName,contextType,newBQTList); 
         } else {
@@ -796,7 +781,7 @@ public class NewKernelTyper {
               }  
             }
           }
-          nkt.subtypeConstraints = nkt.addSubConstraint(`Subtype(codomain,contextType,PairNameOptions(aName,optionList)),nkt.subtypeConstraints);
+          nkt.equationConstraints = nkt.addEqConstraint(`Equation(codomain,contextType,PairNameOptions(aName,optionList)),nkt.equationConstraints);
 
           BQTermList newBQTList =
             nkt.inferBQTermList(`bqTList,`tSymbol,contextType);
@@ -835,7 +820,6 @@ public class NewKernelTyper {
 
       (Variable|VariableStar)[AstName=aName,AstType=aType] << var &&
         concTomTerm(_*,(Variable|VariableStar)[AstName=aName,AstType=aType],_*) << varPatternList -> {
-          //DEBUG System.out.println("Add type '" + `aType + "' of var '" + `var +"'\n");
           `addPositiveTVar(aType);
         }
     }
@@ -895,10 +879,10 @@ public class NewKernelTyper {
       init();
       code =  collectKnownTypesFromCode(`code);
       //DEBUG System.out.println("------------- Code typed with typeVar:\n code = " +
-      //DEBUG    `code);
+      //DEBUG   `code);
       code = inferAllTypes(code,`EmptyType());
+      printGeneratedConstraints(equationConstraints);
       //DEBUG printGeneratedConstraints(subtypeConstraints);
-      //DEBUG printGeneratedConstraints(equationConstraints);
       solveConstraints();
       //DEBUG System.out.println("substitutions = " + substitutions);
       code = replaceInCode(code);
@@ -1008,22 +992,15 @@ public class NewKernelTyper {
     %match(constraint) {
       MatchConstraint[Pattern=pattern,Subject=subject,AstType=aType] -> { 
         //DEBUG System.out.println("inferConstraint l1 -- subject = " + `subject);
-        TomType tPattern = getType(`pattern);
-        TomType tSubject = getType(`subject);
-        if (tPattern == null || tPattern == `EmptyType()) {
-          tPattern = getUnknownFreshTypeVar();
-        }
-        if (tSubject == null || tSubject == `EmptyType()) {
-          tSubject = getUnknownFreshTypeVar();
-        }
-        //DEBUG System.out.println("inferConstraint: match -- constraint " +
-        //DEBUG     tPattern + " = " + tSubject);
+        TomType tPattern = getUnknownFreshTypeVar();
+        TomType tSubject = getUnknownFreshTypeVar();
         %match(aType) {
           (Type|TypeVar)[] -> {
             /* T_pattern = T_cast and T_cast <: T_subject */
             equationConstraints =
-              addEqConstraint(`Equation(tPattern,aType,getInfoFromTomTerm(pattern)),equationConstraints);
-            subtypeConstraints = addSubConstraint(`Subtype(aType,tSubject,getInfoFromBQTerm(subject)),subtypeConstraints);
+              addEqConstraint(`Equation(aType,tPattern,getInfoFromTomTerm(pattern)),equationConstraints);
+            //DEBUG System.out.println("addSubConstraint: " + `aType + " = " + tSubject);
+            subtypeConstraints = addSubConstraint(`Subtype(tPattern,tSubject,getInfoFromBQTerm(subject)),subtypeConstraints);
           }
         }
         TomTerm newPattern = `inferAllTypes(pattern,tPattern);
@@ -1032,16 +1009,8 @@ public class NewKernelTyper {
       }
 
       NumericConstraint(left,right,kind) -> {
-        TomType tLeft = getType(`left);
-        TomType tRight = getType(`right);
-        if (tLeft == null || tLeft == `EmptyType()) {
-          tLeft = getUnknownFreshTypeVar();
-        }
-        if (tRight == null || tRight == `EmptyType()) {
-          tRight = getUnknownFreshTypeVar();
-        }
-        //DEBUG System.out.println("inferConstraint: match -- constraint " +
-        //DEBUG     tLeft + " = " + tRight);
+        TomType tLeft = getUnknownFreshTypeVar();
+        TomType tRight = getUnknownFreshTypeVar();
 
         // To represent the relationshipo between both argument types
         TomType lowerType = getUnknownFreshTypeVar();
@@ -1147,7 +1116,9 @@ public class NewKernelTyper {
       Symbol[AstName=symName,TypesToType=TypesToType[Domain=concTomType(headTTList,_*),Codomain=codomain@Type[TypeOptions=concTypeOption(_*,WithSymbol[],_*)]]] -> {
         TomTerm argTerm;
         TomSymbol argSymb;
+        TomType argFreshVar;
         for (Slot slot : sList.getCollectionconcSlot()) {
+          argFreshVar = contextType;
           argTerm = slot.getAppl();
           argSymb = getSymbolFromTerm(argTerm);
           if(!(TomBase.isListOperator(`argSymb) || TomBase.isArrayOperator(`argSymb))) {
@@ -1157,9 +1128,13 @@ public class NewKernelTyper {
                 argType = `codomain;
               }
               !VariableStar[] -> { 
-                //DEBUG System.out.println("InferSlotList CT-ELEM -- tTerm = " + `tTerm);
+                //DEBUG System.out.println("InferSlotList CT-ELEM -- argTerm = " + `argTerm);
                 /* Case CT-ELEM rule (applying to premises which are not lists) */
                 argType = `headTTList;
+                argFreshVar = getUnknownFreshTypeVar();  
+                //DEBUG System.out.println("addSubConstraint: " + argFreshVar + " = " + argType);
+                subtypeConstraints =
+                  addSubConstraint(`Subtype(argFreshVar,argType,getInfoFromTomTerm(argTerm)),subtypeConstraints);
               }
             }
           } else if (`symName != argSymb.getAstName()) {
@@ -1171,10 +1146,14 @@ public class NewKernelTyper {
              * ListB(ListA(a()))
              */
             argType = `headTTList;
+            argFreshVar = getUnknownFreshTypeVar();  
+            //DEBUG System.out.println("addSubConstraint: " + argFreshVar + " = " + argType);
+            subtypeConstraints =
+              addSubConstraint(`Subtype(argFreshVar,argType,getInfoFromTomTerm(argTerm)),subtypeConstraints);
           } 
 
           /* Case CT-MERGE rule (applying to premises) */
-          argTerm = `inferAllTypes(argTerm,argType);
+          argTerm = `inferAllTypes(argTerm,argFreshVar);
           newSList = `concSlot(PairSlotAppl(slot.getSlotName(),argTerm),newSList*);
         }
         return newSList.reverse(); 
@@ -1184,10 +1163,15 @@ public class NewKernelTyper {
       Symbol[TypesToType=TypesToType[Codomain=Type[TypeOptions=!concTypeOption(_*,WithSymbol[],_*)]]] -> {
         TomTerm argTerm;
         TomName argName;
+        TomType argFreshVar;
         for (Slot slot : sList.getCollectionconcSlot()) {
           argName = slot.getSlotName();
           argType = TomBase.getSlotType(tSymbol,argName);
-          argTerm = `inferAllTypes(slot.getAppl(),argType);
+          argFreshVar = getUnknownFreshTypeVar();  
+          //DEBUG System.out.println("addSubConstraint: " + argFreshVar + " = " + argType);
+          subtypeConstraints =
+            addSubConstraint(`Subtype(argFreshVar,argType,getInfoFromTomTerm(slot.getAppl())),subtypeConstraints);
+          argTerm = `inferAllTypes(slot.getAppl(),argFreshVar);
           newSList = `concSlot(PairSlotAppl(argName,argTerm),newSList*);
           //DEBUG System.out.println("InferSlotList CT-FUN -- end of for with slotappl = " + `argTerm);
         }
@@ -1262,9 +1246,14 @@ public class NewKernelTyper {
         }
 
         BQTermList newBQTList = `concBQTerm();
+
+        TomSymbol argSymb;
+        TomType argType;
+        TomType argFreshVar;
         for (BQTerm argTerm : bqTList.getCollectionconcBQTerm()) {
-          TomSymbol argSymb = getSymbolFromTerm(argTerm);
-          TomType argType = contextType;
+          argSymb = getSymbolFromTerm(argTerm);
+          argType = contextType;
+          argFreshVar = contextType;
           if(!(TomBase.isListOperator(`argSymb) || TomBase.isArrayOperator(`argSymb))) {
             %match(argTerm) {
               Composite(_*) -> {
@@ -1273,7 +1262,7 @@ public class NewKernelTyper {
                  * It can be a BQVariableStar or a list operator or a list of
                  * CompositeBQTerm or something else
                  */
-                argType = `EmptyType();
+                argFreshVar = `EmptyType();
               }
 
               BQVariableStar[] -> {
@@ -1285,6 +1274,9 @@ public class NewKernelTyper {
               /* Case CT-ELEM rule (applying to premises which are not lists) */
               (BQVariable|BQAppl)[] -> {
                 argType = `headTTList;
+                argFreshVar = getUnknownFreshTypeVar();  
+                subtypeConstraints =
+                  addSubConstraint(`Subtype(argFreshVar,argType,getInfoFromBQTerm(argTerm)),subtypeConstraints);
               }
             }
           } else if (`symName != argSymb.getAstName()) {
@@ -1296,10 +1288,13 @@ public class NewKernelTyper {
              * ListB(ListA(a()))
              */
             argType = `headTTList;
+            argFreshVar = getUnknownFreshTypeVar();  
+            subtypeConstraints =
+              addSubConstraint(`Subtype(argFreshVar,argType,getInfoFromBQTerm(argTerm)),subtypeConstraints);
           }
 
           /* Case CT-MERGE rule (applying to premises) */
-          argTerm = `inferAllTypes(argTerm,argType);
+          argTerm = `inferAllTypes(argTerm,argFreshVar);
           newBQTList = `concBQTerm(argTerm,newBQTList*);
         }
         return newBQTList.reverse(); 
@@ -1322,8 +1317,11 @@ public class NewKernelTyper {
         } else {
           TomTypeList symDomain = `domain;
           BQTermList newBQTList = `concBQTerm();
+          TomType argType;
+          TomType argFreshVar;
           for (BQTerm argTerm : bqTList.getCollectionconcBQTerm()) {
-            TomType argType = symDomain.getHeadconcTomType();
+            argType = symDomain.getHeadconcTomType();
+            argFreshVar = getUnknownFreshTypeVar();  
             %match(argTerm) {
               /*
                * We don't know what is into the Composite
@@ -1341,12 +1339,14 @@ public class NewKernelTyper {
                *        CompositeTL(ITL(".")),
                *        CompositeBQTerm(Composite(CompositeBQTerm(BQAppl(concOption(...),Name("getvalue"),concBQTerm())))))))
                */
-              Composite(_*,_,_*,_,_*) -> { argType = `EmptyType(); }
+              Composite(_*,_,_*,_,_*) -> { argFreshVar = `EmptyType(); }
             }
-            argTerm = `inferAllTypes(argTerm,argType);
+            subtypeConstraints =
+              addSubConstraint(`Subtype(argFreshVar,argType,getInfoFromBQTerm(argTerm)),subtypeConstraints);
+            argTerm = `inferAllTypes(argTerm,argFreshVar);
             newBQTList = `concBQTerm(argTerm,newBQTList*);
             symDomain = symDomain.getTailconcTomType();
-            //DEBUG System.out.println("InferBQTermList CT-FUN -- end of for with bqappl = " + `argTerm);
+            //DEBUG System.out.println("InferBQTermList CT-FUN -- end of for with bqappl = " + argTerm);
           }
           return newBQTList.reverse(); 
         }
@@ -1391,45 +1391,45 @@ public class NewKernelTyper {
    * 3^2 = 9).
    * <p>
    * CASE 1: tCList = {(T1 = T2),...)} and Map
-   *  --> detectFail(T1 = T2) to verify if T1 is equals to T2 
+   *  --> isEq(T1 = T2) to verify if T1 is equals to T2 
    * <p>
    * CASE 2: tCList = {(T1 = T2^c),...)} and Map
-   *  --> detectFail(T1 = T2^c) to verify if T1 is equals to T2 
+   *  --> isEq(T1 = T2^c) to verify if T1 is equals to T2 
    * <p>
    * CASE 3: tCList = {(T1^c = T2),...)} and Map
-   *  --> detectFail(T1^c = T2) to verify if T1 is equals to T2 
+   *  --> isEq(T1^c = T2) to verify if T1 is equals to T2 
    * <p>
    * CASE 4: tCList = {(T1^a = T2^b),...)} and Map
-   *  --> detectFail(T1^a = T2^b) to verify if T1^a is equals to T2^b 
+   *  --> isEq(T1^a = T2^b) to verify if T1^a is equals to T2^b 
    * <p>
    * CASE 5: tCList = {(T1 = A1),...)} and Map 
    *  a) Map(A1) does not exist   --> {(A,T1)} U Map 
-   *  b) Map(A1) = T2             --> detectFail(T1 = T2)
+   *  b) Map(A1) = T2             --> isEq(T1 = T2)
    *  c) Map(A1) = A2             --> {(A2,T1)} U Map, since Map is saturated and
    *                                  then Map(A2) does not exist 
    * <p>
    * CASE 6: tCList = {(T1^c = A1),...)} and Map 
    *  a) Map(A1) does not exist   --> {(A1,T1^c)} U Map 
-   *  b) Map(A1) = T2 (or T2^b)   --> detectFail(T1^c = T2) (or detectFail(T1^c = T2^b))
+   *  b) Map(A1) = T2 (or T2^b)   --> isEq(T1^c = T2) (or isEq(T1^c = T2^b))
    *  c) Map(A1) = A2             --> {(A2,T1^c)} U Map, since Map is saturated and
    *                                  then Map(A2) does not exist 
    * <p>
    * CASE 7: tCList = {(A1 = T1),...)} and Map 
    *  a) Map(A1) does not exist   --> {(A1,T1)} U Map 
-   *  b) Map(A1) = T2             --> detectFail(T1 = T2)
+   *  b) Map(A1) = T2             --> isEq(T1 = T2)
    *  c) Map(A1) = A2             --> {(A2,A1)} U Map, since Map is saturated and
    *                                  then Map(A2) does not exist 
    * <p>
    * CASE 8: tCList = {(A1 = T1^c),...)} and Map 
    *  a) Map(A1) does not exist   --> {(A1,T1^c)} U Map 
-   *  b) Map(A1) = T2 (or T2^b)   --> detectFail(T1^c = T2) (or detectFail(T1^c = T2^b))
+   *  b) Map(A1) = T2 (or T2^b)   --> isEq(T1^c = T2) (or isEq(T1^c = T2^b))
    *  c) Map(A1) = A2             --> {(A2,T1^c)} U Map, since Map is saturated and
    *                                  then Map(A2) does not exist 
    * <p>
    * CASE 9: tCList = {(A1 = A2),...)} and Map
    *  a) Map(A1) = T1 (or T1^a) and
    *    i)    Map(A2) does not exist    --> {(A2,T1)} U Map (or {(A2,T1^a)} U Map) 
-   *    ii)   Map(A2) = T2 (or T2^b)    --> detectFail(T1 = T2) (or detectFail(T1^a = T2^b))
+   *    ii)   Map(A2) = T2 (or T2^b)    --> isEq(T1 = T2) (or isEq(T1^a = T2^b))
    *    iii)  Map(A2) = A3              --> {(A3,T1)} U Map (or {(A3,T1^a)} U Map), since Map is saturated and
    *                                        then Map(A3) does not exist 
    *
@@ -1453,12 +1453,17 @@ public class NewKernelTyper {
 matchBlockAdd :
       {
         %match {
+          // CASE A = A or T = T
+          Equation[Type1=t,Type2=t] << tConstraint -> { 
+            break matchBlockAdd;
+          }
+
           // CASES 1, 2, 3 and 4 :
           eConstraint@Equation[Type1=groundType1@!TypeVar[],Type2=groundType2@!TypeVar[]] <<
             tConstraint && (groundType1 != groundType2) -> {
               //DEBUG System.out.println("In solveEquationConstraints:" + `groundType1 +
               //DEBUG     " = " + `groundType2);
-              errorFound = (errorFound || `detectFail(eConstraint));
+              errorFound = (errorFound || !`isEq(eConstraint));
               break matchBlockAdd;
             }
           // CASES 5 and 6 :
@@ -1468,7 +1473,7 @@ matchBlockAdd :
                 TomType mapTypeVar = substitutions.get(`typeVar);
                 if (!isTypeVar(mapTypeVar)) {
                   errorFound = (errorFound || 
-                      `detectFail(Equation(groundType,mapTypeVar,info)));
+                      !`isEq(Equation(groundType,mapTypeVar,info)));
                 } else {
                   // if (isTypeVar(mapTypeVar))
                   addSubstitution(mapTypeVar,`groundType);
@@ -1485,7 +1490,7 @@ matchBlockAdd :
               TomType mapTypeVar = substitutions.get(`typeVar);
               if (!isTypeVar(mapTypeVar)) {
                 errorFound = (errorFound || 
-                    `detectFail(Equation(mapTypeVar,groundType,info)));
+                    !`isEq(Equation(mapTypeVar,groundType,info)));
               } else {
                 // if (isTypeVar(mapTypeVar))
                 addSubstitution(mapTypeVar,`groundType);
@@ -1511,7 +1516,7 @@ matchBlockAdd :
                     addSubstitution(mapTypeVar2,mapTypeVar1);
                   } else {
                     errorFound = (errorFound || 
-                        `detectFail(Equation(mapTypeVar1,mapTypeVar2,info)));
+                        !`isEq(Equation(mapTypeVar1,mapTypeVar2,info)));
                   }
                 }
                 break matchBlockAdd;
@@ -1535,7 +1540,7 @@ matchBlockAdd :
   }
 
   /**
-   * The method <code>detectFail</code> checks if a type constraint
+   * The method <code>isEq</code> checks if a type constraint
    * relating two ground types has a solution. In the negative case, an
    * 'incompatible types' message error is printed.  
    * <p> 
@@ -1547,47 +1552,32 @@ matchBlockAdd :
    * 2^2 = 4).
    * <p>
    * CASE 1: tCList = {(T1 = T2),...)} and Map
-   *  a) --> true if T1 is different from T2
-   *  b) --> false if T1 is equals to T2
+   *  a) --> false if T1 is different from T2
+   *  b) --> true if T1 is equals to T2
    * <p>
    * CASE 2: tCList = {(T1 = T2^c),...)} and Map
-   *  a) --> true if T1 is different from T2
-   *  b) --> false if T1 is equals to T2
+   *  a) --> false if T1 is different from T2
+   *  b) --> true if T1 is equals to T2
    * <p>
    * CASE 3: tCList = {(T1^c = T2),...)} and Map
-   *  a) --> true if T1 is different from T2
-   *  b) --> false if T1 is equals to T2
+   *  a) --> false if T1 is different from T2
+   *  b) --> true if T1 is equals to T2
    * <p>
    * CASE 4: tCList = {(T1^a = T2^b),...)} and Map
-   *  a) --> true if T1 is different from T2 or 'a' is different from 'b'
-   *  b) --> false if T1 is equals to T2 and 'a' is equals to 'b'
-   * <p>
-   * CASE 5: tCList = {(T1 <: T2),...)} and Map
-   *  a) --> true if T1 is not subtype of T2
-   *  b) --> false if T1 is subtype of T2
-   * <p>
-   * CASE 6: tCList = {(T1 <: T2^c),...)} and Map
-   *   --> true
-   * <p>
-   * CASE 7: tCList = {(T1^c <: T2),...)} and Map
-   *  a) --> true if T1 is not subtype of T2
-   *  b) --> false if T1 is subtype of T2
-   * <p>
-   * CASE 8: tCList = {(T1^a <: T2^b),...)} and Map
-   *  a) --> true if T1 is not subtype of T2 or 'a' is different from 'b'
-   *  b) --> false if T1 is subtype of T2 and 'a' is equals to 'b'
+   *  a) --> false if T1 is different from T2 or 'a' is different from 'b'
+   *  b) --> true if T1 is equals to T2 and 'a' is equals to 'b'
    * <p>
    * @param tConstraint the type constraint to be verified 
    * @return            the status of the list, if errors were found or not
    */
-  private boolean detectFail(TypeConstraint tConstraint) {
+  private boolean isEq(TypeConstraint tConstraint) {
     if (!lazyType) {
       %match {
         /* CASES 1a, 2a and 3a */
         Equation[Type1=Type[TomType=tName1],Type2=Type[TomType=tName2@!tName1]]
           << tConstraint && (tName1 != "unknown type") && (tName2 != "unknown type")  -> {
             printErrorIncompatibility(`tConstraint);
-            return true;
+            return false;
           }
 
         /* CASE 4a */  
@@ -1596,18 +1586,11 @@ matchBlockAdd :
           && concTypeOption(_*,WithSymbol[RootSymbolName=rsName1],_*) << tOptions1
           && concTypeOption(_*,WithSymbol[RootSymbolName=rsName2@!rsName1],_*) << tOptions2 -> {
             printErrorIncompatibility(`tConstraint);
-            return true;
+            return false;
           }
-
-        Subtype[Type1=t1,Type2=t2@!t1] << tConstraint -> {
-          if (!isSubtypeOf(`t1,`t2)) {
-            printErrorIncompatibility(`tConstraint);
-            return true;
-          }
-        }
       }
     } 
-    return false;
+    return true;
   }
 
   /**
@@ -1706,6 +1689,8 @@ tryBlock:
    * <p>
    * PHASE 1: Simplification in equations (apply anti-symetry of the partial
    * order "<:"): 
+   * tCList = {T <: T} U tCList' and Map 
+   *  --> tCList' and Map
    * tCList = {T1 <: T2, T2 <: T1} U tCList' and Map 
    *  --> solveEquationConstraints(T1 = T2) U tCList' and Map
    * tCList = {A1 <: A2, A2 <: A1} U tCList' and Map 
@@ -1722,6 +1707,11 @@ tryBlock:
   %strategy simplificationAndClosure(nkt:NewKernelTyper) extends Identity() {
     visit TypeConstraintList {
       /* PHASE 1 */
+      tcl@concTypeConstraint(tcl1*,Subtype[Type1=t,Type2=t,Info=info],tcl2*) -> {
+        return
+          nkt.`concTypeConstraint(tcl1*,tcl2*);
+      }
+
       tcl@concTypeConstraint(tcl1*,Subtype[Type1=t1,Type2=t2,Info=info],tcl2*,Subtype[Type1=t2,Type2=t1],tcl3*) -> {
         nkt.solveEquationConstraints(`concTypeConstraint(Equation(t1,t2,info)));
         return
@@ -1753,7 +1743,7 @@ tryBlock:
    * inconsistencies. This is done for each type constraint of tCList.
    * <p>
    * Let 'Ai' and 'Ti' be type variables and ground types, respectively:
-   * tCList = {T1 <: T2} U tCList' and Map --> detectFail(T1 <: T2) U tCList and Map
+   * tCList = {T1 <: T2} U tCList' and Map --> isSub(T1 <: T2) U tCList and Map
    * Note that the constraint "{T1 <: T2}" must be keeped in tCList to avoid an
    * infinity loop when re-applying <code>simplificationAndClosure</code> method.
    * <p>
@@ -1771,7 +1761,7 @@ matchBlock :
         %match {
           Subtype[Type1=!TypeVar[],Type2=!TypeVar[]] << tConstraint -> {
             //DEBUG System.out.println("\nsolve3: tConstraint=" + `tConstraint);
-            errorFound = (errorFound || detectFail(`tConstraint));
+            errorFound = (errorFound || !isSub(`tConstraint));
             break matchBlock;
           }
           _ << tConstraint -> {
@@ -1784,6 +1774,50 @@ matchBlock :
       simplifiedtCList = `concTypeConstraint(FalseTypeConstraint(),simplifiedtCList*);
     }
     return simplifiedtCList;
+  }
+
+  /**
+   * The method <code>isSub</code> checks if a type constraint
+   * relating two ground types has a solution. In the negative case, an
+   * 'incompatible types' message error is printed.  
+   * <p> 
+   * There exists 2 kinds of ground types: ground types Ti and
+   * ground types Ti^c which are decorated with a given symbol c. Considering
+   * type constraints as pairs (type1,type2) representing an equation or
+   * a subtype relation between two ground types, them the set of all possibilities of arrangement between
+   * ground types is a sequence with repetition. Then, we have 4 possible cases (since
+   * 2^2 = 4).
+   * <p>
+    * CASE 5: tCList = {(T1 <: T2),...)} and Map
+   *  a) --> false if T1 is not subtype of T2
+   *  b) --> true if T1 is subtype of T2
+   * <p>
+   * CASE 6: tCList = {(T1 <: T2^c),...)} and Map
+   *   --> false
+   * <p>
+   * CASE 7: tCList = {(T1^c <: T2),...)} and Map
+   *  a) --> false if T1 is not subtype of T2
+   *  b) --> true if T1 is subtype of T2
+   * <p>
+   * CASE 8: tCList = {(T1^a <: T2^b),...)} and Map
+   *  a) --> false if T1 is not subtype of T2 or 'a' is different from 'b'
+   *  b) --> true if T1 is subtype of T2 and 'a' is equals to 'b'
+   * <p>
+   * @param tConstraint the type constraint to be verified 
+   * @return            the status of the list, if errors were found or not
+   */
+  private boolean isSub(TypeConstraint tConstraint) {
+    if (!lazyType) {
+      %match {
+        Subtype[Type1=t1,Type2=t2@!t1] << tConstraint -> {
+          if (!isSubtypeOf(`t1,`t2)) {
+            printErrorIncompatibility(`tConstraint);
+            return false;
+          }
+        }
+      }
+    } 
+    return true;
   }
 
   /*
@@ -2248,6 +2282,7 @@ matchBlockSolve :
     }
 
   private void garbageCollection(TypeConstraintList tCList) {
+    inputTVarList = replaceInInputTVarList(inputTVarList); 
     TypeConstraintList newtCList = tCList;
     %match(tCList) {
       /* CASE 3 */
@@ -2262,6 +2297,30 @@ matchBlockSolve :
         }
       }
     }
+  }
+
+  /**
+   * The method <code>replaceInInputTVarList</code> applies the
+   * substitutions to the input list of type variables.
+   * @param iTVarList the list of type variables to be replaced
+   * @return       the list of type variables resulting of replacement
+   */
+  private TomTypeList replaceInInputTVarList(TomTypeList iTVarList) {
+    TomTypeList replacediTVarList = `concTomType();
+    TomType mapT;
+    for (TomType tType: iTVarList.getCollectionconcTomType()) {
+      %match(tType) {
+        TypeVar[] -> {
+          mapT = substitutions.get(`tType);
+          if (mapT == null) {
+            mapT = `tType;
+          }
+          replacediTVarList = `concTomType(mapT,replacediTVarList*);
+        }
+      }
+
+    }
+    return replacediTVarList;
   }
 
   private void printErrorGuessMatch(Info info) {
@@ -2313,7 +2372,7 @@ matchBlockSolve :
               TomMessage.error(logger,`fileName, `line,
                   TomMessage.incompatibleTypes,`tName1,`tName2,`termName); 
             }
-            noOption()-> {
+            noOption() -> {
               TomMessage.error(logger,null,0,
                   TomMessage.incompatibleTypes,`tName1,`tName2,`termName); 
             }

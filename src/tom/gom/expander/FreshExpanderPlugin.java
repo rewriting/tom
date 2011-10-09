@@ -98,6 +98,7 @@ public class FreshExpanderPlugin extends GomGenericPlugin {
             swriter);
         GomMessage.info(getLogger(), null, 0, 
             GomMessage.gomFreshGomExpansionPhase, (System.currentTimeMillis()-startChrono));
+        setTime(Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
         if(intermediate) {
           Tools.generateOutput(getStreamManager().getOutputFileName()
               + EXPANDED_SUFFIX, (aterm.ATerm)modules.toATerm());

@@ -100,6 +100,7 @@ public class ExpanderPlugin extends GomGenericPlugin {
       GomMessage.fine(getLogger(), null, 0, GomMessage.importedModules, swriter);
       GomMessage.info(getLogger(), null, 0, GomMessage.gomExpansionPhase, 
           (System.currentTimeMillis()-startChrono));
+      setTime(Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
       if(intermediate) {
         Tools.generateOutput(getStreamManager().getOutputFileName()
             + EXPANDED_SUFFIX, (aterm.ATerm)modules.toATerm());

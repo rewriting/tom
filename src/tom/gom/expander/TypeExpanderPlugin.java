@@ -87,6 +87,7 @@ public class TypeExpanderPlugin extends GomGenericPlugin {
       GomMessage.fine(getLogger(), null, 0, GomMessage.typedModules, swriter);
       GomMessage.info(getLogger(), null, 0, GomMessage.gomTypeExpansionPhase, 
           (System.currentTimeMillis()-startChrono));
+      setTime(Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
       if (intermediate) {
         Tools.generateOutput(getStreamManager().getOutputFileName()
             + TYPED_SUFFIX, typedModuleList);

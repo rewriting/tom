@@ -141,6 +141,7 @@ public class OptimizerPlugin extends TomGenericPlugin {
 
         // verbose
         TomMessage.info(logger,null,0,TomMessage.tomOptimizationPhase,Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
+        setTime(Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
       } catch (Exception e) {
         TomMessage.error(logger,getStreamManager().getInputFileName(),0,TomMessage.exceptionMessage,e.getMessage());
         e.printStackTrace();

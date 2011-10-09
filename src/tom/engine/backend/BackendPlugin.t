@@ -138,6 +138,9 @@ public class BackendPlugin extends TomGenericPlugin {
           // verbose
           TomMessage.info(getLogger(),null,0,TomMessage.tomGenerationPhase,
               Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
+          setTime(Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
+          TomMessage.info(getLogger(),null,0,TomMessage.tomTotalTime,
+              getTime());
           output.close();
         } catch (IOException e) {
           TomMessage.error(getLogger(),

@@ -143,6 +143,7 @@ public class TyperPlugin extends TomGenericPlugin {
         // verbose
         TomMessage.info(logger, null, 0, TomMessage.tomTypingPhase,
             Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
+        setTime(System.currentTimeMillis()-startChrono);
       } catch (Exception e) {
         TomMessage.error(logger, getStreamManager().getInputFileName(), 
             0, TomMessage.exceptionMessage, getClass().getName(), 

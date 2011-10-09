@@ -91,6 +91,7 @@ public class CompilerPlugin extends GomGenericPlugin {
         GomMessage.fine(getLogger(), null, 0, GomMessage.compiledModules, swriter);
         GomMessage.info(getLogger(), null, 0, GomMessage.gomCompilationPhase, 
             (System.currentTimeMillis()-startChrono));
+        setTime(Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
       if (intermediate) {
         Tools.generateOutput(getStreamManager().getOutputFileName()
             + COMPILED_SUFFIX, (aterm.ATerm)classList.toATerm());
