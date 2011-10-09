@@ -47,6 +47,8 @@ The compiler is composed of several plugins, which are executed in the following
    number of fresh type variables generated. Here we give a brief list of main
    differences:
 
+
+
     1) methods 'addEqConstraint' and 'addSubConstraint' adds a constraint c in a
     constraint set C if both types t1 and t2 in c are different from
     'EmptyType()' AND if t1 is different from t2. In this case, the rule
