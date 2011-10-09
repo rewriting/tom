@@ -204,6 +204,7 @@ public class TomParserPlugin extends TomGenericPlugin {
         // verbose
         TomMessage.info(getLogger(), null, 0, TomMessage.tomParsingPhase,
             Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
+        setTime(Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
       } catch (TokenStreamException e) {
         TomMessage.error(getLogger(), currentFileName, getLineFromTomParser(),
             TomMessage.tokenStreamException, e.getMessage());
