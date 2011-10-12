@@ -151,8 +151,6 @@ public class TyperPlugin extends TomGenericPlugin {
         return;
       }
     } else {
-      System.out.println("\nNew typer activated!: " + getStreamManager().getInputFileName());
- 
       try {
 
         updateSymbolTableNewTyper();
