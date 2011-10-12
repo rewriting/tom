@@ -98,7 +98,6 @@ public class AdapterPlugin extends GomGenericPlugin {
     GomMessage.info(getLogger(), null, 0, 
         GomMessage.gomAntlrAdapterGenerationPhase, 
         (System.currentTimeMillis()-startChrono));
-    setTime(Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
     informationTracker.put(KEY_LAST_GEN_MAPPING,getGomEnvironment().getLastGeneratedMapping());
   }
 

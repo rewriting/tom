@@ -286,9 +286,7 @@ public class TomMessage extends BasicPlatformMessage {
   public static final TomMessage tomVerificationPhase =
       new TomMessage("TOM verification phase ({0,number,integer} ms)");
   public static final TomMessage tomGenerationPhase =
-      new TomMessage("TOM generation phase ({0,number,integer} ms)");
-  public static final TomMessage tomTotalTime =
-      new TomMessage("TOM total time ({0,number,integer} ms)");
+      new TomMessage("TOM generation phase ({0,number,integer} ms)\n");
 
   // Main messages
   public static final TomMessage mainErrorMessage      =

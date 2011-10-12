@@ -134,7 +134,6 @@ public class BackendPlugin extends GomGenericPlugin {
     } else {
       GomMessage.info(getLogger(), null, 0, GomMessage.gomGenerationPhase, 
           (System.currentTimeMillis()-startChrono));
-      setTime(Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
     }
     informationTracker.put(KEY_LAST_GEN_MAPPING,getGomEnvironment().getLastGeneratedMapping());
   }

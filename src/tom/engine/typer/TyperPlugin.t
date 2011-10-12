@@ -135,7 +135,7 @@ public class TyperPlugin extends TomGenericPlugin {
 
         // replace 'abc' by concString('a','b','c')
         typedCode = `TopDownIdStopOnSuccess(desugarString(this)).visitLight(typedCode);
-        /* transform each BackQuoteTerm into its compiled form */
+        // transform each BackQuoteTerm into its compiled form
         typedCode = `TopDownIdStopOnSuccess(TransformBQAppl(this)).visitLight(typedCode);
         //System.out.println("step2: " + typedCode);
 
@@ -143,7 +143,6 @@ public class TyperPlugin extends TomGenericPlugin {
         // verbose
         TomMessage.info(logger, null, 0, TomMessage.tomTypingPhase,
             Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
-        setTime(System.currentTimeMillis()-startChrono);
       } catch (Exception e) {
         TomMessage.error(logger, getStreamManager().getInputFileName(), 
             0, TomMessage.exceptionMessage, getClass().getName(), 
@@ -152,7 +151,6 @@ public class TyperPlugin extends TomGenericPlugin {
         return;
       }
     } else {
-
       System.out.println("\nNew typer activated!: " + getStreamManager().getInputFileName());
  
       try {

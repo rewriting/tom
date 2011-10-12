@@ -66,15 +66,6 @@ public abstract class TomGenericPlugin implements Plugin {
   /** The term the plugin works on. */
   protected Code term;
 
-  protected long totalTime;
-  public void setTime(long time) {
-    totalTime = totalTime + time;
-  }
-
-  public long getTime() {
-    return totalTime;
-  }
-
   /** The streamanager */
   protected TomStreamManager streamManager;
   

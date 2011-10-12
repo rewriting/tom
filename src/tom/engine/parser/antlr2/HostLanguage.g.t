@@ -245,7 +245,6 @@ options{
       if(testIncludedFile(fileCanonicalName, alreadyParsedFileSet) ||
 	  testIncludedFile(fileCanonicalName, includedFileSet)) {
         if(!getStreamManager().isSilentDiscardImport(fileName)) {
-          TomMessage.info(logger, currentFile, getLine(), TomMessage.includedFileAlreadyParsed,fileName);
         }
         return;
       }

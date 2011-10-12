@@ -179,7 +179,6 @@ public class TypeCheckerPlugin extends TomGenericPlugin {
         // verbose
         TomMessage.info(getLogger(),null,0,TomMessage.tomTypeCheckingPhase,
             Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
-        setTime(Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
       } catch (Exception e) {
         TomMessage.error(getLogger(), 
             getStreamManager().getInputFileName(), 0,

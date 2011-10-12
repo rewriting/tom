@@ -881,7 +881,7 @@ public class NewKernelTyper {
       //DEBUG System.out.println("------------- Code typed with typeVar:\n code = " +
       //DEBUG   `code);
       code = inferAllTypes(code,`EmptyType());
-      printGeneratedConstraints(equationConstraints);
+      //DEBUG printGeneratedConstraints(equationConstraints);
       //DEBUG printGeneratedConstraints(subtypeConstraints);
       solveConstraints();
       //DEBUG System.out.println("substitutions = " + substitutions);

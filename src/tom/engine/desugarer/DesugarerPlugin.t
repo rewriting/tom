@@ -120,7 +120,6 @@ public class DesugarerPlugin extends TomGenericPlugin {
       // verbose
       TomMessage.info(logger,null,0,TomMessage.tomDesugaringPhase,
           Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
-      setTime(Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
     } catch (Exception e) {
       TomMessage.error(logger,
           getStreamManager().getInputFileName(), 0,

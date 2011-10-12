@@ -499,8 +499,6 @@ public abstract class ParserAction {
           || testIncludedFile(fileCanonicalName, includedFiles)) {
         // pass '-v' option to tom to see this message
         if(!streamManager.isSilentDiscardImport(includeName)) {
-          TomMessage.info(logger, currentFileName, input.getLine(), 
-              TomMessage.includedFileAlreadyParsed,includeName);
         }
         return;
           }
