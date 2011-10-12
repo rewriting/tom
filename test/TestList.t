@@ -37,7 +37,7 @@ public class TestList {
   }
 
   @AfterClass
-  public static void teadDown() {
+  public static void tearDown() {
     factory = null;
     ok = null;
     fail = null;
