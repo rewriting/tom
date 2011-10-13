@@ -188,6 +188,10 @@ public class TyperPlugin extends TomGenericPlugin {
           Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));    
         TomMessage.info(logger, null, 0, TomMessage.tomTypingPhaseComplement,
           totalNumOfConstraints,newKernelTyper.getTVarCounter());
+        
+        int totalBackquotes = newKernelTyper.getBQTerms();
+        totalBackquotes = (totalBackquotes > 0?totalBackquotes:0); 
+        System.out.println("unknown file:1: INFO: TOM typing phase (" + totalBackquotes + "  BQTerms)");
       } catch (Exception e) {
         TomMessage.error(logger, newKernelTyper.getCurrentInputFileName(), 
             0, TomMessage.exceptionMessage, getClass().getName(), 

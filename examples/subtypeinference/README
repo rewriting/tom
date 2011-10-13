@@ -1,6 +1,0 @@
-In this directory, we find same examples using subtypes, which means that all of
-them use hand-written mappings.
-
-The example ProblemStrategy.t must be compiled with option '-gi' in order to
-automatically generate classes representing operators which implement the
-tom.library.sl.Visitable interface.

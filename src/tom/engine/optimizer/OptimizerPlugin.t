@@ -152,7 +152,7 @@ public class OptimizerPlugin extends TomGenericPlugin {
       }
     } else {
       // not active plugin
-      TomMessage.info(logger,null,0,TomMessage.optimizerNotActive);
+      //TomMessage.info(logger,null,0,TomMessage.optimizerNotActive);
     }
     if(getOptionBooleanValue("prettyPIL")) {
       System.out.println(factory.prettyPrintCompiledMatch(factory.remove((Code)getWorkingTerm())));
@@ -222,8 +222,8 @@ public class OptimizerPlugin extends TomGenericPlugin {
                 // verify linearity in case of variables from the pattern
                 // warning to indicate that this var is unused in the rhs
                 Option orgTrack = TomBase.findOriginTracking(`var.getOptions());
-                TomMessage.warning(logger,orgTrack.getFileName(), orgTrack.getLine(),
-                    TomMessage.unusedVariable,varName);
+                //TomMessage.warning(logger,orgTrack.getFileName(), orgTrack.getLine(),
+                //    TomMessage.unusedVariable,varName);
               }
             }
             return `body;
@@ -288,8 +288,8 @@ public class OptimizerPlugin extends TomGenericPlugin {
                 // verify linearity in case of variables from the pattern
                 // warning to indicate that this var is unused in the rhs
                 Option orgTrack = TomBase.findOriginTracking(`var.getOptions());
-                TomMessage.warning(logger,orgTrack.getFileName(), orgTrack.getLine(),
-                    TomMessage.unusedVariable,varName);
+                //TomMessage.warning(logger,orgTrack.getFileName(), orgTrack.getLine(),
+                  //  TomMessage.unusedVariable,varName);
               }
             }
             return `CleanAssign(name).visitLight(`body);

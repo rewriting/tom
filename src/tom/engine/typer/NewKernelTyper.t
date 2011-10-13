@@ -255,6 +255,9 @@ public class NewKernelTyper {
   protected int getSubCounter() { return globalSubConstraintCounter; } 
   protected int getTVarCounter() { return globalTypeVarCounter; } 
 
+  private int globalBQTermCounter = 0;
+  protected int getBQTerms() { return globalBQTermCounter; } 
+
   /**
    * The method <code>getFreshTlTIndex</code> increments the counter of type variables. 
    * @return  the incremented counter of type variables
@@ -756,12 +759,14 @@ public class NewKernelTyper {
 
     visit BQTerm {
       bqVar@(BQVariable|BQVariableStar)[Options=optionList,AstName=aName,AstType=aType] -> {
+        nkt.globalBQTermCounter++;
         nkt.checkNonLinearityOfBQVariables(`bqVar);
         nkt.equationConstraints = nkt.addEqConstraint(`Equation(aType,contextType,PairNameOptions(aName,optionList)),nkt.equationConstraints);  
         return `bqVar;
       }
 
       BQAppl[Options=optionList,AstName=aName@Name(name),Args=bqTList] -> {
+        nkt.globalBQTermCounter++;
         TomSymbol tSymbol = nkt.getSymbolFromName(`name);
         TomType codomain = contextType;
         if (tSymbol == null) {
@@ -880,7 +885,13 @@ public class NewKernelTyper {
       code =  collectKnownTypesFromCode(`code);
       //DEBUG System.out.println("------------- Code typed with typeVar:\n code = " +
       //DEBUG   `code);
+      int localBQTermCounter = globalBQTermCounter;
       code = inferAllTypes(code,`EmptyType());
+      %match {
+        TargetLanguageToCode[] << code -> { globalBQTermCounter = localBQTermCounter; }
+        DeclarationToCode[] << code -> { globalBQTermCounter = localBQTermCounter; }
+      }
+
       //DEBUG printGeneratedConstraints(equationConstraints);
       //DEBUG printGeneratedConstraints(subtypeConstraints);
       solveConstraints();
@@ -1018,8 +1029,11 @@ public class NewKernelTyper {
           addSubConstraint(`Subtype(lowerType,tLeft,getInfoFromBQTerm(left)),subtypeConstraints);
         subtypeConstraints =
           addSubConstraint(`Subtype(lowerType,tRight,getInfoFromBQTerm(right)),subtypeConstraints);
+        int localBQTermCounter = globalBQTermCounter;
         BQTerm newLeft = inferAllTypes(`left,tLeft);
         BQTerm newRight = inferAllTypes(`right,tRight);
+        // To exclude BQTerms of numeric conditions
+        globalBQTermCounter = localBQTermCounter;
         return `NumericConstraint(newLeft,newRight,kind);
       }
 

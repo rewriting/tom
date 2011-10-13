@@ -1,5 +1,0 @@
-module gom.List
-imports int
-abstract syntax
-List = Nil()
-     | Cons(head:int,tail:List)
