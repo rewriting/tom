@@ -886,11 +886,13 @@ public class NewKernelTyper {
       //DEBUG System.out.println("------------- Code typed with typeVar:\n code = " +
       //DEBUG   `code);
       int localBQTermCounter = globalBQTermCounter;
+      //DEBUG System.out.println("------------- globalBQTermCounter before = " + globalBQTermCounter);
       code = inferAllTypes(code,`EmptyType());
       %match {
         TargetLanguageToCode[] << code -> { globalBQTermCounter = localBQTermCounter; }
         DeclarationToCode[] << code -> { globalBQTermCounter = localBQTermCounter; }
       }
+      //DEBUG System.out.println("------------- globalBQTermCounter after = " + globalBQTermCounter);
 
       //DEBUG printGeneratedConstraints(equationConstraints);
       //DEBUG printGeneratedConstraints(subtypeConstraints);

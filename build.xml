@@ -1226,6 +1226,7 @@
 
   <target name="src.all" description="cleans, build, test junit" depends="clean, clean.dist, stable.dist">
     <antcall target="src.dist"/>
+    <!--
     <antcall target="clean.test"/>
     <echo>Runs junit acceptance tests without optimization</echo>
     <antcall target="src.junit"/>  	
@@ -1233,12 +1234,12 @@
     <antcall target="src.junit.opt"/>
     <echo>Runs junit acceptance tests with new typer</echo>
     <antcall target="src.junit.nt"/>
-
+    -->
     <ant dir="${examples}" target="clean">
       <property name="tom.home" location="${src.dist}"/>
       <property name="tom.common.path" location="${src.lib}"/>
     </ant>
-
+    <!--
     <echo>Test tom-source in examples without optimization</echo>
     <ant dir="${examples}" target="junit">
       <property name="tom.home" location="${src.dist}"/>
@@ -1263,7 +1264,7 @@
       <property name="inlineplus" value="on"/>
       <property name="newtyper" value="off"/>
     </ant>
-
+    -->
     <echo>Test tom-source in examples with new typer</echo>
     <ant dir="${examples}" target="junit">
       <property name="tom.home" location="${src.dist}"/>
@@ -1274,7 +1275,6 @@
       <property name="inlineplus" value="off"/>
       <property name="newtyper" value="on"/>
     </ant>
-
   </target>
 
   <target name="examples.stable"
@@ -1334,6 +1334,7 @@
       <property name="optimize" value="on"/>
       <property name="optimize2" value="on"/>
       <property name="inlineplus" value="on"/>
+      <property name="newtyper" value="on"/>
     </ant>
   </target>
 

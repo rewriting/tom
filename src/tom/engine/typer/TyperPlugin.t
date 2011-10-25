@@ -143,6 +143,7 @@ public class TyperPlugin extends TomGenericPlugin {
         // verbose
         TomMessage.info(logger, null, 0, TomMessage.tomTypingPhase,
             Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
+        //EXP System.out.println("unknown file:1: INFO: TOM typing phase (" + (int)(System.currentTimeMillis()-startChrono) + "  ms)");
       } catch (Exception e) {
         TomMessage.error(logger, getStreamManager().getInputFileName(), 
             0, TomMessage.exceptionMessage, getClass().getName(), 
@@ -186,12 +187,16 @@ public class TyperPlugin extends TomGenericPlugin {
           newKernelTyper.getSubCounter(); 
         TomMessage.info(logger, null, 0, TomMessage.tomTypingPhase,
           Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));    
+        //EXP System.out.println("unknown file:1: INFO: TOM typing phase (" + (int)(System.currentTimeMillis()-startChrono) + "  ms)");
         TomMessage.info(logger, null, 0, TomMessage.tomTypingPhaseComplement,
           totalNumOfConstraints,newKernelTyper.getTVarCounter());
+        //EXP System.out.println("unknown file:1: INFO: TOM typing phase (" + totalNumOfConstraints + " constraint(s) and " + newKernelTyper.getTVarCounter() +  "  fresh type variable(s))");
         
         int totalBackquotes = newKernelTyper.getBQTerms();
         totalBackquotes = (totalBackquotes > 0?totalBackquotes:0); 
-        System.out.println("unknown file:1: INFO: TOM typing phase (" + totalBackquotes + "  BQTerms)");
+        TomMessage.info(logger, null, 0, TomMessage.tomTypingPhaseComplementBQ,
+          totalBackquotes);
+        //EXP System.out.println("unknown file:1: INFO: TOM typing phase (" + totalBackquotes + "  BQTerms)");
       } catch (Exception e) {
         TomMessage.error(logger, newKernelTyper.getCurrentInputFileName(), 
             0, TomMessage.exceptionMessage, getClass().getName(), 

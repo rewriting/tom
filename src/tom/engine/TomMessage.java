@@ -273,6 +273,8 @@ public class TomMessage extends BasicPlatformMessage {
       new TomMessage("TOM typing phase ({0,number,integer} ms)");
   public static final TomMessage tomTypingPhaseComplement =
       new TomMessage("TOM typing phase ({0} constraint(s) and {1} fresh type variable(s))");
+  public static final TomMessage tomTypingPhaseComplementBQ =
+      new TomMessage("TOM typing phase ({0} BQTerms)");
   public static final TomMessage tomFormattingPhase =
       new TomMessage("TOM formatting phase ({0,number,integer} ms)");
   public static final TomMessage tomExpandingPhase =
