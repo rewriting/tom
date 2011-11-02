@@ -11,5 +11,5 @@ package peano.PeanoAbstractType is interface
 
 	-- SharedObjectWithID
 
-end peano.PeanoAbstractType
+end peano.PeanoAbstractType;
 	
