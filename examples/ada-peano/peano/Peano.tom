@@ -1,0 +1,26 @@
+
+%typeterm Nat {
+  implement { peano.types.Nat }
+  is_sort(t) { ($t instanceof peano.types.Nat) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+%op Nat zero() {
+  is_fsym(t) { ($t instanceof peano.types.nat.zero) }
+  make() { peano.types.nat.zero.make() }
+}
+
+%op Nat suc(pred:Nat) {
+  is_fsym(t) { ($t instanceof peano.types.nat.suc) }
+  get_slot(pred, t) { $t.getpred() }
+  make(t0) { peano.types.nat.suc.make($t0) }
+}
+
+%op Nat plus(x1:Nat, x2:Nat) {
+  is_fsym(t) { ($t instanceof peano.types.nat.plus) }
+  get_slot(x1, t) { $t.getx1() }
+  get_slot(x2, t) { $t.getx2() }
+  make(t0, t1) { peano.types.nat.plus.make($t0, $t1) }
+}
+
