@@ -1,56 +1,45 @@
 package body SharedObjectFactory is 
 	with SharedObject; use SharedObject; 
- 	with Ada.Containers.Hash_Tables; use Ada.Containers;	
+
+
+	function build(this: SharedObjectFactory, prototype: SharedObject'Class) return SharedObject'Class is
+	begin
+	index: Integer := prototype.hashCode();
 	
-	--function hashSize is
-	--begin
-	--	return ( 2 ** n); 
-	--end;
+	e : SharedObjectEntry := this.table(index); 
+	prev : SharedObjectEntry := null;
+	deepness : Integer := 0;
 
-	--function hashMask is
-	--begin 
-	--	return (hashSize(this.logsize) - 1) ;
-	--end;
-
-	function hashKey is
-	begin
-		return -- ???
-	end;
-
-	function hash is
-	begin
-		return(hashCode(a.all));
-	end;	
-
-	function build is
-	begin
-	
-		foundObj : SharedObject;
-	-- HashTable
-	tab : array (1 .. this.tableSize) of Bucket ;	
-	tab = this.table;
-	-- Using hash to find appropriate bucket
-        hash : integer = prototype.hashCode ;
-	index : integer = hashKey(hash);
-	buck : Bucket = tab(index);
-	-- Introducing a cursor to go through it
-	pos : Cursor = First(buck);
-
-
-	-- Looking for the appropriate object if it exists
 	loop
-	exit when pos = No_Element ;
-	foundObj = buck.Element(pos);
-	if foundObj = prototype then
-		return foundObj ;
-	end if;
-	end loop	
+		exit when e = null;
+		
+		foundObj: SharedObj := e.element.all;
 
-	-- If nothing old found, build anew
-	foundObj = prototype.duplicate();
-	-- ..and insert it in appropriate bucket
-	Doubly_Linked_List.append(buck,foundObj,1);
-        return foundObj;  	
+		if prototype.equivalent(foundObj) then 
+			-- Successful search
+
+			if deepness > 5 and prev != null then
+				-- Swapping the found entry to first place if needed
+			prev.next := e.next;
+			e.next := this.table(index);
+			this.table(index) := e;
+			end if;
+		
+		return foundObj;
+		end if;
+
+		-- Going deeper in collision list
+		deepness := deepness + 1 ;
+		e := e.next; 
+
+	end loop;
+
+	-- Search failed: constructing and inserting a new entry 
+	foundObj = prototype.duplicate() ;
+	this.table(index) := (Next => this.table(index), Element => foundObj'Access);
+	return foundObj;
+		
+	end build;
 
 
 end SharedObjectFactory;
