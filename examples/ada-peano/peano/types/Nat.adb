@@ -3,59 +3,59 @@ with peano.types; use peano.types;
 
 package peano.types.nat is
 
-function iszero is 
+function iszero(this: Nat'Class) return boolean is 
 begin
 	return false;
 end;
 
-function issuc is 
+function issuc(this: Nat'Class) return boolean is 
 begin
 	return false;
 end;
 
-function isplus is 
+function isplus(this: Nat'Class) return boolean is 
 begin
 	return false;
 end;
 
-function getpred is
+function getpred(this: Nat'Class) return Nat'Class is
 begin
 	raise WrongType;
 end;
 
-function setpred is
-begin
-	raise WrongType;
-end;
-
-
-function getx1 is
-begin
-	raise WrongType;
-end;
-
-function setx1 is
+function setpred(this: Nat'Class, _arg: Nat'Class) is
 begin
 	raise WrongType;
 end;
 
 
-function getx2 is
+function getx1(this: Nat'Class) return Nat'Class is
 begin
 	raise WrongType;
 end;
 
-function setx2 is
+function setx1(this: Nat'Class, _arg: Nat'Class) is
 begin
 	raise WrongType;
 end;
 
-function length is
+
+function getx2(this: Nat'Class) return Nat'Class is
+begin
+	raise WrongType;
+end;
+
+function setx2(this: Nat'Class, _arg: Nat'Class) is
+begin
+	raise WrongType;
+end;
+
+function length(this: Nat'Class) return Integer is
 begin 
 	raise NotAList;
 end;
 
-function reverse is
+function reverse(this: Nat'Class) return Nat'Class is
 begin 
 raise NotAList;
 end;

@@ -15,8 +15,6 @@ package peano.types.nat.suc is new peano.types.Nat
 
 	function make(_pred : Nat) return suc;
 
-	function setpred(this: suc) return Nat;
-
 	procedure init(this: suc, _pred: Nat, hashCode: Integer);
 
 	procedure initHashCode(this: suc);
@@ -25,7 +23,7 @@ package peano.types.nat.suc is new peano.types.Nat
 
 	function getArity(this: suc) return Integer;
 
-	function duplicate(this: suc) return SharedObject;
+	function duplicate(this: suc) return SharedObject'Class;
 
 	function compareToLPO(this: suc, o: Object'Class) return Integer;
 
@@ -37,9 +35,9 @@ package peano.types.nat.suc is new peano.types.Nat
 
 	function issuc(this: suc) return boolean;
 
-	function getpred(this: suc) return Nat;
+	function getpred(this: suc) return Nat'Class;
 
-	function setpred(this: suc, set_arg: Nat) return Nat;
+	function setpred(this: suc, set_arg: Nat'Class) return Nat'Class;
 
 	function getChildCount(this: access Visitable'Class) return Integer;
 
@@ -50,6 +48,9 @@ package peano.types.nat.suc is new peano.types.Nat
 	function setChildren(this: access Visitable'Class, childs: ObjectPtrArrayPtr ) return ObjectPtrArrayPtr ;
 
 	function getChildren(this: access Visitable'Class) return ObjectPtrArrayPtr ; 
+
+	function hashFunction(this: suc) return Integer is protected;
+
 end peano.types.nat.suc ;
 
 	 

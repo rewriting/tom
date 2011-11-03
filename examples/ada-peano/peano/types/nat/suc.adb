@@ -4,43 +4,43 @@ with tom.library.sl.VisitablePackage, tom.library.sl.ObjectPack;
 
 package body peano.types.nat.suc is
 
-	function make is 
+	function make(_pred : Nat) return suc is 
 	begin
 
 		this.gomProto.initHashCode(_pred);
 		return (suc) factory.build(gomProto);
 	end;
 
-	procedure init is
+	procedure init(this: suc, _pred: Nat, hashCode: Integer) is
 	begin
 		this._pred = _pred;
 		this.hashCode = hashCode;
 	end;
 
-	procedure initHashCode is
+	procedure initHashCode(this: suc) is
 	begin
 		this._pred = _pred;
 		this.hashCode = this.hashFunction() ;
 	end;
 
-	function symbolName is
+	function symbolName(this: suc) is
 	begin
 		return "suc";
 	end;
 
-	function getArity is
+	function getArity(this: suc) is
 	begin
 		return 1;
 	end;
 
-	function duplicate is
+	function duplicate(this: suc) is
 	begin
 		clone := new suc
         	clone.init(this._pred, this.hashCode);
 		return clone;
 	end;
 
-	function compareToLPO is
+	function compareToLPO(this: suc, o: Object'Class) is
 	begin
 		-- Compare directly
 		ao : peano.PeanoAbstractType := (peano.PeanoAbstractType) o ;
@@ -57,7 +57,7 @@ package body peano.types.nat.suc is
 
 	end;
 
-	function compareTo is
+	function compareTo(this: suc, o: Object'Class) is
 	begin
 
 		-- Compare directly
@@ -79,12 +79,12 @@ package body peano.types.nat.suc is
 		Ada.Text_IO.Put("Unable to compare");
 	end;
 
-	function hashCode is 
+	function hashCode(this: suc) is 
 	begin
 		return this.hashCode;
 	end;
 
-	function equivalent is
+	function equivalent(this: suc, o: SharedObject'Class) is
 	begin
 		if o in suc then
 			peer: suc := (suc) o;
@@ -93,27 +93,27 @@ package body peano.types.nat.suc is
 		return false;
 	end;
 
-	function issuc is
+	function issuc(this: suc) is
 	begin
 		return true;
 	end;
 
-	function getpred is
+	function getpred(this: suc) is
 	begin
 		return this._pred;
 	end;
 
-	function setpred is
+	function setpred(this: suc, set_arg: Nat'Class) is
 	begin
 		return make(set_arg);
 	end;
 
-	function getChildCount is
+	function getChildCount(this: access Visitable'Class) return Integer is
 	begin
 		return 1;
 	end;
 
-	function getChildAt is
+	function getChildAt(this: access Visitable'Class, index: Integer) return VisitablePtr is
 	begin
 		case index is
 			when 0 => return this.all._pred'Access;
@@ -121,25 +121,34 @@ package body peano.types.nat.suc is
 		end case;
 	end;
 
-	function setChildren is
+	function setChildAt(this: access Visitable'Class, index: Integer, v:access Visitable'Class) return VisitablePtr is 
 	begin
-		if childs.all(0).all in Nat then return make( childs.all(0).all)'Access ;
+	
+		case index is
+			when 0 => return this.make(v.all)'Access;
+			when others => raise OutofBounds;
+		end case;
+	end;
+
+
+	function setChildren(this: access Visitable'Class, childs: ObjectPtrArrayPtr ) return ObjectPtrArrayPtr is
+	begin
+		if childs.all(0).all in Nat'Class then return make( childs.all(0).all)'Access ;
 		else raise Wrongtype;
 		end if;
 
 	end;
 
-	function getChildren is
+	function getChildren(this: access Visitable'Class) return ObjectPtrArrayPtr is
 	begin
 		res : array Natural range <> of tom.library.sl.Visitable ;
 
 		res(0) := this._pred;
 
 		return(res)'Access;
+	end;
 
-
-	function hashFunction is
+	function hashFunction(this: suc) return Integer is
 	begin 
 		-- ?? TODO
 	end;
-

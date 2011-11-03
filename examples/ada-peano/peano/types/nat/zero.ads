@@ -12,13 +12,13 @@ package peano.types.nat.zero is new peano.types.nat with
 
 
 
-	function make return zero;
+	function make(this: zero) return zero;
 	
 	function symbolName(this: zero) return String;
 	
 	function getArity(this: zero) return Integer;
 	
-	function duplicate(this: zero) return SharedObject;
+	function duplicate(this: zero) return SharedObject'Class;
 	
 -- String Builder	
 	
@@ -32,8 +32,6 @@ package peano.types.nat.zero is new peano.types.nat with
 	
 	function iszero(this: zero)  return boolean;
 
-	function getChildCount(this: zero) return Integer;
-
 	function getChildCount(this: access Visitable'Class) return Integer;
 
 	function getChildAt(this: access Visitable'Class, index: Integer) return VisitablePtr ;
@@ -44,7 +42,7 @@ package peano.types.nat.zero is new peano.types.nat with
 
 	function getChildren(this: access Visitable'Class) return ObjectPtrArrayPtr ; 
 
-	-- function hashFunction(this:zero) return int is protected; 
+	function hashFunction(this:zero) return Integer is protected; 
 
 end peano.types.nat.zero;
 

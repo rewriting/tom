@@ -24,7 +24,7 @@ package peano.types.nat.plus is new peano.types.nat
 
 	function getArity(this: plus) return Integer;
 
-	function duplicate(this: plus) return SharedObject;
+	function duplicate(this: plus) return SharedObject'Class;
 
 	function compareToLPO(this: plus, o: Object'Class) return Integer;
 
@@ -36,13 +36,13 @@ package peano.types.nat.plus is new peano.types.nat
 
 	function isplus(this: plus) return boolean;
 
-	function getx1(this: plus) return Nat;
+	function getx1(this: plus) return Nat'Class;
 
-	function setx1(this: plus, set_arg: Nat) return Nat;
+	function setx1(this: plus, set_arg: Nat) return Nat'Class;
 
-	function getx2(this: plus) return Nat;
+	function getx2(this: plus) return Nat'Class;
 
-	function setx2(this: plus, set_arg: Nat) return Nat;
+	function setx2(this: plus, set_arg: Nat) return Nat'Class;
 	
 	function getChildCount(this: access Visitable'Class) return Integer;
 
@@ -53,6 +53,8 @@ package peano.types.nat.plus is new peano.types.nat
 	function setChildren(this: access Visitable'Class, childs: ObjectPtrArrayPtr ) return ObjectPtrArrayPtr ;
 
 	function getChildren(this: access Visitable'Class) return ObjectPtrArrayPtr ; 
+
+	function hashFunction(this: plus) return Integer is protected;
 	
 end peano.types.nat.plus;
 
