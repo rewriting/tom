@@ -973,7 +973,7 @@
     </copy>
     
 	<!-- tom-ada sl library -->
-    <copy todir="${src.dist.lib}/compiletime/sl-ada">
+    <copy todir="${src.dist.lib}/runtime/sl-ada">
       <fileset dir="${src.src}/tom/library/sl/ada/">
         <include name="*"/>
       </fileset>
