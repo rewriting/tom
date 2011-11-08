@@ -192,7 +192,8 @@ public class ProblemSubAnti{
     tInt num = `one();
     %match {
       x << tPInt num -> { System.out.println("Line 1: " + `num); }
-      !x << tNInt num -> { System.out.println("Line 2: " + `num); }
+      x << tNInt num -> { System.out.println("Line 2: " + `num); }
+      !x << tNInt num -> { System.out.println("Line 3: " + `num); }
     }
   }
 }
