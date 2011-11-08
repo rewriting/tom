@@ -1033,9 +1033,9 @@ writer.write(%[
     %match(slotList) {
       ConcSlotField(_*,SlotField[Domain=domain],_*) -> {
        if (!getGomEnvironment().isBuiltinClass(`domain)) {
-         res.append(%[ && @arrayName@[@index@] instanceof @fullClassName(`domain)@]%);
+         res.append(%[ && @arrayName@[@index@] in @fullClassName(`domain)@]%);
        } else {
-         res.append(%[ && @arrayName@[@index@] instanceof tom.library.sl.VisitableBuiltin]%);
+         res.append(%[ && @arrayName@[@index@] in tom.library.sl.VisitableBuiltin]%);
        }
        index++;
       }
@@ -1383,7 +1383,7 @@ lbl:ConcHook(_*,MakeHook[HookArguments=args],_*) -> {
         writer.write("%op "+className(sortName)+" "+className()+"(");
         slotDecl(writer,slotList);
         writer.write(") {\n");
-        writer.write("  is_fsym(t) { ($t instanceof "+fullClassName()+") }\n");
+        writer.write("  is_fsym(t) { ($t in "+fullClassName()+") }\n");
         %match(slotList) {
           ConcSlotField(_*,slot@SlotField[Name=slotName],_*) -> {
             writer.write("  get_slot("+`slotName+", t) ");
