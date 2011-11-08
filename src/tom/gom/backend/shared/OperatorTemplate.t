@@ -469,7 +469,7 @@ SlotField head = slots.getHeadConcSlotField();
 slots = slots.getTailConcSlotField();
 if (getGomEnvironment().isBuiltinClass(head.getDomain())) {
   writer.write(%[
-      return @fieldName(head.getName())@ == typed_o.@getMethod(head)@()
+      return @fieldName(head.getName())@ = typed_o.@getMethod(head)@()
       ]%);
 
 } else {
@@ -483,7 +483,7 @@ while(!slots.isEmptyConcSlotField()) {
   slots = slots.getTailConcSlotField();
   if (getGomEnvironment().isBuiltinClass(head.getDomain())) {
     writer.write(%[
-        && @fieldName(head.getName())@ == typed_o.@getMethod(head)@()
+        && @fieldName(head.getName())@ = typed_o.@getMethod(head)@()
         ]%);
 
   } else {
@@ -923,7 +923,7 @@ writer.write(%[
     %match(slotList) {
       ConcSlotField(_*,SlotField[Name=fieldName],_*) -> {
         res.append(fieldName(`fieldName));
-        res.append("==");
+        res.append("=");
         res.append(peer);
         res.append(".");
         res.append(fieldName(`fieldName));

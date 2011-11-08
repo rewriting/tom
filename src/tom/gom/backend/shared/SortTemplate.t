@@ -353,7 +353,7 @@ matchblock: {
 ]%);
     if(maximalsharing) {
       writer.write(%[
-  equals(t1,t2) { ($t1==$t2) }
+  equals(t1,t2) { ($t1=$t2) }
 ]%);
     } else {
       writer.write(%[
