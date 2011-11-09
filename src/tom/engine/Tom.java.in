@@ -90,7 +90,6 @@ public class Tom {
       return 1;
     }
 
-
     // Retrieve the configuration file name
     String configFileName =
       PluginPlatformFactory.getInstance().extractConfigFileName(args);
