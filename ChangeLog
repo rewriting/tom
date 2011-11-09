@@ -1,12 +1,63 @@
+2011-09-09 francois
+ * newparser: fix %gom
+
+2011-09-09 pem
+ * newparser: improve CST signature
+ * improve Tree viewer
+
+2011-09-09 jcb
+ * newparser: fix and improve backquote
+
+2011-09-08 tavaresc
+ * add example to deal with non-linear star variables
+
+2011-09-07 jcb
+ * newparser: change parser behaviour to handle blocks in %gom construct
+
+2011-09-07 francois
+ * newparesr: meta-quote (%[...]%)
+
+2011-09-06 jcb
+ * newparser: change ParserAction to handle %gom options
+
+2011-09-06 francois
+ * newparser now handle labels
+
+2011-09-05 jcb
+ * newparser now handles 'p << T s' in pattern-matching (%match)
+
 2011-08-27 pem
  * bootinstall
  * integrate subtype and newparser into master
  * bumped to version 2.9
 
+2011-08-25 jcb
+ * improve newparser: %strategy
+
+2011-08-22 jcb
+ * improve newparser:
+   * ParseIncludeConstruct
+   * get_default
+   * backquote
+   * fixes in lexers and parser
+
 2011-08-18 pem
  * improve Gom: generate better names for args of congruence strategies
  * merge TyperPlugin with NewTyper
  * bootstrap
+
+2011-08-01 jcb
+ * delete 'literals duplication' (and improve sonar score
+ * remove dead code
+ * improve sonar score by improving generated code
+
+2011-07-25 jcb
+ * add automatic subtyping in Tom-EMF to stick with Eclipse standard: an
+ element that does not extends an other element of the current meta-model
+ extends EObject
+
+2011-07-25 jcb
+ * fix Tom-EMF to avoid multiple generation of mappings
 
 2011-06-15 pem
  * bootinstall
@@ -28,6 +79,9 @@
 
 2011-05-24 pem
  * bootinstall
+
+2011-05-24 jcb
+ * add get_default generation in Tom-EMF
 
 2011-05-20 pem
  * add the possibility to define default-value in a %op

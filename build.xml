@@ -1139,7 +1139,7 @@
 
   <target name="test.nt" depends="src.dist"
     description="Compile acceptance tests with new typer">
-    <ant dir="${test}" target="build">
+    <ant dir="${test}" target="build.nt">
       <property name="tom.home" value="${src.dist}"/>
       <property name="optimize" value="off"/>
       <property name="optimize2" value="off"/>
@@ -1190,7 +1190,7 @@
   <target name="src.junit.nt" depends="junit.nt"/>
   <target name="junit.nt" description="Runs junit acceptance tests with new typer"
     depends="clean.test, test.nt">
-    <ant dir="${test}" target="junit">
+    <ant dir="${test}" target="junit.nt">
       <property name="tom.home" value="${src.dist}"/>
       <property name="newtyper" value="on"/>
     </ant>
