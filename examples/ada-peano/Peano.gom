@@ -1,5 +1,0 @@
-    module Peano
-    abstract syntax
-    Nat = zero()
-        | suc(pred:Nat)
-        | plus(x1:Nat, x2:Nat)
