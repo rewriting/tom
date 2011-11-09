@@ -349,11 +349,11 @@ matchblock: {
     writer.write(%[
 %typeterm @className()@ {
   implement { @fullClassName()@ }
-  is_sort(t) { ($t instanceof @fullClassName()@) }
+  is_sort(t) { ($t in @fullClassName()@) }
 ]%);
     if(maximalsharing) {
       writer.write(%[
-  equals(t1,t2) { ($t1==$t2) }
+  equals(t1,t2) { ($t1=$t2) }
 ]%);
     } else {
       writer.write(%[
