@@ -1,5 +1,5 @@
     with Ada.Text_IO; use Ada.Text_IO;
-    with main.PeanoAbstractType.Nat ; 
+    with main.PeanoAbstractType.Nat ; use main.PeanoAbstractType.Nat; 
    
 
     package body Main is
@@ -62,7 +62,7 @@
 
     
     
-    procedure evaluate(n: Nat) is
+    function evaluate(n: Nat) return Nat is
     begin
     
     if  (n in Nat)  then 

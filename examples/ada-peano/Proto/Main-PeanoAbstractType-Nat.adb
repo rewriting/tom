@@ -55,9 +55,14 @@ begin
 	raise NotAList;
 end;
 
-function reverse(this: Nat'Class) return Nat'Class is
+function revers(this: Nat'Class) return Nat'Class is
 begin 
 raise NotAList;
+end;
+
+function toString(this: Nat'Class) return String is 
+begin
+	return "UnNamed";
 end;
 
 
