@@ -12,7 +12,7 @@ package body peano.types.nat.zero is
 	-- Name & Arity
 	--
 	
-	function symbolName(this: zero) return String is
+	function toString(this: zero) return String is
 	begin
 		return "zero";
 	end;

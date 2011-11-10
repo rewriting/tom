@@ -1,25 +1,24 @@
-with peano.types.nat; use peano.types.nat;
-with tom.library.sl.VisitablePackage, tom.library.sl.ObjectPack;
+with main.PeanoAbstractType.Nat; use main.peanoabstracttype.nat;
 
 
 package body peano.types.nat.suc is
 
-	function make(_pred : Nat) return suc is 
+	function make(pred : Nat) return suc is 
 	begin
 
-		this.gomProto.initHashCode(_pred);
+		this.gomProto.initHashCode(pred);
 		return (suc) factory.build(gomProto);
 	end;
 
-	procedure init(this: suc, _pred: Nat, hashCode: Integer) is
+	procedure init(this: suc, pred: Nat, hashCode: Integer) is
 	begin
-		this._pred = _pred;
+		this.pred = pred;
 		this.hashCode = hashCode;
 	end;
 
 	procedure initHashCode(this: suc) is
 	begin
-		this._pred = _pred;
+		this.pred = pred;
 		this.hashCode = this.hashFunction() ;
 	end;
 
@@ -36,7 +35,7 @@ package body peano.types.nat.suc is
 	function duplicate(this: suc) is
 	begin
 		clone := new suc
-        	clone.init(this._pred, this.hashCode);
+        	clone.init(this.pred, this.hashCode);
 		return clone;
 	end;
 
@@ -50,8 +49,8 @@ package body peano.types.nat.suc is
 		if symbCmp!=0 then return symbCmp; end if;
 		-- Compare childs
 		tco : suc :=(suc) ao;
-		int _predCMmp = (this._pred).compareToLPO(tco._pred);
-		if _predCmp != 0 then return _predCmp; end if;
+		int predCMmp = (this.pred).compareToLPO(tco.pred);
+		if predCmp != 0 then return predCmp; end if;
 
 		Ada.Text_IO.Put("Unable to compare");
 
@@ -73,8 +72,8 @@ package body peano.types.nat.suc is
 		if symbCmp!=0 then return symbCmp; end if;
 		-- Compare childs
 		tco : suc :=(suc) ao;
-		int _predCMmp = (this._pred).compareToLPO(tco._pred);
-		if _predCmp != 0 then return _predCmp; end if;
+		int predCMmp = (this.pred).compareToLPO(tco.pred);
+		if predCmp != 0 then return predCmp; end if;
 
 		Ada.Text_IO.Put("Unable to compare");
 	end;
@@ -88,7 +87,7 @@ package body peano.types.nat.suc is
 	begin
 		if o in suc then
 			peer: suc := (suc) o;
-			return this._pred = peer._pred ;
+			return this.pred = peer.pred ;
 		end if;
 		return false;
 	end;
@@ -100,7 +99,7 @@ package body peano.types.nat.suc is
 
 	function getpred(this: suc) is
 	begin
-		return this._pred;
+		return this.pred;
 	end;
 
 	function setpred(this: suc, set_arg: Nat'Class) is
@@ -116,7 +115,7 @@ package body peano.types.nat.suc is
 	function getChildAt(this: access Visitable'Class, index: Integer) return VisitablePtr is
 	begin
 		case index is
-			when 0 => return this.all._pred'Access;
+			when 0 => return this.all.pred'Access;
 			when others => raise Outofbound;
 		end case;
 	end;
@@ -143,7 +142,7 @@ package body peano.types.nat.suc is
 	begin
 		res : array Natural range <> of tom.library.sl.Visitable ;
 
-		res(0) := this._pred;
+		res(0) := this.pred;
 
 		return(res)'Access;
 	end;

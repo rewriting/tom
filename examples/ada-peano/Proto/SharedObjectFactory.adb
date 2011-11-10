@@ -2,11 +2,17 @@ package body SharedObjectFactory is
 	with SharedObject; use SharedObject; 
 
 
+
+	function projector(this: SharedObjectFactory, entree: Integer) return Integer is 
+	begin
+		return entree mod SharedObjectFactory.table'Length ;		
+	end projector;
+
 	function build(this: SharedObjectFactory, prototype: SharedObject'Class) return SharedObject'Class is
 	begin
-	index: Integer := prototype.hashCode();
+	index: Integer := this.projecteur(prototype.hashCode);
 	
-	e : SharedObjectEntry := this.table(index); 
+	e : SharedObjectEntry := this.table(index);
 	prev : SharedObjectEntry := null;
 	deepness : Integer := 0;
 
@@ -21,7 +27,7 @@ package body SharedObjectFactory is
 			if deepness > 5 and prev != null then
 				-- Swapping the found entry to first place if needed
 			prev.next := e.next;
-			e.next := this.table(index);
+			e.next := this.table(index); 
 			this.table(index) := e;
 			end if;
 		
@@ -30,8 +36,9 @@ package body SharedObjectFactory is
 
 		-- Going deeper in collision list
 		deepness := deepness + 1 ;
+		prev := e;
 		e := e.next; 
-
+		
 	end loop;
 
 	-- Search failed: constructing and inserting a new entry 

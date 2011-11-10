@@ -1,21 +1,19 @@
-with peano.types.nat; use peano.types.nat;
-with tom.library.sl.VisitablePackage, tom.library.sl.ObjectPack;
-use tom.library.sl.VisitablePackage, tom.library.sl.ObjectPack;
+with main.PeanoAbstractType.Nat; use main.peanoabstracttype.nat;
 
-package peano.types.nat.suc is new peano.types.Nat
-	type suc is tagged new Nat with Visitable;
+package Main.PeanoAbstractType.Nat.suc is
 
+	type suc is new Nat with
 	record
 	gomProto: suc := new suc;
 	hashCode: integer;
-	_pred: Nat
-	end record
+	pred: Nat;
+	end record;
 	
-	gomProto: suc := new suc();
+	gomProto: suc := new suc;
 
-	function make(_pred : Nat) return suc;
+	function make(pred : Nat) return suc;
 
-	procedure init(this: suc, _pred: Nat, hashCode: Integer);
+	procedure init(this: suc; pred: Nat; hashCode: Integer);
 
 	procedure initHashCode(this: suc);
 	
@@ -25,32 +23,32 @@ package peano.types.nat.suc is new peano.types.Nat
 
 	function duplicate(this: suc) return SharedObject'Class;
 
-	function compareToLPO(this: suc, o: Object'Class) return Integer;
+	function compareToLPO(this: suc; o: Object'Class) return Integer;
 
-	function compareTo(this: suc, o: Object'Class) return Integer;
+	function compareTo(this: suc; o: Object'Class) return Integer;
 
 	function hashcode(this: suc) return Integer;
 
-	function equivalent(this: suc, o: SharedObject'Class) return boolean;
+	function equivalent(this: suc; o: SharedObject'Class) return boolean;
 
 	function issuc(this: suc) return boolean;
 
 	function getpred(this: suc) return Nat'Class;
 
-	function setpred(this: suc, set_arg: Nat'Class) return Nat'Class;
+	function setpred(this: suc; set_arg: Nat'Class) return Nat'Class;
 
 	function getChildCount(this: access Visitable'Class) return Integer;
 
-	function getChildAt(this: access Visitable'Class, index: Integer) return VisitablePtr ;
+	function getChildAt(this: access Visitable'Class; index: Integer) return VisitablePtr ;
 
-	function setChildAt(this: access Visitable'Class, index: Integer, v:access Visitable'Class) return VisitablePtr;
+	function setChildAt(this: access Visitable'Class; index: Integer; v:access Visitable'Class) return VisitablePtr;
 
-	function setChildren(this: access Visitable'Class, childs: ObjectPtrArrayPtr ) return ObjectPtrArrayPtr ;
+	function setChildren(this: access Visitable'Class; childs: ObjectPtrArrayPtr ) return ObjectPtrArrayPtr ;
 
 	function getChildren(this: access Visitable'Class) return ObjectPtrArrayPtr ; 
 
-	function hashFunction(this: suc) return Integer is protected;
+	function hashFunction(this: suc) return Integer ;
 
-end peano.types.nat.suc ;
+end Main.PeanoAbstractType.Nat.suc;
 
 	 

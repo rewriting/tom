@@ -1,48 +1,42 @@
-with peano.types.nat; use peano.types.nat;
-with tom.library.sl.VisitablePackage, tom.library.sl.ObjectPack;
-use tom.library.sl.VisitablePackage, tom.library.sl.ObjectPack;
+with main.PeanoAbstractType.Nat; use main.peanoabstracttype.nat;
 
-package peano.types.nat.zero is new peano.types.nat with
+package Main.PeanoAbstractType.Nat.zero is 
 
-	type zero is tagged new Nat with Visitable;
+	type zero is new Nat with
 		record
 		hashCode: integer;
-		gomProto: zero := (zero) factory.build(new zero())
+		gomProto: zero := build(factory,new zero);
 		end record;
-
-
 
 	function make(this: zero) return zero;
 	
-	function symbolName(this: zero) return String;
+	function toString(this: zero) return String;
 	
 	function getArity(this: zero) return Integer;
 	
 	function duplicate(this: zero) return SharedObject'Class;
 	
--- String Builder	
+	function compareToLPO(this: zero;o: Object'Class) return Integer;
 	
-	function compareToLPO(this: zero,o: Object'Class) return Integer;
-	
-	function compareTo(this: zero, o: Object'Class) return Integer;
+	function compareTo(this: zero; o: Object'Class) return Integer;
 	
 	function hashCode(this: zero) return Integer;
 	
-	function equivalent(this: zero, o: shared.SharedObject'Class) return boolean; 
+	function equivalent(this: zero; o: shared.SharedObject'Class) return boolean; 
 	
 	function iszero(this: zero)  return boolean;
 
 	function getChildCount(this: access Visitable'Class) return Integer;
 
-	function getChildAt(this: access Visitable'Class, index: Integer) return VisitablePtr ;
+	function getChildAt(this: access Visitable'Class; index: Integer) return VisitablePtr ;
 
-	function setChildAt(this: access Visitable'Class, index: Integer, v: access Visitable'Class) return VisitablePtr;
+	function setChildAt(this: access Visitable'Class; index: Integer; v: access Visitable'Class) return VisitablePtr;
 
-	function setChildren(this: access Visitable'Class, childs: ObjectPtrArrayPtr ) return ObjectPtrArrayPtr ;
+	function setChildren(this: access Visitable'Class; childs: ObjectPtrArrayPtr ) return ObjectPtrArrayPtr ;
 
 	function getChildren(this: access Visitable'Class) return ObjectPtrArrayPtr ; 
 
-	function hashFunction(this:zero) return Integer is protected; 
+	function hashFunction(this:zero) return Integer; 
 
-end peano.types.nat.zero;
+end Main.PeanoAbstractType.Nat.zero;
 

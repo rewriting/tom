@@ -1,12 +1,11 @@
 with Main.PeanoAbstractType ; use Main.PeanoAbstractType ;
-with VisitablePackage, ObjectPack;
+with VisitablePackage, ObjectPack; use ObjectPack;
 
 package Main.PeanoAbstractType.Nat is 
 
-	type Nat is new PeanoAbstractType with record
+	type Nat is abstract new PeanoAbstractType with record
 	hashCode: integer;
 	end record;
-
 
 	function iszero(this: Nat'Class) return boolean;
 
@@ -30,9 +29,7 @@ package Main.PeanoAbstractType.Nat is
 
 	function revers(this: Nat'Class) return Nat'Class ;
 
-	function toString(this: Nat'Class) return String ; 
-
-
+	
 end Main.PeanoAbstractType.Nat;
 
 

@@ -1,17 +1,16 @@
 with VisitablePackage; use VisitablePackage;
+with SharedObjectFactory; use SharedObjectFactory;
+with SharedObject; use SharedObject;
 
 package Main.PeanoAbstractType is
 
-	type PeanoAbstractType is abstract new Visitable with
+	type PeanoAbstractType is abstract new Visitable and SharedObject.SharedObject with
 		record
-			factory : shared.SharedObjectFactory := new shared.SharedObjectFactory; 
+			factory : access SharedObjectFactory.SharedObjectFactory := new SharedObjectFactory.SharedObjectFactory; 
 		end record;
 
 	function symbolName return String is abstract;
 
---	 function toString
-
-	-- SharedObjectWithID
 
 end Main.PeanoAbstractType;
 	
