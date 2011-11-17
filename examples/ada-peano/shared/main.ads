@@ -5,10 +5,12 @@ package Main is
 			serie: Integer:=42;
 		end record;
 
-function duplicate(this: testie) return SharedObject'Class ;
+overriding
+function duplicate(this: testie) return testie ;
 
 function equivalent(this: testie; o: testie) return boolean ; 
 
+overriding
 function hashCode(this: testie) return Integer ;
 
 function toString(this: testie) return String ;

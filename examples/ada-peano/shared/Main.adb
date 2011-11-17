@@ -3,7 +3,7 @@ with SharedObjectP; use SharedObjectP;
 
 package body Main is
 	
-function duplicate(this: testie) return SharedObject'Class is
+function duplicate(this: testie) return testie is
 begin
 	return this;
 end duplicate;
@@ -15,6 +15,7 @@ begin
 	return false;
 end equivalent;
 
+overriding
 function hashCode(this: testie) return Integer is
 begin
 	return this.serie;

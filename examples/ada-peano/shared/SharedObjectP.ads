@@ -5,8 +5,9 @@ package SharedObjectP is
 	
 	overriding
 	function toString(this:SharedObject) return String;
-	function duplicate(this: SharedObject'Class) return SharedObject'Class is abstract;
-	function equivalent(this: SharedObject'Class; o: SharedObject'Class) return Boolean is abstract;
-	function hashCode(this: SharedObject'Class) return Integer is abstract;
+	function duplicate(this: SharedObject) return SharedObject ;
+	function equivalent(this: SharedObject; o: SharedObject) return Boolean;
+	function hashCode(this: SharedObject) return Integer;
+
 
 end SharedObjectP;
