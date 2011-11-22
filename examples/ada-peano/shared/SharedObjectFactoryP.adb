@@ -14,15 +14,16 @@ package body SharedObjectFactoryP is
 index: Integer := projector(this,prototype.hashCode);
 e : access SharedObjectEntry := this.table(index);
 prev : access SharedObjectEntry := null;
+construct : aliased SharedObject'Class := prototype ;
 deepness : Integer := 0;
 	begin
 	
-	status := 0 ; --Default value
+	status := -1 ; --Default value
 
 	loop
 		exit when e = null;
 	
-		foundObj := e.element'Unchecked_Access;	
+		foundObj := e.element;	
 
 		if equivalent(prototype,foundObj.all) then 
 			-- Successful search
@@ -34,8 +35,8 @@ deepness : Integer := 0;
 			this.table(index) := this.table(index).next;
 			end if;
 
-
-		status := +1 ; -- Signalling already existant SharedObject
+		
+		status := 0 ; -- Signalling already existant SharedObject
 		return ;
 		end if;
 
@@ -46,33 +47,17 @@ deepness : Integer := 0;
 		
 	end loop;
 
-	this := addingEntryToTable(this,index,prototype);
-	foundObj := this.table(index).element'Access;
 	this.Size := this.Size+1 ;
-	status := -1 ; --Signalling construction of a new SharedObject
-	end build;
-
-
-	function addingEntryToTable(this: in SharedObjectFactory; index: in Integer; prototype: SharedObject'Class) return SharedObjectFactory is
+	status := +1 ; --Signalling construction of a new SharedObject
 	
-		newEntry : aliased SharedObjectEntry ;
-		newSharedObject : SharedObject := prototype.duplicate ;
-		tempFactory : SharedObjectFactory := this ;
-			
-	begin
+	this.table(index) := new SharedObjectEntry'(this.table(index),null) ;	
+	construct := duplicate(prototype) ;	
+	this.table(index).element := construct'Unchecked_Access ;	
 
-	return tempFactory : SharedObjectFactory := this  do 
-
-		newEntry.Next := this.table(index); 
-		newEntry.Element := newSharedObject;
-
-		tempFactory.table(index) := newEntry'Access ;
-		
-	end return ;
-
-	end addingEntryToTable; 
-
-
+	foundObj := this.table(index).element;
+	
+	
+	end build;
 
 
 	function toString(this: SharedObjectFactory) return String is

@@ -7,7 +7,7 @@ package SharedObjectFactoryP is
 	type SharedObjectEntry is  
 	record
 	Next : access SharedObjectEntry := null;
-	Element : aliased SharedObject ;
+	Element : SharedObjectPtr ;
 	end record;
 
 	type SharedObjectEntryPtr is access all SharedObjectEntry;	
@@ -25,7 +25,7 @@ package SharedObjectFactoryP is
 
 	procedure build(this:in out SharedObjectFactory; prototype: in SharedObject'Class; foundObj: out SharedObjectPtr; status: out Integer) ;
 
-	function addingEntryToTable(this: in SharedObjectFactory; index: in Integer; prototype: SharedObject'Class) return SharedObjectFactory ;
+--	function addingEntryToTable(this: in SharedObjectFactory; index: in Integer; prototype: SharedObject'Class) return SharedObjectFactory ;
 
 	function toString(this: SharedObjectFactory) return String;
 
