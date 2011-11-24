@@ -1,66 +1,64 @@
-with tom.library.sl.VisitablePackage, tom.library.sl.ObjectPack;
-with peano.types; use peano.types;
+package body Main.PeanoAbstractType.Nat is
 
-package Main.PeanoAbstractType.Nat is
+	pseudo_Abstract_Called : Exception ;
 
-function iszero(this: Nat'Class) return boolean is 
+function iszero(this: Nat) return boolean is 
 begin
 	return false;
 end;
 
-function issuc(this: Nat'Class) return boolean is 
+function issuc(this: Nat) return boolean is 
 begin
 	return false;
 end;
 
-function isplus(this: Nat'Class) return boolean is 
+function isplus(this: Nat) return boolean is 
 begin
 	return false;
 end;
 
-function getpred(this: Nat'Class) return Nat'Class is
+function getpred(this: Nat) return Nat'Class is
 begin
-	raise WrongType;
+	raise pseudo_Abstract_Called;
+	return this;
 end;
 
-function setpred(this: Nat'Class, _arg: Nat'Class) is
+procedure setpred(this: Nat; arg: Nat) is
 begin
-	raise WrongType;
+	raise pseudo_Abstract_Called;
+
 end;
 
-
-function getx1(this: Nat'Class) return Nat'Class is
+function duplicate(this: Nat) return Nat is
 begin
-	raise WrongType;
+	raise pseudo_Abstract_Called;
+	return this;
 end;
 
-function setx1(this: Nat'Class, _arg: Nat'Class) is
+function getx1(this: Nat) return Nat'Class is
 begin
-	raise WrongType;
+	raise pseudo_Abstract_Called;
+	return this;
 end;
 
-
-function getx2(this: Nat'Class) return Nat'Class is
+procedure setx1(this: Nat; arg: Nat)  is
 begin
-	raise WrongType;
+	raise pseudo_Abstract_Called;
 end;
 
-function setx2(this: Nat'Class, _arg: Nat'Class) is
+
+function getx2(this: Nat) return Nat'Class is
 begin
-	raise WrongType;
+	raise pseudo_Abstract_Called;
+	return this;
 end;
 
-function length(this: Nat'Class) return Integer is
-begin 
-	raise NotAList;
+procedure setx2(this: Nat; arg: Nat)  is
+begin
+	raise pseudo_Abstract_Called;
 end;
-
-function revers(this: Nat'Class) return Nat'Class is
-begin 
-raise NotAList;
-end;
-
 
 end  Main.PeanoAbstractType.Nat ; 
+
 
 

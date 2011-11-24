@@ -1,49 +1,26 @@
 with main.PeanoAbstractType.Nat; use main.peanoabstracttype.nat;
-
+with main.PeanoAbstractType.Nat.zero ; use main.PeanoAbstractType.Nat.zero ;
 package main.PeanoAbstractType.Nat.plus is 
 
 	type plus is new Nat with 
 	record
-	x1 : Nat;
-	x2 : Nat;
-	end record;
-	
-	overriding
-	function toString(this: plus) return String;
-	
-	overriding
-	function getChildCount(this: access plus) return Integer;
-	
-	overriding
-	function getChildAt(this: access plus; index: Integer) return VisitablePtr ;
-	
-	overriding	
-	function setChildren(this: access plus; childs: ObjectPtrArrayPtr ) return ObjectPtrArrayPtr ;
-	
-	overriding
-	function getChildren(this: access plus) return ObjectPtrArrayPtr ; 
+	x1 : NatPtr; 
+	x2 : NatPtr; 
+end	record;
 
-	function setChildAt(this: access plus; index: Integer; v: access plus) return VisitablePtr;
+	function make(x1: NatPtr; x2: NatPtr) return plus;
 
+	procedure initHashCode(this: in out plus; x1: NatPtr; x2: NatPtr);
 
+	procedure init(this: in out plus; x1: NatPtr; x2: NatPtr; hash: Integer) ; 
 
-	function make(x1: Nat; x2: Nat) return plus;
-
-	procedure init(this: plus; x1: Nat; x2: Nat; hashCode: Integer);
-
-	procedure initHashCode(this: plus);
-	
 	function symbolName(this: plus) return String;
+
+	function toString(this: plus) return String;
 
 	function getArity(this: plus) return Integer;
 
-	function duplicate(this: plus) return SharedObject'Class;
-
-	function compareToLPO(this: plus; o: Object'Class) return Integer;
-
-	function compareTo(this: plus; o: Object'Class) return Integer;
-
-	function hashcode(this: plus) return Integer;
+	function duplicate(this: plus) return plus;
 
 	function equivalent(this: plus; o: SharedObject'Class) return boolean;
 
@@ -51,13 +28,16 @@ package main.PeanoAbstractType.Nat.plus is
 
 	function getx1(this: plus) return Nat'Class;
 
-	function setx1(this: plus; set_arg: Nat) return Nat'Class;
+	function setx1(this: plus; set_arg: NatPtr) return Nat'Class;
 
 	function getx2(this: plus) return Nat'Class;
 
-	function setx2(this: plus; set_arg: Nat) return Nat'Class;
+	function setx2(this: plus; set_arg: NatPtr) return Nat'Class;
 	
 	function hashFunction(this: plus) return Integer ;
+
+	plusGomProto : access  plus := new plus ;
 	
 end main.PeanoAbstractType.Nat.plus;
+
 

@@ -1,13 +1,15 @@
+with peano.types.nat; use peano.types.nat;
+with tom.library.sl.VisitablePackage, tom.library.sl.ObjectPack;
 
-package body Main.PeanoAbstractType.Nat.zero is 
 
-	function make return zero is 
+package body peano.types.nat.zero is 
+
+	function make(this: zero) return zero is 
 	begin
-		return zero(zeroGomProto.all) ;
+		return this.gomProto ;
 	end;
 
 	
-
 	function toString(this: zero) return String is
 	begin
 		return "zero";
@@ -23,10 +25,10 @@ package body Main.PeanoAbstractType.Nat.zero is
 		return this;
 	end;
 
-	function equivalent(this: zero; o: SharedObject'Class) return boolean is
+	function equivalent(this: zero, o: shared.SharedObject'Class) return boolean is
 	begin
 	
-		if o in zero then return true; end if ;
+		if o in zero then return true;
 		return false;
 
 	end;
@@ -39,12 +41,9 @@ package body Main.PeanoAbstractType.Nat.zero is
 	
 	function hashFunction(this:zero) return Integer is 
 	begin
-	
-		return 0 ; 
-	
+--TODO
 	end;
 
-end Main.PeanoAbstractType.Nat.zero;
-
+end peano.types.nat.zero;
 
 

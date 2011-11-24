@@ -1,35 +1,41 @@
 with Main.PeanoAbstractType ; use Main.PeanoAbstractType ;
-with VisitablePackage, ObjectPack; use ObjectPack;
+--with VisitablePackage, ObjectPack; use ObjectPack;
+
 
 package Main.PeanoAbstractType.Nat is 
 
-	type Nat is abstract new PeanoAbstractType with record
+	type Nat is new PeanoAbstractType with record
 	hashCode: integer;
 	end record;
 
-	function iszero(this: Nat'Class) return boolean;
 
-	function issuc(this: Nat'Class) return boolean;
+	type NatPtr is access all Nat'Class;
+	type NatPtrArray is array (Natural range <>) of NatPtr;
+	type NatPtrArrayPtr is access all NatPtrArray;
 
-	function isplus(this: Nat'Class) return boolean;
+	function duplicate(this: Nat) return Nat ; 
 
-	function getpred(this: Nat'Class) return Nat'Class ;
+	function iszero(this: Nat) return boolean;
 
-	function setpred(this: Nat'Class; arg: Nat'Class) return Nat'Class ;
+	function issuc(this: Nat) return boolean;
 
-	function getx1(this: Nat'Class) return Nat'Class ;
+	function isplus(this: Nat) return boolean;
 
-	function setx1(this: Nat'Class; arg: Nat'Class) return Nat'Class ;
+	function getpred(this: Nat) return Nat'Class ;
 
-	function getx2(this: Nat'Class) return Nat'Class ;
+	procedure setpred(this: Nat; arg: Nat) ;
 
-	function setx2(this: Nat'Class; arg: Nat'Class) return Nat'Class ;
+	function getx1(this: Nat) return Nat'Class ;
 
-	function length(this: Nat'Class) return Integer ;
+	procedure setx1(this: Nat; arg: Nat)  ;
 
-	function revers(this: Nat'Class) return Nat'Class ;
+	function getx2(this: Nat) return Nat'Class ;
+
+	procedure setx2(this: Nat; arg: Nat)  ;
 
 	
 end Main.PeanoAbstractType.Nat;
+
+
 
 
