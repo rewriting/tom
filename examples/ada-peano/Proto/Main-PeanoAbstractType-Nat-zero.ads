@@ -5,7 +5,10 @@ package Main.PeanoAbstractType.Nat.zero is
 	type zero is new Nat with null record;
 
 	function make return zero;
-	
+
+	overriding
+	function duplicate(this: zero) return SharedObject'Class;
+
 	function toString(this: zero) return String;
 	
 	function getArity(this: zero) return Integer;

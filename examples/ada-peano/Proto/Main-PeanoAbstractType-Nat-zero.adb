@@ -1,12 +1,19 @@
 
+
 package body Main.PeanoAbstractType.Nat.zero is 
 
-	function make return zero is 
+	function make return Zero is 
+	foundObj : SharedObjectPtr ;
+	tempPhy : SharedObject'Class := zeroGomProto.all ;
 	begin
-		return zero(zeroGomProto.all) ;
+		build(Main.PeanoAbstractType.factory.all,zeroGomProto.all,foundObj,tempPhy);
+		return zero(foundObj.all) ;
 	end;
 
-	
+	function duplicate(this: zero) return SharedObject'Class is
+	begin
+	return this;
+end ;
 
 	function toString(this: zero) return String is
 	begin

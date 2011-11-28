@@ -3,24 +3,24 @@ with main.PeanoAbstractType.Nat; use main.peanoabstracttype.nat;
 
 package body Main.PeanoAbstractType.Nat.Suc is
 
-	function make(pred : NatPtr) return suc is 
+	function make(pred : SharedObjectPtr) return Suc is 
 	 tempAdr : SharedObjectPtr ;
+	 tempPhy : SharedObject'Class := pred.all ;
 	begin
 
 		initHashCode(sucGomProto.all,pred);
-	
-		build(main.PeanoAbstractType.factory.all,sucGomProto.all,tempAdr);
-		return suc(tempAdr.all) ;	
+		build(main.PeanoAbstractType.factory.all,sucGomProto.all,tempAdr,tempPhy);
+		return suc(tempPhy) ;	
 
 	end;
 
-	procedure init(this: in out suc; pred: NatPtr; hashCode: Integer) is
+	procedure init(this: in out suc; pred: SharedObjectPtr; hashCode: Integer) is
 	begin
 		this.pred := pred;
 		this.hashCode := hashCode;
 	end;
 
-	procedure initHashCode(this: in out suc; pred: NatPtr) is
+	procedure initHashCode(this: in out suc; pred: SharedObjectPtr) is
 	begin
 		this.pred := pred;
 		this.hashCode := this.hashFunction ;
@@ -43,7 +43,7 @@ package body Main.PeanoAbstractType.Nat.Suc is
 		return 1;
 	end;
 
-	function duplicate(this: suc) return suc is
+	function duplicate(this: suc) return SharedObject'Class is
 	clone : access suc := new suc ;	
 	begin
         	clone.init(this.pred, this.hashCode);
@@ -65,16 +65,6 @@ package body Main.PeanoAbstractType.Nat.Suc is
 	function issuc(this: suc) return Boolean is
 	begin
 		return true;
-	end;
-
-	function getpred(this: suc) return Nat'Class is
-	begin
-		return this.pred.all;
-	end;
-
-	function setpred(this: suc; set_arg: NatPtr) return Nat'Class is
-	begin
-		return make(set_arg) ;
 	end;
 
 	function hashFunction(this: suc) return Integer is

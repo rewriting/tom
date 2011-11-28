@@ -1,13 +1,12 @@
 with ObjectPack; use ObjectPack;
 
 package SharedObjectP is 
-	type SharedObject is new Object with null record;
+	type SharedObject is abstract new Object with record
+	hashCode : Integer ; 
+end record ;	
 	
-	overriding
-	function toString(this:SharedObject) return String;
-	function duplicate(this: SharedObject) return SharedObject ;
-	function equivalent(this: SharedObject; o: SharedObject) return Boolean;
-	function hashCode(this: SharedObject) return Integer;
+	function duplicate(this: SharedObject) return SharedObject'Class is abstract ;
+	function equivalent(this: SharedObject; o: SharedObject'Class) return Boolean ;
 
 
 end SharedObjectP;

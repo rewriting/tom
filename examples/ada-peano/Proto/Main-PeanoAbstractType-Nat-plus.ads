@@ -4,15 +4,15 @@ package main.PeanoAbstractType.Nat.plus is
 
 	type plus is new Nat with 
 	record
-	x1 : NatPtr; 
-	x2 : NatPtr; 
+	x1 : SharedObjectPtr; 
+	x2 : SharedObjectPtr; 
 end	record;
 
-	function make(x1: NatPtr; x2: NatPtr) return plus;
+	function make(x1: SharedObjectPtr; x2: SharedObjectPtr) return Plus;
 
-	procedure initHashCode(this: in out plus; x1: NatPtr; x2: NatPtr);
+	procedure initHashCode(this: in out plus; x1: SharedObjectPtr; x2: SharedObjectPtr);
 
-	procedure init(this: in out plus; x1: NatPtr; x2: NatPtr; hash: Integer) ; 
+	procedure init(this: in out plus; x1: SharedObjectPtr; x2: SharedObjectPtr; hash: Integer) ; 
 
 	function symbolName(this: plus) return String;
 
@@ -20,20 +20,13 @@ end	record;
 
 	function getArity(this: plus) return Integer;
 
-	function duplicate(this: plus) return plus;
+	overriding
+	function duplicate(this: plus) return SharedObject'Class;
 
 	function equivalent(this: plus; o: SharedObject'Class) return boolean;
 
 	function isplus(this: plus) return boolean;
 
-	function getx1(this: plus) return Nat'Class;
-
-	function setx1(this: plus; set_arg: NatPtr) return Nat'Class;
-
-	function getx2(this: plus) return Nat'Class;
-
-	function setx2(this: plus; set_arg: NatPtr) return Nat'Class;
-	
 	function hashFunction(this: plus) return Integer ;
 
 	plusGomProto : access  plus := new plus ;

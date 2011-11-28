@@ -4,14 +4,14 @@ package Main.PeanoAbstractType.Nat.suc is
 
 	type suc is new Nat with
 	record
-	pred: NatPtr;
+	pred: SharedObjectPtr;
 	end record;
 
-	function make(pred : NatPtr) return suc;
+	function make(pred : SharedObjectPtr) return suc;
 
-	procedure init(this: in out suc; pred: NatPtr; hashCode: Integer); 
+	procedure init(this: in out suc; pred: SharedObjectPtr; hashCode: Integer); 
 
-	procedure initHashCode(this: in out suc; pred: NatPtr);
+	procedure initHashCode(this: in out suc; pred: SharedObjectPtr);
 	
 	function symbolName(this: suc) return String;
 
@@ -19,15 +19,12 @@ package Main.PeanoAbstractType.Nat.suc is
 
 	function getArity(this: suc) return Integer;
 
-	function duplicate(this: suc) return suc; 
+	overriding
+	function duplicate(this: suc) return SharedObject'Class;
 
 	function equivalent(this: suc; o: SharedObject'Class) return boolean;
 
 	function issuc(this: suc) return boolean;
-
-	function getpred(this: suc) return Nat'Class;
-
-	function setpred(this: suc; set_arg: NatPtr) return Nat'Class;
 
 	function hashFunction(this: suc) return Integer ;
 

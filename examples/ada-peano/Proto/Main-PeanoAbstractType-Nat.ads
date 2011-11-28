@@ -4,16 +4,8 @@ with Main.PeanoAbstractType ; use Main.PeanoAbstractType ;
 
 package Main.PeanoAbstractType.Nat is 
 
-	type Nat is new PeanoAbstractType with record
-	hashCode: integer;
-	end record;
+	type Nat is abstract new PeanoAbstractType with null record ; 
 
-
-	type NatPtr is access all Nat'Class;
-	type NatPtrArray is array (Natural range <>) of NatPtr;
-	type NatPtrArrayPtr is access all NatPtrArray;
-
-	function duplicate(this: Nat) return Nat ; 
 
 	function iszero(this: Nat) return boolean;
 
