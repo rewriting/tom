@@ -4,14 +4,14 @@ package Main.PeanoAbstractType.Nat.suc is
 
 	type suc is new Nat with
 	record
-	pred: SharedObjectPtr;
+	pred: NatPtr;
 	end record;
 
-	function make(pred : SharedObjectPtr) return suc;
+	function make(pred : NatPtr) return Suc;
 
-	procedure init(this: in out suc; pred: SharedObjectPtr; hashCode: Integer); 
+	procedure init(this: in out suc; pred: NatPtr; hashCode: Integer); 
 
-	procedure initHashCode(this: in out suc; pred: SharedObjectPtr);
+	procedure initHashCode(this: in out suc; pred: NatPtr);
 	
 	function symbolName(this: suc) return String;
 

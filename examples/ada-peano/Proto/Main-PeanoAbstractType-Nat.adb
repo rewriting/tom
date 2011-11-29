@@ -4,6 +4,11 @@ use Main.peanoabstracttype.Nat.zero ;
 
 package body Main.PeanoAbstractType.Nat is
 
+function toString(this: Nat) return String is
+begin
+	return "unextended Nat" ; 
+end;
+
 
 	pseudo_Abstract_Called : Exception ;
 
@@ -57,7 +62,6 @@ begin
 	raise pseudo_Abstract_Called with "This Nat has no x2";
 end;
 
+
 end  Main.PeanoAbstractType.Nat ; 
-
-
 

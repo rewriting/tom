@@ -3,11 +3,8 @@
 package body Main.PeanoAbstractType.Nat.zero is 
 
 	function make return Zero is 
-	foundObj : SharedObjectPtr ;
-	tempPhy : SharedObject'Class := zeroGomProto.all ;
 	begin
-		build(Main.PeanoAbstractType.factory.all,zeroGomProto.all,foundObj,tempPhy);
-		return zero(foundObj.all) ;
+		return zero(build(Main.PeanoAbstractType.factory.all,zeroGomProto.all)) ;
 	end;
 
 	function duplicate(this: zero) return SharedObject'Class is

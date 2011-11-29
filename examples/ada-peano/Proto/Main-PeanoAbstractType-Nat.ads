@@ -5,7 +5,7 @@ with Main.PeanoAbstractType ; use Main.PeanoAbstractType ;
 package Main.PeanoAbstractType.Nat is 
 
 	type Nat is abstract new PeanoAbstractType with null record ; 
-
+	type NatPtr is access all Nat'Class ;
 
 	function iszero(this: Nat) return boolean;
 
@@ -25,7 +25,10 @@ package Main.PeanoAbstractType.Nat is
 
 	procedure setx2(this: Nat; arg: Nat)  ;
 
-	
+	overriding
+	function toString(this: Nat) return String ;
+
+
 end Main.PeanoAbstractType.Nat;
 
 

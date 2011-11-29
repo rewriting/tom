@@ -1,26 +1,24 @@
 with main.PeanoAbstractType.Nat; use main.peanoabstracttype.nat;
-
+with Ada.Text_IO; use Ada.Text_IO ;
 
 package body Main.PeanoAbstractType.Nat.Suc is
 
-	function make(pred : SharedObjectPtr) return Suc is 
-	 tempAdr : SharedObjectPtr ;
-	 tempPhy : SharedObject'Class := pred.all ;
+	function make(pred : NatPtr) return Suc is 
+	 tempPhy : Suc :=sucGomProto.all ;
 	begin
 
-		initHashCode(sucGomProto.all,pred);
-		build(main.PeanoAbstractType.factory.all,sucGomProto.all,tempAdr,tempPhy);
-		return suc(tempPhy) ;	
+		sucGomProto.all.initHashCode(pred);
+		return suc(build(main.PeanoAbstractType.factory.all,sucGomProto.all));
 
 	end;
 
-	procedure init(this: in out suc; pred: SharedObjectPtr; hashCode: Integer) is
+	procedure init(this: in out suc; pred: NatPtr; hashCode: Integer) is
 	begin
 		this.pred := pred;
 		this.hashCode := hashCode;
 	end;
 
-	procedure initHashCode(this: in out suc; pred: SharedObjectPtr) is
+	procedure initHashCode(this: in out suc; pred: NatPtr) is
 	begin
 		this.pred := pred;
 		this.hashCode := this.hashFunction ;
@@ -57,7 +55,7 @@ package body Main.PeanoAbstractType.Nat.Suc is
 	begin
 		if o in suc then
 			peer := suc(o) ;
-			return this.pred = peer.pred ;
+			return equivalent(this.pred.all,peer.pred.all) ;
 		end if;
 		return false;
 	end;
@@ -69,7 +67,7 @@ package body Main.PeanoAbstractType.Nat.Suc is
 
 	function hashFunction(this: suc) return Integer is
 	begin
-
+	
 	return this.pred.hashCode + 1 ;
 	
 	end;

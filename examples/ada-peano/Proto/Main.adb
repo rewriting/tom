@@ -16,6 +16,8 @@
     package body Main is 
 
 	  void : aliased zero ;
+	  voidbis : aliased zero ;
+	  voidter : aliased zero ;
 	 
 	  one : aliased suc ;
 	  two : aliased suc ;
@@ -33,6 +35,7 @@
 	  sevenplus : aliased plus ;
 	  sevenplusalt : aliased plus ;
 
+	  adr : SharedObjectPtr ;
 procedure Alpha is
 begin
 
@@ -41,6 +44,8 @@ stats(factory.all) ;
 
 -- Creating zero
 void := Main.PeanoAbstractType.Nat.zero.make ;
+voidbis := Main.PeanoAbstractType.Nat.zero.make ;
+ voidter := Main.PeanoAbstractType.Nat.zero.make ;
 
 -- Creating 1 to seven by suc
 one := Main.PeanoAbstractType.Nat.suc.make(void'Access);
@@ -52,8 +57,8 @@ six :=  Main.PeanoAbstractType.Nat.suc.make(five'Access);
 seven :=  Main.PeanoAbstractType.Nat.suc.make(six'Access);
 
 -- Verifying that the table doesn't create the same object twice. 
---twobis :=  Main.PeanoAbstractType.Nat.suc.make(one);
---twoter :=  Main.PeanoAbstractType.Nat.suc.make(one);
+twobis :=  Main.PeanoAbstractType.Nat.suc.make(one'Access);
+twoter :=  Main.PeanoAbstractType.Nat.suc.make(one'Access);
 
 --threebis :=  Main.PeanoAbstractType.Nat.suc.make(twobis);
 

@@ -12,12 +12,14 @@ package body SharedObjectFactoryP is
 
 
 
-	procedure build(this:in out SharedObjectFactory; prototype: in SharedObject'Class; foundObj: out SharedObjectPtr; foundObjPhy : out SharedObject'Class) is
+	function build(this:  SharedObjectFactory; prototype: SharedObject'Class) return SharedObject'Class is 
+		
 
+foundObj : SharedObjectPtr ;
+foundObjPhy : aliased SharedObject'Class := duplicate(prototype) ;
 index: Integer := projector(this,prototype.hashCode);
 e : access SharedObjectEntry := this.table(index);
 prev : access SharedObjectEntry := null;
-construct : aliased SharedObject'Class := prototype ;
 deepness : Integer := 0;
 status : Integer ;
 
@@ -30,9 +32,8 @@ status : Integer ;
 	loop
 		exit when e = null;
 		foundObj := e.element;	
-		foundObjPhy := foundObj.all ;
 
-		Put_Line("Testing against: "&foundObjPhy.toString) ;
+		Put_Line("Comparing to item n°"&Integer'Image(deepness)&" in collision list n°"&Integer'Image(index)&": "&toString(foundObj.all)) ;
 
 		if equivalent(prototype,foundObj.all) then	
 			-- Successful search
@@ -40,13 +41,13 @@ status : Integer ;
 			if deepness > 5 and prev /= null then
 			Put_Line("Reorganization");
 				-- Swapping the found entry to first place if needed
-			prev.next := e.next;
-			e.next := this.table(index); 
-			this.table(index) := this.table(index).next;
+			swapToFirst(this.table.all,prev.all, e.all, index) ; 
 			end if;
 
 		status := 0 ; -- Signalling already existant SharedObject
-		return ;
+		foundObjPhy := foundObj.all ;
+		Put_Line("Equivalent found");
+		return foundObjPhy ;
 		end if;
 		-- Going deeper in collision list
 		deepness := deepness + 1 ;
@@ -55,20 +56,43 @@ status : Integer ;
 		
 	end loop;
 
-	this.Size := this.Size+1 ;
 	status := +1 ; --Signalling construction of a new SharedObject
 	
 	Put_Line("New object constructed") ;
-	
-	this.table(index) := new SharedObjectEntry'(this.table(index),null) ;	
-	foundObjPhy := duplicate(prototype) ;	
-	this.table(index).element := foundObjPhy'Unchecked_Access ;	
 
-	foundObj := this.table(index).element;
-	
+	foundObj := foundObjPhy'Unchecked_Access ;
+	insertInTable(this.table.all,index,foundObj) ;
+
+	return foundObjPhy ;	
 	
 	end build;
 
+	procedure swapToFirst(table: in out chosenTable; prev: in out SharedObjectEntry; e: in out SharedObjectEntry; index: Integer) is
+	begin
+	
+			prev.next := e.next;
+			e.next := table(index); 
+			table(index) := table(index).next;
+
+	end; 
+
+
+	procedure insertInTable(table: in out chosenTable; index: Integer; foundObj: SharedObjectPtr) is
+	begin
+
+		
+	
+	table(index) := new SharedObjectEntry'(table(index),null) ;	
+	table(index).element := foundObj ;	
+
+
+	end;
+
+	procedure plusSize(table: in out chosenTable; level: Integer) is begin
+	
+	null;
+
+	end;	
 
 	procedure stats(this: SharedObjectFactory) is
 		i : Integer := -1;
@@ -99,7 +123,7 @@ loop
 	currentEntry := e.all ;
 	currentElement := currentEntry.element ;
 	
-	Put_Line("Something"&", ") ;
+	Put_Line(currentElement.toString&", ") ;
 	e := e.next ;
 
  end loop;
