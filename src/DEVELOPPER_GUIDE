@@ -153,5 +153,29 @@ and its fields (i.e. the Declaration) are traversed again to be inserted into
 the mapInliner.
 
 
+* How the platform is run
+  starting point:  Tom.java.in
+  PluginPlatformFactory.getInstance().extractConfigFileName(args);
+  new ConfigurationManager(configFileName); // config XML file
+    - parse XML file
+    - create plugins
+    - create option manager (using reflexivity)
+    - collect global options
+    - initialize option manager
+  [Tom]OptionManager:
+    - collect options (including itself)
+    - processArguments
+    - store values of each options
+    - store relation Option <--> OptionOwner
+    - call optionChanged when an option is set
 
+PluginPlatformFactory 
+    - create a platform
+    - manage a pool of platforms
+    *** create a new ConfigurationManager. WHY ?
+
+PluginPlatform extends PluginPlatformBase:
+    - get list of input files
+    - run the list of plugins
+    *** TODO: build a sequence of plugins, interpret this sequence
 
