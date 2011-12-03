@@ -7,7 +7,9 @@ package Main.PeanoAbstractType.Nat.suc is
 	pred: NatPtr;
 	end record;
 
-	function make(pred : NatPtr) return Suc;
+	type SucPtr is access all Suc; 
+
+	function make(pred : NatPtr) return SucPtr;
 
 	procedure init(this: in out suc; pred: NatPtr; hashCode: Integer); 
 

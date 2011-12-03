@@ -3,12 +3,15 @@ with Ada.Text_IO; use Ada.Text_IO ;
 
 package body Main.PeanoAbstractType.Nat.Suc is
 
-	function make(pred : NatPtr) return Suc is 
-	 tempPhy : Suc :=sucGomProto.all ;
-	begin
+	function make(pred : NatPtr) return SucPtr is 
+	
+	this: SucPtr ;
 
+	begin
+		this := new Suc; 
 		sucGomProto.all.initHashCode(pred);
-		return suc(build(main.PeanoAbstractType.factory.all,sucGomProto.all));
+		this.all := suc(build(main.PeanoAbstractType.factory.all,sucGomProto.all,SharedObjectPtr(this)));
+		return this; 	
 
 	end;
 

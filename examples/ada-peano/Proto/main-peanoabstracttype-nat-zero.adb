@@ -2,9 +2,14 @@
 
 package body Main.PeanoAbstractType.Nat.zero is 
 
-	function make return Zero is 
+	function make return ZeroPtr is
+	this : ZeroPtr ; 
 	begin
-		return zero(build(Main.PeanoAbstractType.factory.all,zeroGomProto.all)) ;
+		this := new Zero; 
+
+		this.all := zero(build(Main.PeanoAbstractType.factory.all,zeroGomProto.all,SharedObjectPtr(this))) ;
+
+		return this;
 	end;
 
 	function duplicate(this: zero) return SharedObject'Class is

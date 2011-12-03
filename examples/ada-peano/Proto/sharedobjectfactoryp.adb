@@ -12,7 +12,7 @@ package body SharedObjectFactoryP is
 
 
 
-	function build(this:  SharedObjectFactory; prototype: SharedObject'Class) return SharedObject'Class is 
+	function build(this:  SharedObjectFactory; prototype: SharedObject'Class; adr: SharedObjectPtr) return SharedObject'Class is 
 		
 
 foundObj : SharedObjectPtr ;
@@ -41,8 +41,12 @@ status : Integer ;
 			if deepness > 5 and prev /= null then
 			Put_Line("Reorganization");
 				-- Swapping the found entry to first place if needed
-			swapToFirst(this.table.all,prev.all, e.all, index) ; 
-			end if;
+				 
+				prev.next := e.next ;
+				e.next := this.table.all(index);
+				this.table.all(index) := this.table.all(index).next ;
+
+				end if;
 
 		status := 0 ; -- Signalling already existant SharedObject
 		foundObjPhy := foundObj.all ;
@@ -58,41 +62,16 @@ status : Integer ;
 
 	status := +1 ; --Signalling construction of a new SharedObject
 	
-	Put_Line("New object constructed") ;
+	Put_Line("New object constructed: "&foundObjPhy.toString) ;
 
-	foundObj := foundObjPhy'Unchecked_Access ;
-	insertInTable(this.table.all,index,foundObj) ;
+	this.table.all(index) := new SharedObjectEntry'(this.table.all(index),null) ;
+	this.table.all(index).element := adr ; 
 
 	return foundObjPhy ;	
 	
 	end build;
 
-	procedure swapToFirst(table: in out chosenTable; prev: in out SharedObjectEntry; e: in out SharedObjectEntry; index: Integer) is
-	begin
-	
-			prev.next := e.next;
-			e.next := table(index); 
-			table(index) := table(index).next;
 
-	end; 
-
-
-	procedure insertInTable(table: in out chosenTable; index: Integer; foundObj: SharedObjectPtr) is
-	begin
-
-		
-	
-	table(index) := new SharedObjectEntry'(table(index),null) ;	
-	table(index).element := foundObj ;	
-
-
-	end;
-
-	procedure plusSize(table: in out chosenTable; level: Integer) is begin
-	
-	null;
-
-	end;	
 
 	procedure stats(this: SharedObjectFactory) is
 		i : Integer := -1;

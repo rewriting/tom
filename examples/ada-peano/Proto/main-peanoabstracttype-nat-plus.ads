@@ -8,7 +8,9 @@ package main.PeanoAbstractType.Nat.plus is
 	x2 : NatPtr; 
 end	record;
 
-	function make(x1: NatPtr; x2: NatPtr) return Plus;
+	type PlusPtr is access all Plus; 	
+
+	function make(x1: NatPtr; x2: NatPtr) return PlusPtr;
 
 	procedure initHashCode(this: in out plus; x1: NatPtr; x2: NatPtr);
 

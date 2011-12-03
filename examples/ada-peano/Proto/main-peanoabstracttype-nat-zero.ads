@@ -3,8 +3,9 @@ with main.PeanoAbstractType.Nat; use main.peanoabstracttype.nat;
 package Main.PeanoAbstractType.Nat.zero is 
 
 	type zero is new Nat with null record;
+	type ZeroPtr is access all Zero ;
 
-	function make return zero;
+	function make return zeroptr;
 
 	overriding
 	function duplicate(this: zero) return SharedObject'Class;

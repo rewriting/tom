@@ -1,12 +1,19 @@
 with main.PeanoAbstractType.Nat; use main.peanoabstracttype.nat;
+with Ada.Text_IO ; use Ada.Text_IO ;
 
 package body main.PeanoAbstractType.Nat.Plus is
 
-	function make(x1: NatPtr; x2: NatPtr) return Plus is 
+	function make(x1: NatPtr; x2: NatPtr) return PlusPtr is 
+	this : PlusPtr ;
 	begin
-
+		this := new Plus; 	
+	
 		plusGomProto.all.initHashCode(x1,x2);
-		return plus(build(main.PeanoAbstractType.factory.all,plusGomProto.all));
+	
+		this.all := plus(build(main.PeanoAbstractType.factory.all,plusGomProto.all,SharedObjectPtr(this)));
+	
+		return this; 
+
 	end;
 
 
@@ -22,7 +29,6 @@ package body main.PeanoAbstractType.Nat.Plus is
 	begin
 		this.x1 := x1 ;
 		this.x2 := x2 ;
-
 		this.hashCode := this.hashFunction ;
 	end;
 
@@ -35,7 +41,7 @@ package body main.PeanoAbstractType.Nat.Plus is
 	function toString(this: plus) return String is
 	begin
 
-		return "plus("&this.x1.toString&","&this.x2.toString&")" ; 
+		return "plus("&this.x1.all.toString&","&this.x2.all.toString&")" ; 
 	end;
 
 	function getArity(this: plus) return Integer is
@@ -70,7 +76,7 @@ package body main.PeanoAbstractType.Nat.Plus is
 	function hashFunction(this: plus) return Integer is
 	begin 
 	
-		return(this.x1.hashCode+this.x2.hashCode); 
+		return this.x1.hashCode + this.x2.hashCode; 
 	
 	end;
 
