@@ -190,26 +190,20 @@ writer.write(%[
 }
 
 writer.write(%[
-  /* name and arity */
+	-- Name & Arity
 
-  /**
-   * Returns the name of the symbol
-   *
-   * @@return the name of the symbol
-   */
-  @@Override
-  public String symbolName() {
+function symbolName(this: @className()@) return String is
+begin
     return "@className()@";
-  }
+end;
 
-  /**
-   * Returns the arity of the symbol
-   *
-   * @@return the arity of the symbol
-   */
-  private int getArity() {
+function getArity(this: @className()@) return String is
+begin
     return @slotList.length()@;
-  }
+end;
+
+	-- Stop - Name & Arity
+
 ]%);
 
 
@@ -229,78 +223,56 @@ if(multithread) {
   ]%);
 } else {
   writer.write(%[
-  public shared.SharedObject duplicate() {
-    @className()@ clone = new @className()@();
-    clone.init(@childList(slotList) + (slotList.isEmptyConcSlotField()?"":", ") @hashCode);
-    return clone;
-  }
+		-- Duplicate
+	function duplicate(this: @className()@) return SharedObject''Class is
+		clone : access @className()@ := new @className()@ ;
+	begin
+    		clone.init(@childList(slotList) + (slotList.isEmptyConcSlotField()?"":", ") @hashCode);
+		return clone.all;
+	end;
+
+		-- End duplicate
   ]%);
  }
 }
 
 } else {
-    // case: constant
+    
 writer.write(%[
-  /* name and arity */
+	-- case: constant
+	-- Name & Arity  
 
-  /**
-   * Returns the name of the symbol
-   *
-   * @@return the name of the symbol
-   */
-  @@Override
-  public String symbolName() {
+
+ function symbolName(this: @className()@) return String is
+begin
     return "@className()@";
-  }
+end;
 
-  /**
-   * Returns the arity of the symbol
-   *
-   * @@return arity of the symbol
-   */
-  private static int getArity() {
-    return 0;
-  }
+
+	function getArity(this: plus) return Integer is
+	begin
+		return 2;
+	end;
+
+	-- Stop - Name & Arity
 
 ]%);
 
 if (maximalsharing) {
 writer.write(%[
-  /**
-   * Copy the object and returns the copy
-   *
-   * @@return a clone of the SharedObject
-   */
-  public shared.SharedObject duplicate() {
-    // the proto is a constant object: no need to clone it
-    return this;
-    //return new @className()@();
-  }
+    -- the proto is a constant object: no need to clone it
+
+	function duplicate(this: zero) return zero is
+	begin
+		return this;
+	end;
+  
 ]%);
 }
 
   }
-
-  /*
-   * Generate a toStringBuilder method if the operator is not associative
-   */
-  if (sortName == extendsType) {
-writer.write(%[
-  /**
-   * Appends a string representation of this term to the buffer given as argument.
-   *
-   * @@param buffer the buffer to which a string represention of this term is appended.
-   */
-  @@Override
-  public void toStringBuilder(java.lang.StringBuilder buffer) {
-    buffer.append("@className()@(");
-    @toStringChilds("buffer")@
-    buffer.append(")");
-  }
-]%);
-  }
-
-writer.write(%[
+/* TODO */
+if (false) {writer.write(%[
 
   /**
    * Compares two terms. This functions implements a total lexicographic path ordering.
@@ -329,6 +301,7 @@ writer.write(%[
     throw new RuntimeException("Unable to compare");
   }
 ]%);
+}
 
 if (maximalsharing) {
 writer.write(%[
