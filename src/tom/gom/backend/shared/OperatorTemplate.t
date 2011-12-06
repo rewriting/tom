@@ -80,23 +80,7 @@ public class OperatorTemplate extends TemplateHookedClass {
 
   public void generate(java.io.Writer writer) throws java.io.IOException {
 
-writer.write(
-%[
-package @getPackage()@;
-@generateImport()@
-]%);
-
-if (maximalsharing) {
-  writer.write(
-%[
-@generateComments()@
-public final class @className()@ extends @fullClassName(extendsType)@ implements tom.library.sl.Visitable @generateInterface()@ {
-  @generateBlock()@
-  private static String symbolName = "@className()@";
-]%);
-
-
-  if(slotList.length() > 0) {
+ if(slotList.length() > 0) {
     writer.write(%[
 
   private @className()@() {}
@@ -108,86 +92,60 @@ public final class @className()@ extends @fullClassName(extendsType)@ implements
 
   private @className()@() {}
   private static int hashCode = hashFunction();
-  private static @className()@ gomProto = (@className()@) factory.build(new @className()@());
-  ]%);
+  private static @className()@ @className()@GomProto = (@className()@) factory.build(new @className()@());
+ 
+-- End of Spec, Body starts here
+
+ ]%);
   }
-} else {
-  writer.write(
+
+writer.write(
 %[
-@generateComments()@
-public final class @className()@ extends @fullClassName(extendsType)@ implements Cloneable, tom.library.sl.Visitable @generateInterface()@ {
-  @generateBlock()@
-  private static String symbolName = "@className()@";
+with @getPackage()@; use @getPackage()@;
+@generateImport()@ /*XXX*/
 ]%);
 
+  writer.write(
+%[
+package body @fullClassName(extendsType)@.@className()@ is
+  @generateBlock()@
+]%);
 
-// generate a private constructor that takes as arguments the operator arguments
-  writer.write(%[
-
-  private @className()@(@childListWithType(slotList)@) {
-  ]%);
-  generateMembersInit(writer);
-  writer.write(%[
-  }
-  ]%);
-}
+/**/
 
   if (hooks.containsTomCode()) {
     mapping.generate(writer);
   }
   generateMembers(writer);
   generateBody(writer);
-  writer.write(%[
+
 }
-]%);
-  }
 
   private void generateBody(java.io.Writer writer) throws java.io.IOException {
-    if (!comments.equals("")) {
-      writer.write(%[
-  @generateComments()@
-        ]%);
-    } else {
-    writer.write(%[
-  /**
-   * Constructor that builds a term rooted by @className()@
-   *
-   * @@return a term rooted by @className()@
-   */
-]%);
-    }
 generateConstructor(writer);
 
 if(slotList.length()>0) {
 
-if (maximalsharing) {
 writer.write(%[
-  /**
-   * Initializes attributes and hashcode of the class
-   *
-   * @@param @childListOnePerLine(slotList)@
-   * @@param hashCode hashCode of @className()@
-   */
-  private void init(@childListWithType(slotList) + (slotList.isEmptyConcSlotField()?"":", ") @int hashCode) {
+
+procedure init(this: in out plus; @childListWithType(slotList) + (slotList.isEmptyConcSlotField()?"":"; ")@ hash: Integer) is
+	begin
 ]%);
+
 generateMembersInit(writer);
+
 writer.write(%[
     this.hashCode = hashCode;
-  }
+  end;
 
-  /**
-   * Initializes attributes and hashcode of the class
-   *
-   * @@param @childListOnePerLine(slotList)@
-   */
-  private void initHashCode(@childListWithType(slotList)@) {
+	procedure initHashCode(this: in out plus; x1: NatPtr; x2: NatPtr) is
+	begin
 ]%);
 generateMembersInit(writer);
 writer.write(%[
-    this.hashCode = hashFunction();
-  }
+    this.hashCode = this.hashFunction;
+ end; 
 ]%);
-}
 
 writer.write(%[
 	-- Name & Arity
@@ -207,22 +165,12 @@ end;
 ]%);
 
 
-if (maximalsharing) {
-  writer.write(%[
+writer.write(%[
   /**
    * Copy the object and returns the copy
    *
    * @@return a clone of the SharedObject
-   */]%);
-if(multithread) {
-  writer.write(%[
-  public shared.SharedObject duplicate() {
-    // the proto is a fresh object: no need to clone it again
-    return this;
-  }
-  ]%);
-} else {
-  writer.write(%[
+   */
 		-- Duplicate
 	function duplicate(this: @className()@) return SharedObject''Class is
 		clone : access @className()@ := new @className()@ ;
@@ -233,8 +181,6 @@ if(multithread) {
 
 		-- End duplicate
   ]%);
- }
-}
 
 } else {
     
@@ -271,81 +217,13 @@ writer.write(%[
 }
 
   }
-/* TODO */
-if (false) {writer.write(%[
 
-  /**
-   * Compares two terms. This functions implements a total lexicographic path ordering.
-   *
-   * @@param o object to which this term is compared
-   * @@return a negative integer, zero, or a positive integer as this
-   *         term is less than, equal to, or greater than the argument
-   * @@throws ClassCastException in case of invalid arguments
-   * @@throws RuntimeException if unable to compare childs
-   */
-  @@Override
-  public int compareToLPO(Object o) {
-    /*
-     * We do not want to compare with any object, only members of the module
-     * In case of invalid argument, throw a ClassCastException, as the java api
-     * asks for it
-     */
-    @fullClassName(abstractType)@ ao = (@fullClassName(abstractType)@) o;
-    /* return 0 for equality */
-    if (ao == this) { return 0; }
-    /* compare the symbols */
-    int symbCmp = this.symbolName().compareTo(ao.symbolName());
-    if (symbCmp != 0) { return symbCmp; }
-    /* compare the childs */
-    @genCompareChilds("ao","compareToLPO")@
-    throw new RuntimeException("Unable to compare");
-  }
-]%);
-}
 
-if (maximalsharing) {
 writer.write(%[
- /**
-   * Compares two terms. This functions implements a total order.
-   *
-   * @@param o object to which this term is compared
-   * @@return a negative integer, zero, or a positive integer as this
-   *         term is less than, equal to, or greater than the argument
-   * @@throws ClassCastException in case of invalid arguments
-   * @@throws RuntimeException if unable to compare childs
-   */
-  @@Override
-  public int compareTo(Object o) {
-    /*
-     * We do not want to compare with any object, only members of the module
-     * In case of invalid argument, throw a ClassCastException, as the java api
-     * asks for it
-     */
-    @fullClassName(abstractType)@ ao = (@fullClassName(abstractType)@) o;
-    /* return 0 for equality */
-    if (ao == this) { return 0; }
-    /* use the hash values to discriminate */
 
-    if(hashCode != ao.hashCode()) { return (hashCode < ao.hashCode())?-1:1; }
+/* TODO: Comparaisons */
 
-    /* If not, compare the symbols : back to the normal order */
-    int symbCmp = this.symbolName().compareTo(ao.symbolName());
-    if (symbCmp != 0) { return symbCmp; }
-    /* last resort: compare the childs */
-    @genCompareChilds("ao","compareTo")@
-    throw new RuntimeException("Unable to compare");
-  }
-
- //shared.SharedObject
-  /**
-   * Returns hashCode
-   *
-   * @@return hashCode
-   */
-  @@Override
-  public final int hashCode() {
-    return hashCode;
-  }
+ //SharedObject extension
 
   /**
    * Checks if a SharedObject is equivalent to the current object
@@ -353,126 +231,16 @@ writer.write(%[
    * @@param obj SharedObject to test
    * @@return true if obj is a @className()@ and its members are equal, else false
    */
-  public final boolean equivalent(shared.SharedObject obj) {
-    if(obj instanceof @className()@) {
+	function equivalent(this: plus; o: SharedObject''Class) return Boolean is
+begin
+	    if(o in @className()@) then 
 @generateMembersEqualityTest("peer")@
-    }
+	end if; 
+
     return false;
-  }
+
 
 ]%);
-} else {
-  //XXX: compareTo must be correctly implemented
-writer.write(%[
-  /**
-   * Compares two terms. This functions implements a total order.
-   *
-   * @@param o object to which this term is compared
-   * @@return a negative integer, zero, or a positive integer as this
-   *         term is less than, equal to, or greater than the argument
-   * @@throws ClassCastException in case of invalid arguments
-   * @@throws RuntimeException if unable to compare childs
-   */
-  @@Override
-  public int compareTo(Object o) {
-    throw new UnsupportedOperationException("Unable to compare");
-  }
-
-  /**
-   * Clones the object
-   *
-   * @@return the copy
-   */
-  @@Override
-  public Object clone() {
-]%);
-
-SlotFieldList slots = slotList;
-if(slots.isEmptyConcSlotField()) {
-  writer.write(%[
-      return new @className()@();
-  }
-      ]%);
-} else {
-
-SlotField head = slots.getHeadConcSlotField();
-slots = slots.getTailConcSlotField();
-
-if (getGomEnvironment().isBuiltinClass(head.getDomain())) {
-  writer.write(%[
-      return new @className()@(@getMethod(head)@()]%);
-
-} else {
-  writer.write(%[
-      return new @className()@( (@fullClassName(head.getDomain())@) @getMethod(head)@().clone()]%);
-}
-
-while(!slots.isEmptyConcSlotField()) {
-  head = slots.getHeadConcSlotField();
-  slots = slots.getTailConcSlotField();
-  if (getGomEnvironment().isBuiltinClass(head.getDomain())) {
-   writer.write(%[,@getMethod(head)@()]%);
-  } else {
-  writer.write(%[,(@fullClassName(head.getDomain())@) @getMethod(head)@().clone()]%);
-  }
-}
-writer.write(");\n}");
-}
-
-writer.write(%[
-  /**
-   * Checks if an object is strictly equal to the current object
-   *
-   * @@param o object to compare
-   * @@return true if each member is equal, else false
-   */
-  @@Override
-  public final boolean deepEquals(Object o) {
-    if (o instanceof @className()@) {
-      @className()@ typed_o = (@className()@) o;
-]%);
-
-slots = slotList;
-if(slots.isEmptyConcSlotField()) {
-  writer.write(%[
-      return true;
-      ]%);
-} else {
-SlotField head = slots.getHeadConcSlotField();
-slots = slots.getTailConcSlotField();
-if (getGomEnvironment().isBuiltinClass(head.getDomain())) {
-  writer.write(%[
-      return @fieldName(head.getName())@ = typed_o.@getMethod(head)@()
-      ]%);
-
-} else {
-  writer.write(%[
-      return @fieldName(head.getName())@.deepEquals(typed_o.@getMethod(head)@())
-      ]%);
-}
-
-while(!slots.isEmptyConcSlotField()) {
-  head = slots.getHeadConcSlotField();
-  slots = slots.getTailConcSlotField();
-  if (getGomEnvironment().isBuiltinClass(head.getDomain())) {
-    writer.write(%[
-        && @fieldName(head.getName())@ = typed_o.@getMethod(head)@()
-        ]%);
-
-  } else {
-    writer.write(%[
-      && @fieldName(head.getName())@.deepEquals(typed_o.@getMethod(head)@())
-      ]%);
-  }
-}
-writer.write(";");
-}
-writer.write(%[
-    }
-    return false;
-    }
-  ]%);
-}
 
 writer.write(%[
    //@className(sortName)@ interface
@@ -481,54 +249,21 @@ writer.write(%[
    *
    * @@return true, because this is rooted by @className.getName()@
    */
-  @@Override
-  public boolean @isOperatorMethod(className)@() {
-    return true;
-  }
+
+	function @isOperatorMethod(className)@(this: @className()@) return Boolean is
+	begin
+		return true;
+	end ;
+
   ]%);
 
-generateGetters(writer);
+/* TODO: Unnecessary in Ada? generateGetters(writer);*/
 
-    writer.write(%[
-  /* AbstractType */
-  /**
-   * Returns an ATerm representation of this term.
-   *
-   * @@return an ATerm representation of this term.
-   */
-  @@Override
-  public aterm.ATerm toATerm() {
-    aterm.ATerm res = super.toATerm();
-    if(res != null) {
-      // the super class has produced an ATerm (may be a variadic operator)
-      return res;
-    }
-    return atermFactory.makeAppl(
-      atermFactory.makeAFun(symbolName(),getArity(),false),
-      new aterm.ATerm[] {@generateToATermChilds()@});
-  }
+/* Hereby lies ATerm interface */
 
-  /**
-   * Apply a conversion on the ATerm contained in the String and returns a @fullClassName(sortName)@ from it
-   *
-   * @@param trm ATerm to convert into a Gom term
-   * @@param atConv ATerm Converter used to convert the ATerm
-   * @@return the Gom term
-   */
-  public static @fullClassName(sortName)@ fromTerm(aterm.ATerm trm, tom.library.utils.ATermConverter atConv) {
-    trm = atConv.convert(trm);
-    if(trm instanceof aterm.ATermAppl) {
-      aterm.ATermAppl appl = (aterm.ATermAppl) trm;
-      if(symbolName.equals(appl.getName()) && !appl.getAFun().isQuoted()) {
-        return make(
-@generatefromATermChilds("appl","atConv")@
-        );
-      }
-    }
-    return null;
-  }
-]%);
 
+/*TODO: Handling Visitable Interface*/
+if (false) {
     writer.write(%[
   /* Visitable */
   /**
@@ -597,8 +332,9 @@ generateGetters(writer);
   }
 ]%);
 
-if(maximalsharing) {
-  // OLD VERSION
+}
+
+
     writer.write(%[
     /**
      * Compute a hashcode for this term.
@@ -606,7 +342,9 @@ if(maximalsharing) {
      *
      * @@return a hash value
      */
-  protected@((slotList.length()==0)?" static":"")@ int hashFunction() {
+
+function hashFunction(this: @className()@) return Integer is
+begin 
     int a, b, c;
     /* Set up the internal state */
     a = 0x9e3779b9; /* the golden ratio; an arbitrary value */
@@ -628,53 +366,10 @@ writer.write(%[
     c -= a; c -= b; c ^= (b >> 15);
     /* ------------------------------------------- report the result */
     return c;
-  }
+  end;
+
 ]%);
 }
-
-if(false && maximalsharing) {
-  // NEW VERSION: http://burtleburtle.net/bob/c/lookup3.c
-  // seems to be a bit slower than the OLD version
-  int length = slotList.length();
-    writer.write(%[
-    /**
-     * Compute a hashcode for this term.
-     * (for internal use)
-     *
-     * @@return a hash value
-     */
-  protected@((length==0)?" static":"")@ int hashFunction() {
-    int a, b, c;
-    /* Set up the internal state */
-    a = b = c =
-    0xdeadbeef + (getArity()<<2) +
-    (@shared.HashFunctions.stringHashFunction(fullClassName(),length)@<<8);
-    /* -------------------------------------- handle most of the key */
-    /* ------------------------------------ handle the last 11 bytes */
-]%);
-generateHashArgsLookup3(writer);
-  if(length>0 && (length%3)>0 ) {
-writer.write(%[
-    // final(a,b,c)
-    c ^= b; c -= (((b)<<(14)) | ((b)>>(32-(14))));
-    a ^= c; a -= (((c)<<(11)) | ((c)>>(32-(11))));
-    b ^= a; b -= (((a)<<(25)) | ((a)>>(32-(25))));
-    c ^= b; c -= (((b)<<(16)) | ((b)>>(32-(16))));
-    a ^= c; a -= (((c)<<(4)) | ((c)>>(32-(4))));
-    b ^= a; b -= (((a)<<(14)) | ((a)>>(32-(14))));
-    c ^= b; c -= (((b)<<(24)) | ((b)>>(32-(24))));
-]%);
-  }
-
-writer.write(%[
-    /* ------------------------------------------- report the result */
-    return c;
-  }
-]%);
-}
-
-}
-
   private String generateComments() {
     if (!comments.equals("") && comments.contains("@param")) {
       // "@param chaine " -> "@param _chaine "
@@ -711,107 +406,8 @@ writer.write(%[
     }
   }
 
-  private void generateGetters(java.io.Writer writer) throws java.io.IOException {
-    SlotFieldList slots = slotList;
-    while(!slots.isEmptyConcSlotField()) {
-      SlotField head = slots.getHeadConcSlotField();
-      slots = slots.getTailConcSlotField();
-      writer.write(%[
-  /**
-   * Returns the attribute @slotDomain(head)@
-   *
-   * @@return the attribute @slotDomain(head)@
-   */
-  @@Override
-  public @slotDomain(head)@ @getMethod(head)@() {
-    return @fieldName(head.getName())@;
-  }
-
-  /**
-   * Sets and returns the attribute @fullClassName(sortName)@
-   *
-   * @@param set_arg the argument to set
-   * @@return the attribute @slotDomain(head)@ which just has been set
-   */]%);
-      if (maximalsharing) {
-        writer.write(%[
-  @@Override
-  public @fullClassName(sortName)@ @setMethod(head)@(@slotDomain(head)@ set_arg) {
-    return make(@generateMakeArgsFor(head,"set_arg")@);
-  }
-  ]%);
-      } else {
-        writer.write(%[
-  @@Override
-  public @fullClassName(sortName)@ @setMethod(head)@(@slotDomain(head)@ set_arg) {
-    @fieldName(head.getName())@ = set_arg;
-    return this;
-  }]%);
-      }
-
-      if(jmicompatible) {
-        // generate getters and setters where slot-names are normalized
-        if(!getMethod(head,true).equals(getMethod(head))) {
-      writer.write(%[
-  public @slotDomain(head)@ @getMethod(head,true)@() {
-    return @getMethod(head)@();
-  }
-  ]%);
-        }
-        if(!setMethod(head,true).equals(setMethod(head))) {
-      writer.write(%[
-  public @fullClassName(sortName)@ @setMethod(head,true)@(@slotDomain(head)@ set_arg) {
-    return @setMethod(head)@(set_arg);
-  }
-  ]%);
-        }
-      }
-    }
-  }
-
-  private String generateToATermChilds() {
-    StringBuilder res = new StringBuilder();
-    SlotFieldList slots = slotList;
-    while(!slots.isEmptyConcSlotField()) {
-      SlotField head = slots.getHeadConcSlotField();
-      slots = slots.getTailConcSlotField();
-      if(res.length()!=0) {
-        res.append(", ");
-      }
-      toATermSlotField(res,head);
-    }
-    return res.toString();
-  }
-
-  private String generatefromATermChilds(String appl, String atConv) {
-    StringBuilder res = new StringBuilder();
-    int index = 0;
-    SlotFieldList slots = slotList;
-    while(!slots.isEmptyConcSlotField()) {
-      SlotField head = slots.getHeadConcSlotField();
-      slots = slots.getTailConcSlotField();
-      if (res.length()!=0) {
-        res.append(", ");
-      }
-      fromATermSlotField(res,head, appl+".getArgument("+index+")",atConv);
-      index++;
-    }
-    return res.toString();
-  }
-
   private String fieldName(String fieldName) {
-    return "_"+fieldName;
-  }
-
-  /**
-   * This method is used to generate a part of comments of init method
-   *
-   * @param slots fields of the class being generated
-   * @return a String composed of one line per field
-   */
-  private String childListOnePerLine(SlotFieldList slots) {
-    String str = childList(slots);
-    return str.replaceAll(", ", "\n   * @param");
+    return "tommy_"+fieldName;
   }
 
 
@@ -823,11 +419,11 @@ writer.write(%[
       %match(head) {
         SlotField[Name=name, Domain=domain] -> {
           if (res.length()!=0) {
-            res.append(", ");
+            res.append("; ");
           }
-          res.append(fullClassName(`domain));
-          res.append(" ");
           res.append(fieldName(`name));
+	  res.append(": ");
+          res.append(className(`domain));
         }
       }
     }
@@ -885,22 +481,24 @@ writer.write(%[
     }
     return res.toString();
   }
+
   private String generateMembersEqualityTest(String peer) {
     StringBuilder res = new StringBuilder();
     if(!slotList.isEmptyConcSlotField()) {
       res.append(%[
-      @className()@ peer = (@className()@) obj;]%);;
+       peer := @className()@(o)  ;]%);;
     }
     res.append(%[
       return ]%);
     %match(slotList) {
       ConcSlotField(_*,SlotField[Name=fieldName],_*) -> {
-        res.append(fieldName(`fieldName));
+        res.append("this.");
+	res.append(fieldName(`fieldName));
         res.append("=");
         res.append(peer);
         res.append(".");
         res.append(fieldName(`fieldName));
-        res.append(" && ");
+        res.append(" and ");
       }
     }
     res.append("true;"); // to handle the "no childs" case
@@ -1249,8 +847,10 @@ lbl:ConcHook(_*,MakeHook[HookArguments=args],_*) -> {
       writer.write(%[
     public static @fullClassName(sortName)@ make(@unprotectedChildListWithType(`args)@) {
   ]%);
+
         SlotFieldList bargs = generateMakeHooks(hooks,null,writer);
         writer.write(%[
+
       return realMake(@unprotectedChildList(bargs)@);
     }
   ]%);
@@ -1259,43 +859,31 @@ lbl:ConcHook(_*,MakeHook[HookArguments=args],_*) -> {
     }
 
     String makeName = "make";
-    String visibility = "public";
     if (hasHooks) {
       makeName = "realMake";
-      visibility = "private";
     }
     writer.write(%[
-  @visibility@ static @className()@ @makeName@(@childListWithType(slotList)@) {
+  function @makeName@(@childListWithType(slotList)@) return @className()@Ptr is 
+	this : @className()@Ptr;
+ begin
+
 ]%);
 
-    if (! maximalsharing) {
-        writer.write(%[
-    return new @className()@(@childList(slotList)@);
-    ]%);
-    } else {
     if(slotList.length()>0) {
-      if(multithread) {
         writer.write(%[
-    // allocate and object and make duplicate equal identity
-    @className()@ newProto = new @className()@();
-    newProto.initHashCode(@childList(slotList)@);
-    return (@className()@) factory.build(newProto);
+this := new @className()@;
+@className()@GomProto.all.initHashCode(x1,x2);
+this.all := @className()@(build(factory.all,GomProto.all,SharedObjectPtr(this)));
+    
+return this; 
 ]%);
-      } else {
-        writer.write(%[
-    // use the proto as a model
-    gomProto.initHashCode(@childList(slotList)@);
-    return (@className()@) factory.build(gomProto);
-]%);
-      }
     } else {
         writer.write(%[
-    return gomProto;
+    return @className()@GomProto;
 ]%);
-    }
     }
     writer.write(%[
-  }
+	end;
 ]%);
 }
 

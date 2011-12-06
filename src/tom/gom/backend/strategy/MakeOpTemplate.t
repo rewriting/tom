@@ -441,7 +441,7 @@ private String genStratArgs(String prefix,SlotFieldList slots,String arg) {
     return res.toString();
   }
   private String fieldName(String fieldName) {
-    return "_"+fieldName;
+    return ""+fieldName;
   }
 
   /** the class logger instance*/

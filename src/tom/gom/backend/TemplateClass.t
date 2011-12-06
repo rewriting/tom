@@ -179,7 +179,7 @@ public abstract class TemplateClass {
   }
 
   private String fieldName(String fieldName) {
-    return "_"+fieldName;
+    return ""+fieldName;
   }
 
   public String classFieldName(ClassName clsName) {
