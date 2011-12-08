@@ -80,38 +80,99 @@ public class OperatorTemplate extends TemplateHookedClass {
 
   public void generate(java.io.Writer writer) throws java.io.IOException {
 
- if(slotList.length() > 0) {
-    writer.write(%[
-
-  private @className()@() {}
-  private int hashCode;
-  private static @className()@ gomProto = new @className()@();
-  ]%);
-  } else {
-    writer.write(%[
-
-  private @className()@() {}
-  private static int hashCode = hashFunction();
-  private static @className()@ @className()@GomProto = (@className()@) factory.build(new @className()@());
- 
--- End of Spec, Body starts here
-
- ]%);
-  }
-
 writer.write(
 %[
 with @getPackage()@; use @getPackage()@;
+with @fullClassName(extendsType)@; use @fullClassName(extendsType)@;
 @generateImport()@ /*XXX*/
 ]%);
+
+
+writer.write(%[
+
+-- Spec Start
+
+package @fullClassName(extendsType)@.@className()@ is
+]%);
+
+if(slotList.length()>0){
+writer.write(%[
+type @className()@ is new @className(extendsType)@ with 
+  record
+@childListWithType(slotList)@;
+  end record;
+]%);
+} else {
+writer.write(%[
+type @className()@ is new @className(extendsType)@ with null record;
+]%); }
+
+writer.write(%[
+type @className()@Ptr is access all @className()@;
+]%);
+
+
+if(slotList.length()>0) {
+writer.write(%[
+function make(@childListWithType(slotList)@) return @className()@Ptr;
+]%);
+} else {
+writer.write(%[
+function make return @className()@Ptr;
+]%);
+}
+
+
+writer.write(%[
+
+procedure init(this: in out @className()@; @childListWithType(slotList) + (slotList.isEmptyConcSlotField()?"":"; ")@ hash: Integer);
+]%);
+
+if(slotList.length()>0) {
+writer.write(%[
+procedure initHashCode(this: in out @className()@; @childListWithType(slotList) + (slotList.isEmptyConcSlotField()?"":"")@);
+]%);
+} else {
+writer.write(%[
+procedure initHashCode(this: in out @className()@);
+]%);
+}
+
+
+writer.write(%[
+function symbolName(this: @className()@) return String;
+
+overriding
+function toString(this: @className()@) return String;
+
+function getArity(this: @className()@) return Integer;
+
+overriding
+function duplicate(this: @className()@) return SharedObject''Class;
+
+function equivalent(this: @className()@; o: SharedObject''Class) return boolean;
+
+-- TODO: functions is*
+
+function hashFunction(this: @className()@) return Integer
+
+	@className()@GomProto : @className()@Ptr := new @className()@ ;
+
+end @fullClassName(extendsType)@.@className()@; 
+
+-- Spec End
+ 
+]%);
+
+
+/**/
 
   writer.write(
 %[
 package body @fullClassName(extendsType)@.@className()@ is
-  @generateBlock()@
+  /*@generateBlock()@*/
 ]%);
 
-/**/
 
   if (hooks.containsTomCode()) {
     mapping.generate(writer);
@@ -128,7 +189,7 @@ if(slotList.length()>0) {
 
 writer.write(%[
 
-procedure init(this: in out plus; @childListWithType(slotList) + (slotList.isEmptyConcSlotField()?"":"; ")@ hash: Integer) is
+procedure init(this: in out @className()@; @childListWithType(slotList) + (slotList.isEmptyConcSlotField()?"":"; ")@ hash: Integer) is
 	begin
 ]%);
 
@@ -138,7 +199,7 @@ writer.write(%[
     this.hashCode = hashCode;
   end;
 
-	procedure initHashCode(this: in out plus; x1: NatPtr; x2: NatPtr) is
+	procedure initHashCode(this: in out @className()@; @childListWithType(slotList) + (slotList.isEmptyConcSlotField()?"":"")@) is
 	begin
 ]%);
 generateMembersInit(writer);
@@ -149,6 +210,12 @@ writer.write(%[
 
 writer.write(%[
 	-- Name & Arity
+
+function toString(this: @className()@) return String is
+begin
+return this.symbolName&"()";
+-- TODO, opt. 
+end;
 
 function symbolName(this: @className()@) return String is
 begin
@@ -188,6 +255,10 @@ writer.write(%[
 	-- case: constant
 	-- Name & Arity  
 
+ function toString(this: @className()@) return String is
+begin
+return "@className()@";
+end;
 
  function symbolName(this: @className()@) return String is
 begin
@@ -204,7 +275,6 @@ end;
 
 ]%);
 
-if (maximalsharing) {
 writer.write(%[
     -- the proto is a constant object: no need to clone it
 
@@ -214,7 +284,6 @@ writer.write(%[
 	end;
   
 ]%);
-}
 
   }
 
