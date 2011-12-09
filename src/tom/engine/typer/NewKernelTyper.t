@@ -1377,6 +1377,31 @@ public class NewKernelTyper {
         }
       }
     }
+    checkAllPatterns();
+  }
+
+  /**
+   * The method <code>checkAllPatterns</code> check if all variables in patterns
+   * have their types inferred. If it does not hold, then the
+   * <code>equationConstraints</code> list is traversed to given the necessary
+   * informations about the variables. Note that this verification is performed for
+   * the <code>subtypeConstraints</code> list in the
+   * <code>garbageCollecting</code> method
+   */
+  private void checkAllPatterns() {
+    for (TomType pType : inputTVarList.getCollectionconcTomType()) {
+      %match {
+        tVar@TypeVar[] << substitutions.get(pType) &&
+          concTypeConstraint(_*,Equation[Type1=tVar,Info=info],_*) << equationConstraints -> {
+            `printErrorGuessMatch(info);
+          } 
+
+        tVar@TypeVar[] << substitutions.get(pType) &&
+          concTypeConstraint(_*,Equation[Type2=tVar,Info=info],_*) << equationConstraints -> {
+            `printErrorGuessMatch(info);
+          } 
+      }
+    }
   }
 
   /**
