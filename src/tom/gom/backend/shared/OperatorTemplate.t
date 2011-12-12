@@ -78,19 +78,13 @@ public class OperatorTemplate extends TemplateHookedClass {
         "Bad argument for OperatorTemplate: " + gomClass);
   }
 
-  public void generate(java.io.Writer writer) throws java.io.IOException {
+  public void generateSpec(java.io.Writer writer) throws java.io.IOException {
 
 writer.write(
 %[
 with @getPackage()@; use @getPackage()@;
 with @fullClassName(extendsType)@; use @fullClassName(extendsType)@;
-@generateImport()@ /*XXX*/
-]%);
-
-
-writer.write(%[
-
--- Spec Start
+@generateImport()@
 
 package @fullClassName(extendsType)@.@className()@ is
 ]%);
@@ -164,8 +158,16 @@ end @fullClassName(extendsType)@.@className()@;
  
 ]%);
 
+}
 
-/**/
+  public void generate(java.io.Writer writer) throws java.io.IOException {
+
+writer.write(
+%[
+with @getPackage()@; use @getPackage()@;
+with @fullClassName(extendsType)@; use @fullClassName(extendsType)@;
+@generateImport()@
+]%);
 
   writer.write(
 %[

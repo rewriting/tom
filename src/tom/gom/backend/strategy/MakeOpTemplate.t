@@ -62,6 +62,10 @@ public class MakeOpTemplate extends TemplateClass {
         "Wrong argument for MakeOpTemplate: " + gomClass);
   }
 
+  public void generateSpec(java.io.Writer writer) throws java.io.IOException {
+writer.write(%[ --From generateSpec at MakeOpTemplate.t ]%) ;
+}
+
   public void generate(java.io.Writer writer) throws java.io.IOException {
 writer.write(%[
 package @getPackage()@;

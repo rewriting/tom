@@ -59,6 +59,11 @@ public class AbstractTypeTemplate extends TemplateHookedClass {
         "Bad argument for AbstractTypeTemplate: " + gomClass);
   }
 
+  public void generateSpec(java.io.Writer writer) throws java.io.IOException {
+writer.write(%[ --From generateSpec at AbstractTypeTemplate.t ]%) ;
+}
+
+
   public void generate(java.io.Writer writer) throws java.io.IOException {
 
     writer.write(

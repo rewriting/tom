@@ -69,6 +69,10 @@ public class VariadicOperatorTemplate extends TemplateHookedClass {
         "Wrong argument for VariadicOperatorTemplate: " + gomClass);
   }
 
+  public void generateSpec(java.io.Writer writer) throws java.io.IOException {
+writer.write(%[ --From generateSpec at VariadicOperatorTemplate.t ]%) ;
+}
+
   public void generate(java.io.Writer writer) throws java.io.IOException {
 
     writer.write(%[

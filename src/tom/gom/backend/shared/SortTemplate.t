@@ -74,6 +74,10 @@ public class SortTemplate extends TemplateHookedClass {
     else return %[implements @interfaces.substring(1)@]%;
   }
 
+  public void generateSpec(java.io.Writer writer) throws java.io.IOException {
+writer.write(%[ --From generateSpec at SortTemplate.t ]%) ;
+}
+
   public void generate(java.io.Writer writer) throws java.io.IOException {
     writer.write(%[
 package @getPackage()@;

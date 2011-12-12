@@ -54,7 +54,11 @@ public class StratMappingTemplate extends MappingTemplateClass {
     generate(writer);
   }
 
-  /**
+  public void generateSpec(java.io.Writer writer) throws java.io.IOException {
+writer.write(%[ --From generateSpec at StratMappingTemplate.t ]%) ;
+}  
+
+/**
     * generate mappings for congruence strategies
     * in a _file.tom
     */

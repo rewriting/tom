@@ -42,6 +42,8 @@ public class NullTemplate extends TemplateClass {
   /* We may want to return the stringbuffer itself in the future, or directly write to a Stream */
   public void generate(java.io.Writer writer) { /* does nothing */ }
 
+  public void generateSpec(java.io.Writer writer){ /* does nothing either*/ }  
+
 
   public int generateFile() {
     // Do nothing, we don't need to generate empty files

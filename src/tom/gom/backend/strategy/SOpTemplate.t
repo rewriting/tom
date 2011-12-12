@@ -62,6 +62,10 @@ public class SOpTemplate extends TemplateClass {
         "Wrong argument for SOpTemplate: " + gomClass);
   }
 
+  public void generateSpec(java.io.Writer writer) throws java.io.IOException {
+writer.write(%[ --From generateSpec at SOpTemplate.t ]%) ;
+}
+
   public void generate(java.io.Writer writer) throws java.io.IOException {
 writer.write(%[
 package @getPackage()@;

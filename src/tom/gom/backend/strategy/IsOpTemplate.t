@@ -62,6 +62,10 @@ public class IsOpTemplate extends TemplateClass {
         "Wrong argument for IsOpTemplate: " + gomClass);
   }
 
+  public void generateSpec(java.io.Writer writer) throws java.io.IOException {
+writer.write(%[ --From generateSpec at IsOpTemplate.t ]%) ;
+}
+
   public void generate(java.io.Writer writer) throws java.io.IOException {
 writer.write(%[
 package @getPackage()@;

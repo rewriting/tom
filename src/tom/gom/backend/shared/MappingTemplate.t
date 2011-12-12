@@ -56,6 +56,10 @@ public class MappingTemplate extends MappingTemplateClass {
         "Wrong argument for MappingTemplate: " + gomClass);
   }
 
+  public void generateSpec(java.io.Writer writer) throws java.io.IOException {
+writer.write(%[ --From generateSpec at MappingTemplate.t ]%) ;
+}
+
   public void generate(java.io.Writer writer) throws java.io.IOException {
     if(getGomEnvironment().isBuiltinSort("boolean")) {
       writer.write(%[

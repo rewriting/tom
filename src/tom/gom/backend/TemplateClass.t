@@ -53,6 +53,8 @@ public abstract class TemplateClass {
 
   public abstract void generate(Writer writer) throws java.io.IOException;
 
+  public abstract void generateSpec(Writer writer) throws java.io.IOException;
+
   public String className() {
     return className(this.className);
   }
@@ -427,9 +429,36 @@ public abstract class TemplateClass {
     return output;
   }
 
+public int generateSpecFile() {
+
+  try {
+        File output2 = fileToGenerateSpec(); 
+       
+	// make sure the directory exists
+       // if creation failed, try again, as this can be a manifestation of a
+       // race condition in mkdirs
+	if (!output2.getParentFile().mkdirs()) {
+         output2.getParentFile().mkdirs();
+       }
+
+	Writer writer2 = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output2)));
+       generateSpec(writer2);
+       writer2.flush();
+       writer2.close();
+
+
+    } catch(IOException e) {
+      GomMessage.error(getLogger(),null,0,
+          GomMessage.tomCodeGenerationFailure, e.getMessage());
+      return 1;
+    }
+    return 0;
+
+
+}
+
   public int generateFile() {
     try {
-        File output2 = fileToGenerateSpec(); 
 	File output = fileToGenerate();
        // make sure the directory exists
        // if creation failed, try again, as this can be a manifestation of a
@@ -438,21 +467,10 @@ public abstract class TemplateClass {
          output.getParentFile().mkdirs();
        }
 
-	if (!output2.getParentFile().mkdirs()) {
-         output2.getParentFile().mkdirs();
-       }
-
-
        Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output)));
        generate(writer);
        writer.flush();
        writer.close();
-
-	Writer writer2 = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output2)));
-       generate(writer2);
-       writer2.flush();
-       writer2.close();
-
 
     } catch(IOException e) {
       GomMessage.error(getLogger(),null,0,

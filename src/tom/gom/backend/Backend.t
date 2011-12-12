@@ -131,6 +131,7 @@ public class Backend {
           exec.execute(new Runnable() {
               public void run() {
               generators.get(clsName).generateFile();
+	      generators.get(clsName).generateSpecFile();
               }
               });
           //System.out.println("Task count.." + queue.size());
@@ -155,6 +156,7 @@ public class Backend {
 
       for (final ClassName clsName : generators.keySet()) {
         generators.get(clsName).generateFile();
+	generators.get(clsName).generateSpecFile();
       }
     }
     
