@@ -80,21 +80,18 @@ writer.write(%[ --From generateSpec at SortTemplate.t ]%) ;
 
   public void generate(java.io.Writer writer) throws java.io.IOException {
     writer.write(%[
-package @getPackage()@;
+with @getPackage()@;
 @generateImport()@
 
-public abstract class @className()@ extends @fullClassName(abstractType)@ @generateInterface()@ {
-  /**
-   * Sole constructor.  (For invocation by subclass
-   * constructors, typically implicit.)
-   */
-  protected @className()@() {}
+package body @fullClassName(abstractType)@.@className()@ is 
+
+pseudo_Abstract_Called : Exception; 
 
 @generateBlock()@
 ]%);
 generateBody(writer);
 writer.write(%[
-}
+end @fullClassName(abstractType)@.@className()@ ;
 ]%);
   }
 
@@ -106,14 +103,12 @@ writer.write(%[
       consum = consum.getTailConcClassName();
 
       writer.write(%[
-  /**
-   * Returns true if the term is rooted by the symbol @operatorName.getName()@
-   *
-   * @@return true if the term is rooted by the symbol @operatorName.getName()@
-   */
-  public boolean @isOperatorMethod(operatorName)@() {
-    return false;
-  }
+
+function @isOperatorMethod(operatorName)@(this: @className()@) return boolean is 
+begin
+	return false;
+end;
+
 ]%);
     }
     // methods for each slot
@@ -123,231 +118,18 @@ writer.write(%[
       sl = sl.getTailConcSlotField();
 
       writer.write(%[
-  /**
-   * Returns the subterm corresponding to the slot @slot.getName()@
-   *
-   * @@return the subterm corresponding to the slot @slot.getName()@
-   */
-  public @slotDomain(slot)@ @getMethod(slot)@() {
-    throw new UnsupportedOperationException("This @className()@ has no @slot.getName()@");
-  }
 
-  /**
-   * Returns a new term where the subterm corresponding to the slot @slot.getName()@
-   * is replaced by the term given in argument.
-   * Note that there is no side-effect: a new term is returned and the original term is left unchanged
-   *
-   * @@param _arg the value of the new subterm
-   * @@return a new term where the subterm corresponding to the slot @slot.getName()@ is replaced by _arg
-   */
-  public @className()@ @setMethod(slot)@(@slotDomain(slot)@ _arg) {
-    throw new UnsupportedOperationException("This @className()@ has no @slot.getName()@");
-  }
+function @getMethod(slot)@(this: @className()@) return @slotDomain(slot)@''Class is
+begin
+	raise pseudo_Abstract_Called with "This @className()@ has no @slot.getName()@";
+	return null;
+end;
+
 ]%);
 
     }
+}
 
-    /* fromTerm method, dispatching to operator classes */
-    writer.write(%[
-  protected static tom.library.utils.IdConverter idConv = new tom.library.utils.IdConverter();
-
-  /**
-   * Returns an ATerm representation of this term.
-   *
-   * @@return null to indicate to sub-classes that they have to work
-   */
-  public aterm.ATerm toATerm() {
-    // returns null to indicate sub-classes that they have to work
-    return null;
-  }
-
-  /**
-   * Returns a @fullClassName()@ from an ATerm without any conversion
-   *
-   * @@param trm ATerm to handle to retrieve a Gom term
-   * @@return the term from the ATerm
-   */
-  public static @fullClassName()@ fromTerm(aterm.ATerm trm) {
-    return fromTerm(trm,idConv);
-  }
-
-  /**
-   * Returns a @fullClassName()@ from a String without any conversion
-   *
-   * @@param s String containing the ATerm
-   * @@return the term from the String
-   */
-  public static @fullClassName()@ fromString(String s) {
-    return fromTerm(atermFactory.parse(s),idConv);
-  }
-
-  /**
-   * Returns a @fullClassName()@ from a Stream without any conversion
-   *
-   * @@param stream stream containing the ATerm
-   * @@return the term from the Stream
-   * @@throws java.io.IOException if a problem occurs with the stream
-   */
-  public static @fullClassName()@ fromStream(java.io.InputStream stream) throws java.io.IOException {
-    return fromTerm(atermFactory.readFromFile(stream),idConv);
-  }
-
-  /**
-   * Apply a conversion on the ATerm and returns a @fullClassName()@
-   *
-   * @@param trm ATerm to convert into a Gom term
-   * @@param atConv ATermConverter used to convert the ATerm
-   * @@return the Gom term
-   * @@throws IllegalArgumentException
-   */
-  public static @fullClassName()@ fromTerm(aterm.ATerm trm, tom.library.utils.ATermConverter atConv) {
-    aterm.ATerm convertedTerm = atConv.convert(trm);
-    @fullClassName()@ tmp;
-    java.util.ArrayList<@fullClassName()@> results = new java.util.ArrayList<@fullClassName()@>();
-]%);
-    ClassNameList constructor = `ConcClassName(operatorList*,variadicOperatorList*);
-    while(!constructor.isEmptyConcClassName()) {
-      ClassName operatorName = constructor.getHeadConcClassName();
-      constructor = constructor.getTailConcClassName();
-      writer.write(%[
-    tmp = @fullClassName(operatorName)@.fromTerm(convertedTerm,atConv);
-    if(tmp!=null) {
-      results.add(tmp);
-    }]%);
-    }
-
-    writer.write(%[
-    switch(results.size()) {
-      case 0:
-        throw new IllegalArgumentException(trm + " is not a @className()@");
-      case 1:
-        return results.get(0);
-      default:
-        java.util.logging.Logger.getLogger("@className()@").log(java.util.logging.Level.WARNING,"There were many possibilities ({0}) in {1} but the first one was chosen: {2}",new Object[] {results.toString(), "@fullClassName()@", results.get(0).toString()});
-        return results.get(0);
-    }
-  }
-
-  /**
-   * Apply a conversion on the ATerm contained in the String and returns a @fullClassName()@ from it
-   *
-   * @@param s String containing the ATerm
-   * @@param atConv ATerm Converter used to convert the ATerm
-   * @@return the Gom term
-   */
-  public static @fullClassName()@ fromString(String s, tom.library.utils.ATermConverter atConv) {
-    return fromTerm(atermFactory.parse(s),atConv);
-  }
-
-  /**
-   * Apply a conversion on the ATerm contained in the Stream and returns a @fullClassName()@ from it
-   *
-   * @@param stream stream containing the ATerm
-   * @@param atConv ATerm Converter used to convert the ATerm
-   * @@return the Gom term
-   */
-  public static @fullClassName()@ fromStream(java.io.InputStream stream, tom.library.utils.ATermConverter atConv) throws java.io.IOException {
-    return fromTerm(atermFactory.readFromFile(stream),atConv);
-  }
-]%);
-
-    /* abstract method to compare two terms represented by objects without maximal sharing */
-    /* used in the mapping */
-    if(!maximalsharing) {
-      writer.write(%[
-  /**
-   * Abstract method to compare two terms represented by objects without maximal sharing
-   *
-   * @@param o Object used to compare
-   * @@return true if the two objects are equal
-   */
-  public abstract boolean deepEquals(Object o);
-]%);
-    }
-
-    /* length and reverse prototypes, only usable on lists */
-    writer.write(%[
-  /**
-   * Returns the length of the list
-   *
-   * @@return the length of the list
-   * @@throws IllegalArgumentException if the term is not a list
-   */
-  public int length() {
-    throw new IllegalArgumentException(
-      "This "+this.getClass().getName()+" is not a list");
-  }
-
-  /**
-   * Returns an inverted term
-   *
-   * @@return the inverted list
-   * @@throws IllegalArgumentException if the term is not a list
-   */
-  public @fullClassName()@ reverse() {
-    throw new IllegalArgumentException(
-      "This "+this.getClass().getName()+" is not a list");
-  }
-  ]%);
-
-    /*
-     * generate a getCollection<OpName>() method for all variadic operators
-     */
-    ClassNameList varopList = variadicOperatorList;
-    while (!varopList.isEmptyConcClassName()) {
-      ClassName operatorName = varopList.getHeadConcClassName();
-      varopList = varopList.getTailConcClassName();
-
-      String varopName = operatorName.getName();
-      SlotFieldList tmpsl = slotList;
-      while (!tmpsl.isEmptyConcSlotField()) {
-        SlotField slot = tmpsl.getHeadConcSlotField();
-        tmpsl = tmpsl.getTailConcSlotField();
-        if(slot.getName().equals("Head" + varopName)) {
-          String domainClassName = fullClassName(slot.getDomain());
-          writer.write(%[
-  /**
-   * Returns a Collection extracted from the term
-   *
-   * @@return the collection
-   * @@throws UnsupportedOperationException if the term is not a list
-   */
-  public java.util.Collection<@primitiveToReferenceType(domainClassName)@> getCollection@varopName@() {
-    throw new UnsupportedOperationException("This @className()@ cannot be converted into a Collection");
-  }
-          ]%);
-        }
-      }
-    }
-
-  /*
-    // methods for each variadic operator
-    consum = variadicOperatorList;
-    while(!consum.isEmptyConcClassName()) {
-      ClassName operatorName = consum.getHeadConcClassName();
-      consum = consum.getTailConcClassName();
-      // look for the corresponding domain
-matchblock: {
-      %match(slotList) {
-        ConcSlotField(_*,slot@SlotField[Name=opname,Domain=domain],_*) -> {
-          if(`opname.equals("Head"+operatorName.getName())) {
-      writer.write(%[
-  public java.util.Collection<@primitiveToReferenceType(slotDomain(`slot))@> @getCollectionMethod(operatorName)@() {
-    throw new IllegalArgumentException(
-      "This "+this.getClass().getName()+" is not a list");
-  }
-]%);
-      break matchblock;
-          }
-        }
-      }
-      }
-    }
-  */
-    if(hooks.containsTomCode()) {
-      mapping.generate(writer);
-    }
-  }
 
   public void generateTomMapping(Writer writer) throws java.io.IOException {
     writer.write(%[
