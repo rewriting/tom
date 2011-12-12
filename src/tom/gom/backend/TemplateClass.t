@@ -408,7 +408,11 @@ public abstract class TemplateClass {
   }
 
   protected String fileName() {
-    return fullClassName().replace('.',File.separatorChar)+".java";
+    return fullClassName().replace('.','-')+".adb";
+  }
+
+  protected String fileNameSpec() {
+    return fullClassName().replace('.','-')+".ads";
   }
 
   protected File fileToGenerate() {
@@ -417,19 +421,39 @@ public abstract class TemplateClass {
     return output;
   }
 
+  protected File fileToGenerateSpec() {
+    GomStreamManager stream = getGomEnvironment().getStreamManager();
+    File output = new File(stream.getDestDir(),fileNameSpec());
+    return output;
+  }
+
   public int generateFile() {
     try {
-       File output = fileToGenerate();
+        File output2 = fileToGenerateSpec(); 
+	File output = fileToGenerate();
        // make sure the directory exists
        // if creation failed, try again, as this can be a manifestation of a
        // race condition in mkdirs
        if (!output.getParentFile().mkdirs()) {
          output.getParentFile().mkdirs();
        }
+
+	if (!output2.getParentFile().mkdirs()) {
+         output2.getParentFile().mkdirs();
+       }
+
+
        Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output)));
        generate(writer);
        writer.flush();
        writer.close();
+
+	Writer writer2 = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output2)));
+       generate(writer2);
+       writer2.flush();
+       writer2.close();
+
+
     } catch(IOException e) {
       GomMessage.error(getLogger(),null,0,
           GomMessage.tomCodeGenerationFailure, e.getMessage());

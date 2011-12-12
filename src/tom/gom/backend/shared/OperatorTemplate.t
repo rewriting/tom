@@ -152,7 +152,7 @@ function duplicate(this: @className()@) return SharedObject''Class;
 
 function equivalent(this: @className()@; o: SharedObject''Class) return boolean;
 
--- TODO: functions is*
+function @isOperatorMethod(className)@(this: @className()@) return Boolean
 
 function hashFunction(this: @className()@) return Integer
 
