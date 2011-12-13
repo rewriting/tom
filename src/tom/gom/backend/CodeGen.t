@@ -89,7 +89,7 @@ public class CodeGen {
             String sortNamePackage = `sortName.toLowerCase();
             ClassName className = `ClassName(
                 tom.gom.compiler.Compiler.packagePrefix(
-                  moduleDecl)+".types."+sortNamePackage,tName);
+                  moduleDecl)+"."+sortNamePackage,tName);
             writer.write(tom.gom.backend.TemplateClass.fullClassName(className));
             return;
           }
@@ -128,13 +128,13 @@ public class CodeGen {
         String sortNamePackage = `sortName.toLowerCase();
         ClassName className = `ClassName(
             tom.gom.compiler.Compiler.packagePrefix(
-              moduleDecl)+".types."+sortNamePackage,opName);
+              moduleDecl)+"."+sortNamePackage,opName);
         writer.write(tom.gom.backend.TemplateClass.fullClassName(className));
         return;
       }
       FullSortClass(SortDecl[Name=sortName,ModuleDecl=moduleDecl]) -> {
         ClassName sortClassName = `ClassName(
-            tom.gom.compiler.Compiler.packagePrefix(moduleDecl)+".types",sortName);
+            tom.gom.compiler.Compiler.packagePrefix(moduleDecl)+"",sortName);
         writer.write(tom.gom.backend.TemplateClass.fullClassName(sortClassName));
         return;
       }
