@@ -57,7 +57,9 @@ public class MappingTemplate extends MappingTemplateClass {
   }
 
   public void generateSpec(java.io.Writer writer) throws java.io.IOException {
-writer.write(%[ --From generateSpec at MappingTemplate.t ]%) ;
+
+return;
+
 }
 
   public void generate(java.io.Writer writer) throws java.io.IOException {
@@ -146,6 +148,10 @@ writer.write(%[ --From generateSpec at MappingTemplate.t ]%) ;
   }
 
   protected String fileName() {
+    return fullClassName().replace('.',File.separatorChar)+".tom";
+  }
+
+  protected String fileSpecName() {
     return fullClassName().replace('.',File.separatorChar)+".tom";
   }
 

@@ -75,12 +75,45 @@ public class SortTemplate extends TemplateHookedClass {
   }
 
   public void generateSpec(java.io.Writer writer) throws java.io.IOException {
-writer.write(%[ --From generateSpec at SortTemplate.t ]%) ;
+
+writer.write(%[
+
+with @getPackage()@;
+use @getPackage()@;
+
+]%);
+
+
+    // methods for each operator
+    ClassNameList consum = operatorList;
+    while (!consum.isEmptyConcClassName()) {
+      ClassName operatorName = consum.getHeadConcClassName();
+      consum = consum.getTailConcClassName();
+
+      writer.write(%[
+
+function @isOperatorMethod(operatorName)@(this: @className()@) return Boolean;
+
+ ]%);
+    }
+    // methods for each slot
+    SlotFieldList sl = slotList;
+    while (!sl.isEmptyConcSlotField()) {
+      SlotField slot = sl.getHeadConcSlotField();
+      sl = sl.getTailConcSlotField();
+
+      writer.write(%[
+
+function @getMethod(slot)@(this: @className()@) return @slotDomain(slot)@''Class ]%);
+
+    }
+
 }
 
   public void generate(java.io.Writer writer) throws java.io.IOException {
     writer.write(%[
 with @getPackage()@;
+use @getPackage()@;
 @generateImport()@
 
 package body @fullClassName(abstractType)@.@className()@ is 

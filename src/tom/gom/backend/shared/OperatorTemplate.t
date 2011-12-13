@@ -82,7 +82,6 @@ public class OperatorTemplate extends TemplateHookedClass {
 
 writer.write(
 %[
-with @getPackage()@; use @getPackage()@;
 with @fullClassName(extendsType)@; use @fullClassName(extendsType)@;
 @generateImport()@
 
