@@ -117,7 +117,7 @@ public class GraphRuleExpander {
 
   //add the common methods, includes and imports for all graphrule strategies of a sort
   protected HookDeclList expandFirst(Decl sdecl) {
-    ClassName abstractType = `ClassName(pkgName+"."+moduleName.toLowerCase(),moduleName+"AbstractType");
+    ClassName abstractType = `ClassName(pkgName+"."+moduleName.toLowerCase(),"");//moduleName+"AbstractType");
     ClassName visitor = `ClassName(pkgName+"."+moduleName.toLowerCase(),moduleName+"Visitor");
 
     StringBuilder output = new StringBuilder();
@@ -361,7 +361,7 @@ import @prefix@.types.@`name.toLowerCase()@.Path@`name@;
   }
 
   protected HookDeclList expand(RuleList rulelist, String stratname, String defaultstrat, Decl sdecl) {
-    ClassName abstractType = `ClassName(pkgName+"."+moduleName.toLowerCase(),moduleName+"AbstractType");
+    ClassName abstractType = `ClassName(pkgName+"."+moduleName.toLowerCase(),""); //moduleName+"AbstractType");
 
     StringBuilder output = new StringBuilder();
     output.append(%[

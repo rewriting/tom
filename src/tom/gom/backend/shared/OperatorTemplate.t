@@ -234,11 +234,6 @@ end;
 
 
 writer.write(%[
-  /**
-   * Copy the object and returns the copy
-   *
-   * @@return a clone of the SharedObject
-   */
 		-- Duplicate
 	function duplicate(this: @className()@) return SharedObject''Class is
 		clone : access @className()@ := new @className()@ ;
@@ -295,12 +290,6 @@ writer.write(%[
 
  //SharedObject extension
 
-  /**
-   * Checks if a SharedObject is equivalent to the current object
-   *
-   * @@param obj SharedObject to test
-   * @@return true if obj is a @className()@ and its members are equal, else false
-   */
 	function equivalent(this: plus; o: SharedObject''Class) return Boolean is
 begin
 	    if(o in @className()@) then 
@@ -314,11 +303,6 @@ begin
 
 writer.write(%[
    //@className(sortName)@ interface
-  /**
-   * Returns true if the term is rooted by the symbol @className.getName()@
-   *
-   * @@return true, because this is rooted by @className.getName()@
-   */
 
 	function @isOperatorMethod(className)@(this: @className()@) return Boolean is
 	begin

@@ -117,7 +117,7 @@ public class SymbolTable {
   }
 
   public String getFullAbstractTypeClassName(String moduleName) {
-    return getFullModuleName(moduleName)+"."+moduleName+"AbstractType";
+    return getFullModuleName(moduleName) ; //+"."+moduleName+"AbstractType";
   }
 
   public String getFullSortClassName(String sort) {
@@ -131,8 +131,8 @@ public class SymbolTable {
     %match(desc) {
       SortDescription[ModuleSymbol=m] -> {
         String packageName = gomEnvironment.getStreamManager().getPackagePath(`m);
-        return (packageName.equals("") ? "" : packageName + ".")
-          + `m.toLowerCase() + ".types." + sort;
+        return (packageName.equals("") ? "" : packageName + ".") + `m.toLowerCase() + "." + sort;
+ //+ `m.toLowerCase() + ".types." + sort;
       }
     }
     GomMessage.error(getLogger(),null,0,

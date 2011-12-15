@@ -77,9 +77,14 @@ public class SortTemplate extends TemplateHookedClass {
   public void generateSpec(java.io.Writer writer) throws java.io.IOException {
 
 writer.write(%[
+package @fullClassName(abstractType)@.@className()@ is 
 
 with @getPackage()@;
 use @getPackage()@;
+
+	type @className()@ is abstract new @className(abstractType)@ with null record ; 
+	type @className()@Ptr is access all @className()@''Class ;
+
 
 ]%);
 
@@ -107,6 +112,16 @@ function @isOperatorMethod(operatorName)@(this: @className()@) return Boolean;
 function @getMethod(slot)@(this: @className()@) return @slotDomain(slot)@''Class ]%);
 
     }
+
+writer.write(%[
+
+overriding
+function toString(this: @className()@) return String ;
+
+
+end @fullClassName()@;
+
+]%);
 
 }
 
@@ -161,6 +176,16 @@ end;
 ]%);
 
     }
+
+writer.write(%[
+
+function toString(this: @className()@) return String is
+begin
+	return "unextended @className()@" ; 
+end;
+
+]%) ;
+
 }
 
 

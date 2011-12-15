@@ -60,7 +60,7 @@ public class AbstractTypeTemplate extends TemplateHookedClass {
   }
 
   public void generateSpec(java.io.Writer writer) throws java.io.IOException {
-writer.write(%[ --From generateSpec at AbstractTypeTemplate.t ]%) ;
+writer.write(%[ --From generateSpec at AbstractTypeTemplate.t, unnecessary ]%) ;
 }
 
 
@@ -68,9 +68,9 @@ writer.write(%[ --From generateSpec at AbstractTypeTemplate.t ]%) ;
 
     writer.write(
 %[
-package @getPackage()@;
-@generateImport()@
-
+-- with VisitablePackage; use VisitablePackage;
+with SharedObjectFactoryP; use SharedObjectFactoryP;
+with SharedObjectP; use SharedObjectP;
 ]%);
 
     String implementsInterface;
