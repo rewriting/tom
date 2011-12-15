@@ -155,7 +155,7 @@ public class Backend {
       }
 
       for (final ClassName clsName : generators.keySet()) {
-	System.out.println(clsName);
+	//System.out.println(clsName);
         generators.get(clsName).generateFile();
 	generators.get(clsName).generateSpecFile();
       }

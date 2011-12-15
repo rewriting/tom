@@ -956,10 +956,7 @@ return this;
         if(oArgs != null && oArgs != `args) {
           recVarNameRemap(oArgs,`args, writer);
         }
-        /* Make sure we defeat java dead code detection */
-        writer.write("if (true) {");
         CodeGen.generateCode(`code,writer);
-        writer.write("}");
         return generateMakeHooks(`tail, `args, writer);
       }
     }
@@ -1007,7 +1004,7 @@ return this;
         %match(slotList) {
           ConcSlotField(_*,slot@SlotField[Name=slotName],_*) -> {
             writer.write("  get_slot("+`slotName+", t) ");
-            writer.write("{ $t."+getMethod(`slot)+"() }\n");
+            writer.write("{ $t."+`slotName+"}\n");
           }
         }
         writer.write("  make(");
