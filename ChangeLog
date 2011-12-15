@@ -1,3 +1,6 @@
+2011-12-09 tavaresc
+ * newtyper: add verification for types of each variable in pattern.
+
 2011-09-09 francois
  * newparser: fix %gom
 
