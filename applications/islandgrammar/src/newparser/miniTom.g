@@ -1,19 +1,44 @@
+/*
+ * 
+ * TOM - To One Matching Compiler
+ * 
+ * Copyright (c) 2000-2011, INPL, INRIA
+ * Nancy, France.
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+ * 
+ * Gregoire Brenon, Nabil Dhiba, and Hichem Mokrani (Mines de Nancy)
+ *
+ **/
+
 grammar miniTom;
 
 options {
 	output=AST;
-  ASTLabelType=Tree;
-  backtrack=true;
+	ASTLabelType=Tree;
+	backtrack=true;
 }
 
 tokens {
-  HOSTBLOCK;
-  MATCH;
-  MATCHARG;
-  TYPED;
-  UNTYPED;
-  TYPETERM;
-  PATTERNACTION;
+	HOSTBLOCK;
+	MATCH;
+	MATCHARG;
+	TYPED;
+	UNTYPED;
+	TYPETERM;
+	PATTERNACTION;
 }
 
 @parser::header {
@@ -38,21 +63,36 @@ public static Queue<Tree> SubTrees = new LinkedList<Tree>();
 
 /* Parser rules */
 
+typetermconstruct :
+  STRING LEFTBR implementKword (issortKword)? (equalsKword)? -> ^(TYPETERM implementKword (issortKword)? (equalsKword)?)
+  ;
 
-typetermconstruct : STRING LEFTBR implementKword (issortKword)? (equalsKword)? -> ^(TYPETERM implementKword (issortKword)? (equalsKword)?);
+implementKword :
+  IMPLEMENT s1=innerBlock -> ^(IMPLEMENT $s1)
+  ;
 
-implementKword : IMPLEMENT s1=innerBlock -> ^(IMPLEMENT $s1) ;
-issortKword : ISSORT LEFTPAR s1=STRING RIGHTPAR s2=innerBlock -> ^(ISSORT $s2) ;
-equalsKword : EQUALS LEFTPAR s1=STRING COMMA s2=STRING LEFTBR s3=innerBlock -> ^(EQUALS $s3) ;
+issortKword : 
+  ISSORT LEFTPAR s1=STRING RIGHTPAR s2=innerBlock -> ^(ISSORT $s2) 
+  ;
 
-matchconstruct : LEFTPAR RIGHTPAR LEFTBR patternaction*  -> ^(MATCH patternaction*) ;
+equalsKword : 
+  EQUALS LEFTPAR s1=STRING COMMA s2=STRING LEFTBR s3=innerBlock -> ^(EQUALS $s3)
+  ;
 
-patternaction : (s1=STRING) RARROW s2=innerBlock  -> ^(PATTERNACTION $s1 $s2);
+matchconstruct :
+  LEFTPAR RIGHTPAR LEFTBR patternaction*  -> ^(MATCH patternaction*)
+  ;
 
-innerBlock : VOUCHER -> { miniTomLexer.SubTrees.poll()};
+patternaction :
+  (s1=STRING) RARROW s2=innerBlock  -> ^(PATTERNACTION $s1 $s2)
+  ;
+
+innerBlock :
+  VOUCHER -> { miniTomLexer.SubTrees.poll()}
+  ;
 
 /* Lexer rules */
-VOUCHER  : ;
+VOUCHER    : ;
 LEFTPAR    : '(' ;
 RIGHTPAR   : ')' ;
 LEFTBR     : '{' {
@@ -67,7 +107,7 @@ LEFTBR     : '{' {
   }
 } ;
 RIGHTBR    : '}' {
-  if(levelcounter<=0){emit(Token.EOF_TOKEN);} else{levelcounter-=1;}
+  if(levelcounter<=0) { emit(Token.EOF_TOKEN); } else { levelcounter-=1; }
 } ;
 SEMICOLUMN : ';' ;
 COMMA      : ',' ;

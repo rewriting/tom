@@ -68,7 +68,7 @@ public interface OptionManager {
   public void setOptionValue(String name, Object value);
   
   /**
-   * Get the option 'name' valus 
+   * Get the option 'name' value 
    *
    * @param optionName the option's name
    * @return the option's value as an Object

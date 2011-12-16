@@ -1,6 +1,7 @@
 module TomSignature
 imports TomName TomType TomConstraint TomInstruction TomExpression 
         TomDeclaration TomOption TomTerm TomSlot int String Code TypeConstraints
+        CST
 abstract syntax
 TextPosition = TextPosition(Line:int,Column:int)
 TomVisit = VisitTerm(VNode:TomType,AstConstraintInstructionList:ConstraintInstructionList,Options:OptionList)

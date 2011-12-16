@@ -25,15 +25,12 @@
 package tom.gom.parser;
 
 import java.io.Reader;
-import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Map;
 
-import tom.platform.PlatformLogRecord;
 import tom.engine.tools.Tools;
 import tom.gom.GomMessage;
-import tom.gom.GomStreamManager;
 import tom.gom.adt.gom.types.*;
 import tom.gom.tools.GomGenericPlugin;
 import tom.gom.tools.GomEnvironment;

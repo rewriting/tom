@@ -52,7 +52,7 @@ public class BoulderDash {
 
   %op Bead empty() {
     is_fsym(t) { $t==null }
-    make { null }
+    make() { null }
   }
 
 

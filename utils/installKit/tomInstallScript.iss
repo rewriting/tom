@@ -5,12 +5,12 @@
 
 [Setup]
 AppName=Tom
-AppVerName=Tom version 2.8
+AppVerName=Tom version 2.9
 DefaultDirName={pf}\INRIA\Tom
 DefaultGroupName=Tom
 UninstallDisplayIcon={app}\Tom.exe
 SourceDir=../../stable/dist
-OutputBaseFilename=tom-2.8_setup
+OutputBaseFilename=tom-2.9_setup
 OutputDir=../../utils/installKit
 LicenseFile=LICENCE
 ChangesEnvironment=yes

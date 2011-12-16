@@ -20,6 +20,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  *
  * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
+ * Antoine Floch
  * Nicolas Henry
  *
  **/
@@ -52,7 +53,7 @@ public class EcoreContainmentIntrospector implements Introspector {
   
   public Object getChildAt(Object o, int i) {
     List<Object> l=getList(o);
-    if(l!=null){
+    if(l!=null) {
       return l.get(i);
     }
     return null;
@@ -60,7 +61,7 @@ public class EcoreContainmentIntrospector implements Introspector {
 
   public int getChildCount(Object o) {
     List<Object> l=getList(o);
-    if(l!=null){
+    if(l!=null) {
       return l.size();
     }
     return 0;
@@ -68,7 +69,7 @@ public class EcoreContainmentIntrospector implements Introspector {
 
   public Object[] getChildren(Object o) {
     List<Object> l=getList(o);
-    if(l!=null){
+    if(l!=null) {
       return l.toArray();
     }
     return null;
@@ -78,7 +79,7 @@ public class EcoreContainmentIntrospector implements Introspector {
   /*@Override
   public <T> T setChildAt(T o, int i, Object obj) {
     List<Object> l=getList(o);
-    if(l!=null){
+    if(l!=null) {
       l.set(i,o);
       return o;
     }
@@ -97,17 +98,17 @@ public class EcoreContainmentIntrospector implements Introspector {
 		EStructuralFeature feature = getFeature(eo, i);
 
 		// 2) If feature is a list
-		if (feature.getUpperBound() == -1) {
+		if(feature.getUpperBound() == -1) {
 			EList<EObject> list = (EList<EObject>) eo.eGet(feature);
 
-			if (list.size() > 0) {
+			if(list.size() > 0) {
 				// find the position in the list and set it
 				int pos = getPositionInTheContainingList(i, eo, feature);
-				if (pos > list.size())
-					throw new RuntimeException(
-							"Relative position isn't allowed.");
-				else
+				if(pos > list.size()) {
+					throw new RuntimeException("Relative position isn't allowed.");
+        } else {
 					list.set(pos, (EObject) obj);
+        }
 			} else {
 				list.add((EObject) obj);
 			}
@@ -124,11 +125,9 @@ public class EcoreContainmentIntrospector implements Introspector {
 	 * Get a position in a feature list from global position in all contents of
 	 * the referencing object.
 	 * 
-	 * @param global
-	 *            position of the object in all contents
+	 * @param global position of the object in all contents
 	 * @param referencing
-	 * @param feature
-	 *            target feature
+	 * @param feature target feature
 	 * @return the relative position
 	 */
 	private int getPositionInTheContainingList(int global, EObject referencing,
@@ -136,8 +135,9 @@ public class EcoreContainmentIntrospector implements Introspector {
 		int offset = 0;
 		List<EObject> contents = getList(referencing);
 		while (offset < contents.size()
-				&& contents.get(offset).eContainingFeature() != feature)
+				&& contents.get(offset).eContainingFeature() != feature) {
 			offset++;
+    }
 		return global - offset;
 	}
 
@@ -151,7 +151,7 @@ public class EcoreContainmentIntrospector implements Introspector {
   /*@Override
   public <T> T setChildren(T o, Object[] objs) {
     List<Object> l=getList(o);
-    if(l!=null){
+    if(l!=null) {
       for(int i = 0; i < objs.length; i++) {
         l.set(i, objs[i]);
       }
@@ -172,23 +172,24 @@ public class EcoreContainmentIntrospector implements Introspector {
 
 		// Memorize all setted features
 		List<EStructuralFeature> settedFeatures = new ArrayList<EStructuralFeature>();
-		for (EObject el : l) {
+		for(EObject el : l) {
 			settedFeatures.add(el.eContainingFeature());
 		}
 
 		// Clear list ones
 		clear(eo, new HashSet<EStructuralFeature>(settedFeatures));
 
-		for (int i = 0; i < settedFeatures.size(); i++) {
+		for(int i = 0; i < settedFeatures.size(); i++) {
 			EStructuralFeature feature = settedFeatures.get(i);
-			if (feature.getUpperBound() == -1) {
+			if(feature.getUpperBound() == -1) {
 				// in case of a list feature: add each object to its list
 				List<EObject> list = (List<EObject>) eo.eGet(feature);
-        if (objs[i]!=null) {
+        if(objs[i]!=null) {
           list.add((EObject) objs[i]);
         }
-			} else
+			} else {
 				eo.eSet(l.get(i).eContainingFeature(), objs[i]);
+      }
 		}
 
 		return o;
@@ -202,8 +203,8 @@ public class EcoreContainmentIntrospector implements Introspector {
 	 */
 	@SuppressWarnings({ "unchecked" })
 	private void clear(EObject eo, Set<EStructuralFeature> features) {
-		for (EStructuralFeature feature : features) {
-			if (feature.getUpperBound() == -1) {
+		for(EStructuralFeature feature : features) {
+			if(feature.getUpperBound() == -1) {
 				List<EObject> list = (List<EObject>) eo.eGet(feature);
 				list.clear();
 			}

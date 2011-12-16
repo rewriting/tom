@@ -4,5 +4,6 @@ module Peano
           | b()
           | c()
           | f(Nat*)
+          | g(x:Nat)
           
-     f:ACU(){}  
+     f:AC(){}  

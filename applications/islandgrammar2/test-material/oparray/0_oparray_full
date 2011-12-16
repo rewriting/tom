@@ -1,0 +1,17 @@
+#>
+#description %oparray full
+#<
+
+%oparray TomTrucArray conc( Truc * ){
+
+is_fsym(t)        { $t instanceof SomeKindOfArray }
+make_empty(n)     { new SomeKindOfArray($n) }
+make_append(e, l) { myAdd($e, (SomeKindOfArray)$l }
+get_element(l, n) { $l.get(n) }
+get_size(l)       { $l.size() }
+
+}
+
+private static SomeKindOfArray myAdd(Truc e, SomeKindOfArray l){
+  bliblibli;
+}

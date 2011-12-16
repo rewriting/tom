@@ -237,27 +237,27 @@ public class SyntaxCheckerPlugin extends TomGenericPlugin {
         }
         /* STRATEGY MATCH STRUCTURE */
         scp.verifyStrategy(`list);
-        throw new tom.library.sl.VisitFailure();// stop the top-down
+        throw new tom.library.sl.VisitFailure();/* stop the top-down */
       }
       /*
        * %typeterm
        */
       TypeTermDecl(Name(tomName), declarationList, orgTrack) -> {
         scp.verifyTypeDecl(SyntaxCheckerPlugin.TYPE_TERM, `tomName, `declarationList, `orgTrack);
-        throw new tom.library.sl.VisitFailure();// stop the top-down
+        throw new tom.library.sl.VisitFailure();/* stop the top-down */
       }
       // Symbols
       SymbolDecl(Name(tomName)) -> {
         scp.verifySymbol(SyntaxCheckerPlugin.CONSTRUCTOR, scp.getSymbolFromName(`tomName));
-        throw new tom.library.sl.VisitFailure();// stop the top-down
+        throw new tom.library.sl.VisitFailure();/* stop the top-down */
       }
       ArraySymbolDecl(Name(tomName)) -> {
         scp.verifySymbol(SyntaxCheckerPlugin.OP_ARRAY, scp.getSymbolFromName(`tomName));
-        throw new tom.library.sl.VisitFailure();// stop the top-down
+        throw new tom.library.sl.VisitFailure();/* stop the top-down */
       }
       ListSymbolDecl(Name(tomName))  -> {
         scp.verifySymbol(SyntaxCheckerPlugin.OP_LIST, scp.getSymbolFromName(`tomName));
-        throw new tom.library.sl.VisitFailure();// stop the top-down
+        throw new tom.library.sl.VisitFailure();/* stop the top-down */
       }
       /*
        * %transformation
@@ -401,6 +401,7 @@ matchblock:{
   private void verifySymbol(String symbolType, TomSymbol tomSymbol){
     int domainLength;
     String symbStrName = tomSymbol.getAstName().getString();
+
     OptionList optionList = tomSymbol.getOptions();
     // We save first the origin tracking of the symbol declaration
     setCurrentTomStructureOrgTrack(TomBase.findOriginTracking(optionList));
@@ -621,7 +622,6 @@ matchblock:{
     for(Constraint constr: constraints) {
 matchLbl: %match(constr) {// TODO : add something to test the astType
             MatchConstraint(pattern,subject,astType) -> {
-
               Collection<TomName> patternVars = new HashSet<TomName>();
               Collection<TomName> subjectVars = new HashSet<TomName>();
               `TopDownCollect(CollectVariables(patternVars)).visitLight(`pattern);
@@ -672,7 +672,6 @@ matchLbl: %match(constr) {// TODO : add something to test the astType
                       TomMessage.unknownType,
                       `astType.getTomType());
                 }
-
                 // we now compare the pattern to its definition
                 verifyMatchPattern(`pattern, `astType);
               }
@@ -882,10 +881,10 @@ matchLbl: %match(constr) {// TODO : add something to test the astType
         if(!varList.contains(newvar)) { 
           varList.add(`v); 
         }
-        throw new VisitFailure();// to stop the top-down
+        throw new VisitFailure();/* stop the top-down */
       }
       AntiTerm[] -> {        
-        throw new VisitFailure();// to stop the top-down
+        throw new VisitFailure();/* stop the top-down */
       }
     }
   }
@@ -900,7 +899,7 @@ matchLbl: %match(constr) {// TODO : add something to test the astType
         if(!varList.contains(newvar)) { 
           varList.add(`v); 
         }
-        throw new VisitFailure();// to stop the top-down
+        throw new VisitFailure();/* stop the top-down */
       }
     }
   }
@@ -914,7 +913,7 @@ matchLbl: %match(constr) {// TODO : add something to test the astType
         if(!varList.contains(`name)) {
           varList.add(`name); 
         }
-        throw new VisitFailure();// to stop the top-down
+        throw new VisitFailure();/* stop the top-down */
       }
     }
     visit BQTerm {
@@ -922,7 +921,7 @@ matchLbl: %match(constr) {// TODO : add something to test the astType
         if(!varList.contains(`name)) {
           varList.add(`name); 
         }
-        throw new VisitFailure();// to stop the top-down
+        throw new VisitFailure();/* stop the top-down */
       }
     }
   }
@@ -1072,7 +1071,7 @@ matchL:  %match(subject,s) {
     visit Constraint {
       m@MatchConstraint[] -> {        
         constrList.add(`m);         
-        throw new VisitFailure();// to stop the top-down
+        throw new VisitFailure();/* stop the top-down */
       }      
     }
   }
@@ -1091,7 +1090,7 @@ matchL:  %match(subject,s) {
     visit Constraint {
       c@(MatchConstraint|NumericConstraint)[] -> {        
         constrList.add(`c);         
-        throw new VisitFailure();// to stop the top-down
+        throw new VisitFailure();/* stop the top-down */
       }      
       oc@OrConstraint(_*) -> {
         constrList.add(`oc);
@@ -1354,6 +1353,7 @@ matchblock:{
       } else { // known symbol
         if (!getOptionBooleanValue("newtyper")) {//case of subtyping (-nt option activated)
           if( strictType  || !topLevel ) {
+            //DEBUG System.out.println("ensureValidApplDisjunction!");
             if(!ensureSymbolCodomain(TomBase.getSymbolCodomain(symbol), expectedType, TomMessage.invalidCodomain, res, fileName,decLine)) {
               return null;
             }

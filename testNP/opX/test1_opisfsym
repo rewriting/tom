@@ -1,0 +1,11 @@
+%op TomTruc truc() {
+  is_fsym(a) { $a instanceof Truc }
+}
+
+%op TomTruc truc(someSlot:someType) {
+  is_fsym(a) { $a instanceof Truc }
+}
+
+%op TomTruc truc(a1:t1, a2:t2, a3:t3, a4:t4) {
+  is_fsym(a) { $a instanceof Truc }
+}

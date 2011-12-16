@@ -144,6 +144,20 @@ public class ConstraintGenerator {
       }
       // variables' assignments
       ConstraintToExpression(MatchConstraint[Pattern=v@(Variable|VariableStar)[],Subject=t]) -> {
+        SymbolTable symbolTable = getCompiler().getSymbolTable();
+
+        //DEBUG System.out.println("In Constraint Generator with v = " + `v + '\n');
+        //DEBUG System.out.println("In Constraint Generator with t = " + `t + '\n');
+        TomType pType = TomBase.getTermType(`v,symbolTable);
+        TomType sType = TomBase.getTermType(`t,symbolTable);
+        //DEBUG System.out.println("pType = " + pType);
+        //DEBUG System.out.println("sType = " + sType);
+        %match(pType,sType) {
+          Type[TomType=tType],Type[TomType=!tType] -> {
+            return
+              `LetRef(TomBase.convertFromVarToBQVar(v),Cast(TomBase.getTermType(v,symbolTable),BQTermToExpression(t)),action);
+          } 
+        }
         return `LetRef(TomBase.convertFromVarToBQVar(v),BQTermToExpression(t),action);
       }  
       // numeric constraints
@@ -256,7 +270,13 @@ public class ConstraintGenerator {
       OrExpressionDisjunction() -> {
         return `Nop();
       }
+      OrExpressionDisjunction(And(check@IsSort[],assign),X*) -> {
+        return
+          `If(check,buildDisjunctionIfElse(OrExpressionDisjunction(assign,X*),assignFlagTrue),Nop());
+      }
+
       OrExpressionDisjunction(And(check,assign),X*) -> {        
+        //DEBUG System.out.println("orDisjunction = " + `orDisjunction);
         Instruction subtest = buildDisjunctionIfElse(`OrExpressionDisjunction(X*),assignFlagTrue);
         return `If(check,UnamedBlock(concInstruction(assignFlagTrue,generateAutomata(assign,Nop()))),subtest);
       }
@@ -302,7 +322,7 @@ public class ConstraintGenerator {
   }// end strategy   
   
   /**
-   * Collect the free variables in an expression (do not inspect under a anti)  
+   * Collect the free variables in an expression (do not inspect under an anti)  
    */
   %strategy CollectFreeVar(varList:BQTermCollection) extends Identity() {     
     visit Expression {

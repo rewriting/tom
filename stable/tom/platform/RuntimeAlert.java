@@ -1,27 +1,27 @@
 /*
-* 
-* TOM - To One Matching Compiler
-* 
-* Copyright (c) 2000-2011, INPL, INRIA
-* Nancy, France.
-* 
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 2 of the License, or
-* (at your option) any later version.
-* 
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-* 
-* You should have received a copy of the GNU General Public License
-* along with this program; if not, write to the Free Software
-* Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
-* 
-* Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
-*
-**/
+ * 
+ * TOM - To One Matching Compiler
+ * 
+ * Copyright (c) 2000-2011, INPL, INRIA
+ * Nancy, France.
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+ * 
+ * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
+ *
+ **/
 
 package tom.platform;
 
@@ -32,194 +32,96 @@ import tom.platform.adt.platformalert.*;
 import tom.platform.adt.platformalert.types.*;
 
 public class RuntimeAlert {
+  
+        private static   tom.platform.adt.platformalert.types.AlertList  tom_append_list_concAlert( tom.platform.adt.platformalert.types.AlertList l1,  tom.platform.adt.platformalert.types.AlertList  l2) {     if( l1.isEmptyconcAlert() ) {       return l2;     } else if( l2.isEmptyconcAlert() ) {       return l1;     } else if(  l1.getTailconcAlert() .isEmptyconcAlert() ) {       return  tom.platform.adt.platformalert.types.alertlist.ConsconcAlert.make( l1.getHeadconcAlert() ,l2) ;     } else {       return  tom.platform.adt.platformalert.types.alertlist.ConsconcAlert.make( l1.getHeadconcAlert() ,tom_append_list_concAlert( l1.getTailconcAlert() ,l2)) ;     }   }   private static   tom.platform.adt.platformalert.types.AlertList  tom_get_slice_concAlert( tom.platform.adt.platformalert.types.AlertList  begin,  tom.platform.adt.platformalert.types.AlertList  end, tom.platform.adt.platformalert.types.AlertList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyconcAlert()  ||  (end== tom.platform.adt.platformalert.types.alertlist.EmptyconcAlert.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.platform.adt.platformalert.types.alertlist.ConsconcAlert.make( begin.getHeadconcAlert() ,( tom.platform.adt.platformalert.types.AlertList )tom_get_slice_concAlert( begin.getTailconcAlert() ,end,tail)) ;   }    
 
+  private AlertList errors;
+  private AlertList warnings;
+  private int nbErrors;
+  private int nbWarnings;
 
-
-  private static   tom.platform.adt.platformalert.types.AlertList  tom_append_list_concAlert( tom.platform.adt.platformalert.types.AlertList l1,  tom.platform.adt.platformalert.types.AlertList  l2) {
-    if( l1.isEmptyconcAlert() ) {
-      return l2;
-    } else if( l2.isEmptyconcAlert() ) {
-      return l1;
-    } else if(  l1.getTailconcAlert() .isEmptyconcAlert() ) {
-      return  tom.platform.adt.platformalert.types.alertlist.ConsconcAlert.make( l1.getHeadconcAlert() ,l2) ;
-    } else {
-      return  tom.platform.adt.platformalert.types.alertlist.ConsconcAlert.make( l1.getHeadconcAlert() ,tom_append_list_concAlert( l1.getTailconcAlert() ,l2)) ;
-    }
+  public RuntimeAlert() {
+    errors =  tom.platform.adt.platformalert.types.alertlist.EmptyconcAlert.make() ;
+    warnings =  tom.platform.adt.platformalert.types.alertlist.EmptyconcAlert.make() ;
+    nbErrors = 0;
+    nbWarnings = 0;
   }
-  private static   tom.platform.adt.platformalert.types.AlertList  tom_get_slice_concAlert( tom.platform.adt.platformalert.types.AlertList  begin,  tom.platform.adt.platformalert.types.AlertList  end, tom.platform.adt.platformalert.types.AlertList  tail) {
-    if( (begin==end) ) {
-      return tail;
-    } else if( (end==tail)  && ( end.isEmptyconcAlert()  ||  (end== tom.platform.adt.platformalert.types.alertlist.EmptyconcAlert.make() ) )) {
-      /* code to avoid a call to make, and thus to avoid looping during list-matching */
-      return begin;
-    }
-    return  tom.platform.adt.platformalert.types.alertlist.ConsconcAlert.make( begin.getHeadconcAlert() ,( tom.platform.adt.platformalert.types.AlertList )tom_get_slice_concAlert( begin.getTailconcAlert() ,end,tail)) ;
+
+  /**
+   * Add the warning only if it is not already in the list 
+   */
+  public void addWarning(String message, String file, int line) {
+    Alert entry =  tom.platform.adt.platformalert.types.alert.Warning.make(message, file, line) ;
+    {{if ( (((Object)entry) instanceof tom.platform.adt.platformalert.types.Alert) ) {if ( (((Object)warnings) instanceof tom.platform.adt.platformalert.types.AlertList) ) {boolean tomMatch723_9= false ;if ( (((( tom.platform.adt.platformalert.types.AlertList )(( tom.platform.adt.platformalert.types.AlertList )((Object)warnings))) instanceof tom.platform.adt.platformalert.types.alertlist.ConsconcAlert) || ((( tom.platform.adt.platformalert.types.AlertList )(( tom.platform.adt.platformalert.types.AlertList )((Object)warnings))) instanceof tom.platform.adt.platformalert.types.alertlist.EmptyconcAlert)) ) { tom.platform.adt.platformalert.types.AlertList  tomMatch723__end__5=(( tom.platform.adt.platformalert.types.AlertList )((Object)warnings));do {{if (!( tomMatch723__end__5.isEmptyconcAlert() )) {if ( ((( tom.platform.adt.platformalert.types.Alert )((Object)entry))== tomMatch723__end__5.getHeadconcAlert() ) ) {tomMatch723_9= true ;}}if ( tomMatch723__end__5.isEmptyconcAlert() ) {tomMatch723__end__5=(( tom.platform.adt.platformalert.types.AlertList )((Object)warnings));} else {tomMatch723__end__5= tomMatch723__end__5.getTailconcAlert() ;}}} while(!( (tomMatch723__end__5==(( tom.platform.adt.platformalert.types.AlertList )((Object)warnings))) ));}if (!(tomMatch723_9)) {
+
+        warnings =  tom.platform.adt.platformalert.types.alertlist.ConsconcAlert.make(entry,tom_append_list_concAlert(warnings, tom.platform.adt.platformalert.types.alertlist.EmptyconcAlert.make() )) ;
+        nbWarnings++;   
+      }}}}}
+    
   }
   
+  /**
+   * Add the error only if it is not already in the list 
+   */
+  public void addError(String message, String file, int line) {
+    Alert entry =  tom.platform.adt.platformalert.types.alert.Error.make(message, file, line) ;
+    {{if ( (((Object)entry) instanceof tom.platform.adt.platformalert.types.Alert) ) {if ( (((Object)errors) instanceof tom.platform.adt.platformalert.types.AlertList) ) {boolean tomMatch724_9= false ;if ( (((( tom.platform.adt.platformalert.types.AlertList )(( tom.platform.adt.platformalert.types.AlertList )((Object)errors))) instanceof tom.platform.adt.platformalert.types.alertlist.ConsconcAlert) || ((( tom.platform.adt.platformalert.types.AlertList )(( tom.platform.adt.platformalert.types.AlertList )((Object)errors))) instanceof tom.platform.adt.platformalert.types.alertlist.EmptyconcAlert)) ) { tom.platform.adt.platformalert.types.AlertList  tomMatch724__end__5=(( tom.platform.adt.platformalert.types.AlertList )((Object)errors));do {{if (!( tomMatch724__end__5.isEmptyconcAlert() )) {if ( ((( tom.platform.adt.platformalert.types.Alert )((Object)entry))== tomMatch724__end__5.getHeadconcAlert() ) ) {tomMatch724_9= true ;}}if ( tomMatch724__end__5.isEmptyconcAlert() ) {tomMatch724__end__5=(( tom.platform.adt.platformalert.types.AlertList )((Object)errors));} else {tomMatch724__end__5= tomMatch724__end__5.getTailconcAlert() ;}}} while(!( (tomMatch724__end__5==(( tom.platform.adt.platformalert.types.AlertList )((Object)errors))) ));}if (!(tomMatch724_9)) {
 
-private AlertList errors;
-private AlertList warnings;
-private int nbErrors;
-private int nbWarnings;
+        errors =  tom.platform.adt.platformalert.types.alertlist.ConsconcAlert.make(entry,tom_append_list_concAlert(errors, tom.platform.adt.platformalert.types.alertlist.EmptyconcAlert.make() )) ;
+        nbErrors++;    
+      }}}}}
+    
+  }
+  
+  public int getNbErrors() {
+    return nbErrors;
+  }
 
-public RuntimeAlert() {
-errors = 
- tom.platform.adt.platformalert.types.alertlist.EmptyconcAlert.make() ;
-warnings = 
- tom.platform.adt.platformalert.types.alertlist.EmptyconcAlert.make() ;
-nbErrors = 0;
-nbWarnings = 0;
-}
+  public int getNbWarnings() {
+    return nbWarnings;
+  }
 
-/**
-* Add the warning only if it is not already in the list 
-*/
-public void addWarning(String message, String file, int line) {
-Alert entry = 
- tom.platform.adt.platformalert.types.alert.Warning.make(message, file, line) ;
+  public boolean hasErrors() {
+    return (nbErrors>0);
+  }
 
-{
-{
-if ( (entry instanceof tom.platform.adt.platformalert.types.Alert) ) {
-if ( (warnings instanceof tom.platform.adt.platformalert.types.AlertList) ) {
-boolean tomMatch677_9= false ;
-if ( (((( tom.platform.adt.platformalert.types.AlertList )warnings) instanceof tom.platform.adt.platformalert.types.alertlist.ConsconcAlert) || ((( tom.platform.adt.platformalert.types.AlertList )warnings) instanceof tom.platform.adt.platformalert.types.alertlist.EmptyconcAlert)) ) {
- tom.platform.adt.platformalert.types.AlertList  tomMatch677__end__5=(( tom.platform.adt.platformalert.types.AlertList )warnings);
-do {
-{
-if (!( tomMatch677__end__5.isEmptyconcAlert() )) {
-if ( ((( tom.platform.adt.platformalert.types.Alert )entry)== tomMatch677__end__5.getHeadconcAlert() ) ) {
-tomMatch677_9= true ;
-}
-}
-if ( tomMatch677__end__5.isEmptyconcAlert() ) {
-tomMatch677__end__5=(( tom.platform.adt.platformalert.types.AlertList )warnings);
-} else {
-tomMatch677__end__5= tomMatch677__end__5.getTailconcAlert() ;
-}
+  public boolean hasWarnings() {
+    return (nbWarnings>0);
+  }
 
-}
-} while(!( (tomMatch677__end__5==(( tom.platform.adt.platformalert.types.AlertList )warnings)) ));
-}
-if (!(tomMatch677_9)) {
+  public AlertList getErrors() {
+    return errors;
+  }
 
-warnings = 
- tom.platform.adt.platformalert.types.alertlist.ConsconcAlert.make(entry,tom_append_list_concAlert(warnings, tom.platform.adt.platformalert.types.alertlist.EmptyconcAlert.make() )) ;
-nbWarnings++;   
+  public AlertList getWarnings() {
+    return warnings;
+  }
+  
+  public void concat(RuntimeAlert newErrors) {
+    if(newErrors.getErrors() !=  tom.platform.adt.platformalert.types.alertlist.EmptyconcAlert.make() ) {
+      AlertList newAlerts = newErrors.getErrors();
+      errors = tom_append_list_concAlert(newAlerts,tom_append_list_concAlert(errors, tom.platform.adt.platformalert.types.alertlist.EmptyconcAlert.make() ));
+      nbErrors += newErrors.getNbErrors();      
+    }
+    if(newErrors.getWarnings() !=  tom.platform.adt.platformalert.types.alertlist.EmptyconcAlert.make() ) {
+      AlertList newAlerts = newErrors.getWarnings();
+      warnings = tom_append_list_concAlert(newAlerts,tom_append_list_concAlert(warnings, tom.platform.adt.platformalert.types.alertlist.EmptyconcAlert.make() ));
+      nbWarnings += newErrors.getNbWarnings();
+    }
+  }
 
-
-}
-
-}
-}
-
-}
-
-}
-
-}
-
-/**
-* Add the error only if it is not already in the list 
-*/
-public void addError(String message, String file, int line) {
-Alert entry = 
- tom.platform.adt.platformalert.types.alert.Error.make(message, file, line) ;
-
-{
-{
-if ( (entry instanceof tom.platform.adt.platformalert.types.Alert) ) {
-if ( (errors instanceof tom.platform.adt.platformalert.types.AlertList) ) {
-boolean tomMatch678_9= false ;
-if ( (((( tom.platform.adt.platformalert.types.AlertList )errors) instanceof tom.platform.adt.platformalert.types.alertlist.ConsconcAlert) || ((( tom.platform.adt.platformalert.types.AlertList )errors) instanceof tom.platform.adt.platformalert.types.alertlist.EmptyconcAlert)) ) {
- tom.platform.adt.platformalert.types.AlertList  tomMatch678__end__5=(( tom.platform.adt.platformalert.types.AlertList )errors);
-do {
-{
-if (!( tomMatch678__end__5.isEmptyconcAlert() )) {
-if ( ((( tom.platform.adt.platformalert.types.Alert )entry)== tomMatch678__end__5.getHeadconcAlert() ) ) {
-tomMatch678_9= true ;
-}
-}
-if ( tomMatch678__end__5.isEmptyconcAlert() ) {
-tomMatch678__end__5=(( tom.platform.adt.platformalert.types.AlertList )errors);
-} else {
-tomMatch678__end__5= tomMatch678__end__5.getTailconcAlert() ;
-}
-
-}
-} while(!( (tomMatch678__end__5==(( tom.platform.adt.platformalert.types.AlertList )errors)) ));
-}
-if (!(tomMatch678_9)) {
-
-errors = 
- tom.platform.adt.platformalert.types.alertlist.ConsconcAlert.make(entry,tom_append_list_concAlert(errors, tom.platform.adt.platformalert.types.alertlist.EmptyconcAlert.make() )) ;
-nbErrors++;    
-
-
-}
-
-}
-}
-
-}
-
-}
-
-}
-
-public int getNbErrors() {
-return nbErrors;
-}
-
-public int getNbWarnings() {
-return nbWarnings;
-}
-
-public boolean hasErrors() {
-return (nbErrors>0);
-}
-
-public boolean hasWarnings() {
-return (nbWarnings>0);
-}
-
-public AlertList getErrors() {
-return errors;
-}
-
-public AlertList getWarnings() {
-return warnings;
-}
-
-public void concat(RuntimeAlert newErrors) {
-if(newErrors.getErrors() != 
- tom.platform.adt.platformalert.types.alertlist.EmptyconcAlert.make() ) {
-AlertList newAlerts = newErrors.getErrors();
-errors = 
-tom_append_list_concAlert(newAlerts,tom_append_list_concAlert(errors, tom.platform.adt.platformalert.types.alertlist.EmptyconcAlert.make() ));
-nbErrors += newErrors.getNbErrors();      
-}
-if(newErrors.getWarnings() != 
- tom.platform.adt.platformalert.types.alertlist.EmptyconcAlert.make() ) {
-AlertList newAlerts = newErrors.getWarnings();
-warnings = 
-tom_append_list_concAlert(newAlerts,tom_append_list_concAlert(warnings, tom.platform.adt.platformalert.types.alertlist.EmptyconcAlert.make() ));
-nbWarnings += newErrors.getNbWarnings();
-}
-}
-
-/**
-* @param record
-*/
-public void add(PlatformLogRecord record) {
-
-PlatformFormatter formatter = new PlatformFormatter();   
-
-if(record.getLevel() == Level.SEVERE) {
-addError(formatter.formatMessage(record), record.getFilePath(), record.getLine());
-} else if(record.getLevel() == Level.WARNING) {
-addWarning(formatter.formatMessage(record), record.getFilePath(), record.getLine());
-}
-}
+  /**
+   * @param record
+   */
+  public void add(PlatformLogRecord record) {
+    
+	PlatformFormatter formatter = new PlatformFormatter();   
+	  
+	if(record.getLevel() == Level.SEVERE) {
+      addError(formatter.formatMessage(record), record.getFilePath(), record.getLine());
+    } else if(record.getLevel() == Level.WARNING) {
+      addWarning(formatter.formatMessage(record), record.getFilePath(), record.getLine());
+    }
+  }
 
 } //class RuntimeAlert

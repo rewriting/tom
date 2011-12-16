@@ -1127,19 +1127,22 @@ private String generateMakeArgsFor(SlotField slot, String argName) {
              || `domain.equals(`ClassName("","float"))
              || `domain.equals(`ClassName("","char"))) {
            res.append(%[
-    if( this.@fieldName(`slotName)@ != @other@.@fieldName(`slotName)@)
+    if( this.@fieldName(`slotName)@ != @other@.@fieldName(`slotName)@) {
       return (this.@fieldName(`slotName)@ < @other@.@fieldName(`slotName)@)?-1:1;
+    }
 ]%);
          } else if (`domain.equals(`ClassName("","boolean"))) {
            res.append(%[
-    if( this.@fieldName(`slotName)@ != @other@.@fieldName(`slotName)@)
+    if( this.@fieldName(`slotName)@ != @other@.@fieldName(`slotName)@) {
       return (!this.@fieldName(`slotName)@ && @other@.@fieldName(`slotName)@)?-1:1;
+    }
 ]%);
          } else if (`domain.equals(`ClassName("","String"))) {
            res.append(%[
     int @fieldName(`slotName)@Cmp = (this.@fieldName(`slotName)@).compareTo(@other@.@fieldName(`slotName)@);
-    if(@fieldName(`slotName)@Cmp != 0)
+    if(@fieldName(`slotName)@Cmp != 0) {
       return @fieldName(`slotName)@Cmp;
+    }
 
 ]%);
          } else if (`domain.equals(`ClassName("aterm","ATerm"))
@@ -1147,8 +1150,9 @@ private String generateMakeArgsFor(SlotField slot, String argName) {
            res.append(%[
     /* Inefficient total order on ATerm */
     int @fieldName(`slotName)@Cmp = ((this.@fieldName(`slotName)@).toString()).compareTo((@other@.@fieldName(`slotName)@).toString());
-    if(@fieldName(`slotName)@Cmp != 0)
+    if(@fieldName(`slotName)@Cmp != 0) {
       return @fieldName(`slotName)@Cmp;
+    }
 ]%);
          } else {
             throw new GomRuntimeException("Builtin "+`domain+" not supported");
@@ -1156,8 +1160,9 @@ private String generateMakeArgsFor(SlotField slot, String argName) {
         } else {
           res.append(%[
     int @fieldName(`slotName)@Cmp = (this.@fieldName(`slotName)@).@compareFun@(@other@.@fieldName(`slotName)@);
-    if(@fieldName(`slotName)@Cmp != 0)
+    if(@fieldName(`slotName)@Cmp != 0) {
       return @fieldName(`slotName)@Cmp;
+    }
 ]%);
         }
       }

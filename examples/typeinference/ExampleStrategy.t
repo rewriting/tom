@@ -43,7 +43,7 @@ public class ExampleStrategy{
     Expr = Var(name:String) 
          | Cst(val:int) 
          | Let(name:String, e:Expr, body:Expr) 
-         | If(x:Term)
+         | Call(x:Term)
 
     Term = a() | b()
   }
@@ -54,7 +54,7 @@ public class ExampleStrategy{
     Expr new_p1 = propagate(p1);
     System.out.println(new_p1);
 
-		Expr p2 = `If(a());
+		Expr p2 = `Call(a());
     propagate(p2);
   }
   
@@ -78,7 +78,7 @@ public class ExampleStrategy{
     }
 
     visit Term {
-      a() -> { System.out.println("If!!"); }
+      a() -> { System.out.println("Call!!"); }
     }
   }
 }

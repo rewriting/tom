@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the subtypeinference example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <property name="example" value="subtypeinference"/>
+
+  <target name="build" depends="init">
+    <tom.preset srcdir="${examples.dir}"
+      destdir="${examples.gen}"
+      options="--newtyper">
+      <include name="${example}/**/Problem*"/>
+      <exclude name="${example}/**/StrategyProblem.t"/>
+    </tom.preset>
+    <tom.preset srcdir="${examples.dir}"
+      destdir="${examples.gen}"
+      options="--genIntrospector --newtyper">
+      <include name="${example}/**/StrategyProblem.t"/>
+    </tom.preset>
+
+    <javacompile/>
+  </target>
+  <property name="distribute" value="yes"/>
+</project>

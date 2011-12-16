@@ -1,0 +1,6 @@
+#>
+#description pattern with ...
+#type TomPattern
+#<
+
+conc(_*, x, a(), _*)

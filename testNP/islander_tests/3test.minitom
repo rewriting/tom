@@ -1,0 +1,6 @@
+%match (MyType subject, MySecondType s2) { 
+  a -> { tata }
+  i -> { titi }
+  o -> { toto }
+  _ -> { println }
+}

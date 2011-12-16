@@ -24,8 +24,6 @@
 
 package tom.gom.tools.ant;
 
-import org.apache.tools.ant.taskdefs.Java;
-
 /**
  * Compiles GOM source files into an Antlr adaptor.
  * This task can take the following

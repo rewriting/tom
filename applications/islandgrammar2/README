@@ -1,0 +1,38 @@
+build :
+ant
+
+tests usage :
+
+tests compare parsed tree to reference trees. Tests passes if produced tree is equals to reference tree.
+
+(in [...]/islandgrammar2)
+java -cp build:$CLASSPATH tester.Tester <folder or file to test>
+
+
+to 'init' tests (make the tree produced by current parser the new reference)pass -init argument to Tester.
+
+(in [...]/islandgrammar2)
+java -cp build:$CLASSPATH tester.Tester -init <folder or file to test>
+
+
+to produce graphical representation of produced trees pass -draw argument to Tester. Images will be saved in _imgs folder. This is really slow, so use it wisely.
+
+java -cp build:$CLASSPATH tester.Tester -draw <folder or file to test>
+
+
+tests files :
+
+when working with a folder, Tester search recursively for every file and test it. Files and folders whose names starts with '_' are ignored.
+
+For now Tester can parse a whole Java+Tom programm or Tom's Pattern alone. Java-Tom is default parser so a file with no header is considered a Java+Tom file.
+
+Test files can include a header to add a description used to make nice-looking test outputs and to specify which parser to use 
+---
+if file contains a header, everything before it is just ignored.
+#>
+#description "here a description of the test"
+#type [JavaTom | TomPattern | TomConstraint]
+#<
+actual code to parse
+more of this code
+--- 

@@ -2,7 +2,6 @@ module TomDeclaration
 imports TomSignature 
 abstract syntax
 Declaration = TypeTermDecl(AstName:TomName,Declarations:DeclarationList,OrgTrack:Option)
-            | GetImplementationDecl(Variable:BQTerm,Instr:Instruction,OrgTrack:Option)
             | IsFsymDecl(AstName:TomName,Variable:BQTerm,Expr:Expression,OrgTrack:Option)
             | GetSlotDecl(AstName:TomName,SlotName:TomName,Variable:BQTerm,Expr:Expression,OrgTrack:Option)
             | GetDefaultDecl(AstName:TomName,SlotName:TomName,Expr:Expression,OrgTrack:Option)

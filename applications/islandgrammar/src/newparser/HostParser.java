@@ -150,29 +150,34 @@ public class HostParser {
       if(openKeyword.isReady()) {
         level++;
         openKeyword.reset();
-      } else if (level > 0) {
-        level--;
-        closeKeyword.reset();
-      } else {
-        closeKeyword.action();
-        closeKeyword.reset();
+      } else if(closeKeyword.isReady()) {
+        if(level > 0) {
+          level--;
+          closeKeyword.reset();
+        } else if(level == 0) {
+          closeKeyword.action();
+          closeKeyword.reset();
+        }
       }
+      throw new RuntimeException("should not be there");
     }
-
   }
 /*
 ** Fields definition
 */
 
   private CharStream input;
+  private Keyword[] keywords;/* This array will contain the keywords that trigger various events */
 
+  /* pem: is this variable necessary? */
+  private Tree arbre;
+
+  /* pem: can't we use parameters and return values instead of object fields? */
   private boolean alive;/* whether the getTree() routine should go on or not */
 
   private StringBuffer savedContent;/* a memory to store characters read before asserting whether they're host content or not */
   private StringBuffer hostContent;/* the characters that remain uninterpreted */
   
-  private Tree arbre;
-  private Keyword[] keywords;/* This array will contain the keywords that trigger various events */
 
 /*
 ** Constructors

@@ -1,0 +1,6 @@
+#>
+#description pattern with annotations
+#type TomPattern
+#<
+
+thatFThing@f(x@x, wildCards@_*, someNotAs@!a*,theB@b(c(_*, z2)))
