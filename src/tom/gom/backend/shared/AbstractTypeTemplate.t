@@ -105,24 +105,7 @@ package @fullClassName()@ is
 
 writer.write(
 %[
-  public abstract String symbolName();
-
-]%);
-
-  if(maximalsharing) {
-   writer.write(
-%[
-]%);
-  } else {
-    //implement the Cloneable interface and decalre a public method clone()
-    writer.write(
-%[
-]%);
-  }
-  writer.write(%[
-
 end @fullClassName()@;
-
 ]%); // end of class
 }
 

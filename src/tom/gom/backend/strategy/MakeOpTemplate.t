@@ -175,7 +175,7 @@ public class @className()@ implements tom.library.sl.Strategy {
     String prefix = className();
     return %[
   %op Strategy @className()@(@genStratArgs(prefix,slotList,"arg")@) {
-    is_fsym(t) { (($t!=null) && ($t instanceof @fullClassName()@)) }
+    is_fsym(t) { (($t!=null) && ($t in @fullClassName()@)) }
 @genGetSlot(prefix,slotList.length(),"arg")@
     make(@genMakeArguments(slotList,false)@) { new @fullClassName()@(@genMakeArguments(slotList,true)@) }
   }

@@ -195,15 +195,9 @@ end;
   implement { @fullClassName()@ }
   is_sort(t) { ($t in @fullClassName()@) }
 ]%);
-    if(maximalsharing) {
       writer.write(%[
   equals(t1,t2) { ($t1.equivalent($t2)) }
 ]%);
-    } else {
-      writer.write(%[
-  equals(t1,t2) { (((@fullClassName()@)$t1).deepEquals($t2)) }
-]%);
-    }
     writer.write(%[
 }
 ]%);
