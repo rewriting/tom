@@ -44,17 +44,22 @@ public class Backend {
   private File tomHomePath;
   private List importList = null;
   private int generateStratMapping = 0;
+  private int language = 0;
   private boolean multithread = false;
   private boolean maximalsharing = true;
   private boolean jmicompatible = false;
   private GomEnvironment gomEnvironment;
 
+  public static final int JCODE = 0; 
+  public static final int ACODE = 1; 
+  
   %include { ../adt/objects/Objects.tom }
   %include { ../../library/mapping/java/sl.tom }
 
   Backend(TemplateFactory templatefactory,
           File tomHomePath,
           int generateStratMapping,
+          int language,
           boolean multithread,
           boolean nosharing,
           boolean jmicompatible,
@@ -63,6 +68,7 @@ public class Backend {
     this.templatefactory = templatefactory;
     this.tomHomePath = tomHomePath;
     this.generateStratMapping = generateStratMapping;
+    this.language = language;
     this.multithread = multithread;
     this.maximalsharing = !nosharing;
     this.jmicompatible = jmicompatible;
@@ -87,7 +93,15 @@ public class Backend {
         if (generateStratMapping > 0) { // generate congruence strategies
           ClassName smappingclass = `ClassName(pkg,"_"+name);
           GomClass nGomClass = `gomclass.setClassName(smappingclass);
-          TemplateClass stratMapping = new tom.gom.backend.strategy.StratMappingTemplate(nGomClass,getGomEnvironment(),generateStratMapping);
+
+          TemplateClass stratMapping;
+          if(language == ACODE) {
+            stratMapping = new tom.gom.backend.ada.strategy.StratMappingTemplate(nGomClass,getGomEnvironment(),generateStratMapping);
+          } else { //JCODE
+            TemplateClass stratMapping = new
+              tom.gom.backend.strategy.StratMappingTemplate(nGomClass,getGomEnvironment(),generateStratMapping);
+          }
+
           if (1 == generateStratMapping) {
             // classical mode: generate extra-mapping in file.tom
             mapping = templatefactory.makeTomMappingTemplate(`gomclass,stratMapping,getGomEnvironment());
@@ -125,16 +139,27 @@ public class Backend {
         ThreadPoolExecutor exec = new ThreadPoolExecutor(poolSize, maxPoolSize,
             keepAliveTime, TimeUnit.SECONDS, queue);
         //ExecutorService exec = Executors.newCachedThreadPool();
-        for (final ClassName clsName : generators.keySet()) {
-          //System.out.println("generateFile: "+clsName.getName());
-          //generators.get(clsName).generateFile();
-          exec.execute(new Runnable() {
-              public void run() {
-              generators.get(clsName).generateFile();
-	      generators.get(clsName).generateSpecFile();
-              }
-              });
-          //System.out.println("Task count.." + queue.size());
+
+        if(language == ACODE) {
+          for (final ClassName clsName : generators.keySet()) {
+            //System.out.println("generateFile: "+clsName.getName());
+            //generators.get(clsName).generateFile();
+            exec.execute(new Runnable() {
+                public void run() {
+                generators.get(clsName).generateFile();
+                generators.get(clsName).generateSpecFile();
+                }
+                });
+            //System.out.println("Task count.." + queue.size());
+          }
+        } else { //JCODE
+          for (final ClassName clsName : generators.keySet()) {
+            exec.execute(new Runnable() {
+                public void run() {
+                generators.get(clsName).generateFile();
+                }
+                });
+          }
         }
         exec.shutdown();
         exec.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
@@ -154,16 +179,20 @@ public class Backend {
         templateClass.addTemplates(generators);
       }
 
-      for (final ClassName clsName : generators.keySet()) {
-	//System.out.println(clsName);
-        generators.get(clsName).generateFile();
-	generators.get(clsName).generateSpecFile();
+      if(language == ACODE) {
+        for (final ClassName clsName : generators.keySet()) {
+          //System.out.println(clsName);
+          generators.get(clsName).generateFile();
+          generators.get(clsName).generateSpecFile();
+        }
+      } else {//JCODE
+        for (final ClassName clsName : generators.keySet()) {
+          generators.get(clsName).generateFile();
+        }
       }
     }
-    
     return 1;
   }
-
 
 
   /*
@@ -215,13 +244,21 @@ public class Backend {
             getGomEnvironment());
         generators.put(`className,operator);
         if(generateStratMapping>0) {
-          TemplateClass sOpStrat = new tom.gom.backend.strategy.SOpTemplate(gomclass,getGomEnvironment());
+          
+          TemplateClass sOpStrat;
+          TemplateClass isOpStrat;
+          TemplateClass makeOpStrat; 
+          if(language == ACODE) {
+            sOpStrat = new tom.gom.backend.ada.strategy.SOpTemplate(gomclass,getGomEnvironment());
+            isOpStrat = new tom.gom.backend.ada.strategy.IsOpTemplate(gomclass,getGomEnvironment());
+            makeOpStrat = new tom.gom.backend.ada.strategy.MakeOpTemplate(gomclass,getGomEnvironment());
+          } else { //JCODE
+            sOpStrat = new tom.gom.backend.strategy.SOpTemplate(gomclass,getGomEnvironment());
+            isOpStrat = new tom.gom.backend.strategy.IsOpTemplate(gomclass,getGomEnvironment());
+            makeOpStrat = new tom.gom.backend.strategy.MakeOpTemplate(gomclass,getGomEnvironment());
+          }
           sOpStrat.generateFile();
-
-          TemplateClass isOpStrat = new tom.gom.backend.strategy.IsOpTemplate(gomclass,getGomEnvironment());
           isOpStrat.generateFile();
-
-          TemplateClass makeOpStrat = new tom.gom.backend.strategy.MakeOpTemplate(gomclass,getGomEnvironment());
           makeOpStrat.generateFile();
         }
        return 1;
