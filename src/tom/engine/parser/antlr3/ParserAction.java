@@ -286,6 +286,9 @@ public abstract class ParserAction {
       if(Boolean.TRUE == optionManager.getOptionValue("newparser")) {
         parameters.add("--newparser");
       }
+      if(Boolean.TRUE == getOptionManager().getOptionValue("aCode")) {
+        parameters.add("--aCode");
+      }
       parameters.add("--intermediateName");
       parameters.add(streamManager.getRawFileName()+".t.gom");
       if(optionManager.getOptionValue("verbose")==Boolean.TRUE) {

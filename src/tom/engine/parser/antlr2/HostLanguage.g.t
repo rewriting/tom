@@ -570,6 +570,9 @@ gomsignature [List<Code> list] throws TomException
     if(Boolean.TRUE == getOptionManager().getOptionValue("newparser")) {
       parameters.add("--newparser");
     }
+    if(Boolean.TRUE == getOptionManager().getOptionValue("aCode")) {
+      parameters.add("--aCode");
+    }
     parameters.add("--intermediateName");
     parameters.add(getStreamManager().getRawFileName()+".t.gom");
     if(getOptionManager().getOptionValue("verbose")==Boolean.TRUE) {
