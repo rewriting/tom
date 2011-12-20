@@ -21,7 +21,7 @@
  * Antoine Reilles  e-mail: Antoine.Reilles@loria.fr
  *
  **/
-package tom.gom.backend;
+package tom.gom.backend.java;
 
 import java.io.*;
 import java.util.ArrayList;

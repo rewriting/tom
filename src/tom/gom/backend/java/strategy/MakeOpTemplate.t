@@ -22,11 +22,11 @@
  *
  **/
 
-package tom.gom.backend.strategy;
+package tom.gom.backend.java.strategy;
 
 import java.io.*;
 import java.util.logging.*;
-import tom.gom.backend.TemplateClass;
+import tom.gom.backend.java.TemplateClass;
 import tom.gom.tools.GomEnvironment;
 import tom.gom.tools.error.GomRuntimeException;
 import tom.gom.adt.objects.types.*;
