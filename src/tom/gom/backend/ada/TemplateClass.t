@@ -34,7 +34,7 @@ import tom.gom.adt.objects.*;
 import tom.gom.adt.objects.types.*;
 import tom.gom.tools.error.GomRuntimeException;
 
-public abstract class TemplateClass {
+public abstract class TemplateClass implements gom.backend.TemplateClass{
   protected GomClass gomClass;
   protected ClassName className;
   private GomEnvironment gomEnvironment;

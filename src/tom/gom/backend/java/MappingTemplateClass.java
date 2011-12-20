@@ -28,7 +28,7 @@ import java.util.HashMap;
 import tom.gom.adt.objects.types.*;
 import tom.gom.tools.GomEnvironment;
 
-public abstract class MappingTemplateClass extends TemplateClass {
+public abstract class MappingTemplateClass extends TemplateClass implements gom.backend.MappingTemplateClass {
 
   public MappingTemplateClass(GomClass gomClass, GomEnvironment gomEnvironment) {
     super(gomClass,gomEnvironment);
