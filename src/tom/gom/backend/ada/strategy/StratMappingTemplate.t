@@ -22,11 +22,11 @@
  *
  **/
 
-package tom.gom.backend.strategy;
+package tom.gom.backend.ada.strategy;
 
 import tom.gom.GomStreamManager;
 import tom.gom.tools.GomEnvironment;
-import tom.gom.backend.MappingTemplateClass;
+import tom.gom.backend.ada.MappingTemplateClass;
 import java.io.*;
 import tom.gom.adt.objects.types.*;
 import tom.gom.tools.error.GomRuntimeException;
@@ -69,11 +69,11 @@ writer.write(%[ --From generateSpec at StratMappingTemplate.t ]%) ;
     %match(operatorClasses) {
       ConcGomClass(_*,op@OperatorClass[],_*) -> {
         writer.write(
-            (new tom.gom.backend.strategy.SOpTemplate(`op,getGomEnvironment())).generateMapping());
+            (new tom.gom.backend.ada.strategy.SOpTemplate(`op,getGomEnvironment())).generateMapping());
         writer.write(
-            (new tom.gom.backend.strategy.IsOpTemplate(`op,getGomEnvironment())).generateMapping());
+            (new tom.gom.backend.ada.strategy.IsOpTemplate(`op,getGomEnvironment())).generateMapping());
         writer.write(
-            (new tom.gom.backend.strategy.MakeOpTemplate(`op,getGomEnvironment())).generateMapping());
+            (new tom.gom.backend.ada.strategy.MakeOpTemplate(`op,getGomEnvironment())).generateMapping());
       }
       ConcGomClass(_*,
           VariadicOperatorClass[ClassName=vopName,

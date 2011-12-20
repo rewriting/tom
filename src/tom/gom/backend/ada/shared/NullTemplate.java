@@ -23,10 +23,10 @@
  *
  **/
 
-package tom.gom.backend.shared;
+package tom.gom.backend.ada.shared;
 import tom.gom.tools.GomEnvironment;
 
-import tom.gom.backend.TemplateClass;
+import tom.gom.backend.ada.TemplateClass;
 import java.io.*;
 import tom.gom.adt.objects.types.*;
 

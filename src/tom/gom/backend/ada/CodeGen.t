@@ -22,7 +22,7 @@
  *
  **/
 
-package tom.gom.backend;
+package tom.gom.backend.ada;
 
 import java.io.Writer;
 import java.io.StringWriter;
@@ -90,7 +90,7 @@ public class CodeGen {
             ClassName className = `ClassName(
                 tom.gom.compiler.Compiler.packagePrefix(
                   moduleDecl)+"."+sortNamePackage,tName);
-            writer.write(tom.gom.backend.TemplateClass.fullClassName(className));
+            writer.write(tom.gom.backend.ada.TemplateClass.fullClassName(className));
             return;
           }
         }
@@ -129,13 +129,13 @@ public class CodeGen {
         ClassName className = `ClassName(
             tom.gom.compiler.Compiler.packagePrefix(
               moduleDecl)+"."+sortNamePackage,opName);
-        writer.write(tom.gom.backend.TemplateClass.fullClassName(className));
+        writer.write(tom.gom.backend.ada.TemplateClass.fullClassName(className));
         return;
       }
       FullSortClass(SortDecl[Name=sortName,ModuleDecl=moduleDecl]) -> {
         ClassName sortClassName = `ClassName(
             tom.gom.compiler.Compiler.packagePrefix(moduleDecl)+"",sortName);
-        writer.write(tom.gom.backend.TemplateClass.fullClassName(sortClassName));
+        writer.write(tom.gom.backend.ada.TemplateClass.fullClassName(sortClassName));
         return;
       }
       ShortSortClass(SortDecl[Name=sortName]) -> {

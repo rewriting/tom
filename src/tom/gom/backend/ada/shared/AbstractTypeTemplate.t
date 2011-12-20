@@ -22,13 +22,13 @@
  *
  **/
 
-package tom.gom.backend.shared;
+package tom.gom.backend.ada.shared;
 
 import java.io.*;
 import java.util.*;
 
-import tom.gom.backend.TemplateClass;
-import tom.gom.backend.TemplateHookedClass;
+import tom.gom.backend.ada.TemplateClass;
+import tom.gom.backend.ada.TemplateHookedClass;
 import tom.gom.adt.objects.types.*;
 import tom.gom.tools.error.GomRuntimeException;
 import tom.gom.tools.GomEnvironment;

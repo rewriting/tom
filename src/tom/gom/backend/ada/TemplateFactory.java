@@ -21,7 +21,7 @@
  * Antoine Reilles  e-mail: Antoine.Reilles@loria.fr
  *
  **/
-package tom.gom.backend;
+package tom.gom.backend.ada;
 
 import tom.gom.tools.error.GomRuntimeException;
 import tom.gom.adt.objects.types.*;
@@ -67,19 +67,19 @@ class SharedTemplateFactory extends TemplateFactory {
       GomClass gomClass,
       TemplateClass strategyMapping,
       GomEnvironment gomEnvironment) {
-    return new tom.gom.backend.shared.MappingTemplate(gomClass,strategyMapping,gomEnvironment);
+    return new tom.gom.backend.ada.shared.MappingTemplate(gomClass,strategyMapping,gomEnvironment);
   }
 
   public TemplateClass makeAbstractTypeTemplate(java.io.File tomHomePath, java.util.List importList, GomClass gomClass, TemplateClass mapping, boolean maximalsharing, GomEnvironment gomEnvironment) {
-    return new tom.gom.backend.shared.AbstractTypeTemplate(tomHomePath, manager, importList, gomClass, mapping, maximalsharing, gomEnvironment);
+    return new tom.gom.backend.ada.shared.AbstractTypeTemplate(tomHomePath, manager, importList, gomClass, mapping, maximalsharing, gomEnvironment);
   }
   public TemplateClass makeSortTemplate(java.io.File tomHomePath, java.util.List importList, GomClass gomClass, TemplateClass mapping, boolean maximalsharing, GomEnvironment gomEnvironment) {
-    return new tom.gom.backend.shared.SortTemplate(tomHomePath, manager, maximalsharing, importList, gomClass, mapping, gomEnvironment);
+    return new tom.gom.backend.ada.shared.SortTemplate(tomHomePath, manager, maximalsharing, importList, gomClass, mapping, gomEnvironment);
   }
   public TemplateClass makeOperatorTemplate(java.io.File tomHomePath, java.util.List importList, GomClass gomClass, TemplateClass mapping, boolean multithread, boolean maximalsharing, boolean jmicompatible, GomEnvironment gomEnvironment) {
-    return new tom.gom.backend.shared.OperatorTemplate(tomHomePath, manager, importList, gomClass,mapping,multithread,maximalsharing,jmicompatible,gomEnvironment);
+    return new tom.gom.backend.ada.shared.OperatorTemplate(tomHomePath, manager, importList, gomClass,mapping,multithread,maximalsharing,jmicompatible,gomEnvironment);
   }
   public TemplateClass makeVariadicOperatorTemplate(java.io.File tomHomePath, java.util.List importList, GomClass gomClass, TemplateClass mapping, GomEnvironment gomEnvironment) {
-    return new tom.gom.backend.shared.VariadicOperatorTemplate(tomHomePath, manager, importList, gomClass, mapping, gomEnvironment);
+    return new tom.gom.backend.ada.shared.VariadicOperatorTemplate(tomHomePath, manager, importList, gomClass, mapping, gomEnvironment);
   }
 }
