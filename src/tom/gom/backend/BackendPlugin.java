@@ -131,7 +131,7 @@ public class BackendPlugin extends GomGenericPlugin {
     } else { //default: jCode -> Java
       language = Backend.JCODE;
     }
-    backend = new java.Backend(templateFactory.getFactory(getOptionManager()),
+    Backend backend = new Backend(templateFactory.getFactory(getOptionManager()),
         tomHomePath, generateStratMapping, language, multithread, nosharing,
         jmicompatible, getStreamManager().getImportList(),getGomEnvironment());
     backend.generate(classList);
