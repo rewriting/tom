@@ -41,7 +41,7 @@ public class SortTemplate extends TemplateHookedClass {
   SlotFieldList slotList;
   boolean maximalsharing;
 
-  %include { ../../adt/objects/Objects.tom}
+  %include { ../../../adt/objects/Objects.tom}
 
   public SortTemplate(File tomHomePath,
                       OptionManager manager,

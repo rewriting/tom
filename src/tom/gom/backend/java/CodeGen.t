@@ -34,7 +34,7 @@ import tom.gom.adt.objects.types.*;
 
 public class CodeGen {
 
-  %include { ../adt/code/Code.tom}
+  %include { ../../adt/code/Code.tom}
 
   private static Logger logger = Logger.getLogger("CodeGen");
 

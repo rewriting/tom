@@ -45,7 +45,7 @@ public class OperatorTemplate extends TemplateHookedClass {
   boolean maximalsharing;
   boolean jmicompatible;
 
-  %include { ../../adt/objects/Objects.tom}
+  %include { ../../../adt/objects/Objects.tom}
 
   public OperatorTemplate(File tomHomePath,
                           OptionManager manager,

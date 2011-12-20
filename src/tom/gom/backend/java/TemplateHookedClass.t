@@ -56,7 +56,7 @@ public abstract class TemplateHookedClass extends TemplateClass {
     this.mapping = mapping;
   }
 
-  %include { ../adt/objects/Objects.tom }
+  %include { ../../adt/objects/Objects.tom }
   %include { boolean.tom }
 
   protected String generateBlock() {
