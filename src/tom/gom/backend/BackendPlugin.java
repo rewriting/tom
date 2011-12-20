@@ -55,6 +55,8 @@ public class BackendPlugin extends GomGenericPlugin {
   /** the declared options string */
   public static final String DECLARED_OPTIONS =
     "<options>" +
+    "<boolean name='jCode' altName='j' description='Generate Java code' value='true'/>" + 
+    "<boolean name='aCode' altName='a'  description='Generate Ada code' value='false'/>" +
     "<string name='generator' altName='g' description='Select Generator. Possible value: \"shared\"' value='shared' attrName='type' />" +
     "<boolean name='newtyper' altName='nt' description='New TyperPlugin (not activated by default)' value='false'/>" +
     "<boolean name='newparser' altName='np' description='New parser plugin (not activated by default)' value='false'/>" +
@@ -122,10 +124,16 @@ public class BackendPlugin extends GomGenericPlugin {
     boolean multithread = getOptionBooleanValue("multithread");
     boolean nosharing = getOptionBooleanValue("nosharing");
     boolean jmicompatible = getOptionBooleanValue("jmicompatible");
-    Backend backend =
-      new Backend(templateFactory.getFactory(getOptionManager()),
-          tomHomePath, generateStratMapping, multithread, nosharing, jmicompatible,
-          getStreamManager().getImportList(),getGomEnvironment());
+
+    int language = 0;
+    if(getOptionBooleanValue("aCode")) {
+      language = Backend.ACODE;
+    } else { //default: jCode -> Java
+      language = Backend.JCODE;
+    }
+    backend = new java.Backend(templateFactory.getFactory(getOptionManager()),
+        tomHomePath, generateStratMapping, language, multithread, nosharing,
+        jmicompatible, getStreamManager().getImportList(),getGomEnvironment());
     backend.generate(classList);
     if (null == classList) {
       GomMessage.error(getLogger(),null,0,
