@@ -99,7 +99,7 @@ public class Backend {
             stratMapping = new tom.gom.backend.ada.strategy.StratMappingTemplate(nGomClass,getGomEnvironment(),generateStratMapping);
           } else { //JCODE
             TemplateClass stratMapping = new
-              tom.gom.backend.strategy.StratMappingTemplate(nGomClass,getGomEnvironment(),generateStratMapping);
+              tom.gom.backend.java.strategy.StratMappingTemplate(nGomClass,getGomEnvironment(),generateStratMapping);
           }
 
           if (1 == generateStratMapping) {

@@ -49,7 +49,12 @@ public class BackendPlugin extends GomGenericPlugin {
   /** The constructor*/
   public BackendPlugin() {
     super("GomBackend");
-    templateFactory = new SharedTemplateFactory(getOptionManager(),getGomEnvironment());
+    if(getOptionBooleanValue("aCode")) {
+    templateFactory = new ada.SharedTemplateFactory(getOptionManager(),getGomEnvironment());
+    } else { // Java case
+    templateFactory = new java.SharedTemplateFactory(getOptionManager(),getGomEnvironment());
+    }
+
   }
 
   /** the declared options string */
