@@ -286,7 +286,7 @@ public abstract class ParserAction {
       if(Boolean.TRUE == optionManager.getOptionValue("newparser")) {
         parameters.add("--newparser");
       }
-      if(Boolean.TRUE == getOptionManager().getOptionValue("aCode")) {
+      if(Boolean.TRUE == optionManager.getOptionValue("aCode")) {
         parameters.add("--aCode");
       }
       parameters.add("--intermediateName");
