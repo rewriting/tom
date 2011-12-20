@@ -49,7 +49,7 @@ public abstract class TemplateClass implements gom.backend.TemplateClass{
     return this.gomEnvironment;
   }
 
-  %include { ../adt/objects/Objects.tom}
+  %include { ../../adt/objects/Objects.tom}
 
   public abstract void generate(Writer writer) throws java.io.IOException;
 
