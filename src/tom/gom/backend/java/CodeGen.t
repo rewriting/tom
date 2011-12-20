@@ -22,7 +22,7 @@
  *
  **/
 
-package tom.gom.backend;
+package tom.gom.backend.java;
 
 import java.io.Writer;
 import java.io.StringWriter;
@@ -34,7 +34,7 @@ import tom.gom.adt.objects.types.*;
 
 public class CodeGen {
 
-  %include { ../adt/code/Code.tom}
+  %include { ../../adt/code/Code.tom}
 
   private static Logger logger = Logger.getLogger("CodeGen");
 
@@ -90,7 +90,7 @@ public class CodeGen {
             ClassName className = `ClassName(
                 tom.gom.compiler.Compiler.packagePrefix(
                   moduleDecl)+".types."+sortNamePackage,tName);
-            writer.write(tom.gom.backend.TemplateClass.fullClassName(className));
+            writer.write(tom.gom.backend.java.TemplateClass.fullClassName(className));
             return;
           }
         }
@@ -129,13 +129,13 @@ public class CodeGen {
         ClassName className = `ClassName(
             tom.gom.compiler.Compiler.packagePrefix(
               moduleDecl)+".types."+sortNamePackage,opName);
-        writer.write(tom.gom.backend.TemplateClass.fullClassName(className));
+        writer.write(tom.gom.backend.java.TemplateClass.fullClassName(className));
         return;
       }
       FullSortClass(SortDecl[Name=sortName,ModuleDecl=moduleDecl]) -> {
         ClassName sortClassName = `ClassName(
             tom.gom.compiler.Compiler.packagePrefix(moduleDecl)+".types",sortName);
-        writer.write(tom.gom.backend.TemplateClass.fullClassName(sortClassName));
+        writer.write(tom.gom.backend.java.TemplateClass.fullClassName(sortClassName));
         return;
       }
       ShortSortClass(SortDecl[Name=sortName]) -> {

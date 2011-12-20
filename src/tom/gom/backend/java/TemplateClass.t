@@ -21,7 +21,7 @@
  * Antoine Reilles  e-mail: Antoine.Reilles@loria.fr
  *
  **/
-package tom.gom.backend;
+package tom.gom.backend.java;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -49,7 +49,7 @@ public abstract class TemplateClass {
     return this.gomEnvironment;
   }
 
-  %include { ../adt/objects/Objects.tom}
+  %include { ../../adt/objects/Objects.tom}
 
   public abstract void generate(Writer writer) throws java.io.IOException;
 

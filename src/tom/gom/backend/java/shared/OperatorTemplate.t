@@ -22,14 +22,14 @@
  *
  **/
 
-package tom.gom.backend.shared;
+package tom.gom.backend.java.shared;
 
 import java.io.*;
 import java.util.*;
 import java.util.logging.*;
-import tom.gom.backend.TemplateHookedClass;
-import tom.gom.backend.TemplateClass;
-import tom.gom.backend.CodeGen;
+import tom.gom.backend.java.TemplateHookedClass;
+import tom.gom.backend.java.TemplateClass;
+import tom.gom.backend.java.CodeGen;
 import tom.gom.tools.GomEnvironment;
 import tom.gom.tools.error.GomRuntimeException;
 import tom.gom.adt.objects.types.*;
@@ -45,7 +45,7 @@ public class OperatorTemplate extends TemplateHookedClass {
   boolean maximalsharing;
   boolean jmicompatible;
 
-  %include { ../../adt/objects/Objects.tom}
+  %include { ../../../adt/objects/Objects.tom}
 
   public OperatorTemplate(File tomHomePath,
                           OptionManager manager,

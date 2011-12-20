@@ -22,12 +22,12 @@
  *
  **/
 
-package tom.gom.backend.shared;
+package tom.gom.backend.java.shared;
 
 import tom.gom.GomStreamManager;
 import tom.gom.tools.GomEnvironment;
-import tom.gom.backend.TemplateClass;
-import tom.gom.backend.MappingTemplateClass;
+import tom.gom.backend.java.TemplateClass;
+import tom.gom.backend.java.MappingTemplateClass;
 import java.io.*;
 import tom.gom.adt.objects.types.*;
 import tom.gom.tools.error.GomRuntimeException;
@@ -37,7 +37,7 @@ public class MappingTemplate extends MappingTemplateClass {
   GomClassList operatorClasses;
   TemplateClass strategyMapping;
 
-  %include { ../../adt/objects/Objects.tom}
+  %include { ../../../adt/objects/Objects.tom}
 
   public MappingTemplate(GomClass gomClass, TemplateClass strategyMapping, GomEnvironment gomEnvironment) {
     super(gomClass,gomEnvironment);

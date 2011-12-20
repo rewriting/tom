@@ -22,14 +22,14 @@
  *
  **/
 
-package tom.gom.backend;
+package tom.gom.backend.java;
 
 import java.io.*;
 import java.util.*;
 import java.util.logging.Logger;
 import tom.gom.Gom;
 import tom.gom.GomMessage;
-import tom.gom.backend.CodeGen;
+import tom.gom.backend.java.CodeGen;
 import tom.gom.adt.objects.*;
 import tom.gom.adt.objects.types.*;
 import tom.platform.OptionManager;
@@ -56,7 +56,7 @@ public abstract class TemplateHookedClass extends TemplateClass {
     this.mapping = mapping;
   }
 
-  %include { ../adt/objects/Objects.tom }
+  %include { ../../adt/objects/Objects.tom }
   %include { boolean.tom }
 
   protected String generateBlock() {

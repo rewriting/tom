@@ -22,11 +22,11 @@
  *
  **/
 
-package tom.gom.backend.strategy;
+package tom.gom.backend.java.strategy;
 
 import java.io.*;
 import java.util.logging.*;
-import tom.gom.backend.TemplateClass;
+import tom.gom.backend.java.TemplateClass;
 import tom.gom.tools.GomEnvironment;
 import tom.gom.tools.error.GomRuntimeException;
 import tom.gom.adt.objects.types.*;
@@ -35,7 +35,7 @@ public class MakeOpTemplate extends TemplateClass {
   ClassName operator;
   SlotFieldList slotList;
 
-  %include { ../../adt/objects/Objects.tom}
+  %include { ../../../adt/objects/Objects.tom}
 
   /**
    * The argument is an operator class, and this template generates the
