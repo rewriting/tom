@@ -35,7 +35,7 @@ public class StratMappingTemplate extends MappingTemplateClass {
   GomClassList operatorClasses;
   int generateStratMapping = 0;
 
-  %include { ../../adt/objects/Objects.tom }
+  %include { ../../../adt/objects/Objects.tom }
 
   public StratMappingTemplate(GomClass gomClass, GomEnvironment gomEnvironment, int generateStratMapping) {
     super(gomClass,gomEnvironment);

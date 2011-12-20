@@ -37,7 +37,7 @@ import tom.platform.OptionManager;
 public class AbstractTypeTemplate extends TemplateHookedClass {
   ClassNameList sortList;
 
-  %include { ../../adt/objects/Objects.tom }
+  %include { ../../../adt/objects/Objects.tom }
   boolean maximalsharing;
 
   public AbstractTypeTemplate(File tomHomePath,

@@ -37,7 +37,7 @@ public class MappingTemplate extends MappingTemplateClass {
   GomClassList operatorClasses;
   TemplateClass strategyMapping;
 
-  %include { ../../adt/objects/Objects.tom}
+  %include { ../../../adt/objects/Objects.tom}
 
   public MappingTemplate(GomClass gomClass, TemplateClass strategyMapping, GomEnvironment gomEnvironment) {
     super(gomClass,gomEnvironment);

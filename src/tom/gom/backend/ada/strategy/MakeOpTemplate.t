@@ -35,7 +35,7 @@ public class MakeOpTemplate extends TemplateClass {
   ClassName operator;
   SlotFieldList slotList;
 
-  %include { ../../adt/objects/Objects.tom}
+  %include { ../../../adt/objects/Objects.tom}
 
   /**
    * The argument is an operator class, and this template generates the

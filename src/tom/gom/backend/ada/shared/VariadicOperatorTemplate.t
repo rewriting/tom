@@ -42,7 +42,7 @@ public class VariadicOperatorTemplate extends TemplateHookedClass {
   GomClass cons;
   String comments;
 
-  %include { ../../adt/objects/Objects.tom}
+  %include { ../../../adt/objects/Objects.tom}
 
   public VariadicOperatorTemplate(File tomHomePath,
                                   OptionManager manager,
