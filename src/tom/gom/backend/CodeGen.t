@@ -22,7 +22,7 @@
  *
  **/
 
-package tom.gom.backend.ada;
+package tom.gom.backend;
 
 import java.io.Writer;
 import java.io.StringWriter;
@@ -89,8 +89,8 @@ public class CodeGen {
             String sortNamePackage = `sortName.toLowerCase();
             ClassName className = `ClassName(
                 tom.gom.compiler.Compiler.packagePrefix(
-                  moduleDecl)+"."+sortNamePackage,tName);
-            writer.write(tom.gom.backend.ada.TemplateClass.fullClassName(className));
+                  moduleDecl)+".types."+sortNamePackage,tName);
+            writer.write(tom.gom.backend.java.TemplateClass.fullClassName(className));
             return;
           }
         }
@@ -128,14 +128,14 @@ public class CodeGen {
         String sortNamePackage = `sortName.toLowerCase();
         ClassName className = `ClassName(
             tom.gom.compiler.Compiler.packagePrefix(
-              moduleDecl)+"."+sortNamePackage,opName);
-        writer.write(tom.gom.backend.ada.TemplateClass.fullClassName(className));
+              moduleDecl)+".types."+sortNamePackage,opName);
+        writer.write(tom.gom.backend.java.TemplateClass.fullClassName(className));
         return;
       }
       FullSortClass(SortDecl[Name=sortName,ModuleDecl=moduleDecl]) -> {
         ClassName sortClassName = `ClassName(
-            tom.gom.compiler.Compiler.packagePrefix(moduleDecl)+"",sortName);
-        writer.write(tom.gom.backend.ada.TemplateClass.fullClassName(sortClassName));
+            tom.gom.compiler.Compiler.packagePrefix(moduleDecl)+".types",sortName);
+        writer.write(tom.gom.backend.java.TemplateClass.fullClassName(sortClassName));
         return;
       }
       ShortSortClass(SortDecl[Name=sortName]) -> {
