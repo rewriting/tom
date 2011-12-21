@@ -29,7 +29,7 @@ import java.util.*;
 import java.util.logging.*;
 import tom.gom.backend.java.TemplateHookedClass;
 import tom.gom.backend.java.TemplateClass;
-import tom.gom.backend.java.CodeGen;
+import tom.gom.backend.CodeGen;
 import tom.gom.tools.GomEnvironment;
 import tom.gom.tools.error.GomRuntimeException;
 import tom.gom.adt.objects.types.*;

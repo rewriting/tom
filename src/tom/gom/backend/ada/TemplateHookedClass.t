@@ -29,7 +29,7 @@ import java.util.*;
 import java.util.logging.Logger;
 import tom.gom.Gom;
 import tom.gom.GomMessage;
-import tom.gom.backend.ada.CodeGen;
+import tom.gom.backend.CodeGen;
 import tom.gom.adt.objects.*;
 import tom.gom.adt.objects.types.*;
 import tom.platform.OptionManager;
