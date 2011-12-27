@@ -447,6 +447,7 @@ returns [int marker] :
      | ks+=csKeywordMake
      | ks+=csKeywordGetSlot
      | ks+=csKeywordGetDefault
+     | ks+=csKeywordOpImplement 
     )*
   RBR
 
@@ -574,6 +575,13 @@ csKeywordGetDefault :
         {((CustomToken)$LBR).getPayload(Tree.class)}
       )
 ;
+
+csKeywordOpImplement :
+  KEYWORD_IMPLEMENT LPAR RPAR
+  LBR /* Host Code doing the test */ RBR
+  -> ^(Cst_Implement {((CustomToken)$LBR).getPayload(Tree.class)})
+;
+
 
 csKeywordGetHead :
   KEYWORD_GET_HEAD LPAR argName=csName RPAR 

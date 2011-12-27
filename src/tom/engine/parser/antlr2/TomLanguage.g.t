@@ -1786,6 +1786,8 @@ operator returns [Declaration result] throws TomException
             }
         |   attribute = keywordIsFsym[astName,type.getText()]
             { options.add(`DeclarationToOption(attribute)); }
+        |   attribute = keywordOpImplement[astName,type.getText()]
+            { options.add(`DeclarationToOption(attribute)); }
         )*
         t:RBRACE
 	)
@@ -2217,6 +2219,30 @@ keywordGetDefault [TomName astName, String type] returns [Declaration result] th
                 }
             }
         )
+    ;
+
+keywordOpImplement [TomName astName, String type] returns [Declaration result] throws TomException
+{
+    result = null;
+    Option ot = null;
+}
+    :
+      (
+        t:IMPLEMENT
+        { ot = `OriginTracking(Name(t.getText()),t.getLine(),currentFile()); }
+        LPAREN RPAREN
+        l:LBRACE
+        {
+          updatePosition(t.getLine(),t.getColumn());
+          selector().push("targetlexer");
+          List<Code> blockList = new LinkedList<Code>();
+          TargetLanguage tlCode = targetparser.targetLanguage(blockList);
+          selector().pop();
+          blockList.add(`TargetLanguageToCode(tlCode));
+          String code = tlCode.getCode();
+          result = `ImplementDecl(astName,Code(code),ot);
+        }
+      )
     ;
 
 keywordMake[String opname, TomType returnType, TomTypeList types] returns [Declaration result] throws TomException
