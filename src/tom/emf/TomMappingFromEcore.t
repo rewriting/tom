@@ -176,10 +176,7 @@ public class TomMappingFromEcore {
   private static void extractType(java.io.Writer writer, EClassifier eclf) throws java.io.IOException {
     Class<?> c = eclf.getInstanceClass();
     if(!types.containsKey(c)) {
-      String n = c.getSimpleName();
-      if(c.isArray()) {
-        n = c.getComponentType().getSimpleName() + "array";
-      }
+      String n = (c.isArray()?(c.getComponentType().getSimpleName()+"array"):c.getSimpleName());
       String is = "";
       for(int i = 1; types.containsValue(n + is); i++) {
         is = String.valueOf(i);
