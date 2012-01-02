@@ -35,7 +35,7 @@ import tom.gom.tools.error.GomRuntimeException;
 import tom.gom.adt.objects.types.*;
 import tom.platform.OptionManager;
 
-public class OperatorTemplate extends TemplateHookedClass {
+public class OperatorTemplate extends tom.gom.backend.ada.TemplateHookedClass {
   ClassName abstractType;
   ClassName extendsType;
   ClassName sortName;

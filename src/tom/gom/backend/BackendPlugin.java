@@ -50,9 +50,9 @@ public class BackendPlugin extends GomGenericPlugin {
   public BackendPlugin() {
     super("GomBackend");
     if(getOptionBooleanValue("aCode")) {
-    templateFactory = new ada.SharedTemplateFactory(getOptionManager(),getGomEnvironment());
+    templateFactory = new tom.gom.backend.ada.SharedTemplateFactory(getOptionManager(),getGomEnvironment());
     } else { // Java case
-    templateFactory = new java.SharedTemplateFactory(getOptionManager(),getGomEnvironment());
+    templateFactory = new tom.gom.backend.java.SharedTemplateFactory(getOptionManager(),getGomEnvironment());
     }
 
   }
@@ -133,10 +133,12 @@ public class BackendPlugin extends GomGenericPlugin {
     int language = 0;
     if(getOptionBooleanValue("aCode")) {
       language = Backend.ACODE;
+
     } else { //default: jCode -> Java
       language = Backend.JCODE;
+
     }
-    Backend backend = new Backend(templateFactory.getFactory(getOptionManager()),
+       Backend backend = new Backend(templateFactory.getFactory(getOptionManager()),
         tomHomePath, generateStratMapping, language, multithread, nosharing,
         jmicompatible, getStreamManager().getImportList(),getGomEnvironment());
     backend.generate(classList);

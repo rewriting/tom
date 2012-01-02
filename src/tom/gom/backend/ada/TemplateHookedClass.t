@@ -35,7 +35,7 @@ import tom.gom.adt.objects.types.*;
 import tom.platform.OptionManager;
 import tom.gom.tools.GomEnvironment;
 
-public abstract class TemplateHookedClass extends TemplateClass {
+public abstract class TemplateHookedClass extends tom.gom.backend.ada.TemplateClass {
   protected HookList hooks;
   protected File tomHomePath;
   protected List importList;

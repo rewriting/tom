@@ -34,7 +34,7 @@ import tom.gom.tools.error.GomRuntimeException;
 import tom.gom.tools.GomEnvironment;
 import tom.platform.OptionManager;
 
-public class AbstractTypeTemplate extends TemplateHookedClass {
+public class AbstractTypeTemplate extends tom.gom.backend.java.TemplateHookedClass {
   ClassNameList sortList;
 
   %include { ../../../adt/objects/Objects.tom }

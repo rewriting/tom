@@ -35,7 +35,7 @@ import tom.gom.tools.error.GomRuntimeException;
 import tom.gom.adt.objects.types.*;
 import tom.platform.OptionManager;
 
-public class VariadicOperatorTemplate extends TemplateHookedClass {
+public class VariadicOperatorTemplate extends tom.gom.backend.ada.TemplateHookedClass {
   ClassName abstractType;
   ClassName sortName;
   GomClass empty;

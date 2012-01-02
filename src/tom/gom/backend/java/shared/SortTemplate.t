@@ -34,7 +34,7 @@ import tom.gom.tools.error.GomRuntimeException;
 import tom.gom.tools.GomEnvironment;
 import tom.platform.OptionManager;
 
-public class SortTemplate extends TemplateHookedClass {
+public class SortTemplate extends tom.gom.backend.java.TemplateHookedClass {
   ClassName abstractType;
   ClassNameList operatorList;
   ClassNameList variadicOperatorList;

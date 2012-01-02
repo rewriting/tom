@@ -31,7 +31,7 @@ import tom.gom.tools.GomEnvironment;
 import tom.gom.tools.error.GomRuntimeException;
 import tom.gom.adt.objects.types.*;
 
-public class MakeOpTemplate extends TemplateClass {
+public class MakeOpTemplate extends tom.gom.backend.java.TemplateClass {
   ClassName operator;
   SlotFieldList slotList;
 

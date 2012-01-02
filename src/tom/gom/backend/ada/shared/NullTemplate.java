@@ -19,7 +19,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  *
- * Antoine Reilles  e-mail: Antoine.Reilles@loria.fr
  *
  **/
 
@@ -30,7 +29,7 @@ import tom.gom.backend.ada.TemplateClass;
 import java.io.*;
 import tom.gom.adt.objects.types.*;
 
-public class NullTemplate extends TemplateClass {
+public class NullTemplate extends tom.gom.backend.ada.TemplateClass {
 
   /**
    * The NullTemplate class generates nothing.
@@ -44,6 +43,10 @@ public class NullTemplate extends TemplateClass {
 
   public void generateSpec(java.io.Writer writer){ /* does nothing either*/ }  
 
+    public int generateSpecFile() {
+    // Do nothing, we don't need to generate empty files
+    return 0;
+  }
 
   public int generateFile() {
     // Do nothing, we don't need to generate empty files

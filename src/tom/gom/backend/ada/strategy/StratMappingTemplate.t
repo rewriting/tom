@@ -31,7 +31,7 @@ import java.io.*;
 import tom.gom.adt.objects.types.*;
 import tom.gom.tools.error.GomRuntimeException;
 
-public class StratMappingTemplate extends MappingTemplateClass {
+public class StratMappingTemplate extends tom.gom.backend.ada.MappingTemplateClass {
   GomClassList operatorClasses;
   int generateStratMapping = 0;
 

@@ -51,8 +51,6 @@ public abstract class TemplateClass implements tom.gom.backend.TemplateClass{
 
   %include { ../../adt/objects/Objects.tom}
 
-  public abstract void generate(Writer writer) throws java.io.IOException;
-
   public String className() {
     return className(this.className);
   }

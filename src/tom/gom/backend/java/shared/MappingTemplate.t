@@ -32,7 +32,7 @@ import java.io.*;
 import tom.gom.adt.objects.types.*;
 import tom.gom.tools.error.GomRuntimeException;
 
-public class MappingTemplate extends MappingTemplateClass {
+public class MappingTemplate extends tom.gom.backend.java.MappingTemplateClass {
   GomClassList sortClasses;
   GomClassList operatorClasses;
   TemplateClass strategyMapping;

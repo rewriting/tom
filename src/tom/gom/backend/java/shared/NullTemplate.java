@@ -30,7 +30,7 @@ import tom.gom.backend.java.TemplateClass;
 import java.io.*;
 import tom.gom.adt.objects.types.*;
 
-public class NullTemplate extends TemplateClass {
+public class NullTemplate extends tom.gom.backend.java.TemplateClass {
 
   /**
    * The NullTemplate class generates nothing.

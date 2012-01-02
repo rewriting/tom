@@ -32,7 +32,7 @@ import java.io.*;
 import tom.gom.adt.objects.types.*;
 import tom.gom.tools.error.GomRuntimeException;
 
-public class MappingTemplate extends MappingTemplateClass {
+public class MappingTemplate extends tom.gom.backend.ada.MappingTemplateClass {
   GomClassList sortClasses;
   GomClassList operatorClasses;
   TemplateClass strategyMapping;
@@ -56,10 +56,12 @@ public class MappingTemplate extends MappingTemplateClass {
         "Wrong argument for MappingTemplate: " + gomClass);
   }
 
+/* Overriding unnecessary spec generation */
+  public  int generateSpecFile() {
+return 0;
+}
   public void generateSpec(java.io.Writer writer) throws java.io.IOException {
-
 return;
-
 }
 
   public void generate(java.io.Writer writer) throws java.io.IOException {

@@ -142,15 +142,12 @@ public class Backend {
 
         if(language == ACODE) {
           for (final ClassName clsName : generators.keySet()) {
-            //System.out.println("generateFile: "+clsName.getName());
-            //generators.get(clsName).generateFile();
             exec.execute(new Runnable() {
                 public void run() {
                 generators.get(clsName).generateFile();
                 generators.get(clsName).generateSpecFile();
                 }
                 });
-            //System.out.println("Task count.." + queue.size());
           }
         } else { //JCODE
           for (final ClassName clsName : generators.keySet()) {
@@ -181,7 +178,6 @@ public class Backend {
 
       if(language == ACODE) {
         for (final ClassName clsName : generators.keySet()) {
-          //System.out.println(clsName);
           generators.get(clsName).generateFile();
           generators.get(clsName).generateSpecFile();
         }
@@ -249,13 +245,13 @@ public class Backend {
           TemplateClass isOpStrat;
           TemplateClass makeOpStrat; 
           if(language == ACODE) {
-            sOpStrat = new tom.gom.backend.ada.strategy.SOpTemplate(gomclass,getGomEnvironment());
-            isOpStrat = new tom.gom.backend.ada.strategy.IsOpTemplate(gomclass,getGomEnvironment());
-            makeOpStrat = new tom.gom.backend.ada.strategy.MakeOpTemplate(gomclass,getGomEnvironment());
+            sOpStrat = (tom.gom.backend.TemplateClass) new tom.gom.backend.ada.strategy.SOpTemplate(gomclass,getGomEnvironment());
+            isOpStrat = (tom.gom.backend.TemplateClass) new tom.gom.backend.ada.strategy.IsOpTemplate(gomclass,getGomEnvironment());
+            makeOpStrat = (tom.gom.backend.TemplateClass) new tom.gom.backend.ada.strategy.MakeOpTemplate(gomclass,getGomEnvironment());
           } else { //JCODE
-            sOpStrat = new tom.gom.backend.strategy.SOpTemplate(gomclass,getGomEnvironment());
-            isOpStrat = new tom.gom.backend.strategy.IsOpTemplate(gomclass,getGomEnvironment());
-            makeOpStrat = new tom.gom.backend.strategy.MakeOpTemplate(gomclass,getGomEnvironment());
+            sOpStrat = (tom.gom.backend.TemplateClass) new tom.gom.backend.java.strategy.SOpTemplate(gomclass,getGomEnvironment());
+            isOpStrat = (tom.gom.backend.TemplateClass) new tom.gom.backend.java.strategy.IsOpTemplate(gomclass,getGomEnvironment());
+            makeOpStrat = (tom.gom.backend.TemplateClass) new tom.gom.backend.java.strategy.MakeOpTemplate(gomclass,getGomEnvironment());
           }
           sOpStrat.generateFile();
           isOpStrat.generateFile();
