@@ -44,6 +44,13 @@ public class ExampleAntiPatternNonLinear {
       //!f(x,x) << A f(a(),b()) -> { System.out.println("ligne 2 : x = " + `x); }
       //!f(x,!x) << A f(a(),a()) -> { System.out.println("ligne 3 : x = " + `x); }
       !f(x,!x) << A f(a(),a()) && x << A b() -> { System.out.println("ligne 4 : x = " + `x); }
+      !f(!x,x) << A f(a(),b()) -> { System.out.println("ligne 5 : OK "); }
+      f(!x,x) << A f(a(),b()) -> { System.out.println("ligne 6 : x = " + `x); }
+      !x << A a() -> { System.out.println("ligne 7 : OK "); }
+      !x << A a() && x << A b() -> { System.out.println("ligne 8 : x = " + `x); }
+      f(!x,x) << A f(a(),a()) -> { System.out.println("ligne 9 : x = " + `x); }
+      !f(!x,x) << A f(a(),a()) -> { System.out.println("ligne 10 : OK "); }
+      x << A a() && !x << A b() -> { System.out.println("ligne 11 : x = " + `x); }
     }
   }
 }
