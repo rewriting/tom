@@ -17,13 +17,9 @@ public interface TemplateClass {
 
   public abstract int generateFile() ;
 
-  public int generateSpecFile() {
-    return 0;
-}
+  public int generateSpecFile(); 
 
-  public void generateSpec(java.io.Writer writer) {
-    return ;
-}
+  public void generateSpec(java.io.Writer writer) throws java.io.IOException; 
 
 }
 

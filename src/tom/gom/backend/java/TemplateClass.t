@@ -39,6 +39,14 @@ public abstract class TemplateClass implements tom.gom.backend.TemplateClass{
   protected ClassName className;
   private GomEnvironment gomEnvironment;
 
+/*Unnecessary in Java, overriding interface*/
+  public int generateSpecFile() {
+    return 0;
+}
+  public void generateSpec(java.io.Writer writer) throws java.io.IOException {
+    return ;
+}
+
   public TemplateClass(GomClass gomClass, GomEnvironment gomEnvironment) {
     this.gomClass = gomClass;
     this.className = gomClass.getClassName();

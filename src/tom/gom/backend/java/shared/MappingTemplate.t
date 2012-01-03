@@ -24,6 +24,8 @@
 
 package tom.gom.backend.java.shared;
 
+import java.util.Map;
+import java.util.HashMap;
 import tom.gom.GomStreamManager;
 import tom.gom.tools.GomEnvironment;
 import tom.gom.backend.java.TemplateClass;
@@ -55,6 +57,10 @@ public class MappingTemplate extends tom.gom.backend.java.MappingTemplateClass {
     throw new GomRuntimeException(
         "Wrong argument for MappingTemplate: " + gomClass);
   }
+
+public void addTemplates(Map<ClassName,tom.gom.backend.TemplateClass> map) {
+return;
+}
 
   public void generate(java.io.Writer writer) throws java.io.IOException {
     if(getGomEnvironment().isBuiltinSort("boolean")) {

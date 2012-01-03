@@ -24,12 +24,15 @@
 
 package tom.gom.backend.ada.strategy;
 
+import java.util.Map;
+import java.util.HashMap;
 import tom.gom.GomStreamManager;
 import tom.gom.tools.GomEnvironment;
 import tom.gom.backend.ada.MappingTemplateClass;
 import java.io.*;
 import tom.gom.adt.objects.types.*;
 import tom.gom.tools.error.GomRuntimeException;
+import tom.gom.backend.TemplateClass;
 
 public class StratMappingTemplate extends tom.gom.backend.ada.MappingTemplateClass {
   GomClassList operatorClasses;
@@ -53,6 +56,10 @@ public class StratMappingTemplate extends tom.gom.backend.ada.MappingTemplateCla
   public void generateTomMapping(java.io.Writer writer) throws java.io.IOException {
     generate(writer);
   }
+
+public void addTemplates(Map<ClassName,TemplateClass> map) {
+return;
+}
 
   public void generateSpec(java.io.Writer writer) throws java.io.IOException {
 writer.write(%[ --From generateSpec at StratMappingTemplate.t ]%) ;

@@ -5,6 +5,7 @@ import tom.gom.adt.objects.types.*;
 import tom.platform.OptionManager;
 import tom.gom.tools.GomEnvironment;
 
+
 public abstract class TemplateFactory {
 
   protected GomEnvironment gomEnvironment;
@@ -17,7 +18,7 @@ public abstract class TemplateFactory {
     String mode = (String) manager.getOptionValue("generator");
     if (mode.equals("shared")) {
 
-	    if (manager.getOptionBooleanValue("aCode")) {
+	    if (((Boolean)manager.getOptionValue("aCode")).booleanValue()) {
       return new tom.gom.backend.ada.SharedTemplateFactory(manager,getGomEnvironment());
       		} else { /* Default mode = Java*/
       return new tom.gom.backend.java.SharedTemplateFactory(manager,getGomEnvironment());

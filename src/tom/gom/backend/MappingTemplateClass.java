@@ -7,6 +7,6 @@ import tom.gom.tools.GomEnvironment;
 
 public interface MappingTemplateClass extends TemplateClass {
 
-  public abstract void addTemplates(Map<ClassName,TemplateClass> map); 
+public abstract void addTemplates(Map<ClassName,TemplateClass> map) ;
 
 }

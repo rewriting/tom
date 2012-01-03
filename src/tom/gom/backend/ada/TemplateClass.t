@@ -405,6 +405,10 @@ public abstract class TemplateClass implements tom.gom.backend.TemplateClass{
     return output;
   }
 
+public void generateSpec(Writer writer) throws java.io.IOException{
+return;
+}
+
 public int generateSpecFile() {
 
   try {

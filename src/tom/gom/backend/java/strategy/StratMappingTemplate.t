@@ -24,12 +24,15 @@
 
 package tom.gom.backend.java.strategy;
 
+import java.util.Map;
+import java.util.HashMap;
 import tom.gom.GomStreamManager;
 import tom.gom.tools.GomEnvironment;
 import tom.gom.backend.java.MappingTemplateClass;
 import java.io.*;
 import tom.gom.adt.objects.types.*;
 import tom.gom.tools.error.GomRuntimeException;
+import tom.gom.backend.TemplateClass;
 
 public class StratMappingTemplate extends tom.gom.backend.java.MappingTemplateClass {
   GomClassList operatorClasses;
@@ -49,6 +52,10 @@ public class StratMappingTemplate extends tom.gom.backend.java.MappingTemplateCl
     throw new GomRuntimeException(
         "Wrong argument for MappingTemplate: " + gomClass);
   }
+
+public void addTemplates(Map<ClassName,TemplateClass> map) {
+return;
+}
 
   public void generateTomMapping(java.io.Writer writer) throws java.io.IOException {
     generate(writer);

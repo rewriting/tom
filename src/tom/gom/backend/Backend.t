@@ -98,7 +98,7 @@ public class Backend {
           if(language == ACODE) {
             stratMapping = new tom.gom.backend.ada.strategy.StratMappingTemplate(nGomClass,getGomEnvironment(),generateStratMapping);
           } else { //JCODE
-            TemplateClass stratMapping = new
+            stratMapping = new
               tom.gom.backend.java.strategy.StratMappingTemplate(nGomClass,getGomEnvironment(),generateStratMapping);
           }
 

@@ -23,7 +23,8 @@
  **/
 
 package tom.gom.backend.ada.shared;
-
+import java.util.Map;
+import java.util.HashMap;
 import tom.gom.GomStreamManager;
 import tom.gom.tools.GomEnvironment;
 import tom.gom.backend.ada.TemplateClass;
@@ -55,6 +56,10 @@ public class MappingTemplate extends tom.gom.backend.ada.MappingTemplateClass {
     throw new GomRuntimeException(
         "Wrong argument for MappingTemplate: " + gomClass);
   }
+
+public void addTemplates(Map<ClassName,tom.gom.backend.TemplateClass> map) {
+return;
+}
 
 /* Overriding unnecessary spec generation */
   public  int generateSpecFile() {
