@@ -24,11 +24,12 @@
   </target>
 
   <target name="build" depends="init">
-    <gom config="${gomconfigfile}"
+    <gom.preset 
       srcdir="${policy.src}"
       destdir="${policy.gen}">
-         <include name="**/*.gom"/>
-    </gom>
+      <include name="**/*.gom"/>
+      <exclude name="version1/**/*.gom"/>
+    </gom.preset>
 
     <tom.preset srcdir="${policy.src}"
       destdir="${policy.gen}">
