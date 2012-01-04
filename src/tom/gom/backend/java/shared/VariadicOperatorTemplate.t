@@ -48,7 +48,7 @@ public class VariadicOperatorTemplate extends tom.gom.backend.java.TemplateHooke
                                   OptionManager manager,
                                   List importList, 	
                                   GomClass gomClass,
-                                  TemplateClass mapping,
+                                  tom.gom.backend.TemplateClass mapping,
                                   GomEnvironment gomEnvironment) {
     super(gomClass,manager,tomHomePath,importList,mapping,gomEnvironment);
     %match(gomClass) {

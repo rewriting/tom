@@ -19,7 +19,7 @@ public class SharedTemplateFactory extends tom.gom.backend.TemplateFactory {
 
   public MappingTemplateClass makeTomMappingTemplate(
       GomClass gomClass,
-      TemplateClass strategyMapping,
+      tom.gom.backend.TemplateClass strategyMapping,
       GomEnvironment gomEnvironment) {
     return new tom.gom.backend.ada.shared.MappingTemplate(gomClass,strategyMapping,gomEnvironment);
   }

@@ -39,14 +39,14 @@ public abstract class TemplateHookedClass extends tom.gom.backend.java.TemplateC
   protected HookList hooks;
   protected File tomHomePath;
   protected List importList;
-  protected TemplateClass mapping;
+  protected tom.gom.backend.TemplateClass mapping;
   protected OptionManager optionManager;
 
   public TemplateHookedClass(GomClass gomClass,
                              OptionManager manager,
                              File tomHomePath,
                              List importList,
-                             TemplateClass mapping,
+                             tom.gom.backend.TemplateClass mapping,
                              GomEnvironment gomEnvironment) {
     super(gomClass,gomEnvironment);
     this.optionManager = manager;

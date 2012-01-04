@@ -32,11 +32,11 @@ public abstract class MappingTemplateClass extends tom.gom.backend.ada.TemplateC
 
   public MappingTemplateClass(GomClass gomClass, GomEnvironment gomEnvironment) {
     super(gomClass,gomEnvironment);
-    this.templates = new HashMap<ClassName,TemplateClass>();
+    this.templates = new HashMap<ClassName,tom.gom.backend.TemplateClass>();
   }
-  protected Map<ClassName,TemplateClass> templates;
+  protected Map<ClassName,tom.gom.backend.TemplateClass> templates;
 
-  public void addTemplates(Map<ClassName,TemplateClass> map) {
+  public void addTemplates(Map<ClassName,tom.gom.backend.TemplateClass> map) {
     this.templates.putAll(map);
   }
 }

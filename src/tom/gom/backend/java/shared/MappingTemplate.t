@@ -37,11 +37,11 @@ import tom.gom.tools.error.GomRuntimeException;
 public class MappingTemplate extends tom.gom.backend.java.MappingTemplateClass {
   GomClassList sortClasses;
   GomClassList operatorClasses;
-  TemplateClass strategyMapping;
+  tom.gom.backend.TemplateClass strategyMapping;
 
   %include { ../../../adt/objects/Objects.tom}
 
-  public MappingTemplate(GomClass gomClass, TemplateClass strategyMapping, GomEnvironment gomEnvironment) {
+  public MappingTemplate(GomClass gomClass, tom.gom.backend.TemplateClass strategyMapping, GomEnvironment gomEnvironment) {
     super(gomClass,gomEnvironment);
     %match(gomClass) {
       TomMapping[SortClasses=sortClasses,

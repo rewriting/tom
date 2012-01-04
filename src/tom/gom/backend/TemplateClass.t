@@ -13,6 +13,8 @@ import tom.gom.tools.error.GomRuntimeException;
 
 public interface TemplateClass {
 
+  public abstract void generateTomMapping(java.io.Writer writer) throws java.io.IOException;
+
   public abstract void generate(Writer writer) throws java.io.IOException;
 
   public abstract int generateFile() ;

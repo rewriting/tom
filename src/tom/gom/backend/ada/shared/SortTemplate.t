@@ -48,7 +48,7 @@ public class SortTemplate extends tom.gom.backend.ada.TemplateHookedClass {
                       boolean maximalsharing,
                       List importList, 	
                       GomClass gomClass,
-                      TemplateClass mapping,
+                      tom.gom.backend.TemplateClass mapping,
                       GomEnvironment gomEnvironment) {
     super(gomClass,manager,tomHomePath,importList,mapping,gomEnvironment);
     this.maximalsharing = maximalsharing;

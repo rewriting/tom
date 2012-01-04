@@ -44,7 +44,7 @@ public class AbstractTypeTemplate extends tom.gom.backend.java.TemplateHookedCla
                               OptionManager manager,
                               List importList,
                               GomClass gomClass,
-                              TemplateClass mapping,
+                              tom.gom.backend.TemplateClass mapping,
                               boolean maximalsharing,
                               GomEnvironment gomEnvironment){
     super(gomClass,manager,tomHomePath,importList,mapping,gomEnvironment);

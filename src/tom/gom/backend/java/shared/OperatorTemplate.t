@@ -51,7 +51,7 @@ public class OperatorTemplate extends tom.gom.backend.java.TemplateHookedClass {
                           OptionManager manager,
                           List importList, 	
                           GomClass gomClass,
-                          TemplateClass mapping,
+                          tom.gom.backend.TemplateClass mapping,
                           boolean multithread,
                           boolean maximalsharing,
                           boolean jmicompatible,
