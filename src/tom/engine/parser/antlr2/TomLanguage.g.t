@@ -983,7 +983,18 @@ transformationConstruct [Option orgTrack] returns [Declaration result] throws To
                    ASTFactory.makePairNameDeclList(pairNameDeclList),
                    symbolOptions);
 
-               String extendsName = "###?FQN.ClassImpl?###"; // find the name
+
+               //String extendsName = "###?FQN.ClassImpl?###"; // find the name
+               String extendsName;
+
+               //retrieve classimpl
+               Symbol symb = getSymbolFromName(tName);
+               %match(symb.getOptions()) {
+                 concOption(_*,ImplementDecl[Expr=code],_*) -> {
+                   extendsName = `code;
+                 }
+               }
+
 ///               declList.add(`ResolveClassDeclInit(CodeToInstruction(TargetLanguageToCode(innerClass)))); //inner
                declList.add(`ResolveClassDecl(wName, tName, extendsName)); //inner
                declList.add(`ResolveTypeTermDecl(resolveName,resolveTTDecl,resolveOrgTrack));//%typeterm
@@ -1068,6 +1079,34 @@ transformationConstruct [Option orgTrack] returns [Declaration result] throws To
          selector().pop();
        }
      )
+    ;
+
+transformationBlockList [List<Declaration> declList, String toname] throws TomException
+    :   ( transformationBlock[declList, toname] )*
+    ;
+
+transformationBlock [List<Declaration> declList, String toname] throws TomException
+    : 
+    (
+       transformationReference [declList, toname]
+     | transformationWithTo [declList, toname]
+    )
+    ;
+
+transformationReference [List<Declaration> declList, String toname] throws TomException
+    :
+    (
+      REFERENCE ref:ALL_ID LBRACE
+      { declList.add(`ReferenceDecl(ref.getText())); }
+      ( transformationWithToList[declList, toname] )*
+      RBRACE
+    )
+  {
+    List<Option> optionList = new LinkedList<Option>();
+    optionList.add(`OriginTracking(Name(type.getText()),type.getLine(),currentFile()));
+    OptionList options = ASTFactory.makeOptionList(optionList);
+    list.add(`VisitTerm(vType,ASTFactory.makeConstraintInstructionList(constraintInstructionList),options));
+  }
     ;
 
 transformationWithToList [List<Declaration> declList, String toname] throws TomException
@@ -2878,6 +2917,7 @@ tokens {
     WHEN = "when";
     WITH = "with";
     TO = "to";
+    REFERENCE = "reference";
 }
 
 LBRACE      :   '{' ;
@@ -2888,6 +2928,7 @@ LBRACKET    :   '[' ;
 RBRACKET    :   ']' ;
 COMMA       :   ',' ;
 ARROW       :   "->";
+RARROW      :   "<-";
 DOULEARROW  :   "=>";
 ALTERNATIVE :   '|' ;
 AFFECT      :   ":=";

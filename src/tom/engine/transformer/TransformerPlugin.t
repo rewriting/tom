@@ -261,20 +261,4 @@ ResolveStratBlockList = concResolveStratBlock(ResolveStratBlock*)
     return `AbstractDecl(concDeclaration(strategy,SymbolDecl(sname)));
   }
 
-//// FRom Desugarer
-
-  /* 
-   * replaces  _  by a fresh variable _* by a fresh varstar    
-   */
-/*  %strategy DesugarUnderscore(desugarer:DesugarerPlugin) extends Identity() {
-    visit TomTerm {
-      Variable[Options=optionList,AstName=EmptyName(),AstType=ty,Constraints=constr] -> {
-        return `Variable(optionList,desugarer.getFreshVariable(),ty,constr);
-      }
-      VariableStar[Options=optionList,AstName=EmptyName(),AstType=ty,Constraints=constr] -> {
-        return `VariableStar(optionList,desugarer.getFreshVariable(),ty,constr);
-      }
-    }
-  }*/
-
 }

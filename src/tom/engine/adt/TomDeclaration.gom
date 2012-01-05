@@ -18,14 +18,15 @@ Declaration = TypeTermDecl(AstName:TomName,Declarations:DeclarationList,OrgTrack
             | MakeAddArray(AstName:TomName,VarElt:BQTerm,VarList:BQTerm,Instr:Instruction,OrgTrack:Option)
             | MakeDecl(AstName:TomName,AstType:TomType,Args:BQTermList,Instr:Instruction,OrgTrack:Option)
             | Strategy(SName:TomName,ExtendsTerm:BQTerm,VisitList:TomVisitList,OrgTrack:Option)
-            | Transformation(TName:TomName,WithToList:TomWithToList,OrgTrack:Option) //Options:OptionList ?
+            //| Transformation(TName:TomName,WithToList:TomWithToList,OrgTrack:Option) //Options:OptionList ??
+
 ///
             | TransformationDecl(TName:TomName,Declarations:DeclarationList,OrgTrack:Option)
             | TransfoStratDecl(TSName:TomName,Term:TomTerm,Instructions:InstructionList,Options:OptionList,OrgTrack:Option)
             | ResolveStratDecl(ResList:ResolveStratBlockList,OriginTracking:Option)
             | ResolveTypeTermDecl(AstName:TomName,Declarations:DeclarationList,OrgTrack:Option)
             | ResolveClassDeclInit(Instr:Instruction) //CodeToInstruction(TargetLanguageToCode(ITL(BIG_STRING)))
-            | ResolveClassDecl(WithName:String,ToName:String,Extends:String)
+            | ResolveClassDecl(WithName:String,ToName:String,Extends:String) //et pourquoi pas directement dans la decList de ResolveTypeTermDecl ?
             | ResolveIsSortDecl(TermArg:BQTerm,ResolveName:String,OrgTrack:Option)
             | ResolveIsFsymDecl(AstName:TomName,Variable:BQTerm,OrgTrack:Option)
             | ResolveGetSlotDecl(AstName:TomName,SlotName:TomName,Variable:BQTerm,OrgTrack:Option)

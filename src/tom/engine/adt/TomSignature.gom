@@ -8,8 +8,8 @@ TomVisit = VisitTerm(VNode:TomType,AstConstraintInstructionList:ConstraintInstru
 
 TomReference = ReferenceTerm(RNode:TomType, AstConstraintInstructionList:ConstraintInstructionList,Options:OptionList)
 TomReferenceList = concTomReference(TomReference*)
-TomWithTo = WithToInstruction(With:TomWithTerm,ToInstructionList:InstructionList,Options:OptionList)
-TomWithTerm = WithTerm(WNode:TomType/*,Args:SlotList*/,Options:OptionList) //lhs of a WithTo
+//TomWithTo = WithToInstruction(With:TomWithTerm,ToInstructionList:InstructionList,Options:OptionList)
+//TomWithTerm = WithTerm(WNode:TomType/*,Args:SlotList*/,Options:OptionList) //lhs of a WithTo
 ResolveStratElement = ResolveStratElement(WithName:String, ResolveOrgTrack:Option)
 ResolveStratElementList = concResolveStratElement(ResolveStratElement*)
 ResolveStratBlock = ResolveStratBlock(ToName:String, resolveStratElementList:ResolveStratElementList)
@@ -21,7 +21,7 @@ TomSymbolTable = Table(EntryList:TomEntryList)
 TomEntry = Entry(StrName:String,AstSymbol:TomSymbol)
 TomStructureTable = StructTable(StructList:TomList)
 TomVisitList = concTomVisit(TomVisit*)
-TomWithToList = concTomWithTo(TomWithTo*)
+//TomWithToList = concTomWithTo(TomWithTo*)
 TomEntryList = concTomEntry(TomEntry*)
 TomSymbolList = concTomSymbol(TomSymbol*)
 

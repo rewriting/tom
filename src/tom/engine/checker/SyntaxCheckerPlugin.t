@@ -263,7 +263,7 @@ public class SyntaxCheckerPlugin extends TomGenericPlugin {
        * %transformation
        */
       t@Transformation[TName=name,WithToList=wtlist,OrgTrack=ot] -> {
-        //test if a %transformtion is empty (not valid)
+        /*test if a %transformtion is empty (not valid)*/
         if(`wtlist.isEmptyconcTomWithTo()) {
           %match(ot) {
             OriginTracking[FileName=fileName,Line=line] -> { 
@@ -274,11 +274,10 @@ public class SyntaxCheckerPlugin extends TomGenericPlugin {
           TomMessage.error(scp.getLogger(), null, -1, TomMessage.emptyTransformation);
           return `t;
         }
-        //TODO : verify transformation structure ???
+        //TODO : verify transformation structure?
         //scp.verifyTransformation(`wtlist);
-        throw new tom.library.sl.VisitFailure();// stop the top-down
+        throw new tom.library.sl.VisitFailure();/* stop the top-down*/
       }
-
 
     }
 
