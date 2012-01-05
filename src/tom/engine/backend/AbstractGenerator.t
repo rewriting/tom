@@ -826,7 +826,8 @@ public abstract class AbstractGenerator {
         return;
       }
 
-      TypeTermDecl[Declarations=declList] -> {
+      TypeTermDecl[AstName=name,Declarations=declList] -> {
+        //FIXME: consequences of a %op_implement? 
         generateDeclarationList(deep, `declList, moduleName);
         return;
       }
