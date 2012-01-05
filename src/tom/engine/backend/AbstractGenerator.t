@@ -699,6 +699,12 @@ public abstract class AbstractGenerator {
           return;
         }
 
+      //FIXME: what are the consequences on the code generation ? 
+      ImplementDecl[AstName=Name(name), Expr=code] -> {
+        //nothing for the moment
+        return;
+      }
+
       GetDefaultDecl[AstName=Name(tomName), SlotName=slotName, Expr=code] -> {
           if(getSymbolTable(moduleName).isUsedSymbolConstructor(`tomName)) {
             `buildGetDefaultDecl(deep, tomName, code, slotName, moduleName);
