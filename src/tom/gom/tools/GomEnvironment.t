@@ -41,7 +41,7 @@ public class GomEnvironment {
   // this map is filled by the GomTypeExpander
   private Map<ModuleDecl,ModuleDeclList> importedModules;
   private Map<String,ClassName> usedBuiltinSorts;
-  private int language;
+  public int language;
 
   public static final int JCODE = 0; 
   public static final int ACODE = 1; 

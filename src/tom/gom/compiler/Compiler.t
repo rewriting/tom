@@ -79,14 +79,15 @@ public class Compiler {
         String moduleName = `moduleDecl.getModuleName().getName();
 	ClassName abstractTypeName ;
         /* create an AbstractType class */
-        if (language=ACODE) {
+        if (language == ACODE) {
 	abstractTypeName = `ClassName(
             packagePrefix(moduleDecl).substring(0,packagePrefix(moduleDecl).length()-1-moduleName.length()),
             moduleName);
 } else { //Default Naming
 	abstractTypeName = `ClassName(
+		packagePrefix(moduleDecl),
 		moduleName+"AbstractType");
-}
+           }
 
 
         ClassName tomMappingName = `ClassName(
@@ -109,7 +110,7 @@ public class Compiler {
           _*) -> {
         // get the class name for the sort
 	ClassName sortClassName;
-	if (language=ACODE){
+	if (language == ACODE){
         sortClassName = `ClassName(packagePrefix(moduleDecl),sortname) ; } else { //Java
 	sortClassName = `ClassName(packagePrefix(moduleDecl)+".types",sortname);
 
@@ -144,7 +145,7 @@ public class Compiler {
             String sortNamePackage = `sortName.toLowerCase();
             
 	ClassName operatorClassName ;
-if (language=ACODE) {
+if (language == ACODE) {
 		operatorClassName =
               `ClassName(packagePrefix(moduleDecl)+"."+sortNamePackage,opname);
 } else { //Default naming
@@ -163,7 +164,7 @@ operatorClassName =
                 allSortSlots.add(`slotTail);
                 slots = `ConcSlotField(slotHead,slotTail);
                 // as the operator is variadic, add a Cons and an Empty
-                if (language=ACODE) {
+                if (language == ACODE) {
 
 		variadicOpClassName =
                   `ClassName(packagePrefix(moduleDecl)+"."+sortNamePackage,opname);
@@ -336,7 +337,7 @@ operatorClassName =
                   Sort[Decl=SortDecl[Name=sortname,ModuleDecl=moduledecl]],
                 _*)
           ],_*) -> {
-	if (language=ACODE) {
+	if (language == ACODE) {
         classNames = `ConcClassName(ClassName(packagePrefix(moduledecl)+"",sortname),classNames*);
 } else {//Default naming
 	classNames = `ConcClassName(ClassName(packagePrefix(moduledecl)+".types",sortname),classNames*);
