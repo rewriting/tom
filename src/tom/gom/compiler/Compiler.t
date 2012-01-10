@@ -39,9 +39,15 @@ public class Compiler {
 
   private GomEnvironment gomEnvironment;
   private Map<SortDecl,ClassName> sortClassNameForSortDecl;
+ 
+  private int language = 0;
 
-  public Compiler(GomEnvironment gomEnvironment) {
+  public static final int JCODE = 0; 
+  public static final int ACODE = 1;
+
+  public Compiler(GomEnvironment gomEnvironment, int language) {
     this.gomEnvironment = gomEnvironment;
+    this.language = language;
     sortClassNameForSortDecl = new HashMap<SortDecl,ClassName>(getGomEnvironment().builtinSortClassMap());
   }
 
@@ -71,12 +77,17 @@ public class Compiler {
     %match(moduleList) {
       ConcModule(_*,Module[MDecl=moduleDecl],_*) -> {
         String moduleName = `moduleDecl.getModuleName().getName();
-
+	ClassName abstractTypeName ;
         /* create an AbstractType class */
-        ClassName abstractTypeName = `ClassName(
+        if (language=ACODE) {
+	abstractTypeName = `ClassName(
             packagePrefix(moduleDecl).substring(0,packagePrefix(moduleDecl).length()-1-moduleName.length()),
             moduleName);
-		//moduleName+"AbstractType");
+} else { //Default Naming
+	abstractTypeName = `ClassName(
+		moduleName+"AbstractType");
+}
+
 
         ClassName tomMappingName = `ClassName(
             packagePrefix(moduleDecl),
@@ -97,7 +108,12 @@ public class Compiler {
             _*)],
           _*) -> {
         // get the class name for the sort
-        ClassName sortClassName = `ClassName(packagePrefix(moduleDecl),sortname) ; //+".types",sortname);
+	ClassName sortClassName;
+	if (language=ACODE){
+        sortClassName = `ClassName(packagePrefix(moduleDecl),sortname) ; } else { //Java
+	sortClassName = `ClassName(packagePrefix(moduleDecl)+".types",sortname);
+
+}
         sortClassNameForSortDecl.put(`decl,sortClassName);
       }
     }
@@ -126,8 +142,15 @@ public class Compiler {
               _*) -> {
             String comments = getCommentsFromOption(`option);
             String sortNamePackage = `sortName.toLowerCase();
-            ClassName operatorClassName =
+            
+	ClassName operatorClassName ;
+if (language=ACODE) {
+		operatorClassName =
               `ClassName(packagePrefix(moduleDecl)+"."+sortNamePackage,opname);
+} else { //Default naming
+operatorClassName =
+              `ClassName(packagePrefix(moduleDecl)+".types."+sortNamePackage,opname);
+}
             SlotFieldList slots = `ConcSlotField();
             ClassName variadicOpClassName = null;
             ClassName empty = null;
@@ -140,13 +163,26 @@ public class Compiler {
                 allSortSlots.add(`slotTail);
                 slots = `ConcSlotField(slotHead,slotTail);
                 // as the operator is variadic, add a Cons and an Empty
-                variadicOpClassName =
+                if (language=ACODE) {
+
+		variadicOpClassName =
                   `ClassName(packagePrefix(moduleDecl)+"."+sortNamePackage,opname);
                 allVariadicOperators = `ConcClassName(variadicOpClassName,allVariadicOperators*);
                 empty =
                   `ClassName(packagePrefix(moduleDecl)+"."+sortNamePackage,"Empty"+opname);
                 operatorClassName =
                   `ClassName(packagePrefix(moduleDecl)+"."+sortNamePackage,"Cons"+opname);
+
+} else { //Default naming
+	variadicOpClassName =
+                  `ClassName(packagePrefix(moduleDecl)+".types."+sortNamePackage,opname);
+                allVariadicOperators = `ConcClassName(variadicOpClassName,allVariadicOperators*);
+                empty =
+                  `ClassName(packagePrefix(moduleDecl)+".types."+sortNamePackage,"Empty"+opname);
+                operatorClassName =
+                  `ClassName(packagePrefix(moduleDecl)+".types."+sortNamePackage,"Cons"+opname);
+}
+
 
                 allOperators = `ConcClassName(empty,allOperators*);
               }
@@ -300,7 +336,12 @@ public class Compiler {
                   Sort[Decl=SortDecl[Name=sortname,ModuleDecl=moduledecl]],
                 _*)
           ],_*) -> {
+	if (language=ACODE) {
         classNames = `ConcClassName(ClassName(packagePrefix(moduledecl)+"",sortname),classNames*);
+} else {//Default naming
+	classNames = `ConcClassName(ClassName(packagePrefix(moduledecl)+".types",sortname),classNames*);
+
+}
       }
     }
     return classNames;
