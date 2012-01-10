@@ -43,7 +43,7 @@ public abstract class GomGenericPlugin implements Plugin {
     //myadd
 
 //Transmitting current language to Environment:
-if(getOptionBooleanValue("acode")) { //Ada
+if(Boolean.TRUE == optionManager.getOptionValue("aCode")) { //Ada
     gomEnvironment = new GomEnvironment(1);
 } else { //Java
     gomEnvironment = new GomEnvironment(0);
