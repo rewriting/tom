@@ -41,10 +41,7 @@ public class GomEnvironment {
   // this map is filled by the GomTypeExpander
   private Map<ModuleDecl,ModuleDeclList> importedModules;
   private Map<String,ClassName> usedBuiltinSorts;
-  public int language;
-
-  public static final int JCODE = 0; 
-  public static final int ACODE = 1; 
+  private int language = GomGenericPlugin.JCODE;
 
   private static final Map<String,ClassName> builtinSorts;
   static {
@@ -64,12 +61,11 @@ public class GomEnvironment {
   /**
    * A private constructor method to defeat instantiation
    */
-  public GomEnvironment(int language) {
+  public GomEnvironment() {
     streamManager = new GomStreamManager();
     importedModules = new HashMap<ModuleDecl,ModuleDeclList>();
     usedBuiltinSorts = new HashMap<String,ClassName>();
     symbolTable = new SymbolTable(this);
-    this.language = language;
   }
 
   public SymbolTable getSymbolTable() {
@@ -93,6 +89,12 @@ public class GomEnvironment {
   public GomStreamManager getStreamManager() {
     return streamManager;
   }
+  public void setLanguage(int language) {
+  this.language = language ;
+}
+  public int getLanguage() {
+  return language ;
+}
 
   /**
    * Check if the argument is a builtin module name

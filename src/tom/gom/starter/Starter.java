@@ -43,6 +43,14 @@ public class Starter extends GomGenericPlugin {
     super("GomStarter");
   }
 
+  public void init() {
+if(getOptionBooleanValue("aCode")) { //Ada
+   gomEnvironment.setLanguage(ACODE) ; 
+} else { //Java
+   gomEnvironment.setLanguage(JCODE) ; 
+}
+  }
+
   /**
    * inherited from plugin interface
    * arg[0] should contain the input file name
@@ -50,6 +58,7 @@ public class Starter extends GomGenericPlugin {
   public void setArgs(Object[] arg) {
     if (arg[0] instanceof String) {
       fileName = (String)arg[0];
+      init();
     } else {
       GomMessage.error(getLogger(),null,0,
           GomMessage.invalidPluginArgument,
@@ -67,6 +76,7 @@ public class Starter extends GomGenericPlugin {
     getStreamManager().prepareForInputFile(fileName);
     informationTracker.put(KEY_LAST_GEN_MAPPING,getGomEnvironment().getLastGeneratedMapping());
   }
+
 
   /**
    * inherited from plugin interface

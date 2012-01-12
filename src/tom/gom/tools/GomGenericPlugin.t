@@ -38,20 +38,17 @@ import tom.gom.tools.GomEnvironment;
 
 public abstract class GomGenericPlugin implements Plugin {
 
+  public static final int JCODE = 0; 
+  public static final int ACODE = 1;
+
   public GomGenericPlugin(String name) {
     pluginName = name;
-    //myadd
-
-//Transmitting current language to Environment:
-if(Boolean.TRUE == optionManager.getOptionValue("aCode")) { //Ada
-    gomEnvironment = new GomEnvironment(1);
-} else { //Java
-    gomEnvironment = new GomEnvironment(0);
-
-}
+    gomEnvironment = new GomEnvironment() ; 
   }
 
   %include { ../../platform/adt/platformoption/PlatformOption.tom }
+
+  protected GomEnvironment gomEnvironment;
 
   /** The name of the plugin. */
   private String pluginName;
@@ -64,12 +61,6 @@ if(Boolean.TRUE == optionManager.getOptionValue("aCode")) { //Ada
 
   public final static String KEY_LAST_GEN_MAPPING = "lastGeneratedMapping";
   public final static String KEY_LAST_READ_LINE = "lastReadLine";
-
-  /** myadd : GomEnvironment is not yet a Singleton class, therefore it has to be an attribute
-   * => need to modify environment() method => become abstract and defined in extended classes
-   * add get/set methods
-   */
-  protected GomEnvironment gomEnvironment;
 
   /**
    * An accessor method, so that the plugin can see its logger.

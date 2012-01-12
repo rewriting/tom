@@ -114,7 +114,9 @@ return;
       ConcGomClass(_*,
           SortClass[ClassName=sortName],
           _*) -> {
-        (templates.get(`sortName))
+	System.out.println(templates);
+        System.out.println(`sortName);
+	(templates.get(`sortName))
           .generateTomMapping(writer);
       }
     }
@@ -124,7 +126,7 @@ return;
       ConcGomClass(_*,
           OperatorClass[ClassName=opName],
           _*) -> {
-        //System.out.println("templates = " + templates);
+        //System.out.println("tz emplates = " + templates);
         //System.out.println("opname    = " + `opName);
         //System.out.println("result    = " + templates.get(`opName));
         (templates.get(`opName))
