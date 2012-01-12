@@ -58,10 +58,6 @@ public class MappingTemplate extends tom.gom.backend.java.MappingTemplateClass {
         "Wrong argument for MappingTemplate: " + gomClass);
   }
 
-public void addTemplates(Map<ClassName,tom.gom.backend.TemplateClass> map) {
-return;
-}
-
   public void generate(java.io.Writer writer) throws java.io.IOException {
     if(getGomEnvironment().isBuiltinSort("boolean")) {
       writer.write(%[
@@ -114,8 +110,6 @@ return;
       ConcGomClass(_*,
           SortClass[ClassName=sortName],
           _*) -> {
-	System.out.println(templates);
-        System.out.println(`sortName);
 	(templates.get(`sortName))
           .generateTomMapping(writer);
       }
@@ -126,9 +120,6 @@ return;
       ConcGomClass(_*,
           OperatorClass[ClassName=opName],
           _*) -> {
-        //System.out.println("tz emplates = " + templates);
-        //System.out.println("opname    = " + `opName);
-        //System.out.println("result    = " + templates.get(`opName));
         (templates.get(`opName))
           .generateTomMapping(writer);
       }

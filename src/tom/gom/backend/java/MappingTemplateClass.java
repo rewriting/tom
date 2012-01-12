@@ -37,6 +37,7 @@ public abstract class MappingTemplateClass extends tom.gom.backend.java.Template
   protected Map<ClassName,tom.gom.backend.TemplateClass> templates;
 
   public void addTemplates(Map<ClassName,tom.gom.backend.TemplateClass> map) {
-    this.templates.putAll(map);
+	  this.templates.putAll(map);
+	 
   }
 }
