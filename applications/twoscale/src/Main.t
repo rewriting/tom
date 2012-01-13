@@ -9,7 +9,7 @@ public class Main {
   %include { sl.tom }
 
 	public static void main(String[] args) {
-    Main main = new Main();
+    Pretty pp = new Pretty();
 
     // Sum_i=1..n Integral_Omega( d(U.T*(v_i))/dx_i dx )
     Exp U = `Function(Symbol("U"),concExp());
@@ -26,22 +26,22 @@ public class Main {
     //                Plus(O(Epsilon(1)),CstInt(5)));
 
     System.out.println("psi = " + psi);
-    System.out.println("psi = " + main.pretty(psi));
+    System.out.println("psi = " + pp.pretty(psi));
 
     try {
 
       Exp e = `RepeatId(BottomUp(ApproxTs())).visit(psi);
-      System.out.println("e1 = " + main.pretty(e));
+      System.out.println("e1 = " + pp.pretty(e));
       e = `RepeatId(BottomUp(Expand())).visit(e);
-      System.out.println("e2 = " + main.pretty(e));
+      System.out.println("e2 = " + pp.pretty(e));
       e = `RepeatId(BottomUp(ExpandPartial())).visit(e);
-      System.out.println("e3 = " + main.pretty(e));
+      System.out.println("e3 = " + pp.pretty(e));
       //e = `RepeatId(BottomUp(ConvergenceEpsilon())).visit(e);
-      //System.out.println("e4 = " + main.pretty(e));
+      //System.out.println("e4 = " + pp.pretty(e));
       e = `RepeatId(BottomUp(LinearityIntegral())).visit(e);
-      System.out.println("e4 = " + main.pretty(e));
+      System.out.println("e4 = " + pp.pretty(e));
       e = `RepeatId(BottomUp(LinearitySum())).visit(e);
-      System.out.println("e5 = " + main.pretty(e));
+      System.out.println("e5 = " + pp.pretty(e));
 
     } catch(VisitFailure e) {
       System.out.println("failure on: " + psi);
@@ -96,62 +96,6 @@ public class Main {
       Minus(o@O(Epsilon[]),o) -> o
       Mult(_,o@O(Epsilon[])) -> o
     }
-  }
-
-
-
-
-  /*
-   * Pretty printer
-   */
-  public String pretty(Exp e) {
-    %match(e) {
-      CstInt(v) -> { return ""+`v; }
-      Var(name) -> { return `name + "_"; }
-      Plus(e1,e2) -> { return pretty(`e1) + "+" + pretty(`e2); }
-      Mult(e1,e2) -> { return pretty(`e1) + "*" + pretty(`e2); }
-      O(eps) -> { return "O(" + pretty(`eps) + ")"; }
-      Index(body,indexname) -> { return pretty(`body) + "_" + `indexname; }
-      Function(symbol,args) -> { return pretty(`symbol) + "(" + pretty(`args) + ")"; }
-      Partial(body,var) -> { return "d." + pretty(`body) + "/" + "d." + pretty(`var); }
-      Sum(domain,body,var) -> { return "(Sum " + pretty(`var) + " in " + pretty(`domain) + ". " + pretty(`body) + ")"; }
-      Integral(domain,body,var) -> { return "(Integral " + pretty(`domain) + ". " + pretty(`body) + ". d" + pretty(`var) + ")"; }
-    }
-    return "Exp undefined case: " + e;
-  }
-
-  public String pretty(ExpList e) {
-    %match(e) {
-      concExp() -> { return ""; }
-      concExp(head,tail*) -> { return pretty(`head) + "," + pretty(`tail*); }
-    }
-
-    return "ExpList undefined case: " + e;
-  }
-
-  public String pretty(Epsilon e) {
-    %match(e) {
-      Epsilon(v) -> { return "epsilon_"+`v; }
-    }
-
-    return "Epsilon undefined case: " + e;
-  }
-
-  public String pretty(Region e) {
-    %match(e) {
-      Interval(e1,e2) -> { return "[" + pretty(`e1) + "," + pretty(`e2) + "]"; }
-      Domain(name) -> { return `name; }
-    }
-
-    return "Region undefined case: " + e;
-  }
-
-  public String pretty(Symbol e) {
-    %match(e) {
-      Symbol(name) -> { return `name; }
-    }
-
-    return "Symbol undefined case: " + e;
   }
 
 }
