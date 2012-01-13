@@ -2,5 +2,87 @@ module formula
   imports int boolean String
   abstract syntax 
   
-  Exp = Cst(value:int)
+  Exp = 
+      | CstInt(value:int)
+      | Var(name:String)
+      | Plus(e1:Exp, e2:Exp)
+      | Minus(e1:Exp, e2:Exp)
+      | Mult(e1:Exp, e2:Exp)
+      | O(oname:Epsilon)
+      | Integral(domain:Region, body:Exp, variable:Exp )
+      | Partial(body:Exp, variable:Exp )
+      | Sum(domain:Region, body:Exp, variable:Exp )
+      | Function(symbol:Symbol, args:ExpList)
+      | Index(body:Exp, indexname:String)
+
+//Plus:block() {
+//  private static int javaPlus(int x, int y) { return x+y; }
+//}
+
+module formula:rules() {
+    Minus(o@O(Epsilon(_)),o) -> o
+    Partial(o@O(Epsilon(_)),_) -> o
+    Integral(domain,o@O(Epsilon(_)),_) -> o
+    Sum(domain,o@O(Epsilon(_)),_) -> o
+
+    //Plus(o@O(Epsilon(_)),o) -> o
+    //Mult(_,o@O(Epsilon(_))) -> o
+
+    //Plus(CstInt(x),CstInt(y)) -> CstInt(javaPlus(x,y))
+    //Plus(CstInt(x),Plus(CstInt(y),z)) -> Plus(CstInt(javaPlus(x,y)),z)
+
+    //Plus(Plus(x,y),z) -> Plus(x,Plus(y,z)) 
+    //Plus(o@O(Epsilon(_)),Plus(x,y)) -> Plus(x,Plus(o,y))
+    //Plus(o@CstInt(_),Plus(x@!O(Epsilon(_)),y)) -> Plus(x,Plus(y,o))
+    //Plus(o@O(Epsilon(_)),c@CstInt(_)) -> Plus(c,o)
+
+
+}
+
+Plus:make(e1,e2) {
+  %match(Exp e1, Exp e2) {
+    CstInt(x),CstInt(y) -> { return `CstInt(x+y); }
+    CstInt(x),Plus(CstInt(y),z) -> { return `Plus(CstInt(x+y),z); }
+    o@O(Epsilon(_)),o -> { return `o; }
+    o@O(Epsilon(_)),Plus(o,z) -> { return `Plus(o,z); }
+
+    Plus(x,y),z -> { return `Plus(x,Plus(y,z)); }
+    o@O(Epsilon(_)),Plus(x,y) -> { return `Plus(x,Plus(o,y)); }
+    o@CstInt(_),Plus(x@!O(Epsilon(_)),y) -> { return `Plus(x,Plus(o,y)); }
+    o@O(Epsilon(_)),c@CstInt(_) -> { return `Plus(c,o); }
+
+  }
+}
+
+Mult:make(e1,e2) {
+  %match(Exp e1, Exp e2) {
+    o@O(Epsilon(_)),_ -> { return `o; }
+    _,o@O(Epsilon(_)) -> { return `o; }
+    CstInt(x),CstInt(y) -> { return `CstInt(x * y); }
+    CstInt(x),Mult(CstInt(y),z) -> { return `Mult(CstInt(x * y),z); }
+    Mult(x,y),z -> { return `Mult(x,Mult(y,z)); }
+    o@CstInt(_),Mult(x,y) -> { return `Mult(x,Mult(o,y)); }
+  }
+}
+
+ExpList = concExp(Exp*)
+
+Symbol = Symbol(name:String)
+
+Region =
+       | Interval(inf:Exp, sup:Exp)
+       | Domain(name:String)
+
+//DVariable = 
+//         | D(name:String)
+//         | Di(name:String, indexname:String)
+
+// Integral(Interval(1,100), Var("x"), D("x"))
+
+// O("epsilon")
+// O(1)
+// O(epsilon(1))
+// O(epsilon)
+  Epsilon =
+      | Epsilon(number:int)
 

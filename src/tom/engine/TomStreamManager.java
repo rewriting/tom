@@ -398,7 +398,9 @@ public class TomStreamManager {
     // Look for importList
     for(int i=0 ; i<getImportList().size() ; i++) {
       file = new File(getImportList().get(i),fileName);
+        //System.out.println("*** try: " + file);
       if(file.exists()) {
+        //System.out.println("*** found: " + file);
         return file;
       }
     }
