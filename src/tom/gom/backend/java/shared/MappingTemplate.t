@@ -58,10 +58,6 @@ public class MappingTemplate extends tom.gom.backend.java.MappingTemplateClass {
         "Wrong argument for MappingTemplate: " + gomClass);
   }
 
-public void addTemplates(Map<ClassName,tom.gom.backend.TemplateClass> map) {
-return;
-}
-
   public void generate(java.io.Writer writer) throws java.io.IOException {
     if(getGomEnvironment().isBuiltinSort("boolean")) {
       writer.write(%[

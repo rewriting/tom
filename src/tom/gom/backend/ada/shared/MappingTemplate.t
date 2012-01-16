@@ -57,10 +57,6 @@ public class MappingTemplate extends tom.gom.backend.ada.MappingTemplateClass {
         "Wrong argument for MappingTemplate: " + gomClass);
   }
 
-public void addTemplates(Map<ClassName,tom.gom.backend.TemplateClass> map) {
-return;
-}
-
 /* Overriding unnecessary spec generation */
   public  int generateSpecFile() {
 return 0;
