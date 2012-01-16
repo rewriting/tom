@@ -245,7 +245,6 @@ public class GomOptionManager implements OptionManager, OptionOwner {
   }
 
   private PlatformOption getOptionFromName(String name) {
-    System.out.println("### Canonical name: "+getCanonicalName(name)+" // mapNameToOption :"+mapNameToOption);
     PlatformOption option = mapNameToOption.get(getCanonicalName(name));
     if (null == option) {
       GomMessage.warning(getLogger(),null,0,

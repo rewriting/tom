@@ -174,7 +174,7 @@ public class Backend {
       /* The mappings may need to access generators */
       for(final MappingTemplateClass templateClass : mappingSet) {
         templateClass.addTemplates(generators);
-}
+      }
 
       if(language == ACODE) {
         for (final ClassName clsName : generators.keySet()) {
