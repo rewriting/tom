@@ -20,6 +20,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  *
  * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
+ * Antoine Floch
  * Nicolas Henry
  *
  **/
@@ -124,11 +125,9 @@ public class EcoreContainmentIntrospector implements Introspector {
 	 * Get a position in a feature list from global position in all contents of
 	 * the referencing object.
 	 * 
-	 * @param global
-	 *            position of the object in all contents
+	 * @param global position of the object in all contents
 	 * @param referencing
-	 * @param feature
-	 *            target feature
+	 * @param feature target feature
 	 * @return the relative position
 	 */
 	private int getPositionInTheContainingList(int global, EObject referencing,
@@ -136,8 +135,9 @@ public class EcoreContainmentIntrospector implements Introspector {
 		int offset = 0;
 		List<EObject> contents = getList(referencing);
 		while (offset < contents.size()
-				&& contents.get(offset).eContainingFeature() != feature)
+				&& contents.get(offset).eContainingFeature() != feature) {
 			offset++;
+    }
 		return global - offset;
 	}
 
