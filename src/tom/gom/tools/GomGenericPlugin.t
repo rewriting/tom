@@ -41,14 +41,7 @@ public abstract class GomGenericPlugin implements Plugin {
   public GomGenericPlugin(String name) {
     pluginName = name;
     //myadd
-
-//Transmitting current language to Environment:
-if(getOptionBooleanValue("acode")) { //Ada
-    gomEnvironment = new GomEnvironment(1);
-} else { //Java
-    gomEnvironment = new GomEnvironment(0);
-
-}
+    gomEnvironment = new GomEnvironment();
   }
 
   %include { ../../platform/adt/platformoption/PlatformOption.tom }
