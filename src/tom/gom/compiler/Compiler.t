@@ -74,9 +74,8 @@ public class Compiler {
 
         /* create an AbstractType class */
         ClassName abstractTypeName = `ClassName(
-            packagePrefix(moduleDecl).substring(0,packagePrefix(moduleDecl).length()-1-moduleName.length()),
-            moduleName);
-		//moduleName+"AbstractType");
+            packagePrefix(moduleDecl),
+            moduleName+"AbstractType");
 
         ClassName tomMappingName = `ClassName(
             packagePrefix(moduleDecl),
@@ -97,7 +96,7 @@ public class Compiler {
             _*)],
           _*) -> {
         // get the class name for the sort
-        ClassName sortClassName = `ClassName(packagePrefix(moduleDecl),sortname) ; //+".types",sortname);
+        ClassName sortClassName = `ClassName(packagePrefix(moduleDecl)+".types",sortname);
         sortClassNameForSortDecl.put(`decl,sortClassName);
       }
     }
@@ -127,7 +126,7 @@ public class Compiler {
             String comments = getCommentsFromOption(`option);
             String sortNamePackage = `sortName.toLowerCase();
             ClassName operatorClassName =
-              `ClassName(packagePrefix(moduleDecl)+"."+sortNamePackage,opname);
+              `ClassName(packagePrefix(moduleDecl)+".types."+sortNamePackage,opname);
             SlotFieldList slots = `ConcSlotField();
             ClassName variadicOpClassName = null;
             ClassName empty = null;
@@ -141,12 +140,12 @@ public class Compiler {
                 slots = `ConcSlotField(slotHead,slotTail);
                 // as the operator is variadic, add a Cons and an Empty
                 variadicOpClassName =
-                  `ClassName(packagePrefix(moduleDecl)+"."+sortNamePackage,opname);
+                  `ClassName(packagePrefix(moduleDecl)+".types."+sortNamePackage,opname);
                 allVariadicOperators = `ConcClassName(variadicOpClassName,allVariadicOperators*);
                 empty =
-                  `ClassName(packagePrefix(moduleDecl)+"."+sortNamePackage,"Empty"+opname);
+                  `ClassName(packagePrefix(moduleDecl)+".types."+sortNamePackage,"Empty"+opname);
                 operatorClassName =
-                  `ClassName(packagePrefix(moduleDecl)+"."+sortNamePackage,"Cons"+opname);
+                  `ClassName(packagePrefix(moduleDecl)+".types."+sortNamePackage,"Cons"+opname);
 
                 allOperators = `ConcClassName(empty,allOperators*);
               }
@@ -300,7 +299,7 @@ public class Compiler {
                   Sort[Decl=SortDecl[Name=sortname,ModuleDecl=moduledecl]],
                 _*)
           ],_*) -> {
-        classNames = `ConcClassName(ClassName(packagePrefix(moduledecl)+"",sortname),classNames*);
+        classNames = `ConcClassName(ClassName(packagePrefix(moduledecl)+".types",sortname),classNames*);
       }
     }
     return classNames;
