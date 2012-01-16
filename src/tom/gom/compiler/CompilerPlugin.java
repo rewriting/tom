@@ -79,12 +79,7 @@ public class CompilerPlugin extends GomGenericPlugin {
   public void run(Map<String,String> informationTracker) {
     long startChrono = System.currentTimeMillis();
     boolean intermediate = getOptionBooleanValue("intermediate");
-   Compiler compiler ; 
-    if(getOptionBooleanValue("aCode")) {
-    compiler = new Compiler(getGomEnvironment(),1);
-    } else { //Java by default
-    compiler = new Compiler(getGomEnvironment(),0);
-    }
+    Compiler compiler = new Compiler(getGomEnvironment());
     classList = compiler.compile(moduleList,hookList);
     if (null == classList) {
       GomMessage.error(getLogger(), null, 0, GomMessage.compilationIssue, 
