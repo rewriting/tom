@@ -49,12 +49,6 @@ public class BackendPlugin extends GomGenericPlugin {
   /** The constructor*/
   public BackendPlugin() {
     super("GomBackend");
-    if(getOptionBooleanValue("aCode")) {
-    templateFactory = new tom.gom.backend.ada.SharedTemplateFactory(getOptionManager(),getGomEnvironment());
-    } else { // Java case
-    templateFactory = new tom.gom.backend.java.SharedTemplateFactory(getOptionManager(),getGomEnvironment());
-    }
-
   }
 
   /** the declared options string */
@@ -90,6 +84,13 @@ public class BackendPlugin extends GomGenericPlugin {
     if (arg[0] instanceof GomClassList) {
       classList = (GomClassList)arg[0];
       setGomEnvironment((GomEnvironment)arg[1]);
+
+    if(getOptionBooleanValue("aCode")) {
+    templateFactory = new tom.gom.backend.ada.SharedTemplateFactory(getOptionManager(),getGomEnvironment());
+    } else { // Java case
+    templateFactory = new tom.gom.backend.java.SharedTemplateFactory(getOptionManager(),getGomEnvironment());
+    }
+
     } else {
       GomMessage.error(getLogger(),null,0,
           GomMessage.invalidPluginArgument,
@@ -103,6 +104,7 @@ public class BackendPlugin extends GomGenericPlugin {
    * Create the initial GomModule parsed from the input file
    */
   public void run(Map<String,String> informationTracker) {
+
     long startChrono = System.currentTimeMillis();
     // make sure the environment has the correct streamManager
     getGomEnvironment().setStreamManager(getStreamManager());
