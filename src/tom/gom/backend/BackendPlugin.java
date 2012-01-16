@@ -49,7 +49,7 @@ public class BackendPlugin extends GomGenericPlugin {
   /** The constructor*/
   public BackendPlugin() {
     super("GomBackend");
-    if(gomEnvironment.getLanguage() == ACODE) {
+    if(getOptionBooleanValue("aCode")) {
     templateFactory = new tom.gom.backend.ada.SharedTemplateFactory(getOptionManager(),getGomEnvironment());
     } else { // Java case
     templateFactory = new tom.gom.backend.java.SharedTemplateFactory(getOptionManager(),getGomEnvironment());

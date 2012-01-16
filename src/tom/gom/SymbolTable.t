@@ -38,16 +38,12 @@ import java.util.HashSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import tom.gom.tools.GomEnvironment;
-import tom.gom.tools.GomGenericPlugin;
 
 public class SymbolTable {
 
   %include { adt/gom/Gom.tom }
   %include { adt/symboltable/SymbolTable.tom }
   %include { ../library/mapping/java/sl.tom }
-
-  public static final int JCODE = 0; 
-  public static final int ACODE = 1;
 
   /** map sort-name -> SortDescription */
   private Map<String,SortDescription> sorts =
@@ -121,7 +117,7 @@ public class SymbolTable {
   }
 
   public String getFullAbstractTypeClassName(String moduleName) {
-if (gomEnvironment.getLanguage() == GomGenericPlugin.ACODE) { //Ada
+if (gomEnvironment.language == 1) { //Ada
     return getFullModuleName(moduleName) ; //+"."+moduleName+"AbstractType";
 } else { //Java
     return getFullModuleName(moduleName)+"."+moduleName+"AbstractType";
@@ -139,7 +135,7 @@ if (gomEnvironment.getLanguage() == GomGenericPlugin.ACODE) { //Ada
     %match(desc) {
       SortDescription[ModuleSymbol=m] -> {
         String packageName = gomEnvironment.getStreamManager().getPackagePath(`m);
-	if (gomEnvironment.getLanguage() == GomGenericPlugin.ACODE) { //Ada	
+	if (gomEnvironment.language == 1) { //Ada	
 return (packageName.equals("") ? "" : packageName + ".") + `m.toLowerCase() + "." + sort;
 } else {//Java
 return (packageName.equals("") ? "" : packageName + ".") + `m.toLowerCase() + ".types." + sort;
