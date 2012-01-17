@@ -77,7 +77,7 @@ with SharedObjectP; use SharedObjectP;
     if(maximalsharing) {
       implementsInterface = "SharedObjectP.SharedObject with null record";
     } else {
-      implementsInterface = "tom.library.sl.Visitable and Cloneable and Comparable";
+      implementsInterface = "SharedObjectP.SharedObject with null record";
  
     }
     writer.write(

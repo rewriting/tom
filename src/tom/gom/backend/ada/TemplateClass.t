@@ -57,7 +57,7 @@ public abstract class TemplateClass implements tom.gom.backend.TemplateClass{
           return `name;
         } else {
 	  //"Cleaning" package name, Ada specific
-          return (`pkgPrefix+"."+`name).replaceAll(".types.",".");
+          return (`pkgPrefix+"."+`name).replaceAll("\\.types\\.","\\.").replaceAll("\\.[^\\.]*AbstractType","");
         }
       }
     }
