@@ -56,7 +56,7 @@ public abstract class TemplateClass implements tom.gom.backend.TemplateClass{
         if(`pkgPrefix.length()==0) {
           return `name;
         } else {
-	  //"Cleaning" package name, Ada specific
+	  //"Cleaning" full qualified name, Ada specific
           return (`pkgPrefix+"."+`name).replaceAll("\\.types\\.","\\.").replaceAll("\\.[^\\.]*AbstractType","");
         }
       }
@@ -72,7 +72,8 @@ public abstract class TemplateClass implements tom.gom.backend.TemplateClass{
   public String getPackage(ClassName clsName) {
     %match(clsName) {
       ClassName[Pkg=pkg] -> {
-        return `pkg;
+	//"Cleaning" package name, Ada specific
+        return (`pkg).replaceAll(".types","");
       }
     }
     throw new GomRuntimeException(
