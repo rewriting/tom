@@ -186,88 +186,6 @@ writer.write(%[
     }
   }
 
-  /**
-   * Appends a string representation of this term to the buffer given as argument.
-   *
-   * @@param buffer the buffer to which a string represention of this term is appended.
-   */
-  @@Override
-  public void toStringBuilder(java.lang.StringBuilder buffer) {
-    buffer.append("@className()@(");
-    if(this instanceof @fullClassName(cons.getClassName())@) {
-      @fullClassName(sortName)@ cur = this;
-      while(cur instanceof @fullClassName(cons.getClassName())@) {
-        @domainClassName@ elem = cur.getHead@className()@();
-        cur = cur.getTail@className()@();
-        @toStringChild("buffer","elem")@
-        if(cur instanceof @fullClassName(cons.getClassName())@) {
-          buffer.append(",");
-        }
-      }
-      if(!(cur instanceof @fullClassName(empty.getClassName())@)) {
-        buffer.append(",");
-        cur.toStringBuilder(buffer);
-      }
-    }
-    buffer.append(")");
-  }
-
-  /**
-   * Returns an ATerm representation of this term.
-   *
-   * @@return an ATerm representation of this term.
-   */
-  public aterm.ATerm toATerm() {
-    aterm.ATerm res = atermFactory.makeList();
-    if(this instanceof @fullClassName(cons.getClassName())@) {
-      @fullClassName(sortName)@ tail = this.getTail@className()@();
-      res = atermFactory.makeList(@toATermHead()@,(aterm.ATermList)tail.toATerm());
-    }
-    return res;
-  }
-
-  /**
-   * Apply a conversion on the ATerm contained in the String and returns a @fullClassName(sortName)@ from it
-   *
-   * @@param trm ATerm to convert into a Gom term
-   * @@param atConv ATerm Converter used to convert the ATerm
-   * @@return the Gom term
-   */
-  public static @fullClassName(sortName)@ fromTerm(aterm.ATerm trm, tom.library.utils.ATermConverter atConv) {
-    trm = atConv.convert(trm);
-    if(trm instanceof aterm.ATermAppl) {
-      aterm.ATermAppl appl = (aterm.ATermAppl) trm;
-      if("@className()@".equals(appl.getName())) {
-        @fullClassName(sortName)@ res = @fullClassName(empty.getClassName())@.make();
-
-        aterm.ATerm array[] = appl.getArgumentArray();
-        for(int i = array.length-1; i>=0; --i) {
-          @domainClassName@ elem = @fromATermElement("array[i]","atConv")@;
-          res = @fullClassName(cons.getClassName())@.make(elem,res);
-        }
-        return res;
-      }
-    }
-
-    if(trm instanceof aterm.ATermList) {
-      aterm.ATermList list = (aterm.ATermList) trm;
-      @fullClassName(sortName)@ res = @fullClassName(empty.getClassName())@.make();
-      try {
-        while(!list.isEmpty()) {
-          @domainClassName@ elem = @fromATermElement("list.getFirst()","atConv")@;
-          res = @fullClassName(cons.getClassName())@.make(elem,res);
-          list = list.getNext();
-        }
-      } catch(IllegalArgumentException e) {
-        // returns null when the fromATerm call failed
-        return null;
-      }
-      return res.reverse();
-    }
-
-    return null;
-  }
-
   /*
    * Checks if the Collection contains all elements of the parameter Collection
    *
@@ -308,10 +226,6 @@ writer.write(%[
     }
     return false;
   }
-
-  //public boolean equals(Object o) { return this == o; }
-
-  //public int hashCode() { return hashCode(); }
 
   /**
    * Checks the emptiness

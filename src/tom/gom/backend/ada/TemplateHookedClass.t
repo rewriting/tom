@@ -158,6 +158,7 @@ public abstract class TemplateHookedClass extends tom.gom.backend.ada.TemplateCl
         tomParams.add("--verbose");
       }
       tomParams.add("--output");
+      tomParams.add("--aCode");
       tomParams.add(file_path);
     
       final File tmpFile;
