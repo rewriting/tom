@@ -34,10 +34,7 @@ import tom.gom.adt.objects.*;
 import tom.gom.adt.objects.types.*;
 import tom.gom.tools.error.GomRuntimeException;
 
-public abstract class TemplateClass implements tom.gom.backend.TemplateClass{
-  protected GomClass gomClass;
-  protected ClassName className;
-  private GomEnvironment gomEnvironment;
+public abstract class TemplateClass extends tom.gom.backend.TemplateClass{
 
 /*Unnecessary in Java, overriding interface*/
   public int generateSpecFile() {
@@ -53,9 +50,6 @@ public abstract class TemplateClass implements tom.gom.backend.TemplateClass{
     this.gomEnvironment = gomEnvironment;
   }
 
-  public GomEnvironment getGomEnvironment() {
-    return this.gomEnvironment;
-  }
 
   %include { ../../adt/objects/Objects.tom}
 
@@ -417,45 +411,6 @@ public abstract class TemplateClass implements tom.gom.backend.TemplateClass{
     return fullClassName().replace('.',File.separatorChar)+".java";
   }
 
-  protected File fileToGenerate() {
-    GomStreamManager stream = getGomEnvironment().getStreamManager();
-    File output = new File(stream.getDestDir(),fileName());
-    return output;
-  }
-
-  public int generateFile() {
-    try {
-       File output = fileToGenerate();
-       // make sure the directory exists
-       // if creation failed, try again, as this can be a manifestation of a
-       // race condition in mkdirs
-       if (!output.getParentFile().mkdirs()) {
-         output.getParentFile().mkdirs();
-       }
-       Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output)));
-       generate(writer);
-       writer.flush();
-       writer.close();
-    } catch(IOException e) {
-      GomMessage.error(getLogger(),null,0,
-          GomMessage.tomCodeGenerationFailure, e.getMessage());
-      return 1;
-    }
-    return 0;
-  }
-
-  public String visitMethod(ClassName sortName) {
-    return "visit_"+className(sortName);
-  }
-
-  public String isOperatorMethod(ClassName opName) {
-    return "is"+className(opName);
-  }
-
-  public String getCollectionMethod(ClassName opName) {
-    return "getCollection"+className(opName);
-  }
-
   protected void slotDecl(java.io.Writer writer, SlotFieldList slotList)
                         throws java.io.IOException {
     int index = 0;
@@ -507,8 +462,5 @@ public abstract class TemplateClass implements tom.gom.backend.TemplateClass{
     return;
   }
 
-  private Logger getLogger() {
-    return Logger.getLogger(getClass().getName());
-  }
 
 }

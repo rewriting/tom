@@ -208,7 +208,7 @@ public abstract class TemplateHookedClass extends tom.gom.backend.java.TemplateC
   }
 
   /** the class logger instance*/
-  private Logger getLogger() {
+  protected Logger getLogger() {
     return Logger.getLogger(getClass().getName());
   }
 

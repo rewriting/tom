@@ -11,22 +11,12 @@ import tom.gom.adt.objects.*;
 import tom.gom.adt.objects.types.*;
 import tom.gom.tools.error.GomRuntimeException;
 
-public abstract class TemplateClass implements tom.gom.backend.TemplateClass{
-  protected GomClass gomClass;
-  protected ClassName className;
-  private GomEnvironment gomEnvironment;
-
-
-
+public abstract class TemplateClass extends tom.gom.backend.TemplateClass{
 
   public TemplateClass(GomClass gomClass, GomEnvironment gomEnvironment) {
     this.gomClass = gomClass;
     this.className = gomClass.getClassName();
     this.gomEnvironment = gomEnvironment;
-  }
-
-  public GomEnvironment getGomEnvironment() {
-    return this.gomEnvironment;
   }
 
   %include { ../../adt/objects/Objects.tom}
@@ -292,88 +282,6 @@ public abstract class TemplateClass implements tom.gom.backend.TemplateClass{
     }
   }
 
-  public void toATermSlotField(StringBuilder res, SlotField slot) {
-    %match(slot) {
-      SlotField[Domain=domain] -> {
-        if(!getGomEnvironment().isBuiltinClass(`domain)) {
-          res.append(getMethod(slot));
-          res.append("().toATerm()");
-        } else {
-          if (`domain.equals(`ClassName("","int"))) {
-            res.append("(aterm.ATerm) atermFactory.makeInt(");
-            res.append(getMethod(slot));
-            res.append("())");
-          } else if (`domain.equals(`ClassName("","boolean"))) {
-            res.append("(aterm.ATerm) atermFactory.makeInt(");
-            res.append(getMethod(slot));
-            res.append("()?1:0)");
-          } else if (`domain.equals(`ClassName("","long"))) {
-            res.append("(aterm.ATerm) atermFactory.makeLong(");
-            res.append(getMethod(slot));
-            res.append("())");
-          } else if (`domain.equals(`ClassName("","double"))) {
-            res.append("(aterm.ATerm) atermFactory.makeReal(");
-            res.append(getMethod(slot));
-            res.append("())");
-          } else if (`domain.equals(`ClassName("","float"))) {
-            res.append("(aterm.ATerm) atermFactory.makeReal(");
-            res.append(getMethod(slot));
-            res.append("())");
-          } else if (`domain.equals(`ClassName("","char"))) {
-            res.append("(aterm.ATerm) atermFactory.makeInt(((int)");
-            res.append(getMethod(slot));
-            res.append("()-(int)'0'))");
-          } else if (`domain.equals(`ClassName("","String"))) {
-            res.append("(aterm.ATerm) atermFactory.makeAppl(");
-            res.append("atermFactory.makeAFun(");
-            res.append(getMethod(slot));
-            res.append("() ,0 , true))");
-          } else if (`domain.equals(`ClassName("aterm","ATerm")) ||`domain.equals(`ClassName("aterm","ATermList"))){
-            res.append(getMethod(slot));
-            res.append("()");
-          } else {
-            throw new GomRuntimeException("Builtin " + `domain + " not supported");
-          }
-        }
-      }
-    }
-  }
-
-  public void fromATermSlotField(StringBuilder buffer, SlotField slot, String appl, String atConv) {
-    %match(slot) {
-      SlotField[Domain=domain] -> {
-        if(!getGomEnvironment().isBuiltinClass(`domain)) {
-          buffer.append(fullClassName(`domain));
-          buffer.append(".fromTerm(");
-          buffer.append(appl);
-          buffer.append(",");
-          buffer.append(atConv);
-          buffer.append(")");
-        } else {
-          if (`domain.equals(`ClassName("","int"))) {
-            buffer.append("convertATermToInt(").append(appl).append(", ").append(atConv).append(")");
-          } else  if (`domain.equals(`ClassName("","float"))) {
-            buffer.append("convertATermToFloat(").append(appl).append(", ").append(atConv).append(")");
-          } else  if (`domain.equals(`ClassName("","boolean"))) {
-            buffer.append("convertATermToBoolean(").append(appl).append(", ").append(atConv).append(")");
-          } else  if (`domain.equals(`ClassName("","long"))) {
-            buffer.append("convertATermToLong(").append(appl).append(", ").append(atConv).append(")");
-          } else  if (`domain.equals(`ClassName("","double"))) {
-            buffer.append("convertATermToDouble(").append(appl).append(", ").append(atConv).append(")");
-          } else  if (`domain.equals(`ClassName("","char"))) {
-            buffer.append("convertATermToChar(").append(appl).append(", ").append(atConv).append(")");
-          } else if (`domain.equals(`ClassName("","String"))) {
-            buffer.append("convertATermToString(").append(appl).append(", ").append(atConv).append(")");
-          } else if (`domain.equals(`ClassName("aterm","ATerm")) || `domain.equals(`ClassName("aterm","ATermList")) ){
-            buffer.append(appl);
-          } else {
-            throw new GomRuntimeException("Builtin " + `domain + " not supported");
-          }
-        }
-      }
-    }
-  }
-
   protected String primitiveToReferenceType(String classname) {
     %match(classname) {
       "byte" -> { return "java.lang.Byte"; }
@@ -394,12 +302,6 @@ public abstract class TemplateClass implements tom.gom.backend.TemplateClass{
 
   protected String fileNameSpec() {
     return fullClassName().replace('.','-')+".ads";
-  }
-
-  protected File fileToGenerate() {
-    GomStreamManager stream = getGomEnvironment().getStreamManager();
-    File output = new File(stream.getDestDir(),fileName());
-    return output;
   }
 
   protected File fileToGenerateSpec() {
@@ -439,41 +341,6 @@ public int generateSpecFile() {
 
 
 }
-
-  public int generateFile() {
-    try {
-	File output = fileToGenerate();
-       // make sure the directory exists
-       // if creation failed, try again, as this can be a manifestation of a
-       // race condition in mkdirs
-       if (!output.getParentFile().mkdirs()) {
-         output.getParentFile().mkdirs();
-       }
-
-       Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output)));
-       generate(writer);
-       writer.flush();
-       writer.close();
-
-    } catch(IOException e) {
-      GomMessage.error(getLogger(),null,0,
-          GomMessage.tomCodeGenerationFailure, e.getMessage());
-      return 1;
-    }
-    return 0;
-  }
-
-  public String visitMethod(ClassName sortName) {
-    return "visit_"+className(sortName);
-  }
-
-  public String isOperatorMethod(ClassName opName) {
-    return "is"+className(opName);
-  }
-
-  public String getCollectionMethod(ClassName opName) {
-    return "getCollection"+className(opName);
-  }
 
   protected void slotDecl(java.io.Writer writer, SlotFieldList slotList)
                         throws java.io.IOException {
@@ -524,10 +391,6 @@ public int generateSpecFile() {
   public void generateTomMapping(Writer writer)
       throws java.io.IOException {
     return;
-  }
-
-  private Logger getLogger() {
-    return Logger.getLogger(getClass().getName());
   }
 
 }

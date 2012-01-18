@@ -16,7 +16,7 @@ public class SharedTemplateFactory extends tom.gom.backend.TemplateFactory {
     this.gomEnvironment = gomEnvironment;
   }
 
-  public MappingTemplateClass makeTomMappingTemplate(
+  public tom.gom.backend.MappingTemplateClass makeTomMappingTemplate(
       GomClass gomClass,
       tom.gom.backend.TemplateClass strategyMapping,
       GomEnvironment gomEnvironment) {

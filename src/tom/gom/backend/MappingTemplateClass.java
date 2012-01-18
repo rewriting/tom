@@ -5,8 +5,18 @@ import java.util.HashMap;
 import tom.gom.adt.objects.types.*;
 import tom.gom.tools.GomEnvironment;
 
-public interface MappingTemplateClass extends TemplateClass {
+public abstract class MappingTemplateClass extends tom.gom.backend.TemplateClass  {
 
-public abstract void addTemplates(Map<ClassName,TemplateClass> map) ;
+ public MappingTemplateClass(GomClass gomClass, GomEnvironment gomEnvironment) {
+    this.gomEnvironment = gomEnvironment; 
+    this.gomClass = gomClass;
+    this.templates = new HashMap<ClassName,tom.gom.backend.TemplateClass>();
+  }
+  protected Map<ClassName,tom.gom.backend.TemplateClass> templates;
+
+  public void addTemplates(Map<ClassName,tom.gom.backend.TemplateClass> map) {
+    this.templates.putAll(map);
+  }
+
 
 }

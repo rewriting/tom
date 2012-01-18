@@ -265,7 +265,7 @@ private String genStratArgs(int count, String arg) {
 }
 
 /** the class logger instance*/
-private Logger getLogger() {
+protected Logger getLogger() {
   return Logger.getLogger(getClass().getName());
 }
 }

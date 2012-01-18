@@ -121,7 +121,7 @@ public String generateMapping() {
 }
 
 /** the class logger instance*/
-private Logger getLogger() {
+protected Logger getLogger() {
   return Logger.getLogger(getClass().getName());
 }
 }

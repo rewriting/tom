@@ -29,12 +29,12 @@ import java.util.HashMap;
 import tom.gom.GomStreamManager;
 import tom.gom.tools.GomEnvironment;
 import tom.gom.backend.java.TemplateClass;
-import tom.gom.backend.java.MappingTemplateClass;
+import tom.gom.backend.MappingTemplateClass;
 import java.io.*;
 import tom.gom.adt.objects.types.*;
 import tom.gom.tools.error.GomRuntimeException;
 
-public class MappingTemplate extends tom.gom.backend.java.MappingTemplateClass {
+public class MappingTemplate extends tom.gom.backend.MappingTemplateClass {
   GomClassList sortClasses;
   GomClassList operatorClasses;
   tom.gom.backend.TemplateClass strategyMapping;
@@ -57,6 +57,10 @@ public class MappingTemplate extends tom.gom.backend.java.MappingTemplateClass {
     throw new GomRuntimeException(
         "Wrong argument for MappingTemplate: " + gomClass);
   }
+
+  public void generateSpec(java.io.Writer writer) throws java.io.IOException {
+return ;
+} 
 
   public void generate(java.io.Writer writer) throws java.io.IOException {
     if(getGomEnvironment().isBuiltinSort("boolean")) {

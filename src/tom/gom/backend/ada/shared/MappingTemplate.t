@@ -28,12 +28,12 @@ import java.util.HashMap;
 import tom.gom.GomStreamManager;
 import tom.gom.tools.GomEnvironment;
 import tom.gom.backend.ada.TemplateClass;
-import tom.gom.backend.ada.MappingTemplateClass;
+import tom.gom.backend.MappingTemplateClass;
 import java.io.*;
 import tom.gom.adt.objects.types.*;
 import tom.gom.tools.error.GomRuntimeException;
 
-public class MappingTemplate extends tom.gom.backend.ada.MappingTemplateClass {
+public class MappingTemplate extends tom.gom.backend.MappingTemplateClass {
   GomClassList sortClasses;
   GomClassList operatorClasses;
   tom.gom.backend.TemplateClass strategyMapping;

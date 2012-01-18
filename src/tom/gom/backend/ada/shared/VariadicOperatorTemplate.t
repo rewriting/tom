@@ -534,20 +534,6 @@ writer.write(%[
     return res.toString();
   }
 
-  private String toATermHead() {
-    SlotField head = cons.getSlotFields().getHeadConcSlotField();
-    StringBuilder res = new StringBuilder();
-    toATermSlotField(res,head);
-    return res.toString();
-  }
-
-  private String fromATermElement(String term, String atConv) {
-    SlotField slot = cons.getSlotFields().getHeadConcSlotField();
-    StringBuilder buffer = new StringBuilder();
-    fromATermSlotField(buffer,slot,term,atConv);
-    return buffer.toString();
-  }
-
   public void generateTomMapping(Writer writer)
       throws java.io.IOException {
     boolean hasHook = false;
@@ -582,7 +568,7 @@ writer.write(%[
   }
 
   /** the class logger instance*/
-  private Logger getLogger() {
+  protected Logger getLogger() {
     return Logger.getLogger(getClass().getName());
   }
 }

@@ -445,7 +445,7 @@ private String genStratArgs(String prefix,SlotFieldList slots,String arg) {
   }
 
   /** the class logger instance*/
-  private Logger getLogger() {
+  protected Logger getLogger() {
     return Logger.getLogger(getClass().getName());
   }
 }

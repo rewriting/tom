@@ -28,13 +28,13 @@ import java.util.Map;
 import java.util.HashMap;
 import tom.gom.GomStreamManager;
 import tom.gom.tools.GomEnvironment;
-import tom.gom.backend.java.MappingTemplateClass;
+import tom.gom.backend.MappingTemplateClass;
 import java.io.*;
 import tom.gom.adt.objects.types.*;
 import tom.gom.tools.error.GomRuntimeException;
 import tom.gom.backend.TemplateClass;
 
-public class StratMappingTemplate extends tom.gom.backend.java.MappingTemplateClass {
+public class StratMappingTemplate extends tom.gom.backend.MappingTemplateClass {
   GomClassList operatorClasses;
   int generateStratMapping = 0;
 
@@ -56,6 +56,11 @@ public class StratMappingTemplate extends tom.gom.backend.java.MappingTemplateCl
 public void addTemplates(Map<ClassName,TemplateClass> map) {
 return;
 }
+
+  public void generateSpec(java.io.Writer writer) throws java.io.IOException {
+return ;
+} 
+
 
   public void generateTomMapping(java.io.Writer writer) throws java.io.IOException {
     generate(writer);
