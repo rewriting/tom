@@ -58,7 +58,7 @@ public class MappingTemplate extends tom.gom.backend.MappingTemplateClass {
   }
 
 /* Overriding unnecessary spec generation */
-  public  int generateSpecFile() {
+  public int generateSpecFile() {
 return 0;
 }
   public void generateSpec(java.io.Writer writer) throws java.io.IOException {
@@ -170,4 +170,44 @@ return;
     }
     return output;
   }
+
+  public String fullClassName() {
+    return fullClassName(this.className);
+  }
+
+  public static String fullClassName(ClassName clsName) {
+    %match(clsName) {
+      ClassName[Pkg=pkgPrefix,Name=name] -> {
+        if(`pkgPrefix.length()==0) {
+          return `name;
+        } else {
+	  //"Cleaning" full qualified name, Ada specific
+          return (`pkgPrefix+"."+`name).replaceAll("\\.types\\.","\\.").replaceAll("\\.[^\\.]*AbstractType","");
+        }
+      }
+    }
+    throw new GomRuntimeException(
+        "TemplateClass:fullClassName got a strange ClassName "+clsName);
+  }
+
+  public String className() {
+    return className(this.className);
+  }
+
+  public String className(ClassName clsName) {
+    %match(clsName) {
+      ClassName[Name=name] -> {
+	//"Cleaning" file names, Ada specific
+        return (`name).replaceAll("AbstractType","");
+      }
+    }
+    throw new GomRuntimeException(
+        "TemplateClass:className got a strange ClassName "+clsName);
+  }
+
+public void generateTomMapping(java.io.Writer writer) throws java.io.IOException {
+//XXX
+return ;
+}
+
 }
