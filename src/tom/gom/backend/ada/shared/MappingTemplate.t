@@ -41,8 +41,11 @@ public class MappingTemplate extends tom.gom.backend.MappingTemplateClass {
   %include { ../../../adt/objects/Objects.tom}
 
   public MappingTemplate(GomClass gomClass, tom.gom.backend.TemplateClass strategyMapping, GomEnvironment gomEnvironment) {
-    super(gomClass,gomEnvironment);
-    %match(gomClass) {
+
+	super(gomClass,gomEnvironment);
+    this.className = gomClass.getClassName();
+
+	%match(gomClass) {
       TomMapping[SortClasses=sortClasses,
                  OperatorClasses=ops] -> {
         this.sortClasses = `sortClasses;
@@ -54,7 +57,8 @@ public class MappingTemplate extends tom.gom.backend.MappingTemplateClass {
       }
     }
     throw new GomRuntimeException(
-        "Wrong argument for MappingTemplate: " + gomClass);
+        "Wrong argument for MappingTemplate: " + gomClass);    
+
   }
 
 /* Overriding unnecessary spec generation */
