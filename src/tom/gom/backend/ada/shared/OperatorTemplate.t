@@ -378,7 +378,7 @@ writer.write(%[
   }
 
   private String fieldName(String fieldName) {
-    return "gom_"+fieldName;
+    return "gomada_"+fieldName;
   }
 
 
@@ -692,14 +692,13 @@ private String generateMakeArgsFor(SlotField slot, String argName) {
 lbl:ConcHook(_*,MakeHook[HookArguments=args],_*) -> {
       hasHooks = true;
       writer.write(%[
-    public static @fullClassName(sortName)@ make(@unprotectedChildListWithType(`args)@) {
+    function make(@unprotectedChildListWithType(`args)@) return @className()@Ptr is 
   ]%);
 
         SlotFieldList bargs = generateMakeHooks(hooks,null,writer);
         writer.write(%[
-
       return realMake(@unprotectedChildList(bargs)@);
-    }
+    end;
   ]%);
         break lbl;
       }
