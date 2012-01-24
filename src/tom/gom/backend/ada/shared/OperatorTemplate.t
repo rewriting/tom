@@ -308,10 +308,6 @@ writer.write(%[
 
   ]%);
 
-/* TODO: Unnecessary in Ada? generateGetters(writer);*/
-
-/* Hereby lies ATerm interface */
-
 /* TODO: Visitable interface */
 
 
@@ -382,7 +378,7 @@ writer.write(%[
   }
 
   private String fieldName(String fieldName) {
-    return ""+fieldName;
+    return "gom_"+fieldName;
   }
 
 
