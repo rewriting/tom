@@ -163,139 +163,6 @@ public abstract class TemplateClass extends tom.gom.backend.TemplateClass{
         "TemplateClass:classFieldName got a strange ClassName "+clsName);
   }
 
-  public void toStringSlotField(StringBuilder res, SlotField slot,
-                                String element, String buffer) {
-    %match(slot) {
-      SlotField[Domain=domain] -> {
-        if(!getGomEnvironment().isBuiltinClass(`domain)) {
-          res.append(%[@element@.toStringBuilder(@buffer@);
-]%);
-        } else {
-          if (`domain.equals(`ClassName("","int"))
-              || `domain.equals(`ClassName("","double"))
-              || `domain.equals(`ClassName("","float"))) {
-            res.append(%[@buffer@.append(@element@);
-]%);
-          } else if (`domain.equals(`ClassName("","long"))) {
-            res.append(%[@buffer@.append(@element@);
-            @buffer@.append("l");
-]%);
-          } else if (`domain.equals(`ClassName("","char"))) {
-            res.append(%[@buffer@.append(((int)@element@-(int)'0'));
-]%);
-          } else if (`domain.equals(`ClassName("","boolean"))) {
-            res.append(%[@buffer@.append(@element@?1:0);
-]%);
-          } else if (`domain.equals(`ClassName("","String"))) {
-            String atchar = "@";
-            res.append(%[@buffer@.append('"');
-            for (int i = 0; i < @element@.length(); i++) {
-              char c = @element@.charAt(i);
-              switch (c) {
-                case '\n':
-                  @buffer@.append('\\');
-                  @buffer@.append('n');
-                  break;
-                case '\t':
-                  @buffer@.append('\\');
-                  @buffer@.append('t');
-                  break;
-                case '\b':
-                  @buffer@.append('\\');
-                  @buffer@.append('b');
-                  break;
-                case '\r':
-                  @buffer@.append('\\');
-                  @buffer@.append('r');
-                  break;
-                case '\f':
-                  @buffer@.append('\\');
-                  @buffer@.append('f');
-                  break;
-                case '\\':
-                  @buffer@.append('\\');
-                  @buffer@.append('\\');
-                  break;
-                case '\'':
-                  @buffer@.append('\\');
-                  @buffer@.append('\'');
-                  break;
-                case '\"':
-                  @buffer@.append('\\');
-                  @buffer@.append('\"');
-                  break;
-                case '!':
-                case '@atchar@':
-                case '#':
-                case '$':
-                case '%':
-                case '^':
-                case '&':
-                case '*':
-                case '(':
-                case ')':
-                case '-':
-                case '_':
-                case '+':
-                case '=':
-                case '|':
-                case '~':
-                case '{':
-                case '}':
-                case '[':
-                case ']':
-                case ';':
-                case ':':
-                case '<':
-                case '>':
-                case ',':
-                case '.':
-                case '?':
-                case ' ':
-                case '/':
-                  @buffer@.append(c);
-                  break;
-
-                default:
-                  if (java.lang.Character.isLetterOrDigit(c)) {
-                    @buffer@.append(c);
-                  } else {
-                    @buffer@.append('\\');
-                    @buffer@.append((char) ('0' + c / 64));
-                    c = (char) (c % 64);
-                    @buffer@.append((char) ('0' + c / 8));
-                    c = (char) (c % 8);
-                    @buffer@.append((char) ('0' + c));
-                  }
-              }
-            }
-            @buffer@.append('"');
-]%);
-          } else if (`domain.equals(`ClassName("aterm","ATerm")) ||`domain.equals(`ClassName("aterm","ATermList"))) {
-            res.append(%[@buffer@.append(@element@.toString());
-]%);
-          } else {
-            throw new GomRuntimeException("Builtin " + `domain + " not supported");
-          }
-        }
-      }
-    }
-  }
-
-  protected String primitiveToReferenceType(String classname) {
-    %match(classname) {
-      "byte" -> { return "java.lang.Byte"; }
-      "short" -> { return "java.lang.Short"; }
-      "int" -> { return "java.lang.Integer"; }
-      "long" -> { return "java.lang.Long"; }
-      "float" -> { return "java.lang.Float"; }
-      "double" -> { return "java.lang.Double"; }
-      "boolean" -> { return "java.lang.Boolean"; }
-      "char" -> { return "java.lang.Character"; }
-    }
-    return classname;
-  }
-
   protected String fileName() {
     return fullClassName().replace('.','-')+".adb";
   }
@@ -339,7 +206,7 @@ public int generateSpecFile() {
     }
     return 0;
 
-
+primitiveToReferenceType
 }
 
   protected void slotDecl(java.io.Writer writer, SlotFieldList slotList)

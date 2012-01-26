@@ -455,33 +455,6 @@ end;
     return res.toString();
   }
 
-  private String getCases() {
-    StringBuilder res = new StringBuilder();
-    int index = 0;
-    %match(slotList) {
-      ConcSlotField(_*,SlotField[Name=fieldName,Domain=domain],_*) -> {
-        if (!getGomEnvironment().isBuiltinClass(`domain)) {
-          res.append("      case ");
-          res.append(index);
-          res.append(": return ");
-          res.append(fieldName(`fieldName));
-          res.append(";\n");
-          index++;
-        } else {
-          res.append("      case ");
-          res.append(index);
-          res.append(": return new tom.library.sl.VisitableBuiltin<");
-          res.append(primitiveToReferenceType(fullClassName(`domain)));
-          res.append(">(");
-          res.append(fieldName(`fieldName));
-          res.append(");\n");
-          index++;
-        }
-      }
-    }
-    return res.toString();
-  }
-
   public void generateConstructor(java.io.Writer writer) throws java.io.IOException {
     boolean hasHooks = false;
     %match(hooks) {

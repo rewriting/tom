@@ -70,52 +70,6 @@ return;
 }
 
   public void generate(java.io.Writer writer) throws java.io.IOException {
-    if(getGomEnvironment().isBuiltinSort("boolean")) {
-      writer.write(%[
-%include { boolean.tom }
-]%);
-    }
-    if(getGomEnvironment().isBuiltinSort("String")) {
-      writer.write(%[
-%include { string.tom }
-]%);
-    }
-    if(getGomEnvironment().isBuiltinSort("int")) {
-      writer.write(%[
-%include { int.tom }
-]%);
-    }
-    if(getGomEnvironment().isBuiltinSort("char")) {
-      writer.write(%[
-%include { char.tom }
-]%);
-    }
-    if (getGomEnvironment().isBuiltinSort("double")) {
-      writer.write(%[
-%include { double.tom }
-]%);
-    }
-    if (getGomEnvironment().isBuiltinSort("long")) {
-      writer.write(%[
-%include { long.tom }
-]%);
-    }
-    if (getGomEnvironment().isBuiltinSort("float")) {
-      writer.write(%[
-%include { float.tom }
-]%);
-    }
-    if (getGomEnvironment().isBuiltinSort("ATerm")) {
-      writer.write(%[
-%include { aterm.tom }
-]%);
-    }
-    if (getGomEnvironment().isBuiltinSort("ATermList")) {
-      writer.write(%[
-%include { aterm.tom }
-]%);
-    }
-
     // generate a %typeterm for each class
     %match(sortClasses) {
       ConcGomClass(_*,
