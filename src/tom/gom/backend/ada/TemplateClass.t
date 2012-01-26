@@ -206,7 +206,6 @@ public int generateSpecFile() {
     }
     return 0;
 
-primitiveToReferenceType
 }
 
   protected void slotDecl(java.io.Writer writer, SlotFieldList slotList)
