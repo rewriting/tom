@@ -1,20 +1,15 @@
-	with SharedObjectP; use SharedObjectP;
+with SharedObjectP; use SharedObjectP;
 with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
 with Ada.Text_IO; use Ada.Text_IO;
 
 package body SharedObjectFactoryP is 
 	
-	
 	function projector(this: SharedObjectFactory; entree: Integer) return Integer is 
 	begin
 		return entree mod this.table'Length ;		
 	end projector;
-
-
-
 	function build(this:  SharedObjectFactory; prototype: SharedObject'Class; adr: SharedObjectPtr) return SharedObject'Class is 
 		
-
 foundObj : SharedObjectPtr ;
 foundObjPhy : aliased SharedObject'Class := duplicate(prototype) ;
 index: Integer := projector(this,prototype.hashCode);
@@ -24,17 +19,11 @@ deepness : Integer := 0;
 status : Integer ;
 
 	begin
-	Put_Line("----------------");
-	Put_Line("Injection started") ;
-
 	status := -1 ; --Default value
 
 	loop
 		exit when e = null;
 		foundObj := e.element;	
-
-		Put_Line("Comparing to item n°"&Integer'Image(deepness)&" in collision list n°"&Integer'Image(index)&": "&toString(foundObj.all)) ;
-
 		if equivalent(prototype,foundObj.all) then	
 			-- Successful search
 
@@ -62,8 +51,6 @@ status : Integer ;
 
 	status := +1 ; --Signalling construction of a new SharedObject
 	
-	Put_Line("New object constructed: "&foundObjPhy.toString) ;
-
 	this.table.all(index) := new SharedObjectEntry'(this.table.all(index),null) ;
 	this.table.all(index).element := adr ; 
 
