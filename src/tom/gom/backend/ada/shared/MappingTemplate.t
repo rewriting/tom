@@ -41,8 +41,11 @@ public class MappingTemplate extends tom.gom.backend.MappingTemplateClass {
   %include { ../../../adt/objects/Objects.tom}
 
   public MappingTemplate(GomClass gomClass, tom.gom.backend.TemplateClass strategyMapping, GomEnvironment gomEnvironment) {
-    super(gomClass,gomEnvironment);
-    %match(gomClass) {
+
+	super(gomClass,gomEnvironment);
+    this.className = gomClass.getClassName();
+
+	%match(gomClass) {
       TomMapping[SortClasses=sortClasses,
                  OperatorClasses=ops] -> {
         this.sortClasses = `sortClasses;
@@ -54,11 +57,12 @@ public class MappingTemplate extends tom.gom.backend.MappingTemplateClass {
       }
     }
     throw new GomRuntimeException(
-        "Wrong argument for MappingTemplate: " + gomClass);
+        "Wrong argument for MappingTemplate: " + gomClass);    
+
   }
 
 /* Overriding unnecessary spec generation */
-  public  int generateSpecFile() {
+  public int generateSpecFile() {
 return 0;
 }
   public void generateSpec(java.io.Writer writer) throws java.io.IOException {
@@ -66,52 +70,6 @@ return;
 }
 
   public void generate(java.io.Writer writer) throws java.io.IOException {
-    if(getGomEnvironment().isBuiltinSort("boolean")) {
-      writer.write(%[
-%include { boolean.tom }
-]%);
-    }
-    if(getGomEnvironment().isBuiltinSort("String")) {
-      writer.write(%[
-%include { string.tom }
-]%);
-    }
-    if(getGomEnvironment().isBuiltinSort("int")) {
-      writer.write(%[
-%include { int.tom }
-]%);
-    }
-    if(getGomEnvironment().isBuiltinSort("char")) {
-      writer.write(%[
-%include { char.tom }
-]%);
-    }
-    if (getGomEnvironment().isBuiltinSort("double")) {
-      writer.write(%[
-%include { double.tom }
-]%);
-    }
-    if (getGomEnvironment().isBuiltinSort("long")) {
-      writer.write(%[
-%include { long.tom }
-]%);
-    }
-    if (getGomEnvironment().isBuiltinSort("float")) {
-      writer.write(%[
-%include { float.tom }
-]%);
-    }
-    if (getGomEnvironment().isBuiltinSort("ATerm")) {
-      writer.write(%[
-%include { aterm.tom }
-]%);
-    }
-    if (getGomEnvironment().isBuiltinSort("ATermList")) {
-      writer.write(%[
-%include { aterm.tom }
-]%);
-    }
-
     // generate a %typeterm for each class
     %match(sortClasses) {
       ConcGomClass(_*,
@@ -170,4 +128,44 @@ return;
     }
     return output;
   }
+
+  public String fullClassName() {
+    return fullClassName(this.className);
+  }
+
+  public static String fullClassName(ClassName clsName) {
+    %match(clsName) {
+      ClassName[Pkg=pkgPrefix,Name=name] -> {
+        if(`pkgPrefix.length()==0) {
+          return `name;
+        } else {
+	  //"Cleaning" full qualified name, Ada specific
+          return (`pkgPrefix+"."+`name).replaceAll("\\.types\\.","\\.").replaceAll("\\.[^\\.]*AbstractType","");
+        }
+      }
+    }
+    throw new GomRuntimeException(
+        "TemplateClass:fullClassName got a strange ClassName "+clsName);
+  }
+
+  public String className() {
+    return className(this.className);
+  }
+
+  public String className(ClassName clsName) {
+    %match(clsName) {
+      ClassName[Name=name] -> {
+	//"Cleaning" file names, Ada specific
+        return (`name).replaceAll("AbstractType","");
+      }
+    }
+    throw new GomRuntimeException(
+        "TemplateClass:className got a strange ClassName "+clsName);
+  }
+
+public void generateTomMapping(java.io.Writer writer) throws java.io.IOException {
+//XXX
+return ;
+}
+
 }

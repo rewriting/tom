@@ -68,7 +68,6 @@ writer.write(%[ --From generateSpec at AbstractTypeTemplate.t, unnecessary ]%) ;
 
     writer.write(
 %[
--- with VisitablePackage; use VisitablePackage;
 with SharedObjectFactoryP; use SharedObjectFactoryP;
 with SharedObjectP; use SharedObjectP;
 ]%);

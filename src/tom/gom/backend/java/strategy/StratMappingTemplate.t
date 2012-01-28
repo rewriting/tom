@@ -102,4 +102,41 @@ return ;
     return fullClassName().replace('.',File.separatorChar)+".tom";
   }
 
+  public String fullClassName() {
+    return fullClassName(this.className);
+  }
+
+  public static String fullClassName(ClassName clsName) {
+    %match(clsName) {
+      ClassName[Pkg=pkgPrefix,Name=name] -> {
+        if(`pkgPrefix.length()==0) {
+          return `name;
+        } else {
+          return `pkgPrefix+"."+`name;
+        }
+      }
+    }
+    throw new GomRuntimeException(
+        "TemplateClass:fullClassName got a strange ClassName "+clsName);
+  }
+
+  public String className() {
+    return className(this.className);
+  }
+
+  public String className(ClassName clsName) {
+    %match(clsName) {
+      ClassName[Name=name] -> {
+        return `name;
+      }
+    }
+    throw new GomRuntimeException(
+        "TemplateClass:className got a strange ClassName "+clsName);
+  }
+
+  public int generateSpecFile() {
+//XXX
+return 0;
+}
+
 }

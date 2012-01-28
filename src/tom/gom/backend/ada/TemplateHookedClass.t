@@ -157,8 +157,9 @@ public abstract class TemplateHookedClass extends tom.gom.backend.ada.TemplateCl
       if(optionManager.getOptionValue("verbose")==Boolean.TRUE) {
         tomParams.add("--verbose");
       }
-      tomParams.add("--output");
+
       tomParams.add("--aCode");
+      tomParams.add("--output");
       tomParams.add(file_path);
     
       final File tmpFile;

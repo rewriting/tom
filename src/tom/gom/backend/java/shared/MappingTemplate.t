@@ -42,8 +42,11 @@ public class MappingTemplate extends tom.gom.backend.MappingTemplateClass {
   %include { ../../../adt/objects/Objects.tom}
 
   public MappingTemplate(GomClass gomClass, tom.gom.backend.TemplateClass strategyMapping, GomEnvironment gomEnvironment) {
-    super(gomClass,gomEnvironment);
-    %match(gomClass) {
+   
+	super(gomClass,gomEnvironment);
+    this.className = gomClass.getClassName();
+
+	%match(gomClass) {
       TomMapping[SortClasses=sortClasses,
                  OperatorClasses=ops] -> {
         this.sortClasses = `sortClasses;
@@ -147,6 +150,24 @@ return ;
     }
   }
 
+  public String fullClassName() {
+    return fullClassName(this.className);
+  }
+
+  public static String fullClassName(ClassName clsName) {
+    %match(clsName) {
+      ClassName[Pkg=pkgPrefix,Name=name] -> {
+        if(`pkgPrefix.length()==0) {
+          return `name;
+        } else {
+          return `pkgPrefix+"."+`name;
+        }
+      }
+    }
+    throw new GomRuntimeException(
+        "TemplateClass:fullClassName got a strange ClassName "+clsName);
+  }
+
   protected String fileName() {
     return fullClassName().replace('.',File.separatorChar)+".tom";
   }
@@ -163,4 +184,29 @@ return ;
     }
     return output;
   }
+
+//Overriding useless method in java backend
+  public int generateSpecFile() {
+return 0;
+}
+
+public void generateTomMapping(java.io.Writer writer) throws java.io.IOException {
+//XXX
+return ;
+}
+
+  public String className() {
+    return className(this.className);
+  }
+
+  public String className(ClassName clsName) {
+    %match(clsName) {
+      ClassName[Name=name] -> {
+        return `name;
+      }
+    }
+    throw new GomRuntimeException(
+        "TemplateClass:className got a strange ClassName "+clsName);
+  }
+
 }

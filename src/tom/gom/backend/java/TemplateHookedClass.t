@@ -148,9 +148,6 @@ public abstract class TemplateHookedClass extends tom.gom.backend.java.TemplateC
       if(Boolean.TRUE == optionManager.getOptionValue("inlineplus")) {
         tomParams.add("--inlineplus");
       }
-      if(Boolean.TRUE == optionManager.getOptionValue("aCode")) {
-        tomParams.add("--aCode");
-      }
       if(optionManager.getOptionValue("wall")==Boolean.TRUE) {
         tomParams.add("--wall");
       }
@@ -160,6 +157,7 @@ public abstract class TemplateHookedClass extends tom.gom.backend.java.TemplateC
       if(optionManager.getOptionValue("verbose")==Boolean.TRUE) {
         tomParams.add("--verbose");
       }
+      tomParams.add("--jCode");
       tomParams.add("--output");
       tomParams.add(file_path);
     
