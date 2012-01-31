@@ -178,7 +178,6 @@ package body @fullClassName(extendsType)@.@className()@ is
     mapping.generate(writer);
   }
   generateBody(writer);
-
 }
 
   private void generateBody(java.io.Writer writer) throws java.io.IOException {
@@ -260,7 +259,7 @@ begin
 end;
 
 
-	function getArity(this: plus) return Integer is
+	function getArity(this: @className()@) return Integer is
 	begin
 		return 2;
 	end;
@@ -272,16 +271,31 @@ end;
 writer.write(%[
     -- the proto is a constant object: no need to clone it
 
-	function duplicate(this: zero) return zero is
+	function duplicate(this: @className()@) return @className()@ is
 	begin
 		return this;
 	end;
-  
 ]%);
-
   }
 
-/* TODO: Comparaisons */
+// TODO: Comparing childs/symbolName?
+writer.write(%[
+function compareTo(this: @className()@, o: SharedObject''Class) return Integer is
+	begin
+
+		-- Compare directly
+		if (o in @className()@) then
+		  if (ao = this) then return 0; 
+		  end if;
+		end if; 
+
+		-- Compare by hashCode
+		if this.hashCode != ao.hashCode then return (this.hashCode < ao.hashCode())?-1:1; end if;
+
+		Ada.Text_IO.Put("Unable to compare @className()@");
+	end;
+)%];
+
 
 writer.write(%[
 
