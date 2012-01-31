@@ -4,7 +4,8 @@ package VisitablePackage is
 
 	type Visitable is interface and Object;
 	type VisitablePtr is access all Visitable'Class;
-	
+	type VisitableArray is array Natural range <> of tom.library.sl.Visitable;
+
 	function getChildCount(v: access Visitable) return Integer is abstract;
 	
 	function setChildren(v: access Visitable ; children : ObjectPtrArrayPtr) return VisitablePtr is abstract;

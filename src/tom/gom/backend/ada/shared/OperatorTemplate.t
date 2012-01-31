@@ -143,11 +143,23 @@ function getArity(this: @className()@) return Integer;
 overriding
 function duplicate(this: @className()@) return SharedObject''Class;
 
+function compareTo(this: @className()@, o: SharedObject''Class) return Integer;
+
 function equivalent(this: @className()@; o: SharedObject''Class) return boolean;
 
-function @isOperatorMethod(className)@(this: @className()@) return Boolean
+function @isOperatorMethod(className)@(this: @className()@) return Boolean;
 
-function hashFunction(this: @className()@) return Integer
+function getChildCount() return Integer;
+
+function getChildAt(this: @className()@, index: Integer) return tom.library.sl.Visitable; 
+
+function setChildAt(this: @className()@, index: Integer, v:tom.library.sl.Visitable) return tom.library.sl.Visitable ; 
+
+function setChildren(this: @className()@, childs:tom.library.sl.VisitableArray) return tom.library.sl.Visitable ;  
+
+function getChildren(this: @className()@) return VisitableArray ; 
+
+function hashFunction(this: @className()@) return Integer ;
 
 	@className()@GomProto : @className()@Ptr := new @className()@ ;
 
@@ -225,8 +237,6 @@ begin
     return @slotList.length()@;
 end;
 
-	-- Stop - Name & Arity
-
 ]%);
 
 
@@ -238,8 +248,6 @@ writer.write(%[
     		clone.init(@childList(slotList) + (slotList.isEmptyConcSlotField()?"":", ") @hashCode);
 		return clone.all;
 	end;
-
-		-- End duplicate
   ]%);
 
 } else {
@@ -264,13 +272,10 @@ end;
 		return 2;
 	end;
 
-	-- Stop - Name & Arity
-
 ]%);
 
 writer.write(%[
     -- the proto is a constant object: no need to clone it
-
 	function duplicate(this: @className()@) return @className()@ is
 	begin
 		return this;
@@ -282,7 +287,6 @@ writer.write(%[
 writer.write(%[
 function compareTo(this: @className()@, o: SharedObject''Class) return Integer is
 	begin
-
 		-- Compare directly
 		if (o in @className()@) then
 		  if (ao = this) then return 0; 
@@ -322,8 +326,43 @@ writer.write(%[
 
   ]%);
 
-/* TODO: Visitable interface */
+writer.write(%[
+-- Visitable interface
 
+  function getChildCount(this: @className()@) return Integer is
+  begin 
+    return @visitableCount()@;
+  end;
+
+  function getChildAt(this: @className()@, index: Integer) return tom.library.sl.Visitable is
+      begin 
+    switch(index) {
+@getCases()@
+      when others => raise;
+    }
+      end;
+
+  function setChildAt(this: @className()@, index: Integer, v:tom.library.sl.Visitable) return tom.library.sl.Visitable is 
+        begin 
+@makeCases("v")@
+      when others => raise; 
+        end;
+
+  function setChildren(this: @className()@, childs:tom.library.sl.VisitableArray) return tom.library.sl.Visitable is
+    begin
+      if (true @arrayCheck("childs")@) then 
+      return @arrayMake("childs")@;
+      else 
+      raise;
+    end if; end;
+
+  function getChildren(this: @className()@) return VisitableArray is 
+    res : VisitableArray;
+       begin
+       @visitableList(slotList)@ ;
+       return res;
+       end; 
+]%);
 
     writer.write(%[
 
@@ -341,19 +380,6 @@ end;
       return comments;
     }
   }
-/*
-  private void generateMembers(java.io.Writer writer) throws java.io.IOException {
-    %match(slotList) {
-      ConcSlotField(_*,SlotField[Name=fieldName,Domain=domainClass],_*) -> {
-        writer.write("  private ");
-        writer.write(fullClassName(`domainClass));
-        writer.write(" ");
-        writer.write(fieldName(`fieldName));
-        writer.write(";\n");
-      }
-    }
-  }
-*/
 
   private void generateMembersInit(java.io.Writer writer) throws java.io.IOException {
     %match(slotList) {
@@ -600,4 +626,153 @@ return this;
     }
     return;
   }
+
+ private String getCases() {
+    StringBuilder res = new StringBuilder();
+    int index = 0;
+    %match(slotList) {
+      ConcSlotField(_*,SlotField[Name=fieldName,Domain=domain],_*) -> {
+        if (!getGomEnvironment().isBuiltinClass(`domain)) {
+          res.append("      when ");
+          res.append(index);
+          res.append("=> return this.");
+          res.append(fieldName(`fieldName));
+          res.append(";\n");
+          index++;
+        } else {
+          res.append("      when ");
+          res.append(index);
+          res.append("=> return new tom.library.sl.VisitableBuiltin<");
+          res.append((fullClassName(`domain)));
+          res.append(">(");
+          res.append(fieldName(`fieldName));
+          res.append(");\n");
+          index++;
+        }
+      }
+    }
+    return res.toString();
+  }
+
+  private String visitableList(SlotFieldList slots) {
+    StringBuilder res = new StringBuilder();
+    while(!slots.isEmptyConcSlotField()) {
+      SlotField head = slots.getHeadConcSlotField();
+      slots = slots.getTailConcSlotField();
+      int index = 0;
+      %match(head) {
+        SlotField[Domain=domain,Name=name] -> {
+          if (res.length()!=0) {
+            res.append("; ");
+          }
+          res.append(" ");
+        if (!getGomEnvironment().isBuiltinClass(`domain)) {
+          res.append("this.res("+index+"):="+fieldName(`name));
+          index++;
+        } else {
+          res.append("new tom.library.sl.VisitableBuiltin<");
+          res.append((fullClassName(`domain)));
+          res.append(">(");
+          res.append(fieldName(`name));
+          res.append(")");
+          index++;
+        }
+        }
+      }
+    }
+    return res.toString();
+  }
+
+
+  private String visitableCount() {
+    if(className().equals("ConsPath"+sortName.getName())) {
+      return "0";
+    } else {
+      return ""+slotList.length();
+    }
+  }
+
+private String makeCases(String argName) {
+  StringBuilder res = new StringBuilder();
+  int index = 0;
+  %match(slotList) {
+    ConcSlotField(_*,SlotField[],_*) -> {
+      res.append("      when "+index+"=> return make("+generateMakeArgsFor(index, argName)+");\n");
+      index++;
+    }
+  }
+  return res.toString();
+}
+
+private String generateMakeArgsFor(int argIndex, String argName) {
+  StringBuilder res = new StringBuilder();
+  int index = 0;
+  %match(slotList) {
+    ConcSlotField(_*,slot@SlotField[Name=fieldName,Domain=domain],_*) -> {
+      if(index>0) { res.append(", "); }
+      if (getGomEnvironment().isBuiltinClass(`domain)) {
+        res.append(getMethod(`slot));
+        res.append("()");
+      } else {
+        if (index != argIndex) {
+          res.append(fieldName(`fieldName));
+        } else {
+          res.append("(");
+          res.append(fullClassName(`domain));
+          res.append(") ");
+          res.append(argName);
+        }
+      }
+      index++;
+    }
+  }
+  return res.toString();
+}
+
+ private String arrayMake(String arrayName) {
+    StringBuilder res = new StringBuilder("make(");
+    int index = 0;
+    %match(slotList) {
+      ConcSlotField(_*,SlotField[Domain=domain],_*) -> {
+        if(index>0) { res.append(", "); }
+       if (!getGomEnvironment().isBuiltinClass(`domain)) {
+         res.append("this.");
+         res.append(arrayName);
+         res.append("(");
+         res.append(index);
+         res.append(")");
+       } else {
+         res.append("((tom.library.sl.VisitableBuiltin<");
+         res.append((fullClassName(`domain)));
+         res.append(">)");
+         res.append(arrayName);
+         res.append("[");
+         res.append(index);
+         res.append("])");
+         res.append(".getBuiltin()");
+       }
+       index++;
+      }
+    }
+    res.append(")");
+    return res.toString();
+  }
+
+  private String arrayCheck(String arrayName) {
+    StringBuilder res = new StringBuilder();
+    int index = 0;
+    %match(slotList) {
+      ConcSlotField(_*,SlotField[Domain=domain],_*) -> {
+       if (!getGomEnvironment().isBuiltinClass(`domain)) {
+         res.append(%[ && this.@arrayName@(@index@) in @fullClassName(`domain)@]%);
+       } else {
+         res.append(%[ && this.@arrayName@(@index@) in tom.library.sl.VisitableBuiltin]%);
+       }
+       index++;
+      }
+    }
+    return res.toString();
+  }
+
+
 }
