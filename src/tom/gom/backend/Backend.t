@@ -91,23 +91,23 @@ public class Backend {
           _*) -> {
         MappingTemplateClass mapping = null;
         if (generateStratMapping > 0) { // generate congruence strategies
+
           ClassName smappingclass = `ClassName(pkg,"_"+name);
           GomClass nGomClass = `gomclass.setClassName(smappingclass);
-
           TemplateClass stratMapping;
-          if(language == ACODE) {
+          
+	   if(language == ACODE) {
             stratMapping = new tom.gom.backend.ada.strategy.StratMappingTemplate(nGomClass,getGomEnvironment(),generateStratMapping);
           } else { //JCODE
-            stratMapping = new
-              tom.gom.backend.java.strategy.StratMappingTemplate(nGomClass,getGomEnvironment(),generateStratMapping);
+            stratMapping = new tom.gom.backend.java.strategy.StratMappingTemplate(nGomClass,getGomEnvironment(),generateStratMapping);
           }
-
+	
           if (1 == generateStratMapping) {
             // classical mode: generate extra-mapping in file.tom
             mapping = templatefactory.makeTomMappingTemplate(`gomclass,stratMapping,getGomEnvironment());
           } else {
             // expert mode: generate extra-mapping in _file.tom
-            generators.put(smappingclass,stratMapping);
+	    generators.put(smappingclass,stratMapping);
             mapping = templatefactory.makeTomMappingTemplate(`gomclass,null,getGomEnvironment());
           }
         } else {
@@ -183,7 +183,7 @@ public class Backend {
         }
       } else {//JCODE
         for (final ClassName clsName : generators.keySet()) {
-          generators.get(clsName).generateFile();
+		generators.get(clsName).generateFile();
         }
       }
     }
@@ -240,7 +240,6 @@ public class Backend {
             getGomEnvironment());
         generators.put(`className,operator);
         if(generateStratMapping>0) {
-          
           TemplateClass sOpStrat;
           TemplateClass isOpStrat;
           TemplateClass makeOpStrat; 
