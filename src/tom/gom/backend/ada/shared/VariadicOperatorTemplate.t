@@ -75,13 +75,47 @@ writer.write(%[ --From generateSpec at VariadicOperatorTemplate.t ]%) ;
 
   public void generate(java.io.Writer writer) throws java.io.IOException {
 
-generateBody(writer);
-  }
+writer.write(
+%[
+with @getPackage()@; use @getPackage()@;
+with @fullClassName(extendsType)@; use @fullClassName(extendsType)@;
+@generateImport()@
+]%);
+
+  writer.write(
+%[
+package body @fullClassName(extendsType)@.@className()@ is
+]%);
+
+  generateBody(writer);
+
+writer.write(%[
+end @fullClassName(extendsType)@.@className()@ ;
+]%);
+
+}
 
 
   private void generateBody(java.io.Writer writer) throws java.io.IOException {
-    writer.write(%[
--- Not supported
+    String domainClassName = fullClassName(cons.getSlotFields().getHeadConcSlotField().getDomain());
+
+writer.write(%[
+
+function length(this: @className()@) return Integer is
+tl : @fullClassName(sortName)@;
+begin
+    if(this instanceof @fullClassName(cons.getClassName())@) then 
+      tl = this.getTail@className()@();
+      if (tl in @className()@) then
+        return 1+((@className()@)tl).length();
+       else 
+        return 2;
+     end if; 
+     else 
+      return 0;
+    end if; 
+end;
+
 ]%);
     return;
   }

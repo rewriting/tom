@@ -190,6 +190,10 @@ package body @fullClassName(extendsType)@.@className()@ is
     mapping.generate(writer);
   }
   generateBody(writer);
+
+writer.write(%[
+end @fullClassName(extendsType)@.@className()@ ;
+]%);
 }
 
   private void generateBody(java.io.Writer writer) throws java.io.IOException {
