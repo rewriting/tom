@@ -70,16 +70,30 @@ public class VariadicOperatorTemplate extends tom.gom.backend.ada.TemplateHooked
   }
 
   public void generateSpec(java.io.Writer writer) throws java.io.IOException {
-writer.write(%[ --From generateSpec at VariadicOperatorTemplate.t ]%) ;
+writer.write(%[
+with @getPackage()@; use @getPackage()@;
+with @fullClassName(extendsType)@; use @fullClassName(extendsType)@;
+
+package @fullClassName(extendsType)@.@className()@ is
+
+package Collection@className()@ is new
+
+ ]%) ;
 }
 
   public void generate(java.io.Writer writer) throws java.io.IOException {
-
 writer.write(
 %[
 with @getPackage()@; use @getPackage()@;
 with @fullClassName(extendsType)@; use @fullClassName(extendsType)@;
 @generateImport()@
+
+package is
+
+function length(this: @className()@) return Integer ;
+
+function reverse(this: @fullClassName(sortName)@) return @fullClassName(sortName)@ ;
+
 ]%);
 
   writer.write(
@@ -116,6 +130,59 @@ begin
     end if; 
 end;
 
+  overriding
+function reverse(this: @fullClassName(sortName)@) return @fullClassName(sortName)@ is 
+cur : @fullClassName(sortName)@ ;
+rev : @fullClassName(sortName)@ ;
+begin
+    if(this in @fullClassName(cons.getClassName())@) then 
+      @fullClassName(sortName)@ cur = this;
+      @fullClassName(sortName)@ rev = @fullClassName(empty.getClassName())@.make();
+      
+      while (cur in @fullClassName(cons.getClassName())@) loop
+        rev = @fullClassName(cons.getClassName())@.make(cur.getHead@className()@(),rev);
+        cur = cur.getTail@className()@();
+      end loop;
+]%);
+    if(fullClassName(sortName).equals(domainClassName)) { /* domain = codomain*/ 
+      writer.write(%[
+      if(!(cur in @fullClassName(empty.getClassName())@)) {
+        rev = @fullClassName(cons.getClassName())@.make(cur,rev);
+      }
+]%);
+    }
+    writer.write(%[
+      return rev;
+     else 
+      return this;
+    end if;
+end ;
+
+  function append(this: @fullClassName(sortName)@, element: @domainClassName@) return @fullClassName(sortName)@ is
+tl : @fullClassName(sortName)@;
+begin 
+    if(this instanceof @fullClassName(cons.getClassName())@) {
+      tl = this.getTail@className()@();
+      if (tl in @className()@) then 
+        return @fullClassName(cons.getClassName())@.make(this.getHead@className()@(),((@className()@)tl).append(element));
+       else 
+]%);
+    if(fullClassName(sortName).equals(domainClassName)) {
+      writer.write(%[
+        return @fullClassName(cons.getClassName())@.make(this.getHead@className()@(),@fullClassName(cons.getClassName())@.make(tl,element));
+]%);
+    } else {
+      writer.write(%[
+        return @fullClassName(cons.getClassName())@.make(this.getHead@className()@(),@fullClassName(cons.getClassName())@.make(element,tl));
+]%);
+    }
+    writer.write(%[
+      }
+     else 
+      return @fullClassName(cons.getClassName())@.make(element,this);
+   end if;
+end ; 
+  
 ]%);
     return;
   }

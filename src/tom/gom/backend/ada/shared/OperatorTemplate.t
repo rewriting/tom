@@ -161,7 +161,7 @@ function getChildren(this: @className()@) return VisitableArray ;
 
 function hashFunction(this: @className()@) return Integer ;
 
-	@className()@GomProto : @className()@Ptr := new @className()@ ;
+  @className()@GomProto : @className()@Ptr := new @className()@ ;
 
 end @fullClassName(extendsType)@.@className()@; 
 
@@ -246,12 +246,12 @@ end;
 
 writer.write(%[
 		-- Duplicate
-	function duplicate(this: @className()@) return SharedObject''Class is
-		clone : access @className()@ := new @className()@ ;
-	begin
-    		clone.init(@childList(slotList) + (slotList.isEmptyConcSlotField()?"":", ") @hashCode);
-		return clone.all;
-	end;
+function duplicate(this: @className()@) return SharedObject''Class is
+  clone : access @className()@ := new @className()@ ;
+begin
+  clone.init(@childList(slotList) + (slotList.isEmptyConcSlotField()?"":", ") @hashCode);
+  return clone.all;
+end;
   ]%);
 
 } else {
@@ -260,21 +260,20 @@ writer.write(%[
 	-- case: constant
 	-- Name & Arity  
 
- function toString(this: @className()@) return String is
+function toString(this: @className()@) return String is
 begin
-return "@className()@";
+  return "@className()@";
 end;
 
  function symbolName(this: @className()@) return String is
 begin
-    return "@className()@";
+  return "@className()@";
 end;
 
-
-	function getArity(this: @className()@) return Integer is
-	begin
-		return 2;
-	end;
+function getArity(this: @className()@) return Integer is
+begin
+  return 2;
+end;
 
 ]%);
 
