@@ -171,6 +171,37 @@ begin
       return @fullClassName(cons.getClassName())@.make(element,this);
    end if;
 end ; 
+
+
+function contains(this: @fullClassName(sortName)@, o: Object)
+    cur : @fullClassName(sortName)@ cur;
+    begin 
+    cur = (@fullClassName(sortName)@) this;
+    if(o==null) then return false; end if;
+    if(cur instanceof @fullClassName(cons.getClassName())@) then 
+      while(cur instanceof @fullClassName(cons.getClassName())@) loop 
+        if( o.equals(cur.getHead@className()@()) ) then 
+          return true;
+        end if; 
+        cur = cur.getTail@className()@();
+      end loop; 
+      if(!(cur instanceof @fullClassName(empty.getClassName())@)) then 
+        if( o.equals(cur) ) then 
+          return true;
+        end if; 
+      end if; 
+    end if; 
+    return false;
+end;
+
+
+function isEmpty(this: @fullClassName(sortName)@) is
+begin
+ return isEmpty@className()@() ;
+end;
+ 
+
+
   
 ]%);
     return;
