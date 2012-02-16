@@ -72,39 +72,28 @@ public class VariadicOperatorTemplate extends tom.gom.backend.ada.TemplateHooked
   public void generateSpec(java.io.Writer writer) throws java.io.IOException {
 writer.write(%[
 with @getPackage()@; use @getPackage()@;
-with @fullClassName(extendsType)@; use @fullClassName(extendsType)@;
-
-package @fullClassName(extendsType)@.@className()@ is
-
-package Collection@className()@ is new
-
- ]%) ;
-}
-
-  public void generate(java.io.Writer writer) throws java.io.IOException {
-writer.write(
-%[
-with @getPackage()@; use @getPackage()@;
-with @fullClassName(extendsType)@; use @fullClassName(extendsType)@;
 @generateImport()@
 
-package is
+package @fullClassName()@ is
 
 function length(this: @className()@) return Integer ;
 
 function reverse(this: @fullClassName(sortName)@) return @fullClassName(sortName)@ ;
 
-]%);
+end ;
+ ]%) ;
+}
 
+  public void generate(java.io.Writer writer) throws java.io.IOException {
   writer.write(
 %[
-package body @fullClassName(extendsType)@.@className()@ is
+package body @fullClassName()@ is
 ]%);
 
   generateBody(writer);
 
 writer.write(%[
-end @fullClassName(extendsType)@.@className()@ ;
+end @fullClassName()@ ;
 ]%);
 
 }
