@@ -123,7 +123,7 @@ public class ProblemSubject{
     public boolean equals(Object o) {
       if(o instanceof plus) {
         plus obj = (plus) o;
-        return n1.equals(plus.n1) && n2.equals(plus.n2);
+        return n1.equals(obj.n1) && n2.equals(obj.n2);
       }
       return false;
     }
