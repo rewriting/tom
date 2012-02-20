@@ -18,7 +18,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  *
- * Antoine Reilles  e-mail: Antoine.Reilles@loria.fr
+ * 
  *
  **/
 
@@ -79,6 +79,12 @@ package @fullClassName()@ is
 function length(this: @className()@) return Integer ;
 
 function reverse(this: @fullClassName(sortName)@) return @fullClassName(sortName)@ ;
+
+function append(this: @fullClassName(sortName)@, element: @domainClassName@) return @fullClassName(sortName)@ ;
+
+function contains(this: @fullClassName(sortName)@, o: Object) return Boolean ;
+
+function isEmpty(this: @fullClassName(sortName)@) return Boolean ;
 
 end ;
  ]%) ;
@@ -173,19 +179,19 @@ begin
 end ; 
 
 
-function contains(this: @fullClassName(sortName)@, o: Object)
+function contains(this: @fullClassName(sortName)@, o: Object) return Boolean is
     cur : @fullClassName(sortName)@ cur;
     begin 
     cur = (@fullClassName(sortName)@) this;
     if(o==null) then return false; end if;
-    if(cur instanceof @fullClassName(cons.getClassName())@) then 
+    if(cur in @fullClassName(cons.getClassName())@) then 
       while(cur instanceof @fullClassName(cons.getClassName())@) loop 
         if( o.equals(cur.getHead@className()@()) ) then 
           return true;
         end if; 
         cur = cur.getTail@className()@();
       end loop; 
-      if(!(cur instanceof @fullClassName(empty.getClassName())@)) then 
+      if(!(cur in @fullClassName(empty.getClassName())@)) then 
         if( o.equals(cur) ) then 
           return true;
         end if; 
@@ -195,14 +201,12 @@ function contains(this: @fullClassName(sortName)@, o: Object)
 end;
 
 
-function isEmpty(this: @fullClassName(sortName)@) is
+function isEmpty(this: @fullClassName(sortName)@) return Boolean is
 begin
  return isEmpty@className()@() ;
 end;
  
 
-
-  
 ]%);
     return;
   }

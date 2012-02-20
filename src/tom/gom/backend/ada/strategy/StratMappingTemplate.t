@@ -18,7 +18,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  *
- * Antoine Reilles  e-mail: Antoine.Reilles@loria.fr
+ *
  *
  **/
 
@@ -61,8 +61,9 @@ public void addTemplates(Map<ClassName,TemplateClass> map) {
 return;
 }
 
+/* Unnecessary Spec */
   public void generateSpec(java.io.Writer writer) throws java.io.IOException {
-writer.write(%[ --From generateSpec at StratMappingTemplate.t ]%) ;
+return ;
 }  
 
 /**
@@ -101,8 +102,8 @@ writer.write(%[ --From generateSpec at StratMappingTemplate.t ]%) ;
     return fullClassName().replace('.',File.separatorChar)+".tom";
   }
 
+/* Unnecessary Spec */
   public int generateSpecFile() {
-//XXX
 return 0;
 }
 

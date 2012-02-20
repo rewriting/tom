@@ -18,7 +18,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  *
- * Antoine Reilles  e-mail: Antoine.Reilles@loria.fr
+ * 
  *
  **/
 
@@ -141,11 +141,11 @@ function toString(this: @className()@) return String;
 function getArity(this: @className()@) return Integer;
 
 overriding
-function duplicate(this: @className()@) return SharedObject''Class;
+function duplicate(this: @className()@) return SharedObject'Class;
 
-function compareTo(this: @className()@, o: SharedObject''Class) return Integer;
+function compareTo(this: @className()@, o: SharedObject'Class) return Integer;
 
-function equivalent(this: @className()@; o: SharedObject''Class) return boolean;
+function equivalent(this: @className()@; o: SharedObject'Class) return boolean;
 
 function @isOperatorMethod(className)@(this: @className()@) return Boolean;
 
@@ -246,7 +246,7 @@ end;
 
 writer.write(%[
 		-- Duplicate
-function duplicate(this: @className()@) return SharedObject''Class is
+function duplicate(this: @className()@) return SharedObject'Class is
   clone : access @className()@ := new @className()@ ;
 begin
   clone.init(@childList(slotList) + (slotList.isEmptyConcSlotField()?"":", ") @hashCode);
@@ -288,7 +288,7 @@ writer.write(%[
 
 // TODO: Comparing childs/symbolName?
 writer.write(%[
-function compareTo(this: @className()@, o: SharedObject''Class) return Integer is
+function compareTo(this: @className()@, o: SharedObject'Class) return Integer is
 	begin
 		-- Compare directly
 		if (o in @className()@) then
@@ -308,7 +308,7 @@ writer.write(%[
 
  --SharedObject extension
 
-	function equivalent(this: plus; o: SharedObject''Class) return Boolean is
+	function equivalent(this: plus; o: SharedObject'Class) return Boolean is
 begin
 	    if(o in @className()@) then 
 @generateMembersEqualityTest("peer")@

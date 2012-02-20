@@ -18,7 +18,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  *
- * Antoine Reilles  e-mail: Antoine.Reilles@loria.fr
+ * 
  *
  **/
 
@@ -83,7 +83,7 @@ with @getPackage()@;
 use @getPackage()@;
 
 	type @className()@ is abstract new @className(abstractType)@ with null record ; 
-	type @className()@Ptr is access all @className()@''Class ;
+	type @className()@Ptr is access all @className()@'Class ;
 
 
 ]%);
@@ -109,7 +109,7 @@ function @isOperatorMethod(operatorName)@(this: @className()@) return Boolean;
 
       writer.write(%[
 
-function @getMethod(slot)@(this: @className()@) return @slotDomain(slot)@''Class ]%);
+function @getMethod(slot)@(this: @className()@) return @slotDomain(slot)@'Class ]%);
 
     }
 
@@ -167,7 +167,7 @@ end;
 
       writer.write(%[
 
-function @getMethod(slot)@(this: @className()@) return @slotDomain(slot)@''Class is
+function @getMethod(slot)@(this: @className()@) return @slotDomain(slot)@'Class is
 begin
 	raise pseudo_Abstract_Called with "This @className()@ has no @slot.getName()@";
 	return null;
