@@ -163,11 +163,10 @@ public class BoulderDash2D extends JApplet implements ActionListener {
     frame.addWindowListener(new WindowAdapter() {
         public void windowClosing(WindowEvent e) {System.exit(0);}
       });
-    BoulderDash2D b2d = new BoulderDash2D();
-    frame.setContentPane(b2d);
-    b2d.setAppMode(true);
-    b2d.init();
-    b2d.start();
+    frame.setContentPane(this);
+    setAppMode(true);
+    init();
+    start();
     frame.setVisible(true);
   }
   
