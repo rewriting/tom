@@ -1,7 +1,7 @@
 package fenetre;
 
 /*
- * Couple class.
+ * Popup class.
  * 
  * Copyright (c) 2000-2012, INPL, INRIA
  * Nancy, France.

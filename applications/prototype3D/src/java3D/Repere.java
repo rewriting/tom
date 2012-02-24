@@ -1,7 +1,7 @@
 package java3D;
 
 /*
- * Couple class.
+ * Repere class.
  * 
  * Copyright (c) 2000-2012, INPL, INRIA
  * Nancy, France.

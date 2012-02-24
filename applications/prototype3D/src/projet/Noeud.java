@@ -1,7 +1,7 @@
 package projet;
 
 /*
- * Couple class.
+ * Noeud class.
  * 
  * Copyright (c) 2000-2012, INPL, INRIA
  * Nancy, France.
