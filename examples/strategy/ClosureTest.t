@@ -48,6 +48,12 @@ public class ClosureTest {
       }
     }
 
+  %strategy Print() extends `Identity() {
+    visit Strategy {
+      x -> { System.out.println(`x); }
+    }
+  }
+
   public static void main(String[] args) {
 
     Term subject = `f(g(g(a(),b()),g(a(),a())));
@@ -57,9 +63,14 @@ public class ClosureTest {
         }
     });
     try {
+      
       System.out.println("subject       = " + subject);
       System.out.println("closure_topdown = " + closure_topdown.visitLight(subject));
       System.out.println("topdown = " + `TopDown(RewriteSystem()).visitLight(subject));
+
+      // make the ClosureMu visitable
+      System.out.println("visit the term closure_topdown"); 
+      `TopDown(Print()).visitLight(closure_topdown);
 
     } catch(VisitFailure e) {
       System.out.println("reduction failed on: " + subject);
