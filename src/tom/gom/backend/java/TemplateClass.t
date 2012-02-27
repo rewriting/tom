@@ -36,6 +36,12 @@ import tom.gom.tools.error.GomRuntimeException;
 
 public abstract class TemplateClass extends tom.gom.backend.TemplateClass{
 
+  public TemplateClass(GomClass gomClass, GomEnvironment gomEnvironment) {
+  super(gomClass, gomEnvironment);    
+  }
+
+  %include { ../../adt/objects/Objects.tom}
+
 /*Unnecessary in Java, overriding interface*/
   public int generateSpecFile() {
     return 0;
@@ -43,15 +49,6 @@ public abstract class TemplateClass extends tom.gom.backend.TemplateClass{
   public void generateSpec(java.io.Writer writer) throws java.io.IOException {
     return ;
 }
-
-  public TemplateClass(GomClass gomClass, GomEnvironment gomEnvironment) {
-    this.gomClass = gomClass;
-    this.className = gomClass.getClassName();
-    this.gomEnvironment = gomEnvironment;
-  }
-
-
-  %include { ../../adt/objects/Objects.tom}
 
   public String className() {
     return className(this.className);

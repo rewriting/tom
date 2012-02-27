@@ -94,15 +94,16 @@ public class Backend {
 
           ClassName smappingclass = `ClassName(pkg,"_"+name);
           GomClass nGomClass = `gomclass.setClassName(smappingclass);
-          TemplateClass stratMapping;
-          
-	   if(language == ACODE) {
-            stratMapping = new tom.gom.backend.ada.strategy.StratMappingTemplate(nGomClass,getGomEnvironment(),generateStratMapping);
-          } else { //JCODE
-            stratMapping = new tom.gom.backend.java.strategy.StratMappingTemplate(nGomClass,getGomEnvironment(),generateStratMapping);
+	  TemplateClass stratMapping;
+
+	  if(language == ACODE) {
+		  stratMapping = new tom.gom.backend.ada.strategy.StratMappingTemplate(nGomClass,getGomEnvironment(),generateStratMapping);
+	  } else { //JCODE
+		  stratMapping = new tom.gom.backend.java.strategy.StratMappingTemplate(nGomClass,getGomEnvironment(),generateStratMapping);
           }
-	
-          if (1 == generateStratMapping) {
+
+
+	  if (1 == generateStratMapping) {
             // classical mode: generate extra-mapping in file.tom
             mapping = templatefactory.makeTomMappingTemplate(`gomclass,stratMapping,getGomEnvironment());
           } else {

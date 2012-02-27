@@ -70,6 +70,10 @@ public class VariadicOperatorTemplate extends tom.gom.backend.ada.TemplateHooked
   }
 
   public void generateSpec(java.io.Writer writer) throws java.io.IOException {
+
+String domainClassName = fullClassName(cons.getSlotFields().getHeadConcSlotField().getDomain());
+
+
 writer.write(%[
 with @getPackage()@; use @getPackage()@;
 @generateImport()@

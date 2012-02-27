@@ -38,9 +38,7 @@ import tom.gom.tools.error.GomRuntimeException;
 public abstract class TemplateClass extends tom.gom.backend.TemplateClass{
 
   public TemplateClass(GomClass gomClass, GomEnvironment gomEnvironment) {
-    this.gomClass = gomClass;
-    this.className = gomClass.getClassName();
-    this.gomEnvironment = gomEnvironment;
+  super(gomClass, gomEnvironment);    
   }
 
   %include { ../../adt/objects/Objects.tom}

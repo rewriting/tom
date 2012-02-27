@@ -107,6 +107,7 @@ return ;
   }
 
   public static String fullClassName(ClassName clsName) {
+    	System.out.println("???? - \n"+clsName+"\n - ????");
     %match(clsName) {
       ClassName[Pkg=pkgPrefix,Name=name] -> {
         if(`pkgPrefix.length()==0) {
@@ -135,8 +136,7 @@ return ;
   }
 
   public int generateSpecFile() {
-//XXX
-return 0;
-}
-
+	  //XXX
+	  return 0;
+  }
 }

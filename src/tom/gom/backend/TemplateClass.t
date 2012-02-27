@@ -17,6 +17,12 @@ public abstract class TemplateClass {
   protected ClassName className;
   protected GomEnvironment gomEnvironment;
 
+  public TemplateClass(GomClass gomClass, GomEnvironment gomEnvironment) {
+    this.gomClass = gomClass;
+    this.className = gomClass.getClassName();
+    this.gomEnvironment = gomEnvironment;
+  }
+
   public GomEnvironment getGomEnvironment() {
     return this.gomEnvironment;
   }
