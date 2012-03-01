@@ -26,20 +26,15 @@ status : Integer ;
 		foundObj := e.element;	
 		if equivalent(prototype,foundObj.all) then	
 			-- Successful search
-
 			if deepness > 5 and prev /= null then
-			Put_Line("Reorganization");
 				-- Swapping the found entry to first place if needed
-				 
 				prev.next := e.next ;
 				e.next := this.table.all(index);
 				this.table.all(index) := this.table.all(index).next ;
-
 				end if;
 
 		status := 0 ; -- Signalling already existant SharedObject
 		foundObjPhy := foundObj.all ;
-		Put_Line("Equivalent found");
 		return foundObjPhy ;
 		end if;
 		-- Going deeper in collision list
@@ -66,7 +61,6 @@ status : Integer ;
 		currentEntry : SharedObjectEntry ;
 		currentElement : SharedObjectPtr ;
 begin
-
 Put_Line("") ;
 Put_Line("------------------") ;
 	
@@ -76,27 +70,17 @@ Put_Line("------------------") ;
 loop
  i := i + 1 ; 
  exit when i = this.table'Length ;
-
  Put_Line("Collision list "&Integer'Image(i)&": ") ;
-
  e := this.table(i) ; 
-
  loop
-
 	exit when e = null ;
-	
-
 	currentEntry := e.all ;
 	currentElement := currentEntry.element ;
-	
 	Put_Line(currentElement.toString&", ") ;
 	e := e.next ;
 
  end loop;
-
-
 end loop; 	
-
 Put_Line("------------------") ;
 end stats ;
 
