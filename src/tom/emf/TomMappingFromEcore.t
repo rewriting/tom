@@ -622,17 +622,8 @@ public static <O extends org.eclipse.emf.ecore.EObject> O construct@cr@(O o, Obj
    * Default code generation of EMF works like this:
    * interface -> full.qualified.name.A
    * class     -> full.qualified.name.impl.AImpl
-   */ 
+   */
   private static String genOpImplementContent(String eclname, String cr) {
-    return eclname.substring(0, eclname.lastIndexOf(cr))+"impl."+cr+"Impl";
-  }
-
-  /*
-   * Default code generation of EMF works like this:
-   * interface -> full.qualified.name.A
-   * class     -> full.qualified.name.impl.AImpl
-   */ 
-private static String genOpImplementContent(String eclname, String cr) {
     return eclname.substring(0, eclname.lastIndexOf(cr))+"impl."+cr+"Impl";
   }
 
