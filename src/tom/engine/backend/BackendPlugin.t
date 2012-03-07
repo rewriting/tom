@@ -415,6 +415,15 @@ public class BackendPlugin extends TomGenericPlugin {
         }
       }
 
+/*      ImplementDecl[AstName=Name(opname),Expr=Code(code)] ->{
+        try {
+          String moduleName = stack.peek();
+          bp.getSymbolTable(moduleName).putIsFsym(`opname,`code);
+        } catch (EmptyStackException e) {
+          System.out.println("No moduleName in stack");
+        }
+      }*/
+
       IsSortDecl[TermArg=BQVariable[AstType=Type[TomType=type]],Expr=Code(code)] -> {
         try {
           String moduleName = stack.peek();
@@ -543,13 +552,44 @@ public class BackendPlugin extends TomGenericPlugin {
 
       (SymbolDecl|ListSymbolDecl|ArraySymbolDecl)[AstName=Name(opname)] -> {
         try {
+//          System.out.println("### DEBUG Backend Plugin ###");
+//          System.out.println("=== `toto = "+`toto);
+//          System.out.println("=== `opname = "+`opname);
           String moduleName = stack.peek();
+//          System.out.println("=== moduleName = "+moduleName);
           TomSymbol tomSymbol = TomBase.getSymbolFromName(`opname,bp.getSymbolTable(moduleName));
-          markStrategy.visitLight(tomSymbol);
+//          System.out.println("=== tomSymbol = "+tomSymbol);
+//          System.out.println("### /DEBUG Backend Plugin ###");
         } catch (EmptyStackException e) {
           System.out.println("No moduleName in stack");
         }
       }
+
+      /**
+        * Resolve declarations
+        */
+/*      ..Decl[Opname=Name(opname),Expr=Code(code)] -> {
+        try {
+          String moduleName = stack.peek();
+          bp.getSymbolTable(moduleName).putGetSizeArray(`opname,`code);
+        } catch (EmptyStackException e) {
+          System.out.println("No moduleName in stack");
+        }
+      }
+
+TransformationDecl(TName:TomName,Declarations:DeclarationList,OrgTrack:Option)
+TransfoStratDecl(TSName:TomName,Term:TomTerm,Instructions:InstructionList,Options:OptionList,OrgTrack:Option)
+ResolveStratDecl(ResList:ResolveStratBlockList,OriginTracking:Option)
+//ResolveTypeTermDecl(AstName:TomName,Declarations:DeclarationList,OrgTrack:Option)
+//ResolveDecl(typeterm:Declaration,op:Declaration,class:Declaration)
+//ResolveClassDeclInit(Instr:Instruction)
+ResolveClassDecl(WithName:String,ToName:String,Extends:String)
+//ResolveIsSortDecl(TermArg:BQTerm,ResolveName:String,OrgTrack:Option)
+ResolveIsFsymDecl(AstName:TomName,Variable:BQTerm,OrgTrack:Option)
+ResolveGetSlotDecl(AstName:TomName,SlotName:TomName,Variable:BQTerm,OrgTrack:Option)
+ResolveMakeDecl(AstName:TomName,AstType:TomType,Args:BQTermList,OrgTrack:Option)
+ReferenceDecl(RName:String,Declarations:DeclarationList,OrgTrack:Option)
+*/
 
     }
   }

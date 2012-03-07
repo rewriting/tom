@@ -293,24 +293,23 @@ public abstract class CFamilyGenerator extends GenericGenerator {
   protected void buildResolveClass(String wName, String tName, String extendsName) throws
     IOException {
       String resolveStringName = "Resolve"+wName+tName;
-/*
-      output.write("private static class " + resolveStringName + " extends " + extendsName + " {");
-      output.write("  public String name;");
-      output.write("  public " + wName + " o;"); //problem - canonicalSrcName
-      output.write("  public " + resolveStringName + "(" + wName + " o, String name) {");
-      output.write("    this.name = name;");
-      output.write("    this.o = o;");
-      output.write("  }\n}");
-*/
-      output.write("\n\nprivate static class " + resolveStringName + " extends ###?FQN.ClassImpl?### {\n  public String name;\n  public " + wName + " o;\n  public " + resolveStringName + "(" + wName + " o, String name) {\n    this.name = name;\n    this.o = o;\n  }\n}\n\n");        
-//output.write("\n\nprivate static class " + resolveStringName + " extends ###?FQN.ClassImpl?### {\n  public String name;\n  public " + canonicalSrcName + " o;\n  public " + resolveStringName + "(" + canonicalSrcName + " o, String name) {\n    this.name = name;\n    this.o = o;\n  }\n}\n\n");        
+output.write(%[private static class @resolveStringName@ extends @extendsName@ {
+  public String name;
+  public @wName@ o;
+
+  public @resolveStringName@(@wName@ o, String name) {
+    this.name = name;
+    this.o = o;
+  }
+}
+]%);
     }
 
-  //TODO
+  //TODO: to change
   protected void buildResolveStratInstruction(String name) throws IOException {
-    output.writeln(name+" res = ("+name+") translator.table.get(`o).get(`name);");
-    output.writeln("resolveInverseLinks(`tom__resolve, res, translator);");
-    output.writeln("return res;");
+    output.write(%[@name@ res = (@name@) translator.table.get(`o).get(`name);
+resolveInverseLinks(`tom__resolve, res, translator);
+return res;]%);
   }
 
  

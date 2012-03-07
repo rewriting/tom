@@ -23,15 +23,17 @@ Declaration = TypeTermDecl(AstName:TomName,Declarations:DeclarationList,OrgTrack
 
 ///
             | TransformationDecl(TName:TomName,Declarations:DeclarationList,OrgTrack:Option)
-            | TransfoStratDecl(TSName:TomName,Term:TomTerm,Instructions:InstructionList,Options:OptionList,OrgTrack:Option)
-            | ResolveStratDecl(ResList:ResolveStratBlockList,OriginTracking:Option)
-            | ResolveTypeTermDecl(AstName:TomName,Declarations:DeclarationList,OrgTrack:Option)
+            | TransfoStratDecl(Info:TransfoStratInfo,TSName:TomName,Term:TomTerm,Instructions:InstructionList,Options:OptionList,OrgTrack:Option)//pb avec les options
+            | ResolveStratDecl(TransfoName:String,ResList:ResolveStratBlockList,OriginTracking:Option)
+            | ResolveTypeTermDecl(AstName:TomName,Declarations:DeclarationList,OrgTrack:Option)//useful?
+            | ResolveDecl(typeterm:Declaration,op:Declaration,class:Declaration) //encapsulation
             | ResolveClassDeclInit(Instr:Instruction) //CodeToInstruction(TargetLanguageToCode(ITL(BIG_STRING)))
             | ResolveClassDecl(WithName:String,ToName:String,Extends:String) //et pourquoi pas directement dans la decList de ResolveTypeTermDecl ?
-            | ResolveIsSortDecl(TermArg:BQTerm,ResolveName:String,OrgTrack:Option)
-            | ResolveIsFsymDecl(AstName:TomName,Variable:BQTerm,OrgTrack:Option)
-            | ResolveGetSlotDecl(AstName:TomName,SlotName:TomName,Variable:BQTerm,OrgTrack:Option)
-            | ResolveMakeDecl(AstName:TomName,AstType:TomType,Args:BQTermList,OrgTrack:Option)
+            | ResolveIsSortDecl(TermArg:BQTerm,ResolveName:String,OrgTrack:Option)//useful?
+            | ResolveIsFsymDecl(AstName:TomName,Variable:BQTerm,OrgTrack:Option)//useful?
+            | ResolveGetSlotDecl(AstName:TomName,SlotName:TomName,Variable:BQTerm,OrgTrack:Option)//useful?
+            | ResolveMakeDecl(AstName:TomName,AstType:TomType,Args:BQTermList,OrgTrack:Option)//useful?
+            | ReferenceDecl(Info:TransfoStratInfo,RName:String,Declarations:DeclarationList,OrgTrack:Option)
 ///
             | FunctionDef(AstName:TomName,ArgumentList:BQTermList,Codomain:TomType,ThrowsType:TomType,Instruction:Instruction)
             | MethodDef(AstName:TomName,ArgumentList:BQTermList,Codomain:TomType,ThrowsType:TomType,Instruction:Instruction)
@@ -48,6 +50,10 @@ Declaration = TypeTermDecl(AstName:TomName,Declarations:DeclarationList,OrgTrack
             /**             
             * An AC symbol
             */
-            | ACSymbolDecl(AstName:TomName)
+            | ACSymbolDecl(AstName:TomName) 
+            | BQTermToDeclaration(BqTerm:BQTerm)
 
 DeclarationList = concDeclaration(Declaration*)
+
+//TODO: find better names
+TransfoStratInfo = TransfoStratInfo(Name:String,Traversal:String,OrgTrack:Option)

@@ -728,11 +728,15 @@ public abstract class AbstractGenerator {
         return;
       }
       
-      //TODO
-      ResolveIsSortDecl(BQVariable[AstName=Name(varName), AstType=Type[TomType=type]], resolveName, _) -> {
+      //TODO -> replaced by IsSortDecl
+      /*ResolveIsSortDecl(BQVariable[AstName=Name(varName), AstType=Type[TomType=type]], resolveName, _) -> {
         if(getSymbolTable(moduleName).isUsedType(`type)) {
           `buildResolveIsSortDecl(deep, varName, type, resolveName, moduleName);
         }
+        return;
+      }*/
+      BQTermToDeclaration(bqterm) -> {
+        generateBQTerm(deep,`bqterm,moduleName);
         return;
       }
 
@@ -760,11 +764,11 @@ public abstract class AbstractGenerator {
         return;
       }
 
-      //TODO
-      ResolveClassDeclInit[Instr=instruction] -> {
+      //TODO -> removed
+      /*ResolveClassDeclInit[Instr=instruction] -> {
         generateInstruction(deep, `instruction, moduleName);
         return;
-      }
+      }*/
 
       ResolveClassDecl[WithName=wName,ToName=tName,Extends=eName] -> {
         `buildResolveClass(wName,tName, eName);

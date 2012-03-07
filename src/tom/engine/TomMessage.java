@@ -134,6 +134,8 @@ public class TomMessage extends BasicPlatformMessage {
   // parser.TomParserPlugin
   public static final TomMessage fileNotFound          =
       new TomMessage("File ''{0}'' not found");
+  public static final TomMessage unamedTransformationRule =
+      new TomMessage("A transformation rule has not been named in {0} transformation");
   public static final TomMessage tokenStreamException  =
       new TomMessage("TokenStreamException catched: {0}");
   public static final TomMessage recognitionException  =

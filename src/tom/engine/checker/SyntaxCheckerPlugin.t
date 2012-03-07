@@ -262,22 +262,22 @@ public class SyntaxCheckerPlugin extends TomGenericPlugin {
       /*
        * %transformation
        */
-      t@Transformation[TName=name,WithToList=wtlist,OrgTrack=ot] -> {
-        /*test if a %transformtion is empty (not valid)*/
-        if(`wtlist.isEmptyconcTomWithTo()) {
-          %match(ot) {
-            OriginTracking[FileName=fileName,Line=line] -> { 
-              TomMessage.error(scp.getLogger(), `fileName, `line, TomMessage.emptyTransformation);
-              return `t;
-            }
-          }
-          TomMessage.error(scp.getLogger(), null, -1, TomMessage.emptyTransformation);
-          return `t;
-        }
-        //TODO : verify transformation structure?
-        //scp.verifyTransformation(`wtlist);
-        throw new tom.library.sl.VisitFailure();/* stop the top-down*/
-      }
+//      t@Transformation[TName=name,WithToList=wtlist,OrgTrack=ot] -> {
+//        /*test if a %transformtion is empty (not valid)*/
+//        if(`wtlist.isEmptyconcTomWithTo()) {
+//          %match(ot) {
+//            OriginTracking[FileName=fileName,Line=line] -> { 
+//              TomMessage.error(scp.getLogger(), `fileName, `line, TomMessage.emptyTransformation);
+//              return `t;
+//            }
+//          }
+//          TomMessage.error(scp.getLogger(), null, -1, TomMessage.emptyTransformation);
+//          return `t;
+//        }
+//        //TODO : verify transformation structure?
+//        //scp.verifyTransformation(`wtlist);
+//        throw new tom.library.sl.VisitFailure();/* stop the top-down*/
+//      }
 
     }
 

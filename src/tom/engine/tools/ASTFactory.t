@@ -194,13 +194,13 @@ public class ASTFactory {
     return list;
   }
 ///////////
-  public static TomWithToList makeTomWithToList(List<TomWithTo> argumentList){
+  /*public static TomWithToList makeTomWithToList(List<TomWithTo> argumentList){
     TomWithToList list = `concTomWithTo();
     for(int i=argumentList.size()-1; i>=0 ; i--) {
       list = `concTomWithTo(argumentList.get(i),list*);
     }
     return list;
-  }
+  }*/
 
   public static ResolveStratElementList makeResolveStratElementList(List<ResolveStratElement> argumentList){
     ResolveStratElementList list = `concResolveStratElement();

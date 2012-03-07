@@ -579,6 +579,7 @@ private static <O> org.eclipse.emf.common.util.EList<O> append@name@(O e,org.ecl
 %op @ecl.getInstanceClass().getSimpleName()@ @cr@(@s_types@) {
   is_fsym(t) { $t instanceof @(decl[0]+decl[1])@ }@s_gets@ @s_defaults@
   make(@(s.length() <= 2 ? "" : s.substring(2))@) { construct@cr@((@(EObject.class.isAssignableFrom(ecl.getInstanceClass()) ? ecl.getInstanceClass().getCanonicalName() : "org.eclipse.emf.ecore.EObject")@)@o1@.eINSTANCE.create((EClass)@o2@.eINSTANCE.getEClassifier("@ecl.getName()@")), new Object[]{ @(s2.length() <= 2 ? "" : s2.substring(2))@ }) }
+  implement() { @genOpImplementContent(ecl.getInstanceClassName(), cr)@ }
 }
 
 public static <O extends org.eclipse.emf.ecore.EObject> O construct@cr@(O o, Object[] objs) {
@@ -615,6 +616,15 @@ public static <O extends org.eclipse.emf.ecore.EObject> O construct@cr@(O o, Obj
         }
       }
     }
+  }
+  
+  /*
+   * Default code generation of EMF works like this:
+   * interface -> full.qualified.name.A
+   * class     -> full.qualified.name.impl.AImpl
+   */ 
+  private static String genOpImplementContent(String eclname, String cr) {
+    return eclname.substring(0, eclname.lastIndexOf(cr))+"impl."+cr+"Impl";
   }
 
 }

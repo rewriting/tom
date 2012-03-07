@@ -103,6 +103,7 @@ private static <O> org.eclipse.emf.common.util.EList<O> appendProcessElementELis
 %op WorkSequence WorkSequence(parent : Process, linkType : WorkSequenceType, predecessor : WorkDefinition, successor : WorkDefinition) {
   is_fsym(t) { $t instanceof SimplePDLSemantics.DDMMSimplePDL.WorkSequence }
   get_slot(parent, t)  { (SimplePDLSemantics.DDMMSimplePDL.Process)$t.eGet($t.eClass().getEStructuralFeature("parent")) }
+  implement { SimplePDLSemantics.DDMMSimplePDL.impl.WorkSequenceImpl }
   get_slot(linkType, t)  { (SimplePDLSemantics.DDMMSimplePDL.WorkSequenceType)$t.eGet($t.eClass().getEStructuralFeature("linkType")) }
   get_slot(predecessor, t)  { (SimplePDLSemantics.DDMMSimplePDL.WorkDefinition)$t.eGet($t.eClass().getEStructuralFeature("predecessor")) }
   get_slot(successor, t)  { (SimplePDLSemantics.DDMMSimplePDL.WorkDefinition)$t.eGet($t.eClass().getEStructuralFeature("successor")) }
@@ -145,6 +146,7 @@ private static <O> org.eclipse.emf.common.util.EList<O> appendWorkSequenceEList(
 
 %op WorkDefinition WorkDefinition(parent : Process, linksToPredecessors : WorkSequenceEList, linksToSuccessors : WorkSequenceEList, name : String, process : Process) {
   is_fsym(t) { $t instanceof SimplePDLSemantics.DDMMSimplePDL.WorkDefinition }
+  implement { SimplePDLSemantics.DDMMSimplePDL.impl.WorkDefinitionImpl }
   get_slot(parent, t)  { (SimplePDLSemantics.DDMMSimplePDL.Process)$t.eGet($t.eClass().getEStructuralFeature("parent")) }
   get_slot(linksToPredecessors, t)  { (org.eclipse.emf.common.util.EList<SimplePDLSemantics.DDMMSimplePDL.WorkSequence>)$t.eGet($t.eClass().getEStructuralFeature("linksToPredecessors")) }
   get_slot(linksToSuccessors, t)  { (org.eclipse.emf.common.util.EList<SimplePDLSemantics.DDMMSimplePDL.WorkSequence>)$t.eGet($t.eClass().getEStructuralFeature("linksToSuccessors")) }
@@ -167,6 +169,7 @@ public static <O extends org.eclipse.emf.ecore.EObject> O constructWorkDefinitio
               
 %op Process Process(name : String, processElements : ProcessElementEList, from : WorkDefinition) {
   is_fsym(t) { $t instanceof SimplePDLSemantics.DDMMSimplePDL.Process }
+  implement { SimplePDLSemantics.DDMMSimplePDL.impl.ProcessImpl }
   get_slot(name, t)  { (java.lang.String)$t.eGet($t.eClass().getEStructuralFeature("name")) }
   get_slot(processElements, t)  { (org.eclipse.emf.common.util.EList<SimplePDLSemantics.DDMMSimplePDL.ProcessElement>)$t.eGet($t.eClass().getEStructuralFeature("processElements")) }
   get_slot(from, t)  { (SimplePDLSemantics.DDMMSimplePDL.WorkDefinition)$t.eGet($t.eClass().getEStructuralFeature("from")) }
@@ -195,6 +198,7 @@ public static <O extends org.eclipse.emf.ecore.EObject> O constructProcess(O o, 
 
 %op Guidance Guidance(parent : Process, element : ProcessElementEList, text : String) {
   is_fsym(t) { $t instanceof SimplePDLSemantics.DDMMSimplePDL.Guidance }
+  implement { SimplePDLSemantics.DDMMSimplePDL.impl.GuidanceImpl }
   get_slot(parent, t)  { (SimplePDLSemantics.DDMMSimplePDL.Process)$t.eGet($t.eClass().getEStructuralFeature("parent")) }
   get_slot(element, t)  { (org.eclipse.emf.common.util.EList<SimplePDLSemantics.DDMMSimplePDL.ProcessElement>)$t.eGet($t.eClass().getEStructuralFeature("element")) }
   get_slot(text, t)  { (java.lang.String)$t.eGet($t.eClass().getEStructuralFeature("text")) }

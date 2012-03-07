@@ -124,6 +124,9 @@ public abstract class GenericGenerator extends AbstractGenerator {
 
   protected void buildSymbolDecl(int deep, String tomName, String moduleName) throws IOException {
     TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(tomName);
+//    System.out.println("### DEBUG GenericGenerator ###");
+//    System.out.println("tomName= "+tomName+"\nmoduleName= "+moduleName+"\ntomSymbol= "+tomSymbol);
+//    System.out.println("### /DEBUG GenericGenerator ###");
     OptionList optionList = tomSymbol.getOptions();
     PairNameDeclList pairNameDeclList = tomSymbol.getPairNameDeclList();
     // inspect the optionList
