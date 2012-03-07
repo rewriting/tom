@@ -3,7 +3,8 @@ package projet;
 /*
  * Noeud class.
  * 
- * Copyright (C) 2009-2010 Thomas Boudin (Thomas.Boudin at mines.inpl-nancy.fr)
+ * Copyright (c) 2000-2012, INPL, INRIA
+ * Nancy, France.
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -15,6 +16,9 @@ package projet;
  * details.
  * 
  * To have a copy of the GNU General Public License, please see <http://www.gnu.org/licenses/>.
+ *
+ * Thomas Boudin e-mail: Thomas.Boudin@mines.inpl-nancy.fr
+ *
  */
 
 import java.util.LinkedList;
@@ -167,7 +171,7 @@ public class Noeud implements Comparable<Noeud> {
 	 * Permet de comparer deux points entre eux dans l'espace. A Y donne, N est
 	 * "plus petit" que M si son X est plus petit et en cas d'egalite, si son Z
 	 * est plus petit sinon, ce sont les memes points (on ne compare que des
-	 * points situes dans un meme plan). Sinon, ils sont rangés par Y croissant.
+	 * points situes dans un meme plan). Sinon, ils sont rangÃ©s par Y croissant.
 	 * (non-Javadoc)
 	 * 
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
