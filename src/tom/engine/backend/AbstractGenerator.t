@@ -883,6 +883,7 @@ public abstract class AbstractGenerator {
       }
 
       (TypeTermDecl|ResolveTypeTermDecl)[Declarations=declList] -> {
+        //FIXME: consequences of a %op_implement? 
         generateDeclarationList(deep, `declList, moduleName);
         return;
       }

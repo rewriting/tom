@@ -2234,6 +2234,13 @@ operator returns [Declaration result] throws TomException
 	)
         {
           TomSymbol astSymbol = ASTFactory.makeSymbol(name.getText(), `Type(concTypeOption(),type.getText(),EmptyTargetLanguageType()), types, ASTFactory.makePairNameDeclList(pairNameDeclList), options);
+          //case of %op_implement: replace goal language code by more precise
+          //type?
+          /*TomType testType = getType(name.getText());
+          if(testType!=null) {
+            putType(name.getText(),testType.setTlType(`TLType(attribute.getExpr().getCode())));
+          }*/
+          //
           putSymbol(name.getText(),astSymbol);
           result = `SymbolDecl(astName);
           updatePosition(t.getLine(),t.getColumn());
