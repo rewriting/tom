@@ -102,17 +102,23 @@ public class TransformerPlugin extends TomGenericPlugin {
   public void run(Map informationTracker) {
     long startChrono = System.currentTimeMillis();
     boolean intermediate = getOptionBooleanValue("intermediate");
+    Code transformedTerm = (Code)getWorkingTerm();
+    setSymbolTable(getStreamManager().getSymbolTable());
+    
     try {
-      Code transformedTerm = (Code) this.process((Code)getWorkingTerm());
       // replace content of TransformationDecl by StrategyDecl
+      transformedTerm = `TopDown(ProcessTransformation(this)).visitLight(transformedTerm);
+
+      setWorkingTerm(transformedTerm);
       // verbose
       TomMessage.info(logger,null,0,TomMessage.tomTransformingPhase,
           Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
-      setWorkingTerm(transformedTerm);      
       if(intermediate) {
         Tools.generateOutput(getStreamManager().getOutputFileName() +
-            TRANSFORMED_SUFFIX, (Code)getWorkingTerm());
+            TRANSFORMED_SUFFIX, transformedTerm);
       }
+    }  catch(VisitFailure e) {
+      throw new TomRuntimeException("TransformerPlugin.process: fail on " + transformedTerm);
     } catch (Exception e) {
       TomMessage.error(logger, getStreamManager().getInputFileName(), 0,
           TomMessage.exceptionMessage, e.getMessage());
@@ -120,14 +126,14 @@ public class TransformerPlugin extends TomGenericPlugin {
     }
   }
 
-  private tom.library.sl.Visitable process(tom.library.sl.Visitable workingTerm) {
+  /*private tom.library.sl.Visitable process(tom.library.sl.Visitable workingTerm) {
     try {
       //return `TopDownIdStopOnSuccess(ProcessTransformation(this)).visitLight(subject);
       return `TopDown(ProcessTransformation(this)).visitLight(workingTerm);
     } catch(VisitFailure e) {
       throw new TomRuntimeException("TransformerPlugin.process: fail on " + workingTerm);
     }
-  }
+  }*/
 
 
   %strategy ProcessTransformation(transformer:TransformerPlugin) extends Identity() {
@@ -145,35 +151,73 @@ public class TransformerPlugin extends TomGenericPlugin {
   private static DeclarationList processSubDecl(TransformerPlugin transformer, TomName toname, DeclarationList declList) {
     try {
       List bqlist = new LinkedList<BQTerm>();
-//      List result = new LinkedList<Declaration>();
-      DeclarationList result = `concDeclaration();
-      //`TopDown(ProcessSubTransformation(transformer,toname,bqlist,result)).visitLight(declList);
-      result = `TopDown(ProcessSubTransformation(transformer,toname,bqlist)).visitLight(declList);
-      BQTermList bql = removeDuplicate(ASTFactory.makeBQTermList(bqlist));
-      /*concOption() for the moment, to change*/
-      Declaration transformerBQTerm = `BQTermToDeclaration(
-          Composite(CompositeBQTerm(BQAppl(
-                concOption(),
-                Name("Sequence"),
-                bql)
-              ))
-          );
-      //ASTFactory.makeBQTermList(bqlist))
+      DeclarationList result =
+        `TopDown(ProcessSubTransformation(transformer,toname,bqlist)).visitLight(declList);
+      Declaration transformerBQTerm = makeComposedStrategy(bqlist,declList);
       return `concDeclaration(result*,transformerBQTerm);
-//      return ASTFactory.makeDeclarationList(result);
     } catch(VisitFailure e) {
       throw new TomRuntimeException("TransformerPlugin.processSubDecl: fail on " + declList);
     }
+  }//processSubDecl
+
+  private static Declaration makeComposedStrategy(List<BQTerm> bqlist, DeclarationList declList) {
+    BQTermList bql = removeDuplicate(ASTFactory.makeBQTermList(bqlist));
+    /*concOption() for the moment, to change*/
+    BQTerm transfos = `Composite(CompositeBQTerm(BQAppl(
+            concOption(),
+            Name("Sequence"),
+            bql)
+          ));
+    BQTermList res = `concBQTerm(transfos, makeResolveBQTerm(declList));
+    Declaration transformerBQTerm = `BQTermToDeclaration(
+        Composite(CompositeBQTerm(BQAppl(
+              concOption(),
+              Name("Sequence"),
+              res)
+            ))
+        );
+    return transformerBQTerm;
+  }//makeComposedStrategy
+
+  private static BQTerm makeResolveBQTerm(DeclarationList declList) {
+    Option option = `noOption();
+    String stringRSname = "";
+    %match(declList) {
+      concDeclaration(_*, ResolveStratDecl[TransfoName=name,OriginTracking=ot] ,_*) -> {
+        option = `ot;
+        stringRSname = "tom__StratResolve_"+`name;
+      }
+    }
+    BQTerm bqtrans = `Composite(CompositeBQTerm(BQAppl(
+            concOption(option), Name("TopDown"), concBQTerm(Composite(
+                CompositeBQTerm(
+                  BQAppl(concOption(option),Name(stringRSname),concBQTerm())
+                  ))))));
+    return bqtrans;
+  }//makeResolveBQTerm
+
+  private static boolean partialEqualsBQTerm(BQTerm bqt1, BQTerm bqt2) {
+    boolean result = false;
+    %match {
+      Composite(CompositeBQTerm[term=BQAppl[Options=concOption(_*,OriginTracking[AstName=n],_*)]]) << bqt1
+      && Composite(CompositeBQTerm[term=BQAppl[Options=concOption(_*,OriginTracking[AstName=n],_*)]]) << bqt2 -> { result = true; }
+    }
+    return result;
   }
 
   private static BQTermList removeDuplicate(BQTermList bqlist) {
     BQTermList result = `concBQTerm();
-    %match(BQTermList bqlist) {
-      concBQTerm(X*,
-          p@Composite(CompositeBQTerm[term=BQAppl[Options=concOption(_*,OriginTracking[AstName=n],_*)]]),
-          Y*,
-          Composite(CompositeBQTerm[term=BQAppl[Options=concOption(_*,OriginTracking[AstName=n],_*)]]),
-          Z*) -> { result = `concBQTerm(X*,p,Y*,Z*); }
+    for(BQTerm bqterm : bqlist.getCollectionconcBQTerm()) {
+      boolean duplicate = false;
+      for(BQTerm bqt : result.getCollectionconcBQTerm()) {
+        duplicate = partialEqualsBQTerm(bqterm, bqt);
+        if(duplicate) {
+          break;
+        }
+      }
+      if(!duplicate) {
+        result = `concBQTerm(result*,bqterm);
+      }
     }
     return result;
   }
@@ -187,21 +231,22 @@ public class TransformerPlugin extends TomGenericPlugin {
       /*}*/
 
       /* the order is important:
-         - this rule has to be before the TransfoStratDecl one
-         - the ResolveStratDecl one has to be at the last position
+         - the ReferenceDecl rule has to be before the TransfoStratDecl one
+         - the ResolveStratDecl one has to be at the last position -> why?
        */
       ReferenceDecl[Info=info,RName=rname,Declarations=decl,OrgTrack=ot] -> {
         /*+ ReferenceClassDecl*/
         //need to gener a ReferenceClassDecl (not yet in adt)
-        buildTransfoStratFromReference(transformer, toName, bqlist, `info, `rname, `decl, `ot);
+        return buildTransfoStratFromReference(transformer, toName, bqlist, `info, `rname, `decl, `ot);
         //buildTransfoStratFromReference(transformer, toName, bqlist, result, `info, `rname, `decl, `ot);
       }
       TransfoStratDecl[Info=info,TSName=wName,Term=term,Instructions=instr,Options=options,OrgTrack=ot] -> {
-        buildTransfoStrat(transformer, toName, bqlist, `info, `wName, `term, `instr, `options, `ot);
+        return buildTransfoStrat(transformer, toName, bqlist, `info, `wName, `term, `instr, `options, `ot);
         //buildTransfoStrat(transformer, toName, bqlist, result, `info, `wName, `term, `instr, `options, `ot);
       }
       ResolveStratDecl[TransfoName=name,ResList=reslist,OriginTracking=ot] -> {
-        buildResolveStrat(transformer, toName, bqlist, `name, `reslist, `ot);
+        System.out.println("###DEBUG Transformer: ResolveStratDecl rule! ###");
+        return buildResolveStrat(transformer, toName, bqlist, `name, `reslist, `ot);
         //buildResolveStrat(transformer, toName, bqlist, result, `name, `reslist, `ot);
       }
 
@@ -343,7 +388,7 @@ ResolveStratBlockList = concResolveStratBlock(ResolveStratBlock*)
                   BQAppl(concOption(ot),Name(stringRSname),concBQTerm())
                   ))))));
     bqlist.add(bqtrans);
-    
+        System.out.println("###DEBUG###\nTransformer: buildResolveStrat function, which returns `AbstractDecl(concDeclaration(--"+resolve+"--),SymbolDecl(--"+rsname+"--)\n###/DEBUG###");
     //result.add(`AbstractDecl(concDeclaration(resolve,SymbolDecl(rsname))));
     return `AbstractDecl(concDeclaration(resolve,SymbolDecl(rsname)));
   }

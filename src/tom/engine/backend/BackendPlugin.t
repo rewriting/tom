@@ -552,14 +552,8 @@ public class BackendPlugin extends TomGenericPlugin {
 
       (SymbolDecl|ListSymbolDecl|ArraySymbolDecl)[AstName=Name(opname)] -> {
         try {
-//          System.out.println("### DEBUG Backend Plugin ###");
-//          System.out.println("=== `toto = "+`toto);
-//          System.out.println("=== `opname = "+`opname);
           String moduleName = stack.peek();
-//          System.out.println("=== moduleName = "+moduleName);
           TomSymbol tomSymbol = TomBase.getSymbolFromName(`opname,bp.getSymbolTable(moduleName));
-//          System.out.println("=== tomSymbol = "+tomSymbol);
-//          System.out.println("### /DEBUG Backend Plugin ###");
         } catch (EmptyStackException e) {
           System.out.println("No moduleName in stack");
         }
