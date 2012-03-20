@@ -1045,8 +1045,9 @@ transformationConstruct [Option orgTrack] returns [Declaration result] throws To
        {
          //let's define the SymbolDecl and TomSymbol
          //it should be quite similar to strategyConstruct
-
          //MakeDecl
+         //begin: this block should change. TransformerPlugin modifies
+         //MakeDecl, parameters will have to be considered
 				 BQTermList makeArgs = `concBQTerm();
          int index = 0;
          TomTypeList makeTypes = types;
@@ -1064,6 +1065,7 @@ transformationConstruct [Option orgTrack] returns [Declaration result] throws To
            index++;
          }
 				 makeTlCode += ")";
+         //end
 
          TomType transformationType = `Type(concTypeOption(),"Strategy",EmptyTargetLanguageType());
 				 Option makeOption = `OriginTracking(Name(name.getText()),t.getLine(),currentFile());
@@ -1082,9 +1084,6 @@ transformationConstruct [Option orgTrack] returns [Declaration result] throws To
               transformationType, types,
               ASTFactory.makePairNameDeclList(pairNameDeclList), optionList);
           putSymbol(name.getText(),astSymbol);
-
-//System.out.println("###DEBUG parser###\nsymbol =\n"+astSymbol+"\ngetSymbolfromName("+name.getText()+")=\n"+symbolTable.getSymbolFromName(name.getText())+"\n###DEBUG###");
-
 
          updatePosition(t.getLine(),t.getColumn());
          //work in progress
@@ -1108,9 +1107,7 @@ transformationBlock [List<Declaration> declList, String toname] throws TomExcept
   TransfoStratInfo info = `TransfoStratInfo(strName,strTraversal,orgTrack);
 }
     :
-    //ici, on parametrise le block : nom#parcours
-    //Map<String,String>
-    //LPAREN name:ALL_ID POUNDSIGN (traversal:ALL_ID)? RPAREN
+    //here, we parameterize the block: name#traversal
     ( LPAREN name:ALL_ID POUNDSIGN (traversal:ALL_ID)? RPAREN )
 //    (traversal:ALL_ID)? LPAREN name:ALL_ID RPAREN
     {

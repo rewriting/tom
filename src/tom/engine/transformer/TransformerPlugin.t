@@ -156,42 +156,22 @@ public class TransformerPlugin extends TomGenericPlugin {
     } catch(VisitFailure e) {
       throw new TomRuntimeException("TransformerPlugin.processSubDecl: fail on " + declList);
     }
-
     //let's change the transformation MakeDecl
     String stringName = toname.getString();
     TomSymbol symbol = transformer.getSymbolTable().getSymbolFromName(stringName);
     BQTerm composite = makeComposedStrategy(bqlist,declList);
     try {
-      //TomSymbol newSymbol = `TopDown(ReplaceMakeDecl(bqlist,declList)).visitLight(symbol);
       TomSymbol newSymbol = `TopDown(ReplaceMakeDecl(composite)).visitLight(symbol);
       transformer.getSymbolTable().putSymbol(stringName,newSymbol);
     } catch (VisitFailure e) {
       throw new TomRuntimeException("TransformerPlugin.processSubDecl: fail on " + symbol);
     }
-
-    ///2makeTransformationDeclMake(toname,bqlist,declList);
-    //1test: will be reused in another way
-    //Declaration transformerBQTerm = makeComposedStrategy(bqlist,declList);
-    //return `concDeclaration(result*,transformerBQTerm);
     return result;
   }//processSubDecl
 
-  //2
-  /*private static void makeTransformationDeclMake(TomName tname, List bqlist, DeclarationList declList) {
-    TomSymbol symbol = getSymbolTable().getSymbolFromName(tname.getString());
-    try {
-      TomSymbol newSymbol = `TopDown(ReplaceMakeDecl(bqlist,declList)).visitLight(symbol);
-      getSymbolTable().putSymbol(tname,newSymbol);
-    } catch (VisitFailure e) {
-      throw new TomRuntimeException("TransformerPlugin.makeTransformationDeclMake: fail on " + symbol);
-    }
-  }*/
-
-  //%strategy ReplaceMakeDecl(bqlist:List,declList:DeclarationList) extends Identity() {
   %strategy ReplaceMakeDecl(composite:BQTerm) extends Identity() {
     visit Declaration {
       MakeDecl[AstName=name,AstType=type,Args=args,OrgTrack=ot] -> {
-        //BQTerm composite = makeComposedStrategy(bqlist,declList);
         return `MakeDecl(name,type,args,BQTermToInstruction(composite),ot);
       }
     }
