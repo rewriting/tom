@@ -22,7 +22,7 @@ Declaration = TypeTermDecl(AstName:TomName,Declarations:DeclarationList,OrgTrack
             //| Transformation(TName:TomName,WithToList:TomWithToList,OrgTrack:Option) //Options:OptionList ??
 
 ///
-            | TransformationDecl(TName:TomName,Declarations:DeclarationList,OrgTrack:Option)
+            | TransformationDecl(TName:TomName,Domain:TomTypeList,Declarations:DeclarationList,OrgTrack:Option)
             | TransfoStratDecl(Info:TransfoStratInfo,TSName:TomName,Term:TomTerm,Instructions:InstructionList,Options:OptionList,OrgTrack:Option)//pb avec les options
             | ResolveStratDecl(TransfoName:String,ResList:ResolveStratBlockList,OriginTracking:Option)
             | ResolveTypeTermDecl(AstName:TomName,Declarations:DeclarationList,OrgTrack:Option)//useful?

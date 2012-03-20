@@ -50,9 +50,12 @@ Strategy mytransfo = `SimplePDLToPetriNet(transfo,testVar1,testVar2);
 /* DEBUG56: test pour comparer*/
 
   Strategy transformer = `Sequence(
-      TopDown(AAAP2PNToToPetriNet()),
-      TopDown(AAAWD2PNToToPetriNet()),
-      TopDown(AAAWorkSequenceToToPetriNet())
+      Sequence(
+        TopDown(AAAP2PNToToPetriNet(transfo,testVar1,testVar2)),
+        TopDown(AAAWD2PNToToPetriNet(transfo,testVar1,testVar2)),
+        TopDown(AAAWorkSequenceToToPetriNet(transfo,testVar1,testVar2))
+        )
+      BottomUp(AAAResolve(transfo,testVar1,testVar2))
       );
   transformer.visit(p_root, new EcoreContainmentIntrospector());
 

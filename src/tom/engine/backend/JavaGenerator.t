@@ -142,10 +142,10 @@ output.write(%[private static class @resolveStringName@ extends @extendsName@ {
 ]%);
     }
 
-  //TODO:
+  //TODO: resolveInverseLinks
   protected void buildResolveStratInstruction(String name) throws IOException {
-    output.write(%[@name@ res = (@name@) translator.table.get(o).get(name);
-resolveInverseLinks(tom__resolve, res, translator);
+    output.write(%[@name@ res = null;//(@name@) translator.table.get(o).get(name);
+//resolveInverseLinks(tom__arg, res, translator);
 return res;]%);
 
   }

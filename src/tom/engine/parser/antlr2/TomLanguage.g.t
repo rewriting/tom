@@ -952,8 +952,9 @@ transformationConstruct [Option orgTrack] returns [Declaration result] throws To
                                                 )
                                               );
 
-               pairNameDeclList.add(objectPNDecl);
-               pairNameDeclList.add(namePNDecl);
+               List<PairNameDecl> resolvePairNameDeclList = new LinkedList<PairNameDecl>();
+               resolvePairNameDeclList.add(objectPNDecl);
+               resolvePairNameDeclList.add(namePNDecl);
 
                Declaration isfsymDecl = `ResolveIsFsymDecl(
                    resolveName,
@@ -982,7 +983,7 @@ transformationConstruct [Option orgTrack] returns [Declaration result] throws To
                    resolveStringName,
                    tType,
                    rtypes,
-                   ASTFactory.makePairNameDeclList(pairNameDeclList),
+                   ASTFactory.makePairNameDeclList(resolvePairNameDeclList),
                    symbolOptions);
 
                //add "ResolveOp" symbol into SymbolTable
@@ -1048,6 +1049,7 @@ transformationConstruct [Option orgTrack] returns [Declaration result] throws To
          //MakeDecl
          //begin: this block should change. TransformerPlugin modifies
          //MakeDecl, parameters will have to be considered
+         //TODO: change this ->_makeTlCode = "_to_replace_";
 				 BQTermList makeArgs = `concBQTerm();
          int index = 0;
          TomTypeList makeTypes = types;
@@ -1084,11 +1086,12 @@ transformationConstruct [Option orgTrack] returns [Declaration result] throws To
               transformationType, types,
               ASTFactory.makePairNameDeclList(pairNameDeclList), optionList);
           putSymbol(name.getText(),astSymbol);
+          System.out.println("###DEBUG parser###\nsymbol=\n"+getSymbolTable().getSymbolFromName(name.getText())+"\n###/DEBUG parser###");
 
          updatePosition(t.getLine(),t.getColumn());
          //work in progress
          result = `AbstractDecl(concDeclaration(
-               TransformationDecl(Name(name.getText()),astDeclarationList,orgTrack),
+               TransformationDecl(Name(name.getText()),types,astDeclarationList,orgTrack),
                SymbolDecl(Name(name.getText()))));
          selector().pop();
        }
