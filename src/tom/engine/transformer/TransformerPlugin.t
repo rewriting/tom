@@ -153,8 +153,10 @@ public class TransformerPlugin extends TomGenericPlugin {
       List bqlist = new LinkedList<BQTerm>();
       DeclarationList result =
         `TopDown(ProcessSubTransformation(transformer,toname,bqlist)).visitLight(declList);
-      Declaration transformerBQTerm = makeComposedStrategy(bqlist,declList);
-      return `concDeclaration(result*,transformerBQTerm);
+      //test: will be reused in another way
+      //Declaration transformerBQTerm = makeComposedStrategy(bqlist,declList);
+      //return `concDeclaration(result*,transformerBQTerm);
+      return result;
     } catch(VisitFailure e) {
       throw new TomRuntimeException("TransformerPlugin.processSubDecl: fail on " + declList);
     }
@@ -168,6 +170,7 @@ public class TransformerPlugin extends TomGenericPlugin {
             Name("Sequence"),
             bql)
           ));
+    //add condition: call it only if resolve is needed
     BQTermList res = `concBQTerm(transfos, makeResolveBQTerm(declList));
     Declaration transformerBQTerm = `BQTermToDeclaration(
         Composite(CompositeBQTerm(BQAppl(
@@ -238,14 +241,14 @@ public class TransformerPlugin extends TomGenericPlugin {
         /*+ ReferenceClassDecl*/
         //need to gener a ReferenceClassDecl (not yet in adt)
         return buildTransfoStratFromReference(transformer, toName, bqlist, `info, `rname, `decl, `ot);
-        //buildTransfoStratFromReference(transformer, toName, bqlist, result, `info, `rname, `decl, `ot);
+        //DeclarationList stratsym = buildTransfoStratFromReference(transformer, toName, bqlist, `info, `rname, `decl, `ot);
+        //return `AbstractDecl(stratsym*,..);
       }
       TransfoStratDecl[Info=info,TSName=wName,Term=term,Instructions=instr,Options=options,OrgTrack=ot] -> {
         return buildTransfoStrat(transformer, toName, bqlist, `info, `wName, `term, `instr, `options, `ot);
         //buildTransfoStrat(transformer, toName, bqlist, result, `info, `wName, `term, `instr, `options, `ot);
       }
       ResolveStratDecl[TransfoName=name,ResList=reslist,OriginTracking=ot] -> {
-        System.out.println("###DEBUG Transformer: ResolveStratDecl rule! ###");
         return buildResolveStrat(transformer, toName, bqlist, `name, `reslist, `ot);
         //buildResolveStrat(transformer, toName, bqlist, result, `name, `reslist, `ot);
       }
@@ -388,7 +391,6 @@ ResolveStratBlockList = concResolveStratBlock(ResolveStratBlock*)
                   BQAppl(concOption(ot),Name(stringRSname),concBQTerm())
                   ))))));
     bqlist.add(bqtrans);
-        System.out.println("###DEBUG###\nTransformer: buildResolveStrat function, which returns `AbstractDecl(concDeclaration(--"+resolve+"--),SymbolDecl(--"+rsname+"--)\n###/DEBUG###");
     //result.add(`AbstractDecl(concDeclaration(resolve,SymbolDecl(rsname))));
     return `AbstractDecl(concDeclaration(resolve,SymbolDecl(rsname)));
   }
@@ -511,7 +513,6 @@ ResolveStratBlockList = concResolveStratBlock(ResolveStratBlock*)
                   ))))));
     bqlist.add(bqtrans);
 
-//    System.out.println("### DEBUG ###\ntoname = "+toname+" / wname = "+wname+"\n### /DEBUG ###");
     //naze, à changer en utilisant le nommage toto#TopDown
     //String stringStratName = wname.getString()+"To"+((Name)toname).getString();
     String stringStratName = info.getName();

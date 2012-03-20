@@ -142,11 +142,12 @@ output.write(%[private static class @resolveStringName@ extends @extendsName@ {
 ]%);
     }
 
-  //TODO
+  //TODO:
   protected void buildResolveStratInstruction(String name) throws IOException {
     output.write(%[@name@ res = (@name@) translator.table.get(o).get(name);
 resolveInverseLinks(tom__resolve, res, translator);
 return res;]%);
+
   }
 
   protected void buildClass(int deep, String tomName, TomType extendsType, BQTerm superTerm, Declaration declaration, String moduleName) throws IOException {

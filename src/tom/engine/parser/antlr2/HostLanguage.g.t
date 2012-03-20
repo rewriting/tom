@@ -462,7 +462,7 @@ strategyConstruct [List<Code> list] throws TomException
             list.add(`DeclarationToCode(strategy));
         }
     ;
-///
+
 // the %transformation construct
 transformationConstruct [List<Code> list] throws TomException
 {
@@ -490,8 +490,6 @@ transformationConstruct [List<Code> list] throws TomException
             list.add(`DeclarationToCode(transformation));
         }
     ;
-
-///
 
 matchConstruct [List<Code> list] throws TomException
 {

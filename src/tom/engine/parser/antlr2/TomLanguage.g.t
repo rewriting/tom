@@ -773,8 +773,9 @@ transformationConstruct [Option orgTrack] returns [Declaration result] throws To
   DeclarationList astDeclarationList = `concDeclaration();
   List<Declaration> subDeclList = new LinkedList<Declaration>();
   TomTypeList types = `concTomType();
+  TomTypeList rtypes = `concTomType();
   List<Option> optionList = new LinkedList<Option>();
-  OptionList options = `concOption();
+  //OptionList options = `concOption();
   List<Option> symbolOptions = new LinkedList<Option>();
   List<TomName> slotNameList = new LinkedList<TomName>();
   List<PairNameDecl> pairNameDeclList = new LinkedList<PairNameDecl>();
@@ -809,7 +810,7 @@ transformationConstruct [Option orgTrack] returns [Declaration result] throws To
         {
         ot = `OriginTracking(Name(name.getText()),name.getLine(),currentFile());
         optionList.add(ot);
-        options = ASTFactory.makeOptionList(optionList); // usefull for later
+        //options = ASTFactory.makeOptionList(optionList); // usefull for later
         if(symbolTable.getSymbolFromName(name.getText()) != null) {
           throw new TomException(TomMessage.invalidTransformationName, new Object[]{name.getText()});
         }
@@ -827,15 +828,19 @@ transformationConstruct [Option orgTrack] returns [Declaration result] throws To
            TomName astName = `Name(stringSlotName);
            slotNameList.add(astName);
 
-           TomType transformationType = `Type(concTypeOption(),"Transformation",EmptyTargetLanguageType());
+           TomType transformationType = `Type(concTypeOption(),"Strategy",EmptyTargetLanguageType());
            //
-           // todo: manque quelque chose
+           // todo: manque de quoi creer une strat transfo, symboldecl
            //
+           // Define get<slot> method.
+           Option slotOption = `OriginTracking(Name(stringSlotName),firstSlot1.getLine(),currentFile());
+           String varname = "t";
+           BQTerm slotVar = `BQVariable(concOption(slotOption),Name(varname),transformationType);
+           String code = ASTFactory.abstractCode("((" + name.getText() + ")$"+varname+").get" + stringSlotName + "()",varname);
+           Declaration slotDecl = `GetSlotDecl(Name(name.getText()),Name(stringSlotName),slotVar, Code(code), slotOption);
 
-
-
-
-
+           pairNameDeclList.add(`PairNameDecl(astName,slotDecl));
+           types = `concTomType(types*,Type(concTypeOption(),stringTypeArg,EmptyTargetLanguageType()));
            }
            (
             COMMA
@@ -856,14 +861,21 @@ transformationConstruct [Option orgTrack] returns [Declaration result] throws To
             }
             slotNameList.add(astName);
 
-            TomType transformationType = `Type(concTypeOption(),"Transformation",EmptyTargetLanguageType());
+            TomType transformationType = `Type(concTypeOption(),"Strategy",EmptyTargetLanguageType());
             //todo
-
+            // Define get<slot> method.
+            Option slotOption = `OriginTracking(Name(stringSlotName),firstSlot2.getLine(),currentFile());
+            String varname = "t";
+            BQTerm slotVar = `BQVariable(concOption(slotOption),Name(varname),transformationType);
+            String code = ASTFactory.abstractCode("((" + name.getText() + ")$"+varname+").get" + stringSlotName + "()",varname);
+            Declaration slotDecl = `GetSlotDecl(Name(name.getText()),Name(stringSlotName),slotVar, Code(code), slotOption);
+            pairNameDeclList.add(`PairNameDecl(Name(stringSlotName),slotDecl));
+            types = `concTomType(types*,Type(concTypeOption(),stringTypeArg,EmptyTargetLanguageType()));
             }
            )*
          )? RPAREN
 
-         // shouldn't we find another syntax?
+         // shouldn't we find another syntax? -> indeed. infer useful parts
          with:WITH LPAREN
          withtoElementList[withElementList]
          RPAREN 
@@ -882,7 +894,7 @@ transformationConstruct [Option orgTrack] returns [Declaration result] throws To
 
              while(withIt.hasNext()) {
                String wName = withIt.next();
-               String resolveStringName = "Resolve"+ wName + tName;
+               String resolveStringName = "Resolve"+wName+tName;
                String canonicalSrcName = "";
                try {
                  //has to be changed
@@ -894,7 +906,6 @@ transformationConstruct [Option orgTrack] returns [Declaration result] throws To
                // - %typeterm -> ResolveTypeTermDecl
                // - java code -> ResolveClassDecl
                // - %op -> SymbolDecl (+ TomSymbol)
-                   
                
                //ResolveIsSortDecl(
                DeclarationList resolveTTDecl= `concDeclaration(
@@ -916,7 +927,7 @@ transformationConstruct [Option orgTrack] returns [Declaration result] throws To
                //has to be changed: should not be in the parser (but has to be
                //before typing)
                TomType wType = `Type(concTypeOption(),wName,EmptyTargetLanguageType());
-               types = `concTomType(wType,sType);
+               rtypes = `concTomType(wType,sType);
 
                PairNameDecl objectPNDecl = `PairNameDecl(
                                               Name("o"),
@@ -974,7 +985,7 @@ transformationConstruct [Option orgTrack] returns [Declaration result] throws To
                TomSymbol astSymbol = ASTFactory.makeSymbol(
                    resolveStringName,
                    tType,
-                   types,
+                   rtypes,
                    ASTFactory.makePairNameDeclList(pairNameDeclList),
                    symbolOptions);
 
@@ -1039,12 +1050,50 @@ transformationConstruct [Option orgTrack] returns [Declaration result] throws To
         transformationBlockList[declList, name.getText()] { astDeclarationList = ASTFactory.makeDeclarationList(declList); }
         t:RBRACE
        {
+         //let's define the SymbolDecl and TomSymbol
+         //it should be quite similar to strategyConstruct
+
+         //MakeDecl
+				 BQTermList makeArgs = `concBQTerm();
+         int index = 0;
+         TomTypeList makeTypes = types;
+				 String makeTlCode = "new " + name.getText() + "(";
+         while(!makeTypes.isEmptyconcTomType()) {
+					 String argName = "t"+index;
+           if (index>0) {
+             makeTlCode = makeTlCode.concat(",");
+           }
+					 makeTlCode += argName;
+           BQTerm arg = `BQVariable(concOption(),Name(argName),makeTypes.getHeadconcTomType());
+           makeArgs = `concBQTerm(makeArgs*,arg);
+					 makeTypes = makeTypes.getTailconcTomType();
+           index++;
+         }
+				 makeTlCode += ")";
+
+         TomType transformationType = `Type(concTypeOption(),"Strategy",EmptyTargetLanguageType());
+				 Option makeOption = `OriginTracking(Name(name.getText()),t.getLine(),currentFile());
+				 Declaration makeDecl = `MakeDecl(Name(name.getText()), transformationType, makeArgs, CodeToInstruction(TargetLanguageToCode(ITL(makeTlCode))), makeOption);
+         optionList.add(`DeclarationToOption(makeDecl));
+
+          //IsFsymDecl
+          Option fsymOption = `OriginTracking(Name(name.getText()),t.getLine(),currentFile());
+          String varname = "t";
+          BQTerm fsymVar = `BQVariable(concOption(fsymOption),Name(varname),transformationType);
+          String code = ASTFactory.abstractCode("($"+varname+" instanceof " + name.getText() + ")",varname);
+          Declaration fsymDecl = `IsFsymDecl(Name(name.getText()),fsymVar,Code(code),fsymOption);
+          optionList.add(`DeclarationToOption(fsymDecl));
+
+          TomSymbol astSymbol = ASTFactory.makeSymbol(name.getText(),
+              transformationType, types,
+              ASTFactory.makePairNameDeclList(pairNameDeclList), optionList);
+          putSymbol(name.getText(),astSymbol);
+
          updatePosition(t.getLine(),t.getColumn());
          //work in progress
-//         result = `AbstractDecl(concDeclaration(
-             result = `TransformationDecl(
-                 Name(name.getText()),astDeclarationList,orgTrack); //,
-//               SymbolDecl(Name(name.getText()))));
+         result = `AbstractDecl(concDeclaration(
+               TransformationDecl(Name(name.getText()),astDeclarationList,orgTrack),
+               SymbolDecl(Name(name.getText()))));
          selector().pop();
        }
      )
