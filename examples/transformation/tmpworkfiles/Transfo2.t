@@ -18,7 +18,7 @@ String java="java";
 
 /* DEBUG4b */
 
-%transformation SimplePDLToPetriNet(translator:Transfo2) with (Process, WorkDefinition, WorkSequence) to (Place, Transition) {
+%transformation SimplePDLToPetriNet(translator:Transfo2,i1:int,i2:int) with (Process, WorkDefinition, WorkSequence) to (Place, Transition) {
    (Process2PetriNet##TopDown) reference P2PN {
      p@Process[name=n] -> { traitement1 }
      p@Process[name=n] -> { traitement2 }
@@ -42,11 +42,12 @@ String java="java";
      normaux }*/
 
 /* DEBUG5 call */
-
+int testVar1 = 1;
+int testVar2 = 2;
 Transfo2 transfo = new Transfo2();
-Strategy mytransfo = `SimplePDLToPetriNet(transfo);
+Strategy mytransfo = `SimplePDLToPetriNet(transfo,testVar1,testVar2);
 
-/* DEBUG56: test */
+/* DEBUG56: test pour comparer*/
 
   Strategy transformer = `Sequence(
       TopDown(AAAP2PNToToPetriNet()),
