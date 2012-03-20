@@ -2,7 +2,7 @@
  *
  * TOM - To One Matching Compiler
  *
- * Copyright (c) 2009-2011, INPL, INRIA
+ * Copyright (c) 2009-2012, INPL, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -148,7 +148,7 @@ public class TomMappingFromEcore {
  *
  * TOM - To One Matching Compiler
  *
- * Copyright (c) 2009-2011, INPL, INRIA
+ * Copyright (c) 2009-2012, INPL, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -622,7 +622,7 @@ public static <O extends org.eclipse.emf.ecore.EObject> O construct@cr@(O o, Obj
    * Default code generation of EMF works like this:
    * interface -> full.qualified.name.A
    * class     -> full.qualified.name.impl.AImpl
-   */ 
+   */
   private static String genOpImplementContent(String eclname, String cr) {
     return eclname.substring(0, eclname.lastIndexOf(cr))+"impl."+cr+"Impl";
   }

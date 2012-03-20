@@ -3,7 +3,8 @@ package fenetre;
 /*
  * Interface class.
  * 
- * Copyright (C) 2009-2010 Thomas Boudin (Thomas.Boudin at mines.inpl-nancy.fr)
+ * Copyright (c) 2000-2012, INPL, INRIA
+ * Nancy, France.
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -15,6 +16,9 @@ package fenetre;
  * details.
  * 
  * To have a copy of the GNU General Public License, please see <http://www.gnu.org/licenses/>.
+ *
+ * Thomas Boudin e-mail: Thomas.Boudin@mines.inpl-nancy.fr
+ *
  */
 
 import tom.Sequent;
@@ -407,7 +411,7 @@ public class Interface extends JFrame {
 				 * Liste des caracteres qui seront automatiquement supprimes de
 				 * l'entree utilisateur lors de la generation du graphe
 				 */
-				Pattern p = Pattern.compile("!|:|;|§|ù|µ|£|<|>|%");
+				Pattern p = Pattern.compile("!|:|;|Â§|Ã¹|Âµ|Â£|<|>|%");
 				Matcher m;
 				while (!termine) {
 					m = p.matcher(resultat);
@@ -1202,7 +1206,7 @@ public class Interface extends JFrame {
 			quit.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					/*
-					 * On ferme toutes les fenêtres
+					 * On ferme toutes les fenÃªtres
 					 */
 					inter.setVisible(false);
 					for (Repere rep : listeRepere) {

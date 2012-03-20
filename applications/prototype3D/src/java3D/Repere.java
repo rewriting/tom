@@ -3,7 +3,8 @@ package java3D;
 /*
  * Repere class.
  * 
- * Copyright (C) 2009-2010 Thomas Boudin (Thomas.Boudin at mines.inpl-nancy.fr)
+ * Copyright (c) 2000-2012, INPL, INRIA
+ * Nancy, France.
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -15,6 +16,9 @@ package java3D;
  * details.
  * 
  * To have a copy of the GNU General Public License, please see <http://www.gnu.org/licenses/>.
+ *
+ * Thomas Boudin e-mail: Thomas.Boudin@mines.inpl-nancy.fr
+ *
  */
 
 import projet.Noeud;
@@ -436,7 +440,7 @@ public class Repere extends Applet {
 	@SuppressWarnings( { "static-access", "static-access" })
 	public void dessiner(Repere repere) {
 		/*
-		 * Dessine la fenêtre 3D avec les objets qui vont avec
+		 * Dessine la fenÃªtre 3D avec les objets qui vont avec
 		 */
 		this.setLayout(new BorderLayout());
 
@@ -499,7 +503,7 @@ public class Repere extends Applet {
 
 	public Point getPoint(TreeSet<Point> liste, int k) {
 		/*
-		 * Donne le k-ème element de la liste triee 'liste'
+		 * Donne le k-Ã¨me element de la liste triee 'liste'
 		 */
 		Iterator i = liste.iterator();
 		int j = 0;
@@ -547,7 +551,7 @@ public class Repere extends Applet {
 				while (e.hasMoreElements()) {
 					Geometry g = (Geometry) e.nextElement();
 					/*
-					 * On remet la couleur de base à tous les triangles
+					 * On remet la couleur de base Ã  tous les triangles
 					 */
 					if (!g.getUserData().toString().equals("segment")
 							&& !g.getUserData().toString().contains("axe")

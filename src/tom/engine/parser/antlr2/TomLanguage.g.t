@@ -3,7 +3,7 @@ header{
  *
  * TOM - To One Matching Compiler
  *
- * Copyright (c) 2000-2011, INPL, INRIA
+ * Copyright (c) 2000-2012, INPL, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -2283,6 +2283,13 @@ operator returns [Declaration result] throws TomException
 	)
         {
           TomSymbol astSymbol = ASTFactory.makeSymbol(name.getText(), `Type(concTypeOption(),type.getText(),EmptyTargetLanguageType()), types, ASTFactory.makePairNameDeclList(pairNameDeclList), options);
+          //case of %op_implement: replace goal language code by more precise
+          //type?
+          /*TomType testType = getType(name.getText());
+          if(testType!=null) {
+            putType(name.getText(),testType.setTlType(`TLType(attribute.getExpr().getCode())));
+          }*/
+          //
           putSymbol(name.getText(),astSymbol);
           result = `SymbolDecl(astName);
           updatePosition(t.getLine(),t.getColumn());
