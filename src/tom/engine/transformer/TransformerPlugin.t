@@ -149,20 +149,56 @@ public class TransformerPlugin extends TomGenericPlugin {
   }
 
   private static DeclarationList processSubDecl(TransformerPlugin transformer, TomName toname, DeclarationList declList) {
+    List bqlist = new LinkedList<BQTerm>();
+    DeclarationList result = null;
     try {
-      List bqlist = new LinkedList<BQTerm>();
-      DeclarationList result =
-        `TopDown(ProcessSubTransformation(transformer,toname,bqlist)).visitLight(declList);
-      //test: will be reused in another way
-      //Declaration transformerBQTerm = makeComposedStrategy(bqlist,declList);
-      //return `concDeclaration(result*,transformerBQTerm);
-      return result;
+      result = `TopDown(ProcessSubTransformation(transformer,toname,bqlist)).visitLight(declList);
     } catch(VisitFailure e) {
       throw new TomRuntimeException("TransformerPlugin.processSubDecl: fail on " + declList);
     }
+
+    //let's change the transformation MakeDecl
+    String stringName = toname.getString();
+    TomSymbol symbol = transformer.getSymbolTable().getSymbolFromName(stringName);
+    BQTerm composite = makeComposedStrategy(bqlist,declList);
+    try {
+      //TomSymbol newSymbol = `TopDown(ReplaceMakeDecl(bqlist,declList)).visitLight(symbol);
+      TomSymbol newSymbol = `TopDown(ReplaceMakeDecl(composite)).visitLight(symbol);
+      transformer.getSymbolTable().putSymbol(stringName,newSymbol);
+    } catch (VisitFailure e) {
+      throw new TomRuntimeException("TransformerPlugin.processSubDecl: fail on " + symbol);
+    }
+
+    ///2makeTransformationDeclMake(toname,bqlist,declList);
+    //1test: will be reused in another way
+    //Declaration transformerBQTerm = makeComposedStrategy(bqlist,declList);
+    //return `concDeclaration(result*,transformerBQTerm);
+    return result;
   }//processSubDecl
 
-  private static Declaration makeComposedStrategy(List<BQTerm> bqlist, DeclarationList declList) {
+  //2
+  /*private static void makeTransformationDeclMake(TomName tname, List bqlist, DeclarationList declList) {
+    TomSymbol symbol = getSymbolTable().getSymbolFromName(tname.getString());
+    try {
+      TomSymbol newSymbol = `TopDown(ReplaceMakeDecl(bqlist,declList)).visitLight(symbol);
+      getSymbolTable().putSymbol(tname,newSymbol);
+    } catch (VisitFailure e) {
+      throw new TomRuntimeException("TransformerPlugin.makeTransformationDeclMake: fail on " + symbol);
+    }
+  }*/
+
+  //%strategy ReplaceMakeDecl(bqlist:List,declList:DeclarationList) extends Identity() {
+  %strategy ReplaceMakeDecl(composite:BQTerm) extends Identity() {
+    visit Declaration {
+      MakeDecl[AstName=name,AstType=type,Args=args,OrgTrack=ot] -> {
+        //BQTerm composite = makeComposedStrategy(bqlist,declList);
+        return `MakeDecl(name,type,args,BQTermToInstruction(composite),ot);
+      }
+    }
+  }
+
+  //private static Declaration makeComposedStrategy(List<BQTerm> bqlist, DeclarationList declList) {
+  private static BQTerm makeComposedStrategy(List<BQTerm> bqlist, DeclarationList declList) {
     BQTermList bql = removeDuplicate(ASTFactory.makeBQTermList(bqlist));
     /*concOption() for the moment, to change*/
     BQTerm transfos = `Composite(CompositeBQTerm(BQAppl(
@@ -172,13 +208,12 @@ public class TransformerPlugin extends TomGenericPlugin {
           ));
     //add condition: call it only if resolve is needed
     BQTermList res = `concBQTerm(transfos, makeResolveBQTerm(declList));
-    Declaration transformerBQTerm = `BQTermToDeclaration(
-        Composite(CompositeBQTerm(BQAppl(
-              concOption(),
-              Name("Sequence"),
-              res)
-            ))
-        );
+    //Declaration transformerBQTerm = `BQTermToDeclaration(
+    BQTerm transformerBQTerm = `Composite(CompositeBQTerm(BQAppl(
+            concOption(),
+            Name("Sequence"),
+            res)
+          ));
     return transformerBQTerm;
   }//makeComposedStrategy
 

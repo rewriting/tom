@@ -829,10 +829,7 @@ transformationConstruct [Option orgTrack] returns [Declaration result] throws To
            slotNameList.add(astName);
 
            TomType transformationType = `Type(concTypeOption(),"Strategy",EmptyTargetLanguageType());
-           //
-           // todo: manque de quoi creer une strat transfo, symboldecl
-           //
-           // Define get<slot> method.
+           //TODO: ok?
            Option slotOption = `OriginTracking(Name(stringSlotName),firstSlot1.getLine(),currentFile());
            String varname = "t";
            BQTerm slotVar = `BQVariable(concOption(slotOption),Name(varname),transformationType);
@@ -862,8 +859,7 @@ transformationConstruct [Option orgTrack] returns [Declaration result] throws To
             slotNameList.add(astName);
 
             TomType transformationType = `Type(concTypeOption(),"Strategy",EmptyTargetLanguageType());
-            //todo
-            // Define get<slot> method.
+            //TODO: ok?
             Option slotOption = `OriginTracking(Name(stringSlotName),firstSlot2.getLine(),currentFile());
             String varname = "t";
             BQTerm slotVar = `BQVariable(concOption(slotOption),Name(varname),transformationType);
@@ -1029,10 +1025,7 @@ transformationConstruct [Option orgTrack] returns [Declaration result] throws To
                declList.add(`TypeTermDecl(resolveName,resolveTTDecl,resolveOrgTrack));
                declList.add(`SymbolDecl(Name(resolveStringName)));
                declList.add(`ResolveClassDecl(wName, tName, extendsName));
-
-
-                     //replace: ResolveTypeTermDecl(resolveName,resolveTTDecl,resolveOrgTrack),
-
+               //replace: ResolveTypeTermDecl(resolveName,resolveTTDecl,resolveOrgTrack),
                resolveStratElementList.add(`ResolveStratElement(wName, resolveOrgTrack));
              }
              astResolveStratElementList = ASTFactory.makeResolveStratElementList(resolveStratElementList);
@@ -1058,6 +1051,7 @@ transformationConstruct [Option orgTrack] returns [Declaration result] throws To
          int index = 0;
          TomTypeList makeTypes = types;
 				 String makeTlCode = "new " + name.getText() + "(";
+				 //String makeTlCode = "(";
          while(!makeTypes.isEmptyconcTomType()) {
 					 String argName = "t"+index;
            if (index>0) {
@@ -1088,6 +1082,9 @@ transformationConstruct [Option orgTrack] returns [Declaration result] throws To
               transformationType, types,
               ASTFactory.makePairNameDeclList(pairNameDeclList), optionList);
           putSymbol(name.getText(),astSymbol);
+
+//System.out.println("###DEBUG parser###\nsymbol =\n"+astSymbol+"\ngetSymbolfromName("+name.getText()+")=\n"+symbolTable.getSymbolFromName(name.getText())+"\n###DEBUG###");
+
 
          updatePosition(t.getLine(),t.getColumn());
          //work in progress
