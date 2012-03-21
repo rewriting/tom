@@ -2,7 +2,7 @@
  *
  * TOM - To One Matching Compiler
  *
- * Copyright (c) 2000-2011, INPL, INRIA
+ * Copyright (c) 2000-2012, INPL, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -155,6 +155,8 @@ public class TomMessage extends BasicPlatformMessage {
     new TomMessage("{0}:{1,number,integer}: In structure {2} declared line {3,number,integer}, get_slot({4},...) is repeated.");
   public static final TomMessage errorIncompatibleSlotDecl =
     new TomMessage("{0}:{1,number,integer}: In structure {2} declared line {3,number,integer}, get_slot: {4} is not known");
+  public static final TomMessage errorIncompatibleDefaultDecl =
+    new TomMessage("{0}:{1,number,integer}: In structure {2} declared line {3,number,integer}, get_default: {4} is not known");
   public static final TomMessage slotIncompatibleTypes =
     new TomMessage("Slot ''{0}'' has sort {1} but has already been declared with sort {2}");
   // used with TomMessage to format exception messages
@@ -269,6 +271,8 @@ public class TomMessage extends BasicPlatformMessage {
       new TomMessage("TOM desugaring phase ({0,number,integer} ms)");
   public static final TomMessage tomTypingPhase =
       new TomMessage("TOM typing phase ({0,number,integer} ms)");
+  public static final TomMessage tomTypingPhaseComplement =
+      new TomMessage("TOM typing phase ({0} constraint(s) and {1} fresh type variable(s))");
   public static final TomMessage tomFormattingPhase =
       new TomMessage("TOM formatting phase ({0,number,integer} ms)");
   public static final TomMessage tomExpandingPhase =

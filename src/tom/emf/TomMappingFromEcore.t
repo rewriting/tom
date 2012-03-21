@@ -2,7 +2,7 @@
  *
  * TOM - To One Matching Compiler
  *
- * Copyright (c) 2009-2011, INPL, INRIA
+ * Copyright (c) 2009-2012, INPL, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -124,7 +124,9 @@ public class TomMappingFromEcore {
           for(int i=0;i<ePackageNameList.size();i++) {
             File output = new File(".",ePackageNameList.get(i)+".tom");
             Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output)));
-            //genLicence(writer); //libraries are not necessarily under GPL
+            //libraries are not necessarily under GPL
+            //uncomment the following line when re-generating ecore.tom mapping
+            //genLicence(writer);
             //specific case of EcorePackage mapping generation
             if(ePackageNameList.get(i).equals("org.eclipse.emf.ecore.EcorePackage")) {
               genEcoreMapping = true;
@@ -146,7 +148,7 @@ public class TomMappingFromEcore {
  *
  * TOM - To One Matching Compiler
  *
- * Copyright (c) 2009-2011, INPL, INRIA
+ * Copyright (c) 2009-2012, INPL, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -174,10 +176,7 @@ public class TomMappingFromEcore {
   private static void extractType(java.io.Writer writer, EClassifier eclf) throws java.io.IOException {
     Class<?> c = eclf.getInstanceClass();
     if(!types.containsKey(c)) {
-      String n = c.getSimpleName();
-      if(c.isArray()) {
-        n = c.getComponentType().getSimpleName() + "array";
-      }
+      String n = (c.isArray()?(c.getComponentType().getSimpleName()+"array"):c.getSimpleName());
       String is = "";
       for(int i = 1; types.containsValue(n + is); i++) {
         is = String.valueOf(i);

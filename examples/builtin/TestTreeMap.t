@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2011, INPL, INRIA
+ * Copyright (c) 2006-2012, INPL, INRIA
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

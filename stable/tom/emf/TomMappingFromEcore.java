@@ -2,7 +2,7 @@
  *
  * TOM - To One Matching Compiler
  *
- * Copyright (c) 2009-2011, INPL, INRIA
+ * Copyright (c) 2009-2012, INPL, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -87,6 +87,11 @@ public class TomMappingFromEcore {
   private static boolean useNewTyper = false;
 
   /**
+   * true if the EPackage to generate is EcorePackage itself
+   */
+  private static boolean genEcoreMapping = false;
+
+  /**
    * A dictionnary linking a class with his generated type name
    */
   private final static HashMap<Class<?>, String> types = new HashMap<Class<?>, String>();
@@ -119,10 +124,18 @@ public class TomMappingFromEcore {
           for(int i=0;i<ePackageNameList.size();i++) {
             File output = new File(".",ePackageNameList.get(i)+".tom");
             Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output)));
-            genLicence(writer);
+            //libraries are not necessarily under GPL
+            //uncomment the following line when re-generating ecore.tom mapping
+            //genLicence(writer);
+            //specific case of EcorePackage mapping generation
+            if(ePackageNameList.get(i).equals("org.eclipse.emf.ecore.EcorePackage")) {
+              genEcoreMapping = true;
+            }
             extractFromEPackage(writer, (EPackage) Class.forName(ePackageNameList.get(i)).getField("eINSTANCE").get(null));
             writer.flush();
             writer.close();
+            //reset
+            genEcoreMapping = false;
           }
         } catch (Exception e) {
           e.printStackTrace();
@@ -131,7 +144,7 @@ public class TomMappingFromEcore {
   }
 
   private static void genLicence(java.io.Writer writer) throws java.io.IOException {
-    writer.write("/*\n *\n * TOM - To One Matching Compiler\n *\n * Copyright (c) 2009-2011, INPL, INRIA\n * Nancy, France.\n *\n * This program is free software; you can redistribute it and/or modify\n * it under the terms of the GNU General Public License as published by\n * the Free Software Foundation; either version 2 of the License, or\n * (at your option) any later version.\n *\n * This program is distributed in the hope that it will be useful,\n * but WITHOUT ANY WARRANTY; without even the implied warranty of\n * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n * GNU General Public License for more details.\n *\n * You should have received a copy of the GNU General Public License\n * along with this program; if not, write to the Free Software\n * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA\n *\n *\n **/"
+    writer.write("/*\n *\n * TOM - To One Matching Compiler\n *\n * Copyright (c) 2009-2012, INPL, INRIA\n * Nancy, France.\n *\n * This program is free software; you can redistribute it and/or modify\n * it under the terms of the GNU General Public License as published by\n * the Free Software Foundation; either version 2 of the License, or\n * (at your option) any later version.\n *\n * This program is distributed in the hope that it will be useful,\n * but WITHOUT ANY WARRANTY; without even the implied warranty of\n * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n * GNU General Public License for more details.\n *\n * You should have received a copy of the GNU General Public License\n * along with this program; if not, write to the Free Software\n * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA\n *\n *\n **/"
 
 
 
@@ -175,8 +188,8 @@ public class TomMappingFromEcore {
       types.put(c, n);
       if(tomTypes.containsKey(c)) {
         writer.write("\n\n%include { " + tomTypes.get(c) + ".tom }");
-      } else if (tomEMFTypes.contains(c)) {
-        //add ecore mappings if needed
+      } else if(tomEMFTypes.contains(c) && !genEcoreMapping) {
+        //add ecore mappings if needed, when not generating the EcorePackage mapping itself
         writer.write("\n\n%include { emf/ecore.tom }");
       } else {
         String[] decl = getClassDeclarations(eclf); // [canonical name, anonymous generic, generic type]
@@ -200,7 +213,7 @@ public class TomMappingFromEcore {
           result = result + "extends "+ supertype.getName();
         }
       } else {
-        if (!(eclf.getInstanceClassName().equals("EObject"))) {
+        if(!(eclf.getInstanceClassName().equals("EObject"))) {
           result = result + "extends " + "EObject";
         }
       }
@@ -485,11 +498,11 @@ public class TomMappingFromEcore {
     String result = "";
     String dvalue = ""+esf.getDefaultValue();
     String esftype = getType(esf);
-    
+   
     // cases : null, String, `toto(), builtin
-    if (esftype.equals("String")) {
+    if(esftype.equals("String")) {
       dvalue = "\"" + dvalue + "\"";
-    } else if (esftype.equals("boolean") || esftype.equals("int") ||
+    } else if(esftype.equals("boolean") || esftype.equals("int") ||
         esftype.equals("float") || esftype.equals("double") || 
         esftype.equals("long") ) {
       //nothing
@@ -497,7 +510,9 @@ public class TomMappingFromEcore {
     } else {
       dvalue = "`" + dvalue + "()";
     }
-    return result+"\n  get_default("+esf.getName()+") { "+dvalue+" }";
+    //add a suffix '_' if the name is a reserved keyword
+    String sfname = (keywords.contains(esf.getName()) ? "_" : "")+esf.getName();
+    return result+"\n  get_default("+sfname+") { "+dvalue+" }";
   }
 
   /**
@@ -543,7 +558,7 @@ public class TomMappingFromEcore {
             s_gets.append("\n  get_slot(" + sfname + ", t) { (" + na
                 + ")$t.eGet($t.eClass().getEStructuralFeature(\"" + sf.getName()
                 + "\")) }");
-            if (sf.getDefaultValue()!=null) {
+            if(sf.getDefaultValue()!=null) {
               s_defaults.append(genGetDefault(sf));
             }
           }
@@ -560,7 +575,8 @@ public class TomMappingFromEcore {
           String o2 = ecl.getEPackage().getClass().getInterfaces()[ecl.getEPackage().getClass().getInterfaces().length - 1]
             .getCanonicalName();
           //avoid to generate mappings already been defined in ecore.tom
-          if (!tomEMFTypes.contains(eclf.getInstanceClass())) {
+          //except if the goal is to generate the EcorePackage mapping itself
+          if(genEcoreMapping || !tomEMFTypes.contains(eclf.getInstanceClass())) {
             writer.write("\n\n%op "+ecl.getInstanceClass().getSimpleName()+" "+cr+"("+s_types+") {\n  is_fsym(t) { $t instanceof "+(decl[0]+decl[1])+" }"+s_gets+" "+s_defaults+"\n  make("+(s.length() <= 2 ? "" : s.substring(2))+") { construct"+cr+"(("+(EObject.class.isAssignableFrom(ecl.getInstanceClass()) ? ecl.getInstanceClass().getCanonicalName() : "org.eclipse.emf.ecore.EObject")+")"+o1+".eINSTANCE.create((EClass)"+o2+".eINSTANCE.getEClassifier(\""+ecl.getName()+"\")), new Object[]{ "+(s2.length() <= 2 ? "" : s2.substring(2))+" }) }\n}\n\npublic static <O extends org.eclipse.emf.ecore.EObject> O construct"+cr+"(O o, Object[] objs) {\n  int i=0;\n  EList<EStructuralFeature> sfes = o.eClass().getEAllStructuralFeatures();\n  for(EStructuralFeature esf : sfes) {\n    if(esf.isChangeable()) {\n      o.eSet(esf, objs[i]);\n      i++;\n    }\n  }\n  return o;\n}"
 
 
