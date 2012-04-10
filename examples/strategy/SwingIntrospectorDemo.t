@@ -35,7 +35,7 @@ import javax.swing.event.*;
 import javax.swing.colorchooser.*;
 import java.awt.*;
 
-public class SwingStrategy extends JPanel {
+public class SwingIntrospectorDemo extends JPanel {
 
   %include { sl.tom }
 
@@ -50,7 +50,7 @@ public class SwingStrategy extends JPanel {
   };
 
 
-  public SwingStrategy() {
+  public SwingIntrospectorDemo() {
     super(new GridLayout(3,1));
     final JColorChooser colorchooser = new JColorChooser();
     colorchooser.setPreviewPanel(new JPanel());
@@ -59,8 +59,8 @@ public class SwingStrategy extends JPanel {
         public void stateChanged(ChangeEvent e) {
           newColor = colorchooser.getColor();
           try {
-          `TopDown(changeLabelColor).visit(SwingStrategy.this, new SwingIntrospector());
-          SwingStrategy.this.revalidate();
+          `TopDown(changeLabelColor).visit(SwingIntrospectorDemo.this, new SwingIntrospector());
+          SwingIntrospectorDemo.this.revalidate();
           } catch(VisitFailure failure) {}
         }
     });
@@ -68,14 +68,14 @@ public class SwingStrategy extends JPanel {
 
     JPanel p1 = new JPanel(new GridLayout(1,2));
     JPanel p2 = new JPanel(new GridLayout(1,1));
-    JLabel label1 = new JLabel("label_1",SwingConstants.CENTER);
+    JLabel label1 = new JLabel("label1",SwingConstants.CENTER);
     label1.setOpaque(true);
-    JButton button1 = new JButton("button_1");
+    JButton button1 = new JButton("button1");
     p1.add(label1);
     p1.add(button1);
-    JLabel label2 = new JLabel("label_2",SwingConstants.CENTER);
+    JLabel label2 = new JLabel("label2",SwingConstants.CENTER);
     label2.setOpaque(true);
-    JButton button2 = new JButton("button_2");
+    JButton button2 = new JButton("button2");
     p2.add(button2);
     p2.add(label2);
     add(p1);
@@ -83,8 +83,8 @@ public class SwingStrategy extends JPanel {
   }
 
   private static void createAndShowGUI() {
-    JFrame frame = new JFrame("SwingStrategy Demo");
-    frame.setContentPane(new SwingStrategy());
+    JFrame frame = new JFrame("SwingIntrospector Demo");
+    frame.setContentPane(new SwingIntrospectorDemo());
     frame.pack();
     frame.setVisible(true);
   }
