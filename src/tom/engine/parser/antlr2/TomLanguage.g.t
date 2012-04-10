@@ -776,7 +776,6 @@ transformationConstruct [Option orgTrack] returns [Declaration result] throws To
   TomTypeList rtypes = `concTomType();
   List<Option> optionList = new LinkedList<Option>();
   //OptionList options = `concOption();
-  List<Option> symbolOptions = new LinkedList<Option>();
   List<TomName> slotNameList = new LinkedList<TomName>();
   List<PairNameDecl> pairNameDeclList = new LinkedList<PairNameDecl>();
   String stringSlotName = null;
@@ -974,6 +973,7 @@ transformationConstruct [Option orgTrack] returns [Declaration result] throws To
                    OriginTracking(Name("make"),line,currentFile())
                    );
 
+               List<Option> symbolOptions = new LinkedList<Option>();
                symbolOptions.add(orgTrack);
                symbolOptions.add(`DeclarationToOption(makeDecl));
                symbolOptions.add(`DeclarationToOption(isfsymDecl));
@@ -1086,7 +1086,6 @@ transformationConstruct [Option orgTrack] returns [Declaration result] throws To
               transformationType, types,
               ASTFactory.makePairNameDeclList(pairNameDeclList), optionList);
           putSymbol(name.getText(),astSymbol);
-          System.out.println("###DEBUG parser###\nsymbol=\n"+getSymbolTable().getSymbolFromName(name.getText())+"\n###/DEBUG parser###");
 
          updatePosition(t.getLine(),t.getColumn());
          //work in progress
@@ -1141,9 +1140,6 @@ transformationReference [TransfoStratInfo info, List<Declaration> declList, Stri
 }
     :
     (
-     //TODO: we could name and parameterize each group of rules: name#traversal
-     //name:ALL_ID POUNDSIGN (traversal:ALL_ID)?
-
       REFERENCE ref:ALL_ID LBRACE
       { 
         refName = ref.getText(); 

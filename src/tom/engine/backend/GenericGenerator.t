@@ -593,7 +593,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
   }
 
   //TODO
-  protected void buildResolveIsSortDecl(int deep, String varName, String type, String resolveStringName, String moduleName) throws IOException {
+  /*protected void buildResolveIsSortDecl(int deep, String varName, String type, String resolveStringName, String moduleName) throws IOException {
     //language specific
     Expression code = `Code(genResolveIsSortCode(varName, resolveStringName));
 
@@ -606,7 +606,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
           new String[] { TomBase.getTLType(argType), varName },
           `Return(ExpressionToBQTerm(code)),deep,moduleName);
     }
-  }
+  }*/
 //
 
 

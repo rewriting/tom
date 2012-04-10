@@ -20,7 +20,6 @@ Declaration = TypeTermDecl(AstName:TomName,Declarations:DeclarationList,OrgTrack
             | MakeDecl(AstName:TomName,AstType:TomType,Args:BQTermList,Instr:Instruction,OrgTrack:Option)
             | Strategy(SName:TomName,ExtendsTerm:BQTerm,VisitList:TomVisitList,OrgTrack:Option)
             //| Transformation(TName:TomName,WithToList:TomWithToList,OrgTrack:Option) //Options:OptionList ??
-
 ///
             | TransformationDecl(TName:TomName,Domain:TomTypeList,Declarations:DeclarationList,OrgTrack:Option)
             | TransfoStratDecl(Info:TransfoStratInfo,TSName:TomName,Term:TomTerm,Instructions:InstructionList,Options:OptionList,OrgTrack:Option)//pb avec les options
@@ -34,6 +33,7 @@ Declaration = TypeTermDecl(AstName:TomName,Declarations:DeclarationList,OrgTrack
             | ResolveGetSlotDecl(AstName:TomName,SlotName:TomName,Variable:BQTerm,OrgTrack:Option)//useful?
             | ResolveMakeDecl(AstName:TomName,AstType:TomType,Args:BQTermList,OrgTrack:Option)//useful?
             | ReferenceDecl(Info:TransfoStratInfo,RName:String,Declarations:DeclarationList,OrgTrack:Option)
+            | ReferenceClass(RefName:TomName)//add specialized bq
 ///
             | FunctionDef(AstName:TomName,ArgumentList:BQTermList,Codomain:TomType,ThrowsType:TomType,Instruction:Instruction)
             | MethodDef(AstName:TomName,ArgumentList:BQTermList,Codomain:TomType,ThrowsType:TomType,Instruction:Instruction)

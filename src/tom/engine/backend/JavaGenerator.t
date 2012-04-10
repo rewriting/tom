@@ -114,33 +114,64 @@ public class JavaGenerator extends CFamilyGenerator {
   }
 
   //TODO: to move in JavaGenerator
-  protected String genResolveIsSortCode(String resolveStringName,
+  /*protected String genResolveIsSortCode(String resolveStringName,
                                         String varName) throws IOException {
     return " "+varName+" instanceof "+resolveStringName+" ";
-  }
+  }*/
 
   //TODO: to change, to move in JavaGenerator
-  protected String genResolveGetSlotCode(String tomName,
+  /*rotected String genResolveGetSlotCode(String tomName,
                                          String varName,
                                          String slotName) throws IOException {
     return " (("+tomName+")"+varName+")."+slotName+" ";
-  }
+  }*/
 
   //TODO: retrieve the information about the FQN of wName and extends
-  protected void buildResolveClass(String wName, String tName, String extendsName) throws
+  protected void buildResolveClass(String wName, String tName, String extendsName, String moduleName) throws
     IOException {
       String resolveStringName = "Resolve"+wName+tName;
-output.write(%[private static class @resolveStringName@ extends @extendsName@ {
+      String fqnwName = wName;
+      TomType subject = getSymbolTable(moduleName).getType(wName);
+      %match(subject) {
+        TLType[String=s] -> { fqnwName = `s; }
+      }
+      output.write(%[private static class @resolveStringName@ extends @extendsName@ {
   public String name;
-  public @wName@ o;
+  public @fqnwName@ o;
 
-  public @resolveStringName@(@wName@ o, String name) {
+  public @resolveStringName@(@fqnwName@ o, String name) {
     this.name = name;
     this.o = o;
   }
 }
 ]%);
     }
+
+  //TODO: add attributes, get/set + EObject get(String)
+  protected void buildReferenceClass(int deep, String name, String moduleName)
+  throws IOException {
+    output.write(%[
+public static class @name@ implements tom.library.utils.ReferenceClass {
+  //TODO: something like that
+  //private Node p_ready; //EObject?
+
+  //public void setp_ready(Node n) { p_ready = n; }
+
+  //public Node getp_ready() { return p_ready; }
+
+  /*public Node get(String name)  {//EObject
+    if (name.equals("p_ready")) {//for each attribute
+      return getp_ready();
+    } else {
+      throw new RuntimeException("This Node does not exist:" + name);
+    }
+  }*/
+
+}
+
+]%);
+
+  }
 
   //TODO: resolveInverseLinks
   protected void buildResolveStratInstruction(String name) throws IOException {

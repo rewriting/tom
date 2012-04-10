@@ -172,7 +172,7 @@ public class TransformerPlugin extends TomGenericPlugin {
   %strategy ReplaceMakeDecl(composite:BQTerm) extends Identity() {
     visit Declaration {
       MakeDecl[AstName=name,AstType=type,Args=args,OrgTrack=ot] -> {
-        System.out.println("ReplaceMakeDecl\nargs=\n"+`args+"\n");
+        //System.out.println("ReplaceMakeDecl\nargs=\n"+`args+"\n");
         return `MakeDecl(name,type,args,BQTermToInstruction(composite),ot);
       }
     }
@@ -268,10 +268,14 @@ public class TransformerPlugin extends TomGenericPlugin {
        */
       ReferenceDecl[Info=info,RName=rname,Declarations=decl,OrgTrack=ot] -> {
         /*+ ReferenceClassDecl*/
-        //need to gener a ReferenceClassDecl (not yet in adt)
-        return buildTransfoStratFromReference(transformer, toName, domain, bqlist, symbol, `info, `rname, `decl, `ot);
-        //DeclarationList stratsym = buildTransfoStratFromReference(transformer, toName, bqlist, `info, `rname, `decl, `ot);
-        //return `AbstractDecl(stratsym*,..);
+        //need to generate a ReferenceClassDecl (not yet in adt)
+        Declaration refClass = `ReferenceClass(Name(rname));
+        DeclarationList result = buildTransfoStratFromReference(transformer, toName, domain, bqlist, symbol, `info, `rname, `decl, `ot);
+
+        return `AbstractDecl(concDeclaration(refClass,result*));
+        //1st version:
+        //return buildTransfoStratFromReference(transformer, toName, domain, bqlist, symbol, `info, `rname, `decl, `ot);
+
       }
       TransfoStratDecl[Info=info,TSName=wName,Term=term,Instructions=instr,Options=options,OrgTrack=ot] -> {
         return buildTransfoStrat(transformer, toName, domain, bqlist, symbol, `info, `wName, `term, `instr, `options, `ot);
@@ -294,8 +298,14 @@ ResolveStratBlock = ResolveStratBlock(ToName:String, resolveStratElementList:Res
 ResolveStratBlockList = concResolveStratBlock(ResolveStratBlock*)
    */
   //private static void buildResolveStrat(TransformerPlugin transformer, TomName toname, List bqlist, List result, String name, ResolveStratBlockList rsbList, Option ot) {
-  private static Declaration buildResolveStrat(TransformerPlugin transformer, TomName toname, TomTypeList domain, List bqlist, TomSymbol symbol, String name, ResolveStratBlockList rsbList, Option ot) {
-
+  private static Declaration buildResolveStrat(TransformerPlugin transformer, 
+                                               TomName toname, 
+                                               TomTypeList domain, 
+                                               List bqlist, 
+                                               TomSymbol symbol, 
+                                               String name, 
+                                               ResolveStratBlockList rsbList, 
+                                               Option ot) {
     List<TomVisit> visitList = new LinkedList<TomVisit>();
 
     %match(rsbList) {
@@ -347,10 +357,7 @@ ResolveStratBlockList = concResolveStratBlock(ResolveStratBlock*)
         ciList.clear(); //reset ConstraintInstructionList
       }
     }
-    //problem when several transfo, the name will be composed of resolve and
-    //transformation name
-    //String stringRSname = "tom__StratResolve";
-    String stringRSname = "tom__StratResolve_"+name;//better?
+    String stringRSname = "tom__StratResolve_"+name;
     TomName rsname = `Name(stringRSname);
     BQTerm extendsTerm = `BQAppl(concOption(ot),Name("Identity"),concBQTerm());
     TomVisitList astVisitList = `ASTFactory.makeTomVisitList(visitList);
@@ -363,14 +370,13 @@ ResolveStratBlockList = concResolveStratBlock(ResolveStratBlock*)
     //TomTypeList & PairNameDeclList: empty for the moment, but will need something 
     //(current type as in %strategy Resolve(translator:SimplePDLToPetriNet3c)
     //OptionList: ot (good choice?) + IsFsymDecl + GetSlotDecl
+    // => should be ok
     
     List<Option> options = new LinkedList<Option>();
     options.add(ot);
-
     //definition of make.
-    //change this TLType("") -> EmptyTargetLanguageTyupe(), be careful during
     //code generation of IsFsymDecl
-    TomType strategyType = `Type(concTypeOption(),"Strategy",EmptyTargetLanguageType());//TLType(""));//
+    TomType strategyType = `Type(concTypeOption(),"Strategy",EmptyTargetLanguageType());
     /* Arguments of the strategy. For the moment, nothing, but it will be
        necessary */
     BQTermList makeArgs = `concBQTerm();
@@ -398,7 +404,7 @@ ResolveStratBlockList = concResolveStratBlock(ResolveStratBlock*)
 
     //should not be ot, since the line number is different, but here, we use ot
     Option makeOption = `OriginTracking(rsname,ot.getLine(),ot.getFileName());
-        System.out.println("buildStrat MakeDecl makeArgs=\n"+makeArgs+"\n");
+        //System.out.println("buildStrat MakeDecl makeArgs=\n"+makeArgs+"\n");
     Declaration makeDecl = `MakeDecl(rsname, strategyType, makeArgs,
         CodeToInstruction(TargetLanguageToCode(ITL(makeTlCode))), makeOption);
     options.add(`DeclarationToOption(makeDecl));
@@ -435,7 +441,8 @@ ResolveStratBlockList = concResolveStratBlock(ResolveStratBlock*)
     return `AbstractDecl(concDeclaration(resolve,SymbolDecl(rsname)));
   }
 
-  private static PairNameDeclList genStratPairNameDeclListFromTransfoSymbol(TomName stratName, TomSymbol symbol) {
+  private static PairNameDeclList genStratPairNameDeclListFromTransfoSymbol(TomName stratName, 
+                                                                            TomSymbol symbol) {
     PairNameDeclList result = `concPairNameDecl();
     PairNameDeclList subject = symbol.getPairNameDeclList();
     %match(subject) {
@@ -456,8 +463,17 @@ ResolveStratBlockList = concResolveStratBlock(ResolveStratBlock*)
   //TODO
   //incohérence : pourquoi rname est une chaîne ?
   //private static void buildTransfoStratFromReference(TransformerPlugin transformer, TomName tname, List bqlist, List result, TransfoStratInfo info, String rname, DeclarationList declList, Option orgTrack) {
-  private static Declaration buildTransfoStratFromReference(TransformerPlugin transformer, TomName tname, TomTypeList domain, List bqlist, TomSymbol symbol, TransfoStratInfo info, String rname, DeclarationList declList, Option orgTrack) {
-    //String stringStratName = rname+"To"+((Name)tname).getString();
+  private static DeclarationList buildTransfoStratFromReference(TransformerPlugin transformer,
+//  private static Declaration buildTransfoStratFromReference(TransformerPlugin transformer,
+                                                            TomName tname, 
+                                                            TomTypeList domain, 
+                                                            List bqlist, 
+                                                            TomSymbol symbol, 
+                                                            TransfoStratInfo info, 
+                                                            String rname, 
+                                                            DeclarationList declList, 
+                                                            Option orgTrack) {
+
     String stringStratName = info.getName();
     TomName sname = `Name(stringStratName);
 
@@ -506,7 +522,6 @@ ResolveStratBlockList = concResolveStratBlock(ResolveStratBlock*)
                            Nop())),
                          options)
           );
-
       }
     }
     
@@ -522,9 +537,8 @@ ResolveStratBlockList = concResolveStratBlock(ResolveStratBlock*)
 
     List<Option> optionList = new LinkedList<Option>();
     optionList.add(orgTrack);
-    //args?; //ceux de la transformation => manque qqch dans les nœuds
-    //problem here: should be EmptyTargetLanguageType()
-    TomType strategyType = `Type(concTypeOption(),"Strategy",EmptyTargetLanguageType());//TLType(""));//
+    
+    TomType strategyType = `Type(concTypeOption(),"Strategy",EmptyTargetLanguageType());
     BQTermList makeArgs = `concBQTerm();
     BQTermList params = `concBQTerm();
     //parameters
@@ -576,15 +590,23 @@ ResolveStratBlockList = concResolveStratBlock(ResolveStratBlock*)
 
     Declaration strategy = `Strategy(sname,extendsTerm,astVisitList,orgTrack);
     //result.add(`AbstractDecl(concDeclaration(strategy,SymbolDecl(sname))));
-    return `AbstractDecl(concDeclaration(strategy,SymbolDecl(sname)));
+    //return `AbstractDecl(concDeclaration(strategy,SymbolDecl(sname)));
+    return `concDeclaration(strategy,SymbolDecl(sname));
   }
 
   //TODO
   //private static void buildTransfoStrat(TransformerPlugin transformer, TomName toname, List bqlist, List result, TransfoStratInfo info, TomName wname, TomTerm lhs, InstructionList instr, OptionList options, Option orgTrack) {
-  private static Declaration buildTransfoStrat(TransformerPlugin transformer, TomName toname, TomTypeList domain, List bqlist, TomSymbol symbol, TransfoStratInfo info, TomName wname, TomTerm lhs, InstructionList instr, OptionList options, Option orgTrack) {
-
-    //naze, à changer en utilisant le nommage toto#TopDown
-    //String stringStratName = wname.getString()+"To"+((Name)toname).getString();
+  private static Declaration buildTransfoStrat(TransformerPlugin transformer, 
+                                               TomName toname, 
+                                               TomTypeList domain, 
+                                               List bqlist, 
+                                               TomSymbol symbol, 
+                                               TransfoStratInfo info, 
+                                               TomName wname, 
+                                               TomTerm lhs, 
+                                               InstructionList instr, 
+                                               OptionList options, 
+                                               Option orgTrack) {
     String stringStratName = info.getName();
     TomName sname = `Name(stringStratName);
 
@@ -613,9 +635,7 @@ ResolveStratBlockList = concResolveStratBlock(ResolveStratBlock*)
 
     List<Option> optionList = new LinkedList<Option>();
     optionList.add(orgTrack);
-    //args?; //ceux de la transformation => manque qqch dans les nœuds
-    //problem here: should be EmptyTargetLanguageType()
-    TomType strategyType = `Type(concTypeOption(),"Strategy",EmptyTargetLanguageType());//TLType(""));//
+    TomType strategyType = `Type(concTypeOption(),"Strategy",EmptyTargetLanguageType());
     BQTermList makeArgs = `concBQTerm();
     BQTermList params = `concBQTerm();
     //parameters
@@ -668,26 +688,5 @@ ResolveStratBlockList = concResolveStratBlock(ResolveStratBlock*)
     //result.add(`AbstractDecl(concDeclaration(strategy,SymbolDecl(sname))));
     return `AbstractDecl(concDeclaration(strategy,SymbolDecl(sname)));
   }
-
-         //TODO
-         //build the BQTerm representing the composed transformation strategy
-         /*
-           we want somthing like this:
-           BQTermToCode(
-             Composite(BQTermComposite(
-               BQAppl(..,Name("Sequence"),concBQTerm(
-                 Composite(Composite(BQTermComposite(
-                   BQAppl(..,Name(optional_traversal),concBQTerm(
-                     Composite(Composite(BQTermComposite(
-                       BQAppl(..,Name(name),concBQTerm())
-                     )))
-                   ))
-                 ))),
-                 ..,
-                 ..))
-             ))
-           )
-          
-          */
 
 }

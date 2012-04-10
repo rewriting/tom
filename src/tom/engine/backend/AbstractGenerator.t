@@ -652,7 +652,6 @@ public abstract class AbstractGenerator {
         return;
       }
 
-
       IntrospectorClass(Name(tomName),declaration) -> {
         `buildIntrospectorClass(deep, tomName, declaration, moduleName);
         return;
@@ -771,10 +770,15 @@ public abstract class AbstractGenerator {
       }*/
 
       ResolveClassDecl[WithName=wName,ToName=tName,Extends=eName] -> {
-        `buildResolveClass(wName,tName, eName);
+        `buildResolveClass(wName,tName, eName, moduleName);
         return;
       }
 
+      //complete with specialized backquotes
+      ReferenceClass[RefName=n@Name(name)] -> {
+        `buildReferenceClass(deep, name, moduleName);
+        return;
+      }
 
 //////
 
@@ -1057,13 +1061,14 @@ public abstract class AbstractGenerator {
   
   //TODO: Resolve*
   protected abstract void buildResolveStratInstruction(String name) throws IOException;
-  protected abstract void buildResolveIsSortDecl(int deep, String name1, String type1, String resolveStringName, String moduleName) throws IOException;
+//  protected abstract void buildResolveIsSortDecl(int deep, String name1, String type1, String resolveStringName, String moduleName) throws IOException;
   protected abstract void buildResolveIsFsymDecl(int deep, String tomName, String name1, TargetLanguageType tlType, String moduleName) throws IOException;
   protected abstract void buildResolveGetSlotDecl(int deep, String tomName, String name1, TargetLanguageType tlType, TomName slotName, String moduleName) throws IOException;
   protected abstract void genResolveDeclMake(String prefix, String funName, TomType returnType, BQTermList argList, String moduleName) throws IOException;
-  protected abstract void buildResolveClass(String wName, String tName, String extendsName) throws IOException;
+  protected abstract void buildResolveClass(String wName, String tName, String extendsName, String moduleName) throws IOException;
+  protected abstract void buildReferenceClass(int deep, String name, String moduleName) throws IOException;
 
   protected abstract String genResolveIsFsymCode(String tomName, String varname) throws IOException;
   protected abstract String genResolveGetSlotCode(String tomName, String varname, String slotName) throws IOException;
-  protected abstract String genResolveIsSortCode(String varName, String resolveStringName) throws IOException;
+//  protected abstract String genResolveIsSortCode(String varName, String resolveStringName) throws IOException;
 }

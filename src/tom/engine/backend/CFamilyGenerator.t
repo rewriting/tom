@@ -277,10 +277,10 @@ public abstract class CFamilyGenerator extends GenericGenerator {
   }
 
   //TODO: to move in JavaGenerator
-  protected String genResolveIsSortCode(String resolveStringName,
+  /*protected String genResolveIsSortCode(String resolveStringName,
                                         String varName) throws IOException {
     return " "+varName+" instanceof "+resolveStringName+" ";
-  }
+  }*/
 
   //TODO: to change, to move in JavaGenerator
   protected String genResolveGetSlotCode(String tomName,
@@ -290,14 +290,19 @@ public abstract class CFamilyGenerator extends GenericGenerator {
   }
  
   //TODO: retrieve the information about the FQN of wName and extends
-  protected void buildResolveClass(String wName, String tName, String extendsName) throws
+  protected void buildResolveClass(String wName, String tName, String extendsName, String moduleName) throws
     IOException {
       String resolveStringName = "Resolve"+wName+tName;
+      String fqnwName = wName;
+      TomType subject = getSymbolTable(moduleName).getType(wName);
+      %match(subject) {
+        TLType[String=s] -> { fqnwName = `s; }
+      }
 output.write(%[private static class @resolveStringName@ extends @extendsName@ {
   public String name;
-  public @wName@ o;
+  public @fqnwName@ o;
 
-  public @resolveStringName@(@wName@ o, String name) {
+  public @resolveStringName@(@fqnwName@ o, String name) {
     this.name = name;
     this.o = o;
   }
@@ -385,7 +390,7 @@ matchBlock: {
   //TODO: move it in JavaGenerator
   protected String genResolveIsFsymCode(String resolveStringName,
                                         String varName) throws IOException {
-    return " "+varName+" instanceof "+resolveStringName+" ";
+    return " ( "+varName+" instanceof "+resolveStringName+" ) ";
   }
 
   protected void genDeclInstr(String returnType,
