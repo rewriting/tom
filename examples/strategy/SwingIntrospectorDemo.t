@@ -67,7 +67,7 @@ public class SwingIntrospectorDemo extends JPanel {
     add(colorchooser);
 
     JPanel p1 = new JPanel(new GridLayout(1,2));
-    JPanel p2 = new JPanel(new GridLayout(1,1));
+    JPanel p2 = new JPanel(new GridLayout(1,2));
     JLabel label1 = new JLabel("label1",SwingConstants.CENTER);
     label1.setOpaque(true);
     JButton button1 = new JButton("button1");
