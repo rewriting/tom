@@ -35,7 +35,7 @@ import org.junit.Before;
 import java.util.*;
 import tom.library.sl.*;
 
-public class TestIntrospector {
+public class TestHandWrittenMapping {
 
 
   %include{sl.tom}
@@ -148,7 +148,7 @@ public class TestIntrospector {
 
 
   public static void main(String[] args) {
-    org.junit.runner.JUnitCore.main(TestIntrospector.class.getName());
+    org.junit.runner.JUnitCore.main(TestHandWrittenMapping.class.getName());
   }
 
 }

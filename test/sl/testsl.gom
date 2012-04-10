@@ -28,7 +28,6 @@
  */
 
  module testsl 
- imports String
  abstract syntax
  Term = a()
       | b()
