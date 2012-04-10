@@ -31,32 +31,70 @@ package strategy;
 
 import tom.library.sl.*;
 import javax.swing.*;
+import javax.swing.event.*;
+import javax.swing.colorchooser.*;
 import java.awt.*;
-import boulderdash.*;
 
-public class SwingStrategy {
+public class SwingStrategy extends JPanel {
 
   %include { sl.tom }
 
-  public static void main(String[] args) {
-
-    Strategy s = new AbstractStrategyBasic(new Identity()) {
-
+  private Color newColor = Color.WHITE;
+  private Strategy changeLabelColor = new AbstractStrategyBasic(new Identity()) {
       public <T> T visitLight(T any,tom.library.sl.Introspector i) throws VisitFailure {
-        ((JComponent)any).setBackground(Color.CYAN);
+        if (any instanceof JLabel) {
+          ((JLabel) any).setBackground(newColor);
+        }
         return any;
       }
+  };
 
-    };
 
-    BoulderDash2D b = new BoulderDash2D();
-    b.runApplicationMode();
+  public SwingStrategy() {
+    super(new GridLayout(3,1));
+    final JColorChooser colorchooser = new JColorChooser();
+    colorchooser.setPreviewPanel(new JPanel());
+    colorchooser.setChooserPanels(new AbstractColorChooserPanel[]{colorchooser.getChooserPanels()[0]});
+    colorchooser.getSelectionModel().addChangeListener( new ChangeListener() {
+        public void stateChanged(ChangeEvent e) {
+          newColor = colorchooser.getColor();
+          try {
+          `TopDown(changeLabelColor).visit(SwingStrategy.this, new SwingIntrospector());
+          SwingStrategy.this.revalidate();
+          } catch(VisitFailure failure) {}
+        }
+    });
+    add(colorchooser);
 
-    try {
-      System.out.println(b.getContentPane());
-      `TopDown(s).visitLight(b.getContentPane(), new SwingIntrospector());
-    } catch(VisitFailure e) {}
-
+    JPanel p1 = new JPanel(new GridLayout(1,2));
+    JPanel p2 = new JPanel(new GridLayout(1,1));
+    JLabel label1 = new JLabel("label_1",SwingConstants.CENTER);
+    label1.setOpaque(true);
+    JButton button1 = new JButton("button_1");
+    p1.add(label1);
+    p1.add(button1);
+    JLabel label2 = new JLabel("label_2",SwingConstants.CENTER);
+    label2.setOpaque(true);
+    JButton button2 = new JButton("button_2");
+    p2.add(button2);
+    p2.add(label2);
+    add(p1);
+    add(p2);
   }
+
+  private static void createAndShowGUI() {
+    JFrame frame = new JFrame("SwingStrategy Demo");
+    frame.setContentPane(new SwingStrategy());
+    frame.pack();
+    frame.setVisible(true);
+  }
+
+
+  public static void main(String[] args) {
+    SwingUtilities.invokeLater(new Runnable() {
+        public void run() { createAndShowGUI(); }
+    });
+  }
+
 
 }
