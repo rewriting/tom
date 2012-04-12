@@ -172,17 +172,26 @@ public class @className()@ implements tom.library.sl.Strategy {
     return %[
   %op Strategy @className()@(@genStratArgs(prefix,slotList,"arg")@) {
     is_fsym(t) { (($t!=null) && ($t instanceof @fullClassName()@)) }
-@genGetSlot(prefix,slotList.length(),"arg")@
+@genGetSlot(prefix,slotList,"arg")@
     make(@genMakeArguments(slotList,false)@) { new @fullClassName()@(@genMakeArguments(slotList,true)@) }
   }
 ]%;
   }
 
-private String genGetSlot(String prefix,int count, String arg) {
+private String genGetSlot(String prefix,SlotFieldList slots,String arg) {
   StringBuilder out = new StringBuilder();
-  for (int i = 0; i < count; ++i) {
-    out.append(%[
+  int i = 0;
+  %match(slots) {
+    ConcSlotField(_*,SlotField[Name=_name,Domain=domain],_*) -> {
+      if (!getGomEnvironment().isBuiltinClass(`domain)) {
+        out.append(%[
         get_slot(@prefix+arg+i@, t) { (tom.library.sl.Strategy)((@fullClassName()@)$t).getChildAt(@i@) }]%);
+      } else {
+        out.append(%[
+        get_slot(@prefix+arg+i@, t) { ((tom.library.sl.VisitableBuiltin<@primitiveToReferenceType(fullClassName(`domain))@>)(((@fullClassName()@)$t).getChildAt(@i@))).getBuiltin() }]%); 
+      }
+      i++; 
+    }
   }
   return out.toString();
 }
@@ -232,6 +241,7 @@ private String genStratArgs(String prefix,SlotFieldList slots,String arg) {
   }
 
   private int nonBuiltinChildCount() {
+    /**
     int count = 0;
     %match(slotList) {
       ConcSlotField(_*,SlotField[Domain=domain],_*) -> {
@@ -241,6 +251,8 @@ private String genStratArgs(String prefix,SlotFieldList slots,String arg) {
       }
     }
     return count;
+    */
+    return slotList.length();
   }
 
   /**
@@ -266,8 +278,9 @@ private String genStratArgs(String prefix,SlotFieldList slots,String arg) {
       ConcSlotField(_*,SlotField[Name=fieldName,Domain=domain],_*) -> {
         if (!getGomEnvironment().isBuiltinClass(`domain)) {
           res += fieldName(`fieldName) + ", ";
+        } else {
+          res += "new tom.library.sl.VisitableBuiltin("+ fieldName(`fieldName) + "), ";
         }
-        // else : Skip builtin childs
       }
     }
     if (res.length() != 0) {
@@ -288,8 +301,10 @@ private String genStratArgs(String prefix,SlotFieldList slots,String arg) {
       ConcSlotField(_*,SlotField[Name=fieldName,Domain=domain],_*) -> {
         if (!getGomEnvironment().isBuiltinClass(`domain)) {
           res += "      case "+index+": return "+fieldName(`fieldName)+";\n";
-          index++;
+        } else {
+          res += "      case "+index+": return new tom.library.sl.VisitableBuiltin("+fieldName(`fieldName)+");\n";
         }
+        index++;
       }
     }
     return res;
@@ -303,8 +318,11 @@ private String genStratArgs(String prefix,SlotFieldList slots,String arg) {
         if (!getGomEnvironment().isBuiltinClass(`domain)) {
           res += %[      case @index@: @fieldName(`fieldName)@ = (tom.library.sl.Strategy) @argName@; return this;
 ]%;
-          index++;
+        } else {
+          res += %[      case @index@: @fieldName(`fieldName)@ =
+            ((tom.library.sl.VisitableBuiltin<@primitiveToReferenceType(fullClassName(`domain))@>) @argName@).getBuiltin(); return this;]%;
         }
+        index++;
       }
     }
     return res;

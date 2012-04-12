@@ -82,7 +82,7 @@
     </tom.preset>
    <tom.preset srcdir="${test.src}"
                 destdir="${test.gen}"
-                options="--genIntrospector --pretty --inline">
+                options="--genIntrospector">
       <include name="sl/TestHandWrittenMapping.t"/>
       <include name="sl/IntrospectorBehaviour.t"/>
     </tom.preset>
@@ -159,7 +159,7 @@
     </tom.preset>
     <tom.preset srcdir="${test.src}"
       destdir="${test.gen}"
-      options="--genIntrospector --pretty --inline">
+      options="--genIntrospector">
       <include name="sl/TestHandWrittenMapping.t"/>
       <include name="sl/IntrospectorBehaviour.t"/>
     </tom.preset>
