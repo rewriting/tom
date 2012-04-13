@@ -104,36 +104,36 @@ public class MappingTemplate extends MappingTemplateClass {
     }
 
     // generate a %typeterm for each class
-    {{if ( (((Object)sortClasses) instanceof tom.gom.adt.objects.types.GomClassList) ) {if ( (((( tom.gom.adt.objects.types.GomClassList )(( tom.gom.adt.objects.types.GomClassList )((Object)sortClasses))) instanceof tom.gom.adt.objects.types.gomclasslist.ConsConcGomClass) || ((( tom.gom.adt.objects.types.GomClassList )(( tom.gom.adt.objects.types.GomClassList )((Object)sortClasses))) instanceof tom.gom.adt.objects.types.gomclasslist.EmptyConcGomClass)) ) { tom.gom.adt.objects.types.GomClassList  tomMatch522__end__4=(( tom.gom.adt.objects.types.GomClassList )((Object)sortClasses));do {{if (!( tomMatch522__end__4.isEmptyConcGomClass() )) { tom.gom.adt.objects.types.GomClass  tomMatch522_8= tomMatch522__end__4.getHeadConcGomClass() ;if ( (tomMatch522_8 instanceof tom.gom.adt.objects.types.GomClass) ) {if ( ((( tom.gom.adt.objects.types.GomClass )tomMatch522_8) instanceof tom.gom.adt.objects.types.gomclass.SortClass) ) {
+    {{if ( (((Object)sortClasses) instanceof tom.gom.adt.objects.types.GomClassList) ) {if ( (((( tom.gom.adt.objects.types.GomClassList )(( tom.gom.adt.objects.types.GomClassList )((Object)sortClasses))) instanceof tom.gom.adt.objects.types.gomclasslist.ConsConcGomClass) || ((( tom.gom.adt.objects.types.GomClassList )(( tom.gom.adt.objects.types.GomClassList )((Object)sortClasses))) instanceof tom.gom.adt.objects.types.gomclasslist.EmptyConcGomClass)) ) { tom.gom.adt.objects.types.GomClassList  tomMatch523__end__4=(( tom.gom.adt.objects.types.GomClassList )((Object)sortClasses));do {{if (!( tomMatch523__end__4.isEmptyConcGomClass() )) { tom.gom.adt.objects.types.GomClass  tomMatch523_8= tomMatch523__end__4.getHeadConcGomClass() ;if ( (tomMatch523_8 instanceof tom.gom.adt.objects.types.GomClass) ) {if ( ((( tom.gom.adt.objects.types.GomClass )tomMatch523_8) instanceof tom.gom.adt.objects.types.gomclass.SortClass) ) {
 
 
 
-        (templates.get( tomMatch522_8.getClassName() ))
+        (templates.get( tomMatch523_8.getClassName() ))
           .generateTomMapping(writer);
-      }}}if ( tomMatch522__end__4.isEmptyConcGomClass() ) {tomMatch522__end__4=(( tom.gom.adt.objects.types.GomClassList )((Object)sortClasses));} else {tomMatch522__end__4= tomMatch522__end__4.getTailConcGomClass() ;}}} while(!( (tomMatch522__end__4==(( tom.gom.adt.objects.types.GomClassList )((Object)sortClasses))) ));}}}}
+      }}}if ( tomMatch523__end__4.isEmptyConcGomClass() ) {tomMatch523__end__4=(( tom.gom.adt.objects.types.GomClassList )((Object)sortClasses));} else {tomMatch523__end__4= tomMatch523__end__4.getTailConcGomClass() ;}}} while(!( (tomMatch523__end__4==(( tom.gom.adt.objects.types.GomClassList )((Object)sortClasses))) ));}}}}
 
 
     // generate a %op for each operator
-    {{if ( (((Object)operatorClasses) instanceof tom.gom.adt.objects.types.GomClassList) ) {if ( (((( tom.gom.adt.objects.types.GomClassList )(( tom.gom.adt.objects.types.GomClassList )((Object)operatorClasses))) instanceof tom.gom.adt.objects.types.gomclasslist.ConsConcGomClass) || ((( tom.gom.adt.objects.types.GomClassList )(( tom.gom.adt.objects.types.GomClassList )((Object)operatorClasses))) instanceof tom.gom.adt.objects.types.gomclasslist.EmptyConcGomClass)) ) { tom.gom.adt.objects.types.GomClassList  tomMatch523__end__4=(( tom.gom.adt.objects.types.GomClassList )((Object)operatorClasses));do {{if (!( tomMatch523__end__4.isEmptyConcGomClass() )) { tom.gom.adt.objects.types.GomClass  tomMatch523_8= tomMatch523__end__4.getHeadConcGomClass() ;if ( (tomMatch523_8 instanceof tom.gom.adt.objects.types.GomClass) ) {if ( ((( tom.gom.adt.objects.types.GomClass )tomMatch523_8) instanceof tom.gom.adt.objects.types.gomclass.OperatorClass) ) {
+    {{if ( (((Object)operatorClasses) instanceof tom.gom.adt.objects.types.GomClassList) ) {if ( (((( tom.gom.adt.objects.types.GomClassList )(( tom.gom.adt.objects.types.GomClassList )((Object)operatorClasses))) instanceof tom.gom.adt.objects.types.gomclasslist.ConsConcGomClass) || ((( tom.gom.adt.objects.types.GomClassList )(( tom.gom.adt.objects.types.GomClassList )((Object)operatorClasses))) instanceof tom.gom.adt.objects.types.gomclasslist.EmptyConcGomClass)) ) { tom.gom.adt.objects.types.GomClassList  tomMatch524__end__4=(( tom.gom.adt.objects.types.GomClassList )((Object)operatorClasses));do {{if (!( tomMatch524__end__4.isEmptyConcGomClass() )) { tom.gom.adt.objects.types.GomClass  tomMatch524_8= tomMatch524__end__4.getHeadConcGomClass() ;if ( (tomMatch524_8 instanceof tom.gom.adt.objects.types.GomClass) ) {if ( ((( tom.gom.adt.objects.types.GomClass )tomMatch524_8) instanceof tom.gom.adt.objects.types.gomclass.OperatorClass) ) {
 
 
 
         //System.out.println("templates = " + templates);
         //System.out.println("opname    = " + `opName);
         //System.out.println("result    = " + templates.get(`opName));
-        (templates.get( tomMatch523_8.getClassName() ))
-          .generateTomMapping(writer);
-      }}}if ( tomMatch523__end__4.isEmptyConcGomClass() ) {tomMatch523__end__4=(( tom.gom.adt.objects.types.GomClassList )((Object)operatorClasses));} else {tomMatch523__end__4= tomMatch523__end__4.getTailConcGomClass() ;}}} while(!( (tomMatch523__end__4==(( tom.gom.adt.objects.types.GomClassList )((Object)operatorClasses))) ));}}}}
-
-
-    // generate a %oplist for each variadic operator
-    {{if ( (((Object)operatorClasses) instanceof tom.gom.adt.objects.types.GomClassList) ) {if ( (((( tom.gom.adt.objects.types.GomClassList )(( tom.gom.adt.objects.types.GomClassList )((Object)operatorClasses))) instanceof tom.gom.adt.objects.types.gomclasslist.ConsConcGomClass) || ((( tom.gom.adt.objects.types.GomClassList )(( tom.gom.adt.objects.types.GomClassList )((Object)operatorClasses))) instanceof tom.gom.adt.objects.types.gomclasslist.EmptyConcGomClass)) ) { tom.gom.adt.objects.types.GomClassList  tomMatch524__end__4=(( tom.gom.adt.objects.types.GomClassList )((Object)operatorClasses));do {{if (!( tomMatch524__end__4.isEmptyConcGomClass() )) { tom.gom.adt.objects.types.GomClass  tomMatch524_8= tomMatch524__end__4.getHeadConcGomClass() ;if ( (tomMatch524_8 instanceof tom.gom.adt.objects.types.GomClass) ) {if ( ((( tom.gom.adt.objects.types.GomClass )tomMatch524_8) instanceof tom.gom.adt.objects.types.gomclass.VariadicOperatorClass) ) {
-
-
-
         (templates.get( tomMatch524_8.getClassName() ))
           .generateTomMapping(writer);
       }}}if ( tomMatch524__end__4.isEmptyConcGomClass() ) {tomMatch524__end__4=(( tom.gom.adt.objects.types.GomClassList )((Object)operatorClasses));} else {tomMatch524__end__4= tomMatch524__end__4.getTailConcGomClass() ;}}} while(!( (tomMatch524__end__4==(( tom.gom.adt.objects.types.GomClassList )((Object)operatorClasses))) ));}}}}
+
+
+    // generate a %oplist for each variadic operator
+    {{if ( (((Object)operatorClasses) instanceof tom.gom.adt.objects.types.GomClassList) ) {if ( (((( tom.gom.adt.objects.types.GomClassList )(( tom.gom.adt.objects.types.GomClassList )((Object)operatorClasses))) instanceof tom.gom.adt.objects.types.gomclasslist.ConsConcGomClass) || ((( tom.gom.adt.objects.types.GomClassList )(( tom.gom.adt.objects.types.GomClassList )((Object)operatorClasses))) instanceof tom.gom.adt.objects.types.gomclasslist.EmptyConcGomClass)) ) { tom.gom.adt.objects.types.GomClassList  tomMatch525__end__4=(( tom.gom.adt.objects.types.GomClassList )((Object)operatorClasses));do {{if (!( tomMatch525__end__4.isEmptyConcGomClass() )) { tom.gom.adt.objects.types.GomClass  tomMatch525_8= tomMatch525__end__4.getHeadConcGomClass() ;if ( (tomMatch525_8 instanceof tom.gom.adt.objects.types.GomClass) ) {if ( ((( tom.gom.adt.objects.types.GomClass )tomMatch525_8) instanceof tom.gom.adt.objects.types.gomclass.VariadicOperatorClass) ) {
+
+
+
+        (templates.get( tomMatch525_8.getClassName() ))
+          .generateTomMapping(writer);
+      }}}if ( tomMatch525__end__4.isEmptyConcGomClass() ) {tomMatch525__end__4=(( tom.gom.adt.objects.types.GomClassList )((Object)operatorClasses));} else {tomMatch525__end__4= tomMatch525__end__4.getTailConcGomClass() ;}}} while(!( (tomMatch525__end__4==(( tom.gom.adt.objects.types.GomClassList )((Object)operatorClasses))) ));}}}}
 
     /* Include the strategy mapping (_file.tom) if needed */
     if(strategyMapping != null) {
