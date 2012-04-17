@@ -201,6 +201,22 @@ public class ASTFactory {
     }
     return list;
   }*/
+  public static ElementaryTransformationList makeElementaryTransformationList(List<ElementaryTransformation> argumentList) {
+    ElementaryTransformationList list = `concElementaryTransformation();
+    for(int i=argumentList.size()-1; i>=0 ; i--) {
+      list = `concElementaryTransformation(argumentList.get(i),list*);
+    }
+    return list;
+  }
+
+  public static RuleInstructionList makeRuleInstructionList(List<RuleInstruction> argumentList) {
+    RuleInstructionList list = `concRuleInstruction();
+    for(int i=argumentList.size()-1; i>=0 ; i--) {
+      list = `concRuleInstruction(argumentList.get(i),list*);
+    }
+    return list;
+  }
+
 
   public static ResolveStratElementList makeResolveStratElementList(List<ResolveStratElement> argumentList){
     ResolveStratElementList list = `concResolveStratElement();

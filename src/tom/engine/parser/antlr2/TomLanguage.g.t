@@ -771,6 +771,10 @@ transformationConstruct [Option orgTrack] returns [Declaration result] throws To
 //  TomWithToList astWithToList = `concTomWithTo();
   List<Declaration> declList = new LinkedList<Declaration>();
   DeclarationList astDeclarationList = `concDeclaration();
+
+  List<ElementaryTransformation> elemTransfoList = new LinkedList<ElementaryTransformation>();
+  ElementaryTransformationList astElemTransfoList = `concElementaryTransformation();
+
   List<Declaration> subDeclList = new LinkedList<Declaration>();
   TomTypeList types = `concTomType();
   TomTypeList rtypes = `concTomType();
@@ -989,7 +993,7 @@ transformationConstruct [Option orgTrack] returns [Declaration result] throws To
                //add "ResolveOp" symbol into SymbolTable
                putSymbol(resolveStringName,astSymbol);
 
-               /*cf. later in ResolveDecl*/
+               //cf. later in ResolveDecl
                //add a SymbolDecl in the TransformationDecl declarations list
                //declList.add(`SymbolDecl(Name(resolveStringName)));
                //end %op gen
@@ -1004,24 +1008,7 @@ transformationConstruct [Option orgTrack] returns [Declaration result] throws To
                    extendsName = `code.getCode();
                  }
                }
-               /*if(extendsName==null) {
-                 TomMessage.error(getLogger(), currentFile(), getLine(),
-                        TomMessage...,
-                        ..);
-               }*/
 
-               /*cf. later in ResolveDecl*/
-               //declList.add(`ResolveClassDecl(wName, tName, extendsName));//resolve class
-               //declList.add(`ResolveTypeTermDecl(resolveName,resolveTTDecl,resolveOrgTrack));//%typeterm
-
-               //ResolveDecl(typeterm,op,class)
-  /*             declList.add(
-                   `ResolveDecl(
-                     TypeTermDecl(resolveName,resolveTTDecl,resolveOrgTrack),
-                     SymbolDecl(Name(resolveStringName)),
-                     ResolveClassDecl(wName, tName, extendsName)
-                     )
-                   );*/
                //Pourquoi ? ; pourquoi pas plutôt : 
                declList.add(`TypeTermDecl(resolveName,resolveTTDecl,resolveOrgTrack));
                declList.add(`SymbolDecl(Name(resolveStringName)));
@@ -1037,11 +1024,17 @@ transformationConstruct [Option orgTrack] returns [Declaration result] throws To
            astResolveStratBlockList =
              ASTFactory.makeResolveStratBlockList(resolveStratBlockList);
            declList.add(`ResolveStratDecl(name.getText(),astResolveStratBlockList,ot));
+           astDeclarationList = ASTFactory.makeDeclarationList(declList);
            // ot ou  orgTrack ?
          }
         )
         LBRACE
-        transformationBlockList[declList, name.getText()] { astDeclarationList = ASTFactory.makeDeclarationList(declList); }
+        //transformationBlockList[declList, name.getText()] { astDeclarationList = ASTFactory.makeDeclarationList(declList); }
+        //elementaryTransformationList[declList, name.getText()] { astDeclarationList = ASTFactory.makeDeclarationList(declList); }
+        elementaryTransformationList[elemTransfoList, name.getText()]
+        {
+          astElemTransfoList = ASTFactory.makeElementaryTransformationList(elemTransfoList);
+        }
         t:RBRACE
        {
          //let's define the SymbolDecl and TomSymbol
@@ -1089,19 +1082,68 @@ transformationConstruct [Option orgTrack] returns [Declaration result] throws To
 
          updatePosition(t.getLine(),t.getColumn());
          //work in progress
-         result = `AbstractDecl(concDeclaration(
-               TransformationDecl(Name(name.getText()),types,astDeclarationList,orgTrack),
-               SymbolDecl(Name(name.getText()))));
+         //result = `AbstractDecl(concDeclaration(
+         //      TransformationDecl(Name(name.getText()),types,astDeclarationList,orgTrack),
+          //     SymbolDecl(Name(name.getText()))));
+         //new
+         result = `AbstractDecl(concDeclaration(Transformation(Name(name.getText()),types,astDeclarationList,astElemTransfoList,orgTrack),SymbolDecl(Name(name.getText()))));
          selector().pop();
        }
      )
     ;
 
-transformationBlockList [List<Declaration> declList, String toname] throws TomException
-    :   ( transformationBlock[declList, toname] )*
+elementaryTransformationList [List<ElementaryTransformation> elemTransfoList, String transfoName] throws TomException
+    : ( elementaryTransformation[elemTransfoList, transfoName] )*
     ;
 
-transformationBlock [List<Declaration> declList, String toname] throws TomException
+//elementaryTransformation [List<Declaration> declList, String transfoName] throws TomException
+elementaryTransformation [List<ElementaryTransformation> elemTransfoList, String transfoName] throws TomException
+{
+    BQTerm traversal = null;
+    String strName = "";
+    String strTraversal = "";
+    Option orgTrack = `noOption();
+    //TransfoStratInfo info = `TransfoStratInfo(strName,strTraversal,orgTrack);
+    TransfoStratInfo info = null; //`TransfoStratInfo2(strName,traversal,orgTrack);
+    //List<Declaration> subDecl = new LinkedList<Declaration>();
+    List<RuleInstruction> ruleInstructionList = new LinkedList<RuleInstruction>();
+    clearText();
+}
+    : 
+    ( ELEMENTARY name:ALL_ID TRAVERSAL (BACKQUOTE)? traversal = plainBQTerm )
+    {
+      if(name!=null) {
+        strName = name.getText();
+        orgTrack = `OriginTracking(Name(strName),name.getLine(),currentFile());
+      } else {
+        TomMessage.error(getLogger(),currentFile(), getLine(),
+            TomMessage.unamedTransformationRule, transfoName);
+      }
+      info = `TransfoStratInfo2(strName,traversal,orgTrack);
+    }
+    LBRACE
+    //transformationWithToList[info, subDecl, transfoName]
+      //transformationWithToList[info, ruleInstructionList, transfoName]
+      ( transformationWithTo[info, ruleInstructionList, transfoName] )*
+    RBRACE
+    {
+      List<Option> optionList = new LinkedList<Option>();
+      optionList.add(orgTrack);
+      OptionList options = ASTFactory.makeOptionList(optionList);
+      //declList.add(`ElementaryTransfoDecl(Name(strName), traversal, ASTFactory.makeDeclarationList(subDecl), orgTrack));
+      elemTransfoList.add(`ElementaryTransformation(Name(strName), traversal,
+            ASTFactory.makeRuleInstructionList(ruleInstructionList),
+            options));
+    }
+    ;
+
+
+
+/*transformationBlockList [List<Declaration> declList, String toname] throws TomException
+    :   ( transformationBlock[declList, toname] )*
+    ;*/
+
+/*transformationBlock [List<Declaration> declList, String toname] throws TomException
 {
   String strName = "";
   String strTraversal = "";
@@ -1129,9 +1171,9 @@ transformationBlock [List<Declaration> declList, String toname] throws TomExcept
        transformationReference [info, declList, toname]
      | transformationWithTo [info, declList, toname]
     )
-    ;
+    ;*/
 
-transformationReference [TransfoStratInfo info, List<Declaration> declList, String toname] throws TomException
+/*transformationReference [TransfoStratInfo info, List<Declaration> declList, String toname] throws TomException
 {
   String refName = null;
   Declaration reference;
@@ -1149,41 +1191,36 @@ transformationReference [TransfoStratInfo info, List<Declaration> declList, Stri
       RBRACE
       { declList.add(`ReferenceDecl(info, refName, ASTFactory.makeDeclarationList(subDecl), orgTrack)); }
     )
+    ;*/
+
+    //rename this rule into elemntaryTransformationRuleList
+//transformationWithToList [TransfoStratInfo info, List<Declaration> declList, String toname] throws TomException
+transformationWithToList [TransfoStratInfo info, List<RuleInstruction> ruleInstructionList, String transfoName] throws TomException
+    //:   ( transformationWithTo[info, declList, toname] )*
+    :   ( transformationWithTo[info, ruleInstructionList, transfoName] )*
     ;
 
-transformationWithToList [TransfoStratInfo info, List<Declaration> declList, String toname] throws TomException
-    :   ( transformationWithTo[info, declList, toname] )*
-    ;
-
-transformationWithTo [TransfoStratInfo info, List<Declaration> declList, String toname] throws TomException
+    //rename this rule into elementaryTransformationRule
+//transformationWithTo [TransfoStratInfo info, List<Declaration> declList, String toname] throws TomException
+transformationWithTo [TransfoStratInfo info, List<RuleInstruction> ruleInstructionList, String transfoName] throws TomException
 {
   //to clean
-
-//  TomWithTerm wTerm = null;
-  List argsList = new LinkedList(); //args
   List<Code> toInstructionList = new LinkedList<Code>();
-  List<Option> argsOptionList = new LinkedList<Option>();
   List<Code> blockList = new LinkedList<Code>(); //for the withToInstruction ('To' part)
   BQTerm rhsTerm; //id
   clearText();
   TomTerm lhs;
-
-  TomName sname;
-  List<TomVisit> visitList = new LinkedList<TomVisit>();
-  TomVisitList astVisitList = `concTomVisit();
-  BQTerm extendsTerm;
-  List<ConstraintInstruction> constraintInstructionList = new LinkedList<ConstraintInstruction>();
-  TomType vType = null;
-  clearText();
   
   TomName tomTermName = `EmptyName();
   int lhsLine = 0;
   Constraint constraint;
   BQTerm subject;
+  
+  List<Option> optionList = new LinkedList<Option>();
 }
     :
     (
-           lhs = annotatedTerm[true] ARROW
+     lhs = annotatedTerm[true] ARROW
      (
       (
        t:LBRACE
@@ -1197,13 +1234,13 @@ transformationWithTo [TransfoStratInfo info, List<Declaration> declList, String 
        // target parser finished : pop the target lexer
        selector().pop();
        blockList.add(`TargetLanguageToCode(tlCode));
-       toInstructionList.add(`InstructionToCode(AbstractBlock(ASTFactory.makeInstructionList(blockList))));
+       //toInstructionList.add(`InstructionToCode(AbstractBlock(ASTFactory.makeInstructionList(blockList))));
        }
       )
       | rhsTerm = plainBQTerm
       {
-      // case where the rhs of a rule is an algebraic term
-      toInstructionList.add(`InstructionToCode(Return(rhsTerm)));
+      blockList.add(`InstructionToCode(Return(rhsTerm)));
+      //toInstructionList.add(`InstructionToCode(Return(rhsTerm)));
       }
      )
     )
@@ -1219,16 +1256,13 @@ transformationWithTo [TransfoStratInfo info, List<Declaration> declList, String 
         lhsLine = `line;
       }
     }
-    List<Option> optionList = new LinkedList<Option>();
-    //optionList.add(`OriginTracking(Name(toname),term.getLine(),currentFile()));
+    //optionList.add(`OriginTracking(Name(transfoName),term.getLine(),currentFile()));
     optionList.add(`OriginTracking(tomTermName,lhsLine,currentFile()));
     OptionList options = ASTFactory.makeOptionList(optionList);
     
-    Option orgTrack = `OriginTracking(Name("Strategy"), lhsLine, currentFile());
-//    sname = `Name(tomTermName.getString()+"To"+toname);
-//    declList.add(`Strategy(sname,extendsTerm,astVisitList,orgTrack));
-    declList.add(`TransfoStratDecl(info,tomTermName,lhs,ASTFactory.makeInstructionList(blockList),options,orgTrack));
-    //declList.add(`AbstractDecl(concDeclaration(Strategy(sname,extendsTerm,astVisitList,orgTrack), SymbolDecl(sname))));
+    //Option orgTrack = `OriginTracking(Name("Strategy"), lhsLine, currentFile());
+    //ruleInstructionList.add(`TransfoStratDecl(info,tomTermName,lhs,ASTFactory.makeInstructionList(blockList),options,orgTrack));
+    ruleInstructionList.add(`RuleInstruction(tomTermName.getString(),lhs,ASTFactory.makeInstructionList(blockList),options));
     }
     ;
 
@@ -2963,9 +2997,12 @@ tokens {
     GET_ELEMENT = "get_element";
     GET_SIZE = "get_size";
     WHEN = "when";
+    //to clean
     WITH = "with";
     TO = "to";
     REFERENCE = "reference";
+    TRAVERSAL = "traversal";
+    ELEMENTARY = "rule";
 }
 
 LBRACE      :   '{' ;

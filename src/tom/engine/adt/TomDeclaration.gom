@@ -19,10 +19,11 @@ Declaration = TypeTermDecl(AstName:TomName,Declarations:DeclarationList,OrgTrack
             | MakeAddArray(AstName:TomName,VarElt:BQTerm,VarList:BQTerm,Instr:Instruction,OrgTrack:Option)
             | MakeDecl(AstName:TomName,AstType:TomType,Args:BQTermList,Instr:Instruction,OrgTrack:Option)
             | Strategy(SName:TomName,ExtendsTerm:BQTerm,VisitList:TomVisitList,OrgTrack:Option)
-            //| Transformation(TName:TomName,WithToList:TomWithToList,OrgTrack:Option) //Options:OptionList ??
 ///
             | TransformationDecl(TName:TomName,Domain:TomTypeList,Declarations:DeclarationList,OrgTrack:Option)
-            | TransfoStratDecl(Info:TransfoStratInfo,TSName:TomName,Term:TomTerm,Instructions:InstructionList,Options:OptionList,OrgTrack:Option)//pb avec les options
+            | Transformation(TName:TomName,Domain:TomTypeList,Declarations:DeclarationList,ElementaryTList:ElementaryTransformationList,OrgTrack:Option)
+            | ElementaryTransfoDecl(ETName:TomName,Traversal:BQTerm,Declarations:DeclarationList,OrgTrack:Option)
+            | TransfoStratDecl(Info:TransfoStratInfo,TSName:TomName,Term:TomTerm,Instructions:InstructionList,Options:OptionList,OrgTrack:Option)//pb avec les options//TransfoRuleDecl
             | ResolveStratDecl(TransfoName:String,ResList:ResolveStratBlockList,OriginTracking:Option)
             | ResolveTypeTermDecl(AstName:TomName,Declarations:DeclarationList,OrgTrack:Option)//useful?
             | ResolveDecl(typeterm:Declaration,op:Declaration,class:Declaration) //encapsulation
@@ -57,3 +58,4 @@ DeclarationList = concDeclaration(Declaration*)
 
 //TODO: find better names
 TransfoStratInfo = TransfoStratInfo(Name:String,Traversal:String,OrgTrack:Option)
+                 | TransfoStratInfo2(Name:String,TraversalStrategy:BQTerm,OrgTrack:Option)
