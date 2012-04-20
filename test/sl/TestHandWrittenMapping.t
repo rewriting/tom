@@ -71,7 +71,6 @@ public class TestHandWrittenMapping {
 
 
   // mappings
-
   %typeterm Term {
     implement     { Term }  
     is_sort(t)    { ($t instanceof Term) }
@@ -96,19 +95,33 @@ public class TestHandWrittenMapping {
     equals(l1,l2) { $l1.equals($l2) }
   }
 
-  %oparray List l(Term*) {
-    is_fsym(t) { $t instanceof List }
-    make_empty(n)    { new ArrayList($n) }
-    make_append(e,l) { myAdd($e,(ArrayList)$l) }
-    get_element(l,n) { ((Term)((ArrayList)$l).get($n)) }
-    get_size(l)      { ((ArrayList)$l).size() }
+  %oplist List l(Term*) {
+    is_fsym(t) { t instanceof List }
+    make_empty()  { new LinkedList() }
+    make_insert(e,l) { insert($e,$l) }
+    get_head(l)   { ((Term)$l.get(0)) }
+    get_tail(l)   { $l.subList(1,$l.size()) }
+    is_empty(l)   { $l.isEmpty() }
   }
 
-  private static ArrayList myAdd(Object e, ArrayList l) {
+  %oparray List t(Term*) {
+    is_fsym(t) { $t instanceof List }
+    make_empty(n)    { new ArrayList($n) }
+    make_append(e,l) { add($e,$l) }
+    get_element(l,n) { ((Term)$l.get($n)) }
+    get_size(l)      { $l.size() }
+  }
+
+  private static List add(Object e, List l) {
     l.add(e);
     return l;
   }
 
+  private static List insert(Object e, List l) {
+    l.add(0,e);
+    return l;
+  }
+  
   %strategy R() extends Identity() {
     visit Term {
       f(x) -> { return `x; }
@@ -145,6 +158,47 @@ public class TestHandWrittenMapping {
         assertEquals(`a(), `InnermostId(R()).visit(t, new LocalIntrospector()));
       } catch (VisitFailure e) { fail(); }
     }
+
+  @Test
+    public void testOpList() {
+      try {
+        List l = `l(a(),a(),a());
+        assertEquals(`l(f(a()),f(a()),f(a())), `All(R2()).visit(l, new LocalIntrospector()));
+      } catch (VisitFailure e) { fail(); }
+    }
+
+  @Test
+    public void testOpArray1() {
+      try {
+        List t = `t(a(),a(),a());
+        assertEquals(`t(f(a()),f(a()),f(a())),`All(R2()).visit(t, new LocalIntrospector()));
+       } catch (VisitFailure e) { fail(); }
+    }
+
+  @Test
+    public void testOpArray2() {
+      try {
+        List t = `t(f(f(f(a()))),a(),f(f(f(a()))));
+        assertEquals(`t(f(a()),a(),f(a())), `TopDown(R()).visit(t, new LocalIntrospector()));
+      } catch (VisitFailure e) { fail(); }
+    }
+
+  @Test
+    public void testOpArray3() {
+      try {
+        List t = `t(f(a()),a(),f(a()));
+        assertEquals(`t(f(f(a())),f(a()),f(f(a()))), `BottomUp(R2()).visit(t, new LocalIntrospector()));
+      } catch (VisitFailure e) { fail(); }
+    }
+
+  @Test
+    public void testOpArray4() {
+      try {
+        List t = `t(f(f(f(a()))),a(),f(f(f(a()))));
+        assertEquals(`t(a(),a(),a()), `InnermostId(R()).visit(t, new LocalIntrospector()));
+      } catch (VisitFailure e) { fail(); }
+    }
+
 
 
   public static void main(String[] args) {
