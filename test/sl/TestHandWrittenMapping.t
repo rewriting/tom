@@ -96,7 +96,7 @@ public class TestHandWrittenMapping {
   }
 
   %oplist List l(Term*) {
-    is_fsym(t) { t instanceof List }
+    is_fsym(t) { $t instanceof List }
     make_empty()  { new LinkedList() }
     make_insert(e,l) { insert($e,$l) }
     get_head(l)   { ((Term)$l.get(0)) }
