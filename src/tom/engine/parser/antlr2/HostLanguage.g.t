@@ -422,6 +422,7 @@ blockList [List<Code> list] throws TomException
             matchConstruct[list]
         |   strategyConstruct[list]
         |   transformationConstruct[list] 
+        |   tracelinkConstruct[list]
         |   gomsignature[list]
         |   backquoteTerm[list]
         |   operator[list]
@@ -490,6 +491,29 @@ transformationConstruct [List<Code> list] throws TomException
             list.add(`DeclarationToCode(transformation));
         }
     ;
+
+tracelinkConstruct [List<Code> list] throws TomException
+{
+    TargetLanguage code = null;
+}
+    :
+        t:TRACELINK
+        {
+            String textCode = getCode();
+            if(isCorrect(textCode)) {
+                code = `TL(
+                    textCode,
+                    TextPosition(currentLine,currentColumn),
+                    TextPosition(t.getLine(),t.getColumn())
+                );
+                list.add(`TargetLanguageToCode(code));
+            }
+            Option ot = `OriginTracking(Name("Tracelink"), t.getLine(), currentFile);
+            Instruction tracelink = tomparser.tracelinkConstruct(ot);
+            list.add(`InstructionToCode(tracelink));
+        }
+    ;
+
 
 matchConstruct [List<Code> list] throws TomException
 {
@@ -964,6 +988,9 @@ SUBTYPE
     ;
 TRANSFORMATION
     : "%transformation" {selector().push("tomlexer");}
+    ;
+TRACELINK
+    : "%tracelink" {selector().push("tomlexer");}
     ;
 TYPETERM
     : "%typeterm" {selector().push("tomlexer");}

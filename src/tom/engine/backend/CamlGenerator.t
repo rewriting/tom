@@ -470,21 +470,39 @@ public class CamlGenerator extends GenericGenerator {
 
   //FIXME
   //TODO: to implement
-  protected String genResolveIsSortCode(String varName, String
-      resolveStringName) throws IOException {
-    return "";
+  protected String genResolveIsSortCode(String varName, String resolveStringName) throws IOException {
+    throw new TomRuntimeException("%transformation (ResolveIsSort) not yet supported in Caml");
+    //return "";
   }
 
   protected String genResolveIsFsymCode(String tomName, String varname) throws IOException {
-    return "";
+    throw new TomRuntimeException("%transformation (ResolveIsFsym) not yet supported in Caml");
+    //return "";
   }
 
   protected String genResolveGetSlotCode(String tomName, String varname, String slotName) throws IOException {
-    return "";
+    throw new TomRuntimeException("%transformation (ResolveGetSlot) not yet supported in Caml");
+    //return "";
   }
   
-  protected void buildResolveClass(String wName, String tName, String extendsName) throws IOException {}
-  protected void genResolveDeclMake(String prefix, String funName, TomType returnType, BQTermList argList, String moduleName) throws IOException {}
-  protected void buildResolveStratInstruction(String name) throws IOException {}
+  protected void buildResolveClass(String wName, String tName, String extendsName, String moduleName) throws IOException {
+    throw new TomRuntimeException("%transformation (ResolveClass) not yet supported in Caml");
+  }
+
+  protected void genResolveDeclMake(String prefix, String funName, TomType returnType, BQTermList argList, String moduleName) throws IOException {
+    throw new TomRuntimeException("%transformation (ResolveMakeDecl) not yet supported in Caml");
+  }
+
+  protected void buildResolveStratInstruction(String name) throws IOException {
+    throw new TomRuntimeException("%transformation (ResolveStratInstruction) not yet supported in Caml");
+  }
+
+  protected void buildReferenceClass(int deep, String refname, RefClassTracelinkInstructionList refclassTInstructions, String  moduleName) {
+    throw new TomRuntimeException("%transformation (ResolveReferenceClass) not yet supported in Caml");
+  }
+
+  protected void buildTracelink(int deep, String type, String name, Expression expr, String moduleName) throws IOException {
+    throw new TomRuntimeException("%transformation (Tracelink instruction) not yet supported in Caml");
+  }
 ///
 }

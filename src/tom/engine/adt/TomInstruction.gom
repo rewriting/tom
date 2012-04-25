@@ -50,6 +50,11 @@ Instruction =
    */
   | RawAction(AstInstruction:Instruction)
   | ResolveStratInstruction(TargetType:TomType)
+  | Tracelink(Type:TomName,Name:TomName,ElementaryTransfoName:TomName,Expr:Expression,OrgTrack:Option)//BQTerm, then blocklist
+
+RefClassTracelinkInstruction = RefClassTracelinkInstruction(Type:TomName,Name:TomName)
+
+RefClassTracelinkInstructionList = concRefClassTracelinkInstruction(RefClassTracelinkInstruction*)
 
 /*
  * <code>ConstraintInstruction</code> a line in a match instruction - a tuple (Constraint,Action)

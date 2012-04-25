@@ -141,6 +141,14 @@ options{
         return tomlexer.getLine();
     }
 
+    private int getColumn() {
+        return tomlexer.getColumn();
+    }
+
+    public void updatePosition(){
+      updatePosition(getLine(),getColumn());
+    }
+
     public void updatePosition(int i, int j) {
         targetparser.updatePosition(i,j);
     }
@@ -762,6 +770,62 @@ strategyVisit [List<TomVisit> list] throws TomException
 
 //////////////////////////////////////////////////////////////////
 
+/*tracelinkConstruct [Option orgTrack] returns [Declaration result] throws TomException
+{
+  result=null;
+  TomName type=null;
+  TomName name=null;
+  TomName elemTransfoName = `EmptyName();//will probably disappear
+  clearText();
+}
+    : 
+     LPAREN t:ALL_ID COMMA n:ALL_ID RPAREN
+     {
+       type=`Name(t.getText());
+       name=`Name(n.getText());
+     }
+     t1:LBRACE
+       {
+       updatePosition(t1.getLine(),t1.getColumn());
+       List<Code> blockList = new LinkedList<Code>();
+       selector().push("targetlexer");
+       TargetLanguage tlCode = targetparser.targetLanguage(blockList);
+       selector().pop();
+       blockList.add(`TargetLanguageToCode(tlCode));
+       //System.out.println("###(DEBUG) TomL tracelinkConstruct###\nblockList=\n"+blockList+"\n###");
+       Expression expression;
+       if(blockList.size()==1) {
+         String code = tlCode.getCode();
+         expression = `Code(code);
+       } else {
+         InstructionList instructions = ASTFactory.makeInstructionList(blockList);
+         expression = `TomInstructionToExpression(AbstractBlock(instructions));
+       }
+       result = `TracelinkDecl(type,name,elemTransfoName,expression,orgTrack);
+       selector().pop();
+       }
+    ;*/
+
+//%tracelink(Transition, t_start, i`Transition[name=n+"_start"]);
+tracelinkConstruct [Option orgTrack] returns [Instruction result] throws TomException
+{
+  result=null;
+  BQTerm bqterm = null;
+  TomName elemTransfoName = `EmptyName();//will probably disappear
+}
+    : 
+     t1:LPAREN t:ALL_ID COMMA n:ALL_ID COMMA (BACKQUOTE)? bqterm = plainBQTerm t2:RPAREN
+     {
+       TomName type=`Name(t.getText());
+       TomName name=`Name(n.getText());
+       Expression expression = `BQTermToExpression(bqterm);
+       result = `Tracelink(type,name,elemTransfoName,expression,orgTrack);
+       updatePosition(t2.getLine(),t2.getColumn());
+       selector().pop();
+     }
+    ;
+
+
 // The %transformation construct : looks like the %strategy
 transformationConstruct [Option orgTrack] returns [Declaration result] throws TomException
 {
@@ -906,7 +970,6 @@ transformationConstruct [Option orgTrack] returns [Declaration result] throws To
                // - java code -> ResolveClassDecl
                // - %op -> SymbolDecl (+ TomSymbol)
                
-               //ResolveIsSortDecl(
                DeclarationList resolveTTDecl= `concDeclaration(
                    IsSortDecl(
                      BQVariable(
@@ -1037,6 +1100,7 @@ transformationConstruct [Option orgTrack] returns [Declaration result] throws To
         }
         t:RBRACE
        {
+         updatePosition(t.getLine(),t.getColumn());//
          //let's define the SymbolDecl and TomSymbol
          //it should be quite similar to strategyConstruct
          //MakeDecl
@@ -1195,10 +1259,10 @@ elementaryTransformation [List<ElementaryTransformation> elemTransfoList, String
 
     //rename this rule into elemntaryTransformationRuleList
 //transformationWithToList [TransfoStratInfo info, List<Declaration> declList, String toname] throws TomException
-transformationWithToList [TransfoStratInfo info, List<RuleInstruction> ruleInstructionList, String transfoName] throws TomException
+/*transformationWithToList [TransfoStratInfo info, List<RuleInstruction> ruleInstructionList, String transfoName] throws TomException
     //:   ( transformationWithTo[info, declList, toname] )*
     :   ( transformationWithTo[info, ruleInstructionList, transfoName] )*
-    ;
+    ;*/
 
     //rename this rule into elementaryTransformationRule
 //transformationWithTo [TransfoStratInfo info, List<Declaration> declList, String toname] throws TomException
@@ -2456,7 +2520,6 @@ typeTerm returns [Declaration result] throws TomException
           TomType astType = `Type(typeoptionList,currentTypeName,TLType(implement.getCode()));
           putType(currentTypeName, astType);
           result = `TypeTermDecl(Name(currentTypeName),declarationList,ot);
-//          System.out.println("(DEBUG) parser - TypeTermDecl =\n" + result);
           updatePosition(t.getLine(),t.getColumn());
           selector().pop();
         }

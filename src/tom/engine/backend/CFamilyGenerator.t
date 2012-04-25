@@ -288,7 +288,8 @@ public abstract class CFamilyGenerator extends GenericGenerator {
                                          String slotName) throws IOException {
     return " (("+tomName+")"+varName+")."+slotName+" ";
   }
- 
+
+
   //TODO: retrieve the information about the FQN of wName and extends
   protected void buildResolveClass(String wName, String tName, String extendsName, String moduleName) throws
     IOException {
@@ -317,6 +318,11 @@ output.write(%[private static class @resolveStringName@ extends @extendsName@ {
 return res;]%);
   }
 
+  /*protected void buildTracelink(int deep, String type, String name, Expression expr, String moduleName) throws IOException {
+    output.write(type+" "+name+" = ");
+    generateExpression(deep,expr,moduleName);
+    output.writeln(";");
+  }*/
  
   //TODO: move this code in JavaGenerator
   protected String genResolveMakeCode(String funName,

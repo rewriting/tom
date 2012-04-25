@@ -148,24 +148,34 @@ public class JavaGenerator extends CFamilyGenerator {
     }
 
   //TODO: add attributes, get/set + EObject get(String)
-  protected void buildReferenceClass(int deep, String name, String moduleName)
+  //protected void buildReferenceClass(int deep, String refname,
+  //InstructionList instructions, String moduleName)a
+  protected void buildReferenceClass(int deep, String refname, RefClassTracelinkInstructionList refclassTInstructions, String moduleName)
   throws IOException {
     output.write(%[
-public static class @name@ implements tom.library.utils.ReferenceClass {
-  //TODO: something like that
-  //private Node p_ready; //EObject?
-
-  //public void setp_ready(Node n) { p_ready = n; }
-
-  //public Node getp_ready() { return p_ready; }
-
-  /*public Node get(String name)  {//EObject
-    if (name.equals("p_ready")) {//for each attribute
-      return getp_ready();
-    } else {
-      throw new RuntimeException("This Node does not exist:" + name);
+public static class @refname@ implements tom.library.utils.ReferenceClass {
+  ]%);
+    //RuleInstruction(TypeName:String,Term:TomTerm,Action:InstructionList,Options:OptionList)
+    //ReferenceClass(RefName:TomName,Fields:InstructionList)
+    //Tracelink(Type:TomName,Name:TomName,ElementaryTransfoName:TomName,Expr:Expression,OrgTrack:Option)//BQTerm, then blocklist
+    String getfunctionbody = "";
+    %match(refclassTInstructions) {
+      concRefClassTracelinkInstruction(_*,RefClassTracelinkInstruction[Type=Name(type),Name=Name(name)],_*) -> {
+      output.write(%[
+  private @`type@ @`name@;
+  public @`type@ get@`name@() { return @`name@; }
+  public void set(@`type@ value) { this.@`name@ = value; }
+]%);
+      getfunctionbody = getfunctionbody+"if(name.equals(\""+`name+"\")) {\n        return get"+`name+"();\n    } else";
+      }
     }
-  }*/
+
+    output.write(%[
+  public Object get(String name) {
+    @getfunctionbody@ {
+      throw new RuntimeException("This field does not exist:" + name);
+    }
+  }
 
 }
 
@@ -173,12 +183,19 @@ public static class @name@ implements tom.library.utils.ReferenceClass {
 
   }
 
+  protected void buildTracelink(int deep, String type, String name, Expression expr, String moduleName) throws IOException {
+   output.write(type+" "+name+" = ");
+   generateExpression(deep,expr,moduleName);
+   output.writeln(";");
+  }
+
   //TODO: resolveInverseLinks
   protected void buildResolveStratInstruction(String name) throws IOException {
-    output.write(%[@name@ res = null;//(@name@) translator.table.get(o).get(name);
-//resolveInverseLinks(tom__arg, res, translator);
+    output.write(%[@name@ res = (@name@) translator.table.get(o).get(name);i
+        //expansion de `o & `name
+        //pb translator
+//resolveInverseLinks(tom__arg, res, translator);//trop spec
 return res;]%);
-
   }
 
   protected void buildClass(int deep, String tomName, TomType extendsType, BQTerm superTerm, Declaration declaration, String moduleName) throws IOException {

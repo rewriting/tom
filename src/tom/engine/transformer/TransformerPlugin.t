@@ -191,10 +191,10 @@ public class TransformerPlugin extends TomGenericPlugin {
                                                          Option orgTrack) {
     String strName = strategyName.getString();
     Declaration symbol = `SymbolDecl(strategyName);
-    Declaration refClass = `ReferenceClass((Name(transformer.REFCLASS_PREFIX+strName)));
 
     //build visitList
     List<ConstraintInstruction> ciList = new LinkedList<ConstraintInstruction>();
+    List<RefClassTracelinkInstruction> refclassTInstructionList = new LinkedList<RefClassTracelinkInstruction>();
     TomType vType = null;
     //String vTypeStr = null;
     %match(riList) {
@@ -214,8 +214,17 @@ public class TransformerPlugin extends TomGenericPlugin {
                            Nop())),
                          opts)
                 );
+        //collect Tracelink instructions in order to build the ReferenceClass
+        %match(InstructionList instr) {
+          concInstruction(_*,Tracelink[Type=t,Name=n],_*) -> {
+            refclassTInstructionList.add(`RefClassTracelinkInstruction(t,n));
           }
         }
+      }
+    }
+    //InstructionList instructions = ASTFactory.makeInstructionListFromInstructionCollection(instructionList);
+    RefClassTracelinkInstructionList refclassInstructions = ASTFactory.makeRefClassTracelinkInstructionList(refclassTInstructionList);
+    Declaration refClass = `ReferenceClass((Name(transformer.REFCLASS_PREFIX+strName)),refclassInstructions );
 
     LinkedList<Option> list = new LinkedList<Option>();
     list.add(orgTrack);

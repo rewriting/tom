@@ -23,6 +23,7 @@ Declaration = TypeTermDecl(AstName:TomName,Declarations:DeclarationList,OrgTrack
             | TransformationDecl(TName:TomName,Domain:TomTypeList,Declarations:DeclarationList,OrgTrack:Option)
             | Transformation(TName:TomName,Domain:TomTypeList,Declarations:DeclarationList,ElementaryTList:ElementaryTransformationList,OrgTrack:Option)
             | ElementaryTransfoDecl(ETName:TomName,Traversal:BQTerm,Declarations:DeclarationList,OrgTrack:Option)
+//            | TracelinkDecl(Type:TomName,Name:TomName,ElementaryTransfoName:TomName,Expr:Expression,OrgTrack:Option)//BQTerm, then blocklist
             | TransfoStratDecl(Info:TransfoStratInfo,TSName:TomName,Term:TomTerm,Instructions:InstructionList,Options:OptionList,OrgTrack:Option)//pb avec les options//TransfoRuleDecl
             | ResolveStratDecl(TransfoName:String,ResList:ResolveStratBlockList,OriginTracking:Option)
             | ResolveTypeTermDecl(AstName:TomName,Declarations:DeclarationList,OrgTrack:Option)//useful?
@@ -34,7 +35,7 @@ Declaration = TypeTermDecl(AstName:TomName,Declarations:DeclarationList,OrgTrack
             | ResolveGetSlotDecl(AstName:TomName,SlotName:TomName,Variable:BQTerm,OrgTrack:Option)//useful?
             | ResolveMakeDecl(AstName:TomName,AstType:TomType,Args:BQTermList,OrgTrack:Option)//useful?
             | ReferenceDecl(Info:TransfoStratInfo,RName:String,Declarations:DeclarationList,OrgTrack:Option)
-            | ReferenceClass(RefName:TomName)//add specialized bq
+            | ReferenceClass(RefName:TomName,Fields:RefClassTracelinkInstructionList)//InstructionList)
 ///
             | FunctionDef(AstName:TomName,ArgumentList:BQTermList,Codomain:TomType,ThrowsType:TomType,Instruction:Instruction)
             | MethodDef(AstName:TomName,ArgumentList:BQTermList,Codomain:TomType,ThrowsType:TomType,Instruction:Instruction)

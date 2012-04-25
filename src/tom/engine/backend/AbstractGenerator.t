@@ -580,6 +580,12 @@ public abstract class AbstractGenerator {
         return;
       }
 
+      //Tracelink(Type:TomName,Name:TomName,ElementaryTransfoName:TomName,Expr:Expression,OrgTrack:Option)//BQTerm, then blocklist
+      Tracelink(Name(type), Name(name), _, expr, _) -> {
+        `buildTracelink(deep, type, name, expr, moduleName);
+        return;
+      }
+
       t -> {
         System.out.println("Cannot generate code for instruction: " + `t);
         throw new TomRuntimeException("Cannot generate code for instruction: " + `t);
@@ -775,8 +781,11 @@ public abstract class AbstractGenerator {
       }
 
       //complete with specialized backquotes
-      ReferenceClass[RefName=n@Name(name)] -> {
-        `buildReferenceClass(deep, name, moduleName);
+      //ReferenceClass[RefName=Name(refname),Fields=instructions] -> {
+      ReferenceClass[RefName=Name(refname),Fields=refclassTInstructions] -> {
+        if(!`refclassTInstructions.isEmptyconcRefClassTracelinkInstruction()) {
+        `buildReferenceClass(deep, refname, refclassTInstructions, moduleName);
+        }
         return;
       }
 
@@ -1066,7 +1075,8 @@ public abstract class AbstractGenerator {
   protected abstract void buildResolveGetSlotDecl(int deep, String tomName, String name1, TargetLanguageType tlType, TomName slotName, String moduleName) throws IOException;
   protected abstract void genResolveDeclMake(String prefix, String funName, TomType returnType, BQTermList argList, String moduleName) throws IOException;
   protected abstract void buildResolveClass(String wName, String tName, String extendsName, String moduleName) throws IOException;
-  protected abstract void buildReferenceClass(int deep, String name, String moduleName) throws IOException;
+  protected abstract void buildReferenceClass(int deep, String refname, RefClassTracelinkInstructionList refclassTInstructions, String moduleName) throws IOException;
+  protected abstract void buildTracelink(int deep, String type, String name, Expression expr, String moduleName) throws IOException;
 
   protected abstract String genResolveIsFsymCode(String tomName, String varname) throws IOException;
   protected abstract String genResolveGetSlotCode(String tomName, String varname, String slotName) throws IOException;

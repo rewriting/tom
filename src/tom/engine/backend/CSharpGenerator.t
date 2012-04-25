@@ -261,4 +261,11 @@ public class CSharpGenerator extends CFamilyGenerator {
     output.writeln(deep," }");
   }
 	
+  protected void buildReferenceClass(int deep, String refname, RefClassTracelinkInstructionList refclassTInstructions, String  moduleName) {
+    throw new TomRuntimeException("%transformation (ResolveReferenceClass) not yet supported in CSharp");
+  }
+
+  protected void buildTracelink(int deep, String type, String name, Expression expr, String moduleName) throws IOException {
+    throw new TomRuntimeException("%transformation (Tracelink instruction) not yet supported in CSharp");
+  }
 }

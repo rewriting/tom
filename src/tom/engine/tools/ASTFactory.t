@@ -217,6 +217,21 @@ public class ASTFactory {
     return list;
   }
 
+  public static InstructionList makeInstructionListFromInstructionCollection(List<Instruction> argumentList) {
+    InstructionList list = `concInstruction();
+    for(int i=argumentList.size()-1; i>=0 ; i--) {
+      list = `concInstruction(argumentList.get(i),list*);
+    }
+    return list;
+  }
+
+  public static RefClassTracelinkInstructionList makeRefClassTracelinkInstructionList(List<RefClassTracelinkInstruction> argumentList) {
+    RefClassTracelinkInstructionList list = `concRefClassTracelinkInstruction();
+    for(int i=argumentList.size()-1; i>=0 ; i--) {
+      list = `concRefClassTracelinkInstruction(argumentList.get(i),list*);
+    }
+    return list;
+  }
 
   public static ResolveStratElementList makeResolveStratElementList(List<ResolveStratElement> argumentList){
     ResolveStratElementList list = `concResolveStratElement();
