@@ -6,7 +6,7 @@
  * distribution and modification of Beaver.                            *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-package tomjastadd.beaver;
+package beaver;
 
 import java.io.IOException;
 
