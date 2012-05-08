@@ -26,11 +26,7 @@
                 <include name="${example}/*.t"/>
                 <exclude name="${example}/*.g.t"/>
     </tom.preset>
-    <javac.preset destdir="${examples.build}"
-                  srcdir="${examples.gen}">
-      <classpath refid="tom.examples.classpath"/>
-      <include name="${example}/**/*.java"/>
-    </javac.preset>
+    <javacompile/>
   </target>
 
   <property name="distribute" value="yes"/>
