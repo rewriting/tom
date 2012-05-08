@@ -12,9 +12,9 @@ pretty.code: pretty.mml
 	@printf "compiling $<: " 
 	@java -Xss128M -cp ${CP} lazyml.Main < $< > $@ 
 
-Main.java: Main.pre.java main.code pretty.code
+Main.java: Main.java.pre main.code pretty.code
 	@printf "including generated code\n" 
-	@cpp -P Main.pre.java > Main.java
+	@cpp -P Main.java.pre > Main.java
 
 Main.class: Main.java
 	@printf "compiling $<" 

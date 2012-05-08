@@ -39,10 +39,10 @@ public class Main {
     return ((Integer)x)*((Integer)y);
   }
   public static String append(Object x, Object y) {
-    return ((String)x)+((String)y); 
+    return ((String)x)+((String)y);
   }
   public static String consString(Object x, Object y) {
-    return ((Character)x)+((String)y); 
+    return ((Character)x)+((String)y);
   }
   public static String showInt(Object x) {
     return ""+((Integer)x);
@@ -99,19 +99,17 @@ public class Main {
 	}
 
   public static Object modulePretty() {
-    return 
+    return
     #include "pretty.code"
     ;
   }
 
   public static void main(String[] args) {
 
-    Object res1 = 
-    #include "main.code" 
+    Object res1 =
+    #include "main.code"
     ;
 
     System.out.println(res1);
   }
 }
-
-

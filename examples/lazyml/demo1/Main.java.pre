@@ -66,17 +66,15 @@ public class Main {
 
   public static void main(String[] args) {
 
-    Object res1 = 
-    #include "lazy1.code" 
+    Object res1 =
+    #include "lazy1.code"
     ;
 
-    Object res2 = 
-    #include "lazy2.code" 
+    Object res2 =
+    #include "lazy2.code"
     ;
 
     System.out.println(force(res1));
     System.out.println(force(res2));
   }
 }
-
-
