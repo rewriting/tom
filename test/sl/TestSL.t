@@ -31,7 +31,6 @@ package sl;
 
 import static org.junit.Assert.*;
 import org.junit.Test;
-import org.junit.Before;
 import sl.testsl.types.*;
 
 public class TestSL {
@@ -44,11 +43,6 @@ public class TestSL {
 
   public static void main(String[] args) {
     org.junit.runner.JUnitCore.main(TestSL.class.getName());
-  }
-
-  @Before
-  public void setUp() {
-
   }
 
   @Test
