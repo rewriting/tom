@@ -6,7 +6,7 @@
  * distribution and modification of Beaver.                            *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-package beaver;
+package tomjastadd.beaver;
 
 /**
  * Represents a symbol of a grammar.

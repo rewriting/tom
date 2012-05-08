@@ -6,7 +6,7 @@
  * distribution and modification of Beaver.                            *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-package beaver;
+package tomjastadd.beaver;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;

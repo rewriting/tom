@@ -15,16 +15,25 @@
   <macrodef name="jastaddcompile">
     <sequential>
       <!-- create AST node types and weave aspect modules -->
-      <echo message = "Running JastAdd"/>
-      <jastadd package="${package}" rewrite="true" beaver="true" novisitcheck="true" lazyMaps="true" outdir="${examples.gen}">
-        <fileset dir=".">
-          <include name="${example}/**/*.ast"/>
-          <include name="${example}/**/*.jrag"/>
-          <include name="${example}/**/*.jadd"/>
-        </fileset>
-      </jastadd>
+      <uptodate property="ast.uptodate" targetfile="${examples.gen}/${example}/AST/ASTNode.java">
+        <srcfiles dir="${example}" includes="**/*.ast"/>
+        <srcfiles dir="${example}" includes="**/*.jrag"/>
+        <srcfiles dir="${example}" includes="**/*.jadd"/>
+      </uptodate>
+      <antcall target="jastaddcompileinternal" inheritAll="true"/>
     </sequential>
   </macrodef>
+
+  <target name="jastaddcompileinternal" unless="ast.uptodate">
+    <echo message = "Running JastAdd"/>
+    <jastadd package="${package}" rewrite="true" beaver="true" novisitcheck="true" lazyMaps="true" outdir="${examples.gen}">
+      <fileset dir=".">
+        <include name="${example}/**/*.ast"/>
+        <include name="${example}/**/*.jrag"/>
+        <include name="${example}/**/*.jadd"/>
+      </fileset>
+    </jastadd>
+  </target>
 
   <target name="build" depends="init">
     <jastaddcompile/>

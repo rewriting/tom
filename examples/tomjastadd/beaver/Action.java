@@ -6,7 +6,7 @@
  * distribution and modification of Beaver.                            *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-package beaver;
+package tomjastadd.beaver;
 
 /**
  * An "interface" to Java code executed when a production is reduced.
