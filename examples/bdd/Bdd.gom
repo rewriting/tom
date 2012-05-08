@@ -41,7 +41,7 @@ sort Node:rules() {
 
 Pair = Pair(u1:Node,u2:Node)
 
-Solution = 
+Solution =
   | NoSolution()
   | concAssignment(Assignment*)
 Assignment =  Assignment(index:int,value:int)
@@ -79,12 +79,10 @@ sort Formula:rules() {
   FImp(FTrue(),x) -> x
 
   FIff(x,x) -> FTrue()
-  FIff(FTrue(),FFalse()) -> FFalse() 
-  FIff(FFalse(),FTrue()) -> FFalse() 
+  FIff(FTrue(),FFalse()) -> FFalse()
+  FIff(FFalse(),FTrue()) -> FFalse()
 
   FNot(FTrue()) -> FFalse()
   FNot(FFalse()) -> FTrue()
 
 }
-
-
