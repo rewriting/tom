@@ -37,7 +37,7 @@ public class ProofBuilder extends Observable {
   private void writeToOutputln (String text) {
     writeToOutput(text+"\n");
   }
-  
+
   // methode remplacant System.out.print
   private void writeToOutput (String text) {
     if (countObservers() != 0) {
@@ -49,13 +49,13 @@ public class ProofBuilder extends Observable {
 
   %strategy AddInContexts(ctxt:Context) extends `Identity() {
     visit Sequent {
-      sequent(hyp,concl) -> { return `sequent(context(hyp*,ctxt*),concl);} 
+      sequent(hyp,concl) -> { return `sequent(context(hyp*,ctxt*),concl);}
     }
   }
 
   %strategy PutInConclusion(ctxt:Context) extends `Identity() {
     visit Sequent {
-      sequent(hyp,concl) -> { return `sequent(hyp,context(concl*,ctxt*));} 
+      sequent(hyp,concl) -> { return `sequent(hyp,context(concl*,ctxt*));}
     }
   }
 
@@ -80,20 +80,20 @@ public class ProofBuilder extends Observable {
     private int numRule;
 
     private static int ruleIndex = 0;
-    
+
     public InfoNarrow(HashMap<String, Term> tds) {
       this.tds = tds;
     }
-    
-    public InfoNarrow(Position pos, TermRule rule, 
-		      HashMap<String, Term> tds) {
+
+    public InfoNarrow(Position pos, TermRule rule,
+        HashMap<String, Term> tds) {
       this.pos = pos;
       this.rule = rule;
       this.numRule = ruleIndex++;
       this.tds = tds;
     }
-    
-    public InfoNarrow(Position pos, PropRule rule, 
+
+    public InfoNarrow(Position pos, PropRule rule,
 		      HashMap<String, Term> tds) {
       this.pos = pos;
       this.rule = rule;
@@ -123,22 +123,22 @@ public class ProofBuilder extends Observable {
 
   %typeterm InfoNarrow { implement { InfoNarrow } }
   %typeterm InfoNarrowVector { implement { java.util.Vector<InfoNarrow> } }
-    
+
   %strategy CollectNarrow(l: InfoNarrowVector, tl:TermRuleList, pl:PropRuleList)
     extends `Identity() {
     visit Term {
-      t@!Var[] -> { 
-	%match (TermRuleList tl) {
-	  (_*, tr@termrule[], _*) -> {
-	    TermRule tr = (TermRule) Utils.refresh(`tr, `t.getVars());
-	    HashMap<String,Term> tds = Unification.unify(`t, tr.getlhs());
-	    if (tds != null) {
-	      InfoNarrow in = new InfoNarrow(getEnvironment().getPosition(),
-					     tr, tds);
-	      l.add(in);
-	    };
-	  }
-	}
+      t@!Var[] -> {
+        %match (TermRuleList tl) {
+          termrulelist(_*, tr@termrule[], _*) -> {
+            TermRule tr = (TermRule) Utils.refresh(`tr, `t.getVars());
+            HashMap<String,Term> tds = Unification.unify(`t, tr.getlhs());
+            if (tds != null) {
+              InfoNarrow in = new InfoNarrow(getEnvironment().getPosition(),
+                  tr, tds);
+              l.add(in);
+            };
+          }
+        }
       }
     }
 
@@ -148,17 +148,17 @@ public class ProofBuilder extends Observable {
       exists[] -> { throw new VisitFailure("do not collect under quantifier"); }
 
       t -> {
- 	%match (PropRuleList pl) {
-	  (_*, tr@proprule[], _*) -> {
-	    PropRule tr = (PropRule) Utils.refresh(`tr, `t.getFreeVars());
-	    HashMap<String,Term> tds = Unification.unify(`t, tr.getlhs());
-	    if (tds != null) {
-	      InfoNarrow in = new InfoNarrow(getEnvironment().getPosition(),
-					     tr, tds);
-	      l.add(in);
-	    };
-	  }
-	}
+        %match (PropRuleList pl) {
+          proprulelist(_*, tr@proprule[], _*) -> {
+            PropRule tr = (PropRule) Utils.refresh(`tr, `t.getFreeVars());
+            HashMap<String,Term> tds = Unification.unify(`t, tr.getlhs());
+            if (tds != null) {
+              InfoNarrow in = new InfoNarrow(getEnvironment().getPosition(),
+                  tr, tds);
+              l.add(in);
+            };
+          }
+        }
       }
     }
   }
@@ -199,13 +199,13 @@ public class ProofBuilder extends Observable {
         Prop conj = null;
         if (rule.geths() == 1) { // right rule
           %match (expanded) {
-            rule[c=sequent((),(phi))] -> {
+            rule[c=sequent(context(),context(phi))] -> {
               conj = `and(implies(conclusion,phi),implies(phi,conclusion));
             }
           }
         } else {
           %match (expanded) {
-            rule[c=sequent((phi),())] -> {
+            rule[c=sequent(context(phi),context())] -> {
               conj = `and(implies(conclusion,phi),implies(phi,conclusion));
             }
           }
@@ -218,7 +218,7 @@ public class ProofBuilder extends Observable {
           newconcl = `forall(var,newconcl);
         }
 
-        // -- 
+        // --
         */
 
         // renommage des variables
@@ -228,7 +228,7 @@ public class ProofBuilder extends Observable {
           Term new_term = ent.getValue();
           res = (SeqList) Utils.replaceFreeVars(res, old_term, new_term);
           // also replacing in the expanded tree
-          expanded = (Tree) Utils.replaceFreeVars(expanded, old_term, new_term); 
+          expanded = (Tree) Utils.replaceFreeVars(expanded, old_term, new_term);
         }
 
         // creation des variables fraiches (forall right et exists left)
@@ -238,7 +238,7 @@ public class ProofBuilder extends Observable {
           Term new_var = Utils.freshEigenVar(bname, `seq);
           res = (SeqList) Utils.replaceTerm(res,fvar,new_var);
           // also replacing in the expanded tree
-          expanded = (Tree) Utils.replaceFreeVars(expanded, fvar, new_var); 
+          expanded = (Tree) Utils.replaceFreeVars(expanded, fvar, new_var);
         }
 
         // remplacement des nouvelles variables (forall left et exists right)
@@ -253,7 +253,7 @@ public class ProofBuilder extends Observable {
           Term new_term = ent.getValue();
           res = (SeqList) Utils.replaceFreeVars(res, old_term, new_term);
           // also replacing in the expanded tree
-          expanded = (Tree) Utils.replaceFreeVars(expanded, old_term, new_term); 
+          expanded = (Tree) Utils.replaceFreeVars(expanded, old_term, new_term);
         }
 
         // ajout des contextes dans les premisses
@@ -261,33 +261,33 @@ b: {
         %match (rule, seq, Prop active) {
 
           // si c'est une regle gauche
-          ruledesc(0,_,_,_), sequent(ctxt@(u*,act,v*),c), act -> {
+          ruledesc(0,_,_,_), sequent(ctxt@context(u*,act,v*),c), act -> {
             // also in expanded tree
             /*
-            expanded = (Tree) `TopDown(AddInContexts(ctxt)).fire(expanded); 
-            expanded = (Tree) `TopDown(PutInConclusion(c)).fire(expanded); 
+            expanded = (Tree) `TopDown(AddInContexts(ctxt)).fire(expanded);
+            expanded = (Tree) `TopDown(PutInConclusion(c)).fire(expanded);
             */
             Context gamma = args.size() <= 0 ? `context(u*,v*) : `ctxt;
             //Context gamma = `context(u*,v*);
             try {
-              res = (SeqList) `TopDown(AddInContexts(gamma)).visit(res); 
-              res = (SeqList) `TopDown(PutInConclusion(c)).visit(res); 
+              res = (SeqList) `TopDown(AddInContexts(gamma)).visit(res);
+              res = (SeqList) `TopDown(PutInConclusion(c)).visit(res);
             } catch(VisitFailure e) { e.printStackTrace(); throw new RuntimeException(); }
             break b;
           }
 
           // si c'est une regle droite
-          ruledesc(1,_,_,_), sequent(ctxt,c@(u*,act,v*)), act -> {
+          ruledesc(1,_,_,_), sequent(ctxt,c@context(u*,act,v*)), act -> {
             // also in expanded tree
             /*
             expanded = (Tree) `TopDown(AddInContexts(ctxt)).fire(expanded);
-            expanded = (Tree) `TopDown(PutInConclusion(c)).fire(expanded); 
+            expanded = (Tree) `TopDown(PutInConclusion(c)).fire(expanded);
             */
             Context delta = args.size() <= 0 ? `context(u*,v*) : `c;
             //Context delta = `context(u*,v*);
             try {
               res = (SeqList) `TopDown(AddInContexts(ctxt)).visit(res);
-              res = (SeqList) `TopDown(PutInConclusion(delta)).visit(res); 
+              res = (SeqList) `TopDown(PutInConclusion(delta)).visit(res);
             } catch(VisitFailure e) { e.printStackTrace(); throw new RuntimeException(); }
             break b;
           }
@@ -303,8 +303,8 @@ b: {
         // creating open leaves
         Premisses newprems = `premisses();
         %match(SeqList res) {
-          (_*,x,_*) -> {
-            newprems = `premisses(newprems*,createOpenLeaf(x));    
+          concSeq(_*,x,_*) -> {
+            newprems = `premisses(newprems*,createOpenLeaf(x));
           }
         }
 
@@ -331,7 +331,7 @@ b: {
           Term new_term = ent.getValue();
           res = (SeqList) Utils.replaceFreeVars(res, old_term, new_term);
           // also replacing in the expanded tree
-          expanded = (Tree) Utils.replaceFreeVars(expanded, old_term, new_term); 
+          expanded = (Tree) Utils.replaceFreeVars(expanded, old_term, new_term);
         }
 
         // creation des variables fraiches (forall right et exists left)
@@ -341,7 +341,7 @@ b: {
           Term new_var = Utils.freshEigenVar(bname, `seq);
           res = (SeqList) Utils.replaceTerm(res,fvar,new_var);
           // also replacing in the expanded tree
-          expanded = (Tree) Utils.replaceFreeVars(expanded, fvar, new_var); 
+          expanded = (Tree) Utils.replaceFreeVars(expanded, fvar, new_var);
         }
 
         // remplacement des nouvelles variables (forall left et exists right)
@@ -356,7 +356,7 @@ b: {
           Term new_term = ent.getValue();
           res = (SeqList) Utils.replaceFreeVars(res, old_term, new_term);
           // also replacing in the expanded tree
-          expanded = (Tree) Utils.replaceFreeVars(expanded, old_term, new_term); 
+          expanded = (Tree) Utils.replaceFreeVars(expanded, old_term, new_term);
         }
 
         // ajout des contextes dans les premisses
@@ -364,33 +364,33 @@ b: {
         %match (rule, seq, Prop active) {
 
           // si c'est une regle gauche
-          ruledesc(0,_,_,_), sequent(ctxt@(u*,act,v*),c), act -> {
+          ruledesc(0,_,_,_), sequent(ctxt@context(u*,act,v*),c), act -> {
             // also in expanded tree
             /*
-            expanded = (Tree) `TopDown(AddInContexts(ctxt)).fire(expanded); 
-            expanded = (Tree) `TopDown(PutInConclusion(c)).fire(expanded); 
+            expanded = (Tree) `TopDown(AddInContexts(ctxt)).fire(expanded);
+            expanded = (Tree) `TopDown(PutInConclusion(c)).fire(expanded);
             */
             Context gamma = args.size() <= 0 ? `context(u*,v*) : `ctxt;
             //Context gamma = `context(u*,v*);
             try {
-              res = (SeqList) `TopDown(AddInContexts(gamma)).visit(res); 
-              res = (SeqList) `TopDown(PutInConclusion(c)).visit(res); 
+              res = (SeqList) `TopDown(AddInContexts(gamma)).visit(res);
+              res = (SeqList) `TopDown(PutInConclusion(c)).visit(res);
             } catch(VisitFailure e) { e.printStackTrace(); throw new RuntimeException(); }
             break b;
           }
 
           // si c'est une regle droite
-          ruledesc(1,_,_,_), sequent(ctxt,c@(u*,act,v*)), act -> {
+          ruledesc(1,_,_,_), sequent(ctxt,c@context(u*,act,v*)), act -> {
             // also in expanded tree
             /*
             expanded = (Tree) `TopDown(AddInContexts(ctxt)).fire(expanded);
-            expanded = (Tree) `TopDown(PutInConclusion(c)).fire(expanded); 
+            expanded = (Tree) `TopDown(PutInConclusion(c)).fire(expanded);
             */
             Context delta = args.size() <= 0 ? `context(u*,v*) : `c;
             //Context delta = `context(u*,v*);
             try {
               res = (SeqList) `TopDown(AddInContexts(ctxt)).visit(res);
-              res = (SeqList) `TopDown(PutInConclusion(delta)).visit(res); 
+              res = (SeqList) `TopDown(PutInConclusion(delta)).visit(res);
             } catch(VisitFailure e) { e.printStackTrace(); throw new RuntimeException(); }
             break b;
           }
@@ -403,8 +403,8 @@ b: {
         // creating open leaves
         Premisses newprems = `premisses();
         %match(SeqList res) {
-          (_*,x,_*) -> {
-            newprems = `premisses(newprems*,createOpenLeaf(x));    
+          concSeq(_*,x,_*) -> {
+            newprems = `premisses(newprems*,createOpenLeaf(x));
           }
         }
 
@@ -415,7 +415,7 @@ b: {
 
   %strategy ApplyFoldR(rulelist: PropRuleList, active: Prop) extends Fail() {
     visit Tree {
-     rule[c=seq@sequent(left,(C1*,act,C2*))] -> {
+     rule[c=seq@sequent(left,context(C1*,act,C2*))] -> {
         if (`act==active) {
           int i = 0;
           PropRule rule = null;
@@ -424,9 +424,9 @@ b: {
             if (tds != null) rule=r;
             i++;
           }
- 
+
           Prop newprop = Unification.reduceProp(active,rule);
-          Tree prem = createOpenLeaf(`sequent(left,context(C1*,newprop,C2*))); 
+          Tree prem = createOpenLeaf(`sequent(left,context(C1*,newprop,C2*)));
           return `rule(foldRightInfo(i,newprop),premisses(prem),seq,active);
         }
       }
@@ -435,7 +435,7 @@ b: {
 
   %strategy ApplyFoldL(rulelist: PropRuleList, active: Prop) extends Fail() {
     visit Tree {
-     rule[c=seq@sequent((C1*,act,C2*),right)] -> {
+     rule[c=seq@sequent(context(C1*,act,C2*),right)] -> {
         if (`act==active) {
           int i = 0;
           PropRule rule = null;
@@ -444,9 +444,9 @@ b: {
             if (tds != null) rule=r;
             i++;
           }
- 
+
           Prop newprop = Unification.reduceProp(active,rule);
-          Tree prem = createOpenLeaf(`sequent(context(C1*,newprop,C2*),right)); 
+          Tree prem = createOpenLeaf(`sequent(context(C1*,newprop,C2*),right));
           return `rule(foldLeftInfo(i,newprop),premisses(prem),seq,active);
         }
       }
@@ -455,7 +455,7 @@ b: {
 
   %strategy ApplyAssume(n:String,active:Prop) extends Fail() {
     visit Tree {
-      rule[c=concl] -> { 
+      rule[c=concl] -> {
         return `rule(metaVariableInfo(mvar(n)),premisses(),concl,active);
       }
     }
@@ -471,17 +471,16 @@ b: {
     return `rule(openInfo(),premisses(),concl,nullProp());
   }
 
-
   %strategy ApplyUnifAxiom(in: InfoNarrow) extends Fail() {
     visit Tree {
-      rule[c=seq@sequent((_*,act1,_*),(_*,act2,_*))] -> 
-	{
-	  HashMap<String,Term> tds = Unification.unify(`act1, `act2);
-	  if (tds != null) {
-	    in.setTds(tds);
-	    return `rule(axiomInfo(),premisses(),seq,act1);
-	  }
-	}
+      rule[c=seq@sequent(context(_*,act1,_*),context(_*,act2,_*))] ->
+      {
+        HashMap<String,Term> tds = Unification.unify(`act1, `act2);
+        if (tds != null) {
+          in.setTds(tds);
+          return `rule(axiomInfo(),premisses(),seq,act1);
+        }
+      }
     }
   }
 
@@ -495,18 +494,17 @@ b: {
   %strategy ToRoot(s: Strategy) extends Identity() {
     visit Object {
       _ -> {
-
-	while (getEnvironment().depth() > 1) 
-	  getEnvironment().up();
-	s.visit(getEnvironment());
+        while (getEnvironment().depth() > 1)
+          getEnvironment().up();
+        s.visit(getEnvironment());
       }
     }
   }
 
   %strategy ApplyAxiom() extends Fail() {
     visit Tree {
-	rule[c=seq@sequent((_*,act,_*),(_*,act,_*))] -> 
-	    rule(axiomInfo(),premisses(),seq,act)
+      rule[c=seq@sequent(context(_*,act,_*),context(_*,act,_*))] ->
+        rule(axiomInfo(),premisses(),seq,act)
     }
   }
 
@@ -514,7 +512,7 @@ b: {
     visit Tree {
       rule[c=seq] -> {
         %match(seq, Prop active) {
-          sequent(d,(X*,act@implies(p1,p2),Y*)), act -> {
+          sequent(d,context(X*,act@implies(p1,p2),Y*)), act -> {
             Tree t1 = createOpenLeaf(`sequent(context(d*,p1),context(X*,p2,Y*)));
             return `rule(impliesRightInfo(),premisses(t1),seq,act);
           }
@@ -527,7 +525,7 @@ b: {
     visit Tree {
       rule[c=seq] -> {
         %match(seq, Prop active) {
-          sequent((X*,act@implies(p1,p2),Y*),g), act -> {
+          sequent(context(X*,act@implies(p1,p2),Y*),g), act -> {
             Tree t1 = createOpenLeaf(`sequent(context(X*,Y*),context(p1,g*)));
             Tree t2 = createOpenLeaf(`sequent(context(X*,p2,Y*),g));
             return `rule(impliesLeftInfo(),premisses(t1,t2),seq,act);
@@ -541,7 +539,7 @@ b: {
     visit Tree {
       rule[c=seq] -> {
         %match(seq, Prop active) {
-          sequent(d,(X*,act@and(p1,p2),Y*)), act -> {
+          sequent(d,context(X*,act@and(p1,p2),Y*)), act -> {
             Tree t1 = createOpenLeaf(`sequent(d,context(X*,p1,Y*)));
             Tree t2 = createOpenLeaf(`sequent(d,context(X*,p2,Y*)));
             return `rule(andRightInfo(),premisses(t1,t2),seq,act);
@@ -555,7 +553,7 @@ b: {
     visit Tree {
       rule[c=seq] -> {
         %match(seq, Prop active) {
-          sequent((X*,act@and(p1,p2),Y*),g), act -> {
+          sequent(context(X*,act@and(p1,p2),Y*),g), act -> {
             Tree t1 = createOpenLeaf(`sequent(context(X*,p1,p2,Y*),g));
             return `rule(andLeftInfo(),premisses(t1),seq,act);
           }
@@ -568,7 +566,7 @@ b: {
     visit Tree {
       rule[c=seq] -> {
         %match(seq, Prop active) {
-          sequent(d,(X*,act@or(p1,p2),Y*)), act -> {
+          sequent(d,context(X*,act@or(p1,p2),Y*)), act -> {
             Tree t1 = createOpenLeaf(`sequent(d,context(X*,p1,p2,Y*)));
             return `rule(orRightInfo(),premisses(t1),seq,act);
           }
@@ -581,7 +579,7 @@ b: {
     visit Tree {
       rule[c=seq] -> {
         %match(seq, Prop active) {
-          sequent((X*,act@or(p1,p2),Y*),g), act -> {
+          sequent(context(X*,act@or(p1,p2),Y*),g), act -> {
             Tree t1 = createOpenLeaf(`sequent(context(X*,p1,Y*),g));
             Tree t2 = createOpenLeaf(`sequent(context(X*,p2,Y*),g));
             return `rule(orLeftInfo(),premisses(t1,t2),seq,act);
@@ -595,7 +593,7 @@ b: {
     visit Tree {
       rule[c=seq] -> {
         %match(seq, Prop active) {
-          sequent((X*,act,Y*),g), act -> {
+          sequent(context(X*,act,Y*),g), act -> {
             Tree t1 = createOpenLeaf(`sequent(context(X*,act,act,Y*),g));
             return `rule(contractionLeftInfo(),premisses(t1),seq,act);
           }
@@ -608,7 +606,7 @@ b: {
     visit Tree {
       rule[c=seq] -> {
         %match(seq, Prop active) {
-          sequent(d,(X*,act,Y*)), act -> {
+          sequent(d,context(X*,act,Y*)), act -> {
             Tree t1 = createOpenLeaf(`sequent(d,context(X*,act,act,Y*)));
             return `rule(contractionRightInfo(),premisses(t1),seq,act);
           }
@@ -621,7 +619,7 @@ b: {
     visit Tree {
       rule[c=seq] -> {
         %match(seq, Prop active) {
-          sequent((X*,act,Y*),g), act -> {
+          sequent(context(X*,act,Y*),g), act -> {
             Tree t1 = createOpenLeaf(`sequent(context(X*,Y*),g));
             return `rule(weakLeftInfo(),premisses(t1),seq,act);
           }
@@ -634,7 +632,7 @@ b: {
     visit Tree {
       rule[c=seq] -> {
         %match(seq, Prop active) {
-          sequent(d,(X*,act,Y*)), act -> {
+          sequent(d,context(X*,act,Y*)), act -> {
             Tree t1 = createOpenLeaf(`sequent(d,context(X*,Y*)));
             return `rule(weakRightInfo(),premisses(t1),seq,act);
           }
@@ -645,7 +643,7 @@ b: {
 
   %strategy ApplyBottom() extends Fail() {
     visit Tree {
-      rule[c=seq@sequent((_*,act@bottom(),_*),_)] -> {
+      rule[c=seq@sequent(context(_*,act@bottom(),_*),_)] -> {
         return `rule(bottomInfo(),premisses(),seq,act);
       }
     }
@@ -653,7 +651,7 @@ b: {
 
   %strategy ApplyTop() extends Fail() {
     visit Tree {
-      rule[c=seq@sequent(_,(_*,act@top(),_*))] -> {
+      rule[c=seq@sequent(_,context(_*,act@top(),_*))] -> {
         return `rule(topInfo(),premisses(),seq,act);
       }
     }
@@ -673,9 +671,9 @@ b: {
     visit Tree {
       rule[c=seq] -> {
         %match(seq, Prop active) {
-          sequent(d,(X*,act@forall(n,p),Y*)), act -> {
+          sequent(d,context(X*,act@forall(n,p),Y*)), act -> {
             Term nvar = Utils.freshEigenVar(`n,`seq);
-            Prop res = (Prop) Utils.replaceFreeVars(`p, `Var(n), nvar); 
+            Prop res = (Prop) Utils.replaceFreeVars(`p, `Var(n), nvar);
             Tree t1 = createOpenLeaf(`sequent(d,context(X*,res,Y*)));
             return `rule(forallRightInfo(nvar),premisses(t1),seq,act);
           }
@@ -688,8 +686,8 @@ b: {
     visit Tree {
       rule[c=seq] -> {
         %match(seq, Prop active) {
-          sequent((X*,act@forall(n,p),Y*),g), act -> {
-            Prop res = (Prop) Utils.replaceFreeVars(`p, `Var(n), term); 
+          sequent(context(X*,act@forall(n,p),Y*),g), act -> {
+            Prop res = (Prop) Utils.replaceFreeVars(`p, `Var(n), term);
             Tree t1 = createOpenLeaf(`sequent(context(X*,res,Y*),g));
             return `rule(forallLeftInfo(term),premisses(t1),seq,act);
           }
@@ -702,7 +700,7 @@ b: {
     visit Tree {
       r@rule[c=seq] -> {
         %match(seq, Prop active) {
-          sequent((_*,act@forall(n,_),_*),_), act -> {
+          sequent(context(_*,act@forall(n,_),_*),_), act -> {
             o.writeToOutput("instance of " + `n + " > ");
             Term term = null;
             try { term = IO.getTerm(); } catch (Exception e) { throw new VisitFailure(); }
@@ -717,8 +715,8 @@ b: {
     visit Tree {
       rule[c=seq] -> {
         %match(seq, Prop active) {
-          sequent(d,(X*,act@exists(n,p),Y*)), act -> {
-            Prop res = (Prop) Utils.replaceFreeVars(`p, `Var(n), term); 
+          sequent(d,context(X*,act@exists(n,p),Y*)), act -> {
+            Prop res = (Prop) Utils.replaceFreeVars(`p, `Var(n), term);
             Tree t1 = createOpenLeaf(`sequent(d,context(X*,res,Y*)));
             return `rule(existsRightInfo(term),premisses(t1),seq,act);
           }
@@ -731,7 +729,7 @@ b: {
     visit Tree {
       r@rule[c=seq] -> {
         %match(seq, Prop active) {
-          sequent(_,(_*,act@exists(n,_),_*)), act -> {
+          sequent(_,context(_*,act@exists(n,_),_*)), act -> {
             o.writeToOutput("instance of " + `n + " > ");
             Term term = null;
             try { term = IO.getTerm(); } catch (Exception e) { throw new VisitFailure(); }
@@ -746,9 +744,9 @@ b: {
     visit Tree {
       rule[c=seq] -> {
         %match(seq, Prop active) {
-          sequent((X*,act@exists(n,p),Y*),g), act -> {
+          sequent(context(X*,act@exists(n,p),Y*),g), act -> {
             Term nvar = Utils.freshEigenVar(`n,`seq);
-            Prop res = (Prop) Utils.replaceFreeVars(`p, `Var(n), nvar); 
+            Prop res = (Prop) Utils.replaceFreeVars(`p, `Var(n), nvar);
             Tree t1 = createOpenLeaf(`sequent(context(X*,res,Y*),g));
             return `rule(existsLeftInfo(nvar),premisses(t1),seq,act);
           }
@@ -779,7 +777,7 @@ b: {
     ArrayList<Prop> res = new ArrayList<Prop>();
     Context ctxt = seq.geth();
     %match (Context ctxt) {
-      (_*, p, _*) -> {
+      context(_*, p, _*) -> {
         res.add(`p);
       }
     }
@@ -790,7 +788,7 @@ b: {
     ArrayList<Prop> res = new ArrayList<Prop>();
     Context ctxt = seq.getc();
     %match (Context ctxt) {
-      (_*, p, _*) -> {
+      context(_*, p, _*) -> {
         res.add(`p);
       }
     }
@@ -838,12 +836,12 @@ b: {
 
     if (n == -1) { // trying to apply one unique rule
       for(int i=0; i<newRules.size(); i++) {
-        Rule rule = newRules.get(i); 
+        Rule rule = newRules.get(i);
         Prop conclusion = rule.getconcl();
         HashMap<String,Term> tds = Unification.match(conclusion, active);
         if (tds != null && ((focus_left && rule.geths() == 0) || (!focus_left && rule.geths() == 1))) {
           if (n != -1)  throw new Exception("more than one matching rule, give a number"); // more than one rule
-          else n = i; 
+          else n = i;
         }
       }
       if (n == -1) throw new Exception("No applicable rule.");
@@ -872,16 +870,16 @@ b: {
       Prop active, boolean focus_left, int n) throws Exception {
     HashMap<Term,Term> args = new HashMap<Term,Term>();
     HashMap<String,Term> tds = null;
-    
+
     if (n == -1) { // trying to apply one unique rule
       for(int i=0; i<newRules.size(); i++) {
-        Rule rule = newRules.get(i); 
-	rule = (Rule) Utils.refresh(rule, active.getFreeVars());
-	Prop conclusion = rule.getconcl();
+        Rule rule = newRules.get(i);
+        rule = (Rule) Utils.refresh(rule, active.getFreeVars());
+        Prop conclusion = rule.getconcl();
         tds = Unification.unify(conclusion, active);
         if (tds != null && ((focus_left && rule.geths() == 0) || (!focus_left && rule.geths() == 1))) {
           if (n != -1)  throw new Exception("more than one matching rule, give a number"); // more than one rule
-          else n = i; 
+          else n = i;
         }
       }
       if (n == -1) throw new Exception("No applicable rule.");
@@ -903,7 +901,7 @@ b: {
       rule = (Rule) Utils.refresh(rule, active.getFreeVars());
       Prop conclusion = rule.getconcl();
       tds = Unification.unify(conclusion, active);
-            
+
       tree = (Tree) pos.getOmega(`NarrowApplyRule(rule,active,args,tds)).visit(tree);
       return (Tree) Unification.substitute(tds, tree);
     }
@@ -918,7 +916,7 @@ b: {
     Prop conclusion = null;
 
     %match(Tree thtree) {
-      rule(_,_,sequent((),(prop)),_) -> {
+      rule(_,_,sequent(context(),context(prop)),_) -> {
         tree = (Tree) pos.getOmega(`ApplyCut(prop)).visit(tree);
         pos = pos.down(2);
         pos = pos.down(1);
@@ -931,28 +929,28 @@ b :{
       Sequent goal = getSequentByPosition(tree, pos);
       %match(Prop conclusion, goal) {
         // sequent of the form " |- concl, concl ..."
-        concl, sequent((),l@!(_*,!concl,_*)) -> {
+        concl, sequent(context(),l@!context(_*,!concl,_*)) -> {
           %match (Context l) {
             // more than one occurence
-            (x,x,_*) -> { 
+            context(x,x,_*) -> {
               tree = (Tree) pos.getOmega(`ApplyWeakR(x)).visit(tree);
               pos = pos.down(2);
               pos = pos.down(1);
               break b;
             }
             // one left
-            (_) -> { return (Tree) pos.getReplace(thtree).visit(tree); }
+            context(_) -> { return (Tree) pos.getReplace(thtree).visit(tree); }
           }
         }
         // weak lhs of sequent
-        _, sequent((p,_*),_) -> {
+        _, sequent(context(p,_*),_) -> {
           tree = (Tree) pos.getOmega(`ApplyWeakL(p)).visit(tree);
           pos = pos.down(2);
           pos = pos.down(1);
           break b;
         }
         // remove non-conclusion props at the right of the sequent
-        tokeep, sequent((),(_*,p@!tokeep,_*)) -> {
+        tokeep, sequent(context(),context(_*,p@!tokeep,_*)) -> {
             tree = (Tree) pos.getOmega(`ApplyWeakR(p)).visit(tree);
             pos = pos.down(2);
             pos = pos.down(1);
@@ -964,7 +962,7 @@ b :{
     }
   }
 
-  private Tree reduceCommand(Tree tree, Position pos, 
+  private Tree reduceCommand(Tree tree, Position pos,
       Prop active, boolean focus_left) throws Exception {
     Sequent goal = getSequentByPosition(tree, pos);
     Sequent s = (Sequent) Unification.reduce(goal,newTermRules,newPropRules);
@@ -980,14 +978,14 @@ b :{
   static private WeakHashMap<Rule,Boolean> noNewVars = new WeakHashMap(); // to memoize
 
   private static Rule applicableInAuto(ArrayList<Rule> newRules, Prop prop, boolean left) {
-    Rule res = null; 
+    Rule res = null;
 
     for(int i=0; i<newRules.size(); i++) {
-      Rule rule = newRules.get(i); 
+      Rule rule = newRules.get(i);
       boolean ok = false;
       if (noNewVars.containsKey(rule)) {
         ok = noNewVars.get(rule);
-      } else { 
+      } else {
         ok = (Utils.getNewVars(rule).size() == 0);
         noNewVars.put(rule,ok);
       }
@@ -996,7 +994,7 @@ b :{
         HashMap<String,Term> tds = Unification.match(conclusion, prop);
         if (tds != null && ((left && rule.geths() == 0) || (!left && rule.geths() == 1))) {
           if (res != null)  return null; // more than one rule
-          else res = rule; 
+          else res = rule;
         }
       }
     }
@@ -1020,27 +1018,27 @@ b :{
   %strategy ApplyAuto(newRules: RuleArrayList) extends Fail() {
     visit Tree {
       // right hand side (+ axiom)
-      t@rule[c=sequent(_,(_*,p,_*))] -> { 
+      t@rule[c=sequent(_,context(_*,p,_*))] -> {
         Strategy strat;
         Rule r = applicableInAuto(newRules, `p, false);
         HashMap<Term,Term> hm = new HashMap<Term,Term>();
-        if(r != null) strat = `ApplyRule(r,p,hm); 
+        if(r != null) strat = `ApplyRule(r,p,hm);
         else strat = `Choice(ApplyAxiom(),ApplyTop(),ApplyAndR(p),ApplyOrR(p),ApplyImpliesR(p),ApplyForAllR(p));
         try {
-          Tree res = (Tree) strat.visit(`t); 
+          Tree res = (Tree) strat.visit(`t);
           return res;
         } catch (VisitFailure e) {}
       }
 
       // left hand side
-      t@rule[c=sequent((_*,p,_*),_)] -> {
+      t@rule[c=sequent(context(_*,p,_*),_)] -> {
         Strategy strat;
         Rule r = applicableInAuto(newRules, `p, true);
         HashMap<Term,Term> hm = new HashMap<Term,Term>();
-        if(r != null) strat = `ApplyRule(r,p,hm); 
+        if(r != null) strat = `ApplyRule(r,p,hm);
         else strat = `Choice(ApplyBottom(),ApplyAndL(p),ApplyOrL(p),ApplyImpliesL(p),ApplyExistsL(p));
         try{
-          Tree res = (Tree) strat.visit(`t); 
+          Tree res = (Tree) strat.visit(`t);
           return res;
         } catch (VisitFailure e) {}
       }
@@ -1065,7 +1063,7 @@ b :{
 
   private static Term isAppliedNestedTo(Term funsymb, Term t) {
     %match(t) {
-      funAppl("lappl",(f,x)) -> {
+      funAppl("lappl",concTerm(f,x)) -> {
         if (`f==funsymb) return `x;
         else return isAppliedNestedTo(funsymb,`f);
       }
@@ -1086,49 +1084,49 @@ b :{
   */
 
     %strategy PTSApply(newRules: RuleArrayList, dest: Prop, active: Prop) extends Fail() {
-	visit Tree {
-	    r@rule[c=seq] -> { 
-		%match(seq, Prop dest, Prop active) {
-		    sequent(context(_*,d@relationAppl("in",(f,_)),_*),
-			    context(_*,a@relationAppl("in",(t1@funAppl("lappl",_),_))
-				    ,_*)), d, a -> { 
-			Term appliedTo = `isAppliedNestedTo(f,t1);
-			if(appliedTo != null) {
-			    
-		      int n = -1;
-		      for(int i=0; i<newRules.size(); i++) {
-			  Rule rule = newRules.get(i); 
-			  Prop conclusion = rule.getconcl();
-			  HashMap<String,Term> tds = Unification.match(conclusion, dest);
-			  if (tds != null &&  rule.geths() == 0) {
-			      if (n != -1)  throw new VisitFailure("more than one matching rule"); // more than one rule
-			      else n = i; 
-			  }
-		      }
-		      if (n == -1) throw new VisitFailure("No applicable rule.");
-		      Rule rule = newRules.get(n);
-		      // setting the new var
-		      HashMap<Term,Term> args = new HashMap<Term,Term>();
-		      Set<Term> new_vars = Utils.getNewVars(rule.getprem());
-		      for (Term t : new_vars) {
-			  String varname = t.getname();
-			  args.put(t, appliedTo);
-		      };
-		      try {
-			  Tree res = (Tree) (`ApplyRule(rule,dest,args)).visit(`r);
-			  return res;
-		      } catch (Exception e) {
-			  throw new VisitFailure("cannot apply the rule ; "
-						 + e.getMessage());}
-			}
-			else throw new 
-			    VisitFailure(PrettyPrinter.prettyPrint(`f) +
-					 " is not applied in " +
-					 PrettyPrinter.prettyPrint(`t1));
-		    }
-		}
-	    }
-	 }
+      visit Tree {
+        r@rule[c=seq] -> {
+          %match(seq, Prop dest, Prop active) {
+            sequent(context(_*,d@relationAppl("in",concTerm(f,_)),_*),
+                context(_*,a@relationAppl("in",concTerm(t1@funAppl("lappl",_),_))
+                  ,_*)), d, a -> {
+              Term appliedTo = `isAppliedNestedTo(f,t1);
+              if(appliedTo != null) {
+
+                int n = -1;
+                for(int i=0; i<newRules.size(); i++) {
+                  Rule rule = newRules.get(i);
+                  Prop conclusion = rule.getconcl();
+                  HashMap<String,Term> tds = Unification.match(conclusion, dest);
+                  if (tds != null &&  rule.geths() == 0) {
+                    if (n != -1)  throw new VisitFailure("more than one matching rule"); // more than one rule
+                    else n = i;
+                  }
+                }
+                if (n == -1) throw new VisitFailure("No applicable rule.");
+                Rule rule = newRules.get(n);
+                // setting the new var
+                HashMap<Term,Term> args = new HashMap<Term,Term>();
+                Set<Term> new_vars = Utils.getNewVars(rule.getprem());
+                for (Term t : new_vars) {
+                  String varname = t.getname();
+                  args.put(t, appliedTo);
+                };
+                try {
+                  Tree res = (Tree) (`ApplyRule(rule,dest,args)).visit(`r);
+                  return res;
+                } catch (Exception e) {
+                  throw new VisitFailure("cannot apply the rule ; "
+                      + e.getMessage());}
+              }
+              else throw new
+                VisitFailure(PrettyPrinter.prettyPrint(`f) +
+                    " is not applied in " +
+                    PrettyPrinter.prettyPrint(`t1));
+            }
+          }
+        }
+      }
     }
 
 
@@ -1136,17 +1134,17 @@ b :{
   %strategy LamdaPiTypeCheck(pistarleft:Rule, cont: Strategy) extends Identity() {
     visit Tree {
       r@rule[type=openInfo(),
-             c=sequent(hyps@context(_*,h@relationAppl("in",(f,_)),_*),
-                       context(_*,relationAppl("in",(a@funAppl("lappl",_),_))))] -> {
+             c=sequent(hyps@context(_*,h@relationAppl("in",concTerm(f,_)),_*),
+                       context(_*,relationAppl("in",concTerm(a@funAppl("lappl",_),_))))] -> {
                Term appliedTo = `isAppliedNestedTo(f,a);
                if(appliedTo != null) {
-                 System.out.println("found " + PrettyPrinter.prettyPrint(`f) + 
+                 System.out.println("found " + PrettyPrinter.prettyPrint(`f) +
                      " applied to " + PrettyPrinter.prettyPrint(`appliedTo));
 
                  // if not already done
                  %match(hyps) {
                    //!context(_*,relationAppl("in",(x,_)),_*) && x << funAppl("lappl",concTerm(f,appliedTo)) -> {
-                   context(_*,relationAppl("in",(x,_)),_*) -> {
+                   context(_*,relationAppl("in",concTerm(x,_)),_*) -> {
                      System.out.println(`x);
                    }
                  }
@@ -1161,15 +1159,15 @@ b :{
   }
 
 /* ---- LAMBDA PI -----*/
-  
+
     %op Strategy toPremisses(s: Strategy) {
-	make(s) {
-	    `_rule(Identity(),_premisses(s),Identity(),Identity())
-		}
+      make(s) {
+        `_rule(Identity(),_premisses(s),Identity(),Identity())
+      }
     }
 
   %op Strategy SafeTopDown(s:Strategy) {
-    make(s) { 
+    make(s) {
 	`mu(MuVar("y"),Try(Sequence(s,toPremisses(MuVar("y")))))
     }
   }
@@ -1219,10 +1217,10 @@ b :{
 
   private Stack<ProofEnv> buildProofTreeFromStack(Stack<ProofEnv> envStack)  throws ReInitException {
 
-	  ProofEnv env = envStack.pop(); 
-	  ProofEnv orig = env;
-	  Sequent goal = null;
-	    
+    roofEnv env = envStack.pop();
+    ProofEnv orig = env;
+    Sequent goal = null;
+
     // main loop
     while(env.openGoals.size() > 0) {
       Tree tree = null;
@@ -1231,7 +1229,7 @@ b :{
       LinkedList<Position> og = env.openGoals;
       writeToOutputln(og.size() + " open goals : ");
       %match(LinkedList og) {
-        (_*,p,_*) -> {
+        concLinkedList(_*,p,_*) -> {
           Position pos = (Position) `p;
           writeToOutputln("\t"+PrettyPrinter.prettyPrint(getSequentByPosition(env.tree, pos)));
         }
@@ -1241,7 +1239,7 @@ b :{
       Position currentPos = env.openGoals.get(env.currentGoal);
       goal = getSequentByPosition(env.tree, currentPos);
 
-      // pritty prints the current goal 
+      // pritty prints the current goal
       ArrayList<Prop> hyp = getHypothesis(goal);
       ArrayList<Prop> concl = getConclusions(goal);
       Prop active = env.focus_left ?  hyp.get(env.focus-1) : concl.get(env.focus-1);  // for conveniance
@@ -1280,7 +1278,7 @@ b :{
           if (hs == 'h' && n <= hyp.size()) {
             env.focus_left = true;
             env.focus = n;
-          } 
+          }
           else if (hs == 'c' && n <= concl.size()) {
             env.focus_left = false;
             env.focus = n;
@@ -1295,18 +1293,18 @@ b :{
             Prop conclusion = rule.getconcl();
             HashMap<String,Term> utds = Unification.unify(conclusion, active);
             if (utds != null) {
-		HashMap<String,Term> tds = Unification.match(conclusion, active);
-		int rule_hs = rule.geths();
+              HashMap<String,Term> tds = Unification.match(conclusion, active);
+              int rule_hs = rule.geths();
 
-		// same side condition
-		if (((rule_hs==0 && env.focus_left) || (rule_hs==1 && !env.focus_left))) 
-		    {
-			writeToOutput("\n- rule " + i);
-			if (tds == null) writeToOutput(" (narrow)");
-			writeToOutputln(" :\n");
-			writeToOutputln(PrettyPrinter.prettyRule(rule));
-		    }
-	    }
+              // same side condition
+              if (((rule_hs==0 && env.focus_left) || (rule_hs==1 && !env.focus_left)))
+              {
+                writeToOutput("\n- rule " + i);
+                if (tds == null) writeToOutput(" (narrow)");
+                writeToOutputln(" :\n");
+                writeToOutputln(PrettyPrinter.prettyRule(rule));
+              }
+            }
           } // for
           writeToOutputln("");
         }
@@ -1410,13 +1408,13 @@ b :{
 		int n;
 	      char hs = `arg.charAt(0);
 	      try { n = Integer.parseInt(`arg.substring(1)); }
-	      catch (NumberFormatException e) { 
+	      catch (NumberFormatException e) {
 		  throw new VisitFailure("Apply needs a correct hypothesis as argument.");
 	      };
 	      if (hs == 'c')
 		  throw new VisitFailure("Apply works only for hypotheses");
 	      else if (hs == 'h' && n <= hyp.size()) {
-		  Strategy strat = 
+		  Strategy strat =
 		      `Sequence(PTSApply(newRules,hyp.get(n-1),active),
 				toPremisses(Choice(Sequence(ApplyReduce(newTermRules, newPropRules),
 							    toPremisses(Try(ApplyAxiom()))),Try(ApplyAxiom()))));
@@ -1456,7 +1454,7 @@ b :{
         /* Axiom case */
         proofCommand("axiom") -> {
           try {
-            Strategy strat = `ApplyAxiom(); 
+            Strategy strat = `ApplyAxiom();
             tree = (Tree) currentPos.getOmega(strat).visit(env.tree);
           } catch (VisitFailure e) {
             writeToOutputln("Can't apply rule axiom " + e.getMessage());
@@ -1467,7 +1465,7 @@ b :{
         proofCommand("axiomunif") -> {
           try {
             InfoNarrow in = new InfoNarrow(null);
-	    Strategy strat = `Sequence(ApplyUnifAxiom(in), 
+	    Strategy strat = `Sequence(ApplyUnifAxiom(in),
 				       ToRoot(ApplySubst(in)));
 	    tree = (Tree) currentPos.getOmega(strat).visit(env.tree);
 	    //tree = (Tree) Unification.substitute(in.getTds(), tree);
@@ -1481,14 +1479,14 @@ b :{
           try {
 	    Vector<InfoNarrow> c = new Vector();
 	    InfoNarrow.initNumRules();
-            Strategy strat = `mu(MuVar("x"), Try(Sequence(CollectNarrow(c, 
-							    newTermRules, 
+            Strategy strat = `mu(MuVar("x"), Try(Sequence(CollectNarrow(c,
+							    newTermRules,
 							    newPropRules),
 						     All(MuVar("x")))));
-	    strat = `_rule(Identity(), Identity(), strat, Identity()); 
+	    strat = `_rule(Identity(), Identity(), strat, Identity());
 	    currentPos.getOmega(strat).visit(env.tree);
 
-	    if (c.size() == 0) 
+	    if (c.size() == 0)
 	      { throw new VisitFailure("no possible choices");};
 	    InfoNarrow i;
 	    if (c.size() == 1) {
@@ -1500,7 +1498,7 @@ b :{
 	      for (InfoNarrow in: c) {
 		h.put(in.getNumRule(), n);
 		writeToOutputln( in.getNumRule() + ":");
-		writeToOutputln("  " + 
+		writeToOutputln("  " +
 				PrettyPrinter.prettyPrint((sequentsAbstractType)in.getPos().getSubterm().visit(env.tree)) +
 				" by " + PrettyPrinter.prettyPrint(in.getRule())
 				+"\n");
@@ -1519,13 +1517,13 @@ b :{
           } catch (Exception e) {
 	    writeToOutputln("Incorrect input: " + e.getMessage());
 	  }
-	  
+
         }
 
         /* cut case */
         cutCommand(prop) -> {
           try {
-            Strategy strat = `ApplyCut(prop); 
+            Strategy strat = `ApplyCut(prop);
             tree = (Tree) ((Strategy) currentPos.getOmega(strat)).visit(env.tree);
           } catch (VisitFailure e) {
             writeToOutputln("Can't apply cut rule : " + e.getMessage());
@@ -1545,7 +1543,7 @@ b :{
         /* experimental fold case */
         foldCommand() -> {
           try {
-            Strategy strat =  env.focus_left ?  
+            Strategy strat =  env.focus_left ?
                                 `ApplyFoldL(newPropRules,active)
                               : `ApplyFoldR(newPropRules,active);
             tree = (Tree) currentPos.getOmega(strat).visit(env.tree);
@@ -1588,7 +1586,7 @@ b :{
         /* abort */
         abort() -> {
           envStack.push(env);
-          return envStack; 
+          return envStack;
         }
 
         /* proof end of file */
@@ -1597,7 +1595,7 @@ b :{
           IO.setStream(new DataInputStream(System.in));
           inputStreams.clear();
         }
-        
+
         /* debug commands */
         proofCommand("debugprop") -> {
           writeToOutputln(active.toString());
@@ -1616,7 +1614,7 @@ b :{
         envStack.push(env);
         env = (ProofEnv) env.clone();
 
-        env.tree = tree;       
+        env.tree = tree;
         env.openGoals.remove(currentPos);
         getOpenPositions(env.tree, currentPos, env.openGoals);
         env.currentGoal = env.openGoals.size()-1;
@@ -1645,7 +1643,7 @@ b :{
     pttheorems = new HashMap<String, ProofTerm>();
     writeToOutput("SESSIONRESTARTED"); // mot cle pour dire qu'on a redemarre la session
   }
- 
+
   private ArrayList<Rule> newRules = new ArrayList<Rule>();
   private TermRuleList newTermRules = `termrulelist();
   private PropRuleList newPropRules = `proprulelist();
@@ -1674,7 +1672,7 @@ b :{
     int i = 1;
     while((permut_problem = rc.getProblem()) != null) {
       try {
-        writeToOutputln("name the proposition \"" + 
+        writeToOutputln("name the proposition \"" +
             PrettyPrinter.prettyPrint(permut_problem) + "\" > ");
         String name = IO.getIdent();
         // ask user for a name
@@ -1689,7 +1687,7 @@ b :{
   private void addSuperRule(Prop atom, Prop phi) {
     RuleList rl = `cleanRules(atom,phi);
     %match(RuleList rl) {
-      (_*,r,_*) -> { 
+      rlist(_*,r,_*) -> {
         `r = (Rule) Unification.substPreTreatment(`r);
         newRules.add(`r);
       }
@@ -1701,8 +1699,8 @@ b :{
   private void addSuperRule(Tree theorem) {
     try {
       %match(theorem) {
-        rule[c=sequent((),(p))] -> {
-          PropRule pr = Utils.theoremToPropRewriteRule(`p); 
+        rule[c=sequent(context(),context(p))] -> {
+          PropRule pr = Utils.theoremToPropRewriteRule(`p);
           %match(pr) { proprule(lhs,rhs) -> { `addSuperRule(lhs,rhs); } }
         }
       }
@@ -1720,8 +1718,8 @@ b :{
   private void addPropRule(Tree theorem) {
     try {
       %match(theorem) {
-        rule[c=sequent((),(p))] -> {
-          PropRule pr = Utils.theoremToPropRewriteRule(`p); 
+        rule[c=sequent(context(),context(p))] -> {
+          PropRule pr = Utils.theoremToPropRewriteRule(`p);
           %match(pr) { proprule(lhs,rhs) -> { `addPropRule(lhs,rhs); } }
         }
       }
@@ -1739,8 +1737,8 @@ b :{
   private void addTermRule(Tree t) {
     try {
       %match(t) {
-        rule[c=sequent((),(p))] -> {
-          TermRule pr = Utils.theoremToTermRewriteRule(`p); 
+        rule[c=sequent(context(),context(p))] -> {
+          TermRule pr = Utils.theoremToTermRewriteRule(`p);
           %match(pr) { termrule(lhs,rhs) -> { `addTermRule(lhs,rhs); } }
         }
       }
@@ -1773,7 +1771,7 @@ b :{
           else addSuperRule(t);
         }
 
-        rewriteterm(lhs,rhs) -> { `addTermRule(lhs,rhs); } 
+        rewriteterm(lhs,rhs) -> { `addTermRule(lhs,rhs); }
 
         rewritetermFromTheorem(th) -> {
           Tree t = theorems.get(`th);
@@ -1905,7 +1903,7 @@ b :{
 
         print(name) -> {
           Tree tree = theorems.get(`name);
-          if(tree==null) writeToOutputln(`name + " not found"); 
+          if(tree==null) writeToOutputln(`name + " not found");
           else
             %match(Tree tree) {
               rule[c=concl] -> {
@@ -1919,7 +1917,7 @@ b :{
 
         importfile(name) -> {
           String newname = `name.substring(1, `name.length()-1);
-          try { 
+          try {
             InputStream stream = new FileInputStream(newname);
             IO.setStream(stream);
             inputStreams.push(stream);

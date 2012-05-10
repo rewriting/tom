@@ -113,13 +113,13 @@ public class Pretty {
       Rawbottom()            -> { return "False"; }
       Rawtop()               -> { return "True"; }
       /*-- special cases --*/
-      RawrelApp("eq",(x,y))  -> { return %[(@`pretty(x)@ = @`pretty(y)@)]%; }
-      RawrelApp("gt",(x,y))  -> { return %[(@`pretty(x)@ > @`pretty(y)@)]%; }
-      RawrelApp("lt",(x,y))  -> { return %[(@`pretty(x)@ < @`pretty(y)@)]%; }
-      RawrelApp("le",(x,y))  -> { return %[(@`pretty(x)@ <= @`pretty(y)@)]%; }
-      RawrelApp("in",(x,y))  -> { return "(" + `pretty(x) + " \u2208 " + `pretty(y) + ")"; }
+      RawrelApp("eq",RawtermList(x,y))  -> { return %[(@`pretty(x)@ = @`pretty(y)@)]%; }
+      RawrelApp("gt",RawtermList(x,y))  -> { return %[(@`pretty(x)@ > @`pretty(y)@)]%; }
+      RawrelApp("lt",RawtermList(x,y))  -> { return %[(@`pretty(x)@ < @`pretty(y)@)]%; }
+      RawrelApp("le",RawtermList(x,y))  -> { return %[(@`pretty(x)@ <= @`pretty(y)@)]%; }
+      RawrelApp("in",RawtermList(x,y))  -> { return "(" + `pretty(x) + " \u2208 " + `pretty(y) + ")"; }
       /* -- regular case --*/
-      RawrelApp(r,())        -> { return `r; }
+      RawrelApp(r,RawtermList())        -> { return `r; }
       RawrelApp(r,x)         -> { return %[@`r@(@`pretty(x)@)]%; }
       p1                     -> { return %[(@`pretty(p1,0)@)]%; }
     }
@@ -144,19 +144,19 @@ public class Pretty {
     %match(t) {
       Rawvar(x) -> { return `x;}
       // arithmetic pretty print
-      RawfunApp("z",()) -> { return "0"; }
+      RawfunApp("z",RawtermList()) -> { return "0"; }
       i@RawfunApp("s",_) -> {
         try { return Integer.toString(peanoToInt(`i));}
         catch (ConversionError e) { }
       }
-      RawfunApp("plus",(t1,t2)) -> { return %[(@`pretty(t1)@ + @`pretty(t2)@)]%; }
-      RawfunApp("mult",(t1,t2)) -> { return %[(@`pretty(t1)@ * @`pretty(t2)@)]%; }
-      RawfunApp("minus",(t1,t2)) -> { return %[(@`pretty(t1)@ - @`pretty(t2)@)]%; }
-      RawfunApp("div",(t1,t2)) -> { return %[(@`pretty(t1)@ / @`pretty(t2)@)]%; }
+      RawfunApp("plus",RawtermList(t1,t2)) -> { return %[(@`pretty(t1)@ + @`pretty(t2)@)]%; }
+      RawfunApp("mult",RawtermList(t1,t2)) -> { return %[(@`pretty(t1)@ * @`pretty(t2)@)]%; }
+      RawfunApp("minus",RawtermList(t1,t2)) -> { return %[(@`pretty(t1)@ - @`pretty(t2)@)]%; }
+      RawfunApp("div",RawtermList(t1,t2)) -> { return %[(@`pretty(t1)@ / @`pretty(t2)@)]%; }
       // finite 1st order theory of classes 
-      RawfunApp("appl",(p,x*)) -> { return %[@`pretty(p)@[@`pretty(x)@]]%; }
-      RawfunApp("nil",()) -> { return "nil"; }
-      l@RawfunApp("cons",(x,y)) -> {
+      RawfunApp("appl",RawtermList(p,x*)) -> { return %[@`pretty(p)@[@`pretty(x)@]]%; }
+      RawfunApp("nil",RawtermList()) -> { return "nil"; }
+      l@RawfunApp("cons",RawtermList(x,y)) -> {
         try { return %[<@`prettyList(l)@>]%; }
         catch(ConversionError e) { return %[@`pretty(x)@::@`pretty(y)@]%; }
       }
@@ -170,16 +170,16 @@ public class Pretty {
 
   private static int peanoToInt(RawTerm t) throws ConversionError {
     %match(t) {
-      RawfunApp("z",()) -> { return 0; }
-      RawfunApp("s",(n)) -> { return 1+`peanoToInt(n); }
+      RawfunApp("z",RawtermList()) -> { return 0; }
+      RawfunApp("s",RawtermList(n)) -> { return 1+`peanoToInt(n); }
     }
     throw new ConversionError();
   }
 
   public static String prettyList(RawTerm t) throws ConversionError {
     %match(t) {
-      RawfunApp("cons",(x,RawfunApp("nil",()))) -> { return `pretty(x); }
-      RawfunApp("cons",(x,y)) -> { return %[@`pretty(x)@,@`prettyList(y)@]%; }
+      RawfunApp("cons",RawtermList(x,RawfunApp("nil",RawtermList()))) -> { return `pretty(x); }
+      RawfunApp("cons",RawtermList(x,y)) -> { return %[@`pretty(x)@,@`prettyList(y)@]%; }
     }
     throw new ConversionError();
   }
@@ -359,7 +359,7 @@ public class Pretty {
       and(p1,p2) -> { return %[(@`pretty(p1)@) /\ @`pretty(p2)@]%; }
       forall(Fa(x,p1)) -> { return %[forall @`pretty(x)@, (@`pretty(p1)@)]%; }
       exists(Ex(x,p1)) -> { return %[exists @`pretty(x)@, (@`pretty(p1)@)]%; }
-      relApp(r,()) -> { return `r; }
+      relApp(r,termList()) -> { return `r; }
       relApp(r,x) -> { return %[@`r@(@`pretty(x)@)]%; }
       bottom() -> { return "False"; }
       top() -> { return "True"; }
@@ -637,7 +637,7 @@ public class Pretty {
       Rawand(p1,p2)          -> { if (prec <= 3) return %[@`lpretty(p1,3)@ \land @`lpretty(p2,4)@]%; }
       Rawbottom()            -> { return "\\bot"; }
       Rawtop()               -> { return "\\top"; }
-      RawrelApp(r,())        -> { return `r; }
+      RawrelApp(r,RawtermList())        -> { return `r; }
       RawrelApp("Eq",RawtermList(x,y)) -> { return %[@lpretty(`x)@ \simeq @lpretty(`y)@]%; }
       RawrelApp("In",RawtermList(x,y)) -> { return %[@lpretty(`x)@ \in @lpretty(`y)@]%; }
       RawrelApp(r,x)         -> { return %[@`r@(@`lpretty(x)@)]%; }

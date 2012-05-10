@@ -27,7 +27,7 @@ public class Utils {
   public static Prop forallList(StringList l, Prop p) {
     Prop res = p;
     %match(StringList l) {
-      (_*,v,_*) -> { res = `forall(v,res); }
+      strlist(_*,v,_*) -> { res = `forall(v,res); }
     }
     return res;
   }
@@ -39,7 +39,7 @@ public class Utils {
   public static Prop existsList(StringList l, Prop p) {
     Prop res = p;
     %match(StringList l) {
-      (_*,v,_*) -> { res = `exists(v,res); }
+      strlist(_*,v,_*) -> { res = `exists(v,res); }
     }
     return res;
   }
@@ -287,7 +287,7 @@ public class Utils {
 
   private static PropRule theoremToPropRewriteRuleRec(Prop th) throws Exception {
     %match (th) {
-      forall(x,p) -> { return `theoremToPropRewriteRuleRec(p); }
+      forall(_x,p) -> { return `theoremToPropRewriteRuleRec(p); }
       and(implies(a@relationAppl[],b),implies(b,a@relationAppl[]))  -> {
         return `proprule(a,b); 
       }
@@ -313,7 +313,7 @@ public class Utils {
 
   private static TermRule theoremToTermRewriteRuleRec(Prop th) throws Exception {
     %match (th) {
-      forall(x,p) -> { return `theoremToTermRewriteRuleRec(p); }
+      forall(_x,p) -> { return `theoremToTermRewriteRuleRec(p); }
       relationAppl("eq",concTerm(x,y))  -> {
         return `termrule(x,y); 
       }
