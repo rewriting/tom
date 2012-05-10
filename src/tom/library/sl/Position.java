@@ -35,7 +35,7 @@ package tom.library.sl;
  * Object that represents a position in a term
  */
 
-public class Position implements Cloneable,Path {
+public class Position implements Cloneable, Path {
 
   private int[] omega;
 
