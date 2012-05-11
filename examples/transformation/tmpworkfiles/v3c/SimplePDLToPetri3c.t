@@ -10,12 +10,16 @@ import java.util.*;
 import tom.library.sl.*;
 import tom.library.emf.*;
 
+import tom.library.utils.LinkClass;
+
 public class SimplePDLToPetri3c {
 
   %include{ sl.tom }
   %include{ DDMMPetriNetPackage.tom }
   //%include{ SimplePDL3c.tom }
   %include{ SimplepdlPackage.tom }
+
+  %include{ LinkClass.tom }
 
   %typeterm SimplePDLToPetri3c { implement { SimplePDLToPetri3c }}
   
@@ -34,8 +38,9 @@ public class SimplePDLToPetri3c {
         Node p_ready  = `Place(name + "_ready", translator.pn,ArcEList(), ArcEList(), 1);
         Node p_running  = `Place(name + "_running", translator.pn,ArcEList(), ArcEList(), 0);
         Node p_finished  = `Place(name + "_finished", translator.pn,ArcEList(), ArcEList(), 0);
-        Node t_start  = `Transition(name + "_start", translator.pn,ArcEList(), ArcEList(), 1, 1);
-        Node t_finish  = `Transition(name + "_finish", translator.pn,ArcEList(), ArcEList(), 1, 1);
+        //Node t_start  = `Transition(name + "_start", translator.pn,ArcEList(), ArcEList(), 1, 1);
+        %tracelink(Node, t_start, `Transition(name + "_start", translator.pn,ArcEList(), ArcEList(), 1, 1));
+        %tracelink(Node, t_finish, `Transition(name + "_finish", translator.pn,ArcEList(), ArcEList(), 1, 1));
 
         `Arc(t_start, p_ready, translator.pn,normal(), 1);
         `Arc(p_running, t_start, translator.pn,normal(), 1);
