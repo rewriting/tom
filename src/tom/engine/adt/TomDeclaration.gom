@@ -21,11 +21,12 @@ Declaration = TypeTermDecl(AstName:TomName,Declarations:DeclarationList,OrgTrack
             | Strategy(SName:TomName,ExtendsTerm:BQTerm,VisitList:TomVisitList,OrgTrack:Option)
 ///
             | TransformationDecl(TName:TomName,Domain:TomTypeList,Declarations:DeclarationList,OrgTrack:Option)
-            | Transformation(TName:TomName,Domain:TomTypeList,Declarations:DeclarationList,ElementaryTList:ElementaryTransformationList,OrgTrack:Option)
+            | Transformation(TName:TomName,Domain:TomTypeList,Declarations:DeclarationList,ElementaryTList:ElementaryTransformationList,FileFrom:String,FileTo:String,OrgTrack:Option)
             | ElementaryTransfoDecl(ETName:TomName,Traversal:BQTerm,Declarations:DeclarationList,OrgTrack:Option)
 //            | TracelinkDecl(Type:TomName,Name:TomName,ElementaryTransfoName:TomName,Expr:Expression,OrgTrack:Option)//BQTerm, then blocklist
             | TransfoStratDecl(Info:TransfoStratInfo,TSName:TomName,Term:TomTerm,Instructions:InstructionList,Options:OptionList,OrgTrack:Option)//pb avec les options//TransfoRuleDecl
-            | ResolveStratDecl(TransfoName:String,ResList:ResolveStratBlockList,OriginTracking:Option)
+            | ResolveStratDecl(TransfoName:String,ResList:ResolveStratBlockList,ResolveNameList:TomNameList,OriginTracking:Option)
+            | ResolveInverseLinksDecl(ResolveNameList:TomNameList,FileFrom:String,FileTo:String)
             | ResolveTypeTermDecl(AstName:TomName,Declarations:DeclarationList,OrgTrack:Option)//useful?
             | ResolveDecl(typeterm:Declaration,op:Declaration,class:Declaration) //encapsulation
             | ResolveClassDeclInit(Instr:Instruction) //CodeToInstruction(TargetLanguageToCode(ITL(BIG_STRING)))

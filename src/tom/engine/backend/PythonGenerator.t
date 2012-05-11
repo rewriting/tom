@@ -455,6 +455,10 @@ matchBlock: {
     throw new TomRuntimeException("%transformation (ResolveClass) not yet supported in Python");
   }
 
+  protected void buildResolveInverseLinks(int deep, String fileFrom, String fileTo, TomNameList resolveNameList, String moduleName) throws IOException {
+    throw new TomRuntimeException("%transformation (ResolveInverseLinks) not yet supported in Python");
+  }
+
   protected void genResolveDeclMake(String prefix, String funName, TomType returnType, BQTermList argList, String moduleName) throws IOException {
     throw new TomRuntimeException("%transformation (ResolveDeclMake) not yet supported in Python");
   }
@@ -469,6 +473,14 @@ matchBlock: {
 
   protected void buildTracelink(int deep, String type, String name, Expression expr, String moduleName) throws IOException {
     throw new TomRuntimeException("%transformation (Tracelink instruction) not  yet supported in Python");
+  }
+
+  protected void buildTracelinkPopulateResolve(int deep, String refClassName, TomNameList tracedLinks, BQTerm current, String moduleName) throws IOException {
+    throw new TomRuntimeException("%transformation (TracelinkPopulateResolve instruction) not yet supported in Python");
+  }
+
+  protected void buildResolve(int deep, String src, String srcType, String target, String targetType, String moduleName) throws IOException {
+    throw new TomRuntimeException("%transformation (Resolve instruction) not yet supported in Python");
   }
 ///
 

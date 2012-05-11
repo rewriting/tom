@@ -26,7 +26,11 @@
 package tom.engine.backend;
 
 import java.io.IOException;
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
 
 import tom.engine.TomBase;
 import tom.engine.tools.OutputCode;
@@ -47,6 +51,15 @@ import tom.engine.adt.code.types.*;
 import tom.engine.tools.SymbolTable;
 import tom.platform.OptionManager;
 import tom.engine.exception.TomRuntimeException;
+
+import org.eclipse.emf.ecore.xmi.XMIResource;
+import org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl;
+import org.eclipse.emf.ecore.EClassifier;
+import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.common.util.BasicEList;
 
 public class JavaGenerator extends CFamilyGenerator {
 
@@ -73,6 +86,7 @@ public class JavaGenerator extends CFamilyGenerator {
 
 // ------------------------------------------------------------
   %include { ../adt/tomsignature/TomSignature.tom }
+  %include{ emf/ecore.tom }
 // ------------------------------------------------------------
 
   protected void buildExpBottom(int deep, TomType type, String moduleName) throws IOException {
@@ -164,9 +178,9 @@ public static class @refname@ implements tom.library.utils.ReferenceClass {
       output.write(%[
   private @`type@ @`name@;
   public @`type@ get@`name@() { return @`name@; }
-  public void set(@`type@ value) { this.@`name@ = value; }
+  public void set@`name@(@`type@ value) { this.@`name@ = value; }
 ]%);
-      getfunctionbody = getfunctionbody+"if(name.equals(\""+`name+"\")) {\n        return get"+`name+"();\n    } else";
+      getfunctionbody = getfunctionbody+"if(name.equals(\""+`name+"\")) {\n        return get"+`name+"();\n    } else ";
       }
     }
 
@@ -189,13 +203,144 @@ public static class @refname@ implements tom.library.utils.ReferenceClass {
    output.writeln(";");
   }
 
+  //TODO: update this procedure (tom__linkClass)
+  protected void buildTracelinkPopulateResolve(int deep, String refClassName, TomNameList tracedLinks, BQTerm current, String moduleName) throws IOException {
+    String refVar = "var_"+refClassName.toLowerCase();
+    //create the ReferenceClass instance
+    output.write(refClassName+" "+refVar+" = new "+refClassName+"();");
+    //populate the newly created ReferenceClass by setting attributes
+    for(TomName name : tracedLinks.getCollectionconcTomName()){
+      String namestr = name.getString();
+      output.write(refVar+".set"+namestr+"("+namestr+");");
+    }
+    //save the ReferenceClass into  the LinkClass
+    //TODO: change this to be less specific (and add tom__linkClass:LinkClass
+    //as first parameter of all strategies)
+    //LinkClass class could be in the Tom library
+    output.write("tom__linkClass.put(");
+    generateBQTerm(deep, current, moduleName);
+    output.write(","+refVar+");");
+  }
+
+  protected void buildResolve(int deep, String src, String srcType, String target, String targetType, String moduleName) throws IOException {
+    output.write(" new Resolve"+srcType+targetType+"("+src+", \""+target+"\");");
+  }
+
   //TODO: resolveInverseLinks
+  //how to generateresolveInverseLinks? how to generate the call?
   protected void buildResolveStratInstruction(String name) throws IOException {
-    output.write(%[@name@ res = (@name@) translator.table.get(o).get(name);i
+    output.write(%[@name@ res = (@name@) translator.table.get(o).get(name);
         //expansion de `o & `name
-        //pb translator
-//resolveInverseLinks(tom__arg, res, translator);//trop spec
+        //pb translator, pb dernier param
+        //resolveInverseLinks(tom__arg, res, translator);//trop spec
+        resolveInverseLinks(tom__arg, res, pn);
 return res;]%);
+  }
+
+  //TODO: parameters are problematic
+  //TODO: specific to EMf
+  protected void buildResolveInverseLinks(int deep, String fileFrom, String fileTo, TomNameList resolveNameList, String moduleName) throws IOException {
+    //List<String> resolveList = getResolveNameList(resolveNameList);
+    //String toSet = genToSetFromResolveNameList(resolveNameList);
+
+    output.write(%[
+  public static void resolveInverseLinks(EObject resolveNode, EObject newNode, PetriNet pn) {
+    ECrossReferenceAdapter adapter = new ECrossReferenceAdapter();
+    pn.eAdapters().add(adapter);
+    Collection<EStructuralFeature.Setting> references = adapter.getInverseReferences(resolveNode);
+
+        boolean toSet = (false
+        @genToSetFromResolveNameList(resolveNameList)@
+        );
+
+    for (EStructuralFeature.Setting setting:references) {
+      EObject current = setting.getEObject();
+]%);
+    genTargetElementBlock(fileTo);
+    output.write(%[
+    }
+  }
+]%);
+  }
+
+  //TODO: find another way to generate these blocks. It would be better to
+  //avoid EMF dependancies
+  protected void genTargetElementBlock(String fileTo) throws IOException  {
+    XMIResourceImpl resource = new XMIResourceImpl();
+    Map opts = new HashMap();
+    opts.put(XMIResource.OPTION_SCHEMA_LOCATION, java.lang.Boolean.TRUE);
+    File input = new File(fileTo);
+    try {
+      resource.load(new FileInputStream(input),opts);//new HashMap());
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+    //org.eclipse.emf.ecore.impl.EPackageImpl
+    EPackage tmp = (EPackage)resource.getContents().get(0);
+    EList<EPackage> epkgs = tmp.getESubpackages();
+    if(epkgs.size()<0) {
+      epkgs = getEPackages(epkgs);
+    }
+    epkgs.add(tmp);
+    EList<EClassifier> ecls = new BasicEList<EClassifier>();
+    //retrieve all EClassifiers in the MM
+    for(EPackage epk : epkgs) {
+      ecls.addAll(epk.getEClassifiers());
+    }
+    //generate code for each EClassifier which is an EClass
+    for(EClassifier ecl : ecls) {
+      if(ecl instanceof EClass ) {//EEnum should not produce a block
+        if(!((EClass)ecl).isAbstract()) {
+        String eclName = ecl.getName();
+        output.write(%[if (current instanceof @eclName@) {
+        @eclName@ newCurrent = (@eclName@)current;
+      ]%);
+
+        EList<EStructuralFeature> sfs = ((EClass)ecl).getEAllStructuralFeatures();
+        for(EStructuralFeature sf : sfs) {//many and builtin should not produce a block
+          if(sf.isChangeable() && !sf.isMany()) {
+        output.write(%[if(newCurrent.get@firstToUpperCase(sf.getName())@().equals(resolveNode) && toSet) {
+          newCurrent.set@firstToUpperCase(sf.getName())@(newNode); 
+        } else ]%);
+          }
+        }
+        output.write(%[{
+          throw new RuntimeException("should not be there");
+        }
+      }]%);
+
+      }
+      }
+    }
+  }
+
+  protected String firstToUpperCase(String s) {
+    if(s.length()>1) {
+      return (s.substring(0,1).toUpperCase()+s.substring(1,s.length()));
+    } else {
+      return s.toUpperCase();
+    }
+  }
+
+  protected EList<org.eclipse.emf.ecore.EPackage> getEPackages(EList<org.eclipse.emf.ecore.EPackage> epkgs) {
+    for(EPackage epkg : epkgs ) {
+      EList<EPackage> sub = epkg.getESubpackages();
+      if(sub.size()>0) {
+        epkgs.addAll(getEPackages(sub));
+      }
+    }
+    return epkgs;
+  }
+
+
+  protected String genToSetFromResolveNameList(TomNameList resolveNameList) {
+    //List<String> result = new LinkedList<String>();
+    String result = "";
+    for(TomName tname : resolveNameList.getCollectionconcTomName()) {
+      result = result+" | resolveNode instanceof "+tname.getString();
+    }
+    return result;
   }
 
   protected void buildClass(int deep, String tomName, TomType extendsType, BQTerm superTerm, Declaration declaration, String moduleName) throws IOException {

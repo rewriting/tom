@@ -489,6 +489,10 @@ public class CamlGenerator extends GenericGenerator {
     throw new TomRuntimeException("%transformation (ResolveClass) not yet supported in Caml");
   }
 
+  protected void buildResolveInverseLinks(int deep, String fileFrom, String fileTo, TomNameList resolveNameList, String moduleName) throws IOException {
+    throw new TomRuntimeException("%transformation (ResolveInverseLinks) not yet supported in Caml");
+  }
+
   protected void genResolveDeclMake(String prefix, String funName, TomType returnType, BQTermList argList, String moduleName) throws IOException {
     throw new TomRuntimeException("%transformation (ResolveMakeDecl) not yet supported in Caml");
   }
@@ -504,5 +508,14 @@ public class CamlGenerator extends GenericGenerator {
   protected void buildTracelink(int deep, String type, String name, Expression expr, String moduleName) throws IOException {
     throw new TomRuntimeException("%transformation (Tracelink instruction) not yet supported in Caml");
   }
+
+  protected void buildTracelinkPopulateResolve(int deep, String refClassName, TomNameList tracedLinks, BQTerm current, String moduleName) throws IOException {
+    throw new TomRuntimeException("%transformation (TracelinkPopulateResolve instruction) not yet supported in Caml");
+  }
+
+  protected void buildResolve(int deep, String src, String srcType, String target, String targetType, String moduleName) throws IOException {
+    throw new TomRuntimeException("%transformation (Resolve instruction) not yet supported in Caml");
+  }
+
 ///
 }

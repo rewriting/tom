@@ -181,7 +181,19 @@ public class CGenerator extends CFamilyGenerator {
     throw new TomRuntimeException("%transformation (ResolveReferenceClass) not yet supported in C");
   }
 
+  protected void buildResolveInverseLinks(int deep, String fileFrom, String fileTo, TomNameList resolveNameList, String moduleName) throws IOException {
+    throw new TomRuntimeException("%transformation (ResolveInverseLinks) not yet supported in C");
+  }
+
   protected void buildTracelink(int deep, String type, String name, Expression expr, String moduleName) throws IOException {
     throw new TomRuntimeException("%transformation (Tracelink instruction) not yet supported in C");
+  }
+  
+  protected void buildTracelinkPopulateResolve(int deep, String refClassName, TomNameList tracedLinks, BQTerm current, String moduleName) throws IOException {
+    throw new TomRuntimeException("%transformation (TracelinkPopulateResolve instruction) not yet supported in C");
+  }
+
+  protected void buildResolve(int deep, String src, String srcType, String target, String targetType, String moduleName) throws IOException {
+    throw new TomRuntimeException("%transformation (Resolve instruction) not yet supported in C");
   }
 }

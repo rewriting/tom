@@ -51,6 +51,9 @@ Instruction =
   | RawAction(AstInstruction:Instruction)
   | ResolveStratInstruction(TargetType:TomType)
   | Tracelink(Type:TomName,Name:TomName,ElementaryTransfoName:TomName,Expr:Expression,OrgTrack:Option)//BQTerm, then blocklist
+//  | TracelinkResolve()
+  | TracelinkPopulateResolve(RefClassName:TomName,TracedLinks:TomNameList,Current:BQTerm)//QVariable
+  | Resolve(Src:TomName,SType:TomName,Target:TomName,TType:TomName,OrgTrack:Option)
 
 RefClassTracelinkInstruction = RefClassTracelinkInstruction(Type:TomName,Name:TomName)
 

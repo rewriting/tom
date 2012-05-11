@@ -825,6 +825,36 @@ tracelinkConstruct [Option orgTrack] returns [Instruction result] throws TomExce
      }
     ;
 
+/*bqtermTracelink returns [BQTerm result] throws TomException
+{
+  result = null;
+}
+    :
+        t:BACKQUOTE
+        {
+          Option ot = `OriginTracking(Name("Backquote"),t.getLine(),currentFile());
+          result = bqparser.beginBackquote();
+          // update position for new target block
+          updatePosition();
+        }
+    ;*/
+
+resolveConstruct [Option orgTrack] returns [Instruction result] throws TomException
+{
+  result=null;
+}
+    :
+     t1:LPAREN s:ALL_ID COLON stype:ALL_ID COMMA t:ALL_ID COLON ttype:ALL_ID t2:RPAREN
+     {
+       TomName source = `Name(s.getText());
+       TomName sourceType = `Name(stype.getText());
+       TomName target = `Name(t.getText());
+       TomName targetType = `Name(ttype.getText());
+       result = `Resolve(source,sourceType,target,targetType,orgTrack);
+       updatePosition(t2.getLine(),t2.getColumn());
+       selector().pop();
+     }
+    ;
 
 // The %transformation construct : looks like the %strategy
 transformationConstruct [Option orgTrack] returns [Declaration result] throws TomException
@@ -866,6 +896,8 @@ transformationConstruct [Option orgTrack] returns [Declaration result] throws To
 
   List<ResolveStratBlock> resolveStratBlockList = new LinkedList<ResolveStratBlock>();
   ResolveStratBlockList astResolveStratBlockList = `concResolveStratBlock();
+
+  List<TomName> resolveNameList = new LinkedList<TomName>();
 
   Constraint constraint;
   BQTerm subject;
@@ -945,6 +977,8 @@ transformationConstruct [Option orgTrack] returns [Declaration result] throws To
          TO LPAREN 
          withtoElementList[toElementList]
          RPAREN
+         //intermediate version
+         LPAREN SRC COLON src:ALL_ID COMMA DST COLON dst:ALL_ID RPAREN
          {
            int line = with.getLine();
            TomType sType = `Type(concTypeOption(),"String",EmptyTargetLanguageType()); //  /!\ Java dependant
@@ -1072,21 +1106,27 @@ transformationConstruct [Option orgTrack] returns [Declaration result] throws To
                  }
                }
 
+
                //Pourquoi ? ; pourquoi pas plutôt : 
                declList.add(`TypeTermDecl(resolveName,resolveTTDecl,resolveOrgTrack));
                declList.add(`SymbolDecl(Name(resolveStringName)));
                declList.add(`ResolveClassDecl(wName, tName, extendsName));
                //replace: ResolveTypeTermDecl(resolveName,resolveTTDecl,resolveOrgTrack),
                resolveStratElementList.add(`ResolveStratElement(wName, resolveOrgTrack));
+
+               resolveNameList.add(`Name(resolveStringName));
              }
              astResolveStratElementList = ASTFactory.makeResolveStratElementList(resolveStratElementList);
              resolveStratBlockList.add(`ResolveStratBlock(tName,astResolveStratElementList));
              resolveStratElementList.clear(); //reset ConstraintInstructionList
            }
 
+
+           TomNameList astResolveNameList = ASTFactory.makeNameList(resolveNameList);
+
            astResolveStratBlockList =
              ASTFactory.makeResolveStratBlockList(resolveStratBlockList);
-           declList.add(`ResolveStratDecl(name.getText(),astResolveStratBlockList,ot));
+           declList.add(`ResolveStratDecl(name.getText(),astResolveStratBlockList,astResolveNameList,ot));
            astDeclarationList = ASTFactory.makeDeclarationList(declList);
            // ot ou  orgTrack ?
          }
@@ -1150,7 +1190,9 @@ transformationConstruct [Option orgTrack] returns [Declaration result] throws To
          //      TransformationDecl(Name(name.getText()),types,astDeclarationList,orgTrack),
           //     SymbolDecl(Name(name.getText()))));
          //new
-         result = `AbstractDecl(concDeclaration(Transformation(Name(name.getText()),types,astDeclarationList,astElemTransfoList,orgTrack),SymbolDecl(Name(name.getText()))));
+         String fileFrom = src.getText();
+         String fileTo = dst.getText();
+         result = `AbstractDecl(concDeclaration(Transformation(Name(name.getText()),types,astDeclarationList,astElemTransfoList,fileFrom,fileTo,orgTrack),SymbolDecl(Name(name.getText()))));
          selector().pop();
        }
      )
@@ -3065,7 +3107,9 @@ tokens {
     TO = "to";
     REFERENCE = "reference";
     TRAVERSAL = "traversal";
-    ELEMENTARY = "rule";
+    ELEMENTARY = "definition";//"rule";
+    SRC = "src";
+    DST = "dst";
 }
 
 LBRACE      :   '{' ;
@@ -3106,6 +3150,7 @@ XML_CLOSE_SINGLETON : "/>" ;
 WS  : ( ' '
     | '\t'
     | '\f'
+    | '\u00a0' //non breaking space:
     // handle newlines
     | ( "\r\n"  // Evil DOS
       | '\r'    // Macintosh

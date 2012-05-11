@@ -423,6 +423,7 @@ blockList [List<Code> list] throws TomException
         |   strategyConstruct[list]
         |   transformationConstruct[list] 
         |   tracelinkConstruct[list]
+        |   resolveConstruct[list]
         |   gomsignature[list]
         |   backquoteTerm[list]
         |   operator[list]
@@ -489,6 +490,27 @@ transformationConstruct [List<Code> list] throws TomException
             // call the tomparser for the construct
             Declaration transformation = tomparser.transformationConstruct(ot);
             list.add(`DeclarationToCode(transformation));
+        }
+    ;
+resolveConstruct [List<Code> list] throws TomException
+{
+    TargetLanguage code = null;
+}
+    :
+        t:RESOLVE
+        {
+            String textCode = getCode();
+            if(isCorrect(textCode)) {
+                code = `TL(
+                    textCode,
+                    TextPosition(currentLine,currentColumn),
+                    TextPosition(t.getLine(),t.getColumn())
+                );
+                list.add(`TargetLanguageToCode(code));
+            }
+            Option ot = `OriginTracking(Name("Resolve"), t.getLine(), currentFile);
+            Instruction resolve = tomparser.resolveConstruct(ot);
+            list.add(`InstructionToCode(resolve));
         }
     ;
 
@@ -991,6 +1013,9 @@ TRANSFORMATION
     ;
 TRACELINK
     : "%tracelink" {selector().push("tomlexer");}
+    ;
+RESOLVE
+    : "%resolve" {selector().push("tomlexer");}
     ;
 TYPETERM
     : "%typeterm" {selector().push("tomlexer");}
