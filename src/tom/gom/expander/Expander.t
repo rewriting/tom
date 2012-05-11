@@ -104,7 +104,7 @@ public class Expander {
     Set<GomModuleName> moduleToAnalyse = new HashSet<GomModuleName>();
     ImportList importedModules = getImportList(module);
     while(!importedModules.isEmptyConcImportedModule()) {
-      GomModuleName name = importedModules.getHeadConcImportedModule().getModuleName();
+      GomModuleName name = importedModules.getHeadConcImportedModule();
       if(!alreadyParsedModule.contains(name)) {
         moduleToAnalyse.add(name);
       }

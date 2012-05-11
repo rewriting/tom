@@ -63,6 +63,8 @@
       <exclude name="Record.t"/>
       <exclude name="TestRecord.t"/>
       <exclude name="TestOptimizer.t"/>
+      <exclude name="sl/TestHandWrittenMapping.t"/>
+      <exclude name="sl/IntrospectorBehaviour.t"/>
 
       <!-- Why to exclude these tests?? -->
       <exclude name="**/error/**"/>
@@ -77,6 +79,12 @@
                 destdir="${test.gen}"
                 options="--optimize">
     	<include name="TestOptimizer.t"/>
+    </tom.preset>
+   <tom.preset srcdir="${test.src}"
+                destdir="${test.gen}"
+                options="--genIntrospector">
+      <include name="sl/TestHandWrittenMapping.t"/>
+      <include name="sl/IntrospectorBehaviour.t"/>
     </tom.preset>
     <javac.preset destdir="${test.build}" fork="true">
       <src path="${test.src}"/>
@@ -122,6 +130,8 @@
       <exclude name="Record.t"/>
       <exclude name="TestRecord.t"/>
       <exclude name="TestOptimizer.t"/>
+      <exclude name="sl/TestHandWrittenMapping.t"/>
+      <exclude name="sl/IntrospectorBehaviour.t"/>
 
       <!-- Why to exclude these tests?? -->
       <exclude name="**/error/**"/>
@@ -146,6 +156,12 @@
                 destdir="${test.gen}"
                 options="--optimize">
     	<include name="TestOptimizer.t"/>
+    </tom.preset>
+    <tom.preset srcdir="${test.src}"
+      destdir="${test.gen}"
+      options="--genIntrospector">
+      <include name="sl/TestHandWrittenMapping.t"/>
+      <include name="sl/IntrospectorBehaviour.t"/>
     </tom.preset>
     <javac.preset destdir="${test.build}" fork="true">
       <src path="${test.src}"/>

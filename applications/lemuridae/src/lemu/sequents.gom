@@ -178,14 +178,14 @@ Command = rewriteprop(l:Prop, r:Prop)
         | inductiver(s:Sig)
         | inductive(s:Sig)
         | endoffile()
-	
+
 ProofCommand = proofCommand(text:String)
              | focusCommand(hyp:String)
              | cutCommand(p:Prop)
              | ruleCommand(n:int)
              | narrowRuleCommand(n:int)
              | foldCommand()
-	     | applyCommand(hyp:String)
+             | applyCommand(hyp:String)
              | assumeCommand(m:String)
              | askrulesCommand()
              | theoremCommand(name:String)
@@ -229,7 +229,7 @@ sort Term:block() {
         Var(n) -> { res.add(`n); return res; }
         funAppl(fun, l) -> {
           %match(TermList l) {
-            (_*,c,_*) -> { `getVars(c,res); }
+            concTerm(_*,c,_*) -> { `getVars(c,res); }
           }
         }
       }
@@ -286,7 +286,7 @@ sort Prop:block() {
         }
         relationAppl(_,l) -> {
           %match(TermList l) {
-            (_*,c,_*) -> { Term.getVars(`c,res); }
+            concTerm(_*,c,_*) -> { Term.getVars(`c,res); }
           }
         }
       }

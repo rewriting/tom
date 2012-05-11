@@ -63,7 +63,7 @@ public class RuleCalc {
 
     // looks for permutability problems
     %match(PropRuleList pruleList) {
-      (r1*, r@proprule(_,prop) ,r2*) -> {
+      proprulelist(r1*, r@proprule(_,prop) ,r2*) -> {
         lastPos = forallNeg(`prop, 0, 1, Position.makeFromArray(new int[0]));
         if(lastPos != null) {
           // removing lastRule from the rules
@@ -117,7 +117,7 @@ public class RuleCalc {
     Tree partialTree = null;
     SeqList prems = null;
     %match(PropRuleList pruleList) {
-      (_*,proprule(lhs,rhs),_*) -> {
+      proprulelist(_*,proprule(lhs,rhs),_*) -> {
         // right super rule
         seq = `sequent(context(), context(rhs));
         partialTree = buildTree(`seq);
@@ -162,65 +162,65 @@ public class RuleCalc {
   private static Tree buildTree(Sequent seq, Set<String> freevars) {
     %match(seq) {
       // axiom
-      s@sequent((_*,p,_*),(_*,p,_*)) -> {
+      s@sequent(context(_*,p,_*),context(_*,p,_*)) -> {
         return `rule(axiomInfo(), premisses(), s, p) ;
       }
       // bottom
-      s@sequent((_*,b@bottom(),_*),_) -> {
+      s@sequent(context(_*,b@bottom(),_*),_) -> {
         return `rule(bottomInfo(), premisses(), s, b);
       }
       // top
-      s@sequent(_,(_*,t@top(),_*)) -> {
+      s@sequent(_,context(_*,t@top(),_*)) -> {
         return `rule(topInfo(), premisses(), s, t);
       }
 
       // and R
-      s@sequent(g,(u*,x@and(a,b),v*)) -> {
+      s@sequent(g,context(u*,x@and(a,b),v*)) -> {
         Tree t1 = buildTree(`sequent(g,context(u*,a,v*)),freevars);
         Tree t2 = buildTree(`sequent(g,context(u*,b,v*)),freevars);
         return `rule(andRightInfo(),premisses(t1,t2),s,x);
       }
 
       // or R
-      s@sequent(g,(u*,x@or(a,b),v*)) -> {
+      s@sequent(g,context(u*,x@or(a,b),v*)) -> {
         Tree t = buildTree(`sequent(g,context(u*,a,b,v*)),freevars);
         return `rule(orRightInfo(),premisses(t),s,x);
       }
 
       // => R
-      s@sequent(g,(u*,x@implies(a,b),v*)) -> {
+      s@sequent(g,context(u*,x@implies(a,b),v*)) -> {
         Tree t = buildTree(`sequent(context(g*,a),context(u*,b,v*)),freevars);
         return `rule(impliesRightInfo(),premisses(t),s,x);
       }
 
       // and L
-      s@sequent((u*,x@and(a,b),v*),d) -> {
+      s@sequent(context(u*,x@and(a,b),v*),d) -> {
         Tree t = buildTree(`sequent(context(u*,a,b,v*),d),freevars);
         return `rule(andLeftInfo(),premisses(t),s,x);
       }
 
       // => L
-      s@sequent((u*,x@implies(a,b),v*),d) -> {
+      s@sequent(context(u*,x@implies(a,b),v*),d) -> {
         Tree t1 = buildTree(`sequent(context(u*,v*),context(a,d*)),freevars);
         Tree t2 = buildTree(`sequent(context(u*,b,v*),d),freevars);
         return `rule(impliesLeftInfo(),premisses(t1,t2),s,x);
       }
 
       // or L
-      s@sequent((u*,x@or(a,b),v*),d) -> {
+      s@sequent(context(u*,x@or(a,b),v*),d) -> {
         Tree t1 = buildTree(`sequent(context(u*,a,v*),d),freevars);
         Tree t2 = buildTree(`sequent(context(u*,b,v*),d),freevars);
         return `rule(orLeftInfo(),premisses(t1,t2),s,x);
       }
 
       // and L
-      s@sequent((u*,x@and(a,b),v*),d) -> {
+      s@sequent(context(u*,x@and(a,b),v*),d) -> {
         Tree t = buildTree(`sequent(context(u*,a,b,v*),d),freevars);
         return `rule(andLeftInfo(),premisses(t),s,x);
       }
 
       // forall R
-      s@sequent(g,(u*,x@forall(n,a),v*)) -> {
+      s@sequent(g,context(u*,x@forall(n,a),v*)) -> {
         String new_n = Utils.freshVar(`n,freevars).getname();
         Term fresh_v = `FreshVar(new_n,n);
         freevars.add(fresh_v.getname());
@@ -230,7 +230,7 @@ public class RuleCalc {
       }
 
       // exists R
-      s@sequent(g,(u*,x@exists(n,a),v*)) -> {
+      s@sequent(g,context(u*,x@exists(n,a),v*)) -> {
         String new_n = Utils.freshVar(`n,freevars).getname();
         Term new_v = `NewVar(new_n,n);
         freevars.add(new_v.getname());
@@ -240,7 +240,7 @@ public class RuleCalc {
       }
 
       // forall L
-      s@sequent((u*,x@forall(n,a),v*),d) -> {
+      s@sequent(context(u*,x@forall(n,a),v*),d) -> {
         String new_n = Utils.freshVar(`n,freevars).getname();
         Term new_v = `NewVar(new_n,n);
         freevars.add(new_v.getname());
@@ -250,7 +250,7 @@ public class RuleCalc {
       }
 
       // exists L
-      s@sequent((u*,x@exists(n,a),v*),d) -> {
+      s@sequent(context(u*,x@exists(n,a),v*),d) -> {
         String new_n = Utils.freshVar(`n,freevars).getname();
         Term fresh_v = `FreshVar(new_n,n);
         freevars.add(new_n);

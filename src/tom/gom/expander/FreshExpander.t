@@ -1226,9 +1226,9 @@ public class FreshExpander {
   }
 
   %strategy AddRaw(st:SymbolTable,fe:FreshExpander) extends Identity() {
-    visit Grammar {
-      g@Grammar[ProductionList=pl] -> {
-        return `g.setProductionList(fe.addRaw(st,`pl));
+    visit Section {
+      s@Public[ProductionList=pl] -> {
+        return `s.setProductionList(fe.addRaw(st,`pl));
       }
     }
   }

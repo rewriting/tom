@@ -70,9 +70,7 @@ public class HookTypeExpander {
       ConcGomModule(_*,
           GomModule[ModuleName=GomModuleName[Name=moduleName],
           SectionList=ConcSection(_*,
-            Public(ConcGrammar(_*,
-                Grammar(prodList),
-                _*)),
+            Public(prodList),
             _*)],
           _*) -> {
         %match(prodList) {

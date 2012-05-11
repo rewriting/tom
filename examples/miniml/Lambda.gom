@@ -1,10 +1,10 @@
-module Lambda
+module miniml.Lambda
 imports int String
 abstract syntax
 
 /* pure calculus */
 
-atom LVar 
+atom LVar
 
 LType = Atom(n:String)
       | Arrow(t1:LType,t2:LType)
@@ -20,12 +20,12 @@ LTerm = App(t1:LTerm,t2:LTerm)
 
 Rules = RList(<Clause>*)
 
-Clause binds LVar = Rule(p:Pattern, inner t:LTerm) 
+Clause binds LVar = Rule(p:Pattern, inner t:LTerm)
 
 Pattern binds LVar = PFun(neutral f:String, children:PatternList)
                    | PVar(x:LVar, neutral ty:LType)
 
-LTermList = LTList(LTerm*) 
+LTermList = LTList(LTerm*)
 
 PatternList binds LVar = PList(Pattern*)
 
@@ -45,9 +45,9 @@ TyLTerm = TyApp(t1:Typed,t2:Typed)
         | TyCase(subject:Typed,rules:TyRules)
         | TyThis()
 
-TyLTermList = TyLTList(Typed*) 
+TyLTermList = TyLTList(Typed*)
 TyRules = TyRList(<TyClause>*)
-TyClause binds LVar = TyRule(p:TyPattern, inner t:Typed) 
+TyClause binds LVar = TyRule(p:TyPattern, inner t:Typed)
 TyPattern binds LVar = TyPFun(neutral f:String, children:TyPatternList)
                      | TyPVar(x:LVar, neutral ty:LType)
 TyPatternList binds LVar = TyPList(TyPattern*)
@@ -64,7 +64,7 @@ ReconResult = Pair(t:Typed,cl:ConstraintList)
 ReconChildrenResult = Pair2(tl:TyLTermList,cl:ConstraintList)
 ReconRulesResult = Triple(rls:TyRules,ty:LType,cl:ConstraintList)
 ReconClauseResult = Pair3(c:TyClause,cl:ConstraintList)
-ReconPatternResult = 
+ReconPatternResult =
   Quadruple(c:Context,p:TyPattern,ty:LType,cl:ConstraintList)
 ReconPatternListResult = Triple2(c:Context,pl:TyPatternList,cl:ConstraintList)
 Domain = Domain(LType*)

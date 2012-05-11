@@ -30,6 +30,7 @@ package poly;
 
 import java.util.*;
 import poly.polynom.types.*;
+import poly.polynom.types.poly.*;
 import tom.library.sl.VisitFailure;
 
 public class Eval {
