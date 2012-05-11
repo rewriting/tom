@@ -19,25 +19,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  *
- * Jean-Christophe Bach  e-mail: jeanchristophe.bach@inria.fr
+ * Jean-Christophe Bach e-mail: jeanchristophe.bach@inria.fr
  *
  **/
 
 package tom.library.utils;
 
-/**
- * This interface is used to build the link model during models
- * transformations, and to do the links resolution at the end of a
- * transformation.
- */
-
 public interface ReferenceClass {
-
-  /**
-   * Method triggered when resolving links at the end of the transformation.
-   *
-   * @param name the name of the oject to retrieve
-   * @return an EObject created during the transformation
-   */
-  public org.eclipse.emf.ecore.EObject get(String name);
+  public Object get(String name);
 }
