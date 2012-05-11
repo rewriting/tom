@@ -82,7 +82,7 @@ public class TyperPlugin extends TomGenericPlugin {
   public static final String DECLARED_OPTIONS =
     "<options>" +
     "<boolean name='type' altName='' description='TyperPlugin (activated by default)' value='true'/>" +
-    "<boolean name='newtyper' altName='nt' description='New TyperPlugin (not activated by default)' value='false'/>" +
+    "<boolean name='newtyper' altName='nt' description='New TyperPlugin (not activated by default)' value='true'/>" +
     "</options>";
 
   /**

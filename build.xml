@@ -1112,7 +1112,7 @@
       <property name="optimize2" value="off"/>
       <property name="inline" value="off"/>
       <property name="inlineplus" value="off"/>
-      <property name="newtyper" value="off"/>
+      <property name="newtyper" value="on"/>
     </ant>
   </target>
 
@@ -1123,21 +1123,10 @@
       <property name="optimize" value="on"/>
       <property name="optimize2" value="on"/>
       <property name="inlineplus" value="on"/>
-      <property name="newtyper" value="off"/>
-    </ant>
-  </target>
-
-  <target name="test.nt" depends="src.dist"
-    description="Compile acceptance tests with new typer">
-    <ant dir="${test}" target="build.nt">
-      <property name="tom.home" value="${src.dist}"/>
-      <property name="optimize" value="off"/>
-      <property name="optimize2" value="off"/>
-      <property name="inline" value="off"/>
-      <property name="inlineplus" value="off"/>
       <property name="newtyper" value="on"/>
     </ant>
   </target>
+
 
   <target name="test.stable" description="Compile and run acceptance tests with stable"
     depends="stable.dist">
@@ -1173,15 +1162,6 @@
       <property name="optimize" value="on"/>
       <property name="optimize2" value="on"/>
       <property name="inlineplus" value="on"/>
-      <property name="newtyper" value="off"/>
-    </ant>
-  </target>
-
-  <target name="src.junit.nt" depends="junit.nt"/>
-  <target name="junit.nt" description="Runs junit acceptance tests with new typer"
-    depends="clean.test, test.nt">
-    <ant dir="${test}" target="junit.nt">
-      <property name="tom.home" value="${src.dist}"/>
       <property name="newtyper" value="on"/>
     </ant>
   </target>
@@ -1231,8 +1211,6 @@
     <antcall target="src.junit"/>  	
     <echo>Runs junit acceptance tests with optimization</echo>
     <antcall target="src.junit.opt"/>
-    <echo>Runs junit acceptance tests with new typer</echo>
-    <antcall target="src.junit.nt"/>
 
     <ant dir="${examples}" target="clean">
       <property name="tom.home" location="${src.dist}"/>
@@ -1247,7 +1225,7 @@
       <property name="optimize2" value="off"/>
       <property name="inline" value="off"/>
       <property name="inlineplus" value="off"/>
-      <property name="newtyper" value="off"/>
+      <property name="newtyper" value="on"/>
     </ant>
 
     <echo>Test tom-source in examples with optimization</echo>
@@ -1261,17 +1239,6 @@
       <property name="optimize" value="on"/>
       <property name="optimize2" value="on"/>
       <property name="inlineplus" value="on"/>
-      <property name="newtyper" value="off"/>
-    </ant>
-
-    <echo>Test tom-source in examples with new typer</echo>
-    <ant dir="${examples}" target="junit">
-      <property name="tom.home" location="${src.dist}"/>
-      <property name="tom.common.path" location="${src.lib}"/>
-      <property name="optimize" value="off"/>
-      <property name="optimize2" value="off"/>
-      <property name="inline" value="off"/>
-      <property name="inlineplus" value="off"/>
       <property name="newtyper" value="on"/>
     </ant>
 
