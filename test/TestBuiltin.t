@@ -4,18 +4,12 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 public class TestBuiltin {
-  private static ATerm pattern1,pattern2,pattern3,pattern4,pattern5;
- 
   private static ATermFactory factory = SingletonFactory.getInstance();
 
 	public static void main(String[] args) {
     org.junit.runner.JUnitCore.main(TestBuiltin.class.getName());
 	}
   
-  public void setUp() {
-    factory = SingletonFactory.getInstance();
-  }
-
   %include { int.tom }  
   %include { long.tom }  
   %include { double.tom }  
