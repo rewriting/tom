@@ -5,7 +5,7 @@ Parallellamterm =  var(na:String)
 	| abs(lhs:Parallellamterm,rhs:Parallellamterm)
 	| app(lhs:Parallellamterm,rhs:Parallellamterm)
 	| parallel(Parallellamterm*)
-	
+
 	abs:make(lhs,rhs){
 	%match(Parallellamterm rhs){
 		parallel(t1,t2*)	-> {
