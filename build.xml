@@ -1104,7 +1104,7 @@
     </ant>
   </target>
 
-  <target name="cruisecontrol-src-opt" description="Compile and run acceptance tests"
+  <target name="cruisecontrol-src-opt" description="Compile and run acceptance tests with all optimizations"
     depends="stable">
     <antcall target="src.dist"/>
     <antcall target="clean.test"/>
