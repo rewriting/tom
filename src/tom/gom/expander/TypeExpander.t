@@ -119,10 +119,10 @@ public class TypeExpander {
       // iterate through the productions
       %match(module) {
         GomModule(_,ConcSection(_*,
-              Public(ConcGrammar(_*,Grammar(ConcProduction(_*,
+              Public(ConcProduction(_*,
                 SortType[AlternativeList=ConcAlternative(_*,
                 alt@Alternative[],_*)],
-              _*)),_*)),
+              _*)),
               _*)) -> {
           // we may want to pass moduleName to help resolve ambiguities with modules
           getOperatorDecl(`alt,sortDeclList,operatorsForSort);
@@ -241,9 +241,9 @@ public class TypeExpander {
     Collection<SortDecl> result = new HashSet<SortDecl>();
     %match(module) {
       GomModule(moduleName,ConcSection(_*,
-            Public(ConcGrammar(_*,Grammar(ConcProduction(_*,
+            Public(ConcProduction(_*,
                 SortType[Type=GomType(_,typeName)],
-            _*)),_*)),
+            _*)),
             _*)) -> {
         if (getGomEnvironment().isBuiltinSort(`typeName)) {
           GomMessage.error(getLogger(),null,0,
@@ -268,12 +268,11 @@ public class TypeExpander {
           moduleName,
           ConcSection(_*,
             Public(
-              ConcGrammar(_*,
-                Grammar(ConcProduction(_*,
-                  SortType[AlternativeList=ConcAlternative(_*,
-                    Alternative(_,_,GomType(_,typeName),_option),
-                    _*)],_*)),
-                _*)),
+              ConcProduction(_*,
+                SortType[AlternativeList=ConcAlternative(_*,
+                  Alternative(_,_,GomType(_,typeName),_option),
+                  _*)],_*)
+              ),
             _*)) -> {
         if (getGomEnvironment().isBuiltinSort(`typeName)) {
           result.add(getGomEnvironment().builtinSort(`typeName));
@@ -299,7 +298,7 @@ public class TypeExpander {
         %match(sectionList) {
           ConcSection(_*,
               Imports(ConcImportedModule(_*,
-                  Import(modname@GomModuleName(name)),
+                  modname@GomModuleName(name),
                   _*)),
               _*) -> {
             if (!getGomEnvironment().isBuiltin(`name)) {

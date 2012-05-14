@@ -1,4 +1,4 @@
-module subtyping.Definition
+module subtyping.checking.Definition
 imports String int
 abstract syntax
 
@@ -21,7 +21,7 @@ ConstraintList = CList(Constraint*)
 Jugement = SigOf(name: String, sig: Type)
 
 Mapping = TypeOf(term: Term, sig: Type)
-   
+
 Context = Context(Jugement*)
 
 Statement = Statement1(name: String, path: PathTree, ctx: Context, consequence1: Mapping)
@@ -34,4 +34,3 @@ Label = Label(num: int)
 PathTree = PTree(Label*)
 
 Paths = Paths(PathTree*)
-

@@ -176,10 +176,7 @@ public class TomMappingFromEcore {
   private static void extractType(java.io.Writer writer, EClassifier eclf) throws java.io.IOException {
     Class<?> c = eclf.getInstanceClass();
     if(!types.containsKey(c)) {
-      String n = c.getSimpleName();
-      if(c.isArray()) {
-        n = c.getComponentType().getSimpleName() + "array";
-      }
+      String n = (c.isArray()?(c.getComponentType().getSimpleName()+"array"):c.getSimpleName());
       String is = "";
       for(int i = 1; types.containsValue(n + is); i++) {
         is = String.valueOf(i);
@@ -508,7 +505,7 @@ public class TomMappingFromEcore {
       //nothing
       //dvalue = sf.getDefaultValue();
     } else {
-      dvalue = "`" + dvalue + "()";
+      dvalue = "`" + esftype + dvalue + "()";
     }
     //add a suffix '_' if the name is a reserved keyword
     String sfname = (keywords.contains(esf.getName()) ? "_" : "")+esf.getName();
@@ -608,8 +605,8 @@ public class TomMappingFromEcore {
           String o2 = eclf.getEPackage().getClass().getInterfaces()[eclf
             .getEPackage().getClass().getInterfaces().length - 1]
             .getCanonicalName();
-
-          writer.write("\n\n%op "+cr+" "+lit.getLiteral()+"() {\n  is_fsym(t) { t == "+(decl[0]+decl[1])+".get(\""+lit.getLiteral()+"\") }\n  make() { ("+(decl[0]+decl[2])+")"+o1+".eINSTANCE.createFromString( (EDataType)"+o2+".eINSTANCE.get"+toUpperName(cr)+"(), \""+lit.getLiteral()+"\") }\n}"
+          String operatorName = cr+lit.getLiteral();
+          writer.write("\n\n%op "+cr+" "+operatorName+"() {\n  is_fsym(t) { t == "+(decl[0]+decl[1])+".get(\""+lit.getLiteral()+"\") }\n  make() { ("+(decl[0]+decl[2])+")"+o1+".eINSTANCE.createFromString( (EDataType)"+o2+".eINSTANCE.get"+toUpperName(cr)+"(), \""+lit.getLiteral()+"\") }\n}"
 
 
 

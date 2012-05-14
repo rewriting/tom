@@ -27,16 +27,10 @@ public class TestAlgebraic {
   }
 
   @Test
-  public void test1() {
-    T1 res = `f(a());
+  public void test1() throws VisitFailure {
+    T1 input = `f(a());
     Strategy s = `RepeatId(BottomUp(R()));
-    try {
-      res = s.visit(res);
-      Assert.assertEquals(res,`f(c()));
-      return;
-    } catch(VisitFailure e) {
-      System.out.println("Failure");
-    }
-    Assert.fail("should not be there");
+    T1 res = s.visit(input);
+    Assert.assertEquals(res,`f(c()));
   }
 }

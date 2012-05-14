@@ -14,9 +14,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 public class Proofterms {
-//  %include { sequents/sequents.tom }
   %include { urban/urban.tom }
-  %include { urban/_urban.tom}
   %include { sl.tom }
   %include { util/types/Collection.tom}
 
@@ -35,7 +33,7 @@ public class Proofterms {
     %match(Tree term) {
       rule(_,_,c,_) -> {
         NSequent nseq = seq2nseq(`c);
-        return `typablePT(term2proofterm(term, nseq, 0, 0), nseq); 
+        return `typablePT(term2proofterm(term, nseq, 0, 0), nseq);
       }
     }
     return null;
@@ -54,119 +52,119 @@ public class Proofterms {
     }
     return null;
   }
-  
+
   public static ProofTerm term2proofterm(Tree term, NSequent nseq, int ncount, int cncount) { // INCOMPLET manque les cas 1er ordre
     %match(Tree term,NSequent nseq) {
       /* rule(type, premisses, conclusion, focussed proposition) */
 
       // propositional fragment
-      rule(axiomInfo[],_,sequent((_*,x,_*),(_*,x,_*)),_), nsequent((_*,nprop(name,x),_*),(_*,cnprop(coname,x),_*)) -> {
+      rule(axiomInfo[],_,sequent(context(_*,x,_*),context(_*,x,_*)),_), nsequent(ncontext(_*,nprop(name,x),_*),cncontext(_*,cnprop(coname,x),_*)) -> {
         return `ax(name,coname);
       }
 
-      rule(topInfo[],_,sequent(_,(_*,top(),_*)),_), nsequent((_*),(_*,cnprop(coname,top()),_*)) -> {
+      rule(topInfo[],_,sequent(_,context(_*,top(),_*)),_), nsequent(_,cncontext(_*,cnprop(coname,top()),_*)) -> {
         return `trueR(coname);
       }
 
-      rule(bottomInfo[],_,sequent((_*,bottom(),_*),_),_),nsequent((_*,nprop(name,bottom()),_*),(_*)) -> {
+      rule(bottomInfo[],_,sequent(context(_*,bottom(),_*),_),_),nsequent(ncontext(_*,nprop(name,bottom()),_*),_) -> {
         return `falseL(name);
       }
 
       rule(
           andLeftInfo[],
-          (p@rule(_,_,sequent((g1*,A,B,g2*), d),_)),
-          sequent((g1*,a,g2*),d),
+          premisses(p@rule(_,_,sequent(context(g1*,A,B,g2*), d),_)),
+          sequent(context(g1*,a,g2*),d),
           a@and(A,B)
-          ),nsequent((ng1*,nprop(name,a),ng2*),cnd) -> {
+          ),nsequent(ncontext(ng1*,nprop(name,a),ng2*),cnd) -> {
         return `andL(nprop(name(ncount+1),A),nprop(name(ncount+2),B),term2proofterm(p,nsequent(ncontext(ng1*,nprop(name(ncount+1),A),nprop(name(ncount+2),B),ng2*),cnd),ncount+2,cncount),name);
       }
-      
+
       rule(
           andRightInfo[],
-          (p1@rule(_,_,sequent(g,(d1*,A,d2*)),_),p2@rule(_,_,sequent(g,(d1*,B,d2*)),_)),
-          sequent(g,(d1*,a,d2*)),
+          premisses(p1@rule(_,_,sequent(g,context(d1*,A,d2*)),_),p2@rule(_,_,sequent(g,context(d1*,B,d2*)),_)),
+          sequent(g,context(d1*,a,d2*)),
           a@and(A,B)
-          ),nsequent(ng,(nd1*,cnprop(coname, a),nd2*)) -> {
+          ),nsequent(ng,cncontext(nd1*,cnprop(coname, a),nd2*)) -> {
         return `andR(cnprop(coname(cncount+1),A),term2proofterm(p1,nsequent(ng,cncontext(nd1*,cnprop(coname(cncount+1),A),nd2*)),ncount,cncount+2),cnprop(coname(cncount+2),B),term2proofterm(p2,nsequent(ng,cncontext(nd1*,cnprop(coname(cncount+2),B),nd2*)),ncount,cncount+2),coname);
       }
 
       rule(
           orRightInfo[],
-          (p@rule(_,_,sequent(g, (d1*,A,B,d2*)),_)),
-          sequent(g, (d1*,a,d2*)),
+          premisses(p@rule(_,_,sequent(g, context(d1*,A,B,d2*)),_)),
+          sequent(g, context(d1*,a,d2*)),
           a@or(A,B)
-          ), nsequent(ng, (cnd1*,cnprop(coname,a), cnd2*)) -> {
+          ), nsequent(ng, cncontext(cnd1*,cnprop(coname,a), cnd2*)) -> {
         return `orR(cnprop(coname(cncount+1),A),cnprop(coname(cncount+2),B),term2proofterm(p,nsequent(ng,cncontext(cnd1*,cnprop(coname(cncount+1),A),cnprop(coname(cncount+2),B),cnd2*)),ncount,cncount+2), coname);
       }
 
       rule(
           orLeftInfo[],
-          (p1@rule(_,_,sequent((g1*,A,g2*), d),_),p2@rule(_,_,sequent((g1*,B,g2*), d),_)),
-          sequent((g1*,a,g2*), d),
+          premisses(p1@rule(_,_,sequent(context(g1*,A,g2*), d),_),p2@rule(_,_,sequent(context(g1*,B,g2*), d),_)),
+          sequent(context(g1*,a,g2*), d),
           a@or(A,B)
-          ),nsequent((ng1*,nprop(name,a),ng2*),cnd) -> {
+          ),nsequent(ncontext(ng1*,nprop(name,a),ng2*),cnd) -> {
         return `orL(nprop(name(ncount+1),A),term2proofterm(p1,nsequent(ncontext(ng1*,nprop(name(ncount+1),A),ng2*),cnd),ncount+1,cncount),nprop(name(ncount+2),B),term2proofterm(p2,nsequent(ncontext(ng1*,nprop(name(ncount+2),B),ng2*),cnd),ncount+2,cncount),name);
       }
 
       rule(
           impliesRightInfo[],
-          (p@rule(_,_,sequent((g*,A), (d1*, B, d2*)),_)),
-          sequent(g, (d1*,a,d2*)),
+          premisses(p@rule(_,_,sequent(context(g*,A), context(d1*, B, d2*)),_)),
+          sequent(g, context(d1*,a,d2*)),
           a@implies(A,B)
-          ),nsequent(ng,(cnd1*,cnprop(coname,a),cnd2*)) -> {
+          ),nsequent(ng,cncontext(cnd1*,cnprop(coname,a),cnd2*)) -> {
         return `implyR(nprop(name(ncount+1),A),cnprop(coname(cncount+1),B),term2proofterm(p,nsequent(ncontext(ng*,nprop(name(ncount+1),A)),cncontext(cnd1*,cnprop(coname(cncount+1),B),cnd2*)),ncount+1,cncount+1),coname);
       }
 
       rule(
           impliesLeftInfo[],
-          (p1@rule(_,_,sequent((g1*,g2*),(A,d*)),_), p2@rule(_,_,sequent((g1*,B,g2*),d),_)), 
-          sequent((g1*,a,g2*),d),
+          premisses(p1@rule(_,_,sequent(context(g1*,g2*),context(A,d*)),_), p2@rule(_,_,sequent(context(g1*,B,g2*),d),_)),
+          sequent(context(g1*,a,g2*),d),
           a@implies(A,B)
-          ),nsequent((ng1*,nprop(name,a),ng2*),cnd) -> {
+          ),nsequent(ncontext(ng1*,nprop(name,a),ng2*),cnd) -> {
         return `implyL(cnprop(coname(cncount+1),A),term2proofterm(p1,nsequent(ncontext(ng1*,ng2*),cncontext(cnprop(coname(cncount+1),A), cnd*)),ncount,cncount+1),nprop(name(ncount+1),B),term2proofterm(p2,nsequent(ncontext(ng1*,nprop(name(ncount+1),B),ng2*),cnd),ncount+1,cncount),name);
       }
 
       rule(
           contractionLeftInfo[],
-          (p@rule(_,_,sequent((g1*,a,a,g2*), d),_)),
-          sequent((g1*,a,g2*),d),
+          premisses(p@rule(_,_,sequent(context(g1*,a,a,g2*), d),_)),
+          sequent(context(g1*,a,g2*),d),
           a
-          ),nsequent((ng1*,np@nprop(name,a),ng2*),cnd)
+          ),nsequent(ncontext(ng1*,np@nprop(name,a),ng2*),cnd)
         -> {
           return `term2proofterm(p,nsequent(ncontext(ng1*,np,np,ng2*),cnd),ncount,cncount);
         }
-      
+
       rule(
           contractionRightInfo[],
-          (p@rule(_,_,sequent(g,(d1*,a,a,d2*)),_)),
-          sequent(g,(d1*,a,d2*)),
+          premisses(p@rule(_,_,sequent(g,context(d1*,a,a,d2*)),_)),
+          sequent(g,context(d1*,a,d2*)),
           a
-          ),nsequent(ng,(cnd1*,cnp@cnprop(coname,a),cnd2*))
+          ),nsequent(ng,cncontext(cnd1*,cnp@cnprop(coname,a),cnd2*))
         -> {
           return `term2proofterm(p,nsequent(ng,cncontext(cnd1*,cnp,cnp,cnd2*)),ncount,cncount);
         }
-        
+
 
       rule(
           weakLeftInfo[],
-          (p@rule(_,_,_,_)),
+          premisses(p@rule(_,_,_,_)),
           _,
           a
           ),nsequ
         -> { return term2proofterm(`p, `nsequ, ncount, cncount);}
-      
+
       rule(
           weakRightInfo[],
-          (p@rule(_,_,_,_)),
+          premisses(p@rule(_,_,_,_)),
           _,
           a
           ),nsequ
         -> { return term2proofterm(`p,`nsequ, ncount, cncount); }
-      /* the syntax could be improved when the bug #3786 is fixed */ 
+      /* the syntax could be improved when the bug #3786 is fixed */
       rule(
           cutInfo(a),
-          (p1@rule(_,_,sequent((g*),(d*,a)),_), p2@rule(_,_,sequent((g*,a),(d*)),_)),
-          sequent((g*),(d*)),
+          premisses(p1@rule(_,_,sequent(context(g*),context(d*,a)),_), p2@rule(_,_,sequent(context(g*,a),context(d*)),_)),
+          sequent(context(g*),context(d*)),
           _
           ),nsequent(ng,cnd) -> {
         return `cut(cnprop(coname(cncount+1),a),term2proofterm(p1,nsequent(ng,cncontext(cnd*,cnprop(coname(cncount+1),a))),ncount+1,cncount+1),nprop(name(ncount+1),a),term2proofterm(p2,nsequent(ncontext(ng*,nprop(name(ncount+1),a)),cnd),ncount+1,cncount+1));
@@ -175,47 +173,47 @@ public class Proofterms {
       // first order logic
       rule(
           forallRightInfo(new_var),
-          (p@rule(_,_,sequent(g,(d1*,B,d2*)),_)), 
-          sequent(g,(d1*,a,d2*)),
+          premisses(p@rule(_,_,sequent(g,context(d1*,B,d2*)),_)),
+          sequent(g,context(d1*,a,d2*)),
           a@forall(v,A)
-          ),nsequent(ng,(cnd1*,cnprop(coname,a),cnd2*))
+          ),nsequent(ng,cncontext(cnd1*,cnprop(coname,a),cnd2*))
         -> {
-          if ((Utils.replaceFreeVars(`A,`Var(v),`new_var) == `B) && !Utils.getFreeVars(`context(d1*,d2*,g*)).contains(`new_var.getname()))  
+          if ((Utils.replaceFreeVars(`A,`Var(v),`new_var) == `B) && !Utils.getFreeVars(`context(d1*,d2*,g*)).contains(`new_var.getname()))
          return `forallR(cnprop(coname(cncount+1),B),new_var,term2proofterm(p,nsequent(ng,cncontext(cnd1*,cnprop(coname(cncount+1),B),cnd2*)),ncount,cncount+1),coname);
         }
 
-      
+
       rule(
           forallLeftInfo(new_term),
-          (p@rule(_,_,sequent((g1*,B,g2*),d),_)), 
-          sequent((g1*,a,g2*),d),
+          premisses(p@rule(_,_,sequent(context(g1*,B,g2*),d),_)),
+          sequent(context(g1*,a,g2*),d),
           a@forall(v,A)
-          ),nsequent((ng1*,nprop(name,a),ng2*),cnd)
-        -> { 
+          ),nsequent(ncontext(ng1*,nprop(name,a),ng2*),cnd)
+        -> {
           if (Utils.replaceFreeVars(`A,`Var(v),`new_term) == `B)
-            return `forallL(nprop(name(ncount+1),B),term2proofterm(p, nsequent(ncontext(ng1*,nprop(name(ncount+1),B),ng2*),cnd), ncount+1, cncount), new_term, name); 
+            return `forallL(nprop(name(ncount+1),B),term2proofterm(p, nsequent(ncontext(ng1*,nprop(name(ncount+1),B),ng2*),cnd), ncount+1, cncount), new_term, name);
         }
 
       rule(
           existsRightInfo(new_term),
-          (p@rule(_,_,sequent(g,(d1*,B,d2*)),_)), 
-          sequent(g,(d1*,a,d2*)),
+          premisses(p@rule(_,_,sequent(g,context(d1*,B,d2*)),_)),
+          sequent(g,context(d1*,a,d2*)),
           a@exists(v,A)
-          ),nsequent(ng,(cnd1*,cnprop(coname,a),cnd2*))
+          ),nsequent(ng,cncontext(cnd1*,cnprop(coname,a),cnd2*))
         -> {
-          if (Utils.replaceFreeVars(`A,`Var(v),`new_term) == `B) 
-            return `existsR(cnprop(coname(cncount+1),B),term2proofterm(p, nsequent(ng,cncontext(cnd1*,cnprop(coname(cncount+1),B),cnd2*)),ncount, cncount+1),new_term,coname); 
-        } 
+          if (Utils.replaceFreeVars(`A,`Var(v),`new_term) == `B)
+            return `existsR(cnprop(coname(cncount+1),B),term2proofterm(p, nsequent(ng,cncontext(cnd1*,cnprop(coname(cncount+1),B),cnd2*)),ncount, cncount+1),new_term,coname);
+        }
 
       rule(
           existsLeftInfo(new_var),
-          (p@rule(_,_,sequent((g1*,B,g2*),d),_)), 
-          sequent((g1*,a,g2*),d),
+          premisses(p@rule(_,_,sequent(context(g1*,B,g2*),d),_)),
+          sequent(context(g1*,a,g2*),d),
           a@exists(v,A)
-          ),nsequent((ng1*,nprop(name,a),ng2*),cnd)
+          ),nsequent(ncontext(ng1*,nprop(name,a),ng2*),cnd)
         -> {
           if ((Utils.replaceFreeVars(`A,`Var(v),`new_var) == `B) && !Utils.getFreeVars(`context(g1*,g2*,d*)).contains(`new_var.getname()))
-            return `existsL(nprop(name(ncount+1),B),new_var,term2proofterm(p,nsequent(ncontext(ng1*,nprop(name(cncount+1),B),ng2*),cnd),ncount+1,cncount),name); 
+            return `existsL(nprop(name(ncount+1),B),new_var,term2proofterm(p,nsequent(ncontext(ng1*,nprop(name(cncount+1),B),ng2*),cnd),ncount+1,cncount),name);
         }
       /*
 
@@ -240,22 +238,22 @@ public class Proofterms {
 
   public static NContext cont2ncont (Context c,int n) {
     %match(Context c) {
-      (x,y*) -> {
+      context(x,y*) -> {
         NContext nc= cont2ncont(`y,n+1);
         return `ncontext(nprop(name(n),x), nc*) ;
       }
-      () -> { return `ncontext(); }
+      context() -> { return `ncontext(); }
     }
     return null;
   }
 
   public static CNContext cont2cncont (Context c,int n) {
     %match(Context c) {
-      (x,y*) -> {
+      context(x,y*) -> {
         CNContext cnc= cont2cncont(`y,n+1);
         return `cncontext(cnprop(coname(n),x), cnc*) ;
       }
-      () -> { return `cncontext(); }
+      context() -> { return `cncontext(); }
     }
     return null;
   }
@@ -266,41 +264,41 @@ public class Proofterms {
 //      System.out.println("implicit contraction detected");
       %match (ProofTerm pi, NSequent nseq) {
         /* plusieurs liaison d'une meme variable...
-        _, nsequent((_*,nprop(n,phi1),_*,nprop(n,phi2),_*),_) -> {
+        _, nsequent(ncontext(_*,nprop(n,phi1),_*,nprop(n,phi2),_*),_) -> {
           if (! (`phi1 == `phi2)) { System.out.println("double occurence of "+`n); return null;}
         }
-        _, nsequent(_,(_*,cnprop(cn,phi1),_*,cnprop(cn,phi2),_*)) -> {
+        _, nsequent(_,ncontext(_*,cnprop(cn,phi1),_*,cnprop(cn,phi2),_*)) -> {
           if (! (`phi1 == `phi2)) { System.out.println("double occurence of "+`cn); return null;}
         }
         */
-         pt@andR(a@cnprop(cn1,A),m1,b@cnprop(cn2,B),m2,cn), ns@nsequent(ng,(cnd1*,active@cnprop(cn, and(A,B)),cnd2*)) -> {
+         pt@andR(a@cnprop(cn1,A),m1,b@cnprop(cn2,B),m2,cn), ns@nsequent(ng,cncontext(cnd1*,active@cnprop(cn, and(A,B)),cnd2*)) -> {
           return `nrule(andRightInfo(),npremisses(typeProofterm(m1,nsequent(ng,cncontext(cnd1*,active,a,cnd2*))),typeProofterm(m2,nsequent(ng,cncontext(cnd1*,active,b,cnd2*)))),ns,pt);
         }
-        pt@andL(x@nprop(n1,A),y@nprop(n2,B),m,n), ns@nsequent((ng1*, active@nprop(n, and(A,B)),ng2*), cnd) -> {
+        pt@andL(x@nprop(n1,A),y@nprop(n2,B),m,n), ns@nsequent(ncontext(ng1*, active@nprop(n, and(A,B)),ng2*), cnd) -> {
           return `nrule(andLeftInfo(),npremisses(typeProofterm(m,nsequent(ncontext(ng1*,active,x,y,ng2*),cnd))),ns,pt);
         }
-        pt@orL(x@nprop(n1,A),m1,y@nprop(n2,B),m2,n), ns@nsequent((ng1*,active@nprop(n, or(A,B)),ng2*),cnd) -> {
+        pt@orL(x@nprop(n1,A),m1,y@nprop(n2,B),m2,n), ns@nsequent(ncontext(ng1*,active@nprop(n, or(A,B)),ng2*),cnd) -> {
           return `nrule(orLeftInfo(),npremisses(typeProofterm(m1,nsequent(ncontext(ng1*,active,x,ng2*),cnd)),typeProofterm(m2,nsequent(ncontext(ng1*,active,y,ng2*),cnd))),ns,pt);
         }
-        pt@orR(a@cnprop(cn1,A),b@cnprop(cn2,B),m,cn), ns@nsequent(ng,(cnd1*, active@cnprop(cn, or(A,B)),cnd2*)) -> {
+        pt@orR(a@cnprop(cn1,A),b@cnprop(cn2,B),m,cn), ns@nsequent(ng,cncontext(cnd1*, active@cnprop(cn, or(A,B)),cnd2*)) -> {
           return `nrule(orRightInfo(),npremisses(typeProofterm(m,nsequent(ng,cncontext(cnd1*,active,a,b,cnd2*)))),ns,pt);
         }
-        pt@implyL(a@cnprop(cn,A),m1, x@nprop(n,B), m2, name), ns@nsequent((ng1*,active@nprop(name,implies(A,B)),ng2*),cnd) -> {
+        pt@implyL(a@cnprop(cn,A),m1, x@nprop(n,B), m2, name), ns@nsequent(ncontext(ng1*,active@nprop(name,implies(A,B)),ng2*),cnd) -> {
           return `nrule(impliesLeftInfo(),npremisses(typeProofterm(m1,nsequent(ncontext(ng1*,active,ng2*),cncontext(a,cnd*))),typeProofterm(m2,nsequent(ncontext(ng1*,active,x,ng2*),cnd))),ns,pt);
         }
-        pt@implyR(x@nprop(n,A),a@cnprop(cn,B),m,coname), ns@nsequent(ng,(cnd1*,active@cnprop(coname,implies(A,B)),cnd2*)) -> {
+        pt@implyR(x@nprop(n,A),a@cnprop(cn,B),m,coname), ns@nsequent(ng,cncontext(cnd1*,active@cnprop(coname,implies(A,B)),cnd2*)) -> {
           return `nrule(impliesRightInfo(),npremisses(typeProofterm(m,nsequent(ncontext(ng*,x),cncontext(cnd1*,active,a,cnd2*)))),ns,pt);
         }
-        pt@forallR(a@cnprop(cn,A), varx, m, coname), ns@nsequent(ng,(cnd1*,active@cnprop(coname,forall(var,B)),cnd2*)) -> {
+        pt@forallR(a@cnprop(cn,A), varx, m, coname), ns@nsequent(ng,cncontext(cnd1*,active@cnprop(coname,forall(var,B)),cnd2*)) -> {
           return `nrule(forallRightInfo(varx),npremisses(typeProofterm(m,nsequent(ng,cncontext(cnd1*,active,a,cnd2*)))),ns,pt);
         }
-        pt@forallL(x@nprop(n,A), m, t, name), ns@nsequent((ng1*,active@nprop(name,forall(var,B)),ng2*),cnd) -> {
+        pt@forallL(x@nprop(n,A), m, t, name), ns@nsequent(ncontext(ng1*,active@nprop(name,forall(var,B)),ng2*),cnd) -> {
           return `nrule(forallLeftInfo(t),npremisses(typeProofterm(m,nsequent(ncontext(ng1*,active,x,ng2*),cnd))),ns,pt);
         }
-        pt@existsL(x@nprop(n,A), varx, m, name), ns@nsequent((ng1*,active@nprop(name,exists(var,B)),ng2*),cnd) -> {
+        pt@existsL(x@nprop(n,A), varx, m, name), ns@nsequent(ncontext(ng1*,active@nprop(name,exists(var,B)),ng2*),cnd) -> {
           return `nrule(existsLeftInfo(varx),npremisses(typeProofterm(m,nsequent(ncontext(ng1*,active,x,ng2*),cnd))),ns,pt);
         }
-        pt@existsR(a@cnprop(cn,A), m, t, coname), ns@nsequent(ng,(cnd1*,active@cnprop(coname,exists(var,B)),cnd2*)) -> {
+        pt@existsR(a@cnprop(cn,A), m, t, coname), ns@nsequent(ng,cncontext(cnd1*,active@cnprop(coname,exists(var,B)),cnd2*)) -> {
           return `nrule(existsRightInfo(t),npremisses(typeProofterm(m,nsequent(ng,cncontext(cnd1*,active,a,cnd2*)))),ns,pt);
         }
       }
@@ -310,53 +308,53 @@ public class Proofterms {
 //      System.out.println(pi);
       %match (ProofTerm pi, NSequent nseq) {
         /* plusieurs liaison d'une meme variable
-        _, nsequent((_*,nprop(n,phi1),_*,nprop(n,phi2),_*),_) -> {
+        _, nsequent(ncontext(_*,nprop(n,phi1),_*,nprop(n,phi2),_*),_) -> {
           if (! (`phi1 == `phi2)) { System.out.println("double occurence of "+`n); return null;}
         }
-        _, nsequent(_,(_*,cnprop(cn,phi1),_*,cnprop(cn,phi2),_*)) -> {
+        _, nsequent(_,ncontext(_*,cnprop(cn,phi1),_*,cnprop(cn,phi2),_*)) -> {
           if (! (`phi1 == `phi2)) { System.out.println("double occurence of "+`cn); return null;}
         }
         */
-         pt@ax(name,coname),ns@nsequent((_*,nprop(name,a),_*),(_*,cnprop(coname,a),_*)) -> {
+         pt@ax(name,coname),ns@nsequent(ncontext(_*,nprop(name,a),_*),cncontext(_*,cnprop(coname,a),_*)) -> {
           return `nrule(axiomInfo(),npremisses(),ns,pt);
         }
         pt@cut(cn@cnprop(_,a),pt1,n@nprop(_,a),pt2), ns@nsequent(ng, cnd) -> {
           return `nrule(cutInfo(a),npremisses(typeProofterm(pt1,nsequent(ng, cncontext(cn,cnd*))),typeProofterm(pt2,nsequent(ncontext(ng*,n),cnd))),ns,pt);
         }
-        pt@falseL(name), ns@nsequent((_*,nprop(name,bottom()),_*),_) -> {
+        pt@falseL(name), ns@nsequent(ncontext(_*,nprop(name,bottom()),_*),_) -> {
           return `nrule(bottomInfo(),npremisses(),ns,pt);
         }
-        pt@trueR(coname), ns@nsequent(_,(_*,cnprop(coname,top()),_*)) -> {
+        pt@trueR(coname), ns@nsequent(_,cncontext(_*,cnprop(coname,top()),_*)) -> {
           return `nrule(topInfo(),npremisses(),ns,pt);
         }
-        pt@andR(a@cnprop(cn1,A),m1,b@cnprop(cn2,B),m2,cn), ns@nsequent(ng,(cnd1*,cnprop(cn, and(A,B)),cnd2*)) -> {
+        pt@andR(a@cnprop(cn1,A),m1,b@cnprop(cn2,B),m2,cn), ns@nsequent(ng,cncontext(cnd1*,cnprop(cn, and(A,B)),cnd2*)) -> {
           return `nrule(andRightInfo(),npremisses(typeProofterm(m1,nsequent(ng,cncontext(cnd1*,a,cnd2*))),typeProofterm(m2,nsequent(ng,cncontext(cnd1*,b,cnd2*)))),ns,pt);
         }
-        pt@andL(x@nprop(n1,A),y@nprop(n2,B),m,n), ns@nsequent((ng1*, nprop(n, and(A,B)),ng2*), cnd) -> {
+        pt@andL(x@nprop(n1,A),y@nprop(n2,B),m,n), ns@nsequent(ncontext(ng1*, nprop(n, and(A,B)),ng2*), cnd) -> {
           return `nrule(andLeftInfo(),npremisses(typeProofterm(m,nsequent(ncontext(ng1*,x,y,ng2*),cnd))),ns,pt);
         }
-        pt@orL(x@nprop(n1,A),m1,y@nprop(n2,B),m2,n), ns@nsequent((ng1*,nprop(n, or(A,B)),ng2*),cnd) -> {
+        pt@orL(x@nprop(n1,A),m1,y@nprop(n2,B),m2,n), ns@nsequent(ncontext(ng1*,nprop(n, or(A,B)),ng2*),cnd) -> {
           return `nrule(orLeftInfo(),npremisses(typeProofterm(m1,nsequent(ncontext(ng1*,x,ng2*),cnd)),typeProofterm(m2,nsequent(ncontext(ng1*,y,ng2*),cnd))),ns,pt);
         }
-        pt@orR(a@cnprop(cn1,A),b@cnprop(cn2,B),m,cn), ns@nsequent(ng,(cnd1*, cnprop(cn, or(A,B)),cnd2*)) -> {
+        pt@orR(a@cnprop(cn1,A),b@cnprop(cn2,B),m,cn), ns@nsequent(ng,cncontext(cnd1*, cnprop(cn, or(A,B)),cnd2*)) -> {
           return `nrule(orRightInfo(),npremisses(typeProofterm(m,nsequent(ng,cncontext(cnd1*,a,b,cnd2*)))),ns,pt);
         }
-        pt@implyL(a@cnprop(cn,A),m1, x@nprop(n,B), m2, name), ns@nsequent((ng1*,nprop(name,implies(A,B)),ng2*),cnd) -> {
+        pt@implyL(a@cnprop(cn,A),m1, x@nprop(n,B), m2, name), ns@nsequent(ncontext(ng1*,nprop(name,implies(A,B)),ng2*),cnd) -> {
           return `nrule(impliesLeftInfo(),npremisses(typeProofterm(m1,nsequent(ncontext(ng1*,ng2*),cncontext(a,cnd*))),typeProofterm(m2,nsequent(ncontext(ng1*,x,ng2*),cnd))),ns,pt);
         }
-        pt@implyR(x@nprop(n,A),a@cnprop(cn,B),m,coname), ns@nsequent(ng,(cnd1*,cnprop(coname,implies(A,B)),cnd2*)) -> {
+        pt@implyR(x@nprop(n,A),a@cnprop(cn,B),m,coname), ns@nsequent(ng,cncontext(cnd1*,cnprop(coname,implies(A,B)),cnd2*)) -> {
           return `nrule(impliesRightInfo(),npremisses(typeProofterm(m,nsequent(ncontext(ng*,x),cncontext(cnd1*,a,cnd2*)))),ns,pt);
         }
-        pt@forallR(a@cnprop(cn,A), varx, m, coname), ns@nsequent(ng,(cnd1*,cnprop(coname,forall(var,B)),cnd2*)) -> {
+        pt@forallR(a@cnprop(cn,A), varx, m, coname), ns@nsequent(ng,cncontext(cnd1*,cnprop(coname,forall(var,B)),cnd2*)) -> {
           return `nrule(forallRightInfo(varx),npremisses(typeProofterm(m,nsequent(ng,cncontext(cnd1*,a,cnd2*)))),ns,pt);
         }
-        pt@forallL(x@nprop(n,A), m, t, name), ns@nsequent((ng1*,nprop(name,forall(var,B)),ng2*),cnd) -> {
+        pt@forallL(x@nprop(n,A), m, t, name), ns@nsequent(ncontext(ng1*,nprop(name,forall(var,B)),ng2*),cnd) -> {
           return `nrule(forallLeftInfo(t),npremisses(typeProofterm(m,nsequent(ncontext(ng1*,x,ng2*),cnd))),ns,pt);
         }
-        pt@existsL(x@nprop(n,A), varx, m, name), ns@nsequent((ng1*,nprop(name,exists(var,B)),ng2*),cnd) -> {
+        pt@existsL(x@nprop(n,A), varx, m, name), ns@nsequent(ncontext(ng1*,nprop(name,exists(var,B)),ng2*),cnd) -> {
           return `nrule(existsLeftInfo(varx),npremisses(typeProofterm(m,nsequent(ncontext(ng1*,x,ng2*),cnd))),ns,pt);
         }
-        pt@existsR(a@cnprop(cn,A), m, t, coname), ns@nsequent(ng,(cnd1*,cnprop(coname,exists(var,B)),cnd2*)) -> {
+        pt@existsR(a@cnprop(cn,A), m, t, coname), ns@nsequent(ng,cncontext(cnd1*,cnprop(coname,exists(var,B)),cnd2*)) -> {
           return `nrule(existsRightInfo(t),npremisses(typeProofterm(m,nsequent(ng,cncontext(cnd1*,a,cnd2*)))),ns,pt);
         }
       }
@@ -370,7 +368,7 @@ public class Proofterms {
     %match(Tree proof) {
       rule(_,_,c,_) -> {
         NSequent nseq = seq2nseq(`c);
-        ProofTerm pt = term2proofterm(proof, nseq, 0, 0); 
+        ProofTerm pt = term2proofterm(proof, nseq, 0, 0);
         return typeProofterm(pt, nseq);
       }
     }
@@ -399,8 +397,8 @@ public class Proofterms {
     }
 
     %match (NContext term) {
-      () -> {return false;}
-      (a,b*) -> {return (`nameAppearsFree(a,name) || `nameAppearsFree(b,name));}
+      ncontext() -> {return false;}
+      ncontext(a,b*) -> {return (`nameAppearsFree(a,name) || `nameAppearsFree(b,name));}
     }
 
     %match (NSequent term) {
@@ -422,7 +420,7 @@ public class Proofterms {
       }
     }
 
-    %match (ProofTerm term) { 
+    %match (ProofTerm term) {
       ax(n,cn) -> {return `nameAppearsFree(n,name); }
       cut(a,m1,x,m2) -> {return (`nameAppearsFree(m1,name) || (`nameAppearsFree(m2,name) && (! `nameAppearsFree(x,name))));}
       falseL(n) -> {return `nameAppearsFree(n,name); }
@@ -443,7 +441,7 @@ public class Proofterms {
     return false;
   }
 
-  public static boolean nameTopIntroduced(ProofTerm term, Name name) { 
+  public static boolean nameTopIntroduced(ProofTerm term, Name name) {
     %match (ProofTerm term) {
       ax(n,cn) -> {return `nameAppearsFree(n,name); }
       falseL(n) -> {return `nameAppearsFree(n,name); }
@@ -465,8 +463,8 @@ public class Proofterms {
     }
 
     %match (CNContext term) {
-      () -> {return false;}
-      (a,b*) -> {return (`conameAppearsFree(a,coname) || `conameAppearsFree(b,coname));}
+      cncontext() -> {return false;}
+      cncontext(a,b*) -> {return (`conameAppearsFree(a,coname) || `conameAppearsFree(b,coname));}
     }
 
     %match (NSequent term) {
@@ -484,7 +482,7 @@ public class Proofterms {
       }
     }
 
-    %match (ProofTerm term) { 
+    %match (ProofTerm term) {
       ax(n,cn) -> {return `conameAppearsFree(cn,coname); }
       cut(a,m1,x,m2) -> {return (`conameAppearsFree(m2,coname) || (`conameAppearsFree(m1,coname) && (! `conameAppearsFree(a,coname))));}
       falseL(n) -> {return false;}
@@ -505,7 +503,7 @@ public class Proofterms {
     return false;
   }
 
-  public static boolean conameTopIntroduced(ProofTerm term, CoName coname) { 
+  public static boolean conameTopIntroduced(ProofTerm term, CoName coname) {
     %match (ProofTerm term) {
       ax(n,cn) -> {return `conameAppearsFree(cn,coname); }
       trueR(cn) -> {return `conameAppearsFree(cn,coname); }
@@ -737,7 +735,7 @@ public class Proofterms {
       }
       */
       p -> {
-        if (conameTopIntroduced(`p,cn)) return `cut(cnprop(cn,phi),p,nprop(n,phi),pt); 
+        if (conameTopIntroduced(`p,cn)) return `cut(cnprop(cn,phi),p,nprop(n,phi),pt);
       }
     }
   }
@@ -852,7 +850,7 @@ public class Proofterms {
     }
     return null;
   }
-  
+
   private static ProofTerm NameSubstitutionDescend(ProofTerm subj, Name n, CoName cn, ProofTerm pt, Prop phi) { // MANQUE TRUE ET FALSE ET PREMIER ORDRE
     %match (ProofTerm subj) {
       cut(a,m1,x@nprop(name,_),m2) -> {
@@ -899,11 +897,11 @@ public class Proofterms {
     return null;
   }
 
- 
+
   %strategy OneStep(subject:ProofTerm,c:Collection,refresher:VarGenerator) extends `Identity() {
     visit ProofTerm {
       // COMMUTING CUTS
-      
+
       /*
       cut(cnprop(cn,phi),m1,x,m2) -> {
         if (! `conameAppearsFree(m1,cn)) {
@@ -946,13 +944,13 @@ public class Proofterms {
       // LOGICAL CUTS
       cut(cnprop(cn2,phi),m,nprop(n,phi),ax(n,cn)) -> { // ATTENTION
         if (`conameFreshlyIntroduced(m,cn2)) {
-          ProofTerm mm = (ProofTerm) `ReCoName(m,cn2,cn); 
+          ProofTerm mm = (ProofTerm) `ReCoName(m,cn2,cn);
           c.add(getEnvironment().getPosition().getReplace(mm).visit(subject));
         }
       }
       cut(cnprop(cn,phi),ax(n,cn),nprop(n2,phi),m) -> { // ATTENTION
         if (`nameFreshlyIntroduced(m,n2)) {
-          ProofTerm mm = (ProofTerm) `ReName(m,n2,n); 
+          ProofTerm mm = (ProofTerm) `ReName(m,n2,n);
           c.add(getEnvironment().getPosition().getReplace(mm).visit(subject));}
       }
       cut(cnprop(cn,phi),p1@andR(a1,m1,a2,m2,cn),nprop(n,phi),p2@andL(x1,x2,m3,n)) -> {
@@ -1033,7 +1031,7 @@ public class Proofterms {
     catch (Exception e) { System.out.println(e);}
     boolean res = true;
     for (Object o : c) {
-      if (conameAppearsFree(m2,(CoName) o)) { res=false; } 
+      if (conameAppearsFree(m2,(CoName) o)) { res=false; }
     }
     return res;
   }

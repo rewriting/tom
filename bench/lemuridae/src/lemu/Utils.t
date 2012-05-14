@@ -26,7 +26,7 @@ public class Utils {
   public static Prop forallList(StringList l, Prop p) {
     Prop res = p;
     %match(StringList l) {
-      (_*,v,_*) -> { res = `forall(v,res); }
+      strlist(_*,v,_*) -> { res = `forall(v,res); }
     }
     return res;
   }
@@ -38,7 +38,7 @@ public class Utils {
   public static Prop existsList(StringList l, Prop p) {
     Prop res = p;
     %match(StringList l) {
-      (_*,v,_*) -> { res = `exists(v,res); }
+      strlist(_*,v,_*) -> { res = `exists(v,res); }
     }
     return res;
   }

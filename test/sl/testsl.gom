@@ -27,8 +27,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
- module testsl 
- imports String
+ module testsl
+ imports int
  abstract syntax
  Term = a()
       | b()
@@ -37,3 +37,4 @@
       | g(arg1:Term, arg2:Term)
       | h(arg1:Term, arg2:Term, arg3:Term)
       | l(Term*)
+      | m(i:int)

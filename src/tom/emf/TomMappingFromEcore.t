@@ -505,7 +505,7 @@ private static <O> org.eclipse.emf.common.util.EList<O> append@name@(O e,org.ecl
       //nothing
       //dvalue = sf.getDefaultValue();
     } else {
-      dvalue = "`" + dvalue + "()";
+      dvalue = "`" + esftype + dvalue + "()";
     }
     //add a suffix '_' if the name is a reserved keyword
     String sfname = (keywords.contains(esf.getName()) ? "_" : "")+esf.getName();
@@ -605,10 +605,10 @@ public static <O extends org.eclipse.emf.ecore.EObject> O construct@cr@(O o, Obj
           String o2 = eclf.getEPackage().getClass().getInterfaces()[eclf
             .getEPackage().getClass().getInterfaces().length - 1]
             .getCanonicalName();
-
+          String operatorName = cr+lit.getLiteral();
           writer.write(%[
 
-%op @cr@ @lit.getLiteral()@() {
+%op @cr@ @operatorName@() {
   is_fsym(t) { t == @(decl[0]+decl[1])@.get("@lit.getLiteral()@") }
   make() { (@(decl[0]+decl[2])@)@o1@.eINSTANCE.createFromString( (EDataType)@o2@.eINSTANCE.get@toUpperName(cr)@(), "@lit.getLiteral()@") }
 }]%);

@@ -21,7 +21,7 @@ class Unification {
   %include { sl.tom }
 
   /**
-   * returns a Symbol Table if it matches, else null 
+   * returns a Symbol Table if it matches, else null
    **/
   public static HashMap<String, Term> match(Prop p1, Prop p2) {
     return match(p1, p2, new HashMap<String, Term>(), 0);
@@ -31,14 +31,14 @@ class Unification {
   public static HashMap<String, Term> match(Prop p1, Prop p2, HashMap<String,Term> ts) {
     return match(p1, p2, ts, 0);
   }
-  
+
   public static HashMap<String, Term> match(Term pattern, Term subject) {
     return match(pattern, subject, new HashMap<String, Term>(), 0);
   }
 
   private static HashMap<String, Term> match(sequentsAbstractType p1,
       sequentsAbstractType p2, HashMap<String, Term> tds, int varcount) {
-    
+
     %match (Prop p1, Prop p2) {
       relationAppl(x,args1), relationAppl(x,args2) -> {
         return match(`args1,`args2, tds, varcount);
@@ -78,13 +78,13 @@ class Unification {
     }
 
     %match (TermList p1, TermList p2) {
-      (), () -> { return tds; }
+      concTerm(), concTerm() -> { return tds; }
 
       // 2 listes de longueur differentes, clash
-      (_,_*), () -> { return null; }
-      (), (_,_*) -> { return null; }
+      concTerm(_,_*), concTerm() -> { return null; }
+      concTerm(), concTerm(_,_*) -> { return null; }
 
-      (x1,t1*), (x2,t2*) -> { 
+      concTerm(x1,t1*), concTerm(x2,t2*) -> {
         tds = match(`x1,`x2,tds,varcount);
         if (tds == null)
           return null;
@@ -95,11 +95,11 @@ class Unification {
 
     %match (Term p1, Term p2) {
 
-      funAppl(f,args1), funAppl(f,args2) -> { 
+      funAppl(f,args1), funAppl(f,args2) -> {
         return match(`args1, `args2, tds,varcount);
       }
 
-      Var(x), t -> { 
+      Var(x), t -> {
         if(tds.containsKey(`x)) {
           if (tds.get(`x) == `t) return tds;
           else return null;
@@ -114,11 +114,11 @@ class Unification {
     // better with an exception ?
   }
 
-    /** 
+    /**
 	unify p1 with p2
 	@return the substitution in tree form, or null
      */
-  public static HashMap<String, Term> unify(sequentsAbstractType p1, 
+  public static HashMap<String, Term> unify(sequentsAbstractType p1,
 					    sequentsAbstractType p2) {
     return unify(p1, p2, new HashMap<String, Term>(), 0);
   }
@@ -126,27 +126,27 @@ class Unification {
     // maybe incorrect, certainly not optimal
   private static HashMap<String, Term> unify(sequentsAbstractType p1,
       sequentsAbstractType p2, HashMap<String, Term> tds, int varcount) {
-    
+
     %match (Prop p1, Prop p2) {
       relationAppl(x,args1), relationAppl(x,args2) -> {
         return unify(`args1,`args2, tds, varcount);
       }
       and(l1,r1), and(l2,r2) -> {
         unify(`l1,`l2, tds, varcount);
-        if(tds != null) 
-	  return unify(substitute(tds,`r1), substitute(tds,`r2), 
+        if(tds != null)
+	  return unify(substitute(tds,`r1), substitute(tds,`r2),
 		       tds, varcount);
       }
       or(l1,r1), or(l2,r2) -> {
         unify(`l1,`l2, tds, varcount);
-        if(tds != null) 
-	  return unify(substitute(tds,`r1), substitute(tds,`r2), 
+        if(tds != null)
+	  return unify(substitute(tds,`r1), substitute(tds,`r2),
 		       tds, varcount);
       }
       implies(l1,r1), implies(l2,r2) -> {
         unify(`l1,`l2, tds, varcount);
-        if(tds != null) 
-	  return unify(substitute(tds,`r1), substitute(tds,`r2), 
+        if(tds != null)
+	  return unify(substitute(tds,`r1), substitute(tds,`r2),
 		       tds, varcount);
       }
       bottom(),bottom() -> {
@@ -170,76 +170,76 @@ class Unification {
         return unify(new_r1, new_r2, tds, varcount+1);
       }
     }
-    
+
     %match (TermList p1, TermList p2) {
-       (), () -> { return tds; }
-       
+       concTerm(), concTerm() -> { return tds; }
+
        // 2 listes de longueur differentes, clash
-       (_,_*), () -> { return null; }
-       (), (_,_*) -> { return null; }
-       
-       (x1,t1*), (x2,t2*) -> { 
-	 tds = unify(`x1,`x2,tds,varcount);
-	 if (tds == null)
-	   return null;
-	 else {
-	   return unify(substitute(tds,`t1),substitute(tds,`t2),tds,varcount);
-	 }
+       concTerm(_,_*), concTerm() -> { return null; }
+       concTerm(), concTerm(_,_*) -> { return null; }
+
+       concTerm(x1,t1*), concTerm(x2,t2*) -> {
+         tds = unify(`x1,`x2,tds,varcount);
+         if (tds == null)
+           return null;
+         else {
+           return unify(substitute(tds,`t1),substitute(tds,`t2),tds,varcount);
+         }
       }
      }
-    
+
     %match (Term p1, Term p2) {
-       
-       funAppl(f,args1), funAppl(f,args2) -> { 
-	 return unify(`args1, `args2, tds, varcount);
+
+       funAppl(f,args1), funAppl(f,args2) -> {
+         return unify(`args1, `args2, tds, varcount);
        }
-       
+
       !Var[], Var[] -> {
-	return unify(p2, p1, tds, varcount);
+        return unify(p2, p1, tds, varcount);
       }
-      
-      Var(x), s -> { 
-	if (check(`x, `s)) {
-	  if (tds.containsKey(`x)) {
-	    Term l = tds.get(`x);
-	    tds.put(`x, `s);
-	    return unify(l, p2, tds, varcount);
-	  }
-	  else {
-	    tds = replace(tds, `x, `s);
-	    tds.put(`x, `s);
-	    return tds; 
-	  }}
-	else 
-	  return null;
+
+      Var(x), s -> {
+        if (check(`x, `s)) {
+          if (tds.containsKey(`x)) {
+            Term l = tds.get(`x);
+            tds.put(`x, `s);
+            return unify(l, p2, tds, varcount);
+          }
+          else {
+            tds = replace(tds, `x, `s);
+            tds.put(`x, `s);
+            return tds;
+          }}
+        else
+          return null;
       }
-      
+
      }
 
     return null; // clash par defaut
   }
-  
+
   private static boolean check(String name, sequentsAbstractType t) {
     %match (Term t) {
       Var(y) -> { return ! `y.equals(name); }
-      
+
       funAppl(_, args) -> { return check(name, `args); }
-      
+
       _ -> { return true; }
     }
-    
+
     %match (TermList t) {
        concTerm(f, q*) -> { return check(name,`f) && check(name,`q); }
-       
+
        concTerm() -> { return true; }
      }
-    
+
     return false;
   }
-  
+
   /* Replace Var(name) by t in orig */
-  private static HashMap<String,Term> replace(HashMap<String,Term> orig, 
-					      String name, 
+  private static HashMap<String,Term> replace(HashMap<String,Term> orig,
+					      String name,
 					       Term t) {
     HashMap<String,Term> res = new HashMap();
     Set<Map.Entry<String,Term>> entries= orig.entrySet();
@@ -251,12 +251,12 @@ class Unification {
     }
     return res;
   }
-  
-  /** 
+
+  /**
    * apply the substitution sub to l
    * the substitution sub is assumed to be in tree form
-   */ 
-  public static sequentsAbstractType substitute(HashMap<String,Term> sub, 
+   */
+  public static sequentsAbstractType substitute(HashMap<String,Term> sub,
 						sequentsAbstractType l) {
     Set<Map.Entry<String,Term>> entries= sub.entrySet();
     for (Map.Entry<String,Term> ent: entries) {
@@ -266,7 +266,7 @@ class Unification {
         }
     return l;
   }
-  
+
   public static sequentsAbstractType reduce(sequentsAbstractType t, TermRuleList tl, PropRuleList pl) {
       Strategy ar =  `InnermostId(ApplyRules(tl,pl));
       try { return (sequentsAbstractType) ar.visit(t); }
@@ -275,19 +275,19 @@ class Unification {
 
   %strategy ApplyRules(tl:TermRuleList, pl:PropRuleList) extends `Identity() {
     visit Term {
-      x -> { 
+      x -> {
         Term res = `x;
         %match(TermRuleList tl) {
-          (_*,r,_*) -> { res = `reduceTerm(res,r); }
+          termrulelist(_*,r,_*) -> { res = `reduceTerm(res,r); }
         }
         return res;
       }
     }
     visit Prop {
-      p -> { 
+      p -> {
         Prop res = `p;
         %match(PropRuleList pl) {
-          (_*,r,_*) -> { res = `reduceProp(res,r); }
+          proprulelist(_*,r,_*) -> { res = `reduceProp(res,r); }
         }
         return res;
       }
@@ -300,30 +300,30 @@ class Unification {
 
   %strategy RenameIntoTemp(bounded : StringSet) extends `Fail() {
     visit Prop {
-      forall(n,p) -> { 
-        bounded.add(`n); 
-        Prop res = (Prop) 
+      forall(n,p) -> {
+        bounded.add(`n);
+        Prop res = (Prop)
           `mu(MuVar("y"),Choice(RenameIntoTemp(bounded),All(MuVar("y")))).visit(`p);
         bounded.remove(`n);
         return `forall(n,res);
       }
-      exists(n,p) -> { 
-        bounded.add(`n); 
-        Prop res = (Prop) 
+      exists(n,p) -> {
+        bounded.add(`n);
+        Prop res = (Prop)
           `mu(MuVar("y"),Choice(RenameIntoTemp(bounded),All(MuVar("y")))).visit(`p);
         bounded.remove(`n);
         return `exists(n,res);
       }
    }
     visit Term {
-       v@Var(name) -> { 
-         if (!bounded.contains(`name)) return `Var("@" + name); 
+       v@Var(name) -> {
+         if (!bounded.contains(`name)) return `Var("@" + name);
          else return `v;
        }
     }
   }
 
-  public static sequentsAbstractType 
+  public static sequentsAbstractType
     substPreTreatment(sequentsAbstractType term) {
       HashSet<String> bounded = new HashSet();
       try {
@@ -369,9 +369,4 @@ class Unification {
     }
     return p;
   }
-
-  
-
 }
-
-

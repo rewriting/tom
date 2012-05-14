@@ -1,4 +1,4 @@
-module subtyping.Language
+module subtyping.inference.Language
 imports String int
 abstract syntax
 
@@ -72,5 +72,3 @@ ContextAndResult = CRPair(ctx: Context, res: ReconResult)
 ContextAndResultList = CRLPair(ctx: Context, rlist: ReconResultList)
 
 ContextAndConstraints = CCPair(ctx: Context, constraints: ConstraintList)
-
-

@@ -1,7 +1,10 @@
 package gom;
 
 import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.*;
 import org.junit.Test;
+import org.junit.Rule;
+import org.junit.rules.ErrorCollector;
 import tom.library.sl.Strategy;
 import gom.teststratmapping.m.types.*;
 
@@ -27,6 +30,9 @@ public class TestStratMapping {
     }
   }
 
+  @Rule
+  public ErrorCollector collector= new ErrorCollector();
+
   @Test
   public void testCongruenceConstant() {
     S t = `f(f(a(),b()),f(b(),a()));
@@ -38,42 +44,41 @@ public class TestStratMapping {
     Strategy s6 = `Make_a();
     try {
       t = s1.visit(t);
-      assertEquals(`f(a(),b()),t);
+      collector.checkThat(t, is(`f(a(),b())));
     } catch (tom.library.sl.VisitFailure ee) {
-      fail("s1 failed"); 
+      collector.addError(new Throwable("s1 failed"));
     }
 
     try {
       t = s2.visit(t);
-      assertEquals(`a(),t);
+      collector.checkThat(t,is(`a()));
     } catch (tom.library.sl.VisitFailure ee) {
-      fail("s2 failed"); 
+      collector.addError(new Throwable("s2 failed"));
     }
 
     try {
       t = s3.visit(t);
     } catch (tom.library.sl.VisitFailure ee) {
-      fail("s3 failed"); 
+      collector.addError(new Throwable("s3 failed"));
     }
 
     try {
       t = s4.visit(t);
-      fail("_f() has not failed on a()"); 
+      collector.addError(new Throwable("_f() has not failed on a()"));
     } catch (tom.library.sl.VisitFailure ee) {
     }
 
     try {
       t = s5.visit(t);
-      fail("Make_f(Make_a(),Make_c()) is not well formed and has not failed"); 
+      collector.addError(new Throwable("Make_f(Make_a(),Make_c()) is not well formed and has not failed"));
     } catch (tom.library.sl.VisitFailure ee) {
     }
 
     try {
       t = s6.visit(t);
-      assertEquals(`a(),t);
+      collector.checkThat(t,is(`a()));
     } catch (tom.library.sl.VisitFailure ee) {
-      fail("Make_a() failed"); 
+      collector.addError(new Throwable("Make_a() failed"));
     }
   }
-
 }
