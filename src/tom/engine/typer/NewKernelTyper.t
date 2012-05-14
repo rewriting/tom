@@ -344,28 +344,28 @@ public class NewKernelTyper {
         symmetryConstraint = `Equation(tVar,Type(emptyOptionList,tType,emptyTargetLanguageType),emptyInfo);
       }
 
-      Equation[Type1=Type[TomType=tType1],Type2=Type[TomType=tType2]] -> {
-        constraint         = `Equation(Type(emptyOptionList,tType1,emptyTargetLanguageType),
-                                       Type(emptyOptionList,tType2,emptyTargetLanguageType),emptyInfo);
-        symmetryConstraint = `Equation(Type(emptyOptionList,tType2,emptyTargetLanguageType),
-                                       Type(emptyOptionList,tType1,emptyTargetLanguageType),emptyInfo);
+      Equation[Type1=Type[TypeOptions=ol1,TomType=tType1],Type2=Type[TypeOptions=ol2,TomType=tType2]] -> {
+        constraint         = `Equation(Type(ol1,tType1,emptyTargetLanguageType),
+                                       Type(ol2,tType2,emptyTargetLanguageType),emptyInfo);
+        symmetryConstraint = `Equation(Type(ol2,tType2,emptyTargetLanguageType),
+                                       Type(ol1,tType1,emptyTargetLanguageType),emptyInfo);
       }
 
       Subtype[Type1=type1,Type2=type2] -> {
         constraint         = `Subtype(type1,type2,emptyInfo);
         symmetryConstraint = constraint;
       }
-      Subtype[Type1=type,Type2=Type[TomType=tType]] -> {
-        constraint         = `Subtype(type,Type(emptyOptionList,tType,emptyTargetLanguageType),emptyInfo);
+      Subtype[Type1=type,Type2=Type[TypeOptions=ol,TomType=tType]] -> {
+        constraint         = `Subtype(type,Type(ol,tType,emptyTargetLanguageType),emptyInfo);
         symmetryConstraint = constraint;
       }
-      Subtype[Type1=Type[TomType=tType],Type2=type] -> {
-        constraint         = `Subtype(Type(emptyOptionList,tType,emptyTargetLanguageType),type,emptyInfo);
+      Subtype[Type1=Type[TypeOptions=ol,TomType=tType],Type2=type] -> {
+        constraint         = `Subtype(Type(ol,tType,emptyTargetLanguageType),type,emptyInfo);
         symmetryConstraint = constraint;
       }
-      Subtype[Type1=Type[TomType=tType1],Type2=Type[TomType=tType2]] -> {
-        constraint         = `Subtype(Type(emptyOptionList,tType1,emptyTargetLanguageType),
-                                      Type(emptyOptionList,tType2,emptyTargetLanguageType),emptyInfo);
+      Subtype[Type1=Type[TypeOptions=ol1,TomType=tType1],Type2=Type[TypeOptions=ol2,TomType=tType2]] -> {
+        constraint         = `Subtype(Type(ol1,tType1,emptyTargetLanguageType),
+                                      Type(ol2,tType2,emptyTargetLanguageType),emptyInfo);
         symmetryConstraint = constraint;
       }
 
@@ -404,7 +404,9 @@ public class NewKernelTyper {
       constraintBag.add(symmetryConstraint);
       result1 = `concTypeConstraint(tConstraint,tCList*);
     }
-   /* 
+   
+    //----------------
+    /*
     result2 = tCList;
     if (!containsConstraint(tConstraint,tCList)) {
       %match(tConstraint) {
@@ -423,7 +425,9 @@ public class NewKernelTyper {
       System.out.println("result1 = " + result1);
       System.out.println("result2 = " + result2);
     }
-*/
+    */
+    //----------------
+
     return result1;
      
   }

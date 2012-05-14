@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+
 <project name="Ant for TOM" default="stable" basedir=".">
   <description>
     Build script using Ant offering checks, dists,
