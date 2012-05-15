@@ -1,3 +1,7 @@
+2012-05-15 pem
+ * merge subtype into master
+ * bootstrap
+
 2011-12-09 tavaresc
  * newtyper: add verification for types of each variable in pattern.
 
