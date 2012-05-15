@@ -79,8 +79,8 @@ public class ACPropagator implements IBasePropagator {
     //Constraint res = `TopDownWhenConstraint(ACMatching(this)).visitLight(constraint);		
     if(result!=constraint) {
       /*System.out.println("after propagate:");*/
-      System.out.println(TomConstraintPrettyPrinter.prettyPrint(result));
-      System.out.println();
+      /*System.out.println(TomConstraintPrettyPrinter.prettyPrint(result));*/
+      /*System.out.println();*/
     }
     return result;
   }	
@@ -102,7 +102,7 @@ public class ACPropagator implements IBasePropagator {
            * f(t,...) <<ac s -> (X1*,t,X2*) <<a s /\ f(...) <<ac f(X1*,X2*)
            */
           concSlot(C1*, slot@PairSlotAppl[SlotName=slotname, Appl=!VariableStar[]], C2*) -> {
-            System.out.println("case F(t,...): " + `slots);
+            /*System.out.println("case F(t,...): " + `slots);*/
             /*System.out.println("slot: " + `slot);*/
 
             //generate f(X1*, slot, X2*) << s and modify s <- f(X1*,X2*)
@@ -128,7 +128,7 @@ public class ACPropagator implements IBasePropagator {
 
             Constraint result = `AndConstraint(c1,c2);
             /*System.out.println("result: " + result);*/
-            System.out.println(TomConstraintPrettyPrinter.prettyPrint(result));
+            /*System.out.println(TomConstraintPrettyPrinter.prettyPrint(result));*/
             return result;
           }
         }
@@ -189,9 +189,9 @@ public class ACPropagator implements IBasePropagator {
                   Constraint result = `AndConstraint(c1,c2);
 
                   if(`slotContext.length() > 1) {
-                    System.out.println("remove non linear X*: " + `Xn);
-                    System.out.println("result: ");
-                    System.out.println(TomConstraintPrettyPrinter.prettyPrint(result));
+                    /*System.out.println("remove non linear X*: " + `Xn);*/
+                    /*System.out.println("result: ");*/
+                    /*System.out.println(TomConstraintPrettyPrinter.prettyPrint(result));*/
                     return result;
                   }
                 }
@@ -220,7 +220,7 @@ public class ACPropagator implements IBasePropagator {
             concSlot(C1*, Z@PairSlotAppl[SlotName=slotname, Appl=VariableStar[]], C2*)
         && !concSlot(_*,    PairSlotAppl[SlotName=slotname, Appl=VariableStar[]], _*) << concSlot(C1*,C2*)
             -> {
-              System.out.println("case F(Z*,...): " + `slots);
+              /*System.out.println("case F(Z*,...): " + `slots);*/
               //generate: f(Z,X1) <<ac s 
               TomType listType = acp.getCompiler().getTermTypeFromTerm(`pattern);
               BQTerm X1 = acp.getCompiler().getFreshVariableStar(listType);				
@@ -267,7 +267,7 @@ public class ACPropagator implements IBasePropagator {
           Constraint result = `MatchConstraint(
               RecordAppl(optWithoutAC, namelist, slots, concConstraint()),
               subject,aType);
-          System.out.println(TomConstraintPrettyPrinter.prettyPrint(result));
+          /*System.out.println(TomConstraintPrettyPrinter.prettyPrint(result));*/
           return result;
         }
     }

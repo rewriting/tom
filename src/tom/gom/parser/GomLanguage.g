@@ -73,7 +73,7 @@ imports :
   IMPORTS (importedModuleName)* -> ^(Imports ^(ConcImportedModule (importedModuleName)*))
   ;
 importedModuleName :
-  ID -> ^(Import ^(GomModuleName ID))
+  ID -> ^(GomModuleName ID)
   ;
 
 section :

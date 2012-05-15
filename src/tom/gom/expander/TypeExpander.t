@@ -298,7 +298,7 @@ public class TypeExpander {
         %match(sectionList) {
           ConcSection(_*,
               Imports(ConcImportedModule(_*,
-                  Import(modname@GomModuleName(name)),
+                  modname@GomModuleName(name),
                   _*)),
               _*) -> {
             if (!getGomEnvironment().isBuiltin(`name)) {

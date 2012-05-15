@@ -6,7 +6,7 @@ public class Inductive {
 
   %include { sequents/sequents.tom }
 
-  // e.g. Nat(t) 
+  // e.g. Nat(t)
   public static Prop getLhs(Sig s) {
     %match (Sig s) {
       sig(def,_) -> {return  `relationAppl(def,concTerm(Var("t")));}
@@ -17,7 +17,7 @@ public class Inductive {
   // e.g. forall P, (P(0) -> forall m ...
   public static Prop getRhs(Sig s, boolean recursive) {
     %match (Sig s) {
-      sig(def,(l*)) -> {return `forall("p",getAxiom(l,def,recursive));}
+      sig(def,clist(l*)) -> {return `forall("p",getAxiom(l,def,recursive));}
     }
     throw new RuntimeException("should not happen");
   }
@@ -32,10 +32,10 @@ public class Inductive {
     Prop res = `In(Var("t"),Var("p"));
     // res = getQuantified(nil) -> getQuantified(bin) -> P(t)
     %match (Ctorlist cl) {
-      () -> { 
+      clist() -> {
         return `In(Var("t"),Var("p"));
       }
-      (ctor(c,(l1*)), l2*) -> {
+      clist(ctor(c,tlist(l1*)), l2*) -> {
           return  `implies(getQuantified(c,l1,def,recursive), getAxiom(l2,def,recursive));
       }
     }
@@ -48,7 +48,7 @@ public class Inductive {
 
     // inner implications : p = P(t1) -> P(t2) -> P(bin(n,t1,t2))
     %match(TypeList tl, String def) {
-      (_*,type(lab,name),_*) , name -> {
+      tlist(_*,type(lab,name),_*) , name -> {
         p = `implies(In(Var(lab),Var("p")),p);
       }
     }
@@ -58,7 +58,7 @@ public class Inductive {
         - recursive: p = forall n, Nat(n) -> forall t1, BinTree(t1) -> ...
      */
     %match(TypeList tl) {
-      (_*,type(lab,name),_*) -> {
+      tlist(_*,type(lab,name),_*) -> {
         if(recursive || !`name.equals(def)) {
           p = `implies(relationAppl(name,concTerm(Var(lab))),p);
         }
@@ -72,7 +72,7 @@ public class Inductive {
   private static TermList getLabels(TypeList tl) {
     TermList res = `concTerm();
     %match(TypeList tl) {
-      (_*,type(lab,_),_*) -> { res = `concTerm(res*,Var(lab)); } 
+      tlist(_*,type(lab,_),_*) -> { res = `concTerm(res*,Var(lab)); }
     }
     return res;
   }
