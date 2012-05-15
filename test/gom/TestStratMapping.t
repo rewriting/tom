@@ -1,7 +1,8 @@
 package gom;
 
 import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
+import org.hamcrest.Matcher;
+import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 import org.junit.Rule;
 import org.junit.rules.ErrorCollector;
@@ -80,5 +81,9 @@ public class TestStratMapping {
     } catch (tom.library.sl.VisitFailure ee) {
       collector.addError(new Throwable("Make_a() failed"));
     }
+  }
+
+  private static Matcher<S> is(S s) {
+    return CoreMatchers.is(s);
   }
 }
