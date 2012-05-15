@@ -555,6 +555,7 @@ public class NewKernelTyper {
       %match(tTerm,localVarPatternList,bqTList) {
         test@(Variable|VariableStar)[AstName=aName],!concTomTerm(_*,test,_*),concBQTerm(x*,(BQVariable|BQVariableStar)[AstName=aName],y*)
           -> {
+            System.out.println("*** resetVarList remove: " + `aName);
             bqTList = `concBQTerm(x*,y*);
           }
       }
@@ -609,7 +610,7 @@ public class NewKernelTyper {
     visit TomType {
       Type[TomType=tomType,TlType=EmptyTargetLanguageType()] -> {
         TomType newType = nkt.symbolTable.getType(`tomType);
-        if (newType == null) {
+        if(newType == null) {
           /*
            * This happens when :
            * tomType != unknown type AND (newType == null)
@@ -632,8 +633,7 @@ public class NewKernelTyper {
    */
   public <T extends tom.library.sl.Visitable> T inferAllTypes(T term, TomType contextType) {
     try {
-      return
-        `TopDownStopOnSuccess(inferTypes(contextType,this)).visitLight(term); 
+      return `TopDownStopOnSuccess(inferTypes(contextType,this)).visitLight(term); 
     } catch(tom.library.sl.VisitFailure e) {
       throw new TomRuntimeException("inferAllTypes: failure on " + term);
     }
@@ -717,8 +717,7 @@ public class NewKernelTyper {
     visit Instruction {
       Match[ConstraintInstructionList=ciList,Options=optionList] -> {
         BQTermList BQTList = nkt.varList;
-        ConstraintInstructionList newCIList =
-          nkt.inferConstraintInstructionList(`ciList);
+        ConstraintInstructionList newCIList = nkt.inferConstraintInstructionList(`ciList);
         nkt.varList = BQTList;
         return `Match(newCIList,optionList);
       }      
@@ -726,23 +725,23 @@ public class NewKernelTyper {
 
     visit TomVisit {
       VisitTerm[VNode=vNode,AstConstraintInstructionList=ciList,Options=optionList] -> {
-
         BQTermList BQTList = nkt.varList;
-        ConstraintInstructionList newCIList =
-          nkt.inferConstraintInstructionList(`ciList);
+        ConstraintInstructionList newCIList = nkt.inferConstraintInstructionList(`ciList);
         nkt.varList = BQTList;
         return `VisitTerm(vNode,newCIList,optionList);
       }
     }
 
     visit TomTerm {
-      AntiTerm[TomTerm=atomicTerm] -> { nkt.inferAllTypes(`atomicTerm,contextType); }
+      AntiTerm[TomTerm=atomicTerm] -> { 
+        nkt.inferAllTypes(`atomicTerm,contextType); 
+        /* pem: there is not return! */
+      }
 
       var@Variable[Options=optionList,AstName=aName,AstType=aType,Constraints=cList] -> {
         nkt.checkNonLinearityOfVariables(`var);
         nkt.subtypeConstraints =
           nkt.addConstraint(`Subtype(aType,contextType,PairNameOptions(aName,optionList)),nkt.subtypeConstraints);  
-        ConstraintList newCList = `cList;
         %match(cList) {
           /* How many "AliasTo" constructors can concConstraint have? */
           concConstraint(AliasTo(boundTerm)) -> {
@@ -750,14 +749,13 @@ public class NewKernelTyper {
               nkt.addConstraint(`Equation(nkt.getType(boundTerm),aType,nkt.getInfoFromTomTerm(boundTerm)),nkt.equationConstraints); 
           }
         }
-        return `var.setConstraints(newCList);
+        return `var.setConstraints(`cList);
       }
 
       varStar@VariableStar[Options=optionList,AstName=aName,AstType=aType,Constraints=cList] -> {
         nkt.checkNonLinearityOfVariables(`varStar);
         nkt.equationConstraints =
           nkt.addConstraint(`Equation(aType,contextType,PairNameOptions(aName,optionList)),nkt.equationConstraints);  
-        ConstraintList newCList = `cList;
         %match(cList) {
           /* How many "AliasTo" constructors can concConstraint have? */
           concConstraint(AliasTo(boundTerm)) -> {
@@ -765,39 +763,36 @@ public class NewKernelTyper {
               nkt.addConstraint(`Equation(nkt.getType(boundTerm),aType,nkt.getInfoFromTomTerm(boundTerm)),nkt.equationConstraints); 
           }
         }
-        return `varStar.setConstraints(newCList);
+        return `varStar.setConstraints(`cList);
       }
 
       RecordAppl[Options=optionList,NameList=nList@concTomName(aName@Name(tomName),_*),Slots=sList,Constraints=cList] -> {
         /* In case of a String, tomName is "" for ("a","b") */
         TomSymbol tSymbol = nkt.getSymbolFromName(`tomName);
-
         TomType codomain = contextType;
 
         /* IF_3 */
-        if (tSymbol == null) {
+        if(tSymbol == null) {
           tSymbol = `EmptySymbol();
         } else {
-          /* This code can not be moved to IF_2 because tSymbol may don't be
+          /* This code cannot be moved to IF_2 because tSymbol may don't be
            "null" since the begginning and then does not enter into neither IF_1 nor */
+
           /* IF_2 */
-          TomSymbol newtSymbol = tSymbol;
-          %match(newtSymbol) {
+          %match(tSymbol) {
             Symbol[AstName=symName,TypesToType=TypesToType[Domain=domain,Codomain=tsCodomain@Type[TypeOptions=tOptions,TomType=tomCodomain,TlType=tlCodomain]],PairNameDeclList=pndList,Options=options] -> { 
               codomain = `tsCodomain;
               if(TomBase.isListOperator(`tSymbol) || TomBase.isArrayOperator(`tSymbol)) {
                 /* Apply decoration for types of list operators */
                 TypeOptionList newTOptions = `concTypeOption(WithSymbol(symName),tOptions*);
                 codomain = `Type(newTOptions,tomCodomain,tlCodomain);
-                tSymbol =
-                  `Symbol(symName,TypesToType(domain,codomain),pndList,options); 
+                tSymbol = `Symbol(symName,TypesToType(domain,codomain),pndList,options); 
               }  
             }
           }
           nkt.subtypeConstraints = nkt.addConstraint(`Subtype(codomain,contextType,PairNameOptions(aName,optionList)),nkt.subtypeConstraints);
         }
 
-        ConstraintList newCList = `cList;
         %match(cList) {
           /* How many "AliasTo" constructors can concConstraint have? */
           concConstraint(AliasTo(boundTerm)) -> {
@@ -807,11 +802,10 @@ public class NewKernelTyper {
         }
 
         SlotList newSList = `concSlot();
-        if (!`sList.isEmptyconcSlot()) {
-          `newSList =
-            nkt.inferSlotList(`sList,tSymbol,contextType);
+        if(!`sList.isEmptyconcSlot()) {
+          `newSList = nkt.inferSlotList(`sList,tSymbol,contextType);
         }
-        return `RecordAppl(optionList,nList,newSList,newCList);
+        return `RecordAppl(optionList,nList,newSList,cList);
       }
     }
 
@@ -853,8 +847,7 @@ public class NewKernelTyper {
           }
           nkt.subtypeConstraints = nkt.addConstraint(`Subtype(codomain,contextType,PairNameOptions(aName,optionList)),nkt.subtypeConstraints);
 
-          BQTermList newBQTList =
-            nkt.inferBQTermList(`bqTList,`tSymbol,contextType);
+          BQTermList newBQTList = nkt.inferBQTermList(`bqTList,`tSymbol,contextType);
           return `BQAppl(optionList,aName,newBQTList);
         }
       }
@@ -891,7 +884,7 @@ public class NewKernelTyper {
       (Variable|VariableStar)[AstName=aName,AstType=aType] << var &&
         concTomTerm(_*,(Variable|VariableStar)[AstName=aName,AstType=aType],_*) << varPatternList -> {
           //DEBUG System.out.println("Add type '" + `aType + "' of var '" + `var +"'\n");
-          `addPositiveTVar(aType);
+          addPositiveTVar(`aType);
         }
     }
   }
