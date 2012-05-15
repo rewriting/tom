@@ -2,7 +2,7 @@
  * 
  * TOM - To One Matching Compiler
  * 
- * Copyright (c) 2000-2011, INPL, INRIA
+ * Copyright (c) 2000-2012, INPL, INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -82,7 +82,7 @@ public class TyperPlugin extends TomGenericPlugin {
   public static final String DECLARED_OPTIONS =
     "<options>" +
     "<boolean name='type' altName='' description='TyperPlugin (activated by default)' value='true'/>" +
-    "<boolean name='newtyper' altName='nt' description='New TyperPlugin (not activated by default)' value='false'/>" +
+    "<boolean name='newtyper' altName='nt' description='New TyperPlugin (not activated by default)' value='true'/>" +
     "</options>";
 
   /**
@@ -185,8 +185,12 @@ public class TyperPlugin extends TomGenericPlugin {
         setWorkingTerm(typedCode);
 
         // verbose
+        int totalNumOfConstraints = newKernelTyper.getEqCounter() +
+          newKernelTyper.getSubCounter(); 
         TomMessage.info(logger, null, 0, TomMessage.tomTypingPhase,
           Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));    
+        TomMessage.info(logger, null, 0, TomMessage.tomTypingPhaseComplement,
+          totalNumOfConstraints,newKernelTyper.getTVarCounter());
       } catch (Exception e) {
         TomMessage.error(logger, newKernelTyper.getCurrentInputFileName(), 
             0, TomMessage.exceptionMessage, getClass().getName(), 

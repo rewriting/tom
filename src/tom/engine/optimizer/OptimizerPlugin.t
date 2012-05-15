@@ -2,7 +2,7 @@
  *
  * TOM - To One Matching Compiler
  *
- * Copyright (c) 2000-2011, INPL, INRIA
+ * Copyright (c) 2000-2012, INPL, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -44,6 +44,7 @@ import tom.engine.adt.tomexpression.types.*;
 import tom.engine.adt.tominstruction.types.*;
 import tom.engine.adt.tomname.types.*;
 import tom.engine.adt.tomoption.types.*;
+import tom.engine.adt.tomoption.types.option.OriginTracking;
 import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomslot.types.*;
@@ -223,8 +224,9 @@ public class OptimizerPlugin extends TomGenericPlugin {
                 // verify linearity in case of variables from the pattern
                 // warning to indicate that this var is unused in the rhs
                 Option orgTrack = TomBase.findOriginTracking(`var.getOptions());
-                TomMessage.warning(logger,orgTrack.getFileName(), orgTrack.getLine(),
-                    TomMessage.unusedVariable,varName);
+                TomMessage.warning(logger,(orgTrack instanceof OriginTracking)?orgTrack.getFileName():"unknown file", 
+                  (orgTrack instanceof OriginTracking)?orgTrack.getLine():-1,
+                  TomMessage.unusedVariable,varName);
                 TomMessage.info(logger,null,0,TomMessage.remove,mult,varName);
               }
             }

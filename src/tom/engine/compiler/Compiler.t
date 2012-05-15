@@ -2,7 +2,7 @@
  * 
  * TOM - To One Matching Expander
  * 
- * Copyright (c) 2000-2011, INPL, INRIA
+ * Copyright (c) 2000-2012, INPL, INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -234,26 +234,17 @@ public class Compiler extends TomGenericPlugin {
               // get the new names for subjects and generates casts -- needed especially for lists
               // this is performed here, and not above, because in the case of nested matches, we do not want 
               // to go in the action and collect from there              
-              //DEBUG System.out.println("\n constraint = " + `constraint);
               Constraint newConstraint = `TopDownIdStopOnSuccess(renameSubjects(subjectList,renamedSubjects,compiler)).visitLight(`constraint);
-              //DEBUG System.out.println("\n In compiler!!");
-              //DEBUG System.out.println("\n newConstraint = " + newConstraint);
 
               Constraint propagationResult = compiler.getCompilerEnvironment().getConstraintPropagator().performPropagations(newConstraint);
-              //DEBUG System.out.println("\n propagationResult = " + propagationResult);
               PreGenerator preGenerator = new PreGenerator(compiler.getCompilerEnvironment().getConstraintGenerator());
-              //DEBUG System.out.println("\n preGenerator = " + preGenerator);
               Expression preGeneratedExpr = preGenerator.performPreGenerationTreatment(propagationResult);
-              //DEBUG System.out.println("\n preGeneratedExpr = " + preGeneratedExpr);
               Instruction matchingAutomata = compiler.getCompilerEnvironment().getConstraintGenerator().performGenerations(preGeneratedExpr, `action);
-              //DEBUG System.out.println("\n matchingAutomata = " + matchingAutomata);
               Instruction postGenerationAutomata = PostGenerator.performPostGenerationTreatment(matchingAutomata);
-              //DEBUG System.out.println("\n postGenerationAutomata = " + postGenerationAutomata);
               TomNumberList path = compiler.getCompilerEnvironment().getRootpath();
               TomNumberList numberList = `concTomNumber(path*,PatternNumber(actionNumber));
               TomTerm automata = `Automata(optionList,newConstraint,numberList,postGenerationAutomata);
-              automataList = `concTomTerm(automataList*,automata); //append(automata,automataList);
-              //DEBUG System.out.println("\n automataList = " + automataList);
+              automataList = `concTomTerm(automataList*,automata);
             } catch(Exception e) {
               e.printStackTrace();
               throw new TomRuntimeException("Propagation or generation exception:" + e);
@@ -296,15 +287,10 @@ public class Compiler extends TomGenericPlugin {
           // directly modified (I don't know why) 
           TomTerm typedRenamedSubj = renamedSubj;
 
-          //DEBUG System.out.println("renameSubjects -- freshVar= " + freshVar);
           if (freshSubjectType.getTlType() == compiler.getSymbolTable().TYPE_UNKNOWN.getTlType()) {
-            //DEBUG System.out.println("\nIn renameSubjects - IF 1 - freshSubjectType is unknown!");
             freshSubjectType = typedRenamedSubj.getAstType();
           } else {
-            //DEBUG System.out.println("\noriginal renameSubjects -- typedRenamedSubj = " + typedRenamedSubj);
-            //DEBUG System.out.println("\nfreshSubjectType = " + freshSubjectType + "\n\n");
             typedRenamedSubj = typedRenamedSubj.setAstType(freshSubjectType);
-            //DEBUG System.out.println("\nmodified renameSubjects -- typedRenamedSubj = " + typedRenamedSubj + "\n\n");
           }
 
           BQTerm freshVar = compiler.getUniversalObjectForSubject(freshSubjectType);
@@ -318,8 +304,6 @@ public class Compiler extends TomGenericPlugin {
 
           Constraint newConstraint =
             `constr.setSubject(TomBase.convertFromVarToBQVar(typedRenamedSubj));
-          //DEBUG System.out.println("renameSubjects -- newConstraint = " +
-          //DEBUG     newConstraint);
 
           return `AndConstraint(
               MatchConstraint(TomBase.convertFromBQVarToVar(freshVar),subject,freshSubjectType),
@@ -333,7 +317,6 @@ public class Compiler extends TomGenericPlugin {
         TomName freshSubjectName  = `PositionName(concTomNumber(path*,NameNumber(Name("_freshSubject_" + compiler.getCompilerEnvironment().genFreshSubjectCounter()))));
         if (freshSubjectType.getTlType() ==
             compiler.getSymbolTable().TYPE_UNKNOWN.getTlType()) {
-          //DEBUG System.out.println("\nIn renameSubjects - IF 2 - freshSubjectType is unknown!");
           %match(subject) {
             (BQVariable|BQVariableStar)[AstType=variableType] -> {
               freshSubjectType = `variableType;
@@ -349,18 +332,11 @@ public class Compiler extends TomGenericPlugin {
           }
         }
 
-        //DEBUG System.out.println("\n -------- In renameSubjects - freshSubjectType = "
-        //DEBUG     + `freshSubjectType);
-        //DEBUG System.out.println("\n -------- In renameSubjects - castType = "
-        //DEBUG     + `castType);
         TomTerm renamedVar = `Variable(concOption(),freshSubjectName,freshSubjectType,concConstraint());
         //TomTerm renamedVar = `Variable(concOption(),freshSubjectName,castType,concConstraint());
         subjectList.add(`subject);
-        //DEBUG System.out.println("\n -------- In renameSubjects after add - subjectList = " + `subjectList);
         renamedSubjects.add(renamedVar);
         Constraint newConstraint = `constr.setSubject(TomBase.convertFromVarToBQVar(renamedVar));
-        //DEBUG System.out.println("renameSubjects -- newConstraint2 = " +
-        //DEBUG     newConstraint);
         BQTerm freshVar = compiler.getUniversalObjectForSubject(freshSubjectType);
         //BQTerm freshVar = compiler.getUniversalObjectForSubject(`castType);
         /*
@@ -506,7 +482,6 @@ public class Compiler extends TomGenericPlugin {
     visit BQTerm {
       var@(BQVariable|BQVariableStar)[AstName=astName@Name(name)] -> {
         if(context.contains(`astName)) {          
-          //DEBUG System.out.println("In findRenameVariable in 'if' with var = "  + `var + '\n');
           return `var.setAstName(`Name(ASTFactory.makeTomVariableName(name)));
         }
       }
@@ -539,7 +514,7 @@ public class Compiler extends TomGenericPlugin {
             bag.add(o);       
           }
         }        
-        throw new VisitFailure();// to stop the top-down
+        throw new VisitFailure();/* to stop the top-down */
       }
     }
   }

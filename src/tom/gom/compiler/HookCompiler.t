@@ -1,7 +1,7 @@
 /*
  * Gom
  *
- * Copyright (c) 2006-2011, INPL, INRIA
+ * Copyright (c) 2006-2012, INPL, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -43,7 +43,9 @@ public class HookCompiler {
   %include { ../adt/objects/Objects.tom}
   %include { ../../library/mapping/java/sl.tom }
 
-    %typeterm HookCompiler { implement { tom.gom.compiler.HookCompiler } }
+  %typeterm HookCompiler { implement { tom.gom.compiler.HookCompiler } }
+
+  public static final String UNEXPECTED_STRATEGY_FAILURE = "Unexpected strategy failure!";
 
   // myadd-begin
   private GomEnvironment gomEnvironment;
@@ -101,7 +103,7 @@ public class HookCompiler {
               classes = `TopDown(AttachModuleHook(clsName,hook,this)).visit(classes);
                 //`TopDown(AttachModuleHook(clsName,hook)).visit(classes);
             } catch (tom.library.sl.VisitFailure e) {
-              throw new GomRuntimeException("Unexpected strategy failure!");
+              throw new GomRuntimeException(HookCompiler.UNEXPECTED_STRATEGY_FAILURE);
             }
           }
           CutSort(sdecl) -> {
@@ -110,7 +112,7 @@ public class HookCompiler {
               classes = `TopDown(AttachSortHook(clsName,hook,this)).visit(classes);
                 //`TopDown(AttachSortHook(clsName,hook)).visit(classes);
             } catch (tom.library.sl.VisitFailure e) {
-              throw new GomRuntimeException("Unexpected strategy failure!");
+              throw new GomRuntimeException(HookCompiler.UNEXPECTED_STRATEGY_FAILURE);
             }
           }
           CutOperator(odecl) -> {
@@ -119,7 +121,7 @@ public class HookCompiler {
               classes = `TopDown(AttachOperatorHook(clsName,hook,this)).visit(classes);
                 //`TopDown(AttachOperatorHook(clsName,hook)).visit(classes);
             } catch (tom.library.sl.VisitFailure e) {
-              throw new GomRuntimeException("Unexpected strategy failure!");
+              throw new GomRuntimeException(HookCompiler.UNEXPECTED_STRATEGY_FAILURE);
             }
           }
           CutFutureOperator(odecl,consornil) -> {
@@ -134,7 +136,7 @@ public class HookCompiler {
               classes = `TopDown(AttachOperatorHook(clsName,hook,this)).visit(classes);
                 //`TopDown(AttachOperatorHook(clsName,hook)).visit(classes);
             } catch (tom.library.sl.VisitFailure e) {
-              throw new GomRuntimeException("Unexpected strategy failure!");
+              throw new GomRuntimeException(HookCompiler.UNEXPECTED_STRATEGY_FAILURE);
             }
           }
         }

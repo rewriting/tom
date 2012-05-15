@@ -24,19 +24,19 @@
   </target>
 
   <target name="build" depends="init">
-    <gom config="${gomconfigfile}"
-      srcdir="${lemu.src}/lambdapp"
+    <gom.preset
+         srcdir="${lemu.src}/lambdapp"
          destdir="${lemu.gen}"
          package="lambdapp">
          <include name="**/*.gom"/>
-    </gom>
-    <gom config="${gomconfigfile}"
-      srcdir="${lemu.src}/lemu"
+    </gom.preset>
+    <gom.preset
+         srcdir="${lemu.src}/lemu"
+         withCongruenceStrategies="true"
          destdir="${lemu.gen}"
-         package="lemu"
-         >
+         package="lemu">
          <include name="**/*.gom"/>
-    </gom>
+    </gom.preset>
 
     <tom.preset srcdir="${lemu.src}"
       destdir="${lemu.gen}">
@@ -85,7 +85,6 @@
       <classpath refid="tom.classpath"/>
       <include name="**/*.java"/>
     </javac.preset>
-    <copy file="proof.sty" todir="${lemu.build}" />
   </target>
 
   <target name="clean" description="make clean">

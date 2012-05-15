@@ -2,7 +2,7 @@
  *   
  * TOM - To One Matching Compiler
  * 
- * Copyright (c) 2000-2011, INPL, INRIA
+ * Copyright (c) 2000-2012, INPL, INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -208,7 +208,7 @@ public class TypeCheckerPlugin extends TomGenericPlugin {
       Match(constraintInstructionList, oplist) -> {  
         tcp.currentTomStructureOrgTrack = TomBase.findOriginTracking(`oplist);
         tcp.verifyMatchVariable(`constraintInstructionList);
-        throw new tom.library.sl.VisitFailure();// to stop the top-downd
+        throw new tom.library.sl.VisitFailure();/* to stop the top-down */
       }
     }
 
@@ -216,7 +216,7 @@ public class TypeCheckerPlugin extends TomGenericPlugin {
       Strategy(_,_,visitList,orgTrack) -> {
         tcp.currentTomStructureOrgTrack = `orgTrack;
         tcp.verifyStrategyVariable(`visitList);
-        throw new tom.library.sl.VisitFailure();// to stop the top-downd
+        throw new tom.library.sl.VisitFailure();/* to stop the top-down */
       }
     }
 

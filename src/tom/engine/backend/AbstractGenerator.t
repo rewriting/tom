@@ -2,7 +2,7 @@
  *
  * TOM - To One Matching Compiler
  * 
- * Copyright (c) 2000-2011, INPL, INRIA
+ * Copyright (c) 2000-2012, INPL, INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -675,15 +675,6 @@ public abstract class AbstractGenerator {
         return ;
       }
 
-      GetImplementationDecl(BQVariable[AstName=Name(name),
-          AstType=Type[TomType=type,TlType=tlType@TLType[]]],
-          instr, _) -> {
-        if(getSymbolTable(moduleName).isUsedSymbolDestructor(`name)) {
-          `buildGetImplementationDecl(deep, type, name, tlType, instr, moduleName);
-        }
-        return;
-      }
-
       IsFsymDecl(Name(tomName),
           BQVariable[AstName=Name(varname), AstType=Type[TlType=tlType@TLType[]]], code, _) -> {
         if(getSymbolTable(moduleName).isUsedSymbolDestructor(`tomName)) {
@@ -983,8 +974,6 @@ public abstract class AbstractGenerator {
   protected abstract void buildSubstract(int deep, BQTerm var1, BQTerm var2, String moduleName) throws IOException;
   protected abstract void buildReturn(int deep, BQTerm exp, String moduleName) throws IOException ;
   protected abstract void buildSymbolDecl(int deep, String tomName, String moduleName) throws IOException ;
-  protected abstract void buildGetImplementationDecl(int deep, String type, String name,
-      TargetLanguageType tlType, Instruction instr, String moduleName) throws IOException;
 
   protected abstract void buildIsFsymDecl(int deep, String tomName, String name1,
       TargetLanguageType tlType, Expression code, String moduleName) throws IOException;

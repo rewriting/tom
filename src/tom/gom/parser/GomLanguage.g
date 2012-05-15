@@ -1,7 +1,7 @@
 /*
  * Gom
  *
- * Copyright (c) 2007-2011, INPL, INRIA
+ * Copyright (c) 2007-2012, INPL, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -73,7 +73,7 @@ imports :
   IMPORTS (importedModuleName)* -> ^(Imports ^(ConcImportedModule (importedModuleName)*))
   ;
 importedModuleName :
-  ID -> ^(Import ^(GomModuleName ID))
+  ID -> ^(GomModuleName ID)
   ;
 
 section :
@@ -81,12 +81,12 @@ section :
   ;
 
 adtgrammar :
-  (gr+=syntax)+ -> $gr
+  (gr+=syntax)* -> $gr
   ;
 
 syntax :
-  ABSTRACT SYNTAX (gr1+=hookConstruct | gr2+=typedecl | gr3+=atomdecl)*
-    -> ^(ConcGrammar ^(Grammar ^(ConcProduction ($gr1)* ($gr2)* ($gr3)*)))
+  (ABSTRACT SYNTAX) (gr1+=hookConstruct | gr2+=typedecl | gr3+=atomdecl)*
+    -> ^(ConcProduction ($gr1)* ($gr2)* ($gr3)*)
   ;
 
 atomdecl :

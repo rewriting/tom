@@ -9,6 +9,52 @@ module accesscontrol
 // List of partially ordered lists of security levels
   SecurityLevelsLattice = slLattice(SecurityLevelsSet*)
 
+//Subject which has an ID for identification and a security level SL.
+  Subject = subject(id:int,sl:SecurityLevel)
+  ListOfSubjects = subjects(Subject*)
+   
+//Resource which has an ID for identification and a security level SL.
+  Resource  = resource(id:int,sl:SecurityLevel)
+  ListOfResources = resources(Resource*)
+  
+//An access is defined by the "subject" that accesses  the  "resource" in "access mode" 
+//It can be explicitly requested by the subjects or an implicit consequence of other accesses 
+//0 for read, 1 for write
+  Access = read(subject:Subject,resource:Resource)
+         | write(subject:Subject,resource:Resource)
+         | access(mode:int,subject:Subject,resource:Resource)
+
+  ListOfAccesses = accesses(Access*)
+
+//State composed of a list of accesses 
+// can add the lattice of levels - maybe interesting when dynamic
+  State = state(accesses:ListOfAccesses)
+  ListOfStates = states(State*)
+
+//Request, composed of a request type and an access
+// add - to request the addition of an access,  
+// delete - to request the deletion of an access
+  Request = add(access:Access)
+          | delete(access:Access)
+  ListOfRequests = requests(Request*)
+ 
+//Decision for an access request: (not) granted, not applicable, ...
+  Decision = grant(state:State)
+           | deny(state:State)
+           | na(state:State)
+
+  Trace = RequestToTrace(r:Request)
+        | StateToTrace(s:State)
+
+  ListOfTraces = traces(Trace*)
+
+  Pair = pair(s:State,lor:ListOfRequests)
+  
+  module accesscontrol:rules() {
+      access(0,s,r) -> read(s,r)
+      access(1,s,r) -> write(s,r)
+  }
+   
   sort SecurityLevelsLattice:block() {
     /**
      * Checks if a security level is smaller than another one
@@ -41,6 +87,7 @@ module accesscontrol
      int v = compare(l1,l2);
      return (v==0);
    }
+
   /**
    * Compare two levels of security wrt a security levels lattice 
    * 
@@ -65,33 +112,12 @@ module accesscontrol
   }
 }
   
-//Subject which has an ID for identification and a security level SL.
-  Subject = subject(id:int,sl:SecurityLevel)
-  ListOfSubjects = subjects(Subject*)
-   
-//Resource which has an ID for identification and a security level SL.
-  Resource  = resource(id:int,sl:SecurityLevel)
-  ListOfResources = resources(Resource*)
-  
-//An access is defined by the "subject" that accesses  the  "resource" in "access mode" 
-//It can be explicitly requested by the subjects or an implicit consequence of other accesses 
-//0 for read, 1 for write
-  Access = read(subject:Subject,resource:Resource)
-         | write(subject:Subject,resource:Resource)
-         | access(mode:int,subject:Subject,resource:Resource)
-
-  module accesscontrol:rules() {
-      access(0,s,r) -> read(s,r)
-      access(1,s,r) -> write(s,r)
-  }
-   
-  ListOfAccesses = accesses(Access*)
-
-  accesses:block(){
+accesses:block() {
   static int max = 0;
-  }
+}
+
   // we use sorted list to identify equivalent states
-  accesses:make_insert(e,l) {
+accesses:make_insert(e,l) {
     accesscontrol.types.listofaccesses.accesses l1 = (accesscontrol.types.listofaccesses.accesses) l;
    
     // do not add an access already there 
@@ -104,13 +130,13 @@ module accesscontrol
     matchblock:{
     %match(e) {
       x@read(s1,o1) &&
-      accesses(_*,y@read(s2,o2),_*,write(s1,o2),_*) << l1 -> { //&& !x<<Access y -> {
+      accesses(_*,y@read(s2,o2),_*,write(s1,o2),_*) << l1 -> {
         toBeAdded.add(`read(s2,o1));
         break matchblock;// add only one element
       }
 
       x@read(s2,o2) &&
-      accesses(_*,y@read(s1,o1),_*,write(s1,o2),_*) << l1 -> { // && !x<<Access y -> {
+      accesses(_*,y@read(s1,o1),_*,write(s1,o2),_*) << l1 -> { 
         toBeAdded.add(`read(s2,o1));
         break matchblock;// add only one element
       }
@@ -152,26 +178,4 @@ module accesscontrol
     return l2;
   }
 
-//State composed of a list of accesses 
-// can add the lattice of levels - maybe interesting when dynamic
-  State = state(accesses:ListOfAccesses)
-  ListOfStates = states(State*)
 
-//Request, composed of a request type and an access
-// add - to request the addition of an access,  
-// delete - to request the deletion of an access
-  Request = add(access:Access)
-          | delete(access:Access)
-  ListOfRequests = requests(Request*)
- 
-//Decision for an access request: (not) granted, not applicable, ...
-  Decision = grant(state:State)
-           | deny(state:State)
-           | na(state:State)
-
-  Trace = RequestToTrace(r:Request)
-        | StateToTrace(s:State)
-
-  ListOfTraces = traces(Trace*)
-
-  Pair = pair(s:State,lor:ListOfRequests)

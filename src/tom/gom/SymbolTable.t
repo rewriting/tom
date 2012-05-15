@@ -1,7 +1,7 @@
 /*
  * Gom
  *
- * Copyright (c) 2000-2011, INPL, INRIA
+ * Copyright (c) 2000-2012, INPL, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -293,15 +293,9 @@ public class SymbolTable {
   private void fillFromGomModule(GomModule m) {
     %match(m) {
       GomModule[ModuleName=GomModuleName[Name=n],
-        SectionList=ConcSection(_*,Public[GrammarList=ConcGrammar(_*,g,_*)],_*)] -> {
-          `fillFromGrammar(n,g);
+        SectionList=ConcSection(_*,Public[ProductionList=ConcProduction(_*,p,_*)],_*)] -> {
+          `fillFromProduction(n,p);
         }
-    }
-  }
-
-  private void fillFromGrammar(String moduleName, Grammar g) {
-    %match(g) {
-      Grammar[ProductionList=ConcProduction(_*,p,_*)] -> { `fillFromProduction(moduleName,p); }
     }
   }
 

@@ -2,7 +2,7 @@
  *
  * TOM - To One Matching Compiler
  *
- * Copyright (c) 2009-2011, INPL, INRIA
+ * Copyright (c) 2009-2012, INPL, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -70,7 +70,18 @@ import org.xml.sax.SAXParseException;
 public class EcoreMappingToXMI {
 
   %include { emf/ecore.tom }
-  
+  // LIterals definitions 
+  public static final String SERIALIZABLE = "serializable";
+  public static final String ORDERED      = "ordered";
+  public static final String UNIQUE       = "unique";
+  public static final String LOWERBOUND   = "lowerBound";
+  public static final String UPPERBOUND   = "upperBound";
+  public static final String CHANGEABLE   = "changeable";
+  public static final String VOLATILE     = "volatile";
+  public static final String TRANSIENT    = "transient";
+  public static final String UNSETTABLE   = "unsettable";
+  public static final String DERIVED      = "derived";
+
   /**
    * Return XML string matching the object
    * @param eo EPackage to match
@@ -147,7 +158,7 @@ public class EcoreMappingToXMI {
             "name=\"" + `name + "\" " +
             "instanceClassName=\""+`instanceClassName+"\" " +
             (!`instanceClassName.equals(`instanceTypeName)?"instanceTypeName=\"" + `instanceTypeName + "\" ":"") + 
-            ((Boolean)`d.eClass().getEStructuralFeature("serializable").getDefaultValue() != `serializable?"serializable=\"" + `serializable + "\" ":"") + 
+            ((Boolean)`d.eClass().getEStructuralFeature(EcoreMappingToXMI.SERIALIZABLE).getDefaultValue() != `serializable?"serializable=\"" + `serializable + "\" ":"") + 
             ">");
         sb.append(parse(`eAnnotations));
         sb.append(parse(`eTypeParameters));
@@ -172,7 +183,7 @@ public class EcoreMappingToXMI {
             "name=\"" + `name + "\" " +
             "instanceClassName=\""+`instanceClassName+"\" " +
             (!`instanceClassName.equals(`instanceTypeName)?"instanceTypeName=\"" + `instanceTypeName + "\" ":"") + 
-            ((Boolean)`e.eClass().getEStructuralFeature("serializable").getDefaultValue() != `serializable?"serializable=\"" + `serializable + "\" ":"") + 
+            ((Boolean)`e.eClass().getEStructuralFeature(EcoreMappingToXMI.SERIALIZABLE).getDefaultValue() != `serializable?"serializable=\"" + `serializable + "\" ":"") + 
             ">");
         sb.append(parse(`eAnnotations));
         sb.append(parse(`eTypeParameters));
@@ -214,17 +225,17 @@ public class EcoreMappingToXMI {
       a@EAttribute(eAnnotations, name, ordered, unique, lowerBound, upperBound, eType, eGenericType, changeable, _volatile, _transient, defaultValueLiteral, unsettable, derived, iD) -> {
         sb.append("<eStructuralFeatures xsi:type=\"ecore:EAttribute\" " + 
             "name=\"" + `name + "\" " + 
-            ((Boolean)`a.eClass().getEStructuralFeature("ordered").getDefaultValue() != `ordered?"ordered=\"" + `ordered + "\" ":"") + 
-            ((Boolean)`a.eClass().getEStructuralFeature("unique").getDefaultValue() != `unique?"unique=\"" + `unique + "\" ":"") + 
-            ((Integer)`a.eClass().getEStructuralFeature("lowerBound").getDefaultValue() != `lowerBound?"lowerBound=\"" + `lowerBound + "\" ":"") + 
-            ((Integer)`a.eClass().getEStructuralFeature("upperBound").getDefaultValue() != `upperBound?"upperBound=\"" + `upperBound + "\" ":"") + 
+            ((Boolean)`a.eClass().getEStructuralFeature(EcoreMappingToXMI.ORDERED).getDefaultValue() != `ordered?"ordered=\"" + `ordered + "\" ":"") + 
+            ((Boolean)`a.eClass().getEStructuralFeature(EcoreMappingToXMI.UNIQUE).getDefaultValue() != `unique?"unique=\"" + `unique + "\" ":"") + 
+            ((Integer)`a.eClass().getEStructuralFeature(EcoreMappingToXMI.LOWERBOUND).getDefaultValue() != `lowerBound?"lowerBound=\"" + `lowerBound + "\" ":"") + 
+            ((Integer)`a.eClass().getEStructuralFeature(EcoreMappingToXMI.UPPERBOUND).getDefaultValue() != `upperBound?"upperBound=\"" + `upperBound + "\" ":"") + 
             (`eType != null&&`eType.getETypeParameters().size() == 0?"eType=\"#//" + `eType.getName() + "\" ":"") +
-            ((Boolean)`a.eClass().getEStructuralFeature("changeable").getDefaultValue() != `changeable?"changeable=\"" + `changeable + "\" ":"") + 
-            ((Boolean)`a.eClass().getEStructuralFeature("volatile").getDefaultValue() != `_volatile?"volatile=\"" + `_volatile + "\" ":"") + 
-            ((Boolean)`a.eClass().getEStructuralFeature("transient").getDefaultValue() != `_transient?"transient=\"" + `_transient + "\" ":"") + 
+            ((Boolean)`a.eClass().getEStructuralFeature(EcoreMappingToXMI.CHANGEABLE).getDefaultValue() != `changeable?"changeable=\"" + `changeable + "\" ":"") + 
+            ((Boolean)`a.eClass().getEStructuralFeature(EcoreMappingToXMI.VOLATILE).getDefaultValue() != `_volatile?"volatile=\"" + `_volatile + "\" ":"") + 
+            ((Boolean)`a.eClass().getEStructuralFeature(EcoreMappingToXMI.TRANSIENT).getDefaultValue() != `_transient?"transient=\"" + `_transient + "\" ":"") + 
             (`defaultValueLiteral != null?"defaultValueLiteral=\"" + `defaultValueLiteral + "\" ":"") + 
-            ((Boolean)`a.eClass().getEStructuralFeature("unsettable").getDefaultValue() != `unsettable?"unsettable=\"" + `unsettable + "\" ":"") + 
-            ((Boolean)`a.eClass().getEStructuralFeature("derived").getDefaultValue() != `derived?"derived=\"" + `derived + "\" ":"") + 
+            ((Boolean)`a.eClass().getEStructuralFeature(EcoreMappingToXMI.UNSETTABLE).getDefaultValue() != `unsettable?"unsettable=\"" + `unsettable + "\" ":"") + 
+            ((Boolean)`a.eClass().getEStructuralFeature(EcoreMappingToXMI.DERIVED).getDefaultValue() != `derived?"derived=\"" + `derived + "\" ":"") + 
             ((Boolean)`a.eClass().getEStructuralFeature("iD").getDefaultValue() != `iD?"iD=\"" + `iD + "\" ":"") + 
             ">");
         sb.append(parse(`eAnnotations));
@@ -255,17 +266,17 @@ public class EcoreMappingToXMI {
       }
       sb.append("<eStructuralFeatures xsi:type=\"ecore:EReference\" " + 
         "name=\"" + `name + "\" " + 
-        ((Boolean)`r.eClass().getEStructuralFeature("ordered").getDefaultValue() != `ordered?"ordered=\"" + `ordered + "\" ":"") + 
-        ((Boolean)`r.eClass().getEStructuralFeature("unique").getDefaultValue() != `unique?"unique=\"" + `unique + "\" ":"") + 
-        ((Integer)`r.eClass().getEStructuralFeature("lowerBound").getDefaultValue() != `lowerBound?"lowerBound=\"" + `lowerBound + "\" ":"") + 
-        ((Integer)`r.eClass().getEStructuralFeature("upperBound").getDefaultValue() != `upperBound?"upperBound=\"" + `upperBound + "\" ":"") + 
+        ((Boolean)`r.eClass().getEStructuralFeature(EcoreMappingToXMI.ORDERED).getDefaultValue() != `ordered?"ordered=\"" + `ordered + "\" ":"") + 
+        ((Boolean)`r.eClass().getEStructuralFeature(EcoreMappingToXMI.UNIQUE).getDefaultValue() != `unique?"unique=\"" + `unique + "\" ":"") + 
+        ((Integer)`r.eClass().getEStructuralFeature(EcoreMappingToXMI.LOWERBOUND).getDefaultValue() != `lowerBound?"lowerBound=\"" + `lowerBound + "\" ":"") + 
+        ((Integer)`r.eClass().getEStructuralFeature(EcoreMappingToXMI.UPPERBOUND).getDefaultValue() != `upperBound?"upperBound=\"" + `upperBound + "\" ":"") + 
         (`eType != null&&`eType.getETypeParameters().size() == 0?"eType=\"#//" + `eType.getName() + "\" ":"") +
-        ((Boolean)`r.eClass().getEStructuralFeature("changeable").getDefaultValue() != `changeable?"changeable=\"" + `changeable + "\" ":"") + 
-        ((Boolean)`r.eClass().getEStructuralFeature("volatile").getDefaultValue() != `_volatile?"volatile=\"" + `_volatile + "\" ":"") + 
-        ((Boolean)`r.eClass().getEStructuralFeature("transient").getDefaultValue() != `_transient?"transient=\"" + `_transient + "\" ":"") + 
+        ((Boolean)`r.eClass().getEStructuralFeature(EcoreMappingToXMI.CHANGEABLE).getDefaultValue() != `changeable?"changeable=\"" + `changeable + "\" ":"") + 
+        ((Boolean)`r.eClass().getEStructuralFeature(EcoreMappingToXMI.VOLATILE).getDefaultValue() != `_volatile?"volatile=\"" + `_volatile + "\" ":"") + 
+        ((Boolean)`r.eClass().getEStructuralFeature(EcoreMappingToXMI.TRANSIENT).getDefaultValue() != `_transient?"transient=\"" + `_transient + "\" ":"") + 
         (`defaultValueLiteral != null?"defaultValueLiteral=\""+`defaultValueLiteral + "\" ":"") +
-        ((Boolean)`r.eClass().getEStructuralFeature("unsettable").getDefaultValue() != `unsettable?"unsettable=\"" + `unsettable + "\" ":"") + 
-        ((Boolean)`r.eClass().getEStructuralFeature("derived").getDefaultValue() != `derived?"derived=\"" + `derived + "\" ":"") + 
+        ((Boolean)`r.eClass().getEStructuralFeature(EcoreMappingToXMI.UNSETTABLE).getDefaultValue() != `unsettable?"unsettable=\"" + `unsettable + "\" ":"") + 
+        ((Boolean)`r.eClass().getEStructuralFeature(EcoreMappingToXMI.DERIVED).getDefaultValue() != `derived?"derived=\"" + `derived + "\" ":"") + 
         ((Boolean)`r.eClass().getEStructuralFeature("containment").getDefaultValue() != `containment?"containment=\"" + `containment + "\" ":"") + 
         ((Boolean)`r.eClass().getEStructuralFeature("resolveProxies").getDefaultValue() != `resolveProxies?"resolveProxies=\"" + `resolveProxies + "\" ":"") + 
         (`eOpposite != null?"eOpposite=\"#//" + `eType.getName() + "/" + `eOpposite.getName() + "\" ":"") + 
@@ -323,10 +334,10 @@ public class EcoreMappingToXMI {
         }
         sb.append("<eOperations " +
             "name=\"" + `name + "\" " +
-            ((Boolean)`o.eClass().getEStructuralFeature("ordered").getDefaultValue() != `ordered?"ordered=\"" + `ordered + "\" ":"") + 
-            ((Boolean)`o.eClass().getEStructuralFeature("unique").getDefaultValue() != `unique?"unique=\"" + `unique + "\" ":"") + 
-            ((Integer)`o.eClass().getEStructuralFeature("lowerBound").getDefaultValue() != `lowerBound?"lowerBound=\"" + `lowerBound + "\" ":"") + 
-            ((Integer)`o.eClass().getEStructuralFeature("upperBound").getDefaultValue() != `upperBound?"upperBound=\"" + `upperBound + "\" ":"") + 
+            ((Boolean)`o.eClass().getEStructuralFeature(EcoreMappingToXMI.ORDERED).getDefaultValue() != `ordered?"ordered=\"" + `ordered + "\" ":"") + 
+            ((Boolean)`o.eClass().getEStructuralFeature(EcoreMappingToXMI.UNIQUE).getDefaultValue() != `unique?"unique=\"" + `unique + "\" ":"") + 
+            ((Integer)`o.eClass().getEStructuralFeature(EcoreMappingToXMI.LOWERBOUND).getDefaultValue() != `lowerBound?"lowerBound=\"" + `lowerBound + "\" ":"") + 
+            ((Integer)`o.eClass().getEStructuralFeature(EcoreMappingToXMI.UPPERBOUND).getDefaultValue() != `upperBound?"upperBound=\"" + `upperBound + "\" ":"") + 
             (`eType != null&&`eType.getETypeParameters().size() == 0?"eType=\"#//" + `eType.getName() + "\" ":"") +
             (sb2.length() > 0?"eExceptions=\"" + sb2 + "\" ":"") + 
             ">");
@@ -354,10 +365,10 @@ public class EcoreMappingToXMI {
     %match(eo){
       p@EParameter(eAnnotations, name, ordered, unique, lowerBound, upperBound, eType, eGenericType) -> {
         sb.append("<eParameters name=\"" + `name + "\" "+
-            ((Boolean)`p.eClass().getEStructuralFeature("ordered").getDefaultValue() != `ordered?"ordered=\"" + `ordered + "\" ":"") + 
-            ((Boolean)`p.eClass().getEStructuralFeature("unique").getDefaultValue() != `unique?"unique=\"" + `unique + "\" ":"") + 
-            ((Integer)`p.eClass().getEStructuralFeature("lowerBound").getDefaultValue() != `lowerBound?"lowerBound=\"" + `lowerBound + "\" ":"") + 
-            ((Integer)`p.eClass().getEStructuralFeature("upperBound").getDefaultValue() != `upperBound?"upperBound=\"" + `upperBound + "\" ":"") + 
+            ((Boolean)`p.eClass().getEStructuralFeature(EcoreMappingToXMI.ORDERED).getDefaultValue() != `ordered?"ordered=\"" + `ordered + "\" ":"") + 
+            ((Boolean)`p.eClass().getEStructuralFeature(EcoreMappingToXMI.UNIQUE).getDefaultValue() != `unique?"unique=\"" + `unique + "\" ":"") + 
+            ((Integer)`p.eClass().getEStructuralFeature(EcoreMappingToXMI.LOWERBOUND).getDefaultValue() != `lowerBound?"lowerBound=\"" + `lowerBound + "\" ":"") + 
+            ((Integer)`p.eClass().getEStructuralFeature(EcoreMappingToXMI.UPPERBOUND).getDefaultValue() != `upperBound?"upperBound=\"" + `upperBound + "\" ":"") + 
             (`eType != null&&`eType.getETypeParameters().size() == 0?"eType=\"#//" + `eType.getName() + "\" ":"") +
             ">");
         sb.append(parse(`eAnnotations));

@@ -24,7 +24,7 @@ public class ProofExpander {
     visit Tree {
       rule[c=seq] -> {
         %match(seq, Prop active) {
-          sequent((X*,act,Y*),g), act -> {
+          sequent(context(X*,act,Y*),g), act -> {
             Tree t1 = ProofBuilder.createOpenLeaf(`sequent(context(X*,Y*),g));
             return `rule(weakLeftInfo(),premisses(t1),seq,act);
           }
@@ -37,7 +37,7 @@ public class ProofExpander {
     visit Tree {
       rule[c=seq] -> {
         %match(seq, Prop active) {
-          sequent(d,(X*,act,Y*)), act -> {
+          sequent(d,context(X*,act,Y*)), act -> {
             Tree t1 = ProofBuilder.createOpenLeaf(`sequent(d,context(X*,Y*)));
             return `rule(weakRightInfo(),premisses(t1),seq,act);
           }
@@ -52,10 +52,10 @@ public class ProofExpander {
         %match(t) {
           rule[c=wantedconcl] -> {
             %match(currentconcl,wantedconcl) {
-              sequent((_*,p,_*),_), sequent(!(_*,p,_*),_) -> {
+              sequent(context(_*,p,_*),_), sequent(!context(_*,p,_*),_) -> {
                 return (Tree) `ApplyWeakL(p).visit(`r);
               }
-              sequent(_,(_*,p,_*)), sequent(_,!(_*,p,_*)) -> {
+              sequent(_,context(_*,p,_*)), sequent(_,!context(_*,p,_*)) -> {
                 return (Tree) `ApplyWeakR(p).visit(`r);
               }
               x,x -> {
@@ -83,13 +83,13 @@ public class ProofExpander {
 
   %strategy ExpandLocally(p: Proposition) extends Fail() {
     visit Tree {
-      rule(customRuleInfo[expanded=tree@rule[c=sequent((prop,_*),_)]],prems,_,_) -> {
+      rule(customRuleInfo[expanded=tree@rule[c=sequent(context(prop,_*),_)]],prems,_,_) -> {
         p.prop = `prop;
         p.pos = getEnvironment().getPosition();
         // plug premises into open leaves of the expanded tree
         Tree result = `tree;
         %match(Premisses prems) {
-          (_*,pr,_*) -> {
+          premisses(_*,pr,_*) -> {
             Proposition axiom = new Proposition();
             axiom.prop = `prop;
             `pr = (Tree) `SafeAddInGamma(axiom).visit(`pr);

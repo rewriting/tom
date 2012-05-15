@@ -2,7 +2,7 @@
  *
  * GOM
  *
- * Copyright (c) 2006-2011, INPL, INRIA
+ * Copyright (c) 2006-2012, INPL, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -29,7 +29,6 @@ import tom.gom.tools.GomEnvironment;
 import tom.gom.backend.TemplateClass;
 import java.io.*;
 import tom.gom.adt.objects.types.*;
-import java.util.ArrayList;
 
 public class NullTemplate extends TemplateClass {
 

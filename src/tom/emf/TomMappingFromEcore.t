@@ -2,7 +2,7 @@
  *
  * TOM - To One Matching Compiler
  *
- * Copyright (c) 2009-2011, INPL, INRIA
+ * Copyright (c) 2009-2012, INPL, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -87,6 +87,11 @@ public class TomMappingFromEcore {
   private static boolean useNewTyper = false;
 
   /**
+   * true if the EPackage to generate is EcorePackage itself
+   */
+  private static boolean genEcoreMapping = false;
+
+  /**
    * A dictionnary linking a class with his generated type name
    */
   private final static HashMap<Class<?>, String> types = new HashMap<Class<?>, String>();
@@ -119,10 +124,18 @@ public class TomMappingFromEcore {
           for(int i=0;i<ePackageNameList.size();i++) {
             File output = new File(".",ePackageNameList.get(i)+".tom");
             Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output)));
-            genLicence(writer);
+            //libraries are not necessarily under GPL
+            //uncomment the following line when re-generating ecore.tom mapping
+            //genLicence(writer);
+            //specific case of EcorePackage mapping generation
+            if(ePackageNameList.get(i).equals("org.eclipse.emf.ecore.EcorePackage")) {
+              genEcoreMapping = true;
+            }
             extractFromEPackage(writer, (EPackage) Class.forName(ePackageNameList.get(i)).getField("eINSTANCE").get(null));
             writer.flush();
             writer.close();
+            //reset
+            genEcoreMapping = false;
           }
         } catch (Exception e) {
           e.printStackTrace();
@@ -135,7 +148,7 @@ public class TomMappingFromEcore {
  *
  * TOM - To One Matching Compiler
  *
- * Copyright (c) 2009-2011, INPL, INRIA
+ * Copyright (c) 2009-2012, INPL, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -163,10 +176,7 @@ public class TomMappingFromEcore {
   private static void extractType(java.io.Writer writer, EClassifier eclf) throws java.io.IOException {
     Class<?> c = eclf.getInstanceClass();
     if(!types.containsKey(c)) {
-      String n = c.getSimpleName();
-      if(c.isArray()) {
-        n = c.getComponentType().getSimpleName() + "array";
-      }
+      String n = (c.isArray()?(c.getComponentType().getSimpleName()+"array"):c.getSimpleName());
       String is = "";
       for(int i = 1; types.containsValue(n + is); i++) {
         is = String.valueOf(i);
@@ -175,8 +185,8 @@ public class TomMappingFromEcore {
       types.put(c, n);
       if(tomTypes.containsKey(c)) {
         writer.write("\n\n%include { " + tomTypes.get(c) + ".tom }");
-      } else if (tomEMFTypes.contains(c)) {
-        //add ecore mappings if needed
+      } else if(tomEMFTypes.contains(c) && !genEcoreMapping) {
+        //add ecore mappings if needed, when not generating the EcorePackage mapping itself
         writer.write("\n\n%include { emf/ecore.tom }");
       } else {
         String[] decl = getClassDeclarations(eclf); // [canonical name, anonymous generic, generic type]
@@ -200,7 +210,7 @@ public class TomMappingFromEcore {
           result = result + "extends "+ supertype.getName();
         }
       } else {
-        if (!(eclf.getInstanceClassName().equals("EObject"))) {
+        if(!(eclf.getInstanceClassName().equals("EObject"))) {
           result = result + "extends " + "EObject";
         }
       }
@@ -485,19 +495,21 @@ private static <O> org.eclipse.emf.common.util.EList<O> append@name@(O e,org.ecl
     String result = "";
     String dvalue = ""+esf.getDefaultValue();
     String esftype = getType(esf);
-    
+   
     // cases : null, String, `toto(), builtin
-    if (esftype.equals("String")) {
+    if(esftype.equals("String")) {
       dvalue = "\"" + dvalue + "\"";
-    } else if (esftype.equals("boolean") || esftype.equals("int") ||
+    } else if(esftype.equals("boolean") || esftype.equals("int") ||
         esftype.equals("float") || esftype.equals("double") || 
         esftype.equals("long") ) {
       //nothing
       //dvalue = sf.getDefaultValue();
     } else {
-      dvalue = "`" + dvalue + "()";
+      dvalue = "`" + esftype + dvalue + "()";
     }
-    return result+"\n  get_default("+esf.getName()+") { "+dvalue+" }";
+    //add a suffix '_' if the name is a reserved keyword
+    String sfname = (keywords.contains(esf.getName()) ? "_" : "")+esf.getName();
+    return result+"\n  get_default("+sfname+") { "+dvalue+" }";
   }
 
   /**
@@ -543,7 +555,7 @@ private static <O> org.eclipse.emf.common.util.EList<O> append@name@(O e,org.ecl
             s_gets.append("\n  get_slot(" + sfname + ", t) { (" + na
                 + ")$t.eGet($t.eClass().getEStructuralFeature(\"" + sf.getName()
                 + "\")) }");
-            if (sf.getDefaultValue()!=null) {
+            if(sf.getDefaultValue()!=null) {
               s_defaults.append(genGetDefault(sf));
             }
           }
@@ -560,7 +572,8 @@ private static <O> org.eclipse.emf.common.util.EList<O> append@name@(O e,org.ecl
           String o2 = ecl.getEPackage().getClass().getInterfaces()[ecl.getEPackage().getClass().getInterfaces().length - 1]
             .getCanonicalName();
           //avoid to generate mappings already been defined in ecore.tom
-          if (!tomEMFTypes.contains(eclf.getInstanceClass())) {
+          //except if the goal is to generate the EcorePackage mapping itself
+          if(genEcoreMapping || !tomEMFTypes.contains(eclf.getInstanceClass())) {
             writer.write(%[
 
 %op @ecl.getInstanceClass().getSimpleName()@ @cr@(@s_types@) {
@@ -592,10 +605,10 @@ public static <O extends org.eclipse.emf.ecore.EObject> O construct@cr@(O o, Obj
           String o2 = eclf.getEPackage().getClass().getInterfaces()[eclf
             .getEPackage().getClass().getInterfaces().length - 1]
             .getCanonicalName();
-
+          String operatorName = cr+lit.getLiteral();
           writer.write(%[
 
-%op @cr@ @lit.getLiteral()@() {
+%op @cr@ @operatorName@() {
   is_fsym(t) { t == @(decl[0]+decl[1])@.get("@lit.getLiteral()@") }
   make() { (@(decl[0]+decl[2])@)@o1@.eINSTANCE.createFromString( (EDataType)@o2@.eINSTANCE.get@toUpperName(cr)@(), "@lit.getLiteral()@") }
 }]%);

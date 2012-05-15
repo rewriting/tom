@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2011, INPL, INRIA
+ * Copyright (c) 2004-2012, INPL, INRIA
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -38,6 +38,7 @@ import java.io.Writer;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.ArrayList;
+import java.lang.reflect.Method;
 
 import tom.library.xml.*;
 import tom.library.adt.tnode.*;
@@ -45,83 +46,86 @@ import tom.library.adt.tnode.types.*;
 import tom.engine.*;
 
 public class MatchGenerator {
-  
+
   %include{adt/tnode/TNode.tom}
   %include{boolean.tom}
 
   private static XmlTools xtools = null;
   private static String rssFilename = null;
   private static String workDir = null;
-    
+
   private static final String fileSep = System.getProperty("file.separator");
-  
-  private static final String MATCH_TEMPLATE_FILENAME = "Filter"; 
-  
-  public MatchGenerator(){	  
+
+  private static final String MATCH_TEMPLATE_FILENAME = "Filter";
+
+  public MatchGenerator(){
 	  xtools = new XmlTools();
-	   
-	  // for launching from eclipse  		
+
+	  // for launching from eclipse
 	  rssFilename = System.getProperty("user.dir") + fileSep
 		+ "workspace" + fileSep
 		+ "jtom" + fileSep
 		+ "examples" + fileSep
 		+ "build" + fileSep
 		+ "xml" + fileSep
-		+ "rss.xml";		
-	
-	  File file = new File(rssFilename);	  
+		+ "rss.xml";
+
+	  File file = new File(rssFilename);
 	  if (!file.exists()){
 		  rssFilename = "xml/rss.xml";
-	  }	 
-  }  
-  
+	  }
+  }
+
   public static void main(String[] args) throws Exception{
-	  
+
 	  //String pattern = args[0];
 	  String pattern = "<item><title>#TEXT(\"Many casualties in Baghdad blast\")</title></item>";
 	  //String pattern = "<item><title>(_*,#TEXT(\"Baghdad\"),_*)</title></item>";
 	  String className = getUniqueFileName(MATCH_TEMPLATE_FILENAME,pattern);
-	  workDir = args[0];	  
-	  	  
+	  workDir = args[0];
+
 	  MatchGenerator mg = new MatchGenerator();
 	  System.out.println("path:" + rssFilename);
-	  
+
 	  TNode term = (TNode)xtools.convertXMLToTNode(rssFilename);
 	  TNode result = mg.applyPattern(pattern,term.getDocElem(), className);
-	  
+
 	  xtools.printXMLFromTNode(result);
   }
-  
+
   private TNode applyPattern(String pattern, TNode subject, String className)
   throws Exception{
-	  // TODO - if the file exists, just load it and call the method	  
+	  // TODO - if the file exists, just load it and call the method
 	  Writer writer = new BufferedWriter(new FileWriter(workDir + fileSep + className+".t"));
-	  // generate the .t  
-	  generate(writer,className,pattern);	  
+	  // generate the .t
+	  generate(writer,className,pattern);
 	  // generate .java
 	  System.setProperty("tom.home",System.getenv("TOM_HOME"));
 	  int tomResult = Tom.exec(getTomParams(className));
 	  System.out.println("Tom returned: " + tomResult);
-	  // compile class	  
-	  int javacResult = com.sun.tools.javac.Main.compile(new String[] {
+    // compile class
+    Class compilerMain = Class.forName("com.sun.tools.javac.Main");
+    Method m = compilerMain.getDeclaredMethod("compile", new Class[] {String[].class});
+	  //int javacResult = com.sun.tools.javac.Main.compile(new String[] {
+    int javacResult = (Integer) m.invoke(null,new Object[] { new String[] {
 //	            "-classpath", "bin",
 //	            "-d", "/temp/dynacode_classes",
-			  workDir + fileSep + className +".java"});	  
+			  workDir + fileSep + className +".java"}});
 	  System.out.println("Java returned: " + javacResult);
 	  // loadClass
 	  Class cls = ClassLoader.getSystemClassLoader().loadClass("xml." + className);
 	  IMatchXML matchCls = (IMatchXML)cls.newInstance();
 	  return matchCls.match(subject);
   }
-  
+
   private String[] getTomParams(String className){
-	  
+
 	  File xmlFile = new File(System.getenv("TOM_HOME") + fileSep + "Tom.xml");
 	  if(!xmlFile.exists()) {
 		  System.out.println("Failed to get canonical path for "+xmlFile);
 		  System.exit(0);
 	  }
-	  
+
 	  String file_path = workDir + fileSep + className+".t";
 	  File output = new File(file_path);
 	  if (!output.exists()){
@@ -130,7 +134,7 @@ public class MatchGenerator {
 	  }
 
 	  ArrayList<String> tomParams = new ArrayList<String>();
-	  
+
 	  tomParams.add("-X");
 	  tomParams.add(xmlFile.getPath());
 	  tomParams.add("--optimize");
@@ -138,59 +142,59 @@ public class MatchGenerator {
 	  tomParams.add("--output");
 	  tomParams.add(workDir + fileSep + className+".java");
 	  tomParams.add(file_path);
-	  	  
+
 	  return (String[])tomParams.toArray(new String[tomParams.size()]);
   }
-  
+
   private static String getUniqueFileName(String classname, String pattern){
-	  
+
 	  String result = "";
-	  
+
 	  for (int i=0; i < pattern.length(); i++){
 		  int numericValue = Character.getNumericValue(pattern.charAt(i));
-		  result += numericValue > 0 ? "" + numericValue: "m" + (-1 * numericValue); 
+		  result += numericValue > 0 ? "" + numericValue: "m" + (-1 * numericValue);
 	  }
-	  
+
 	  return classname + result;
   }
 
   public static void generate(Writer writer, String className, String pattern)
   throws IOException {
-	  
-	  writer.write(			  
+
+	  writer.write(
 %[
-package xml;  
+package xml;
 
 import tom.library.xml.*;
 import tom.library.adt.tnode.*;
 import tom.library.adt.tnode.types.*;
 
 public class @className@ implements IMatchXML{
-  
+
   %include{adt/tnode/TNode.tom}
-  %include{ sl.tom }	
-  
+  %include{ sl.tom }
+
   static TNodeList retList = `concTNode();
-  
-  public TNode match(TNode subject){	  	  
+
+  public TNode match(TNode subject){
 	  `TopDown(MatchXml()).apply(subject);
 	  return `xml(<Result>retList*</Result>);
   }
-  
+
   %strategy MatchXml() extends `Identity() {
 	  visit TNode{
 		  t@@@pattern@ ->{
-			  retList = `concTNode(retList*, t);			
+			  retList = `concTNode(retList*, t);
 		  }
 	  }
-  }  
-  
+  }
+
 }
 
 ]%);
       writer.flush();
       writer.close();
-	  
+
   }
 
 }

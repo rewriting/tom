@@ -144,7 +144,7 @@ public class Tests {
       }
     }
     
-    %match(lor) {
+    %match(ListOfRequests lor) {
       // sol1: be naive and generate all possible permutations
       requests(R1*,r@(add|delete)((read|write)(subject,resource)),R2*) -> {
         Decision decision1 = p.transition(`r,s);
@@ -230,7 +230,7 @@ public class Tests {
       return;
     }
 
-    %match(lor) {
+    %match(ListOfRequests lor) {
       // sol1: be naive and generate all possible permutations
       requests(R1*,r@(add|delete)((read|write)(subject,resource)),R2*) -> {
         Decision decision1 = p.transition(`r,s);
@@ -264,7 +264,7 @@ public class Tests {
 
     %match(r) {
 			add(read(s1@subject[sl=ssl1],resource[sl=rsl1]))  -> {
-        %match(lor) {
+        %match(ListOfRequests lor) {
           requests(R1*,add(read(s2@subject[sl=ssl2],resource[sl=rsl2])),R2*) -> {
             if(`s1==`s2 && `slL.ge(`rsl1,`rsl2)) {
               return `clearRequests(slL,r,requests(R1*,R2*));
@@ -278,7 +278,7 @@ public class Tests {
         }
       }
 			add(write(s1@subject[sl=ssl1],resource[sl=rsl1]))  -> {
-        %match(lor) {
+        %match(ListOfRequests lor) {
           requests(R1*,add(write(s2@subject[sl=ssl2],resource[sl=rsl2])),R2*) -> {
             if(`s1==`s2 && `slL.ge(`rsl2,`rsl1)) {
               return `clearRequests(slL,r,requests(R1,R2));
@@ -300,7 +300,7 @@ public class Tests {
       return `requests();
     }
 
-    %match(lor) {
+    %match(ListOfRequests lor) {
       requests(R1*,a@add(read(s1,resource[sl=rsl1])),R0*,add(read(s1,resource[sl=rsl2])),R2*) -> {
         if(`slL.ge(`rsl1,`rsl2)) {
           return `simplifyRequests(slL,requests(R1*,a,R0*,R2*));

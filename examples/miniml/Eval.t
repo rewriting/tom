@@ -91,7 +91,7 @@ public class Eval {
   public static LTerm caseof(LTerm t, Rules r) throws VisitFailure {
     %match(t,r) {
       Constr[],RList(Rule(lhs,rhs),rs*) -> {
-        Hashtable<LVar,LTerm> m = match(new Hashtable(),`lhs,t);
+        Hashtable<LVar,LTerm> m = match(new Hashtable<LVar,LTerm>(),`lhs,t);
         if (m!=null) return `substitute(rhs,m);
         else return caseof(t,`rs);
       }

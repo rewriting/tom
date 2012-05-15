@@ -2,7 +2,7 @@
  * 
  * TOM - To One Matching Compiler
  * 
- * Copyright (c) 2000-2011, INPL, INRIA
+ * Copyright (c) 2000-2012, INPL, INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -68,7 +68,7 @@ public interface OptionManager {
   public void setOptionValue(String name, Object value);
   
   /**
-   * Get the option 'name' valus 
+   * Get the option 'name' value 
    *
    * @param optionName the option's name
    * @return the option's value as an Object

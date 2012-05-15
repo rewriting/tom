@@ -21,7 +21,7 @@ class Unification {
   %include { sl.tom }
 
   /**
-   * returns a Symbol Table if it matches, else null 
+   * returns a Symbol Table if it matches, else null
    **/
   public static HashMap<String, Term> match(Prop p1, Prop p2) {
     return match(p1, p2, new HashMap<String, Term>(), 0);
@@ -31,7 +31,7 @@ class Unification {
   public static HashMap<String, Term> match(Prop p1, Prop p2, HashMap<String,Term> ts) {
     return match(p1, p2, ts, 0);
   }
-  
+
   public static HashMap<String, Term> match(Term pattern, Term subject) {
     return match(pattern, subject, new HashMap<String, Term>(), 0);
   }
@@ -78,13 +78,13 @@ class Unification {
     }
 
     %match (TermList p1, TermList p2) {
-      (), () -> { return tds; }
+      concTerm(), concTerm() -> { return tds; }
 
       // 2 listes de longueur differentes, clash
-      (_,_*), () -> { return null; }
-      (), (_,_*) -> { return null; }
+      concTerm(_,_*), concTerm() -> { return null; }
+      concTerm(), concTerm(_,_*) -> { return null; }
 
-      (x1,t1*), (x2,t2*) -> { 
+      concTerm(x1,t1*), concTerm(x2,t2*) -> {
         tds = match(`x1,`x2,tds,varcount);
         if (tds == null)
           return null;
@@ -95,11 +95,11 @@ class Unification {
 
     %match (Term p1, Term p2) {
 
-      funAppl(f,args1), funAppl(f,args2) -> { 
+      funAppl(f,args1), funAppl(f,args2) -> {
         return match(`args1, `args2, tds,varcount);
       }
 
-      Var(x), t -> { 
+      Var(x), t -> {
         if(tds.containsKey(`x)) {
           if (tds.get(`x) == `t) return tds;
           else return null;
@@ -121,19 +121,19 @@ class Unification {
 
   %strategy ApplyRules(tl:TermRuleList, pl:PropRuleList) extends `Identity() {
     visit Term {
-      x -> { 
+      x -> {
         Term res = `x;
         %match(TermRuleList tl) {
-          (_*,r,_*) -> { res = `reduceTerm(res,r); }
+          termrulelist(_*,r,_*) -> { res = `reduceTerm(res,r); }
         }
         return res;
       }
     }
     visit Prop {
-      p -> { 
+      p -> {
         Prop res = `p;
         %match(PropRuleList pl) {
-          (_*,r,_*) -> { res = `reduceProp(res,r); }
+          proprulelist(_*,r,_*) -> { res = `reduceProp(res,r); }
         }
         return res;
       }
@@ -146,30 +146,30 @@ class Unification {
 
   %strategy RenameIntoTemp(bounded : StringSet) extends `Fail() {
     visit Prop {
-      forall(n,p) -> { 
-        bounded.add(`n); 
-        Prop res = (Prop) 
+      forall(n,p) -> {
+        bounded.add(`n);
+        Prop res = (Prop)
           `mu(MuVar("y"),Choice(RenameIntoTemp(bounded),All(MuVar("y")))).visit(`p);
         bounded.remove(`n);
         return `forall(n,res);
       }
-      exists(n,p) -> { 
-        bounded.add(`n); 
-        Prop res = (Prop) 
+      exists(n,p) -> {
+        bounded.add(`n);
+        Prop res = (Prop)
           `mu(MuVar("y"),Choice(RenameIntoTemp(bounded),All(MuVar("y")))).visit(`p);
         bounded.remove(`n);
         return `exists(n,res);
       }
    }
     visit Term {
-       v@Var(name) -> { 
-         if (!bounded.contains(`name)) return `Var("@" + name); 
+       v@Var(name) -> {
+         if (!bounded.contains(`name)) return `Var("@" + name);
          else return `v;
        }
     }
   }
 
-  public static sequentsAbstractType 
+  public static sequentsAbstractType
     substPreTreatment(sequentsAbstractType term) {
       HashSet<String> bounded = new HashSet();
       try {

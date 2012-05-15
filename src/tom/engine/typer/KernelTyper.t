@@ -2,7 +2,7 @@
  *
  * TOM - To One Matching Compiler
  * 
- * Copyright (c) 2000-2011, INPL, INRIA
+ * Copyright (c) 2000-2012, INPL, INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -170,35 +170,35 @@ public class KernelTyper {
   %strategy replace_typeVariable(contextType:TomType,kernelTyper:KernelTyper) extends Fail() {
 
     visit Option {
-      // cut the traversal
+      /* cut the traversal */
       subject@OriginTracking[] -> { return `subject; }
     }
 
     visit TargetLanguage {
-      // cut the traversal
+      /* cut the traversal */
       subject@TL[] -> { return `subject; }
       subject@ITL[] -> { return `subject; }
       subject@Comment[] -> { return `subject; }
     }
 
     visit TomType {
-      // Type(_,EmptyTargetLanguageType()) are expanded
+      /* Type(_,EmptyTargetLanguageType()) are expanded */
       subject@Type[TomType=tomType,TlType=EmptyTargetLanguageType()] -> {
         TomType type = kernelTyper.getType(`tomType);
         if(type != null) {
           return type;
         } else {
-          return `subject; // useful for SymbolTable.TYPE_UNKNOWN
+          return `subject; /* useful for SymbolTable.TYPE_UNKNOWN */
         }
       }
     }
 
     visit TomVisit {
       VisitTerm(type,constraintInstructionList,options) -> {
-        // expands the type (remember that the strategy is applied top-down)
+        /* expands the type (remember that the strategy is applied top-down) */
         TomType newType = `kernelTyper.typeVariable(contextType,`type);
         HashSet<Constraint> matchAndNumericConstraints = new HashSet<Constraint>();
-        // collect one level of MatchConstraint and NumericConstraint
+        /* collect one level of MatchConstraint and NumericConstraint */
         `TopDownCollect(CollectMatchAndNumericConstraints(matchAndNumericConstraints)).visitLight(`constraintInstructionList);
         ConstraintInstructionList newConstraintInstructionList = 
           kernelTyper.typeConstraintInstructionList(newType,`constraintInstructionList,matchAndNumericConstraints);
@@ -230,7 +230,6 @@ public class KernelTyper {
           ConstraintList newConstraints = kernelTyper.typeVariable(TomBase.getSymbolCodomain(tomSymbol),`constraints);
           return `RecordAppl(optionList,nameList,subterm,newConstraints);
         } else {
-          //System.out.println("contextType = " + contextType);
 
           %match(contextType) {
             type@Type[] -> {
@@ -245,19 +244,16 @@ public class KernelTyper {
 
       var@Variable[AstType=Type[TomType=tomType,TlType=EmptyTargetLanguageType()],Constraints=constraints] -> {
         TomType localType = kernelTyper.getType(`tomType);
-        //System.out.println("localType = " + localType);
         if(localType != null) {
-          // The variable has already a known type
+          /* The variable has already a known type */
           return `var.setAstType(localType);
         }
 
-        //System.out.println("contextType = " + contextType);
         %match(contextType) {
           Type[TypeOptions=tOptions,TomType=tomType,TlType=tlType] -> {
             TomType ctype = `Type(tOptions,tomType,tlType);
             ConstraintList newConstraints = kernelTyper.typeVariable(ctype,`constraints);
             TomTerm newVar = `var.setAstType(ctype);
-            //System.out.println("newVar = " + newVar);
             return newVar.setConstraints(newConstraints);
           }
         }
@@ -267,14 +263,11 @@ public class KernelTyper {
     visit BQTerm {
 
       bq@BQAppl[Options=optionList,AstName=name@Name(tomName),Args=args] -> {
-        //System.out.println("bq = " + `bq);
         TomSymbol tomSymbol = kernelTyper.getSymbolFromName(`tomName);
-        //System.out.println("symb = " + `tomSymbol);
         if(tomSymbol != null) {
           BQTermList subterm = kernelTyper.typeVariableList(tomSymbol, `args);
           return `BQAppl(optionList,name,subterm);
         } else {
-          //System.out.println("contextType = " + contextType);
 
           %match(contextType) {
             Type[] -> {
@@ -287,13 +280,11 @@ public class KernelTyper {
 
       var@BQVariable[AstType=Type[TomType=tomType,TlType=EmptyTargetLanguageType()]] -> {
         TomType localType = kernelTyper.getType(`tomType);
-        //System.out.println("localType = " + localType);
         if(localType != null) {
-          // The variable has already a known type
+          /* The variable has already a known type */
           return `var.setAstType(localType);
         }
 
-        //System.out.println("contextType = " + contextType);
         %match(contextType) {
           Type[TypeOptions=tOptions,TomType=tomType,TlType=tlType] -> {
             TomType ctype = `Type(tOptions,tomType,tlType);
@@ -351,10 +342,9 @@ public class KernelTyper {
           (BQVariable|BQVariableStar)(variableOptions,astName@Name(name),_) -> {
             `subject = `subject.setAstType(`aType);
             newSubject = `subject;
-            // tomType may be a Type(_,EmptyTargetLanguageType()) or a type from an typed variable
+            /* tomType may be a Type(_,EmptyTargetLanguageType()) or a type from an typed variable */
             String type = TomBase.getTomType(`aType);
-            //System.out.println("match type = " + `subject.getAstType());
-            if(kernelTyper.getType(`type) == null) {
+            if(kernelTyper.getType(type) == null) {
               /* the subject is a variable with an unknown type */
               newSubjectType = kernelTyper.guessSubjectType(`subject,matchAndNumericConstraints);
               if(newSubjectType != null) {
@@ -378,7 +368,7 @@ public class KernelTyper {
                 newSubject = `t;
               }
             } else {
-              // unknown function call
+              /* unknown function call */
               type = kernelTyper.guessSubjectType(`subject,matchAndNumericConstraints);
               if(type != null) {
                 newSubject = `FunctionCall(n,type,args);
@@ -412,8 +402,7 @@ public class KernelTyper {
       }
 
       NumericConstraint[Left=lhs,Right=rhs,Type=nct] -> {
-        //System.out.println("\nNumeric constraint = " + `constraint);
-        // if it is numeric, we do not care about the type
+        /* if it is numeric, we do not care about the type */
         BQTerm newLhs = kernelTyper.typeVariable(`EmptyType(), `lhs);                  
         BQTerm newRhs = kernelTyper.typeVariable(`EmptyType(), `rhs);                  
         return `NumericConstraint(lhs,rhs,nct);
@@ -425,8 +414,8 @@ public class KernelTyper {
     for(Object constr:matchConstraints) {
       %match(constr) {
         MatchConstraint[Pattern=pattern,Subject=s] -> {
-          // we want two terms to be equal even if their option is different 
-          // ( because of their position for example )
+          /* we want two terms to be equal even if their option is different */
+          /* ( because of their position for example ) */
 matchL:  %match(subject,s) {
            BQVariable[AstName=astName,AstType=tomType],BQVariable[AstName=astName,AstType=tomType] -> {break matchL;}
            BQAppl[AstName=astName,Args=tomList],BQAppl[AstName=astName,Args=tomList] -> {break matchL;}
@@ -439,7 +428,6 @@ matchL:  %match(subject,s) {
          %match(patt) {
            (TermAppl|RecordAppl|XMLAppl)[NameList=concTomName(Name(name),_*)] -> {        
              TomSymbol symbol = getSymbolFromName(`name);
-             // System.out.println("name = " + `name);
              if(symbol != null) {
                return TomBase.getSymbolCodomain(symbol);
              }
@@ -620,15 +608,12 @@ matchL:  %match(subject,s) {
       subject -> {
         %match(subject, instantiatedVariable) {
           RecordAppl[NameList=concTomName(opNameAST),Slots=concSlot()] , concTomTerm(_*,var@(Variable|VariableStar)[AstName=opNameAST],_*) -> {
-            //System.out.println("RecordAppl, opNameAST = " + `opNameAST);
             return `var;
           }
           Variable[AstName=opNameAST], concTomTerm(_*,var@(Variable|VariableStar)[AstName=opNameAST],_*) -> {
-            //System.out.println("Variable, opNameAST = " + `opNameAST);
             return `var;
           }
           VariableStar[AstName=opNameAST], concTomTerm(_*,var@VariableStar[AstName=opNameAST],_*) -> {
-            //System.out.println("VariableStar, opNameAST = " + `opNameAST);
             return `var;
           }
         }
@@ -657,7 +642,7 @@ matchL:  %match(subject,s) {
     visit Constraint {
       c@(MatchConstraint|NumericConstraint)[] -> {        
         constrList.add(`c);
-        throw new VisitFailure();// to stop the top-down
+        throw new VisitFailure();/* to stop the top-down */
       }      
     }
   }

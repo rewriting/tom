@@ -1,36 +1,36 @@
 /*
-   *
-   * Copyright (c) 2004-2011, INPL, INRIA
-   * All rights reserved.
-   *
-   * Redistribution and use in source and binary forms, with or without
-   * modification, are permitted provided that the following conditions are
-   * met:
-   *  - Redistributions of source code must retain the above copyright
-   *  notice, this list of conditions and the following disclaimer.
-   *  - Redistributions in binary form must reproduce the above copyright
-   *  notice, this list of conditions and the following disclaimer in the
-   *  documentation and/or other materials provided with the distribution.
-   *  - Neither the name of the INRIA nor the names of its
-   *  contributors may be used to endorse or promote products derived from
-   *  this software without specific prior written permission.
-   * 
-   * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-   * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-   * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-   * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-   * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-   * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-   * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-   * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-   * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-   * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-   * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-   */
+ *
+ * Copyright (c) 2004-2012, INPL, INRIA
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are
+ * met:
+ *  - Redistributions of source code must retain the above copyright
+ *  notice, this list of conditions and the following disclaimer.
+ *  - Redistributions in binary form must reproduce the above copyright
+ *  notice, this list of conditions and the following disclaimer in the
+ *  documentation and/or other materials provided with the distribution.
+ *  - Neither the name of the INRIA nor the names of its
+ *  contributors may be used to endorse or promote products derived from
+ *  this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
 
-package subtyping;
+package subtyping.inference;
 
-import subtyping.language.types.*;
+import subtyping.inference.language.types.*;
 import tom.library.sl.*;
 import java.util.*;
 import org.antlr.runtime.*;
@@ -56,17 +56,17 @@ public class TypeInference {
   //---------------------------------
   private static TomType freshTypeVar() {
     return `TypeVar(counter++);
-  } 
+  }
 
   //---------------------------------------------------------------
-  // To collect all TypeVar names existing in a specified subterm  
+  // To collect all TypeVar names existing in a specified subterm
   //---------------------------------------------------------------
   %strategy collectTypeVars(listVars: IntList) extends Identity() {
     visit TomType {
       TypeVar(i) -> { listVars.add(`i); }
     }
   }
- 
+
   //--------------------------------------------------
   // To collect all TypeVar names existing in a term
   //--------------------------------------------------
@@ -110,7 +110,7 @@ public class TypeInference {
     visit TomType {
       TypeVar(x) && x << int i -> { return type; }
     }
-  } 
+  }
 
   private static ConstraintList applySubstitution(Mapping map, ConstraintList cl) {
     %match(map) {
@@ -204,11 +204,11 @@ public class TypeInference {
     visit ConstraintList {
       // C = {tvar = type} U C' -> {tvar |-> type} &&
       //                      (if (tvar in C') then (resolution([type/tvar]C))
-      //                       else (resolution({type = type} U C'))) 
-      cl@CList(x*,Equation(tvar@TypeVar(_),type@!tvar),y*) //&& 
+      //                       else (resolution({type = type} U C')))
+      cl@CList(x*,Equation(tvar@TypeVar(_),type@!tvar),y*) //&&
       //(tvar != type)
       ->
-      { 
+      {
 /*        System.out.println("C = {tvar = type} U C' -> {tvar |-> type} && (if (tvar in C') " +
                            "then (resolution([type/tvar]C)) " +
                            "else (resolution({type = type} U C')))\n");
@@ -238,7 +238,7 @@ public class TypeInference {
       //                       else (resolution({tprim = tprim} U C')))
       cl@CList(x*,Equation(tprim@Type(_),tvar@TypeVar(_)),y*)
       ->
-      { 
+      {
 /*        System.out.println("C = {tprim = tvar} U C' -> {tvar |-> tprim} && (if (tvar in C') " +
                            "then (resolution([tprim/tvar]C)) " +
                            "else (resolution({tprim = tprim} U C')))\n");
@@ -268,20 +268,20 @@ public class TypeInference {
 
       // C = {type1 <: type2, type2 <: type1} U C' -> resolution({type1 = type2} U C) if ((type1 = type2) notin C')
       cl@CList(_*,Subtype(type1,type2@!type1),_*,Subtype(type2,type1),_*) &&
-      !CList(_*,Equation(type1,type2),_*) << cl     
-      -> 
+      !CList(_*,Equation(type1,type2),_*) << cl
+      ->
       {
-/*        System.out.println("C = {type1 <: type2, type2 <: type1} U C' -> resolution({type1 = type2} U C) if ((type1 = type2) notin C) \n"); 
-*/          
+/*        System.out.println("C = {type1 <: type2, type2 <: type1} U C' -> resolution({type1 = type2} U C) if ((type1 = type2) notin C) \n");
+*/
           return `CList(Equation(type1,type2),cl*);
       }
 
-      // C = {tvar1 <: tprim2, tvar1 <: tprim3} U C' -> resolution({tvar1 = min(tprim2,tprim3)} U C) 
+      // C = {tvar1 <: tprim2, tvar1 <: tprim3} U C' -> resolution({tvar1 = min(tprim2,tprim3)} U C)
       //                                           if ((tvar1 = min(tprim2,tprim3)) notin C')
       cl@CList(_*,Subtype(tvar1@TypeVar(_),tprim2@Type(_)),_*,Subtype(tvar1,tprim3@Type(_)),_*) &&
       (tprim2 != tprim3)
       ->
-      { 
+      {
 /*        System.out.println("C = {tvar1 <: tprim2, tvar1 <: tprim3} U C' -> resolution({tvar1 = min(tprim2,tprim3)} U C) " +
                            "if ((tvar1 = min(tprim2,tprim3)) notin C')\n");
 */
@@ -298,11 +298,11 @@ public class TypeInference {
       //                              if ((tvar1 = type2) notin C')
       // Default case: should be after {tvar1 <: tprim2, tvar1 <: tprim3} U C ...
       cl@CList(_*,Subtype(tvar1@TypeVar(_),type2@!tvar1),_*) && !CList(_*,Equation(tvar1,type2),_*) << cl
-      -> 
+      ->
       {
 /*        System.out.println("C = {tvar1 <: type2} U C' -> resolution({tvar1 = type2} U C)" +
                            "if ((tvar1 = type2) notin C')\n");
-*/        
+*/
         return `CList(Equation(tvar1,type2),cl*);
       }
 
@@ -332,7 +332,7 @@ public class TypeInference {
     }
     throw new RuntimeException("Error in declaration of Context and Matchs");
   }
-  
+
   private static SubstitutionList typeOf(Context ctx, ConstraintList clist, TomInstructionList allMatchs, SubstitutionList allSubs) {
     %match(allMatchs) {
       TIList() -> { return allSubs; }
@@ -371,9 +371,9 @@ public class TypeInference {
   //------------------------------------------------------
   private static ConstraintList reconTomInstruction(Context ctx, TomInstruction match, ConstraintList clist) {
     %match(match) {
-      Match(rule) 
-      -> 
-      { 
+      Match(rule)
+      ->
+      {
         ConstraintList cl = reconClause(ctx,`rule);
         return `CList(cl*,clist*);
       }
@@ -388,7 +388,7 @@ public class TypeInference {
     %match(rule) {
       Rule(condition,result) &&
       CCPair(ctx_c,cl_c) << reconCondition(ctx,condition)
-      -> 
+      ->
       {
         %match(reconBlockList(Context(ctx*,ctx_c*),result)) {
           CList() -> { return `cl_c; }
@@ -410,9 +410,9 @@ public class TypeInference {
   private static ContextAndConstraints reconEachCondition(Context ctx, Condition cond, ConstraintList cl) {
     %match {
       Matching(_,_,_) << cond -> { return `reconMatching(ctx,cond,cl); }
-      
+
       Conjunction(conditions) << cond || Disjunction(conditions) << cond -> { return `reconConjDisj(ctx,conditions,cl); }
-      
+
       (Equality(term1,term2) << cond ||
       Inequality(term1,term2) << cond ||
       Greater(term1,term2) << cond ||
@@ -470,7 +470,7 @@ public class TypeInference {
   // To reconstruct the types of each terms of a conjunction or a disjunction
   // It is necessary to collect all local context for each pattern before to
   // try to reconstruct types of theirs related subjects
-  //---------------------------------------------------------------------------- 
+  //----------------------------------------------------------------------------
   %strategy unfoldCondList() extends Identity() {
     visit ConditionList {
       CondList(x*,Conjunction(CondList(sublist*)),y*) -> { return `CondList(x*,sublist*,y*); }
@@ -480,14 +480,14 @@ public class TypeInference {
 
   %strategy separeMatchings(ml : MatchingList) extends Identity() {
     visit ConditionList {
-      CondList(x*,match@Matching(_,_,_),y*) 
+      CondList(x*,match@Matching(_,_,_),y*)
       ->
       {
         //System.out.println("Testing strategy... :\n" + `test +"\n");
         ml.add(`match);
         return `CondList(x*,y*);
       }
-    } 
+    }
   }
 
   private static ContextAndConstraints reconConjDisj(Context ctx, ConditionList conditions, ConstraintList cl) {
@@ -499,7 +499,7 @@ public class TypeInference {
     } catch (VisitFailure e) {
       throw new RuntimeException("Error in reconCondition function: collecting matching in a composed condition.");
     }
-  
+
     //System.out.println("CondList after unfolding:\n" + unfold_conditions + "\n");
 
     // 2 - separe matching condition from the other conditons
@@ -516,7 +516,7 @@ public class TypeInference {
       matchings_list = `CondList(onlyMatchings.get(i),matchings_list*);
     }
 
-    // 3 - collect local contexts and contraints of patterns and reconstruct type of each one 
+    // 3 - collect local contexts and contraints of patterns and reconstruct type of each one
     ContextAndResultList local_crlist = collectLocalContexts(ctx,`RRList(),matchings_list);
 
     // 4 - reconstruct types of subjects
@@ -547,7 +547,7 @@ public class TypeInference {
 
       CondList(match,matchs*) << ml &&
       Matching(pattern,_,_) << match &&
-      CRPair(ctx_p,pair_p) << reconPattern(ctx,pattern)      
+      CRPair(ctx_p,pair_p) << reconPattern(ctx,pattern)
       ->
       {
         Context whole_ctx = `Context(ctx_p*,ctx*);
@@ -582,19 +582,19 @@ public class TypeInference {
       RRList(pair,pairs*) << rrlist &&
       Pair(type_p,cons_p) << pair &&
       Pair(type_s,cons_s) << reconTerm(ctx,subject)
-      -> 
+      ->
       {
         //System.out.println("Pair: \n" + `pair + "\n");
         //System.out.println("Match: \n" + `match + "\n");
         ConstraintList cl_s = `CList(Equation(type,type_s),Subtype(type_p,type_s),cons_p*,cons_s*,cl*);
-        return `reconMatchingList(CRLPair(ctx,pairs),matchs,cl_s); 
+        return `reconMatchingList(CRLPair(ctx,pairs),matchs,cl_s);
       }
     }
     throw new RuntimeException("Error in reconMatchingList function.");
   }
 
   //------------------------------------------------------------------
-  // To reconstruct types of teh other conditions by global and all 
+  // To reconstruct types of teh other conditions by global and all
   // local contexts
   //------------------------------------------------------------------
   private static ContextAndConstraints reconConditionList(Context ctx, ConditionList condlist, ConstraintList cl) {
@@ -635,8 +635,8 @@ public class TypeInference {
   private static ContextAndResult reconPattern(Context ctx, TomTerm pattern) {
     %match(pattern) {
       Var(name,type)
-      -> 
-      { 
+      ->
+      {
         ConstraintList cl = `CList();
         if (isAssocVar(ctx,`name)) {
           TomType existent_type = assocVar(ctx,`name);
@@ -644,7 +644,7 @@ public class TypeInference {
         }
         else
           ctx = `Context(Jugement(name,type),ctx*);
-        return `CRPair(ctx,Pair(type,cl)); 
+        return `CRPair(ctx,Pair(type,cl));
       }
 
       Fun(name,args) && Sig(dom,codom) << assocFun(ctx,name) &&
@@ -667,7 +667,7 @@ public class TypeInference {
   // of a function in a pattern
   //----------------------------------------
   private static ContextAndConstraints reconPatternFunArgs(Context ctx, TomTermList pArgs, Domain dom) {
-    return reconPatternFArgs(ctx,pArgs,dom,`CList());  
+    return reconPatternFArgs(ctx,pArgs,dom,`CList());
   }
 
   private static ContextAndConstraints reconPatternFArgs(Context ctx, TomTermList pArgs, Domain dom, ConstraintList cons) {
@@ -676,7 +676,7 @@ public class TypeInference {
       TTeList(pterm,pterms*), Domain(pDom,pTypes*) &&
       CRPair(ctx_p,res_p) << reconPattern(ctx,pterm) &&
       Pair(type_p,cons_p) << res_p
-      -> 
+      ->
       {
         return `reconPatternFArgs(ctx_p,pterms*,pTypes,CList(Subtype(type_p,pDom),cons_p*,cons*));
       }
@@ -689,7 +689,7 @@ public class TypeInference {
   // of a list in a pattern
   //----------------------------------------
   private static ContextAndConstraints reconPatternListArgs(Context ctx, TomTermList pArgs, String name, TomType dom, TomType codom) {
-    return reconPatternLArgs(ctx,pArgs,name,dom,codom,`CList());  
+    return reconPatternLArgs(ctx,pArgs,name,dom,codom,`CList());
   }
 
   private static ContextAndConstraints reconPatternLArgs(Context ctx, TomTermList pArgs, String name, TomType dom, TomType codom, ConstraintList cons) {
@@ -701,7 +701,7 @@ public class TypeInference {
       CRPair(ctx_p,res_p) << reconPatternListVar(ctx,pterm) &&
       Pair(_,cons_p) << res_p
       -> { return `reconPatternLArgs(ctx_p,pterms*,name,dom,codom,CList(Equation(type,codom),cons_p*,cons*)); }
-        
+
       TTeList(pterm,pterms*) << pArgs &&
       !List(_,_) << pterm &&
       CRPair(ctx_p,res_p) << reconPattern(ctx,pterm) &&
@@ -710,7 +710,7 @@ public class TypeInference {
 
       TTeList(pterm,pterms*) << pArgs &&
       List(tName,_) << pterm
-      -> 
+      ->
       {
         %match {
           tName << String name &&
@@ -733,8 +733,8 @@ public class TypeInference {
   private static ContextAndResult reconPatternListVar(Context ctx, TomTerm pattern) {
     %match(pattern) {
       ListVar(name,type)
-      -> 
-      { 
+      ->
+      {
         ConstraintList cl = `CList();
         if (isAssocVar(ctx,`name)) {
           TomType existent_type = assocVar(ctx,`name);
@@ -742,7 +742,7 @@ public class TypeInference {
         }
         else
           ctx = `Context(Jugement(name,type),ctx*);
-        return `CRPair(ctx,Pair(type,cl)); 
+        return `CRPair(ctx,Pair(type,cl));
       }
     }
     throw new RuntimeException("Type reconstruction failed to the list variable in a list of a pattern.");
@@ -755,21 +755,21 @@ public class TypeInference {
     //System.out.println("Term to reconstruct: " + term + "\n");
     %match {
       Var(name,type) << term || ListVar(name,type) << term
-      -> 
+      ->
       {
         TomType typeInContext = assocVar(ctx,`name);
         return `Pair(type,CList(Equation(typeInContext,type)));
       }
 /*
-      ListVar(name,type) << term 
-      -> 
+      ListVar(name,type) << term
+      ->
       {
         TomType typeInContext = assocVar(ctx,`name);
         return `Pair(type,CList(Equation(typeInContext,type)));
       }
 */
       Fun(name,args) << term && Sig(dom,codom) << assocFun(ctx,name)
-      -> 
+      ->
       {
         ConstraintList cl = `reconFunArgs(ctx,args,dom);
         return `Pair(codom,cl);
@@ -801,7 +801,7 @@ public class TypeInference {
     %match(args,dom) {
       TTeList(), Domain() -> { return cons; }
       TTeList(term,terms*), Domain(tDom,types*) && Pair(tArg,cons_t) << reconTerm(ctx,term)
-      -> 
+      ->
       {
         ConstraintList cl = `CList(Subtype(tArg,tDom),cons*,cons_t*);
         return `reconFArgs(ctx,terms,types,cl);
@@ -825,7 +825,7 @@ public class TypeInference {
       TTeList(term,terms*) << args &&
       !List(_,_) << term &&
       Pair(tArg,cons_t) << reconTerm(ctx,term)
-      -> 
+      ->
       {
         ConstraintList cl = `CList(Subtype(tArg,dom),cons*,cons_t*);
         return `reconLArgs(ctx,terms,name,dom,cl);
@@ -833,7 +833,7 @@ public class TypeInference {
 
       TTeList(term,terms*) << args &&
       List(tName,_) << term
-      -> 
+      ->
       {
         %match {
           tName << String name &&
@@ -879,12 +879,12 @@ public class TypeInference {
   private static Signature assocFun(Context ctx, String name) {
     %match(ctx) {
       Context(_*,SigOf(fun,sig),_*) && fun << String name
-      -> 
-      { 
+      ->
+      {
         %match(sig) {
           Sig(dom,codom) && Domain(_*) << dom -> { return `sig; }
-        }  
-        throw new RuntimeException("Ill formed function\"" + name + "\"."); 
+        }
+        throw new RuntimeException("Ill formed function\"" + name + "\".");
       }
     }
     throw new RuntimeException("Function\"" + name + "\" was not declared.");
@@ -896,12 +896,12 @@ public class TypeInference {
   private static Signature assocList(Context ctx, String name) {
     %match(ctx) {
       Context(_*,SigOf(list,sig),_*) && list << String name
-      -> 
-      { 
+      ->
+      {
         %match(sig) {
           Sig(dom,codom) && VariadicDomain(_) << dom -> { return `sig; }
-        }  
-        throw new RuntimeException("Ill formed list\"" + name + "\"."); 
+        }
+        throw new RuntimeException("Ill formed list\"" + name + "\".");
       }
     }
     throw new RuntimeException("List\"" + name + "\" was not declared.");

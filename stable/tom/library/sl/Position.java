@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (c) 2000-2011, INPL, INRIA
+ * Copyright (c) 2000-2012, INPL, INRIA
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,11 +30,6 @@
  **/
 
 package tom.library.sl;
-
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Arrays;
-
 
 /**
  * Object that represents a position in a term

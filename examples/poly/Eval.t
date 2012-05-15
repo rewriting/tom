@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2011, INPL, INRIA
+ * Copyright (c) 2004-2012, INPL, INRIA
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,6 +30,7 @@ package poly;
 
 import java.util.*;
 import poly.polynom.types.*;
+import poly.polynom.types.poly.*;
 import tom.library.sl.VisitFailure;
 
 public class Eval {

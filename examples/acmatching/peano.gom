@@ -1,9 +1,0 @@
-module Peano
-      abstract syntax
-      Nat = a()
-          | b()
-          | c()
-          | f(Nat*)
-          | g(x:Nat)
-          
-     f:AC(){}  

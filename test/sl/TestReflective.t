@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2011, INPL, INRIA
+ * Copyright (c) 2004-2012, INPL, INRIA
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -38,7 +38,7 @@ public class TestReflective {
 
   %include { sl.tom }
   %include { testsl/testsl.tom }
-
+  
   public static void main(String[] args) {
     org.junit.runner.JUnitCore.main(TestReflective.class.getName());
   }
@@ -338,6 +338,24 @@ public class TestReflective {
     assertEquals(
         "countAll should return 2 with `BottomUp(S5()).visit(`"+s+")", 2,
         countAll(`BottomUp(S5()).visit(s)));
+  }
+
+  @Test
+  public void testMake() throws VisitFailure  {
+    Strategy s = `Make_Consl(Make_a(),Make_Emptyl());
+    %match(s) {
+      Make_Consl(x,Make_Emptyl()) -> { return; }
+    }  
+    fail("match should success");
+  }
+
+  @Test
+  public void testMakeWithBuiltin() throws VisitFailure  {
+    Strategy s = `Make_m(1);
+    %match(s) {
+      Make_m(_) -> { return; }
+    }  
+    fail("match should success");
   }
 
   %strategy S1() extends `Identity() {

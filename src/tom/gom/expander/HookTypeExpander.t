@@ -2,7 +2,7 @@
  *
  * GOM
  *
- * Copyright (c) 2006-2011, INPL, INRIA
+ * Copyright (c) 2006-2012, INPL, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -70,9 +70,7 @@ public class HookTypeExpander {
       ConcGomModule(_*,
           GomModule[ModuleName=GomModuleName[Name=moduleName],
           SectionList=ConcSection(_*,
-            Public(ConcGrammar(_*,
-                Grammar(prodList),
-                _*)),
+            Public(prodList),
             _*)],
           _*) -> {
         %match(prodList) {

@@ -2,7 +2,7 @@
  * 
  * TOM - To One Matching Compiler
  * 
- * Copyright (c) 2000-2011, INPL, INRIA
+ * Copyright (c) 2000-2012, INPL, INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -25,22 +25,14 @@
 
 package tom.engine.parser;
 
-import java.io.BufferedReader;
 import java.io.Reader;
-import java.io.InputStreamReader;
-import java.io.FileInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.Map;
 import java.util.HashSet;
-import java.util.logging.Level;
 import java.util.Iterator;
 
-import tom.engine.Tom;
 import tom.engine.TomMessage;
 import tom.engine.TomStreamManager;
 import tom.engine.exception.TomException;
@@ -49,15 +41,23 @@ import tom.engine.tools.Tools;
 import tom.engine.tools.SymbolTable;
 import tom.platform.OptionManager;
 import tom.platform.OptionParser;
-import tom.platform.PlatformLogRecord;
 import tom.platform.adt.platformoption.types.PlatformOptionList;
 import tom.engine.adt.tomsignature.types.TomSymbol;
+import tom.engine.adt.code.types.*;
+import tom.engine.adt.cst.types.*;
+
+import tom.engine.adt.cst.CSTAdaptor;
+
+import aterm.ATerm;
+import tom.library.sl.*;
+
 import antlr.RecognitionException;
 import antlr.TokenStreamException;
 import antlr.TokenStreamSelector;
-import aterm.ATerm;
-import tom.engine.adt.code.types.*;
 
+import org.antlr.runtime.ANTLRReaderStream;
+import org.antlr.runtime.CharStream;
+import org.antlr.runtime.tree.Tree;
 /**
  * The TomParser "plugin"
  * The responsability of the plugin is to parse the input file and create the
@@ -65,20 +65,28 @@ import tom.engine.adt.code.types.*;
  * It get the input file from the TomStreamManger and parse it
  */
 public class TomParserPlugin extends TomGenericPlugin {
+          private static   tom.library.sl.Strategy  tom_append_list_Sequence( tom.library.sl.Strategy  l1,  tom.library.sl.Strategy  l2) {     if(( l1 == null )) {       return l2;     } else if(( l2 == null )) {       return l1;     } else if(( l1 instanceof tom.library.sl.Sequence )) {       if(( ( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Sequence.THEN) ) == null )) {         return  tom.library.sl.Sequence.make(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Sequence.FIRST) ),l2) ;       } else {         return  tom.library.sl.Sequence.make(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Sequence.FIRST) ),tom_append_list_Sequence(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Sequence.THEN) ),l2)) ;       }     } else {       return  tom.library.sl.Sequence.make(l1,l2) ;     }   }   private static   tom.library.sl.Strategy  tom_get_slice_Sequence( tom.library.sl.Strategy  begin,  tom.library.sl.Strategy  end, tom.library.sl.Strategy  tail) {     if( (begin.equals(end)) ) {       return tail;     } else if( (end.equals(tail))  && (( end == null ) ||  (end.equals( null )) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.library.sl.Sequence.make(((( begin instanceof tom.library.sl.Sequence ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.Sequence.FIRST) ):begin),( tom.library.sl.Strategy )tom_get_slice_Sequence(((( begin instanceof tom.library.sl.Sequence ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.Sequence.THEN) ): null ),end,tail)) ;   }      private static   tom.library.sl.Strategy  tom_append_list_Choice( tom.library.sl.Strategy  l1,  tom.library.sl.Strategy  l2) {     if(( l1 ==null )) {       return l2;     } else if(( l2 ==null )) {       return l1;     } else if(( l1 instanceof tom.library.sl.Choice )) {       if(( ( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Choice.THEN) ) ==null )) {         return  tom.library.sl.Choice.make(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Choice.FIRST) ),l2) ;       } else {         return  tom.library.sl.Choice.make(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Choice.FIRST) ),tom_append_list_Choice(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Choice.THEN) ),l2)) ;       }     } else {       return  tom.library.sl.Choice.make(l1,l2) ;     }   }   private static   tom.library.sl.Strategy  tom_get_slice_Choice( tom.library.sl.Strategy  begin,  tom.library.sl.Strategy  end, tom.library.sl.Strategy  tail) {     if( (begin.equals(end)) ) {       return tail;     } else if( (end.equals(tail))  && (( end ==null ) ||  (end.equals( null )) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.library.sl.Choice.make(((( begin instanceof tom.library.sl.Choice ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.Choice.FIRST) ):begin),( tom.library.sl.Strategy )tom_get_slice_Choice(((( begin instanceof tom.library.sl.Choice ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.Choice.THEN) ): null ),end,tail)) ;   }      private static   tom.library.sl.Strategy  tom_append_list_SequenceId( tom.library.sl.Strategy  l1,  tom.library.sl.Strategy  l2) {     if(( l1 == null )) {       return l2;     } else if(( l2 == null )) {       return l1;     } else if(( l1 instanceof tom.library.sl.SequenceId )) {       if(( ( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.SequenceId.THEN) ) == null )) {         return  tom.library.sl.SequenceId.make(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.SequenceId.FIRST) ),l2) ;       } else {         return  tom.library.sl.SequenceId.make(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.SequenceId.FIRST) ),tom_append_list_SequenceId(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.SequenceId.THEN) ),l2)) ;       }     } else {       return  tom.library.sl.SequenceId.make(l1,l2) ;     }   }   private static   tom.library.sl.Strategy  tom_get_slice_SequenceId( tom.library.sl.Strategy  begin,  tom.library.sl.Strategy  end, tom.library.sl.Strategy  tail) {     if( (begin.equals(end)) ) {       return tail;     } else if( (end.equals(tail))  && (( end == null ) ||  (end.equals( null )) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.library.sl.SequenceId.make(((( begin instanceof tom.library.sl.SequenceId ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.SequenceId.FIRST) ):begin),( tom.library.sl.Strategy )tom_get_slice_SequenceId(((( begin instanceof tom.library.sl.SequenceId ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.SequenceId.THEN) ): null ),end,tail)) ;   }      private static   tom.library.sl.Strategy  tom_append_list_ChoiceId( tom.library.sl.Strategy  l1,  tom.library.sl.Strategy  l2) {     if(( l1 ==null )) {       return l2;     } else if(( l2 ==null )) {       return l1;     } else if(( l1 instanceof tom.library.sl.ChoiceId )) {       if(( ( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.ChoiceId.THEN) ) ==null )) {         return  tom.library.sl.ChoiceId.make(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.ChoiceId.FIRST) ),l2) ;       } else {         return  tom.library.sl.ChoiceId.make(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.ChoiceId.FIRST) ),tom_append_list_ChoiceId(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.ChoiceId.THEN) ),l2)) ;       }     } else {       return  tom.library.sl.ChoiceId.make(l1,l2) ;     }   }   private static   tom.library.sl.Strategy  tom_get_slice_ChoiceId( tom.library.sl.Strategy  begin,  tom.library.sl.Strategy  end, tom.library.sl.Strategy  tail) {     if( (begin.equals(end)) ) {       return tail;     } else if( (end.equals(tail))  && (( end ==null ) ||  (end.equals( null )) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.library.sl.ChoiceId.make(((( begin instanceof tom.library.sl.ChoiceId ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.ChoiceId.FIRST) ):begin),( tom.library.sl.Strategy )tom_get_slice_ChoiceId(((( begin instanceof tom.library.sl.ChoiceId ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.ChoiceId.THEN) ): null ),end,tail)) ;   }      private static  tom.library.sl.Strategy  tom_make_AUCtl( tom.library.sl.Strategy  s1,  tom.library.sl.Strategy  s2) { return ( ( new tom.library.sl.Mu(( new tom.library.sl.MuVar("x") ), tom.library.sl.Choice.make(s2, tom.library.sl.Choice.make( tom.library.sl.Sequence.make( tom.library.sl.Sequence.make(s1, tom.library.sl.Sequence.make(( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ), null ) ) , tom.library.sl.Sequence.make(( new tom.library.sl.One(( new tom.library.sl.Identity() )) ), null ) ) , null ) ) ) ) );}private static  tom.library.sl.Strategy  tom_make_EUCtl( tom.library.sl.Strategy  s1,  tom.library.sl.Strategy  s2) { return ( ( new tom.library.sl.Mu(( new tom.library.sl.MuVar("x") ), tom.library.sl.Choice.make(s2, tom.library.sl.Choice.make( tom.library.sl.Sequence.make(s1, tom.library.sl.Sequence.make(( new tom.library.sl.One(( new tom.library.sl.MuVar("x") )) ), null ) ) , null ) ) ) ));} private static  tom.library.sl.Strategy  tom_make_Try( tom.library.sl.Strategy  s) { return (  tom.library.sl.Choice.make(s, tom.library.sl.Choice.make(( new tom.library.sl.Identity() ), null ) )  );}private static  tom.library.sl.Strategy  tom_make_Repeat( tom.library.sl.Strategy  s) { return ( ( new tom.library.sl.Mu(( new tom.library.sl.MuVar("_x") ), tom.library.sl.Choice.make( tom.library.sl.Sequence.make(s, tom.library.sl.Sequence.make(( new tom.library.sl.MuVar("_x") ), null ) ) , tom.library.sl.Choice.make(( new tom.library.sl.Identity() ), null ) ) ) ) );}private static  tom.library.sl.Strategy  tom_make_TopDown( tom.library.sl.Strategy  v) { return ( ( new tom.library.sl.Mu(( new tom.library.sl.MuVar("_x") ), tom.library.sl.Sequence.make(v, tom.library.sl.Sequence.make(( new tom.library.sl.All(( new tom.library.sl.MuVar("_x") )) ), null ) ) ) ) );}private static  tom.library.sl.Strategy  tom_make_BottomUp( tom.library.sl.Strategy  v) { return ( ( new tom.library.sl.Mu(( new tom.library.sl.MuVar("_x") ), tom.library.sl.Sequence.make(( new tom.library.sl.All(( new tom.library.sl.MuVar("_x") )) ), tom.library.sl.Sequence.make(v, null ) ) ) ) );}private static  tom.library.sl.Strategy  tom_make_OnceTopDown( tom.library.sl.Strategy  v) { return ( ( new tom.library.sl.Mu(( new tom.library.sl.MuVar("_x") ), tom.library.sl.Choice.make(v, tom.library.sl.Choice.make(( new tom.library.sl.One(( new tom.library.sl.MuVar("_x") )) ), null ) ) ) ) );}private static  tom.library.sl.Strategy  tom_make_RepeatId( tom.library.sl.Strategy  v) { return ( ( new tom.library.sl.Mu(( new tom.library.sl.MuVar("_x") ), tom.library.sl.SequenceId.make(v, tom.library.sl.SequenceId.make(( new tom.library.sl.MuVar("_x") ), null ) ) ) ) );}private static  tom.library.sl.Strategy  tom_make_OnceTopDownId( tom.library.sl.Strategy  v) { return ( ( new tom.library.sl.Mu(( new tom.library.sl.MuVar("_x") ), tom.library.sl.ChoiceId.make(v, tom.library.sl.ChoiceId.make(( new tom.library.sl.OneId(( new tom.library.sl.MuVar("_x") )) ), null ) ) ) ) );}    
+
   
   /** some output suffixes */
   public static final String PARSED_SUFFIX = ".tfix.parsed";
   public static final String PARSED_TABLE_SUFFIX = ".tfix.parsed.table";
 
   /** the declared options string*/
-  public static final String DECLARED_OPTIONS = "<options><boolean name='parse' altName='' description='Parser (activated by default)' value='true'/></options>";
+  public static final String DECLARED_OPTIONS = 
+    "<options>" +
+    "<boolean name='parse' altName='' description='Parser (activated by default)' value='true'/>" +
+    "<boolean name='newparser' altName='np' description='New Parser (not activated by default)' value='false'/>" +
+    "<boolean name='printcst' altName='cst' description='print post-parsing cst (only with new parser)' value='false'/>" +
+    "<boolean name='printast' altName='ast' description='print post-parsing ast' value='false'/>" +
+    "</options>";
   
   /** input file name and stream */
   private String currentFileName;
   private Reader currentReader;
   
   /** the main HostParser */
-  private HostParser parser = null;
+  private tom.engine.parser.antlr2.HostParser parser = null;
   
   /** Constructor */
   public TomParserPlugin(){
@@ -86,7 +94,7 @@ public class TomParserPlugin extends TomGenericPlugin {
   }
   
   //creating a new Host parser
-  protected static HostParser newParser(Reader reader, String fileName,
+  public static tom.engine.parser.antlr2.HostParser newParser(Reader reader, String fileName,
                                         OptionManager optionManager,
                                         TomStreamManager tomStreamManager)
     throws FileNotFoundException,IOException {
@@ -97,7 +105,7 @@ public class TomParserPlugin extends TomGenericPlugin {
                      optionManager, tomStreamManager);
   }
   
-  protected static HostParser newParser(Reader reader,String fileName,
+  public static tom.engine.parser.antlr2.HostParser newParser(Reader reader,String fileName,
                                         HashSet<String> includedFiles,
                                         HashSet<String> alreadyParsedFiles,
                                         OptionManager optionManager,
@@ -106,11 +114,11 @@ public class TomParserPlugin extends TomGenericPlugin {
     // a selector to choose the lexer to use
     TokenStreamSelector selector = new TokenStreamSelector();
     // create a lexer for target mode
-    HostLexer targetlexer = new HostLexer(reader);
+    tom.engine.parser.antlr2.HostLexer targetlexer = new tom.engine.parser.antlr2.HostLexer(reader);
     // create a lexer for tom mode
-    TomLexer tomlexer = new TomLexer(targetlexer.getInputState());
+    tom.engine.parser.antlr2.TomLexer tomlexer = new tom.engine.parser.antlr2.TomLexer(targetlexer.getInputState());
     // create a lexer for backquote mode
-    BackQuoteLexer bqlexer = new BackQuoteLexer(targetlexer.getInputState());
+    tom.engine.parser.antlr2.BackQuoteLexer bqlexer = new tom.engine.parser.antlr2.BackQuoteLexer(targetlexer.getInputState());
     // notify selector about various lexers
     selector.addInputStream(targetlexer,"targetlexer");
     selector.addInputStream(tomlexer, "tomlexer");
@@ -118,7 +126,7 @@ public class TomParserPlugin extends TomGenericPlugin {
     selector.select("targetlexer");
     // create the parser for target mode
     // also create tom parser and backquote parser
-    return new HostParser(selector, fileName,
+    return new tom.engine.parser.antlr2.HostParser(selector, fileName,
         includedFiles, alreadyParsedFiles,
         optionManager, tomStreamManager);
   }
@@ -131,19 +139,6 @@ public class TomParserPlugin extends TomGenericPlugin {
     //System.out.println("(DEBUG) Old parser");
     if (arg[0] instanceof TomStreamManager) {
       setStreamManager((TomStreamManager)arg[0]);
-      currentFileName = getStreamManager().getInputFileName();  
-      currentReader = getStreamManager().getInputReader();
-      /*
-       * The following part has been added in order to be able to have many
-       * parsers. It is useful as long the new parser is not fully operational
-       * A parser waits a StreamManager as first (and single) argument
-       * (arg[0]) but the NewParser Plugin is called after the TomParserPlugin,
-       * —whatever parser plugin is activated, both are called— therefore
-       * it receives two arguments : the parsed code and the StreamManager.
-       */
-    } else if (arg[1] instanceof TomStreamManager) {
-      term = (Code)arg[0];
-      setStreamManager((TomStreamManager)arg[1]);
       currentFileName = getStreamManager().getInputFileName();  
       currentReader = getStreamManager().getInputReader();
     } else {
@@ -163,13 +158,16 @@ public class TomParserPlugin extends TomGenericPlugin {
     boolean java         = ((Boolean)getOptionManager().getOptionValue("jCode")).booleanValue();
     boolean eclipse      = ((Boolean)getOptionManager().getOptionValue("eclipse")).booleanValue();
     boolean newparser    = ((Boolean)getOptionManager().getOptionValue("newparser")).booleanValue();
-    if (newparser==false) {
-      //System.out.println("(DEBUG) we are using the old parser / newparser = " + newparser);
+    boolean printcst     = ((Boolean)getOptionManager().getOptionValue("printcst")).booleanValue();
+    boolean printast     = ((Boolean)getOptionManager().getOptionValue("printast")).booleanValue();
+
+    SymbolTable symbolTable = getStreamManager().getSymbolTable();
+    if(newparser==false) {
       try {
         // looking for java package
         if(java && (!currentFileName.equals("-"))) {
           /* Do not exhaust the stream !! */
-          TomJavaParser javaParser = TomJavaParser.createParser(currentFileName);
+          tom.engine.parser.antlr2.TomJavaParser javaParser = tom.engine.parser.antlr2.TomJavaParser.createParser(currentFileName);
           String packageName = "";
           try {
             packageName = javaParser.javaPackageDeclaration();
@@ -179,6 +177,7 @@ public class TomParserPlugin extends TomGenericPlugin {
           // Update streamManager to take into account package information
           getStreamManager().setPackagePath(packageName);
         }
+
         // getting a parser 
         parser = newParser(currentReader, currentFileName, getOptionManager(), getStreamManager());
         // parsing
@@ -187,13 +186,21 @@ public class TomParserPlugin extends TomGenericPlugin {
          * we update codomains which are constrained by a symbolName
          * (come from the %strategy operator)
          */
-        SymbolTable symbolTable = getStreamManager().getSymbolTable();
         Iterator it = symbolTable.keySymbolIterator();
         while(it.hasNext()) {
           String tomName = (String)it.next();
           TomSymbol tomSymbol = getSymbolFromName(tomName);
           tomSymbol = symbolTable.updateConstrainedSymbolCodomain(tomSymbol, symbolTable);
+
+          if(printast) {
+            printTree(tomSymbol);
+          }
         }
+
+          if(printast) {
+            printTree((Visitable)getWorkingTerm());
+          }
+
         // verbose
         TomMessage.info(getLogger(), null, 0, TomMessage.tomParsingPhase,
             Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
@@ -226,15 +233,53 @@ public class TomParserPlugin extends TomGenericPlugin {
           getStreamManager().getRawFileName()+ PARSED_TABLE_SUFFIX;
         Tools.generateOutput(outputFileName, getStreamManager().getSymbolTable().toTerm().toATerm());
       }
-      if(intermediate) {
-        Tools.generateOutput(getStreamManager().getOutputFileName() 
-            + PARSED_SUFFIX, (tom.library.sl.Visitable)getWorkingTerm());
-        Tools.generateOutput(getStreamManager().getOutputFileName() 
-            + PARSED_TABLE_SUFFIX, getStreamManager().getSymbolTable().toTerm().toATerm());
-      }
     } else {
-      // not active plugin
-      TomMessage.info(getLogger(), null, 0, TomMessage.parserNotUsed);
+      try {
+        if(!currentFileName.equals("-")) {
+          tom.engine.parser.antlr3.HostParser parser = 
+            new tom.engine.parser.antlr3.HostParser(getStreamManager(), getOptionManager());
+          ANTLRReaderStream input = new ANTLRReaderStream(currentReader);
+          input.name = currentFileName;
+          //System.out.println("CurrentFileName : "+currentFileName);
+          Tree programAsAntrlTree = parser.parseProgram(input);
+          CstProgram cst = (CstProgram)CSTAdaptor.getTerm(programAsAntrlTree);
+
+          if(printcst) {
+            printTree(cst);
+          }
+
+          tom.engine.parser.antlr3.CstConverter converter = new tom.engine.parser.antlr3.CstConverter(symbolTable);
+          Code code = converter.convert(cst);
+          setWorkingTerm(code);
+
+          Iterator it = symbolTable.keySymbolIterator();
+          while(it.hasNext()) {
+            String tomName = (String)it.next();
+            TomSymbol tomSymbol = getSymbolFromName(tomName);
+            if(printast) {
+              printTree(tomSymbol);
+            }
+          }
+
+          if(printast) {
+            printTree((Visitable)getWorkingTerm());
+          }
+        }
+
+        // verbose
+        TomMessage.info(getLogger(), null, 0, TomMessage.tomParsingPhase,
+            Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
+      } catch(IOException e) {
+         TomMessage.error(getLogger(), currentFileName, -1,
+             TomMessage.fileNotFound, e.getMessage());// TODO custom ErrMessage
+       }
+    }
+
+    if(intermediate) {
+      Tools.generateOutput(getStreamManager().getOutputFileName() 
+          + PARSED_SUFFIX, (tom.library.sl.Visitable)getWorkingTerm());
+      Tools.generateOutput(getStreamManager().getOutputFileName() 
+          + PARSED_TABLE_SUFFIX, getStreamManager().getSymbolTable().toTerm().toATerm());
     }
 
   }
@@ -255,5 +300,54 @@ public class TomParserPlugin extends TomGenericPlugin {
     } 
     return parser.getLine();
   }
-  
+
+  private void printTree(Visitable tree) {
+    if(tree!=null) {
+      try {
+        tree = tom_make_BottomUp(tom_make_ToSingleLineTargetLanguage()).visit(tree);
+        tom.library.utils.Viewer.toTree(tree);
+      } catch (tom.library.sl.VisitFailure e) {
+        System.err.println("VisitFailure Exception"); //XXX handle cleanly
+      }
+    } else {
+      System.out.println("Nothing to print (tree is null)");
+    }
+  }
+
+  /**
+   * Change every hostCode block so it's on a single line.
+   * Make printed tree more easily readable.
+   */
+  public static class ToSingleLineTargetLanguage extends tom.library.sl.AbstractStrategyBasic {public ToSingleLineTargetLanguage() {super(( new tom.library.sl.Identity() ));}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];stratChilds[0] = super.getChildAt(0);return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() {return 1;}public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}@SuppressWarnings("unchecked")public <T> T visitLight(T v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.engine.adt.code.types.TargetLanguage) ) {return ((T)visit_TargetLanguage((( tom.engine.adt.code.types.TargetLanguage )v),introspector));}if (!(( null  == environment))) {return ((T)any.visit(environment,introspector));} else {return any.visitLight(v,introspector);}}@SuppressWarnings("unchecked")public  tom.engine.adt.code.types.TargetLanguage  _visit_TargetLanguage( tom.engine.adt.code.types.TargetLanguage  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!(( null  == environment))) {return (( tom.engine.adt.code.types.TargetLanguage )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);}}@SuppressWarnings("unchecked")public  tom.engine.adt.code.types.TargetLanguage  visit_TargetLanguage( tom.engine.adt.code.types.TargetLanguage  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if ( (((Object)tom__arg) instanceof tom.engine.adt.code.types.TargetLanguage) ) {if ( ((( tom.engine.adt.code.types.TargetLanguage )((Object)tom__arg)) instanceof tom.engine.adt.code.types.TargetLanguage) ) {if ( ((( tom.engine.adt.code.types.TargetLanguage )(( tom.engine.adt.code.types.TargetLanguage )((Object)tom__arg))) instanceof tom.engine.adt.code.types.targetlanguage.TL) ) {
+
+
+        return  tom.engine.adt.code.types.targetlanguage.TL.make(formatTargetLanguageString( (( tom.engine.adt.code.types.TargetLanguage )((Object)tom__arg)).getCode() ),  (( tom.engine.adt.code.types.TargetLanguage )((Object)tom__arg)).getStart() ,  (( tom.engine.adt.code.types.TargetLanguage )((Object)tom__arg)).getEnd() ) ;
+      }}}}{if ( (((Object)tom__arg) instanceof tom.engine.adt.code.types.TargetLanguage) ) {if ( ((( tom.engine.adt.code.types.TargetLanguage )((Object)tom__arg)) instanceof tom.engine.adt.code.types.TargetLanguage) ) {if ( ((( tom.engine.adt.code.types.TargetLanguage )(( tom.engine.adt.code.types.TargetLanguage )((Object)tom__arg))) instanceof tom.engine.adt.code.types.targetlanguage.ITL) ) {
+
+        return  tom.engine.adt.code.types.targetlanguage.ITL.make(formatTargetLanguageString( (( tom.engine.adt.code.types.TargetLanguage )((Object)tom__arg)).getCode() )) ;
+      }}}}{if ( (((Object)tom__arg) instanceof tom.engine.adt.code.types.TargetLanguage) ) {if ( ((( tom.engine.adt.code.types.TargetLanguage )((Object)tom__arg)) instanceof tom.engine.adt.code.types.TargetLanguage) ) {if ( ((( tom.engine.adt.code.types.TargetLanguage )(( tom.engine.adt.code.types.TargetLanguage )((Object)tom__arg))) instanceof tom.engine.adt.code.types.targetlanguage.Comment) ) {
+
+        return  tom.engine.adt.code.types.targetlanguage.Comment.make(formatTargetLanguageString( (( tom.engine.adt.code.types.TargetLanguage )((Object)tom__arg)).getCode() )) ;
+      }}}}}return _visit_TargetLanguage(tom__arg,introspector);}}private static  tom.library.sl.Strategy  tom_make_ToSingleLineTargetLanguage() { return new ToSingleLineTargetLanguage();}
+
+
+
+
+
+
+
+
+
+
+  /**
+   * Usefull to print every hostCode on a single line in tree.
+   * Improve readability.
+   */
+  private static String formatTargetLanguageString(String s) {
+    s = s.replaceAll("\n", "\\\\n");
+    s = s.replaceAll("\r", "\\\\r");
+    s = s.replaceAll("\t", "\\\\t");
+    return "["+s+"]";
+  }
+
 } //class TomParserPlugin
