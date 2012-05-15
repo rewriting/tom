@@ -113,15 +113,13 @@ csBQTermArgs [ boolean compositeAllowed] :
              ID ^(Cst_TypeUnknown )) csCompositePart*
           )
         )
-  | LPAR ID RPAR {$compositeAllowed}?=> c=csCompositePart*
-    -> {c==null}? ^(Cst_BQVar {extractOptions((CommonToken)$ID)}
-        ID ^(Cst_TypeUnknown ))
+  | LPAR csBQTermArgs[true] RPAR {$compositeAllowed}?=> c=csCompositePart*
+    -> {c==null}? csBQTermArgs
     -> ^(Cst_BQComposite
          {extractOptions((CommonToken)$LPAR, (CommonToken)$RPAR)}
          ^(ConcCstBQTerm
            ^(Cst_ITL {extractOptions((CommonToken)$LPAR)} LPAR)
-           ^(Cst_BQVar {extractOptions((CommonToken)$ID)}
-             ID ^(Cst_TypeUnknown ))
+           csBQTermArgs
            ^(Cst_ITL {extractOptions((CommonToken)$RPAR)} RPAR)
            csCompositePart*
           )

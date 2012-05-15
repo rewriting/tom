@@ -35,7 +35,7 @@ import org.junit.BeforeClass;
 import org.junit.AfterClass;
 
 public class TestExpression {
-  private static Record record;
+  //private static Record record;
   private static RecordStrict recordStrict;
 
 	public static void main(String[] args) {
@@ -44,16 +44,16 @@ public class TestExpression {
 
   @BeforeClass
   public static void setUp() {
-    record = new Record();
+    //record = new Record();
     recordStrict = new RecordStrict();
   }
 
   @AfterClass
   public static void teadDown() {
-    record = null;
+    //record = null;
     recordStrict = null;
   }
-
+/*
   @Test public void recordE1PP() {
     Exp e = record.buildExp1();
     Assert.assertEquals("Mult(Plus(2,3),4)", record.prettyPrint(e));
@@ -105,7 +105,7 @@ public class TestExpression {
     Assert.assertEquals("0",
         record.prettyPrint(record.traversalSimplify(e)));
   }
-
+*/
   @Test public void recordStrictE1PP() {
     Exp e = recordStrict.buildExp1();
     Assert.assertEquals("Mult(Plus(2,3),4)", recordStrict.prettyPrint(e));
@@ -157,7 +157,7 @@ public class TestExpression {
     Assert.assertEquals("0",
         recordStrict.prettyPrint(recordStrict.traversalSimplify(e)));
   }
-
+/*
   @Test public void eqE1pp() {
     Assert.assertEquals(
         record.prettyPrint(record.buildExp1()),
@@ -211,4 +211,5 @@ public class TestExpression {
         record.prettyPrint(record.traversalSimplify(record.buildExp3())),
         recordStrict.prettyPrint(recordStrict.traversalSimplify(recordStrict.buildExp3())));
   }
+  */
 }

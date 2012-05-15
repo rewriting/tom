@@ -56,7 +56,7 @@ public class BackendPlugin extends GomGenericPlugin {
   public static final String DECLARED_OPTIONS =
     "<options>" +
     "<string name='generator' altName='g' description='Select Generator. Possible value: \"shared\"' value='shared' attrName='type' />" +
-    "<boolean name='newtyper' altName='nt' description='New TyperPlugin (not activated by default)' value='false'/>" +
+    "<boolean name='newtyper' altName='nt' description='New TyperPlugin (not activated by default)' value='true'/>" +
     "<boolean name='newparser' altName='np' description='New parser plugin (not activated by default)' value='false'/>" +
     "<boolean name='optimize' altName='O' description='Optimize generated code' value='false'/>" +
     "<boolean name='optimize2' altName='O2' description='Optimize generated code' value='false'/>" +

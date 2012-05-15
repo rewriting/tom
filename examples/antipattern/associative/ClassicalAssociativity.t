@@ -59,7 +59,7 @@ public class ClassicalAssociativity {
 
   %strategy PerformAssociativeMatching() extends Identity(){
 
-    visit Constraint{		
+    visit Constraint {
       // EqTransform
       Match(p,s) -> {
         return `Equal(p,s);
@@ -198,7 +198,7 @@ public class ClassicalAssociativity {
       // Exists
       Exists(v@Variable(var),l@Or(_*)) ->{        
         Constraint result = `Or();
-        %match(l){
+        %match(l) {
           Or(_*,x,_*) ->{ result = `Or(Exists(v,x),result*); }
         }
         return result;
@@ -214,7 +214,7 @@ public class ClassicalAssociativity {
       }
 
       // cleaning
-      Or(X*,x,Y*,x,Z*)->{
+      Or(X*,x,Y*,x,Z*) -> {
         return `Or(X*,x,Y*,Z*);
       }
 
