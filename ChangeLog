@@ -1,3 +1,8 @@
+2012-05-14 pem
+ * activate newtyper by default
+ * improved newtyper efficiency
+ * merge with master branch
+
 2011-12-09 tavaresc
  * newtyper: add verification for types of each variable in pattern.
 
