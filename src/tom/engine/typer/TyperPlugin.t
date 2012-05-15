@@ -110,14 +110,10 @@ public class TyperPlugin extends TomGenericPlugin {
     long startChrono = System.currentTimeMillis();
     boolean intermediate = getOptionBooleanValue("intermediate");
     boolean newtyper = getOptionBooleanValue("newtyper");
-    boolean lazyType = getOptionBooleanValue("lazyType");
 
     kernelTyper.setSymbolTable(getStreamManager().getSymbolTable());
     newKernelTyper.setSymbolTable(getStreamManager().getSymbolTable()); 
     newKernelTyper.setCurrentInputFileName(getStreamManager().getInputFileName()); 
-    if(lazyType) {
-      newKernelTyper.setLazyType();
-    }
 
     Code typedCode = (Code)getWorkingTerm();
     //System.out.println("before: " + typedCode);
@@ -173,7 +169,7 @@ public class TyperPlugin extends TomGenericPlugin {
          * Replace all remains of type variables by
          * Type(tomType,EmptyTargetLanguageType()) in Code and in SymbolTable
          */
-        typedCode = `TopDown(removeFreshTypeVar()).visitLight(typedCode);
+        typedCode = `TopDownIdStopOnSuccess(removeFreshTypeVar()).visitLight(typedCode);
         replaceInSymbolTableNewTyper();
 
         // replace 'abc' by concString('a','b','c')
@@ -224,7 +220,7 @@ public class TyperPlugin extends TomGenericPlugin {
     for(String tomName:symbolTable.keySymbolIterable()) {
       TomSymbol tomSymbol = getSymbolFromName(tomName);
       try {
-        `TopDownIdStopOnSuccess(FindEmptyTLType(this)).visitLight(tomSymbol);
+        //`TopDownIdStopOnSuccess(FindEmptyTLType(this)).visitLight(tomSymbol);
         tomSymbol = ((TomTerm) kernelTyper.typeVariable(`EmptyType(),`TomSymbolToTomTerm(tomSymbol))).getAstSymbol();
         tomSymbol = `TopDownIdStopOnSuccess(TransformBQAppl(this)).visitLight(tomSymbol);
       } catch(tom.library.sl.VisitFailure e) {
@@ -235,20 +231,20 @@ public class TyperPlugin extends TomGenericPlugin {
     }
   }
 
+  /*
   %strategy FindEmptyTLType(typer:TyperPlugin) extends Identity() {
     visit TomType {
       Type[TomType=tomType,TlType=EmptyTargetLanguageType()] -> {
-        TomType newType = null;
-        newType = typer.getSymbolTable().getType(`tomType);
+        TomType newType = typer.getSymbolTable().getType(`tomType);
         %match(newType) {
          Type[TlType=EmptyTargetLanguageType()] -> {
-          System.out.println("Found an EmptyTargetLanguageType!!");
-
+           System.out.println("Found an EmptyTargetLanguageType!!");
          }
         }
       }
     }
   }
+  */
 
   /*
    * transform a BQAppl into its compiled form (BuildConstant, BuildList, FunctionCall, BuildTerm)
@@ -370,7 +366,7 @@ public class TyperPlugin extends TomGenericPlugin {
 
     /* utilities for new typer */
   private int freshTypeVarCounter = 0;
-  private int getFreshTlTIndex() {
+  private int genFreshTlTIndex() {
     return freshTypeVarCounter++;
   }
    /**
@@ -395,7 +391,7 @@ public class TyperPlugin extends TomGenericPlugin {
           // This happens when :
           // * tomType != unknown type AND (newType == null)
           // * tomType == unknown type
-          newType = `TypeVar(tomType,typer.getFreshTlTIndex());
+          newType = `TypeVar(tomType,typer.genFreshTlTIndex());
         }
         return newType;
       }
@@ -426,7 +422,7 @@ public class TyperPlugin extends TomGenericPlugin {
     try {
       for(String tomName:getSymbolTable().keySymbolIterable()) {
         TomSymbol tSymbol = getSymbolFromName(tomName);
-        tSymbol = `TopDown(removeFreshTypeVar()).visitLight(tSymbol);
+        tSymbol = `TopDownIdStopOnSuccess(removeFreshTypeVar()).visitLight(tSymbol);
         getSymbolTable().putSymbol(tomName,tSymbol);
       }
     } catch(tom.library.sl.VisitFailure e) {

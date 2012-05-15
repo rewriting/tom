@@ -146,12 +146,12 @@ public class ConstraintGenerator {
 
         SymbolTable symbolTable = getCompiler().getSymbolTable();
 
-        //DEBUG System.out.println("In Constraint Generator with v = " + `v + '\n');
-        //DEBUG System.out.println("In Constraint Generator with t = " + `t + '\n');
+        //System.out.println("In Constraint Generator with v = " + `v + '\n');
+        //System.out.println("In Constraint Generator with t = " + `t + '\n');
         TomType pType = TomBase.getTermType(tom_v,symbolTable);
         TomType sType = TomBase.getTermType(tom_t,symbolTable);
-        //DEBUG System.out.println("pType = " + pType);
-        //DEBUG System.out.println("sType = " + sType);
+        //System.out.println("pType = " + pType);
+        //System.out.println("sType = " + sType);
         {{if ( (((Object)pType) instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )((Object)pType)) instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )(( tom.engine.adt.tomtype.types.TomType )((Object)pType))) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {if ( (((Object)sType) instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )((Object)sType)) instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )(( tom.engine.adt.tomtype.types.TomType )((Object)sType))) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {boolean tomMatch178_9= false ;if (  (( tom.engine.adt.tomtype.types.TomType )((Object)pType)).getTomType() .equals( (( tom.engine.adt.tomtype.types.TomType )((Object)sType)).getTomType() ) ) {tomMatch178_9= true ;}if (!(tomMatch178_9)) {
 
             return

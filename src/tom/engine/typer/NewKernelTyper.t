@@ -88,11 +88,6 @@ public class NewKernelTyper {
 
   private String currentInputFileName;
 
-  private boolean lazyType = false;
-  protected void setLazyType() {
-    lazyType = true;
-  }
-
   protected void setSymbolTable(SymbolTable symbolTable) {
     this.symbolTable = symbolTable;
   }
@@ -545,21 +540,20 @@ public class NewKernelTyper {
   /**
    * The method <code>resetVarList</code> checks if <code>varList</code> contains
    * a BQTerm which is in the <code>localVarPatternList</code> but is not in
-   * <code>varPatternList</code> (i.e. the globalVarPatternList</code>. Then,
-   * this BQTerm is removed from <code>varList</code>.
+   * <code>varPatternList</code> (i.e. the <code>globalVarPatternList</code>).
+   * Then, this BQTerm is removed from <code>varList</code>.
+   * pem: remove from varList, all variables that belong to varPatternList, which are not in localVarPatternList
    * @param localVarPatternList   the TomList to be reset
    */
   protected void resetVarList(TomList localVarPatternList) {
-    BQTermList bqTList = varList;
     for(TomTerm tTerm: varPatternList.getCollectionconcTomTerm()) {
-      %match(tTerm,localVarPatternList,bqTList) {
-        test@(Variable|VariableStar)[AstName=aName],!concTomTerm(_*,test,_*),concBQTerm(x*,(BQVariable|BQVariableStar)[AstName=aName],y*)
+      %match(tTerm,localVarPatternList,varList) {
+        test@(Variable|VariableStar)[AstName=aName], !concTomTerm(_*,test,_*), concBQTerm(x*,(BQVariable|BQVariableStar)[AstName=aName],y*)
           -> {
-            bqTList = `concBQTerm(x*,y*);
+            varList = `concBQTerm(x*,y*);
           }
       }
     }
-    varList = bqTList;
   }
 
   /**
@@ -990,8 +984,7 @@ public class NewKernelTyper {
    */
   private ConstraintInstructionList inferConstraintInstructionList(ConstraintInstructionList ciList) {
     ConstraintInstructionList newCIList = `concConstraintInstruction();
-    for (ConstraintInstruction cInst :
-        ciList.getCollectionconcConstraintInstruction()) {
+    for(ConstraintInstruction cInst:ciList.getCollectionconcConstraintInstruction()) {
       try {
         %match(cInst) {
           ConstraintInstruction(constraint,action,optionList) -> {
@@ -1025,8 +1018,7 @@ public class NewKernelTyper {
    * occurring in a condition.
    * @param nkt an instance of object NewKernelTyper
    */
-  %strategy
-    CollectVars(nkt:NewKernelTyper) extends Identity() {
+  %strategy CollectVars(nkt:NewKernelTyper) extends Identity() {
     visit TomTerm {
       var@(Variable|VariableStar)[] -> { 
         nkt.addTomTerm(`var);
@@ -1664,32 +1656,30 @@ matchBlockAdd :
    * @return            the status of the list, if errors were found or not
    */
   private boolean detectFail(TypeConstraint tConstraint) {
-    if (!lazyType) {
-      %match {
-        /* CASES 1a, 2a and 3a */
-        Equation[Type1=Type[TomType=tName1],Type2=Type[TomType=tName2@!tName1]]
-          << tConstraint && (tName1 != "unknown type") && (tName2 != "unknown type")  -> {
-            printErrorIncompatibility(`tConstraint);
-            return true;
-          }
+    %match {
+      /* CASES 1a, 2a and 3a */
+      Equation[Type1=Type[TomType=tName1],Type2=Type[TomType=tName2@!tName1]]
+        << tConstraint && (tName1 != "unknown type") && (tName2 != "unknown type")  -> {
+          printErrorIncompatibility(`tConstraint);
+          return true;
+        }
 
-        /* CASE 4a */  
-        Equation[Type1=Type[TypeOptions=tOptions1,TomType=tName1],Type2=Type[TypeOptions=tOptions2@!tOptions1,TomType=tName1]]
-          << tConstraint
-          && concTypeOption(_*,WithSymbol[RootSymbolName=rsName1],_*) << tOptions1
-          && concTypeOption(_*,WithSymbol[RootSymbolName=rsName2@!rsName1],_*) << tOptions2 -> {
-            printErrorIncompatibility(`tConstraint);
-            return true;
-          }
+      /* CASE 4a */  
+      Equation[Type1=Type[TypeOptions=tOptions1,TomType=tName1],Type2=Type[TypeOptions=tOptions2@!tOptions1,TomType=tName1]]
+        << tConstraint
+        && concTypeOption(_*,WithSymbol[RootSymbolName=rsName1],_*) << tOptions1
+        && concTypeOption(_*,WithSymbol[RootSymbolName=rsName2@!rsName1],_*) << tOptions2 -> {
+          printErrorIncompatibility(`tConstraint);
+          return true;
+        }
 
-        Subtype[Type1=t1,Type2=t2@!t1] << tConstraint -> {
-          if (!isSubtypeOf(`t1,`t2)) {
-            printErrorIncompatibility(`tConstraint);
-            return true;
-          }
+      Subtype[Type1=t1,Type2=t2@!t1] << tConstraint -> {
+        if (!isSubtypeOf(`t1,`t2)) {
+          printErrorIncompatibility(`tConstraint);
+          return true;
         }
       }
-    } 
+    }
     return false;
   }
 

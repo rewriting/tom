@@ -1,4 +1,4 @@
-// $ANTLR 3.2 Sep 23, 2009 12:02:23 /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g 2012-04-23 18:26:12
+// $ANTLR 3.2 Sep 23, 2009 12:02:23 /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g 2012-05-15 11:03:23
 
 package tom.engine.parser.antlr3;
 
@@ -390,7 +390,7 @@ public class BQTermLexer extends Lexer {
         super(input,state);
 
     }
-    public String getGrammarFileName() { return "/Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g"; }
+    public String getGrammarFileName() { return "/Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g"; }
 
     public Token nextToken() {
         while (true) {
@@ -444,11 +444,11 @@ public class BQTermLexer extends Lexer {
             int _channel = DEFAULT_TOKEN_CHANNEL;
             CommonToken FragID1=null;
 
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:25:10: ( BQ ( FragWS )* FragID ( FragWS )* LPAR )
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:25:12: BQ ( FragWS )* FragID ( FragWS )* LPAR
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:25:10: ( BQ ( FragWS )* FragID ( FragWS )* LPAR )
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:25:12: BQ ( FragWS )* FragID ( FragWS )* LPAR
             {
             mBQ(); if (state.failed) return ;
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:25:15: ( FragWS )*
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:25:15: ( FragWS )*
             loop1:
             do {
                 int alt1=2;
@@ -461,7 +461,7 @@ public class BQTermLexer extends Lexer {
 
                 switch (alt1) {
             	case 1 :
-            	    // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:25:16: FragWS
+            	    // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:25:16: FragWS
             	    {
             	    mFragWS(); if (state.failed) return ;
 
@@ -476,7 +476,7 @@ public class BQTermLexer extends Lexer {
             int FragID1Start60 = getCharIndex();
             mFragID(); if (state.failed) return ;
             FragID1 = new CommonToken(input, Token.INVALID_TOKEN_TYPE, Token.DEFAULT_CHANNEL, FragID1Start60, getCharIndex()-1);
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:25:32: ( FragWS )*
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:25:32: ( FragWS )*
             loop2:
             do {
                 int alt2=2;
@@ -489,7 +489,7 @@ public class BQTermLexer extends Lexer {
 
                 switch (alt2) {
             	case 1 :
-            	    // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:25:33: FragWS
+            	    // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:25:33: FragWS
             	    {
             	    mFragWS(); if (state.failed) return ;
 
@@ -523,11 +523,11 @@ public class BQTermLexer extends Lexer {
             int _channel = DEFAULT_TOKEN_CHANNEL;
             CommonToken FragID2=null;
 
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:30:10: ( BQ ( FragWS )* FragID ( FragWS )* '[' )
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:30:12: BQ ( FragWS )* FragID ( FragWS )* '['
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:30:10: ( BQ ( FragWS )* FragID ( FragWS )* '[' )
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:30:12: BQ ( FragWS )* FragID ( FragWS )* '['
             {
             mBQ(); if (state.failed) return ;
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:30:15: ( FragWS )*
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:30:15: ( FragWS )*
             loop3:
             do {
                 int alt3=2;
@@ -540,7 +540,7 @@ public class BQTermLexer extends Lexer {
 
                 switch (alt3) {
             	case 1 :
-            	    // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:30:16: FragWS
+            	    // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:30:16: FragWS
             	    {
             	    mFragWS(); if (state.failed) return ;
 
@@ -555,7 +555,7 @@ public class BQTermLexer extends Lexer {
             int FragID2Start93 = getCharIndex();
             mFragID(); if (state.failed) return ;
             FragID2 = new CommonToken(input, Token.INVALID_TOKEN_TYPE, Token.DEFAULT_CHANNEL, FragID2Start93, getCharIndex()-1);
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:30:32: ( FragWS )*
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:30:32: ( FragWS )*
             loop4:
             do {
                 int alt4=2;
@@ -568,7 +568,7 @@ public class BQTermLexer extends Lexer {
 
                 switch (alt4) {
             	case 1 :
-            	    // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:30:33: FragWS
+            	    // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:30:33: FragWS
             	    {
             	    mFragWS(); if (state.failed) return ;
 
@@ -602,14 +602,14 @@ public class BQTermLexer extends Lexer {
             int _channel = DEFAULT_TOKEN_CHANNEL;
             CommonToken FragID3=null;
 
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:35:10: ( BQ FragID ( FragWS )* '*' )
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:35:12: BQ FragID ( FragWS )* '*'
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:35:10: ( BQ FragID ( FragWS )* '*' )
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:35:12: BQ FragID ( FragWS )* '*'
             {
             mBQ(); if (state.failed) return ;
             int FragID3Start118 = getCharIndex();
             mFragID(); if (state.failed) return ;
             FragID3 = new CommonToken(input, Token.INVALID_TOKEN_TYPE, Token.DEFAULT_CHANNEL, FragID3Start118, getCharIndex()-1);
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:35:22: ( FragWS )*
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:35:22: ( FragWS )*
             loop5:
             do {
                 int alt5=2;
@@ -622,7 +622,7 @@ public class BQTermLexer extends Lexer {
 
                 switch (alt5) {
             	case 1 :
-            	    // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:35:23: FragWS
+            	    // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:35:23: FragWS
             	    {
             	    mFragWS(); if (state.failed) return ;
 
@@ -659,8 +659,8 @@ public class BQTermLexer extends Lexer {
             int _channel = DEFAULT_TOKEN_CHANNEL;
             CommonToken FragID4=null;
 
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:40:10: ( BQ FragID )
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:40:12: BQ FragID
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:40:10: ( BQ FragID )
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:40:12: BQ FragID
             {
             mBQ(); if (state.failed) return ;
             int FragID4Start150 = getCharIndex();
@@ -688,8 +688,8 @@ public class BQTermLexer extends Lexer {
         try {
             int _type = BQPAR;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:45:10: ( BQ LPAR )
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:45:12: BQ LPAR
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:45:10: ( BQ LPAR )
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:45:12: BQ LPAR
             {
             mBQ(); if (state.failed) return ;
             mLPAR(); if (state.failed) return ;
@@ -714,13 +714,13 @@ public class BQTermLexer extends Lexer {
             int _channel = DEFAULT_TOKEN_CHANNEL;
             CommonToken FragID5=null;
 
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:50:10: ( FragID ( FragWS )* LPAR )
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:50:12: FragID ( FragWS )* LPAR
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:50:10: ( FragID ( FragWS )* LPAR )
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:50:12: FragID ( FragWS )* LPAR
             {
             int FragID5Start194 = getCharIndex();
             mFragID(); if (state.failed) return ;
             FragID5 = new CommonToken(input, Token.INVALID_TOKEN_TYPE, Token.DEFAULT_CHANNEL, FragID5Start194, getCharIndex()-1);
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:50:19: ( FragWS )*
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:50:19: ( FragWS )*
             loop6:
             do {
                 int alt6=2;
@@ -733,7 +733,7 @@ public class BQTermLexer extends Lexer {
 
                 switch (alt6) {
             	case 1 :
-            	    // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:50:20: FragWS
+            	    // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:50:20: FragWS
             	    {
             	    mFragWS(); if (state.failed) return ;
 
@@ -767,13 +767,13 @@ public class BQTermLexer extends Lexer {
             int _channel = DEFAULT_TOKEN_CHANNEL;
             CommonToken FragID6=null;
 
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:55:10: ( FragID ( FragWS )* '[' )
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:55:12: FragID ( FragWS )* '['
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:55:10: ( FragID ( FragWS )* '[' )
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:55:12: FragID ( FragWS )* '['
             {
             int FragID6Start222 = getCharIndex();
             mFragID(); if (state.failed) return ;
             FragID6 = new CommonToken(input, Token.INVALID_TOKEN_TYPE, Token.DEFAULT_CHANNEL, FragID6Start222, getCharIndex()-1);
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:55:19: ( FragWS )*
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:55:19: ( FragWS )*
             loop7:
             do {
                 int alt7=2;
@@ -786,7 +786,7 @@ public class BQTermLexer extends Lexer {
 
                 switch (alt7) {
             	case 1 :
-            	    // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:55:20: FragWS
+            	    // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:55:20: FragWS
             	    {
             	    mFragWS(); if (state.failed) return ;
 
@@ -820,8 +820,8 @@ public class BQTermLexer extends Lexer {
             int _channel = DEFAULT_TOKEN_CHANNEL;
             CommonToken FragID7=null;
 
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:60:10: ( FragID '*' )
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:60:12: FragID '*'
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:60:10: ( FragID '*' )
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:60:12: FragID '*'
             {
             int FragID7Start247 = getCharIndex();
             mFragID(); if (state.failed) return ;
@@ -846,8 +846,8 @@ public class BQTermLexer extends Lexer {
         try {
             int _type = ID;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:65:10: ( FragID )
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:65:12: FragID
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:65:10: ( FragID )
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:65:12: FragID
             {
             mFragID(); if (state.failed) return ;
 
@@ -866,8 +866,8 @@ public class BQTermLexer extends Lexer {
         try {
             int _type = UNDERSCORE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:69:12: ( '_' )
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:69:14: '_'
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:69:12: ( '_' )
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:69:14: '_'
             {
             match('_'); if (state.failed) return ;
 
@@ -886,8 +886,8 @@ public class BQTermLexer extends Lexer {
         try {
             int _type = COMMA;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:71:8: ( ',' )
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:71:10: ','
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:71:8: ( ',' )
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:71:10: ','
             {
             match(','); if (state.failed) return ;
 
@@ -906,8 +906,8 @@ public class BQTermLexer extends Lexer {
         try {
             int _type = LPAR;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:72:8: ( '(' )
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:72:10: '('
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:72:8: ( '(' )
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:72:10: '('
             {
             match('('); if (state.failed) return ;
 
@@ -926,8 +926,8 @@ public class BQTermLexer extends Lexer {
         try {
             int _type = RPAR;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:73:8: ( ')' )
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:73:10: ')'
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:73:8: ( ')' )
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:73:10: ')'
             {
             match(')'); if (state.failed) return ;
             if ( state.backtracking==1 ) {
@@ -949,8 +949,8 @@ public class BQTermLexer extends Lexer {
         try {
             int _type = RBR;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:74:8: ( ']' )
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:74:10: ']'
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:74:8: ( ']' )
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:74:10: ']'
             {
             match(']'); if (state.failed) return ;
             if ( state.backtracking==1 ) {
@@ -972,8 +972,8 @@ public class BQTermLexer extends Lexer {
         try {
             int _type = EQUAL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:75:8: ( '=' )
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:75:10: '='
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:75:8: ( '=' )
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:75:10: '='
             {
             match('='); if (state.failed) return ;
 
@@ -990,8 +990,8 @@ public class BQTermLexer extends Lexer {
     // $ANTLR start "MINUS"
     public final void mMINUS() throws RecognitionException {
         try {
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:77:8: ( '-' )
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:77:10: '-'
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:77:8: ( '-' )
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:77:10: '-'
             {
             match('-'); if (state.failed) return ;
 
@@ -1006,8 +1006,8 @@ public class BQTermLexer extends Lexer {
     // $ANTLR start "BQ"
     public final void mBQ() throws RecognitionException {
         try {
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:84:9: ( '`' )
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:84:11: '`'
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:84:9: ( '`' )
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:84:11: '`'
             {
             match('`'); if (state.failed) return ;
 
@@ -1022,10 +1022,10 @@ public class BQTermLexer extends Lexer {
     // $ANTLR start "FragID"
     public final void mFragID() throws RecognitionException {
         try {
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:86:13: ( ( '_' )? LETTER ( LETTER | DIGIT | '_' )* )
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:86:16: ( '_' )? LETTER ( LETTER | DIGIT | '_' )*
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:86:13: ( ( '_' )? LETTER ( LETTER | DIGIT | '_' )* )
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:86:16: ( '_' )? LETTER ( LETTER | DIGIT | '_' )*
             {
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:86:16: ( '_' )?
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:86:16: ( '_' )?
             int alt8=2;
             int LA8_0 = input.LA(1);
 
@@ -1034,7 +1034,7 @@ public class BQTermLexer extends Lexer {
             }
             switch (alt8) {
                 case 1 :
-                    // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:86:17: '_'
+                    // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:86:17: '_'
                     {
                     match('_'); if (state.failed) return ;
 
@@ -1044,7 +1044,7 @@ public class BQTermLexer extends Lexer {
             }
 
             mLETTER(); if (state.failed) return ;
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:86:30: ( LETTER | DIGIT | '_' )*
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:86:30: ( LETTER | DIGIT | '_' )*
             loop9:
             do {
                 int alt9=2;
@@ -1057,7 +1057,7 @@ public class BQTermLexer extends Lexer {
 
                 switch (alt9) {
             	case 1 :
-            	    // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:
+            	    // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:
             	    {
             	    if ( (input.LA(1)>='0' && input.LA(1)<='9')||(input.LA(1)>='A' && input.LA(1)<='Z')||input.LA(1)=='_'||(input.LA(1)>='a' && input.LA(1)<='z') ) {
             	        input.consume();
@@ -1090,8 +1090,8 @@ public class BQTermLexer extends Lexer {
     // $ANTLR start "BQESC"
     public final void mBQESC() throws RecognitionException {
         try {
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:89:7: ( '\\\\' ( 'n' | 'r' | 't' | 'b' | 'f' | '\"' | '\\'' | '\\\\' ) )
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:89:9: '\\\\' ( 'n' | 'r' | 't' | 'b' | 'f' | '\"' | '\\'' | '\\\\' )
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:89:7: ( '\\\\' ( 'n' | 'r' | 't' | 'b' | 'f' | '\"' | '\\'' | '\\\\' ) )
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:89:9: '\\\\' ( 'n' | 'r' | 't' | 'b' | 'f' | '\"' | '\\'' | '\\\\' )
             {
             match('\\'); if (state.failed) return ;
             if ( input.LA(1)=='\"'||input.LA(1)=='\''||input.LA(1)=='\\'||input.LA(1)=='b'||input.LA(1)=='f'||input.LA(1)=='n'||input.LA(1)=='r'||input.LA(1)=='t' ) {
@@ -1118,11 +1118,11 @@ public class BQTermLexer extends Lexer {
         try {
             int _type = BQSTRING;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:114:10: ( '\"' ( BQESC | ~ ( '\"' | '\\\\' | '\\n' | '\\r' ) )* '\"' )
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:114:12: '\"' ( BQESC | ~ ( '\"' | '\\\\' | '\\n' | '\\r' ) )* '\"'
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:114:10: ( '\"' ( BQESC | ~ ( '\"' | '\\\\' | '\\n' | '\\r' ) )* '\"' )
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:114:12: '\"' ( BQESC | ~ ( '\"' | '\\\\' | '\\n' | '\\r' ) )* '\"'
             {
             match('\"'); if (state.failed) return ;
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:114:16: ( BQESC | ~ ( '\"' | '\\\\' | '\\n' | '\\r' ) )*
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:114:16: ( BQESC | ~ ( '\"' | '\\\\' | '\\n' | '\\r' ) )*
             loop10:
             do {
                 int alt10=3;
@@ -1138,14 +1138,14 @@ public class BQTermLexer extends Lexer {
 
                 switch (alt10) {
             	case 1 :
-            	    // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:114:17: BQESC
+            	    // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:114:17: BQESC
             	    {
             	    mBQESC(); if (state.failed) return ;
 
             	    }
             	    break;
             	case 2 :
-            	    // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:114:23: ~ ( '\"' | '\\\\' | '\\n' | '\\r' )
+            	    // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:114:23: ~ ( '\"' | '\\\\' | '\\n' | '\\r' )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='\t')||(input.LA(1)>='\u000B' && input.LA(1)<='\f')||(input.LA(1)>='\u000E' && input.LA(1)<='!')||(input.LA(1)>='#' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='\uFFFF') ) {
             	        input.consume();
@@ -1183,11 +1183,11 @@ public class BQTermLexer extends Lexer {
         try {
             int _type = BQCHAR;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:115:10: ( '\\'' (~ ( '\\'' | '\\n' | '\\r' | '\\\\' ) )+ '\\'' )
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:115:12: '\\'' (~ ( '\\'' | '\\n' | '\\r' | '\\\\' ) )+ '\\''
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:115:10: ( '\\'' (~ ( '\\'' | '\\n' | '\\r' | '\\\\' ) )+ '\\'' )
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:115:12: '\\'' (~ ( '\\'' | '\\n' | '\\r' | '\\\\' ) )+ '\\''
             {
             match('\''); if (state.failed) return ;
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:115:17: (~ ( '\\'' | '\\n' | '\\r' | '\\\\' ) )+
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:115:17: (~ ( '\\'' | '\\n' | '\\r' | '\\\\' ) )+
             int cnt11=0;
             loop11:
             do {
@@ -1201,7 +1201,7 @@ public class BQTermLexer extends Lexer {
 
                 switch (alt11) {
             	case 1 :
-            	    // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:115:18: ~ ( '\\'' | '\\n' | '\\r' | '\\\\' )
+            	    // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:115:18: ~ ( '\\'' | '\\n' | '\\r' | '\\\\' )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='\t')||(input.LA(1)>='\u000B' && input.LA(1)<='\f')||(input.LA(1)>='\u000E' && input.LA(1)<='&')||(input.LA(1)>='(' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='\uFFFF') ) {
             	        input.consume();
@@ -1242,10 +1242,10 @@ public class BQTermLexer extends Lexer {
     // $ANTLR start "INTEGER"
     public final void mINTEGER() throws RecognitionException {
         try {
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:117:10: ( ( MINUS )? ( DIGIT )+ )
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:117:12: ( MINUS )? ( DIGIT )+
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:117:10: ( ( MINUS )? ( DIGIT )+ )
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:117:12: ( MINUS )? ( DIGIT )+
             {
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:117:12: ( MINUS )?
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:117:12: ( MINUS )?
             int alt12=2;
             int LA12_0 = input.LA(1);
 
@@ -1254,7 +1254,7 @@ public class BQTermLexer extends Lexer {
             }
             switch (alt12) {
                 case 1 :
-                    // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:117:14: MINUS
+                    // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:117:14: MINUS
                     {
                     mMINUS(); if (state.failed) return ;
 
@@ -1263,7 +1263,7 @@ public class BQTermLexer extends Lexer {
 
             }
 
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:117:23: ( DIGIT )+
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:117:23: ( DIGIT )+
             int cnt13=0;
             loop13:
             do {
@@ -1277,7 +1277,7 @@ public class BQTermLexer extends Lexer {
 
                 switch (alt13) {
             	case 1 :
-            	    // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:117:25: DIGIT
+            	    // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:117:25: DIGIT
             	    {
             	    mDIGIT(); if (state.failed) return ;
 
@@ -1308,8 +1308,8 @@ public class BQTermLexer extends Lexer {
         try {
             int _type = BQDOT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:118:10: ( '.' )
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:118:12: '.'
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:118:10: ( '.' )
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:118:12: '.'
             {
             match('.'); if (state.failed) return ;
 
@@ -1328,11 +1328,11 @@ public class BQTermLexer extends Lexer {
         try {
             int _type = NUM;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:119:5: ( INTEGER ( BQDOT ( DIGIT )* )? )
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:119:7: INTEGER ( BQDOT ( DIGIT )* )?
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:119:5: ( INTEGER ( BQDOT ( DIGIT )* )? )
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:119:7: INTEGER ( BQDOT ( DIGIT )* )?
             {
             mINTEGER(); if (state.failed) return ;
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:119:15: ( BQDOT ( DIGIT )* )?
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:119:15: ( BQDOT ( DIGIT )* )?
             int alt15=2;
             int LA15_0 = input.LA(1);
 
@@ -1341,10 +1341,10 @@ public class BQTermLexer extends Lexer {
             }
             switch (alt15) {
                 case 1 :
-                    // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:119:16: BQDOT ( DIGIT )*
+                    // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:119:16: BQDOT ( DIGIT )*
                     {
                     mBQDOT(); if (state.failed) return ;
-                    // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:119:22: ( DIGIT )*
+                    // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:119:22: ( DIGIT )*
                     loop14:
                     do {
                         int alt14=2;
@@ -1357,7 +1357,7 @@ public class BQTermLexer extends Lexer {
 
                         switch (alt14) {
                     	case 1 :
-                    	    // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:119:22: DIGIT
+                    	    // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:119:22: DIGIT
                     	    {
                     	    mDIGIT(); if (state.failed) return ;
 
@@ -1389,8 +1389,8 @@ public class BQTermLexer extends Lexer {
     // $ANTLR start "LETTER"
     public final void mLETTER() throws RecognitionException {
         try {
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:122:9: ( ( 'A' .. 'Z' | 'a' .. 'z' ) )
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:122:11: ( 'A' .. 'Z' | 'a' .. 'z' )
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:122:9: ( ( 'A' .. 'Z' | 'a' .. 'z' ) )
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:122:11: ( 'A' .. 'Z' | 'a' .. 'z' )
             {
             if ( (input.LA(1)>='A' && input.LA(1)<='Z')||(input.LA(1)>='a' && input.LA(1)<='z') ) {
                 input.consume();
@@ -1414,8 +1414,8 @@ public class BQTermLexer extends Lexer {
     // $ANTLR start "DIGIT"
     public final void mDIGIT() throws RecognitionException {
         try {
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:124:9: ( '0' .. '9' )
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:124:11: '0' .. '9'
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:124:9: ( '0' .. '9' )
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:124:11: '0' .. '9'
             {
             matchRange('0','9'); if (state.failed) return ;
 
@@ -1430,8 +1430,8 @@ public class BQTermLexer extends Lexer {
     // $ANTLR start "FragWS"
     public final void mFragWS() throws RecognitionException {
         try {
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:127:13: ( ( '\\r' | '\\n' | '\\t' | ' ' ) )
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:127:15: ( '\\r' | '\\n' | '\\t' | ' ' )
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:127:13: ( ( '\\r' | '\\n' | '\\t' | ' ' ) )
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:127:15: ( '\\r' | '\\n' | '\\t' | ' ' )
             {
             if ( (input.LA(1)>='\t' && input.LA(1)<='\n')||input.LA(1)=='\r'||input.LA(1)==' ' ) {
                 input.consume();
@@ -1457,8 +1457,8 @@ public class BQTermLexer extends Lexer {
         try {
             int _type = WS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:129:4: ( FragWS )
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:130:1: FragWS
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:129:4: ( FragWS )
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:130:1: FragWS
             {
             mFragWS(); if (state.failed) return ;
             if ( state.backtracking==1 ) {
@@ -1480,12 +1480,12 @@ public class BQTermLexer extends Lexer {
         try {
             int _type = SL_COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:132:12: ( '//' (~ ( '\\n' | '\\r' ) )* ( '\\n' | '\\r' ( '\\n' )? )? )
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:132:14: '//' (~ ( '\\n' | '\\r' ) )* ( '\\n' | '\\r' ( '\\n' )? )?
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:132:12: ( '//' (~ ( '\\n' | '\\r' ) )* ( '\\n' | '\\r' ( '\\n' )? )? )
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:132:14: '//' (~ ( '\\n' | '\\r' ) )* ( '\\n' | '\\r' ( '\\n' )? )?
             {
             match("//"); if (state.failed) return ;
 
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:132:19: (~ ( '\\n' | '\\r' ) )*
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:132:19: (~ ( '\\n' | '\\r' ) )*
             loop16:
             do {
                 int alt16=2;
@@ -1498,7 +1498,7 @@ public class BQTermLexer extends Lexer {
 
                 switch (alt16) {
             	case 1 :
-            	    // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:132:20: ~ ( '\\n' | '\\r' )
+            	    // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:132:20: ~ ( '\\n' | '\\r' )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='\t')||(input.LA(1)>='\u000B' && input.LA(1)<='\f')||(input.LA(1)>='\u000E' && input.LA(1)<='\uFFFF') ) {
             	        input.consume();
@@ -1519,7 +1519,7 @@ public class BQTermLexer extends Lexer {
                 }
             } while (true);
 
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:132:35: ( '\\n' | '\\r' ( '\\n' )? )?
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:132:35: ( '\\n' | '\\r' ( '\\n' )? )?
             int alt18=3;
             int LA18_0 = input.LA(1);
 
@@ -1531,17 +1531,17 @@ public class BQTermLexer extends Lexer {
             }
             switch (alt18) {
                 case 1 :
-                    // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:132:36: '\\n'
+                    // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:132:36: '\\n'
                     {
                     match('\n'); if (state.failed) return ;
 
                     }
                     break;
                 case 2 :
-                    // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:132:41: '\\r' ( '\\n' )?
+                    // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:132:41: '\\r' ( '\\n' )?
                     {
                     match('\r'); if (state.failed) return ;
-                    // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:132:45: ( '\\n' )?
+                    // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:132:45: ( '\\n' )?
                     int alt17=2;
                     int LA17_0 = input.LA(1);
 
@@ -1550,7 +1550,7 @@ public class BQTermLexer extends Lexer {
                     }
                     switch (alt17) {
                         case 1 :
-                            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:132:46: '\\n'
+                            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:132:46: '\\n'
                             {
                             match('\n'); if (state.failed) return ;
 
@@ -1584,12 +1584,12 @@ public class BQTermLexer extends Lexer {
         try {
             int _type = ML_COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:133:12: ( '/*' ( options {greedy=false; } : . )* '*/' )
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:133:14: '/*' ( options {greedy=false; } : . )* '*/'
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:133:12: ( '/*' ( options {greedy=false; } : . )* '*/' )
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:133:14: '/*' ( options {greedy=false; } : . )* '*/'
             {
             match("/*"); if (state.failed) return ;
 
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:133:19: ( options {greedy=false; } : . )*
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:133:19: ( options {greedy=false; } : . )*
             loop19:
             do {
                 int alt19=2;
@@ -1614,7 +1614,7 @@ public class BQTermLexer extends Lexer {
 
                 switch (alt19) {
             	case 1 :
-            	    // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:133:47: .
+            	    // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:133:47: .
             	    {
             	    matchAny(); if (state.failed) return ;
 
@@ -1647,8 +1647,8 @@ public class BQTermLexer extends Lexer {
         try {
             int _type = ANY;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:135:5: ( . )
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:135:7: .
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:135:5: ( . )
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:135:7: .
             {
             matchAny(); if (state.failed) return ;
 
@@ -1663,166 +1663,166 @@ public class BQTermLexer extends Lexer {
     // $ANTLR end "ANY"
 
     public void mTokens() throws RecognitionException {
-        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:39: ( BQIDPAR | BQIDBR | BQIDSTAR | BQID | BQPAR | IDPAR | IDBR | IDSTAR | ID | UNDERSCORE | COMMA | LPAR | RPAR | RBR | EQUAL | BQSTRING | BQCHAR | BQDOT | NUM | WS | SL_COMMENT | ML_COMMENT | ANY )
+        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:39: ( BQIDPAR | BQIDBR | BQIDSTAR | BQID | BQPAR | IDPAR | IDBR | IDSTAR | ID | UNDERSCORE | COMMA | LPAR | RPAR | RBR | EQUAL | BQSTRING | BQCHAR | BQDOT | NUM | WS | SL_COMMENT | ML_COMMENT | ANY )
         int alt20=23;
         alt20 = dfa20.predict(input);
         switch (alt20) {
             case 1 :
-                // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:41: BQIDPAR
+                // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:41: BQIDPAR
                 {
                 mBQIDPAR(); if (state.failed) return ;
 
                 }
                 break;
             case 2 :
-                // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:49: BQIDBR
+                // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:49: BQIDBR
                 {
                 mBQIDBR(); if (state.failed) return ;
 
                 }
                 break;
             case 3 :
-                // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:56: BQIDSTAR
+                // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:56: BQIDSTAR
                 {
                 mBQIDSTAR(); if (state.failed) return ;
 
                 }
                 break;
             case 4 :
-                // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:65: BQID
+                // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:65: BQID
                 {
                 mBQID(); if (state.failed) return ;
 
                 }
                 break;
             case 5 :
-                // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:70: BQPAR
+                // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:70: BQPAR
                 {
                 mBQPAR(); if (state.failed) return ;
 
                 }
                 break;
             case 6 :
-                // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:76: IDPAR
+                // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:76: IDPAR
                 {
                 mIDPAR(); if (state.failed) return ;
 
                 }
                 break;
             case 7 :
-                // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:82: IDBR
+                // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:82: IDBR
                 {
                 mIDBR(); if (state.failed) return ;
 
                 }
                 break;
             case 8 :
-                // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:87: IDSTAR
+                // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:87: IDSTAR
                 {
                 mIDSTAR(); if (state.failed) return ;
 
                 }
                 break;
             case 9 :
-                // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:94: ID
+                // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:94: ID
                 {
                 mID(); if (state.failed) return ;
 
                 }
                 break;
             case 10 :
-                // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:97: UNDERSCORE
+                // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:97: UNDERSCORE
                 {
                 mUNDERSCORE(); if (state.failed) return ;
 
                 }
                 break;
             case 11 :
-                // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:108: COMMA
+                // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:108: COMMA
                 {
                 mCOMMA(); if (state.failed) return ;
 
                 }
                 break;
             case 12 :
-                // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:114: LPAR
+                // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:114: LPAR
                 {
                 mLPAR(); if (state.failed) return ;
 
                 }
                 break;
             case 13 :
-                // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:119: RPAR
+                // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:119: RPAR
                 {
                 mRPAR(); if (state.failed) return ;
 
                 }
                 break;
             case 14 :
-                // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:124: RBR
+                // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:124: RBR
                 {
                 mRBR(); if (state.failed) return ;
 
                 }
                 break;
             case 15 :
-                // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:128: EQUAL
+                // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:128: EQUAL
                 {
                 mEQUAL(); if (state.failed) return ;
 
                 }
                 break;
             case 16 :
-                // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:134: BQSTRING
+                // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:134: BQSTRING
                 {
                 mBQSTRING(); if (state.failed) return ;
 
                 }
                 break;
             case 17 :
-                // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:143: BQCHAR
+                // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:143: BQCHAR
                 {
                 mBQCHAR(); if (state.failed) return ;
 
                 }
                 break;
             case 18 :
-                // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:150: BQDOT
+                // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:150: BQDOT
                 {
                 mBQDOT(); if (state.failed) return ;
 
                 }
                 break;
             case 19 :
-                // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:156: NUM
+                // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:156: NUM
                 {
                 mNUM(); if (state.failed) return ;
 
                 }
                 break;
             case 20 :
-                // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:160: WS
+                // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:160: WS
                 {
                 mWS(); if (state.failed) return ;
 
                 }
                 break;
             case 21 :
-                // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:163: SL_COMMENT
+                // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:163: SL_COMMENT
                 {
                 mSL_COMMENT(); if (state.failed) return ;
 
                 }
                 break;
             case 22 :
-                // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:174: ML_COMMENT
+                // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:174: ML_COMMENT
                 {
                 mML_COMMENT(); if (state.failed) return ;
 
                 }
                 break;
             case 23 :
-                // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:185: ANY
+                // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:185: ANY
                 {
                 mANY(); if (state.failed) return ;
 
@@ -1835,8 +1835,8 @@ public class BQTermLexer extends Lexer {
 
     // $ANTLR start synpred1_BQTermLexer
     public final void synpred1_BQTermLexer_fragment() throws RecognitionException {   
-        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:41: ( BQIDPAR )
-        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:41: BQIDPAR
+        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:41: ( BQIDPAR )
+        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:41: BQIDPAR
         {
         mBQIDPAR(); if (state.failed) return ;
 
@@ -1846,8 +1846,8 @@ public class BQTermLexer extends Lexer {
 
     // $ANTLR start synpred2_BQTermLexer
     public final void synpred2_BQTermLexer_fragment() throws RecognitionException {   
-        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:49: ( BQIDBR )
-        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:49: BQIDBR
+        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:49: ( BQIDBR )
+        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:49: BQIDBR
         {
         mBQIDBR(); if (state.failed) return ;
 
@@ -1857,8 +1857,8 @@ public class BQTermLexer extends Lexer {
 
     // $ANTLR start synpred3_BQTermLexer
     public final void synpred3_BQTermLexer_fragment() throws RecognitionException {   
-        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:56: ( BQIDSTAR )
-        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:56: BQIDSTAR
+        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:56: ( BQIDSTAR )
+        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:56: BQIDSTAR
         {
         mBQIDSTAR(); if (state.failed) return ;
 
@@ -1868,8 +1868,8 @@ public class BQTermLexer extends Lexer {
 
     // $ANTLR start synpred4_BQTermLexer
     public final void synpred4_BQTermLexer_fragment() throws RecognitionException {   
-        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:65: ( BQID )
-        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:65: BQID
+        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:65: ( BQID )
+        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:65: BQID
         {
         mBQID(); if (state.failed) return ;
 
@@ -1879,8 +1879,8 @@ public class BQTermLexer extends Lexer {
 
     // $ANTLR start synpred5_BQTermLexer
     public final void synpred5_BQTermLexer_fragment() throws RecognitionException {   
-        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:70: ( BQPAR )
-        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:70: BQPAR
+        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:70: ( BQPAR )
+        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:70: BQPAR
         {
         mBQPAR(); if (state.failed) return ;
 
@@ -1890,8 +1890,8 @@ public class BQTermLexer extends Lexer {
 
     // $ANTLR start synpred6_BQTermLexer
     public final void synpred6_BQTermLexer_fragment() throws RecognitionException {   
-        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:76: ( IDPAR )
-        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:76: IDPAR
+        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:76: ( IDPAR )
+        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:76: IDPAR
         {
         mIDPAR(); if (state.failed) return ;
 
@@ -1901,8 +1901,8 @@ public class BQTermLexer extends Lexer {
 
     // $ANTLR start synpred7_BQTermLexer
     public final void synpred7_BQTermLexer_fragment() throws RecognitionException {   
-        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:82: ( IDBR )
-        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:82: IDBR
+        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:82: ( IDBR )
+        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:82: IDBR
         {
         mIDBR(); if (state.failed) return ;
 
@@ -1912,8 +1912,8 @@ public class BQTermLexer extends Lexer {
 
     // $ANTLR start synpred8_BQTermLexer
     public final void synpred8_BQTermLexer_fragment() throws RecognitionException {   
-        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:87: ( IDSTAR )
-        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:87: IDSTAR
+        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:87: ( IDSTAR )
+        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:87: IDSTAR
         {
         mIDSTAR(); if (state.failed) return ;
 
@@ -1923,8 +1923,8 @@ public class BQTermLexer extends Lexer {
 
     // $ANTLR start synpred9_BQTermLexer
     public final void synpred9_BQTermLexer_fragment() throws RecognitionException {   
-        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:94: ( ID )
-        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:94: ID
+        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:94: ( ID )
+        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:94: ID
         {
         mID(); if (state.failed) return ;
 
@@ -1934,8 +1934,8 @@ public class BQTermLexer extends Lexer {
 
     // $ANTLR start synpred10_BQTermLexer
     public final void synpred10_BQTermLexer_fragment() throws RecognitionException {   
-        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:97: ( UNDERSCORE )
-        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:97: UNDERSCORE
+        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:97: ( UNDERSCORE )
+        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:97: UNDERSCORE
         {
         mUNDERSCORE(); if (state.failed) return ;
 
@@ -1945,8 +1945,8 @@ public class BQTermLexer extends Lexer {
 
     // $ANTLR start synpred11_BQTermLexer
     public final void synpred11_BQTermLexer_fragment() throws RecognitionException {   
-        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:108: ( COMMA )
-        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:108: COMMA
+        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:108: ( COMMA )
+        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:108: COMMA
         {
         mCOMMA(); if (state.failed) return ;
 
@@ -1956,8 +1956,8 @@ public class BQTermLexer extends Lexer {
 
     // $ANTLR start synpred12_BQTermLexer
     public final void synpred12_BQTermLexer_fragment() throws RecognitionException {   
-        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:114: ( LPAR )
-        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:114: LPAR
+        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:114: ( LPAR )
+        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:114: LPAR
         {
         mLPAR(); if (state.failed) return ;
 
@@ -1967,8 +1967,8 @@ public class BQTermLexer extends Lexer {
 
     // $ANTLR start synpred13_BQTermLexer
     public final void synpred13_BQTermLexer_fragment() throws RecognitionException {   
-        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:119: ( RPAR )
-        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:119: RPAR
+        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:119: ( RPAR )
+        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:119: RPAR
         {
         mRPAR(); if (state.failed) return ;
 
@@ -1978,8 +1978,8 @@ public class BQTermLexer extends Lexer {
 
     // $ANTLR start synpred14_BQTermLexer
     public final void synpred14_BQTermLexer_fragment() throws RecognitionException {   
-        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:124: ( RBR )
-        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:124: RBR
+        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:124: ( RBR )
+        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:124: RBR
         {
         mRBR(); if (state.failed) return ;
 
@@ -1989,8 +1989,8 @@ public class BQTermLexer extends Lexer {
 
     // $ANTLR start synpred15_BQTermLexer
     public final void synpred15_BQTermLexer_fragment() throws RecognitionException {   
-        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:128: ( EQUAL )
-        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:128: EQUAL
+        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:128: ( EQUAL )
+        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:128: EQUAL
         {
         mEQUAL(); if (state.failed) return ;
 
@@ -2000,8 +2000,8 @@ public class BQTermLexer extends Lexer {
 
     // $ANTLR start synpred16_BQTermLexer
     public final void synpred16_BQTermLexer_fragment() throws RecognitionException {   
-        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:134: ( BQSTRING )
-        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:134: BQSTRING
+        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:134: ( BQSTRING )
+        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:134: BQSTRING
         {
         mBQSTRING(); if (state.failed) return ;
 
@@ -2011,8 +2011,8 @@ public class BQTermLexer extends Lexer {
 
     // $ANTLR start synpred17_BQTermLexer
     public final void synpred17_BQTermLexer_fragment() throws RecognitionException {   
-        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:143: ( BQCHAR )
-        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:143: BQCHAR
+        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:143: ( BQCHAR )
+        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:143: BQCHAR
         {
         mBQCHAR(); if (state.failed) return ;
 
@@ -2022,8 +2022,8 @@ public class BQTermLexer extends Lexer {
 
     // $ANTLR start synpred18_BQTermLexer
     public final void synpred18_BQTermLexer_fragment() throws RecognitionException {   
-        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:150: ( BQDOT )
-        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:150: BQDOT
+        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:150: ( BQDOT )
+        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:150: BQDOT
         {
         mBQDOT(); if (state.failed) return ;
 
@@ -2033,8 +2033,8 @@ public class BQTermLexer extends Lexer {
 
     // $ANTLR start synpred19_BQTermLexer
     public final void synpred19_BQTermLexer_fragment() throws RecognitionException {   
-        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:156: ( NUM )
-        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:156: NUM
+        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:156: ( NUM )
+        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:156: NUM
         {
         mNUM(); if (state.failed) return ;
 
@@ -2044,8 +2044,8 @@ public class BQTermLexer extends Lexer {
 
     // $ANTLR start synpred20_BQTermLexer
     public final void synpred20_BQTermLexer_fragment() throws RecognitionException {   
-        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:160: ( WS )
-        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:160: WS
+        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:160: ( WS )
+        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:160: WS
         {
         mWS(); if (state.failed) return ;
 
@@ -2055,8 +2055,8 @@ public class BQTermLexer extends Lexer {
 
     // $ANTLR start synpred21_BQTermLexer
     public final void synpred21_BQTermLexer_fragment() throws RecognitionException {   
-        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:163: ( SL_COMMENT )
-        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:163: SL_COMMENT
+        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:163: ( SL_COMMENT )
+        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:163: SL_COMMENT
         {
         mSL_COMMENT(); if (state.failed) return ;
 
@@ -2066,8 +2066,8 @@ public class BQTermLexer extends Lexer {
 
     // $ANTLR start synpred22_BQTermLexer
     public final void synpred22_BQTermLexer_fragment() throws RecognitionException {   
-        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:174: ( ML_COMMENT )
-        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g:1:174: ML_COMMENT
+        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:174: ( ML_COMMENT )
+        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTermLexer.g:1:174: ML_COMMENT
         {
         mML_COMMENT(); if (state.failed) return ;
 
@@ -2215,20 +2215,6 @@ public class BQTermLexer extends Lexer {
         state.failed=false;
         return success;
     }
-    public final boolean synpred19_BQTermLexer() {
-        state.backtracking++;
-        int start = input.mark();
-        try {
-            synpred19_BQTermLexer_fragment(); // can never throw exception
-        } catch (RecognitionException re) {
-            System.err.println("impossible: "+re);
-        }
-        boolean success = !state.failed;
-        input.rewind(start);
-        state.backtracking--;
-        state.failed=false;
-        return success;
-    }
     public final boolean synpred11_BQTermLexer() {
         state.backtracking++;
         int start = input.mark();
@@ -2243,11 +2229,25 @@ public class BQTermLexer extends Lexer {
         state.failed=false;
         return success;
     }
-    public final boolean synpred20_BQTermLexer() {
+    public final boolean synpred19_BQTermLexer() {
         state.backtracking++;
         int start = input.mark();
         try {
-            synpred20_BQTermLexer_fragment(); // can never throw exception
+            synpred19_BQTermLexer_fragment(); // can never throw exception
+        } catch (RecognitionException re) {
+            System.err.println("impossible: "+re);
+        }
+        boolean success = !state.failed;
+        input.rewind(start);
+        state.backtracking--;
+        state.failed=false;
+        return success;
+    }
+    public final boolean synpred3_BQTermLexer() {
+        state.backtracking++;
+        int start = input.mark();
+        try {
+            synpred3_BQTermLexer_fragment(); // can never throw exception
         } catch (RecognitionException re) {
             System.err.println("impossible: "+re);
         }
@@ -2271,11 +2271,11 @@ public class BQTermLexer extends Lexer {
         state.failed=false;
         return success;
     }
-    public final boolean synpred3_BQTermLexer() {
+    public final boolean synpred20_BQTermLexer() {
         state.backtracking++;
         int start = input.mark();
         try {
-            synpred3_BQTermLexer_fragment(); // can never throw exception
+            synpred20_BQTermLexer_fragment(); // can never throw exception
         } catch (RecognitionException re) {
             System.err.println("impossible: "+re);
         }
@@ -2313,11 +2313,11 @@ public class BQTermLexer extends Lexer {
         state.failed=false;
         return success;
     }
-    public final boolean synpred8_BQTermLexer() {
+    public final boolean synpred21_BQTermLexer() {
         state.backtracking++;
         int start = input.mark();
         try {
-            synpred8_BQTermLexer_fragment(); // can never throw exception
+            synpred21_BQTermLexer_fragment(); // can never throw exception
         } catch (RecognitionException re) {
             System.err.println("impossible: "+re);
         }
@@ -2327,11 +2327,11 @@ public class BQTermLexer extends Lexer {
         state.failed=false;
         return success;
     }
-    public final boolean synpred21_BQTermLexer() {
+    public final boolean synpred8_BQTermLexer() {
         state.backtracking++;
         int start = input.mark();
         try {
-            synpred21_BQTermLexer_fragment(); // can never throw exception
+            synpred8_BQTermLexer_fragment(); // can never throw exception
         } catch (RecognitionException re) {
             System.err.println("impossible: "+re);
         }
@@ -2391,40 +2391,30 @@ public class BQTermLexer extends Lexer {
     static final String DFA20_eofS =
         "\47\uffff";
     static final String DFA20_minS =
-        "\2\0\2\uffff\1\0\1\uffff\1\0\2\uffff\1\0\6\uffff\1\0\1\uffff\1\0"+
-        "\1\uffff\1\0\4\uffff\1\0\1\uffff\1\0\1\uffff\1\0\1\uffff\1\0\1\uffff"+
-        "\1\0\1\uffff\1\0\1\uffff\1\0\1\uffff";
+        "\2\0\2\uffff\1\0\1\uffff\1\0\1\uffff\1\0\1\uffff\1\0\5\uffff\1\0"+
+        "\1\uffff\1\0\1\uffff\2\0\1\uffff\1\0\2\uffff\1\0\5\uffff\1\0\2\uffff"+
+        "\1\0\1\uffff\1\0\1\uffff";
     static final String DFA20_maxS =
-        "\1\uffff\1\0\2\uffff\1\0\1\uffff\1\0\2\uffff\1\0\6\uffff\1\0\1\uffff"+
-        "\1\0\1\uffff\1\0\4\uffff\1\0\1\uffff\1\0\1\uffff\1\0\1\uffff\1\0"+
-        "\1\uffff\1\0\1\uffff\1\0\1\uffff\1\0\1\uffff";
+        "\1\uffff\1\0\2\uffff\1\0\1\uffff\1\0\1\uffff\1\0\1\uffff\1\0\5\uffff"+
+        "\1\0\1\uffff\1\0\1\uffff\2\0\1\uffff\1\0\2\uffff\1\0\5\uffff\1\0"+
+        "\2\uffff\1\0\1\uffff\1\0\1\uffff";
     static final String DFA20_acceptS =
-        "\2\uffff\1\17\1\27\1\uffff\1\21\1\uffff\1\25\1\26\1\uffff\1\1\1"+
-        "\2\1\3\1\4\1\5\1\27\1\uffff\1\15\1\uffff\1\14\1\uffff\1\6\1\7\1"+
-        "\10\1\11\1\uffff\1\13\1\uffff\1\23\1\uffff\1\22\1\uffff\1\24\1\uffff"+
-        "\1\12\1\uffff\1\16\1\uffff\1\20";
+        "\2\uffff\1\13\1\27\1\uffff\1\21\1\uffff\1\14\1\uffff\1\23\1\uffff"+
+        "\1\6\1\7\1\10\1\11\1\12\1\uffff\1\24\1\uffff\1\15\2\uffff\1\16\1"+
+        "\uffff\1\17\1\27\1\uffff\1\1\1\2\1\3\1\4\1\5\1\uffff\1\25\1\26\1"+
+        "\uffff\1\22\1\uffff\1\20";
     static final String DFA20_specialS =
-        "\1\0\1\1\2\uffff\1\2\1\uffff\1\3\2\uffff\1\4\6\uffff\1\5\1\uffff"+
-        "\1\6\1\uffff\1\7\4\uffff\1\10\1\uffff\1\11\1\uffff\1\12\1\uffff"+
-        "\1\13\1\uffff\1\14\1\uffff\1\15\1\uffff\1\16\1\uffff}>";
+        "\1\0\1\1\2\uffff\1\2\1\uffff\1\3\1\uffff\1\4\1\uffff\1\5\5\uffff"+
+        "\1\6\1\uffff\1\7\1\uffff\1\10\1\11\1\uffff\1\12\2\uffff\1\13\5\uffff"+
+        "\1\14\2\uffff\1\15\1\uffff\1\16\1\uffff}>";
     static final String[] DFA20_transitionS = {
-            "\11\17\2\37\2\17\1\37\22\17\1\37\1\17\1\45\4\17\1\4\1\22\1\20"+
-            "\2\17\1\31\1\33\1\35\1\6\12\33\3\17\1\1\3\17\32\24\2\17\1\43"+
-            "\1\17\1\41\1\11\32\24\uff85\17",
+            "\11\31\2\20\2\31\1\20\22\31\1\20\1\31\1\45\4\31\1\4\1\6\1\22"+
+            "\2\31\1\1\1\10\1\43\1\40\12\10\3\31\1\27\3\31\32\24\2\31\1\25"+
+            "\1\31\1\12\1\32\32\24\uff85\31",
             "\1\uffff",
             "",
             "",
             "\1\uffff",
-            "",
-            "\1\uffff",
-            "",
-            "",
-            "\1\uffff",
-            "",
-            "",
-            "",
-            "",
-            "",
             "",
             "\1\uffff",
             "",
@@ -2435,15 +2425,25 @@ public class BQTermLexer extends Lexer {
             "",
             "",
             "",
-            "\1\uffff",
             "",
             "\1\uffff",
             "",
             "\1\uffff",
             "",
             "\1\uffff",
+            "\1\uffff",
             "",
             "\1\uffff",
+            "",
+            "",
+            "\1\uffff",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "\1\uffff",
+            "",
             "",
             "\1\uffff",
             "",
@@ -2491,33 +2491,33 @@ public class BQTermLexer extends Lexer {
                         int LA20_0 = input.LA(1);
 
                         s = -1;
-                        if ( (LA20_0=='=') ) {s = 1;}
+                        if ( (LA20_0==',') ) {s = 1;}
 
                         else if ( (LA20_0=='\'') ) {s = 4;}
 
-                        else if ( (LA20_0=='/') ) {s = 6;}
+                        else if ( (LA20_0=='(') ) {s = 6;}
 
-                        else if ( (LA20_0=='`') ) {s = 9;}
+                        else if ( (LA20_0=='-'||(LA20_0>='0' && LA20_0<='9')) ) {s = 8;}
 
-                        else if ( ((LA20_0>='\u0000' && LA20_0<='\b')||(LA20_0>='\u000B' && LA20_0<='\f')||(LA20_0>='\u000E' && LA20_0<='\u001F')||LA20_0=='!'||(LA20_0>='#' && LA20_0<='&')||(LA20_0>='*' && LA20_0<='+')||(LA20_0>=':' && LA20_0<='<')||(LA20_0>='>' && LA20_0<='@')||(LA20_0>='[' && LA20_0<='\\')||LA20_0=='^'||(LA20_0>='{' && LA20_0<='\uFFFF')) ) {s = 15;}
+                        else if ( (LA20_0=='_') ) {s = 10;}
 
-                        else if ( (LA20_0==')') ) {s = 16;}
+                        else if ( ((LA20_0>='\t' && LA20_0<='\n')||LA20_0=='\r'||LA20_0==' ') ) {s = 16;}
 
-                        else if ( (LA20_0=='(') ) {s = 18;}
+                        else if ( (LA20_0==')') ) {s = 18;}
 
                         else if ( ((LA20_0>='A' && LA20_0<='Z')||(LA20_0>='a' && LA20_0<='z')) ) {s = 20;}
 
-                        else if ( (LA20_0==',') ) {s = 25;}
+                        else if ( (LA20_0==']') ) {s = 21;}
 
-                        else if ( (LA20_0=='-'||(LA20_0>='0' && LA20_0<='9')) ) {s = 27;}
+                        else if ( (LA20_0=='=') ) {s = 23;}
 
-                        else if ( (LA20_0=='.') ) {s = 29;}
+                        else if ( ((LA20_0>='\u0000' && LA20_0<='\b')||(LA20_0>='\u000B' && LA20_0<='\f')||(LA20_0>='\u000E' && LA20_0<='\u001F')||LA20_0=='!'||(LA20_0>='#' && LA20_0<='&')||(LA20_0>='*' && LA20_0<='+')||(LA20_0>=':' && LA20_0<='<')||(LA20_0>='>' && LA20_0<='@')||(LA20_0>='[' && LA20_0<='\\')||LA20_0=='^'||(LA20_0>='{' && LA20_0<='\uFFFF')) ) {s = 25;}
 
-                        else if ( ((LA20_0>='\t' && LA20_0<='\n')||LA20_0=='\r'||LA20_0==' ') ) {s = 31;}
+                        else if ( (LA20_0=='`') ) {s = 26;}
 
-                        else if ( (LA20_0=='_') ) {s = 33;}
+                        else if ( (LA20_0=='/') ) {s = 32;}
 
-                        else if ( (LA20_0==']') ) {s = 35;}
+                        else if ( (LA20_0=='.') ) {s = 35;}
 
                         else if ( (LA20_0=='\"') ) {s = 37;}
 
@@ -2530,7 +2530,7 @@ public class BQTermLexer extends Lexer {
                         int index20_1 = input.index();
                         input.rewind();
                         s = -1;
-                        if ( (synpred15_BQTermLexer()) ) {s = 2;}
+                        if ( (synpred11_BQTermLexer()) ) {s = 2;}
 
                         else if ( (true) ) {s = 3;}
 
@@ -2560,9 +2560,7 @@ public class BQTermLexer extends Lexer {
                         int index20_6 = input.index();
                         input.rewind();
                         s = -1;
-                        if ( (synpred21_BQTermLexer()) ) {s = 7;}
-
-                        else if ( (synpred22_BQTermLexer()) ) {s = 8;}
+                        if ( (synpred12_BQTermLexer()) ) {s = 7;}
 
                         else if ( (true) ) {s = 3;}
 
@@ -2571,160 +2569,162 @@ public class BQTermLexer extends Lexer {
                         if ( s>=0 ) return s;
                         break;
                     case 4 : 
-                        int LA20_9 = input.LA(1);
+                        int LA20_8 = input.LA(1);
 
                          
-                        int index20_9 = input.index();
+                        int index20_8 = input.index();
                         input.rewind();
                         s = -1;
-                        if ( (synpred1_BQTermLexer()) ) {s = 10;}
-
-                        else if ( (synpred2_BQTermLexer()) ) {s = 11;}
-
-                        else if ( (synpred3_BQTermLexer()) ) {s = 12;}
-
-                        else if ( (synpred4_BQTermLexer()) ) {s = 13;}
-
-                        else if ( (synpred5_BQTermLexer()) ) {s = 14;}
+                        if ( (synpred19_BQTermLexer()) ) {s = 9;}
 
                         else if ( (true) ) {s = 3;}
 
                          
-                        input.seek(index20_9);
+                        input.seek(index20_8);
                         if ( s>=0 ) return s;
                         break;
                     case 5 : 
+                        int LA20_10 = input.LA(1);
+
+                         
+                        int index20_10 = input.index();
+                        input.rewind();
+                        s = -1;
+                        if ( (synpred6_BQTermLexer()) ) {s = 11;}
+
+                        else if ( (synpred7_BQTermLexer()) ) {s = 12;}
+
+                        else if ( (synpred8_BQTermLexer()) ) {s = 13;}
+
+                        else if ( (synpred9_BQTermLexer()) ) {s = 14;}
+
+                        else if ( (synpred10_BQTermLexer()) ) {s = 15;}
+
+                        else if ( (true) ) {s = 3;}
+
+                         
+                        input.seek(index20_10);
+                        if ( s>=0 ) return s;
+                        break;
+                    case 6 : 
                         int LA20_16 = input.LA(1);
 
                          
                         int index20_16 = input.index();
                         input.rewind();
                         s = -1;
-                        if ( (synpred13_BQTermLexer()) ) {s = 17;}
+                        if ( (synpred20_BQTermLexer()) ) {s = 17;}
 
-                        else if ( (true) ) {s = 15;}
+                        else if ( (true) ) {s = 3;}
 
                          
                         input.seek(index20_16);
                         if ( s>=0 ) return s;
                         break;
-                    case 6 : 
+                    case 7 : 
                         int LA20_18 = input.LA(1);
 
                          
                         int index20_18 = input.index();
                         input.rewind();
                         s = -1;
-                        if ( (synpred12_BQTermLexer()) ) {s = 19;}
+                        if ( (synpred13_BQTermLexer()) ) {s = 19;}
 
-                        else if ( (true) ) {s = 15;}
+                        else if ( (true) ) {s = 3;}
 
                          
                         input.seek(index20_18);
                         if ( s>=0 ) return s;
                         break;
-                    case 7 : 
+                    case 8 : 
                         int LA20_20 = input.LA(1);
 
                          
                         int index20_20 = input.index();
                         input.rewind();
                         s = -1;
-                        if ( (synpred6_BQTermLexer()) ) {s = 21;}
+                        if ( (synpred6_BQTermLexer()) ) {s = 11;}
 
-                        else if ( (synpred7_BQTermLexer()) ) {s = 22;}
+                        else if ( (synpred7_BQTermLexer()) ) {s = 12;}
 
-                        else if ( (synpred8_BQTermLexer()) ) {s = 23;}
+                        else if ( (synpred8_BQTermLexer()) ) {s = 13;}
 
-                        else if ( (synpred9_BQTermLexer()) ) {s = 24;}
+                        else if ( (synpred9_BQTermLexer()) ) {s = 14;}
 
-                        else if ( (true) ) {s = 15;}
+                        else if ( (true) ) {s = 3;}
 
                          
                         input.seek(index20_20);
                         if ( s>=0 ) return s;
                         break;
-                    case 8 : 
-                        int LA20_25 = input.LA(1);
-
-                         
-                        int index20_25 = input.index();
-                        input.rewind();
-                        s = -1;
-                        if ( (synpred11_BQTermLexer()) ) {s = 26;}
-
-                        else if ( (true) ) {s = 15;}
-
-                         
-                        input.seek(index20_25);
-                        if ( s>=0 ) return s;
-                        break;
                     case 9 : 
-                        int LA20_27 = input.LA(1);
+                        int LA20_21 = input.LA(1);
 
                          
-                        int index20_27 = input.index();
+                        int index20_21 = input.index();
                         input.rewind();
                         s = -1;
-                        if ( (synpred19_BQTermLexer()) ) {s = 28;}
+                        if ( (synpred14_BQTermLexer()) ) {s = 22;}
 
-                        else if ( (true) ) {s = 15;}
+                        else if ( (true) ) {s = 3;}
 
                          
-                        input.seek(index20_27);
+                        input.seek(index20_21);
                         if ( s>=0 ) return s;
                         break;
                     case 10 : 
-                        int LA20_29 = input.LA(1);
+                        int LA20_23 = input.LA(1);
 
                          
-                        int index20_29 = input.index();
+                        int index20_23 = input.index();
                         input.rewind();
                         s = -1;
-                        if ( (synpred18_BQTermLexer()) ) {s = 30;}
+                        if ( (synpred15_BQTermLexer()) ) {s = 24;}
 
-                        else if ( (true) ) {s = 15;}
+                        else if ( (true) ) {s = 3;}
 
                          
-                        input.seek(index20_29);
+                        input.seek(index20_23);
                         if ( s>=0 ) return s;
                         break;
                     case 11 : 
-                        int LA20_31 = input.LA(1);
+                        int LA20_26 = input.LA(1);
 
                          
-                        int index20_31 = input.index();
+                        int index20_26 = input.index();
                         input.rewind();
                         s = -1;
-                        if ( (synpred20_BQTermLexer()) ) {s = 32;}
+                        if ( (synpred1_BQTermLexer()) ) {s = 27;}
 
-                        else if ( (true) ) {s = 15;}
+                        else if ( (synpred2_BQTermLexer()) ) {s = 28;}
+
+                        else if ( (synpred3_BQTermLexer()) ) {s = 29;}
+
+                        else if ( (synpred4_BQTermLexer()) ) {s = 30;}
+
+                        else if ( (synpred5_BQTermLexer()) ) {s = 31;}
+
+                        else if ( (true) ) {s = 25;}
 
                          
-                        input.seek(index20_31);
+                        input.seek(index20_26);
                         if ( s>=0 ) return s;
                         break;
                     case 12 : 
-                        int LA20_33 = input.LA(1);
+                        int LA20_32 = input.LA(1);
 
                          
-                        int index20_33 = input.index();
+                        int index20_32 = input.index();
                         input.rewind();
                         s = -1;
-                        if ( (synpred6_BQTermLexer()) ) {s = 21;}
+                        if ( (synpred21_BQTermLexer()) ) {s = 33;}
 
-                        else if ( (synpred7_BQTermLexer()) ) {s = 22;}
+                        else if ( (synpred22_BQTermLexer()) ) {s = 34;}
 
-                        else if ( (synpred8_BQTermLexer()) ) {s = 23;}
-
-                        else if ( (synpred9_BQTermLexer()) ) {s = 24;}
-
-                        else if ( (synpred10_BQTermLexer()) ) {s = 34;}
-
-                        else if ( (true) ) {s = 15;}
+                        else if ( (true) ) {s = 25;}
 
                          
-                        input.seek(index20_33);
+                        input.seek(index20_32);
                         if ( s>=0 ) return s;
                         break;
                     case 13 : 
@@ -2734,9 +2734,9 @@ public class BQTermLexer extends Lexer {
                         int index20_35 = input.index();
                         input.rewind();
                         s = -1;
-                        if ( (synpred14_BQTermLexer()) ) {s = 36;}
+                        if ( (synpred18_BQTermLexer()) ) {s = 36;}
 
-                        else if ( (true) ) {s = 15;}
+                        else if ( (true) ) {s = 25;}
 
                          
                         input.seek(index20_35);
@@ -2751,7 +2751,7 @@ public class BQTermLexer extends Lexer {
                         s = -1;
                         if ( (synpred16_BQTermLexer()) ) {s = 38;}
 
-                        else if ( (true) ) {s = 15;}
+                        else if ( (true) ) {s = 25;}
 
                          
                         input.seek(index20_37);

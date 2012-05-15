@@ -1,4 +1,4 @@
-// $ANTLR 3.2 Sep 23, 2009 12:02:23 /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g 2012-04-23 18:26:14
+// $ANTLR 3.2 Sep 23, 2009 12:02:23 /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g 2012-05-15 10:22:45
 
 package tom.engine.parser.antlr3;
 
@@ -405,7 +405,7 @@ public class BQTermParser extends Parser {
     }
 
     public String[] getTokenNames() { return BQTermParser.tokenNames; }
-    public String getGrammarFileName() { return "/Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g"; }
+    public String getGrammarFileName() { return "/Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g"; }
 
 
 
@@ -454,7 +454,7 @@ public class BQTermParser extends Parser {
     };
 
     // $ANTLR start "csBQTerm"
-    // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:65:1: csBQTerm returns [int marker] : ( BQID -> ^( Cst_BQVar BQID ^( Cst_TypeUnknown ) ) | BQPAR ( csCompositePart )* RPAR -> ^( Cst_BQComposite ^( ConcCstBQTerm ^( Cst_ITL BQPAR ) ^( Cst_BQComposite ^( ConcCstBQTerm ( csCompositePart )* ) ) ^( Cst_ITL RPAR ) ) ) | BQIDSTAR -> ^( Cst_BQVarStar BQIDSTAR ^( Cst_TypeUnknown ) ) | BQIDPAR ( csBQTermArgsComposite ( COMMA csBQTermArgsComposite )* )? RPAR -> ^( Cst_BQAppl BQIDPAR ^( ConcCstBQTerm ( csBQTermArgsComposite )* ) ) | BQIDBR ( csPairSlotBQTerm ( COMMA csPairSlotBQTerm )* )? RBR -> ^( Cst_BQRecordAppl BQIDBR ^( ConcCstPairSlotBQTerm ( csPairSlotBQTerm )* ) ) );
+    // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:65:1: csBQTerm returns [int marker] : ( BQID -> ^( Cst_BQVar BQID ^( Cst_TypeUnknown ) ) | BQPAR ( csCompositePart )* RPAR -> ^( Cst_BQComposite ^( ConcCstBQTerm ^( Cst_ITL BQPAR ) ^( Cst_BQComposite ^( ConcCstBQTerm ( csCompositePart )* ) ) ^( Cst_ITL RPAR ) ) ) | BQIDSTAR -> ^( Cst_BQVarStar BQIDSTAR ^( Cst_TypeUnknown ) ) | BQIDPAR ( csBQTermArgsComposite ( COMMA csBQTermArgsComposite )* )? RPAR -> ^( Cst_BQAppl BQIDPAR ^( ConcCstBQTerm ( csBQTermArgsComposite )* ) ) | BQIDBR ( csPairSlotBQTerm ( COMMA csPairSlotBQTerm )* )? RBR -> ^( Cst_BQRecordAppl BQIDBR ^( ConcCstPairSlotBQTerm ( csPairSlotBQTerm )* ) ) );
     public final BQTermParser.csBQTerm_return csBQTerm() throws RecognitionException {
         BQTermParser.csBQTerm_return retval = new BQTermParser.csBQTerm_return();
         retval.start = input.LT(1);
@@ -504,7 +504,7 @@ public class BQTermParser extends Parser {
         RewriteRuleSubtreeStream stream_csBQTermArgsComposite=new RewriteRuleSubtreeStream(adaptor,"rule csBQTermArgsComposite");
         RewriteRuleSubtreeStream stream_csCompositePart=new RewriteRuleSubtreeStream(adaptor,"rule csCompositePart");
         try {
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:66:22: ( BQID -> ^( Cst_BQVar BQID ^( Cst_TypeUnknown ) ) | BQPAR ( csCompositePart )* RPAR -> ^( Cst_BQComposite ^( ConcCstBQTerm ^( Cst_ITL BQPAR ) ^( Cst_BQComposite ^( ConcCstBQTerm ( csCompositePart )* ) ) ^( Cst_ITL RPAR ) ) ) | BQIDSTAR -> ^( Cst_BQVarStar BQIDSTAR ^( Cst_TypeUnknown ) ) | BQIDPAR ( csBQTermArgsComposite ( COMMA csBQTermArgsComposite )* )? RPAR -> ^( Cst_BQAppl BQIDPAR ^( ConcCstBQTerm ( csBQTermArgsComposite )* ) ) | BQIDBR ( csPairSlotBQTerm ( COMMA csPairSlotBQTerm )* )? RBR -> ^( Cst_BQRecordAppl BQIDBR ^( ConcCstPairSlotBQTerm ( csPairSlotBQTerm )* ) ) )
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:66:22: ( BQID -> ^( Cst_BQVar BQID ^( Cst_TypeUnknown ) ) | BQPAR ( csCompositePart )* RPAR -> ^( Cst_BQComposite ^( ConcCstBQTerm ^( Cst_ITL BQPAR ) ^( Cst_BQComposite ^( ConcCstBQTerm ( csCompositePart )* ) ) ^( Cst_ITL RPAR ) ) ) | BQIDSTAR -> ^( Cst_BQVarStar BQIDSTAR ^( Cst_TypeUnknown ) ) | BQIDPAR ( csBQTermArgsComposite ( COMMA csBQTermArgsComposite )* )? RPAR -> ^( Cst_BQAppl BQIDPAR ^( ConcCstBQTerm ( csBQTermArgsComposite )* ) ) | BQIDBR ( csPairSlotBQTerm ( COMMA csPairSlotBQTerm )* )? RBR -> ^( Cst_BQRecordAppl BQIDBR ^( ConcCstPairSlotBQTerm ( csPairSlotBQTerm )* ) ) )
             int alt6=5;
             switch ( input.LA(1) ) {
             case BQID:
@@ -542,7 +542,7 @@ public class BQTermParser extends Parser {
 
             switch (alt6) {
                 case 1 :
-                    // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:67:2: BQID
+                    // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:67:2: BQID
                     {
                     BQID1=(Token)match(input,BQID,FOLLOW_BQID_in_csBQTerm68); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_BQID.add(BQID1);
@@ -566,14 +566,14 @@ public class BQTermParser extends Parser {
                     root_0 = (Tree)adaptor.nil();
                     // 69:3: -> ^( Cst_BQVar BQID ^( Cst_TypeUnknown ) )
                     {
-                        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:69:6: ^( Cst_BQVar BQID ^( Cst_TypeUnknown ) )
+                        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:69:6: ^( Cst_BQVar BQID ^( Cst_TypeUnknown ) )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_BQVar, "Cst_BQVar"), root_1);
 
                         adaptor.addChild(root_1, extractOptions((CommonToken)BQID1));
                         adaptor.addChild(root_1, stream_BQID.nextNode());
-                        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:69:60: ^( Cst_TypeUnknown )
+                        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:69:60: ^( Cst_TypeUnknown )
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_TypeUnknown, "Cst_TypeUnknown"), root_2);
@@ -590,12 +590,12 @@ public class BQTermParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:71:3: BQPAR ( csCompositePart )* RPAR
+                    // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:71:3: BQPAR ( csCompositePart )* RPAR
                     {
                     BQPAR2=(Token)match(input,BQPAR,FOLLOW_BQPAR_in_csBQTerm94); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_BQPAR.add(BQPAR2);
 
-                    // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:71:9: ( csCompositePart )*
+                    // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:71:9: ( csCompositePart )*
                     loop1:
                     do {
                         int alt1=2;
@@ -608,7 +608,7 @@ public class BQTermParser extends Parser {
 
                         switch (alt1) {
                     	case 1 :
-                    	    // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:0:0: csCompositePart
+                    	    // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:0:0: csCompositePart
                     	    {
                     	    pushFollow(FOLLOW_csCompositePart_in_csBQTerm96);
                     	    csCompositePart3=csCompositePart();
@@ -634,7 +634,7 @@ public class BQTermParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: csCompositePart, RPAR, BQPAR
+                    // elements: csCompositePart, BQPAR, RPAR
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -647,18 +647,18 @@ public class BQTermParser extends Parser {
                     root_0 = (Tree)adaptor.nil();
                     // 74:3: -> ^( Cst_BQComposite ^( ConcCstBQTerm ^( Cst_ITL BQPAR ) ^( Cst_BQComposite ^( ConcCstBQTerm ( csCompositePart )* ) ) ^( Cst_ITL RPAR ) ) )
                     {
-                        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:74:6: ^( Cst_BQComposite ^( ConcCstBQTerm ^( Cst_ITL BQPAR ) ^( Cst_BQComposite ^( ConcCstBQTerm ( csCompositePart )* ) ) ^( Cst_ITL RPAR ) ) )
+                        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:74:6: ^( Cst_BQComposite ^( ConcCstBQTerm ^( Cst_ITL BQPAR ) ^( Cst_BQComposite ^( ConcCstBQTerm ( csCompositePart )* ) ) ^( Cst_ITL RPAR ) ) )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_BQComposite, "Cst_BQComposite"), root_1);
 
                         adaptor.addChild(root_1, extractOptions((CommonToken)BQPAR2, (CommonToken)RPAR4));
-                        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:76:8: ^( ConcCstBQTerm ^( Cst_ITL BQPAR ) ^( Cst_BQComposite ^( ConcCstBQTerm ( csCompositePart )* ) ) ^( Cst_ITL RPAR ) )
+                        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:76:8: ^( ConcCstBQTerm ^( Cst_ITL BQPAR ) ^( Cst_BQComposite ^( ConcCstBQTerm ( csCompositePart )* ) ) ^( Cst_ITL RPAR ) )
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConcCstBQTerm, "ConcCstBQTerm"), root_2);
 
-                        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:77:10: ^( Cst_ITL BQPAR )
+                        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:77:10: ^( Cst_ITL BQPAR )
                         {
                         Tree root_3 = (Tree)adaptor.nil();
                         root_3 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_ITL, "Cst_ITL"), root_3);
@@ -668,18 +668,18 @@ public class BQTermParser extends Parser {
 
                         adaptor.addChild(root_2, root_3);
                         }
-                        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:78:10: ^( Cst_BQComposite ^( ConcCstBQTerm ( csCompositePart )* ) )
+                        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:78:10: ^( Cst_BQComposite ^( ConcCstBQTerm ( csCompositePart )* ) )
                         {
                         Tree root_3 = (Tree)adaptor.nil();
                         root_3 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_BQComposite, "Cst_BQComposite"), root_3);
 
                         adaptor.addChild(root_3, extractOptions((CommonToken)(csCompositePart3!=null?((Token)csCompositePart3.stop):null)));
-                        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:80:12: ^( ConcCstBQTerm ( csCompositePart )* )
+                        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:80:12: ^( ConcCstBQTerm ( csCompositePart )* )
                         {
                         Tree root_4 = (Tree)adaptor.nil();
                         root_4 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConcCstBQTerm, "ConcCstBQTerm"), root_4);
 
-                        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:80:28: ( csCompositePart )*
+                        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:80:28: ( csCompositePart )*
                         while ( stream_csCompositePart.hasNext() ) {
                             adaptor.addChild(root_4, stream_csCompositePart.nextTree());
 
@@ -691,7 +691,7 @@ public class BQTermParser extends Parser {
 
                         adaptor.addChild(root_2, root_3);
                         }
-                        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:81:10: ^( Cst_ITL RPAR )
+                        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:81:10: ^( Cst_ITL RPAR )
                         {
                         Tree root_3 = (Tree)adaptor.nil();
                         root_3 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_ITL, "Cst_ITL"), root_3);
@@ -714,7 +714,7 @@ public class BQTermParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:85:3: BQIDSTAR
+                    // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:85:3: BQIDSTAR
                     {
                     BQIDSTAR5=(Token)match(input,BQIDSTAR,FOLLOW_BQIDSTAR_in_csBQTerm232); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_BQIDSTAR.add(BQIDSTAR5);
@@ -738,14 +738,14 @@ public class BQTermParser extends Parser {
                     root_0 = (Tree)adaptor.nil();
                     // 88:3: -> ^( Cst_BQVarStar BQIDSTAR ^( Cst_TypeUnknown ) )
                     {
-                        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:88:6: ^( Cst_BQVarStar BQIDSTAR ^( Cst_TypeUnknown ) )
+                        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:88:6: ^( Cst_BQVarStar BQIDSTAR ^( Cst_TypeUnknown ) )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_BQVarStar, "Cst_BQVarStar"), root_1);
 
                         adaptor.addChild(root_1, extractOptions((CommonToken)BQIDSTAR5));
                         adaptor.addChild(root_1, stream_BQIDSTAR.nextNode());
-                        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:88:72: ^( Cst_TypeUnknown )
+                        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:88:72: ^( Cst_TypeUnknown )
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_TypeUnknown, "Cst_TypeUnknown"), root_2);
@@ -762,12 +762,12 @@ public class BQTermParser extends Parser {
                     }
                     break;
                 case 4 :
-                    // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:90:3: BQIDPAR ( csBQTermArgsComposite ( COMMA csBQTermArgsComposite )* )? RPAR
+                    // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:90:3: BQIDPAR ( csBQTermArgsComposite ( COMMA csBQTermArgsComposite )* )? RPAR
                     {
                     BQIDPAR6=(Token)match(input,BQIDPAR,FOLLOW_BQIDPAR_in_csBQTerm259); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_BQIDPAR.add(BQIDPAR6);
 
-                    // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:90:11: ( csBQTermArgsComposite ( COMMA csBQTermArgsComposite )* )?
+                    // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:90:11: ( csBQTermArgsComposite ( COMMA csBQTermArgsComposite )* )?
                     int alt3=2;
                     int LA3_0 = input.LA(1);
 
@@ -776,7 +776,7 @@ public class BQTermParser extends Parser {
                     }
                     switch (alt3) {
                         case 1 :
-                            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:90:12: csBQTermArgsComposite ( COMMA csBQTermArgsComposite )*
+                            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:90:12: csBQTermArgsComposite ( COMMA csBQTermArgsComposite )*
                             {
                             pushFollow(FOLLOW_csBQTermArgsComposite_in_csBQTerm262);
                             csBQTermArgsComposite7=csBQTermArgsComposite();
@@ -784,7 +784,7 @@ public class BQTermParser extends Parser {
                             state._fsp--;
                             if (state.failed) return retval;
                             if ( state.backtracking==0 ) stream_csBQTermArgsComposite.add(csBQTermArgsComposite7.getTree());
-                            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:90:34: ( COMMA csBQTermArgsComposite )*
+                            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:90:34: ( COMMA csBQTermArgsComposite )*
                             loop2:
                             do {
                                 int alt2=2;
@@ -797,7 +797,7 @@ public class BQTermParser extends Parser {
 
                                 switch (alt2) {
                             	case 1 :
-                            	    // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:90:35: COMMA csBQTermArgsComposite
+                            	    // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:90:35: COMMA csBQTermArgsComposite
                             	    {
                             	    COMMA8=(Token)match(input,COMMA,FOLLOW_COMMA_in_csBQTerm265); if (state.failed) return retval; 
                             	    if ( state.backtracking==0 ) stream_COMMA.add(COMMA8);
@@ -845,19 +845,19 @@ public class BQTermParser extends Parser {
                     root_0 = (Tree)adaptor.nil();
                     // 93:3: -> ^( Cst_BQAppl BQIDPAR ^( ConcCstBQTerm ( csBQTermArgsComposite )* ) )
                     {
-                        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:93:6: ^( Cst_BQAppl BQIDPAR ^( ConcCstBQTerm ( csBQTermArgsComposite )* ) )
+                        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:93:6: ^( Cst_BQAppl BQIDPAR ^( ConcCstBQTerm ( csBQTermArgsComposite )* ) )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_BQAppl, "Cst_BQAppl"), root_1);
 
                         adaptor.addChild(root_1, extractOptions((CommonToken)BQIDPAR6, (CommonToken)RPAR10));
                         adaptor.addChild(root_1, stream_BQIDPAR.nextNode());
-                        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:94:15: ^( ConcCstBQTerm ( csBQTermArgsComposite )* )
+                        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:94:15: ^( ConcCstBQTerm ( csBQTermArgsComposite )* )
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConcCstBQTerm, "ConcCstBQTerm"), root_2);
 
-                        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:94:31: ( csBQTermArgsComposite )*
+                        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:94:31: ( csBQTermArgsComposite )*
                         while ( stream_csBQTermArgsComposite.hasNext() ) {
                             adaptor.addChild(root_2, stream_csBQTermArgsComposite.nextTree());
 
@@ -876,12 +876,12 @@ public class BQTermParser extends Parser {
                     }
                     break;
                 case 5 :
-                    // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:96:3: BQIDBR ( csPairSlotBQTerm ( COMMA csPairSlotBQTerm )* )? RBR
+                    // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:96:3: BQIDBR ( csPairSlotBQTerm ( COMMA csPairSlotBQTerm )* )? RBR
                     {
                     BQIDBR11=(Token)match(input,BQIDBR,FOLLOW_BQIDBR_in_csBQTerm309); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_BQIDBR.add(BQIDBR11);
 
-                    // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:96:10: ( csPairSlotBQTerm ( COMMA csPairSlotBQTerm )* )?
+                    // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:96:10: ( csPairSlotBQTerm ( COMMA csPairSlotBQTerm )* )?
                     int alt5=2;
                     int LA5_0 = input.LA(1);
 
@@ -890,7 +890,7 @@ public class BQTermParser extends Parser {
                     }
                     switch (alt5) {
                         case 1 :
-                            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:96:11: csPairSlotBQTerm ( COMMA csPairSlotBQTerm )*
+                            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:96:11: csPairSlotBQTerm ( COMMA csPairSlotBQTerm )*
                             {
                             pushFollow(FOLLOW_csPairSlotBQTerm_in_csBQTerm312);
                             csPairSlotBQTerm12=csPairSlotBQTerm();
@@ -898,7 +898,7 @@ public class BQTermParser extends Parser {
                             state._fsp--;
                             if (state.failed) return retval;
                             if ( state.backtracking==0 ) stream_csPairSlotBQTerm.add(csPairSlotBQTerm12.getTree());
-                            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:96:28: ( COMMA csPairSlotBQTerm )*
+                            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:96:28: ( COMMA csPairSlotBQTerm )*
                             loop4:
                             do {
                                 int alt4=2;
@@ -911,7 +911,7 @@ public class BQTermParser extends Parser {
 
                                 switch (alt4) {
                             	case 1 :
-                            	    // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:96:29: COMMA csPairSlotBQTerm
+                            	    // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:96:29: COMMA csPairSlotBQTerm
                             	    {
                             	    COMMA13=(Token)match(input,COMMA,FOLLOW_COMMA_in_csBQTerm315); if (state.failed) return retval; 
                             	    if ( state.backtracking==0 ) stream_COMMA.add(COMMA13);
@@ -946,7 +946,7 @@ public class BQTermParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: BQIDBR, csPairSlotBQTerm
+                    // elements: csPairSlotBQTerm, BQIDBR
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -959,19 +959,19 @@ public class BQTermParser extends Parser {
                     root_0 = (Tree)adaptor.nil();
                     // 99:3: -> ^( Cst_BQRecordAppl BQIDBR ^( ConcCstPairSlotBQTerm ( csPairSlotBQTerm )* ) )
                     {
-                        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:99:6: ^( Cst_BQRecordAppl BQIDBR ^( ConcCstPairSlotBQTerm ( csPairSlotBQTerm )* ) )
+                        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:99:6: ^( Cst_BQRecordAppl BQIDBR ^( ConcCstPairSlotBQTerm ( csPairSlotBQTerm )* ) )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_BQRecordAppl, "Cst_BQRecordAppl"), root_1);
 
                         adaptor.addChild(root_1, extractOptions((CommonToken)BQIDBR11, (CommonToken)RBR15));
                         adaptor.addChild(root_1, stream_BQIDBR.nextNode());
-                        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:100:14: ^( ConcCstPairSlotBQTerm ( csPairSlotBQTerm )* )
+                        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:100:14: ^( ConcCstPairSlotBQTerm ( csPairSlotBQTerm )* )
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConcCstPairSlotBQTerm, "ConcCstPairSlotBQTerm"), root_2);
 
-                        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:100:38: ( csPairSlotBQTerm )*
+                        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:100:38: ( csPairSlotBQTerm )*
                         while ( stream_csPairSlotBQTerm.hasNext() ) {
                             adaptor.addChild(root_2, stream_csPairSlotBQTerm.nextTree());
 
@@ -1017,7 +1017,7 @@ public class BQTermParser extends Parser {
     };
 
     // $ANTLR start "csBQTermArgs"
-    // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:103:1: csBQTermArgs[ boolean compositeAllowed] : ( UNDERSCORE -> ^( Cst_BQDefault ) | IDSTAR -> ^( Cst_BQVarStar IDSTAR ^( Cst_TypeUnknown ) ) | ID {...}? => (c= csCompositePart )* -> {c==null}? ^( Cst_BQVar ID ^( Cst_TypeUnknown ) ) -> ^( Cst_BQComposite ^( ConcCstBQTerm ^( Cst_BQVar ID ^( Cst_TypeUnknown ) ) ( csCompositePart )* ) ) | LPAR ID RPAR {...}? => (c= csCompositePart )* -> {c==null}? ^( Cst_BQVar ID ^( Cst_TypeUnknown ) ) -> ^( Cst_BQComposite ^( ConcCstBQTerm ^( Cst_ITL LPAR ) ^( Cst_BQVar ID ^( Cst_TypeUnknown ) ) ^( Cst_ITL RPAR ) ( csCompositePart )* ) ) | IDPAR ( csBQTermArgsComposite ( COMMA csBQTermArgsComposite )* )? RPAR -> ^( Cst_BQAppl IDPAR ^( ConcCstBQTerm ( csBQTermArgsComposite )* ) ) | IDBR ( csPairSlotBQTerm ( COMMA csPairSlotBQTerm )* )? RBR -> ^( Cst_BQRecordAppl IDBR ^( ConcCstPairSlotBQTerm ( csPairSlotBQTerm )* ) ) | csTL );
+    // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:103:1: csBQTermArgs[ boolean compositeAllowed] : ( UNDERSCORE -> ^( Cst_BQDefault ) | IDSTAR -> ^( Cst_BQVarStar IDSTAR ^( Cst_TypeUnknown ) ) | ID {...}? => (c= csCompositePart )* -> {c==null}? ^( Cst_BQVar ID ^( Cst_TypeUnknown ) ) -> ^( Cst_BQComposite ^( ConcCstBQTerm ^( Cst_BQVar ID ^( Cst_TypeUnknown ) ) ( csCompositePart )* ) ) | LPAR csBQTermArgs[true] RPAR {...}? => (c= csCompositePart )* -> {c==null}? csBQTermArgs -> ^( Cst_BQComposite ^( ConcCstBQTerm ^( Cst_ITL LPAR ) csBQTermArgs ^( Cst_ITL RPAR ) ( csCompositePart )* ) ) | IDPAR ( csBQTermArgsComposite ( COMMA csBQTermArgsComposite )* )? RPAR -> ^( Cst_BQAppl IDPAR ^( ConcCstBQTerm ( csBQTermArgsComposite )* ) ) | IDBR ( csPairSlotBQTerm ( COMMA csPairSlotBQTerm )* )? RBR -> ^( Cst_BQRecordAppl IDBR ^( ConcCstPairSlotBQTerm ( csPairSlotBQTerm )* ) ) | csTL );
     public final BQTermParser.csBQTermArgs_return csBQTermArgs(boolean compositeAllowed) throws RecognitionException {
         BQTermParser.csBQTermArgs_return retval = new BQTermParser.csBQTermArgs_return();
         retval.start = input.LT(1);
@@ -1028,7 +1028,6 @@ public class BQTermParser extends Parser {
         Token IDSTAR17=null;
         Token ID18=null;
         Token LPAR19=null;
-        Token ID20=null;
         Token RPAR21=null;
         Token IDPAR22=null;
         Token COMMA24=null;
@@ -1037,6 +1036,8 @@ public class BQTermParser extends Parser {
         Token COMMA29=null;
         Token RBR31=null;
         BQTermParser.csCompositePart_return c = null;
+
+        BQTermParser.csBQTermArgs_return csBQTermArgs20 = null;
 
         BQTermParser.csBQTermArgsComposite_return csBQTermArgsComposite23 = null;
 
@@ -1053,7 +1054,6 @@ public class BQTermParser extends Parser {
         Tree IDSTAR17_tree=null;
         Tree ID18_tree=null;
         Tree LPAR19_tree=null;
-        Tree ID20_tree=null;
         Tree RPAR21_tree=null;
         Tree IDPAR22_tree=null;
         Tree COMMA24_tree=null;
@@ -1072,9 +1072,10 @@ public class BQTermParser extends Parser {
         RewriteRuleTokenStream stream_IDSTAR=new RewriteRuleTokenStream(adaptor,"token IDSTAR");
         RewriteRuleSubtreeStream stream_csPairSlotBQTerm=new RewriteRuleSubtreeStream(adaptor,"rule csPairSlotBQTerm");
         RewriteRuleSubtreeStream stream_csBQTermArgsComposite=new RewriteRuleSubtreeStream(adaptor,"rule csBQTermArgsComposite");
+        RewriteRuleSubtreeStream stream_csBQTermArgs=new RewriteRuleSubtreeStream(adaptor,"rule csBQTermArgs");
         RewriteRuleSubtreeStream stream_csCompositePart=new RewriteRuleSubtreeStream(adaptor,"rule csCompositePart");
         try {
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:103:42: ( UNDERSCORE -> ^( Cst_BQDefault ) | IDSTAR -> ^( Cst_BQVarStar IDSTAR ^( Cst_TypeUnknown ) ) | ID {...}? => (c= csCompositePart )* -> {c==null}? ^( Cst_BQVar ID ^( Cst_TypeUnknown ) ) -> ^( Cst_BQComposite ^( ConcCstBQTerm ^( Cst_BQVar ID ^( Cst_TypeUnknown ) ) ( csCompositePart )* ) ) | LPAR ID RPAR {...}? => (c= csCompositePart )* -> {c==null}? ^( Cst_BQVar ID ^( Cst_TypeUnknown ) ) -> ^( Cst_BQComposite ^( ConcCstBQTerm ^( Cst_ITL LPAR ) ^( Cst_BQVar ID ^( Cst_TypeUnknown ) ) ^( Cst_ITL RPAR ) ( csCompositePart )* ) ) | IDPAR ( csBQTermArgsComposite ( COMMA csBQTermArgsComposite )* )? RPAR -> ^( Cst_BQAppl IDPAR ^( ConcCstBQTerm ( csBQTermArgsComposite )* ) ) | IDBR ( csPairSlotBQTerm ( COMMA csPairSlotBQTerm )* )? RBR -> ^( Cst_BQRecordAppl IDBR ^( ConcCstPairSlotBQTerm ( csPairSlotBQTerm )* ) ) | csTL )
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:103:42: ( UNDERSCORE -> ^( Cst_BQDefault ) | IDSTAR -> ^( Cst_BQVarStar IDSTAR ^( Cst_TypeUnknown ) ) | ID {...}? => (c= csCompositePart )* -> {c==null}? ^( Cst_BQVar ID ^( Cst_TypeUnknown ) ) -> ^( Cst_BQComposite ^( ConcCstBQTerm ^( Cst_BQVar ID ^( Cst_TypeUnknown ) ) ( csCompositePart )* ) ) | LPAR csBQTermArgs[true] RPAR {...}? => (c= csCompositePart )* -> {c==null}? csBQTermArgs -> ^( Cst_BQComposite ^( ConcCstBQTerm ^( Cst_ITL LPAR ) csBQTermArgs ^( Cst_ITL RPAR ) ( csCompositePart )* ) ) | IDPAR ( csBQTermArgsComposite ( COMMA csBQTermArgsComposite )* )? RPAR -> ^( Cst_BQAppl IDPAR ^( ConcCstBQTerm ( csBQTermArgsComposite )* ) ) | IDBR ( csPairSlotBQTerm ( COMMA csPairSlotBQTerm )* )? RBR -> ^( Cst_BQRecordAppl IDBR ^( ConcCstPairSlotBQTerm ( csPairSlotBQTerm )* ) ) | csTL )
             int alt13=7;
             switch ( input.LA(1) ) {
             case UNDERSCORE:
@@ -1126,7 +1127,7 @@ public class BQTermParser extends Parser {
 
             switch (alt13) {
                 case 1 :
-                    // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:104:3: UNDERSCORE
+                    // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:104:3: UNDERSCORE
                     {
                     UNDERSCORE16=(Token)match(input,UNDERSCORE,FOLLOW_UNDERSCORE_in_csBQTermArgs370); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_UNDERSCORE.add(UNDERSCORE16);
@@ -1147,7 +1148,7 @@ public class BQTermParser extends Parser {
                     root_0 = (Tree)adaptor.nil();
                     // 104:14: -> ^( Cst_BQDefault )
                     {
-                        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:104:17: ^( Cst_BQDefault )
+                        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:104:17: ^( Cst_BQDefault )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_BQDefault, "Cst_BQDefault"), root_1);
@@ -1163,7 +1164,7 @@ public class BQTermParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:105:5: IDSTAR
+                    // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:105:5: IDSTAR
                     {
                     IDSTAR17=(Token)match(input,IDSTAR,FOLLOW_IDSTAR_in_csBQTermArgs384); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_IDSTAR.add(IDSTAR17);
@@ -1184,14 +1185,14 @@ public class BQTermParser extends Parser {
                     root_0 = (Tree)adaptor.nil();
                     // 105:12: -> ^( Cst_BQVarStar IDSTAR ^( Cst_TypeUnknown ) )
                     {
-                        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:105:15: ^( Cst_BQVarStar IDSTAR ^( Cst_TypeUnknown ) )
+                        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:105:15: ^( Cst_BQVarStar IDSTAR ^( Cst_TypeUnknown ) )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_BQVarStar, "Cst_BQVarStar"), root_1);
 
                         adaptor.addChild(root_1, extractOptions((CommonToken)IDSTAR17));
                         adaptor.addChild(root_1, stream_IDSTAR.nextNode());
-                        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:105:77: ^( Cst_TypeUnknown )
+                        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:105:77: ^( Cst_TypeUnknown )
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_TypeUnknown, "Cst_TypeUnknown"), root_2);
@@ -1208,7 +1209,7 @@ public class BQTermParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:106:5: ID {...}? => (c= csCompositePart )*
+                    // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:106:5: ID {...}? => (c= csCompositePart )*
                     {
                     ID18=(Token)match(input,ID,FOLLOW_ID_in_csBQTermArgs405); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_ID.add(ID18);
@@ -1217,14 +1218,14 @@ public class BQTermParser extends Parser {
                         if (state.backtracking>0) {state.failed=true; return retval;}
                         throw new FailedPredicateException(input, "csBQTermArgs", "$compositeAllowed");
                     }
-                    // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:106:32: (c= csCompositePart )*
+                    // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:106:32: (c= csCompositePart )*
                     loop7:
                     do {
                         int alt7=2;
                         alt7 = dfa7.predict(input);
                         switch (alt7) {
                     	case 1 :
-                    	    // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:0:0: c= csCompositePart
+                    	    // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:0:0: c= csCompositePart
                     	    {
                     	    pushFollow(FOLLOW_csCompositePart_in_csBQTermArgs412);
                     	    c=csCompositePart();
@@ -1244,7 +1245,7 @@ public class BQTermParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: ID, ID, csCompositePart
+                    // elements: csCompositePart, ID, ID
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -1257,14 +1258,14 @@ public class BQTermParser extends Parser {
                     root_0 = (Tree)adaptor.nil();
                     // 107:5: -> {c==null}? ^( Cst_BQVar ID ^( Cst_TypeUnknown ) )
                     if (c==null) {
-                        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:107:19: ^( Cst_BQVar ID ^( Cst_TypeUnknown ) )
+                        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:107:19: ^( Cst_BQVar ID ^( Cst_TypeUnknown ) )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_BQVar, "Cst_BQVar"), root_1);
 
                         adaptor.addChild(root_1, extractOptions((CommonToken)ID18));
                         adaptor.addChild(root_1, stream_ID.nextNode());
-                        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:108:12: ^( Cst_TypeUnknown )
+                        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:108:12: ^( Cst_TypeUnknown )
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_TypeUnknown, "Cst_TypeUnknown"), root_2);
@@ -1278,25 +1279,25 @@ public class BQTermParser extends Parser {
                     }
                     else // 109:5: -> ^( Cst_BQComposite ^( ConcCstBQTerm ^( Cst_BQVar ID ^( Cst_TypeUnknown ) ) ( csCompositePart )* ) )
                     {
-                        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:109:8: ^( Cst_BQComposite ^( ConcCstBQTerm ^( Cst_BQVar ID ^( Cst_TypeUnknown ) ) ( csCompositePart )* ) )
+                        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:109:8: ^( Cst_BQComposite ^( ConcCstBQTerm ^( Cst_BQVar ID ^( Cst_TypeUnknown ) ) ( csCompositePart )* ) )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_BQComposite, "Cst_BQComposite"), root_1);
 
                         adaptor.addChild(root_1, extractOptions((CommonToken)ID18));
-                        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:111:10: ^( ConcCstBQTerm ^( Cst_BQVar ID ^( Cst_TypeUnknown ) ) ( csCompositePart )* )
+                        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:111:10: ^( ConcCstBQTerm ^( Cst_BQVar ID ^( Cst_TypeUnknown ) ) ( csCompositePart )* )
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConcCstBQTerm, "ConcCstBQTerm"), root_2);
 
-                        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:112:12: ^( Cst_BQVar ID ^( Cst_TypeUnknown ) )
+                        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:112:12: ^( Cst_BQVar ID ^( Cst_TypeUnknown ) )
                         {
                         Tree root_3 = (Tree)adaptor.nil();
                         root_3 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_BQVar, "Cst_BQVar"), root_3);
 
                         adaptor.addChild(root_3, extractOptions((CommonToken)ID18));
                         adaptor.addChild(root_3, stream_ID.nextNode());
-                        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:113:17: ^( Cst_TypeUnknown )
+                        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:113:17: ^( Cst_TypeUnknown )
                         {
                         Tree root_4 = (Tree)adaptor.nil();
                         root_4 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_TypeUnknown, "Cst_TypeUnknown"), root_4);
@@ -1306,7 +1307,7 @@ public class BQTermParser extends Parser {
 
                         adaptor.addChild(root_2, root_3);
                         }
-                        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:113:38: ( csCompositePart )*
+                        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:113:38: ( csCompositePart )*
                         while ( stream_csCompositePart.hasNext() ) {
                             adaptor.addChild(root_2, stream_csCompositePart.nextTree());
 
@@ -1325,31 +1326,34 @@ public class BQTermParser extends Parser {
                     }
                     break;
                 case 4 :
-                    // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:116:5: LPAR ID RPAR {...}? => (c= csCompositePart )*
+                    // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:116:5: LPAR csBQTermArgs[true] RPAR {...}? => (c= csCompositePart )*
                     {
                     LPAR19=(Token)match(input,LPAR,FOLLOW_LPAR_in_csBQTermArgs543); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_LPAR.add(LPAR19);
 
-                    ID20=(Token)match(input,ID,FOLLOW_ID_in_csBQTermArgs545); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_ID.add(ID20);
+                    pushFollow(FOLLOW_csBQTermArgs_in_csBQTermArgs545);
+                    csBQTermArgs20=csBQTermArgs(true);
 
-                    RPAR21=(Token)match(input,RPAR,FOLLOW_RPAR_in_csBQTermArgs547); if (state.failed) return retval; 
+                    state._fsp--;
+                    if (state.failed) return retval;
+                    if ( state.backtracking==0 ) stream_csBQTermArgs.add(csBQTermArgs20.getTree());
+                    RPAR21=(Token)match(input,RPAR,FOLLOW_RPAR_in_csBQTermArgs548); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_RPAR.add(RPAR21);
 
                     if ( !((compositeAllowed)) ) {
                         if (state.backtracking>0) {state.failed=true; return retval;}
                         throw new FailedPredicateException(input, "csBQTermArgs", "$compositeAllowed");
                     }
-                    // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:116:42: (c= csCompositePart )*
+                    // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:116:58: (c= csCompositePart )*
                     loop8:
                     do {
                         int alt8=2;
                         alt8 = dfa8.predict(input);
                         switch (alt8) {
                     	case 1 :
-                    	    // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:0:0: c= csCompositePart
+                    	    // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:0:0: c= csCompositePart
                     	    {
-                    	    pushFollow(FOLLOW_csCompositePart_in_csBQTermArgs554);
+                    	    pushFollow(FOLLOW_csCompositePart_in_csBQTermArgs555);
                     	    c=csCompositePart();
 
                     	    state._fsp--;
@@ -1367,7 +1371,7 @@ public class BQTermParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: ID, ID, RPAR, LPAR, csCompositePart
+                    // elements: RPAR, csBQTermArgs, csBQTermArgs, LPAR, csCompositePart
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -1378,41 +1382,25 @@ public class BQTermParser extends Parser {
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
                     root_0 = (Tree)adaptor.nil();
-                    // 117:5: -> {c==null}? ^( Cst_BQVar ID ^( Cst_TypeUnknown ) )
+                    // 117:5: -> {c==null}? csBQTermArgs
                     if (c==null) {
-                        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:117:19: ^( Cst_BQVar ID ^( Cst_TypeUnknown ) )
-                        {
-                        Tree root_1 = (Tree)adaptor.nil();
-                        root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_BQVar, "Cst_BQVar"), root_1);
-
-                        adaptor.addChild(root_1, extractOptions((CommonToken)ID20));
-                        adaptor.addChild(root_1, stream_ID.nextNode());
-                        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:118:12: ^( Cst_TypeUnknown )
-                        {
-                        Tree root_2 = (Tree)adaptor.nil();
-                        root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_TypeUnknown, "Cst_TypeUnknown"), root_2);
-
-                        adaptor.addChild(root_1, root_2);
-                        }
-
-                        adaptor.addChild(root_0, root_1);
-                        }
+                        adaptor.addChild(root_0, stream_csBQTermArgs.nextTree());
 
                     }
-                    else // 119:5: -> ^( Cst_BQComposite ^( ConcCstBQTerm ^( Cst_ITL LPAR ) ^( Cst_BQVar ID ^( Cst_TypeUnknown ) ) ^( Cst_ITL RPAR ) ( csCompositePart )* ) )
+                    else // 118:5: -> ^( Cst_BQComposite ^( ConcCstBQTerm ^( Cst_ITL LPAR ) csBQTermArgs ^( Cst_ITL RPAR ) ( csCompositePart )* ) )
                     {
-                        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:119:8: ^( Cst_BQComposite ^( ConcCstBQTerm ^( Cst_ITL LPAR ) ^( Cst_BQVar ID ^( Cst_TypeUnknown ) ) ^( Cst_ITL RPAR ) ( csCompositePart )* ) )
+                        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:118:8: ^( Cst_BQComposite ^( ConcCstBQTerm ^( Cst_ITL LPAR ) csBQTermArgs ^( Cst_ITL RPAR ) ( csCompositePart )* ) )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_BQComposite, "Cst_BQComposite"), root_1);
 
                         adaptor.addChild(root_1, extractOptions((CommonToken)LPAR19, (CommonToken)RPAR21));
-                        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:121:10: ^( ConcCstBQTerm ^( Cst_ITL LPAR ) ^( Cst_BQVar ID ^( Cst_TypeUnknown ) ) ^( Cst_ITL RPAR ) ( csCompositePart )* )
+                        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:120:10: ^( ConcCstBQTerm ^( Cst_ITL LPAR ) csBQTermArgs ^( Cst_ITL RPAR ) ( csCompositePart )* )
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConcCstBQTerm, "ConcCstBQTerm"), root_2);
 
-                        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:122:12: ^( Cst_ITL LPAR )
+                        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:121:12: ^( Cst_ITL LPAR )
                         {
                         Tree root_3 = (Tree)adaptor.nil();
                         root_3 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_ITL, "Cst_ITL"), root_3);
@@ -1422,24 +1410,8 @@ public class BQTermParser extends Parser {
 
                         adaptor.addChild(root_2, root_3);
                         }
-                        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:123:12: ^( Cst_BQVar ID ^( Cst_TypeUnknown ) )
-                        {
-                        Tree root_3 = (Tree)adaptor.nil();
-                        root_3 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_BQVar, "Cst_BQVar"), root_3);
-
-                        adaptor.addChild(root_3, extractOptions((CommonToken)ID20));
-                        adaptor.addChild(root_3, stream_ID.nextNode());
-                        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:124:17: ^( Cst_TypeUnknown )
-                        {
-                        Tree root_4 = (Tree)adaptor.nil();
-                        root_4 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_TypeUnknown, "Cst_TypeUnknown"), root_4);
-
-                        adaptor.addChild(root_3, root_4);
-                        }
-
-                        adaptor.addChild(root_2, root_3);
-                        }
-                        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:125:12: ^( Cst_ITL RPAR )
+                        adaptor.addChild(root_2, stream_csBQTermArgs.nextTree());
+                        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:123:12: ^( Cst_ITL RPAR )
                         {
                         Tree root_3 = (Tree)adaptor.nil();
                         root_3 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_ITL, "Cst_ITL"), root_3);
@@ -1449,7 +1421,7 @@ public class BQTermParser extends Parser {
 
                         adaptor.addChild(root_2, root_3);
                         }
-                        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:126:12: ( csCompositePart )*
+                        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:124:12: ( csCompositePart )*
                         while ( stream_csCompositePart.hasNext() ) {
                             adaptor.addChild(root_2, stream_csCompositePart.nextTree());
 
@@ -1468,12 +1440,12 @@ public class BQTermParser extends Parser {
                     }
                     break;
                 case 5 :
-                    // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:130:5: IDPAR ( csBQTermArgsComposite ( COMMA csBQTermArgsComposite )* )? RPAR
+                    // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:128:5: IDPAR ( csBQTermArgsComposite ( COMMA csBQTermArgsComposite )* )? RPAR
                     {
-                    IDPAR22=(Token)match(input,IDPAR,FOLLOW_IDPAR_in_csBQTermArgs734); if (state.failed) return retval; 
+                    IDPAR22=(Token)match(input,IDPAR,FOLLOW_IDPAR_in_csBQTermArgs692); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_IDPAR.add(IDPAR22);
 
-                    // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:130:11: ( csBQTermArgsComposite ( COMMA csBQTermArgsComposite )* )?
+                    // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:128:11: ( csBQTermArgsComposite ( COMMA csBQTermArgsComposite )* )?
                     int alt10=2;
                     int LA10_0 = input.LA(1);
 
@@ -1482,15 +1454,15 @@ public class BQTermParser extends Parser {
                     }
                     switch (alt10) {
                         case 1 :
-                            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:130:12: csBQTermArgsComposite ( COMMA csBQTermArgsComposite )*
+                            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:128:12: csBQTermArgsComposite ( COMMA csBQTermArgsComposite )*
                             {
-                            pushFollow(FOLLOW_csBQTermArgsComposite_in_csBQTermArgs737);
+                            pushFollow(FOLLOW_csBQTermArgsComposite_in_csBQTermArgs695);
                             csBQTermArgsComposite23=csBQTermArgsComposite();
 
                             state._fsp--;
                             if (state.failed) return retval;
                             if ( state.backtracking==0 ) stream_csBQTermArgsComposite.add(csBQTermArgsComposite23.getTree());
-                            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:130:34: ( COMMA csBQTermArgsComposite )*
+                            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:128:34: ( COMMA csBQTermArgsComposite )*
                             loop9:
                             do {
                                 int alt9=2;
@@ -1503,12 +1475,12 @@ public class BQTermParser extends Parser {
 
                                 switch (alt9) {
                             	case 1 :
-                            	    // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:130:35: COMMA csBQTermArgsComposite
+                            	    // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:128:35: COMMA csBQTermArgsComposite
                             	    {
-                            	    COMMA24=(Token)match(input,COMMA,FOLLOW_COMMA_in_csBQTermArgs740); if (state.failed) return retval; 
+                            	    COMMA24=(Token)match(input,COMMA,FOLLOW_COMMA_in_csBQTermArgs698); if (state.failed) return retval; 
                             	    if ( state.backtracking==0 ) stream_COMMA.add(COMMA24);
 
-                            	    pushFollow(FOLLOW_csBQTermArgsComposite_in_csBQTermArgs742);
+                            	    pushFollow(FOLLOW_csBQTermArgsComposite_in_csBQTermArgs700);
                             	    csBQTermArgsComposite25=csBQTermArgsComposite();
 
                             	    state._fsp--;
@@ -1529,7 +1501,7 @@ public class BQTermParser extends Parser {
 
                     }
 
-                    RPAR26=(Token)match(input,RPAR,FOLLOW_RPAR_in_csBQTermArgs748); if (state.failed) return retval; 
+                    RPAR26=(Token)match(input,RPAR,FOLLOW_RPAR_in_csBQTermArgs706); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_RPAR.add(RPAR26);
 
 
@@ -1546,21 +1518,21 @@ public class BQTermParser extends Parser {
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
                     root_0 = (Tree)adaptor.nil();
-                    // 131:5: -> ^( Cst_BQAppl IDPAR ^( ConcCstBQTerm ( csBQTermArgsComposite )* ) )
+                    // 129:5: -> ^( Cst_BQAppl IDPAR ^( ConcCstBQTerm ( csBQTermArgsComposite )* ) )
                     {
-                        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:131:8: ^( Cst_BQAppl IDPAR ^( ConcCstBQTerm ( csBQTermArgsComposite )* ) )
+                        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:129:8: ^( Cst_BQAppl IDPAR ^( ConcCstBQTerm ( csBQTermArgsComposite )* ) )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_BQAppl, "Cst_BQAppl"), root_1);
 
                         adaptor.addChild(root_1, extractOptions((CommonToken)IDPAR22, (CommonToken)RPAR26));
                         adaptor.addChild(root_1, stream_IDPAR.nextNode());
-                        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:132:15: ^( ConcCstBQTerm ( csBQTermArgsComposite )* )
+                        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:130:15: ^( ConcCstBQTerm ( csBQTermArgsComposite )* )
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConcCstBQTerm, "ConcCstBQTerm"), root_2);
 
-                        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:132:31: ( csBQTermArgsComposite )*
+                        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:130:31: ( csBQTermArgsComposite )*
                         while ( stream_csBQTermArgsComposite.hasNext() ) {
                             adaptor.addChild(root_2, stream_csBQTermArgsComposite.nextTree());
 
@@ -1579,12 +1551,12 @@ public class BQTermParser extends Parser {
                     }
                     break;
                 case 6 :
-                    // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:134:5: IDBR ( csPairSlotBQTerm ( COMMA csPairSlotBQTerm )* )? RBR
+                    // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:132:5: IDBR ( csPairSlotBQTerm ( COMMA csPairSlotBQTerm )* )? RBR
                     {
-                    IDBR27=(Token)match(input,IDBR,FOLLOW_IDBR_in_csBQTermArgs785); if (state.failed) return retval; 
+                    IDBR27=(Token)match(input,IDBR,FOLLOW_IDBR_in_csBQTermArgs743); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_IDBR.add(IDBR27);
 
-                    // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:134:10: ( csPairSlotBQTerm ( COMMA csPairSlotBQTerm )* )?
+                    // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:132:10: ( csPairSlotBQTerm ( COMMA csPairSlotBQTerm )* )?
                     int alt12=2;
                     int LA12_0 = input.LA(1);
 
@@ -1593,15 +1565,15 @@ public class BQTermParser extends Parser {
                     }
                     switch (alt12) {
                         case 1 :
-                            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:134:11: csPairSlotBQTerm ( COMMA csPairSlotBQTerm )*
+                            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:132:11: csPairSlotBQTerm ( COMMA csPairSlotBQTerm )*
                             {
-                            pushFollow(FOLLOW_csPairSlotBQTerm_in_csBQTermArgs788);
+                            pushFollow(FOLLOW_csPairSlotBQTerm_in_csBQTermArgs746);
                             csPairSlotBQTerm28=csPairSlotBQTerm();
 
                             state._fsp--;
                             if (state.failed) return retval;
                             if ( state.backtracking==0 ) stream_csPairSlotBQTerm.add(csPairSlotBQTerm28.getTree());
-                            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:134:28: ( COMMA csPairSlotBQTerm )*
+                            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:132:28: ( COMMA csPairSlotBQTerm )*
                             loop11:
                             do {
                                 int alt11=2;
@@ -1614,12 +1586,12 @@ public class BQTermParser extends Parser {
 
                                 switch (alt11) {
                             	case 1 :
-                            	    // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:134:29: COMMA csPairSlotBQTerm
+                            	    // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:132:29: COMMA csPairSlotBQTerm
                             	    {
-                            	    COMMA29=(Token)match(input,COMMA,FOLLOW_COMMA_in_csBQTermArgs791); if (state.failed) return retval; 
+                            	    COMMA29=(Token)match(input,COMMA,FOLLOW_COMMA_in_csBQTermArgs749); if (state.failed) return retval; 
                             	    if ( state.backtracking==0 ) stream_COMMA.add(COMMA29);
 
-                            	    pushFollow(FOLLOW_csPairSlotBQTerm_in_csBQTermArgs793);
+                            	    pushFollow(FOLLOW_csPairSlotBQTerm_in_csBQTermArgs751);
                             	    csPairSlotBQTerm30=csPairSlotBQTerm();
 
                             	    state._fsp--;
@@ -1640,13 +1612,13 @@ public class BQTermParser extends Parser {
 
                     }
 
-                    RBR31=(Token)match(input,RBR,FOLLOW_RBR_in_csBQTermArgs799); if (state.failed) return retval; 
+                    RBR31=(Token)match(input,RBR,FOLLOW_RBR_in_csBQTermArgs757); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_RBR.add(RBR31);
 
 
 
                     // AST REWRITE
-                    // elements: IDBR, csPairSlotBQTerm
+                    // elements: csPairSlotBQTerm, IDBR
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -1657,21 +1629,21 @@ public class BQTermParser extends Parser {
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
                     root_0 = (Tree)adaptor.nil();
-                    // 135:5: -> ^( Cst_BQRecordAppl IDBR ^( ConcCstPairSlotBQTerm ( csPairSlotBQTerm )* ) )
+                    // 133:5: -> ^( Cst_BQRecordAppl IDBR ^( ConcCstPairSlotBQTerm ( csPairSlotBQTerm )* ) )
                     {
-                        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:135:8: ^( Cst_BQRecordAppl IDBR ^( ConcCstPairSlotBQTerm ( csPairSlotBQTerm )* ) )
+                        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:133:8: ^( Cst_BQRecordAppl IDBR ^( ConcCstPairSlotBQTerm ( csPairSlotBQTerm )* ) )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_BQRecordAppl, "Cst_BQRecordAppl"), root_1);
 
                         adaptor.addChild(root_1, extractOptions((CommonToken)IDBR27, (CommonToken)RBR31));
                         adaptor.addChild(root_1, stream_IDBR.nextNode());
-                        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:136:14: ^( ConcCstPairSlotBQTerm ( csPairSlotBQTerm )* )
+                        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:134:14: ^( ConcCstPairSlotBQTerm ( csPairSlotBQTerm )* )
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConcCstPairSlotBQTerm, "ConcCstPairSlotBQTerm"), root_2);
 
-                        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:136:38: ( csPairSlotBQTerm )*
+                        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:134:38: ( csPairSlotBQTerm )*
                         while ( stream_csPairSlotBQTerm.hasNext() ) {
                             adaptor.addChild(root_2, stream_csPairSlotBQTerm.nextTree());
 
@@ -1690,11 +1662,11 @@ public class BQTermParser extends Parser {
                     }
                     break;
                 case 7 :
-                    // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:137:5: csTL
+                    // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:135:5: csTL
                     {
                     root_0 = (Tree)adaptor.nil();
 
-                    pushFollow(FOLLOW_csTL_in_csBQTermArgs834);
+                    pushFollow(FOLLOW_csTL_in_csBQTermArgs792);
                     csTL32=csTL();
 
                     state._fsp--;
@@ -1731,7 +1703,7 @@ public class BQTermParser extends Parser {
     };
 
     // $ANTLR start "csBQTermArgsComposite"
-    // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:140:1: csBQTermArgsComposite : csBQTermArgs[true] (csCP= csCompositePart )* -> {csCP==null}? csBQTermArgs -> ^( Cst_BQComposite ^( ConcCstBQTerm csBQTermArgs ( csCompositePart )* ) ) ;
+    // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:138:1: csBQTermArgsComposite : csBQTermArgs[true] (csCP= csCompositePart )* -> {csCP==null}? csBQTermArgs -> ^( Cst_BQComposite ^( ConcCstBQTerm csBQTermArgs ( csCompositePart )* ) ) ;
     public final BQTermParser.csBQTermArgsComposite_return csBQTermArgsComposite() throws RecognitionException {
         BQTermParser.csBQTermArgsComposite_return retval = new BQTermParser.csBQTermArgsComposite_return();
         retval.start = input.LT(1);
@@ -1746,16 +1718,16 @@ public class BQTermParser extends Parser {
         RewriteRuleSubtreeStream stream_csBQTermArgs=new RewriteRuleSubtreeStream(adaptor,"rule csBQTermArgs");
         RewriteRuleSubtreeStream stream_csCompositePart=new RewriteRuleSubtreeStream(adaptor,"rule csCompositePart");
         try {
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:140:23: ( csBQTermArgs[true] (csCP= csCompositePart )* -> {csCP==null}? csBQTermArgs -> ^( Cst_BQComposite ^( ConcCstBQTerm csBQTermArgs ( csCompositePart )* ) ) )
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:141:3: csBQTermArgs[true] (csCP= csCompositePart )*
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:138:23: ( csBQTermArgs[true] (csCP= csCompositePart )* -> {csCP==null}? csBQTermArgs -> ^( Cst_BQComposite ^( ConcCstBQTerm csBQTermArgs ( csCompositePart )* ) ) )
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:139:3: csBQTermArgs[true] (csCP= csCompositePart )*
             {
-            pushFollow(FOLLOW_csBQTermArgs_in_csBQTermArgsComposite847);
+            pushFollow(FOLLOW_csBQTermArgs_in_csBQTermArgsComposite805);
             csBQTermArgs33=csBQTermArgs(true);
 
             state._fsp--;
             if (state.failed) return retval;
             if ( state.backtracking==0 ) stream_csBQTermArgs.add(csBQTermArgs33.getTree());
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:141:26: (csCP= csCompositePart )*
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:139:26: (csCP= csCompositePart )*
             loop14:
             do {
                 int alt14=2;
@@ -1768,9 +1740,9 @@ public class BQTermParser extends Parser {
 
                 switch (alt14) {
             	case 1 :
-            	    // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:0:0: csCP= csCompositePart
+            	    // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:0:0: csCP= csCompositePart
             	    {
-            	    pushFollow(FOLLOW_csCompositePart_in_csBQTermArgsComposite852);
+            	    pushFollow(FOLLOW_csCompositePart_in_csBQTermArgsComposite810);
             	    csCP=csCompositePart();
 
             	    state._fsp--;
@@ -1788,7 +1760,7 @@ public class BQTermParser extends Parser {
 
 
             // AST REWRITE
-            // elements: csBQTermArgs, csCompositePart, csBQTermArgs
+            // elements: csBQTermArgs, csBQTermArgs, csCompositePart
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -1799,26 +1771,26 @@ public class BQTermParser extends Parser {
             RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
             root_0 = (Tree)adaptor.nil();
-            // 142:3: -> {csCP==null}? csBQTermArgs
+            // 140:3: -> {csCP==null}? csBQTermArgs
             if (csCP==null) {
                 adaptor.addChild(root_0, stream_csBQTermArgs.nextTree());
 
             }
-            else // 143:3: -> ^( Cst_BQComposite ^( ConcCstBQTerm csBQTermArgs ( csCompositePart )* ) )
+            else // 141:3: -> ^( Cst_BQComposite ^( ConcCstBQTerm csBQTermArgs ( csCompositePart )* ) )
             {
-                // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:143:6: ^( Cst_BQComposite ^( ConcCstBQTerm csBQTermArgs ( csCompositePart )* ) )
+                // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:141:6: ^( Cst_BQComposite ^( ConcCstBQTerm csBQTermArgs ( csCompositePart )* ) )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_BQComposite, "Cst_BQComposite"), root_1);
 
                 adaptor.addChild(root_1, extractOptions((CommonToken)(csBQTermArgs33!=null?((Token)csBQTermArgs33.start):null), (CommonToken)(csBQTermArgs33!=null?((Token)csBQTermArgs33.stop):null)));
-                // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:145:8: ^( ConcCstBQTerm csBQTermArgs ( csCompositePart )* )
+                // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:143:8: ^( ConcCstBQTerm csBQTermArgs ( csCompositePart )* )
                 {
                 Tree root_2 = (Tree)adaptor.nil();
                 root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConcCstBQTerm, "ConcCstBQTerm"), root_2);
 
                 adaptor.addChild(root_2, stream_csBQTermArgs.nextTree());
-                // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:145:37: ( csCompositePart )*
+                // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:143:37: ( csCompositePart )*
                 while ( stream_csCompositePart.hasNext() ) {
                     adaptor.addChild(root_2, stream_csCompositePart.nextTree());
 
@@ -1862,7 +1834,7 @@ public class BQTermParser extends Parser {
     };
 
     // $ANTLR start "csPairSlotBQTerm"
-    // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:149:1: csPairSlotBQTerm : ID EQUAL csBQTermArgs[false] -> ^( Cst_PairSlotBQTerm ^( Cst_Name ID ) csBQTermArgs ) ;
+    // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:147:1: csPairSlotBQTerm : ID EQUAL csBQTermArgs[false] -> ^( Cst_PairSlotBQTerm ^( Cst_Name ID ) csBQTermArgs ) ;
     public final BQTermParser.csPairSlotBQTerm_return csPairSlotBQTerm() throws RecognitionException {
         BQTermParser.csPairSlotBQTerm_return retval = new BQTermParser.csPairSlotBQTerm_return();
         retval.start = input.LT(1);
@@ -1880,16 +1852,16 @@ public class BQTermParser extends Parser {
         RewriteRuleTokenStream stream_EQUAL=new RewriteRuleTokenStream(adaptor,"token EQUAL");
         RewriteRuleSubtreeStream stream_csBQTermArgs=new RewriteRuleSubtreeStream(adaptor,"rule csBQTermArgs");
         try {
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:149:18: ( ID EQUAL csBQTermArgs[false] -> ^( Cst_PairSlotBQTerm ^( Cst_Name ID ) csBQTermArgs ) )
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:150:3: ID EQUAL csBQTermArgs[false]
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:147:18: ( ID EQUAL csBQTermArgs[false] -> ^( Cst_PairSlotBQTerm ^( Cst_Name ID ) csBQTermArgs ) )
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:148:3: ID EQUAL csBQTermArgs[false]
             {
-            ID34=(Token)match(input,ID,FOLLOW_ID_in_csPairSlotBQTerm914); if (state.failed) return retval; 
+            ID34=(Token)match(input,ID,FOLLOW_ID_in_csPairSlotBQTerm872); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_ID.add(ID34);
 
-            EQUAL35=(Token)match(input,EQUAL,FOLLOW_EQUAL_in_csPairSlotBQTerm916); if (state.failed) return retval; 
+            EQUAL35=(Token)match(input,EQUAL,FOLLOW_EQUAL_in_csPairSlotBQTerm874); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_EQUAL.add(EQUAL35);
 
-            pushFollow(FOLLOW_csBQTermArgs_in_csPairSlotBQTerm918);
+            pushFollow(FOLLOW_csBQTermArgs_in_csPairSlotBQTerm876);
             csBQTermArgs36=csBQTermArgs(false);
 
             state._fsp--;
@@ -1909,15 +1881,15 @@ public class BQTermParser extends Parser {
             RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
             root_0 = (Tree)adaptor.nil();
-            // 151:3: -> ^( Cst_PairSlotBQTerm ^( Cst_Name ID ) csBQTermArgs )
+            // 149:3: -> ^( Cst_PairSlotBQTerm ^( Cst_Name ID ) csBQTermArgs )
             {
-                // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:151:6: ^( Cst_PairSlotBQTerm ^( Cst_Name ID ) csBQTermArgs )
+                // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:149:6: ^( Cst_PairSlotBQTerm ^( Cst_Name ID ) csBQTermArgs )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_PairSlotBQTerm, "Cst_PairSlotBQTerm"), root_1);
 
                 adaptor.addChild(root_1, extractOptions((CommonToken)ID34));
-                // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:151:62: ^( Cst_Name ID )
+                // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:149:62: ^( Cst_Name ID )
                 {
                 Tree root_2 = (Tree)adaptor.nil();
                 root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_Name, "Cst_Name"), root_2);
@@ -1962,7 +1934,7 @@ public class BQTermParser extends Parser {
     };
 
     // $ANTLR start "csCompositePart"
-    // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:154:1: csCompositePart : ( csTL | EQUAL -> ^( Cst_ITL EQUAL ) | csBQTermArgs[true] -> csBQTermArgs );
+    // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:152:1: csCompositePart : ( csTL | EQUAL -> ^( Cst_ITL EQUAL ) | csBQTermArgs[true] -> csBQTermArgs );
     public final BQTermParser.csCompositePart_return csCompositePart() throws RecognitionException {
         BQTermParser.csCompositePart_return retval = new BQTermParser.csCompositePart_return();
         retval.start = input.LT(1);
@@ -1979,7 +1951,7 @@ public class BQTermParser extends Parser {
         RewriteRuleTokenStream stream_EQUAL=new RewriteRuleTokenStream(adaptor,"token EQUAL");
         RewriteRuleSubtreeStream stream_csBQTermArgs=new RewriteRuleSubtreeStream(adaptor,"rule csBQTermArgs");
         try {
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:154:17: ( csTL | EQUAL -> ^( Cst_ITL EQUAL ) | csBQTermArgs[true] -> csBQTermArgs )
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:152:17: ( csTL | EQUAL -> ^( Cst_ITL EQUAL ) | csBQTermArgs[true] -> csBQTermArgs )
             int alt15=3;
             switch ( input.LA(1) ) {
             case BQSTRING:
@@ -2102,11 +2074,11 @@ public class BQTermParser extends Parser {
 
             switch (alt15) {
                 case 1 :
-                    // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:155:4: csTL
+                    // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:153:4: csTL
                     {
                     root_0 = (Tree)adaptor.nil();
 
-                    pushFollow(FOLLOW_csTL_in_csCompositePart951);
+                    pushFollow(FOLLOW_csTL_in_csCompositePart909);
                     csTL37=csTL();
 
                     state._fsp--;
@@ -2116,9 +2088,9 @@ public class BQTermParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:156:5: EQUAL
+                    // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:154:5: EQUAL
                     {
-                    EQUAL38=(Token)match(input,EQUAL,FOLLOW_EQUAL_in_csCompositePart957); if (state.failed) return retval; 
+                    EQUAL38=(Token)match(input,EQUAL,FOLLOW_EQUAL_in_csCompositePart915); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_EQUAL.add(EQUAL38);
 
 
@@ -2135,9 +2107,9 @@ public class BQTermParser extends Parser {
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
                     root_0 = (Tree)adaptor.nil();
-                    // 156:11: -> ^( Cst_ITL EQUAL )
+                    // 154:11: -> ^( Cst_ITL EQUAL )
                     {
-                        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:156:14: ^( Cst_ITL EQUAL )
+                        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:154:14: ^( Cst_ITL EQUAL )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_ITL, "Cst_ITL"), root_1);
@@ -2154,9 +2126,9 @@ public class BQTermParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:157:5: csBQTermArgs[true]
+                    // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:155:5: csBQTermArgs[true]
                     {
-                    pushFollow(FOLLOW_csBQTermArgs_in_csCompositePart973);
+                    pushFollow(FOLLOW_csBQTermArgs_in_csCompositePart931);
                     csBQTermArgs39=csBQTermArgs(true);
 
                     state._fsp--;
@@ -2176,7 +2148,7 @@ public class BQTermParser extends Parser {
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
                     root_0 = (Tree)adaptor.nil();
-                    // 157:24: -> csBQTermArgs
+                    // 155:24: -> csBQTermArgs
                     {
                         adaptor.addChild(root_0, stream_csBQTermArgs.nextTree());
 
@@ -2213,7 +2185,7 @@ public class BQTermParser extends Parser {
     };
 
     // $ANTLR start "csTL"
-    // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:160:1: csTL : ( BQSTRING -> ^( Cst_ITL BQSTRING ) | NUM -> ^( Cst_ITL NUM ) | BQDOT -> ^( Cst_ITL BQDOT ) | BQCHAR -> ^( Cst_ITL BQCHAR ) | ANY -> ^( Cst_ITL ANY ) );
+    // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:158:1: csTL : ( BQSTRING -> ^( Cst_ITL BQSTRING ) | NUM -> ^( Cst_ITL NUM ) | BQDOT -> ^( Cst_ITL BQDOT ) | BQCHAR -> ^( Cst_ITL BQCHAR ) | ANY -> ^( Cst_ITL ANY ) );
     public final BQTermParser.csTL_return csTL() throws RecognitionException {
         BQTermParser.csTL_return retval = new BQTermParser.csTL_return();
         retval.start = input.LT(1);
@@ -2238,7 +2210,7 @@ public class BQTermParser extends Parser {
         RewriteRuleTokenStream stream_NUM=new RewriteRuleTokenStream(adaptor,"token NUM");
 
         try {
-            // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:160:6: ( BQSTRING -> ^( Cst_ITL BQSTRING ) | NUM -> ^( Cst_ITL NUM ) | BQDOT -> ^( Cst_ITL BQDOT ) | BQCHAR -> ^( Cst_ITL BQCHAR ) | ANY -> ^( Cst_ITL ANY ) )
+            // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:158:6: ( BQSTRING -> ^( Cst_ITL BQSTRING ) | NUM -> ^( Cst_ITL NUM ) | BQDOT -> ^( Cst_ITL BQDOT ) | BQCHAR -> ^( Cst_ITL BQCHAR ) | ANY -> ^( Cst_ITL ANY ) )
             int alt16=5;
             switch ( input.LA(1) ) {
             case BQSTRING:
@@ -2276,9 +2248,9 @@ public class BQTermParser extends Parser {
 
             switch (alt16) {
                 case 1 :
-                    // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:161:3: BQSTRING
+                    // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:159:3: BQSTRING
                     {
-                    BQSTRING40=(Token)match(input,BQSTRING,FOLLOW_BQSTRING_in_csTL991); if (state.failed) return retval; 
+                    BQSTRING40=(Token)match(input,BQSTRING,FOLLOW_BQSTRING_in_csTL949); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_BQSTRING.add(BQSTRING40);
 
 
@@ -2295,9 +2267,9 @@ public class BQTermParser extends Parser {
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
                     root_0 = (Tree)adaptor.nil();
-                    // 161:12: -> ^( Cst_ITL BQSTRING )
+                    // 159:12: -> ^( Cst_ITL BQSTRING )
                     {
-                        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:161:15: ^( Cst_ITL BQSTRING )
+                        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:159:15: ^( Cst_ITL BQSTRING )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_ITL, "Cst_ITL"), root_1);
@@ -2314,9 +2286,9 @@ public class BQTermParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:162:5: NUM
+                    // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:160:5: NUM
                     {
-                    NUM41=(Token)match(input,NUM,FOLLOW_NUM_in_csTL1007); if (state.failed) return retval; 
+                    NUM41=(Token)match(input,NUM,FOLLOW_NUM_in_csTL965); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_NUM.add(NUM41);
 
 
@@ -2333,9 +2305,9 @@ public class BQTermParser extends Parser {
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
                     root_0 = (Tree)adaptor.nil();
-                    // 162:9: -> ^( Cst_ITL NUM )
+                    // 160:9: -> ^( Cst_ITL NUM )
                     {
-                        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:162:12: ^( Cst_ITL NUM )
+                        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:160:12: ^( Cst_ITL NUM )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_ITL, "Cst_ITL"), root_1);
@@ -2352,9 +2324,9 @@ public class BQTermParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:163:5: BQDOT
+                    // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:161:5: BQDOT
                     {
-                    BQDOT42=(Token)match(input,BQDOT,FOLLOW_BQDOT_in_csTL1023); if (state.failed) return retval; 
+                    BQDOT42=(Token)match(input,BQDOT,FOLLOW_BQDOT_in_csTL981); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_BQDOT.add(BQDOT42);
 
 
@@ -2371,9 +2343,9 @@ public class BQTermParser extends Parser {
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
                     root_0 = (Tree)adaptor.nil();
-                    // 163:11: -> ^( Cst_ITL BQDOT )
+                    // 161:11: -> ^( Cst_ITL BQDOT )
                     {
-                        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:163:14: ^( Cst_ITL BQDOT )
+                        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:161:14: ^( Cst_ITL BQDOT )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_ITL, "Cst_ITL"), root_1);
@@ -2390,9 +2362,9 @@ public class BQTermParser extends Parser {
                     }
                     break;
                 case 4 :
-                    // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:164:5: BQCHAR
+                    // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:162:5: BQCHAR
                     {
-                    BQCHAR43=(Token)match(input,BQCHAR,FOLLOW_BQCHAR_in_csTL1039); if (state.failed) return retval; 
+                    BQCHAR43=(Token)match(input,BQCHAR,FOLLOW_BQCHAR_in_csTL997); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_BQCHAR.add(BQCHAR43);
 
 
@@ -2409,9 +2381,9 @@ public class BQTermParser extends Parser {
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
                     root_0 = (Tree)adaptor.nil();
-                    // 164:12: -> ^( Cst_ITL BQCHAR )
+                    // 162:12: -> ^( Cst_ITL BQCHAR )
                     {
-                        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:164:15: ^( Cst_ITL BQCHAR )
+                        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:162:15: ^( Cst_ITL BQCHAR )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_ITL, "Cst_ITL"), root_1);
@@ -2428,9 +2400,9 @@ public class BQTermParser extends Parser {
                     }
                     break;
                 case 5 :
-                    // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:165:5: ANY
+                    // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:163:5: ANY
                     {
-                    ANY44=(Token)match(input,ANY,FOLLOW_ANY_in_csTL1055); if (state.failed) return retval; 
+                    ANY44=(Token)match(input,ANY,FOLLOW_ANY_in_csTL1013); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_ANY.add(ANY44);
 
 
@@ -2447,9 +2419,9 @@ public class BQTermParser extends Parser {
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
                     root_0 = (Tree)adaptor.nil();
-                    // 165:9: -> ^( Cst_ITL ANY )
+                    // 163:9: -> ^( Cst_ITL ANY )
                     {
-                        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:165:12: ^( Cst_ITL ANY )
+                        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:163:12: ^( Cst_ITL ANY )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Cst_ITL, "Cst_ITL"), root_1);
@@ -2492,8 +2464,8 @@ public class BQTermParser extends Parser {
         BQTermParser.csCompositePart_return c = null;
 
 
-        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:106:32: (c= csCompositePart )
-        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:106:32: c= csCompositePart
+        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:106:32: (c= csCompositePart )
+        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:106:32: c= csCompositePart
         {
         pushFollow(FOLLOW_csCompositePart_in_synpred12_BQTerm412);
         c=csCompositePart();
@@ -2510,10 +2482,10 @@ public class BQTermParser extends Parser {
         BQTermParser.csCompositePart_return c = null;
 
 
-        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:116:42: (c= csCompositePart )
-        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:116:42: c= csCompositePart
+        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:116:58: (c= csCompositePart )
+        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:116:58: c= csCompositePart
         {
-        pushFollow(FOLLOW_csCompositePart_in_synpred14_BQTerm554);
+        pushFollow(FOLLOW_csCompositePart_in_synpred14_BQTerm555);
         c=csCompositePart();
 
         state._fsp--;
@@ -2525,10 +2497,10 @@ public class BQTermParser extends Parser {
 
     // $ANTLR start synpred23_BQTerm
     public final void synpred23_BQTerm_fragment() throws RecognitionException {   
-        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:155:4: ( csTL )
-        // /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g:155:4: csTL
+        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:153:4: ( csTL )
+        // /Users/pem/workspace/jtom/src/tom/engine/parser/antlr3/BQTerm.g:153:4: csTL
         {
-        pushFollow(FOLLOW_csTL_in_synpred23_BQTerm951);
+        pushFollow(FOLLOW_csTL_in_synpred23_BQTerm909);
         csTL();
 
         state._fsp--;
@@ -2589,31 +2561,31 @@ public class BQTermParser extends Parser {
     static final String DFA7_eotS =
         "\22\uffff";
     static final String DFA7_eofS =
-        "\1\15\21\uffff";
+        "\1\1\21\uffff";
     static final String DFA7_minS =
-        "\1\u0155\14\0\5\uffff";
+        "\1\u0155\1\uffff\14\0\4\uffff";
     static final String DFA7_maxS =
-        "\1\u0170\14\0\5\uffff";
+        "\1\u0170\1\uffff\14\0\4\uffff";
     static final String DFA7_acceptS =
-        "\15\uffff\1\2\3\uffff\1\1";
+        "\1\uffff\1\2\17\uffff\1\1";
     static final String DFA7_specialS =
-        "\1\uffff\1\0\1\1\1\2\1\3\1\4\1\5\1\6\1\7\1\10\1\11\1\12\1\13\5\uffff}>";
+        "\2\uffff\1\0\1\1\1\2\1\3\1\4\1\5\1\6\1\7\1\10\1\11\1\12\1\13\4\uffff}>";
     static final String[] DFA7_transitionS = {
-            "\1\12\5\uffff\1\13\1\14\1\10\1\11\1\7\3\15\1\6\4\uffff\1\1\1"+
-            "\4\1\uffff\1\3\1\2\3\uffff\1\5",
-            "\1\uffff",
-            "\1\uffff",
-            "\1\uffff",
-            "\1\uffff",
-            "\1\uffff",
-            "\1\uffff",
-            "\1\uffff",
-            "\1\uffff",
-            "\1\uffff",
-            "\1\uffff",
-            "\1\uffff",
-            "\1\uffff",
+            "\1\13\5\uffff\1\14\1\15\1\11\1\12\1\10\3\1\1\7\4\uffff\1\2\1"+
+            "\5\1\uffff\1\4\1\3\3\uffff\1\6",
             "",
+            "\1\uffff",
+            "\1\uffff",
+            "\1\uffff",
+            "\1\uffff",
+            "\1\uffff",
+            "\1\uffff",
+            "\1\uffff",
+            "\1\uffff",
+            "\1\uffff",
+            "\1\uffff",
+            "\1\uffff",
+            "\1\uffff",
             "",
             "",
             "",
@@ -2657,21 +2629,6 @@ public class BQTermParser extends Parser {
         	int _s = s;
             switch ( s ) {
                     case 0 : 
-                        int LA7_1 = input.LA(1);
-
-                         
-                        int index7_1 = input.index();
-                        input.rewind();
-                        s = -1;
-                        if ( (synpred12_BQTerm()) ) {s = 17;}
-
-                        else if ( (true) ) {s = 13;}
-
-                         
-                        input.seek(index7_1);
-                        if ( s>=0 ) return s;
-                        break;
-                    case 1 : 
                         int LA7_2 = input.LA(1);
 
                          
@@ -2680,13 +2637,13 @@ public class BQTermParser extends Parser {
                         s = -1;
                         if ( (synpred12_BQTerm()) ) {s = 17;}
 
-                        else if ( (true) ) {s = 13;}
+                        else if ( (true) ) {s = 1;}
 
                          
                         input.seek(index7_2);
                         if ( s>=0 ) return s;
                         break;
-                    case 2 : 
+                    case 1 : 
                         int LA7_3 = input.LA(1);
 
                          
@@ -2695,13 +2652,13 @@ public class BQTermParser extends Parser {
                         s = -1;
                         if ( (synpred12_BQTerm()) ) {s = 17;}
 
-                        else if ( (true) ) {s = 13;}
+                        else if ( (true) ) {s = 1;}
 
                          
                         input.seek(index7_3);
                         if ( s>=0 ) return s;
                         break;
-                    case 3 : 
+                    case 2 : 
                         int LA7_4 = input.LA(1);
 
                          
@@ -2710,13 +2667,13 @@ public class BQTermParser extends Parser {
                         s = -1;
                         if ( (synpred12_BQTerm()) ) {s = 17;}
 
-                        else if ( (true) ) {s = 13;}
+                        else if ( (true) ) {s = 1;}
 
                          
                         input.seek(index7_4);
                         if ( s>=0 ) return s;
                         break;
-                    case 4 : 
+                    case 3 : 
                         int LA7_5 = input.LA(1);
 
                          
@@ -2725,13 +2682,13 @@ public class BQTermParser extends Parser {
                         s = -1;
                         if ( (synpred12_BQTerm()) ) {s = 17;}
 
-                        else if ( (true) ) {s = 13;}
+                        else if ( (true) ) {s = 1;}
 
                          
                         input.seek(index7_5);
                         if ( s>=0 ) return s;
                         break;
-                    case 5 : 
+                    case 4 : 
                         int LA7_6 = input.LA(1);
 
                          
@@ -2740,13 +2697,13 @@ public class BQTermParser extends Parser {
                         s = -1;
                         if ( (synpred12_BQTerm()) ) {s = 17;}
 
-                        else if ( (true) ) {s = 13;}
+                        else if ( (true) ) {s = 1;}
 
                          
                         input.seek(index7_6);
                         if ( s>=0 ) return s;
                         break;
-                    case 6 : 
+                    case 5 : 
                         int LA7_7 = input.LA(1);
 
                          
@@ -2755,13 +2712,13 @@ public class BQTermParser extends Parser {
                         s = -1;
                         if ( (synpred12_BQTerm()) ) {s = 17;}
 
-                        else if ( (true) ) {s = 13;}
+                        else if ( (true) ) {s = 1;}
 
                          
                         input.seek(index7_7);
                         if ( s>=0 ) return s;
                         break;
-                    case 7 : 
+                    case 6 : 
                         int LA7_8 = input.LA(1);
 
                          
@@ -2770,13 +2727,13 @@ public class BQTermParser extends Parser {
                         s = -1;
                         if ( (synpred12_BQTerm()) ) {s = 17;}
 
-                        else if ( (true) ) {s = 13;}
+                        else if ( (true) ) {s = 1;}
 
                          
                         input.seek(index7_8);
                         if ( s>=0 ) return s;
                         break;
-                    case 8 : 
+                    case 7 : 
                         int LA7_9 = input.LA(1);
 
                          
@@ -2785,13 +2742,13 @@ public class BQTermParser extends Parser {
                         s = -1;
                         if ( (synpred12_BQTerm()) ) {s = 17;}
 
-                        else if ( (true) ) {s = 13;}
+                        else if ( (true) ) {s = 1;}
 
                          
                         input.seek(index7_9);
                         if ( s>=0 ) return s;
                         break;
-                    case 9 : 
+                    case 8 : 
                         int LA7_10 = input.LA(1);
 
                          
@@ -2800,13 +2757,13 @@ public class BQTermParser extends Parser {
                         s = -1;
                         if ( (synpred12_BQTerm()) ) {s = 17;}
 
-                        else if ( (true) ) {s = 13;}
+                        else if ( (true) ) {s = 1;}
 
                          
                         input.seek(index7_10);
                         if ( s>=0 ) return s;
                         break;
-                    case 10 : 
+                    case 9 : 
                         int LA7_11 = input.LA(1);
 
                          
@@ -2815,13 +2772,13 @@ public class BQTermParser extends Parser {
                         s = -1;
                         if ( (synpred12_BQTerm()) ) {s = 17;}
 
-                        else if ( (true) ) {s = 13;}
+                        else if ( (true) ) {s = 1;}
 
                          
                         input.seek(index7_11);
                         if ( s>=0 ) return s;
                         break;
-                    case 11 : 
+                    case 10 : 
                         int LA7_12 = input.LA(1);
 
                          
@@ -2830,10 +2787,25 @@ public class BQTermParser extends Parser {
                         s = -1;
                         if ( (synpred12_BQTerm()) ) {s = 17;}
 
-                        else if ( (true) ) {s = 13;}
+                        else if ( (true) ) {s = 1;}
 
                          
                         input.seek(index7_12);
+                        if ( s>=0 ) return s;
+                        break;
+                    case 11 : 
+                        int LA7_13 = input.LA(1);
+
+                         
+                        int index7_13 = input.index();
+                        input.rewind();
+                        s = -1;
+                        if ( (synpred12_BQTerm()) ) {s = 17;}
+
+                        else if ( (true) ) {s = 1;}
+
+                         
+                        input.seek(index7_13);
                         if ( s>=0 ) return s;
                         break;
             }
@@ -2847,31 +2819,31 @@ public class BQTermParser extends Parser {
     static final String DFA8_eotS =
         "\22\uffff";
     static final String DFA8_eofS =
-        "\1\15\21\uffff";
+        "\1\1\21\uffff";
     static final String DFA8_minS =
-        "\1\u0155\14\0\5\uffff";
+        "\1\u0155\1\uffff\14\0\4\uffff";
     static final String DFA8_maxS =
-        "\1\u0170\14\0\5\uffff";
+        "\1\u0170\1\uffff\14\0\4\uffff";
     static final String DFA8_acceptS =
-        "\15\uffff\1\2\3\uffff\1\1";
+        "\1\uffff\1\2\17\uffff\1\1";
     static final String DFA8_specialS =
-        "\1\uffff\1\0\1\1\1\2\1\3\1\4\1\5\1\6\1\7\1\10\1\11\1\12\1\13\5\uffff}>";
+        "\2\uffff\1\0\1\1\1\2\1\3\1\4\1\5\1\6\1\7\1\10\1\11\1\12\1\13\4\uffff}>";
     static final String[] DFA8_transitionS = {
-            "\1\12\5\uffff\1\13\1\14\1\10\1\11\1\7\3\15\1\6\4\uffff\1\1\1"+
-            "\4\1\uffff\1\3\1\2\3\uffff\1\5",
-            "\1\uffff",
-            "\1\uffff",
-            "\1\uffff",
-            "\1\uffff",
-            "\1\uffff",
-            "\1\uffff",
-            "\1\uffff",
-            "\1\uffff",
-            "\1\uffff",
-            "\1\uffff",
-            "\1\uffff",
-            "\1\uffff",
+            "\1\13\5\uffff\1\14\1\15\1\11\1\12\1\10\3\1\1\7\4\uffff\1\2\1"+
+            "\5\1\uffff\1\4\1\3\3\uffff\1\6",
             "",
+            "\1\uffff",
+            "\1\uffff",
+            "\1\uffff",
+            "\1\uffff",
+            "\1\uffff",
+            "\1\uffff",
+            "\1\uffff",
+            "\1\uffff",
+            "\1\uffff",
+            "\1\uffff",
+            "\1\uffff",
+            "\1\uffff",
             "",
             "",
             "",
@@ -2908,28 +2880,13 @@ public class BQTermParser extends Parser {
             this.transition = DFA8_transition;
         }
         public String getDescription() {
-            return "()* loopback of 116:42: (c= csCompositePart )*";
+            return "()* loopback of 116:58: (c= csCompositePart )*";
         }
         public int specialStateTransition(int s, IntStream _input) throws NoViableAltException {
             TokenStream input = (TokenStream)_input;
         	int _s = s;
             switch ( s ) {
                     case 0 : 
-                        int LA8_1 = input.LA(1);
-
-                         
-                        int index8_1 = input.index();
-                        input.rewind();
-                        s = -1;
-                        if ( (synpred14_BQTerm()) ) {s = 17;}
-
-                        else if ( (true) ) {s = 13;}
-
-                         
-                        input.seek(index8_1);
-                        if ( s>=0 ) return s;
-                        break;
-                    case 1 : 
                         int LA8_2 = input.LA(1);
 
                          
@@ -2938,13 +2895,13 @@ public class BQTermParser extends Parser {
                         s = -1;
                         if ( (synpred14_BQTerm()) ) {s = 17;}
 
-                        else if ( (true) ) {s = 13;}
+                        else if ( (true) ) {s = 1;}
 
                          
                         input.seek(index8_2);
                         if ( s>=0 ) return s;
                         break;
-                    case 2 : 
+                    case 1 : 
                         int LA8_3 = input.LA(1);
 
                          
@@ -2953,13 +2910,13 @@ public class BQTermParser extends Parser {
                         s = -1;
                         if ( (synpred14_BQTerm()) ) {s = 17;}
 
-                        else if ( (true) ) {s = 13;}
+                        else if ( (true) ) {s = 1;}
 
                          
                         input.seek(index8_3);
                         if ( s>=0 ) return s;
                         break;
-                    case 3 : 
+                    case 2 : 
                         int LA8_4 = input.LA(1);
 
                          
@@ -2968,13 +2925,13 @@ public class BQTermParser extends Parser {
                         s = -1;
                         if ( (synpred14_BQTerm()) ) {s = 17;}
 
-                        else if ( (true) ) {s = 13;}
+                        else if ( (true) ) {s = 1;}
 
                          
                         input.seek(index8_4);
                         if ( s>=0 ) return s;
                         break;
-                    case 4 : 
+                    case 3 : 
                         int LA8_5 = input.LA(1);
 
                          
@@ -2983,13 +2940,13 @@ public class BQTermParser extends Parser {
                         s = -1;
                         if ( (synpred14_BQTerm()) ) {s = 17;}
 
-                        else if ( (true) ) {s = 13;}
+                        else if ( (true) ) {s = 1;}
 
                          
                         input.seek(index8_5);
                         if ( s>=0 ) return s;
                         break;
-                    case 5 : 
+                    case 4 : 
                         int LA8_6 = input.LA(1);
 
                          
@@ -2998,13 +2955,13 @@ public class BQTermParser extends Parser {
                         s = -1;
                         if ( (synpred14_BQTerm()) ) {s = 17;}
 
-                        else if ( (true) ) {s = 13;}
+                        else if ( (true) ) {s = 1;}
 
                          
                         input.seek(index8_6);
                         if ( s>=0 ) return s;
                         break;
-                    case 6 : 
+                    case 5 : 
                         int LA8_7 = input.LA(1);
 
                          
@@ -3013,13 +2970,13 @@ public class BQTermParser extends Parser {
                         s = -1;
                         if ( (synpred14_BQTerm()) ) {s = 17;}
 
-                        else if ( (true) ) {s = 13;}
+                        else if ( (true) ) {s = 1;}
 
                          
                         input.seek(index8_7);
                         if ( s>=0 ) return s;
                         break;
-                    case 7 : 
+                    case 6 : 
                         int LA8_8 = input.LA(1);
 
                          
@@ -3028,13 +2985,13 @@ public class BQTermParser extends Parser {
                         s = -1;
                         if ( (synpred14_BQTerm()) ) {s = 17;}
 
-                        else if ( (true) ) {s = 13;}
+                        else if ( (true) ) {s = 1;}
 
                          
                         input.seek(index8_8);
                         if ( s>=0 ) return s;
                         break;
-                    case 8 : 
+                    case 7 : 
                         int LA8_9 = input.LA(1);
 
                          
@@ -3043,13 +3000,13 @@ public class BQTermParser extends Parser {
                         s = -1;
                         if ( (synpred14_BQTerm()) ) {s = 17;}
 
-                        else if ( (true) ) {s = 13;}
+                        else if ( (true) ) {s = 1;}
 
                          
                         input.seek(index8_9);
                         if ( s>=0 ) return s;
                         break;
-                    case 9 : 
+                    case 8 : 
                         int LA8_10 = input.LA(1);
 
                          
@@ -3058,13 +3015,13 @@ public class BQTermParser extends Parser {
                         s = -1;
                         if ( (synpred14_BQTerm()) ) {s = 17;}
 
-                        else if ( (true) ) {s = 13;}
+                        else if ( (true) ) {s = 1;}
 
                          
                         input.seek(index8_10);
                         if ( s>=0 ) return s;
                         break;
-                    case 10 : 
+                    case 9 : 
                         int LA8_11 = input.LA(1);
 
                          
@@ -3073,13 +3030,13 @@ public class BQTermParser extends Parser {
                         s = -1;
                         if ( (synpred14_BQTerm()) ) {s = 17;}
 
-                        else if ( (true) ) {s = 13;}
+                        else if ( (true) ) {s = 1;}
 
                          
                         input.seek(index8_11);
                         if ( s>=0 ) return s;
                         break;
-                    case 11 : 
+                    case 10 : 
                         int LA8_12 = input.LA(1);
 
                          
@@ -3088,10 +3045,25 @@ public class BQTermParser extends Parser {
                         s = -1;
                         if ( (synpred14_BQTerm()) ) {s = 17;}
 
-                        else if ( (true) ) {s = 13;}
+                        else if ( (true) ) {s = 1;}
 
                          
                         input.seek(index8_12);
+                        if ( s>=0 ) return s;
+                        break;
+                    case 11 : 
+                        int LA8_13 = input.LA(1);
+
+                         
+                        int index8_13 = input.index();
+                        input.rewind();
+                        s = -1;
+                        if ( (synpred14_BQTerm()) ) {s = 17;}
+
+                        else if ( (true) ) {s = 1;}
+
+                         
+                        input.seek(index8_13);
                         if ( s>=0 ) return s;
                         break;
             }
@@ -3123,36 +3095,36 @@ public class BQTermParser extends Parser {
     public static final BitSet FOLLOW_IDSTAR_in_csBQTermArgs384 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_ID_in_csBQTermArgs405 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x00011B08F8200000L});
     public static final BitSet FOLLOW_csCompositePart_in_csBQTermArgs412 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x00011B08F8200000L});
-    public static final BitSet FOLLOW_LPAR_in_csBQTermArgs543 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000040000000L});
-    public static final BitSet FOLLOW_ID_in_csBQTermArgs545 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000200000000L});
-    public static final BitSet FOLLOW_RPAR_in_csBQTermArgs547 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x00011B08F8200000L});
-    public static final BitSet FOLLOW_csCompositePart_in_csBQTermArgs554 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x00011B08F8200000L});
-    public static final BitSet FOLLOW_IDPAR_in_csBQTermArgs734 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x00011B0AF8200000L});
-    public static final BitSet FOLLOW_csBQTermArgsComposite_in_csBQTermArgs737 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000300000000L});
-    public static final BitSet FOLLOW_COMMA_in_csBQTermArgs740 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x00011B08F8200000L});
-    public static final BitSet FOLLOW_csBQTermArgsComposite_in_csBQTermArgs742 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000300000000L});
-    public static final BitSet FOLLOW_RPAR_in_csBQTermArgs748 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_IDBR_in_csBQTermArgs785 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000440000000L});
-    public static final BitSet FOLLOW_csPairSlotBQTerm_in_csBQTermArgs788 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000500000000L});
-    public static final BitSet FOLLOW_COMMA_in_csBQTermArgs791 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000040000000L});
-    public static final BitSet FOLLOW_csPairSlotBQTerm_in_csBQTermArgs793 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000500000000L});
-    public static final BitSet FOLLOW_RBR_in_csBQTermArgs799 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_csTL_in_csBQTermArgs834 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_csBQTermArgs_in_csBQTermArgsComposite847 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x00011B08F8200000L});
-    public static final BitSet FOLLOW_csCompositePart_in_csBQTermArgsComposite852 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x00011B08F8200000L});
-    public static final BitSet FOLLOW_ID_in_csPairSlotBQTerm914 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000800000000L});
-    public static final BitSet FOLLOW_EQUAL_in_csPairSlotBQTerm916 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x00011B08F8200000L});
-    public static final BitSet FOLLOW_csBQTermArgs_in_csPairSlotBQTerm918 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_csTL_in_csCompositePart951 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_EQUAL_in_csCompositePart957 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_csBQTermArgs_in_csCompositePart973 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_BQSTRING_in_csTL991 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_NUM_in_csTL1007 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_BQDOT_in_csTL1023 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_BQCHAR_in_csTL1039 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ANY_in_csTL1055 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_LPAR_in_csBQTermArgs543 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x00011B08F8200000L});
+    public static final BitSet FOLLOW_csBQTermArgs_in_csBQTermArgs545 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000200000000L});
+    public static final BitSet FOLLOW_RPAR_in_csBQTermArgs548 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x00011B08F8200000L});
+    public static final BitSet FOLLOW_csCompositePart_in_csBQTermArgs555 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x00011B08F8200000L});
+    public static final BitSet FOLLOW_IDPAR_in_csBQTermArgs692 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x00011B0AF8200000L});
+    public static final BitSet FOLLOW_csBQTermArgsComposite_in_csBQTermArgs695 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000300000000L});
+    public static final BitSet FOLLOW_COMMA_in_csBQTermArgs698 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x00011B08F8200000L});
+    public static final BitSet FOLLOW_csBQTermArgsComposite_in_csBQTermArgs700 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000300000000L});
+    public static final BitSet FOLLOW_RPAR_in_csBQTermArgs706 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_IDBR_in_csBQTermArgs743 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000440000000L});
+    public static final BitSet FOLLOW_csPairSlotBQTerm_in_csBQTermArgs746 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000500000000L});
+    public static final BitSet FOLLOW_COMMA_in_csBQTermArgs749 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000040000000L});
+    public static final BitSet FOLLOW_csPairSlotBQTerm_in_csBQTermArgs751 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000500000000L});
+    public static final BitSet FOLLOW_RBR_in_csBQTermArgs757 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_csTL_in_csBQTermArgs792 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_csBQTermArgs_in_csBQTermArgsComposite805 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x00011B08F8200000L});
+    public static final BitSet FOLLOW_csCompositePart_in_csBQTermArgsComposite810 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x00011B08F8200000L});
+    public static final BitSet FOLLOW_ID_in_csPairSlotBQTerm872 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000800000000L});
+    public static final BitSet FOLLOW_EQUAL_in_csPairSlotBQTerm874 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x00011B08F8200000L});
+    public static final BitSet FOLLOW_csBQTermArgs_in_csPairSlotBQTerm876 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_csTL_in_csCompositePart909 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_EQUAL_in_csCompositePart915 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_csBQTermArgs_in_csCompositePart931 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_BQSTRING_in_csTL949 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_NUM_in_csTL965 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_BQDOT_in_csTL981 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_BQCHAR_in_csTL997 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ANY_in_csTL1013 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_csCompositePart_in_synpred12_BQTerm412 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_csCompositePart_in_synpred14_BQTerm554 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_csTL_in_synpred23_BQTerm951 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_csCompositePart_in_synpred14_BQTerm555 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_csTL_in_synpred23_BQTerm909 = new BitSet(new long[]{0x0000000000000002L});
 
 }
