@@ -551,7 +551,7 @@ public class NewKernelTyper {
         test@(Variable|VariableStar)[AstName=aName], !concTomTerm(_*,test,_*), concBQTerm(x*,(BQVariable|BQVariableStar)[AstName=aName],y*)
           -> {
             System.out.println("*** resetVarList remove: " + `aName);
-            bqTList = `concBQTerm(x*,y*);
+            varList = `concBQTerm(x*,y*);
           }
       }
     }
