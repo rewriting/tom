@@ -1108,9 +1108,15 @@
     depends="stable">
     <antcall target="src.dist"/>
     <antcall target="clean.test"/>
-    <ant dir="${test}" target="junit.opt">
+    <!--antcall target="junit.opt"/-->
+    <ant dir="${test}" target="junit">
       <property name="tom.home" value="${src.dist}"/>
-      <property name="test.xmlreport" value="on"/>
+      <property name="optimize" value="on"/>
+      <property name="optimize2" value="on"/>
+      <property name="inlineplus" value="on"/>
+      <property name="newtyper" value="on"/>
+    </ant>
+
     </ant>
   </target>
 
