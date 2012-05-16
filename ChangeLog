@@ -1,3 +1,7 @@
+2012-05-15 pem
+ * merge subtype into master
+ * bootstrap
+
 2012-05-14 pem
  * activate newtyper by default
  * improved newtyper efficiency
