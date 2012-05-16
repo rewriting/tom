@@ -539,18 +539,37 @@ public class NewKernelTyper {
 
   /**
    * The method <code>resetVarList</code> checks if <code>varList</code> contains
-   * a BQTerm which is in the <code>localVarPatternList</code> but is not in
-   * <code>varPatternList</code> (i.e. the <code>globalVarPatternList</code>).
-   * Then, this BQTerm is removed from <code>varList</code>.
+   * a BQTerm which is in the local context (see page 137 of Claudia's thesis)
+   * <code>localVarPatternList</code> but is not in the global context
+   * <code>varPatternList</code> (i.e. the globalVarPatternList</code>). Then,
+   * this BQTerm is removed from <code>varList</code>.
+   * e.g. :
+   * gC = global context / lC = local context
+   * Suppose the following match block
+   *   %match {					// l1
+   *     f(x) << v1 && (x == a()) -> { `x; }	// l2
+   *     x << v2 && (x != b() -> { `x; }	// l3
+   *   }
+   * where A := a() and B := b()
+   *  		gC	    |	lC
+   * --------------------------------
+   * l1		{}	    |	{}
+   * l2		{v1}	  |	{x}
+   * l3		{v1,v2}	|	{x}
+   * But the "x" of lC at l2 is not the same of that of lC at l3. Although the
+   * "x" occurring in the numeric condition of l2 is in varList, it must be
+   * removed to avoid variable capture when the condition of l3 is considered.
+   * Thus, instead of performing variable renaming, we assume that pattern
+   * variables are only "valid" in the current rule cond -> action.
    * pem: remove from varList, all variables that belong to varPatternList, which are not in localVarPatternList
    * @param localVarPatternList   the TomList to be reset
    */
-  protected void resetVarList(TomList localVarPatternList) {
+  protected void resetVarList(TomList globalVarPatternList) {
     for(TomTerm tTerm: varPatternList.getCollectionconcTomTerm()) {
-      %match(tTerm,localVarPatternList,varList) {
-        test@(Variable|VariableStar)[AstName=aName], !concTomTerm(_*,test,_*), concBQTerm(x*,(BQVariable|BQVariableStar)[AstName=aName],y*)
+      %match(tTerm,globalVarPatternList,varList) {
+        test@(Variable|VariableStar)[AstName=aName],!concTomTerm(_*,test,_*),concBQTerm(x*,(BQVariable|BQVariableStar)[AstName=aName],y*)
           -> {
-            System.out.println("*** resetVarList remove: " + `aName);
+            //System.out.println("*** resetVarList remove: " + `aName);
             varList = `concBQTerm(x*,y*);
           }
       }
@@ -992,8 +1011,8 @@ public class NewKernelTyper {
             //DEBUG     `action);
             Instruction newAction = `inferAllTypes(action,EmptyType());
 
-            varPatternList = globalVarPatternList;
             resetVarList(globalVarPatternList);
+            varPatternList = globalVarPatternList;
             newCIList =
               `concConstraintInstruction(ConstraintInstruction(newConstraint,newAction,optionList),newCIList*);
           } 
