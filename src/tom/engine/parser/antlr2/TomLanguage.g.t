@@ -3083,8 +3083,8 @@ options {
 }
 
 tokens {
-    WHERE="where";
-    IF="if";
+    //WHERE="where";
+    //IF="if";
     EXTENDS="extends";
     MAKE_EMPTY = "make_empty";
     MAKE_INSERT = "make_insert";
@@ -3101,7 +3101,6 @@ tokens {
     IMPLEMENT = "implement";
     GET_ELEMENT = "get_element";
     GET_SIZE = "get_size";
-    WHEN = "when";
     //to clean
     WITH = "with";
     TO = "to";

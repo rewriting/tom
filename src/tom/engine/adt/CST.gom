@@ -29,7 +29,7 @@ CstConstraintAction = Cst_ConstraintAction(constraint:CstConstraint , action:Cst
 
 CstConstraintActionList = ConcCstConstraintAction(CstConstraintAction*)
 
-CstConstraint  = Cst_MatchTermConstraint(pattern:CstPattern, subject:CstBQTerm)
+CstConstraint  = Cst_MatchTermConstraint(pattern:CstPattern, subject:CstBQTerm, type:CstType)
               | Cst_MatchArgumentConstraint(pattern:CstPattern)
               | Cst_AndConstraint(CstConstraint*)
               | Cst_OrConstraint(CstConstraint*)

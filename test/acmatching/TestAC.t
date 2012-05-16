@@ -31,7 +31,9 @@ package acmatching;
 import acmatching.testac.term.types.*;
 import java.util.*;
 import static org.junit.Assert.*;
-import static org.junit.matchers.JUnitMatchers.*;
+import org.junit.matchers.JUnitMatchers;
+import static org.hamcrest.CoreMatchers.*;
+import org.hamcrest.Matcher;
 import org.junit.Test;
 
 public class TestAC {
@@ -136,18 +138,22 @@ public class TestAC {
     }
 
   @Test
-    public void test4() {
-      T t1 = `f(a(),b(),b(),a());
-      Set<T> bagX = new HashSet<T>();
+  public void test4() {
+    T t1 = `f(a(),b(),b(),a());
+    Set<T> bagX = new HashSet<T>();
 
-      %match(t1) {
-        f??(X*,Y*) && X==Y -> {
-          bagX.add(`X);
-        }
+    %match(t1) {
+      f??(X*,Y*) && X==Y -> {
+        bagX.add(`X);
       }
-
-      assertThat("f(a(),b()) is solution of X", bagX, hasItem(`f(a(),b())));
-      assertThat("f(b(),a()) is solution of X", bagX, hasItem(`f(b(),a())));
-      assertEquals("bagX.size==1", 1, bagX.size());
     }
+
+    assertThat("f(a(),b()) is solution of X", bagX, hasItem(`f(a(),b())));
+    assertThat("f(b(),a()) is solution of X", bagX, hasItem(`f(b(),a())));
+    assertEquals("bagX.size==1", 1, bagX.size());
+  }
+
+  private static Matcher<java.lang.Iterable<T>> hasItem(T t) {
+    return JUnitMatchers.hasItem(t);
+  }
 }

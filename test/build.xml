@@ -108,8 +108,8 @@
                 termpointer="true"
                 withCongruenceStrategies="true"
                 destdir="${test.gen}">
-         <include name="sl/testsl.gom"/>
-         <exclude name="**/error/**"/>
+      <include name="sl/testsl.gom"/>
+      <exclude name="**/error/**"/>
       <exclude name="**/regress/**"/>
     </gom.preset>
     <gom.preset srcdir="${test.src}"
@@ -142,16 +142,20 @@
       <exclude name="TestConstraintCombination.t"/>
 
     </tom.preset>
-    <tom.preset srcdir="${test.src}"
+
+    <!-- 
+         <tom.preset srcdir="${test.src}"
                 multithread="${multithread}"
                 destdir="${test.gen}"
-                options="--lazyType">
+                options="- -lazyType">
       <include name="Record.t"/>
       <include name="TestRecord.t"/>
       <exclude name="**/error/**"/>
       <exclude name="**/rule/**"/>
       <exclude name="**/regress/**"/>
-    </tom.preset>
+    </tom.preset> 
+    -->
+
     <tom.preset srcdir="${test.src}"
                 destdir="${test.gen}"
                 options="--optimize">

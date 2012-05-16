@@ -31,6 +31,7 @@ package sl;
 
 import sl.testreduceall.reduce.types.*;
 import tom.library.sl.Strategy;
+import tom.library.sl.VisitFailure;
 import static org.junit.Assert.*;
 import org.junit.Test;
 
@@ -65,75 +66,46 @@ public class TestReduceAll {
 	}
 
   @Test
-  public void testOneRed() {
+  public void testOneRed() throws VisitFailure {
     Term subject = `f(a(),b());
     Strategy s = `One(AB());
-    Term resJ = null;
-    Term resS = null;
-    try {
-      resJ = (Term) s.visitLight(subject);
-      assertEquals(resJ,`a());
-    } catch (tom.library.sl.VisitFailure e) {
-      fail("Identity.visit should not fail");
-    }
-    try {
-      resS = (Term) s.visit(subject);
-      assertEquals(resS,`a());
-    } catch (tom.library.sl.VisitFailure e) {
-    }
+    Term resJ = (Term) s.visitLight(subject);
+    assertEquals(resJ,`a());
+    Term resS = (Term) s.visit(subject);
+    assertEquals(resS,`a());
     assertEquals(resJ,resS);
   }
 
   @Test
-  public void testAllRed_Visit() {
+  public void testAllRed_Visit() throws VisitFailure {
     Term subject = `f(a(),b());
     Strategy s = `All(AB());
-    Term resJ = null;
-    try {
-      resJ = (Term) s.visitLight(subject);
-      assertEquals(resJ,`f(b(),c()));
-    } catch (tom.library.sl.VisitFailure e) {
-      fail("Visit should not fail");
-    }
+    Term resJ = (Term) s.visitLight(subject);
+    assertEquals(resJ,`f(b(),c()));
   }
 
   @Test
-  public void testAllRed_Fire() {
+  public void testAllRed_Fire() throws VisitFailure {
     Term subject = `f(a(),b());
     Strategy s = `All(AB());
-    Term resS = null;
-    try {
-      resS = (Term) s.visit(subject);
-      assertEquals(resS,`f(b(),c()));
-    } catch (tom.library.sl.VisitFailure e) {
-      fail("Fire should not fail");
-    }
+    Term resS = (Term) s.visit(subject);
+    assertEquals(resS,`f(b(),c()));
   }
 
   @Test
-  public void testCongruenceRed_Visit() {
+  public void testCongruenceRed_Visit() throws VisitFailure {
     Term subject = `f(a(),b());
     Strategy s = `_f(AB(),AB());
-    Term resJ = null;
-    try {
-      resJ = (Term) s.visitLight(subject);
-      assertEquals(resJ,`f(b(),c()));
-    } catch (tom.library.sl.VisitFailure e) {
-      fail("Visit should not fail");
-    }
+    Term resJ = (Term) s.visitLight(subject);
+    assertEquals(resJ,`f(b(),c()));
   }
 
   @Test
-  public void testCongruenceRed_Fire() {
+  public void testCongruenceRed_Fire() throws VisitFailure {
     Term subject = `f(a(),b());
     Strategy s = `_f(AB(),AB());
-    Term resS = null;
-    try {
-      resS = (Term) s.visit(subject);
-      assertEquals(resS,`f(b(),c()));
-    } catch (tom.library.sl.VisitFailure e) {
-      fail("Fire should not fail");
-    }
+    Term resS = (Term) s.visit(subject);
+    assertEquals(resS,`f(b(),c()));
   }
 
   %strategy G() extends `Fail() {
@@ -145,17 +117,12 @@ public class TestReduceAll {
   }
 
   @Test
-  public void testOutermost() {
+  public void testOutermost() throws VisitFailure {
     Term subject = `g(f(a(),a()));
     Strategy s = `Outermost(G());
-    try {
-      Term res1 = (Term) s.visit(subject);
-      assertEquals(res1,`b());
-      Term res2 = (Term) s.visitLight(subject);
-      assertEquals(res2,`b());
-    } catch (tom.library.sl.VisitFailure e) {
-      fail("Fire should not fail");
-    }
+    Term res1 = (Term) s.visit(subject);
+    assertEquals(res1,`b());
+    Term res2 = (Term) s.visitLight(subject);
+    assertEquals(res2,`b());
   }
-
 }

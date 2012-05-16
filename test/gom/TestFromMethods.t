@@ -33,12 +33,12 @@ package gom;
 import org.junit.Test;
 import org.junit.Assert;
 import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
-import java.util.Collection;
+import org.junit.experimental.theories.Theory;
+import org.junit.experimental.theories.Theories;
+import org.junit.experimental.theories.DataPoints;
 import gom.b.u.i.l.t.i.n.builtin.types.*;
 
-@RunWith(Parameterized.class)
+@RunWith(Theories.class)
 public class TestFromMethods {
 
   %include { b/u/i/l/t/i/n/builtin/Builtin.tom }
@@ -47,52 +47,47 @@ public class TestFromMethods {
     org.junit.runner.JUnitCore.main(TestFromMethods.class.getName());
   }
 
-  @Parameters
-  public static Collection<Object[]> data() {
-    return java.util.Arrays.asList(new Object[][] {
-      { `Char('a') },
-      { `Int(21) },
-      { `Int(java.lang.Integer.MAX_VALUE-2) },
-      { `Int(java.lang.Integer.MAX_VALUE) },
-      { `Real(21) },
-      { `Real((float)20.3) },
-      { `Double(21) },
-      { `Double(20.3) },
-      { `Bool(true()) },
-      { `Bool(false()) },
-      { `Long(23) },
-      { `Long(java.lang.Integer.MAX_VALUE-3) },
-      { `Long(java.lang.Integer.MAX_VALUE-1) },
-      { `Long(java.lang.Integer.MAX_VALUE) },
-      { `Long(java.lang.Long.MAX_VALUE-10) },
-      { `Long(java.lang.Long.MAX_VALUE-1) },
-      { `Long(java.lang.Long.MAX_VALUE) },
-      { `Name("who?") },
-      { `Name("\"Hello\"") },
-      { `Name("\"Hello\tWorld\n print-it\f end\"") },
-      { `Node(aterm.pure.SingletonFactory.getInstance().parse("f(g,(h(<a>,b),b),c)")) },
-      { `concWrap(Int(1),Int(2),Name("toto"),Name("blop")) },
-      { `concWrap(Int(1),concWrap(Name("a"),Name("b"),Name("c")),Int(3)) },
-      { `WrapListInt(concInt(1,2,3,4,5,6,7,8,9,0)) },
-      { `WrapListLong(concLong(10000,123455,23445556)) },
-      { `WrapListBool(concBool(true(),false(),true(),false())) },
-      { `WrapListChar(concChar('t','o','m')) },
-    });
+  @DataPoints
+  public static Wrapper[] data() {
+    return new Wrapper[] {
+      `Char('a'),
+      `Int(21),
+      `Int(java.lang.Integer.MAX_VALUE-2),
+      `Int(java.lang.Integer.MAX_VALUE),
+      `Real(21),
+      `Real((float)20.3),
+      `Double(21),
+      `Double(20.3),
+      `Bool(true()),
+      `Bool(false()),
+      `Long(23),
+      `Long(java.lang.Integer.MAX_VALUE-3),
+      `Long(java.lang.Integer.MAX_VALUE-1),
+      `Long(java.lang.Integer.MAX_VALUE),
+      `Long(java.lang.Long.MAX_VALUE-10),
+      `Long(java.lang.Long.MAX_VALUE-1),
+      `Long(java.lang.Long.MAX_VALUE),
+      `Name("who?"),
+      `Name("\"Hello\""),
+      `Name("\"Hello\tWorld\n print-it\f end\""),
+      `Node(aterm.pure.SingletonFactory.getInstance().parse("f(g,(h(<a>,b),b),c)")),
+      `concWrap(Int(1),Int(2),Name("toto"),Name("blop")),
+      `concWrap(Int(1),concWrap(Name("a"),Name("b"),Name("c")),Int(3)),
+      `WrapListInt(concInt(1,2,3,4,5,6,7,8,9,0)),
+      `WrapListLong(concLong(10000,123455,23445556)),
+      `WrapListBool(concBool(true(),false(),true(),false())),
+      `WrapListChar(concChar('t','o','m')),
+    };
   }
 
-  private Wrapper testSubject;
-  public TestFromMethods(Wrapper wr) {
-    testSubject = wr; 
-  }
-
-  @Test
-  public void testFromTerm() {
+  @Theory
+  public void testFromTerm(Wrapper testSubject) {
     Wrapper newObj = Wrapper.fromTerm(testSubject.toATerm());
     Assert.assertEquals(testSubject,newObj);
   }
 
-  @Test
-  public void testFromString() {
+  @Theory
+  public void testFromString(Wrapper testSubject) {
     Wrapper newObj = Wrapper.fromString(testSubject.toString());
     Assert.assertEquals(testSubject,newObj);
   }

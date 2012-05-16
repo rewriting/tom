@@ -95,50 +95,26 @@ tested):
 - examples:
   examples/appletxml --> xml non géré
   examples/bpel --> xml non géré
-  examples/caml --> commentaire caml non géré (pas de soucis tant qu'il n'y a pas de mot
-                    clef dedans) et les ' autorisés dans les noms de variables sont détectés
-                    comme des ' signalant un char (PeanoMapped.t)
-  examples/csharp --> parse mais c'est du C#
+  examples/caml --> commentaire caml non géré (pas de soucis tant qu'il n'y a 
+                    pas de mot clef dedans) et les ' autorisés dans les noms
+                    de variables sont détectés comme des ' signalant un char
+                    (PeanoMapped.t)
   examples/dom --> xml non géré
-  examples/gom
-  examples/gomoku
-  examples/gterm
-  examples/integerc
-  examples/labyrinth
-  examples/lambdacalculi
-  examples/lazyml
-  examples/lib
-  examples/list
-  examples/lsystems
-  examples/master
-  examples/matching
-  examples/meta
-  examples/mgs
-  examples/miniml
-  examples/modeltrans
-  examples/multigraph
-  examples/nspk
-  examples/old
-  examples/p3p
-  examples/parser
-  examples/peano
-  examples/poly
-  examples/polygraphes
-  examples/prodrule
-  examples/propp
-  examples/python
-  examples/quine
-  examples/rbtree
-  examples/report
-  examples/servlet
-  examples/set
-  examples/strategy
-  examples/strategycompiler
-  examples/strings
-  examples/structure
-  examples/subtypeinference
-  examples/subtyping
-  examples/tactics
+  examples/lambdacalculi --> Ne peut pas parser correctement car la phase de 
+                             transformation du CST pour le code Tom dans le 
+                             %gom plante
+  examples/lazyml --> Typer.t ne parse pas, on dirait qu'il boucle
+  examples/lsystems --> Ne parse pas mais non conforme à la grammaire Tom. Il 
+                        n'y a pas de build.xml de toute façon
+  examples/miniml --> Typer.t : comme lazyml, des match imbriqués et on dirait 
+                      que ça boucle
+  examples/modeltrans --> Uml.t : problème de typage, il y a des math(this) dans
+                          les fichiers tmp qui pose problème (lié à --termgraph)
+  examples/p3p --> xml non géré
+  examples/python --> python non géré
+  examples/servlet --> xml non géré, ne respecte pas la grammaire
+  examples/strategy --> xml non géré dans RewriteXML.t, reste ok
+  examples/subtyping --> inference/TypeInference.t très lent
   examples/termgraph
   examples/TestMatch.t
   examples/tomjastadd
