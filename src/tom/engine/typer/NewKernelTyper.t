@@ -564,17 +564,15 @@ public class NewKernelTyper {
    * @param localVarPatternList   the TomList to be reset
    */
   protected void resetVarList(TomList globalVarPatternList) {
-    BQTermList bqTList = varList;
     for(TomTerm tTerm: varPatternList.getCollectionconcTomTerm()) {
-      %match(tTerm,globalVarPatternList,bqTList) {
+      %match(tTerm,globalVarPatternList,varList) {
         test@(Variable|VariableStar)[AstName=aName],!concTomTerm(_*,test,_*),concBQTerm(x*,(BQVariable|BQVariableStar)[AstName=aName],y*)
           -> {
             System.out.println("*** resetVarList remove: " + `aName);
-            bqTList = `concBQTerm(x*,y*);
+            varList = `concBQTerm(x*,y*);
           }
       }
     }
-    varList = bqTList;
   }
 
   /**
