@@ -127,8 +127,6 @@ public class NewKernelTyper {
       (BQVariable|BQVariableStar|FunctionCall)[AstType=aType] -> { return `aType; }
       (BQAppl|BuildConstant|BuildTerm|BuildEmptyList|BuildConsList|BuildAppendList|BuildEmptyArray|BuildConsArray|BuildAppendArray)[AstName=Name[String=name]] -> {
         TomSymbol tSymbol = getSymbolFromName(`name);
-        //DEBUG System.out.println("In getType with BQAppl " + `bqTerm + "\n");
-        //DEBUG System.out.println("In getType with type " + getCodomain(tSymbol) + "\n");
         return getCodomain(tSymbol);
       }
     } 
@@ -236,6 +234,41 @@ public class NewKernelTyper {
     throw new TomRuntimeException("getUnknownFreshTypeVar: should not be here.");
   }
 
+
+  protected TypeConstraintList addConstraintSlow(TypeConstraint tConstraint, TypeConstraintList tCList) {
+    if(!containsConstraint(tConstraint,tCList)) {
+      %match(tConstraint) {
+        (Equation|Subtype)[Type1=t1@!EmptyType(),Type2=t2@!EmptyType()] && (t1 != t2) -> { 
+          tCList = `concTypeConstraint(tConstraint,tCList*);
+        }
+      }
+    }
+    return tCList;
+  }
+
+  /**
+   * The method <code>containsConstraint</code> checks if a given constraint
+   * already exists in a constraint type list. The method considers symmetry for
+   * equation constraints. 
+   * slow code used only by addConstraintSlow (for compatibility reasons)
+   * @param tConstraint the constraint to be considered
+   * @param tCList      the type constraint list to be traversed
+   * @return            'true' if the constraint already exists in the list
+   *                    'false' otherwise            
+   */
+  protected boolean containsConstraint(TypeConstraint tConstraint, TypeConstraintList tCList) {
+    %match(tConstraint,tCList) {
+      Subtype[Type1=t1,Type2=t2], concTypeConstraint(_*,(Subtype|Equation)[Type1=t1,Type2=t2],_*) -> { return true; }
+
+      Equation[Type1=t1,Type2=t2], concTypeConstraint(_*,Equation[Type1=t3,Type2=t4],_*) -> {
+        if(`(t1==t3 && t2==t4) || `(t1==t4 && t2==t3)) {
+          return true; 
+        }
+      }
+    }
+    return containsConstraintModuloEqDecoratedSort(tConstraint,tCList);
+  } 
+  
   /**
    * The method <code>containsConstraintModuloEqDecoratedSort</code> checks if a given constraint
    * already exists in a constraint type list. The method considers symmetry for
@@ -247,13 +280,13 @@ public class NewKernelTyper {
    * insert((T^? = A),C)	->	C,              if (A = T^c) in C \/ (T^c = A) in C 
    *                      ->  {T^? = A} U C,  otherwise
    * 
+   * slow code used only by containsConstraint (for compatibility reasons)
    * @param tConstraint the constraint to be considered
    * @param tCList      the type constraint list to be traversed
    * @return            'true' if an equal constraint modulo EqOfDecSort already exists in the list
    *                    'false' otherwise            
    */
-  protected boolean containsConstraintModuloEqDecoratedSort(TypeConstraint tConstraint, TypeConstraintList
-      tCList) {
+  protected boolean containsConstraintModuloEqDecoratedSort(TypeConstraint tConstraint, TypeConstraintList tCList) {
     %match(tConstraint) {
       Equation[Type1=tVar@TypeVar[],Type2=Type[TypeOptions=tOptions,TomType=tType]] &&
         !concTypeOption(_*,WithSymbol[],_*) << tOptions &&
@@ -279,31 +312,6 @@ public class NewKernelTyper {
     return false;
   }
 
-  /**
-   * The method <code>containsConstraint</code> checks if a given constraint
-   * already exists in a constraint type list. The method considers symmetry for
-   * equation constraints. 
-   * @param tConstraint the constraint to be considered
-   * @param tCList      the type constraint list to be traversed
-   * @return            'true' if the constraint already exists in the list
-   *                    'false' otherwise            
-   */
-  protected boolean containsConstraint(TypeConstraint tConstraint, TypeConstraintList tCList) {
-    %match {
-      Subtype[Type1=t1,Type2=t2] << TypeConstraint tConstraint &&
-        concTypeConstraint(_*,(Subtype|Equation)[Type1=t1,Type2=t2],_*) << tCList 
-        -> { return true; }
-
-      Equation[Type1=t1,Type2=t2] << TypeConstraint tConstraint &&
-        concTypeConstraint(_*,Equation[Type1=t1,Type2=t2],_*) << tCList 
-        -> { return true; }
-
-      Equation[Type1=t1,Type2=t2] << TypeConstraint tConstraint &&
-        concTypeConstraint(_*,Equation[Type1=t2,Type2=t1],_*) << tCList 
-        -> { return true; }
-    }
-    return containsConstraintModuloEqDecoratedSort(tConstraint,tCList);
-  } 
 
   /*
    * pem: use if(...==... && typeConstraints.contains(...))
@@ -427,21 +435,6 @@ public class NewKernelTyper {
      
   }
 
-  protected TypeConstraintList addConstraintSlow(TypeConstraint tConstraint, TypeConstraintList tCList) {
-
-    TypeConstraintList result2 = null;
-    result2 = tCList;
-    if (!containsConstraint(tConstraint,tCList)) {
-      %match(tConstraint) {
-        (Equation|Subtype)[Type1=t1@!EmptyType(),Type2=t2@!EmptyType()] && (t1 != t2) -> { 
-            result2 = `concTypeConstraint(tConstraint,tCList*);
-          }
-      }
-    }
-
-    return result2;
-     
-  }
 
   /**
    * The method <code>generateDependencies</code> generates a
@@ -464,35 +457,29 @@ public class NewKernelTyper {
   // type inference and for all types of symbol table instead of only "used
   // types".
   protected void generateDependencies() {
-    TomTypeList superTypes;
-    TomTypeList supOfSubTypes;
-    String currentTypeName;
     for(TomType currentType:symbolTable.getUsedTypes()) {
-      currentTypeName = currentType.getTomType();
-      superTypes = `concTomType();
-      //DEBUG System.out.println("In generateDependencies -- for 1 : currentType = " +
-      //DEBUG    currentType);
-      %match {
+      String currentTypeName = currentType.getTomType();
+      TomTypeList superTypes = `concTomType();
+      %match(currentType) {
         /* STEP 1 */
-        Type[TypeOptions=concTypeOption(_*,SubtypeDecl[TomType=supTypeName],_*),TomType=tName] << currentType -> {
+        Type[TypeOptions=concTypeOption(_*,SubtypeDecl[TomType=supTypeName],_*),TomType=tName] -> {
           //DEBUG System.out.println("In generateDependencies -- match : supTypeName = "
           //DEBUG     + `supTypeName + " and supType = " + supType);
-          if (dependencies.containsKey(`supTypeName)) {
+          if(dependencies.containsKey(`supTypeName)) {
             superTypes = dependencies.get(`supTypeName); 
           }
           TomType supType = symbolTable.getType(`supTypeName);
-          if (supType != null) {
+          if(supType != null) {
             superTypes = `concTomType(supType,superTypes*);  
 
             /* STEP 2 */
             for(String subType:dependencies.keySet()) {
-              supOfSubTypes = dependencies.get(`subType);
+              TomTypeList supOfSubTypes = dependencies.get(`subType);
               //DEBUG System.out.println("In generateDependencies -- for 2: supOfSubTypes = " +
               //DEBUG     supOfSubTypes);
               %match {
                 // The same tName of currentType
-                concTomType(_*,Type[TomType=suptName],_*) << supOfSubTypes &&
-                  (suptName == tName) -> {
+                concTomType(_*,Type[TomType=suptName],_*) << supOfSubTypes && (suptName == tName) -> {
                     /* 
                      * Replace list of superTypes of "subType" by a new one
                      * containing the superTypes of "currentType" which is also a
