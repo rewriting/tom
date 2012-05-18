@@ -548,7 +548,7 @@ public class NewKernelTyper {
    * Thus, instead of performing variable renaming, we assume that pattern
    * variables are only "valid" in the current rule cond -> action.
    * pem: remove from varList, all variables that belong to varPatternList, which are not in globalVarPatternList
-   * @param localVarPatternList   the TomList to be reset
+   * @param globalVarPatternList   the TomList to be reset
    */
   protected void resetVarList(TomList globalVarPatternList) {
     for(TomTerm tTerm: varPatternList.getCollectionconcTomTerm()) {
