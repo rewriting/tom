@@ -732,10 +732,10 @@ public class NewKernelTyper {
     }
 
     visit TomTerm {
-      AntiTerm[TomTerm=atomicTerm] -> { 
-        nkt.inferAllTypes(`atomicTerm,contextType); 
-        /* pem: there is not return! */
-      }
+      //AntiTerm[TomTerm=atomicTerm] -> { 
+      //  TomTerm tmp = nkt.inferAllTypes(`atomicTerm,contextType); 
+        /* pem: there is not return: can be removed! */
+      //}
 
       var@Variable[Options=optionList,AstName=aName,AstType=aType,Constraints=cList] -> {
         nkt.checkNonLinearityOfVariables(`var);
