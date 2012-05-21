@@ -108,10 +108,10 @@ public class ToolBox {
       map.put(accessObj[i],accessFlags[i]);
     }
 
-    {{if ( (((Object)list) instanceof tom.library.adt.bytecode.types.AccessList) ) {if ( (((( tom.library.adt.bytecode.types.AccessList )(( tom.library.adt.bytecode.types.AccessList )((Object)list))) instanceof tom.library.adt.bytecode.types.accesslist.ConsAccessList) || ((( tom.library.adt.bytecode.types.AccessList )(( tom.library.adt.bytecode.types.AccessList )((Object)list))) instanceof tom.library.adt.bytecode.types.accesslist.EmptyAccessList)) ) { tom.library.adt.bytecode.types.AccessList  tomMatch711__end__4=(( tom.library.adt.bytecode.types.AccessList )((Object)list));do {{if (!( tomMatch711__end__4.isEmptyAccessList() )) {
+    {{if ( (((Object)list) instanceof tom.library.adt.bytecode.types.AccessList) ) {if ( (((( tom.library.adt.bytecode.types.AccessList )(( tom.library.adt.bytecode.types.AccessList )((Object)list))) instanceof tom.library.adt.bytecode.types.accesslist.ConsAccessList) || ((( tom.library.adt.bytecode.types.AccessList )(( tom.library.adt.bytecode.types.AccessList )((Object)list))) instanceof tom.library.adt.bytecode.types.accesslist.EmptyAccessList)) ) { tom.library.adt.bytecode.types.AccessList  tomMatch708__end__4=(( tom.library.adt.bytecode.types.AccessList )((Object)list));do {{if (!( tomMatch708__end__4.isEmptyAccessList() )) {
 
-        value = value | (map.get( tomMatch711__end__4.getHeadAccessList() )).intValue();
-      }if ( tomMatch711__end__4.isEmptyAccessList() ) {tomMatch711__end__4=(( tom.library.adt.bytecode.types.AccessList )((Object)list));} else {tomMatch711__end__4= tomMatch711__end__4.getTailAccessList() ;}}} while(!( (tomMatch711__end__4==(( tom.library.adt.bytecode.types.AccessList )((Object)list))) ));}}}}
+        value = value | (map.get( tomMatch708__end__4.getHeadAccessList() )).intValue();
+      }if ( tomMatch708__end__4.isEmptyAccessList() ) {tomMatch708__end__4=(( tom.library.adt.bytecode.types.AccessList )((Object)list));} else {tomMatch708__end__4= tomMatch708__end__4.getTailAccessList() ;}}} while(!( (tomMatch708__end__4==(( tom.library.adt.bytecode.types.AccessList )((Object)list))) ));}}}}
 
     return value;   
   }
