@@ -226,13 +226,13 @@ matchArgument [List<BQTerm> list, List<TomType> typeList] throws TomException
   String s2 = null;
 }
     :
-
+    (BACKQUOTE { text.delete(0, text.length()); } )?
     subject1 = plainBQTerm {
       s1 = text.toString();
       text.delete(0, text.length());
     }
-    (BACKQUOTE { text.delete(0, text.length()); } )?
-    (subject2 = plainBQTerm { s2 = text.toString(); })?
+    ((BACKQUOTE { text.delete(0, text.length()); } )?
+     subject2 = plainBQTerm { s2 = text.toString(); })?
     {
       if(subject2==null) {
         list.add(subject1);
