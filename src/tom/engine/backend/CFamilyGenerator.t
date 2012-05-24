@@ -351,7 +351,7 @@ matchBlock: {
     return "new "+funName+"("+args+")";
   }
 
-  //TODO
+  //TODO -> not called
   protected void genResolveDeclMake(String prefix, String funName, TomType
       returnType, BQTermList argList, String moduleName) throws IOException {
     if(nodeclMode) {
