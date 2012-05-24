@@ -1,4 +1,4 @@
-// $ANTLR 3.2 Sep 23, 2009 12:02:23 /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/miniTom.g 2012-05-21 14:50:11
+// $ANTLR 3.2 Sep 23, 2009 12:02:23 /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/miniTom.g 2012-05-24 18:00:46
 
 package tom.engine.parser.antlr3;
 import org.antlr.runtime.tree.Tree;
@@ -685,7 +685,7 @@ public class miniTomParser extends Parser {
 
 
             // AST REWRITE
-            // elements: csName, csBQTerm, csStrategyVisitList, csSlotList
+            // elements: csStrategyVisitList, csSlotList, csBQTerm, csName
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -922,7 +922,7 @@ public class miniTomParser extends Parser {
 
 
             // AST REWRITE
-            // elements: IDENTIFIER, csVisitAction
+            // elements: csVisitAction, IDENTIFIER
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -1087,7 +1087,7 @@ public class miniTomParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: IDENTIFIER, csExtendedConstraint, csExtendedConstraint
+                    // elements: csExtendedConstraint, csExtendedConstraint, IDENTIFIER
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -1202,7 +1202,7 @@ public class miniTomParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: IDENTIFIER, csBQTerm, csExtendedConstraint, csExtendedConstraint, csBQTerm
+                    // elements: csBQTerm, csBQTerm, csExtendedConstraint, IDENTIFIER, csExtendedConstraint
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -1495,7 +1495,7 @@ public class miniTomParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: csExtendedConstraintAction, csBQTerm
+                    // elements: csBQTerm, csExtendedConstraintAction
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -1771,7 +1771,7 @@ public class miniTomParser extends Parser {
 
 
             // AST REWRITE
-            // elements: IDENTIFIER, csConstraint, csConstraint
+            // elements: csConstraint, csConstraint, IDENTIFIER
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -1939,7 +1939,7 @@ public class miniTomParser extends Parser {
 
 
             // AST REWRITE
-            // elements: IDENTIFIER, csExtendedConstraint, csExtendedConstraint
+            // elements: csExtendedConstraint, csExtendedConstraint, IDENTIFIER
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -2250,7 +2250,7 @@ public class miniTomParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: bqname, a, a, a, bqname, type, bqname
+                    // elements: bqname, a, bqname, bqname, type, a, a
                     // token labels: type, bqname
                     // rule labels: retval
                     // token list labels: 
@@ -2447,7 +2447,7 @@ public class miniTomParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: type, name, name, type, type, name, name, name, type, name, type, name, name, type
+                    // elements: name, type, name, type, name, type, name, name, type, name, name, type, name, type
                     // token labels: name, type
                     // rule labels: retval
                     // token list labels: 
@@ -2836,7 +2836,7 @@ public class miniTomParser extends Parser {
 
 
             // AST REWRITE
-            // elements: csMatchArgumentConstraintList, csConstraint, csMatchArgumentConstraintList, csConstraint, csMatchArgumentConstraintList
+            // elements: csConstraint, csMatchArgumentConstraintList, csMatchArgumentConstraintList, csConstraint, csMatchArgumentConstraintList
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -3667,7 +3667,7 @@ public class miniTomParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: l, l, r, r, l, r, l, l, r, r, l, r
+                    // elements: r, l, l, r, l, r, r, l, l, r, r, l
                     // token labels: 
                     // rule labels: retval, r, l
                     // token list labels: 
@@ -4035,7 +4035,7 @@ public class miniTomParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: IDENTIFIER, csTerm
+                    // elements: csTerm, IDENTIFIER
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -4172,7 +4172,7 @@ public class miniTomParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: IDENTIFIER, csPattern
+                    // elements: csPattern, IDENTIFIER
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -4262,7 +4262,7 @@ public class miniTomParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: csHeadSymbolList, csExplicitTermList
+                    // elements: csExplicitTermList, csHeadSymbolList
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -5557,7 +5557,7 @@ public class miniTomParser extends Parser {
 
 
             // AST REWRITE
-            // elements: csPattern, IDENTIFIER
+            // elements: IDENTIFIER, csPattern
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -5779,7 +5779,7 @@ public class miniTomParser extends Parser {
 
 
             // AST REWRITE
-            // elements: ctorName, ks, csSlotList, codomain
+            // elements: ks, codomain, csSlotList, ctorName
             // token labels: codomain
             // rule labels: retval, ctorName
             // token list labels: 
@@ -6039,7 +6039,7 @@ public class miniTomParser extends Parser {
 
 
             // AST REWRITE
-            // elements: codomain, ks, domain, ctorName
+            // elements: domain, ctorName, codomain, ks
             // token labels: codomain, domain
             // rule labels: retval, ctorName
             // token list labels: 
@@ -6329,7 +6329,7 @@ public class miniTomParser extends Parser {
 
 
             // AST REWRITE
-            // elements: ks, ctorName, domain, codomain
+            // elements: domain, codomain, ctorName, ks
             // token labels: codomain, domain
             // rule labels: retval, ctorName
             // token list labels: 
@@ -6549,7 +6549,7 @@ public class miniTomParser extends Parser {
 
 
             // AST REWRITE
-            // elements: typeName, typeName, ks, extend, ks
+            // elements: ks, ks, extend, typeName, typeName
             // token labels: typeName, extend
             // rule labels: retval
             // token list labels: 
@@ -6880,7 +6880,7 @@ public class miniTomParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: type, name
+                    // elements: name, type
                     // token labels: name, type
                     // rule labels: retval
                     // token list labels: 
@@ -6939,7 +6939,7 @@ public class miniTomParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: name, type
+                    // elements: type, name
                     // token labels: name, type
                     // rule labels: retval
                     // token list labels: 
@@ -7192,7 +7192,7 @@ public class miniTomParser extends Parser {
 
 
             // AST REWRITE
-            // elements: slotName, termName
+            // elements: termName, slotName
             // token labels: 
             // rule labels: termName, retval, slotName
             // token list labels: 
@@ -8204,7 +8204,7 @@ public class miniTomParser extends Parser {
 
 
             // AST REWRITE
-            // elements: elementIndexArgName, termArgName
+            // elements: termArgName, elementIndexArgName
             // token labels: 
             // rule labels: retval, elementIndexArgName, termArgName
             // token list labels: 
@@ -8764,7 +8764,7 @@ public class miniTomParser extends Parser {
 
 
             // AST REWRITE
-            // elements: arg1, arg2
+            // elements: arg2, arg1
             // token labels: 
             // rule labels: retval, arg2, arg1
             // token list labels: 

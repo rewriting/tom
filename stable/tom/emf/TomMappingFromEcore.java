@@ -613,8 +613,9 @@ public class TomMappingFromEcore {
           String o2 = eclf.getEPackage().getClass().getInterfaces()[eclf
             .getEPackage().getClass().getInterfaces().length - 1]
             .getCanonicalName();
-          String operatorName = cr+lit.getLiteral();
-          writer.write("\n\n%op "+cr+" "+operatorName+"() {\n  is_fsym(t) { t == "+(decl[0]+decl[1])+".get(\""+lit.getLiteral()+"\") }\n  make() { ("+(decl[0]+decl[2])+")"+o1+".eINSTANCE.createFromString( (EDataType)"+o2+".eINSTANCE.get"+toUpperName(cr)+"(), \""+lit.getLiteral()+"\") }\n}"
+          String literal = lit.getLiteral();
+          String operatorName = cr+literal.replaceAll(" ","");
+          writer.write("\n\n%op "+cr+" "+operatorName+"() {\n  is_fsym(t) { t == "+(decl[0]+decl[1])+".get(\""+literal+"\") }\n  make() { ("+(decl[0]+decl[2])+")"+o1+".eINSTANCE.createFromString( (EDataType)"+o2+".eINSTANCE.get"+toUpperName(cr)+"(), \""+literal+"\") }\n}"
 
 
 

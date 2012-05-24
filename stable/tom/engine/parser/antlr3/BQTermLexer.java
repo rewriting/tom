@@ -1,4 +1,4 @@
-// $ANTLR 3.2 Sep 23, 2009 12:02:23 /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g 2012-05-21 14:50:13
+// $ANTLR 3.2 Sep 23, 2009 12:02:23 /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTermLexer.g 2012-05-24 18:00:48
 
 package tom.engine.parser.antlr3;
 
@@ -2089,11 +2089,11 @@ public class BQTermLexer extends Lexer {
         state.failed=false;
         return success;
     }
-    public final boolean synpred16_BQTermLexer() {
+    public final boolean synpred13_BQTermLexer() {
         state.backtracking++;
         int start = input.mark();
         try {
-            synpred16_BQTermLexer_fragment(); // can never throw exception
+            synpred13_BQTermLexer_fragment(); // can never throw exception
         } catch (RecognitionException re) {
             System.err.println("impossible: "+re);
         }
@@ -2103,11 +2103,11 @@ public class BQTermLexer extends Lexer {
         state.failed=false;
         return success;
     }
-    public final boolean synpred13_BQTermLexer() {
+    public final boolean synpred16_BQTermLexer() {
         state.backtracking++;
         int start = input.mark();
         try {
-            synpred13_BQTermLexer_fragment(); // can never throw exception
+            synpred16_BQTermLexer_fragment(); // can never throw exception
         } catch (RecognitionException re) {
             System.err.println("impossible: "+re);
         }
@@ -2201,20 +2201,6 @@ public class BQTermLexer extends Lexer {
         state.failed=false;
         return success;
     }
-    public final boolean synpred18_BQTermLexer() {
-        state.backtracking++;
-        int start = input.mark();
-        try {
-            synpred18_BQTermLexer_fragment(); // can never throw exception
-        } catch (RecognitionException re) {
-            System.err.println("impossible: "+re);
-        }
-        boolean success = !state.failed;
-        input.rewind(start);
-        state.backtracking--;
-        state.failed=false;
-        return success;
-    }
     public final boolean synpred19_BQTermLexer() {
         state.backtracking++;
         int start = input.mark();
@@ -2234,6 +2220,20 @@ public class BQTermLexer extends Lexer {
         int start = input.mark();
         try {
             synpred11_BQTermLexer_fragment(); // can never throw exception
+        } catch (RecognitionException re) {
+            System.err.println("impossible: "+re);
+        }
+        boolean success = !state.failed;
+        input.rewind(start);
+        state.backtracking--;
+        state.failed=false;
+        return success;
+    }
+    public final boolean synpred18_BQTermLexer() {
+        state.backtracking++;
+        int start = input.mark();
+        try {
+            synpred18_BQTermLexer_fragment(); // can never throw exception
         } catch (RecognitionException re) {
             System.err.println("impossible: "+re);
         }
@@ -2313,11 +2313,11 @@ public class BQTermLexer extends Lexer {
         state.failed=false;
         return success;
     }
-    public final boolean synpred8_BQTermLexer() {
+    public final boolean synpred21_BQTermLexer() {
         state.backtracking++;
         int start = input.mark();
         try {
-            synpred8_BQTermLexer_fragment(); // can never throw exception
+            synpred21_BQTermLexer_fragment(); // can never throw exception
         } catch (RecognitionException re) {
             System.err.println("impossible: "+re);
         }
@@ -2327,11 +2327,11 @@ public class BQTermLexer extends Lexer {
         state.failed=false;
         return success;
     }
-    public final boolean synpred21_BQTermLexer() {
+    public final boolean synpred8_BQTermLexer() {
         state.backtracking++;
         int start = input.mark();
         try {
-            synpred21_BQTermLexer_fragment(); // can never throw exception
+            synpred8_BQTermLexer_fragment(); // can never throw exception
         } catch (RecognitionException re) {
             System.err.println("impossible: "+re);
         }
@@ -2391,36 +2391,33 @@ public class BQTermLexer extends Lexer {
     static final String DFA20_eofS =
         "\47\uffff";
     static final String DFA20_minS =
-        "\2\0\2\uffff\1\0\1\uffff\1\0\2\uffff\1\0\6\uffff\1\0\1\uffff\1\0"+
-        "\1\uffff\1\0\4\uffff\1\0\1\uffff\1\0\1\uffff\1\0\1\uffff\1\0\1\uffff"+
-        "\1\0\1\uffff\1\0\1\uffff\1\0\1\uffff";
+        "\2\0\2\uffff\1\0\2\uffff\1\0\5\uffff\1\0\5\uffff\1\0\1\uffff\1\0"+
+        "\1\uffff\1\0\1\uffff\1\0\1\uffff\1\0\1\uffff\1\0\1\uffff\1\0\2\uffff"+
+        "\2\0\1\uffff\1\0\1\uffff";
     static final String DFA20_maxS =
-        "\1\uffff\1\0\2\uffff\1\0\1\uffff\1\0\2\uffff\1\0\6\uffff\1\0\1\uffff"+
-        "\1\0\1\uffff\1\0\4\uffff\1\0\1\uffff\1\0\1\uffff\1\0\1\uffff\1\0"+
-        "\1\uffff\1\0\1\uffff\1\0\1\uffff\1\0\1\uffff";
+        "\1\uffff\1\0\2\uffff\1\0\2\uffff\1\0\5\uffff\1\0\5\uffff\1\0\1\uffff"+
+        "\1\0\1\uffff\1\0\1\uffff\1\0\1\uffff\1\0\1\uffff\1\0\1\uffff\1\0"+
+        "\2\uffff\2\0\1\uffff\1\0\1\uffff";
     static final String DFA20_acceptS =
-        "\2\uffff\1\17\1\27\1\uffff\1\21\1\uffff\1\25\1\26\1\uffff\1\1\1"+
-        "\2\1\3\1\4\1\5\1\27\1\uffff\1\15\1\uffff\1\14\1\uffff\1\6\1\7\1"+
-        "\10\1\11\1\uffff\1\13\1\uffff\1\23\1\uffff\1\22\1\uffff\1\24\1\uffff"+
-        "\1\12\1\uffff\1\16\1\uffff\1\20";
+        "\2\uffff\1\20\1\27\1\uffff\1\22\1\27\1\uffff\1\1\1\2\1\3\1\4\1\5"+
+        "\1\uffff\1\6\1\7\1\10\1\11\1\12\1\uffff\1\16\1\uffff\1\15\1\uffff"+
+        "\1\13\1\uffff\1\14\1\uffff\1\24\1\uffff\1\23\1\uffff\1\25\1\26\2"+
+        "\uffff\1\17\1\uffff\1\21";
     static final String DFA20_specialS =
-        "\1\0\1\1\2\uffff\1\2\1\uffff\1\3\2\uffff\1\4\6\uffff\1\5\1\uffff"+
-        "\1\6\1\uffff\1\7\4\uffff\1\10\1\uffff\1\11\1\uffff\1\12\1\uffff"+
-        "\1\13\1\uffff\1\14\1\uffff\1\15\1\uffff\1\16\1\uffff}>";
+        "\1\0\1\1\2\uffff\1\2\2\uffff\1\3\5\uffff\1\4\5\uffff\1\5\1\uffff"+
+        "\1\6\1\uffff\1\7\1\uffff\1\10\1\uffff\1\11\1\uffff\1\12\1\uffff"+
+        "\1\13\2\uffff\1\14\1\15\1\uffff\1\16\1\uffff}>";
     static final String[] DFA20_transitionS = {
-            "\11\17\2\37\2\17\1\37\22\17\1\37\1\17\1\45\4\17\1\4\1\22\1\20"+
-            "\2\17\1\31\1\33\1\35\1\6\12\33\3\17\1\1\3\17\32\24\2\17\1\43"+
-            "\1\17\1\41\1\11\32\24\uff85\17",
+            "\11\6\2\33\2\6\1\33\22\6\1\33\1\6\1\1\4\6\1\45\1\31\1\25\2\6"+
+            "\1\27\1\35\1\4\1\37\12\35\3\6\1\43\3\6\32\42\2\6\1\23\1\6\1"+
+            "\15\1\7\32\42\uff85\6",
             "\1\uffff",
             "",
             "",
             "\1\uffff",
             "",
-            "\1\uffff",
-            "",
             "",
             "\1\uffff",
-            "",
             "",
             "",
             "",
@@ -2428,9 +2425,6 @@ public class BQTermLexer extends Lexer {
             "",
             "\1\uffff",
             "",
-            "\1\uffff",
-            "",
-            "\1\uffff",
             "",
             "",
             "",
@@ -2445,6 +2439,12 @@ public class BQTermLexer extends Lexer {
             "",
             "\1\uffff",
             "",
+            "\1\uffff",
+            "",
+            "\1\uffff",
+            "",
+            "",
+            "\1\uffff",
             "\1\uffff",
             "",
             "\1\uffff",
@@ -2491,35 +2491,35 @@ public class BQTermLexer extends Lexer {
                         int LA20_0 = input.LA(1);
 
                         s = -1;
-                        if ( (LA20_0=='=') ) {s = 1;}
+                        if ( (LA20_0=='\"') ) {s = 1;}
 
-                        else if ( (LA20_0=='\'') ) {s = 4;}
+                        else if ( (LA20_0=='.') ) {s = 4;}
 
-                        else if ( (LA20_0=='/') ) {s = 6;}
+                        else if ( ((LA20_0>='\u0000' && LA20_0<='\b')||(LA20_0>='\u000B' && LA20_0<='\f')||(LA20_0>='\u000E' && LA20_0<='\u001F')||LA20_0=='!'||(LA20_0>='#' && LA20_0<='&')||(LA20_0>='*' && LA20_0<='+')||(LA20_0>=':' && LA20_0<='<')||(LA20_0>='>' && LA20_0<='@')||(LA20_0>='[' && LA20_0<='\\')||LA20_0=='^'||(LA20_0>='{' && LA20_0<='\uFFFF')) ) {s = 6;}
 
-                        else if ( (LA20_0=='`') ) {s = 9;}
+                        else if ( (LA20_0=='`') ) {s = 7;}
 
-                        else if ( ((LA20_0>='\u0000' && LA20_0<='\b')||(LA20_0>='\u000B' && LA20_0<='\f')||(LA20_0>='\u000E' && LA20_0<='\u001F')||LA20_0=='!'||(LA20_0>='#' && LA20_0<='&')||(LA20_0>='*' && LA20_0<='+')||(LA20_0>=':' && LA20_0<='<')||(LA20_0>='>' && LA20_0<='@')||(LA20_0>='[' && LA20_0<='\\')||LA20_0=='^'||(LA20_0>='{' && LA20_0<='\uFFFF')) ) {s = 15;}
+                        else if ( (LA20_0=='_') ) {s = 13;}
 
-                        else if ( (LA20_0==')') ) {s = 16;}
+                        else if ( (LA20_0==']') ) {s = 19;}
 
-                        else if ( (LA20_0=='(') ) {s = 18;}
+                        else if ( (LA20_0==')') ) {s = 21;}
 
-                        else if ( ((LA20_0>='A' && LA20_0<='Z')||(LA20_0>='a' && LA20_0<='z')) ) {s = 20;}
+                        else if ( (LA20_0==',') ) {s = 23;}
 
-                        else if ( (LA20_0==',') ) {s = 25;}
+                        else if ( (LA20_0=='(') ) {s = 25;}
 
-                        else if ( (LA20_0=='-'||(LA20_0>='0' && LA20_0<='9')) ) {s = 27;}
+                        else if ( ((LA20_0>='\t' && LA20_0<='\n')||LA20_0=='\r'||LA20_0==' ') ) {s = 27;}
 
-                        else if ( (LA20_0=='.') ) {s = 29;}
+                        else if ( (LA20_0=='-'||(LA20_0>='0' && LA20_0<='9')) ) {s = 29;}
 
-                        else if ( ((LA20_0>='\t' && LA20_0<='\n')||LA20_0=='\r'||LA20_0==' ') ) {s = 31;}
+                        else if ( (LA20_0=='/') ) {s = 31;}
 
-                        else if ( (LA20_0=='_') ) {s = 33;}
+                        else if ( ((LA20_0>='A' && LA20_0<='Z')||(LA20_0>='a' && LA20_0<='z')) ) {s = 34;}
 
-                        else if ( (LA20_0==']') ) {s = 35;}
+                        else if ( (LA20_0=='=') ) {s = 35;}
 
-                        else if ( (LA20_0=='\"') ) {s = 37;}
+                        else if ( (LA20_0=='\'') ) {s = 37;}
 
                         if ( s>=0 ) return s;
                         break;
@@ -2530,7 +2530,7 @@ public class BQTermLexer extends Lexer {
                         int index20_1 = input.index();
                         input.rewind();
                         s = -1;
-                        if ( (synpred15_BQTermLexer()) ) {s = 2;}
+                        if ( (synpred16_BQTermLexer()) ) {s = 2;}
 
                         else if ( (true) ) {s = 3;}
 
@@ -2545,7 +2545,7 @@ public class BQTermLexer extends Lexer {
                         int index20_4 = input.index();
                         input.rewind();
                         s = -1;
-                        if ( (synpred17_BQTermLexer()) ) {s = 5;}
+                        if ( (synpred18_BQTermLexer()) ) {s = 5;}
 
                         else if ( (true) ) {s = 3;}
 
@@ -2554,94 +2554,94 @@ public class BQTermLexer extends Lexer {
                         if ( s>=0 ) return s;
                         break;
                     case 3 : 
-                        int LA20_6 = input.LA(1);
+                        int LA20_7 = input.LA(1);
 
                          
-                        int index20_6 = input.index();
+                        int index20_7 = input.index();
                         input.rewind();
                         s = -1;
-                        if ( (synpred21_BQTermLexer()) ) {s = 7;}
+                        if ( (synpred1_BQTermLexer()) ) {s = 8;}
 
-                        else if ( (synpred22_BQTermLexer()) ) {s = 8;}
+                        else if ( (synpred2_BQTermLexer()) ) {s = 9;}
 
-                        else if ( (true) ) {s = 3;}
+                        else if ( (synpred3_BQTermLexer()) ) {s = 10;}
+
+                        else if ( (synpred4_BQTermLexer()) ) {s = 11;}
+
+                        else if ( (synpred5_BQTermLexer()) ) {s = 12;}
+
+                        else if ( (true) ) {s = 6;}
 
                          
-                        input.seek(index20_6);
+                        input.seek(index20_7);
                         if ( s>=0 ) return s;
                         break;
                     case 4 : 
-                        int LA20_9 = input.LA(1);
+                        int LA20_13 = input.LA(1);
 
                          
-                        int index20_9 = input.index();
+                        int index20_13 = input.index();
                         input.rewind();
                         s = -1;
-                        if ( (synpred1_BQTermLexer()) ) {s = 10;}
+                        if ( (synpred6_BQTermLexer()) ) {s = 14;}
 
-                        else if ( (synpred2_BQTermLexer()) ) {s = 11;}
+                        else if ( (synpred7_BQTermLexer()) ) {s = 15;}
 
-                        else if ( (synpred3_BQTermLexer()) ) {s = 12;}
+                        else if ( (synpred8_BQTermLexer()) ) {s = 16;}
 
-                        else if ( (synpred4_BQTermLexer()) ) {s = 13;}
+                        else if ( (synpred9_BQTermLexer()) ) {s = 17;}
 
-                        else if ( (synpred5_BQTermLexer()) ) {s = 14;}
+                        else if ( (synpred10_BQTermLexer()) ) {s = 18;}
 
-                        else if ( (true) ) {s = 3;}
+                        else if ( (true) ) {s = 6;}
 
                          
-                        input.seek(index20_9);
+                        input.seek(index20_13);
                         if ( s>=0 ) return s;
                         break;
                     case 5 : 
-                        int LA20_16 = input.LA(1);
+                        int LA20_19 = input.LA(1);
 
                          
-                        int index20_16 = input.index();
+                        int index20_19 = input.index();
                         input.rewind();
                         s = -1;
-                        if ( (synpred13_BQTermLexer()) ) {s = 17;}
+                        if ( (synpred14_BQTermLexer()) ) {s = 20;}
 
-                        else if ( (true) ) {s = 15;}
+                        else if ( (true) ) {s = 6;}
 
                          
-                        input.seek(index20_16);
+                        input.seek(index20_19);
                         if ( s>=0 ) return s;
                         break;
                     case 6 : 
-                        int LA20_18 = input.LA(1);
+                        int LA20_21 = input.LA(1);
 
                          
-                        int index20_18 = input.index();
+                        int index20_21 = input.index();
                         input.rewind();
                         s = -1;
-                        if ( (synpred12_BQTermLexer()) ) {s = 19;}
+                        if ( (synpred13_BQTermLexer()) ) {s = 22;}
 
-                        else if ( (true) ) {s = 15;}
+                        else if ( (true) ) {s = 6;}
 
                          
-                        input.seek(index20_18);
+                        input.seek(index20_21);
                         if ( s>=0 ) return s;
                         break;
                     case 7 : 
-                        int LA20_20 = input.LA(1);
+                        int LA20_23 = input.LA(1);
 
                          
-                        int index20_20 = input.index();
+                        int index20_23 = input.index();
                         input.rewind();
                         s = -1;
-                        if ( (synpred6_BQTermLexer()) ) {s = 21;}
+                        if ( (synpred11_BQTermLexer()) ) {s = 24;}
 
-                        else if ( (synpred7_BQTermLexer()) ) {s = 22;}
-
-                        else if ( (synpred8_BQTermLexer()) ) {s = 23;}
-
-                        else if ( (synpred9_BQTermLexer()) ) {s = 24;}
-
-                        else if ( (true) ) {s = 15;}
+                        else if ( (true) ) {s = 6;}
 
                          
-                        input.seek(index20_20);
+                        input.seek(index20_23);
                         if ( s>=0 ) return s;
                         break;
                     case 8 : 
@@ -2651,9 +2651,9 @@ public class BQTermLexer extends Lexer {
                         int index20_25 = input.index();
                         input.rewind();
                         s = -1;
-                        if ( (synpred11_BQTermLexer()) ) {s = 26;}
+                        if ( (synpred12_BQTermLexer()) ) {s = 26;}
 
-                        else if ( (true) ) {s = 15;}
+                        else if ( (true) ) {s = 6;}
 
                          
                         input.seek(index20_25);
@@ -2666,9 +2666,9 @@ public class BQTermLexer extends Lexer {
                         int index20_27 = input.index();
                         input.rewind();
                         s = -1;
-                        if ( (synpred19_BQTermLexer()) ) {s = 28;}
+                        if ( (synpred20_BQTermLexer()) ) {s = 28;}
 
-                        else if ( (true) ) {s = 15;}
+                        else if ( (true) ) {s = 6;}
 
                          
                         input.seek(index20_27);
@@ -2681,9 +2681,9 @@ public class BQTermLexer extends Lexer {
                         int index20_29 = input.index();
                         input.rewind();
                         s = -1;
-                        if ( (synpred18_BQTermLexer()) ) {s = 30;}
+                        if ( (synpred19_BQTermLexer()) ) {s = 30;}
 
-                        else if ( (true) ) {s = 15;}
+                        else if ( (true) ) {s = 6;}
 
                          
                         input.seek(index20_29);
@@ -2696,35 +2696,35 @@ public class BQTermLexer extends Lexer {
                         int index20_31 = input.index();
                         input.rewind();
                         s = -1;
-                        if ( (synpred20_BQTermLexer()) ) {s = 32;}
+                        if ( (synpred21_BQTermLexer()) ) {s = 32;}
 
-                        else if ( (true) ) {s = 15;}
+                        else if ( (synpred22_BQTermLexer()) ) {s = 33;}
+
+                        else if ( (true) ) {s = 6;}
 
                          
                         input.seek(index20_31);
                         if ( s>=0 ) return s;
                         break;
                     case 12 : 
-                        int LA20_33 = input.LA(1);
+                        int LA20_34 = input.LA(1);
 
                          
-                        int index20_33 = input.index();
+                        int index20_34 = input.index();
                         input.rewind();
                         s = -1;
-                        if ( (synpred6_BQTermLexer()) ) {s = 21;}
+                        if ( (synpred6_BQTermLexer()) ) {s = 14;}
 
-                        else if ( (synpred7_BQTermLexer()) ) {s = 22;}
+                        else if ( (synpred7_BQTermLexer()) ) {s = 15;}
 
-                        else if ( (synpred8_BQTermLexer()) ) {s = 23;}
+                        else if ( (synpred8_BQTermLexer()) ) {s = 16;}
 
-                        else if ( (synpred9_BQTermLexer()) ) {s = 24;}
+                        else if ( (synpred9_BQTermLexer()) ) {s = 17;}
 
-                        else if ( (synpred10_BQTermLexer()) ) {s = 34;}
-
-                        else if ( (true) ) {s = 15;}
+                        else if ( (true) ) {s = 6;}
 
                          
-                        input.seek(index20_33);
+                        input.seek(index20_34);
                         if ( s>=0 ) return s;
                         break;
                     case 13 : 
@@ -2734,9 +2734,9 @@ public class BQTermLexer extends Lexer {
                         int index20_35 = input.index();
                         input.rewind();
                         s = -1;
-                        if ( (synpred14_BQTermLexer()) ) {s = 36;}
+                        if ( (synpred15_BQTermLexer()) ) {s = 36;}
 
-                        else if ( (true) ) {s = 15;}
+                        else if ( (true) ) {s = 6;}
 
                          
                         input.seek(index20_35);
@@ -2749,9 +2749,9 @@ public class BQTermLexer extends Lexer {
                         int index20_37 = input.index();
                         input.rewind();
                         s = -1;
-                        if ( (synpred16_BQTermLexer()) ) {s = 38;}
+                        if ( (synpred17_BQTermLexer()) ) {s = 38;}
 
-                        else if ( (true) ) {s = 15;}
+                        else if ( (true) ) {s = 6;}
 
                          
                         input.seek(index20_37);

@@ -1,4 +1,4 @@
-// $ANTLR 3.2 Sep 23, 2009 12:02:23 /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g 2012-05-21 14:50:15
+// $ANTLR 3.2 Sep 23, 2009 12:02:23 /Users/jcb/workspace/jtom2/src/tom/engine/parser/antlr3/BQTerm.g 2012-05-24 18:00:49
 
 package tom.engine.parser.antlr3;
 
@@ -634,7 +634,7 @@ public class BQTermParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: BQPAR, csCompositePart, RPAR
+                    // elements: csCompositePart, RPAR, BQPAR
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -832,7 +832,7 @@ public class BQTermParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: csBQTermArgsComposite, BQIDPAR
+                    // elements: BQIDPAR, csBQTermArgsComposite
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -1245,7 +1245,7 @@ public class BQTermParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: ID, csCompositePart, ID
+                    // elements: ID, ID, csCompositePart
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -1371,7 +1371,7 @@ public class BQTermParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: LPAR, csBQTermArgs, csBQTermArgs, csCompositePart, RPAR
+                    // elements: csBQTermArgs, csBQTermArgs, RPAR, LPAR, csCompositePart
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -1507,7 +1507,7 @@ public class BQTermParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: csBQTermArgsComposite, IDPAR
+                    // elements: IDPAR, csBQTermArgsComposite
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -1760,7 +1760,7 @@ public class BQTermParser extends Parser {
 
 
             // AST REWRITE
-            // elements: csCompositePart, csBQTermArgs, csBQTermArgs
+            // elements: csBQTermArgs, csCompositePart, csBQTermArgs
             // token labels: 
             // rule labels: retval
             // token list labels: 
