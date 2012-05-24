@@ -591,6 +591,11 @@ public abstract class AbstractGenerator {
         return;
       }
 
+      //tmp
+      Resolve2(bqterm, _) -> {
+        `buildResolve2(deep, bqterm, moduleName);
+        return;
+      }
       Resolve(Name(src), Name(srcType), Name(target), Name(targetType), _) -> {
         `buildResolve(deep, src, srcType, target, targetType, moduleName);
         return;
@@ -755,11 +760,12 @@ public abstract class AbstractGenerator {
         return;
       }
 
+      //why?
       ResolveIsFsymDecl(Name(tomName),
           BQVariable[AstName=Name(varname), AstType=Type[TlType=tlType@TLType[]]], _) -> {
-        if(getSymbolTable(moduleName).isUsedSymbolDestructor(`tomName)) {
+        /*if(getSymbolTable(moduleName).isUsedSymbolDestructor(`tomName)) {
           `buildResolveIsFsymDecl(deep, tomName, varname, tlType, moduleName);
-        }
+        }*/
         return;
       }
 
@@ -772,10 +778,11 @@ public abstract class AbstractGenerator {
           return;
         }
 
+      //why?
       ResolveMakeDecl(Name(opname), returnType, argList, _) -> {
-        if(getSymbolTable(moduleName).isUsedSymbolConstructor(`opname)) {
+        /*if(getSymbolTable(moduleName).isUsedSymbolConstructor(`opname)) {
           `genResolveDeclMake("tom_make_", opname, returnType, argList, moduleName);
-        }
+        }*/
         return;
       }
 
@@ -1093,6 +1100,8 @@ public abstract class AbstractGenerator {
   protected abstract void buildResolveInverseLinks(int deep, String fileFrom, String fileTo, TomNameList resolveNameList, String moduleName) throws IOException;
   protected abstract void buildReferenceClass(int deep, String refname, RefClassTracelinkInstructionList refclassTInstructions, String moduleName) throws IOException;
   protected abstract void buildTracelink(int deep, String type, String name, Expression expr, String moduleName) throws IOException;
+  //tmp
+  protected abstract void buildResolve2(int deep, BQTerm bqterm, String moduleName) throws IOException;
   protected abstract void buildResolve(int deep, String src, String srcType, String target, String targetType, String moduleName) throws IOException;
   protected abstract void buildTracelinkPopulateResolve(int deep, String refClassName, TomNameList tracedLinks, BQTerm current, String moduleName) throws IOException;
 
