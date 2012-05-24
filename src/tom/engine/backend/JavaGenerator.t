@@ -146,8 +146,9 @@ public class JavaGenerator extends CFamilyGenerator {
       String resolveStringName = "Resolve"+wName+tName;
       String fqnwName = wName;
       TomType subject = getSymbolTable(moduleName).getType(wName);
+      System.out.println("###DEBUG### subject=\n"+subject);
       %match(subject) {
-        TLType[String=s] -> { fqnwName = `s; }
+        Type(_,_,TLType[String=s]) -> { fqnwName = `s; }
       }
       output.write(%[private static class @resolveStringName@ extends @extendsName@ {
   public String name;
@@ -222,6 +223,10 @@ public static class @refname@ implements tom.library.utils.ReferenceClass {
     output.write(","+refVar+");");
   }
 
+  //tmp
+  protected void buildResolve2(int deep, BQTerm bqterm, String moduleName) throws IOException {
+    generateBQTerm(deep, bqterm, moduleName);
+  }
   protected void buildResolve(int deep, String src, String srcType, String target, String targetType, String moduleName) throws IOException {
     output.write(" new Resolve"+srcType+targetType+"("+src+", \""+target+"\");");
   }
@@ -229,7 +234,7 @@ public static class @refname@ implements tom.library.utils.ReferenceClass {
   //TODO: resolveInverseLinks
   //how to generateresolveInverseLinks? how to generate the call?
   protected void buildResolveStratInstruction(String name) throws IOException {
-    output.write(%[@name@ res = (@name@) translator.table.get(o).get(name);
+    output.write(%[@name@ res = (@name@) translator.link.get(o).get(name);
         //expansion de `o & `name
         //pb translator, pb dernier param
         //resolveInverseLinks(tom__arg, res, translator);//trop spec
