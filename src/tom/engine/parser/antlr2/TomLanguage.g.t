@@ -234,13 +234,13 @@ matchArgument [List<BQTerm> list, List<TomType> typeList] throws TomException
   String s2 = null;
 }
     :
-
+    (BACKQUOTE { text.delete(0, text.length()); } )?
     subject1 = plainBQTerm {
       s1 = text.toString();
       text.delete(0, text.length());
     }
-    (BACKQUOTE { text.delete(0, text.length()); } )?
-    (subject2 = plainBQTerm { s2 = text.toString(); })?
+    ((BACKQUOTE { text.delete(0, text.length()); } )?
+     subject2 = plainBQTerm { s2 = text.toString(); })?
     {
       if(subject2==null) {
         list.add(subject1);
@@ -850,7 +850,25 @@ resolveConstruct [Option orgTrack] returns [Instruction result] throws TomExcept
        TomName sourceType = `Name(stype.getText());
        TomName target = `Name(t.getText());
        TomName targetType = `Name(ttype.getText());
-       result = `Resolve(source,sourceType,target,targetType,orgTrack);
+       //result = `Resolve(source,sourceType,target,targetType,orgTrack);
+
+       String resolveName = "Resolve"+stype.getText()+ttype.getText();
+       BQTerm bqterm = `Composite(CompositeBQTerm(BQAppl(
+               concOption(OriginTracking(Name(resolveName),orgTrack.getLine(),orgTrack.getFileName()),ModuleName("default")),
+               Name(resolveName),
+               concBQTerm(
+                 Composite(CompositeBQTerm(
+                     BQVariable(
+                       concOption(OriginTracking(source,orgTrack.getLine(),orgTrack.getFileName()),ModuleName("default")),
+                       source,
+                       Type(concTypeOption(),"unknown type",EmptyTargetLanguageType())
+                       )
+                     )),
+                 Composite(CompositeTL(ITL("\""+t.getText()+"\"")))
+                 )
+               )));
+       result = `Resolve2(bqterm,orgTrack);
+
        updatePosition(t2.getLine(),t2.getColumn());
        selector().pop();
      }
@@ -1110,7 +1128,7 @@ transformationConstruct [Option orgTrack] returns [Declaration result] throws To
                //Pourquoi ? ; pourquoi pas plutôt : 
                declList.add(`TypeTermDecl(resolveName,resolveTTDecl,resolveOrgTrack));
                declList.add(`SymbolDecl(Name(resolveStringName)));
-               declList.add(`ResolveClassDecl(wName, tName, extendsName));
+               declList.add(`ResolveClassDecl(Name(resolveStringName), wName, tName, extendsName));
                //replace: ResolveTypeTermDecl(resolveName,resolveTTDecl,resolveOrgTrack),
                resolveStratElementList.add(`ResolveStratElement(wName, resolveOrgTrack));
 
@@ -3104,7 +3122,7 @@ tokens {
     //to clean
     WITH = "with";
     TO = "to";
-    REFERENCE = "reference";
+    //REFERENCE = "reference";
     TRAVERSAL = "traversal";
     ELEMENTARY = "definition";//"rule";
     SRC = "src";

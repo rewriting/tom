@@ -106,12 +106,13 @@ public class TransformerPlugin extends TomGenericPlugin {
     boolean intermediate = getOptionBooleanValue("intermediate");
     Code transformedTerm = (Code)getWorkingTerm();
     setSymbolTable(getStreamManager().getSymbolTable());
-    
+    //System.out.println("###DEBUG1### SymbolTable =\n"+getSymbolTable().getMapSymbolName()); 
     try {
       // replace content of TransformationDecl by StrategyDecl
       transformedTerm = `TopDown(ProcessTransformation(this)).visitLight(transformedTerm);
 
       setWorkingTerm(transformedTerm);
+      //System.out.println("###DEBUG2### SymbolTable =\n"+getSymbolTable().getMapSymbolName()); 
       // verbose
       TomMessage.info(logger,null,0,TomMessage.tomTransformingPhase,
           Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
@@ -161,12 +162,31 @@ public class TransformerPlugin extends TomGenericPlugin {
     //generate resolve strategy
     Declaration resolveStratDecl = null;
     Declaration inverseLinks = null;
+    /*
     %match(declList) {
       concDeclaration(_*,ResolveStratDecl[TransfoName=name,ResList=reslist,ResolveNameList=resolveNameList,OriginTracking=rot],_*) -> {
         resolveStratDecl = buildResolveStrat(transformer, transfoName, domain, bqlist, symbol, `name, `reslist, `resolveNameList, `rot);
         inverseLinks = `ResolveInverseLinksDecl(resolveNameList,fileFrom,fileTo);
       }
     }
+    */
+
+    %match(declList) {
+      concDeclaration(_*,decl,_*) -> {
+        %match(decl) {
+          ResolveStratDecl[TransfoName=name,ResList=reslist,ResolveNameList=resolveNameList,OriginTracking=rot] -> {
+            resolveStratDecl = buildResolveStrat(transformer, transfoName, domain, bqlist, symbol, `name, `reslist, `resolveNameList, `rot);
+            inverseLinks = `ResolveInverseLinksDecl(resolveNameList,fileFrom,fileTo);
+          }
+          d@(SymbolDecl|ResolveClassDecl|TypeTermDecl)[] -> {
+            result.add(`d);
+          }
+        }
+      
+      }
+    }
+
+
     //add them to DeclarationList
     result.add(resolveStratDecl);
     result.add(inverseLinks);
@@ -448,8 +468,46 @@ ResolveStratBlockList = concResolveStratBlock(ResolveStratBlock*)
         %match(rseList) {
           // "wName" is no longer useful -> signature to change
           concResolveStratElement(_*,ResolveStratElement(wname,rot),_*) -> {
-
-            TomTerm pattern = `Variable(concOption(rot),
+          
+            Slot sloto = `PairSlotAppl(
+                    Name("o"),
+                    Variable(
+                      concOption(OriginTracking(Name("o"),rot.getLine(),rot.getFileName())),
+                      Name("o"),
+                      Type(concTypeOption(),"unknown type",EmptyTargetLanguageType()),
+                      concConstraint()
+                      )
+                    );
+            Slot slotname = `PairSlotAppl(
+                    Name("name"),
+                    Variable(
+                      concOption(OriginTracking(Name("name"),rot.getLine(),rot.getFileName())),
+                      Name("name"),
+                      Type(concTypeOption(),"unknown type",EmptyTargetLanguageType()),
+                      concConstraint()
+                      )
+                    );
+            
+            TomTerm pattern = `RecordAppl(
+                concOption(rot),
+                concTomName(rot.getAstName()),
+                concSlot(sloto,slotname),
+                concConstraint(
+                    AliasTo(
+                      Variable(
+                        concOption(OriginTracking(
+                            Name("tom__resolve"),
+                            rot.getLine(),
+                            rot.getFileName())),
+                        Name("tom__resolve"),
+                        Type(concTypeOption(),"unknown type",EmptyTargetLanguageType()),
+                        concConstraint()
+                        )
+                      )
+                    )
+                  );
+            //old
+            /*TomTerm pattern = `Variable(concOption(rot),
                 rot.getAstName(),
                 Type(concTypeOption(),"unknown type",EmptyTargetLanguageType()),
                 concConstraint(
@@ -466,7 +524,7 @@ ResolveStratBlockList = concResolveStratBlock(ResolveStratBlock*)
                       )
                     )
                   )
-                );
+                );*/
 
             //maybe something like that in the future
             //TomType matchType = (getOptionBooleanValue("newtyper")?SymbolTable.TYPE_UNKNOWN:ttype);
@@ -585,6 +643,150 @@ ResolveStratBlockList = concResolveStratBlock(ResolveStratBlock*)
     }
     return result;
   }
-  
 
+//OriginTracking(Name("Transformation"),19,"Transfo3.t")
+//OriginTracking(AstName:TomName,Line:int,FileName:String)
+/*
+  %strategy genResolveElement(declList:DeclarationList) extends Identity() {
+    visit Instruction {
+      Resolve[Src=sname,SType=stypename,Target=tname,TType=ttypename,OrgTrack=ot] -> {
+        //TODO:
+        //BQTerm: OK 
+        //TypeTermDecl: OK
+        //SymbolDecl: OK
+        //ResolveClassDecl: OK
+        //ResolveOp: OK
+        //what else?
+
+        int line = `ot.getLine();
+        String fileName = `ot.getFileName();
+
+        String resolveStringName = "Resolve"+sname+tname;
+
+        DeclarationList resolveTTDecl= `concDeclaration(
+            IsSortDecl(
+              BQVariable(
+                concOption(OriginTracking(Name("t"),line,fileName)),
+                Name("t"),
+                Type(concTypeOption(),resolveStringName,EmptyTargetLanguageType())),
+              Code(resolveStringName),
+              OriginTracking(Name("is_sort"),line,fileName)
+              )
+            );
+
+        TomName resolveName = `Name(resolveStringName);
+        resolveOrgTrack = `OriginTracking(resolveName,line,fileName);
+
+        TomType stype = `Type(concTypeOption(),stypename,EmptyTargetLanguageType());
+        TomType stringType = `Type(concTypeOption(),"String",EmptyTargetLanguageType()); //  /!\ Java dependant
+        rtypes = `concTomType(stype, stringType);
+        TomType tType = `Type(concTypeOption(),ttypename,EmptyTargetLanguageType());
+
+        PairNameDecl objectPNDecl = `PairNameDecl(
+                                       Name("o"),
+                                       ResolveGetSlotDecl(
+                                         Name(resolveStringName),
+                                         Name("o"), 
+                                         BQVariable(
+                                           concOption(OriginTracking(Name("t"),line,fileName)),
+                                           Name("t"),
+                                           tType 
+                                           ),
+                                         OriginTracking(Name("get_slot"),line,fileName)
+                                         )
+                                       );
+        PairNameDecl namePNDecl = `PairNameDecl(
+                                       Name("name"),
+                                       ResolveGetSlotDecl(
+                                         Name(resolveStringName),
+                                         Name("name"), 
+                                         BQVariable(
+                                           concOption(OriginTracking(Name("t"),line,fileName)),
+                                           Name("t"),
+                                           tType 
+                                           ),
+                                         OriginTracking(Name("get_slot"),line,fileName)
+                                         )
+                                       );
+
+
+        List<PairNameDecl> resolvePairNameDeclList = new LinkedList<PairNameDecl>();
+        resolvePairNameDeclList.add(objectPNDecl);
+        resolvePairNameDeclList.add(namePNDecl);
+
+        Declaration isfsymDecl = `ResolveIsFsymDecl(
+            resolveName,
+            BQVariable(concOption(OriginTracking(Name("t"),line,fileName)),Name("t"),tType),
+            OriginTracking(Name("is_fsym"),line,fileName)
+);
+
+        BQTermList makeArgs = `concBQTerm(
+            BQVariable(concOption(OriginTracking(Name("o"),line,fileName)),Name("o"),sType),
+            BQVariable(concOption(OriginTracking(Name("name"),line,fileName)),Name("name"),stringType)
+            );
+
+        Declaration makeDecl = `ResolveMakeDecl(
+            resolveName,
+            tType,
+            makeArgs,
+            OriginTracking(Name("make"),line,fileName)
+            );
+
+        List<Option> symbolOptions = new LinkedList<Option>();
+        symbolOptions.add(orgTrack);
+        symbolOptions.add(`DeclarationToOption(makeDecl));
+        symbolOptions.add(`DeclarationToOption(isfsymDecl));
+
+        //create Resolve constructor symbol ("ResolveOp")
+        TomSymbol astSymbol = ASTFactory.makeSymbol(
+            resolveStringName,
+            tType,
+            rtypes,
+            ASTFactory.makePairNameDeclList(resolvePairNameDeclList),
+            symbolOptions
+            );
+        //add "ResolveOp" symbol into SymbolTable
+        putSymbol(resolveStringName,astSymbol);
+
+        declList.add(`TypeTermDecl(resolveName,resolveTTDecl,resolveOrgTrack));
+        declList.add(`SymbolDecl(Name(resolveStringName)));
+
+        String extendsName = null;
+        TomSymbol symb = symbolTable.getSymbolFromName(ttypename);
+        //retrieve classimpl
+        %match(symb.getOptions()) {
+          concOption(_*,DeclarationToOption(ImplementDecl[Expr=code]),_*) -> {
+            extendsName = `code.getCode();
+          }
+        }
+        declList.add(`ResolveClassDecl(.., stypename, ttypename, extendsName));
+
+        //build the `ResolveXY(src,"dst");
+        BQTerm bqterm = `Composite(CompositeBQTerm(BQAppl(
+                concOption(OriginTracking(Name(resolveStringName),line,fileName),ModuleName("default")),
+                Name(resolveStringName),
+                concBQTerm(
+                  Composite(CompositeBQTerm(BQVariable(
+                        concOption(OriginTracking(Name(sname),line,fileName),ModuleName("default")),
+                        Name(sname),
+                        Type(concTypeOption(),"unknown type",EmptyTargetLanguageType())
+                        ))),
+                  Composite(CompositeTL(ITL("\""+tname+"\"")))
+                ))));
+        return `BQTermToInstruction(bqterm);
+      }
+      Tracelink[] -> {
+        //TODO:
+      }
+    }
+  }*/
 }
+/*
+                  Composite(CompositeBQTerm(
+                      BQVariable(
+                        concOption(OriginTracking(Name(tname),line,fileName),ModuleName("default")),
+                        Name(tname),
+                        Type(concTypeOption(),"unknown type",EmptyTargetLanguageType())
+                        )
+                      ))*/
+
