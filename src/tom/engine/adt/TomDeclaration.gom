@@ -30,7 +30,7 @@ Declaration = TypeTermDecl(AstName:TomName,Declarations:DeclarationList,OrgTrack
             | ResolveTypeTermDecl(AstName:TomName,Declarations:DeclarationList,OrgTrack:Option)//useful?
             | ResolveDecl(typeterm:Declaration,op:Declaration,class:Declaration) //encapsulation
             | ResolveClassDeclInit(Instr:Instruction) //CodeToInstruction(TargetLanguageToCode(ITL(BIG_STRING)))
-            | ResolveClassDecl(WithName:String,ToName:String,Extends:String) //et pourquoi pas directement dans la decList de ResolveTypeTermDecl ?
+            | ResolveClassDecl(AstName:TomName,WithName:String,ToName:String,Extends:String) //et pourquoi pas directement dans la decList de ResolveTypeTermDecl ?
             | ResolveIsSortDecl(TermArg:BQTerm,ResolveName:String,OrgTrack:Option)//useful?
             | ResolveIsFsymDecl(AstName:TomName,Variable:BQTerm,OrgTrack:Option)//useful?
             | ResolveGetSlotDecl(AstName:TomName,SlotName:TomName,Variable:BQTerm,OrgTrack:Option)//useful?

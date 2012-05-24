@@ -54,6 +54,7 @@ Instruction =
 //  | TracelinkResolve()
   | TracelinkPopulateResolve(RefClassName:TomName,TracedLinks:TomNameList,Current:BQTerm)//QVariable
   | Resolve(Src:TomName,SType:TomName,Target:TomName,TType:TomName,OrgTrack:Option)
+  | Resolve2(BQTerm:BQTerm,OrgTrack:Option)
 
 RefClassTracelinkInstruction = RefClassTracelinkInstruction(Type:TomName,Name:TomName)
 
