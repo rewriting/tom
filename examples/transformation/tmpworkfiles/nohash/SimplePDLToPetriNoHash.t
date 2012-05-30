@@ -7,6 +7,13 @@ import org.eclipse.emf.ecore.xmi.impl.*;
 import SimplePDLSemantics.DDMMSimplePDL.*;
 import petrinetsemantics.DDMMPetriNet.*;
 
+import SimplePDLSemantics.EDMMSimplePDL.*;
+import petrinetsemantics.EDMMPetriNet.*;
+import SimplePDLSemantics.SDMMSimplePDL.*;
+import petrinetsemantics.SDMMPetriNet.*;
+import SimplePDLSemantics.TM3SimplePDL.*;
+import petrinetsemantics.TM3PetriNet.*;
+
 import java.util.*;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentHashMap;
@@ -31,27 +38,27 @@ public class SimplePDLToPetriNoHash {
   %include{ DDMMPetriNetPackage.tom }
   %include{ DDMMSimplePDLPackage.tom }
 
-  /*%include{ EDMMPetriNetPackage.tom }
+  %include{ EDMMPetriNetPackage.tom }
   %include{ EDMMSimplePDLPackage.tom }
   %include{ SDMMPetriNetPackage.tom }
   %include{ SDMMSimplePDLPackage.tom }
   %include{ TM3PetriNetPackage.tom }
-  %include{ TM3SimplePDLPackage.tom }*/
+  %include{ TM3SimplePDLPackage.tom }
 
 
   %typeterm SimplePDLToPetriNoHash { implement { SimplePDLToPetriNoHash }}
   
-  private PetriNet pn = null;
-  private LinkClass link;
+  private static PetriNet pn = null;
+  private static LinkClass tom__linkClass;
 
   public SimplePDLToPetriNoHash() {
-    this.link = new LinkClass();
+    this.tom__linkClass = new LinkClass();
   }
 
 
-  %transformation SimplePDLToPetriNet(translator:SimplePDLToPetriNoHash,link:LinkClass,pn:PetriNet) with(Process, WorkDefinition, WorkSequence) to (Place, Transition) (src:PetriNetSemantics_updated.ecorePetriNetSemantics_updated.ecore,dst:SimplePDLSemantics_updated.ecore) {
+  %transformation SimplePDLToPetriNet(tom__linkClass:LinkClass,pn:PetriNet) with(Process, WorkDefinition, WorkSequence) to (Place, Transition) (src:SimplePDLSemantics_updated.ecore,dst:PetriNetSemantics_updated.ecore) {
 
-    definition P2PN traversal `TopDown(P2PN(translator,link,pn)) {
+    definition P2PN traversal `TopDown(P2PN(tom__linkClass,pn)) {
       p@Process[name=name] -> {
         Node p_ready  = `Place(name + "_ready", pn,ArcEList(), ArcEList(), 1);
         Node p_running  = `Place(name + "_running", pn,ArcEList(), ArcEList(), 0);
@@ -79,17 +86,17 @@ public class SimplePDLToPetriNoHash {
       }
     }
 
-    definition WD2PN traversal `TopDown(WD2PN(translator,link,pn)) {
+    definition WD2PN traversal `TopDown(WD2PN(tom__linkClass,pn)) {
       wd@WorkDefinition[name=name] -> {
         Node p_ready  = `Place(name + "_ready", pn,ArcEList(), ArcEList(), 1);
         String n1 = `name+"_started";
         %tracelink(Node, p_started, `Place(n1, pn,ArcEList(), ArcEList(), 0));
         Node p_running  = `Place(name+"_running", pn,ArcEList(), ArcEList(), 0);
-        String n1 = `name+"_finished";
+        n1 = `name+"_finished";
         %tracelink(Node, p_finished, `Place(n1, pn,ArcEList(), ArcEList(), 0));
-        String n1 = `name+"_start";
+        n1 = `name+"_start";
         %tracelink(Node, t_start, `Transition(n1, pn,ArcEList(), ArcEList(), 1, 1));
-        String n1 = `name+"_finish";
+        n1 = `name+"_finish";
         %tracelink(Node, t_finish, `Transition(n1, pn,ArcEList(), ArcEList(), 1, 1));
 
         `Arc(t_start, p_ready, pn,normal(), 1);
@@ -109,7 +116,7 @@ public class SimplePDLToPetriNoHash {
       }
     }
 
-    definition WS2PN traversal `TopDown(WS2PN(translator,link,pn)) {
+    definition WS2PN traversal `TopDown(WS2PN(tom__linkClass,pn)) {
       ws@WorkSequence[predecessor=p,successor=s,linkType=linkType] -> {
         Place source= null;
         Transition target= null;
@@ -164,11 +171,12 @@ public class SimplePDLToPetriNoHash {
 
   }*/
 
-  /*
-  %strategy Resolve(link:LinkClass,pn:PetriNet) extends Identity() {
+  
+  //DEBUG 
+  /*%strategy Resolve(tom__linkClass:LinkClass,pn:PetriNet) extends Identity() {
     visit Place {
       pr@ResolveWorkDefinitionPlace[o=o,name=name] -> {
-        Place res = (Place) link.get(`o).get(`name);
+        Place res = (Place) tom__linkClass.get(`o).get(`name);
         resolveInverseLinks(`pr, res, pn);
         return res;
       }
@@ -176,18 +184,18 @@ public class SimplePDLToPetriNoHash {
 
     visit Transition {
       tr@ResolveWorkDefinitionTransition[o=o,name=name] -> {
-        Transition res = (Transition) link.get(`o).get(`name);
+        Transition res = (Transition) tom__linkClass.get(`o).get(`name);
         resolveInverseLinks(`tr, res, pn);
         return res;
       }
       ptr@ResolveProcessTransition[o=o,name=name] -> {
-        Transition res = (Transition) link.get(`o).get(`name);
+        Transition res = (Transition) tom__linkClass.get(`o).get(`name);
         resolveInverseLinks(`ptr, res, pn);
         return res;
       }
     }
-  }
-   */
+  }*/
+  //DEBUG 
 
   public static void main(String[] args) {
     System.out.println("\nStarting…\n");
@@ -240,7 +248,7 @@ public class SimplePDLToPetriNoHash {
           TopDown(WorkSequence2PetriNet(translator))
        );
        */
-      Strategy transformer = `SimplePDLToPetriNet(translator,translator.link,translator.pn);
+      Strategy transformer = `SimplePDLToPetriNet(translator.tom__linkClass,translator.pn);
       transformer.visit(p_root, new EcoreContainmentIntrospector());
 
       /*
