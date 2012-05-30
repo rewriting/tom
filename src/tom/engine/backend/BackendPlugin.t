@@ -562,6 +562,16 @@ public class BackendPlugin extends TomGenericPlugin {
       /**
         * Resolve declarations
         */
+      ResolveGetSlotDecl[AstName=Name(opname),SlotName=Name(slotName)] -> {
+        try {
+          String moduleName = stack.peek();
+          bp.getSymbolTable(moduleName).putResolveGetSlot(`opname,`slotName);
+        } catch (EmptyStackException e) {
+          System.out.println("No moduleName in stack");
+        }
+      }
+
+
 /*      ..Decl[Opname=Name(opname),Expr=Code(code)] -> {
         try {
           String moduleName = stack.peek();

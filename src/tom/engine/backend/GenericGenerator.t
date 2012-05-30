@@ -86,7 +86,8 @@ public abstract class GenericGenerator extends AbstractGenerator {
 
   protected void buildTerm(int deep, String opname, BQTermList argList, String moduleName) throws IOException {
     String template = getSymbolTable(moduleName).getMake(opname);
-    if(instantiateTemplate(deep,template,opname,argList,moduleName) == false) {
+    if(instantiateTemplate(deep,template,opname,argList,moduleName) == false)
+    {// && !isResolveOp(opname, moduleName)) {
       String prefix = "tom_make_";
         output.write(prefix+opname);
         output.writeOpenBrace();
@@ -120,6 +121,13 @@ public abstract class GenericGenerator extends AbstractGenerator {
         output.writeCloseBrace();
       
     }
+  }
+
+  //ResolveMakeDecl
+  protected boolean isResolveOp(String opname, String moduleName) {
+    TomSymbol symbol = getSymbolTable(moduleName).getSymbolFromName(opname);
+    //System.out.println("==DEBUG== symbol=\n"+symbol);
+    return true;
   }
 
   protected void buildSymbolDecl(int deep, String tomName, String moduleName) throws IOException {

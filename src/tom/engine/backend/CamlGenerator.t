@@ -497,7 +497,7 @@ public class CamlGenerator extends GenericGenerator {
     throw new TomRuntimeException("%transformation (ResolveMakeDecl) not yet supported in Caml");
   }
 
-  protected void buildResolveStratInstruction(String name) throws IOException {
+  protected void buildResolveStratInstruction(int deep, String opname, String name, String moduleName) throws IOException {
     throw new TomRuntimeException("%transformation (ResolveStratInstruction) not yet supported in Caml");
   }
 

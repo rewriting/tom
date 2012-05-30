@@ -31,6 +31,8 @@ import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Set;
+import java.util.HashSet;
 
 import tom.engine.TomBase;
 import tom.engine.tools.OutputCode;
@@ -56,6 +58,7 @@ import org.eclipse.emf.ecore.xmi.XMIResource;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.common.util.EList;
@@ -140,16 +143,28 @@ public class JavaGenerator extends CFamilyGenerator {
     return " (("+tomName+")"+varName+")."+slotName+" ";
   }*/
 
+  protected String getFullQualifiedNameFromTypeName(String name, String moduleName) {
+    String result = null;
+    TomType type = getSymbolTable(moduleName).getType(name);
+    return getFullQualifiedNameFromType(type);
+  }
+
+  protected String getFullQualifiedNameFromType(TomType type) {
+    String result = null;
+    %match(type) {
+      Type(_,_,TLType[String=s]) -> { return result = `s; }
+    }
+    throw new RuntimeException("Should not be there: full qualified name of "+type+" is null");
+  }
+
   //TODO: retrieve the information about the FQN of wName and extends
   protected void buildResolveClass(String wName, String tName, String extendsName, String moduleName) throws
     IOException {
       String resolveStringName = "Resolve"+wName+tName;
-      String fqnwName = wName;
-      TomType subject = getSymbolTable(moduleName).getType(wName);
-      System.out.println("###DEBUG### subject=\n"+subject);
-      %match(subject) {
-        Type(_,_,TLType[String=s]) -> { fqnwName = `s; }
-      }
+      //String fqnwName = wName;
+      //TomType type = getSymbolTable(moduleName).getType(wName);
+      //fqnwName = getFullQualifiedNameFromType(type);
+      String fqnwName = getFullQualifiedNameFromTypeName(wName, moduleName);
       output.write(%[private static class @resolveStringName@ extends @extendsName@ {
   public String name;
   public @fqnwName@ o;
@@ -233,11 +248,22 @@ public static class @refname@ implements tom.library.utils.ReferenceClass {
 
   //TODO: resolveInverseLinks
   //how to generateresolveInverseLinks? how to generate the call?
-  protected void buildResolveStratInstruction(String name) throws IOException {
-    output.write(%[@name@ res = (@name@) translator.link.get(o).get(name);
+  //protected void buildResolveStratInstruction(int deep, String name, String moduleName) throws IOException {
+  protected void buildResolveStratInstruction(int deep, String opname, String name, String moduleName) throws IOException {
+    //on veut generer des choses comme :
+    //tom_get_slot_ResolveWorkDefinitionTransition_o((( petrinetsemantics.DDMMPetriNet.Transition )((Object)tom__arg)))
+    //et
+    //tom_get_slot_ResolveWorkDefinitionTransition_name((( petrinetsemantics.DDMMPetriNet.Transition )((Object)tom__arg)))
+
+    //comment recuperer les slots ?
+    // remplacer name par le fqn
+  //cf buildExpGetSlot(deep, String opname, "o",moduleName)
+
+    //tom__linkClass.get(@buildResolveGetSlot(deep, opname, "o",moduleName)@).get(@buildResolveGetSlot(deep,opname, "name",moduleName)@);
+    //output.write(%[@name@ res = (@name@) tom__linkClass.get(o).get(name);
+    output.write(%[@name@ res = (@name@)tom__linkClass.get(tom_get_slot_@opname@_o(tom__arg)).get(tom_get_slot_@opname@_name(tom__arg));
         //expansion de `o & `name
-        //pb translator, pb dernier param
-        //resolveInverseLinks(tom__arg, res, translator);//trop spec
+        // recup des autres param ("pn")
         resolveInverseLinks(tom__arg, res, pn);
 return res;]%);
   }
@@ -248,10 +274,11 @@ return res;]%);
     //List<String> resolveList = getResolveNameList(resolveNameList);
     //String toSet = genToSetFromResolveNameList(resolveNameList);
 
+    //result/accumulator to change ("acc")
     output.write(%[
-  public static void resolveInverseLinks(EObject resolveNode, EObject newNode, PetriNet pn) {
+  public static void resolveInverseLinks(EObject resolveNode, EObject newNode, EObject acc) {
     ECrossReferenceAdapter adapter = new ECrossReferenceAdapter();
-    pn.eAdapters().add(adapter);
+    acc.eAdapters().add(adapter);
     Collection<EStructuralFeature.Setting> references = adapter.getInverseReferences(resolveNode);
 
         boolean toSet = (false
@@ -261,7 +288,7 @@ return res;]%);
     for (EStructuralFeature.Setting setting:references) {
       EObject current = setting.getEObject();
 ]%);
-    genTargetElementBlock(fileTo);
+    genTargetElementBlock(fileTo,moduleName);
     output.write(%[
     }
   }
@@ -270,7 +297,8 @@ return res;]%);
 
   //TODO: find another way to generate these blocks. It would be better to
   //avoid EMF dependancies
-  protected void genTargetElementBlock(String fileTo) throws IOException  {
+  //protected void genTargetElementBlock(String fileTo) throws IOException  {
+  protected void genTargetElementBlock(String fileTo, String moduleName) throws IOException  {
     XMIResourceImpl resource = new XMIResourceImpl();
     Map opts = new HashMap();
     opts.put(XMIResource.OPTION_SCHEMA_LOCATION, java.lang.Boolean.TRUE);
@@ -297,27 +325,60 @@ return res;]%);
     for(EClassifier ecl : ecls) {
       if(ecl instanceof EClass ) {//EEnum should not produce a block
         if(!((EClass)ecl).isAbstract()) {
-        String eclName = ecl.getName();
-        output.write(%[if (current instanceof @eclName@) {
-        @eclName@ newCurrent = (@eclName@)current;
+        //String eclName = ecl.getName();
+        String eclFQName = getFullQualifiedNameFromTypeName(ecl.getName(),moduleName);
+        output.write(%[if (current instanceof @eclFQName@) {
+        @eclFQName@ newCurrent = (@eclFQName@)current;
       ]%);
 
         EList<EStructuralFeature> sfs = ((EClass)ecl).getEAllStructuralFeatures();
         for(EStructuralFeature sf : sfs) {//many and builtin should not produce a block
-          if(sf.isChangeable() && !sf.isMany()) {
+          if(sf.isChangeable() && !sf.isMany() && !isPrimitiveEMFType(sf) && !isEEnumType(sf)) {
         output.write(%[if(newCurrent.get@firstToUpperCase(sf.getName())@().equals(resolveNode) && toSet) {
-          newCurrent.set@firstToUpperCase(sf.getName())@(newNode); 
+          newCurrent.set@firstToUpperCase(sf.getName())@((@getTypeFromEStructuralFeature(sf)@)newNode); 
         } else ]%);
           }
         }
         output.write(%[{
           throw new RuntimeException("should not be there");
         }
-      }]%);
-
-      }
+      } else ]%);
+        }
       }
     }
+    output.write(%[ { throw new RuntimeException("should not be there"); }]%);
+  }
+
+  //TODO: change that!
+  private final static Set<String> primitiveEMFTypes = new HashSet<String>();
+  static {
+    primitiveEMFTypes.add("EInt");
+    primitiveEMFTypes.add("EBoolean");
+    primitiveEMFTypes.add("EString");
+    primitiveEMFTypes.add("EDouble");
+    primitiveEMFTypes.add("EDate");
+    primitiveEMFTypes.add("BigInteger");
+    primitiveEMFTypes.add("BigDecimal");
+    primitiveEMFTypes.add("Date");
+    primitiveEMFTypes.add("java.lang.String");
+    primitiveEMFTypes.add("byte");
+    primitiveEMFTypes.add("double");
+    primitiveEMFTypes.add("int");
+    primitiveEMFTypes.add("float");
+    primitiveEMFTypes.add("double");
+    primitiveEMFTypes.add("boolean");
+  }
+  protected boolean isPrimitiveEMFType(EStructuralFeature sf) {
+    return (primitiveEMFTypes.contains(sf.getName()) || primitiveEMFTypes.contains(sf.getEType().getInstanceClassName()));
+  }
+
+  protected boolean isEEnumType(EStructuralFeature sf) {
+    return (sf.getEType() instanceof EEnum);
+  }
+
+  protected String getTypeFromEStructuralFeature(EStructuralFeature sf) {
+    String result = sf.getEType().getInstanceClassName();
+    return ((result==null)?sf.getEType().getName():result);
   }
 
   protected String firstToUpperCase(String s) {

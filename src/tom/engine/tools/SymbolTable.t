@@ -92,6 +92,10 @@ public class SymbolTable {
 
   }
 
+  public Map getMapSymbolName() {
+    return this.mapSymbolName;
+  }
+
   public void regenerateFromTerm(TomSymbolTable symbTable) {
     TomEntryList list =  symbTable.getEntryList();
     while(!list.isEmptyconcTomEntry()) {
@@ -354,6 +358,16 @@ public class SymbolTable {
       isFloatType(type);
   }
 
+  /*
+   * %transformation
+   */
+  public boolean isResolveSymbol(TomSymbol symb) {
+    %match(symb) {
+     Symbol[Options=concOption(_*,DeclarationToOption(ResolveMakeDecl[]),_*)] -> { return true; }
+    }
+    return false;
+  }
+
   public boolean isNumericType(String type) {
     return isIntType(type) || isLongType(type) || isDoubleType(type) || isFloatType(type);
   }
@@ -512,6 +526,14 @@ public class SymbolTable {
   }
   public String getIsSort(String type) {
     return getInliner(prefixIsSort,type);
+  }
+
+  //the code is generated in the backend
+  public void putResolveGetSlot(String opname, String slotname) {
+    putInliner(prefixGetSlot,opname+slotname,"");
+  }
+  public String getResolveGetSlot(String opname, String slotname) {
+    return getInliner(prefixGetSlot,opname+slotname);
   }
 
   public void putGetSlot(String opname, String slotname, String code) {

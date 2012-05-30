@@ -49,7 +49,7 @@ Instruction =
    * a RawAction is an action that comes from the original program 
    */
   | RawAction(AstInstruction:Instruction)
-  | ResolveStratInstruction(TargetType:TomType)
+  | ResolveStratInstruction(OpName:TomName,TargetType:TomType)
   | Tracelink(Type:TomName,Name:TomName,ElementaryTransfoName:TomName,Expr:Expression,OrgTrack:Option)//BQTerm, then blocklist
 //  | TracelinkResolve()
   | TracelinkPopulateResolve(RefClassName:TomName,TracedLinks:TomNameList,Current:BQTerm)//QVariable

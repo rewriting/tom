@@ -460,7 +460,8 @@ ResolveStratBlockList = concResolveStratBlock(ResolveStratBlock*)
     List<TomVisit> visitList = new LinkedList<TomVisit>();
 
     %match(rsbList) {
-      concResolveStratBlock(_*,ResolveStratBlock(tname,rseList),_*) -> {
+      concResolveStratBlock(_*,xxx@ResolveStratBlock(tname,rseList),_*) -> {
+        //System.out.println("###DEBUG### resolve etc xxx=\n"+`xxx);
         TomType ttype = `Type(concTypeOption(),tname,EmptyTargetLanguageType());
         //TODO: to check
         BQTerm subject = `BQVariable(concOption(),Name("tom__arg"),ttype);//SymbolTable.TYPE_UNKNOWN);
@@ -532,8 +533,10 @@ ResolveStratBlockList = concResolveStratBlock(ResolveStratBlock*)
                 MatchConstraint(pattern,subject,ttype));
 
             // ??
+            //non
             ciList.add(`ConstraintInstruction(constraint,
-                  ResolveStratInstruction(ttype),concOption(rot)));
+                  ResolveStratInstruction(rot.getAstName(),ttype),concOption(rot)));
+            //TODO: GetSlot ou autre maniere de recuperer les elements
           }
         }
 
@@ -592,6 +595,7 @@ ResolveStratBlockList = concResolveStratBlock(ResolveStratBlock*)
     
     Declaration makeDecl = `MakeDecl(rsname, strategyType, makeArgs,
         CodeToInstruction(TargetLanguageToCode(ITL(makeTlCode))), makeOption);
+    //System.out.println("###DEBUG### buildResolveStrat - makeDecl = "+makeDecl);
     options.add(`DeclarationToOption(makeDecl));
 
     //definition of the is_fsym method.

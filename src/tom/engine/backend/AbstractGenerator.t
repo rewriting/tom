@@ -488,8 +488,8 @@ public abstract class AbstractGenerator {
       }
 
 /*      ResolveStratInstruction[TargetType=Type[TomType=name]] -> {*/
-      ResolveStratInstruction(Type(_,name,_)) -> {
-        `buildResolveStratInstruction(name);
+      ResolveStratInstruction(Name(opname),Type(_,name,_)) -> {
+        `buildResolveStratInstruction(deep, opname, name, moduleName);
         return;
       }
 
@@ -591,7 +591,7 @@ public abstract class AbstractGenerator {
         return;
       }
 
-      //tmp
+      //tmp //resolve construct
       Resolve2(bqterm, _) -> {
         `buildResolve2(deep, bqterm, moduleName);
         return;
@@ -763,9 +763,9 @@ public abstract class AbstractGenerator {
       //why?
       ResolveIsFsymDecl(Name(tomName),
           BQVariable[AstName=Name(varname), AstType=Type[TlType=tlType@TLType[]]], _) -> {
-        /*if(getSymbolTable(moduleName).isUsedSymbolDestructor(`tomName)) {
+        if(getSymbolTable(moduleName).isUsedSymbolDestructor(`tomName)) {
           `buildResolveIsFsymDecl(deep, tomName, varname, tlType, moduleName);
-        }*/
+        }
         return;
       }
 
@@ -780,9 +780,9 @@ public abstract class AbstractGenerator {
 
       //why?
       ResolveMakeDecl(Name(opname), returnType, argList, _) -> {
-        /*if(getSymbolTable(moduleName).isUsedSymbolConstructor(`opname)) {
+        if(getSymbolTable(moduleName).isUsedSymbolConstructor(`opname)) {
           `genResolveDeclMake("tom_make_", opname, returnType, argList, moduleName);
-        }*/
+        }
         return;
       }
 
@@ -805,9 +805,11 @@ public abstract class AbstractGenerator {
       //complete with specialized backquotes
       //ReferenceClass[RefName=Name(refname),Fields=instructions] -> {
       ReferenceClass[RefName=Name(refname),Fields=refclassTInstructions] -> {
-        if(!`refclassTInstructions.isEmptyconcRefClassTracelinkInstruction()) {
+        //no test in order to generate the skeletton even if the class is not
+        //populated
+        //if(!`refclassTInstructions.isEmptyconcRefClassTracelinkInstruction()) {
         `buildReferenceClass(deep, refname, refclassTInstructions, moduleName);
-        }
+        //}
         return;
       }
 
@@ -1091,7 +1093,7 @@ public abstract class AbstractGenerator {
 
   
   //TODO: Resolve*
-  protected abstract void buildResolveStratInstruction(String name) throws IOException;
+  protected abstract void buildResolveStratInstruction(int deep, String opname, String name, String moduleName) throws IOException;
 //  protected abstract void buildResolveIsSortDecl(int deep, String name1, String type1, String resolveStringName, String moduleName) throws IOException;
   protected abstract void buildResolveIsFsymDecl(int deep, String tomName, String name1, TargetLanguageType tlType, String moduleName) throws IOException;
   protected abstract void buildResolveGetSlotDecl(int deep, String tomName, String name1, TargetLanguageType tlType, TomName slotName, String moduleName) throws IOException;

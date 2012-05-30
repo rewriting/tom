@@ -312,7 +312,7 @@ output.write(%[private static class @resolveStringName@ extends @extendsName@ {
     }
 
   //TODO: resolveInverseLinks
-  protected void buildResolveStratInstruction(String name) throws IOException {
+  protected void buildResolveStratInstruction(int deep, String opname, String name, String moduleName) throws IOException {
     output.write(%[@name@ res = null;//(@name@) translator.table.get(o).get(name);
 //resolveInverseLinks(tom__arg, res, translator);
 return res;]%);
@@ -388,7 +388,7 @@ matchBlock: {
       output.writeln(s);
       output.write("return ");
       generateInstruction(0,instr,moduleName);
-      output.writeln(";");
+      output.writeln(";/*titi*/");
       output.writeln("}");
     }
   }
@@ -655,8 +655,9 @@ matchBlock: {
       s.append(") { ");
       output.writeln(s);
       output.write("return ");
+      //System.out.println("###DEBUG### backend, instr = "+instr);
       generateInstruction(0,instr,moduleName);
-      output.writeln(";");
+      output.writeln(";/*toto*/");
       output.writeln("}");
     }
   }

@@ -463,7 +463,7 @@ matchBlock: {
     throw new TomRuntimeException("%transformation (ResolveDeclMake) not yet supported in Python");
   }
 
-  protected void buildResolveStratInstruction(String name) throws IOException {
+  protected void buildResolveStratInstruction(int deep, String opname, String name, String moduleName) throws IOException {
     throw new TomRuntimeException("%transformation (ResolveStratInstruction) not yet supported in Python");
   }
 
