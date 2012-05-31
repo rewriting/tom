@@ -640,10 +640,10 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
               if(colon != null) {
                 stringSlotName = firstSlot1.getText();
                 stringTypeArg = secondSlot1.getText();
-                } else {
+              } else {
                 stringSlotName = secondSlot1.getText();
                 stringTypeArg = firstSlot1.getText();
-                }
+              }
                 TomName astName = `Name(stringSlotName);
                 slotNameList.add(astName);
 
@@ -1124,8 +1124,7 @@ transformationConstruct [Option orgTrack] returns [Declaration result] throws To
                  }
                }
 
-
-               //Pourquoi ? ; pourquoi pas plutôt : 
+               //Pourquoi ? ; pourquoi pas plutot : 
                declList.add(`TypeTermDecl(resolveName,resolveTTDecl,resolveOrgTrack));
                declList.add(`SymbolDecl(Name(resolveStringName)));
                declList.add(`ResolveClassDecl(Name(resolveStringName), wName, tName, extendsName));
@@ -1138,7 +1137,6 @@ transformationConstruct [Option orgTrack] returns [Declaration result] throws To
              resolveStratBlockList.add(`ResolveStratBlock(tName,astResolveStratElementList));
              resolveStratElementList.clear(); //reset ConstraintInstructionList
            }
-
 
            TomNameList astResolveNameList = ASTFactory.makeNameList(resolveNameList);
 

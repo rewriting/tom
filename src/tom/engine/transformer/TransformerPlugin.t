@@ -71,7 +71,7 @@ import tom.library.sl.*;
  * The Transmorfer plugin.
  * Performs tree transformation and code expansion.
  *
- * TOÂ BE DETAILED /!\
+ * TO BE DETAILED /!\
  * 1st step: TransformationDecl - 
  * 
  * 
@@ -448,11 +448,37 @@ ResolveStratElementList = concResolveStratElement(ResolveStratElement*)
 ResolveStratBlock = ResolveStratBlock(ToName:String, resolveStratElementList:ResolveStratElementList)
 ResolveStratBlockList = concResolveStratBlock(ResolveStratBlock*)
    */
+
+  /*
+   * pem: make function non-static
+   * example of generated code:
+   %strategy Resolve(tom__linkClass:LinkClass,model:PetriNet) extends Identity() {
+    visit Place {
+      tom__arg@ResolveWorkDefinitionPlace[o=o,name=name] -> {
+        Place res = (Place) tom__linkClass.get(`o).get(`name);
+        `resolveInverseLinks(tom__arg, res, model);
+        return res;
+      }
+    }
+
+    visit Transition {
+      tom__arg@ResolveWorkDefinitionTransition[o=o,name=name] -> {
+        Transition res = (Transition) tom__linkClass.get(`o).get(`name);
+        `resolveInverseLinks(tom__arg, res, model);
+        return res;
+      }
+      tom__arg@ResolveProcessTransition[o=o,name=name] -> {
+        Transition res = (Transition) tom__linkClass.get(`o).get(`name);
+        `resolveInverseLinks(tom__arg, res, model);
+        return res;
+      }
+    }
+   */
   private static Declaration buildResolveStrat(TransformerPlugin transformer, 
                                                TomName toname, 
                                                TomTypeList domain, 
                                                List bqlist, 
-                                               TomSymbol symbol, 
+                                               TomSymbol transformationSymbol, 
                                                String name, 
                                                ResolveStratBlockList rsbList, 
                                                TomNameList resolveNameList,
@@ -464,7 +490,6 @@ ResolveStratBlockList = concResolveStratBlock(ResolveStratBlock*)
         //System.out.println("###DEBUG### resolve etc xxx=\n"+`xxx);
         TomType ttype = `Type(concTypeOption(),tname,EmptyTargetLanguageType());
         //TODO: to check
-        BQTerm subject = `BQVariable(concOption(),Name("tom__arg"),ttype);//SymbolTable.TYPE_UNKNOWN);
         List<ConstraintInstruction> ciList = new LinkedList<ConstraintInstruction>();
         %match(rseList) {
           // "wName" is no longer useful -> signature to change
@@ -507,35 +532,29 @@ ResolveStratBlockList = concResolveStratBlock(ResolveStratBlock*)
                       )
                     )
                   );
-            //old
-            /*TomTerm pattern = `Variable(concOption(rot),
-                rot.getAstName(),
-                Type(concTypeOption(),"unknown type",EmptyTargetLanguageType()),
-                concConstraint(
-                  AliasTo(
-                    Variable(
-                      concOption(OriginTracking(
-                          Name("tom__resolve"),
-                          rot.getLine(),
-                          rot.getFileName())),
-                      Name("tom__resolve"),
-                      Type(concTypeOption(),"unknown type",
-                        EmptyTargetLanguageType()),
-                      concConstraint()
-                      )
-                    )
-                  )
-                );*/
 
             //maybe something like that in the future
             //TomType matchType = (getOptionBooleanValue("newtyper")?SymbolTable.TYPE_UNKNOWN:ttype);
+            BQTerm subject = `BQVariable(concOption(),Name("tom__arg"),ttype);
             Constraint constraint = `AndConstraint(TrueConstraint(),
                 MatchConstraint(pattern,subject,ttype));
 
-            // ??
-            //non
-            ciList.add(`ConstraintInstruction(constraint,
-                  ResolveStratInstruction(rot.getAstName(),ttype),concOption(rot)));
+            TomName firstArgument = TomBase.getSlotName(transformationSymbol,0);
+            TomName secondArgument = TomBase.getSlotName(transformationSymbol,1);
+            Instruction referenceStatement /* TODO */;
+            BQTerm res = `BQVariable(concOption(),Name("res"),ttype);
+            BQTerm model = `BQVariable(concOption(),secondArgument,SymbolTable.TYPE_UNKNOWN);
+            //System.out.println("*** transformationSymbol = " + transformationSymbol);
+
+            Instruction resolveStatement = `BQTermToInstruction(FunctionCall(
+                  Name("resolveInverseLinks"), transformer.getSymbolTable().getVoidType(),
+                  concBQTerm(subject,res,model)));
+            
+            Instruction returnStatement = `Return(Composite(CompositeTL(ITL("res"))));
+            /*referenceStatement,*/ 
+            InstructionList instructions = `concInstruction(resolveStatement, CodeToInstruction(TargetLanguageToCode(ITL(";"))), returnStatement);
+            ciList.add(`ConstraintInstruction(constraint, AbstractBlock(instructions),concOption(rot)));
+                  //ResolveStratInstruction(rot.getAstName(),ttype),concOption(rot)));
             //TODO: GetSlot ou autre maniere de recuperer les elements
           }
         }
@@ -607,12 +626,12 @@ ResolveStratBlockList = concResolveStratBlock(ResolveStratBlock*)
     Declaration fsymDecl = `IsFsymDecl(rsname,fsymVar,Code(code),fsymOption);
     options.add(`DeclarationToOption(fsymDecl));
 
-    //TomType transfoCodomain = TomBase.getSymbolCodomain(symbol);
+    //TomType transfoCodomain = TomBase.getSymbolCodomain(transformationSymbol);
     //types <-> `concTomType() (no param)
-    TomTypeList transfoDomain = TomBase.getSymbolDomain(symbol);
+    TomTypeList transfoDomain = TomBase.getSymbolDomain(transformationSymbol);
     //slots <-> `concPairNameDecl() (no param)
-    //PairNameDeclList paramDecl = symbol.getPairNameDeclList();
-    PairNameDeclList paramDecl = genStratPairNameDeclListFromTransfoSymbol(rsname,symbol);
+    //PairNameDeclList paramDecl = transformationSymbol.getPairNameDeclList();
+    PairNameDeclList paramDecl = genStratPairNameDeclListFromTransfoSymbol(rsname,transformationSymbol);
 
     TomSymbol astSymbol = ASTFactory.makeSymbol(stringRSname,
         strategyType, transfoDomain, paramDecl, options);
@@ -630,18 +649,13 @@ ResolveStratBlockList = concResolveStratBlock(ResolveStratBlock*)
   } //buildResolveStrat
 
   private static PairNameDeclList genStratPairNameDeclListFromTransfoSymbol(TomName stratName, 
-                                                                            TomSymbol symbol) {
+                                                                            TomSymbol transformationSymbol) {
     PairNameDeclList result = `concPairNameDecl();
-    PairNameDeclList subject = symbol.getPairNameDeclList();
-    %match(subject) {
-      concPairNameDecl(_*,PairNameDecl[SlotName=name,SlotDecl=decl],_*) -> {
-        Declaration slotDecl = `EmptyDeclaration();
-        %match(decl) {
-          GetSlotDecl[SlotName=slotname,Variable=bq,Expr=expr,OrgTrack=ot] -> {
-            slotDecl = `GetSlotDecl(stratName,slotname,bq,expr,ot);
-          }
-        }
-        PairNameDecl pnd = `PairNameDecl(name,slotDecl);
+    PairNameDeclList transformationParameters = transformationSymbol.getPairNameDeclList();
+    %match(transformationParameters) {
+      concPairNameDecl(_*,PairNameDecl[SlotName=name,
+                                       SlotDecl=decl@GetSlotDecl[SlotName=slotname,Variable=bq,Expr=expr,OrgTrack=ot]],_*) -> {
+        PairNameDecl pnd = `PairNameDecl(name,GetSlotDecl(stratName,slotname,bq,expr,ot));
         result = `concPairNameDecl(result*,pnd);
       }
     }
