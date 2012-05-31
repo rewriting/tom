@@ -457,11 +457,11 @@ public abstract class TemplateClass {
       SlotField slot = slotList.getHeadConcSlotField();
       slotList = slotList.getTailConcSlotField();
       if (index>0) { writer.write(", "); }
-      {{if ( (((Object)slot) instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )((Object)slot)) instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )(( tom.gom.adt.objects.types.SlotField )((Object)slot))) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { tom.gom.adt.objects.types.ClassName  tomMatch520_2= (( tom.gom.adt.objects.types.SlotField )((Object)slot)).getDomain() ;if ( (tomMatch520_2 instanceof tom.gom.adt.objects.types.ClassName) ) {if ( ((( tom.gom.adt.objects.types.ClassName )tomMatch520_2) instanceof tom.gom.adt.objects.types.classname.ClassName) ) {
+      {{if ( (((Object)slot) instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )((Object)slot)) instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )(( tom.gom.adt.objects.types.SlotField )((Object)slot))) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { tom.gom.adt.objects.types.ClassName  tomMatch517_2= (( tom.gom.adt.objects.types.SlotField )((Object)slot)).getDomain() ;if ( (tomMatch517_2 instanceof tom.gom.adt.objects.types.ClassName) ) {if ( ((( tom.gom.adt.objects.types.ClassName )tomMatch517_2) instanceof tom.gom.adt.objects.types.classname.ClassName) ) {
 
           writer.write( (( tom.gom.adt.objects.types.SlotField )((Object)slot)).getName() );
           writer.write(":");
-          writer.write( tomMatch520_2.getName() );
+          writer.write( tomMatch517_2.getName() );
           index++;
         }}}}}}}
 

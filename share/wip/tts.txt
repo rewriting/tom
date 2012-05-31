@@ -8,7 +8,7 @@ dans les instructions match.
 Mon but actuel est de mettre en place la "tuyauterie" qui permattra de recuperer
 une table de symboles dans une table de table de symboles.
 Pour ce faire, la fonction getSymbolTable() va prendre en parametre un argument
-correspondant a l'idantifiant de la table des symboles demandees, c'est à dire
+correspondant a l'identifiant de la table des symboles demandees, c'est à dire
 le nom de module.
 
 ================================================================================
