@@ -1104,6 +1104,20 @@
     </ant>
   </target>
 
+  <target name="cruisecontrol-junit-opt" description="Compile and run acceptance tests with all optimizations"
+    depends="stable">
+    <antcall target="src.dist"/>
+    <antcall target="clean.test"/>
+    <!--antcall target="junit.opt"/-->
+    <ant dir="${test}" target="junit">
+      <property name="tom.home" value="${src.dist}"/>
+      <property name="optimize" value="on"/>
+      <property name="optimize2" value="on"/>
+      <property name="inlineplus" value="on"/>
+      <property name="newtyper" value="on"/>
+    </ant>
+  </target>
+
   <target name="cruisecontrol-src-opt" description="Compile and run acceptance tests with all optimizations"
     depends="stable">
     <antcall target="src.dist"/>

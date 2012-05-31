@@ -207,11 +207,11 @@ public class TomMappingFromEcore {
       if(!((EClass)eclf).getESuperTypes().isEmpty()) {
         //should be a collection with one and only one element
         for (EClass supertype:((EClass)eclf).getESuperTypes()) {
-          result = result + "extends "+ supertype.getName();
+          result = result + " extends "+ supertype.getName();
         }
       } else {
         if(!(eclf.getInstanceClassName().equals("EObject"))) {
-          result = result + "extends " + "EObject";
+          result = result + " extends " + "EObject";
         }
       }
     }
@@ -372,9 +372,17 @@ public class TomMappingFromEcore {
 
         String[] decl = getClassDeclarations(sf.getEType()); // [canonical name, anonymous generic, generic type]
 
-        String inst = (EObject.class.isAssignableFrom(sf.getEType()
-            .getInstanceClass()) ? decl[0] + decl[2] : "org.eclipse.emf.ecore.EObject");
-
+        /*String inst = (EObject.class.isAssignableFrom(sf.getEType()
+            .getInstanceClass()) ? decl[0] + decl[2] :
+            "org.eclipse.emf.ecore.EObject");*/
+        String inst = "";
+        if(EObject.class.isAssignableFrom(c)) {
+          inst = decl[0] + decl[2];
+        } else if(!c.isInterface()) {
+          inst = "java.lang.Object";
+        } else {
+          inst = "org.eclipse.emf.ecore.EObject";
+        }
         writer.write("\n\n%typeterm "+name+" {\n  implement { org.eclipse.emf.common.util.EList<"+inst+"> }\n  is_sort(t) { $t instanceof org.eclipse.emf.common.util.EList<?> && (((org.eclipse.emf.common.util.EList<"+inst+">)$t).size() == 0 || (((org.eclipse.emf.common.util.EList<"+inst+">)$t).size()>0 && ((org.eclipse.emf.common.util.EList<"+inst+">)$t).get(0) instanceof "+(decl[0]+decl[1])+")) }\n  equals(l1,l2) { $l1.equals($l2) }\n}\n\n%oparray "+name+" "+name+" ( "+simplename+"* ) {\n  is_fsym(t) { $t instanceof org.eclipse.emf.common.util.EList<?> && ($t.size() == 0 || ($t.size()>0 && $t.get(0) instanceof "+(decl[0]+decl[1])+")) }\n  make_empty(n) { new org.eclipse.emf.common.util.BasicEList<"+inst+">($n) }\n  make_append(e,l) { append"+name+"($e,$l) }\n  get_element(l,n) { $l.get($n) }\n  get_size(l)      { $l.size() }\n}\n\nprivate static <O> org.eclipse.emf.common.util.EList<O> append"+name+"(O e,org.eclipse.emf.common.util.EList<O> l) {\n  l.add(e);\n  return l;\n}"
 
 

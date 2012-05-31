@@ -226,13 +226,13 @@ matchArgument [List<BQTerm> list, List<TomType> typeList] throws TomException
   String s2 = null;
 }
     :
-
+    (BACKQUOTE { text.delete(0, text.length()); } )?
     subject1 = plainBQTerm {
       s1 = text.toString();
       text.delete(0, text.length());
     }
-    (BACKQUOTE { text.delete(0, text.length()); } )?
-    (subject2 = plainBQTerm { s2 = text.toString(); })?
+    ((BACKQUOTE { text.delete(0, text.length()); } )?
+     subject2 = plainBQTerm { s2 = text.toString(); })?
     {
       if(subject2==null) {
         list.add(subject1);
@@ -2428,8 +2428,8 @@ options {
 }
 
 tokens {
-    WHERE="where";
-    IF="if";
+    //WHERE="where";
+    //IF="if";
     EXTENDS="extends";
     MAKE_EMPTY = "make_empty";
     MAKE_INSERT = "make_insert";
@@ -2446,7 +2446,7 @@ tokens {
     IMPLEMENT = "implement";
     GET_ELEMENT = "get_element";
     GET_SIZE = "get_size";
-    WHEN = "when";
+    //WHEN = "when";
 }
 
 LBRACE      :   '{' ;

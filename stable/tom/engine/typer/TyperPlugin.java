@@ -110,14 +110,10 @@ public class TyperPlugin extends TomGenericPlugin {
     long startChrono = System.currentTimeMillis();
     boolean intermediate = getOptionBooleanValue("intermediate");
     boolean newtyper = getOptionBooleanValue("newtyper");
-    boolean lazyType = getOptionBooleanValue("lazyType");
 
     kernelTyper.setSymbolTable(getStreamManager().getSymbolTable());
     newKernelTyper.setSymbolTable(getStreamManager().getSymbolTable()); 
     newKernelTyper.setCurrentInputFileName(getStreamManager().getInputFileName()); 
-    if(lazyType) {
-      newKernelTyper.setLazyType();
-    }
 
     Code typedCode = (Code)getWorkingTerm();
     //System.out.println("before: " + typedCode);
