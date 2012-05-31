@@ -71,7 +71,7 @@ import tom.library.sl.*;
  * The Transmorfer plugin.
  * Performs tree transformation and code expansion.
  *
- * TO BE DETAILED /!\
+ * TOÂ BE DETAILED /!\
  * 1st step: TransformationDecl - 
  * 
  * 
@@ -486,15 +486,15 @@ ResolveStratBlockList = concResolveStratBlock(ResolveStratBlock*)
     List<TomVisit> visitList = new LinkedList<TomVisit>();
 
     %match(rsbList) {
-      concResolveStratBlock(_*,xxx@ResolveStratBlock(tname,rseList),_*) -> {
-        //System.out.println("###DEBUG### resolve etc xxx=\n"+`xxx);
+      concResolveStratBlock(_*,ResolveStratBlock(tname,rseList),_*) -> {
         TomType ttype = `Type(concTypeOption(),tname,EmptyTargetLanguageType());
         //TODO: to check
         List<ConstraintInstruction> ciList = new LinkedList<ConstraintInstruction>();
         %match(rseList) {
           // "wName" is no longer useful -> signature to change
           concResolveStratElement(_*,ResolveStratElement(wname,rot),_*) -> {
-          
+            //factorize it?
+            //types? String & unknown?
             Slot sloto = `PairSlotAppl(
                     Name("o"),
                     Variable(
@@ -539,20 +539,43 @@ ResolveStratBlockList = concResolveStratBlock(ResolveStratBlock*)
             Constraint constraint = `AndConstraint(TrueConstraint(),
                 MatchConstraint(pattern,subject,ttype));
 
+
+
+            //Transition res = (Transition) tom__linkClass.get(`o).get(`name);
+           
             TomName firstArgument = TomBase.getSlotName(transformationSymbol,0);
             TomName secondArgument = TomBase.getSlotName(transformationSymbol,1);
-            Instruction referenceStatement /* TODO */;
+            /* TODO */
             BQTerm res = `BQVariable(concOption(),Name("res"),ttype);
+            TomType firstArgType = TomBase.getSlotType(transformationSymbol,firstArgument);
+            BQTerm link = `BQVariable(concOption(),firstArgument,firstArgType);
+            BQTerm first = `BQVariable(concOption(),Name("o"),SymbolTable.TYPE_UNKNOWN);
+            BQTerm second = `BQVariable(concOption(),Name("name"),SymbolTable.TYPE_UNKNOWN);
+            //replace ITL() by FunctionCall()?
+            //to change: language specific
+            //Instruction referenceStatement = `LetRef(res,
+            Instruction referenceStatement = `AbstractBlock(concInstruction(
+                  CodeToInstruction(TargetLanguageToCode(ITL(TomBase.getTLType(transformer.getSymbolTable().getType(tname))))),
+                  Assign(res,
+                    Cast(ttype,BQTermToExpression(Composite(
+                          CompositeBQTerm(link),
+                          CompositeTL(ITL(".get(")),
+                          CompositeBQTerm(first),
+                          CompositeTL(ITL(").get(")),
+                          CompositeBQTerm(second),
+                          CompositeTL(ITL(")"))
+                          )))
+                    )
+                  ));
+
             BQTerm model = `BQVariable(concOption(),secondArgument,SymbolTable.TYPE_UNKNOWN);
             //System.out.println("*** transformationSymbol = " + transformationSymbol);
-
             Instruction resolveStatement = `BQTermToInstruction(FunctionCall(
                   Name("resolveInverseLinks"), transformer.getSymbolTable().getVoidType(),
                   concBQTerm(subject,res,model)));
-            
             Instruction returnStatement = `Return(Composite(CompositeTL(ITL("res"))));
             /*referenceStatement,*/ 
-            InstructionList instructions = `concInstruction(resolveStatement, CodeToInstruction(TargetLanguageToCode(ITL(";"))), returnStatement);
+            InstructionList instructions = `concInstruction(referenceStatement,resolveStatement, CodeToInstruction(TargetLanguageToCode(ITL(";"))), returnStatement);
             ciList.add(`ConstraintInstruction(constraint, AbstractBlock(instructions),concOption(rot)));
                   //ResolveStratInstruction(rot.getAstName(),ttype),concOption(rot)));
             //TODO: GetSlot ou autre maniere de recuperer les elements
