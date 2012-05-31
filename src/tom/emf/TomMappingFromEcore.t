@@ -613,12 +613,13 @@ public static <O extends org.eclipse.emf.ecore.EObject> O construct@cr@(O o, Obj
           String o2 = eclf.getEPackage().getClass().getInterfaces()[eclf
             .getEPackage().getClass().getInterfaces().length - 1]
             .getCanonicalName();
-          String operatorName = cr+lit.getLiteral();
+          String literal = lit.getLiteral();
+          String operatorName = cr+literal.replaceAll(" ","");
           writer.write(%[
 
 %op @cr@ @operatorName@() {
-  is_fsym(t) { t == @(decl[0]+decl[1])@.get("@lit.getLiteral()@") }
-  make() { (@(decl[0]+decl[2])@)@o1@.eINSTANCE.createFromString( (EDataType)@o2@.eINSTANCE.get@toUpperName(cr)@(), "@lit.getLiteral()@") }
+  is_fsym(t) { t == @(decl[0]+decl[1])@.get("@literal@") }
+  make() { (@(decl[0]+decl[2])@)@o1@.eINSTANCE.createFromString( (EDataType)@o2@.eINSTANCE.get@toUpperName(cr)@(), "@literal@") }
 }]%);
         }
       }
