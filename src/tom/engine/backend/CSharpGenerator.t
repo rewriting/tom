@@ -176,14 +176,14 @@ public class CSharpGenerator extends CFamilyGenerator {
     int stratChildCount = stratChild.size();
 
     output.write(deep, "override public tom.library.sl.Visitable[] getChildren() {");
-    output.write(deep, "tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];");
+    output.write(deep, "tom.library.sl.Visitable[] stratChildren = new tom.library.sl.Visitable[getChildCount()];");
     output.write(deep, "for (int i = 0; i < getChildCount(); i++) {");
-    output.write(deep, "stratChilds[i]=getChildAt(i);}");
+    output.write(deep, "stratChildren[i]=getChildAt(i);}");
     //for (int i = 0; i < stratChildCount; i++) {
     //  int j = (stratChild.get(i)).intValue();
-    //  output.write(deep, "stratChilds[" + i + "] = get" + names.get(j) + "();");
+    //  output.write(deep, "stratChildren[" + i + "] = get" + names.get(j) + "();");
     //}
-    output.write(deep, "return stratChilds;}");
+    output.write(deep, "return stratChildren;}");
 
     output.write(deep, "override public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {");
     output.write(deep, "for (int i = 0; i < getChildCount(); i++) {");

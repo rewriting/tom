@@ -1759,17 +1759,17 @@ class All(AbstractStrategy):
         """
         childCount = any.getChildCount()
         result = any
-        childs = None
+        children = None
         for i in xrange(childCount):
             oldChild = any.getChildAt(i)
             newChild = self.visitors[self.ARG].visitLight(oldChild)
-            if childs != None: 
-                childs[i] = newChild
+            if children != None: 
+                children[i] = newChild
             elif newChild != oldChild:
-                childs = any.getChildren()
-                childs[i] = newChild
-        if childs != None:
-            result = any.setChildren(childs)
+                children = any.getChildren()
+                children[i] = newChild
+        if children != None:
+            result = any.setChildren(children)
         return result
 
     def visit_noarg(self):
@@ -1778,7 +1778,7 @@ class All(AbstractStrategy):
         """
         any = self.environment.getSubject()
         childCount = any.getChildCount()
-        childs = None
+        children = None
         for i in xrange(childCount):
             oldChild = any.getChildAt(i)
             self.environment.down(i+1)
@@ -1788,17 +1788,17 @@ class All(AbstractStrategy):
                 return status
 
             newChild = self.environment.getSubject()
-            if childs != None: 
-                childs[i] = newChild
+            if children != None: 
+                children[i] = newChild
             else:
                 if newChild != oldChild: 
-                    childs = any.getChildren()
-                    childs[i] = newChild
+                    children = any.getChildren()
+                    children[i] = newChild
 
             self.environment.upLocal()
 
-        if childs != None: 
-            self.environment.setSubject(any.setChildren(childs))
+        if children != None: 
+            self.environment.setSubject(any.setChildren(children))
 
         return Environment.SUCCESS
 

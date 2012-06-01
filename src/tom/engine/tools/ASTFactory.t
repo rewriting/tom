@@ -348,9 +348,9 @@ public class ASTFactory {
     return "tom_" + name;
   }
 
-  public static List<TomTerm> metaEncodeExplicitTermList(SymbolTable symbolTable, List<TomTerm> childs) {
+  public static List<TomTerm> metaEncodeExplicitTermList(SymbolTable symbolTable, List<TomTerm> children) {
     LinkedList<TomTerm> res = new LinkedList<TomTerm>();
-    for(TomTerm term:childs) {
+    for(TomTerm term:children) {
       res.add(metaEncodeXMLAppl(symbolTable,term));
     }
     return res;

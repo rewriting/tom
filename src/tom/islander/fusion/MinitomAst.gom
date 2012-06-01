@@ -239,7 +239,7 @@ PlainPattern 	 ::= 	 ['!'] VariableName
 // grammaire XML Term du wiki
 /*
 XMLTerm 	 ::= 	 '<' XMLNameList XMLAttrList '/>'
-	∣ 	'<' XMLNameList XMLAttrList '>' XMLChilds '</' XMLNameList '>'
+	∣ 	'<' XMLNameList XMLAttrList '>' XMLChildren '</' XMLNameList '>'
 	∣ 	'#TEXT' '(' Identifier ∣ String ')'
 	∣ 	'#COMMENT' '(' Identifier ∣ String ')'
 	∣ 	'#PROCESSING-INSTRUCTION'
@@ -253,7 +253,7 @@ XMLAttribute 	::= 	'_*'
 	∣ 	VariableName '*'
 	∣ 	AttributeName '=' [AnnotedName '@'] ( Identifier ∣ String )
 	∣ 	[AnnotedName '@'] '_' '=' [AnnotedName '@'] ( Identifier ∣ String )
-XMLChilds 	::= 	( Term )*
+XMLChildren 	::= 	( Term )*
 	∣ 	'[' Term ( ',' Term )* ']'
 */
 
