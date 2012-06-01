@@ -87,9 +87,11 @@ public class TransformerPlugin extends TomGenericPlugin {
   %typeterm TransformerPlugin { implement { TransformerPlugin } }
 
   private static Logger logger = Logger.getLogger("tom.engine.transformer.TransformerPlugin");
-  /** some output suffixes */
+  /** some prefixes and suffixes */
   public static final String TRANSFORMED_SUFFIX = ".tfix.transformed";
   public static final String REFCLASS_PREFIX = "tom__reference_class_";
+  public static final String STRAT_RESOLVE_PREFIX = "tom__StratResolve_";
+
   private SymbolTable symbolTable;
   private int freshCounter = 0;
 
@@ -137,24 +139,24 @@ public class TransformerPlugin extends TomGenericPlugin {
     visit Declaration {
       Transformation(transfoName,domain,declList,elemTransfoList,fileFrom,fileTo,orgTrack) ->
        {
-         return `AbstractDecl(processSubDecl(transformer,transfoName,domain,declList,elemTransfoList,fileFrom,fileTo,orgTrack));
+         return `AbstractDecl(transformer.processSubDecl(transfoName,domain,declList,elemTransfoList,fileFrom,fileTo,orgTrack));
       }
     }
   }
 
 
-  private static DeclarationList processSubDecl(TransformerPlugin transformer, TomName transfoName, TomTypeList domain, DeclarationList declList, ElementaryTransformationList elemTransfoList, String fileFrom, String fileTo, Option orgTrack) {
+  private DeclarationList processSubDecl(TomName transfoName, TomTypeList domain, DeclarationList declList, ElementaryTransformationList elemTransfoList, String fileFrom, String fileTo, Option orgTrack) {
     List bqlist = new LinkedList<BQTerm>();
     List<Declaration> result = new LinkedList<Declaration>();
     String stringName = transfoName.getString();
-    TomSymbol symbol = transformer.getSymbolTable().getSymbolFromName(stringName);
+    TomSymbol symbol = getSymbolTable().getSymbolFromName(stringName);
     //elementary strategies generation
     %match(elemTransfoList) {
       concElementaryTransformation(_*,ElementaryTransformation[ETName=etName,Traversal=traversal,AstRuleInstructionList=riList,Options=concOption(_*,ot@OriginTracking(_,_,_),_*)],_*) -> {
         //generate elementary `Strategy, `ReferenceClass and `SymbolDecl
-        result.addAll(genElementaryStrategy(transformer,`etName,`traversal,`riList,`ot));
+        result.addAll(genElementaryStrategy(`etName,`traversal,`riList,`ot));
         //Generate symbol for elementary strategy and put it into symbol table
-        genAndPutElementaryStratSymbol(transformer, `ot, `etName, domain, symbol);
+        genAndPutElementaryStratSymbol(`ot, `etName, domain, symbol);
         //add the part of CompositeBQTerm transformer to bqlist
         bqlist.add(`traversal);
       }
@@ -175,7 +177,7 @@ public class TransformerPlugin extends TomGenericPlugin {
       concDeclaration(_*,decl,_*) -> {
         %match(decl) {
           ResolveStratDecl[TransfoName=name,ResList=reslist,ResolveNameList=resolveNameList,OriginTracking=rot] -> {
-            resolveStratDecl = buildResolveStrat(transformer, transfoName, domain, bqlist, symbol, `name, `reslist, `resolveNameList, `rot);
+            resolveStratDecl = buildResolveStrat(transfoName, domain, bqlist, symbol, `name, `reslist, `resolveNameList, `rot);
             inverseLinks = `ResolveInverseLinksDecl(resolveNameList,fileFrom,fileTo);
           }
           d@(SymbolDecl|ResolveClassDecl|TypeTermDecl)[] -> {
@@ -186,7 +188,6 @@ public class TransformerPlugin extends TomGenericPlugin {
       }
     }
 
-
     //add them to DeclarationList
     result.add(resolveStratDecl);
     result.add(inverseLinks);
@@ -194,7 +195,7 @@ public class TransformerPlugin extends TomGenericPlugin {
     BQTerm composite = makeComposedStrategy(bqlist,declList,domain);
     try {
       TomSymbol newSymbol = `TopDown(ReplaceMakeDecl(composite)).visitLight(symbol);
-      transformer.getSymbolTable().putSymbol(stringName,newSymbol);
+      getSymbolTable().putSymbol(stringName,newSymbol);
     } catch (VisitFailure e) {
       throw new TomRuntimeException("TransformerPlugin.processSubDecl: fail on " + symbol);
     }
@@ -207,13 +208,12 @@ public class TransformerPlugin extends TomGenericPlugin {
    * @return DeclarationList containeng the `Strategy, the `SymbolDecl and a
    * `ReferenceClass
    */
-  private static List<Declaration> genElementaryStrategy(TransformerPlugin transformer,
-                                                         TomName strategyName,
-                                                         BQTerm traversal,
-                                                         RuleInstructionList riList,
-                                                         Option orgTrack) {
+  private List<Declaration> genElementaryStrategy(TomName strategyName,
+                                                  BQTerm traversal,
+                                                  RuleInstructionList riList,
+                                                  Option orgTrack) {
     String strName = strategyName.getString();
-    TomName refClassName = `Name(transformer.REFCLASS_PREFIX+strName);
+    TomName refClassName = `Name(REFCLASS_PREFIX+strName);
     Declaration symbol = `SymbolDecl(strategyName);
 
     //build visitList
@@ -286,7 +286,7 @@ public class TransformerPlugin extends TomGenericPlugin {
   }//genElementaryStrategy
 
   //TODO: change this, to specific, NOK with complex patterns
-  private static BQTerm genTracelinkPopulateResolveCurrent(TomTerm term) {
+  private BQTerm genTracelinkPopulateResolveCurrent(TomTerm term) {
     BQTerm result = null;
     %match(term) {
       RecordAppl[Constraints=concConstraint(_*,AliasTo(t),_*)] -> {
@@ -303,11 +303,10 @@ public class TransformerPlugin extends TomGenericPlugin {
   /**
    * 
    */
-  private static void genAndPutElementaryStratSymbol(TransformerPlugin transformer,
-                                                     Option orgTrack,
-                                                     TomName stratName,
-                                                     TomTypeList domain,
-                                                     TomSymbol symbol) {
+  private void genAndPutElementaryStratSymbol(Option orgTrack,
+                                              TomName stratName,
+                                              TomTypeList domain,
+                                              TomSymbol symbol) {
     List<Option> optionList = new LinkedList<Option>();
     optionList.add(orgTrack);
     
@@ -349,9 +348,9 @@ public class TransformerPlugin extends TomGenericPlugin {
     TomTypeList transfoDomain = TomBase.getSymbolDomain(symbol);
     PairNameDeclList paramDecl =
       genStratPairNameDeclListFromTransfoSymbol(stratName,symbol);
-    TomSymbol astSymbol = ASTFactory.makeSymbol(stringStratName,
-        strategyType, transfoDomain, paramDecl, optionList);
-    transformer.getSymbolTable().putSymbol(stringStratName,astSymbol);
+    TomSymbol astSymbol = ASTFactory.makeSymbol(stringStratName, strategyType,
+        transfoDomain, paramDecl, optionList);
+    getSymbolTable().putSymbol(stringStratName,astSymbol);
   }//genAndPutElementaryStratSymbol
 
 
@@ -363,7 +362,9 @@ public class TransformerPlugin extends TomGenericPlugin {
     }
   }
 
-  private static BQTerm makeComposedStrategy(List<BQTerm> bqlist, DeclarationList declList, TomTypeList domain) {
+  private BQTerm makeComposedStrategy(List<BQTerm> bqlist, 
+                                      DeclarationList declList, 
+                                      TomTypeList domain) {
     BQTermList bql = removeDuplicate(ASTFactory.makeBQTermList(bqlist));
     /*concOption() for the moment, to change*/
     BQTerm transfos = `Composite(CompositeBQTerm(BQAppl(
@@ -382,13 +383,14 @@ public class TransformerPlugin extends TomGenericPlugin {
     return transformerBQTerm;
   }
 
-  private static BQTerm makeResolveBQTerm(DeclarationList declList, TomTypeList domain) {
+  private BQTerm makeResolveBQTerm(DeclarationList declList, 
+                                   TomTypeList domain) {
     Option option = `noOption();
     String stringRSname = "";
     %match(declList) {
       concDeclaration(_*, ResolveStratDecl[TransfoName=name,OriginTracking=ot] ,_*) -> {
         option = `ot;
-        stringRSname = "tom__StratResolve_"+`name;
+        stringRSname = STRAT_RESOLVE_PREFIX+`name;
       }
     }
     //build parameters
@@ -412,7 +414,7 @@ public class TransformerPlugin extends TomGenericPlugin {
     return bqtrans;
   }
 
-  private static boolean partialEqualsBQTerm(BQTerm bqt1, BQTerm bqt2) {
+  private boolean partialEqualsBQTerm(BQTerm bqt1, BQTerm bqt2) {
     boolean result = false;
     %match {
       Composite(CompositeBQTerm[term=BQAppl[Options=concOption(_*,OriginTracking[AstName=n],_*)]]) << bqt1
@@ -421,7 +423,7 @@ public class TransformerPlugin extends TomGenericPlugin {
     return result;
   }
 
-  private static BQTermList removeDuplicate(BQTermList bqlist) {
+  private BQTermList removeDuplicate(BQTermList bqlist) {
     BQTermList result = `concBQTerm();
     for(BQTerm bqterm : bqlist.getCollectionconcBQTerm()) {
       boolean duplicate = false;
@@ -474,15 +476,14 @@ ResolveStratBlockList = concResolveStratBlock(ResolveStratBlock*)
       }
     }
    */
-  private static Declaration buildResolveStrat(TransformerPlugin transformer, 
-                                               TomName toname, 
-                                               TomTypeList domain, 
-                                               List bqlist, 
-                                               TomSymbol transformationSymbol, 
-                                               String name, 
-                                               ResolveStratBlockList rsbList, 
-                                               TomNameList resolveNameList,
-                                               Option ot) {
+  private Declaration buildResolveStrat(TomName toname, 
+                                        TomTypeList domain, 
+                                        List bqlist, 
+                                        TomSymbol transformationSymbol, 
+                                        String name, 
+                                        ResolveStratBlockList rsbList, 
+                                        TomNameList resolveNameList,
+                                        Option ot) {
     List<TomVisit> visitList = new LinkedList<TomVisit>();
 
     %match(rsbList) {
@@ -555,7 +556,7 @@ ResolveStratBlockList = concResolveStratBlock(ResolveStratBlock*)
             //to change: language specific
             //Instruction referenceStatement = `LetRef(res,
             Instruction referenceStatement = `AbstractBlock(concInstruction(
-                  CodeToInstruction(TargetLanguageToCode(ITL(TomBase.getTLType(transformer.getSymbolTable().getType(tname))))),
+                  CodeToInstruction(TargetLanguageToCode(ITL(TomBase.getTLType(getSymbolTable().getType(tname))))),
                   Assign(res,
                     Cast(ttype,BQTermToExpression(Composite(
                           CompositeBQTerm(link),
@@ -571,7 +572,7 @@ ResolveStratBlockList = concResolveStratBlock(ResolveStratBlock*)
             BQTerm model = `BQVariable(concOption(),secondArgument,SymbolTable.TYPE_UNKNOWN);
             //System.out.println("*** transformationSymbol = " + transformationSymbol);
             Instruction resolveStatement = `BQTermToInstruction(FunctionCall(
-                  Name("resolveInverseLinks"), transformer.getSymbolTable().getVoidType(),
+                  Name("resolveInverseLinks"), getSymbolTable().getVoidType(),
                   concBQTerm(subject,res,model)));
             Instruction returnStatement = `Return(Composite(CompositeTL(ITL("res"))));
             /*referenceStatement,*/ 
@@ -588,7 +589,7 @@ ResolveStratBlockList = concResolveStratBlock(ResolveStratBlock*)
         ciList.clear(); //reset ConstraintInstructionList
       }
     }
-    String stringRSname = "tom__StratResolve_"+name;
+    String stringRSname = STRAT_RESOLVE_PREFIX+name;
     TomName rsname = `Name(stringRSname);
     BQTerm extendsTerm = `BQAppl(concOption(ot),Name("Identity"),concBQTerm());
     TomVisitList astVisitList = `ASTFactory.makeTomVisitList(visitList);
@@ -658,7 +659,7 @@ ResolveStratBlockList = concResolveStratBlock(ResolveStratBlock*)
 
     TomSymbol astSymbol = ASTFactory.makeSymbol(stringRSname,
         strategyType, transfoDomain, paramDecl, options);
-    transformer.getSymbolTable().putSymbol(stringRSname,astSymbol);
+    getSymbolTable().putSymbol(stringRSname,astSymbol);
 
     //build here the part of BQTermComposite transformer
 /*    BQTerm bqtrans = `Composite(CompositeBQTerm(BQAppl(
