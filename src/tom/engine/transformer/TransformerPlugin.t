@@ -108,13 +108,11 @@ public class TransformerPlugin extends TomGenericPlugin {
     boolean intermediate = getOptionBooleanValue("intermediate");
     Code transformedTerm = (Code)getWorkingTerm();
     setSymbolTable(getStreamManager().getSymbolTable());
-    //System.out.println("###DEBUG1### SymbolTable =\n"+getSymbolTable().getMapSymbolName()); 
     try {
       // replace content of TransformationDecl by StrategyDecl
       transformedTerm = `TopDown(ProcessTransformation(this)).visitLight(transformedTerm);
 
       setWorkingTerm(transformedTerm);
-      //System.out.println("###DEBUG2### SymbolTable =\n"+getSymbolTable().getMapSymbolName()); 
       // verbose
       TomMessage.info(logger,null,0,TomMessage.tomTransformingPhase,
           Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
@@ -148,56 +146,50 @@ public class TransformerPlugin extends TomGenericPlugin {
   private DeclarationList processSubDecl(TomName transfoName, TomTypeList domain, DeclarationList declList, ElementaryTransformationList elemTransfoList, String fileFrom, String fileTo, Option orgTrack) {
     List bqlist = new LinkedList<BQTerm>();
     List<Declaration> result = new LinkedList<Declaration>();
-    String stringName = transfoName.getString();
-    TomSymbol symbol = getSymbolTable().getSymbolFromName(stringName);
+    String strTransfoName = transfoName.getString();
+    TomSymbol transfoSymbol = getSymbolTable().getSymbolFromName(strTransfoName);
     //elementary strategies generation
     %match(elemTransfoList) {
-      concElementaryTransformation(_*,ElementaryTransformation[ETName=etName,Traversal=traversal,AstRuleInstructionList=riList,Options=concOption(_*,ot@OriginTracking(_,_,_),_*)],_*) -> {
+      concElementaryTransformation(_*,ElementaryTransformation[ETName=etName@Name(eStratName),Traversal=traversal,AstRuleInstructionList=riList,Options=concOption(_*,ot@OriginTracking(_,_,_),_*)],_*) -> {
         //generate elementary `Strategy, `ReferenceClass and `SymbolDecl
         result.addAll(genElementaryStrategy(`etName,`traversal,`riList,`ot));
         //Generate symbol for elementary strategy and put it into symbol table
-        genAndPutElementaryStratSymbol(`ot, `etName, domain, symbol);
+        TomSymbol astElemStratSymbol = generateElementaryStratSymbol(`ot,
+            `etName, domain, transfoSymbol);
+        getSymbolTable().putSymbol(`eStratName,astElemStratSymbol);
         //add the part of CompositeBQTerm transformer to bqlist
         bqlist.add(`traversal);
       }
     }
-    //generate resolve strategy
+    //Generation of Resolve strategy
     Declaration resolveStratDecl = null;
     Declaration inverseLinks = null;
-    /*
-    %match(declList) {
-      concDeclaration(_*,ResolveStratDecl[TransfoName=name,ResList=reslist,ResolveNameList=resolveNameList,OriginTracking=rot],_*) -> {
-        resolveStratDecl = buildResolveStrat(transformer, transfoName, domain, bqlist, symbol, `name, `reslist, `resolveNameList, `rot);
-        inverseLinks = `ResolveInverseLinksDecl(resolveNameList,fileFrom,fileTo);
-      }
-    }
-    */
-
     %match(declList) {
       concDeclaration(_*,decl,_*) -> {
         %match(decl) {
           ResolveStratDecl[TransfoName=name,ResList=reslist,ResolveNameList=resolveNameList,OriginTracking=rot] -> {
-            resolveStratDecl = buildResolveStrat(transfoName, domain, bqlist, symbol, `name, `reslist, `resolveNameList, `rot);
-            inverseLinks = `ResolveInverseLinksDecl(resolveNameList,fileFrom,fileTo);
+            resolveStratDecl = buildResolveStrat(transfoName, domain, bqlist,
+                transfoSymbol, `name, `reslist, `resolveNameList, `rot);
+            inverseLinks =
+              `ResolveInverseLinksDecl(resolveNameList,fileFrom,fileTo);
           }
           d@(SymbolDecl|ResolveClassDecl|TypeTermDecl)[] -> {
             result.add(`d);
           }
         }
-      
       }
     }
-
     //add them to DeclarationList
     result.add(resolveStratDecl);
     result.add(inverseLinks);
     //let's change the transformation MakeDecl
     BQTerm composite = makeComposedStrategy(bqlist,declList,domain);
     try {
-      TomSymbol newSymbol = `TopDown(ReplaceMakeDecl(composite)).visitLight(symbol);
-      getSymbolTable().putSymbol(stringName,newSymbol);
+      TomSymbol newSymbol =
+        `TopDown(ReplaceMakeDecl(composite)).visitLight(transfoSymbol);
+      getSymbolTable().putSymbol(strTransfoName,newSymbol);
     } catch (VisitFailure e) {
-      throw new TomRuntimeException("TransformerPlugin.processSubDecl: fail on " + symbol);
+      throw new TomRuntimeException("TransformerPlugin.processSubDecl: fail on " + transfoSymbol);
     }
     return ASTFactory.makeDeclarationList(result);
   }//processSubDecl
@@ -205,7 +197,13 @@ public class TransformerPlugin extends TomGenericPlugin {
 
   /**
    * Generate the `Strategy corresponding to an `ElementaryTransformation
-   * @return DeclarationList containeng the `Strategy, the `SymbolDecl and a
+   * @param strategyName the naem of the strategy (elementary transformation)
+   * @param traversal the traversal strategy which have been given to the
+   * elementary transformation. It is used in the "transformer" strategy
+   * composition.
+   * @param riList the list of rules composing the elementary transformation
+   * @param orgTrack an option to track the construct
+   * @return DeclarationList containclieng the `Strategy, the `SymbolDecl and a
    * `ReferenceClass
    */
   private List<Declaration> genElementaryStrategy(TomName strategyName,
@@ -221,7 +219,6 @@ public class TransformerPlugin extends TomGenericPlugin {
     List<RefClassTracelinkInstruction> refclassTInstructionList = new LinkedList<RefClassTracelinkInstruction>();
 
     TomType vType = null;
-    //String vTypeStr = null;
     %match(riList) {
       concRuleInstruction(_*,RuleInstruction[TypeName=type,Term=term,Action=instr,Options=opts],_*) -> {
         List<TomName> nameList = new LinkedList<TomName>();
@@ -301,12 +298,18 @@ public class TransformerPlugin extends TomGenericPlugin {
   }
 
   /**
-   * 
+   * Generate TomSymbol for each strategy representing an elementary
+   * transformation
+   * @param orgTrack an option to track the construct
+   * @param stratName the name of the strategy
+   * @param domain the domain of the strategy
+   * @param symbol the transformation symbol where parameters are retrieved
+   * @return The generated symbol of an elementary strategy
    */
-  private void genAndPutElementaryStratSymbol(Option orgTrack,
-                                              TomName stratName,
-                                              TomTypeList domain,
-                                              TomSymbol symbol) {
+  private TomSymbol generateElementaryStratSymbol(Option orgTrack,
+                                                  TomName stratName,
+                                                  TomTypeList domain,
+                                                  TomSymbol transfoSymbol) {
     List<Option> optionList = new LinkedList<Option>();
     optionList.add(orgTrack);
     
@@ -345,13 +348,12 @@ public class TransformerPlugin extends TomGenericPlugin {
     Declaration fsymDecl = `IsFsymDecl(stratName,fsymVar,Code(code),fsymOption);
     optionList.add(`DeclarationToOption(fsymDecl));
 
-    TomTypeList transfoDomain = TomBase.getSymbolDomain(symbol);
+    TomTypeList transfoDomain = TomBase.getSymbolDomain(transfoSymbol);
     PairNameDeclList paramDecl =
-      genStratPairNameDeclListFromTransfoSymbol(stratName,symbol);
-    TomSymbol astSymbol = ASTFactory.makeSymbol(stringStratName, strategyType,
-        transfoDomain, paramDecl, optionList);
-    getSymbolTable().putSymbol(stringStratName,astSymbol);
-  }//genAndPutElementaryStratSymbol
+      genStratPairNameDeclListFromTransfoSymbol(stratName,transfoSymbol);
+    return ASTFactory.makeSymbol(stringStratName, strategyType, transfoDomain,
+        paramDecl, optionList);
+  }//generateElementaryStratSymbol
 
 
   %strategy ReplaceMakeDecl(composite:BQTerm) extends Identity() {
@@ -638,7 +640,6 @@ ResolveStratBlockList = concResolveStratBlock(ResolveStratBlock*)
     
     Declaration makeDecl = `MakeDecl(rsname, strategyType, makeArgs,
         CodeToInstruction(TargetLanguageToCode(ITL(makeTlCode))), makeOption);
-    //System.out.println("###DEBUG### buildResolveStrat - makeDecl = "+makeDecl);
     options.add(`DeclarationToOption(makeDecl));
 
     //definition of the is_fsym method.
