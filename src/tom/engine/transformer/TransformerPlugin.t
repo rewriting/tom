@@ -129,7 +129,10 @@ public class TransformerPlugin extends TomGenericPlugin {
     }
   }
 
-
+  /** 
+   * This strategy handles each Transformation declaration and transforms it to
+   * an AbstractDecl containing a list of declarations.
+   */
   %strategy ProcessTransformation(transformer:TransformerPlugin) extends Identity() {
     /* 
      * Compilation of %transformation
@@ -142,8 +145,19 @@ public class TransformerPlugin extends TomGenericPlugin {
     }
   }
 
-
-  private DeclarationList processSubDecl(TomName transfoName, TomTypeList domain, DeclarationList declList, ElementaryTransformationList elemTransfoList, String fileFrom, String fileTo, Option orgTrack) {
+  /**
+   * This function processes a transformation declarations list.
+   * @param transfoName the name of the transformation
+   * @param transfoDomain the domain of the transformation
+   * @param declList the list of declarations related to the transformation
+   * @param elemTransfoList the liste of elementary transformations composing
+   * the whole transformation
+   * @param fileFrom the source metamodel file name
+   * @param fileTo the target metamodel file name
+   * @param orgTrack an option to track the transformation construct
+   * @return a list of declarations related to the transformation
+   */
+  private DeclarationList processSubDecl(TomName transfoName, TomTypeList transfoDomain, DeclarationList declList, ElementaryTransformationList elemTransfoList, String fileFrom, String fileTo, Option orgTrack) {
     List bqlist = new LinkedList<BQTerm>();
     List<Declaration> result = new LinkedList<Declaration>();
     String strTransfoName = transfoName.getString();
@@ -152,10 +166,10 @@ public class TransformerPlugin extends TomGenericPlugin {
     %match(elemTransfoList) {
       concElementaryTransformation(_*,ElementaryTransformation[ETName=etName@Name(eStratName),Traversal=traversal,AstRuleInstructionList=riList,Options=concOption(_*,ot@OriginTracking(_,_,_),_*)],_*) -> {
         //generate elementary `Strategy, `ReferenceClass and `SymbolDecl
-        result.addAll(genElementaryStrategy(`etName,`traversal,`riList,`ot));
+        result.addAll(`genElementaryStrategy(etName,traversal,riList,ot));
         //Generate symbol for elementary strategy and put it into symbol table
-        TomSymbol astElemStratSymbol = generateElementaryStratSymbol(`ot,
-            `etName, domain, transfoSymbol);
+        TomSymbol astElemStratSymbol = `generateElementaryStratSymbol(ot,
+            etName, transfoDomain, transfoSymbol);
         getSymbolTable().putSymbol(`eStratName,astElemStratSymbol);
         //add the part of CompositeBQTerm transformer to bqlist
         bqlist.add(`traversal);
@@ -167,9 +181,10 @@ public class TransformerPlugin extends TomGenericPlugin {
     %match(declList) {
       concDeclaration(_*,decl,_*) -> {
         %match(decl) {
-          ResolveStratDecl[TransfoName=name,ResList=reslist,ResolveNameList=resolveNameList,OriginTracking=rot] -> {
-            resolveStratDecl = buildResolveStrat(transfoName, domain, bqlist,
-                transfoSymbol, `name, `reslist, `resolveNameList, `rot);
+          ResolveStratDecl[ResList=reslist,ResolveNameList=resolveNameList,OriginTracking=rot]
+            -> {
+            resolveStratDecl = `buildResolveStrat(transfoName, bqlist,
+                transfoSymbol, reslist, resolveNameList, rot);
             inverseLinks =
               `ResolveInverseLinksDecl(resolveNameList,fileFrom,fileTo);
           }
@@ -183,7 +198,10 @@ public class TransformerPlugin extends TomGenericPlugin {
     result.add(resolveStratDecl);
     result.add(inverseLinks);
     //let's change the transformation MakeDecl
-    BQTerm composite = makeComposedStrategy(bqlist,declList,domain);
+    //this first step is necessary due to the fact that an elementary
+    //transformation may have many rules, therefore bqlist may have duplicate
+    //bqterms
+    BQTerm composite = makeComposedStrategy(bqlist,declList,transfoDomain);
     try {
       TomSymbol newSymbol =
         `TopDown(ReplaceMakeDecl(composite)).visitLight(transfoSymbol);
@@ -282,6 +300,11 @@ public class TransformerPlugin extends TomGenericPlugin {
     return result;
   }//genElementaryStrategy
 
+  /**
+   *
+   * @param term the term on which the tracelink BQTerm is based
+   * @return the Backquote term representing 
+   */
   //TODO: change this, to specific, NOK with complex patterns
   private BQTerm genTracelinkPopulateResolveCurrent(TomTerm term) {
     BQTerm result = null;
@@ -302,13 +325,14 @@ public class TransformerPlugin extends TomGenericPlugin {
    * transformation
    * @param orgTrack an option to track the construct
    * @param stratName the name of the strategy
-   * @param domain the domain of the strategy
+   * @param transfoDomain the domain of the strategy (the same as the
+   * transformation domain)
    * @param symbol the transformation symbol where parameters are retrieved
    * @return The generated symbol of an elementary strategy
    */
   private TomSymbol generateElementaryStratSymbol(Option orgTrack,
                                                   TomName stratName,
-                                                  TomTypeList domain,
+                                                  TomTypeList transfoDomain,
                                                   TomSymbol transfoSymbol) {
     List<Option> optionList = new LinkedList<Option>();
     optionList.add(orgTrack);
@@ -320,7 +344,7 @@ public class TransformerPlugin extends TomGenericPlugin {
     String stringStratName = stratName.getString();
     String makeTlCode = "new "+stringStratName+"(";
     int index = 0;
-    TomTypeList makeTypes = domain; //`concTomType();
+    TomTypeList makeTypes = transfoDomain; //`concTomType();
     while(!makeTypes.isEmptyconcTomType()) {
       String argName = "t"+index;
       if (index>0) {//if many parameters
@@ -348,7 +372,7 @@ public class TransformerPlugin extends TomGenericPlugin {
     Declaration fsymDecl = `IsFsymDecl(stratName,fsymVar,Code(code),fsymOption);
     optionList.add(`DeclarationToOption(fsymDecl));
 
-    TomTypeList transfoDomain = TomBase.getSymbolDomain(transfoSymbol);
+    //TomTypeList transfoDomain = TomBase.getSymbolDomain(transfoSymbol);
     PairNameDeclList paramDecl =
       genStratPairNameDeclListFromTransfoSymbol(stratName,transfoSymbol);
     return ASTFactory.makeSymbol(stringStratName, strategyType, transfoDomain,
@@ -356,6 +380,10 @@ public class TransformerPlugin extends TomGenericPlugin {
   }//generateElementaryStratSymbol
 
 
+  /**
+   * This strategy modifies the MakeDecl of a transformation symbol by adding
+   * a forged BQTerm
+   */
   %strategy ReplaceMakeDecl(composite:BQTerm) extends Identity() {
     visit Declaration {
       MakeDecl[AstName=name,AstType=type,Args=args,OrgTrack=ot] -> {
@@ -364,9 +392,18 @@ public class TransformerPlugin extends TomGenericPlugin {
     }
   }
 
+  /**
+   * This function generates the Backquote term of the transformation
+   * @param bqlist the list of BQTerm representing the elementary
+   * transformation strategies, and composing the whole transformation
+   * @param declList a declaration list necessary to build the Resolve BQTerm
+   * @param transfoDomain the domain of the transformation, used to build the
+   * Resolve BQTerm
+   * @return a Backquote term representing the whole transformation strategy
+   */
   private BQTerm makeComposedStrategy(List<BQTerm> bqlist, 
                                       DeclarationList declList, 
-                                      TomTypeList domain) {
+                                      TomTypeList transfoDomain) {
     BQTermList bql = removeDuplicate(ASTFactory.makeBQTermList(bqlist));
     /*concOption() for the moment, to change*/
     BQTerm transfos = `Composite(CompositeBQTerm(BQAppl(
@@ -375,8 +412,8 @@ public class TransformerPlugin extends TomGenericPlugin {
             bql)
           ));
     //add condition: call it only if resolve is needed
-    BQTermList res = `concBQTerm(transfos, makeResolveBQTerm(declList, domain));
-    //Declaration transformerBQTerm = `BQTermToDeclaration(
+    BQTermList res = `concBQTerm(transfos, 
+                                 makeResolveBQTerm(declList, transfoDomain));
     BQTerm transformerBQTerm = `Composite(CompositeBQTerm(BQAppl(
             concOption(),
             Name("Sequence"),
@@ -385,8 +422,15 @@ public class TransformerPlugin extends TomGenericPlugin {
     return transformerBQTerm;
   }
 
+  /**
+   * This function generates the Resolve BQTerm used in the whole
+   * transformation BQTerm
+   * @param declList the declaration list containing ResolveStratDecl() nodes
+   * @param transfoDomain the domain of the transformation
+   * @return the generated Resolve BQTerm
+   */
   private BQTerm makeResolveBQTerm(DeclarationList declList, 
-                                   TomTypeList domain) {
+                                   TomTypeList transfoDomain) {
     Option option = `noOption();
     String stringRSname = "";
     %match(declList) {
@@ -398,7 +442,7 @@ public class TransformerPlugin extends TomGenericPlugin {
     //build parameters
     BQTermList params = `concBQTerm();
     int index = 0;
-    TomTypeList makeTypes = domain;
+    TomTypeList makeTypes = transfoDomain;
     while(!makeTypes.isEmptyconcTomType()) {
       String argName = "t"+index;
       BQTerm arg = `BQVariable(concOption(),Name(argName),makeTypes.getHeadconcTomType());
@@ -416,15 +460,27 @@ public class TransformerPlugin extends TomGenericPlugin {
     return bqtrans;
   }
 
+  /**
+   * This function compares (partly) two backquote terms. This "equality" is
+   * only based on the AstName contained in the OriginTracking option.
+   * @param bqt1 a backquote term
+   * @param bqt2 a backquote term to compare to the first one
+   * @return the result of the "test of equality"
+   */
   private boolean partialEqualsBQTerm(BQTerm bqt1, BQTerm bqt2) {
-    boolean result = false;
     %match {
       Composite(CompositeBQTerm[term=BQAppl[Options=concOption(_*,OriginTracking[AstName=n],_*)]]) << bqt1
-      && Composite(CompositeBQTerm[term=BQAppl[Options=concOption(_*,OriginTracking[AstName=n],_*)]]) << bqt2 -> { result = true; }
+      &&
+      Composite(CompositeBQTerm[term=BQAppl[Options=concOption(_*,OriginTracking[AstName=n],_*)]]) << bqt2 -> { return true; }
     }
-    return result;
+    return false;
   }
 
+  /**
+   * This function removes duplicate BQTerm from a BQTermList
+   * @param bqlist a BQTermList which may contain duplicate BQTerm
+   * @return a BQTermList without any duplicate BQTerm
+   */
   private BQTermList removeDuplicate(BQTermList bqlist) {
     BQTermList result = `concBQTerm();
     for(BQTerm bqterm : bqlist.getCollectionconcBQTerm()) {
@@ -453,36 +509,43 @@ ResolveStratBlock = ResolveStratBlock(ToName:String, resolveStratElementList:Res
 ResolveStratBlockList = concResolveStratBlock(ResolveStratBlock*)
    */
 
-  /*
-   * pem: make function non-static
-   * example of generated code:
-   %strategy Resolve(tom__linkClass:LinkClass,model:PetriNet) extends Identity() {
-    visit Place {
-      tom__arg@ResolveWorkDefinitionPlace[o=o,name=name] -> {
-        Place res = (Place) tom__linkClass.get(`o).get(`name);
-        `resolveInverseLinks(tom__arg, res, model);
-        return res;
-      }
-    }
-
-    visit Transition {
-      tom__arg@ResolveWorkDefinitionTransition[o=o,name=name] -> {
-        Transition res = (Transition) tom__linkClass.get(`o).get(`name);
-        `resolveInverseLinks(tom__arg, res, model);
-        return res;
-      }
-      tom__arg@ResolveProcessTransition[o=o,name=name] -> {
-        Transition res = (Transition) tom__linkClass.get(`o).get(`name);
-        `resolveInverseLinks(tom__arg, res, model);
-        return res;
-      }
-    }
+  /**
+   * Generates the Resolve strategy
+   * Here is an example of code for this strategy:
+   * %strategy Resolve(tom__linkClass:LinkClass,model:PetriNet) extends Identity() {
+   *   visit Place {
+   *     tom__arg@ResolveWorkDefinitionPlace[o=o,name=name] -> {
+   *       Place res = (Place) tom__linkClass.get(`o).get(`name);
+   *       `resolveInverseLinks(tom__arg, res, model);
+   *       return res;
+   *     }
+   *   }
+   * 
+   *   visit Transition {
+   *     tom__arg@ResolveWorkDefinitionTransition[o=o,name=name] -> {
+   *       Transition res = (Transition) tom__linkClass.get(`o).get(`name);
+   *       `resolveInverseLinks(tom__arg, res, model);
+   *       return res;
+   *     }
+   *     tom__arg@ResolveProcessTransition[o=o,name=name] -> {
+   *       Transition res = (Transition) tom__linkClass.get(`o).get(`name);
+   *       `resolveInverseLinks(tom__arg, res, model);
+   *       return res;
+   *     }
+   *   }
+   * }
+   * @param transfoName the name of the transformation
+   * @param bqlist
+   * @param transformationSymbol
+   * @param rsbList
+   * @param resolveNameLest
+   * @param ot 
+   * @return the AbstractDecl containing the Resolve Strategy and its
+   * SymbolDecl
    */
-  private Declaration buildResolveStrat(TomName toname, 
-                                        TomTypeList domain, 
+  private Declaration buildResolveStrat(TomName transfoName,
                                         List bqlist, 
                                         TomSymbol transformationSymbol, 
-                                        String name, 
                                         ResolveStratBlockList rsbList, 
                                         TomNameList resolveNameList,
                                         Option ot) {
@@ -496,26 +559,11 @@ ResolveStratBlockList = concResolveStratBlock(ResolveStratBlock*)
         %match(rseList) {
           // "wName" is no longer useful -> signature to change
           concResolveStratElement(_*,ResolveStratElement(wname,rot),_*) -> {
-            //factorize it?
             //types? String & unknown?
-            Slot sloto = `PairSlotAppl(
-                    Name("o"),
-                    Variable(
-                      concOption(OriginTracking(Name("o"),rot.getLine(),rot.getFileName())),
-                      Name("o"),
-                      Type(concTypeOption(),"unknown type",EmptyTargetLanguageType()),
-                      concConstraint()
-                      )
-                    );
-            Slot slotname = `PairSlotAppl(
-                    Name("name"),
-                    Variable(
-                      concOption(OriginTracking(Name("name"),rot.getLine(),rot.getFileName())),
-                      Name("name"),
-                      Type(concTypeOption(),"unknown type",EmptyTargetLanguageType()),
-                      concConstraint()
-                      )
-                    );
+            int rline = `rot.getLine();
+            String rfileName = `rot.getFileName();
+            Slot sloto = genPairSlotAppl("o", rline, rfileName);
+            Slot slotname = genPairSlotAppl("name", rline, rfileName);
             
             TomTerm pattern = `RecordAppl(
                 concOption(rot),
@@ -529,12 +577,14 @@ ResolveStratBlockList = concResolveStratBlock(ResolveStratBlock*)
                             rot.getLine(),
                             rot.getFileName())),
                         Name("tom__resolve"),
-                        Type(concTypeOption(),"unknown type",EmptyTargetLanguageType()),
+                        getSymbolTable().TYPE_UNKNOWN,
                         concConstraint()
                         )
                       )
                     )
                   );
+            //getSymbolTable().TYPE_UNKNOWN <->
+            //Type(concTypeOption(),"unknown type",EmptyTargetLanguageType()),
 
             //maybe something like that in the future
             //TomType matchType = (getOptionBooleanValue("newtyper")?SymbolTable.TYPE_UNKNOWN:ttype);
@@ -591,13 +641,13 @@ ResolveStratBlockList = concResolveStratBlock(ResolveStratBlock*)
         ciList.clear(); //reset ConstraintInstructionList
       }
     }
-    String stringRSname = STRAT_RESOLVE_PREFIX+name;
+    String stringRSname = STRAT_RESOLVE_PREFIX+transfoName;
     TomName rsname = `Name(stringRSname);
     BQTerm extendsTerm = `BQAppl(concOption(ot),Name("Identity"),concBQTerm());
     TomVisitList astVisitList = `ASTFactory.makeTomVisitList(visitList);
-    Option orgTrack = `OriginTracking(Name("Strategy"),
-        ot.getLine(),
-        ot.getFileName());
+    int line = `ot.getLine();
+    String fileName = `ot.getFileName();
+    Option orgTrack = `OriginTracking(Name("Strategy"),line,fileName);
     Declaration resolve = `Strategy(rsname,extendsTerm,astVisitList,orgTrack);
 
     //Many questions/problems about this TomSymbol:
@@ -619,7 +669,8 @@ ResolveStratBlockList = concResolveStratBlock(ResolveStratBlock*)
     //factorize this code with other buildStrat functions?
     String makeTlCode = "new "+stringRSname+"(";
     int index = 0;
-    TomTypeList makeTypes = domain; //`concTomType();
+    TomTypeList transfoDomain = TomBase.getSymbolDomain(transformationSymbol);
+    TomTypeList makeTypes = transfoDomain; //`concTomType();
     while(!makeTypes.isEmptyconcTomType()) {
       String argName = "t"+index;
       if (index>0) {//if many parameters
@@ -636,7 +687,7 @@ ResolveStratBlockList = concResolveStratBlock(ResolveStratBlock*)
     }
     makeTlCode += ")";
     //should not be ot, since the line number is different, but here, we use ot
-    Option makeOption = `OriginTracking(rsname,ot.getLine(),ot.getFileName());
+    Option makeOption = `OriginTracking(rsname,line,fileName);
     
     Declaration makeDecl = `MakeDecl(rsname, strategyType, makeArgs,
         CodeToInstruction(TargetLanguageToCode(ITL(makeTlCode))), makeOption);
@@ -644,7 +695,7 @@ ResolveStratBlockList = concResolveStratBlock(ResolveStratBlock*)
 
     //definition of the is_fsym method.
     //should not be ot, since the line number is different, but here, we use ot
-    Option fsymOption = `OriginTracking(rsname,ot.getLine(),ot.getFileName());
+    Option fsymOption = `OriginTracking(rsname,line,fileName);
     String varname = "t";
     BQTerm fsymVar = `BQVariable(concOption(fsymOption),Name(varname),strategyType);
     String code = ASTFactory.abstractCode("($"+varname+" instanceof "+stringRSname+")",varname);
@@ -653,13 +704,12 @@ ResolveStratBlockList = concResolveStratBlock(ResolveStratBlock*)
 
     //TomType transfoCodomain = TomBase.getSymbolCodomain(transformationSymbol);
     //types <-> `concTomType() (no param)
-    TomTypeList transfoDomain = TomBase.getSymbolDomain(transformationSymbol);
     //slots <-> `concPairNameDecl() (no param)
     //PairNameDeclList paramDecl = transformationSymbol.getPairNameDeclList();
-    PairNameDeclList paramDecl = genStratPairNameDeclListFromTransfoSymbol(rsname,transformationSymbol);
-
-    TomSymbol astSymbol = ASTFactory.makeSymbol(stringRSname,
-        strategyType, transfoDomain, paramDecl, options);
+    PairNameDeclList paramDecl =
+      genStratPairNameDeclListFromTransfoSymbol(rsname,transformationSymbol);
+    TomSymbol astSymbol = ASTFactory.makeSymbol(stringRSname, strategyType,
+        transfoDomain, paramDecl, options);
     getSymbolTable().putSymbol(stringRSname,astSymbol);
 
     //build here the part of BQTermComposite transformer
@@ -673,6 +723,13 @@ ResolveStratBlockList = concResolveStratBlock(ResolveStratBlock*)
     return `AbstractDecl(concDeclaration(resolve,SymbolDecl(rsname)));
   } //buildResolveStrat
 
+  /**
+   * Generates and returns the list of the strategy parameters
+   * @param stratName the name of the strategy
+   * @param transformationSymbol the symbol of the transformation, needed to
+   * retrieve parameters
+   * @return the PairNameDeclList containing the strategy parameters
+   */
   private static PairNameDeclList genStratPairNameDeclListFromTransfoSymbol(TomName stratName, 
                                                                             TomSymbol transformationSymbol) {
     PairNameDeclList result = `concPairNameDecl();
@@ -686,6 +743,38 @@ ResolveStratBlockList = concResolveStratBlock(ResolveStratBlock*)
     }
     return result;
   }
+
+  /**
+   * Generates a PairSlotAppl with an unknown type
+   * @param name the name of the slot
+   * @param line the line number for origin tracking
+   * @param fileName the fileName for origin tracking
+   * @return the generated PairSlotAppl
+   */
+  private Slot genPairSlotAppl(String name, int line, String fileName) {
+    return genPairSlotAppl(name,line,fileName,getSymbolTable().TYPE_UNKNOWN);
+  }
+
+   /**
+   * Generates a PairSlotAppl with a known type
+   * @param name the name of the slot
+   * @param line the line number for origin tracking
+   * @param fileName the fileName for origin tracking
+   * @param type the type of the Slot
+   * @return the generated PairSlotAppl
+   */
+  private Slot genPairSlotAppl(String name, int line, String fileName, TomType type) {
+    return `PairSlotAppl(
+        Name(name),
+        Variable(
+          concOption(OriginTracking(Name(name),line,fileName)),
+          Name(name),
+          type, 
+          concConstraint()
+          )
+        );
+  }
+
 
 //OriginTracking(Name("Transformation"),19,"Transfo3.t")
 //OriginTracking(AstName:TomName,Line:int,FileName:String)
