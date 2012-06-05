@@ -358,7 +358,7 @@ public class DesugarerPlugin extends TomGenericPlugin {
     newAttrList = newAttrList.reverse();
 
     /*
-     * Childs: go from implicit notation to explicit notation
+     * Children: go from implicit notation to explicit notation
      */
     for(TomTerm child:(concTomTerm)childList) {
       try {

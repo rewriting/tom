@@ -1486,7 +1486,7 @@ xmlTerm [List<Option> optionList, List<Constraint> constraintList] returns [TomT
   TomTerm arg1, arg2;
   List<Slot> pairSlotList = new LinkedList<Slot>();
   List attributeList = new LinkedList();
-  List childs = new LinkedList();
+  List children = new LinkedList();
   String keyword = null;
   boolean implicit;
   TomNameList nameList, closingNameList;
@@ -1495,7 +1495,7 @@ xmlTerm [List<Option> optionList, List<Constraint> constraintList] returns [TomT
 }
     :
         (
-            // < NODE attributes [ /> | > childs </NODE> ]
+            // < NODE attributes [ /> | > children </NODE> ]
             XML_START {text.append("<");}
             nameList = xmlNameList[optionList, true]
             implicit = xmlAttributeList[attributeList]
@@ -1508,10 +1508,10 @@ xmlTerm [List<Option> optionList, List<Constraint> constraintList] returns [TomT
                     text.append("\\>");
                     option =  ASTFactory.makeOptionList(optionList);
                 }
-            |   // case: > childs  </NODE>
+            |   // case: > children  </NODE>
                 XML_CLOSE  {text.append(">");}
 
-                implicit = xmlChilds[childs]
+                implicit = xmlChildren[children]
 
                 XML_START_ENDING {text.append("</"); }
                 closingNameList = xmlNameList[optionList, false]
@@ -1535,13 +1535,13 @@ xmlTerm [List<Option> optionList, List<Constraint> constraintList] returns [TomT
                     }
                     if(implicit) {
                       //System.out.println("implicit");
-                      //System.out.println("childs = " + childs);
+                      //System.out.println("children = " + children);
                       optionList.add(`ImplicitXMLChild());
                     } else {
                       //System.out.println("explicit");
-                      //System.out.println("childs1 = " + childs);
-                      childs = ASTFactory.metaEncodeExplicitTermList(symbolTable, childs);
-                      //System.out.println("childs2 = " + childs);
+                      //System.out.println("children1 = " + children);
+                      children = ASTFactory.metaEncodeExplicitTermList(symbolTable, children);
+                      //System.out.println("children2 = " + children);
                     }
                     option = ASTFactory.makeOptionList(optionList);
                 }
@@ -1551,7 +1551,7 @@ xmlTerm [List<Option> optionList, List<Constraint> constraintList] returns [TomT
                     option,
                     nameList,
                     ASTFactory.makeTomList((List<TomTerm>)attributeList),
-                    ASTFactory.makeTomList((List<TomTerm>)childs),
+                    ASTFactory.makeTomList((List<TomTerm>)children),
                     ASTFactory.makeConstraintList(constraintList));
             }
 
@@ -1861,7 +1861,7 @@ unamedVariableOrTermStringIdentifier [List<Option> options, List<Constraint> con
     ;
 
 // returns true is implicit notation
-xmlChilds [List<TomTerm> list] returns [boolean result] throws TomException
+xmlChildren [List<TomTerm> list] returns [boolean result] throws TomException
 {
   result = false;
   TomTerm term;
