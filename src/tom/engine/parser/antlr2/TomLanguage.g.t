@@ -734,8 +734,8 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
           putSymbol(name.getText(),astSymbol);
           // update for new target block...
           updatePosition(t.getLine(),t.getColumn());
-
-          result = `AbstractDecl(concDeclaration(Strategy(Name(name.getText()), extendsBQTerm, astVisitList,orgTrack),SymbolDecl(Name(name.getText()))));
+//TODO: hook
+          result = `AbstractDecl(concDeclaration(Strategy(Name(name.getText()),extendsBQTerm,astVisitList,concDeclaration(),orgTrack),SymbolDecl(Name(name.getText()))));
 
           // %strat finished: go back in target parser.
             selector().pop();
@@ -769,110 +769,6 @@ strategyVisit [List<TomVisit> list] throws TomException
 
 
 //////////////////////////////////////////////////////////////////
-
-/*tracelinkConstruct [Option orgTrack] returns [Declaration result] throws TomException
-{
-  result=null;
-  TomName type=null;
-  TomName name=null;
-  TomName elemTransfoName = `EmptyName();//will probably disappear
-  clearText();
-}
-    : 
-     LPAREN t:ALL_ID COMMA n:ALL_ID RPAREN
-     {
-       type=`Name(t.getText());
-       name=`Name(n.getText());
-     }
-     t1:LBRACE
-       {
-       updatePosition(t1.getLine(),t1.getColumn());
-       List<Code> blockList = new LinkedList<Code>();
-       selector().push("targetlexer");
-       TargetLanguage tlCode = targetparser.targetLanguage(blockList);
-       selector().pop();
-       blockList.add(`TargetLanguageToCode(tlCode));
-       //System.out.println("###(DEBUG) TomL tracelinkConstruct###\nblockList=\n"+blockList+"\n###");
-       Expression expression;
-       if(blockList.size()==1) {
-         String code = tlCode.getCode();
-         expression = `Code(code);
-       } else {
-         InstructionList instructions = ASTFactory.makeInstructionList(blockList);
-         expression = `TomInstructionToExpression(AbstractBlock(instructions));
-       }
-       result = `TracelinkDecl(type,name,elemTransfoName,expression,orgTrack);
-       selector().pop();
-       }
-    ;*/
-
-//%tracelink(Transition, t_start, i`Transition[name=n+"_start"]);
-tracelinkConstruct [Option orgTrack] returns [Instruction result] throws TomException
-{
-  result=null;
-  BQTerm bqterm = null;
-  TomName elemTransfoName = `EmptyName();//will probably disappear
-}
-    : 
-     t1:LPAREN t:ALL_ID COMMA n:ALL_ID COMMA (BACKQUOTE)? bqterm = plainBQTerm t2:RPAREN
-     {
-       TomName type=`Name(t.getText());
-       TomName name=`Name(n.getText());
-       Expression expression = `BQTermToExpression(bqterm);
-       result = `Tracelink(type,name,elemTransfoName,expression,orgTrack);
-       updatePosition(t2.getLine(),t2.getColumn());
-       selector().pop();
-     }
-    ;
-
-/*bqtermTracelink returns [BQTerm result] throws TomException
-{
-  result = null;
-}
-    :
-        t:BACKQUOTE
-        {
-          Option ot = `OriginTracking(Name("Backquote"),t.getLine(),currentFile());
-          result = bqparser.beginBackquote();
-          // update position for new target block
-          updatePosition();
-        }
-    ;*/
-
-resolveConstruct [Option orgTrack] returns [Instruction result] throws TomException
-{
-  result=null;
-}
-    :
-     t1:LPAREN s:ALL_ID COLON stype:ALL_ID COMMA t:ALL_ID COLON ttype:ALL_ID t2:RPAREN
-     {
-       TomName source = `Name(s.getText());
-       TomName sourceType = `Name(stype.getText());
-       TomName target = `Name(t.getText());
-       TomName targetType = `Name(ttype.getText());
-       //result = `Resolve(source,sourceType,target,targetType,orgTrack);
-
-       String resolveName = "Resolve"+stype.getText()+ttype.getText();
-       BQTerm bqterm = `Composite(CompositeBQTerm(BQAppl(
-               concOption(OriginTracking(Name(resolveName),orgTrack.getLine(),orgTrack.getFileName()),ModuleName("default")),
-               Name(resolveName),
-               concBQTerm(
-                 Composite(CompositeBQTerm(
-                     BQVariable(
-                       concOption(OriginTracking(source,orgTrack.getLine(),orgTrack.getFileName()),ModuleName("default")),
-                       source,
-                       Type(concTypeOption(),"unknown type",EmptyTargetLanguageType())
-                       )
-                     )),
-                 Composite(CompositeTL(ITL("\""+t.getText()+"\"")))
-                 )
-               )));
-       result = `Resolve2(bqterm,orgTrack);
-
-       updatePosition(t2.getLine(),t2.getColumn());
-       selector().pop();
-     }
-    ;
 
 // The %transformation construct : looks like the %strategy
 transformationConstruct [Option orgTrack] returns [Declaration result] throws TomException
@@ -1018,7 +914,7 @@ transformationConstruct [Option orgTrack] returns [Declaration result] throws To
                  e.printStackTrace();
                }
                // Generate all Resolve:
-               // - %typeterm -> ResolveTypeTermDecl
+               // - %typeterm -> TypeTermDecl
                // - java code -> ResolveClassDecl
                // - %op -> SymbolDecl (+ TomSymbol)
                
@@ -1107,15 +1003,8 @@ transformationConstruct [Option orgTrack] returns [Declaration result] throws To
 
                //add "ResolveOp" symbol into SymbolTable
                putSymbol(resolveStringName,astSymbol);
-
-               //cf. later in ResolveDecl
-               //add a SymbolDecl in the TransformationDecl declarations list
-               //declList.add(`SymbolDecl(Name(resolveStringName)));
-               //end %op gen
-
                //String extendsName = "###?FQN.ClassImpl?###"; // find the name
                String extendsName = null;
-
                //retrieve classimpl
                TomSymbol symb = symbolTable.getSymbolFromName(tName);
                %match(symb.getOptions()) {
@@ -1128,7 +1017,6 @@ transformationConstruct [Option orgTrack] returns [Declaration result] throws To
                declList.add(`TypeTermDecl(resolveName,resolveTTDecl,resolveOrgTrack));
                declList.add(`SymbolDecl(Name(resolveStringName)));
                declList.add(`ResolveClassDecl(Name(resolveStringName), wName, tName, extendsName));
-               //replace: ResolveTypeTermDecl(resolveName,resolveTTDecl,resolveOrgTrack),
                resolveStratElementList.add(`ResolveStratElement(wName, resolveOrgTrack));
 
                resolveNameList.add(`Name(resolveStringName));
@@ -1201,11 +1089,6 @@ transformationConstruct [Option orgTrack] returns [Declaration result] throws To
           putSymbol(name.getText(),astSymbol);
 
          updatePosition(t.getLine(),t.getColumn());
-         //work in progress
-         //result = `AbstractDecl(concDeclaration(
-         //      TransformationDecl(Name(name.getText()),types,astDeclarationList,orgTrack),
-          //     SymbolDecl(Name(name.getText()))));
-         //new
          String fileFrom = src.getText();
          String fileTo = dst.getText();
          result = `AbstractDecl(concDeclaration(Transformation(Name(name.getText()),types,astDeclarationList,astElemTransfoList,fileFrom,fileTo,orgTrack),SymbolDecl(Name(name.getText()))));
@@ -1225,8 +1108,7 @@ elementaryTransformation [List<ElementaryTransformation> elemTransfoList, String
     String strName = "";
     String strTraversal = "";
     Option orgTrack = `noOption();
-    //TransfoStratInfo info = `TransfoStratInfo(strName,strTraversal,orgTrack);
-    TransfoStratInfo info = null; //`TransfoStratInfo2(strName,traversal,orgTrack);
+    TransfoStratInfo info = null;
     //List<Declaration> subDecl = new LinkedList<Declaration>();
     List<RuleInstruction> ruleInstructionList = new LinkedList<RuleInstruction>();
     clearText();
@@ -1241,7 +1123,7 @@ elementaryTransformation [List<ElementaryTransformation> elemTransfoList, String
         TomMessage.error(getLogger(),currentFile(), getLine(),
             TomMessage.unamedTransformationRule, transfoName);
       }
-      info = `TransfoStratInfo2(strName,traversal,orgTrack);
+      info = `TransfoStratInfo(strName,traversal,orgTrack);
     }
     LBRACE
     //transformationWithToList[info, subDecl, transfoName]
@@ -1252,77 +1134,16 @@ elementaryTransformation [List<ElementaryTransformation> elemTransfoList, String
       List<Option> optionList = new LinkedList<Option>();
       optionList.add(orgTrack);
       OptionList options = ASTFactory.makeOptionList(optionList);
-      //declList.add(`ElementaryTransfoDecl(Name(strName), traversal, ASTFactory.makeDeclarationList(subDecl), orgTrack));
       elemTransfoList.add(`ElementaryTransformation(Name(strName), traversal,
             ASTFactory.makeRuleInstructionList(ruleInstructionList),
             options));
     }
     ;
 
-
-
-/*transformationBlockList [List<Declaration> declList, String toname] throws TomException
-    :   ( transformationBlock[declList, toname] )*
-    ;*/
-
-/*transformationBlock [List<Declaration> declList, String toname] throws TomException
-{
-  String strName = "";
-  String strTraversal = "";
-  Option orgTrack = `noOption();
-  TransfoStratInfo info = `TransfoStratInfo(strName,strTraversal,orgTrack);
-}
-    :
-    //here, we parameterize the block: name#traversal
-    ( LPAREN name:ALL_ID POUNDSIGN (traversal:ALL_ID)? RPAREN )
-//    (traversal:ALL_ID)? LPAREN name:ALL_ID RPAREN
-    {
-      //add a warning here for verbose version? ("no traversal has been
-      //specified, therefore 'TopDown' is used by default")
-      strTraversal = ((traversal!=null)?traversal.getText():"TopDown");
-      if(name!=null) {
-        strName = name.getText();
-        orgTrack = `OriginTracking(Name(strName),name.getLine(),currentFile());
-      } else {
-        TomMessage.error(getLogger(),currentFile(), getLine(),
-            TomMessage.unamedTransformationRule, toname);
-      }
-      info = `TransfoStratInfo(strName,strTraversal,orgTrack);
-    }
-    (
-       transformationReference [info, declList, toname]
-     | transformationWithTo [info, declList, toname]
-    )
-    ;*/
-
-/*transformationReference [TransfoStratInfo info, List<Declaration> declList, String toname] throws TomException
-{
-  String refName = null;
-  Declaration reference;
-  List<Declaration> subDecl = new LinkedList<Declaration>();
-  Option orgTrack = null;
-}
-    :
-    (
-      REFERENCE ref:ALL_ID LBRACE
-      { 
-        refName = ref.getText(); 
-        orgTrack = `OriginTracking(Name(refName), ref.getLine(), currentFile());
-      }
-      transformationWithToList[info, subDecl, toname]
-      RBRACE
-      { declList.add(`ReferenceDecl(info, refName, ASTFactory.makeDeclarationList(subDecl), orgTrack)); }
-    )
-    ;*/
-
-    //rename this rule into elemntaryTransformationRuleList
+//rename this rule into elemntaryTransformationRuleList
 //transformationWithToList [TransfoStratInfo info, List<Declaration> declList, String toname] throws TomException
-/*transformationWithToList [TransfoStratInfo info, List<RuleInstruction> ruleInstructionList, String transfoName] throws TomException
-    //:   ( transformationWithTo[info, declList, toname] )*
-    :   ( transformationWithTo[info, ruleInstructionList, transfoName] )*
-    ;*/
 
-    //rename this rule into elementaryTransformationRule
+//rename this rule into elementaryTransformationRule
 //transformationWithTo [TransfoStratInfo info, List<Declaration> declList, String toname] throws TomException
 transformationWithTo [TransfoStratInfo info, List<RuleInstruction> ruleInstructionList, String transfoName] throws TomException
 {
@@ -1382,8 +1203,6 @@ transformationWithTo [TransfoStratInfo info, List<RuleInstruction> ruleInstructi
     optionList.add(`OriginTracking(tomTermName,lhsLine,currentFile()));
     OptionList options = ASTFactory.makeOptionList(optionList);
     
-    //Option orgTrack = `OriginTracking(Name("Strategy"), lhsLine, currentFile());
-    //ruleInstructionList.add(`TransfoStratDecl(info,tomTermName,lhs,ASTFactory.makeInstructionList(blockList),options,orgTrack));
     ruleInstructionList.add(`RuleInstruction(tomTermName.getString(),lhs,ASTFactory.makeInstructionList(blockList),options));
     }
     ;
@@ -1395,6 +1214,75 @@ withtoElementList [List<String> list] throws TomException
 withtoElement [List<String> list] throws TomException
     : t:ALL_ID { list.add(t.getText()); }
     ;
+
+//%tracelink(Transition, t_start, i`Transition[name=n+"_start"]);
+tracelinkConstruct [Option orgTrack] returns [Instruction result] throws TomException
+{
+  result=null;
+  BQTerm bqterm = null;
+  TomName elemTransfoName = `EmptyName();//will probably disappear
+}
+    : 
+     t1:LPAREN t:ALL_ID COMMA n:ALL_ID COMMA (BACKQUOTE)? bqterm = plainBQTerm t2:RPAREN
+     {
+       TomName type=`Name(t.getText());
+       TomName name=`Name(n.getText());
+       Expression expression = `BQTermToExpression(bqterm);
+       result = `Tracelink(type,name,elemTransfoName,expression,orgTrack);
+       updatePosition(t2.getLine(),t2.getColumn());
+       selector().pop();
+     }
+    ;
+
+/*bqtermTracelink returns [BQTerm result] throws TomException
+{
+  result = null;
+}
+    :
+        t:BACKQUOTE
+        {
+          Option ot = `OriginTracking(Name("Backquote"),t.getLine(),currentFile());
+          result = bqparser.beginBackquote();
+          // update position for new target block
+          updatePosition();
+        }
+    ;*/
+
+resolveConstruct [Option orgTrack] returns [Instruction result] throws TomException
+{
+  result=null;
+}
+    :
+     t1:LPAREN s:ALL_ID COLON stype:ALL_ID COMMA t:ALL_ID COLON ttype:ALL_ID t2:RPAREN
+     {
+       TomName source = `Name(s.getText());
+       TomName sourceType = `Name(stype.getText());
+       TomName target = `Name(t.getText());
+       TomName targetType = `Name(ttype.getText());
+
+       String resolveName = "Resolve"+stype.getText()+ttype.getText();
+       BQTerm bqterm = `Composite(CompositeBQTerm(BQAppl(
+               concOption(OriginTracking(Name(resolveName),orgTrack.getLine(),orgTrack.getFileName()),ModuleName("default")),
+               Name(resolveName),
+               concBQTerm(
+                 Composite(CompositeBQTerm(
+                     BQVariable(
+                       concOption(OriginTracking(source,orgTrack.getLine(),orgTrack.getFileName()),ModuleName("default")),
+                       source,
+                       Type(concTypeOption(),"unknown type",EmptyTargetLanguageType())
+                       )
+                     )),
+                 Composite(CompositeTL(ITL("\""+t.getText()+"\"")))
+                 )
+               )));
+       result = `Resolve(bqterm,orgTrack);
+
+       updatePosition(t2.getLine(),t2.getColumn());
+       selector().pop();
+     }
+    ;
+
+
 
 ////////////////////////////////////////////////////////////////
 

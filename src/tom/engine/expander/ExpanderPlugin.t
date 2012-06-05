@@ -169,7 +169,7 @@ public class ExpanderPlugin extends TomGenericPlugin {
      * compilation of  %strategy
      */
     visit Declaration {
-      Strategy(name,extendsTerm,visitList,orgTrack) -> {
+      Strategy(name,extendsTerm,visitList,hooks,orgTrack) -> {
         //Generate only one Introspector for a class if at least one  %strategy is found
         Declaration introspectorClass = `EmptyDeclaration();
         if(expander.getGenIntrospector() && !expander.getGeneratedIntrospector()) {
@@ -508,6 +508,8 @@ public class ExpanderPlugin extends TomGenericPlugin {
             visitfailureType,
             AbstractBlock(ifList));
         l = `concDeclaration(visitLightDeclaration,l*);
+        //TODO: hooks
+        l= `concDeclaration(hooks,l*);
         return (Declaration) expander.expand(`AbstractDecl(concDeclaration(introspectorClass,Class(name,basicStratType,extendsTerm,AbstractDecl(l)))));
       }        
     }//end visit Declaration

@@ -18,24 +18,15 @@ Declaration = TypeTermDecl(AstName:TomName,Declarations:DeclarationList,OrgTrack
             | MakeEmptyArray(AstName:TomName,VarSize:BQTerm,Instr:Instruction,OrgTrack:Option)
             | MakeAddArray(AstName:TomName,VarElt:BQTerm,VarList:BQTerm,Instr:Instruction,OrgTrack:Option)
             | MakeDecl(AstName:TomName,AstType:TomType,Args:BQTermList,Instr:Instruction,OrgTrack:Option)
-            | Strategy(SName:TomName,ExtendsTerm:BQTerm,VisitList:TomVisitList,OrgTrack:Option)
+            | Strategy(SName:TomName,ExtendsTerm:BQTerm,VisitList:TomVisitList,Hooks:DeclarationList,OrgTrack:Option)
 ///
-            | TransformationDecl(TName:TomName,Domain:TomTypeList,Declarations:DeclarationList,OrgTrack:Option)
             | Transformation(TName:TomName,Domain:TomTypeList,Declarations:DeclarationList,ElementaryTList:ElementaryTransformationList,FileFrom:String,FileTo:String,OrgTrack:Option)
-            | ElementaryTransfoDecl(ETName:TomName,Traversal:BQTerm,Declarations:DeclarationList,OrgTrack:Option)
-//            | TracelinkDecl(Type:TomName,Name:TomName,ElementaryTransfoName:TomName,Expr:Expression,OrgTrack:Option)//BQTerm, then blocklist
-            | TransfoStratDecl(Info:TransfoStratInfo,TSName:TomName,Term:TomTerm,Instructions:InstructionList,Options:OptionList,OrgTrack:Option)//pb avec les options//TransfoRuleDecl
             | ResolveStratDecl(TransfoName:String,ResList:ResolveStratBlockList,ResolveNameList:TomNameList,OriginTracking:Option)
             | ResolveInverseLinksDecl(ResolveNameList:TomNameList,FileFrom:String,FileTo:String)
-            | ResolveTypeTermDecl(AstName:TomName,Declarations:DeclarationList,OrgTrack:Option)//useful?
-            | ResolveDecl(typeterm:Declaration,op:Declaration,class:Declaration) //encapsulation
-            | ResolveClassDeclInit(Instr:Instruction) //CodeToInstruction(TargetLanguageToCode(ITL(BIG_STRING)))
-            | ResolveClassDecl(AstName:TomName,WithName:String,ToName:String,Extends:String) //et pourquoi pas directement dans la decList de ResolveTypeTermDecl ?
-            | ResolveIsSortDecl(TermArg:BQTerm,ResolveName:String,OrgTrack:Option)//useful?
+            | ResolveClassDecl(AstName:TomName,WithName:String,ToName:String,Extends:String)
             | ResolveIsFsymDecl(AstName:TomName,Variable:BQTerm,OrgTrack:Option)//useful?
             | ResolveGetSlotDecl(AstName:TomName,SlotName:TomName,Variable:BQTerm,OrgTrack:Option)//useful?
             | ResolveMakeDecl(AstName:TomName,AstType:TomType,Args:BQTermList,OrgTrack:Option)//useful?
-            | ReferenceDecl(Info:TransfoStratInfo,RName:String,Declarations:DeclarationList,OrgTrack:Option)
             | ReferenceClass(RefName:TomName,Fields:RefClassTracelinkInstructionList)//InstructionList)
 ///
             | FunctionDef(AstName:TomName,ArgumentList:BQTermList,Codomain:TomType,ThrowsType:TomType,Instruction:Instruction)
@@ -57,7 +48,3 @@ Declaration = TypeTermDecl(AstName:TomName,Declarations:DeclarationList,OrgTrack
             | BQTermToDeclaration(BqTerm:BQTerm)
 
 DeclarationList = concDeclaration(Declaration*)
-
-//TODO: find better names
-TransfoStratInfo = TransfoStratInfo(Name:String,Traversal:String,OrgTrack:Option)
-                 | TransfoStratInfo2(Name:String,TraversalStrategy:BQTerm,OrgTrack:Option)

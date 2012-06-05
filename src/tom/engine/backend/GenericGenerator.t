@@ -600,24 +600,6 @@ public abstract class GenericGenerator extends AbstractGenerator {
     }
   }
 
-  //TODO
-  /*protected void buildResolveIsSortDecl(int deep, String varName, String type, String resolveStringName, String moduleName) throws IOException {
-    //language specific
-    Expression code = `Code(genResolveIsSortCode(varName, resolveStringName));
-
-    if(!inline) {
-      TomType argType = getUniversalType();
-      if(getSymbolTable(moduleName).isBuiltinType(type)) {
-        argType = getSymbolTable(moduleName).getBuiltinType(type);
-      }
-      genDeclInstr(TomBase.getTLType(getSymbolTable(moduleName).getBooleanType()), "tom_is_sort", type,
-          new String[] { TomBase.getTLType(argType), varName },
-          `Return(ExpressionToBQTerm(code)),deep,moduleName);
-    }
-  }*/
-//
-
-
   protected void buildGetHeadDecl(int deep, TomName opNameAST, String varName, String suffix, TargetLanguageType domain, TargetLanguageType codomain, Expression code, String moduleName)
     throws IOException {
       String opname = opNameAST.getString();

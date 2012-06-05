@@ -239,11 +239,8 @@ public static class @refname@ implements tom.library.utils.ReferenceClass {
   }
 
   //tmp
-  protected void buildResolve2(int deep, BQTerm bqterm, String moduleName) throws IOException {
+  protected void buildResolve(int deep, BQTerm bqterm, String moduleName) throws IOException {
     generateBQTerm(deep, bqterm, moduleName);
-  }
-  protected void buildResolve(int deep, String src, String srcType, String target, String targetType, String moduleName) throws IOException {
-    output.write(" new Resolve"+srcType+targetType+"("+src+", \""+target+"\");");
   }
 
   //TODO: resolveInverseLinks

@@ -276,12 +276,6 @@ public abstract class CFamilyGenerator extends GenericGenerator {
     output.writeln();
   }
 
-  //TODO: to move in JavaGenerator
-  /*protected String genResolveIsSortCode(String resolveStringName,
-                                        String varName) throws IOException {
-    return " "+varName+" instanceof "+resolveStringName+" ";
-  }*/
-
   //TODO: to change, to move in JavaGenerator
   protected String genResolveGetSlotCode(String tomName,
                                          String varName,
@@ -388,7 +382,7 @@ matchBlock: {
       output.writeln(s);
       output.write("return ");
       generateInstruction(0,instr,moduleName);
-      output.writeln(";/*titi*/");
+      output.writeln(";");
       output.writeln("}");
     }
   }
@@ -657,7 +651,7 @@ matchBlock: {
       output.write("return ");
       //System.out.println("###DEBUG### backend, instr = "+instr);
       generateInstruction(0,instr,moduleName);
-      output.writeln(";/*toto*/");
+      output.writeln(";");
       output.writeln("}");
     }
   }

@@ -72,7 +72,7 @@ import tom.library.sl.*;
  * Performs tree transformation and code expansion.
  *
  * TO BE DETAILED /!\
- * 1st step: TransformationDecl - 
+ * 1st step: Transformation - 
  * 
  * 
  * 
@@ -91,6 +91,8 @@ public class TransformerPlugin extends TomGenericPlugin {
   public static final String TRANSFORMED_SUFFIX = ".tfix.transformed";
   public static final String REFCLASS_PREFIX = "tom__reference_class_";
   public static final String STRAT_RESOLVE_PREFIX = "tom__StratResolve_";
+  public static final String RESOLVE_INVERSE_LINK_FUNCTION = "resolveInverseLinks";
+  private static final TomType voidType = ASTFactory.makeType(`concTypeOption(),"undefined","void");
 
   private SymbolTable symbolTable;
   private int freshCounter = 0;
@@ -109,7 +111,7 @@ public class TransformerPlugin extends TomGenericPlugin {
     Code transformedTerm = (Code)getWorkingTerm();
     setSymbolTable(getStreamManager().getSymbolTable());
     try {
-      // replace content of TransformationDecl by StrategyDecl
+      // replace content of Transformation declaration by Strategy
       transformedTerm = `TopDown(ProcessTransformation(this)).visitLight(transformedTerm);
 
       setWorkingTerm(transformedTerm);
@@ -118,7 +120,7 @@ public class TransformerPlugin extends TomGenericPlugin {
           Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
       if(intermediate) {
         Tools.generateOutput(getStreamManager().getOutputFileName() +
-            TRANSFORMED_SUFFIX, transformedTerm);
+            TransformerPlugin.TRANSFORMED_SUFFIX, transformedTerm);
       }
     }  catch(VisitFailure e) {
       throw new TomRuntimeException("TransformerPlugin.process: fail on " + transformedTerm);
@@ -184,9 +186,16 @@ public class TransformerPlugin extends TomGenericPlugin {
           ResolveStratDecl[ResList=reslist,ResolveNameList=resolveNameList,OriginTracking=rot]
             -> {
             resolveStratDecl = `buildResolveStrat(transfoName, bqlist,
-                transfoSymbol, reslist, resolveNameList, rot);
-            inverseLinks =
-              `ResolveInverseLinksDecl(resolveNameList,fileFrom,fileTo);
+                transfoSymbol, reslist, resolveNameList, fileFrom, fileTo, rot);
+            //TODO: tset hook
+            /*inverseLinks =
+              `ResolveInverseLinksDecl(resolveNameList,fileFrom,fileTo);*/
+            //to replace by MethodDef?
+            /*`MethodDef(Name(TransformerPlugin.RESOLVE_INVERSE_LINK_FUNCTION),
+                ArgumentList:BQTermList,
+                voidType,
+                EmptyType(),
+                Instruction:Instruction);*/
           }
           d@(SymbolDecl|ResolveClassDecl|TypeTermDecl)[] -> {
             result.add(`d);
@@ -196,7 +205,9 @@ public class TransformerPlugin extends TomGenericPlugin {
     }
     //add them to DeclarationList
     result.add(resolveStratDecl);
-    result.add(inverseLinks);
+    //TODO: test hook
+    //result.add(inverseLinks);
+
     //let's change the transformation MakeDecl
     //this first step is necessary due to the fact that an elementary
     //transformation may have many rules, therefore bqlist may have duplicate
@@ -229,7 +240,7 @@ public class TransformerPlugin extends TomGenericPlugin {
                                                   RuleInstructionList riList,
                                                   Option orgTrack) {
     String strName = strategyName.getString();
-    TomName refClassName = `Name(REFCLASS_PREFIX+strName);
+    TomName refClassName = `Name(TransformerPlugin.REFCLASS_PREFIX+strName);
     Declaration symbol = `SymbolDecl(strategyName);
 
     //build visitList
@@ -277,6 +288,8 @@ public class TransformerPlugin extends TomGenericPlugin {
     }
     //InstructionList instructions = ASTFactory.makeInstructionListFromInstructionCollection(instructionList);
     RefClassTracelinkInstructionList refclassInstructions = ASTFactory.makeRefClassTracelinkInstructionList(refclassTInstructionList);
+
+    //TODO: use Class(AstName:TomName,ExtendsType:TomType,SuperTerm:BQTerm,Declaration:Declaration)
     Declaration refClass = `ReferenceClass(refClassName,refclassInstructions);
 
     LinkedList<Option> list = new LinkedList<Option>();
@@ -291,7 +304,7 @@ public class TransformerPlugin extends TomGenericPlugin {
 
     BQTerm extendsTerm = `BQAppl(concOption(OriginTracking(strategyName,orgTrack.getLine(),orgTrack.getFileName())),Name("Identity"),concBQTerm());
 
-    Declaration strategy = `Strategy(strategyName,extendsTerm,astVisitList,orgTrack);
+    Declaration strategy = `Strategy(strategyName,extendsTerm,astVisitList,concDeclaration(),orgTrack);
 
     List<Declaration> result = new LinkedList<Declaration>();
     result.add(refClass);
@@ -436,7 +449,7 @@ public class TransformerPlugin extends TomGenericPlugin {
     %match(declList) {
       concDeclaration(_*, ResolveStratDecl[TransfoName=name,OriginTracking=ot] ,_*) -> {
         option = `ot;
-        stringRSname = STRAT_RESOLVE_PREFIX+`name;
+        stringRSname = TransformerPlugin.STRAT_RESOLVE_PREFIX+`name;
       }
     }
     //build parameters
@@ -548,6 +561,8 @@ ResolveStratBlockList = concResolveStratBlock(ResolveStratBlock*)
                                         TomSymbol transformationSymbol, 
                                         ResolveStratBlockList rsbList, 
                                         TomNameList resolveNameList,
+                                        String fileFrom,
+                                        String fileTo,
                                         Option ot) {
     List<TomVisit> visitList = new LinkedList<TomVisit>();
 
@@ -624,7 +639,7 @@ ResolveStratBlockList = concResolveStratBlock(ResolveStratBlock*)
             BQTerm model = `BQVariable(concOption(),secondArgument,SymbolTable.TYPE_UNKNOWN);
             //System.out.println("*** transformationSymbol = " + transformationSymbol);
             Instruction resolveStatement = `BQTermToInstruction(FunctionCall(
-                  Name("resolveInverseLinks"), getSymbolTable().getVoidType(),
+                  Name(TransformerPlugin.RESOLVE_INVERSE_LINK_FUNCTION), getSymbolTable().getVoidType(),
                   concBQTerm(subject,res,model)));
             Instruction returnStatement = `Return(Composite(CompositeTL(ITL("res"))));
             /*referenceStatement,*/ 
@@ -641,14 +656,16 @@ ResolveStratBlockList = concResolveStratBlock(ResolveStratBlock*)
         ciList.clear(); //reset ConstraintInstructionList
       }
     }
-    String stringRSname = STRAT_RESOLVE_PREFIX+transfoName;
+    String stringRSname = TransformerPlugin.STRAT_RESOLVE_PREFIX+transfoName.getString();
     TomName rsname = `Name(stringRSname);
     BQTerm extendsTerm = `BQAppl(concOption(ot),Name("Identity"),concBQTerm());
     TomVisitList astVisitList = `ASTFactory.makeTomVisitList(visitList);
     int line = `ot.getLine();
     String fileName = `ot.getFileName();
     Option orgTrack = `OriginTracking(Name("Strategy"),line,fileName);
-    Declaration resolve = `Strategy(rsname,extendsTerm,astVisitList,orgTrack);
+    Declaration inverseLinks = `ResolveInverseLinksDecl(resolveNameList,fileFrom,fileTo);
+    Declaration resolve = `Strategy(rsname, extendsTerm, astVisitList,
+        concDeclaration(inverseLinks), orgTrack);
 
     //Many questions/problems about this TomSymbol:
     //TomTypeList & PairNameDeclList: empty for the moment, but will need something 

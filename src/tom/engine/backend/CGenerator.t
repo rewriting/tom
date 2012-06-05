@@ -194,10 +194,7 @@ public class CGenerator extends CFamilyGenerator {
   }
 
   //tmp
-  protected void buildResolve2(int deep, BQTerm bqterm, String moduleName) throws IOException {
+  protected void buildResolve(int deep, BQTerm bqterm, String moduleName) throws IOException {
     throw new TomRuntimeException("%transformation (Resolve2 instruction) not yet supported in C");
-  }
-  protected void buildResolve(int deep, String src, String srcType, String target, String targetType, String moduleName) throws IOException {
-    throw new TomRuntimeException("%transformation (Resolve instruction) not yet supported in C");
   }
 }

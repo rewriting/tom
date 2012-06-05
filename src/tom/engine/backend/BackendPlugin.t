@@ -571,30 +571,6 @@ public class BackendPlugin extends TomGenericPlugin {
         }
       }
 
-
-/*      ..Decl[Opname=Name(opname),Expr=Code(code)] -> {
-        try {
-          String moduleName = stack.peek();
-          bp.getSymbolTable(moduleName).putGetSizeArray(`opname,`code);
-        } catch (EmptyStackException e) {
-          System.out.println("No moduleName in stack");
-        }
-      }
-
-TransformationDecl(TName:TomName,Declarations:DeclarationList,OrgTrack:Option)
-TransfoStratDecl(TSName:TomName,Term:TomTerm,Instructions:InstructionList,Options:OptionList,OrgTrack:Option)
-ResolveStratDecl(ResList:ResolveStratBlockList,OriginTracking:Option)
-//ResolveTypeTermDecl(AstName:TomName,Declarations:DeclarationList,OrgTrack:Option)
-//ResolveDecl(typeterm:Declaration,op:Declaration,class:Declaration)
-//ResolveClassDeclInit(Instr:Instruction)
-ResolveClassDecl(WithName:String,ToName:String,Extends:String)
-//ResolveIsSortDecl(TermArg:BQTerm,ResolveName:String,OrgTrack:Option)
-ResolveIsFsymDecl(AstName:TomName,Variable:BQTerm,OrgTrack:Option)
-ResolveGetSlotDecl(AstName:TomName,SlotName:TomName,Variable:BQTerm,OrgTrack:Option)
-ResolveMakeDecl(AstName:TomName,AstType:TomType,Args:BQTermList,OrgTrack:Option)
-ReferenceDecl(RName:String,Declarations:DeclarationList,OrgTrack:Option)
-*/
-
     }
   }
 }

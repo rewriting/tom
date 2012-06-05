@@ -27,3 +27,6 @@ KeyEntry = UsedSymbolConstructor(Symbol:TomSymbol)
          | UsedSymbolDestructor(Symbol:TomSymbol)
          | UsedSymbolAC(Symbol:TomSymbol)
          | UsedType(Typedef:TomType)
+
+//TODO: find better names
+TransfoStratInfo = TransfoStratInfo(Name:String,TraversalStrategy:BQTerm,OrgTrack:Option)

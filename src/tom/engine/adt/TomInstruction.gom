@@ -51,10 +51,8 @@ Instruction =
   | RawAction(AstInstruction:Instruction)
   | ResolveStratInstruction(OpName:TomName,TargetType:TomType)
   | Tracelink(Type:TomName,Name:TomName,ElementaryTransfoName:TomName,Expr:Expression,OrgTrack:Option)//BQTerm, then blocklist
-//  | TracelinkResolve()
   | TracelinkPopulateResolve(RefClassName:TomName,TracedLinks:TomNameList,Current:BQTerm)//QVariable
-  | Resolve(Src:TomName,SType:TomName,Target:TomName,TType:TomName,OrgTrack:Option)
-  | Resolve2(BQTerm:BQTerm,OrgTrack:Option)
+  | Resolve(BQTerm:BQTerm,OrgTrack:Option)
 
 RefClassTracelinkInstruction = RefClassTracelinkInstruction(Type:TomName,Name:TomName)
 
@@ -67,7 +65,6 @@ RefClassTracelinkInstructionList = concRefClassTracelinkInstruction(RefClassTrac
  * @param Action the action to execute if the constraints are evaluated to true
  */  
 ConstraintInstruction = ConstraintInstruction(Constraint:Constraint, Action:Instruction, Options:OptionList)  
-                      | ResolveConstraintInstruction(Constraint:Constraint, Options:OptionList)
 
 RuleInstruction = RuleInstruction(TypeName:String,Term:TomTerm,Action:InstructionList,Options:OptionList)
 RuleInstructionList = concRuleInstruction(RuleInstruction*)

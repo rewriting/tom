@@ -592,12 +592,8 @@ public abstract class AbstractGenerator {
       }
 
       //tmp //resolve construct
-      Resolve2(bqterm, _) -> {
-        `buildResolve2(deep, bqterm, moduleName);
-        return;
-      }
-      Resolve(Name(src), Name(srcType), Name(target), Name(targetType), _) -> {
-        `buildResolve(deep, src, srcType, target, targetType, moduleName);
+      Resolve(bqterm, _) -> {
+        `buildResolve(deep, bqterm, moduleName);
         return;
       }
 
@@ -748,13 +744,6 @@ public abstract class AbstractGenerator {
         return;
       }
       
-      //TODO -> replaced by IsSortDecl
-      /*ResolveIsSortDecl(BQVariable[AstName=Name(varName), AstType=Type[TomType=type]], resolveName, _) -> {
-        if(getSymbolTable(moduleName).isUsedType(`type)) {
-          `buildResolveIsSortDecl(deep, varName, type, resolveName, moduleName);
-        }
-        return;
-      }*/
       BQTermToDeclaration(bqterm) -> {
         generateBQTerm(deep,`bqterm,moduleName);
         return;
@@ -785,12 +774,6 @@ public abstract class AbstractGenerator {
         }
         return;
       }
-
-      //TODO -> removed
-      /*ResolveClassDeclInit[Instr=instruction] -> {
-        generateInstruction(deep, `instruction, moduleName);
-        return;
-      }*/
 
       ResolveClassDecl[WithName=wName,ToName=tName,Extends=eName] -> {
         `buildResolveClass(wName,tName, eName, moduleName);
@@ -919,7 +902,7 @@ public abstract class AbstractGenerator {
         return;
       }
 
-      (TypeTermDecl|ResolveTypeTermDecl)[Declarations=declList] -> {
+      TypeTermDecl[Declarations=declList] -> {
         //FIXME: consequences of a %op_implement? 
         generateDeclarationList(deep, `declList, moduleName);
         return;
@@ -1094,7 +1077,6 @@ public abstract class AbstractGenerator {
   
   //TODO: Resolve*
   protected abstract void buildResolveStratInstruction(int deep, String opname, String name, String moduleName) throws IOException;
-//  protected abstract void buildResolveIsSortDecl(int deep, String name1, String type1, String resolveStringName, String moduleName) throws IOException;
   protected abstract void buildResolveIsFsymDecl(int deep, String tomName, String name1, TargetLanguageType tlType, String moduleName) throws IOException;
   protected abstract void buildResolveGetSlotDecl(int deep, String tomName, String name1, TargetLanguageType tlType, TomName slotName, String moduleName) throws IOException;
   protected abstract void genResolveDeclMake(String prefix, String funName, TomType returnType, BQTermList argList, String moduleName) throws IOException;
@@ -1103,8 +1085,7 @@ public abstract class AbstractGenerator {
   protected abstract void buildReferenceClass(int deep, String refname, RefClassTracelinkInstructionList refclassTInstructions, String moduleName) throws IOException;
   protected abstract void buildTracelink(int deep, String type, String name, Expression expr, String moduleName) throws IOException;
   //tmp
-  protected abstract void buildResolve2(int deep, BQTerm bqterm, String moduleName) throws IOException;
-  protected abstract void buildResolve(int deep, String src, String srcType, String target, String targetType, String moduleName) throws IOException;
+  protected abstract void buildResolve(int deep, BQTerm bqterm, String moduleName) throws IOException;
   protected abstract void buildTracelinkPopulateResolve(int deep, String refClassName, TomNameList tracedLinks, BQTerm current, String moduleName) throws IOException;
 
   protected abstract String genResolveIsFsymCode(String tomName, String varname) throws IOException;
