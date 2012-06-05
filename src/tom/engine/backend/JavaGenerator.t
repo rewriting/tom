@@ -220,7 +220,7 @@ public static class @refname@ implements tom.library.utils.ReferenceClass {
   }
 
   //TODO: update this procedure (tom__linkClass)
-  protected void buildTracelinkPopulateResolve(int deep, String refClassName, TomNameList tracedLinks, BQTerm current, String moduleName) throws IOException {
+  protected void buildTracelinkPopulateResolve(int deep, String refClassName, TomNameList tracedLinks, BQTerm current, BQTerm link, String moduleName) throws IOException {
     String refVar = "var_"+refClassName.toLowerCase();
     //create the ReferenceClass instance
     output.write(refClassName+" "+refVar+" = new "+refClassName+"();");
@@ -233,36 +233,14 @@ public static class @refname@ implements tom.library.utils.ReferenceClass {
     //TODO: change this to be less specific (and add tom__linkClass:LinkClass
     //as first parameter of all strategies)
     //LinkClass class could be in the Tom library
-    output.write("tom__linkClass.put(");
+    generateBQTerm(deep, link, moduleName);
+    output.write(".put(");
     generateBQTerm(deep, current, moduleName);
     output.write(","+refVar+");");
   }
 
-  //tmp
   protected void buildResolve(int deep, BQTerm bqterm, String moduleName) throws IOException {
     generateBQTerm(deep, bqterm, moduleName);
-  }
-
-  //TODO: resolveInverseLinks
-  //how to generateresolveInverseLinks? how to generate the call?
-  //protected void buildResolveStratInstruction(int deep, String name, String moduleName) throws IOException {
-  protected void buildResolveStratInstruction(int deep, String opname, String name, String moduleName) throws IOException {
-    //on veut generer des choses comme :
-    //tom_get_slot_ResolveWorkDefinitionTransition_o((( petrinetsemantics.DDMMPetriNet.Transition )((Object)tom__arg)))
-    //et
-    //tom_get_slot_ResolveWorkDefinitionTransition_name((( petrinetsemantics.DDMMPetriNet.Transition )((Object)tom__arg)))
-
-    //comment recuperer les slots ?
-    // remplacer name par le fqn
-  //cf buildExpGetSlot(deep, String opname, "o",moduleName)
-
-    //tom__linkClass.get(@buildResolveGetSlot(deep, opname, "o",moduleName)@).get(@buildResolveGetSlot(deep,opname, "name",moduleName)@);
-    //output.write(%[@name@ res = (@name@) tom__linkClass.get(o).get(name);
-    output.write(%[@name@ res = (@name@)tom__linkClass.get(tom_get_slot_@opname@_o(tom__arg)).get(tom_get_slot_@opname@_name(tom__arg));
-        //expansion de `o & `name
-        // recup des autres param ("pn")
-        resolveInverseLinks(tom__arg, res, pn);
-return res;]%);
   }
 
   //TODO: parameters are problematic

@@ -273,7 +273,7 @@ public class CSharpGenerator extends CFamilyGenerator {
     throw new TomRuntimeException("%transformation (Tracelink instruction) not yet supported in CSharp");
   }
 
-  protected void buildTracelinkPopulateResolve(int deep, String refClassName, TomNameList tracedLinks, BQTerm current, String moduleName) throws IOException {
+  protected void buildTracelinkPopulateResolve(int deep, String refClassName, TomNameList tracedLinks, BQTerm current, BQTerm link, String moduleName) throws IOException {
     throw new TomRuntimeException("%transformation (TracelinkPopulateResolve instruction) not yet supported in CSharp");
   }
 

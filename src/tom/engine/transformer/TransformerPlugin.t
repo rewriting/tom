@@ -168,7 +168,8 @@ public class TransformerPlugin extends TomGenericPlugin {
     %match(elemTransfoList) {
       concElementaryTransformation(_*,ElementaryTransformation[ETName=etName@Name(eStratName),Traversal=traversal,AstRuleInstructionList=riList,Options=concOption(_*,ot@OriginTracking(_,_,_),_*)],_*) -> {
         //generate elementary `Strategy, `ReferenceClass and `SymbolDecl
-        result.addAll(`genElementaryStrategy(etName,traversal,riList,ot));
+        //result.addAll(`genElementaryStrategy(etName,traversal,riList,ot));
+        result.addAll(`genElementaryStrategy(etName,traversal,riList,transfoSymbol,ot));
         //Generate symbol for elementary strategy and put it into symbol table
         TomSymbol astElemStratSymbol = `generateElementaryStratSymbol(ot,
             etName, transfoDomain, transfoSymbol);
@@ -238,6 +239,7 @@ public class TransformerPlugin extends TomGenericPlugin {
   private List<Declaration> genElementaryStrategy(TomName strategyName,
                                                   BQTerm traversal,
                                                   RuleInstructionList riList,
+                                                  TomSymbol transfoSymbol,
                                                   Option orgTrack) {
     String strName = strategyName.getString();
     TomName refClassName = `Name(TransformerPlugin.REFCLASS_PREFIX+strName);
@@ -265,7 +267,12 @@ public class TransformerPlugin extends TomGenericPlugin {
         if(current==null){
           throw new TomRuntimeException("TransformerPlugin.process: current is null");
         } 
-        Instruction tracelinkPopResolveInstruction = `TracelinkPopulateResolve(refClassName,tracedLinks,current);
+        //Instruction tracelinkPopResolveInstruction = `TracelinkPopulateResolve(refClassName,tracedLinks,current);
+        TomName firstArgument = TomBase.getSlotName(transfoSymbol,0);
+        TomType firstArgType = TomBase.getSlotType(transfoSymbol,firstArgument);
+        BQTerm link = `BQVariable(concOption(),firstArgument,firstArgType);
+        Instruction tracelinkPopResolveInstruction = `TracelinkPopulateResolve(refClassName,tracedLinks,current,link);
+
         //add instruction which populates RefClass (set..),
         //instr=`concInstruction(instr*,tracelinkPopResolveInstruction)
 
@@ -607,16 +614,11 @@ ResolveStratBlockList = concResolveStratBlock(ResolveStratBlock*)
             Constraint constraint = `AndConstraint(TrueConstraint(),
                 MatchConstraint(pattern,subject,ttype));
 
-
-
-            //Transition res = (Transition) tom__linkClass.get(`o).get(`name);
-           
             TomName firstArgument = TomBase.getSlotName(transformationSymbol,0);
             TomName secondArgument = TomBase.getSlotName(transformationSymbol,1);
-            /* TODO */
-            BQTerm res = `BQVariable(concOption(),Name("res"),ttype);
             TomType firstArgType = TomBase.getSlotType(transformationSymbol,firstArgument);
             BQTerm link = `BQVariable(concOption(),firstArgument,firstArgType);
+            BQTerm res = `BQVariable(concOption(),Name("res"),ttype);
             BQTerm first = `BQVariable(concOption(),Name("o"),SymbolTable.TYPE_UNKNOWN);
             BQTerm second = `BQVariable(concOption(),Name("name"),SymbolTable.TYPE_UNKNOWN);
             //replace ITL() by FunctionCall()?
@@ -664,6 +666,13 @@ ResolveStratBlockList = concResolveStratBlock(ResolveStratBlock*)
     String fileName = `ot.getFileName();
     Option orgTrack = `OriginTracking(Name("Strategy"),line,fileName);
     Declaration inverseLinks = `ResolveInverseLinksDecl(resolveNameList,fileFrom,fileTo);
+    /*Declaration inverseLinks = `MethodDef(
+        Name(TransformerPlugin.RESOLVE_INVERSE_LINK_FUNCTION),
+        ArgumentList:BQTermList,
+        voidType,
+        EmptyType(),
+        Instruction:Instruction);*/
+
     Declaration resolve = `Strategy(rsname, extendsTerm, astVisitList,
         concDeclaration(inverseLinks), orgTrack);
 

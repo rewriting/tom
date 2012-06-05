@@ -487,12 +487,6 @@ public abstract class AbstractGenerator {
         return;
       }
 
-/*      ResolveStratInstruction[TargetType=Type[TomType=name]] -> {*/
-      ResolveStratInstruction(Name(opname),Type(_,name,_)) -> {
-        `buildResolveStratInstruction(deep, opname, name, moduleName);
-        return;
-      }
-
       Assign(var@(BQVariable|BQVariableStar)[Options=optionList],exp) -> {
         `buildAssign(deep, var, optionList, exp, moduleName);
         return;
@@ -586,14 +580,16 @@ public abstract class AbstractGenerator {
         return;
       }
 
-      TracelinkPopulateResolve[RefClassName=Name(refClassName),TracedLinks=tracedLinks,Current=current] -> {
-        `buildTracelinkPopulateResolve(deep, refClassName, tracedLinks, current , moduleName);
+      TracelinkPopulateResolve[RefClassName=Name(refClassName),TracedLinks=tracedLinks,Current=current,Link=link] -> {
+        `buildTracelinkPopulateResolve(deep, refClassName, tracedLinks, current, link, moduleName);
         return;
       }
 
-      //tmp //resolve construct
+      //resolve construct
       Resolve(bqterm, _) -> {
-        `buildResolve(deep, bqterm, moduleName);
+        //why?
+        //buildResolve(deep, `bqterm, moduleName);
+        generateBQTerm(deep, `bqterm, moduleName);
         return;
       }
 
@@ -1076,7 +1072,6 @@ public abstract class AbstractGenerator {
 
   
   //TODO: Resolve*
-  protected abstract void buildResolveStratInstruction(int deep, String opname, String name, String moduleName) throws IOException;
   protected abstract void buildResolveIsFsymDecl(int deep, String tomName, String name1, TargetLanguageType tlType, String moduleName) throws IOException;
   protected abstract void buildResolveGetSlotDecl(int deep, String tomName, String name1, TargetLanguageType tlType, TomName slotName, String moduleName) throws IOException;
   protected abstract void genResolveDeclMake(String prefix, String funName, TomType returnType, BQTermList argList, String moduleName) throws IOException;
@@ -1084,11 +1079,9 @@ public abstract class AbstractGenerator {
   protected abstract void buildResolveInverseLinks(int deep, String fileFrom, String fileTo, TomNameList resolveNameList, String moduleName) throws IOException;
   protected abstract void buildReferenceClass(int deep, String refname, RefClassTracelinkInstructionList refclassTInstructions, String moduleName) throws IOException;
   protected abstract void buildTracelink(int deep, String type, String name, Expression expr, String moduleName) throws IOException;
-  //tmp
   protected abstract void buildResolve(int deep, BQTerm bqterm, String moduleName) throws IOException;
-  protected abstract void buildTracelinkPopulateResolve(int deep, String refClassName, TomNameList tracedLinks, BQTerm current, String moduleName) throws IOException;
-
+  protected abstract void buildTracelinkPopulateResolve(int deep, String refClassName, TomNameList tracedLinks, BQTerm current, BQTerm link, String moduleName) throws IOException;
   protected abstract String genResolveIsFsymCode(String tomName, String varname) throws IOException;
   protected abstract String genResolveGetSlotCode(String tomName, String varname, String slotName) throws IOException;
-//  protected abstract String genResolveIsSortCode(String varName, String resolveStringName) throws IOException;
+
 }

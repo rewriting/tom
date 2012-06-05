@@ -463,10 +463,6 @@ matchBlock: {
     throw new TomRuntimeException("%transformation (ResolveDeclMake) not yet supported in Python");
   }
 
-  protected void buildResolveStratInstruction(int deep, String opname, String name, String moduleName) throws IOException {
-    throw new TomRuntimeException("%transformation (ResolveStratInstruction) not yet supported in Python");
-  }
-
   protected void buildReferenceClass(int deep, String refname, RefClassTracelinkInstructionList refclassTInstructions, String  moduleName) {
     throw new TomRuntimeException("%transformation (ResolveReferenceClass) not yet supported in Python");
   }
@@ -475,7 +471,7 @@ matchBlock: {
     throw new TomRuntimeException("%transformation (Tracelink instruction) not  yet supported in Python");
   }
 
-  protected void buildTracelinkPopulateResolve(int deep, String refClassName, TomNameList tracedLinks, BQTerm current, String moduleName) throws IOException {
+  protected void buildTracelinkPopulateResolve(int deep, String refClassName, TomNameList tracedLinks, BQTerm current, BQTerm link, String moduleName) throws IOException {
     throw new TomRuntimeException("%transformation (TracelinkPopulateResolve instruction) not yet supported in Python");
   }
 

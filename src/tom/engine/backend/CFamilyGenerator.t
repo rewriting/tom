@@ -305,13 +305,6 @@ output.write(%[private static class @resolveStringName@ extends @extendsName@ {
 ]%);
     }
 
-  //TODO: resolveInverseLinks
-  protected void buildResolveStratInstruction(int deep, String opname, String name, String moduleName) throws IOException {
-    output.write(%[@name@ res = null;//(@name@) translator.table.get(o).get(name);
-//resolveInverseLinks(tom__arg, res, translator);
-return res;]%);
-  }
-
   /*protected void buildTracelink(int deep, String type, String name, Expression expr, String moduleName) throws IOException {
     output.write(type+" "+name+" = ");
     generateExpression(deep,expr,moduleName);
