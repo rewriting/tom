@@ -68,20 +68,20 @@ public class SimplePDLToPetriNoHash {
         n1 = `name+"_finish";
         %tracelink(Node, t_finish, `Transition(n1, pn,ArcEList(), ArcEList(), 1, 1));
         
-        `Arc(t_start, p_ready, pn,normal(), 1);
-        `Arc(p_running, t_start, pn,normal(), 1);
-        `Arc(t_finish, p_running, pn,normal(), 1);
-        `Arc(p_finished, t_finish, pn,normal(), 1);
+        `Arc(t_start, p_ready, pn,ArcKindnormal(), 1);
+        `Arc(p_running, t_start, pn,ArcKindnormal(), 1);
+        `Arc(t_finish, p_running, pn,ArcKindnormal(), 1);
+        `Arc(p_finished, t_finish, pn,ArcKindnormal(), 1);
 
         WorkDefinition from = `p.getFrom();
         if (from!=null) {
           Transition source = %resolve(from:WorkDefinition,t_start:Transition);
           source.setNet(pn);
-          Arc tmpZoomIn = `Arc(p_ready,source,pn,normal(), 1);
+          Arc tmpZoomIn = `Arc(p_ready,source,pn,ArcKindnormal(), 1);
 
           Transition target = %resolve(from:WorkDefinition,t_finish:Transition);
           target.setNet(pn);
-          Arc tmpZoomOut = `Arc(target,p_finished,pn,read_arc(), 1);
+          Arc tmpZoomOut = `Arc(target,p_finished,pn,ArcKindread_arc(), 1);
         }
       }
     }
@@ -99,20 +99,20 @@ public class SimplePDLToPetriNoHash {
         n1 = `name+"_finish";
         %tracelink(Node, t_finish, `Transition(n1, pn,ArcEList(), ArcEList(), 1, 1));
 
-        `Arc(t_start, p_ready, pn,normal(), 1);
-        `Arc(p_started, t_start, pn,normal(), 1);
-        `Arc(p_running, t_start, pn,normal(), 1);
-        `Arc(t_finish, p_running, pn,normal(), 1);
-        `Arc(p_finished, t_finish, pn,normal(), 1);
+        `Arc(t_start, p_ready, pn,ArcKindnormal(), 1);
+        `Arc(p_started, t_start, pn,ArcKindnormal(), 1);
+        `Arc(p_running, t_start, pn,ArcKindnormal(), 1);
+        `Arc(t_finish, p_running, pn,ArcKindnormal(), 1);
+        `Arc(p_finished, t_finish, pn,ArcKindnormal(), 1);
 
         SimplePDLSemantics.DDMMSimplePDL.Process parent = `wd.getParent();
         Transition source = %resolve(parent:Process,t_start:Transition);
         source.setNet(pn);
-        Arc tmpDistribute = `Arc(p_ready,source,pn,normal(), 1);
+        Arc tmpDistribute = `Arc(p_ready,source,pn,ArcKindnormal(), 1);
 
         Transition target = %resolve(parent:Process,t_finish:Transition);
         target.setNet(pn);
-        Arc tmpRejoin = `Arc(target,p_finished,pn,read_arc(), 1);
+        Arc tmpRejoin = `Arc(target,p_finished,pn,ArcKindread_arc(), 1);
       }
     }
 
@@ -123,16 +123,16 @@ public class SimplePDLToPetriNoHash {
         WorkDefinition pre = `p;
         WorkDefinition suc = `s;
         %match(linkType) { 
-          (finishToFinish|finishToStart)[] -> { source = %resolve(pre:WorkDefinition,p_finished:Place); }
-          (startToStart|startToFinish)[]   -> { source = %resolve(pre:WorkDefinition,p_started:Place); }
+          (WorkSequenceTypefinishToFinish|WorkSequenceTypefinishToStart)[] -> { source = %resolve(pre:WorkDefinition,p_finished:Place); }
+          (WorkSequenceTypestartToStart|WorkSequenceTypestartToFinish)[]   -> { source = %resolve(pre:WorkDefinition,p_started:Place); }
 
-          (finishToStart|startToStart)[]   -> { target = %resolve(suc:WorkDefinition,t_start:Transition); }
-          (startToFinish|finishToFinish)[] -> { target = %resolve(suc:WorkDefinition,t_finish:Transition); }
+          (WorkSequenceTypefinishToStart|WorkSequenceTypestartToStart)[]   -> { target = %resolve(suc:WorkDefinition,t_start:Transition); }
+          (WorkSequenceTypestartToFinish|WorkSequenceTypefinishToFinish)[] -> { target = %resolve(suc:WorkDefinition,t_finish:Transition); }
         }
         source.setNet(pn);
         target.setNet(pn);
 
-        Arc tmp = `Arc(target,source, pn,read_arc(), 1);  
+        Arc tmp = `Arc(target,source, pn,ArcKindread_arc(), 1);  
       }
     }
   }
@@ -220,8 +220,8 @@ public class SimplePDLToPetriNoHash {
       WorkDefinition wd2 = `WorkDefinition(null,WorkSequenceEList(),WorkSequenceEList(),"B",null);
       WorkDefinition wd3 = `WorkDefinition(null,WorkSequenceEList(),WorkSequenceEList(),"C",null);
       WorkDefinition wd4 = `WorkDefinition(null,WorkSequenceEList(),WorkSequenceEList(),"D",null);
-      WorkSequence ws1 = `WorkSequence(null,startToStart(),wd1,wd2);
-      WorkSequence ws2 = `WorkSequence(null,startToFinish(),wd3,wd4);
+      WorkSequence ws1 = `WorkSequence(null,WorkSequenceTypestartToStart(),wd1,wd2);
+      WorkSequence ws2 = `WorkSequence(null,WorkSequenceTypestartToFinish(),wd3,wd4);
 
       p_root = `Process("root",ProcessElementEList(wd1,wd2,ws1),null);
       SimplePDLSemantics.DDMMSimplePDL.Process p_child = `Process("child",ProcessElementEList(wd3,wd4,ws2), wd2);
@@ -241,6 +241,9 @@ public class SimplePDLToPetriNoHash {
     try {
       translator.pn = `PetriNet(NodeEList(),ArcEList(),"main");
 
+      //System.out.println("Initial Petri net");
+      //`Sequence(TopDown(PrintTransition()),TopDown(PrintPlace())).visit(translator.pn, new EcoreContainmentIntrospector());
+
       /*
       Strategy transformer = `Sequence(
           TopDown(Process2PetriNet(translator)),
@@ -248,6 +251,9 @@ public class SimplePDLToPetriNoHash {
           TopDown(WorkSequence2PetriNet(translator))
        );
        */
+
+      //TODO: force the user to give the link as first parameter, and target
+      //model as second one
       Strategy transformer = `SimplePDLToPetriNet(translator.tom__linkClass,translator.pn);
       transformer.visit(p_root, new EcoreContainmentIntrospector());
 
@@ -295,10 +301,10 @@ public class SimplePDLToPetriNoHash {
         String t = "";
         %match {
          ArcEList(_*,Arc[kind=k,weight=w,source=node],_*) << sources && Place[name=placename]<< node -> {
-           s += `placename + ((`k==`read_arc())?"?":"*") + `w + " "; 
+           s += `placename + ((`k==`ArcKindread_arc())?"?":"*") + `w + " "; 
          }
          ArcEList(_*,Arc[kind=k,weight=w,target=node],_*) << targets && Place[name=placename]<< node -> { 
-           t += `placename + ((`k==`read_arc())?"?":"*") + `w + " "; 
+           t += `placename + ((`k==`ArcKindread_arc())?"?":"*") + `w + " "; 
          }
         }
         System.out.println("tr " + `name + " " + s + " --> " + t);
