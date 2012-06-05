@@ -1,45 +1,22 @@
-/*
- *
- * TOM - To One Matching Compiler
- *
- * Copyright (c) 2009-2011, INPL, INRIA
- * Nancy, France.
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
- *
- *
- **/
 
-%typeterm PNScenario  {
+
+%typeterm PNScenario  extends EObject {
   implement { petrinetsemantics.TM3PetriNet.PNScenario }
   is_sort(t) { $t instanceof petrinetsemantics.TM3PetriNet.PNScenario }
   equals(l1,l2) { $l1.equals($l2) }
-//  concrete_implementation { @ }
 }
 
-%typeterm PNTrace  {
+%typeterm PNTrace  extends EObject {
   implement { petrinetsemantics.TM3PetriNet.PNTrace }
   is_sort(t) { $t instanceof petrinetsemantics.TM3PetriNet.PNTrace }
   equals(l1,l2) { $l1.equals($l2) }
-//  concrete_implementation { @ }
 }
 
 %op PNTrace PNTrace(scenario : PNScenario) {
   is_fsym(t) { $t instanceof petrinetsemantics.TM3PetriNet.PNTrace }
-  get_slot(scenario, t)  { (petrinetsemantics.TM3PetriNet.PNScenario)$t.eGet($t.eClass().getEStructuralFeature("scenario")) }
+  get_slot(scenario, t) { (petrinetsemantics.TM3PetriNet.PNScenario)$t.eGet($t.eClass().getEStructuralFeature("scenario")) } 
   make(scenario) { constructPNTrace((petrinetsemantics.TM3PetriNet.PNTrace)petrinetsemantics.TM3PetriNet.TM3PetriNetFactory.eINSTANCE.create((EClass)petrinetsemantics.TM3PetriNet.TM3PetriNetPackage.eINSTANCE.getEClassifier("PNTrace")), new Object[]{ $scenario }) }
+  implement() { petrinetsemantics.TM3PetriNet.impl.PNTraceImpl }
 }
 
 public static <O extends org.eclipse.emf.ecore.EObject> O constructPNTrace(O o, Object[] objs) {
@@ -73,19 +50,22 @@ private static <O> org.eclipse.emf.common.util.EList<O> appendPNTraceEList(O e,o
   return l;
 }
 
-%typeterm PNSimEvent  {
+%typeterm PNSimEvent  extends EObject {
   implement { petrinetsemantics.TM3PetriNet.PNSimEvent }
   is_sort(t) { $t instanceof petrinetsemantics.TM3PetriNet.PNSimEvent }
   equals(l1,l2) { $l1.equals($l2) }
-//  concrete_implementation { @ }
 }
 
 %op PNSimEvent PNSimEvent(internal : boolean, date : int, name : String) {
   is_fsym(t) { $t instanceof petrinetsemantics.TM3PetriNet.PNSimEvent }
-  get_slot(internal, t)  { (java.lang.Boolean)$t.eGet($t.eClass().getEStructuralFeature("internal")) }
-  get_slot(date, t)  { (java.lang.Integer)$t.eGet($t.eClass().getEStructuralFeature("date")) }
-  get_slot(name, t)  { (java.lang.String)$t.eGet($t.eClass().getEStructuralFeature("name")) }
+  get_slot(internal, t) { (java.lang.Boolean)$t.eGet($t.eClass().getEStructuralFeature("internal")) }
+  get_slot(date, t) { (java.lang.Integer)$t.eGet($t.eClass().getEStructuralFeature("date")) }
+  get_slot(name, t) { (java.lang.String)$t.eGet($t.eClass().getEStructuralFeature("name")) } 
+  get_default(internal) { false }
+  get_default(date) { 0 }
+  get_default(name) { "" }
   make(internal, date, name) { constructPNSimEvent((petrinetsemantics.TM3PetriNet.PNSimEvent)petrinetsemantics.TM3PetriNet.TM3PetriNetFactory.eINSTANCE.create((EClass)petrinetsemantics.TM3PetriNet.TM3PetriNetPackage.eINSTANCE.getEClassifier("PNSimEvent")), new Object[]{ $internal, $date, $name }) }
+  implement() { petrinetsemantics.TM3PetriNet.impl.PNSimEventImpl }
 }
 
 public static <O extends org.eclipse.emf.ecore.EObject> O constructPNSimEvent(O o, Object[] objs) {
@@ -121,9 +101,10 @@ private static <O> org.eclipse.emf.common.util.EList<O> appendPNSimEventEList(O 
 
 %op PNScenario PNScenario(traces : PNTraceEList, simEvents : PNSimEventEList) {
   is_fsym(t) { $t instanceof petrinetsemantics.TM3PetriNet.PNScenario }
-  get_slot(traces, t)  { (org.eclipse.emf.common.util.EList<petrinetsemantics.TM3PetriNet.PNTrace>)$t.eGet($t.eClass().getEStructuralFeature("traces")) }
-  get_slot(simEvents, t)  { (org.eclipse.emf.common.util.EList<petrinetsemantics.TM3PetriNet.PNSimEvent>)$t.eGet($t.eClass().getEStructuralFeature("simEvents")) }
+  get_slot(traces, t) { (org.eclipse.emf.common.util.EList<petrinetsemantics.TM3PetriNet.PNTrace>)$t.eGet($t.eClass().getEStructuralFeature("traces")) }
+  get_slot(simEvents, t) { (org.eclipse.emf.common.util.EList<petrinetsemantics.TM3PetriNet.PNSimEvent>)$t.eGet($t.eClass().getEStructuralFeature("simEvents")) } 
   make(traces, simEvents) { constructPNScenario((petrinetsemantics.TM3PetriNet.PNScenario)petrinetsemantics.TM3PetriNet.TM3PetriNetFactory.eINSTANCE.create((EClass)petrinetsemantics.TM3PetriNet.TM3PetriNetPackage.eINSTANCE.getEClassifier("PNScenario")), new Object[]{ $traces, $simEvents }) }
+  implement() { petrinetsemantics.TM3PetriNet.impl.PNScenarioImpl }
 }
 
 public static <O extends org.eclipse.emf.ecore.EObject> O constructPNScenario(O o, Object[] objs) {

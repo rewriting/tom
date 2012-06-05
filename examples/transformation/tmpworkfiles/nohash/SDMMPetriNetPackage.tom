@@ -1,47 +1,25 @@
-/*
- *
- * TOM - To One Matching Compiler
- *
- * Copyright (c) 2009-2011, INPL, INRIA
- * Nancy, France.
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
- *
- *
- **/
 
-%typeterm Node_dynamic  {
+
+%typeterm Node_dynamic  extends EObject {
   implement { petrinetsemantics.SDMMPetriNet.Node_dynamic }
   is_sort(t) { $t instanceof petrinetsemantics.SDMMPetriNet.Node_dynamic }
   equals(l1,l2) { $l1.equals($l2) }
-//  concrete_implementation { @ }
 }
 
-%typeterm Place_dynamic extends Node_dynamic {
+%typeterm Place_dynamic  extends Node_dynamic {
   implement { petrinetsemantics.SDMMPetriNet.Place_dynamic }
   is_sort(t) { $t instanceof petrinetsemantics.SDMMPetriNet.Place_dynamic }
   equals(l1,l2) { $l1.equals($l2) }
-//  concrete_implementation { @ }
 }
 
 %op Place_dynamic Place_dynamic(Node_static : Node, Place_static : Place, marking : int) {
   is_fsym(t) { $t instanceof petrinetsemantics.SDMMPetriNet.Place_dynamic }
-  get_slot(Node_static, t)  { (petrinetsemantics.DDMMPetriNet.Node)$t.eGet($t.eClass().getEStructuralFeature("Node_static")) }
-  get_slot(Place_static, t)  { (petrinetsemantics.DDMMPetriNet.Place)$t.eGet($t.eClass().getEStructuralFeature("Place_static")) }
-  get_slot(marking, t)  { (java.lang.Integer)$t.eGet($t.eClass().getEStructuralFeature("marking")) }
+  get_slot(Node_static, t) { (petrinetsemantics.DDMMPetriNet.Node)$t.eGet($t.eClass().getEStructuralFeature("Node_static")) }
+  get_slot(Place_static, t) { (petrinetsemantics.DDMMPetriNet.Place)$t.eGet($t.eClass().getEStructuralFeature("Place_static")) }
+  get_slot(marking, t) { (java.lang.Integer)$t.eGet($t.eClass().getEStructuralFeature("marking")) } 
+  get_default(marking) { 0 }
   make(Node_static, Place_static, marking) { constructPlace_dynamic((petrinetsemantics.SDMMPetriNet.Place_dynamic)petrinetsemantics.SDMMPetriNet.SDMMPetriNetFactory.eINSTANCE.create((EClass)petrinetsemantics.SDMMPetriNet.SDMMPetriNetPackage.eINSTANCE.getEClassifier("Place_dynamic")), new Object[]{ $Node_static, $Place_static, $marking }) }
+  implement() { petrinetsemantics.SDMMPetriNet.impl.Place_dynamicImpl }
 }
 
 public static <O extends org.eclipse.emf.ecore.EObject> O constructPlace_dynamic(O o, Object[] objs) {
@@ -56,11 +34,10 @@ public static <O extends org.eclipse.emf.ecore.EObject> O constructPlace_dynamic
   return o;
 }
 
-%typeterm PetriNet_dynamic  {
+%typeterm PetriNet_dynamic  extends EObject {
   implement { petrinetsemantics.SDMMPetriNet.PetriNet_dynamic }
   is_sort(t) { $t instanceof petrinetsemantics.SDMMPetriNet.PetriNet_dynamic }
   equals(l1,l2) { $l1.equals($l2) }
-//  concrete_implementation { @ }
 }
 
 %typeterm Node_dynamicEList {
@@ -84,9 +61,10 @@ private static <O> org.eclipse.emf.common.util.EList<O> appendNode_dynamicEList(
 
 %op PetriNet_dynamic PetriNet_dynamic(nodes : Node_dynamicEList, PetriNet_static : PetriNet) {
   is_fsym(t) { $t instanceof petrinetsemantics.SDMMPetriNet.PetriNet_dynamic }
-  get_slot(nodes, t)  { (org.eclipse.emf.common.util.EList<petrinetsemantics.SDMMPetriNet.Node_dynamic>)$t.eGet($t.eClass().getEStructuralFeature("nodes")) }
-  get_slot(PetriNet_static, t)  { (petrinetsemantics.DDMMPetriNet.PetriNet)$t.eGet($t.eClass().getEStructuralFeature("PetriNet_static")) }
+  get_slot(nodes, t) { (org.eclipse.emf.common.util.EList<petrinetsemantics.SDMMPetriNet.Node_dynamic>)$t.eGet($t.eClass().getEStructuralFeature("nodes")) }
+  get_slot(PetriNet_static, t) { (petrinetsemantics.DDMMPetriNet.PetriNet)$t.eGet($t.eClass().getEStructuralFeature("PetriNet_static")) } 
   make(nodes, PetriNet_static) { constructPetriNet_dynamic((petrinetsemantics.SDMMPetriNet.PetriNet_dynamic)petrinetsemantics.SDMMPetriNet.SDMMPetriNetFactory.eINSTANCE.create((EClass)petrinetsemantics.SDMMPetriNet.SDMMPetriNetPackage.eINSTANCE.getEClassifier("PetriNet_dynamic")), new Object[]{ $nodes, $PetriNet_static }) }
+  implement() { petrinetsemantics.SDMMPetriNet.impl.PetriNet_dynamicImpl }
 }
 
 public static <O extends org.eclipse.emf.ecore.EObject> O constructPetriNet_dynamic(O o, Object[] objs) {

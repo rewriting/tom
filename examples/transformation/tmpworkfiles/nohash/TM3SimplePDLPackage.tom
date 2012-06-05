@@ -1,45 +1,22 @@
-/*
- *
- * TOM - To One Matching Compiler
- *
- * Copyright (c) 2009-2011, INPL, INRIA
- * Nancy, France.
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
- *
- *
- **/
 
-%typeterm SPDLScenario  {
+
+%typeterm SPDLScenario  extends EObject {
   implement { SimplePDLSemantics.TM3SimplePDL.SPDLScenario }
   is_sort(t) { $t instanceof SimplePDLSemantics.TM3SimplePDL.SPDLScenario }
   equals(l1,l2) { $l1.equals($l2) }
-//  concrete_implementation { @ }
 }
 
-%typeterm SPDLTrace  {
+%typeterm SPDLTrace  extends EObject {
   implement { SimplePDLSemantics.TM3SimplePDL.SPDLTrace }
   is_sort(t) { $t instanceof SimplePDLSemantics.TM3SimplePDL.SPDLTrace }
   equals(l1,l2) { $l1.equals($l2) }
-//  concrete_implementation { @ }
 }
 
 %op SPDLTrace SPDLTrace(scenario : SPDLScenario) {
   is_fsym(t) { $t instanceof SimplePDLSemantics.TM3SimplePDL.SPDLTrace }
-  get_slot(scenario, t)  { (SimplePDLSemantics.TM3SimplePDL.SPDLScenario)$t.eGet($t.eClass().getEStructuralFeature("scenario")) }
+  get_slot(scenario, t) { (SimplePDLSemantics.TM3SimplePDL.SPDLScenario)$t.eGet($t.eClass().getEStructuralFeature("scenario")) } 
   make(scenario) { constructSPDLTrace((SimplePDLSemantics.TM3SimplePDL.SPDLTrace)SimplePDLSemantics.TM3SimplePDL.TM3SimplePDLFactory.eINSTANCE.create((EClass)SimplePDLSemantics.TM3SimplePDL.TM3SimplePDLPackage.eINSTANCE.getEClassifier("SPDLTrace")), new Object[]{ $scenario }) }
+  implement() { SimplePDLSemantics.TM3SimplePDL.impl.SPDLTraceImpl }
 }
 
 public static <O extends org.eclipse.emf.ecore.EObject> O constructSPDLTrace(O o, Object[] objs) {
@@ -73,19 +50,22 @@ private static <O> org.eclipse.emf.common.util.EList<O> appendSPDLTraceEList(O e
   return l;
 }
 
-%typeterm SPDLSimEvent  {
+%typeterm SPDLSimEvent  extends EObject {
   implement { SimplePDLSemantics.TM3SimplePDL.SPDLSimEvent }
   is_sort(t) { $t instanceof SimplePDLSemantics.TM3SimplePDL.SPDLSimEvent }
   equals(l1,l2) { $l1.equals($l2) }
-//  concrete_implementation { @ }
 }
 
 %op SPDLSimEvent SPDLSimEvent(internal : boolean, date : int, name : String) {
   is_fsym(t) { $t instanceof SimplePDLSemantics.TM3SimplePDL.SPDLSimEvent }
-  get_slot(internal, t)  { (java.lang.Boolean)$t.eGet($t.eClass().getEStructuralFeature("internal")) }
-  get_slot(date, t)  { (java.lang.Integer)$t.eGet($t.eClass().getEStructuralFeature("date")) }
-  get_slot(name, t)  { (java.lang.String)$t.eGet($t.eClass().getEStructuralFeature("name")) }
+  get_slot(internal, t) { (java.lang.Boolean)$t.eGet($t.eClass().getEStructuralFeature("internal")) }
+  get_slot(date, t) { (java.lang.Integer)$t.eGet($t.eClass().getEStructuralFeature("date")) }
+  get_slot(name, t) { (java.lang.String)$t.eGet($t.eClass().getEStructuralFeature("name")) } 
+  get_default(internal) { false }
+  get_default(date) { 0 }
+  get_default(name) { "" }
   make(internal, date, name) { constructSPDLSimEvent((SimplePDLSemantics.TM3SimplePDL.SPDLSimEvent)SimplePDLSemantics.TM3SimplePDL.TM3SimplePDLFactory.eINSTANCE.create((EClass)SimplePDLSemantics.TM3SimplePDL.TM3SimplePDLPackage.eINSTANCE.getEClassifier("SPDLSimEvent")), new Object[]{ $internal, $date, $name }) }
+  implement() { SimplePDLSemantics.TM3SimplePDL.impl.SPDLSimEventImpl }
 }
 
 public static <O extends org.eclipse.emf.ecore.EObject> O constructSPDLSimEvent(O o, Object[] objs) {
@@ -121,9 +101,10 @@ private static <O> org.eclipse.emf.common.util.EList<O> appendSPDLSimEventEList(
 
 %op SPDLScenario SPDLScenario(traces : SPDLTraceEList, simEvents : SPDLSimEventEList) {
   is_fsym(t) { $t instanceof SimplePDLSemantics.TM3SimplePDL.SPDLScenario }
-  get_slot(traces, t)  { (org.eclipse.emf.common.util.EList<SimplePDLSemantics.TM3SimplePDL.SPDLTrace>)$t.eGet($t.eClass().getEStructuralFeature("traces")) }
-  get_slot(simEvents, t)  { (org.eclipse.emf.common.util.EList<SimplePDLSemantics.TM3SimplePDL.SPDLSimEvent>)$t.eGet($t.eClass().getEStructuralFeature("simEvents")) }
+  get_slot(traces, t) { (org.eclipse.emf.common.util.EList<SimplePDLSemantics.TM3SimplePDL.SPDLTrace>)$t.eGet($t.eClass().getEStructuralFeature("traces")) }
+  get_slot(simEvents, t) { (org.eclipse.emf.common.util.EList<SimplePDLSemantics.TM3SimplePDL.SPDLSimEvent>)$t.eGet($t.eClass().getEStructuralFeature("simEvents")) } 
   make(traces, simEvents) { constructSPDLScenario((SimplePDLSemantics.TM3SimplePDL.SPDLScenario)SimplePDLSemantics.TM3SimplePDL.TM3SimplePDLFactory.eINSTANCE.create((EClass)SimplePDLSemantics.TM3SimplePDL.TM3SimplePDLPackage.eINSTANCE.getEClassifier("SPDLScenario")), new Object[]{ $traces, $simEvents }) }
+  implement() { SimplePDLSemantics.TM3SimplePDL.impl.SPDLScenarioImpl }
 }
 
 public static <O extends org.eclipse.emf.ecore.EObject> O constructSPDLScenario(O o, Object[] objs) {

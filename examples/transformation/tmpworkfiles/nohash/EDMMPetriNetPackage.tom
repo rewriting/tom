@@ -1,53 +1,34 @@
-/*
- *
- * TOM - To One Matching Compiler
- *
- * Copyright (c) 2009-2011, INPL, INRIA
- * Nancy, France.
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
- *
- *
- **/
 
-%typeterm PetriNetEvent extends PNSimEvent {
+
+%typeterm PetriNetEvent  extends PNSimEvent {
   implement { petrinetsemantics.EDMMPetriNet.PetriNetEvent }
   is_sort(t) { $t instanceof petrinetsemantics.EDMMPetriNet.PetriNetEvent }
   equals(l1,l2) { $l1.equals($l2) }
-//  concrete_implementation { @ }
 }
 
 %include { boolean.tom }
 
-%typeterm FireTransitionEvent extends PetriNetEvent {
+%typeterm FireTransitionEvent  extends PetriNetEvent {
   implement { petrinetsemantics.EDMMPetriNet.FireTransitionEvent }
   is_sort(t) { $t instanceof petrinetsemantics.EDMMPetriNet.FireTransitionEvent }
   equals(l1,l2) { $l1.equals($l2) }
-//  concrete_implementation { @ }
 }
 
 %include { double.tom }
 
 %op FireTransitionEvent FireTransitionEvent(internal : boolean, date : int, name : String, time : double, firedTransition : Transition) {
   is_fsym(t) { $t instanceof petrinetsemantics.EDMMPetriNet.FireTransitionEvent }
-  get_slot(internal, t)  { (java.lang.Boolean)$t.eGet($t.eClass().getEStructuralFeature("internal")) }
-  get_slot(date, t)  { (java.lang.Integer)$t.eGet($t.eClass().getEStructuralFeature("date")) }
-  get_slot(name, t)  { (java.lang.String)$t.eGet($t.eClass().getEStructuralFeature("name")) }
-  get_slot(time, t)  { (java.lang.Double)$t.eGet($t.eClass().getEStructuralFeature("time")) }
-  get_slot(firedTransition, t)  { (petrinetsemantics.DDMMPetriNet.Transition)$t.eGet($t.eClass().getEStructuralFeature("firedTransition")) }
+  get_slot(internal, t) { (java.lang.Boolean)$t.eGet($t.eClass().getEStructuralFeature("internal")) }
+  get_slot(date, t) { (java.lang.Integer)$t.eGet($t.eClass().getEStructuralFeature("date")) }
+  get_slot(name, t) { (java.lang.String)$t.eGet($t.eClass().getEStructuralFeature("name")) }
+  get_slot(time, t) { (java.lang.Double)$t.eGet($t.eClass().getEStructuralFeature("time")) }
+  get_slot(firedTransition, t) { (petrinetsemantics.DDMMPetriNet.Transition)$t.eGet($t.eClass().getEStructuralFeature("firedTransition")) } 
+  get_default(internal) { false }
+  get_default(date) { 0 }
+  get_default(name) { "" }
+  get_default(time) { 0.0 }
   make(internal, date, name, time, firedTransition) { constructFireTransitionEvent((petrinetsemantics.EDMMPetriNet.FireTransitionEvent)petrinetsemantics.EDMMPetriNet.EDMMPetriNetFactory.eINSTANCE.create((EClass)petrinetsemantics.EDMMPetriNet.EDMMPetriNetPackage.eINSTANCE.getEClassifier("FireTransitionEvent")), new Object[]{ $internal, $date, $name, $time, $firedTransition }) }
+  implement() { petrinetsemantics.EDMMPetriNet.impl.FireTransitionEventImpl }
 }
 
 public static <O extends org.eclipse.emf.ecore.EObject> O constructFireTransitionEvent(O o, Object[] objs) {
