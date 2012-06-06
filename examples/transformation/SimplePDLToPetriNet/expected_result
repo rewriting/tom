@@ -1,3 +1,7 @@
+This is the output from SimplePDLToPetriNet prototypes (quarteft repositolry).
+The compilation and execution of SimplePDLToPetriNet.t use case should print
+the last block of this output (beginning at "After Resolve"):
+
 
 Starting…
 

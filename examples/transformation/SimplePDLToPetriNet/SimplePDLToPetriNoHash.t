@@ -137,66 +137,6 @@ public class SimplePDLToPetriNoHash {
     }
   }
 
-  /**
-    *
-    * @param resolveNode temporary ResolveNode that should be replaced
-    * @param newNode node (stored in the HashMap) that will replace the ResolveNode
-    * @param translator the TimplePDLToPetri3
-    */
-/*  public static void resolveInverseLinks(EObject resolveNode, Node newNode, PetriNet pn) {
-    ECrossReferenceAdapter adapter = new ECrossReferenceAdapter(); //create an adapter
-    translator.pn.eAdapters().add(adapter); //attach it to PetriNet
-
-    Collection<EStructuralFeature.Setting> references = adapter.getInverseReferences(resolveNode);
-
-    boolean toSet = (false
-        | resolveNode instanceof ResolveWorkDefinitionPlace 
-        | resolveNode instanceof ResolveWorkDefinitionTransition
-        | resolveNode instanceof ResolveProcessTransition
-        );
-
-    for (EStructuralFeature.Setting setting:references) {
-      EObject current = setting.getEObject();
-      if (current instanceof Arc) {
-        Arc newCurrent = (Arc)current;
-        if(newCurrent.getSource().equals(resolveNode) && toSet) {
-          newCurrent.setSource(newNode); 
-        } else if(newCurrent.getTarget().equals(resolveNode) && toSet) {
-          newCurrent.setTarget(newNode); 
-        } else {
-          throw new RuntimeException("should not be there");
-        }
-      }
-    }
-
-  }*/
-
-  
-  //DEBUG 
-  /*%strategy Resolve(tom__linkClass:LinkClass,pn:PetriNet) extends Identity() {
-    visit Place {
-      pr@ResolveWorkDefinitionPlace[o=o,name=name] -> {
-        Place res = (Place) tom__linkClass.get(`o).get(`name);
-        resolveInverseLinks(`pr, res, pn);
-        return res;
-      }
-    }
-
-    visit Transition {
-      tr@ResolveWorkDefinitionTransition[o=o,name=name] -> {
-        Transition res = (Transition) tom__linkClass.get(`o).get(`name);
-        resolveInverseLinks(`tr, res, pn);
-        return res;
-      }
-      ptr@ResolveProcessTransition[o=o,name=name] -> {
-        Transition res = (Transition) tom__linkClass.get(`o).get(`name);
-        resolveInverseLinks(`ptr, res, pn);
-        return res;
-      }
-    }
-  }*/
-  //DEBUG 
-
   public static void main(String[] args) {
     System.out.println("\nStarting…\n");
 
@@ -244,7 +184,7 @@ public class SimplePDLToPetriNoHash {
       //System.out.println("Initial Petri net");
       //`Sequence(TopDown(PrintTransition()),TopDown(PrintPlace())).visit(translator.pn, new EcoreContainmentIntrospector());
 
-      /*
+      /*//transformer is equivalent to:
       Strategy transformer = `Sequence(
           TopDown(Process2PetriNet(translator)),
           TopDown(WorkDefinition2PetriNet(translator)),
@@ -259,16 +199,6 @@ public class SimplePDLToPetriNoHash {
       //TODO
       `TopDown(tom__StratResolve_SimplePDLToPetriNet(translator.tom__linkClass,translator.pn)).visit(translator.pn, new EcoreContainmentIntrospector());
 
-      /*
-      System.out.println("\nBefore Resolve");
-      `Sequence(TopDown(PrintTransition()),TopDown(PrintPlace())).visit(translator.pn, new EcoreContainmentIntrospector());
-       */
-
-      /*
-      System.out.println("\nTest strategy resolve");
-      `TopDown(Resolve(translator)).visit(translator.pn, new EcoreContainmentIntrospector());
-       */
-
       System.out.println("\nResult");
       `Sequence(TopDown(PrintTransition()),TopDown(PrintPlace())).visit(translator.pn, new EcoreContainmentIntrospector());
 
@@ -276,7 +206,6 @@ public class SimplePDLToPetriNoHash {
       System.out.println("strategy fail");
     }
   }
-
 
   %strategy PrintArc() extends Identity() {
     visit Arc {
