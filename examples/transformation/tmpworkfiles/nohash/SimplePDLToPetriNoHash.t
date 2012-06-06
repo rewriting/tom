@@ -256,6 +256,8 @@ public class SimplePDLToPetriNoHash {
       //model as second one
       Strategy transformer = `SimplePDLToPetriNet(translator.tom__linkClass,translator.pn);
       transformer.visit(p_root, new EcoreContainmentIntrospector());
+      //TODO
+      `TopDown(tom__StratResolve_SimplePDLToPetriNet(translator.tom__linkClass,translator.pn)).visit(translator.pn, new EcoreContainmentIntrospector());
 
       /*
       System.out.println("\nBefore Resolve");
