@@ -1,0 +1,42 @@
+%transformation
+
+- "delete" with(src args) to(dst args):
+  - do not precise args (we will infer them by using %resolve and %tracelink)
+  - put ecore files instead: with(MMs.ecore) to(MMt.ecore)
+
+- ReferenceClass() -> Class()? (we need implement and there is only extends)
+
+- create resolve elements in the TransformerPlugin instead of the Parser
+
+- simplify TomSignature
+
+- ResolveGetSlotDecl, ResolveIsFsymDecl, ResolveMakeDecl
+
+- Strategy(): hook system? (test in transformation branch by adding a
+  parameter, very easy to use and modify, but it's more a hack) ; new Strategy
+  construct allowing to embed code
+
+- RuleInstruction? useful?
+
+- short notation for: definition Name traversal `TopDown(WD2PN(args))
+  -> args
+
+- resolveInverseLinks : do not generate empty blocks
+  - first, authorize empty block generation but without any RuntimeException
+  - then, no empty block generation. Possible by making this part more abstract
+    and moving it into TransformerPlugin
+
+- transformation strategy: remove resolve strategy
+  - remove resolve from transformation strategy
+  - add a FunctionCall for resolve strategy
+ => why?
+ we want to have something like that:
+
+ Strategy transformer = `SimplePDLToPetriNet(translator.tom__linkClass,translator.pn);
+ transformer.visit(p_root, new EcoreContainmentIntrospector());
+ `TopDown(tom__StratResolve_SimplePDLToPetriNet(translator.tom__linkClass,translator.pn)).visit(translator.pn, new EcoreContainmentIntrospector());
+
+with SimplePDLToPetriNet a Sequence of strategies (elementary transformations).
+visit() is applied to the source model, but for resolve strategy, it is applied
+to the target model. SimplePDLToPetrinet cannot be one and only one strategy
+containing resolve).
