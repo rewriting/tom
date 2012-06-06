@@ -300,24 +300,29 @@ public static class @refname@ implements tom.library.utils.ReferenceClass {
     for(EClassifier ecl : ecls) {
       if(ecl instanceof EClass ) {//EEnum should not produce a block
         if(!((EClass)ecl).isAbstract()) {
-        //String eclName = ecl.getName();
-        String eclFQName = getFullQualifiedNameFromTypeName(ecl.getName(),moduleName);
-        output.write(%[if (current instanceof @eclFQName@) {
+          //String eclName = ecl.getName();
+          String eclFQName = getFullQualifiedNameFromTypeName(ecl.getName(),moduleName);
+          output.write(%[if (current instanceof @eclFQName@) {
         @eclFQName@ newCurrent = (@eclFQName@)current;
       ]%);
 
-        EList<EStructuralFeature> sfs = ((EClass)ecl).getEAllStructuralFeatures();
-        for(EStructuralFeature sf : sfs) {//many and builtin should not produce a block
-          if(sf.isChangeable() && !sf.isMany() && !isPrimitiveEMFType(sf) && !isEEnumType(sf)) {
-        output.write(%[if(newCurrent.get@firstToUpperCase(sf.getName())@().equals(resolveNode) && toSet) {
+          EList<EStructuralFeature> sfs = ((EClass)ecl).getEAllStructuralFeatures();
+          int sfCounter = 0; //to avoid to gen blocks with only an exception
+          for(EStructuralFeature sf : sfs) {//many and builtin should not produce a block
+            if(sf.isChangeable() && !sf.isMany() && !isPrimitiveEMFType(sf) && !isEEnumType(sf)) {
+              if(sfCounter>0) {
+                output.write(%[ else ]%);
+              }
+              output.write(%[if(newCurrent.get@firstToUpperCase(sf.getName())@().equals(resolveNode) && toSet) {
           newCurrent.set@firstToUpperCase(sf.getName())@((@getTypeFromEStructuralFeature(sf)@)newNode); 
-        } else ]%);
+        } ]%);
+              sfCounter++;
+            }
           }
-        }
-        output.write(%[{
-          throw new RuntimeException("should not be there");
-        }
-      } else ]%);
+          if(sfCounter>0) {
+            output.write(%[else { throw new RuntimeException("should not be there"); }]%);
+          }
+          output.write(%[} else ]%);
         }
       }
     }

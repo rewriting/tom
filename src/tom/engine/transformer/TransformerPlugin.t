@@ -431,15 +431,17 @@ public class TransformerPlugin extends TomGenericPlugin {
             Name("Sequence"),
             bql)
           ));
+    //TODO
     //add condition: call it only if resolve is needed
-    BQTermList res = `concBQTerm(transfos, 
+    /*BQTermList res = `concBQTerm(transfos, 
                                  makeResolveBQTerm(declList, transfoDomain));
     BQTerm transformerBQTerm = `Composite(CompositeBQTerm(BQAppl(
             concOption(),
             Name("Sequence"),
             res)
           ));
-    return transformerBQTerm;
+    return transformerBQTerm;*/
+    return transfos;
   }
 
   /**
@@ -471,7 +473,7 @@ public class TransformerPlugin extends TomGenericPlugin {
       index++;
     }
     //build resolve part of the BQComposite
-    //TODO?: change that to avoid to have a hardcoded traversal?
+    //TODO?: change that to avoid to have a hardcoded idefault traversal?
     BQTerm bqtrans = `Composite(CompositeBQTerm(BQAppl(
             concOption(option), Name("TopDown"), concBQTerm(Composite(
                 CompositeBQTerm(
