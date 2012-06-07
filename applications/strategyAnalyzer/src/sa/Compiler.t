@@ -134,15 +134,20 @@ public class Compiler {
         String n1 = compileStrat(bag,extractedSignature,generatedSignature,`s1);
         String n2 = compileStrat(bag,extractedSignature,generatedSignature,`s2);
         String seq = getName("seq");
+        String seq2 = getName("seq2");
         generatedSignature.put(seq,1);
+        generatedSignature.put(seq2,2);
         if( !Main.options.exact ){
-          bag.add(tools.encodeRule(%[rule(@seq@(X), @n2@(@n1@(X)))]%));
+          //           bag.add(tools.encodeRule(%[rule(@seq@(X), @n2@(@n1@(X)))]%));
+          bag.add(tools.encodeRule(%[rule(@seq@(X), @seq2@(@n2@(@n1@(X)),X))]%));
         } else { 
           // the rule cannot be applied on arguments containing fresh variables but only on terms from the signature or Bottom
           // normally it will follow reduction in original TRS
-          bag.add(tools.encodeRule(%[rule(@seq@(at(X,anti(Dummy()))), @n2@(@n1@(X)))]%));
+          bag.add(tools.encodeRule(%[rule(@seq@(at(X,anti(Dummy()))), @seq2@(@n2@(@n1@(X)),X))]%));
           bag.add(tools.encodeRule(%[rule(@seq@(Bottom(X)), Bottom(X))]%));
         }
+        bag.add(tools.encodeRule(%[rule(@seq2@(Bottom(Y),X), Bottom(X))]%));
+        bag.add(tools.encodeRule(%[rule(@seq2@(at(X,anti(Bottom(Y))),Z), X)]%));
         return seq;
       }
 
