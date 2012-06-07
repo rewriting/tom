@@ -36,6 +36,9 @@ public class Options {
   @Option(name="-l",usage="anti-pattern level",metaVar="LEVEL")
     public int level = 100;
 
+  @Option(name="-exact",usage="compilation respects the reduction in the original system")
+    public boolean exact = false;
+
   // receives other command line parameters than options
   @Argument
     public List<String> arguments = new ArrayList<String>();

@@ -135,7 +135,14 @@ public class Compiler {
         String n2 = compileStrat(bag,extractedSignature,generatedSignature,`s2);
         String seq = getName("seq");
         generatedSignature.put(seq,1);
-        bag.add(tools.encodeRule(%[rule(@seq@(X), @n2@(@n1@(X)))]%));
+        if( !Main.options.exact ){
+          bag.add(tools.encodeRule(%[rule(@seq@(X), @n2@(@n1@(X)))]%));
+        } else { 
+          // the rule cannot be applied on arguments containing fresh variables but only on terms from the signature or Bottom
+          // normally it will follow reduction in original TRS
+          bag.add(tools.encodeRule(%[rule(@seq@(at(X,anti(Dummy()))), @n2@(@n1@(X)))]%));
+          bag.add(tools.encodeRule(%[rule(@seq@(Bottom(X)), Bottom(X))]%));
+        }
         return seq;
       }
 
