@@ -87,7 +87,7 @@ public class Compiler {
             // use AST-syntax because lhs and rhs are already encoded
             bag.add(`Rule(Appl(r,TermList(lhs)),rhs));
             bag.add(`Rule(Appl(r,TermList(At(tools.encode("INTERNALX"),Anti(lhs)))),tools.encode("Bottom(INTERNALX)")));
-            // propagate failure; if the rule is applied to the result of a strategy that failed than the result is a failure
+            // propagate failure; if the rule is applied to the result of a strategy that failed then the result is a failure
             bag.add(`Rule(Appl(r,TermList(tools.encode("Bottom(INTERNALX)"))),tools.encode("Bottom(INTERNALX)")));
           }
         }

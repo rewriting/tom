@@ -20,27 +20,37 @@
 // // Test SEQUENCE
 // // Expected resuts:
 // //    a -->  c()
-// //    b --> Bottom(Bottom(b()))
-// //    c --> Bottom(Bottom(c()))
-// //    f(a) --> Bottom(Bottom(f(a())))
+// //    b --> Bottom(b())
+// //    c --> Bottom(c())
+// //    f(a) --> Bottom(f(a()))
 // let S=signature {a:0, b:0, c:0, f:1, g:2} in
 // let r1 = { a() -> b() } in 
 // let r2 = { b() -> c() } in 
 // (r1 ; r2)
 
-let S=signature {a:0, b:0, c:0, f:1, g:2} in
-let r1 = { a() -> b() } in 
-let r2 = { b() -> c() } in 
-let r3 = { c() -> a() } in 
-r1 ; (r2 ; r3)
+// let S=signature {a:0, b:0, c:0, f:1, g:2} in
+// let r1 = { a() -> b() } in 
+// let r2 = { b() -> c() } in 
+// let r3 = { c() -> a() } in 
+// r1 ; (r2 ; r3)
 
-
-
+// // doesn't work if the failure is not propagated for each rule
+// let S=signature {a:0, b:0, c:0, f:1, g:2} in
+// let r1 = { a() -> b() } in 
+// let r2 = { b() -> c() } in 
+// (r1 ; r2) <+ identity
 
 
 // // Test CHOICE
 // let S=signature {a:0, b:0, c:0, f:1, g:2} in
 // let r1 = { a() -> b() } in 
 // let r2 = { b() -> c() } in 
-// let r3 = { c() -> a() } in 
-// (r1 ; r2; r3) <+ identity
+// r1 <+ r2
+
+// BUG !!!! a -> b and should be a
+// implementation of sequence doesn't keep the original term before
+// the application of Seq strategy but the term that triggered the failure
+let S=signature {a:0, b:0, c:0, f:1, g:2} in
+let r1 = { a() -> b() } in 
+let r2 = { c() -> c() } in 
+(r1 ; r2) <+ identity
