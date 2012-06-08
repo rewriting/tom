@@ -32,10 +32,11 @@
 // -- if 'exact=false' (and no rule Bottom(Bottom) --> Bottom ) result is : Bottom(Bottom(a))
 
 // BUG !!!! a reduces to b and should be a
-// in case of failure implementation of sequence doesn't keep the
+// in case of failure, the implementation of sequence doesn't keep the
 // original term before the application of Seq strategy but the term
 // that triggered the failure
 // Result should be Bottom(a)  not Bottom(b) 
+//  --> Fixed: add parameter to keep the original input 
 // let S=signature {a:0, b:0, c:0, f:1, g:2} in
 // let r1 = { a() -> b() } in 
 // let r2 = { c() -> c() } in 
@@ -60,7 +61,13 @@
 
 // // Test CHOICE
 // BUG !!!! 'b' reduces to 'c' and should be 'Bottom(b)'
+//  --> Fixed: add immediate propagation of Bottom (if Bottom is the input)
+// let S=signature {a:0, b:0, c:0, f:1, g:2} in
+// let r1 = { a() -> b() } in 
+// let r2 = { b() -> c() } in 
+// r1 ; (r1 <+ r2)
+
 let S=signature {a:0, b:0, c:0, f:1, g:2} in
 let r1 = { a() -> b() } in 
 let r2 = { b() -> c() } in 
-r1 ; (r1 <+ r2)
+r1 <+ r2

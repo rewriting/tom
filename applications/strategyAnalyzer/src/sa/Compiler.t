@@ -138,7 +138,7 @@ public class Compiler {
         generatedSignature.put(seq,1);
         generatedSignature.put(seq2,2);
         if( !Main.options.exact ){
-          //           bag.add(tools.encodeRule(%[rule(@seq@(X), @n2@(@n1@(X)))]%)); // old version that doesn't keep track of input
+          //           bag.add(tools.encodeRule(%[rule(@seq@(X), @n2@(@n1@(X)))]%)); // old version - doesn't keep track of input
           bag.add(tools.encodeRule(%[rule(@seq@(X), @seq2@(@n2@(@n1@(X)),X))]%));
           // Bottom of Bottom is Bottom
           // this is not necessary if exact reduction - in this case Bottom is propagated immediately 
@@ -161,7 +161,9 @@ public class Compiler {
         String choice2 = getName("choice");
         generatedSignature.put(choice,1);
         generatedSignature.put(choice2,1);
-        bag.add(tools.encodeRule(%[rule(@choice@(X), @choice2@(@n1@(X)))]%));
+        //         bag.add(tools.encodeRule(%[rule(@choice@(X), @choice2@(@n1@(X)))]%)); // old version - Bottom not propagated directly
+        bag.add(tools.encodeRule(%[rule(@choice@(at(X,anti(Dummy()))),  @choice2@(@n1@(X)) )]%));
+        bag.add(tools.encodeRule(%[rule(@choice@(Bottom(X)), Bottom(X))]%));
         bag.add(tools.encodeRule(%[rule(@choice2@(Bottom(X)), @n2@(X))]%));
         bag.add(tools.encodeRule(%[rule(@choice2@(at(X,anti(Bottom(Y)))), X)]%));
         return choice;
