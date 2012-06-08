@@ -23,10 +23,10 @@
 // //    b --> Bottom(b())
 // //    c --> Bottom(c())
 // //    f(a) --> Bottom(f(a()))
-let S=signature {a:0, b:0, c:0, f:1, g:2} in
-let r1 = { a() -> b() } in 
-let r2 = { b() -> c() } in 
-(r1 ; r2)
+// let S=signature {a:0, b:0, c:0, f:1, g:2} in
+// let r1 = { a() -> b() } in 
+// let r2 = { b() -> c() } in 
+// (r1 ; r2)
 // apply on Bottom(a)
 // -- if 'exact=true' result is : Bottom(a)
 // -- if 'exact=false' (and no rule Bottom(Bottom) --> Bottom ) result is : Bottom(Bottom(a))
@@ -59,7 +59,8 @@ let r2 = { b() -> c() } in
 
 
 // // Test CHOICE
-// let S=signature {a:0, b:0, c:0, f:1, g:2} in
-// let r1 = { a() -> b() } in 
-// let r2 = { b() -> c() } in 
-// r1 ; (r1 <+ r2)
+// BUG !!!! 'b' reduces to 'c' and should be 'Bottom(b)'
+let S=signature {a:0, b:0, c:0, f:1, g:2} in
+let r1 = { a() -> b() } in 
+let r2 = { b() -> c() } in 
+r1 ; (r1 <+ r2)
