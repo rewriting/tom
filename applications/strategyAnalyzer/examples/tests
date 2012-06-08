@@ -67,7 +67,70 @@
 // let r2 = { b() -> c() } in 
 // r1 ; (r1 <+ r2)
 
+// let S=signature {a:0, b:0, c:0, f:1, g:2} in
+// let r1 = { a() -> b() } in 
+// let r2 = { b() -> c() } in 
+// r1 <+ r2
+
+
+
+
+
+
+// Test MU
 let S=signature {a:0, b:0, c:0, f:1, g:2} in
-let r1 = { a() -> b() } in 
-let r2 = { b() -> c() } in 
-r1 <+ r2
+let simplest = mu x .(identity <+ x) in
+simplest
+
+
+// let S=signature {a:0, b:0, c:0, f:1, g:2} in
+// let r1 = { a() -> b() } in 
+// let repeatR1 = mu x .((r1;x) <+ identity) in
+// repeatR1
+
+
+// // non-terminating
+// let S=signature {a:0, b:0, c:0, f:1, g:2} in
+// let infinite = mu x .(fail <+ x) in
+// infinite
+
+// let S=signature {a:0, b:0, c:0, f:1, g:2} in
+// let r1 = { a() -> a() } in 
+// let infinite = mu x .((r1;x) <+ identity) in
+// infinite
+
+// let S=signature {a:0, b:0, c:0, f:1, g:2} in
+// let infinite = mu x .(x ; identity) in
+// infinite
+
+
+
+
+
+// // repeat that fails all the time
+// let S=signature {a:0, b:0, c:0, f:1, g:2} in
+// let r1 = { a() -> b() } in 
+// let repeatR1 = mu x .(r1;x) in
+// repeatR1
+
+
+
+
+
+
+
+
+
+// let S=signature {a:0, b:0, c:0, f:1, g:2} in
+// let r1 = { a() -> b() } in 
+// let r2 = { b() -> a() } in 
+// let repeatR1orR2 = mu x .(((r1 <+ r2);x) <+ identity) in
+// repeatR1orR2
+
+
+
+
+
+//mu x .(((r1<+r2);x) <+ identity)
+
+
