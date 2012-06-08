@@ -23,20 +23,25 @@
 // //    b --> Bottom(b())
 // //    c --> Bottom(c())
 // //    f(a) --> Bottom(f(a()))
-// let S=signature {a:0, b:0, c:0, f:1, g:2} in
-// let r1 = { a() -> b() } in 
-// let r2 = { b() -> c() } in 
-// (r1 ; r2)
-
-// BUG !!!! a -> b and should be a
-// implementation of sequence doesn't keep the original term before
-// the application of Seq strategy but the term that triggered the
-// failure
-// Result should be Bottom(a)  not Bottom(b) 
 let S=signature {a:0, b:0, c:0, f:1, g:2} in
 let r1 = { a() -> b() } in 
-let r2 = { c() -> c() } in 
-r1 ; r2
+let r2 = { b() -> c() } in 
+(r1 ; r2)
+// apply on Bottom(a)
+// -- if 'exact=true' result is : Bottom(a)
+// -- if 'exact=false' (and no rule Bottom(Bottom) --> Bottom ) result is : Bottom(Bottom(a))
+
+// BUG !!!! a reduces to b and should be a
+// in case of failure implementation of sequence doesn't keep the
+// original term before the application of Seq strategy but the term
+// that triggered the failure
+// Result should be Bottom(a)  not Bottom(b) 
+// let S=signature {a:0, b:0, c:0, f:1, g:2} in
+// let r1 = { a() -> b() } in 
+// let r2 = { c() -> c() } in 
+// r1 ; r2
+// // result should be 'a' and not 'b'
+// // (r1 ; r2) <+ identity 
 
 // let S=signature {a:0, b:0, c:0, f:1, g:2} in
 // let r1 = { a() -> b() } in 
@@ -51,8 +56,10 @@ r1 ; r2
 // (r1 ; r2) <+ identity
 
 
+
+
 // // Test CHOICE
 // let S=signature {a:0, b:0, c:0, f:1, g:2} in
 // let r1 = { a() -> b() } in 
 // let r2 = { b() -> c() } in 
-// r1 <+ r2
+// r1 ; (r1 <+ r2)

@@ -138,9 +138,12 @@ public class Compiler {
         generatedSignature.put(seq,1);
         generatedSignature.put(seq2,2);
         if( !Main.options.exact ){
-          //           bag.add(tools.encodeRule(%[rule(@seq@(X), @n2@(@n1@(X)))]%));
+          //           bag.add(tools.encodeRule(%[rule(@seq@(X), @n2@(@n1@(X)))]%)); // old version that doesn't keep track of input
           bag.add(tools.encodeRule(%[rule(@seq@(X), @seq2@(@n2@(@n1@(X)),X))]%));
-        } else { 
+          // Bottom of Bottom is Bottom
+          // this is not necessary if exact reduction - in this case Bottom is propagated immediately 
+          bag.add(tools.encodeRule(%[rule(Bottom(Bottom(X)), Bottom(X))]%));
+       } else { 
           // the rule cannot be applied on arguments containing fresh variables but only on terms from the signature or Bottom
           // normally it will follow reduction in original TRS
           bag.add(tools.encodeRule(%[rule(@seq@(at(X,anti(Dummy()))), @seq2@(@n2@(@n1@(X)),X))]%));
