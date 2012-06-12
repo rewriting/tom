@@ -192,7 +192,9 @@ public class Compiler {
                 lx += ",X"+i;
                 rx += ","+phi_s+"(X"+i+")";
               }
-              bag.add(tools.encodeRule(%[rule(@all@(@name@(@lx@)), @all_n@(@rx@,@name@(@lx@)))]%));
+              bag.add(tools.encodeRule(%[rule(@all@(@name@(@lx@)), @all_n@(@rx@,@name@(@lx@)))]%)); 
+              // propagate Bottom  (otherwise not reduced and leads to bug in Sequence)
+              bag.add(tools.encodeRule(%[rule(@all@(Bottom(X)), Bottom(X) )]%));               
             }
 
             // generate success rules
