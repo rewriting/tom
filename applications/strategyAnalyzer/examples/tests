@@ -78,9 +78,9 @@
 
 
 // Test MU
-// let S=signature {a:0, b:0, c:0, f:1, g:2} in
-// let simplest = mu x .(identity <+ x) in
-// simplest
+let S=signature {a:0, b:0, c:0, f:1, g:2} in
+let simplest = mu x .(identity <+ x) in
+simplest
 
 
 // let S=signature {a:0, b:0, c:0, f:1, g:2} in
@@ -90,6 +90,10 @@
 
 
 // // non-terminating
+// let S=signature {a:0, b:0, c:0, f:1, g:2} in
+// let infinite = mu x .(identity ; x) in
+// infinite
+
 // let S=signature {a:0, b:0, c:0, f:1, g:2} in
 // let infinite = mu x .(fail <+ x) in
 // infinite
