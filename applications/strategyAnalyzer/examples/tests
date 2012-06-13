@@ -1,3 +1,16 @@
+// // Test Identity & Fail
+// // Fail should propagate Bottom directly : 
+// // Fail( Bottom(a) ) --> Bottom(a)   
+// //               and not Bottom(Bottom(a))
+// // Fail and Identity should apply only on terms of the signature
+// // (not on Dummy)
+let S=signature {a:0, b:0, f:1, g:2, h:1} in
+// identity
+fail
+
+
+
+
 // // Test one rule 
 // // Expected resuts:
 // //    a --> b()
@@ -14,6 +27,8 @@
 // let S=signature {a:0, b:0,  f:1, g:2} in
 // let r1 = { a() -> b() } in 
 // r1 <+ identity
+
+
 
 
 
@@ -101,11 +116,11 @@
 // simplest
 
 // // BUG (if Bottom not propagated directly)
-let S=signature {a:0, b:0, f:1, g:2, h:1} in
-let r1 = { a() -> b() } in 
-// let bug = r1 ; one(r1)  in
-let bug = (r1 ; one(r1)) <+ identity  in
-bug
+// let S=signature {a:0, b:0, f:1, g:2, h:1} in
+// let r1 = { a() -> b() } in 
+// // let bug = r1 ; one(r1)  in
+// let bug = (r1 ; one(r1)) <+ identity  in
+// bug
 
 
 

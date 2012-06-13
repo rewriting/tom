@@ -119,14 +119,34 @@ public class Compiler {
       StratIdentity() -> {
         String id = getName("id");
         generatedSignature.put(id,1);
-        bag.add(tools.encodeRule(%[rule(@id@(X), X)]%));
+        if( !Main.options.exact ){
+          bag.add(tools.encodeRule(%[rule(@id@(X), X)]%));
+          // Bottom of Bottom is Bottom
+          // this is not necessary if exact reduction - in this case Bottom is propagated immediately 
+          bag.add(tools.encodeRule(%[rule(Bottom(Bottom(X)), Bottom(X))]%));
+       } else { 
+          // the rule cannot be applied on arguments containing fresh variables but only on terms from the signature or Bottom
+          // normally it will follow reduction in original TRS
+          bag.add(tools.encodeRule(%[rule(@id@(at(X,anti(Dummy()))), X)]%));
+          bag.add(tools.encodeRule(%[rule(@id@(Bottom(X)), Bottom(X))]%));
+        }
         return id;
       }
 
       StratFail() -> {
         String fail = getName("fail");
         generatedSignature.put(fail,1);
-        bag.add(tools.encodeRule(%[rule(@fail@(X), Bottom(X))]%));
+        if( !Main.options.exact ){
+          bag.add(tools.encodeRule(%[rule(@fail@(X), Bottom(X))]%));
+          // Bottom of Bottom is Bottom
+          // this is not necessary if exact reduction - in this case Bottom is propagated immediately 
+          bag.add(tools.encodeRule(%[rule(Bottom(Bottom(X)), Bottom(X))]%));
+       } else { 
+          // the rule cannot be applied on arguments containing fresh variables but only on terms from the signature or Bottom
+          // normally it will follow reduction in original TRS
+          bag.add(tools.encodeRule(%[rule(@fail@(at(X,anti(Dummy()))), Bottom(X))]%));
+          bag.add(tools.encodeRule(%[rule(@fail@(Bottom(X)), Bottom(X))]%));
+        }
         return fail;
       }
 
