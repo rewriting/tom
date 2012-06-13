@@ -94,11 +94,14 @@ public class ExpanderPlugin extends GomGenericPlugin {
       try {
         tom.library.utils.Viewer.toTree(modules,swriter);
       } catch(java.io.IOException e) {
-        GomMessage.error(getLogger(), null, 0, GomMessage.viewerToTreeFailure, e);
+        GomMessage.error(getLogger(), getStreamManager().getInputFileName(), 0,
+            GomMessage.viewerToTreeFailure, e);
         e.printStackTrace();
       }
-      GomMessage.fine(getLogger(), null, 0, GomMessage.importedModules, swriter);
-      GomMessage.info(getLogger(), null, 0, GomMessage.gomExpansionPhase, 
+      GomMessage.fine(getLogger(), getStreamManager().getInputFileName(), 0,
+          GomMessage.importedModules, swriter);
+      GomMessage.info(getLogger(), getStreamManager().getInputFileName(), 0,
+          GomMessage.gomExpansionPhase,
           (System.currentTimeMillis()-startChrono));
       if(intermediate) {
         Tools.generateOutput(getStreamManager().getOutputFileName()

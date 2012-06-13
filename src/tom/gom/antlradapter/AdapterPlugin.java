@@ -95,8 +95,8 @@ public class AdapterPlugin extends GomGenericPlugin {
     }
     AdapterGenerator adapter = new AdapterGenerator(tomHomePath, getGomEnvironment());
     adapter.generate(moduleList,hookList);
-    GomMessage.info(getLogger(), null, 0, 
-        GomMessage.gomAntlrAdapterGenerationPhase, 
+    GomMessage.info(getLogger(), getStreamManager().getInputFileName(), 0,
+        GomMessage.gomAntlrAdapterGenerationPhase,
         (System.currentTimeMillis()-startChrono));
     informationTracker.put(KEY_LAST_GEN_MAPPING,getGomEnvironment().getLastGeneratedMapping());
   }

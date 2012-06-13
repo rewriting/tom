@@ -128,11 +128,12 @@ public class BackendPlugin extends GomGenericPlugin {
           getStreamManager().getImportList(),getGomEnvironment());
     backend.generate(classList);
     if (null == classList) {
-      GomMessage.error(getLogger(),null,0,
+      GomMessage.error(getLogger(), getStreamManager().getInputFileName(),0,
           GomMessage.generationIssue,
           getStreamManager().getInputFileName());
     } else {
-      GomMessage.info(getLogger(), null, 0, GomMessage.gomGenerationPhase, 
+      GomMessage.info(getLogger(), getStreamManager().getInputFileName(), 0,
+          GomMessage.gomGenerationPhase,
           (System.currentTimeMillis()-startChrono));
     }
     informationTracker.put(KEY_LAST_GEN_MAPPING,getGomEnvironment().getLastGeneratedMapping());
