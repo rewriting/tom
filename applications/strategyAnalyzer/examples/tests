@@ -76,6 +76,47 @@
 
 
 
+// // Test ALL
+// let S=signature {a:0, b:0, f:1, g:2, h:1} in
+// let r1 = { a() -> b() } in 
+// let simplest = all(r1)  in
+// simplest
+
+// // BUG (if Bottom not propagated directly)
+// let S=signature {a:0, b:0, f:1, g:2, h:1} in
+// let r1 = { a() -> b() } in 
+// // let bug = r1 ; all(r1)  in
+// let bug = (r1 ; all(r1)) <+ identity  in
+// bug
+
+
+
+
+
+
+// // Test ONE
+// let S=signature {a:0, b:0, f:1, g:2, h:1} in
+// let r1 = { a() -> b() } in 
+// let simplest = one(r1)  in
+// simplest
+
+// // BUG (if Bottom not propagated directly)
+let S=signature {a:0, b:0, f:1, g:2, h:1} in
+let r1 = { a() -> b() } in 
+// let bug = r1 ; one(r1)  in
+let bug = (r1 ; one(r1)) <+ identity  in
+bug
+
+
+
+
+
+
+
+
+
+
+
 
 // Test MU
 // let S=signature {a:0, b:0, c:0, f:1, g:2} in
@@ -119,17 +160,3 @@
 
 
 
-
-
-// // Test ALL
-let S=signature {a:0, b:0, f:1, g:2, h:1} in
-let r1 = { a() -> b() } in 
-let simplest = all(r1)  in
-simplest
-
-// // BUG (if Bottom not propagated directly)
-// let S=signature {a:0, b:0, f:1, g:2, h:1} in
-// let r1 = { a() -> b() } in 
-// // let bug = r1 ; all(r1)  in
-// let bug = (r1 ; all(r1)) <+ identity  in
-// bug

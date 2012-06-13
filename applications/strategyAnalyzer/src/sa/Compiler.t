@@ -250,6 +250,8 @@ public class Compiler {
                 rx += ",X"+i;
               }
               bag.add(tools.encodeRule(%[rule(@one@(@name@(@lx@)), @one_n@_1(@rx@))]%));
+              // propagate Bottom  (otherwise not reduced and leads to bug in Sequence)
+              bag.add(tools.encodeRule(%[rule(@one@(Bottom(X)), Bottom(X) )]%));               
             }
 
             for(int i=1 ; i<=arity ; i++) {
