@@ -173,9 +173,10 @@ public class Compiler {
         String phi_s = compileStrat(bag,extractedSignature,generatedSignature,`s);
         String all = getName("all");
         generatedSignature.put(all,1);
-        Iterator<String> it = extractedSignature.keySet().iterator();
-        while(it.hasNext()) {
-          String name = it.next();
+        //         Iterator<String> it = extractedSignature.keySet().iterator();
+        //         while(it.hasNext()) {
+        //           String name = it.next();
+        for(String name : extractedSignature.keySet()) {
           int arity = generatedSignature.get(name);
           int arity_all = arity+1;
           if(arity==0) {
@@ -231,9 +232,10 @@ public class Compiler {
         String phi_s = compileStrat(bag,extractedSignature,generatedSignature,`s);
         String one = getName("one");
         generatedSignature.put(one,1);
-        Iterator<String> it = extractedSignature.keySet().iterator();
-        while(it.hasNext()) {
-          String name = it.next();
+        //         Iterator<String> it = extractedSignature.keySet().iterator();
+        //         while(it.hasNext()) {
+        //           String name = it.next();
+        for(String name : extractedSignature.keySet()) {
           int arity = generatedSignature.get(name);
           if(arity==0) {
             bag.add(tools.encodeRule(%[rule(@one@(@name@), Bottom(@name@))]%));
