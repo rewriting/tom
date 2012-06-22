@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<cheatsheet title="Simple TOM Application">
+
+	<intro>
+		<description>
+			Welcome to the TOM Hello World tutorial.
+		</description>
+	</intro>
+	
+	<item
+		title="Create a new TOM + Java project"
+		skip="true">
+		<action
+			pluginId="fr.loria.eclipse.tom"
+			class="fr.loria.eclipse.jtom.ui.wizards.OpenTomProjectWizardAction"/>
+		<description>
+		</description>
+	</item>
+
+	<item
+		title="Create your HelloWorld TOM file"
+		skip="true">
+		<action
+			pluginId="fr.loria.eclipse.tom"
+			class="fr.loria.eclipse.jtom.ui.wizards.OpenTomFileWizardAction"/>
+		<description>
+		</description>
+	</item>
+
+	<item title="Include the TOM string mapping">
+		<description>
+		</description>
+	</item>
+
+	<item
+		title="Create your first TOM + Java method">
+		<description>
+		</description>
+	</item>
+
+	<item
+		title="Test your TOM + Java Application">
+		<description>
+		</description>
+	</item>
+
+</cheatsheet>
