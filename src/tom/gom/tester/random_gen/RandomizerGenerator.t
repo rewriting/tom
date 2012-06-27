@@ -6,6 +6,11 @@ import tom.library.sl.*;
 public class RandomizerGenerator {
   %include { sl.tom }
   %include {sort/Sort.tom}
+  %typeterm Integer {
+    implement{Integer}
+    is_sort(t){t instanceof Integer}
+    equals(l1,l2)  { $l1.equals($l2) }
+  }
     
 	public Strategy make_random(){
 		return 
@@ -17,4 +22,7 @@ public class RandomizerGenerator {
           Make_plus(MuVar("x"), MuVar("x")),
           Make_mult(MuVar("x"), MuVar("x"))));
 	}
+	
+	
+	
 }
