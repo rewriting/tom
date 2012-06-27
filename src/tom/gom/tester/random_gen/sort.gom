@@ -1,0 +1,6 @@
+module Sort
+abstract syntax
+Expr = zero()
+  | un()
+  | plus(a:Expr, b:Expr)
+  | mult(a:Expr, b:Expr)

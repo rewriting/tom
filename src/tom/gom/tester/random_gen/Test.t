@@ -58,6 +58,7 @@ public class Test {
 	}
 	
 	public static void main(String[] args) {
+		
 		Expr a = rand_gen();
 		System.out.println(a);
 		System.out.println("\n\n");
