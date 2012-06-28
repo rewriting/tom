@@ -38,7 +38,8 @@ public class Main {
     
     
     /* debut test */
-    Strategy s_test = generator.testStrategy2();
+    Strategy s_test = generator.testStrategy();
+    System.out.println(s_test);
     Expr b = null;
     try{
       b=s_test.visit(`zero());

@@ -1,1 +1,1 @@
-gom sort.gom --withCongruenceStrategies && tom RandomizerGenerator.t && javac RandomizerGenerator.java && tom Main.t && javac Main.java && java Main
+gom sort.gom --withCongruenceStrategies && tom RandomizerGenerator.t && javac RandomizerGenerator.java && tom Main.t && javac Main.java

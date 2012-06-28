@@ -35,6 +35,7 @@ public class RandomizerGenerator {
 	}
 	
 	public Strategy testStrategy(){
+  	//int i =0;
   	return 
   	  `Mu(
   	    MuVar("x"),
@@ -44,6 +45,7 @@ public class RandomizerGenerator {
 	}
 	
 	public Strategy testStrategy2(){
+  	//int i = 0;
 	    return 
 	      `Mu(
 	        MuVar("y"),
