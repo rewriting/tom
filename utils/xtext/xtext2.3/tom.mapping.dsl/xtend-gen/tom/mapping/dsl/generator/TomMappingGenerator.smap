@@ -1,0 +1,11 @@
+SMAP
+TomMappingGenerator.java
+Xtend
+*S Xtend
+*F
++ 0 TomMappingGenerator.xtend
+src/tom/mapping/dsl/generator/TomMappingGenerator.xtend
+*L
+18:18,3
+19:21
+*E

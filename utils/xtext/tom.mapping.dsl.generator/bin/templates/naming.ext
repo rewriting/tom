@@ -1,0 +1,33 @@
+import tom::mapping::model;
+import org::eclipse::emf::ecore;
+
+
+String getCustomOperatorSlotAccessorName(Accessor accessor):
+	"get"+((UserOperator)accessor.eContainer()).name.toFirstUpper()+"Slot"+accessor.slot.name.toUpperCase(); 
+	
+String getCustomOperatorsClass(Mapping mapping) :
+	mapping.name.toFirstUpper()+"CustomAccessors";
+	
+String getChildrenGetterName(EPackage p):
+	p.name.toFirstUpper()+"ChildrenGetter";
+	
+String getChildrenSetterName(EPackage p):
+	p.name.toFirstUpper()+"ChildrenSetter";
+	
+String name(Terminal t, Mapping m):
+	t.many&&isInferedList(t,m)?t.name+"List":t.name;
+	
+String factoryName(Mapping m):
+	m.name.toFirstUpper()+"UserFactory";
+
+String tomFactoryName(Mapping m):
+	m.name.toFirstUpper()+"TomFactory";
+	
+String tomFactoryQualifiedName(Mapping m):
+	m.prefix+"."+m.name+"."+"internal"+"."+tomFactoryName(m);
+
+String getPackagePrefix(String prefix):
+	(prefix==null || prefix.compareTo("")==0)?"":prefix+".";
+	
+private Boolean isInferedList(Terminal t, Mapping m):
+	t.many&&!(m.terminals.contains(t)||m.externalTerminals.contains(t));

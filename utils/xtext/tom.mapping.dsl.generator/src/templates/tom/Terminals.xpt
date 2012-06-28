@@ -1,0 +1,43 @@
+«IMPORT tom::mapping::model»
+«IMPORT org::eclipse::emf::ecore»
+
+«EXTENSION templates::extensions»
+«EXTENSION templates::naming»
+
+
+
+«DEFINE terminal(Mapping m) FOR Terminal-»
+«IF this.many»«EXPAND listTerminal(m) FOR this-»
+«ELSE-»
+%typeterm «this.name» {
+	implement 		{«this.class_.name»}
+	is_sort(t) 		{$t instanceof «this.class_.name»}
+	equals(l1,l2) 	{($l1!=null && $l1.equals($l2)) || $l1==$l2}
+}
+«ENDIF»
+
+«ENDDEFINE»
+
+
+«DEFINE listTerminal(Mapping m) FOR Terminal-»
+
+%typeterm «name(m)»{
+	 implement { EList<«class_.name»> }
+     is_sort(t) «EXPAND listTest FOR this-»
+	equals(l1,l2) 	{($l1!=null && $l1.equals($l2)) || $l1==$l2}
+}
+
+%oparray «name(m)» «name(m)» («m.getTerminal(this.class_,false).name»*) {
+ 	 is_fsym(t) «EXPAND listTest FOR this-»
+     make_empty(n) { new BasicEList<«class_.name»>($n) }
+     make_append(e,l) { append($e,$l) }
+     get_element(l,n) { $l.get($n) }
+     get_size(l)      { $l.size() }
+}
+«ENDDEFINE»
+
+«DEFINE listTest FOR Terminal-»
+					{ $t instanceof EList<?> && 
+                           (((EList<«class_.name»>)$t).size() == 0 
+                         || (((EList<«class_.name»>)$t).size()>0 && ((EList<«class_.name»>)$t).get(0) instanceof «class_.name»))} 
+«ENDDEFINE»

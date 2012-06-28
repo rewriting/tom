@@ -1,0 +1,49 @@
+«IMPORT tom::mapping::model»
+«IMPORT org::eclipse::emf::ecore»
+
+«EXTENSION templates::naming»
+
+«DEFINE main FOR Mapping»
+
+«IF this.operators.select(e|UserOperator.isInstance(e)).size>0»
+
+«FILE getCustomOperatorsClass()+".java"-»
+
+public class «getCustomOperatorsClass()» {
+
+	«FOREACH operators AS op-»
+	«EXPAND operator(this) FOR op-»
+	«ENDFOREACH»
+	
+	«ENDFILE-»
+	«ENDIF»
+	«ENDDEFINE»
+	
+	«DEFINE operator(Mapping mapping) FOR Operator»«ENDDEFINE»
+	«DEFINE operator(Mapping mapping) FOR UserOperator»
+	
+	«FOREACH accessors AS a»«EXPAND accessor(this) FOR a-»«ENDFOREACH»
+	«EXPAND test FOR this»
+	«EXPAND make FOR this»
+	
+	«ENDDEFINE»
+	
+	«DEFINE accessor(UserOperator op) FOR Accessor»
+	public static «EXPAND templates::tom::Parameters::javaTerminalType FOR this.slot.type-» «getCustomOperatorSlotAccessorName(this)» («EXPAND templates::tom::Parameters::javaTerminalType FOR op.type-» t){
+		return «java»;
+	}
+	«ENDDEFINE»
+	
+	«DEFINE test FOR UserOperator»
+	public static boolean is«name.toFirstUpper()»(«EXPAND templates::tom::Parameters::javaTerminalType FOR this.type-»» t){
+		return «test»;
+	}
+	«ENDDEFINE»
+	
+	«DEFINE make FOR UserOperator»
+	public static «EXPAND templates::tom::Parameters::javaTerminalType FOR this.type-» make«name.toFirstUpper()»(«FOREACH accessors AS acc SEPARATOR ","-»«EXPAND templates::tom::Parameters::javaParameter FOR acc.slot-»«ENDFOREACH»){
+		return «make»;
+	}
+}
+
+«ENDDEFINE»

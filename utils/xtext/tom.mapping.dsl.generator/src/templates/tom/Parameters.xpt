@@ -1,0 +1,54 @@
+«IMPORT tom::mapping::model»
+«IMPORT org::eclipse::emf::ecore»
+
+«EXTENSION templates::extensions»
+«EXTENSION templates::naming»
+
+«DEFINE parameter FOR Parameter»«name» : «EXPAND terminalType FOR this.type»«ENDDEFINE»
+«DEFINE javaParameter FOR Parameter»«EXPAND javaTerminalType FOR this.type» «name»«ENDDEFINE»
+
+«DEFINE terminalType FOR Terminal»«this.name»«ENDDEFINE»
+«DEFINE javaTerminalType FOR Terminal»«IF this.many»List<«this.class_.name»>«ELSE»«this.class_.name»«ENDIF»«ENDDEFINE»
+
+«DEFINE featureParameter(Mapping mapping) FOR FeatureParameter»«this.feature.name» : «EXPAND feature(mapping) FOR this.feature»«ENDDEFINE»
+«DEFINE javaFeatureParameter FOR FeatureParameter»«EXPAND feature FOR this.feature» _«this.feature.name»«ENDDEFINE»
+
+«DEFINE defaultFeatureParameter(Mapping mapping) FOR EStructuralFeature»«this.name» : «EXPAND feature(mapping) FOR this»«ENDDEFINE»
+«DEFINE defaultJavaFeatureParameter FOR EStructuralFeature»«EXPAND feature FOR this» _«this.name»«ENDDEFINE»
+
+
+«DEFINE renameEcoreClasses FOR EAttribute-»«
+	IF EAttributeType.name=="EInt"»int«
+	ELSEIF EAttributeType.name=="ELong"»long«
+	ELSEIF EAttributeType.name=="EFloat"»float«
+	ELSEIF EAttributeType.name=="EDouble"»double«
+	ELSEIF EAttributeType.name=="EBoolean"»boolean«
+	ELSEIF EAttributeType.name=="EString"»String«
+	ELSE»«
+	IF EAttributeType.instanceTypeName!=null»«
+		EAttributeType.instanceClassName»«
+	ELSE»«EAttributeType.name»
+	«ENDIF» 
+«ENDIF»«ENDDEFINE»
+
+«DEFINE feature(Mapping mapping) FOR EStructuralFeature»«ENDDEFINE»
+«DEFINE feature(Mapping mapping) FOR EReference-»«name(mapping.getTerminal(this.EReferenceType,this.many),mapping)»«ENDDEFINE»
+«DEFINE feature(Mapping mapping) FOR EAttribute-»«
+	IF this.many
+		»List<? extends«EXPAND renameEcoreClasses FOR this»>«
+	ELSE
+		»«EXPAND renameEcoreClasses FOR this»«
+	ENDIF
+»«ENDDEFINE»
+
+
+
+
+«DEFINE feature FOR EStructuralFeature»«ENDDEFINE»
+«DEFINE feature FOR EReference-»«IF this.many»List<? extends «EReferenceType.name»>«ELSE»«EReferenceType.name»«ENDIF»«ENDDEFINE»
+«DEFINE feature FOR EEnum»«name»«ENDDEFINE»
+«DEFINE feature  FOR EAttribute-»«EXPAND primitiveType FOR this.EAttributeType»«ENDDEFINE»
+
+
+«DEFINE primitiveType FOR EDataType»«IF instanceTypeName=="java.lang.String"-»String«ELSE-»«instanceTypeName»«ENDIF-»«ENDDEFINE»
+«DEFINE primitiveType FOR EEnum»«name»«ENDDEFINE»

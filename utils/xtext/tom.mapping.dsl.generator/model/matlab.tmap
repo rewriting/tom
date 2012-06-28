@@ -1,0 +1,19 @@
+TomMapping matlab ;
+
+prefix "eu.alma.frontend.matlab";
+
+import "platform:/resource/eu.alma.frontend.matlab/src/eu/alma/frontend/MatlabAst.ecore";
+
+import "platform:/resource//fr.irisa.cairn.gecos.model/model/gecos.cdfg.ecore";
+import "platform:/resource/fr.irisa.cairn.gecos.model.tom/src-tom/gecos.tmap";  
+
+terminals { 
+	use {InstL,Inst,Sym,Blk,BlkL}
+}
+
+module nodes {
+	operators {
+		op matlabFor:: matlabAst.MatlabForBlock(iterator, range, bodyBlock, ignore branchInfos, ignore stepBlock, ignore testBlock, ignore initBlock, ignore number );
+		op exprStmt:: matlabAst.ExpressionStatement(expr, ignore separators);
+	}
+}

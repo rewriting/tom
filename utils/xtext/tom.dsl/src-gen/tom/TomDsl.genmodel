@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/tom.dsl/src-gen"
+    editDirectory="/tom.dsl.edit/src" editorDirectory="/tom.dsl.editor/src" modelPluginID="tom.dsl"
+    forceOverwrite="true" modelName="TomDsl" updateClasspath="false" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
+    complianceLevel="5.0" copyrightFields="false" editPluginID="tom.dsl.edit" editorPluginID="tom.dsl.editor">
+  <genPackages prefix="TomDsl" basePackage="tom" disposableProviderFactory="true"
+      ecorePackage="TomDsl.ecore#/">
+    <genClasses ecoreClass="TomDsl.ecore#//TomFile">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference TomDsl.ecore#//TomFile/ops"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference TomDsl.ecore#//TomFile/terms"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference TomDsl.ecore#//TomFile/inc"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute TomDsl.ecore#//TomFile/locals"/>
+    </genClasses>
+    <genClasses ecoreClass="TomDsl.ecore#//ArrayOperation">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute TomDsl.ecore#//ArrayOperation/term"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute TomDsl.ecore#//ArrayOperation/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference TomDsl.ecore#//ArrayOperation/fsym"/>
+    </genClasses>
+    <genClasses ecoreClass="TomDsl.ecore#//Include">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute TomDsl.ecore#//Include/path"/>
+    </genClasses>
+    <genClasses ecoreClass="TomDsl.ecore#//Operation">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference TomDsl.ecore#//Operation/arg"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference TomDsl.ecore#//Operation/slot"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference TomDsl.ecore#//Operation/make"/>
+    </genClasses>
+    <genClasses ecoreClass="TomDsl.ecore#//OperationArray">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference TomDsl.ecore#//OperationArray/size"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference TomDsl.ecore#//OperationArray/element"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference TomDsl.ecore#//OperationArray/empty"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference TomDsl.ecore#//OperationArray/append"/>
+    </genClasses>
+    <genClasses ecoreClass="TomDsl.ecore#//JavaBody">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute TomDsl.ecore#//JavaBody/body"/>
+    </genClasses>
+    <genClasses ecoreClass="TomDsl.ecore#//ARG">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute TomDsl.ecore#//ARG/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute TomDsl.ecore#//ARG/type"/>
+    </genClasses>
+    <genClasses ecoreClass="TomDsl.ecore#//TypeTerm">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute TomDsl.ecore#//TypeTerm/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference TomDsl.ecore#//TypeTerm/implement"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference TomDsl.ecore#//TypeTerm/sort"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference TomDsl.ecore#//TypeTerm/equals"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>

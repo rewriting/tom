@@ -1,0 +1,12 @@
+TomMapping example { 
+	metamodel "file:/c:/data/projects/tom.mapping.example/model/ex.ecore"; 
+	terminals {
+		N : Node, NList : Node[]
+	}
+	
+	operators {
+		op name::NameNode(name);
+		op value::ValueNode(value);
+		op complex::ComplexNode(children);
+	}	
+}

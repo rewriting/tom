@@ -1,0 +1,76 @@
+grammar tom.TomDsl hidden(WS,ML_COMMENT,SL_COMMENT)
+
+generate tomDsl "http://www.TomDsl.tom"
+
+import "http://www.eclipse.org/emf/2002/Ecore" as ecore
+
+	
+TomFile:
+	 (ops+=ArrayOperation | terms+=TypeTerm | inc+=Include | locals=Local)*
+	;
+
+
+ArrayOperation: Operation | OperationArray;
+	
+Include: '%include' FIRST_LEVEL_LBRACKET path+=(ID |'/' |'.')+ FIRST_LEVEL_RBRACKET;
+
+Local :
+	JAVAMETHOD 
+;
+Operation:
+ '%op' term=ID name=ID '(' (arg+=ARG ( ',' arg+=ARG)* )? ')' FIRST_LEVEL_LBRACKET
+	'is_fsym' ParID fsym=JavaBody
+
+	( 'get_slot' ParIDList slot+=JavaBody)*
+	 'make' ParIDList make=JavaBody
+ FIRST_LEVEL_RBRACKET ;
+
+OperationArray:
+'%oparray' term=ID name=ID '(' ID '*' ')' FIRST_LEVEL_LBRACKET
+	(
+		( 'is_fsym' ParID fsym=JavaBody)|
+		( 'get_size' ParID size=JavaBody )|
+		( 'get_element' ParIDList element=JavaBody)|
+		( 'make_empty' ParID empty=JavaBody) |
+		( 'make_append' ParIDList append=JavaBody)
+	) +
+FIRST_LEVEL_RBRACKET;
+
+//FSYMNode:
+//	( 'is_fsym' ParID fsym=JavaBody)
+//;
+
+JavaBody:
+	body=BRCKTSTMT;
+ParID:
+	'(' (ID)? ')';  
+
+ParIDList :
+	'(' (ID ( ',' ID )*)? ')' ;
+
+
+ARG: 
+	 name=ID (':' type=ID)?;
+
+TypeTerm:	
+ '%typeterm' name=ID FIRST_LEVEL_LBRACKET 
+	 'implement' implement=JavaBody
+	 'is_sort' ParID	 sort=JavaBody
+	 'equals' '(' ID ',' ID ')' equals=JavaBody
+ FIRST_LEVEL_RBRACKET;
+
+terminal FIRST_LEVEL_LBRACKET: '{';
+terminal FIRST_LEVEL_RBRACKET : '}'; 
+
+terminal BRCKTSTMT	: '{' -> '}';
+terminal JAVAMETHOD	: 'private' -> '(' -> ')' -> '{' -> '}';
+
+
+terminal ID 		: '^'?('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')*;
+terminal ML_COMMENT	: '/*' -> '*/';
+terminal SL_COMMENT 	: '//' !('\n'|'\r')* ('\r'? '\n')?;
+
+terminal WS			: (' '|'\t'|'\r'|'\n')+;
+
+terminal ANY_OTHER: .;
+	

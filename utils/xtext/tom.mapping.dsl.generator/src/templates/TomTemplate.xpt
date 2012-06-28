@@ -1,0 +1,95 @@
+«IMPORT tom::mapping::model»
+«IMPORT org::eclipse::emf::ecore»
+
+«EXTENSION templates::extensions»
+
+«DEFINE main FOR Mapping-»
+«FILE this.name+"_common.tom"-»
+%include { string.tom }
+%include { boolean.tom }
+%include { int.tom }
+%include { long.tom }
+%include { float.tom }
+%include { double.tom }
+
+private static <O> EList<O> enforce(EList l) {
+		return l;
+}
+
+private static <O> EList<O> append(O e,EList<O> l) {
+       l.add(e);
+       return l;
+}
+«ENDFILE»
+«FILE this.name+"_terms.tom"-»
+// Primitive terminals (enum and data types)
+«FOREACH getAllRootPackages() AS p»«EXPAND primitiveTerminals FOR p»
+«ENDFOREACH»    
+// Terminals
+«FOREACH terminals AS t-»
+«EXPAND tom::Terminals::terminal(this) FOR t-»
+«ENDFOREACH-»
+// List Terminals
+«FOREACH allListTerminals AS lt»
+«EXPAND tom::Terminals::listTerminal(this) FOR lt»
+«ENDFOREACH»
+«ENDFILE»
+
+«FILE this.name+"_ops.tom"-»
+//User operators
+«FOREACH operators AS op-»
+«EXPAND tom::Operators::operator(this) FOR op-»
+«ENDFOREACH»
+«ENDFILE»
+
+«FILE this.name+"_defaults_ops.tom"-»
+//Default operators
+«FOREACH allDefaultOperators AS op»«EXPAND tom::Operators::classOperator(this,op.name) FOR op»«ENDFOREACH»
+«PROTECT CSTART "/*" CEND "*/" ID this.name+"_mapping_user" »
+//Protected user region
+«ENDPROTECT»
+
+«ENDFILE»
+
+«FOREACH this.modules AS module»
+«FILE this.name+"_"+module.name+"_ops.tom"-»
+«PROTECT CSTART "/*" CEND "*/" ID module.name+"_mapping_user"»
+//Protected user region
+«ENDPROTECT»
+
+//User operators
+«FOREACH module.operators AS op-»
+«EXPAND tom::Operators::operator(this) FOR op-»
+«ENDFOREACH»
+
+
+«ENDFILE-»
+«ENDFOREACH»
+
+«ENDDEFINE»
+
+
+«DEFINE primitiveTerminals FOR EPackage-»
+«FOREACH EClassifiers AS c-»«EXPAND primitiveTerminal FOR c-»«ENDFOREACH-»
+«FOREACH ESubpackages AS subp-»«EXPAND primitiveTerminals FOR subp-»«ENDFOREACH-»
+«ENDDEFINE»
+
+«DEFINE primitiveTerminal FOR EClassifier-»«ENDDEFINE»
+«DEFINE primitiveTerminal FOR EEnum»
+%typeterm «name» {
+	implement 		{«name»}
+	is_sort(t) 		{$t instanceof «name»}
+	equals(l1,l2) 	{$l1==$l2}
+}
+«ENDDEFINE»
+«DEFINE primitiveTerminal FOR EDataType»
+«LET isPrimitive(instanceTypeName) AS primitive»
+%typeterm «name» {
+	implement 		{«instanceTypeName»}
+	is_sort(t) 		{«IF primitive»true«ELSE»$t instanceof «instanceTypeName»«ENDIF»}
+	equals(l1,l2) 	{«IF primitive»$l1==$l2«ELSE»$l1.equals($l2)«ENDIF»}
+}
+«ENDLET»
+«ENDDEFINE»
+
+

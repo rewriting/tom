@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Eclipse-BundleShape: dir
+Bundle-ManifestVersion: 2
+Bundle-Name: Tools
+Bundle-SymbolicName: fr.irisa.cairn.ecore.tools
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6,
+ J2SE-1.5
+Require-Bundle: org.eclipse.emf.ecore.xmi;bundle-version="2.5.0";visibility:=reexport
+Export-Package: fr.irisa.cairn.ecore.tools,
+ fr.irisa.cairn.ecore.tools.prettyprint,
+ fr.irisa.cairn.ecore.tools.query
+Bundle-ClassPath: lib/guava-r05.jar,
+ .

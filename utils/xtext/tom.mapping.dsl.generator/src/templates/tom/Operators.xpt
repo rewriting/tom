@@ -1,0 +1,75 @@
+«IMPORT tom::mapping::model»
+«IMPORT org::eclipse::emf::ecore»
+
+«EXTENSION templates::extensions»
+
+«EXTENSION templates::naming»
+
+
+«DEFINE operator(Mapping mapping) FOR Operator»«ENDDEFINE»
+
+«DEFINE operator(Mapping mapping) FOR ClassOperator»
+«IF this.parameters.size>0»«EXPAND classOperatorWithParameters(mapping) FOR this-»
+«ELSE-»
+«EXPAND classOperator(mapping,this.name) FOR this.class_»
+«ENDIF»
+«ENDDEFINE»
+
+«DEFINE classOperator(Mapping mapping, String op) FOR EClass»
+«PROTECT CSTART "/*" CEND "*/" ID op+"_"+this.name+"_tom_operator" »
+«LET getDefaultParameters(mapping) AS parameters»
+«IF mapping.getTerminal(this,false)!=null»
+%op «mapping.getTerminal(this,false).name» «op» («EXPAND classAttributes(mapping) FOR this»«FOREACH parameters AS param SEPARATOR ","»«EXPAND Parameters::defaultFeatureParameter(mapping) FOR param-»«ENDFOREACH»){
+	is_fsym(t) {$t instanceof «name»}
+	«FOREACH EAllAttributes AS attribute-»
+	get_slot(«attribute.name»,t) {((«this.name»)$t).get«attribute.name.toFirstUpper()»()}
+	«ENDFOREACH-»
+	«FOREACH parameters AS param -»
+	get_slot(«param.name»,t) {«EXPAND getter(this) FOR param»}
+	«ENDFOREACH-»
+	make(«FOREACH this.EAllAttributes AS att SEPARATOR ","-»«att.name»«ENDFOREACH»«IF this.EAllAttributes.size>0 && getDefaultParameters(mapping).size>0-»,«ENDIF-»«FOREACH parameters AS param SEPARATOR ","»«param.name»«ENDFOREACH») {«tomFactoryQualifiedName(mapping)».create«this.name.toFirstUpper()»(«FOREACH this.EAllAttributes AS att SEPARATOR ","-»$«att.name»«ENDFOREACH»«IF this.EAllAttributes.size>0 && getDefaultParameters(mapping).size>0-»,«ENDIF-»«FOREACH parameters AS param SEPARATOR ","»$«param.name»«ENDFOREACH-»)}
+}
+«ENDIF»
+«ENDLET»
+«ENDPROTECT»
+«ENDDEFINE»
+
+«DEFINE classOperatorWithParameters(Mapping mapping) FOR ClassOperator»
+«PROTECT CSTART "/*" CEND "*/" ID this.name+"_tom_operator_with_param" »
+«LET getCustomParameters(this) AS parameters»
+%op «mapping.getTerminal(this.class_,false).name» «name» («FOREACH parameters AS p SEPARATOR ","»«EXPAND Parameters::featureParameter(mapping) FOR p-»«ENDFOREACH»){
+	is_fsym(t) {$t instanceof «this.class_.name»«FOREACH this.parameters AS p»«EXPAND settedParameterTest(this.class_)FOR p»«ENDFOREACH»}
+	«FOREACH parameters AS p-»
+	get_slot(«p.feature.name»,t) {«EXPAND getter(this.class_) FOR p.feature»}
+	«ENDFOREACH-»
+	make(«FOREACH parameters AS p SEPARATOR ","-»_«p.feature.name»«ENDFOREACH») {«tomFactoryQualifiedName(mapping)».create«this.name.toFirstUpper()»(«FOREACH parameters AS p SEPARATOR ","-»$_«p.feature.name»«ENDFOREACH»)}
+}
+«ENDLET»
+«ENDPROTECT»
+«ENDDEFINE»
+
+«DEFINE getter(EClass c) FOR EStructuralFeature»«IF many»enforce(«ENDIF»((«c.name»)$t).get«name.toFirstUpper()»()«IF many»)«ENDIF»«ENDDEFINE»
+
+
+
+«DEFINE classAttributes(Mapping mapping) FOR EClass-»
+«FOREACH this.EAllAttributes AS att SEPARATOR ","-»«att.name» : «EXPAND Parameters::feature FOR att»«ENDFOREACH»«IF this.EAllAttributes.size>0 && getDefaultParameters(mapping).size>0-»,«ENDIF-»
+«ENDDEFINE»
+
+«DEFINE javaClassAttributes(Mapping mapping) FOR EClass-»
+«FOREACH this.EAllAttributes AS att SEPARATOR ","-»«EXPAND Parameters::feature FOR att» _«att.name»«ENDFOREACH»«IF this.EAllAttributes.size>0 && getDefaultParameters(mapping).size>0-»,«ENDIF-»
+«ENDDEFINE»
+
+«DEFINE settedParameterTest(EClass c) FOR FeatureParameter-»«ENDDEFINE»
+«DEFINE settedParameterTest(EClass c) FOR SettedFeatureParameter-»
+ && ((«c.name»)$t).get«feature.name.toFirstUpper()»().equals(«EXPAND settedValue(feature) FOR this.value-»)«
+ ENDDEFINE»
+
+«DEFINE settedValue(EStructuralFeature feature) FOR SettedValue»
+«ENDDEFINE»
+
+«DEFINE settedValue(EStructuralFeature feature) FOR EnumLiteralValue»«feature.EType.name».«literal.name»«ENDDEFINE»
+
+«DEFINE settedValue(EStructuralFeature feature) FOR JavaCodeValue-»
+«LET feature.EType.instanceTypeName!=null && feature.EType.instanceTypeName.contains("java.lang.String") AS isString-»«IF isString»"«ENDIF»«java»«IF isString»"«ENDIF-»
+«ENDLET»«ENDDEFINE»

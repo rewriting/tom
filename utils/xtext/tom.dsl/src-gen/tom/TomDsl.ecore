@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="tomDsl"
+    nsURI="http://www.TomDsl.tom" nsPrefix="tomDsl">
+  <eClassifiers xsi:type="ecore:EClass" name="TomFile">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="ops" upperBound="-1" eType="#//ArrayOperation"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="terms" upperBound="-1"
+        eType="#//TypeTerm" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="inc" upperBound="-1" eType="#//Include"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="locals" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ArrayOperation">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="term" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="fsym" eType="#//JavaBody"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Include">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="path" unique="false" upperBound="-1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Operation" eSuperTypes="#//ArrayOperation">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="arg" upperBound="-1" eType="#//ARG"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="slot" upperBound="-1" eType="#//JavaBody"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="make" eType="#//JavaBody"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="OperationArray" eSuperTypes="#//ArrayOperation">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="size" eType="#//JavaBody"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="element" eType="#//JavaBody"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="empty" eType="#//JavaBody"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="append" eType="#//JavaBody"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="JavaBody">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="body" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ARG">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="TypeTerm">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="implement" eType="#//JavaBody"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="sort" eType="#//JavaBody"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="equals" eType="#//JavaBody"
+        containment="true"/>
+  </eClassifiers>
+</ecore:EPackage>
