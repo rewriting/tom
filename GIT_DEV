@@ -39,6 +39,8 @@ git branch -a : list branches (remote and local)
 
 git branch -D <branch> : delete a local branch
 
+git branch -m <old_branch> <new_branch> : rename a branch
+
 git checkout <branch> : switch to the branch named <branch> (or retrieve the
                         content if already in this branch. Erase modifications 
 			which have not been committed). /!\ It is not possible 
