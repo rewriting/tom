@@ -38,7 +38,7 @@ public class Main {
     
     
     /* debut test */
-    Strategy s_test = generator.testStrategy();
+    Strategy s_test = generator.testStrategyID();
     System.out.println(s_test);
     Expr b = null;
     try{

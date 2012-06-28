@@ -7,6 +7,7 @@ import tom.library.sl.*;
 public class Representation {
   %include { sl.tom }
   %include {sort/Sort.tom}
+  
 
   private static void represente_aux(Expr e, String way){
     %match(e){
@@ -36,7 +37,7 @@ public class Representation {
   public static void main(String[] args) {
     //Expr a = `plus(zero(),plus(plus(plus(plus(zero(),zero()),plus(zero(),zero())),plus(plus(plus(zero(),zero()),plus(zero(),zero())),plus(plus(plus(zero(),zero()),plus(zero(),zero())),plus(plus(plus(zero(),zero()),plus(zero(),zero())),plus(plus(zero(),zero()),plus(zero(),zero())))))),plus(plus(plus(zero(),zero()),plus(zero(),zero())),plus(plus(plus(zero(),zero()),plus(zero(),zero())),plus(plus(plus(zero(),zero()),plus(zero(),zero())),plus(plus(plus(zero(),zero()),plus(zero(),zero())),plus(plus(zero(),zero()),plus(zero(),zero()))))))));
     
-    Expr a = `plus(mult(un(),un()),plus(mult(zero(),mult(zero(),mult(zero(),mult(mult(mult(zero(),un()),un()),zero())))),plus(zero(),plus(mult(plus(mult(mult(un(),mult(un(),plus(un(),zero()))),mult(zero(),un())),un()),mult(plus(mult(plus(un(),un()),plus(plus(plus(mult(zero(),zero()),un()),zero()),un())),mult(zero(),plus(plus(mult(mult(plus(un(),mult(plus(zero(),un()),mult(plus(zero(),un()),zero()))),mult(zero(),mult(zero(),zero()))),un()),un()),mult(un(),zero())))),un())),un()))));
+    Expr a = `plus(plus(zero(),plus(zero(),plus(zero(),zero()))),plus(zero(),plus(zero(),plus(zero(),zero()))));
     
    represente(a); 
   }

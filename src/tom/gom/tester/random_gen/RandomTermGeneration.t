@@ -40,7 +40,7 @@ public class RandomTermGeneration {
     abstract syntax
     Term = a()
     | b()
-    | f(x:Term)
+    | f(x:Term, y:Term)
     | g(x:Term)
   }
 
@@ -49,7 +49,7 @@ public class RandomTermGeneration {
 
 public static void  main(String[] args) {
 try {
-  Term t = (Term) `Mu(MuVar("x"),ChoiceUndet(Make_a(),Make_b(),Make_f(MuVar("x")),Make_g(MuVar("x")))).visit(`a());
+  Term t = (Term) `Mu(MuVar("x"),ChoiceUndet(Make_a(),Make_f(MuVar("x"),MuVar("x")))).visit(`a());
   System.out.println(t);
 } catch ( VisitFailure e) {}
   }

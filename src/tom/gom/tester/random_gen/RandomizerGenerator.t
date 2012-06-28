@@ -29,13 +29,14 @@ public class RandomizerGenerator {
     	e -> {
       	Position position = getEnvironment().getPosition();
       	System.out.println("position actuelle de " + `e);
-      	System.out.println(position);
+      	System.out.println(getEnvironment().depth());
+      	return `e;
     	}
   	}
 	}
 	
 	public Strategy testStrategy(){
-  	//int i =0;
+  	//int i = 0;
   	return 
   	  `Mu(
   	    MuVar("x"),
@@ -43,6 +44,16 @@ public class RandomizerGenerator {
   	      Make_plus(MuVar("x"),MuVar("x")),
   	      Machin()));
 	}
+	
+	public Strategy testStrategyID(){
+	    //int i = 0;
+	    return 
+	      `Mu(
+	        MuVar("x"),
+	        ChoiceUndet(
+	          Make_plus(MuVar("x"),MuVar("x")),
+	          Identity()));
+	  }
 	
 	public Strategy testStrategy2(){
   	//int i = 0;
