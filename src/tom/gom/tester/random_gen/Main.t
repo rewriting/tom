@@ -35,6 +35,20 @@ public class Main {
 
   public static void main(String[] args) {
     RandomizerGenerator generator = new RandomizerGenerator();
+    
+    
+    /* debut test */
+    Strategy s_test = generator.testStrategy2();
+    Expr b = null;
+    try{
+      b=s_test.visit(`zero());
+    } catch (VisitFailure e){
+      System.out.println("erreur");
+    }
+    System.out.println(b + "\n\n");
+    /* fin test */
+    
+    
     Strategy s = generator.make_random();
     Expr a = null;
     try{
@@ -45,6 +59,6 @@ public class Main {
     
     System.out.println(a);
     System.out.println("\n\n");
-    represente(a); 
+    //represente(a); 
   }
 }

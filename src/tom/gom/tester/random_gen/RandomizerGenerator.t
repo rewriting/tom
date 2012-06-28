@@ -6,6 +6,7 @@ import tom.library.sl.*;
 public class RandomizerGenerator {
   %include { sl.tom }
   %include {sort/Sort.tom}
+  
   %typeterm Integer {
     implement{Integer}
     is_sort(t){t instanceof Integer}
@@ -23,6 +24,45 @@ public class RandomizerGenerator {
           Make_mult(MuVar("x"), MuVar("x"))));
 	}
 	
+	%strategy Machin() extends Fail(){
+  	visit Expr {
+    	e -> {
+      	Position position = getEnvironment().getPosition();
+      	System.out.println("position actuelle de " + `e);
+      	System.out.println(position);
+    	}
+  	}
+	}
 	
+	public Strategy testStrategy(){
+  	return 
+  	  `Mu(
+  	    MuVar("x"),
+  	    ChoiceUndet(
+  	      Make_plus(MuVar("x"),MuVar("x")),
+  	      Machin()));
+	}
 	
+	public Strategy testStrategy2(){
+	    return 
+	      `Mu(
+	        MuVar("y"),
+	        Mu(
+	        MuVar("x"),
+	        ChoiceUndet(
+	          Make_plus(MuVar("x"),MuVar("y")),
+	          Machin()))
+	        );
+	  }
+	
+	public Strategy make_random_with_depth(int max_depth){
+	    return 
+	      `Mu(
+	        MuVar("x"),
+	        ChoiceUndet(
+	          Make_zero(),
+	          Make_un(),
+	          Make_plus(MuVar("x"), MuVar("x")),
+	          Make_mult(MuVar("x"), MuVar("x"))));
+	  }
 }
