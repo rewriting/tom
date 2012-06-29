@@ -78,12 +78,4 @@ public class Representation {
       System.out.println("ecriture fichier impossible");
     }    
   }
-
-  // public static void main(String[] args) {
-  //   //Expr a = `plus(zero(),plus(plus(plus(plus(zero(),zero()),plus(zero(),zero())),plus(plus(plus(zero(),zero()),plus(zero(),zero())),plus(plus(plus(zero(),zero()),plus(zero(),zero())),plus(plus(plus(zero(),zero()),plus(zero(),zero())),plus(plus(zero(),zero()),plus(zero(),zero())))))),plus(plus(plus(zero(),zero()),plus(zero(),zero())),plus(plus(plus(zero(),zero()),plus(zero(),zero())),plus(plus(plus(zero(),zero()),plus(zero(),zero())),plus(plus(plus(zero(),zero()),plus(zero(),zero())),plus(plus(zero(),zero()),plus(zero(),zero()))))))));
-  //   
-  //   Expr a = `plus(zero(),plus(zero(),plus(plus(zero(),plus(zero(),zero())),plus(zero(),plus(zero(),zero())))));
-  //   
-  //  represente(a, "res.dot"); 
-  // }
 }
