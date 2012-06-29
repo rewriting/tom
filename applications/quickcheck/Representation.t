@@ -81,17 +81,19 @@ public class Representation {
   
   %strategy SeeStrategy() extends Fail(){
     visit Strategy {
-      Identity() -> {System.out.println("ID");}
+      Pselect(_,_,_,_) -> {System.out.println("ID");}
       Make_plus(_,_) -> {System.out.println("PLUS");}
+      Make_mult(_,_) -> {System.out.println("MULT");}
+      _ -> {System.out.println("???");}
     }
   }
   
   public static void representeStrategy(Strategy s){
+    //tom.library.utils.Viewer.toTree(s);
     try {
       `TopDown(SeeStrategy()).visit(s);
     } catch (VisitFailure e){
       System.out.println("erreur de representation de la strategie");
     }
   }
-  
 }

@@ -13,8 +13,9 @@ public class Main {
     
     
     /* debut test */
-    Strategy s_test = generator.testStrategyRec(5);
+    Strategy s_test = generator.make_random_with_depth(5);
     Representation.representeStrategy(s_test);
+    System.out.println(s_test);
     Expr b = null;
     try{
       b=s_test.visit(`zero());
@@ -27,16 +28,16 @@ public class Main {
     /* fin test */
     
     
-    Strategy s = generator.make_random();
-    Expr a = null;
-    try{
-      a = s.visit(`zero());
-    } catch (VisitFailure e){
-      System.out.println("impossible");
-    }
-    
-    System.out.println(a);
-    Representation.represente(a, "res.dot");
-    Representation.representeHash(a, "res_hash.dot");
+    // Strategy s = generator.make_random();
+    // Expr a = null;
+    // try{
+    //   a = s.visit(`zero());
+    // } catch (VisitFailure e){
+    //   System.out.println("impossible");
+    // }
+    // 
+    // System.out.println(a);
+    // Representation.represente(a, "res.dot");
+    // Representation.representeHash(a, "res_hash.dot");
   }
 }
