@@ -8,37 +8,12 @@ public class Main {
   %include { sl.tom }
   %include {sort/Sort.tom}
 
-  private static void represente_aux(Expr e, String way){
-    %match(e){
-      zero() -> {System.out.println("\"" + way + "\"");}
-      un() -> {System.out.println("\"" + way + "\"");}
-      plus(a,b) -> {
-        System.out.println("\"" + way + "\"" + "->" + "\"" + way + 0 + "\"");
-        System.out.println("\"" + way + "\"" + "->" + "\"" + way + 1 + "\"");
-        represente_aux(`a, way + 0);
-        represente_aux(`b, way + 1);
-      }
-      mult(a,b) -> {
-        System.out.println("\"" + way + "\"" + "->" + "\"" + way + 0 + "\"");
-        System.out.println("\"" + way + "\"" + "->" + "\"" + way + 1 + "\"");
-        represente_aux(`a, way + 0);
-        represente_aux(`b, way + 1);
-      }
-    }
-  }
-
-  public static void represente(Expr e){
-    System.out.println("digraph mon_graphe {");
-    represente_aux(e, "8");
-    System.out.println("}");
-  }
-
   public static void main(String[] args) {
     RandomizerGenerator generator = new RandomizerGenerator();
     
     
     /* debut test */
-    Strategy s_test = generator.testStrategyID();
+    Strategy s_test = generator.testStrategy();
     System.out.println(s_test);
     Expr b = null;
     try{
@@ -47,6 +22,8 @@ public class Main {
       System.out.println("erreur");
     }
     System.out.println(b + "\n\n");
+    Representation.represente(b, "test.dot");
+    Representation.representeHash(b, "test_hash.dot");
     /* fin test */
     
     
@@ -59,7 +36,7 @@ public class Main {
     }
     
     System.out.println(a);
-    System.out.println("\n\n");
-    //represente(a); 
+    Representation.represente(a, "res.dot");
+    Representation.representeHash(a, "res_hash.dot");
   }
 }
