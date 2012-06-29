@@ -78,4 +78,20 @@ public class Representation {
       System.out.println("ecriture fichier impossible");
     }    
   }
+  
+  %strategy SeeStrategy() extends Fail(){
+    visit Strategy {
+      Identity() -> {System.out.println("ID");}
+      Make_plus(_,_) -> {System.out.println("PLUS");}
+    }
+  }
+  
+  public static void representeStrategy(Strategy s){
+    try {
+      `TopDown(SeeStrategy()).visit(s);
+    } catch (VisitFailure e){
+      System.out.println("erreur de representation de la strategie");
+    }
+  }
+  
 }
