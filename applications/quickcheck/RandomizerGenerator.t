@@ -45,6 +45,25 @@ public class RandomizerGenerator {
   	      Machin()));
 	}
 	
+	public Strategy testStrategyRec(int i){
+  	System.out.println(i);
+  	if(i==0){
+    	return `Identity();
+  	} else {
+    	int choix = (int) (Math.random() * 2);
+    	if(choix == 0){
+      	return `Make_plus(testStrategyRec(i - 1), testStrategyRec(i - 1));
+    	} else {
+      	return `Identity();
+    	}
+  	}
+	}
+	
+	public Strategy testStrategyCons(){
+	    return `ChoiceUndet(Make_plus(Machin(), Machin()));
+	  }
+	
+	
 	public Strategy testStrategyID(){
 	    //int i = 0;
 	    return 
