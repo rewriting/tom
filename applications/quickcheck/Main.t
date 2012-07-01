@@ -13,7 +13,8 @@ public class Main {
     
     
     /* debut test */
-    Strategy s_test = generator.make_random_with_depth(5);
+    // Strategy s_test = generator.make_random_with_depth(5);
+    Strategy s_test = generator.testStrategy(10);
     Representation.representeStrategy(s_test);
     System.out.println(s_test);
     Expr b = null;

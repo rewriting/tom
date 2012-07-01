@@ -7,10 +7,87 @@ public class RandomizerGenerator {
   %include { sl.tom }
   %include {sort/Sort.tom}
   
-  %typeterm Integer {
-    implement{Integer}
-    is_sort(t){t instanceof Integer}
+  private class Condition {
+    int i;
+    Condition(int i){
+      this.i = i;
+    }
+  }
+  
+  private class Constructor{
+    private String name;
+    private Buildable[] fields;
+    private boolean isRec;
+    
+    public Constructor(String name, Buildable[] fields, boolean isRec){
+      this.name = name;
+      this.fields = fields;
+      this.isRec = isRec;
+    }
+    public boolean isRec(){
+      return isRec;
+    }
+  }
+  
+  private interface Buildable {
+    public abstract int getDimention();
+    public abstract Constructor[] getConstructors();
+  }
+  
+  %typeterm Condition {
+    implement{Condition}
+    is_sort(t){t instanceof Condition}
     equals(l1,l2)  { $l1.equals($l2) }
+  }
+  
+  %strategy ChoiceLeaf() extends Fail(){
+    visit Expr {
+      e -> {
+        return `Pselect(1,2, Make_zero(), Make_un()).visit(`e);
+      }
+    }
+  }
+  
+  %strategy ChoiceBranch(retour:Strategy, retour2:Strategy) extends Fail(){
+    visit Expr {
+      e -> {
+        System.out.println(retour.hashCode() + " et " + retour2.hashCode());
+        return `Pselect(
+          1,
+          2,
+          Make_plus(retour, retour2),
+          Make_mult(retour, retour2)
+        ).visit(`e);
+      }
+    }
+  }
+  
+  %strategy ChoiceWithCondition(cond:Condition, leaf:Strategy, branch:Strategy) extends Fail(){
+    visit Expr {
+      e && cond.i > 0 -> {
+        System.out.println(cond.i);
+        cond.i--;
+        return `Pselect(1,2,leaf, branch).visit(`e);
+      }
+      e && cond.i == 0 -> {
+        System.out.println("stop : " + cond.i);
+        cond.i--;
+        return leaf.visit(`e);
+      }
+    }
+  }
+  
+  public Strategy testStrategy(int depth){
+    Condition cond = new Condition(depth);
+    return
+      `Mu(
+        MuVar("x"),
+        ChoiceWithCondition(
+          cond,
+          ChoiceLeaf(),
+          ChoiceBranch(MuVar("x"), MuVar("x"))
+        )
+      );
   }
     
 	public Strategy make_random(){
@@ -23,69 +100,6 @@ public class RandomizerGenerator {
           Make_plus(MuVar("x"), MuVar("x")),
           Make_mult(MuVar("x"), MuVar("x"))));
 	}
-	/**
-	 * @deprecated
-	 */ 
-	 
-	%strategy Machin() extends Fail(){
-  	visit Expr {
-    	e -> {
-      	Position position = getEnvironment().getPosition();
-      	System.out.println("position actuelle de " + `e);
-      	System.out.println(getEnvironment().depth());
-      	return `e;
-    	}
-  	}
-	}
-	
-	public Strategy testStrategy(){
-  	return 
-  	  `Mu(
-  	    MuVar("x"),
-  	    ChoiceUndet(
-  	      Make_plus(MuVar("x"),MuVar("x")),
-  	      Machin()));
-	}
-
-	public Strategy testStrategyRec(int i){
-  	System.out.println(i);
-  	if(i==0){
-    	return `Pselect(1,2,Make_zero(), Make_un());
-  	} else {
-    	int choix = (int) (Math.random() * 2);
-    	if(choix == 0){
-      	return `Make_plus(testStrategyRec(i - 1), testStrategyRec(i - 1));
-    	} else {
-      	return `Pselect(1,2,Make_zero(), Make_un());
-    	}
-  	}
-	}
-	
-	public Strategy testStrategyCons(){
-	    return `ChoiceUndet(Make_plus(Machin(), Machin()));
-	  }
-	
-	
-	public Strategy testStrategyID(){
-	    return 
-	      `Mu(
-	        MuVar("x"),
-	        ChoiceUndet(
-	          Make_plus(MuVar("x"),MuVar("x")),
-	          Identity()));
-	  }
-	
-	public Strategy testStrategy2(){
-	    return 
-	      `Mu(
-	        MuVar("y"),
-	        Mu(
-	        MuVar("x"),
-	        ChoiceUndet(
-	          Make_plus(MuVar("x"),MuVar("y")),
-	          Machin()))
-	        );
-	  }
 	
 	public Strategy make_random_with_depth(int max_depth){
 	        if(max_depth == 0){
