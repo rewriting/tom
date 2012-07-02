@@ -128,19 +128,21 @@ public class ExpanderPlugin extends TomGenericPlugin {
     long startChrono = System.currentTimeMillis();
     boolean intermediate = getOptionBooleanValue("intermediate");    
     setGenIntrospector(getOptionBooleanValue("genIntrospector"));
-    //System.out.println("(debug) I'm in the Tom expander : TSM"+getStreamManager().toString());
     try {
       //reinit the variable for intropsector generation
       setGeneratedIntrospector(false);
       Code expandedTerm = (Code) this.expand((Code)getWorkingTerm());
       // verbose
-      TomMessage.info(logger,null,0,TomMessage.tomExpandingPhase, Integer.valueOf((int)(System.currentTimeMillis()-startChrono)) );
+      TomMessage.info(logger, getStreamManager().getInputFileName(), 0,
+          TomMessage.tomExpandingPhase,
+          Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
       setWorkingTerm(expandedTerm);
       if(intermediate) {
-        Tools.generateOutput(getStreamManager().getOutputFileName() + EXPANDED_SUFFIX, (Code)getWorkingTerm());
+        Tools.generateOutput(getStreamManager().getOutputFileName()+EXPANDED_SUFFIX, (Code)getWorkingTerm());
       }
     } catch(Exception e) {
-      TomMessage.error(logger,getStreamManager().getInputFileName(),0,TomMessage.exceptionMessage, e.getMessage());
+      TomMessage.error(logger, getStreamManager().getInputFileName(), 0,
+          TomMessage.exceptionMessage, e.getMessage());
       e.printStackTrace();
     }
   }

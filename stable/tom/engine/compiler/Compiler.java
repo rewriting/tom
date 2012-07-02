@@ -183,18 +183,19 @@ public class Compiler extends TomGenericPlugin {
       // add the additional functions needed by the AC operators
       code = addACFunctions(code);      
 
-
       // we use TopDown and not TopDownIdStopOnSuccess to compile nested-match
       Code compiledTerm = tom_make_TopDown(tom_make_CompileMatch(this)).visitLight(code);
 
       //System.out.println("compiledTerm = \n" + compiledTerm);            
       Collection hashSet = new HashSet();
-      Code renamedTerm = tom_make_TopDownIdStopOnSuccess(tom_make_findRenameVariable(hashSet)).visitLight(compiledTerm);
+      Code renamedTerm =
+        tom_make_TopDownIdStopOnSuccess(tom_make_findRenameVariable(hashSet)).visitLight(compiledTerm);
       setWorkingTerm(renamedTerm);
       if(intermediate) {
         Tools.generateOutput(getStreamManager().getOutputFileName() + COMPILED_SUFFIX, renamedTerm);
       }
-      TomMessage.info(getLogger(),null,0,TomMessage.tomCompilationPhase,
+      TomMessage.info(getLogger(), getStreamManager().getInputFileName(), 0,
+          TomMessage.tomCompilationPhase,
           Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
     } catch (Exception e) {
       String fileName = getStreamManager().getInputFileName();

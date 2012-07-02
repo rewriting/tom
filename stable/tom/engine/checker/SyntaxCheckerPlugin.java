@@ -192,7 +192,8 @@ public class SyntaxCheckerPlugin extends TomGenericPlugin {
           System.out.println("strategy failed");
         }
         // verbose
-        TomMessage.info(getLogger(),null,0,TomMessage.tomSyntaxCheckingPhase,
+        TomMessage.info(getLogger(), getStreamManager().getInputFileName(), 0,
+            TomMessage.tomSyntaxCheckingPhase,
             Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
       } catch (Exception e) {
         TomMessage.error(getLogger(), 
@@ -205,7 +206,8 @@ public class SyntaxCheckerPlugin extends TomGenericPlugin {
       }
     } else {
       // syntax checker desactivated
-      TomMessage.info(getLogger(),null,0,TomMessage.syntaxCheckerInactivated);
+      TomMessage.info(getLogger(), getStreamManager().getInputFileName(), 0,
+          TomMessage.syntaxCheckerInactivated);
     }
   }
 

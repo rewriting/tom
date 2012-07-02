@@ -137,7 +137,8 @@ public class TyperPlugin extends TomGenericPlugin {
 
         setWorkingTerm(typedCode);      
         // verbose
-        TomMessage.info(logger, null, 0, TomMessage.tomTypingPhase,
+        TomMessage.info(logger, getStreamManager().getInputFileName(), 0,
+            TomMessage.tomTypingPhase,
             Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
       } catch (Exception e) {
         TomMessage.error(logger, getStreamManager().getInputFileName(), 
@@ -151,9 +152,7 @@ public class TyperPlugin extends TomGenericPlugin {
       System.out.println("\nNew typer activated!: " + getStreamManager().getInputFileName());
  
       try {
-
         updateSymbolTableNewTyper();
-
         /**
          * Typing variables whose types are unknown with fresh type variables before
          * start inference
@@ -182,11 +181,13 @@ public class TyperPlugin extends TomGenericPlugin {
 
         // verbose
         int totalNumOfConstraints = newKernelTyper.getEqCounter() +
-          newKernelTyper.getSubCounter(); 
-        TomMessage.info(logger, null, 0, TomMessage.tomTypingPhase,
-          Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));    
-        TomMessage.info(logger, null, 0, TomMessage.tomTypingPhaseComplement,
-          totalNumOfConstraints,newKernelTyper.getTVarCounter());
+          newKernelTyper.getSubCounter();
+        TomMessage.info(logger, getStreamManager().getInputFileName(), 0,
+            TomMessage.tomTypingPhase,
+            Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
+        TomMessage.info(logger, getStreamManager().getInputFileName(), 0,
+            TomMessage.tomTypingPhaseComplement,
+            totalNumOfConstraints,newKernelTyper.getTVarCounter());
       } catch (Exception e) {
         TomMessage.error(logger, newKernelTyper.getCurrentInputFileName(), 
             0, TomMessage.exceptionMessage, getClass().getName(), 

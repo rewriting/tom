@@ -285,7 +285,7 @@ writer.write("\n  /**\n   * Copy the object and returns the copy\n   *\n   * @re
    * Generate a toStringBuilder method if the operator is not associative
    */
   if (sortName == extendsType) {
-writer.write("\n  /**\n   * Appends a string representation of this term to the buffer given as argument.\n   *\n   * @param buffer the buffer to which a string represention of this term is appended.\n   */\n  @Override\n  public void toStringBuilder(java.lang.StringBuilder buffer) {\n    buffer.append(\""+className()+"(\");\n    "+toStringChilds("buffer")+"\n    buffer.append(\")\");\n  }\n"
+writer.write("\n  /**\n   * Appends a string representation of this term to the buffer given as argument.\n   *\n   * @param buffer the buffer to which a string represention of this term is appended.\n   */\n  @Override\n  public void toStringBuilder(java.lang.StringBuilder buffer) {\n    buffer.append(\""+className()+"(\");\n    "+toStringChildren("buffer")+"\n    buffer.append(\")\");\n  }\n"
 
 
 
@@ -300,7 +300,7 @@ writer.write("\n  /**\n   * Appends a string representation of this term to the 
 );
   }
 
-writer.write("\n\n  /**\n   * Compares two terms. This functions implements a total lexicographic path ordering.\n   *\n   * @param o object to which this term is compared\n   * @return a negative integer, zero, or a positive integer as this\n   *         term is less than, equal to, or greater than the argument\n   * @throws ClassCastException in case of invalid arguments\n   * @throws RuntimeException if unable to compare childs\n   */\n  @Override\n  public int compareToLPO(Object o) {\n    /*\n     * We do not want to compare with any object, only members of the module\n     * In case of invalid argument, throw a ClassCastException, as the java api\n     * asks for it\n     */\n    "+fullClassName(abstractType)+" ao = ("+fullClassName(abstractType)+") o;\n    /* return 0 for equality */\n    if (ao == this) { return 0; }\n    /* compare the symbols */\n    int symbCmp = this.symbolName().compareTo(ao.symbolName());\n    if (symbCmp != 0) { return symbCmp; }\n    /* compare the childs */\n    "+genCompareChilds("ao","compareToLPO")+"\n    throw new RuntimeException(\"Unable to compare\");\n  }\n"
+writer.write("\n\n  /**\n   * Compares two terms. This functions implements a total lexicographic path ordering.\n   *\n   * @param o object to which this term is compared\n   * @return a negative integer, zero, or a positive integer as this\n   *         term is less than, equal to, or greater than the argument\n   * @throws ClassCastException in case of invalid arguments\n   * @throws RuntimeException if unable to compare children\n   */\n  @Override\n  public int compareToLPO(Object o) {\n    /*\n     * We do not want to compare with any object, only members of the module\n     * In case of invalid argument, throw a ClassCastException, as the java api\n     * asks for it\n     */\n    "+fullClassName(abstractType)+" ao = ("+fullClassName(abstractType)+") o;\n    /* return 0 for equality */\n    if (ao == this) { return 0; }\n    /* compare the symbols */\n    int symbCmp = this.symbolName().compareTo(ao.symbolName());\n    if (symbCmp != 0) { return symbCmp; }\n    /* compare the children */\n    "+genCompareChildren("ao","compareToLPO")+"\n    throw new RuntimeException(\"Unable to compare\");\n  }\n"
 
 
 
@@ -331,7 +331,7 @@ writer.write("\n\n  /**\n   * Compares two terms. This functions implements a to
 );
 
 if (maximalsharing) {
-writer.write("\n /**\n   * Compares two terms. This functions implements a total order.\n   *\n   * @param o object to which this term is compared\n   * @return a negative integer, zero, or a positive integer as this\n   *         term is less than, equal to, or greater than the argument\n   * @throws ClassCastException in case of invalid arguments\n   * @throws RuntimeException if unable to compare childs\n   */\n  @Override\n  public int compareTo(Object o) {\n    /*\n     * We do not want to compare with any object, only members of the module\n     * In case of invalid argument, throw a ClassCastException, as the java api\n     * asks for it\n     */\n    "+fullClassName(abstractType)+" ao = ("+fullClassName(abstractType)+") o;\n    /* return 0 for equality */\n    if (ao == this) { return 0; }\n    /* use the hash values to discriminate */\n\n    if(hashCode != ao.hashCode()) { return (hashCode < ao.hashCode())?-1:1; }\n\n    /* If not, compare the symbols : back to the normal order */\n    int symbCmp = this.symbolName().compareTo(ao.symbolName());\n    if (symbCmp != 0) { return symbCmp; }\n    /* last resort: compare the childs */\n    "+genCompareChilds("ao","compareTo")+"\n    throw new RuntimeException(\"Unable to compare\");\n  }\n\n //shared.SharedObject\n  /**\n   * Returns hashCode\n   *\n   * @return hashCode\n   */\n  @Override\n  public final int hashCode() {\n    return hashCode;\n  }\n\n  /**\n   * Checks if a SharedObject is equivalent to the current object\n   *\n   * @param obj SharedObject to test\n   * @return true if obj is a "+className()+" and its members are equal, else false\n   */\n  public final boolean equivalent(shared.SharedObject obj) {\n    if(obj instanceof "+className()+") {\n"+generateMembersEqualityTest("peer")+"\n    }\n    return false;\n  }\n\n"
+writer.write("\n /**\n   * Compares two terms. This functions implements a total order.\n   *\n   * @param o object to which this term is compared\n   * @return a negative integer, zero, or a positive integer as this\n   *         term is less than, equal to, or greater than the argument\n   * @throws ClassCastException in case of invalid arguments\n   * @throws RuntimeException if unable to compare children\n   */\n  @Override\n  public int compareTo(Object o) {\n    /*\n     * We do not want to compare with any object, only members of the module\n     * In case of invalid argument, throw a ClassCastException, as the java api\n     * asks for it\n     */\n    "+fullClassName(abstractType)+" ao = ("+fullClassName(abstractType)+") o;\n    /* return 0 for equality */\n    if (ao == this) { return 0; }\n    /* use the hash values to discriminate */\n\n    if(hashCode != ao.hashCode()) { return (hashCode < ao.hashCode())?-1:1; }\n\n    /* If not, compare the symbols : back to the normal order */\n    int symbCmp = this.symbolName().compareTo(ao.symbolName());\n    if (symbCmp != 0) { return symbCmp; }\n    /* last resort: compare the children */\n    "+genCompareChildren("ao","compareTo")+"\n    throw new RuntimeException(\"Unable to compare\");\n  }\n\n //shared.SharedObject\n  /**\n   * Returns hashCode\n   *\n   * @return hashCode\n   */\n  @Override\n  public final int hashCode() {\n    return hashCode;\n  }\n\n  /**\n   * Checks if a SharedObject is equivalent to the current object\n   *\n   * @param obj SharedObject to test\n   * @return true if obj is a "+className()+" and its members are equal, else false\n   */\n  public final boolean equivalent(shared.SharedObject obj) {\n    if(obj instanceof "+className()+") {\n"+generateMembersEqualityTest("peer")+"\n    }\n    return false;\n  }\n\n"
 
 
 
@@ -390,7 +390,7 @@ writer.write("\n /**\n   * Compares two terms. This functions implements a total
 );
 } else {
   //XXX: compareTo must be correctly implemented
-writer.write("\n  /**\n   * Compares two terms. This functions implements a total order.\n   *\n   * @param o object to which this term is compared\n   * @return a negative integer, zero, or a positive integer as this\n   *         term is less than, equal to, or greater than the argument\n   * @throws ClassCastException in case of invalid arguments\n   * @throws RuntimeException if unable to compare childs\n   */\n  @Override\n  public int compareTo(Object o) {\n    throw new UnsupportedOperationException(\"Unable to compare\");\n  }\n\n  /**\n   * Clones the object\n   *\n   * @return the copy\n   */\n  @Override\n  public Object clone() {\n"
+writer.write("\n  /**\n   * Compares two terms. This functions implements a total order.\n   *\n   * @param o object to which this term is compared\n   * @return a negative integer, zero, or a positive integer as this\n   *         term is less than, equal to, or greater than the argument\n   * @throws ClassCastException in case of invalid arguments\n   * @throws RuntimeException if unable to compare children\n   */\n  @Override\n  public int compareTo(Object o) {\n    throw new UnsupportedOperationException(\"Unable to compare\");\n  }\n\n  /**\n   * Clones the object\n   *\n   * @return the copy\n   */\n  @Override\n  public Object clone() {\n"
 
 
 
@@ -516,7 +516,7 @@ writer.write("\n   //"+className(sortName)+" interface\n  /**\n   * Returns true
 
 generateGetters(writer);
 
-    writer.write("\n  /* AbstractType */\n  /**\n   * Returns an ATerm representation of this term.\n   *\n   * @return an ATerm representation of this term.\n   */\n  @Override\n  public aterm.ATerm toATerm() {\n    aterm.ATerm res = super.toATerm();\n    if(res != null) {\n      // the super class has produced an ATerm (may be a variadic operator)\n      return res;\n    }\n    return atermFactory.makeAppl(\n      atermFactory.makeAFun(symbolName(),getArity(),false),\n      new aterm.ATerm[] {"+generateToATermChilds()+"});\n  }\n\n  /**\n   * Apply a conversion on the ATerm contained in the String and returns a "+fullClassName(sortName)+" from it\n   *\n   * @param trm ATerm to convert into a Gom term\n   * @param atConv ATerm Converter used to convert the ATerm\n   * @return the Gom term\n   */\n  public static "+fullClassName(sortName)+" fromTerm(aterm.ATerm trm, tom.library.utils.ATermConverter atConv) {\n    trm = atConv.convert(trm);\n    if(trm instanceof aterm.ATermAppl) {\n      aterm.ATermAppl appl = (aterm.ATermAppl) trm;\n      if(symbolName.equals(appl.getName()) && !appl.getAFun().isQuoted()) {\n        return make(\n"+generatefromATermChilds("appl","atConv")+"\n        );\n      }\n    }\n    return null;\n  }\n"
+    writer.write("\n  /* AbstractType */\n  /**\n   * Returns an ATerm representation of this term.\n   *\n   * @return an ATerm representation of this term.\n   */\n  @Override\n  public aterm.ATerm toATerm() {\n    aterm.ATerm res = super.toATerm();\n    if(res != null) {\n      // the super class has produced an ATerm (may be a variadic operator)\n      return res;\n    }\n    return atermFactory.makeAppl(\n      atermFactory.makeAFun(symbolName(),getArity(),false),\n      new aterm.ATerm[] {"+generateToATermChildren()+"});\n  }\n\n  /**\n   * Apply a conversion on the ATerm contained in the String and returns a "+fullClassName(sortName)+" from it\n   *\n   * @param trm ATerm to convert into a Gom term\n   * @param atConv ATerm Converter used to convert the ATerm\n   * @return the Gom term\n   */\n  public static "+fullClassName(sortName)+" fromTerm(aterm.ATerm trm, tom.library.utils.ATermConverter atConv) {\n    trm = atConv.convert(trm);\n    if(trm instanceof aterm.ATermAppl) {\n      aterm.ATermAppl appl = (aterm.ATermAppl) trm;\n      if(symbolName.equals(appl.getName()) && !appl.getAFun().isQuoted()) {\n        return make(\n"+generatefromATermChildren("appl","atConv")+"\n        );\n      }\n    }\n    return null;\n  }\n"
 
 
 
@@ -556,7 +556,7 @@ generateGetters(writer);
 
 );
 
-    writer.write("\n  /* Visitable */\n  /**\n   * Returns the number of childs of the term\n   *\n   * @return the number of childs of the term\n   */\n  public int getChildCount() {\n    return "+visitableCount()+";\n  }\n\n  /**\n   * Returns the child at the specified index\n   *\n   * @param index index of the child to return; must be\n             nonnegative and less than the childCount\n   * @return the child at the specified index\n   * @throws IndexOutOfBoundsException if the index out of range\n   */\n  public tom.library.sl.Visitable getChildAt(int index) {\n    switch(index) {\n"+getCases()+"\n      default: throw new IndexOutOfBoundsException();\n    }\n  }\n\n  /**\n   * Set the child at the specified index\n   *\n   * @param index index of the child to set; must be\n             nonnegative and less than the childCount\n   * @param v child to set at the specified index\n   * @return the child which was just set\n   * @throws IndexOutOfBoundsException if the index out of range\n   */\n  public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable v) {\n    switch(index) {\n"+makeCases("v")+"\n      default: throw new IndexOutOfBoundsException();\n    }\n  }\n\n  /**\n   * Set children to the term\n   *\n   * @param childs array of children to set\n   * @return an array of children which just were set\n   * @throws IndexOutOfBoundsException if length of \"childs\" is different than "+slotList.length()+"\n   */\n  @SuppressWarnings(\"unchecked\")\n  public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] childs) {\n    if (childs.length == "+slotList.length()+" "+arrayCheck("childs")+") {\n      return "+arrayMake("childs")+";\n    } else {\n      throw new IndexOutOfBoundsException();\n    }\n  }\n\n  /**\n   * Returns the whole children of the term\n   *\n   * @return the children of the term\n   */\n  public tom.library.sl.Visitable[] getChildren() {\n    return new tom.library.sl.Visitable[] { "+visitableList(slotList)+" };\n  }\n"
+    writer.write("\n  /* Visitable */\n  /**\n   * Returns the number of children of the term\n   *\n   * @return the number of children of the term\n   */\n  public int getChildCount() {\n    return "+visitableCount()+";\n  }\n\n  /**\n   * Returns the child at the specified index\n   *\n   * @param index index of the child to return; must be\n             nonnegative and less than the childCount\n   * @return the child at the specified index\n   * @throws IndexOutOfBoundsException if the index out of range\n   */\n  public tom.library.sl.Visitable getChildAt(int index) {\n    switch(index) {\n"+getCases()+"\n      default: throw new IndexOutOfBoundsException();\n    }\n  }\n\n  /**\n   * Set the child at the specified index\n   *\n   * @param index index of the child to set; must be\n             nonnegative and less than the childCount\n   * @param v child to set at the specified index\n   * @return the child which was just set\n   * @throws IndexOutOfBoundsException if the index out of range\n   */\n  public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable v) {\n    switch(index) {\n"+makeCases("v")+"\n      default: throw new IndexOutOfBoundsException();\n    }\n  }\n\n  /**\n   * Set children to the term\n   *\n   * @param children array of children to set\n   * @return an array of children which just were set\n   * @throws IndexOutOfBoundsException if length of \"children\" is different than "+slotList.length()+"\n   */\n  @SuppressWarnings(\"unchecked\")\n  public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {\n    if (children.length == "+slotList.length()+" "+arrayCheck("children")+") {\n      return "+arrayMake("children")+";\n    } else {\n      throw new IndexOutOfBoundsException();\n    }\n  }\n\n  /**\n   * Returns the whole children of the term\n   *\n   * @return the children of the term\n   */\n  public tom.library.sl.Visitable[] getChildren() {\n    return new tom.library.sl.Visitable[] { "+visitableList(slotList)+" };\n  }\n"
 
 
 
@@ -796,7 +796,7 @@ writer.write("\n    /* ------------------------------------------- report the re
     }
   }
 
-  private String generateToATermChilds() {
+  private String generateToATermChildren() {
     StringBuilder res = new StringBuilder();
     SlotFieldList slots = slotList;
     while(!slots.isEmptyConcSlotField()) {
@@ -810,7 +810,7 @@ writer.write("\n    /* ------------------------------------------- report the re
     return res.toString();
   }
 
-  private String generatefromATermChilds(String appl, String atConv) {
+  private String generatefromATermChildren(String appl, String atConv) {
     StringBuilder res = new StringBuilder();
     int index = 0;
     SlotFieldList slots = slotList;
@@ -930,7 +930,7 @@ writer.write("\n    /* ------------------------------------------- report the re
         res.append(" && ");
       }}}if ( tomMatch533__end__4.isEmptyConcSlotField() ) {tomMatch533__end__4=(( tom.gom.adt.objects.types.SlotFieldList )((Object)slotList));} else {tomMatch533__end__4= tomMatch533__end__4.getTailConcSlotField() ;}}} while(!( (tomMatch533__end__4==(( tom.gom.adt.objects.types.SlotFieldList )((Object)slotList))) ));}}}}
 
-    res.append("true;"); // to handle the "no childs" case
+    res.append("true;"); // to handle the "no children" case
     return res.toString();
   }
 
@@ -1094,7 +1094,7 @@ private String generateMakeArgsFor(SlotField slot, String argName) {
   return res.toString();
 }
 
-  private String toStringChilds(String buffer) {
+  private String toStringChildren(String buffer) {
     if (0 == slotList.length()) {
       return "";
     }
@@ -1112,7 +1112,7 @@ private String generateMakeArgsFor(SlotField slot, String argName) {
     return res.toString();
   }
 
-  private String genCompareChilds(String oldOther, String compareFun) {
+  private String genCompareChildren(String oldOther, String compareFun) {
     StringBuilder res = new StringBuilder();
     String other = "tco";
     if(!slotList.isEmptyConcSlotField()) {

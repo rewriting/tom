@@ -1930,7 +1930,7 @@ inputState.guessing--;
 		TomTerm arg1, arg2;
 		List<Slot> pairSlotList = new LinkedList<Slot>();
 		List attributeList = new LinkedList();
-		List childs = new LinkedList();
+		List children = new LinkedList();
 		String keyword = null;
 		boolean implicit;
 		TomNameList nameList, closingNameList;
@@ -1972,7 +1972,7 @@ inputState.guessing--;
 				if ( inputState.guessing==0 ) {
 					text.append(">");
 				}
-				implicit=xmlChilds(childs);
+				implicit=xmlChildren(children);
 				match(XML_START_ENDING);
 				if ( inputState.guessing==0 ) {
 					text.append("</");
@@ -2003,13 +2003,13 @@ inputState.guessing--;
 					}
 					if(implicit) {
 					//System.out.println("implicit");
-					//System.out.println("childs = " + childs);
+					//System.out.println("children = " + children);
 					optionList.add(tom_make_ImplicitXMLChild());
 					} else {
 					//System.out.println("explicit");
-					//System.out.println("childs1 = " + childs);
-					childs = ASTFactory.metaEncodeExplicitTermList(symbolTable, childs);
-					//System.out.println("childs2 = " + childs);
+					//System.out.println("children1 = " + children);
+					children = ASTFactory.metaEncodeExplicitTermList(symbolTable, children);
+					//System.out.println("children2 = " + children);
 					}
 					option = ASTFactory.makeOptionList(optionList);
 					
@@ -2024,7 +2024,7 @@ inputState.guessing--;
 			}
 			if ( inputState.guessing==0 ) {
 				
-				result = tom_make_XMLAppl(option,nameList,ASTFactory.makeTomList((List<TomTerm>)attributeList),ASTFactory.makeTomList((List<TomTerm>)childs),ASTFactory.makeConstraintList(constraintList))
+				result = tom_make_XMLAppl(option,nameList,ASTFactory.makeTomList((List<TomTerm>)attributeList),ASTFactory.makeTomList((List<TomTerm>)children),ASTFactory.makeConstraintList(constraintList))
 				
 				
 				
@@ -2790,7 +2790,7 @@ inputState.guessing--;
 		return result;
 	}
 	
-	public final boolean  xmlChilds(
+	public final boolean  xmlChildren(
 		List<TomTerm> list
 	) throws RecognitionException, TokenStreamException, TomException {
 		boolean result;

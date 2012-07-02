@@ -194,13 +194,13 @@ matchblock: {
     int stratChildCount = stratChild.size();
 
     output.writeln(deep, "public tom.library.sl.Visitable[] getChildren() {");
-    output.writeln(deep, "tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];");
-    output.writeln(deep, "stratChilds[0] = super.getChildAt(0);");
+    output.writeln(deep, "tom.library.sl.Visitable[] stratChildren = new tom.library.sl.Visitable[getChildCount()];");
+    output.writeln(deep, "stratChildren[0] = super.getChildAt(0);");
     for(int i = 0; i < stratChildCount; i++) {
       int j = (stratChild.get(i)).intValue();
-      output.writeln(deep, "stratChilds[" + (i+1) + "] = get" + names.get(j) + "();");
+      output.writeln(deep, "stratChildren[" + (i+1) + "] = get" + names.get(j) + "();");
     }
-    output.writeln(deep, "return stratChilds;}");
+    output.writeln(deep, "return stratChildren;}");
 
     output.writeln(deep, "public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {");
     output.writeln(deep,"super.setChildAt(0, children[0]);");

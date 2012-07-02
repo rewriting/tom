@@ -126,7 +126,8 @@ public class DesugarerPlugin extends TomGenericPlugin {
             DESUGARED_SUFFIX, code);
       }
       // verbose
-      TomMessage.info(logger,null,0,TomMessage.tomDesugaringPhase,
+      TomMessage.info(logger, getStreamManager().getInputFileName(), 0,
+          TomMessage.tomDesugaringPhase,
           Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
     } catch (Exception e) {
       TomMessage.error(logger,
@@ -357,7 +358,7 @@ public class DesugarerPlugin extends TomGenericPlugin {
     newAttrList = newAttrList.reverse();
 
     /*
-     * Childs: go from implicit notation to explicit notation
+     * Children: go from implicit notation to explicit notation
      */
     for(TomTerm child:(concTomTerm)childList) {
       try {
