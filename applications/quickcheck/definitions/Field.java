@@ -2,23 +2,19 @@ package definitions;
 
 public class Field {
 
-  private Buildable val;
+  private Type buildable;
   private boolean isRec; // also true in case of mutual recurstion
 
-  public Field(Buildable val, boolean isRec) {
-    this.val = val;
+  public Field(Type buildable, boolean isRec) {
+    this.buildable = buildable;
     this.isRec = isRec;
   }
 
-  public Buildable getBuildable() {
-    return val;
-  }
-
-  public boolean isRec() {
+  boolean isRec() {
     return isRec;
   }
 
   int getDimention() {
-    return val.getDimention();
+    return buildable.getDimention();
   }
 }
