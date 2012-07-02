@@ -21,7 +21,7 @@ class Constructor {
     }
     return max;
   }
-
+  
   boolean isRec() {
     int l = fields.length;
     for (int i = 0; i < l; i++) {

@@ -6,6 +6,10 @@ public class Type {
 
   private LinkedList<Constructor> listConstructors;
   
+  private Type(){
+    listConstructors = new LinkedList<Constructor>();
+  }
+  
   public static Type declare(){
     return new Type();
   }
@@ -28,11 +32,11 @@ public class Type {
     int dim = 0;
     int add = 0;
     if (isRec()) {
-      add++;
+      add = 1;
     }
     for (Constructor constructor : listConstructors) {
       dim = Math.max(dim, constructor.getDimention());
     }
-    return dim;
+    return dim + add;
   }
 }
