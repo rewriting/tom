@@ -1,6 +1,9 @@
+//package quickcheck;
+
 import sort.strategy.expr.*;
 import sort.types.*;
 import sort.types.expr.*;
+import definitions.*;
 import tom.library.sl.*;
 
 public class RandomizerGenerator {
@@ -12,26 +15,6 @@ public class RandomizerGenerator {
     Condition(int i){
       this.i = i;
     }
-  }
-  
-  private class Constructor{
-    private String name;
-    private Buildable[] fields;
-    private boolean isRec;
-    
-    public Constructor(String name, Buildable[] fields, boolean isRec){
-      this.name = name;
-      this.fields = fields;
-      this.isRec = isRec;
-    }
-    public boolean isRec(){
-      return isRec;
-    }
-  }
-  
-  private interface Buildable {
-    public abstract int getDimention();
-    public abstract Constructor[] getConstructors();
   }
   
   %typeterm Condition {

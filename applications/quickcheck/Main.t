@@ -1,3 +1,5 @@
+//package quickcheck;
+
 import sort.strategy.expr.*;
 import sort.types.*;
 import sort.types.expr.*;
