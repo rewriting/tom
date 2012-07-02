@@ -97,7 +97,9 @@ public class TomMappingFromEcore {
   private final static HashMap<Class<?>, String> types = new HashMap<Class<?>, String>();
 
   /**
-   * 
+   * Prefix to add to mappings (%typeterm and %op). There is no prefix by
+   * default. Useful to avoid names clash when several elements of differemnt
+   * packages have the same names.
    */
   private static String prefix = "";
 
@@ -271,7 +273,7 @@ public class TomMappingFromEcore {
         String[] decl = getClassDeclarations(eclf); // [canonical name, anonymous generic, generic type]
         writer.write(%[
 
-%typeterm @n@ @(useNewTyper?genSubtype(eclf):"")@ {
+%typeterm @prefix+n@ @(useNewTyper?genSubtype(eclf):"")@ {
   implement { @(eclf instanceof EClass && !EObject.class.isAssignableFrom(c) ? "org.eclipse.emf.ecore.EObject" : decl[0] + decl[2])@ }
   is_sort(t) { @(c.isPrimitive() ? "true" : "$t instanceof " + decl[0] + decl[1])@ }
   equals(l1,l2) { @(c.isPrimitive() ? "$l1 == $l2" : "$l1.equals($l2)")@ }
@@ -286,7 +288,7 @@ public class TomMappingFromEcore {
       if(!((EClass)eclf).getESuperTypes().isEmpty()) {
         //should be a collection with one and only one element
         for (EClass supertype:((EClass)eclf).getESuperTypes()) {
-          result = result + " extends "+ supertype.getName();
+          result = result + " extends "+ prefix + supertype.getName();
         }
       } else {
         if(!(eclf.getInstanceClassName().equals("EObject"))) {
@@ -464,21 +466,21 @@ public class TomMappingFromEcore {
         }
         writer.write(%[
 
-%typeterm @name@ {
+%typeterm @prefix+name@ {
   implement { org.eclipse.emf.common.util.EList<@inst@> }
   is_sort(t) { $t instanceof org.eclipse.emf.common.util.EList<?> && (((org.eclipse.emf.common.util.EList<@inst@>)$t).size() == 0 || (((org.eclipse.emf.common.util.EList<@inst@>)$t).size()>0 && ((org.eclipse.emf.common.util.EList<@inst@>)$t).get(0) instanceof @(decl[0]+decl[1])@)) }
   equals(l1,l2) { $l1.equals($l2) }
 }
 
-%oparray @name@ @name@ ( @simplename@* ) {
+%oparray @prefix+name@ @prefix+name@ ( @simplename@* ) {
   is_fsym(t) { $t instanceof org.eclipse.emf.common.util.EList<?> && ($t.size() == 0 || ($t.size()>0 && $t.get(0) instanceof @(decl[0]+decl[1])@)) }
   make_empty(n) { new org.eclipse.emf.common.util.BasicEList<@inst@>($n) }
-  make_append(e,l) { append@name@($e,$l) }
+  make_append(e,l) { append@prefix+name@($e,$l) }
   get_element(l,n) { $l.get($n) }
   get_size(l)      { $l.size() }
 }
 
-private static <O> org.eclipse.emf.common.util.EList<O> append@name@(O e,org.eclipse.emf.common.util.EList<O> l) {
+private static <O> org.eclipse.emf.common.util.EList<O> append@prefix+name@(O e,org.eclipse.emf.common.util.EList<O> l) {
   l.add(e);
   return l;
 }]%);
@@ -592,7 +594,7 @@ private static <O> org.eclipse.emf.common.util.EList<O> append@name@(O e,org.ecl
       //nothing
       //dvalue = sf.getDefaultValue();
     } else {
-      dvalue = "`" + esftype + dvalue + "()";
+      dvalue = "`" + prefix + esftype + dvalue + "()";
     }
     //add a suffix '_' if the name is a reserved keyword
     String sfname = (keywords.contains(esf.getName()) ? "_" : "")+esf.getName();
@@ -622,7 +624,7 @@ private static <O> org.eclipse.emf.common.util.EList<O> append@name@(O e,org.ecl
             EClassifier type = sf.getEType();
             String sfname = (keywords.contains(sf.getName()) ? "_" : "")
                 + sf.getName();
-            s_types.append(sfname + " : " + getType(writer,sf) + ", ");
+            s_types.append(sfname + " : " + prefix + getType(writer,sf) + ", ");
             String[] decl = getClassDeclarations(type); // [canonical name, anonymous generic, generic type]
             writer.write("");
             s_types2.append(", "
@@ -663,12 +665,12 @@ private static <O> org.eclipse.emf.common.util.EList<O> append@name@(O e,org.ecl
           if(genEcoreMapping || !tomEMFTypes.contains(eclf.getInstanceClass())) {
             writer.write(%[
 
-%op @ecl.getInstanceClass().getSimpleName()@ @cr@(@s_types@) {
+%op @prefix+ecl.getInstanceClass().getSimpleName()@ @prefix+cr@(@s_types@) {
   is_fsym(t) { $t instanceof @(decl[0]+decl[1])@ }@s_gets@ @s_defaults@
-  make(@(s.length() <= 2 ? "" : s.substring(2))@) { construct@cr@((@(EObject.class.isAssignableFrom(ecl.getInstanceClass()) ? ecl.getInstanceClass().getCanonicalName() : "org.eclipse.emf.ecore.EObject")@)@o1@.eINSTANCE.create((EClass)@o2@.eINSTANCE.getEClassifier("@ecl.getName()@")), new Object[]{ @(s2.length() <= 2 ? "" : s2.substring(2))@ }) }
+  make(@(s.length() <= 2 ? "" : s.substring(2))@) { construct@prefix+cr@((@(EObject.class.isAssignableFrom(ecl.getInstanceClass()) ? ecl.getInstanceClass().getCanonicalName() : "org.eclipse.emf.ecore.EObject")@)@o1@.eINSTANCE.create((EClass)@o2@.eINSTANCE.getEClassifier("@ecl.getName()@")), new Object[]{ @(s2.length() <= 2 ? "" : s2.substring(2))@ }) }
 }
 
-public static <O extends org.eclipse.emf.ecore.EObject> O construct@cr@(O o, Object[] objs) {
+public static <O extends org.eclipse.emf.ecore.EObject> O construct@prefix+cr@(O o, Object[] objs) {
   int i=0;
   EList<EStructuralFeature> sfes = o.eClass().getEAllStructuralFeatures();
   for(EStructuralFeature esf : sfes) {
@@ -696,7 +698,7 @@ public static <O extends org.eclipse.emf.ecore.EObject> O construct@cr@(O o, Obj
           String operatorName = cr+literal.replaceAll(" ","");
           writer.write(%[
 
-%op @cr@ @operatorName@() {
+%op @prefix+cr@ @prefix+operatorName@() {
   is_fsym(t) { t == @(decl[0]+decl[1])@.get("@literal@") }
   make() { (@(decl[0]+decl[2])@)@o1@.eINSTANCE.createFromString( (EDataType)@o2@.eINSTANCE.get@toUpperName(cr)@(), "@literal@") }
 }]%);
