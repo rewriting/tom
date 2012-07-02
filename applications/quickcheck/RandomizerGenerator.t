@@ -62,6 +62,7 @@ public class RandomizerGenerator {
   
   public Strategy testStrategy(int depth){
     Condition cond = new Condition(depth);
+    Buildable t;
     return
       `Mu(
         MuVar("x"),
