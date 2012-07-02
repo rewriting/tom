@@ -96,6 +96,80 @@ public class TomMappingFromEcore {
    */
   private final static HashMap<Class<?>, String> types = new HashMap<Class<?>, String>();
 
+  /**
+   * 
+   */
+  private static String prefix = "";
+
+  /** 
+   * aa
+   * 
+   * @param args the argmuents list
+   * @return the list of EPackage names to process
+   */
+  public static List<String> processArgs(String[] args) {
+    List<String> ePackageNameList = new ArrayList<String>();
+    // -nt: typer
+    // -prefix
+    int i = 0;
+    String argument = "";
+    try {
+      for(; i < args.length; i++) {
+        argument = args[i];
+
+        if(!argument.startsWith("-") || (argument.equals("-"))) {
+          // input file name, should never start with '-' (except for System.in)
+          ePackageNameList.add(argument);
+        } else {
+          // argument does start with '-', thus is -or at least should be- an option
+          argument = argument.substring(1); // crops the '-'
+          if(argument.startsWith("-")) {
+            // if there's another one
+            argument = argument.substring(1); // crops the second '-'
+          }
+          /*if(argument.equals("help") || argument.equals("h")) {
+            displayHelp();
+            return null;
+          }*/
+          /*if(argument.equals("version") || argument.equals("V")) {
+            TomOptionManager.displayVersion();
+            return null;
+          }*/
+          if(argument.equals("X") || argument.equals("cp")) {
+            // just skip it, along with its argument (java options)
+            i++;
+            continue;
+          }
+          if(argument.equals("nt") || argument.equals("subtype")) {
+            useNewTyper = true;
+          }
+          if(argument.equals("prefix")) {
+            prefix = args[++i]; 
+          }
+        }
+      }
+    } catch (ArrayIndexOutOfBoundsException e) {
+      System.err.println("Expecting information after option "+argument);
+      return null;
+    }
+    
+    if(ePackageNameList.isEmpty()) {
+      //TomEMFMessage.error(logger, null, 0, TomEMFMessage.noEPackageToInspect);
+      System.err.println("No EPackage has been given.");
+      displayHelp();
+      return null;
+    }
+    return ePackageNameList;
+  }
+
+  private static void displayHelp() {
+    System.out.println("usage: emf-generate-mappings [options] <EPackageClassName>");
+    System.out.println("options:");
+        System.out.println("  -nt|-subtype (generates constructs with subtyping)");
+        System.out.println("  -prefix (generates mappings with a prefix)");
+        System.out.println("  any Java options");
+  }
+
   public static void main(String[] args) {
     /*
      * this way to use options shouldn't be like this : we could add a better
@@ -103,13 +177,14 @@ public class TomMappingFromEcore {
      * We may also add an --output <file> option
      */
       if(args.length < 1) {
-        System.out.println("No argument has been given!");
+        displayHelp();
+        /*System.out.println("No argument has been given!");
         System.out.println("usage: emf-generate-mappings [options] <EPackageClassName>");
         System.out.println("options:");
         System.out.println("  -nt (allows to generate constructs with subtyping)");
-        System.out.println("  any Java options");
+        System.out.println("  any Java options");*/
       } else {
-        int initindex = 0;
+        /*int initindex = 0;
         List<String> ePackageNameList = new ArrayList<String>();
 
         if (args[0].contentEquals("-nt")) {
@@ -118,6 +193,10 @@ public class TomMappingFromEcore {
         }
         for(int i=initindex;i<args.length;i++) {
           ePackageNameList.add(args[i]);
+        }*/
+        List<String> ePackageNameList = processArgs(args);
+        if(ePackageNameList == null) {
+          throw new RuntimeException("No EPackage has been given as argument!");
         }
 
         try {
