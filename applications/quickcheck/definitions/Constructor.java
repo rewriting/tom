@@ -3,18 +3,12 @@ package definitions;
 /**
  * Each constructor is linked to only one Buildable.
  */
-public class Constructor {
+class Constructor {
 
-  private String name;
   private Field[] fields;
 
-  public Constructor(String name, Field[] fields) {
-    this.name = name;
+  Constructor(Field[] fields) {
     this.fields = fields;
-  }
-
-  public Field[] getFields() {
-    return fields;
   }
 
   int getDimention() {
@@ -28,11 +22,7 @@ public class Constructor {
     return max;
   }
 
-  public String getName() {
-    return name;
-  }
-
-  public boolean isRec() {
+  boolean isRec() {
     int l = fields.length;
     for (int i = 0; i < l; i++) {
       if (fields[i].isRec()) {
