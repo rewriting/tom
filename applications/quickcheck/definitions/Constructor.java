@@ -20,7 +20,6 @@ class Constructor {
    * @return maximum des dimentions des champs non recursifs, 0 si aucun champs
    * n'est pas recursifs
    */
-  
   int getDimention() {
     int l = fields.length;
     int max = 0;
@@ -43,6 +42,12 @@ class Constructor {
   }
 
   boolean hasFieldOfType(Type t) {
-    throw new UnsupportedOperationException("Not yet implemented");
+    int l = fields.length;
+    for (int i = 0; i < l; i++) {
+      if (fields[i].dependsOnType(t)) {
+        return true;
+      }
+    }
+    return false;
   }
 }

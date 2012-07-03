@@ -17,4 +17,12 @@ public class Field {
   int getDimention() {
     return type.getDimention();
   }
+
+  boolean dependsOnType(Type t) {
+    if (type == t) {
+      return true;
+    } else {
+      return type.checkIfConstructorHasFieldOfType(t);
+    }
+  }
 }
