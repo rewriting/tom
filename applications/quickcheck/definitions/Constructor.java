@@ -41,4 +41,8 @@ class Constructor {
     }
     return false;
   }
+
+  boolean hasFieldOfType(Type t) {
+    throw new UnsupportedOperationException("Not yet implemented");
+  }
 }
