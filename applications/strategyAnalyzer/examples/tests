@@ -4,9 +4,9 @@
 // //               and not Bottom(Bottom(a))
 // // Fail and Identity should apply only on terms of the signature
 // // (not on Dummy)
-let S=signature {a:0, b:0, f:1, g:2, h:1} in
-// identity
-fail
+// let S=signature {a:0, b:0, f:1, g:2, h:1} in
+// // identity
+// fail
 
 
 
@@ -138,11 +138,27 @@ fail
 // let simplest = mu x .(identity <+ x) in
 // simplest
 
+let S=signature {a:0, b:0, c:0, f:1, g:2} in
+let r1 = { a() -> b() } in 
+let check = mu x .(r1 <+ one(x)) in
+check
 
+// let S=signature {a:0, b:0, c:0, f:1, g:2} in
+// let check = mu x . (x) in
+// check
+
+// // repeat(r1)
 // let S=signature {a:0, b:0, c:0, f:1, g:2} in
 // let r1 = { a() -> b() } in 
 // let repeatR1 = mu x .((r1;x) <+ identity) in
 // repeatR1
+
+// // repeat(r1,r2)
+// let S=signature {a:0, b:0, c:0, f:1, g:2} in
+// let r1 = { a() -> b() } in 
+// let r2 = { b() -> c() } in 
+// let repeatR12 = mu x .(((r1<+r2);x) <+ identity) in
+// repeatR12
 
 
 // // non-terminating
@@ -154,6 +170,7 @@ fail
 // let infinite = mu x .(fail <+ x) in
 // infinite
 
+// repeat(r1) infinite
 // let S=signature {a:0, b:0, c:0, f:1, g:2} in
 // let r1 = { a() -> a() } in 
 // let infinite = mu x .((r1;x) <+ identity) in
