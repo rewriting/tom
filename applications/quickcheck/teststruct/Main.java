@@ -1,6 +1,5 @@
 package teststruct;
 
-import definitions.Field;
 import definitions.Scope;
 import definitions.Type;
 

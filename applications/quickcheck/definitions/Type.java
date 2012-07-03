@@ -17,18 +17,6 @@ public class Type {
     scope.addType(this);
   }
 
-  /**
-   *
-   * @param listFields
-   * @return
-   * @deprecated
-   */
-  @Deprecated
-  public Type addConstructor(Field[] listFields) {
-    listConstructors.add(new Constructor(listFields));
-    return this;
-  }
-
   public Type addConstructor(Type[] listTypes) {
     listConstructors.add(new Constructor(this, listTypes));
     for (int i = 0; i < listTypes.length; i++) {
@@ -68,20 +56,5 @@ public class Type {
     }
 
     return dim + add;
-  }
-
-  @Deprecated
-  boolean checkIfConstructorHasFieldOfType(Type t) {
-    for (Constructor constructor : listConstructors) {
-      if (constructor.hasFieldOfType(t)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  @Deprecated
-  public boolean isRec2() {
-    return checkIfConstructorHasFieldOfType(this);
   }
 }

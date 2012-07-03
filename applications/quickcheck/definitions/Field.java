@@ -6,7 +6,7 @@ package definitions;
  * @deprecated 
  */
 @Deprecated
-public class Field {
+class Field {
 
   private Type type;
   private boolean isRec; // also true in case of mutual recurstion
@@ -25,14 +25,5 @@ public class Field {
   @Deprecated
   int getDimention() {
     return type.getDimention();
-  }
-
-  @Deprecated
-  boolean dependsOnType(Type t) {
-    if (type == t) {
-      return true;
-    } else {
-      return type.checkIfConstructorHasFieldOfType(t);
-    }
   }
 }
