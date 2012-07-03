@@ -15,6 +15,10 @@ public class RandomizerGenerator {
     Condition(int i){
       this.i = i;
     }
+    public Condition dec(){
+      this.i--;
+      return this;
+    }
   }
   
   %typeterm Condition {
@@ -98,7 +102,7 @@ public class RandomizerGenerator {
     }
   }
   
-  %strategy ChoiceWithConditionLight(cond:Condition, leaf:Strategy, branch:Strategy) extends Fail(){
+  %strategy ChoiceWithConditionLight(leaf:Strategy, branch:Strategy, cond:Condition) extends Fail(){
     visit Expr {
       e && cond.i > 0 -> {
         System.out.println(cond.i);
@@ -106,8 +110,8 @@ public class RandomizerGenerator {
         return `Pselect(1,2,leaf, branch).visitLight(`e);
       }
       e && cond.i <= 0 -> {
-        // here condition can be <0 because of the fact that cond is 
-        // shared with all created strategies
+        // here condition can be < 0 because of the fact that cond 
+        // is shared with all created strategies
         System.out.println("stop : " + cond.i);
         cond.i--;
         return leaf.visitLight(`e);
@@ -117,15 +121,16 @@ public class RandomizerGenerator {
   
   public Strategy testStrategyLight(int depth){
     Condition cond = new Condition(depth);
-    return
+    Strategy s = 
       `Mu(
         MuVar("x"),
         ChoiceWithConditionLight(
-          cond,
           ChoiceLeafLight(),
-          ChoiceBranchLight(MuVar("x"), MuVar("x"))
+          ChoiceBranchLight(MuVar("x"), MuVar("x")),
+          cond
         )
       );
+    return s;
   }
   
   /*============================================================*/
