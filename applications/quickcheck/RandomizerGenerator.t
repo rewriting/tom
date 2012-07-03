@@ -50,7 +50,13 @@ public class RandomizerGenerator {
       e && cond.i > 0 -> {
         System.out.println(cond.i);
         cond.i--;
-        return `Pselect(1,2,leaf, branch).visit(`e);
+        double r = Math.random();
+        if(r<0.5) {
+          return `leaf.visit(`e);
+        } else {
+          return `branch.visit(`e);
+        }
+        //return `Pselect(1,2,leaf, branch).visit(`e);
       }
       e && cond.i == 0 -> {
         System.out.println("stop : " + cond.i);
@@ -62,9 +68,9 @@ public class RandomizerGenerator {
   
   public Strategy testStrategy(int depth){
     Condition cond = new Condition(depth);
-    Buildable t;
+    /*
     return
-      `Mu(
+      `mu(
         MuVar("x"),
         ChoiceWithCondition(
           cond,
@@ -72,11 +78,21 @@ public class RandomizerGenerator {
           ChoiceBranch(MuVar("x"), MuVar("x"))
         )
       );
+      */
+    return
+      `mu(
+        MuVar("x"),
+        ChoiceWithCondition(
+          cond,
+          Pselect(1,2, Make_zero(), Make_un()),
+          Pselect(1,2, Make_plus(MuVar("x"),MuVar("x")), Make_mult(MuVar("x"),MuVar("x")))
+        )
+      );
   }
     
 	public Strategy make_random(){
 		return 
-      `Mu(
+      `mu(
         MuVar("x"),
         ChoiceUndet(
           Make_zero(),
