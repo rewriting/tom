@@ -4,14 +4,24 @@ package definitions;
  *
  * @author hubert
  */
-
 class Constructor {
 
+  @Deprecated
   private Field[] fields;
+  private Type caller;
+  private Type[] champs;
 
+  @Deprecated
   Constructor(Field[] fields) {
     this.fields = fields;
   }
+
+  public Constructor(Type caller, Type[] fields) {
+    this.caller = caller;
+    this.champs = fields;
+  }
+  
+  
 
   /**
    * Cette fonction donne la dimention du constructeur. Elle renvoie le maximum
@@ -22,6 +32,7 @@ class Constructor {
    * @return maximum des dimentions des champs non recursifs, 0 si aucun champs
    * n'est pas recursifs
    */
+  @Deprecated
   int getDimention() {
     int l = fields.length;
     int max = 0;
@@ -33,6 +44,7 @@ class Constructor {
     return max;
   }
 
+  @Deprecated
   boolean isRec() {
     int l = fields.length;
     for (int i = 0; i < l; i++) {
@@ -43,6 +55,7 @@ class Constructor {
     return false;
   }
 
+  @Deprecated
   boolean hasFieldOfType(Type t) {
     int l = fields.length;
     for (int i = 0; i < l; i++) {

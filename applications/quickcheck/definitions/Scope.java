@@ -19,7 +19,13 @@ public class Scope {
   }
   
   public void setDependances(){
-    throw new UnsupportedOperationException("not yet implemented");
+    boolean hasChanged = true;
+    while (hasChanged) {      
+      hasChanged = false;
+      for (Type type : setOfTypes) {
+        hasChanged = hasChanged || type.updateDependances();
+      }
+    }
   }
   
 }
