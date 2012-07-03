@@ -3,6 +3,8 @@
 	<name>tom.mapping.dsl.generator</name>
 	<comment></comment>
 	<projects>
+		<project>tom.mapping.dsl</project>
+		<project>tom.mapping.model</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

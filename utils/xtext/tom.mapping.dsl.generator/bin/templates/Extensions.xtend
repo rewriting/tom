@@ -1,18 +1,15 @@
 package templates
 
-import tom.mapping.model.Accessor
-import tom.mapping.model.UserOperator
-import tom.mapping.model.Mapping
-import org.eclipse.emf.ecore.EPackage
-import tom.mapping.model.Terminal
-import org.eclipse.emf.ecore.EReference
 import java.util.List
 import org.eclipse.emf.ecore.EClass
+import org.eclipse.emf.ecore.EPackage
+import org.eclipse.emf.ecore.EReference
 import org.eclipse.emf.ecore.EStructuralFeature
-import tom.mapping.model.FeatureParameter
-import tom.mapping.model.SettedFeatureParameter
-import tom.mapping.model.FeatureException
 import tom.mapping.model.ClassOperator
+import tom.mapping.model.FeatureException
+import tom.mapping.model.FeatureParameter
+import tom.mapping.model.Mapping
+import tom.mapping.model.SettedFeatureParameter
 
 class Extensions {
 	  
@@ -26,7 +23,7 @@ def Iterable<FeatureParameter> getCustomParameters(ClassOperator c) {
 }
 
 def Iterable<SettedFeatureParameter> getSettedCustomParameters(ClassOperator c) {
-	c.parameters.filter([e| e instanceof SettedFeatureParameter]) as Iterable<SettedFeatureParameter>;
+	c.getParameters.filter([e|e instanceof SettedFeatureParameter]) as Iterable<SettedFeatureParameter>;
 }
 
 def  boolean isParameterFeature(EStructuralFeature f,Mapping mapping) {
