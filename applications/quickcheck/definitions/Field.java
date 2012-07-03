@@ -1,5 +1,10 @@
 package definitions;
 
+/**
+ *
+ * @author hubert
+ */
+
 public class Field {
 
   private Type type;

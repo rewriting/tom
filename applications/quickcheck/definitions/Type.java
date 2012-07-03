@@ -1,13 +1,19 @@
 package definitions;
 
-import java.util.LinkedList;
+import java.util.HashSet;
 
+/**
+ *
+ * @author hubert
+ */
 public class Type {
 
-  private LinkedList<Constructor> listConstructors;
+  private HashSet<Constructor> listConstructors;
+  private HashSet<Type> dependances;
 
   private Type() {
-    listConstructors = new LinkedList<Constructor>();
+    listConstructors = new HashSet<Constructor>();
+    dependances = new HashSet<Type>();
   }
 
   public static Type declare() {
@@ -18,6 +24,8 @@ public class Type {
     listConstructors.add(new Constructor(listFields));
     return this;
   }
+  
+  
 
   private boolean isRec() {
     for (Constructor constructor : listConstructors) {
@@ -48,8 +56,8 @@ public class Type {
     }
     return false;
   }
-  
-  public boolean isRec2(){
+
+  public boolean isRec2() {
     return checkIfConstructorHasFieldOfType(this);
   }
 }

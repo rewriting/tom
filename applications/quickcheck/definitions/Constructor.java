@@ -1,8 +1,10 @@
 package definitions;
 
 /**
- * Each constructor is linked to only one Type.
+ *
+ * @author hubert
  */
+
 class Constructor {
 
   private Field[] fields;
