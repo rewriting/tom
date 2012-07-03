@@ -2,11 +2,11 @@ package definitions;
 
 public class Field {
 
-  private Type buildable;
+  private Type type;
   private boolean isRec; // also true in case of mutual recurstion
 
   public Field(Type buildable, boolean isRec) {
-    this.buildable = buildable;
+    this.type = buildable;
     this.isRec = isRec;
   }
 
@@ -15,6 +15,6 @@ public class Field {
   }
 
   int getDimention() {
-    return buildable.getDimention();
+    return type.getDimention();
   }
 }

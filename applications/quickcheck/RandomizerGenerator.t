@@ -15,6 +15,10 @@ public class RandomizerGenerator {
     Condition(int i){
       this.i = i;
     }
+    public Condition dec(){
+      this.i--;
+      return this;
+    }
   }
   
   %typeterm Condition {
@@ -89,6 +93,64 @@ public class RandomizerGenerator {
         )
       );
   }
+  
+  /*===================== TEST LIGHT =====================*/
+  
+  %strategy ChoiceLeafLight() extends Fail(){
+    visit Expr {
+      e -> {
+        System.out.println("leaf generated");
+        return `Pselect(1,2, Make_zero(), Make_un()).visitLight(`e);
+      }
+    }
+  }
+  
+  %strategy ChoiceBranchLight(retour:Strategy, retour2:Strategy) extends Fail(){
+    visit Expr {
+      e -> {
+        System.out.println("branch generated");
+        return `Pselect(
+          1,
+          2,
+          Make_plus(retour, retour2),
+          Make_mult(retour, retour2)
+        ).visitLight(`e);
+      }
+    }
+  }
+  
+  %strategy ChoiceWithConditionLight(leaf:Strategy, branch:Strategy, cond:Condition) extends Fail(){
+    visit Expr {
+      e && cond.i > 0 -> {
+        System.out.println(cond.i);
+        cond.i--;
+        return `Pselect(1,2,leaf, branch).visitLight(`e);
+      }
+      e && cond.i <= 0 -> {
+        // here condition can be < 0 because of the fact that cond 
+        // is shared with all created strategies
+        System.out.println("stop : " + cond.i);
+        cond.i--;
+        return leaf.visitLight(`e);
+      }
+    }
+  }
+  
+  public Strategy testStrategyLight(int depth){
+    Condition cond = new Condition(depth);
+    Strategy s = 
+      `Mu(
+        MuVar("x"),
+        ChoiceWithConditionLight(
+          ChoiceLeafLight(),
+          ChoiceBranchLight(MuVar("x"), MuVar("x")),
+          cond
+        )
+      );
+    return s;
+  }
+  
+  /*============================================================*/
     
 	public Strategy make_random(){
 		return 

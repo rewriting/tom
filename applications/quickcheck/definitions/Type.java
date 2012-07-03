@@ -39,4 +39,24 @@ public class Type {
     }
     return dim + add;
   }
+  
+  private boolean checkIfConstructorHasFieldOf(Type t){
+    for (Constructor constructor : listConstructors) {
+        if (constructor.hasFieldOfType(t)) return true;
+      }
+    return false;
+  }
+  
+  boolean include_aux(Type t){
+    boolean res = false;
+    if(t == this){
+      res = true;
+    } else {
+      for (Constructor constructor : listConstructors) {
+        res = constructor.hasFieldOfType(t);
+        if (res) break;
+      }
+    }
+    return res;
+  }
 }

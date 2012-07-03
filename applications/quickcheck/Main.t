@@ -16,12 +16,14 @@ public class Main {
     
     /* debut test */
     // Strategy s_test = generator.make_random_with_depth(5);
-    Strategy s_test = generator.testStrategy(10);
-    Representation.representeStrategy(s_test);
-    System.out.println(s_test);
+    System.out.println("Generation du generateur");
+    Strategy s_test = generator.testStrategyLight(100);
+    System.out.println("visitation");
+    //Representation.representeStrategy(s_test);
+    //System.out.println(s_test);
     Expr b = null;
     try{
-      b=s_test.visit(`zero());
+      b=s_test.visitLight(`zero());
     } catch (VisitFailure e){
       System.out.println("erreur");
     }

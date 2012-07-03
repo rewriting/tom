@@ -1,3 +1,7 @@
-#gom sort.gom --withCongruenceStrategies && tom RandomizerGenerator.t && javac RandomizerGenerator.java && tom Representation.t && javac Representation.java && tom Main.t && javac Main.java
+bash clean.sh class
 
-gom sort.gom --withCongruenceStrategies && tom RandomizerGenerator.t  && tom Representation.t && tom Main.t && javac Main.java
+if [ "$1" != "nogom" ]; then
+  gom sort.gom --withCongruenceStrategies
+fi
+
+tom RandomizerGenerator.t  && tom Representation.t && tom Main.t && javac Main.java
