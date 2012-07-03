@@ -79,7 +79,7 @@ public class Representation {
     }    
   }
   
-  %strategy SeeStrategy() extends Fail(){
+  %strategy SeeStrategy() extends Identity(){
     visit Strategy {
       Pselect(_,_,_,_) -> {System.out.println("ID");}
       Make_plus(_,_) -> {System.out.println("PLUS");}
