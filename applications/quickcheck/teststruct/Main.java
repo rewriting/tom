@@ -1,7 +1,7 @@
 package teststruct;
 
-import definitions.Scope;
 import definitions.Algebraic;
+import definitions.Scope;
 
 public class Main {
 

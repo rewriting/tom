@@ -4,6 +4,8 @@
  */
 package definitions;
 
+import tom.library.sl.Strategy;
+
 /**
  *
  * @author hubert
@@ -26,6 +28,11 @@ public abstract class BuiltIn {
     public boolean dependsOn(Typable t) {
       return false;
     }
+
+    @Override
+    public Strategy makeGenerator(Request request) {
+      throw new UnsupportedOperationException("Not supported yet.");
+    }
   };
   public static final Typable string = new Typable() {
 
@@ -42,6 +49,11 @@ public abstract class BuiltIn {
     @Override
     public boolean dependsOn(Typable t) {
       return false;
+    }
+
+    @Override
+    public Strategy makeGenerator(Request request) {
+      throw new UnsupportedOperationException("Not supported yet.");
     }
   };
 }

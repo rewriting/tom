@@ -2,6 +2,7 @@ package definitions;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import tom.library.sl.Strategy;
 
 /**
  *
@@ -11,9 +12,6 @@ public class Algebraic implements Typable {
   
   private HashSet<Constructor> listConstructors;
   private HashSet<Typable> listDependances;
-
-  private Algebraic() {
-  }
 
   public Algebraic(Scope scope) {
     listConstructors = new HashSet<Constructor>();
@@ -64,5 +62,10 @@ public class Algebraic implements Typable {
   @Override
   public boolean dependsOn(Typable t) {
     return listDependances.contains(t);
+  }
+
+  @Override
+  public Strategy makeGenerator(Request request) {
+    throw new UnsupportedOperationException("Not supported yet.");
   }
 }
