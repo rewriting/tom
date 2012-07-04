@@ -74,7 +74,7 @@ public class Bug {
           }*/
             System.out.println("case branch");
             Expr res = `branch.visitLight(`e);
-            System.out.println("=> " + res);
+            System.out.println("branch result " + res);
             return res;
 
         } else {
@@ -83,7 +83,7 @@ public class Bug {
           System.out.println("stop");
           cond.dec();
           Expr res = leaf.visitLight(`e);
-          System.out.println("=> " + res);
+          System.out.println("leaf result " + res);
           return res;
         }
       }
