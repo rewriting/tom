@@ -50,24 +50,33 @@ public class Bug {
     }
   }
   
-  %strategy ChoiceWithConditionLight(leaf:Strategy, branch:Strategy, cond:Condition) extends Identity(){
+  %strategy ChoiceWithConditionLight(leaf:Strategy, branch:Strategy, cond:Condition) extends Identity() {
     visit Expr {
-      e && cond.i > 0 -> {
-        System.out.println(cond.i);
-        cond.dec();
-        //return `Pselect(1,2,leaf, branch).visitLight(`e);
-        if(Math.random() < 0.5) {
-          `leaf.visitLight(`e);
+      e -> {
+        if(cond.i > 0) {
+          System.out.println(cond.i);
+          cond.dec();
+          //return `Pselect(1,2,leaf, branch).visitLight(`e);
+          if(Math.random() < 0.5) {
+            System.out.println("case leaf");
+            Expr res = `leaf.visitLight(`e);
+            System.out.println("=> " + res);
+            return res;
+          } else {
+            System.out.println("case branch");
+            Expr res = `branch.visitLight(`e);
+            System.out.println("=> " + res);
+            return res;
+          }
         } else {
-          `branch.visitLight(`e);
+          // here condition can be < 0 because of the fact that cond 
+          // is shared with all created strategies
+          System.out.println("stop : " + cond.i);
+          cond.dec();
+          Expr res = leaf.visitLight(`e);
+          System.out.println("=> " + res);
+          return res;
         }
-      }
-      e && cond.i <= 0 -> {
-        // here condition can be < 0 because of the fact that cond 
-        // is shared with all created strategies
-        System.out.println("stop : " + cond.i);
-        cond.dec();
-        return leaf.visitLight(`e);
       }
     }
   }
