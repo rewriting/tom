@@ -108,12 +108,31 @@ public class Bug {
     return s;
   }
   
+  %strategy StraTest(s1:Strategy, s2:Strategy) extends Fail(){
+    visit Expr {
+      e-> {System.out.println("passage");return `ChoiceUndet(s1,s2).visitLight(`e);}
+    }
+  }
+  
+  public Strategy genStrategytest(int depth) {
+    Condition cond = new Condition(depth);
+    Strategy s = 
+      `mu(
+        MuVar("x"),
+        StraTest(
+          Make_zero(),
+          Make_plus(MuVar("x"), MuVar("x"))
+        )
+      );
+    return s;
+  }
+  
   /*============================================================*/
     
   public static void main(String[] args) {
     Bug generator = new Bug();
     
-    Strategy s = generator.genStrategy(3);
+    Strategy s = generator.genStrategytest(5);
     Expr b = null;
     try {
       b=s.visitLight(`zero());
@@ -121,7 +140,7 @@ public class Bug {
       System.out.println("failure");
     }
     System.out.println("result = " + b + "\n\n");
-    //Representation.represente(b, "test.dot");
-    //Representation.representeHash(b, "test_hash.dot");
+    Representation.represente(b, "test.dot");
+    Representation.representeHash(b, "test_hash.dot");
   }
 }
