@@ -31,7 +31,7 @@ public class Bug {
     equals(l1,l2)  { $l1.equals($l2) }
   }
   
-  %strategy ChoiceLeafLight() extends Identity(){
+  %strategy ChoiceLeaf() extends Identity(){
     visit Expr {
       e -> {
         System.out.println("leaf generated");
@@ -40,21 +40,22 @@ public class Bug {
     }
   }
   
-  %strategy ChoiceBranchLight(retour:Strategy, retour2:Strategy) extends Identity(){
+  %strategy ChoiceBranch(retour:Strategy, retour2:Strategy) extends Identity(){
     visit Expr {
       e -> {
         System.out.println("branch generated");
-        return `Pselect(
-          1,
-          2,
-          Make_plus(retour, retour2),
-          Make_mult(retour, retour2)
-        ).visit(`e);
+        //return `Pselect(1,2, Make_plus(retour, retour2), Make_mult(retour, retour2)).visit(`e);
+        //Expr res =  `Make_plus(retour, retour2).visit(`e);
+        //System.out.println("result = " + res);
+        //return res;
+        `Make_plus(retour, retour2).visit(getEnvironment());
+        return (Expr) getEnvironment().getSubject();
+        
       }
     }
   }
   
-  %strategy ChoiceWithConditionLight(leaf:Strategy, branch:Strategy, cond:Condition) extends Identity() {
+  %strategy ChoiceWithCondition(leaf:Strategy, branch:Strategy, cond:Condition) extends Identity() {
     visit Expr {
       e -> {
         if(cond.isTrue()) {
@@ -73,18 +74,21 @@ public class Bug {
             return res;
           }*/
             System.out.println("case branch");
-            Expr res = `branch.visit(`e);
-            System.out.println("branch result " + res);
-            return res;
-
+            //Expr res = `branch.visit(`e);
+            //System.out.println("branch result " + res);
+            //return res;
+            `branch.visit(getEnvironment());
+            return (Expr) getEnvironment().getSubject();
         } else {
           // here condition can be < 0 because of the fact that cond 
           // is shared with all created strategies
           System.out.println("stop");
           cond.dec();
-          Expr res = leaf.visit(`e);
-          System.out.println("leaf result " + res);
-          return res;
+          //Expr res = leaf.visit(`e);
+          //System.out.println("leaf result " + res);
+          //return res;
+          `leaf.visit(getEnvironment());
+          return (Expr) getEnvironment().getSubject();
         }
       }
     }
@@ -95,33 +99,14 @@ public class Bug {
     Strategy s = 
       `mu(
         MuVar("x"),
-        ChoiceWithConditionLight(
+        ChoiceWithCondition(
           Make_zero() 
           /*Pselect(1,2, Make_zero(), Make_un())*/
-          /*ChoiceLeafLight()*/,
+          /*ChoiceLeaf()*/,
           /*Make_plus(MuVar("x"), Make_zero())*/
           /*Pselect(1,2, Make_plus(MuVar("x"), MuVar("x")), Make_mult(MuVar("x"), MuVar("x")))*/
-          ChoiceBranchLight(MuVar("x"), MuVar("x")),
+          ChoiceBranch(MuVar("x"), Make_un()),
           cond
-        )
-      );
-    return s;
-  }
-  
-  %strategy StraTest(s1:Strategy, s2:Strategy) extends Fail(){
-    visit Expr {
-      e-> {System.out.println("passage");return `ChoiceUndet(s1,s2).visitLight(`e);}
-    }
-  }
-  
-  public Strategy genStrategytest(int depth) {
-    Condition cond = new Condition(depth);
-    Strategy s = 
-      `mu(
-        MuVar("x"),
-        StraTest(
-          Make_zero(),
-          Make_plus(MuVar("x"), MuVar("x"))
         )
       );
     return s;
