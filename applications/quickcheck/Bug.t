@@ -35,7 +35,7 @@ public class Bug {
     visit Expr {
       e -> {
         System.out.println("leaf generated");
-        return `Pselect(1,2, Make_zero(), Make_un()).visitLight(`e);
+        return `Pselect(1,2, Make_zero(), Make_un()).visit(`e);
       }
     }
   }
@@ -49,7 +49,7 @@ public class Bug {
           2,
           Make_plus(retour, retour2),
           Make_mult(retour, retour2)
-        ).visitLight(`e);
+        ).visit(`e);
       }
     }
   }
@@ -73,7 +73,7 @@ public class Bug {
             return res;
           }*/
             System.out.println("case branch");
-            Expr res = `branch.visitLight(`e);
+            Expr res = `branch.visit(`e);
             System.out.println("=> " + res);
             return res;
 
@@ -82,7 +82,7 @@ public class Bug {
           // is shared with all created strategies
           System.out.println("stop");
           cond.dec();
-          Expr res = leaf.visitLight(`e);
+          Expr res = leaf.visit(`e);
           System.out.println("=> " + res);
           return res;
         }
@@ -99,9 +99,9 @@ public class Bug {
           Make_zero() 
           /*Pselect(1,2, Make_zero(), Make_un())*/
           /*ChoiceLeafLight()*/,
-          Make_plus(MuVar("x"), MuVar("x"))
+          /*Make_plus(MuVar("x"), Make_zero())*/
           /*Pselect(1,2, Make_plus(MuVar("x"), MuVar("x")), Make_mult(MuVar("x"), MuVar("x")))*/
-          /*ChoiceBranchLight(MuVar("x"), MuVar("x"))*/,
+          ChoiceBranchLight(MuVar("x"), MuVar("x")),
           cond
         )
       );
@@ -116,7 +116,7 @@ public class Bug {
     Strategy s = generator.genStrategy(3);
     Expr b = null;
     try {
-      b=s.visitLight(`zero());
+      b=s.visit(`zero());
     } catch (VisitFailure e) {
       System.out.println("failure");
     }
