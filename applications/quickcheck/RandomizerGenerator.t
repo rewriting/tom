@@ -84,12 +84,20 @@ public class RandomizerGenerator {
       );
       */
     return
-      `mu(
+      `Mu(
         MuVar("x"),
         ChoiceWithCondition(
           cond,
-          Pselect(1,2, Make_zero(), Make_un()),
-          Pselect(1,2, Make_plus(MuVar("x"),MuVar("x")), Make_mult(MuVar("x"),MuVar("x")))
+          Pselect(1,2, 
+            Make_zero(), 
+            Make_un()),
+          Pselect(1,2, 
+            Make_plus(
+              MuVar("x"),
+              MuVar("x")), 
+            Make_mult(
+              MuVar("x"),
+              MuVar("x")))
         )
       );
   }

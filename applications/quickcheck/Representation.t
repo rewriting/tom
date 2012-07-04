@@ -81,15 +81,19 @@ public class Representation {
   
   %strategy SeeStrategy() extends Identity(){
     visit Strategy {
-      Pselect(_,_,_,_) -> {System.out.println("ID");}
+      Pselect(_,_,_,_) -> {System.out.println("PSELECT");}
       Make_plus(_,_) -> {System.out.println("PLUS");}
       Make_mult(_,_) -> {System.out.println("MULT");}
+      Make_zero() -> {System.out.println("ZERO");}
+      Make_un() -> {System.out.println("UN");}
+      //ChoiceWithCondition(_,_,_) -> {System.out.println("Choice");}
+      Mu(MuVar(a),_) -> {System.out.println("Mu("+`a+")");}
       _ -> {System.out.println("???");}
     }
   }
   
   public static void representeStrategy(Strategy s){
-    //tom.library.utils.Viewer.toTree(s);
+    tom.library.utils.Viewer.toTree(s);
     try {
       `TopDown(SeeStrategy()).visit(s);
     } catch (VisitFailure e){
