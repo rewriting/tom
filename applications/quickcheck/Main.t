@@ -17,9 +17,9 @@ public class Main {
     /* debut test */
     // Strategy s_test = generator.make_random_with_depth(5);
     System.out.println("Generation du generateur");
-    Strategy s_test = generator.testStrategyLight(100);
+    Strategy s_test = generator.testStrategy(100);
     System.out.println("visitation");
-    //Representation.representeStrategy(s_test);
+    Representation.representeStrategy(s_test);
     //System.out.println(s_test);
     Expr b = null;
     try{

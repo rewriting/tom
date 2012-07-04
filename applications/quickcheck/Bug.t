@@ -60,12 +60,12 @@ public class Bug {
           if(Math.random() < 0.5) {
             System.out.println("case leaf");
             Expr res = `leaf.visitLight(`e);
-            System.out.println("=> " + res);
+            System.out.println("leaf result " + res);
             return res;
           } else {
             System.out.println("case branch");
             Expr res = `branch.visitLight(`e);
-            System.out.println("=> " + res);
+            System.out.println("branch result " + res);
             return res;
           }
         } else {
