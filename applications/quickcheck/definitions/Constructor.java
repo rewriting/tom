@@ -7,10 +7,10 @@ package definitions;
 class Constructor {
 
   private Type caller;
-  private Type[] champs;
+  private Typable[] champs;
 
 
-  public Constructor(Type caller, Type[] fields) {
+  public Constructor(Type caller, Typable[] fields) {
     this.caller = caller;
     this.champs = fields;
   }
