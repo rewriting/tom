@@ -8,41 +8,7 @@ import java.util.HashSet;
  * @author hubert
  */
 public class Algebraic implements Typable {
-
-  public static final Typable integer = new Typable() {
-
-    @Override
-    public boolean isRec() {
-      return false;
-    }
-
-    @Override
-    public int getDimention() {
-      return 0;
-    }
-
-    @Override
-    public boolean dependsOn(Typable t) {
-      return false;
-    }
-  };
-  public static final Typable string = new Typable() {
-
-    @Override
-    public boolean isRec() {
-      return false;
-    }
-
-    @Override
-    public int getDimention() {
-      return 1;
-    }
-
-    @Override
-    public boolean dependsOn(Typable t) {
-      return false;
-    }
-  };
+  
   private HashSet<Constructor> listConstructors;
   private HashSet<Typable> listDependances;
 
