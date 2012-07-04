@@ -58,17 +58,18 @@ public class BugLight {
   
   %strategy ChoiceWithConditionLight(leaf:Strategy, branch:Strategy, cond:Condition) extends Fail(){
     visit Expr {
-      e && cond.i > 0 -> {
-        System.out.println(cond.i);
-        cond.i--;
-        return `Pselect(1,2,leaf, branch).visitLight(`e);
-      }
-      e && cond.i <= 0 -> {
-        // here condition can be < 0 because of the fact that cond 
-        // is shared with all created strategies
-        System.out.println("stop : " + cond.i);
-        cond.i--;
-        return leaf.visitLight(`e);
+      e -> {
+        if(cond.isTrue()) {
+          cond.dec();
+          System.out.println("case branch");
+          return `branch.visitLight(`e);
+        } else {
+          // here condition can be < 0 because of the fact that cond 
+          // is shared with all created strategies
+          System.out.println("stop");
+          cond.dec();
+          return `leaf.visitLight(`e);
+        }
       }
     }
   }
@@ -79,8 +80,8 @@ public class BugLight {
       `Mu(
         MuVar("x"),
         ChoiceWithConditionLight(
-          ChoiceLeafLight(),
-          ChoiceBranchLight(MuVar("x"), MuVar("x")),
+          Make_zero(),
+          Make_plus(MuVar("x"), MuVar("x")),
           cond
         )
       );
@@ -92,7 +93,7 @@ public class BugLight {
   public static void main(String[] args) {
     BugLight generator = new BugLight();
 
-    Strategy s = generator.testStrategyLight(5);
+    Strategy s = generator.testStrategyLight(10);
     Expr b = null;
     try {
       b=s.visit(`zero());
