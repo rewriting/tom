@@ -1,27 +1,27 @@
 package definitions;
 
+import java.util.Arrays;
 import java.util.HashSet;
+import tom.library.sl.Strategy;
 
 /**
  *
  * @author hubert
  */
-public class Type {
-
+public class Algebraic implements Typable {
+  
   private HashSet<Constructor> listConstructors;
-  private HashSet<Type> listDependances;
+  private HashSet<Typable> listDependances;
 
-  public Type(Scope scope) {
+  public Algebraic(Scope scope) {
     listConstructors = new HashSet<Constructor>();
-    listDependances = new HashSet<Type>();
+    listDependances = new HashSet<Typable>();
     scope.addType(this);
   }
 
-  public Type addConstructor(Type[] listTypes) {
+  public Algebraic addConstructor(Typable[] listTypes) {
     listConstructors.add(new Constructor(this, listTypes));
-    for (int i = 0; i < listTypes.length; i++) {
-      listDependances.add(listTypes[i]);
-    }
+    listDependances.addAll(Arrays.asList(listTypes));
     return this;
   }
 
@@ -31,30 +31,41 @@ public class Type {
    */
   boolean updateDependances() {
     boolean hasChanged = false;
-    HashSet<Type> depsClone = (HashSet<Type>) listDependances.clone();
-    for (Type deps : depsClone) {
+    HashSet<Algebraic> depsClone = (HashSet<Algebraic>) listDependances.clone();
+    for (Algebraic deps : depsClone) {
       hasChanged = hasChanged || !depsClone.containsAll(deps.listDependances);
       listDependances.addAll(deps.listDependances);
     }
     return hasChanged;
   }
 
+  @Override
   public boolean isRec() {
     return listDependances.contains(this);
   }
 
+  @Override
   public int getDimention() {
     int dim = 0;
     int add = 0;
     if (isRec()) {
       add = 1;
     }
-    for (Type type : listDependances) {
-      if (!type.listDependances.contains(this)) {
+    for (Typable type : listDependances) {
+      if (!type.dependsOn(this)) {
         dim = Math.max(dim, type.getDimention());
       }
     }
-
     return dim + add;
+  }
+
+  @Override
+  public boolean dependsOn(Typable t) {
+    return listDependances.contains(t);
+  }
+
+  @Override
+  public Strategy makeGenerator(Request request) {
+    throw new UnsupportedOperationException("Not supported yet.");
   }
 }

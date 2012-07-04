@@ -8,13 +8,13 @@ import java.util.HashSet;
  */
 public class Scope {
 
-  private HashSet<Type> setOfTypes;
+  private HashSet<Algebraic> setOfTypes;
 
   public Scope() {
-    setOfTypes = new HashSet<Type>();
+    setOfTypes = new HashSet<Algebraic>();
   }
   
-  void addType(Type t){
+  void addType(Algebraic t){
     setOfTypes.add(t);
   }
   
@@ -22,7 +22,7 @@ public class Scope {
     boolean hasChanged = true;
     while (hasChanged) {      
       hasChanged = false;
-      for (Type type : setOfTypes) {
+      for (Algebraic type : setOfTypes) {
         hasChanged = hasChanged || type.updateDependances();
       }
     }
