@@ -365,7 +365,7 @@ private String genStratArgs(String prefix,SlotFieldList slots,String arg) {
       ConcSlotField(_*,SlotField[Name=fieldName,Domain=domain],_*) -> {
         if (!getGomEnvironment().isBuiltinClass(`domain)) {
           res += %[
-    Object tmp@fieldName(`fieldName)@ = @fieldName(`fieldName)@.visit(@argName@,@introspectorName@);
+    Object tmp@fieldName(`fieldName)@ = @fieldName(`fieldName)@.visitLight(@argName@,@introspectorName@);
     if (! (tmp@fieldName(`fieldName)@ instanceof @fullClassName(`domain)@)) {
       throw new tom.library.sl.VisitFailure();
     }
