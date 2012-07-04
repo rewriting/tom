@@ -1,6 +1,18 @@
+05/06/2012
+----------
+release 2.10 :
+- Claudia's type engine by default
+- new parser GLL
+- Gom avec sous-typage
+- Tom/ADA
+- function rule - séparation Java-Tom (regarder xTend, MPF)
+- OO mappings + introspectors -> comment fournir du support Java
+  pour mapper des structures utilisateurs
+- génération aléatoire de termes gom (à faire générer par Gom)
+- généricité dans Tom+Gom
+
 18/10/2005
 ----------
-
   class FindLeaves extends strategy.term.termVisitableFwd {
     Collection bag;
     public FindLeaves(Collection bag) {
