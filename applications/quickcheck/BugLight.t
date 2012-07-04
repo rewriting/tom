@@ -6,10 +6,10 @@ import sort.types.expr.*;
 import definitions.*;
 import tom.library.sl.*;
 
-public class Bug {
+public class BugLight {
   %include { sl.tom }
   %include {sort/Sort.tom}
-  
+
   private class Condition {
     private int i;
     Condition(int i) {
@@ -24,73 +24,75 @@ public class Bug {
       this.i--;
     }
   }
-  
+
   %typeterm Condition {
     implement{Condition}
     is_sort(t){t instanceof Condition}
     equals(l1,l2)  { $l1.equals($l2) }
   }
+
+  /*===================== TEST LIGHT =====================*/
   
-  %strategy ChoiceLeaf() extends Identity(){
+  %strategy ChoiceLeafLight() extends Fail(){
     visit Expr {
       e -> {
         System.out.println("leaf generated");
-        return `Pselect(1,2, Make_zero(), Make_un()).visit(`e);
+        return `Pselect(1,2, Make_zero(), Make_un()).visitLight(`e);
       }
     }
   }
   
-  %strategy ChoiceBranch(retour:Strategy, retour2:Strategy) extends Identity(){
+  %strategy ChoiceBranchLight(retour:Strategy, retour2:Strategy) extends Fail(){
     visit Expr {
       e -> {
         System.out.println("branch generated");
-        `Make_plus(retour, retour2).visit(getEnvironment());
-        return (Expr) getEnvironment().getSubject();
-        
+        return `Pselect(
+          1,
+          2,
+          Make_plus(retour, retour2),
+          Make_mult(retour, retour2)
+        ).visitLight(`e);
       }
     }
   }
   
-  %strategy ChoiceWithCondition(leaf:Strategy, branch:Strategy, cond:Condition) extends Identity() {
+  %strategy ChoiceWithConditionLight(leaf:Strategy, branch:Strategy, cond:Condition) extends Fail(){
     visit Expr {
-      e -> {
-        if(cond.isTrue()) {
-          cond.dec();
-            System.out.println("case branch");
-            `branch.visit(getEnvironment());
-            return (Expr) getEnvironment().getSubject();
-        } else {
-          // here condition can be < 0 because of the fact that cond 
-          // is shared with all created strategies
-          System.out.println("stop");
-          cond.dec();
-          `leaf.visit(getEnvironment());
-          return (Expr) getEnvironment().getSubject();
-        }
+      e && cond.i > 0 -> {
+        System.out.println(cond.i);
+        cond.i--;
+        return `Pselect(1,2,leaf, branch).visitLight(`e);
+      }
+      e && cond.i <= 0 -> {
+        // here condition can be < 0 because of the fact that cond 
+        // is shared with all created strategies
+        System.out.println("stop : " + cond.i);
+        cond.i--;
+        return leaf.visitLight(`e);
       }
     }
   }
   
-  public Strategy genStrategy(int depth) {
+  public Strategy testStrategyLight(int depth){
     Condition cond = new Condition(depth);
     Strategy s = 
-      `mu(
+      `Mu(
         MuVar("x"),
-        ChoiceWithCondition(
-          Make_zero(),
-          ChoiceBranch(MuVar("x"), Make_un()),
+        ChoiceWithConditionLight(
+          ChoiceLeafLight(),
+          ChoiceBranchLight(MuVar("x"), MuVar("x")),
           cond
         )
       );
     return s;
   }
-  
+
   /*============================================================*/
-    
+
   public static void main(String[] args) {
-    Bug generator = new Bug();
-    
-    Strategy s = generator.genStrategy(5);
+    BugLight generator = new BugLight();
+
+    Strategy s = generator.testStrategyLight(5);
     Expr b = null;
     try {
       b=s.visit(`zero());
