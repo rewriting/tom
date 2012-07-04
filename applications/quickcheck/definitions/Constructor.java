@@ -6,11 +6,11 @@ package definitions;
  */
 class Constructor {
 
-  private Type caller;
+  private Algebraic caller;
   private Typable[] champs;
 
 
-  public Constructor(Type caller, Typable[] fields) {
+  public Constructor(Algebraic caller, Typable[] fields) {
     this.caller = caller;
     this.champs = fields;
   }

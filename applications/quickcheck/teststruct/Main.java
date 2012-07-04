@@ -1,35 +1,35 @@
 package teststruct;
 
 import definitions.Scope;
-import definitions.Type;
+import definitions.Algebraic;
 
 public class Main {
 
   public static void main(String[] args) {
     Scope scope = new Scope();
 
-    Type nat = new Type(scope);
-    Type[] tab = {nat};
+    Algebraic nat = new Algebraic(scope);
+    Algebraic[] tab = {nat};
     nat.addConstructor(tab);
-    Type[] vide = new Type[0];
+    Algebraic[] vide = new Algebraic[0];
     nat.addConstructor(vide);
 
-    Type tree = new Type(scope);
-    Type[] tab2 = {tree, tree};
+    Algebraic tree = new Algebraic(scope);
+    Algebraic[] tab2 = {tree, tree};
     tree.addConstructor(tab2);
     tree.addConstructor(vide);
 
-    Type typetest = new Type(scope);
-    Type[] cons_test1 = {tree};
-    Type[] cons_test2 = {nat};
+    Algebraic typetest = new Algebraic(scope);
+    Algebraic[] cons_test1 = {tree};
+    Algebraic[] cons_test2 = {nat};
     typetest.addConstructor(cons_test1);
     typetest.addConstructor(cons_test2);
 
-    Type forest = new Type(scope);
-    Type tree2 = new Type(scope);
-    Type[] cons_tree1 = {nat};
-    Type[] cons_tree2 = {forest};
-    Type[] cons_forest1 = {tree2};
+    Algebraic forest = new Algebraic(scope);
+    Algebraic tree2 = new Algebraic(scope);
+    Algebraic[] cons_tree1 = {nat};
+    Algebraic[] cons_tree2 = {forest};
+    Algebraic[] cons_forest1 = {tree2};
     forest.addConstructor(cons_forest1);
     tree2.addConstructor(cons_tree1);
     tree2.addConstructor(cons_tree2);

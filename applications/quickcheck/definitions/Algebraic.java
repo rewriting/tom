@@ -7,10 +7,8 @@ import java.util.HashSet;
  *
  * @author hubert
  */
-public class Type implements Typable{
+public class Algebraic implements Typable {
 
-  private HashSet<Constructor> listConstructors;
-  private HashSet<Typable> listDependances;
   public static final Typable integer = new Typable() {
 
     @Override
@@ -28,17 +26,36 @@ public class Type implements Typable{
       return false;
     }
   };
+  public static final Typable string = new Typable() {
 
-  private Type() {
+    @Override
+    public boolean isRec() {
+      return false;
+    }
+
+    @Override
+    public int getDimention() {
+      return 1;
+    }
+
+    @Override
+    public boolean dependsOn(Typable t) {
+      return false;
+    }
+  };
+  private HashSet<Constructor> listConstructors;
+  private HashSet<Typable> listDependances;
+
+  private Algebraic() {
   }
 
-  public Type(Scope scope) {
+  public Algebraic(Scope scope) {
     listConstructors = new HashSet<Constructor>();
     listDependances = new HashSet<Typable>();
     scope.addType(this);
   }
 
-  public Type addConstructor(Typable[] listTypes) {
+  public Algebraic addConstructor(Typable[] listTypes) {
     listConstructors.add(new Constructor(this, listTypes));
     listDependances.addAll(Arrays.asList(listTypes));
     return this;
@@ -50,8 +67,8 @@ public class Type implements Typable{
    */
   boolean updateDependances() {
     boolean hasChanged = false;
-    HashSet<Type> depsClone = (HashSet<Type>) listDependances.clone();
-    for (Type deps : depsClone) {
+    HashSet<Algebraic> depsClone = (HashSet<Algebraic>) listDependances.clone();
+    for (Algebraic deps : depsClone) {
       hasChanged = hasChanged || !depsClone.containsAll(deps.listDependances);
       listDependances.addAll(deps.listDependances);
     }
