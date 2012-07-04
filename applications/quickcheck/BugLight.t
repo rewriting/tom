@@ -61,14 +61,18 @@ public class BugLight {
       e -> {
         if(cond.isTrue()) {
           cond.dec();
-          System.out.println("case branch");
-          return `branch.visitLight(`e);
+          System.out.println("case branch : ");
+          Expr res = branch.visitLight(`e);
+          System.out.println(res);
+          return res;
         } else {
           // here condition can be < 0 because of the fact that cond 
           // is shared with all created strategies
-          System.out.println("stop");
+          System.out.print("stop : ");
           cond.dec();
-          return `leaf.visitLight(`e);
+          Expr res = leaf.visitLight(`e);
+          System.out.println(res);
+          return res;
         }
       }
     }
@@ -96,7 +100,7 @@ public class BugLight {
     Strategy s = generator.testStrategyLight(10);
     Expr b = null;
     try {
-      b=s.visit(`zero());
+      b=s.visitLight(`zero());
     } catch (VisitFailure e) {
       System.out.println("failure");
     }
