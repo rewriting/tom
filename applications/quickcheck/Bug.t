@@ -11,13 +11,17 @@ public class Bug {
   %include {sort/Sort.tom}
   
   private class Condition {
-    int i;
-    Condition(int i){
+    private int i;
+    Condition(int i) {
       this.i = i;
     }
-    public Condition dec(){
+
+    public boolean isTrue() {
+      return i>0;
+    }
+
+    public void dec() {
       this.i--;
-      return this;
     }
   }
   
@@ -53,10 +57,10 @@ public class Bug {
   %strategy ChoiceWithConditionLight(leaf:Strategy, branch:Strategy, cond:Condition) extends Identity() {
     visit Expr {
       e -> {
-        if(cond.i > 0) {
-          System.out.println(cond.i);
+        if(cond.isTrue()) {
           cond.dec();
           //return `Pselect(1,2,leaf, branch).visitLight(`e);
+          /*
           if(Math.random() < 0.5) {
             System.out.println("case leaf");
             Expr res = `leaf.visitLight(`e);
@@ -67,11 +71,16 @@ public class Bug {
             Expr res = `branch.visitLight(`e);
             System.out.println("=> " + res);
             return res;
-          }
+          }*/
+            System.out.println("case branch");
+            Expr res = `branch.visitLight(`e);
+            System.out.println("=> " + res);
+            return res;
+
         } else {
           // here condition can be < 0 because of the fact that cond 
           // is shared with all created strategies
-          System.out.println("stop : " + cond.i);
+          System.out.println("stop");
           cond.dec();
           Expr res = leaf.visitLight(`e);
           System.out.println("=> " + res);
@@ -87,8 +96,12 @@ public class Bug {
       `mu(
         MuVar("x"),
         ChoiceWithConditionLight(
-          Pselect(1,2, Make_zero(), Make_un()) /*ChoiceLeafLight()*/,
-          Pselect(1,2, Make_plus(MuVar("x"), MuVar("x")), Make_mult(MuVar("x"), MuVar("x"))) /*ChoiceBranchLight(MuVar("x"), MuVar("x"))*/,
+          Make_zero() 
+          /*Pselect(1,2, Make_zero(), Make_un())*/
+          /*ChoiceLeafLight()*/,
+          Make_plus(MuVar("x"), MuVar("x"))
+          /*Pselect(1,2, Make_plus(MuVar("x"), MuVar("x")), Make_mult(MuVar("x"), MuVar("x")))*/
+          /*ChoiceBranchLight(MuVar("x"), MuVar("x"))*/,
           cond
         )
       );
@@ -100,15 +113,15 @@ public class Bug {
   public static void main(String[] args) {
     Bug generator = new Bug();
     
-    Strategy s = generator.genStrategy(100);
+    Strategy s = generator.genStrategy(3);
     Expr b = null;
-    try{
+    try {
       b=s.visitLight(`zero());
     } catch (VisitFailure e) {
-      System.out.println("erreur");
+      System.out.println("failure");
     }
     System.out.println("result = " + b + "\n\n");
-    Representation.represente(b, "test.dot");
-    Representation.representeHash(b, "test_hash.dot");
+    //Representation.represente(b, "test.dot");
+    //Representation.representeHash(b, "test_hash.dot");
   }
 }
