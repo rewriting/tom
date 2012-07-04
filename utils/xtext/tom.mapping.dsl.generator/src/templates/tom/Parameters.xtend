@@ -25,7 +25,7 @@ class Parameters {
 //EXTENSION templates) {) {naming
 //
 def parameter(Parameter name ) { /*terminalType(t.type)*/}
-//def javaParameter(Parameter t) { javaTerminalType(t.type name}
+//def javaParameter(Parameter t) { javaTerminalType(t.type name)}
 //
 //def terminalType(Terminal t) t.name}
 //def javaTerminalType(Terminal t) {if t.manyList<t.class_.name>elset.class_.nameEND if}

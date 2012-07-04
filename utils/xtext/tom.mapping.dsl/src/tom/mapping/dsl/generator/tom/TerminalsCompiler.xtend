@@ -1,6 +1,4 @@
-
 package tom.mapping.dsl.generator.tom
-
 
 import tom.mapping.model.Mapping
 import tom.mapping.model.Terminal

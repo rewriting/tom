@@ -7,7 +7,7 @@
 
 
 «DEFINE terminal(Mapping m) FOR Terminal-»
-«IF this.many»«EXPAND listTerminal(m) FOR this-»
+«IF this.many»«EXPAND listTerminal(m) FOR this-» // EXPAND y(.) FOR this := y(.,this)
 «ELSE-»
 %typeterm «this.name» {
 	implement 		{«this.class_.name»}
@@ -19,7 +19,7 @@
 «ENDDEFINE»
 
 
-«DEFINE listTerminal(Mapping m) FOR Terminal-»
+«DEFINE listTerminal(Mapping m) FOR Terminal-à»
 
 %typeterm «name(m)»{
 	 implement { EList<«class_.name»> }
