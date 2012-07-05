@@ -8,6 +8,14 @@ package definitions;
  *
  * @author hubert
  */
-public class Request {
+public abstract class Request {
+  int counter;
   
+  public Request(int initialValue){
+    counter = initialValue;
+  }
+
+  abstract Request getNewRequestWith(int d);
+
+  abstract Request[] getNewRequestWith(Constructor cons);
 }
