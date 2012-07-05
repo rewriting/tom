@@ -20,8 +20,9 @@ public class BugLight {
       return i>0;
     }
 
-    public void dec() {
+    public Condition dec() {
       this.i--;
+      return this;
     }
   }
 
@@ -60,7 +61,7 @@ public class BugLight {
     visit Expr {
       e -> {
         if(cond.isTrue()) {
-          cond.dec();
+          //cond.dec();
           System.out.println("case branch : ");
           Expr res = branch.visitLight(`e);
           System.out.println(res);
@@ -69,7 +70,7 @@ public class BugLight {
           // here condition can be < 0 because of the fact that cond 
           // is shared with all created strategies
           System.out.print("stop : ");
-          cond.dec();
+          //cond.dec();
           Expr res = leaf.visitLight(`e);
           System.out.println(res);
           return res;
@@ -86,7 +87,7 @@ public class BugLight {
         ChoiceWithConditionLight(
           ChoiceLeafLight(),
           ChoiceBranchLight(MuVar("x"), MuVar("x")),
-          cond
+          cond.dec()
         )
       );
     return s;

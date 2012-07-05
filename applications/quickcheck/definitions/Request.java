@@ -4,18 +4,23 @@
  */
 package definitions;
 
+import java.util.HashSet;
+
 /**
  *
  * @author hubert
  */
 public abstract class Request {
+
   int counter;
-  
-  public Request(int initialValue){
+
+  public Request(int initialValue) {
     counter = initialValue;
   }
 
   abstract Request getNewRequestWith(int d);
 
   abstract Request[] getNewRequestWith(Constructor cons);
+
+  abstract Constructor chooseConstructor(HashSet<Constructor> listConstructors);
 }

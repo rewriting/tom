@@ -9,7 +9,7 @@ import tom.library.sl.Strategy;
  * @author hubert
  */
 public class Algebraic implements Typable {
-  
+
   private HashSet<Constructor> listConstructors;
   private HashSet<Typable> listDependances;
 

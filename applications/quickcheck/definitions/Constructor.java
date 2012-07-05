@@ -13,4 +13,12 @@ class Constructor {
     this.caller = caller;
     this.champs = fields;
   }
+
+  int getDimentionMax() {
+    int res = 0;
+    for (int i = 0; i < champs.length; i++) {
+      res = Math.max(res, champs[i].getDimention());
+    }
+    return res;
+  }
 }
