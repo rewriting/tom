@@ -16,3 +16,6 @@ applications/quickcheck/*.java
 applications/quickcheck/sort/
 
 *.class
+applications/quickcheck/build
+applications/quickcheck/gen
+applications/quickcheck/tom/sort
