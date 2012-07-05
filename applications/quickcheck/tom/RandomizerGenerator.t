@@ -1,4 +1,4 @@
-//package quickcheck;
+package gen;
 
 import sort.strategy.expr.*;
 import sort.types.*;
@@ -189,4 +189,18 @@ public class RandomizerGenerator {
 	          }
 	        }
 	      }
+	      
+  public Strategy make_random_with_Counter(int n){
+    Condition cond = new Condition(n);
+    Strategy s = 
+      `Mu(
+        MuVar("x"),
+        ChoiceWithConditionLight(
+          ChoiceLeafLight(),
+          ChoiceBranchLight(MuVar("x"), MuVar("x")),
+          cond
+        )
+      );
+    return s;
+  }
 }

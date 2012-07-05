@@ -3,66 +3,51 @@
 <project default="javac" basedir=".">
 
   <property environment="env"/>
-  <property name="tom.home"        location="../../src/dist"/>
-  <property name="logo.dir"      location="."/>
-  <property name="logo.src"      location="${logo.dir}/src"/>
-  <property name="logo.gen"      location="${logo.dir}/gen"/>
-  <property name="logo.build"    location="${logo.dir}/build"/>
-  <property name="logo.package"   value="logo"/>
-  <property name="logo.ast"      value="${logo.package}/Ast"/>
-  <property name="logo.grammarname"  value="Langage"/>
-  <property name="logo.grammar"  value="${logo.package}/${logo.grammarname}"/>
+  <property name="tom.home"                location="../../src/dist"/>
+  <property name="quickcheck.dir"          location="."/>
+  <property name="quickcheck.src"          location="${quickcheck.dir}/src"/>
+  <property name="quickcheck.gen"          location="${quickcheck.dir}/gen"/>
+  <property name="quickcheck.build"        location="${quickcheck.dir}/build"/>
+  <property name="quickcheck.package"      value="quickcheck"/>
+  <property name="quickcheck.ast"          value="${quickcheck.package}/Ast"/>
+  <property name="quickcheck.grammarname"  value="Langage"/>
+  <property name="quickcheck.grammar"      value="${quickcheck.package}/${quickcheck.grammarname}"/>
 
   <import file="${tom.home}/lib/tom-common.xml"/>
 
   <target name="init" depends="tom.init">
-    <mkdir dir="${logo.build}"/>
-    <mkdir dir="${logo.gen}"/>
+    <mkdir dir="${quickcheck.build}"/>
+    <mkdir dir="${quickcheck.gen}"/>
+  </target>
+  
+  <target name="gom" depends="init">
+    <gom.preset srcdir="${quickcheck.src}"
+                destdir="${quickcheck.gen}">
+      <include name="${quickcheck.ast}.gom"/>
+    </gom.preset>
   </target>
 
   <target name="tom" depends="gom">
-    <tom.preset srcdir="${logo.src}"
-                destdir="${logo.gen}"
-                import="${logo.gen}">
+    <tom.preset srcdir="${quickcheck.src}"
+                destdir="${quickcheck.gen}"
+                import="${quickcheck.gen}">
       <include name="**/*.t"/>
       <exclude name="**/*.g.t"/>
     </tom.preset>
   </target>
 
-  <target name="gomantlradapter" depends="init">
-    <gomantlradapter.preset srcdir="${logo.src}"
-                            destdir="${logo.gen}"
-                            package="${logo.package}">
-      <include name="${logo.ast}.gom"/>
-    </gomantlradapter.preset>
-  </target>
-
-  <target name="gom" depends="init">
-    <gom.preset srcdir="${logo.src}"
-                destdir="${logo.gen}">
-      <include name="${logo.ast}.gom"/>
-    </gom.preset>
-  </target>
-
-  <target name="antlr" depends="gomantlradapter">
-    <antlr3 target="${logo.src}/${logo.grammar}.g"
-            libdirectory="${logo.gen}/${logo.package}/ast"
-            outputdirectory="${logo.gen}/${logo.package}"
-            />
-  </target>
-
-  <target name="javac" depends="tom, antlr">
-    <javac.preset destdir="${logo.build}" >
-      <!--<src path="${logo.src}"/>-->
-      <src path="${logo.gen}"/>
-      <src path="${logo.src}"/>
+  <target name="javac" depends="tom">
+    <javac.preset destdir="${quickcheck.build}" >
+      <!--<src path="${quickcheck.src}"/>-->
+      <src path="${quickcheck.gen}"/>
+      <src path="${quickcheck.src}"/>
       <include name="**/*.java"/>
     </javac.preset>
   </target>
 
   <target name="clean">
-    <delete dir="${logo.gen}"/>
-    <delete dir="${logo.build}"/>
+    <delete dir="${quickcheck.gen}"/>
+    <delete dir="${quickcheck.build}"/>
   </target>
 
 </project>
