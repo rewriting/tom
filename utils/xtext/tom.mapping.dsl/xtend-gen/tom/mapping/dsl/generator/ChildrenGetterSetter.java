@@ -1,5 +1,6 @@
 package tom.mapping.dsl.generator;
 
+import java.util.List;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EPackage;
@@ -8,13 +9,13 @@ import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.xbase.lib.Functions.Function1;
 import org.eclipse.xtext.xbase.lib.IntegerExtensions;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
-import templates.Extensions;
-import templates.Naming;
+import tom.mapping.dsl.generator.NamingCompiler;
+import tom.mapping.dsl.generator.TomMappingExtensions;
 import tom.mapping.model.Mapping;
 
 @SuppressWarnings("all")
 public class ChildrenGetterSetter {
-  private Naming nam;
+  private NamingCompiler nam;
   
   public CharSequence getter(final Mapping mapping, final EPackage ep) {
     StringConcatenation _builder = new StringConcatenation();
@@ -43,7 +44,7 @@ public class ChildrenGetterSetter {
     _builder.append("}");
     _builder.newLine();
     _builder.append("\t");
-    _builder.append("\u00AC\u00B4for(c: ep.EClassifiers) {");
+    _builder.append("\u00AC\u00B4for(EClassifier c: ep.EClassifiers) {");
     _builder.newLine();
     _builder.append("\t\t");
     _builder.append("getter(mapping, c);");
@@ -64,12 +65,12 @@ public class ChildrenGetterSetter {
   public CharSequence getter(final Mapping mapping, final EClass ec) {
     CharSequence _xblockexpression = null;
     {
-      Extensions _extensions = new Extensions();
-      final Extensions ext = _extensions;
-      Iterable<EReference> _defaultParameters = ext.getDefaultParameters(ec, mapping);
-      final Iterable<EReference> parameters = _defaultParameters;
+      TomMappingExtensions _tomMappingExtensions = new TomMappingExtensions();
+      final TomMappingExtensions ext = _tomMappingExtensions;
+      List<EReference> _defaultParameters = ext.getDefaultParameters(ec, mapping);
+      final List<EReference> parameters = _defaultParameters;
       CharSequence _xifexpression = null;
-      int _size = IterableExtensions.size(parameters);
+      int _size = parameters.size();
       boolean _operator_greaterThan = IntegerExtensions.operator_greaterThan(_size, 0);
       if (_operator_greaterThan) {
         StringConcatenation _builder = new StringConcatenation();
@@ -79,7 +80,7 @@ public class ChildrenGetterSetter {
         _builder.append("List<Object> l = new ArrayList<Object>();");
         _builder.newLine();
         _builder.append("\t");
-        _builder.append("\u00AC\u00B4for(param: parameters) {\u00AC\u00AA");
+        _builder.append("\u00AC\u00B4for(EReference param: parameters) {\u00AC\u00AA");
         _builder.newLine();
         _builder.append("\t\t");
         _builder.append("if(o.get\u00AC\u00B4param.name.toFirstUpper()\u00AC\u00AA() != null)");
@@ -135,7 +136,7 @@ public class ChildrenGetterSetter {
     _builder.append("\t");
     _builder.newLine();
     _builder.append("\t");
-    _builder.append("\u00AC\u00B4for(c: ep.EClassifiers) {");
+    _builder.append("\u00AC\u00B4for(EClassifier c: ep.EClassifiers) {");
     _builder.newLine();
     _builder.append("\t\t");
     _builder.append("setter(mapping, c);");
@@ -156,9 +157,9 @@ public class ChildrenGetterSetter {
   public CharSequence setter(final Mapping mapping, final EClass ec) {
     CharSequence _xblockexpression = null;
     {
-      Extensions _extensions = new Extensions();
-      final Extensions ext = _extensions;
-      Iterable<EReference> _defaultParameters = ext.getDefaultParameters(ec, mapping);
+      TomMappingExtensions _tomMappingExtensions = new TomMappingExtensions();
+      final TomMappingExtensions ext = _tomMappingExtensions;
+      List<EReference> _defaultParameters = ext.getDefaultParameters(ec, mapping);
       final Function1<EReference,Boolean> _function = new Function1<EReference,Boolean>() {
           public Boolean apply(final EReference e) {
             boolean _isMany = e.isMany();
@@ -175,7 +176,7 @@ public class ChildrenGetterSetter {
         _builder.append("public Object case\u00AC\u00B4ec.name.toFirstUpper()\u00AC\u00AA(\u00ACec.name\u00AC\u00AA o) {");
         _builder.newLine();
         _builder.append("\t");
-        _builder.append("\u00AC\u00B4for(p: parameters) {\u00AC\u00AA");
+        _builder.append("\u00AC\u00B4for(EReference p: parameters) {\u00AC\u00AA");
         _builder.newLine();
         _builder.append("\t\t");
         _builder.append("o.set\u00AC\u00B4p.name.toFirstUpper()\u00AC\u00AA((\u00AC\u00B4p.EReferenceType.name\u00AC\u00AA)children[\u00AC\u00B4parameters.indexOf(p)\u00AC\u00AA]);");

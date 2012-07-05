@@ -10,14 +10,14 @@ class ImportsCompiler {
 	
 	
 	def imports(Mapping map) {
-		for(p: map.getAllRootPackages) {
+		for(EPackage p: map.getAllRootPackages) {
 			imports(p.getNsPrefix, p);
 		}
 	}
 	
 	
 	def importsWithUtils(Mapping map) {
-		for(p: map.getAllRootPackages) {
+		for(EPackage p: map.getAllRootPackages) {
 			importsWithUtils(p.getNsPrefix, p);
 		}
 	}
@@ -30,7 +30,7 @@ class ImportsCompiler {
 			 import ÂaimporterÂ»; 
 			 '''
 		}
-		for(p: ep.ESubpackages) {
+		for(EPackage p: ep.ESubpackages) {
 			imports(p.getNsPrefix, p);
 		}
 	}
@@ -45,7 +45,7 @@ class ImportsCompiler {
 			import Âimport2Â»; 
 			'''
 		}
-		for(p: ep.ESubpackages) {
+		for(EPackage p: ep.ESubpackages) {
 			importsWithUtils(p.getNsPrefix, p);
 		} 
 	}

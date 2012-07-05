@@ -5,12 +5,11 @@ import tom.mapping.model.Mapping
 import org.eclipse.emf.ecore.EPackage
 import org.eclipse.emf.ecore.EClassifier
 import org.eclipse.emf.ecore.EClass
-import templates.Naming
-import templates.Extensions
+import tom.mapping.dsl.generator.NamingCompiler
 
 class ChildrenGetterSetter {
 	
-	Naming nam
+	NamingCompiler nam
 	
 	// Getter
 	
@@ -25,7 +24,7 @@ class ChildrenGetterSetter {
 				Object[] children = doSwitch((EObject) i);
 				return children !=null ? children: new Object[0];
 			}
-			«for(c: ep.EClassifiers) {
+			«for(EClassifier c: ep.EClassifiers) {
 				getter(mapping, c);
 			}»
 		}
@@ -40,13 +39,13 @@ class ChildrenGetterSetter {
 	
 	
 	def getter(Mapping mapping, EClass ec) {
-		val ext = new Extensions();
+		val ext = new TomMappingExtensions();
 		val parameters = ext.getDefaultParameters(ec, mapping);
 		if(parameters.size() > 0) {
 			'''
 			public Object[] case«ec.name.toFirstUpper()»(�ec.name» o) {
 				List<Object> l = new ArrayList<Object>();
-				«for(param: parameters) {»
+				«for(EReference param: parameters) {»
 					if(o.get«param.name.toFirstUpper()»() != null)
 					l.add(o.get«param.name.toFirstUpper()»());
 					«}»
@@ -72,7 +71,7 @@ class ChildrenGetterSetter {
 				return doSwitch((EObject) i);
 			}
 			
-			«for(c: ep.EClassifiers) {
+			«for(EClassifier c: ep.EClassifiers) {
 				setter(mapping, c);
 			}»
 		}
@@ -87,12 +86,12 @@ class ChildrenGetterSetter {
 	
 	
 	def setter(Mapping mapping, EClass ec) {
-		val ext = new Extensions();
+		val ext = new TomMappingExtensions();
 		val parameters = ext.getDefaultParameters(ec, mapping).filter(e|e.many);
 		if(parameters.size() > 0) {
 			'''
 			public Object case«ec.name.toFirstUpper()»(�ec.name» o) {
-				«for(p: parameters) {»
+				«for(EReference p: parameters) {»
 					o.set«p.name.toFirstUpper()»((«p.EReferenceType.name»)children[«parameters.indexOf(p)»]);
 					«}»
 				return o;

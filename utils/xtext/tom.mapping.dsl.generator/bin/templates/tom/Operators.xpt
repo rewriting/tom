@@ -51,7 +51,6 @@
 «DEFINE getter(EClass c) FOR EStructuralFeature»«IF many»enforce(«ENDIF»((«c.name»)$t).get«name.toFirstUpper()»()«IF many»)«ENDIF»«ENDDEFINE»
 
 
-
 «DEFINE classAttributes(Mapping mapping) FOR EClass-»
 «FOREACH this.EAllAttributes AS att SEPARATOR ","-»«att.name» : «EXPAND Parameters::feature FOR att»«ENDFOREACH»«IF this.EAllAttributes.size>0 && getDefaultParameters(mapping).size>0-»,«ENDIF-»
 «ENDDEFINE»
