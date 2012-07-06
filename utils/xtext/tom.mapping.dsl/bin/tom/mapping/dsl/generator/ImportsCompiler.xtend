@@ -7,46 +7,45 @@ import tom.mapping.model.Mapping
 class ImportsCompiler {
 
 	extension TomMappingExtensions = new TomMappingExtensions()
+	extension NamingCompiler = new NamingCompiler()
 	
+	String prefix = ""
 	
 	def imports(Mapping map) {
 		for(EPackage p: map.getAllRootPackages) {
-			imports(p.getNsPrefix, p);
+			imports(prefix, p);
 		}
 	}
 	
 	
 	def importsWithUtils(Mapping map) {
 		for(EPackage p: map.getAllRootPackages) {
-			importsWithUtils(p.getNsPrefix, p);
+			importsWithUtils(prefix, p);
 		}
 	}
 	
 	
-	def imports(String prefix, EPackage ep) { // Is the '''import''' correct ?
+	def imports(String prefix, EPackage ep) {
 		if(ep.EClassifiers.size > 0) {
-		var aimporter = prefix+ep.name+".*";
 			'''
-			 import �aimporter»; 
+			 import «getPackagePrefix(prefix)»«ep.name».*; 
 			 '''
 		}
 		for(EPackage p: ep.ESubpackages) {
-			imports(p.getNsPrefix, p);
+			imports(prefix, p);
 		}
 	}
 
 
 	def importsWithUtils(String prefix, EPackage ep) {
 		if(ep.EClassifiers.size > 0) {
-			var import1 = prefix+ep.name+".*";
-			var import2 = prefix+ep.name+".util.*";
 			'''
-			import �import1»; 
-			import �import2»; 
+			import «getPackagePrefix(prefix)»«ep.name».*; 
+			import «getPackagePrefix(prefix)�«ep.name».util.*; 
 			'''
 		}
 		for(EPackage p: ep.ESubpackages) {
-			importsWithUtils(p.getNsPrefix, p);
+			importsWithUtils(getPackagePrefix(prefix)+ep.name, p);
 		} 
 	}
 

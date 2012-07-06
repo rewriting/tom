@@ -12,36 +12,41 @@ import tom.mapping.model.Mapping
 import tom.mapping.model.Parameter
 import tom.mapping.model.Terminal
 import java.util.List
+import tom.mapping.dsl.generator.NamingCompiler
 
 class ParametersCompiler {
 	
 	extension TomMappingExtensions = new TomMappingExtensions()
+	extension NamingCompiler = new NamingCompiler()
 	
-	
-	def parameter(Parameter p){ // Is p.name ok ?
-		terminalType(p.type);
+	def parameter(Parameter p){
+		'''
+		«p.name» : «terminalType(p.type)»;
+		'''
 	}
 	
 	
 	def javaParameter(Parameter p) {
-		javaTerminalType(p.type);
+		'''
+		«javaTerminalType(p.type)» «name»;
+		'''
 	}
 	
 	
 	def terminalType(Terminal t) {
-		t.name;
+		'''«t.name»;'''
 	}
 	
 	
-	def javaTerminalType(Terminal t) { // Is the implementation of the List ok ?
+	def javaTerminalType(Terminal t) {
 		if(t.many) {
-			var List<String> tnames;
-			tnames.add(t.class_.name);
+			'''List<«t.class_.name»>;'''
 		} else {
-			t.class_.name;
+			'''«t.class_.name»;''';
 		}
 	}
 	
+	// Reprendre ici. Bon week-end tout le monde !
 	
 	def featureParameter(Mapping mapping, FeatureParameter fp) {
 		feature(mapping, fp.feature);

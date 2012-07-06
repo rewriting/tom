@@ -9,10 +9,12 @@ import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.ENamedElement;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.xbase.lib.Functions.Function0;
 import org.eclipse.xtext.xbase.lib.Functions.Function1;
 import org.eclipse.xtext.xbase.lib.ListExtensions;
 import org.eclipse.xtext.xbase.lib.ObjectExtensions;
+import tom.mapping.dsl.generator.NamingCompiler;
 import tom.mapping.dsl.generator.TomMappingExtensions;
 import tom.mapping.model.FeatureParameter;
 import tom.mapping.model.Mapping;
@@ -28,40 +30,44 @@ public class ParametersCompiler {
     }
   }.apply();
   
-  public String parameter(final Parameter p) {
-    Terminal _type = p.getType();
-    String _terminalType = this.terminalType(_type);
-    return _terminalType;
+  private NamingCompiler _namingCompiler = new Function0<NamingCompiler>() {
+    public NamingCompiler apply() {
+      NamingCompiler _namingCompiler = new NamingCompiler();
+      return _namingCompiler;
+    }
+  }.apply();
+  
+  public CharSequence parameter(final Parameter p) {
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append("\u00AC\u00B4p.name\u00AC\u00AA : \u00AC\u00B4terminalType(p.type)\u00AC\u00AA;");
+    _builder.newLine();
+    return _builder;
   }
   
-  public Object javaParameter(final Parameter p) {
-    Terminal _type = p.getType();
-    Object _javaTerminalType = this.javaTerminalType(_type);
-    return _javaTerminalType;
+  public CharSequence javaParameter(final Parameter p) {
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append("\u00AC\u00B4javaTerminalType(p.type)\u00AC\u00AA \u00AC\u00B4name\u00AC\u00AA;");
+    _builder.newLine();
+    return _builder;
   }
   
-  public String terminalType(final Terminal t) {
-    String _name = t.getName();
-    return _name;
+  public CharSequence terminalType(final Terminal t) {
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append("\u00AC\u00B4t.name\u00AC\u00AA;");
+    return _builder;
   }
   
-  public Object javaTerminalType(final Terminal t) {
-    Object _xifexpression = null;
+  public CharSequence javaTerminalType(final Terminal t) {
+    CharSequence _xifexpression = null;
     boolean _isMany = t.isMany();
     if (_isMany) {
-      boolean _xblockexpression = false;
-      {
-        List<String> tnames = null;
-        EClass _class_ = t.getClass_();
-        String _name = _class_.getName();
-        boolean _add = tnames.add(_name);
-        _xblockexpression = (_add);
-      }
-      _xifexpression = _xblockexpression;
+      StringConcatenation _builder = new StringConcatenation();
+      _builder.append("List<\u00AC\u00B4t.class_.name\u00AC\u00AA>;");
+      _xifexpression = _builder;
     } else {
-      EClass _class__1 = t.getClass_();
-      String _name_1 = _class__1.getName();
-      _xifexpression = _name_1;
+      StringConcatenation _builder_1 = new StringConcatenation();
+      _builder_1.append("\u00AC\u00B4t.class_.name\u00AC\u00AA;");
+      _xifexpression = _builder_1;
     }
     return _xifexpression;
   }
@@ -163,7 +169,7 @@ public class ParametersCompiler {
     EClass _eReferenceType = er.getEReferenceType();
     boolean _isMany = er.isMany();
     Terminal _terminal = mapping.getTerminal(_eReferenceType, _isMany);
-    String _name = this._tomMappingExtensions.name(_terminal, mapping);
+    String _name = this._namingCompiler.name(_terminal, mapping);
     return _name;
   }
   
