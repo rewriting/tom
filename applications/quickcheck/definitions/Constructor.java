@@ -26,9 +26,17 @@ class Constructor {
     return fields.length;
   }
   
+  private boolean isRec(){
+    for (int i = 0; i < fields.length; i++) {
+      Typable field = fields[i];
+      if(field.dependsOn(caller)){
+        return true;
+      }
+    }
+    return false;
+  }
+  
   int distanceToReachLeaf(){
-    int res = 0;
     throw new UnsupportedOperationException("not yet implemented");
-//    return 0;
   }
 }
