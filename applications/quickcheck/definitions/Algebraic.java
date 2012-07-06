@@ -68,4 +68,13 @@ public class Algebraic implements Typable {
   public Strategy makeGenerator(Request request) {
     throw new UnsupportedOperationException("Not supported yet.");
   }
+
+  @Override
+  public int isLeafable() {
+    int res = Integer.MAX_VALUE;
+    for (Constructor constructor : listConstructors) {
+      res = Math.min(res, constructor.distanceToReachLeaf());
+    }
+    return res;
+  }
 }

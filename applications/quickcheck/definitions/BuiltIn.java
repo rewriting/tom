@@ -33,6 +33,11 @@ public abstract class BuiltIn {
     public Strategy makeGenerator(Request request) {
       throw new UnsupportedOperationException("Not supported yet.");
     }
+
+    @Override
+    public int isLeafable() {
+      return 0;
+    }
   };
   public static final Typable string = new Typable() {
 
@@ -54,6 +59,11 @@ public abstract class BuiltIn {
     @Override
     public Strategy makeGenerator(Request request) {
       throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public int isLeafable() {
+      return 0;
     }
   };
 }

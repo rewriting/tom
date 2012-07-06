@@ -33,6 +33,10 @@ public class Main {
     forest.addConstructor(cons_forest1);
     tree2.addConstructor(cons_tree1);
     tree2.addConstructor(cons_tree2);
+    
+    Algebraic circ = new Algebraic(scope);
+    Algebraic[] cons_circ = {circ};
+    circ.addConstructor(cons_circ);
 
     scope.setDependances();
 
@@ -42,11 +46,13 @@ public class Main {
     System.out.println("typetest : " + typetest.getDimention());
     System.out.println("tree2 : " + tree2.getDimention());
     System.out.println("forest : " + forest.getDimention());
+    System.out.println("circ : " + circ.getDimention());
 
     System.out.println("nat.isRec() = " + nat.isRec());
     System.out.println("tree.isRec() = " + tree.isRec());
     System.out.println("typetest.isRec() = " + typetest.isRec());
     System.out.println("forest.isRec() = " + forest.isRec());
     System.out.println("tree2.isRec() = " + tree2.isRec());
+    System.out.println("circ.isRec() = " + circ.isRec());
   }
 }
