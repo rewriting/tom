@@ -37,6 +37,9 @@ class Constructor {
   }
   
   int distanceToReachLeaf(){
+    if(fields.length == 0){
+      return 0;
+    }
     throw new UnsupportedOperationException("not yet implemented");
   }
 }

@@ -1,7 +1,7 @@
 rm -f -r build
 
 if [ "$1" != "class" ]; then
-  rm -f -r gen
-  rm -f -r sort
-  rm -f -r tom/sort
+  rm -f -r src/gen
+  rm -f -r src/sort
+  rm -f -r src/tom/sort
 fi

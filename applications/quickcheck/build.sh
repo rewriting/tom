@@ -1,19 +1,20 @@
 bash clean.sh class
 
-mkdir gen
+mkdir src/gen
 mkdir build
 
 if [ "$1" != "nogom" ]; then
-  gom gom/sort.gom --withCongruenceStrategies
-  mkdir tom/sort
-  mv sort/Sort.tom tom/sort/Sort.tom
+  gom src/gom/sort.gom --withCongruenceStrategies -d src
+  mkdir src/tom/sort
+  mv src/sort/Sort.tom src/tom/sort/Sort.tom
 fi
 
-tom tom/RandomizerGenerator.t -o gen/RandomizerGenerator.java
-tom tom/Representation.t -o gen/Representation.java
-tom tom/Bug.t -o gen/Bug.java
-tom tom/BugLight.t -o gen/BugLight.java
-tom tom/Main.t -o gen/Main.java
-javac gen/Main.java -d build
-javac gen/Bug.java -d build
-javac gen/BugLight.java -d build
+tom src/tom/RandomizerGenerator.t -o src/gen/RandomizerGenerator.java
+tom src/tom/Representation.t -o src/gen/Representation.java
+tom src/tom/Bug.t -o src/gen/Bug.java
+tom src/tom/BugLight.t -o src/gen/BugLight.java
+tom src/tom/Main.t -o src/gen/Main.java
+#cd src
+javac src/gen/Main.java -d build -sourcepath src
+javac src/gen/Bug.java -d build -sourcepath src
+javac src/gen/BugLight.java -d build -sourcepath src

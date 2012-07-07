@@ -4,6 +4,7 @@ import sort.strategy.expr.*;
 import sort.types.*;
 import sort.types.expr.*;
 import tom.library.sl.*;
+import definitions.*;
 
 
 public class Main {
@@ -13,6 +14,7 @@ public class Main {
   public static void main(String[] args) {
     RandomizerGenerator generator = new RandomizerGenerator();
     
+    Scope t;
     
     /* debut test */
     System.out.println("Generation du generateur");
