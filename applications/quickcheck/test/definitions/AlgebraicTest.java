@@ -4,9 +4,9 @@
  */
 package definitions;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import org.junit.*;
-import tom.library.sl.Strategy;
 
 /**
  *
@@ -14,7 +14,49 @@ import tom.library.sl.Strategy;
  */
 public class AlgebraicTest {
 
+  Scope scope;
+  Algebraic nat;
+  Algebraic tree;
+  Algebraic tree2;
+  Algebraic forest;
+  Algebraic circ;
+  Algebraic typetest;
+
   public AlgebraicTest() {
+    scope = new Scope();
+
+    nat = new Algebraic(scope);
+    Algebraic[] tab = {nat};
+    nat.addConstructor(tab);
+    Algebraic[] vide = new Algebraic[0];
+    nat.addConstructor(vide);
+
+    tree = new Algebraic(scope);
+    Algebraic[] tab2 = {tree, tree};
+    tree.addConstructor(tab2);
+    tree.addConstructor(vide);
+
+    typetest = new Algebraic(scope);
+    Algebraic[] cons_test1 = {tree};
+    Algebraic[] cons_test2 = {nat};
+    typetest.addConstructor(cons_test1);
+    typetest.addConstructor(cons_test2);
+
+
+    forest = new Algebraic(scope);
+    tree2 = new Algebraic(scope);
+    Algebraic[] cons_tree1 = {nat};
+    Algebraic[] cons_tree2 = {forest};
+    Algebraic[] cons_forest1 = {tree2};
+    forest.addConstructor(cons_forest1);
+    tree2.addConstructor(cons_tree1);
+    tree2.addConstructor(cons_tree2);
+    
+    circ = new Algebraic(scope);
+    Algebraic[] cons_circ = {circ};
+    circ.addConstructor(cons_circ);
+
+    scope.setDependances();
   }
 
   @BeforeClass
@@ -40,16 +82,6 @@ public class AlgebraicTest {
   public void testGetDimentionNat() {
     System.out.println("getDimention Nat");
 
-    Scope scope = new Scope();
-
-    Algebraic nat = new Algebraic(scope);
-    Algebraic[] tab = {nat};
-    nat.addConstructor(tab);
-    Algebraic[] vide = new Algebraic[0];
-    nat.addConstructor(vide);
-
-    scope.setDependances();
-
     int expResult = 1;
     int result = nat.getDimention();
     assertEquals(expResult, result);
@@ -58,16 +90,6 @@ public class AlgebraicTest {
   @Test
   public void testGetDimentionTree() {
     System.out.println("getDimention tree");
-
-    Scope scope = new Scope();
-
-    Algebraic tree = new Algebraic(scope);
-    Algebraic[] tab2 = {tree, tree};
-    Algebraic[] vide = new Algebraic[0];
-    tree.addConstructor(tab2);
-    tree.addConstructor(vide);
-
-    scope.setDependances();
 
     int expResult = 1;
     int result = tree.getDimention();
@@ -78,74 +100,35 @@ public class AlgebraicTest {
   public void testGetDimentionTypeTest() {
     System.out.println("getDimention TypeTest");
 
-    Scope scope = new Scope();
-    
-    Algebraic nat = new Algebraic(scope);
-    Algebraic[] tab = {nat};
-    nat.addConstructor(tab);
-    Algebraic[] vide = new Algebraic[0];
-    nat.addConstructor(vide);
-    
-    Algebraic tree = new Algebraic(scope);
-    Algebraic[] tab2 = {tree, tree};
-    tree.addConstructor(tab2);
-    tree.addConstructor(vide);
-
-    Algebraic typetest = new Algebraic(scope);
-    Algebraic[] cons_test1 = {tree};
-    Algebraic[] cons_test2 = {nat};
-    typetest.addConstructor(cons_test1);
-    typetest.addConstructor(cons_test2);
-
-    scope.setDependances();
-
     int expResult = 1;
     int result = typetest.getDimention();
     assertEquals(expResult, result);
   }
   
   @Test
+  public void testGetDimentionTree2() {
+    System.out.println("getDimention Tree2");
+
+    int expResult = 2;
+    int result = tree2.getDimention();
+    assertEquals(expResult, result);
+  }
+
+  @Test
   public void testGetDimentionForest() {
     System.out.println("getDimention Forest");
-
-    Scope scope = new Scope();
-    
-    Algebraic nat = new Algebraic(scope);
-    Algebraic[] tab = {nat};
-    nat.addConstructor(tab);
-    Algebraic[] vide = new Algebraic[0];
-    nat.addConstructor(vide);
-
-    Algebraic forest = new Algebraic(scope);
-    Algebraic tree = new Algebraic(scope);
-    Algebraic[] cons_tree1 = {nat};
-    Algebraic[] cons_tree2 = {forest};
-    Algebraic[] cons_forest1 = {tree};
-    forest.addConstructor(cons_forest1);
-    tree.addConstructor(cons_tree1);
-    tree.addConstructor(cons_tree2);
-    
-    scope.setDependances();
 
     int expResult = 2;
     int result = forest.getDimention();
     assertEquals(expResult, result);
-    
-    assertEquals(2, tree.getDimention());
+
+    assertEquals(2, tree2.getDimention());
   }
-  
-   @Test
+
+  @Test
   public void testGetDimentionCirc() {
     System.out.println("getDimention Circ");
-
-    Scope scope = new Scope();
-
-    Algebraic circ = new Algebraic(scope);
-    Algebraic[] cons_circ = {circ};
-    circ.addConstructor(cons_circ);
-
-    scope.setDependances();
-
+    
     int expResult = 1;
     int result = circ.getDimention();
     assertEquals(expResult, result);
@@ -155,13 +138,56 @@ public class AlgebraicTest {
    * Test of dstToLeaf method, of class Algebraic.
    */
   @Test
-  public void testDstToLeaf() {
-    System.out.println("dstToLeaf");
-    Algebraic instance = null;
+  public void testDstToLeafNat() {
+
+    System.out.println("dstToLeaf Nat");
     int expResult = 0;
-    int result = instance.dstToLeaf();
+    int result = nat.dstToLeaf();
     assertEquals(expResult, result);
-    // TODO review the generated test code and remove the default call to fail.
-    fail("The test case is a prototype.");
+  }
+
+  @Test
+  public void testDstToLeafTree() {
+
+    System.out.println("dstToLeaf Tree");
+    int expResult = 0;
+    int result = tree.dstToLeaf();
+    assertEquals(expResult, result);
+  }
+
+  @Test
+  public void testDstToLeafTypeTest() {
+
+    System.out.println("dstToLeaf TypeTest");
+    int expResult = 1;
+    int result = typetest.dstToLeaf();
+    assertEquals(expResult, result);
+  }
+
+  @Test
+  public void testDstToLeafForest() {
+
+    System.out.println("dstToLeaf Forest");
+    int expResult = 2;
+    int result = forest.dstToLeaf();
+    assertEquals(expResult, result);
+  }
+
+  @Test
+  public void testDstToLeafTree2() {
+
+    System.out.println("dstToLeaf Tree2");
+    int expResult = 1;
+    int result = tree2.dstToLeaf();
+    assertEquals(expResult, result);
+  }
+
+  @Test
+  public void testDstToLeafCirc() {
+
+    System.out.println("dstToLeaf Circ");
+    int expResult = Integer.MAX_VALUE;
+    int result = circ.dstToLeaf();
+    assertEquals(expResult, result);
   }
 }
