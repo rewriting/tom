@@ -35,8 +35,13 @@ public abstract class BuiltIn {
     }
 
     @Override
-    public int isLeafable() {
+    public int dstToLeaf() {
       return 0;
+    }
+
+    @Override
+    public boolean isDstToLeafDefined() {
+      return true;
     }
   };
   public static final Typable string = new Typable() {
@@ -62,8 +67,13 @@ public abstract class BuiltIn {
     }
 
     @Override
-    public int isLeafable() {
+    public int dstToLeaf() {
       return 0;
+    }
+
+    @Override
+    public boolean isDstToLeafDefined() {
+      return true;
     }
   };
 }

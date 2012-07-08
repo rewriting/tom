@@ -20,7 +20,9 @@ public interface Typable {
    * @return size of the minimal path between here and a leaf. Returns
    * Integer.MAX_VALUE if no path reaches a leaf.
    */
-  public int isLeafable();
+  public int dstToLeaf();
+
+  public boolean isDstToLeafDefined();
 
   public Strategy makeGenerator(Request request);
 }

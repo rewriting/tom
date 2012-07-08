@@ -12,6 +12,8 @@ public class Algebraic implements Typable {
 
   private HashSet<Constructor> listConstructors;
   private HashSet<Typable> listDependances;
+  private int dstLeaf = Integer.MAX_VALUE;
+  private boolean dstIsDefined = false;
 
   public Algebraic(Scope scope) {
     listConstructors = new HashSet<Constructor>();
@@ -23,6 +25,11 @@ public class Algebraic implements Typable {
     listConstructors.add(new Constructor(this, listTypes));
     listDependances.addAll(Arrays.asList(listTypes));
     return this;
+  }
+
+  @Override
+  public boolean isDstToLeafDefined() {
+    return dstIsDefined;
   }
 
   /**
@@ -70,11 +77,22 @@ public class Algebraic implements Typable {
   }
 
   @Override
-  public int isLeafable() {
+  public int dstToLeaf() {
+    if (this.dstIsDefined) {
+      return dstLeaf;
+    }
     int res = Integer.MAX_VALUE;
     for (Constructor constructor : listConstructors) {
+      if (constructor.isLocked()) {
+        //this case should not directly happen if dstToLeaf() is called by user:
+        //only during recursive call.
+        //the returned value is sensless
+        return Integer.MAX_VALUE;
+      }
       res = Math.min(res, constructor.distanceToReachLeaf());
     }
-    return res;
+    this.dstIsDefined = true;
+    this.dstLeaf = res;
+    return dstLeaf;
   }
 }

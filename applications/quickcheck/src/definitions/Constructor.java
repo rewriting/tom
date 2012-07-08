@@ -8,10 +8,15 @@ class Constructor {
 
   private Algebraic caller;
   private Typable[] fields;
+  private boolean lock = false;
 
   Constructor(Algebraic caller, Typable[] fields) {
     this.caller = caller;
     this.fields = fields;
+  }
+
+  boolean isLocked() {
+    return lock;
   }
 
   int getDimentionMax() {
@@ -21,25 +26,37 @@ class Constructor {
     }
     return res;
   }
-  
-  int getSize(){
+
+  int getSize() {
     return fields.length;
   }
-  
-  private boolean isRec(){
-    for (int i = 0; i < fields.length; i++) {
-      Typable field = fields[i];
-      if(field.dependsOn(caller)){
-        return true;
-      }
-    }
-    return false;
+
+  boolean isLeaf() {
+    return fields.length == 0;
   }
-  
-  int distanceToReachLeaf(){
-    if(fields.length == 0){
+
+  int distanceToReachLeaf() {
+    if (fields.length == 0) {
       return 0;
     }
-    throw new UnsupportedOperationException("not yet implemented");
+    lock = true;
+    int res = 0;
+    for (int i = 0; i < fields.length; i++) {
+      Typable field = fields[i];
+      int tmp = field.dstToLeaf();
+      if (!field.isDstToLeafDefined()) {
+        // if one of the constructors of field is locked
+        lock = false;
+        return Integer.MAX_VALUE;
+      }
+      if (tmp == Integer.MAX_VALUE) {
+        // if field can not lead to terminaison
+        lock = false;
+        return Integer.MAX_VALUE;
+      }
+      res = 1 + Math.max(res, tmp);
+    }
+    lock = false;
+    return res;
   }
 }
