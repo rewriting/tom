@@ -62,4 +62,9 @@ public class Tom_Integer implements Typable {
   public Scope getScope() {
     return scope;
   }
+
+  @Override
+  public Integer generate(Request request) {
+    return (int) (Math.random()*request.getCounter());
+  }
 }

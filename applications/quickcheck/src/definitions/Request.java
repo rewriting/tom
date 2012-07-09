@@ -17,6 +17,10 @@ public abstract class Request {
   public Request(int initialValue) {
     counter = initialValue;
   }
+  
+  public int getCounter(){
+    return counter;
+  }
 
   abstract Request getNewRequestWith(int d);
 

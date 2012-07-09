@@ -1,6 +1,9 @@
 package definitions;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -80,6 +83,22 @@ class Constructor {
     }
     lock = false;
     return res;
+  }
+
+  Object make(Object... args) {
+    try {
+      return make.invoke(null, args);
+    } catch (IllegalAccessException ex) {
+      System.err.println("Method " + make + " enforces Java language access control and the underlying method is inaccessible.");
+      Logger.getLogger(Constructor.class.getName()).log(Level.SEVERE, null, ex);
+    } catch (IllegalArgumentException ex) {
+      System.err.println("Method " + make + " is not static.");
+      Logger.getLogger(Constructor.class.getName()).log(Level.SEVERE, null, ex);
+    } catch (InvocationTargetException ex) {
+      System.err.println("Method " + make + " throws exception.");
+      Logger.getLogger(Constructor.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    throw new UnsupportedOperationException("ERROR");
   }
 
   @Override

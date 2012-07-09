@@ -32,13 +32,15 @@ public interface Typable {
 
   public Strategy makeGenerator(Request request);
 
+  public Object generate(Request request);
+
   /**
    *
    * @return false if no changes were done
    */
   public boolean updateDependances();
-  
+
   public String getName();
-  
+
   public Scope getScope();
 }

@@ -62,4 +62,14 @@ public class Tom_String implements Typable {
   public Scope getScope() {
     return scope;
   }
+
+  @Override
+  public String generate(Request request) {
+    int taille = (int) (Math.random()*request.getCounter());
+    byte[] tabBytes = new byte[taille];
+    for (int i = 0; i < taille; i++) {
+      tabBytes[i] = (byte) (Math.random()*256);
+    }
+    return new String(tabBytes);
+  }
 }

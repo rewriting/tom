@@ -6,6 +6,7 @@ package definitions;
 
 import static org.junit.Assert.assertEquals;
 import org.junit.*;
+import sort.types.Expr;
 import sort.types.expr.*;
 
 /**
@@ -22,52 +23,46 @@ public class AlgebraicTest {
   Algebraic circ;
   Algebraic typetest;
   Algebraic a, b, c;
+  Algebraic expr;
 
   public AlgebraicTest() {
     scope = new Scope();
 
     nat = new Algebraic(scope, "nat");
-    Algebraic[] tab = {nat};
-    nat.addConstructor(tab);
-    Algebraic[] vide = new Algebraic[0];
-    nat.addConstructor(vide);
+    nat.addConstructor(nat);
+    nat.addConstructor();
 
     tree = new Algebraic(scope, "tree");
-    Algebraic[] tab2 = {tree, tree};
-    tree.addConstructor(tab2);
-    tree.addConstructor(vide);
+    tree.addConstructor(tree, tree);
+    tree.addConstructor();
 
     typetest = new Algebraic(scope, "typetest");
-    Algebraic[] cons_test1 = {tree};
-    Algebraic[] cons_test2 = {nat};
-    typetest.addConstructor(cons_test1);
-    typetest.addConstructor(cons_test2);
+    typetest.addConstructor(tree);
+    typetest.addConstructor(nat);
 
 
     forest = new Algebraic(scope, "forest");
     tree2 = new Algebraic(scope, "tree2");
-    Algebraic[] cons_tree1 = {nat};
-    Algebraic[] cons_tree2 = {forest};
-    Algebraic[] cons_forest1 = {tree2};
-    forest.addConstructor(cons_forest1);
-    tree2.addConstructor(cons_tree1);
-    tree2.addConstructor(cons_tree2);
+    forest.addConstructor(tree2);
+    tree2.addConstructor(nat);
+    tree2.addConstructor(forest);
 
     circ = new Algebraic(scope, "circ");
-    Algebraic[] cons_circ = {circ};
-    circ.addConstructor(cons_circ);
+    circ.addConstructor(circ);
 
     a = new Algebraic(scope, "a");
     b = new Algebraic(scope, "b");
     c = new Algebraic(scope, "c");
-    Algebraic[] cons_a1 = {};
-    Algebraic[] cons_a2 = {b};
-    Algebraic[] cons_b = {c};
-    Algebraic[] cons_c = {a};
-    a.addConstructor(cons_a1);
-    a.addConstructor(cons_a2);
-    b.addConstructor(cons_b);
-    c.addConstructor(cons_c);
+    a.addConstructor();
+    a.addConstructor(b);
+    b.addConstructor(c);
+    c.addConstructor(a);
+    
+    expr = new Algebraic(scope, Expr.class);
+    expr.addConstructor(mult.class);
+    expr.addConstructor(plus.class);
+    expr.addConstructor(un.class);
+    expr.addConstructor(zero.class);
 
     scope.setDependances();
   }
@@ -317,12 +312,6 @@ public class AlgebraicTest {
   @Test
   public void testAddConstructorClass() {
     System.out.println("testAddConstructorClass");
-    Scope newscope = new Scope();
-    Algebraic expr = new Algebraic(newscope, "sort.types.Expr");
-    expr.addConstructor(mult.class);
-    expr.addConstructor(plus.class);
-    expr.addConstructor(un.class);
-    expr.addConstructor(zero.class);
     System.out.println(expr);
     int expResult = 1;
     int result = c.dstToLeaf();

@@ -15,18 +15,36 @@ public class Algebraic implements Typable {
   private HashSet<Typable> listDependances;
   private int dstLeaf = Integer.MAX_VALUE;
   private boolean dstIsDefined = false;
+  @Deprecated
   private String name;
   private Scope scope;
+  private Class type;
 
+  @Deprecated
   public Algebraic(Scope scope, String name) {
     this.scope = scope;
     this.name = name;
+//    try {
+//      this.type = Class.forName(name);
+//    } catch (ClassNotFoundException ex) {
+//      Logger.getLogger(Algebraic.class.getName()).log(Level.SEVERE, null, ex);
+//    }
     listConstructors = new HashSet<Constructor>();
     listDependances = new HashSet<Typable>();
     scope.addType(this);
   }
 
-  public Algebraic addConstructor(Typable[] listTypes) {
+  public Algebraic(Scope scope, Class type) {
+    this.scope = scope;
+    this.name = type.getName();
+    this.type = type;
+    listConstructors = new HashSet<Constructor>();
+    listDependances = new HashSet<Typable>();
+    scope.addType(this);
+  }
+
+  @Deprecated
+  public Algebraic addConstructor(Typable... listTypes) {
     listConstructors.add(new Constructor(this, listTypes));
     listDependances.addAll(Arrays.asList(listTypes));
     return this;
@@ -90,7 +108,14 @@ public class Algebraic implements Typable {
   }
 
   @Override
+  public Object generate(Request request) {
+    // TODO Not supported yet
+    throw new UnsupportedOperationException("Not supported yet.");
+  }
+
+  @Override
   public Strategy makeGenerator(Request request) {
+    // TODO Not supported yet
     throw new UnsupportedOperationException("Not supported yet.");
   }
 
@@ -113,9 +138,9 @@ public class Algebraic implements Typable {
     this.dstLeaf = res;
     return dstLeaf;
   }
-  
+
   @Override
-  public String toString(){
+  public String toString() {
     String res = this.getName() + " : \n";
     for (Constructor constructor : listConstructors) {
       res += "\t" + constructor + "\n";
