@@ -27,6 +27,12 @@ public class Algebraic implements Typable {
     return this;
   }
 
+  /**
+   * Thie function return true if and only if dstToLeaf() has been already
+   * called for the current Algebraic Typable.
+   *
+   * @return
+   */
   @Override
   public boolean isDstToLeafDefined() {
     return dstIsDefined;

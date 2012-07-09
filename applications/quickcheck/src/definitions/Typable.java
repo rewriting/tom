@@ -22,6 +22,12 @@ public interface Typable {
    */
   public int dstToLeaf();
 
+  /**
+   * This function returns true if function dstToLeaf() can give its results in
+   * constant time.
+   *
+   * @return
+   */
   public boolean isDstToLeafDefined();
 
   public Strategy makeGenerator(Request request);
