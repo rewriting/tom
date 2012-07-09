@@ -9,7 +9,9 @@ import tom.library.sl.Strategy;
 /**
  *
  * @author hubert
+ * @deprecated
  */
+@Deprecated
 public abstract class BuiltIn {
 
   public static final Typable integer = new Typable() {
@@ -43,6 +45,21 @@ public abstract class BuiltIn {
     public boolean isDstToLeafDefined() {
       return true;
     }
+
+    @Override
+    public boolean updateDependances() {
+      return false;
+    }
+
+    @Override
+    public String getName() {
+      return "interger";
+    }
+
+    @Override
+    public Scope getScope() {
+      throw new UnsupportedOperationException("Not supported yet.");
+    }
   };
   public static final Typable string = new Typable() {
 
@@ -74,6 +91,21 @@ public abstract class BuiltIn {
     @Override
     public boolean isDstToLeafDefined() {
       return true;
+    }
+
+    @Override
+    public boolean updateDependances() {
+      return false;
+    }
+
+    @Override
+    public String getName() {
+      return "string";
+    }
+
+    @Override
+    public Scope getScope() {
+      throw new UnsupportedOperationException("Not supported yet.");
     }
   };
 }

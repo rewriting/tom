@@ -31,4 +31,14 @@ public interface Typable {
   public boolean isDstToLeafDefined();
 
   public Strategy makeGenerator(Request request);
+
+  /**
+   *
+   * @return false if no changes were done
+   */
+  public boolean updateDependances();
+  
+  public String getName();
+  
+  public Scope getScope();
 }

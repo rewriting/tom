@@ -25,26 +25,26 @@ public class AlgebraicTest {
   public AlgebraicTest() {
     scope = new Scope();
 
-    nat = new Algebraic(scope);
+    nat = new Algebraic(scope, "nat");
     Algebraic[] tab = {nat};
     nat.addConstructor(tab);
     Algebraic[] vide = new Algebraic[0];
     nat.addConstructor(vide);
 
-    tree = new Algebraic(scope);
+    tree = new Algebraic(scope, "tree");
     Algebraic[] tab2 = {tree, tree};
     tree.addConstructor(tab2);
     tree.addConstructor(vide);
 
-    typetest = new Algebraic(scope);
+    typetest = new Algebraic(scope, "typetest");
     Algebraic[] cons_test1 = {tree};
     Algebraic[] cons_test2 = {nat};
     typetest.addConstructor(cons_test1);
     typetest.addConstructor(cons_test2);
 
 
-    forest = new Algebraic(scope);
-    tree2 = new Algebraic(scope);
+    forest = new Algebraic(scope, "forest");
+    tree2 = new Algebraic(scope, "tree2");
     Algebraic[] cons_tree1 = {nat};
     Algebraic[] cons_tree2 = {forest};
     Algebraic[] cons_forest1 = {tree2};
@@ -52,13 +52,13 @@ public class AlgebraicTest {
     tree2.addConstructor(cons_tree1);
     tree2.addConstructor(cons_tree2);
 
-    circ = new Algebraic(scope);
+    circ = new Algebraic(scope, "circ");
     Algebraic[] cons_circ = {circ};
     circ.addConstructor(cons_circ);
 
-    a = new Algebraic(scope);
-    b = new Algebraic(scope);
-    c = new Algebraic(scope);
+    a = new Algebraic(scope, "a");
+    b = new Algebraic(scope, "b");
+    c = new Algebraic(scope, "c");
     Algebraic[] cons_a1 = {};
     Algebraic[] cons_a2 = {b};
     Algebraic[] cons_b = {c};

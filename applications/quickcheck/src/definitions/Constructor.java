@@ -1,5 +1,7 @@
 package definitions;
 
+import java.lang.reflect.Method;
+
 /**
  *
  * @author hubert
@@ -9,10 +11,30 @@ class Constructor {
   private Algebraic caller;
   private Typable[] fields;
   private boolean lock = false;
+  private Method make;
 
   Constructor(Algebraic caller, Typable[] fields) {
     this.caller = caller;
     this.fields = fields;
+  }
+
+  Constructor(Algebraic caller, Method make) {
+    this.make = make;
+    this.caller = caller;
+    this.fields = extractFields(make);
+  }
+
+  private Typable[] extractFields(Method make) {
+    Class[] listClasses = make.getParameterTypes();
+    Typable[] res = new Typable[listClasses.length];
+    for (int i = 0; i < res.length; i++) {
+       res[i] = caller.getScope().searchType(listClasses[i].getName());
+    }
+    return res;
+  }
+
+  Typable[] getFields() {
+    return fields;
   }
 
   boolean isLocked() {

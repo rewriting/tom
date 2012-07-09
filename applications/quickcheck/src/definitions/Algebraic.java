@@ -1,5 +1,6 @@
 package definitions;
 
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashSet;
 import tom.library.sl.Strategy;
@@ -14,8 +15,12 @@ public class Algebraic implements Typable {
   private HashSet<Typable> listDependances;
   private int dstLeaf = Integer.MAX_VALUE;
   private boolean dstIsDefined = false;
+  private String name;
+  private Scope scope;
 
-  public Algebraic(Scope scope) {
+  public Algebraic(Scope scope, String name) {
+    this.scope = scope;
+    this.name = name;
     listConstructors = new HashSet<Constructor>();
     listDependances = new HashSet<Typable>();
     scope.addType(this);
@@ -25,6 +30,16 @@ public class Algebraic implements Typable {
     listConstructors.add(new Constructor(this, listTypes));
     listDependances.addAll(Arrays.asList(listTypes));
     return this;
+  }
+
+  @Override
+  public String getName() {
+    return name;
+  }
+
+  @Override
+  public Scope getScope() {
+    return scope;
   }
 
   /**
@@ -38,11 +53,8 @@ public class Algebraic implements Typable {
     return dstIsDefined;
   }
 
-  /**
-   *
-   * @return true if no changes were done
-   */
-  boolean updateDependances() {
+  @Override
+  public boolean updateDependances() {
     boolean hasChanged = false;
     HashSet<Algebraic> depsClone = (HashSet<Algebraic>) listDependances.clone();
     for (Algebraic deps : depsClone) {
@@ -100,5 +112,54 @@ public class Algebraic implements Typable {
     this.dstIsDefined = true;
     this.dstLeaf = res;
     return dstLeaf;
+  }
+
+  /*
+   * =========================== USING META-TYPAGE ============================
+   */
+  /**
+   * This methode only work with Gom pattern classes. Indeed, method make()
+   * constructed by using Gom is searched in order to build Constructor
+   *
+   * @param classe class following Gom pattern definition
+   * @return
+   */
+  public Algebraic addConstructor(Class classe) {
+    String pattern = "make";
+    Method[] listMethods = classe.getDeclaredMethods();
+    Method make = null;
+    for (int i = 0; i < listMethods.length; i++) {
+      Method method = listMethods[i];
+      if (method.getName().equals(pattern)) {
+        make = method;
+        break;
+      }
+      if (i == listMethods.length - 1) {
+        throw new UnsupportedOperationException("Method " + pattern + "() was not found in " + classe);
+      }
+    }
+    Constructor cons = new Constructor(this, make);
+    listConstructors.add(cons);
+    listDependances.addAll(Arrays.asList(cons.getFields()));
+    return this;
+  }
+
+  public Algebraic addConstructor(Class classe, String pattern) {
+    Method[] listMethods = classe.getDeclaredMethods();
+    Method make = null;
+    for (int i = 0; i < listMethods.length; i++) {
+      Method method = listMethods[i];
+      if (method.getName().equals(pattern)) {
+        make = method;
+        break;
+      }
+      if (i == listMethods.length - 1) {
+        throw new UnsupportedOperationException("Method " + pattern + "() was not found in " + classe);
+      }
+    }
+    Constructor cons = new Constructor(this, make);
+    listConstructors.add(cons);
+    listDependances.addAll(Arrays.asList(cons.getFields()));
+    return this;
   }
 }
