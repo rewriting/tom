@@ -6,6 +6,7 @@ package definitions;
 
 import static org.junit.Assert.assertEquals;
 import org.junit.*;
+import sort.types.expr.*;
 
 /**
  *
@@ -308,6 +309,21 @@ public class AlgebraicTest {
   @Test
   public void testDstToLeafC() {
     System.out.println("dstToLeaf C");
+    int expResult = 1;
+    int result = c.dstToLeaf();
+    assertEquals(expResult, result);
+  }
+  
+  @Test
+  public void testAddConstructorClass() {
+    System.out.println("testAddConstructorClass");
+    Scope newscope = new Scope();
+    Algebraic expr = new Algebraic(newscope, "sort.types.Expr");
+    expr.addConstructor(mult.class);
+    expr.addConstructor(plus.class);
+    expr.addConstructor(un.class);
+    expr.addConstructor(zero.class);
+    System.out.println(expr);
     int expResult = 1;
     int result = c.dstToLeaf();
     assertEquals(expResult, result);

@@ -39,6 +39,6 @@ public class Scope {
         return typable;
       }
     }
-    throw new UnsupportedOperationException("Type " + name + "does not exist in the current scope");
+    throw new UnsupportedOperationException("Type " + name + " does not exist in the current scope");
   } 
 }

@@ -113,6 +113,15 @@ public class Algebraic implements Typable {
     this.dstLeaf = res;
     return dstLeaf;
   }
+  
+  @Override
+  public String toString(){
+    String res = this.getName() + " : \n";
+    for (Constructor constructor : listConstructors) {
+      res += "\t" + constructor + "\n";
+    }
+    return res;
+  }
 
   /*
    * =========================== USING META-TYPAGE ============================

@@ -28,7 +28,7 @@ class Constructor {
     Class[] listClasses = make.getParameterTypes();
     Typable[] res = new Typable[listClasses.length];
     for (int i = 0; i < res.length; i++) {
-       res[i] = caller.getScope().searchType(listClasses[i].getName());
+      res[i] = caller.getScope().searchType(listClasses[i].getName());
     }
     return res;
   }
@@ -79,6 +79,17 @@ class Constructor {
       res = 1 + Math.max(res, tmp);
     }
     lock = false;
+    return res;
+  }
+
+  @Override
+  public String toString() {
+    String res = "[";
+    for (int i = 0; i < fields.length; i++) {
+      Typable typable = fields[i];
+      res += typable.getName() + ", ";
+    }
+    res += "]";
     return res;
   }
 }
