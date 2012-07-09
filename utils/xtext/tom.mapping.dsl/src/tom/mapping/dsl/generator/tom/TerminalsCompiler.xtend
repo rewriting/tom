@@ -7,10 +7,12 @@ import org.eclipse.emf.ecore.EClassifier
 import org.eclipse.emf.ecore.EEnum
 import org.eclipse.emf.ecore.EDataType
 import org.eclipse.emf.ecore.EPackage
+import tom.mapping.dsl.generator.NamingCompiler
 
 class TerminalsCompiler {
 
 extension TomMappingExtensions = new TomMappingExtensions()
+extension NamingCompiler = new NamingCompiler()
 
 	def terminal(Mapping m, Terminal t) {
 		if  (t.many) {

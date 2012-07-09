@@ -21,7 +21,7 @@ class ParametersCompiler {
 	
 	def parameter(Parameter p){
 		'''
-		«p.name» : «terminalType(p.type)»;
+		«p.name» = «terminalType(p.type)»;
 		'''
 	}
 	
@@ -42,33 +42,32 @@ class ParametersCompiler {
 		if(t.many) {
 			'''List<«t.class_.name»>;'''
 		} else {
-			'''«t.class_.name»;''';
+			'''«t.class_.name»;'''
 		}
 	}
-	
-	// Reprendre ici. Bon week-end tout le monde !
+
 	
 	def featureParameter(Mapping mapping, FeatureParameter fp) {
-		feature(mapping, fp.feature);
+		'''«fp.feature.name» = «feature(mapping, fp.feature)»;'''
 	}
 	
 	
-	def javaFeatureParameter(FeatureParameter fp) { // What to do with "_this.feature.name" ?
-		feature(fp.feature);
+	def javaFeatureParameter(FeatureParameter fp) {
+		'''«feature(fp.feature)» _«fp.feature.name»;''';
 	}
 	
 	
 	def defaultFeatureParameter(Mapping mapping, EStructuralFeature esf) {
-		feature(mapping, esf);
+		'''«esf.name» = «feature(mapping, esf)»;''';
 	}
 	
 	
-	def defaultJavaFeatureParameter(EStructuralFeature efp) { // this.name ?
-		feature(efp);
+	def defaultJavaFeatureParameter(EStructuralFeature efp) {
+		'''«feature(efp)» _«efp.name»''';
 	}
 	
 	
-	def renameEcoreClasses(EAttribute eat) { // Ok for the EAttributeType ?
+	def renameEcoreClasses(EAttribute eat) {
 		if(eat.EAttributeType.name == "EInt") {
 			eat.EAttributeType.name = "int"; 
 		}
@@ -102,28 +101,26 @@ class ParametersCompiler {
 	}
 	
 	
-	def dispatch feature(Mapping mapping, EAttribute eat) { // Is it ok with the List ?
+	def dispatch feature(Mapping mapping, EAttribute eat) {
 		if(eat.many) {
-			var List<? extends EAttribute> leat;
-			leat.map[renameEcoreClasses(eat)];
-		} else {renameEcoreClasses(eat);}
+			'''List<? extends «renameEcoreClasses(eat)»>;'''
+		} else {'''renameEcoreClasses(eat);'''}
 	}
 	
-	
+    
 	def dispatch feature(EStructuralFeature esf) {
 	}
 	
 	
-	def dispatch feature(EReference er) {  // Is it ok with the List ?
-		if(er.many) {
-			var List<String> lert;
-			lert.add(er.EReferenceType.name);
+	def dispatch feature(EReference er) {
+    	if(er.many) {
+			'''List<? extends «er.EReferenceType.name»>;'''
 		}
-		er.EReferenceType.name;
+		'''er.EReferenceType.name''';
 	}
 	
 	
-	def dispatch feature(EEnum ee) { // What else to put in this ?
+	def dispatch feature(EEnum ee) {
 		ee.name;
 	}
 	
@@ -142,7 +139,7 @@ class ParametersCompiler {
 	}
 	
 	
-	def dispatch primitiveType(EEnum ee) { // What else to put in this ?
+	def dispatch primitiveType(EEnum ee) {
 		ee.name;
 	}
 	

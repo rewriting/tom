@@ -18,7 +18,7 @@ private static class «getChildrenGetterName()» extends «name.toFirstUpper()»
 		«FOREACH this.EClassifiers AS c»«EXPAND getter(mapping) FOR c»«ENDFOREACH»
 	
 }
-«ENDDEFINE»
+«ENDDEFINE» // ICI
 
 «DEFINE getter(Mapping mapping) FOR EClassifier»«ENDDEFINE»
 
