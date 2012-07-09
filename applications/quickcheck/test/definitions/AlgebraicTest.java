@@ -88,6 +88,81 @@ public class AlgebraicTest {
   }
 
   /**
+   * Test of isRec method, of class Algebraic.
+   */
+  @Test
+  public void testIsRecA() {
+    System.out.println("isRec A");
+    boolean expResult = true;
+    boolean result = a.isRec();
+    assertEquals(expResult, result);
+  }
+
+  @Test
+  public void testIsRecB() {
+    System.out.println("isRec B");
+    boolean expResult = true;
+    boolean result = b.isRec();
+    assertEquals(expResult, result);
+  }
+
+  @Test
+  public void testIsRecC() {
+    System.out.println("isRec C");
+    boolean expResult = true;
+    boolean result = c.isRec();
+    assertEquals(expResult, result);
+  }
+
+  @Test
+  public void testIsRecCirc() {
+    System.out.println("isRec Circ");
+    boolean expResult = true;
+    boolean result = circ.isRec();
+    assertEquals(expResult, result);
+  }
+
+  @Test
+  public void testIsRecForest() {
+    System.out.println("isRec Forest");
+    boolean expResult = true;
+    boolean result = forest.isRec();
+    assertEquals(expResult, result);
+  }
+
+  @Test
+  public void testIsRecNat() {
+    System.out.println("isRec Nat");
+    boolean expResult = true;
+    boolean result = nat.isRec();
+    assertEquals(expResult, result);
+  }
+
+  @Test
+  public void testIsRecTree() {
+    System.out.println("isRec Tree");
+    boolean expResult = true;
+    boolean result = tree.isRec();
+    assertEquals(expResult, result);
+  }
+
+  @Test
+  public void testIsRecTree2() {
+    System.out.println("isRec Tree2");
+    boolean expResult = true;
+    boolean result = tree2.isRec();
+    assertEquals(expResult, result);
+  }
+
+  @Test
+  public void testIsRecTypeTest() {
+    System.out.println("isRec TypeTest");
+    boolean expResult = false;
+    boolean result = typetest.isRec();
+    assertEquals(expResult, result);
+  }
+
+  /**
    * Test of getDimention method, of class Algebraic.
    */
   @Test
