@@ -115,12 +115,12 @@ class OperatorsCompiler {
 	
 	
 	def classAttributes(Mapping mapping, EClass ecl) {
-				
-		for(att: ecl.EAllAttributes SEPARATOR ",") {
-			'''
-			«att.name» = «injpa.feature(att)»
-			'''
-		}
+		
+		'''		
+		«FOR att: ecl.EAllAttributes SEPARATOR ","»
+		«att.name» = «injpa.feature(att)»
+		«ENDFOR»
+		'''
 		
 		if(ecl.EAllAttributes.size > 0 && getDefaultParameters(ecl, mapping).size>0) {''','''}
 	}
@@ -128,11 +128,11 @@ class OperatorsCompiler {
 	
 	def javaClassAttibutes(Mapping mapping, EClass ecl) {
 		
-		for(att: ecl.EAllAttributes SEPARATOR ",") {
-			'''
-			«injpa.feature(att)» _«att.name»
-			'''
-		}
+		'''		
+		«FOR att: ecl.EAllAttributes SEPARATOR ","»
+		 «injpa.feature(att)» _«att.name»
+		«ENDFOR»
+		'''
 		
 		if(ecl.EAllAttributes.size > 0 && getDefaultParameters(ecl, mapping).size>0) {''','''}
 	}

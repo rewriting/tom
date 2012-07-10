@@ -1,11 +1,9 @@
 // Licence
 package tom.mapping.dsl.generator
 
-import tom.mapping.model.*
-import org.eclipse.emf.ecore.*
-import org.eclipse.xtext.generator.IFileSystemAccess
-import sun.tools.java.Imports
 import com.google.inject.Inject
+import org.eclipse.xtext.generator.IFileSystemAccess
+import tom.mapping.model.Mapping
 
 class IntrospectorCompiler {
 	

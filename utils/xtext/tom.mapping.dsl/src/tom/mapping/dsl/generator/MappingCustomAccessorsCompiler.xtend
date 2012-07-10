@@ -11,7 +11,7 @@ class MappingCustomAccessorsCompiler {
 	@Inject CustomOperatorsCompiler injcusopco
 	
 	def main(Mapping m) {
-		injcusopco.main();
+		injcusopco.main(m);
 	}
 	
 }

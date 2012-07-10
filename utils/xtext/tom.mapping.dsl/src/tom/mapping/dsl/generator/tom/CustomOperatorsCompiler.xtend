@@ -1,12 +1,11 @@
 package tom.mapping.dsl.generator.tom
 
+import org.eclipse.xtext.generator.IFileSystemAccess
 import tom.mapping.dsl.generator.TomMappingExtensions
 import tom.mapping.model.Accessor
 import tom.mapping.model.Mapping
 import tom.mapping.model.Operator
 import tom.mapping.model.UserOperator
-import org.eclipse.emf.ecore.*
-import org.eclipse.xtext.generator.IFileSystemAccess
 
 class CustomOperatorsCompiler {
 	
@@ -20,7 +19,7 @@ class CustomOperatorsCompiler {
 	}
 	
 	def main(Mapping map) {
-		if(map.operators.filter[e | UserOperator.isInstance(e)].size>0) {			
+		if(map.operators.filter[e | e instanceof UserOperator].size>0) {			
 			'''
 			public class «getCustomOperatorClass()» {
 				«for(op: operators)» {

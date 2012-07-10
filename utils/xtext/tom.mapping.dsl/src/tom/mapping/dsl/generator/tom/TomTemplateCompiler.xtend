@@ -11,12 +11,12 @@ import org.eclipse.emf.ecore.EEnum
 import org.eclipse.emf.ecore.EDataType
 
 class TomTemplateCompiler {
+	
 	extension TomMappingExtensions = new TomMappingExtensions()
 	
 	@Inject TerminalsCompiler terminals
 	@Inject OperatorsCompiler injop
 	String prefix="tom/"
-	
 	
 	
 	def compile(Mapping m, IFileSystemAccess fsa){
@@ -30,7 +30,7 @@ class TomTemplateCompiler {
 		}
 	}
 	
-	def main(Mapping m) '''
+	def main(Mapping m){ '''
 %include { string.tom }
 %include { boolean.tom }
 %include { int.tom }
@@ -47,9 +47,10 @@ private static <O> EList<O> append(O e,EList<O> l) {
        return l;
 }
 	'''
+}
 	
-	def terminals(Mapping m)'''
-// Primitive terminals (enum and data types)
+	def terminals(Mapping m) { '''
+// Primitive terminals (enu and data types)
 «FOR p: m.getAllRootPackages()»
 «terminals.primitiveTerminal(p)»
 «ENDFOR»    
@@ -62,15 +63,17 @@ private static <O> EList<O> append(O e,EList<O> l) {
 «terminals.listTerminal(m,lt)»
 «ENDFOR»
 	'''
+	}
 	
-	def operators(Mapping m)'''
+	def operators(Mapping m) {'''
 	// User operators
 	«FOR op: m.operators()»
 	«injop.operator(m, op)»
 	«ENDFOR»
 	'''
+	}
 	
-	def defaultOperators(Mapping m)'''
+	def defaultOperators(Mapping m) { '''
 	// Default operators
 	«FOR op: m.allDefaultOperators»
 	«injop.classOperator(m, op.name, op)»
@@ -79,9 +82,10 @@ private static <O> EList<O> append(O e,EList<O> l) {
 	// Protected user region
 	/* PROTECTED REGION END */
 	'''
+	}
 
 	
-	def module(Module m)'''
+	def module(Module m) {'''
 	/* PROTECTED REGION ID(module.name+"_mapping_user") ENABLED START */
 	// Protected user region
 	/* PROTECTED REGION END */
@@ -90,6 +94,7 @@ private static <O> EList<O> append(O e,EList<O> l) {
 	«injop.operator(m,op)»
 	«ENDFOR»
 	'''
+	}
 	
 	
 	def primitiveTerminals(EPackage epa) {
@@ -108,11 +113,11 @@ private static <O> EList<O> append(O e,EList<O> l) {
 		''''''
 	}	
 		
-	def dispatch primitiveTerminal(EEnum enum) {
+	def dispatch primitiveTerminal(EEnum enu) {
 		'''
-		%typeterm «enum.name» {
-			implement {«enum.name»}
-			is_sort(t) {$t instanceof «enum.name»}
+		%typeterm «enu.name» {
+			implement {«enu.name»}
+			is_sort(t) {$t instanceof «enu.name»}
 			equals(l1,l2) {$l1==$l2}
 		}	
 		'''

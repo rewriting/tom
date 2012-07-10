@@ -17,8 +17,8 @@ class TomFactoryCompiler {
 	
 	String prefix = "tom"
 	
-	@Inject ImportsCompiler injco
 	@Inject OperatorsCompiler injop
+	@Inject ImportsCompiler injco
 	@Inject ParametersCompiler injpa
 	
 	def compile(Mapping m, IFileSystemAccess fsa) {
@@ -163,7 +163,7 @@ class TomFactoryCompiler {
 	
 	def dispatch typeOfParameter(Mapping mapping, EReference eref) {terminalTypeName(mapping, eref.many, eref.EType);}
 	
-	def dispatch typeOfParameter(Mapping mapping, EEnum enum) {enum.name;}
+	def dispatch typeOfParameter(Mapping mapping, EEnum enu) {enu.name;}
 	
 	def dispatch typeOfParameters(Mapping mapping, EAttribute eat) {injpa.primitiveType(eat.EAttributeType);}
 	
