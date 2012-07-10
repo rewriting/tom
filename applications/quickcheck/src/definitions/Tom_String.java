@@ -72,4 +72,9 @@ public class Tom_String implements Typable {
     }
     return new String(tabBytes);
   }
+  
+  @Override
+  public Object makeLeaf(Request request) {
+    return generate(request);
+  }
 }

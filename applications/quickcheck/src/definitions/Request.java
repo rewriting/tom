@@ -5,6 +5,8 @@
 package definitions;
 
 import java.util.HashSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -12,7 +14,7 @@ import java.util.HashSet;
  */
 public abstract class Request {
 
-  int counter;
+  private int counter;
 
   public Request(int initialValue) {
     counter = initialValue;
@@ -20,6 +22,23 @@ public abstract class Request {
   
   public int getCounter(){
     return counter;
+  }
+  
+  public void inc(){
+    counter++;
+  }
+  
+  public void setCounter(int n){
+    this.counter = n;
+  }
+  
+  public Request copy(){
+    try {
+      return (Request) this.clone();
+    } catch (CloneNotSupportedException ex) {
+      Logger.getLogger(Request.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    throw new UnsupportedOperationException("clone method fails.");
   }
 
   abstract Request getNewRequestWith(int d);

@@ -43,4 +43,6 @@ public interface Typable {
   public String getName();
 
   public Scope getScope();
+  
+  public Object makeLeaf(Request request);
 }

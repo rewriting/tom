@@ -4,6 +4,7 @@
  */
 package definitions;
 
+import java.util.HashSet;
 import static org.junit.Assert.assertEquals;
 import org.junit.*;
 import sort.types.Expr;
@@ -18,6 +19,7 @@ import sort.types.surexpr.*;
 public class AlgebraicTest {
 
   Scope scope;
+  Request request;
   Algebraic nat;
   Algebraic tree;
   Algebraic tree2;
@@ -30,6 +32,24 @@ public class AlgebraicTest {
 
   public AlgebraicTest() {
     scope = new Scope();
+
+    request = new Request(10) {
+
+      @Override
+      Request getNewRequestWith(int d) {
+        throw new UnsupportedOperationException("Not supported yet.");
+      }
+
+      @Override
+      Request[] getNewRequestWith(Constructor cons) {
+        throw new UnsupportedOperationException("Not supported yet.");
+      }
+
+      @Override
+      Constructor chooseConstructor(HashSet<Constructor> listConstructors) {
+        throw new UnsupportedOperationException("Not supported yet.");
+      }
+    };
 
     nat = new Algebraic(scope, "nat");
     nat.addConstructor(nat);
@@ -69,7 +89,6 @@ public class AlgebraicTest {
 
     surexpr = new Algebraic(scope, Surexpr.class);
     surexpr.addConstructor(rec.class);
-    surexpr.addConstructor(rien.class);
     surexpr.addConstructor(wrapper.class);
 
     scope.setDependances();
@@ -165,7 +184,7 @@ public class AlgebraicTest {
     boolean result = expr.isRec();
     assertEquals(expResult, result);
   }
-  
+
   @Test
   public void testIsRecExpr() {
     System.out.println("isRec Expr");
@@ -173,7 +192,7 @@ public class AlgebraicTest {
     boolean result = surexpr.isRec();
     assertEquals(expResult, result);
   }
-  
+
   @Test
   public void testIsRecSurExpr() {
     System.out.println("isRec SurExpr");
@@ -257,7 +276,7 @@ public class AlgebraicTest {
     int result = c.getDimention();
     assertEquals(expResult, result);
   }
-  
+
   @Test
   public void testGetDimentionExpr() {
     System.out.println("getDimention Expr");
@@ -265,7 +284,7 @@ public class AlgebraicTest {
     int result = expr.getDimention();
     assertEquals(expResult, result);
   }
-  
+
   @Test
   public void testGetDimentionSurExpr() {
     System.out.println("getDimention SurExpr");
@@ -348,7 +367,7 @@ public class AlgebraicTest {
     int result = c.dstToLeaf();
     assertEquals(expResult, result);
   }
-  
+
   @Test
   public void testDstToLeafExpre() {
     System.out.println("dstToLeaf Expr");
@@ -356,19 +375,18 @@ public class AlgebraicTest {
     int result = expr.dstToLeaf();
     assertEquals(expResult, result);
   }
-  
+
   @Test
   public void testDstToLeafSurExpre() {
     System.out.println("dstToLeaf SurExpr");
-    int expResult = 0;
+    int expResult = 1;
     int result = surexpr.dstToLeaf();
     assertEquals(expResult, result);
   }
-  
+
   /**
    * Test of testAddConstructor with class method, of class Algebraic.
    */
-
   @Test
   public void testAddConstructorClassExpr() {
     System.out.println("testAddConstructorClass SurExpr");
@@ -377,11 +395,32 @@ public class AlgebraicTest {
     int result = c.dstToLeaf();
     assertEquals(expResult, result);
   }
-  
+
   @Test
   public void testAddConstructorClassSurExpr() {
     System.out.println("testAddConstructorClass SurExpr");
     System.out.println(surexpr);
+    int expResult = 1;
+    int result = c.dstToLeaf();
+    assertEquals(expResult, result);
+  }
+
+  /**
+   * Test of makeLeaf method, of class Algebraic.
+   */
+  @Test
+  public void testMakeLeafExpr() {
+    System.out.println("testMakeLeaf Expr");
+    System.out.println(expr.makeLeaf(request));
+    int expResult = 1;
+    int result = c.dstToLeaf();
+    assertEquals(expResult, result);
+  }
+
+  @Test
+  public void testMakeLeafSurExpr() {
+    System.out.println("testMakeLeaf SurExpr");
+    System.out.println(surexpr.makeLeaf(request));
     int expResult = 1;
     int result = c.dstToLeaf();
     assertEquals(expResult, result);

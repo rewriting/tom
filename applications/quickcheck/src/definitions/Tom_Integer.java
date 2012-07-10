@@ -67,4 +67,9 @@ public class Tom_Integer implements Typable {
   public Integer generate(Request request) {
     return (int) (Math.random()*request.getCounter());
   }
+
+  @Override
+  public Object makeLeaf(Request request) {
+    return generate(request);
+  }
 }

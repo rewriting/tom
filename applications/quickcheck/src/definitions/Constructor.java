@@ -85,7 +85,7 @@ class Constructor {
     return res;
   }
 
-  Object make(Object... args) {
+  Object make(Object[] args) {
     try {
       return make.invoke(null, args);
     } catch (IllegalAccessException ex) {

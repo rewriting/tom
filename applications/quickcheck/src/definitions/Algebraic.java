@@ -94,9 +94,9 @@ public class Algebraic implements Typable {
     if (isRec()) {
       add = 1;
     }
-    for (Typable type : listDependances) {
-      if (!type.dependsOn(this)) {
-        dim = Math.max(dim, type.getDimention());
+    for (Typable typable : listDependances) {
+      if (!typable.dependsOn(this)) {
+        dim = Math.max(dim, typable.getDimention());
       }
     }
     return dim + add;
@@ -107,10 +107,60 @@ public class Algebraic implements Typable {
     return listDependances.contains(t);
   }
 
+  private Constructor getMinimalConstructor() {
+    for (Constructor constructor : listConstructors) {
+      int m = constructor.distanceToReachLeaf();
+      if (m == dstToLeaf()) {
+        return constructor;
+      }
+    }
+    throw new UnsupportedOperationException("Internal error happends when making backtraking.");
+  }
+
+  private Request[] spread(Request request, int size) {
+    Request[] listRequests = new Request[size];
+    for (int i = 0; i < listRequests.length; i++) {
+      listRequests[i] = new MakeLeafStrategy(0);
+    }
+    if(size == 0){
+      return listRequests;
+    }
+    int n = request.getCounter();
+    while(n != 0){
+      int index = (int) (Math.random()*size);
+      listRequests[index].inc();
+      n--;
+    }
+    return listRequests;
+  }
+
+  @Override
+  public Object makeLeaf(Request request) {
+    Constructor cons = getMinimalConstructor();
+    Typable[] fields = cons.getFields();
+    Request[] listRequests = spread(request, fields.length);
+    Object[] branches = new Object[fields.length];
+    for (int i = 0; i < fields.length; i++) {
+      Typable typable = fields[i];
+      Request req = listRequests[i];
+      branches[i] = typable.makeLeaf(req);
+    }
+    return cons.make(branches);
+  }
+
   @Override
   public Object generate(Request request) {
-    // TODO Not supported yet
-    throw new UnsupportedOperationException("Not supported yet.");
+    int dst2leaf = dstToLeaf();
+    if (dst2leaf == Integer.MAX_VALUE) {
+      throw new UnsupportedOperationException("Type " + type + " is not finite.");
+    }
+    int n = request.getCounter();
+    if (n < dst2leaf) {
+      return makeLeaf(request);
+    } else {
+      // TODO Not supported yet
+      throw new UnsupportedOperationException("Not yet implemented");
+    }
   }
 
   @Override

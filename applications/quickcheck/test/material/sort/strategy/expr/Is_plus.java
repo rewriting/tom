@@ -1,4 +1,4 @@
-
+  
 package sort.strategy.expr;
 
 public class Is_plus extends tom.library.sl.AbstractStrategyCombinator {
