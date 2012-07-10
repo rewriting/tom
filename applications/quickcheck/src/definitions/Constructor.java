@@ -111,4 +111,12 @@ class Constructor {
     res += "]";
     return res;
   }
+
+  ATerm[] giveATermDeps() {
+    ATerm[] res = new ATerm[getSize()];
+    for (int i = 0; i < res.length; i++) {
+      res[i] = new ATerm(fields[i]);
+    }
+    return res;
+  }
 }

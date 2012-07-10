@@ -24,11 +24,6 @@ public class Algebraic implements Typable {
   public Algebraic(Scope scope, String name) {
     this.scope = scope;
     this.name = name;
-//    try {
-//      this.type = Class.forName(name);
-//    } catch (ClassNotFoundException ex) {
-//      Logger.getLogger(Algebraic.class.getName()).log(Level.SEVERE, null, ex);
-//    }
     listConstructors = new HashSet<Constructor>();
     listDependances = new HashSet<Typable>();
     scope.addType(this);
@@ -48,6 +43,21 @@ public class Algebraic implements Typable {
     listConstructors.add(new Constructor(this, listTypes));
     listDependances.addAll(Arrays.asList(listTypes));
     return this;
+  }
+  
+  boolean checkLink(Constructor cons){
+    return listConstructors.contains(cons);
+  }
+  
+  Constructor chooseConstructor(){
+    int choice = (int) (Math.random()*listConstructors.size());
+    int i = 0;
+    for (Constructor constructor : listConstructors) {
+      if(i==choice){
+        return constructor;
+      }
+    }
+    throw new UnsupportedOperationException("ERROR");
   }
 
   @Override
@@ -107,7 +117,8 @@ public class Algebraic implements Typable {
     return listDependances.contains(t);
   }
 
-  private Constructor getMinimalConstructor() {
+  @Deprecated
+  Constructor getMinimalConstructor() {
     for (Constructor constructor : listConstructors) {
       int m = constructor.distanceToReachLeaf();
       if (m == dstToLeaf()) {
@@ -117,6 +128,7 @@ public class Algebraic implements Typable {
     throw new UnsupportedOperationException("Internal error happends when making backtraking.");
   }
 
+  @Deprecated
   private Request[] spread(Request request, int size) {
     Request[] listRequests = new Request[size];
     for (int i = 0; i < listRequests.length; i++) {
@@ -158,15 +170,10 @@ public class Algebraic implements Typable {
     if (n < dst2leaf) {
       return makeLeaf(request);
     } else {
+      
       // TODO Not supported yet
       throw new UnsupportedOperationException("Not yet implemented");
     }
-  }
-
-  @Override
-  public Strategy makeGenerator(Request request) {
-    // TODO Not supported yet
-    throw new UnsupportedOperationException("Not supported yet.");
   }
 
   @Override

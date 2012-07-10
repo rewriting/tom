@@ -30,8 +30,6 @@ public interface Typable {
    */
   public boolean isDstToLeafDefined();
 
-  public Strategy makeGenerator(Request request);
-
   public Object generate(Request request);
 
   /**
@@ -43,6 +41,6 @@ public interface Typable {
   public String getName();
 
   public Scope getScope();
-  
+
   public Object makeLeaf(Request request);
 }

@@ -34,11 +34,6 @@ public class Tom_String implements Typable {
   }
 
   @Override
-  public Strategy makeGenerator(Request request) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
   public int dstToLeaf() {
     return 0;
   }

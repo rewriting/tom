@@ -22,13 +22,35 @@ class MakeLeafStrategy extends Request {
   }
 
   @Override
-  Request[] getNewRequestWith(Constructor cons) {
-    throw new UnsupportedOperationException("Not supported yet.");
+  MakeLeafStrategy[] getNewRequestWith(Constructor cons) {
+    int size = cons.getFields().length;
+    MakeLeafStrategy[] listRequests = new MakeLeafStrategy[size];
+    for (int i = 0; i < listRequests.length; i++) {
+      listRequests[i] = new MakeLeafStrategy(0);
+    }
+    if (size == 0) {
+      return listRequests;
+    }
+    int n = getCounter();
+    while (n != 0) {
+      int index = (int) (Math.random() * size);
+      listRequests[index].inc();
+      n--;
+    }
+    return listRequests;
   }
 
   @Override
   Constructor chooseConstructor(HashSet<Constructor> listConstructors) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    Constructor res = null;
+    int min = Integer.MAX_VALUE;
+    for (Constructor constructor : listConstructors) {
+      int m = constructor.distanceToReachLeaf();
+      if (m < min) {
+        min = m;
+        res = constructor;
+      }
+    }
+    return res;
   }
-  
 }
