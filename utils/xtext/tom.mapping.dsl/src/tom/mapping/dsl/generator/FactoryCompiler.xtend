@@ -31,7 +31,7 @@ class FactoryCompiler {
 		}
 	
 	def main(Mapping map) {
-		 tfc.main(map); // Erreur qui dispara�tra lorsque TomFactoryCompiler sera termin�e
+		 tfc.main(map);
 		 
 		 '''
 		 package «getPackagePrefix(prefix)»«map.name.toFirstLower()»;
@@ -55,12 +55,12 @@ class FactoryCompiler {
 		 	
 		 	/* PROTECTED REGION ID(map.name+"_user_factory_instances") ENABLED START */
 		 	
-		 	«var packageList = operators.typeSelect(ClassOperator).collect[e | e.class_.EPackage]»;		!!!!! FAIL ICI !!!!!
+		 	«var packageList = operators.typeSelect(ClassOperator).collect[e | e.class_.EPackage]»;
 		 	«for(package :packageList.intersect(packageList))» {
 		 		public static «package.name.toFirstUpper()»Factory «package.name»Factory = «package.name.toFirstUpper()»Factory.eINSTANCE;
 		 	}
 		 	
-		 	«var packageList = map.allDefaultOperators.filter[e | e.EPackage]»;								!!!!! FAIL ICI !!!!!
+		 	«var packageList = map.allDefaultOperators.select[e | e.EPackage]»;
 		 	«for(package: packageList.reject[e | packageList.select(f | e.name == f.name && e!= f])» {
 		 		public static «package.name.toFirstUpper()»Factory «package.name»Factory = «package.name.toFirstUpper()»Factory.eINSTANCE;
 		 	}
@@ -100,7 +100,7 @@ class FactoryCompiler {
 	def operator(Mapping map, ClassOperator clop) {
 		if(clop.parameters.size>0) {
 			val parameters = getCustomParameters(clop);
-			javaFactoryCreateOperatorWithParameters(clop.parameters, clop); // Pourquoi le "parameters" seul ne fonctionne pas ?
+			javaFactoryCreateOperatorWithParameters(clop.parameters, clop); // Pourquoi le "parameters" ne passe-t-il pas ?
 		} else {
 			javaFactoryCreateDefaultOperator(map, clop.name, clop.class_)
 		}
@@ -109,7 +109,12 @@ class FactoryCompiler {
 	
 	def javaFactoryCreateOperatorWithParameters(List<FeatureParameter> parameters, ClassOperator clop) {
 		'''
-		public static «clop.class_.name» «name.toFirstLower()»(«for(p: parameters») {«injpa.javaFeatureParameters(p)») } {		!!!!! SEPARATORS ? !!!!!
+		public static «clop.class_.name» «name.toFirstLower()»(
+		«FOR p: parameters SEPARATOR ","»
+		«injpa.javaFeatureParameters(p)»
+		«ENDFOR»
+		) 
+		{
 			«clop.class_.name» o = «clop.class_.EPackage.name»Factory.create«clop.class_.name.toFirstUpper()»();
 			«for(p: parameters)» {
 				«structureFeatureSetter(p.feature)»;
@@ -127,7 +132,10 @@ class FactoryCompiler {
 		val parameters = getDefaultParameters(ecl,mapping);
 		if(!ecl.abstract && !ecl.interface) {
 			'''
-			public static «ecl.name» «name.toFirstLower()»(injop.javaClassAttributes(mapping, ecl); «for(param: parameters)»{«injpa.defaultJavaFeatureParameter(param)»;} {		!!!!! SEPARATORS ? !!!!!
+			public static «ecl.name» «name.toFirstLower()»(injop.javaClassAttributes(mapping, ecl); 
+			«FOR param: parameters SEPARATOR ","» 
+			«injpa.defaultJavaFeatureParameter(param)»
+			«ENDFOR») {
 				«ecl.name» o = «EPackage.name»Factory.create.«ecl.name.toFirstUpper()»();
 				«for(attribute EAllAttributes)» {
 					«structureFeatureSetter(attribute)»;
