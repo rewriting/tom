@@ -43,7 +43,6 @@ public abstract class Request {
   
   protected void spreadBetweenHigherDim(HashSet<ATerm> listHigherDim) {
     int size = listHigherDim.size();
-    //Request[] listRequests = new Request[size];
     int[] tabSizes = new int[size];
     for (int i = 0; i < tabSizes.length; i++) {
       tabSizes[i] = 0;
@@ -52,7 +51,7 @@ public abstract class Request {
       return;
     }
     int n = this.getCounter() - 1;
-    while (n != 0) {
+    while (n > 0) {
       int index = (int) (Math.random() * size);
       tabSizes[index]++;
       n--;

@@ -4,7 +4,6 @@
  */
 package definitions;
 
-import java.util.HashSet;
 import static org.junit.Assert.assertEquals;
 import org.junit.*;
 import sort.types.Expr;
@@ -88,6 +87,7 @@ public class AlgebraicTest {
 
   @Before
   public void setUp() {
+    System.out.println("--------------------");
   }
 
   @After
@@ -416,7 +416,7 @@ public class AlgebraicTest {
   @Test
   public void testGenerateExpr() {
     System.out.println("Generate Expr");
-    System.out.println(expr.generate(request));
+    System.out.println(expr.generate(10));
     int expResult = 1;
     int result = c.dstToLeaf();
     assertEquals(expResult, result);
@@ -425,7 +425,7 @@ public class AlgebraicTest {
   @Test
   public void testGenerateSurExpr() {
     System.out.println("Generate SurExpr");
-    System.out.println(surexpr.generate(request));
+    System.out.println(surexpr.generate(10));
     int expResult = 1;
     int result = c.dstToLeaf();
     assertEquals(expResult, result);

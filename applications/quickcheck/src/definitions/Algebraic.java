@@ -195,7 +195,7 @@ public class Algebraic implements Typable {
     HashSet<ATerm> listHoles = new HashSet<ATerm>();
     listHoles.add(res);
     while (!listHoles.isEmpty()) {
-
+      
       //retrieve set of maximal dimension terms
       int dimMax = 0;
       HashSet<ATerm> toVisit = new HashSet<ATerm>();
@@ -213,11 +213,10 @@ public class Algebraic implements Typable {
       //spread n across maximal dimention terms
       int[] listSpread = spread(n, toVisit.size());
 
-
       //fill each maximal dimension term
       int i = 0;
       for (ATerm term : toVisit) {
-        Request req = null;
+        Request req;
         if (term.getDstToLeaf() < listSpread[i]) {
           req = new MakeAllStrategy(listSpread[i]);
           if (term.getRequest() != null) {
