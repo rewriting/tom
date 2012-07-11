@@ -19,20 +19,20 @@ public abstract class Request {
   public Request(int initialValue) {
     counter = initialValue;
   }
-  
-  public int getCounter(){
+
+  public int getCounter() {
     return counter;
   }
-  
-  public void inc(){
+
+  public void inc() {
     counter++;
   }
-  
-  public void setCounter(int n){
+
+  public void setCounter(int n) {
     this.counter = n;
   }
-  
-  public Request copy(){
+
+  public Request copy() {
     try {
       return (Request) this.clone();
     } catch (CloneNotSupportedException ex) {
@@ -41,18 +41,34 @@ public abstract class Request {
     throw new UnsupportedOperationException("clone method fails.");
   }
   
-  abstract HashSet<ATerm> fillATerm(ATerm aTerm);
-  
-  /**
-   * Cette methode permet de construire les requestes a passer lors dela
-   * creation des champs du constructeur. La repartition des requetes doit tenir
-   * compte des dimensions des champs, mais peut aussi infuer sur la forme du
-   * graphe en choisissant par exemple 
-   *
-   * @param cons
-   * @return
-   */
-  abstract Request[] getNewRequestWith(Constructor cons);
+  protected void spreadBetweenHigherDim(HashSet<ATerm> listHigherDim) {
+    int size = listHigherDim.size();
+    //Request[] listRequests = new Request[size];
+    int[] tabSizes = new int[size];
+    for (int i = 0; i < tabSizes.length; i++) {
+      tabSizes[i] = 0;
+    }
+    if (size == 0) {
+      return;
+    }
+    int n = this.getCounter() - 1;
+    while (n != 0) {
+      int index = (int) (Math.random() * size);
+      tabSizes[index]++;
+      n--;
+    }
+    int i = 0;
+    for (ATerm term : listHigherDim) {
+      if (term.getDstToLeaf() < this.getCounter()) {
+        term.setRequest(new MakeAllStrategy(tabSizes[i]));
+      } else {
+        term.setRequest(new MakeLeafStrategy(tabSizes[i]));
+      }
+      i++;
+    }
+  }
 
-  abstract Constructor chooseConstructor(HashSet<Constructor> listConstructors);
+  abstract HashSet<ATerm> fillATerm(ATerm aTerm);
+
+//  abstract Constructor chooseConstructor(HashSet<Constructor> listConstructors);
 }

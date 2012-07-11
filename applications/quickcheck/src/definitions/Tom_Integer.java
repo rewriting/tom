@@ -61,6 +61,7 @@ public class Tom_Integer implements Typable {
   }
 
   @Override
+  @Deprecated
   public Object makeLeaf(Request request) {
     return generate(request);
   }

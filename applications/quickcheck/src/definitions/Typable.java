@@ -40,5 +40,6 @@ public interface Typable {
 
   public Scope getScope();
 
+  @Deprecated
   public Object makeLeaf(Request request);
 }

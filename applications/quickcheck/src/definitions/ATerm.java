@@ -30,21 +30,37 @@ public class ATerm {
     return deps;
   }
   
+  ATerm[] chooseMinimalConstructor() {
+    if (type instanceof Algebraic) {
+      cons = ((Algebraic) type).chooseMinimalConstructor();
+      deps = cons.giveATermDeps();
+    } else {
+      deps = new ATerm[0];
+    }
+    return deps;
+  }
+
   @Deprecated
-  void setRequest(Request req){
+  Request getRequest() {
+    return req;
+  }
+
+  @Deprecated
+  void setRequest(Request req) {
     this.req = req;
   }
 
   int getDimention() {
     return type.getDimention();
   }
-  
-  int getDstToLeaf(){
+
+  int getDstToLeaf() {
     return type.dstToLeaf();
   }
   
-  @Deprecated
-  Request getRequest(){
-    return req;
+  public String toString(){
+    String res = "";
+    
+    return res;
   }
 }

@@ -66,6 +66,7 @@ public class Tom_String implements Typable {
   }
   
   @Override
+  @Deprecated
   public Object makeLeaf(Request request) {
     return generate(request);
   }

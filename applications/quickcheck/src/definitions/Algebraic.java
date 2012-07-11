@@ -3,7 +3,6 @@ package definitions;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashSet;
-import tom.library.sl.Strategy;
 
 /**
  *
@@ -87,6 +86,7 @@ public class Algebraic implements Typable {
     HashSet<Algebraic> depsClone = (HashSet<Algebraic>) listDependances.clone();
     for (Algebraic deps : depsClone) {
       hasChanged = hasChanged || !depsClone.containsAll(deps.listDependances);
+      // TODO : utiliser la taille comme moyen de controle
       listDependances.addAll(deps.listDependances);
     }
     return hasChanged;
@@ -117,15 +117,15 @@ public class Algebraic implements Typable {
     return listDependances.contains(t);
   }
 
-  @Deprecated
-  Constructor getMinimalConstructor() {
+  Constructor chooseMinimalConstructor() {
+    //TODO improve choice randomly
     for (Constructor constructor : listConstructors) {
       int m = constructor.distanceToReachLeaf();
       if (m == dstToLeaf()) {
         return constructor;
       }
     }
-    throw new UnsupportedOperationException("Internal error happends when making backtraking.");
+    throw new UnsupportedOperationException("Internal error happends when backtraking.");
   }
 
   @Deprecated
@@ -146,9 +146,26 @@ public class Algebraic implements Typable {
     return listRequests;
   }
 
+  private int[] spread(int n, int size) {
+    int[] res = new int[size];
+    for (int i = 0; i < res.length; i++) {
+      res[i] = 0;
+    }
+    if (size == 0) {
+      return res;
+    }
+    while (n != 0) {
+      int index = (int) (Math.random() * size);
+      res[index]++;
+      n--;
+    }
+    return res;
+  }
+
   @Override
+  @Deprecated
   public Object makeLeaf(Request request) {
-    Constructor cons = getMinimalConstructor();
+    Constructor cons = chooseMinimalConstructor();
     Typable[] fields = cons.getFields();
     Request[] listRequests = spread(request, fields.length);
     Object[] branches = new Object[fields.length];
@@ -162,11 +179,14 @@ public class Algebraic implements Typable {
 
   @Override
   public ATerm generate(Request request) {
+    int n = request.getCounter();
     ATerm res = new ATerm(this);
     res.setRequest(request);
     HashSet<ATerm> listHoles = new HashSet<ATerm>();
     listHoles.add(res);
     while (!listHoles.isEmpty()) {
+
+      //retrieve set of maximal dimension terms
       int dimMax = 0;
       HashSet<ATerm> toVisit = new HashSet<ATerm>();
       for (ATerm term : listHoles) {
@@ -179,32 +199,36 @@ public class Algebraic implements Typable {
           toVisit.add(term);
         }
       }
-      listHoles.removeAll(toVisit);
 
+      //spread n across maximal dimention terms
+      int[] listSpread = spread(n, toVisit.size());
+
+
+      //fill each maximal dimension term
+      int i = 0;
       for (ATerm term : toVisit) {
-        Request req = term.getRequest();
+        Request req = null;
+        if (term.getDstToLeaf() < listSpread[i]) {
+          req = new MakeAllStrategy(listSpread[i]);
+          if (term.getRequest() != null) {
+            throw new UnsupportedOperationException("Request of term should not be defined here.");
+          }
+          term.setRequest(req); // normaly useless...
+        } else {
+          req = new MakeLeafStrategy(listSpread[i]);
+          if (term.getRequest() != null) {
+            throw new UnsupportedOperationException("Request of term should not be defined here.");
+          }
+          term.setRequest(req); // normaly useless...
+        }
         listHoles.addAll(req.fillATerm(term));
+        i++;
       }
 
+      //remove newly filled terms
+      listHoles.removeAll(toVisit);
     }
     return res;
-
-
-
-
-
-//    int dst2leaf = dstToLeaf();
-//    if (dst2leaf == Integer.MAX_VALUE) {
-//      throw new UnsupportedOperationException("Type " + type + " is not finite.");
-//    }
-//    int n = request.getCounter();
-//    if (n < dst2leaf) {
-//      return makeLeaf(request);
-//    } else {
-//
-//      // TODO Not supported yet
-//      throw new UnsupportedOperationException("Not yet implemented");
-//    }
   }
 
   @Override
