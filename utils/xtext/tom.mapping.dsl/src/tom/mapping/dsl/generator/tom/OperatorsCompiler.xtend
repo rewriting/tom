@@ -1,6 +1,6 @@
 package tom.mapping.dsl.generator.tom
 
-import org.eclipse.emf.ecore.EAttribute
+import com.google.inject.Inject
 import org.eclipse.emf.ecore.EClass
 import org.eclipse.emf.ecore.EStructuralFeature
 import tom.mapping.dsl.generator.TomMappingExtensions
@@ -12,13 +12,10 @@ import tom.mapping.model.Mapping
 import tom.mapping.model.Operator
 import tom.mapping.model.SettedFeatureParameter
 import tom.mapping.model.SettedValue
-import tom.mapping.dsl.generator.NamingCompiler
-import com.google.inject.Inject
 
 class OperatorsCompiler {
 	
 	extension TomMappingExtensions = new TomMappingExtensions()
-	extension NamingCompiler = new NamingCompiler()
 	
 	@Inject ParametersCompiler injpa
 	
@@ -29,9 +26,9 @@ class OperatorsCompiler {
 	
 	def dispatch operator(Mapping mapping, ClassOperator clop) {
 		if(clop.parameters.size > 0) {
-			classOperatorWithParameters(mapping, clop);
+			mapping.classOperatorWithParameters(clop);
 		} else {
-			classOperator(mapping, clop.name, clop.class_);
+			mapping.classOperator(clop.name, clop.class_);
 		}
 	}
 	
@@ -40,36 +37,36 @@ class OperatorsCompiler {
 	
 		/* PROTECTED REGION ID(op+"_"+ecl.name+"_tom_operator") ENABLED START */
    
-   val parameters = getDefaultParameters(ecl, mapping);
+   val parameters = ecl.getDefaultParameters(mapping);
    
    if(mapping.getTerminal(ecl,false) != null) {
    	'''
-		%op Â«mapping.getTerminal(ecl.class_,false).nameÂ» Â«opÂ» (Â«mapping.classAttributes(ecl))Â» 
-		Â«(for(p : parameters SEPARATOR ",") Â» {
-		Â«injpa.defaultFeatureParameter(mapping, p))
-		Â» }
-		is_fsym(t) {$t instanceof Â«ecl.nameÂ»}
-		Â«for(attribute: ecl.EAllAttribute)Â» {
-		get_slot(Â«attribute.nameÂ»,t) {
-		((Â«ecl.nameÂ»)$t).getÂ«attribute.name.toFirstUpper()Â»()
-		}
-		}
-		}
-		Â«for(p: parameters)Â»{
-		get_slot(Â«p.nameÂ»,t) {Â«getter(ecl, p)Â»}
-		}
-		make(Â«for(att: ecl.EAllAttribute SEPARATOR ",")Â» {
-		Â«att.nameÂ»
-		Â«if(ecl.EAllAttributes.size > 0 && ecl.getDefaultParameters(mapping).size > 0)Â» {
-			for(param: parameters SEPARATOR ","") {
-				Â«param.nameÂ») {
-					Â«tomFactoryQualifiedName(mapping)Â».createÂ«ecl.name.toFirstUpper()Â»(Â«for(att: ecl.EAllAttributes SEPARATOR ",")Â» {$Â«att.nameÂ»}
-					Â«if(ecl.EAllAttributes.size > 0 && ecl.getDefaultParameters(mapping).size > 0)Â»{,}
-					Â«for(param: parameters SEPARATOR ",")Â» {$Â«param.nameÂ»})
-				}
-			}
-		}
-	}
+		%op Çmapping.getTerminal(ecl,false).nameÈ ÇopÈ (Çmapping.classAttributes(ecl)È
+		
+		ÇFOR p: parameters SEPARATOR ","È
+		Çinjpa.defaultFeatureParameter(mapping, p)È
+		ÇENDFORÈ) {
+		is_fsym(t) {$t instanceof Çecl.nameÈ}
+		
+		ÇFOR attribute: ecl.EAllAttributesÈ
+		get_slot(Çattribute.nameÈ,t) {
+		((Çecl.nameÈ)$t).getÇattribute.name.toFirstUpper()È()}
+		ÇENDFORÈ
+		
+		ÇFOR p: parametersÈ
+		get_slot(Çp.nameÈ,t) {Çecl.getter(p)È}
+		ÇENDFORÈ
+		
+		make(ÇFOR att: ecl.EAllAttributes SEPARATOR ","È 
+		Çatt.nameÈ
+			ÇENDFORÈ
+		ÇIF ecl.EAllAttributes.size > 0 && ecl.getDefaultParameters(mapping).size > 0È,ÇENDIFÈ
+			ÇFOR param: parameters SEPARATOR ","È
+				Çparam.nameÈ
+			ÇENDFORÈ
+			{Çmapping.tomFactoryQualifiedName()È.createÇecl.name.toFirstUpper()È(ÇFOR att: ecl.EAllAttributes SEPARATOR ","È$Çatt.nameÈÇENDFORÈ
+					ÇIF ecl.EAllAttributes.size > 0 && ecl.getDefaultParameters(mapping).size > 0È,ÇENDIFÈ
+					ÇFOR param: parameters SEPARATOR ","È {$Çparam.nameÈ}ÇENDFORÈ)}
    	'''
    }
    
@@ -77,92 +74,89 @@ class OperatorsCompiler {
 	}
 	
 	
-	def classOperatorWithParameters(Mapping mapping, ClassOperator clop) { // How to manage protected regions ?
+	def classOperatorWithParameters(Mapping mapping, ClassOperator clop) {
 	
 		/* PROTECTED REGION ID(op+"_"+clop.name+"_tom_operator_with_param") ENABLED START */
    
    val parameters = getCustomParameters(clop);
 
    	'''
-   	%op Â«mapping.getTerminal(clop.class_,false).nameÂ» Â«nameÂ» 
-   	Â«(for(p : parameters SEPARATOR ",") Â» {
-   		Â«injpa.featureParameter(mapping, p)Â»
-   		}) {
-   		is_fsym(t) {$t instanceof Â«clop.class_.nameÂ»
-   		Â«for(p: ecl.parameters)Â» {
-   			Â«settedParameterTest(clop.class_, p)Â»
-   			}
-   		}
-   		Â«for(p: parameters)Â»{
-   			get_slot(Â«p.feature.nameÂ»,t) {Â«getter(clop.class_, p.feature)Â»}
-   		}
-   		make(Â«for(p: parameters SEPARATOR ",")Â» {
-   			_Â«p.feature.nameÂ»
-   		}) {
-   	Â«tomFactoryQualifiedName(mappingÂ».createÂ«this.name.toFirstUpper()Â»(Âfor(p:parameters SEPARATOR ",")Â»{$_Â«p.feature.nameÂ»})}
+   	%op Çmapping.getTerminal(clop.class_,false).nameÈ Çclop.nameÈ 
+   	(ÇFOR p: parameters SEPARATOR ","È
+   		Çinjpa.featureParameter(mapping, p)È
+   		ÇENDFORÈ) {
+   		is_fsym(t) {$t instanceof Çclop.class_.nameÈ
+   		ÇFOR p: clop.parametersÈ
+   			Çclop.class_.settedParameterTest(p)È
+   			ÇENDFORÈ}
+   			
+   		ÇFOR p: parametersÈ
+   			get_slot(Çp.feature.nameÈ,t) {Çclop.class_.getter(p.feature)È}
+   		ÇENDFORÈ
+   		
+   		make(ÇFOR p: parameters SEPARATOR ","È
+   			_Çp.feature.nameÈ
+   		ÇENDFORÈ) {Çmapping.tomFactoryQualifiedName()È.createÇclop.name.toFirstUpper()È(ÇFOR p:parameters SEPARATOR ","È$_Çp.feature.nameÈÇENDFORÈ)}
    	'''
-   
 		/* PROTECTED REGION END */
 	}
 	
 	
 	def getter(EClass c, EStructuralFeature esf) {
-		if(esf.many){
-			'''enforce(''' }
-			'''((Â«c.nameÂ»)$t).getÂ«name.toFirstUpper()Â»()'''
-		if(esf.many) {''')'''}
+		'''
+		ÇIF esf.manyÈenforceÇENDIFÈ
+			((Çc.nameÈ)$t).getÇesf.name.toFirstUpper()È()
+		ÇIF esf.manyÈ)ÇENDIFÈ
+		'''
 	}
 	
 	
-	def classAttributes(Mapping mapping, EClass ecl) {
-		
+	def classAttributes(Mapping mapping, EClass ecl) {		
 		'''		
-		Â«FOR att: ecl.EAllAttributes SEPARATOR ","Â»
-		Â«att.nameÂ» = Â«injpa.feature(att)Â»
-		Â«ENDFORÂ»
+		ÇFOR att: ecl.EAllAttributes SEPARATOR ","È
+		Çatt.nameÈ : Çinjpa.feature(att)È
+		ÇENDFORÈ
+		ÇIF ecl.EAllAttributes.size > 0 && getDefaultParameters(ecl, mapping).size>0È,ÇENDIFÈ
 		'''
-		
-		if(ecl.EAllAttributes.size > 0 && getDefaultParameters(ecl, mapping).size>0) {''','''}
 	}
 	
 	
 	def javaClassAttibutes(Mapping mapping, EClass ecl) {
-		
 		'''		
-		Â«FOR att: ecl.EAllAttributes SEPARATOR ","Â»
-		 Â«injpa.feature(att)Â» _Â«att.nameÂ»
-		Â«ENDFORÂ»
+		ÇFOR att: ecl.EAllAttributes SEPARATOR ","È
+		 Çinjpa.feature(att)È _Çatt.nameÈ
+		ÇENDFORÈ
+		ÇIF ecl.EAllAttributes.size > 0 && getDefaultParameters(ecl, mapping).size>0È,ÇENDIFÈ
 		'''
-		
-		if(ecl.EAllAttributes.size > 0 && getDefaultParameters(ecl, mapping).size>0) {''','''}
 	}
 	
 	
-	def dispatch settedParameterTest(EClass c, FeatureParameter feature) {		
-	}
+	def dispatch settedParameterTest(EClass c, FeatureParameter feature) {}
 	
 	
-	def dispatch settedParameterTest(EClass c, SettedFeatureParameter feature) {
+	def dispatch settedParameterTest(EClass c, SettedFeatureParameter sfp) {
 		'''
-		((Â«c.nameÂ»)$t).getÂ«feature.name.toFirstUpper()Â»().equals(Â«settedValue(feature, sfp.value) Â»
+		&& ((Çc.nameÈ)$t).getÇsfp.feature.name.toFirstUpper()È().equals(Çsfp.feature.settedValue(sfp.value)È
 		'''
 	}
 	
 	
 	def dispatch settedValue(EStructuralFeature feature, SettedValue sv) {}
 	
-	def dispatch settedValue(EStructuralFeature feature, EnumLiteralValue literal) { // litteral.name ?
+	def dispatch settedValue(EStructuralFeature feature, EnumLiteralValue elv) {
 		'''
-		Â«feature.EType.nameÂ».Â«literal.nameÂ»
+		Çfeature.EType.nameÈ.Çelv.literal.nameÈ
 		'''
 	}
 	
 	
 	def dispatch settedValue(EStructuralFeature feature, JavaCodeValue jcv) {
-		val isString = ((feature.EType.instanceTypeName != null) && (feature.EType.instanceTypeName.contains("java.lang.String")))
-		if(isString) {'''"'''}
-		'''Â«javaÂ»'''
-		if(isString) {'''"'''}
+		'''
+		Çval isString = ((feature.EType.instanceTypeName != null) && (feature.EType.instanceTypeName.contains("java.lang.String")))È
+		ÇIF isStringÈ"ÇENDIFÈ
+		Çjcv.javaÈ
+		ÇIF isStringÈ"ÇENDIFÈ
+		'''
 	}
 	
 	

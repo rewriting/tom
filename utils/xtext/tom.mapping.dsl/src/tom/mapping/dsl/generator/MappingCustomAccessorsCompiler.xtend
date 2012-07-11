@@ -1,10 +1,9 @@
 // Licence
 package tom.mapping.dsl.generator
 
-import tom.mapping.model.*
-import org.eclipse.emf.ecore.*
-import tom.mapping.dsl.generator.tom.CustomOperatorsCompiler
 import com.google.inject.Inject
+import tom.mapping.dsl.generator.tom.CustomOperatorsCompiler
+import tom.mapping.model.Mapping
 
 class MappingCustomAccessorsCompiler {
 	

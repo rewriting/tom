@@ -6,10 +6,13 @@ import tom.mapping.model.Accessor
 import tom.mapping.model.Mapping
 import tom.mapping.model.Operator
 import tom.mapping.model.UserOperator
+import com.google.inject.Inject
 
 class CustomOperatorsCompiler {
 	
 	extension TomMappingExtensions = new TomMappingExtensions()
+	
+	@Inject ParametersCompiler injpa
 	
 	String prefix = "tom"
 	
@@ -21,10 +24,10 @@ class CustomOperatorsCompiler {
 	def main(Mapping map) {
 		if(map.operators.filter[e | e instanceof UserOperator].size>0) {			
 			'''
-			public class Â«getCustomOperatorClass()Â» {
-				Â«for(op: operators)Â» {
-				Â«operator(map, op);
-				}Â»
+			public class Çmap.getCustomOperatorsClass()È {
+				ÇFOR op: map.operatorsÈ
+					Çmap.operator(op)È
+				ÇENDFORÈ
 				
 			}
 			'''
@@ -36,51 +39,43 @@ class CustomOperatorsCompiler {
 	
 	def operator(Mapping map, UserOperator usop){
 		for(a: usop.accessors) {
-			'''
-			Â«accessor(usop,a)Â»
-			Â«test(usop)Â»
-			Â«make(usop)Â»
-			'''
-		}
+			usop.accessor(a) 
+			}
+			usop.test()
+			usop.make()
 	}
 	
 	
 	def accessor(UserOperator op, Accessor acc) {
-		var ParametersCompiler paco;
 		'''
-		public static Â«paco.javaTerminalType(acc.slot.type)Â»
-		Â«getCustomOperatorSlotAccessorName(acc);Â»
-		Â«(paco.javaTerminalType(op.type)Â» t) {
-			return Â«javaÂ»
+		public static Çinjpa.javaTerminalType(acc.slot.type)È
+		Çacc.getCustomOperatorSlotAccessorName()È
+		(Çinjpa.javaTerminalType(op.type)È t) {
+			return Çacc.javaÈ;
 		}
 		'''
 	}
 
 
 	def test(UserOperator usop) {
-		var ParametersCompiler paco;
 		'''
-		public static boolean isÂ«name.toFirstUpper()Â»
-			(Â«paco.javaTerminalType(usop.type)Â» t) {
-			return Â«testÂ»;
+		public static boolean isÇusop.name.toFirstUpper()È
+			(Çinjpa.javaTerminalType(usop.type)È t) {
+			return Çusop.test()È;
 		}
 		'''
 	}
 
 
 	def make(UserOperator usop) {
-		var ParametersCompiler paco;
 		'''
-		public static Â«paco.javaTerminalType(usop.type)Â» make Â«name.toFirstUpper()Â»
-		(Â«for(Accessor as: accessors)Â») {
-			Â«paco.javaParameter(acc.slot)Â» {
-				return Â«makeÂ»
+		public static Çinjpa.javaTerminalType(usop.type)È make Çusop.name.toFirstUpper()È
+		(ÇFOR acc: usop.accessors SEPARATOR ","È
+			Çinjpa.javaParameter(acc.slot)È
+		ÇENDFORÈ) {
+			return Çusop.make()È
 			}
-		}
 		'''
 	}
-
-
-
 
 }

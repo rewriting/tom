@@ -1,27 +1,25 @@
 package tom.mapping.dsl.generator.tom
 
+import org.eclipse.emf.ecore.EClassifier
+import org.eclipse.emf.ecore.EDataType
+import org.eclipse.emf.ecore.EEnum
+import org.eclipse.emf.ecore.EPackage
+import tom.mapping.dsl.generator.TomMappingExtensions
 import tom.mapping.model.Mapping
 import tom.mapping.model.Terminal
-import tom.mapping.dsl.generator.TomMappingExtensions
-import org.eclipse.emf.ecore.EClassifier
-import org.eclipse.emf.ecore.EEnum
-import org.eclipse.emf.ecore.EDataType
-import org.eclipse.emf.ecore.EPackage
-import tom.mapping.dsl.generator.NamingCompiler
 
 class TerminalsCompiler {
 
 extension TomMappingExtensions = new TomMappingExtensions()
-extension NamingCompiler = new NamingCompiler()
 
 	def terminal(Mapping m, Terminal t) {
 		if  (t.many) {
-			listTerminal(m,t);
+			m.listTerminal(t);
 		} else {
 		'''
-		%typeterm Â«t.nameÂ» {
-			implement 		{Â«t.class_.nameÂ»}
-			is_sort(t) 		{$t instanceof Â«t.class_.nameÂ»}
+		%typeterm Çt.nameÈ {
+			implement 		{Çt.class_.nameÈ}
+			is_sort(t) 		{$t instanceof Çt.class_.nameÈ}
 			equals(l1,l2) 	{($l1!=null && $l1.equals($l2)) || $l1==$l2}
 		}
 		'''
@@ -34,15 +32,15 @@ extension NamingCompiler = new NamingCompiler()
 		val name  = t.name(m);
 	
 	'''
-	%typeterm Â«nameÂ»{
-		 implement { EList<Â«t.class_.nameÂ»> }
-	     is_sort(t) Â«listTest (t)Â»
+	%typeterm ÇnameÈ{
+		 implement { EList<Çt.class_.nameÈ> }
+	     is_sort(t) Çt.listTest()È
 		equals(l1,l2) 	{($l1!=null && $l1.equals($l2)) || $l1==$l2}
 	}
 	
-	%oparray Â«nameÂ» Â«nameÂ» (Â«m.getTerminal(t.class_,false).nameÂ»*) {
-	 	 is_fsym(t) Â«listTest(t)Â»
-	     make_empty(n) { new BasicEList<Â«t.class_.nameÂ»>($n) }
+	%oparray ÇnameÈ ÇnameÈ (Çm.getTerminal(t.class_,false).nameÈ*) {
+	 	 is_fsym(t) Çt.listTest()È
+	     make_empty(n) { new BasicEList<Çt.class_.nameÈ>($n) }
 	     make_append(e,l) { append($e,$l) }
 	     get_element(l,n) { $l.get($n) }
 	     get_size(l)      { $l.size() }
@@ -53,35 +51,35 @@ extension NamingCompiler = new NamingCompiler()
 	def listTest(Terminal t) {
 		'''
 		{ $t instanceof EList<?> &&
-			(((EList<Â«t.class_.nameÂ»>)$t).size() == 0 
-			|| (((EList<Â«t.class_.nameÂ»>)$t).size()>0 && ((EList<Â«t.class_.nameÂ»>)$t).get(0) instanceof Â«t.class_.nameÂ»))} 
+			(((EList<Çt.class_.nameÈ>)$t).size() == 0 
+			|| (((EList<Çt.class_.nameÈ>)$t).size()>0 && ((EList<Çt.class_.nameÈ>)$t).get(0) instanceof Çt.class_.nameÈ))} 
 		}
 		'''
 	}
 	
 	def dispatch primitiveTerminal(EPackage c)'''
-		Â«FOR classifier :c.eAllContents.filter(typeof(EClassifier)).toListÂ»
-			Â«classifier.primitiveTerminalÂ»
-		Â«ENDFORÂ»
+		ÇFOR classifier :c.eAllContents.filter(typeof(EClassifier)).toListÈ
+			Çclassifier.primitiveTerminal()È
+		ÇENDFORÈ
 	'''
 	
 	def dispatch primitiveTerminal(EClassifier c)''''''
 	
 	
 	def dispatch primitiveTerminal(EEnum c)'''
-		%typeterm Â«c.nameÂ» {
-			implement 		{Â«c.nameÂ»}
-			is_sort(t) 		{$t instanceof Â«c.nameÂ»}
+		%typeterm Çc.nameÈ {
+			implement 		{Çc.nameÈ}
+			is_sort(t) 		{$t instanceof Çc.nameÈ}
 			equals(l1,l2) 	{$l1==$l2}
 		}
 	'''
 	
 	def dispatch primitiveTerminal(EDataType c)'''
-		Â«val primitive = c.instanceTypeName.primitiveÂ»
-		%typeterm Â«c.nameÂ» {
-			implement 		{Â«c.instanceTypeNameÂ»}
-			is_sort(t) 		{Â«IF primitiveÂ»trueÂ«ELSEÂ»$t instanceof Â«c.instanceTypeNameÂ»Â«ENDIFÂ»}
-			equals(l1,l2) 	{Â«IF primitiveÂ»$l1==$l2Â«ELSEÂ»$l1.equals($l2)Â«ENDIFÂ»}
+		Çval primitive = c.instanceTypeName.primitiveÈ
+		%typeterm Çc.nameÈ {
+			implement 		{Çc.instanceTypeNameÈ}
+			is_sort(t) 		{ÇIF primitiveÈtrueÇELSEÈ$t instanceof Çc.instanceTypeNameÈÇENDIFÈ}
+			equals(l1,l2) 	{ÇIF primitiveÈ$l1==$l2ÇELSEÈ$l1.equals($l2)ÇENDIFÈ}
 		}
 	'''
 }

@@ -11,84 +11,69 @@ import tom.mapping.model.FeatureParameter
 import tom.mapping.model.Mapping
 import tom.mapping.model.Parameter
 import tom.mapping.model.Terminal
-import java.util.List
-import tom.mapping.dsl.generator.NamingCompiler
 
 class ParametersCompiler {
 	
 	extension TomMappingExtensions = new TomMappingExtensions()
-	extension NamingCompiler = new NamingCompiler()
 	
 	def parameter(Parameter p){
 		'''
-		Â«p.nameÂ» = Â«terminalType(p.type)Â»;
+		Çp.nameÈ : Çp.type.terminalType()È;
 		'''
 	}
 	
 	
 	def javaParameter(Parameter p) {
 		'''
-		Â«javaTerminalType(p.type)Â» Â«nameÂ»;
+		Çp.type.javaTerminalType()È Çp.nameÈ;
 		'''
 	}
 	
 	
 	def terminalType(Terminal t) {
-		'''Â«t.nameÂ»;'''
+		'''Çt.nameÈ;'''
 	}
 	
 	
 	def javaTerminalType(Terminal t) {
-		if(t.many) {
-			'''List<Â«t.class_.nameÂ»>;'''
-		} else {
-			'''Â«t.class_.nameÂ»;'''
-		}
+		'''ÇIF t.manyÈList<Çt.class_.nameÈ>ÇELSEÈÇt.class_.nameÈÇENDIFÈ'''
 	}
 
 	
 	def featureParameter(Mapping mapping, FeatureParameter fp) {
-		'''Â«fp.feature.nameÂ» = Â«feature(mapping, fp.feature)Â»;'''
+		'''Çfp.feature.nameÈ : Çmapping.feature(fp.feature)È;'''
 	}
 	
 	
 	def javaFeatureParameter(FeatureParameter fp) {
-		'''Â«feature(fp.feature)Â» _Â«fp.feature.nameÂ»;''';
+		'''Çfp.feature.feature()È _Çfp.feature.nameÈ;''';
 	}
 	
 	
 	def defaultFeatureParameter(Mapping mapping, EStructuralFeature esf) {
-		'''Â«esf.nameÂ» = Â«feature(mapping, esf)Â»;''';
+		'''Çesf.nameÈ : Çmapping.feature(esf)È;''';
 	}
 	
 	
 	def defaultJavaFeatureParameter(EStructuralFeature efp) {
-		'''Â«feature(efp)Â» _Â«efp.nameÂ»''';
+		'''Çefp.feature()È _Çefp.nameÈ''';
 	}
 	
 	
 	def renameEcoreClasses(EAttribute eat) {
-		if(eat.EAttributeType.name == "EInt") {
-			eat.EAttributeType.name = "int"; 
-		}
-		else if(eat.EAttributeType.name == "EFloat") {
-			eat.EAttributeType.name = "float"; 
-		}
-		else if(eat.EAttributeType.name == "EDouble") {
-			eat.EAttributeType.name = "double"; 
-		}
-		else if(eat.EAttributeType.name == "EBoolean") {
-			eat.EAttributeType.name = "boolean"; 
-		}
-		else if(eat.EAttributeType.name == "EString") {
-			eat.EAttributeType.name = "String"; 
-		} else {
-			if(eat.EAttributeType.instanceTypeName != "null") {
-				eat.EAttributeType.instanceClassName;
-			} else {
-				eat.EAttributeType.name;
-			}
-		}
+		'''
+		ÇIF eat.EAttributeType.name == "EInt"Èint
+		ÇELSEIF eat.EAttributeType.name == "ELong"Èlong
+		ÇELSEIF eat.EAttributeType.name == "EFloat"Èfloat
+		ÇELSEIF eat.EAttributeType.name == "EDouble"Èdouble
+		ÇELSEIF eat.EAttributeType.name == "EBoolean"Èboolean
+		ÇELSEIF eat.EAttributeType.name == "EString"ÈString
+		ÇELSEÈ
+		ÇIF eat.EAttributeType.instanceTypeName != nullÈ
+			Çeat.EAttributeType.instanceClassNameÈ
+		ÇELSEÈÇeat.EAttributeType.nameÈÇENDIFÈ
+		ÇENDIFÈ
+		'''
 	}
 	
 	
@@ -97,14 +82,17 @@ class ParametersCompiler {
 	
 	
 	def dispatch feature(Mapping mapping, EReference er) {
-		name(mapping.getTerminal(er.EReferenceType, er.many),mapping);
+		mapping.getTerminal(er.EReferenceType, er.many).name(mapping)
 	}
 	
 	
 	def dispatch feature(Mapping mapping, EAttribute eat) {
-		if(eat.many) {
-			'''List<? extends Â«renameEcoreClasses(eat)Â»>;'''
-		} else {'''renameEcoreClasses(eat);'''}
+		'''
+		ÇIF eat.manyÈ
+			List<? extends Çeat.renameEcoreClasses()È>
+		ÇELSEÈrenameEcoreClasses(eat)
+		ÇENDIFÈ
+		'''
 	}
 	
     
@@ -113,10 +101,11 @@ class ParametersCompiler {
 	
 	
 	def dispatch feature(EReference er) {
-    	if(er.many) {
-			'''List<? extends Â«er.EReferenceType.nameÂ»>;'''
-		}
-		'''er.EReferenceType.name''';
+    	'''
+    	ÇIF er.manyÈ
+    	List<? extends Çer.EReferenceType.nameÈ>ÇELSEÈ
+    	er.EReferenceType.nameÇENDIFÈ
+		'''
 	}
 	
 	
@@ -126,22 +115,21 @@ class ParametersCompiler {
 	
 	
 	def dispatch feature(EAttribute eat) {
-		primitiveType(eat.EAttributeType);
+		eat.EAttributeType.primitiveType();
 	}
 	
 	
 	def dispatch primitiveType(EDataType edt) {
-		if(edt.instanceTypeName == "java.lang.String") {
-			"String";
-		} else {
-			edt.instanceTypeName;
-		}
+		'''
+		ÇIF edt.instanceTypeName == "java.lang.String"È"String";
+		ÇELSEÈÇedt.instanceTypeNameÈ
+		ÇENDIFÈ
+		'''
 	}
 	
 	
 	def dispatch primitiveType(EEnum ee) {
 		ee.name;
 	}
-	
 	
 }

@@ -7,20 +7,19 @@ import tom.mapping.model.Mapping
 class ImportsCompiler {
 
 	extension TomMappingExtensions = new TomMappingExtensions()
-	extension NamingCompiler = new NamingCompiler()
 	
 	String prefix = ""
 	
 	def imports(Mapping map) {
 		for(EPackage p: map.getAllRootPackages) {
-			imports(prefix, p);
+			prefix.imports(p);
 		}
 	}
 	
 	
 	def importsWithUtils(Mapping map) {
 		for(EPackage p: map.getAllRootPackages) {
-			importsWithUtils(prefix, p);
+			prefix.importsWithUtils(p);
 		}
 	}
 	
@@ -28,11 +27,11 @@ class ImportsCompiler {
 	def imports(String prefix, EPackage ep) {
 		if(ep.EClassifiers.size > 0) {
 			'''
-			 import Â«getPackagePrefix(prefix)Â»Â«ep.nameÂ».*; 
+			 import Çprefix.getPackagePrefix()ÈÇep.nameÈ.*; 
 			 '''
 		}
 		for(EPackage p: ep.ESubpackages) {
-			imports(prefix, p);
+			(prefix.getPackagePrefix()+ep.name).imports(p);
 		}
 	}
 
@@ -40,12 +39,12 @@ class ImportsCompiler {
 	def importsWithUtils(String prefix, EPackage ep) {
 		if(ep.EClassifiers.size > 0) {
 			'''
-			import Â«getPackagePrefix(prefix)Â»Â«ep.nameÂ».*; 
-			import Â«getPackagePrefix(prefix)»Â«ep.nameÂ».util.*; 
+			import Çprefix.getPackagePrefix()ÈÇep.nameÈ.*; 
+			import Çprefix.getPackagePrefix()ÈÇep.nameÈ.util.*; 
 			'''
 		}
 		for(EPackage p: ep.ESubpackages) {
-			importsWithUtils(getPackagePrefix(prefix)+ep.name, p);
+			(prefix.getPackagePrefix()+ep.name).importsWithUtils(p);
 		} 
 	}
 

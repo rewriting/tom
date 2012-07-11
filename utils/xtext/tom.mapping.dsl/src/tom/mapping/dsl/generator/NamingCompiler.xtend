@@ -27,7 +27,7 @@ class NamingCompiler {
 	}
 	
 	def name(Terminal t, Mapping m) {
-		if(t.many && isInferedList(t,m)) {
+		if(t.many && t.isInferedList(m)) {
 			t.name+"List"
 		} else {
 			t.name;
@@ -43,7 +43,7 @@ class NamingCompiler {
 	}
 	
 	def String tomFactoryQualifiedName(Mapping m) {
-		m.prefix+"."+m.name+"."+"internal"+"."+tomFactoryName(m);
+		m.prefix+"."+m.name+"."+"internal"+"."+m.tomFactoryName();
 	}
 	
 	def String getPackagePrefix(String prefix) {

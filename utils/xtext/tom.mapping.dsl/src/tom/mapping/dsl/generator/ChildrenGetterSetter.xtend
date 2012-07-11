@@ -5,23 +5,19 @@ import tom.mapping.model.Mapping
 import org.eclipse.emf.ecore.EPackage
 import org.eclipse.emf.ecore.EClassifier
 import org.eclipse.emf.ecore.EClass
-import tom.mapping.dsl.generator.NamingCompiler
 
 class ChildrenGetterSetter {
 	
 	extension TomMappingExtensions = new TomMappingExtensions()
-	extension NamingCompiler = new NamingCompiler()
-	
-	NamingCompiler nam
 	
 	// Getter
 	
 	def dispatch getter(Mapping mapping, EPackage ep) {
 		'''
-		private static class Â«getChildrenGetterName(ep)Â» extends Â«ep.name.toFirstUpper()Â»Switch<Object[]> implements IChildrenGetter{
-			public final static Â«getChildrenGetterName(ep)Â» INSTANCE = new Â«getChildrenGetterName(ep)Â»();
+		private static class Çep.getChildrenGetterName()È extends Çep.name.toFirstUpper()ÈSwitch<Object[]> implements IChildrenGetter{
+			public final static Çep.getChildrenGetterName()È INSTANCE = new Çep.getChildrenGetterName()È();
 			
-			private Â«getChildrenGetterName(ep)Â»(){}
+			private Çep.getChildrenGetterName()È(){}
 			
 			public Object[] children(Object i) {				
 				Object[] children = doSwitch((EObject) i);
@@ -29,53 +25,48 @@ class ChildrenGetterSetter {
 					return children
 				} else { return new Object[0]; }
 			}
-			Â«for(EClassifier c: ep.EClassifiers) {
-				getter(mapping, c);
-			}Â»
+			ÇFOR c: ep.EClassifiersÈ
+				Çmapping.getter(c)È
+			ÇENDFORÈ
 		}
 		'''
 }
-
+// Reprendre ici
 	
-	def getter(Mapping mapping, EClassifier ecf) {
-		'''
-		'''
-	}
+	def dispatch getter(Mapping mapping, EClassifier ecf) {}
 	
 	
 	def dispatch getter(Mapping mapping, EClass ec) {
-		val parameters = getDefaultParameters(ec, mapping);
-		if(parameters.size() > 0) {
-			'''
-			public Object[] caseÂ«ec.name.toFirstUpper()Â»(Âec.nameÂ» o) {
+		val parameters = ec.getDefaultParameters(mapping);
+		'''
+		ÇIF parameters.size() > 0È
+			public Object[] caseÇec.name.toFirstUpper()È(Çec.nameÈ o) {
 				List<Object> l = new ArrayList<Object>();
-				Â«for(EReference param: parameters)Â» {
-					if(o.getÂ«param.name.toFirstUpper()Â»() != null)
-					l.add(o.getÂ«param.name.toFirstUpper()Â»());
-					}
-				return l.toArray();
-			}
-			
-			'''	
-		}
+				for (param: parameters) {
+					if(o.getÇparam.name.toFirstUpper()È() != null) { 
+						l.add(o.getÇparam.name.toFirstUpper()È());
+					} '''
+				}
+				'''return l.toArray();'''
+		ÇENDFORÈ'''	
 	}
 	
 	// Setter
 	
 	def dispatch setter(Mapping mapping, EPackage ep) {
 		'''
-		private static class Â«getChildrenSetterName(ep)Â» extends Â«ep.name.toFirstUpper()Â»Switch<Object[]> implements IChildrenSetter{
-			public final static Â«getChildrenSetterName(ep)Â» INSTANCE = new Â«getChildrenSetterName(ep)Â»();
+		private static class ÇgetChildrenSetterName(ep)È extends Çep.name.toFirstUpper()ÈSwitch<Object[]> implements IChildrenSetter{
+			public final static ÇgetChildrenSetterName(ep)È INSTANCE = new ÇgetChildrenSetterName(ep)È();
 			
-			private Â«getChildrenSetterName(ep)Â»(){}
+			private ÇgetChildrenSetterName(ep)È(){}
 			
 			public Object set(Object i, Object[] children) {				
 				ep.children = children;
 				return doSwitch((EObject) i);
 			}
-			Â«for(EClassifier c: ep.EClassifiers) {
-				setter(mapping, c);
-			}Â»
+			ÇFOR c: ep.EClassifiersÈ
+				Çsetter(mapping, c)È
+			ÇENDFORÈ
 		}
 		'''
 }
@@ -90,16 +81,12 @@ class ChildrenGetterSetter {
 	def dispatch setter(Mapping mapping, EClass ec) {
 		val parameters = getDefaultParameters(ec, mapping).filter[e | !e.many];
 		if(parameters.size() > 0) {
-			'''
-			public Object[] caseÂ«ec.name.toFirstUpper()Â»(Âec.nameÂ» o) {
-				Â«for(EReference p: parameters)Â» {
-					o.setÂ«p.name.toFirstUpper()Â»((Â«p.EReferenceType.nameÂ»)children[Â«parameters.indexOf(p)Â»]);
+			'''public Object[] caseÇec.name.toFirstUpper()È(Çec.nameÈ o) { '''
+				for(p: parameters) {
+					'''o.setÇp.name.toFirstUpper()È((Çp.EReferenceType.nameÈ)children[Çparameters.indexOf(p)È]);'''
 					}
-				return o;
+				'''return o;'''
 			}
-			
-			'''	
 		}
-	}
 	
 }

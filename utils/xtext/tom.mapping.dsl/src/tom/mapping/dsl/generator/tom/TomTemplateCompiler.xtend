@@ -26,7 +26,7 @@ class TomTemplateCompiler {
 		fsa.generateFile(prefix+m.name+"_operators.tom",m.operators())
 		fsa.generateFile(prefix+m.name+"_defaultOperators.tom",m.defaultOperators())
 		for(module: m.modules){
-			fsa.generateFile(prefix+m.name+"_"+module.name+".tom",module.module())
+			fsa.generateFile(prefix+m.name+"_"+module.name+".tom",m.module(module))
 		}
 	}
 	
@@ -51,33 +51,33 @@ private static <O> EList<O> append(O e,EList<O> l) {
 	
 	def terminals(Mapping m) { '''
 // Primitive terminals (enu and data types)
-Â«FOR p: m.getAllRootPackages()Â»
-Â«terminals.primitiveTerminal(p)Â»
-Â«ENDFORÂ»    
+ÇFOR p: m.getAllRootPackages()È
+Çterminals.primitiveTerminal(p)È
+ÇENDFORÈ    
 // Terminals
-Â«FOR t: m.terminalsÂ»
-Â«terminals.terminal(m,t)Â»
-Â«ENDFORÂ»
+ÇFOR t: m.terminalsÈ
+Çterminals.terminal(m,t)È
+ÇENDFORÈ
 // List Terminals
-Â«FOR lt:m.allListTerminalsÂ»
-Â«terminals.listTerminal(m,lt)Â»
-Â«ENDFORÂ»
+ÇFOR lt:m.allListTerminalsÈ
+Çterminals.listTerminal(m,lt)È
+ÇENDFORÈ
 	'''
 	}
 	
 	def operators(Mapping m) {'''
 	// User operators
-	Â«FOR op: m.operators()Â»
-	Â«injop.operator(m, op)Â»
-	Â«ENDFORÂ»
+	ÇFOR op: m.operatorsÈ
+	Çinjop.operator(m, op)È
+	ÇENDFORÈ
 	'''
 	}
 	
 	def defaultOperators(Mapping m) { '''
 	// Default operators
-	Â«FOR op: m.allDefaultOperatorsÂ»
-	Â«injop.classOperator(m, op.name, op)Â»
-	Â«ENDFORÂ»
+	ÇFOR op: m.allDefaultOperatorsÈ
+	Çinjop.classOperator(m, op.name, op)È
+	ÇENDFORÈ
 	/* PROTECTED REGION ID(op.name+"_mapping_user") ENABLED START */
 	// Protected user region
 	/* PROTECTED REGION END */
@@ -85,14 +85,14 @@ private static <O> EList<O> append(O e,EList<O> l) {
 	}
 
 	
-	def module(Module m) {'''
+	def module(Mapping m, Module mod) {'''
 	/* PROTECTED REGION ID(module.name+"_mapping_user") ENABLED START */
 	// Protected user region
 	/* PROTECTED REGION END */
 	
-	Â«FOR op: m.operatorsÂ»
-	Â«injop.operator(m,op)Â»
-	Â«ENDFORÂ»
+	ÇFOR op: mod.operatorsÈ
+	Çinjop.operator(m,op)È
+	ÇENDFORÈ
 	'''
 	}
 	
@@ -100,38 +100,36 @@ private static <O> EList<O> append(O e,EList<O> l) {
 	def primitiveTerminals(EPackage epa) {
 		
 		for(c: epa.EClassifiers) {
-		primitiveTerminal(c);
+		c.primitiveTerminal();
 		}
 		
 		for(subp: epa.ESubpackages) {
-			primitiveTerminals(subp);
+			subp.primitiveTerminals();
 		}
 	}
 		
 		
 	def dispatch primitiveTerminal(EClassifier ecl) {
-		''''''
 	}	
 		
 	def dispatch primitiveTerminal(EEnum enu) {
 		'''
-		%typeterm Â«enu.nameÂ» {
-			implement {Â«enu.nameÂ»}
-			is_sort(t) {$t instanceof Â«enu.nameÂ»}
+		%typeterm Çenu.nameÈ {
+			implement {Çenu.nameÈ}
+			is_sort(t) {$t instanceof Çenu.nameÈ}
 			equals(l1,l2) {$l1==$l2}
 		}	
 		'''
 	}	
 		
 	def dispatch primitiveTerminal(EDataType edaty){
-		val primitive = isPrimitive(edaty.instanceTypeName);
+		val primitive = edaty.instanceTypeName.isPrimitive();
 		'''
-		%typeterm Â«edaty.nameÂ» {
-			implement {Â«edaty.instanceTypeNameÂ»}
-			is_sort(t) {Â«if (primitive)Â»{true} Â«else {$t instanceof Â«edaty.instanceTypeNameÂ»} }
-			equals(l1,l2) {Â«if(primitive)Â»{$l1=$l2} Â«elseÂ» {l1.equals($l2)} }
-		}
-		'''	
-		}	
+		%typeterm Çedaty.nameÈ {
+			implement {Çedaty.instanceTypeNameÈ}
+			is_sort(t) {ÇIF primitiveÈtrueÇELSEÈ{$t instanceof Çedaty.instanceTypeNameÈÇENDIFÈ}
+			equals(l1,l2) {ÇIF primitiveÈ{$l1=$l2}ÇELSEÈ{l1.equals($l2)ÇENDIFÈ}
+		}'''	
+	}	
 			
 }
