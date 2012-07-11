@@ -4,8 +4,6 @@
  */
 package definitions;
 
-import tom.library.sl.Strategy;
-
 /**
  *
  * @author hubert
@@ -58,8 +56,7 @@ public class Tom_String implements Typable {
     return scope;
   }
 
-  @Override
-  public String generate(Request request) {
+  public String generate_final(Request request) {
     int taille = (int) (Math.random()*request.getCounter());
     byte[] tabBytes = new byte[taille];
     for (int i = 0; i < taille; i++) {
@@ -71,5 +68,12 @@ public class Tom_String implements Typable {
   @Override
   public Object makeLeaf(Request request) {
     return generate(request);
+  }
+
+  @Override
+  public ATerm generate(Request request) {
+    ATerm res = new ATerm(this);
+    res.chooseConstructor();
+    return res;
   }
 }

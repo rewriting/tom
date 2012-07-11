@@ -1,7 +1,5 @@
 package definitions;
 
-import tom.library.sl.Strategy;
-
 /**
  *
  * @author hubert
@@ -30,7 +28,7 @@ public interface Typable {
    */
   public boolean isDstToLeafDefined();
 
-  public Object generate(Request request);
+  public ATerm generate(Request request);
 
   /**
    *

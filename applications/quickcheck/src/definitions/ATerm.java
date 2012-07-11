@@ -8,7 +8,7 @@ package definitions;
  *
  * @author hubert
  */
-class ATerm {
+public class ATerm {
 
   private Typable type;
   private Constructor cons;

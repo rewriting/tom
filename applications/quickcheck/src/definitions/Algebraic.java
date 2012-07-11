@@ -44,16 +44,16 @@ public class Algebraic implements Typable {
     listDependances.addAll(Arrays.asList(listTypes));
     return this;
   }
-  
-  boolean checkLink(Constructor cons){
+
+  boolean checkLink(Constructor cons) {
     return listConstructors.contains(cons);
   }
-  
-  Constructor chooseConstructor(){
-    int choice = (int) (Math.random()*listConstructors.size());
+
+  Constructor chooseConstructor() {
+    int choice = (int) (Math.random() * listConstructors.size());
     int i = 0;
     for (Constructor constructor : listConstructors) {
-      if(i==choice){
+      if (i == choice) {
         return constructor;
       }
     }
@@ -134,12 +134,12 @@ public class Algebraic implements Typable {
     for (int i = 0; i < listRequests.length; i++) {
       listRequests[i] = new MakeLeafStrategy(0);
     }
-    if(size == 0){
+    if (size == 0) {
       return listRequests;
     }
     int n = request.getCounter();
-    while(n != 0){
-      int index = (int) (Math.random()*size);
+    while (n != 0) {
+      int index = (int) (Math.random() * size);
       listRequests[index].inc();
       n--;
     }
@@ -161,19 +161,50 @@ public class Algebraic implements Typable {
   }
 
   @Override
-  public Object generate(Request request) {
-    int dst2leaf = dstToLeaf();
-    if (dst2leaf == Integer.MAX_VALUE) {
-      throw new UnsupportedOperationException("Type " + type + " is not finite.");
+  public ATerm generate(Request request) {
+    ATerm res = new ATerm(this);
+    res.setRequest(request);
+    HashSet<ATerm> listHoles = new HashSet<ATerm>();
+    listHoles.add(res);
+    while (!listHoles.isEmpty()) {
+      int dimMax = 0;
+      HashSet<ATerm> toVisit = new HashSet<ATerm>();
+      for (ATerm term : listHoles) {
+        int d = term.getDimention();
+        if (d > dimMax) {
+          dimMax = d;
+          toVisit = new HashSet<ATerm>();
+        }
+        if (d == dimMax) {
+          toVisit.add(term);
+        }
+      }
+      listHoles.removeAll(toVisit);
+
+      for (ATerm term : toVisit) {
+        Request req = term.getRequest();
+        listHoles.addAll(req.fillATerm(term));
+      }
+
     }
-    int n = request.getCounter();
-    if (n < dst2leaf) {
-      return makeLeaf(request);
-    } else {
-      
-      // TODO Not supported yet
-      throw new UnsupportedOperationException("Not yet implemented");
-    }
+    return res;
+
+
+
+
+
+//    int dst2leaf = dstToLeaf();
+//    if (dst2leaf == Integer.MAX_VALUE) {
+//      throw new UnsupportedOperationException("Type " + type + " is not finite.");
+//    }
+//    int n = request.getCounter();
+//    if (n < dst2leaf) {
+//      return makeLeaf(request);
+//    } else {
+//
+//      // TODO Not supported yet
+//      throw new UnsupportedOperationException("Not yet implemented");
+//    }
   }
 
   @Override

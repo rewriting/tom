@@ -4,8 +4,6 @@
  */
 package definitions;
 
-import tom.library.sl.Strategy;
-
 /**
  *
  * @author hubert
@@ -58,13 +56,19 @@ public class Tom_Integer implements Typable {
     return scope;
   }
 
-  @Override
-  public Integer generate(Request request) {
+  public Integer generate_final(Request request) {
     return (int) (Math.random()*request.getCounter());
   }
 
   @Override
   public Object makeLeaf(Request request) {
     return generate(request);
+  }
+
+  @Override
+  public ATerm generate(Request request) {
+    ATerm res = new ATerm(this);
+    res.chooseConstructor();
+    return res;
   }
 }
