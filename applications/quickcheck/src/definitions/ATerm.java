@@ -13,7 +13,8 @@ class ATerm {
   private Typable type;
   private Constructor cons;
   private ATerm[] deps;
-  Request req;
+  @Deprecated
+  private Request req;
 
   ATerm(Typable type) {
     this.type = type;
@@ -28,8 +29,22 @@ class ATerm {
     }
     return deps;
   }
+  
+  @Deprecated
+  void setRequest(Request req){
+    this.req = req;
+  }
 
   int getDimention() {
     return type.getDimention();
+  }
+  
+  int getDstToLeaf(){
+    return type.dstToLeaf();
+  }
+  
+  @Deprecated
+  Request getRequest(){
+    return req;
   }
 }

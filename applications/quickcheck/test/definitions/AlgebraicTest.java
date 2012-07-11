@@ -33,23 +33,7 @@ public class AlgebraicTest {
   public AlgebraicTest() {
     scope = new Scope();
 
-    request = new Request(10) {
-
-      @Override
-      Request getNewRequestWith(int d) {
-        throw new UnsupportedOperationException("Not supported yet.");
-      }
-
-      @Override
-      Request[] getNewRequestWith(Constructor cons) {
-        throw new UnsupportedOperationException("Not supported yet.");
-      }
-
-      @Override
-      Constructor chooseConstructor(HashSet<Constructor> listConstructors) {
-        throw new UnsupportedOperationException("Not supported yet.");
-      }
-    };
+    request = new MakeAllStrategy(10);
 
     nat = new Algebraic(scope, "nat");
     nat.addConstructor(nat);

@@ -40,9 +40,9 @@ public abstract class Request {
     }
     throw new UnsupportedOperationException("clone method fails.");
   }
-
-  abstract Request getNewRequestWith(int d);
-
+  
+  abstract HashSet<ATerm> fillATerm(ATerm aTerm);
+  
   /**
    * Cette methode permet de construire les requestes a passer lors dela
    * creation des champs du constructeur. La repartition des requetes doit tenir

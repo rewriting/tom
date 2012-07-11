@@ -17,11 +17,6 @@ class MakeLeafStrategy extends Request {
   }
 
   @Override
-  Request getNewRequestWith(int d) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
   MakeLeafStrategy[] getNewRequestWith(Constructor cons) {
     int size = cons.getFields().length;
     MakeLeafStrategy[] listRequests = new MakeLeafStrategy[size];
@@ -52,5 +47,10 @@ class MakeLeafStrategy extends Request {
       }
     }
     return res;
+  }
+
+  @Override
+  HashSet<ATerm> fillATerm(ATerm aTerm) {
+    throw new UnsupportedOperationException("Not supported yet.");
   }
 }
