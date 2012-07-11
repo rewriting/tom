@@ -29,7 +29,7 @@ public class ATerm {
     }
     return deps;
   }
-  
+
   ATerm[] chooseMinimalConstructor() {
     if (type instanceof Algebraic) {
       cons = ((Algebraic) type).chooseMinimalConstructor();
@@ -57,10 +57,20 @@ public class ATerm {
   int getDstToLeaf() {
     return type.dstToLeaf();
   }
-  
-  public String toString(){
+
+  @Override
+  public String toString() {
     String res = "";
-    
+    res += cons.getName() + "(";
+    int i = 0;
+    for (ATerm aTerm : deps) {
+      res += aTerm;
+      if (i != deps.length - 1) {
+        res += ", ";
+      }
+      i++;
+    }
+    res += ")";
     return res;
   }
 }

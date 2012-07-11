@@ -36,44 +36,44 @@ public class AlgebraicTest {
     request = new MakeAllStrategy(10);
 
     nat = new Algebraic(scope, "nat");
-    nat.addConstructor(nat);
-    nat.addConstructor();
+    nat.addConstructor("succ", nat);
+    nat.addConstructor("zero");
 
     tree = new Algebraic(scope, "tree");
-    tree.addConstructor(tree, tree);
-    tree.addConstructor();
+    tree.addConstructor("branch", tree, tree);
+    tree.addConstructor("leaf");
 
     typetest = new Algebraic(scope, "typetest");
-    typetest.addConstructor(tree);
-    typetest.addConstructor(nat);
+    typetest.addConstructor("tree", tree);
+    typetest.addConstructor("nat", nat);
 
 
     forest = new Algebraic(scope, "forest");
     tree2 = new Algebraic(scope, "tree2");
-    forest.addConstructor(tree2);
-    tree2.addConstructor(nat);
-    tree2.addConstructor(forest);
+    forest.addConstructor("tree", tree2);
+    tree2.addConstructor("nat", nat);
+    tree2.addConstructor("forest", forest);
 
     circ = new Algebraic(scope, "circ");
-    circ.addConstructor(circ);
+    circ.addConstructor("circ", circ);
 
     a = new Algebraic(scope, "a");
     b = new Algebraic(scope, "b");
     c = new Algebraic(scope, "c");
-    a.addConstructor();
-    a.addConstructor(b);
-    b.addConstructor(c);
-    c.addConstructor(a);
+    a.addConstructor("nill");
+    a.addConstructor("b", b);
+    b.addConstructor("c", c);
+    c.addConstructor("a", a);
 
     expr = new Algebraic(scope, Expr.class);
-    expr.addConstructor(mult.class);
-    expr.addConstructor(plus.class);
-    expr.addConstructor(un.class);
-    expr.addConstructor(zero.class);
+    expr.addConstructor("mult", mult.class);
+    expr.addConstructor("plus", plus.class);
+    expr.addConstructor("un", un.class);
+    expr.addConstructor("zero", zero.class);
 
     surexpr = new Algebraic(scope, Surexpr.class);
-    surexpr.addConstructor(rec.class);
-    surexpr.addConstructor(wrapper.class);
+    surexpr.addConstructor("rec", rec.class);
+    surexpr.addConstructor("wrapper", wrapper.class);
 
     scope.setDependances();
   }
@@ -405,6 +405,27 @@ public class AlgebraicTest {
   public void testMakeLeafSurExpr() {
     System.out.println("testMakeLeaf SurExpr");
     System.out.println(surexpr.makeLeaf(request));
+    int expResult = 1;
+    int result = c.dstToLeaf();
+    assertEquals(expResult, result);
+  }
+
+  /**
+   * Test of generate method, of class Algebraic.
+   */
+  @Test
+  public void testGenerateExpr() {
+    System.out.println("Generate Expr");
+    System.out.println(expr.generate(request));
+    int expResult = 1;
+    int result = c.dstToLeaf();
+    assertEquals(expResult, result);
+  }
+
+  @Test
+  public void testGenerateSurExpr() {
+    System.out.println("Generate SurExpr");
+    System.out.println(surexpr.generate(request));
     int expResult = 1;
     int result = c.dstToLeaf();
     assertEquals(expResult, result);

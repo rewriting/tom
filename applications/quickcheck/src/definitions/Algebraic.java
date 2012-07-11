@@ -38,8 +38,8 @@ public class Algebraic implements Typable {
   }
 
   @Deprecated
-  public Algebraic addConstructor(Typable... listTypes) {
-    listConstructors.add(new Constructor(this, listTypes));
+  public Algebraic addConstructor(String name, Typable... listTypes) {
+    listConstructors.add(new Constructor(this, listTypes, name));
     listDependances.addAll(Arrays.asList(listTypes));
     return this;
   }
@@ -55,6 +55,7 @@ public class Algebraic implements Typable {
       if (i == choice) {
         return constructor;
       }
+      i++;
     }
     throw new UnsupportedOperationException("ERROR");
   }
@@ -177,11 +178,20 @@ public class Algebraic implements Typable {
     return cons.make(branches);
   }
 
+  public ATerm generate(int n) {
+    if (this.dstToLeaf() < n) {
+      return generate(new MakeAllStrategy(n));
+    } else {
+      return generate(new MakeLeafStrategy(n));
+    }
+  }
+
   @Override
   public ATerm generate(Request request) {
+    // TODO verifier les cas de non terminaison
     int n = request.getCounter();
     ATerm res = new ATerm(this);
-    res.setRequest(request);
+//    res.setRequest(request);
     HashSet<ATerm> listHoles = new HashSet<ATerm>();
     listHoles.add(res);
     while (!listHoles.isEmpty()) {
@@ -270,7 +280,7 @@ public class Algebraic implements Typable {
    * @param classe class following Gom pattern definition
    * @return
    */
-  public Algebraic addConstructor(Class classe) {
+  public Algebraic addConstructor(String name, Class classe) {
     String pattern = "make";
     Method[] listMethods = classe.getDeclaredMethods();
     Method make = null;
@@ -284,13 +294,13 @@ public class Algebraic implements Typable {
         throw new UnsupportedOperationException("Method " + pattern + "() was not found in " + classe);
       }
     }
-    Constructor cons = new Constructor(this, make);
+    Constructor cons = new Constructor(this, make, name);
     listConstructors.add(cons);
     listDependances.addAll(Arrays.asList(cons.getFields()));
     return this;
   }
 
-  public Algebraic addConstructor(Class classe, String pattern) {
+  public Algebraic addConstructor(String name, Class classe, String pattern) {
     Method[] listMethods = classe.getDeclaredMethods();
     Method make = null;
     for (int i = 0; i < listMethods.length; i++) {
@@ -303,7 +313,7 @@ public class Algebraic implements Typable {
         throw new UnsupportedOperationException("Method " + pattern + "() was not found in " + classe);
       }
     }
-    Constructor cons = new Constructor(this, make);
+    Constructor cons = new Constructor(this, make, name);
     listConstructors.add(cons);
     listDependances.addAll(Arrays.asList(cons.getFields()));
     return this;

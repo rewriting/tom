@@ -15,18 +15,25 @@ class Constructor {
   private Typable[] fields;
   private boolean lock = false;
   private Method make;
+  private String name;
 
-  Constructor(Algebraic caller, Typable[] fields) {
+  Constructor(Algebraic caller, Typable[] fields, String name) {
     this.caller = caller;
     this.fields = fields;
+    this.name = name;
   }
 
-  Constructor(Algebraic caller, Method make) {
+  Constructor(Algebraic caller, Method make, String name) {
     this.make = make;
     this.caller = caller;
+    this.name = name;
     this.fields = extractFields(make);
   }
-
+  
+  String getName(){
+    return name;
+  }
+  
   private Typable[] extractFields(Method make) {
     Class[] listClasses = make.getParameterTypes();
     Typable[] res = new Typable[listClasses.length];
