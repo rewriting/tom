@@ -43,17 +43,17 @@ public class Tom_String implements Typable {
     return scope;
   }
 
-  public String generate_final(Request request) {
-    int taille = (int) (Math.random()*request.getCounter());
-    byte[] tabBytes = new byte[taille];
-    for (int i = 0; i < taille; i++) {
-      tabBytes[i] = (byte) (Math.random()*256);
-    }
-    return new String(tabBytes);
-  }
+//  public String generate_final(Request request) {
+//    int taille = (int) (Math.random()*request.getCounter());
+//    byte[] tabBytes = new byte[taille];
+//    for (int i = 0; i < taille; i++) {
+//      tabBytes[i] = (byte) (Math.random()*256);
+//    }
+//    return new String(tabBytes);
+//  }
 
   @Override
-  public ATerm generate(Request request) {
+  public ATerm generate(int n) {
     ATerm res = new ATerm(this);
     res.chooseConstructor();
     return res;

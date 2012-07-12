@@ -13,12 +13,11 @@ public class Algebraic implements Typable {
   private HashSet<Constructor> listConstructors;
   private HashSet<Typable> listDependences;
   private int dstLeaf = -1;
-  @Deprecated
   private String name;
   private Scope scope;
+  @Deprecated
   private Class type;
 
-  @Deprecated
   public Algebraic(Scope scope, String name) {
     this.scope = scope;
     this.name = name;
@@ -27,6 +26,7 @@ public class Algebraic implements Typable {
     scope.addType(this);
   }
 
+  @Deprecated
   public Algebraic(Scope scope, Class type) {
     this.scope = scope;
     this.name = type.getName();
@@ -36,7 +36,6 @@ public class Algebraic implements Typable {
     scope.addType(this);
   }
 
-  @Deprecated
   public Algebraic addConstructor(String name, Typable... listTypes) {
     listConstructors.add(new Constructor(this, listTypes, name));
     listDependences.addAll(Arrays.asList(listTypes));
@@ -57,6 +56,17 @@ public class Algebraic implements Typable {
       i++;
     }
     throw new UnsupportedOperationException("ERROR");
+  }
+  
+  Constructor chooseMinimalConstructor() {
+    //TODO improve choice randomly
+    for (Constructor constructor : listConstructors) {
+      int m = constructor.distanceToReachLeaf();
+      if (m == dstToLeaf()) {
+        return constructor;
+      }
+    }
+    throw new UnsupportedOperationException("Internal error happends when backtraking.");
   }
 
   @Override
@@ -101,35 +111,6 @@ public class Algebraic implements Typable {
     return dim + add;
   }
 
-  Constructor chooseMinimalConstructor() {
-    //TODO improve choice randomly
-    for (Constructor constructor : listConstructors) {
-      int m = constructor.distanceToReachLeaf();
-      if (m == dstToLeaf()) {
-        return constructor;
-      }
-    }
-    throw new UnsupportedOperationException("Internal error happends when backtraking.");
-  }
-
-  @Deprecated
-  private Request[] spread(Request request, int size) {
-    Request[] listRequests = new Request[size];
-    for (int i = 0; i < listRequests.length; i++) {
-      listRequests[i] = new MakeLeafStrategy(0);
-    }
-    if (size == 0) {
-      return listRequests;
-    }
-    int n = request.getCounter();
-    while (n != 0) {
-      int index = (int) (Math.random() * size);
-      listRequests[index].inc();
-      n--;
-    }
-    return listRequests;
-  }
-
   private int[] spread(int n, int size) {
     int[] res = new int[size];
     for (int i = 0; i < res.length; i++) {
@@ -145,39 +126,23 @@ public class Algebraic implements Typable {
     }
     return res;
   }
-
-//  @Deprecated
-//  public Object makeLeaf(Request request) {
-//    Constructor cons = chooseMinimalConstructor();
-//    Typable[] fields = cons.getFields();
-//    Request[] listRequests = spread(request, fields.length);
-//    Object[] branches = new Object[fields.length];
-//    for (int i = 0; i < fields.length; i++) {
-//      Typable typable = fields[i];
-//      Request req = listRequests[i];
-//      branches[i] = typable.makeLeaf(req);
+  
+//  public ATerm generate(int n) {
+//    if (this.dstToLeaf() < n) {
+//      return generate(new MakeAllStrategy(n));
+//    } else {
+//      return generate(new MakeLeafStrategy(n));
 //    }
-//    return cons.make(branches);
 //  }
 
-  public ATerm generate(int n) {
-    if (this.dstToLeaf() < n) {
-      return generate(new MakeAllStrategy(n));
-    } else {
-      return generate(new MakeLeafStrategy(n));
-    }
-  }
-
   @Override
-  public ATerm generate(Request request) {
-    // TODO verifier les cas de non terminaison
-    int n = request.getCounter();
+  public ATerm generate(int n) {
+    // TODO empecher les cas de non terminaison
     ATerm res = new ATerm(this);
-//    res.setRequest(request);
     HashSet<ATerm> listHoles = new HashSet<ATerm>();
     listHoles.add(res);
     while (!listHoles.isEmpty()) {
-      
+
       //retrieve set of maximal dimension terms
       int dimMax = 0;
       HashSet<ATerm> toVisit = new HashSet<ATerm>();
@@ -224,7 +189,7 @@ public class Algebraic implements Typable {
 
   @Override
   public int dstToLeaf() {
-    if(dstLeaf != -1){
+    if (dstLeaf != -1) {
       return dstLeaf;
     }
     int res = Integer.MAX_VALUE;
@@ -260,6 +225,7 @@ public class Algebraic implements Typable {
    * @param classe class following Gom pattern definition
    * @return
    */
+  @Deprecated
   public Algebraic addConstructor(String name, Class classe) {
     String pattern = "make";
     Method[] listMethods = classe.getDeclaredMethods();
@@ -280,6 +246,7 @@ public class Algebraic implements Typable {
     return this;
   }
 
+  @Deprecated
   public Algebraic addConstructor(String name, Class classe, String pattern) {
     Method[] listMethods = classe.getDeclaredMethods();
     Method make = null;

@@ -16,54 +16,16 @@ class MakeLeafStrategy extends Request {
     super(i);
   }
 
-  /**
-   * Cette methode permet de construire les requestes a passer lors dela
-   * creation des champs du constructeur. La repartition des requetes doit tenir
-   * compte des dimensions des champs, mais peut aussi infuer sur la forme du
-   * graphe en choisissant par exemple
-   *
-   * @param cons
-   * @return
-   */
-  @Deprecated
-  private MakeLeafStrategy[] getNewRequestWith(Constructor cons) {
-    int size = cons.getFields().length;
-    MakeLeafStrategy[] listRequests = new MakeLeafStrategy[size];
-    for (int i = 0; i < listRequests.length; i++) {
-      listRequests[i] = new MakeLeafStrategy(0);
-    }
-    if (size == 0) {
-      return listRequests;
-    }
-    int n = getCounter();
-    while (n != 0) {
-      int index = (int) (Math.random() * size);
-      listRequests[index].inc();
-      n--;
-    }
-    return listRequests;
-  }
-
-  @Deprecated
-  private Constructor chooseConstructor(HashSet<Constructor> listConstructors) {
-    Constructor res = null;
-    int min = Integer.MAX_VALUE;
-    for (Constructor constructor : listConstructors) {
-      int m = constructor.distanceToReachLeaf();
-      if (m < min) {
-        min = m;
-        res = constructor;
-      }
-    }
-    return res;
-  }
-
   @Override
   HashSet<ATerm> fillATerm(ATerm aTerm) {
     HashSet<ATerm> res = new HashSet<ATerm>();
+    
+    //fill the term by choosing the constructor with minimal terminaison
     ATerm[] deps = aTerm.chooseMinimalConstructor();
+    
+    //dispatch fields of the term between two categories: these whose dimension 
+    //equals dimension of the term, and the others
     HashSet<ATerm> listHigherDim = new HashSet<ATerm>();
-
     for (int i = 0; i < deps.length; i++) {
       ATerm dep = deps[i];
       if (dep.getDimention() < aTerm.getDimention()) {
@@ -74,8 +36,12 @@ class MakeLeafStrategy extends Request {
       }
     }
 
+    //spread number of recursions of the curent term into each fields with the 
+    //same dimension (useless here)
     spreadBetweenHigherDim(listHigherDim);
 
+    //re-apply algorithm on same dimension fields in order to eliminate them
+    //(useless here)
     for (ATerm term : listHigherDim) {
       Request req = term.getRequest();
       res.addAll(req.fillATerm(term));

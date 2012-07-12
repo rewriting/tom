@@ -44,12 +44,12 @@ public class Tom_Integer implements Typable {
     return scope;
   }
 
-  public Integer generate_final(Request request) {
-    return (int) (Math.random() * request.getCounter());
-  }
+//  public Integer generate_final(Request request) {
+//    return (int) (Math.random() * request.getCounter());
+//  }
 
   @Override
-  public ATerm generate(Request request) {
+  public ATerm generate(int n) {
     ATerm res = new ATerm(this);
     res.chooseConstructor();
     return res;

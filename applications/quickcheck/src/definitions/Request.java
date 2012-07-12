@@ -20,16 +20,8 @@ public abstract class Request {
     counter = initialValue;
   }
 
-  public int getCounter() {
+  private int getCounter() {
     return counter;
-  }
-
-  public void inc() {
-    counter++;
-  }
-
-  public void setCounter(int n) {
-    this.counter = n;
   }
 
   public Request copy() {
@@ -37,10 +29,10 @@ public abstract class Request {
       return (Request) this.clone();
     } catch (CloneNotSupportedException ex) {
       Logger.getLogger(Request.class.getName()).log(Level.SEVERE, null, ex);
+      throw new UnsupportedOperationException("clone method fails.");
     }
-    throw new UnsupportedOperationException("clone method fails.");
   }
-  
+
   protected void spreadBetweenHigherDim(HashSet<ATerm> listHigherDim) {
     int size = listHigherDim.size();
     int[] tabSizes = new int[size];
@@ -68,6 +60,4 @@ public abstract class Request {
   }
 
   abstract HashSet<ATerm> fillATerm(ATerm aTerm);
-
-//  abstract Constructor chooseConstructor(HashSet<Constructor> listConstructors);
 }
