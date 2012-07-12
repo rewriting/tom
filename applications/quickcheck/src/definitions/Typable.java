@@ -22,7 +22,7 @@ public interface Typable {
    */
   public int dstToLeaf();
 
-  public ATerm generate(int n);
+  public Hole generate(int n);
 
   /**
    *

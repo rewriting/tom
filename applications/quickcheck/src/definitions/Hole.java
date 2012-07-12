@@ -8,34 +8,34 @@ package definitions;
  *
  * @author hubert
  */
-public class ATerm {
+public class Hole {
 
   private Typable type;
   private Constructor cons;
-  private ATerm[] deps;
+  private Hole[] deps;
   @Deprecated
   private Request req;
 
-  ATerm(Typable type) {
+  Hole(Typable type) {
     this.type = type;
   }
 
-  ATerm[] chooseConstructor() {
+  Hole[] chooseConstructor() {
     if (type instanceof Algebraic) {
       cons = ((Algebraic) type).chooseConstructor();
       deps = cons.giveATermDeps();
     } else {
-      deps = new ATerm[0];
+      deps = new Hole[0];
     }
     return deps;
   }
 
-  ATerm[] chooseMinimalConstructor() {
+  Hole[] chooseMinimalConstructor() {
     if (type instanceof Algebraic) {
       cons = ((Algebraic) type).chooseMinimalConstructor();
       deps = cons.giveATermDeps();
     } else {
-      deps = new ATerm[0];
+      deps = new Hole[0];
     }
     return deps;
   }
@@ -63,7 +63,7 @@ public class ATerm {
     String res = "";
     res += cons.getName() + "(";
     int i = 0;
-    for (ATerm aTerm : deps) {
+    for (Hole aTerm : deps) {
       res += aTerm;
       if (i != deps.length - 1) {
         res += ", ";

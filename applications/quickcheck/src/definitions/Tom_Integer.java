@@ -49,8 +49,8 @@ public class Tom_Integer implements Typable {
 //  }
 
   @Override
-  public ATerm generate(int n) {
-    ATerm res = new ATerm(this);
+  public Hole generate(int n) {
+    Hole res = new Hole(this);
     res.chooseConstructor();
     return res;
   }

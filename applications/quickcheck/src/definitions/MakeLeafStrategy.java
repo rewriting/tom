@@ -17,17 +17,17 @@ class MakeLeafStrategy extends Request {
   }
 
   @Override
-  HashSet<ATerm> fillATerm(ATerm aTerm) {
-    HashSet<ATerm> res = new HashSet<ATerm>();
+  HashSet<Hole> fillATerm(Hole aTerm) {
+    HashSet<Hole> res = new HashSet<Hole>();
     
     //fill the term by choosing the constructor with minimal terminaison
-    ATerm[] deps = aTerm.chooseMinimalConstructor();
+    Hole[] deps = aTerm.chooseMinimalConstructor();
     
     //dispatch fields of the term between two categories: these whose dimension 
     //equals dimension of the term, and the others
-    HashSet<ATerm> listHigherDim = new HashSet<ATerm>();
+    HashSet<Hole> listHigherDim = new HashSet<Hole>();
     for (int i = 0; i < deps.length; i++) {
-      ATerm dep = deps[i];
+      Hole dep = deps[i];
       if (dep.getDimention() < aTerm.getDimention()) {
         res.add(dep);
       } else {
@@ -42,7 +42,7 @@ class MakeLeafStrategy extends Request {
 
     //re-apply algorithm on same dimension fields in order to eliminate them
     //(useless here)
-    for (ATerm term : listHigherDim) {
+    for (Hole term : listHigherDim) {
       Request req = term.getRequest();
       res.addAll(req.fillATerm(term));
     }

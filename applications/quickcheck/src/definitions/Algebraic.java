@@ -111,6 +111,7 @@ public class Algebraic implements Typable {
     return dim + add;
   }
 
+  @Deprecated
   private int[] spread(int n, int size) {
     int[] res = new int[size];
     for (int i = 0; i < res.length; i++) {
@@ -127,7 +128,7 @@ public class Algebraic implements Typable {
     return res;
   }
   
-//  public ATerm generate(int n) {
+//  public Hole generate(int n) {
 //    if (this.dstToLeaf() < n) {
 //      return generate(new MakeAllStrategy(n));
 //    } else {
@@ -136,21 +137,21 @@ public class Algebraic implements Typable {
 //  }
 
   @Override
-  public ATerm generate(int n) {
+  public Hole generate(int n) {
     // TODO empecher les cas de non terminaison
-    ATerm res = new ATerm(this);
-    HashSet<ATerm> listHoles = new HashSet<ATerm>();
+    Hole res = new Hole(this);
+    HashSet<Hole> listHoles = new HashSet<Hole>();
     listHoles.add(res);
     while (!listHoles.isEmpty()) {
 
       //retrieve set of maximal dimension terms
       int dimMax = 0;
-      HashSet<ATerm> toVisit = new HashSet<ATerm>();
-      for (ATerm term : listHoles) {
+      HashSet<Hole> toVisit = new HashSet<Hole>();
+      for (Hole term : listHoles) {
         int d = term.getDimention();
         if (d > dimMax) {
           dimMax = d;
-          toVisit = new HashSet<ATerm>();
+          toVisit = new HashSet<Hole>();
         }
         if (d == dimMax) {
           toVisit.add(term);
@@ -158,11 +159,11 @@ public class Algebraic implements Typable {
       }
 
       //spread n across maximal dimention terms
-      int[] listSpread = spread(n, toVisit.size());
+      int[] listSpread = Random.pile(n, toVisit.size());
 
       //fill each maximal dimension term
       int i = 0;
-      for (ATerm term : toVisit) {
+      for (Hole term : toVisit) {
         Request req;
         if (term.getDstToLeaf() < listSpread[i]) {
           req = new MakeAllStrategy(listSpread[i]);

@@ -33,7 +33,7 @@ public abstract class Request {
     }
   }
 
-  protected void spreadBetweenHigherDim(HashSet<ATerm> listHigherDim) {
+  protected void spreadBetweenHigherDim(HashSet<Hole> listHigherDim) {
     int size = listHigherDim.size();
     int[] tabSizes = new int[size];
     for (int i = 0; i < tabSizes.length; i++) {
@@ -49,7 +49,7 @@ public abstract class Request {
       n--;
     }
     int i = 0;
-    for (ATerm term : listHigherDim) {
+    for (Hole term : listHigherDim) {
       if (term.getDstToLeaf() < this.getCounter()) {
         term.setRequest(new MakeAllStrategy(tabSizes[i]));
       } else {
@@ -59,5 +59,5 @@ public abstract class Request {
     }
   }
 
-  abstract HashSet<ATerm> fillATerm(ATerm aTerm);
+  abstract HashSet<Hole> fillATerm(Hole aTerm);
 }

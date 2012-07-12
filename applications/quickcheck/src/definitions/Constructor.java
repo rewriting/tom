@@ -120,10 +120,10 @@ class Constructor {
     return res;
   }
 
-  ATerm[] giveATermDeps() {
-    ATerm[] res = new ATerm[getSize()];
+  Hole[] giveATermDeps() {
+    Hole[] res = new Hole[getSize()];
     for (int i = 0; i < res.length; i++) {
-      res[i] = new ATerm(fields[i]);
+      res[i] = new Hole(fields[i]);
     }
     return res;
   }
