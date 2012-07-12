@@ -66,7 +66,7 @@ public class Algebraic implements Typable {
         return constructor;
       }
     }
-    throw new UnsupportedOperationException("Internal error happends when backtraking.");
+    throw new UnsupportedOperationException("Internal error happends when backtracking.");
   }
 
   @Override
@@ -81,14 +81,12 @@ public class Algebraic implements Typable {
 
   @Override
   public boolean updateDependences() {
-    boolean hasChanged = false;
     HashSet<Algebraic> depsClone = (HashSet<Algebraic>) listDependences.clone();
     for (Algebraic deps : depsClone) {
-      hasChanged = hasChanged || !depsClone.containsAll(deps.listDependences);
-      // TODO : utiliser la taille comme moyen de controle
       listDependences.addAll(deps.listDependences);
     }
-    return hasChanged;
+    //return true if there were changes
+    return listDependences.size() != depsClone.size();
   }
 
   public boolean isRec() {
@@ -142,16 +140,8 @@ public class Algebraic implements Typable {
         Request req;
         if (term.getDstToLeaf() < listSpread[i]) {
           req = new MakeAllStrategy(listSpread[i]);
-//          if (term.getRequest() != null) {
-//            throw new UnsupportedOperationException("Request of term should not be defined here.");
-//          }
-//          term.setRequest(req); // normaly useless...
         } else {
           req = new MakeLeafStrategy(listSpread[i]);
-//          if (term.getRequest() != null) {
-//            throw new UnsupportedOperationException("Request of term should not be defined here.");
-//          }
-//          term.setRequest(req); // normaly useless...
         }
         listHoles.addAll(req.fillATerm(term));
         i++;

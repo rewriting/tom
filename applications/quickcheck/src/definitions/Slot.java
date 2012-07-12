@@ -16,8 +16,6 @@ public class Slot {
   private Typable type;
   private Constructor cons;
   private Slot[] deps;
-  @Deprecated
-  private Request req;
 
   Slot(Typable type) {
     this.type = type;
@@ -43,16 +41,6 @@ public class Slot {
     return deps;
   }
 
-  @Deprecated
-  Request getRequest() {
-    return req;
-  }
-
-  @Deprecated
-  void setRequest(Request req) {
-    this.req = req;
-  }
-
   int getDimention() {
     return type.getDimension();
   }
@@ -76,22 +64,22 @@ public class Slot {
     res += ")";
     return res;
   }
-  
-  public void toDot(String chemin){
+
+  public void toDot(String chemin) {
     String res = "digraph mon_graphe {\n";
     res += toDot_aux("8");
     res += "}\n";
     File fichier = new File(chemin);
-    try{
+    try {
       FileOutputStream graveur = new FileOutputStream(fichier);
       graveur.write(res.getBytes());
-      graveur.close(); 
-    } catch (java.io.IOException err){
+      graveur.close();
+    } catch (java.io.IOException err) {
       System.err.println("ecriture fichier impossible");
-    } 
+    }
   }
-  
-  private String toDot_aux(String way){
+
+  private String toDot_aux(String way) {
     String res = new String();
     int i = 0;
     for (Slot slot : deps) {
