@@ -1,10 +1,12 @@
 // Licence
 package tom.mapping.dsl.generator
 
-import tom.mapping.model.Mapping
-import org.eclipse.emf.ecore.EPackage
-import org.eclipse.emf.ecore.EClassifier
 import org.eclipse.emf.ecore.EClass
+import org.eclipse.emf.ecore.EClassifier
+import org.eclipse.emf.ecore.EPackage
+import tom.mapping.model.Mapping
+import java.util.ArrayList
+import org.eclipse.emf.ecore.EReference
 
 class ChildrenGetterSetter {
 	
@@ -31,7 +33,6 @@ class ChildrenGetterSetter {
 		}
 		'''
 }
-// Reprendre ici
 	
 	def dispatch getter(Mapping mapping, EClassifier ecf) {}
 	
@@ -42,51 +43,52 @@ class ChildrenGetterSetter {
 		«IF parameters.size() > 0»
 			public Object[] case«ec.name.toFirstUpper()»(«ec.name» o) {
 				List<Object> l = new ArrayList<Object>();
-				for (param: parameters) {
+				«FOR param: parameters»
 					if(o.get«param.name.toFirstUpper()»() != null) { 
 						l.add(o.get«param.name.toFirstUpper()»());
-					} '''
-				}
-				'''return l.toArray();'''
-		«ENDFOR»'''	
+					}
+				«ENDFOR»
+				return l.toArray();
+		«ENDIF»'''	
 	}
 	
 	// Setter
 	
 	def dispatch setter(Mapping mapping, EPackage ep) {
 		'''
-		private static class «getChildrenSetterName(ep)» extends «ep.name.toFirstUpper()»Switch<Object[]> implements IChildrenSetter{
-			public final static «getChildrenSetterName(ep)» INSTANCE = new «getChildrenSetterName(ep)»();
+		private static class «ep.getChildrenSetterName()» extends «ep.name.toFirstUpper()»Switch<Object[]> implements IChildrenSetter{
+			public final static «ep.getChildrenSetterName()» INSTANCE = new «ep.getChildrenSetterName()»();
 			
-			private «getChildrenSetterName(ep)»(){}
+			private «ep.getChildrenSetterName()»(){}
 			
 			public Object set(Object i, Object[] children) {				
 				ep.children = children;
 				return doSwitch((EObject) i);
 			}
 			«FOR c: ep.EClassifiers»
-				«setter(mapping, c)»
+				«mapping.setter(c)»
 			«ENDFOR»
 		}
 		'''
 }
 
 	
-	def setter(Mapping mapping, EClassifier ecf) {
-		'''
-		'''
+	def dispatch setter(Mapping mapping, EClassifier ecf) {
 	}
 	
 	
 	def dispatch setter(Mapping mapping, EClass ec) {
-		val parameters = getDefaultParameters(ec, mapping).filter[e | !e.many];
-		if(parameters.size() > 0) {
-			'''public Object[] case«ec.name.toFirstUpper()»(«ec.name» o) { '''
-				for(p: parameters) {
-					'''o.set«p.name.toFirstUpper()»((«p.EReferenceType.name»)children[«parameters.indexOf(p)»]);'''
-					}
-				'''return o;'''
-			}
-		}
+		val parameters = ec.getDefaultParameters(mapping).filter(e | !e.many)  as ArrayList<EReference>;
+		'''
+		«IF parameters.size() > 0»
+			public Object[] case«ec.name.toFirstUpper()»(«ec.name» o) { 
+				«FOR p: parameters»
+					o.set«p.name.toFirstUpper()»((«p.EReferenceType.name»)children[«parameters.indexOf(p)»]);
+					«ENDFOR»
+				return o;
+		«ENDIF»
+		'''
+	}
 	
+
 }

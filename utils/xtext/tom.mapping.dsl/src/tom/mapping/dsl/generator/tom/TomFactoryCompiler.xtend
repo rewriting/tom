@@ -2,11 +2,21 @@
 package tom.mapping.dsl.generator.tom
 
 import com.google.inject.Inject
+import java.util.ArrayList
+import org.eclipse.emf.ecore.EAttribute
+import org.eclipse.emf.ecore.EClass
+import org.eclipse.emf.ecore.EClassifier
+import org.eclipse.emf.ecore.EEnum
+import org.eclipse.emf.ecore.EPackage
+import org.eclipse.emf.ecore.EReference
+import org.eclipse.emf.ecore.EStructuralFeature
 import org.eclipse.xtext.generator.IFileSystemAccess
 import tom.mapping.dsl.generator.ImportsCompiler
 import tom.mapping.dsl.generator.TomMappingExtensions
 import tom.mapping.model.ClassOperator
+import tom.mapping.model.FeatureParameter
 import tom.mapping.model.Mapping
+import tom.mapping.model.Operator
 
 class TomFactoryCompiler {
 	
@@ -21,6 +31,22 @@ class TomFactoryCompiler {
 	def compile(Mapping m, IFileSystemAccess fsa) {
 		fsa.generateFile(prefix+"/"+m.name.toFirstLower()+"/internal/"+m.tomFactoryName()+".java", m.main());
 	}
+	
+	def ArrayList<EPackage> intersectName(ArrayList<EPackage> listBase) { // Defined because of the intersections of "packageList" needed in function "main"
+		var listDestination = new ArrayList<EPackage>();
+		
+		for(eltB : listBase) {
+			var sameName = false;
+			for(eltD : listDestination) {
+				sameName = sameName || eltB.name == eltD.name;
+				} 
+			if(!sameName) {
+				listDestination.add(eltB);
+				}
+			}
+		return listDestination;
+		}
+		
 	
 	def main(Mapping map){
 	'''
@@ -43,19 +69,27 @@ class TomFactoryCompiler {
 	 
 	 public class «map.tomFactoryName()» {
 	 	
-	 	/* PROTECTED REGION ID(map.name+"_tom_factory_instances") ENABLED START */
+	 	«/* PROTECTED REGION ID(map.name+"_tom_factory_instances") ENABLED START */»
 	 	
-	 	«val packageList = map.operators.filter[j | j instanceof ClassOperator].reduce[e | e.class_.EPackage]»
-	 	«FOR pack: packageList.filter[!e | packageList].filter[f | e.name == f.name && e!=f]»
-	 		public static «pack.name.toFirstUpper()»Factory «pack.name»Factory = «pack.name.toFirstUpper())»Factory.eINSTANCE;
+	 	«var packageList = new ArrayList<EPackage>()»
+	    «FOR elt : map.operators.filter(typeof(ClassOperator))»
+	    «packageList.add(elt.class_.EPackage)»
+		«ENDFOR»
+
+	 	«FOR pack: packageList.intersectName()»
+	 		public static «pack.name.toFirstUpper()»Factory «pack.name»Factory = «pack.name.toFirstUpper()»Factory.eINSTANCE;
 	 	«ENDFOR»
 	 	
-	 	«val packageList = map.allDefaultOperators.collect(e | e.EPackage);»
-	 	«FOR pack: packageList.filter[!e | packageList.filter[f | e.name == f.name && e!=f]]»
-	 		public static «pack.name.toFirstUpper()»Factory «pack.name»Factory = «pack.name.toFirstUpper())»Factory.eINSTANCE;
+	 	«var packageList2 = new ArrayList<EPackage>()»
+		 	«FOR elt : map.allDefaultOperators»
+		 	«packageList2.add(elt.EPackage)»
+		 	«ENDFOR»
+
+	 	«FOR pack: packageList2.intersectName()»
+	 		public static «pack.name.toFirstUpper()»Factory «pack.name»Factory = «pack.name.toFirstUpper()»Factory.eINSTANCE;
 	 	«ENDFOR»
 	 }
-	 	/* ENDPROTECT */
+	 	«/* ENDPROTECT */»
 	 
 	 
 	 // User operators «map.operators»
@@ -64,7 +98,7 @@ class TomFactoryCompiler {
 	 	/** Module «module.name» **/
 	 	«FOR op: module.operators»
 	 		// Operator «op.name»
-	 		«operator(map,op);»
+	 		«map.operator(op)»
 	 	«ENDFOR»
 	 «ENDFOR»
 	 
@@ -74,7 +108,7 @@ class TomFactoryCompiler {
 	 
 	 «FOR op: map.allDefaultOperators»
 	 	«IF !op.instanceClassName.contains("java.util.Map$Entry")»
-	 		«javaFactoryCreateDefaultOperator(map,op.name,op)»
+	 		«map.javaFactoryCreateDefaultOperator(op.name,op)»
 	 	«ENDIF»
 	 «ENDFOR»
 	 '''
@@ -87,24 +121,24 @@ class TomFactoryCompiler {
 
 	
 	def operator(Mapping mapping, ClassOperator clop) {
-		if(clop.parameters.size>0) {
-			val parameters = getCustomParameters(clop) as List<FeatureParameter>;
-			javaFactoryCreateOperatorWithParameters(parameters, mapping, clop);
+		if(clop.parameters.size()>0) {
+			val parameters = clop.getCustomParameters();
+			parameters.javaFactoryCreateOperatorWithParameters(mapping, clop);
 		} else {
-			javaFactoryCreateDefaultOperator(mapping, clop.name, clop.class_);
+			mapping.javaFactoryCreateDefaultOperator(clop.name, clop.class_);
 		}
 	}
 
 
-	def javaFactoryCreateOperatorWithParameters(List[FeatureParameter] parameters, Mapping mapping, ClassOperator clop) {
+	def javaFactoryCreateOperatorWithParameters(Iterable<FeatureParameter> parameters, Mapping mapping, ClassOperator clop) {
 	'''	
 	// CreateOperatorWithParameters «clop.name»
-	public static «clop.class_.name» create«clop.name.toFirstUpper()»(«FOR p: parameters SEPARATOR ","»«typeOfParameter(mapping, p.feature)» _«p.feature.name»«ENDFOR») {
+	public static «clop.class_.name» create«clop.name.toFirstUpper()»(«FOR p: parameters SEPARATOR ","»«mapping.typeOfParameter(p.feature)» _«p.feature.name»«ENDFOR») {
 		«clop.class_.name» o = «clop.class_.EPackage.name»Factory.create«clop.class_.name.toFirstUpper()»();
 		«FOR p: parameters»
-			«structureFeatureSetter(p.feature)»
+			«p.feature.structureFeatureSetter()»
 		«ENDFOR»
-		«FOR p: clop.getSettedCustomParameters())»
+		«FOR p: clop.getSettedCustomParameters()»
 			o.set«p.feature.name.toFirstUpper()»(«injop.settedValue(p.feature, p.value)»
 		«ENDFOR»
 		return o;
@@ -114,17 +148,17 @@ class TomFactoryCompiler {
 	
 	
 	def javaFactoryCreateDefaultOperator(Mapping mapping, String name, EClass ecl) {
-		val parameters = getDefaultParameters(ecl,mapping);
+		val parameters = ecl.getDefaultParameters(mapping);
 		'''
 		// CreateDefaultOperator «ecl.name»
 		public static «ecl.name» create«ecl.name.toFirstUpper()»(«injop.javaClassAttributes(mapping, ecl)»
-		«FOR p: parameters SEPARATOR ","»«typeOfParameter(mapping, p)» _«p.name»«ENDFOR») {
-			«ecl.name» o = «EPackage.name»Factory create«ecl.name.toFirstUpper()»();
+		«FOR p: parameters SEPARATOR ","»«mapping.typeOfParameter(p)» _«p.name»«ENDFOR») {
+			«ecl.name» o = «ecl.EPackage.name»Factory create«ecl.name.toFirstUpper()»();
 			«FOR attribute: ecl.EAllAttributes»
-				«structureFeatureSetter(attribute)»
+				«attribute.structureFeatureSetter()»
 			«ENDFOR»
 		«FOR param: parameters»
-			«structureFeatureSetter(param)»
+			«param.structureFeatureSetter()»
 		«ENDFOR»
 		return o;
 		}
@@ -136,12 +170,12 @@ class TomFactoryCompiler {
 		if(esf.many) {
 			'''
 			for(int i=0; i<_«esf.name».size(); i++) {
-				o.get«name.toFirstUpper()»().add(«featureAccess(esf)».get(i));
+				o.get«esf.name.toFirstUpper()»().add(«esf.featureAccess()».get(i));
 			}
 			'''
 		} else {
 			'''
-			o.set«ecl.name.toFirstUpper()»(«featureAccess(esf)»);
+			o.set«esf.name.toFirstUpper()»(«esf.featureAccess()»);
 			'''
 		}
 	}
@@ -159,7 +193,7 @@ class TomFactoryCompiler {
 	
 	def typeOfParameter(Mapping mapping, EStructuralFeature esf) {}
 	
-	def dispatch typeOfParameter(Mapping mapping, EReference eref) {terminalTypeName(mapping, eref.many, eref.EType);}
+	def dispatch typeOfParameter(Mapping mapping, EReference eref) {mapping.terminalTypeName(eref.many, eref.EType);}
 	
 	def dispatch typeOfParameter(Mapping mapping, EEnum enu) {enu.name;}
 	
@@ -167,20 +201,20 @@ class TomFactoryCompiler {
 	
 	
 	def dispatch terminalTypeName(Mapping mapping, boolean many, EClassifier ecl) {
-		'''«IF ecl.many»List<«ENDIF»«ecl.name»«IF ecl.many»>«ENDIF»'''
+		'''«IF many»List<«ENDIF»«ecl.name»«IF many»>«ENDIF»'''
 	}
 	
 	def dispatch terminalTypeName(Mapping mapping, boolean many, EClass ecl) {
-		'''«IF ecl.many»List<«ENDIF»«mapping.getTerminal(ecl,false).class_.name»«IF ecl.many»>«ENDIF»'''
+		'''«IF many»List<«ENDIF»«mapping.getTerminal(ecl,false).class_.name»«IF many»>«ENDIF»'''
 	}
 
 
 	def javaClassAttributes(Mapping mapping, EClass ecl) {
 		'''
 		«FOR att: ecl.EAllAttributes SEPARATOR ","»
-			«typeOfParameter(mapping, att)» _«att.name»
+			«mapping.typeOfParameter(att)» _«att.name»
 		«ENDFOR»
-		«IF ecl.EAllAttribute.size > 0 && ecl.getDefaultParameters(mapping).size > 0»,«ENDIF»
+		«IF ecl.EAllAttributes.size() > 0 && ecl.getDefaultParameters(mapping).size() > 0»,«ENDIF»
 		'''
 	}
 	

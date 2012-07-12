@@ -121,7 +121,7 @@ class OperatorsCompiler {
 	}
 	
 	
-	def javaClassAttibutes(Mapping mapping, EClass ecl) {
+	def javaClassAttributes(Mapping mapping, EClass ecl) {
 		'''		
 		«FOR att: ecl.EAllAttributes SEPARATOR ","»
 		 «injpa.feature(att)» _«att.name»

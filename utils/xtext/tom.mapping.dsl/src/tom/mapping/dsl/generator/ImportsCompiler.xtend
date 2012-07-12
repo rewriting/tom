@@ -11,14 +11,14 @@ class ImportsCompiler {
 	String prefix = ""
 	
 	def imports(Mapping map) {
-		for(EPackage p: map.getAllRootPackages) {
+		for(EPackage p: map.getAllRootPackages()) {
 			prefix.imports(p);
 		}
 	}
 	
 	
 	def importsWithUtils(Mapping map) {
-		for(EPackage p: map.getAllRootPackages) {
+		for(EPackage p: map.getAllRootPackages()) {
 			prefix.importsWithUtils(p);
 		}
 	}
