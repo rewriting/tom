@@ -29,11 +29,11 @@ class Constructor {
     this.name = name;
     this.fields = extractFields(make);
   }
-  
-  String getName(){
+
+  String getName() {
     return name;
   }
-  
+
   private Typable[] extractFields(Method make) {
     Class[] listClasses = make.getParameterTypes();
     Typable[] res = new Typable[listClasses.length];
@@ -54,7 +54,7 @@ class Constructor {
   int getDimentionMax() {
     int res = 0;
     for (int i = 0; i < fields.length; i++) {
-      res = Math.max(res, fields[i].getDimention());
+      res = Math.max(res, fields[i].getDimension());
     }
     return res;
   }
@@ -76,7 +76,8 @@ class Constructor {
     for (int i = 0; i < fields.length; i++) {
       Typable field = fields[i];
       int tmp = field.dstToLeaf();
-      if (!field.isDstToLeafDefined()) {
+//      if (!field.isDstToLeafDefined()) {
+      if (tmp == -1) {
         // if one of the constructors of field is locked
         lock = false;
         return Integer.MAX_VALUE;

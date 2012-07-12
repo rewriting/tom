@@ -186,13 +186,13 @@ public class AlgebraicTest {
   }
 
   /**
-   * Test of getDimention method, of class Algebraic.
+   * Test of getDimension method, of class Algebraic.
    */
   @Test
   public void testGetDimentionNat() {
     System.out.println("getDimention Nat");
     int expResult = 1;
-    int result = nat.getDimention();
+    int result = nat.getDimension();
     assertEquals(expResult, result);
   }
 
@@ -200,7 +200,7 @@ public class AlgebraicTest {
   public void testGetDimentionTree() {
     System.out.println("getDimention tree");
     int expResult = 1;
-    int result = tree.getDimention();
+    int result = tree.getDimension();
     assertEquals(expResult, result);
   }
 
@@ -208,7 +208,7 @@ public class AlgebraicTest {
   public void testGetDimentionTypeTest() {
     System.out.println("getDimention TypeTest");
     int expResult = 1;
-    int result = typetest.getDimention();
+    int result = typetest.getDimension();
     assertEquals(expResult, result);
   }
 
@@ -216,7 +216,7 @@ public class AlgebraicTest {
   public void testGetDimentionTree2() {
     System.out.println("getDimention Tree2");
     int expResult = 2;
-    int result = tree2.getDimention();
+    int result = tree2.getDimension();
     assertEquals(expResult, result);
   }
 
@@ -224,16 +224,16 @@ public class AlgebraicTest {
   public void testGetDimentionForest() {
     System.out.println("getDimention Forest");
     int expResult = 2;
-    int result = forest.getDimention();
+    int result = forest.getDimension();
     assertEquals(expResult, result);
-    assertEquals(2, tree2.getDimention());
+    assertEquals(2, tree2.getDimension());
   }
 
   @Test
   public void testGetDimentionCirc() {
     System.out.println("getDimention Circ");
     int expResult = 1;
-    int result = circ.getDimention();
+    int result = circ.getDimension();
     assertEquals(expResult, result);
   }
 
@@ -241,7 +241,7 @@ public class AlgebraicTest {
   public void testGetDimentionA() {
     System.out.println("getDimention A");
     int expResult = 1;
-    int result = a.getDimention();
+    int result = a.getDimension();
     assertEquals(expResult, result);
   }
 
@@ -249,7 +249,7 @@ public class AlgebraicTest {
   public void testGetDimentionB() {
     System.out.println("getDimention B");
     int expResult = 1;
-    int result = b.getDimention();
+    int result = b.getDimension();
     assertEquals(expResult, result);
   }
 
@@ -257,7 +257,7 @@ public class AlgebraicTest {
   public void testGetDimentionC() {
     System.out.println("getDimention C");
     int expResult = 1;
-    int result = c.getDimention();
+    int result = c.getDimension();
     assertEquals(expResult, result);
   }
 
@@ -265,7 +265,7 @@ public class AlgebraicTest {
   public void testGetDimentionExpr() {
     System.out.println("getDimention Expr");
     int expResult = 1;
-    int result = expr.getDimention();
+    int result = expr.getDimension();
     assertEquals(expResult, result);
   }
 
@@ -273,7 +273,7 @@ public class AlgebraicTest {
   public void testGetDimentionSurExpr() {
     System.out.println("getDimention SurExpr");
     int expResult = 2;
-    int result = surexpr.getDimention();
+    int result = surexpr.getDimension();
     assertEquals(expResult, result);
   }
 
@@ -390,44 +390,23 @@ public class AlgebraicTest {
   }
 
   /**
-   * Test of makeLeaf method, of class Algebraic.
-   */
-  @Test
-  public void testMakeLeafExpr() {
-    System.out.println("testMakeLeaf Expr");
-    System.out.println(expr.makeLeaf(request));
-    int expResult = 1;
-    int result = c.dstToLeaf();
-    assertEquals(expResult, result);
-  }
-
-  @Test
-  public void testMakeLeafSurExpr() {
-    System.out.println("testMakeLeaf SurExpr");
-    System.out.println(surexpr.makeLeaf(request));
-    int expResult = 1;
-    int result = c.dstToLeaf();
-    assertEquals(expResult, result);
-  }
-
-  /**
    * Test of generate method, of class Algebraic.
    */
   @Test
   public void testGenerateExpr() {
     System.out.println("Generate Expr");
-    System.out.println(expr.generate(10));
+    System.out.println(expr.generate(100));
     int expResult = 1;
-    int result = c.dstToLeaf();
+    int result = 1;
     assertEquals(expResult, result);
   }
 
   @Test
   public void testGenerateSurExpr() {
     System.out.println("Generate SurExpr");
-    System.out.println(surexpr.generate(10));
+    System.out.println(surexpr.generate(100));
     int expResult = 1;
-    int result = c.dstToLeaf();
+    int result = 1;
     assertEquals(expResult, result);
   }
 }

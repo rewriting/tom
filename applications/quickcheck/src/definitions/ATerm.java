@@ -51,7 +51,7 @@ public class ATerm {
   }
 
   int getDimention() {
-    return type.getDimention();
+    return type.getDimension();
   }
 
   int getDstToLeaf() {

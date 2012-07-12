@@ -28,7 +28,7 @@ public class Scope {
     while (hasChanged) {
       hasChanged = false;
       for (Typable type : setOfTypes) {
-        hasChanged = hasChanged || type.updateDependances();
+        hasChanged = hasChanged || type.updateDependences();
       }
     }
   }

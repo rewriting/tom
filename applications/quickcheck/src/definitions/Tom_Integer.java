@@ -4,31 +4,24 @@
  */
 package definitions;
 
+import java.util.HashSet;
+
 /**
  *
  * @author hubert
  */
 public class Tom_Integer implements Typable {
+
   private Scope scope;
-  
-  public Tom_Integer(Scope scope){
+
+  public Tom_Integer(Scope scope) {
     this.scope = scope;
     scope.addType(this);
   }
-  
-  @Override
-  public boolean isRec() {
-    return false;
-  }
 
   @Override
-  public int getDimention() {
+  public int getDimension() {
     return 0;
-  }
-
-  @Override
-  public boolean dependsOn(Typable t) {
-    return false;
   }
 
   @Override
@@ -37,12 +30,7 @@ public class Tom_Integer implements Typable {
   }
 
   @Override
-  public boolean isDstToLeafDefined() {
-    return true;
-  }
-
-  @Override
-  public boolean updateDependances() {
+  public boolean updateDependences() {
     return false;
   }
 
@@ -57,13 +45,7 @@ public class Tom_Integer implements Typable {
   }
 
   public Integer generate_final(Request request) {
-    return (int) (Math.random()*request.getCounter());
-  }
-
-  @Override
-  @Deprecated
-  public Object makeLeaf(Request request) {
-    return generate(request);
+    return (int) (Math.random() * request.getCounter());
   }
 
   @Override
@@ -71,5 +53,10 @@ public class Tom_Integer implements Typable {
     ATerm res = new ATerm(this);
     res.chooseConstructor();
     return res;
+  }
+
+  @Override
+  public HashSet<Typable> getDependences() {
+    return new HashSet<Typable>();
   }
 }

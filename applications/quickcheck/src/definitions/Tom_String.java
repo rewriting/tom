@@ -4,6 +4,8 @@
  */
 package definitions;
 
+import java.util.HashSet;
+
 /**
  *
  * @author hubert
@@ -17,18 +19,8 @@ public class Tom_String implements Typable {
   }
 
   @Override
-  public boolean isRec() {
-    return false;
-  }
-
-  @Override
-  public int getDimention() {
+  public int getDimension() {
     return 1;
-  }
-
-  @Override
-  public boolean dependsOn(Typable t) {
-    return false;
   }
 
   @Override
@@ -37,12 +29,7 @@ public class Tom_String implements Typable {
   }
 
   @Override
-  public boolean isDstToLeafDefined() {
-    return true;
-  }
-
-  @Override
-  public boolean updateDependances() {
+  public boolean updateDependences() {
     return false;
   }
 
@@ -64,17 +51,16 @@ public class Tom_String implements Typable {
     }
     return new String(tabBytes);
   }
-  
-  @Override
-  @Deprecated
-  public Object makeLeaf(Request request) {
-    return generate(request);
-  }
 
   @Override
   public ATerm generate(Request request) {
     ATerm res = new ATerm(this);
     res.chooseConstructor();
     return res;
+  }
+
+  @Override
+  public HashSet<Typable> getDependences() {
+    return new HashSet<Typable>();
   }
 }

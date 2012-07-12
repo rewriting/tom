@@ -11,9 +11,8 @@ import java.util.HashSet;
 public class Algebraic implements Typable {
 
   private HashSet<Constructor> listConstructors;
-  private HashSet<Typable> listDependances;
-  private int dstLeaf = Integer.MAX_VALUE;
-  private boolean dstIsDefined = false;
+  private HashSet<Typable> listDependences;
+  private int dstLeaf = -1;
   @Deprecated
   private String name;
   private Scope scope;
@@ -24,7 +23,7 @@ public class Algebraic implements Typable {
     this.scope = scope;
     this.name = name;
     listConstructors = new HashSet<Constructor>();
-    listDependances = new HashSet<Typable>();
+    listDependences = new HashSet<Typable>();
     scope.addType(this);
   }
 
@@ -33,14 +32,14 @@ public class Algebraic implements Typable {
     this.name = type.getName();
     this.type = type;
     listConstructors = new HashSet<Constructor>();
-    listDependances = new HashSet<Typable>();
+    listDependences = new HashSet<Typable>();
     scope.addType(this);
   }
 
   @Deprecated
   public Algebraic addConstructor(String name, Typable... listTypes) {
     listConstructors.add(new Constructor(this, listTypes, name));
-    listDependances.addAll(Arrays.asList(listTypes));
+    listDependences.addAll(Arrays.asList(listTypes));
     return this;
   }
 
@@ -70,52 +69,36 @@ public class Algebraic implements Typable {
     return scope;
   }
 
-  /**
-   * Thie function return true if and only if dstToLeaf() has been already
-   * called for the current Algebraic Typable.
-   *
-   * @return
-   */
   @Override
-  public boolean isDstToLeafDefined() {
-    return dstIsDefined;
-  }
-
-  @Override
-  public boolean updateDependances() {
+  public boolean updateDependences() {
     boolean hasChanged = false;
-    HashSet<Algebraic> depsClone = (HashSet<Algebraic>) listDependances.clone();
+    HashSet<Algebraic> depsClone = (HashSet<Algebraic>) listDependences.clone();
     for (Algebraic deps : depsClone) {
-      hasChanged = hasChanged || !depsClone.containsAll(deps.listDependances);
+      hasChanged = hasChanged || !depsClone.containsAll(deps.listDependences);
       // TODO : utiliser la taille comme moyen de controle
-      listDependances.addAll(deps.listDependances);
+      listDependences.addAll(deps.listDependences);
     }
     return hasChanged;
   }
 
-  @Override
   public boolean isRec() {
-    return listDependances.contains(this);
+    return listDependences.contains(this);
   }
 
   @Override
-  public int getDimention() {
+  public int getDimension() {
     int dim = 0;
     int add = 0;
     if (isRec()) {
       add = 1;
     }
-    for (Typable typable : listDependances) {
-      if (!typable.dependsOn(this)) {
-        dim = Math.max(dim, typable.getDimention());
+    for (Typable typable : listDependences) {
+      boolean dependsOn = typable.getDependences().contains(this);
+      if (!dependsOn) {
+        dim = Math.max(dim, typable.getDimension());
       }
     }
     return dim + add;
-  }
-
-  @Override
-  public boolean dependsOn(Typable t) {
-    return listDependances.contains(t);
   }
 
   Constructor chooseMinimalConstructor() {
@@ -163,20 +146,19 @@ public class Algebraic implements Typable {
     return res;
   }
 
-  @Override
-  @Deprecated
-  public Object makeLeaf(Request request) {
-    Constructor cons = chooseMinimalConstructor();
-    Typable[] fields = cons.getFields();
-    Request[] listRequests = spread(request, fields.length);
-    Object[] branches = new Object[fields.length];
-    for (int i = 0; i < fields.length; i++) {
-      Typable typable = fields[i];
-      Request req = listRequests[i];
-      branches[i] = typable.makeLeaf(req);
-    }
-    return cons.make(branches);
-  }
+//  @Deprecated
+//  public Object makeLeaf(Request request) {
+//    Constructor cons = chooseMinimalConstructor();
+//    Typable[] fields = cons.getFields();
+//    Request[] listRequests = spread(request, fields.length);
+//    Object[] branches = new Object[fields.length];
+//    for (int i = 0; i < fields.length; i++) {
+//      Typable typable = fields[i];
+//      Request req = listRequests[i];
+//      branches[i] = typable.makeLeaf(req);
+//    }
+//    return cons.make(branches);
+//  }
 
   public ATerm generate(int n) {
     if (this.dstToLeaf() < n) {
@@ -242,7 +224,7 @@ public class Algebraic implements Typable {
 
   @Override
   public int dstToLeaf() {
-    if (this.dstIsDefined) {
+    if(dstLeaf != -1){
       return dstLeaf;
     }
     int res = Integer.MAX_VALUE;
@@ -251,11 +233,10 @@ public class Algebraic implements Typable {
         //this case should not directly happen if dstToLeaf() is called by user:
         //only during recursive call.
         //the returned value is sensless
-        return Integer.MAX_VALUE;
+        return -1;
       }
       res = Math.min(res, constructor.distanceToReachLeaf());
     }
-    this.dstIsDefined = true;
     this.dstLeaf = res;
     return dstLeaf;
   }
@@ -295,7 +276,7 @@ public class Algebraic implements Typable {
     }
     Constructor cons = new Constructor(this, make, name);
     listConstructors.add(cons);
-    listDependances.addAll(Arrays.asList(cons.getFields()));
+    listDependences.addAll(Arrays.asList(cons.getFields()));
     return this;
   }
 
@@ -314,7 +295,12 @@ public class Algebraic implements Typable {
     }
     Constructor cons = new Constructor(this, make, name);
     listConstructors.add(cons);
-    listDependances.addAll(Arrays.asList(cons.getFields()));
+    listDependences.addAll(Arrays.asList(cons.getFields()));
     return this;
+  }
+
+  @Override
+  public HashSet<Typable> getDependences() {
+    return listDependences;
   }
 }
