@@ -18,7 +18,7 @@ public class Random {
     if (k == 0) {
       return res;
     }
-    while (n != 0) {
+    while (n > 0) {
       int index = (int) (Math.random() * k);
       res[index]++;
       n--;

@@ -57,7 +57,7 @@ public class Algebraic implements Typable {
     }
     throw new UnsupportedOperationException("ERROR");
   }
-  
+
   Constructor chooseMinimalConstructor() {
     //TODO improve choice randomly
     for (Constructor constructor : listConstructors) {
@@ -110,31 +110,6 @@ public class Algebraic implements Typable {
     }
     return dim + add;
   }
-
-  @Deprecated
-  private int[] spread(int n, int size) {
-    int[] res = new int[size];
-    for (int i = 0; i < res.length; i++) {
-      res[i] = 0;
-    }
-    if (size == 0) {
-      return res;
-    }
-    while (n != 0) {
-      int index = (int) (Math.random() * size);
-      res[index]++;
-      n--;
-    }
-    return res;
-  }
-  
-//  public Hole generate(int n) {
-//    if (this.dstToLeaf() < n) {
-//      return generate(new MakeAllStrategy(n));
-//    } else {
-//      return generate(new MakeLeafStrategy(n));
-//    }
-//  }
 
   @Override
   public Hole generate(int n) {

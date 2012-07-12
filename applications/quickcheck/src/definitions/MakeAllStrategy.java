@@ -37,12 +37,19 @@ public class MakeAllStrategy extends Request {
 
     //spread number of recursions of the curent term into each fields with the 
     //same dimension
-    spreadBetweenHigherDim(listHigherDim);
+    int[] listSpread = Random.pile(this.getCounter() - 1, listHigherDim.size());
 
     //re-apply algorithm on same dimension fields in order to eliminate them
+    int i = 0;
     for (Hole term : listHigherDim) {
-      Request req = term.getRequest();
+      Request req;
+      if (term.getDstToLeaf() < this.getCounter()) {
+        req = new MakeAllStrategy(listSpread[i]);
+      } else {
+        req = new MakeLeafStrategy(listSpread[i]);
+      }
       res.addAll(req.fillATerm(term));
+      i++;
     }
     return res;
   }

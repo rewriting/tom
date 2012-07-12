@@ -20,7 +20,7 @@ public abstract class Request {
     counter = initialValue;
   }
 
-  private int getCounter() {
+  protected int getCounter() {
     return counter;
   }
 
@@ -30,32 +30,6 @@ public abstract class Request {
     } catch (CloneNotSupportedException ex) {
       Logger.getLogger(Request.class.getName()).log(Level.SEVERE, null, ex);
       throw new UnsupportedOperationException("clone method fails.");
-    }
-  }
-
-  protected void spreadBetweenHigherDim(HashSet<Hole> listHigherDim) {
-    int size = listHigherDim.size();
-    int[] tabSizes = new int[size];
-    for (int i = 0; i < tabSizes.length; i++) {
-      tabSizes[i] = 0;
-    }
-    if (size == 0) {
-      return;
-    }
-    int n = this.getCounter() - 1;
-    while (n > 0) {
-      int index = (int) (Math.random() * size);
-      tabSizes[index]++;
-      n--;
-    }
-    int i = 0;
-    for (Hole term : listHigherDim) {
-      if (term.getDstToLeaf() < this.getCounter()) {
-        term.setRequest(new MakeAllStrategy(tabSizes[i]));
-      } else {
-        term.setRequest(new MakeLeafStrategy(tabSizes[i]));
-      }
-      i++;
     }
   }
 
