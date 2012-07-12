@@ -120,10 +120,10 @@ class Constructor {
     return res;
   }
 
-  Hole[] giveATermDeps() {
-    Hole[] res = new Hole[getSize()];
+  Slot[] giveATermDeps() {
+    Slot[] res = new Slot[getSize()];
     for (int i = 0; i < res.length; i++) {
-      res[i] = new Hole(fields[i]);
+      res[i] = new Slot(fields[i]);
     }
     return res;
   }

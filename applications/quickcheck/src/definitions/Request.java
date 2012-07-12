@@ -33,5 +33,5 @@ public abstract class Request {
     }
   }
 
-  abstract HashSet<Hole> fillATerm(Hole aTerm);
+  abstract HashSet<Slot> fillATerm(Slot aTerm);
 }

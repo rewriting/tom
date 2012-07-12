@@ -395,7 +395,9 @@ public class AlgebraicTest {
   @Test
   public void testGenerateExpr() {
     System.out.println("Generate Expr");
-    System.out.println(expr.generate(100));
+    Slot slot = expr.generate(100);
+    System.out.println(slot);
+    slot.toDot("Expr.dot");
     int expResult = 1;
     int result = 1;
     assertEquals(expResult, result);
@@ -404,7 +406,9 @@ public class AlgebraicTest {
   @Test
   public void testGenerateSurExpr() {
     System.out.println("Generate SurExpr");
-    System.out.println(surexpr.generate(100));
+    Slot slot = surexpr.generate(100);
+    System.out.println(slot);
+    slot.toDot("SurExpr.dot");
     int expResult = 1;
     int result = 1;
     assertEquals(expResult, result);

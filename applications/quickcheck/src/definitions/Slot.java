@@ -4,38 +4,41 @@
  */
 package definitions;
 
+import java.io.File;
+import java.io.FileOutputStream;
+
 /**
  *
  * @author hubert
  */
-public class Hole {
+public class Slot {
 
   private Typable type;
   private Constructor cons;
-  private Hole[] deps;
+  private Slot[] deps;
   @Deprecated
   private Request req;
 
-  Hole(Typable type) {
+  Slot(Typable type) {
     this.type = type;
   }
 
-  Hole[] chooseConstructor() {
+  Slot[] chooseConstructor() {
     if (type instanceof Algebraic) {
       cons = ((Algebraic) type).chooseConstructor();
       deps = cons.giveATermDeps();
     } else {
-      deps = new Hole[0];
+      deps = new Slot[0];
     }
     return deps;
   }
 
-  Hole[] chooseMinimalConstructor() {
+  Slot[] chooseMinimalConstructor() {
     if (type instanceof Algebraic) {
       cons = ((Algebraic) type).chooseMinimalConstructor();
       deps = cons.giveATermDeps();
     } else {
-      deps = new Hole[0];
+      deps = new Slot[0];
     }
     return deps;
   }
@@ -63,7 +66,7 @@ public class Hole {
     String res = "";
     res += cons.getName() + "(";
     int i = 0;
-    for (Hole aTerm : deps) {
+    for (Slot aTerm : deps) {
       res += aTerm;
       if (i != deps.length - 1) {
         res += ", ";
@@ -71,6 +74,31 @@ public class Hole {
       i++;
     }
     res += ")";
+    return res;
+  }
+  
+  public void toDot(String chemin){
+    String res = "digraph mon_graphe {\n";
+    res += toDot_aux("8");
+    res += "}\n";
+    File fichier = new File(chemin);
+    try{
+      FileOutputStream graveur = new FileOutputStream(fichier);
+      graveur.write(res.getBytes());
+      graveur.close(); 
+    } catch (java.io.IOException err){
+      System.err.println("ecriture fichier impossible");
+    } 
+  }
+  
+  private String toDot_aux(String way){
+    String res = new String();
+    int i = 0;
+    for (Slot slot : deps) {
+      res += "\"" + way + "\"" + "->" + "\"" + way + i + "\"\n";
+      res += slot.toDot_aux(way + i);
+      i++;
+    }
     return res;
   }
 }

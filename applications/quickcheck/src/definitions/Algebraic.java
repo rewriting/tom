@@ -112,21 +112,21 @@ public class Algebraic implements Typable {
   }
 
   @Override
-  public Hole generate(int n) {
+  public Slot generate(int n) {
     // TODO empecher les cas de non terminaison
-    Hole res = new Hole(this);
-    HashSet<Hole> listHoles = new HashSet<Hole>();
+    Slot res = new Slot(this);
+    HashSet<Slot> listHoles = new HashSet<Slot>();
     listHoles.add(res);
     while (!listHoles.isEmpty()) {
 
       //retrieve set of maximal dimension terms
       int dimMax = 0;
-      HashSet<Hole> toVisit = new HashSet<Hole>();
-      for (Hole term : listHoles) {
+      HashSet<Slot> toVisit = new HashSet<Slot>();
+      for (Slot term : listHoles) {
         int d = term.getDimention();
         if (d > dimMax) {
           dimMax = d;
-          toVisit = new HashSet<Hole>();
+          toVisit = new HashSet<Slot>();
         }
         if (d == dimMax) {
           toVisit.add(term);
@@ -138,20 +138,20 @@ public class Algebraic implements Typable {
 
       //fill each maximal dimension term
       int i = 0;
-      for (Hole term : toVisit) {
+      for (Slot term : toVisit) {
         Request req;
         if (term.getDstToLeaf() < listSpread[i]) {
           req = new MakeAllStrategy(listSpread[i]);
-          if (term.getRequest() != null) {
-            throw new UnsupportedOperationException("Request of term should not be defined here.");
-          }
-          term.setRequest(req); // normaly useless...
+//          if (term.getRequest() != null) {
+//            throw new UnsupportedOperationException("Request of term should not be defined here.");
+//          }
+//          term.setRequest(req); // normaly useless...
         } else {
           req = new MakeLeafStrategy(listSpread[i]);
-          if (term.getRequest() != null) {
-            throw new UnsupportedOperationException("Request of term should not be defined here.");
-          }
-          term.setRequest(req); // normaly useless...
+//          if (term.getRequest() != null) {
+//            throw new UnsupportedOperationException("Request of term should not be defined here.");
+//          }
+//          term.setRequest(req); // normaly useless...
         }
         listHoles.addAll(req.fillATerm(term));
         i++;

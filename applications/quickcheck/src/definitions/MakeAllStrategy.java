@@ -17,17 +17,17 @@ public class MakeAllStrategy extends Request {
   }
 
   @Override
-  HashSet<Hole> fillATerm(Hole aTerm) {
-    HashSet<Hole> res = new HashSet<Hole>();
+  HashSet<Slot> fillATerm(Slot aTerm) {
+    HashSet<Slot> res = new HashSet<Slot>();
 
     //fill the term by choosing one of its constructors
-    Hole[] deps = aTerm.chooseConstructor();
+    Slot[] deps = aTerm.chooseConstructor();
 
     //dispatch fields of the term between two categories: these whose dimension 
     //equals dimension of the term, and the others
-    HashSet<Hole> listHigherDim = new HashSet<Hole>();
+    HashSet<Slot> listHigherDim = new HashSet<Slot>();
     for (int i = 0; i < deps.length; i++) {
-      Hole dep = deps[i];
+      Slot dep = deps[i];
       if (dep.getDimention() < aTerm.getDimention()) {
         res.add(dep);
       } else {
@@ -41,7 +41,7 @@ public class MakeAllStrategy extends Request {
 
     //re-apply algorithm on same dimension fields in order to eliminate them
     int i = 0;
-    for (Hole term : listHigherDim) {
+    for (Slot term : listHigherDim) {
       Request req;
       if (term.getDstToLeaf() < this.getCounter()) {
         req = new MakeAllStrategy(listSpread[i]);

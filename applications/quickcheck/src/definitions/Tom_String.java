@@ -53,8 +53,8 @@ public class Tom_String implements Typable {
 //  }
 
   @Override
-  public Hole generate(int n) {
-    Hole res = new Hole(this);
+  public Slot generate(int n) {
+    Slot res = new Slot(this);
     res.chooseConstructor();
     return res;
   }
