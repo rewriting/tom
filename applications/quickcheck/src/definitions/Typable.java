@@ -28,9 +28,6 @@ public interface Typable {
    *
    * @return false if no changes were done
    */
-  @Deprecated
   public boolean updateDependences();
-
-  public Scope getScope();
   
 }

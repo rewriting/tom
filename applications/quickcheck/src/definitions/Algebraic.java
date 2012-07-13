@@ -12,13 +12,14 @@ public class Algebraic implements Typable {
 
   private HashSet<Constructor> listConstructors;
   private HashSet<Typable> listDependences;
-  private int dstLeaf = -1;
+  private int dstLeaf;
   private String name;
   private Scope scope;
   @Deprecated
   private Class type;
 
   public Algebraic(Scope scope, String name) {
+    dstLeaf = -1;
     this.scope = scope;
     this.name = name;
     listConstructors = new HashSet<Constructor>();
@@ -28,6 +29,7 @@ public class Algebraic implements Typable {
 
   @Deprecated
   public Algebraic(Scope scope, Class type) {
+    dstLeaf = -1;
     this.scope = scope;
     this.name = type.getName();
     this.type = type;
@@ -66,7 +68,7 @@ public class Algebraic implements Typable {
         return constructor;
       }
     }
-    throw new UnsupportedOperationException("Internal error happends when backtracking.");
+    throw new UnsupportedOperationException("Internal error happends when backtracking (" + getName() + " : " + dstToLeaf() + ").");
   }
 
   @Override
@@ -74,7 +76,6 @@ public class Algebraic implements Typable {
     return name;
   }
 
-  @Override
   public Scope getScope() {
     return scope;
   }
@@ -112,6 +113,48 @@ public class Algebraic implements Typable {
   @Override
   public Slot generate(int n) {
     // TODO empecher les cas de non terminaison
+    Slot res = new Slot(this);
+    HashSet<Slot> listHoles = new HashSet<Slot>();
+    listHoles.add(res);
+    while (!listHoles.isEmpty()) {
+
+      //retrieve set of maximal dimension terms
+      int dimMax = 0;
+      HashSet<Slot> toVisit = new HashSet<Slot>();
+      for (Slot term : listHoles) {
+        int d = term.getDimention();
+        if (d > dimMax) {
+          dimMax = d;
+          toVisit = new HashSet<Slot>();
+        }
+        if (d == dimMax) {
+          toVisit.add(term);
+        }
+      }
+
+      //spread n across maximal dimention terms
+      int[] listSpread = Random.pile(n, toVisit.size());
+
+      //fill each maximal dimension term
+      int i = 0;
+      for (Slot term : toVisit) {
+        Request req;
+        if (term.getDstToLeaf() < listSpread[i]) {
+          req = new MakeAllStrategy(listSpread[i]);
+        } else {
+          req = new MakeLeafStrategy(listSpread[i]);
+        }
+        listHoles.addAll(req.fillATerm(term));
+        i++;
+      }
+
+      //remove newly filled terms
+      listHoles.removeAll(toVisit);
+    }
+    return res;
+  }
+
+  public Slot generate2(int n) {
     Slot res = new Slot(this);
     HashSet<Slot> listHoles = new HashSet<Slot>();
     listHoles.add(res);

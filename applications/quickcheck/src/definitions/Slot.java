@@ -4,6 +4,7 @@
  */
 package definitions;
 
+import aterm.ATerm;
 import java.io.File;
 import java.io.FileOutputStream;
 
@@ -89,4 +90,8 @@ public class Slot {
     }
     return res;
   }
+  
+//  public ATerm toATerm(){
+//    
+//  }
 }

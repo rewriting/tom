@@ -39,7 +39,6 @@ public class Tom_Integer implements Typable {
     return "integer";
   }
 
-  @Override
   public Scope getScope() {
     return scope;
   }

@@ -38,7 +38,6 @@ public class Tom_String implements Typable {
     return "string";
   }
 
-  @Override
   public Scope getScope() {
     return scope;
   }

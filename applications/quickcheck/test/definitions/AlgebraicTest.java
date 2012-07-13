@@ -413,4 +413,15 @@ public class AlgebraicTest {
     int result = 1;
     assertEquals(expResult, result);
   }
+  
+  @Test
+  public void testGenerateTree2() {
+    System.out.println("Generate tree2");
+    Slot slot = tree2.generate(100);
+    System.out.println(slot);
+    slot.toDot("tree2.dot");
+    int expResult = 1;
+    int result = 1;
+    assertEquals(expResult, result);
+  }
 }

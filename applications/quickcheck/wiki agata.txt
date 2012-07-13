@@ -1,0 +1,15 @@
+'''Page de wiki de la génération automatique de termes dans TOM'''
+
+== Vocabulaire utilisé ==
+
+On travaillera avec des arbres et on usera naturellement du vocabulaire associé (noeud, feuille, ...). Un '''type''' est défini par un ensemble de '''constructeurs''', chacun représenté par un ensemble de types (les arguments). L'ensemble des types est noté $T$, celui des constructeurs est $C$. Un '''slot''' est  Un '''terme''' est une instance d'un type.
+
+== Présentation de l'algorithme ==
+
+L'algorithme que nous développerons ici permet de construire un terme algébrique de manière aléatoire.
+L'idée repose ici sur le concept de la dimention (à definir) d'un type. Voici une présentation informelle de l'algorithme paramétré par l'entier n : supposons que le terme que l'on veut construire est du type T de dimention d. 
+  - initialisation : on pose c = d et L un ensemble de termes
+
+== Choix de réalisation des "trous" ==
+
+Lors de la réalisation de l'algorithme, on définit le "front de propagation" (c'est à dire l'ensemble des noeuds dont ils faut s'occuper à l'étape suivante) comme une liste de noeuds incomplets car on ne connait que son type mais pas son constructeur ni ses champs.

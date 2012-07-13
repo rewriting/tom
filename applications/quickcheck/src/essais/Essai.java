@@ -4,8 +4,10 @@
  */
 package essais;
 
-import definitions.Algebraic;
-import java.util.Arrays;
+import aterm.AFun;
+import aterm.ATerm;
+import aterm.ATermAppl;
+import aterm.pure.PureFactory;
 
 /**
  *
@@ -17,13 +19,13 @@ public class Essai {
    * @param args the command line arguments
    */
   public static void main(String[] args) {
-    System.out.println(Arrays.toString(Algebraic.class.getDeclaredMethods()));
-    System.out.println(Arrays.toString(Algebraic.class.getMethods()));
-    System.out.println(Arrays.toString(Algebraic.class.getDeclaredConstructors()));
-    foo(1,2,4);
-  }
-  
-  public static void foo(int... args){
-    System.out.println(args.length);
+    PureFactory factory = new PureFactory();
+    AFun fun = factory.makeAFun("fun", 1, false);
+    System.out.println(fun);
+    ATerm term = factory.make("aterm");
+    System.out.println(term);
+    ATermAppl appl = factory.makeAppl(fun, term);
+    System.out.println(appl);
+    
   }
 }
