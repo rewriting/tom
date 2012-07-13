@@ -149,20 +149,13 @@ public class Algebraic implements Typable {
     return scope;
   }
 
+  @Deprecated
   Constructor chooseConstructor() {
     if (constructors.isEmpty()) {
       throw new UnsupportedOperationException("No constructors");
     }
     int choice = (int) (Math.random() * constructors.size());
     return constructors.get(choice);
-//        int i = 0;
-//        for (Constructor constructor : constructors) {
-//            if (i == choice) {
-//                return constructor;
-//            }
-//            i++;
-//        }
-//        throw new UnsupportedOperationException("ERROR");
   }
 
   Constructor chooseFiniteConstructor() {
