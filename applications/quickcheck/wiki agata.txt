@@ -2,7 +2,7 @@
 
 == Vocabulaire utilisé ==
 
-On travaillera avec des arbres et on usera naturellement du vocabulaire associé (noeud, feuille, ...). Un '''type''' est défini par un ensemble de '''constructeurs''', chacun représenté par un ensemble de types (les arguments). L'ensemble des types est noté $T$, celui des constructeurs est $C$. Un '''slot''' est  Un '''terme''' est une instance d'un type.
+On travaillera avec des arbres et on usera naturellement du vocabulaire associé (noeud, feuille, ...). Un '''type''' est défini par un ensemble de '''constructeurs''', chacun représenté par un ensemble de types (les arguments). L'ensemble des types est noté $T$, celui des constructeurs est $C$. l'ensemble '''slot''' noté $S$ est défini Un '''terme''' est une instance d'un type.
 
 == Présentation de l'algorithme ==
 

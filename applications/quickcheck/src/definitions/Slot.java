@@ -4,7 +4,6 @@
  */
 package definitions;
 
-import aterm.ATerm;
 import java.io.File;
 import java.io.FileOutputStream;
 

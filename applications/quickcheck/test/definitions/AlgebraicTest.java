@@ -429,6 +429,6 @@ public class AlgebraicTest {
     slot.toDot("tree2.dot");
     int expResult = 1;
     int result = 1;
-//    assertEquals(expResult, result);
+    assertEquals(expResult, result);
   }
 }
