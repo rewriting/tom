@@ -28,7 +28,7 @@ public class MakeAllStrategy extends Request {
     HashSet<Slot> listHigherDim = new HashSet<Slot>();
     for (int i = 0; i < deps.length; i++) {
       Slot dep = deps[i];
-      if (dep.getDimention() < aTerm.getDimention()) {
+      if (dep.getDimension() < aTerm.getDimension()) {
         res.add(dep);
       } else {
         listHigherDim.add(dep);

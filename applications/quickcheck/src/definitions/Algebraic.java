@@ -1,8 +1,7 @@
 package definitions;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.HashSet;
+import java.util.*;
 
 /**
  *
@@ -10,275 +9,281 @@ import java.util.HashSet;
  */
 public class Algebraic implements Typable {
 
-  private HashSet<Constructor> listConstructors;
-  private HashSet<Typable> listDependences;
-  private int dstLeaf;
-  private String name;
-  private Scope scope;
-  @Deprecated
-  private Class type;
+    private String name;
+//    private Set<Constructor> constructors;
+    private List<Constructor> constructors;
+    private Set<Typable> dependences;
+    private int dstLeaf;
+    private Scope scope;
 
-  public Algebraic(Scope scope, String name) {
-    dstLeaf = -1;
-    this.scope = scope;
-    this.name = name;
-    listConstructors = new HashSet<Constructor>();
-    listDependences = new HashSet<Typable>();
-    scope.addType(this);
-  }
-
-  @Deprecated
-  public Algebraic(Scope scope, Class type) {
-    dstLeaf = -1;
-    this.scope = scope;
-    this.name = type.getName();
-    this.type = type;
-    listConstructors = new HashSet<Constructor>();
-    listDependences = new HashSet<Typable>();
-    scope.addType(this);
-  }
-
-  public Algebraic addConstructor(String name, Typable... listTypes) {
-    listConstructors.add(new Constructor(this, listTypes, name));
-    listDependences.addAll(Arrays.asList(listTypes));
-    return this;
-  }
-
-  boolean checkLink(Constructor cons) {
-    return listConstructors.contains(cons);
-  }
-
-  Constructor chooseConstructor() {
-    int choice = (int) (Math.random() * listConstructors.size());
-    int i = 0;
-    for (Constructor constructor : listConstructors) {
-      if (i == choice) {
-        return constructor;
-      }
-      i++;
+    public Algebraic(Scope scope, String name) {
+        this.name = name;
+//    constructors = new HashSet<Constructor>();
+        constructors = new ArrayList<Constructor>();
+        dependences = new HashSet<Typable>();
+        dstLeaf = -1;
+        this.scope = scope;
+        scope.addType(this);
     }
-    throw new UnsupportedOperationException("ERROR");
-  }
 
-  Constructor chooseMinimalConstructor() {
-    //TODO improve choice randomly
-    for (Constructor constructor : listConstructors) {
-      int m = constructor.distanceToReachLeaf();
-      if (m == dstToLeaf()) {
-        return constructor;
-      }
+    @Deprecated
+    public Algebraic(Scope scope, Class type) {
+        dstLeaf = -1;
+        this.scope = scope;
+        this.name = type.getName();
+//    constructors = new HashSet<Constructor>();
+        constructors = new ArrayList<Constructor>();
+        dependences = new HashSet<Typable>();
+        scope.addType(this);
     }
-    throw new UnsupportedOperationException("Internal error happends when backtracking (" + getName() + " : " + dstToLeaf() + ").");
-  }
-
-  @Override
-  public String getName() {
-    return name;
-  }
-
-  public Scope getScope() {
-    return scope;
-  }
-
-  @Override
-  public boolean updateDependences() {
-    HashSet<Algebraic> depsClone = (HashSet<Algebraic>) listDependences.clone();
-    for (Algebraic deps : depsClone) {
-      listDependences.addAll(deps.listDependences);
+    
+    
+    @Override
+    public String getName() {
+        return name;
     }
-    //return true if there were changes
-    return listDependences.size() != depsClone.size();
-  }
 
-  public boolean isRec() {
-    return listDependences.contains(this);
-  }
-
-  @Override
-  public int getDimension() {
-    int dim = 0;
-    int add = 0;
-    if (isRec()) {
-      add = 1;
+    @Override
+    public Set<Typable> getDependences() {
+        return dependences;
     }
-    for (Typable typable : listDependences) {
-      boolean dependsOn = typable.getDependences().contains(this);
-      if (!dependsOn) {
-        dim = Math.max(dim, typable.getDimension());
-      }
-    }
-    return dim + add;
-  }
-
-  @Override
-  public Slot generate(int n) {
-    // TODO empecher les cas de non terminaison
-    Slot res = new Slot(this);
-    HashSet<Slot> listHoles = new HashSet<Slot>();
-    listHoles.add(res);
-    while (!listHoles.isEmpty()) {
-
-      //retrieve set of maximal dimension terms
-      int dimMax = 0;
-      HashSet<Slot> toVisit = new HashSet<Slot>();
-      for (Slot term : listHoles) {
-        int d = term.getDimention();
-        if (d > dimMax) {
-          dimMax = d;
-          toVisit = new HashSet<Slot>();
+    
+    @Override
+    public int getDimension() {
+        int dim = 0;
+        int add = 0;
+        if (isRec()) {
+            add = 1;
         }
-        if (d == dimMax) {
-          toVisit.add(term);
+        for (Typable typable : dependences) {
+            boolean dependsOn = typable.getDependences().contains(this);
+            if (!dependsOn) {
+                dim = Math.max(dim, typable.getDimension());
+            }
         }
-      }
+        return dim + add;
+    }
 
-      //spread n across maximal dimention terms
-      int[] listSpread = Random.pile(n, toVisit.size());
-
-      //fill each maximal dimension term
-      int i = 0;
-      for (Slot term : toVisit) {
-        Request req;
-        if (term.getDstToLeaf() < listSpread[i]) {
-          req = new MakeAllStrategy(listSpread[i]);
-        } else {
-          req = new MakeLeafStrategy(listSpread[i]);
+    @Override
+    public int dstToLeaf() {
+        System.out.println(getName() + " : " + dstLeaf);
+        if (dstLeaf != -1) {
+            return dstLeaf;
         }
-        listHoles.addAll(req.fillATerm(term));
-        i++;
-      }
-
-      //remove newly filled terms
-      listHoles.removeAll(toVisit);
-    }
-    return res;
-  }
-
-  public Slot generate2(int n) {
-    Slot res = new Slot(this);
-    HashSet<Slot> listHoles = new HashSet<Slot>();
-    listHoles.add(res);
-    while (!listHoles.isEmpty()) {
-
-      //retrieve set of maximal dimension terms
-      int dimMax = 0;
-      HashSet<Slot> toVisit = new HashSet<Slot>();
-      for (Slot term : listHoles) {
-        int d = term.getDimention();
-        if (d > dimMax) {
-          dimMax = d;
-          toVisit = new HashSet<Slot>();
+        int res = Integer.MAX_VALUE;
+        for (Constructor constructor : constructors) {
+            if (constructor.isLocked()) {
+                //this case should not directly happen if dstToLeaf() is called by user:
+                //only during recursive call.
+                //the returned value is sensless
+                return -1;
+            }
+            res = Math.min(res, constructor.distanceToReachLeaf());
         }
-        if (d == dimMax) {
-          toVisit.add(term);
+        this.dstLeaf = res;
+        System.out.println(getName() + " -> " + dstLeaf);
+        return dstLeaf;
+    }
+
+    
+    @Override
+    public Slot generate(int n) {
+        // TODO empecher les cas de non terminaison
+        Slot res = new Slot(this);
+        HashSet<Slot> listHoles = new HashSet<Slot>();
+        listHoles.add(res);
+        while (!listHoles.isEmpty()) {
+
+            //retrieve set of maximal dimension terms
+            int dimMax = 0;
+            HashSet<Slot> toVisit = new HashSet<Slot>();
+            for (Slot term : listHoles) {
+                int d = term.getDimension();
+                if (d > dimMax) {
+                    dimMax = d;
+                    toVisit = new HashSet<Slot>();
+                }
+                if (d == dimMax) {
+                    toVisit.add(term);
+                }
+            }
+
+            //spread n across maximal dimention terms
+            int[] listSpread = Random.pile(n, toVisit.size());
+
+            //fill each maximal dimension term
+            int i = 0;
+            for (Slot term : toVisit) {
+                Request req;
+                if (term.getDstToLeaf() < listSpread[i]) {
+                    req = new MakeAllStrategy(listSpread[i]);
+                } else {
+                    req = new MakeLeafStrategy(listSpread[i]);
+                }
+                listHoles.addAll(req.fillATerm(term));
+                i++;
+            }
+
+            //remove newly filled terms
+            listHoles.removeAll(toVisit);
         }
-      }
+        return res;
+    }
 
-      //spread n across maximal dimention terms
-      int[] listSpread = Random.pile(n, toVisit.size());
-
-      //fill each maximal dimension term
-      int i = 0;
-      for (Slot term : toVisit) {
-        Request req;
-        if (term.getDstToLeaf() < listSpread[i]) {
-          req = new MakeAllStrategy(listSpread[i]);
-        } else {
-          req = new MakeLeafStrategy(listSpread[i]);
+    @Override
+    public boolean updateDependences() {
+        Set<Typable> depsClone = new HashSet<Typable>(dependences);
+        for (Typable deps : depsClone) {
+            dependences.addAll(deps.getDependences());
         }
-        listHoles.addAll(req.fillATerm(term));
-        i++;
-      }
-
-      //remove newly filled terms
-      listHoles.removeAll(toVisit);
+        //return true if there were changes
+        return dependences.size() != depsClone.size();
     }
-    return res;
-  }
-
-  @Override
-  public int dstToLeaf() {
-    System.out.println(getName() + " : " + dstLeaf);
-    if (dstLeaf != -1) {
-      return dstLeaf;
+    
+    
+    public Algebraic addConstructor(String name, Typable... listTypes) {
+        constructors.add(new Constructor(this, listTypes, name));
+        dependences.addAll(Arrays.asList(listTypes));
+        return this;
     }
-    int res = Integer.MAX_VALUE;
-    for (Constructor constructor : listConstructors) {
-      if (constructor.isLocked()) {
-        //this case should not directly happen if dstToLeaf() is called by user:
-        //only during recursive call.
-        //the returned value is sensless
-        return -1;
-      }
-      res = Math.min(res, constructor.distanceToReachLeaf());
-    }
-    this.dstLeaf = res;
-    System.out.println(getName() + " -> " + dstLeaf);
-    return dstLeaf;
-  }
 
-  @Override
-  public String toString() {
-    String res = this.getName() + " : \n";
-    for (Constructor constructor : listConstructors) {
-      res += "\t" + constructor + "\n";
+    public Scope getScope() {
+        return scope;
     }
-    return res;
-  }
 
-  /*
-   * =========================== USING META-TYPAGE ============================
-   */
-  /**
-   * This methode only work with Gom pattern classes. Indeed, method make()
-   * constructed by using Gom is searched in order to build Constructor
-   *
-   * @param classe class following Gom pattern definition
-   * @return
-   */
-  @Deprecated
-  public Algebraic addConstructor(String name, Class classe) {
-    String pattern = "make";
-    Method[] listMethods = classe.getDeclaredMethods();
-    Method make = null;
-    for (int i = 0; i < listMethods.length; i++) {
-      Method method = listMethods[i];
-      if (method.getName().equals(pattern)) {
-        make = method;
-        break;
-      }
-      if (i == listMethods.length - 1) {
-        throw new UnsupportedOperationException("Method " + pattern + "() was not found in " + classe);
-      }
+    Constructor chooseConstructor() {
+        if(constructors.isEmpty()){
+                    throw new UnsupportedOperationException("No constructors");
+        }
+        int choice = (int) (Math.random() * constructors.size());
+        return constructors.get(choice);
+//        int i = 0;
+//        for (Constructor constructor : constructors) {
+//            if (i == choice) {
+//                return constructor;
+//            }
+//            i++;
+//        }
+//        throw new UnsupportedOperationException("ERROR");
     }
-    Constructor cons = new Constructor(this, make, name);
-    listConstructors.add(cons);
-    listDependences.addAll(Arrays.asList(cons.getFields()));
-    return this;
-  }
 
-  @Deprecated
-  public Algebraic addConstructor(String name, Class classe, String pattern) {
-    Method[] listMethods = classe.getDeclaredMethods();
-    Method make = null;
-    for (int i = 0; i < listMethods.length; i++) {
-      Method method = listMethods[i];
-      if (method.getName().equals(pattern)) {
-        make = method;
-        break;
-      }
-      if (i == listMethods.length - 1) {
-        throw new UnsupportedOperationException("Method " + pattern + "() was not found in " + classe);
-      }
+    Constructor chooseMinimalConstructor() {
+        //TODO improve choice randomly
+        for (Constructor constructor : constructors) {
+            int m = constructor.distanceToReachLeaf();
+            if (m == dstToLeaf()) {
+                return constructor;
+            }
+        }
+        throw new UnsupportedOperationException("Internal error happends when backtracking (" + getName() + " : " + dstToLeaf() + ").");
     }
-    Constructor cons = new Constructor(this, make, name);
-    listConstructors.add(cons);
-    listDependences.addAll(Arrays.asList(cons.getFields()));
-    return this;
-  }
 
-  @Override
-  public HashSet<Typable> getDependences() {
-    return listDependences;
-  }
+
+    public boolean isRec() {
+        return dependences.contains(this);
+    }
+
+    public Slot generate2(int n) {
+        Slot res = new Slot(this);
+        HashSet<Slot> listHoles = new HashSet<Slot>();
+        listHoles.add(res);
+        while (!listHoles.isEmpty()) {
+
+            //retrieve set of maximal dimension terms
+            int dimMax = 0;
+            HashSet<Slot> toVisit = new HashSet<Slot>();
+            for (Slot term : listHoles) {
+                int d = term.getDimension();
+                if (d > dimMax) {
+                    dimMax = d;
+                    toVisit = new HashSet<Slot>();
+                }
+                if (d == dimMax) {
+                    toVisit.add(term);
+                }
+            }
+
+            //spread n across maximal dimention terms
+            int[] listSpread = Random.pile(n, toVisit.size());
+
+            //fill each maximal dimension term
+            int i = 0;
+            for (Slot term : toVisit) {
+                Request req;
+                if (term.getDstToLeaf() < listSpread[i]) {
+                    req = new MakeAllStrategy(listSpread[i]);
+                } else {
+                    req = new MakeLeafStrategy(listSpread[i]);
+                }
+                listHoles.addAll(req.fillATerm(term));
+                i++;
+            }
+
+            //remove newly filled terms
+            listHoles.removeAll(toVisit);
+        }
+        return res;
+    }
+
+    @Override
+    public String toString() {
+        String res = this.getName() + " : \n";
+        for (Constructor constructor : constructors) {
+            res += "\t" + constructor + "\n";
+        }
+        return res;
+    }
+
+    /*
+     * =========================== USING META-TYPAGE
+     * ============================
+     */
+    /**
+     * This methode only work with Gom pattern classes. Indeed, method make()
+     * constructed by using Gom is searched in order to build Constructor
+     *
+     * @param classe class following Gom pattern definition
+     * @return
+     */
+    @Deprecated
+    public Algebraic addConstructor(String name, Class classe) {
+        String pattern = "make";
+        Method[] listMethods = classe.getDeclaredMethods();
+        Method make = null;
+        for (int i = 0; i < listMethods.length; i++) {
+            Method method = listMethods[i];
+            if (method.getName().equals(pattern)) {
+                make = method;
+                break;
+            }
+            if (i == listMethods.length - 1) {
+                throw new UnsupportedOperationException("Method " + pattern + "() was not found in " + classe);
+            }
+        }
+        Constructor cons = new Constructor(this, make, name);
+        constructors.add(cons);
+        dependences.addAll(Arrays.asList(cons.getFields()));
+        return this;
+    }
+
+    @Deprecated
+    public Algebraic addConstructor(String name, Class classe, String pattern) {
+        Method[] listMethods = classe.getDeclaredMethods();
+        Method make = null;
+        for (int i = 0; i < listMethods.length; i++) {
+            Method method = listMethods[i];
+            if (method.getName().equals(pattern)) {
+                make = method;
+                break;
+            }
+            if (i == listMethods.length - 1) {
+                throw new UnsupportedOperationException("Method " + pattern + "() was not found in " + classe);
+            }
+        }
+        Constructor cons = new Constructor(this, make, name);
+        constructors.add(cons);
+        dependences.addAll(Arrays.asList(cons.getFields()));
+        return this;
+    }
+
 }

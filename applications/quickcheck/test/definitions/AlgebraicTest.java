@@ -5,11 +5,16 @@
 package definitions;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 import org.junit.*;
 import sort.types.Expr;
 import sort.types.Surexpr;
-import sort.types.expr.*;
-import sort.types.surexpr.*;
+import sort.types.expr.mult;
+import sort.types.expr.plus;
+import sort.types.expr.un;
+import sort.types.expr.zero;
+import sort.types.surexpr.rec;
+import sort.types.surexpr.wrapper;
 
 /**
  *
@@ -309,11 +314,13 @@ public class AlgebraicTest {
     System.out.println("dstToLeaf Forest");
     int expResult = 2;
     int result = forest.dstToLeaf();
+    System.out.println(result);
     assertEquals(expResult, result);
   }
 
   @Test
   public void testDstToLeafTree2() {
+    System.out.println(forest.dstToLeaf());
     System.out.println("dstToLeaf Tree2");
     int expResult = 1;
     int result = tree2.dstToLeaf();
@@ -422,6 +429,6 @@ public class AlgebraicTest {
     slot.toDot("tree2.dot");
     int expResult = 1;
     int result = 1;
-    assertEquals(expResult, result);
+//    assertEquals(expResult, result);
   }
 }

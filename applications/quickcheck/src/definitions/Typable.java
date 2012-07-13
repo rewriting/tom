@@ -1,6 +1,6 @@
 package definitions;
 
-import java.util.HashSet;
+import java.util.Set;
 
 /**
  *
@@ -10,7 +10,7 @@ public interface Typable {
 
   public String getName();
   
-  public HashSet<Typable> getDependences();
+  public Set<Typable> getDependences();
 
   public int getDimension();
 

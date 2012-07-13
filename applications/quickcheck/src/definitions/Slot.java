@@ -42,7 +42,7 @@ public class Slot {
     return deps;
   }
 
-  int getDimention() {
+  int getDimension() {
     return type.getDimension();
   }
 
