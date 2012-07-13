@@ -23,7 +23,7 @@ public class Slot {
 
   Slot[] chooseConstructor() {
     if (type instanceof Algebraic) {
-      cons = ((Algebraic) type).chooseConstructor();
+      cons = ((Algebraic) type).chooseFiniteConstructor();
       deps = cons.giveATermDeps();
     } else {
       deps = new Slot[0];
@@ -93,4 +93,8 @@ public class Slot {
 //  public ATerm toATerm(){
 //    
 //  }
+
+  String getName() {
+    return type.getName();
+  }
 }

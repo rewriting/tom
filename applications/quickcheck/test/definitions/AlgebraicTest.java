@@ -420,13 +420,107 @@ public class AlgebraicTest {
     int result = 1;
     assertEquals(expResult, result);
   }
-  
+
+  @Test
+  public void testGenerateA() {
+    System.out.println("Generate A");
+    Slot slot = a.generate(100);
+    System.out.println(slot);
+    slot.toDot("A.dot");
+    int expResult = 1;
+    int result = 1;
+    assertEquals(expResult, result);
+  }
+
+  @Test
+  public void testGenerateB() {
+    System.out.println("Generate B");
+    Slot slot = b.generate(100);
+    System.out.println(slot);
+    slot.toDot("B.dot");
+    int expResult = 1;
+    int result = 1;
+    assertEquals(expResult, result);
+  }
+
+  @Test
+  public void testGenerateC() {
+    System.out.println("Generate C");
+    Slot slot = c.generate(100);
+    System.out.println(slot);
+    slot.toDot("C.dot");
+    int expResult = 1;
+    int result = 1;
+    assertEquals(expResult, result);
+  }
+
+  @Test
+  public void testGenerateCirc() {
+    System.out.println("Generate Circ");
+    Slot slot;
+    String res = "not this";
+    try {
+      slot = circ.generate(100);
+      System.out.println(slot);
+      slot.toDot("Circ.dot");
+    } catch (UnsupportedOperationException e) {
+      res = e.getMessage();
+    }
+
+    String expResult = "Type circ does not terminate.";
+    assertEquals(expResult, res);
+  }
+
+  @Test
+  public void testGenerateforest() {
+    System.out.println("Generate forest");
+    Slot slot = forest.generate(100);
+    System.out.println(slot);
+    slot.toDot("forest.dot");
+    int expResult = 1;
+    int result = 1;
+    assertEquals(expResult, result);
+  }
+
+  @Test
+  public void testGeneratenat() {
+    System.out.println("Generate nat");
+    Slot slot = nat.generate(100);
+    System.out.println(slot);
+    slot.toDot("nat.dot");
+    int expResult = 1;
+    int result = 1;
+    assertEquals(expResult, result);
+  }
+
+  @Test
+  public void testGenerateTree() {
+    System.out.println("Generate tree");
+    Slot slot = tree.generate(100);
+    System.out.println(slot);
+    slot.toDot("tree.dot");
+    int expResult = 1;
+    int result = 1;
+    assertEquals(expResult, result);
+  }
+
   @Test
   public void testGenerateTree2() {
     System.out.println("Generate tree2");
     Slot slot = tree2.generate(100);
     System.out.println(slot);
     slot.toDot("tree2.dot");
+    int expResult = 1;
+    int result = 1;
+    assertEquals(expResult, result);
+  }
+
+  @Test
+  public void testGeneratetypetest() {
+    System.out.println("Generate typetest");
+    Slot slot = typetest.generate(100);
+    System.out.println(slot);
+    slot.toDot("typetest.dot");
     int expResult = 1;
     int result = 1;
     assertEquals(expResult, result);
