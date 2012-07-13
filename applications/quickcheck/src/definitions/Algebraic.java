@@ -198,6 +198,7 @@ public class Algebraic implements Typable {
 
   @Override
   public int dstToLeaf() {
+    System.out.println(getName() + " : " + dstLeaf);
     if (dstLeaf != -1) {
       return dstLeaf;
     }
@@ -212,6 +213,7 @@ public class Algebraic implements Typable {
       res = Math.min(res, constructor.distanceToReachLeaf());
     }
     this.dstLeaf = res;
+    System.out.println(getName() + " -> " + dstLeaf);
     return dstLeaf;
   }
 
