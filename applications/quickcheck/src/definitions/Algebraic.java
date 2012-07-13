@@ -84,7 +84,6 @@ public class Algebraic implements Typable {
 
   @Override
   public Slot generate(int n) {
-    // TODO empecher les cas de non terminaison
     if (this.dstToLeaf() == Integer.MAX_VALUE) {
       throw new UnsupportedOperationException("Type " + this.getName() + " does not terminate.");
     }
@@ -186,14 +185,18 @@ public class Algebraic implements Typable {
   }
 
   Constructor chooseMinimalConstructor() {
-    //TODO improve choice randomly
+    ArrayList<Constructor> minCons = new ArrayList<Constructor>(constructors.size());
     for (Constructor constructor : constructors) {
       int m = constructor.distanceToReachLeaf();
       if (m == dstToLeaf()) {
-        return constructor;
+        minCons.add(constructor);
       }
     }
-    throw new UnsupportedOperationException("Internal error happends when backtracking (" + getName() + " : " + dstToLeaf() + ").");
+    if (minCons.isEmpty()) {
+      throw new UnsupportedOperationException("Internal error happends when backtracking (" + getName() + " : " + dstToLeaf() + ").");
+    } else {
+      return minCons.get((int) (Math.random() * minCons.size()));
+    }
   }
 
   public boolean isRec() {
