@@ -32,6 +32,8 @@ public abstract class Request {
       throw new UnsupportedOperationException("clone method fails.");
     }
   }
+  
+  abstract HashSet<Slot> fillATerm(Slot aTerm, int n);
 
   abstract HashSet<Slot> fillATerm(Slot aTerm);
 }

@@ -115,11 +115,13 @@ public class Algebraic implements Typable {
         Request req;
         int dst = term.getDstToLeaf();
         if (dst < listSpread[i]) {
-          req = new MakeAllStrategy(listSpread[i]);
+//          req = new MakeAllStrategy(listSpread[i]);
+          req = new MakeAllStrategy();
         } else {
-          req = new MakeLeafStrategy(listSpread[i]);
+//          req = new MakeLeafStrategy(listSpread[i]);
+          req = new MakeLeafStrategy();
         }
-        listHoles.addAll(req.fillATerm(term));
+        listHoles.addAll(req.fillATerm(term, listSpread[i]));
         i++;
       }
 
