@@ -10,7 +10,6 @@ import java.util.*;
 public class Algebraic implements Typable {
 
   private String name;
-//    private Set<Constructor> constructors;
   private List<Constructor> constructors;
   private Set<Typable> dependences;
   private int dstLeaf;
@@ -18,7 +17,6 @@ public class Algebraic implements Typable {
 
   public Algebraic(Scope scope, String name) {
     this.name = name;
-//    constructors = new HashSet<Constructor>();
     constructors = new ArrayList<Constructor>();
     dependences = new HashSet<Typable>();
     dstLeaf = -1;
@@ -31,7 +29,6 @@ public class Algebraic implements Typable {
     dstLeaf = -1;
     this.scope = scope;
     this.name = type.getName();
-//    constructors = new HashSet<Constructor>();
     constructors = new ArrayList<Constructor>();
     dependences = new HashSet<Typable>();
     scope.addType(this);
@@ -115,10 +112,8 @@ public class Algebraic implements Typable {
         Request req;
         int dst = term.getDstToLeaf();
         if (dst < listSpread[i]) {
-//          req = new MakeAllStrategy(listSpread[i]);
           req = new MakeAllStrategy();
         } else {
-//          req = new MakeLeafStrategy(listSpread[i]);
           req = new MakeLeafStrategy();
         }
         listHoles.addAll(req.fillATerm(term, listSpread[i]));
@@ -141,16 +136,31 @@ public class Algebraic implements Typable {
     return dependences.size() != depsClone.size();
   }
 
+  /**
+   * This function make it possible to add constructors of the given type.
+   *
+   * @param name name of the constructor
+   * @param listTypes types of the fields of the constructor
+   * @return
+   */
   public Algebraic addConstructor(String name, Typable... listTypes) {
     constructors.add(new Constructor(this, listTypes, name));
     dependences.addAll(Arrays.asList(listTypes));
     return this;
   }
 
-  public Scope getScope() {
+  Scope getScope() {
     return scope;
   }
 
+  /**
+   * Choose randomly one of the constructors of the current type. This function
+   * does not check whether choosen constructor is finite, that is, whether each
+   * of these fields is finite.
+   *
+   * @return choosen constructor
+   * @deprecated
+   */
   @Deprecated
   Constructor chooseConstructor() {
     if (constructors.isEmpty()) {
@@ -160,6 +170,13 @@ public class Algebraic implements Typable {
     return constructors.get(choice);
   }
 
+  /**
+   * Choose randomly one of the constructor of the current type and check
+   * whether choosen constructor is finite, that is, whether each of these
+   * fields is finite.
+   *
+   * @return choosen constructor
+   */
   Constructor chooseFiniteConstructor() {
     if (constructors.isEmpty()) {
       throw new UnsupportedOperationException("No constructors");
@@ -179,6 +196,11 @@ public class Algebraic implements Typable {
     throw new UnsupportedOperationException("No constructors are finite");
   }
 
+  /**
+   * Choose one the constructor that can terminate in the minimum of steps.
+   *
+   * @return choosen constructor
+   */
   Constructor chooseMinimalConstructor() {
     ArrayList<Constructor> minCons = new ArrayList<Constructor>(constructors.size());
     for (Constructor constructor : constructors) {
@@ -194,6 +216,14 @@ public class Algebraic implements Typable {
     }
   }
 
+  /**
+   * Check whether the current type is recursive, that is, whether it is
+   * contained in its own dependences. This function cannot be used till
+   * dependances are not set
+   *
+   * @see Scope#setDependances() 
+   * @return true if type is recursive.
+   */
   public boolean isRec() {
     return dependences.contains(this);
   }
@@ -216,6 +246,7 @@ public class Algebraic implements Typable {
    *
    * @param classe class following Gom pattern definition
    * @return
+   * @deprecated 
    */
   @Deprecated
   public Algebraic addConstructor(String name, Class classe) {
@@ -238,6 +269,14 @@ public class Algebraic implements Typable {
     return this;
   }
 
+  /**
+   * The method make it possible to add constructor by using java class of this constructor. 
+   * @param name
+   * @param classe
+   * @param pattern
+   * @return
+   * @deprecated
+   */
   @Deprecated
   public Algebraic addConstructor(String name, Class classe, String pattern) {
     Method[] listMethods = classe.getDeclaredMethods();

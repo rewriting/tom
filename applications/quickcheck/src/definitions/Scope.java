@@ -23,6 +23,9 @@ public class Scope {
     setOfTypes.add(t);
   }
 
+  /**
+   * This funtion sets dependences of all type in this scope.
+   */
   public void setDependances() {
     boolean hasChanged = true;
     while (hasChanged) {
