@@ -253,7 +253,7 @@ public class TomMappingFromEcore {
   }
 
 /**
-   * A dictionnary linking EMF classes with the corresponding tom mapping filename 
+   * A set of EMF classes 
    */
   private final static HashSet<Class<?>> tomEMFTypes = new HashSet<Class<?>>();
   static {
@@ -415,7 +415,6 @@ private static <O> org.eclipse.emf.common.util.EList<O> append@name@(O e,org.ecl
    */
   private static void extractFromEPackage(java.io.Writer writer, EPackage p) throws java.io.IOException {
     for(EClassifier eclf : p.getEClassifiers()) {
-      //System.out.println("(DEBUG) EClassifier.default = " + eclf.getName() + " / " + eclf.getDefaultValue());
       extractFromEClassifier(writer,eclf);
     }
     for(EPackage ep : p.getESubpackages()) {
