@@ -56,7 +56,7 @@ public class SimplePDLToPetriNoHash {
   }
 
 
-  %transformation SimplePDLToPetriNet(tom__linkClass:LinkClass,pn:PetriNet) with(Process, WorkDefinition, WorkSequence) to (Place, Transition) (src:SimplePDLSemantics_updated.ecore,dst:PetriNetSemantics_updated.ecore) {
+  %transformation SimplePDLToPetriNet(tom__linkClass:LinkClass,pn:PetriNet) with(SimplePDLSemantics_updated.ecore) to (PetriNetSemantics_updated.ecore) {
 
     definition P2PN traversal `TopDown(P2PN(tom__linkClass,pn)) {
       p@Process[name=name] -> {
@@ -88,6 +88,7 @@ public class SimplePDLToPetriNoHash {
 
     definition WD2PN traversal `TopDown(WD2PN(tom__linkClass,pn)) {
       wd@WorkDefinition[name=name] -> {
+        //System.out.println("Je suis un A");
         Node p_ready  = `Place(name + "_ready", pn,ArcEList(), ArcEList(), 1);
         String n1 = `name+"_started";
         %tracelink(Node, p_started, `Place(n1, pn,ArcEList(), ArcEList(), 0));
