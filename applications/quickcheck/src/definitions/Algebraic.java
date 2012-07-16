@@ -4,21 +4,21 @@ import aterm.ATermAppl;
 import java.util.*;
 
 /**
- * Represents implementation of any algebraic type with Typable formalism.
+ * Represents implementation of any algebraic type with Buildable formalism.
  *
  * @author hubert
  */
-public class Algebraic implements Typable {
+public class Algebraic implements Buildable {
 
   private String name;
   private List<Constructor> constructors;
-  private Set<Typable> dependences;
+  private Set<Buildable> dependences;
   private int dstLeaf;
 
   public Algebraic(Scope scope, String name) {
     this.name = name;
     constructors = new ArrayList<Constructor>();
-    dependences = new HashSet<Typable>();
+    dependences = new HashSet<Buildable>();
     dstLeaf = -1;
     scope.addType(this);
   }
@@ -33,7 +33,7 @@ public class Algebraic implements Typable {
   }
 
   @Override
-  public Set<Typable> getDependences() {
+  public Set<Buildable> getDependences() {
     return dependences;
   }
 
@@ -44,7 +44,7 @@ public class Algebraic implements Typable {
     if (isRec()) {
       add = 1;
     }
-    for (Typable typable : dependences) {
+    for (Buildable typable : dependences) {
       boolean dependsOn = typable.getDependences().contains(this);
       if (!dependsOn) {
         dim = Math.max(dim, typable.getDimension());
@@ -125,8 +125,8 @@ public class Algebraic implements Typable {
 
   @Override
   public boolean updateDependences() {
-    Set<Typable> depsClone = new HashSet<Typable>(dependences);
-    for (Typable deps : depsClone) {
+    Set<Buildable> depsClone = new HashSet<Buildable>(dependences);
+    for (Buildable deps : depsClone) {
       dependences.addAll(deps.getDependences());
     }
     //return true if there were changes
@@ -140,7 +140,7 @@ public class Algebraic implements Typable {
    * @param listTypes types of the fields of the constructor
    * @return
    */
-  public Algebraic addConstructor(String name, Typable... listTypes) {
+  public Algebraic addConstructor(String name, Buildable... listTypes) {
     constructors.add(new Constructor(name, listTypes));
     dependences.addAll(Arrays.asList(listTypes));
     return this;

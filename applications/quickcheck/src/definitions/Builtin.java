@@ -11,12 +11,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
+ * Implements several built-in types.
  *
  * @author hubert
  */
 public final class Builtin {
-  
-  public final static Typable Integer = new Typable() {
+
+  public final static Buildable Integer = new Buildable() {
 
     @Override
     public java.lang.String getName() {
@@ -24,8 +25,8 @@ public final class Builtin {
     }
 
     @Override
-    public Set<Typable> getDependences() {
-      return new HashSet<Typable>();
+    public Set<Buildable> getDependences() {
+      return new HashSet<Buildable>();
     }
 
     @Override
@@ -40,7 +41,7 @@ public final class Builtin {
 
     @Override
     public ATerm generate(int n) {
-      return (new PureFactory()).makeInt((int) (Math.random()*n));
+      return (new PureFactory()).makeInt((int) (Math.random() * n));
     }
 
     @Override
@@ -48,8 +49,7 @@ public final class Builtin {
       return false;
     }
   };
-  
-  public final static Typable String = new Typable() {
+  public final static Buildable String = new Buildable() {
 
     @Override
     public java.lang.String getName() {
@@ -57,8 +57,8 @@ public final class Builtin {
     }
 
     @Override
-    public Set<Typable> getDependences() {
-      return new HashSet<Typable>();
+    public Set<Buildable> getDependences() {
+      return new HashSet<Buildable>();
     }
 
     @Override
@@ -76,7 +76,7 @@ public final class Builtin {
       PureFactory factory = new PureFactory();
       ATermList res = factory.makeList();
       for (int i = 0; i < n; i++) {
-        res = factory.makeList(factory.makeInt((int) (Math.random()*256)), res);
+        res = factory.makeList(factory.makeInt((int) (Math.random() * 256)), res);
       }
       return res;
     }
@@ -86,7 +86,8 @@ public final class Builtin {
       return false;
     }
   };
-  
-  private Builtin(){};
-  
+
+  private Builtin() {
+  }
+;
 }

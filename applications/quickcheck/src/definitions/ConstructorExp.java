@@ -22,9 +22,9 @@ class ConstructorExp extends Constructor {
     this.make = make;
   }
 
-  static private Typable[] extractFields(Method make, AlgebraicExp caller) {
+  static private Buildable[] extractFields(Method make, AlgebraicExp caller) {
     Class[] listClasses = make.getParameterTypes();
-    Typable[] res = new Typable[listClasses.length];
+    Buildable[] res = new Buildable[listClasses.length];
     for (int i = 0; i < res.length; i++) {
       res[i] = caller.getScope().searchType(listClasses[i].getName());
     }

@@ -15,13 +15,13 @@ import java.io.FileOutputStream;
  *
  * @author hubert
  */
-public class Slot {
+class Slot {
 
-  private Typable type;
+  private Buildable type;
   private Constructor cons;
   private Slot[] deps;
 
-  Slot(Typable type) {
+  Slot(Buildable type) {
     this.type = type;
   }
 

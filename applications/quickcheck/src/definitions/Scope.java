@@ -3,19 +3,20 @@ package definitions;
 import java.util.HashSet;
 
 /**
+ * Contains all declared types.
  *
  * @author hubert
  */
 public class Scope {
 
-  private HashSet<Typable> setOfTypes;
+  private HashSet<Buildable> setOfTypes;
 
   public Scope() {
-    setOfTypes = new HashSet<Typable>();
+    setOfTypes = new HashSet<Buildable>();
   }
 
-  void addType(Typable t) {
-    for (Typable typable : setOfTypes) {
+  void addType(Buildable t) {
+    for (Buildable typable : setOfTypes) {
       if (typable.getName().equals(t.getName())) {
         throw new UnsupportedOperationException("Type " + t.getName() + " already defined");
       }
@@ -30,18 +31,18 @@ public class Scope {
     boolean hasChanged = true;
     while (hasChanged) {
       hasChanged = false;
-      for (Typable type : setOfTypes) {
+      for (Buildable type : setOfTypes) {
         hasChanged = hasChanged || type.updateDependences();
       }
     }
   }
 
-  Typable searchType(String name) {
-    for (Typable typable : setOfTypes) {
+  Buildable searchType(String name) {
+    for (Buildable typable : setOfTypes) {
       if (typable.getName().equals(name)) {
         return typable;
       }
     }
     throw new UnsupportedOperationException("Type " + name + " does not exist in the current scope");
-  } 
+  }
 }

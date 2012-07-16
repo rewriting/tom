@@ -6,11 +6,11 @@ package definitions;
  */
 class Constructor {
 
-  private Typable[] fields;
+  private Buildable[] fields;
   private boolean lock = false;
   private String name;
 
-  Constructor(String name, Typable[] fields) {
+  Constructor(String name, Buildable[] fields) {
     this.fields = fields;
     this.name = name;
   }
@@ -19,7 +19,7 @@ class Constructor {
     return name;
   }
 
-  Typable[] getFields() {
+  Buildable[] getFields() {
     return fields;
   }
 
@@ -42,7 +42,7 @@ class Constructor {
     lock = true;
     int res = 0;
     for (int i = 0; i < fields.length; i++) {
-      Typable field = fields[i];
+      Buildable field = fields[i];
       int tmp = field.dstToLeaf();
       if (tmp == -1) {
         lock = false;
@@ -63,7 +63,7 @@ class Constructor {
   public String toString() {
     String res = "[";
     for (int i = 0; i < fields.length; i++) {
-      Typable typable = fields[i];
+      Buildable typable = fields[i];
       res += typable.getName() + ", ";
     }
     res += "]";

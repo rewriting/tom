@@ -4,10 +4,10 @@ import aterm.ATerm;
 import java.util.Set;
 
 /**
- *
+ * Defines what a randomly buildable is.
  * @author hubert
  */
-public interface Typable {
+public interface Buildable {
 
   /**
    * Gives name of type.
@@ -23,7 +23,16 @@ public interface Typable {
    *
    * @return set of dependences
    */
-  public Set<Typable> getDependences();
+  public Set<Buildable> getDependences();
+
+  /**
+   * This function add depencences of its fields to its own depedences. It is
+   * use in order to set dependances (in fcontion Scope.setdependences()).
+   *
+   * @see Scope#setDependances()
+   * @return true if changes were done
+   */
+  public boolean updateDependences();
 
   /**
    * Gives dimension of the current type. This function cannot be used till
@@ -49,12 +58,4 @@ public interface Typable {
    * @return
    */
   public ATerm generate(int n);
-
-  /**
-   * This function add depencences of its fields to its own depedences. It is
-   * use in order to set dependances (in fcontion Scope.setdependences()).
-   * @see Scope#setDependances() 
-   * @return true if changes were done
-   */
-  public boolean updateDependences();
 }
