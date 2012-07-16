@@ -17,13 +17,13 @@ class Constructor {
   private Method make;
   private String name;
 
-  Constructor(Algebraic caller, Typable[] fields, String name) {
+  Constructor(String name, Algebraic caller, Typable[] fields) {
     this.caller = caller;
     this.fields = fields;
     this.name = name;
   }
 
-  Constructor(Algebraic caller, Method make, String name) {
+  Constructor(String name, Algebraic caller, Method make) {
     this.make = make;
     this.caller = caller;
     this.name = name;
