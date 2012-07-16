@@ -138,7 +138,7 @@ public class Algebraic implements Buildable {
    *
    * @param name name of the constructor
    * @param listTypes types of the fields of the constructor
-   * @return
+   * @return type with new constructor
    */
   public Algebraic addConstructor(String name, Buildable... listTypes) {
     constructors.add(new Constructor(name, listTypes));

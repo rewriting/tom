@@ -16,7 +16,10 @@ import java.util.Set;
  * @author hubert
  */
 public final class Builtin {
-
+  
+  /**
+   * Representation of type Integer.
+   */
   public final static Buildable Integer = new Buildable() {
 
     @Override
@@ -49,6 +52,10 @@ public final class Builtin {
       return false;
     }
   };
+  
+  /**
+   * Representation of type String.
+   */
   public final static Buildable String = new Buildable() {
 
     @Override

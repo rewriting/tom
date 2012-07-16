@@ -55,7 +55,7 @@ public interface Buildable {
    * not set (using scope.setdependences()).
    *
    * @param n maximal size of the generated term
-   * @return
+   * @return generated term
    */
   public ATerm generate(int n);
 }
