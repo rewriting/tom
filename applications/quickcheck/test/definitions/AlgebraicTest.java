@@ -22,7 +22,6 @@ import sort.types.surexpr.wrapper;
 public class AlgebraicTest {
 
   Scope scope;
-  Request request;
   Algebraic nat;
   Algebraic tree;
   Algebraic tree2;
@@ -35,9 +34,7 @@ public class AlgebraicTest {
 
   public AlgebraicTest() {
     scope = new Scope();
-
-    request = new MakeAllStrategy(10);
-
+    
     nat = new Algebraic(scope, "nat");
     nat.addConstructor("succ", nat);
     nat.addConstructor("zero");

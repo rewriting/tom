@@ -101,7 +101,7 @@ public class Algebraic implements Typable {
       //fill each maximal dimension term
       int i = 0;
       for (Slot term : toVisit) {
-        Request req;
+        Strategy req;
         int dst = term.getDstToLeaf();
         if (dst < listSpread[i]) {
           req = new MakeAllStrategy();
