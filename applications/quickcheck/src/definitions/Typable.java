@@ -8,10 +8,28 @@ import java.util.Set;
  */
 public interface Typable {
 
+  /**
+   * Gives name of type.
+   *
+   * @return name of type
+   */
   public String getName();
-  
+
+  /**
+   * This function gives the set of types which depend on current type. This
+   * function cannot be used till dependances are not set (using
+   * scope.setdependences()).
+   *
+   * @return set of dependences
+   */
   public Set<Typable> getDependences();
 
+  /**
+   * Gives dimension of the current type. This function cannot be used till
+   * dependances are not set (using scope.setdependences()).
+   *
+   * @return dimention
+   */
   public int getDimension();
 
   /**
@@ -22,12 +40,20 @@ public interface Typable {
    */
   public int dstToLeaf();
 
+  /**
+   * Make a new random term. This function cannot be used till dependances are
+   * not set (using scope.setdependences()).
+   *
+   * @param n maximal size of the generated term
+   * @return
+   */
   public Slot generate(int n);
 
   /**
+   * This function add depencences of its fields to its own depedences. It is
+   * use in order to set dependances (in fcontion Scope.setdependences()).
    *
-   * @return false if no changes were done
+   * @return true if changes were done
    */
   public boolean updateDependences();
-  
 }
