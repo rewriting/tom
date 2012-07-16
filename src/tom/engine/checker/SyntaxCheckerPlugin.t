@@ -528,7 +528,6 @@ matchblock:{
                    foundOpMake = true;
                    `verifyMakeDeclArgs(makeArgsList, domainLength, og, symbolType);
                  } else {
-      System.out.println("=== (DEBUG) === SyntaxChecker - " + `debug);
                    TomMessage.error(getLogger(), `fileName, `line, 
                        TomMessage.macroFunctionRepeated,
                        SyntaxCheckerPlugin.MAKE);
@@ -1352,7 +1351,6 @@ matchblock:{
       } else { // known symbol
         if (!getOptionBooleanValue("newtyper")) {//case of subtyping (-nt option activated)
           if( strictType  || !topLevel ) {
-            //DEBUG System.out.println("ensureValidApplDisjunction!");
             if(!ensureSymbolCodomain(TomBase.getSymbolCodomain(symbol), expectedType, TomMessage.invalidCodomain, res, fileName,decLine)) {
               return null;
             }

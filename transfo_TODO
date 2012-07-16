@@ -1,10 +1,17 @@
 %transformation
 
+- extend possible patterns: the same as in strategies
+
+- Tom-EMF: %op implement subconstruct causes problems when generating
+  EcorePackage mappings (Entry <-> Map, etc.)
+
 - "delete" with(src args) to(dst args):
   - do not precise args (we will infer them by using %resolve and %tracelink)
   - put ecore files instead: with(MMs.ecore) to(MMt.ecore)
+=> done.
 
 - create resolve elements in the TransformerPlugin instead of the Parser
+=> done.
 
 - simplify TomSignature
   - use Class() instead of ReferenceClass()? Pb: we need implement and there is
