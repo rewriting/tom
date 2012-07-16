@@ -24,7 +24,7 @@ class MakeAllStrategy extends Request {
     HashSet<Slot> res = new HashSet<Slot>();
 
     //fill the term by choosing one of its constructors
-    Slot[] deps = aTerm.chooseConstructor();
+    Slot[] deps = aTerm.chooseFiniteConstructor();
 
     //dispatch fields of the term between two categories: these whose dimension 
     //equals dimension of the term, and the others
@@ -62,7 +62,7 @@ class MakeAllStrategy extends Request {
     HashSet<Slot> res = new HashSet<Slot>();
 
     //fill the term by choosing one of its constructors
-    Slot[] deps = aTerm.chooseConstructor();
+    Slot[] deps = aTerm.chooseFiniteConstructor();
 
     //dispatch fields of the term between two categories: these whose dimension 
     //equals dimension of the term, and the others

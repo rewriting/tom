@@ -4,6 +4,10 @@
  */
 package definitions;
 
+import aterm.AFun;
+import aterm.ATerm;
+import aterm.ATermAppl;
+import aterm.pure.PureFactory;
 import java.io.File;
 import java.io.FileOutputStream;
 
@@ -21,7 +25,7 @@ public class Slot {
     this.type = type;
   }
 
-  Slot[] chooseConstructor() {
+  Slot[] chooseFiniteConstructor() {
     if (type instanceof Algebraic) {
       cons = ((Algebraic) type).chooseFiniteConstructor();
       deps = cons.giveATermDeps();
@@ -89,10 +93,16 @@ public class Slot {
     }
     return res;
   }
-  
-//  public ATerm toATerm(){
-//    
-//  }
+
+  ATermAppl toATerm() {
+    PureFactory factory = new PureFactory();
+    ATerm[] listFields = new ATerm[deps.length];
+    for (int i = 0; i < listFields.length; i++) {
+      listFields[i] = deps[i].toATerm();
+    }
+    AFun fun = factory.makeAFun(cons.getName(), deps.length, false);
+    return factory.makeAppl(fun, listFields);
+  }
 
   String getName() {
     return type.getName();

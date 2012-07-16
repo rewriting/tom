@@ -1,5 +1,6 @@
 package definitions;
 
+import aterm.ATerm;
 import java.util.Set;
 
 /**
@@ -47,12 +48,12 @@ public interface Typable {
    * @param n maximal size of the generated term
    * @return
    */
-  public Slot generate(int n);
+  public ATerm generate(int n);
 
   /**
    * This function add depencences of its fields to its own depedences. It is
    * use in order to set dependances (in fcontion Scope.setdependences()).
-   *
+   * @see Scope#setDependances() 
    * @return true if changes were done
    */
   public boolean updateDependences();

@@ -5,7 +5,6 @@
 package definitions;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertEquals;
 import org.junit.*;
 import sort.types.Expr;
 import sort.types.Surexpr;
@@ -402,7 +401,7 @@ public class AlgebraicTest {
   @Test
   public void testGenerateExpr() {
     System.out.println("Generate Expr");
-    Slot slot = expr.generate(100);
+    Slot slot = expr.generateSlot(100);
     System.out.println(slot);
     slot.toDot("Expr.dot");
     int expResult = 1;
@@ -413,7 +412,7 @@ public class AlgebraicTest {
   @Test
   public void testGenerateSurExpr() {
     System.out.println("Generate SurExpr");
-    Slot slot = surexpr.generate(100);
+    Slot slot = surexpr.generateSlot(100);
     System.out.println(slot);
     slot.toDot("SurExpr.dot");
     int expResult = 1;
@@ -424,7 +423,7 @@ public class AlgebraicTest {
   @Test
   public void testGenerateA() {
     System.out.println("Generate A");
-    Slot slot = a.generate(100);
+    Slot slot = a.generateSlot(100);
     System.out.println(slot);
     slot.toDot("A.dot");
     int expResult = 1;
@@ -435,7 +434,7 @@ public class AlgebraicTest {
   @Test
   public void testGenerateB() {
     System.out.println("Generate B");
-    Slot slot = b.generate(100);
+    Slot slot = b.generateSlot(100);
     System.out.println(slot);
     slot.toDot("B.dot");
     int expResult = 1;
@@ -446,7 +445,7 @@ public class AlgebraicTest {
   @Test
   public void testGenerateC() {
     System.out.println("Generate C");
-    Slot slot = c.generate(100);
+    Slot slot = c.generateSlot(100);
     System.out.println(slot);
     slot.toDot("C.dot");
     int expResult = 1;
@@ -460,7 +459,7 @@ public class AlgebraicTest {
     Slot slot;
     String res = "not this";
     try {
-      slot = circ.generate(100);
+      slot = circ.generateSlot(100);
       System.out.println(slot);
       slot.toDot("Circ.dot");
     } catch (UnsupportedOperationException e) {
@@ -474,7 +473,7 @@ public class AlgebraicTest {
   @Test
   public void testGenerateforest() {
     System.out.println("Generate forest");
-    Slot slot = forest.generate(100);
+    Slot slot = forest.generateSlot(100);
     System.out.println(slot);
     slot.toDot("forest.dot");
     int expResult = 1;
@@ -485,7 +484,7 @@ public class AlgebraicTest {
   @Test
   public void testGeneratenat() {
     System.out.println("Generate nat");
-    Slot slot = nat.generate(100);
+    Slot slot = nat.generateSlot(100);
     System.out.println(slot);
     slot.toDot("nat.dot");
     int expResult = 1;
@@ -496,7 +495,7 @@ public class AlgebraicTest {
   @Test
   public void testGenerateTree() {
     System.out.println("Generate tree");
-    Slot slot = tree.generate(100);
+    Slot slot = tree.generateSlot(100);
     System.out.println(slot);
     slot.toDot("tree.dot");
     int expResult = 1;
@@ -507,7 +506,7 @@ public class AlgebraicTest {
   @Test
   public void testGenerateTree2() {
     System.out.println("Generate tree2");
-    Slot slot = tree2.generate(100);
+    Slot slot = tree2.generateSlot(100);
     System.out.println(slot);
     slot.toDot("tree2.dot");
     int expResult = 1;
@@ -518,7 +517,7 @@ public class AlgebraicTest {
   @Test
   public void testGeneratetypetest() {
     System.out.println("Generate typetest");
-    Slot slot = typetest.generate(100);
+    Slot slot = typetest.generateSlot(100);
     System.out.println(slot);
     slot.toDot("typetest.dot");
     int expResult = 1;

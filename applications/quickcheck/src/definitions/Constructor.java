@@ -6,37 +6,18 @@ package definitions;
  */
 class Constructor {
 
-//  private Algebraic caller;
   private Typable[] fields;
   private boolean lock = false;
-//  private Method make;
   private String name;
 
   Constructor(String name, Typable[] fields) {
-//    this.caller = caller;
     this.fields = fields;
     this.name = name;
   }
 
-//  Constructor(String name, Algebraic caller, Method make) {
-//    this.make = make;
-//    this.caller = caller;
-//    this.name = name;
-//    this.fields = extractFields(make);
-//  }
-
   String getName() {
     return name;
   }
-
-//  private Typable[] extractFields(Method make) {
-//    Class[] listClasses = make.getParameterTypes();
-//    Typable[] res = new Typable[listClasses.length];
-//    for (int i = 0; i < res.length; i++) {
-//      res[i] = caller.getScope().searchType(listClasses[i].getName());
-//    }
-//    return res;
-//  }
 
   Typable[] getFields() {
     return fields;
@@ -63,9 +44,7 @@ class Constructor {
     for (int i = 0; i < fields.length; i++) {
       Typable field = fields[i];
       int tmp = field.dstToLeaf();
-//      if (!field.isDstToLeafDefined()) {
       if (tmp == -1) {
-        // if one of the constructors of field is locked
         lock = false;
         return Integer.MAX_VALUE;
       }
@@ -80,22 +59,6 @@ class Constructor {
     return res;
   }
 
-//  Object make(Object[] args) {
-//    try {
-//      return make.invoke(null, args);
-//    } catch (IllegalAccessException ex) {
-//      System.err.println("Method " + make + " enforces Java language access control and the underlying method is inaccessible.");
-//      Logger.getLogger(Constructor.class.getName()).log(Level.SEVERE, null, ex);
-//    } catch (IllegalArgumentException ex) {
-//      System.err.println("Method " + make + " is not static.");
-//      Logger.getLogger(Constructor.class.getName()).log(Level.SEVERE, null, ex);
-//    } catch (InvocationTargetException ex) {
-//      System.err.println("Method " + make + " throws exception.");
-//      Logger.getLogger(Constructor.class.getName()).log(Level.SEVERE, null, ex);
-//    }
-//    throw new UnsupportedOperationException("ERROR");
-//  }
-
   @Override
   public String toString() {
     String res = "[";
@@ -107,6 +70,11 @@ class Constructor {
     return res;
   }
 
+  /**
+   * Gives all fields of the current constructor
+   *
+   * @return
+   */
   Slot[] giveATermDeps() {
     Slot[] res = new Slot[getSize()];
     for (int i = 0; i < res.length; i++) {

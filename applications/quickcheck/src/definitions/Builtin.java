@@ -4,6 +4,9 @@
  */
 package definitions;
 
+import aterm.ATerm;
+import aterm.ATermList;
+import aterm.pure.PureFactory;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -36,8 +39,8 @@ public final class Builtin {
     }
 
     @Override
-    public Slot generate(int n) {
-      throw new UnsupportedOperationException("Not supported yet.");
+    public ATerm generate(int n) {
+      return (new PureFactory()).makeInt((int) (Math.random()*n));
     }
 
     @Override
@@ -69,8 +72,13 @@ public final class Builtin {
     }
 
     @Override
-    public Slot generate(int n) {
-      throw new UnsupportedOperationException("Not supported yet.");
+    public ATerm generate(int n) {
+      PureFactory factory = new PureFactory();
+      ATermList res = factory.makeList();
+      for (int i = 0; i < n; i++) {
+        res = factory.makeList(factory.makeInt((int) (Math.random()*256)), res);
+      }
+      return res;
     }
 
     @Override

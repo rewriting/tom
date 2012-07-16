@@ -57,7 +57,6 @@ class AlgebraicExp extends Algebraic {
    * The method make it possible to add constructor by using java class of this
    * constructor.
    *
-   * @param name
    * @param classe
    * @param pattern
    * @return

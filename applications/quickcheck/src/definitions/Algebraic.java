@@ -1,9 +1,11 @@
 package definitions;
 
+import aterm.ATermAppl;
 import java.util.*;
 
 /**
  * Represents implementation of any algebraic type with Typable formalism.
+ *
  * @author hubert
  */
 public class Algebraic implements Typable {
@@ -12,28 +14,16 @@ public class Algebraic implements Typable {
   private List<Constructor> constructors;
   private Set<Typable> dependences;
   private int dstLeaf;
-//  private Scope scope;
 
   public Algebraic(Scope scope, String name) {
     this.name = name;
     constructors = new ArrayList<Constructor>();
     dependences = new HashSet<Typable>();
     dstLeaf = -1;
-//    this.scope = scope;
     scope.addType(this);
   }
 
-//  @Deprecated
-//  public Algebraic(Scope scope, Class type) {
-//    dstLeaf = -1;
-//    this.scope = scope;
-//    this.name = type.getName();
-//    constructors = new ArrayList<Constructor>();
-//    dependences = new HashSet<Typable>();
-//    scope.addType(this);
-//  }
-  
-  List<Constructor> getConstructors(){
+  List<Constructor> getConstructors() {
     return constructors;
   }
 
@@ -81,15 +71,14 @@ public class Algebraic implements Typable {
     this.dstLeaf = res;
     return dstLeaf;
   }
-
-  @Override
-  public Slot generate(int n) {
+  
+  Slot generateSlot(int n){
     if (this.dstToLeaf() == Integer.MAX_VALUE) {
       throw new UnsupportedOperationException("Type " + this.getName() + " does not terminate.");
     }
-    Slot res = new Slot(this);
+    Slot slot = new Slot(this);
     HashSet<Slot> listHoles = new HashSet<Slot>();
-    listHoles.add(res);
+    listHoles.add(slot);
     while (!listHoles.isEmpty()) {
 
       //retrieve set of maximal dimension terms
@@ -126,7 +115,12 @@ public class Algebraic implements Typable {
       //remove newly filled terms
       listHoles.removeAll(toVisit);
     }
-    return res;
+    return slot;
+  }
+
+  @Override
+  public ATermAppl generate(int n) {
+    return generateSlot(n).toATerm();
   }
 
   @Override
@@ -220,7 +214,7 @@ public class Algebraic implements Typable {
    * contained in its own dependences. This function cannot be used till
    * dependances are not set
    *
-   * @see Scope#setDependances() 
+   * @see Scope#setDependances()
    * @return true if type is recursive.
    */
   public boolean isRec() {
@@ -235,64 +229,4 @@ public class Algebraic implements Typable {
     }
     return res;
   }
-
-  /*
-   * =========================== USING META-TYPAGE ============================
-   */
-//  /**
-//   * This methode only work with Gom pattern classes. Indeed, method make()
-//   * constructed by using Gom is searched in order to build Constructor
-//   *
-//   * @param classe class following Gom pattern definition
-//   * @return
-//   * @deprecated 
-//   */
-//  @Deprecated
-//  public Algebraic addConstructor(Class classe) {
-//    String pattern = "make";
-//    Method[] listMethods = classe.getDeclaredMethods();
-//    Method make = null;
-//    for (int i = 0; i < listMethods.length; i++) {
-//      Method method = listMethods[i];
-//      if (method.getName().equals(pattern)) {
-//        make = method;
-//        break;
-//      }
-//      if (i == listMethods.length - 1) {
-//        throw new UnsupportedOperationException("Method " + pattern + "() was not found in " + classe);
-//      }
-//    }
-//    Constructor cons = new Constructor(classe.getSimpleName(), this, make);
-//    constructors.add(cons);
-//    dependences.addAll(Arrays.asList(cons.getFields()));
-//    return this;
-//  }
-
-//  /**
-//   * The method make it possible to add constructor by using java class of this constructor. 
-//   * @param name
-//   * @param classe
-//   * @param pattern
-//   * @return
-//   * @deprecated
-//   */
-//  @Deprecated
-//  public Algebraic addConstructor(Class classe, String pattern) {
-//    Method[] listMethods = classe.getDeclaredMethods();
-//    Method make = null;
-//    for (int i = 0; i < listMethods.length; i++) {
-//      Method method = listMethods[i];
-//      if (method.getName().equals(pattern)) {
-//        make = method;
-//        break;
-//      }
-//      if (i == listMethods.length - 1) {
-//        throw new UnsupportedOperationException("Method " + pattern + "() was not found in " + classe);
-//      }
-//    }
-//    Constructor cons = new Constructor(classe.getSimpleName(), this, make);
-//    constructors.add(cons);
-//    dependences.addAll(Arrays.asList(cons.getFields()));
-//    return this;
-//  }
 }
