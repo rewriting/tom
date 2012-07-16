@@ -770,52 +770,24 @@ strategyVisit [List<TomVisit> list] throws TomException
 
 //////////////////////////////////////////////////////////////////
 
-// The %transformation construct : looks like the %strategy
+// The %transformation construct: looks like the %strategy
 transformationConstruct [Option orgTrack] returns [Declaration result] throws TomException
 {
   result = null;
-  Option ot = `noOption(); // ?
-//  List<TomWithTo> withList = new LinkedList<TomWithTo>();
-//  TomWithToList astWithToList = `concTomWithTo();
-  List<Declaration> declList = new LinkedList<Declaration>();
-  DeclarationList astDeclarationList = `concDeclaration();
+ 
+  List<Option> optionList = new LinkedList<Option>();
+  Option ot = `noOption();
 
   List<ElementaryTransformation> elemTransfoList = new LinkedList<ElementaryTransformation>();
   ElementaryTransformationList astElemTransfoList = `concElementaryTransformation();
 
-  List<Declaration> subDeclList = new LinkedList<Declaration>();
-  TomTypeList types = `concTomType();
-  TomTypeList rtypes = `concTomType();
-  List<Option> optionList = new LinkedList<Option>();
-  //OptionList options = `concOption();
+  //%transformation args
   List<TomName> slotNameList = new LinkedList<TomName>();
   List<PairNameDecl> pairNameDeclList = new LinkedList<PairNameDecl>();
+  TomTypeList types = `concTomType();
   String stringSlotName = null;
   String stringTypeArg = null;
-  TargetLanguage implement;
-  //tmp, will probably changed into List<BQTerm>
-  List<String> withElementList = new LinkedList<String>();
-  List<String> toElementList = new LinkedList<String>();
 
-  Option resolveOrgTrack = `noOption(); // ?
-
-  TomName rsname; 
-  List<TomVisit> resolveVisitList = new LinkedList<TomVisit>();
-  TomVisitList astResolveVisitList = `concTomVisit();
-  BQTerm resolveExtendsTerm;
-  List<ConstraintInstruction> resolveConstraintInstructionList = new LinkedList<ConstraintInstruction>();
-
-  List<ResolveStratElement> resolveStratElementList = new LinkedList<ResolveStratElement>();
-  ResolveStratElementList astResolveStratElementList = `concResolveStratElement();
-
-  List<ResolveStratBlock> resolveStratBlockList = new LinkedList<ResolveStratBlock>();
-  ResolveStratBlockList astResolveStratBlockList = `concResolveStratBlock();
-
-  List<TomName> resolveNameList = new LinkedList<TomName>();
-
-  Constraint constraint;
-  BQTerm subject;
-  TomTerm pattern;
   clearText();
 }
     :(
@@ -823,7 +795,6 @@ transformationConstruct [Option orgTrack] returns [Declaration result] throws To
         {
         ot = `OriginTracking(Name(name.getText()),name.getLine(),currentFile());
         optionList.add(ot);
-        //options = ASTFactory.makeOptionList(optionList); // usefull for later
         if(symbolTable.getSymbolFromName(name.getText()) != null) {
           throw new TomException(TomMessage.invalidTransformationName, new Object[]{name.getText()});
         }
@@ -872,7 +843,6 @@ transformationConstruct [Option orgTrack] returns [Declaration result] throws To
             slotNameList.add(astName);
 
             TomType transformationType = `Type(concTypeOption(),"Strategy",EmptyTargetLanguageType());
-            //TODO: ok?
             Option slotOption = `OriginTracking(Name(stringSlotName),firstSlot2.getLine(),currentFile());
             String varname = "t";
             BQTerm slotVar = `BQVariable(concOption(slotOption),Name(varname),transformationType);
@@ -883,22 +853,9 @@ transformationConstruct [Option orgTrack] returns [Declaration result] throws To
             }
            )*
          )? RPAREN
-
-         // shouldn't we find another syntax? -> indeed. infer useful parts
-         with:WITH LPAREN
-         src:ALL_ID
-         //withtoElementList[withElementList]
-         RPAREN 
-         TO LPAREN
-         dst:ALL_ID
-         //withtoElementList[toElementList]
-         RPAREN
-         //intermediate version
-         //LPAREN SRC COLON src:ALL_ID COMMA DST COLON dst:ALL_ID RPAREN
+         WITH LPAREN src:ALL_ID RPAREN TO LPAREN dst:ALL_ID RPAREN
         )
         LBRACE
-        //transformationBlockList[declList, name.getText()] { astDeclarationList = ASTFactory.makeDeclarationList(declList); }
-        //elementaryTransformationList[declList, name.getText()] { astDeclarationList = ASTFactory.makeDeclarationList(declList); }
         elementaryTransformationList[elemTransfoList, name.getText()]
         {
           astElemTransfoList = ASTFactory.makeElementaryTransformationList(elemTransfoList);
@@ -952,26 +909,25 @@ transformationConstruct [Option orgTrack] returns [Declaration result] throws To
          updatePosition(t.getLine(),t.getColumn());
          String fileFrom = src.getText();
          String fileTo = dst.getText();
-         //result = `AbstractDecl(concDeclaration(Transformation(Name(name.getText()),types,astDeclarationList,astElemTransfoList,fileFrom,fileTo,orgTrack),SymbolDecl(Name(name.getText()))));
+         //Transformation construct
          result = `AbstractDecl(concDeclaration(Transformation(Name(name.getText()),types,astElemTransfoList,fileFrom,fileTo,orgTrack),SymbolDecl(Name(name.getText()))));
          selector().pop();
        }
      )
     ;
 
+
 elementaryTransformationList [List<ElementaryTransformation> elemTransfoList, String transfoName] throws TomException
     : ( elementaryTransformation[elemTransfoList, transfoName] )*
     ;
 
-//elementaryTransformation [List<Declaration> declList, String transfoName] throws TomException
+
 elementaryTransformation [List<ElementaryTransformation> elemTransfoList, String transfoName] throws TomException
 {
     BQTerm traversal = null;
     String strName = "";
-    String strTraversal = "";
     Option orgTrack = `noOption();
     TransfoStratInfo info = null;
-    //List<Declaration> subDecl = new LinkedList<Declaration>();
     List<RuleInstruction> ruleInstructionList = new LinkedList<RuleInstruction>();
     clearText();
 }
@@ -988,9 +944,7 @@ elementaryTransformation [List<ElementaryTransformation> elemTransfoList, String
       info = `TransfoStratInfo(strName,traversal,orgTrack);
     }
     LBRACE
-    //transformationWithToList[info, subDecl, transfoName]
-      //transformationWithToList[info, ruleInstructionList, transfoName]
-      ( transformationWithTo[info, ruleInstructionList, transfoName] )*
+      ( elementaryTransformationRule[info, ruleInstructionList, transfoName] )*
     RBRACE
     {
       List<Option> optionList = new LinkedList<Option>();
@@ -1002,24 +956,16 @@ elementaryTransformation [List<ElementaryTransformation> elemTransfoList, String
     }
     ;
 
-//rename this rule into elemntaryTransformationRuleList
-//transformationWithToList [TransfoStratInfo info, List<Declaration> declList, String toname] throws TomException
 
-//rename this rule into elementaryTransformationRule
-//transformationWithTo [TransfoStratInfo info, List<Declaration> declList, String toname] throws TomException
-transformationWithTo [TransfoStratInfo info, List<RuleInstruction> ruleInstructionList, String transfoName] throws TomException
+elementaryTransformationRule [TransfoStratInfo info, List<RuleInstruction> ruleInstructionList, String transfoName] throws TomException
 {
-  //to clean
-  List<Code> toInstructionList = new LinkedList<Code>();
-  List<Code> blockList = new LinkedList<Code>(); //for the withToInstruction ('To' part)
-  BQTerm rhsTerm; //id
+  List<Code> blockList = new LinkedList<Code>();
+  BQTerm rhsTerm;
   clearText();
   TomTerm lhs;
   
   TomName tomTermName = `EmptyName();
   int lhsLine = 0;
-  Constraint constraint;
-  BQTerm subject;
   
   List<Option> optionList = new LinkedList<Option>();
 }
@@ -1039,18 +985,15 @@ transformationWithTo [TransfoStratInfo info, List<RuleInstruction> ruleInstructi
        // target parser finished : pop the target lexer
        selector().pop();
        blockList.add(`TargetLanguageToCode(tlCode));
-       //toInstructionList.add(`InstructionToCode(AbstractBlock(ASTFactory.makeInstructionList(blockList))));
        }
       )
       | rhsTerm = plainBQTerm
       {
       blockList.add(`InstructionToCode(Return(rhsTerm)));
-      //toInstructionList.add(`InstructionToCode(Return(rhsTerm)));
       }
      )
     )
     {
-    //TODO: is it ok?
     %match(lhs) {
       Variable(concOption(_*,OriginTracking[Line=line],_*),n,_,_) -> {
         tomTermName = `n;
@@ -1061,7 +1004,6 @@ transformationWithTo [TransfoStratInfo info, List<RuleInstruction> ruleInstructi
         lhsLine = `line;
       }
     }
-    //optionList.add(`OriginTracking(Name(transfoName),term.getLine(),currentFile()));
     optionList.add(`OriginTracking(tomTermName,lhsLine,currentFile()));
     OptionList options = ASTFactory.makeOptionList(optionList);
     
@@ -1069,15 +1011,6 @@ transformationWithTo [TransfoStratInfo info, List<RuleInstruction> ruleInstructi
     }
     ;
 
-withtoElementList [List<String> list] throws TomException
-    : (withtoElement[list] ( COMMA withtoElement[list] )*)
-    ;
-
-withtoElement [List<String> list] throws TomException
-    : t:ALL_ID { list.add(t.getText()); }
-    ;
-
-//%tracelink(Transition, t_start, i`Transition[name=n+"_start"]);
 tracelinkConstruct [Option orgTrack] returns [Instruction result] throws TomException
 {
   result=null;
@@ -1096,19 +1029,6 @@ tracelinkConstruct [Option orgTrack] returns [Instruction result] throws TomExce
      }
     ;
 
-/*bqtermTracelink returns [BQTerm result] throws TomException
-{
-  result = null;
-}
-    :
-        t:BACKQUOTE
-        {
-          Option ot = `OriginTracking(Name("Backquote"),t.getLine(),currentFile());
-          result = bqparser.beginBackquote();
-          // update position for new target block
-          updatePosition();
-        }
-    ;*/
 
 resolveConstruct [Option orgTrack] returns [Instruction result] throws TomException
 {
@@ -1122,7 +1042,7 @@ resolveConstruct [Option orgTrack] returns [Instruction result] throws TomExcept
        TomName target = `Name(t.getText());
        TomName targetType = `Name(ttype.getText());
 
-       String resolveName = "Resolve"+stype.getText()+ttype.getText();
+       String resolveName = tom.engine.transformer.TransformerPlugin.RESOLVE_ELEMENT_PREFIX+stype.getText()+ttype.getText();
        BQTerm resolveBQTerm = `Composite(CompositeBQTerm(BQAppl(
                concOption(OriginTracking(Name(resolveName),orgTrack.getLine(),orgTrack.getFileName()),ModuleName("default")),
                Name(resolveName),
@@ -1130,8 +1050,8 @@ resolveConstruct [Option orgTrack] returns [Instruction result] throws TomExcept
                  Composite(CompositeBQTerm(
                      BQVariable(
                        concOption(OriginTracking(source,orgTrack.getLine(),orgTrack.getFileName()),ModuleName("default")),
-                       source,
-                       Type(concTypeOption(),"unknown type",EmptyTargetLanguageType())
+                       source, 
+                       tom.engine.tools.SymbolTable.TYPE_UNKNOWN
                        )
                      )),
                  Composite(CompositeTL(ITL("\""+t.getText()+"\"")))
@@ -1143,8 +1063,6 @@ resolveConstruct [Option orgTrack] returns [Instruction result] throws TomExcept
        selector().pop();
      }
     ;
-
-
 
 ////////////////////////////////////////////////////////////////
 
