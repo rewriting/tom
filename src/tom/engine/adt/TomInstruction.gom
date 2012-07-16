@@ -51,7 +51,7 @@ Instruction =
   | RawAction(AstInstruction:Instruction)
   | Tracelink(Type:TomName,Name:TomName,ElementaryTransfoName:TomName,Expr:Expression,OrgTrack:Option)//BQTerm, then blocklist
   | TracelinkPopulateResolve(RefClassName:TomName,TracedLinks:TomNameList,Current:BQTerm,Link:BQTerm)
-  | Resolve(BQTerm:BQTerm,OrgTrack:Option)
+  | Resolve(ResolveBQTerm:BQTerm,Src:String,SType:String,Target:String,TType:String,OrgTrack:Option)
 
 RefClassTracelinkInstruction = RefClassTracelinkInstruction(Type:TomName,Name:TomName)
 

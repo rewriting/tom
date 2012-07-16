@@ -19,8 +19,7 @@ Declaration = TypeTermDecl(AstName:TomName,Declarations:DeclarationList,OrgTrack
             | MakeAddArray(AstName:TomName,VarElt:BQTerm,VarList:BQTerm,Instr:Instruction,OrgTrack:Option)
             | MakeDecl(AstName:TomName,AstType:TomType,Args:BQTermList,Instr:Instruction,OrgTrack:Option)
             | Strategy(SName:TomName,ExtendsTerm:BQTerm,VisitList:TomVisitList,Hooks:DeclarationList,OrgTrack:Option)
-///
-            | Transformation(TName:TomName,Domain:TomTypeList,Declarations:DeclarationList,ElementaryTList:ElementaryTransformationList,FileFrom:String,FileTo:String,OrgTrack:Option)
+            | Transformation(TName:TomName,Domain:TomTypeList,ElementaryTList:ElementaryTransformationList,FileFrom:String,FileTo:String,OrgTrack:Option)
             | ResolveStratDecl(TransfoName:String,ResList:ResolveStratBlockList,ResolveNameList:TomNameList,OriginTracking:Option)
             | ResolveInverseLinksDecl(ResolveNameList:TomNameList,FileFrom:String,FileTo:String)
             | ResolveClassDecl(AstName:TomName,WithName:String,ToName:String,Extends:String)
