@@ -70,14 +70,14 @@ public class AlgebraicTest {
     c.addConstructor("a", a);
 
     expr = new Algebraic(scope, Expr.class);
-    expr.addConstructor("mult", mult.class);
-    expr.addConstructor("plus", plus.class);
-    expr.addConstructor("un", un.class);
-    expr.addConstructor("zero", zero.class);
+    expr.addConstructor(mult.class);
+    expr.addConstructor(plus.class);
+    expr.addConstructor(un.class);
+    expr.addConstructor(zero.class);
 
     surexpr = new Algebraic(scope, Surexpr.class);
-    surexpr.addConstructor("rec", rec.class);
-    surexpr.addConstructor("wrapper", wrapper.class);
+    surexpr.addConstructor(rec.class);
+    surexpr.addConstructor(wrapper.class);
 
     scope.setDependances();
   }

@@ -249,7 +249,7 @@ public class Algebraic implements Typable {
    * @deprecated 
    */
   @Deprecated
-  public Algebraic addConstructor(String name, Class classe) {
+  public Algebraic addConstructor(Class classe) {
     String pattern = "make";
     Method[] listMethods = classe.getDeclaredMethods();
     Method make = null;
@@ -263,7 +263,7 @@ public class Algebraic implements Typable {
         throw new UnsupportedOperationException("Method " + pattern + "() was not found in " + classe);
       }
     }
-    Constructor cons = new Constructor(this, make, name);
+    Constructor cons = new Constructor(this, make, classe.getSimpleName());
     constructors.add(cons);
     dependences.addAll(Arrays.asList(cons.getFields()));
     return this;
@@ -278,7 +278,7 @@ public class Algebraic implements Typable {
    * @deprecated
    */
   @Deprecated
-  public Algebraic addConstructor(String name, Class classe, String pattern) {
+  public Algebraic addConstructor(Class classe, String pattern) {
     Method[] listMethods = classe.getDeclaredMethods();
     Method make = null;
     for (int i = 0; i < listMethods.length; i++) {
@@ -291,7 +291,7 @@ public class Algebraic implements Typable {
         throw new UnsupportedOperationException("Method " + pattern + "() was not found in " + classe);
       }
     }
-    Constructor cons = new Constructor(this, make, name);
+    Constructor cons = new Constructor(this, make, classe.getSimpleName());
     constructors.add(cons);
     dependences.addAll(Arrays.asList(cons.getFields()));
     return this;
