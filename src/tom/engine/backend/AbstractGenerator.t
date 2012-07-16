@@ -586,10 +586,10 @@ public abstract class AbstractGenerator {
       }
 
       //resolve construct
-      Resolve(bqterm, _) -> {
+      Resolve[ResolveBQTerm=resolveBQTerm] -> {
         //why?
         //buildResolve(deep, `bqterm, moduleName);
-        generateBQTerm(deep, `bqterm, moduleName);
+        generateBQTerm(deep, `resolveBQTerm, moduleName);
         return;
       }
 
