@@ -27,6 +27,8 @@ package tom.engine.transformer;
 
 import java.util.Map;
 import java.util.Iterator;
+import java.util.Set;
+import java.util.HashSet;
 import java.util.List;
 import java.util.LinkedList;
 import java.util.ArrayList;
@@ -39,6 +41,7 @@ import tom.engine.adt.tomsignature.*;
 import tom.engine.adt.tominstruction.*;
 import tom.engine.adt.tomconstraint.types.*;
 import tom.engine.adt.tomdeclaration.types.*;
+import tom.engine.adt.tomdeclaration.types.declaration.*;
 import tom.engine.adt.tomdeclaration.types.declarationlist.*;
 import tom.engine.adt.tomexpression.types.*;
 import tom.engine.adt.tominstruction.types.*;
@@ -82,6 +85,7 @@ public class TransformerPlugin extends TomGenericPlugin {
   %include { ../adt/tomsignature/TomSignature.tom }
   %include { ../../library/mapping/java/sl.tom }
   %include { ../../library/mapping/java/util/types/List.tom }
+  %include { ../../library/mapping/java/util/types/HashSet.tom }
 
   //%typeterm TransformerPlugin { implement { tom.engine.transformer.TransformerPlugin } }
   %typeterm TransformerPlugin { implement { TransformerPlugin } }
@@ -113,7 +117,7 @@ public class TransformerPlugin extends TomGenericPlugin {
     try {
       // replace content of Transformation declaration by Strategy
       transformedTerm = `TopDown(ProcessTransformation(this)).visitLight(transformedTerm);
-
+      //System.out.println("DEBUG - transformedTerm=\n"+transformedTerm);
       setWorkingTerm(transformedTerm);
       // verbose
       TomMessage.info(logger,null,0,TomMessage.tomTransformingPhase,
@@ -140,9 +144,11 @@ public class TransformerPlugin extends TomGenericPlugin {
      * Compilation of %transformation
      */
     visit Declaration {
-      Transformation(transfoName,domain,declList,elemTransfoList,fileFrom,fileTo,orgTrack) ->
+      /*t@Transformation(transfoName,domain,declList,elemTransfoList,fileFrom,fileTo,orgTrack) ->*/
+      t@Transformation(transfoName,domain,elemTransfoList,fileFrom,fileTo,orgTrack) ->
        {
-         return `AbstractDecl(transformer.processSubDecl(transfoName,domain,declList,elemTransfoList,fileFrom,fileTo,orgTrack));
+         //return `AbstractDecl(transformer.processSubDecl(t,transfoName,domain,declList,elemTransfoList,fileFrom,fileTo,orgTrack));
+         return `AbstractDecl(transformer.processSubDecl(t,transfoName,domain,elemTransfoList,fileFrom,fileTo,orgTrack));
       }
     }
   }
@@ -159,9 +165,34 @@ public class TransformerPlugin extends TomGenericPlugin {
    * @param orgTrack an option to track the transformation construct
    * @return a list of declarations related to the transformation
    */
-  private DeclarationList processSubDecl(TomName transfoName, TomTypeList transfoDomain, DeclarationList declList, ElementaryTransformationList elemTransfoList, String fileFrom, String fileTo, Option orgTrack) {
-    List bqlist = new LinkedList<BQTerm>();
+  //private DeclarationList processSubDecl(Declaration transfo,TomName transfoName, TomTypeList transfoDomain, DeclarationList declList, ElementaryTransformationList elemTransfoList, String fileFrom, String fileTo, Option orgTrack) {
+  private DeclarationList processSubDecl(Declaration transfo,TomName transfoName, TomTypeList transfoDomain, ElementaryTransformationList elemTransfoList, String fileFrom, String fileTo, Option orgTrack) {
+
     List<Declaration> result = new LinkedList<Declaration>();
+    HashSet<String> resolveNameSet = new HashSet<String>();
+    //toremove
+///    DeclarationList newDeclarations = `concDeclaration();
+
+    HashSet<String> withNameSet = new HashSet<String>();
+    HashSet<String> toNameSet = new HashSet<String>();
+    try {
+      //side effect on newDeclarations -> will disappear
+      //side effect on resolveNameList
+      //side effect on result (add created declarations)
+      //side effect on withNameSet and toNameSet
+      ///`TopDown(GenResolveElement(this,newDeclarations,resolveNameList,result,withNameSet,toNameSet,orgTrack)).visitLight(elemTransfoList);
+      //`TopDown(GenResolveElement(this,resolveNameList,resolveNameSet,result,withNameSet,toNameSet,orgTrack)).visitLight(elemTransfoList);
+      `TopDown(GenResolveElement(this,resolveNameSet,result,withNameSet,toNameSet)).visitLight(elemTransfoList);
+    } catch (VisitFailure e) {
+      throw new TomRuntimeException("TransformerPlugin.GenResolveElement: fail on " + transfo);
+    }
+///    declList = `concDeclaration(newDeclarations*,declList*);
+
+    /*System.out.println("###DEBUG###");
+    System.out.println("result=\n"+result);
+    System.out.println("###/DEBUG###");*/
+
+    List bqlist = new LinkedList<BQTerm>();
     String strTransfoName = transfoName.getString();
     TomSymbol transfoSymbol = getSymbolTable().getSymbolFromName(strTransfoName);
     //elementary strategies generation
@@ -178,32 +209,86 @@ public class TransformerPlugin extends TomGenericPlugin {
         bqlist.add(`traversal);
       }
     }
-    //Generation of Resolve strategy
-    Declaration resolveStratDecl = null;
-    Declaration inverseLinks = null;
-    %match(declList) {
-      concDeclaration(_*,decl,_*) -> {
-        %match(decl) {
-          ResolveStratDecl[ResList=reslist,ResolveNameList=resolveNameList,OriginTracking=rot]
-            -> {
-            resolveStratDecl = `buildResolveStrat(transfoName, bqlist,
-                transfoSymbol, reslist, resolveNameList, fileFrom, fileTo, rot);
-            //TODO: tset hook
-            /*inverseLinks =
-              `ResolveInverseLinksDecl(resolveNameList,fileFrom,fileTo);*/
-            //to replace by MethodDef?
-            /*`MethodDef(Name(TransformerPlugin.RESOLVE_INVERSE_LINK_FUNCTION),
-                ArgumentList:BQTermList,
-                voidType,
-                EmptyType(),
-                Instruction:Instruction);*/
-          }
-          d@(SymbolDecl|ResolveClassDecl|TypeTermDecl)[] -> {
-            result.add(`d);
-          }
+       
+    /*
+    System.out.println("###DEBUG2###");
+    System.out.println("withNameSet=\n"+withNameSet);
+    System.out.println("toNameSet=\n"+toNameSet);
+    System.out.println("###/DEBUG2###");
+    */
+
+    //retrieve %transformation line number and current file name to forge
+    //Resolve elements options
+    int line = orgTrack.getLine();
+    String fileName = orgTrack.getFileName();
+    List<ResolveStratBlock> resolveStratBlockList = new LinkedList<ResolveStratBlock>();
+    //build blocks for resolve strategy
+    for(String toName:toNameSet) {
+      List<ResolveStratElement> resolveStratElementList = new LinkedList<ResolveStratElement>();
+      for(String withName:withNameSet) {
+        String resolveStringName = "Resolve"+withName+toName;
+        //do not create a ResolveStratElement if no corresponding resolve
+        //element has been created / is necessary (from %resolve)
+        if(getSymbolTable().getSymbolFromName(resolveStringName)!=null) {
+          Option resolveOrgTrack =
+            `OriginTracking(Name(resolveStringName),line,fileName);
+          resolveStratElementList.add(`ResolveStratElement(withName, resolveOrgTrack));
         }
       }
+      ResolveStratElementList astResolveStratElementList = ASTFactory.makeResolveStratElementList(resolveStratElementList);
+      resolveStratBlockList.add(`ResolveStratBlock(toName,astResolveStratElementList));
+      //resolveStratElementList.clear(); 
     }
+
+    ResolveStratBlockList rsblist =
+      `ASTFactory.makeResolveStratBlockList(resolveStratBlockList);
+
+
+    TomNameList resolveNameList = `concTomName();//populate in GenResolveElement strategy
+    for(String stringName:resolveNameSet) {
+      resolveNameList = `concTomName(Name(stringName),resolveNameList*);
+    }
+
+
+    //Generation of Resolve strategy
+    Declaration resolveStratDecl = `buildResolveStrat(transfoName, bqlist,
+        transfoSymbol, rsblist, resolveNameList, fileFrom, fileTo, orgTrack);
+    //Declaration inverseLinks = null;
+     
+
+///
+///
+///    %match(declList) {
+///      concDeclaration(_*,decl,_*) -> {
+///        %match(decl) {
+///          ResolveStratDecl[ResList=reslist,ResolveNameList=resolveNameList,OriginTracking=rot]
+///            -> {
+///            resolveStratDecl = `buildResolveStrat(transfoName, bqlist,
+///                transfoSymbol, reslist, resolveNameList, fileFrom, fileTo, rot);
+///            //TODO: test hook
+///            /*inverseLinks =
+///              `ResolveInverseLinksDecl(resolveNameList,fileFrom,fileTo);*/
+///            //to replace by MethodDef?
+///            /*`MethodDef(Name(TransformerPlugin.RESOLVE_INVERSE_LINK_FUNCTION),
+///                ArgumentList:BQTermList,
+///                voidType,
+///                EmptyType(),
+///                Instruction:Instruction);*/
+///          }
+///          d@(SymbolDecl|ResolveClassDecl|TypeTermDecl)[] -> {
+///            result.add(`d);
+///          }
+///        }
+///      }
+///    }
+///
+///
+
+
+
+
+
+
     //add them to DeclarationList
     result.add(resolveStratDecl);
     //TODO: test hook
@@ -213,7 +298,7 @@ public class TransformerPlugin extends TomGenericPlugin {
     //this first step is necessary due to the fact that an elementary
     //transformation may have many rules, therefore bqlist may have duplicate
     //bqterms
-    BQTerm composite = makeComposedStrategy(bqlist,declList,transfoDomain);
+    BQTerm composite = makeComposedStrategy(bqlist,/*declList,*/transfoDomain);
     try {
       TomSymbol newSymbol =
         `TopDown(ReplaceMakeDecl(composite)).visitLight(transfoSymbol);
@@ -422,7 +507,7 @@ public class TransformerPlugin extends TomGenericPlugin {
    * @return a Backquote term representing the whole transformation strategy
    */
   private BQTerm makeComposedStrategy(List<BQTerm> bqlist, 
-                                      DeclarationList declList, 
+                                      /*DeclarationList declList, */
                                       TomTypeList transfoDomain) {
     BQTermList bql = removeDuplicate(ASTFactory.makeBQTermList(bqlist));
     /*concOption() for the moment, to change*/
@@ -806,22 +891,31 @@ ResolveStratBlockList = concResolveStratBlock(ResolveStratBlock*)
 
 //OriginTracking(Name("Transformation"),19,"Transfo3.t")
 //OriginTracking(AstName:TomName,Line:int,FileName:String)
-/*
-  %strategy genResolveElement(declList:DeclarationList) extends Identity() {
+  //%strategy GenResolveElement(transformer:TransformerPlugin,declList:DeclarationList,resolveNameList:TomNameList,result:DeclarationList,withNameSet:HashSet,toNameSet:HashSet,orgTrack:Option) extends Identity() {
+  //%strategy GenResolveElement(transformer:TransformerPlugin,resolveNameList:TomNameList,resolveNameSet:HashSet,result:List,withNameSet:HashSet,toNameSet:HashSet,orgTrack:Option) extends Identity() {
+  %strategy GenResolveElement(transformer:TransformerPlugin,resolveNameSet:HashSet,result:List,withNameSet:HashSet,toNameSet:HashSet) extends Identity() {
     visit Instruction {
       Resolve[Src=sname,SType=stypename,Target=tname,TType=ttypename,OrgTrack=ot] -> {
+        String resolveStringName = "Resolve"+`stypename+`ttypename;
+        int line = `ot.getLine();
+        String fileName = `ot.getFileName();
+if(!resolveNameSet.contains(resolveStringName)) {
+        resolveNameSet.add(resolveStringName);
+        //used for generation of ResolveStratElement and ResolveStratBlock
+        withNameSet.add(`stypename);
+        toNameSet.add(`ttypename);
+
+      /*Resolve[BQTerm=bqtermOrgTrack=ot] -> */
         //TODO:
         //BQTerm: OK 
         //TypeTermDecl: OK
         //SymbolDecl: OK
         //ResolveClassDecl: OK
         //ResolveOp: OK
+        //Resolve(..): OK
         //what else?
 
-        int line = `ot.getLine();
-        String fileName = `ot.getFileName();
-
-        String resolveStringName = "Resolve"+sname+tname;
+///        String resolveStringName = "Resolve"+`stypename+`ttypename;
 
         DeclarationList resolveTTDecl= `concDeclaration(
             IsSortDecl(
@@ -835,14 +929,21 @@ ResolveStratBlockList = concResolveStratBlock(ResolveStratBlock*)
             );
 
         TomName resolveName = `Name(resolveStringName);
-        resolveOrgTrack = `OriginTracking(resolveName,line,fileName);
+        //side effect:
+        //resolveNameList = `concTomName(resolveName,resolveNameList*);
+        
+        Option resolveOrgTrack = `OriginTracking(resolveName,line,fileName);
 
         TomType stype = `Type(concTypeOption(),stypename,EmptyTargetLanguageType());
         TomType stringType = `Type(concTypeOption(),"String",EmptyTargetLanguageType()); //  /!\ Java dependant
-        rtypes = `concTomType(stype, stringType);
+        TomTypeList rtypes = `concTomType(stype, stringType);
         TomType tType = `Type(concTypeOption(),ttypename,EmptyTargetLanguageType());
 
-        PairNameDecl objectPNDecl = `PairNameDecl(
+        PairNameDecl objectPNDecl = transformer.genResolvePairNameDecl("o", resolveStringName, line, fileName, tType);
+        //
+        //PairNameDecl objectPNDecl = genResolveGetSlotDecl("o",genResolveGetSlotDecl(resolveStringName, "o", line, fileName, tType));
+        //old version:
+        /*PairNameDecl objectPNDecl = `PairNameDecl(
                                        Name("o"),
                                        ResolveGetSlotDecl(
                                          Name(resolveStringName),
@@ -854,8 +955,9 @@ ResolveStratBlockList = concResolveStratBlock(ResolveStratBlock*)
                                            ),
                                          OriginTracking(Name("get_slot"),line,fileName)
                                          )
-                                       );
-        PairNameDecl namePNDecl = `PairNameDecl(
+                                       );*/
+        PairNameDecl namePNDecl = transformer.genResolvePairNameDecl("name", resolveStringName, line, fileName, tType);
+        /*PairNameDecl namePNDecl = `PairNameDecl(
                                        Name("name"),
                                        ResolveGetSlotDecl(
                                          Name(resolveStringName),
@@ -867,8 +969,7 @@ ResolveStratBlockList = concResolveStratBlock(ResolveStratBlock*)
                                            ),
                                          OriginTracking(Name("get_slot"),line,fileName)
                                          )
-                                       );
-
+                                       );*/
 
         List<PairNameDecl> resolvePairNameDeclList = new LinkedList<PairNameDecl>();
         resolvePairNameDeclList.add(objectPNDecl);
@@ -881,7 +982,7 @@ ResolveStratBlockList = concResolveStratBlock(ResolveStratBlock*)
 );
 
         BQTermList makeArgs = `concBQTerm(
-            BQVariable(concOption(OriginTracking(Name("o"),line,fileName)),Name("o"),sType),
+            BQVariable(concOption(OriginTracking(Name("o"),line,fileName)),Name("o"),stype),
             BQVariable(concOption(OriginTracking(Name("name"),line,fileName)),Name("name"),stringType)
             );
 
@@ -893,7 +994,7 @@ ResolveStratBlockList = concResolveStratBlock(ResolveStratBlock*)
             );
 
         List<Option> symbolOptions = new LinkedList<Option>();
-        symbolOptions.add(orgTrack);
+        symbolOptions.add(`ot);
         symbolOptions.add(`DeclarationToOption(makeDecl));
         symbolOptions.add(`DeclarationToOption(isfsymDecl));
 
@@ -906,20 +1007,27 @@ ResolveStratBlockList = concResolveStratBlock(ResolveStratBlock*)
             symbolOptions
             );
         //add "ResolveOp" symbol into SymbolTable
-        putSymbol(resolveStringName,astSymbol);
+        transformer.getSymbolTable().putSymbol(resolveStringName,astSymbol);
 
-        declList.add(`TypeTermDecl(resolveName,resolveTTDecl,resolveOrgTrack));
-        declList.add(`SymbolDecl(Name(resolveStringName)));
+        //declList = `concDeclaration(declList*,TypeTermDecl(resolveName,resolveTTDecl,resolveOrgTrack));
+        result.add(`TypeTermDecl(resolveName,resolveTTDecl,resolveOrgTrack));
+        //declList = `concDeclaration(declList*,SymbolDecl(Name(resolveStringName)));
+        result.add(`SymbolDecl(Name(resolveStringName)));
 
         String extendsName = null;
-        TomSymbol symb = symbolTable.getSymbolFromName(ttypename);
+        TomSymbol symb = transformer.getSymbolTable().getSymbolFromName(`ttypename);
         //retrieve classimpl
         %match(symb.getOptions()) {
           concOption(_*,DeclarationToOption(ImplementDecl[Expr=code]),_*) -> {
             extendsName = `code.getCode();
           }
         }
-        declList.add(`ResolveClassDecl(.., stypename, ttypename, extendsName));
+        //declList.add(`ResolveClassDecl(Name(resolveStringName), stypename, ttypename, extendsName));
+        //declList = `concDeclaration(declList*,ResolveClassDecl(Name(resolveStringName), stypename, ttypename, extendsName));
+        result.add(`ResolveClassDecl(Name(resolveStringName), stypename, ttypename, extendsName));
+
+
+      }
 
         //build the `ResolveXY(src,"dst");
         BQTerm bqterm = `Composite(CompositeBQTerm(BQAppl(
@@ -935,12 +1043,49 @@ ResolveStratBlockList = concResolveStratBlock(ResolveStratBlock*)
                 ))));
         return `BQTermToInstruction(bqterm);
       }
-      Tracelink[] -> {
-        //TODO:
-      }
+      //Tracelink[] -> {
+        //TODO: ?
+      //}
     }
-  }*/
-}
+  }//GenResolveElement
+
+  private Declaration genResolveGetSlotDecl(String astName, String slotName, int line, String fileName, TomType type) {
+    return `ResolveGetSlotDecl(
+        Name(astName),
+        Name(slotName), 
+        BQVariable(
+          concOption(OriginTracking(Name("t"),line,fileName)),
+          Name("t"),
+          type 
+          ),
+        OriginTracking(Name("get_slot"),line,fileName)
+        );
+  }
+
+  private PairNameDecl genPairNameDecl(String slotName, Declaration slotDecl) {
+    return `PairNameDecl(Name(slotName), slotDecl);
+  }
+
+  private PairNameDecl genResolvePairNameDecl(String slotName, String astName, int line, String fileName, TomType type) {
+    return `PairNameDecl(
+        Name(slotName),
+        ResolveGetSlotDecl(
+          Name(astName),
+          Name(slotName), 
+          BQVariable(
+            concOption(OriginTracking(Name("t"),line,fileName)),
+            Name("t"),
+            type 
+            ),
+          OriginTracking(Name("get_slot"),line,fileName)
+          )
+        );
+  }
+
+
+
+
+}//class
 /*
                   Composite(CompositeBQTerm(
                       BQVariable(
