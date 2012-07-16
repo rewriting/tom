@@ -7,14 +7,17 @@ package definitions;
 import java.util.HashSet;
 
 /**
+ * Represents implementation of string with Typable formalism.
  *
  * @author hubert
  */
-public class Tom_String implements Typable {
-  
+
+@Deprecated
+class Tom_String implements Typable {
+
   private Scope scope;
-  
-  public Tom_String(Scope scope){
+
+  public Tom_String(Scope scope) {
     this.scope = scope;
   }
 
@@ -50,7 +53,6 @@ public class Tom_String implements Typable {
 //    }
 //    return new String(tabBytes);
 //  }
-
   @Override
   public Slot generate(int n) {
     Slot res = new Slot(this);

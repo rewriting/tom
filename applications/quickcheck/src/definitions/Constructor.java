@@ -1,47 +1,42 @@
 package definitions;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 /**
  *
  * @author hubert
  */
 class Constructor {
 
-  private Algebraic caller;
+//  private Algebraic caller;
   private Typable[] fields;
   private boolean lock = false;
-  private Method make;
+//  private Method make;
   private String name;
 
-  Constructor(String name, Algebraic caller, Typable[] fields) {
-    this.caller = caller;
+  Constructor(String name, Typable[] fields) {
+//    this.caller = caller;
     this.fields = fields;
     this.name = name;
   }
 
-  Constructor(String name, Algebraic caller, Method make) {
-    this.make = make;
-    this.caller = caller;
-    this.name = name;
-    this.fields = extractFields(make);
-  }
+//  Constructor(String name, Algebraic caller, Method make) {
+//    this.make = make;
+//    this.caller = caller;
+//    this.name = name;
+//    this.fields = extractFields(make);
+//  }
 
   String getName() {
     return name;
   }
 
-  private Typable[] extractFields(Method make) {
-    Class[] listClasses = make.getParameterTypes();
-    Typable[] res = new Typable[listClasses.length];
-    for (int i = 0; i < res.length; i++) {
-      res[i] = caller.getScope().searchType(listClasses[i].getName());
-    }
-    return res;
-  }
+//  private Typable[] extractFields(Method make) {
+//    Class[] listClasses = make.getParameterTypes();
+//    Typable[] res = new Typable[listClasses.length];
+//    for (int i = 0; i < res.length; i++) {
+//      res[i] = caller.getScope().searchType(listClasses[i].getName());
+//    }
+//    return res;
+//  }
 
   Typable[] getFields() {
     return fields;
@@ -51,22 +46,14 @@ class Constructor {
     return lock;
   }
 
-  int getDimentionMax() {
-    int res = 0;
-    for (int i = 0; i < fields.length; i++) {
-      res = Math.max(res, fields[i].getDimension());
-    }
-    return res;
-  }
-
-  int getSize() {
+  private int getSize() {
     return fields.length;
   }
 
-  boolean isLeaf() {
-    return fields.length == 0;
-  }
-
+  /**
+   * Gives minimal number of steps before terminaison.
+   *
+   */
   int distanceToReachLeaf() {
     if (fields.length == 0) {
       return 0;
@@ -93,21 +80,21 @@ class Constructor {
     return res;
   }
 
-  Object make(Object[] args) {
-    try {
-      return make.invoke(null, args);
-    } catch (IllegalAccessException ex) {
-      System.err.println("Method " + make + " enforces Java language access control and the underlying method is inaccessible.");
-      Logger.getLogger(Constructor.class.getName()).log(Level.SEVERE, null, ex);
-    } catch (IllegalArgumentException ex) {
-      System.err.println("Method " + make + " is not static.");
-      Logger.getLogger(Constructor.class.getName()).log(Level.SEVERE, null, ex);
-    } catch (InvocationTargetException ex) {
-      System.err.println("Method " + make + " throws exception.");
-      Logger.getLogger(Constructor.class.getName()).log(Level.SEVERE, null, ex);
-    }
-    throw new UnsupportedOperationException("ERROR");
-  }
+//  Object make(Object[] args) {
+//    try {
+//      return make.invoke(null, args);
+//    } catch (IllegalAccessException ex) {
+//      System.err.println("Method " + make + " enforces Java language access control and the underlying method is inaccessible.");
+//      Logger.getLogger(Constructor.class.getName()).log(Level.SEVERE, null, ex);
+//    } catch (IllegalArgumentException ex) {
+//      System.err.println("Method " + make + " is not static.");
+//      Logger.getLogger(Constructor.class.getName()).log(Level.SEVERE, null, ex);
+//    } catch (InvocationTargetException ex) {
+//      System.err.println("Method " + make + " throws exception.");
+//      Logger.getLogger(Constructor.class.getName()).log(Level.SEVERE, null, ex);
+//    }
+//    throw new UnsupportedOperationException("ERROR");
+//  }
 
   @Override
   public String toString() {

@@ -8,9 +8,9 @@ package definitions;
  *
  * @author hubert
  */
-public class Random {
+class Random {
 
-  public static int[] pile(int n, int k) {
+  static int[] pile(int n, int k) {
     int[] res = new int[k];
     for (int i = 0; i < res.length; i++) {
       res[i] = 0;

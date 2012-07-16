@@ -7,10 +7,12 @@ package definitions;
 import java.util.HashSet;
 
 /**
+ * Represents implementation of integer with Typable formalism.
  *
  * @author hubert
  */
-public class Tom_Integer implements Typable {
+@Deprecated
+class Tom_Integer implements Typable {
 
   private Scope scope;
 
@@ -46,7 +48,6 @@ public class Tom_Integer implements Typable {
 //  public Integer generate_final(Request request) {
 //    return (int) (Math.random() * request.getCounter());
 //  }
-
   @Override
   public Slot generate(int n) {
     Slot res = new Slot(this);

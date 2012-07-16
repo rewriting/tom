@@ -31,8 +31,8 @@ public class AlgebraicTest {
   Algebraic circ;
   Algebraic typetest;
   Algebraic a, b, c;
-  Algebraic expr;
-  Algebraic surexpr;
+  AlgebraicExp expr;
+  AlgebraicExp surexpr;
 
   public AlgebraicTest() {
     scope = new Scope();
@@ -69,13 +69,13 @@ public class AlgebraicTest {
     b.addConstructor("c", c);
     c.addConstructor("a", a);
 
-    expr = new Algebraic(scope, Expr.class);
+    expr = new AlgebraicExp(scope, Expr.class);
     expr.addConstructor(mult.class);
     expr.addConstructor(plus.class);
     expr.addConstructor(un.class);
     expr.addConstructor(zero.class);
 
-    surexpr = new Algebraic(scope, Surexpr.class);
+    surexpr = new AlgebraicExp(scope, Surexpr.class);
     surexpr.addConstructor(rec.class);
     surexpr.addConstructor(wrapper.class);
 

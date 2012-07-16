@@ -13,7 +13,7 @@ import aterm.pure.PureFactory;
  *
  * @author hubert
  */
-public class Essai {
+class Essai {
 
   /**
    * @param args the command line arguments

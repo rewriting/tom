@@ -12,11 +12,11 @@ import java.util.logging.Logger;
  *
  * @author hubert
  */
-public abstract class Request {
+abstract class Request {
 
   private int counter;
 
-  public Request(int initialValue) {
+  Request(int initialValue) {
     counter = initialValue;
   }
 
@@ -24,7 +24,7 @@ public abstract class Request {
     return counter;
   }
 
-  public Request copy() {
+  Request copy() {
     try {
       return (Request) this.clone();
     } catch (CloneNotSupportedException ex) {
