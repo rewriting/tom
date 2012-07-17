@@ -53,10 +53,10 @@ class Constructor {
         lock = false;
         return Integer.MAX_VALUE;
       }
-      res = 1 + Math.max(res, tmp);
+      res = Math.max(res, tmp);
     }
     lock = false;
-    return res;
+    return res + 1;
   }
   
   /**
@@ -71,8 +71,9 @@ class Constructor {
     int res = 0;
     for (int i = 0; i < fields.length; i++) {
       Buildable field = fields[i];
-      int tmp = field.depthToLeaf();
+      int tmp = field.stepsToLeaf();
       if (tmp == -1) {
+        // if one of the constructors of field is locked
         lock = false;
         return Integer.MAX_VALUE;
       }
@@ -81,10 +82,13 @@ class Constructor {
         lock = false;
         return Integer.MAX_VALUE;
       }
-      res = 1 + Math.max(res, tmp);
+      res += tmp;
+      if(Math.signum(res)*Math.signum(res - tmp) == -1){
+        throw new RuntimeException("Number of steps overflows.");
+      }
     }
     lock = false;
-    return res;
+    return res + 1;
   }
 
   @Override

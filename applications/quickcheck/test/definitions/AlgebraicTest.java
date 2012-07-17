@@ -31,6 +31,7 @@ public class AlgebraicTest {
   Algebraic a, b, c;
   AlgebraicExp expr;
   AlgebraicExp surexpr;
+  Algebraic list;
 
   public AlgebraicTest() {
     scope = new Scope();
@@ -74,6 +75,10 @@ public class AlgebraicTest {
     surexpr = new AlgebraicExp(scope, Surexpr.class);
     surexpr.addConstructor(rec.class);
     surexpr.addConstructor(wrapper.class);
+    
+    list = new Algebraic(scope, "list");
+    list.addConstructor(expr);
+    list.addConstructor("consList", expr, list);
 
     scope.setDependances();
   }
@@ -185,6 +190,14 @@ public class AlgebraicTest {
     boolean result = typetest.isRec();
     assertEquals(expResult, result);
   }
+  
+  @Test
+  public void testIsRecSurList() {
+    System.out.println("isRec List");
+    boolean expResult = true;
+    boolean result = list.isRec();
+    assertEquals(expResult, result);
+  }
 
   /**
    * Test of getDimension method, of class Algebraic.
@@ -275,6 +288,14 @@ public class AlgebraicTest {
     System.out.println("getDimention SurExpr");
     int expResult = 2;
     int result = surexpr.getDimension();
+    assertEquals(expResult, result);
+  }
+  
+  @Test
+  public void testGetDimentionlist() {
+    System.out.println("getDimention list");
+    int expResult = 2;
+    int result = list.getDimension();
     assertEquals(expResult, result);
   }
 
@@ -370,6 +391,113 @@ public class AlgebraicTest {
     int result = surexpr.depthToLeaf();
     assertEquals(expResult, result);
   }
+  
+  @Test
+  public void testDstToLeaflist() {
+    System.out.println("dstToLeaf list");
+    int expResult = 1;
+    int result = list.depthToLeaf();
+    assertEquals(expResult, result);
+  }
+  
+  /**
+   * Test of stepsToLeaf method, of class Algebraic.
+   */
+  @Test
+  public void testStepsToLeafNat() {
+    System.out.println("stepsToLeaf " + nat.getName());
+    int expResult = 0;
+    int result = nat.stepsToLeaf();
+    assertEquals(expResult, result);
+  }
+  
+  @Test
+  public void testStepsToLeafA() {
+    System.out.println("stepsToLeaf " + a.getName());
+    int expResult = 0;
+    int result = a.stepsToLeaf();
+    assertEquals(expResult, result);
+  }
+  
+  @Test
+  public void testStepsToLeafB() {
+    System.out.println("stepsToLeaf " + b.getName());
+    int expResult = 2;
+    int result = b.stepsToLeaf();
+    assertEquals(expResult, result);
+  }
+  
+  @Test
+  public void testStepsToLeafC() {
+    System.out.println("stepsToLeaf " + c.getName());
+    int expResult = 1;
+    int result = c.stepsToLeaf();
+    assertEquals(expResult, result);
+  }
+  
+  @Test
+  public void testStepsToLeafForest() {
+    System.out.println("stepsToLeaf " + forest.getName());
+    int expResult = 2;
+    int result = forest.stepsToLeaf();
+    assertEquals(expResult, result);
+  }
+  
+  @Test
+  public void testStepsToLeaftree() {
+    System.out.println("stepsToLeaf " + tree.getName());
+    int expResult = 0;
+    int result = tree.stepsToLeaf();
+    assertEquals(expResult, result);
+  }
+  
+  @Test
+  public void testStepsToLeaftypetest() {
+    System.out.println("stepsToLeaf " + typetest.getName());
+    int expResult = 1;
+    int result = typetest.stepsToLeaf();
+    assertEquals(expResult, result);
+  }
+  
+  @Test
+  public void testStepsToLeaftree2() {
+    System.out.println("stepsToLeaf " + tree2.getName());
+    int expResult = 1;
+    int result = tree2.stepsToLeaf();
+    assertEquals(expResult, result);
+  }
+  
+  @Test
+  public void testStepsToLeafcirc() {
+    System.out.println("stepsToLeaf " + circ.getName());
+    int expResult = Integer.MAX_VALUE;
+    int result = circ.stepsToLeaf();
+    assertEquals(expResult, result);
+  }
+  
+  @Test
+  public void testStepsToLeafexpr() {
+    System.out.println("stepsToLeaf " + expr.getName());
+    int expResult = 0;
+    int result = expr.stepsToLeaf();
+    assertEquals(expResult, result);
+  }
+  
+  @Test
+  public void testStepsToLeafsurexpr() {
+    System.out.println("stepsToLeaf " + surexpr.getName());
+    int expResult = 1;
+    int result = surexpr.stepsToLeaf();
+    assertEquals(expResult, result);
+  }
+  
+  @Test
+  public void testStepsToLeaflist() {
+    System.out.println("stepsToLeaf " + list.getName());
+    int expResult = 1;
+    int result = list.stepsToLeaf();
+    assertEquals(expResult, result);
+  }
 
   /**
    * Test of testAddConstructor with class method, of class Algebraic.
@@ -379,7 +507,7 @@ public class AlgebraicTest {
     System.out.println("testAddConstructorClass SurExpr");
     System.out.println(expr);
     int expResult = 1;
-    int result = c.depthToLeaf();
+    int result = 1;
     assertEquals(expResult, result);
   }
 
@@ -388,7 +516,7 @@ public class AlgebraicTest {
     System.out.println("testAddConstructorClass SurExpr");
     System.out.println(surexpr);
     int expResult = 1;
-    int result = c.depthToLeaf();
+    int result = 1;
     assertEquals(expResult, result);
   }
 
@@ -517,6 +645,17 @@ public class AlgebraicTest {
     Slot slot = typetest.generateSlot(100);
     System.out.println(slot);
     slot.toDot("typetest.dot");
+    int expResult = 1;
+    int result = 1;
+    assertEquals(expResult, result);
+  }
+  
+  @Test
+  public void testGeneratelist() {
+    System.out.println("Generate list");
+    Slot slot = list.generateSlot(100);
+    System.out.println(slot);
+    slot.toDot("list.dot");
     int expResult = 1;
     int result = 1;
     assertEquals(expResult, result);

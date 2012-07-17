@@ -71,8 +71,27 @@ public class Algebraic implements Buildable {
     this.dstLeaf = res;
     return dstLeaf;
   }
-  
-  Slot generateSlot(int n){
+
+  @Override
+  public int stepsToLeaf() {
+    if (dstLeaf != -1 && dstLeaf != Integer.MAX_VALUE) {
+      return dstLeaf;
+    }
+    int res = Integer.MAX_VALUE;
+    for (Constructor constructor : constructors) {
+      if (constructor.isLocked()) {
+        //this case should not directly happen if stepsToLeaf() is called by user:
+        //only during recursive call.
+        //the returned value is sensless
+        return -1;
+      }
+      res = Math.min(res, constructor.stepsToLeaf());
+    }
+    this.dstLeaf = res;
+    return dstLeaf;
+  }
+
+  Slot generateSlot(int n) {
     if (this.depthToLeaf() == Integer.MAX_VALUE) {
       throw new UnsupportedOperationException("Type " + this.getName() + " does not terminate.");
     }
@@ -144,6 +163,18 @@ public class Algebraic implements Buildable {
     constructors.add(new Constructor(name, listTypes));
     dependences.addAll(Arrays.asList(listTypes));
     return this;
+  }
+
+  /**
+   * This function make it possible to add constructors of the given type. In
+   * this case, giving a name to the constructor can be canonic: its name can be
+   * the same as the name of its field.
+   *
+   * @param type type of the field of the constructor
+   * @return type with new constructor
+   */
+  public Algebraic addConstructor(Buildable type) {
+    return addConstructor(type.getName(), type);
   }
 
   /**

@@ -51,6 +51,11 @@ public final class Builtin {
     public boolean updateDependences() {
       return false;
     }
+
+    @Override
+    public int stepsToLeaf() {
+      return 0;
+    }
   };
   
   /**
@@ -91,6 +96,11 @@ public final class Builtin {
     @Override
     public boolean updateDependences() {
       return false;
+    }
+
+    @Override
+    public int stepsToLeaf() {
+      return 0;
     }
   };
 

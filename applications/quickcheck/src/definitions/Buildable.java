@@ -58,4 +58,6 @@ public interface Buildable {
    * @return generated term
    */
   public ATerm generate(int n);
+
+  public int stepsToLeaf();
 }
