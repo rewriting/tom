@@ -32,10 +32,12 @@ public class AlgebraicTest {
   AlgebraicExp expr;
   AlgebraicExp surexpr;
   Algebraic list;
+  Algebraic list2;
+//  Algebraic 
 
   public AlgebraicTest() {
     scope = new Scope();
-    
+
     nat = new Algebraic(scope, "nat");
     nat.addConstructor("succ", nat);
     nat.addConstructor("zero");
@@ -75,10 +77,13 @@ public class AlgebraicTest {
     surexpr = new AlgebraicExp(scope, Surexpr.class);
     surexpr.addConstructor(rec.class);
     surexpr.addConstructor(wrapper.class);
-    
+
     list = new Algebraic(scope, "list");
     list.addConstructor(expr);
     list.addConstructor("consList", expr, list);
+
+    list2 = new Algebraic(scope, "list2");
+    list2.addConstructor("consList", expr, list2);
 
     scope.setDependances();
   }
@@ -190,12 +195,21 @@ public class AlgebraicTest {
     boolean result = typetest.isRec();
     assertEquals(expResult, result);
   }
-  
+
   @Test
   public void testIsRecSurList() {
     System.out.println("isRec List");
     boolean expResult = true;
     boolean result = list.isRec();
+    assertEquals(expResult, result);
+  }
+
+  @Test
+  public void testIsRecSurList2() {
+    Algebraic test = list2;
+    System.out.println("isRec " + test.getName());
+    boolean expResult = true;
+    boolean result = test.isRec();
     assertEquals(expResult, result);
   }
 
@@ -290,12 +304,21 @@ public class AlgebraicTest {
     int result = surexpr.getDimension();
     assertEquals(expResult, result);
   }
-  
+
   @Test
   public void testGetDimentionlist() {
     System.out.println("getDimention list");
     int expResult = 2;
     int result = list.getDimension();
+    assertEquals(expResult, result);
+  }
+
+  @Test
+  public void testGetDimentionlist2() {
+    Algebraic test = list2;
+    System.out.println("getDimention " + test.getName());
+    int expResult = 2;
+    int result = test.getDimension();
     assertEquals(expResult, result);
   }
 
@@ -391,7 +414,7 @@ public class AlgebraicTest {
     int result = surexpr.depthToLeaf();
     assertEquals(expResult, result);
   }
-  
+
   @Test
   public void testDstToLeaflist() {
     System.out.println("dstToLeaf list");
@@ -399,7 +422,16 @@ public class AlgebraicTest {
     int result = list.depthToLeaf();
     assertEquals(expResult, result);
   }
-  
+
+  @Test
+  public void testDstToLeaflist2() {
+    Algebraic test = list2;
+    System.out.println("dstToLeaf " + test.getName());
+    int expResult = Integer.MAX_VALUE;
+    int result = test.depthToLeaf();
+    assertEquals(expResult, result);
+  }
+
   /**
    * Test of stepsToLeaf method, of class Algebraic.
    */
@@ -410,7 +442,7 @@ public class AlgebraicTest {
     int result = nat.stepsToLeaf();
     assertEquals(expResult, result);
   }
-  
+
   @Test
   public void testStepsToLeafA() {
     System.out.println("stepsToLeaf " + a.getName());
@@ -418,7 +450,7 @@ public class AlgebraicTest {
     int result = a.stepsToLeaf();
     assertEquals(expResult, result);
   }
-  
+
   @Test
   public void testStepsToLeafB() {
     System.out.println("stepsToLeaf " + b.getName());
@@ -426,7 +458,7 @@ public class AlgebraicTest {
     int result = b.stepsToLeaf();
     assertEquals(expResult, result);
   }
-  
+
   @Test
   public void testStepsToLeafC() {
     System.out.println("stepsToLeaf " + c.getName());
@@ -434,7 +466,7 @@ public class AlgebraicTest {
     int result = c.stepsToLeaf();
     assertEquals(expResult, result);
   }
-  
+
   @Test
   public void testStepsToLeafForest() {
     System.out.println("stepsToLeaf " + forest.getName());
@@ -442,7 +474,7 @@ public class AlgebraicTest {
     int result = forest.stepsToLeaf();
     assertEquals(expResult, result);
   }
-  
+
   @Test
   public void testStepsToLeaftree() {
     System.out.println("stepsToLeaf " + tree.getName());
@@ -450,7 +482,7 @@ public class AlgebraicTest {
     int result = tree.stepsToLeaf();
     assertEquals(expResult, result);
   }
-  
+
   @Test
   public void testStepsToLeaftypetest() {
     System.out.println("stepsToLeaf " + typetest.getName());
@@ -458,7 +490,7 @@ public class AlgebraicTest {
     int result = typetest.stepsToLeaf();
     assertEquals(expResult, result);
   }
-  
+
   @Test
   public void testStepsToLeaftree2() {
     System.out.println("stepsToLeaf " + tree2.getName());
@@ -466,7 +498,7 @@ public class AlgebraicTest {
     int result = tree2.stepsToLeaf();
     assertEquals(expResult, result);
   }
-  
+
   @Test
   public void testStepsToLeafcirc() {
     System.out.println("stepsToLeaf " + circ.getName());
@@ -474,7 +506,7 @@ public class AlgebraicTest {
     int result = circ.stepsToLeaf();
     assertEquals(expResult, result);
   }
-  
+
   @Test
   public void testStepsToLeafexpr() {
     System.out.println("stepsToLeaf " + expr.getName());
@@ -482,7 +514,7 @@ public class AlgebraicTest {
     int result = expr.stepsToLeaf();
     assertEquals(expResult, result);
   }
-  
+
   @Test
   public void testStepsToLeafsurexpr() {
     System.out.println("stepsToLeaf " + surexpr.getName());
@@ -490,12 +522,21 @@ public class AlgebraicTest {
     int result = surexpr.stepsToLeaf();
     assertEquals(expResult, result);
   }
-  
+
   @Test
   public void testStepsToLeaflist() {
     System.out.println("stepsToLeaf " + list.getName());
     int expResult = 1;
     int result = list.stepsToLeaf();
+    assertEquals(expResult, result);
+  }
+
+  @Test
+  public void testStepsToLeaflist2() {
+    Algebraic test = list2;
+    System.out.println("stepsToLeaf " + test.getName());
+    int expResult = Integer.MAX_VALUE;
+    int result = test.stepsToLeaf();
     assertEquals(expResult, result);
   }
 
@@ -649,7 +690,7 @@ public class AlgebraicTest {
     int result = 1;
     assertEquals(expResult, result);
   }
-  
+
   @Test
   public void testGeneratelist() {
     System.out.println("Generate list");
@@ -659,5 +700,22 @@ public class AlgebraicTest {
     int expResult = 1;
     int result = 1;
     assertEquals(expResult, result);
+  }
+
+  @Test
+  public void testGeneratelist2() {
+    Algebraic test = list2;
+    System.out.println("Generate " + test.getName());
+    Slot slot = null;
+    String res = "not this";
+    try {
+      slot = test.generateSlot(100);
+      System.out.println(slot);
+      slot.toDot("list.dot");
+    } catch (UnsupportedOperationException e) {
+      res = e.getMessage();
+    }
+    String expResult = "Type list2 does not terminate.";
+    assertEquals(expResult, res);
   }
 }
