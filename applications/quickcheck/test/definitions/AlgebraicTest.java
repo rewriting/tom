@@ -279,13 +279,13 @@ public class AlgebraicTest {
   }
 
   /**
-   * Test of dstToLeaf method, of class Algebraic.
+   * Test of depthToLeaf method, of class Algebraic.
    */
   @Test
   public void testDstToLeafNat() {
     System.out.println("dstToLeaf Nat");
     int expResult = 0;
-    int result = nat.dstToLeaf();
+    int result = nat.depthToLeaf();
     assertEquals(expResult, result);
   }
 
@@ -293,7 +293,7 @@ public class AlgebraicTest {
   public void testDstToLeafTree() {
     System.out.println("dstToLeaf Tree");
     int expResult = 0;
-    int result = tree.dstToLeaf();
+    int result = tree.depthToLeaf();
     assertEquals(expResult, result);
   }
 
@@ -301,7 +301,7 @@ public class AlgebraicTest {
   public void testDstToLeafTypeTest() {
     System.out.println("dstToLeaf TypeTest");
     int expResult = 1;
-    int result = typetest.dstToLeaf();
+    int result = typetest.depthToLeaf();
     assertEquals(expResult, result);
   }
 
@@ -309,17 +309,17 @@ public class AlgebraicTest {
   public void testDstToLeafForest() {
     System.out.println("dstToLeaf Forest");
     int expResult = 2;
-    int result = forest.dstToLeaf();
+    int result = forest.depthToLeaf();
     System.out.println(result);
     assertEquals(expResult, result);
   }
 
   @Test
   public void testDstToLeafTree2() {
-    System.out.println(forest.dstToLeaf());
+    System.out.println(forest.depthToLeaf());
     System.out.println("dstToLeaf Tree2");
     int expResult = 1;
-    int result = tree2.dstToLeaf();
+    int result = tree2.depthToLeaf();
     assertEquals(expResult, result);
   }
 
@@ -327,7 +327,7 @@ public class AlgebraicTest {
   public void testDstToLeafCirc() {
     System.out.println("dstToLeaf Circ");
     int expResult = Integer.MAX_VALUE;
-    int result = circ.dstToLeaf();
+    int result = circ.depthToLeaf();
     assertEquals(expResult, result);
   }
 
@@ -335,7 +335,7 @@ public class AlgebraicTest {
   public void testDstToLeafB() {
     System.out.println("dstToLeaf B");
     int expResult = 2;
-    int result = b.dstToLeaf();
+    int result = b.depthToLeaf();
     assertEquals(expResult, result);
   }
 
@@ -343,7 +343,7 @@ public class AlgebraicTest {
   public void testDstToLeafA() {
     System.out.println("dstToLeaf A");
     int expResult = 0;
-    int result = a.dstToLeaf();
+    int result = a.depthToLeaf();
     assertEquals(expResult, result);
   }
 
@@ -351,7 +351,7 @@ public class AlgebraicTest {
   public void testDstToLeafC() {
     System.out.println("dstToLeaf C");
     int expResult = 1;
-    int result = c.dstToLeaf();
+    int result = c.depthToLeaf();
     assertEquals(expResult, result);
   }
 
@@ -359,7 +359,7 @@ public class AlgebraicTest {
   public void testDstToLeafExpre() {
     System.out.println("dstToLeaf Expr");
     int expResult = 0;
-    int result = expr.dstToLeaf();
+    int result = expr.depthToLeaf();
     assertEquals(expResult, result);
   }
 
@@ -367,7 +367,7 @@ public class AlgebraicTest {
   public void testDstToLeafSurExpre() {
     System.out.println("dstToLeaf SurExpr");
     int expResult = 1;
-    int result = surexpr.dstToLeaf();
+    int result = surexpr.depthToLeaf();
     assertEquals(expResult, result);
   }
 
@@ -379,7 +379,7 @@ public class AlgebraicTest {
     System.out.println("testAddConstructorClass SurExpr");
     System.out.println(expr);
     int expResult = 1;
-    int result = c.dstToLeaf();
+    int result = c.depthToLeaf();
     assertEquals(expResult, result);
   }
 
@@ -388,7 +388,7 @@ public class AlgebraicTest {
     System.out.println("testAddConstructorClass SurExpr");
     System.out.println(surexpr);
     int expResult = 1;
-    int result = c.dstToLeaf();
+    int result = c.depthToLeaf();
     assertEquals(expResult, result);
   }
 

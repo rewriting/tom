@@ -38,7 +38,7 @@ public final class Builtin {
     }
 
     @Override
-    public int dstToLeaf() {
+    public int depthToLeaf() {
       return 0;
     }
 
@@ -74,7 +74,7 @@ public final class Builtin {
     }
 
     @Override
-    public int dstToLeaf() {
+    public int depthToLeaf() {
       return 0;
     }
 

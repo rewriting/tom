@@ -50,7 +50,7 @@ class Slot {
   }
 
   int getDstToLeaf() {
-    return type.dstToLeaf();
+    return type.depthToLeaf();
   }
 
   @Override

@@ -54,26 +54,26 @@ public class Algebraic implements Buildable {
   }
 
   @Override
-  public int dstToLeaf() {
+  public int depthToLeaf() {
     if (dstLeaf != -1 && dstLeaf != Integer.MAX_VALUE) {
       return dstLeaf;
     }
     int res = Integer.MAX_VALUE;
     for (Constructor constructor : constructors) {
       if (constructor.isLocked()) {
-        //this case should not directly happen if dstToLeaf() is called by user:
+        //this case should not directly happen if depthToLeaf() is called by user:
         //only during recursive call.
         //the returned value is sensless
         return -1;
       }
-      res = Math.min(res, constructor.distanceToReachLeaf());
+      res = Math.min(res, constructor.depthToLeaf());
     }
     this.dstLeaf = res;
     return dstLeaf;
   }
   
   Slot generateSlot(int n){
-    if (this.dstToLeaf() == Integer.MAX_VALUE) {
+    if (this.depthToLeaf() == Integer.MAX_VALUE) {
       throw new UnsupportedOperationException("Type " + this.getName() + " does not terminate.");
     }
     Slot slot = new Slot(this);
@@ -181,7 +181,7 @@ public class Algebraic implements Buildable {
     while (!copy.isEmpty()) {
       int choice = (int) (Math.random() * copy.size());
       Constructor cons = copy.get(choice);
-      if (cons.distanceToReachLeaf() != Integer.MAX_VALUE) {
+      if (cons.depthToLeaf() != Integer.MAX_VALUE) {
         return cons;
       }
       copy.remove(cons);
@@ -197,13 +197,13 @@ public class Algebraic implements Buildable {
   Constructor chooseMinimalConstructor() {
     ArrayList<Constructor> minCons = new ArrayList<Constructor>(constructors.size());
     for (Constructor constructor : constructors) {
-      int m = constructor.distanceToReachLeaf();
-      if (m == dstToLeaf()) {
+      int m = constructor.depthToLeaf();
+      if (m == depthToLeaf()) {
         minCons.add(constructor);
       }
     }
     if (minCons.isEmpty()) {
-      throw new UnsupportedOperationException("Internal error happends when backtracking (" + getName() + " : " + dstToLeaf() + ").");
+      throw new UnsupportedOperationException("Internal error happends when backtracking (" + getName() + " : " + depthToLeaf() + ").");
     } else {
       return minCons.get((int) (Math.random() * minCons.size()));
     }

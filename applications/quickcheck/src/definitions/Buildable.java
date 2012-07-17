@@ -48,7 +48,7 @@ public interface Buildable {
    * @return size of the minimal path between here and a leaf. Returns
    * Integer.MAX_VALUE if no path reaches a leaf.
    */
-  public int dstToLeaf();
+  public int depthToLeaf();
 
   /**
    * Make a new random term. This function cannot be used till dependances are

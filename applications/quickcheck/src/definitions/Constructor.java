@@ -32,10 +32,10 @@ class Constructor {
   }
 
   /**
-   * Gives minimal number of steps before terminaison.
+   * Gives minimal depth before terminaison.
    *
    */
-  int distanceToReachLeaf() {
+  int depthToLeaf() {
     if (fields.length == 0) {
       return 0;
     }
@@ -43,7 +43,35 @@ class Constructor {
     int res = 0;
     for (int i = 0; i < fields.length; i++) {
       Buildable field = fields[i];
-      int tmp = field.dstToLeaf();
+      int tmp = field.depthToLeaf();
+      if (tmp == -1) {
+        lock = false;
+        return Integer.MAX_VALUE;
+      }
+      if (tmp == Integer.MAX_VALUE) {
+        // if field can not lead to terminaison
+        lock = false;
+        return Integer.MAX_VALUE;
+      }
+      res = 1 + Math.max(res, tmp);
+    }
+    lock = false;
+    return res;
+  }
+  
+  /**
+   * Gives minimal number of steps before terminaison.
+   *
+   */
+  int stepsToLeaf() {
+    if (fields.length == 0) {
+      return 0;
+    }
+    lock = true;
+    int res = 0;
+    for (int i = 0; i < fields.length; i++) {
+      Buildable field = fields[i];
+      int tmp = field.depthToLeaf();
       if (tmp == -1) {
         lock = false;
         return Integer.MAX_VALUE;
