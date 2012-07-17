@@ -33,7 +33,7 @@ public class AlgebraicTest {
   AlgebraicExp surexpr;
   Algebraic list;
   Algebraic list2;
-//  Algebraic 
+  Algebraic mix;
 
   public AlgebraicTest() {
     scope = new Scope();
@@ -84,6 +84,9 @@ public class AlgebraicTest {
 
     list2 = new Algebraic(scope, "list2");
     list2.addConstructor("consList", expr, list2);
+    
+    mix = new Algebraic(scope, "mix");
+    mix.addConstructor("consMix", list, surexpr);
 
     scope.setDependances();
   }
@@ -212,6 +215,15 @@ public class AlgebraicTest {
     boolean result = test.isRec();
     assertEquals(expResult, result);
   }
+  
+  @Test
+  public void testIsRecSurMix() {
+    Algebraic test = mix;
+    System.out.println("isRec " + test.getName());
+    boolean expResult = false;
+    boolean result = test.isRec();
+    assertEquals(expResult, result);
+  }
 
   /**
    * Test of getDimension method, of class Algebraic.
@@ -316,6 +328,15 @@ public class AlgebraicTest {
   @Test
   public void testGetDimentionlist2() {
     Algebraic test = list2;
+    System.out.println("getDimention " + test.getName());
+    int expResult = 2;
+    int result = test.getDimension();
+    assertEquals(expResult, result);
+  }
+  
+  @Test
+  public void testGetDimentionmix() {
+    Algebraic test = mix;
     System.out.println("getDimention " + test.getName());
     int expResult = 2;
     int result = test.getDimension();
@@ -431,6 +452,15 @@ public class AlgebraicTest {
     int result = test.depthToLeaf();
     assertEquals(expResult, result);
   }
+  
+  @Test
+  public void testDstToLeafmix() {
+    Algebraic test = mix;
+    System.out.println("dstToLeaf " + test.getName());
+    int expResult = 2;
+    int result = test.depthToLeaf();
+    assertEquals(expResult, result);
+  }
 
   /**
    * Test of stepsToLeaf method, of class Algebraic.
@@ -536,6 +566,15 @@ public class AlgebraicTest {
     Algebraic test = list2;
     System.out.println("stepsToLeaf " + test.getName());
     int expResult = Integer.MAX_VALUE;
+    int result = test.stepsToLeaf();
+    assertEquals(expResult, result);
+  }
+  
+  @Test
+  public void testStepsToLeafmix() {
+    Algebraic test = mix;
+    System.out.println("stepsToLeaf " + test.getName());
+    int expResult = 3;
     int result = test.stepsToLeaf();
     assertEquals(expResult, result);
   }
@@ -713,9 +752,22 @@ public class AlgebraicTest {
       System.out.println(slot);
       slot.toDot("list.dot");
     } catch (UnsupportedOperationException e) {
+      System.out.println("fail");
       res = e.getMessage();
     }
     String expResult = "Type list2 does not terminate.";
     assertEquals(expResult, res);
+  }
+  
+  @Test
+  public void testGeneratemix() {
+    Algebraic test = mix;
+    System.out.println("Generate " + test.getName());
+    Slot slot = mix.generateSlot(100);
+    System.out.println(slot);
+    slot.toDot("list.dot");
+    int expResult = 1;
+    int result = 1;
+    assertEquals(expResult, result);
   }
 }
