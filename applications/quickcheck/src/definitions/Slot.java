@@ -44,6 +44,16 @@ class Slot {
     }
     return deps;
   }
+  
+  Slot[] chooseMaxDimConstructor() {
+    if (type instanceof Algebraic) {
+      cons = ((Algebraic) type).chooseMaxDimConstructor();
+      deps = cons.giveATermDeps();
+    } else {
+      deps = new Slot[0];
+    }
+    return deps;
+  }
 
   int getDimension() {
     return type.getDimension();
