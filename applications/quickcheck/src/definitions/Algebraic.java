@@ -123,9 +123,9 @@ public class Algebraic implements Buildable {
         Strategy req;
         int dst = term.getDstToLeaf();
         if (dst < listSpread[i]) {
-          req = new MakeAllStrategy();
+          req = new MakeAnyStrategy();
         } else {
-          req = new MakeLeafStrategy();
+          req = new BacktrackDepthStrategy();
         }
         listHoles.addAll(req.fillATerm(term, listSpread[i]));
         i++;
@@ -178,23 +178,6 @@ public class Algebraic implements Buildable {
   }
 
   /**
-   * Choose randomly one of the constructors of the current type. This function
-   * does not check whether choosen constructor is finite, that is, whether each
-   * of these fields is finite.
-   *
-   * @return choosen constructor
-   * @deprecated
-   */
-  @Deprecated
-  Constructor chooseConstructor() {
-    if (constructors.isEmpty()) {
-      throw new UnsupportedOperationException("No constructor");
-    }
-    int choice = (int) (Math.random() * constructors.size());
-    return constructors.get(choice);
-  }
-
-  /**
    * Choose randomly one of the constructor of the current type and check
    * whether choosen constructor is finite, that is, whether each of these
    * fields is finite.
@@ -220,7 +203,7 @@ public class Algebraic implements Buildable {
     throw new UnsupportedOperationException("No constructor is finite");
   }
 
-  Constructor chooseMaxFiniteConstructor() {
+  Constructor chooseMaxDimConstructor() {
     if (constructors.isEmpty()) {
       throw new UnsupportedOperationException("No constructor");
     }
@@ -228,8 +211,10 @@ public class Algebraic implements Buildable {
     int max = 0;
     for (Constructor constructor : constructors) {
       if (constructor.depthToLeaf() != Integer.MAX_VALUE) {
-        if (constructor.getDimention() > max) {
+        int dim = constructor.getDimention();
+        if (dim > max) {
           maxCons = new ArrayList<Constructor>();
+          max = dim;
         }
         maxCons.add(constructor);
       }
@@ -242,7 +227,7 @@ public class Algebraic implements Buildable {
   }
 
   /**
-   * Choose one the constructor that can terminate in the minimum of steps.
+   * Choose one the constructor that can terminate in the minimum of depth.
    *
    * @return choosen constructor
    */
@@ -250,6 +235,26 @@ public class Algebraic implements Buildable {
     ArrayList<Constructor> minCons = new ArrayList<Constructor>(constructors.size());
     for (Constructor constructor : constructors) {
       int m = constructor.depthToLeaf();
+      if (m == depthToLeaf()) {
+        minCons.add(constructor);
+      }
+    }
+    if (minCons.isEmpty()) {
+      throw new UnsupportedOperationException("Internal error happends when backtracking (" + getName() + " : " + depthToLeaf() + ").");
+    } else {
+      return minCons.get((int) (Math.random() * minCons.size()));
+    }
+  }
+
+  /**
+   * Choose one the constructor that can terminate in the minimum of steps.
+   *
+   * @return choosen constructor
+   */
+  Constructor chooseMinStepsConstructor() {
+    ArrayList<Constructor> minCons = new ArrayList<Constructor>(constructors.size());
+    for (Constructor constructor : constructors) {
+      int m = constructor.stepsToLeaf();
       if (m == depthToLeaf()) {
         minCons.add(constructor);
       }

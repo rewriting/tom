@@ -10,14 +10,14 @@ import java.util.HashSet;
  *
  * @author hubert
  */
-class MakeAllStrategy implements Strategy {
+class BacktrackDepthStrategy implements Strategy {
 
   @Override
   public HashSet<Slot> fillATerm(Slot aTerm, int n) {
     HashSet<Slot> res = new HashSet<Slot>();
 
-    //fill the term by choosing one of its constructors
-    Slot[] deps = aTerm.chooseFiniteConstructor();
+    //fill the term by choosing the constructor with minimal terminaison
+    Slot[] deps = aTerm.chooseMinDepthConstructor();
 
     //dispatch fields of the term between two categories: these whose dimension 
     //equals dimension of the term, and the others
@@ -40,9 +40,9 @@ class MakeAllStrategy implements Strategy {
     for (Slot term : listHigherDim) {
       Strategy req;
       if (term.getDstToLeaf() < n) {
-        req = new MakeAllStrategy();
+        req = new MakeAnyStrategy();
       } else {
-        req = new MakeLeafStrategy();
+        req = new BacktrackDepthStrategy();
       }
       res.addAll(req.fillATerm(term, listSpread[i]));
       i++;
