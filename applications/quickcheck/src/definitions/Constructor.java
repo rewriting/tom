@@ -58,7 +58,7 @@ class Constructor {
     lock = false;
     return res + 1;
   }
-  
+
   /**
    * Gives minimal number of steps before terminaison.
    *
@@ -83,7 +83,7 @@ class Constructor {
         return Integer.MAX_VALUE;
       }
       res += tmp;
-      if(Math.signum(res)*Math.signum(res - tmp) == -1){
+      if (Math.signum(res) * Math.signum(res - tmp) == -1) {
         throw new RuntimeException("Number of steps overflows.");
       }
     }
@@ -113,5 +113,13 @@ class Constructor {
       res[i] = new Slot(fields[i]);
     }
     return res;
+  }
+
+  int getDimention() {
+    int dimMax = 0;
+    for (Buildable field : fields) {
+      dimMax = Math.max(dimMax, field.getDimension());
+    }
+    return dimMax;
   }
 }

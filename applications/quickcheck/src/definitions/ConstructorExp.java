@@ -14,10 +14,10 @@ import java.util.logging.Logger;
  * @author hubert
  */
 class ConstructorExp extends Constructor {
-  
+
   private Method make;
 
-  ConstructorExp(String name, AlgebraicExp caller, Method make) {
+  ConstructorExp(String name, Method make, AlgebraicExp caller) {
     super(name, extractFields(make, caller));
     this.make = make;
   }
@@ -30,7 +30,7 @@ class ConstructorExp extends Constructor {
     }
     return res;
   }
-  
+
   Object make(Object[] args) {
     try {
       return make.invoke(null, args);
@@ -46,5 +46,4 @@ class ConstructorExp extends Constructor {
     }
     throw new UnsupportedOperationException("ERROR");
   }
-  
 }

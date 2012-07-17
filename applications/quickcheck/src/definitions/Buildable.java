@@ -5,6 +5,7 @@ import java.util.Set;
 
 /**
  * Defines what a randomly buildable is.
+ *
  * @author hubert
  */
 public interface Buildable {
@@ -43,12 +44,24 @@ public interface Buildable {
   public int getDimension();
 
   /**
-   * This function give the size of the shortest path from here to a leaf.
+   * This function give the size of the shortest path from here to a leaf in
+   * terms of depth.
    *
    * @return size of the minimal path between here and a leaf. Returns
    * Integer.MAX_VALUE if no path reaches a leaf.
+   * @see Buildable#stepsToLeaf() 
    */
   public int depthToLeaf();
+
+  /**
+   * This function give the size of the shortest path from here to a leaf in
+   * terms of steps.
+   *
+   * @return size of the minimal path between here and a leaf. Returns
+   * Integer.MAX_VALUE if no path reaches a leaf.
+   * @see Buildable#depthToLeaf() 
+   */
+  public int stepsToLeaf();
 
   /**
    * Make a new random term. This function cannot be used till dependances are
@@ -58,6 +71,4 @@ public interface Buildable {
    * @return generated term
    */
   public ATerm generate(int n);
-
-  public int stepsToLeaf();
 }

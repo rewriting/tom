@@ -19,7 +19,7 @@ class AlgebraicExp extends Algebraic {
     super(scope, type.getName());
     this.scope = scope;
   }
-  
+
   Scope getScope() {
     return scope;
   }
@@ -47,7 +47,7 @@ class AlgebraicExp extends Algebraic {
         throw new UnsupportedOperationException("Method " + pattern + "() was not found in " + classe);
       }
     }
-    ConstructorExp cons = new ConstructorExp(classe.getSimpleName(), this, make);
+    ConstructorExp cons = new ConstructorExp(classe.getSimpleName(), make, this);
     this.getConstructors().add(cons);
     this.getDependences().addAll(Arrays.asList(cons.getFields()));
     return this;
@@ -76,7 +76,7 @@ class AlgebraicExp extends Algebraic {
         throw new UnsupportedOperationException("Method " + pattern + "() was not found in " + classe);
       }
     }
-    ConstructorExp cons = new ConstructorExp(classe.getSimpleName(), this, make);
+    ConstructorExp cons = new ConstructorExp(classe.getSimpleName(), make, this);
     this.getConstructors().add(cons);
     this.getDependences().addAll(Arrays.asList(cons.getFields()));
     return this;

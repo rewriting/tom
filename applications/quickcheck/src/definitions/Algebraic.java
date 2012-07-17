@@ -188,7 +188,7 @@ public class Algebraic implements Buildable {
   @Deprecated
   Constructor chooseConstructor() {
     if (constructors.isEmpty()) {
-      throw new UnsupportedOperationException("No constructors");
+      throw new UnsupportedOperationException("No constructor");
     }
     int choice = (int) (Math.random() * constructors.size());
     return constructors.get(choice);
@@ -203,7 +203,7 @@ public class Algebraic implements Buildable {
    */
   Constructor chooseFiniteConstructor() {
     if (constructors.isEmpty()) {
-      throw new UnsupportedOperationException("No constructors");
+      throw new UnsupportedOperationException("No constructor");
     }
     ArrayList<Constructor> copy = new ArrayList<Constructor>(constructors.size());
     for (Constructor constructor : constructors) {
@@ -217,7 +217,28 @@ public class Algebraic implements Buildable {
       }
       copy.remove(cons);
     }
-    throw new UnsupportedOperationException("No constructors are finite");
+    throw new UnsupportedOperationException("No constructor is finite");
+  }
+
+  Constructor chooseMaxFiniteConstructor() {
+    if (constructors.isEmpty()) {
+      throw new UnsupportedOperationException("No constructor");
+    }
+    ArrayList<Constructor> maxCons = new ArrayList<Constructor>(constructors.size());
+    int max = 0;
+    for (Constructor constructor : constructors) {
+      if (constructor.depthToLeaf() != Integer.MAX_VALUE) {
+        if (constructor.getDimention() > max) {
+          maxCons = new ArrayList<Constructor>();
+        }
+        maxCons.add(constructor);
+      }
+    }
+    if (maxCons.isEmpty()) {
+      throw new UnsupportedOperationException("No constructor is finite");
+    } else {
+      return maxCons.get((int) (Math.random() * maxCons.size()));
+    }
   }
 
   /**
@@ -225,7 +246,7 @@ public class Algebraic implements Buildable {
    *
    * @return choosen constructor
    */
-  Constructor chooseMinimalConstructor() {
+  Constructor chooseMinDepthConstructor() {
     ArrayList<Constructor> minCons = new ArrayList<Constructor>(constructors.size());
     for (Constructor constructor : constructors) {
       int m = constructor.depthToLeaf();

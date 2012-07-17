@@ -37,7 +37,7 @@ class Slot {
 
   Slot[] chooseMinimalConstructor() {
     if (type instanceof Algebraic) {
-      cons = ((Algebraic) type).chooseMinimalConstructor();
+      cons = ((Algebraic) type).chooseMinDepthConstructor();
       deps = cons.giveATermDeps();
     } else {
       deps = new Slot[0];
