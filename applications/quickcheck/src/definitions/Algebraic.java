@@ -121,9 +121,9 @@ public class Algebraic implements Buildable {
       int i = 0;
       for (Slot term : toVisit) {
         Strategy req;
-        int dst = term.getDstToLeaf();
+        int dst = term.depthToLeaf();
         if (dst < ns[i]) {
-          req = new MakeAnyStrategy();
+          req = new MakeMaxDimStrategy();
         } else {
           req = new BacktrackDepthStrategy();
         }
@@ -216,7 +216,9 @@ public class Algebraic implements Buildable {
           maxCons = new ArrayList<Constructor>();
           max = dim;
         }
-        maxCons.add(constructor);
+        if (dim == max) {
+          maxCons.add(constructor);
+        }
       }
     }
     if (maxCons.isEmpty()) {

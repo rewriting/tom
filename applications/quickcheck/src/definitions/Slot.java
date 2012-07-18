@@ -59,7 +59,7 @@ class Slot {
     return type.getDimension();
   }
 
-  int getDstToLeaf() {
+  int depthToLeaf() {
     return type.depthToLeaf();
   }
 

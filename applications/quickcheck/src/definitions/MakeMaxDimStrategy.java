@@ -39,7 +39,7 @@ class MakeMaxDimStrategy implements Strategy {
     int i = 0;
     for (Slot field : listHigherDimFields) {
       Strategy req;
-      if (field.getDstToLeaf() < ni) {
+      if (field.depthToLeaf() < ni) {
         req = new MakeMaxDimStrategy();
       } else {
         req = new BacktrackDepthStrategy();

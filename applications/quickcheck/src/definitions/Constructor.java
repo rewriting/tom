@@ -91,15 +91,20 @@ class Constructor {
     return res + 1;
   }
 
+//  @Override
+//  public String toString() {
+//    String res = "[";
+//    for (int i = 0; i < fields.length; i++) {
+//      Buildable typable = fields[i];
+//      res += typable.getName() + ", ";
+//    }
+//    res += "]";
+//    return res;
+//  }
+  
   @Override
   public String toString() {
-    String res = "[";
-    for (int i = 0; i < fields.length; i++) {
-      Buildable typable = fields[i];
-      res += typable.getName() + ", ";
-    }
-    res += "]";
-    return res;
+    return getName();
   }
 
   /**
