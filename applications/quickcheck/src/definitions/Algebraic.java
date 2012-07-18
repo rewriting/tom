@@ -115,19 +115,19 @@ public class Algebraic implements Buildable {
       }
 
       //spread n across maximal dimention terms
-      int[] listSpread = Random.pile(n, toVisit.size());
+      int[] ns = Random.pile(n, toVisit.size());
 
       //fill each maximal dimension term
       int i = 0;
       for (Slot term : toVisit) {
         Strategy req;
         int dst = term.getDstToLeaf();
-        if (dst < listSpread[i]) {
+        if (dst < ns[i]) {
           req = new MakeAnyStrategy();
         } else {
           req = new BacktrackDepthStrategy();
         }
-        listHoles.addAll(req.fillATerm(term, listSpread[i]));
+        listHoles.addAll(req.fillATerm(term, ns[i]));
         i++;
       }
 

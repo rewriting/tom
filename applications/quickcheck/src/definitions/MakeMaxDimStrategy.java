@@ -13,7 +13,7 @@ import java.util.HashSet;
 class MakeMaxDimStrategy implements Strategy {
 
   @Override
-  public HashSet<Slot> fillATerm(Slot aTerm, int n) {
+  public HashSet<Slot> fillATerm(Slot aTerm, int ni) {
     HashSet<Slot> res = new HashSet<Slot>();
 
     //fill the term by choosing one of its constructors
@@ -33,19 +33,18 @@ class MakeMaxDimStrategy implements Strategy {
 
     //spread number of recursions of the curent term into each fields with the 
     //same dimension
-    int[] listSpread = Random.pile(n - 1, listHigherDimFields.size());
+    int[] nis = Random.pile(ni - 1, listHigherDimFields.size());
 
     //re-apply algorithm on same dimension fields in order to eliminate them
     int i = 0;
     for (Slot field : listHigherDimFields) {
       Strategy req;
-      if (field.getDstToLeaf() < n) {
-        req = new MakeAnyStrategy();
+      if (field.getDstToLeaf() < ni) {
+        req = new MakeMaxDimStrategy();
       } else {
         req = new BacktrackDepthStrategy();
       }
-      res.addAll(req.fillATerm(field, listSpread[i]));
-      res.addAll(req.fillATerm(field, listSpread[i]));
+      res.addAll(req.fillATerm(field, nis[i]));
       i++;
     }
     return res;
