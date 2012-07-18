@@ -52,7 +52,7 @@ class StrategyMakeMaxDimAtMost extends Strategy {
     Slot[] fields = aTerm.chooseMaxDimConstructor();
     int currentDim = aTerm.getDimension();
     Set<Slot> listHigherDimFields = dispatchFields(fields, res, currentDim);
-    int[] nis = Random.pile(rand, listHigherDimFields.size());
+    int[] nis = Random.pile(rand - 1, listHigherDimFields.size());
     int i = 0;
     for (Slot field : listHigherDimFields) {
       if (nis[i] > 0) {
