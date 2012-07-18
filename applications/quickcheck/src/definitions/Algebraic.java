@@ -151,7 +151,7 @@ public class Algebraic implements Buildable {
         if (dst < ns[i]) {
           req = new StrategyMakeMaxDimExactly();
         } else {
-          req = new StrategyBacktrackDepth();
+          req = new StrategyMakeMinimal();
         }
         listHoles.addAll(req.fillATerm(term, ns[i], distStrategy));
         i++;

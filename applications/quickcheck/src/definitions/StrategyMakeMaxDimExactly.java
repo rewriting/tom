@@ -36,7 +36,7 @@ class StrategyMakeMaxDimExactly extends Strategy {
       if (field.minimalSize(distStrategy) < ni) {
         req = new StrategyMakeMaxDimExactly();
       } else {
-        req = new StrategyBacktrackDepth();
+        req = new StrategyMakeMinimal();
       }
       res.addAll(req.fillATerm(field, nis[i], distStrategy));
       i++;

@@ -11,7 +11,7 @@ import java.util.Set;
  *
  * @author hubert
  */
-class StrategyBacktrackDepth extends Strategy {
+class StrategyMakeMinimal extends Strategy {
 
   @Override
   public HashSet<Slot> fillATerm(Slot aTerm, int ni, int distStrategy) {
@@ -36,7 +36,7 @@ class StrategyBacktrackDepth extends Strategy {
       if (field.minimalSize(distStrategy) < ni) {
         req = new StrategyMakeAny();
       } else {
-        req = new StrategyBacktrackDepth();
+        req = new StrategyMakeMinimal();
       }
       res.addAll(req.fillATerm(field, nis[i], distStrategy));
       i++;

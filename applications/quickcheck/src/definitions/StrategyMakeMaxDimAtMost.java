@@ -9,8 +9,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * ne peut être utilisé avec le générateur actuel car on ne doit plus regarder
- * si oui ou non la taille minimal
+ * TODO ne peut être utilisé avec le générateur actuel car on ne doit plus
+ * regarder si oui ou non la taille minimal
  *
  * @author hubert
  */
@@ -41,15 +41,28 @@ class StrategyMakeMaxDimAtMost extends Strategy {
       } else {
         rand = 1 + (int) (Math.random() * nis[i]);
       }
-      res.addAll(propagate(field, rand));
+      res.addAll(propagate(field, rand, distStrategy));
       i++;
     }
     return res;
   }
-  
-  private Collection propagate(Slot field, int rand){
+
+  private Collection propagate(Slot aTerm, int rand, int distStrategy) {
     Set<Slot> res = new HashSet<Slot>();
-    
-    return null;
+    Slot[] fields = aTerm.chooseMaxDimConstructor();
+    int currentDim = aTerm.getDimension();
+    Set<Slot> listHigherDimFields = dispatchFields(fields, res, currentDim);
+    int[] nis = Random.pile(rand, listHigherDimFields.size());
+    int i = 0;
+    for (Slot field : listHigherDimFields) {
+      if (nis[i] > 0) {
+        res.addAll(propagate(field, nis[i], distStrategy));
+      } else {
+        Strategy req = new StrategyMakeMinimal();
+        res.addAll(req.fillATerm(field, nis[i], distStrategy));
+      }
+      i++;
+    }
+    return res;
   }
 }
