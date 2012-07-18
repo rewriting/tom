@@ -18,10 +18,9 @@ class Random {
     if (k == 0) {
       return res;
     }
-    while (n > 0) {
+    for (int i = 0; i < n; i++) {
       int index = (int) (Math.random() * k);
       res[index]++;
-      n--;
     }
     return res;
   }

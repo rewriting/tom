@@ -5,12 +5,13 @@
 package definitions;
 
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  *
  * @author hubert
  */
-class StrategyMakeMaxDimExactly implements Strategy {
+class StrategyMakeMaxDimExactly extends Strategy {
 
   @Override
   public HashSet<Slot> fillATerm(Slot aTerm, int ni, int distStrategy) {
@@ -21,15 +22,8 @@ class StrategyMakeMaxDimExactly implements Strategy {
 
     //dispatch fields of the term between two categories: these whose dimension 
     //equals dimension of the term, and the others
-    HashSet<Slot> listHigherDimFields = new HashSet<Slot>();
-    for (int i = 0; i < fields.length; i++) {
-      Slot field = fields[i];
-      if (field.getDimension() < aTerm.getDimension()) {
-        res.add(field);
-      } else {
-        listHigherDimFields.add(field);
-      }
-    }
+    int currentDim = aTerm.getDimension();
+    Set<Slot> listHigherDimFields = dispatchFields(fields, res, currentDim);
 
     //spread number of recursions of the curent term into each fields with the 
     //same dimension

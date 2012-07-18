@@ -5,46 +5,40 @@
 package definitions;
 
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  *
  * @author hubert
  */
-class StrategyBacktrackDepth implements Strategy {
+class StrategyBacktrackDepth extends Strategy {
 
   @Override
-  public HashSet<Slot> fillATerm(Slot aTerm, int n, int distStrategy) {
+  public HashSet<Slot> fillATerm(Slot aTerm, int ni, int distStrategy) {
     HashSet<Slot> res = new HashSet<Slot>();
 
     //fill the term by choosing the constructor with minimal terminaison
-    Slot[] deps = aTerm.chooseMinDepthConstructor();
+    Slot[] fields = aTerm.chooseMinDepthConstructor();
 
     //dispatch fields of the term between two categories: these whose dimension 
     //equals dimension of the term, and the others
-    HashSet<Slot> listHigherDim = new HashSet<Slot>();
-    for (int i = 0; i < deps.length; i++) {
-      Slot dep = deps[i];
-      if (dep.getDimension() < aTerm.getDimension()) {
-        res.add(dep);
-      } else {
-        listHigherDim.add(dep);
-      }
-    }
+    int currentDim = aTerm.getDimension();
+    Set<Slot> listHigherDimFields = dispatchFields(fields, res, currentDim);
 
     //spread number of recursions of the curent term into each fields with the 
     //same dimension
-    int[] listSpread = Random.pile(n - 1, listHigherDim.size());
+    int[] nis = Random.pile(ni - 1, listHigherDimFields.size());
 
     //re-apply algorithm on same dimension fields in order to eliminate them
     int i = 0;
-    for (Slot term : listHigherDim) {
+    for (Slot field : listHigherDimFields) {
       Strategy req;
-      if (term.minimalSize(distStrategy) < n) {
+      if (field.minimalSize(distStrategy) < ni) {
         req = new StrategyMakeAny();
       } else {
         req = new StrategyBacktrackDepth();
       }
-      res.addAll(req.fillATerm(term, listSpread[i], distStrategy));
+      res.addAll(req.fillATerm(field, nis[i], distStrategy));
       i++;
     }
     return res;
