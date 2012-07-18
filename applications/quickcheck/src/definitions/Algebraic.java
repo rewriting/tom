@@ -149,9 +149,9 @@ public class Algebraic implements Buildable {
         Strategy req;
         int dst = term.distToLeaf(distStrategy);
         if (dst < ns[i]) {
-          req = new MakeMaxDimStrategy();
+          req = new StrategyMakeMaxDimExactly();
         } else {
-          req = new BacktrackDepthStrategy();
+          req = new StrategyBacktrackDepth();
         }
         listHoles.addAll(req.fillATerm(term, ns[i], distStrategy));
         i++;

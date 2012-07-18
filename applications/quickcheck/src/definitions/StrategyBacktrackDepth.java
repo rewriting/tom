@@ -10,7 +10,7 @@ import java.util.HashSet;
  *
  * @author hubert
  */
-class BacktrackDepthStrategy implements Strategy {
+class StrategyBacktrackDepth implements Strategy {
 
   @Override
   public HashSet<Slot> fillATerm(Slot aTerm, int n, int distStrategy) {
@@ -40,9 +40,9 @@ class BacktrackDepthStrategy implements Strategy {
     for (Slot term : listHigherDim) {
       Strategy req;
       if (term.distToLeaf(distStrategy) < n) {
-        req = new MakeAnyStrategy();
+        req = new StrategyMakeAny();
       } else {
-        req = new BacktrackDepthStrategy();
+        req = new StrategyBacktrackDepth();
       }
       res.addAll(req.fillATerm(term, listSpread[i], distStrategy));
       i++;

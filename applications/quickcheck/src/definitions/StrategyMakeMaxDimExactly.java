@@ -10,7 +10,7 @@ import java.util.HashSet;
  *
  * @author hubert
  */
-class MakeMaxDimStrategy implements Strategy {
+class StrategyMakeMaxDimExactly implements Strategy {
 
   @Override
   public HashSet<Slot> fillATerm(Slot aTerm, int ni, int distStrategy) {
@@ -40,9 +40,9 @@ class MakeMaxDimStrategy implements Strategy {
     for (Slot field : listHigherDimFields) {
       Strategy req;
       if (field.distToLeaf(distStrategy) < ni) {
-        req = new MakeMaxDimStrategy();
+        req = new StrategyMakeMaxDimExactly();
       } else {
-        req = new BacktrackDepthStrategy();
+        req = new StrategyBacktrackDepth();
       }
       res.addAll(req.fillATerm(field, nis[i], distStrategy));
       i++;
