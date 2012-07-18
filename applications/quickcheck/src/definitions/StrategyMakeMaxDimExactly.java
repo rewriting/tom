@@ -39,7 +39,7 @@ class StrategyMakeMaxDimExactly implements Strategy {
     int i = 0;
     for (Slot field : listHigherDimFields) {
       Strategy req;
-      if (field.distToLeaf(distStrategy) < ni) {
+      if (field.minimalSize(distStrategy) < ni) {
         req = new StrategyMakeMaxDimExactly();
       } else {
         req = new StrategyBacktrackDepth();

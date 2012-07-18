@@ -54,7 +54,7 @@ public class Algebraic implements Buildable {
   }
   
   @Override
-  public int distToLeaf(int strategy){
+  public int minimalSize(int strategy){
     switch(strategy){
       case DEPTH:
         return depthToLeaf();
@@ -85,7 +85,7 @@ public class Algebraic implements Buildable {
         //the returned value is sensless
         return -1;
       }
-      res = Math.min(res, constructor.depthToLeaf());
+      res = Math.min(res, constructor.minimalDepth());
     }
     this.dstLeaf = res;
     return dstLeaf;
@@ -111,7 +111,7 @@ public class Algebraic implements Buildable {
         //the returned value is sensless
         return -1;
       }
-      res = Math.min(res, constructor.stepsToLeaf());
+      res = Math.min(res, constructor.minimalSteps());
     }
     this.dstLeaf = res;
     return dstLeaf;
@@ -147,7 +147,7 @@ public class Algebraic implements Buildable {
       int i = 0;
       for (Slot term : toVisit) {
         Strategy req;
-        int dst = term.distToLeaf(distStrategy);
+        int dst = term.minimalSize(distStrategy);
         if (dst < ns[i]) {
           req = new StrategyMakeMaxDimExactly();
         } else {
@@ -221,7 +221,7 @@ public class Algebraic implements Buildable {
     while (!copy.isEmpty()) {
       int choice = (int) (Math.random() * copy.size());
       Constructor cons = copy.get(choice);
-      if (cons.depthToLeaf() != Integer.MAX_VALUE) {
+      if (cons.minimalDepth() != Integer.MAX_VALUE) {
         return cons;
       }
       copy.remove(cons);
@@ -236,7 +236,7 @@ public class Algebraic implements Buildable {
     ArrayList<Constructor> maxCons = new ArrayList<Constructor>(constructors.size());
     int max = 0;
     for (Constructor constructor : constructors) {
-      if (constructor.depthToLeaf() != Integer.MAX_VALUE) {
+      if (constructor.minimalDepth() != Integer.MAX_VALUE) {
         int dim = constructor.getDimention();
         if (dim > max) {
           maxCons = new ArrayList<Constructor>();
@@ -262,7 +262,7 @@ public class Algebraic implements Buildable {
   Constructor chooseMinDepthConstructor() {
     ArrayList<Constructor> minCons = new ArrayList<Constructor>(constructors.size());
     for (Constructor constructor : constructors) {
-      int m = constructor.depthToLeaf();
+      int m = constructor.minimalDepth();
       if (m == depthToLeaf()) {
         minCons.add(constructor);
       }
@@ -282,7 +282,7 @@ public class Algebraic implements Buildable {
   Constructor chooseMinStepsConstructor() {
     ArrayList<Constructor> minCons = new ArrayList<Constructor>(constructors.size());
     for (Constructor constructor : constructors) {
-      int m = constructor.stepsToLeaf();
+      int m = constructor.minimalSteps();
       if (m == depthToLeaf()) {
         minCons.add(constructor);
       }

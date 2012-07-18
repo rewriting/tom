@@ -7,7 +7,7 @@ package definitions;
 import java.util.HashSet;
 
 /**
- *
+ * ne peut être utilisé avec le générateur actuel car on ne doit plus regarder si oui ou non la taille minimal
  * @author hubert
  */
 class StrategyMakeMaxDimAtMost implements Strategy {
@@ -39,7 +39,7 @@ class StrategyMakeMaxDimAtMost implements Strategy {
     int i = 0;
     for (Slot field : listHigherDimFields) {
       Strategy req;
-      if (field.distToLeaf(distStrategy) < ni) {
+      if (field.minimalSize(distStrategy) < ni) {
         req = new StrategyMakeMaxDimAtMost();
       } else {
         req = new StrategyBacktrackDepth();

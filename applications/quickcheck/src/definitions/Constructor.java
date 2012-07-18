@@ -35,7 +35,7 @@ class Constructor {
    * Gives minimal depth before terminaison.
    *
    */
-  int depthToLeaf() {
+  int minimalDepth() {
     if (fields.length == 0) {
       return 0;
     }
@@ -43,7 +43,7 @@ class Constructor {
     int res = 0;
     for (int i = 0; i < fields.length; i++) {
       Buildable field = fields[i];
-      int tmp = field.distToLeaf(Buildable.DEPTH);
+      int tmp = field.minimalSize(Buildable.DEPTH);
       if (tmp == -1) {
         lock = false;
         return Integer.MAX_VALUE;
@@ -63,7 +63,7 @@ class Constructor {
    * Gives minimal number of steps before terminaison.
    *
    */
-  int stepsToLeaf() {
+  int minimalSteps() {
     if (fields.length == 0) {
       return 0;
     }
@@ -71,7 +71,7 @@ class Constructor {
     int res = 0;
     for (int i = 0; i < fields.length; i++) {
       Buildable field = fields[i];
-      int tmp = field.distToLeaf(Buildable.STEPS);
+      int tmp = field.minimalSize(Buildable.STEPS);
       if (tmp == -1) {
         // if one of the constructors of field is locked
         lock = false;

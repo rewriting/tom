@@ -350,7 +350,7 @@ public class AlgebraicTest {
   public void testDstToLeafNat() {
     System.out.println("dstToLeaf Nat");
     int expResult = 0;
-    int result = nat.distToLeaf(Buildable.DEPTH);
+    int result = nat.minimalSize(Buildable.DEPTH);
     assertEquals(expResult, result);
   }
 
@@ -358,7 +358,7 @@ public class AlgebraicTest {
   public void testDstToLeafTree() {
     System.out.println("dstToLeaf Tree");
     int expResult = 0;
-    int result = tree.distToLeaf(Buildable.DEPTH);
+    int result = tree.minimalSize(Buildable.DEPTH);
     assertEquals(expResult, result);
   }
 
@@ -366,7 +366,7 @@ public class AlgebraicTest {
   public void testDstToLeafTypeTest() {
     System.out.println("dstToLeaf TypeTest");
     int expResult = 1;
-    int result = typetest.distToLeaf(Buildable.DEPTH);
+    int result = typetest.minimalSize(Buildable.DEPTH);
     assertEquals(expResult, result);
   }
 
@@ -374,17 +374,17 @@ public class AlgebraicTest {
   public void testDstToLeafForest() {
     System.out.println("dstToLeaf Forest");
     int expResult = 2;
-    int result = forest.distToLeaf(Buildable.DEPTH);
+    int result = forest.minimalSize(Buildable.DEPTH);
     System.out.println(result);
     assertEquals(expResult, result);
   }
 
   @Test
   public void testDstToLeafTree2() {
-    System.out.println(forest.distToLeaf(Buildable.DEPTH));
+    System.out.println(forest.minimalSize(Buildable.DEPTH));
     System.out.println("dstToLeaf Tree2");
     int expResult = 1;
-    int result = tree2.distToLeaf(Buildable.DEPTH);
+    int result = tree2.minimalSize(Buildable.DEPTH);
     assertEquals(expResult, result);
   }
 
@@ -392,7 +392,7 @@ public class AlgebraicTest {
   public void testDstToLeafCirc() {
     System.out.println("dstToLeaf Circ");
     int expResult = Integer.MAX_VALUE;
-    int result = circ.distToLeaf(Buildable.DEPTH);
+    int result = circ.minimalSize(Buildable.DEPTH);
     assertEquals(expResult, result);
   }
 
@@ -400,7 +400,7 @@ public class AlgebraicTest {
   public void testDstToLeafB() {
     System.out.println("dstToLeaf B");
     int expResult = 2;
-    int result = b.distToLeaf(Buildable.DEPTH);
+    int result = b.minimalSize(Buildable.DEPTH);
     assertEquals(expResult, result);
   }
 
@@ -408,7 +408,7 @@ public class AlgebraicTest {
   public void testDstToLeafA() {
     System.out.println("dstToLeaf A");
     int expResult = 0;
-    int result = a.distToLeaf(Buildable.DEPTH);
+    int result = a.minimalSize(Buildable.DEPTH);
     assertEquals(expResult, result);
   }
 
@@ -416,7 +416,7 @@ public class AlgebraicTest {
   public void testDstToLeafC() {
     System.out.println("dstToLeaf C");
     int expResult = 1;
-    int result = c.distToLeaf(Buildable.DEPTH);
+    int result = c.minimalSize(Buildable.DEPTH);
     assertEquals(expResult, result);
   }
 
@@ -424,7 +424,7 @@ public class AlgebraicTest {
   public void testDstToLeafExpre() {
     System.out.println("dstToLeaf Expr");
     int expResult = 0;
-    int result = expr.distToLeaf(Buildable.DEPTH);
+    int result = expr.minimalSize(Buildable.DEPTH);
     assertEquals(expResult, result);
   }
 
@@ -432,7 +432,7 @@ public class AlgebraicTest {
   public void testDstToLeafSurExpre() {
     System.out.println("dstToLeaf SurExpr");
     int expResult = 1;
-    int result = surexpr.distToLeaf(Buildable.DEPTH);
+    int result = surexpr.minimalSize(Buildable.DEPTH);
     assertEquals(expResult, result);
   }
 
@@ -440,7 +440,7 @@ public class AlgebraicTest {
   public void testDstToLeaflist() {
     System.out.println("dstToLeaf list");
     int expResult = 1;
-    int result = list.distToLeaf(Buildable.DEPTH);
+    int result = list.minimalSize(Buildable.DEPTH);
     assertEquals(expResult, result);
   }
 
@@ -449,7 +449,7 @@ public class AlgebraicTest {
     Algebraic test = list2;
     System.out.println("dstToLeaf " + test.getName());
     int expResult = Integer.MAX_VALUE;
-    int result = test.distToLeaf(Buildable.DEPTH);
+    int result = test.minimalSize(Buildable.DEPTH);
     assertEquals(expResult, result);
   }
   
@@ -458,7 +458,7 @@ public class AlgebraicTest {
     Algebraic test = mix;
     System.out.println("dstToLeaf " + test.getName());
     int expResult = 2;
-    int result = test.distToLeaf(Buildable.DEPTH);
+    int result = test.minimalSize(Buildable.DEPTH);
     assertEquals(expResult, result);
   }
 
@@ -469,7 +469,7 @@ public class AlgebraicTest {
   public void testStepsToLeafNat() {
     System.out.println("stepsToLeaf " + nat.getName());
     int expResult = 0;
-    int result = nat.distToLeaf(Buildable.STEPS);
+    int result = nat.minimalSize(Buildable.STEPS);
     assertEquals(expResult, result);
   }
 
@@ -477,7 +477,7 @@ public class AlgebraicTest {
   public void testStepsToLeafA() {
     System.out.println("stepsToLeaf " + a.getName());
     int expResult = 0;
-    int result = a.distToLeaf(Buildable.STEPS);
+    int result = a.minimalSize(Buildable.STEPS);
     assertEquals(expResult, result);
   }
 
@@ -485,7 +485,7 @@ public class AlgebraicTest {
   public void testStepsToLeafB() {
     System.out.println("stepsToLeaf " + b.getName());
     int expResult = 2;
-    int result = b.distToLeaf(Buildable.STEPS);
+    int result = b.minimalSize(Buildable.STEPS);
     assertEquals(expResult, result);
   }
 
@@ -493,7 +493,7 @@ public class AlgebraicTest {
   public void testStepsToLeafC() {
     System.out.println("stepsToLeaf " + c.getName());
     int expResult = 1;
-    int result = c.distToLeaf(Buildable.STEPS);
+    int result = c.minimalSize(Buildable.STEPS);
     assertEquals(expResult, result);
   }
 
@@ -501,7 +501,7 @@ public class AlgebraicTest {
   public void testStepsToLeafForest() {
     System.out.println("stepsToLeaf " + forest.getName());
     int expResult = 2;
-    int result = forest.distToLeaf(Buildable.STEPS);
+    int result = forest.minimalSize(Buildable.STEPS);
     assertEquals(expResult, result);
   }
 
@@ -509,7 +509,7 @@ public class AlgebraicTest {
   public void testStepsToLeaftree() {
     System.out.println("stepsToLeaf " + tree.getName());
     int expResult = 0;
-    int result = tree.distToLeaf(Buildable.STEPS);
+    int result = tree.minimalSize(Buildable.STEPS);
     assertEquals(expResult, result);
   }
 
@@ -517,7 +517,7 @@ public class AlgebraicTest {
   public void testStepsToLeaftypetest() {
     System.out.println("stepsToLeaf " + typetest.getName());
     int expResult = 1;
-    int result = typetest.distToLeaf(Buildable.STEPS);
+    int result = typetest.minimalSize(Buildable.STEPS);
     assertEquals(expResult, result);
   }
 
@@ -525,7 +525,7 @@ public class AlgebraicTest {
   public void testStepsToLeaftree2() {
     System.out.println("stepsToLeaf " + tree2.getName());
     int expResult = 1;
-    int result = tree2.distToLeaf(Buildable.STEPS);
+    int result = tree2.minimalSize(Buildable.STEPS);
     assertEquals(expResult, result);
   }
 
@@ -533,7 +533,7 @@ public class AlgebraicTest {
   public void testStepsToLeafcirc() {
     System.out.println("stepsToLeaf " + circ.getName());
     int expResult = Integer.MAX_VALUE;
-    int result = circ.distToLeaf(Buildable.STEPS);
+    int result = circ.minimalSize(Buildable.STEPS);
     assertEquals(expResult, result);
   }
 
@@ -541,7 +541,7 @@ public class AlgebraicTest {
   public void testStepsToLeafexpr() {
     System.out.println("stepsToLeaf " + expr.getName());
     int expResult = 0;
-    int result = expr.distToLeaf(Buildable.STEPS);
+    int result = expr.minimalSize(Buildable.STEPS);
     assertEquals(expResult, result);
   }
 
@@ -549,7 +549,7 @@ public class AlgebraicTest {
   public void testStepsToLeafsurexpr() {
     System.out.println("stepsToLeaf " + surexpr.getName());
     int expResult = 1;
-    int result = surexpr.distToLeaf(Buildable.STEPS);
+    int result = surexpr.minimalSize(Buildable.STEPS);
     assertEquals(expResult, result);
   }
 
@@ -557,7 +557,7 @@ public class AlgebraicTest {
   public void testStepsToLeaflist() {
     System.out.println("stepsToLeaf " + list.getName());
     int expResult = 1;
-    int result = list.distToLeaf(Buildable.STEPS);
+    int result = list.minimalSize(Buildable.STEPS);
     assertEquals(expResult, result);
   }
 
@@ -566,7 +566,7 @@ public class AlgebraicTest {
     Algebraic test = list2;
     System.out.println("stepsToLeaf " + test.getName());
     int expResult = Integer.MAX_VALUE;
-    int result = test.distToLeaf(Buildable.STEPS);
+    int result = test.minimalSize(Buildable.STEPS);
     assertEquals(expResult, result);
   }
   
@@ -575,7 +575,7 @@ public class AlgebraicTest {
     Algebraic test = mix;
     System.out.println("stepsToLeaf " + test.getName());
     int expResult = 3;
-    int result = test.distToLeaf(Buildable.STEPS);
+    int result = test.minimalSize(Buildable.STEPS);
     assertEquals(expResult, result);
   }
 

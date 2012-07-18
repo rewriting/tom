@@ -39,7 +39,7 @@ class StrategyMakeAny implements Strategy {
     int i = 0;
     for (Slot term : listHigherDim) {
       Strategy req;
-      if (term.distToLeaf(distStrategy) < n) {
+      if (term.minimalSize(distStrategy) < n) {
         req = new StrategyMakeAny();
       } else {
         req = new StrategyBacktrackDepth();

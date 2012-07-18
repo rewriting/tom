@@ -49,7 +49,7 @@ public final class Builtin {
 
 
     @Override
-    public int distToLeaf(int strategy) {
+    public int minimalSize(int strategy) {
       return 0;
     }
   };
@@ -90,7 +90,7 @@ public final class Builtin {
     }
 
     @Override
-    public int distToLeaf(int strategy) {
+    public int minimalSize(int strategy) {
       return 0;
     }
   };

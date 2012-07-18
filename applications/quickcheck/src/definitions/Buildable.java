@@ -53,7 +53,7 @@ public interface Buildable {
    * Integer.MAX_VALUE if no path reaches a leaf.
    * @see Buildable#stepsToLeaf()
    */
-  public int distToLeaf(int distStrategy);
+  public int minimalSize(int distStrategy);
 
   /**
    * Make a new random term. This function cannot be used till dependances are
