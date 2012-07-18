@@ -13,7 +13,7 @@ import java.util.HashSet;
 class BacktrackDepthStrategy implements Strategy {
 
   @Override
-  public HashSet<Slot> fillATerm(Slot aTerm, int n) {
+  public HashSet<Slot> fillATerm(Slot aTerm, int n, int distStrategy) {
     HashSet<Slot> res = new HashSet<Slot>();
 
     //fill the term by choosing the constructor with minimal terminaison
@@ -39,12 +39,12 @@ class BacktrackDepthStrategy implements Strategy {
     int i = 0;
     for (Slot term : listHigherDim) {
       Strategy req;
-      if (term.depthToLeaf() < n) {
+      if (term.distToLeaf(distStrategy) < n) {
         req = new MakeAnyStrategy();
       } else {
         req = new BacktrackDepthStrategy();
       }
-      res.addAll(req.fillATerm(term, listSpread[i]));
+      res.addAll(req.fillATerm(term, listSpread[i], distStrategy));
       i++;
     }
     return res;

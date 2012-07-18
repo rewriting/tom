@@ -21,5 +21,5 @@ interface Strategy {
    * @param n
    * @return Set of fields of the filled terms
    */
-  HashSet<Slot> fillATerm(Slot aTerm, int n);
+  HashSet<Slot> fillATerm(Slot aTerm, int n, int distStrategy);
 }

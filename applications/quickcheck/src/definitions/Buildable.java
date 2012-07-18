@@ -10,6 +10,9 @@ import java.util.Set;
  */
 public interface Buildable {
 
+  public static final int DEPTH = 1;
+  public static final int STEPS = 2;
+
   /**
    * Gives name of type.
    *
@@ -44,24 +47,13 @@ public interface Buildable {
   public int getDimension();
 
   /**
-   * This function give the size of the shortest path from here to a leaf in
-   * terms of depth.
+   * This function give the size of the shortest path from here to a leaf.
    *
    * @return size of the minimal path between here and a leaf. Returns
    * Integer.MAX_VALUE if no path reaches a leaf.
-   * @see Buildable#stepsToLeaf() 
+   * @see Buildable#stepsToLeaf()
    */
-  public int depthToLeaf();
-
-  /**
-   * This function give the size of the shortest path from here to a leaf in
-   * terms of steps.
-   *
-   * @return size of the minimal path between here and a leaf. Returns
-   * Integer.MAX_VALUE if no path reaches a leaf.
-   * @see Buildable#depthToLeaf() 
-   */
-  public int stepsToLeaf();
+  public int distToLeaf(int distStrategy);
 
   /**
    * Make a new random term. This function cannot be used till dependances are

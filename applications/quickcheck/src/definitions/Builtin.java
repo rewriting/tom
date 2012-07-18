@@ -38,11 +38,6 @@ public final class Builtin {
     }
 
     @Override
-    public int depthToLeaf() {
-      return 0;
-    }
-
-    @Override
     public ATerm generate(int n) {
       return (new PureFactory()).makeInt((int) (Math.random() * n));
     }
@@ -52,8 +47,9 @@ public final class Builtin {
       return false;
     }
 
+
     @Override
-    public int stepsToLeaf() {
+    public int distToLeaf(int strategy) {
       return 0;
     }
   };
@@ -79,11 +75,6 @@ public final class Builtin {
     }
 
     @Override
-    public int depthToLeaf() {
-      return 0;
-    }
-
-    @Override
     public ATerm generate(int n) {
       PureFactory factory = new PureFactory();
       ATermList res = factory.makeList();
@@ -99,7 +90,7 @@ public final class Builtin {
     }
 
     @Override
-    public int stepsToLeaf() {
+    public int distToLeaf(int strategy) {
       return 0;
     }
   };

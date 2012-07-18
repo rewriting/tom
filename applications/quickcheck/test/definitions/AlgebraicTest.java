@@ -350,7 +350,7 @@ public class AlgebraicTest {
   public void testDstToLeafNat() {
     System.out.println("dstToLeaf Nat");
     int expResult = 0;
-    int result = nat.depthToLeaf();
+    int result = nat.distToLeaf(Buildable.DEPTH);
     assertEquals(expResult, result);
   }
 
@@ -358,7 +358,7 @@ public class AlgebraicTest {
   public void testDstToLeafTree() {
     System.out.println("dstToLeaf Tree");
     int expResult = 0;
-    int result = tree.depthToLeaf();
+    int result = tree.distToLeaf(Buildable.DEPTH);
     assertEquals(expResult, result);
   }
 
@@ -366,7 +366,7 @@ public class AlgebraicTest {
   public void testDstToLeafTypeTest() {
     System.out.println("dstToLeaf TypeTest");
     int expResult = 1;
-    int result = typetest.depthToLeaf();
+    int result = typetest.distToLeaf(Buildable.DEPTH);
     assertEquals(expResult, result);
   }
 
@@ -374,17 +374,17 @@ public class AlgebraicTest {
   public void testDstToLeafForest() {
     System.out.println("dstToLeaf Forest");
     int expResult = 2;
-    int result = forest.depthToLeaf();
+    int result = forest.distToLeaf(Buildable.DEPTH);
     System.out.println(result);
     assertEquals(expResult, result);
   }
 
   @Test
   public void testDstToLeafTree2() {
-    System.out.println(forest.depthToLeaf());
+    System.out.println(forest.distToLeaf(Buildable.DEPTH));
     System.out.println("dstToLeaf Tree2");
     int expResult = 1;
-    int result = tree2.depthToLeaf();
+    int result = tree2.distToLeaf(Buildable.DEPTH);
     assertEquals(expResult, result);
   }
 
@@ -392,7 +392,7 @@ public class AlgebraicTest {
   public void testDstToLeafCirc() {
     System.out.println("dstToLeaf Circ");
     int expResult = Integer.MAX_VALUE;
-    int result = circ.depthToLeaf();
+    int result = circ.distToLeaf(Buildable.DEPTH);
     assertEquals(expResult, result);
   }
 
@@ -400,7 +400,7 @@ public class AlgebraicTest {
   public void testDstToLeafB() {
     System.out.println("dstToLeaf B");
     int expResult = 2;
-    int result = b.depthToLeaf();
+    int result = b.distToLeaf(Buildable.DEPTH);
     assertEquals(expResult, result);
   }
 
@@ -408,7 +408,7 @@ public class AlgebraicTest {
   public void testDstToLeafA() {
     System.out.println("dstToLeaf A");
     int expResult = 0;
-    int result = a.depthToLeaf();
+    int result = a.distToLeaf(Buildable.DEPTH);
     assertEquals(expResult, result);
   }
 
@@ -416,7 +416,7 @@ public class AlgebraicTest {
   public void testDstToLeafC() {
     System.out.println("dstToLeaf C");
     int expResult = 1;
-    int result = c.depthToLeaf();
+    int result = c.distToLeaf(Buildable.DEPTH);
     assertEquals(expResult, result);
   }
 
@@ -424,7 +424,7 @@ public class AlgebraicTest {
   public void testDstToLeafExpre() {
     System.out.println("dstToLeaf Expr");
     int expResult = 0;
-    int result = expr.depthToLeaf();
+    int result = expr.distToLeaf(Buildable.DEPTH);
     assertEquals(expResult, result);
   }
 
@@ -432,7 +432,7 @@ public class AlgebraicTest {
   public void testDstToLeafSurExpre() {
     System.out.println("dstToLeaf SurExpr");
     int expResult = 1;
-    int result = surexpr.depthToLeaf();
+    int result = surexpr.distToLeaf(Buildable.DEPTH);
     assertEquals(expResult, result);
   }
 
@@ -440,7 +440,7 @@ public class AlgebraicTest {
   public void testDstToLeaflist() {
     System.out.println("dstToLeaf list");
     int expResult = 1;
-    int result = list.depthToLeaf();
+    int result = list.distToLeaf(Buildable.DEPTH);
     assertEquals(expResult, result);
   }
 
@@ -449,7 +449,7 @@ public class AlgebraicTest {
     Algebraic test = list2;
     System.out.println("dstToLeaf " + test.getName());
     int expResult = Integer.MAX_VALUE;
-    int result = test.depthToLeaf();
+    int result = test.distToLeaf(Buildable.DEPTH);
     assertEquals(expResult, result);
   }
   
@@ -458,7 +458,7 @@ public class AlgebraicTest {
     Algebraic test = mix;
     System.out.println("dstToLeaf " + test.getName());
     int expResult = 2;
-    int result = test.depthToLeaf();
+    int result = test.distToLeaf(Buildable.DEPTH);
     assertEquals(expResult, result);
   }
 
@@ -469,7 +469,7 @@ public class AlgebraicTest {
   public void testStepsToLeafNat() {
     System.out.println("stepsToLeaf " + nat.getName());
     int expResult = 0;
-    int result = nat.stepsToLeaf();
+    int result = nat.distToLeaf(Buildable.STEPS);
     assertEquals(expResult, result);
   }
 
@@ -477,7 +477,7 @@ public class AlgebraicTest {
   public void testStepsToLeafA() {
     System.out.println("stepsToLeaf " + a.getName());
     int expResult = 0;
-    int result = a.stepsToLeaf();
+    int result = a.distToLeaf(Buildable.STEPS);
     assertEquals(expResult, result);
   }
 
@@ -485,7 +485,7 @@ public class AlgebraicTest {
   public void testStepsToLeafB() {
     System.out.println("stepsToLeaf " + b.getName());
     int expResult = 2;
-    int result = b.stepsToLeaf();
+    int result = b.distToLeaf(Buildable.STEPS);
     assertEquals(expResult, result);
   }
 
@@ -493,7 +493,7 @@ public class AlgebraicTest {
   public void testStepsToLeafC() {
     System.out.println("stepsToLeaf " + c.getName());
     int expResult = 1;
-    int result = c.stepsToLeaf();
+    int result = c.distToLeaf(Buildable.STEPS);
     assertEquals(expResult, result);
   }
 
@@ -501,7 +501,7 @@ public class AlgebraicTest {
   public void testStepsToLeafForest() {
     System.out.println("stepsToLeaf " + forest.getName());
     int expResult = 2;
-    int result = forest.stepsToLeaf();
+    int result = forest.distToLeaf(Buildable.STEPS);
     assertEquals(expResult, result);
   }
 
@@ -509,7 +509,7 @@ public class AlgebraicTest {
   public void testStepsToLeaftree() {
     System.out.println("stepsToLeaf " + tree.getName());
     int expResult = 0;
-    int result = tree.stepsToLeaf();
+    int result = tree.distToLeaf(Buildable.STEPS);
     assertEquals(expResult, result);
   }
 
@@ -517,7 +517,7 @@ public class AlgebraicTest {
   public void testStepsToLeaftypetest() {
     System.out.println("stepsToLeaf " + typetest.getName());
     int expResult = 1;
-    int result = typetest.stepsToLeaf();
+    int result = typetest.distToLeaf(Buildable.STEPS);
     assertEquals(expResult, result);
   }
 
@@ -525,7 +525,7 @@ public class AlgebraicTest {
   public void testStepsToLeaftree2() {
     System.out.println("stepsToLeaf " + tree2.getName());
     int expResult = 1;
-    int result = tree2.stepsToLeaf();
+    int result = tree2.distToLeaf(Buildable.STEPS);
     assertEquals(expResult, result);
   }
 
@@ -533,7 +533,7 @@ public class AlgebraicTest {
   public void testStepsToLeafcirc() {
     System.out.println("stepsToLeaf " + circ.getName());
     int expResult = Integer.MAX_VALUE;
-    int result = circ.stepsToLeaf();
+    int result = circ.distToLeaf(Buildable.STEPS);
     assertEquals(expResult, result);
   }
 
@@ -541,7 +541,7 @@ public class AlgebraicTest {
   public void testStepsToLeafexpr() {
     System.out.println("stepsToLeaf " + expr.getName());
     int expResult = 0;
-    int result = expr.stepsToLeaf();
+    int result = expr.distToLeaf(Buildable.STEPS);
     assertEquals(expResult, result);
   }
 
@@ -549,7 +549,7 @@ public class AlgebraicTest {
   public void testStepsToLeafsurexpr() {
     System.out.println("stepsToLeaf " + surexpr.getName());
     int expResult = 1;
-    int result = surexpr.stepsToLeaf();
+    int result = surexpr.distToLeaf(Buildable.STEPS);
     assertEquals(expResult, result);
   }
 
@@ -557,7 +557,7 @@ public class AlgebraicTest {
   public void testStepsToLeaflist() {
     System.out.println("stepsToLeaf " + list.getName());
     int expResult = 1;
-    int result = list.stepsToLeaf();
+    int result = list.distToLeaf(Buildable.STEPS);
     assertEquals(expResult, result);
   }
 
@@ -566,7 +566,7 @@ public class AlgebraicTest {
     Algebraic test = list2;
     System.out.println("stepsToLeaf " + test.getName());
     int expResult = Integer.MAX_VALUE;
-    int result = test.stepsToLeaf();
+    int result = test.distToLeaf(Buildable.STEPS);
     assertEquals(expResult, result);
   }
   
@@ -575,7 +575,7 @@ public class AlgebraicTest {
     Algebraic test = mix;
     System.out.println("stepsToLeaf " + test.getName());
     int expResult = 3;
-    int result = test.stepsToLeaf();
+    int result = test.distToLeaf(Buildable.STEPS);
     assertEquals(expResult, result);
   }
 
@@ -606,7 +606,7 @@ public class AlgebraicTest {
   @Test
   public void testGenerateExpr() {
     System.out.println("Generate Expr");
-    Slot slot = expr.generateSlot(100);
+    Slot slot = expr.generateSlot(100, Buildable.DEPTH);
     System.out.println(slot);
     slot.toDot("Expr.dot");
     int expResult = 1;
@@ -617,7 +617,7 @@ public class AlgebraicTest {
   @Test
   public void testGenerateSurExpr() {
     System.out.println("Generate SurExpr");
-    Slot slot = surexpr.generateSlot(100);
+    Slot slot = surexpr.generateSlot(100, Buildable.DEPTH);
     System.out.println(slot);
     slot.toDot("SurExpr.dot");
     int expResult = 1;
@@ -628,7 +628,7 @@ public class AlgebraicTest {
   @Test
   public void testGenerateA() {
     System.out.println("Generate A");
-    Slot slot = a.generateSlot(100);
+    Slot slot = a.generateSlot(100, Buildable.DEPTH);
     System.out.println(slot);
     slot.toDot("A.dot");
     int expResult = 1;
@@ -639,7 +639,7 @@ public class AlgebraicTest {
   @Test
   public void testGenerateB() {
     System.out.println("Generate B");
-    Slot slot = b.generateSlot(100);
+    Slot slot = b.generateSlot(100, Buildable.DEPTH);
     System.out.println(slot);
     slot.toDot("B.dot");
     int expResult = 1;
@@ -650,7 +650,7 @@ public class AlgebraicTest {
   @Test
   public void testGenerateC() {
     System.out.println("Generate C");
-    Slot slot = c.generateSlot(100);
+    Slot slot = c.generateSlot(100, Buildable.DEPTH);
     System.out.println(slot);
     slot.toDot("C.dot");
     int expResult = 1;
@@ -664,7 +664,7 @@ public class AlgebraicTest {
     Slot slot;
     String res = "not this";
     try {
-      slot = circ.generateSlot(100);
+      slot = circ.generateSlot(100, Buildable.DEPTH);
       System.out.println(slot);
       slot.toDot("Circ.dot");
     } catch (UnsupportedOperationException e) {
@@ -678,7 +678,7 @@ public class AlgebraicTest {
   @Test
   public void testGenerateforest() {
     System.out.println("Generate forest");
-    Slot slot = forest.generateSlot(100);
+    Slot slot = forest.generateSlot(100, Buildable.DEPTH);
     System.out.println(slot);
     slot.toDot("forest.dot");
     int expResult = 1;
@@ -689,7 +689,7 @@ public class AlgebraicTest {
   @Test
   public void testGeneratenat() {
     System.out.println("Generate nat");
-    Slot slot = nat.generateSlot(100);
+    Slot slot = nat.generateSlot(100, Buildable.DEPTH);
     System.out.println(slot);
     slot.toDot("nat.dot");
     int expResult = 1;
@@ -700,7 +700,7 @@ public class AlgebraicTest {
   @Test
   public void testGenerateTree() {
     System.out.println("Generate tree");
-    Slot slot = tree.generateSlot(100);
+    Slot slot = tree.generateSlot(100, Buildable.DEPTH);
     System.out.println(slot);
     slot.toDot("tree.dot");
     int expResult = 1;
@@ -711,7 +711,7 @@ public class AlgebraicTest {
   @Test
   public void testGenerateTree2() {
     System.out.println("Generate tree2");
-    Slot slot = tree2.generateSlot(100);
+    Slot slot = tree2.generateSlot(100, Buildable.DEPTH);
     System.out.println(slot);
     slot.toDot("tree2.dot");
     int expResult = 1;
@@ -722,7 +722,7 @@ public class AlgebraicTest {
   @Test
   public void testGeneratetypetest() {
     System.out.println("Generate typetest");
-    Slot slot = typetest.generateSlot(100);
+    Slot slot = typetest.generateSlot(100, Buildable.DEPTH);
     System.out.println(slot);
     slot.toDot("typetest.dot");
     int expResult = 1;
@@ -733,7 +733,7 @@ public class AlgebraicTest {
   @Test
   public void testGeneratelist() {
     System.out.println("Generate list");
-    Slot slot = list.generateSlot(100);
+    Slot slot = list.generateSlot(100, Buildable.DEPTH);
     System.out.println(slot);
     slot.toDot("list.dot");
     int expResult = 1;
@@ -748,9 +748,9 @@ public class AlgebraicTest {
     Slot slot = null;
     String res = "not this";
     try {
-      slot = test.generateSlot(100);
+      slot = test.generateSlot(100, Buildable.DEPTH);
       System.out.println(slot);
-      slot.toDot("list.dot");
+      slot.toDot("list2.dot");
     } catch (UnsupportedOperationException e) {
       System.out.println("fail");
       res = e.getMessage();
@@ -763,9 +763,9 @@ public class AlgebraicTest {
   public void testGeneratemix() {
     Algebraic test = mix;
     System.out.println("Generate " + test.getName());
-    Slot slot = mix.generateSlot(100);
+    Slot slot = mix.generateSlot(100, Buildable.DEPTH);
     System.out.println(slot);
-    slot.toDot("list.dot");
+    slot.toDot("mix.dot");
     int expResult = 1;
     int result = 1;
     assertEquals(expResult, result);

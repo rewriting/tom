@@ -59,8 +59,8 @@ class Slot {
     return type.getDimension();
   }
 
-  int depthToLeaf() {
-    return type.depthToLeaf();
+  int distToLeaf(int strategy) {
+    return type.distToLeaf(strategy);
   }
 
   @Override

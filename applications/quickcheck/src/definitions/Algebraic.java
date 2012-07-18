@@ -52,9 +52,28 @@ public class Algebraic implements Buildable {
     }
     return dim + add;
   }
-
+  
   @Override
-  public int depthToLeaf() {
+  public int distToLeaf(int strategy){
+    switch(strategy){
+      case DEPTH:
+        return depthToLeaf();
+      case STEPS:
+        return stepsToLeaf();
+      default :
+        throw new UnsupportedOperationException("strategy " + strategy + " not defined.");
+    }
+  }
+
+  /**
+   * This function give the size of the shortest path from here to a leaf in
+   * terms of depth.
+   *
+   * @return size of the minimal path between here and a leaf. Returns
+   * Integer.MAX_VALUE if no path reaches a leaf.
+   * @see Buildable#stepsToLeaf()
+   */
+  private int depthToLeaf() {
     if (dstLeaf != -1 && dstLeaf != Integer.MAX_VALUE) {
       return dstLeaf;
     }
@@ -72,8 +91,15 @@ public class Algebraic implements Buildable {
     return dstLeaf;
   }
 
-  @Override
-  public int stepsToLeaf() {
+  /**
+   * This function give the size of the shortest path from here to a leaf in
+   * terms of steps.
+   *
+   * @return size of the minimal path between here and a leaf. Returns
+   * Integer.MAX_VALUE if no path reaches a leaf.
+   * @see Buildable#depthToLeaf()
+   */
+  private int stepsToLeaf() {
     if (dstLeaf != -1 && dstLeaf != Integer.MAX_VALUE) {
       return dstLeaf;
     }
@@ -91,7 +117,7 @@ public class Algebraic implements Buildable {
     return dstLeaf;
   }
 
-  Slot generateSlot(int n) {
+  Slot generateSlot(int n, int distStrategy) {
     if (this.depthToLeaf() == Integer.MAX_VALUE) {
       throw new UnsupportedOperationException("Type " + this.getName() + " does not terminate.");
     }
@@ -121,13 +147,13 @@ public class Algebraic implements Buildable {
       int i = 0;
       for (Slot term : toVisit) {
         Strategy req;
-        int dst = term.depthToLeaf();
+        int dst = term.distToLeaf(distStrategy);
         if (dst < ns[i]) {
           req = new MakeMaxDimStrategy();
         } else {
           req = new BacktrackDepthStrategy();
         }
-        listHoles.addAll(req.fillATerm(term, ns[i]));
+        listHoles.addAll(req.fillATerm(term, ns[i], distStrategy));
         i++;
       }
 
@@ -139,7 +165,7 @@ public class Algebraic implements Buildable {
 
   @Override
   public ATermAppl generate(int n) {
-    return generateSlot(n).toATerm();
+    return generateSlot(n, Buildable.DEPTH).toATerm();
   }
 
   @Override
