@@ -147,8 +147,7 @@ public class Algebraic implements Buildable {
       int i = 0;
       for (Slot term : toVisit) {
         Strategy req;
-        int dst = term.minimalSize(param.getDistStrategy());
-        if (dst < ns[i]) {
+        if (!param.requireTermination(term, ns[i])) {
           req = new StrategyMakeMaxDimAtMost();
         } else {
           req = new StrategyMakeMinimal();
