@@ -10,7 +10,7 @@ import java.util.Set;
 
 /**
  * TODO ne peut être utilisé avec le générateur actuel car on ne doit plus
- * regarder si oui ou non la taille minimal
+ * regarder si oui ou non la taille minimal est plus grande que le n.
  *
  * @author hubert
  */
@@ -18,6 +18,15 @@ class StrategyMakeMaxDimAtMost extends Strategy {
 
   @Override
   public Set<Slot> fillATerm(Slot aTerm, int ni, StrategyParameters param) {
+    if (param.getTerminaisonCriterion() == StrategyParameters.TerminaisonCriterion.FORECAST) {
+      System.out.print("WARNING: current terminaison criterion ("
+              + param.getTerminaisonCriterion()
+              + ") does not seem to be compliant with StrategyMakeMaxDimAtMost. ");
+      param.changeTerminaisonCriterion(StrategyParameters.TerminaisonCriterion.POINT_OF_NON_RETURN);
+      System.out.println("The criterion have thus been changed into "
+              + param.getTerminaisonCriterion()
+              + ".");
+    }
     Set<Slot> res = new HashSet<Slot>();
 
     //fill the term by choosing one of its constructors
@@ -41,12 +50,15 @@ class StrategyMakeMaxDimAtMost extends Strategy {
       } else {
         rand = 1 + (int) (Math.random() * nis[i]);
       }
-      res.addAll(propagate(field, rand, param));
+//      res.addAll(propagate(field, rand, param));
+      Strategy req = new StrategyMakeMaxDimExactly();
+      res.addAll(req.fillATerm(field, rand, param));
       i++;
     }
     return res;
   }
-
+  
+  @Deprecated
   private Collection propagate(Slot aTerm, int rand, StrategyParameters param) {
     Set<Slot> res = new HashSet<Slot>();
     Slot[] fields = aTerm.chooseMaxDimConstructor();

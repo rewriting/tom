@@ -32,6 +32,14 @@ public class StrategyParameters {
   DistStrategy getDistStrategy() {
     return distStrategy;
   }
+  
+  TerminaisonCriterion getTerminaisonCriterion(){
+    return terminaisonCriterion;
+  }
+  
+  void changeTerminaisonCriterion(TerminaisonCriterion criterion){
+    this.terminaisonCriterion = criterion;
+  }
 
   boolean requireTerminaison(Slot field, int n) {
     switch (terminaisonCriterion) {
