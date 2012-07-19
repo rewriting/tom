@@ -1,9 +1,15 @@
 %transformation
 
-- extend possible patterns: the same as in strategies
+- extend possible patterns: the same as in strategies. First, wait for multi
+  patterns
 
-- Tom-EMF: %op implement subconstruct causes problems when generating
+- problem of parameters: result and linkClass. force the developeer (as now)?
+add parameters, etc.?
+
+- Tom-EMF:
+  - %op implement subconstruct causes problems when generating
   EcorePackage mappings (Entry <-> Map, etc.)
+  - -nt option causes problems with multiple inheritance
 
 - "delete" with(src args) to(dst args):
   - do not precise args (we will infer them by using %resolve and %tracelink)
@@ -20,6 +26,7 @@
   - ResolveGetSlotDecl
   - ResolveIsFsymDecl
   - ResolveMakeDecl
+  - ResolveStratBlock / ResolveStratElements
 
 - Strategy(): hook system? (test in transformation branch by adding a
   parameter, very easy to use and modify, but it's more a hack) ; new Strategy
@@ -47,3 +54,5 @@ with SimplePDLToPetriNet a Sequence of strategies (elementary transformations).
 visit() is applied to the source model, but for resolve strategy, it is applied
 to the target model. SimplePDLToPetrinet cannot be one and only one strategy
 containing resolve).
+
+- multi patterns in rules: how?

@@ -294,7 +294,7 @@ public class TransformerPlugin extends TomGenericPlugin {
         BQTerm current = genTracelinkPopulateResolveCurrent(`term);
         //TODO: change that
         if(current==null){
-          throw new TomRuntimeException("TransformerPlugin.process: current is null");
+          throw new TomRuntimeException("TransformerPlugin.process: fail to generate tracelink backquote terme corresponding to "+`term);
         } 
         TomName firstArgument = TomBase.getSlotName(transfoSymbol,0);
         TomType firstArgType = TomBase.getSlotType(transfoSymbol,firstArgument);
