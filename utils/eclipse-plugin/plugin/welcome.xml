@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<welcomePage title="Tom" format="wrap">
+
+<intro>Tom is a pattern matching compiler, developed at INRIA, is particularly 
+well-suited for programming various transformations on trees/terms.
+Its design follows our research on rule based languages, and our experiences on
+the efficient compilation of ELAN developed by the Protheo group.
+The tool can be seen as a Yacc-like compiler translating patterns into 
+executable pattern matching automata. Similarly to Yacc, when a match is found, 
+the corresponding semantic action is triggered and executed.</intro>
+
+<item><b>Learn more </b>
+To learn more about Tom you can browse the
+<topic id="/fr.loria.eclipse.jtom/help.xml">online tutorial</topic>.</item>
+
+</welcomePage>

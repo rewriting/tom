@@ -136,13 +136,13 @@ public class BackendPlugin extends TomGenericPlugin {
 
           generator.generate(defaultDeep, pilCode,TomBase.DEFAULT_MODULE_NAME);
           // verbose
-          TomMessage.info(getLogger(),null,0,TomMessage.tomGenerationPhase,
+          TomMessage.info(getLogger(), getStreamManager().getInputFileName(),
+              0, TomMessage.tomGenerationPhase,
               Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
           output.close();
         } catch (IOException e) {
-          TomMessage.error(getLogger(),
-              getStreamManager().getInputFileName(), 0,
-              TomMessage.backendIOException, e.getMessage());
+          TomMessage.error(getLogger(), getStreamManager().getInputFileName(),
+              0, TomMessage.backendIOException, e.getMessage());
           return;
         } catch (Exception e) {
           String fileName = getStreamManager().getInputFileName();

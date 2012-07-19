@@ -177,7 +177,8 @@ public class TypeCheckerPlugin extends TomGenericPlugin {
           System.out.println("strategy failed");
         }
         // verbose
-        TomMessage.info(getLogger(),null,0,TomMessage.tomTypeCheckingPhase,
+        TomMessage.info(getLogger(), getStreamManager().getInputFileName(), 0,
+            TomMessage.tomTypeCheckingPhase,
             Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
       } catch (Exception e) {
         TomMessage.error(getLogger(), 
@@ -189,8 +190,9 @@ public class TypeCheckerPlugin extends TomGenericPlugin {
         e.printStackTrace();
       }
     } else {
-      // type checker desactivated    
-      TomMessage.info(getLogger(),null,0,TomMessage.typeCheckerInactivated);
+      // type checker desactivated
+      TomMessage.info(getLogger(), getStreamManager().getInputFileName(), 0,
+          TomMessage.typeCheckerInactivated);
     }
   }
 

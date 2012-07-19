@@ -9,6 +9,9 @@ import java.util.*;
 import java.io.*;
 import org.kohsuke.args4j.*;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Type;
+
 public class Main {
   protected static Options options = new Options();
 
@@ -37,17 +40,39 @@ public class Main {
     }
 
     // print current options
-    System.out.println("withAP: " + options.withAP);
-    System.out.println("aprove: " + options.aprove);
-    System.out.println("classname: " + options.classname);
-    System.out.println("out: " + options.out);
-    System.out.println("in: " + options.in);
-    System.out.println("level: " + options.level);
-
-    System.out.println("other arguments are:");
-    for( String s : options.arguments ) {
-      System.out.println(s);
+    try {
+      Class c = options.getClass();
+      Field[] fields = c.getDeclaredFields();
+      for(Field f : fields){
+        if( !f.getName().startsWith("h") ){
+          System.out.print(f.getName() + ":  " );
+          if( f.getType() != Class.forName("java.util.List") ){
+            System.out.println(f.get(options));
+          } else {
+            for( Object s : (List)f.get(options) ) {
+              System.out.println("\n   "+ s);
+            }
+          }
+        }
+      }
     }
+    catch (java.lang.ClassNotFoundException ec) {
+      System.err.println("No class: " + ec);
+    }    catch (java.lang.IllegalAccessException ef) {
+      System.err.println("No field: " + ef);
+    }
+    System.out.println("\n------------------------------------------   ");
+
+//     System.out.println("withAP: " + options.withAP);
+//     System.out.println("aprove: " + options.aprove);
+//     System.out.println("classname: " + options.classname);
+//     System.out.println("out: " + options.out);
+//     System.out.println("in: " + options.in);
+//     System.out.println("level: " + options.level);
+//     System.out.println("other arguments are:");
+//     for( String s : options.arguments ) {
+//       System.out.println(s);
+//     }
 
     try {
       InputStream fileinput = System.in;
@@ -55,17 +80,22 @@ public class Main {
         fileinput = new FileInputStream(options.in);
       }
 
+
       // Parse the input expression and build an AST
       RuleLexer lexer = new RuleLexer(new ANTLRInputStream(fileinput));
       CommonTokenStream tokens = new CommonTokenStream(lexer);
       RuleParser ruleParser = new RuleParser(tokens);
       Tree b = (Tree) ruleParser.expressionlist().getTree();
       ExpressionList expl = (ExpressionList) RuleAdaptor.getTerm(b);
-      //       System.out.println(expl);
+      System.out.println(pretty.toString(expl));
+      System.out.println("------------------------------------------   ");
 
       // Transforms Let(name,exp,body) into body[name/exp]
       ExpressionList expandl = Compiler.expand(expl);
       //       System.out.println(expandl);
+
+      System.out.println(pretty.toString(expandl));
+      System.out.println("------------------------------------------   ");
 
       Map<String,Integer> generatedSignature = new HashMap<String,Integer>();
       Map<String,Integer> extractedSignature = new HashMap<String,Integer>();

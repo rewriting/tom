@@ -10,3 +10,8 @@ local.properties
 .*.swp
 *~
 src/doc/
+
+applications/quickcheck/*.dot
+applications/quickcheck/*.java
+applications/quickcheck/sort/
+

@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="fr.loria.eclipse.jtom" default="build.jars" basedir=".">
+
+	<property name="bootclasspath" value=""/>
+	<property name="basews" value="${ws}"/>
+	<property name="baseos" value="${os}"/>
+	<property name="basearch" value="${arch}"/>
+	<property name="basenl" value="${nl}"/>
+	<property name="javacFailOnError" value="false"/>
+	<property name="javacDebugInfo" value="on"/>
+	<property name="javacVerbose" value="true"/>
+	<property name="javacSource" value="1.3"/>
+	<property name="javacTarget" value="1.2"/>
+	<property name="compilerArg" value=""/>
+
+	<target name="init" depends="properties">
+		<condition property="pluginTemp" value="${buildTempFolder}/plugins">
+			<isset property="buildTempFolder"/>
+		</condition>
+		<property name="pluginTemp" value="${basedir}"/>
+		<condition property="build.result.folder" value="${pluginTemp}/jtom-eclipse">
+			<isset property="buildTempFolder"/>
+		</condition>
+		<property name="build.result.folder" value="${basedir}"/>
+		<property name="temp.folder" value="${basedir}/temp.folder"/>
+		<property name="plugin.destination" value="${basedir}"/>
+	</target>
+
+	<target name="properties" if="eclipse.running">
+		<property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
+	</target>
+
+	<target name="build.update.jar" depends="init" description="Build the plug-in: fr.loria.eclipse.jtom for an update site.">
+		<delete dir="${temp.folder}"/>
+		<mkdir dir="${temp.folder}"/>
+		<antcall target="build.jars"/>
+		<antcall target="gather.bin.parts">
+			<param name="destination.temp.folder" value="${temp.folder}/"/>
+		</antcall>
+		<zip zipfile="${plugin.destination}/fr.loria.eclipse.jtom_2.3.1.jar" basedir="${temp.folder}/fr.loria.eclipse.jtom_2.3.1" filesonly="false" whenempty="skip" update="false"/>
+		<delete dir="${temp.folder}"/>
+	</target>
+
+	<target name="jtom-eclipse.jar" depends="init" unless="jtom-eclipse.jar" description="Create jar: jtom-eclipse.jar.">
+		<delete dir="${temp.folder}/jtom-eclipse.jar.bin"/>
+		<mkdir dir="${temp.folder}/jtom-eclipse.jar.bin"/>
+		<!-- compile the source code -->
+		<javac destdir="${temp.folder}/jtom-eclipse.jar.bin" failonerror="${javacFailOnError}" verbose="${javacVerbose}" debug="${javacDebugInfo}" includeAntRuntime="no" bootclasspath="${bootclasspath}" source="${javacSource}" target="${javacTarget}"		>
+			<compilerarg line="${compilerArg}"/>
+			<classpath>
+				<pathelement path="../../eclipse/plugins/org.eclipse.core.resources_3.0.1/resources.jar"/>
+				<pathelement path="../../eclipse/plugins/org.eclipse.core.resources.win32_3.0.0/resources.jar"/>
+				<pathelement path="../../eclipse/plugins/org.eclipse.core.resources.win32_3.0.0/resources-win32.jar"/>
+				<pathelement path="../../eclipse/plugins/org.eclipse.core.runtime.compatibility_3.0.0/compatibility.jar"/>
+				<pathelement path="../../eclipse/plugins/org.eclipse.core.runtime_3.0.1/runtime.jar"/>
+				<pathelement path="../../eclipse/plugins/org.eclipse.osgi_3.0.1/core.jar"/>
+				<pathelement path="../../eclipse/plugins/org.eclipse.osgi_3.0.1/console.jar"/>
+				<pathelement path="../../eclipse/plugins/org.eclipse.osgi_3.0.1/osgi.jar"/>
+				<pathelement path="../../eclipse/plugins/org.eclipse.osgi_3.0.1/resolver.jar"/>
+				<pathelement path="../../eclipse/plugins/org.eclipse.osgi_3.0.1/defaultAdaptor.jar"/>
+				<pathelement path="../../eclipse/plugins/org.eclipse.osgi_3.0.1/eclipseAdaptor.jar"/>
+				<pathelement path="../../eclipse/plugins/org.eclipse.update.configurator_3.0.0/configurator.jar"/>
+				<pathelement path="../../eclipse/plugins/org.eclipse.jface_3.0.0/jface.jar"/>
+				<pathelement path="../../eclipse/plugins/org.eclipse.swt_3.0.1/ws/${basews}/swt.jar"/>
+				<pathelement path="../../eclipse/plugins/org.eclipse.swt.win32_3.0.1/ws/${basews}/swt.jar"/>
+				<pathelement path="../../eclipse/plugins/org.eclipse.swt.win32_3.0.1"/>
+				<pathelement path="../../eclipse/plugins/org.eclipse.jface.text_3.0.1/jfacetext.jar"/>
+				<pathelement path="../../eclipse/plugins/org.eclipse.text_3.0.1/text.jar"/>
+				<pathelement path="../../eclipse/plugins/org.eclipse.ui_3.0.1/ui.jar"/>
+				<pathelement path="../../eclipse/plugins/org.eclipse.help_3.0.0/help.jar"/>
+				<pathelement path="../../eclipse/plugins/org.eclipse.ui.workbench_3.0.1/compatibility.jar"/>
+				<pathelement path="../../eclipse/plugins/org.eclipse.ui.workbench_3.0.1/workbench.jar"/>
+				<pathelement path="../../eclipse/plugins/org.eclipse.ui.workbench.compatibility_3.0.0/compatibility.jar"/>
+				<pathelement path="../../eclipse/plugins/org.eclipse.ui.workbench.compatibility_3.0.0/workbench.jar"/>
+				<pathelement path="../../eclipse/plugins/org.eclipse.core.expressions_3.0.0/expressions.jar"/>
+				<pathelement path="../../eclipse/plugins/org.eclipse.ui.editors_3.0.1/editors.jar"/>
+				<pathelement path="../../eclipse/plugins/org.eclipse.ui.ide_3.0.1/ide.jar"/>
+				<pathelement path="../../eclipse/plugins/org.eclipse.ui.win32_3.0.1/ide.jar"/>
+				<pathelement path="../../eclipse/plugins/org.eclipse.ui.win32_3.0.1/workbenchwin32.jar"/>
+				<pathelement path="../../eclipse/plugins/org.eclipse.ui.views_3.0.0/views.jar"/>
+				<pathelement path="../../eclipse/plugins/org.eclipse.update.core_3.0.1/updatecore.jar"/>
+				<pathelement path="../../eclipse/plugins/org.eclipse.update.core.win32_3.0.0/updatecore.jar"/>
+				<pathelement path="../../eclipse/plugins/org.eclipse.update.ui_3.0.1/updateui.jar"/>
+				<pathelement path="../../eclipse/plugins/org.eclipse.help.base_3.0.1/helpbase.jar"/>
+				<pathelement path="../../eclipse/plugins/org.apache.lucene_1.3.1/parser.jar"/>
+				<pathelement path="../../eclipse/plugins/org.apache.lucene_1.3.1/lucene-1.3-final.jar"/>
+				<pathelement path="../../eclipse/plugins/org.eclipse.help.appserver_3.0.0/appserver.jar"/>
+				<pathelement path="../../eclipse/plugins/org.eclipse.ui.forms_3.0.0/forms.jar"/>
+				<pathelement path="../../eclipse/plugins/org.eclipse.ui.workbench.texteditor_3.0.1/texteditor.jar"/>
+				<pathelement path="../../eclipse/plugins/org.eclipse.core.filebuffers_3.0.1/filebuffers.jar"/>
+				<pathelement path="../../eclipse/plugins/org.eclipse.jdt.ui_3.0.1/jdt.jar"/>
+				<pathelement path="../../eclipse/plugins/org.eclipse.ui.console_3.0.0/console.jar"/>
+				<pathelement path="../../eclipse/plugins/org.eclipse.jdt.core_3.0.1/jdtcore.jar"/>
+				<pathelement path="../../eclipse/plugins/org.apache.ant_1.6.2/lib/ant.jar"/>
+				<pathelement path="../../eclipse/plugins/org.apache.ant_1.6.2/lib/ant-antlr.jar"/>
+				<pathelement path="../../eclipse/plugins/org.apache.ant_1.6.2/lib/ant-apache-bcel.jar"/>
+				<pathelement path="../../eclipse/plugins/org.apache.ant_1.6.2/lib/ant-apache-bsf.jar"/>
+				<pathelement path="../../eclipse/plugins/org.apache.ant_1.6.2/lib/ant-apache-log4j.jar"/>
+				<pathelement path="../../eclipse/plugins/org.apache.ant_1.6.2/lib/ant-apache-oro.jar"/>
+				<pathelement path="../../eclipse/plugins/org.apache.ant_1.6.2/lib/ant-apache-regexp.jar"/>
+				<pathelement path="../../eclipse/plugins/org.apache.ant_1.6.2/lib/ant-apache-resolver.jar"/>
+				<pathelement path="../../eclipse/plugins/org.apache.ant_1.6.2/lib/ant-commons-logging.jar"/>
+				<pathelement path="../../eclipse/plugins/org.apache.ant_1.6.2/lib/ant-commons-net.jar"/>
+				<pathelement path="../../eclipse/plugins/org.apache.ant_1.6.2/lib/ant-icontract.jar"/>
+				<pathelement path="../../eclipse/plugins/org.apache.ant_1.6.2/lib/ant-jai.jar"/>
+				<pathelement path="../../eclipse/plugins/org.apache.ant_1.6.2/lib/ant-javamail.jar"/>
+				<pathelement path="../../eclipse/plugins/org.apache.ant_1.6.2/lib/ant-jdepend.jar"/>
+				<pathelement path="../../eclipse/plugins/org.apache.ant_1.6.2/lib/ant-jmf.jar"/>
+				<pathelement path="../../eclipse/plugins/org.apache.ant_1.6.2/lib/ant-jsch.jar"/>
+				<pathelement path="../../eclipse/plugins/org.apache.ant_1.6.2/lib/ant-junit.jar"/>
+				<pathelement path="../../eclipse/plugins/org.apache.ant_1.6.2/lib/ant-launcher.jar"/>
+				<pathelement path="../../eclipse/plugins/org.apache.ant_1.6.2/lib/ant-netrexx.jar"/>
+				<pathelement path="../../eclipse/plugins/org.apache.ant_1.6.2/lib/ant-nodeps.jar"/>
+				<pathelement path="../../eclipse/plugins/org.apache.ant_1.6.2/lib/ant-starteam.jar"/>
+				<pathelement path="../../eclipse/plugins/org.apache.ant_1.6.2/lib/ant-stylebook.jar"/>
+				<pathelement path="../../eclipse/plugins/org.apache.ant_1.6.2/lib/ant-swing.jar"/>
+				<pathelement path="../../eclipse/plugins/org.apache.ant_1.6.2/lib/ant-trax.jar"/>
+				<pathelement path="../../eclipse/plugins/org.apache.ant_1.6.2/lib/ant-vaj.jar"/>
+				<pathelement path="../../eclipse/plugins/org.apache.ant_1.6.2/lib/ant-weblogic.jar"/>
+				<pathelement path="../../eclipse/plugins/org.apache.ant_1.6.2/lib/ant-xalan1.jar"/>
+				<pathelement path="../../eclipse/plugins/org.apache.ant_1.6.2/lib/ant-xslp.jar"/>
+				<pathelement path="../../eclipse/plugins/org.eclipse.team.core_3.0.0/team.jar"/>
+				<pathelement path="../../eclipse/plugins/org.eclipse.search_3.0.1/search.jar"/>
+				<pathelement path="../../eclipse/plugins/org.eclipse.debug.core_3.0.1/dtcore.jar"/>
+				<pathelement path="../../eclipse/plugins/org.eclipse.core.variables_3.0.0/variables.jar"/>
+				<pathelement path="../../eclipse/plugins/org.eclipse.debug.ui_3.0.1/dtui.jar"/>
+				<pathelement path="../../eclipse/plugins/org.eclipse.jdt.launching_3.0.1/launching.jar"/>
+				<pathelement path="../../eclipse/plugins/org.eclipse.jdt.debug_3.0.1/jdi.jar"/>
+				<pathelement path="../../eclipse/plugins/org.eclipse.jdt.debug_3.0.1/jdimodel.jar"/>
+				<pathelement path="../../eclipse/plugins/org.eclipse.jdt.debug_3.0.1/tools.jar"/>
+				<pathelement path="../../eclipse/plugins/org.eclipse.compare_3.0.0/compare.jar"/>
+				<pathelement path="../../eclipse/plugins/org.eclipse.ltk.core.refactoring_3.0.1/refcore.jar"/>
+				<pathelement path="../../eclipse/plugins/org.eclipse.ltk.ui.refactoring_3.0.1/refui.jar"/>
+				<pathelement path="../aircube-eclipse/bin"/>
+				<pathelement path="../aircube-eclipse/aircube-eclipse.jar"/>
+				<pathelement path="../aircube-eclipse/aircube-bundle.jar"/>
+			</classpath>
+			<src path="src/"			/>
+			</javac>
+		<!-- Copy necessary resources -->
+		<copy todir="${temp.folder}/jtom-eclipse.jar.bin" failonerror="true">
+			<fileset dir="src/" excludes="**/*.java, **/package.htm*"			/>
+		</copy>
+		<mkdir dir="${build.result.folder}"/>
+		<jar jarfile="${build.result.folder}/jtom-eclipse.jar" basedir="${temp.folder}/jtom-eclipse.jar.bin"/>
+		<delete dir="${temp.folder}/jtom-eclipse.jar.bin"/>
+	</target>
+
+	<target name="jtom-eclipsesrc.zip" depends="init" unless="jtom-eclipsesrc.zip">
+		<mkdir dir="${build.result.folder}"/>
+		<zip zipfile="${build.result.folder}/jtom-eclipsesrc.zip" filesonly="false" whenempty="skip" update="false">
+			<fileset dir="src/" includes="**/*.java"			/>
+		</zip>
+	</target>
+
+	<target name="build.jars" depends="init" description="Build all the jars for the plug-in: fr.loria.eclipse.jtom.">
+		<available property="jtom-eclipse.jar" file="${build.result.folder}/jtom-eclipse.jar"/>
+		<antcall target="jtom-eclipse.jar"/>
+	</target>
+
+	<target name="build.sources" depends="init">
+		<available property="jtom-eclipsesrc.zip" file="${build.result.folder}/jtom-eclipsesrc.zip"/>
+		<antcall target="jtom-eclipsesrc.zip"/>
+	</target>
+
+	<target name="gather.bin.parts" depends="init" if="destination.temp.folder">
+		<mkdir dir="${destination.temp.folder}/fr.loria.eclipse.jtom_2.3.1"/>
+		<copy todir="${destination.temp.folder}/fr.loria.eclipse.jtom_2.3.1" failonerror="true">
+			<fileset dir="${build.result.folder}" includes="jtom-eclipse.jar"			/>
+		</copy>
+		<copy todir="${destination.temp.folder}/fr.loria.eclipse.jtom_2.3.1" failonerror="true">
+			<fileset dir="${basedir}" includes="plugin.xml,plugin.properties,jtom-eclipse.jar,icons/,include/,help.xml,doc.zip,about.html,about.ini,about.mappings,about.properties,welcome.xml,loria.jpg,templates/,META-INF/,README,Tom.xml"			/>
+		</copy>
+	</target>
+
+	<target name="build.zips" depends="init">
+	</target>
+
+	<target name="gather.sources" depends="init" if="destination.temp.folder">
+		<mkdir dir="${destination.temp.folder}/fr.loria.eclipse.jtom_2.3.1"/>
+		<copy file="${build.result.folder}/jtom-eclipsesrc.zip" todir="${destination.temp.folder}/fr.loria.eclipse.jtom_2.3.1" failonerror="false"/>
+		<copy todir="${destination.temp.folder}/fr.loria.eclipse.jtom_2.3.1" failonerror="false">
+			<fileset dir="${basedir}" includes="META-INF/,about.html,about.ini,README,about.mappings,about.properties,build.properties,doc.zip,help.xml,icons/,plugin.properties,plugin.xml,src/,templates/,welcome.xml"			/>
+		</copy>
+	</target>
+
+	<target name="gather.logs" depends="init" if="destination.temp.folder">
+		<mkdir dir="${destination.temp.folder}/fr.loria.eclipse.jtom_2.3.1"/>
+		<copy file="${temp.folder}/jtom-eclipse.jar.bin.log" todir="${destination.temp.folder}/fr.loria.eclipse.jtom_2.3.1" failonerror="false"/>
+	</target>
+
+	<target name="clean" depends="init" description="Clean the plug-in: fr.loria.eclipse.jtom of all the zips, jars and logs created.">
+		<delete file="${build.result.folder}/jtom-eclipse.jar"/>
+		<delete file="${build.result.folder}/jtom-eclipsesrc.zip"/>
+		<delete file="${plugin.destination}/fr.loria.eclipse.jtom_2.3.1.jar"/>
+		<delete file="${plugin.destination}/fr.loria.eclipse.jtom_2.3.1.zip"/>
+		<delete dir="${temp.folder}"/>
+	</target>
+
+	<target name="refresh" depends="init" if="eclipse.running" description="Refresh this folder.">
+		<eclipse.convertPath fileSystemPath="D:/workspace/jtom-eclipse" property="resourcePath"/>
+		<eclipse.refreshLocal resource="${resourcePath}" depth="infinite"/>
+	</target>
+
+	<target name="zip.plugin" depends="init" description="Create a zip containing all the elements for the plug-in: fr.loria.eclipse.jtom.">
+		<delete dir="${temp.folder}"/>
+		<mkdir dir="${temp.folder}"/>
+		<antcall target="build.jars"/>
+		<antcall target="build.sources"/>
+		<antcall target="gather.bin.parts">
+			<param name="destination.temp.folder" value="${temp.folder}/"/>
+		</antcall>
+		<antcall target="gather.sources">
+			<param name="destination.temp.folder" value="${temp.folder}/"/>
+		</antcall>
+		<delete>
+			<fileset dir="${temp.folder}" includes="**/*.bin.log"			/>
+		</delete>
+		<zip zipfile="${plugin.destination}/fr.loria.eclipse.jtom_2.3.1.zip" basedir="${temp.folder}" filesonly="true" whenempty="skip" update="false"/>
+		<delete dir="${temp.folder}"/>
+	</target>
+
+</project>

@@ -96,6 +96,82 @@ public class TomMappingFromEcore {
    */
   private final static HashMap<Class<?>, String> types = new HashMap<Class<?>, String>();
 
+  /**
+   * Prefix to add to mappings (%typeterm and %op). There is no prefix by
+   * default. Useful to avoid names clash when several elements of differemnt
+   * packages have the same names.
+   */
+  private static String prefix = "";
+
+  /** 
+   * aa
+   * 
+   * @param args the argmuents list
+   * @return the list of EPackage names to process
+   */
+  public static List<String> processArgs(String[] args) {
+    List<String> ePackageNameList = new ArrayList<String>();
+    // -nt: typer
+    // -prefix
+    int i = 0;
+    String argument = "";
+    try {
+      for(; i < args.length; i++) {
+        argument = args[i];
+
+        if(!argument.startsWith("-") || (argument.equals("-"))) {
+          // input file name, should never start with '-' (except for System.in)
+          ePackageNameList.add(argument);
+        } else {
+          // argument does start with '-', thus is -or at least should be- an option
+          argument = argument.substring(1); // crops the '-'
+          if(argument.startsWith("-")) {
+            // if there's another one
+            argument = argument.substring(1); // crops the second '-'
+          }
+          /*if(argument.equals("help") || argument.equals("h")) {
+            displayHelp();
+            return null;
+          }*/
+          /*if(argument.equals("version") || argument.equals("V")) {
+            TomOptionManager.displayVersion();
+            return null;
+          }*/
+          if(argument.equals("X") || argument.equals("cp")) {
+            // just skip it, along with its argument (java options)
+            i++;
+            continue;
+          }
+          if(argument.equals("nt") || argument.equals("subtype")) {
+            useNewTyper = true;
+          }
+          if(argument.equals("prefix")) {
+            prefix = args[++i]; 
+          }
+        }
+      }
+    } catch (ArrayIndexOutOfBoundsException e) {
+      System.err.println("Expecting information after option "+argument);
+      return null;
+    }
+    
+    if(ePackageNameList.isEmpty()) {
+      //TomEMFMessage.error(logger, null, 0, TomEMFMessage.noEPackageToInspect);
+      System.err.println("No EPackage has been given.");
+      displayHelp();
+      return null;
+    }
+    return ePackageNameList;
+  }
+
+  private static void displayHelp() {
+    System.out.println("usage: emf-generate-mappings [options] <EPackageClassName>");
+    System.out.println("options:");
+        System.out.println("  -nt|-subtype (generates constructs with subtyping)");
+        System.out.println("  -prefix (generates mappings with a prefix)");
+        System.out.println("  any Java options");
+  }
+
   public static void main(String[] args) {
     /*
      * this way to use options shouldn't be like this : we could add a better
@@ -103,13 +179,14 @@ public class TomMappingFromEcore {
      * We may also add an --output <file> option
      */
       if(args.length < 1) {
-        System.out.println("No argument has been given!");
+        displayHelp();
+        /*System.out.println("No argument has been given!");
         System.out.println("usage: emf-generate-mappings [options] <EPackageClassName>");
         System.out.println("options:");
         System.out.println("  -nt (allows to generate constructs with subtyping)");
-        System.out.println("  any Java options");
+        System.out.println("  any Java options");*/
       } else {
-        int initindex = 0;
+        /*int initindex = 0;
         List<String> ePackageNameList = new ArrayList<String>();
 
         if (args[0].contentEquals("-nt")) {
@@ -118,6 +195,10 @@ public class TomMappingFromEcore {
         }
         for(int i=initindex;i<args.length;i++) {
           ePackageNameList.add(args[i]);
+        }*/
+        List<String> ePackageNameList = processArgs(args);
+        if(ePackageNameList == null) {
+          throw new RuntimeException("No EPackage has been given as argument!");
         }
 
         try {
@@ -192,7 +273,7 @@ public class TomMappingFromEcore {
         String[] decl = getClassDeclarations(eclf); // [canonical name, anonymous generic, generic type]
         writer.write(%[
 
-%typeterm @n@ @(useNewTyper?genSubtype(eclf):"")@ {
+%typeterm @prefix+n@ @(useNewTyper?genSubtype(eclf):"")@ {
   implement { @(eclf instanceof EClass && !EObject.class.isAssignableFrom(c) ? "org.eclipse.emf.ecore.EObject" : decl[0] + decl[2])@ }
   is_sort(t) { @(c.isPrimitive() ? "true" : "$t instanceof " + decl[0] + decl[1])@ }
   equals(l1,l2) { @(c.isPrimitive() ? "$l1 == $l2" : "$l1.equals($l2)")@ }
@@ -207,7 +288,7 @@ public class TomMappingFromEcore {
       if(!((EClass)eclf).getESuperTypes().isEmpty()) {
         //should be a collection with one and only one element
         for (EClass supertype:((EClass)eclf).getESuperTypes()) {
-          result = result + " extends "+ supertype.getName();
+          result = result + " extends "+ prefix + supertype.getName();
         }
       } else {
         if(!(eclf.getInstanceClassName().equals("EObject"))) {
@@ -385,21 +466,21 @@ public class TomMappingFromEcore {
         }
         writer.write(%[
 
-%typeterm @name@ {
+%typeterm @prefix+name@ {
   implement { org.eclipse.emf.common.util.EList<@inst@> }
   is_sort(t) { $t instanceof org.eclipse.emf.common.util.EList<?> && (((org.eclipse.emf.common.util.EList<@inst@>)$t).size() == 0 || (((org.eclipse.emf.common.util.EList<@inst@>)$t).size()>0 && ((org.eclipse.emf.common.util.EList<@inst@>)$t).get(0) instanceof @(decl[0]+decl[1])@)) }
   equals(l1,l2) { $l1.equals($l2) }
 }
 
-%oparray @name@ @name@ ( @simplename@* ) {
+%oparray @prefix+name@ @prefix+name@ ( @simplename@* ) {
   is_fsym(t) { $t instanceof org.eclipse.emf.common.util.EList<?> && ($t.size() == 0 || ($t.size()>0 && $t.get(0) instanceof @(decl[0]+decl[1])@)) }
   make_empty(n) { new org.eclipse.emf.common.util.BasicEList<@inst@>($n) }
-  make_append(e,l) { append@name@($e,$l) }
+  make_append(e,l) { append@prefix+name@($e,$l) }
   get_element(l,n) { $l.get($n) }
   get_size(l)      { $l.size() }
 }
 
-private static <O> org.eclipse.emf.common.util.EList<O> append@name@(O e,org.eclipse.emf.common.util.EList<O> l) {
+private static <O> org.eclipse.emf.common.util.EList<O> append@prefix+name@(O e,org.eclipse.emf.common.util.EList<O> l) {
   l.add(e);
   return l;
 }]%);
@@ -508,11 +589,11 @@ private static <O> org.eclipse.emf.common.util.EList<O> append@name@(O e,org.ecl
       dvalue = "\"" + dvalue + "\"";
     } else if(esftype.equals("boolean") || esftype.equals("int") ||
         esftype.equals("float") || esftype.equals("double") || 
-        esftype.equals("long") ) {
+        esftype.equals("long")) {
       //nothing
       //dvalue = sf.getDefaultValue();
     } else {
-      dvalue = "`" + esftype + dvalue + "()";
+      dvalue = "`" + prefix + esftype + dvalue + "()";
     }
     //add a suffix '_' if the name is a reserved keyword
     String sfname = (keywords.contains(esf.getName()) ? "_" : "")+esf.getName();
@@ -531,7 +612,7 @@ private static <O> org.eclipse.emf.common.util.EList<O> append@name@(O e,org.ecl
         EClass ecl = (EClass) eclf;
         EList<EStructuralFeature> sfs = ecl.getEAllStructuralFeatures();
         StringBuffer s_types = new StringBuffer();
-        StringBuffer s_types2 = new StringBuffer();
+        //StringBuffer s_types2 = new StringBuffer();
         StringBuffer s = new StringBuffer();
         StringBuffer s2 = new StringBuffer();
         StringBuffer s_gets = new StringBuffer();
@@ -542,12 +623,12 @@ private static <O> org.eclipse.emf.common.util.EList<O> append@name@(O e,org.ecl
             EClassifier type = sf.getEType();
             String sfname = (keywords.contains(sf.getName()) ? "_" : "")
                 + sf.getName();
-            s_types.append(sfname + " : " + getType(writer,sf) + ", ");
+            s_types.append(sfname + " : " + prefix + getType(writer,sf) + ", ");
             String[] decl = getClassDeclarations(type); // [canonical name, anonymous generic, generic type]
             writer.write("");
-            s_types2.append(", "
+            /*s_types2.append(", "
                 + (sf.isMany() ? "org.eclipse.emf.common.util.EList<" + decl[0] + decl[2] + ">" : decl[0] + decl[2])
-                + " " + sfname);
+                + " " + sfname);*/
             s.append(", " + sfname);
             s2.append(", $" + sfname);
             String na = boxType(sf.getEType().getInstanceClass())
@@ -565,7 +646,7 @@ private static <O> org.eclipse.emf.common.util.EList<O> append@name@(O e,org.ecl
             if(sf.getDefaultValue()!=null) {
               s_defaults.append(genGetDefault(sf));
             }
-          }
+          } 
         }
         if(s_types.length() >= 2) {
           s_types.delete(s_types.length() - 2, s_types.length());
@@ -583,13 +664,13 @@ private static <O> org.eclipse.emf.common.util.EList<O> append@name@(O e,org.ecl
           if(genEcoreMapping || !tomEMFTypes.contains(eclf.getInstanceClass())) {
             writer.write(%[
 
-%op @ecl.getInstanceClass().getSimpleName()@ @cr@(@s_types@) {
+%op @prefix+ecl.getInstanceClass().getSimpleName()@ @prefix+cr@(@s_types@) {
   is_fsym(t) { $t instanceof @(decl[0]+decl[1])@ }@s_gets@ @s_defaults@
   make(@(s.length() <= 2 ? "" : s.substring(2))@) { construct@cr@((@(EObject.class.isAssignableFrom(ecl.getInstanceClass()) ? ecl.getInstanceClass().getCanonicalName() : "org.eclipse.emf.ecore.EObject")@)@o1@.eINSTANCE.create((EClass)@o2@.eINSTANCE.getEClassifier("@ecl.getName()@")), new Object[]{ @(s2.length() <= 2 ? "" : s2.substring(2))@ }) }
   implement() { @genOpImplementContent(ecl.getInstanceClassName(), cr)@ }
 }
 
-public static <O extends org.eclipse.emf.ecore.EObject> O construct@cr@(O o, Object[] objs) {
+public static <O extends org.eclipse.emf.ecore.EObject> O construct@prefix+cr@(O o, Object[] objs) {
   int i=0;
   EList<EStructuralFeature> sfes = o.eClass().getEAllStructuralFeatures();
   for(EStructuralFeature esf : sfes) {
@@ -617,7 +698,7 @@ public static <O extends org.eclipse.emf.ecore.EObject> O construct@cr@(O o, Obj
           String operatorName = cr+literal.replaceAll(" ","");
           writer.write(%[
 
-%op @cr@ @operatorName@() {
+%op @prefix+cr@ @prefix+operatorName@() {
   is_fsym(t) { t == @(decl[0]+decl[1])@.get("@literal@") }
   make() { (@(decl[0]+decl[2])@)@o1@.eINSTANCE.createFromString( (EDataType)@o2@.eINSTANCE.get@toUpperName(cr)@(), "@literal@") }
 }]%);

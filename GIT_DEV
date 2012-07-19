@@ -39,6 +39,8 @@ git branch -a : list branches (remote and local)
 
 git branch -D <branch> : delete a local branch
 
+git branch -m <old_branch> <new_branch> : rename a branch
+
 git checkout <branch> : switch to the branch named <branch> (or retrieve the
                         content if already in this branch. Erase modifications 
 			which have not been committed). /!\ It is not possible 
@@ -60,7 +62,7 @@ git cherry-pick $COMMIT_ID_YOU_WANT : apply a specific commit into the current
                                       branch (useful to import a part of another
 				      branch)
 
-git commit --amend -m "<type here your new message>" : change las commit
+git commit --amend -m "<type here your new message>" : change last commit
                                                        message. May be used for
 						       other commits by
 						       modifying a bit the
