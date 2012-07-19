@@ -52,15 +52,15 @@ public class Algebraic implements Buildable {
     }
     return dim + add;
   }
-  
+
   @Override
-  public int minimalSize(int strategy){
-    switch(strategy){
+  public int minimalSize(StrategyParameters.DistStrategy strategy) {
+    switch (strategy) {
       case DEPTH:
         return depthToLeaf();
       case STEPS:
         return stepsToLeaf();
-      default :
+      default:
         throw new UnsupportedOperationException("strategy " + strategy + " not defined.");
     }
   }
@@ -117,7 +117,7 @@ public class Algebraic implements Buildable {
     return dstLeaf;
   }
 
-  Slot generateSlot(int n, int distStrategy) {
+  Slot generateSlot(int n, StrategyParameters param) {
     if (this.depthToLeaf() == Integer.MAX_VALUE) {
       throw new UnsupportedOperationException("Type " + this.getName() + " does not terminate.");
     }
@@ -147,13 +147,13 @@ public class Algebraic implements Buildable {
       int i = 0;
       for (Slot term : toVisit) {
         Strategy req;
-        int dst = term.minimalSize(distStrategy);
+        int dst = term.minimalSize(param.getDistStrategy());
         if (dst < ns[i]) {
-          req = new StrategyMakeMaxDimExactly();
+          req = new StrategyMakeMaxDimAtMost();
         } else {
           req = new StrategyMakeMinimal();
         }
-        listHoles.addAll(req.fillATerm(term, ns[i], distStrategy));
+        listHoles.addAll(req.fillATerm(term, ns[i], param));
         i++;
       }
 
@@ -165,7 +165,10 @@ public class Algebraic implements Buildable {
 
   @Override
   public ATermAppl generate(int n) {
-    return generateSlot(n, Buildable.DEPTH).toATerm();
+    StrategyParameters param = new StrategyParameters(
+            StrategyParameters.DistStrategy.DEPTH, 
+            StrategyParameters.TerminaisonCriterion.FORECAST);
+    return generateSlot(n, param).toATerm();
   }
 
   @Override

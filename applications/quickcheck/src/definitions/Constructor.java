@@ -43,7 +43,7 @@ class Constructor {
     int res = 0;
     for (int i = 0; i < fields.length; i++) {
       Buildable field = fields[i];
-      int tmp = field.minimalSize(Buildable.DEPTH);
+      int tmp = field.minimalSize(StrategyParameters.DistStrategy.DEPTH);
       if (tmp == -1) {
         lock = false;
         return Integer.MAX_VALUE;
@@ -71,7 +71,7 @@ class Constructor {
     int res = 0;
     for (int i = 0; i < fields.length; i++) {
       Buildable field = fields[i];
-      int tmp = field.minimalSize(Buildable.STEPS);
+      int tmp = field.minimalSize(StrategyParameters.DistStrategy.STEPS);
       if (tmp == -1) {
         // if one of the constructors of field is locked
         lock = false;

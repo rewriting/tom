@@ -17,7 +17,7 @@ import java.util.Set;
 class StrategyMakeMaxDimAtMost extends Strategy {
 
   @Override
-  public Set<Slot> fillATerm(Slot aTerm, int ni, int distStrategy) {
+  public Set<Slot> fillATerm(Slot aTerm, int ni, StrategyParameters param) {
     Set<Slot> res = new HashSet<Slot>();
 
     //fill the term by choosing one of its constructors
@@ -41,13 +41,13 @@ class StrategyMakeMaxDimAtMost extends Strategy {
       } else {
         rand = 1 + (int) (Math.random() * nis[i]);
       }
-      res.addAll(propagate(field, rand, distStrategy));
+      res.addAll(propagate(field, rand, param));
       i++;
     }
     return res;
   }
 
-  private Collection propagate(Slot aTerm, int rand, int distStrategy) {
+  private Collection propagate(Slot aTerm, int rand, StrategyParameters param) {
     Set<Slot> res = new HashSet<Slot>();
     Slot[] fields = aTerm.chooseMaxDimConstructor();
     int currentDim = aTerm.getDimension();
@@ -56,10 +56,10 @@ class StrategyMakeMaxDimAtMost extends Strategy {
     int i = 0;
     for (Slot field : listHigherDimFields) {
       if (nis[i] > 0) {
-        res.addAll(propagate(field, nis[i], distStrategy));
+        res.addAll(propagate(field, nis[i], param));
       } else {
         Strategy req = new StrategyMakeMinimal();
-        res.addAll(req.fillATerm(field, nis[i], distStrategy));
+        res.addAll(req.fillATerm(field, nis[i], param));
       }
       i++;
     }

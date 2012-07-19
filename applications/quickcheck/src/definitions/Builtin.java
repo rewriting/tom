@@ -7,6 +7,7 @@ package definitions;
 import aterm.ATerm;
 import aterm.ATermList;
 import aterm.pure.PureFactory;
+import definitions.StrategyParameters.DistStrategy;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -47,9 +48,8 @@ public final class Builtin {
       return false;
     }
 
-
     @Override
-    public int minimalSize(int strategy) {
+    public int minimalSize(DistStrategy strategy) {
       return 0;
     }
   };
@@ -90,7 +90,7 @@ public final class Builtin {
     }
 
     @Override
-    public int minimalSize(int strategy) {
+    public int minimalSize(DistStrategy strategy) {
       return 0;
     }
   };

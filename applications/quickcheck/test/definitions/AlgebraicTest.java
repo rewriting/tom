@@ -21,21 +21,31 @@ import sort.types.surexpr.wrapper;
  */
 public class AlgebraicTest {
 
-  Scope scope;
-  Algebraic nat;
-  Algebraic tree;
-  Algebraic tree2;
-  Algebraic forest;
-  Algebraic circ;
-  Algebraic typetest;
-  Algebraic a, b, c;
-  AlgebraicExp expr;
-  AlgebraicExp surexpr;
-  Algebraic list;
-  Algebraic list2;
-  Algebraic mix;
+  private Scope scope;
+  private Algebraic nat;
+  private Algebraic tree;
+  private Algebraic tree2;
+  private Algebraic forest;
+  private Algebraic circ;
+  private Algebraic typetest;
+  private Algebraic a, b, c;
+  private AlgebraicExp expr;
+  private AlgebraicExp surexpr;
+  private Algebraic list;
+  private Algebraic list2;
+  private Algebraic mix;
+  private StrategyParameters paramDepth, paramSteps;
 
   public AlgebraicTest() {
+
+    paramDepth = new StrategyParameters(
+            StrategyParameters.DistStrategy.DEPTH,
+            StrategyParameters.TerminaisonCriterion.FORECAST);
+    
+    paramSteps = new StrategyParameters(
+            StrategyParameters.DistStrategy.STEPS,
+            StrategyParameters.TerminaisonCriterion.FORECAST);
+    
     scope = new Scope();
 
     nat = new Algebraic(scope, "nat");
@@ -84,7 +94,7 @@ public class AlgebraicTest {
 
     list2 = new Algebraic(scope, "list2");
     list2.addConstructor("consList", expr, list2);
-    
+
     mix = new Algebraic(scope, "mix");
     mix.addConstructor("consMix", list, surexpr);
 
@@ -215,7 +225,7 @@ public class AlgebraicTest {
     boolean result = test.isRec();
     assertEquals(expResult, result);
   }
-  
+
   @Test
   public void testIsRecSurMix() {
     Algebraic test = mix;
@@ -333,7 +343,7 @@ public class AlgebraicTest {
     int result = test.getDimension();
     assertEquals(expResult, result);
   }
-  
+
   @Test
   public void testGetDimentionmix() {
     Algebraic test = mix;
@@ -350,7 +360,7 @@ public class AlgebraicTest {
   public void testDstToLeafNat() {
     System.out.println("dstToLeaf Nat");
     int expResult = 0;
-    int result = nat.minimalSize(Buildable.DEPTH);
+    int result = nat.minimalSize(paramDepth.getDistStrategy());
     assertEquals(expResult, result);
   }
 
@@ -358,7 +368,7 @@ public class AlgebraicTest {
   public void testDstToLeafTree() {
     System.out.println("dstToLeaf Tree");
     int expResult = 0;
-    int result = tree.minimalSize(Buildable.DEPTH);
+    int result = tree.minimalSize(paramDepth.getDistStrategy());
     assertEquals(expResult, result);
   }
 
@@ -366,7 +376,7 @@ public class AlgebraicTest {
   public void testDstToLeafTypeTest() {
     System.out.println("dstToLeaf TypeTest");
     int expResult = 1;
-    int result = typetest.minimalSize(Buildable.DEPTH);
+    int result = typetest.minimalSize(paramDepth.getDistStrategy());
     assertEquals(expResult, result);
   }
 
@@ -374,17 +384,15 @@ public class AlgebraicTest {
   public void testDstToLeafForest() {
     System.out.println("dstToLeaf Forest");
     int expResult = 2;
-    int result = forest.minimalSize(Buildable.DEPTH);
-    System.out.println(result);
+    int result = forest.minimalSize(paramDepth.getDistStrategy());
     assertEquals(expResult, result);
   }
 
   @Test
   public void testDstToLeafTree2() {
-    System.out.println(forest.minimalSize(Buildable.DEPTH));
     System.out.println("dstToLeaf Tree2");
     int expResult = 1;
-    int result = tree2.minimalSize(Buildable.DEPTH);
+    int result = tree2.minimalSize(paramDepth.getDistStrategy());
     assertEquals(expResult, result);
   }
 
@@ -392,7 +400,7 @@ public class AlgebraicTest {
   public void testDstToLeafCirc() {
     System.out.println("dstToLeaf Circ");
     int expResult = Integer.MAX_VALUE;
-    int result = circ.minimalSize(Buildable.DEPTH);
+    int result = circ.minimalSize(paramDepth.getDistStrategy());
     assertEquals(expResult, result);
   }
 
@@ -400,7 +408,7 @@ public class AlgebraicTest {
   public void testDstToLeafB() {
     System.out.println("dstToLeaf B");
     int expResult = 2;
-    int result = b.minimalSize(Buildable.DEPTH);
+    int result = b.minimalSize(paramDepth.getDistStrategy());
     assertEquals(expResult, result);
   }
 
@@ -408,7 +416,7 @@ public class AlgebraicTest {
   public void testDstToLeafA() {
     System.out.println("dstToLeaf A");
     int expResult = 0;
-    int result = a.minimalSize(Buildable.DEPTH);
+    int result = a.minimalSize(paramDepth.getDistStrategy());
     assertEquals(expResult, result);
   }
 
@@ -416,7 +424,7 @@ public class AlgebraicTest {
   public void testDstToLeafC() {
     System.out.println("dstToLeaf C");
     int expResult = 1;
-    int result = c.minimalSize(Buildable.DEPTH);
+    int result = c.minimalSize(paramDepth.getDistStrategy());
     assertEquals(expResult, result);
   }
 
@@ -424,7 +432,7 @@ public class AlgebraicTest {
   public void testDstToLeafExpre() {
     System.out.println("dstToLeaf Expr");
     int expResult = 0;
-    int result = expr.minimalSize(Buildable.DEPTH);
+    int result = expr.minimalSize(paramDepth.getDistStrategy());
     assertEquals(expResult, result);
   }
 
@@ -432,7 +440,7 @@ public class AlgebraicTest {
   public void testDstToLeafSurExpre() {
     System.out.println("dstToLeaf SurExpr");
     int expResult = 1;
-    int result = surexpr.minimalSize(Buildable.DEPTH);
+    int result = surexpr.minimalSize(paramDepth.getDistStrategy());
     assertEquals(expResult, result);
   }
 
@@ -440,7 +448,7 @@ public class AlgebraicTest {
   public void testDstToLeaflist() {
     System.out.println("dstToLeaf list");
     int expResult = 1;
-    int result = list.minimalSize(Buildable.DEPTH);
+    int result = list.minimalSize(paramDepth.getDistStrategy());
     assertEquals(expResult, result);
   }
 
@@ -449,16 +457,16 @@ public class AlgebraicTest {
     Algebraic test = list2;
     System.out.println("dstToLeaf " + test.getName());
     int expResult = Integer.MAX_VALUE;
-    int result = test.minimalSize(Buildable.DEPTH);
+    int result = test.minimalSize(paramDepth.getDistStrategy());
     assertEquals(expResult, result);
   }
-  
+
   @Test
   public void testDstToLeafmix() {
     Algebraic test = mix;
     System.out.println("dstToLeaf " + test.getName());
     int expResult = 2;
-    int result = test.minimalSize(Buildable.DEPTH);
+    int result = test.minimalSize(paramDepth.getDistStrategy());
     assertEquals(expResult, result);
   }
 
@@ -469,7 +477,7 @@ public class AlgebraicTest {
   public void testStepsToLeafNat() {
     System.out.println("stepsToLeaf " + nat.getName());
     int expResult = 0;
-    int result = nat.minimalSize(Buildable.STEPS);
+    int result = nat.minimalSize(paramSteps.getDistStrategy());
     assertEquals(expResult, result);
   }
 
@@ -477,7 +485,7 @@ public class AlgebraicTest {
   public void testStepsToLeafA() {
     System.out.println("stepsToLeaf " + a.getName());
     int expResult = 0;
-    int result = a.minimalSize(Buildable.STEPS);
+    int result = a.minimalSize(paramSteps.getDistStrategy());
     assertEquals(expResult, result);
   }
 
@@ -485,7 +493,7 @@ public class AlgebraicTest {
   public void testStepsToLeafB() {
     System.out.println("stepsToLeaf " + b.getName());
     int expResult = 2;
-    int result = b.minimalSize(Buildable.STEPS);
+    int result = b.minimalSize(paramSteps.getDistStrategy());
     assertEquals(expResult, result);
   }
 
@@ -493,7 +501,7 @@ public class AlgebraicTest {
   public void testStepsToLeafC() {
     System.out.println("stepsToLeaf " + c.getName());
     int expResult = 1;
-    int result = c.minimalSize(Buildable.STEPS);
+    int result = c.minimalSize(paramSteps.getDistStrategy());
     assertEquals(expResult, result);
   }
 
@@ -501,7 +509,7 @@ public class AlgebraicTest {
   public void testStepsToLeafForest() {
     System.out.println("stepsToLeaf " + forest.getName());
     int expResult = 2;
-    int result = forest.minimalSize(Buildable.STEPS);
+    int result = forest.minimalSize(paramSteps.getDistStrategy());
     assertEquals(expResult, result);
   }
 
@@ -509,7 +517,7 @@ public class AlgebraicTest {
   public void testStepsToLeaftree() {
     System.out.println("stepsToLeaf " + tree.getName());
     int expResult = 0;
-    int result = tree.minimalSize(Buildable.STEPS);
+    int result = tree.minimalSize(paramSteps.getDistStrategy());
     assertEquals(expResult, result);
   }
 
@@ -517,7 +525,7 @@ public class AlgebraicTest {
   public void testStepsToLeaftypetest() {
     System.out.println("stepsToLeaf " + typetest.getName());
     int expResult = 1;
-    int result = typetest.minimalSize(Buildable.STEPS);
+    int result = typetest.minimalSize(paramSteps.getDistStrategy());
     assertEquals(expResult, result);
   }
 
@@ -525,7 +533,7 @@ public class AlgebraicTest {
   public void testStepsToLeaftree2() {
     System.out.println("stepsToLeaf " + tree2.getName());
     int expResult = 1;
-    int result = tree2.minimalSize(Buildable.STEPS);
+    int result = tree2.minimalSize(paramSteps.getDistStrategy());
     assertEquals(expResult, result);
   }
 
@@ -533,7 +541,7 @@ public class AlgebraicTest {
   public void testStepsToLeafcirc() {
     System.out.println("stepsToLeaf " + circ.getName());
     int expResult = Integer.MAX_VALUE;
-    int result = circ.minimalSize(Buildable.STEPS);
+    int result = circ.minimalSize(paramSteps.getDistStrategy());
     assertEquals(expResult, result);
   }
 
@@ -541,7 +549,7 @@ public class AlgebraicTest {
   public void testStepsToLeafexpr() {
     System.out.println("stepsToLeaf " + expr.getName());
     int expResult = 0;
-    int result = expr.minimalSize(Buildable.STEPS);
+    int result = expr.minimalSize(paramSteps.getDistStrategy());
     assertEquals(expResult, result);
   }
 
@@ -549,7 +557,7 @@ public class AlgebraicTest {
   public void testStepsToLeafsurexpr() {
     System.out.println("stepsToLeaf " + surexpr.getName());
     int expResult = 1;
-    int result = surexpr.minimalSize(Buildable.STEPS);
+    int result = surexpr.minimalSize(paramSteps.getDistStrategy());
     assertEquals(expResult, result);
   }
 
@@ -557,7 +565,7 @@ public class AlgebraicTest {
   public void testStepsToLeaflist() {
     System.out.println("stepsToLeaf " + list.getName());
     int expResult = 1;
-    int result = list.minimalSize(Buildable.STEPS);
+    int result = list.minimalSize(paramSteps.getDistStrategy());
     assertEquals(expResult, result);
   }
 
@@ -566,16 +574,16 @@ public class AlgebraicTest {
     Algebraic test = list2;
     System.out.println("stepsToLeaf " + test.getName());
     int expResult = Integer.MAX_VALUE;
-    int result = test.minimalSize(Buildable.STEPS);
+    int result = test.minimalSize(paramSteps.getDistStrategy());
     assertEquals(expResult, result);
   }
-  
+
   @Test
   public void testStepsToLeafmix() {
     Algebraic test = mix;
     System.out.println("stepsToLeaf " + test.getName());
     int expResult = 3;
-    int result = test.minimalSize(Buildable.STEPS);
+    int result = test.minimalSize(paramSteps.getDistStrategy());
     assertEquals(expResult, result);
   }
 
@@ -606,7 +614,7 @@ public class AlgebraicTest {
   @Test
   public void testGenerateExpr() {
     System.out.println("Generate Expr");
-    Slot slot = expr.generateSlot(100, Buildable.DEPTH);
+    Slot slot = expr.generateSlot(100, paramDepth);
     System.out.println(slot);
     slot.toDot("Expr.dot");
     int expResult = 1;
@@ -617,7 +625,7 @@ public class AlgebraicTest {
   @Test
   public void testGenerateSurExpr() {
     System.out.println("Generate SurExpr");
-    Slot slot = surexpr.generateSlot(100, Buildable.DEPTH);
+    Slot slot = surexpr.generateSlot(100, paramDepth);
     System.out.println(slot);
     slot.toDot("SurExpr.dot");
     int expResult = 1;
@@ -628,7 +636,7 @@ public class AlgebraicTest {
   @Test
   public void testGenerateA() {
     System.out.println("Generate A");
-    Slot slot = a.generateSlot(100, Buildable.DEPTH);
+    Slot slot = a.generateSlot(100, paramDepth);
     System.out.println(slot);
     slot.toDot("A.dot");
     int expResult = 1;
@@ -639,7 +647,7 @@ public class AlgebraicTest {
   @Test
   public void testGenerateB() {
     System.out.println("Generate B");
-    Slot slot = b.generateSlot(100, Buildable.DEPTH);
+    Slot slot = b.generateSlot(100, paramDepth);
     System.out.println(slot);
     slot.toDot("B.dot");
     int expResult = 1;
@@ -650,7 +658,7 @@ public class AlgebraicTest {
   @Test
   public void testGenerateC() {
     System.out.println("Generate C");
-    Slot slot = c.generateSlot(100, Buildable.DEPTH);
+    Slot slot = c.generateSlot(100, paramDepth);
     System.out.println(slot);
     slot.toDot("C.dot");
     int expResult = 1;
@@ -664,7 +672,7 @@ public class AlgebraicTest {
     Slot slot;
     String res = "not this";
     try {
-      slot = circ.generateSlot(100, Buildable.DEPTH);
+      slot = circ.generateSlot(100, paramDepth);
       System.out.println(slot);
       slot.toDot("Circ.dot");
     } catch (UnsupportedOperationException e) {
@@ -678,7 +686,7 @@ public class AlgebraicTest {
   @Test
   public void testGenerateforest() {
     System.out.println("Generate forest");
-    Slot slot = forest.generateSlot(100, Buildable.DEPTH);
+    Slot slot = forest.generateSlot(100, paramDepth);
     System.out.println(slot);
     slot.toDot("forest.dot");
     int expResult = 1;
@@ -689,7 +697,7 @@ public class AlgebraicTest {
   @Test
   public void testGeneratenat() {
     System.out.println("Generate nat");
-    Slot slot = nat.generateSlot(100, Buildable.DEPTH);
+    Slot slot = nat.generateSlot(100, paramDepth);
     System.out.println(slot);
     slot.toDot("nat.dot");
     int expResult = 1;
@@ -700,7 +708,7 @@ public class AlgebraicTest {
   @Test
   public void testGenerateTree() {
     System.out.println("Generate tree");
-    Slot slot = tree.generateSlot(100, Buildable.DEPTH);
+    Slot slot = tree.generateSlot(100, paramDepth);
     System.out.println(slot);
     slot.toDot("tree.dot");
     int expResult = 1;
@@ -711,7 +719,7 @@ public class AlgebraicTest {
   @Test
   public void testGenerateTree2() {
     System.out.println("Generate tree2");
-    Slot slot = tree2.generateSlot(100, Buildable.DEPTH);
+    Slot slot = tree2.generateSlot(100, paramDepth);
     System.out.println(slot);
     slot.toDot("tree2.dot");
     int expResult = 1;
@@ -722,7 +730,7 @@ public class AlgebraicTest {
   @Test
   public void testGeneratetypetest() {
     System.out.println("Generate typetest");
-    Slot slot = typetest.generateSlot(100, Buildable.DEPTH);
+    Slot slot = typetest.generateSlot(100, paramDepth);
     System.out.println(slot);
     slot.toDot("typetest.dot");
     int expResult = 1;
@@ -733,7 +741,7 @@ public class AlgebraicTest {
   @Test
   public void testGeneratelist() {
     System.out.println("Generate list");
-    Slot slot = list.generateSlot(100, Buildable.DEPTH);
+    Slot slot = list.generateSlot(100, paramDepth);
     System.out.println(slot);
     slot.toDot("list.dot");
     int expResult = 1;
@@ -748,7 +756,7 @@ public class AlgebraicTest {
     Slot slot = null;
     String res = "not this";
     try {
-      slot = test.generateSlot(100, Buildable.DEPTH);
+      slot = test.generateSlot(100, paramDepth);
       System.out.println(slot);
       slot.toDot("list2.dot");
     } catch (UnsupportedOperationException e) {
@@ -758,12 +766,12 @@ public class AlgebraicTest {
     String expResult = "Type list2 does not terminate.";
     assertEquals(expResult, res);
   }
-  
+
   @Test
   public void testGeneratemix() {
     Algebraic test = mix;
     System.out.println("Generate " + test.getName());
-    Slot slot = mix.generateSlot(100, Buildable.DEPTH);
+    Slot slot = mix.generateSlot(100, paramDepth);
     System.out.println(slot);
     slot.toDot("mix.dot");
     int expResult = 1;

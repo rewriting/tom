@@ -14,7 +14,7 @@ import java.util.Set;
 class StrategyMakeAny extends Strategy {
 
   @Override
-  public HashSet<Slot> fillATerm(Slot aTerm, int ni, int distStrategy) {
+  public HashSet<Slot> fillATerm(Slot aTerm, int ni, StrategyParameters param) {
     HashSet<Slot> res = new HashSet<Slot>();
 
     //fill the term by choosing one of its constructors
@@ -33,12 +33,12 @@ class StrategyMakeAny extends Strategy {
     int i = 0;
     for (Slot field : listHigherDimFields) {
       Strategy req;
-      if (field.minimalSize(distStrategy) < ni) {
+      if (field.minimalSize(param.getDistStrategy()) < ni) {
         req = new StrategyMakeAny();
       } else {
         req = new StrategyMakeMinimal();
       }
-      res.addAll(req.fillATerm(field, nis[i], distStrategy));
+      res.addAll(req.fillATerm(field, nis[i], param));
       i++;
     }
     return res;

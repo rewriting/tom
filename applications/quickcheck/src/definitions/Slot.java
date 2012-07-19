@@ -59,7 +59,7 @@ class Slot {
     return type.getDimension();
   }
 
-  int minimalSize(int strategy) {
+  int minimalSize(StrategyParameters.DistStrategy strategy) {
     return type.minimalSize(strategy);
   }
 

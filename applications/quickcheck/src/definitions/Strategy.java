@@ -22,7 +22,7 @@ abstract class Strategy {
    * @param n
    * @return Set of fields of the filled terms
    */
-  abstract Set<Slot> fillATerm(Slot aTerm, int ni, int distStrategy);
+  abstract Set<Slot> fillATerm(Slot aTerm, int ni, StrategyParameters param);
 
   /**
    * dispatch fields of the term between two categories: these whose dimension

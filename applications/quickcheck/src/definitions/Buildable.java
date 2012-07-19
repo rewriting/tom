@@ -10,9 +10,6 @@ import java.util.Set;
  */
 public interface Buildable {
 
-  public static final int DEPTH = 1;
-  public static final int STEPS = 2;
-
   /**
    * Gives name of type.
    *
@@ -53,7 +50,7 @@ public interface Buildable {
    * Integer.MAX_VALUE if no path reaches a leaf.
    * @see Buildable#stepsToLeaf()
    */
-  public int minimalSize(int distStrategy);
+  public int minimalSize(StrategyParameters.DistStrategy strategy);
 
   /**
    * Make a new random term. This function cannot be used till dependances are
