@@ -19,7 +19,7 @@ public class StrategyParameters {
   public static enum TerminaisonCriterion {
 
     FORECAST,
-    POINT_OF_NON_RETURN;
+    POINT_OF_NO_RETURN;
   }
   private DistStrategy distStrategy;
   private TerminaisonCriterion terminaisonCriterion;
@@ -45,7 +45,7 @@ public class StrategyParameters {
     switch (terminaisonCriterion) {
       case FORECAST:
         return field.minimalSize(this.getDistStrategy()) >= n;
-      case POINT_OF_NON_RETURN:
+      case POINT_OF_NO_RETURN:
         return n <= 0;
       default:
         throw new RuntimeException();

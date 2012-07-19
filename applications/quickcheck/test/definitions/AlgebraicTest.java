@@ -40,11 +40,11 @@ public class AlgebraicTest {
 
     paramDepth = new StrategyParameters(
             StrategyParameters.DistStrategy.DEPTH,
-            StrategyParameters.TerminaisonCriterion.FORECAST);
+            StrategyParameters.TerminaisonCriterion.POINT_OF_NO_RETURN);
     
     paramSteps = new StrategyParameters(
             StrategyParameters.DistStrategy.STEPS,
-            StrategyParameters.TerminaisonCriterion.FORECAST);
+            StrategyParameters.TerminaisonCriterion.POINT_OF_NO_RETURN);
     
     scope = new Scope();
 
@@ -616,7 +616,7 @@ public class AlgebraicTest {
     System.out.println("Generate Expr");
     Slot slot = expr.generateSlot(100, paramDepth);
     System.out.println(slot);
-    slot.toDot("Expr.dot");
+    slot.toDot2("Expr.dot");
     int expResult = 1;
     int result = 1;
     assertEquals(expResult, result);
@@ -627,7 +627,7 @@ public class AlgebraicTest {
     System.out.println("Generate SurExpr");
     Slot slot = surexpr.generateSlot(100, paramDepth);
     System.out.println(slot);
-    slot.toDot("SurExpr.dot");
+    slot.toDot2("SurExpr.dot");
     int expResult = 1;
     int result = 1;
     assertEquals(expResult, result);
@@ -638,7 +638,7 @@ public class AlgebraicTest {
     System.out.println("Generate A");
     Slot slot = a.generateSlot(100, paramDepth);
     System.out.println(slot);
-    slot.toDot("A.dot");
+    slot.toDot2("A.dot");
     int expResult = 1;
     int result = 1;
     assertEquals(expResult, result);
@@ -649,7 +649,7 @@ public class AlgebraicTest {
     System.out.println("Generate B");
     Slot slot = b.generateSlot(100, paramDepth);
     System.out.println(slot);
-    slot.toDot("B.dot");
+    slot.toDot2("B.dot");
     int expResult = 1;
     int result = 1;
     assertEquals(expResult, result);
@@ -660,7 +660,7 @@ public class AlgebraicTest {
     System.out.println("Generate C");
     Slot slot = c.generateSlot(100, paramDepth);
     System.out.println(slot);
-    slot.toDot("C.dot");
+    slot.toDot2("C.dot");
     int expResult = 1;
     int result = 1;
     assertEquals(expResult, result);
@@ -674,7 +674,7 @@ public class AlgebraicTest {
     try {
       slot = circ.generateSlot(100, paramDepth);
       System.out.println(slot);
-      slot.toDot("Circ.dot");
+      slot.toDot2("Circ.dot");
     } catch (UnsupportedOperationException e) {
       res = e.getMessage();
     }
@@ -688,7 +688,7 @@ public class AlgebraicTest {
     System.out.println("Generate forest");
     Slot slot = forest.generateSlot(100, paramDepth);
     System.out.println(slot);
-    slot.toDot("forest.dot");
+    slot.toDot2("forest.dot");
     int expResult = 1;
     int result = 1;
     assertEquals(expResult, result);
@@ -699,7 +699,7 @@ public class AlgebraicTest {
     System.out.println("Generate nat");
     Slot slot = nat.generateSlot(100, paramDepth);
     System.out.println(slot);
-    slot.toDot("nat.dot");
+    slot.toDot2("nat.dot");
     int expResult = 1;
     int result = 1;
     assertEquals(expResult, result);
@@ -710,7 +710,7 @@ public class AlgebraicTest {
     System.out.println("Generate tree");
     Slot slot = tree.generateSlot(100, paramDepth);
     System.out.println(slot);
-    slot.toDot("tree.dot");
+    slot.toDot2("tree.dot");
     int expResult = 1;
     int result = 1;
     assertEquals(expResult, result);
@@ -721,7 +721,7 @@ public class AlgebraicTest {
     System.out.println("Generate tree2");
     Slot slot = tree2.generateSlot(100, paramDepth);
     System.out.println(slot);
-    slot.toDot("tree2.dot");
+    slot.toDot2("tree2.dot");
     int expResult = 1;
     int result = 1;
     assertEquals(expResult, result);
@@ -732,7 +732,7 @@ public class AlgebraicTest {
     System.out.println("Generate typetest");
     Slot slot = typetest.generateSlot(100, paramDepth);
     System.out.println(slot);
-    slot.toDot("typetest.dot");
+    slot.toDot2("typetest.dot");
     int expResult = 1;
     int result = 1;
     assertEquals(expResult, result);
@@ -743,7 +743,7 @@ public class AlgebraicTest {
     System.out.println("Generate list");
     Slot slot = list.generateSlot(100, paramDepth);
     System.out.println(slot);
-    slot.toDot("list.dot");
+    slot.toDot2("list.dot");
     int expResult = 1;
     int result = 1;
     assertEquals(expResult, result);
@@ -758,7 +758,7 @@ public class AlgebraicTest {
     try {
       slot = test.generateSlot(100, paramDepth);
       System.out.println(slot);
-      slot.toDot("list2.dot");
+      slot.toDot2("list2.dot");
     } catch (UnsupportedOperationException e) {
       System.out.println("fail");
       res = e.getMessage();
@@ -773,7 +773,7 @@ public class AlgebraicTest {
     System.out.println("Generate " + test.getName());
     Slot slot = mix.generateSlot(100, paramDepth);
     System.out.println(slot);
-    slot.toDot("mix.dot");
+    slot.toDot2("mix.dot");
     int expResult = 1;
     int result = 1;
     assertEquals(expResult, result);

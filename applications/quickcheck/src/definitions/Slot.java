@@ -10,6 +10,7 @@ import aterm.ATermAppl;
 import aterm.pure.PureFactory;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  *
@@ -99,6 +100,34 @@ class Slot {
     for (Slot slot : deps) {
       res += "\"" + way + "\"" + "->" + "\"" + way + i + "\"\n";
       res += slot.toDot_aux(way + i);
+      i++;
+    }
+    return res;
+  }
+  
+  public void toDot2(String chemin) {
+    String res = "digraph mon_graphe {\n";
+    res += toDot_aux2(new AtomicInteger(1));
+    res += "}\n";
+    File fichier = new File(chemin);
+    try {
+      FileOutputStream graveur = new FileOutputStream(fichier);
+      graveur.write(res.getBytes());
+      graveur.close();
+    } catch (java.io.IOException err) {
+      System.err.println("ecriture fichier impossible");
+    }
+  }
+
+  private String toDot_aux2(AtomicInteger n) {
+    int root = n.intValue();
+    String res = new String();
+    int i = 0;
+    for (Slot slot : deps) {
+      res += "\"" + root + "\"" + "->" + "\"";
+      n.incrementAndGet();
+      res += n + "\"\n";
+      res += slot.toDot_aux2(n);
       i++;
     }
     return res;

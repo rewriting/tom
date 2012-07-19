@@ -57,9 +57,9 @@ public class Algebraic implements Buildable {
   public int minimalSize(StrategyParameters.DistStrategy strategy) {
     switch (strategy) {
       case DEPTH:
-        return depthToLeaf();
+        return minimalDepth();
       case STEPS:
-        return stepsToLeaf();
+        return minimalSteps();
       default:
         throw new UnsupportedOperationException("strategy " + strategy + " not defined.");
     }
@@ -73,7 +73,7 @@ public class Algebraic implements Buildable {
    * Integer.MAX_VALUE if no path reaches a leaf.
    * @see Buildable#stepsToLeaf()
    */
-  private int depthToLeaf() {
+  private int minimalDepth() {
     if (dstLeaf != -1 && dstLeaf != Integer.MAX_VALUE) {
       return dstLeaf;
     }
@@ -99,7 +99,7 @@ public class Algebraic implements Buildable {
    * Integer.MAX_VALUE if no path reaches a leaf.
    * @see Buildable#depthToLeaf()
    */
-  private int stepsToLeaf() {
+  private int minimalSteps() {
     if (dstLeaf != -1 && dstLeaf != Integer.MAX_VALUE) {
       return dstLeaf;
     }
@@ -118,7 +118,7 @@ public class Algebraic implements Buildable {
   }
 
   Slot generateSlot(int n, StrategyParameters param) {
-    if (this.depthToLeaf() == Integer.MAX_VALUE) {
+    if (this.minimalDepth() == Integer.MAX_VALUE) {
       throw new UnsupportedOperationException("Type " + this.getName() + " does not terminate.");
     }
     Slot slot = new Slot(this);
@@ -167,7 +167,7 @@ public class Algebraic implements Buildable {
   public ATermAppl generate(int n) {
     StrategyParameters param = new StrategyParameters(
             StrategyParameters.DistStrategy.DEPTH, 
-            StrategyParameters.TerminaisonCriterion.FORECAST);
+            StrategyParameters.TerminaisonCriterion.POINT_OF_NO_RETURN);
     return generateSlot(n, param).toATerm();
   }
 
@@ -266,12 +266,12 @@ public class Algebraic implements Buildable {
     ArrayList<Constructor> minCons = new ArrayList<Constructor>(constructors.size());
     for (Constructor constructor : constructors) {
       int m = constructor.minimalDepth();
-      if (m == depthToLeaf()) {
+      if (m == minimalDepth()) {
         minCons.add(constructor);
       }
     }
     if (minCons.isEmpty()) {
-      throw new UnsupportedOperationException("Internal error happends when backtracking (" + getName() + " : " + depthToLeaf() + ").");
+      throw new UnsupportedOperationException("Internal error happends when backtracking (" + getName() + " : " + minimalDepth() + ").");
     } else {
       return minCons.get((int) (Math.random() * minCons.size()));
     }
@@ -286,12 +286,12 @@ public class Algebraic implements Buildable {
     ArrayList<Constructor> minCons = new ArrayList<Constructor>(constructors.size());
     for (Constructor constructor : constructors) {
       int m = constructor.minimalSteps();
-      if (m == depthToLeaf()) {
+      if (m == minimalDepth()) {
         minCons.add(constructor);
       }
     }
     if (minCons.isEmpty()) {
-      throw new UnsupportedOperationException("Internal error happends when backtracking (" + getName() + " : " + depthToLeaf() + ").");
+      throw new UnsupportedOperationException("Internal error happends when backtracking (" + getName() + " : " + minimalDepth() + ").");
     } else {
       return minCons.get((int) (Math.random() * minCons.size()));
     }

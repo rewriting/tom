@@ -4,7 +4,6 @@
  */
 package definitions;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -22,7 +21,7 @@ class StrategyMakeMaxDimAtMost extends Strategy {
       System.out.print("WARNING: current terminaison criterion ("
               + param.getTerminaisonCriterion()
               + ") does not seem to be compliant with StrategyMakeMaxDimAtMost. ");
-      param.changeTerminaisonCriterion(StrategyParameters.TerminaisonCriterion.POINT_OF_NON_RETURN);
+      param.changeTerminaisonCriterion(StrategyParameters.TerminaisonCriterion.POINT_OF_NO_RETURN);
       System.out.println("The criterion have thus been changed into "
               + param.getTerminaisonCriterion()
               + ".");
@@ -44,35 +43,19 @@ class StrategyMakeMaxDimAtMost extends Strategy {
     //re-apply algorithm on same dimension fields in order to eliminate them
     int i = 0;
     for (Slot field : listHigherDimFields) {
+      Strategy req;
+      if (!param.requireTerminaison(field, ni)) {
+        req = new StrategyMakeMaxDimExactly();
+      } else {
+        req = new StrategyMakeMinimal();
+      }
       int rand;
       if (nis[i] == 0) {
         rand = 0;
       } else {
         rand = 1 + (int) (Math.random() * nis[i]);
       }
-//      res.addAll(propagate(field, rand, param));
-      Strategy req = new StrategyMakeMaxDimExactly();
       res.addAll(req.fillATerm(field, rand, param));
-      i++;
-    }
-    return res;
-  }
-  
-  @Deprecated
-  private Collection propagate(Slot aTerm, int rand, StrategyParameters param) {
-    Set<Slot> res = new HashSet<Slot>();
-    Slot[] fields = aTerm.chooseMaxDimConstructor();
-    int currentDim = aTerm.getDimension();
-    Set<Slot> listHigherDimFields = dispatchFields(fields, res, currentDim);
-    int[] nis = Random.pile(rand - 1, listHigherDimFields.size());
-    int i = 0;
-    for (Slot field : listHigherDimFields) {
-      if (nis[i] > 0) {
-        res.addAll(propagate(field, nis[i], param));
-      } else {
-        Strategy req = new StrategyMakeMinimal();
-        res.addAll(req.fillATerm(field, nis[i], param));
-      }
       i++;
     }
     return res;
