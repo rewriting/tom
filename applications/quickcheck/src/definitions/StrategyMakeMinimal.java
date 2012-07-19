@@ -33,7 +33,7 @@ class StrategyMakeMinimal extends Strategy {
     int i = 0;
     for (Slot field : listHigherDimFields) {
       Strategy req;
-      if (field.minimalSize(param.getDistStrategy()) < ni) {
+      if (!param.requireTerminaison(field, ni)) {
         req = new StrategyMakeAny();
       } else {
         req = new StrategyMakeMinimal();

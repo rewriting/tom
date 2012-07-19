@@ -9,31 +9,38 @@ package definitions;
  * @author hubert
  */
 public class StrategyParameters {
-  
-  public static enum DistStrategy{
+
+  public static enum DistStrategy {
+
     DEPTH,
     STEPS
   }
 
-  public static enum TerminaisonCriterion{
+  public static enum TerminaisonCriterion {
+
     FORECAST,
     POINT_OF_NON_RETURN;
   }
-  
   private DistStrategy distStrategy;
   private TerminaisonCriterion terminaisonCriterion;
-  
-  public StrategyParameters(DistStrategy distStrategy, TerminaisonCriterion terminaisonCriterion){
+
+  public StrategyParameters(DistStrategy distStrategy, TerminaisonCriterion terminaisonCriterion) {
     this.distStrategy = distStrategy;
     this.terminaisonCriterion = terminaisonCriterion;
   }
-  
-  public DistStrategy getDistStrategy(){
+
+  DistStrategy getDistStrategy() {
     return distStrategy;
   }
-  
-  public TerminaisonCriterion getTerminaisonCriterion(){
-    return terminaisonCriterion;
+
+  boolean requireTerminaison(Slot field, int n) {
+    switch (terminaisonCriterion) {
+      case FORECAST:
+        return field.minimalSize(this.getDistStrategy()) >= n;
+      case POINT_OF_NON_RETURN:
+        return n <= 0;
+      default:
+        throw new RuntimeException();
+    }
   }
-  
 }
