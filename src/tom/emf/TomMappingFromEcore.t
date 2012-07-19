@@ -590,7 +590,7 @@ private static <O> org.eclipse.emf.common.util.EList<O> append@prefix+name@(O e,
       dvalue = "\"" + dvalue + "\"";
     } else if(esftype.equals("boolean") || esftype.equals("int") ||
         esftype.equals("float") || esftype.equals("double") || 
-        esftype.equals("long") ) {
+        esftype.equals("long")) {
       //nothing
       //dvalue = sf.getDefaultValue();
     } else {
@@ -613,7 +613,7 @@ private static <O> org.eclipse.emf.common.util.EList<O> append@prefix+name@(O e,
         EClass ecl = (EClass) eclf;
         EList<EStructuralFeature> sfs = ecl.getEAllStructuralFeatures();
         StringBuffer s_types = new StringBuffer();
-        StringBuffer s_types2 = new StringBuffer();
+        //StringBuffer s_types2 = new StringBuffer();
         StringBuffer s = new StringBuffer();
         StringBuffer s2 = new StringBuffer();
         StringBuffer s_gets = new StringBuffer();
@@ -627,9 +627,9 @@ private static <O> org.eclipse.emf.common.util.EList<O> append@prefix+name@(O e,
             s_types.append(sfname + " : " + prefix + getType(writer,sf) + ", ");
             String[] decl = getClassDeclarations(type); // [canonical name, anonymous generic, generic type]
             writer.write("");
-            s_types2.append(", "
+            /*s_types2.append(", "
                 + (sf.isMany() ? "org.eclipse.emf.common.util.EList<" + decl[0] + decl[2] + ">" : decl[0] + decl[2])
-                + " " + sfname);
+                + " " + sfname);*/
             s.append(", " + sfname);
             s2.append(", $" + sfname);
             String na = boxType(sf.getEType().getInstanceClass())
@@ -647,7 +647,7 @@ private static <O> org.eclipse.emf.common.util.EList<O> append@prefix+name@(O e,
             if(sf.getDefaultValue()!=null) {
               s_defaults.append(genGetDefault(sf));
             }
-          }
+          } 
         }
         if(s_types.length() >= 2) {
           s_types.delete(s_types.length() - 2, s_types.length());
