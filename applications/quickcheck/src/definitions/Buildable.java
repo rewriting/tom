@@ -46,6 +46,7 @@ public interface Buildable {
   /**
    * This function give the size of the shortest path from here to a leaf.
    *
+   * @param strategy 
    * @return size of the minimal path between here and a leaf. Returns
    * Integer.MAX_VALUE if no path reaches a leaf.
    * @see Buildable#stepsToLeaf()

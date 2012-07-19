@@ -17,7 +17,7 @@ class StrategyMakeMinimal extends Strategy {
   public HashSet<Slot> fillATerm(Slot aTerm, int ni, StrategyParameters param) {
     HashSet<Slot> res = new HashSet<Slot>();
 
-    //fill the term by choosing the constructor with minimal terminaison
+    //fill the term by choosing the constructor with minimal termination
     Slot[] fields = aTerm.chooseMinDepthConstructor();
 
     //dispatch fields of the term between two categories: these whose dimension 
@@ -33,7 +33,7 @@ class StrategyMakeMinimal extends Strategy {
     int i = 0;
     for (Slot field : listHigherDimFields) {
       Strategy req;
-      if (!param.requireTerminaison(field, ni)) {
+      if (!param.requireTermination(field, ni)) {
         req = new StrategyMakeAny();
       } else {
         req = new StrategyMakeMinimal();

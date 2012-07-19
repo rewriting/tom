@@ -33,7 +33,7 @@ class StrategyMakeMaxDimExactly extends Strategy {
     int i = 0;
     for (Slot field : listHigherDimFields) {
       Strategy req;
-      if (!param.requireTerminaison(field, ni)) {
+      if (!param.requireTermination(field, ni)) {
         req = new StrategyMakeMaxDimExactly();
       } else {
         req = new StrategyMakeMinimal();

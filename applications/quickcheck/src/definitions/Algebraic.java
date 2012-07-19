@@ -166,8 +166,8 @@ public class Algebraic implements Buildable {
   @Override
   public ATermAppl generate(int n) {
     StrategyParameters param = new StrategyParameters(
-            StrategyParameters.DistStrategy.DEPTH, 
-            StrategyParameters.TerminaisonCriterion.POINT_OF_NO_RETURN);
+            StrategyParameters.DistStrategy.STEPS, 
+            StrategyParameters.TerminationCriterion.POINT_OF_NO_RETURN);
     return generateSlot(n, param).toATerm();
   }
 

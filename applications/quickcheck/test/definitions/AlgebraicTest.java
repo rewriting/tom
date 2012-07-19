@@ -40,11 +40,11 @@ public class AlgebraicTest {
 
     paramDepth = new StrategyParameters(
             StrategyParameters.DistStrategy.DEPTH,
-            StrategyParameters.TerminaisonCriterion.POINT_OF_NO_RETURN);
+            StrategyParameters.TerminationCriterion.POINT_OF_NO_RETURN);
     
     paramSteps = new StrategyParameters(
             StrategyParameters.DistStrategy.STEPS,
-            StrategyParameters.TerminaisonCriterion.POINT_OF_NO_RETURN);
+            StrategyParameters.TerminationCriterion.POINT_OF_NO_RETURN);
     
     scope = new Scope();
 

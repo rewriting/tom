@@ -32,7 +32,7 @@ class Constructor {
   }
 
   /**
-   * Gives minimal depth before terminaison.
+   * Gives minimal depth before termination.
    *
    */
   int minimalDepth() {
@@ -49,7 +49,7 @@ class Constructor {
         return Integer.MAX_VALUE;
       }
       if (tmp == Integer.MAX_VALUE) {
-        // if field can not lead to terminaison
+        // if field can not lead to termination
         lock = false;
         return Integer.MAX_VALUE;
       }
@@ -60,7 +60,7 @@ class Constructor {
   }
 
   /**
-   * Gives minimal number of steps before terminaison.
+   * Gives minimal number of steps before termination.
    *
    */
   int minimalSteps() {
@@ -78,7 +78,7 @@ class Constructor {
         return Integer.MAX_VALUE;
       }
       if (tmp == Integer.MAX_VALUE) {
-        // if field can not lead to terminaison
+        // if field can not lead to termination
         lock = false;
         return Integer.MAX_VALUE;
       }

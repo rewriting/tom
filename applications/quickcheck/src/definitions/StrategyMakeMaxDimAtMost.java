@@ -17,13 +17,13 @@ class StrategyMakeMaxDimAtMost extends Strategy {
 
   @Override
   public Set<Slot> fillATerm(Slot aTerm, int ni, StrategyParameters param) {
-    if (param.getTerminaisonCriterion() == StrategyParameters.TerminaisonCriterion.FORECAST) {
-      System.out.print("WARNING: current terminaison criterion ("
-              + param.getTerminaisonCriterion()
+    if (param.getTerminationCriterion() == StrategyParameters.TerminationCriterion.FORECAST) {
+      System.out.print("WARNING: current termination criterion ("
+              + param.getTerminationCriterion()
               + ") does not seem to be compliant with StrategyMakeMaxDimAtMost. ");
-      param.changeTerminaisonCriterion(StrategyParameters.TerminaisonCriterion.POINT_OF_NO_RETURN);
+      param.changeTerminationCriterion(StrategyParameters.TerminationCriterion.POINT_OF_NO_RETURN);
       System.out.println("The criterion have thus been changed into "
-              + param.getTerminaisonCriterion()
+              + param.getTerminationCriterion()
               + ".");
     }
     Set<Slot> res = new HashSet<Slot>();
@@ -44,7 +44,7 @@ class StrategyMakeMaxDimAtMost extends Strategy {
     int i = 0;
     for (Slot field : listHigherDimFields) {
       Strategy req;
-      if (!param.requireTerminaison(field, ni)) {
+      if (!param.requireTermination(field, ni)) {
         req = new StrategyMakeMaxDimExactly();
       } else {
         req = new StrategyMakeMinimal();
