@@ -1,11 +1,10 @@
-// Licence
 package tom.mapping.dsl.generator
 
 import com.google.inject.Inject
-import tom.mapping.dsl.generator.tom.CustomOperatorsCompiler
 import tom.mapping.model.Mapping
+import tom.mapping.dsl.java.CustomOperatorsCompiler
 
-class MappingCustomAccessorsCompiler {
+class MappingCustomAccessorCompiler {
 	
 	@Inject CustomOperatorsCompiler injcusopco
 	

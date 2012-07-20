@@ -1,4 +1,4 @@
-module tom.mapping.dsl.GenerateTomMapping
+module tom.mapping.dsl.TomMapping
 
 import org.eclipse.emf.mwe.utils.*
 import org.eclipse.xtext.generator.*
@@ -32,7 +32,7 @@ Workflow {
         component = Generator {
             pathRtProject = runtimeProject
             pathUiProject = "${runtimeProject}.ui"
-            pathTestProject = "${runtimeProject}.tests"
+           // pathTestProject = "${runtimeProject}.tests"
             projectNameRt = projectName
             projectNameUi = "${projectName}.ui"
             language = {

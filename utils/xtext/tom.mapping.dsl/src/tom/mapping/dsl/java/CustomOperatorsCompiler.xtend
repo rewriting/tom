@@ -1,4 +1,4 @@
-package tom.mapping.dsl.generator.tom
+package tom.mapping.dsl.java
 
 import org.eclipse.xtext.generator.IFileSystemAccess
 import tom.mapping.dsl.generator.TomMappingExtensions
@@ -7,6 +7,7 @@ import tom.mapping.model.Mapping
 import tom.mapping.model.Operator
 import tom.mapping.model.UserOperator
 import com.google.inject.Inject
+import tom.mapping.dsl.generator.tom.ParametersCompiler
 
 class CustomOperatorsCompiler {
 	
@@ -24,10 +25,10 @@ class CustomOperatorsCompiler {
 	def main(Mapping map) {
 		if(map.operators.filter[e | e instanceof UserOperator].size>0) {			
 			'''
-			public class Çmap.getCustomOperatorsClass()È {
-				ÇFOR op: map.operatorsÈ
-					Çmap.operator(op)È
-				ÇENDFORÈ
+			public class Â«map.getCustomOperatorsClass()Â» {
+				Â«FOR op: map.operatorsÂ»
+					Â«map.operator(op)Â»
+				Â«ENDFORÂ»
 				
 			}
 			'''
@@ -48,10 +49,10 @@ class CustomOperatorsCompiler {
 	
 	def accessor(UserOperator op, Accessor acc) {
 		'''
-		public static Çinjpa.javaTerminalType(acc.slot.type)È
-		Çacc.getCustomOperatorSlotAccessorName()È
-		(Çinjpa.javaTerminalType(op.type)È t) {
-			return Çacc.javaÈ;
+		public static Â«injpa.javaTerminalType(acc.slot.type)Â»
+		Â«acc.getCustomOperatorSlotAccessorName()Â»
+		(Â«injpa.javaTerminalType(op.type)Â» t) {
+			return Â«acc.javaÂ»;
 		}
 		'''
 	}
@@ -59,9 +60,9 @@ class CustomOperatorsCompiler {
 
 	def test(UserOperator usop) {
 		'''
-		public static boolean isÇusop.name.toFirstUpper()È
-			(Çinjpa.javaTerminalType(usop.type)È t) {
-			return Çusop.test()È;
+		public static boolean isÂ«usop.name.toFirstUpper()Â»
+			(Â«injpa.javaTerminalType(usop.type)Â» t) {
+			return Â«usop.test()Â»;
 		}
 		'''
 	}
@@ -69,11 +70,11 @@ class CustomOperatorsCompiler {
 
 	def make(UserOperator usop) {
 		'''
-		public static Çinjpa.javaTerminalType(usop.type)È make Çusop.name.toFirstUpper()È
-		(ÇFOR acc: usop.accessors SEPARATOR ","È
-			Çinjpa.javaParameter(acc.slot)È
-		ÇENDFORÈ) {
-			return Çusop.make()È
+		public static Â«injpa.javaTerminalType(usop.type)Â» make Â«usop.name.toFirstUpper()Â»
+		(Â«FOR acc: usop.accessors SEPARATOR ","Â»
+			Â«injpa.javaParameter(acc.slot)Â»
+		Â«ENDFORÂ») {
+			return Â«usop.make()Â»
 			}
 		'''
 	}

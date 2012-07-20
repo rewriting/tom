@@ -17,9 +17,9 @@ extension TomMappingExtensions = new TomMappingExtensions()
 			m.listTerminal(t);
 		} else {
 		'''
-		%typeterm Çt.nameÈ {
-			implement 		{Çt.class_.nameÈ}
-			is_sort(t) 		{$t instanceof Çt.class_.nameÈ}
+		%typeterm Â«t.nameÂ» {
+			implement 		{Â«t.class_.nameÂ»}
+			is_sort(t) 		{$t instanceof Â«t.class_.nameÂ»}
 			equals(l1,l2) 	{($l1!=null && $l1.equals($l2)) || $l1==$l2}
 		}
 		'''
@@ -32,15 +32,15 @@ extension TomMappingExtensions = new TomMappingExtensions()
 		val name  = t.name(m);
 	
 	'''
-	%typeterm ÇnameÈ{
-		 implement { EList<Çt.class_.nameÈ> }
-	     is_sort(t) Çt.listTest()È
+	%typeterm Â«nameÂ»{
+		 implement { EList<Â«t.class_.nameÂ»> }
+	     is_sort(t) Â«t.listTest()Â»
 		equals(l1,l2) 	{($l1!=null && $l1.equals($l2)) || $l1==$l2}
 	}
 	
-	%oparray ÇnameÈ ÇnameÈ (Çm.getTerminal(t.class_,false).nameÈ*) {
-	 	 is_fsym(t) Çt.listTest()È
-	     make_empty(n) { new BasicEList<Çt.class_.nameÈ>($n) }
+	%oparray Â«nameÂ» Â«nameÂ» (Â«m.getTerminal(t.class_,false).nameÂ»*) {
+	 	 is_fsym(t) Â«t.listTest()Â»
+	     make_empty(n) { new BasicEList<Â«t.class_.nameÂ»>($n) }
 	     make_append(e,l) { append($e,$l) }
 	     get_element(l,n) { $l.get($n) }
 	     get_size(l)      { $l.size() }
@@ -51,35 +51,35 @@ extension TomMappingExtensions = new TomMappingExtensions()
 	def listTest(Terminal t) {
 		'''
 		{ $t instanceof EList<?> &&
-			(((EList<Çt.class_.nameÈ>)$t).size() == 0 
-			|| (((EList<Çt.class_.nameÈ>)$t).size()>0 && ((EList<Çt.class_.nameÈ>)$t).get(0) instanceof Çt.class_.nameÈ))} 
+			(((EList<Â«t.class_.nameÂ»>)$t).size() == 0 
+			|| (((EList<Â«t.class_.nameÂ»>)$t).size()>0 && ((EList<Â«t.class_.nameÂ»>)$t).get(0) instanceof Â«t.class_.nameÂ»))} 
 		}
 		'''
 	}
 	
 	def dispatch primitiveTerminal(EPackage c)'''
-		ÇFOR classifier :c.eAllContents.filter(typeof(EClassifier)).toListÈ
-			Çclassifier.primitiveTerminal()È
-		ÇENDFORÈ
+		Â«FOR classifier :c.eAllContents.filter(typeof(EClassifier)).toListÂ»
+			Â«classifier.primitiveTerminal()Â»
+		Â«ENDFORÂ»
 	'''
 	
 	def dispatch primitiveTerminal(EClassifier c)''''''
 	
 	
 	def dispatch primitiveTerminal(EEnum c)'''
-		%typeterm Çc.nameÈ {
-			implement 		{Çc.nameÈ}
-			is_sort(t) 		{$t instanceof Çc.nameÈ}
+		%typeterm Â«c.nameÂ» {
+			implement 		{Â«c.nameÂ»}
+			is_sort(t) 		{$t instanceof Â«c.nameÂ»}
 			equals(l1,l2) 	{$l1==$l2}
 		}
 	'''
 	
 	def dispatch primitiveTerminal(EDataType c)'''
-		Çval primitive = c.instanceTypeName.primitiveÈ
-		%typeterm Çc.nameÈ {
-			implement 		{Çc.instanceTypeNameÈ}
-			is_sort(t) 		{ÇIF primitiveÈtrueÇELSEÈ$t instanceof Çc.instanceTypeNameÈÇENDIFÈ}
-			equals(l1,l2) 	{ÇIF primitiveÈ$l1==$l2ÇELSEÈ$l1.equals($l2)ÇENDIFÈ}
+		Â«val primitive = c.instanceTypeName.primitiveÂ»
+		%typeterm Â«c.nameÂ» {
+			implement 		{Â«c.instanceTypeNameÂ»}
+			is_sort(t) 		{Â«IF primitiveÂ»trueÂ«ELSEÂ»$t instanceof Â«c.instanceTypeNameÂ»Â«ENDIFÂ»}
+			equals(l1,l2) 	{Â«IF primitiveÂ»$l1==$l2Â«ELSEÂ»$l1.equals($l2)Â«ENDIFÂ»}
 		}
 	'''
 }

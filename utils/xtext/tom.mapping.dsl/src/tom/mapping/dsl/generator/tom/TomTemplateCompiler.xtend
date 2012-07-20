@@ -51,33 +51,33 @@ private static <O> EList<O> append(O e,EList<O> l) {
 	
 	def terminals(Mapping m) { '''
 // Primitive terminals (enu and data types)
-ÇFOR p: m.getAllRootPackages()È
-Çterminals.primitiveTerminal(p)È
-ÇENDFORÈ    
+Â«FOR p: m.getAllRootPackages()Â»
+Â«terminals.primitiveTerminal(p)Â»
+Â«ENDFORÂ»    
 // Terminals
-ÇFOR t: m.terminalsÈ
-Çterminals.terminal(m,t)È
-ÇENDFORÈ
+Â«FOR t: m.terminalsÂ»
+Â«terminals.terminal(m,t)Â»
+Â«ENDFORÂ»
 // List Terminals
-ÇFOR lt:m.allListTerminalsÈ
-Çterminals.listTerminal(m,lt)È
-ÇENDFORÈ
+Â«FOR lt:m.allListTerminalsÂ»
+Â«terminals.listTerminal(m,lt)Â»
+Â«ENDFORÂ»
 	'''
 	}
 	
 	def operators(Mapping m) {'''
 	// User operators
-	ÇFOR op: m.operatorsÈ
-	Çinjop.operator(m, op)È
-	ÇENDFORÈ
+	Â«FOR op: m.operatorsÂ»
+	Â«injop.operator(m, op)Â»
+	Â«ENDFORÂ»
 	'''
 	}
 	
 	def defaultOperators(Mapping m) { '''
 	// Default operators
-	ÇFOR op: m.allDefaultOperatorsÈ
-	Çinjop.classOperator(m, op.name, op)È
-	ÇENDFORÈ
+	Â«FOR op: m.allDefaultOperatorsÂ»
+	Â«injop.classOperator(m, op.name, op)Â»
+	Â«ENDFORÂ»
 	/* PROTECTED REGION ID(op.name+"_mapping_user") ENABLED START */
 	// Protected user region
 	/* PROTECTED REGION END */
@@ -90,9 +90,9 @@ private static <O> EList<O> append(O e,EList<O> l) {
 	// Protected user region
 	/* PROTECTED REGION END */
 	
-	ÇFOR op: mod.operatorsÈ
-	Çinjop.operator(m,op)È
-	ÇENDFORÈ
+	Â«FOR op: mod.operatorsÂ»
+	Â«injop.operator(m,op)Â»
+	Â«ENDFORÂ»
 	'''
 	}
 	
@@ -114,9 +114,9 @@ private static <O> EList<O> append(O e,EList<O> l) {
 		
 	def dispatch primitiveTerminal(EEnum enu) {
 		'''
-		%typeterm Çenu.nameÈ {
-			implement {Çenu.nameÈ}
-			is_sort(t) {$t instanceof Çenu.nameÈ}
+		%typeterm Â«enu.nameÂ» {
+			implement {Â«enu.nameÂ»}
+			is_sort(t) {$t instanceof Â«enu.nameÂ»}
 			equals(l1,l2) {$l1==$l2}
 		}	
 		'''
@@ -125,10 +125,10 @@ private static <O> EList<O> append(O e,EList<O> l) {
 	def dispatch primitiveTerminal(EDataType edaty){
 		val primitive = edaty.instanceTypeName.isPrimitive();
 		'''
-		%typeterm Çedaty.nameÈ {
-			implement {Çedaty.instanceTypeNameÈ}
-			is_sort(t) {ÇIF primitiveÈtrueÇELSEÈ{$t instanceof Çedaty.instanceTypeNameÈÇENDIFÈ}
-			equals(l1,l2) {ÇIF primitiveÈ{$l1=$l2}ÇELSEÈ{l1.equals($l2)ÇENDIFÈ}
+		%typeterm Â«edaty.nameÂ» {
+			implement {Â«edaty.instanceTypeNameÂ»}
+			is_sort(t) {Â«IF primitiveÂ»trueÂ«ELSEÂ»{$t instanceof Â«edaty.instanceTypeNameÂ»Â«ENDIFÂ»}
+			equals(l1,l2) {Â«IF primitiveÂ»{$l1=$l2}Â«ELSEÂ»{l1.equals($l2)Â«ENDIFÂ»}
 		}'''	
 	}	
 			

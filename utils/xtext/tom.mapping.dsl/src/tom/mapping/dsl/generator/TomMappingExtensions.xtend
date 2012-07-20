@@ -76,14 +76,17 @@ class TomMappingExtensions {
 
 	def getCustomParameters(ClassOperator c){
 		c.parameters.filter([e|isExplicitParameter(e)]);
+		
 	}
 		
 	def getSettedCustomParameters(ClassOperator c){
 		c.parameters.filter(typeof(SettedFeatureParameter)).toList;
+		
 	}
 	
 	def private dispatch boolean isParameterFeature(EStructuralFeature f,Mapping mapping){
 		true;
+	
 	}
 		
 	def private dispatch boolean isParameterFeature(EReference f,Mapping mapping){
@@ -95,6 +98,7 @@ class TomMappingExtensions {
 	
 	def private dispatch boolean isExplicitParameter(FeatureParameter pf){
 		true; 
+	
 	}
 	
 	def private dispatch boolean  isExplicitParameter(SettedFeatureParameter pf){
@@ -115,7 +119,7 @@ class TomMappingExtensions {
 			selected.addAll(mp.allSubPackages.filter([e | e.isSelected(m)]));
 		}
 		return selected
-	} 
+	}
 		
 	def boolean isSelected(EPackage p, Mapping m){
 		p.EClassifiers.filter(typeof(EClass)).filter([e|m.getTerminal(e as EClass,false)!=null]).size >0; 

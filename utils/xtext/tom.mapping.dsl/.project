@@ -3,7 +3,6 @@
 	<name>tom.mapping.dsl</name>
 	<comment></comment>
 	<projects>
-		<project>tom.mapping.model</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
@@ -36,13 +35,7 @@
 		<link>
 			<name>tom.mapping.model</name>
 			<type>2</type>
-			<location>/Users/kevinbaumann/Documents/workspace/plugin_cairn/tom.mapping.model</location>
+			<location>/Users/kevinbaumann/Documents/copieTom/2.3/tom.mapping.model</location>
 		</link>
 	</linkedResources>
-	<variableList>
-		<variable>
-			<name>MODEL</name>
-			<value>file:/Users/kevinbaumann/Documents/workspace/plugin_cairn/tom.mapping.model</value>
-		</variable>
-	</variableList>
 </projectDescription>

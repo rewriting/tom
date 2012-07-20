@@ -27,7 +27,7 @@ class ImportsCompiler {
 	def imports(String prefix, EPackage ep) {
 		if(ep.EClassifiers.size > 0) {
 			'''
-			 import Çprefix.getPackagePrefix()ÈÇep.nameÈ.*; 
+			 import Â«prefix.getPackagePrefix()Â»Â«ep.nameÂ».*; 
 			 '''
 		}
 		for(EPackage p: ep.ESubpackages) {
@@ -39,8 +39,8 @@ class ImportsCompiler {
 	def importsWithUtils(String prefix, EPackage ep) {
 		if(ep.EClassifiers.size > 0) {
 			'''
-			import Çprefix.getPackagePrefix()ÈÇep.nameÈ.*; 
-			import Çprefix.getPackagePrefix()ÈÇep.nameÈ.util.*; 
+			import Â«prefix.getPackagePrefix()Â»Â«ep.nameÂ».*; 
+			import Â«prefix.getPackagePrefix()Â»Â«ep.nameÂ».util.*; 
 			'''
 		}
 		for(EPackage p: ep.ESubpackages) {

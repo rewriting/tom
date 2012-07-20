@@ -150,7 +150,22 @@
             uriExtension="tmap">
         </resourceServiceProvider>
     </extension>
-
+    
+    <extension
+         point="org.eclipse.ui.newWizards">
+      <wizard
+            category="fr.loria.eclipse.jtom.ui.wizards"
+            class="tom.mapping.dsl.ui.TomMappingExecutableExtensionFactory:tom.mapping.dsl.ui.wizard.TomMappingNewProjectWizard"
+            icon="icons/TomMappingProject.gif"
+            id="tom.mapping.dsl.ui.wizard.TomMappingNewProjectWizard"
+            name="TomMapping Project"
+            project="true"
+            >
+         <description>
+            Create a new ECORE to TOM mapping project
+         </description>
+      </wizard>
+   </extension>
 
     <!-- marker definitions for tom.mapping.dsl.TomMapping -->
     <extension

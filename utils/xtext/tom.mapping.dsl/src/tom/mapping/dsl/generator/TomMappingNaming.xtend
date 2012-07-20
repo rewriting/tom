@@ -8,7 +8,7 @@ import tom.mapping.model.UserOperator
 import tom.mapping.model.Terminal
 
 
-class NamingCompiler {
+class TomMappingNaming {
 	
 	def String getCustomOperatorSlotAccessorName(Accessor accessor){
 		"get"+(accessor.eContainer() as UserOperator).name.toFirstUpper()+"Slot"+accessor.slot.name.toUpperCase();

@@ -18,61 +18,61 @@ class ParametersCompiler {
 	
 	def parameter(Parameter p){
 		'''
-		Çp.nameÈ : Çp.type.terminalType()È;
+		Â«p.nameÂ» : Â«p.type.terminalType()Â»;
 		'''
 	}
 	
 	
 	def javaParameter(Parameter p) {
 		'''
-		Çp.type.javaTerminalType()È Çp.nameÈ;
+		Â«p.type.javaTerminalType()Â» Â«p.nameÂ»;
 		'''
 	}
 	
 	
 	def terminalType(Terminal t) {
-		'''Çt.nameÈ;'''
+		'''Â«t.nameÂ»;'''
 	}
 	
 	
 	def javaTerminalType(Terminal t) {
-		'''ÇIF t.manyÈList<Çt.class_.nameÈ>ÇELSEÈÇt.class_.nameÈÇENDIFÈ'''
+		'''Â«IF t.manyÂ»List<Â«t.class_.nameÂ»>Â«ELSEÂ»Â«t.class_.nameÂ»Â«ENDIFÂ»'''
 	}
 
 	
 	def featureParameter(Mapping mapping, FeatureParameter fp) {
-		'''Çfp.feature.nameÈ : Çmapping.feature(fp.feature)È;'''
+		'''Â«fp.feature.nameÂ» : Â«mapping.feature(fp.feature)Â»;'''
 	}
 	
 	
 	def javaFeatureParameter(FeatureParameter fp) {
-		'''Çfp.feature.feature()È _Çfp.feature.nameÈ;''';
+		'''Â«fp.feature.feature()Â» _Â«fp.feature.nameÂ»;''';
 	}
 	
 	
 	def defaultFeatureParameter(Mapping mapping, EStructuralFeature esf) {
-		'''Çesf.nameÈ : Çmapping.feature(esf)È;''';
+		'''Â«esf.nameÂ» : Â«mapping.feature(esf)Â»;''';
 	}
 	
 	
 	def defaultJavaFeatureParameter(EStructuralFeature efp) {
-		'''Çefp.feature()È _Çefp.nameÈ''';
+		'''Â«efp.feature()Â» _Â«efp.nameÂ»''';
 	}
 	
 	
 	def renameEcoreClasses(EAttribute eat) {
 		'''
-		ÇIF eat.EAttributeType.name == "EInt"Èint
-		ÇELSEIF eat.EAttributeType.name == "ELong"Èlong
-		ÇELSEIF eat.EAttributeType.name == "EFloat"Èfloat
-		ÇELSEIF eat.EAttributeType.name == "EDouble"Èdouble
-		ÇELSEIF eat.EAttributeType.name == "EBoolean"Èboolean
-		ÇELSEIF eat.EAttributeType.name == "EString"ÈString
-		ÇELSEÈ
-		ÇIF eat.EAttributeType.instanceTypeName != nullÈ
-			Çeat.EAttributeType.instanceClassNameÈ
-		ÇELSEÈÇeat.EAttributeType.nameÈÇENDIFÈ
-		ÇENDIFÈ
+		Â«IF eat.EAttributeType.name == "EInt"Â»int
+		Â«ELSEIF eat.EAttributeType.name == "ELong"Â»long
+		Â«ELSEIF eat.EAttributeType.name == "EFloat"Â»float
+		Â«ELSEIF eat.EAttributeType.name == "EDouble"Â»double
+		Â«ELSEIF eat.EAttributeType.name == "EBoolean"Â»boolean
+		Â«ELSEIF eat.EAttributeType.name == "EString"Â»String
+		Â«ELSEÂ»
+		Â«IF eat.EAttributeType.instanceTypeName != nullÂ»
+			Â«eat.EAttributeType.instanceClassNameÂ»
+		Â«ELSEÂ»Â«eat.EAttributeType.nameÂ»Â«ENDIFÂ»
+		Â«ENDIFÂ»
 		'''
 	}
 	
@@ -88,10 +88,10 @@ class ParametersCompiler {
 	
 	def dispatch feature(Mapping mapping, EAttribute eat) {
 		'''
-		ÇIF eat.manyÈ
-			List<? extends Çeat.renameEcoreClasses()È>
-		ÇELSEÈrenameEcoreClasses(eat)
-		ÇENDIFÈ
+		Â«IF eat.manyÂ»
+			List<? extends Â«eat.renameEcoreClasses()Â»>
+		Â«ELSEÂ»renameEcoreClasses(eat)
+		Â«ENDIFÂ»
 		'''
 	}
 	
@@ -102,9 +102,9 @@ class ParametersCompiler {
 	
 	def dispatch feature(EReference er) {
     	'''
-    	ÇIF er.manyÈ
-    	List<? extends Çer.EReferenceType.nameÈ>ÇELSEÈ
-    	er.EReferenceType.nameÇENDIFÈ
+    	Â«IF er.manyÂ»
+    	List<? extends Â«er.EReferenceType.nameÂ»>Â«ELSEÂ»
+    	er.EReferenceType.nameÂ«ENDIFÂ»
 		'''
 	}
 	
@@ -121,9 +121,9 @@ class ParametersCompiler {
 	
 	def dispatch primitiveType(EDataType edt) {
 		'''
-		ÇIF edt.instanceTypeName == "java.lang.String"È"String";
-		ÇELSEÈÇedt.instanceTypeNameÈ
-		ÇENDIFÈ
+		Â«IF edt.instanceTypeName == "java.lang.String"Â»"String";
+		Â«ELSEÂ»Â«edt.instanceTypeNameÂ»
+		Â«ENDIFÂ»
 		'''
 	}
 	
