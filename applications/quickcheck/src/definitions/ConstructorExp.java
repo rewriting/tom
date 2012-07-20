@@ -17,12 +17,12 @@ class ConstructorExp extends Constructor {
 
   private Method make;
 
-  ConstructorExp(String name, Method make, AlgebraicExp caller) {
+  ConstructorExp(String name, Method make, SortExp caller) {
     super(name, extractFields(make, caller));
     this.make = make;
   }
 
-  static private Buildable[] extractFields(Method make, AlgebraicExp caller) {
+  static private Buildable[] extractFields(Method make, SortExp caller) {
     Class[] listClasses = make.getParameterTypes();
     Buildable[] res = new Buildable[listClasses.length];
     for (int i = 0; i < res.length; i++) {

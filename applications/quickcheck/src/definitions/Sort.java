@@ -4,18 +4,18 @@ import aterm.ATermAppl;
 import java.util.*;
 
 /**
- * Represents implementation of any algebraic type with Buildable formalism.
+ * Represents implementation of any Sort type with Buildable formalism.
  *
  * @author hubert
  */
-public class Algebraic implements Buildable {
+public class Sort implements Buildable {
 
   private String name;
   private List<Constructor> constructors;
   private Set<Buildable> dependences;
   private int dstLeaf;
 
-  public Algebraic(Scope scope, String name) {
+  public Sort(Scope scope, String name) {
     this.name = name;
     constructors = new ArrayList<Constructor>();
     dependences = new HashSet<Buildable>();
@@ -187,7 +187,7 @@ public class Algebraic implements Buildable {
    * @param listTypes types of the fields of the constructor
    * @return type with new constructor
    */
-  public Algebraic addConstructor(String name, Buildable... listTypes) {
+  public Sort addConstructor(String name, Buildable... listTypes) {
     constructors.add(new Constructor(name, listTypes));
     dependences.addAll(Arrays.asList(listTypes));
     return this;
@@ -201,7 +201,7 @@ public class Algebraic implements Buildable {
    * @param type type of the field of the constructor
    * @return type with new constructor
    */
-  public Algebraic addConstructor(Buildable type) {
+  public Sort addConstructor(Buildable type) {
     return addConstructor(type.getName(), type);
   }
 

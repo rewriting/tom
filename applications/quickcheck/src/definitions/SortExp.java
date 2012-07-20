@@ -11,11 +11,11 @@ import java.util.Arrays;
  *
  * @author hubert
  */
-class AlgebraicExp extends Algebraic {
+class SortExp extends Sort {
 
   private final Scope scope;
 
-  public AlgebraicExp(Scope scope, Class type) {
+  public SortExp(Scope scope, Class type) {
     super(scope, type.getName());
     this.scope = scope;
   }
@@ -33,7 +33,7 @@ class AlgebraicExp extends Algebraic {
    * @deprecated
    */
   @Deprecated
-  public Algebraic addConstructor(Class classe) {
+  public Sort addConstructor(Class classe) {
     String pattern = "make";
     Method[] listMethods = classe.getDeclaredMethods();
     Method make = null;
@@ -63,7 +63,7 @@ class AlgebraicExp extends Algebraic {
    * @deprecated
    */
   @Deprecated
-  public Algebraic addConstructor(Class classe, String pattern) {
+  public Sort addConstructor(Class classe, String pattern) {
     Method[] listMethods = classe.getDeclaredMethods();
     Method make = null;
     for (int i = 0; i < listMethods.length; i++) {

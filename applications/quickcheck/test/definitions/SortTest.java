@@ -19,24 +19,24 @@ import sort.types.surexpr.wrapper;
  *
  * @author hubert
  */
-public class AlgebraicTest {
+public class SortTest {
 
   private Scope scope;
-  private Algebraic nat;
-  private Algebraic tree;
-  private Algebraic tree2;
-  private Algebraic forest;
-  private Algebraic circ;
-  private Algebraic typetest;
-  private Algebraic a, b, c;
-  private AlgebraicExp expr;
-  private AlgebraicExp surexpr;
-  private Algebraic list;
-  private Algebraic list2;
-  private Algebraic mix;
+  private Sort nat;
+  private Sort tree;
+  private Sort tree2;
+  private Sort forest;
+  private Sort circ;
+  private Sort typetest;
+  private Sort a, b, c;
+  private SortExp expr;
+  private SortExp surexpr;
+  private Sort list;
+  private Sort list2;
+  private Sort mix;
   private StrategyParameters paramDepth, paramSteps;
 
-  public AlgebraicTest() {
+  public SortTest() {
 
     paramDepth = new StrategyParameters(
             StrategyParameters.DistStrategy.DEPTH,
@@ -48,54 +48,54 @@ public class AlgebraicTest {
     
     scope = new Scope();
 
-    nat = new Algebraic(scope, "nat");
+    nat = new Sort(scope, "nat");
     nat.addConstructor("succ", nat);
     nat.addConstructor("zero");
 
-    tree = new Algebraic(scope, "tree");
+    tree = new Sort(scope, "tree");
     tree.addConstructor("branch", tree, tree);
     tree.addConstructor("leaf");
 
-    typetest = new Algebraic(scope, "typetest");
+    typetest = new Sort(scope, "typetest");
     typetest.addConstructor("tree", tree);
     typetest.addConstructor("nat", nat);
 
 
-    forest = new Algebraic(scope, "forest");
-    tree2 = new Algebraic(scope, "tree2");
+    forest = new Sort(scope, "forest");
+    tree2 = new Sort(scope, "tree2");
     forest.addConstructor("tree", tree2);
     tree2.addConstructor("nat", nat);
     tree2.addConstructor("forest", forest);
 
-    circ = new Algebraic(scope, "circ");
+    circ = new Sort(scope, "circ");
     circ.addConstructor("circ", circ);
 
-    a = new Algebraic(scope, "a");
-    b = new Algebraic(scope, "b");
-    c = new Algebraic(scope, "c");
+    a = new Sort(scope, "a");
+    b = new Sort(scope, "b");
+    c = new Sort(scope, "c");
     a.addConstructor("nill");
     a.addConstructor("b", b);
     b.addConstructor("c", c);
     c.addConstructor("a", a);
 
-    expr = new AlgebraicExp(scope, Expr.class);
+    expr = new SortExp(scope, Expr.class);
     expr.addConstructor(mult.class);
     expr.addConstructor(plus.class);
     expr.addConstructor(un.class);
     expr.addConstructor(zero.class);
 
-    surexpr = new AlgebraicExp(scope, Surexpr.class);
+    surexpr = new SortExp(scope, Surexpr.class);
     surexpr.addConstructor(rec.class);
     surexpr.addConstructor(wrapper.class);
 
-    list = new Algebraic(scope, "list");
+    list = new Sort(scope, "list");
     list.addConstructor(expr);
     list.addConstructor("consList", expr, list);
 
-    list2 = new Algebraic(scope, "list2");
+    list2 = new Sort(scope, "list2");
     list2.addConstructor("consList", expr, list2);
 
-    mix = new Algebraic(scope, "mix");
+    mix = new Sort(scope, "mix");
     mix.addConstructor("consMix", list, surexpr);
 
     scope.setDependances();
@@ -119,7 +119,7 @@ public class AlgebraicTest {
   }
 
   /**
-   * Test of isRec method, of class Algebraic.
+   * Test of isRec method, of class Sort.
    */
   @Test
   public void testIsRecA() {
@@ -219,7 +219,7 @@ public class AlgebraicTest {
 
   @Test
   public void testIsRecSurList2() {
-    Algebraic test = list2;
+    Sort test = list2;
     System.out.println("isRec " + test.getName());
     boolean expResult = true;
     boolean result = test.isRec();
@@ -228,7 +228,7 @@ public class AlgebraicTest {
 
   @Test
   public void testIsRecSurMix() {
-    Algebraic test = mix;
+    Sort test = mix;
     System.out.println("isRec " + test.getName());
     boolean expResult = false;
     boolean result = test.isRec();
@@ -236,7 +236,7 @@ public class AlgebraicTest {
   }
 
   /**
-   * Test of getDimension method, of class Algebraic.
+   * Test of getDimension method, of class Sort.
    */
   @Test
   public void testGetDimentionNat() {
@@ -337,7 +337,7 @@ public class AlgebraicTest {
 
   @Test
   public void testGetDimentionlist2() {
-    Algebraic test = list2;
+    Sort test = list2;
     System.out.println("getDimention " + test.getName());
     int expResult = 2;
     int result = test.getDimension();
@@ -346,7 +346,7 @@ public class AlgebraicTest {
 
   @Test
   public void testGetDimentionmix() {
-    Algebraic test = mix;
+    Sort test = mix;
     System.out.println("getDimention " + test.getName());
     int expResult = 2;
     int result = test.getDimension();
@@ -354,7 +354,7 @@ public class AlgebraicTest {
   }
 
   /**
-   * Test of depthToLeaf method, of class Algebraic.
+   * Test of depthToLeaf method, of class Sort.
    */
   @Test
   public void testDstToLeafNat() {
@@ -454,7 +454,7 @@ public class AlgebraicTest {
 
   @Test
   public void testDstToLeaflist2() {
-    Algebraic test = list2;
+    Sort test = list2;
     System.out.println("dstToLeaf " + test.getName());
     int expResult = Integer.MAX_VALUE;
     int result = test.minimalSize(paramDepth.getDistStrategy());
@@ -463,7 +463,7 @@ public class AlgebraicTest {
 
   @Test
   public void testDstToLeafmix() {
-    Algebraic test = mix;
+    Sort test = mix;
     System.out.println("dstToLeaf " + test.getName());
     int expResult = 2;
     int result = test.minimalSize(paramDepth.getDistStrategy());
@@ -471,7 +471,7 @@ public class AlgebraicTest {
   }
 
   /**
-   * Test of stepsToLeaf method, of class Algebraic.
+   * Test of stepsToLeaf method, of class Sort.
    */
   @Test
   public void testStepsToLeafNat() {
@@ -571,7 +571,7 @@ public class AlgebraicTest {
 
   @Test
   public void testStepsToLeaflist2() {
-    Algebraic test = list2;
+    Sort test = list2;
     System.out.println("stepsToLeaf " + test.getName());
     int expResult = Integer.MAX_VALUE;
     int result = test.minimalSize(paramSteps.getDistStrategy());
@@ -580,7 +580,7 @@ public class AlgebraicTest {
 
   @Test
   public void testStepsToLeafmix() {
-    Algebraic test = mix;
+    Sort test = mix;
     System.out.println("stepsToLeaf " + test.getName());
     int expResult = 3;
     int result = test.minimalSize(paramSteps.getDistStrategy());
@@ -588,7 +588,7 @@ public class AlgebraicTest {
   }
 
   /**
-   * Test of testAddConstructor with class method, of class Algebraic.
+   * Test of testAddConstructor with class method, of class Sort.
    */
   @Test
   public void testAddConstructorClassExpr() {
@@ -609,7 +609,7 @@ public class AlgebraicTest {
   }
 
   /**
-   * Test of generate method, of class Algebraic.
+   * Test of generate method, of class Sort.
    */
   @Test
   public void testGenerateExpr() {
@@ -751,7 +751,7 @@ public class AlgebraicTest {
 
   @Test
   public void testGeneratelist2() {
-    Algebraic test = list2;
+    Sort test = list2;
     System.out.println("Generate " + test.getName());
     Slot slot = null;
     String res = "not this";
@@ -769,7 +769,7 @@ public class AlgebraicTest {
 
   @Test
   public void testGeneratemix() {
-    Algebraic test = mix;
+    Sort test = mix;
     System.out.println("Generate " + test.getName());
     Slot slot = mix.generateSlot(100, paramDepth);
     System.out.println(slot);

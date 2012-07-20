@@ -27,8 +27,8 @@ class Slot {
   }
 
   Slot[] chooseFiniteConstructor() {
-    if (type instanceof Algebraic) {
-      cons = ((Algebraic) type).chooseFiniteConstructor();
+    if (type instanceof Sort) {
+      cons = ((Sort) type).chooseFiniteConstructor();
       deps = cons.giveATermDeps();
     } else {
       deps = new Slot[0];
@@ -37,8 +37,8 @@ class Slot {
   }
 
   Slot[] chooseMinDepthConstructor() {
-    if (type instanceof Algebraic) {
-      cons = ((Algebraic) type).chooseMinDepthConstructor();
+    if (type instanceof Sort) {
+      cons = ((Sort) type).chooseMinDepthConstructor();
       deps = cons.giveATermDeps();
     } else {
       deps = new Slot[0];
@@ -47,8 +47,8 @@ class Slot {
   }
   
   Slot[] chooseMaxDimConstructor() {
-    if (type instanceof Algebraic) {
-      cons = ((Algebraic) type).chooseMaxDimConstructor();
+    if (type instanceof Sort) {
+      cons = ((Sort) type).chooseMaxDimConstructor();
       deps = cons.giveATermDeps();
     } else {
       deps = new Slot[0];
