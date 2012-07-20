@@ -1,10 +1,13 @@
 module Sort
 abstract syntax
 Expr = zero()
-  | un()
-  | plus(a:Expr, b:Expr)
-  | mult(a:Expr, b:Expr)
+     | un()
+     | plus(a:Expr, b:Expr)
+     | mult(a:Expr, b:Expr)
 
 Surexpr = rien()
-  | wrapper(e:Expr)
-  | rec(s:Surexpr)
+        | wrapper(e:Expr)
+        | rec(s:Surexpr)
+
+IntList = end(a:Integer)
+        | consList(a:Integer, tail:IntList)
