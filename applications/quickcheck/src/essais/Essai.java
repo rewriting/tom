@@ -4,10 +4,7 @@
  */
 package essais;
 
-import aterm.AFun;
 import aterm.ATerm;
-import aterm.ATermAppl;
-import aterm.pure.PureFactory;
 import definitions.Buildable;
 import definitions.Scope;
 import definitions.Sort;
@@ -29,29 +26,24 @@ class Essai {
    */
   public static void main(String[] args) {
 
-    PureFactory factory = new PureFactory();
-
-    AFun fun = factory.makeAFun("truc", 3, false);
-    ATerm a = factory.make("a");
-    ATerm b = factory.make("b");
-    ATerm c = factory.make("c");
-    ATermAppl appl = factory.makeAppl(fun, a, b, c);
-
-    System.out.println(appl);
-    System.out.println(appl.getChildCount());
-    System.out.println(getSize(appl));
-
     Scope scope = new Scope();
 
     Sort nat = new Sort(scope, "nat");
     nat.addConstructor("succ", nat);
     nat.addConstructor("zero");
+    
+    Sort expr = new Sort(scope, "expr");
+    expr.addConstructor("zero");
+    expr.addConstructor("un");
+    expr.addConstructor("plus", expr, expr);
+    expr.addConstructor("mult", expr, expr);
 
     scope.setDependances();
 
-    int range = 100;
-    int nbrTest = 10;
+    int range = 200;
+    int nbrTest = 50;
     testSize(nat, range, nbrTest);
+    testSize(expr, range, nbrTest);
   }
 
   private static int getSize(Visitable term) {
