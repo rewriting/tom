@@ -114,9 +114,10 @@ class Slot {
     return res;
   }
 
-  public void toDot2(String chemin) {
+  public int toDot2(String chemin) {
     String res = "digraph mon_graphe {\n";
-    res += toDot_aux2(new AtomicInteger(1));
+    AtomicInteger n = new AtomicInteger(1);
+    res += toDot_aux2(n);
     res += "}\n";
     File fichier = new File(chemin);
     try {
@@ -126,6 +127,7 @@ class Slot {
     } catch (java.io.IOException err) {
       System.err.println("ecriture fichier impossible");
     }
+    return n.intValue();
   }
 
   private String toDot_aux2(AtomicInteger n) {
