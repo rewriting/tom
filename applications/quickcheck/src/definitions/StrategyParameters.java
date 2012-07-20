@@ -23,7 +23,7 @@ public class StrategyParameters {
     /**
      * Indicates that size is given in number of nodes of the tree.
      */
-    STEPS
+    NODES
   }
 
   /**

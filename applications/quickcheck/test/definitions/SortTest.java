@@ -34,7 +34,7 @@ public class SortTest {
   private Sort list;
   private Sort list2;
   private Sort mix;
-  private StrategyParameters paramDepth, paramSteps;
+  private StrategyParameters paramDepth, paramNodes;
 
   public SortTest() {
 
@@ -42,8 +42,8 @@ public class SortTest {
             StrategyParameters.DistStrategy.DEPTH,
             StrategyParameters.TerminationCriterion.POINT_OF_NO_RETURN);
     
-    paramSteps = new StrategyParameters(
-            StrategyParameters.DistStrategy.STEPS,
+    paramNodes = new StrategyParameters(
+            StrategyParameters.DistStrategy.NODES,
             StrategyParameters.TerminationCriterion.POINT_OF_NO_RETURN);
     
     scope = new Scope();
@@ -477,7 +477,7 @@ public class SortTest {
   public void testStepsToLeafNat() {
     System.out.println("stepsToLeaf " + nat.getName());
     int expResult = 0;
-    int result = nat.minimalSize(paramSteps.getDistStrategy());
+    int result = nat.minimalSize(paramNodes.getDistStrategy());
     assertEquals(expResult, result);
   }
 
@@ -485,7 +485,7 @@ public class SortTest {
   public void testStepsToLeafA() {
     System.out.println("stepsToLeaf " + a.getName());
     int expResult = 0;
-    int result = a.minimalSize(paramSteps.getDistStrategy());
+    int result = a.minimalSize(paramNodes.getDistStrategy());
     assertEquals(expResult, result);
   }
 
@@ -493,7 +493,7 @@ public class SortTest {
   public void testStepsToLeafB() {
     System.out.println("stepsToLeaf " + b.getName());
     int expResult = 2;
-    int result = b.minimalSize(paramSteps.getDistStrategy());
+    int result = b.minimalSize(paramNodes.getDistStrategy());
     assertEquals(expResult, result);
   }
 
@@ -501,7 +501,7 @@ public class SortTest {
   public void testStepsToLeafC() {
     System.out.println("stepsToLeaf " + c.getName());
     int expResult = 1;
-    int result = c.minimalSize(paramSteps.getDistStrategy());
+    int result = c.minimalSize(paramNodes.getDistStrategy());
     assertEquals(expResult, result);
   }
 
@@ -509,7 +509,7 @@ public class SortTest {
   public void testStepsToLeafForest() {
     System.out.println("stepsToLeaf " + forest.getName());
     int expResult = 2;
-    int result = forest.minimalSize(paramSteps.getDistStrategy());
+    int result = forest.minimalSize(paramNodes.getDistStrategy());
     assertEquals(expResult, result);
   }
 
@@ -517,7 +517,7 @@ public class SortTest {
   public void testStepsToLeaftree() {
     System.out.println("stepsToLeaf " + tree.getName());
     int expResult = 0;
-    int result = tree.minimalSize(paramSteps.getDistStrategy());
+    int result = tree.minimalSize(paramNodes.getDistStrategy());
     assertEquals(expResult, result);
   }
 
@@ -525,7 +525,7 @@ public class SortTest {
   public void testStepsToLeaftypetest() {
     System.out.println("stepsToLeaf " + typetest.getName());
     int expResult = 1;
-    int result = typetest.minimalSize(paramSteps.getDistStrategy());
+    int result = typetest.minimalSize(paramNodes.getDistStrategy());
     assertEquals(expResult, result);
   }
 
@@ -533,7 +533,7 @@ public class SortTest {
   public void testStepsToLeaftree2() {
     System.out.println("stepsToLeaf " + tree2.getName());
     int expResult = 1;
-    int result = tree2.minimalSize(paramSteps.getDistStrategy());
+    int result = tree2.minimalSize(paramNodes.getDistStrategy());
     assertEquals(expResult, result);
   }
 
@@ -541,7 +541,7 @@ public class SortTest {
   public void testStepsToLeafcirc() {
     System.out.println("stepsToLeaf " + circ.getName());
     int expResult = Integer.MAX_VALUE;
-    int result = circ.minimalSize(paramSteps.getDistStrategy());
+    int result = circ.minimalSize(paramNodes.getDistStrategy());
     assertEquals(expResult, result);
   }
 
@@ -549,7 +549,7 @@ public class SortTest {
   public void testStepsToLeafexpr() {
     System.out.println("stepsToLeaf " + expr.getName());
     int expResult = 0;
-    int result = expr.minimalSize(paramSteps.getDistStrategy());
+    int result = expr.minimalSize(paramNodes.getDistStrategy());
     assertEquals(expResult, result);
   }
 
@@ -557,7 +557,7 @@ public class SortTest {
   public void testStepsToLeafsurexpr() {
     System.out.println("stepsToLeaf " + surexpr.getName());
     int expResult = 1;
-    int result = surexpr.minimalSize(paramSteps.getDistStrategy());
+    int result = surexpr.minimalSize(paramNodes.getDistStrategy());
     assertEquals(expResult, result);
   }
 
@@ -565,7 +565,7 @@ public class SortTest {
   public void testStepsToLeaflist() {
     System.out.println("stepsToLeaf " + list.getName());
     int expResult = 1;
-    int result = list.minimalSize(paramSteps.getDistStrategy());
+    int result = list.minimalSize(paramNodes.getDistStrategy());
     assertEquals(expResult, result);
   }
 
@@ -574,7 +574,7 @@ public class SortTest {
     Sort test = list2;
     System.out.println("stepsToLeaf " + test.getName());
     int expResult = Integer.MAX_VALUE;
-    int result = test.minimalSize(paramSteps.getDistStrategy());
+    int result = test.minimalSize(paramNodes.getDistStrategy());
     assertEquals(expResult, result);
   }
 
@@ -583,7 +583,7 @@ public class SortTest {
     Sort test = mix;
     System.out.println("stepsToLeaf " + test.getName());
     int expResult = 3;
-    int result = test.minimalSize(paramSteps.getDistStrategy());
+    int result = test.minimalSize(paramNodes.getDistStrategy());
     assertEquals(expResult, result);
   }
 

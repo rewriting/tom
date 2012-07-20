@@ -28,7 +28,7 @@ class Slot {
 
   Slot[] chooseFiniteConstructor() {
     if (type instanceof Sort) {
-      cons = ((Sort) type).chooseFiniteConstructor();
+      cons = ((Sort) type).chooseAnyFiniteConstructor();
       deps = cons.giveATermDeps();
     } else {
       deps = new Slot[0];
@@ -36,16 +36,25 @@ class Slot {
     return deps;
   }
 
-  Slot[] chooseMinDepthConstructor() {
+  Slot[] chooseMinSizeConstructor(StrategyParameters.DistStrategy strategy) {
     if (type instanceof Sort) {
-      cons = ((Sort) type).chooseMinDepthConstructor();
+      switch (strategy) {
+        case DEPTH:
+          cons = ((Sort) type).chooseMinDepthConstructor();
+          break;
+        case NODES:
+          cons = ((Sort) type).chooseMinNodesConstructor();
+          break;
+        default:
+          throw new RuntimeException("Strategy " + strategy + " is unknown.");
+      }
       deps = cons.giveATermDeps();
     } else {
       deps = new Slot[0];
     }
     return deps;
   }
-  
+
   Slot[] chooseMaxDimConstructor() {
     if (type instanceof Sort) {
       cons = ((Sort) type).chooseMaxDimConstructor();
@@ -104,7 +113,7 @@ class Slot {
     }
     return res;
   }
-  
+
   public void toDot2(String chemin) {
     String res = "digraph mon_graphe {\n";
     res += toDot_aux2(new AtomicInteger(1));

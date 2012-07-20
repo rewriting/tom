@@ -23,6 +23,13 @@ class Constructor {
     return fields;
   }
 
+  /**
+   * This function is necessary for computation of the minimal size of a term. A
+   * constructor is locked from the beginning of both minimalDepth and
+   * minimalNodes functions till their ends.
+   *
+   * @return
+   */
   boolean isLocked() {
     return lock;
   }
@@ -32,8 +39,11 @@ class Constructor {
   }
 
   /**
-   * Gives minimal depth before termination.
+   * Gives the minimal depth of a term build with this constructor.
    *
+   * @return either the expected result (Integer.MAX_VALUE in case of non
+   * termination), or Integer.MAX_VALUE if one constructor of one its fields is
+   * locked.
    */
   int minimalDepth() {
     if (fields.length == 0) {
@@ -45,6 +55,7 @@ class Constructor {
       Buildable field = fields[i];
       int tmp = field.minimalSize(StrategyParameters.DistStrategy.DEPTH);
       if (tmp == -1) {
+        //if one the constructors of the field is locked
         lock = false;
         return Integer.MAX_VALUE;
       }
@@ -60,10 +71,13 @@ class Constructor {
   }
 
   /**
-   * Gives minimal number of steps before termination.
+   * Gives the minimal number of nodes of a term build with this constructor.
    *
+   * @return either the expected result (Integer.MAX_VALUE in case of non
+   * termination), or Integer.MAX_VALUE if one constructor of one its fields is
+   * locked.
    */
-  int minimalSteps() {
+  int minimalNodes() {
     if (fields.length == 0) {
       return 0;
     }
@@ -71,7 +85,7 @@ class Constructor {
     int res = 0;
     for (int i = 0; i < fields.length; i++) {
       Buildable field = fields[i];
-      int tmp = field.minimalSize(StrategyParameters.DistStrategy.STEPS);
+      int tmp = field.minimalSize(StrategyParameters.DistStrategy.NODES);
       if (tmp == -1) {
         // if one of the constructors of field is locked
         lock = false;
@@ -101,7 +115,6 @@ class Constructor {
 //    res += "]";
 //    return res;
 //  }
-  
   @Override
   public String toString() {
     return getName();

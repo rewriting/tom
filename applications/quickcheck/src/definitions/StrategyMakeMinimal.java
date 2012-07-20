@@ -18,7 +18,7 @@ class StrategyMakeMinimal extends Strategy {
     HashSet<Slot> res = new HashSet<Slot>();
 
     //fill the term by choosing the constructor with minimal termination
-    Slot[] fields = aTerm.chooseMinDepthConstructor();
+    Slot[] fields = aTerm.chooseMinSizeConstructor(param.getDistStrategy());
 
     //dispatch fields of the term between two categories: these whose dimension 
     //equals dimension of the term, and the others

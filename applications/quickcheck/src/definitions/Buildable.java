@@ -22,7 +22,11 @@ public interface Buildable {
    * function cannot be used till dependances are not set (using
    * scope.setdependences()).
    *
+   * @precondition This function cannot be used till dependances are not set
+   * (using scope.setdependences()).
+   *
    * @return set of dependences
+   *
    */
   public Set<Buildable> getDependences();
 
@@ -38,6 +42,9 @@ public interface Buildable {
   /**
    * Gives dimension of the current type. This function cannot be used till
    * dependances are not set (using scope.setdependences()).
+   * 
+   * @precondition This function cannot be used till dependances are not set
+   * (using scope.setdependences()).
    *
    * @return dimention
    */
@@ -46,16 +53,18 @@ public interface Buildable {
   /**
    * This function give the size of the shortest path from here to a leaf.
    *
-   * @param strategy 
+   * @param strategy
    * @return size of the minimal path between here and a leaf. Returns
    * Integer.MAX_VALUE if no path reaches a leaf.
-   * @see Buildable#stepsToLeaf()
    */
   public int minimalSize(StrategyParameters.DistStrategy strategy);
 
   /**
    * Make a new random term. This function cannot be used till dependances are
    * not set (using scope.setdependences()).
+   * 
+   * @precondition This function cannot be used till dependances are not set
+   * (using scope.setdependences()).
    *
    * @param n maximal size of the generated term
    * @return generated term

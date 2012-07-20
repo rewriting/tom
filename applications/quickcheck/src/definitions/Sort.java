@@ -58,8 +58,8 @@ public class Sort implements Buildable {
     switch (strategy) {
       case DEPTH:
         return minimalDepth();
-      case STEPS:
-        return minimalSteps();
+      case NODES:
+        return minimalNodes();
       default:
         throw new UnsupportedOperationException("strategy " + strategy + " not defined.");
     }
@@ -71,7 +71,6 @@ public class Sort implements Buildable {
    *
    * @return size of the minimal path between here and a leaf. Returns
    * Integer.MAX_VALUE if no path reaches a leaf.
-   * @see Buildable#stepsToLeaf()
    */
   private int minimalDepth() {
     if (dstLeaf != -1 && dstLeaf != Integer.MAX_VALUE) {
@@ -80,7 +79,7 @@ public class Sort implements Buildable {
     int res = Integer.MAX_VALUE;
     for (Constructor constructor : constructors) {
       if (constructor.isLocked()) {
-        //this case should not directly happen if depthToLeaf() is called by user:
+        //this case should not directly happen if minimalDepth() is called by user:
         //only during recursive call.
         //the returned value is sensless
         return -1;
@@ -93,25 +92,25 @@ public class Sort implements Buildable {
 
   /**
    * This function give the size of the shortest path from here to a leaf in
-   * terms of steps.
+   * terms of NODES.
    *
    * @return size of the minimal path between here and a leaf. Returns
    * Integer.MAX_VALUE if no path reaches a leaf.
    * @see Buildable#depthToLeaf()
    */
-  private int minimalSteps() {
+  private int minimalNodes() {
     if (dstLeaf != -1 && dstLeaf != Integer.MAX_VALUE) {
       return dstLeaf;
     }
     int res = Integer.MAX_VALUE;
     for (Constructor constructor : constructors) {
       if (constructor.isLocked()) {
-        //this case should not directly happen if stepsToLeaf() is called by user:
+        //this case should not directly happen if minimalNodes() is called by user:
         //only during recursive call.
         //the returned value is sensless
         return -1;
       }
-      res = Math.min(res, constructor.minimalSteps());
+      res = Math.min(res, constructor.minimalNodes());
     }
     this.dstLeaf = res;
     return dstLeaf;
@@ -165,7 +164,7 @@ public class Sort implements Buildable {
   @Override
   public ATermAppl generate(int n) {
     StrategyParameters param = new StrategyParameters(
-            StrategyParameters.DistStrategy.STEPS, 
+            StrategyParameters.DistStrategy.NODES, 
             StrategyParameters.TerminationCriterion.POINT_OF_NO_RETURN);
     return generateSlot(n, param).toATerm();
   }
@@ -212,7 +211,7 @@ public class Sort implements Buildable {
    *
    * @return choosen constructor
    */
-  Constructor chooseFiniteConstructor() {
+  Constructor chooseAnyFiniteConstructor() {
     if (constructors.isEmpty()) {
       throw new UnsupportedOperationException("No constructor");
     }
@@ -277,14 +276,14 @@ public class Sort implements Buildable {
   }
 
   /**
-   * Choose one the constructor that can terminate in the minimum of steps.
+   * Choose one the constructor that can terminate in the minimum of NODES.
    *
    * @return choosen constructor
    */
-  Constructor chooseMinStepsConstructor() {
+  Constructor chooseMinNodesConstructor() {
     ArrayList<Constructor> minCons = new ArrayList<Constructor>(constructors.size());
     for (Constructor constructor : constructors) {
-      int m = constructor.minimalSteps();
+      int m = constructor.minimalNodes();
       if (m == minimalDepth()) {
         minCons.add(constructor);
       }
