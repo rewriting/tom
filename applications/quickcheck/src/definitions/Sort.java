@@ -15,6 +15,7 @@ public class Sort implements Buildable {
   private Set<Buildable> dependences;
   private int minDepth;
   private int minNodes;
+  private int dimension;
 
   public Sort(Scope scope, String name) {
     this.name = name;
@@ -22,6 +23,7 @@ public class Sort implements Buildable {
     dependences = new HashSet<Buildable>();
     minDepth = -1;
     minNodes = -1;
+    dimension = -1;
     scope.addType(this);
   }
 
@@ -41,6 +43,9 @@ public class Sort implements Buildable {
 
   @Override
   public int getDimension() {
+    if(dimension != -1){
+      return dimension;
+    }
     int dim = 0;
     int add = 0;
     if (isRec()) {
@@ -52,7 +57,8 @@ public class Sort implements Buildable {
         dim = Math.max(dim, typable.getDimension());
       }
     }
-    return dim + add;
+    dimension = dim + add;
+    return dimension;
   }
 
   @Override
@@ -98,7 +104,6 @@ public class Sort implements Buildable {
    *
    * @return size of the minimal path between here and a leaf. Returns
    * Integer.MAX_VALUE if no path reaches a leaf.
-   * @see Buildable#depthToLeaf()
    */
   private int minimalNodes() {
     if (minNodes != -1 && minNodes != Integer.MAX_VALUE) {
