@@ -1,13 +1,50 @@
 package tom.mapping.dsl.ui.wizard
 
 import org.eclipse.xtext.generator.IFileSystemAccess
+import org.eclipse.xtext.ui.wizard.XtextNewProjectWizard
+import org.eclipse.xtext.ui.wizard.IProjectCreator
+import org.eclipse.xtext.ui.wizard.IProjectInfo
+import com.google.inject.Inject
+import tom.mapping.dsl.ui.wizard.TomMappingProjectInfo
+import org.eclipse.ui.dialogs.WizardNewProjectCreationPage
 
-class TomMappingNewProject {
+
+class TomMappingNewProjectWizard extends XtextNewProjectWizard {	
+	
+	// Abstract methods for XtextNewProjectWizard
+	
+	@Inject WizardNewProjectCreationPage mainPage
+	
+	@Inject
+	new(IProjectCreator creator) { // Problem here
+	super(creator)
+	setWindowTitle("New TomMapping Project")
+}
+
+	override protected IProjectInfo getProjectInfo() {
+		val TomMappingProjectInfo projectInfo = new TomMappingProjectInfo()
+		projectInfo.setProjectName(mainPage.getProjectName())
+		return projectInfo
+	}
+	
+	/**
+	 * Use this method to add pages to the wizard.
+	 * The one-time generated version of this class will add a default new project page to the wizard.
+	 */
+	 
+	override addPages() {
+		mainPage = new WizardNewProjectCreationPage("basicNewProjectPage")
+		mainPage.setTitle("TomMapping Project")
+		mainPage.setDescription("Create a new TomMapping project.")
+		addPage(mainPage)
+	}
+	
+	// End abtract methods
 	
 	extension Tools = new Tools()
 	
 	String prefix = ""
-	
+		
 	def compile(TomMappingProjectInfo tmpi, IFileSystemAccess fsa) {
 		
 		fsa.generateFile(prefix+"src/mappings/Model.tmap", tmpi.model())

@@ -1,14 +1,48 @@
 package tom.mapping.dsl.ui.wizard;
 
+import com.google.inject.Inject;
+import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.generator.IFileSystemAccess;
+import org.eclipse.xtext.ui.wizard.IProjectCreator;
+import org.eclipse.xtext.ui.wizard.IProjectInfo;
+import org.eclipse.xtext.ui.wizard.XtextNewProjectWizard;
 import org.eclipse.xtext.xbase.lib.Functions.Function0;
 import org.eclipse.xtext.xbase.lib.StringExtensions;
 import tom.mapping.dsl.ui.wizard.TomMappingProjectInfo;
 import tom.mapping.dsl.ui.wizard.Tools;
 
 @SuppressWarnings("all")
-public class TomMappingNewProject {
+public class TomMappingNewProjectWizard extends XtextNewProjectWizard {
+  @Inject
+  private WizardNewProjectCreationPage mainPage;
+  
+  @Inject
+  public TomMappingNewProjectWizard(final IProjectCreator creator) {
+      super(creator);
+      this.setWindowTitle("New TomMapping Project");
+  }
+  
+  protected IProjectInfo getProjectInfo() {
+      TomMappingProjectInfo _tomMappingProjectInfo = new TomMappingProjectInfo();
+      final TomMappingProjectInfo projectInfo = _tomMappingProjectInfo;
+      String _projectName = this.mainPage.getProjectName();
+      projectInfo.setProjectName(_projectName);
+      return projectInfo;
+  }
+  
+  /**
+   * Use this method to add pages to the wizard.
+   * The one-time generated version of this class will add a default new project page to the wizard.
+   */
+  public void addPages() {
+      WizardNewProjectCreationPage _wizardNewProjectCreationPage = new WizardNewProjectCreationPage("basicNewProjectPage");
+      this.mainPage = _wizardNewProjectCreationPage;
+      this.mainPage.setTitle("TomMapping Project");
+      this.mainPage.setDescription("Create a new TomMapping project.");
+      this.addPage(this.mainPage);
+  }
+  
   private Tools _tools = new Function0<Tools>() {
     public Tools apply() {
       Tools _tools = new Tools();

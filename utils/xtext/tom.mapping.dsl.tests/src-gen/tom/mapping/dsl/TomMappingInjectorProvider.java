@@ -11,35 +11,28 @@ import org.eclipse.xtext.junit4.IRegistryConfigurator;
 import com.google.inject.Injector;
 
 public class TomMappingInjectorProvider implements IInjectorProvider, IRegistryConfigurator {
-	
-    protected GlobalStateMemento stateBeforeInjectorCreation;
-	protected GlobalStateMemento stateAfterInjectorCreation;
+	protected GlobalStateMemento globalStateMemento;
 	protected Injector injector;
 
 	static {
 		GlobalRegistries.initializeDefaults();
 	}
-
-	public Injector getInjector()
-	{
+	
+	public Injector getInjector() {
 		if (injector == null) {
-			stateBeforeInjectorCreation = GlobalRegistries.makeCopyOfGlobalState();
-			this.injector = internalCreateInjector();
-			stateAfterInjectorCreation = GlobalRegistries.makeCopyOfGlobalState();
+			this.injector = new TomMappingStandaloneSetup().createInjectorAndDoEMFRegistration();
 		}
 		return injector;
 	}
 	
-	protected Injector internalCreateInjector() {
-	    return new TomMappingStandaloneSetup().createInjectorAndDoEMFRegistration();
-	}
-
 	public void restoreRegistry() {
-		stateBeforeInjectorCreation.restoreGlobalState();
+		globalStateMemento.restoreGlobalState();
 	}
 
 	public void setupRegistry() {
-		getInjector();
-		stateAfterInjectorCreation.restoreGlobalState();
+		globalStateMemento = GlobalRegistries.makeCopyOfGlobalState();
+		if (injector != null)
+			new TomMappingStandaloneSetup().register(injector);
 	}
+	
 }
