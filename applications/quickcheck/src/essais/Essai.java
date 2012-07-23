@@ -42,6 +42,7 @@ class Essai {
 
     int range = 200;
     int nbrTest = 50;
+    // 5 minutes 48 secondes
     testSize(nat, range, nbrTest);
     testSize(expr, range, nbrTest);
   }

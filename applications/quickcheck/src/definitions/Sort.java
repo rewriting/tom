@@ -13,13 +13,15 @@ public class Sort implements Buildable {
   private String name;
   private List<Constructor> constructors;
   private Set<Buildable> dependences;
-  private int dstLeaf;
+  private int minDepth;
+  private int minNodes;
 
   public Sort(Scope scope, String name) {
     this.name = name;
     constructors = new ArrayList<Constructor>();
     dependences = new HashSet<Buildable>();
-    dstLeaf = -1;
+    minDepth = -1;
+    minNodes = -1;
     scope.addType(this);
   }
 
@@ -73,8 +75,8 @@ public class Sort implements Buildable {
    * Integer.MAX_VALUE if no path reaches a leaf.
    */
   private int minimalDepth() {
-    if (dstLeaf != -1 && dstLeaf != Integer.MAX_VALUE) {
-      return dstLeaf;
+    if (minDepth != -1 && minDepth != Integer.MAX_VALUE) {
+      return minDepth;
     }
     int res = Integer.MAX_VALUE;
     for (Constructor constructor : constructors) {
@@ -86,8 +88,8 @@ public class Sort implements Buildable {
       }
       res = Math.min(res, constructor.minimalDepth());
     }
-    this.dstLeaf = res;
-    return dstLeaf;
+    this.minDepth = res;
+    return minDepth;
   }
 
   /**
@@ -99,8 +101,8 @@ public class Sort implements Buildable {
    * @see Buildable#depthToLeaf()
    */
   private int minimalNodes() {
-    if (dstLeaf != -1 && dstLeaf != Integer.MAX_VALUE) {
-      return dstLeaf;
+    if (minNodes != -1 && minNodes != Integer.MAX_VALUE) {
+      return minNodes;
     }
     int res = Integer.MAX_VALUE;
     for (Constructor constructor : constructors) {
@@ -112,8 +114,8 @@ public class Sort implements Buildable {
       }
       res = Math.min(res, constructor.minimalNodes());
     }
-    this.dstLeaf = res;
-    return dstLeaf;
+    this.minNodes = res;
+    return minNodes;
   }
 
   Slot generateSlot(int n, StrategyParameters param) {
