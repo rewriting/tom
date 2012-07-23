@@ -5,7 +5,7 @@
 package logic.system;
 
 /**
- * 
+ *
  * @author hubert
  */
 public class And extends Formula {
@@ -17,9 +17,9 @@ public class And extends Formula {
     this.f1 = f1;
     this.f2 = f2;
   }
-  
+
   @Override
-  public String toString(){
+  public String toString() {
     return f1.toString() + "⋏" + f2.toString();
   }
 }
