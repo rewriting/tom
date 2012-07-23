@@ -2,22 +2,24 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package logic;
+package logic.system;
 
 /**
  *
  * @author hubert
  */
-public class Not extends Formula {
+public class Exists extends Formula {
 
   private Formula f;
+  private Variable x;
 
-  public Not(Formula f) {
+  public Exists(Formula f, Variable x) {
     this.f = f;
+    this.x = x;
   }
 
   @Override
   public String toString() {
-    return "¬" + f.toString();
+    return "∃" + x + f;
   }
 }

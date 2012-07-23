@@ -2,24 +2,22 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package logic;
+package logic.system;
 
 /**
  *
  * @author hubert
  */
-public class Forall extends Formula {
+public class Not extends Formula {
 
   private Formula f;
-  private Variable x;
 
-  public Forall(Formula f, Variable x) {
+  public Not(Formula f) {
     this.f = f;
-    this.x = x;
   }
 
   @Override
   public String toString() {
-    return "∀" + x + f;
+    return "¬" + f.toString();
   }
 }
