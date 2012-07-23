@@ -10,5 +10,5 @@ Surexpr = rien()
         | wrapper(e:Expr)
         | rec(s:Surexpr)
 
-IntList = end(a:int)
+IntList = nill()
         | consList(a:int, tail:IntList)

@@ -21,3 +21,6 @@ applications/quickcheck/gen
 applications/quickcheck/tom/sort
 nat_res.txt
 expr_res.txt
+applications/quickcheck/src/sort
+applications/quickcheck/src/gen
+applications/quickcheck/src/tom/sort

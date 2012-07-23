@@ -17,17 +17,19 @@ echo ""
 echo "TOM"
 echo ""
 
-tom src/tom/RandomizerGenerator.t -o src/gen/RandomizerGenerator.java
-tom src/tom/Representation.t -o src/gen/Representation.java
-tom src/tom/Bug.t -o src/gen/Bug.java
-tom src/tom/BugLight.t -o src/gen/BugLight.java
-tom src/tom/Main.t -o src/gen/Main.java
+#tom src/tom/RandomizerGenerator.t -o src/gen/RandomizerGenerator.java
+#tom src/tom/Representation.t -o src/gen/Representation.java
+#tom src/tom/Bug.t -o src/gen/Bug.java
+#tom src/tom/BugLight.t -o src/gen/BugLight.java
+tom src/tom/TestGen.t -o src/gen/TestGen.java
+#tom src/tom/Main.t -o src/gen/Main.java
 #cd src
 
 echo ""
 echo "JAVAC"
 echo ""
 
-javac src/gen/Main.java -d build -sourcepath src
-javac src/gen/Bug.java -d build -sourcepath src
-javac src/gen/BugLight.java -d build -sourcepath src
+#javac src/gen/Main.java -d build -sourcepath src
+#javac src/gen/Bug.java -d build -sourcepath src
+#javac src/gen/BugLight.java -d build -sourcepath src
+javac src/gen/TestGen.java -d build -sourcepath src
