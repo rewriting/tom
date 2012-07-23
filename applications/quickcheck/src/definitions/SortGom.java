@@ -11,11 +11,11 @@ import java.util.Arrays;
  *
  * @author hubert
  */
-class SortExp extends Sort {
+public class SortGom extends Sort {
 
   private final Scope scope;
 
-  public SortExp(Scope scope, Class type) {
+  public SortGom(Scope scope, Class type) {
     super(scope, type.getName());
     this.scope = scope;
   }
@@ -47,7 +47,7 @@ class SortExp extends Sort {
         throw new UnsupportedOperationException("Method " + pattern + "() was not found in " + classe);
       }
     }
-    ConstructorExp cons = new ConstructorExp(classe.getSimpleName(), make, this);
+    ConstructorGom cons = new ConstructorGom(classe.getSimpleName(), make, this);
     this.getConstructors().add(cons);
     this.getDependences().addAll(Arrays.asList(cons.getFields()));
     return this;
@@ -76,7 +76,7 @@ class SortExp extends Sort {
         throw new UnsupportedOperationException("Method " + pattern + "() was not found in " + classe);
       }
     }
-    ConstructorExp cons = new ConstructorExp(classe.getSimpleName(), make, this);
+    ConstructorGom cons = new ConstructorGom(classe.getSimpleName(), make, this);
     this.getConstructors().add(cons);
     this.getDependences().addAll(Arrays.asList(cons.getFields()));
     return this;

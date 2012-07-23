@@ -29,8 +29,8 @@ public class SortTest {
   private Sort circ;
   private Sort typetest;
   private Sort a, b, c;
-  private SortExp expr;
-  private SortExp surexpr;
+  private SortGom expr;
+  private SortGom surexpr;
   private Sort list;
   private Sort list2;
   private Sort mix;
@@ -78,13 +78,13 @@ public class SortTest {
     b.addConstructor("c", c);
     c.addConstructor("a", a);
 
-    expr = new SortExp(scope, Expr.class);
+    expr = new SortGom(scope, Expr.class);
     expr.addConstructor(mult.class);
     expr.addConstructor(plus.class);
     expr.addConstructor(un.class);
     expr.addConstructor(zero.class);
 
-    surexpr = new SortExp(scope, Surexpr.class);
+    surexpr = new SortGom(scope, Surexpr.class);
     surexpr.addConstructor(rec.class);
     surexpr.addConstructor(wrapper.class);
 

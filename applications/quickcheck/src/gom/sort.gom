@@ -1,5 +1,4 @@
 module Sort
-imports int
 abstract syntax
 Expr = zero()
      | un()
@@ -10,5 +9,9 @@ Surexpr = rien()
         | wrapper(e:Expr)
         | rec(s:Surexpr)
 
+Leaf = a()
+     | b()
+     | c()
+
 IntList = nill()
-        | consList(a:int, tail:IntList)
+        | consList(a:Leaf, tail:IntList)

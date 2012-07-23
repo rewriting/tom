@@ -13,16 +13,16 @@ import java.util.logging.Logger;
  *
  * @author hubert
  */
-class ConstructorExp extends Constructor {
+class ConstructorGom extends Constructor {
 
   private Method make;
 
-  ConstructorExp(String name, Method make, SortExp caller) {
+  ConstructorGom(String name, Method make, SortGom caller) {
     super(name, extractFields(make, caller));
     this.make = make;
   }
 
-  static private Buildable[] extractFields(Method make, SortExp caller) {
+  static private Buildable[] extractFields(Method make, SortGom caller) {
     Class[] listClasses = make.getParameterTypes();
     Buildable[] res = new Buildable[listClasses.length];
     for (int i = 0; i < res.length; i++) {
