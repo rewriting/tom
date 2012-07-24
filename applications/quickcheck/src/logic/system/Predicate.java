@@ -32,4 +32,8 @@ public class Predicate extends Formula {
     res += ")";
     return res;
   }
+
+  public int getArity() {
+    return args.size();
+  }
 }

@@ -8,6 +8,6 @@ package logic.model;
  *
  * @author hubert
  */
-public class PredicateInterpretation {
-  
+public abstract class PredicateInterpretation<T> {
+
 }
