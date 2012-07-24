@@ -46,12 +46,12 @@ public class Interpretation {
     }
   }
 
-  public Object evaluateTerm(Term term) { // prototype -> TOM
+  public Object evaluateTerm(Term term) {
     %match(term){
       Var(name) -> {return valuation.get(name);}
       Sig(name, args) -> {
-        SignatureInterpretation interpretation = interp_sig.get(name);
-        List<Object> argsEvaluations = evaluateListTerm(args);
+        SignatureInterpretation interpretation = interp_sig.get(`name);
+        List<Object> argsEvaluations = evaluateListTerm(`args);
         return interpretation.compute(argsEvaluations);
       }
     }
@@ -59,17 +59,22 @@ public class Interpretation {
   }
 
 
-  public boolean evaluateFormula(Formula f) {
+  public boolean valideFormula(Formula f) {
     %match(f){
-      Predicate(name, args) -> {}
-      And(f1, f2) -> {}
-      Or(f1, f2) -> {}
-      Imply(f1, f2) -> {}
-      Not(f) -> {}
+      Predicate(name, args) -> {
+        PredicateInterpretation interpretation = interp_pre.get(`name);
+        List<Object> argsEvaluations = evaluateListTerm(`args);
+        return interpretation.isTrue(argsEvaluations);
+      }
+      And(f1, f2) -> {return valideFormula(`f1) && valideFormula(`f2);}
+      Or(f1, f2) -> {return valideFormula(`f1) || valideFormula(`f2);}
+      Imply(f1, f2) -> {return (!valideFormula(`f1)) || valideFormula(`f2);}
+      Not(f) -> {return !valideFormula(`f);}
+      True() -> {return true;}
+      False() -> {return false;}
       Forall(var, f) -> {}
-      Exists(var, f) -> {}
-      True() -> {}
-      False() -> {}
+      Exists(var, f) -> {} // passer par la négation + forall
+
     }
     return false; // unreachable
   }

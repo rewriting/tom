@@ -9,8 +9,11 @@ echo ""
 
 if [ "$1" != "nogom" ]; then
   gom src/gom/sort.gom --withCongruenceStrategies -d src
-  mkdir src/tom/sort
-  mv src/sort/Sort.tom src/tom/sort/Sort.tom
+  gom src/gom/system.gom --withCongruenceStrategies -d src
+	mkdir src/tom/sort
+  mkdir src/tom/system
+	mv src/sort/Sort.tom src/tom/sort/Sort.tom
+	mv src/system/System.tom src/tom/system/System.tom
 fi
 
 echo ""
@@ -21,9 +24,10 @@ echo ""
 #tom src/tom/Representation.t -o src/gen/Representation.java
 #tom src/tom/Bug.t -o src/gen/Bug.java
 #tom src/tom/BugLight.t -o src/gen/BugLight.java
-tom src/tom/TestGen.t -o src/gen/TestGen.java
+#tom src/tom/TestGen.t -o src/gen/TestGen.java
 #tom src/tom/Main.t -o src/gen/Main.java
-#cd src
+tom src/tom/Interpretation.t -o src/gen/Interpretation.java
+
 
 echo ""
 echo "JAVAC"
@@ -32,4 +36,5 @@ echo ""
 #javac src/gen/Main.java -d build -sourcepath src
 #javac src/gen/Bug.java -d build -sourcepath src
 #javac src/gen/BugLight.java -d build -sourcepath src
-javac src/gen/TestGen.java -d build -sourcepath src
+#javac src/gen/TestGen.java -d build -sourcepath src
+javac src/gen/Interpretation.java -d build -sourcepath src

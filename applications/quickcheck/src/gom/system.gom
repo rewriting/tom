@@ -1,6 +1,7 @@
 module System
-abstract syntax
 imports String
+abstract syntax
+
 
 Args = ListArgs(Term*)
 
