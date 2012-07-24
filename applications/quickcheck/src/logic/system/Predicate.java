@@ -4,9 +4,7 @@
  */
 package logic.system;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Map;
 
 /**
  *
@@ -14,12 +12,12 @@ import java.util.Set;
  */
 public class Predicate extends Formula {
 
-  private Set<Term> args;
+  private Term[] args;
   private String name;
 
   public Predicate(String name, Term... args) {
     this.name = name;
-    this.args = new HashSet<Term>(Arrays.asList(args));
+    this.args = args;
   }
   
   @Override
@@ -34,6 +32,15 @@ public class Predicate extends Formula {
   }
 
   public int getArity() {
-    return args.size();
+    return args.length;
+  }
+  
+  public Term[] getArgs(){
+    return args;
+  }
+
+  @Override
+  protected boolean interprete(Map<Variable, Object> valuation) {
+    throw new UnsupportedOperationException("Not supported yet.");
   }
 }

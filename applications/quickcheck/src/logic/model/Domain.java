@@ -24,7 +24,7 @@ public class Domain {
     this.type = type;
     fromTerm = retrieveFromTerm(type);
   }
-  
+
   public Domain(Buildable model) {
     this.model = model;
     this.fromTerm = null;

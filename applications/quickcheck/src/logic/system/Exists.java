@@ -4,6 +4,8 @@
  */
 package logic.system;
 
+import java.util.Map;
+
 /**
  *
  * @author hubert
@@ -21,5 +23,10 @@ public class Exists extends Formula {
   @Override
   public String toString() {
     return "∃" + x + f;
+  }
+
+  @Override
+  protected boolean interprete(Map<Variable, Object> valuation) {
+    throw new UnsupportedOperationException("Not supported yet.");
   }
 }

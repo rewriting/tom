@@ -1,0 +1,18 @@
+module System
+abstract syntax
+imports String
+
+Args = ListArgs(Term*)
+
+Term = Var(name:String)
+     | Sig(name:String, args:Args)
+
+Formula = Predicate(name:String, args:Args)
+        | And(f1:Formula, f2:Formula)
+        | Or(f1:Formula, f2:Formula)
+        | Imply(f1:Formula, f2:Formula)
+        | Not(f:Formula)
+        | Forall(var:String, f:Formula)
+        | Exists(var:String, f:Formula)
+        | True()
+        | False()

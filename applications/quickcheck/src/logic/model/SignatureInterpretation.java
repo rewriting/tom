@@ -4,10 +4,15 @@
  */
 package logic.model;
 
+import java.util.List;
+
 /**
  *
  * @author hubert
  */
-public class SignatureInterpretation {
+public interface SignatureInterpretation {
+
+  public abstract Object compute(Object[] args);
   
+  public abstract Object compute(List<Object> args);
 }

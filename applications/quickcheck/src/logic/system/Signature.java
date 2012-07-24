@@ -4,22 +4,18 @@
  */
 package logic.system;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
 /**
  *
  * @author hubert
  */
 public class Signature extends Term {
 
-  private Set<Term> args;
+  private Term[] args;
   private String name;
 
   public Signature(String name, Term... args) {
     this.name = name;
-    this.args = new HashSet<Term>(Arrays.asList(args));
+    this.args = args;
   }
 
   @Override
@@ -31,5 +27,9 @@ public class Signature extends Term {
     res = res.substring(0, res.length()-1);
     res += ")";
     return res;
+  }
+  
+  public Term[] getArgs(){
+    return args;
   }
 }

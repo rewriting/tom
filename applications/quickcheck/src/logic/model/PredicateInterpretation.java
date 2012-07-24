@@ -4,10 +4,15 @@
  */
 package logic.model;
 
+import java.util.List;
+
 /**
  *
  * @author hubert
  */
-public abstract class PredicateInterpretation<T> {
-
+public interface PredicateInterpretation {
+  
+  public abstract boolean isTrue(Object[] args);
+  
+  public abstract boolean isTrue(List<Object> args);
 }
