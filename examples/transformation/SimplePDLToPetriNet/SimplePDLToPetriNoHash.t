@@ -60,13 +60,13 @@ public class SimplePDLToPetriNoHash {
 
     definition P2PN traversal `TopDown(P2PN(tom__linkClass,pn)) {
       p@Process[name=name] -> {
-        Node p_ready  = `Place(name + "_ready", pn,ArcEList(), ArcEList(), 1);
-        Node p_running  = `Place(name + "_running", pn,ArcEList(), ArcEList(), 0);
-        Node p_finished  = `Place(name + "_finished", pn,ArcEList(), ArcEList(), 0);
+        Place p_ready  = `Place(name + "_ready", pn,ArcEList(), ArcEList(), 1);
+        Place p_running  = `Place(name + "_running", pn,ArcEList(), ArcEList(), 0);
+        Place p_finished  = `Place(name + "_finished", pn,ArcEList(), ArcEList(), 0);
         String n1 = `name+"_start";
-        %tracelink(Node, t_start, `Transition(n1, pn,ArcEList(), ArcEList(), 1, 1));
+        %tracelink(Transition, t_start, `Transition(n1, pn,ArcEList(), ArcEList(), 1, 1));
         n1 = `name+"_finish";
-        %tracelink(Node, t_finish, `Transition(n1, pn,ArcEList(), ArcEList(), 1, 1));
+        %tracelink(Transition, t_finish, `Transition(n1, pn,ArcEList(), ArcEList(), 1, 1));
         
         `Arc(t_start, p_ready, pn,ArcKindnormal(), 1);
         `Arc(p_running, t_start, pn,ArcKindnormal(), 1);
@@ -89,16 +89,16 @@ public class SimplePDLToPetriNoHash {
     definition WD2PN traversal `TopDown(WD2PN(tom__linkClass,pn)) {
       wd@WorkDefinition[name=name] -> {
         //System.out.println("Je suis un A");
-        Node p_ready  = `Place(name + "_ready", pn,ArcEList(), ArcEList(), 1);
+        Place p_ready  = `Place(name + "_ready", pn,ArcEList(), ArcEList(), 1);
         String n1 = `name+"_started";
-        %tracelink(Node, p_started, `Place(n1, pn,ArcEList(), ArcEList(), 0));
-        Node p_running  = `Place(name+"_running", pn,ArcEList(), ArcEList(), 0);
+        %tracelink(Place, p_started, `Place(n1, pn,ArcEList(), ArcEList(), 0));
+        Place p_running  = `Place(name+"_running", pn,ArcEList(), ArcEList(), 0);
         n1 = `name+"_finished";
-        %tracelink(Node, p_finished, `Place(n1, pn,ArcEList(), ArcEList(), 0));
+        %tracelink(Place, p_finished, `Place(n1, pn,ArcEList(), ArcEList(), 0));
         n1 = `name+"_start";
-        %tracelink(Node, t_start, `Transition(n1, pn,ArcEList(), ArcEList(), 1, 1));
+        %tracelink(Transition, t_start, `Transition(n1, pn,ArcEList(), ArcEList(), 1, 1));
         n1 = `name+"_finish";
-        %tracelink(Node, t_finish, `Transition(n1, pn,ArcEList(), ArcEList(), 1, 1));
+        %tracelink(Transition, t_finish, `Transition(n1, pn,ArcEList(), ArcEList(), 1, 1));
 
         `Arc(t_start, p_ready, pn,ArcKindnormal(), 1);
         `Arc(p_started, t_start, pn,ArcKindnormal(), 1);
