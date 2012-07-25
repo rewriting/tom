@@ -4,6 +4,7 @@
  */
 package logic.model;
 
+import aterm.ATerm;
 import java.util.List;
 
 /**
@@ -14,5 +15,5 @@ public interface PredicateInterpretation {
   
   public abstract boolean isTrue(Object[] args);
   
-  public abstract boolean isTrue(List<Object> args);
+  public abstract boolean isTrue(List<ATerm> args);
 }

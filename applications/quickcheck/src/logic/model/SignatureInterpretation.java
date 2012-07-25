@@ -4,6 +4,7 @@
  */
 package logic.model;
 
+import aterm.ATerm;
 import java.util.List;
 
 /**
@@ -12,7 +13,15 @@ import java.util.List;
  */
 public interface SignatureInterpretation {
 
+  @Deprecated
   public abstract Object compute(Object[] args);
-  
-  public abstract Object compute(List<Object> args);
+
+  /**
+   * Gives an interpretation of a signature (function). Since its parameters are
+   * only knew to be instance of Object, this method has to cast them.
+   *
+   * @param args
+   * @return
+   */
+  public abstract ATerm compute(List<ATerm> args);
 }

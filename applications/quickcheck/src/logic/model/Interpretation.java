@@ -35,7 +35,7 @@ public class Interpretation {
     return interpretation.isTrue(argsEvaluations);
   }
 
-  public Object evaluateTerm(Term term) { // prototype -> TOM
+  private Object evaluateTerm(Term term) { // prototype -> TOM
     if (term instanceof Variable) {
 
       return valuation.get((Variable) term);
@@ -57,7 +57,7 @@ public class Interpretation {
     if (f instanceof Predicate) {
       return evaluatePredicate((Predicate) f);
     } else if (f instanceof And) {
-      throw new UnsupportedOperationException("");
+      throw new UnsupportedOperationException("Implemented in TOM");
     }
     return false; // unreachable
   }
