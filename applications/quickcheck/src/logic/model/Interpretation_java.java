@@ -11,13 +11,13 @@ import logic.system.*;
  *
  * @author hubert
  */
-public class Interpretation {
+public class Interpretation_java {
 
   private Map<Variable, Object> valuation;
   private Map<Predicate, PredicateInterpretation> interp_pre;
   private Map<Signature, SignatureInterpretation> interp_sig;
 
-  public Interpretation(Map<Predicate, PredicateInterpretation> interp_pre,
+  public Interpretation_java(Map<Predicate, PredicateInterpretation> interp_pre,
           Map<Signature, SignatureInterpretation> interp_sig,
           Map<Variable, Object> valuation) {
     this.valuation = valuation;

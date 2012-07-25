@@ -4,11 +4,13 @@
  */
 package logic.model;
 
+import aterm.ATerm;
+
 /**
  *
  * @author hubert
  */
 public interface Domain {
 
-  public Object chooseElement(int Size);
+  public ATerm chooseElement();
 }

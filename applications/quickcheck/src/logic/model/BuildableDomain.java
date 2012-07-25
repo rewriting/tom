@@ -4,6 +4,7 @@
  */
 package logic.model;
 
+import aterm.ATerm;
 import definitions.Buildable;
 import java.lang.reflect.Method;
 
@@ -24,8 +25,8 @@ public class BuildableDomain implements Domain {
   }
 
   @Override
-  public Object chooseElement(int size) {
-    return model.generate(size);
+  public ATerm chooseElement() {
+    return model.generate(100);
   }
 
   /*
