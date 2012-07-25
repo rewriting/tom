@@ -24,3 +24,5 @@ expr_res.txt
 applications/quickcheck/src/sort
 applications/quickcheck/src/gen
 applications/quickcheck/src/tom/sort
+applications/quickcheck/src/system
+System.tom

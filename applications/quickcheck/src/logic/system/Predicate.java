@@ -4,8 +4,6 @@
  */
 package logic.system;
 
-import java.util.Map;
-
 /**
  *
  * @author hubert
@@ -37,10 +35,5 @@ public class Predicate extends Formula {
   
   public Term[] getArgs(){
     return args;
-  }
-
-  @Override
-  protected boolean interprete(Map<Variable, Object> valuation) {
-    throw new UnsupportedOperationException("Not supported yet.");
   }
 }

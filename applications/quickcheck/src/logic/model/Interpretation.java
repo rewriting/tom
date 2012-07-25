@@ -57,7 +57,7 @@ public class Interpretation {
     if (f instanceof Predicate) {
       return evaluatePredicate((Predicate) f);
     } else if (f instanceof And) {
-      return 
+      throw new UnsupportedOperationException("");
     }
     return false; // unreachable
   }

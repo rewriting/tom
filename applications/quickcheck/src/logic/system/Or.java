@@ -4,8 +4,6 @@
  */
 package logic.system;
 
-import java.util.Map;
-
 /**
  *
  * @author hubert
@@ -23,10 +21,5 @@ public class Or extends Formula{
   @Override
   public String toString() {
     return f1.toString() + "⋎" + f2.toString();
-  }
-
-  @Override
-  protected boolean interprete(Map<Variable, Object> valuation) {
-    throw new UnsupportedOperationException("Not supported yet.");
   }
 }

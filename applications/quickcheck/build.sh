@@ -9,7 +9,7 @@ echo ""
 
 if [ "$1" != "nogom" ]; then
   gom src/gom/sort.gom --withCongruenceStrategies -d src
-  gom src/gom/system.gom --withCongruenceStrategies -d src
+  gom src/gom/system.gom -d src
 	mkdir src/tom/sort
   mkdir src/tom/system
 	mv src/sort/Sort.tom src/tom/sort/Sort.tom
