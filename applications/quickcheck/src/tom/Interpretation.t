@@ -42,7 +42,12 @@ public class Interpretation {
 
   public ATerm evaluateTerm(Term term, Map<String, ATerm> valuation) {
     %match(term){
-      Var(name) -> {return valuation.get(`name);}
+      Var(name) -> {
+        ATerm res = valuation.get(`name);
+        if(res == null){
+          throw new UnsupportedOperationException("Variable " + `name + " has no valuation.");
+        }
+        return res;}
       Sig(name, args) -> {
         SignatureInterpretation interpretation = interp_sig.get(`name);
         if(interpretation == null){

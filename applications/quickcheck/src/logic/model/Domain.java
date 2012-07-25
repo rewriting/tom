@@ -7,10 +7,16 @@ package logic.model;
 import aterm.ATerm;
 
 /**
+ * A class implementing this interface is an interpretation of a set.
  *
  * @author hubert
  */
 public interface Domain {
 
+  /**
+   * Choose an element in the interpreted set.
+   *
+   * @return
+   */
   public ATerm chooseElement();
 }

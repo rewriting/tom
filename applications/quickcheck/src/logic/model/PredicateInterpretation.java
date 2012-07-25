@@ -8,12 +8,17 @@ import aterm.ATerm;
 import java.util.List;
 
 /**
+ * A class implementing this interface is an interpretation of a Predicate.
  *
  * @author hubert
  */
 public interface PredicateInterpretation {
-  
-  public abstract boolean isTrue(Object[] args);
-  
+
+  /**
+   * Gives the result of the function which interprete a Predicate.
+   *
+   * @param args
+   * @return
+   */
   public abstract boolean isTrue(List<ATerm> args);
 }
