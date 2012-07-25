@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/tom.mapping.model/src" modelPluginID="tom.mapping.model"
+    modelName="TomMapping" importerID="org.eclipse.emf.importer.ecore" copyrightFields="false"
+    usedGenPackages="platform:/plugin/org.eclipse.emf.ecore/model/Ecore.genmodel#//ecore">
+  <foreignModel>file:/Users/kevinbaumann/Documents/copieTom/TomMapping.ecore</foreignModel>
+  <genPackages prefix="Model" disposableProviderFactory="true" ecorePackage="TomMapping.ecore#/">
+    <genClasses ecoreClass="TomMapping.ecore#//Mapping">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference TomMapping.ecore#//Mapping/imports"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference TomMapping.ecore#//Mapping/terminals"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference TomMapping.ecore#//Mapping/externalTerminals"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference TomMapping.ecore#//Mapping/operators"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute TomMapping.ecore#//Mapping/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute TomMapping.ecore#//Mapping/prefix"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference TomMapping.ecore#//Mapping/modules"/>
+      <genOperations ecoreOperation="TomMapping.ecore#//Mapping/getAllDefaultOperators"/>
+      <genOperations ecoreOperation="TomMapping.ecore#//Mapping/getTerminal">
+        <genParameters ecoreParameter="TomMapping.ecore#//Mapping/getTerminal/c"/>
+        <genParameters ecoreParameter="TomMapping.ecore#//Mapping/getTerminal/isList"/>
+      </genOperations>
+      <genOperations ecoreOperation="TomMapping.ecore#//Mapping/getAllListTerminals"/>
+      <genOperations ecoreOperation="TomMapping.ecore#//Mapping/getMetamodelPackages"/>
+    </genClasses>
+    <genClasses ecoreClass="TomMapping.ecore#//Terminal">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference TomMapping.ecore#//Terminal/class"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute TomMapping.ecore#//Terminal/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute TomMapping.ecore#//Terminal/many"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="TomMapping.ecore#//Operator">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute TomMapping.ecore#//Operator/name"/>
+    </genClasses>
+    <genClasses ecoreClass="TomMapping.ecore#//ClassOperator">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference TomMapping.ecore#//ClassOperator/class"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference TomMapping.ecore#//ClassOperator/parameters"/>
+    </genClasses>
+    <genClasses ecoreClass="TomMapping.ecore#//UserOperator">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference TomMapping.ecore#//UserOperator/type"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference TomMapping.ecore#//UserOperator/parameters"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference TomMapping.ecore#//UserOperator/accessors"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute TomMapping.ecore#//UserOperator/make"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute TomMapping.ecore#//UserOperator/test"/>
+    </genClasses>
+    <genClasses ecoreClass="TomMapping.ecore#//Parameter">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference TomMapping.ecore#//Parameter/type"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute TomMapping.ecore#//Parameter/name"/>
+    </genClasses>
+    <genClasses ecoreClass="TomMapping.ecore#//Import">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute TomMapping.ecore#//Import/importURI"/>
+    </genClasses>
+    <genClasses ecoreClass="TomMapping.ecore#//Accessor">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference TomMapping.ecore#//Accessor/slot"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute TomMapping.ecore#//Accessor/java"/>
+    </genClasses>
+    <genClasses ecoreClass="TomMapping.ecore#//FeatureException"/>
+    <genClasses ecoreClass="TomMapping.ecore#//FeatureParameter">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference TomMapping.ecore#//FeatureParameter/feature"/>
+    </genClasses>
+    <genClasses ecoreClass="TomMapping.ecore#//SettedFeatureParameter">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference TomMapping.ecore#//SettedFeatureParameter/value"/>
+    </genClasses>
+    <genClasses ecoreClass="TomMapping.ecore#//SettedValue"/>
+    <genClasses ecoreClass="TomMapping.ecore#//JavaCodeValue">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute TomMapping.ecore#//JavaCodeValue/java"/>
+    </genClasses>
+    <genClasses ecoreClass="TomMapping.ecore#//EnumLiteralValue">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference TomMapping.ecore#//EnumLiteralValue/literal"/>
+    </genClasses>
+    <genClasses ecoreClass="TomMapping.ecore#//AliasOperator"/>
+    <genClasses ecoreClass="TomMapping.ecore#//AliasNode"/>
+    <genClasses ecoreClass="TomMapping.ecore#//FeatureNode">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute TomMapping.ecore#//FeatureNode/feature"/>
+    </genClasses>
+    <genClasses ecoreClass="TomMapping.ecore#//OperatorNode">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference TomMapping.ecore#//OperatorNode/op"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference TomMapping.ecore#//OperatorNode/nodes"/>
+    </genClasses>
+    <genClasses ecoreClass="TomMapping.ecore#//Module">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute TomMapping.ecore#//Module/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference TomMapping.ecore#//Module/operators"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>
