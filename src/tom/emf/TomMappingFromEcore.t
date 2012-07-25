@@ -472,7 +472,7 @@ public class TomMappingFromEcore {
   equals(l1,l2) { $l1.equals($l2) }
 }
 
-%oparray @prefix+name@ @prefix+name@ ( @simplename@* ) {
+%oparray @prefix+name@ @prefix+name@ ( @prefix+simplename@* ) {
   is_fsym(t) { $t instanceof org.eclipse.emf.common.util.EList<?> && ($t.size() == 0 || ($t.size()>0 && $t.get(0) instanceof @(decl[0]+decl[1])@)) }
   make_empty(n) { new org.eclipse.emf.common.util.BasicEList<@inst@>($n) }
   make_append(e,l) { append@prefix+name@($e,$l) }
