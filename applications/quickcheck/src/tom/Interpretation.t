@@ -40,7 +40,7 @@ public class Interpretation {
     return null; // unreachable
   }
 
-  public ATerm evaluateTerm(Term term, Map<String, ATerm> valuation) {
+  private ATerm evaluateTerm(Term term, Map<String, ATerm> valuation) {
     %match(term){
       Var(name) -> {
         ATerm res = valuation.get(`name);

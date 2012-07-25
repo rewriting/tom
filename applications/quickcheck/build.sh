@@ -27,6 +27,7 @@ echo ""
 #tom src/tom/TestGen.t -o src/gen/TestGen.java
 #tom src/tom/Main.t -o src/gen/Main.java
 tom src/tom/Interpretation.t -o src/gen/Interpretation.java
+tom src/tom/Shrink.t -o src/gen/Shrink.java
 
 
 echo ""
@@ -38,3 +39,4 @@ echo ""
 #javac src/gen/BugLight.java -d build -sourcepath src
 #javac src/gen/TestGen.java -d build -sourcepath src
 javac src/gen/Interpretation.java -d build -sourcepath src
+javac src/gen/Shrink.java -d build -sourcepath src

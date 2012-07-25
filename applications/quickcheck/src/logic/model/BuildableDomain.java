@@ -5,6 +5,7 @@
 package logic.model;
 
 import aterm.ATerm;
+import aterm.ATermList;
 import definitions.Buildable;
 import java.lang.reflect.Method;
 
