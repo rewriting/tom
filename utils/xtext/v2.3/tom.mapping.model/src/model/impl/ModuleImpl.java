@@ -4,6 +4,7 @@ package model.impl;
 
 import java.util.Collection;
 
+
 import model.ModelPackage;
 import model.Module;
 import model.Operator;
@@ -21,6 +22,7 @@ import org.eclipse.emf.ecore.impl.EObjectImpl;
 
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
+
 
 /**
  * <!-- begin-user-doc -->
@@ -65,7 +67,7 @@ public class ModuleImpl extends EObjectImpl implements Module {
 	 * @generated
 	 * @ordered
 	 */
-	protected EList operators;
+	protected EList<Operator> operators;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -111,9 +113,9 @@ public class ModuleImpl extends EObjectImpl implements Module {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList getOperators() {
+	public EList<Operator> getOperators() {
 		if (operators == null) {
-			operators = new EObjectContainmentEList(Operator.class, this, ModelPackage.MODULE__OPERATORS);
+			operators = new EObjectContainmentEList<Operator>(Operator.class, this, ModelPackage.MODULE__OPERATORS);
 		}
 		return operators;
 	}
@@ -126,7 +128,7 @@ public class ModuleImpl extends EObjectImpl implements Module {
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
 			case ModelPackage.MODULE__OPERATORS:
-				return ((InternalEList)getOperators()).basicRemove(otherEnd, msgs);
+				return ((InternalEList<?>)getOperators()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -151,6 +153,7 @@ public class ModuleImpl extends EObjectImpl implements Module {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@SuppressWarnings("unchecked")
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
 			case ModelPackage.MODULE__NAME:
@@ -158,7 +161,7 @@ public class ModuleImpl extends EObjectImpl implements Module {
 				return;
 			case ModelPackage.MODULE__OPERATORS:
 				getOperators().clear();
-				getOperators().addAll((Collection)newValue);
+				getOperators().addAll((Collection<? extends Operator>)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);

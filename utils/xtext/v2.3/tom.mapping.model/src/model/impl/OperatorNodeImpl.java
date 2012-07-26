@@ -1,8 +1,9 @@
-/**
+	/**
  */
 package model.impl;
 
 import java.util.Collection;
+
 
 import model.AliasNode;
 import model.ModelPackage;
@@ -21,6 +22,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
+
 
 /**
  * <!-- begin-user-doc -->
@@ -55,7 +57,7 @@ public class OperatorNodeImpl extends AliasNodeImpl implements OperatorNode {
 	 * @generated
 	 * @ordered
 	 */
-	protected EList nodes;
+	protected EList<AliasNode> nodes;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -118,9 +120,9 @@ public class OperatorNodeImpl extends AliasNodeImpl implements OperatorNode {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList getNodes() {
+	public EList<AliasNode> getNodes() {
 		if (nodes == null) {
-			nodes = new EObjectContainmentEList(AliasNode.class, this, ModelPackage.OPERATOR_NODE__NODES);
+			nodes = new EObjectContainmentEList<AliasNode>(AliasNode.class, this, ModelPackage.OPERATOR_NODE__NODES);
 		}
 		return nodes;
 	}
@@ -133,7 +135,7 @@ public class OperatorNodeImpl extends AliasNodeImpl implements OperatorNode {
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
 			case ModelPackage.OPERATOR_NODE__NODES:
-				return ((InternalEList)getNodes()).basicRemove(otherEnd, msgs);
+				return ((InternalEList<?>)getNodes()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -159,6 +161,7 @@ public class OperatorNodeImpl extends AliasNodeImpl implements OperatorNode {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@SuppressWarnings("unchecked")
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
 			case ModelPackage.OPERATOR_NODE__OP:
@@ -166,7 +169,7 @@ public class OperatorNodeImpl extends AliasNodeImpl implements OperatorNode {
 				return;
 			case ModelPackage.OPERATOR_NODE__NODES:
 				getNodes().clear();
-				getNodes().addAll((Collection)newValue);
+				getNodes().addAll((Collection<? extends AliasNode>)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);

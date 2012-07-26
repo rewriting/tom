@@ -64,6 +64,6 @@ public interface Module extends EObject {
 	 * @model type="model.Operator" containment="true"
 	 * @generated
 	 */
-	EList getOperators();
+	EList<Operator> getOperators();
 
 } // Module

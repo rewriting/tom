@@ -4,6 +4,7 @@ package model.impl;
 
 import java.util.Collection;
 
+
 import model.ClassOperator;
 import model.FeatureParameter;
 import model.ModelPackage;
@@ -21,6 +22,7 @@ import org.eclipse.emf.ecore.impl.EObjectImpl;
 
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
+
 
 /**
  * <!-- begin-user-doc -->
@@ -76,7 +78,7 @@ public class ClassOperatorImpl extends EObjectImpl implements ClassOperator {
 	 * @generated
 	 * @ordered
 	 */
-	protected EList parameters;
+	protected EList<FeatureParameter> parameters;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -160,9 +162,9 @@ public class ClassOperatorImpl extends EObjectImpl implements ClassOperator {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList getParameters() {
+	public EList<FeatureParameter> getParameters() {
 		if (parameters == null) {
-			parameters = new EObjectContainmentEList(FeatureParameter.class, this, ModelPackage.CLASS_OPERATOR__PARAMETERS);
+			parameters = new EObjectContainmentEList<FeatureParameter>(FeatureParameter.class, this, ModelPackage.CLASS_OPERATOR__PARAMETERS);
 		}
 		return parameters;
 	}
@@ -175,7 +177,7 @@ public class ClassOperatorImpl extends EObjectImpl implements ClassOperator {
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
 			case ModelPackage.CLASS_OPERATOR__PARAMETERS:
-				return ((InternalEList)getParameters()).basicRemove(otherEnd, msgs);
+				return ((InternalEList<?>)getParameters()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -203,6 +205,7 @@ public class ClassOperatorImpl extends EObjectImpl implements ClassOperator {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@SuppressWarnings("unchecked")
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
 			case ModelPackage.CLASS_OPERATOR__NAME:
@@ -213,7 +216,7 @@ public class ClassOperatorImpl extends EObjectImpl implements ClassOperator {
 				return;
 			case ModelPackage.CLASS_OPERATOR__PARAMETERS:
 				getParameters().clear();
-				getParameters().addAll((Collection)newValue);
+				getParameters().addAll((Collection<? extends FeatureParameter>)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);

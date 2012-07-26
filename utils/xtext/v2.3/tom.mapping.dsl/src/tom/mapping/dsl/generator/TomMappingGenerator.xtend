@@ -3,13 +3,20 @@
  */
 package tom.mapping.dsl.generator
 
+import com.google.inject.Inject
 import org.eclipse.emf.ecore.resource.Resource
-import org.eclipse.xtext.generator.IGenerator
 import org.eclipse.xtext.generator.IFileSystemAccess
+import org.eclipse.xtext.generator.IGenerator
+import model.Mapping
+import tom.mapping.dsl.generator.tom.TomTemplateCompiler
+
 
 class TomMappingGenerator implements IGenerator {
 	
+	@Inject TomTemplateCompiler tomCompiler
+	
 	override void doGenerate(Resource resource, IFileSystemAccess fsa) {
-		//TODO implement me
+		val mapping = resource.contents.get(0) as Mapping
+		tomCompiler.compile(mapping,fsa)
 	}
 }

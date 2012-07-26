@@ -65,7 +65,7 @@ public interface UserOperator extends Operator {
 	 * @model type="model.Parameter" containment="true"
 	 * @generated
 	 */
-	EList getParameters();
+	EList<Parameter> getParameters();
 
 	/**
 	 * Returns the value of the '<em><b>Accessors</b></em>' containment reference list.
@@ -81,7 +81,7 @@ public interface UserOperator extends Operator {
 	 * @model type="model.Accessor" containment="true"
 	 * @generated
 	 */
-	EList getAccessors();
+	EList<Accessor> getAccessors();
 
 	/**
 	 * Returns the value of the '<em><b>Make</b></em>' attribute.

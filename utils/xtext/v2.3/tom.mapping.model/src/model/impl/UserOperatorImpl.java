@@ -4,6 +4,7 @@ package model.impl;
 
 import java.util.Collection;
 
+
 import model.Accessor;
 import model.ModelPackage;
 import model.Parameter;
@@ -23,6 +24,7 @@ import org.eclipse.emf.ecore.impl.EObjectImpl;
 
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
+
 
 /**
  * <!-- begin-user-doc -->
@@ -81,7 +83,7 @@ public class UserOperatorImpl extends EObjectImpl implements UserOperator {
 	 * @generated
 	 * @ordered
 	 */
-	protected EList parameters;
+	protected EList<Parameter> parameters;
 
 	/**
 	 * The cached value of the '{@link #getAccessors() <em>Accessors</em>}' containment reference list.
@@ -91,7 +93,7 @@ public class UserOperatorImpl extends EObjectImpl implements UserOperator {
 	 * @generated
 	 * @ordered
 	 */
-	protected EList accessors;
+	protected EList<Accessor> accessors;
 
 	/**
 	 * The default value of the '{@link #getMake() <em>Make</em>}' attribute.
@@ -215,9 +217,9 @@ public class UserOperatorImpl extends EObjectImpl implements UserOperator {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList getParameters() {
+	public EList<Parameter> getParameters() {
 		if (parameters == null) {
-			parameters = new EObjectContainmentEList(Parameter.class, this, ModelPackage.USER_OPERATOR__PARAMETERS);
+			parameters = new EObjectContainmentEList<Parameter>(Parameter.class, this, ModelPackage.USER_OPERATOR__PARAMETERS);
 		}
 		return parameters;
 	}
@@ -227,13 +229,13 @@ public class UserOperatorImpl extends EObjectImpl implements UserOperator {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList getAccessors() {
+	public EList<Accessor> getAccessors() {
 		if (accessors == null) {
-			accessors = new EObjectContainmentEList(Accessor.class, this, ModelPackage.USER_OPERATOR__ACCESSORS);
+			accessors = new EObjectContainmentEList<Accessor>(Accessor.class, this, ModelPackage.USER_OPERATOR__ACCESSORS);
 		}
 		return accessors;
 	}
-
+	
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -284,9 +286,9 @@ public class UserOperatorImpl extends EObjectImpl implements UserOperator {
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
 			case ModelPackage.USER_OPERATOR__PARAMETERS:
-				return ((InternalEList)getParameters()).basicRemove(otherEnd, msgs);
+				return ((InternalEList<?>)getParameters()).basicRemove(otherEnd, msgs);
 			case ModelPackage.USER_OPERATOR__ACCESSORS:
-				return ((InternalEList)getAccessors()).basicRemove(otherEnd, msgs);
+				return ((InternalEList<?>)getAccessors()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -320,6 +322,7 @@ public class UserOperatorImpl extends EObjectImpl implements UserOperator {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@SuppressWarnings("unchecked")
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
 			case ModelPackage.USER_OPERATOR__NAME:
@@ -330,11 +333,11 @@ public class UserOperatorImpl extends EObjectImpl implements UserOperator {
 				return;
 			case ModelPackage.USER_OPERATOR__PARAMETERS:
 				getParameters().clear();
-				getParameters().addAll((Collection)newValue);
+				getParameters().addAll((Collection<? extends Parameter>)newValue);
 				return;
 			case ModelPackage.USER_OPERATOR__ACCESSORS:
 				getAccessors().clear();
-				getAccessors().addAll((Collection)newValue);
+				getAccessors().addAll((Collection<? extends Accessor>)newValue);
 				return;
 			case ModelPackage.USER_OPERATOR__MAKE:
 				setMake((String)newValue);

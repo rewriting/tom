@@ -62,6 +62,6 @@ public interface OperatorNode extends AliasNode {
 	 * @model type="model.AliasNode" containment="true"
 	 * @generated
 	 */
-	EList getNodes();
+	EList<AliasNode> getNodes();
 
 } // OperatorNode

@@ -2,6 +2,7 @@
  */
 package model.impl;
 
+
 import model.ModelPackage;
 import model.SettedFeatureParameter;
 import model.SettedValue;
@@ -13,6 +14,7 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
+
 
 /**
  * <!-- begin-user-doc -->

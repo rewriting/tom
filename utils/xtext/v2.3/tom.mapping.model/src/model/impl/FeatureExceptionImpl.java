@@ -2,10 +2,12 @@
  */
 package model.impl;
 
+
 import model.FeatureException;
 import model.ModelPackage;
 
 import org.eclipse.emf.ecore.EClass;
+
 
 /**
  * <!-- begin-user-doc -->

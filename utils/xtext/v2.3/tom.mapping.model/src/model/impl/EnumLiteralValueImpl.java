@@ -2,6 +2,7 @@
  */
 package model.impl;
 
+
 import model.EnumLiteralValue;
 import model.ModelPackage;
 
@@ -12,6 +13,7 @@ import org.eclipse.emf.ecore.EEnumLiteral;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
+
 
 /**
  * <!-- begin-user-doc -->

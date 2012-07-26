@@ -2,6 +2,7 @@
  */
 package model.impl;
 
+
 import model.Accessor;
 import model.AliasNode;
 import model.AliasOperator;
@@ -32,6 +33,7 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EcorePackage;
 
 import org.eclipse.emf.ecore.impl.EPackageImpl;
+
 
 /**
  * <!-- begin-user-doc -->

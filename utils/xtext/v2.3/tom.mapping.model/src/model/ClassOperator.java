@@ -64,6 +64,6 @@ public interface ClassOperator extends Operator {
 	 * @model type="model.FeatureParameter" containment="true"
 	 * @generated
 	 */
-	EList getParameters();
+	EList<FeatureParameter> getParameters();
 
 } // ClassOperator

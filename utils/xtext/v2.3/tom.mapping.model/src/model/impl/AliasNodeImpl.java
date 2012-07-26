@@ -2,12 +2,14 @@
  */
 package model.impl;
 
+
 import model.AliasNode;
 import model.ModelPackage;
 
 import org.eclipse.emf.ecore.EClass;
 
 import org.eclipse.emf.ecore.impl.EObjectImpl;
+
 
 /**
  * <!-- begin-user-doc -->

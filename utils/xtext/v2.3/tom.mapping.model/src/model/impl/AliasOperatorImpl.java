@@ -4,6 +4,7 @@ package model.impl;
 
 import java.util.Collection;
 
+
 import model.AliasNode;
 import model.AliasOperator;
 import model.ModelPackage;
@@ -23,6 +24,7 @@ import org.eclipse.emf.ecore.impl.EObjectImpl;
 
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
+
 
 /**
  * <!-- begin-user-doc -->
@@ -78,7 +80,7 @@ public class AliasOperatorImpl extends EObjectImpl implements AliasOperator {
 	 * @generated
 	 * @ordered
 	 */
-	protected EList nodes;
+	protected EList<AliasNode> nodes;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -162,9 +164,9 @@ public class AliasOperatorImpl extends EObjectImpl implements AliasOperator {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList getNodes() {
+	public EList<AliasNode> getNodes() {
 		if (nodes == null) {
-			nodes = new EObjectContainmentEList(AliasNode.class, this, ModelPackage.ALIAS_OPERATOR__NODES);
+			nodes = new EObjectContainmentEList<AliasNode>(AliasNode.class, this, ModelPackage.ALIAS_OPERATOR__NODES);
 		}
 		return nodes;
 	}
@@ -177,7 +179,7 @@ public class AliasOperatorImpl extends EObjectImpl implements AliasOperator {
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
 			case ModelPackage.ALIAS_OPERATOR__NODES:
-				return ((InternalEList)getNodes()).basicRemove(otherEnd, msgs);
+				return ((InternalEList<?>)getNodes()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -205,6 +207,7 @@ public class AliasOperatorImpl extends EObjectImpl implements AliasOperator {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@SuppressWarnings("unchecked")
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
 			case ModelPackage.ALIAS_OPERATOR__NAME:
@@ -215,7 +218,7 @@ public class AliasOperatorImpl extends EObjectImpl implements AliasOperator {
 				return;
 			case ModelPackage.ALIAS_OPERATOR__NODES:
 				getNodes().clear();
-				getNodes().addAll((Collection)newValue);
+				getNodes().addAll((Collection<? extends AliasNode>)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -263,7 +266,7 @@ public class AliasOperatorImpl extends EObjectImpl implements AliasOperator {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public int eBaseStructuralFeatureID(int derivedFeatureID, Class baseClass) {
+	public int eBaseStructuralFeatureID(int derivedFeatureID, Class<?> baseClass) {
 		if (baseClass == AliasNode.class) {
 			switch (derivedFeatureID) {
 				default: return -1;
@@ -284,7 +287,7 @@ public class AliasOperatorImpl extends EObjectImpl implements AliasOperator {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public int eDerivedStructuralFeatureID(int baseFeatureID, Class baseClass) {
+	public int eDerivedStructuralFeatureID(int baseFeatureID, Class<?> baseClass) {
 		if (baseClass == AliasNode.class) {
 			switch (baseFeatureID) {
 				default: return -1;

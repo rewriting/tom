@@ -2,6 +2,7 @@
  */
 package model.impl;
 
+
 import model.Accessor;
 import model.ModelPackage;
 import model.Parameter;
@@ -13,6 +14,7 @@ import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.EObjectImpl;
+
 
 /**
  * <!-- begin-user-doc -->

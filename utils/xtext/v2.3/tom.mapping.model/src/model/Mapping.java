@@ -6,6 +6,7 @@ import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EPackage;
 
 /**
  * <!-- begin-user-doc -->
@@ -44,7 +45,7 @@ public interface Mapping extends EObject {
 	 * @model type="model.Import" containment="true" required="true"
 	 * @generated
 	 */
-	EList getImports();
+	EList<Import> getImports();
 
 	/**
 	 * Returns the value of the '<em><b>Terminals</b></em>' containment reference list.
@@ -60,7 +61,7 @@ public interface Mapping extends EObject {
 	 * @model type="model.Terminal" containment="true"
 	 * @generated
 	 */
-	EList getTerminals();
+	EList<Terminal> getTerminals();
 
 	/**
 	 * Returns the value of the '<em><b>External Terminals</b></em>' reference list.
@@ -76,7 +77,7 @@ public interface Mapping extends EObject {
 	 * @model type="model.Terminal"
 	 * @generated
 	 */
-	EList getExternalTerminals();
+	EList<Terminal> getExternalTerminals();
 
 	/**
 	 * Returns the value of the '<em><b>Operators</b></em>' containment reference list.
@@ -92,7 +93,7 @@ public interface Mapping extends EObject {
 	 * @model type="model.Operator" containment="true"
 	 * @generated
 	 */
-	EList getOperators();
+	EList<Operator> getOperators();
 
 	/**
 	 * Returns the value of the '<em><b>Name</b></em>' attribute.
@@ -160,7 +161,7 @@ public interface Mapping extends EObject {
 	 * @model type="model.Module" containment="true"
 	 * @generated
 	 */
-	EList getModules();
+	EList<Module> getModules();
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -168,7 +169,7 @@ public interface Mapping extends EObject {
 	 * @model kind="operation" type="org.eclipse.emf.ecore.EClass"
 	 * @generated
 	 */
-	EList getAllDefaultOperators();
+	EList<EClass> getAllDefaultOperators();
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -184,7 +185,7 @@ public interface Mapping extends EObject {
 	 * @model kind="operation" type="model.Terminal"
 	 * @generated
 	 */
-	EList getAllListTerminals();
+	EList<Terminal> getAllListTerminals();
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -192,6 +193,6 @@ public interface Mapping extends EObject {
 	 * @model kind="operation" type="org.eclipse.emf.ecore.EPackage"
 	 * @generated
 	 */
-	EList getMetamodelPackages();
+	EList<EPackage> getMetamodelPackages();
 
 } // Mapping
