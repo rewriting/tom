@@ -4,6 +4,7 @@ import system.types.*;
 import system.types.args.*;
 import system.types.formula.*;
 import system.types.term.*;
+import system.types.counterexample.*;
 
 import java.util.Map;
 import java.util.List;
@@ -88,8 +89,50 @@ public class Interpretation {
       Or(f1, f2) -> {return validateFormula(`f1, valuation) || validateFormula(`f2, valuation);}
       Imply(f1, f2) -> {return (!validateFormula(`f1, valuation)) || validateFormula(`f2, valuation);}
       Not(f1) -> {return !validateFormula(`f1, valuation);}
-      True() -> {return true;}
-      False() -> {return false;}
+      Forall(varname, domain, f1) -> {return validateForall(`varname, `domain, `f1, valuation);}
+      Exists(varname, domain, f1) -> {return !validateForall(`varname, `domain, `Not(f1), valuation);}
+    }
+    return false; // unreachable
+  }
+
+  public CounterExample validateFormula(Formula f, Map<String, ATerm> valuation, boolean findCE) {
+    if(!findCE){
+      boolean valide = validateFormula(f, valuation);
+      if(valide){
+        return `CETrue();
+      } else {
+        return `CEFalse();
+      }
+    }
+    %match(f){
+      Predicate(name, args) -> {
+        PredicateInterpretation interpretation = interp_pre.get(`name);
+        if(interpretation == null){
+          throw new UnsupportedOperationException("Predicate " + `name + " has no interpretation.");
+        }
+        List<ATerm> argsEvaluations = evaluateListTerm(`args, valuation);
+        boolean isValide = interpretation.isTrue(argsEvaluations);
+        if(isValide){
+          return `NoCE();
+        } else {
+          return `CEPredicate(name, args);
+        }
+      }
+      And(f1, f2) -> {
+        CounterExample cef1 = validateFormula(`f1, valuation, findCE);
+        %match(cef1){
+          NoCE() -> {
+            CounterExample cef2 = validateFormula(`f2, valuation, findCE);
+            %match(cef2){
+              NoCE() -> {return `NoCE();}
+              _ -> {return CEAnd(cef2);}
+            }
+          }
+          _ -> {return `CEAnd(cef1);}
+        }
+      Or(f1, f2) -> {return validateFormula(`f1, valuation) || validateFormula(`f2, valuation);}
+      Imply(f1, f2) -> {return (!validateFormula(`f1, valuation)) || validateFormula(`f2, valuation);}
+      Not(f1) -> {return !validateFormula(`f1, valuation);}
       Forall(varname, domain, f1) -> {return validateForall(`varname, `domain, `f1, valuation);}
       Exists(varname, domain, f1) -> {return !validateForall(`varname, `domain, `Not(f1), valuation);}
     }

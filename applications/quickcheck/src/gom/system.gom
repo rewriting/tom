@@ -1,5 +1,5 @@
 module System
-imports String
+imports String int ATerm
 abstract syntax
 
 
@@ -15,5 +15,14 @@ Formula = Predicate(name:String, args:Args)
         | Not(f:Formula)
         | Forall(var:String, domain:String, f:Formula)
         | Exists(var:String, domain:String, f:Formula)
-        | True()
-        | False()
+
+CounterExample = CEAnd(ce:CounterExample)
+               | CEOr(ce1:CounterExample, ce2:CounterExample)
+               | CEImply(ce1:CounterExample, ce2:CounterExample)
+               | CENot(ce1:CounterExample)
+               | CEForall(varName:String, value:ATerm, ce:CounterExample)
+               | CEExists(varName:String, ce:CounterExample)
+               | CEPredicate(name:String, args:Args)
+               | CETrue() // deprecated
+               | CEFalse() // deprecated
+               | NoCE()
