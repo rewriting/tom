@@ -74,6 +74,26 @@ public class Interpretation {
     return res;
   }
 
+  private CounterExample validateForallWithCE(String varName, String domainName, Formula f, Map<String, ATerm> valuation){
+    Domain domain = domain_map.get(domainName);
+    if(domain == null){
+      throw new UnsupportedOperationException("Domain " + domainName + " has no interpretation.");
+    }
+    ATerm term = domain.chooseElement();
+    valuation.put(varName, term);
+    CounterExample cef = validateFormulaWithCE(f, valuation);
+    %match(cef){
+      NoCE() -> {
+        valuation.remove(varName);
+        return `NoCE();
+      }
+      _ -> {
+        valuation.remove(varName);
+        return `CEForall(varName, term, cef);
+      }
+    }
+    return null; // unreachable
+  }
 
   public boolean validateFormula(Formula f, Map<String, ATerm> valuation) {
     %match(f){
@@ -95,15 +115,7 @@ public class Interpretation {
     return false; // unreachable
   }
 
-  public CounterExample validateFormula(Formula f, Map<String, ATerm> valuation, boolean findCE) {
-    if(!findCE){
-      boolean valide = validateFormula(f, valuation);
-      if(valide){
-        return `CETrue();
-      } else {
-        return `CEFalse();
-      }
-    }
+  public CounterExample validateFormulaWithCE(Formula f, Map<String, ATerm> valuation) {
     %match(f){
       Predicate(name, args) -> {
         PredicateInterpretation interpretation = interp_pre.get(`name);
@@ -119,10 +131,10 @@ public class Interpretation {
         }
       }
       And(f1, f2) -> {
-        CounterExample cef1 = validateFormula(`f1, valuation, findCE);
+        CounterExample cef1 = validateFormulaWithCE(`f1, valuation);
         %match(cef1){
           NoCE() -> {
-            CounterExample cef2 = validateFormula(`f2, valuation, findCE);
+            CounterExample cef2 = validateFormulaWithCE(`f2, valuation);
             %match(cef2){
               NoCE() -> {return `NoCE();}
               _ -> {return `CEAnd(cef2);}
@@ -132,11 +144,11 @@ public class Interpretation {
         }
       }
       Or(f1, f2) -> {
-        CounterExample cef1 = validateFormula(`f1, valuation, findCE);
+        CounterExample cef1 = validateFormulaWithCE(`f1, valuation);
         %match(cef1){
           NoCE() -> {return `NoCE();}
           _ -> {
-            CounterExample cef2 = validateFormula(`f2, valuation, findCE);
+            CounterExample cef2 = validateFormulaWithCE(`f2, valuation);
             %match(cef2){
               NoCE() -> {return `NoCE();}
               _ -> {return `CEOr(cef1, cef2);}
@@ -147,7 +159,7 @@ public class Interpretation {
       Imply(f1, f2) -> {
         boolean valide = validateFormula(`f1, valuation);
         if(valide){
-          CounterExample cef2 = validateFormula(`f2, valuation, findCE);
+          CounterExample cef2 = validateFormulaWithCE(`f2, valuation);
           %match(cef2){
             NoCE() -> {return `NoCE();}
             _ -> {return `CEImply(cef2);}
@@ -164,8 +176,8 @@ public class Interpretation {
           return `NoCE();
         }
       }
-      Forall(varname, domain, f1) -> {return validateForall(`varname, `domain, `f1, valuation);}
-      Exists(varname, domain, f1) -> {return !validateForall(`varname, `domain, `Not(f1), valuation);}
+      Forall(varname, domain, f1) -> {return validateForallWithCE(`varname, `domain, `f1, valuation);}
+      Exists(varname, domain, f1) -> {return validateForallWithCE(`varname, `domain, `f1, valuation);} // false
     }
     return null; // unreachable
   }
