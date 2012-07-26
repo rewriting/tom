@@ -473,7 +473,7 @@ public class TomMappingFromEcore {
   equals(l1,l2) { $l1.equals($l2) }
 }
 
-%oparray @name@ @name@ ( @argname@* ) {
+%oparray @prefix+name@ @prefix+name@ ( @argname@* ) {
   is_fsym(t) { $t instanceof org.eclipse.emf.common.util.EList<?> && ($t.size() == 0 || ($t.size()>0 && $t.get(0) instanceof @(decl[0]+decl[1])@)) }
   make_empty(n) { new org.eclipse.emf.common.util.BasicEList<@inst@>($n) }
   make_append(e,l) { append@name@($e,$l) }
@@ -488,7 +488,7 @@ private static <O> org.eclipse.emf.common.util.EList<O> append@name@(O e,org.ecl
         lists.add(c);
       }
     }
-    return name;
+    return (sf.isMany()?prefix+name:name);
   }
 
   /**
@@ -695,13 +695,16 @@ public static <O extends org.eclipse.emf.ecore.EObject> O construct@prefix+cr@(O
           String o2 = eclf.getEPackage().getClass().getInterfaces()[eclf
             .getEPackage().getClass().getInterfaces().length - 1]
             .getCanonicalName();
-          String literal = lit.getLiteral();
-          String operatorName = cr+literal.replaceAll(" ","");
+          //Problem: lit.getLiteral() can be a non-alphanumerical symbol. Use
+          //name instead (a non alphanumerical name should not be valid
+          //String literal = lit.getLiteral();
+          String literalname = lit.getName();
+          String operatorName = cr+literalname.replaceAll(" ","");
           writer.write(%[
 
 %op @prefix+cr@ @prefix+operatorName@() {
-  is_fsym(t) { t == @(decl[0]+decl[1])@.get("@literal@") }
-  make() { (@(decl[0]+decl[2])@)@o1@.eINSTANCE.createFromString( (EDataType)@o2@.eINSTANCE.get@toUpperName(cr)@(), "@literal@") }
+  is_fsym(t) { t == @(decl[0]+decl[1])@.get("@literalname@") }
+  make() { (@(decl[0]+decl[2])@)@o1@.eINSTANCE.createFromString((EDataType)@o2@.eINSTANCE.get@toUpperName(cr)@(), "@literalname@") }
 }]%);
         }
       }
