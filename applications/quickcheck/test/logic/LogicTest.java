@@ -45,7 +45,7 @@ public class LogicTest {
       @Override
       public ATerm chooseElement() {
         PureFactory factory = new PureFactory();
-        return factory.makeInt(6537);
+        return factory.makeInt((int) (Math.random()*1000));
       }
     };
 
@@ -81,7 +81,8 @@ public class LogicTest {
   }
   @Test
   public void testInterpIntCE() {
-    System.out.println(interp_int.validateFormulaWithCE(formula, new HashMap<String, ATerm>()));
-    assert true;
+    String res = interp_int.validateFormulaWithCE(formula, new HashMap<String, ATerm>()).toString();
+    System.out.println(res);
+    assert res.equals("NoCE()");
   }
 }
