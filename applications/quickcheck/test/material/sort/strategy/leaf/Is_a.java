@@ -1,10 +1,10 @@
 
-package sort.strategy.expr;
+package sort.strategy.leaf;
 
-public class Is_plus extends tom.library.sl.AbstractStrategyCombinator {
-  private static final String msg = "Not an plus";
+public class Is_a extends tom.library.sl.AbstractStrategyCombinator {
+  private static final String msg = "Not an a";
 
-  public Is_plus() {
+  public Is_a() {
     initSubterm();
   }
 
@@ -22,7 +22,7 @@ public class Is_plus extends tom.library.sl.AbstractStrategyCombinator {
   }
 
   public <T> T visitLight(T any, tom.library.sl.Introspector i) throws tom.library.sl.VisitFailure {
-    if(any instanceof sort.types.expr.plus) {
+    if(any instanceof sort.types.leaf.a) {
      return any;
     } else {
       throw new tom.library.sl.VisitFailure(msg);
@@ -31,7 +31,7 @@ public class Is_plus extends tom.library.sl.AbstractStrategyCombinator {
 
   public int visit(tom.library.sl.Introspector i) {
     Object any = environment.getSubject();
-    if(any instanceof sort.types.expr.plus) {
+    if(any instanceof sort.types.leaf.a) {
      return tom.library.sl.Environment.SUCCESS;
     } else {
       return tom.library.sl.Environment.FAILURE;
