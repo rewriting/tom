@@ -10,7 +10,7 @@ import aterm.pure.PureFactory;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import logic.model.Domain;
+import logic.model.DomainInterpretation;
 import logic.model.PredicateInterpretation;
 import logic.model.SignatureInterpretation;
 import material.ExamplesFormula; // generated + moved
@@ -27,7 +27,7 @@ public class LogicTest {
   private Formula formula = ExamplesFormula.f1;
   private Interpretation interp_int;
   private PredicateInterpretation P_int;
-  private Domain D_int;
+  private DomainInterpretation D_int;
 
   public LogicTest() {
     
@@ -40,7 +40,7 @@ public class LogicTest {
       }
     };
 
-    D_int = new Domain() {
+    D_int = new DomainInterpretation() {
 
       @Override
       public ATerm chooseElement() {
@@ -51,7 +51,7 @@ public class LogicTest {
 
     Map<String, PredicateInterpretation> map_pre = new HashMap<String, PredicateInterpretation>();
     Map<String, SignatureInterpretation> map_sig = new HashMap<String, SignatureInterpretation>();
-    Map<String, Domain> map_dom = new HashMap<String, Domain>();
+    Map<String, DomainInterpretation> map_dom = new HashMap<String, DomainInterpretation>();
 
     map_pre.put("P", P_int);
     map_dom.put("D", D_int);

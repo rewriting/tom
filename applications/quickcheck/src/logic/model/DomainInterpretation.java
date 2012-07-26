@@ -11,7 +11,7 @@ import aterm.ATerm;
  *
  * @author hubert
  */
-public interface Domain {
+public interface DomainInterpretation {
 
   /**
    * Choose an element in the interpreted set.

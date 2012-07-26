@@ -19,11 +19,11 @@ public class Interpretation {
   //private Map<String, Object> valuation;
   private Map<String, PredicateInterpretation> interp_pre;
   private Map<String, SignatureInterpretation> interp_sig;
-  private Map<String, Domain> domain_map;
+  private Map<String, DomainInterpretation> domain_map;
 
   public Interpretation(Map<String, PredicateInterpretation> interp_pre,
       Map<String, SignatureInterpretation> interp_sig, 
-      Map<String, Domain> domain_map) {
+      Map<String, DomainInterpretation> domain_map) {
     this.interp_pre = interp_pre;
     this.interp_sig = interp_sig;
     this.domain_map = domain_map;
@@ -63,7 +63,7 @@ return new LinkedList<ATerm>();}}}}{if (tom_is_sort_Args(((Object)args))) {if (t
 
 
   private boolean validateForall(String varName, String domainName, Formula f, Map<String, ATerm> valuation){
-    Domain domain = domain_map.get(domainName);
+    DomainInterpretation domain = domain_map.get(domainName);
     if(domain == null){
       throw new UnsupportedOperationException("Domain " + domainName + " has no interpretation.");
     }
@@ -75,7 +75,7 @@ return new LinkedList<ATerm>();}}}}{if (tom_is_sort_Args(((Object)args))) {if (t
   }
 
   private CounterExample validateForallWithCE(String varName, String domainName, Formula f, Map<String, ATerm> valuation){
-    Domain domain = domain_map.get(domainName);
+    DomainInterpretation domain = domain_map.get(domainName);
     if(domain == null){
       throw new UnsupportedOperationException("Domain " + domainName + " has no interpretation.");
     }

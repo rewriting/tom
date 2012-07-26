@@ -13,7 +13,7 @@ import java.lang.reflect.Method;
  *
  * @author hubert
  */
-public class BuildableDomain implements Domain {
+public class BuildableDomain implements DomainInterpretation {
 
   private Buildable model;
   @Deprecated
