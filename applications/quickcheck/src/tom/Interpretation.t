@@ -125,14 +125,41 @@ public class Interpretation {
             CounterExample cef2 = validateFormula(`f2, valuation, findCE);
             %match(cef2){
               NoCE() -> {return `NoCE();}
-              _ -> {return CEAnd(cef2);}
+              _ -> {return `CEAnd(cef2);}
             }
           }
           _ -> {return `CEAnd(cef1);}
         }
-      Or(f1, f2) -> {return validateFormula(`f1, valuation) || validateFormula(`f2, valuation);}
-      Imply(f1, f2) -> {return (!validateFormula(`f1, valuation)) || validateFormula(`f2, valuation);}
-      Not(f1) -> {return !validateFormula(`f1, valuation);}
+      Or(f1, f2) -> {
+        CounterExample cef1 = validateFormula(`f1, valuation, findCE);
+        %match(cef1){
+          NoCE() -> {return `NoCE();}
+          _ -> {
+            CounterExample cef2 = validateFormula(`f2, valuation, findCE);
+            %match(cef2){
+              NoCE() -> {return `NoCE();}
+              _ -> {return `CEOr(cef1, cef2);}
+            }
+          }
+        }
+      }
+      Imply(f1, f2) -> {
+        CounterExample cef1 = validateFormula(`f1, valuation, findCE);
+        %match(cef1){
+          NoCE() -> {
+            CounterExample cef2 = validateFormula(`f2, valuation, findCE);
+            %match(cef2){
+              NoCE() -> {return `NoCE();}
+              _ -> {return `CEImply(cef1, cef2);}
+            }
+          }
+          _ -> {return `NoCE();}
+        }
+      }
+      Not(f1) -> {
+        boolean valide 
+        return !validateFormula(`f1, valuation);
+      }
       Forall(varname, domain, f1) -> {return validateForall(`varname, `domain, `f1, valuation);}
       Exists(varname, domain, f1) -> {return !validateForall(`varname, `domain, `Not(f1), valuation);}
     }
