@@ -93,7 +93,7 @@ public class LogicTest {
       }
 
       @Override
-      public boolean include(ATerm term) {
+      public boolean includes(ATerm term) {
         if (!(term instanceof ATermInt)) {
           return false;
         }
@@ -110,7 +110,7 @@ public class LogicTest {
       }
 
       @Override
-      public boolean include(ATerm term) {
+      public boolean includes(ATerm term) {
         return term instanceof ATermInt;
       }
     };
@@ -140,7 +140,7 @@ public class LogicTest {
       }
 
       @Override
-      public boolean include(ATerm term) {
+      public boolean includes(ATerm term) {
         return list.isTypeOf(term);
       }
     };
@@ -196,7 +196,7 @@ public class LogicTest {
       }
 
       @Override
-      public boolean include(ATerm term) {
+      public boolean includes(ATerm term) {
         return term instanceof ATermInt && ((ATermInt) term).getInt() == 4;
       }
     };

@@ -27,5 +27,5 @@ public interface DomainInterpretation {
    * @param term
    * @return
    */
-  public boolean include(ATerm term);
+  public boolean includes(ATerm term);
 }

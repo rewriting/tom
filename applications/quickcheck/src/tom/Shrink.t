@@ -18,7 +18,8 @@ public class Shrink{
   %include{string.tom}
   %include{aterm.tom}
 
-  public ATermList shrink1(ATerm term,  Interpretation interp){
+
+  public static List<ATerm> getSameTypeFields(ATerm term, Domain domain){
     return null;
   }
 
