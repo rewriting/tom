@@ -1,5 +1,6 @@
 package definitions;
 
+import aterm.ATerm;
 import aterm.ATermAppl;
 import java.util.*;
 
@@ -321,5 +322,16 @@ public class Sort implements Buildable {
       res += "\t" + constructor + "\n";
     }
     return res;
+  }
+
+  @Override
+  public boolean isTypeOf(ATerm term) {
+    String nameTerm = term.toString();
+    for (Constructor constructor : constructors) {
+      if (nameTerm.startsWith(constructor.getName())) {
+        return true;
+      }
+    }
+    return false;
   }
 }

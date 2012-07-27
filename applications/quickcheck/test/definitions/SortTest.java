@@ -4,6 +4,10 @@
  */
 package definitions;
 
+import aterm.AFun;
+import aterm.ATerm;
+import aterm.ATermAppl;
+import aterm.pure.PureFactory;
 import static org.junit.Assert.assertEquals;
 import org.junit.*;
 import sort.types.Expr;
@@ -117,7 +121,7 @@ public class SortTest {
   @After
   public void tearDown() {
   }
-
+  
   /**
    * Test of isRec method, of class Sort.
    */
@@ -777,5 +781,49 @@ public class SortTest {
     int expResult = 1;
     int result = 1;
     assertEquals(expResult, result);
+  }
+  
+  /**
+   * Test of isTypeOf method, of class Sort.
+   */
+  
+  @Test
+  public void testIsTypeOfNat(){
+    System.out.println("isRec nat");
+    PureFactory factory = new PureFactory();
+    ATerm term = factory.make("truc");
+    AFun fun = factory.makeAFun("succ", 1, false);
+    ATermAppl appl = factory.makeAppl(fun, term);
+    System.out.println(appl);
+    assert nat.isTypeOf(appl);
+  }
+  
+  @Test
+  public void testIsTypeOfNatAutoNeg(){
+    System.out.println("isRec nat auto neg");
+    assert !(nat.isTypeOf(mix.generate(10)));
+  }
+  
+  @Test
+  public void testIsTypeOfNatAuto(){
+    System.out.println("isRec nat auto");
+    assert (nat.isTypeOf(nat.generate(10)));
+  }
+  
+  @Test
+  public void testIsTypeOfExpr(){
+    System.out.println("isRec nat");
+    PureFactory factory = new PureFactory();
+    ATerm term = factory.make("truc");
+    AFun fun = factory.makeAFun("plus", 1, false);
+    ATermAppl appl = factory.makeAppl(fun, term);
+    System.out.println(appl);
+    assert expr.isTypeOf(appl);
+  }
+  
+  @Test
+  public void testIsTypeOfExprAuto(){
+    System.out.println("isRec expr auto");
+    assert (expr.isTypeOf(expr.generate(10)));
   }
 }

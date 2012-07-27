@@ -5,6 +5,7 @@
 package definitions;
 
 import aterm.ATerm;
+import aterm.ATermInt;
 import aterm.ATermList;
 import aterm.pure.PureFactory;
 import definitions.StrategyParameters.DistStrategy;
@@ -52,6 +53,11 @@ public final class Builtin {
     public int minimalSize(DistStrategy strategy) {
       return 0;
     }
+
+    @Override
+    public boolean isTypeOf(ATerm term) {
+      return term instanceof ATermInt;
+    }
   };
   
   /**
@@ -92,6 +98,11 @@ public final class Builtin {
     @Override
     public int minimalSize(DistStrategy strategy) {
       return 0;
+    }
+
+    @Override
+    public boolean isTypeOf(ATerm term) {
+      throw new UnsupportedOperationException("Not supported yet.");
     }
   };
 
