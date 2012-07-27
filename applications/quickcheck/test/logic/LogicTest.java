@@ -13,8 +13,8 @@ import java.util.Map;
 import logic.model.DomainInterpretation;
 import logic.model.PredicateInterpretation;
 import logic.model.SignatureInterpretation;
-import material.ExamplesFormula; // generated + moved
-import material.Interpretation; // generated + moved
+import gen.ExamplesFormula; // generated
+import gen.Interpretation; // generated
 import org.junit.*;
 import system.types.Formula; // generated
 
