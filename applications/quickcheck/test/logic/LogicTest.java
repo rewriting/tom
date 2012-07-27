@@ -38,6 +38,7 @@ public class LogicTest {
   private PredicateInterpretation EVEN;
   private SignatureInterpretation succ;
   private DomainInterpretation Integer;
+  private DomainInterpretation EvenInteger;
   // List interpretation
   private PredicateInterpretation REV_REV;
   private DomainInterpretation List;
@@ -81,6 +82,15 @@ public class LogicTest {
       }
     };
 
+    EvenInteger = new DomainInterpretation() {
+
+      @Override
+      public ATerm chooseElement() {
+        PureFactory factory = new PureFactory();
+        return factory.makeInt(((int) (Math.random() * 1000)) * 2);
+      }
+    };
+
     Integer = new DomainInterpretation() {
 
       @Override
@@ -89,6 +99,7 @@ public class LogicTest {
         return factory.makeInt((int) (Math.random() * 1000));
       }
     };
+
     List = new DomainInterpretation() {
 
       @Override
@@ -132,14 +143,14 @@ public class LogicTest {
   @Test
   public void testInterpInt() {
 
-    Map<String, PredicateInterpretation> map_pre_int = new HashMap<String, PredicateInterpretation>();
-    Map<String, SignatureInterpretation> map_sig_int = new HashMap<String, SignatureInterpretation>();
-    Map<String, DomainInterpretation> map_dom_int = new HashMap<String, DomainInterpretation>();
+    Map<String, PredicateInterpretation> map_pre = new HashMap<String, PredicateInterpretation>();
+    Map<String, SignatureInterpretation> map_sig = new HashMap<String, SignatureInterpretation>();
+    Map<String, DomainInterpretation> map_dom = new HashMap<String, DomainInterpretation>();
 
-    map_pre_int.put("P", EVEN);
-    map_dom_int.put("D", Integer);
+    map_pre.put("P", EVEN);
+    map_dom.put("D", EvenInteger);
 
-    Interpretation interp_int = new Interpretation(map_pre_int, map_sig_int, map_dom_int);
+    Interpretation interp_int = new Interpretation(map_pre, map_sig, map_dom);
 
     assert interp_int.validateFormula(formula, new HashMap<String, ATerm>());
   }
@@ -147,33 +158,62 @@ public class LogicTest {
   @Test
   public void testInterpIntCE() {
 
-    Map<String, PredicateInterpretation> map_pre_int = new HashMap<String, PredicateInterpretation>();
-    Map<String, SignatureInterpretation> map_sig_int = new HashMap<String, SignatureInterpretation>();
-    Map<String, DomainInterpretation> map_dom_int = new HashMap<String, DomainInterpretation>();
+    Map<String, PredicateInterpretation> map_pre = new HashMap<String, PredicateInterpretation>();
+    Map<String, SignatureInterpretation> map_sig = new HashMap<String, SignatureInterpretation>();
+    Map<String, DomainInterpretation> map_dom = new HashMap<String, DomainInterpretation>();
 
-    map_pre_int.put("P", EVEN);
-    map_dom_int.put("D", Integer);
+    map_pre.put("P", ODD);
 
-    Interpretation interp_int = new Interpretation(map_pre_int, map_sig_int, map_dom_int);
+    DomainInterpretation EvenInteger_cheat = new DomainInterpretation() {
+
+      @Override
+      public ATerm chooseElement() {
+        PureFactory factory = new PureFactory();
+        return factory.makeInt(4);
+      }
+    };
+
+    map_dom.put("D", EvenInteger_cheat);
+
+    Interpretation interp_int = new Interpretation(map_pre, map_sig, map_dom);
 
     String res = interp_int.validateFormulaWithCE(formula, new HashMap<String, ATerm>()).toString();
-    System.out.println(res);
-    assert res.equals("NoCE()");
+    assert res.equals("CEForall(\"x\",4,CEPredicate(\"P\",ListArgs(Var(\"x\"))))");
   }
 
   @Test
   public void testInterpListCE() {
 
-    Map<String, PredicateInterpretation> map_pre_list = new HashMap<String, PredicateInterpretation>();
-    Map<String, SignatureInterpretation> map_sig_list = new HashMap<String, SignatureInterpretation>();
-    Map<String, DomainInterpretation> map_dom_list = new HashMap<String, DomainInterpretation>();
+    Map<String, PredicateInterpretation> map_pre = new HashMap<String, PredicateInterpretation>();
+    Map<String, SignatureInterpretation> map_sig = new HashMap<String, SignatureInterpretation>();
+    Map<String, DomainInterpretation> map_dom = new HashMap<String, DomainInterpretation>();
 
-    map_pre_list.put("P", REV_REV);
-    map_dom_list.put("D", List);
+    map_pre.put("P", REV_REV);
+    map_dom.put("D", List);
 
-    Interpretation interp_list = new Interpretation(map_pre_list, map_sig_list, map_dom_list);
+    Interpretation interp_list = new Interpretation(map_pre, map_sig, map_dom);
 
     String res = interp_list.validateFormulaWithCE(formula, new HashMap<String, ATerm>()).toString();
+    assert res.equals("NoCE()");
+  }
+
+  @Test
+  public void testEVEN_ODD_CE() {
+
+    Map<String, PredicateInterpretation> map_pre = new HashMap<String, PredicateInterpretation>();
+    Map<String, SignatureInterpretation> map_sig = new HashMap<String, SignatureInterpretation>();
+    Map<String, DomainInterpretation> map_dom = new HashMap<String, DomainInterpretation>();
+
+    map_pre.put("EVEN", EVEN);
+    map_pre.put("ODD", ODD);
+
+    map_dom.put("int", Integer);
+
+    map_sig.put("succ", succ);
+
+    Interpretation interp_list = new Interpretation(map_pre, map_sig, map_dom);
+
+    String res = interp_list.validateFormulaWithCE(even_odd, new HashMap<String, ATerm>()).toString();
     assert res.equals("NoCE()");
   }
 }
