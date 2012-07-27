@@ -103,15 +103,14 @@ Workflow {
 			fragment = builder.BuilderIntegrationFragment {}
 			
 			// Code generator
-			fragment = generator.GeneratorFragment {
+			fragment = generator.GeneratorFragment { // Ajouté manuellement
 			}
 			
 			fragment = templates.CodetemplatesGeneratorFragment {}
 
 			// project wizard (optional) 
-
 			 fragment = projectWizard.SimpleProjectWizardFragment {
-					generatorProjectName = "${projectName}.generator" 
+					generatorProjectName = "${projectName}.generator" // Ligne modifiée (pour le wizard ?)
 					modelFileExtension = file.extensions
 			 }
 
