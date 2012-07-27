@@ -24,10 +24,10 @@ echo ""
 #tom src/tom/Representation.t -o src/gen/Representation.java
 #tom src/tom/Bug.t -o src/gen/Bug.java
 #tom src/tom/BugLight.t -o src/gen/BugLight.java
-#tom src/tom/TestGen.t -o src/gen/TestGen.java
+tom src/tom/TestGen.t -o src/gen/TestGen.java
 #tom src/tom/Main.t -o src/gen/Main.java
 tom src/tom/Interpretation.t -o src/gen/Interpretation.java
-tom src/tom/Shrink.t -o src/gen/Shrink.java
+#tom src/tom/Shrink.t -o src/gen/Shrink.java
 tom src/tom/ExamplesFormula.t -o src/gen/ExamplesFormula.java
 
 
@@ -39,6 +39,6 @@ echo ""
 #javac src/gen/Bug.java -d build -sourcepath src
 #javac src/gen/BugLight.java -d build -sourcepath src
 #javac src/gen/TestGen.java -d build -sourcepath src
-javac src/gen/Interpretation.java -d build -sourcepath src
-javac src/gen/Shrink.java -d build -sourcepath src
-javac src/gen/ExamplesFormula.java -d build -sourcepath src
+#javac src/gen/Interpretation.java -d build -sourcepath src
+#javac src/gen/Shrink.java -d build -sourcepath src
+#javac src/gen/ExamplesFormula.java -d build -sourcepath src
