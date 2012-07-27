@@ -7,7 +7,9 @@ package logic;
 import aterm.ATerm;
 import aterm.ATermInt;
 import aterm.pure.PureFactory;
+import definitions.Buildable;
 import definitions.Scope;
+import definitions.Sort;
 import definitions.SortGom;
 import java.util.HashMap;
 import java.util.List;
@@ -92,7 +94,10 @@ public class LogicTest {
 
       @Override
       public boolean include(ATerm term) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if (!(term instanceof ATermInt)) {
+          return false;
+        }
+        return ((ATermInt) term).getInt() % 2 == 0;
       }
     };
 
@@ -106,19 +111,22 @@ public class LogicTest {
 
       @Override
       public boolean include(ATerm term) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return term instanceof ATermInt;
       }
     };
 
     List = new DomainInterpretation() {
+
+      private Sort leaf;
+      private SortGom list;
 
       @Override
       public ATerm chooseElement() {
 
         Scope scope = new Scope();
 
-        SortGom leaf = new SortGom(scope, Leaf.class);
-        SortGom list = new SortGom(scope, IntList.class);
+        leaf = new SortGom(scope, Leaf.class);
+        list = new SortGom(scope, IntList.class);
         list.addConstructor(nill.class);
         list.addConstructor(consList.class);
         leaf.addConstructor("a");
@@ -133,7 +141,7 @@ public class LogicTest {
 
       @Override
       public boolean include(ATerm term) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return list.isTypeOf(term);
       }
     };
   }
@@ -189,7 +197,7 @@ public class LogicTest {
 
       @Override
       public boolean include(ATerm term) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return term instanceof ATermInt && ((ATermInt) term).getInt() == 4;
       }
     };
 
