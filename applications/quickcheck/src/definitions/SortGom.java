@@ -47,6 +47,8 @@ public class SortGom extends Sort {
         throw new UnsupportedOperationException("Method " + pattern + "() was not found in " + classe);
       }
     }
+    // It is important to use getSimpleName in order to make it possible to use 
+    // produced ATerm to build real term using fromTerm method.
     ConstructorGom cons = new ConstructorGom(classe.getSimpleName(), make, this);
     this.getConstructors().add(cons);
     this.getDependences().addAll(Arrays.asList(cons.getFields()));

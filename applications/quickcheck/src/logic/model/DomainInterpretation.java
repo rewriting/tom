@@ -19,4 +19,13 @@ public interface DomainInterpretation {
    * @return
    */
   public ATerm chooseElement();
+
+  /**
+   * Tell whether given term is include in the set. This method is use in the
+   * shrink algorithm to fetch terms of given type.
+   *
+   * @param term
+   * @return
+   */
+  public boolean include(ATerm term);
 }

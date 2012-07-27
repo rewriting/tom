@@ -89,6 +89,11 @@ public class LogicTest {
         PureFactory factory = new PureFactory();
         return factory.makeInt(((int) (Math.random() * 1000)) * 2);
       }
+
+      @Override
+      public boolean include(ATerm term) {
+        throw new UnsupportedOperationException("Not supported yet.");
+      }
     };
 
     Integer = new DomainInterpretation() {
@@ -97,6 +102,11 @@ public class LogicTest {
       public ATerm chooseElement() {
         PureFactory factory = new PureFactory();
         return factory.makeInt((int) (Math.random() * 1000));
+      }
+
+      @Override
+      public boolean include(ATerm term) {
+        throw new UnsupportedOperationException("Not supported yet.");
       }
     };
 
@@ -119,6 +129,11 @@ public class LogicTest {
 
         ATerm res = list.generate(20);
         return res;
+      }
+
+      @Override
+      public boolean include(ATerm term) {
+        throw new UnsupportedOperationException("Not supported yet.");
       }
     };
   }
@@ -170,6 +185,11 @@ public class LogicTest {
       public ATerm chooseElement() {
         PureFactory factory = new PureFactory();
         return factory.makeInt(4);
+      }
+
+      @Override
+      public boolean include(ATerm term) {
+        throw new UnsupportedOperationException("Not supported yet.");
       }
     };
 
