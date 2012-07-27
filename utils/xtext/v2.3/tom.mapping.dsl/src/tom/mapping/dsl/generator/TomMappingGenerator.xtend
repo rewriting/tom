@@ -10,7 +10,6 @@ import org.eclipse.xtext.generator.IGenerator
 import model.Mapping
 import tom.mapping.dsl.generator.tom.TomTemplateCompiler
 
-
 class TomMappingGenerator implements IGenerator {
 	
 	@Inject TomTemplateCompiler tomCompiler

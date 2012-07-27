@@ -108,11 +108,11 @@ Workflow {
 			
 			fragment = templates.CodetemplatesGeneratorFragment {}
 
-			// project wizard (optional) 
-			 fragment = projectWizard.SimpleProjectWizardFragment {
-					generatorProjectName = "${projectName}.generator" // Ligne modifiée (pour le wizard ?)
+			 //project wizard (optional) 
+			 	fragment = projectWizard.SimpleProjectWizardFragment {
+				generatorProjectName = "${projectName}.generator" // Ligne modifiée (pour le wizard ?)
 					modelFileExtension = file.extensions
-			 }
+			}
 
 			// quickfix API 
 			fragment = quickfix.QuickfixProviderFragment {}
