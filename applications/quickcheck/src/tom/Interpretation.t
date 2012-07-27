@@ -177,7 +177,7 @@ public class Interpretation {
         }
       }
       Forall(varname, domain, f1) -> {return validateForallWithCE(`varname, `domain, `f1, valuation);}
-      Exists(varname, domain, f1) -> {throw new UnsupportedOperationException("Exists ligic is not yet implemented")} // false
+      Exists(varname, domain, f1) -> {throw new UnsupportedOperationException("Exists ligic is not yet implemented");} // false
     }
     return null; // unreachable
   }
