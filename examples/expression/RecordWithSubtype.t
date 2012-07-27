@@ -139,7 +139,7 @@ public class RecordWithSubtype {
     Exp e = buildExp1();
     String s1 = prettyPrint(e);
     String s2 = prettyPrintInv(e);
-    String s3 = prettyPrint(traversalSimplify(e));
+    String s3 = prettyPrint(simplify(e));
 
     System.out.println("prettyPrint: " + s1);
     System.out.println("prettyPrintInv: " + s2);
@@ -150,7 +150,7 @@ public class RecordWithSubtype {
     Exp e = buildExp2();
     String s1 = prettyPrint(e);
     String s2 = prettyPrintInv(e);
-    String s3 = prettyPrint(traversalSimplify(e));
+    String s3 = prettyPrint(simplify(e));
 
     System.out.println("prettyPrint: " + s1);
     System.out.println("prettyPrintInv: " + s2);
@@ -161,7 +161,7 @@ public class RecordWithSubtype {
     Exp e = buildExp3();
     String s1 = prettyPrint(e);
     String s2 = prettyPrintInv(e);
-    String s3 = prettyPrint(traversalSimplify(e));
+    String s3 = prettyPrint(simplify(e));
 
     System.out.println("prettyPrint: " + s1);
     System.out.println("prettyPrintInv: " + s2);
@@ -200,23 +200,7 @@ public class RecordWithSubtype {
     }
     return "error";
   }
-
-  public Exp traversalSimplify(Exp t) {
-    %match(t) {
-      x@UnaryOperator[first=e1] -> {
-        `x.first  = traversalSimplify(`e1);
-        return simplify(t);
-      }
-      
-      x@BinaryOperator[first=e1, second=e2] -> {
-        `x.first  = traversalSimplify(`e1);
-        `x.second  = traversalSimplify(`e2);
-        return simplify(t);
-      }
-    }
-    return t;
-  }
-
+  
   public Exp simplify(Exp t) {
     %match(t) {
       Plus[first=IntExp(v1), second=IntExp(v2)] -> {
@@ -240,6 +224,17 @@ public class RecordWithSubtype {
       
       Mult[first=e1, second=IntExp(1)] -> { return `e1; }
       Mult[second=e1, first=IntExp(1)] -> { return `e1; }
+      
+      x@UnaryOperator[first=e1] -> {
+        `x.first  = simplify(`e1);
+        return simplify(t);
+      }
+      
+      x@BinaryOperator[first=e1, second=e2] -> {
+        `x.first  = simplify(`e1);
+        `x.second  = simplify(`e2);
+        return simplify(t);
+      }
     }
     return t;
   }
