@@ -26,3 +26,5 @@ Require-Bundle: system.bundle,
  org.eclipse.ltk.ui.refactoring
 Eclipse-LazyStart: true
 Bundle-ManifestVersion: 2
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
