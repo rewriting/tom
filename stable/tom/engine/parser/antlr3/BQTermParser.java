@@ -1,4 +1,4 @@
-// $ANTLR 3.2 Sep 23, 2009 12:02:23 /home/jcb/workspace/gitexperiment/master/src/tom/engine/parser/antlr3/BQTerm.g 2012-07-25 16:12:32
+// $ANTLR 3.2 Sep 23, 2009 12:02:23 /home/jcb/workspace/gitexperiment/master/src/tom/engine/parser/antlr3/BQTerm.g 2012-07-27 16:11:25
 
 package tom.engine.parser.antlr3;
 
@@ -832,7 +832,7 @@ public class BQTermParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: csBQTermArgsComposite, BQIDPAR
+                    // elements: BQIDPAR, csBQTermArgsComposite
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -946,7 +946,7 @@ public class BQTermParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: BQIDBR, csPairSlotBQTerm
+                    // elements: csPairSlotBQTerm, BQIDBR
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -1371,7 +1371,7 @@ public class BQTermParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: csCompositePart, LPAR, RPAR, csBQTermArgs, csBQTermArgs
+                    // elements: csBQTermArgs, csBQTermArgs, csCompositePart, RPAR, LPAR
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
