@@ -96,7 +96,7 @@ public class TomMappingGenerator {
       for(String usedTypeName: usedTypes.keySet()){
         if (processed.contains(usedTypeName)) { continue; }
         processed.add(usedTypeName);
-        Class usedTypeClass = usedTypes.get(usedTypeName);
+        Class<?> usedTypeClass = usedTypes.get(usedTypeName);
         if (!declaredTypes.containsKey(usedTypeName) && !Collection.class.equals(usedTypeClass)){
           if (usedTypeClass.isPrimitive()){
             strBuilder.insert(0, "%include { " + usedTypeClass.getName() + ".tom }\n");
@@ -153,7 +153,7 @@ public class TomMappingGenerator {
   }
 
 
-  private void extractMapping(Class classObj, StringBuilder strBuilder, HashMap<String, Class<?>> usedTypes,
+  private void extractMapping(Class<?> classObj, StringBuilder strBuilder, HashMap<String, Class<?>> usedTypes,
       HashMap<String, Class<?>> declaredTypes) throws ClassNotFoundException, IOException {    
     strBuilder.append("\n/*******************************************************************************/\n");    
     // generate %typeterm
@@ -170,7 +170,7 @@ public class TomMappingGenerator {
     }
   }
 
-  private void generateTypeTerm(Class classFName, StringBuilder strBuilder, HashMap<String, Class<?>> declaredTypes){
+  private void generateTypeTerm(Class<?> classFName, StringBuilder strBuilder, HashMap<String, Class<?>> declaredTypes){
     String className = classFName.getName().substring(classFName.getName().lastIndexOf('.') + 1);
     // handle inner classes
     if (className.contains("$")) { className = className.substring(className.indexOf("$")+1); }
@@ -186,12 +186,12 @@ public class TomMappingGenerator {
 );
   }
 
-  private void generateOperator(Class classFName, StringBuilder strBuilder, HashMap<String, Class<?>> usedTypes){
+  private void generateOperator(Class<?> classFName, StringBuilder strBuilder, HashMap<String, Class<?>> usedTypes){
     String fullClassName = classFName.getName();
     String className = fullClassName.substring(fullClassName.lastIndexOf('.') + 1);
     Method[] methods = classFName.getMethods();    
     // find the class that is the highest in the hierarchy
-    Class superClass = null;    
+    Class<?> superClass = null;    
     while(classFName.getSuperclass() != null && !Object.class.equals(classFName.getSuperclass()) ) {      
       superClass = classFName.getSuperclass();
       classFName = superClass;

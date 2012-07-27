@@ -472,7 +472,7 @@ public class PathPropertyEditor {
 	
 	private String[] parseString(String stringList) {
 		StringTokenizer st = new StringTokenizer(stringList, File.pathSeparator + "\n\r");//$NON-NLS-1$
-		ArrayList v = new ArrayList();
+		ArrayList<Object> v = new ArrayList<Object>();
 		while (st.hasMoreElements()) {
 			v.add(st.nextElement());
 		}

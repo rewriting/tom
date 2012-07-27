@@ -1,14 +1,9 @@
 package fr.loria.eclipse.jtom.mappinggenerator;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FilterOutputStream;
-import java.io.IOException;
 import java.io.PrintStream;
 
-import org.apache.tools.ant.types.selectors.DepthSelector;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;

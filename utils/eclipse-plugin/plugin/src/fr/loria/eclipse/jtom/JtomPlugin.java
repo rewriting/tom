@@ -53,7 +53,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.osgi.framework.BundleContext;
 
-import fr.loria.eclipse.gom.editor.GomCodeScanner;
 import fr.loria.eclipse.gom.editor.GomPartitionScanner;
 import fr.loria.eclipse.gom.editor.util.GomColorManager;
 import fr.loria.eclipse.jtom.editor.TomEditorPartitionScanner;

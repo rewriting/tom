@@ -29,8 +29,6 @@ package fr.loria.eclipse.gom.editor;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.jdt.internal.ui.text.AbstractJavaScanner;
-import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.jdt.ui.text.IJavaColorConstants;
 import org.eclipse.jface.text.rules.BufferedRuleBasedScanner;
 import org.eclipse.jface.text.rules.IRule;
@@ -63,7 +61,7 @@ public class GomCodeScanner extends BufferedRuleBasedScanner {
 	public GomCodeScanner() {
 		//fast implementation
 		super(255);
-		List rules = createRules();
+		List<?> rules = createRules();
 		IRule[] result = new IRule[rules.size()];
 		rules.toArray(result);
 		setRules(result); 
@@ -105,8 +103,8 @@ public class GomCodeScanner extends BufferedRuleBasedScanner {
 
 	} // class GomWordDetector
 
-	protected List createRules() {
-		List rules = new ArrayList();
+	protected List<IRule> createRules() {
+		List<IRule> rules = new ArrayList<IRule>();
 
 		GomColorManager provider = JtomPlugin.getDefault()
 				.getGomColorManager();

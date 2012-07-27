@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-Name: %pluginName
 Bundle-SymbolicName: fr.loria.eclipse.tom;singleton:=true
-Bundle-Version: 2.7
+Bundle-Version: 2.10
 Bundle-ClassPath: tom-eclipse.jar,
  tom-ant.jar,
  lib/aircube-bundle.jar

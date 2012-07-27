@@ -63,8 +63,8 @@ public class TomTextHover implements ITextHover {
 	
 	private long timeStamp;
 	private String symbolTableFileName;
-	private HashMap mapOpToSignature;
-	private HashSet sortSet;
+	private HashMap<String, String> mapOpToSignature;
+	private HashSet<String> sortSet;
 	TomTextHoverType type;
 	
 	public TomTextHover(String fileName, TomTextHoverType type) {
@@ -76,8 +76,8 @@ public class TomTextHover implements ITextHover {
 	private void initializeKeyMap() {
 		InputStream inputStream = null;
 		
-		mapOpToSignature = new HashMap();
-		sortSet = new HashSet();
+		mapOpToSignature = new HashMap<String, String>();
+		sortSet = new HashSet<String>();
 		if(symbolTableFileName!= null) {
 			try {
 				inputStream = new FileInputStream(symbolTableFileName);
@@ -138,7 +138,7 @@ public class TomTextHover implements ITextHover {
 			res += "Array of "+symbol.getTypesToType().getDomain().getHeadconcTomType().getString()+": "+symbol.getTypesToType().getCodomain().getString();
 		} else {
 			res += symbolName+"(";
-			ArrayList slotAList = new ArrayList();
+			ArrayList<String> slotAList = new ArrayList<String>();
 			PairNameDeclList slotList = symbol.getPairNameDeclList();
 			TomName name;
 			while(!slotList.isEmptyconcPairNameDecl()) {

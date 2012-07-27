@@ -61,13 +61,13 @@ public class TomColorManager implements IColorManager{
 	public static final RGB JAVADOC_LINK_COLOR= new RGB(128, 128, 128);
 	public static final RGB JAVADOC_DEFAULT_COLOR= new RGB(0, 128, 128);
 
-	protected Map fColorTable= new HashMap(20);
+	protected Map<RGB, Color> fColorTable= new HashMap<RGB, Color>(20);
 
 	/**
 	 * Release all of the color resources held onto by the receiver.
 	 */	
 	public void dispose() {
-		Iterator e= fColorTable.values().iterator();
+		Iterator<Color> e= fColorTable.values().iterator();
 		while (e.hasNext())
 			 ((Color) e.next()).dispose();
 	}

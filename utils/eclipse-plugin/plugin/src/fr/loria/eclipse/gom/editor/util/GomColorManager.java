@@ -47,7 +47,7 @@ public class GomColorManager extends TomColorManager  {
 	public final static String DEFAULT_ATTRIBUTE = "__default";
 	public static final String GOM_TYPE_ATTRIBUTE = "gom_type_attrubute";
 
-	private Map fAttributes = new HashMap();
+	private Map<String, TextAttribute> fAttributes = new HashMap<String, TextAttribute>();
 
 	public GomColorManager() {
 

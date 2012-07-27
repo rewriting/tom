@@ -112,7 +112,7 @@ public class TomTemplateCompletionProcessor extends TemplateCompletionProcessor 
 
 		Template[] templates = getTemplates(context.getContextType().getId());
 
-		List matches = new ArrayList();
+		List<ICompletionProposal> matches = new ArrayList<ICompletionProposal>();
 		for (int i = 0; i < templates.length; i++) {
 			Template template = templates[i];
 			try {
