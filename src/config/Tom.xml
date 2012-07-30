@@ -61,6 +61,8 @@
     <plugin name="AST Printer"
       class="tom.engine.newparser.converter.TreePrinterPlugin"/>
       -->
+    <plugin name="Code transformer"
+      class="tom.engine.transformer.TransformerPlugin"/>
     <plugin name="Syntax checker"
       class="tom.engine.checker.SyntaxCheckerApPlugin"/>
     <plugin name="Desugarer"

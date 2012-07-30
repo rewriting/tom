@@ -141,6 +141,14 @@ options{
         return tomlexer.getLine();
     }
 
+    private int getColumn() {
+        return tomlexer.getColumn();
+    }
+
+    public void updatePosition(){
+      updatePosition(getLine(),getColumn());
+    }
+
     public void updatePosition(int i, int j) {
         targetparser.updatePosition(i,j);
     }
@@ -632,10 +640,10 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
               if(colon != null) {
                 stringSlotName = firstSlot1.getText();
                 stringTypeArg = secondSlot1.getText();
-                } else {
+              } else {
                 stringSlotName = secondSlot1.getText();
                 stringTypeArg = firstSlot1.getText();
-                }
+              }
                 TomName astName = `Name(stringSlotName);
                 slotNameList.add(astName);
 
@@ -726,8 +734,8 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
           putSymbol(name.getText(),astSymbol);
           // update for new target block...
           updatePosition(t.getLine(),t.getColumn());
-
-          result = `AbstractDecl(concDeclaration(Strategy(Name(name.getText()), extendsBQTerm, astVisitList,orgTrack),SymbolDecl(Name(name.getText()))));
+//TODO: hook
+          result = `AbstractDecl(concDeclaration(Strategy(Name(name.getText()),extendsBQTerm,astVisitList,concDeclaration(),orgTrack),SymbolDecl(Name(name.getText()))));
 
           // %strat finished: go back in target parser.
             selector().pop();
@@ -758,6 +766,305 @@ strategyVisit [List<TomVisit> list] throws TomException
     list.add(`VisitTerm(vType,ASTFactory.makeConstraintInstructionList(constraintInstructionList),options));
   }
 ;
+
+
+//////////////////////////////////////////////////////////////////
+
+// The %transformation construct: looks like the %strategy
+transformationConstruct [Option orgTrack] returns [Declaration result] throws TomException
+{
+  result = null;
+ 
+  List<Option> optionList = new LinkedList<Option>();
+  Option ot = `noOption();
+
+  List<ElementaryTransformation> elemTransfoList = new LinkedList<ElementaryTransformation>();
+  ElementaryTransformationList astElemTransfoList = `concElementaryTransformation();
+
+  //%transformation args
+  List<TomName> slotNameList = new LinkedList<TomName>();
+  List<PairNameDecl> pairNameDeclList = new LinkedList<PairNameDecl>();
+  TomTypeList types = `concTomType();
+  String stringSlotName = null;
+  String stringTypeArg = null;
+
+  clearText();
+}
+    :(
+        name:ALL_ID
+        {
+        ot = `OriginTracking(Name(name.getText()),name.getLine(),currentFile());
+        optionList.add(ot);
+        if(symbolTable.getSymbolFromName(name.getText()) != null) {
+          throw new TomException(TomMessage.invalidTransformationName, new Object[]{name.getText()});
+        }
+        }
+        (
+         LPAREN (firstSlot1:ALL_ID (colon:COLON)? secondSlot1:ALL_ID
+           {
+           if(colon != null) {
+             stringSlotName = firstSlot1.getText();
+             stringTypeArg = secondSlot1.getText();
+           } else {
+             stringSlotName = secondSlot1.getText();
+             stringTypeArg = firstSlot1.getText();
+           }
+           TomName astName = `Name(stringSlotName);
+           slotNameList.add(astName);
+
+           TomType transformationType = `Type(concTypeOption(),"Strategy",EmptyTargetLanguageType());
+           //TODO: ok?
+           Option slotOption = `OriginTracking(Name(stringSlotName),firstSlot1.getLine(),currentFile());
+           String varname = "t";
+           BQTerm slotVar = `BQVariable(concOption(slotOption),Name(varname),transformationType);
+           String code = ASTFactory.abstractCode("((" + name.getText() + ")$"+varname+").get" + stringSlotName + "()",varname);
+           Declaration slotDecl = `GetSlotDecl(Name(name.getText()),Name(stringSlotName),slotVar, Code(code), slotOption);
+
+           pairNameDeclList.add(`PairNameDecl(astName,slotDecl));
+           types = `concTomType(types*,Type(concTypeOption(),stringTypeArg,EmptyTargetLanguageType()));
+           }
+           (
+            COMMA
+            firstSlot2:ALL_ID (colon2:COLON)? secondSlot2:ALL_ID
+            {
+            if(colon != null) {
+            stringSlotName = firstSlot2.getText();
+            stringTypeArg = secondSlot2.getText();
+            } else {
+            stringSlotName = secondSlot2.getText();
+            stringTypeArg = firstSlot2.getText();
+            }
+            TomName astName = ASTFactory.makeName(stringSlotName);
+            if(slotNameList.indexOf(astName) != -1) {
+            TomMessage.error(getLogger(),currentFile(), getLine(),
+              TomMessage.repeatedSlotName,
+              stringSlotName);
+            }
+            slotNameList.add(astName);
+
+            TomType transformationType = `Type(concTypeOption(),"Strategy",EmptyTargetLanguageType());
+            Option slotOption = `OriginTracking(Name(stringSlotName),firstSlot2.getLine(),currentFile());
+            String varname = "t";
+            BQTerm slotVar = `BQVariable(concOption(slotOption),Name(varname),transformationType);
+            String code = ASTFactory.abstractCode("((" + name.getText() + ")$"+varname+").get" + stringSlotName + "()",varname);
+            Declaration slotDecl = `GetSlotDecl(Name(name.getText()),Name(stringSlotName),slotVar, Code(code), slotOption);
+            pairNameDeclList.add(`PairNameDecl(Name(stringSlotName),slotDecl));
+            types = `concTomType(types*,Type(concTypeOption(),stringTypeArg,EmptyTargetLanguageType()));
+            }
+           )*
+         )? RPAREN
+         WITH LPAREN src:ALL_ID RPAREN TO LPAREN dst:ALL_ID RPAREN
+        )
+        LBRACE
+        elementaryTransformationList[elemTransfoList, name.getText()]
+        {
+          astElemTransfoList = ASTFactory.makeElementaryTransformationList(elemTransfoList);
+        }
+        t:RBRACE
+       {
+         updatePosition(t.getLine(),t.getColumn());//
+         //let's define the SymbolDecl and TomSymbol
+         //it should be quite similar to strategyConstruct
+         //MakeDecl
+         //begin: this block should change. TransformerPlugin modifies
+         //MakeDecl, parameters will have to be considered
+         //TODO: change this ->_makeTlCode = "_to_replace_";
+				 BQTermList makeArgs = `concBQTerm();
+         int index = 0;
+         TomTypeList makeTypes = types;
+				 String makeTlCode = "new " + name.getText() + "(";
+				 //String makeTlCode = "(";
+         while(!makeTypes.isEmptyconcTomType()) {
+					 String argName = "t"+index;
+           if (index>0) {
+             makeTlCode = makeTlCode.concat(",");
+           }
+					 makeTlCode += argName;
+           BQTerm arg = `BQVariable(concOption(),Name(argName),makeTypes.getHeadconcTomType());
+           makeArgs = `concBQTerm(makeArgs*,arg);
+					 makeTypes = makeTypes.getTailconcTomType();
+           index++;
+         }
+				 makeTlCode += ")";
+         //end
+
+         TomType transformationType = `Type(concTypeOption(),"Strategy",EmptyTargetLanguageType());
+				 Option makeOption = `OriginTracking(Name(name.getText()),t.getLine(),currentFile());
+				 Declaration makeDecl = `MakeDecl(Name(name.getText()), transformationType, makeArgs, CodeToInstruction(TargetLanguageToCode(ITL(makeTlCode))), makeOption);
+         optionList.add(`DeclarationToOption(makeDecl));
+
+          //IsFsymDecl
+          Option fsymOption = `OriginTracking(Name(name.getText()),t.getLine(),currentFile());
+          String varname = "t";
+          BQTerm fsymVar = `BQVariable(concOption(fsymOption),Name(varname),transformationType);
+          String code = ASTFactory.abstractCode("($"+varname+" instanceof " + name.getText() + ")",varname);
+          Declaration fsymDecl = `IsFsymDecl(Name(name.getText()),fsymVar,Code(code),fsymOption);
+          optionList.add(`DeclarationToOption(fsymDecl));
+
+          TomSymbol astSymbol = ASTFactory.makeSymbol(name.getText(),
+              transformationType, types,
+              ASTFactory.makePairNameDeclList(pairNameDeclList), optionList);
+          putSymbol(name.getText(),astSymbol);
+
+         updatePosition(t.getLine(),t.getColumn());
+         String fileFrom = src.getText();
+         String fileTo = dst.getText();
+         //Transformation construct
+         result = `AbstractDecl(concDeclaration(Transformation(Name(name.getText()),types,astElemTransfoList,fileFrom,fileTo,orgTrack),SymbolDecl(Name(name.getText()))));
+         selector().pop();
+       }
+     )
+    ;
+
+
+elementaryTransformationList [List<ElementaryTransformation> elemTransfoList, String transfoName] throws TomException
+    : ( elementaryTransformation[elemTransfoList, transfoName] )*
+    ;
+
+
+elementaryTransformation [List<ElementaryTransformation> elemTransfoList, String transfoName] throws TomException
+{
+    BQTerm traversal = null;
+    String strName = "";
+    Option orgTrack = `noOption();
+    TransfoStratInfo info = null;
+    List<RuleInstruction> ruleInstructionList = new LinkedList<RuleInstruction>();
+    clearText();
+}
+    : 
+    ( ELEMENTARY name:ALL_ID TRAVERSAL (BACKQUOTE)? traversal = plainBQTerm )
+    {
+      if(name!=null) {
+        strName = name.getText();
+        orgTrack = `OriginTracking(Name(strName),name.getLine(),currentFile());
+      } else {
+        TomMessage.error(getLogger(),currentFile(), getLine(),
+            TomMessage.unamedTransformationRule, transfoName);
+      }
+      info = `TransfoStratInfo(strName,traversal,orgTrack);
+    }
+    LBRACE
+      ( elementaryTransformationRule[info, ruleInstructionList, transfoName] )*
+    RBRACE
+    {
+      List<Option> optionList = new LinkedList<Option>();
+      optionList.add(orgTrack);
+      OptionList options = ASTFactory.makeOptionList(optionList);
+      elemTransfoList.add(`ElementaryTransformation(Name(strName), traversal,
+            ASTFactory.makeRuleInstructionList(ruleInstructionList),
+            options));
+    }
+    ;
+
+
+elementaryTransformationRule [TransfoStratInfo info, List<RuleInstruction> ruleInstructionList, String transfoName] throws TomException
+{
+  List<Code> blockList = new LinkedList<Code>();
+  BQTerm rhsTerm;
+  clearText();
+  TomTerm lhs;
+  
+  TomName tomTermName = `EmptyName();
+  int lhsLine = 0;
+  
+  List<Option> optionList = new LinkedList<Option>();
+}
+    :
+    (
+     lhs = annotatedTerm[true] ARROW
+     (
+      (
+       t:LBRACE
+       {
+       // update for new target block
+       updatePosition(t.getLine(),t.getColumn());
+       // actions in target language : call the target lexer and
+       // call the target parser
+       selector().push("targetlexer");
+       TargetLanguage tlCode = targetparser.targetLanguage(blockList);
+       // target parser finished : pop the target lexer
+       selector().pop();
+       blockList.add(`TargetLanguageToCode(tlCode));
+       }
+      )
+      | rhsTerm = plainBQTerm
+      {
+      blockList.add(`InstructionToCode(Return(rhsTerm)));
+      }
+     )
+    )
+    {
+    %match(lhs) {
+      Variable(concOption(_*,OriginTracking[Line=line],_*),n,_,_) -> {
+        tomTermName = `n;
+        lhsLine = `line;
+      }
+      (RecordAppl|TermAppl)[Options=concOption(_*,OriginTracking[Line=line],_*),NameList=concTomName(n,_*)] -> {
+        tomTermName = `n;
+        lhsLine = `line;
+      }
+    }
+    optionList.add(`OriginTracking(tomTermName,lhsLine,currentFile()));
+    OptionList options = ASTFactory.makeOptionList(optionList);
+    
+    ruleInstructionList.add(`RuleInstruction(tomTermName.getString(),lhs,ASTFactory.makeInstructionList(blockList),options));
+    }
+    ;
+
+tracelinkConstruct [Option orgTrack] returns [Instruction result] throws TomException
+{
+  result=null;
+  BQTerm bqterm = null;
+  TomName elemTransfoName = `EmptyName();//will probably disappear
+}
+    : 
+     t1:LPAREN t:ALL_ID COMMA n:ALL_ID COMMA (BACKQUOTE)? bqterm = plainBQTerm t2:RPAREN
+     {
+       TomName type=`Name(t.getText());
+       TomName name=`Name(n.getText());
+       Expression expression = `BQTermToExpression(bqterm);
+       result = `Tracelink(type,name,elemTransfoName,expression,orgTrack);
+       updatePosition(t2.getLine(),t2.getColumn());
+       selector().pop();
+     }
+    ;
+
+
+resolveConstruct [Option orgTrack] returns [Instruction result] throws TomException
+{
+  result=null;
+}
+    :
+     t1:LPAREN s:ALL_ID COLON stype:ALL_ID COMMA t:ALL_ID COLON ttype:ALL_ID t2:RPAREN
+     {
+       TomName source = `Name(s.getText());
+       TomName sourceType = `Name(stype.getText());
+       TomName target = `Name(t.getText());
+       TomName targetType = `Name(ttype.getText());
+
+       String resolveName = tom.engine.transformer.TransformerPlugin.RESOLVE_ELEMENT_PREFIX+stype.getText()+ttype.getText();
+       BQTerm resolveBQTerm = `Composite(CompositeBQTerm(BQAppl(
+               concOption(OriginTracking(Name(resolveName),orgTrack.getLine(),orgTrack.getFileName()),ModuleName("default")),
+               Name(resolveName),
+               concBQTerm(
+                 Composite(CompositeBQTerm(
+                     BQVariable(
+                       concOption(OriginTracking(source,orgTrack.getLine(),orgTrack.getFileName()),ModuleName("default")),
+                       source, 
+                       tom.engine.tools.SymbolTable.TYPE_UNKNOWN
+                       )
+                     )),
+                 Composite(CompositeTL(ITL("\""+t.getText()+"\"")))
+                 )
+               )));
+       result = `Resolve(resolveBQTerm,s.getText(),stype.getText(),t.getText(),ttype.getText(),orgTrack);
+
+       updatePosition(t2.getLine(),t2.getColumn());
+       selector().pop();
+     }
+    ;
+
+////////////////////////////////////////////////////////////////
 
 // terms for %match
 annotatedTerm [boolean allowImplicit] returns [TomTerm result] throws TomException
@@ -959,7 +1266,7 @@ xmlTerm [List<Option> optionList, List<Constraint> constraintList] returns [TomT
   TomTerm arg1, arg2;
   List<Slot> pairSlotList = new LinkedList<Slot>();
   List attributeList = new LinkedList();
-  List childs = new LinkedList();
+  List children = new LinkedList();
   String keyword = null;
   boolean implicit;
   TomNameList nameList, closingNameList;
@@ -968,7 +1275,7 @@ xmlTerm [List<Option> optionList, List<Constraint> constraintList] returns [TomT
 }
     :
         (
-            // < NODE attributes [ /> | > childs </NODE> ]
+            // < NODE attributes [ /> | > children </NODE> ]
             XML_START {text.append("<");}
             nameList = xmlNameList[optionList, true]
             implicit = xmlAttributeList[attributeList]
@@ -981,10 +1288,10 @@ xmlTerm [List<Option> optionList, List<Constraint> constraintList] returns [TomT
                     text.append("\\>");
                     option =  ASTFactory.makeOptionList(optionList);
                 }
-            |   // case: > childs  </NODE>
+            |   // case: > children  </NODE>
                 XML_CLOSE  {text.append(">");}
 
-                implicit = xmlChilds[childs]
+                implicit = xmlChildren[children]
 
                 XML_START_ENDING {text.append("</"); }
                 closingNameList = xmlNameList[optionList, false]
@@ -1008,13 +1315,13 @@ xmlTerm [List<Option> optionList, List<Constraint> constraintList] returns [TomT
                     }
                     if(implicit) {
                       //System.out.println("implicit");
-                      //System.out.println("childs = " + childs);
+                      //System.out.println("children = " + children);
                       optionList.add(`ImplicitXMLChild());
                     } else {
                       //System.out.println("explicit");
-                      //System.out.println("childs1 = " + childs);
-                      childs = ASTFactory.metaEncodeExplicitTermList(symbolTable, childs);
-                      //System.out.println("childs2 = " + childs);
+                      //System.out.println("children1 = " + children);
+                      children = ASTFactory.metaEncodeExplicitTermList(symbolTable, children);
+                      //System.out.println("children2 = " + children);
                     }
                     option = ASTFactory.makeOptionList(optionList);
                 }
@@ -1024,7 +1331,7 @@ xmlTerm [List<Option> optionList, List<Constraint> constraintList] returns [TomT
                     option,
                     nameList,
                     ASTFactory.makeTomList((List<TomTerm>)attributeList),
-                    ASTFactory.makeTomList((List<TomTerm>)childs),
+                    ASTFactory.makeTomList((List<TomTerm>)children),
                     ASTFactory.makeConstraintList(constraintList));
             }
 
@@ -1334,7 +1641,7 @@ unamedVariableOrTermStringIdentifier [List<Option> options, List<Constraint> con
     ;
 
 // returns true is implicit notation
-xmlChilds [List<TomTerm> list] returns [boolean result] throws TomException
+xmlChildren [List<TomTerm> list] returns [boolean result] throws TomException
 {
   result = false;
   TomTerm term;
@@ -1786,11 +2093,20 @@ operator returns [Declaration result] throws TomException
             }
         |   attribute = keywordIsFsym[astName,type.getText()]
             { options.add(`DeclarationToOption(attribute)); }
+        |   attribute = keywordOpImplement[astName,type.getText()]
+            { options.add(`DeclarationToOption(attribute)); }
         )*
         t:RBRACE
 	)
         {
           TomSymbol astSymbol = ASTFactory.makeSymbol(name.getText(), `Type(concTypeOption(),type.getText(),EmptyTargetLanguageType()), types, ASTFactory.makePairNameDeclList(pairNameDeclList), options);
+          //case of %op_implement: replace goal language code by more precise
+          //type?
+          /*TomType testType = getType(name.getText());
+          if(testType!=null) {
+            putType(name.getText(),testType.setTlType(`TLType(attribute.getExpr().getCode())));
+          }*/
+          //
           putSymbol(name.getText(),astSymbol);
           result = `SymbolDecl(astName);
           updatePosition(t.getLine(),t.getColumn());
@@ -2219,6 +2535,29 @@ keywordGetDefault [TomName astName, String type] returns [Declaration result] th
         )
     ;
 
+keywordOpImplement [TomName astName, String type] returns [Declaration result] throws TomException
+{
+    result = null;
+    Option ot = null;
+}
+    :
+      (
+        t:IMPLEMENT (LPAREN RPAREN)*
+        { ot = `OriginTracking(Name(t.getText()),t.getLine(),currentFile()); }
+        l:LBRACE
+        {
+          updatePosition(t.getLine(),t.getColumn());
+          selector().push("targetlexer");
+          List<Code> blockList = new LinkedList<Code>();
+          TargetLanguage tlCode = targetparser.targetLanguage(blockList);
+          selector().pop();
+          blockList.add(`TargetLanguageToCode(tlCode));
+          String code = tlCode.getCode();
+          result = `ImplementDecl(astName,Code(code),ot);
+        }
+      )
+    ;
+
 keywordMake[String opname, TomType returnType, TomTypeList types] returns [Declaration result] throws TomException
 {
     result = null;
@@ -2446,7 +2785,14 @@ tokens {
     IMPLEMENT = "implement";
     GET_ELEMENT = "get_element";
     GET_SIZE = "get_size";
-    //WHEN = "when";
+    //to clean
+    WITH = "with";
+    TO = "to";
+    //REFERENCE = "reference";
+    TRAVERSAL = "traversal";
+    ELEMENTARY = "definition";//"rule";
+    SRC = "src";
+    DST = "dst";
 }
 
 LBRACE      :   '{' ;
@@ -2457,6 +2803,7 @@ LBRACKET    :   '[' ;
 RBRACKET    :   ']' ;
 COMMA       :   ',' ;
 ARROW       :   "->";
+RARROW      :   "<-";
 DOULEARROW  :   "=>";
 ALTERNATIVE :   '|' ;
 AFFECT      :   ":=";
@@ -2469,6 +2816,7 @@ QMARK       :   '?' ;
 QQMARK      :   "??" ;
 UNDERSCORE  :   {!Character.isJavaIdentifierPart(LA(2))}? '_' ;
 BACKQUOTE   :   "`" ;
+POUNDSIGN   :   "##" ;
 
 //XML Tokens
 
@@ -2485,6 +2833,7 @@ XML_CLOSE_SINGLETON : "/>" ;
 WS  : ( ' '
     | '\t'
     | '\f'
+    | '\u00a0' //non breaking space:
     // handle newlines
     | ( "\r\n"  // Evil DOS
       | '\r'    // Macintosh

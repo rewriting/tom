@@ -47,6 +47,7 @@ BQTerm = BQAppl(Options:OptionList,AstName:TomName,Args:BQTermList)
        | BQVariableStar(Options:OptionList,AstName:TomName,AstType:TomType)
        | BQDefault()
        | Composite(CompositeMember*)
+       | ReferencerBQTerm(Options:OptionList,AstName:TomName,Type:String,Term:BQTerm)//? AstType:TomType
       /**
        * <code>FunctionCall</code> generates a function call
        *

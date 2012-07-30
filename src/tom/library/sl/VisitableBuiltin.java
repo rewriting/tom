@@ -54,8 +54,8 @@ public class VisitableBuiltin<T> implements Visitable {
     throw new IndexOutOfBoundsException();
   }
 
-  public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] childs) {
-    if(childs.length==0) {
+  public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {
+    if(children.length==0) {
       return this;
     } else {
       throw new IndexOutOfBoundsException();

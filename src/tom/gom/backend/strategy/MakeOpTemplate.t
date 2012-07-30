@@ -154,12 +154,12 @@ public class @className()@ implements tom.library.sl.Strategy {
 
   @@SuppressWarnings("unchecked")
   public <T> T visitLight(T any, tom.library.sl.Introspector i) throws tom.library.sl.VisitFailure {
-@computeNewChilds(slotList,"any","i")@
+@computeNewChildren(slotList,"any","i")@
     return (T) @fullClassName(operator)@.make(@genMakeArguments(slotList,false)@);
   }
 
   public int visit(tom.library.sl.Introspector i) {
-@computeSLNewChilds(slotList,"i")@
+@computeSLNewChildren(slotList,"i")@
     getEnvironment().setSubject(@fullClassName(operator)@.make(@genMakeArguments(slotList,false)@));
     return tom.library.sl.Environment.SUCCESS;
   }
@@ -359,13 +359,13 @@ private String genStratArgs(String prefix,SlotFieldList slots,String arg) {
   /**
    * Generate code to initialize all members of the strategy
    */
-  private String computeNewChilds(SlotFieldList slots, String argName, String introspectorName) {
+  private String computeNewChildren(SlotFieldList slots, String argName, String introspectorName) {
     String res = "";
     %match(slots) {
       ConcSlotField(_*,SlotField[Name=fieldName,Domain=domain],_*) -> {
         if (!getGomEnvironment().isBuiltinClass(`domain)) {
           res += %[
-    Object tmp@fieldName(`fieldName)@ = @fieldName(`fieldName)@.visit(@argName@,@introspectorName@);
+    Object tmp@fieldName(`fieldName)@ = @fieldName(`fieldName)@.visitLight(@argName@,@introspectorName@);
     if (! (tmp@fieldName(`fieldName)@ instanceof @fullClassName(`domain)@)) {
       throw new tom.library.sl.VisitFailure();
     }
@@ -380,7 +380,7 @@ private String genStratArgs(String prefix,SlotFieldList slots,String arg) {
   /**
    * Generate code to initialize all members of the strategy with the sl scheme
    */
-  private String computeSLNewChilds(SlotFieldList slots, String introspectorName) {
+  private String computeSLNewChildren(SlotFieldList slots, String introspectorName) {
     String res = "";
     %match(slots) {
       ConcSlotField(_*,SlotField[Name=fieldName,Domain=domain],_*) -> {
@@ -399,7 +399,7 @@ private String genStratArgs(String prefix,SlotFieldList slots,String arg) {
   }
 
   /**
-    * Generate the computation of all new childs for the target
+    * Generate the computation of all new children for the target
     */
   private String generateMembersInit() {
     String res = "";
@@ -427,7 +427,7 @@ private String genStratArgs(String prefix,SlotFieldList slots,String arg) {
 
   /**
     * Generate the argument list for the operator construction, using the
-    * values computed by computeNewChilds
+    * values computed by computeNewChildren
     */
   private String genMakeArguments(SlotFieldList slots, boolean withDollar) {
     StringBuilder res = new StringBuilder();

@@ -5,12 +5,21 @@ imports TomName TomType TomConstraint TomInstruction TomExpression
 abstract syntax
 TextPosition = TextPosition(Line:int,Column:int)
 TomVisit = VisitTerm(VNode:TomType,AstConstraintInstructionList:ConstraintInstructionList,Options:OptionList)
+
+ResolveStratElement = ResolveStratElement(WithName:String, ResolveOrgTrack:Option)
+ResolveStratElementList = concResolveStratElement(ResolveStratElement*)
+ResolveStratBlock = ResolveStratBlock(ToName:String, resolveStratElementList:ResolveStratElementList)
+ResolveStratBlockList = concResolveStratBlock(ResolveStratBlock*)
+ElementaryTransformation = ElementaryTransformation(ETName:TomName,Traversal:BQTerm,AstRuleInstructionList:RuleInstructionList,Options:OptionList)
+ElementaryTransformationList = concElementaryTransformation(ElementaryTransformation*)
+
 TomSymbol = EmptySymbol()
           | Symbol(AstName:TomName, TypesToType:TomType, PairNameDeclList:PairNameDeclList, Options:OptionList)
 TomSymbolTable = Table(EntryList:TomEntryList)
 TomEntry = Entry(StrName:String,AstSymbol:TomSymbol)
 TomStructureTable = StructTable(StructList:TomList)
 TomVisitList = concTomVisit(TomVisit*)
+//TomWithToList = concTomWithTo(TomWithTo*)
 TomEntryList = concTomEntry(TomEntry*)
 TomSymbolList = concTomSymbol(TomSymbol*)
 
@@ -18,3 +27,6 @@ KeyEntry = UsedSymbolConstructor(Symbol:TomSymbol)
          | UsedSymbolDestructor(Symbol:TomSymbol)
          | UsedSymbolAC(Symbol:TomSymbol)
          | UsedType(Typedef:TomType)
+
+//TODO: find better names
+TransfoStratInfo = TransfoStratInfo(Name:String,TraversalStrategy:BQTerm,OrgTrack:Option)

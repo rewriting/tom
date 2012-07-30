@@ -88,8 +88,10 @@ public class CompilerPlugin extends GomGenericPlugin {
       java.io.StringWriter swriter = new java.io.StringWriter();
       try { tom.library.utils.Viewer.toTree(classList,swriter); }
       catch(java.io.IOException e) { e.printStackTrace(); }
-        GomMessage.fine(getLogger(), null, 0, GomMessage.compiledModules, swriter);
-        GomMessage.info(getLogger(), null, 0, GomMessage.gomCompilationPhase, 
+        GomMessage.fine(getLogger(), getStreamManager().getInputFileName(), 0,
+            GomMessage.compiledModules, swriter);
+        GomMessage.info(getLogger(), getStreamManager().getInputFileName(), 0,
+            GomMessage.gomCompilationPhase,
             (System.currentTimeMillis()-startChrono));
       if (intermediate) {
         Tools.generateOutput(getStreamManager().getOutputFileName()

@@ -94,10 +94,11 @@ public class FreshExpanderPlugin extends GomGenericPlugin {
         java.io.StringWriter swriter = new java.io.StringWriter();
         try { tom.library.utils.Viewer.toTree(result,swriter); }
         catch(java.io.IOException e) { e.printStackTrace(); }
-        GomMessage.fine(getLogger(), null, 0, GomMessage.freshExpandedModules,
-            swriter);
-        GomMessage.info(getLogger(), null, 0, 
-            GomMessage.gomFreshGomExpansionPhase, (System.currentTimeMillis()-startChrono));
+        GomMessage.fine(getLogger(), getStreamManager().getInputFileName(), 0,
+            GomMessage.freshExpandedModules, swriter);
+        GomMessage.info(getLogger(), getStreamManager().getInputFileName(), 0,
+            GomMessage.gomFreshGomExpansionPhase,
+            (System.currentTimeMillis()-startChrono));
         if(intermediate) {
           Tools.generateOutput(getStreamManager().getOutputFileName()
               + EXPANDED_SUFFIX, (aterm.ATerm)modules.toATerm());

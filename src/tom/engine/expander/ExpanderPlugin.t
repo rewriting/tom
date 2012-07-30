@@ -128,19 +128,21 @@ public class ExpanderPlugin extends TomGenericPlugin {
     long startChrono = System.currentTimeMillis();
     boolean intermediate = getOptionBooleanValue("intermediate");    
     setGenIntrospector(getOptionBooleanValue("genIntrospector"));
-    //System.out.println("(debug) I'm in the Tom expander : TSM"+getStreamManager().toString());
     try {
       //reinit the variable for intropsector generation
       setGeneratedIntrospector(false);
       Code expandedTerm = (Code) this.expand((Code)getWorkingTerm());
       // verbose
-      TomMessage.info(logger,null,0,TomMessage.tomExpandingPhase, Integer.valueOf((int)(System.currentTimeMillis()-startChrono)) );
+      TomMessage.info(logger, getStreamManager().getInputFileName(), 0,
+          TomMessage.tomExpandingPhase,
+          Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
       setWorkingTerm(expandedTerm);
       if(intermediate) {
-        Tools.generateOutput(getStreamManager().getOutputFileName() + EXPANDED_SUFFIX, (Code)getWorkingTerm());
+        Tools.generateOutput(getStreamManager().getOutputFileName()+EXPANDED_SUFFIX, (Code)getWorkingTerm());
       }
     } catch(Exception e) {
-      TomMessage.error(logger,getStreamManager().getInputFileName(),0,TomMessage.exceptionMessage, e.getMessage());
+      TomMessage.error(logger, getStreamManager().getInputFileName(), 0,
+          TomMessage.exceptionMessage, e.getMessage());
       e.printStackTrace();
     }
   }
@@ -169,7 +171,7 @@ public class ExpanderPlugin extends TomGenericPlugin {
      * compilation of  %strategy
      */
     visit Declaration {
-      Strategy(name,extendsTerm,visitList,orgTrack) -> {
+      Strategy(name,extendsTerm,visitList,hooks,orgTrack) -> {
         //Generate only one Introspector for a class if at least one  %strategy is found
         Declaration introspectorClass = `EmptyDeclaration();
         if(expander.getGenIntrospector() && !expander.getGeneratedIntrospector()) {
@@ -508,6 +510,8 @@ public class ExpanderPlugin extends TomGenericPlugin {
             visitfailureType,
             AbstractBlock(ifList));
         l = `concDeclaration(visitLightDeclaration,l*);
+        //TODO: hooks
+        l= `concDeclaration(hooks,l*);
         return (Declaration) expander.expand(`AbstractDecl(concDeclaration(introspectorClass,Class(name,basicStratType,extendsTerm,AbstractDecl(l)))));
       }        
     }//end visit Declaration

@@ -136,13 +136,13 @@ public class BackendPlugin extends TomGenericPlugin {
 
           generator.generate(defaultDeep, pilCode,TomBase.DEFAULT_MODULE_NAME);
           // verbose
-          TomMessage.info(getLogger(),null,0,TomMessage.tomGenerationPhase,
+          TomMessage.info(getLogger(), getStreamManager().getInputFileName(),
+              0, TomMessage.tomGenerationPhase,
               Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
           output.close();
         } catch (IOException e) {
-          TomMessage.error(getLogger(),
-              getStreamManager().getInputFileName(), 0,
-              TomMessage.backendIOException, e.getMessage());
+          TomMessage.error(getLogger(), getStreamManager().getInputFileName(),
+              0, TomMessage.backendIOException, e.getMessage());
           return;
         } catch (Exception e) {
           String fileName = getStreamManager().getInputFileName();
@@ -415,6 +415,15 @@ public class BackendPlugin extends TomGenericPlugin {
         }
       }
 
+/*      ImplementDecl[AstName=Name(opname),Expr=Code(code)] ->{
+        try {
+          String moduleName = stack.peek();
+          bp.getSymbolTable(moduleName).putIsFsym(`opname,`code);
+        } catch (EmptyStackException e) {
+          System.out.println("No moduleName in stack");
+        }
+      }*/
+
       IsSortDecl[TermArg=BQVariable[AstType=Type[TomType=type]],Expr=Code(code)] -> {
         try {
           String moduleName = stack.peek();
@@ -545,7 +554,18 @@ public class BackendPlugin extends TomGenericPlugin {
         try {
           String moduleName = stack.peek();
           TomSymbol tomSymbol = TomBase.getSymbolFromName(`opname,bp.getSymbolTable(moduleName));
-          markStrategy.visitLight(tomSymbol);
+        } catch (EmptyStackException e) {
+          System.out.println("No moduleName in stack");
+        }
+      }
+
+      /**
+        * Resolve declarations
+        */
+      ResolveGetSlotDecl[AstName=Name(opname),SlotName=Name(slotName)] -> {
+        try {
+          String moduleName = stack.peek();
+          bp.getSymbolTable(moduleName).putResolveGetSlot(`opname,`slotName);
         } catch (EmptyStackException e) {
           System.out.println("No moduleName in stack");
         }

@@ -119,31 +119,34 @@ public class OptimizerPlugin extends TomGenericPlugin {
        Code renamedTerm = (Code)getWorkingTerm();
         if(getOptionBooleanValue("optimize2")) {
           Strategy optStrategy2 = `Sequence(
-              InnermostId(ChoiceId(NormExpr(this),NopElimAndFlatten())),
+              InnermostId(ChoiceId(NormExpr(this),NopElimAndFlatten(this))),
               InnermostId(ChoiceId(
                   Sequence(BuiltinRepeatId(IfSwapping(this)), 
-                    BuiltinRepeatId(SequenceId(ChoiceId(BlockFusion(),IfFusion()),OnceTopDownId(NopElimAndFlatten())))),
+                    BuiltinRepeatId(SequenceId(ChoiceId(BlockFusion(this),IfFusion(this)),OnceTopDownId(NopElimAndFlatten(this))))),
                   SequenceId(InterBlock(this),
-                    OnceTopDownId(BuiltinRepeatId(NopElimAndFlatten()))))
+                    OnceTopDownId(BuiltinRepeatId(NopElimAndFlatten(this)))))
                 )
               );
           renamedTerm = optStrategy2.visitLight(renamedTerm);
-          renamedTerm = `BuiltinBottomUp(Inline(TrueConstraint())).visit(renamedTerm);
+          renamedTerm = `BuiltinBottomUp(Inline(TrueConstraint(),this)).visit(renamedTerm);
           renamedTerm = optStrategy2.visitLight(renamedTerm);
           //System.out.println("opt renamedTerm = " + renamedTerm);
         } else if(getOptionBooleanValue("optimize")) {
           Strategy optStrategy = `Sequence(
-              InnermostId(ChoiceId(NormExpr(this),NopElimAndFlatten())),
-              BuiltinBottomUp(Inline(TrueConstraint())));
+              InnermostId(ChoiceId(NormExpr(this),NopElimAndFlatten(this))),
+              BuiltinBottomUp(Inline(TrueConstraint(),this)));
 
           renamedTerm = optStrategy.visit(renamedTerm);
         }
         setWorkingTerm(renamedTerm);
 
         // verbose
-        TomMessage.info(logger,null,0,TomMessage.tomOptimizationPhase,Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
+        TomMessage.info(logger, getStreamManager().getInputFileName(), 0,
+            TomMessage.tomOptimizationPhase,
+            Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
       } catch (Exception e) {
-        TomMessage.error(logger,getStreamManager().getInputFileName(),0,TomMessage.exceptionMessage,e.getMessage());
+        TomMessage.error(logger, getStreamManager().getInputFileName(), 0,
+            TomMessage.exceptionMessage, e.getMessage());
         e.printStackTrace();
          return;
       }
@@ -153,7 +156,8 @@ public class OptimizerPlugin extends TomGenericPlugin {
       }
     } else {
       // not active plugin
-      TomMessage.info(logger,null,0,TomMessage.optimizerNotActive);
+      TomMessage.info(logger, getStreamManager().getInputFileName(), 0,
+          TomMessage.optimizerNotActive);
     }
     if(getOptionBooleanValue("prettyPIL")) {
       System.out.println(factory.prettyPrintCompiledMatch(factory.remove((Code)getWorkingTerm())));
@@ -168,7 +172,7 @@ public class OptimizerPlugin extends TomGenericPlugin {
     return name;
   }
 
-  %strategy Inline(context:Constraint) extends Identity() {
+  %strategy Inline(context:Constraint,optimizer:OptimizerPlugin) extends Identity() {
     visit BQTerm {
       /* optimize the insertion of a slice into a list */
       BuildAppendList(name,ExpressionToBQTerm(GetSliceList(name,begin,end,tailSlice)),tail) -> {
@@ -235,7 +239,9 @@ public class OptimizerPlugin extends TomGenericPlugin {
             //test if variables contained in the exp to assign have not been
             //modified between the last assignment and the read
             if(varName.length() > 0) {
-              TomMessage.info(logger,null,0,TomMessage.inline,mult,varName);
+              TomMessage.info(logger,
+                  optimizer.getStreamManager().getInputFileName(), 0,
+                  TomMessage.inline, mult, varName);
             }
             Position current = getPosition();
             getEnvironment().goToPosition(infoBody.usePosition);
@@ -247,7 +253,7 @@ public class OptimizerPlugin extends TomGenericPlugin {
           } else {
             /* do nothing */
             if(varName.length() > 0) {
-              TomMessage.info(logger,null,0,TomMessage.doNothing,mult,varName);
+              TomMessage.info(logger,optimizer.getStreamManager().getInputFileName(),0,TomMessage.doNothing,mult,varName);
             }
           }
         }
@@ -323,7 +329,9 @@ public class OptimizerPlugin extends TomGenericPlugin {
               //positivePart there is an instruction If, WhileDo or DoWhile
               positivePart.getOmegaPath(`Not(Choice(Is_If(),Is_DoWhile(),Is_WhileDo()))).visit(`getEnvironment());
               if(varName.length() > 0) {
-                TomMessage.info(logger,null,0,TomMessage.inline,mult,varName);
+                TomMessage.info(logger,
+                    optimizer.getStreamManager().getInputFileName(), 0,
+                    TomMessage.inline, mult, varName);
               }
               getEnvironment().goToPosition(readPos);
               BQTerm value = `ExpressionToBQTerm(info.assignment);
@@ -337,13 +345,17 @@ public class OptimizerPlugin extends TomGenericPlugin {
             } catch(VisitFailure e) {
               getEnvironment().goToPosition(current);
               if(varName.length() > 0) {
-                TomMessage.info(logger,null,0,TomMessage.noInline,mult,varName);
+                TomMessage.info(logger,
+                    optimizer.getStreamManager().getInputFileName(), 0,
+                    TomMessage.noInline, mult, varName);
               }
             }
           } else {
             /* do nothing: traversal() */
             if(varName.length() > 0) {
-              TomMessage.info(logger,null,0,TomMessage.doNothing,mult,varName);
+              TomMessage.info(logger,
+                  optimizer.getStreamManager().getInputFileName(), 0,
+                  TomMessage.doNothing, mult, varName);
             }
           }
         }
@@ -607,41 +619,41 @@ public class OptimizerPlugin extends TomGenericPlugin {
     return factory.remove(term1)==factory.remove(term2);
   }
 
-  %strategy NopElimAndFlatten() extends Identity() {
+  %strategy NopElimAndFlatten(optimizer:OptimizerPlugin) extends Identity() {
     visit Instruction {
 
       AbstractBlock(concInstruction(C1*,AbstractBlock(L1),C2*)) -> {
-        TomMessage.info(logger,null,0,TomMessage.tomOptimizationType,"flatten");
+        TomMessage.info(logger,optimizer.getStreamManager().getInputFileName(),0,TomMessage.tomOptimizationType,"flatten");
         return `AbstractBlock(concInstruction(C1*,L1*,C2*));
       }
 
       AbstractBlock(concInstruction(C1*,Nop(),C2*)) -> {
-        TomMessage.info(logger,null,0,TomMessage.tomOptimizationType,"nop-elim");
+        TomMessage.info(logger,optimizer.getStreamManager().getInputFileName(),0,TomMessage.tomOptimizationType,"nop-elim");
         return `AbstractBlock(concInstruction(C1*,C2*));
       }
 
       AbstractBlock(concInstruction()) -> {
-        TomMessage.info(logger,null,0,TomMessage.tomOptimizationType,"abstractblock-elim1");
+        TomMessage.info(logger,optimizer.getStreamManager().getInputFileName(),0,TomMessage.tomOptimizationType,"abstractblock-elim1");
         return `Nop();
       }
 
       AbstractBlock(concInstruction(i)) -> {
-        TomMessage.info(logger,null,0,TomMessage.tomOptimizationType,"abstractblock-elim2");
+        TomMessage.info(logger,optimizer.getStreamManager().getInputFileName(),0,TomMessage.tomOptimizationType,"abstractblock-elim2");
         return `i;
       }
 
       If[SuccesInst=Nop(),FailureInst=Nop()] -> {
-        TomMessage.info(logger,null,0,TomMessage.tomOptimizationType,"ifnopnop-elim");
+        TomMessage.info(logger,optimizer.getStreamManager().getInputFileName(),0,TomMessage.tomOptimizationType,"ifnopnop-elim");
         return `Nop();
       }
 
       If[Condition=TrueTL(),SuccesInst=i] -> {
-        TomMessage.info(logger,null,0,TomMessage.tomOptimizationType,"iftrue-elim");
+        TomMessage.info(logger,optimizer.getStreamManager().getInputFileName(),0,TomMessage.tomOptimizationType,"iftrue-elim");
         return `i;
       }
 
       If[Condition=FalseTL(),FailureInst=i] -> {
-        TomMessage.info(logger,null,0,TomMessage.tomOptimizationType,"iffalse-elim");
+        TomMessage.info(logger,optimizer.getStreamManager().getInputFileName(),0,TomMessage.tomOptimizationType,"iffalse-elim");
         return `i;
       }
 
@@ -668,7 +680,7 @@ public class OptimizerPlugin extends TomGenericPlugin {
         if(s1.compareTo(s2) < 0) {
           /* swap two incompatible conditions */
           if(optimizer.incompatible(`cond1,`cond2)) {
-            TomMessage.info(logger,null,0,TomMessage.tomOptimizationType,"if-swapping");
+            TomMessage.info(logger,optimizer.getStreamManager().getInputFileName(),0,TomMessage.tomOptimizationType,"if-swapping");
             return `AbstractBlock(concInstruction(X1*,I2,I1,X2*));
           }
         }
@@ -676,7 +688,7 @@ public class OptimizerPlugin extends TomGenericPlugin {
     }
   }
 
-  %strategy BlockFusion() extends Identity() {
+  %strategy BlockFusion(optimizer:OptimizerPlugin) extends Identity() {
     visit Instruction {
       block@AbstractBlock(concInstruction(X1*,
             Let(var1@(BQVariable|BQVariableStar)[AstName=name1],term1,body1),
@@ -685,14 +697,14 @@ public class OptimizerPlugin extends TomGenericPlugin {
         /* Fusion de 2 blocs Let contigus instanciant deux variables egales */
         if(`compare(term1,term2)) {
           if(`compare(var1,var2)) {
-            TomMessage.info(logger,null,0,TomMessage.tomOptimizationType,"block-fusion1");
+            TomMessage.info(logger,optimizer.getStreamManager().getInputFileName(),0,TomMessage.tomOptimizationType,"block-fusion1");
             return `(block.setInstList(concInstruction(X1*,Let(var1,term1,AbstractBlock(concInstruction(body1,body2))),X2*)));
           } else {
             InfoVariable info = new InfoVariable();
             `computeOccurencesLet(name1,info).visit(`body2);
             int mult = info.readCount;
             if(mult==0) {
-              TomMessage.info(logger,null,0,TomMessage.tomOptimizationType,"block-fusion2");
+              TomMessage.info(logger,optimizer.getStreamManager().getInputFileName(),0,TomMessage.tomOptimizationType,"block-fusion2");
               Instruction newBody2 =  `renameVariable(name2,name1).visitLight(`body2);
               return `(block.setInstList(concInstruction(X1*,Let(var1,term1,AbstractBlock(concInstruction(body1,newBody2))),X2*)));
             }
@@ -702,7 +714,7 @@ public class OptimizerPlugin extends TomGenericPlugin {
     }
   }
 
-  %strategy IfFusion() extends Identity() {
+  %strategy IfFusion(optimizer:OptimizerPlugin) extends Identity() {
     visit Instruction {
       block@(UnamedBlock|AbstractBlock)(concInstruction(X1*,
             If(cond1,success1,failure1),
@@ -716,20 +728,20 @@ public class OptimizerPlugin extends TomGenericPlugin {
           c,c -> {
             /* Merge 2 blocks whose conditions are equals */
             if(`failure1.isNop() && `failure2.isNop()) {
-              TomMessage.info(logger,null,0,TomMessage.tomOptimizationType,"if-fusion1");
+              TomMessage.info(logger,optimizer.getStreamManager().getInputFileName(),0,TomMessage.tomOptimizationType,"if-fusion1");
               Instruction res = `(block.setInstList(concInstruction(X1*,If(cond1,AbstractBlock(concInstruction(success1,success2)),Nop()),X2*)));
               //System.out.println(res);
 
               return res;
             } else {
-              TomMessage.info(logger,null,0,TomMessage.tomOptimizationType,"if-fusion2");
+              TomMessage.info(logger,optimizer.getStreamManager().getInputFileName(),0,TomMessage.tomOptimizationType,"if-fusion2");
               return `(block.setInstList(concInstruction(X1*,If(cond1,AbstractBlock(concInstruction(success1,success2)),AbstractBlock(concInstruction(failure1,failure2))),X2*)));
             }
           }
 
           Negation(c),c -> {
             /* Merge 2 blocks whose conditions are the negation of the other */
-            TomMessage.info(logger,null,0,TomMessage.tomOptimizationType,"if-fusion-not");
+            TomMessage.info(logger,optimizer.getStreamManager().getInputFileName(),0,TomMessage.tomOptimizationType,"if-fusion-not");
             return `(block.setInstList(concInstruction(X1*,If(cond1,AbstractBlock(concInstruction(success1,failure2)),AbstractBlock(concInstruction(failure1,success2))),X2*)));
           }
         }
@@ -745,7 +757,7 @@ public class OptimizerPlugin extends TomGenericPlugin {
             If(cond2,suc2,Nop()),
             X2*)) -> {
         if(optimizer.incompatible(`cond1,`cond2)) {
-          TomMessage.info(logger,null,0,TomMessage.tomOptimizationType,"inter-block");
+          TomMessage.info(logger,optimizer.getStreamManager().getInputFileName(),0,TomMessage.tomOptimizationType,"inter-block");
           return `AbstractBlock(concInstruction(X1*,If(cond1,suc1,AbstractBlock(concInstruction(fail1,If(cond2,suc2,Nop())))),X2*));
         }
       }

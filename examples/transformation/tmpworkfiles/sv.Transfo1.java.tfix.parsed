@@ -1,0 +1,103 @@
+Tom(
+    concCode(
+      TomInclude(),
+      TomInclude(),
+      
+      TargetLanguageToCode(TL("\n\n/* DEBUG1 */\n/*\n%typeterm ResolveWorkDefinitionPlace extends Place {\n  implement { ResolveWorkDefinitionPlace }\n  is_sort(t) { $t instanceof ResolveWorkDefinitionPlace }\n}\n*/\n/* DEBUG1b */\n/*\n%op Place ResolveWorkDefinitionPlace(o:WorkDefinition, name:String) {\n  is_fsym(t) { $t instanceof ResolveWorkDefinitionPlace }\n  get_slot(name, t)  { ((ResolveWorkDefinitionPlace)$t).name }\n  get_slot(o, t)  { ((ResolveWorkDefinitionPlace)$t).o }\n  make(o,name) { new ResolveWorkDefinitionPlace(o,name) }\n}\n*/\n/* DEBUG2 */\n\n/*%include { sl.tom }\n\n%strategy RRR() extends Identity() {\n  visit T1 {\n    a() -> { System.out.println(\"rrr\"); }\n  }\n}\n\n%strategy SSS() extends Identity() {\n  visit T1 {\n    b() -> { System.out.println(\"sss\"); }\n  }\n}*/\n\n/* DEBUG3 */\n\n//%transformation SimplePDL2Petrinet() {\n",TextPosition(3,37),TextPosition(40,1))),
+      
+      DeclarationToCode(
+        AbstractDecl(
+          concDeclaration(
+            
+            ResolveClassDecl(CodeToInstruction(TargetLanguageToCode(ITL("\n\nprivate static class ResolveProcessPlace extends ###?FQN.ClassImpl?### {\n  public String name;\n  public  o;\n  public ResolveProcessPlace( o, String name) {\n    this.name = name;\n    this.o = o;\n  }\n}\n\n")))),
+            ResolveTypeTermDecl(
+    	      Name("ResolveProcessPlace"),
+	      concDeclaration(IsSortDecl(BQVariable(concOption(OriginTracking(Name("t"),40,"Transfo1.t")),Name("t"),Type(concTypeOption(),"ResolveProcessPlace",EmptyTargetLanguageType())),Code(" {0} instanceof ResolveProcessPlace "),OriginTracking(Name("is_sort"),40,"Transfo1.t"))),
+	      OriginTracking(Name("ResolveProcessPlace"),40,"Transfo1.t")
+	    ),
+            
+            ResolveClassDecl(CodeToInstruction(TargetLanguageToCode(ITL("\n\nprivate static class ResolveProcessTransition extends ###?FQN.ClassImpl?### {\n  public String name;\n  public  o;\n  public ResolveProcessTransition( o, String name) {\n    this.name = name;\n    this.o = o;\n  }\n}\n\n")))),
+            ResolveTypeTermDecl(
+	      Name("ResolveProcessTransition"),
+	      concDeclaration(IsSortDecl(BQVariable(concOption(OriginTracking(Name("t"),40,"Transfo1.t")),Name("t"),Type(concTypeOption(),"ResolveProcessTransition",EmptyTargetLanguageType())),Code(" {0} instanceof ResolveProcessTransition "),OriginTracking(Name("is_sort"),40,"Transfo1.t"))),
+	      OriginTracking(Name("ResolveProcessTransition"),40,"Transfo1.t")
+	    ),
+
+            ResolveClassDecl(CodeToInstruction(TargetLanguageToCode(ITL("\n\nprivate static class ResolveProcessArc extends ###?FQN.ClassImpl?### {\n  public String name;\n  public  o;\n  public ResolveProcessArc( o, String name) {\n    this.name = name;\n    this.o = o;\n  }\n}\n\n")))),
+            ResolveTypeTermDecl(
+	      Name("ResolveProcessArc"),
+	      concDeclaration(IsSortDecl(BQVariable(concOption(OriginTracking(Name("t"),40,"Transfo1.t")),Name("t"),Type(concTypeOption(),"ResolveProcessArc",EmptyTargetLanguageType())),Code(" {0} instanceof ResolveProcessArc "),OriginTracking(Name("is_sort"),40,"Transfo1.t"))),
+	      OriginTracking(Name("ResolveProcessArc"),40,"Transfo1.t")
+	    ),
+
+            ResolveClassDecl(CodeToInstruction(TargetLanguageToCode(ITL("\n\nprivate static class ResolveWorkDefinitionPlace extends ###?FQN.ClassImpl?### {\n  public String name;\n  public  o;\n  public ResolveWorkDefinitionPlace( o, String name) {\n    this.name = name;\n    this.o = o;\n  }\n}\n\n")))),
+            ResolveTypeTermDecl(
+	      Name("ResolveWorkDefinitionPlace"),
+	      concDeclaration(IsSortDecl(BQVariable(concOption(OriginTracking(Name("t"),40,"Transfo1.t")),Name("t"),Type(concTypeOption(),"ResolveWorkDefinitionPlace",EmptyTargetLanguageType())),Code(" {0} instanceof ResolveWorkDefinitionPlace "),OriginTracking(Name("is_sort"),40,"Transfo1.t"))),
+	      OriginTracking(Name("ResolveWorkDefinitionPlace"),40,"Transfo1.t")
+	    ),
+
+            ResolveClassDecl(CodeToInstruction(TargetLanguageToCode(ITL("\n\nprivate static class ResolveWorkDefinitionTransition extends ###?FQN.ClassImpl?### {\n  public String name;\n  public  o;\n  public ResolveWorkDefinitionTransition( o, String name) {\n    this.name = name;\n    this.o = o;\n  }\n}\n\n")))),
+            ResolveTypeTermDecl(
+	      Name("ResolveWorkDefinitionTransition"),
+	      concDeclaration(IsSortDecl(BQVariable(concOption(OriginTracking(Name("t"),40,"Transfo1.t")),Name("t"),Type(concTypeOption(),"ResolveWorkDefinitionTransition",EmptyTargetLanguageType())),Code(" {0} instanceof ResolveWorkDefinitionTransition "),OriginTracking(Name("is_sort"),40,"Transfo1.t"))),
+	      OriginTracking(Name("ResolveWorkDefinitionTransition"),40,"Transfo1.t")
+	    ),
+
+            ResolveClassDecl(CodeToInstruction(TargetLanguageToCode(ITL("\n\nprivate static class ResolveWorkDefinitionArc extends ###?FQN.ClassImpl?### {\n  public String name;\n  public  o;\n  public ResolveWorkDefinitionArc( o, String name) {\n    this.name = name;\n    this.o = o;\n  }\n}\n\n")))),
+            ResolveTypeTermDecl(
+	      Name("ResolveWorkDefinitionArc"),
+	      concDeclaration(IsSortDecl(BQVariable(concOption(OriginTracking(Name("t"),40,"Transfo1.t")),Name("t"),Type(concTypeOption(),"ResolveWorkDefinitionArc",EmptyTargetLanguageType())),Code(" {0} instanceof ResolveWorkDefinitionArc "),OriginTracking(Name("is_sort"),40,"Transfo1.t"))),
+	      OriginTracking(Name("ResolveWorkDefinitionArc"),40,"Transfo1.t")
+	    ),
+
+            ResolveClassDecl(CodeToInstruction(TargetLanguageToCode(ITL("\n\nprivate static class ResolveWorkSequencePlace extends ###?FQN.ClassImpl?### {\n  public String name;\n  public  o;\n  public ResolveWorkSequencePlace( o, String name) {\n    this.name = name;\n    this.o = o;\n  }\n}\n\n")))),
+            ResolveTypeTermDecl(
+	      Name("ResolveWorkSequencePlace"),
+	      concDeclaration(IsSortDecl(BQVariable(concOption(OriginTracking(Name("t"),40,"Transfo1.t")),Name("t"),Type(concTypeOption(),"ResolveWorkSequencePlace",EmptyTargetLanguageType())),Code(" {0} instanceof ResolveWorkSequencePlace "),OriginTracking(Name("is_sort"),40,"Transfo1.t"))),
+	      OriginTracking(Name("ResolveWorkSequencePlace"),40,"Transfo1.t")
+	    ),
+
+            ResolveClassDecl(CodeToInstruction(TargetLanguageToCode(ITL("\n\nprivate static class ResolveWorkSequenceTransition extends ###?FQN.ClassImpl?### {\n  public String name;\n  public  o;\n  public ResolveWorkSequenceTransition( o, String name) {\n    this.name = name;\n    this.o = o;\n  }\n}\n\n")))),
+            ResolveTypeTermDecl(
+	      Name("ResolveWorkSequenceTransition"),
+	      concDeclaration(IsSortDecl(BQVariable(concOption(OriginTracking(Name("t"),40,"Transfo1.t")),Name("t"),Type(concTypeOption(),"ResolveWorkSequenceTransition",EmptyTargetLanguageType())),Code(" {0} instanceof ResolveWorkSequenceTransition "),OriginTracking(Name("is_sort"),40,"Transfo1.t"))),
+	      OriginTracking(Name("ResolveWorkSequenceTransition"),40,"Transfo1.t")
+	    ),
+
+            ResolveClassDecl(CodeToInstruction(TargetLanguageToCode(ITL("\n\nprivate static class ResolveWorkSequenceArc extends ###?FQN.ClassImpl?### {\n  public String name;\n  public  o;\n  public ResolveWorkSequenceArc( o, String name) {\n    this.name = name;\n    this.o = o;\n  }\n}\n\n")))),
+            ResolveTypeTermDecl(
+	      Name("ResolveWorkSequenceArc"),
+	      concDeclaration(IsSortDecl(BQVariable(concOption(OriginTracking(Name("t"),40,"Transfo1.t")),Name("t"),Type(concTypeOption(),"ResolveWorkSequenceArc",EmptyTargetLanguageType())),Code(" {0} instanceof ResolveWorkSequenceArc "),OriginTracking(Name("is_sort"),40,"Transfo1.t"))),
+	      OriginTracking(Name("ResolveWorkSequenceArc"),40,"Transfo1.t")
+	    ),
+            
+            Strategy(
+                Name("ProcessToPetrinet"),
+                BQAppl(concOption(OriginTracking(Name("Process"),41,"Transfo1.t")),Name("Identity"),concBQTerm()),
+                concTomVisit(
+                  VisitTerm(
+                    Type(concTypeOption(),"Process",EmptyTargetLanguageType()),
+                    concConstraintInstruction(ConstraintInstruction(MatchConstraint(Variable(concOption(OriginTracking(Name("Process"),41,"Transfo1.t")),Name("Process"),Type(concTypeOption(),"unknown type",EmptyTargetLanguageType()),concConstraint(AliasTo(Variable(concOption(OriginTracking(Name("p"),41,"Transfo1.t")),Name("p"),Type(concTypeOption(),"unknown type",EmptyTargetLanguageType()),concConstraint())))),BQVariable(concOption(),Name("tom__arg"),Type(concTypeOption(),"unknown type",EmptyTargetLanguageType())),Type(concTypeOption(),"Process",EmptyTargetLanguageType())),RawAction(If(TrueTL(),AbstractBlock(concInstruction(CodeToInstruction(TargetLanguageToCode(TL(" System.out.println(\"a\"); ",TextPosition(41,16),TextPosition(41,43)))))),Nop())),concOption(OriginTracking(Name("Process"),41,"Transfo1.t")))),
+                    concOption(OriginTracking(Name("Process"),41,"Transfo1.t"))
+                    )
+                  ),
+                OriginTracking(Name("Strategy"),41,"Transfo1.t")
+                ),
+
+            Strategy(
+                Name("WorkDefinitionToPetrinet"),
+                BQAppl(concOption(OriginTracking(Name("WorkDefinition"),42,"Transfo1.t")),Name("Identity"),concBQTerm()),
+                concTomVisit(
+                  VisitTerm(
+                    Type(concTypeOption(),"WorkDefinition",EmptyTargetLanguageType()),
+                    concConstraintInstruction(ConstraintInstruction(MatchConstraint(Variable(concOption(OriginTracking(Name("WorkDefinition"),42,"Transfo1.t")),Name("WorkDefinition"),Type(concTypeOption(),"unknown type",EmptyTargetLanguageType()),concConstraint()),BQVariable(concOption(),Name("tom__arg"),Type(concTypeOption(),"unknown type",EmptyTargetLanguageType())),Type(concTypeOption(),"WorkDefinition",EmptyTargetLanguageType())),RawAction(If(TrueTL(),AbstractBlock(concInstruction(CodeToInstruction(TargetLanguageToCode(TL(" System.out.println(\"b\"); ",TextPosition(42,21),TextPosition(42,48)))))),Nop())),concOption(OriginTracking(Name("WorkDefinition"),42,"Transfo1.t")))),
+                    concOption(OriginTracking(Name("WorkDefinition"),42,"Transfo1.t")))
+                  ),
+                OriginTracking(Name("Strategy"),42,"Transfo1.t"))
+            )
+          )
+        ),
+      TargetLanguageToCode(TL("\n",TextPosition(43,1),TextPosition(44,1)))
+      )
+      )

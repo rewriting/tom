@@ -433,4 +433,51 @@ matchBlock: {
     output.write(";\n");
   } 
 
+  //FIXME
+  //TODO: to implement
+  protected String genResolveIsSortCode(String varName, String
+      resolveStringName) throws IOException {
+    throw new TomRuntimeException("%transformation (ResolveIsSort) not yet supported in Python");
+    //return "";
+  }
+
+  protected String genResolveIsFsymCode(String tomName, String varname) throws IOException {
+    throw new TomRuntimeException("%transformation (ResolveIsFsym) not yet supported in Python");
+    //return "";
+  }
+
+  protected String genResolveGetSlotCode(String tomName, String varname, String slotName) throws IOException {
+    throw new TomRuntimeException("%transformation (ResolveGetSlot) not yet supported in Python");
+    //return "";
+  }
+  
+  protected void buildResolveClass(String wName, String tName, String extendsName, String moduleName) throws IOException {
+    throw new TomRuntimeException("%transformation (ResolveClass) not yet supported in Python");
+  }
+
+  protected void buildResolveInverseLinks(int deep, String fileFrom, String fileTo, TomNameList resolveNameList, String moduleName) throws IOException {
+    throw new TomRuntimeException("%transformation (ResolveInverseLinks) not yet supported in Python");
+  }
+
+  protected void genResolveDeclMake(String prefix, String funName, TomType returnType, BQTermList argList, String moduleName) throws IOException {
+    throw new TomRuntimeException("%transformation (ResolveDeclMake) not yet supported in Python");
+  }
+
+  protected void buildReferenceClass(int deep, String refname, RefClassTracelinkInstructionList refclassTInstructions, String  moduleName) {
+    throw new TomRuntimeException("%transformation (ResolveReferenceClass) not yet supported in Python");
+  }
+
+  protected void buildTracelink(int deep, String type, String name, Expression expr, String moduleName) throws IOException {
+    throw new TomRuntimeException("%transformation (Tracelink instruction) not  yet supported in Python");
+  }
+
+  protected void buildTracelinkPopulateResolve(int deep, String refClassName, TomNameList tracedLinks, BQTerm current, BQTerm link, String moduleName) throws IOException {
+    throw new TomRuntimeException("%transformation (TracelinkPopulateResolve instruction) not yet supported in Python");
+  }
+
+  //tmp
+  protected void buildResolve(int deep, BQTerm bqterm, String moduleName) throws IOException {
+    throw new TomRuntimeException("%transformation (Resolve2 instruction) not yet supported in Python");
+  }
+
 }

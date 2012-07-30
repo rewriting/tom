@@ -203,7 +203,7 @@ public class TomParserPlugin extends TomGenericPlugin {
           }
 
         // verbose
-        TomMessage.info(getLogger(), null, 0, TomMessage.tomParsingPhase,
+        TomMessage.info(getLogger(), currentFileName, getLineFromTomParser(), TomMessage.tomParsingPhase,
             Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
       } catch (TokenStreamException e) {
         TomMessage.error(getLogger(), currentFileName, getLineFromTomParser(),
@@ -272,7 +272,8 @@ public class TomParserPlugin extends TomGenericPlugin {
         }
 
         // verbose
-        TomMessage.info(getLogger(), null, 0, TomMessage.tomParsingPhase,
+        TomMessage.info(getLogger(), currentFileName, getLineFromTomParser(),
+            TomMessage.tomParsingPhase,
             Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
       } catch(IOException e) {
          TomMessage.error(getLogger(), currentFileName, -1,

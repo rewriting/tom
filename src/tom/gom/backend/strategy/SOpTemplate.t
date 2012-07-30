@@ -151,21 +151,21 @@ public class @className()@ implements tom.library.sl.Strategy {
   public <T> T visitLight(T any, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {
     if(any instanceof @fullClassName(operator)@) {
       T result = any;
-      Object[] childs = null;
+      Object[] children = null;
       for (int i = 0, nbi = 0; i < @slotList.length()@; i++) {
           Object oldChild = introspector.getChildAt(any,nbi);
           Object newChild = args[i].visitLight(oldChild,introspector);
-          if(childs != null) {
-            childs[nbi] = newChild;
+          if(children != null) {
+            children[nbi] = newChild;
           } else if(newChild != oldChild) {
             // allocate the array, and fill it
-            childs = introspector.getChildren(any);
-            childs[nbi] = newChild;
+            children = introspector.getChildren(any);
+            children[nbi] = newChild;
           }
           nbi++;
       }
-      if(childs!=null) {
-        result = introspector.setChildren(any,childs);
+      if(children!=null) {
+        result = introspector.setChildren(any,children);
       }
       return result;
     } else {
@@ -176,7 +176,7 @@ public class @className()@ implements tom.library.sl.Strategy {
   public int visit(tom.library.sl.Introspector introspector) {
     Object any = environment.getSubject();
     if(any instanceof @fullClassName(operator)@) {
-      Object[] childs = null;
+      Object[] children = null;
       for(int i = 0, nbi = 0; i < @slotList.length()@; i++) {
           Object oldChild = introspector.getChildAt(any,nbi);
           environment.down(nbi+1);
@@ -186,17 +186,17 @@ public class @className()@ implements tom.library.sl.Strategy {
             return status;
           }
           Object newChild = environment.getSubject();
-          if(childs != null) {
-            childs[nbi] = newChild;
+          if(children != null) {
+            children[nbi] = newChild;
           } else if(newChild != oldChild) {
-            childs = introspector.getChildren(any);
-            childs[nbi] = newChild;
+            children = introspector.getChildren(any);
+            children[nbi] = newChild;
           }
           environment.upLocal();
           nbi++;
       }
-      if(childs!=null) {
-        environment.setSubject(introspector.setChildren(any,childs));
+      if(children!=null) {
+        environment.setSubject(introspector.setChildren(any,children));
       }
       return tom.library.sl.Environment.SUCCESS;
     } else {

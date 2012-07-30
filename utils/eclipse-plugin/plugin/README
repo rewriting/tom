@@ -1,0 +1,41 @@
+This files contains information to help people developping jtom Eclipse plug-in.
+
+Once you have checked out the project from cvs repository (as a Java Project):
+
+To compile this you need to add to your build path (from other eclipse plugins) the following variables:
+	- org.apache.ant_<version>/ant.jar
+    - org.eclipse.core.resources_<version>/resources.jar
+    - org.eclipse.core.runtime_<version>/runtime.jar
+    - org.eclipse.jdt.core_<version>/jdtcore.jar
+    - org.eclipse.jdt.ui_<version>/jdt.jar
+    - org.eclipse.jface_<version>/jface.jar
+    - org.eclipse.jface.text_<version>/jfacetext.jar
+    - org.eclipse.swt.gtk_<version>/ws/gtk/swt.jar
+	   (depends on your platform and available graphical toolkit: mac, motif...)  
+    - org.eclipse.swt.gtk_<version>/ws/gtk/swt-pi.jar
+	  (depends on your platform and available graphical toolkit: mac, motif..)  
+    - org.eclipse.text_<version>/text.jar
+    - org.eclipse.ui_<version>/ui.jar
+    - org.eclipse.ui.editors_<version>/editors.jar
+    - org.eclipse.ui.views_<version>/views.jar
+    - org.eclipse.ui.workbench_<version>/workbench.jar
+    - org.eclipse.ui.workbench.texteditor_<version>/texteditor.jar
+
+
+Then, you can modify the 2 .jardesc (ant and project) files to determine where they should generate:
+    	- the jtom-ant.jar containing ant classes
+    	- the jtom-eclipse.jar containing plug-in classes
+
+After, to generate the zip archive to be distributed, you need to synchronize this file to point to the right jtom-bundle archive.
+	- build.xml and its property: 		<property name="jtom.bundle.name" value="jtom-bundle-<VERSION>.jar"/> 
+	- plugin.xml and its runtime section:
+	  <runtime>
+      	<library name="jtom-eclipse.jar"/>
+      	<library name="jtom-bundle-<VERSION>.jar"/>
+      	...
+	- the fr.loria.eclipse.jtom.ui.NewProjectCreationPage.java class file and its private String:
+			private String JTOM_BUNDLE_VARIABLE= "ECLIPSE_HOME/plugins/fr.loria.eclipse.jtom_<PLUGIN_VERSION>/jtom-bundle-2.0beta.jar";
+		PLUGIN_VERSION corresponding to :
+			- <property name="version.suffix" value="_PLUGIN_VERSION"/> in build.xml
+			-  Attribute version="2.0.1" in plugin.xml
+

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="SimplePDLSemantics"
+    nsURI="http://simplepdl/1.0" nsPrefix="simplepdl">
+  <eSubpackages name="DDMMSimplePDL" nsURI="simplepdl.ddmm" nsPrefix="simplepdl.ddmm">
+    <eClassifiers xsi:type="ecore:EEnum" name="WorkSequenceType">
+      <eLiterals name="startToStart"/>
+      <eLiterals name="finishToStart" value="1"/>
+      <eLiterals name="startToFinish" value="2"/>
+      <eLiterals name="finishToFinish" value="3"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Process">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="processElements" upperBound="-1"
+          eType="#//DDMMSimplePDL/ProcessElement" containment="true" eOpposite="#//DDMMSimplePDL/ProcessElement/parent"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="from" eType="#//DDMMSimplePDL/WorkDefinition"
+          eOpposite="#//DDMMSimplePDL/WorkDefinition/process"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="WorkDefinition" eSuperTypes="#//DDMMSimplePDL/ProcessElement">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="linksToPredecessors"
+          upperBound="-1" eType="#//DDMMSimplePDL/WorkSequence" eOpposite="#//DDMMSimplePDL/WorkSequence/successor"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="linksToSuccessors" upperBound="-1"
+          eType="#//DDMMSimplePDL/WorkSequence" eOpposite="#//DDMMSimplePDL/WorkSequence/predecessor"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="process" eType="#//DDMMSimplePDL/Process"
+          containment="true" eOpposite="#//DDMMSimplePDL/Process/from"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="WorkSequence" eSuperTypes="#//DDMMSimplePDL/ProcessElement">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="linkType" lowerBound="1"
+          eType="#//DDMMSimplePDL/WorkSequenceType"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="predecessor" lowerBound="1"
+          eType="#//DDMMSimplePDL/WorkDefinition" eOpposite="#//DDMMSimplePDL/WorkDefinition/linksToSuccessors"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="successor" lowerBound="1"
+          eType="#//DDMMSimplePDL/WorkDefinition" eOpposite="#//DDMMSimplePDL/WorkDefinition/linksToPredecessors"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="ProcessElement" abstract="true" interface="true">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="parent" lowerBound="1"
+          eType="#//DDMMSimplePDL/Process" eOpposite="#//DDMMSimplePDL/Process/processElements"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Guidance" eSuperTypes="#//DDMMSimplePDL/ProcessElement">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="element" upperBound="-1"
+          eType="#//DDMMSimplePDL/ProcessElement"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="text" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eClassifiers>
+  </eSubpackages>
+  <eSubpackages name="EDMMSimplePDL" nsURI="simplepdl.edmm" nsPrefix="simplepdl.edmm">
+    <eClassifiers xsi:type="ecore:EClass" name="Event" abstract="true" eSuperTypes="#//TM3SimplePDL/SPDLSimEvent"/>
+    <eClassifiers xsi:type="ecore:EClass" name="WorkDefinitionEvent" abstract="true"
+        eSuperTypes="#//EDMMSimplePDL/Event">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="workdefinition" lowerBound="1"
+          eType="#//DDMMSimplePDL/WorkDefinition"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="StartWD" eSuperTypes="#//EDMMSimplePDL/WorkDefinitionEvent"/>
+    <eClassifiers xsi:type="ecore:EClass" name="FinishWD" eSuperTypes="#//EDMMSimplePDL/WorkDefinitionEvent"/>
+  </eSubpackages>
+  <eSubpackages name="SDMMSimplePDL" nsURI="simplepdl.sdmm" nsPrefix="simplepdl.sdmm">
+    <eClassifiers xsi:type="ecore:EEnum" name="ExecutionState">
+      <eLiterals name="notStarted"/>
+      <eLiterals name="running" value="1"/>
+      <eLiterals name="finished" value="2"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EEnum" name="TimeState">
+      <eLiterals name="tooEarly"/>
+      <eLiterals name="inTime" value="1"/>
+      <eLiterals name="tooLate" value="2"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="DynamicWorkDefinition" eSuperTypes="#//DDMMSimplePDL/WorkDefinition">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="state" lowerBound="1"
+          eType="#//SDMMSimplePDL/ExecutionState"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="time" lowerBound="1"
+          eType="#//SDMMSimplePDL/TimeState"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="timeElapsed" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat"/>
+    </eClassifiers>
+  </eSubpackages>
+  <eSubpackages name="TM3SimplePDL" nsURI="simplepdl.tmmm" nsPrefix="simplepdl.tmmm">
+    <eClassifiers xsi:type="ecore:EClass" name="SPDLScenario">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="traces" upperBound="-1"
+          eType="#//TM3SimplePDL/SPDLTrace" eOpposite="#//TM3SimplePDL/SPDLTrace/scenario"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="simEvents" upperBound="-1"
+          eType="#//TM3SimplePDL/SPDLSimEvent" containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="SPDLTrace">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="scenario" lowerBound="1"
+          eType="#//TM3SimplePDL/SPDLScenario" eOpposite="#//TM3SimplePDL/SPDLScenario/traces"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="SPDLSimEvent">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="internal" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="date" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+          defaultValueLiteral=""/>
+    </eClassifiers>
+  </eSubpackages>
+</ecore:EPackage>

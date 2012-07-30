@@ -421,6 +421,9 @@ blockList [List<Code> list] throws TomException
             // either a tom construct or everything else
             matchConstruct[list]
         |   strategyConstruct[list]
+        |   transformationConstruct[list] 
+        |   tracelinkConstruct[list]
+        |   resolveConstruct[list]
         |   gomsignature[list]
         |   backquoteTerm[list]
         |   operator[list]
@@ -461,6 +464,78 @@ strategyConstruct [List<Code> list] throws TomException
             list.add(`DeclarationToCode(strategy));
         }
     ;
+
+// the %transformation construct
+transformationConstruct [List<Code> list] throws TomException
+{
+    TargetLanguage code = null;
+}
+    :
+        t:TRANSFORMATION // we switch the lexers here : we are in Tom mode
+        {
+            // add the target code preceeding the construct
+            String textCode = getCode();
+
+            if(isCorrect(textCode)) {
+                code = `TL(
+                    textCode,
+                    TextPosition(currentLine,currentColumn),
+                    TextPosition(t.getLine(),t.getColumn())
+                );
+                list.add(`TargetLanguageToCode(code));
+            }
+
+            Option ot = `OriginTracking( Name("Transformation"), t.getLine(), currentFile);
+
+            // call the tomparser for the construct
+            Declaration transformation = tomparser.transformationConstruct(ot);
+            list.add(`DeclarationToCode(transformation));
+        }
+    ;
+resolveConstruct [List<Code> list] throws TomException
+{
+    TargetLanguage code = null;
+}
+    :
+        t:RESOLVE
+        {
+            String textCode = getCode();
+            if(isCorrect(textCode)) {
+                code = `TL(
+                    textCode,
+                    TextPosition(currentLine,currentColumn),
+                    TextPosition(t.getLine(),t.getColumn())
+                );
+                list.add(`TargetLanguageToCode(code));
+            }
+            Option ot = `OriginTracking(Name("Resolve"), t.getLine(), currentFile);
+            Instruction resolve = tomparser.resolveConstruct(ot);
+            list.add(`InstructionToCode(resolve));
+        }
+    ;
+
+tracelinkConstruct [List<Code> list] throws TomException
+{
+    TargetLanguage code = null;
+}
+    :
+        t:TRACELINK
+        {
+            String textCode = getCode();
+            if(isCorrect(textCode)) {
+                code = `TL(
+                    textCode,
+                    TextPosition(currentLine,currentColumn),
+                    TextPosition(t.getLine(),t.getColumn())
+                );
+                list.add(`TargetLanguageToCode(code));
+            }
+            Option ot = `OriginTracking(Name("Tracelink"), t.getLine(), currentFile);
+            Instruction tracelink = tomparser.tracelinkConstruct(ot);
+            list.add(`InstructionToCode(tracelink));
+        }
+    ;
+
 
 matchConstruct [List<Code> list] throws TomException
 {
@@ -930,6 +1005,18 @@ MATCH
 OPERATOR
     : "%op"   {selector().push("tomlexer");}
     ;
+SUBTYPE
+    : "%subtype"  {selector().push("tomlexer");}
+    ;
+TRANSFORMATION
+    : "%transformation" {selector().push("tomlexer");}
+    ;
+TRACELINK
+    : "%tracelink" {selector().push("tomlexer");}
+    ;
+RESOLVE
+    : "%resolve" {selector().push("tomlexer");}
+    ;
 TYPETERM
     : "%typeterm" {selector().push("tomlexer");}
     ;
@@ -939,7 +1026,6 @@ OPERATORLIST
 OPERATORARRAY
     : "%oparray"  {selector().push("tomlexer");}
     ;
-
 // following tokens are keyword for tom constructs
 // do not need to switch lexers
 INCLUDE

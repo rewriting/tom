@@ -126,7 +126,8 @@ public class DesugarerPlugin extends TomGenericPlugin {
             DESUGARED_SUFFIX, code);
       }
       // verbose
-      TomMessage.info(logger,null,0,TomMessage.tomDesugaringPhase,
+      TomMessage.info(logger, getStreamManager().getInputFileName(), 0,
+          TomMessage.tomDesugaringPhase,
           Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
     } catch (Exception e) {
       TomMessage.error(logger,
@@ -168,7 +169,8 @@ public class DesugarerPlugin extends TomGenericPlugin {
        *  - it is a builtin type
        *  - another option (if_sfsym, get_slot, etc) is already defined for this operator
        */
-      if(!getSymbolTable().isBuiltinType(TomBase.getTomType(TomBase.getSymbolCodomain(tomSymbol)))) {
+      //TODO - modified for %transformation ResolveMakeDecl
+      if(!getSymbolTable().isBuiltinType(TomBase.getTomType(TomBase.getSymbolCodomain(tomSymbol))) && !getSymbolTable().isResolveSymbol(tomSymbol)) {
         tomSymbol = addDefaultMake(tomSymbol);
         tomSymbol = addDefaultIsFsym(tomSymbol);
       }
@@ -357,7 +359,7 @@ public class DesugarerPlugin extends TomGenericPlugin {
     newAttrList = newAttrList.reverse();
 
     /*
-     * Childs: go from implicit notation to explicit notation
+     * Children: go from implicit notation to explicit notation
      */
     for(TomTerm child:(concTomTerm)childList) {
       try {

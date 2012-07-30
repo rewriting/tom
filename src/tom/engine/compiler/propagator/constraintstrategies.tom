@@ -20,10 +20,10 @@ public static class WhenConstraint extends tom.library.sl.AbstractStrategyBasic 
   }
 
   public tom.library.sl.Visitable[] getChildren() {
-    tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];
-    stratChilds[0] = super.getChildAt(0);
-    stratChilds[1] = gets();
-    return stratChilds;
+    tom.library.sl.Visitable[] stratChildren = new tom.library.sl.Visitable[getChildCount()];
+    stratChildren[0] = super.getChildAt(0);
+    stratChildren[1] = gets();
+    return stratChildren;
   }
 
   public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {

@@ -1,0 +1,125 @@
+
+%include { string.tom }
+
+%typeterm TNodeList {
+  implement { tom.library.adt.tnode.types.TNodeList }
+  is_sort(t) { ($t instanceof tom.library.adt.tnode.types.TNodeList) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm TNode {
+  implement { tom.library.adt.tnode.types.TNode }
+  is_sort(t) { ($t instanceof tom.library.adt.tnode.types.TNode) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+%op TNodeList EmptyconcTNode() {
+  is_fsym(t) { ($t instanceof tom.library.adt.tnode.types.tnodelist.EmptyconcTNode) }
+  make() { tom.library.adt.tnode.types.tnodelist.EmptyconcTNode.make() }
+}
+
+%op TNodeList ConsconcTNode(HeadconcTNode:TNode, TailconcTNode:TNodeList) {
+  is_fsym(t) { ($t instanceof tom.library.adt.tnode.types.tnodelist.ConsconcTNode) }
+  get_slot(HeadconcTNode, t) { $t.getHeadconcTNode() }
+  get_slot(TailconcTNode, t) { $t.getTailconcTNode() }
+  make(t0, t1) { tom.library.adt.tnode.types.tnodelist.ConsconcTNode.make($t0, $t1) }
+}
+
+%op TNode EmptyNode() {
+  is_fsym(t) { ($t instanceof tom.library.adt.tnode.types.tnode.EmptyNode) }
+  make() { tom.library.adt.tnode.types.tnode.EmptyNode.make() }
+}
+
+%op TNode CommentNode(Data:String) {
+  is_fsym(t) { ($t instanceof tom.library.adt.tnode.types.tnode.CommentNode) }
+  get_slot(Data, t) { $t.getData() }
+  make(t0) { tom.library.adt.tnode.types.tnode.CommentNode.make($t0) }
+}
+
+%op TNode ProcessingInstructionNode(Target:String, Data:String) {
+  is_fsym(t) { ($t instanceof tom.library.adt.tnode.types.tnode.ProcessingInstructionNode) }
+  get_slot(Target, t) { $t.getTarget() }
+  get_slot(Data, t) { $t.getData() }
+  make(t0, t1) { tom.library.adt.tnode.types.tnode.ProcessingInstructionNode.make($t0, $t1) }
+}
+
+%op TNode TextNode(Data:String) {
+  is_fsym(t) { ($t instanceof tom.library.adt.tnode.types.tnode.TextNode) }
+  get_slot(Data, t) { $t.getData() }
+  make(t0) { tom.library.adt.tnode.types.tnode.TextNode.make($t0) }
+}
+
+%op TNode CDATASectionNode(Data:String) {
+  is_fsym(t) { ($t instanceof tom.library.adt.tnode.types.tnode.CDATASectionNode) }
+  get_slot(Data, t) { $t.getData() }
+  make(t0) { tom.library.adt.tnode.types.tnode.CDATASectionNode.make($t0) }
+}
+
+%op TNode DocumentNode(DocType:TNode, DocElem:TNode) {
+  is_fsym(t) { ($t instanceof tom.library.adt.tnode.types.tnode.DocumentNode) }
+  get_slot(DocType, t) { $t.getDocType() }
+  get_slot(DocElem, t) { $t.getDocElem() }
+  make(t0, t1) { tom.library.adt.tnode.types.tnode.DocumentNode.make($t0, $t1) }
+}
+
+%op TNode ElementNode(Name:String, AttrList:TNodeList, ChildList:TNodeList) {
+  is_fsym(t) { ($t instanceof tom.library.adt.tnode.types.tnode.ElementNode) }
+  get_slot(Name, t) { $t.getName() }
+  get_slot(AttrList, t) { $t.getAttrList() }
+  get_slot(ChildList, t) { $t.getChildList() }
+  make(t0, t1, t2) { tom.library.adt.tnode.types.tnode.ElementNode.make($t0, $t1, $t2) }
+}
+
+%op TNode AttributeNode(Name:String, Specified:String, Value:String) {
+  is_fsym(t) { ($t instanceof tom.library.adt.tnode.types.tnode.AttributeNode) }
+  get_slot(Name, t) { $t.getName() }
+  get_slot(Specified, t) { $t.getSpecified() }
+  get_slot(Value, t) { $t.getValue() }
+  make(t0, t1, t2) { tom.library.adt.tnode.types.tnode.AttributeNode.make($t0, $t1, $t2) }
+}
+
+%op TNode DocumentTypeNode(Name:String, PublicId:String, SystemId:String, InternalSubset:String, Entities:TNodeList, Notations:TNodeList) {
+  is_fsym(t) { ($t instanceof tom.library.adt.tnode.types.tnode.DocumentTypeNode) }
+  get_slot(Name, t) { $t.getName() }
+  get_slot(PublicId, t) { $t.getPublicId() }
+  get_slot(SystemId, t) { $t.getSystemId() }
+  get_slot(InternalSubset, t) { $t.getInternalSubset() }
+  get_slot(Entities, t) { $t.getEntities() }
+  get_slot(Notations, t) { $t.getNotations() }
+  make(t0, t1, t2, t3, t4, t5) { tom.library.adt.tnode.types.tnode.DocumentTypeNode.make($t0, $t1, $t2, $t3, $t4, $t5) }
+}
+
+%op TNode EntityReferenceNode(Name:String, ChildList:TNodeList) {
+  is_fsym(t) { ($t instanceof tom.library.adt.tnode.types.tnode.EntityReferenceNode) }
+  get_slot(Name, t) { $t.getName() }
+  get_slot(ChildList, t) { $t.getChildList() }
+  make(t0, t1) { tom.library.adt.tnode.types.tnode.EntityReferenceNode.make($t0, $t1) }
+}
+
+%op TNode EntityNode(NotationName:String, PublicId:String, SystemId:String) {
+  is_fsym(t) { ($t instanceof tom.library.adt.tnode.types.tnode.EntityNode) }
+  get_slot(NotationName, t) { $t.getNotationName() }
+  get_slot(PublicId, t) { $t.getPublicId() }
+  get_slot(SystemId, t) { $t.getSystemId() }
+  make(t0, t1, t2) { tom.library.adt.tnode.types.tnode.EntityNode.make($t0, $t1, $t2) }
+}
+
+%op TNode NotationNode(PublicId:String, SystemId:String) {
+  is_fsym(t) { ($t instanceof tom.library.adt.tnode.types.tnode.NotationNode) }
+  get_slot(PublicId, t) { $t.getPublicId() }
+  get_slot(SystemId, t) { $t.getSystemId() }
+  make(t0, t1) { tom.library.adt.tnode.types.tnode.NotationNode.make($t0, $t1) }
+}
+
+
+%oplist TNodeList concTNode(TNode*) {
+  is_fsym(t) { (($t instanceof tom.library.adt.tnode.types.tnodelist.ConsconcTNode) || ($t instanceof tom.library.adt.tnode.types.tnodelist.EmptyconcTNode)) }
+  make_empty() { tom.library.adt.tnode.types.tnodelist.EmptyconcTNode.make() }
+  make_insert(e,l) { tom.library.adt.tnode.types.tnodelist.ConsconcTNode.make($e,$l) }
+  get_head(l) { $l.getHeadconcTNode() }
+  get_tail(l) { $l.getTailconcTNode() }
+  is_empty(l) { $l.isEmptyconcTNode() }
+}
