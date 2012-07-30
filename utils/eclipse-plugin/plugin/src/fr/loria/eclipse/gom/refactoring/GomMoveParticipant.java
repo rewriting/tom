@@ -26,7 +26,6 @@
 package fr.loria.eclipse.gom.refactoring;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -36,8 +35,8 @@ import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
 import org.eclipse.ltk.core.refactoring.participants.MoveParticipant;
 
 /**
- * When a gom file is moved , the generated packages/files are deleted
- * TODO when a folder is moved , refactor all the gom/tom files contained in this folder
+ * When a Gom file is moved , the generated packages/files are deleted
+ * TODO when a folder is moved , refactor all the Gom/Tom files contained in this folder
  * @author Martin GRANDCOLAS
  *
  */

@@ -26,6 +26,7 @@
 
 package fr.loria.eclipse.jtom.editor.util;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -82,14 +83,14 @@ public class TomAnnotationHover implements IAnnotationHover {
 	 * Selects a set of markers from the two lists. By default, it just returns
 	 * the set of exact matches.
 	 */
-	protected List select(List exactMatch, List including) {
+	protected List<Annotation> select(List<Annotation> exactMatch, List<Annotation> including) {
 		return exactMatch;
 	}
 	
 	/**
 	 * Returns one marker which includes the ruler's line of activity.
 	 */
-	protected List getAllAnnotationsForLine(ISourceViewer viewer, int line) {
+	protected List<Annotation> getAllAnnotationsForLine(ISourceViewer viewer, int line) {
 		
 		IDocument document= viewer.getDocument();
 		IAnnotationModel model= viewer.getAnnotationModel();
@@ -97,11 +98,11 @@ public class TomAnnotationHover implements IAnnotationHover {
 		if (model == null)
 			return null;
 			
-		List exact= new ArrayList();
-		List including= new ArrayList();
+		List<Annotation> exact= new ArrayList<Annotation>();
+		List<Annotation> including= new ArrayList<Annotation>();
 		
-		Iterator e= model.getAnnotationIterator();
-		HashMap messagesAtPosition= new HashMap();
+		Iterator<?> e= model.getAnnotationIterator();
+		HashMap<Position, Serializable> messagesAtPosition= new HashMap<Position, Serializable>();
 		while (e.hasNext()) {
 			Annotation annotation= (Annotation) e.next();
 			String message = null;
@@ -156,20 +157,20 @@ public class TomAnnotationHover implements IAnnotationHover {
 		return select(exact, including);
 	}
 
-	private boolean isDuplicateAnnotation(Map messagesAtPosition, Position position, String message) {
+	private boolean isDuplicateAnnotation(Map<Position, Serializable> messagesAtPosition, Position position, String message) {
 		if (messagesAtPosition.containsKey(position)) {
 			Object value= messagesAtPosition.get(position);
 			if (message.equals(value))
 				return true;
 
 			if (value instanceof List) {
-				List messages= (List)value;
+				List<String> messages= (List<String>)value;
 				if  (messages.contains(message))
 					return true;
 				else
 					messages.add(message);
 			} else {
-				ArrayList messages= new ArrayList();
+				ArrayList<Object> messages= new ArrayList<Object>();
 				messages.add(value);
 				messages.add(message);
 				messagesAtPosition.put(position, messages);
@@ -183,7 +184,7 @@ public class TomAnnotationHover implements IAnnotationHover {
 	 * @see IVerticalRulerHover#getHoverInfo(ISourceViewer, int)
 	 */
 	public String getHoverInfo(ISourceViewer sourceViewer, int lineNumber) {
-		List annotations= getAllAnnotationsForLine(sourceViewer, lineNumber);
+		List<?> annotations= getAllAnnotationsForLine(sourceViewer, lineNumber);
 		if (annotations != null) {
 		    
 			if (annotations.size() == 1) {
@@ -194,9 +195,9 @@ public class TomAnnotationHover implements IAnnotationHover {
 					return formatSingleMessage(message);
 					
 			} else {
-				List messages= new ArrayList();
+				List<String> messages= new ArrayList<String>();
 				
-				Iterator e= annotations.iterator();
+				Iterator<?> e= annotations.iterator();
 				while (e.hasNext()) {
 					Annotation annotation= (Annotation) e.next();
 					String message= annotation.getText();
@@ -229,13 +230,13 @@ public class TomAnnotationHover implements IAnnotationHover {
 	/*
 	 * Formats several message as HTML text.
 	 */
-	private String formatMultipleMessages(List messages) {
+	private String formatMultipleMessages(List<String> messages) {
 		StringBuffer buffer= new StringBuffer();
 		HTMLPrinter.addPageProlog(buffer);
 		HTMLPrinter.addParagraph(buffer, HTMLPrinter.convertToHTMLContent(TomEditorMessages.getResourceString("TomAnnotationHover.multipleMarkersAtThisLine"))); //$NON-NLS-1$
 		
 		HTMLPrinter.startBulletList(buffer);
-		Iterator e= messages.iterator();
+		Iterator<String> e= messages.iterator();
 		while (e.hasNext())
 			HTMLPrinter.addBullet(buffer, HTMLPrinter.convertToHTMLContent((String) e.next()));
 		HTMLPrinter.endBulletList(buffer);	

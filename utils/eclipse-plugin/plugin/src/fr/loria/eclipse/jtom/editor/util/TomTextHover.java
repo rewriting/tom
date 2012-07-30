@@ -44,7 +44,6 @@ import tom.engine.adt.tomsignature.types.TomSymbolTable;
 import tom.engine.adt.tomname.types.TomName;
 import tom.engine.adt.tomsignature.types.TomSymbol;
 import tom.engine.adt.tomtype.types.TomTypeList;
-
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextHover;
@@ -63,8 +62,8 @@ public class TomTextHover implements ITextHover {
 	
 	private long timeStamp;
 	private String symbolTableFileName;
-	private HashMap mapOpToSignature;
-	private HashSet sortSet;
+	private HashMap<String, String> mapOpToSignature;
+	private HashSet<String> sortSet;
 	TomTextHoverType type;
 	
 	public TomTextHover(String fileName, TomTextHoverType type) {
@@ -76,8 +75,8 @@ public class TomTextHover implements ITextHover {
 	private void initializeKeyMap() {
 		InputStream inputStream = null;
 		
-		mapOpToSignature = new HashMap();
-		sortSet = new HashSet();
+		mapOpToSignature = new HashMap<String, String>();
+		sortSet = new HashSet<String>();
 		if(symbolTableFileName!= null) {
 			try {
 				inputStream = new FileInputStream(symbolTableFileName);
@@ -130,15 +129,15 @@ public class TomTextHover implements ITextHover {
 	 */
 	private String findSignature(String symbolName, TomSymbol symbol) {
 		String res = "";
-		sortSet.add(symbol.getTypesToType().getCodomain().getString());
+		sortSet.add(symbol.getTypesToType().getCodomain().getAstName());
 		//System.out.println(symbol.getTypesToType().getCodomain().getString());
 		if(isListSymbol(symbol)) {
-			res += "List of "+symbol.getTypesToType().getDomain().getHeadconcTomType().getString()+": "+symbol.getTypesToType().getCodomain().getString();
+			res += "List of "+symbol.getTypesToType().getDomain().getHeadconcTomType().getAstName()+": "+symbol.getTypesToType().getCodomain().getAstName();
 		} else if(isArraySymbol(symbol)) {
-			res += "Array of "+symbol.getTypesToType().getDomain().getHeadconcTomType().getString()+": "+symbol.getTypesToType().getCodomain().getString();
+			res += "Array of "+symbol.getTypesToType().getDomain().getHeadconcTomType().getAstName()+": "+symbol.getTypesToType().getCodomain().getAstName();
 		} else {
 			res += symbolName+"(";
-			ArrayList slotAList = new ArrayList();
+			ArrayList<String> slotAList = new ArrayList<String>();
 			PairNameDeclList slotList = symbol.getPairNameDeclList();
 			TomName name;
 			while(!slotList.isEmptyconcPairNameDecl()) {
@@ -156,14 +155,14 @@ public class TomTextHover implements ITextHover {
 			if(!typeList.isEmptyconcTomType()) {
 			  while(!typeList.isEmptyconcTomType()) {
 			    res += slotAList.get(i).equals("")?
-						typeList.getHeadconcTomType().getString()+", ":
-						slotAList.get(i)+":"+typeList.getHeadconcTomType().getString()+", ";
+						typeList.getHeadconcTomType().getAstName()+", ":
+						slotAList.get(i)+":"+typeList.getHeadconcTomType().getAstName()+", ";
 				  typeList = typeList.getTailconcTomType();
 				  i++;
 			  }
 			  res = res.substring(0, res.length()-2);
 			}
-			res += "): "+symbol.getTypesToType().getCodomain().getString();
+			res += "): "+symbol.getTypesToType().getCodomain().getAstName();
 		}
 		return res;
 	}
@@ -176,7 +175,7 @@ public class TomTextHover implements ITextHover {
 		if(symbol==null) {
       return false;
     }
-		OptionList optionList = symbol.getOption();
+		OptionList optionList = symbol.getOptions();
 		while(!optionList.isEmptyconcOption()) {
 			Option opt = optionList.getHeadconcOption();
       if(opt.isDeclarationToOption() &&
@@ -197,7 +196,7 @@ public class TomTextHover implements ITextHover {
 		if(symbol==null) {
       return false;
     }
-		OptionList optionList = symbol.getOption();
+		OptionList optionList = symbol.getOptions();
 		while(!optionList.isEmptyconcOption()) {
 			Option opt = optionList.getHeadconcOption();
       if(opt.isDeclarationToOption() &&

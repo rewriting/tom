@@ -165,7 +165,7 @@ public class TomProjectJavaCreationWizardPage extends JavaCapabilityConfiguratio
 				if (mainPage.getDetect()) {
 					if (!fCurrProject.getFile(".classpath").exists()) {			
 						IPath projectPath= fCurrProject.getFullPath();
-						List cpEntries= new ArrayList();
+						List<IClasspathEntry> cpEntries= new ArrayList<IClasspathEntry>();
 						cpEntries.add(JavaCore.newSourceEntry(projectPath));
 						cpEntries.addAll(Arrays.asList(PreferenceConstants.getDefaultJRELibrary()));
 						entries= (IClasspathEntry[]) cpEntries.toArray(new IClasspathEntry[cpEntries.size()]);
@@ -192,7 +192,7 @@ public class TomProjectJavaCreationWizardPage extends JavaCapabilityConfiguratio
 						
 
 					// configure the classpath entries, including the default jre library.
-					List cpEntries= new ArrayList();
+					List<IClasspathEntry> cpEntries= new ArrayList<IClasspathEntry>();
 					cpEntries.add(JavaCore.newSourceEntry(projectPath.append(srcPath)));
 					cpEntries.addAll(Arrays.asList(PreferenceConstants.getDefaultJRELibrary()));
 					entries= (IClasspathEntry[]) cpEntries.toArray(new IClasspathEntry[cpEntries.size()]);
@@ -201,7 +201,7 @@ public class TomProjectJavaCreationWizardPage extends JavaCapabilityConfiguratio
 					outputLocation= projectPath.append(binPath);
 				} else {
 					IPath projectPath= fCurrProject.getFullPath();
-					List cpEntries= new ArrayList();
+					List<IClasspathEntry> cpEntries= new ArrayList<IClasspathEntry>();
 					cpEntries.add(JavaCore.newSourceEntry(projectPath));
 					cpEntries.addAll(Arrays.asList(PreferenceConstants.getDefaultJRELibrary()));
 					entries= (IClasspathEntry[]) cpEntries.toArray(new IClasspathEntry[cpEntries.size()]);

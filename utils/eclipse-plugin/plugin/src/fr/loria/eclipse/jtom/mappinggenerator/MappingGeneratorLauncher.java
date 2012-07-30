@@ -10,13 +10,10 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.viewers.IStructuredSelection;
-
-import fr.loria.eclipse.jtom.JtomPlugin;
 
 /**
  * Launches the mapping generator
@@ -34,7 +31,7 @@ public class MappingGeneratorLauncher {
 	 */
 	public static void launchGenerator(boolean isFolder, IFile file, IStructuredSelection selection) {		
 		TomMappingGenerator gen = new TomMappingGenerator();
-		Iterator it = selection.iterator();
+		Iterator<?> it = selection.iterator();
 		while(it.hasNext()){
 			Object currentObj = it.next();
 			String currentFilePath = null;

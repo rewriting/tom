@@ -47,7 +47,7 @@ public class TomEditorPartitionScanner implements IPartitionTokenScanner,
 		ITomPartitions {
 
 	private static int MAX_KEY_SIZE = 8;
-	private static Set tomKeywords = new HashSet();
+	private static Set<String> tomKeywords = new HashSet<String>();
 
 	public final static String[] PARTITION_TYPES = new String[] {// 0
 	// (Default)

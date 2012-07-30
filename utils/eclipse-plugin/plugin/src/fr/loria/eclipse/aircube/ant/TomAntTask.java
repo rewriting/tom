@@ -49,7 +49,7 @@ public class TomAntTask extends Task {
             String res[] = new String[0];
             int begin = 0;
             int end = 0;
-            Vector list = new Vector();
+            Vector<String> list = new Vector<String>();
             while(end < str.length()) 
             {
                 while(end < str.length() && str.charAt(end) != ' ') 

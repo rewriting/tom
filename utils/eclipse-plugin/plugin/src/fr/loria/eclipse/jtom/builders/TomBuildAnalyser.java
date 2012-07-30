@@ -122,7 +122,7 @@ public class TomBuildAnalyser extends IncrementalProjectBuilder implements IReso
 			if(generatedResource != null) {
 			  try {
 			    IMarker[] problems = null;
-				Map map;
+				Map<String, ?> map;
 				IMarker marker;
 			    problems = generatedResource.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
 			    //System.out.println("Java problems "+problems.length);

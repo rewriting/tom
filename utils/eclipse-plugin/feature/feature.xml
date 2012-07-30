@@ -2,7 +2,7 @@
 <feature
       id="fr.loria.eclipse.tom"
       label="%featureName"
-      version="2.7"
+      version="2.10"
       provider-name="%providerName"
       exclusive="true">
 
@@ -42,6 +42,6 @@
          id="fr.loria.eclipse.tom"
          download-size="0"
          install-size="0"
-         version="2.7"/>
+         version="2.10"/>
 
 </feature>

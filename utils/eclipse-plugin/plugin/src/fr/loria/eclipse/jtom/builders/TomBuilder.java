@@ -65,11 +65,11 @@ import fr.loria.eclipse.jtom.JtomPlugin;
 public class TomBuilder extends IncrementalProjectBuilder implements
 IResourceDeltaVisitor, IResourceVisitor {
 
-	private static HashMap errorMap = new HashMap();
+	private static HashMap<IResource, RuntimeAlert> errorMap = new HashMap<IResource, RuntimeAlert>();
 
-	private static HashMap generationMap = new HashMap();
+	private static HashMap<IResource, File> generationMap = new HashMap<IResource, File>();
 
-	private static HashSet nogenerationSet = new HashSet();
+	private static HashSet<IResource> nogenerationSet = new HashSet<IResource>();
 
 	/*
 	 * (non-Javadoc)
@@ -145,7 +145,7 @@ IResourceDeltaVisitor, IResourceVisitor {
 			System.out.println("TomBuilder in action for " + tomFilePath);
 
 			// List of args
-			ArrayList finalCommandList = new ArrayList();
+			ArrayList<String> finalCommandList = new ArrayList<String>();
 			finalCommandList.add("--eclipse");
 			finalCommandList.add(tomFilePath.toString());
 
@@ -319,7 +319,7 @@ IResourceDeltaVisitor, IResourceVisitor {
 				// than the
 				// errors will corespond to the included file and no the the
 				// current one
-				Iterator it = platform.getGlobalStatusHandler().getAlertMap()
+				Iterator<?> it = platform.getGlobalStatusHandler().getAlertMap()
 				.keySet().iterator();
 				while (it.hasNext()) {
 					String fileName = (String) it.next();
@@ -374,7 +374,7 @@ IResourceDeltaVisitor, IResourceVisitor {
 	 *            the command list to add the "--import" to
 	 * @throws IOException
 	 */
-	public static void manageIncludes(ArrayList finalCommandList)
+	public static void manageIncludes(ArrayList<String> finalCommandList)
 	throws IOException {
 
 		String includedFile = JtomPlugin.getDefault().getPreferenceStore()
@@ -403,7 +403,7 @@ IResourceDeltaVisitor, IResourceVisitor {
 	}
 
 	private static void includeFolders(String rootForInclude,
-			ArrayList finalCommandList) throws IOException {
+			ArrayList<String> finalCommandList) throws IOException {
 
 		File files[] = new File(rootForInclude).getCanonicalFile().listFiles();
 		for (int i = 0; i < files.length; i++) {
@@ -434,7 +434,7 @@ IResourceDeltaVisitor, IResourceVisitor {
 		String res = "There are ";
 		res += errorMap.size() + " resources with Tom errors\n";
 		int totalError = 0;
-		Iterator it = errorMap.keySet().iterator();
+		Iterator<IResource> it = errorMap.keySet().iterator();
 		int error = 0;
 		while (it.hasNext()) {
 			IResource resource = (IResource) it.next();
@@ -447,7 +447,7 @@ IResourceDeltaVisitor, IResourceVisitor {
 		return res;
 	}
 
-	public static HashMap getErrorMap() {
+	public static HashMap<IResource, RuntimeAlert> getErrorMap() {
 		return errorMap;
 	}
 
