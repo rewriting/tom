@@ -1,0 +1,2 @@
+String path(String p):
+	p.replaceAll("\\.","/");

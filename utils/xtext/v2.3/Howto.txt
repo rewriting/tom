@@ -1,0 +1,40 @@
+******************************************************************************************************************************************
+******************************************************************* HOWTO ****************************************************************
+******************************************************************************************************************************************
+
+This file explains how to do to launch the plugin in eclipse in order to work on and test it as a developer.
+
+This plugin has been developed using Eclipse 4.2 (Juno), with Xtext 2.3.
+
+
+********** Opening the project with Eclipse **********
+
+1 - Launch Eclipse
+
+2 - Import the following projects from a fresh workspace
+	- tom.mapping.dsl
+	- tom.mapping.dsl.tests
+	- tom.mapping.dsl.ui
+	- tom.mapping.model
+
+3A - Right click on "tom.mapping.dsl" project and select "New" -> "Folder"
+3B - Select "tom.mapping.dsl" as the parent folder
+3C - Click on "Advanced" and chose "Link to alternate location (Linked Folder)"
+3D - Click on "Browse" and select the folder "tom.mapping.model"
+
+4 - Locate the files "TomMapping.xtext" and "GenerateTomMapping.mwe2" (project "tom.mapping.dsl", folder "src", package "tom.mapping.dsl")
+
+5 - Right click on "TomMapping.xtext" and select "Run As" -> "Generate Xtext Artifacts"
+
+6 - Right click on "GenerateTomMapping.mwe2" and select "Run As" -> "MWE2 Workflow"
+
+7 - Clean all projects, it's done
+
+
+********** Testing the plugin **********
+
+1 - Right click on the project "tom.mapping.dsl" and choose "Run As" -> "Eclipse Application"
+
+2 - Create a new project : "New" -> "Project" -> "Tom Mapping Project"
+
+3 - Write your .tmap files and generate your own mappings
