@@ -7,10 +7,6 @@ package logic;
 import aterm.ATerm;
 import aterm.ATermInt;
 import aterm.pure.PureFactory;
-import definitions.Buildable;
-import definitions.Scope;
-import definitions.Sort;
-import definitions.SortGom;
 import examples.Examples;
 import java.util.HashMap;
 import java.util.List;
@@ -21,13 +17,9 @@ import logic.model.SignatureInterpretation;
 import gen.ExamplesFormula; // generated
 import gen.Interpretation; // generated
 import gen.TestGen;
-import java.util.Set;
 import logic.model.BuildableDomain;
 import org.junit.*;
 import sort.types.IntList;
-import sort.types.Leaf;
-import sort.types.intlist.consList;
-import sort.types.intlist.nill;
 import system.types.Formula; // generated
 
 /**

@@ -23,7 +23,7 @@ public class Shrink {
     private Stack<ATermList> stack;
     private DomainInterpretation domain;
 
-    private ATermSameTypeIterator(ATerm term, DomainInterpretation domain) {
+    private ATermSameTypeIterator(final ATerm term, DomainInterpretation domain) {
       this.domain = domain;
       ATermList args = getArgs(term);
       stack.push(args);
@@ -80,7 +80,41 @@ public class Shrink {
     }
   }
 
-  public static Iterator<ATerm> getSameTypeFields(ATerm term, DomainInterpretation domain) {
+  private static class ATermShrunkFieldsIterator implements Iterator<ATerm> {
+
+    private DomainInterpretation domain;
+    private ATerm term;
+
+    private ATermShrunkFieldsIterator(final ATerm term, DomainInterpretation domain) {
+      this.domain = domain;
+      this.term = term;
+    }
+
+    @Override
+    public boolean hasNext() {
+      throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public ATerm next() {
+      throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void remove() {
+      throw new UnsupportedOperationException("Not supported yet.");
+    }
+  }
+
+  public static Iterator<ATerm> getSameTypeFields(final ATerm term, DomainInterpretation domain) {
     return new ATermSameTypeIterator(term, domain);
+  }
+
+  public static Iterator<ATerm> getReducedCons(final ATerm term, DomainInterpretation domain) {
+    throw new UnsupportedOperationException("Not yet implemented");
+  }
+
+  public static Iterator<ATerm> getShrunkFields(final ATerm term, DomainInterpretation domain) {
+    return new ATermShrunkFieldsIterator(term, domain);
   }
 }
