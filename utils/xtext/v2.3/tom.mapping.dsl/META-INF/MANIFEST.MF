@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: tom.mapping.dsl
-Bundle-Vendor: My Company
+Bundle-Vendor: Loria
 Bundle-Version: 1.0.0.qualifier
 Bundle-SymbolicName: tom.mapping.dsl; singleton:=true
 Bundle-ActivationPolicy: lazy
@@ -14,7 +14,8 @@ Require-Bundle: org.eclipse.xtext;visibility:=reexport,
  org.eclipse.emf.mwe2.launch;resolution:=optional,
  tom.mapping.model,
  org.eclipse.xtext.util,
- org.antlr.runtime
+ org.antlr.runtime,
+ org.eclipse.xtend.util.stdlib;bundle-version="1.0.1"
 Import-Package: org.apache.log4j,
  org.eclipse.xtext.xbase.lib
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
@@ -26,4 +27,7 @@ Export-Package: tom.mapping.dsl,
  tom.mapping.dsl.validation,
  tom.mapping.dsl.scoping,
  tom.mapping.dsl.formatting,
- tom.mapping.dsl.generator
+ tom.mapping.dsl.generator,
+ tom.mapping.dsl.generator.introspector,
+ tom.mapping.dsl.generator.java,
+ tom.mapping.dsl.generator.tom

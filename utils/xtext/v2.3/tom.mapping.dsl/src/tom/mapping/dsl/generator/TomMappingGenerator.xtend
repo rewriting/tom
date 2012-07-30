@@ -9,14 +9,24 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 import org.eclipse.xtext.generator.IGenerator
 import model.Mapping
 import tom.mapping.dsl.generator.tom.TomTemplateCompiler
+import tom.mapping.dsl.generator.tom.TomFactoryCompiler
+import tom.mapping.dsl.generator.java.CustomOperatorsCompiler
 
 class TomMappingGenerator implements IGenerator {
 	
-	@Inject TomTemplateCompiler tomCompiler
+	@Inject FactoryCompiler facCompiler
+	@Inject TomFactoryCompiler tomFacCompiler
+	@Inject TomTemplateCompiler tempCompiler
+	@Inject IntrospectorCompiler introCompiler
+	@Inject CustomOperatorsCompiler copCompiler
 	
-	override void doGenerate(Resource resource, IFileSystemAccess fsa) {
+	override void doGenerate(Resource resource, IFileSystemAccess fsa) { // Compilation of the components of the resource one by one@
 		val mapping = resource.contents.get(0) as Mapping
-		tomCompiler.compile(mapping,fsa)
+		facCompiler.compile(mapping,fsa)
+		tomFacCompiler.compile(mapping,fsa)
+		tempCompiler.compile(mapping,fsa)
+		introCompiler.compile(mapping,fsa)
+		copCompiler.compile(mapping,fsa)
 		}
 		
 }
