@@ -27,7 +27,7 @@ echo ""
 tom src/tom/TestGen.t -o src/gen/TestGen.java
 #tom src/tom/Main.t -o src/gen/Main.java
 tom src/tom/Interpretation.t -o src/gen/Interpretation.java
-#tom src/tom/Shrink.t -o src/gen/Shrink.java
+tom src/tom/Shrink.t -o src/gen/Shrink.java
 tom src/tom/ExamplesFormula.t -o src/gen/ExamplesFormula.java
 
 

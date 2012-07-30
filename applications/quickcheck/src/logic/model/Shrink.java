@@ -12,6 +12,7 @@ import java.util.Stack;
 
 /**
  * Prototype of tom code.
+ *
  * @author hubert
  */
 public class Shrink {
@@ -24,11 +25,37 @@ public class Shrink {
 
     private ATermSameTypeIterator(ATerm term, DomainInterpretation domain) {
       this.domain = domain;
+      ATermList args = getArgs(term);
+      stack.push(args);
+      current = null;
+    }
+
+    private ATermList getArgs(ATerm term) {
+      /*
+       * %match(term){ ATermAppl(fun, list) -> {return `list;} _ -> {throw new
+       * UnsupportedOperationException("Operation not supported");} }
+       */
+      return null; //unreachable
     }
 
     @Override
     public boolean hasNext() {
-      throw new UnsupportedOperationException("Not supported yet.");
+      if (stack.empty()) {
+        return false;
+      }
+      ATermList args = stack.pop();
+      if (args.isEmpty()) {
+        return hasNext();
+      }
+      ATerm head = args.getFirst();
+      ATermList tail = args.getNext();
+      stack.push(tail);
+      if (domain.includes(head)) {
+        current = head;
+        return true;
+      }
+      stack.push(getArgs(head));
+      return hasNext();
     }
 
     @Override
@@ -38,6 +65,7 @@ public class Shrink {
         current = null;
         return res;
       } else if (hasNext()) {
+        System.out.println("WARNING : the use of the methode next() is not preceded by hasNext().");
         ATerm res = current;
         current = null;
         return res;
