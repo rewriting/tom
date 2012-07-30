@@ -9,11 +9,15 @@ import definitions.Sort;
 import definitions.SortGom;
 import definitions.StrategyParameters;
 import sort.types.Expr;
+import sort.types.IntList;
+import sort.types.Leaf;
 import sort.types.Surexpr;
 import sort.types.expr.mult;
 import sort.types.expr.plus;
 import sort.types.expr.un;
 import sort.types.expr.zero;
+import sort.types.intlist.consList;
+import sort.types.intlist.nill;
 import sort.types.surexpr.rec;
 import sort.types.surexpr.wrapper;
 
@@ -22,6 +26,7 @@ import sort.types.surexpr.wrapper;
  * @author hubert
  */
 public class Examples {
+
   public static Scope scope;
   public static Sort nat;
   public static Sort tree;
@@ -35,17 +40,19 @@ public class Examples {
   public static Sort list;
   public static Sort list2;
   public static Sort mix;
+  public static Sort leafABC;
+  public static SortGom listABC;
   public static StrategyParameters paramDepth, paramNodes;
-  
-  public static void init(){
+
+  public static void init() {
     paramDepth = new StrategyParameters(
             StrategyParameters.DistStrategy.DEPTH,
             StrategyParameters.TerminationCriterion.POINT_OF_NO_RETURN);
-    
+
     paramNodes = new StrategyParameters(
             StrategyParameters.DistStrategy.NODES,
             StrategyParameters.TerminationCriterion.POINT_OF_NO_RETURN);
-    
+
     scope = new Scope();
 
     nat = new Sort(scope, "nat");
@@ -97,6 +104,15 @@ public class Examples {
 
     mix = new Sort(scope, "mix");
     mix.addConstructor("consMix", list, surexpr);
+
+
+    leafABC = new SortGom(scope, Leaf.class);
+    listABC = new SortGom(scope, IntList.class);
+    listABC.addConstructor(nill.class);
+    listABC.addConstructor(consList.class);
+    leafABC.addConstructor("a");
+    leafABC.addConstructor("b");
+    leafABC.addConstructor("c");
 
     scope.setDependances();
   }

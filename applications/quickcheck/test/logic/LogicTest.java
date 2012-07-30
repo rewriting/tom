@@ -11,6 +11,7 @@ import definitions.Buildable;
 import definitions.Scope;
 import definitions.Sort;
 import definitions.SortGom;
+import examples.Examples;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,7 @@ import gen.ExamplesFormula; // generated
 import gen.Interpretation; // generated
 import gen.TestGen;
 import java.util.Set;
+import logic.model.BuildableDomain;
 import org.junit.*;
 import sort.types.IntList;
 import sort.types.Leaf;
@@ -126,44 +128,12 @@ public class LogicTest {
       }
     };
 
-    List = new DomainInterpretation() {
-
-      private Sort leaf;
-      private SortGom list;
-
-      @Override
-      public ATerm chooseElement() {
-
-        Scope scope = new Scope();
-
-        leaf = new SortGom(scope, Leaf.class);
-        list = new SortGom(scope, IntList.class);
-        list.addConstructor(nill.class);
-        list.addConstructor(consList.class);
-        leaf.addConstructor("a");
-        leaf.addConstructor("b");
-        leaf.addConstructor("c");
-
-        scope.setDependances();
-
-        ATerm res = list.generate(20);
-        return res;
-      }
-
-      @Override
-      public boolean includes(ATerm term) {
-        return list.isTypeOf(term);
-      }
-
-      @Override
-      public DomainInterpretation[] getDepsDomains() {
-        
-      }
-    };
+    List = new BuildableDomain(Examples.listABC);
   }
 
   @BeforeClass
   public static void setUpClass() throws Exception {
+    Examples.init();
   }
 
   @AfterClass
@@ -214,6 +184,11 @@ public class LogicTest {
       @Override
       public boolean includes(ATerm term) {
         return term instanceof ATermInt && ((ATermInt) term).getInt() == 4;
+      }
+
+      @Override
+      public DomainInterpretation[] getDepsDomains() {
+        throw new UnsupportedOperationException("Not supported yet.");
       }
     };
 

@@ -11,14 +11,6 @@ import aterm.pure.PureFactory;
 import examples.Examples;
 import static org.junit.Assert.assertEquals;
 import org.junit.*;
-import sort.types.Expr;
-import sort.types.Surexpr;
-import sort.types.expr.mult;
-import sort.types.expr.plus;
-import sort.types.expr.un;
-import sort.types.expr.zero;
-import sort.types.surexpr.rec;
-import sort.types.surexpr.wrapper;
 
 /**
  *
@@ -26,82 +18,7 @@ import sort.types.surexpr.wrapper;
  */
 public class SortTest {
 
-//  private Scope scope;
-//  private Sort nat;
-//  private Sort tree;
-//  private Sort tree2;
-//  private Sort forest;
-//  private Sort circ;
-//  private Sort typetest;
-//  private Sort a, b, c;
-//  private SortGom expr;
-//  private SortGom surexpr;
-//  private Sort list;
-//  private Sort list2;
-//  private Sort mix;
-//  private StrategyParameters paramDepth, paramNodes;
   public SortTest() {
-//    paramDepth = new StrategyParameters(
-//            StrategyParameters.DistStrategy.DEPTH,
-//            StrategyParameters.TerminationCriterion.POINT_OF_NO_RETURN);
-//    
-//    paramNodes = new StrategyParameters(
-//            StrategyParameters.DistStrategy.NODES,
-//            StrategyParameters.TerminationCriterion.POINT_OF_NO_RETURN);
-//    
-//    scope = new Scope();
-//
-//    nat = new Sort(scope, "nat");
-//    nat.addConstructor("succ", nat);
-//    nat.addConstructor("zero");
-//
-//    tree = new Sort(scope, "tree");
-//    tree.addConstructor("branch", tree, tree);
-//    tree.addConstructor("leaf");
-//
-//    typetest = new Sort(scope, "typetest");
-//    typetest.addConstructor("tree", tree);
-//    typetest.addConstructor("nat", nat);
-//
-//
-//    forest = new Sort(scope, "forest");
-//    tree2 = new Sort(scope, "tree2");
-//    forest.addConstructor("tree", tree2);
-//    tree2.addConstructor("nat", nat);
-//    tree2.addConstructor("forest", forest);
-//
-//    circ = new Sort(scope, "circ");
-//    circ.addConstructor("circ", circ);
-//
-//    a = new Sort(scope, "a");
-//    b = new Sort(scope, "b");
-//    c = new Sort(scope, "c");
-//    a.addConstructor("nill");
-//    a.addConstructor("b", b);
-//    b.addConstructor("c", c);
-//    c.addConstructor("a", a);
-//
-//    expr = new SortGom(scope, Expr.class);
-//    expr.addConstructor(mult.class);
-//    expr.addConstructor(plus.class);
-//    expr.addConstructor(un.class);
-//    expr.addConstructor(zero.class);
-//
-//    surexpr = new SortGom(scope, Surexpr.class);
-//    surexpr.addConstructor(rec.class);
-//    surexpr.addConstructor(wrapper.class);
-//
-//    list = new Sort(scope, "list");
-//    list.addConstructor(expr);
-//    list.addConstructor("consList", expr, list);
-//
-//    list2 = new Sort(scope, "list2");
-//    list2.addConstructor("consList", expr, list2);
-//
-//    mix = new Sort(scope, "mix");
-//    mix.addConstructor("consMix", list, surexpr);
-//
-//    scope.setDependances();
   }
 
   @BeforeClass
@@ -503,7 +420,7 @@ public class SortTest {
 
   @Test
   public void testStepsToLeafC() {
-    System.out.println("stepsToLeaf " +Examples. c.getName());
+    System.out.println("stepsToLeaf " + Examples.c.getName());
     int expResult = 1;
     int result = Examples.c.minimalSize(Examples.paramNodes.getDistStrategy());
     assertEquals(expResult, result);
@@ -521,7 +438,7 @@ public class SortTest {
   public void testStepsToLeaftree() {
     System.out.println("stepsToLeaf " + Examples.tree.getName());
     int expResult = 0;
-    int result =Examples. tree.minimalSize(Examples.paramNodes.getDistStrategy());
+    int result = Examples.tree.minimalSize(Examples.paramNodes.getDistStrategy());
     assertEquals(expResult, result);
   }
 
