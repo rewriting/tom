@@ -20,6 +20,7 @@ import logic.model.SignatureInterpretation;
 import gen.ExamplesFormula; // generated
 import gen.Interpretation; // generated
 import gen.TestGen;
+import java.util.Set;
 import org.junit.*;
 import sort.types.IntList;
 import sort.types.Leaf;
@@ -99,6 +100,11 @@ public class LogicTest {
         }
         return ((ATermInt) term).getInt() % 2 == 0;
       }
+
+      @Override
+      public DomainInterpretation[] getDepsDomains() {
+        return new DomainInterpretation[0];
+      }
     };
 
     Integer = new DomainInterpretation() {
@@ -112,6 +118,11 @@ public class LogicTest {
       @Override
       public boolean includes(ATerm term) {
         return term instanceof ATermInt;
+      }
+
+      @Override
+      public DomainInterpretation[] getDepsDomains() {
+        return new DomainInterpretation[0];
       }
     };
 
@@ -142,6 +153,11 @@ public class LogicTest {
       @Override
       public boolean includes(ATerm term) {
         return list.isTypeOf(term);
+      }
+
+      @Override
+      public DomainInterpretation[] getDepsDomains() {
+        
       }
     };
   }

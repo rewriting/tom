@@ -28,4 +28,6 @@ public interface DomainInterpretation {
    * @return
    */
   public boolean includes(ATerm term);
+  
+  public DomainInterpretation[] getDepsDomains();
 }

@@ -5,9 +5,8 @@
 package logic.model;
 
 import aterm.ATerm;
-import aterm.ATermList;
 import definitions.Buildable;
-import java.lang.reflect.Method;
+import java.util.Set;
 
 /**
  * This class is a exemple of an implementation of Domain Interface. It gives
@@ -25,11 +24,23 @@ public class BuildableDomain implements DomainInterpretation {
 
   @Override
   public ATerm chooseElement() {
-    return model.generate(100);
+    return model.generate(20);
   }
 
   @Override
-  public boolean include(ATerm term) {
+  public boolean includes(ATerm term) {
     return model.isTypeOf(term);
+  }
+
+  @Override
+  public DomainInterpretation[] getDepsDomains() {
+    Set<Buildable> deps = model.getDependences();
+    DomainInterpretation[] res = new DomainInterpretation[deps.size()];
+    int i = 0;
+    for (Buildable buildable : deps) {
+      res[i] = new BuildableDomain(buildable);
+      i++;
+    }
+    return res;
   }
 }
