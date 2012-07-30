@@ -27,23 +27,24 @@ package tom.library.utils;
 
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentHashMap;
+import org.eclipse.emf.ecore.EObject;
 
 public class LinkClass {
-  private ConcurrentMap<Object,ReferenceClass> table;
+  private ConcurrentMap<EObject,ReferenceClass> table;
 
   public LinkClass() {
-    this.table = new ConcurrentHashMap<Object,ReferenceClass>();
+    this.table = new ConcurrentHashMap<EObject,ReferenceClass>();
   }
 
-  public ReferenceClass put(Object key, ReferenceClass value) {
+  public ReferenceClass put(EObject key, ReferenceClass value) {
     return this.table.put(key,value);
   }
 
-  public boolean containsKey(Object key) {
+  public boolean containsKey(EObject key) {
     return this.table.containsKey(key);
   }
 
-  public ReferenceClass get(Object key) {
+  public ReferenceClass get(EObject key) {
     return this.table.get(key);
   }
 }
