@@ -8,6 +8,7 @@ import aterm.AFun;
 import aterm.ATerm;
 import aterm.ATermAppl;
 import aterm.pure.PureFactory;
+import examples.Examples;
 import static org.junit.Assert.assertEquals;
 import org.junit.*;
 import sort.types.Expr;
@@ -25,84 +26,82 @@ import sort.types.surexpr.wrapper;
  */
 public class SortTest {
 
-  private Scope scope;
-  private Sort nat;
-  private Sort tree;
-  private Sort tree2;
-  private Sort forest;
-  private Sort circ;
-  private Sort typetest;
-  private Sort a, b, c;
-  private SortGom expr;
-  private SortGom surexpr;
-  private Sort list;
-  private Sort list2;
-  private Sort mix;
-  private StrategyParameters paramDepth, paramNodes;
-
+//  private Scope scope;
+//  private Sort nat;
+//  private Sort tree;
+//  private Sort tree2;
+//  private Sort forest;
+//  private Sort circ;
+//  private Sort typetest;
+//  private Sort a, b, c;
+//  private SortGom expr;
+//  private SortGom surexpr;
+//  private Sort list;
+//  private Sort list2;
+//  private Sort mix;
+//  private StrategyParameters paramDepth, paramNodes;
   public SortTest() {
-
-    paramDepth = new StrategyParameters(
-            StrategyParameters.DistStrategy.DEPTH,
-            StrategyParameters.TerminationCriterion.POINT_OF_NO_RETURN);
-    
-    paramNodes = new StrategyParameters(
-            StrategyParameters.DistStrategy.NODES,
-            StrategyParameters.TerminationCriterion.POINT_OF_NO_RETURN);
-    
-    scope = new Scope();
-
-    nat = new Sort(scope, "nat");
-    nat.addConstructor("succ", nat);
-    nat.addConstructor("zero");
-
-    tree = new Sort(scope, "tree");
-    tree.addConstructor("branch", tree, tree);
-    tree.addConstructor("leaf");
-
-    typetest = new Sort(scope, "typetest");
-    typetest.addConstructor("tree", tree);
-    typetest.addConstructor("nat", nat);
-
-
-    forest = new Sort(scope, "forest");
-    tree2 = new Sort(scope, "tree2");
-    forest.addConstructor("tree", tree2);
-    tree2.addConstructor("nat", nat);
-    tree2.addConstructor("forest", forest);
-
-    circ = new Sort(scope, "circ");
-    circ.addConstructor("circ", circ);
-
-    a = new Sort(scope, "a");
-    b = new Sort(scope, "b");
-    c = new Sort(scope, "c");
-    a.addConstructor("nill");
-    a.addConstructor("b", b);
-    b.addConstructor("c", c);
-    c.addConstructor("a", a);
-
-    expr = new SortGom(scope, Expr.class);
-    expr.addConstructor(mult.class);
-    expr.addConstructor(plus.class);
-    expr.addConstructor(un.class);
-    expr.addConstructor(zero.class);
-
-    surexpr = new SortGom(scope, Surexpr.class);
-    surexpr.addConstructor(rec.class);
-    surexpr.addConstructor(wrapper.class);
-
-    list = new Sort(scope, "list");
-    list.addConstructor(expr);
-    list.addConstructor("consList", expr, list);
-
-    list2 = new Sort(scope, "list2");
-    list2.addConstructor("consList", expr, list2);
-
-    mix = new Sort(scope, "mix");
-    mix.addConstructor("consMix", list, surexpr);
-
-    scope.setDependances();
+//    paramDepth = new StrategyParameters(
+//            StrategyParameters.DistStrategy.DEPTH,
+//            StrategyParameters.TerminationCriterion.POINT_OF_NO_RETURN);
+//    
+//    paramNodes = new StrategyParameters(
+//            StrategyParameters.DistStrategy.NODES,
+//            StrategyParameters.TerminationCriterion.POINT_OF_NO_RETURN);
+//    
+//    scope = new Scope();
+//
+//    nat = new Sort(scope, "nat");
+//    nat.addConstructor("succ", nat);
+//    nat.addConstructor("zero");
+//
+//    tree = new Sort(scope, "tree");
+//    tree.addConstructor("branch", tree, tree);
+//    tree.addConstructor("leaf");
+//
+//    typetest = new Sort(scope, "typetest");
+//    typetest.addConstructor("tree", tree);
+//    typetest.addConstructor("nat", nat);
+//
+//
+//    forest = new Sort(scope, "forest");
+//    tree2 = new Sort(scope, "tree2");
+//    forest.addConstructor("tree", tree2);
+//    tree2.addConstructor("nat", nat);
+//    tree2.addConstructor("forest", forest);
+//
+//    circ = new Sort(scope, "circ");
+//    circ.addConstructor("circ", circ);
+//
+//    a = new Sort(scope, "a");
+//    b = new Sort(scope, "b");
+//    c = new Sort(scope, "c");
+//    a.addConstructor("nill");
+//    a.addConstructor("b", b);
+//    b.addConstructor("c", c);
+//    c.addConstructor("a", a);
+//
+//    expr = new SortGom(scope, Expr.class);
+//    expr.addConstructor(mult.class);
+//    expr.addConstructor(plus.class);
+//    expr.addConstructor(un.class);
+//    expr.addConstructor(zero.class);
+//
+//    surexpr = new SortGom(scope, Surexpr.class);
+//    surexpr.addConstructor(rec.class);
+//    surexpr.addConstructor(wrapper.class);
+//
+//    list = new Sort(scope, "list");
+//    list.addConstructor(expr);
+//    list.addConstructor("consList", expr, list);
+//
+//    list2 = new Sort(scope, "list2");
+//    list2.addConstructor("consList", expr, list2);
+//
+//    mix = new Sort(scope, "mix");
+//    mix.addConstructor("consMix", list, surexpr);
+//
+//    scope.setDependances();
   }
 
   @BeforeClass
@@ -116,12 +115,13 @@ public class SortTest {
   @Before
   public void setUp() {
     System.out.println("--------------------");
+    Examples.init();
   }
 
   @After
   public void tearDown() {
   }
-  
+
   /**
    * Test of isRec method, of class Sort.
    */
@@ -129,7 +129,7 @@ public class SortTest {
   public void testIsRecA() {
     System.out.println("isRec A");
     boolean expResult = true;
-    boolean result = a.isRec();
+    boolean result = Examples.a.isRec();
     assertEquals(expResult, result);
   }
 
@@ -137,7 +137,7 @@ public class SortTest {
   public void testIsRecB() {
     System.out.println("isRec B");
     boolean expResult = true;
-    boolean result = b.isRec();
+    boolean result = Examples.b.isRec();
     assertEquals(expResult, result);
   }
 
@@ -145,7 +145,7 @@ public class SortTest {
   public void testIsRecC() {
     System.out.println("isRec C");
     boolean expResult = true;
-    boolean result = c.isRec();
+    boolean result = Examples.c.isRec();
     assertEquals(expResult, result);
   }
 
@@ -153,7 +153,7 @@ public class SortTest {
   public void testIsRecCirc() {
     System.out.println("isRec Circ");
     boolean expResult = true;
-    boolean result = circ.isRec();
+    boolean result = Examples.circ.isRec();
     assertEquals(expResult, result);
   }
 
@@ -161,7 +161,7 @@ public class SortTest {
   public void testIsRecForest() {
     System.out.println("isRec Forest");
     boolean expResult = true;
-    boolean result = forest.isRec();
+    boolean result = Examples.forest.isRec();
     assertEquals(expResult, result);
   }
 
@@ -169,7 +169,7 @@ public class SortTest {
   public void testIsRecNat() {
     System.out.println("isRec Nat");
     boolean expResult = true;
-    boolean result = nat.isRec();
+    boolean result = Examples.nat.isRec();
     assertEquals(expResult, result);
   }
 
@@ -177,7 +177,7 @@ public class SortTest {
   public void testIsRecTree() {
     System.out.println("isRec Tree");
     boolean expResult = true;
-    boolean result = tree.isRec();
+    boolean result = Examples.tree.isRec();
     assertEquals(expResult, result);
   }
 
@@ -185,7 +185,7 @@ public class SortTest {
   public void testIsRecTree2() {
     System.out.println("isRec Tree2");
     boolean expResult = true;
-    boolean result = tree2.isRec();
+    boolean result = Examples.tree2.isRec();
     assertEquals(expResult, result);
   }
 
@@ -193,7 +193,7 @@ public class SortTest {
   public void testIsRecTypeTest() {
     System.out.println("isRec TypeTest");
     boolean expResult = true;
-    boolean result = expr.isRec();
+    boolean result = Examples.expr.isRec();
     assertEquals(expResult, result);
   }
 
@@ -201,7 +201,7 @@ public class SortTest {
   public void testIsRecExpr() {
     System.out.println("isRec Expr");
     boolean expResult = true;
-    boolean result = surexpr.isRec();
+    boolean result = Examples.surexpr.isRec();
     assertEquals(expResult, result);
   }
 
@@ -209,7 +209,7 @@ public class SortTest {
   public void testIsRecSurExpr() {
     System.out.println("isRec SurExpr");
     boolean expResult = false;
-    boolean result = typetest.isRec();
+    boolean result = Examples.typetest.isRec();
     assertEquals(expResult, result);
   }
 
@@ -217,13 +217,13 @@ public class SortTest {
   public void testIsRecSurList() {
     System.out.println("isRec List");
     boolean expResult = true;
-    boolean result = list.isRec();
+    boolean result = Examples.list.isRec();
     assertEquals(expResult, result);
   }
 
   @Test
   public void testIsRecSurList2() {
-    Sort test = list2;
+    Sort test = Examples.list2;
     System.out.println("isRec " + test.getName());
     boolean expResult = true;
     boolean result = test.isRec();
@@ -232,7 +232,7 @@ public class SortTest {
 
   @Test
   public void testIsRecSurMix() {
-    Sort test = mix;
+    Sort test = Examples.mix;
     System.out.println("isRec " + test.getName());
     boolean expResult = false;
     boolean result = test.isRec();
@@ -246,7 +246,7 @@ public class SortTest {
   public void testGetDimentionNat() {
     System.out.println("getDimention Nat");
     int expResult = 1;
-    int result = nat.getDimension();
+    int result = Examples.nat.getDimension();
     assertEquals(expResult, result);
   }
 
@@ -254,7 +254,7 @@ public class SortTest {
   public void testGetDimentionTree() {
     System.out.println("getDimention tree");
     int expResult = 1;
-    int result = tree.getDimension();
+    int result = Examples.tree.getDimension();
     assertEquals(expResult, result);
   }
 
@@ -262,7 +262,7 @@ public class SortTest {
   public void testGetDimentionTypeTest() {
     System.out.println("getDimention TypeTest");
     int expResult = 1;
-    int result = typetest.getDimension();
+    int result = Examples.typetest.getDimension();
     assertEquals(expResult, result);
   }
 
@@ -270,7 +270,7 @@ public class SortTest {
   public void testGetDimentionTree2() {
     System.out.println("getDimention Tree2");
     int expResult = 2;
-    int result = tree2.getDimension();
+    int result = Examples.tree2.getDimension();
     assertEquals(expResult, result);
   }
 
@@ -278,16 +278,16 @@ public class SortTest {
   public void testGetDimentionForest() {
     System.out.println("getDimention Forest");
     int expResult = 2;
-    int result = forest.getDimension();
+    int result = Examples.forest.getDimension();
     assertEquals(expResult, result);
-    assertEquals(2, tree2.getDimension());
+    assertEquals(2, Examples.tree2.getDimension());
   }
 
   @Test
   public void testGetDimentionCirc() {
     System.out.println("getDimention Circ");
     int expResult = 1;
-    int result = circ.getDimension();
+    int result = Examples.circ.getDimension();
     assertEquals(expResult, result);
   }
 
@@ -295,7 +295,7 @@ public class SortTest {
   public void testGetDimentionA() {
     System.out.println("getDimention A");
     int expResult = 1;
-    int result = a.getDimension();
+    int result = Examples.a.getDimension();
     assertEquals(expResult, result);
   }
 
@@ -303,7 +303,7 @@ public class SortTest {
   public void testGetDimentionB() {
     System.out.println("getDimention B");
     int expResult = 1;
-    int result = b.getDimension();
+    int result = Examples.b.getDimension();
     assertEquals(expResult, result);
   }
 
@@ -311,7 +311,7 @@ public class SortTest {
   public void testGetDimentionC() {
     System.out.println("getDimention C");
     int expResult = 1;
-    int result = c.getDimension();
+    int result = Examples.c.getDimension();
     assertEquals(expResult, result);
   }
 
@@ -319,7 +319,7 @@ public class SortTest {
   public void testGetDimentionExpr() {
     System.out.println("getDimention Expr");
     int expResult = 1;
-    int result = expr.getDimension();
+    int result = Examples.expr.getDimension();
     assertEquals(expResult, result);
   }
 
@@ -327,7 +327,7 @@ public class SortTest {
   public void testGetDimentionSurExpr() {
     System.out.println("getDimention SurExpr");
     int expResult = 2;
-    int result = surexpr.getDimension();
+    int result = Examples.surexpr.getDimension();
     assertEquals(expResult, result);
   }
 
@@ -335,13 +335,13 @@ public class SortTest {
   public void testGetDimentionlist() {
     System.out.println("getDimention list");
     int expResult = 2;
-    int result = list.getDimension();
+    int result = Examples.list.getDimension();
     assertEquals(expResult, result);
   }
 
   @Test
   public void testGetDimentionlist2() {
-    Sort test = list2;
+    Sort test = Examples.list2;
     System.out.println("getDimention " + test.getName());
     int expResult = 2;
     int result = test.getDimension();
@@ -350,7 +350,7 @@ public class SortTest {
 
   @Test
   public void testGetDimentionmix() {
-    Sort test = mix;
+    Sort test = Examples.mix;
     System.out.println("getDimention " + test.getName());
     int expResult = 2;
     int result = test.getDimension();
@@ -364,7 +364,7 @@ public class SortTest {
   public void testDstToLeafNat() {
     System.out.println("dstToLeaf Nat");
     int expResult = 0;
-    int result = nat.minimalSize(paramDepth.getDistStrategy());
+    int result = Examples.nat.minimalSize(Examples.paramDepth.getDistStrategy());
     assertEquals(expResult, result);
   }
 
@@ -372,7 +372,7 @@ public class SortTest {
   public void testDstToLeafTree() {
     System.out.println("dstToLeaf Tree");
     int expResult = 0;
-    int result = tree.minimalSize(paramDepth.getDistStrategy());
+    int result = Examples.tree.minimalSize(Examples.paramDepth.getDistStrategy());
     assertEquals(expResult, result);
   }
 
@@ -380,7 +380,7 @@ public class SortTest {
   public void testDstToLeafTypeTest() {
     System.out.println("dstToLeaf TypeTest");
     int expResult = 1;
-    int result = typetest.minimalSize(paramDepth.getDistStrategy());
+    int result = Examples.typetest.minimalSize(Examples.paramDepth.getDistStrategy());
     assertEquals(expResult, result);
   }
 
@@ -388,7 +388,7 @@ public class SortTest {
   public void testDstToLeafForest() {
     System.out.println("dstToLeaf Forest");
     int expResult = 2;
-    int result = forest.minimalSize(paramDepth.getDistStrategy());
+    int result = Examples.forest.minimalSize(Examples.paramDepth.getDistStrategy());
     assertEquals(expResult, result);
   }
 
@@ -396,7 +396,7 @@ public class SortTest {
   public void testDstToLeafTree2() {
     System.out.println("dstToLeaf Tree2");
     int expResult = 1;
-    int result = tree2.minimalSize(paramDepth.getDistStrategy());
+    int result = Examples.tree2.minimalSize(Examples.paramDepth.getDistStrategy());
     assertEquals(expResult, result);
   }
 
@@ -404,7 +404,7 @@ public class SortTest {
   public void testDstToLeafCirc() {
     System.out.println("dstToLeaf Circ");
     int expResult = Integer.MAX_VALUE;
-    int result = circ.minimalSize(paramDepth.getDistStrategy());
+    int result = Examples.circ.minimalSize(Examples.paramDepth.getDistStrategy());
     assertEquals(expResult, result);
   }
 
@@ -412,7 +412,7 @@ public class SortTest {
   public void testDstToLeafB() {
     System.out.println("dstToLeaf B");
     int expResult = 2;
-    int result = b.minimalSize(paramDepth.getDistStrategy());
+    int result = Examples.b.minimalSize(Examples.paramDepth.getDistStrategy());
     assertEquals(expResult, result);
   }
 
@@ -420,7 +420,7 @@ public class SortTest {
   public void testDstToLeafA() {
     System.out.println("dstToLeaf A");
     int expResult = 0;
-    int result = a.minimalSize(paramDepth.getDistStrategy());
+    int result = Examples.a.minimalSize(Examples.paramDepth.getDistStrategy());
     assertEquals(expResult, result);
   }
 
@@ -428,7 +428,7 @@ public class SortTest {
   public void testDstToLeafC() {
     System.out.println("dstToLeaf C");
     int expResult = 1;
-    int result = c.minimalSize(paramDepth.getDistStrategy());
+    int result = Examples.c.minimalSize(Examples.paramDepth.getDistStrategy());
     assertEquals(expResult, result);
   }
 
@@ -436,7 +436,7 @@ public class SortTest {
   public void testDstToLeafExpre() {
     System.out.println("dstToLeaf Expr");
     int expResult = 0;
-    int result = expr.minimalSize(paramDepth.getDistStrategy());
+    int result = Examples.expr.minimalSize(Examples.paramDepth.getDistStrategy());
     assertEquals(expResult, result);
   }
 
@@ -444,7 +444,7 @@ public class SortTest {
   public void testDstToLeafSurExpre() {
     System.out.println("dstToLeaf SurExpr");
     int expResult = 1;
-    int result = surexpr.minimalSize(paramDepth.getDistStrategy());
+    int result = Examples.surexpr.minimalSize(Examples.paramDepth.getDistStrategy());
     assertEquals(expResult, result);
   }
 
@@ -452,25 +452,25 @@ public class SortTest {
   public void testDstToLeaflist() {
     System.out.println("dstToLeaf list");
     int expResult = 1;
-    int result = list.minimalSize(paramDepth.getDistStrategy());
+    int result = Examples.list.minimalSize(Examples.paramDepth.getDistStrategy());
     assertEquals(expResult, result);
   }
 
   @Test
   public void testDstToLeaflist2() {
-    Sort test = list2;
+    Sort test = Examples.list2;
     System.out.println("dstToLeaf " + test.getName());
     int expResult = Integer.MAX_VALUE;
-    int result = test.minimalSize(paramDepth.getDistStrategy());
+    int result = test.minimalSize(Examples.paramDepth.getDistStrategy());
     assertEquals(expResult, result);
   }
 
   @Test
   public void testDstToLeafmix() {
-    Sort test = mix;
+    Sort test = Examples.mix;
     System.out.println("dstToLeaf " + test.getName());
     int expResult = 2;
-    int result = test.minimalSize(paramDepth.getDistStrategy());
+    int result = test.minimalSize(Examples.paramDepth.getDistStrategy());
     assertEquals(expResult, result);
   }
 
@@ -479,115 +479,115 @@ public class SortTest {
    */
   @Test
   public void testStepsToLeafNat() {
-    System.out.println("stepsToLeaf " + nat.getName());
+    System.out.println("stepsToLeaf " + Examples.nat.getName());
     int expResult = 0;
-    int result = nat.minimalSize(paramNodes.getDistStrategy());
+    int result = Examples.nat.minimalSize(Examples.paramNodes.getDistStrategy());
     assertEquals(expResult, result);
   }
 
   @Test
   public void testStepsToLeafA() {
-    System.out.println("stepsToLeaf " + a.getName());
+    System.out.println("stepsToLeaf " + Examples.a.getName());
     int expResult = 0;
-    int result = a.minimalSize(paramNodes.getDistStrategy());
+    int result = Examples.a.minimalSize(Examples.paramNodes.getDistStrategy());
     assertEquals(expResult, result);
   }
 
   @Test
   public void testStepsToLeafB() {
-    System.out.println("stepsToLeaf " + b.getName());
+    System.out.println("stepsToLeaf " + Examples.b.getName());
     int expResult = 2;
-    int result = b.minimalSize(paramNodes.getDistStrategy());
+    int result = Examples.b.minimalSize(Examples.paramNodes.getDistStrategy());
     assertEquals(expResult, result);
   }
 
   @Test
   public void testStepsToLeafC() {
-    System.out.println("stepsToLeaf " + c.getName());
+    System.out.println("stepsToLeaf " +Examples. c.getName());
     int expResult = 1;
-    int result = c.minimalSize(paramNodes.getDistStrategy());
+    int result = Examples.c.minimalSize(Examples.paramNodes.getDistStrategy());
     assertEquals(expResult, result);
   }
 
   @Test
   public void testStepsToLeafForest() {
-    System.out.println("stepsToLeaf " + forest.getName());
+    System.out.println("stepsToLeaf " + Examples.forest.getName());
     int expResult = 2;
-    int result = forest.minimalSize(paramNodes.getDistStrategy());
+    int result = Examples.forest.minimalSize(Examples.paramNodes.getDistStrategy());
     assertEquals(expResult, result);
   }
 
   @Test
   public void testStepsToLeaftree() {
-    System.out.println("stepsToLeaf " + tree.getName());
+    System.out.println("stepsToLeaf " + Examples.tree.getName());
     int expResult = 0;
-    int result = tree.minimalSize(paramNodes.getDistStrategy());
+    int result =Examples. tree.minimalSize(Examples.paramNodes.getDistStrategy());
     assertEquals(expResult, result);
   }
 
   @Test
   public void testStepsToLeaftypetest() {
-    System.out.println("stepsToLeaf " + typetest.getName());
+    System.out.println("stepsToLeaf " + Examples.typetest.getName());
     int expResult = 1;
-    int result = typetest.minimalSize(paramNodes.getDistStrategy());
+    int result = Examples.typetest.minimalSize(Examples.paramNodes.getDistStrategy());
     assertEquals(expResult, result);
   }
 
   @Test
   public void testStepsToLeaftree2() {
-    System.out.println("stepsToLeaf " + tree2.getName());
+    System.out.println("stepsToLeaf " + Examples.tree2.getName());
     int expResult = 1;
-    int result = tree2.minimalSize(paramNodes.getDistStrategy());
+    int result = Examples.tree2.minimalSize(Examples.paramNodes.getDistStrategy());
     assertEquals(expResult, result);
   }
 
   @Test
   public void testStepsToLeafcirc() {
-    System.out.println("stepsToLeaf " + circ.getName());
+    System.out.println("stepsToLeaf " + Examples.circ.getName());
     int expResult = Integer.MAX_VALUE;
-    int result = circ.minimalSize(paramNodes.getDistStrategy());
+    int result = Examples.circ.minimalSize(Examples.paramNodes.getDistStrategy());
     assertEquals(expResult, result);
   }
 
   @Test
   public void testStepsToLeafexpr() {
-    System.out.println("stepsToLeaf " + expr.getName());
+    System.out.println("stepsToLeaf " + Examples.expr.getName());
     int expResult = 0;
-    int result = expr.minimalSize(paramNodes.getDistStrategy());
+    int result = Examples.expr.minimalSize(Examples.paramNodes.getDistStrategy());
     assertEquals(expResult, result);
   }
 
   @Test
   public void testStepsToLeafsurexpr() {
-    System.out.println("stepsToLeaf " + surexpr.getName());
+    System.out.println("stepsToLeaf " + Examples.surexpr.getName());
     int expResult = 1;
-    int result = surexpr.minimalSize(paramNodes.getDistStrategy());
+    int result = Examples.surexpr.minimalSize(Examples.paramNodes.getDistStrategy());
     assertEquals(expResult, result);
   }
 
   @Test
   public void testStepsToLeaflist() {
-    System.out.println("stepsToLeaf " + list.getName());
+    System.out.println("stepsToLeaf " + Examples.list.getName());
     int expResult = 1;
-    int result = list.minimalSize(paramNodes.getDistStrategy());
+    int result = Examples.list.minimalSize(Examples.paramNodes.getDistStrategy());
     assertEquals(expResult, result);
   }
 
   @Test
   public void testStepsToLeaflist2() {
-    Sort test = list2;
+    Sort test = Examples.list2;
     System.out.println("stepsToLeaf " + test.getName());
     int expResult = Integer.MAX_VALUE;
-    int result = test.minimalSize(paramNodes.getDistStrategy());
+    int result = test.minimalSize(Examples.paramNodes.getDistStrategy());
     assertEquals(expResult, result);
   }
 
   @Test
   public void testStepsToLeafmix() {
-    Sort test = mix;
+    Sort test = Examples.mix;
     System.out.println("stepsToLeaf " + test.getName());
     int expResult = 3;
-    int result = test.minimalSize(paramNodes.getDistStrategy());
+    int result = test.minimalSize(Examples.paramNodes.getDistStrategy());
     assertEquals(expResult, result);
   }
 
@@ -597,7 +597,7 @@ public class SortTest {
   @Test
   public void testAddConstructorClassExpr() {
     System.out.println("testAddConstructorClass SurExpr");
-    System.out.println(expr);
+    System.out.println(Examples.expr);
     int expResult = 1;
     int result = 1;
     assertEquals(expResult, result);
@@ -606,7 +606,7 @@ public class SortTest {
   @Test
   public void testAddConstructorClassSurExpr() {
     System.out.println("testAddConstructorClass SurExpr");
-    System.out.println(surexpr);
+    System.out.println(Examples.surexpr);
     int expResult = 1;
     int result = 1;
     assertEquals(expResult, result);
@@ -618,7 +618,7 @@ public class SortTest {
   @Test
   public void testGenerateExpr() {
     System.out.println("Generate Expr");
-    Slot slot = expr.generateSlot(100, paramDepth);
+    Slot slot = Examples.expr.generateSlot(100, Examples.paramDepth);
     System.out.println(slot);
     slot.toDot2("Expr.dot");
     int expResult = 1;
@@ -629,7 +629,7 @@ public class SortTest {
   @Test
   public void testGenerateSurExpr() {
     System.out.println("Generate SurExpr");
-    Slot slot = surexpr.generateSlot(100, paramDepth);
+    Slot slot = Examples.surexpr.generateSlot(100, Examples.paramDepth);
     System.out.println(slot);
     slot.toDot2("SurExpr.dot");
     int expResult = 1;
@@ -640,7 +640,7 @@ public class SortTest {
   @Test
   public void testGenerateA() {
     System.out.println("Generate A");
-    Slot slot = a.generateSlot(100, paramDepth);
+    Slot slot = Examples.a.generateSlot(100, Examples.paramDepth);
     System.out.println(slot);
     slot.toDot2("A.dot");
     int expResult = 1;
@@ -651,7 +651,7 @@ public class SortTest {
   @Test
   public void testGenerateB() {
     System.out.println("Generate B");
-    Slot slot = b.generateSlot(100, paramDepth);
+    Slot slot = Examples.b.generateSlot(100, Examples.paramDepth);
     System.out.println(slot);
     slot.toDot2("B.dot");
     int expResult = 1;
@@ -662,7 +662,7 @@ public class SortTest {
   @Test
   public void testGenerateC() {
     System.out.println("Generate C");
-    Slot slot = c.generateSlot(100, paramDepth);
+    Slot slot = Examples.c.generateSlot(100, Examples.paramDepth);
     System.out.println(slot);
     slot.toDot2("C.dot");
     int expResult = 1;
@@ -676,7 +676,7 @@ public class SortTest {
     Slot slot;
     String res = "not this";
     try {
-      slot = circ.generateSlot(100, paramDepth);
+      slot = Examples.circ.generateSlot(100, Examples.paramDepth);
       System.out.println(slot);
       slot.toDot2("Circ.dot");
     } catch (UnsupportedOperationException e) {
@@ -690,7 +690,7 @@ public class SortTest {
   @Test
   public void testGenerateforest() {
     System.out.println("Generate forest");
-    Slot slot = forest.generateSlot(100, paramDepth);
+    Slot slot = Examples.forest.generateSlot(100, Examples.paramDepth);
     System.out.println(slot);
     slot.toDot2("forest.dot");
     int expResult = 1;
@@ -701,7 +701,7 @@ public class SortTest {
   @Test
   public void testGeneratenat() {
     System.out.println("Generate nat");
-    Slot slot = nat.generateSlot(100, paramDepth);
+    Slot slot = Examples.nat.generateSlot(100, Examples.paramDepth);
     System.out.println(slot);
     slot.toDot2("nat.dot");
     int expResult = 1;
@@ -712,7 +712,7 @@ public class SortTest {
   @Test
   public void testGenerateTree() {
     System.out.println("Generate tree");
-    Slot slot = tree.generateSlot(100, paramDepth);
+    Slot slot = Examples.tree.generateSlot(100, Examples.paramDepth);
     System.out.println(slot);
     slot.toDot2("tree.dot");
     int expResult = 1;
@@ -723,7 +723,7 @@ public class SortTest {
   @Test
   public void testGenerateTree2() {
     System.out.println("Generate tree2");
-    Slot slot = tree2.generateSlot(100, paramDepth);
+    Slot slot = Examples.tree2.generateSlot(100, Examples.paramDepth);
     System.out.println(slot);
     slot.toDot2("tree2.dot");
     int expResult = 1;
@@ -734,7 +734,7 @@ public class SortTest {
   @Test
   public void testGeneratetypetest() {
     System.out.println("Generate typetest");
-    Slot slot = typetest.generateSlot(100, paramDepth);
+    Slot slot = Examples.typetest.generateSlot(100, Examples.paramDepth);
     System.out.println(slot);
     slot.toDot2("typetest.dot");
     int expResult = 1;
@@ -745,7 +745,7 @@ public class SortTest {
   @Test
   public void testGeneratelist() {
     System.out.println("Generate list");
-    Slot slot = list.generateSlot(100, paramDepth);
+    Slot slot = Examples.list.generateSlot(100, Examples.paramDepth);
     System.out.println(slot);
     slot.toDot2("list.dot");
     int expResult = 1;
@@ -755,12 +755,12 @@ public class SortTest {
 
   @Test
   public void testGeneratelist2() {
-    Sort test = list2;
+    Sort test = Examples.list2;
     System.out.println("Generate " + test.getName());
     Slot slot = null;
     String res = "not this";
     try {
-      slot = test.generateSlot(100, paramDepth);
+      slot = test.generateSlot(100, Examples.paramDepth);
       System.out.println(slot);
       slot.toDot2("list2.dot");
     } catch (UnsupportedOperationException e) {
@@ -773,57 +773,56 @@ public class SortTest {
 
   @Test
   public void testGeneratemix() {
-    Sort test = mix;
+    Sort test = Examples.mix;
     System.out.println("Generate " + test.getName());
-    Slot slot = mix.generateSlot(100, paramDepth);
+    Slot slot = Examples.mix.generateSlot(100, Examples.paramDepth);
     System.out.println(slot);
     slot.toDot2("mix.dot");
     int expResult = 1;
     int result = 1;
     assertEquals(expResult, result);
   }
-  
+
   /**
    * Test of isTypeOf method, of class Sort.
    */
-  
   @Test
-  public void testIsTypeOfNat(){
+  public void testIsTypeOfNat() {
     System.out.println("isRec nat");
     PureFactory factory = new PureFactory();
     ATerm term = factory.make("truc");
     AFun fun = factory.makeAFun("succ", 1, false);
     ATermAppl appl = factory.makeAppl(fun, term);
     System.out.println(appl);
-    assert nat.isTypeOf(appl);
+    assert Examples.nat.isTypeOf(appl);
   }
-  
+
   @Test
-  public void testIsTypeOfNatAutoNeg(){
+  public void testIsTypeOfNatAutoNeg() {
     System.out.println("isRec nat auto neg");
-    assert !(nat.isTypeOf(mix.generate(10)));
+    assert !(Examples.nat.isTypeOf(Examples.mix.generate(10)));
   }
-  
+
   @Test
-  public void testIsTypeOfNatAuto(){
+  public void testIsTypeOfNatAuto() {
     System.out.println("isRec nat auto");
-    assert (nat.isTypeOf(nat.generate(10)));
+    assert (Examples.nat.isTypeOf(Examples.nat.generate(10)));
   }
-  
+
   @Test
-  public void testIsTypeOfExpr(){
+  public void testIsTypeOfExpr() {
     System.out.println("isRec nat");
     PureFactory factory = new PureFactory();
     ATerm term = factory.make("truc");
     AFun fun = factory.makeAFun("plus", 1, false);
     ATermAppl appl = factory.makeAppl(fun, term);
     System.out.println(appl);
-    assert expr.isTypeOf(appl);
+    assert Examples.expr.isTypeOf(appl);
   }
-  
+
   @Test
-  public void testIsTypeOfExprAuto(){
+  public void testIsTypeOfExprAuto() {
     System.out.println("isRec expr auto");
-    assert (expr.isTypeOf(expr.generate(10)));
+    assert (Examples.expr.isTypeOf(Examples.expr.generate(10)));
   }
 }
