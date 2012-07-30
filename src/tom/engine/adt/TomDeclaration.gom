@@ -18,6 +18,14 @@ Declaration = TypeTermDecl(AstName:TomName,Declarations:DeclarationList,OrgTrack
             | MakeEmptyArray(AstName:TomName,VarSize:BQTerm,Instr:Instruction,OrgTrack:Option)
             | MakeAddArray(AstName:TomName,VarElt:BQTerm,VarList:BQTerm,Instr:Instruction,OrgTrack:Option)
             | MakeDecl(AstName:TomName,AstType:TomType,Args:BQTermList,Instr:Instruction,OrgTrack:Option)
+            /*
+	     * Construct for strategies
+	     * @param SName the strategy name
+	     * @param ExtendsTerm the strategy that gives the default behaviour
+	     * @param VisitList the list of visit blocks
+	     * @param Hooks a list of declarations which allows to add code to the strategy (useful for resolve strategy in %transformation)
+	     * @param OrgTrack an option to keep the track of file name and line number
+	     * */
             | Strategy(SName:TomName,ExtendsTerm:BQTerm,VisitList:TomVisitList,Hooks:DeclarationList,OrgTrack:Option)
             | Transformation(TName:TomName,Domain:TomTypeList,ElementaryTList:ElementaryTransformationList,FileFrom:String,FileTo:String,OrgTrack:Option)
             | ResolveStratDecl(TransfoName:String,ResList:ResolveStratBlockList,ResolveNameList:TomNameList,OriginTracking:Option)
