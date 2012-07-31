@@ -1,6 +1,7 @@
 package definitions;
 
 import aterm.ATerm;
+import java.util.Iterator;
 import java.util.Set;
 
 /**
@@ -60,16 +61,6 @@ public interface Buildable {
   public int minimalSize(StrategyParameters.DistStrategy strategy);
 
   /**
-   * Tell whether a given term is from type designed by this Buildable. This
-   * function check if the name of the aterm is the name of one of the
-   * constructors of the current Buildable.
-   *
-   * @param term
-   * @return
-   */
-  public boolean isTypeOf(ATerm term);
-
-  /**
    * Make a new random term. This function cannot be used till dependances are
    * not set (using scope.setdependences()).
    *
@@ -80,4 +71,23 @@ public interface Buildable {
    * @return generated term
    */
   public ATerm generate(int n);
+
+  /**
+   * ===========================================================================
+   *
+   * Function exclusively for shrinking algorithm
+   *
+   * ===========================================================================
+   */
+  /**
+   * Tell whether a given term is from type designed by this Buildable. This
+   * function check if the name of the aterm is the name of one of the
+   * constructors of the current Buildable.
+   *
+   * @param term
+   * @return
+   */
+  public boolean isTypeOf(ATerm term);
+  
+  public Iterator<ATerm> lighten(ATerm term);
 }

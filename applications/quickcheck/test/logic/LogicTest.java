@@ -17,6 +17,8 @@ import logic.model.SignatureInterpretation;
 import gen.ExamplesFormula; // generated
 import gen.Interpretation; // generated
 import gen.TestGen;
+import java.util.ArrayList;
+import java.util.Iterator;
 import logic.model.BuildableDomain;
 import org.junit.*;
 import sort.types.IntList;
@@ -99,6 +101,13 @@ public class LogicTest {
       public DomainInterpretation[] getDepsDomains() {
         return new DomainInterpretation[0];
       }
+
+      @Override
+      public Iterator<ATerm> lighten(ATerm term) {
+        List<ATerm> res = new ArrayList<ATerm>();
+        res.add(term);
+        return res.iterator();
+      }
     };
 
     Integer = new DomainInterpretation() {
@@ -117,6 +126,13 @@ public class LogicTest {
       @Override
       public DomainInterpretation[] getDepsDomains() {
         return new DomainInterpretation[0];
+      }
+
+      @Override
+      public Iterator<ATerm> lighten(ATerm term) {
+        List<ATerm> res = new ArrayList<ATerm>();
+        res.add(term);
+        return res.iterator();
       }
     };
 
@@ -181,6 +197,13 @@ public class LogicTest {
       @Override
       public DomainInterpretation[] getDepsDomains() {
         throw new UnsupportedOperationException("Not supported yet.");
+      }
+
+      @Override
+      public Iterator<ATerm> lighten(ATerm term) {
+        List<ATerm> res = new ArrayList<ATerm>();
+        res.add(term);
+        return res.iterator();
       }
     };
 

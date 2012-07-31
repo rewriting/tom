@@ -36,6 +36,10 @@ class Essai {
     System.out.println(term);
     System.out.println(n);
     
+    for (int i = 0; i < n; i++) {
+      System.out.println(term.getChildAt(i));
+    }
+    
     System.out.println(term.getChildAt(0) instanceof ATermAppl);
   }
 }

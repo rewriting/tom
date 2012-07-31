@@ -44,7 +44,7 @@ public class Sort implements Buildable {
 
   @Override
   public int getDimension() {
-    if(dimension != -1){
+    if (dimension != -1) {
       return dimension;
     }
     int dim = 0;
@@ -172,7 +172,7 @@ public class Sort implements Buildable {
   @Override
   public ATermAppl generate(int n) {
     StrategyParameters param = new StrategyParameters(
-            StrategyParameters.DistStrategy.NODES, 
+            StrategyParameters.DistStrategy.NODES,
             StrategyParameters.TerminationCriterion.POINT_OF_NO_RETURN);
     return generateSlot(n, param).toATerm();
   }
@@ -324,14 +324,120 @@ public class Sort implements Buildable {
     return res;
   }
 
-  @Override
-  public boolean isTypeOf(ATerm term) {
+  private Constructor getCurrentCons(ATerm term) {
     String nameTerm = term.toString();
     for (Constructor constructor : constructors) {
       if (nameTerm.startsWith(constructor.getName())) {
-        return true;
+        return constructor;
       }
     }
-    return false;
+    return null;
+  }
+
+  @Override
+  public boolean isTypeOf(ATerm term) {
+    return getCurrentCons(term) != null;
+  }
+
+  private class OneConstructorIterator implements Iterator<ATerm> {
+
+    private ATerm current;
+    //
+    private Map<String, List<ATerm>> mapInitialFields;
+    private Map<Buildable, Integer> mapCountConsFieldsType;
+    private Buildable[] fieldsInit;
+
+    public OneConstructorIterator(ATerm term, Constructor cons) {
+
+      mapInitialFields = new HashMap<String, List<ATerm>>();
+      mapCountConsFieldsType = new HashMap<Buildable, Integer>();
+      Constructor constructor = getCurrentCons(term);
+      fieldsInit = constructor.getFields();
+
+      // build the map which contains all possible fields
+      int nbrChildren = term.getChildCount();
+      for (int i = 0; i < nbrChildren; i++) {
+        ATerm field = (ATerm) term.getChildAt(i);
+        String type = getType(field).getName();
+        List<ATerm> occurences = mapInitialFields.get(type);
+        if (occurences == null) {
+          occurences = new LinkedList<ATerm>();
+        }
+        occurences.add(field);
+      }
+
+      // build the map which contains numbers of needed instances for each type.
+      for (int i = 0; i < cons.getFields().length; i++) {
+        Buildable buildable = cons.getFields()[i];
+        Integer n = mapCountConsFieldsType.get(buildable);
+        if (n == null) {
+          n = 0;
+        }
+        mapCountConsFieldsType.put(buildable, n + 1);
+      }
+    }
+    
+    private Buildable getType(ATerm term) {
+      for (int i = 0; i < fieldsInit.length; i++) {
+        Buildable type = fieldsInit[i];
+        if (type.isTypeOf(term)) {
+          return type;
+        }
+      }
+      throw new UnsupportedOperationException("Term " + term + " is not from known sub type of " + getName());
+    }
+
+    @Override
+    public boolean hasNext() {
+    }
+
+    @Override
+    public ATerm next() {
+      if (current != null) {
+        ATerm res = current;
+        current = null;
+        return res;
+      } else if (hasNext()) {
+        System.out.println("WARNING : the use of the methode next() is not preceded by hasNext().");
+        ATerm res = current;
+        current = null;
+        return res;
+      } else {
+        throw new NoSuchElementException();
+      }
+    }
+
+    @Override
+    public void remove() {
+      throw new UnsupportedOperationException("This method must not be used.");
+    }
+  }
+
+  @Override
+  public Iterator<ATerm> lighten(ATerm term) {
+    Constructor constructor = getCurrentCons(term);
+    final List<Constructor> listSC = new LinkedList<Constructor>();
+    for (Constructor cons : constructors) {
+      if (cons.isSubCons(constructor)) {
+        listSC.add(cons);
+      }
+    }
+
+    return new Iterator<ATerm>() {
+
+      List<Constructor> list = listSC;
+
+      @Override
+      public boolean hasNext() {
+      }
+
+      @Override
+      public ATerm next() {
+      }
+
+      @Override
+      public void remove() {
+      }
+    };
   }
 }

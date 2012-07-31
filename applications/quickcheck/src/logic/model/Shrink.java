@@ -92,17 +92,15 @@ public class Shrink {
 
     @Override
     public boolean hasNext() {
-      throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public ATerm next() {
-      throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public void remove() {
-      throw new UnsupportedOperationException("Not supported yet.");
+      return
     }
   }
 
@@ -111,7 +109,6 @@ public class Shrink {
   }
 
   public static Iterator<ATerm> getReducedCons(final ATerm term, DomainInterpretation domain) {
-    throw new UnsupportedOperationException("Not yet implemented");
   }
 
   public static Iterator<ATerm> getShrunkFields(final ATerm term, DomainInterpretation domain) {
