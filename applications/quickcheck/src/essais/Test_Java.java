@@ -4,6 +4,9 @@
  */
 package essais;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  *
  * @author hubert
@@ -14,7 +17,8 @@ public class Test_Java {
    * @param args the command line arguments
    */
   public static void main(String[] args) {
-    System.out.println("cons(args)".split("n")[0]);
-    System.out.println("cons(args)".startsWith("conse"));
+    Map<String, Integer> map = new HashMap<String, Integer>();
+    Integer n = map.get("truc");
+    System.out.println(n);
   }
 }

@@ -95,6 +95,33 @@ public class Interpretation {
     return null; // unreachable
   }
 
+  private ATerm shrink(String varName, ATerm term, DomainInterpretation domain, Formula f, Map<String, ATerm> valuation){
+
+  }
+
+
+  private CounterExample validateForallWithShrunkCE(String varName, String domainName, Formula f, Map<String, ATerm> valuation){
+    DomainInterpretation domain = domain_map.get(domainName);
+    if(domain == null){
+      throw new UnsupportedOperationException("Domain " + domainName + " has no interpretation.");
+    }
+    ATerm term = domain.chooseElement();
+    valuation.put(varName, term);
+    CounterExample cef = validateFormulaWithCE(f, valuation);
+    %match(cef){
+      NoCE() -> {
+        valuation.remove(varName);
+        return `NoCE();
+      }
+      _ -> {
+        valuation.remove(varName);
+        ATerm shrunkTerm = shrink(varName, term, domain, f, valuation);
+        return `CEForall(varName, term, cef);
+      }
+    }
+    return null; // unreachable
+  }
+
   public boolean validateFormula(Formula f, Map<String, ATerm> valuation) {
     %match(f){
       Predicate(name, args) -> {

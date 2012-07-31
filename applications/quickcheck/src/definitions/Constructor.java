@@ -1,5 +1,8 @@
 package definitions;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  *
  * @author hubert
@@ -21,6 +24,41 @@ class Constructor {
 
   Buildable[] getFields() {
     return fields;
+  }
+
+  /**
+   * Checks whether fields of the current constructor are included in those of
+   * cons. Return true of and only if the set of fields of the current
+   * constructor is a subset the set of fields of cons. For instance cons1(int,
+   * String) is a a sub-constructor of cons2(String, String, int) but the
+   * converse in false.
+   *
+   * @param cons
+   * @return true if the current constructor is include a sub-constructor of
+   * cons
+   */
+  boolean isSubCons(Constructor cons) {
+    Map<Buildable, Integer> map = new HashMap<Buildable, Integer>();
+    for (Buildable buildable : cons.fields) {
+      Integer n = map.get(buildable);
+      if (n==null){
+        map.put(buildable, 1);
+      } else {
+        map.put(buildable, n + 1);
+      }
+    }
+    
+    for (Buildable buildable : fields) {
+      Integer n = map.get(buildable);
+      if (n==null) {
+        return false;
+      } else if (n > 1){
+        map.put(buildable, n-1);
+      } else {
+        map.remove(buildable);
+      }
+    }
+    return true;
   }
 
   /**
