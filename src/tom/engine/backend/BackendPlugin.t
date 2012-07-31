@@ -554,6 +554,7 @@ public class BackendPlugin extends TomGenericPlugin {
         try {
           String moduleName = stack.peek();
           TomSymbol tomSymbol = TomBase.getSymbolFromName(`opname,bp.getSymbolTable(moduleName));
+          markStrategy.visitLight(tomSymbol);
         } catch (EmptyStackException e) {
           System.out.println("No moduleName in stack");
         }
