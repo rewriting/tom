@@ -265,5 +265,40 @@
             </attribute>
         </markerResolutionGenerator>
     </extension>
+    
+    <!-- Manual additions -->
+    <extension
+        point="org.eclipse.ui.handlers">
+     <handler
+           class="tom.mapping.dsl.ui.TomMappingExecutableExtensionFactory:tom.mapping.dsl.ui.handler.GenerationHandler"
+           commandId="tom.mapping.dsl.ui.handler.GenerationCommand">
+     </handler>
 
+  </extension>
+
+  <extension
+        point="org.eclipse.ui.commands">
+        <command name="Generate Mapping"
+              id="tom.mapping.dsl.ui.handler.GenerationCommand">
+        </command>
+  </extension>
+
+  <extension point="org.eclipse.ui.menus">
+    <menuContribution locationURI="popup:org.eclipse.jdt.ui.PackageExplorer">
+        <command
+            commandId="tom.mapping.dsl.ui.handler.GenerationCommand"
+            style="push">
+            <visibleWhen
+                  checkEnabled="false">
+                  <iterate>
+       <adapt type="org.eclipse.core.resources.IResource">
+          <test property="org.eclipse.core.resources.name"
+                value="*.tmap"/>
+       </adapt>
+    </iterate>
+            </visibleWhen>
+        </command>
+    </menuContribution>
+    </extension>
+    
 </plugin>

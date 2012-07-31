@@ -10,13 +10,59 @@
 «ENDDEFINE»
 
 «DEFINE model FOR TomMappingProjectInfo»
+
 «FILE "src/mappings/Model.tmap"-»
 TomMapping MyMapping;
 
-import "NetOfPetri.ecore";
+import "/«projectName»/NetOfPetri.ecore";
 «ENDFILE»
 
-«FILE "src/NetOfPetri.ecore"-»
+«FILE "NetOfPetri.ecore"-»<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="NetOfPetri"
+    nsURI="http://NetOfPetri" nsPrefix="NetOfPetri">
+  <eClassifiers xsi:type="ecore:EClass" name="PetriNet">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="nodes" upperBound="-1"
+        eType="#//Node" containment="true" eOpposite="#//Node/net"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="arcs" upperBound="-1" eType="#//Arc"
+        containment="true" eOpposite="#//Arc/net"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Transition" eSuperTypes="#//Node">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="min_time" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="max_time" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Node" abstract="true">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="net" lowerBound="1" eType="#//PetriNet"
+        eOpposite="#//PetriNet/nodes"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="outgoings" upperBound="-1"
+        eType="#//Arc" eOpposite="#//Arc/source"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="incomings" upperBound="-1"
+        eType="#//Arc" eOpposite="#//Arc/target"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Place" eSuperTypes="#//Node">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="initialMarking" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Arc">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="target" lowerBound="1"
+        eType="#//Node" eOpposite="#//Node/incomings"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="source" lowerBound="1"
+        eType="#//Node" eOpposite="#//Node/outgoings"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="net" lowerBound="1" eType="#//PetriNet"
+        eOpposite="#//PetriNet/arcs"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="kind" lowerBound="1" eType="#//ArcKind"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="weight" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="ArcKind">
+    <eLiterals name="normal" value="1"/>
+    <eLiterals name="read_arc" value="2"/>
+  </eClassifiers>
+</ecore:EPackage>
+
 
 «ENDFILE»
 
@@ -51,28 +97,6 @@ Bundle-RequiredExecutionEnvironment: J2SE-1.5
 «ENDDEFINE»
 
 «DEFINE generator FOR TomMappingProjectInfo»
-«FILE "src/"+path(projectName)+"/generator/MappingGenerator.java"»
-package «projectName».generator;
-
-import tom.mapping.dsl.generator.TomMappingGenerator;
-
-public class MappingGenerator {
-	private final static String MODEL_PATH = "src/mappings/";
-	private final static String TOM_PATH = "src-tom/";
-	private final static String JAVA_PACKAGE = "internal/";
-	private final static String JAVA_PATH = "src-gen/«path(projectName)»/";
-	private final static String ENCODING = "UTF-8";
-
-	public static void main(String[] args) {
-		MappingGenerator.generate();
-	}
-	
-	public static void generate() {
-		TomMappingGenerator.generate(MODEL_PATH, JAVA_PATH, JAVA_PACKAGE,
-				TOM_PATH, ENCODING);
-	}
-}
-«ENDFILE»
 «ENDDEFINE»
 
 «DEFINE project FOR TomMappingProjectInfo»

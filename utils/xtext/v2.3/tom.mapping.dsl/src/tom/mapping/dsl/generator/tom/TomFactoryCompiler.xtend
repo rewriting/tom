@@ -52,7 +52,7 @@ class TomFactoryCompiler {
 	'''
 	 package «prefix.getPackagePrefix()»«map.name.toFirstLower()».internal;
 	 
-	 /* PROTECTED REGION ID(map.name+"_tom_factory_imports") ENABLED START */
+	 /* PROTECTED REGION ID(«map.name»_tom_factory_imports) ENABLED START */
 	 // protected imports, you should add here required imports that won't be removed after regeneration of the maping code
 	  
 	 import java.util.List 
@@ -69,7 +69,7 @@ class TomFactoryCompiler {
 	 
 	 public class «map.tomFactoryName()» {
 	 	
-	 	«/* PROTECTED REGION ID(map.name+"_tom_factory_instances") ENABLED START */»
+	 	/* PROTECTED REGION ID(«map.name»_tom_factory_instances) ENABLED START */
 	 	
 	 	«var packageList = new ArrayList<EPackage>()»
 	    «FOR elt : map.operators.filter(typeof(ClassOperator))»
@@ -89,7 +89,7 @@ class TomFactoryCompiler {
 	 		public static «pack.name.toFirstUpper()»Factory «pack.name»Factory = «pack.name.toFirstUpper()»Factory.eINSTANCE;
 	 	«ENDFOR»
 	 }
-	 	«/* ENDPROTECT */»
+	 	/* ENDPROTECT */
 	 
 	 
 	 // User operators «map.operators»
@@ -103,24 +103,24 @@ class TomFactoryCompiler {
 	 «ENDFOR»
 	 
 	 /*
-	 * Default TOM operators for «map.name» mapping. Each class that has a terminal type has aloso a default create function.
+	 * Default TOM operators for «map.name» mapping. Each class that has a terminal type has also a default create function.
 	 */
 	 
 	 «FOR op: map.allDefaultOperators»
 	 	«IF !op.instanceClassName.contains("java.util.Map$Entry")»
-	 		«map.javaFactoryCreateDefaultOperator(op.name,op)»
+	 	«map.javaFactoryCreateDefaultOperator(op.name,op)»
 	 	«ENDIF»
 	 «ENDFOR»
 	 '''
-	} 
+	}
 
 
-	def operator(Mapping mapping, Operator op) {
+	def dispatch operator(Mapping mapping, Operator op) {
 		'''// «op.eClass().name»'''
 	}
 
 	
-	def operator(Mapping mapping, ClassOperator clop) {
+	def dispatch operator(Mapping mapping, ClassOperator clop) {
 		if(clop.parameters.size()>0) {
 			val parameters = clop.getCustomParameters();
 			parameters.javaFactoryCreateOperatorWithParameters(mapping, clop);
@@ -191,13 +191,13 @@ class TomFactoryCompiler {
 	}
 	
 	
-	def typeOfParameter(Mapping mapping, EStructuralFeature esf) {}
+	def dispatch typeOfParameter(Mapping mapping, EStructuralFeature esf) {''''''}
 	
-	def typeOfParameter(Mapping mapping, EReference eref) {mapping.terminalTypeName(eref.many, eref.EType);}
+	def dispatch typeOfParameter(Mapping mapping, EReference eref) {mapping.terminalTypeName(eref.many, eref.EType);}
 	
-	def typeOfParameter(Mapping mapping, EEnum enu) {enu.name;}
+	def dispatch typeOfParameter(Mapping mapping, EEnum enu) {'''«enu.name»;'''}
 	
-	def  typeOfParameters(Mapping mapping, EAttribute eat) {injpa.primitiveType(eat.EAttributeType);}
+	def typeOfParameters(Mapping mapping, EAttribute eat) {injpa.primitiveType(eat.EAttributeType);}
 	
 	
 	def dispatch terminalTypeName(Mapping mapping, boolean many, EClassifier ecl) {

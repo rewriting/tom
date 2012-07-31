@@ -36,9 +36,9 @@ class CustomOperatorsCompiler {
 	}
 	
 
-	def operator(Mapping map, Operator op){}
+	def dispatch operator(Mapping map, Operator op){}
 	
-	def operator(Mapping map, UserOperator usop){
+	def dispatch operator(Mapping map, UserOperator usop){
 		for(a: usop.accessors) {
 			usop.accessor(a) 
 			}

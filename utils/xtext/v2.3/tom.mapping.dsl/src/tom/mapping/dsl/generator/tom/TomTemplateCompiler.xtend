@@ -16,21 +16,22 @@ class TomTemplateCompiler {
 	
 	@Inject TerminalsCompiler terminals
 	@Inject OperatorsCompiler injop
-	String prefix="tom/"
+	String prefix="tom"
 	
 	
 	def compile(Mapping m, IFileSystemAccess fsa){
 	
-		fsa.generateFile(prefix+"common.tom",m.main())
-		fsa.generateFile(prefix+m.name+"_terminals.tom",m.terminals())
-		fsa.generateFile(prefix+m.name+"_operators.tom",m.operators())
-		fsa.generateFile(prefix+m.name+"_defaultOperators.tom",m.defaultOperators())
+		fsa.generateFile(prefix+"/common.t",m.main())
+		fsa.generateFile(prefix+"/"+m.name+"_terminals.t",m.terminals())
+		fsa.generateFile(prefix+"/"+m.name+"_operators.t",m.operators())
+		fsa.generateFile(prefix+"/"+m.name+"_defaultOperators.t",m.defaultOperators())
 		for(module: m.modules){
-			fsa.generateFile(prefix+m.name+"_"+module.name+".tom",m.module(module))
+			fsa.generateFile(prefix+"/"+m.name+"_"+module.name+".t",m.module(module))
 		}
 	}
 	
-	def main(Mapping m){ '''
+	def main(Mapping m){
+	'''
 %include { string.tom }
 %include { boolean.tom }
 %include { int.tom }
@@ -77,16 +78,17 @@ private static <O> EList<O> append(O e,EList<O> l) {
 	// Default operators
 	«FOR op: m.allDefaultOperators»
 	«injop.classOperator(m, op.name, op)»
-	«ENDFOR»
-	/* PROTECTED REGION ID(op.name+"_mapping_user") ENABLED START */
+	
+	/* PROTECTED REGION ID(«op.name»_mapping_user) ENABLED START */
 	// Protected user region
 	/* PROTECTED REGION END */
+	«ENDFOR»
 	'''
 	}
 
 	
 	def module(Mapping m, Module mod) {'''
-	/* PROTECTED REGION ID(module.name+"_mapping_user") ENABLED START */
+	/* PROTECTED REGION ID(«mod.name»_mapping_user) ENABLED START */
 	// Protected user region
 	/* PROTECTED REGION END */
 	

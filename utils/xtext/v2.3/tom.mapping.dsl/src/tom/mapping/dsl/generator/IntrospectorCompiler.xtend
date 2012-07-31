@@ -12,10 +12,10 @@ class IntrospectorCompiler {
 	
 	@Inject ImportsCompiler injim
 	@Inject ChildrenGetterSetter injchi
-	String prefix = ""
+	String prefix = "tom"
 	
 	def compile(Mapping map, IFileSystemAccess fsa) {
-		fsa.generateFile(prefix+"/"+map.name.toFirstLower()+"/internal"+map.name.toFirstUpper()+"Instrospector.java", map.introspector());
+		fsa.generateFile(prefix+"/"+map.name.toFirstLower()+"/internal"+map.name.toFirstUpper()+"Instrospector.java", map.main());
 	}
 	
 	

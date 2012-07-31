@@ -12,6 +12,8 @@ import tom.mapping.dsl.generator.tom.TomTemplateCompiler
 import tom.mapping.dsl.generator.tom.TomFactoryCompiler
 import tom.mapping.dsl.generator.java.CustomOperatorsCompiler
 
+import static extension org.eclipse.xtext.xbase.lib.IteratorExtensions.*
+
 class TomMappingGenerator implements IGenerator {
 	
 	@Inject FactoryCompiler facCompiler
@@ -20,13 +22,18 @@ class TomMappingGenerator implements IGenerator {
 	@Inject IntrospectorCompiler introCompiler
 	@Inject CustomOperatorsCompiler copCompiler
 	
-	override void doGenerate(Resource resource, IFileSystemAccess fsa) { // Compilation of the components of the resource one by one@
+	override void doGenerate(Resource resource, IFileSystemAccess fsa) { // Compilation of the components of the resource one by one
 		val mapping = resource.contents.get(0) as Mapping
-		facCompiler.compile(mapping,fsa)
+		
+		//for (mapping : resource.getContents.filter(typeof(Mapping))) {
+		
 		tomFacCompiler.compile(mapping,fsa)
+		facCompiler.compile(mapping,fsa)
 		tempCompiler.compile(mapping,fsa)
 		introCompiler.compile(mapping,fsa)
 		copCompiler.compile(mapping,fsa)
-		}
+		//}
 		
+		}
+
 }

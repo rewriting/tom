@@ -8,7 +8,7 @@ class ImportsCompiler {
 
 	extension TomMappingExtensions = new TomMappingExtensions()
 	
-	String prefix = ""
+	String prefix = "tom"
 	
 	def imports(Mapping map) {
 		for(EPackage p: map.getAllRootPackages()) {
