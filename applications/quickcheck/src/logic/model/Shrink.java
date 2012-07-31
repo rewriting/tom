@@ -100,7 +100,6 @@ public class Shrink {
 
     @Override
     public void remove() {
-      return
     }
   }
 

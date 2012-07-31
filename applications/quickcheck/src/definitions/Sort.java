@@ -342,13 +342,17 @@ public class Sort implements Buildable {
   private class OneConstructorIterator implements Iterator<ATerm> {
 
     private ATerm current;
+    private Buildable beingModified;
+    private int offset = 0;
+    private Iterator<Buildable> progress;
     //
     private Map<String, List<ATerm>> mapInitialFields;
     private Map<Buildable, Integer> mapCountConsFieldsType;
     private Buildable[] fieldsInit;
+    private String nameCons;
 
     public OneConstructorIterator(ATerm term, Constructor cons) {
-
+      nameCons = cons.getName();
       mapInitialFields = new HashMap<String, List<ATerm>>();
       mapCountConsFieldsType = new HashMap<Buildable, Integer>();
       Constructor constructor = getCurrentCons(term);
@@ -361,7 +365,7 @@ public class Sort implements Buildable {
         String type = getType(field).getName();
         List<ATerm> occurences = mapInitialFields.get(type);
         if (occurences == null) {
-          occurences = new LinkedList<ATerm>();
+          occurences = new ArrayList<ATerm>();
         }
         occurences.add(field);
       }
@@ -375,8 +379,9 @@ public class Sort implements Buildable {
         }
         mapCountConsFieldsType.put(buildable, n + 1);
       }
+      progress = mapCountConsFieldsType.keySet().iterator();
     }
-    
+
     private Buildable getType(ATerm term) {
       for (int i = 0; i < fieldsInit.length; i++) {
         Buildable type = fieldsInit[i];
@@ -389,6 +394,7 @@ public class Sort implements Buildable {
 
     @Override
     public boolean hasNext() {
+      int n, k;
     }
 
     @Override
