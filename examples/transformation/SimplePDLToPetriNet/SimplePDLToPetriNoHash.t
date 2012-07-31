@@ -56,7 +56,8 @@ public class SimplePDLToPetriNoHash {
   }
 
 
-  %transformation SimplePDLToPetriNet(tom__linkClass:LinkClass,pn:PetriNet) with(SimplePDLSemantics_updated.ecore) to (PetriNetSemantics_updated.ecore) {
+  //%transformation SimplePDLToPetriNet(tom__linkClass:LinkClass,pn:PetriNet) with(SimplePDLSemantics_updated.ecore) to(PetriNetSemantics_updated.ecore) {
+  %transformation SimplePDLToPetriNet(tom__linkClass:LinkClass,pn:PetriNet) : SimplePDLSemantics_updated.ecore -> PetriNetSemantics_updated.ecore {
 
     definition P2PN traversal `TopDown(P2PN(tom__linkClass,pn)) {
       p@Process[name=name] -> {

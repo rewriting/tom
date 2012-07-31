@@ -853,7 +853,8 @@ transformationConstruct [Option orgTrack] returns [Declaration result] throws To
             }
            )*
          )? RPAREN
-         WITH LPAREN src:ALL_ID RPAREN TO LPAREN dst:ALL_ID RPAREN
+         //WITH LPAREN src:ALL_ID RPAREN TO LPAREN dst:ALL_ID RPAREN
+          COLON src:ALL_ID ARROW dst:ALL_ID 
         )
         LBRACE
         elementaryTransformationList[elemTransfoList, name.getText()]
@@ -2785,14 +2786,11 @@ tokens {
     IMPLEMENT = "implement";
     GET_ELEMENT = "get_element";
     GET_SIZE = "get_size";
-    //to clean
-    WITH = "with";
-    TO = "to";
-    //REFERENCE = "reference";
+    //to clean, or to redefine. these keyword are not satisfying
+    //WITH = "with";
+    //TO = "to";
     TRAVERSAL = "traversal";
     ELEMENTARY = "definition";//"rule";
-    SRC = "src";
-    DST = "dst";
 }
 
 LBRACE      :   '{' ;
