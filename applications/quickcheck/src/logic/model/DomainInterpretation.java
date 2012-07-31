@@ -25,9 +25,22 @@ public interface DomainInterpretation {
    * shrink algorithm to fetch terms of given type.
    *
    * @param term
-   * @return
+   * @return true if term is from type interpreted by this.
    */
   public boolean includes(ATerm term);
   
+  /**
+   * 
+   * @param term
+   * @return 
+   */
+  public ATerm lighten(ATerm term);
+
+  /**
+   * Gives all domains which current domain depends on. This function is used in
+   * the shrink algorithm to shrink sub-term ao a term.
+   *
+   * @return array of depedences.
+   */
   public DomainInterpretation[] getDepsDomains();
 }
