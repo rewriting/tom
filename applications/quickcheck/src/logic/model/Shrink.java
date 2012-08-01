@@ -19,17 +19,18 @@ public class Shrink {
 
   private static class ATermSameTypeIterator implements Iterator<ATerm> {
     //<editor-fold defaultstate="collapsed" desc="ATermSameTypeIterator">
+
     private ATerm current;
     private Stack<ATermList> stack;
     private DomainInterpretation domain;
-    
+
     private ATermSameTypeIterator(final ATerm term, DomainInterpretation domain) {
       this.domain = domain;
       ATermList args = getArgs(term);
       stack.push(args);
       current = null;
     }
-    
+
     private ATermList getArgs(ATerm term) {
       /*
        * %match(term){ ATermAppl(fun, list) -> {return `list;} _ -> {throw new
@@ -37,7 +38,7 @@ public class Shrink {
        */
       return null; //unreachable
     }
-    
+
     @Override
     public boolean hasNext() {
       if (stack.empty()) {
@@ -57,7 +58,7 @@ public class Shrink {
       stack.push(getArgs(head));
       return hasNext();
     }
-    
+
     @Override
     public ATerm next() {
       if (current != null) {
@@ -73,7 +74,7 @@ public class Shrink {
         throw new NoSuchElementException();
       }
     }
-    
+
     @Override
     public void remove() {
       throw new UnsupportedOperationException("Not supported yet.");
@@ -81,37 +82,93 @@ public class Shrink {
     //</editor-fold>
   }
 
-  private static class ATermShrunkFieldsIterator implements Iterator<ATerm> {
+  public static Iterator<ATerm> s1(final Iterator<ATerm> termIterator, final DomainInterpretation domain) {
+    return new Iterator<ATerm>() {
 
-    private DomainInterpretation domain;
-    private ATerm term;
+      private Iterator<ATerm> globalIterator = termIterator;
+      private DomainInterpretation dom = domain;
+      private Iterator<ATerm> localIterator;
 
-    private ATermShrunkFieldsIterator(final ATerm term, DomainInterpretation domain) {
-      this.domain = domain;
-      this.term = term;
-    }
+      @Override
+      public boolean hasNext() {
+        if (localIterator == null) {
+          if (globalIterator.hasNext()) {
+            localIterator = new ATermSameTypeIterator(globalIterator.next(), dom);
+          } else {
+            return false;
+          }
+        }
+        if (localIterator.hasNext()) {
+          return true;
+        } else if (globalIterator.hasNext()) {
+          localIterator = new ATermSameTypeIterator(globalIterator.next(), dom);
+          return hasNext();
+        } else {
+          return false;
+        }
+      }
 
-    @Override
-    public boolean hasNext() {
-    }
+      @Override
+      public ATerm next() {
+        if (hasNext()) {
+          return localIterator.next();
+        } else {
+          throw new NoSuchElementException();
+        }
 
-    @Override
-    public ATerm next() {
-    }
+      }
 
-    @Override
-    public void remove() {
-    }
+      @Override
+      public void remove() {
+        throw new UnsupportedOperationException("Not supported yet.");
+      }
+    };
   }
 
-  public static Iterator<ATerm> getSameTypeFields(final ATerm term, DomainInterpretation domain) {
-    return new ATermSameTypeIterator(term, domain);
+  public static Iterator<ATerm> s2(final Iterator<ATerm> termIterator, final DomainInterpretation domain) {
+    return new Iterator<ATerm>() {
+
+      private Iterator<ATerm> globalIterator = termIterator;
+      private DomainInterpretation dom = domain;
+      private Iterator<ATerm> localIterator;
+
+      @Override
+      public boolean hasNext() {
+        if (localIterator == null) {
+          if (globalIterator.hasNext()) {
+            localIterator = dom.lighten(globalIterator.next());
+          } else {
+            return false;
+          }
+        }
+        if (localIterator.hasNext()) {
+          return true;
+        } else if (globalIterator.hasNext()) {
+          localIterator = dom.lighten(globalIterator.next());
+          return hasNext();
+        } else {
+          return false;
+        }
+      }
+
+      @Override
+      public ATerm next() {
+        if (hasNext()) {
+          return localIterator.next();
+        } else {
+          throw new NoSuchElementException();
+        }
+
+      }
+
+      @Override
+      public void remove() {
+        throw new UnsupportedOperationException("Not supported yet.");
+      }
+    };
   }
 
-  public static Iterator<ATerm> getReducedCons(final ATerm term, DomainInterpretation domain) {
-  }
-
-  public static Iterator<ATerm> getShrunkFields(final ATerm term, DomainInterpretation domain) {
-    return new ATermShrunkFieldsIterator(term, domain);
+  public static Iterator<ATerm> s3(final Iterator<ATerm> termIterator, final DomainInterpretation domain){
+    
   }
 }

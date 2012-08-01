@@ -10,6 +10,9 @@ import aterm.ATermList;
 import aterm.pure.PureFactory;
 import definitions.StrategyParameters.DistStrategy;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -58,6 +61,13 @@ public final class Builtin {
     public boolean isTypeOf(ATerm term) {
       return term instanceof ATermInt;
     }
+
+    @Override
+    public Iterator<ATerm> lighten(ATerm term) {
+      List<ATerm> list = new LinkedList<ATerm>();
+      list.add(term);
+      return list.iterator();
+    }
   };
   
   /**
@@ -103,6 +113,13 @@ public final class Builtin {
     @Override
     public boolean isTypeOf(ATerm term) {
       throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Iterator<ATerm> lighten(ATerm term) {
+      List<ATerm> list = new LinkedList<ATerm>();
+      list.add(term);
+      return list.iterator();
     }
   };
 
