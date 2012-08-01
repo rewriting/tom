@@ -715,7 +715,7 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
 					 makeTypes = makeTypes.getTailconcTomType();
            index++;
          }
-				 makeTlCode += ")";
+         makeTlCode += ")";
 
          TomType strategyType = `Type(concTypeOption(),"Strategy",EmptyTargetLanguageType());
 				 Option makeOption = `OriginTracking(Name(name.getText()),t.getLine(),currentFile());

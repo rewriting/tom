@@ -187,8 +187,8 @@ public class ExpanderPlugin extends TomGenericPlugin {
            * public int getChildCount(Object o);
            */
           String funcName = "getChildCount";//function name
-            //manage null children: return 0
-            InstructionList instructions = `concInstruction(If(BQTermToExpression(Composite(CompositeTL(ITL("o==null")))),Return(Composite(CompositeTL(ITL("0")))),Nop()));
+          //manage null children: return 0
+          InstructionList instructions = `concInstruction(If(BQTermToExpression(Composite(CompositeTL(ITL("o==null")))),Return(Composite(CompositeTL(ITL("0")))),Nop()));
           for (TomType type:types) {
             InstructionList instructionsForSort = `concInstruction();
             %match(type) {
@@ -270,8 +270,8 @@ public class ExpanderPlugin extends TomGenericPlugin {
                                             ),
                                           Return(objectArrayVar)
                                           ))))
-                                    ), 
-                                    Nop());
+                                  ), 
+                                Nop());
                           instructionsForSort = `concInstruction(instructionsForSort*,inst);
 
                         } else {
@@ -365,7 +365,7 @@ public class ExpanderPlugin extends TomGenericPlugin {
                                                 AbstractBlock(concInstruction(
                                                     Assign(intVar, SubstractOne(intVar)),
                                                     Assign(res, BQTermToExpression(BuildConsArray(symbolName, ExpressionToBQTerm(Cast(domain,BQTermToExpression(Composite(CompositeTL(ITL("children[i]")))))), res)))
-                                                ))),
+                                                    ))),
                                               Return(res)))))),
                                     Nop());
                               instructionsForSort = `concInstruction(instructionsForSort*,inst);

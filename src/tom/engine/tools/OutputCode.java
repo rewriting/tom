@@ -149,10 +149,10 @@ public class OutputCode {
   public void write(int deep, String s, int line, int length) throws IOException {
     if(!pretty) {
       if(cCode) {
-          String s1 = "\n#line "+line+"\n";
-          s = s1+s;
-          write(s);
-          lineCounter+= length;
+        String s1 = "\n#line "+line+"\n";
+        s = s1+s;
+        write(s);
+        lineCounter+= length;
       } else if(singleLine>0 || lineCounter>line) {
         // put everything on a single line
         length = 0;
