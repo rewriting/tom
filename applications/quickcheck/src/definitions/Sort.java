@@ -1,7 +1,9 @@
 package definitions;
 
+import aterm.AFun;
 import aterm.ATerm;
 import aterm.ATermAppl;
+import aterm.pure.PureFactory;
 import java.util.*;
 
 /**
@@ -343,16 +345,16 @@ public class Sort implements Buildable {
 
     private ATerm current;
     private Buildable beingModified;
-    private int offset = 0;
+    private int offset;
     private Iterator<Buildable> progress;
     //
     private Map<String, List<ATerm>> mapInitialFields;
     private Map<Buildable, Integer> mapCountConsFieldsType;
     private Buildable[] fieldsInit;
-    private String nameCons;
+    private Constructor cons;
 
     public OneConstructorIterator(ATerm term, Constructor cons) {
-      nameCons = cons.getName();
+      this.cons = cons;
       mapInitialFields = new HashMap<String, List<ATerm>>();
       mapCountConsFieldsType = new HashMap<Buildable, Integer>();
       Constructor constructor = getCurrentCons(term);
@@ -380,6 +382,12 @@ public class Sort implements Buildable {
         mapCountConsFieldsType.put(buildable, n + 1);
       }
       progress = mapCountConsFieldsType.keySet().iterator();
+      if (progress.hasNext()) {
+        beingModified = progress.next();
+      } else {
+        beingModified = null;
+      }
+      offset = 0;
     }
 
     private Buildable getType(ATerm term) {
@@ -394,7 +402,49 @@ public class Sort implements Buildable {
 
     @Override
     public boolean hasNext() {
-      int n, k;
+      if (beingModified == null) {
+        // if new constructor has no field
+        PureFactory factory = new PureFactory();
+        AFun fun = factory.makeAFun(cons.getName(), 0, false);
+        current = factory.makeAppl(fun);
+        return true;
+      }
+      int k = mapCountConsFieldsType.get(beingModified);
+      List<ATerm> possibleFields = mapInitialFields.get(beingModified.getName());
+      int n = possibleFields.size();
+      if (offset >= n - k) {
+        if (progress.hasNext()) {
+          beingModified = progress.next();
+          offset = 0;
+          return hasNext();
+        } else {
+          return false;
+        }
+      }
+
+      PureFactory factory = new PureFactory();
+      AFun fun = factory.makeAFun(cons.getName(), cons.getFields().length, false);
+      ATerm[] args = new ATerm[cons.getFields().length];
+
+      Map<Buildable, Integer> states = new HashMap<Buildable, Integer>();
+
+      for (int i = 0; i < args.length; i++) {
+        Buildable field = cons.getFields()[i];
+        Integer occ = states.get(field);
+        if (occ == null) {
+          occ = 0;
+        }
+        states.put(field, occ + 1);
+        int index = occ;
+        if (field == beingModified) {
+          index += offset;
+        }
+        ATerm value = mapInitialFields.get(field.getName()).get(index);
+        args[i] = value;
+      }
+      offset++;
+      current = factory.makeAppl(fun, args);
+      return true;
     }
 
     @Override

@@ -1,7 +1,7 @@
 bash clean.sh class
 
-mkdir src/gen
-mkdir build
+mkdir -p src/gen
+mkdir -p build
 
 echo ""
 echo "GOM"
@@ -10,8 +10,8 @@ echo ""
 if [ "$1" != "nogom" ]; then
   gom src/gom/sort.gom -d src
   gom src/gom/system.gom -d src
-	mkdir src/tom/sort
-  mkdir src/tom/system
+	mkdir -p src/tom/sort
+  mkdir -p src/tom/system
 	mv src/sort/Sort.tom src/tom/sort/Sort.tom
 	mv src/system/System.tom src/tom/system/System.tom
 fi

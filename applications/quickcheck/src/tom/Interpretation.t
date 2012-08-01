@@ -96,7 +96,7 @@ public class Interpretation {
   }
 
   private ATerm shrink(String varName, ATerm term, DomainInterpretation domain, Formula f, Map<String, ATerm> valuation){
-
+    
   }
 
 
