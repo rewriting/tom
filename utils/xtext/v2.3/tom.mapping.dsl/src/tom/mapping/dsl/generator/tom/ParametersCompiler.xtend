@@ -18,20 +18,20 @@ class ParametersCompiler {
 	
 	def parameter(Parameter p){
 		'''
-		«p.name» : «p.type.terminalType()»;
+		«p.name» : «p.type.terminalType()»
 		'''
 	}
 	
 	
 	def javaParameter(Parameter p) {
 		'''
-		«p.type.javaTerminalType()» «p.name»;
+		«p.type.javaTerminalType()» «p.name»
 		'''
 	}
 	
 	
 	def terminalType(Terminal t) {
-		'''«t.name»;'''
+		'''«t.name»'''
 	}
 	
 	
@@ -41,22 +41,22 @@ class ParametersCompiler {
 
 	
 	def featureParameter(Mapping mapping, FeatureParameter fp) {
-		'''«fp.feature.name» : «mapping.feature(fp.feature)»;'''
+		'''«fp.feature.name» : «mapping.feature(fp.feature)»'''
 	}
 	
 	
 	def javaFeatureParameter(FeatureParameter fp) {
-		'''«fp.feature.feature()» _«fp.feature.name»;''';
+		'''«fp.feature.feature()» _«fp.feature.name»'''
 	}
 	
 	
 	def defaultFeatureParameter(Mapping mapping, EStructuralFeature esf) {
-		'''«esf.name» : «mapping.feature(esf)»;''';
+		'''«esf.name» : «mapping.feature(esf)»'''
 	}
 	
 	
 	def defaultJavaFeatureParameter(EStructuralFeature efp) {
-		'''«efp.feature()» _«efp.name»''';
+		'''«efp.feature()» _«efp.name»'''
 	}
 	
 	
@@ -78,11 +78,12 @@ class ParametersCompiler {
 	
 	
 	def dispatch feature(Mapping mapping, EStructuralFeature esf) {
+		''''''
 	}
 	
 	
 	def dispatch feature(Mapping mapping, EReference er) {
-		mapping.getTerminal(er.EReferenceType, er.many).name(mapping)
+		'''«mapping.getTerminal(er.EReferenceType, er.many).name(mapping)»'''
 	}
 	
 	
@@ -90,13 +91,14 @@ class ParametersCompiler {
 		'''
 		«IF eat.many»
 			List<? extends «eat.renameEcoreClasses()»>
-		«ELSE»renameEcoreClasses(eat)
+		«ELSE»«renameEcoreClasses(eat)»
 		«ENDIF»
 		'''
 	}
 	
     
 	def dispatch feature(EStructuralFeature esf) {
+		''''''
 	}
 	
 	
@@ -104,32 +106,30 @@ class ParametersCompiler {
     	'''
     	«IF er.many»
     	List<? extends «er.EReferenceType.name»>«ELSE»
-    	er.EReferenceType.name«ENDIF»
+    	«er.EReferenceType.name»«ENDIF»
 		'''
 	}
 	
 	
 	def dispatch feature(EEnum ee) {
-		ee.name;
+		'''«ee.name»'''
 	}
 	
 	
 	def dispatch feature(EAttribute eat) {
-		eat.EAttributeType.primitiveType();
-	}
+		'''«eat.EAttributeType.primitiveType()»'''
+			}
 	
 	
 	def dispatch primitiveType(EDataType edt) {
 		'''
-		«IF edt.instanceTypeName == "java.lang.String"»"String";
-		«ELSE»«edt.instanceTypeName»
-		«ENDIF»
+		«IF edt.instanceTypeName == "java.lang.String"»String«ELSE»«edt.instanceTypeName»«ENDIF»
 		'''
 	}
 	
 	
 	def dispatch primitiveType(EEnum ee) {
-		ee.name;
+		'''«ee.name»'''
 	}
 	
 }

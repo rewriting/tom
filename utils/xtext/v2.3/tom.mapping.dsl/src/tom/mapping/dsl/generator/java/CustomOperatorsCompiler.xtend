@@ -62,7 +62,7 @@ class CustomOperatorsCompiler {
 		'''
 		public static boolean is«usop.name.toFirstUpper()»
 			(«injpa.javaTerminalType(usop.type)» t) {
-			return «usop.test()»;
+			return «usop.test»;
 		}
 		'''
 	}
@@ -74,7 +74,7 @@ class CustomOperatorsCompiler {
 		(«FOR acc: usop.accessors SEPARATOR ","»
 			«injpa.javaParameter(acc.slot)»
 		«ENDFOR») {
-			return «usop.make()»
+			return «usop.make»
 			}
 		'''
 	}

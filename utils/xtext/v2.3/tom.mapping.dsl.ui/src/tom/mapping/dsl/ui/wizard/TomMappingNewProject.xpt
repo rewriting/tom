@@ -14,7 +14,7 @@
 «FILE "src/mappings/Model.tmap"-»
 TomMapping MyMapping;
 
-import "/«projectName»/NetOfPetri.ecore";
+import "platform:/resource/«projectName»/NetOfPetri.ecore";
 «ENDFILE»
 
 «FILE "NetOfPetri.ecore"-»<?xml version="1.0" encoding="UTF-8"?>

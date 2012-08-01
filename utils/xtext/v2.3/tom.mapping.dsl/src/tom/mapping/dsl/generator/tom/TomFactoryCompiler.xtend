@@ -33,15 +33,15 @@ class TomFactoryCompiler {
 	}
 	
 	def ArrayList<EPackage> intersectName(ArrayList<EPackage> listBase) { // Defined because of the intersections of "packageList" needed in function "main"
-		var listDestination = new ArrayList<EPackage>();
+		var listDestination = new ArrayList<EPackage>
 		
 		for(eltB : listBase) {
 			var sameName = false;
 			for(eltD : listDestination) {
-				sameName = sameName || eltB.name == eltD.name;
+				sameName = sameName || eltB.name.equals(eltD.name)
 				} 
 			if(!sameName) {
-				listDestination.add(eltB);
+				listDestination.add(eltB)
 				}
 			}
 		return listDestination;
@@ -88,7 +88,6 @@ class TomFactoryCompiler {
 	 	«FOR pack: packageList2.intersectName()»
 	 		public static «pack.name.toFirstUpper()»Factory «pack.name»Factory = «pack.name.toFirstUpper()»Factory.eINSTANCE;
 	 	«ENDFOR»
-	 }
 	 	/* ENDPROTECT */
 	 
 	 
@@ -107,10 +106,11 @@ class TomFactoryCompiler {
 	 */
 	 
 	 «FOR op: map.allDefaultOperators»
-	 	«IF !op.instanceClassName.contains("java.util.Map$Entry")»
+	 	«IF !(op.instanceClassName == null) && !(op.instanceClassName.contains("java.util.Map$Entry"))»
 	 	«map.javaFactoryCreateDefaultOperator(op.name,op)»
 	 	«ENDIF»
 	 «ENDFOR»
+	 }
 	 '''
 	}
 
@@ -139,7 +139,7 @@ class TomFactoryCompiler {
 			«p.feature.structureFeatureSetter()»
 		«ENDFOR»
 		«FOR p: clop.getSettedCustomParameters()»
-			o.set«p.feature.name.toFirstUpper()»(«injop.settedValue(p.feature, p.value)»
+			o.set«p.feature.name.toFirstUpper()»(«injop.settedValue(p.feature, p.value)»)
 		«ENDFOR»
 		return o;
 	}
@@ -193,12 +193,12 @@ class TomFactoryCompiler {
 	
 	def dispatch typeOfParameter(Mapping mapping, EStructuralFeature esf) {''''''}
 	
-	def dispatch typeOfParameter(Mapping mapping, EReference eref) {mapping.terminalTypeName(eref.many, eref.EType);}
+	def dispatch typeOfParameter(Mapping mapping, EReference eref) {mapping.terminalTypeName(eref.many, eref.EType)}
 	
-	def dispatch typeOfParameter(Mapping mapping, EEnum enu) {'''«enu.name»;'''}
+	def dispatch typeOfParameter(Mapping mapping, EEnum enu) {'''«enu.name»'''}
 	
-	def typeOfParameters(Mapping mapping, EAttribute eat) {injpa.primitiveType(eat.EAttributeType);}
-	
+	def dispatch typeOfParameter(Mapping mapping, EAttribute eat) {injpa.primitiveType(eat.EAttributeType)}
+
 	
 	def dispatch terminalTypeName(Mapping mapping, boolean many, EClassifier ecl) {
 		'''«IF many»List<«ENDIF»«ecl.name»«IF many»>«ENDIF»'''

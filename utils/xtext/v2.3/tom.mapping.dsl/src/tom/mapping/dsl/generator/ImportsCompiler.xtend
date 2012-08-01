@@ -11,20 +11,26 @@ class ImportsCompiler {
 	String prefix = "tom"
 	
 	def imports(Mapping map) {
-		for(EPackage p: map.getAllRootPackages()) {
+		'''
+		«FOR EPackage p: map.getAllRootPackages()»
 			prefix.imports(p)
+		«ENDFOR»
 		}
+		'''
 	}
 	
 	
 	def importsWithUtils(Mapping map) {
-		for(EPackage p: map.getAllRootPackages()) {
+		'''
+		«FOR EPackage p: map.getAllRootPackages()»
 			prefix.importsWithUtils(p)
 		}
+		«ENDFOR»
+		'''
 	}
 	
 	
-	def imports(String prefix, EPackage ep) {
+	def imports(String prefix, EPackage ep) { // Check this function
 		'''
 		«IF ep.EClassifiers.size() > 0»	
 			 import «prefix.getPackagePrefix()»«ep.name».*;
@@ -36,7 +42,7 @@ class ImportsCompiler {
 	}
 
 
-	def importsWithUtils(String prefix, EPackage ep) {
+	def importsWithUtils(String prefix, EPackage ep) { // Check this function
 		'''
 		«IF ep.EClassifiers.size() > 0»
 			import «prefix.getPackagePrefix()»«ep.name».*; 

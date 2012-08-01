@@ -52,8 +52,7 @@ extension TomMappingExtensions = new TomMappingExtensions()
 		'''
 		{ $t instanceof EList<?> &&
 			(((EList<«t.class_.name»>)$t).size() == 0 
-			|| (((EList<«t.class_.name»>)$t).size()>0 && ((EList<«t.class_.name»>)$t).get(0) instanceof «t.class_.name»))} 
-		}
+			|| (((EList<«t.class_.name»>)$t).size()>0 && ((EList<«t.class_.name»>)$t).get(0) instanceof «t.class_.name»))}
 		'''
 	}
 	

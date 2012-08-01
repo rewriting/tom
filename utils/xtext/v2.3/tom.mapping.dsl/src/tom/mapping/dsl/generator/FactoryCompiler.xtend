@@ -19,7 +19,7 @@ class FactoryCompiler {
 	
 	extension TomMappingExtensions = new TomMappingExtensions()
 	
-	@Inject TomFactoryCompiler tfc
+	// @Inject TomFactoryCompiler tfc // Is it really useful since TomFactoryCompiler is compiled in the generator ?
 	@Inject ImportsCompiler imc
 	@Inject ParametersCompiler injpa
 	@Inject OperatorsCompiler injop
@@ -27,28 +27,27 @@ class FactoryCompiler {
 	String prefix = "tom"
 	
 	def compile(Mapping m, IFileSystemAccess fsa){
+		// tfc.main(m) // Moved from main to here in order not to disturb the generation of the file Factory
 		fsa.generateFile(packageToPath(prefix)+"/"+m.name.toFirstLower()+"/"+m.factoryName()+".java", m.main())
 		}
 		
 		
 	def ArrayList<EPackage> intersectName(ArrayList<EPackage> listBase) { // Defined because of the intersections of "packageList" needed in function "main"
-		var listDestination = new ArrayList<EPackage>();
+		var listDestination = new ArrayList<EPackage>
 		
 		for(eltB : listBase) {
-			var sameName = false;
+			var sameName = false
 			for(eltD : listDestination) {
-				sameName = sameName || eltB.name == eltD.name;
+				sameName = sameName || eltB.name.equals(eltD.name)
 				} 
 			if(!sameName) {
-				listDestination.add(eltB);
+				listDestination.add(eltB)
 				}
 			}
-		return listDestination;
+		return listDestination
 		}
 	
-	def main(Mapping map) {
-		 tfc.main(map);
-		 
+	def main(Mapping map) {		 
 		 '''
 		 package «prefix.getPackagePrefix()»«map.name.toFirstLower()»;
 		 
@@ -120,12 +119,12 @@ class FactoryCompiler {
 	}
 	
 
-	def dispatch operator(Mapping map, Operator op) {}
+	def dispatch operator(Mapping map, Operator op) {''''''}
 	
 	def dispatch operator(Mapping map, ClassOperator clop) {
 		if(clop.parameters.size>0) {
 			val parameters = clop.getCustomParameters();
-			javaFactoryCreateOperatorWithParameters(parameters, clop);
+			parameters.javaFactoryCreateOperatorWithParameters(clop);
 		} else {
 			map.javaFactoryCreateDefaultOperator(clop.name, clop.class_)
 		}
@@ -175,22 +174,19 @@ class FactoryCompiler {
 	
 	
 	def structureFeatureSetter(EStructuralFeature esf){
-		
-		if(esf.many){
 		'''
-		«IF !esf.unsettable»
+		«IF esf.many»
+			«IF !esf.unsettable»
 			for(int i = 0 ; i < «esf.name».size() ; ++i) {
 				o.get«esf.name.toFirstUpper()»().add(_«esf.name».get(i));
 				}
+			«ENDIF»
+		«ELSE» 
+			«IF !esf.unsettable»
+			o.set«esf.name.toFirstUpper()»(_«esf.name»);
+			«ENDIF»
 		«ENDIF»
-				'''
-			} else {
-				'''
-				«IF !esf.unsettable»
-					o.set«esf.name.toFirstUpper()»(_«esf.name»);
-				«ENDIF»
-				'''
-			}
+		'''
 		}
 	
 }

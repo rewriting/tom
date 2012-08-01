@@ -32,6 +32,7 @@ class TomMappingGenerator implements IGenerator {
 		tempCompiler.compile(mapping,fsa)
 		introCompiler.compile(mapping,fsa)
 		copCompiler.compile(mapping,fsa)
+		
 		//}
 		
 		}

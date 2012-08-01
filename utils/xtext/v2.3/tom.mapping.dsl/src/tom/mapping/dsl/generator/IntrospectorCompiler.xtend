@@ -15,7 +15,7 @@ class IntrospectorCompiler {
 	String prefix = "tom"
 	
 	def compile(Mapping map, IFileSystemAccess fsa) {
-		fsa.generateFile(prefix+"/"+map.name.toFirstLower()+"/internal"+map.name.toFirstUpper()+"Instrospector.java", map.main());
+		fsa.generateFile(prefix+"/"+map.name.toFirstLower()+"/internal/"+map.name.toFirstUpper()+"Introspector.java", map.main());
 	}
 	
 	
@@ -31,13 +31,15 @@ class IntrospectorCompiler {
 		/* PROTECTED REGION ID("introspector_imports") ENABLED START */
 		// protected imports
 		import java.util.ArrayList;
-		import java.util.HashSet
-		import java.util.List
-		import java.util.Set
+		import java.util.HashSet;
+		import java.util.List;
+		import java.util.Set;
 		
 		import org.eclipse.emf.common.util.EList;
 		import org.eclipse.emf.ecore.EObject;
 		import org.eclipse.emf.ecore.EStructuralFeature;
+		import org.eclipse.emf.ecore.EPackage;
+		import org.eclipse.emf.ecore.EClass;
 		
 		import tom.library.sl.Introspector;
 		«injim.importsWithUtils(map)»
@@ -89,7 +91,7 @@ class IntrospectorCompiler {
 			List<Object> l = new ArrayList<Object>();
 			if(arg0 instanceof List) {
 				// Children of a list are its content
-				for(Object object : (List<Object> arg0) {
+				for(Object object : (List<Object>) arg0) {
 					l.add(object);
 				}
 				return l.toArray();
@@ -97,7 +99,7 @@ class IntrospectorCompiler {
 			return getter(arg0).children(arg0);
 		}
 		
-		@deprecated
+		@Deprecated
 		private static IChildrenGetter old_getter(Object o) {
 			EObject eo = (EObject) o;
 			«FOR pack: packages»
@@ -128,7 +130,7 @@ class IntrospectorCompiler {
 				«ENDFOR»
 				
 				IChildrenGetter res = null;
-				for(EClass superClass : eo.getAllSuperTypes()) {
+				for(EClass superClass : eo.getEAllSuperTypes()) {
 					res = searchChildrenGetter(superClass);
 					if(res!=null) {return res;}
 				}
@@ -136,7 +138,7 @@ class IntrospectorCompiler {
 			throw new RuntimeException("No children getter for"+eo.toString());
 		}
 		
-		private static interface IChildreGetter {
+		private static interface IChildrenGetter {
 			public Object[] children(Object i);
 		}
 		
@@ -149,7 +151,7 @@ class IntrospectorCompiler {
 		val packages = map.getAllPackages();
 		
 		'''
-		@SupressWarnings("uncheked")
+		@SuppressWarnings("uncheked")
 		public <T> T setChildren(T arg0, Object[] arg1) {
 			if (arg0 instanceof List) {
 				// If object is a list then content of the original list has to be replaced
@@ -193,7 +195,7 @@ class IntrospectorCompiler {
 		}
 		
 		private static interface IChildrenSetter {
-			public Object set(Object i, Objet[] children);
+			public Object set(Object i, Object[] children);
 		}
 		
 		«FOR pack: packages» «injchi.setter(map, pack)» «ENDFOR»
