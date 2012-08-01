@@ -18,18 +18,18 @@ import java.util.Stack;
 public class Shrink {
 
   private static class ATermSameTypeIterator implements Iterator<ATerm> {
-
+    //<editor-fold defaultstate="collapsed" desc="ATermSameTypeIterator">
     private ATerm current;
     private Stack<ATermList> stack;
     private DomainInterpretation domain;
-
+    
     private ATermSameTypeIterator(final ATerm term, DomainInterpretation domain) {
       this.domain = domain;
       ATermList args = getArgs(term);
       stack.push(args);
       current = null;
     }
-
+    
     private ATermList getArgs(ATerm term) {
       /*
        * %match(term){ ATermAppl(fun, list) -> {return `list;} _ -> {throw new
@@ -37,7 +37,7 @@ public class Shrink {
        */
       return null; //unreachable
     }
-
+    
     @Override
     public boolean hasNext() {
       if (stack.empty()) {
@@ -57,7 +57,7 @@ public class Shrink {
       stack.push(getArgs(head));
       return hasNext();
     }
-
+    
     @Override
     public ATerm next() {
       if (current != null) {
@@ -73,11 +73,12 @@ public class Shrink {
         throw new NoSuchElementException();
       }
     }
-
+    
     @Override
     public void remove() {
       throw new UnsupportedOperationException("Not supported yet.");
     }
+    //</editor-fold>
   }
 
   private static class ATermShrunkFieldsIterator implements Iterator<ATerm> {

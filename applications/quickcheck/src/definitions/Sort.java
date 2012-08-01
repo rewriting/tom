@@ -342,15 +342,17 @@ public class Sort implements Buildable {
   }
 
   private class OneConstructorIterator implements Iterator<ATerm> {
+    //<editor-fold defaultstate="collapsed" desc="OneConstructorIterator">
 
     private ATerm current;
     private Buildable beingModified;
     private int offset;
     private Iterator<Buildable> progress;
     //
+    private boolean hasnext;
+    //
     private Map<String, List<ATerm>> mapInitialFields;
     private Map<Buildable, Integer> mapCountConsFieldsType;
-    private Buildable[] fieldsInit;
     private Constructor cons;
 
     public OneConstructorIterator(ATerm term, Constructor cons) {
@@ -358,13 +360,13 @@ public class Sort implements Buildable {
       mapInitialFields = new HashMap<String, List<ATerm>>();
       mapCountConsFieldsType = new HashMap<Buildable, Integer>();
       Constructor constructor = getCurrentCons(term);
-      fieldsInit = constructor.getFields();
+      Buildable[] listFieldsInit = constructor.getFields();
 
       // build the map which contains all possible fields
       int nbrChildren = term.getChildCount();
       for (int i = 0; i < nbrChildren; i++) {
         ATerm field = (ATerm) term.getChildAt(i);
-        String type = getType(field).getName();
+        String type = getType(field, listFieldsInit).getName();
         List<ATerm> occurences = mapInitialFields.get(type);
         if (occurences == null) {
           occurences = new ArrayList<ATerm>();
@@ -388,11 +390,12 @@ public class Sort implements Buildable {
         beingModified = null;
       }
       offset = 0;
+      hasnext = true;
     }
 
-    private Buildable getType(ATerm term) {
-      for (int i = 0; i < fieldsInit.length; i++) {
-        Buildable type = fieldsInit[i];
+    private Buildable getType(ATerm term, Buildable[] listFieldsInit) {
+      for (int i = 0; i < listFieldsInit.length; i++) {
+        Buildable type = listFieldsInit[i];
         if (type.isTypeOf(term)) {
           return type;
         }
@@ -402,11 +405,15 @@ public class Sort implements Buildable {
 
     @Override
     public boolean hasNext() {
+      if (!hasnext && current == null) {
+        return false;
+      }
       if (beingModified == null) {
         // if new constructor has no field
         PureFactory factory = new PureFactory();
         AFun fun = factory.makeAFun(cons.getName(), 0, false);
         current = factory.makeAppl(fun);
+        hasnext = false;
         return true;
       }
       int k = mapCountConsFieldsType.get(beingModified);
@@ -467,6 +474,72 @@ public class Sort implements Buildable {
     public void remove() {
       throw new UnsupportedOperationException("This method must not be used.");
     }
+    //</editor-fold>
+  }
+
+  private class MultiConstructorIterator implements Iterator<ATerm> {
+
+    private Iterator<Constructor> consIte;
+    private ATerm term;
+    //
+    private ATerm current;
+    private Iterator<ATerm> monoIte;
+    private boolean hasnext;
+
+    public MultiConstructorIterator(ATerm term, Iterator<Constructor> ite) {
+      this.consIte = ite;
+      this.term = term;
+      this.current = null;
+      if (consIte.hasNext()) {
+        monoIte = new OneConstructorIterator(term, consIte.next());
+      } else {
+        monoIte = null;
+      }
+      hasnext = true;
+    }
+
+    @Override
+    public boolean hasNext() {
+      if (!hasnext && current == null) {
+        return false;
+      }
+      if (monoIte == null) {
+        current = term;
+        hasnext = false;
+        return true;
+      }
+      if (monoIte.hasNext()) {
+        current = monoIte.next();
+        return true;
+      } else if (consIte.hasNext()){
+        monoIte = new OneConstructorIterator(term, consIte.next());
+        return hasNext();
+      } else {
+        return false;
+      }
+      
+    }
+
+    @Override
+    public ATerm next() {
+      if (current != null) {
+        ATerm res = current;
+        current = null;
+        return res;
+      } else if (hasNext()) {
+        System.out.println("WARNING : the use of the methode next() is not preceded by hasNext().");
+        ATerm res = current;
+        current = null;
+        return res;
+      } else {
+        throw new NoSuchElementException();
+      }
+    }
+
+    @Override
+    public void remove() {
+      throw new UnsupportedOperationException("Remove function must not be used.");
+    }
   }
 
   @Override
@@ -474,26 +547,10 @@ public class Sort implements Buildable {
     Constructor constructor = getCurrentCons(term);
     final List<Constructor> listSC = new LinkedList<Constructor>();
     for (Constructor cons : constructors) {
-      if (cons.isSubCons(constructor)) {
+      if (cons.isSubCons(constructor) && cons != constructor) {
         listSC.add(cons);
       }
     }
-
-    return new Iterator<ATerm>() {
-
-      List<Constructor> list = listSC;
-
-      @Override
-      public boolean hasNext() {
-      }
-
-      @Override
-      public ATerm next() {
-      }
-
-      @Override
-      public void remove() {
-      }
-    };
+    return new MultiConstructorIterator(term, listSC.iterator());
   }
 }
