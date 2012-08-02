@@ -72,10 +72,8 @@ public class BackendPlugin extends TomGenericPlugin {
   %include { ../../library/mapping/java/sl.tom }
 
   /** the tabulation starting value */
-  //tom-ada
-  //public final static int defaultDeep = 1;
-  //master
-  private final static int defaultDeep = 1;
+  //access: package
+  final static int defaultDeep = 1;
 
   /** the declared options string */
   public static final String DECLARED_OPTIONS = 
