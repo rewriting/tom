@@ -83,21 +83,23 @@ public class ExpanderPlugin extends TomGenericPlugin {
     "<boolean name='genIntrospector' altName='gi' description='Generate a class that implements Introspector to apply strategies on non visitable terms' value='false'/>" +
     "</options>";
 
-  private static final TomType objectType = ASTFactory.makeType(`concTypeOption(),"undefined","Object");
-  private static final TomType genericType = ASTFactory.makeType(`concTypeOption(),"undefined","T");
-  private static final TomType methodparameterType = ASTFactory.makeType(`concTypeOption(),"undefined","<T> T");
-  private static final TomType objectArrayType = ASTFactory.makeType(`concTypeOption(),"undefined","Object[]");
-  private static final TomType intType = ASTFactory.makeType(`concTypeOption(),"int","int");
-  
-  private static final TomType basicStratType = ASTFactory.makeType(`concTypeOption(),"undefined","tom.library.sl.AbstractStrategyBasic");
-  private static final TomType introspectorType = ASTFactory.makeType(`concTypeOption(),"undefined","tom.library.sl.Introspector");
-  private static final TomType visitfailureType = ASTFactory.makeType(`concTypeOption(),"undefined","tom.library.sl.VisitFailure");
+  private static TomType objectType;
+  private static TomType genericType;
+  private static TomType methodparameterType;
+  private static TomType objectArrayType;
+  private static TomType intType;
+
+  private static TomType basicStratType;
+  private static TomType introspectorType;
+  private static TomType visitfailureType;
   // introspector argument of visitLight
-  private static final BQTerm introspectorVar = `BQVariable(concOption(),Name("introspector"),introspectorType);
-  private static final BQTerm objectVar = `BQVariable(concOption(),Name("o"),objectType);
-  private static final BQTerm childVar = `BQVariable(concOption(),Name("child"),objectType);
-  private static final BQTerm intVar = `BQVariable(concOption(),Name("i"),intType);
-  private static final BQTerm objectArrayVar = `BQVariable(concOption(),Name("children"),objectArrayType);
+  private static BQTerm introspectorVar;
+  private static BQTerm objectVar;
+  private static BQTerm childVar;
+  private static BQTerm intVar;
+  private static BQTerm objectArrayVar;
+  private static String visitFuncPrefix; // _visit_TermN prefix is "_" but in Ada function can't start with "_"
+  private static boolean generateAdaCode = false;
 
   /** if the flag is true, a class that implements Introspector is generated */
   private boolean genIntrospector = false;
@@ -125,6 +127,42 @@ public class ExpanderPlugin extends TomGenericPlugin {
   }
 
   public void run(Map informationTracker) {
+    if ( getOptionBooleanValue("aCode") ) {
+      generateAdaCode = true;
+      visitFuncPrefix = "tom_";
+      objectType = ASTFactory.makeType(`concTypeOption(),"undefined","ObjectPtr");
+      genericType = ASTFactory.makeType(`concTypeOption(),"undefined","ObjectPtr");
+      methodparameterType = ASTFactory.makeType(`concTypeOption(),"undefined","ObjectPtr");
+      objectArrayType = ASTFactory.makeType(`concTypeOption(),"undefined","ObjectPtrArrayPtr");
+      intType = ASTFactory.makeType(`concTypeOption(),"int","int");
+
+      basicStratType = ASTFactory.makeType(`concTypeOption(),"undefined","AbstractStrategyBasic");
+      introspectorType = ASTFactory.makeType(`concTypeOption(),"undefined","access Introspector'Class");
+      visitfailureType = ASTFactory.makeType(`concTypeOption(),"undefined","VisitFailure");
+      // introspector argument of visitLight
+      introspectorVar = `BQVariable(concOption(),Name("intro"),introspectorType);
+      objectVar = `BQVariable(concOption(),Name("o"),objectType);
+      childVar = `BQVariable(concOption(),Name("child"),objectType);
+      intVar = `BQVariable(concOption(),Name("i"),intType);
+      objectArrayVar = `BQVariable(concOption(),Name("children"),objectArrayType);
+    } else {
+      visitFuncPrefix = "_";
+      objectType = ASTFactory.makeType(`concTypeOption(),"undefined","Object");
+      genericType = ASTFactory.makeType(`concTypeOption(),"undefined","T");
+      methodparameterType = ASTFactory.makeType(`concTypeOption(),"undefined","<T> T");
+      objectArrayType = ASTFactory.makeType(`concTypeOption(),"undefined","Object[]");
+      intType = ASTFactory.makeType(`concTypeOption(),"int","int");
+
+      basicStratType = ASTFactory.makeType(`concTypeOption(),"undefined","tom.library.sl.AbstractStrategyBasic");
+      introspectorType = ASTFactory.makeType(`concTypeOption(),"undefined","tom.library.sl.Introspector");
+      visitfailureType = ASTFactory.makeType(`concTypeOption(),"undefined","tom.library.sl.VisitFailure");
+      // introspector argument of visitLight
+      introspectorVar = `BQVariable(concOption(),Name("introspector"),introspectorType);
+      objectVar = `BQVariable(concOption(),Name("o"),objectType);
+      childVar = `BQVariable(concOption(),Name("child"),objectType);
+      intVar = `BQVariable(concOption(),Name("i"),intType);
+      objectArrayVar = `BQVariable(concOption(),Name("children"),objectArrayType);
+    }
     long startChrono = System.currentTimeMillis();
     boolean intermediate = getOptionBooleanValue("intermediate");    
     setGenIntrospector(getOptionBooleanValue("genIntrospector"));
@@ -419,8 +457,8 @@ public class ExpanderPlugin extends TomGenericPlugin {
           funcName = "setChildAt";//function name
           String code = %[
             Object[] newChildren = getChildren(o);
-            newChildren[i] = child;
-            return setChildren(o, newChildren);
+          newChildren[i] = child;
+          return setChildren(o, newChildren);
           ]%;
           l = `concDeclaration(MethodDef(Name(funcName),concBQTerm(objectVar,intVar,childVar),objectType,EmptyType(),CodeToInstruction(TargetLanguageToCode(ITL(code)))),l*);
           introspectorClass = `IntrospectorClass(Name("LocalIntrospector"),AbstractDecl(l));
@@ -429,19 +467,33 @@ public class ExpanderPlugin extends TomGenericPlugin {
         /*
          * generate code for a %strategy
          */
+        //tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm methodParameterBQT; //Contains parameters of the function
+        BQTermList methodParameterBQT; //Contains parameters of the function
+        TomType strategyType = ASTFactory.makeType(`concTypeOption(),"undefined", "access " + `name.getString());
+        BQTerm strategyVar = `BQVariable(concOption(),Name("str"), strategyType); //try with name instead of genericType
         DeclarationList l = `concDeclaration(); // represents compiled Strategy
         HashMap<TomType,String> dispatchInfo = new HashMap<TomType,String>(); // contains info needed for dispatch
         %match(visitList) {
           concTomVisit(_*,VisitTerm(vType@Type[TomType=type],constraintInstructionList,_),_*) -> {              
-            BQTerm arg = `BQVariable(concOption(orgTrack),Name("tom__arg"),vType);//arg subjectList
+            BQTerm arg;
+            if(generateAdaCode) {
+              arg = `BQVariable(concOption(orgTrack),Name("tom_arg"),vType);//double underscore not supported by Ada
+            } else {
+              arg = `BQVariable(concOption(orgTrack),Name("tom__arg"),vType);//arg subjectList
+            }
             String funcName = "visit_" + `type; // function name
-            BQTermList subjectListAST = `concBQTerm(arg,introspectorVar);
+            BQTermList subjectListAST;
+            if(generateAdaCode) {//???
+              subjectListAST = `concBQTerm(strategyVar,arg,introspectorVar);
+            } else {
+              subjectListAST = `concBQTerm(arg,introspectorVar);
+            }
             //return default strategy.visitLight(arg)
             // FIXME: put superclass keyword in backend, in c# 'super' is 'base'
-            Instruction returnStatement = `Return(FunctionCall(Name("_" + funcName),vType,subjectListAST));
+            Instruction returnStatement = `Return(FunctionCall(Name(visitFuncPrefix+ funcName),vType,subjectListAST));
             Instruction matchStatement = `Match(constraintInstructionList, concOption(orgTrack));
             InstructionList instructions = `concInstruction(matchStatement, returnStatement);
-            l = `concDeclaration(MethodDef(Name(funcName),concBQTerm(arg,introspectorVar),vType,visitfailureType,AbstractBlock(instructions)),l*);
+            l = `concDeclaration(MethodDef(Name(funcName),subjectListAST,vType,visitfailureType,AbstractBlock(instructions)),l*);
             dispatchInfo.put(`vType,funcName);
           }
         }
@@ -480,36 +532,72 @@ public class ExpanderPlugin extends TomGenericPlugin {
         Expression testEnvNotNull = null;
         // generate the visitLight
         for(TomType type:dispatchInfo.keySet()) {
-          BQTermList funcArg = `concBQTerm(ExpressionToBQTerm(Cast(type,BQTermToExpression(vVar))),introspectorVar);            
+          BQTermList funcArg;
+          if(generateAdaCode) {//???
+            funcArg = `concBQTerm(strategyVar, ExpressionToBQTerm(Cast(type,BQTermToExpression(vVar))),introspectorVar); //there is one more parameter in Ada visit functions
+          } else {
+            funcArg = `concBQTerm(ExpressionToBQTerm(Cast(type,BQTermToExpression(vVar))),introspectorVar);
+          }    
           Instruction returnStatement = `Return(ExpressionToBQTerm(Cast(genericType,BQTermToExpression(FunctionCall(Name(dispatchInfo.get(type)),type,funcArg)))));
           Instruction ifInstr = `If(IsSort(type,vVar),returnStatement,Nop());
           ifList = `concInstruction(ifList*,ifInstr);
           // generate the _visit_Term
           BQTerm arg = `BQVariable(concOption(orgTrack),Name("arg"),type);
-          BQTerm environmentVar = `BQVariable(concOption(orgTrack),Name("environment"),EmptyType());
-          Instruction return1 = `Return(ExpressionToBQTerm(Cast(type,TomInstructionToExpression(CodeToInstruction(TargetLanguageToCode(ITL("any.visit(environment,introspector)")))))));
-          Instruction return2 = `Return(Composite(CompositeTL(ITL("any.visitLight(arg,introspector)"))));
+          BQTerm environmentVar;
+          Instruction return1, return2;
+          if(generateAdaCode) {//???
+            environmentVar = `BQVariable(concOption(orgTrack),Name("str.env"),EmptyType());
+            return1 = `Return(ExpressionToBQTerm(Cast(type,TomInstructionToExpression(CodeToInstruction(TargetLanguageToCode(ITL("visit(str.any, str.env, intro)")))))));
+            return2 = `Return(ExpressionToBQTerm(Cast(type,TomInstructionToExpression(CodeToInstruction(TargetLanguageToCode(ITL("visitLight(str.any, ObjectPtr(arg),intro)")))))));
+          } else {
+            environmentVar = `BQVariable(concOption(orgTrack),Name("environment"),EmptyType());
+            return1 = `Return(ExpressionToBQTerm(Cast(type,TomInstructionToExpression(CodeToInstruction(TargetLanguageToCode(ITL("any.visit(environment,introspector)")))))));
+            return2 = `Return(Composite(CompositeTL(ITL("any.visitLight(arg,introspector)"))));
+          }
           testEnvNotNull = `Negation(EqualTerm(expander.getStreamManager().getSymbolTable().getBooleanType(),
                 ExpressionToBQTerm(Bottom(Type(concTypeOption(),"Object",EmptyTargetLanguageType()))),TomBase.convertFromBQVarToVar(environmentVar)));
           Instruction ifThenElse = `If(testEnvNotNull,return1,return2);
+          if(generateAdaCode) {//???
+            methodParameterBQT = `concBQTerm(strategyVar, arg,introspectorVar);
+          } else {
+            methodParameterBQT = `concBQTerm(arg,introspectorVar);
+          }
           l = `concDeclaration(MethodDef(
-                Name("_" + dispatchInfo.get(type)),
-                concBQTerm(arg,introspectorVar),
+                Name(visitFuncPrefix + dispatchInfo.get(type)),
+                methodParameterBQT,
                 type,
                 visitfailureType,
                 ifThenElse),l*);
         }
-        ifList = `concInstruction(ifList*,              
-            If(testEnvNotNull,
-              Return(ExpressionToBQTerm(Cast(genericType,BQTermToExpression(Composite(CompositeTL(ITL("any.visit(environment,introspector)"))))))),
-              Return(Composite(CompositeTL(ITL("any.visitLight(v,introspector)"))))));
+        if(generateAdaCode) {
+          ifList = `concInstruction(ifList*,              
+              If(testEnvNotNull,
+                Return(ExpressionToBQTerm(Cast(genericType,BQTermToExpression(Composite(CompositeTL(ITL("visit(str.any, str.env, intro)"))))))),
+                Return(ExpressionToBQTerm(Cast(genericType,BQTermToExpression(Composite(CompositeTL(ITL("visitLight(str.any, v,intro)")))))))));
+        } else {
+          ifList = `concInstruction(ifList*,              
+              If(testEnvNotNull,
+                Return(ExpressionToBQTerm(Cast(genericType,BQTermToExpression(Composite(CompositeTL(ITL("any.visit(environment,introspector)"))))))),
+                Return(Composite(CompositeTL(ITL("any.visitLight(v,introspector)"))))));
+        }
+
+        if ( generateAdaCode ) {
+          methodParameterBQT = `concBQTerm(strategyVar,vVar,introspectorVar);
+        } else {
+          methodParameterBQT = `concBQTerm(vVar,introspectorVar);
+        }
+
         Declaration visitLightDeclaration = `MethodDef(
             Name("visitLight"),
-            concBQTerm(vVar,introspectorVar),
+            methodParameterBQT,
             methodparameterType,
             visitfailureType,
             AbstractBlock(ifList));
-        l = `concDeclaration(visitLightDeclaration,l*);
+        if(generateAdaCode) {
+          l = `concDeclaration(l*, visitLightDeclaration); //the order matter in Ada
+        } else {
+          l = `concDeclaration(visitLightDeclaration,l*);
+        }
         //TODO: hooks
         l= `concDeclaration(hooks,l*);
         return (Declaration) expander.expand(`AbstractDecl(concDeclaration(introspectorClass,Class(name,basicStratType,extendsTerm,AbstractDecl(l)))));

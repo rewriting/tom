@@ -87,18 +87,21 @@ options{
 
     private SymbolTable symbolTable;
 
+    private static boolean generateAdaCode = false;
+
     private OptionManager optionManager;
 
     private HashMap<String,String> usedSlots = new HashMap<String,String>();
 
     public TomParser(ParserSharedInputState state, HostParser target,
                      OptionManager optionManager) {
-        this(state);
-        this.targetparser = target;
-        this.tomlexer = (TomLexer) selector().getStream("tomlexer");
-        this.symbolTable = target.getSymbolTable();
-        this.bqparser = new BackQuoteParser(state,this);
-        this.optionManager = optionManager;
+      this(state);
+      this.targetparser = target;
+      this.tomlexer = (TomLexer) selector().getStream("tomlexer");
+      this.symbolTable = target.getSymbolTable();
+      this.bqparser = new BackQuoteParser(state,this);
+      this.optionManager = optionManager;
+      this.generateAdaCode = ((Boolean)optionManager.getOptionValue("aCode")).booleanValue();
     }
 
     public synchronized SymbolTable getSymbolTable() {
@@ -343,8 +346,12 @@ visitInstruction [List<ConstraintInstruction> list, TomType rhsType] throws TomE
                     subjectListLength, Integer.valueOf(matchPatternList.size()));
                 return;
                 }
-
-                BQTerm subject = `BQVariable(concOption(),Name("tom__arg"),rhsType);
+                BQTerm subject;
+                if (generateAdaCode) {// double underscore is forbidden in Ada
+                subject = `BQVariable(concOption(),Name("tom_arg"),SymbolTable.TYPE_UNKNOWN);
+                } else {
+                subject = `BQVariable(concOption(),Name("tom__arg"),SymbolTable.TYPE_UNKNOWN);
+                }
                 TomType matchType = (getOptionBooleanValue("newtyper")?SymbolTable.TYPE_UNKNOWN:rhsType);
                 constraint =
                     `AndConstraint(constraint,MatchConstraint(matchPatternList.get(0),subject,matchType));

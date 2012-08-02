@@ -71,7 +71,7 @@ public class Compiler extends TomGenericPlugin {
 
   private static final String freshVarPrefix = "_freshVar_";
   private static final String freshBeginPrefix = "_begin_";
-  private static final String freshEndPrefix = "_end_";
+  private static final String freshEndPrefix = "end";
 
   private CompilerEnvironment compilerEnvironment;
 
