@@ -2,7 +2,7 @@
  *
  * TOM - To One Matching Compiler
  * 
- * Copyright (c) 2000-2011, INPL, INRIA
+ * Copyright (c) 2000-2012, INPL, INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -96,8 +96,25 @@ public class GeneralPurposePropagator implements IBasePropagator {
        * AntiMatchConstraint[] /\ ... /\ MatchConstraint[] ->  MatchConstraint[] /\ ... /\ AntiMatchConstraint[] 
        */
       AndConstraint(X*,antiMatch@AntiMatchConstraint[],Y*,match@MatchConstraint[],Z*) -> {
+        //TODO : rename variables
         return `AndConstraint(X*,Y*,match,antiMatch,Z*);        
       }      
+      /**
+       * Merge for variables (we only deal with the variables of the pattern, ignoring the introduced ones)
+       * 
+       * X* = p1 /\ Context( X* = p2 ) -> X* = p1 /\ Context( freshVar = p2)
+       * x = p1 /\ Context( x = p2 ) -> x = p1 /\ Context( freshVar = p2)
+       */
+      /*
+      AndConstraint(X*,antiMatch@AntiMatchConstraint[Constraint=MatchConstraint[Pattern=(Variable|VariableStar)[AstName=varName@!PositionName[]]]],Y*) -> {
+        // we cannot cache already renamed variables, because disjunctions have to be taken into account
+        // for example: g(x) || f(x,x) -> ...
+        Constraint res = (Constraint)`TopDownWhenConstraint(ReplaceAntiMatchConstraint(varName,gpp)).visitLight(`Y*);
+        if(res != `Y*) {
+          return `AndConstraint(X*,antiMatch,res*);
+        }
+      }
+      */
       /**
        * Merge for variables (we only deal with the variables of the pattern, ignoring the introduced ones)
        * 
@@ -189,6 +206,21 @@ matchSlot:  %match(slot, TomName name) {
         BQTerm freshVar = `var.isVariable() ? gpp.getCompiler().getFreshVariable(`type) : gpp.getCompiler().getFreshVariableStar(`type);
         return
           `AndConstraint(MatchConstraint(TomBase.convertFromBQVarToVar(freshVar),subject,aType),MatchConstraint(TestVar(TomBase.convertFromBQVarToVar(freshVar)),TomBase.convertFromVarToBQVar(var),aType));
+      }
+    }
+  }
+
+  /*
+   * x << s -> fresh << s 
+   */
+  %strategy ReplaceAntiMatchConstraint(varName:TomName,gpp:GeneralPurposePropagator) extends Identity() {
+    visit Constraint {
+      // we can have the same variable both as variableStar and as variable
+      // we know that this is ok, because the type checker authorized it
+      AntiMatchConstraint[Constraint=MatchConstraint[Pattern=var@(Variable|VariableStar)[AstName=name,AstType=type],Subject=subject,AstType=aType]] && name == varName -> {        
+        BQTerm freshVar = `var.isVariable() ? gpp.getCompiler().getFreshVariable(`type) : gpp.getCompiler().getFreshVariableStar(`type);
+        return
+          `AntiMatchConstraint(MatchConstraint(TomBase.convertFromBQVarToVar(freshVar),subject,aType));
       }
     }
   }

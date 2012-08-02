@@ -1,0 +1,28 @@
+some host code
+
+%match(a){
+	bli()-> {doBli}
+	blo()-> {doBlo}
+}
+
+some more host code
+
+%match(a){
+    blu()-> {doBlu}
+    bla()-> {doBla}
+}
+
+some blabla
+%match(a){
+    blu(b) -> {doBlu}
+    bla(c) -> {doBla}
+}
+
+// this comment seems to be a problem... (not anymore)
+
+%match(d){
+    blu(e) -> {doBlu}
+    bla(f) -> {doBla}
+}
+
+bonjour

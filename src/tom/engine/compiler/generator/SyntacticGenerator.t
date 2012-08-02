@@ -2,7 +2,7 @@
  *
  * TOM - To One Matching Compiler
  * 
- * Copyright (c) 2000-2011, INPL, INRIA
+ * Copyright (c) 2000-2012, INPL, INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -80,9 +80,10 @@ public class SyntacticGenerator implements IBaseGenerator {
   %strategy Generator(sg:SyntacticGenerator) extends Identity() {
     visit Expression {
       // generate is_fsym(t,f)
-      ConstraintToExpression(MatchConstraint[Pattern=currentTerm@RecordAppl[NameList=concTomName(name)],Subject=SymbolOf(subject)]) -> {
-        TomType termType = sg.getCompiler().getTermTypeFromName(`name);
-        return sg.buildEqualFunctionSymbol(termType,`subject,`name,TomBase.getTheory(`currentTerm));
+      ConstraintToExpression(MatchConstraint[Pattern=currentTerm@RecordAppl[NameList=concTomName(name)],Subject=SymbolOf(subject),AstType=aType]) -> {
+        //TomType termType = sg.getCompiler().getTermTypeFromName(`name);
+        //return sg.buildEqualFunctionSymbol(termType,`subject,`name,TomBase.getTheory(`currentTerm));
+        return sg.buildEqualFunctionSymbol(`aType,`subject,`name,TomBase.getTheory(`currentTerm));
       }
       // generate equality test
       ConstraintToExpression(MatchConstraint[Pattern=TestVar(v@(Variable|VariableStar)[AstType=type]),Subject=t]) -> {
@@ -102,6 +103,9 @@ public class SyntacticGenerator implements IBaseGenerator {
     } else if(TomBase.hasTheory(theory, `AU())) {
       return `IsSort(type,subject);
     }
-    return `IsFsym(name,subject);
+    //DEBUG System.out.println("In buildEqualFunctionSymbol name = " + name);
+    return
+      `IsFsym(name,ExpressionToBQTerm(Cast(type,BQTermToExpression(subject))));
+      //`IsFsym(name,subject);
   }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2011, INPL, INRIA
+ * Copyright (c) 2004-2012, INPL, INRIA
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -48,7 +48,7 @@ static AFun f_fib;
 
 %op term zero() {
   is_fsym(t)     { ATisEqualAFun(ATgetAFun(t),f_zero) }
-  make           { make_zero() }
+  make()           { make_zero() }
 }
   
 %op term suc(sl:term) {

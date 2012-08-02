@@ -1,5 +1,5 @@
 (*
- * Copyright (c) 2004-2011, INPL, INRIA
+ * Copyright (c) 2004-2012, INPL, INRIA
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -48,7 +48,7 @@ and fsuc  = get_fun_sym(Suc(Zero));;
   
 %op peano zero() {
   is_fsym(t) { get_fun_sym(t) = fzero }
-  make { Zero }
+  make() { Zero }
 }
 
 %op peano suc(pred:peano) {

@@ -1,7 +1,7 @@
 /*
  * Gom
  * 
- * Copyright (c) 2000-2011, INPL, INRIA
+ * Copyright (c) 2000-2012, INPL, INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -25,7 +25,6 @@
 package tom.library.freshgom;
 
 import java.util.Hashtable;
-import java.util.Collection;
 
 /* stack for exportation (term -> raw term) */
 

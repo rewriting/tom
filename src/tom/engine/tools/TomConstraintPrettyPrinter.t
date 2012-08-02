@@ -2,7 +2,7 @@
  * 
  * TOM - To One Matching Compiler
  * 
- * Copyright (c) 2000-2011, INPL, INRIA
+ * Copyright (c) 2000-2012, INPL, INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -152,7 +152,7 @@ public class TomConstraintPrettyPrinter {
       }
 
       VariableStar(_,name,_,_) -> {
-        return prettyPrint(`name);
+        return prettyPrint(`name) + "*";
       }
 
       RecordAppl[NameList=nameList,Slots=slots] ->{
@@ -161,7 +161,6 @@ public class TomConstraintPrettyPrinter {
     } 
     return subject.toString();
   }
-
 
   public static String prettyPrint(Expression subject) {
     %match(subject) {
@@ -309,15 +308,36 @@ public class TomConstraintPrettyPrinter {
         return "VariableHeadArray("+prettyPrint(`Opname)+","+prettyPrint(`Subject)+","+prettyPrint(`BeginIndex)+","+prettyPrint(`EndIndex)+")";
       }
 
-      BuildEmptyList(name) -> {
-        return prettyPrint(`name) + "()";
+      BQVariable[AstName=name] -> {
+        return prettyPrint(`name);
       }
-      BuildConsList(name,head,tail) -> {
-        return prettyPrint(`name) + "(" + prettyPrint(`head) + "," + prettyPrint(`tail) + ")";
+      BQVariableStar[AstName=name] -> {
+        return prettyPrint(`name);
       }
-      BuildAppendList(name,head,tail) -> {
-        return prettyPrint(`name) + "(" + prettyPrint(`tail) + "," + prettyPrint(`head) + ")";
+      
+      BuildTerm(AstName,Args,_) -> {
+        String s = "";
+        int min=0;
+        %match(Args) {
+          concBQTerm(_*,x,_*) -> {
+            s += ","+prettyPrint(`x);
+            min=1;
+          }
+        }
+        return prettyPrint(`AstName)+"("+s.substring(min, s.length())+")";
       }
+
+      BuildEmptyList(AstName) -> {
+        return prettyPrint(`AstName)+"()";
+      }
+
+      BuildConsList(AstName,HeadTerm,TailTerm) -> {
+        return prettyPrint(`AstName)+"(" + prettyPrint(`HeadTerm) + ", " + prettyPrint(`TailTerm) +")";
+      }
+      BuildAppendList(AstName,HeadTerm,TailTerm) -> {
+        return prettyPrint(`AstName)+"(" + prettyPrint(`TailTerm) + ", " + prettyPrint(`HeadTerm) +")";
+      }
+
     }
     return subject.toString();
   }

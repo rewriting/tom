@@ -2,7 +2,7 @@
  *
  * TOM - To One Matching Compiler
  *
- * Copyright (c) 2000-2011, INPL, INRIA
+ * Copyright (c) 2000-2012, INPL, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -390,12 +390,14 @@ public final class TomBase {
     return null;
   }
 
+  /*
   public static boolean hasConstant(OptionList optionList) {
     %match(optionList) {
       concOption(_*,Constant[],_*) -> { return true; }
     }
     return false;
   }
+*/
 
   public static boolean hasDefinedSymbol(OptionList optionList) {
     %match(optionList) {
@@ -520,32 +522,11 @@ public final class TomBase {
       }
       optionList = optionList.getTailconcOption();
     }
-    System.out.println("findOriginTracking:  not found" + optionList);
-    throw new TomRuntimeException("findOriginTracking:  not found" + optionList);
+    throw new TomRuntimeException("findOriginTracking:  not found: " + optionList);
   }
 
   public static TomSymbol getSymbolFromName(String tomName, SymbolTable symbolTable) {
     return symbolTable.getSymbolFromName(tomName);
-  }
-
-  public static TomSymbol getSymbolFromType(TomType tomType, SymbolTable symbolTable) {
-    if ( SymbolTable.TYPE_UNKNOWN == tomType) { return null; }
-
-    TomSymbolList list = symbolTable.getSymbolFromType(tomType);
-    TomSymbolList filteredList = `concTomSymbol();
-    // Not necessary since checker ensure the uniqueness of the symbol
-    while(!list.isEmptyconcTomSymbol()) {
-      TomSymbol head = list.getHeadconcTomSymbol();
-      if(isArrayOperator(head) || isListOperator(head)) {
-        filteredList = `concTomSymbol(head,filteredList*);
-      }
-      list = list.getTailconcTomSymbol();
-    }
-    if(filteredList.isEmptyconcTomSymbol()) {
-      return null;
-    } else {
-      return filteredList.getHeadconcTomSymbol();
-    }
   }
 
   public static TomType getTermType(TomTerm t, SymbolTable symbolTable) {
@@ -591,14 +572,42 @@ public final class TomBase {
 
       ListTail[Variable=term] -> { return getTermType(`term, symbolTable); }
 
-      Subterm(Name(name), slotName, _) -> {
+      Subterm[AstName=Name(name),SlotName=slotName] -> {
         TomSymbol tomSymbol = symbolTable.getSymbolFromName(`name);
         return getSlotType(tomSymbol, `slotName);
       }
+
+      (BuildConstant|BuildTerm|BuildEmptyList|BuildConsList|BuildAppendList|BuildEmptyArray|BuildConsArray|BuildAppendArray)[AstName=Name(name)]
+        -> {
+          TomSymbol tomSymbol = symbolTable.getSymbolFromName(`name); 
+          if(tomSymbol!=null) {
+            return tomSymbol.getTypesToType().getCodomain();
+          } else {
+            return `EmptyType();
+          }
+        }
    }
     //System.out.println("getTermType error on term: " + t);
     //throw new TomRuntimeException("getTermType error on term: " + t);
     return `EmptyType();
+  }
+
+  public static TomType getTermType(Expression t, SymbolTable symbolTable) {
+    %match(t) {
+      (GetHead|GetSlot|GetElement)[Codomain=type] -> { return `type; }
+
+      BQTermToExpression[AstTerm=bqterm] -> { return getTermType(`bqterm, symbolTable); }
+      Conditional[Cond=cond] -> { return getTermType(`cond, symbolTable); } 
+      IsFsym[Variable=bqterm] ->  { return getTermType(`bqterm, symbolTable); }
+      GetTail[Variable=term] -> { return getTermType(`term, symbolTable); }
+      GetSliceList[VariableBeginAST=term] -> { return getTermType(`term, symbolTable); }
+      GetSliceArray[SubjectListName=term] -> { return getTermType(`term, symbolTable); }
+      Cast[AstType=type] -> { return `type; }
+      AddOne[Variable=bqterm] -> { return getTermType(`bqterm, symbolTable); }
+      Integer[] -> { return symbolTable.getType("int"); }
+    }
+    System.out.println("getTermType error on term: " + t);
+    throw new TomRuntimeException("getTermType error on term: " + t);
   }
 
   public static TomSymbol getSymbolFromTerm(TomTerm t, SymbolTable symbolTable) {
@@ -633,19 +642,6 @@ public final class TomBase {
     return null;
   }
 
-  public static TomType getTermType(Expression t, SymbolTable symbolTable) {
-    %match(t) {
-      (GetHead|GetSlot|GetElement)[Codomain=type] -> { return `type; }
-
-      BQTermToExpression(term) -> { return getTermType(`term, symbolTable); }
-      GetTail[Variable=term] -> { return getTermType(`term, symbolTable); }
-      GetSliceList[VariableBeginAST=term] -> { return getTermType(`term, symbolTable); }
-      GetSliceArray[SubjectListName=term] -> { return getTermType(`term, symbolTable); }
-      Cast[AstType=type] -> { return `type; }
-    }
-    System.out.println("getTermType error on term: " + t);
-    throw new TomRuntimeException("getTermType error on term: " + t);
-  }
 
   public static SlotList tomListToSlotList(TomList tomList) {
     return tomListToSlotList(tomList,1);
@@ -722,7 +718,7 @@ public final class TomBase {
         return `VariableStar(optionList, name, type, concConstraint());
       }
     }
-    throw new TomRuntimeException("cannot convert into a variable the term "+variable);
+    throw new TomRuntimeException("cannot convert into a variable the term " + variable);
   }
 
 } // class TomBase

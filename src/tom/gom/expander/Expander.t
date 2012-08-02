@@ -1,7 +1,7 @@
 /*
  * Gom
  *
- * Copyright (c) 2006-2011, INPL, INRIA
+ * Copyright (c) 2006-2012, INPL, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -104,7 +104,7 @@ public class Expander {
     Set<GomModuleName> moduleToAnalyse = new HashSet<GomModuleName>();
     ImportList importedModules = getImportList(module);
     while(!importedModules.isEmptyConcImportedModule()) {
-      GomModuleName name = importedModules.getHeadConcImportedModule().getModuleName();
+      GomModuleName name = importedModules.getHeadConcImportedModule();
       if(!alreadyParsedModule.contains(name)) {
         moduleToAnalyse.add(name);
       }

@@ -2,7 +2,7 @@
  *
  * TOM - To One Matching Compiler
  * 
- * Copyright (c) 2000-2011, INPL, INRIA
+ * Copyright (c) 2000-2012, INPL, INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -94,7 +94,7 @@ public class VariadicGenerator implements IBaseGenerator {
         Expression testEmpty = vg.getConstraintGenerator().genIsEmptyList(`opName,`end);
         Expression endExpression = 
                `TomInstructionToExpression(If(testEmpty,Assign(end,BQTermToExpression(begin)),Assign(end,vg.genGetTail(opName,end))));
-        // if we have a varStar, we generate its declaration also
+        /* if we have a varStar, we generate its declaration also */
         if (`v.isVariableStar()) {
           Expression varDeclaration =
             `ConstraintToExpression(MatchConstraint(v,ExpressionToBQTerm(GetSliceList(opName,begin,end,BuildEmptyList(opName))),aType));

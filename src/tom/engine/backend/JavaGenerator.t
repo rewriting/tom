@@ -2,7 +2,7 @@
  *
  * TOM - To One Matching Compiler
  *
- * Copyright (c) 2000-2011, INPL, INRIA
+ * Copyright (c) 2000-2012, INPL, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -26,7 +26,13 @@
 package tom.engine.backend;
 
 import java.io.IOException;
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Set;
+import java.util.HashSet;
 
 import tom.engine.TomBase;
 import tom.engine.tools.OutputCode;
@@ -47,6 +53,16 @@ import tom.engine.adt.code.types.*;
 import tom.engine.tools.SymbolTable;
 import tom.platform.OptionManager;
 import tom.engine.exception.TomRuntimeException;
+
+import org.eclipse.emf.ecore.xmi.XMIResource;
+import org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl;
+import org.eclipse.emf.ecore.EClassifier;
+import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EEnum;
+import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.common.util.BasicEList;
 
 public class JavaGenerator extends CFamilyGenerator {
 
@@ -73,6 +89,7 @@ public class JavaGenerator extends CFamilyGenerator {
 
 // ------------------------------------------------------------
   %include { ../adt/tomsignature/TomSignature.tom }
+  %include{ emf/ecore.tom }
 // ------------------------------------------------------------
 
   protected void buildExpBottom(int deep, TomType type, String moduleName) throws IOException {
@@ -111,6 +128,265 @@ public class JavaGenerator extends CFamilyGenerator {
     output.write("public static class " + tomName+ " implements tom.library.sl.Introspector {");
     generateDeclaration(deep,`declaration,moduleName);
     output.write(deep,"}");
+  }
+
+  //TODO: to move in JavaGenerator
+  /*protected String genResolveIsSortCode(String resolveStringName,
+                                        String varName) throws IOException {
+    return " "+varName+" instanceof "+resolveStringName+" ";
+  }*/
+
+  //TODO: to change, to move in JavaGenerator
+  /*rotected String genResolveGetSlotCode(String tomName,
+                                         String varName,
+                                         String slotName) throws IOException {
+    return " (("+tomName+")"+varName+")."+slotName+" ";
+  }*/
+
+  protected String getFullQualifiedNameFromTypeName(String name, String moduleName) {
+    String result = null;
+    TomType type = getSymbolTable(moduleName).getType(name);
+    return getFullQualifiedNameFromType(type);
+  }
+
+  protected String getFullQualifiedNameFromType(TomType type) {
+    String result = null;
+    %match(type) {
+      Type(_,_,TLType[String=s]) -> { return result = `s; }
+    }
+    throw new RuntimeException("Should not be there: full qualified name of "+type+" is null");
+  }
+
+  //TODO: retrieve the information about the FQN of wName and extends
+  protected void buildResolveClass(String wName, String tName, String extendsName, String moduleName) throws
+    IOException {
+      String resolveStringName = "Resolve"+wName+tName;
+      //String fqnwName = wName;
+      //TomType type = getSymbolTable(moduleName).getType(wName);
+      //fqnwName = getFullQualifiedNameFromType(type);
+      String fqnwName = getFullQualifiedNameFromTypeName(wName, moduleName);
+      output.write(%[private static class @resolveStringName@ extends @extendsName@ {
+  public String name;
+  public @fqnwName@ o;
+
+  public @resolveStringName@(@fqnwName@ o, String name) {
+    this.name = name;
+    this.o = o;
+  }
+}
+]%);
+    }
+
+  //TODO: add attributes, get/set + EObject get(String)
+  //protected void buildReferenceClass(int deep, String refname,
+  //InstructionList instructions, String moduleName)a
+  protected void buildReferenceClass(int deep, String refname, RefClassTracelinkInstructionList refclassTInstructions, String moduleName)
+  throws IOException {
+    output.write(%[
+public static class @refname@ implements tom.library.utils.ReferenceClass {
+  ]%);
+    //RuleInstruction(TypeName:String,Term:TomTerm,Action:InstructionList,Options:OptionList)
+    //ReferenceClass(RefName:TomName,Fields:InstructionList)
+    //Tracelink(Type:TomName,Name:TomName,ElementaryTransfoName:TomName,Expr:Expression,OrgTrack:Option)//BQTerm, then blocklist
+    String getfunctionbody = "";
+    %match(refclassTInstructions) {
+      concRefClassTracelinkInstruction(_*,RefClassTracelinkInstruction[Type=Name(type),Name=Name(name)],_*) -> {
+      output.write(%[
+  private @`type@ @`name@;
+  public @`type@ get@`name@() { return @`name@; }
+  public void set@`name@(@`type@ value) { this.@`name@ = value; }
+]%);
+      getfunctionbody = getfunctionbody+"if(name.equals(\""+`name+"\")) {\n        return get"+`name+"();\n    } else ";
+      }
+    }
+
+    output.write(%[
+  public Object get(String name) {
+    @getfunctionbody@ {
+      throw new RuntimeException("This field does not exist:" + name);
+    }
+  }
+
+}
+
+]%);
+
+  }
+
+  protected void buildTracelink(int deep, String type, String name, Expression expr, String moduleName) throws IOException {
+   output.write(type+" "+name+" = ");
+   generateExpression(deep,expr,moduleName);
+   output.writeln(";");
+  }
+
+  //TODO: update this procedure (tom__linkClass)
+  protected void buildTracelinkPopulateResolve(int deep, String refClassName, TomNameList tracedLinks, BQTerm current, BQTerm link, String moduleName) throws IOException {
+    String refVar = "var_"+refClassName.toLowerCase();
+    //create the ReferenceClass instance
+    output.write(refClassName+" "+refVar+" = new "+refClassName+"();");
+    //populate the newly created ReferenceClass by setting attributes
+    for(TomName name : tracedLinks.getCollectionconcTomName()){
+      String namestr = name.getString();
+      output.write(refVar+".set"+namestr+"("+namestr+");");
+    }
+    //save the ReferenceClass into  the LinkClass
+    //TODO: change this to be less specific (and add tom__linkClass:LinkClass
+    //as first parameter of all strategies)
+    //LinkClass class could be in the Tom library
+    generateBQTerm(deep, link, moduleName);
+    output.write(".put(");
+    generateBQTerm(deep, current, moduleName);
+    output.write(","+refVar+");");
+  }
+
+  protected void buildResolve(int deep, BQTerm bqterm, String moduleName) throws IOException {
+    generateBQTerm(deep, bqterm, moduleName);
+  }
+
+  //TODO: parameters are problematic
+  //TODO: specific to EMf
+  protected void buildResolveInverseLinks(int deep, String fileFrom, String fileTo, TomNameList resolveNameList, String moduleName) throws IOException {
+    //List<String> resolveList = getResolveNameList(resolveNameList);
+    //String toSet = genToSetFromResolveNameList(resolveNameList);
+
+    //result/accumulator to change ("acc")
+    output.write(%[
+  public static void resolveInverseLinks(EObject resolveNode, EObject newNode, EObject acc) {
+    ECrossReferenceAdapter adapter = new ECrossReferenceAdapter();
+    acc.eAdapters().add(adapter);
+    Collection<EStructuralFeature.Setting> references = adapter.getInverseReferences(resolveNode);
+
+        boolean toSet = (false
+        @genToSetFromResolveNameList(resolveNameList)@
+        );
+
+    for (EStructuralFeature.Setting setting:references) {
+      EObject current = setting.getEObject();
+]%);
+    genTargetElementBlock(fileTo,moduleName);
+    output.write(%[
+    }
+  }
+]%);
+  }
+
+  //TODO: find another way to generate these blocks. It would be better to
+  //avoid EMF dependancies
+  //protected void genTargetElementBlock(String fileTo) throws IOException  {
+  protected void genTargetElementBlock(String fileTo, String moduleName) throws IOException  {
+    XMIResourceImpl resource = new XMIResourceImpl();
+    Map opts = new HashMap();
+    opts.put(XMIResource.OPTION_SCHEMA_LOCATION, java.lang.Boolean.TRUE);
+    File input = new File(fileTo);
+    try {
+      resource.load(new FileInputStream(input),opts);//new HashMap());
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+    //org.eclipse.emf.ecore.impl.EPackageImpl
+    EPackage tmp = (EPackage)resource.getContents().get(0);
+    EList<EPackage> epkgs = tmp.getESubpackages();
+    if(epkgs.size()<0) {
+      epkgs = getEPackages(epkgs);
+    }
+    epkgs.add(tmp);
+    EList<EClassifier> ecls = new BasicEList<EClassifier>();
+    //retrieve all EClassifiers in the MM
+    for(EPackage epk : epkgs) {
+      ecls.addAll(epk.getEClassifiers());
+    }
+    //generate code for each EClassifier which is an EClass
+    for(EClassifier ecl : ecls) {
+      if(ecl instanceof EClass ) {//EEnum should not produce a block
+        if(!((EClass)ecl).isAbstract()) {
+          //String eclName = ecl.getName();
+          String eclFQName = getFullQualifiedNameFromTypeName(ecl.getName(),moduleName);
+          output.write(%[if (current instanceof @eclFQName@) {
+        @eclFQName@ newCurrent = (@eclFQName@)current;
+      ]%);
+
+          EList<EStructuralFeature> sfs = ((EClass)ecl).getEAllStructuralFeatures();
+          int sfCounter = 0; //to avoid to gen blocks with only an exception
+          for(EStructuralFeature sf : sfs) {//many and builtin should not produce a block
+            if(sf.isChangeable() && !sf.isMany() && !isPrimitiveEMFType(sf) && !isEEnumType(sf)) {
+              if(sfCounter>0) {
+                output.write(%[ else ]%);
+              }
+              output.write(%[if(newCurrent.get@firstToUpperCase(sf.getName())@().equals(resolveNode) && toSet) {
+          newCurrent.set@firstToUpperCase(sf.getName())@((@getTypeFromEStructuralFeature(sf)@)newNode); 
+        } ]%);
+              sfCounter++;
+            }
+          }
+          if(sfCounter>0) {
+            output.write(%[else { throw new RuntimeException("should not be there"); }]%);
+          }
+          output.write(%[} else ]%);
+        }
+      }
+    }
+    output.write(%[ { throw new RuntimeException("should not be there"); }]%);
+  }
+
+  //TODO: change that!
+  private final static Set<String> primitiveEMFTypes = new HashSet<String>();
+  static {
+    primitiveEMFTypes.add("EInt");
+    primitiveEMFTypes.add("EBoolean");
+    primitiveEMFTypes.add("EString");
+    primitiveEMFTypes.add("EDouble");
+    primitiveEMFTypes.add("EDate");
+    primitiveEMFTypes.add("BigInteger");
+    primitiveEMFTypes.add("BigDecimal");
+    primitiveEMFTypes.add("Date");
+    primitiveEMFTypes.add("java.lang.String");
+    primitiveEMFTypes.add("byte");
+    primitiveEMFTypes.add("double");
+    primitiveEMFTypes.add("int");
+    primitiveEMFTypes.add("float");
+    primitiveEMFTypes.add("double");
+    primitiveEMFTypes.add("boolean");
+  }
+  protected boolean isPrimitiveEMFType(EStructuralFeature sf) {
+    return (primitiveEMFTypes.contains(sf.getName()) || primitiveEMFTypes.contains(sf.getEType().getInstanceClassName()));
+  }
+
+  protected boolean isEEnumType(EStructuralFeature sf) {
+    return (sf.getEType() instanceof EEnum);
+  }
+
+  protected String getTypeFromEStructuralFeature(EStructuralFeature sf) {
+    String result = sf.getEType().getInstanceClassName();
+    return ((result==null)?sf.getEType().getName():result);
+  }
+
+  protected String firstToUpperCase(String s) {
+    if(s.length()>1) {
+      return (s.substring(0,1).toUpperCase()+s.substring(1,s.length()));
+    } else {
+      return s.toUpperCase();
+    }
+  }
+
+  protected EList<org.eclipse.emf.ecore.EPackage> getEPackages(EList<org.eclipse.emf.ecore.EPackage> epkgs) {
+    for(EPackage epkg : epkgs ) {
+      EList<EPackage> sub = epkg.getESubpackages();
+      if(sub.size()>0) {
+        epkgs.addAll(getEPackages(sub));
+      }
+    }
+    return epkgs;
+  }
+
+
+  protected String genToSetFromResolveNameList(TomNameList resolveNameList) {
+    //List<String> result = new LinkedList<String>();
+    String result = "";
+    for(TomName tname : resolveNameList.getCollectionconcTomName()) {
+      result = result+" | resolveNode instanceof "+tname.getString();
+    }
+    return result;
   }
 
   protected void buildClass(int deep, String tomName, TomType extendsType, BQTerm superTerm, Declaration declaration, String moduleName) throws IOException {
@@ -194,13 +470,13 @@ matchblock: {
     int stratChildCount = stratChild.size();
 
     output.writeln(deep, "public tom.library.sl.Visitable[] getChildren() {");
-    output.writeln(deep, "tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];");
-    output.writeln(deep, "stratChilds[0] = super.getChildAt(0);");
+    output.writeln(deep, "tom.library.sl.Visitable[] stratChildren = new tom.library.sl.Visitable[getChildCount()];");
+    output.writeln(deep, "stratChildren[0] = super.getChildAt(0);");
     for(int i = 0; i < stratChildCount; i++) {
       int j = (stratChild.get(i)).intValue();
-      output.writeln(deep, "stratChilds[" + (i+1) + "] = get" + names.get(j) + "();");
+      output.writeln(deep, "stratChildren[" + (i+1) + "] = get" + names.get(j) + "();");
     }
-    output.writeln(deep, "return stratChilds;}");
+    output.writeln(deep, "return stratChildren;}");
 
     output.writeln(deep, "public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {");
     output.writeln(deep,"super.setChildAt(0, children[0]);");

@@ -196,17 +196,17 @@ public class Latex {
 
   private static int peanoToInt(RawTerm t) throws ConversionError {
     %match(t) {
-      RawfunApp("z",()) -> { return 0; }
-      RawfunApp("s",(n)) -> { return 1+`peanoToInt(n); }
+      RawfunApp("z",RawtermList()) -> { return 0; }
+      RawfunApp("s",RawtermList(n)) -> { return 1+`peanoToInt(n); }
     }
     throw new ConversionError();
   }
 
-	private static String toTex(RawTerm t) {
-		%match(t) {
+  private static String toTex(RawTerm t) {
+    %match(t) {
       Rawvar(x) -> { return `x;}
       // arithmetic toTex print
-      RawfunApp("z",()) -> { return "0"; }
+      RawfunApp("z",RawtermList()) -> { return "0"; }
       i@RawfunApp("s",_) -> {
         try { return Integer.toString(peanoToInt(`i));}
         catch (ConversionError e) { }
@@ -215,7 +215,7 @@ public class Latex {
       RawfunApp(name,x) -> { return %[@`name@(@`toTex(x)@)]%; }
     }
     throw new RuntimeException("non exhaustive patterns"); 
-	}
+  }
 
 	private static String toTex(RawTermList tl) {
     %match(tl) {
@@ -238,11 +238,11 @@ public class Latex {
       Rawforall(RawFa(x,p1)) -> { return %[\forall @`x@. (@`toTex(p1)@)]%; }
       Rawexists(RawEx(x,p1@RawrelApp[])) -> { return %[\exists @`x@. @`toTex(p1)@]%; }
       Rawexists(RawEx(x,p1)) -> { return %[\exists @`x@. (@`toTex(p1)@)]%; }
-      RawrelApp(r,()) -> { return `r; }
+      RawrelApp(r,RawtermList()) -> { return `r; }
       // arithmetic toTex print
-      RawrelApp("Eq",(x,y)) -> { return %[@`toTex(x)@ = @`toTex(y)@]%; }
+      RawrelApp("Eq",RawtermList(x,y)) -> { return %[@`toTex(x)@ = @`toTex(y)@]%; }
       // set theory toTexprint
-      RawrelApp("In",(x,y)) -> { return %[@`toTex(x)@ \in @`toTex(y)@]%; }
+      RawrelApp("In",RawtermList(x,y)) -> { return %[@`toTex(x)@ \in @`toTex(y)@]%; }
       RawrelApp(r,x) -> { return %[@`r@(@`toTex(x)@)]%; }
       Rawbottom() -> { return "\\bot"; }
       Rawtop() -> { return "\\top"; }

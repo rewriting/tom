@@ -1,21 +1,20 @@
 import aterm.*;
 import aterm.pure.*;
 import org.junit.Test;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.AfterClass;
 import static org.junit.Assert.*;
-import java.util.logging.Logger;
-import java.util.logging.Level;
 
 public class TestPeano {
 
-  private static ATermFactory factory = SingletonFactory.getInstance();
-  private static AFun fzero, fsuc, fplus;
-  public ATermAppl tzero;
+  private static final ATermFactory factory = SingletonFactory.getInstance();
+  private static final AFun fzero, fsuc, fplus;
+  private static final ATermAppl tzero;
 
-  private static Logger logger;
-  private static Level level = Level.FINE;
+  static {
+    fzero = factory.makeAFun("zero", 0, false);
+    fsuc  = factory.makeAFun("suc" , 1, false);
+    fplus = factory.makeAFun("plus", 2, false);
+    tzero = factory.makeAppl(fzero);
+  }
 
   %typeterm term {
     implement { ATerm }
@@ -31,7 +30,7 @@ public class TestPeano {
 
   %op term zero() {
     is_fsym(t) { ((ATermAppl)$t).getAFun() == fzero }
-    make { factory.makeAppl(fzero) }
+    make() { factory.makeAppl(fzero) }
   }
 
   %op term suc(pred:term) {
@@ -49,33 +48,14 @@ public class TestPeano {
   }
 
   public static void main(String[] args) {
-    level = Level.INFO;
     org.junit.runner.JUnitCore.main(TestPeano.class.getName());
-  }
-
-  @BeforeClass
-  public static void staticSetUp() {
-    logger = Logger.getLogger(TestPeano.class.getName());
-  }
-
-  @Before
-  public void setUp() {
-    fzero = factory.makeAFun("zero", 0, false);
-    fsuc  = factory.makeAFun("suc" , 1, false);
-    fplus = factory.makeAFun("plus", 2, false);
-    tzero = factory.makeAppl(fzero);
-  }
-  
-  @AfterClass
-  public static void staticTearDown() {
-    logger = null;
   }
 
   @Test
   public void testPlus1() {
     for(int i=0 ; i<100 ; i++) {
       ATerm N = int2peano(i);
-      assertTrue("Testing plus1 with N ="+N+": ", 
+      assertTrue("Testing plus1 with N ="+N+": ",
 	  peano2int(plus1(N,N)) == (i+i) );
     }
   }
@@ -84,7 +64,7 @@ public class TestPeano {
   public void testPlus2() {
     for(int i=0 ; i<100 ; i++) {
       ATerm N = int2peano(i);
-      assertTrue("Testing plus2 with N ="+N+": ",  
+      assertTrue("Testing plus2 with N ="+N+": ",
 	  peano2int(plus2(N,N)) == (i+i) );
     }
   }
@@ -93,7 +73,7 @@ public class TestPeano {
   public void testPlus3() {
     for(int i=0 ; i<100 ; i++) {
       ATerm N = int2peano(i);
-      assertTrue("Testing plus3 with N ="+N+": ",  
+      assertTrue("Testing plus3 with N ="+N+": ",
 	  peano2int(plus3(N,N)) == (i+i) );
     }
   }
@@ -102,7 +82,7 @@ public class TestPeano {
   public void testPlus4() {
     for(int i=0 ; i<100 ; i++) {
       ATerm N = int2peano(i);
-      assertTrue("Testing plus4 with N ="+N+": ",  
+      assertTrue("Testing plus4 with N ="+N+": ",
 	  peano2int(plus4(N,N)) == (i+i) );
     }
   }
@@ -111,7 +91,7 @@ public class TestPeano {
   public void testFib3() {
     for(int i=0 ; i<15 ; i++) {
       ATerm N = int2peano(i);
-      assertTrue("Testing fib3 with N ="+N+": ",   
+      assertTrue("Testing fib3 with N ="+N+": ",
 	  peano2int(fib3(N)) == fibint(i) );
     }
   }
@@ -120,21 +100,10 @@ public class TestPeano {
   public void testFib4() {
     for(int i=0 ; i<15 ; i++) {
       ATerm N = int2peano(i);
-      assertTrue("Testing fib4 with N ="+N+": ",   
+      assertTrue("Testing fib4 with N ="+N+": ",
 	  peano2int(fib4(N)) == fibint(i) );
     }
   }
-
-/*
-  @Test
-  public void testFib5() {
-    ATerm N = `suc(suc(suc(suc(suc(suc(suc(suc(suc(suc(zero()))))))))));
-    assertTrue("Testing fib5 with N =" + peano2int(N) + ": ",   
-	peano2int(`fib5(N)) == fibint(peano2int(N)));
-    assertTrue("Testing fib5 with N =" + peano2int(N)+1 + ": ",   
-	peano2int(`fib5(suc(N))) == fibint(peano2int(N)+1));
-  }
-*/
 
   public ATerm plus1(ATerm t1, ATerm t2) {
     %match(term t1, term t2) {

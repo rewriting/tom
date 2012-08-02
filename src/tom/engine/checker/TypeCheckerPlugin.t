@@ -2,7 +2,7 @@
  *   
  * TOM - To One Matching Compiler
  * 
- * Copyright (c) 2000-2011, INPL, INRIA
+ * Copyright (c) 2000-2012, INPL, INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -177,7 +177,8 @@ public class TypeCheckerPlugin extends TomGenericPlugin {
           System.out.println("strategy failed");
         }
         // verbose
-        TomMessage.info(getLogger(),null,0,TomMessage.tomTypeCheckingPhase,
+        TomMessage.info(getLogger(), getStreamManager().getInputFileName(), 0,
+            TomMessage.tomTypeCheckingPhase,
             Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
       } catch (Exception e) {
         TomMessage.error(getLogger(), 
@@ -189,8 +190,9 @@ public class TypeCheckerPlugin extends TomGenericPlugin {
         e.printStackTrace();
       }
     } else {
-      // type checker desactivated    
-      TomMessage.info(getLogger(),null,0,TomMessage.typeCheckerInactivated);
+      // type checker desactivated
+      TomMessage.info(getLogger(), getStreamManager().getInputFileName(), 0,
+          TomMessage.typeCheckerInactivated);
     }
   }
 
@@ -208,15 +210,15 @@ public class TypeCheckerPlugin extends TomGenericPlugin {
       Match(constraintInstructionList, oplist) -> {  
         tcp.currentTomStructureOrgTrack = TomBase.findOriginTracking(`oplist);
         tcp.verifyMatchVariable(`constraintInstructionList);
-        throw new tom.library.sl.VisitFailure();// to stop the top-downd
+        throw new tom.library.sl.VisitFailure();/* to stop the top-down */
       }
     }
 
     visit Declaration {
-      Strategy(_,_,visitList,orgTrack) -> {
+      Strategy(_,_,visitList,_,orgTrack) -> {
         tcp.currentTomStructureOrgTrack = `orgTrack;
         tcp.verifyStrategyVariable(`visitList);
-        throw new tom.library.sl.VisitFailure();// to stop the top-downd
+        throw new tom.library.sl.VisitFailure();/* to stop the top-down */
       }
     }
 
@@ -282,6 +284,9 @@ public class TypeCheckerPlugin extends TomGenericPlugin {
     visit BQTerm {
       (BuildAppendList|BuildAppendArray)[AstName=Name(listName),HeadTerm=BQVariableStar[Options=optionList,AstName=Name(variableName),AstType=Type[TypeOptions=tOptions]]]
         && concTypeOption(_*,WithSymbol[RootSymbolName=Name(rootName)],_*) << tOptions -> {
+        /* This error is equivalent to the "invalidVariableStarArgument"
+         * signaled by the SyntaxCheckerPlugin 
+         */
         if(!`listName.equals(`rootName)) {
           TomMessage.error(tcp.getLogger(),
               tcp.findOriginTrackingFileName(`optionList),
@@ -298,6 +303,9 @@ public class TypeCheckerPlugin extends TomGenericPlugin {
     if(`list.isEmptyconcTomVisit()) {
       TomMessage.error(getLogger(),null,0,TomMessage.emptyStrategy);
     }
+        /* This error is alreay signaled by the SyntaxCheckerPlugin with error
+         * "unknownType
+         */
     %match(list) {
       concTomVisit(_*,VisitTerm(Type[TomType=strVisitType,TlType=EmptyTargetLanguageType()],_,optionList),_*) -> {
         TomMessage.error(getLogger(),

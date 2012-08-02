@@ -1,7 +1,7 @@
 /*
  * Gom
  *
- * Copyright (c) 2000-2011, INPL, INRIA
+ * Copyright (c) 2000-2012, INPL, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,9 +24,7 @@
 
 package tom.gom;
 
-import tom.platform.BasicFormatter;
 import tom.platform.BasicPlatformMessage;
-import tom.platform.PlatformLogRecord;
 
 /**
  * The GomMessage class is a container for error messages, using the

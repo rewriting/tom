@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2011, INPL, INRIA
+ * Copyright (c) 2004-2012, INPL, INRIA
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -42,7 +42,7 @@ public class Peano1 {
 
   %op Nat zero() {
     is_fsym(t) { $t.getName().equals("zero") }
-    make { factory.makeAppl(factory.makeAFun("zero",0,false)) }
+    make() { factory.makeAppl(factory.makeAFun("zero",0,false)) }
   }
   
   %op Nat suc(pred:Nat) {

@@ -49,6 +49,13 @@ Instruction =
    * a RawAction is an action that comes from the original program 
    */
   | RawAction(AstInstruction:Instruction)
+  | Tracelink(Type:TomName,Name:TomName,ElementaryTransfoName:TomName,Expr:Expression,OrgTrack:Option)//BQTerm, then blocklist
+  | TracelinkPopulateResolve(RefClassName:TomName,TracedLinks:TomNameList,Current:BQTerm,Link:BQTerm)
+  | Resolve(ResolveBQTerm:BQTerm,Src:String,SType:String,Target:String,TType:String,OrgTrack:Option)
+
+RefClassTracelinkInstruction = RefClassTracelinkInstruction(Type:TomName,Name:TomName)
+
+RefClassTracelinkInstructionList = concRefClassTracelinkInstruction(RefClassTracelinkInstruction*)
 
 /*
  * <code>ConstraintInstruction</code> a line in a match instruction - a tuple (Constraint,Action)
@@ -57,6 +64,9 @@ Instruction =
  * @param Action the action to execute if the constraints are evaluated to true
  */  
 ConstraintInstruction = ConstraintInstruction(Constraint:Constraint, Action:Instruction, Options:OptionList)  
+
+RuleInstruction = RuleInstruction(TypeName:String,Term:TomTerm,Action:InstructionList,Options:OptionList)
+RuleInstructionList = concRuleInstruction(RuleInstruction*)
 
 ConstraintInstructionList = concConstraintInstruction(ConstraintInstruction*)    
   

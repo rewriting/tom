@@ -2,7 +2,7 @@
  *
  * TOM - To One Matching Compiler
  * 
- * Copyright (c) 2000-2011, INPL, INRIA
+ * Copyright (c) 2000-2012, INPL, INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -75,10 +75,6 @@ public abstract class AbstractGenerator {
     return TomBase.getSymbolFromName(tomName, symbolTable);
   }
 
-  protected TomSymbol getSymbolFromType(TomType tomType) {
-    return TomBase.getSymbolFromType(tomType, symbolTable);
-  }
-
   protected TomType getTermType(TomTerm t) {
     return TomBase.getTermType(t, symbolTable);
   }
@@ -90,6 +86,11 @@ public abstract class AbstractGenerator {
   protected TomType getUniversalType() {
     return symbolTable.getUniversalType();
   }
+
+  protected TomType getCodomain(TomSymbol tSymbol) {
+    return TomBase.getSymbolCodomain(tSymbol);
+  }
+
 // ------------------------------------------------------------
   %include { ../adt/tomsignature/TomSignature.tom }
 // ------------------------------------------------------------
@@ -362,11 +363,6 @@ public abstract class AbstractGenerator {
         return;
       }
 
-      //Cast(tlType@TLType[],exp) -> {
-      //  buildExpCast(deep, `tlType, `exp, moduleName);
-      //  return;
-      //}
-
       GetSlot(_,Name(opname),slotName, var@(BQVariable|BuildTerm|ExpressionToBQTerm)[]) -> {    	  
         `buildExpGetSlot(deep, opname, slotName, var, moduleName);
         return;
@@ -578,6 +574,25 @@ public abstract class AbstractGenerator {
         return;
       }
 
+      //Tracelink(Type:TomName,Name:TomName,ElementaryTransfoName:TomName,Expr:Expression,OrgTrack:Option)//BQTerm, then blocklist
+      Tracelink(Name(type), Name(name), _, expr, _) -> {
+        `buildTracelink(deep, type, name, expr, moduleName);
+        return;
+      }
+
+      TracelinkPopulateResolve[RefClassName=Name(refClassName),TracedLinks=tracedLinks,Current=current,Link=link] -> {
+        `buildTracelinkPopulateResolve(deep, refClassName, tracedLinks, current, link, moduleName);
+        return;
+      }
+
+      //resolve construct
+      Resolve[ResolveBQTerm=resolveBQTerm] -> {
+        //why?
+        //buildResolve(deep, `bqterm, moduleName);
+        generateBQTerm(deep, `resolveBQTerm, moduleName);
+        return;
+      }
+
       t -> {
         System.out.println("Cannot generate code for instruction: " + `t);
         throw new TomRuntimeException("Cannot generate code for instruction: " + `t);
@@ -650,7 +665,6 @@ public abstract class AbstractGenerator {
         return;
       }
 
-
       IntrospectorClass(Name(tomName),declaration) -> {
         `buildIntrospectorClass(deep, tomName, declaration, moduleName);
         return;
@@ -679,15 +693,6 @@ public abstract class AbstractGenerator {
         return ;
       }
 
-      GetImplementationDecl(BQVariable[AstName=Name(name),
-          AstType=Type[TomType=type,TlType=tlType@TLType[]]],
-          instr, _) -> {
-        if(getSymbolTable(moduleName).isUsedSymbolDestructor(`name)) {
-          `buildGetImplementationDecl(deep, type, name, tlType, instr, moduleName);
-        }
-        return;
-      }
-
       IsFsymDecl(Name(tomName),
           BQVariable[AstName=Name(varname), AstType=Type[TlType=tlType@TLType[]]], code, _) -> {
         if(getSymbolTable(moduleName).isUsedSymbolDestructor(`tomName)) {
@@ -705,6 +710,12 @@ public abstract class AbstractGenerator {
           }
           return;
         }
+
+      //FIXME: what are the consequences on the code generation ? 
+      ImplementDecl[AstName=Name(name), Expr=code] -> {
+        //nothing for the moment
+        return;
+      }
 
       GetDefaultDecl[AstName=Name(tomName), SlotName=slotName, Expr=code] -> {
           if(getSymbolTable(moduleName).isUsedSymbolConstructor(`tomName)) {
@@ -728,6 +739,60 @@ public abstract class AbstractGenerator {
         }
         return;
       }
+      
+      BQTermToDeclaration(bqterm) -> {
+        generateBQTerm(deep,`bqterm,moduleName);
+        return;
+      }
+
+      //why?
+      ResolveIsFsymDecl(Name(tomName),
+          BQVariable[AstName=Name(varname), AstType=Type[TlType=tlType@TLType[]]], _) -> {
+        if(getSymbolTable(moduleName).isUsedSymbolDestructor(`tomName)) {
+          `buildResolveIsFsymDecl(deep, tomName, varname, tlType, moduleName);
+        }
+        return;
+      }
+
+      ResolveGetSlotDecl[AstName=Name(tomName),
+        SlotName=slotName,
+        Variable=BQVariable[AstName=Name(name), AstType=Type[TlType=tlType@TLType[]]]] -> {
+          if(getSymbolTable(moduleName).isUsedSymbolDestructor(`tomName)) {
+            `buildResolveGetSlotDecl(deep, tomName, name, tlType, slotName, moduleName);
+          }
+          return;
+        }
+
+      //why?
+      ResolveMakeDecl(Name(opname), returnType, argList, _) -> {
+        if(getSymbolTable(moduleName).isUsedSymbolConstructor(`opname)) {
+          `genResolveDeclMake("tom_make_", opname, returnType, argList, moduleName);
+        }
+        return;
+      }
+
+      ResolveClassDecl[WithName=wName,ToName=tName,Extends=eName] -> {
+        `buildResolveClass(wName,tName, eName, moduleName);
+        return;
+      }
+
+      ResolveInverseLinksDecl[FileFrom=fileFrom,FileTo=fileTo,ResolveNameList=resolveNameList] -> {
+        `buildResolveInverseLinks(deep, fileFrom, fileTo, resolveNameList, moduleName);
+        return;
+      }
+
+      //complete with specialized backquotes
+      //ReferenceClass[RefName=Name(refname),Fields=instructions] -> {
+      ReferenceClass[RefName=Name(refname),Fields=refclassTInstructions] -> {
+        //no test in order to generate the skeletton even if the class is not
+        //populated
+        //if(!`refclassTInstructions.isEmptyconcRefClassTracelinkInstruction()) {
+        `buildReferenceClass(deep, refname, refclassTInstructions, moduleName);
+        //}
+        return;
+      }
+
+//////
 
       GetHeadDecl[Opname=opNameAST@Name(opname),
         Codomain=Type[TlType=codomain],
@@ -834,6 +899,7 @@ public abstract class AbstractGenerator {
       }
 
       TypeTermDecl[Declarations=declList] -> {
+        //FIXME: consequences of a %op_implement? 
         generateDeclarationList(deep, `declList, moduleName);
         return;
       }
@@ -988,8 +1054,6 @@ public abstract class AbstractGenerator {
   protected abstract void buildSubstract(int deep, BQTerm var1, BQTerm var2, String moduleName) throws IOException;
   protected abstract void buildReturn(int deep, BQTerm exp, String moduleName) throws IOException ;
   protected abstract void buildSymbolDecl(int deep, String tomName, String moduleName) throws IOException ;
-  protected abstract void buildGetImplementationDecl(int deep, String type, String name,
-      TargetLanguageType tlType, Instruction instr, String moduleName) throws IOException;
 
   protected abstract void buildIsFsymDecl(int deep, String tomName, String name1,
       TargetLanguageType tlType, Expression code, String moduleName) throws IOException;
@@ -1006,5 +1070,19 @@ public abstract class AbstractGenerator {
       TargetLanguageType tlType, Expression code, String moduleName) throws IOException;
   protected abstract void buildGetElementDecl(int deep, TomName opNameAST, String name1, String name2, String type1, Expression code, String moduleName) throws IOException;
   protected abstract void buildGetSizeDecl(int deep, TomName opNameAST, String name1, String type, Expression code, String moduleName) throws IOException;
+
+  
+  //TODO: Resolve*
+  protected abstract void buildResolveIsFsymDecl(int deep, String tomName, String name1, TargetLanguageType tlType, String moduleName) throws IOException;
+  protected abstract void buildResolveGetSlotDecl(int deep, String tomName, String name1, TargetLanguageType tlType, TomName slotName, String moduleName) throws IOException;
+  protected abstract void genResolveDeclMake(String prefix, String funName, TomType returnType, BQTermList argList, String moduleName) throws IOException;
+  protected abstract void buildResolveClass(String wName, String tName, String extendsName, String moduleName) throws IOException;
+  protected abstract void buildResolveInverseLinks(int deep, String fileFrom, String fileTo, TomNameList resolveNameList, String moduleName) throws IOException;
+  protected abstract void buildReferenceClass(int deep, String refname, RefClassTracelinkInstructionList refclassTInstructions, String moduleName) throws IOException;
+  protected abstract void buildTracelink(int deep, String type, String name, Expression expr, String moduleName) throws IOException;
+  protected abstract void buildResolve(int deep, BQTerm bqterm, String moduleName) throws IOException;
+  protected abstract void buildTracelinkPopulateResolve(int deep, String refClassName, TomNameList tracedLinks, BQTerm current, BQTerm link, String moduleName) throws IOException;
+  protected abstract String genResolveIsFsymCode(String tomName, String varname) throws IOException;
+  protected abstract String genResolveGetSlotCode(String tomName, String varname, String slotName) throws IOException;
 
 }

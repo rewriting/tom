@@ -41,7 +41,7 @@ class PrettyPrinter {
       bottomInfo[] -> { return "\\bot"; }
       topInfo[] -> { return "\\top"; }
       cutInfo(p) -> { return "cut (" + `toLatex(p) + ")"; }
-      openInfo[] -> { return "open"; } 
+      openInfo[] -> { return "open"; }
       reductionInfo[] -> { return "reduction"; }
       contractionLeftInfo[] -> { return "contr_\\mathcal{L}"; }
       contractionRightInfo[] -> { return "contr_\\mathcal{R}"; }
@@ -58,8 +58,8 @@ class PrettyPrinter {
 
   private static int peanoToInt(Term term, int i) throws Exception {
     %match(Term term) {
-      funAppl("z",()) -> { return i; }
-      funAppl("succ",(t)) -> { return peanoToInt(`t,i+1); }
+      funAppl("z",concTerm()) -> { return i; }
+      funAppl("succ",concTerm(t)) -> { return peanoToInt(`t,i+1); }
     }
     throw new Exception("term is not an integer");
   }
@@ -76,13 +76,13 @@ class PrettyPrinter {
 
   %strategy RemoveInHyp(prop: Prop) extends `Identity() {
     visit Sequent {
-      sequent((X*,p,Y*), c) -> { if (prop == `p) return `sequent(context(X*,Y*),c); }
+      sequent(context(X*,p,Y*), c) -> { if (prop == `p) return `sequent(context(X*,Y*),c); }
     }
   }
 
   %strategy RemoveInConcl(prop: Prop) extends `Identity() {
     visit Sequent {
-      sequent(h, (X*,p,Y*)) -> { if (prop == `p) return `sequent(h,context(X*,Y*)); }
+      sequent(h, context(X*,p,Y*)) -> { if (prop == `p) return `sequent(h,context(X*,Y*)); }
     }
   }
 
@@ -94,14 +94,14 @@ class PrettyPrinter {
       // in case of a reduce rule, we have to check if the reduced form of a prop is active
       r@rule(reductionInfo[],_,concl,_) -> {
         %match(Sequent `concl, Prop prop) {
-          sequent((_*,p,_*),_), p -> {
+          sequent(context(_*,p,_*),_), p -> {
             Prop after = (Prop) Unification.reduce(`p,tl,pl);
-            if (`p != after) 
+            if (`p != after)
               return `r;
           }
-          sequent(_,(_*,p,_*)), p -> {
+          sequent(_,context(_*,p,_*)), p -> {
             Prop after = (Prop) Unification.reduce(`p,tl,pl);
-            if (`p != after) 
+            if (`p != after)
               return `r;
           }
         }
@@ -116,14 +116,14 @@ class PrettyPrinter {
       r@rule(_,_,sequent(h,c),_) -> {
         Tree res = `r;
         %match(Context h) {
-          (_*,x,_*) -> {
-            res = (Tree) 
+          context(_*,x,_*) -> {
+            res = (Tree)
               `Choice(OnceTopDown(IsActive(x,tl,pl)),InnermostId(RemoveInHyp(x))).visit(`res);
           }
         }
         %match(Context c) {
-          (_*,x,_*) -> {
-            res = (Tree) 
+          context(_*,x,_*) -> {
+            res = (Tree)
               `Choice(OnceTopDown(IsActive(x,tl,pl)),InnermostId(RemoveInConcl(x))).visit(`res);
           }
         }
@@ -144,187 +144,187 @@ class PrettyPrinter {
 
   public static String toLatex(sequentsAbstractType term) {
     %match(Tree term) {
-      rule(n,(),c,_) -> {return "\\infer["+ translate(`n) +"]\n{"+ toLatex(`c) +"}\n{}";}
+      rule(n,premisses(),c,_) -> {return "\\infer["+ translate(`n) +"]\n{"+ toLatex(`c) +"}\n{}";}
       rule(n,p,c,_) -> {return "\\infer["+ translate(`n) +"]\n{" + toLatex(`c) + "}\n{"+ toLatex(`p) +"}";}
     }
 
     %match(Premisses term) {
-      () -> { return ""; }
-      (x) -> { return toLatex(`x); }
-      (h,t*) -> { return toLatex(`h) + " & " + toLatex(`t*); }
+      premisses() -> { return ""; }
+      premisses(x) -> { return toLatex(`x); }
+      premisses(h,t*) -> { return toLatex(`h) + " & " + toLatex(`t*); }
     }
 
     %match(Context term) {
-      () -> { return ""; }
-      (x) -> { return toLatex(`x); }
-      (h,t*) -> {return toLatex(`h) + ", " + toLatex(`t);}
+      context() -> { return ""; }
+      context(x) -> { return toLatex(`x); }
+      context(h,t*) -> {return toLatex(`h) + ", " + toLatex(`t);}
     }
 
     %match(Sequent term) {
-      sequent((), c) -> { return "\\vdash " + toLatex(`c); }
+      sequent(context(), c) -> { return "\\vdash " + toLatex(`c); }
       sequent(ctx, c) -> { return toLatex(`ctx) + " \\vdash " + toLatex(`c); }
     }
 
     %match(Prop term) {
 
       // arithmetic pretty print
-      relationAppl("eq",(x,y)) -> {
+      relationAppl("eq",concTerm(x,y)) -> {
         return toLatex(`x) + " = " + toLatex(`y);
       }
-      relationAppl("gt",(x,y)) -> {
+      relationAppl("gt",concTerm(x,y)) -> {
         return toLatex(`x) + " > " + toLatex(`y);
       }
-      relationAppl("lt",(x,y)) -> {
+      relationAppl("lt",concTerm(x,y)) -> {
         return toLatex(`x) + " < " + toLatex(`y);
       }
-      relationAppl("le",(x,y)) -> {
+      relationAppl("le",concTerm(x,y)) -> {
         return toLatex(`x) + " \\le " + toLatex(`y);
       }
 
       // set theory pretty print
-      relationAppl("in",(x,y)) -> {
+      relationAppl("in",concTerm(x,y)) -> {
         return toLatex(`x) + " \\in " + toLatex(`y);
       }
-      relationAppl("subset",(x,y)) -> {
+      relationAppl("subset",concTerm(x,y)) -> {
         return toLatex(`x) + " \\subset " + toLatex(`y);
       }
-      relationAppl("supset",(x,y)) -> {
+      relationAppl("supset",concTerm(x,y)) -> {
         return toLatex(`x) + " \\supset " + toLatex(`y);
       }
 
       // lamda-Pi
-      relationAppl("WF",(x)) -> {
+      relationAppl("WF",concTerm(x)) -> {
         if (leftEndedByNil(`x))
           return ("\\mathsf{WF}\\left(") + contextListToLatex(`x) + "\\right)";
         else
           return ("\\mathsf{WF}\\left(") + toLatex(`x) + "\\right)";
       }
-      
-      relationAppl(n, ()) -> { return `n;}
+
+      relationAppl(n, concTerm()) -> { return `n;}
       relationAppl(n, tlist) -> { return `n + "(" + toLatex(`tlist) + ")";}
 
       implies(p, bottom()) -> { return "\\lnot (" + toLatex(`p) + ")"; }
 
       implies(p1@relationAppl[],p2) -> {
-        return %[@toLatex(`p1)@ \Rightarrow @toLatex(`p2)@]% ; 
+        return %[@toLatex(`p1)@ \Rightarrow @toLatex(`p2)@]% ;
       }
       implies(p1,p2) -> {
-        return %[(@toLatex(`p1)@) \Rightarrow @toLatex(`p2)@]% ; 
+        return %[(@toLatex(`p1)@) \Rightarrow @toLatex(`p2)@]% ;
       }
-      or(p1@relationAppl[],p2) -> { 
-        return %[@toLatex(`p1)@ \lor @toLatex(`p2)@]%; 
+      or(p1@relationAppl[],p2) -> {
+        return %[@toLatex(`p1)@ \lor @toLatex(`p2)@]%;
       }
       or(p1,p2) -> {
-        return %[(@toLatex(`p1)@) \lor @toLatex(`p2)@]%; 
+        return %[(@toLatex(`p1)@) \lor @toLatex(`p2)@]%;
       }
-      and(p1@relationAppl[],p2) -> { 
-        return %[@toLatex(`p1)@ \land @toLatex(`p2)@]%; 
+      and(p1@relationAppl[],p2) -> {
+        return %[@toLatex(`p1)@ \land @toLatex(`p2)@]%;
       }
-      and(p1,p2) -> { 
-        return %[(@toLatex(`p1)@) \land @toLatex(`p2)@]%; 
+      and(p1,p2) -> {
+        return %[(@toLatex(`p1)@) \land @toLatex(`p2)@]%;
       }
       forall(n, p) -> { return "\\forall " + `n + ", " + toLatex(`p);}
       exists(n, p) -> { return "\\exists " + `n + ", " + toLatex(`p);}
       bottom() -> { return "\\bot";  }
       top() -> { return "\\top";  }
-    }	
+    }
 
     %match(TermList term) {
-      (x) -> { return toLatex(`x); }
-      (h,t*) -> { return toLatex(`h) + ", " + toLatex(`t); }
+      concTerm(x) -> { return toLatex(`x); }
+      concTerm(h,t*) -> { return toLatex(`h) + ", " + toLatex(`t); }
     }
 
     %match(Term term) {
-      Var(('@',n*)) -> { return `n; }
+      Var(concString('@',n*)) -> { return `n; }
       Var(n) -> { return `n; }
 
       // arithmetic
-      funAppl("z",()) -> { return "0"; }
+      funAppl("z",concTerm()) -> { return "0"; }
       i@funAppl("succ",_) -> {
         try { return Integer.toString(peanoToInt(`i));}
         catch (Exception e) {}
       }
-      
-      funAppl("plus",(t1,t2)) -> { 
+
+      funAppl("plus",concTerm(t1,t2)) -> {
         return "(" + toLatex(`t1) + "+" + toLatex(`t2) + ")";
       }
-      funAppl("mult",(t1,t2)) -> { 
+      funAppl("mult",concTerm(t1,t2)) -> {
         return "(" + toLatex(`t1) + " \\times " + toLatex(`t2) + ")";
       }
-      funAppl("minus",(t1,t2)) -> { 
+      funAppl("minus",concTerm(t1,t2)) -> {
         return "(" + toLatex(`t1) + " - " + toLatex(`t2) + ")";
       }
-      funAppl("div",(t1,t2)) -> { 
+      funAppl("div",concTerm(t1,t2)) -> {
         return "(" + toLatex(`t1) + " / " + toLatex(`t2) + ")";
       }
 
       // set theory
-      funAppl("union",(t1,t2)) -> { 
+      funAppl("union",concTerm(t1,t2)) -> {
         return "(" + toLatex(`t1) + ") \\cup (" + toLatex(`t2) + ")";
       }
-      funAppl("inter",(t1,t2)) -> { 
+      funAppl("inter",concTerm(t1,t2)) -> {
         return "(" + toLatex(`t1) + ") \\cap (" + toLatex(`t2) + ")";
       }
-      funAppl("emptyset",()) -> { 
+      funAppl("emptyset",concTerm()) -> {
         return "\\emptyset";
       }
 
       // finite 1st order theory of classes pretty print
-      funAppl("appl",(p,x*)) -> {
+      funAppl("appl",concTerm(p,x*)) -> {
         return `toLatex(p) + "["+ toLatex(`x*) + "]";
       }
-      funAppl("nil",()) -> {
+      funAppl("nil",concTerm()) -> {
         return ("nil");
       }
-      funAppl("fEq",(x,y)) -> {
+      funAppl("fEq",concTerm(x,y)) -> {
         return toLatex(`x) + "\\dot{=}" + `toLatex(y);
       }
-      l@funAppl("cons",(x,y)) -> {
-        if (endedByNil(`l)) return "\\langle " + listToLatex(`l) + "\\rangle "; 
+      l@funAppl("cons",concTerm(x,y)) -> {
+        if (endedByNil(`l)) return "\\langle " + listToLatex(`l) + "\\rangle ";
         else return toLatex(`x) + "::" + toLatex(`y);
       }
 
       // lambda-Pi
-     funAppl("type",()) -> {
+     funAppl("type",concTerm()) -> {
        return ("*");
      }
-     funAppl("kind",()) -> {
+     funAppl("kind",concTerm()) -> {
        return ("\\square");
      }
-     funAppl("pitype",(x,y)) -> {
+     funAppl("pitype",concTerm(x,y)) -> {
        return ("\\dot\\pi_*") + toLatex(`x) + " .~" +  toLatex(`y);
      }
-     funAppl("pikind",(x,y)) -> {
+     funAppl("pikind",concTerm(x,y)) -> {
        return ("\\dot\\pi_\\square") + toLatex(`x) + " .~" +  toLatex(`y);
      }
 
      // lambda-sigma
-     funAppl("subst",(x,y)) -> {
+     funAppl("subst",concTerm(x,y)) -> {
        return toLatex(`x) + "[" + toLatex(`y) + "]";
      }
-     funAppl("rond",(x,y)) -> {
+     funAppl("rond",concTerm(x,y)) -> {
        return toLatex(`x) + " \\circ " + toLatex(`y);
      }
-     funAppl("shift",()) -> {
+     funAppl("shift",concTerm()) -> {
        return "\\uparrow";
      }
-     funAppl("one",()) -> {
+     funAppl("one",concTerm()) -> {
        return "\\mathsf{1}";
      }
-     funAppl("id",()) -> {
+     funAppl("id",concTerm()) -> {
        return "id";
      }
-     funAppl("lcons",(x,y)) -> {
+     funAppl("lcons",concTerm(x,y)) -> {
        return  toLatex(`x) + " \\cdot " + toLatex(`y);
      }
-     funAppl("lambda",(x)) -> {
+     funAppl("lambda",concTerm(x)) -> {
        return "\\lambda " + toLatex(`x);
      }
-     funAppl("lappl",(p,x*)) -> {
+     funAppl("lappl",concTerm(p,x*)) -> {
        return "(" + toLatex(`p) + "~" + toLatex(`x*) + ")";
      }
 
-     funAppl(n, ()) -> { return `n + "()";}
+     funAppl(n, concTerm()) -> { return `n + "()";}
      funAppl(n, tlist) -> { return `n + "(" + toLatex(`tlist) + ")";}
     }
 
@@ -332,16 +332,18 @@ class PrettyPrinter {
   }
 
   public static String toLatex(urbanAbstractType term) {
-    
+
     %match(NTree term) {
-      nrule(n,(),c,pt) -> {return "\\infer["+ translate(`n) +"]\n{ "+toLatex(`pt)+" \\rhd "+ toLatex(`c) +"}\n{}";}
+      nrule(n,npremisses(),c,pt) -> {
+        return "\\infer["+ translate(`n) +"]\n{ "+toLatex(`pt)+" \\rhd "+ toLatex(`c) +"}\n{}";
+      }
       nrule(n,p,c,pt) -> {return "\\infer["+ translate(`n) +"]\n{ "+toLatex(`pt)+" \\rhd " + toLatex(`c) + "}\n{"+ toLatex(`p) +"}";}
     }
 
     %match(NPremisses term) {
-      () -> { return ""; }
-      (x) -> { return toLatex(`x); }
-      (h,t*) -> { return toLatex(`h) + " & " + toLatex(`t*); }
+      npremisses() -> { return ""; }
+      npremisses(x) -> { return toLatex(`x); }
+      npremisses(h,t*) -> { return toLatex(`h) + " & " + toLatex(`t*); }
     }
 
     %match (NProp term) {
@@ -353,15 +355,15 @@ class PrettyPrinter {
     }
 
     %match (NContext term) {
-      () -> {return "";}
-      (h) -> {return toLatex(`h); }
-      (h,d*) -> {return toLatex(`h)+","+toLatex(`d);}
+      ncontext() -> {return "";}
+      ncontext(h) -> {return toLatex(`h); }
+      ncontext(h,d*) -> {return toLatex(`h)+","+toLatex(`d);}
     }
 
     %match (CNContext term) {
-      () -> {return "";}
-      (h) -> {return toLatex(`h); }
-      (h,d*) -> {return toLatex(`h)+","+toLatex(`d);}
+      cncontext() -> {return "";}
+      cncontext(h) -> {return toLatex(`h); }
+      cncontext(h,d*) -> {return toLatex(`h)+","+toLatex(`d);}
     }
 
     %match (NSequent term) {
@@ -394,24 +396,24 @@ class PrettyPrinter {
     }
 
     return null;
-    
+
   }
 
 
   // finite 1st order theory of classes list pretty print
   private static boolean endedByNil(Term l) {
     %match(Term l) {
-      funAppl("cons",(_,funAppl("nil",()))) -> { return true; }
-      funAppl("cons",(_,y)) -> { return endedByNil(`y); }
+      funAppl("cons",concTerm(_,funAppl("nil",concTerm()))) -> { return true; }
+      funAppl("cons",concTerm(_,y)) -> { return endedByNil(`y); }
     }
     return false;
   }
 
   public static String listToLatex(Term t) {
     %match(Term t) {
-      funAppl("cons",(x,funAppl("nil",()))) -> { return toLatex(`x); }
-      funAppl("cons",(x,y)) -> {
-        return toLatex(`x) + "," + listToLatex(`y); 
+      funAppl("cons",concTerm(x,funAppl("nil",concTerm()))) -> { return toLatex(`x); }
+      funAppl("cons",concTerm(x,y)) -> {
+        return toLatex(`x) + "," + listToLatex(`y);
       }
     }
     return null;
@@ -420,17 +422,17 @@ class PrettyPrinter {
   // lambda-Pi context list pretty print (inverted order)
   private static boolean leftEndedByNil(Term l) {
     %match(Term l) {
-	  funAppl("cons",(funAppl("nil",()),_)) -> { return true; }
-	  funAppl("cons",(x,_)) -> { return leftEndedByNil(`x); }
+	  funAppl("cons",concTerm(funAppl("nil",concTerm()),_)) -> { return true; }
+	  funAppl("cons",concTerm(x,_)) -> { return leftEndedByNil(`x); }
     }
     return false;
   }
 
   public static String contextListToLatex(Term t) {
     %match(Term t) {
-	  funAppl("cons",(funAppl("nil",()), funAppl("e",(a,b))))
+	  funAppl("cons",concTerm(funAppl("nil",concTerm()), funAppl("e",concTerm(a,b))))
 	      -> { return toLatex(`a) + " \\in " + toLatex(`b); }
-	  funAppl("cons",(x,funAppl("e",(a,b)))) -> {
+	  funAppl("cons",concTerm(x,funAppl("e",concTerm(a,b)))) -> {
 	      return contextListToLatex(`x) + "," + toLatex(`a) + " \\in " + toLatex(`b);      }
     }
     return null;
@@ -439,62 +441,62 @@ class PrettyPrinter {
   public static String prettyPrint(sequentsAbstractType term) {
 
     %match(Sequent term) {
-      sequent(h,c) -> { 
-        return prettyPrint(`h) + " |- " + prettyPrint(`c); 
+      sequent(h,c) -> {
+        return prettyPrint(`h) + " |- " + prettyPrint(`c);
       }
     }
 
     %match(Context term) {
-      () -> { return ""; }
-      (f) -> { return prettyPrint(`f); }
-      (h,t*) -> { return prettyPrint(`h) + ", " +  prettyPrint(`t); }
+      context() -> { return ""; }
+      context(f) -> { return prettyPrint(`f); }
+      context(h,t*) -> { return prettyPrint(`h) + ", " +  prettyPrint(`t); }
     }
 
     %match(Prop term) {
       implies(p1@relationAppl[],p2) -> {
-        return %[@prettyPrint(`p1)@ => @prettyPrint(`p2)@]% ; 
+        return %[@prettyPrint(`p1)@ => @prettyPrint(`p2)@]% ;
       }
       implies(p1,p2) -> {
-        return %[(@prettyPrint(`p1)@) => @prettyPrint(`p2)@]% ; 
+        return %[(@prettyPrint(`p1)@) => @prettyPrint(`p2)@]% ;
       }
-      or(p1@relationAppl[],p2) -> { 
-        return %[@prettyPrint(`p1)@ \/ @prettyPrint(`p2)@]%; 
+      or(p1@relationAppl[],p2) -> {
+        return %[@prettyPrint(`p1)@ \/ @prettyPrint(`p2)@]%;
       }
       or(p1,p2) -> {
-        return %[(@prettyPrint(`p1)@) \/ @prettyPrint(`p2)@]%; 
+        return %[(@prettyPrint(`p1)@) \/ @prettyPrint(`p2)@]%;
       }
-      and(p1@relationAppl[],p2) -> { 
-        return %[@prettyPrint(`p1)@ /\ @prettyPrint(`p2)@]%; 
+      and(p1@relationAppl[],p2) -> {
+        return %[@prettyPrint(`p1)@ /\ @prettyPrint(`p2)@]%;
       }
-      and(p1,p2) -> { 
-        return %[(@prettyPrint(`p1)@) /\ @prettyPrint(`p2)@]%; 
+      and(p1,p2) -> {
+        return %[(@prettyPrint(`p1)@) /\ @prettyPrint(`p2)@]%;
       }
       forall(x,p1) -> {
         return "forall " + `x + ", " + prettyPrint(`p1);
       }
-      exists(x,p1) -> { 
+      exists(x,p1) -> {
         return "exists " + `x + ", " + prettyPrint(`p1);
       }
-      relationAppl(r,()) -> {
+      relationAppl(r,concTerm()) -> {
         return `r;
       }
 
       // arithmetic pretty print
-      relationAppl("eq",(x,y)) -> {
+      relationAppl("eq",concTerm(x,y)) -> {
         return prettyPrint(`x) + " = " + prettyPrint(`y);
       }
-      relationAppl("gt",(x,y)) -> {
+      relationAppl("gt",concTerm(x,y)) -> {
         return prettyPrint(`x) + " > " + prettyPrint(`y);
       }
-      relationAppl("lt",(x,y)) -> {
+      relationAppl("lt",concTerm(x,y)) -> {
         return prettyPrint(`x) + " < " + prettyPrint(`y);
       }
-      relationAppl("le",(x,y)) -> {
+      relationAppl("le",concTerm(x,y)) -> {
         return prettyPrint(`x) + " <= " + prettyPrint(`y);
       }
 
       // set theory prettyprint
-      relationAppl("in",(x,y)) -> {
+      relationAppl("in",concTerm(x,y)) -> {
         return prettyPrint(`x) + " \u2208 " + prettyPrint(`y);
       }
 
@@ -511,78 +513,78 @@ class PrettyPrinter {
     }
 
     %match(Term term) {
-      Var(('@',n*)) -> { return `n; }
+      Var(concString('@',n*)) -> { return `n; }
       Var(x) -> { return `x;}
 
       // arithmetic pretty print
-      funAppl("z",()) -> { return "0"; }
+      funAppl("z",concTerm()) -> { return "0"; }
       i@funAppl("succ",_) -> {
         try { return Integer.toString(peanoToInt(`i));}
         catch (Exception e) {}
       }
-      funAppl("plus",(t1,t2)) -> { 
+      funAppl("plus",concTerm(t1,t2)) -> {
         return "(" + prettyPrint(`t1) + "+" + prettyPrint(`t2) + ")";
       }
-      funAppl("mult",(t1,t2)) -> { 
+      funAppl("mult",concTerm(t1,t2)) -> {
         return "(" + prettyPrint(`t1) + "*" + prettyPrint(`t2) + ")";
       }
-      funAppl("minus",(t1,t2)) -> { 
+      funAppl("minus",concTerm(t1,t2)) -> {
         return "(" + prettyPrint(`t1) + "-" + prettyPrint(`t2) + ")";
       }
-      funAppl("div",(t1,t2)) -> { 
+      funAppl("div",concTerm(t1,t2)) -> {
         return "(" + prettyPrint(`t1) + "/" + prettyPrint(`t2) + ")";
       }
 
       // finite 1st order theory of classes pretty print
-      funAppl("appl",(p,x*)) -> {
+      funAppl("appl",concTerm(p,x*)) -> {
         return `prettyPrint(p) + "["+ prettyPrint(`x*) + "]";
       }
-      funAppl("nil",()) -> {
+      funAppl("nil",concTerm()) -> {
         return ("nil");
       }
-      l@funAppl("cons",(x,y)) -> {
-        if(endedByNil(`l)) return "<" + prettyList(`l) + ">"; 
+      l@funAppl("cons",concTerm(x,y)) -> {
+        if(endedByNil(`l)) return "<" + prettyList(`l) + ">";
         else return prettyPrint(`x) + "::" + prettyPrint(`y);
       }
 
       // lambda-sigma
-      funAppl("lambda",(x)) -> {
+      funAppl("lambda",concTerm(x)) -> {
         return "λ" + `prettyPrint(x);
       }
-      funAppl("lappl",(p,x*)) -> {
+      funAppl("lappl",concTerm(p,x*)) -> {
         return "(" + `prettyPrint(p) + " "+ prettyPrint(`x*) + ")";
       }
-      funAppl("subst",(p,x*)) -> {
+      funAppl("subst",concTerm(p,x*)) -> {
         return  `prettyPrint(p) + "["+ prettyPrint(`x*) + "]";
       }
-      funAppl("one",()) -> {
+      funAppl("one",concTerm()) -> {
         return ("1");
       }
-      funAppl("shift",()) -> {
+      funAppl("shift",concTerm()) -> {
         return ("↑");
       }
-      funAppl("lcons",(x,y)) -> {
+      funAppl("lcons",concTerm(x,y)) -> {
         return prettyPrint(`x) + "." + prettyPrint(`y);
       }
-      funAppl("rond",(x,y)) -> {
+      funAppl("rond",concTerm(x,y)) -> {
         return prettyPrint(`x) + " o " + prettyPrint(`y);
       }
 
       // lambda-pi
-      funAppl("type",()) -> {
-        return ("*");  
+      funAppl("type",concTerm()) -> {
+        return ("*");
       }
 
-      funAppl("kind",()) -> {
-        return ("□");   
+      funAppl("kind",concTerm()) -> {
+        return ("□");
       }
 
-      funAppl("pitype",(x,y))  -> {
+      funAppl("pitype",concTerm(x,y))  -> {
         return "π⁎" + prettyPrint(`x) + ". " + prettyPrint(`y);
       }
 
-      funAppl("pikind",(x,y))  -> {
-        return "π◽" + prettyPrint(`x) + ". " + prettyPrint(`y);  
+      funAppl("pikind",concTerm(x,y))  -> {
+        return "π◽" + prettyPrint(`x) + ". " + prettyPrint(`y);
       }
 
 
@@ -595,9 +597,9 @@ class PrettyPrinter {
     }
 
     %match(TermList term) {
-      () -> {return ""; }
-      (h) -> { return prettyPrint(`h);}
-      (h,t*) -> { return prettyPrint(`h) + ", " + prettyPrint(`t); }
+      concTerm() -> {return ""; }
+      concTerm(h) -> { return prettyPrint(`h);}
+      concTerm(h,t*) -> { return prettyPrint(`h) + ", " + prettyPrint(`t); }
     }
 
     return term.toString();
@@ -622,18 +624,18 @@ class PrettyPrinter {
     }
 
     %match(NContext term) {
-      () -> { return ""; }
-      (h) -> { return  prettyPrint(`h); }
-      (h,t*) -> { return prettyPrint(`h) + ", " + prettyPrint(`t); }
+      ncontext() -> { return ""; }
+      ncontext(h) -> { return  prettyPrint(`h); }
+      ncontext(h,t*) -> { return prettyPrint(`h) + ", " + prettyPrint(`t); }
     }
 
     %match(CNContext term) {
-      () -> { return ""; }
-      (h) -> { return  prettyPrint(`h); }
-      (h,t*) -> { return prettyPrint(`h) + ", " + prettyPrint(`t); }
+      cncontext() -> { return ""; }
+      cncontext(h) -> { return  prettyPrint(`h); }
+      cncontext(h,t*) -> { return prettyPrint(`h) + ", " + prettyPrint(`t); }
     }
 
-    %match(ProofTerm term) { 
+    %match(ProofTerm term) {
       ax(n,cn) -> {return "ax("+prettyPrint(`n)+", "+prettyPrint(`cn)+")"; }
       cut(a,m1,x,m2) -> {return "cut("+prettyPrint(`a)+" "+prettyPrint(`m1)+", "+prettyPrint(`x)+" "+prettyPrint(`m2)+")";}
       falseL(n) -> {return "falseL("+prettyPrint(`n)+")";}
@@ -656,9 +658,9 @@ class PrettyPrinter {
   // finite 1st order theory of classes list pretty print
   public static String prettyList(Term t) {
     %match(Term t) {
-      funAppl("cons",(x,funAppl("nil",()))) -> { return prettyPrint(`x); }
-      funAppl("cons",(x,y)) -> {
-        return prettyPrint(`x) + "," + prettyList(`y); 
+      funAppl("cons",concTerm(x,funAppl("nil",concTerm()))) -> { return prettyPrint(`x); }
+      funAppl("cons",concTerm(x,y)) -> {
+        return prettyPrint(`x) + "," + prettyList(`y);
       }
     }
     return null;
@@ -684,14 +686,14 @@ class PrettyPrinter {
   public static String prettyRule(sequentsAbstractType term) {
 
     %match(RuleList term) {
-      (x) -> { return prettyRule(`x); }
-      (t,q*) -> {	return prettyRule(`t) + "\n\n" + prettyRule(`q); }
+      rlist(x) -> { return prettyRule(`x); }
+      rlist(t,q*) -> {	return prettyRule(`t) + "\n\n" + prettyRule(`q); }
     }
 
     %match(SeqList term) {
-      () -> { return ""; }
-      (x) -> { return prettyPrint(`x); }
-      (t,q*) -> {	return prettyPrint(`t) + "    " + prettyRule(`q); }
+      concSeq() -> { return ""; }
+      concSeq(x) -> { return prettyPrint(`x); }
+      concSeq(t,q*) -> {	return prettyPrint(`t) + "    " + prettyRule(`q); }
     }
 
     // generated rules
@@ -705,14 +707,14 @@ class PrettyPrinter {
           r2 = prettyPrint(`sequent(context(),context(c)));
 
         StringBuffer sb = new StringBuffer();
-        for (int i=0; i< Math.max(r1.length(), r2.length()); ++i) 
+        for (int i=0; i< Math.max(r1.length(), r2.length()); ++i)
           sb.append('-');
 
 
         String r3 = getPrettySideConstraints(`p);
-        if (r3 != null) 
+        if (r3 != null)
           return r1 + "\n" + sb.toString() + " (" + r3 + ")\n" + r2;
-        else 
+        else
           return r1 + "\n" + sb.toString() + "\n" + r2;
       }
     }
@@ -745,7 +747,7 @@ class PrettyPrinter {
     System.out.println(%[latex -output-directory=/tmp @path@]%);
     Process pr = rt.exec(%[latex -output-directory=/tmp @path@]%);
     //Process pr = rt.exec(%[latex -output-directory=/tmp \nonstopmode\input{@path@}]%);
-    int ret = pr.waitFor(); 
+    int ret = pr.waitFor();
     if (ret == 0) {
       System.out.println(%[dvips @basename@.dvi -X 300 -Y 300 -E -o @basename@.ps]%);
       pr = rt.exec(%[dvips @basename@.dvi -X 300 -Y 300 -E -o @basename@.ps]%);
@@ -784,7 +786,7 @@ class PrettyPrinter {
     Process pr = rt.exec("latex -output-directory=/tmp " + path);
     //Process pr = rt.exec("latex -output-directory=/tmp \\nonstopmode\\input{" + path + "}");
 
-    int ret = pr.waitFor(); 
+    int ret = pr.waitFor();
     if (ret == 0) {
       pr = rt.exec("dvips " + basename +".dvi -X 300 -Y 300 -E -o "+ basename +".ps");
       ret = pr.waitFor();

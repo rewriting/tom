@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (c) 2000-2011, INPL, INRIA
+ * Copyright (c) 2000-2012, INPL, INRIA
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -64,23 +64,23 @@ public class All extends AbstractStrategyCombinator {
    * @throws VisitFailure if visitLight fails
    */ 
   public final <T> T visitLight(T any, Introspector introspector) throws VisitFailure {
-    Object[] childs = null;
+    Object[] children = null;
     int childCount = introspector.getChildCount(any);
     for (int i = 0; i < childCount; i++) {
       Object oldChild = introspector.getChildAt(any,i);
       Object newChild = arguments[ARG].visitLight(oldChild,introspector);
-      if(childs != null) {
-        childs[i] = newChild;
+      if(children != null) {
+        children[i] = newChild;
       } else if(newChild != oldChild) {
         // allocate the array, and fill it
-        childs = introspector.getChildren(any);
-        childs[i] = newChild;
+        children = introspector.getChildren(any);
+        children[i] = newChild;
       }
     }
-    if(childs==null) {
+    if(children==null) {
       return any;
     } else {
-      return introspector.setChildren(any,childs);
+      return introspector.setChildren(any,children);
     }
   }
 
@@ -97,7 +97,7 @@ public class All extends AbstractStrategyCombinator {
     Object any = environment.getSubject();
     int childCount = introspector.getChildCount(any);
 
-    Object[] childs = null;
+    Object[] children = null;
 
     for(int i = 0; i < childCount; i++) {
       Object oldChild = introspector.getChildAt(any,i);
@@ -108,17 +108,17 @@ public class All extends AbstractStrategyCombinator {
         return status;
       }
       Object newChild = environment.getSubject();
-      if(childs != null) {
-        childs[i] = newChild;
+      if(children != null) {
+        children[i] = newChild;
       } else if(newChild != oldChild) {
         // allocate the array, and fill it
-        childs = introspector.getChildren(any);
-        childs[i] = newChild;
+        children = introspector.getChildren(any);
+        children[i] = newChild;
       } 
       environment.upLocal();
     }
-    if(childs!=null) {
-      environment.setSubject(introspector.setChildren(any,childs));
+    if(children!=null) {
+      environment.setSubject(introspector.setChildren(any,children));
     }
     return Environment.SUCCESS;
   }

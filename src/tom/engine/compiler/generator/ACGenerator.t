@@ -25,6 +25,8 @@
  **/
 package tom.engine.compiler.generator;
 
+import java.util.logging.Logger;
+
 import tom.engine.adt.tominstruction.types.*;
 import tom.engine.adt.tomexpression.types.*;
 import tom.engine.adt.tomexpression.types.expression.*;
@@ -33,15 +35,17 @@ import tom.engine.adt.tomname.types.tomname.*;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomtype.types.*;
 import tom.engine.adt.tomslot.types.*;
+import tom.engine.adt.tomoption.types.*;
 import tom.engine.adt.tomterm.types.tomterm.*;
 import tom.library.sl.*;
 import tom.engine.tools.SymbolTable;
+import tom.engine.tools.TomConstraintPrettyPrinter;
 import tom.engine.exception.TomRuntimeException;
 import tom.engine.adt.tomsignature.types.*;
 import tom.engine.TomBase;
+import tom.engine.TomMessage;
 import tom.engine.compiler.*;
 import tom.engine.compiler.Compiler;
-
 
 // TODO : move all this in the constraintgenerator.
 // we should only generate the functions once per operator
@@ -66,13 +70,36 @@ public class ACGenerator implements IBaseGenerator {
     return this.compiler;
   }
 
+  private Logger getLogger() {
+    return Logger.getLogger(getClass().getName());
+  }
+  
+  /**
+   * Shared Functions 
+   */
+  protected String findOriginTrackingFileName(OptionList optionList) {
+    %match(optionList) {
+      concOption(_*,OriginTracking[FileName=fileName],_*) -> { return `fileName; }
+    }
+    return "unknown filename";
+  }
+
+  protected int findOriginTrackingLine(OptionList optionList) {
+    %match(optionList) {
+      concOption(_*,OriginTracking[Line=line],_*) -> { return `line; }
+    }
+    return -1;
+  }
+
   public ACGenerator(Compiler compiler, ConstraintGenerator generator) {
     this.compiler = compiler;
     this.constraintGenerator = generator;
   }
  
   public Expression generate(Expression expression) throws VisitFailure {
-    return `TopDownIdStopOnSuccess(Generator(this)).visitLight(expression);
+    //System.out.println("\n *** generate: " + expression);
+    //return `TopDownIdStopOnSuccess(Generator(this)).visitLight(expression);
+    return `TopDown(Generator(this)).visitLight(expression);
   }
 
   /**
@@ -82,19 +109,19 @@ public class ACGenerator implements IBaseGenerator {
    */
   %strategy Generator(acg:ACGenerator) extends Identity() {
     visit Expression {
-      ConstraintToExpression(MatchConstraint[Pattern=pattern@RecordAppl[NameList=concTomName(Name(symbolName)),Slots=concSlot(PairSlotAppl[Appl=var_x@VariableStar[AstName=Name(name_x)]],tail*)],Subject=subject]) -> {
+      ConstraintToExpression(MatchConstraint[Pattern=pattern@RecordAppl[NameList=concTomName(Name(symbolName)),Slots=concSlot(PairSlotAppl[Appl=var_x@VariableStar[AstName=name_x]],tail*), Options=options],Subject=subject]) -> {
         if (TomBase.hasTheory(`pattern,`AC())) {
           int mult_x = 1;
           int mult_y = 0;
-          String name_y = null;
+          TomName name_y = null;
           TomTerm var_y = null;
 
           //System.out.println("\n *** ACGenerator on: " + `pattern);
 
           for(Slot t:`tail.getCollectionconcSlot()) {
             %match(t) {
-              PairSlotAppl[Appl=var@VariableStar[AstName=Name(name)]] -> {
-                if (null == name_y && ! (`name).equals(`name_x)) {
+              PairSlotAppl[Appl=var@VariableStar[AstName=name]] -> {
+                if (null == name_y && ! `name.equals(`name_x)) {
                   name_y = `name;
                   var_y = `var;
                 }
@@ -103,9 +130,9 @@ public class ACGenerator implements IBaseGenerator {
                 //System.out.println("name_x = " + `name_x);
                 //System.out.println("name_y = " + name_y);
 
-                if ((`name).equals(`name_x)) {
+                if (`name.equals(`name_x)) {
                   mult_x++;
-                } else if ((`name).equals(name_y)) {
+                } else if (`name.equals(name_y)) {
                   mult_y++;
                 } else {
                   throw new TomRuntimeException("Bad VariableStar: " + `var);
@@ -120,7 +147,12 @@ public class ACGenerator implements IBaseGenerator {
           } else if (mult_x==1 && mult_y>=1) {
             return `ACMatchLoop(symbolName,var_y,var_x,mult_y,subject);
           } else {
-            throw new TomRuntimeException("Bad AC pattern: " + `pattern);
+            //System.out.println("Cannot compile this AC pattern: " + TomConstraintPrettyPrinter.prettyPrint(`pattern));
+            //throw new TomRuntimeException("Bad AC pattern: " + `pattern);
+            String fileName = acg.findOriginTrackingFileName(`options);
+            int line = acg.findOriginTrackingLine(`options);
+            TomMessage.error(acg.getLogger(), fileName, line,
+                TomMessage.cannotCompileACPattern, TomConstraintPrettyPrinter.prettyPrint(`pattern));
           }
         }
 

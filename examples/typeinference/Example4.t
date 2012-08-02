@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2011, INPL, INRIA
+ * Copyright (c) 2004-2012, INPL, INRIA
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -41,7 +41,7 @@ public class Example4 {
     B tt = `f(f(b()));
     %match{
       b() << tt -> { System.out.println(`tt); }
-      f(x) << tt -> { System.out.println(`x); }
+      f(x*) << tt -> { System.out.println(`x); }
     }
   }
 }

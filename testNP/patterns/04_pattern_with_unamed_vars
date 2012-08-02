@@ -1,0 +1,6 @@
+#>
+#description pattern with unamed variables
+#type TomPattern
+#<
+
+f(_, a(y), b(c(_, z2)))

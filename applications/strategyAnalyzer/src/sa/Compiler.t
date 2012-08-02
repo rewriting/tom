@@ -682,7 +682,8 @@ public class Compiler {
               array[i] = tools.encode(z+"_"+i);
             }
             for(int i=0 ; i<arity ; i++) {
-              array[i] = `Anti(tarray[i]);
+              Term ti = tarray[i];
+              array[i] = `Anti(ti);
               Term newt = `Appl(name,sa.rule.types.termlist.TermList.fromArray(array));
               //               System.out.println("NEWT:"+`newt);
               array[i] = tools.encode(z+"_"+i);
@@ -725,6 +726,8 @@ public class Compiler {
               } else {
                 Map<String,Integer> signature = (Map<String,Integer>)extractedSignature;
                 // add g(Z1,...) ... h(Z1,...)
+                extractedSignature.put("Bottom",1);
+                // add Bottom(Z1) to propagate failure 
                 for(String otherName:signature.keySet()) {
                   if(!`name.equals(otherName)) {
                     int arity = signature.get(otherName);
@@ -749,7 +752,8 @@ public class Compiler {
                   array[i] = tools.encode(z+"_"+i);
                 }
                 for(int i=0 ; i<arity ; i++) {
-                  array[i] = `Anti(tarray[i]);
+                  Term ti = tarray[i];
+                  array[i] = `Anti(ti);
                   Term newt = `Appl(name,sa.rule.types.termlist.TermList.fromArray(array));
                   array[i] = tools.encode(z+"_"+i);
                   if(Main.options.generic) {

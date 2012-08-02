@@ -5,12 +5,12 @@
 
 [Setup]
 AppName=Tom
-AppVerName=Tom version 2.8
+AppVerName=Tom version 2.10alpha
 DefaultDirName={pf}\INRIA\Tom
 DefaultGroupName=Tom
 UninstallDisplayIcon={app}\Tom.exe
 SourceDir=../../stable/dist
-OutputBaseFilename=tom-2.8_setup
+OutputBaseFilename=tom-2.10alpha_setup
 OutputDir=../../utils/installKit
 LicenseFile=LICENCE
 ChangesEnvironment=yes
@@ -203,11 +203,11 @@ begin
       if RegQueryStringValue(RegistryRoot, RegistryEnvPath, 'CLASSPATH', OldClasspath) then
         begin
           RegWriteExpandStringValue(RegistryRoot, RegistryEnvPath, 'CLASSPATH',
-	  OldClasspath + ';.;%TOM_HOME%\lib\tom-runtime-full.jar;%TOM_HOME%\lib\tools\org.eclipse.emf.ecore_2.5.0.v200906151043.jar;%TOM_HOME%\lib\tools\org.eclipse.emf.common_2.5.0.v200906151043.jar');
+	  OldClasspath + ';.;%TOM_HOME%\lib\tom-runtime-full.jar;%TOM_HOME%\lib\tools\org.eclipse.emf.ecore_2.5.0.v200906151043.jar;%TOM_HOME%\lib\tools\org.eclipse.emf.common_2.5.0.v200906151043.jar;%TOM_HOME%\lib\tools\org.eclipse.emf.ecore.xmi_2.5.0.v200906151043.jar');
         end
       else
         begin
-          RegWriteExpandStringValue(RegistryRoot, RegistryEnvPath, 'CLASSPATH', '.;%TOM_HOME%\lib\tom-runtime-full.jar;%TOM_HOME%\lib\tools\org.eclipse.emf.ecore_2.5.0.v200906151043.jar;%TOM_HOME%\lib\tools\org.eclipse.emf.common_2.5.0.v200906151043.jar');
+          RegWriteExpandStringValue(RegistryRoot, RegistryEnvPath, 'CLASSPATH', '.;%TOM_HOME%\lib\tom-runtime-full.jar;%TOM_HOME%\lib\tools\org.eclipse.emf.ecore_2.5.0.v200906151043.jar;%TOM_HOME%\lib\tools\org.eclipse.emf.common_2.5.0.v200906151043.jar;%TOM_HOME%\lib\tools\org.eclipse.emf.ecore.xmi_2.5.0.v200906151043.jar');
         end
 end;
 

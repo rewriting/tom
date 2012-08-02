@@ -2,7 +2,7 @@
  * 
  * TOM - To One Matching Compiler
  * 
- * Copyright (c) 2000-2011, INPL, INRIA
+ * Copyright (c) 2000-2012, INPL, INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -72,7 +72,10 @@ public class BackendPlugin extends TomGenericPlugin {
   %include { ../../library/mapping/java/sl.tom }
 
   /** the tabulation starting value */
-  public final static int defaultDeep = 1;
+  //tom-ada
+  //public final static int defaultDeep = 1;
+  //master
+  private final static int defaultDeep = 1;
 
   /** the declared options string */
   public static final String DECLARED_OPTIONS = 
@@ -87,6 +90,13 @@ public class BackendPlugin extends TomGenericPlugin {
     "<boolean name='inline'   altName=''  description='Inline mapping' value='false'/>" +
     "<boolean name='inlineplus'   altName=''  description='Inline mapping' value='false'/>" +
     "</options>";
+
+  public static final String CCODE = "cCode"; 
+  public static final String CAMLCODE = "camlCode"; 
+  public static final String PCODE = "pCode"; 
+  public static final String JCODE = "jCode"; 
+  public static final String CSCODE = "csCode"; 
+  public static final String ACODE = "aCode"; 
 
   /** the generated file name */
   private String generatedFileName = null;
@@ -112,17 +122,17 @@ public class BackendPlugin extends TomGenericPlugin {
           OutputCode output = new OutputCode(writer, getOptionManager());
           if(getOptionBooleanValue("noOutput")) {
             throw new TomRuntimeException("Backend activated, but noOutput is set");
-          } else if(getOptionBooleanValue("cCode")) {
+          } else if(getOptionBooleanValue(BackendPlugin.CCODE)) {
             generator = new CGenerator(output, getOptionManager(), getSymbolTable());
-          } else if(getOptionBooleanValue("camlCode")) {
+          } else if(getOptionBooleanValue(BackendPlugin.CAMLCODE)) {
             generator = new CamlGenerator(output, getOptionManager(), getSymbolTable());
-          } else if(getOptionBooleanValue("pCode")) {
+          } else if(getOptionBooleanValue(BackendPlugin.PCODE)) {
             generator = new PythonGenerator(output, getOptionManager(), getSymbolTable());
-          } else if(getOptionBooleanValue("aCode")) {
-		generator = new AdaGenerator(output, getOptionManager(), getSymbolTable());
-	  } else if(getOptionBooleanValue("csCode")) {
+          } else if(getOptionBooleanValue(BackendPlugin.ACODE)) {
+            generator = new AdaGenerator(output, getOptionManager(), getSymbolTable());
+          } else if(getOptionBooleanValue(BackendPlugin.CSCODE)) {
             generator = new CSharpGenerator(output, getOptionManager(), getSymbolTable());
-          } else if(getOptionBooleanValue("jCode")) {
+          } else if(getOptionBooleanValue(BackendPlugin.JCODE)) {
             generator = new JavaGenerator(output, getOptionManager(), getSymbolTable());
           } else {
             throw new TomRuntimeException("no selected language for the Backend");
@@ -134,13 +144,13 @@ public class BackendPlugin extends TomGenericPlugin {
 
           generator.generate(defaultDeep, pilCode,TomBase.DEFAULT_MODULE_NAME);
           // verbose
-          TomMessage.info(getLogger(),null,0,TomMessage.tomGenerationPhase,
+          TomMessage.info(getLogger(), getStreamManager().getInputFileName(),
+              0, TomMessage.tomGenerationPhase,
               Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
           output.close();
         } catch (IOException e) {
-          TomMessage.error(getLogger(),
-              getStreamManager().getInputFileName(), 0,
-              TomMessage.backendIOException, e.getMessage());
+          TomMessage.error(getLogger(), getStreamManager().getInputFileName(),
+              0, TomMessage.backendIOException, e.getMessage());
           return;
         } catch (Exception e) {
           String fileName = getStreamManager().getInputFileName();
@@ -169,32 +179,31 @@ public class BackendPlugin extends TomGenericPlugin {
   }
 
   public void optionChanged(String optionName, Object optionValue) {
-    //System.out.println("optionChanged: " + optionName + " --> " + optionValue);
-    if(optionName.equals("camlCode") && ((Boolean)optionValue).booleanValue() ) { 
-      setOptionValue("jCode", Boolean.FALSE);        
-      setOptionValue("cCode", Boolean.FALSE);        
-      setOptionValue("pCode", Boolean.FALSE);
-      setOptionValue("aCode", Boolean.FALSE);       
-    } else if(optionName.equals("cCode") && ((Boolean)optionValue).booleanValue() ) { 
-      setOptionValue("jCode", Boolean.FALSE);        
-      setOptionValue("camlCode", Boolean.FALSE);        
-      setOptionValue("pCode", Boolean.FALSE);
-      setOptionValue("aCode", Boolean.FALSE);        
-    } else if(optionName.equals("jCode") && ((Boolean)optionValue).booleanValue() ) { 
-      setOptionValue("cCode", Boolean.FALSE);        
-      setOptionValue("camlCode", Boolean.FALSE);        
-      setOptionValue("pCode", Boolean.FALSE);
-      setOptionValue("aCode", Boolean.FALSE);        
-    } else if(optionName.equals("pCode") && ((Boolean)optionValue).booleanValue() ) { 
-      setOptionValue("cCode", Boolean.FALSE);        
-      setOptionValue("camlCode", Boolean.FALSE);        
-      setOptionValue("jCode", Boolean.FALSE);
-      setOptionValue("aCode", Boolean.FALSE);        
-    } else if(optionName.equals("aCode") && ((Boolean)optionValue).booleanValue() ) { 
-      setOptionValue("cCode", Boolean.FALSE);        
-      setOptionValue("camlCode", Boolean.FALSE);        
-      setOptionValue("jCode", Boolean.FALSE);
-      setOptionValue("pCode", Boolean.FALSE);        
+    if(optionName.equals(BackendPlugin.CAMLCODE) && ((Boolean)optionValue).booleanValue() ) {
+      setOptionValue(BackendPlugin.JCODE, Boolean.FALSE);
+      setOptionValue(BackendPlugin.CCODE, Boolean.FALSE);
+      setOptionValue(BackendPlugin.PCODE, Boolean.FALSE);
+      setOptionValue(BackendPlugin.ACODE, Boolean.FALSE);
+    } else if(optionName.equals(BackendPlugin.CCODE) && ((Boolean)optionValue).booleanValue() ) {
+      setOptionValue(BackendPlugin.JCODE, Boolean.FALSE);
+      setOptionValue(BackendPlugin.CAMLCODE, Boolean.FALSE);
+      setOptionValue(BackendPlugin.PCODE, Boolean.FALSE);
+      setOptionValue(BackendPlugin.ACODE, Boolean.FALSE);
+    } else if(optionName.equals(BackendPlugin.JCODE) && ((Boolean)optionValue).booleanValue() ) {
+      setOptionValue(BackendPlugin.CCODE, Boolean.FALSE);
+      setOptionValue(BackendPlugin.CAMLCODE, Boolean.FALSE);
+      setOptionValue(BackendPlugin.PCODE, Boolean.FALSE);
+      setOptionValue(BackendPlugin.ACODE, Boolean.FALSE);
+    } else if(optionName.equals(BackendPlugin.PCODE) && ((Boolean)optionValue).booleanValue() ) {
+      setOptionValue(BackendPlugin.CCODE, Boolean.FALSE);
+      setOptionValue(BackendPlugin.CAMLCODE, Boolean.FALSE);
+      setOptionValue(BackendPlugin.JCODE, Boolean.FALSE);
+      setOptionValue(BackendPlugin.ACODE, Boolean.FALSE);
+    } else if(optionName.equals(BackendPlugin.ACODE) && ((Boolean)optionValue).booleanValue() ) { 
+      setOptionValue(BackendPlugin.CCODE, Boolean.FALSE);
+      setOptionValue(BackendPlugin.CAMLCODE, Boolean.FALSE);
+      setOptionValue(BackendPlugin.JCODE, Boolean.FALSE);
+      setOptionValue(BackendPlugin.PCODE, Boolean.FALSE);
     }
   }
 
@@ -321,7 +330,7 @@ public class BackendPlugin extends TomGenericPlugin {
           System.out.println("No moduleName in stack");
         }
       }
-      
+
       IsFsym[AstName=Name(name)] -> {
         try {
           /*System.out.println("list check: " + `name);*/
@@ -348,7 +357,7 @@ public class BackendPlugin extends TomGenericPlugin {
 
     visit TomTerm {
       /* TermAppl does not exists after Desugarer phase */
-      //(TermAppl|RecordAppl)[NameList=nameList] -> {
+      /*(TermAppl|RecordAppl)[NameList=nameList] -> {*/
       RecordAppl[NameList=nameList] -> {
         TomNameList l = `nameList;
         /*System.out.println("dest " + `l);*/
@@ -422,6 +431,15 @@ public class BackendPlugin extends TomGenericPlugin {
         }
       }
 
+      /*      ImplementDecl[AstName=Name(opname),Expr=Code(code)] ->{
+              try {
+              String moduleName = stack.peek();
+              bp.getSymbolTable(moduleName).putIsFsym(`opname,`code);
+              } catch (EmptyStackException e) {
+              System.out.println("No moduleName in stack");
+              }
+              }*/
+
       IsSortDecl[TermArg=BQVariable[AstType=Type[TomType=type]],Expr=Code(code)] -> {
         try {
           String moduleName = stack.peek();
@@ -444,6 +462,15 @@ public class BackendPlugin extends TomGenericPlugin {
         try {
           String moduleName = stack.peek();
           bp.getSymbolTable(moduleName).putGetSlot(`opname,`slotName,`code);
+        } catch (EmptyStackException e) {
+          System.out.println("No moduleName in stack");
+        }
+      }
+
+      GetDefaultDecl[AstName=Name(opname),SlotName=Name(slotName),Expr=Code(code)] -> {
+        try {
+          String moduleName = stack.peek();
+          bp.getSymbolTable(moduleName).putGetDefault(`opname,`slotName,`code);
         } catch (EmptyStackException e) {
           System.out.println("No moduleName in stack");
         }
@@ -549,6 +576,18 @@ public class BackendPlugin extends TomGenericPlugin {
         }
       }
 
+      /**
+       * Resolve declarations
+       */
+      ResolveGetSlotDecl[AstName=Name(opname),SlotName=Name(slotName)] -> {
+        try {
+          String moduleName = stack.peek();
+          bp.getSymbolTable(moduleName).putResolveGetSlot(`opname,`slotName);
+        } catch (EmptyStackException e) {
+          System.out.println("No moduleName in stack");
+        }
+      }
+
+    }
     }
   }
-}

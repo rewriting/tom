@@ -1,7 +1,7 @@
 /*
  * TOM - To One Matching Compiler
  *
- * Copyright (c) 2007-2011, INPL, INRIA
+ * Copyright (c) 2007-2012, INPL, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -239,7 +239,7 @@ termList :
 //XML
 xmlTerm : 
   XML_START xmlNameList xmlAttrList XML_CLOSE_SINGLETON -> ^(XMLTerm xmlNameList xmlAttrList ^(TomTermList ))
-  | XML_START xmlNameList xmlAttrList XML_CLOSE xmlChilds XML_START_ENDING xmlNameList XML_CLOSE -> ^(XMLTerm xmlNameList xmlAttrList xmlChilds)
+  | XML_START xmlNameList xmlAttrList XML_CLOSE xmlChildren XML_START_ENDING xmlNameList XML_CLOSE -> ^(XMLTerm xmlNameList xmlAttrList xmlChildren)
   | XML_TEXT LPAREN (id=Identifier | id=STRING ) RPAREN -> ^(XMLTerm ^(TomNameList ^(Name $id)) ^(EmptyList ) ^(EmptyList ))
 /*  | XML_COMMENT LPAREN ( Identifier | STRING ) RPAREN -> ^(XMLTerm )
   | XML_PROC LPAREN ( Identifier | STRING ) COMMA ( Identifier | STRING ) RPAREN -> ^(XMLTerm )
@@ -263,7 +263,7 @@ xmlAttr :
   | UNDERSCORE EQUAL id3=Identifier/* | STRING )*/ -> ^(UnamedXMLAttr Identifier[$id3] ^(EmptyAnnotation ) ^(EmptyAnnotation ))// ?
   ;
 
-xmlChilds : //TermList
+xmlChildren : //TermList
   term* -> ^(TomTermList term*)
   | LBRACKET /*term (COMMA term)* */ termList RBRACKET -> termList //^(TomTermList term+)
   ;

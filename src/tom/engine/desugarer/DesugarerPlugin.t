@@ -2,7 +2,7 @@
  * 
  * TOM - To One Matching Compiler
  * 
- * Copyright (c) 2000-2011, INPL, INRIA
+ * Copyright (c) 2000-2012, INPL, INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -77,6 +77,9 @@ public class DesugarerPlugin extends TomGenericPlugin {
   %include { ../../library/mapping/java/sl.tom }
   %typeterm DesugarerPlugin { implement { tom.engine.desugarer.DesugarerPlugin }}
 
+  /** some output suffixes */
+  public static final String DESUGARED_SUFFIX = ".tfix.desugared";
+
   private static Logger logger = Logger.getLogger("tom.engine.desugarer.DesugarerPlugin");
   private SymbolTable symbolTable;
   private int freshCounter = 0;
@@ -101,6 +104,7 @@ public class DesugarerPlugin extends TomGenericPlugin {
 
   public void run(Map informationTracker) {
     long startChrono = System.currentTimeMillis();
+    boolean intermediate = getOptionBooleanValue("intermediate");
     try {
       setSymbolTable(getStreamManager().getSymbolTable());
       updateSymbolTable();
@@ -117,8 +121,13 @@ public class DesugarerPlugin extends TomGenericPlugin {
 
       setWorkingTerm(code);      
 
+      if(intermediate) {
+        Tools.generateOutput(getStreamManager().getOutputFileName() +
+            DESUGARED_SUFFIX, code);
+      }
       // verbose
-      TomMessage.info(logger,null,0,TomMessage.tomDesugaringPhase,
+      TomMessage.info(logger, getStreamManager().getInputFileName(), 0,
+          TomMessage.tomDesugaringPhase,
           Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
     } catch (Exception e) {
       TomMessage.error(logger,
@@ -160,7 +169,8 @@ public class DesugarerPlugin extends TomGenericPlugin {
        *  - it is a builtin type
        *  - another option (if_sfsym, get_slot, etc) is already defined for this operator
        */
-      if(!getSymbolTable().isBuiltinType(TomBase.getTomType(TomBase.getSymbolCodomain(tomSymbol)))) {
+      //TODO - modified for %transformation ResolveMakeDecl
+      if(!getSymbolTable().isBuiltinType(TomBase.getTomType(TomBase.getSymbolCodomain(tomSymbol))) && !getSymbolTable().isResolveSymbol(tomSymbol)) {
         tomSymbol = addDefaultMake(tomSymbol);
         tomSymbol = addDefaultIsFsym(tomSymbol);
       }
@@ -191,7 +201,7 @@ public class DesugarerPlugin extends TomGenericPlugin {
 
   private TomSymbol addDefaultMake(TomSymbol tomSymbol) {
     %match(tomSymbol) {
-      Symbol[Options=concOption(_*,DeclarationToOption((MakeDecl|MakeEmptyList|MakeEmptyArray|MakeAddList|MakeAddArray|IsFsymDecl|GetImplementationDecl|GetSlotDecl|GetDefaultDecl|GetHeadDecl|GetTailDecl|IsEmptyDecl|GetElementDecl|GetSizeDecl)[]),_*)] -> {
+      Symbol[Options=concOption(_*,DeclarationToOption((MakeDecl|MakeEmptyList|MakeEmptyArray|MakeAddList|MakeAddArray|IsFsymDecl|GetSlotDecl|GetDefaultDecl|GetHeadDecl|GetTailDecl|IsEmptyDecl|GetElementDecl|GetSizeDecl)[]),_*)] -> {
         return tomSymbol;
       }
       Symbol(name,t@TypesToType(domain,codomain),l,concOption(X1*,origin@OriginTracking(_,line,file),X2*)) -> {
@@ -349,7 +359,7 @@ public class DesugarerPlugin extends TomGenericPlugin {
     newAttrList = newAttrList.reverse();
 
     /*
-     * Childs: go from implicit notation to explicit notation
+     * Children: go from implicit notation to explicit notation
      */
     for(TomTerm child:(concTomTerm)childList) {
       try {

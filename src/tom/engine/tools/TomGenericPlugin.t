@@ -2,7 +2,7 @@
  * 
  * TOM - To One Matching Compiler
  * 
- * Copyright (c) 2000-2011, INPL, INRIA
+ * Copyright (c) 2000-2012, INPL, INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -113,15 +113,16 @@ public abstract class TomGenericPlugin implements Plugin {
       term = (Code)arg[0];
       streamManager = (TomStreamManager)arg[1];
     } else {
-      TomMessage.error(getLogger(),null,0,TomMessage.invalidPluginArgument, "[Code, TomStreamManager]", getArgumentArrayString(arg));
+      TomMessage.error(getLogger(),null,0,TomMessage.invalidPluginArgument,
+         pluginName, "[Code, TomStreamManager]", getArgumentArrayString(arg));
     }
   }
 
   public void setWorkingTerm(Object arg) {
-    if (arg instanceof Code) {
+    if(arg instanceof Code) {
       term = (Code)arg;
     } else {
-      TomMessage.error(getLogger(),null,0,TomMessage.tomTermExpected, pluginName);
+      TomMessage.error(getLogger(),null,0,TomMessage.codeExpected, pluginName);
     }
   }
 
@@ -165,10 +166,6 @@ public abstract class TomGenericPlugin implements Plugin {
 
   protected TomSymbol getSymbolFromName(String tomName) {
     return TomBase.getSymbolFromName(tomName, streamManager.getSymbolTable());
-  }
-  
-  protected TomSymbol getSymbolFromType(TomType tomType) {
-    return TomBase.getSymbolFromType(tomType, streamManager.getSymbolTable());
   }
   
   protected TomType getTermType(BQTerm t) {
@@ -285,7 +282,11 @@ public abstract class TomGenericPlugin implements Plugin {
   public String getArgumentArrayString(Object[] arg) {
     StringBuilder argString = new StringBuilder("[");
     for(int i=0;i<arg.length;i++) {
-      argString.append(arg[i].getClass().getName());
+      if(arg[i]==null) {
+        argString.append("null");
+      } else {
+        argString.append(arg[i].getClass().getName());
+      }
       if (i < arg.length -1) {
         argString.append(",");
       }

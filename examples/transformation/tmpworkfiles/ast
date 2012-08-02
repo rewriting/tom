@@ -1,0 +1,62 @@
+(DEBUG) parser - astSymbol = 
+
+Symbol(
+    Name("ResolveWorkDefinitionPlace"),
+    TypesToType(
+      concTomType(Type(concTypeOption(),"WorkDefinition",EmptyTargetLanguageType()),Type(concTypeOption(),"String",EmptyTargetLanguageType())),
+      Type(concTypeOption(),"Place",EmptyTargetLanguageType())
+      ),
+
+    concPairNameDecl(
+      PairNameDecl(Name("o"),GetSlotDecl(Name("ResolveWorkDefinitionPlace"),Name("o"),BQVariable(concOption(OriginTracking(Name("t"),10,"Transfo1.t")),Name("t"),Type(concTypeOption(),"Place",EmptyTargetLanguageType())),Code(" ((ResolveWorkDefinitionPlace){0}).o "),OriginTracking(Name("get_slot"),10,"Transfo1.t"))),
+      PairNameDecl(Name("name"),GetSlotDecl(Name("ResolveWorkDefinitionPlace"),Name("name"),BQVariable(concOption(OriginTracking(Name("t"),9,"Transfo1.t")),Name("t"),Type(concTypeOption(),"Place",EmptyTargetLanguageType())),Code(" ((ResolveWorkDefinitionPlace){0}).name "),OriginTracking(Name("get_slot"),9,"Transfo1.t")))
+      ),
+
+    concOption(
+
+      OriginTracking(Name("ResolveWorkDefinitionPlace"),7,"Transfo1.t"),
+
+      DeclarationToOption(
+        IsFsymDecl(
+          Name("ResolveWorkDefinitionPlace"),
+          BQVariable(concOption(OriginTracking(Name("t"),8,"Transfo1.t")),Name("t"),Type(concTypeOption(),"Place",EmptyTargetLanguageType())),
+          Code(" {0} instanceof ResolveWorkDefinitionPlace "),i
+          OriginTracking(Name("is_fsym"),8,"Transfo1.t")
+          )
+        ),
+
+      DeclarationToOption(
+        MakeDecl(
+          Name("ResolveWorkDefinitionPlace"),
+          Type(concTypeOption(),"Place",EmptyTargetLanguageType()),
+          concBQTerm(
+            BQVariable(concOption(OriginTracking(Name("o"),11,"Transfo1.t")),Name("o"),Type(concTypeOption(),"WorkDefinition",EmptyTargetLanguageType())),
+            BQVariable(concOption(OriginTracking(Name("name"),11,"Transfo1.t")),Name("name"),Type(concTypeOption(),"String",EmptyTargetLanguageType()))),
+          ExpressionToInstruction(Code(" new ResolveWorkDefinitionPlace(o,name) ")),
+          OriginTracking(Name("make"),11,"Transfo1.t")
+          )
+        )
+
+      )
+
+    )
+
+==========================================================================================
+
+(DEBUG) parser - TypeTermDecl =
+
+TypeTermDecl(
+    Name("ResolveWorkDefinitionPlace"),
+    concDeclaration(
+      IsSortDecl(
+        BQVariable(concOption(OriginTracking(Name("t"),8,"Transfo1.t")),Name("t"),Type(concTypeOption(),"ResolveWorkDefinitionPlace",EmptyTargetLanguageType())),
+        Code(" {0} instanceof ResolveWorkDefinitionPlace "),
+        OriginTracking(Name("is_sort"),8,"Transfo1.t")
+        )
+      ),
+    OriginTracking(Name("ResolveWorkDefinitionPlace"),6,"Transfo1.t")
+    )
+
+==========================================================================================
+
+

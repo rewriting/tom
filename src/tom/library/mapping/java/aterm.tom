@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2011, INPL, INRIA
+ * Copyright (c) 2004-2012, INPL, INRIA
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -83,7 +83,7 @@
 %op ATerm ATermInt(val: int) {
   is_fsym(t) { $t instanceof aterm.ATermInt }
   make(i) { aterm.pure.SingletonFactory.getInstance().makeInt($i) }
-  get_slot(val, t) { ((ATermInt)$t).getInt() }
+  get_slot(val, t) { ((aterm.ATermInt)$t).getInt() }
 }
 
 /** ATermFun **/

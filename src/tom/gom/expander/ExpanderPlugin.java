@@ -1,7 +1,7 @@
 /*
  * Gom
  *
- * Copyright (c) 2000-2011, INPL, INRIA
+ * Copyright (c) 2000-2012, INPL, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,13 +24,10 @@
 
 package tom.gom.expander;
 
-import java.util.logging.Level;
 import java.util.Map;
 
-import tom.platform.PlatformLogRecord;
 import tom.engine.tools.Tools;
 import tom.gom.GomMessage;
-import tom.gom.GomStreamManager;
 import tom.gom.tools.GomEnvironment;
 import tom.gom.adt.gom.types.*;
 import tom.gom.tools.GomGenericPlugin;
@@ -97,11 +94,14 @@ public class ExpanderPlugin extends GomGenericPlugin {
       try {
         tom.library.utils.Viewer.toTree(modules,swriter);
       } catch(java.io.IOException e) {
-        GomMessage.error(getLogger(), null, 0, GomMessage.viewerToTreeFailure, e);
+        GomMessage.error(getLogger(), getStreamManager().getInputFileName(), 0,
+            GomMessage.viewerToTreeFailure, e);
         e.printStackTrace();
       }
-      GomMessage.fine(getLogger(), null, 0, GomMessage.importedModules, swriter);
-      GomMessage.info(getLogger(), null, 0, GomMessage.gomExpansionPhase, 
+      GomMessage.fine(getLogger(), getStreamManager().getInputFileName(), 0,
+          GomMessage.importedModules, swriter);
+      GomMessage.info(getLogger(), getStreamManager().getInputFileName(), 0,
+          GomMessage.gomExpansionPhase,
           (System.currentTimeMillis()-startChrono));
       if(intermediate) {
         Tools.generateOutput(getStreamManager().getOutputFileName()

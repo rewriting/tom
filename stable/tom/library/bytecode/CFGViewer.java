@@ -1,31 +1,31 @@
 /*
-* Copyright (c) 2000-2011, INPL, INRIA
-* All rights reserved.
-* 
-* Redistribution and use in source and binary forms, with or without
-* modification, are permitted provided that the following conditions are
-* met: 
-*	- Redistributions of source code must retain the above copyright
-*	notice, this list of conditions and the following disclaimer.  
-*	- Redistributions in binary form must reproduce the above copyright
-*	notice, this list of conditions and the following disclaimer in the
-*	documentation and/or other materials provided with the distribution.
-*	- Neither the name of the INRIA nor the names of its
-*	contributors may be used to endorse or promote products derived from
-*	this software without specific prior written permission.
-* 
-* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-* "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-* LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-* A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-* OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-* LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-* DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-* THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-* (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-* OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
+ * Copyright (c) 2000-2012, INPL, INRIA
+ * All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are
+ * met: 
+ *	- Redistributions of source code must retain the above copyright
+ *	notice, this list of conditions and the following disclaimer.  
+ *	- Redistributions in binary form must reproduce the above copyright
+ *	notice, this list of conditions and the following disclaimer in the
+ *	documentation and/or other materials provided with the distribution.
+ *	- Neither the name of the INRIA nor the names of its
+ *	contributors may be used to endorse or promote products derived from
+ *	this software without specific prior written permission.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
 
 package tom.library.bytecode;
 
@@ -45,2459 +45,368 @@ import tom.library.adt.bytecode.*;
 import tom.library.adt.bytecode.types.*;
 
 /**
-* A dot control flow graph exporter.
-* This class generates a control flow graph for each method of a class.
-*/
+ * A dot control flow graph exporter.
+ * This class generates a control flow graph for each method of a class.
+ */
 public class CFGViewer {
+  
+          private static   tom.library.sl.Strategy  tom_append_list_Sequence( tom.library.sl.Strategy  l1,  tom.library.sl.Strategy  l2) {     if(( l1 == null )) {       return l2;     } else if(( l2 == null )) {       return l1;     } else if(( l1 instanceof tom.library.sl.Sequence )) {       if(( ( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Sequence.THEN) ) == null )) {         return  tom.library.sl.Sequence.make(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Sequence.FIRST) ),l2) ;       } else {         return  tom.library.sl.Sequence.make(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Sequence.FIRST) ),tom_append_list_Sequence(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Sequence.THEN) ),l2)) ;       }     } else {       return  tom.library.sl.Sequence.make(l1,l2) ;     }   }   private static   tom.library.sl.Strategy  tom_get_slice_Sequence( tom.library.sl.Strategy  begin,  tom.library.sl.Strategy  end, tom.library.sl.Strategy  tail) {     if( (begin.equals(end)) ) {       return tail;     } else if( (end.equals(tail))  && (( end == null ) ||  (end.equals( null )) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.library.sl.Sequence.make(((( begin instanceof tom.library.sl.Sequence ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.Sequence.FIRST) ):begin),( tom.library.sl.Strategy )tom_get_slice_Sequence(((( begin instanceof tom.library.sl.Sequence ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.Sequence.THEN) ): null ),end,tail)) ;   }      private static   tom.library.sl.Strategy  tom_append_list_Choice( tom.library.sl.Strategy  l1,  tom.library.sl.Strategy  l2) {     if(( l1 ==null )) {       return l2;     } else if(( l2 ==null )) {       return l1;     } else if(( l1 instanceof tom.library.sl.Choice )) {       if(( ( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Choice.THEN) ) ==null )) {         return  tom.library.sl.Choice.make(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Choice.FIRST) ),l2) ;       } else {         return  tom.library.sl.Choice.make(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Choice.FIRST) ),tom_append_list_Choice(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Choice.THEN) ),l2)) ;       }     } else {       return  tom.library.sl.Choice.make(l1,l2) ;     }   }   private static   tom.library.sl.Strategy  tom_get_slice_Choice( tom.library.sl.Strategy  begin,  tom.library.sl.Strategy  end, tom.library.sl.Strategy  tail) {     if( (begin.equals(end)) ) {       return tail;     } else if( (end.equals(tail))  && (( end ==null ) ||  (end.equals( null )) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.library.sl.Choice.make(((( begin instanceof tom.library.sl.Choice ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.Choice.FIRST) ):begin),( tom.library.sl.Strategy )tom_get_slice_Choice(((( begin instanceof tom.library.sl.Choice ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.Choice.THEN) ): null ),end,tail)) ;   }      private static   tom.library.sl.Strategy  tom_append_list_SequenceId( tom.library.sl.Strategy  l1,  tom.library.sl.Strategy  l2) {     if(( l1 == null )) {       return l2;     } else if(( l2 == null )) {       return l1;     } else if(( l1 instanceof tom.library.sl.SequenceId )) {       if(( ( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.SequenceId.THEN) ) == null )) {         return  tom.library.sl.SequenceId.make(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.SequenceId.FIRST) ),l2) ;       } else {         return  tom.library.sl.SequenceId.make(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.SequenceId.FIRST) ),tom_append_list_SequenceId(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.SequenceId.THEN) ),l2)) ;       }     } else {       return  tom.library.sl.SequenceId.make(l1,l2) ;     }   }   private static   tom.library.sl.Strategy  tom_get_slice_SequenceId( tom.library.sl.Strategy  begin,  tom.library.sl.Strategy  end, tom.library.sl.Strategy  tail) {     if( (begin.equals(end)) ) {       return tail;     } else if( (end.equals(tail))  && (( end == null ) ||  (end.equals( null )) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.library.sl.SequenceId.make(((( begin instanceof tom.library.sl.SequenceId ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.SequenceId.FIRST) ):begin),( tom.library.sl.Strategy )tom_get_slice_SequenceId(((( begin instanceof tom.library.sl.SequenceId ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.SequenceId.THEN) ): null ),end,tail)) ;   }      private static   tom.library.sl.Strategy  tom_append_list_ChoiceId( tom.library.sl.Strategy  l1,  tom.library.sl.Strategy  l2) {     if(( l1 ==null )) {       return l2;     } else if(( l2 ==null )) {       return l1;     } else if(( l1 instanceof tom.library.sl.ChoiceId )) {       if(( ( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.ChoiceId.THEN) ) ==null )) {         return  tom.library.sl.ChoiceId.make(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.ChoiceId.FIRST) ),l2) ;       } else {         return  tom.library.sl.ChoiceId.make(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.ChoiceId.FIRST) ),tom_append_list_ChoiceId(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.ChoiceId.THEN) ),l2)) ;       }     } else {       return  tom.library.sl.ChoiceId.make(l1,l2) ;     }   }   private static   tom.library.sl.Strategy  tom_get_slice_ChoiceId( tom.library.sl.Strategy  begin,  tom.library.sl.Strategy  end, tom.library.sl.Strategy  tail) {     if( (begin.equals(end)) ) {       return tail;     } else if( (end.equals(tail))  && (( end ==null ) ||  (end.equals( null )) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.library.sl.ChoiceId.make(((( begin instanceof tom.library.sl.ChoiceId ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.ChoiceId.FIRST) ):begin),( tom.library.sl.Strategy )tom_get_slice_ChoiceId(((( begin instanceof tom.library.sl.ChoiceId ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.ChoiceId.THEN) ): null ),end,tail)) ;   }      private static  tom.library.sl.Strategy  tom_make_AUCtl( tom.library.sl.Strategy  s1,  tom.library.sl.Strategy  s2) { return ( ( new tom.library.sl.Mu(( new tom.library.sl.MuVar("x") ), tom.library.sl.Choice.make(s2, tom.library.sl.Choice.make( tom.library.sl.Sequence.make( tom.library.sl.Sequence.make(s1, tom.library.sl.Sequence.make(( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ), null ) ) , tom.library.sl.Sequence.make(( new tom.library.sl.One(( new tom.library.sl.Identity() )) ), null ) ) , null ) ) ) ) );}private static  tom.library.sl.Strategy  tom_make_EUCtl( tom.library.sl.Strategy  s1,  tom.library.sl.Strategy  s2) { return ( ( new tom.library.sl.Mu(( new tom.library.sl.MuVar("x") ), tom.library.sl.Choice.make(s2, tom.library.sl.Choice.make( tom.library.sl.Sequence.make(s1, tom.library.sl.Sequence.make(( new tom.library.sl.One(( new tom.library.sl.MuVar("x") )) ), null ) ) , null ) ) ) ));} private static  tom.library.sl.Strategy  tom_make_Try( tom.library.sl.Strategy  s) { return (  tom.library.sl.Choice.make(s, tom.library.sl.Choice.make(( new tom.library.sl.Identity() ), null ) )  );}private static  tom.library.sl.Strategy  tom_make_Repeat( tom.library.sl.Strategy  s) { return ( ( new tom.library.sl.Mu(( new tom.library.sl.MuVar("_x") ), tom.library.sl.Choice.make( tom.library.sl.Sequence.make(s, tom.library.sl.Sequence.make(( new tom.library.sl.MuVar("_x") ), null ) ) , tom.library.sl.Choice.make(( new tom.library.sl.Identity() ), null ) ) ) ) );}private static  tom.library.sl.Strategy  tom_make_TopDown( tom.library.sl.Strategy  v) { return ( ( new tom.library.sl.Mu(( new tom.library.sl.MuVar("_x") ), tom.library.sl.Sequence.make(v, tom.library.sl.Sequence.make(( new tom.library.sl.All(( new tom.library.sl.MuVar("_x") )) ), null ) ) ) ) );}private static  tom.library.sl.Strategy  tom_make_OnceTopDown( tom.library.sl.Strategy  v) { return ( ( new tom.library.sl.Mu(( new tom.library.sl.MuVar("_x") ), tom.library.sl.Choice.make(v, tom.library.sl.Choice.make(( new tom.library.sl.One(( new tom.library.sl.MuVar("_x") )) ), null ) ) ) ) );}private static  tom.library.sl.Strategy  tom_make_RepeatId( tom.library.sl.Strategy  v) { return ( ( new tom.library.sl.Mu(( new tom.library.sl.MuVar("_x") ), tom.library.sl.SequenceId.make(v, tom.library.sl.SequenceId.make(( new tom.library.sl.MuVar("_x") ), null ) ) ) ) );}private static  tom.library.sl.Strategy  tom_make_OnceTopDownId( tom.library.sl.Strategy  v) { return ( ( new tom.library.sl.Mu(( new tom.library.sl.MuVar("_x") ), tom.library.sl.ChoiceId.make(v, tom.library.sl.ChoiceId.make(( new tom.library.sl.OneId(( new tom.library.sl.MuVar("_x") )) ), null ) ) ) ) );}          private static   tom.library.adt.bytecode.types.LabelNodeList  tom_append_list_LabelNodeList( tom.library.adt.bytecode.types.LabelNodeList l1,  tom.library.adt.bytecode.types.LabelNodeList  l2) {     if( l1.isEmptyLabelNodeList() ) {       return l2;     } else if( l2.isEmptyLabelNodeList() ) {       return l1;     } else if(  l1.getTailLabelNodeList() .isEmptyLabelNodeList() ) {       return  tom.library.adt.bytecode.types.labelnodelist.ConsLabelNodeList.make( l1.getHeadLabelNodeList() ,l2) ;     } else {       return  tom.library.adt.bytecode.types.labelnodelist.ConsLabelNodeList.make( l1.getHeadLabelNodeList() ,tom_append_list_LabelNodeList( l1.getTailLabelNodeList() ,l2)) ;     }   }   private static   tom.library.adt.bytecode.types.LabelNodeList  tom_get_slice_LabelNodeList( tom.library.adt.bytecode.types.LabelNodeList  begin,  tom.library.adt.bytecode.types.LabelNodeList  end, tom.library.adt.bytecode.types.LabelNodeList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyLabelNodeList()  ||  (end== tom.library.adt.bytecode.types.labelnodelist.EmptyLabelNodeList.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.library.adt.bytecode.types.labelnodelist.ConsLabelNodeList.make( begin.getHeadLabelNodeList() ,( tom.library.adt.bytecode.types.LabelNodeList )tom_get_slice_LabelNodeList( begin.getTailLabelNodeList() ,end,tail)) ;   }      private static   tom.library.adt.bytecode.types.MethodList  tom_append_list_MethodList( tom.library.adt.bytecode.types.MethodList l1,  tom.library.adt.bytecode.types.MethodList  l2) {     if( l1.isEmptyMethodList() ) {       return l2;     } else if( l2.isEmptyMethodList() ) {       return l1;     } else if(  l1.getTailMethodList() .isEmptyMethodList() ) {       return  tom.library.adt.bytecode.types.methodlist.ConsMethodList.make( l1.getHeadMethodList() ,l2) ;     } else {       return  tom.library.adt.bytecode.types.methodlist.ConsMethodList.make( l1.getHeadMethodList() ,tom_append_list_MethodList( l1.getTailMethodList() ,l2)) ;     }   }   private static   tom.library.adt.bytecode.types.MethodList  tom_get_slice_MethodList( tom.library.adt.bytecode.types.MethodList  begin,  tom.library.adt.bytecode.types.MethodList  end, tom.library.adt.bytecode.types.MethodList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyMethodList()  ||  (end== tom.library.adt.bytecode.types.methodlist.EmptyMethodList.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.library.adt.bytecode.types.methodlist.ConsMethodList.make( begin.getHeadMethodList() ,( tom.library.adt.bytecode.types.MethodList )tom_get_slice_MethodList( begin.getTailMethodList() ,end,tail)) ;   }      private static   tom.library.adt.bytecode.types.LocalVariableList  tom_append_list_LocalVariableList( tom.library.adt.bytecode.types.LocalVariableList l1,  tom.library.adt.bytecode.types.LocalVariableList  l2) {     if( l1.isEmptyLocalVariableList() ) {       return l2;     } else if( l2.isEmptyLocalVariableList() ) {       return l1;     } else if(  l1.getTailLocalVariableList() .isEmptyLocalVariableList() ) {       return  tom.library.adt.bytecode.types.localvariablelist.ConsLocalVariableList.make( l1.getHeadLocalVariableList() ,l2) ;     } else {       return  tom.library.adt.bytecode.types.localvariablelist.ConsLocalVariableList.make( l1.getHeadLocalVariableList() ,tom_append_list_LocalVariableList( l1.getTailLocalVariableList() ,l2)) ;     }   }   private static   tom.library.adt.bytecode.types.LocalVariableList  tom_get_slice_LocalVariableList( tom.library.adt.bytecode.types.LocalVariableList  begin,  tom.library.adt.bytecode.types.LocalVariableList  end, tom.library.adt.bytecode.types.LocalVariableList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyLocalVariableList()  ||  (end== tom.library.adt.bytecode.types.localvariablelist.EmptyLocalVariableList.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.library.adt.bytecode.types.localvariablelist.ConsLocalVariableList.make( begin.getHeadLocalVariableList() ,( tom.library.adt.bytecode.types.LocalVariableList )tom_get_slice_LocalVariableList( begin.getTailLocalVariableList() ,end,tail)) ;   }      private static   tom.library.adt.bytecode.types.InstructionList  tom_append_list_InstructionList( tom.library.adt.bytecode.types.InstructionList l1,  tom.library.adt.bytecode.types.InstructionList  l2) {     if( l1.isEmptyInstructionList() ) {       return l2;     } else if( l2.isEmptyInstructionList() ) {       return l1;     } else if(  l1.getTailInstructionList() .isEmptyInstructionList() ) {       return  tom.library.adt.bytecode.types.instructionlist.ConsInstructionList.make( l1.getHeadInstructionList() ,l2) ;     } else {       return  tom.library.adt.bytecode.types.instructionlist.ConsInstructionList.make( l1.getHeadInstructionList() ,tom_append_list_InstructionList( l1.getTailInstructionList() ,l2)) ;     }   }   private static   tom.library.adt.bytecode.types.InstructionList  tom_get_slice_InstructionList( tom.library.adt.bytecode.types.InstructionList  begin,  tom.library.adt.bytecode.types.InstructionList  end, tom.library.adt.bytecode.types.InstructionList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyInstructionList()  ||  (end== tom.library.adt.bytecode.types.instructionlist.EmptyInstructionList.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.library.adt.bytecode.types.instructionlist.ConsInstructionList.make( begin.getHeadInstructionList() ,( tom.library.adt.bytecode.types.InstructionList )tom_get_slice_InstructionList( begin.getTailInstructionList() ,end,tail)) ;   }      private static   tom.library.adt.bytecode.types.IntList  tom_append_list_IntList( tom.library.adt.bytecode.types.IntList l1,  tom.library.adt.bytecode.types.IntList  l2) {     if( l1.isEmptyIntList() ) {       return l2;     } else if( l2.isEmptyIntList() ) {       return l1;     } else if(  l1.getTailIntList() .isEmptyIntList() ) {       return  tom.library.adt.bytecode.types.intlist.ConsIntList.make( l1.getHeadIntList() ,l2) ;     } else {       return  tom.library.adt.bytecode.types.intlist.ConsIntList.make( l1.getHeadIntList() ,tom_append_list_IntList( l1.getTailIntList() ,l2)) ;     }   }   private static   tom.library.adt.bytecode.types.IntList  tom_get_slice_IntList( tom.library.adt.bytecode.types.IntList  begin,  tom.library.adt.bytecode.types.IntList  end, tom.library.adt.bytecode.types.IntList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyIntList()  ||  (end== tom.library.adt.bytecode.types.intlist.EmptyIntList.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.library.adt.bytecode.types.intlist.ConsIntList.make( begin.getHeadIntList() ,( tom.library.adt.bytecode.types.IntList )tom_get_slice_IntList( begin.getTailIntList() ,end,tail)) ;   }      private static   tom.library.adt.bytecode.types.TryCatchBlockList  tom_append_list_TryCatchBlockList( tom.library.adt.bytecode.types.TryCatchBlockList l1,  tom.library.adt.bytecode.types.TryCatchBlockList  l2) {     if( l1.isEmptyTryCatchBlockList() ) {       return l2;     } else if( l2.isEmptyTryCatchBlockList() ) {       return l1;     } else if(  l1.getTailTryCatchBlockList() .isEmptyTryCatchBlockList() ) {       return  tom.library.adt.bytecode.types.trycatchblocklist.ConsTryCatchBlockList.make( l1.getHeadTryCatchBlockList() ,l2) ;     } else {       return  tom.library.adt.bytecode.types.trycatchblocklist.ConsTryCatchBlockList.make( l1.getHeadTryCatchBlockList() ,tom_append_list_TryCatchBlockList( l1.getTailTryCatchBlockList() ,l2)) ;     }   }   private static   tom.library.adt.bytecode.types.TryCatchBlockList  tom_get_slice_TryCatchBlockList( tom.library.adt.bytecode.types.TryCatchBlockList  begin,  tom.library.adt.bytecode.types.TryCatchBlockList  end, tom.library.adt.bytecode.types.TryCatchBlockList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyTryCatchBlockList()  ||  (end== tom.library.adt.bytecode.types.trycatchblocklist.EmptyTryCatchBlockList.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.library.adt.bytecode.types.trycatchblocklist.ConsTryCatchBlockList.make( begin.getHeadTryCatchBlockList() ,( tom.library.adt.bytecode.types.TryCatchBlockList )tom_get_slice_TryCatchBlockList( begin.getTailTryCatchBlockList() ,end,tail)) ;   }    public static class BuildLabelMap extends tom.library.sl.AbstractStrategyBasic {private  java.util.Map  m;public BuildLabelMap( java.util.Map  m) {super(( new tom.library.sl.Identity() ));this.m=m;}public  java.util.Map  getm() {return m;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];stratChilds[0] = super.getChildAt(0);return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() {return 1;}public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}@SuppressWarnings("unchecked")public <T> T visitLight(T v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.library.adt.bytecode.types.InstructionList) ) {return ((T)visit_InstructionList((( tom.library.adt.bytecode.types.InstructionList )v),introspector));}if (!(( null  == environment))) {return ((T)any.visit(environment,introspector));} else {return any.visitLight(v,introspector);}}@SuppressWarnings("unchecked")public  tom.library.adt.bytecode.types.InstructionList  _visit_InstructionList( tom.library.adt.bytecode.types.InstructionList  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!(( null  == environment))) {return (( tom.library.adt.bytecode.types.InstructionList )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);}}@SuppressWarnings("unchecked")public  tom.library.adt.bytecode.types.InstructionList  visit_InstructionList( tom.library.adt.bytecode.types.InstructionList  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if ( (((Object)tom__arg) instanceof tom.library.adt.bytecode.types.InstructionList) ) {if ( ((( tom.library.adt.bytecode.types.InstructionList )((Object)tom__arg)) instanceof tom.library.adt.bytecode.types.InstructionList) ) {if ( ((( tom.library.adt.bytecode.types.InstructionList )(( tom.library.adt.bytecode.types.InstructionList )((Object)tom__arg))) instanceof tom.library.adt.bytecode.types.instructionlist.ConsInstructionList) ) { tom.library.adt.bytecode.types.Instruction  tomMatch691_1= (( tom.library.adt.bytecode.types.InstructionList )((Object)tom__arg)).getHeadInstructionList() ;if ( (tomMatch691_1 instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )tomMatch691_1) instanceof tom.library.adt.bytecode.types.instruction.Anchor) ) {       m.put( tomMatch691_1.getlabel() , getEnvironment().getPosition());     }}}}}}}return _visit_InstructionList(tom__arg,introspector);}}private static  tom.library.sl.Strategy  tom_make_BuildLabelMap( java.util.Map  t0) { return new BuildLabelMap(t0);}public static class OneCfg extends tom.library.sl.AbstractStrategyBasic {private  tom.library.sl.Strategy  s;private  java.util.Map  m;public OneCfg( tom.library.sl.Strategy  s,  java.util.Map  m) {super(( new tom.library.sl.Identity() ));this.s=s;this.m=m;}public  tom.library.sl.Strategy  gets() {return s;}public  java.util.Map  getm() {return m;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];stratChilds[0] = super.getChildAt(0);stratChilds[1] = gets();return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);s = ( tom.library.sl.Strategy ) children[1];return this;}public int getChildCount() {return 2;}public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);case 1: return gets();default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);case 1: s = ( tom.library.sl.Strategy )child; return this;default: throw new IndexOutOfBoundsException();}}@SuppressWarnings("unchecked")public <T> T visitLight(T v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.library.adt.bytecode.types.InstructionList) ) {return ((T)visit_InstructionList((( tom.library.adt.bytecode.types.InstructionList )v),introspector));}if (!(( null  == environment))) {return ((T)any.visit(environment,introspector));} else {return any.visitLight(v,introspector);}}@SuppressWarnings("unchecked")public  tom.library.adt.bytecode.types.InstructionList  _visit_InstructionList( tom.library.adt.bytecode.types.InstructionList  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!(( null  == environment))) {return (( tom.library.adt.bytecode.types.InstructionList )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);}}@SuppressWarnings("unchecked")public  tom.library.adt.bytecode.types.InstructionList  visit_InstructionList( tom.library.adt.bytecode.types.InstructionList  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if ( (((Object)tom__arg) instanceof tom.library.adt.bytecode.types.InstructionList) ) {if ( ((( tom.library.adt.bytecode.types.InstructionList )((Object)tom__arg)) instanceof tom.library.adt.bytecode.types.InstructionList) ) {if ( ((( tom.library.adt.bytecode.types.InstructionList )(( tom.library.adt.bytecode.types.InstructionList )((Object)tom__arg))) instanceof tom.library.adt.bytecode.types.instructionlist.ConsInstructionList) ) { tom.library.adt.bytecode.types.Instruction  tomMatch692_1= (( tom.library.adt.bytecode.types.InstructionList )((Object)tom__arg)).getHeadInstructionList() ;if ( (tomMatch692_1 instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )tomMatch692_1) instanceof tom.library.adt.bytecode.types.instruction.Goto) ) {       tom.library.sl.Position p = (tom.library.sl.Position) (m.get( tomMatch692_1.getlabel() ));       tom.library.sl.Position current = getEnvironment().getPosition();       getEnvironment().followPath(p.sub(current));       s.visit(getEnvironment());       if(getEnvironment().getStatus() == Environment.SUCCESS) {         getEnvironment().followPath(current.sub(p));       } else {                 getEnvironment().followPathLocal(current.sub(p));       }       return (InstructionList) getEnvironment().getSubject();     }}}}}}{if ( (((Object)tom__arg) instanceof tom.library.adt.bytecode.types.InstructionList) ) {if ( ((( tom.library.adt.bytecode.types.InstructionList )((Object)tom__arg)) instanceof tom.library.adt.bytecode.types.InstructionList) ) {if ( ((( tom.library.adt.bytecode.types.InstructionList )(( tom.library.adt.bytecode.types.InstructionList )((Object)tom__arg))) instanceof tom.library.adt.bytecode.types.instructionlist.ConsInstructionList) ) { tom.library.adt.bytecode.types.Instruction  tomMatch692_9= (( tom.library.adt.bytecode.types.InstructionList )((Object)tom__arg)).getHeadInstructionList() ;boolean tomMatch692_32= false ; tom.library.adt.bytecode.types.Instruction  tomMatch692_22= null ; tom.library.adt.bytecode.types.Instruction  tomMatch692_21= null ; tom.library.adt.bytecode.types.Instruction  tomMatch692_24= null ; tom.library.adt.bytecode.types.Instruction  tomMatch692_31= null ; tom.library.adt.bytecode.types.Instruction  tomMatch692_23= null ; tom.library.adt.bytecode.types.Instruction  tomMatch692_29= null ; tom.library.adt.bytecode.types.Instruction  tomMatch692_20= null ; tom.library.adt.bytecode.types.Instruction  tomMatch692_26= null ; tom.library.adt.bytecode.types.Instruction  tomMatch692_25= null ; tom.library.adt.bytecode.types.Instruction  tomMatch692_15= null ; tom.library.adt.bytecode.types.Instruction  tomMatch692_27= null ; tom.library.adt.bytecode.types.Instruction  tomMatch692_30= null ; tom.library.adt.bytecode.types.Instruction  tomMatch692_16= null ; tom.library.adt.bytecode.types.Instruction  tomMatch692_18= null ; tom.library.adt.bytecode.types.Instruction  tomMatch692_17= null ; tom.library.adt.bytecode.types.LabelNode  tomMatch692_13= null ; tom.library.adt.bytecode.types.Instruction  tomMatch692_19= null ; tom.library.adt.bytecode.types.Instruction  tomMatch692_28= null ;if ( (tomMatch692_9 instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )tomMatch692_9) instanceof tom.library.adt.bytecode.types.instruction.Ifeq) ) {{tomMatch692_32= true ;tomMatch692_15=tomMatch692_9;tomMatch692_13= tomMatch692_15.getlabel() ;}} else {if ( (tomMatch692_9 instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )tomMatch692_9) instanceof tom.library.adt.bytecode.types.instruction.Ifne) ) {{tomMatch692_32= true ;tomMatch692_16=tomMatch692_9;tomMatch692_13= tomMatch692_16.getlabel() ;}} else {if ( (tomMatch692_9 instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )tomMatch692_9) instanceof tom.library.adt.bytecode.types.instruction.Iflt) ) {{tomMatch692_32= true ;tomMatch692_17=tomMatch692_9;tomMatch692_13= tomMatch692_17.getlabel() ;}} else {if ( (tomMatch692_9 instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )tomMatch692_9) instanceof tom.library.adt.bytecode.types.instruction.Ifge) ) {{tomMatch692_32= true ;tomMatch692_18=tomMatch692_9;tomMatch692_13= tomMatch692_18.getlabel() ;}} else {if ( (tomMatch692_9 instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )tomMatch692_9) instanceof tom.library.adt.bytecode.types.instruction.Ifgt) ) {{tomMatch692_32= true ;tomMatch692_19=tomMatch692_9;tomMatch692_13= tomMatch692_19.getlabel() ;}} else {if ( (tomMatch692_9 instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )tomMatch692_9) instanceof tom.library.adt.bytecode.types.instruction.Ifle) ) {{tomMatch692_32= true ;tomMatch692_20=tomMatch692_9;tomMatch692_13= tomMatch692_20.getlabel() ;}} else {if ( (tomMatch692_9 instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )tomMatch692_9) instanceof tom.library.adt.bytecode.types.instruction.If_icmpeq) ) {{tomMatch692_32= true ;tomMatch692_21=tomMatch692_9;tomMatch692_13= tomMatch692_21.getlabel() ;}} else {if ( (tomMatch692_9 instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )tomMatch692_9) instanceof tom.library.adt.bytecode.types.instruction.If_icmpne) ) {{tomMatch692_32= true ;tomMatch692_22=tomMatch692_9;tomMatch692_13= tomMatch692_22.getlabel() ;}} else {if ( (tomMatch692_9 instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )tomMatch692_9) instanceof tom.library.adt.bytecode.types.instruction.If_icmplt) ) {{tomMatch692_32= true ;tomMatch692_23=tomMatch692_9;tomMatch692_13= tomMatch692_23.getlabel() ;}} else {if ( (tomMatch692_9 instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )tomMatch692_9) instanceof tom.library.adt.bytecode.types.instruction.If_icmpge) ) {{tomMatch692_32= true ;tomMatch692_24=tomMatch692_9;tomMatch692_13= tomMatch692_24.getlabel() ;}} else {if ( (tomMatch692_9 instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )tomMatch692_9) instanceof tom.library.adt.bytecode.types.instruction.If_icmpgt) ) {{tomMatch692_32= true ;tomMatch692_25=tomMatch692_9;tomMatch692_13= tomMatch692_25.getlabel() ;}} else {if ( (tomMatch692_9 instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )tomMatch692_9) instanceof tom.library.adt.bytecode.types.instruction.If_icmple) ) {{tomMatch692_32= true ;tomMatch692_26=tomMatch692_9;tomMatch692_13= tomMatch692_26.getlabel() ;}} else {if ( (tomMatch692_9 instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )tomMatch692_9) instanceof tom.library.adt.bytecode.types.instruction.If_acmpeq) ) {{tomMatch692_32= true ;tomMatch692_27=tomMatch692_9;tomMatch692_13= tomMatch692_27.getlabel() ;}} else {if ( (tomMatch692_9 instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )tomMatch692_9) instanceof tom.library.adt.bytecode.types.instruction.If_acmpne) ) {{tomMatch692_32= true ;tomMatch692_28=tomMatch692_9;tomMatch692_13= tomMatch692_28.getlabel() ;}} else {if ( (tomMatch692_9 instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )tomMatch692_9) instanceof tom.library.adt.bytecode.types.instruction.Jsr) ) {{tomMatch692_32= true ;tomMatch692_29=tomMatch692_9;tomMatch692_13= tomMatch692_29.getlabel() ;}} else {if ( (tomMatch692_9 instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )tomMatch692_9) instanceof tom.library.adt.bytecode.types.instruction.Ifnull) ) {{tomMatch692_32= true ;tomMatch692_30=tomMatch692_9;tomMatch692_13= tomMatch692_30.getlabel() ;}} else {if ( (tomMatch692_9 instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )tomMatch692_9) instanceof tom.library.adt.bytecode.types.instruction.Ifnonnull) ) {{tomMatch692_32= true ;tomMatch692_31=tomMatch692_9;tomMatch692_13= tomMatch692_31.getlabel() ;}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}if (tomMatch692_32) {       tom.library.sl.Position p = (tom.library.sl.Position) (m.get(tomMatch692_13));       tom.library.sl.Position current = getEnvironment().getPosition();       getEnvironment().followPath(p.sub(current));       s.visit(getEnvironment());       if(getEnvironment().getStatus() == Environment.SUCCESS) {         getEnvironment().followPath(current.sub(p));         return (InstructionList) getEnvironment().getSubject();       } else {                 getEnvironment().followPathLocal(current.sub(p));       }     }}}}}{if ( (((Object)tom__arg) instanceof tom.library.adt.bytecode.types.InstructionList) ) {if ( ((( tom.library.adt.bytecode.types.InstructionList )((Object)tom__arg)) instanceof tom.library.adt.bytecode.types.InstructionList) ) {if ( ((( tom.library.adt.bytecode.types.InstructionList )(( tom.library.adt.bytecode.types.InstructionList )((Object)tom__arg))) instanceof tom.library.adt.bytecode.types.instructionlist.ConsInstructionList) ) { tom.library.adt.bytecode.types.Instruction  tomMatch692_34= (( tom.library.adt.bytecode.types.InstructionList )((Object)tom__arg)).getHeadInstructionList() ;boolean tomMatch692_43= false ; tom.library.adt.bytecode.types.LabelNodeList  tomMatch692_39= null ; tom.library.adt.bytecode.types.Instruction  tomMatch692_42= null ; tom.library.adt.bytecode.types.LabelNode  tomMatch692_38= null ; tom.library.adt.bytecode.types.Instruction  tomMatch692_41= null ;if ( (tomMatch692_34 instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )tomMatch692_34) instanceof tom.library.adt.bytecode.types.instruction.Tableswitch) ) {{tomMatch692_43= true ;tomMatch692_41=tomMatch692_34;tomMatch692_38= tomMatch692_41.getdflt() ;tomMatch692_39= tomMatch692_41.getlabels() ;}} else {if ( (tomMatch692_34 instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )tomMatch692_34) instanceof tom.library.adt.bytecode.types.instruction.Lookupswitch) ) {{tomMatch692_43= true ;tomMatch692_42=tomMatch692_34;tomMatch692_38= tomMatch692_42.getdflt() ;tomMatch692_39= tomMatch692_42.getlabels() ;}}}}}if (tomMatch692_43) {       LabelNodeList labelList = tomMatch692_39;       {{if ( (((Object)labelList) instanceof tom.library.adt.bytecode.types.LabelNodeList) ) {if ( (((( tom.library.adt.bytecode.types.LabelNodeList )(( tom.library.adt.bytecode.types.LabelNodeList )((Object)labelList))) instanceof tom.library.adt.bytecode.types.labelnodelist.ConsLabelNodeList) || ((( tom.library.adt.bytecode.types.LabelNodeList )(( tom.library.adt.bytecode.types.LabelNodeList )((Object)labelList))) instanceof tom.library.adt.bytecode.types.labelnodelist.EmptyLabelNodeList)) ) { tom.library.adt.bytecode.types.LabelNodeList  tomMatch693__end__4=(( tom.library.adt.bytecode.types.LabelNodeList )((Object)labelList));do {{if (!( tomMatch693__end__4.isEmptyLabelNodeList() )) {           tom.library.sl.Position p = (tom.library.sl.Position) (m.get( tomMatch693__end__4.getHeadLabelNodeList() ));           tom.library.sl.Position current = getEnvironment().getPosition();           getEnvironment().followPath(p.sub(current));           s.visit(getEnvironment());           if(getEnvironment().getStatus() == Environment.SUCCESS) {             getEnvironment().followPath(current.sub(p));             return (InstructionList) getEnvironment().getSubject();           } else {                         getEnvironment().followPathLocal(current.sub(p));           }         }if ( tomMatch693__end__4.isEmptyLabelNodeList() ) {tomMatch693__end__4=(( tom.library.adt.bytecode.types.LabelNodeList )((Object)labelList));} else {tomMatch693__end__4= tomMatch693__end__4.getTailLabelNodeList() ;}}} while(!( (tomMatch693__end__4==(( tom.library.adt.bytecode.types.LabelNodeList )((Object)labelList))) ));}}}}       tom.library.sl.Position p = (tom.library.sl.Position) (m.get(tomMatch692_38));       tom.library.sl.Position current = getEnvironment().getPosition();       getEnvironment().followPath(p.sub(current));       s.visit(getEnvironment());       if(getEnvironment().getStatus() == Environment.SUCCESS) {         getEnvironment().followPath(current.sub(p));         return (InstructionList) getEnvironment().getSubject();       } else {                 getEnvironment().followPathLocal(current.sub(p));       }      }}}}}{if ( (((Object)tom__arg) instanceof tom.library.adt.bytecode.types.InstructionList) ) {if ( ((( tom.library.adt.bytecode.types.InstructionList )((Object)tom__arg)) instanceof tom.library.adt.bytecode.types.InstructionList) ) {if ( ((( tom.library.adt.bytecode.types.InstructionList )(( tom.library.adt.bytecode.types.InstructionList )((Object)tom__arg))) instanceof tom.library.adt.bytecode.types.instructionlist.ConsInstructionList) ) { tom.library.adt.bytecode.types.InstructionList  tomMatch692_46= (( tom.library.adt.bytecode.types.InstructionList )((Object)tom__arg)).getTailInstructionList() ;boolean tomMatch692_50= false ;if ( (((( tom.library.adt.bytecode.types.InstructionList )tomMatch692_46) instanceof tom.library.adt.bytecode.types.instructionlist.ConsInstructionList) || ((( tom.library.adt.bytecode.types.InstructionList )tomMatch692_46) instanceof tom.library.adt.bytecode.types.instructionlist.EmptyInstructionList)) ) {if ( tomMatch692_46.isEmptyInstructionList() ) {tomMatch692_50= true ;}}if (!(tomMatch692_50)) {       getEnvironment().down(2);       s.visit(getEnvironment());       getEnvironment().up();     }}}}}}return _visit_InstructionList(tom__arg,introspector);}}public static class AllCfg extends tom.library.sl.AbstractStrategyBasic {private  tom.library.sl.Strategy  s;private  java.util.Map  m;public AllCfg( tom.library.sl.Strategy  s,  java.util.Map  m) {super(( new tom.library.sl.Identity() ));this.s=s;this.m=m;}public  tom.library.sl.Strategy  gets() {return s;}public  java.util.Map  getm() {return m;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];stratChilds[0] = super.getChildAt(0);stratChilds[1] = gets();return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);s = ( tom.library.sl.Strategy ) children[1];return this;}public int getChildCount() {return 2;}public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);case 1: return gets();default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);case 1: s = ( tom.library.sl.Strategy )child; return this;default: throw new IndexOutOfBoundsException();}}@SuppressWarnings("unchecked")public <T> T visitLight(T v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.library.adt.bytecode.types.InstructionList) ) {return ((T)visit_InstructionList((( tom.library.adt.bytecode.types.InstructionList )v),introspector));}if (!(( null  == environment))) {return ((T)any.visit(environment,introspector));} else {return any.visitLight(v,introspector);}}@SuppressWarnings("unchecked")public  tom.library.adt.bytecode.types.InstructionList  _visit_InstructionList( tom.library.adt.bytecode.types.InstructionList  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!(( null  == environment))) {return (( tom.library.adt.bytecode.types.InstructionList )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);}}@SuppressWarnings("unchecked")public  tom.library.adt.bytecode.types.InstructionList  visit_InstructionList( tom.library.adt.bytecode.types.InstructionList  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if ( (((Object)tom__arg) instanceof tom.library.adt.bytecode.types.InstructionList) ) {if ( ((( tom.library.adt.bytecode.types.InstructionList )((Object)tom__arg)) instanceof tom.library.adt.bytecode.types.InstructionList) ) {if ( ((( tom.library.adt.bytecode.types.InstructionList )(( tom.library.adt.bytecode.types.InstructionList )((Object)tom__arg))) instanceof tom.library.adt.bytecode.types.instructionlist.ConsInstructionList) ) { tom.library.adt.bytecode.types.Instruction  tomMatch694_1= (( tom.library.adt.bytecode.types.InstructionList )((Object)tom__arg)).getHeadInstructionList() ;if ( (tomMatch694_1 instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )tomMatch694_1) instanceof tom.library.adt.bytecode.types.instruction.Goto) ) {       tom.library.sl.Position p = (tom.library.sl.Position) (m.get( tomMatch694_1.getlabel() ));       tom.library.sl.Position current = getEnvironment().getPosition();       getEnvironment().followPath(p.sub(current));       s.visit(getEnvironment());       if(getEnvironment().getStatus() == Environment.SUCCESS) {         getEnvironment().followPath(current.sub(p));       } else {                 getEnvironment().followPathLocal(current.sub(p));       }                return (InstructionList) getEnvironment().getSubject();     }}}}}}{if ( (((Object)tom__arg) instanceof tom.library.adt.bytecode.types.InstructionList) ) {if ( ((( tom.library.adt.bytecode.types.InstructionList )((Object)tom__arg)) instanceof tom.library.adt.bytecode.types.InstructionList) ) {if ( ((( tom.library.adt.bytecode.types.InstructionList )(( tom.library.adt.bytecode.types.InstructionList )((Object)tom__arg))) instanceof tom.library.adt.bytecode.types.instructionlist.ConsInstructionList) ) { tom.library.adt.bytecode.types.Instruction  tomMatch694_9= (( tom.library.adt.bytecode.types.InstructionList )((Object)tom__arg)).getHeadInstructionList() ;boolean tomMatch694_32= false ; tom.library.adt.bytecode.types.Instruction  tomMatch694_25= null ; tom.library.adt.bytecode.types.Instruction  tomMatch694_15= null ; tom.library.adt.bytecode.types.Instruction  tomMatch694_26= null ; tom.library.adt.bytecode.types.Instruction  tomMatch694_16= null ; tom.library.adt.bytecode.types.Instruction  tomMatch694_19= null ; tom.library.adt.bytecode.types.Instruction  tomMatch694_28= null ; tom.library.adt.bytecode.types.Instruction  tomMatch694_24= null ; tom.library.adt.bytecode.types.Instruction  tomMatch694_22= null ; tom.library.adt.bytecode.types.LabelNode  tomMatch694_13= null ; tom.library.adt.bytecode.types.Instruction  tomMatch694_20= null ; tom.library.adt.bytecode.types.Instruction  tomMatch694_30= null ; tom.library.adt.bytecode.types.Instruction  tomMatch694_17= null ; tom.library.adt.bytecode.types.Instruction  tomMatch694_27= null ; tom.library.adt.bytecode.types.Instruction  tomMatch694_21= null ; tom.library.adt.bytecode.types.Instruction  tomMatch694_29= null ; tom.library.adt.bytecode.types.Instruction  tomMatch694_23= null ; tom.library.adt.bytecode.types.Instruction  tomMatch694_18= null ; tom.library.adt.bytecode.types.Instruction  tomMatch694_31= null ;if ( (tomMatch694_9 instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )tomMatch694_9) instanceof tom.library.adt.bytecode.types.instruction.Ifeq) ) {{tomMatch694_32= true ;tomMatch694_15=tomMatch694_9;tomMatch694_13= tomMatch694_15.getlabel() ;}} else {if ( (tomMatch694_9 instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )tomMatch694_9) instanceof tom.library.adt.bytecode.types.instruction.Ifne) ) {{tomMatch694_32= true ;tomMatch694_16=tomMatch694_9;tomMatch694_13= tomMatch694_16.getlabel() ;}} else {if ( (tomMatch694_9 instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )tomMatch694_9) instanceof tom.library.adt.bytecode.types.instruction.Iflt) ) {{tomMatch694_32= true ;tomMatch694_17=tomMatch694_9;tomMatch694_13= tomMatch694_17.getlabel() ;}} else {if ( (tomMatch694_9 instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )tomMatch694_9) instanceof tom.library.adt.bytecode.types.instruction.Ifge) ) {{tomMatch694_32= true ;tomMatch694_18=tomMatch694_9;tomMatch694_13= tomMatch694_18.getlabel() ;}} else {if ( (tomMatch694_9 instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )tomMatch694_9) instanceof tom.library.adt.bytecode.types.instruction.Ifgt) ) {{tomMatch694_32= true ;tomMatch694_19=tomMatch694_9;tomMatch694_13= tomMatch694_19.getlabel() ;}} else {if ( (tomMatch694_9 instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )tomMatch694_9) instanceof tom.library.adt.bytecode.types.instruction.Ifle) ) {{tomMatch694_32= true ;tomMatch694_20=tomMatch694_9;tomMatch694_13= tomMatch694_20.getlabel() ;}} else {if ( (tomMatch694_9 instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )tomMatch694_9) instanceof tom.library.adt.bytecode.types.instruction.If_icmpeq) ) {{tomMatch694_32= true ;tomMatch694_21=tomMatch694_9;tomMatch694_13= tomMatch694_21.getlabel() ;}} else {if ( (tomMatch694_9 instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )tomMatch694_9) instanceof tom.library.adt.bytecode.types.instruction.If_icmpne) ) {{tomMatch694_32= true ;tomMatch694_22=tomMatch694_9;tomMatch694_13= tomMatch694_22.getlabel() ;}} else {if ( (tomMatch694_9 instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )tomMatch694_9) instanceof tom.library.adt.bytecode.types.instruction.If_icmplt) ) {{tomMatch694_32= true ;tomMatch694_23=tomMatch694_9;tomMatch694_13= tomMatch694_23.getlabel() ;}} else {if ( (tomMatch694_9 instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )tomMatch694_9) instanceof tom.library.adt.bytecode.types.instruction.If_icmpge) ) {{tomMatch694_32= true ;tomMatch694_24=tomMatch694_9;tomMatch694_13= tomMatch694_24.getlabel() ;}} else {if ( (tomMatch694_9 instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )tomMatch694_9) instanceof tom.library.adt.bytecode.types.instruction.If_icmpgt) ) {{tomMatch694_32= true ;tomMatch694_25=tomMatch694_9;tomMatch694_13= tomMatch694_25.getlabel() ;}} else {if ( (tomMatch694_9 instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )tomMatch694_9) instanceof tom.library.adt.bytecode.types.instruction.If_icmple) ) {{tomMatch694_32= true ;tomMatch694_26=tomMatch694_9;tomMatch694_13= tomMatch694_26.getlabel() ;}} else {if ( (tomMatch694_9 instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )tomMatch694_9) instanceof tom.library.adt.bytecode.types.instruction.If_acmpeq) ) {{tomMatch694_32= true ;tomMatch694_27=tomMatch694_9;tomMatch694_13= tomMatch694_27.getlabel() ;}} else {if ( (tomMatch694_9 instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )tomMatch694_9) instanceof tom.library.adt.bytecode.types.instruction.If_acmpne) ) {{tomMatch694_32= true ;tomMatch694_28=tomMatch694_9;tomMatch694_13= tomMatch694_28.getlabel() ;}} else {if ( (tomMatch694_9 instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )tomMatch694_9) instanceof tom.library.adt.bytecode.types.instruction.Jsr) ) {{tomMatch694_32= true ;tomMatch694_29=tomMatch694_9;tomMatch694_13= tomMatch694_29.getlabel() ;}} else {if ( (tomMatch694_9 instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )tomMatch694_9) instanceof tom.library.adt.bytecode.types.instruction.Ifnull) ) {{tomMatch694_32= true ;tomMatch694_30=tomMatch694_9;tomMatch694_13= tomMatch694_30.getlabel() ;}} else {if ( (tomMatch694_9 instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )tomMatch694_9) instanceof tom.library.adt.bytecode.types.instruction.Ifnonnull) ) {{tomMatch694_32= true ;tomMatch694_31=tomMatch694_9;tomMatch694_13= tomMatch694_31.getlabel() ;}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}if (tomMatch694_32) {       tom.library.sl.Position p = (tom.library.sl.Position) (m.get(tomMatch694_13));       tom.library.sl.Position current = getEnvironment().getPosition();       getEnvironment().followPath(p.sub(current));       s.visit(getEnvironment());       if(getEnvironment().getStatus() == Environment.SUCCESS) {         getEnvironment().followPath(current.sub(p));       } else {                 getEnvironment().followPathLocal(current.sub(p));       }              }}}}}{if ( (((Object)tom__arg) instanceof tom.library.adt.bytecode.types.InstructionList) ) {if ( ((( tom.library.adt.bytecode.types.InstructionList )((Object)tom__arg)) instanceof tom.library.adt.bytecode.types.InstructionList) ) {if ( ((( tom.library.adt.bytecode.types.InstructionList )(( tom.library.adt.bytecode.types.InstructionList )((Object)tom__arg))) instanceof tom.library.adt.bytecode.types.instructionlist.ConsInstructionList) ) { tom.library.adt.bytecode.types.Instruction  tomMatch694_34= (( tom.library.adt.bytecode.types.InstructionList )((Object)tom__arg)).getHeadInstructionList() ;boolean tomMatch694_43= false ; tom.library.adt.bytecode.types.Instruction  tomMatch694_41= null ; tom.library.adt.bytecode.types.LabelNode  tomMatch694_38= null ; tom.library.adt.bytecode.types.Instruction  tomMatch694_42= null ; tom.library.adt.bytecode.types.LabelNodeList  tomMatch694_39= null ;if ( (tomMatch694_34 instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )tomMatch694_34) instanceof tom.library.adt.bytecode.types.instruction.Tableswitch) ) {{tomMatch694_43= true ;tomMatch694_41=tomMatch694_34;tomMatch694_38= tomMatch694_41.getdflt() ;tomMatch694_39= tomMatch694_41.getlabels() ;}} else {if ( (tomMatch694_34 instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )tomMatch694_34) instanceof tom.library.adt.bytecode.types.instruction.Lookupswitch) ) {{tomMatch694_43= true ;tomMatch694_42=tomMatch694_34;tomMatch694_38= tomMatch694_42.getdflt() ;tomMatch694_39= tomMatch694_42.getlabels() ;}}}}}if (tomMatch694_43) { tom.library.adt.bytecode.types.LabelNodeList  tom_labels=tomMatch694_39;       LabelNodeList labels = tom_labels;       {{if ( (((Object)tom_labels) instanceof tom.library.adt.bytecode.types.LabelNodeList) ) {if ( (((( tom.library.adt.bytecode.types.LabelNodeList )(( tom.library.adt.bytecode.types.LabelNodeList )((Object)tom_labels))) instanceof tom.library.adt.bytecode.types.labelnodelist.ConsLabelNodeList) || ((( tom.library.adt.bytecode.types.LabelNodeList )(( tom.library.adt.bytecode.types.LabelNodeList )((Object)tom_labels))) instanceof tom.library.adt.bytecode.types.labelnodelist.EmptyLabelNodeList)) ) { tom.library.adt.bytecode.types.LabelNodeList  tomMatch695__end__4=(( tom.library.adt.bytecode.types.LabelNodeList )((Object)tom_labels));do {{if (!( tomMatch695__end__4.isEmptyLabelNodeList() )) {           tom.library.sl.Position p = (tom.library.sl.Position) (m.get( tomMatch695__end__4.getHeadLabelNodeList() ));           tom.library.sl.Position current = getEnvironment().getPosition();           getEnvironment().followPath(current.sub(p));           s.visit(getEnvironment());           if(getEnvironment().getStatus() == Environment.SUCCESS) {             getEnvironment().followPath(current.sub(p));           } else {                         getEnvironment().followPathLocal(current.sub(p));           }              }if ( tomMatch695__end__4.isEmptyLabelNodeList() ) {tomMatch695__end__4=(( tom.library.adt.bytecode.types.LabelNodeList )((Object)tom_labels));} else {tomMatch695__end__4= tomMatch695__end__4.getTailLabelNodeList() ;}}} while(!( (tomMatch695__end__4==(( tom.library.adt.bytecode.types.LabelNodeList )((Object)tom_labels))) ));}}}}       tom.library.sl.Position p = (tom.library.sl.Position) (m.get(tomMatch694_38));       tom.library.sl.Position current = getEnvironment().getPosition();       getEnvironment().followPath(p.sub(current));       s.visit(getEnvironment());       if(getEnvironment().getStatus() == Environment.SUCCESS) {         getEnvironment().followPath(current.sub(p));       } else {                 getEnvironment().followPathLocal(current.sub(p));       }     }}}}}{if ( (((Object)tom__arg) instanceof tom.library.adt.bytecode.types.InstructionList) ) {if ( ((( tom.library.adt.bytecode.types.InstructionList )((Object)tom__arg)) instanceof tom.library.adt.bytecode.types.InstructionList) ) {if ( ((( tom.library.adt.bytecode.types.InstructionList )(( tom.library.adt.bytecode.types.InstructionList )((Object)tom__arg))) instanceof tom.library.adt.bytecode.types.instructionlist.ConsInstructionList) ) { tom.library.adt.bytecode.types.InstructionList  tomMatch694_46= (( tom.library.adt.bytecode.types.InstructionList )((Object)tom__arg)).getTailInstructionList() ;boolean tomMatch694_50= false ;if ( (((( tom.library.adt.bytecode.types.InstructionList )tomMatch694_46) instanceof tom.library.adt.bytecode.types.instructionlist.ConsInstructionList) || ((( tom.library.adt.bytecode.types.InstructionList )tomMatch694_46) instanceof tom.library.adt.bytecode.types.instructionlist.EmptyInstructionList)) ) {if ( tomMatch694_46.isEmptyInstructionList() ) {tomMatch694_50= true ;}}if (!(tomMatch694_50)) {       getEnvironment().down(2);       s.visit(getEnvironment());       getEnvironment().up();     }}}}}}return _visit_InstructionList(tom__arg,introspector);}}private static  tom.library.sl.Strategy  tom_make_AllCfg( tom.library.sl.Strategy  t0,  java.util.Map  t1) { return new AllCfg(t0,t1);}public static class Mark extends tom.library.sl.AbstractStrategyBasic {private  java.util.Map  map;public Mark( java.util.Map  map) {super(( new tom.library.sl.Identity() ));this.map=map;}public  java.util.Map  getmap() {return map;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];stratChilds[0] = super.getChildAt(0);return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() {return 1;}public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}@SuppressWarnings("unchecked")public <T> T visitLight(T v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.library.adt.bytecode.types.InstructionList) ) {return ((T)visit_InstructionList((( tom.library.adt.bytecode.types.InstructionList )v),introspector));}if (!(( null  == environment))) {return ((T)any.visit(environment,introspector));} else {return any.visitLight(v,introspector);}}@SuppressWarnings("unchecked")public  tom.library.adt.bytecode.types.InstructionList  _visit_InstructionList( tom.library.adt.bytecode.types.InstructionList  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!(( null  == environment))) {return (( tom.library.adt.bytecode.types.InstructionList )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);}}@SuppressWarnings("unchecked")public  tom.library.adt.bytecode.types.InstructionList  visit_InstructionList( tom.library.adt.bytecode.types.InstructionList  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if ( (((Object)tom__arg) instanceof tom.library.adt.bytecode.types.InstructionList) ) { tom.library.adt.bytecode.types.InstructionList  tom_c=(( tom.library.adt.bytecode.types.InstructionList )((Object)tom__arg));       Object o = map.get(tom_c);       int value = 1;       if(o != null)         value = ((Integer)o).intValue() + 1;       map.put(tom_c, Integer.valueOf(value));     }}}return _visit_InstructionList(tom__arg,introspector);}}public static class UnMark extends tom.library.sl.AbstractStrategyBasic {private  java.util.Map  map;public UnMark( java.util.Map  map) {super(( new tom.library.sl.Identity() ));this.map=map;}public  java.util.Map  getmap() {return map;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];stratChilds[0] = super.getChildAt(0);return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() {return 1;}public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}@SuppressWarnings("unchecked")public <T> T visitLight(T v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.library.adt.bytecode.types.InstructionList) ) {return ((T)visit_InstructionList((( tom.library.adt.bytecode.types.InstructionList )v),introspector));}if (!(( null  == environment))) {return ((T)any.visit(environment,introspector));} else {return any.visitLight(v,introspector);}}@SuppressWarnings("unchecked")public  tom.library.adt.bytecode.types.InstructionList  _visit_InstructionList( tom.library.adt.bytecode.types.InstructionList  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!(( null  == environment))) {return (( tom.library.adt.bytecode.types.InstructionList )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);}}@SuppressWarnings("unchecked")public  tom.library.adt.bytecode.types.InstructionList  visit_InstructionList( tom.library.adt.bytecode.types.InstructionList  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if ( (((Object)tom__arg) instanceof tom.library.adt.bytecode.types.InstructionList) ) { tom.library.adt.bytecode.types.InstructionList  tom_c=(( tom.library.adt.bytecode.types.InstructionList )((Object)tom__arg));       Object o = map.get(tom_c);       if(o == null) {         throw new tom.library.sl.VisitFailure();       }       int value = ((Integer)o).intValue() - 1;       map.put(tom_c, Integer.valueOf(value));     }}}return _visit_InstructionList(tom__arg,introspector);}}public static class IsMarked extends tom.library.sl.AbstractStrategyBasic {private  java.util.Map  map;public IsMarked( java.util.Map  map) {super(( new tom.library.sl.Identity() ));this.map=map;}public  java.util.Map  getmap() {return map;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];stratChilds[0] = super.getChildAt(0);return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() {return 1;}public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}@SuppressWarnings("unchecked")public <T> T visitLight(T v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.library.adt.bytecode.types.InstructionList) ) {return ((T)visit_InstructionList((( tom.library.adt.bytecode.types.InstructionList )v),introspector));}if (!(( null  == environment))) {return ((T)any.visit(environment,introspector));} else {return any.visitLight(v,introspector);}}@SuppressWarnings("unchecked")public  tom.library.adt.bytecode.types.InstructionList  _visit_InstructionList( tom.library.adt.bytecode.types.InstructionList  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!(( null  == environment))) {return (( tom.library.adt.bytecode.types.InstructionList )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);}}@SuppressWarnings("unchecked")public  tom.library.adt.bytecode.types.InstructionList  visit_InstructionList( tom.library.adt.bytecode.types.InstructionList  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if ( (((Object)tom__arg) instanceof tom.library.adt.bytecode.types.InstructionList) ) {       Object o = map.get((( tom.library.adt.bytecode.types.InstructionList )((Object)tom__arg)));       if(o == null || ((Integer)o).intValue() <= 0)         throw new tom.library.sl.VisitFailure();     }}}return _visit_InstructionList(tom__arg,introspector);}}  
 
 
 
-  private static   tom.library.sl.Strategy  tom_append_list_Sequence( tom.library.sl.Strategy  l1,  tom.library.sl.Strategy  l2) {
-    if(( l1 == null )) {
-      return l2;
-    } else if(( l2 == null )) {
-      return l1;
-    } else if(( l1 instanceof tom.library.sl.Sequence )) {
-      if(( ( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Sequence.THEN) ) == null )) {
-        return  tom.library.sl.Sequence.make(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Sequence.FIRST) ),l2) ;
-      } else {
-        return  tom.library.sl.Sequence.make(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Sequence.FIRST) ),tom_append_list_Sequence(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Sequence.THEN) ),l2)) ;
-      }
-    } else {
-      return  tom.library.sl.Sequence.make(l1,l2) ;
+
+
+
+  /**
+   * Returns the dot node id of the given InstructionList.
+   * @param ins the instruction.
+   * @return the id.
+   */
+  private static String getDotId(InstructionList ins) {
+    return ("insid" + ins.hashCode()).replace('-', 'm');
+  }
+
+  /**
+   * Returns the dot node id of the given TryCatchBlock.
+   * @param bl the try/catch block.
+   * @return the id.
+   */
+  private static String getDotId(TryCatchBlock bl) {
+    return ("blockid" + bl.hashCode()).replace('-', 'm');
+  }
+
+  /**
+   * Returns the dot node id of the given LocalVariable.
+   * @param the local variable.
+   * @return the id.
+   */
+  private static String getDotId(LocalVariable var) {
+    return ("varid" + var.hashCode()).replace('-', 'm');
+  }
+
+  /**
+   * Cleans the given string to prevent dot compilation problems.
+   * (ex: replace the character '"' with the string "\"").
+   * @param s the string to be cleaned.
+   * @return the cleaned string.
+   */
+  private static String clean(String s) {
+    return s.replaceAll("\\\"", "\\\\\\\"");
+  }
+
+  /**
+   * Prints the current instruction node with a suitable label.
+   * @param out the writer to be used for the dot output.
+   */
+  public static class PrintDotNode extends tom.library.sl.AbstractStrategyBasic {private java.io.Writer out;public PrintDotNode(java.io.Writer out) {super(( new tom.library.sl.Identity() ));this.out=out;}public java.io.Writer getout() {return out;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];stratChilds[0] = super.getChildAt(0);return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() {return 1;}public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}@SuppressWarnings("unchecked")public <T> T visitLight(T v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.library.adt.bytecode.types.InstructionList) ) {return ((T)visit_InstructionList((( tom.library.adt.bytecode.types.InstructionList )v),introspector));}if (!(( null  == environment))) {return ((T)any.visit(environment,introspector));} else {return any.visitLight(v,introspector);}}@SuppressWarnings("unchecked")public  tom.library.adt.bytecode.types.InstructionList  _visit_InstructionList( tom.library.adt.bytecode.types.InstructionList  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!(( null  == environment))) {return (( tom.library.adt.bytecode.types.InstructionList )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);}}@SuppressWarnings("unchecked")public  tom.library.adt.bytecode.types.InstructionList  visit_InstructionList( tom.library.adt.bytecode.types.InstructionList  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if ( (((Object)tom__arg) instanceof tom.library.adt.bytecode.types.InstructionList) ) {if ( ((( tom.library.adt.bytecode.types.InstructionList )((Object)tom__arg)) instanceof tom.library.adt.bytecode.types.InstructionList) ) {if ( ((( tom.library.adt.bytecode.types.InstructionList )(( tom.library.adt.bytecode.types.InstructionList )((Object)tom__arg))) instanceof tom.library.adt.bytecode.types.instructionlist.ConsInstructionList) ) {
+
+
+        String id = getDotId((( tom.library.adt.bytecode.types.InstructionList )((Object)tom__arg)));
+        printDotInstruction( (( tom.library.adt.bytecode.types.InstructionList )((Object)tom__arg)).getHeadInstructionList() , id, out);
+      }}}}}return _visit_InstructionList(tom__arg,introspector);}}private static  tom.library.sl.Strategy  tom_make_PrintDotNode(java.io.Writer t0) { return new PrintDotNode(t0);}
+
+
+
+  /**
+   * Prints the given instruction with a suitable label and id.
+   * @param ins the instruction to be printed.
+   * @param id the id of the dot node.
+   * @param out the writer to be used for the dot output.
+   */
+  private static void printDotInstruction(Instruction ins, String id, Writer out) {
+    try {
+      {{if ( (((Object)ins) instanceof tom.library.adt.bytecode.types.Instruction) ) {boolean tomMatch700_6= false ; tom.library.adt.bytecode.types.Instruction  tomMatch700_5= null ; tom.library.adt.bytecode.types.Instruction  tomMatch700_3= null ; tom.library.adt.bytecode.types.Instruction  tomMatch700_4= null ; int  tomMatch700_1= 0 ;if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)ins)) instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)ins))) instanceof tom.library.adt.bytecode.types.instruction.Bipush) ) {{tomMatch700_6= true ;tomMatch700_3=(( tom.library.adt.bytecode.types.Instruction )((Object)ins));tomMatch700_1= tomMatch700_3.getoperand() ;}} else {if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)ins)) instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)ins))) instanceof tom.library.adt.bytecode.types.instruction.Sipush) ) {{tomMatch700_6= true ;tomMatch700_4=(( tom.library.adt.bytecode.types.Instruction )((Object)ins));tomMatch700_1= tomMatch700_4.getoperand() ;}} else {if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)ins)) instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)ins))) instanceof tom.library.adt.bytecode.types.instruction.Newarray) ) {{tomMatch700_6= true ;tomMatch700_5=(( tom.library.adt.bytecode.types.Instruction )((Object)ins));tomMatch700_1= tomMatch700_5.getoperand() ;}}}}}}}if (tomMatch700_6) {
+
+
+          out.write("\n              "+id+" [label=\""+ins.symbolName()+"\\noperand : "+Integer.toString(tomMatch700_1)+"\"];\n              "
+
+);
+          return;
+        }}}{if ( (((Object)ins) instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)ins)) instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)ins))) instanceof tom.library.adt.bytecode.types.instruction.Multianewarray) ) {
+
+
+          out.write("\n              "+id+" [label=\""+ins.symbolName()+"\\ntypeDesc : "+ (( tom.library.adt.bytecode.types.Instruction )((Object)ins)).gettypeDesc() +"\\ndims : "+Integer.toString( (( tom.library.adt.bytecode.types.Instruction )((Object)ins)).getdims() )+"\"];\n              "
+
+);
+          return;
+        }}}}{if ( (((Object)ins) instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)ins)) instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)ins))) instanceof tom.library.adt.bytecode.types.instruction.Ldc) ) {
+
+
+          out.write("\n              "+id+" [label=\""+ins.symbolName()+"\\ncst : "+clean( (( tom.library.adt.bytecode.types.Instruction )((Object)ins)).getcst() .toString())+"\"];\n              "
+
+);
+          return;
+        }}}}{if ( (((Object)ins) instanceof tom.library.adt.bytecode.types.Instruction) ) {boolean tomMatch700_30= false ; tom.library.adt.bytecode.types.Instruction  tomMatch700_26= null ; tom.library.adt.bytecode.types.Instruction  tomMatch700_28= null ; tom.library.adt.bytecode.types.Instruction  tomMatch700_24= null ; tom.library.adt.bytecode.types.Instruction  tomMatch700_29= null ; tom.library.adt.bytecode.types.Instruction  tomMatch700_19= null ; tom.library.adt.bytecode.types.Instruction  tomMatch700_21= null ; tom.library.adt.bytecode.types.Instruction  tomMatch700_25= null ; tom.library.adt.bytecode.types.Instruction  tomMatch700_23= null ; tom.library.adt.bytecode.types.Instruction  tomMatch700_27= null ; int  tomMatch700_17= 0 ; tom.library.adt.bytecode.types.Instruction  tomMatch700_20= null ; tom.library.adt.bytecode.types.Instruction  tomMatch700_22= null ;if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)ins)) instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)ins))) instanceof tom.library.adt.bytecode.types.instruction.Iload) ) {{tomMatch700_30= true ;tomMatch700_19=(( tom.library.adt.bytecode.types.Instruction )((Object)ins));tomMatch700_17= tomMatch700_19.getvar() ;}} else {if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)ins)) instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)ins))) instanceof tom.library.adt.bytecode.types.instruction.Lload) ) {{tomMatch700_30= true ;tomMatch700_20=(( tom.library.adt.bytecode.types.Instruction )((Object)ins));tomMatch700_17= tomMatch700_20.getvar() ;}} else {if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)ins)) instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)ins))) instanceof tom.library.adt.bytecode.types.instruction.Fload) ) {{tomMatch700_30= true ;tomMatch700_21=(( tom.library.adt.bytecode.types.Instruction )((Object)ins));tomMatch700_17= tomMatch700_21.getvar() ;}} else {if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)ins)) instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)ins))) instanceof tom.library.adt.bytecode.types.instruction.Dload) ) {{tomMatch700_30= true ;tomMatch700_22=(( tom.library.adt.bytecode.types.Instruction )((Object)ins));tomMatch700_17= tomMatch700_22.getvar() ;}} else {if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)ins)) instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)ins))) instanceof tom.library.adt.bytecode.types.instruction.Aload) ) {{tomMatch700_30= true ;tomMatch700_23=(( tom.library.adt.bytecode.types.Instruction )((Object)ins));tomMatch700_17= tomMatch700_23.getvar() ;}} else {if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)ins)) instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)ins))) instanceof tom.library.adt.bytecode.types.instruction.Istore) ) {{tomMatch700_30= true ;tomMatch700_24=(( tom.library.adt.bytecode.types.Instruction )((Object)ins));tomMatch700_17= tomMatch700_24.getvar() ;}} else {if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)ins)) instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)ins))) instanceof tom.library.adt.bytecode.types.instruction.Lstore) ) {{tomMatch700_30= true ;tomMatch700_25=(( tom.library.adt.bytecode.types.Instruction )((Object)ins));tomMatch700_17= tomMatch700_25.getvar() ;}} else {if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)ins)) instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)ins))) instanceof tom.library.adt.bytecode.types.instruction.Fstore) ) {{tomMatch700_30= true ;tomMatch700_26=(( tom.library.adt.bytecode.types.Instruction )((Object)ins));tomMatch700_17= tomMatch700_26.getvar() ;}} else {if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)ins)) instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)ins))) instanceof tom.library.adt.bytecode.types.instruction.Dstore) ) {{tomMatch700_30= true ;tomMatch700_27=(( tom.library.adt.bytecode.types.Instruction )((Object)ins));tomMatch700_17= tomMatch700_27.getvar() ;}} else {if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)ins)) instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)ins))) instanceof tom.library.adt.bytecode.types.instruction.Astore) ) {{tomMatch700_30= true ;tomMatch700_28=(( tom.library.adt.bytecode.types.Instruction )((Object)ins));tomMatch700_17= tomMatch700_28.getvar() ;}} else {if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)ins)) instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)ins))) instanceof tom.library.adt.bytecode.types.instruction.Ret) ) {{tomMatch700_30= true ;tomMatch700_29=(( tom.library.adt.bytecode.types.Instruction )((Object)ins));tomMatch700_17= tomMatch700_29.getvar() ;}}}}}}}}}}}}}}}}}}}}}}}if (tomMatch700_30) {
+
+
+
+
+          out.write("\n              "+id+" [label=\""+ins.symbolName()+"\\nvar : "+Integer.toString(tomMatch700_17)+"\"];\n              "
+
+);
+          return;
+        }}}{if ( (((Object)ins) instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)ins)) instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)ins))) instanceof tom.library.adt.bytecode.types.instruction.Iinc) ) {
+
+
+          out.write("\n              "+id+" [label=\""+ins.symbolName()+"\\nincr : "+Integer.toString( (( tom.library.adt.bytecode.types.Instruction )((Object)ins)).getincr() )+"\\nvar : "+Integer.toString( (( tom.library.adt.bytecode.types.Instruction )((Object)ins)).getvar() )+"\"];\n              "
+
+);
+          return;
+        }}}}{if ( (((Object)ins) instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)ins)) instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)ins))) instanceof tom.library.adt.bytecode.types.instruction.Tableswitch) ) {
+
+
+          out.write("\n              "+id+" [label=\""+ins.symbolName()+"\\nmin : "+ (( tom.library.adt.bytecode.types.Instruction )((Object)ins)).getmin() +"\\nmax : "+ (( tom.library.adt.bytecode.types.Instruction )((Object)ins)).getmax() +"\"];\n              "
+
+);
+          return;
+        }}}}{if ( (((Object)ins) instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)ins)) instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)ins))) instanceof tom.library.adt.bytecode.types.instruction.Lookupswitch) ) { tom.library.adt.bytecode.types.IntList  tom_keys= (( tom.library.adt.bytecode.types.Instruction )((Object)ins)).getkeys() ;
+
+
+          out.write("\n              "+id+" [label=\""+ins.symbolName()+"\\nkeys : "
+);
+              IntList keys = tom_keys;
+              {{if ( (((Object)tom_keys) instanceof tom.library.adt.bytecode.types.IntList) ) {if ( (((( tom.library.adt.bytecode.types.IntList )(( tom.library.adt.bytecode.types.IntList )((Object)tom_keys))) instanceof tom.library.adt.bytecode.types.intlist.ConsIntList) || ((( tom.library.adt.bytecode.types.IntList )(( tom.library.adt.bytecode.types.IntList )((Object)tom_keys))) instanceof tom.library.adt.bytecode.types.intlist.EmptyIntList)) ) { tom.library.adt.bytecode.types.IntList  tomMatch701__end__4=(( tom.library.adt.bytecode.types.IntList )((Object)tom_keys));do {{if (!( tomMatch701__end__4.isEmptyIntList() )) { tom.library.adt.bytecode.types.IntList  tomMatch701_5= tomMatch701__end__4.getTailIntList() ; tom.library.adt.bytecode.types.IntList  tomMatch701__end__8=tomMatch701_5;do {{if (!( tomMatch701__end__8.isEmptyIntList() )) {if (  tomMatch701__end__8.getTailIntList() .isEmptyIntList() ) {
+
+                  out.write(""+Integer.toString( tomMatch701__end__4.getHeadIntList() )+", ");
+                }}if ( tomMatch701__end__8.isEmptyIntList() ) {tomMatch701__end__8=tomMatch701_5;} else {tomMatch701__end__8= tomMatch701__end__8.getTailIntList() ;}}} while(!( (tomMatch701__end__8==tomMatch701_5) ));}if ( tomMatch701__end__4.isEmptyIntList() ) {tomMatch701__end__4=(( tom.library.adt.bytecode.types.IntList )((Object)tom_keys));} else {tomMatch701__end__4= tomMatch701__end__4.getTailIntList() ;}}} while(!( (tomMatch701__end__4==(( tom.library.adt.bytecode.types.IntList )((Object)tom_keys))) ));}}}{if ( (((Object)tom_keys) instanceof tom.library.adt.bytecode.types.IntList) ) {if ( (((( tom.library.adt.bytecode.types.IntList )(( tom.library.adt.bytecode.types.IntList )((Object)tom_keys))) instanceof tom.library.adt.bytecode.types.intlist.ConsIntList) || ((( tom.library.adt.bytecode.types.IntList )(( tom.library.adt.bytecode.types.IntList )((Object)tom_keys))) instanceof tom.library.adt.bytecode.types.intlist.EmptyIntList)) ) { tom.library.adt.bytecode.types.IntList  tomMatch701__end__14=(( tom.library.adt.bytecode.types.IntList )((Object)tom_keys));do {{if (!( tomMatch701__end__14.isEmptyIntList() )) {if (  tomMatch701__end__14.getTailIntList() .isEmptyIntList() ) {
+
+                  out.write(Integer.toString( tomMatch701__end__14.getHeadIntList() ));
+                }}if ( tomMatch701__end__14.isEmptyIntList() ) {tomMatch701__end__14=(( tom.library.adt.bytecode.types.IntList )((Object)tom_keys));} else {tomMatch701__end__14= tomMatch701__end__14.getTailIntList() ;}}} while(!( (tomMatch701__end__14==(( tom.library.adt.bytecode.types.IntList )((Object)tom_keys))) ));}}}}
+
+              out.write("\"];");
+              return;
+        }}}}{if ( (((Object)ins) instanceof tom.library.adt.bytecode.types.Instruction) ) {boolean tomMatch700_54= false ; tom.library.adt.bytecode.types.Instruction  tomMatch700_52= null ; String  tomMatch700_46= "" ; tom.library.adt.bytecode.types.Instruction  tomMatch700_51= null ; String  tomMatch700_47= "" ; tom.library.adt.bytecode.types.Instruction  tomMatch700_50= null ; tom.library.adt.bytecode.types.FieldDescriptor  tomMatch700_48= null ; tom.library.adt.bytecode.types.Instruction  tomMatch700_53= null ;if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)ins)) instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)ins))) instanceof tom.library.adt.bytecode.types.instruction.Getstatic) ) {{tomMatch700_54= true ;tomMatch700_50=(( tom.library.adt.bytecode.types.Instruction )((Object)ins));tomMatch700_46= tomMatch700_50.getowner() ;tomMatch700_47= tomMatch700_50.getname() ;tomMatch700_48= tomMatch700_50.getfieldDesc() ;}} else {if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)ins)) instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)ins))) instanceof tom.library.adt.bytecode.types.instruction.Putstatic) ) {{tomMatch700_54= true ;tomMatch700_51=(( tom.library.adt.bytecode.types.Instruction )((Object)ins));tomMatch700_46= tomMatch700_51.getowner() ;tomMatch700_47= tomMatch700_51.getname() ;tomMatch700_48= tomMatch700_51.getfieldDesc() ;}} else {if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)ins)) instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)ins))) instanceof tom.library.adt.bytecode.types.instruction.Getfield) ) {{tomMatch700_54= true ;tomMatch700_52=(( tom.library.adt.bytecode.types.Instruction )((Object)ins));tomMatch700_46= tomMatch700_52.getowner() ;tomMatch700_47= tomMatch700_52.getname() ;tomMatch700_48= tomMatch700_52.getfieldDesc() ;}} else {if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)ins)) instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)ins))) instanceof tom.library.adt.bytecode.types.instruction.Putfield) ) {{tomMatch700_54= true ;tomMatch700_53=(( tom.library.adt.bytecode.types.Instruction )((Object)ins));tomMatch700_46= tomMatch700_53.getowner() ;tomMatch700_47= tomMatch700_53.getname() ;tomMatch700_48= tomMatch700_53.getfieldDesc() ;}}}}}}}}}if (tomMatch700_54) {
+
+
+          out.write("\n              "+id+" [label=\""+ins.symbolName()+"\\nowner : "+tomMatch700_46+"\\nname : "+tomMatch700_47+"\\ndescriptor : "+ToolBox.buildDescriptor(tomMatch700_48)+"\"];\n              "
+
+);
+          return;
+        }}}{if ( (((Object)ins) instanceof tom.library.adt.bytecode.types.Instruction) ) {boolean tomMatch700_64= false ; String  tomMatch700_56= "" ; tom.library.adt.bytecode.types.Instruction  tomMatch700_63= null ; tom.library.adt.bytecode.types.Instruction  tomMatch700_60= null ; String  tomMatch700_57= "" ; tom.library.adt.bytecode.types.Instruction  tomMatch700_62= null ; tom.library.adt.bytecode.types.MethodDescriptor  tomMatch700_58= null ; tom.library.adt.bytecode.types.Instruction  tomMatch700_61= null ;if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)ins)) instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)ins))) instanceof tom.library.adt.bytecode.types.instruction.Invokevirtual) ) {{tomMatch700_64= true ;tomMatch700_60=(( tom.library.adt.bytecode.types.Instruction )((Object)ins));tomMatch700_56= tomMatch700_60.getowner() ;tomMatch700_57= tomMatch700_60.getname() ;tomMatch700_58= tomMatch700_60.getmethodDesc() ;}} else {if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)ins)) instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)ins))) instanceof tom.library.adt.bytecode.types.instruction.Invokespecial) ) {{tomMatch700_64= true ;tomMatch700_61=(( tom.library.adt.bytecode.types.Instruction )((Object)ins));tomMatch700_56= tomMatch700_61.getowner() ;tomMatch700_57= tomMatch700_61.getname() ;tomMatch700_58= tomMatch700_61.getmethodDesc() ;}} else {if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)ins)) instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)ins))) instanceof tom.library.adt.bytecode.types.instruction.Invokestatic) ) {{tomMatch700_64= true ;tomMatch700_62=(( tom.library.adt.bytecode.types.Instruction )((Object)ins));tomMatch700_56= tomMatch700_62.getowner() ;tomMatch700_57= tomMatch700_62.getname() ;tomMatch700_58= tomMatch700_62.getmethodDesc() ;}} else {if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)ins)) instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)ins))) instanceof tom.library.adt.bytecode.types.instruction.Invokeinterface) ) {{tomMatch700_64= true ;tomMatch700_63=(( tom.library.adt.bytecode.types.Instruction )((Object)ins));tomMatch700_56= tomMatch700_63.getowner() ;tomMatch700_57= tomMatch700_63.getname() ;tomMatch700_58= tomMatch700_63.getmethodDesc() ;}}}}}}}}}if (tomMatch700_64) {
+
+
+          out.write("\n              "+id+" [label=\""+ins.symbolName()+"\\nowner : "+tomMatch700_56+"\\nname : "+tomMatch700_57+"\\ndescriptor : "+ToolBox.buildDescriptor(tomMatch700_58)+"\"];\n              "
+
+);
+          return;
+        }}}{if ( (((Object)ins) instanceof tom.library.adt.bytecode.types.Instruction) ) {boolean tomMatch700_72= false ; tom.library.adt.bytecode.types.Instruction  tomMatch700_70= null ; tom.library.adt.bytecode.types.Instruction  tomMatch700_68= null ; tom.library.adt.bytecode.types.Instruction  tomMatch700_69= null ; String  tomMatch700_66= "" ; tom.library.adt.bytecode.types.Instruction  tomMatch700_71= null ;if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)ins)) instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)ins))) instanceof tom.library.adt.bytecode.types.instruction.New) ) {{tomMatch700_72= true ;tomMatch700_68=(( tom.library.adt.bytecode.types.Instruction )((Object)ins));tomMatch700_66= tomMatch700_68.gettypeDesc() ;}} else {if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)ins)) instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)ins))) instanceof tom.library.adt.bytecode.types.instruction.Anewarray) ) {{tomMatch700_72= true ;tomMatch700_69=(( tom.library.adt.bytecode.types.Instruction )((Object)ins));tomMatch700_66= tomMatch700_69.gettypeDesc() ;}} else {if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)ins)) instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)ins))) instanceof tom.library.adt.bytecode.types.instruction.Checkcast) ) {{tomMatch700_72= true ;tomMatch700_70=(( tom.library.adt.bytecode.types.Instruction )((Object)ins));tomMatch700_66= tomMatch700_70.gettypeDesc() ;}} else {if ( ((( tom.library.adt.bytecode.types.Instruction )((Object)ins)) instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )(( tom.library.adt.bytecode.types.Instruction )((Object)ins))) instanceof tom.library.adt.bytecode.types.instruction.Instanceof) ) {{tomMatch700_72= true ;tomMatch700_71=(( tom.library.adt.bytecode.types.Instruction )((Object)ins));tomMatch700_66= tomMatch700_71.gettypeDesc() ;}}}}}}}}}if (tomMatch700_72) {
+
+
+          out.write("\n              "+id+" [label=\""+ins.symbolName()+"\\ndescriptor : "+tomMatch700_66+"\"];\n              "
+
+);
+          return;
+        }}}{if ( (((Object)ins) instanceof tom.library.adt.bytecode.types.Instruction) ) {
+
+
+          out.write("\n              "+id+" [label=\""+ins.symbolName()+"\"];\n              "
+
+);
+        }}}
+
+    } catch(IOException e) {
+      e.printStackTrace();
     }
   }
-  private static   tom.library.sl.Strategy  tom_get_slice_Sequence( tom.library.sl.Strategy  begin,  tom.library.sl.Strategy  end, tom.library.sl.Strategy  tail) {
-    if( (begin.equals(end)) ) {
-      return tail;
-    } else if( (end.equals(tail))  && (( end == null ) ||  (end.equals( null )) )) {
-      /* code to avoid a call to make, and thus to avoid looping during list-matching */
-      return begin;
-    }
-    return  tom.library.sl.Sequence.make(((( begin instanceof tom.library.sl.Sequence ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.Sequence.FIRST) ):begin),( tom.library.sl.Strategy )tom_get_slice_Sequence(((( begin instanceof tom.library.sl.Sequence ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.Sequence.THEN) ): null ),end,tail)) ;
+
+  /**
+   * Prints a link from the `parent' instruction to the current node instruction.
+   * @param out the writer to be used for the dot output.
+   */
+  public static class PrintDotLink extends tom.library.sl.AbstractStrategyBasic {private java.io.Writer out;private  InsWrapper  parent;public PrintDotLink(java.io.Writer out,  InsWrapper  parent) {super(( new tom.library.sl.Identity() ));this.out=out;this.parent=parent;}public java.io.Writer getout() {return out;}public  InsWrapper  getparent() {return parent;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];stratChilds[0] = super.getChildAt(0);return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() {return 1;}public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}@SuppressWarnings("unchecked")public <T> T visitLight(T v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.library.adt.bytecode.types.InstructionList) ) {return ((T)visit_InstructionList((( tom.library.adt.bytecode.types.InstructionList )v),introspector));}if (!(( null  == environment))) {return ((T)any.visit(environment,introspector));} else {return any.visitLight(v,introspector);}}@SuppressWarnings("unchecked")public  tom.library.adt.bytecode.types.InstructionList  _visit_InstructionList( tom.library.adt.bytecode.types.InstructionList  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!(( null  == environment))) {return (( tom.library.adt.bytecode.types.InstructionList )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);}}@SuppressWarnings("unchecked")public  tom.library.adt.bytecode.types.InstructionList  visit_InstructionList( tom.library.adt.bytecode.types.InstructionList  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if ( (((Object)tom__arg) instanceof tom.library.adt.bytecode.types.InstructionList) ) {if ( ((( tom.library.adt.bytecode.types.InstructionList )((Object)tom__arg)) instanceof tom.library.adt.bytecode.types.InstructionList) ) {if ( ((( tom.library.adt.bytecode.types.InstructionList )(( tom.library.adt.bytecode.types.InstructionList )((Object)tom__arg))) instanceof tom.library.adt.bytecode.types.instructionlist.ConsInstructionList) ) {
+
+
+        try {
+          out.write(""+getDotId(parent.ins)+" -> "+getDotId((( tom.library.adt.bytecode.types.InstructionList )((Object)tom__arg)))+";\n              "
+);
+        } catch(IOException e) {
+          e.printStackTrace();
+        }
+      }}}}}return _visit_InstructionList(tom__arg,introspector);}}private static  tom.library.sl.Strategy  tom_make_PrintDotLink(java.io.Writer t0,  InsWrapper  t1) { return new PrintDotLink(t0,t1);}
+
+
+
+  /**
+   * Prints all the try/catch/finally informations of the given block list.
+   * @param list the try/catch/finally blocks to be printed.
+   * @param labelMap the label map (see the BuildLabelMap strategy).
+   * @param out the writer to be used for the dot output.
+   * @param inst the global list of instructions.
+   */
+  private static void printTryCatchBlocks(TryCatchBlockList list, Map labelMap, Writer out,InstructionList inst) throws VisitFailure{
+    {{if ( (((Object)list) instanceof tom.library.adt.bytecode.types.TryCatchBlockList) ) {if ( (((( tom.library.adt.bytecode.types.TryCatchBlockList )(( tom.library.adt.bytecode.types.TryCatchBlockList )((Object)list))) instanceof tom.library.adt.bytecode.types.trycatchblocklist.ConsTryCatchBlockList) || ((( tom.library.adt.bytecode.types.TryCatchBlockList )(( tom.library.adt.bytecode.types.TryCatchBlockList )((Object)list))) instanceof tom.library.adt.bytecode.types.trycatchblocklist.EmptyTryCatchBlockList)) ) { tom.library.adt.bytecode.types.TryCatchBlockList  tomMatch703__end__4=(( tom.library.adt.bytecode.types.TryCatchBlockList )((Object)list));do {{if (!( tomMatch703__end__4.isEmptyTryCatchBlockList() )) {
+
+        try {
+          TryCatchBlock block =  tomMatch703__end__4.getHeadTryCatchBlockList() ;
+          Handler handler = block.gethandler();
+          String id = getDotId(block);
+
+          {{if ( (((Object)handler) instanceof tom.library.adt.bytecode.types.Handler) ) {if ( ((( tom.library.adt.bytecode.types.Handler )((Object)handler)) instanceof tom.library.adt.bytecode.types.Handler) ) {if ( ((( tom.library.adt.bytecode.types.Handler )(( tom.library.adt.bytecode.types.Handler )((Object)handler))) instanceof tom.library.adt.bytecode.types.handler.CatchHandler) ) {
+
+              Position labelPosition = (Position) labelMap.get( (( tom.library.adt.bytecode.types.Handler )((Object)handler)).gethandler() );
+              InstructionList labelInst = (InstructionList) labelPosition.getSubterm().visit(inst);
+              out.write("\n                  "+id+" [label=\"Catch\\ntype : "+ (( tom.library.adt.bytecode.types.Handler )((Object)handler)).gettype() +"\" shape=box];\n                  "+id+" -> "+getDotId(labelInst)+" [label=\"handler\" style=dotted];\n                  "
+
+
+);
+            }}}}{if ( (((Object)handler) instanceof tom.library.adt.bytecode.types.Handler) ) {if ( ((( tom.library.adt.bytecode.types.Handler )((Object)handler)) instanceof tom.library.adt.bytecode.types.Handler) ) {if ( ((( tom.library.adt.bytecode.types.Handler )(( tom.library.adt.bytecode.types.Handler )((Object)handler))) instanceof tom.library.adt.bytecode.types.handler.FinallyHandler) ) {
+
+
+              Position labelPosition = (Position) labelMap.get( (( tom.library.adt.bytecode.types.Handler )((Object)handler)).gethandler() );
+              InstructionList labelInst = (InstructionList) labelPosition.getSubterm().visit(inst);
+              out.write("\n                  "+id+" [label=\"Finally\" shape=box];\n                  "+id+" -> "+getDotId(labelInst)+" [label=\"handler\" style=dotted];\n                  "
+
+
+);
+            }}}}}
+
+
+          Position startPosition = (Position) labelMap.get(block.getstart());
+          InstructionList startInst = (InstructionList) startPosition.getSubterm().visit(inst);
+          Position endPosition = (Position) labelMap.get(block.getend());
+          InstructionList lastInst = (InstructionList) endPosition.getSubterm().visit(inst);
+          out.write("\n              "+id+" -> "+getDotId(startInst)+" [label=\"start\" style=dotted];\n              "+id+" -> "+getDotId(lastInst)+" [label=\"end\" style=dotted];\n              "
+
+
+);
+        } catch(IOException e) {
+          e.printStackTrace();
+        }
+      }if ( tomMatch703__end__4.isEmptyTryCatchBlockList() ) {tomMatch703__end__4=(( tom.library.adt.bytecode.types.TryCatchBlockList )((Object)list));} else {tomMatch703__end__4= tomMatch703__end__4.getTailTryCatchBlockList() ;}}} while(!( (tomMatch703__end__4==(( tom.library.adt.bytecode.types.TryCatchBlockList )((Object)list))) ));}}}}
+
   }
+
+  /**
+   * Prints all the local variables informations.
+   * @param list the local variables list to be printed.
+   * @param labelMap the label map (see the BuildLabelMap strategy).
+   * @param out the writer to be used for the dot output.
+   * @param inst the global list of instructions.
+   */
+  private static void printLocalVariables(LocalVariableList list, Map labelMap, Writer out, InstructionList inst) throws VisitFailure {
+    {{if ( (((Object)list) instanceof tom.library.adt.bytecode.types.LocalVariableList) ) {if ( (((( tom.library.adt.bytecode.types.LocalVariableList )(( tom.library.adt.bytecode.types.LocalVariableList )((Object)list))) instanceof tom.library.adt.bytecode.types.localvariablelist.ConsLocalVariableList) || ((( tom.library.adt.bytecode.types.LocalVariableList )(( tom.library.adt.bytecode.types.LocalVariableList )((Object)list))) instanceof tom.library.adt.bytecode.types.localvariablelist.EmptyLocalVariableList)) ) { tom.library.adt.bytecode.types.LocalVariableList  tomMatch705__end__4=(( tom.library.adt.bytecode.types.LocalVariableList )((Object)list));do {{if (!( tomMatch705__end__4.isEmptyLocalVariableList() )) {
+
+        try {
+          LocalVariable var =  tomMatch705__end__4.getHeadLocalVariableList() ;
+          String id = getDotId(var);
+          Position startPosition = (Position) labelMap.get(var.getstart());
+          InstructionList startInst = (InstructionList) startPosition.getSubterm().visit(inst);
+          Position endPosition = (Position) labelMap.get(var.getend());
+          InstructionList lastInst = (InstructionList) endPosition.getSubterm().visit(inst);
+
+          out.write("\n              "+id+" [label=\"var : "+var.getname()+"\\ndescriptor : "+var.gettypeDesc()+"\\nindex : "+Integer.toString(var.getindex())+"\" shape=box];\n              "+id+" -> "+getDotId(startInst)+" [label=\"start\" style=dotted];\n              "+id+" -> "+getDotId(lastInst)+" [label=\"end\" style=dotted];\n              "
+
+
+
+);
+        } catch(IOException e) {
+          e.printStackTrace();
+        }
+      }if ( tomMatch705__end__4.isEmptyLocalVariableList() ) {tomMatch705__end__4=(( tom.library.adt.bytecode.types.LocalVariableList )((Object)list));} else {tomMatch705__end__4= tomMatch705__end__4.getTailLocalVariableList() ;}}} while(!( (tomMatch705__end__4==(( tom.library.adt.bytecode.types.LocalVariableList )((Object)list))) ));}}}}
+
+  }
+
+  /**
+   * Used to pass the stored instruction as a strategy parameter.
+   */
+  private static class InsWrapper { public InstructionList ins; }
   
-  private static   tom.library.sl.Strategy  tom_append_list_Choice( tom.library.sl.Strategy  l1,  tom.library.sl.Strategy  l2) {
-    if(( l1 ==null )) {
-      return l2;
-    } else if(( l2 ==null )) {
-      return l1;
-    } else if(( l1 instanceof tom.library.sl.Choice )) {
-      if(( ( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Choice.THEN) ) ==null )) {
-        return  tom.library.sl.Choice.make(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Choice.FIRST) ),l2) ;
-      } else {
-        return  tom.library.sl.Choice.make(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Choice.FIRST) ),tom_append_list_Choice(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Choice.THEN) ),l2)) ;
-      }
-    } else {
-      return  tom.library.sl.Choice.make(l1,l2) ;
-    }
-  }
-  private static   tom.library.sl.Strategy  tom_get_slice_Choice( tom.library.sl.Strategy  begin,  tom.library.sl.Strategy  end, tom.library.sl.Strategy  tail) {
-    if( (begin.equals(end)) ) {
-      return tail;
-    } else if( (end.equals(tail))  && (( end ==null ) ||  (end.equals( null )) )) {
-      /* code to avoid a call to make, and thus to avoid looping during list-matching */
-      return begin;
-    }
-    return  tom.library.sl.Choice.make(((( begin instanceof tom.library.sl.Choice ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.Choice.FIRST) ):begin),( tom.library.sl.Strategy )tom_get_slice_Choice(((( begin instanceof tom.library.sl.Choice ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.Choice.THEN) ): null ),end,tail)) ;
-  }
-  
-  private static   tom.library.sl.Strategy  tom_append_list_SequenceId( tom.library.sl.Strategy  l1,  tom.library.sl.Strategy  l2) {
-    if(( l1 == null )) {
-      return l2;
-    } else if(( l2 == null )) {
-      return l1;
-    } else if(( l1 instanceof tom.library.sl.SequenceId )) {
-      if(( ( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.SequenceId.THEN) ) == null )) {
-        return  tom.library.sl.SequenceId.make(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.SequenceId.FIRST) ),l2) ;
-      } else {
-        return  tom.library.sl.SequenceId.make(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.SequenceId.FIRST) ),tom_append_list_SequenceId(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.SequenceId.THEN) ),l2)) ;
-      }
-    } else {
-      return  tom.library.sl.SequenceId.make(l1,l2) ;
-    }
-  }
-  private static   tom.library.sl.Strategy  tom_get_slice_SequenceId( tom.library.sl.Strategy  begin,  tom.library.sl.Strategy  end, tom.library.sl.Strategy  tail) {
-    if( (begin.equals(end)) ) {
-      return tail;
-    } else if( (end.equals(tail))  && (( end == null ) ||  (end.equals( null )) )) {
-      /* code to avoid a call to make, and thus to avoid looping during list-matching */
-      return begin;
-    }
-    return  tom.library.sl.SequenceId.make(((( begin instanceof tom.library.sl.SequenceId ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.SequenceId.FIRST) ):begin),( tom.library.sl.Strategy )tom_get_slice_SequenceId(((( begin instanceof tom.library.sl.SequenceId ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.SequenceId.THEN) ): null ),end,tail)) ;
-  }
-  
-  private static   tom.library.sl.Strategy  tom_append_list_ChoiceId( tom.library.sl.Strategy  l1,  tom.library.sl.Strategy  l2) {
-    if(( l1 ==null )) {
-      return l2;
-    } else if(( l2 ==null )) {
-      return l1;
-    } else if(( l1 instanceof tom.library.sl.ChoiceId )) {
-      if(( ( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.ChoiceId.THEN) ) ==null )) {
-        return  tom.library.sl.ChoiceId.make(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.ChoiceId.FIRST) ),l2) ;
-      } else {
-        return  tom.library.sl.ChoiceId.make(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.ChoiceId.FIRST) ),tom_append_list_ChoiceId(( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.ChoiceId.THEN) ),l2)) ;
-      }
-    } else {
-      return  tom.library.sl.ChoiceId.make(l1,l2) ;
-    }
-  }
-  private static   tom.library.sl.Strategy  tom_get_slice_ChoiceId( tom.library.sl.Strategy  begin,  tom.library.sl.Strategy  end, tom.library.sl.Strategy  tail) {
-    if( (begin.equals(end)) ) {
-      return tail;
-    } else if( (end.equals(tail))  && (( end ==null ) ||  (end.equals( null )) )) {
-      /* code to avoid a call to make, and thus to avoid looping during list-matching */
-      return begin;
-    }
-    return  tom.library.sl.ChoiceId.make(((( begin instanceof tom.library.sl.ChoiceId ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.ChoiceId.FIRST) ):begin),( tom.library.sl.Strategy )tom_get_slice_ChoiceId(((( begin instanceof tom.library.sl.ChoiceId ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.ChoiceId.THEN) ): null ),end,tail)) ;
-  }
-  private static  tom.library.sl.Strategy  tom_make_AUCtl( tom.library.sl.Strategy  s1,  tom.library.sl.Strategy  s2) { 
-return ( 
-( new tom.library.sl.Mu(( new tom.library.sl.MuVar("x") ), tom.library.sl.Choice.make(s2, tom.library.sl.Choice.make( tom.library.sl.Sequence.make( tom.library.sl.Sequence.make(s1, tom.library.sl.Sequence.make(( new tom.library.sl.All(( new tom.library.sl.MuVar("x") )) ), null ) ) , tom.library.sl.Sequence.make(( new tom.library.sl.One(( new tom.library.sl.Identity() )) ), null ) ) , null ) ) ) ))
+
+
+
+
+  /**
+   * Assign the current instruction node to the given InsWrapper.
+   * @param ins the instruction wrapper.
+   */
+  public static class Assign extends tom.library.sl.AbstractStrategyBasic {private  InsWrapper  ins;public Assign( InsWrapper  ins) {super(( new tom.library.sl.Identity() ));this.ins=ins;}public  InsWrapper  getins() {return ins;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];stratChilds[0] = super.getChildAt(0);return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() {return 1;}public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}@SuppressWarnings("unchecked")public <T> T visitLight(T v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.library.adt.bytecode.types.InstructionList) ) {return ((T)visit_InstructionList((( tom.library.adt.bytecode.types.InstructionList )v),introspector));}if (!(( null  == environment))) {return ((T)any.visit(environment,introspector));} else {return any.visitLight(v,introspector);}}@SuppressWarnings("unchecked")public  tom.library.adt.bytecode.types.InstructionList  _visit_InstructionList( tom.library.adt.bytecode.types.InstructionList  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!(( null  == environment))) {return (( tom.library.adt.bytecode.types.InstructionList )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);}}@SuppressWarnings("unchecked")public  tom.library.adt.bytecode.types.InstructionList  visit_InstructionList( tom.library.adt.bytecode.types.InstructionList  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if ( (((Object)tom__arg) instanceof tom.library.adt.bytecode.types.InstructionList) ) {
+
+ ins.ins = (( tom.library.adt.bytecode.types.InstructionList )((Object)tom__arg)); }}}return _visit_InstructionList(tom__arg,introspector);}}private static  tom.library.sl.Strategy  tom_make_Assign( InsWrapper  t0) { return new Assign(t0);}
+
+
+
+  /**
+   * Generates a control flow graph for each method of the given class.
+   * @param ast the gom-term subject representing the class.
+   */
+  public static void classToDot(ClassNode ast) throws VisitFailure {
+    Writer w = new BufferedWriter(new OutputStreamWriter(System.out)); 
+    MethodList methods = ast.getmethods();
+    {{if ( (((Object)methods) instanceof tom.library.adt.bytecode.types.MethodList) ) {if ( (((( tom.library.adt.bytecode.types.MethodList )(( tom.library.adt.bytecode.types.MethodList )((Object)methods))) instanceof tom.library.adt.bytecode.types.methodlist.ConsMethodList) || ((( tom.library.adt.bytecode.types.MethodList )(( tom.library.adt.bytecode.types.MethodList )((Object)methods))) instanceof tom.library.adt.bytecode.types.methodlist.EmptyMethodList)) ) { tom.library.adt.bytecode.types.MethodList  tomMatch707__end__4=(( tom.library.adt.bytecode.types.MethodList )((Object)methods));do {{if (!( tomMatch707__end__4.isEmptyMethodList() )) { tom.library.adt.bytecode.types.Method  tom_x= tomMatch707__end__4.getHeadMethodList() ;
+
+        try {
+          MethodInfo info = tom_x.getinfo();
+          w.write("digraph "+info.getname()+" {\n              "
+);
+
+          // Print a root node with the method name and descriptor. Add a link to the first instruction if any.
+          w.write("method [label=\"method : "+info.getname()+"\\ndescriptor : "+ToolBox.buildDescriptor(info.getdesc())+"\" shape=box];\n              "
+);
+          if(!tom_x.getcode().isEmptyCode()) {
+            InstructionList ins = tom_x.getcode().getinstructions();
+            if(!ins.isEmptyInstructionList()) {
+              w.write("method -> "+getDotId(ins)+"\n                  "
+);
+            }
+
+            // Compute the label map to allow us to retrieve an instruction from a label.
+            HashMap labelMap = new HashMap();
+            tom_make_TopDown(tom_make_BuildLabelMap(labelMap)).visit(ins);
+
+            // Create a wrapper to pass a parent node to its children.
+            InsWrapper insWrapper = new InsWrapper();
+
+            // This strategy run through all node. For each of them, the node is printed.
+            // Links between the current node and its children are printed by passing the parent to each of them.
+            // AllCfg allows us to get all the children of the current node.
+            Strategy toDot = tom_make_TopDown(tom_make_Try( tom.library.sl.Sequence.make(tom_make_PrintDotNode(w), tom.library.sl.Sequence.make( tom.library.sl.Sequence.make(tom_make_Assign(insWrapper), tom.library.sl.Sequence.make(tom_make_AllCfg(tom_make_PrintDotLink(w,insWrapper),labelMap), null ) ) , null ) ) ))
+
+
+
+
+
+
 
 ;
-}
-private static  tom.library.sl.Strategy  tom_make_EUCtl( tom.library.sl.Strategy  s1,  tom.library.sl.Strategy  s2) { 
-return ( 
-( new tom.library.sl.Mu(( new tom.library.sl.MuVar("x") ), tom.library.sl.Choice.make(s2, tom.library.sl.Choice.make( tom.library.sl.Sequence.make(s1, tom.library.sl.Sequence.make(( new tom.library.sl.One(( new tom.library.sl.MuVar("x") )) ), null ) ) , null ) ) ) ))
 
-;
-}
-private static  tom.library.sl.Strategy  tom_make_Try( tom.library.sl.Strategy  s) { 
-return ( 
- tom.library.sl.Choice.make(s, tom.library.sl.Choice.make(( new tom.library.sl.Identity() ), null ) ) )
+            toDot.visit(ins);
 
-;
-}
-private static  tom.library.sl.Strategy  tom_make_Repeat( tom.library.sl.Strategy  s) { 
-return ( 
-( new tom.library.sl.Mu(( new tom.library.sl.MuVar("_x") ), tom.library.sl.Choice.make( tom.library.sl.Sequence.make(s, tom.library.sl.Sequence.make(( new tom.library.sl.MuVar("_x") ), null ) ) , tom.library.sl.Choice.make(( new tom.library.sl.Identity() ), null ) ) ) ))
+            // Prints the try/catch/finally blocks.
+            printTryCatchBlocks(tom_x.getcode().gettryCatchBlocks(), labelMap, w, ins);
 
-;
-}
-private static  tom.library.sl.Strategy  tom_make_TopDown( tom.library.sl.Strategy  v) { 
-return ( 
-( new tom.library.sl.Mu(( new tom.library.sl.MuVar("_x") ), tom.library.sl.Sequence.make(v, tom.library.sl.Sequence.make(( new tom.library.sl.All(( new tom.library.sl.MuVar("_x") )) ), null ) ) ) ))
+            // Prints the local variables informations.
+            printLocalVariables(tom_x.getcode().getlocalVariables(), labelMap, w, ins);
+          }
 
-;
-}
-private static  tom.library.sl.Strategy  tom_make_OnceTopDown( tom.library.sl.Strategy  v) { 
-return ( 
-( new tom.library.sl.Mu(( new tom.library.sl.MuVar("_x") ), tom.library.sl.Choice.make(v, tom.library.sl.Choice.make(( new tom.library.sl.One(( new tom.library.sl.MuVar("_x") )) ), null ) ) ) ))
+          w.write("}\n");
+          w.flush();
+        } catch(IOException e) {
+          e.printStackTrace();
+        }
+      }if ( tomMatch707__end__4.isEmptyMethodList() ) {tomMatch707__end__4=(( tom.library.adt.bytecode.types.MethodList )((Object)methods));} else {tomMatch707__end__4= tomMatch707__end__4.getTailMethodList() ;}}} while(!( (tomMatch707__end__4==(( tom.library.adt.bytecode.types.MethodList )((Object)methods))) ));}}}}
 
-;
-}
-private static  tom.library.sl.Strategy  tom_make_RepeatId( tom.library.sl.Strategy  v) { 
-return ( 
-( new tom.library.sl.Mu(( new tom.library.sl.MuVar("_x") ), tom.library.sl.SequenceId.make(v, tom.library.sl.SequenceId.make(( new tom.library.sl.MuVar("_x") ), null ) ) ) ))
-
-;
-}
-private static  tom.library.sl.Strategy  tom_make_OnceTopDownId( tom.library.sl.Strategy  v) { 
-return ( 
-( new tom.library.sl.Mu(( new tom.library.sl.MuVar("_x") ), tom.library.sl.ChoiceId.make(v, tom.library.sl.ChoiceId.make(( new tom.library.sl.OneId(( new tom.library.sl.MuVar("_x") )) ), null ) ) ) ))
-
-;
-}
-
-  private static   tom.library.adt.bytecode.types.LabelNodeList  tom_append_list_LabelNodeList( tom.library.adt.bytecode.types.LabelNodeList l1,  tom.library.adt.bytecode.types.LabelNodeList  l2) {
-    if( l1.isEmptyLabelNodeList() ) {
-      return l2;
-    } else if( l2.isEmptyLabelNodeList() ) {
-      return l1;
-    } else if(  l1.getTailLabelNodeList() .isEmptyLabelNodeList() ) {
-      return  tom.library.adt.bytecode.types.labelnodelist.ConsLabelNodeList.make( l1.getHeadLabelNodeList() ,l2) ;
-    } else {
-      return  tom.library.adt.bytecode.types.labelnodelist.ConsLabelNodeList.make( l1.getHeadLabelNodeList() ,tom_append_list_LabelNodeList( l1.getTailLabelNodeList() ,l2)) ;
-    }
   }
-  private static   tom.library.adt.bytecode.types.LabelNodeList  tom_get_slice_LabelNodeList( tom.library.adt.bytecode.types.LabelNodeList  begin,  tom.library.adt.bytecode.types.LabelNodeList  end, tom.library.adt.bytecode.types.LabelNodeList  tail) {
-    if( (begin==end) ) {
-      return tail;
-    } else if( (end==tail)  && ( end.isEmptyLabelNodeList()  ||  (end== tom.library.adt.bytecode.types.labelnodelist.EmptyLabelNodeList.make() ) )) {
-      /* code to avoid a call to make, and thus to avoid looping during list-matching */
-      return begin;
-    }
-    return  tom.library.adt.bytecode.types.labelnodelist.ConsLabelNodeList.make( begin.getHeadLabelNodeList() ,( tom.library.adt.bytecode.types.LabelNodeList )tom_get_slice_LabelNodeList( begin.getTailLabelNodeList() ,end,tail)) ;
-  }
-  
-  private static   tom.library.adt.bytecode.types.MethodList  tom_append_list_MethodList( tom.library.adt.bytecode.types.MethodList l1,  tom.library.adt.bytecode.types.MethodList  l2) {
-    if( l1.isEmptyMethodList() ) {
-      return l2;
-    } else if( l2.isEmptyMethodList() ) {
-      return l1;
-    } else if(  l1.getTailMethodList() .isEmptyMethodList() ) {
-      return  tom.library.adt.bytecode.types.methodlist.ConsMethodList.make( l1.getHeadMethodList() ,l2) ;
-    } else {
-      return  tom.library.adt.bytecode.types.methodlist.ConsMethodList.make( l1.getHeadMethodList() ,tom_append_list_MethodList( l1.getTailMethodList() ,l2)) ;
-    }
-  }
-  private static   tom.library.adt.bytecode.types.MethodList  tom_get_slice_MethodList( tom.library.adt.bytecode.types.MethodList  begin,  tom.library.adt.bytecode.types.MethodList  end, tom.library.adt.bytecode.types.MethodList  tail) {
-    if( (begin==end) ) {
-      return tail;
-    } else if( (end==tail)  && ( end.isEmptyMethodList()  ||  (end== tom.library.adt.bytecode.types.methodlist.EmptyMethodList.make() ) )) {
-      /* code to avoid a call to make, and thus to avoid looping during list-matching */
-      return begin;
-    }
-    return  tom.library.adt.bytecode.types.methodlist.ConsMethodList.make( begin.getHeadMethodList() ,( tom.library.adt.bytecode.types.MethodList )tom_get_slice_MethodList( begin.getTailMethodList() ,end,tail)) ;
-  }
-  
-  private static   tom.library.adt.bytecode.types.LocalVariableList  tom_append_list_LocalVariableList( tom.library.adt.bytecode.types.LocalVariableList l1,  tom.library.adt.bytecode.types.LocalVariableList  l2) {
-    if( l1.isEmptyLocalVariableList() ) {
-      return l2;
-    } else if( l2.isEmptyLocalVariableList() ) {
-      return l1;
-    } else if(  l1.getTailLocalVariableList() .isEmptyLocalVariableList() ) {
-      return  tom.library.adt.bytecode.types.localvariablelist.ConsLocalVariableList.make( l1.getHeadLocalVariableList() ,l2) ;
-    } else {
-      return  tom.library.adt.bytecode.types.localvariablelist.ConsLocalVariableList.make( l1.getHeadLocalVariableList() ,tom_append_list_LocalVariableList( l1.getTailLocalVariableList() ,l2)) ;
-    }
-  }
-  private static   tom.library.adt.bytecode.types.LocalVariableList  tom_get_slice_LocalVariableList( tom.library.adt.bytecode.types.LocalVariableList  begin,  tom.library.adt.bytecode.types.LocalVariableList  end, tom.library.adt.bytecode.types.LocalVariableList  tail) {
-    if( (begin==end) ) {
-      return tail;
-    } else if( (end==tail)  && ( end.isEmptyLocalVariableList()  ||  (end== tom.library.adt.bytecode.types.localvariablelist.EmptyLocalVariableList.make() ) )) {
-      /* code to avoid a call to make, and thus to avoid looping during list-matching */
-      return begin;
-    }
-    return  tom.library.adt.bytecode.types.localvariablelist.ConsLocalVariableList.make( begin.getHeadLocalVariableList() ,( tom.library.adt.bytecode.types.LocalVariableList )tom_get_slice_LocalVariableList( begin.getTailLocalVariableList() ,end,tail)) ;
-  }
-  
-  private static   tom.library.adt.bytecode.types.InstructionList  tom_append_list_InstructionList( tom.library.adt.bytecode.types.InstructionList l1,  tom.library.adt.bytecode.types.InstructionList  l2) {
-    if( l1.isEmptyInstructionList() ) {
-      return l2;
-    } else if( l2.isEmptyInstructionList() ) {
-      return l1;
-    } else if(  l1.getTailInstructionList() .isEmptyInstructionList() ) {
-      return  tom.library.adt.bytecode.types.instructionlist.ConsInstructionList.make( l1.getHeadInstructionList() ,l2) ;
-    } else {
-      return  tom.library.adt.bytecode.types.instructionlist.ConsInstructionList.make( l1.getHeadInstructionList() ,tom_append_list_InstructionList( l1.getTailInstructionList() ,l2)) ;
-    }
-  }
-  private static   tom.library.adt.bytecode.types.InstructionList  tom_get_slice_InstructionList( tom.library.adt.bytecode.types.InstructionList  begin,  tom.library.adt.bytecode.types.InstructionList  end, tom.library.adt.bytecode.types.InstructionList  tail) {
-    if( (begin==end) ) {
-      return tail;
-    } else if( (end==tail)  && ( end.isEmptyInstructionList()  ||  (end== tom.library.adt.bytecode.types.instructionlist.EmptyInstructionList.make() ) )) {
-      /* code to avoid a call to make, and thus to avoid looping during list-matching */
-      return begin;
-    }
-    return  tom.library.adt.bytecode.types.instructionlist.ConsInstructionList.make( begin.getHeadInstructionList() ,( tom.library.adt.bytecode.types.InstructionList )tom_get_slice_InstructionList( begin.getTailInstructionList() ,end,tail)) ;
-  }
-  
-  private static   tom.library.adt.bytecode.types.IntList  tom_append_list_IntList( tom.library.adt.bytecode.types.IntList l1,  tom.library.adt.bytecode.types.IntList  l2) {
-    if( l1.isEmptyIntList() ) {
-      return l2;
-    } else if( l2.isEmptyIntList() ) {
-      return l1;
-    } else if(  l1.getTailIntList() .isEmptyIntList() ) {
-      return  tom.library.adt.bytecode.types.intlist.ConsIntList.make( l1.getHeadIntList() ,l2) ;
-    } else {
-      return  tom.library.adt.bytecode.types.intlist.ConsIntList.make( l1.getHeadIntList() ,tom_append_list_IntList( l1.getTailIntList() ,l2)) ;
-    }
-  }
-  private static   tom.library.adt.bytecode.types.IntList  tom_get_slice_IntList( tom.library.adt.bytecode.types.IntList  begin,  tom.library.adt.bytecode.types.IntList  end, tom.library.adt.bytecode.types.IntList  tail) {
-    if( (begin==end) ) {
-      return tail;
-    } else if( (end==tail)  && ( end.isEmptyIntList()  ||  (end== tom.library.adt.bytecode.types.intlist.EmptyIntList.make() ) )) {
-      /* code to avoid a call to make, and thus to avoid looping during list-matching */
-      return begin;
-    }
-    return  tom.library.adt.bytecode.types.intlist.ConsIntList.make( begin.getHeadIntList() ,( tom.library.adt.bytecode.types.IntList )tom_get_slice_IntList( begin.getTailIntList() ,end,tail)) ;
-  }
-  
-  private static   tom.library.adt.bytecode.types.TryCatchBlockList  tom_append_list_TryCatchBlockList( tom.library.adt.bytecode.types.TryCatchBlockList l1,  tom.library.adt.bytecode.types.TryCatchBlockList  l2) {
-    if( l1.isEmptyTryCatchBlockList() ) {
-      return l2;
-    } else if( l2.isEmptyTryCatchBlockList() ) {
-      return l1;
-    } else if(  l1.getTailTryCatchBlockList() .isEmptyTryCatchBlockList() ) {
-      return  tom.library.adt.bytecode.types.trycatchblocklist.ConsTryCatchBlockList.make( l1.getHeadTryCatchBlockList() ,l2) ;
-    } else {
-      return  tom.library.adt.bytecode.types.trycatchblocklist.ConsTryCatchBlockList.make( l1.getHeadTryCatchBlockList() ,tom_append_list_TryCatchBlockList( l1.getTailTryCatchBlockList() ,l2)) ;
-    }
-  }
-  private static   tom.library.adt.bytecode.types.TryCatchBlockList  tom_get_slice_TryCatchBlockList( tom.library.adt.bytecode.types.TryCatchBlockList  begin,  tom.library.adt.bytecode.types.TryCatchBlockList  end, tom.library.adt.bytecode.types.TryCatchBlockList  tail) {
-    if( (begin==end) ) {
-      return tail;
-    } else if( (end==tail)  && ( end.isEmptyTryCatchBlockList()  ||  (end== tom.library.adt.bytecode.types.trycatchblocklist.EmptyTryCatchBlockList.make() ) )) {
-      /* code to avoid a call to make, and thus to avoid looping during list-matching */
-      return begin;
-    }
-    return  tom.library.adt.bytecode.types.trycatchblocklist.ConsTryCatchBlockList.make( begin.getHeadTryCatchBlockList() ,( tom.library.adt.bytecode.types.TryCatchBlockList )tom_get_slice_TryCatchBlockList( begin.getTailTryCatchBlockList() ,end,tail)) ;
-  }
-  public static class BuildLabelMap extends tom.library.sl.AbstractStrategyBasic {
-private  java.util.Map  m;
-public BuildLabelMap( java.util.Map  m) {
-super(( new tom.library.sl.Identity() ));
-this.m=m;
-}
-public  java.util.Map  getm() {
-return m;
-}
-public tom.library.sl.Visitable[] getChildren() {
-tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];
-stratChilds[0] = super.getChildAt(0);
-return stratChilds;}
-public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {
-super.setChildAt(0, children[0]);
-return this;
-}
-public int getChildCount() {
-return 1;
-}
-public tom.library.sl.Visitable getChildAt(int index) {
-switch (index) {
-case 0: return super.getChildAt(0);
-default: throw new IndexOutOfBoundsException();
-}
-}
-public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {
-switch (index) {
-case 0: return super.setChildAt(0, child);
-default: throw new IndexOutOfBoundsException();
-}
-}
-@SuppressWarnings("unchecked")
-public <T> T visitLight(T v, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if ( (v instanceof tom.library.adt.bytecode.types.InstructionList) ) {
-return ((T)visit_InstructionList((( tom.library.adt.bytecode.types.InstructionList )v),introspector));
-}
-if (!(( null  == environment))) {
-return ((T)any.visit(environment,introspector));
-} else {
-return any.visitLight(v,introspector);
-}
-
-}
-@SuppressWarnings("unchecked")
-public  tom.library.adt.bytecode.types.InstructionList  _visit_InstructionList( tom.library.adt.bytecode.types.InstructionList  arg, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if (!(( null  == environment))) {
-return (( tom.library.adt.bytecode.types.InstructionList )any.visit(environment,introspector));
-} else {
-return any.visitLight(arg,introspector);
-}
-}
-@SuppressWarnings("unchecked")
-public  tom.library.adt.bytecode.types.InstructionList  visit_InstructionList( tom.library.adt.bytecode.types.InstructionList  tom__arg, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-{
-{
-if ( (tom__arg instanceof tom.library.adt.bytecode.types.InstructionList) ) {
-if ( ((( tom.library.adt.bytecode.types.InstructionList )tom__arg) instanceof tom.library.adt.bytecode.types.instructionlist.ConsInstructionList) ) {
- tom.library.adt.bytecode.types.Instruction  tomMatch644_1= (( tom.library.adt.bytecode.types.InstructionList )tom__arg).getHeadInstructionList() ;
-if ( (tomMatch644_1 instanceof tom.library.adt.bytecode.types.instruction.Anchor) ) {
-
-m.put(
- tomMatch644_1.getlabel() , getEnvironment().getPosition());
-
-
-}
-}
-}
-
-}
-
-}
-return _visit_InstructionList(tom__arg,introspector);
-
-}
-}
-private static  tom.library.sl.Strategy  tom_make_BuildLabelMap( java.util.Map  t0) { 
-return new BuildLabelMap(t0);
-}
-public static class OneCfg extends tom.library.sl.AbstractStrategyBasic {
-private  tom.library.sl.Strategy  s;
-private  java.util.Map  m;
-public OneCfg( tom.library.sl.Strategy  s,  java.util.Map  m) {
-super(( new tom.library.sl.Identity() ));
-this.s=s;
-this.m=m;
-}
-public  tom.library.sl.Strategy  gets() {
-return s;
-}
-public  java.util.Map  getm() {
-return m;
-}
-public tom.library.sl.Visitable[] getChildren() {
-tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];
-stratChilds[0] = super.getChildAt(0);
-stratChilds[1] = gets();
-return stratChilds;}
-public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {
-super.setChildAt(0, children[0]);
-s = ( tom.library.sl.Strategy ) children[1];
-return this;
-}
-public int getChildCount() {
-return 2;
-}
-public tom.library.sl.Visitable getChildAt(int index) {
-switch (index) {
-case 0: return super.getChildAt(0);
-case 1: return gets();
-default: throw new IndexOutOfBoundsException();
-}
-}
-public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {
-switch (index) {
-case 0: return super.setChildAt(0, child);
-case 1: s = ( tom.library.sl.Strategy )child; return this;
-default: throw new IndexOutOfBoundsException();
-}
-}
-@SuppressWarnings("unchecked")
-public <T> T visitLight(T v, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if ( (v instanceof tom.library.adt.bytecode.types.InstructionList) ) {
-return ((T)visit_InstructionList((( tom.library.adt.bytecode.types.InstructionList )v),introspector));
-}
-if (!(( null  == environment))) {
-return ((T)any.visit(environment,introspector));
-} else {
-return any.visitLight(v,introspector);
-}
-
-}
-@SuppressWarnings("unchecked")
-public  tom.library.adt.bytecode.types.InstructionList  _visit_InstructionList( tom.library.adt.bytecode.types.InstructionList  arg, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if (!(( null  == environment))) {
-return (( tom.library.adt.bytecode.types.InstructionList )any.visit(environment,introspector));
-} else {
-return any.visitLight(arg,introspector);
-}
-}
-@SuppressWarnings("unchecked")
-public  tom.library.adt.bytecode.types.InstructionList  visit_InstructionList( tom.library.adt.bytecode.types.InstructionList  tom__arg, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-{
-{
-if ( (tom__arg instanceof tom.library.adt.bytecode.types.InstructionList) ) {
-if ( ((( tom.library.adt.bytecode.types.InstructionList )tom__arg) instanceof tom.library.adt.bytecode.types.instructionlist.ConsInstructionList) ) {
- tom.library.adt.bytecode.types.Instruction  tomMatch645_1= (( tom.library.adt.bytecode.types.InstructionList )tom__arg).getHeadInstructionList() ;
-if ( (tomMatch645_1 instanceof tom.library.adt.bytecode.types.instruction.Goto) ) {
-
-tom.library.sl.Position p = (tom.library.sl.Position) (m.get(
- tomMatch645_1.getlabel() ));
-tom.library.sl.Position current = getEnvironment().getPosition();
-getEnvironment().followPath(p.sub(current));
-s.visit(getEnvironment());
-if(getEnvironment().getStatus() == Environment.SUCCESS) {
-getEnvironment().followPath(current.sub(p));
-} else {
-getEnvironment().followPathLocal(current.sub(p));
-}
-return (InstructionList) getEnvironment().getSubject();
-
-
-}
-}
-}
-
-}
-{
-if ( (tom__arg instanceof tom.library.adt.bytecode.types.InstructionList) ) {
-if ( ((( tom.library.adt.bytecode.types.InstructionList )tom__arg) instanceof tom.library.adt.bytecode.types.instructionlist.ConsInstructionList) ) {
- tom.library.adt.bytecode.types.Instruction  tomMatch645_7= (( tom.library.adt.bytecode.types.InstructionList )tom__arg).getHeadInstructionList() ;
-boolean tomMatch645_12= false ;
- tom.library.adt.bytecode.types.LabelNode  tomMatch645_10= null ;
-if ( (tomMatch645_7 instanceof tom.library.adt.bytecode.types.instruction.Ifeq) ) {
-{
-tomMatch645_12= true ;
-tomMatch645_10= tomMatch645_7.getlabel() ;
-
-}
-} else {
-if ( (tomMatch645_7 instanceof tom.library.adt.bytecode.types.instruction.Ifne) ) {
-{
-tomMatch645_12= true ;
-tomMatch645_10= tomMatch645_7.getlabel() ;
-
-}
-} else {
-if ( (tomMatch645_7 instanceof tom.library.adt.bytecode.types.instruction.Iflt) ) {
-{
-tomMatch645_12= true ;
-tomMatch645_10= tomMatch645_7.getlabel() ;
-
-}
-} else {
-if ( (tomMatch645_7 instanceof tom.library.adt.bytecode.types.instruction.Ifge) ) {
-{
-tomMatch645_12= true ;
-tomMatch645_10= tomMatch645_7.getlabel() ;
-
-}
-} else {
-if ( (tomMatch645_7 instanceof tom.library.adt.bytecode.types.instruction.Ifgt) ) {
-{
-tomMatch645_12= true ;
-tomMatch645_10= tomMatch645_7.getlabel() ;
-
-}
-} else {
-if ( (tomMatch645_7 instanceof tom.library.adt.bytecode.types.instruction.Ifle) ) {
-{
-tomMatch645_12= true ;
-tomMatch645_10= tomMatch645_7.getlabel() ;
-
-}
-} else {
-if ( (tomMatch645_7 instanceof tom.library.adt.bytecode.types.instruction.If_icmpeq) ) {
-{
-tomMatch645_12= true ;
-tomMatch645_10= tomMatch645_7.getlabel() ;
-
-}
-} else {
-if ( (tomMatch645_7 instanceof tom.library.adt.bytecode.types.instruction.If_icmpne) ) {
-{
-tomMatch645_12= true ;
-tomMatch645_10= tomMatch645_7.getlabel() ;
-
-}
-} else {
-if ( (tomMatch645_7 instanceof tom.library.adt.bytecode.types.instruction.If_icmplt) ) {
-{
-tomMatch645_12= true ;
-tomMatch645_10= tomMatch645_7.getlabel() ;
-
-}
-} else {
-if ( (tomMatch645_7 instanceof tom.library.adt.bytecode.types.instruction.If_icmpge) ) {
-{
-tomMatch645_12= true ;
-tomMatch645_10= tomMatch645_7.getlabel() ;
-
-}
-} else {
-if ( (tomMatch645_7 instanceof tom.library.adt.bytecode.types.instruction.If_icmpgt) ) {
-{
-tomMatch645_12= true ;
-tomMatch645_10= tomMatch645_7.getlabel() ;
-
-}
-} else {
-if ( (tomMatch645_7 instanceof tom.library.adt.bytecode.types.instruction.If_icmple) ) {
-{
-tomMatch645_12= true ;
-tomMatch645_10= tomMatch645_7.getlabel() ;
-
-}
-} else {
-if ( (tomMatch645_7 instanceof tom.library.adt.bytecode.types.instruction.If_acmpeq) ) {
-{
-tomMatch645_12= true ;
-tomMatch645_10= tomMatch645_7.getlabel() ;
-
-}
-} else {
-if ( (tomMatch645_7 instanceof tom.library.adt.bytecode.types.instruction.If_acmpne) ) {
-{
-tomMatch645_12= true ;
-tomMatch645_10= tomMatch645_7.getlabel() ;
-
-}
-} else {
-if ( (tomMatch645_7 instanceof tom.library.adt.bytecode.types.instruction.Jsr) ) {
-{
-tomMatch645_12= true ;
-tomMatch645_10= tomMatch645_7.getlabel() ;
-
-}
-} else {
-if ( (tomMatch645_7 instanceof tom.library.adt.bytecode.types.instruction.Ifnull) ) {
-{
-tomMatch645_12= true ;
-tomMatch645_10= tomMatch645_7.getlabel() ;
-
-}
-} else {
-if ( (tomMatch645_7 instanceof tom.library.adt.bytecode.types.instruction.Ifnonnull) ) {
-{
-tomMatch645_12= true ;
-tomMatch645_10= tomMatch645_7.getlabel() ;
-
-}
-}
-}
-}
-}
-}
-}
-}
-}
-}
-}
-}
-}
-}
-}
-}
-}
-}
-if (tomMatch645_12) {
-
-tom.library.sl.Position p = (tom.library.sl.Position) (m.get(
-tomMatch645_10));
-tom.library.sl.Position current = getEnvironment().getPosition();
-getEnvironment().followPath(p.sub(current));
-s.visit(getEnvironment());
-if(getEnvironment().getStatus() == Environment.SUCCESS) {
-getEnvironment().followPath(current.sub(p));
-return (InstructionList) getEnvironment().getSubject();
-} else {
-getEnvironment().followPathLocal(current.sub(p));
-}
-
-
-}
-
-}
-}
-
-}
-{
-if ( (tom__arg instanceof tom.library.adt.bytecode.types.InstructionList) ) {
-if ( ((( tom.library.adt.bytecode.types.InstructionList )tom__arg) instanceof tom.library.adt.bytecode.types.instructionlist.ConsInstructionList) ) {
- tom.library.adt.bytecode.types.Instruction  tomMatch645_14= (( tom.library.adt.bytecode.types.InstructionList )tom__arg).getHeadInstructionList() ;
-boolean tomMatch645_20= false ;
- tom.library.adt.bytecode.types.LabelNode  tomMatch645_17= null ;
- tom.library.adt.bytecode.types.LabelNodeList  tomMatch645_18= null ;
-if ( (tomMatch645_14 instanceof tom.library.adt.bytecode.types.instruction.Tableswitch) ) {
-{
-tomMatch645_20= true ;
-tomMatch645_17= tomMatch645_14.getdflt() ;
-tomMatch645_18= tomMatch645_14.getlabels() ;
-
-}
-} else {
-if ( (tomMatch645_14 instanceof tom.library.adt.bytecode.types.instruction.Lookupswitch) ) {
-{
-tomMatch645_20= true ;
-tomMatch645_17= tomMatch645_14.getdflt() ;
-tomMatch645_18= tomMatch645_14.getlabels() ;
-
-}
-}
-}
-if (tomMatch645_20) {
-
-LabelNodeList labelList = 
-tomMatch645_18;
-
-{
-{
-if ( (labelList instanceof tom.library.adt.bytecode.types.LabelNodeList) ) {
-if ( (((( tom.library.adt.bytecode.types.LabelNodeList )labelList) instanceof tom.library.adt.bytecode.types.labelnodelist.ConsLabelNodeList) || ((( tom.library.adt.bytecode.types.LabelNodeList )labelList) instanceof tom.library.adt.bytecode.types.labelnodelist.EmptyLabelNodeList)) ) {
- tom.library.adt.bytecode.types.LabelNodeList  tomMatch646__end__4=(( tom.library.adt.bytecode.types.LabelNodeList )labelList);
-do {
-{
-if (!( tomMatch646__end__4.isEmptyLabelNodeList() )) {
-
-tom.library.sl.Position p = (tom.library.sl.Position) (m.get(
- tomMatch646__end__4.getHeadLabelNodeList() ));
-tom.library.sl.Position current = getEnvironment().getPosition();
-getEnvironment().followPath(p.sub(current));
-s.visit(getEnvironment());
-if(getEnvironment().getStatus() == Environment.SUCCESS) {
-getEnvironment().followPath(current.sub(p));
-return (InstructionList) getEnvironment().getSubject();
-} else {
-getEnvironment().followPathLocal(current.sub(p));
-}
-
-
-}
-if ( tomMatch646__end__4.isEmptyLabelNodeList() ) {
-tomMatch646__end__4=(( tom.library.adt.bytecode.types.LabelNodeList )labelList);
-} else {
-tomMatch646__end__4= tomMatch646__end__4.getTailLabelNodeList() ;
-}
-
-}
-} while(!( (tomMatch646__end__4==(( tom.library.adt.bytecode.types.LabelNodeList )labelList)) ));
-}
-}
-
-}
-
-}
-
-tom.library.sl.Position p = (tom.library.sl.Position) (m.get(
-tomMatch645_17));
-tom.library.sl.Position current = getEnvironment().getPosition();
-getEnvironment().followPath(p.sub(current));
-s.visit(getEnvironment());
-if(getEnvironment().getStatus() == Environment.SUCCESS) {
-getEnvironment().followPath(current.sub(p));
-return (InstructionList) getEnvironment().getSubject();
-} else {
-getEnvironment().followPathLocal(current.sub(p));
-}
-
-
-
-}
-
-}
-}
-
-}
-{
-if ( (tom__arg instanceof tom.library.adt.bytecode.types.InstructionList) ) {
-if ( ((( tom.library.adt.bytecode.types.InstructionList )tom__arg) instanceof tom.library.adt.bytecode.types.instructionlist.ConsInstructionList) ) {
- tom.library.adt.bytecode.types.InstructionList  tomMatch645_23= (( tom.library.adt.bytecode.types.InstructionList )tom__arg).getTailInstructionList() ;
-boolean tomMatch645_26= false ;
-if ( ((tomMatch645_23 instanceof tom.library.adt.bytecode.types.instructionlist.ConsInstructionList) || (tomMatch645_23 instanceof tom.library.adt.bytecode.types.instructionlist.EmptyInstructionList)) ) {
-if ( tomMatch645_23.isEmptyInstructionList() ) {
-tomMatch645_26= true ;
-}
-}
-if (!(tomMatch645_26)) {
-
-getEnvironment().down(2);
-s.visit(getEnvironment());
-getEnvironment().up();
-
-}
-
-}
-}
-
-}
-
-
-}
-return _visit_InstructionList(tom__arg,introspector);
-
-}
-}
-public static class AllCfg extends tom.library.sl.AbstractStrategyBasic {
-private  tom.library.sl.Strategy  s;
-private  java.util.Map  m;
-public AllCfg( tom.library.sl.Strategy  s,  java.util.Map  m) {
-super(( new tom.library.sl.Identity() ));
-this.s=s;
-this.m=m;
-}
-public  tom.library.sl.Strategy  gets() {
-return s;
-}
-public  java.util.Map  getm() {
-return m;
-}
-public tom.library.sl.Visitable[] getChildren() {
-tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];
-stratChilds[0] = super.getChildAt(0);
-stratChilds[1] = gets();
-return stratChilds;}
-public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {
-super.setChildAt(0, children[0]);
-s = ( tom.library.sl.Strategy ) children[1];
-return this;
-}
-public int getChildCount() {
-return 2;
-}
-public tom.library.sl.Visitable getChildAt(int index) {
-switch (index) {
-case 0: return super.getChildAt(0);
-case 1: return gets();
-default: throw new IndexOutOfBoundsException();
-}
-}
-public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {
-switch (index) {
-case 0: return super.setChildAt(0, child);
-case 1: s = ( tom.library.sl.Strategy )child; return this;
-default: throw new IndexOutOfBoundsException();
-}
-}
-@SuppressWarnings("unchecked")
-public <T> T visitLight(T v, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if ( (v instanceof tom.library.adt.bytecode.types.InstructionList) ) {
-return ((T)visit_InstructionList((( tom.library.adt.bytecode.types.InstructionList )v),introspector));
-}
-if (!(( null  == environment))) {
-return ((T)any.visit(environment,introspector));
-} else {
-return any.visitLight(v,introspector);
-}
-
-}
-@SuppressWarnings("unchecked")
-public  tom.library.adt.bytecode.types.InstructionList  _visit_InstructionList( tom.library.adt.bytecode.types.InstructionList  arg, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if (!(( null  == environment))) {
-return (( tom.library.adt.bytecode.types.InstructionList )any.visit(environment,introspector));
-} else {
-return any.visitLight(arg,introspector);
-}
-}
-@SuppressWarnings("unchecked")
-public  tom.library.adt.bytecode.types.InstructionList  visit_InstructionList( tom.library.adt.bytecode.types.InstructionList  tom__arg, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-{
-{
-if ( (tom__arg instanceof tom.library.adt.bytecode.types.InstructionList) ) {
-if ( ((( tom.library.adt.bytecode.types.InstructionList )tom__arg) instanceof tom.library.adt.bytecode.types.instructionlist.ConsInstructionList) ) {
- tom.library.adt.bytecode.types.Instruction  tomMatch647_1= (( tom.library.adt.bytecode.types.InstructionList )tom__arg).getHeadInstructionList() ;
-if ( (tomMatch647_1 instanceof tom.library.adt.bytecode.types.instruction.Goto) ) {
-
-tom.library.sl.Position p = (tom.library.sl.Position) (m.get(
- tomMatch647_1.getlabel() ));
-tom.library.sl.Position current = getEnvironment().getPosition();
-getEnvironment().followPath(p.sub(current));
-s.visit(getEnvironment());
-if(getEnvironment().getStatus() == Environment.SUCCESS) {
-getEnvironment().followPath(current.sub(p));
-} else {
-getEnvironment().followPathLocal(current.sub(p));
-}         
-return (InstructionList) getEnvironment().getSubject();
-
-
-}
-}
-}
-
-}
-{
-if ( (tom__arg instanceof tom.library.adt.bytecode.types.InstructionList) ) {
-if ( ((( tom.library.adt.bytecode.types.InstructionList )tom__arg) instanceof tom.library.adt.bytecode.types.instructionlist.ConsInstructionList) ) {
- tom.library.adt.bytecode.types.Instruction  tomMatch647_7= (( tom.library.adt.bytecode.types.InstructionList )tom__arg).getHeadInstructionList() ;
-boolean tomMatch647_12= false ;
- tom.library.adt.bytecode.types.LabelNode  tomMatch647_10= null ;
-if ( (tomMatch647_7 instanceof tom.library.adt.bytecode.types.instruction.Ifeq) ) {
-{
-tomMatch647_12= true ;
-tomMatch647_10= tomMatch647_7.getlabel() ;
-
-}
-} else {
-if ( (tomMatch647_7 instanceof tom.library.adt.bytecode.types.instruction.Ifne) ) {
-{
-tomMatch647_12= true ;
-tomMatch647_10= tomMatch647_7.getlabel() ;
-
-}
-} else {
-if ( (tomMatch647_7 instanceof tom.library.adt.bytecode.types.instruction.Iflt) ) {
-{
-tomMatch647_12= true ;
-tomMatch647_10= tomMatch647_7.getlabel() ;
-
-}
-} else {
-if ( (tomMatch647_7 instanceof tom.library.adt.bytecode.types.instruction.Ifge) ) {
-{
-tomMatch647_12= true ;
-tomMatch647_10= tomMatch647_7.getlabel() ;
-
-}
-} else {
-if ( (tomMatch647_7 instanceof tom.library.adt.bytecode.types.instruction.Ifgt) ) {
-{
-tomMatch647_12= true ;
-tomMatch647_10= tomMatch647_7.getlabel() ;
-
-}
-} else {
-if ( (tomMatch647_7 instanceof tom.library.adt.bytecode.types.instruction.Ifle) ) {
-{
-tomMatch647_12= true ;
-tomMatch647_10= tomMatch647_7.getlabel() ;
-
-}
-} else {
-if ( (tomMatch647_7 instanceof tom.library.adt.bytecode.types.instruction.If_icmpeq) ) {
-{
-tomMatch647_12= true ;
-tomMatch647_10= tomMatch647_7.getlabel() ;
-
-}
-} else {
-if ( (tomMatch647_7 instanceof tom.library.adt.bytecode.types.instruction.If_icmpne) ) {
-{
-tomMatch647_12= true ;
-tomMatch647_10= tomMatch647_7.getlabel() ;
-
-}
-} else {
-if ( (tomMatch647_7 instanceof tom.library.adt.bytecode.types.instruction.If_icmplt) ) {
-{
-tomMatch647_12= true ;
-tomMatch647_10= tomMatch647_7.getlabel() ;
-
-}
-} else {
-if ( (tomMatch647_7 instanceof tom.library.adt.bytecode.types.instruction.If_icmpge) ) {
-{
-tomMatch647_12= true ;
-tomMatch647_10= tomMatch647_7.getlabel() ;
-
-}
-} else {
-if ( (tomMatch647_7 instanceof tom.library.adt.bytecode.types.instruction.If_icmpgt) ) {
-{
-tomMatch647_12= true ;
-tomMatch647_10= tomMatch647_7.getlabel() ;
-
-}
-} else {
-if ( (tomMatch647_7 instanceof tom.library.adt.bytecode.types.instruction.If_icmple) ) {
-{
-tomMatch647_12= true ;
-tomMatch647_10= tomMatch647_7.getlabel() ;
-
-}
-} else {
-if ( (tomMatch647_7 instanceof tom.library.adt.bytecode.types.instruction.If_acmpeq) ) {
-{
-tomMatch647_12= true ;
-tomMatch647_10= tomMatch647_7.getlabel() ;
-
-}
-} else {
-if ( (tomMatch647_7 instanceof tom.library.adt.bytecode.types.instruction.If_acmpne) ) {
-{
-tomMatch647_12= true ;
-tomMatch647_10= tomMatch647_7.getlabel() ;
-
-}
-} else {
-if ( (tomMatch647_7 instanceof tom.library.adt.bytecode.types.instruction.Jsr) ) {
-{
-tomMatch647_12= true ;
-tomMatch647_10= tomMatch647_7.getlabel() ;
-
-}
-} else {
-if ( (tomMatch647_7 instanceof tom.library.adt.bytecode.types.instruction.Ifnull) ) {
-{
-tomMatch647_12= true ;
-tomMatch647_10= tomMatch647_7.getlabel() ;
-
-}
-} else {
-if ( (tomMatch647_7 instanceof tom.library.adt.bytecode.types.instruction.Ifnonnull) ) {
-{
-tomMatch647_12= true ;
-tomMatch647_10= tomMatch647_7.getlabel() ;
-
-}
-}
-}
-}
-}
-}
-}
-}
-}
-}
-}
-}
-}
-}
-}
-}
-}
-}
-if (tomMatch647_12) {
-
-tom.library.sl.Position p = (tom.library.sl.Position) (m.get(
-tomMatch647_10));
-tom.library.sl.Position current = getEnvironment().getPosition();
-getEnvironment().followPath(p.sub(current));
-s.visit(getEnvironment());
-if(getEnvironment().getStatus() == Environment.SUCCESS) {
-getEnvironment().followPath(current.sub(p));
-} else {
-getEnvironment().followPathLocal(current.sub(p));
-}         
-
-
-}
-
-}
-}
-
-}
-{
-if ( (tom__arg instanceof tom.library.adt.bytecode.types.InstructionList) ) {
-if ( ((( tom.library.adt.bytecode.types.InstructionList )tom__arg) instanceof tom.library.adt.bytecode.types.instructionlist.ConsInstructionList) ) {
- tom.library.adt.bytecode.types.Instruction  tomMatch647_14= (( tom.library.adt.bytecode.types.InstructionList )tom__arg).getHeadInstructionList() ;
-boolean tomMatch647_20= false ;
- tom.library.adt.bytecode.types.LabelNode  tomMatch647_17= null ;
- tom.library.adt.bytecode.types.LabelNodeList  tomMatch647_18= null ;
-if ( (tomMatch647_14 instanceof tom.library.adt.bytecode.types.instruction.Tableswitch) ) {
-{
-tomMatch647_20= true ;
-tomMatch647_17= tomMatch647_14.getdflt() ;
-tomMatch647_18= tomMatch647_14.getlabels() ;
-
-}
-} else {
-if ( (tomMatch647_14 instanceof tom.library.adt.bytecode.types.instruction.Lookupswitch) ) {
-{
-tomMatch647_20= true ;
-tomMatch647_17= tomMatch647_14.getdflt() ;
-tomMatch647_18= tomMatch647_14.getlabels() ;
-
-}
-}
-}
-if (tomMatch647_20) {
- tom.library.adt.bytecode.types.LabelNodeList  tom_labels=tomMatch647_18;
-
-LabelNodeList labels = 
-tom_labels;
-
-{
-{
-if ( (tom_labels instanceof tom.library.adt.bytecode.types.LabelNodeList) ) {
-if ( (((( tom.library.adt.bytecode.types.LabelNodeList )tom_labels) instanceof tom.library.adt.bytecode.types.labelnodelist.ConsLabelNodeList) || ((( tom.library.adt.bytecode.types.LabelNodeList )tom_labels) instanceof tom.library.adt.bytecode.types.labelnodelist.EmptyLabelNodeList)) ) {
- tom.library.adt.bytecode.types.LabelNodeList  tomMatch648__end__4=(( tom.library.adt.bytecode.types.LabelNodeList )tom_labels);
-do {
-{
-if (!( tomMatch648__end__4.isEmptyLabelNodeList() )) {
-
-tom.library.sl.Position p = (tom.library.sl.Position) (m.get(
- tomMatch648__end__4.getHeadLabelNodeList() ));
-tom.library.sl.Position current = getEnvironment().getPosition();
-getEnvironment().followPath(current.sub(p));
-s.visit(getEnvironment());
-if(getEnvironment().getStatus() == Environment.SUCCESS) {
-getEnvironment().followPath(current.sub(p));
-} else {
-getEnvironment().followPathLocal(current.sub(p));
-}     
-
-
-}
-if ( tomMatch648__end__4.isEmptyLabelNodeList() ) {
-tomMatch648__end__4=(( tom.library.adt.bytecode.types.LabelNodeList )tom_labels);
-} else {
-tomMatch648__end__4= tomMatch648__end__4.getTailLabelNodeList() ;
-}
-
-}
-} while(!( (tomMatch648__end__4==(( tom.library.adt.bytecode.types.LabelNodeList )tom_labels)) ));
-}
-}
-
-}
-
-}
-
-tom.library.sl.Position p = (tom.library.sl.Position) (m.get(
-tomMatch647_17));
-tom.library.sl.Position current = getEnvironment().getPosition();
-getEnvironment().followPath(p.sub(current));
-s.visit(getEnvironment());
-if(getEnvironment().getStatus() == Environment.SUCCESS) {
-getEnvironment().followPath(current.sub(p));
-} else {
-getEnvironment().followPathLocal(current.sub(p));
-}
-
-
-}
-
-}
-}
-
-}
-{
-if ( (tom__arg instanceof tom.library.adt.bytecode.types.InstructionList) ) {
-if ( ((( tom.library.adt.bytecode.types.InstructionList )tom__arg) instanceof tom.library.adt.bytecode.types.instructionlist.ConsInstructionList) ) {
- tom.library.adt.bytecode.types.InstructionList  tomMatch647_23= (( tom.library.adt.bytecode.types.InstructionList )tom__arg).getTailInstructionList() ;
-boolean tomMatch647_26= false ;
-if ( ((tomMatch647_23 instanceof tom.library.adt.bytecode.types.instructionlist.ConsInstructionList) || (tomMatch647_23 instanceof tom.library.adt.bytecode.types.instructionlist.EmptyInstructionList)) ) {
-if ( tomMatch647_23.isEmptyInstructionList() ) {
-tomMatch647_26= true ;
-}
-}
-if (!(tomMatch647_26)) {
-
-getEnvironment().down(2);
-s.visit(getEnvironment());
-getEnvironment().up();
-
-}
-
-}
-}
-
-}
-
-
-}
-return _visit_InstructionList(tom__arg,introspector);
-
-}
-}
-private static  tom.library.sl.Strategy  tom_make_AllCfg( tom.library.sl.Strategy  t0,  java.util.Map  t1) { 
-return new AllCfg(t0,t1);
-}
-public static class Mark extends tom.library.sl.AbstractStrategyBasic {
-private  java.util.Map  map;
-public Mark( java.util.Map  map) {
-super(( new tom.library.sl.Identity() ));
-this.map=map;
-}
-public  java.util.Map  getmap() {
-return map;
-}
-public tom.library.sl.Visitable[] getChildren() {
-tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];
-stratChilds[0] = super.getChildAt(0);
-return stratChilds;}
-public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {
-super.setChildAt(0, children[0]);
-return this;
-}
-public int getChildCount() {
-return 1;
-}
-public tom.library.sl.Visitable getChildAt(int index) {
-switch (index) {
-case 0: return super.getChildAt(0);
-default: throw new IndexOutOfBoundsException();
-}
-}
-public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {
-switch (index) {
-case 0: return super.setChildAt(0, child);
-default: throw new IndexOutOfBoundsException();
-}
-}
-@SuppressWarnings("unchecked")
-public <T> T visitLight(T v, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if ( (v instanceof tom.library.adt.bytecode.types.InstructionList) ) {
-return ((T)visit_InstructionList((( tom.library.adt.bytecode.types.InstructionList )v),introspector));
-}
-if (!(( null  == environment))) {
-return ((T)any.visit(environment,introspector));
-} else {
-return any.visitLight(v,introspector);
-}
-
-}
-@SuppressWarnings("unchecked")
-public  tom.library.adt.bytecode.types.InstructionList  _visit_InstructionList( tom.library.adt.bytecode.types.InstructionList  arg, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if (!(( null  == environment))) {
-return (( tom.library.adt.bytecode.types.InstructionList )any.visit(environment,introspector));
-} else {
-return any.visitLight(arg,introspector);
-}
-}
-@SuppressWarnings("unchecked")
-public  tom.library.adt.bytecode.types.InstructionList  visit_InstructionList( tom.library.adt.bytecode.types.InstructionList  tom__arg, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-{
-{
-if ( (tom__arg instanceof tom.library.adt.bytecode.types.InstructionList) ) {
- tom.library.adt.bytecode.types.InstructionList  tom_c=(( tom.library.adt.bytecode.types.InstructionList )tom__arg);
-
-Object o = map.get(
-tom_c);
-int value = 1;
-if(o != null)
-value = ((Integer)o).intValue() + 1;
-map.put(
-tom_c, Integer.valueOf(value));
-
-
-}
-
-}
-
-}
-return _visit_InstructionList(tom__arg,introspector);
-
-}
-}
-public static class UnMark extends tom.library.sl.AbstractStrategyBasic {
-private  java.util.Map  map;
-public UnMark( java.util.Map  map) {
-super(( new tom.library.sl.Identity() ));
-this.map=map;
-}
-public  java.util.Map  getmap() {
-return map;
-}
-public tom.library.sl.Visitable[] getChildren() {
-tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];
-stratChilds[0] = super.getChildAt(0);
-return stratChilds;}
-public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {
-super.setChildAt(0, children[0]);
-return this;
-}
-public int getChildCount() {
-return 1;
-}
-public tom.library.sl.Visitable getChildAt(int index) {
-switch (index) {
-case 0: return super.getChildAt(0);
-default: throw new IndexOutOfBoundsException();
-}
-}
-public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {
-switch (index) {
-case 0: return super.setChildAt(0, child);
-default: throw new IndexOutOfBoundsException();
-}
-}
-@SuppressWarnings("unchecked")
-public <T> T visitLight(T v, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if ( (v instanceof tom.library.adt.bytecode.types.InstructionList) ) {
-return ((T)visit_InstructionList((( tom.library.adt.bytecode.types.InstructionList )v),introspector));
-}
-if (!(( null  == environment))) {
-return ((T)any.visit(environment,introspector));
-} else {
-return any.visitLight(v,introspector);
-}
-
-}
-@SuppressWarnings("unchecked")
-public  tom.library.adt.bytecode.types.InstructionList  _visit_InstructionList( tom.library.adt.bytecode.types.InstructionList  arg, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if (!(( null  == environment))) {
-return (( tom.library.adt.bytecode.types.InstructionList )any.visit(environment,introspector));
-} else {
-return any.visitLight(arg,introspector);
-}
-}
-@SuppressWarnings("unchecked")
-public  tom.library.adt.bytecode.types.InstructionList  visit_InstructionList( tom.library.adt.bytecode.types.InstructionList  tom__arg, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-{
-{
-if ( (tom__arg instanceof tom.library.adt.bytecode.types.InstructionList) ) {
- tom.library.adt.bytecode.types.InstructionList  tom_c=(( tom.library.adt.bytecode.types.InstructionList )tom__arg);
-
-Object o = map.get(
-tom_c);
-if(o == null) {
-throw new tom.library.sl.VisitFailure();
-}
-int value = ((Integer)o).intValue() - 1;
-map.put(
-tom_c, Integer.valueOf(value));
-
-
-}
-
-}
-
-}
-return _visit_InstructionList(tom__arg,introspector);
-
-}
-}
-public static class IsMarked extends tom.library.sl.AbstractStrategyBasic {
-private  java.util.Map  map;
-public IsMarked( java.util.Map  map) {
-super(( new tom.library.sl.Identity() ));
-this.map=map;
-}
-public  java.util.Map  getmap() {
-return map;
-}
-public tom.library.sl.Visitable[] getChildren() {
-tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];
-stratChilds[0] = super.getChildAt(0);
-return stratChilds;}
-public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {
-super.setChildAt(0, children[0]);
-return this;
-}
-public int getChildCount() {
-return 1;
-}
-public tom.library.sl.Visitable getChildAt(int index) {
-switch (index) {
-case 0: return super.getChildAt(0);
-default: throw new IndexOutOfBoundsException();
-}
-}
-public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {
-switch (index) {
-case 0: return super.setChildAt(0, child);
-default: throw new IndexOutOfBoundsException();
-}
-}
-@SuppressWarnings("unchecked")
-public <T> T visitLight(T v, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if ( (v instanceof tom.library.adt.bytecode.types.InstructionList) ) {
-return ((T)visit_InstructionList((( tom.library.adt.bytecode.types.InstructionList )v),introspector));
-}
-if (!(( null  == environment))) {
-return ((T)any.visit(environment,introspector));
-} else {
-return any.visitLight(v,introspector);
-}
-
-}
-@SuppressWarnings("unchecked")
-public  tom.library.adt.bytecode.types.InstructionList  _visit_InstructionList( tom.library.adt.bytecode.types.InstructionList  arg, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if (!(( null  == environment))) {
-return (( tom.library.adt.bytecode.types.InstructionList )any.visit(environment,introspector));
-} else {
-return any.visitLight(arg,introspector);
-}
-}
-@SuppressWarnings("unchecked")
-public  tom.library.adt.bytecode.types.InstructionList  visit_InstructionList( tom.library.adt.bytecode.types.InstructionList  tom__arg, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-{
-{
-if ( (tom__arg instanceof tom.library.adt.bytecode.types.InstructionList) ) {
-
-Object o = map.get(
-(( tom.library.adt.bytecode.types.InstructionList )tom__arg));
-if(o == null || ((Integer)o).intValue() <= 0)
-throw new tom.library.sl.VisitFailure();
-
-
-}
-
-}
-
-}
-return _visit_InstructionList(tom__arg,introspector);
-
-}
-}
-
-
-/**
-* Returns the dot node id of the given InstructionList.
-* @param ins the instruction.
-* @return the id.
-*/
-private static String getDotId(InstructionList ins) {
-return ("insid" + ins.hashCode()).replace('-', 'm');
-}
-
-/**
-* Returns the dot node id of the given TryCatchBlock.
-* @param bl the try/catch block.
-* @return the id.
-*/
-private static String getDotId(TryCatchBlock bl) {
-return ("blockid" + bl.hashCode()).replace('-', 'm');
-}
-
-/**
-* Returns the dot node id of the given LocalVariable.
-* @param the local variable.
-* @return the id.
-*/
-private static String getDotId(LocalVariable var) {
-return ("varid" + var.hashCode()).replace('-', 'm');
-}
-
-/**
-* Cleans the given string to prevent dot compilation problems.
-* (ex: replace the character '"' with the string "\"").
-* @param s the string to be cleaned.
-* @return the cleaned string.
-*/
-private static String clean(String s) {
-return s.replaceAll("\\\"", "\\\\\\\"");
-}
-
-/**
-* Prints the current instruction node with a suitable label.
-* @param out the writer to be used for the dot output.
-*/
-
-public static class PrintDotNode extends tom.library.sl.AbstractStrategyBasic {
-private java.io.Writer out;
-public PrintDotNode(java.io.Writer out) {
-super(( new tom.library.sl.Identity() ));
-this.out=out;
-}
-public java.io.Writer getout() {
-return out;
-}
-public tom.library.sl.Visitable[] getChildren() {
-tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];
-stratChilds[0] = super.getChildAt(0);
-return stratChilds;}
-public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {
-super.setChildAt(0, children[0]);
-return this;
-}
-public int getChildCount() {
-return 1;
-}
-public tom.library.sl.Visitable getChildAt(int index) {
-switch (index) {
-case 0: return super.getChildAt(0);
-default: throw new IndexOutOfBoundsException();
-}
-}
-public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {
-switch (index) {
-case 0: return super.setChildAt(0, child);
-default: throw new IndexOutOfBoundsException();
-}
-}
-@SuppressWarnings("unchecked")
-public <T> T visitLight(T v, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if ( (v instanceof tom.library.adt.bytecode.types.InstructionList) ) {
-return ((T)visit_InstructionList((( tom.library.adt.bytecode.types.InstructionList )v),introspector));
-}
-if (!(( null  == environment))) {
-return ((T)any.visit(environment,introspector));
-} else {
-return any.visitLight(v,introspector);
-}
-
-}
-@SuppressWarnings("unchecked")
-public  tom.library.adt.bytecode.types.InstructionList  _visit_InstructionList( tom.library.adt.bytecode.types.InstructionList  arg, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if (!(( null  == environment))) {
-return (( tom.library.adt.bytecode.types.InstructionList )any.visit(environment,introspector));
-} else {
-return any.visitLight(arg,introspector);
-}
-}
-@SuppressWarnings("unchecked")
-public  tom.library.adt.bytecode.types.InstructionList  visit_InstructionList( tom.library.adt.bytecode.types.InstructionList  tom__arg, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-{
-{
-if ( (tom__arg instanceof tom.library.adt.bytecode.types.InstructionList) ) {
-if ( ((( tom.library.adt.bytecode.types.InstructionList )tom__arg) instanceof tom.library.adt.bytecode.types.instructionlist.ConsInstructionList) ) {
-
-String id = getDotId(
-(( tom.library.adt.bytecode.types.InstructionList )tom__arg));
-printDotInstruction(
- (( tom.library.adt.bytecode.types.InstructionList )tom__arg).getHeadInstructionList() , id, out);
-
-
-}
-}
-
-}
-
-}
-return _visit_InstructionList(tom__arg,introspector);
-
-}
-}
-private static  tom.library.sl.Strategy  tom_make_PrintDotNode(java.io.Writer t0) { 
-return new PrintDotNode(t0);
-}
-
-
-/**
-* Prints the given instruction with a suitable label and id.
-* @param ins the instruction to be printed.
-* @param id the id of the dot node.
-* @param out the writer to be used for the dot output.
-*/
-private static void printDotInstruction(Instruction ins, String id, Writer out) {
-try {
-
-{
-{
-if ( (ins instanceof tom.library.adt.bytecode.types.Instruction) ) {
-boolean tomMatch653_3= false ;
- int  tomMatch653_1= 0 ;
-if ( ((( tom.library.adt.bytecode.types.Instruction )ins) instanceof tom.library.adt.bytecode.types.instruction.Bipush) ) {
-{
-tomMatch653_3= true ;
-tomMatch653_1= (( tom.library.adt.bytecode.types.Instruction )ins).getoperand() ;
-
-}
-} else {
-if ( ((( tom.library.adt.bytecode.types.Instruction )ins) instanceof tom.library.adt.bytecode.types.instruction.Sipush) ) {
-{
-tomMatch653_3= true ;
-tomMatch653_1= (( tom.library.adt.bytecode.types.Instruction )ins).getoperand() ;
-
-}
-} else {
-if ( ((( tom.library.adt.bytecode.types.Instruction )ins) instanceof tom.library.adt.bytecode.types.instruction.Newarray) ) {
-{
-tomMatch653_3= true ;
-tomMatch653_1= (( tom.library.adt.bytecode.types.Instruction )ins).getoperand() ;
-
-}
-}
-}
-}
-if (tomMatch653_3) {
-
-out.write(
-"\n              "+id+
-" [label=\""+ins.symbolName()+
-"\\noperand : "+Integer.toString(
-tomMatch653_1)+
-"\"];\n              ");
-return;
-
-
-}
-
-}
-
-}
-{
-if ( (ins instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )ins) instanceof tom.library.adt.bytecode.types.instruction.Multianewarray) ) {
-
-out.write(
-"\n              "+id+
-" [label=\""+ins.symbolName()+
-"\\ntypeDesc : "+
- (( tom.library.adt.bytecode.types.Instruction )ins).gettypeDesc() +
-"\\ndims : "+Integer.toString(
- (( tom.library.adt.bytecode.types.Instruction )ins).getdims() )+
-"\"];\n              ");
-return;
-
-
-}
-}
-
-}
-{
-if ( (ins instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )ins) instanceof tom.library.adt.bytecode.types.instruction.Ldc) ) {
-
-out.write(
-"\n              "+id+
-" [label=\""+ins.symbolName()+
-"\\ncst : "+clean(
- (( tom.library.adt.bytecode.types.Instruction )ins).getcst() .toString())+
-"\"];\n              ");
-return;
-
-
-}
-}
-
-}
-{
-if ( (ins instanceof tom.library.adt.bytecode.types.Instruction) ) {
-boolean tomMatch653_14= false ;
- int  tomMatch653_12= 0 ;
-if ( ((( tom.library.adt.bytecode.types.Instruction )ins) instanceof tom.library.adt.bytecode.types.instruction.Iload) ) {
-{
-tomMatch653_14= true ;
-tomMatch653_12= (( tom.library.adt.bytecode.types.Instruction )ins).getvar() ;
-
-}
-} else {
-if ( ((( tom.library.adt.bytecode.types.Instruction )ins) instanceof tom.library.adt.bytecode.types.instruction.Lload) ) {
-{
-tomMatch653_14= true ;
-tomMatch653_12= (( tom.library.adt.bytecode.types.Instruction )ins).getvar() ;
-
-}
-} else {
-if ( ((( tom.library.adt.bytecode.types.Instruction )ins) instanceof tom.library.adt.bytecode.types.instruction.Fload) ) {
-{
-tomMatch653_14= true ;
-tomMatch653_12= (( tom.library.adt.bytecode.types.Instruction )ins).getvar() ;
-
-}
-} else {
-if ( ((( tom.library.adt.bytecode.types.Instruction )ins) instanceof tom.library.adt.bytecode.types.instruction.Dload) ) {
-{
-tomMatch653_14= true ;
-tomMatch653_12= (( tom.library.adt.bytecode.types.Instruction )ins).getvar() ;
-
-}
-} else {
-if ( ((( tom.library.adt.bytecode.types.Instruction )ins) instanceof tom.library.adt.bytecode.types.instruction.Aload) ) {
-{
-tomMatch653_14= true ;
-tomMatch653_12= (( tom.library.adt.bytecode.types.Instruction )ins).getvar() ;
-
-}
-} else {
-if ( ((( tom.library.adt.bytecode.types.Instruction )ins) instanceof tom.library.adt.bytecode.types.instruction.Istore) ) {
-{
-tomMatch653_14= true ;
-tomMatch653_12= (( tom.library.adt.bytecode.types.Instruction )ins).getvar() ;
-
-}
-} else {
-if ( ((( tom.library.adt.bytecode.types.Instruction )ins) instanceof tom.library.adt.bytecode.types.instruction.Lstore) ) {
-{
-tomMatch653_14= true ;
-tomMatch653_12= (( tom.library.adt.bytecode.types.Instruction )ins).getvar() ;
-
-}
-} else {
-if ( ((( tom.library.adt.bytecode.types.Instruction )ins) instanceof tom.library.adt.bytecode.types.instruction.Fstore) ) {
-{
-tomMatch653_14= true ;
-tomMatch653_12= (( tom.library.adt.bytecode.types.Instruction )ins).getvar() ;
-
-}
-} else {
-if ( ((( tom.library.adt.bytecode.types.Instruction )ins) instanceof tom.library.adt.bytecode.types.instruction.Dstore) ) {
-{
-tomMatch653_14= true ;
-tomMatch653_12= (( tom.library.adt.bytecode.types.Instruction )ins).getvar() ;
-
-}
-} else {
-if ( ((( tom.library.adt.bytecode.types.Instruction )ins) instanceof tom.library.adt.bytecode.types.instruction.Astore) ) {
-{
-tomMatch653_14= true ;
-tomMatch653_12= (( tom.library.adt.bytecode.types.Instruction )ins).getvar() ;
-
-}
-} else {
-if ( ((( tom.library.adt.bytecode.types.Instruction )ins) instanceof tom.library.adt.bytecode.types.instruction.Ret) ) {
-{
-tomMatch653_14= true ;
-tomMatch653_12= (( tom.library.adt.bytecode.types.Instruction )ins).getvar() ;
-
-}
-}
-}
-}
-}
-}
-}
-}
-}
-}
-}
-}
-if (tomMatch653_14) {
-
-out.write(
-"\n              "+id+
-" [label=\""+ins.symbolName()+
-"\\nvar : "+Integer.toString(
-tomMatch653_12)+
-"\"];\n              ");
-return;
-
-
-}
-
-}
-
-}
-{
-if ( (ins instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )ins) instanceof tom.library.adt.bytecode.types.instruction.Iinc) ) {
-
-out.write(
-"\n              "+id+
-" [label=\""+ins.symbolName()+
-"\\nincr : "+Integer.toString(
- (( tom.library.adt.bytecode.types.Instruction )ins).getincr() )+
-"\\nvar : "+Integer.toString(
- (( tom.library.adt.bytecode.types.Instruction )ins).getvar() )+
-"\"];\n              ");
-return;
-
-
-}
-}
-
-}
-{
-if ( (ins instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )ins) instanceof tom.library.adt.bytecode.types.instruction.Tableswitch) ) {
-
-out.write(
-"\n              "+id+
-" [label=\""+ins.symbolName()+
-"\\nmin : "+
- (( tom.library.adt.bytecode.types.Instruction )ins).getmin() +
-"\\nmax : "+
- (( tom.library.adt.bytecode.types.Instruction )ins).getmax() +
-"\"];\n              ");
-return;
-
-
-}
-}
-
-}
-{
-if ( (ins instanceof tom.library.adt.bytecode.types.Instruction) ) {
-if ( ((( tom.library.adt.bytecode.types.Instruction )ins) instanceof tom.library.adt.bytecode.types.instruction.Lookupswitch) ) {
- tom.library.adt.bytecode.types.IntList  tom_keys= (( tom.library.adt.bytecode.types.Instruction )ins).getkeys() ;
-
-out.write(
-"\n              "+id+
-" [label=\""+ins.symbolName()+
-"\\nkeys : ");
-IntList keys = 
-tom_keys;
-
-{
-{
-if ( (tom_keys instanceof tom.library.adt.bytecode.types.IntList) ) {
-if ( (((( tom.library.adt.bytecode.types.IntList )tom_keys) instanceof tom.library.adt.bytecode.types.intlist.ConsIntList) || ((( tom.library.adt.bytecode.types.IntList )tom_keys) instanceof tom.library.adt.bytecode.types.intlist.EmptyIntList)) ) {
- tom.library.adt.bytecode.types.IntList  tomMatch654__end__4=(( tom.library.adt.bytecode.types.IntList )tom_keys);
-do {
-{
-if (!( tomMatch654__end__4.isEmptyIntList() )) {
- tom.library.adt.bytecode.types.IntList  tomMatch654_5= tomMatch654__end__4.getTailIntList() ;
- tom.library.adt.bytecode.types.IntList  tomMatch654__end__8=tomMatch654_5;
-do {
-{
-if (!( tomMatch654__end__8.isEmptyIntList() )) {
-if (  tomMatch654__end__8.getTailIntList() .isEmptyIntList() ) {
-
-out.write(
-""+Integer.toString(
- tomMatch654__end__4.getHeadIntList() )+
-", ");
-
-
-}
-}
-if ( tomMatch654__end__8.isEmptyIntList() ) {
-tomMatch654__end__8=tomMatch654_5;
-} else {
-tomMatch654__end__8= tomMatch654__end__8.getTailIntList() ;
-}
-
-}
-} while(!( (tomMatch654__end__8==tomMatch654_5) ));
-}
-if ( tomMatch654__end__4.isEmptyIntList() ) {
-tomMatch654__end__4=(( tom.library.adt.bytecode.types.IntList )tom_keys);
-} else {
-tomMatch654__end__4= tomMatch654__end__4.getTailIntList() ;
-}
-
-}
-} while(!( (tomMatch654__end__4==(( tom.library.adt.bytecode.types.IntList )tom_keys)) ));
-}
-}
-
-}
-{
-if ( (tom_keys instanceof tom.library.adt.bytecode.types.IntList) ) {
-if ( (((( tom.library.adt.bytecode.types.IntList )tom_keys) instanceof tom.library.adt.bytecode.types.intlist.ConsIntList) || ((( tom.library.adt.bytecode.types.IntList )tom_keys) instanceof tom.library.adt.bytecode.types.intlist.EmptyIntList)) ) {
- tom.library.adt.bytecode.types.IntList  tomMatch654__end__14=(( tom.library.adt.bytecode.types.IntList )tom_keys);
-do {
-{
-if (!( tomMatch654__end__14.isEmptyIntList() )) {
-if (  tomMatch654__end__14.getTailIntList() .isEmptyIntList() ) {
-
-out.write(Integer.toString(
- tomMatch654__end__14.getHeadIntList() ));
-
-
-}
-}
-if ( tomMatch654__end__14.isEmptyIntList() ) {
-tomMatch654__end__14=(( tom.library.adt.bytecode.types.IntList )tom_keys);
-} else {
-tomMatch654__end__14= tomMatch654__end__14.getTailIntList() ;
-}
-
-}
-} while(!( (tomMatch654__end__14==(( tom.library.adt.bytecode.types.IntList )tom_keys)) ));
-}
-}
-
-}
-
-
-}
-
-out.write(
-"\"];");
-return;
-
-
-}
-}
-
-}
-{
-if ( (ins instanceof tom.library.adt.bytecode.types.Instruction) ) {
-boolean tomMatch653_31= false ;
- String  tomMatch653_28= "" ;
- tom.library.adt.bytecode.types.FieldDescriptor  tomMatch653_29= null ;
- String  tomMatch653_27= "" ;
-if ( ((( tom.library.adt.bytecode.types.Instruction )ins) instanceof tom.library.adt.bytecode.types.instruction.Getstatic) ) {
-{
-tomMatch653_31= true ;
-tomMatch653_27= (( tom.library.adt.bytecode.types.Instruction )ins).getowner() ;
-tomMatch653_28= (( tom.library.adt.bytecode.types.Instruction )ins).getname() ;
-tomMatch653_29= (( tom.library.adt.bytecode.types.Instruction )ins).getfieldDesc() ;
-
-}
-} else {
-if ( ((( tom.library.adt.bytecode.types.Instruction )ins) instanceof tom.library.adt.bytecode.types.instruction.Putstatic) ) {
-{
-tomMatch653_31= true ;
-tomMatch653_27= (( tom.library.adt.bytecode.types.Instruction )ins).getowner() ;
-tomMatch653_28= (( tom.library.adt.bytecode.types.Instruction )ins).getname() ;
-tomMatch653_29= (( tom.library.adt.bytecode.types.Instruction )ins).getfieldDesc() ;
-
-}
-} else {
-if ( ((( tom.library.adt.bytecode.types.Instruction )ins) instanceof tom.library.adt.bytecode.types.instruction.Getfield) ) {
-{
-tomMatch653_31= true ;
-tomMatch653_27= (( tom.library.adt.bytecode.types.Instruction )ins).getowner() ;
-tomMatch653_28= (( tom.library.adt.bytecode.types.Instruction )ins).getname() ;
-tomMatch653_29= (( tom.library.adt.bytecode.types.Instruction )ins).getfieldDesc() ;
-
-}
-} else {
-if ( ((( tom.library.adt.bytecode.types.Instruction )ins) instanceof tom.library.adt.bytecode.types.instruction.Putfield) ) {
-{
-tomMatch653_31= true ;
-tomMatch653_27= (( tom.library.adt.bytecode.types.Instruction )ins).getowner() ;
-tomMatch653_28= (( tom.library.adt.bytecode.types.Instruction )ins).getname() ;
-tomMatch653_29= (( tom.library.adt.bytecode.types.Instruction )ins).getfieldDesc() ;
-
-}
-}
-}
-}
-}
-if (tomMatch653_31) {
-
-out.write(
-"\n              "+id+
-" [label=\""+ins.symbolName()+
-"\\nowner : "+
-tomMatch653_27+
-"\\nname : "+
-tomMatch653_28+
-"\\ndescriptor : "+ToolBox.buildDescriptor(
-tomMatch653_29)+
-"\"];\n              ");
-return;
-
-
-}
-
-}
-
-}
-{
-if ( (ins instanceof tom.library.adt.bytecode.types.Instruction) ) {
-boolean tomMatch653_37= false ;
- String  tomMatch653_34= "" ;
- String  tomMatch653_33= "" ;
- tom.library.adt.bytecode.types.MethodDescriptor  tomMatch653_35= null ;
-if ( ((( tom.library.adt.bytecode.types.Instruction )ins) instanceof tom.library.adt.bytecode.types.instruction.Invokevirtual) ) {
-{
-tomMatch653_37= true ;
-tomMatch653_33= (( tom.library.adt.bytecode.types.Instruction )ins).getowner() ;
-tomMatch653_34= (( tom.library.adt.bytecode.types.Instruction )ins).getname() ;
-tomMatch653_35= (( tom.library.adt.bytecode.types.Instruction )ins).getmethodDesc() ;
-
-}
-} else {
-if ( ((( tom.library.adt.bytecode.types.Instruction )ins) instanceof tom.library.adt.bytecode.types.instruction.Invokespecial) ) {
-{
-tomMatch653_37= true ;
-tomMatch653_33= (( tom.library.adt.bytecode.types.Instruction )ins).getowner() ;
-tomMatch653_34= (( tom.library.adt.bytecode.types.Instruction )ins).getname() ;
-tomMatch653_35= (( tom.library.adt.bytecode.types.Instruction )ins).getmethodDesc() ;
-
-}
-} else {
-if ( ((( tom.library.adt.bytecode.types.Instruction )ins) instanceof tom.library.adt.bytecode.types.instruction.Invokestatic) ) {
-{
-tomMatch653_37= true ;
-tomMatch653_33= (( tom.library.adt.bytecode.types.Instruction )ins).getowner() ;
-tomMatch653_34= (( tom.library.adt.bytecode.types.Instruction )ins).getname() ;
-tomMatch653_35= (( tom.library.adt.bytecode.types.Instruction )ins).getmethodDesc() ;
-
-}
-} else {
-if ( ((( tom.library.adt.bytecode.types.Instruction )ins) instanceof tom.library.adt.bytecode.types.instruction.Invokeinterface) ) {
-{
-tomMatch653_37= true ;
-tomMatch653_33= (( tom.library.adt.bytecode.types.Instruction )ins).getowner() ;
-tomMatch653_34= (( tom.library.adt.bytecode.types.Instruction )ins).getname() ;
-tomMatch653_35= (( tom.library.adt.bytecode.types.Instruction )ins).getmethodDesc() ;
-
-}
-}
-}
-}
-}
-if (tomMatch653_37) {
-
-out.write(
-"\n              "+id+
-" [label=\""+ins.symbolName()+
-"\\nowner : "+
-tomMatch653_33+
-"\\nname : "+
-tomMatch653_34+
-"\\ndescriptor : "+ToolBox.buildDescriptor(
-tomMatch653_35)+
-"\"];\n              ");
-return;
-
-
-}
-
-}
-
-}
-{
-if ( (ins instanceof tom.library.adt.bytecode.types.Instruction) ) {
-boolean tomMatch653_41= false ;
- String  tomMatch653_39= "" ;
-if ( ((( tom.library.adt.bytecode.types.Instruction )ins) instanceof tom.library.adt.bytecode.types.instruction.New) ) {
-{
-tomMatch653_41= true ;
-tomMatch653_39= (( tom.library.adt.bytecode.types.Instruction )ins).gettypeDesc() ;
-
-}
-} else {
-if ( ((( tom.library.adt.bytecode.types.Instruction )ins) instanceof tom.library.adt.bytecode.types.instruction.Anewarray) ) {
-{
-tomMatch653_41= true ;
-tomMatch653_39= (( tom.library.adt.bytecode.types.Instruction )ins).gettypeDesc() ;
-
-}
-} else {
-if ( ((( tom.library.adt.bytecode.types.Instruction )ins) instanceof tom.library.adt.bytecode.types.instruction.Checkcast) ) {
-{
-tomMatch653_41= true ;
-tomMatch653_39= (( tom.library.adt.bytecode.types.Instruction )ins).gettypeDesc() ;
-
-}
-} else {
-if ( ((( tom.library.adt.bytecode.types.Instruction )ins) instanceof tom.library.adt.bytecode.types.instruction.Instanceof) ) {
-{
-tomMatch653_41= true ;
-tomMatch653_39= (( tom.library.adt.bytecode.types.Instruction )ins).gettypeDesc() ;
-
-}
-}
-}
-}
-}
-if (tomMatch653_41) {
-
-out.write(
-"\n              "+id+
-" [label=\""+ins.symbolName()+
-"\\ndescriptor : "+
-tomMatch653_39+
-"\"];\n              ");
-return;
-
-
-}
-
-}
-
-}
-{
-if ( (ins instanceof tom.library.adt.bytecode.types.Instruction) ) {
-
-out.write(
-"\n              "+id+
-" [label=\""+ins.symbolName()+
-"\"];\n              ");
-
-
-}
-
-}
-
-
-}
-
-} catch(IOException e) {
-e.printStackTrace();
-}
-}
-
-/**
-* Prints a link from the `parent' instruction to the current node instruction.
-* @param out the writer to be used for the dot output.
-*/
-
-public static class PrintDotLink extends tom.library.sl.AbstractStrategyBasic {
-private java.io.Writer out;
-private  InsWrapper  parent;
-public PrintDotLink(java.io.Writer out,  InsWrapper  parent) {
-super(( new tom.library.sl.Identity() ));
-this.out=out;
-this.parent=parent;
-}
-public java.io.Writer getout() {
-return out;
-}
-public  InsWrapper  getparent() {
-return parent;
-}
-public tom.library.sl.Visitable[] getChildren() {
-tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];
-stratChilds[0] = super.getChildAt(0);
-return stratChilds;}
-public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {
-super.setChildAt(0, children[0]);
-return this;
-}
-public int getChildCount() {
-return 1;
-}
-public tom.library.sl.Visitable getChildAt(int index) {
-switch (index) {
-case 0: return super.getChildAt(0);
-default: throw new IndexOutOfBoundsException();
-}
-}
-public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {
-switch (index) {
-case 0: return super.setChildAt(0, child);
-default: throw new IndexOutOfBoundsException();
-}
-}
-@SuppressWarnings("unchecked")
-public <T> T visitLight(T v, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if ( (v instanceof tom.library.adt.bytecode.types.InstructionList) ) {
-return ((T)visit_InstructionList((( tom.library.adt.bytecode.types.InstructionList )v),introspector));
-}
-if (!(( null  == environment))) {
-return ((T)any.visit(environment,introspector));
-} else {
-return any.visitLight(v,introspector);
-}
-
-}
-@SuppressWarnings("unchecked")
-public  tom.library.adt.bytecode.types.InstructionList  _visit_InstructionList( tom.library.adt.bytecode.types.InstructionList  arg, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if (!(( null  == environment))) {
-return (( tom.library.adt.bytecode.types.InstructionList )any.visit(environment,introspector));
-} else {
-return any.visitLight(arg,introspector);
-}
-}
-@SuppressWarnings("unchecked")
-public  tom.library.adt.bytecode.types.InstructionList  visit_InstructionList( tom.library.adt.bytecode.types.InstructionList  tom__arg, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-{
-{
-if ( (tom__arg instanceof tom.library.adt.bytecode.types.InstructionList) ) {
-if ( ((( tom.library.adt.bytecode.types.InstructionList )tom__arg) instanceof tom.library.adt.bytecode.types.instructionlist.ConsInstructionList) ) {
-
-try {
-out.write(
-""+getDotId(parent.ins)+
-" -> "+getDotId(
-(( tom.library.adt.bytecode.types.InstructionList )tom__arg))+
-";\n              ");
-} catch(IOException e) {
-e.printStackTrace();
-}
-
-
-}
-}
-
-}
-
-}
-return _visit_InstructionList(tom__arg,introspector);
-
-}
-}
-private static  tom.library.sl.Strategy  tom_make_PrintDotLink(java.io.Writer t0,  InsWrapper  t1) { 
-return new PrintDotLink(t0,t1);
-}
-
-
-/**
-* Prints all the try/catch/finally informations of the given block list.
-* @param list the try/catch/finally blocks to be printed.
-* @param labelMap the label map (see the BuildLabelMap strategy).
-* @param out the writer to be used for the dot output.
-* @param inst the global list of instructions.
-*/
-private static void printTryCatchBlocks(TryCatchBlockList list, Map labelMap, Writer out,InstructionList inst) throws VisitFailure{
-
-{
-{
-if ( (list instanceof tom.library.adt.bytecode.types.TryCatchBlockList) ) {
-if ( (((( tom.library.adt.bytecode.types.TryCatchBlockList )list) instanceof tom.library.adt.bytecode.types.trycatchblocklist.ConsTryCatchBlockList) || ((( tom.library.adt.bytecode.types.TryCatchBlockList )list) instanceof tom.library.adt.bytecode.types.trycatchblocklist.EmptyTryCatchBlockList)) ) {
- tom.library.adt.bytecode.types.TryCatchBlockList  tomMatch656__end__4=(( tom.library.adt.bytecode.types.TryCatchBlockList )list);
-do {
-{
-if (!( tomMatch656__end__4.isEmptyTryCatchBlockList() )) {
-
-try {
-TryCatchBlock block = 
- tomMatch656__end__4.getHeadTryCatchBlockList() ;
-Handler handler = block.gethandler();
-String id = getDotId(block);
-
-
-{
-{
-if ( (handler instanceof tom.library.adt.bytecode.types.Handler) ) {
-if ( ((( tom.library.adt.bytecode.types.Handler )handler) instanceof tom.library.adt.bytecode.types.handler.CatchHandler) ) {
-
-Position labelPosition = (Position) labelMap.get(
- (( tom.library.adt.bytecode.types.Handler )handler).gethandler() );
-InstructionList labelInst = (InstructionList) labelPosition.getSubterm().visit(inst);
-out.write(
-"\n                  "+id+
-" [label=\"Catch\\ntype : "+
- (( tom.library.adt.bytecode.types.Handler )handler).gettype() +
-"\" shape=box];\n                  "+id+
-" -> "+getDotId(labelInst)+
-" [label=\"handler\" style=dotted];\n                  ");
-
-
-}
-}
-
-}
-{
-if ( (handler instanceof tom.library.adt.bytecode.types.Handler) ) {
-if ( ((( tom.library.adt.bytecode.types.Handler )handler) instanceof tom.library.adt.bytecode.types.handler.FinallyHandler) ) {
-
-Position labelPosition = (Position) labelMap.get(
- (( tom.library.adt.bytecode.types.Handler )handler).gethandler() );
-InstructionList labelInst = (InstructionList) labelPosition.getSubterm().visit(inst);
-out.write(
-"\n                  "+id+
-" [label=\"Finally\" shape=box];\n                  "+id+
-" -> "+getDotId(labelInst)+
-" [label=\"handler\" style=dotted];\n                  ");
-
-
-}
-}
-
-}
-
-
-}
-
-
-Position startPosition = (Position) labelMap.get(block.getstart());
-InstructionList startInst = (InstructionList) startPosition.getSubterm().visit(inst);
-Position endPosition = (Position) labelMap.get(block.getend());
-InstructionList lastInst = (InstructionList) endPosition.getSubterm().visit(inst);
-out.write(
-"\n              "+id+
-" -> "+getDotId(startInst)+
-" [label=\"start\" style=dotted];\n              "+id+
-" -> "+getDotId(lastInst)+
-" [label=\"end\" style=dotted];\n              ");
-} catch(IOException e) {
-e.printStackTrace();
-}
-
-
-}
-if ( tomMatch656__end__4.isEmptyTryCatchBlockList() ) {
-tomMatch656__end__4=(( tom.library.adt.bytecode.types.TryCatchBlockList )list);
-} else {
-tomMatch656__end__4= tomMatch656__end__4.getTailTryCatchBlockList() ;
-}
-
-}
-} while(!( (tomMatch656__end__4==(( tom.library.adt.bytecode.types.TryCatchBlockList )list)) ));
-}
-}
-
-}
-
-}
-
-}
-
-/**
-* Prints all the local variables informations.
-* @param list the local variables list to be printed.
-* @param labelMap the label map (see the BuildLabelMap strategy).
-* @param out the writer to be used for the dot output.
-* @param inst the global list of instructions.
-*/
-private static void printLocalVariables(LocalVariableList list, Map labelMap, Writer out, InstructionList inst) throws VisitFailure {
-
-{
-{
-if ( (list instanceof tom.library.adt.bytecode.types.LocalVariableList) ) {
-if ( (((( tom.library.adt.bytecode.types.LocalVariableList )list) instanceof tom.library.adt.bytecode.types.localvariablelist.ConsLocalVariableList) || ((( tom.library.adt.bytecode.types.LocalVariableList )list) instanceof tom.library.adt.bytecode.types.localvariablelist.EmptyLocalVariableList)) ) {
- tom.library.adt.bytecode.types.LocalVariableList  tomMatch658__end__4=(( tom.library.adt.bytecode.types.LocalVariableList )list);
-do {
-{
-if (!( tomMatch658__end__4.isEmptyLocalVariableList() )) {
-
-try {
-LocalVariable var = 
- tomMatch658__end__4.getHeadLocalVariableList() ;
-String id = getDotId(var);
-Position startPosition = (Position) labelMap.get(var.getstart());
-InstructionList startInst = (InstructionList) startPosition.getSubterm().visit(inst);
-Position endPosition = (Position) labelMap.get(var.getend());
-InstructionList lastInst = (InstructionList) endPosition.getSubterm().visit(inst);
-
-out.write(
-"\n              "+id+
-" [label=\"var : "+var.getname()+
-"\\ndescriptor : "+var.gettypeDesc()+
-"\\nindex : "+Integer.toString(var.getindex())+
-"\" shape=box];\n              "+id+
-" -> "+getDotId(startInst)+
-" [label=\"start\" style=dotted];\n              "+id+
-" -> "+getDotId(lastInst)+
-" [label=\"end\" style=dotted];\n              ");
-} catch(IOException e) {
-e.printStackTrace();
-}
-
-
-}
-if ( tomMatch658__end__4.isEmptyLocalVariableList() ) {
-tomMatch658__end__4=(( tom.library.adt.bytecode.types.LocalVariableList )list);
-} else {
-tomMatch658__end__4= tomMatch658__end__4.getTailLocalVariableList() ;
-}
-
-}
-} while(!( (tomMatch658__end__4==(( tom.library.adt.bytecode.types.LocalVariableList )list)) ));
-}
-}
-
-}
-
-}
-
-}
-
-/**
-* Used to pass the stored instruction as a strategy parameter.
-*/
-private static class InsWrapper { public InstructionList ins; }
-
-
-
-/**
-* Assign the current instruction node to the given InsWrapper.
-* @param ins the instruction wrapper.
-*/
-
-public static class Assign extends tom.library.sl.AbstractStrategyBasic {
-private  InsWrapper  ins;
-public Assign( InsWrapper  ins) {
-super(( new tom.library.sl.Identity() ));
-this.ins=ins;
-}
-public  InsWrapper  getins() {
-return ins;
-}
-public tom.library.sl.Visitable[] getChildren() {
-tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];
-stratChilds[0] = super.getChildAt(0);
-return stratChilds;}
-public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {
-super.setChildAt(0, children[0]);
-return this;
-}
-public int getChildCount() {
-return 1;
-}
-public tom.library.sl.Visitable getChildAt(int index) {
-switch (index) {
-case 0: return super.getChildAt(0);
-default: throw new IndexOutOfBoundsException();
-}
-}
-public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {
-switch (index) {
-case 0: return super.setChildAt(0, child);
-default: throw new IndexOutOfBoundsException();
-}
-}
-@SuppressWarnings("unchecked")
-public <T> T visitLight(T v, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if ( (v instanceof tom.library.adt.bytecode.types.InstructionList) ) {
-return ((T)visit_InstructionList((( tom.library.adt.bytecode.types.InstructionList )v),introspector));
-}
-if (!(( null  == environment))) {
-return ((T)any.visit(environment,introspector));
-} else {
-return any.visitLight(v,introspector);
-}
-
-}
-@SuppressWarnings("unchecked")
-public  tom.library.adt.bytecode.types.InstructionList  _visit_InstructionList( tom.library.adt.bytecode.types.InstructionList  arg, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-if (!(( null  == environment))) {
-return (( tom.library.adt.bytecode.types.InstructionList )any.visit(environment,introspector));
-} else {
-return any.visitLight(arg,introspector);
-}
-}
-@SuppressWarnings("unchecked")
-public  tom.library.adt.bytecode.types.InstructionList  visit_InstructionList( tom.library.adt.bytecode.types.InstructionList  tom__arg, tom.library.sl.Introspector introspector)
- throws tom.library.sl.VisitFailure {
-{
-{
-if ( (tom__arg instanceof tom.library.adt.bytecode.types.InstructionList) ) {
-ins.ins = 
-(( tom.library.adt.bytecode.types.InstructionList )tom__arg); 
-
-}
-
-}
-
-}
-return _visit_InstructionList(tom__arg,introspector);
-
-}
-}
-private static  tom.library.sl.Strategy  tom_make_Assign( InsWrapper  t0) { 
-return new Assign(t0);
-}
-
-
-/**
-* Generates a control flow graph for each method of the given class.
-* @param ast the gom-term subject representing the class.
-*/
-public static void classToDot(ClassNode ast) throws VisitFailure {
-Writer w = new BufferedWriter(new OutputStreamWriter(System.out)); 
-MethodList methods = ast.getmethods();
-
-{
-{
-if ( (methods instanceof tom.library.adt.bytecode.types.MethodList) ) {
-if ( (((( tom.library.adt.bytecode.types.MethodList )methods) instanceof tom.library.adt.bytecode.types.methodlist.ConsMethodList) || ((( tom.library.adt.bytecode.types.MethodList )methods) instanceof tom.library.adt.bytecode.types.methodlist.EmptyMethodList)) ) {
- tom.library.adt.bytecode.types.MethodList  tomMatch660__end__4=(( tom.library.adt.bytecode.types.MethodList )methods);
-do {
-{
-if (!( tomMatch660__end__4.isEmptyMethodList() )) {
- tom.library.adt.bytecode.types.Method  tom_x= tomMatch660__end__4.getHeadMethodList() ;
-
-try {
-MethodInfo info = 
-tom_x.getinfo();
-w.write(
-"digraph "+info.getname()+
-" {\n              ");
-
-// Print a root node with the method name and descriptor. Add a link to the first instruction if any.
-w.write(
-"method [label=\"method : "+info.getname()+
-"\\ndescriptor : "+ToolBox.buildDescriptor(info.getdesc())+
-"\" shape=box];\n              ");
-if(!
-tom_x.getcode().isEmptyCode()) {
-InstructionList ins = 
-tom_x.getcode().getinstructions();
-if(!ins.isEmptyInstructionList()) {
-w.write(
-"method -> "+getDotId(ins)+
-"\n                  ");
-}
-
-// Compute the label map to allow us to retrieve an instruction from a label.
-HashMap labelMap = new HashMap();
-
-tom_make_TopDown(tom_make_BuildLabelMap(labelMap)).visit(ins);
-
-// Create a wrapper to pass a parent node to its children.
-InsWrapper insWrapper = new InsWrapper();
-
-// This strategy run through all node. For each of them, the node is printed.
-// Links between the current node and its children are printed by passing the parent to each of them.
-// AllCfg allows us to get all the children of the current node.
-Strategy toDot = 
-tom_make_TopDown(tom_make_Try( tom.library.sl.Sequence.make(tom_make_PrintDotNode(w), tom.library.sl.Sequence.make( tom.library.sl.Sequence.make(tom_make_Assign(insWrapper), tom.library.sl.Sequence.make(tom_make_AllCfg(tom_make_PrintDotLink(w,insWrapper),labelMap), null ) ) , null ) ) ));
-
-toDot.visit(ins);
-
-// Prints the try/catch/finally blocks.
-printTryCatchBlocks(
-tom_x.getcode().gettryCatchBlocks(), labelMap, w, ins);
-
-// Prints the local variables informations.
-printLocalVariables(
-tom_x.getcode().getlocalVariables(), labelMap, w, ins);
-}
 
-w.write("}\n");
-w.flush();
-} catch(IOException e) {
-e.printStackTrace();
-}
-
-
-}
-if ( tomMatch660__end__4.isEmptyMethodList() ) {
-tomMatch660__end__4=(( tom.library.adt.bytecode.types.MethodList )methods);
-} else {
-tomMatch660__end__4= tomMatch660__end__4.getTailMethodList() ;
-}
-
-}
-} while(!( (tomMatch660__end__4==(( tom.library.adt.bytecode.types.MethodList )methods)) ));
-}
-}
-
-}
-
-}
+  /**
+   * Generates the dot control flow graphs for each method of the specified class.
+   * Usage : java bytecode.CFGViewer <class name>
+   * Ex: java bytecode.CFGViewer bytecode.Subject
+   * @param args args[0] : the class name
+   */
+   public static void main(String[] args) {
+     if(args.length <= 0) {
+       System.out.println("Usage : java bytecode.CFGViewer <class name>\nEx: java bytecode.CFGViewer MyClass");
+       return;
+     }
+     BytecodeReader cg = new BytecodeReader(args[0]);
+     ClassNode c = cg.getAst();
+     try {
+       classToDot(c);
+     } catch (VisitFailure e) {
+       System.out.println("Unexpected failure in strategies");
+     }
+   }
 
 }
 
-/**
-* Generates the dot control flow graphs for each method of the specified class.
-* Usage : java bytecode.CFGViewer <class name>
-* Ex: java bytecode.CFGViewer bytecode.Subject
-* @param args args[0] : the class name
-*/
-public static void main(String[] args) {
-if(args.length <= 0) {
-System.out.println("Usage : java bytecode.CFGViewer <class name>\nEx: java bytecode.CFGViewer MyClass");
-return;
-}
-BytecodeReader cg = new BytecodeReader(args[0]);
-ClassNode c = cg.getAst();
-try {
-classToDot(c);
-} catch (VisitFailure e) {
-System.out.println("Unexpected failure in strategies");
-}
-}
 
-}

@@ -1,0 +1,24 @@
+%typeterm TomPerson {
+  implement { someCompositeTerm }
+  is_sort(t) { someCompositeTerm }
+  equals(t1,t2) { someCompositeTerm }
+}
+
+%op TomPerson person(name:String,age:int) {
+  is_fsym(t) { $s }
+  make(t1,t2) { someCompositeTerm }
+  get_slot(name,t) { someCompositeTerm }
+  get_slot(age,t) { someCompositeTerm }
+}
+
+%op TomPerson2 person2(name2:String,age2:int) {
+  is_fsym(t) { someCompositeTerm }
+}
+
+%oparray TomList conc(Object*){
+  is_fsym(t) { someCompositeTerm }
+  make_empty(n) { someCompositeTerm }
+  make_append(e,l) { someCompositeTerm }
+  get_element(l,n) { someCompositeTerm }
+  get_size(l){ someCompositeTerm }
+}

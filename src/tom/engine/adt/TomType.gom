@@ -1,5 +1,5 @@
 module TomType
-imports TomSignature int
+imports TomSignature int 
 abstract syntax
 
 TomType =
@@ -35,6 +35,9 @@ TomType =
         | TypeVar(TomType:String,Index:int)
 
 TypeOption = WithSymbol(RootSymbolName:TomName)
+           /**
+            * Declaration of type hierarchy
+            */
            | SubtypeDecl(TomType:String)
 
 TypeOptionList = concTypeOption(TypeOption*)

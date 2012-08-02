@@ -2,7 +2,7 @@
  *   
  * TOM - To One Matching Compiler
  * 
- * Copyright (c) 2000-2011, INPL, INRIA
+ * Copyright (c) 2000-2012, INPL, INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -175,5 +175,26 @@ public class CGenerator extends CFamilyGenerator {
 
   protected void buildFunctionDef(int deep, String tomName, BQTermList varList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName) throws IOException {
     throw new TomRuntimeException("Function not yet supported in C");
+  }
+
+  protected void buildReferenceClass(int deep, String refname, RefClassTracelinkInstructionList refclassTInstructions, String  moduleName) {
+    throw new TomRuntimeException("%transformation (ResolveReferenceClass) not yet supported in C");
+  }
+
+  protected void buildResolveInverseLinks(int deep, String fileFrom, String fileTo, TomNameList resolveNameList, String moduleName) throws IOException {
+    throw new TomRuntimeException("%transformation (ResolveInverseLinks) not yet supported in C");
+  }
+
+  protected void buildTracelink(int deep, String type, String name, Expression expr, String moduleName) throws IOException {
+    throw new TomRuntimeException("%transformation (Tracelink instruction) not yet supported in C");
+  }
+  
+  protected void buildTracelinkPopulateResolve(int deep, String refClassName, TomNameList tracedLinks, BQTerm current, BQTerm link, String moduleName) throws IOException {
+    throw new TomRuntimeException("%transformation (TracelinkPopulateResolve instruction) not yet supported in C");
+  }
+
+  //tmp
+  protected void buildResolve(int deep, BQTerm bqterm, String moduleName) throws IOException {
+    throw new TomRuntimeException("%transformation (Resolve2 instruction) not yet supported in C");
   }
 }

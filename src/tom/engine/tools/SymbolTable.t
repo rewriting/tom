@@ -2,7 +2,7 @@
  *
  * TOM - To One Matching Compiler
  *
- * Copyright (c) 2000-2011, INPL, INRIA
+ * Copyright (c) 2000-2012, INPL, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -95,6 +95,10 @@ public class SymbolTable {
 
   }
 
+  public Map getMapSymbolName() {
+    return this.mapSymbolName;
+  }
+
   public void regenerateFromTerm(TomSymbolTable symbTable) {
     TomEntryList list =  symbTable.getEntryList();
     while(!list.isEmptyconcTomEntry()) {
@@ -131,7 +135,10 @@ public class SymbolTable {
   }
 
   public TomType getType(String name) {
-    return mapTypeName.get(name);
+    if (mapTypeName.containsKey(name)) {
+      return mapTypeName.get(name);
+    }
+    return null;
   }
 
   public boolean isUsedSymbolConstructor(TomSymbol symbol) {    
@@ -380,6 +387,16 @@ public class SymbolTable {
       isFloatType(type);
   }
 
+  /*
+   * %transformation
+   */
+  public boolean isResolveSymbol(TomSymbol symb) {
+    %match(symb) {
+     Symbol[Options=concOption(_*,DeclarationToOption(ResolveMakeDecl[]),_*)] -> { return true; }
+    }
+    return false;
+  }
+
   public boolean isNumericType(String type) {
     return isIntType(type) || isLongType(type) || isDoubleType(type) || isFloatType(type);
   }
@@ -418,7 +435,11 @@ public class SymbolTable {
     System.out.println("Not a builtin type: " + type);
     throw new TomRuntimeException("getBuiltinType error on term: " + type);
   }
-
+/*
+  public Iterable<TomType> entryTypeIterable() {
+    return mapTypeName.entrySet();
+  }
+*/
   public Iterable<String> keySymbolIterable() {
     return mapSymbolName.keySet();
   }
@@ -474,6 +495,22 @@ public class SymbolTable {
   }
 
   /*
+  public void checkTomTypes(SymbolTable symbolTable) {
+    for (TomType type : mapTypeName.entrySet()) {
+      %match(type) {
+        Type[TypeOptions=concTypeOption(_*,SubtypeDecl[TomType=supertypeName],_*)] -> {
+          if (!mapTypeName.contains(`supertypeName)) {
+            TomMessage.error(getLogger(),currentFile(), getLine(),
+                TomMessage.typetermNotDefined, 
+                supertypeName);
+          }
+        }
+      }
+    }
+  }
+  */
+
+  /*
    * Inlining
    */
 
@@ -517,6 +554,14 @@ public class SymbolTable {
   }
   public String getIsSort(String type) {
     return getInliner(prefixIsSort,type);
+  }
+
+  //the code is generated in the backend
+  public void putResolveGetSlot(String opname, String slotname) {
+    putInliner(prefixGetSlot,opname+slotname,"");
+  }
+  public String getResolveGetSlot(String opname, String slotname) {
+    return getInliner(prefixGetSlot,opname+slotname);
   }
 
   public void putGetSlot(String opname, String slotname, String code) {

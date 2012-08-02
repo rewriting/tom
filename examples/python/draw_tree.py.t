@@ -10,6 +10,8 @@ interval = Constructor('interval',2)
 
 %include { draw_tree.tom }
 
+def nil(): return []
+
 def movetree(t,delta):
   %match(t) {
     enode(pair(label,x), subtrees) -> { return `enode(pair(label,x+delta), subtrees) }
@@ -43,8 +45,8 @@ def fitlistl(es):
   %op FloatList fitlistlaux(l1:Extent, l2:ExtentList) { make(l1,l2) { fitlistlaux(l1,l2) } }
   def fitlistlaux(acc,l):
     %match(ExtentList l) {
-      ()      -> { return `extentlist() }
-      (e,es*) -> {
+      extentlist()      -> { return `extentlist() }
+      extentlist(e,es*) -> {
         x = `fit(acc,e)
         return `floatlist(x,fitlistlaux(merge(acc,moveextent(e,x)),es))
       }
@@ -55,8 +57,8 @@ def fitlistr(es):
   %op FloatList fitlistraux(l1:Extent, l2:ExtentList) { make(l1,l2) { fitlistraux(l1,l2) } }
   def fitlistraux(acc,l):
     %match(ExtentList l) {
-      ()      -> { return `extentlist() }
-      (e,es*) -> {
+      extentlist()      -> { return `extentlist() }
+      extentlist(e,es*) -> {
         x = -`fit(e,acc)
         return `floatlist(x,fitlistraux(merge(moveextent(e,x),acc),es))
       }
@@ -206,7 +208,7 @@ class TermParser:
             return `node(name,children)
 
         elif t == COMMA or t == RPAR:
-            return `node(name,[])
+            return `node(name,nil())
 
         else:
             raise "expected left or right parenthesis or comma"

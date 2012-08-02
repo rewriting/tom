@@ -1,7 +1,7 @@
 /*
  * Gom
  *
- * Copyright (c) 2000-2011, INPL, INRIA
+ * Copyright (c) 2000-2012, INPL, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,14 +24,10 @@
 
 package tom.gom.expander;
 
-import java.io.File;
-import java.util.logging.Level;
 import java.util.Map;
 
-import tom.platform.PlatformLogRecord;
 import tom.engine.tools.Tools;
 import tom.gom.GomMessage;
-import tom.gom.GomStreamManager;
 import tom.gom.adt.gom.types.*;
 import tom.gom.tools.GomGenericPlugin;
 import tom.gom.tools.GomEnvironment;
@@ -80,7 +76,8 @@ public class GraphExpanderPlugin extends GomGenericPlugin {
   public void run(Map<String,String> informationTracker) {
     if(getOptionBooleanValue("termgraph") || getOptionBooleanValue("termpointer")) {
       boolean intermediate = ((Boolean)getOptionManager().getOptionValue("intermediate")).booleanValue();
-      GomMessage.info(getLogger(), null, 0, GomMessage.signatureExtension);
+      GomMessage.info(getLogger(), getStreamManager().getInputFileName(), 0,
+          GomMessage.signatureExtension);
       GraphExpander expander = new GraphExpander(getOptionBooleanValue("termgraph"),getGomEnvironment());
       Pair mpair = expander.expand(typedModuleList,hookList);
       referencedModuleList = mpair.getModules();
@@ -90,9 +87,9 @@ public class GraphExpanderPlugin extends GomGenericPlugin {
             getStreamManager().getInputFileName(), 0,
             GomMessage.expansionIssue);
       } else {
-        GomMessage.fine(getLogger(), null, 0, 
+        GomMessage.fine(getLogger(), getStreamManager().getInputFileName(), 0,
             GomMessage.referencedModules,referencedModuleList);
-        GomMessage.info(getLogger(), null, 0, 
+        GomMessage.info(getLogger(), getStreamManager().getInputFileName(), 0,
             GomMessage.signatureExtensionSuccess);
         if(intermediate) {
           Tools.generateOutput(getStreamManager().getOutputFileName()
@@ -104,7 +101,8 @@ public class GraphExpanderPlugin extends GomGenericPlugin {
       referencedModuleList = typedModuleList;
       referencedHookList = hookList;
     }
-    informationTracker.put(KEY_LAST_GEN_MAPPING,getGomEnvironment().getLastGeneratedMapping());
+    informationTracker.put(KEY_LAST_GEN_MAPPING,
+        getGomEnvironment().getLastGeneratedMapping());
   }
 
   /**

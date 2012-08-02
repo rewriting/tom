@@ -1,7 +1,7 @@
 /*
  * Gom
  *
- * Copyright (c) 2000-2011, INPL, INRIA
+ * Copyright (c) 2000-2012, INPL, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -47,6 +47,8 @@ public class FreshExpander {
   private SymbolTable st;
   private GomEnvironment gomEnvironment;
 
+  public final static String SHOULD_NEVER_HAPPEN_MSG = "Should never happen";
+
   public FreshExpander(GomEnvironment gomEnvironment) {
     this.gomEnvironment = gomEnvironment;
     this.st = gomEnvironment.getSymbolTable();
@@ -79,13 +81,13 @@ public class FreshExpander {
       st.fill(res);
       return res;
     } catch (VisitFailure e) {
-      throw new GomRuntimeException("Should never happen");
+      throw new GomRuntimeException(FreshExpander.SHOULD_NEVER_HAPPEN_MSG);
     } catch (SortException e) {
       e.printStackTrace();
-      throw new GomRuntimeException("Should never happen");
+      throw new GomRuntimeException(FreshExpander.SHOULD_NEVER_HAPPEN_MSG);
     } catch (ConstructorException e) {
       e.printStackTrace();
-      throw new GomRuntimeException("Should never happen");
+      throw new GomRuntimeException(FreshExpander.SHOULD_NEVER_HAPPEN_MSG);
     }
   }
 
@@ -486,7 +488,7 @@ public class FreshExpander {
         return `OnceTopDown(AddHook(sort,hook)).visitLight(ml);
       }
       catch (VisitFailure e) {
-        throw new GomRuntimeException("Should never happen");
+        throw new GomRuntimeException(FreshExpander.SHOULD_NEVER_HAPPEN_MSG);
       }
     }
 
@@ -508,7 +510,7 @@ public class FreshExpander {
       try {
         return `OnceTopDown(AddHook(sort,hook)).visitLight(ml);
       } catch (VisitFailure e) {
-        throw new GomRuntimeException("Should never happen");
+        throw new GomRuntimeException(FreshExpander.SHOULD_NEVER_HAPPEN_MSG);
       }
     }
 
@@ -532,7 +534,7 @@ public class FreshExpander {
         return `OnceTopDown(AddHook(st.rawCons(sort),hook)).visitLight(ml);
       }
       catch (VisitFailure e) {
-        throw new GomRuntimeException("Should never happen");
+        throw new GomRuntimeException(FreshExpander.SHOULD_NEVER_HAPPEN_MSG);
       }
     }
 
@@ -546,7 +548,7 @@ public class FreshExpander {
         return `OnceTopDown(AddHook(sort,hook)).visitLight(ml);
       }
       catch (VisitFailure e) {
-        throw new GomRuntimeException("Should never happen");
+        throw new GomRuntimeException(FreshExpander.SHOULD_NEVER_HAPPEN_MSG);
       }
     }
 
@@ -568,7 +570,7 @@ public class FreshExpander {
       try {
         return `OnceTopDown(AddHook(sort,hook)).visitLight(ml);
       } catch (VisitFailure e) {
-        throw new GomRuntimeException("Should never happen");
+        throw new GomRuntimeException(FreshExpander.SHOULD_NEVER_HAPPEN_MSG);
       }
     }
 
@@ -1219,14 +1221,14 @@ public class FreshExpander {
   private GomModuleList addRawSortsAndConstructors(GomModuleList res) {
     try { return `TopDown(AddRaw(st,this)).visitLight(res); }
     catch(VisitFailure e) {
-      throw new GomRuntimeException("Should never happen");
+      throw new GomRuntimeException(FreshExpander.SHOULD_NEVER_HAPPEN_MSG);
     }
   }
 
   %strategy AddRaw(st:SymbolTable,fe:FreshExpander) extends Identity() {
-    visit Grammar {
-      g@Grammar[ProductionList=pl] -> {
-        return `g.setProductionList(fe.addRaw(st,`pl));
+    visit Section {
+      s@Public[ProductionList=pl] -> {
+        return `s.setProductionList(fe.addRaw(st,`pl));
       }
     }
   }
@@ -1271,7 +1273,7 @@ public class FreshExpander {
   private Production rawify(Production p, SymbolTable st) {
     try { return `TopDown(Rawify(st,this)).visitLight(p); }
     catch(VisitFailure f) {
-      throw new GomRuntimeException("Should never happen");
+      throw new GomRuntimeException(FreshExpander.SHOULD_NEVER_HAPPEN_MSG);
     }
   }
 

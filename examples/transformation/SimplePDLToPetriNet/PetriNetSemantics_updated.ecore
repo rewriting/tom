@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="petrinetsemantics"
+    nsURI="http://petrinetsemantics/1.0" nsPrefix="petrinetsemantics">
+  <eSubpackages name="DDMMPetriNet" nsURI="petrinet.ddmm" nsPrefix="petrinet.ddmm">
+    <eClassifiers xsi:type="ecore:EClass" name="PetriNet">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="nodes" upperBound="-1"
+          eType="#//DDMMPetriNet/Node" containment="true" eOpposite="#//DDMMPetriNet/Node/net"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="arcs" upperBound="-1"
+          eType="#//DDMMPetriNet/Arc" containment="true" eOpposite="#//DDMMPetriNet/Arc/net"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Transition" eSuperTypes="#//DDMMPetriNet/Node">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="min_time" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="max_time" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Node" abstract="true">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="net" lowerBound="1" eType="#//DDMMPetriNet/PetriNet"
+          eOpposite="#//DDMMPetriNet/PetriNet/nodes"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="outgoings" upperBound="-1"
+          eType="#//DDMMPetriNet/Arc" eOpposite="#//DDMMPetriNet/Arc/source"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="incomings" upperBound="-1"
+          eType="#//DDMMPetriNet/Arc" eOpposite="#//DDMMPetriNet/Arc/target"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Place" eSuperTypes="#//DDMMPetriNet/Node">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="initialMarking" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Arc">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="target" lowerBound="1"
+          eType="#//DDMMPetriNet/Node" eOpposite="#//DDMMPetriNet/Node/incomings"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="source" lowerBound="1"
+          eType="#//DDMMPetriNet/Node" eOpposite="#//DDMMPetriNet/Node/outgoings"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="net" lowerBound="1" eType="#//DDMMPetriNet/PetriNet"
+          eOpposite="#//DDMMPetriNet/PetriNet/arcs"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="kind" lowerBound="1"
+          eType="#//DDMMPetriNet/ArcKind"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="weight" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EEnum" name="ArcKind">
+      <eLiterals name="normal" value="1"/>
+      <eLiterals name="read_arc" value="2"/>
+    </eClassifiers>
+  </eSubpackages>
+  <eSubpackages name="SDMMPetriNet" nsURI="petrinet.sdmm" nsPrefix="petrinet.sdmm">
+    <eClassifiers xsi:type="ecore:EClass" name="Node_dynamic" abstract="true">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="Node_static" lowerBound="1"
+          eType="#//DDMMPetriNet/Node"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Place_dynamic" eSuperTypes="#//SDMMPetriNet/Node_dynamic">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="Place_static" lowerBound="1"
+          eType="#//DDMMPetriNet/Place"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="marking" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="PetriNet_dynamic">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="nodes" upperBound="-1"
+          eType="#//SDMMPetriNet/Node_dynamic" containment="true"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="PetriNet_static" lowerBound="1"
+          eType="#//DDMMPetriNet/PetriNet"/>
+    </eClassifiers>
+  </eSubpackages>
+  <eSubpackages name="EDMMPetriNet" nsURI="petrinet.edmm" nsPrefix="petrinet.edmm">
+    <eClassifiers xsi:type="ecore:EClass" name="PetriNetEvent" abstract="true" eSuperTypes="#//TM3PetriNet/PNSimEvent"/>
+    <eClassifiers xsi:type="ecore:EClass" name="FireTransitionEvent" eSuperTypes="#//EDMMPetriNet/PetriNetEvent">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="time" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="firedTransition" lowerBound="1"
+          eType="#//DDMMPetriNet/Transition"/>
+    </eClassifiers>
+  </eSubpackages>
+  <eSubpackages name="TM3PetriNet" nsURI="petrinet.tmmm" nsPrefix="petrinet.tmmm">
+    <eClassifiers xsi:type="ecore:EClass" name="PNScenario">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="traces" upperBound="-1"
+          eType="#//TM3PetriNet/PNTrace" eOpposite="#//TM3PetriNet/PNTrace/scenario"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="simEvents" upperBound="-1"
+          eType="#//TM3PetriNet/PNSimEvent" containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="PNTrace">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="scenario" lowerBound="1"
+          eType="#//TM3PetriNet/PNScenario" eOpposite="#//TM3PetriNet/PNScenario/traces"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="PNSimEvent">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="internal" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="date" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+          defaultValueLiteral=""/>
+    </eClassifiers>
+  </eSubpackages>
+</ecore:EPackage>

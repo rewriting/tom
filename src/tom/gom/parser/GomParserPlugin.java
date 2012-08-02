@@ -1,7 +1,7 @@
 /*
  * Gom
  *
- * Copyright (c) 2000-2011, INPL, INRIA
+ * Copyright (c) 2000-2012, INPL, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -25,15 +25,12 @@
 package tom.gom.parser;
 
 import java.io.Reader;
-import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Map;
 
-import tom.platform.PlatformLogRecord;
 import tom.engine.tools.Tools;
 import tom.gom.GomMessage;
-import tom.gom.GomStreamManager;
 import tom.gom.adt.gom.types.*;
 import tom.gom.tools.GomGenericPlugin;
 import tom.gom.tools.GomEnvironment;
@@ -107,7 +104,7 @@ public class GomParserPlugin extends GomGenericPlugin {
       module = (GomModule) GomAdaptor.getTerm(tree);
       java.io.StringWriter swriter = new java.io.StringWriter();
       tom.library.utils.Viewer.toTree(module,swriter);
-      GomMessage.fine(getLogger(), null, 0, GomMessage.parsedModules, swriter);
+      GomMessage.fine(getLogger(), inputFileName, 0, GomMessage.parsedModules, swriter);
       if (null == module) {
         GomMessage.error(getLogger(),inputFileName, lex.getLine(),GomMessage.detailedParseException);
         return;
@@ -134,7 +131,7 @@ public class GomParserPlugin extends GomGenericPlugin {
         }
       }
     }
-    GomMessage.info(getLogger(), null, 0, GomMessage.parsingPhase, 
+    GomMessage.info(getLogger(), inputFileName, 0, GomMessage.parsingPhase, 
         (System.currentTimeMillis()-startChrono));
     if (intermediate) {
       Tools.generateOutput(getStreamManager().getOutputFileName()

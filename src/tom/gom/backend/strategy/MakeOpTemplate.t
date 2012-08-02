@@ -1,7 +1,7 @@
 /*
  * Gom
  *
- * Copyright (c) 2006-2011, INPL, INRIA
+ * Copyright (c) 2006-2012, INPL, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -154,12 +154,12 @@ public class @className()@ implements tom.library.sl.Strategy {
 
   @@SuppressWarnings("unchecked")
   public <T> T visitLight(T any, tom.library.sl.Introspector i) throws tom.library.sl.VisitFailure {
-@computeNewChilds(slotList,"any","i")@
+@computeNewChildren(slotList,"any","i")@
     return (T) @fullClassName(operator)@.make(@genMakeArguments(slotList,false)@);
   }
 
   public int visit(tom.library.sl.Introspector i) {
-@computeSLNewChilds(slotList,"i")@
+@computeSLNewChildren(slotList,"i")@
     getEnvironment().setSubject(@fullClassName(operator)@.make(@genMakeArguments(slotList,false)@));
     return tom.library.sl.Environment.SUCCESS;
   }
@@ -168,25 +168,35 @@ public class @className()@ implements tom.library.sl.Strategy {
   }
 
   public String generateMapping() {
+    String prefix = className();
     return %[
-  %op Strategy @className()@(@genStratArgs(slotList,"arg")@) {
+  %op Strategy @className()@(@genStratArgs(prefix,slotList,"arg")@) {
     is_fsym(t) { (($t!=null) && ($t instanceof @fullClassName()@)) }
-@genGetSlot(slotList.length(),"arg")@
+@genGetSlot(prefix,slotList,"arg")@
     make(@genMakeArguments(slotList,false)@) { new @fullClassName()@(@genMakeArguments(slotList,true)@) }
   }
 ]%;
   }
 
-private String genGetSlot(int count, String arg) {
+private String genGetSlot(String prefix,SlotFieldList slots,String arg) {
   StringBuilder out = new StringBuilder();
-  for (int i = 0; i < count; ++i) {
-    out.append(%[
-        get_slot(@arg+i@, t) { (tom.library.sl.Strategy)((@fullClassName()@)$t).getChildAt(@i@) }]%);
+  int i = 0;
+  %match(slots) {
+    ConcSlotField(_*,SlotField[Name=_name,Domain=domain],_*) -> {
+      if (!getGomEnvironment().isBuiltinClass(`domain)) {
+        out.append(%[
+        get_slot(@prefix+arg+i@, t) { (tom.library.sl.Strategy)((@fullClassName()@)$t).getChildAt(@i@) }]%);
+      } else {
+        out.append(%[
+        get_slot(@prefix+arg+i@, t) { ((tom.library.sl.VisitableBuiltin<@primitiveToReferenceType(fullClassName(`domain))@>)(((@fullClassName()@)$t).getChildAt(@i@))).getBuiltin() }]%); 
+      }
+      i++; 
+    }
   }
   return out.toString();
 }
 
-private String genStratArgs(SlotFieldList slots,String arg) {
+private String genStratArgs(String prefix,SlotFieldList slots,String arg) {
     StringBuilder args = new StringBuilder();
     int i = 0;
     while(!slots.isEmptyConcSlotField()) {
@@ -196,6 +206,7 @@ private String genStratArgs(SlotFieldList slots,String arg) {
       %match(head) {
         SlotField[Name=_name,Domain=domain] -> {
           args.append((i==0?"":", "));
+          args.append(prefix);
           args.append(arg);
           args.append(i);
           if (!getGomEnvironment().isBuiltinClass(`domain)) {
@@ -230,6 +241,7 @@ private String genStratArgs(SlotFieldList slots,String arg) {
   }
 
   private int nonBuiltinChildCount() {
+    /**
     int count = 0;
     %match(slotList) {
       ConcSlotField(_*,SlotField[Domain=domain],_*) -> {
@@ -239,6 +251,8 @@ private String genStratArgs(SlotFieldList slots,String arg) {
       }
     }
     return count;
+    */
+    return slotList.length();
   }
 
   /**
@@ -264,8 +278,9 @@ private String genStratArgs(SlotFieldList slots,String arg) {
       ConcSlotField(_*,SlotField[Name=fieldName,Domain=domain],_*) -> {
         if (!getGomEnvironment().isBuiltinClass(`domain)) {
           res += fieldName(`fieldName) + ", ";
+        } else {
+          res += "new tom.library.sl.VisitableBuiltin("+ fieldName(`fieldName) + "), ";
         }
-        // else : Skip builtin childs
       }
     }
     if (res.length() != 0) {
@@ -286,8 +301,10 @@ private String genStratArgs(SlotFieldList slots,String arg) {
       ConcSlotField(_*,SlotField[Name=fieldName,Domain=domain],_*) -> {
         if (!getGomEnvironment().isBuiltinClass(`domain)) {
           res += "      case "+index+": return "+fieldName(`fieldName)+";\n";
-          index++;
+        } else {
+          res += "      case "+index+": return new tom.library.sl.VisitableBuiltin("+fieldName(`fieldName)+");\n";
         }
+        index++;
       }
     }
     return res;
@@ -301,8 +318,11 @@ private String genStratArgs(SlotFieldList slots,String arg) {
         if (!getGomEnvironment().isBuiltinClass(`domain)) {
           res += %[      case @index@: @fieldName(`fieldName)@ = (tom.library.sl.Strategy) @argName@; return this;
 ]%;
-          index++;
+        } else {
+          res += %[      case @index@: @fieldName(`fieldName)@ =
+            ((tom.library.sl.VisitableBuiltin<@primitiveToReferenceType(fullClassName(`domain))@>) @argName@).getBuiltin(); return this;]%;
         }
+        index++;
       }
     }
     return res;
@@ -339,13 +359,13 @@ private String genStratArgs(SlotFieldList slots,String arg) {
   /**
    * Generate code to initialize all members of the strategy
    */
-  private String computeNewChilds(SlotFieldList slots, String argName, String introspectorName) {
+  private String computeNewChildren(SlotFieldList slots, String argName, String introspectorName) {
     String res = "";
     %match(slots) {
       ConcSlotField(_*,SlotField[Name=fieldName,Domain=domain],_*) -> {
         if (!getGomEnvironment().isBuiltinClass(`domain)) {
           res += %[
-    Object tmp@fieldName(`fieldName)@ = @fieldName(`fieldName)@.visit(@argName@,@introspectorName@);
+    Object tmp@fieldName(`fieldName)@ = @fieldName(`fieldName)@.visitLight(@argName@,@introspectorName@);
     if (! (tmp@fieldName(`fieldName)@ instanceof @fullClassName(`domain)@)) {
       throw new tom.library.sl.VisitFailure();
     }
@@ -360,7 +380,7 @@ private String genStratArgs(SlotFieldList slots,String arg) {
   /**
    * Generate code to initialize all members of the strategy with the sl scheme
    */
-  private String computeSLNewChilds(SlotFieldList slots, String introspectorName) {
+  private String computeSLNewChildren(SlotFieldList slots, String introspectorName) {
     String res = "";
     %match(slots) {
       ConcSlotField(_*,SlotField[Name=fieldName,Domain=domain],_*) -> {
@@ -379,7 +399,7 @@ private String genStratArgs(SlotFieldList slots,String arg) {
   }
 
   /**
-    * Generate the computation of all new childs for the target
+    * Generate the computation of all new children for the target
     */
   private String generateMembersInit() {
     String res = "";
@@ -407,7 +427,7 @@ private String genStratArgs(SlotFieldList slots,String arg) {
 
   /**
     * Generate the argument list for the operator construction, using the
-    * values computed by computeNewChilds
+    * values computed by computeNewChildren
     */
   private String genMakeArguments(SlotFieldList slots, boolean withDollar) {
     StringBuilder res = new StringBuilder();

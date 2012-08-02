@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2011, INPL, INRIA
+ * Copyright (c) 2004-2012, INPL, INRIA
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -42,6 +42,7 @@ public class Example7 {
     B tt = `f(f(b()));
     %match{
       f(x) << tt && f(b()) << x -> { System.out.println("l1 = " + `x); }
+      f(x) << f(f(b())) || g(x) << g(b()) -> { System.out.println("x " + `x); }    
     }
   }
 }

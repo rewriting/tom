@@ -1,0 +1,137 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!DOCTYPE platform [
+<!ELEMENT platform (plugins,optionmanager)>
+
+  <!ELEMENT plugins (plugin*)>
+
+  <!ELEMENT plugin EMPTY>
+  <!ATTLIST plugin
+    name CDATA #IMPLIED
+    version CDATA #IMPLIED
+    description CDATA #IMPLIED
+    class CDATA #REQUIRED>
+
+  <!ELEMENT optionmanager (options)>
+  <!ATTLIST optionmanager
+    class CDATA #REQUIRED>
+
+  <!ELEMENT options (boolean*,integer*,string*)>
+
+  <!ELEMENT boolean EMPTY>
+  <!ATTLIST boolean
+    name CDATA #REQUIRED
+    altName CDATA ''
+    description CDATA ''
+    value (true|false) #REQUIRED>
+
+  <!ELEMENT integer EMPTY>
+  <!ATTLIST integer
+    name CDATA #REQUIRED
+    altName CDATA ''
+    description CDATA ''
+    value CDATA #REQUIRED
+    attrName CDATA #REQUIRED>
+
+  <!ELEMENT string EMPTY>
+  <!ATTLIST string
+    name CDATA #REQUIRED
+    altName CDATA ''
+    description CDATA ''
+    value CDATA #REQUIRED
+    attrName CDATA #REQUIRED>
+]>
+
+<platform>
+  <plugins>
+    <plugin name='Starter'
+      version=''
+      description='Only here to initialize the environment'
+      class='tom.gom.starter.Starter'/>
+    <plugin name='GomParser'
+      class='tom.gom.parser.GomParserPlugin'/>
+    <plugin name='Expander'
+      class='tom.gom.expander.ExpanderPlugin'/>
+    <plugin name='FreshExpander'
+      class='tom.gom.expander.FreshExpanderPlugin'/>
+    <plugin name='TypeExpander'
+      class='tom.gom.expander.TypeExpanderPlugin'/>
+    <plugin name='GraphExpander'
+      class='tom.gom.expander.GraphExpanderPlugin'/>
+    <plugin name='Compiler'
+      class='tom.gom.compiler.CompilerPlugin'/>
+    <plugin name='Backend'
+      class='tom.gom.backend.BackendPlugin'/>
+  </plugins>
+  <optionmanager class='tom.gom.GomOptionManager'>
+    <options>
+      <boolean name='help'
+        altName='h'
+        description='Show this help'
+        value='false'/>
+      <boolean name='version'
+        altName='V'
+        description='Print version'
+        value='false'/>
+      <boolean name='verbose'
+        altName='v'
+        description='Display compilation information'
+        value='false'/>
+      <boolean name='termpointer'
+        altName='tp'
+        description='Extend the signature for term pointers'
+        value='false'/>
+      <boolean name='fresh'
+        altName='f'
+        description='Extend the signature to deal with terms with binders'
+        value='false'/>
+      <boolean name='termgraph'
+        altName='tg'
+        description='Extend the signature for term-graphs'
+        value='false'/>
+      <boolean name='debug'
+        altName='vv'
+        description='Display debugging info'
+        value='false'/>
+      <boolean name='multithread'
+        altName='mt'
+        description='Generate code compatible with multi-threading'
+        value='false'/>
+      <boolean name='verbosedebug'
+        altName='vvv'
+        description='Display even more debugging info'
+        value='false'/>
+      <string name='package'
+        altName='p'
+        description='Specify package name (optional)'
+        value=''
+        attrName='packageName'/>
+      <boolean name="wall"
+        altName="W"
+        description="Print warning"
+        value="false"/>
+      <string name='destdir'
+        altName='d'
+        description='Specify where to place generated files'
+        value='.'
+        attrName='dir'/>
+      <string name="import"
+        altName="I"
+        description="Path for include"
+        value=""
+        attrName="path"/>
+      <string name='intermediateName'
+        altName='iname'
+        description='specify the prefix of intermediate files'
+        value=''
+        attrName='intermediateName'/>
+      <boolean name="intermediate" altName="i"
+        description="Generate intermediate files"
+        value="false"/>
+      <boolean name='nosharing'
+        altName='ns'
+        description='Generate code whithout sharing'
+        value='false'/>
+    </options>
+  </optionmanager>
+</platform>

@@ -2,7 +2,7 @@
  *
  * TOM - To One Matching Compiler
  *
- * Copyright (c) 2000-2011, INPL, INRIA
+ * Copyright (c) 2000-2012, INPL, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -25,9 +25,7 @@
 
 package tom.engine;
 
-import tom.platform.BasicFormatter;
 import tom.platform.BasicPlatformMessage;
-import tom.platform.PlatformLogRecord;
 
 import java.lang.reflect.*;
 /**
@@ -122,6 +120,8 @@ public class TomMessage extends BasicPlatformMessage {
   // TomGenericPlugin
   public static final TomMessage tomTermExpected       =
     new TomMessage("{0}: A TomTerm was expected by the plugin");
+  public static final TomMessage codeExpected       =
+    new TomMessage("{0}: A Code was expected by the plugin");
 
   // Plugings common
   public static final TomMessage invalidPluginArgument =
@@ -134,6 +134,8 @@ public class TomMessage extends BasicPlatformMessage {
   // parser.TomParserPlugin
   public static final TomMessage fileNotFound          =
       new TomMessage("File ''{0}'' not found");
+  public static final TomMessage unamedTransformationRule =
+      new TomMessage("A transformation rule has not been named in {0} transformation");
   public static final TomMessage tokenStreamException  =
       new TomMessage("TokenStreamException catched: {0}");
   public static final TomMessage recognitionException  =
@@ -155,6 +157,10 @@ public class TomMessage extends BasicPlatformMessage {
     new TomMessage("{0}:{1,number,integer}: In structure {2} declared line {3,number,integer}, get_slot({4},...) is repeated.");
   public static final TomMessage errorIncompatibleSlotDecl =
     new TomMessage("{0}:{1,number,integer}: In structure {2} declared line {3,number,integer}, get_slot: {4} is not known");
+  public static final TomMessage errorIncompatibleDefaultDecl =
+    new TomMessage("{0}:{1,number,integer}: In structure {2} declared line {3,number,integer}, get_default: {4} is not known");
+  public static final TomMessage slotIncompatibleTypes =
+    new TomMessage("Slot ''{0}'' has sort {1} but has already been declared with sort {2}");
   // used with TomMessage to format exception messages
   public static final TomMessage missingIncludedFile   =
       new TomMessage("Missing file name in %include structure in file ''{0}'' at line {1,number,integer}");
@@ -172,6 +178,8 @@ public class TomMessage extends BasicPlatformMessage {
       new TomMessage("An error occured dealing with %gom input in ''{0}'' at line {1,number,integer}");
   public static final TomMessage gomInitFailure =
       new TomMessage("An error occured initializing gom in ''{0}'' at line {1,number,integer}: {2}");
+  public static final TomMessage emptyGomSignature =
+      new TomMessage("A %gom block is empty");
   public static final TomMessage vasPlatformFailure    =
       new TomMessage("Fail to obtain a Vas PluginPlatform in ''{0}'' at line {1,number,integer}");
   public static final TomMessage vasFailure            =
@@ -229,7 +237,8 @@ public class TomMessage extends BasicPlatformMessage {
       new TomMessage("The match with ''{0}'' is always unsuccessful. No code for the correspondent action will be generated");
   public static final TomMessage circularReferences =
       new TomMessage("A circular reference was detected for the variable ''{0}''. For instance x << Context[x] is a circular reference.");
-
+  public static final TomMessage cannotCompileACPattern =
+      new TomMessage("Cannot compile this AC pattern: ''{0}''. There should be at least one linear variable");
 
   // optimizer.TomOptimizer
   public static final TomMessage tomOptimizationType =
@@ -260,10 +269,16 @@ public class TomMessage extends BasicPlatformMessage {
       new TomMessage("TOM parsing phase ({0,number,integer} ms)");
   public static final TomMessage tomSyntaxCheckingPhase =
       new TomMessage("TOM syntax checking phase ({0,number,integer} ms)");
+  public static final TomMessage tomTransformingPhase =
+      new TomMessage("TOM transforming phase ({0,number,integer} ms)");
   public static final TomMessage tomDesugaringPhase =
       new TomMessage("TOM desugaring phase ({0,number,integer} ms)");
   public static final TomMessage tomTypingPhase =
       new TomMessage("TOM typing phase ({0,number,integer} ms)");
+  public static final TomMessage tomTypingPhaseComplement =
+      new TomMessage("TOM typing phase ({0} constraint(s) and {1} fresh type variable(s))");
+  public static final TomMessage tomFormattingPhase =
+      new TomMessage("TOM formatting phase ({0,number,integer} ms)");
   public static final TomMessage tomExpandingPhase =
       new TomMessage("TOM expanding phase ({0,number,integer} ms)");
   public static final TomMessage tomTypeCheckingPhase =
@@ -394,6 +409,12 @@ public class TomMessage extends BasicPlatformMessage {
       new TomMessage("Visited Type ''{0}'' is unknown.");
   public static final TomMessage emptyStrategy =
       new TomMessage("empty %strategy construct : at least one \"visit\" should be declared");
+
+  //transformation
+  public static final TomMessage emptyTransformation =
+      new TomMessage("empty %transformation construct : at least one \"<with> -> <to>\" should be declared");
+  public static final TomMessage invalidTransformationName =
+      new TomMessage("{0} is not a valid transformation name. Maybe it is already used as a symbol.");
 
   // rule
   public static final TomMessage incorrectRuleLHSClass   =

@@ -8,7 +8,6 @@ Option =
   | GeneratedMatch()
   | OriginTracking(AstName:TomName,Line:int,FileName:String)
   | OriginalText(AstName:TomName)
-  | Constant()
   | MatchingTheory(Theory:Theory)
   | Label(AstName:TomName)
   | Debug(AstName:TomName)

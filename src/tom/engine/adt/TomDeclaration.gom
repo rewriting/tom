@@ -2,10 +2,10 @@ module TomDeclaration
 imports TomSignature 
 abstract syntax
 Declaration = TypeTermDecl(AstName:TomName,Declarations:DeclarationList,OrgTrack:Option)
-            | GetImplementationDecl(Variable:BQTerm,Instr:Instruction,OrgTrack:Option)
             | IsFsymDecl(AstName:TomName,Variable:BQTerm,Expr:Expression,OrgTrack:Option)
             | GetSlotDecl(AstName:TomName,SlotName:TomName,Variable:BQTerm,Expr:Expression,OrgTrack:Option)
             | GetDefaultDecl(AstName:TomName,SlotName:TomName,Expr:Expression,OrgTrack:Option)
+            | ImplementDecl(AstName:TomName,Expr:Expression,orgTrack:Option)
             | EqualTermDecl(TermArg1:BQTerm,TermArg2:BQTerm,Expr:Expression,OrgTrack:Option)
             | IsSortDecl(TermArg:BQTerm,Expr:Expression,OrgTrack:Option)
             | GetHeadDecl(Opname:TomName, Codomain:TomType,Variable:BQTerm,Expr:Expression,OrgTrack:Option)
@@ -18,7 +18,24 @@ Declaration = TypeTermDecl(AstName:TomName,Declarations:DeclarationList,OrgTrack
             | MakeEmptyArray(AstName:TomName,VarSize:BQTerm,Instr:Instruction,OrgTrack:Option)
             | MakeAddArray(AstName:TomName,VarElt:BQTerm,VarList:BQTerm,Instr:Instruction,OrgTrack:Option)
             | MakeDecl(AstName:TomName,AstType:TomType,Args:BQTermList,Instr:Instruction,OrgTrack:Option)
-            | Strategy(SName:TomName,ExtendsTerm:BQTerm,VisitList:TomVisitList,OrgTrack:Option)
+            /*
+	     * Construct for strategies
+	     * @param SName the strategy name
+	     * @param ExtendsTerm the strategy that gives the default behaviour
+	     * @param VisitList the list of visit blocks
+	     * @param Hooks a list of declarations which allows to add code to the strategy (useful for resolve strategy in %transformation)
+	     * @param OrgTrack an option to keep the track of file name and line number
+	     * */
+            | Strategy(SName:TomName,ExtendsTerm:BQTerm,VisitList:TomVisitList,Hooks:DeclarationList,OrgTrack:Option)
+            | Transformation(TName:TomName,Domain:TomTypeList,ElementaryTList:ElementaryTransformationList,FileFrom:String,FileTo:String,OrgTrack:Option)
+            | ResolveStratDecl(TransfoName:String,ResList:ResolveStratBlockList,ResolveNameList:TomNameList,OriginTracking:Option)
+            | ResolveInverseLinksDecl(ResolveNameList:TomNameList,FileFrom:String,FileTo:String)
+            | ResolveClassDecl(AstName:TomName,WithName:String,ToName:String,Extends:String)
+            | ResolveIsFsymDecl(AstName:TomName,Variable:BQTerm,OrgTrack:Option)//useful?
+            | ResolveGetSlotDecl(AstName:TomName,SlotName:TomName,Variable:BQTerm,OrgTrack:Option)//useful?
+            | ResolveMakeDecl(AstName:TomName,AstType:TomType,Args:BQTermList,OrgTrack:Option)//useful?
+            | ReferenceClass(RefName:TomName,Fields:RefClassTracelinkInstructionList)//InstructionList)
+///
             | FunctionDef(AstName:TomName,ArgumentList:BQTermList,Codomain:TomType,ThrowsType:TomType,Instruction:Instruction)
             | MethodDef(AstName:TomName,ArgumentList:BQTermList,Codomain:TomType,ThrowsType:TomType,Instruction:Instruction)
             /*
@@ -34,6 +51,7 @@ Declaration = TypeTermDecl(AstName:TomName,Declarations:DeclarationList,OrgTrack
             /**             
             * An AC symbol
             */
-            | ACSymbolDecl(AstName:TomName)
+            | ACSymbolDecl(AstName:TomName) 
+            | BQTermToDeclaration(BqTerm:BQTerm)
 
 DeclarationList = concDeclaration(Declaration*)

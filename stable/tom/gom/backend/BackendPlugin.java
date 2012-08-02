@@ -1,7 +1,7 @@
 /*
  * Gom
  *
- * Copyright (c) 2000-2011, INPL, INRIA
+ * Copyright (c) 2000-2012, INPL, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -25,16 +25,13 @@
 package tom.gom.backend;
 
 import java.util.Map;
-import java.util.logging.Level;
 import java.io.File;
 import java.io.IOException;
 
-import tom.platform.PlatformLogRecord;
 import tom.platform.OptionParser;
 import tom.platform.adt.platformoption.types.PlatformOptionList;
 
 import tom.gom.GomMessage;
-import tom.gom.GomStreamManager;
 import tom.gom.tools.GomGenericPlugin;
 import tom.gom.tools.GomEnvironment;
 
@@ -59,7 +56,7 @@ public class BackendPlugin extends GomGenericPlugin {
   public static final String DECLARED_OPTIONS =
     "<options>" +
     "<string name='generator' altName='g' description='Select Generator. Possible value: \"shared\"' value='shared' attrName='type' />" +
-    "<boolean name='newtyper' altName='nt' description='New TyperPlugin (not activated by default)' value='false'/>" +
+    "<boolean name='newtyper' altName='nt' description='New TyperPlugin (not activated by default)' value='true'/>" +
     "<boolean name='newparser' altName='np' description='New parser plugin (not activated by default)' value='false'/>" +
     "<boolean name='optimize' altName='O' description='Optimize generated code' value='false'/>" +
     "<boolean name='optimize2' altName='O2' description='Optimize generated code' value='false'/>" +

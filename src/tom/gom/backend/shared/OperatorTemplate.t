@@ -1,7 +1,7 @@
 /*
  * Gom
  *
- * Copyright (c) 2006-2011, INPL, INRIA
+ * Copyright (c) 2006-2012, INPL, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -294,7 +294,7 @@ writer.write(%[
   @@Override
   public void toStringBuilder(java.lang.StringBuilder buffer) {
     buffer.append("@className()@(");
-    @toStringChilds("buffer")@
+    @toStringChildren("buffer")@
     buffer.append(")");
   }
 ]%);
@@ -309,7 +309,7 @@ writer.write(%[
    * @@return a negative integer, zero, or a positive integer as this
    *         term is less than, equal to, or greater than the argument
    * @@throws ClassCastException in case of invalid arguments
-   * @@throws RuntimeException if unable to compare childs
+   * @@throws RuntimeException if unable to compare children
    */
   @@Override
   public int compareToLPO(Object o) {
@@ -324,8 +324,8 @@ writer.write(%[
     /* compare the symbols */
     int symbCmp = this.symbolName().compareTo(ao.symbolName());
     if (symbCmp != 0) { return symbCmp; }
-    /* compare the childs */
-    @genCompareChilds("ao","compareToLPO")@
+    /* compare the children */
+    @genCompareChildren("ao","compareToLPO")@
     throw new RuntimeException("Unable to compare");
   }
 ]%);
@@ -339,7 +339,7 @@ writer.write(%[
    * @@return a negative integer, zero, or a positive integer as this
    *         term is less than, equal to, or greater than the argument
    * @@throws ClassCastException in case of invalid arguments
-   * @@throws RuntimeException if unable to compare childs
+   * @@throws RuntimeException if unable to compare children
    */
   @@Override
   public int compareTo(Object o) {
@@ -358,8 +358,8 @@ writer.write(%[
     /* If not, compare the symbols : back to the normal order */
     int symbCmp = this.symbolName().compareTo(ao.symbolName());
     if (symbCmp != 0) { return symbCmp; }
-    /* last resort: compare the childs */
-    @genCompareChilds("ao","compareTo")@
+    /* last resort: compare the children */
+    @genCompareChildren("ao","compareTo")@
     throw new RuntimeException("Unable to compare");
   }
 
@@ -398,7 +398,7 @@ writer.write(%[
    * @@return a negative integer, zero, or a positive integer as this
    *         term is less than, equal to, or greater than the argument
    * @@throws ClassCastException in case of invalid arguments
-   * @@throws RuntimeException if unable to compare childs
+   * @@throws RuntimeException if unable to compare children
    */
   @@Override
   public int compareTo(Object o) {
@@ -532,7 +532,7 @@ generateGetters(writer);
     }
     return atermFactory.makeAppl(
       atermFactory.makeAFun(symbolName(),getArity(),false),
-      new aterm.ATerm[] {@generateToATermChilds()@});
+      new aterm.ATerm[] {@generateToATermChildren()@});
   }
 
   /**
@@ -548,7 +548,7 @@ generateGetters(writer);
       aterm.ATermAppl appl = (aterm.ATermAppl) trm;
       if(symbolName.equals(appl.getName()) && !appl.getAFun().isQuoted()) {
         return make(
-@generatefromATermChilds("appl","atConv")@
+@generatefromATermChildren("appl","atConv")@
         );
       }
     }
@@ -559,9 +559,9 @@ generateGetters(writer);
     writer.write(%[
   /* Visitable */
   /**
-   * Returns the number of childs of the term
+   * Returns the number of children of the term
    *
-   * @@return the number of childs of the term
+   * @@return the number of children of the term
    */
   public int getChildCount() {
     return @visitableCount()@;
@@ -601,14 +601,14 @@ generateGetters(writer);
   /**
    * Set children to the term
    *
-   * @@param childs array of children to set
+   * @@param children array of children to set
    * @@return an array of children which just were set
-   * @@throws IndexOutOfBoundsException if length of "childs" is different than @slotList.length()@
+   * @@throws IndexOutOfBoundsException if length of "children" is different than @slotList.length()@
    */
   @@SuppressWarnings("unchecked")
-  public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] childs) {
-    if (childs.length == @slotList.length()@ @arrayCheck("childs")@) {
-      return @arrayMake("childs")@;
+  public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {
+    if (children.length == @slotList.length()@ @arrayCheck("children")@) {
+      return @arrayMake("children")@;
     } else {
       throw new IndexOutOfBoundsException();
     }
@@ -796,7 +796,7 @@ writer.write(%[
     }
   }
 
-  private String generateToATermChilds() {
+  private String generateToATermChildren() {
     StringBuilder res = new StringBuilder();
     SlotFieldList slots = slotList;
     while(!slots.isEmptyConcSlotField()) {
@@ -810,7 +810,7 @@ writer.write(%[
     return res.toString();
   }
 
-  private String generatefromATermChilds(String appl, String atConv) {
+  private String generatefromATermChildren(String appl, String atConv) {
     StringBuilder res = new StringBuilder();
     int index = 0;
     SlotFieldList slots = slotList;
@@ -930,7 +930,7 @@ writer.write(%[
         res.append(" && ");
       }
     }
-    res.append("true;"); // to handle the "no childs" case
+    res.append("true;"); // to handle the "no children" case
     return res.toString();
   }
 
@@ -1094,7 +1094,7 @@ private String generateMakeArgsFor(SlotField slot, String argName) {
   return res.toString();
 }
 
-  private String toStringChilds(String buffer) {
+  private String toStringChildren(String buffer) {
     if (0 == slotList.length()) {
       return "";
     }
@@ -1112,7 +1112,7 @@ private String generateMakeArgsFor(SlotField slot, String argName) {
     return res.toString();
   }
 
-  private String genCompareChilds(String oldOther, String compareFun) {
+  private String genCompareChildren(String oldOther, String compareFun) {
     StringBuilder res = new StringBuilder();
     String other = "tco";
     if(!slotList.isEmptyConcSlotField()) {
@@ -1127,19 +1127,22 @@ private String generateMakeArgsFor(SlotField slot, String argName) {
              || `domain.equals(`ClassName("","float"))
              || `domain.equals(`ClassName("","char"))) {
            res.append(%[
-    if( this.@fieldName(`slotName)@ != @other@.@fieldName(`slotName)@)
+    if( this.@fieldName(`slotName)@ != @other@.@fieldName(`slotName)@) {
       return (this.@fieldName(`slotName)@ < @other@.@fieldName(`slotName)@)?-1:1;
+    }
 ]%);
          } else if (`domain.equals(`ClassName("","boolean"))) {
            res.append(%[
-    if( this.@fieldName(`slotName)@ != @other@.@fieldName(`slotName)@)
+    if( this.@fieldName(`slotName)@ != @other@.@fieldName(`slotName)@) {
       return (!this.@fieldName(`slotName)@ && @other@.@fieldName(`slotName)@)?-1:1;
+    }
 ]%);
          } else if (`domain.equals(`ClassName("","String"))) {
            res.append(%[
     int @fieldName(`slotName)@Cmp = (this.@fieldName(`slotName)@).compareTo(@other@.@fieldName(`slotName)@);
-    if(@fieldName(`slotName)@Cmp != 0)
+    if(@fieldName(`slotName)@Cmp != 0) {
       return @fieldName(`slotName)@Cmp;
+    }
 
 ]%);
          } else if (`domain.equals(`ClassName("aterm","ATerm"))
@@ -1147,8 +1150,9 @@ private String generateMakeArgsFor(SlotField slot, String argName) {
            res.append(%[
     /* Inefficient total order on ATerm */
     int @fieldName(`slotName)@Cmp = ((this.@fieldName(`slotName)@).toString()).compareTo((@other@.@fieldName(`slotName)@).toString());
-    if(@fieldName(`slotName)@Cmp != 0)
+    if(@fieldName(`slotName)@Cmp != 0) {
       return @fieldName(`slotName)@Cmp;
+    }
 ]%);
          } else {
             throw new GomRuntimeException("Builtin "+`domain+" not supported");
@@ -1156,8 +1160,9 @@ private String generateMakeArgsFor(SlotField slot, String argName) {
         } else {
           res.append(%[
     int @fieldName(`slotName)@Cmp = (this.@fieldName(`slotName)@).@compareFun@(@other@.@fieldName(`slotName)@);
-    if(@fieldName(`slotName)@Cmp != 0)
+    if(@fieldName(`slotName)@Cmp != 0) {
       return @fieldName(`slotName)@Cmp;
+    }
 ]%);
         }
       }

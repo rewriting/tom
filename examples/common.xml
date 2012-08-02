@@ -105,12 +105,11 @@
     <macrodef name="javacompile">
       <sequential>
         <javac.preset destdir="${examples.build}" 
-          includeantruntime="false">
+                      includeantruntime="false">
           <src path="${examples.dir}"/>
           <src path="${examples.gen}"/>
           <include name="${example}/**/*.java"/>
           <classpath refid="tom.examples.classpath"/>
-	  <!-- compilerarg value="-Xlint"/ -->
         </javac.preset>
       </sequential>
     </macrodef>

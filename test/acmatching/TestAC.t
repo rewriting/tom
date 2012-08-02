@@ -1,20 +1,20 @@
 package acmatching;
 /*
- * Copyright (c) 2004-2011, INPL, INRIA
+ * Copyright (c) 2004-2012, INPL, INRIA
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
- * met: 
+ * met:
  * 	- Redistributions of source code must retain the above copyright
- * 	notice, this list of conditions and the following disclaimer.  
+ * 	notice, this list of conditions and the following disclaimer.
  * 	- Redistributions in binary form must reproduce the above copyright
  * 	notice, this list of conditions and the following disclaimer in the
  * 	documentation and/or other materials provided with the distribution.
  * 	- Neither the name of the INRIA nor the names of its
  * 	contributors may be used to endorse or promote products derived from
  * 	this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -31,6 +31,9 @@ package acmatching;
 import acmatching.testac.term.types.*;
 import java.util.*;
 import static org.junit.Assert.*;
+import org.junit.matchers.JUnitMatchers;
+import static org.hamcrest.CoreMatchers.*;
+import org.hamcrest.Matcher;
 import org.junit.Test;
 
 public class TestAC {
@@ -39,10 +42,10 @@ public class TestAC {
   %include{ intarray.tom }
   %gom {
     module Term
-      imports 
+      imports
       abstract syntax
 
-      T = 
+      T =
       | a()
       | b()
       | c()
@@ -50,7 +53,7 @@ public class TestAC {
       | g(T*)
 
       f:AC{}
-g:AC{}
+      g:AC{}
 
   }
 
@@ -59,26 +62,26 @@ g:AC{}
   }
 
   @Test
-    public void test1() {
-      T t1 = `f(a(),b(),c());
-      Set<T> bagX = new HashSet<T>();
-      Set<T> bagY = new HashSet<T>();
+  public void test1() {
+    T t1 = `f(a(),b(),c());
+    Set<T> bagX = new HashSet<T>();
+    Set<T> bagY = new HashSet<T>();
 
-      %match(t1) {
-        f??(X*,a(),Y*) -> { 
-          bagX.add(`X);
-          bagY.add(`Y);
-        }
+    %match(t1) {
+      f??(X*,a(),Y*) -> {
+        bagX.add(`X);
+        bagY.add(`Y);
       }
-
-      assertTrue("f() is solution",bagX.contains(`f()));
-      assertTrue("b() is solution",bagX.contains(`b()));
-      assertTrue("c() is solution",bagX.contains(`c()));
-      assertTrue("f(b(),c()) is solution",bagX.contains(`f(b(),c())));
-      assertTrue("f(c(),b()) is solution",bagX.contains(`f(c(),b())));
-      assertEquals("bagX==bagY",bagX,bagY);
-      assertEquals("bagX.size==4",bagX.size(),4);
     }
+
+    assertThat("f() is solution", bagX, hasItem(`f()));
+    assertThat("b() is solution", bagX, hasItem(`b()));
+    assertThat("c() is solution", bagX, hasItem(`c()));
+    assertThat("f(b(),c()) is solution", bagX, hasItem(`f(b(),c())));
+    assertThat("f(c(),b()) is solution", bagX, hasItem(`f(c(),b())));
+    assertEquals("bagX==bagY", bagX, bagY);
+    assertEquals("bagX.size==4", 4, bagX.size());
+  }
 
   @Test
     public void test2() {
@@ -87,23 +90,23 @@ g:AC{}
       Set<T> bagY = new HashSet<T>();
 
       %match(t1) {
-        f??(X*,X*,Y*) -> { 
+        f??(X*,X*,Y*) -> {
           bagX.add(`X);
           bagY.add(`Y);
         }
       }
 
-      assertTrue("f() is solution of X",bagX.contains(`f()));
-      assertTrue("f(a(),a()) is solution of X",bagX.contains(`f(a(),a())));
-      assertTrue("t1 is solution ofYX",bagY.contains(t1));
-      assertTrue("b() is solution of Y",bagY.contains(`b()));
-      assertEquals("bagX.size==2",bagX.size(),2);
-      assertEquals("bagY.size==2",bagY.size(),2);
+      assertThat("f() is solution of X", bagX, hasItem(`f()));
+      assertThat("f(a(),a()) is solution of X", bagX, hasItem(`f(a(),a())));
+      assertThat("t1 is solution ofYX", bagY, hasItem(t1));
+      assertThat("b() is solution of Y", bagY, hasItem(`b()));
+      assertEquals("bagX.size==2", 2, bagX.size());
+      assertEquals("bagY.size==2", 2, bagY.size());
 
       Set<T> bagXX = new HashSet<T>();
       Set<T> bagYY = new HashSet<T>();
       %match(t1) {
-        f??(XX*,YY*,YY*) -> { 
+        f??(XX*,YY*,YY*) -> {
           bagXX.add(`XX);
           bagYY.add(`YY);
         }
@@ -113,4 +116,44 @@ g:AC{}
 
     }
 
+  @Test
+    public void test3() {
+      T t1 = `f(a(),b(),a());
+      Set<T> bagX = new HashSet<T>();
+      Set<T> bagY = new HashSet<T>();
+
+      %match(t1) {
+        f??(C*,X*,X*,Y*,Y*) -> {
+          bagX.add(`X);
+          bagY.add(`Y);
+        }
+      }
+
+      assertThat("f() is solution of X", bagX, hasItem(`f()));
+      assertThat("f() is solution of Y", bagY, hasItem(`f()));
+      assertThat("f(a(),a()) is solution of X", bagX, hasItem(`f(a(),a())));
+      assertThat("f(a(),a()) is solution of Y", bagY, hasItem(`f(a(),a())));
+      assertEquals("bagX.size==2", 2, bagX.size());
+      assertEquals("bagY.size==2", 2, bagY.size());
+    }
+
+  @Test
+  public void test4() {
+    T t1 = `f(a(),b(),b(),a());
+    Set<T> bagX = new HashSet<T>();
+
+    %match(t1) {
+      f??(X*,Y*) && X==Y -> {
+        bagX.add(`X);
+      }
+    }
+
+    assertThat("f(a(),b()) is solution of X", bagX, hasItem(`f(a(),b())));
+    assertThat("f(b(),a()) is solution of X", bagX, hasItem(`f(b(),a())));
+    assertEquals("bagX.size==1", 1, bagX.size());
+  }
+
+  private static Matcher<java.lang.Iterable<T>> hasItem(T t) {
+    return JUnitMatchers.hasItem(t);
+  }
 }

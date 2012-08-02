@@ -1,7 +1,7 @@
 /*
  * Gom
  *
- * Copyright (c) 2000-2011, INPL, INRIA
+ * Copyright (c) 2000-2012, INPL, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,7 +24,6 @@
 
 package tom.gom.compiler;
 
-import java.util.logging.Level;
 import java.util.Map;
 
 import tom.engine.tools.Tools;
@@ -89,8 +88,10 @@ public class CompilerPlugin extends GomGenericPlugin {
       java.io.StringWriter swriter = new java.io.StringWriter();
       try { tom.library.utils.Viewer.toTree(classList,swriter); }
       catch(java.io.IOException e) { e.printStackTrace(); }
-        GomMessage.fine(getLogger(), null, 0, GomMessage.compiledModules, swriter);
-        GomMessage.info(getLogger(), null, 0, GomMessage.gomCompilationPhase, 
+        GomMessage.fine(getLogger(), getStreamManager().getInputFileName(), 0,
+            GomMessage.compiledModules, swriter);
+        GomMessage.info(getLogger(), getStreamManager().getInputFileName(), 0,
+            GomMessage.gomCompilationPhase,
             (System.currentTimeMillis()-startChrono));
       if (intermediate) {
         Tools.generateOutput(getStreamManager().getOutputFileName()

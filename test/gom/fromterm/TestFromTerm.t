@@ -6,8 +6,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
 
 @RunWith(Suite.class)
 @SuiteClasses({ 
@@ -52,5 +50,4 @@ public class TestFromTerm {
   public static void main(String[] args) {
     org.junit.runner.JUnitCore.main(TestFromTerm.class.getName());
   }
-
-} // TestFromTerm
+}

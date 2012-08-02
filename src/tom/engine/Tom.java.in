@@ -2,7 +2,7 @@
  *
  * TOM - To One Matching Compiler
  *
- * Copyright (c) 2000-2011, INPL, INRIA
+ * Copyright (c) 2000-2012, INPL, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -77,6 +77,10 @@ public class Tom {
   /** the console handler those level can be changed dynamically */
   private static Handler consoleHandler = null;
 
+  /**
+   * 0 -> Success
+   * 1 -> Failure
+   */
   public static void main(String[] args) {
     int errno = exec(args);
     System.exit(errno);
@@ -89,7 +93,6 @@ public class Tom {
       System.err.println(MessageFormat.format(TomMessage.loggingInitializationFailure.getMessage(),new Object[]{e.getMessage()}));
       return 1;
     }
-
 
     // Retrieve the configuration file name
     String configFileName =

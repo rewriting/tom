@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2011, INPL, INRIA
+ * Copyright (c) 2004-2012, INPL, INRIA
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -49,7 +49,7 @@ public class BeadSort {
 
   %op Bead empty() {
     is_fsym(t) { $t==null }
-    make { null }
+    make() { null }
   }
 
     /*

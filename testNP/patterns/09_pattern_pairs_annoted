@@ -1,0 +1,7 @@
+#>
+#description pattern with ...
+#type TomPattern
+#<
+
+f[x2=y@!g[]]
+

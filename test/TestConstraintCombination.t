@@ -408,6 +408,6 @@ static class tFloat {
 //        nbCasesOK++;
 //      }
     }
-//    assertTrue("testCombinations",nbCasesOK==4);
+//    assertTrue("testCombinations",nbCasesOK==5);
   }
 }

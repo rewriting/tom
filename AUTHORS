@@ -2,9 +2,7 @@ Current developers:
     Jean-Christophe Bach      e-mail: Jeanchristophe.Bach@inria.fr
     Emilie Balland            e-mail: Emilie.Balland@inria.fr
     Pierre-Etienne Moreau     e-mail: Pierre-Etienne.Moreau@loria.fr
-    Francois Prugniel         e-mail: Francois.Prugniel@loria.fr
     Antoine Reilles           e-mail: Antoine.Reilles@loria.fr
-    Claudia Tavares           e-mail: Claudia.Tavares@loria.fr
 
 Main contributors:
     Paul Brauner              Many many things, and FreshGom
@@ -17,6 +15,7 @@ Other contributors:
     Mark van den Brand        Discussions
     Guillaume Darmont         XML extension
     Eric Deplagne             first ANTLR plugin
+    Maxime Gabut              New Tom parser using antlr v3
     Stephane Hrvatin          ANTLR based parser
     Anne-Claire Lonchamp      Constraint extension
     Christophe Ringeissen     Initial design of Tom
@@ -26,3 +25,5 @@ Other contributors:
     Eelco Visser              Discussions and %match construct
     Marian Vittek             Initial design of Tom
     Antoine Floch             Improvment of EcoreContainmentIntrospector
+    Claudia Tavares           Type inference engine (+subtyping)
+    Francois Prugniel         
