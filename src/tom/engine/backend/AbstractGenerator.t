@@ -939,6 +939,7 @@ public abstract class AbstractGenerator {
         generateInstruction(deep,subject.getHeadconcInstruction(), moduleName);
         subject = subject.getTailconcInstruction();
       }
+      //TODO: is it correct?
       /* this is not pretty ! there is a ";" right after the new line
       if(prettyMode) {
         output.writeln();

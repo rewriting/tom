@@ -87,11 +87,11 @@ public class SymbolTable {
       jCode = true;
     } else if( ((Boolean)optionManager.getOptionValue("camlCode")).booleanValue() ) {
       camlCode = true;
-	} else if( ((Boolean)optionManager.getOptionValue("pCode")).booleanValue() ) {
-	  pCode = true;
-	} else if( ((Boolean)optionManager.getOptionValue("aCode")).booleanValue() ) {
-	  aCode = true;
-	}
+    } else if( ((Boolean)optionManager.getOptionValue("pCode")).booleanValue() ) {
+      pCode = true;
+    } else if( ((Boolean)optionManager.getOptionValue("aCode")).booleanValue() ) {
+      aCode = true;
+    }
 
   }
 
@@ -228,32 +228,32 @@ public class SymbolTable {
   public TomType getIntType() {
     String type = "int";
     if(aCode) {
-        type = "Integer";
+      type = "Integer";
     }
     return ASTFactory.makeType(`concTypeOption(),TYPE_INT,type);
   }
 
   public TomType getIntArrayType() {
-	String type = "int[]";
-	if(aCode) {
-		type = "array (Positive range <>) of Integer";
-	}
+    String type = "int[]";
+    if(aCode) {
+      type = "array (Positive range <>) of Integer";
+    }
     return ASTFactory.makeType(`concTypeOption(),TYPE_INT_ARRAY,type);
   }
 
   public TomType getLongType() {
-	String type = "long";
-	if(aCode) {
-		type = "Long_Integer";
-	}
+    String type = "long";
+    if(aCode) {
+      type = "Long_Integer";
+    }
     return ASTFactory.makeType(`concTypeOption(),TYPE_LONG,type);
   }
 
   public TomType getFloatType() {
-	String type = "float";
-	if(aCode) {
-		type = "Float";
-	}
+    String type = "float";
+    if(aCode) {
+      type = "Float";
+    }
     return ASTFactory.makeType(`concTypeOption(),TYPE_FLOAT,type);
   }
 
@@ -362,7 +362,7 @@ public class SymbolTable {
   public boolean isVoidType(String type) {
     return TYPE_VOID.equals(type);
   }
-  
+
   public boolean isUnknownType(String type) {
     return `Type(concTypeOption(),type,EmptyTargetLanguageType()).equals(TYPE_UNKNOWN);
   }
@@ -392,7 +392,7 @@ public class SymbolTable {
    */
   public boolean isResolveSymbol(TomSymbol symb) {
     %match(symb) {
-     Symbol[Options=concOption(_*,DeclarationToOption(ResolveMakeDecl[]),_*)] -> { return true; }
+      Symbol[Options=concOption(_*,DeclarationToOption(ResolveMakeDecl[]),_*)] -> { return true; }
     }
     return false;
   }
@@ -435,11 +435,11 @@ public class SymbolTable {
     System.out.println("Not a builtin type: " + type);
     throw new TomRuntimeException("getBuiltinType error on term: " + type);
   }
-/*
-  public Iterable<TomType> entryTypeIterable() {
-    return mapTypeName.entrySet();
-  }
-*/
+  /*
+     public Iterable<TomType> entryTypeIterable() {
+     return mapTypeName.entrySet();
+     }
+   */
   public Iterable<String> keySymbolIterable() {
     return mapSymbolName.keySet();
   }
@@ -495,20 +495,20 @@ public class SymbolTable {
   }
 
   /*
-  public void checkTomTypes(SymbolTable symbolTable) {
-    for (TomType type : mapTypeName.entrySet()) {
-      %match(type) {
-        Type[TypeOptions=concTypeOption(_*,SubtypeDecl[TomType=supertypeName],_*)] -> {
-          if (!mapTypeName.contains(`supertypeName)) {
-            TomMessage.error(getLogger(),currentFile(), getLine(),
-                TomMessage.typetermNotDefined, 
-                supertypeName);
-          }
-        }
-      }
-    }
-  }
-  */
+     public void checkTomTypes(SymbolTable symbolTable) {
+     for (TomType type : mapTypeName.entrySet()) {
+     %match(type) {
+     Type[TypeOptions=concTypeOption(_*,SubtypeDecl[TomType=supertypeName],_*)] -> {
+     if (!mapTypeName.contains(`supertypeName)) {
+     TomMessage.error(getLogger(),currentFile(), getLine(),
+     TomMessage.typetermNotDefined, 
+     supertypeName);
+     }
+     }
+     }
+     }
+     }
+   */
 
   /*
    * Inlining
@@ -519,6 +519,7 @@ public class SymbolTable {
 
   private final static String prefixIsFsym = "is_fsym_";
   private final static String prefixGetSlot = "get_slot_";
+  private final static String prefixGetDefault = "get_default_";
   private final static String prefixGetHead = "get_head_";
   private final static String prefixGetTail = "get_tail_";
   private final static String prefixGetElementArray = "get_element_array_";
@@ -569,6 +570,13 @@ public class SymbolTable {
   }
   public String getGetSlot(String opname, String slotname) {
     return getInliner(prefixGetSlot,opname+slotname);
+  }
+
+  public void putGetDefault(String opname, String slotname, String code) {
+    putInliner(prefixGetDefault,opname+slotname,code);
+  }
+  public String getGetDefault(String opname, String slotname) {
+    return getInliner(prefixGetDefault,opname+slotname);
   }
 
   public void putGetHead(String opname, String code) {

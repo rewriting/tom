@@ -46,10 +46,10 @@ public class OutputCode {
   public OutputCode(Writer file, OptionManager optionManager) {
     this.file = file;
     this.optionManager = optionManager;
+    this.pretty = ((Boolean)optionManager.getOptionValue("pretty")).booleanValue();
+    this.indent = ((Boolean)optionManager.getOptionValue("pCode")).booleanValue() || this.aCode;
     this.cCode  = ((Boolean)optionManager.getOptionValue("cCode")).booleanValue();
     this.aCode  = ((Boolean)optionManager.getOptionValue("aCode")).booleanValue();
-    this.indent = ((Boolean)optionManager.getOptionValue("pCode")).booleanValue() || this.aCode;
-    this.pretty = ((Boolean)optionManager.getOptionValue("pretty")).booleanValue();
   }
 
   public OutputCode(Writer file) {
@@ -149,37 +149,36 @@ public class OutputCode {
   }
 
   public void write(int deep, String s, int line, int length) throws IOException {
-  
-	if (aCode && pretty) {
+    if(aCode && pretty) {
       String[] lines = s.split("\n", -1);
       if(lines.length==1) { //one line
         String s2 = s.replaceFirst("^\\s+","");
-        if (! s2.equals("") ) {
-			write(deep, s);
-		} else {
-			indent = true;
-		}
+        if(! s2.equals("") ) {
+          write(deep, s);
+        } else {
+          indent = true;
+        }
       } else { //several lines
-        for (int i=0; i<lines.length-1; i++) {
+        for(int i=0; i<lines.length-1; i++) {
           String ln = lines[i];
           ln = ln.replaceFirst("^\\s+",""); // removes spaces at the beginning of the line
-		  writeln(deep, ln);
-		  indent = true;
+          writeln(deep, ln);
+          indent = true;
         }
         String s2 = lines[lines.length-1].replaceFirst("^\\s+","");
-        if (! s2.equals("") ) {
-			write(deep, s2);
-			indent = false;
-		} else {
-			indent = true;
-		}
+        if(! s2.equals("")) {
+          write(deep, s2);
+          indent = false;
+        } else {
+          indent = true;
+        }
       }
-	} else if(!pretty) {
+    } else if(!pretty) {
       if(cCode) {
-          String s1 = "\n#line "+line+"\n";
-          s = s1+s;
-          write(s);
-          lineCounter+= length;
+        String s1 = "\n#line "+line+"\n";
+        s = s1+s;
+        write(s);
+        lineCounter+= length;
       } else if(singleLine>0 || lineCounter>line) {
         // put everything on a single line
         length = 0;
@@ -238,7 +237,8 @@ public class OutputCode {
       if(indent) {
         if(pretty) {
           for(int i=0 ; i<deep ; i++) {
-            file.write("    ");
+            file.write(' ');
+            file.write(' ');
           }
         } else {
           file.write(' ');

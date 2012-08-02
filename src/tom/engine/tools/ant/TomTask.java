@@ -331,7 +331,7 @@ public class TomTask extends MatchingTask {
     return newtyper;
   }
 
- /**
+  /**
    * If true, compiles with new parser enabled.
    * @param flag if true compile with new parser
    */
@@ -386,7 +386,7 @@ public class TomTask extends MatchingTask {
   public boolean getCamlcode() {
     return this.camlCode;
   }
-  
+
   /**
    * If true, generates Ada code
    * @param aCode if true generate ada code
@@ -463,7 +463,7 @@ public class TomTask extends MatchingTask {
     return genIntrospector;
   }
 
-  
+
   /**
    * If true, generates  protected functions instead of private
    * @param flag if true generates  protected functions instead of private
@@ -541,8 +541,8 @@ public class TomTask extends MatchingTask {
 
       if (!srcDir.exists()) {
         throw new BuildException("srcdir \""
-                                 + srcDir.getPath()
-                                 + "\" does not exist!", getLocation());
+            + srcDir.getPath()
+            + "\" does not exist!", getLocation());
       }
 
       DirectoryScanner ds = this.getDirectoryScanner(srcDir);
@@ -581,9 +581,9 @@ public class TomTask extends MatchingTask {
         File[] newCompileList
           = new File[compileList.length + newFiles.length];
         System.arraycopy(compileList, 0, newCompileList, 0,
-                         compileList.length);
+            compileList.length);
         System.arraycopy(newFiles, 0, newCompileList,
-                         compileList.length, newFiles.length);
+            compileList.length, newFiles.length);
         compileList = newCompileList;
       }
     } else {
@@ -594,8 +594,8 @@ public class TomTask extends MatchingTask {
       } else if (camlCode) {
         m.setTo("*.tom.ml");
       } else if (aCode) {
-		m.setTo("*.adb");
-	  } else {
+        m.setTo("*.adb");
+      } else {
         m.setTo("*.java");
       }
       SourceFileScanner sfs = new SourceFileScanner(this);
@@ -605,9 +605,9 @@ public class TomTask extends MatchingTask {
         File[] newCompileList
           = new File[compileList.length + newFiles.length];
         System.arraycopy(compileList, 0, newCompileList, 0,
-                         compileList.length);
+            compileList.length);
         System.arraycopy(newFiles, 0, newCompileList,
-                         compileList.length, newFiles.length);
+            compileList.length, newFiles.length);
         compileList = newCompileList;
       }
     }
@@ -636,18 +636,18 @@ public class TomTask extends MatchingTask {
     }
     if (src == null) {
       throw new BuildException("srcdir attribute must be set!",
-                               getLocation());
+          getLocation());
     }
     if (src.size() == 0) {
       throw new BuildException("srcdir attribute must be set!",
-                               getLocation());
+          getLocation());
     }
 
     if (destDir != null && !destDir.isDirectory()) {
       throw new BuildException("destination directory \""
-                               + destDir
-                               + "\" does not exist "
-                               + "or is not a directory", getLocation());
+          + destDir
+          + "\" does not exist "
+          + "or is not a directory", getLocation());
     }
   }
 
@@ -660,7 +660,7 @@ public class TomTask extends MatchingTask {
       log("Compiling " + compileList.length + " source file"
           + (compileList.length == 1 ? "" : "s")
           + (destDir != null ? " to " + destDir : ""));
-      
+
       if (logPropertiesFile != null) {
         System.out.println("ANT task : properties = " + System.getProperty("java.util.logging.config.file"));
         System.setProperty(PluginPlatform.LOG_FILE,logPropertiesFile);
