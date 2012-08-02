@@ -8,14 +8,13 @@ class ImportsCompiler {
 
 	extension TomMappingExtensions = new TomMappingExtensions()
 	
-	String prefix = "tom"
+	String prefix = ""
 	
 	def imports(Mapping map) {
 		'''
 		ÇFOR EPackage p: map.getAllRootPackages()È
-			prefix.imports(p)
+		Çprefix.imports(p)È
 		ÇENDFORÈ
-		}
 		'''
 	}
 	
@@ -23,8 +22,7 @@ class ImportsCompiler {
 	def importsWithUtils(Mapping map) {
 		'''
 		ÇFOR EPackage p: map.getAllRootPackages()È
-			prefix.importsWithUtils(p)
-		}
+		Çprefix.importsWithUtils(p)È
 		ÇENDFORÈ
 		'''
 	}

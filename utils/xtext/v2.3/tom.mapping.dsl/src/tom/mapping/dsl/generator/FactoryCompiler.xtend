@@ -24,7 +24,7 @@ class FactoryCompiler {
 	@Inject ParametersCompiler injpa
 	@Inject OperatorsCompiler injop
 	
-	String prefix = "tom"
+	String prefix = ""
 	
 	def compile(Mapping m, IFileSystemAccess fsa){
 		// tfc.main(m) // Moved from main to here in order not to disturb the generation of the file Factory
@@ -46,8 +46,24 @@ class FactoryCompiler {
 			}
 		return listDestination
 		}
+		
 	
-	def main(Mapping map) {		 
+	def main(Mapping map) {
+		
+		var packageList = new ArrayList<EPackage>
+		for(elt : map.operators.filter(typeof(ClassOperator))) {
+			packageList.add(elt.class_.EPackage)
+		}
+		
+		var packageListBis = packageList.intersectName()
+		
+		var packageList2 = new ArrayList<EPackage>
+		for(elt : map.allDefaultOperators) {
+			packageList.add(elt.EPackage)
+		}
+		
+		var packageList2Bis = packageList2.intersectName()
+				 
 		 '''
 		 package «prefix.getPackagePrefix()»«map.name.toFirstLower()»;
 		 
@@ -69,30 +85,19 @@ class FactoryCompiler {
 		 public class «map.factoryName()» {
 		 	
 		 	/* PROTECTED REGION ID(«map.name»_user_factory_instances) ENABLED START */
-		 	
-		 	«var packageList = new ArrayList<EPackage>()»
-		 	«FOR elt : map.operators.filter(typeof(ClassOperator))»
-		 	«packageList.add(elt.class_.EPackage)»
+
+		 	«FOR pack : packageListBis»
+		 	public static «pack.name.toFirstUpper()»Factory «pack.name.toFirstLower()»Factory = «pack.name.toFirstUpper()»Factory.eINSTANCE;
 		 	«ENDFOR»
-		 	
-		 	«FOR pack : packageList.intersectName()»
-		 		public static «pack.name.toFirstUpper()»Factory «pack.name»Factory = «pack.name.toFirstUpper()»Factory.eINSTANCE
-		 	«ENDFOR»
-		 	
-		 	«var packageList2 = new ArrayList<EPackage>()»
-		 	«FOR elt : map.allDefaultOperators»
-		 	«packageList2.add(elt.EPackage)»
-		 	«ENDFOR»
-		 	
-		 	«FOR pack: packageList2.intersectName()»
-		 		public static «pack.name.toFirstUpper()»Factory «pack.name»Factory = «pack.name.toFirstUpper()»Factory.eINSTANCE
-		 	«ENDFOR»
-		 }
 		 
-		 «/* PROTECTED REGION END */»
+		 	«FOR pack: packageList2Bis»
+		 	public static «pack.name.toFirstUpper()»Factory «pack.name.toFirstLower()»Factory = «pack.name.toFirstUpper()»Factory.eINSTANCE;
+		 	«ENDFOR»
+		 
+		 /* PROTECTED REGION END */
 		 
 		 // User operators «map.operators»
-		 «FOR module: map.modules»{
+		 «FOR module: map.modules»
 		 	/** Module «module.name» **/
 		 «FOR op: module.operators»
 		 	// Operator «op.name»
@@ -115,6 +120,7 @@ class FactoryCompiler {
 		 */
 		 
 		 /* PROTECTED REGION END */
+		 }
 		 '''	 
 	}
 	
@@ -133,12 +139,8 @@ class FactoryCompiler {
 	
 	def javaFactoryCreateOperatorWithParameters(Iterable<FeatureParameter> parameters, ClassOperator clop) { // List[] = Iterable<>
 		'''
-		public static «clop.class_.name» «clop.name.toFirstLower()»(
-		«FOR p: parameters SEPARATOR ","»
-		«injpa.javaFeatureParameter(p)»
-		«ENDFOR»
-		) {
-			«clop.class_.name» o = «clop.class_.EPackage.name»Factory.create«clop.class_.name.toFirstUpper()»();
+		public static «clop.class_.name» «clop.name.toFirstLower()»(«FOR p: parameters SEPARATOR ","»«injpa.javaFeatureParameter(p)»«ENDFOR») {
+			«clop.class_.name» o = «clop.class_.EPackage.name.toFirstLower()»Factory.create«clop.class_.name.toFirstUpper()»();
 			«FOR p: parameters»
 				«p.feature.structureFeatureSetter()»
 			«ENDFOR»
@@ -155,17 +157,10 @@ class FactoryCompiler {
 		val parameters = ecl.getDefaultParameters(mapping);
 		'''
 		«IF !ecl.isAbstract && !ecl.interface»
-			public static «ecl.name» «name.toFirstLower()»(«injop.javaClassAttributes(mapping, ecl)»
-			«FOR param: parameters SEPARATOR ","» 
-			«injpa.defaultJavaFeatureParameter(param)»
-			«ENDFOR») {
-				«ecl.name» o = «ecl.EPackage.name»Factory.create.«ecl.name.toFirstUpper()»();
-				«FOR attribute : ecl.EAllAttributes»
-					«attribute.structureFeatureSetter()»
-				«ENDFOR»
-				«FOR param: parameters»
-					«param.structureFeatureSetter()»;
-				«ENDFOR»
+			public static «ecl.name» «name.toFirstLower()»(«injop.javaClassAttributes(mapping, ecl)»«FOR param: parameters SEPARATOR ","»«injpa.defaultJavaFeatureParameter(param)»«ENDFOR») {
+			«ecl.name» o = «ecl.EPackage.name.toFirstLower()»Factory.create«ecl.name.toFirstUpper()»();
+				«FOR attribute : ecl.EAllAttributes»«attribute.structureFeatureSetter()»«ENDFOR»
+				«FOR param: parameters»«param.structureFeatureSetter()»;«ENDFOR»
 			return o;
 			}	
 		«ENDIF»
@@ -177,7 +172,7 @@ class FactoryCompiler {
 		'''
 		«IF esf.many»
 			«IF !esf.unsettable»
-			for(int i = 0 ; i < «esf.name».size() ; ++i) {
+			for(int i = 0 ; i < _«esf.name».size() ; ++i) {
 				o.get«esf.name.toFirstUpper()»().add(_«esf.name».get(i));
 				}
 			«ENDIF»

@@ -40,7 +40,7 @@ class OperatorsCompiler {
 	Çval parameters = ecl.getDefaultParameters(mapping)È
 	
 	ÇIF mapping.getTerminal(ecl,false) != nullÈ
-		%op Çmapping.getTerminal(ecl,false).nameÈ ÇopÈ (Çmapping.classAttributes(ecl)ÈÇFOR p: parameters SEPARATOR ","ÈÇinjpa.defaultFeatureParameter(mapping, p)ÈÇENDFORÈ) {
+		%op Çmapping.getTerminal(ecl,false).nameÈ ÇopÈ(Çmapping.classAttributes(ecl)ÈÇFOR p: parameters SEPARATOR ","ÈÇinjpa.defaultFeatureParameter(mapping, p)ÈÇENDFORÈ) {
 			
 		is_fsym(t) {$t instanceof Çecl.nameÈ}
 		
@@ -52,7 +52,8 @@ class OperatorsCompiler {
 		get_slot(Çp.nameÈ,t) {Çecl.getter(p)È}
 		ÇENDFORÈ
 		
-		make(ÇFOR att: ecl.EAllAttributes SEPARATOR ","È Çatt.nameÈÇENDFORÈÇIF (ecl.EAllAttributes.size > 0) && (ecl.getDefaultParameters(mapping).size > 0)È,ÇENDIFÈÇFOR param: parameters SEPARATOR ","ÈÇparam.nameÈÇENDFORÈ){Çmapping.tomFactoryQualifiedName()È.createÇop.toFirstUpper()È(ÇFOR att: ecl.EAllAttributes SEPARATOR ","È$Çatt.nameÈÇENDFORÈÇIF ecl.EAllAttributes.size > 0 && ecl.getDefaultParameters(mapping).size > 0È,ÇENDIFÈÇFOR param: parameters SEPARATOR ","È $Çparam.nameÈÇENDFORÈ)}ÇENDIFÈ}
+		make(ÇFOR att: ecl.EAllAttributes SEPARATOR ","È Çatt.nameÈÇENDFORÈÇIF (ecl.EAllAttributes.size > 0) && (ecl.getDefaultParameters(mapping).size > 0)È,ÇENDIFÈÇFOR param: parameters SEPARATOR ","ÈÇparam.nameÈÇENDFORÈ){Çmapping.tomFactoryQualifiedName()È.
+Çop.toFirstUpper()È(ÇFOR att: ecl.EAllAttributes SEPARATOR ","È$Çatt.nameÈÇENDFORÈÇIF ecl.EAllAttributes.size > 0 && ecl.getDefaultParameters(mapping).size > 0È,ÇENDIFÈÇFOR param: parameters SEPARATOR ","È $Çparam.nameÈÇENDFORÈ)}ÇENDIFÈ}
    	'''
 	}
 	
@@ -61,8 +62,7 @@ class OperatorsCompiler {
 	'''
    Çval parameters = clop.getCustomParameters()È
 
-		%op Çmapping.getTerminal(clop.class_,false).nameÈ Çclop.nameÈ 
-		(ÇFOR p : parameters SEPARATOR ","ÈÇinjpa.featureParameter(mapping, p)ÈÇENDFORÈ) {
+		%op Çmapping.getTerminal(clop.class_,false).nameÈ Çclop.nameÈ(ÇFOR p : parameters SEPARATOR ","ÈÇinjpa.featureParameter(mapping, p)ÈÇENDFORÈ) {
 		is_fsym(t) {$t instanceof Çclop.class_.nameÈÇFOR p: clop.parametersÈÇclop.class_.settedParameterTest(p)ÈÇENDFORÈ}
 		
    		ÇFOR p: parametersÈ
@@ -76,29 +76,21 @@ class OperatorsCompiler {
 	
 	def getter(EClass c, EStructuralFeature esf) {
 		'''
-		ÇIF esf.manyÈenforceÇENDIFÈ
-			((Çc.nameÈ)$t).getÇesf.name.toFirstUpper()È()
-		ÇIF esf.manyÈ)ÇENDIFÈ
+		ÇIF esf.manyÈenforceÇENDIFÈ((Çc.nameÈ)$t).getÇesf.name.toFirstUpper()È()ÇIF esf.manyÈ)ÇENDIFÈ
 		'''
 	}
 	
 	
 	def classAttributes(Mapping mapping, EClass ecl) {		
 		'''		
-		ÇFOR att: ecl.EAllAttributes SEPARATOR ","È
-		Çatt.nameÈ : Çinjpa.feature(att)È
-		ÇENDFORÈ
-		ÇIF (ecl.EAllAttributes.size() > 0) && (ecl.getDefaultParameters(mapping).size() >0)È,ÇENDIFÈ
+		ÇFOR att: ecl.EAllAttributes SEPARATOR ","ÈÇatt.nameÈ : Çinjpa.feature(att)ÈÇENDFORÈÇIF (ecl.EAllAttributes.size() > 0) && (ecl.getDefaultParameters(mapping).size() >0)È,ÇENDIFÈ
 		'''
 	}
 	
 	
 	def javaClassAttributes(Mapping mapping, EClass ecl) {
 		'''		
-		ÇFOR att: ecl.EAllAttributes SEPARATOR ","È
-		 Çinjpa.feature(att)È _Çatt.nameÈ
-		ÇENDFORÈ
-		ÇIF (ecl.EAllAttributes.size > 0) && (ecl.getDefaultParameters(mapping).size>0)È,ÇENDIFÈ
+		ÇFOR att: ecl.EAllAttributes SEPARATOR ","ÈÇinjpa.feature(att)È _Çatt.nameÈÇENDFORÈÇIF (ecl.EAllAttributes.size > 0) && (ecl.getDefaultParameters(mapping).size>0)È,ÇENDIFÈ
 		'''
 	}
 	

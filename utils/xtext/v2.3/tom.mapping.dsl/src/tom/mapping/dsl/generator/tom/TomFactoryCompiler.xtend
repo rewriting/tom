@@ -22,7 +22,7 @@ class TomFactoryCompiler {
 	
 	extension TomMappingExtensions = new TomMappingExtensions()
 	
-	String prefix = "tom"
+	String prefix = ""
 	
 	@Inject OperatorsCompiler injop
 	@Inject ImportsCompiler injco
@@ -49,13 +49,28 @@ class TomFactoryCompiler {
 		
 	
 	def main(Mapping map){
+		
+	var packageList = new ArrayList<EPackage>
+	    for(elt : map.operators.filter(typeof(ClassOperator))) {
+	    packageList.add(elt.class_.EPackage)
+		}
+		
+	var packageListBis = packageList.intersectName()
+	
+	var packageList2 = new ArrayList<EPackage>
+	for(elt : map.allDefaultOperators) {
+	packageList2.add(elt.EPackage)
+	}
+	
+	var packageList2Bis = packageList2.intersectName()
+	
 	'''
 	 package «prefix.getPackagePrefix()»«map.name.toFirstLower()».internal;
 	 
 	 /* PROTECTED REGION ID(«map.name»_tom_factory_imports) ENABLED START */
 	 // protected imports, you should add here required imports that won't be removed after regeneration of the maping code
 	  
-	 import java.util.List 
+	 import java.util.List;
 	  
 	 «injco.imports(map)»
 	 /* ENDPROTECT */
@@ -70,23 +85,13 @@ class TomFactoryCompiler {
 	 public class «map.tomFactoryName()» {
 	 	
 	 	/* PROTECTED REGION ID(«map.name»_tom_factory_instances) ENABLED START */
-	 	
-	 	«var packageList = new ArrayList<EPackage>()»
-	    «FOR elt : map.operators.filter(typeof(ClassOperator))»
-	    «packageList.add(elt.class_.EPackage)»
-		«ENDFOR»
 
-	 	«FOR pack: packageList.intersectName()»
-	 		public static «pack.name.toFirstUpper()»Factory «pack.name»Factory = «pack.name.toFirstUpper()»Factory.eINSTANCE;
+	 	«FOR pack: packageListBis»
+	 		public static «pack.name.toFirstUpper()»Factory «pack.name.toFirstLower()»Factory = «pack.name.toFirstUpper()»Factory.eINSTANCE;
 	 	«ENDFOR»
 	 	
-	 	«var packageList2 = new ArrayList<EPackage>()»
-		 	«FOR elt : map.allDefaultOperators»
-		 	«packageList2.add(elt.EPackage)»
-		 	«ENDFOR»
-
-	 	«FOR pack: packageList2.intersectName()»
-	 		public static «pack.name.toFirstUpper()»Factory «pack.name»Factory = «pack.name.toFirstUpper()»Factory.eINSTANCE;
+	 	«FOR pack: packageList2Bis.intersectName()»
+	 		public static «pack.name.toFirstUpper()»Factory «pack.name.toFirstLower()»Factory = «pack.name.toFirstUpper()»Factory.eINSTANCE;
 	 	«ENDFOR»
 	 	/* ENDPROTECT */
 	 

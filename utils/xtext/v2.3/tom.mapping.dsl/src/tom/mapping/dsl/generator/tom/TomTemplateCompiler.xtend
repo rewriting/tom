@@ -21,12 +21,12 @@ class TomTemplateCompiler {
 	
 	def compile(Mapping m, IFileSystemAccess fsa){
 	
-		fsa.generateFile(prefix+"/common.t",m.main())
-		fsa.generateFile(prefix+"/"+m.name+"_terminals.t",m.terminals())
-		fsa.generateFile(prefix+"/"+m.name+"_operators.t",m.operators())
-		fsa.generateFile(prefix+"/"+m.name+"_defaultOperators.t",m.defaultOperators())
+		fsa.generateFile(prefix+"/common.tom",m.main())
+		fsa.generateFile(prefix+"/"+m.name+"_terminals.tom",m.terminals())
+		fsa.generateFile(prefix+"/"+m.name+"_operators.tom",m.operators())
+		fsa.generateFile(prefix+"/"+m.name+"_defaultOperators.tom",m.defaultOperators())
 		for(module: m.modules){
-			fsa.generateFile(prefix+"/"+m.name+"_"+module.name+".t",m.module(module))
+			fsa.generateFile(prefix+"/"+m.name+"_"+module.name+".tom",m.module(module))
 		}
 	}
 	

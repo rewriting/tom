@@ -15,24 +15,23 @@ class CustomOperatorsCompiler {
 	
 	@Inject ParametersCompiler injpa
 	
-	String prefix = "tom"
+	String prefix = ""
 	
 	
 	def compile(Mapping m, IFileSystemAccess fsa) {
+		if(m.operators.filter(e | e instanceof UserOperator).size() > 0) {
 		fsa.generateFile(prefix+"/"+m.getCustomOperatorsClass()+".java", m.main())
+		}
 	}
 	
 	def main(Mapping map) {
-		if(map.operators.filter[e | e instanceof UserOperator].size>0) {			
-			'''
-			public class «map.getCustomOperatorsClass()» {
-				«FOR op: map.operators»
-					«map.operator(op)»
-				«ENDFOR»
-				
+		'''	
+		public class «map.getCustomOperatorsClass()» {
+			«FOR op: map.operators»
+				«map.operator(op)»
+			«ENDFOR»
 			}
-			'''
-		}
+		'''
 	}
 	
 
@@ -49,9 +48,7 @@ class CustomOperatorsCompiler {
 	
 	def accessor(UserOperator op, Accessor acc) {
 		'''
-		public static «injpa.javaTerminalType(acc.slot.type)»
-		«acc.getCustomOperatorSlotAccessorName()»
-		(«injpa.javaTerminalType(op.type)» t) {
+		public static «injpa.javaTerminalType(acc.slot.type)»«acc.getCustomOperatorSlotAccessorName()»(«injpa.javaTerminalType(op.type)» t) {
 			return «acc.java»;
 		}
 		'''
@@ -60,8 +57,7 @@ class CustomOperatorsCompiler {
 
 	def test(UserOperator usop) {
 		'''
-		public static boolean is«usop.name.toFirstUpper()»
-			(«injpa.javaTerminalType(usop.type)» t) {
+		public static boolean is«usop.name.toFirstUpper()»(«injpa.javaTerminalType(usop.type)» t) {
 			return «usop.test»;
 		}
 		'''
@@ -70,10 +66,7 @@ class CustomOperatorsCompiler {
 
 	def make(UserOperator usop) {
 		'''
-		public static «injpa.javaTerminalType(usop.type)» make «usop.name.toFirstUpper()»
-		(«FOR acc: usop.accessors SEPARATOR ","»
-			«injpa.javaParameter(acc.slot)»
-		«ENDFOR») {
+		public static «injpa.javaTerminalType(usop.type)» make «usop.name.toFirstUpper()»(«FOR acc: usop.accessors SEPARATOR ","»«injpa.javaParameter(acc.slot)»«ENDFOR») {
 			return «usop.make»
 			}
 		'''

@@ -122,9 +122,7 @@ class ParametersCompiler {
 	
 	
 	def dispatch primitiveType(EDataType edt) {
-		'''
-		«IF edt.instanceTypeName == "java.lang.String"»String«ELSE»«edt.instanceTypeName»«ENDIF»
-		'''
+		'''«IF edt.instanceTypeName == "java.lang.String"»String«ELSE»«edt.instanceTypeName»«ENDIF»'''
 	}
 	
 	

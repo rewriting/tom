@@ -12,9 +12,26 @@
 «DEFINE model FOR TomMappingProjectInfo»
 
 «FILE "src/mappings/Model.tmap"-»
-TomMapping MyMapping;
+TomMapping NetOfPetri;
 
 import "platform:/resource/«projectName»/NetOfPetri.ecore";
+
+terminals {
+
+	PetriNet : NetOfPetri.PetriNet,
+	Node : NetOfPetri.Node,
+	Arc : NetOfPetri.Arc,
+	Transition : NetOfPetri.Transition,
+	Place : NetOfPetri.Place,
+	
+	ArcEList : NetOfPetri.Arc[]
+
+}
+
+
+operators {
+	op Arc:: NetOfPetri.Arc;
+}
 «ENDFILE»
 
 «FILE "NetOfPetri.ecore"-»<?xml version="1.0" encoding="UTF-8"?>
@@ -159,4 +176,5 @@ public class Example {
 
 }
 «ENDFILE»
+
 «ENDDEFINE»

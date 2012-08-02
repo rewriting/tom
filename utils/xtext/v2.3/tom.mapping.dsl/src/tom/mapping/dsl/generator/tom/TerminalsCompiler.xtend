@@ -29,18 +29,16 @@ extension TomMappingExtensions = new TomMappingExtensions()
 	
 	
 	def listTerminal(Mapping m, Terminal t) {
-		val name  = t.name(m);
-	
 	'''
-	%typeterm «name»{
+	%typeterm «t.name»{
 		 implement { EList<«t.class_.name»> }
 	     is_sort(t) «t.listTest()»
 		equals(l1,l2) 	{($l1!=null && $l1.equals($l2)) || $l1==$l2}
 	}
 	
-	%oparray «name» «name» («m.getTerminal(t.class_,false).name»*) {
+	%oparray «t.name» «t.name»(«m.getTerminal(t.class_,false).name»*) {
 	 	 is_fsym(t) «t.listTest()»
-	     make_empty(n) { new BasicEList<«t.class_.name»>($n) }
+	     make_empty(n) { new BasicEList<«m.name»«t.class_.name»>($n) }
 	     make_append(e,l) { append($e,$l) }
 	     get_element(l,n) { $l.get($n) }
 	     get_size(l)      { $l.size() }
