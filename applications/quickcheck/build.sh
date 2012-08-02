@@ -1,4 +1,4 @@
-bash clean.sh class
+bash clean.sh
 
 mkdir -p src/gen
 mkdir -p build

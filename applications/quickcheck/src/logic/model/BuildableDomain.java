@@ -35,6 +35,7 @@ public class BuildableDomain implements DomainInterpretation {
 
   @Override
   public DomainInterpretation[] getDepsDomains() {
+    //TODO : this method can be optimized because it use currently all recursive dependences.
     Set<Buildable> deps = model.getDependences();
     DomainInterpretation[] res = new DomainInterpretation[deps.size()];
     int i = 0;

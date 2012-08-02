@@ -78,41 +78,30 @@ public class Shrink{
     }
   }
 
-  private static class ATermShrunkFieldsIterator implements Iterator<ATerm> {
 
-    private DomainInterpretation domain;
-    private ATerm term;
-
-    private ATermShrunkFieldsIterator(final ATerm term, DomainInterpretation domain) {
-      this.domain = domain;
-      this.term = term;
+  private static ATermList s1_aux(ATermList list, DomainInterpretation domain){
+    %match(list){
+      concATerm() -> {return `concATerm();}
+      concATerm(hd, tl*) -> {
+        if(domain.includes(`hd)){
+          return `concATerm(hd, s1_aux(tl*, domain));
+        } else {
+          %match(`hd){
+            ATermAppl(_, listFields) -> {return `concATerm(s1_aux(listFields, domain), s1_aux(tl*, domain));}
+            _ -> {throw new UnsupportedOperationException();}
+          }
+        }
+      }
     }
-
-    @Override
-    public boolean hasNext() {
-      throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public ATerm next() {
-      throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void remove() {
-      throw new UnsupportedOperationException("Not supported yet.");
-    }
+    return null; // unreachable
   }
 
-  public static Iterator<ATerm> getSameTypeFields(final ATerm term, DomainInterpretation domain) {
-    return new ATermSameTypeIterator(term, domain);
-  }
-
-  public static Iterator<ATerm> getReducedCons(final ATerm term, DomainInterpretation domain) {
-    throw new UnsupportedOperationException("Not yet implemented");
-  }
-
-  public static Iterator<ATerm> getShrunkFields(final ATerm term, DomainInterpretation domain) {
-    return new ATermShrunkFieldsIterator(term, domain);
+  public static ATermList s1(ATerm term, DomainInterpretation domain){
+    ATermList list = s1_aux(`concATerm(term), domain);
+    if(list.isEmpty()){
+      return `concATerm(term);
+    } else {
+      return list;
+    }
   }
 }
