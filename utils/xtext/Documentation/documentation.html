@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="utf-8" />
+ <link rel="stylesheet" href="doc.css" />
+<title>Tom Mapping Generator Documentation</title>
+</head>
+
+<body>
+
+<h1>Tom Mapping Generator Documentation</h1>
+
+<p>This document aims at presenting the tool "Tom Mapping Generator", which is an Eclipse 
+plugin, useful to generate mappings in Tom language.</p>
+
+<p>The first part of this document deals with the installation of the plugin, if you want 
+to launch it in order to work and develop the project or simply to use it. The second 
+part explains how the plugin works, and what is the purpose of its main components. 
+Finally, the third part shows, through a very simple example, how to use the plugin.</p>
+
+<h2>Overview</h2>
+
+<p>This plugin has been developed with Eclipse 4.2 Juno with Xtext 2.3 
+(<a href="http://xtext.itemis.com/xtext/language=en/36553/downloads">available here</a>) 
+on a Mac OS X 10.6.8 operating system.</p>
+
+<p>Note that the plugin also works on Eclipse 3.7 Indigo.</p>
+
+
+<p>The plugin has been developed on the basis of a version from the 
+<a href="http://cairn.gforge.inria.fr/dokuwiki/dokuwiki-2008-05-05/doku.php?id=public:wiki:tommapping">
+Cairn</a> which used a former Xtext with Xpand. The current version now uses Xtext 2.3 
+with Xtend. So, you need the following software on your Eclipse to run the plugin :</p>
+
+<ul>
+<li>Tom (v2.9) [http://tom.loria.fr/eclipse-update/stable]</li>
+<li>Xtend (v2.3) [http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/]</li>
+<li>Xpand (v1.0.1) [http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/]</li>
+</ul>
+
+<p>To install a new software on your Eclipse, just follow these steps :</p>
+
+<ul>
+<li>Select "Help" -> "Install new software"</li>
+<li>Add the two software sites which the locations are in square brackets above</li>
+<li>Select "Work with : All Available Sites"</li>
+<li>Research and install the plugins "Tom Feature", "M2T Xpand 1.0.1", "Xtext 2.3.0" and 
+"Xtend 2.3.0" if they aren't yet</li>
+<li>Restart Eclipse</li>
+</ul>
+
+<h2>How to install it</h2>
+
+<p>First of all, get the contents of the branch "xtext" from Tom Git repository. You should 
+have five folders : "tom.mapping.dsl", "tom.mapping.dsl.tests", "tom.mapping.dsl.ui", 
+"tom.mapping.model" and "tommapping.feature".</p>
+
+<h3>As a developer</h3>
+
+<p>Lauch Eclipse and set a fresh workspace in which you have placed these four folders : 
+"tom.mapping.dsl", "tom.mapping.dsl.tests", "tom.mapping.dsl.ui" and "tom.mapping.model".<br />
+Import the corresponding projects in Eclipse.</p>
+
+<p>Right click on the project "tom.mapping.dsl" and select "New" -> "Folder". Click on 
+"Advanced" and select "Link to alternate location (Linked Folder)". Browse to reach the 
+folder "tom.mapping.model" then finish.</p>
+
+<p>Locate the file "TomMapping.xtext" in "tom.mapping.dsl" -> "src" -> "tom.mapping.dsl". 
+Right click on it and select "Run as" -> "Generate Xtext artifacts". Then, right click on 
+"GenerateTomMapping.mwe2" above and select "Run as" -> "MWE2 workflow".</p>
+
+<p>If you work on the project and want to export it as a plugin to install in Eclipse, 
+just do the following :</p>
+
+<ul>
+<li>"New" -> "Project" -> Plug-in development" -> "Feature Project"</li>
+<li>Click on "Next" and check the four projects composing the plugin. Then finish</li>
+<li>Right click on the feature project, and choose "Export"</li>
+<li>Select "Plug-in development" -> "Deployable features"</li>
+<li>Select a target directory and finish</li>
+<li>If you want to install the plugin in Eclipse definitely, read the subpart "As a user"</li>
+</ul>
+
+<h3>As a user</h3>
+
+<p>Open the folder "tommapping.feature" and the one in which your Eclipse is installed. 
+Copy the content of the folder "plugins" from "tommapping.feature" to the folder "plugins" 
+of Eclipse. Do the same for "features".</p>
+
+<p>If Eclipse is already launched, restart it.</p>
+
+<h2>How does it work</h2>
+
+<p>The plugin is composed by four main sub-projects having different roles and purposes. 
+The functioning of each one is described here.</p>
+
+<h3>tom.mapping.dsl</h3>
+
+<p>This is the project in which our DSL (for Domain Specific Language), here to define and 
+generate Tom mappings, is described. The grammar of such a language in written in the file 
+"TomMapping.xtext" in the first package. You can notice that the description of the 
+grammar is very close to antlr.</p>
+
+<p>The file "GenerateTomMapping.mwe2", just above, describe the fragments which will be 
+used in the projects and generate some package and code in all of them. You can add or 
+remove fragments by commenting or uncommenting the corresponding lines.</p>
+
+<p>The core of the generator is located in the packages "tom.mapping.dsl.generator". To 
+start, let's have a look at "TomMappingGenerator.xtend", the file which will be called 
+when you will try to generate mappings, and more particularly, the function doGenerate.</p>
+
+<div class="code">
+	@Inject FactoryCompiler facCompiler<br />
+	@Inject TomFactoryCompiler tomFacCompiler<br />
+	@Inject TomTemplateCompiler tempCompiler<br />
+	@Inject IntrospectorCompiler introCompiler<br />
+	@Inject CustomOperatorsCompiler copCompiler<br />
+	<br />
+override void doGenerate(Resource resource, IFileSystemAccess fsa) { // Compilation of the components of the resource one by one<br />
+		val mapping = resource.contents.get(0) as Mapping<br />
+		<br />
+		tomFacCompiler.compile(mapping,fsa)<br />
+		facCompiler.compile(mapping,fsa)<br />
+		tempCompiler.compile(mapping,fsa)<br />
+		introCompiler.compile(mapping,fsa)<br />
+		copCompiler.compile(mapping,fsa)<br />
+		}</div>
+		
+<p>We notice that this function calls the method "compile" on different other xtend 
+classes. To have an idea of how it works through an example, let's see what the method 
+"compile" lookk like opening the file "FactoryCompiler.xtend".</p>
+
+<div class="code">
+def compile(Mapping m, IFileSystemAccess fsa){<br />
+		fsa.generateFile(packageToPath(prefix)+"/"+m.name.toFirstLower()+"/"+m.factoryName()+".java", m.main()) <br />
+		}
+</div>
+
+<p>The method compile creates a file at the location stated in the first argument of the 
+function "generateFile", containing the charSequence returned by m.main(). A method 
+returning a charSequence on such a purpose looks like this :</p>
+
+<div class="code">
+def method_returning_charSequence(/* arguments */) {<br />
+''' // Signalizes the beginning of a "template"<br />
+Text in any language (in our case, tom or java)<br />
+&laquo;Piece of code in Xtend&raquo;<br />
+Text again... etc<br />
+''' // End of the charSequence<br />
+}
+</div>
+
+<p>The pieces of code in Xtend, surrounded by &laquo; &raquo;, can be used to insert loops (FOR, 
+FOREACH...) and conditions (IF, ELSE, ...) or to call other methods returning charSequences 
+too.</p>
+
+<p>To sum up, to generate the mapping, the program will execute the function doGenerate 
+from "TomMappingGenerator.xtend". As a consequence, the method "compile" will be called 
+for several classes (FactoryCompiler, TomFactoryCompiler, TomTemplateCompiler, 
+IntrospectorCompiler, CustomOperatorsCompiler) which will lead to the generation of files, 
+containing charSequences in tom or java. Those files are the result of templates 
+directly written in the functions and the calling of other methods which return 
+charSequences themselves. The characteristics of the obtained mapping will be written by 
+parsing the .tmap file and exploring the .ecore model.</p>
+
+
+<h3>tom.mapping.dsl.tests</h3>
+
+<p>This project is for the creation of unit tests, but is currently not used neither 
+implemented. However, it is posible to modify it on such a purpose.</p>
+
+
+<h3>tom.mapping.dsl.ui</h3>
+
+<p>This subproject manages the user interface. In other words, how Eclipse will present 
+the features to the user, and how both will interact. The major part of this project is 
+auto-generated by Eclipse, except "GenerationHandler.java" and 
+"TomMappingNewProject.xpt".</p>
+
+<p>The first one sets, in a certain way, the link between the user interface and the 
+generator. If we have a look at the code, we can notice that when we execute this handler, 
+the function "doGenerate" seen above is called at the end.</p>
+
+<p>"TomMappingNewProject.xpt" is a file in Xpand, which describes what will happen when 
+creating a new TomMapping project. Assuming you know the syntax of Xpand, the file is 
+quite simple. Here the very basis of Xpand instructions :</p>
+
+<p>
+<div class="code">&laquo;IMPORT tom::mapping::dsl::ui::wizard&raquo;</div>
+Imports the package tom.mapping.dsl.ui.wizard.
+</p>
+
+<p>
+<div class="code">&laquo;DEFINE a FOR b&raquo;</div>
+Declaration of the function a(b)
+</p>
+
+<p>
+<div class="code">&laquo;EXPAND a FOR b&raquo;</div>
+Call the function a with b as argument [a(b)]
+</p>
+
+<p>
+<div class="code">&laquo;FILE "location/file.extension"&raquo;<br />
+&laquo; Content &raquo;<br />
+&laquo; ENDFILE &raquo;</div>
+Generate a file "file.extension" at location "location" with the content "Content".
+</p>
+
+
+<h3>tom.mapping.model</h3>
+
+<p>This subproject describes the model the grammar is based on. Everything is generated 
+when, creating a new Xtext project, you chose "New" -> "Xtext project from an existing 
+EMF model". In our case, "TomMapping.ecore".</p>
+
+
+<h2>How to use it</h2>
+
+<p>If you use the plugin as a developer, you have to run the plugin in a new instance of 
+Eclipse. For that, juste right click on the project "tom.mapping.dsl" and choose "Run as" 
+-> "Eclipse Application". A new Eclipse will be launched, and behave exactly if the plugin 
+was installed in Eclipse.</p>
+
+<p>First of all, create a new TomMapping project (in the folder "Xtext projects").</p>
+
+<p>Right click on your project, and select "Build Path" -> "Add external jar". Locate 
+"tom-runtime-full.jar" and add it to the referenced libraries.</p>
+
+<p>A .ecore file is present in the project by default. However, it is empty. So, you have 
+to edit it. For example, use the file "NetOfPetri.ecore". Make sure that if you modify the 
+file the import in the .tmap is stil correct.</p>
+
+<p>Then, right click on your .ecore model, and choose "New" -> "Other" -> "Eclipse 
+Modeling Framework" -> "EMF Generator Model". Click on "Next" three times, "Load", and 
+finally "Next" and "Finish". The .genmodel document is now open. Right click on the root 
+of the tree and chose "Generate Model Code". You can now write your mapping.</p>
+
+<p>You have now to define the terminals (which lead to %typeterm) and operators (%op). 
+Try to copy this in your .tmap file :</p>
+
+<div class="code">
+TomMapping MyMapping;<br />
+<br />
+import "platform:/resource/TomMapping/MyMapping.ecore";<br />
+<br />
+terminals {<br />
+<br />
+	PetriNet : MyMapping.PetriNet,<br />
+	Node : MyMapping.Node,<br />
+	Arc : MyMapping.Arc,<br />
+	Transition : MyMapping.Transition,<br />
+	Place : MyMapping.Place,<br />
+<br />	
+	ArcEList : MyMapping.Arc[]<br />
+<br />
+}<br />
+<br />
+operators {<br />
+	op Arc:: MyMapping.Arc;<br />
+}
+</div>
+
+<p>Now, generate the mapping right clicking on "Model.tmap" and selecting 
+"Generate Mapping". Everything have been generated in the folder "src-gen".</p>
+
+<p>You can now find the UserFactory, the TomFactory and the Introspector in the first two 
+packages, and the mapping itself in the package called "tom". Note that the elements of 
+the mapping are separated.</p>
+
+<p>For instance, the %typeterm are generated in the "_terminals.tom" file whereas the 
+operators are in "_defaultOperators.tom" and "_operators.tom". In "_defaultOperator.tom", 
+all the %op corresponding to the operators we havn't defined in the .tmap file. In other 
+words, if you don't define any operator, all the operators corresponding to your terminals 
+will be generated by default. So, define your operators when you want to custom the %op.
+The resulting code will appear in the file "_operators.tom".</p>
+
+<h2>Util links</h2>
+
+<ul>
+<li>Tom Wiki : <a href="http://tom.loria.fr">http://tom.loria.fr</a></li>
+<li>Xtext tutorials : <a href="http://www.eclipse.org/Xtext/documentation.html">http://www.eclipse.org/Xtext/documentation.html</a></li>
+<li>Xtend tutorials : <a href="http://www.eclipse.org/xtend/documentation.html">http://www.eclipse.org/xtend/documentation.html</a></li>
+</ul>
+
+</body>
+
+</html>

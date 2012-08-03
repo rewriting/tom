@@ -25,16 +25,11 @@ class TomMappingGenerator implements IGenerator {
 	override void doGenerate(Resource resource, IFileSystemAccess fsa) { // Compilation of the components of the resource one by one
 		val mapping = resource.contents.get(0) as Mapping
 		
-		//for (mapping : resource.getContents.filter(typeof(Mapping))) {
-		
 		tomFacCompiler.compile(mapping,fsa)
 		facCompiler.compile(mapping,fsa)
 		tempCompiler.compile(mapping,fsa)
 		introCompiler.compile(mapping,fsa)
 		copCompiler.compile(mapping,fsa)
-		
-		//}
-		
 		}
 
 }

@@ -33,7 +33,7 @@ class TomFactoryCompiler {
 	}
 	
 	def ArrayList<EPackage> intersectName(ArrayList<EPackage> listBase) { // Defined because of the intersections of "packageList" needed in function "main"
-		var listDestination = new ArrayList<EPackage>
+		var listDestination = new ArrayList<EPackage>()
 		
 		for(eltB : listBase) {
 			var sameName = false;
@@ -50,14 +50,14 @@ class TomFactoryCompiler {
 	
 	def main(Mapping map){
 		
-	var packageList = new ArrayList<EPackage>
+	var packageList = new ArrayList<EPackage>()
 	    for(elt : map.operators.filter(typeof(ClassOperator))) {
 	    packageList.add(elt.class_.EPackage)
 		}
 		
 	var packageListBis = packageList.intersectName()
 	
-	var packageList2 = new ArrayList<EPackage>
+	var packageList2 = new ArrayList<EPackage>()
 	for(elt : map.allDefaultOperators) {
 	packageList2.add(elt.EPackage)
 	}
