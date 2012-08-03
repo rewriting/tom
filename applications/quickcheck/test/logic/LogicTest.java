@@ -4,25 +4,21 @@
  */
 package logic;
 
-import aterm.ATerm;
+import aterm.ATerm; // generated
 import aterm.ATermInt;
 import aterm.pure.PureFactory;
 import examples.Examples;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import gen.ExamplesFormula;
+import gen.Interpretation;
+import gen.TestGen;
+import java.util.*;
+import logic.model.BuildableDomain;
 import logic.model.DomainInterpretation;
 import logic.model.PredicateInterpretation;
 import logic.model.SignatureInterpretation;
-import gen.ExamplesFormula; // generated
-import gen.Interpretation; // generated
-import gen.TestGen;
-import java.util.ArrayList;
-import java.util.Iterator;
-import logic.model.BuildableDomain;
 import org.junit.*;
 import sort.types.IntList;
-import system.types.Formula; // generated
+import system.types.Formula;
 
 /**
  *
