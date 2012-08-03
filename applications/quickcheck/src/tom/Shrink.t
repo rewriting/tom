@@ -1,13 +1,11 @@
 package gen;
 
-import java.util.LinkedList;
+import aterm.ATerm;
+import aterm.ATermList;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Stack;
-import logic.model.*;
-
-import aterm.ATerm;
-import aterm.ATermList;
+import logic.model.DomainInterpretation;
 
 public class Shrink{
   %include{int.tom}
@@ -84,10 +82,15 @@ public class Shrink{
       concATerm() -> {return `concATerm();}
       concATerm(hd, tl*) -> {
         if(domain.includes(`hd)){
-          return `concATerm(hd, s1_aux(tl*, domain));
+          ATermList tail = `s1_aux(tl*, domain);
+          return `concATerm(hd, tail*);
         } else {
           %match(`hd){
-            ATermAppl(_, listFields) -> {return `concATerm(s1_aux(listFields, domain), s1_aux(tl*, domain));}
+            ATermAppl(_, listFields) -> {
+              ATermList a = s1_aux(`listFields, domain);
+              ATermList b = s1_aux(`tl*, domain);
+              return `concATerm(a*, b*);
+            }
             _ -> {throw new UnsupportedOperationException();}
           }
         }
@@ -97,11 +100,50 @@ public class Shrink{
   }
 
   public static ATermList s1(ATerm term, DomainInterpretation domain){
-    ATermList list = s1_aux(`concATerm(term), domain);
+    ATermList list = null;
+breakmatch : {
+               %match(term){
+                 ATermAppl(_, listFields) -> {list = s1_aux(`listFields, domain); break breakmatch;}
+                 _ -> {throw new UnsupportedOperationException();}
+               }
+             }
     if(list.isEmpty()){
       return `concATerm(term);
     } else {
       return list;
     }
   }
+
+  public static Iterator<ATerm> toIterator(final ATermList list){
+    return new Iterator<ATerm>() {
+
+      private ATermList state = list;
+
+      @Override
+      public boolean hasNext(){
+        return !state.isEmpty();
+      }
+    
+      @Override
+      public ATerm next(){
+        if(hasNext()){
+          ATerm res = state.getFirst();
+          state = state.getNext();
+          return res;
+        } else {
+          throw new NoSuchElementException();
+        }
+      }
+
+      @Override
+      public void remove(){
+        state = state.removeElementAt(0);
+      }
+
+    };
+  }
+
+
 }
+
+
