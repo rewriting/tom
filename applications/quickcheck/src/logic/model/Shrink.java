@@ -6,6 +6,7 @@ package logic.model;
 
 import aterm.ATerm;
 import aterm.ATermList;
+import aterm.pure.PureFactory;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Stack;
@@ -127,6 +128,10 @@ public class Shrink {
     };
   }
 
+  public static ATermList s1(ATermList list, DomainInterpretation domain){
+    return toATermList(s1(toIterator(list), domain));
+  }
+
   public static Iterator<ATerm> s2(final Iterator<ATerm> termIterator, final DomainInterpretation domain) {
     return new Iterator<ATerm>() {
       //<editor-fold defaultstate="collapsed" desc="s2">
@@ -170,6 +175,10 @@ public class Shrink {
       }
       //</editor-fold>
     };
+  }
+
+  public static ATermList s2(ATermList list, DomainInterpretation domain){
+    return toATermList(s2(toIterator(list), domain));
   }
 
   public static Iterator<ATerm> s3_aux(final ATerm root, final DomainInterpretation domain) {
@@ -217,5 +226,43 @@ public class Shrink {
       }
       //</editor-fold>
     };
+  }
+
+  private static Iterator<ATerm> toIterator(final ATermList list) {
+    return new Iterator<ATerm>() {
+
+      private ATermList state = list;
+
+      @Override
+      public boolean hasNext() {
+        return !state.isEmpty();
+      }
+
+      @Override
+      public ATerm next() {
+        if (hasNext()) {
+          ATerm res = state.getFirst();
+          state = state.getNext();
+          return res;
+        } else {
+          throw new NoSuchElementException();
+        }
+      }
+
+      @Override
+      public void remove() {
+        state = state.removeElementAt(0);
+      }
+    };
+  }
+
+  private static ATermList toATermList(Iterator<ATerm> iterator) {
+    PureFactory factory = new PureFactory();
+    ATermList list = factory.makeList();
+    while (iterator.hasNext()) {
+      ATerm aTerm = iterator.next();
+      list = list.insert(aTerm);
+    }
+    return list;
   }
 }

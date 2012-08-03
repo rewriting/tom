@@ -114,6 +114,15 @@ breakmatch : {
     }
   }
 
+  public static ATermList s1(ATermList list, DomainInterpretation domain){
+    if (list.isEmpty()){
+      return list;
+    }
+    ATerm head = list.getFirst();
+    return s1(list.getNext(), domain).insert(head);
+  }
+
+
   public static Iterator<ATerm> toIterator(final ATermList list){
     return new Iterator<ATerm>() {
 

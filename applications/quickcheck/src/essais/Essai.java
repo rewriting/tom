@@ -6,6 +6,8 @@ package essais;
 
 import aterm.ATerm;
 import aterm.ATermAppl;
+import aterm.ATermList;
+import aterm.pure.PureFactory;
 import definitions.Scope;
 import definitions.Sort;
 
@@ -28,18 +30,27 @@ class Essai {
     expr.addConstructor("mult", expr, expr);
 
     scope.setDependances();
-    
+
     ATerm term = expr.generate(10);
-    
+
     int n = term.getChildCount();
-    
+
     System.out.println(term);
     System.out.println(n);
-    
+
     for (int i = 0; i < n; i++) {
       System.out.println(term.getChildAt(i));
     }
-    
+
     System.out.println(term.getChildAt(0) instanceof ATermAppl);
+
+    System.out.println("=======================================");
+
+    PureFactory factory = new PureFactory();
+    ATermList list = factory.makeList(expr.generate(5));
+    System.out.println(list);
+    ATermList list2 = list.append(expr.generate(5));
+    System.out.println(list);
+    System.out.println(list2);
   }
 }

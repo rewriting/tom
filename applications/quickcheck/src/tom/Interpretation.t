@@ -1,17 +1,17 @@
 package gen;
 
-import system.types.*;
-import system.types.args.*;
-import system.types.formula.*;
-import system.types.term.*;
-import system.types.counterexample.*;
-
-import java.util.Map;
-import java.util.List;
-import java.util.LinkedList;
-import logic.model.*;
-
 import aterm.ATerm;
+import aterm.ATermList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import logic.model.DomainInterpretation;
+import logic.model.PredicateInterpretation;
+import logic.model.SignatureInterpretation;
+import system.types.Args;
+import system.types.CounterExample;
+import system.types.Formula;
+import system.types.Term;
 
 public class Interpretation {
 
@@ -60,6 +60,10 @@ public class Interpretation {
     }
     return null; // unreachable
   }
+ 
+  /* =================================================================== */
+  /*                            ValidateForall                           */
+  /* =================================================================== */
 
 
   private boolean validateForall(String varName, String domainName, Formula f, Map<String, ATerm> valuation){
@@ -95,6 +99,63 @@ public class Interpretation {
     return null; // unreachable
   }
 
+  private ATermList filterList(String varName, ATermList list, DomainInterpretation domain, Formula f, Map<String, ATerm> valuation) {
+    if (list.isEmpty()) {
+      return list;
+    }
+    ATerm head = list.getFirst();
+    valuation.put(varName, head);
+    boolean res = validateFormula(f, valuation);
+    valuation.remove(varName);
+    if (res) {
+      return filterList(varName, list.getNext(), domain, f, valuation);
+    } else {
+      return filterList(varName, list.getNext(), domain, f, valuation).insert(head);
+    }
+  }
+
+  private ATermList s1(String varName, ATermList list, DomainInterpretation domain, Formula f, Map<String, ATerm> valuation){
+    ATermList res = filterList(varName, Shrink.s1(list, domain), domain, f, valuation);
+    if (res.equals(list)) {
+      return list;
+    } else {
+      return s1(varName, res, domain, f, valuation);
+    }
+  }
+
+  private ATermList s2(String varName, ATermList list, DomainInterpretation domain, Formula f, Map<String, ATerm> valuation){
+    ATermList res = filterList(varName, logic.model.Shrink.s2(list, domain), domain, f, valuation);
+    if (res.equals(list)) {
+      return list;
+    } else {
+      return s2(varName, res, domain, f, valuation);
+    }
+  }
+
+  private int sizeATerm(Visitable term){
+    int n = term.getChildCount();
+    int res = 0;
+    for (int i = 0; i < n; i++) {
+      res += sizeATerm(term.getChildAt(i));
+    }
+    return res + 1;
+  }
+
+  private ATerm minATerm(ATermList list){
+    ATerm term = null;
+    ATermList current = list;
+    int sizeMin = Integer.MAX_VALUE;
+    while (current.isEmpty()) {
+      int size = sizeATerm(current.getFirst());
+      if (size < sizeMin) {
+        term = current.getFirst();
+        sizeMin = size;
+      }
+      current = current.getNext();
+    }
+    return term;
+  }
+
   private ATerm shrink(String varName, ATerm term, DomainInterpretation domain, Formula f, Map<String, ATerm> valuation){
     
   }
@@ -107,20 +168,22 @@ public class Interpretation {
     }
     ATerm term = domain.chooseElement();
     valuation.put(varName, term);
-    CounterExample cef = validateFormulaWithCE(f, valuation);
-    %match(cef){
-      NoCE() -> {
-        valuation.remove(varName);
-        return `NoCE();
-      }
-      _ -> {
-        valuation.remove(varName);
-        ATerm shrunkTerm = shrink(varName, term, domain, f, valuation);
-        return `CEForall(varName, term, cef);
-      }
+    boolean res = validateFormula(f, valuation);
+    valuation.remove(varName);
+    if (res) {
+      return `NoCE();
+    } else {
+      ATerm shrunkTerm = shrink(varName, term, domain, f, valuation);
+      valuation.put(varName, shrunkTerm);
+      CounterExample cef = validateFormulaWithCE(f, valuation);
+      valuation.remove(varName);
+      return `CEForall(varName, shrunkTerm, cef);
     }
-    return null; // unreachable
   }
+
+  /* =================================================================== */
+  /*                            ValidateFormula                          */
+  /* =================================================================== */
 
   public boolean validateFormula(Formula f, Map<String, ATerm> valuation) {
     %match(f){
