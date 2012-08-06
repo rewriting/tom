@@ -2,9 +2,11 @@ package gen;
 
 import aterm.ATerm;
 import aterm.ATermList;
+import aterm.pure.PureFactory;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import jjtraveler.Visitable;
 import logic.model.DomainInterpretation;
 import logic.model.PredicateInterpretation;
 import logic.model.SignatureInterpretation;
@@ -157,7 +159,11 @@ public class Interpretation {
   }
 
   private ATerm shrink(String varName, ATerm term, DomainInterpretation domain, Formula f, Map<String, ATerm> valuation){
-    
+    PureFactory factory = new PureFactory();
+    ATermList l0 = factory.makeList(term);
+    ATermList l1 = s1(varName, l0, domain, f, valuation);
+    ATermList l2 = s2(varName, l1, domain, f, valuation);
+    return minATerm(l2);
   }
 
 

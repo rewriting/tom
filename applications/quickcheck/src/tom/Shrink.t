@@ -101,12 +101,12 @@ public class Shrink{
 
   public static ATermList s1(ATerm term, DomainInterpretation domain){
     ATermList list = null;
-breakmatch : {
-               %match(term){
-                 ATermAppl(_, listFields) -> {list = s1_aux(`listFields, domain); break breakmatch;}
-                 _ -> {throw new UnsupportedOperationException();}
-               }
-             }
+    breakmatch : {
+      %match(term){
+        ATermAppl(_, listFields) -> {list = s1_aux(`listFields, domain); break breakmatch;}
+        _ -> {throw new UnsupportedOperationException();}
+      }
+    }
     if(list.isEmpty()){
       return `concATerm(term);
     } else {

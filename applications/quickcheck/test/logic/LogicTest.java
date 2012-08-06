@@ -4,7 +4,7 @@
  */
 package logic;
 
-import aterm.ATerm; // generated
+import aterm.ATerm;
 import aterm.ATermInt;
 import aterm.pure.PureFactory;
 import examples.Examples;

@@ -181,53 +181,6 @@ public class Shrink {
     return toATermList(s2(toIterator(list), domain));
   }
 
-  public static Iterator<ATerm> s3_aux(final ATerm root, final DomainInterpretation domain) {
-    return new Iterator<ATerm>() {
-      //<editor-fold defaultstate="collapsed" desc="s3">
-
-      private ATerm term = root;
-      private int indexChild = -1;
-      private DomainInterpretation[] domainFields = domain.getDepsDomains();
-      private Iterator<ATerm> localIterator = null;
-
-      private DomainInterpretation getDomain(ATerm field) {
-        for (DomainInterpretation dom : domainFields) {
-          if (dom.includes(field)) {
-            return dom;
-          }
-        }
-        throw new UnsupportedOperationException("Internal problem");
-      }
-
-      @Override
-      public boolean hasNext() {
-        if (localIterator == null) {
-          if (term.getChildCount() != 0) {
-            indexChild++; // = 0
-            ATerm child = (ATerm) term.getChildAt(indexChild);
-            DomainInterpretation newdomain = getDomain(child);
-            localIterator = s3_aux(child, newdomain);
-            return hasNext();
-          }
-        } else {
-          return false;
-        }
-
-
-      }
-
-      @Override
-      public ATerm next() {
-      }
-
-      @Override
-      public void remove() {
-        throw new UnsupportedOperationException("This method cannot be used");
-      }
-      //</editor-fold>
-    };
-  }
-
   private static Iterator<ATerm> toIterator(final ATermList list) {
     return new Iterator<ATerm>() {
 

@@ -48,7 +48,6 @@ public class ShrinkTest {
     ATerm term = sort.generate(10);
     System.out.println(term);
     DomainInterpretation domain = new BuildableDomain(sort);
-    ATermList expResult = null;
     ATermList result = Shrink.s1(term, domain);
     System.out.println(result);
 //    assertEquals(expResult, result);
