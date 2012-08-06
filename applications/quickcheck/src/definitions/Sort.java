@@ -370,6 +370,7 @@ public class Sort implements Buildable {
         List<ATerm> occurences = mapInitialFields.get(type);
         if (occurences == null) {
           occurences = new ArrayList<ATerm>();
+          mapInitialFields.put(type, occurences);
         }
         occurences.add(field);
       }
@@ -478,7 +479,7 @@ public class Sort implements Buildable {
   }
 
   private class MultiConstructorIterator implements Iterator<ATerm> {
-
+    //<editor-fold defaultstate="collapsed" desc="MultiConstructorIterator">
     private Iterator<Constructor> consIte;
     private ATerm term;
     //
@@ -517,7 +518,7 @@ public class Sort implements Buildable {
       } else {
         return false;
       }
-      
+
     }
 
     @Override
@@ -540,6 +541,7 @@ public class Sort implements Buildable {
     public void remove() {
       throw new UnsupportedOperationException("Remove function must not be used.");
     }
+    //</editor-fold>
   }
 
   @Override
@@ -550,6 +552,9 @@ public class Sort implements Buildable {
       if (cons.isSubCons(constructor) && cons != constructor) {
         listSC.add(cons);
       }
+    }
+    if (listSC.isEmpty()) {
+      listSC.add(constructor);
     }
     return new MultiConstructorIterator(term, listSC.iterator());
   }
