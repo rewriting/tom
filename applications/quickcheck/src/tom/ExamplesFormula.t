@@ -7,7 +7,7 @@ import system.types.term.*;
 
 public class ExamplesFormula{
 
-  %include{ ../system/system.tom}
+  %include{system/system.tom}
 
   public static Formula f1 = `Forall("x", "D", Predicate("P", ListArgs(Var("x"))));
   public static Formula odd_even = `Forall(

@@ -17,7 +17,7 @@ import system.types.Term;
 
 public class Interpretation {
 
-  %include{ ../system/system.tom}
+  %include{system/system.tom}
   //private Map<String, Object> valuation;
   private Map<String, PredicateInterpretation> interp_pre;
   private Map<String, SignatureInterpretation> interp_sig;

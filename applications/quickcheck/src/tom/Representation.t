@@ -8,7 +8,7 @@ import java.io.*;
 
 public class Representation {
   %include { sl.tom }
-  %include { ../sort/Sort.tom}
+  %include {sort/Sort.tom}
   
 
   private static String represente_aux(Expr e, String way){

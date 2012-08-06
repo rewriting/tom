@@ -8,7 +8,7 @@ import tom.library.sl.*;
 
 public class Bug {
   %include { sl.tom }
-  %include { ../sort/Sort.tom}
+  %include {sort/Sort.tom}
   
   private class Condition {
     private int i;

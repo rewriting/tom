@@ -9,7 +9,7 @@ import definitions.*;
 
 public class Main {
   %include { sl.tom }
-  %include { ../sort/Sort.tom}
+  %include {sort/Sort.tom}
 
   public static void main(String[] args) {
     RandomizerGenerator generator = new RandomizerGenerator();

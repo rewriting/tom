@@ -1,21 +1,17 @@
 package gen;
 
-import aterm.*;
-import java.util.*;
+import aterm.ATerm;
+import aterm.ATermList;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.Stack;
 import logic.model.DomainInterpretation;
-import tom.library.sl.*;
 
 public class Shrink{
   %include{int.tom}
   %include{string.tom}
   %include{aterm.tom}
 
-  %include{sl.tom}
-  %include { util/types/Collection.tom }
-  %typeterm DomainInterpretation { 
-    implement {DomainInterpretation} 
-    is_sort(t) { ($t instanceof DomainInterpretation) } 
-  }
 
   private static class ATermSameTypeIterator implements Iterator<ATerm> {
 
@@ -154,27 +150,6 @@ public class Shrink{
       }
 
     };
-  }
-
-  public static Collection s1bis(ATerm term, DomainInterpretation domain) {
-    Collection bag = new HashSet();
-    try {
-      `TopDownStopOnSuccess(SelectSameType(bag,domain,term)).visitLight(term, new LocalIntrospector());
-    } catch (VisitFailure e) {
-      System.out.println("failure");
-    }
-    return bag;
-  }
-
-  %strategy SelectSameType(bag:Collection,domain:DomainInterpretation,root:ATerm) extends Fail() {
-    visit ATerm { 
-      subject@ATermAppl[] -> {
-        if(`subject != root && domain.includes(`subject)) {
-          `bag.add(`subject);
-          return `subject;
-        }
-      }
-    }
   }
 
 
