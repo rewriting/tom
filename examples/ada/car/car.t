@@ -47,7 +47,7 @@ package body Car is
     c4 : access Car := `car(4, color_black);
   begin
    
-    %match (c2) {
+    %match (TomCar c2) {
       car(s, "green") -> { 
       put_line("this green car has" & Integer'Image(`s) & " seats"); 
       }

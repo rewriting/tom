@@ -435,7 +435,7 @@ public abstract class AbstractGenerator {
   }
 
   /**
-   * generates var[index] 
+   * generates var[index]   // [04/08/2012 MaPa] There should be no language specific code there.
    */
   protected void generateArray(int deep, BQTerm subject, BQTerm index, String moduleName) throws IOException {
     %match(subject) {

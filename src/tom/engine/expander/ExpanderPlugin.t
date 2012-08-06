@@ -99,7 +99,7 @@ public class ExpanderPlugin extends TomGenericPlugin {
   private static BQTerm intVar;
   private static BQTerm objectArrayVar;
   private static String visitFuncPrefix; // _visit_TermN prefix is "_" but in Ada function can't start with "_"
-  private static boolean generateAdaCode = false;
+  private static boolean generateAdaCode = false;  // [04/08/2012 MaPa] There should be no language specific code there.
 
   /** if the flag is true, a class that implements Introspector is generated */
   private boolean genIntrospector = false;
@@ -128,7 +128,7 @@ public class ExpanderPlugin extends TomGenericPlugin {
 
   public void run(Map informationTracker) {
     if ( getOptionBooleanValue("aCode") ) {
-      generateAdaCode = true;
+      generateAdaCode = true;  // [04/08/2012 MaPa] There should be no language specific code there.
       visitFuncPrefix = "tom_";
       objectType = ASTFactory.makeType(`concTypeOption(),"undefined","ObjectPtr");
       genericType = ASTFactory.makeType(`concTypeOption(),"undefined","ObjectPtr");
@@ -247,6 +247,7 @@ public class ExpanderPlugin extends TomGenericPlugin {
                       instructionsForSort = `concInstruction(instructionsForSort*,inst);
                     }
                   }
+		  // DEBUG System.out.println( "[MaPa 20120805 in ExpanderPlugin.t] Generating a cast to type: " + TomBase.getTLType(type) );
                   instructions = `concInstruction(instructions*,If(IsSort(type,objectVar),Let(var,Cast(type,BQTermToExpression(objectVar)),AbstractBlock(instructionsForSort)),Nop()));
                 }
               }
@@ -344,6 +345,7 @@ public class ExpanderPlugin extends TomGenericPlugin {
                       } 
                     }
                   }
+		  // DEBUG System.out.println( "[MaPa 20120805 in ExpanderPlugin.t] Generating a cast to type: " + TomBase.getTLType(type) );
                   instructions = `concInstruction(instructions*,If(IsSort(type,objectVar),Let(var,Cast(type,BQTermToExpression(objectVar)),AbstractBlock(instructionsForSort)),Nop()));
                 } 
               }
@@ -373,6 +375,7 @@ public class ExpanderPlugin extends TomGenericPlugin {
                         if (TomBase.isListOperator(symbol)) {
                           %match(TypesToType) {
                             TypesToType[Domain=concTomType(domain)] -> {
+			      // DEBUG System.out.println( "[MaPa 20120805 in ExpanderPlugin.t] Generating a cast to type: " + TomBase.getTLType(type) );
                               Instruction inst = 
                                 `If(IsFsym(symbolName,var),
                                     If(BQTermToExpression(Composite(CompositeTL(ITL("children.length==0")))),
@@ -423,6 +426,7 @@ public class ExpanderPlugin extends TomGenericPlugin {
                             if(symbolTable.isBuiltinType(slotTypeName)) {
                               slots = `concBQTerm(slots*,Composite(CompositeTL(ITL("("+symbolTable.builtinToWrapper(slotTypeName)+")children["+i+"]"))));
                             } else {
+			      // DEBUG System.out.println( "[MaPa 20120805 in ExpanderPlugin.t] Generating a cast to type: " + TomBase.getTLType(slotType) );
                               slots = `concBQTerm(slots*,ExpressionToBQTerm(Cast(slotType,BQTermToExpression(Composite(CompositeTL(ITL("children["+i+"]")))))));
                             }
                             pairNameDeclList = pairNameDeclList.getTailconcPairNameDecl();
@@ -434,6 +438,7 @@ public class ExpanderPlugin extends TomGenericPlugin {
                     }
                   } 
 
+		  // DEBUG System.out.println( "[MaPa 20120805 in ExpanderPlugin.t] Generating a cast to type: " + TomBase.getTLType(type) );
                   instructions = `concInstruction(instructions*,If(IsSort(type,objectVar),Let(var,Cast(type,BQTermToExpression(objectVar)),AbstractBlock(instructionsForSort)),Nop()));
                 }
               }
@@ -476,14 +481,14 @@ public class ExpanderPlugin extends TomGenericPlugin {
         %match(visitList) {
           concTomVisit(_*,VisitTerm(vType@Type[TomType=type],constraintInstructionList,_),_*) -> {              
             BQTerm arg;
-            if(generateAdaCode) {
+            if(generateAdaCode) {  // [04/08/2012 MaPa] There should be no language specific code there.
               arg = `BQVariable(concOption(orgTrack),Name("tom_arg"),vType);//double underscore not supported by Ada
             } else {
               arg = `BQVariable(concOption(orgTrack),Name("tom__arg"),vType);//arg subjectList
             }
             String funcName = "visit_" + `type; // function name
             BQTermList subjectListAST;
-            if(generateAdaCode) {//???
+            if(generateAdaCode) {//???  // [04/08/2012 MaPa] There should be no language specific code there.
               subjectListAST = `concBQTerm(strategyVar,arg,introspectorVar);
             } else {
               subjectListAST = `concBQTerm(arg,introspectorVar);
@@ -533,11 +538,14 @@ public class ExpanderPlugin extends TomGenericPlugin {
         // generate the visitLight
         for(TomType type:dispatchInfo.keySet()) {
           BQTermList funcArg;
-          if(generateAdaCode) {//???
+          if(generateAdaCode) {//???  // [04/08/2012 MaPa] There should be no language specific code there.
+	    // DEBUG System.out.println( "[MaPa 20120805 in ExpanderPlugin.t] Generating a cast to type: " + TomBase.getTLType(type) );
             funcArg = `concBQTerm(strategyVar, ExpressionToBQTerm(Cast(type,BQTermToExpression(vVar))),introspectorVar); //there is one more parameter in Ada visit functions
           } else {
+	    // DEBUG System.out.println( "[MaPa 20120805 in ExpanderPlugin.t] Generating a cast to type: " + TomBase.getTLType(type) );
             funcArg = `concBQTerm(ExpressionToBQTerm(Cast(type,BQTermToExpression(vVar))),introspectorVar);
           }    
+	  // DEBUG System.out.println( "[MaPa 20120805 in ExpanderPlugin.t] Generating a cast to type: " + TomBase.getTLType(type) );
           Instruction returnStatement = `Return(ExpressionToBQTerm(Cast(genericType,BQTermToExpression(FunctionCall(Name(dispatchInfo.get(type)),type,funcArg)))));
           Instruction ifInstr = `If(IsSort(type,vVar),returnStatement,Nop());
           ifList = `concInstruction(ifList*,ifInstr);
@@ -545,19 +553,22 @@ public class ExpanderPlugin extends TomGenericPlugin {
           BQTerm arg = `BQVariable(concOption(orgTrack),Name("arg"),type);
           BQTerm environmentVar;
           Instruction return1, return2;
-          if(generateAdaCode) {//???
+          if(generateAdaCode) {//???  // [04/08/2012 MaPa] There should be no language specific code there.
             environmentVar = `BQVariable(concOption(orgTrack),Name("str.env"),EmptyType());
+	    // DEBUG System.out.println( "[MaPa 20120805 in ExpanderPlugin.t] Generating a cast to type: " + TomBase.getTLType(type) );
             return1 = `Return(ExpressionToBQTerm(Cast(type,TomInstructionToExpression(CodeToInstruction(TargetLanguageToCode(ITL("visit(str.any, str.env, intro)")))))));
+	    // DEBUG System.out.println( "[MaPa 20120805 in ExpanderPlugin.t] Generating a cast to type: " + TomBase.getTLType(type) );
             return2 = `Return(ExpressionToBQTerm(Cast(type,TomInstructionToExpression(CodeToInstruction(TargetLanguageToCode(ITL("visitLight(str.any, ObjectPtr(arg),intro)")))))));
           } else {
             environmentVar = `BQVariable(concOption(orgTrack),Name("environment"),EmptyType());
+	    // DEBUG System.out.println( "[MaPa 20120805 in ExpanderPlugin.t] Generating a cast to type: " + TomBase.getTLType(type) );
             return1 = `Return(ExpressionToBQTerm(Cast(type,TomInstructionToExpression(CodeToInstruction(TargetLanguageToCode(ITL("any.visit(environment,introspector)")))))));
             return2 = `Return(Composite(CompositeTL(ITL("any.visitLight(arg,introspector)"))));
           }
           testEnvNotNull = `Negation(EqualTerm(expander.getStreamManager().getSymbolTable().getBooleanType(),
                 ExpressionToBQTerm(Bottom(Type(concTypeOption(),"Object",EmptyTargetLanguageType()))),TomBase.convertFromBQVarToVar(environmentVar)));
           Instruction ifThenElse = `If(testEnvNotNull,return1,return2);
-          if(generateAdaCode) {//???
+          if(generateAdaCode) {//???  // [04/08/2012 MaPa] There should be no language specific code there.
             methodParameterBQT = `concBQTerm(strategyVar, arg,introspectorVar);
           } else {
             methodParameterBQT = `concBQTerm(arg,introspectorVar);
@@ -569,19 +580,22 @@ public class ExpanderPlugin extends TomGenericPlugin {
                 visitfailureType,
                 ifThenElse),l*);
         }
-        if(generateAdaCode) {
+        if(generateAdaCode) {  // [04/08/2012 MaPa] There should be no language specific code there.
+	  // DEBUG System.out.println( "[MaPa 20120805 in ExpanderPlugin.t] Generating a cast to type: " + TomBase.getTLType(genericType) );
+	  // DEBUG System.out.println( "[MaPa 20120805 in ExpanderPlugin.t] Generating a cast to type: " + TomBase.getTLType(genericType) );
           ifList = `concInstruction(ifList*,              
               If(testEnvNotNull,
                 Return(ExpressionToBQTerm(Cast(genericType,BQTermToExpression(Composite(CompositeTL(ITL("visit(str.any, str.env, intro)"))))))),
                 Return(ExpressionToBQTerm(Cast(genericType,BQTermToExpression(Composite(CompositeTL(ITL("visitLight(str.any, v,intro)")))))))));
         } else {
+	  // DEBUG System.out.println( "[MaPa 20120805 in ExpanderPlugin.t] Generating a cast to type: " + TomBase.getTLType(genericType) );
           ifList = `concInstruction(ifList*,              
               If(testEnvNotNull,
                 Return(ExpressionToBQTerm(Cast(genericType,BQTermToExpression(Composite(CompositeTL(ITL("any.visit(environment,introspector)"))))))),
                 Return(Composite(CompositeTL(ITL("any.visitLight(v,introspector)"))))));
         }
 
-        if ( generateAdaCode ) {
+        if ( generateAdaCode ) {  // [04/08/2012 MaPa] There should be no language specific code there.
           methodParameterBQT = `concBQTerm(strategyVar,vVar,introspectorVar);
         } else {
           methodParameterBQT = `concBQTerm(vVar,introspectorVar);
@@ -593,7 +607,7 @@ public class ExpanderPlugin extends TomGenericPlugin {
             methodparameterType,
             visitfailureType,
             AbstractBlock(ifList));
-        if(generateAdaCode) {
+        if(generateAdaCode) {  // [04/08/2012 MaPa] There should be no language specific code there.
           l = `concDeclaration(l*, visitLightDeclaration); //the order matter in Ada
         } else {
           l = `concDeclaration(visitLightDeclaration,l*);

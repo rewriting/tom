@@ -165,11 +165,11 @@ public class SyntacticPropagator implements IBasePropagator {
             BQTerm freshCastedSubject = sp.getCompiler().getFreshVariable(`aType);
             TomTerm var = TomBase.convertFromBQVarToVar(freshCastedSubject);
             //DEBUG System.out.println("*** " + var);
-            //DEBUG System.out.println("+++ " + aType);
+            //DEBUG System.out.println("+++ " + `aType);
             //DEBUG System.out.println("--- " + freshSubject);
             andForName.add(`MatchConstraint(var,freshSubject,aType));
             //DEBUG System.out.println("Match#3= " +
-            //DEBUG     `MatchConstraint(var,freshSubject,aType));
+            //DEBUG `MatchConstraint(var,freshSubject,aType));
 
             // for each slot
             %match(slots) {
@@ -190,9 +190,9 @@ public class SyntacticPropagator implements IBasePropagator {
         lastPart.add(0,l);
         lastPart.add(0,`MatchConstraint(TomBase.convertFromBQVarToVar(freshSubject),g,aType));
         //DEBUG System.out.println("Match#5 = " +
-        //DEBUG     `MatchConstraint(TomBase.convertFromBQVarToVar(freshSubject),g,sp.getCompiler().getTermTypeFromTerm(g)));
+        //DEBUG `MatchConstraint(TomBase.convertFromBQVarToVar(freshSubject),g,sp.getCompiler().getTermTypeFromTerm(g)));
         //DEBUG System.out.println("\n\n\nIn Syntactic Propagator: lastPart = " +
-        //DEBUG     lastPart + "\n\n");
+        //DEBUG lastPart + "\n\n");
         lastPart.add(sp.getConstraintPropagator().performDetach(`m));
         return ASTFactory.makeAndConstraint(lastPart);
       }      

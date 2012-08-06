@@ -146,14 +146,15 @@ public class ConstraintGenerator {
       ConstraintToExpression(MatchConstraint[Pattern=v@(Variable|VariableStar)[],Subject=t]) -> {
         SymbolTable symbolTable = getCompiler().getSymbolTable();
 
-        //System.out.println("In Constraint Generator with v = " + `v + '\n');
-        //System.out.println("In Constraint Generator with t = " + `t + '\n');
+        // DEBUG System.out.println("In Constraint Generator with v = " + `v + '\n');
+        // DEBUG System.out.println("In Constraint Generator with t = " + `t + '\n');
         TomType pType = TomBase.getTermType(`v,symbolTable);
         TomType sType = TomBase.getTermType(`t,symbolTable);
-        //System.out.println("pType = " + pType);
-        //System.out.println("sType = " + sType);
+        // DEBUG System.out.println("pType = " + pType);
+        // DEBUG System.out.println("sType = " + sType);
         %match(pType,sType) {
           Type[TomType=tType],Type[TomType=!tType] -> {
+	    // DEBUG System.out.println( "[MaPa 20120805 in ConstraintGenerator.t] Cast: " + `t + " to: " + TomBase.getTermType(`v,symbolTable) );
             return
               `LetRef(TomBase.convertFromVarToBQVar(v),Cast(TomBase.getTermType(v,symbolTable),BQTermToExpression(t)),action);
           } 

@@ -116,13 +116,13 @@ public class TyperPlugin extends TomGenericPlugin {
     newKernelTyper.setCurrentInputFileName(getStreamManager().getInputFileName()); 
 
     Code typedCode = (Code)getWorkingTerm();
-    //System.out.println("before: " + typedCode);
+    // DEBUG System.out.println("before: " + typedCode);
 
     if(newtyper==false) {
       try {
 
         updateSymbolTable();
-        //System.out.println("\nCode before type inference = \n" + getWorkingTerm());
+        // DEBUG System.out.println("\nCode before type inference = \n" + getWorkingTerm());
 
         typedCode = (Code) kernelTyper.typeVariable(`EmptyType(), typedCode);
 
@@ -133,9 +133,9 @@ public class TyperPlugin extends TomGenericPlugin {
         typedCode = `TopDownIdStopOnSuccess(desugarString(this)).visitLight(typedCode);
         /* transform each BackQuoteTerm into its compiled form */
         typedCode = `TopDownIdStopOnSuccess(TransformBQAppl(this)).visitLight(typedCode);
-        //System.out.println("step2: " + typedCode);
+        // DEBUG System.out.println("step2: " + typedCode);
 
-        setWorkingTerm(typedCode);      
+        // DEBUG setWorkingTerm(typedCode);      
         // verbose
         TomMessage.info(logger, getStreamManager().getInputFileName(), 0,
             TomMessage.tomTypingPhase,
@@ -175,7 +175,7 @@ public class TyperPlugin extends TomGenericPlugin {
         typedCode = `TopDownIdStopOnSuccess(desugarString(this)).visitLight(typedCode);
         /* transform each BackQuoteTerm into its compiled form */
         typedCode = `TopDownIdStopOnSuccess(TransformBQAppl(this)).visitLight(typedCode);
-        //System.out.println("step2: " + typedCode);
+        // DEBUG System.out.println("step2: " + typedCode);
 
         setWorkingTerm(typedCode);
 

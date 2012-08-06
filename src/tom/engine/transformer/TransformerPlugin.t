@@ -641,6 +641,7 @@ public class TransformerPlugin extends TomGenericPlugin {
             //replace ITL() by FunctionCall()?
             //to change: language specific
             //Instruction referenceStatement = `LetRef(res,
+	    // DEBUG System.out.println( "[MaPa 20120805 in TranformerPlugin.t] Generating a cast to type: " + TomBase.getTLType(ttype) );
             Instruction referenceStatement = `AbstractBlock(concInstruction(
                   CodeToInstruction(TargetLanguageToCode(ITL(TomBase.getTLType(getSymbolTable().getType(tname))))),
                   Assign(res,

@@ -2349,7 +2349,7 @@ keywordGetHead[TomName opname, String type] returns [Declaration result] throws 
                 selector().pop();
 
                 result = `GetHeadDecl(opname,
-                    symbolTable.getUniversalType(),
+                    symbolTable.getUniversalType(), //  04/08/2012 MaPa  Is it really usefull ?
                     BQVariable(option,Name(name.getText()),Type(concTypeOption(),type,EmptyTargetLanguageType())),
                     Code(ASTFactory.abstractCode(tlCode.getCode(),name.getText())),
                     ot);

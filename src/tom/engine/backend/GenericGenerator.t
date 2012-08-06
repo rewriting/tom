@@ -66,13 +66,18 @@ public abstract class GenericGenerator extends AbstractGenerator {
     super(output, optionManager, symbolTable);
 
     lazyType = ((Boolean)optionManager.getOptionValue("lazyType")).booleanValue();
+    if (lazyType) { System.out.println("Lazy Type is activated.");  } // [04/08/2012 MaPa]
     nodeclMode = ((Boolean)optionManager.getOptionValue("noDeclaration")).booleanValue();
-    boolean cCode = ((Boolean)optionManager.getOptionValue("cCode")).booleanValue();
-    boolean jCode = ((Boolean)optionManager.getOptionValue("jCode")).booleanValue();
+    boolean cCode = ((Boolean)optionManager.getOptionValue("cCode")).booleanValue();  // [04/08/2012 MaPa] There should be no language specific code there.
+    boolean jCode = ((Boolean)optionManager.getOptionValue("jCode")).booleanValue();  // [04/08/2012 MaPa] There should be no language specific code there.
+    boolean aCode = ((Boolean)optionManager.getOptionValue("aCode")).booleanValue();  // [04/08/2012 MaPa] There should be no language specific code there.
+    if (aCode) { System.out.println("Ada Code is activated."); }  // [04/08/2012 MaPa]
+    lazyType &= !aCode; // [04/08/2012 MaPa] Ada does not support Universal Type
+    if (lazyType) { System.out.println("Lazy Type is still activated."); }  // [04/08/2012 MaPa]
     inline = ((Boolean)optionManager.getOptionValue("inline")).booleanValue();
     inlineplus = ((Boolean)optionManager.getOptionValue("inlineplus")).booleanValue();
     inline |= inlineplus;
-    inline &= (cCode || jCode);
+    inline &= (cCode || jCode);  // [04/08/2012 MaPa] Why only inline in Java or C and not in other languages ?
   }
 
   // ------------------------------------------------------------
@@ -89,7 +94,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
     String template = getSymbolTable(moduleName).getMake(opname);
     if(instantiateTemplate(deep,template,opname,argList,moduleName) == false)
     {// && !isResolveOp(opname, moduleName)) {
-      String prefix = "tom_make_";
+      String prefix = "tom_make_";  // [04/08/2012 MaPa] The structure of the ident should be language specific.
       output.write(prefix+opname);
       output.writeOpenBrace();
       int index=0;
@@ -185,7 +190,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
       String sType = TomBase.getTomType(type);
       String template = getSymbolTable(moduleName).getGetSizeArray(opName);
       if(instantiateTemplate(deep,template,opName,`concBQTerm(expArray),moduleName) == false) {
-        output.write("tom_get_size_" + `opName + "_" + sType + "(");
+        output.write("tom_get_size_" + `opName + "_" + sType + "(");  // [04/08/2012 MaPa] The structure of the ident should be language specific.
         generateBQTerm(deep,expArray,moduleName);
         output.write(")");
       }
@@ -277,7 +282,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
       String template = getSymbolTable(moduleName).getIsSort(type);
       String opname="";
       if(instantiateTemplate(deep,template,opname,`concBQTerm(exp),moduleName) == false) {
-        output.write("tom_is_sort_" + type + "(");
+        output.write("tom_is_sort_" + type + "(");  // [04/08/2012 MaPa] The structure of the ident should be language specific.
         generateBQTerm(deep,exp,moduleName);
         output.write(")");
       }
@@ -289,7 +294,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
       if(instantiateTemplate(deep,template,opname,`concBQTerm(exp),moduleName) == false) {
         String s = isFsymMap.get(opname);
         if(s == null) {
-          s = "tom_is_fun_sym_" + opname + "(";
+          s = "tom_is_fun_sym_" + opname + "(";  // [04/08/2012 MaPa] The structure of the ident should be language specific.
         }
         output.write(s);
         //DEBUG System.out.println("generate BQTerm for '" + exp + "'");
@@ -302,10 +307,10 @@ public abstract class GenericGenerator extends AbstractGenerator {
       deep = 0; //to avoid usless spaces inside the code 
       String template = getSymbolTable(moduleName).getGetSlot(opname,slotName);
       if(instantiateTemplate(deep,template,opname,`concBQTerm(var),moduleName) == false) {
-        //output.write("tom_get_slot_" + opname + "_" + slotName + "(");
+        //output.write("tom_get_slot_" + opname + "_" + slotName + "(");  // [04/08/2012 MaPa] The structure of the ident should be language specific.
         //generateBQTerm(deep,var);
         //output.write(")");
-        output.write("tom_get_slot_");
+        output.write("tom_get_slot_");  // [04/08/2012 MaPa] The structure of the ident should be language specific.
         output.write(opname);
         output.writeUnderscore();
         output.write(slotName);
@@ -321,7 +326,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
 
     protected void buildExpGetDefault(int deep, String opname, String slotName, String moduleName) throws IOException {
       deep = 0; //to avoid usless spaces inside the code  
-      output.write("tom_get_default_");
+      output.write("tom_get_default_");  // [04/08/2012 MaPa] The structure of the ident should be language specific.
       output.write(opname);
       output.writeUnderscore();
       output.write(slotName);
@@ -333,7 +338,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
       deep = 0; //to avoid usless spaces inside the code  
       String template = getSymbolTable(moduleName).getGetHead(opName);
       if(instantiateTemplate(deep,template,opName,`concBQTerm(var),moduleName) == false) {
-        output.write("tom_get_head_" + opName + "_" + TomBase.getTomType(domain) + "(");
+        output.write("tom_get_head_" + opName + "_" + TomBase.getTomType(domain) + "(");  // [04/08/2012 MaPa] The structure of the ident should be language specific.
         generateBQTerm(deep,var,moduleName);
         output.write(")");
       }
@@ -343,7 +348,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
       deep = 0; //to avoid usless spaces inside the code  
       String template = getSymbolTable(moduleName).getGetTail(opName);
       if(instantiateTemplate(deep,template,opName,`concBQTerm(var),moduleName) == false) {
-        output.write("tom_get_tail_" + opName + "_" + TomBase.getTomType(type) + "(");
+        output.write("tom_get_tail_" + opName + "_" + TomBase.getTomType(type) + "(");  // [04/08/2012 MaPa] The structure of the ident should be language specific.
         generateBQTerm(deep,var,moduleName);
         output.write(")");
       }
@@ -353,7 +358,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
       deep = 0; //to avoid usless spaces inside the code  
       String template = getSymbolTable(moduleName).getIsEmptyList(opName);
       if(instantiateTemplate(deep,template,opName,`concBQTerm(var),moduleName) == false) {
-        output.write("tom_is_empty_" + `opName + "_" + TomBase.getTomType(type) + "(");
+        output.write("tom_is_empty_" + `opName + "_" + TomBase.getTomType(type) + "(");  // [04/08/2012 MaPa] The structure of the ident should be language specific.
         generateBQTerm(deep,var,moduleName);
         output.write(")");
       }
@@ -370,7 +375,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
       String sType = TomBase.getTomType(type);
       String template = getSymbolTable(moduleName).getGetSizeArray(opName);
       if(instantiateTemplate(deep,template,opName,`concBQTerm(var),moduleName) == false) {
-        output.write("tom_get_size_" + `opName + "_" + sType + "(");
+        output.write("tom_get_size_" + `opName + "_" + sType + "(");  // [04/08/2012 MaPa] The structure of the ident should be language specific.
         generateBQTerm(deep,var,moduleName);
         output.write(")");
       }
@@ -378,7 +383,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
 
     protected void buildExpGetSliceList(int deep, String name, BQTerm varBegin, BQTerm varEnd, BQTerm tail, String moduleName) throws IOException {
       deep = 0; //to avoid usless spaces inside the code  
-      output.write("tom_get_slice_" + name + "(");
+      output.write("tom_get_slice_" + name + "(");  // [04/08/2012 MaPa] The structure of the ident should be language specific.
       generateBQTerm(deep,varBegin,moduleName);
       output.write(",");
       generateBQTerm(deep,varEnd,moduleName);
@@ -389,7 +394,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
 
     protected void buildExpGetSliceArray(int deep, String name, BQTerm varArray, BQTerm varBegin, BQTerm expEnd, String moduleName) throws IOException {
       deep = 0; //to avoid usless spaces inside the code  
-      output.write("tom_get_slice_" + name + "(");
+      output.write("tom_get_slice_" + name + "(");  // [04/08/2012 MaPa] The structure of the ident should be language specific.
       generateBQTerm(deep,varArray,moduleName);
       output.write(",");
       generateBQTerm(deep,varBegin,moduleName);
@@ -431,10 +436,10 @@ public abstract class GenericGenerator extends AbstractGenerator {
         if(!lazyType) {
           argType = TomBase.getTLCode(tlType);
         } else {
-          argType = TomBase.getTLType(getUniversalType());
+          argType = TomBase.getTLType(getUniversalType()); // [04/08/2012 MaPa] Is it really usefull ?
         }
 
-        genDeclInstr(TomBase.getTLType(returnType), "tom_is_fun_sym", opname,
+        genDeclInstr(TomBase.getTLType(returnType), "tom_is_fun_sym", opname,  // [04/08/2012 MaPa] The structure of the ident should be language specific.
             new String[] { argType, varname }, `Return(ExpressionToBQTerm(code)),deep,moduleName);
       }
 
@@ -456,10 +461,10 @@ public abstract class GenericGenerator extends AbstractGenerator {
         if(!lazyType) {
           argType = TomBase.getTLCode(tlType);
         } else {
-          argType = TomBase.getTLType(getUniversalType());
+          argType = TomBase.getTLType(getUniversalType());  // [04/08/2012 MaPa] Is it really usefull ?
         }
 
-        genDeclInstr(TomBase.getTLType(returnType), "tom_is_fun_sym", opname,
+        genDeclInstr(TomBase.getTLType(returnType), "tom_is_fun_sym", opname,  // [04/08/2012 MaPa] The structure of the ident should be language specific.
             new String[] { argType, varname }, `Return(ExpressionToBQTerm(code)),deep,moduleName);
       }
 
@@ -500,10 +505,10 @@ public abstract class GenericGenerator extends AbstractGenerator {
         if(!lazyType) {
           argType = TomBase.getTLCode(tlType);
         } else {
-          argType = TomBase.getTLType(getUniversalType());
+          argType = TomBase.getTLType(getUniversalType());  // [04/08/2012 MaPa] Is it really usefull ?
         }
         genDeclInstr(TomBase.getTLType(returnType),
-            "tom_get_slot", opname  + "_" + slotName.getString(),
+            "tom_get_slot", opname  + "_" + slotName.getString(),  // [04/08/2012 MaPa] The structure of the ident should be language specific.
             new String[] { argType, varname },
             `Return(ExpressionToBQTerm(code)),deep,moduleName);
       }
@@ -532,10 +537,10 @@ public abstract class GenericGenerator extends AbstractGenerator {
         if(!lazyType) {
           argType = TomBase.getTLCode(tlType);
         } else {
-          argType = TomBase.getTLType(getUniversalType());
+          argType = TomBase.getTLType(getUniversalType());  // [04/08/2012 MaPa] Is it really usefull ?
         }
         genDeclInstr(TomBase.getTLType(returnType),
-            "tom_get_slot", opname  + "_" + slotName.getString(),
+            "tom_get_slot", opname  + "_" + slotName.getString(),  // [04/08/2012 MaPa] The structure of the ident should be language specific.
             new String[] { argType, varname },
             `Return(ExpressionToBQTerm(code)),deep,moduleName);
       }
@@ -558,7 +563,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
       TomType returnType = l.getHeadconcTomType();
 
       genDeclInstr(TomBase.getTLType(returnType),
-          "tom_get_default", opname  + "_" + slotName.getString(),
+          "tom_get_default", opname  + "_" + slotName.getString(),  // [04/08/2012 MaPa] The structure of the ident should be language specific.
           new String[] { },
           `Return(ExpressionToBQTerm(code)),deep,moduleName);
     }
@@ -566,13 +571,17 @@ public abstract class GenericGenerator extends AbstractGenerator {
 
     protected void buildEqualTermDecl(int deep, String varname1, String varname2,
         String type1, String type2, Expression code, String moduleName) throws IOException {
-      TomType argType1 = getUniversalType();
+      TomType argType1 = null;
       if(getSymbolTable(moduleName).isBuiltinType(type1)) {
         argType1 = getSymbolTable(moduleName).getBuiltinType(type1);
-      }
-      TomType argType2 = getUniversalType();
+      } else {
+      	argType1 = getUniversalType();  // [04/08/2012 MaPa] Is it really usefull ?
+      }     
+      TomType argType2 = null;
       if(getSymbolTable(moduleName).isBuiltinType(type2)) {
         argType2 = getSymbolTable(moduleName).getBuiltinType(type2);
+      } else {
+      	argType2 = getUniversalType();  // [04/08/2012 MaPa] Is it really usefull ?
       }
       boolean inlined = inlineplus;
       if(code.isCode()) {
@@ -585,7 +594,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
         }
       }
       if(!inline || !code.isCode() || !inlined) {
-        genDeclInstr(TomBase.getTLType(getSymbolTable(moduleName).getBooleanType()), "tom_equal_term", type1,
+        genDeclInstr(TomBase.getTLType(getSymbolTable(moduleName).getBooleanType()), "tom_equal_term", type1,  // [04/08/2012 MaPa] The structure of the ident should be language specific.
             new String[] {
             TomBase.getTLType(argType1), varname1,
             TomBase.getTLType(argType2), varname2
@@ -606,11 +615,13 @@ public abstract class GenericGenerator extends AbstractGenerator {
         }
       }
       if(!inline || !code.isCode() || !inlined) {
-        TomType argType = getUniversalType();
+        TomType argType = null;
         if(getSymbolTable(moduleName).isBuiltinType(type)) {
           argType = getSymbolTable(moduleName).getBuiltinType(type);
-        }
-        genDeclInstr(TomBase.getTLType(getSymbolTable(moduleName).getBooleanType()), "tom_is_sort", type,
+        } else {
+	  argType = getUniversalType();  // [04/08/2012 MaPa] Is it really usefull ?
+	}
+        genDeclInstr(TomBase.getTLType(getSymbolTable(moduleName).getBooleanType()), "tom_is_sort", type,  // [04/08/2012 MaPa] The structure of the ident should be language specific.
             new String[] { TomBase.getTLType(argType), varName },
             `Return(ExpressionToBQTerm(code)),deep,moduleName);
       }
@@ -632,11 +643,11 @@ public abstract class GenericGenerator extends AbstractGenerator {
         if(!inline || !code.isCode() || !inlined) {
           String returnType = null;
           String argType = null;
-          String functionName = "tom_get_head_" + opname;
+          String functionName = "tom_get_head_" + opname;  // [04/08/2012 MaPa] The structure of the ident should be language specific.
 
           if(lazyType) {
-            returnType = TomBase.getTLType(getUniversalType());
-            argType = TomBase.getTLType(getUniversalType());
+            returnType = TomBase.getTLType(getUniversalType());  // [04/08/2012 MaPa] Is it really usefull ?
+            argType = TomBase.getTLType(getUniversalType());  // [04/08/2012 MaPa] Is it really usefull ?
           } else {
             %match(opNameAST) {
               EmptyName() -> {
@@ -675,11 +686,11 @@ public abstract class GenericGenerator extends AbstractGenerator {
         if(!inline || !code.isCode() || !inlined) {
           String returnType = null;
           String argType = null;
-          String functionName = "tom_get_tail_" + opname;
+          String functionName = "tom_get_tail_" + opname;  // [04/08/2012 MaPa] The structure of the ident should be language specific.
 
           if(lazyType) {
-            returnType = TomBase.getTLType(getUniversalType());
-            argType = TomBase.getTLType(getUniversalType());
+            returnType = TomBase.getTLType(getUniversalType());  // [04/08/2012 MaPa] Is it really usefull ?
+            argType = TomBase.getTLType(getUniversalType());  // [04/08/2012 MaPa] Is it really usefull ?
           } else {
             %match(opNameAST) {
               EmptyName() -> {
@@ -717,10 +728,10 @@ public abstract class GenericGenerator extends AbstractGenerator {
       }
       if(!inline || !code.isCode() || !inlined) {
         String argType = null;
-        String functionName = "tom_is_empty_" + opname;
+        String functionName = "tom_is_empty_" + opname;  // [04/08/2012 MaPa] The structure of the ident should be language specific.
 
         if(lazyType) {
-          argType = TomBase.getTLType(getUniversalType());
+          argType = TomBase.getTLType(getUniversalType());  // [04/08/2012 MaPa] Is it really usefull ?
         } else {
           %match(opNameAST) {
             EmptyName() -> {
@@ -758,11 +769,11 @@ public abstract class GenericGenerator extends AbstractGenerator {
       if(!inline || !code.isCode() || !inlined) {
         String returnType = null;
         String argType = null;
-        String functionName = "tom_get_element";
+        String functionName = "tom_get_element";  // [04/08/2012 MaPa] The structure of the ident should be language specific.
 
         if(lazyType) {
-          returnType = TomBase.getTLType(getUniversalType());
-          argType = TomBase.getTLType(getUniversalType());
+          returnType = TomBase.getTLType(getUniversalType());  // [04/08/2012 MaPa] Is it really usefull ?
+          argType = TomBase.getTLType(getUniversalType());  // [04/08/2012 MaPa] Is it really usefull ?
         } else {
           %match(opNameAST) {
             EmptyName() -> {
@@ -799,10 +810,10 @@ public abstract class GenericGenerator extends AbstractGenerator {
       }
       if(!inline || !code.isCode() || !inlined) {
         String argType = null;
-        String functionName = "tom_get_size";
+        String functionName = "tom_get_size";  // [04/08/2012 MaPa] The structure of the ident should be language specific.
 
         if(lazyType) {
-          argType = TomBase.getTLType(getUniversalType());
+          argType = TomBase.getTLType(getUniversalType());  // [04/08/2012 MaPa] Is it really usefull ?
         } else {
           %match(opNameAST) {
             EmptyName() -> {
@@ -838,7 +849,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
       String sType = TomBase.getTomType(domain);
       String template = getSymbolTable(moduleName).getGetElementArray(opName);
       if(instantiateTemplate(deep,template,opName,`concBQTerm(varName,varIndex),moduleName) == false) {
-        output.write("tom_get_element_" + `opName + "_" + sType + "(");
+        output.write("tom_get_element_" + `opName + "_" + sType + "(");  // [04/08/2012 MaPa] The structure of the ident should be language specific.
         generateBQTerm(deep,varName,moduleName);
         output.write(",");
         generateBQTerm(deep,varIndex,moduleName);
@@ -851,7 +862,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
       deep = 0; //to avoid usless spaces inside the code
       %match(list) {
         BuildEmptyList(Name(name)) -> {
-          String prefix = "tom_empty_list_";
+          String prefix = "tom_empty_list_";  // [04/08/2012 MaPa] The structure of the ident should be language specific.
           String template = getSymbolTable(moduleName).getMakeEmptyList(`name);
           if(instantiateTemplate(deep,template,`name,`concBQTerm(),moduleName) == false) {
             output.write(prefix + `name + "()");
@@ -860,7 +871,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
         }
 
         BuildConsList(Name(name), headTerm, tailTerm) -> {
-          String prefix = "tom_cons_list_";
+          String prefix = "tom_cons_list_";  // [04/08/2012 MaPa] The structure of the ident should be language specific.
           String template = getSymbolTable(moduleName).getMakeAddList(`name);
           if(instantiateTemplate(deep,template,`name,`concBQTerm(headTerm,tailTerm),moduleName) == false) {
             output.write(prefix + `name + "(");
@@ -873,7 +884,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
         }
 
         BuildAppendList(Name(name), headTerm, tailTerm) -> {
-          output.write("tom_append_list_" + `name + "(");
+          output.write("tom_append_list_" + `name + "(");  // [04/08/2012 MaPa] The structure of the ident should be language specific.
           generateBQTerm(deep,`headTerm,moduleName);
           output.write(",");
           generateBQTerm(deep,`tailTerm,moduleName);
@@ -882,7 +893,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
         }
 
         BuildEmptyArray(Name(name),size) -> {
-          String prefix = "tom_empty_array_";
+          String prefix = "tom_empty_array_";  // [04/08/2012 MaPa] The structure of the ident should be language specific.
           String template = getSymbolTable(moduleName).getMakeEmptyArray(`name);
           if(instantiateTemplate(deep,template,`name,`concBQTerm(size),moduleName) == false) {
             output.write(prefix + `name + "(");
@@ -895,7 +906,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
         BuildConsArray(Name(name), headTerm, tailTerm) -> {
           String template = getSymbolTable(moduleName).getMakeAddArray(`name);
           if(instantiateTemplate(deep,template,`name,`concBQTerm(headTerm,tailTerm),moduleName) == false) {
-            String prefix = "tom_cons_array_";
+            String prefix = "tom_cons_array_";  // [04/08/2012 MaPa] The structure of the ident should be language specific.
             output.write(prefix + `name + "(");
             generateBQTerm(deep,`headTerm,moduleName);
             output.write(",");
@@ -906,7 +917,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
         }
 
         BuildAppendArray(Name(name), headTerm, tailTerm) -> {
-          output.write("tom_append_array_" + `name + "(");
+          output.write("tom_append_array_" + `name + "(");  // [04/08/2012 MaPa] The structure of the ident should be language specific.
           generateBQTerm(deep,`headTerm,moduleName);
           output.write(",");
           generateBQTerm(deep,`tailTerm,moduleName);
@@ -949,23 +960,23 @@ public abstract class GenericGenerator extends AbstractGenerator {
       String glType = TomBase.getTLType(listType);
 
       String utype = glType;
-      if(lazyType) {
-        utype =  TomBase.getTLType(getUniversalType());
+      if (lazyType) {
+        utype =  TomBase.getTLType(getUniversalType());  // [04/08/2012 MaPa] Is it really usefull ?
       }
 
       //String listCast = "(" + glType + ")";
       //String eltCast = "(" + TomBase.getTLType(eltType) + ")";
-      //String make_empty = listCast + "tom_empty_array_" + name;
-      //String make_insert = listCast + "tom_cons_array_" + name;
-      //String get_element = eltCast + "tom_get_element_" + name +"_" + tomType;
-      //String get_size = "tom_get_size_" + name +"_" + tomType;
+      //String make_empty = listCast + "tom_empty_array_" + name;  // [04/08/2012 MaPa] The structure of the ident should be language specific.
+      //String make_insert = listCast + "tom_cons_array_" + name;  // [04/08/2012 MaPa] The structure of the ident should be language specific.
+      //String get_element = eltCast + "tom_get_element_" + name +"_" + tomType;  // [04/08/2012 MaPa] The structure of the ident should be language specific.
+      //String get_size = "tom_get_size_" + name +"_" + tomType;  // [04/08/2012 MaPa] The structure of the ident should be language specific.
 
       String s = "";
       if(getSymbolTable(moduleName).isUsedSymbolDestructor(name)) {
         // add this test to avoid generating get_slice and append_array when
         // the constructor is not used in any matching
         s = %[
-          @modifier@ @utype@ tom_get_slice_@name@(@utype@ subject, int begin, int end) {
+          @modifier@ @utype@ tom_get_slice_@name@(@utype@ subject, int begin, int end) {  // [04/08/2012 MaPa] The structure of the ident should be language specific.
             @glType@ result = @getMakeEmptyArray(name,"end-begin",moduleName)@;
             while(begin!=end) {
               result = @getMakeAddArray(name,getGetElementArray(name,tomType,"subject","begin",moduleName),"result",moduleName)@;
@@ -974,7 +985,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
             return result;
           }
 
-        @modifier@ @utype@ tom_append_array_@name@(@utype@ l2, @utype@ l1) {
+        @modifier@ @utype@ tom_append_array_@name@(@utype@ l2, @utype@ l1) {  // [04/08/2012 MaPa] The structure of the ident should be language specific.
           int size1 = @getGetSizeArray(name,tomType,"l1",moduleName)@;
           int size2 = @getGetSizeArray(name,tomType,"l2",moduleName)@;
           int index;
@@ -1000,7 +1011,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
 
 
     private String getMakeEmptyArray(String name,String size,String moduleName) {
-      String prefix = "tom_empty_array_";
+      String prefix = "tom_empty_array_";  // [04/08/2012 MaPa] The structure of the ident should be language specific.
       String template = getSymbolTable(moduleName).getMakeEmptyArray(name);
       String res = instantiateTemplate(template,size);
       if(res==null || (!inlineplus && res.equals(template))) {
@@ -1013,7 +1024,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
       String template = getSymbolTable(moduleName).getMakeAddArray(name);
       String res = instantiateTemplate(template,elt,subject);
       if(res==null || (!inlineplus && res.equals(template))) {
-        res = %[tom_cons_array_@name@(@elt@,@subject@)]%;
+        res = %[tom_cons_array_@name@(@elt@,@subject@)]%;  // [04/08/2012 MaPa] The structure of the ident should be language specific.
       }
       return res;
     }
@@ -1022,7 +1033,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
       String template = getSymbolTable(moduleName).getGetElementArray(name);
       String res = instantiateTemplate(template,subject,index);
       if(res==null || (!inlineplus && res.equals(template))) {
-        res = %[tom_get_element_@name@_@type@(@subject@,@index@)]%;
+        res = %[tom_get_element_@name@_@type@(@subject@,@index@)]%;  // [04/08/2012 MaPa] The structure of the ident should be language specific.
       }
       return res;
     }
@@ -1031,7 +1042,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
       String template = getSymbolTable(moduleName).getGetSizeArray(name);
       String res = instantiateTemplate(template,subject);
       if(res==null || (!inlineplus && res.equals(template))) {
-        res = %[tom_get_size_@name@_@type@(@subject@)]%;
+        res = %[tom_get_size_@name@_@type@(@subject@)]%;  // [04/08/2012 MaPa] The structure of the ident should be language specific.
       }
       return res;
     }

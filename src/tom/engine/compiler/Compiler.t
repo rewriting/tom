@@ -278,8 +278,10 @@ public class Compiler extends TomGenericPlugin {
           return `constr; 
         } 
         TomType freshSubjectType = compiler.getTermTypeFromTerm(`subject);
-        //System.out.println("subject = " + `subject);
-        //System.out.println("freshSubjectType = " + freshSubjectType);
+        // DEBUG System.out.println("pattern = " + `pattern);
+        // DEBUG System.out.println("subject = " + `subject);
+        // DEBUG System.out.println("freshSubjectType = " + freshSubjectType);
+        // DEBUG System.out.println("castType = " + `castType);
 
         // test if we already renamed this subject 
         if(subjectList.contains(`subject)) {
@@ -293,10 +295,17 @@ public class Compiler extends TomGenericPlugin {
           } else {
             typedRenamedSubj = typedRenamedSubj.setAstType(freshSubjectType);
           }
+          // DEBUG System.out.println("freshSubjectType = " + freshSubjectType);
 
-          BQTerm freshVar = compiler.getUniversalObjectForSubject(freshSubjectType);
+	  // [MaPa 20120805] I don't understand why the chosen type is Universal except for buitins...
+	  // [MaPa 20120805] With a sort constraint that freshVar should be of sort castType
+	  // [MaPa 20120805] and then a cast to castType... so I change this...
+          // BQTerm freshVar = compiler.getUniversalObjectForSubject(freshSubjectType);
+          BQTerm freshVar = compiler.getFreshVariable(freshSubjectType);
+          // DEBUG System.out.println("freshVar = " + freshVar);
           /*
-             return `AndConstraint(
+	     // DEBUG System.out.println( "[MaPa 20120805 in Compiler.t (303)] Cast: " + freshVar + " to: " + castType);
+[MaPa 20120805 in AdaGenerator.t]             return `AndConstraint(
              MatchConstraint(TomBase.convertFromBQVarToVar(freshVar),subject,castType),
              IsSortConstraint(castType,freshVar),
              MatchConstraint(typedRenamedSubj,ExpressionToBQTerm(Cast(castType,BQTermToExpression(freshVar))),castType),
@@ -306,6 +315,7 @@ public class Compiler extends TomGenericPlugin {
           Constraint newConstraint =
             `constr.setSubject(TomBase.convertFromVarToBQVar(typedRenamedSubj));
 
+	  // DEBUG System.out.println( "[MaPa 20120805 in Compiler.t (314)] Cast: " + freshVar + " to: " + freshSubjectType );
           return `AndConstraint(
               MatchConstraint(TomBase.convertFromBQVarToVar(freshVar),subject,freshSubjectType),
               IsSortConstraint(castType,freshVar),
@@ -316,6 +326,7 @@ public class Compiler extends TomGenericPlugin {
 
         TomNumberList path = compiler.getCompilerEnvironment().getRootpath();
         TomName freshSubjectName  = `PositionName(concTomNumber(path*,NameNumber(Name("_freshSubject_" + compiler.getCompilerEnvironment().genFreshSubjectCounter()))));
+        // DEBUG System.out.println("freshSubjectName = " + freshSubjectName);
         if (freshSubjectType.getTlType() ==
             compiler.getSymbolTable().TYPE_UNKNOWN.getTlType()) {
           %match(subject) {
@@ -333,31 +344,41 @@ public class Compiler extends TomGenericPlugin {
           }
         }
 
+        // DEBUG System.out.println("freshSubjectType = " + freshSubjectType);
         TomTerm renamedVar = `Variable(concOption(),freshSubjectName,freshSubjectType,concConstraint());
         //TomTerm renamedVar = `Variable(concOption(),freshSubjectName,castType,concConstraint());
         subjectList.add(`subject);
         renamedSubjects.add(renamedVar);
         Constraint newConstraint = `constr.setSubject(TomBase.convertFromVarToBQVar(renamedVar));
-        BQTerm freshVar = compiler.getUniversalObjectForSubject(freshSubjectType);
+	// [MaPa 20120805] I don't understand why the chosen type is Universal except for buitins...
+	// [MaPa 20120805] With a sort constraint that freshVar should be of sort castType
+	// [MaPa 20120805] and then a cast to castType... so I change this...
+        // BQTerm freshVar = compiler.getUniversalObjectForSubject(freshSubjectType);
+        BQTerm freshVar = compiler.getFreshVariable(freshSubjectType);
+        // DEBUG System.out.println("freshVar = " + freshVar);
         //BQTerm freshVar = compiler.getUniversalObjectForSubject(`castType);
         /*
-           System.out.println("renameSubjects -- return = " + `AndConstraint(
+	   // DEBUG System.out.println( "[MaPa 20120805 in Compiler.t (352)] Cast: " + freshVar + " to: " + castType );
+           // DEBUG System.out.println("renameSubjects -- return = " + `AndConstraint(
            MatchConstraint(TomBase.convertFromBQVarToVar(freshVar),subject,castType),
            IsSortConstraint(castType,freshVar),
            MatchConstraint(renamedVar,ExpressionToBQTerm(Cast(castType,BQTermToExpression(freshVar))),castType),
            newConstraint));
+	   // DEBUG System.out.println( "[MaPa 20120805 in Compiler.t (358)] Cast: " + freshVar + " to: " + castType );
            return `AndConstraint(
            MatchConstraint(TomBase.convertFromBQVarToVar(freshVar),subject,castType),
            IsSortConstraint(castType,freshVar),
            MatchConstraint(renamedVar,ExpressionToBQTerm(Cast(castType,BQTermToExpression(freshVar))),castType),
            newConstraint);
-           System.out.println("renameSubjects -- return = " + `AndConstraint(
+	   // DEBUG System.out.println( "[MaPa 20120805 in Compiler.t] Cast: " + freshVar + " to: " + freshSubjectType );
+           // DEBUG System.out.println("renameSubjects -- return = " + `AndConstraint(
            MatchConstraint(TomBase.convertFromBQVarToVar(freshVar),subject,freshSubjectType),
            IsSortConstraint(freshSubjectType,freshVar),
            MatchConstraint(renamedVar,ExpressionToBQTerm(Cast(freshSubjectType,BQTermToExpression(freshVar))),freshSubjectType),
            newConstraint));
          */
 
+ 	// DEBUG System.out.println( "[MaPa 20120805 in Compiler.t (372)] Cast: " + freshVar + " to:" + freshSubjectType );
         return `AndConstraint(
             MatchConstraint(TomBase.convertFromBQVarToVar(freshVar),subject,freshSubjectType),
             IsSortConstraint(castType,freshVar),
@@ -372,7 +393,7 @@ public class Compiler extends TomGenericPlugin {
     if(getSymbolTable().isBuiltinType(TomBase.getTomType(subjectType))) {
       return getFreshVariable(subjectType);
     } else {
-      return getFreshVariable(getSymbolTable().getUniversalType());
+      return getFreshVariable(getSymbolTable().getUniversalType()); // [04/08/2012 MaPa] Is it really usefull ?
     }
   }
 

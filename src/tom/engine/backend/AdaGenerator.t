@@ -144,6 +144,7 @@ public class AdaGenerator extends GenericGenerator {
 	 */  
 	 
 	 //save the code of each tom_is_sort function in memory
+    System.out.println("[MaPa 20120805 in AdaGenerator.t] Registering IsSort for type: " + type + " and variable: " + varName + " in module: " + moduleName);
     isSortType.add(type);
     isSortCode.add(code);
 
@@ -354,6 +355,7 @@ public class AdaGenerator extends GenericGenerator {
     // If cast are necessary: 
     String code = TomBase.getTLCode(tlType);
     String cast = extractImplementedType(code);
+    System.out.println( "[MaPa 20120805 in AdaGenerator.t] Building a cast for type: " + code + " with " + cast + " in " + exp );
     String[] cut = cast.trim().split(" "); //to avoid bad casting when type is declared with access
     
 	if (cut.length==1 && builtinDescriptor.equals( extractDescriptor(code) )) {

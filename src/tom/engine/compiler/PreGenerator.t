@@ -342,7 +342,7 @@ loop_j: for(int j=i+1 ; j<array.length ; j++) {
                   boolean fire = true;
                   for(int k=i+1; k<j ; k++) { // go over Y
                     Constraint element = array[k];
-                    System.out.println("element: " + element);
+                    // DEBUG System.out.println("element: " + element);
                     %match(element) {
                       (MatchConstraint|NumericConstraint)[Pattern=z] -> {
                         if(`z==`x || `z==`y) {

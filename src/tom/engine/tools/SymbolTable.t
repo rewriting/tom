@@ -48,17 +48,19 @@ public class SymbolTable {
 
   %include { ../adt/tomsignature/TomSignature.tom }
 
-  private final static String TYPE_INT       = "int";
-  private final static String TYPE_LONG      = "long";
-  private final static String TYPE_FLOAT     = "float";
-  private final static String TYPE_CHAR      = "char";
-  private final static String TYPE_DOUBLE    = "double";
-  private final static String TYPE_STRING    = "String";
-  private final static String TYPE_BOOLEAN   = "boolean";
-  private final static String TYPE_UNIVERSAL = "universal";
-  private final static String TYPE_VOID      = "void";
-  private final static String TYPE_INT_ARRAY = "intarray";
-  private final static String INT_ARRAY_OP   = "concInt";
+  // [04/08/2012 MaPa] There should be no language specific code there.
+  // [04/08/2012 MaPa] Using Java ids for tom internal types is a bad error probe idea according to me...
+  private final static String TYPE_INT       = "int"; // propose "tom_int"
+  private final static String TYPE_LONG      = "long"; // propose "tom_long"
+  private final static String TYPE_FLOAT     = "float"; // propose "tom_float"
+  private final static String TYPE_CHAR      = "char"; // propose "tom_char"
+  private final static String TYPE_DOUBLE    = "double"; // propose "tom_double"
+  private final static String TYPE_STRING    = "String"; // propose "tom_string"
+  private final static String TYPE_BOOLEAN   = "boolean"; // propose "tom_boolean"
+  private final static String TYPE_UNIVERSAL = "universal"; // propose "tom_universal"
+  private final static String TYPE_VOID      = "void"; // propose "tom_void"
+  private final static String TYPE_INT_ARRAY = "intarray"; // propose "tom_int_array"
+  private final static String INT_ARRAY_OP   = "concInt"; // propose "tom_conc_int" (should not mix CamelCase and _)
 
   public final static TomType TYPE_UNKNOWN = `Type(concTypeOption(),"unknown type",EmptyTargetLanguageType());
 
@@ -69,6 +71,7 @@ public class SymbolTable {
   /** store symbols and types that are used */ 
   private Set<KeyEntry> usedKeyEntry = null;
 
+  // [04/08/2012 MaPa] There should be no language specific code there.
   private boolean cCode = false;
   private boolean jCode = false;
   private boolean camlCode = false;
@@ -81,6 +84,7 @@ public class SymbolTable {
     usedKeyEntry = new HashSet<KeyEntry>();
     mapInliner = new HashMap<String,String>();
 
+    // [04/08/2012 MaPa] There should be no language specific code there.
     if( ((Boolean)optionManager.getOptionValue("cCode")).booleanValue() ) {
       cCode = true;
     } else if( ((Boolean)optionManager.getOptionValue("jCode")).booleanValue() ) {
@@ -225,7 +229,7 @@ public class SymbolTable {
     return false;
   }
 
-  public TomType getIntType() {
+  public TomType getIntType() {  // [04/08/2012 MaPa] There should be no language specific code there.
     String type = "int";
     if(aCode) {
       type = "Integer";
@@ -233,7 +237,7 @@ public class SymbolTable {
     return ASTFactory.makeType(`concTypeOption(),TYPE_INT,type);
   }
 
-  public TomType getIntArrayType() {
+  public TomType getIntArrayType() {  // [04/08/2012 MaPa] There should be no language specific code there.
     String type = "int[]";
     if(aCode) {
       type = "array (Positive range <>) of Integer";
@@ -241,7 +245,7 @@ public class SymbolTable {
     return ASTFactory.makeType(`concTypeOption(),TYPE_INT_ARRAY,type);
   }
 
-  public TomType getLongType() {
+  public TomType getLongType() {  // [04/08/2012 MaPa] There should be no language specific code there.
     String type = "long";
     if(aCode) {
       type = "Long_Integer";
@@ -249,7 +253,7 @@ public class SymbolTable {
     return ASTFactory.makeType(`concTypeOption(),TYPE_LONG,type);
   }
 
-  public TomType getFloatType() {
+  public TomType getFloatType() {  // [04/08/2012 MaPa] There should be no language specific code there.
     String type = "float";
     if(aCode) {
       type = "Float";
@@ -257,7 +261,7 @@ public class SymbolTable {
     return ASTFactory.makeType(`concTypeOption(),TYPE_FLOAT,type);
   }
 
-  public TomType getCharType() {
+  public TomType getCharType() {  // [04/08/2012 MaPa] There should be no language specific code there.
     String type = "char";
     if(pCode) {
       type = "str";
@@ -267,7 +271,7 @@ public class SymbolTable {
     return ASTFactory.makeType(`concTypeOption(),TYPE_CHAR,type);
   }
 
-  public TomType getDoubleType() {
+  public TomType getDoubleType() {  // [04/08/2012 MaPa] There should be no language specific code there.
     String type = "double";
     if(pCode) {
       type = "float";
@@ -277,7 +281,7 @@ public class SymbolTable {
     return ASTFactory.makeType(`concTypeOption(),TYPE_DOUBLE,type);
   }
 
-  public TomType getBooleanType() {
+  public TomType getBooleanType() {  // [04/08/2012 MaPa] There should be no language specific code there.
     String type = "boolean";
     if(cCode) {
       type = "int";
@@ -291,7 +295,7 @@ public class SymbolTable {
     return ASTFactory.makeType(`concTypeOption(),TYPE_BOOLEAN,type);
   }
 
-  public TomType getStringType() {
+  public TomType getStringType() {  // [04/08/2012 MaPa] There should be no language specific code there.
     String type = "String";
     if(cCode) {
       type = "char*";
@@ -301,7 +305,7 @@ public class SymbolTable {
     return ASTFactory.makeType(`concTypeOption(),TYPE_STRING,type);
   }
 
-  public TomType getUniversalType() {
+  public TomType getUniversalType() {  // [04/08/2012 MaPa] There should be no language specific code there.
     String type = "Object";
     if(cCode) {
       type = "void*";
@@ -315,7 +319,7 @@ public class SymbolTable {
     return ASTFactory.makeType(`concTypeOption(),TYPE_UNIVERSAL,type);
   }
 
-  public TomType getVoidType() {
+  public TomType getVoidType() {  // [04/08/2012 MaPa] There should be no language specific code there.
     String type = "void";
     if(camlCode) {
       type = "unit";

@@ -104,6 +104,7 @@ public class SyntacticGenerator implements IBaseGenerator {
       return `IsSort(type,subject);
     }
     //DEBUG System.out.println("In buildEqualFunctionSymbol name = " + name);
+    // DEBUG System.out.println( "[MaPa 20120805 in SyntacticGenerator.t] Cast:" + subject + " to: " + type );
     return
       `IsFsym(name,ExpressionToBQTerm(Cast(type,BQTermToExpression(subject))));
       //`IsFsym(name,subject);
