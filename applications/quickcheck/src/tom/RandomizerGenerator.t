@@ -8,7 +8,7 @@ import tom.library.sl.*;
 
 public class RandomizerGenerator {
   %include { sl.tom }
-  %include {sort/Sort.tom}
+  %include { ../sort/Sort.tom}
   
   private class Condition {
     int i;

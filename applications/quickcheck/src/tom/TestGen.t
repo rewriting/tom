@@ -8,7 +8,7 @@ import aterm.*;
 
 public class TestGen {
 
-  %include {sort/Sort.tom}
+  %include { ../sort/Sort.tom}
 
   public static IntList reverse(IntList list){
     return append_reverse(list, `nill());
