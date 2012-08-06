@@ -2,15 +2,22 @@ package logic.model;
 
 import aterm.ATerm;
 import aterm.ATermList;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-import java.util.Stack;
-import logic.model.DomainInterpretation;
+import aterm.ATermPlaceholder;
+import java.util.*;
+import tom.library.sl.Strategy;
+import tom.library.sl.VisitFailure;
 
 public class Shrink{
   %include{int.tom}
   %include{string.tom}
   %include{aterm.tom}
+
+  %include{sl.tom}
+  %include { util/types/Collection.tom }
+  %typeterm DomainInterpretation { 
+    implement {DomainInterpretation} 
+    is_sort(t) { ($t instanceof DomainInterpretation) } 
+  }
 
 
   private static class ATermSameTypeIterator implements Iterator<ATerm> {
@@ -121,6 +128,29 @@ public class Shrink{
     ATerm head = list.getFirst();
     return s1(list.getNext(), domain).insert(head);
   }
+
+
+  public static Collection s1bis(ATerm term, DomainInterpretation domain) {
+    Collection bag = new HashSet();
+    try {
+      `TopDownStopOnSuccess(SelectSameType(bag,domain,term)).visitLight(term, new LocalIntrospector());
+    } catch (VisitFailure e) {
+      System.out.println("failure");
+    }
+    return bag;
+  }
+
+  %strategy SelectSameType(bag:Collection,domain:DomainInterpretation,root:ATerm) extends Fail() {
+    visit ATerm { 
+      subject@ATermAppl[] -> {
+        if(`subject != root && domain.includes(`subject)) {
+          `bag.add(`subject);
+          return `subject;
+        }
+      }
+    }
+  }
+
 
 
   public static Iterator<ATerm> toIterator(final ATermList list){
