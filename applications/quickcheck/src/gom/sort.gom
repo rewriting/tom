@@ -1,4 +1,4 @@
-module Sort
+module Examples.Sort
 abstract syntax
 Expr = zero()
      | un()

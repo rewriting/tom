@@ -8,17 +8,12 @@ import aterm.ATerm;
 import aterm.ATermInt;
 import aterm.pure.PureFactory;
 import examples.Examples;
-import gen.ExamplesFormula;
-import gen.Interpretation;
-import gen.TestGen;
+import examples.TestGen;
+import examples.sort.types.IntList;
 import java.util.*;
-import logic.model.BuildableDomain;
-import logic.model.DomainInterpretation;
-import logic.model.PredicateInterpretation;
-import logic.model.SignatureInterpretation;
+import logic.model.*;
+import logic.system.types.Formula;
 import org.junit.*;
-import sort.types.IntList;
-import system.types.Formula;
 
 /**
  *

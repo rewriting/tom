@@ -1,4 +1,4 @@
-module System
+module Logic.System
 imports String int ATerm
 abstract syntax
 

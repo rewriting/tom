@@ -1,9 +1,9 @@
-package gen;
+package logic;
 
-import system.types.*;
-import system.types.args.*;
-import system.types.formula.*;
-import system.types.term.*;
+import logic.system.types.*;
+import logic.system.types.args.*;
+import logic.system.types.formula.*;
+import logic.system.types.term.*;
 
 public class ExamplesFormula{
 

@@ -1,4 +1,4 @@
-package gen;
+package logic.model;
 
 import aterm.ATerm;
 import aterm.ATermList;
@@ -10,14 +10,14 @@ import jjtraveler.Visitable;
 import logic.model.DomainInterpretation;
 import logic.model.PredicateInterpretation;
 import logic.model.SignatureInterpretation;
-import system.types.Args;
-import system.types.CounterExample;
-import system.types.Formula;
-import system.types.Term;
+import logic.system.types.Args;
+import logic.system.types.CounterExample;
+import logic.system.types.Formula;
+import logic.system.types.Term;
 
 public class Interpretation {
 
-  %include{system/system.tom}
+  %include{../system/system.tom}
   //private Map<String, Object> valuation;
   private Map<String, PredicateInterpretation> interp_pre;
   private Map<String, SignatureInterpretation> interp_sig;
@@ -126,7 +126,7 @@ public class Interpretation {
   }
 
   private ATermList s2(String varName, ATermList list, DomainInterpretation domain, Formula f, Map<String, ATerm> valuation){
-    ATermList res = filterList(varName, logic.model.Shrink.s2(list, domain), domain, f, valuation);
+    ATermList res = filterList(varName, logic.model.Shrink_java.s2(list, domain), domain, f, valuation);
     if (res.equals(list)) {
       return list;
     } else {

@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package gen;
+package logic;
 
 import aterm.ATerm;
 import aterm.ATermList;
@@ -10,6 +10,7 @@ import definitions.Buildable;
 import examples.Examples;
 import logic.model.BuildableDomain;
 import logic.model.DomainInterpretation;
+import logic.model.Shrink;
 import org.junit.*;
 
 /**

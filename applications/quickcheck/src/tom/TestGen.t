@@ -1,9 +1,9 @@
-package gen;
+package examples;
 
 import definitions.*;
-import sort.types.*;
-import sort.types.intlist.*;
-import sort.types.leaf.*;
+import examples.sort.types.*;
+import examples.sort.types.intlist.*;
+import examples.sort.types.leaf.*;
 import aterm.*;
 
 public class TestGen {
