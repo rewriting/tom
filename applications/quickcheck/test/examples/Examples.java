@@ -8,18 +8,18 @@ import definitions.Scope;
 import definitions.Sort;
 import definitions.SortGom;
 import definitions.StrategyParameters;
-import sort.types.Expr;
-import sort.types.IntList;
-import sort.types.Leaf;
-import sort.types.Surexpr;
-import sort.types.expr.mult;
-import sort.types.expr.plus;
-import sort.types.expr.un;
-import sort.types.expr.zero;
-import sort.types.intlist.consList;
-import sort.types.intlist.nill;
-import sort.types.surexpr.rec;
-import sort.types.surexpr.wrapper;
+import examples.sort.types.Expr;
+import examples.sort.types.IntList;
+import examples.sort.types.Leaf;
+import examples.sort.types.Surexpr;
+import examples.sort.types.expr.mult;
+import examples.sort.types.expr.plus;
+import examples.sort.types.expr.un;
+import examples.sort.types.expr.zero;
+import examples.sort.types.intlist.consList;
+import examples.sort.types.intlist.nill;
+import examples.sort.types.surexpr.rec;
+import examples.sort.types.surexpr.wrapper;
 
 /**
  *

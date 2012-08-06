@@ -1,4 +1,4 @@
-package gen;
+package logic.model;
 
 import aterm.ATerm;
 import aterm.ATermList;
