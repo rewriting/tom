@@ -181,7 +181,7 @@ public class Shrink_java {
     return toATermList(s2(toIterator(list), domain));
   }
 
-  private static Iterator<ATerm> toIterator(final ATermList list) {
+  public static Iterator<ATerm> toIterator(final ATermList list) {
     return new Iterator<ATerm>() {
 
       private ATermList state = list;
@@ -209,7 +209,7 @@ public class Shrink_java {
     };
   }
 
-  private static ATermList toATermList(Iterator<ATerm> iterator) {
+  public static ATermList toATermList(Iterator<ATerm> iterator) {
     PureFactory factory = new PureFactory();
     ATermList list = factory.makeList();
     while (iterator.hasNext()) {

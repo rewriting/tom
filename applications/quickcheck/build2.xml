@@ -15,6 +15,7 @@
 
   <property name="quickcheck.dir"      location="."/>
   <property name="quickcheck.src"      location="src"/>
+  <property name="quickcheck.test"     location="test"/>
   <property name="quickcheck.gen"      location="gen"/>
   <property name="quickcheck.build"    location="build"/>
 
@@ -45,6 +46,7 @@
     <javac.preset destdir="${quickcheck.build}" fork="yes">
       <src path="${quickcheck.src}"/>
       <src path="${quickcheck.gen}"/>
+      <src path="${quickcheck.test}"/>
       <classpath refid="tom.classpath"/>
       <include name="**/*.java"/>
     </javac.preset>

@@ -3,8 +3,10 @@ package definitions;
 import aterm.AFun;
 import aterm.ATerm;
 import aterm.ATermAppl;
+import aterm.ATermList;
 import aterm.pure.PureFactory;
 import java.util.*;
+import logic.model.Shrink_java;
 
 /**
  * Represents implementation of any Sort type with Buildable formalism.
@@ -492,7 +494,14 @@ public class Sort implements Buildable {
       this.term = term;
       this.current = null;
       if (consIte.hasNext()) {
-        monoIte = new OneConstructorIterator(term, consIte.next());
+        System.out.println("passage global");
+        Constructor c = consIte.next();
+        monoIte = new OneConstructorIterator(term, c);
+//
+//        Iterator<ATerm> test = new OneConstructorIterator(term, c);
+//        ATermList listTest = Shrink_java.toATermList(test);
+//        System.out.println(listTest);
+//        System.out.println("");
       } else {
         monoIte = null;
       }
@@ -510,9 +519,11 @@ public class Sort implements Buildable {
         return true;
       }
       if (monoIte.hasNext()) {
+        System.out.println("passage local");
         current = monoIte.next();
         return true;
       } else if (consIte.hasNext()){
+        System.out.println("passage global");
         monoIte = new OneConstructorIterator(term, consIte.next());
         return hasNext();
       } else {
