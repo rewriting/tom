@@ -7,9 +7,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import jjtraveler.Visitable;
-import logic.model.DomainInterpretation;
-import logic.model.PredicateInterpretation;
-import logic.model.SignatureInterpretation;
 import logic.system.types.Args;
 import logic.system.types.CounterExample;
 import logic.system.types.Formula;
@@ -156,6 +153,15 @@ public class Interpretation {
       current = current.getNext();
     }
     return term;
+  }
+
+  private int depth(Visitable term){
+    int res = -1;
+    int n = term.getChildCount();
+    for (int i = 0; i < n; i++) {
+      res = Math.max(res, depth(term.getChildAt(i)));
+    }
+    return res + 1;
   }
 
   private ATerm shrink(String varName, ATerm term, DomainInterpretation domain, Formula f, Map<String, ATerm> valuation){

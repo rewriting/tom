@@ -499,14 +499,8 @@ public class Sort implements Buildable {
       this.term = term;
       this.current = null;
       if (consIte.hasNext()) {
-        System.out.println("passage global");
         Constructor c = consIte.next();
         monoIte = new OneConstructorIterator(term, c);
-//
-//        Iterator<ATerm> test = new OneConstructorIterator(term, c);
-//        ATermList listTest = Shrink_java.toATermList(test);
-//        System.out.println(listTest);
-//        System.out.println("");
       } else {
         monoIte = null;
       }
