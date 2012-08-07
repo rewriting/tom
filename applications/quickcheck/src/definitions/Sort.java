@@ -515,8 +515,10 @@ public class Sort implements Buildable {
 
     @Override
     public boolean hasNext() {
+      if (current != null) {
+        return true;
+      }
       if (!hasnext && current == null) {
-        System.out.println("stop 1");
         return false;
       }
       // if an empty list of constructors is given
@@ -526,15 +528,12 @@ public class Sort implements Buildable {
         return true;
       }
       if (monoIte.hasNext()) {
-        System.out.println("passage local");
         current = monoIte.next();
         return true;
       } else if (consIte.hasNext()) {
-        System.out.println("passage global");
         monoIte = new OneConstructorIterator(term, consIte.next());
         return hasNext();
       } else {
-        System.out.println("stop 2");
         return false;
       }
 
