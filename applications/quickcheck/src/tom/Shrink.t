@@ -3,6 +3,7 @@ package logic.model;
 import aterm.ATerm;
 import aterm.ATermList;
 import aterm.ATermPlaceholder;
+import aterm.pure.PureFactory;
 import java.util.*;
 import tom.library.sl.Strategy;
 import tom.library.sl.VisitFailure;
@@ -17,6 +18,15 @@ public class Shrink{
   %typeterm DomainInterpretation { 
     implement {DomainInterpretation} 
     is_sort(t) { ($t instanceof DomainInterpretation) } 
+  }
+
+  private static DomainInterpretation getCorrespondingDomain(DomainInterpretation[] subDoms, ATerm term){
+    for(int i = 0; i<subDoms.length; i++){
+      if(subDoms[i].includes(term)){
+        return subDoms[i];
+      }
+    }
+    throw new UnsupportedOperationException("The term " + term + " is not included in " + Arrays.toString(subDoms));
   }
 
 
@@ -62,9 +72,37 @@ public class Shrink{
       return list;
     }
     ATerm head = list.getFirst();
-    return s1(list.getNext(), domain).insert(head);
+    return s1(head, domain).concat(s1(list.getNext(), domain));
   }
 
+  public static ATermList s1WithDepth(ATerm term, DomainInterpretation domain, int depth){
+    if(depth==0) {
+      return s1(term, domain);
+    }
+    
+    DomainInterpretation[] subDoms = domain.getDepsDomains();
+    
+    ATermFactory factory = term.getFactory();
+    AFun fun = ((ATermAppl) term).getAFun();
+    ATerm[] args = ((ATermAppl) term).getArgumentArray();
+    int n = term.getChildCount();
+    
+    ATermList list = factory.makeList();
+    for(int childIndex = 0; childIndex<n; childIndex++){
+      ATerm child = args[childIndex];
+      DomainInterpretation dom = getCorrespondingDomain(subDoms, child);
+      ATermList l = s1WithDepth(child, dom, depth-1);
+      
+      
+      while(!l.isEmpty()){
+        ATerm[] newArgs = Arrays.copyOf(args, n); // here is compulsory
+        ATerm head = l.getFirst();
+        l = l.getNext();
+        
+      }
+    }
+    return list;
+  }
 
   public static Collection s1bis(ATerm term, DomainInterpretation domain) {
     Collection bag = new HashSet();
