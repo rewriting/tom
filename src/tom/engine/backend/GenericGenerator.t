@@ -55,7 +55,6 @@ public abstract class GenericGenerator extends AbstractGenerator {
   public static final String GENERIC_GENERATOR_BAD_CASE = "GenericGenerator: bad case: ";
 
   protected HashMap<String,String> isFsymMap = new HashMap<String,String>();
-  protected boolean lazyType;
   protected boolean nodeclMode;
   protected boolean inline;
   protected boolean inlineplus; // perform inlining even if no substitution has been done
@@ -65,7 +64,6 @@ public abstract class GenericGenerator extends AbstractGenerator {
                              SymbolTable symbolTable) {
     super(output, optionManager, symbolTable);
 
-    lazyType = ((Boolean)optionManager.getOptionValue("lazyType")).booleanValue();
     nodeclMode = ((Boolean)optionManager.getOptionValue("noDeclaration")).booleanValue();
     boolean cCode = ((Boolean)optionManager.getOptionValue("cCode")).booleanValue();
     boolean jCode = ((Boolean)optionManager.getOptionValue("jCode")).booleanValue();
@@ -132,9 +130,9 @@ public abstract class GenericGenerator extends AbstractGenerator {
 
   protected void buildSymbolDecl(int deep, String tomName, String moduleName) throws IOException {
     TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(tomName);
-//    System.out.println("### DEBUGÂ GenericGenerator ###");
+//    System.out.println("### DEBUG GenericGenerator ###");
 //    System.out.println("tomName= "+tomName+"\nmoduleName= "+moduleName+"\ntomSymbol= "+tomSymbol);
-//    System.out.println("### /DEBUGÂ GenericGenerator ###");
+//    System.out.println("### /DEBUG GenericGenerator ###");
     OptionList optionList = tomSymbol.getOptions();
     PairNameDeclList pairNameDeclList = tomSymbol.getPairNameDeclList();
     // inspect the optionList
@@ -412,12 +410,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
       // automatically generated for mappings (e.g. tom_is_fun_sym_toto) when
       // using builtin types (e.g. boolean)
 
-      if(!lazyType) {
-        argType = TomBase.getTLCode(tlType);
-      } else {
-        argType = TomBase.getTLType(getUniversalType());
-      }
-
+      argType = TomBase.getTLCode(tlType);
       genDeclInstr(TomBase.getTLType(returnType), "tom_is_fun_sym", opname,
           new String[] { argType, varname }, `Return(ExpressionToBQTerm(code)),deep,moduleName);
     }
@@ -437,11 +430,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
     if(!inline || !code.isCode()) {
       TomType returnType = getSymbolTable(moduleName).getBooleanType();
       String argType;
-      if(!lazyType) {
-        argType = TomBase.getTLCode(tlType);
-      } else {
-        argType = TomBase.getTLType(getUniversalType());
-      }
+      argType = TomBase.getTLCode(tlType);
 
       genDeclInstr(TomBase.getTLType(returnType), "tom_is_fun_sym", opname,
           new String[] { argType, varname }, `Return(ExpressionToBQTerm(code)),deep,moduleName);
@@ -481,11 +470,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
       TomType returnType = l.getHeadconcTomType();
 
       String argType;
-      if(!lazyType) {
-        argType = TomBase.getTLCode(tlType);
-      } else {
-        argType = TomBase.getTLType(getUniversalType());
-      }
+      argType = TomBase.getTLCode(tlType);
       genDeclInstr(TomBase.getTLType(returnType),
           "tom_get_slot", opname  + "_" + slotName.getString(),
           new String[] { argType, varname },
@@ -513,11 +498,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
       TomType returnType = l.getHeadconcTomType();
 
       String argType;
-      if(!lazyType) {
-        argType = TomBase.getTLCode(tlType);
-      } else {
-        argType = TomBase.getTLType(getUniversalType());
-      }
+      argType = TomBase.getTLCode(tlType);
       genDeclInstr(TomBase.getTLType(returnType),
           "tom_get_slot", opname  + "_" + slotName.getString(),
           new String[] { argType, varname },
@@ -618,22 +599,17 @@ public abstract class GenericGenerator extends AbstractGenerator {
         String argType = null;
         String functionName = "tom_get_head_" + opname;
 
-        if(lazyType) {
-          returnType = TomBase.getTLType(getUniversalType());
-          argType = TomBase.getTLType(getUniversalType());
-        } else {
-          %match(opNameAST) {
-            EmptyName() -> {
-              returnType = TomBase.getTLCode(codomain);
-              argType = TomBase.getTLCode(domain);
-              throw new TomRuntimeException(GenericGenerator.GENERIC_GENERATOR_BAD_CASE + opNameAST);
-            }
+        %match(opNameAST) {
+          EmptyName() -> {
+            returnType = TomBase.getTLCode(codomain);
+            argType = TomBase.getTLCode(domain);
+            throw new TomRuntimeException(GenericGenerator.GENERIC_GENERATOR_BAD_CASE + opNameAST);
+          }
 
-            Name(opName) -> {
-              TomSymbol tomSymbol = getSymbolFromName(`opName);
-              argType = TomBase.getTLType(TomBase.getSymbolCodomain(tomSymbol));
-              returnType = TomBase.getTLType(TomBase.getSymbolDomain(tomSymbol).getHeadconcTomType());
-            }
+          Name(opName) -> {
+            TomSymbol tomSymbol = getSymbolFromName(`opName);
+            argType = TomBase.getTLType(TomBase.getSymbolCodomain(tomSymbol));
+            returnType = TomBase.getTLType(TomBase.getSymbolDomain(tomSymbol).getHeadconcTomType());
           }
         }
         genDeclInstr(returnType, functionName, suffix,
@@ -661,22 +637,17 @@ public abstract class GenericGenerator extends AbstractGenerator {
             String argType = null;
             String functionName = "tom_get_tail_" + opname;
 
-            if(lazyType) {
-              returnType = TomBase.getTLType(getUniversalType());
-              argType = TomBase.getTLType(getUniversalType());
-            } else {
-              %match(opNameAST) {
-                EmptyName() -> {
-                  returnType = TomBase.getTLCode(tlType);
-                  argType = returnType;
-                  throw new TomRuntimeException(GenericGenerator.GENERIC_GENERATOR_BAD_CASE + opNameAST);
-                }
+            %match(opNameAST) {
+              EmptyName() -> {
+                returnType = TomBase.getTLCode(tlType);
+                argType = returnType;
+                throw new TomRuntimeException(GenericGenerator.GENERIC_GENERATOR_BAD_CASE + opNameAST);
+              }
 
-                Name(opName) -> {
-                  TomSymbol tomSymbol = getSymbolFromName(`opName);
-                  returnType = TomBase.getTLType(TomBase.getSymbolCodomain(tomSymbol));
-                  argType = returnType;
-                }
+              Name(opName) -> {
+                TomSymbol tomSymbol = getSymbolFromName(`opName);
+                returnType = TomBase.getTLType(TomBase.getSymbolCodomain(tomSymbol));
+                argType = returnType;
               }
             }
 
@@ -703,19 +674,15 @@ public abstract class GenericGenerator extends AbstractGenerator {
           String argType = null;
           String functionName = "tom_is_empty_" + opname;
 
-          if(lazyType) {
-            argType = TomBase.getTLType(getUniversalType());
-          } else {
-            %match(opNameAST) {
-              EmptyName() -> {
-                argType = TomBase.getTLCode(tlType);
-                throw new TomRuntimeException(GenericGenerator.GENERIC_GENERATOR_BAD_CASE + opNameAST);
-              }
+          %match(opNameAST) {
+            EmptyName() -> {
+              argType = TomBase.getTLCode(tlType);
+              throw new TomRuntimeException(GenericGenerator.GENERIC_GENERATOR_BAD_CASE + opNameAST);
+            }
 
-              Name(opName) -> {
-                TomSymbol tomSymbol = getSymbolFromName(`opName);
-                argType = TomBase.getTLType(TomBase.getSymbolCodomain(tomSymbol));
-              }
+            Name(opName) -> {
+              TomSymbol tomSymbol = getSymbolFromName(`opName);
+              argType = TomBase.getTLType(TomBase.getSymbolCodomain(tomSymbol));
             }
           }
 
@@ -744,20 +711,15 @@ public abstract class GenericGenerator extends AbstractGenerator {
           String argType = null;
           String functionName = "tom_get_element";
 
-          if(lazyType) {
-            returnType = TomBase.getTLType(getUniversalType());
-            argType = TomBase.getTLType(getUniversalType());
-          } else {
-            %match(opNameAST) {
-              EmptyName() -> {
-                throw new TomRuntimeException(GenericGenerator.GENERIC_GENERATOR_BAD_CASE + opNameAST);
-              }
+          %match(opNameAST) {
+            EmptyName() -> {
+              throw new TomRuntimeException(GenericGenerator.GENERIC_GENERATOR_BAD_CASE + opNameAST);
             }
-
-            TomSymbol tomSymbol = getSymbolFromName(opname);
-            argType = TomBase.getTLType(TomBase.getSymbolCodomain(tomSymbol));
-            returnType = TomBase.getTLType(TomBase.getSymbolDomain(tomSymbol).getHeadconcTomType());
           }
+
+          TomSymbol tomSymbol = getSymbolFromName(opname);
+          argType = TomBase.getTLType(TomBase.getSymbolCodomain(tomSymbol));
+          returnType = TomBase.getTLType(TomBase.getSymbolDomain(tomSymbol).getHeadconcTomType());
 
           genDeclInstr(returnType,
               functionName+"_"+opname, type1,
@@ -785,18 +747,14 @@ public abstract class GenericGenerator extends AbstractGenerator {
           String argType = null;
           String functionName = "tom_get_size";
 
-          if(lazyType) {
-            argType = TomBase.getTLType(getUniversalType());
-          } else {
-            %match(opNameAST) {
-              EmptyName() -> {
-                throw new TomRuntimeException(GenericGenerator.GENERIC_GENERATOR_BAD_CASE + opNameAST);
-              }
+          %match(opNameAST) {
+            EmptyName() -> {
+              throw new TomRuntimeException(GenericGenerator.GENERIC_GENERATOR_BAD_CASE + opNameAST);
+            }
 
-              Name(opName) -> {
-                TomSymbol tomSymbol = getSymbolFromName(`opName);
-                argType = TomBase.getTLType(TomBase.getSymbolCodomain(tomSymbol));
-              }
+            Name(opName) -> {
+              TomSymbol tomSymbol = getSymbolFromName(`opName);
+              argType = TomBase.getTLType(TomBase.getSymbolCodomain(tomSymbol));
             }
           }
 
@@ -925,9 +883,6 @@ public abstract class GenericGenerator extends AbstractGenerator {
         String glType = TomBase.getTLType(listType);
 
         String utype = glType;
-        if(lazyType) {
-          utype =  TomBase.getTLType(getUniversalType());
-        }
 
         //String listCast = "(" + glType + ")";
         //String eltCast = "(" + TomBase.getTLType(eltType) + ")";
