@@ -9,6 +9,8 @@ import aterm.ATerm;
 import aterm.ATermAppl;
 import aterm.pure.PureFactory;
 import examples.Examples;
+import java.util.ArrayList;
+import java.util.Iterator;
 import static org.junit.Assert.assertEquals;
 import org.junit.*;
 
@@ -741,5 +743,52 @@ public class SortTest {
   public void testIsTypeOfExprAuto() {
     System.out.println("isRec expr auto");
     assert (Examples.expr.isTypeOf(Examples.expr.generate(10)));
+  }
+
+  /*
+   * Test Iterators.
+   */
+
+  private void testIterator(Iterator<?> ite){
+    while(ite.hasNext()){
+      for (int i = 0; i < 10; i++) {
+        assert ite.hasNext();
+      }
+    }
+    for (int i = 0; i < 10; i++) {
+      assert !ite.hasNext();
+    }
+  }
+
+  @Test
+  public void testOneConsIter(){
+    System.out.println("test oneConsIter");
+    ATerm term = Examples.expr.generate(10);
+    Constructor cons = Examples.expr.getCons("plus");
+    Iterator<ATerm> ite = Examples.expr.getOneConsIter(term, cons);
+    testIterator(ite);
+  }
+
+  @Test
+  public void testMultiConsIter(){
+    System.out.println("test MultiConsIter");
+    ATerm term = Examples.expr.generate(10);
+    Constructor c1 = Examples.expr.getCons("plus");
+    Constructor c2 = Examples.expr.getCons("mult");
+    Constructor c3 = Examples.expr.getCons("un");
+    ArrayList<Constructor> list = new ArrayList<Constructor>();
+    list.add(c1);
+    list.add(c2);
+    list.add(c3);
+    Iterator<ATerm> ite = Examples.expr.getMultiConsIter(term, list.iterator());
+    testIterator(ite);
+  }
+
+  @Test
+  public void testLigthen(){
+    System.out.println("test ligthen hasNext()");
+    ATerm term = Examples.expr.generate(10);
+    Iterator<ATerm> ite = Examples.expr.lighten(term);
+    testIterator(ite);
   }
 }

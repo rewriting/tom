@@ -146,15 +146,19 @@ public class Shrink_java {
           if (globalIterator.hasNext()) {
             localIterator = dom.lighten(globalIterator.next());
           } else {
+            System.out.println("false");
             return false;
           }
         }
         if (localIterator.hasNext()) {
+          System.out.println("true");
           return true;
         } else if (globalIterator.hasNext()) {
           localIterator = dom.lighten(globalIterator.next());
+          System.out.println("REC");
           return hasNext();
         } else {
+          System.out.println("false");
           return false;
         }
       }

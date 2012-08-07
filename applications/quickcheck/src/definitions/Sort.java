@@ -422,7 +422,7 @@ public class Sort implements Buildable {
       int k = mapCountConsFieldsType.get(beingModified);
       List<ATerm> possibleFields = mapInitialFields.get(beingModified.getName());
       int n = possibleFields.size();
-      if (offset >= n - k) {
+      if (offset > n - k) {
         if (progress.hasNext()) {
           beingModified = progress.next();
           offset = 0;
@@ -569,4 +569,24 @@ public class Sort implements Buildable {
     }
     return new MultiConstructorIterator(term, listSC.iterator());
   }
+
+  // ----------------------- TESTS ------------------------------
+
+  OneConstructorIterator getOneConsIter(ATerm term, Constructor cons){
+    return new OneConstructorIterator(term, cons);
+  }
+
+  MultiConstructorIterator getMultiConsIter(ATerm term, Iterator<Constructor> ite){
+    return new MultiConstructorIterator(term, ite);
+  }
+
+  Constructor getCons(String name){
+    for (Constructor constructor : constructors) {
+      if (name.startsWith(constructor.getName())) {
+        return constructor;
+      }
+    }
+    return null;
+  }
+
 }

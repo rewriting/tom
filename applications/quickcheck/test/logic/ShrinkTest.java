@@ -45,6 +45,21 @@ public class ShrinkTest {
    * Test of s1 method, of class Shrink.
    */
   @Test
+  public void testIteratorS2() {
+    System.out.println("s1");
+    Buildable sort = Examples.expr;
+    ATerm term = sort.generate(10);
+    System.out.println(term);
+    DomainInterpretation domain = new BuildableDomain(sort);
+    ATermList result = Shrink.s1(term, domain);
+    System.out.println(result);
+//    assertEquals(expResult, result);
+  }
+
+  /**
+   * Test of s1 method, of class Shrink.
+   */
+  @Test
   public void testS1() {
     System.out.println("s1");
     Buildable sort = Examples.expr;
