@@ -516,8 +516,10 @@ public class Sort implements Buildable {
     @Override
     public boolean hasNext() {
       if (!hasnext && current == null) {
+        System.out.println("stop 1");
         return false;
       }
+      // if an empty list of constructors is given
       if (monoIte == null) {
         current = term;
         hasnext = false;
@@ -532,6 +534,7 @@ public class Sort implements Buildable {
         monoIte = new OneConstructorIterator(term, consIte.next());
         return hasNext();
       } else {
+        System.out.println("stop 2");
         return false;
       }
 

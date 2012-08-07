@@ -749,15 +749,15 @@ public class SortTest {
    * Test Iterators.
    */
 
-  private void testIterator(Iterator<?> ite){
+  private void testIterator(Iterator<?> ite, int n){
     while(ite.hasNext()){
-      for (int i = 0; i < 10; i++) {
+      for (int i = 0; i < n; i++) {
         System.out.println("true " + i);
         assert ite.hasNext();
       }
       ite.next();
     }
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < n; i++) {
       System.out.println("false " + i);
       assert !ite.hasNext();
     }
@@ -769,7 +769,7 @@ public class SortTest {
     ATerm term = Examples.expr.generate(10);
     Constructor cons = Examples.expr.getCons("plus");
     Iterator<ATerm> ite = Examples.expr.getOneConsIter(term, cons);
-    testIterator(ite);
+    testIterator(ite,10);
   }
 
   @Test
@@ -784,7 +784,7 @@ public class SortTest {
     list.add(c2);
     list.add(c3);
     Iterator<ATerm> ite = Examples.expr.getMultiConsIter(term, list.iterator());
-    testIterator(ite);
+    testIterator(ite,10);
   }
 
   @Test
@@ -792,6 +792,6 @@ public class SortTest {
     System.out.println("test ligthen hasNext()");
     ATerm term = Examples.expr.generate(10);
     Iterator<ATerm> ite = Examples.expr.lighten(term);
-    testIterator(ite);
+    testIterator(ite,10);
   }
 }
