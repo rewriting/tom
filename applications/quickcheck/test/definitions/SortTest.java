@@ -752,10 +752,13 @@ public class SortTest {
   private void testIterator(Iterator<?> ite){
     while(ite.hasNext()){
       for (int i = 0; i < 10; i++) {
+        System.out.println("true " + i);
         assert ite.hasNext();
       }
+      ite.next();
     }
     for (int i = 0; i < 10; i++) {
+      System.out.println("false " + i);
       assert !ite.hasNext();
     }
   }

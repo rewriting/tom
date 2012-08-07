@@ -394,6 +394,7 @@ public class Sort implements Buildable {
       }
       offset = 0;
       hasnext = true;
+      current = null;
     }
 
     private Buildable getType(ATerm term, Buildable[] listFieldsInit) {
@@ -408,7 +409,10 @@ public class Sort implements Buildable {
 
     @Override
     public boolean hasNext() {
-      if (!hasnext && current == null) {
+      if (current != null) {
+        return true;
+      }
+      if (!hasnext) {
         return false;
       }
       if (beingModified == null) {
@@ -482,6 +486,7 @@ public class Sort implements Buildable {
 
   private class MultiConstructorIterator implements Iterator<ATerm> {
     //<editor-fold defaultstate="collapsed" desc="MultiConstructorIterator">
+
     private Iterator<Constructor> consIte;
     private ATerm term;
     //
@@ -522,7 +527,7 @@ public class Sort implements Buildable {
         System.out.println("passage local");
         current = monoIte.next();
         return true;
-      } else if (consIte.hasNext()){
+      } else if (consIte.hasNext()) {
         System.out.println("passage global");
         monoIte = new OneConstructorIterator(term, consIte.next());
         return hasNext();
@@ -571,16 +576,15 @@ public class Sort implements Buildable {
   }
 
   // ----------------------- TESTS ------------------------------
-
-  OneConstructorIterator getOneConsIter(ATerm term, Constructor cons){
+  OneConstructorIterator getOneConsIter(ATerm term, Constructor cons) {
     return new OneConstructorIterator(term, cons);
   }
 
-  MultiConstructorIterator getMultiConsIter(ATerm term, Iterator<Constructor> ite){
+  MultiConstructorIterator getMultiConsIter(ATerm term, Iterator<Constructor> ite) {
     return new MultiConstructorIterator(term, ite);
   }
 
-  Constructor getCons(String name){
+  Constructor getCons(String name) {
     for (Constructor constructor : constructors) {
       if (name.startsWith(constructor.getName())) {
         return constructor;
@@ -588,5 +592,4 @@ public class Sort implements Buildable {
     }
     return null;
   }
-
 }
