@@ -149,32 +149,31 @@ public class OutputCode {
   }
 
   public void write(int deep, String s, int line, int length) throws IOException {
-  
-	if (aCode && pretty) {
+    if(aCode && pretty) {
       String[] lines = s.split("\n", -1);
       if(lines.length==1) { //one line
         String s2 = s.replaceFirst("^\\s+","");
-        if (! s2.equals("") ) {
-			write(deep, s);
-		} else {
-			indent = true;
-		}
+        if(!s2.equals("")) {
+          write(deep, s);
+        } else {
+          indent = true;
+        }
       } else { //several lines
-        for (int i=0; i<lines.length-1; i++) {
+        for(int i=0;i<lines.length-1;i++) {
           String ln = lines[i];
           ln = ln.replaceFirst("^\\s+",""); // removes spaces at the beginning of the line
-		  writeln(deep, ln);
-		  indent = true;
+          writeln(deep, ln);
+          indent = true;
         }
         String s2 = lines[lines.length-1].replaceFirst("^\\s+","");
-        if (! s2.equals("") ) {
-			write(deep, s2);
-			indent = false;
-		} else {
-			indent = true;
-		}
+        if(!s2.equals("")) {
+          write(deep, s2);
+          indent = false;
+        } else {
+          indent = true;
+        }
       }
-	} else if(!pretty) {
+    } else if(!pretty) {
       if(cCode) {
         String s1 = "\n#line "+line+"\n";
         s = s1+s;
@@ -199,7 +198,7 @@ public class OutputCode {
       if(lines.length==0) {
         write(deep, s.replaceFirst("^\\s+",""));
       } else {
-        for (int i=0; i<lines.length; i++) {
+        for (int i=0;i<lines.length;i++) {
           String ln = lines[i];
           ln = ln.replaceFirst("^\\s+",""); // removes spaces at the beginning of the line
           writeln(deep, ln);
