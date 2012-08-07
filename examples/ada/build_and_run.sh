@@ -1,15 +1,11 @@
-cd vehicle
-./build_and_run.sh
-cd ..
+#!/bin/sh
 
-cd car
-./build_and_run.sh
-cd ..
+EXAMPLES="car concString successeur vehicle"
 
-cd concString
-./build_and_run.sh
-cd ..
+for i in `echo $EXAMPLES`; do
+	echo "### Ada example: $i/ ###"
+	cd $i
+	sh ./build_and_run.sh
+	cd ..
+done
 
-cd successeur
-./build_and_run.sh
-cd ..
