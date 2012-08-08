@@ -420,7 +420,6 @@ public class Sort implements Buildable {
       }
       if (beingModified == null) {
         // if new constructor has no field
-        //PureFactory factory = new PureFactory();
         AFun fun = factory.makeAFun(cons.getName(), 0, false);
         current = factory.makeAppl(fun);
         hasnext = false;
@@ -432,7 +431,8 @@ public class Sort implements Buildable {
       if (offset > n - k) {
         if (progress.hasNext()) {
           beingModified = progress.next();
-          offset = 0;
+//          offset = 0;
+          offset = 1;
           return hasNext();
         } else {
           return false;
@@ -571,7 +571,8 @@ public class Sort implements Buildable {
     if (listSC.isEmpty()) {
       listSC.add(constructor);
     }
-    return new MultiConstructorIterator(term, listSC.iterator());
+    Iterator<ATerm> res = new MultiConstructorIterator(term, listSC.iterator());
+    return res;
   }
 
   // ----------------------- TESTS ------------------------------

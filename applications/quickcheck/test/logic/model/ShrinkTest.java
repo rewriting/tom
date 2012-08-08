@@ -130,12 +130,13 @@ public class ShrinkTest {
     System.out.println("tes s2 Iterator");
     Buildable sort = Examples.sortTestShrink2;
     ATerm term = ExamplesTerms.sortTestShrink2_s2test;
-    System.out.println(term);
     ATermFactory factory = term.getFactory();
     DomainInterpretation domain = new BuildableDomain(sort);
     ATermList result = ShrinkIterator.s2(factory.makeList(term), domain);
-    System.out.println(result);
-//    assertEquals(expResult, result);
+    assert result.getChildCount() == 8;
+    for (int i = 0; i < 8; i++) {
+      assert result.getChildAt(i).equals(ExamplesTerms.sortTestShrink2_s2test_children[i]);
+    }
   }
 
   /**
