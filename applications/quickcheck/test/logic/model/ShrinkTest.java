@@ -52,7 +52,7 @@ public class ShrinkTest {
    */
   @Test
   public void testFundamentalS1IteratorOneArg() {
-    System.out.println("test fundamental s1Iterator one arg");
+    System.out.println("test fundamental s1 iterator one arg");
     Buildable sort = Examples.expr;
     ATerm term = sort.generate(10);
     DomainInterpretation domain = new BuildableDomain(sort);
@@ -62,7 +62,7 @@ public class ShrinkTest {
   
   @Test
   public void testFundamentalS1IteratorList() {
-    System.out.println("test fundamental s1Iterator list");
+    System.out.println("test fundamental s1 iterator list");
     Buildable sort = Examples.expr;
     ATerm t1 = sort.generate(10);
     ATerm t2 = sort.generate(10);
@@ -77,6 +77,26 @@ public class ShrinkTest {
     list.add(t5);
     DomainInterpretation domain = new BuildableDomain(sort);
     Iterator<ATerm> ite = ShrinkIterator.s1(list.iterator(), domain);
+    LibTests.testIterator(ite, 100, false);
+  }
+  
+  @Test
+  public void testFundamentalS2IteratorList() {
+    System.out.println("test fundamental s2 iterator list");
+    Buildable sort = Examples.expr;
+    ATerm t1 = sort.generate(10);
+    ATerm t2 = sort.generate(10);
+    ATerm t3 = sort.generate(10);
+    ATerm t4 = sort.generate(10);
+    ATerm t5 = sort.generate(10);
+    List<ATerm> list = new LinkedList<ATerm>();
+    list.add(t1);
+    list.add(t2);
+    list.add(t3);
+    list.add(t4);
+    list.add(t5);
+    DomainInterpretation domain = new BuildableDomain(sort);
+    Iterator<ATerm> ite = ShrinkIterator.s2(list.iterator(), domain);
     LibTests.testIterator(ite, 100, false);
   }
 
@@ -103,7 +123,7 @@ public class ShrinkTest {
     System.out.println(term);
     System.out.println(term.getChildAt(0));
     System.out.println(term.getChildAt(1));
-    PureFactory factory = new PureFactory();
+    ATermFactory factory = term.getFactory();
     DomainInterpretation domain = new BuildableDomain(sort);
     ATermList result = ShrinkIterator.s1(factory.makeList(term), domain);
     System.out.println(result.getLength() + " " + result);
@@ -116,7 +136,7 @@ public class ShrinkTest {
     Buildable sort = Examples.expr;
     ATerm term = sort.generate(10);
     System.out.println(term);
-    PureFactory factory = new PureFactory();
+    ATermFactory factory = term.getFactory();
     DomainInterpretation domain = new BuildableDomain(sort);
     ATermList result = ShrinkIterator.s2(factory.makeList(term), domain);
     System.out.println(result);

@@ -3,6 +3,7 @@ package definitions;
 import aterm.AFun;
 import aterm.ATerm;
 import aterm.ATermAppl;
+import aterm.ATermFactory;
 import aterm.ATermList;
 import aterm.pure.PureFactory;
 import java.util.*;
@@ -356,9 +357,11 @@ public class Sort implements Buildable {
     private Map<String, List<ATerm>> mapInitialFields;
     private Map<Buildable, Integer> mapCountConsFieldsType;
     private Constructor cons;
+    private ATermFactory factory;
 
     public OneConstructorIterator(ATerm term, Constructor cons) {
       this.cons = cons;
+      this.factory = term.getFactory();
       mapInitialFields = new HashMap<String, List<ATerm>>();
       mapCountConsFieldsType = new HashMap<Buildable, Integer>();
       Constructor constructor = getCurrentCons(term);
@@ -417,7 +420,7 @@ public class Sort implements Buildable {
       }
       if (beingModified == null) {
         // if new constructor has no field
-        PureFactory factory = new PureFactory();
+        //PureFactory factory = new PureFactory();
         AFun fun = factory.makeAFun(cons.getName(), 0, false);
         current = factory.makeAppl(fun);
         hasnext = false;
@@ -436,7 +439,7 @@ public class Sort implements Buildable {
         }
       }
 
-      PureFactory factory = new PureFactory();
+      //PureFactory factory = new PureFactory();
       AFun fun = factory.makeAFun(cons.getName(), cons.getFields().length, false);
       ATerm[] args = new ATerm[cons.getFields().length];
 

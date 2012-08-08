@@ -6,6 +6,7 @@ package logic.model;
 
 import aterm.ATerm;
 import aterm.ATermAppl;
+import aterm.ATermFactory;
 import aterm.ATermList;
 import aterm.pure.PureFactory;
 import java.util.Iterator;
@@ -216,10 +217,15 @@ public class ShrinkIterator {
   }
 
   public static ATermList toATermList(Iterator<ATerm> iterator) {
-    PureFactory factory = new PureFactory();
-    ATermList list = factory.makeList();
+    ATermFactory factory = null;
+    ATermList list = null;
+    
     while (iterator.hasNext()) {
       ATerm aTerm = iterator.next();
+      if (factory == null) {
+        factory = aTerm.getFactory();
+        list = factory.makeList();
+      }
       list = list.insert(aTerm);
     }
     return list;

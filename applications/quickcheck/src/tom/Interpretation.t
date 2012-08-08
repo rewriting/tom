@@ -1,8 +1,8 @@
 package logic.model;
 
 import aterm.ATerm;
+import aterm.ATermFactory;
 import aterm.ATermList;
-import aterm.pure.PureFactory;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -123,7 +123,7 @@ public class Interpretation {
   }
 
   private ATermList s2(String varName, ATermList list, DomainInterpretation domain, Formula f, Map<String, ATerm> valuation){
-    ATermList res = filterList(varName, logic.model.Shrink_java.s2(list, domain), domain, f, valuation);
+    ATermList res = filterList(varName, logic.model.ShrinkIterator.s2(list, domain), domain, f, valuation);
     if (res.equals(list)) {
       return list;
     } else {
@@ -165,7 +165,7 @@ public class Interpretation {
   }
 
   private ATerm shrink(String varName, ATerm term, DomainInterpretation domain, Formula f, Map<String, ATerm> valuation){
-    PureFactory factory = new PureFactory();
+    ATermFactory factory = term.getFactory();
     ATermList l0 = factory.makeList(term);
     ATermList l1 = s1(varName, l0, domain, f, valuation);
     ATermList l2 = s2(varName, l1, domain, f, valuation);
