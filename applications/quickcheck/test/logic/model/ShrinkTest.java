@@ -143,10 +143,10 @@ public class ShrinkTest {
    * Tests of shrink in depth.
    */
   @Test
-  public void testS1DepthList() {
+  public void testDepthList() {
     System.out.println("tes s2 depth list");
-    Buildable sort = Examples.expr;
-    ATerm term = ExamplesTerms.expr_T1;
+    Buildable sort = Examples.sortTestShrink2;
+    ATerm term = ExamplesTerms.sortTestShrink2_s2test;
     System.out.println(term);
     DomainInterpretation domain = new BuildableDomain(sort);
     ATermList result = Shrink.s1WithDepth(term, domain, 1);
