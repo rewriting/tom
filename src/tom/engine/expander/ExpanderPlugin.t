@@ -203,7 +203,6 @@ public class ExpanderPlugin extends TomGenericPlugin {
    * - generate instrospectors if -gi is activated
    * - generate visitLight and visit
    */
-
   %strategy Expand_once(expander:ExpanderPlugin) extends Identity() {
     /*
      * compilation of  %strategy
@@ -227,7 +226,7 @@ public class ExpanderPlugin extends TomGenericPlugin {
           String funcName = "getChildCount";//function name
           //manage null children: return 0
           InstructionList instructions = `concInstruction(If(BQTermToExpression(Composite(CompositeTL(ITL("o==null")))),Return(Composite(CompositeTL(ITL("0")))),Nop()));
-          for (TomType type:types) {
+          for(TomType type:types) {
             InstructionList instructionsForSort = `concInstruction();
             %match(type) {
               Type[TomType=typeName] -> {
@@ -261,15 +260,15 @@ public class ExpanderPlugin extends TomGenericPlugin {
            */
           funcName = "getChildren";//function name
           instructions = `concInstruction();
-          for (TomType type:types) {
+          for(TomType type:types) {
             InstructionList instructionsForSort = `concInstruction();
             //cast in concTomSymbol to use the for statement
             %match(type) {
               Type[TomType=typeName] -> {
-                if (! symbolTable.isBuiltinType(`typeName)) {
+                if(!symbolTable.isBuiltinType(`typeName)) {
                   BQTerm var = `BQVariable(concOption(orgTrack),Name("v_"+typeName),type);
                   concTomSymbol list = (concTomSymbol) symbolTable.getSymbolFromType(type);
-                  for (TomSymbol symbol:list) {
+                  for(TomSymbol symbol:list) {
                     %match(symbol) {
                       Symbol[AstName=symbolName,TypesToType=TypesToType[Domain=domain,Codomain=codomain]] -> {
                         if(TomBase.isListOperator(symbol)) {
@@ -284,7 +283,7 @@ public class ExpanderPlugin extends TomGenericPlugin {
                           Instruction return_emptyArray = `CodeToInstruction(TargetLanguageToCode(ITL("return new Object[]{};")));
                           Instruction inst = `If(IsFsym(symbolName,var),If(IsEmptyList(symbolName,var),return_emptyArray,return_array),Nop());
                           instructionsForSort = `concInstruction(instructionsForSort*,inst);
-                        } else if (TomBase.isArrayOperator(symbol)) {
+                        } else if(TomBase.isArrayOperator(symbol)) {
                           // contrary to list operators, we consider that the children of an array are all its elements
                           BQTerm emptyArray = `Composite(CompositeTL(ITL("new Object[]{}")));
                           BQTerm children = `Composite(CompositeTL(ITL("new Object[getChildCount(o)]")));
@@ -359,7 +358,7 @@ public class ExpanderPlugin extends TomGenericPlugin {
            */
           funcName = "setChildren";//function name
           instructions = `concInstruction();
-          for (TomType type:types) {
+          for(TomType type:types) {
             InstructionList instructionsForSort = `concInstruction();
             //cast in concTomSymbol to use the for statement
             %match(type) {
@@ -383,7 +382,7 @@ public class ExpanderPlugin extends TomGenericPlugin {
                               instructionsForSort = `concInstruction(instructionsForSort*,inst);
                             }
                           }
-                        } else if (TomBase.isArrayOperator(symbol)) {
+                        } else if(TomBase.isArrayOperator(symbol)) {
                           %match(TypesToType) {
                             TypesToType[Domain=concTomType(domain),Codomain=codomain] -> {
                               BQTerm res = `BQVariable(concOption(),Name("res"),codomain);
