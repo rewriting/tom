@@ -8,6 +8,7 @@ package body Successeur is
 
 	%op Nat zero() {
 	  is_fsym(t) { $t = 0 }
+	  make() { 0 }
 	}
 
 	%op Nat suc(p:Nat) {
@@ -25,8 +26,10 @@ package body Successeur is
 		x,suc(y) -> {
 			return `suc(plus(x,y));
 		}
+		_,_ -> {
+			return `zero(); -- should never occur but the Ada compiler does not know it.
+		}
 	  }
-	  return 0; -- N'arrive jamais mais gnat ne le sait pas
 	end plus;
 
 end Successeur;
