@@ -86,6 +86,8 @@ options{
     private int lastLine;
 
     private SymbolTable symbolTable;
+    
+    private static boolean generateAdaCode = false;
 
     private OptionManager optionManager;
 
@@ -98,6 +100,7 @@ options{
         this.tomlexer = (TomLexer) selector().getStream("tomlexer");
         this.symbolTable = target.getSymbolTable();
         this.bqparser = new BackQuoteParser(state,this);
+        this.generateAdaCode = ((Boolean)optionManager.getOptionValue("aCode")).booleanValue();
         this.optionManager = optionManager;
     }
 
@@ -344,12 +347,17 @@ visitInstruction [List<ConstraintInstruction> list, TomType rhsType] throws TomE
                 return;
                 }
 
-                BQTerm subject = `BQVariable(concOption(),Name("tom__arg"),rhsType);
+                BQTerm subject;
+                if(generateAdaCode) {
+                  subject = `BQVariable(concOption(),Name("tom_arg"),rhsType);
+                } else {
+                  subject = `BQVariable(concOption(),Name("tom__arg"),rhsType);
+                }
                 TomType matchType = (getOptionBooleanValue("newtyper")?SymbolTable.TYPE_UNKNOWN:rhsType);
                 constraint =
-                    `AndConstraint(constraint,MatchConstraint(matchPatternList.get(0),subject,matchType));
-              
-              //optionList = `concOption(option, OriginalText(Name(text.toString())));
+                  `AndConstraint(constraint,MatchConstraint(matchPatternList.get(0),subject,matchType));
+
+                //optionList = `concOption(option, OriginalText(Name(text.toString())));
 
               matchPatternList.clear();
               clearText();
@@ -700,10 +708,18 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
          //initialize arrayList with argument names
 				 BQTermList makeArgs = `concBQTerm();
          int index = 0;
+         
          TomTypeList makeTypes = types;//keep a copy of types
-				 String makeTlCode = "new " + name.getText() + "(";
+		 String makeTlCode;
+ 		  if (generateAdaCode) {
+	 		 makeTlCode = " new" + name.getText(); //function call
+		  } else {
+		 	 makeTlCode = "new " + name.getText() + "(";
+		  }
+				 
          while(!makeTypes.isEmptyconcTomType()) {
 					 String argName = "t"+index;
+		   if (generateAdaCode && index == 0) { makeTlCode += "("; } // empty braces are not allowed in Ada
            if (index>0) {//if many parameters
              makeTlCode = makeTlCode.concat(",");
            }
@@ -715,8 +731,12 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
 					 makeTypes = makeTypes.getTailconcTomType();
            index++;
          }
-         makeTlCode += ")";
 
+         if (generateAdaCode) {//JCB: ???
+           if (index > 0) { makeTlCode += ")"; }
+         } else {
+           makeTlCode += ")";
+         }
          TomType strategyType = `Type(concTypeOption(),"Strategy",EmptyTargetLanguageType());
 				 Option makeOption = `OriginTracking(Name(name.getText()),t.getLine(),currentFile());
 				 Declaration makeDecl = `MakeDecl(Name(name.getText()), strategyType, makeArgs, CodeToInstruction(TargetLanguageToCode(ITL(makeTlCode))), makeOption);

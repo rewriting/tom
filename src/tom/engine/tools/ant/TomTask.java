@@ -107,6 +107,7 @@ public class TomTask extends MatchingTask {
   private boolean listFiles = false;
   private boolean cCode = false;
   private boolean camlCode = false;
+  private boolean aCode = false;
   private File[] compileList = new File[0];
 
   protected Java javaRunner;
@@ -362,6 +363,7 @@ public class TomTask extends MatchingTask {
     this.cCode = cCode;
     if (cCode) {
       camlCode = false;
+      aCode = false;
     }
   }
 
@@ -377,11 +379,28 @@ public class TomTask extends MatchingTask {
     this.camlCode = camlCode;
     if (camlCode) {
       cCode = false;
+      aCode = false;
     }
   }
 
   public boolean getCamlcode() {
     return this.camlCode;
+  }
+  
+  /**
+   * If true, generates Ada code
+   * @param aCode if true generate ada code
+   */
+  public void setAcode(boolean aCode) {
+    this.aCode = aCode;
+    if (aCode) {
+      cCode = false;
+      camlCode = false;
+    }
+  }
+
+  public boolean getAcode() {
+    return this.aCode;
   }
 
   /**
@@ -574,7 +593,9 @@ public class TomTask extends MatchingTask {
         m.setTo("*.tom.c");
       } else if (camlCode) {
         m.setTo("*.tom.ml");
-      } else {
+      } else if (aCode) {
+		m.setTo("*.adb");
+	  } else {
         m.setTo("*.java");
       }
       SourceFileScanner sfs = new SourceFileScanner(this);
@@ -719,6 +740,9 @@ public class TomTask extends MatchingTask {
       }
       if (camlCode) {
         javaRunner.createArg().setValue("--camlCode");
+      }
+      if (aCode) {
+        javaRunner.createArg().setValue("--aCode");
       }
       if(pretty == true) {
         javaRunner.createArg().setValue("--pretty");

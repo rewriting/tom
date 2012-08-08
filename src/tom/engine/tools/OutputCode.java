@@ -41,13 +41,15 @@ public class OutputCode {
   private boolean pretty = false;
   private boolean indent = false;
   private boolean cCode  = false;
+  private boolean aCode  = false;
 
   public OutputCode(Writer file, OptionManager optionManager) {
     this.file = file;
     this.optionManager = optionManager;
-    this.pretty = ((Boolean)optionManager.getOptionValue("pretty")).booleanValue();
-    this.indent = ((Boolean)optionManager.getOptionValue("pCode")).booleanValue();
     this.cCode  = ((Boolean)optionManager.getOptionValue("cCode")).booleanValue();
+    this.aCode  = ((Boolean)optionManager.getOptionValue("aCode")).booleanValue();
+    this.indent = ((Boolean)optionManager.getOptionValue("pCode")).booleanValue() || this.aCode;
+    this.pretty = ((Boolean)optionManager.getOptionValue("pretty")).booleanValue();
   }
 
   public OutputCode(Writer file) {
@@ -147,7 +149,32 @@ public class OutputCode {
   }
 
   public void write(int deep, String s, int line, int length) throws IOException {
-    if(!pretty) {
+  
+	if (aCode && pretty) {
+      String[] lines = s.split("\n", -1);
+      if(lines.length==1) { //one line
+        String s2 = s.replaceFirst("^\\s+","");
+        if (! s2.equals("") ) {
+			write(deep, s);
+		} else {
+			indent = true;
+		}
+      } else { //several lines
+        for (int i=0; i<lines.length-1; i++) {
+          String ln = lines[i];
+          ln = ln.replaceFirst("^\\s+",""); // removes spaces at the beginning of the line
+		  writeln(deep, ln);
+		  indent = true;
+        }
+        String s2 = lines[lines.length-1].replaceFirst("^\\s+","");
+        if (! s2.equals("") ) {
+			write(deep, s2);
+			indent = false;
+		} else {
+			indent = true;
+		}
+      }
+	} else if(!pretty) {
       if(cCode) {
         String s1 = "\n#line "+line+"\n";
         s = s1+s;
@@ -211,8 +238,7 @@ public class OutputCode {
       if(indent) {
         if(pretty) {
           for(int i=0 ; i<deep ; i++) {
-            file.write(' ');
-            file.write(' ');
+            file.write("    ");
           }
         } else {
           file.write(' ');

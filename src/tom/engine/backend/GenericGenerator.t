@@ -83,6 +83,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
    */
 
   protected void buildTerm(int deep, String opname, BQTermList argList, String moduleName) throws IOException {
+	deep = 0; //to avoid usless spaces inside the code
     String template = getSymbolTable(moduleName).getMake(opname);
     if(instantiateTemplate(deep,template,opname,argList,moduleName) == false)
     {// && !isResolveOp(opname, moduleName)) {
@@ -130,9 +131,9 @@ public abstract class GenericGenerator extends AbstractGenerator {
 
   protected void buildSymbolDecl(int deep, String tomName, String moduleName) throws IOException {
     TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(tomName);
-//    System.out.println("### DEBUG GenericGenerator ###");
+//    System.out.println("### DEBUGÂ GenericGenerator ###");
 //    System.out.println("tomName= "+tomName+"\nmoduleName= "+moduleName+"\ntomSymbol= "+tomSymbol);
-//    System.out.println("### /DEBUG GenericGenerator ###");
+//    System.out.println("### /DEBUGÂ GenericGenerator ###");
     OptionList optionList = tomSymbol.getOptions();
     PairNameDeclList pairNameDeclList = tomSymbol.getPairNameDeclList();
     // inspect the optionList
@@ -142,30 +143,35 @@ public abstract class GenericGenerator extends AbstractGenerator {
   }
 
   protected void buildExpGreaterThan(int deep, Expression exp1, Expression exp2, String moduleName) throws IOException {
+	deep = 0; //to avoid usless spaces inside the code  
     generateExpression(deep,exp1,moduleName);
     output.write(" > ");
     generateExpression(deep,exp2,moduleName);
   }
 
   protected void buildExpGreaterOrEqualThan(int deep, Expression exp1, Expression exp2, String moduleName) throws IOException {
+    deep = 0; //to avoid usless spaces inside the code
     generateExpression(deep,exp1,moduleName);
     output.write(" >= ");
     generateExpression(deep,exp2,moduleName);
   }
 
   protected void buildExpLessThan(int deep, Expression exp1, Expression exp2, String moduleName) throws IOException {
+    deep = 0; //to avoid usless spaces inside the code
     generateExpression(deep,exp1,moduleName);
     output.write(" < ");
     generateExpression(deep,exp2,moduleName);
   }
 
   protected void buildExpLessOrEqualThan(int deep, Expression exp1, Expression exp2, String moduleName) throws IOException {
+    deep = 0; //to avoid usless spaces inside the code
     generateExpression(deep,exp1,moduleName);
     output.write(" <= ");
     generateExpression(deep,exp2,moduleName);
   }
 
   protected void buildExpIsEmptyArray(int deep, TomName opNameAST, TomType type, BQTerm expIndex, BQTerm expArray, String moduleName) throws IOException {
+    deep = 0; //to avoid usless spaces inside the code
     generateBQTerm(deep,expIndex,moduleName);
     output.write(" >= ");
     %match(opNameAST) {
@@ -260,6 +266,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
   }
 
   protected void buildExpIsSort(int deep, String type, BQTerm exp, String moduleName) throws IOException {
+	deep = 0; //to avoid usless spaces inside the code  
     if(getSymbolTable(moduleName).isBuiltinType(type)) {
       generateExpression(deep,`TrueTL(),moduleName);
       return;
@@ -275,6 +282,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
   }
 
   protected void buildExpIsFsym(int deep, String opname, BQTerm exp, String moduleName) throws IOException {
+	deep = 0; //to avoid usless spaces inside the code  
     String template = getSymbolTable(moduleName).getIsFsym(opname);
     if(instantiateTemplate(deep,template,opname,`concBQTerm(exp),moduleName) == false) {
       String s = isFsymMap.get(opname);
@@ -289,6 +297,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
   }
 
   protected void buildExpGetSlot(int deep, String opname, String slotName, BQTerm var, String moduleName) throws IOException {
+	deep = 0; //to avoid usless spaces inside the code 
     String template = getSymbolTable(moduleName).getGetSlot(opname,slotName);
     if(instantiateTemplate(deep,template,opname,`concBQTerm(var),moduleName) == false) {
       //output.write("tom_get_slot_" + opname + "_" + slotName + "(");
@@ -309,6 +318,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
   }
 
   protected void buildExpGetDefault(int deep, String opname, String slotName, String moduleName) throws IOException {
+	deep = 0; //to avoid usless spaces inside the code  
     output.write("tom_get_default_");
     output.write(opname);
     output.writeUnderscore();
@@ -318,6 +328,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
   }
 
   protected void buildExpGetHead(int deep, String opName, TomType domain, TomType codomain, BQTerm var, String moduleName) throws IOException {
+	deep = 0; //to avoid usless spaces inside the code  
     String template = getSymbolTable(moduleName).getGetHead(opName);
     if(instantiateTemplate(deep,template,opName,`concBQTerm(var),moduleName) == false) {
       output.write("tom_get_head_" + opName + "_" + TomBase.getTomType(domain) + "(");
@@ -327,6 +338,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
   }
 
   protected void buildExpGetTail(int deep, String opName, TomType type, BQTerm var, String moduleName) throws IOException {
+	deep = 0; //to avoid usless spaces inside the code  
     String template = getSymbolTable(moduleName).getGetTail(opName);
     if(instantiateTemplate(deep,template,opName,`concBQTerm(var),moduleName) == false) {
       output.write("tom_get_tail_" + opName + "_" + TomBase.getTomType(type) + "(");
@@ -336,6 +348,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
   }
 
   protected void buildExpIsEmptyList(int deep, String opName, TomType type, BQTerm var, String moduleName) throws IOException {
+	deep = 0; //to avoid usless spaces inside the code  
     String template = getSymbolTable(moduleName).getIsEmptyList(opName);
     if(instantiateTemplate(deep,template,opName,`concBQTerm(var),moduleName) == false) {
       output.write("tom_is_empty_" + `opName + "_" + TomBase.getTomType(type) + "(");
@@ -345,6 +358,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
   }
 
   protected void buildExpGetSize(int deep, TomName opNameAST, TomType type, BQTerm var, String moduleName) throws IOException {
+	deep = 0; //to avoid usless spaces inside the code  
     %match(opNameAST) {
       EmptyName() -> {
         throw new TomRuntimeException(GenericGenerator.GENERIC_GENERATOR_BAD_CASE + opNameAST);
@@ -361,6 +375,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
   }
 
   protected void buildExpGetSliceList(int deep, String name, BQTerm varBegin, BQTerm varEnd, BQTerm tail, String moduleName) throws IOException {
+	deep = 0; //to avoid usless spaces inside the code  
     output.write("tom_get_slice_" + name + "(");
     generateBQTerm(deep,varBegin,moduleName);
     output.write(",");
@@ -371,6 +386,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
   }
 
   protected void buildExpGetSliceArray(int deep, String name, BQTerm varArray, BQTerm varBegin, BQTerm expEnd, String moduleName) throws IOException {
+	deep = 0; //to avoid usless spaces inside the code  
     output.write("tom_get_slice_" + name + "(");
     generateBQTerm(deep,varArray,moduleName);
     output.write(",");
@@ -770,6 +786,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
        */
 
       protected void buildExpGetElement(int deep, TomName opNameAST, TomType domain, BQTerm varName, BQTerm varIndex, String moduleName) throws IOException {
+		deep = 0; //to avoid usless spaces inside the code
         %match(opNameAST) {
           EmptyName() -> {
             throw new TomRuntimeException(GenericGenerator.GENERIC_GENERATOR_BAD_CASE + opNameAST);
@@ -789,6 +806,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
       }
 
       protected void buildListOrArray(int deep, BQTerm list, String moduleName) throws IOException {
+		deep = 0; //to avoid usless spaces inside the code
         %match(list) {
           BuildEmptyList(Name(name)) -> {
             String prefix = "tom_empty_list_";
@@ -857,11 +875,11 @@ public abstract class GenericGenerator extends AbstractGenerator {
       }
 
       protected void buildFunctionCall(int deep, String name, BQTermList argList, String moduleName) throws IOException {
-        output.write(name);
+        output.write(deep, name);
         output.writeOpenBrace();
         while(!argList.isEmptyconcBQTerm()) {
           BQTerm bqt = argList.getHeadconcBQTerm();
-          generateBQTerm(deep,bqt,moduleName);
+          generateBQTerm(0,bqt,moduleName);
           argList = argList.getTailconcBQTerm();
           if(!argList.isEmptyconcBQTerm()) {
             output.writeComa();
@@ -968,14 +986,14 @@ public abstract class GenericGenerator extends AbstractGenerator {
   }
 
   protected void buildSubstractOne(int deep, BQTerm var, String moduleName) throws IOException { 	 
-     generateBQTerm(deep,var,moduleName); 	 
+     generateBQTerm(0,var,moduleName); 	 
      output.write(" - 1"); 	 
    } 	 
   	 
    protected void buildSubstract(int deep, BQTerm var1, BQTerm var2, String moduleName) throws IOException { 	 
-     generateBQTerm(deep,var1,moduleName); 	 
+     generateBQTerm(0, var1,moduleName); 	 
      output.write(" - "); 	 
-     generateBQTerm(deep,var2,moduleName); 	 
+     generateBQTerm(0,var2,moduleName); 	 
    }
 
 }
