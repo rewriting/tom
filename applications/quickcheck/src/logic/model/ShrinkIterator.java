@@ -17,7 +17,7 @@ import java.util.Stack;
  *
  * @author hubert
  */
-public class Shrink_java {
+public class ShrinkIterator {
 
   private static class s1Iterator implements Iterator<ATerm> {
     //<editor-fold defaultstate="collapsed" desc="ATermSameTypeIterator">

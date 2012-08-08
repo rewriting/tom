@@ -14,7 +14,7 @@ import libtests.LibTests;
 import logic.model.BuildableDomain;
 import logic.model.DomainInterpretation;
 import logic.model.Shrink;
-import logic.model.Shrink_java;
+import logic.model.ShrinkIterator;
 import org.junit.*;
 
 /**
@@ -53,7 +53,7 @@ public class ShrinkTest {
     Buildable sort = Examples.expr;
     ATerm term = sort.generate(10);
     DomainInterpretation domain = new BuildableDomain(sort);
-    Iterator<ATerm> ite = Shrink_java.getS1Iterator(term, domain);
+    Iterator<ATerm> ite = ShrinkIterator.getS1Iterator(term, domain);
     LibTests.testIterator(ite, 10, false);
   }
 
@@ -82,7 +82,7 @@ public class ShrinkTest {
     System.out.println(term.getChildAt(1));
     PureFactory factory = new PureFactory();
     DomainInterpretation domain = new BuildableDomain(sort);
-    ATermList result = Shrink_java.s1(factory.makeList(term), domain);
+    ATermList result = ShrinkIterator.s1(factory.makeList(term), domain);
     System.out.println(result.getLength() + " " + result);
 //    assertEquals(expResult, result);
   }
@@ -95,7 +95,7 @@ public class ShrinkTest {
     System.out.println(term);
     PureFactory factory = new PureFactory();
     DomainInterpretation domain = new BuildableDomain(sort);
-    ATermList result = Shrink_java.s2(factory.makeList(term), domain);
+    ATermList result = ShrinkIterator.s2(factory.makeList(term), domain);
     System.out.println(result);
 //    assertEquals(expResult, result);
   }
