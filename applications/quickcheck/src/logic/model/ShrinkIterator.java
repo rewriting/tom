@@ -47,6 +47,9 @@ public class ShrinkIterator {
 
     @Override
     public boolean hasNext() {
+      if (current != null) {
+        return true;
+      }
       if (stack.empty()) {
         return false;
       }
