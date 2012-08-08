@@ -75,34 +75,36 @@ public class Shrink{
     return s1(head, domain).concat(s1(list.getNext(), domain));
   }
 
-  public static ATermList s1WithDepth(ATerm term, DomainInterpretation domain, int depth){
-    if(depth==0) {
+  public static ATermList s1WithDepth(ATerm term, DomainInterpretation domain, int depth) {
+    if (depth == 0) {
       return s1(term, domain);
     }
-    
+
     DomainInterpretation[] subDoms = domain.getDepsDomains();
-    
+
     ATermFactory factory = term.getFactory();
     AFun fun = ((ATermAppl) term).getAFun();
     ATerm[] args = ((ATermAppl) term).getArgumentArray();
     int n = term.getChildCount();
-    
+
     ATermList list = factory.makeList();
-    for(int childIndex = 0; childIndex<n; childIndex++){
+    for (int childIndex = 0; childIndex < n; childIndex++) {
       ATerm child = args[childIndex];
       DomainInterpretation dom = getCorrespondingDomain(subDoms, child);
-      ATermList l = s1WithDepth(child, dom, depth-1);
-      
-      
-      while(!l.isEmpty()){
-        ATerm[] newArgs = Arrays.copyOf(args, n); // here is compulsory
-        ATerm head = l.getFirst();
-        l = l.getNext();
-        
+      ATermList resS1 = s1WithDepth(child, dom, depth - 1);
+
+      while (!resS1.isEmpty()) {
+        ATerm[] newArgs = Arrays.copyOf(args, n); // here is necessary
+        ATerm head = resS1.getFirst();
+        resS1 = resS1.getNext();
+        newArgs[childIndex] = head;
+        ATerm newTerm = factory.makeAppl(fun, newArgs);
+        list = list.insert(newTerm);
       }
     }
     return list;
   }
+  
 
   public static Collection s1bis(ATerm term, DomainInterpretation domain) {
     Collection bag = new HashSet();
