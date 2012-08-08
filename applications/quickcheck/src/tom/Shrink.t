@@ -106,6 +106,38 @@ public class Shrink{
     }
     return list;
   }
+
+  public static ATermList s2WithDepth(ATerm term, DomainInterpretation domain, int depth) {
+    if (depth == 0) {
+      ATermFactory factory = term.getFactory();
+      ATermList list = factory.makeList(term);
+      return ShrinkIterator.s2(list, domain);
+    }
+
+    DomainInterpretation[] subDoms = domain.getDepsDomains();
+
+    ATermFactory factory = term.getFactory();
+    AFun fun = ((ATermAppl) term).getAFun();
+    ATerm[] args = ((ATermAppl) term).getArgumentArray();
+    int n = term.getChildCount();
+
+    ATermList list = factory.makeList();
+    for (int childIndex = 0; childIndex < n; childIndex++) {
+      ATerm child = args[childIndex];
+      DomainInterpretation dom = getCorrespondingDomain(subDoms, child);
+      ATermList resS2 = s2WithDepth(child, dom, depth - 1);
+
+      while (!resS2.isEmpty()) {
+        ATerm[] newArgs = Arrays.copyOf(args, n); // here is necessary
+        ATerm head = resS2.getFirst();
+        resS2 = resS2.getNext();
+        newArgs[childIndex] = head;
+        ATerm newTerm = factory.makeAppl(fun, newArgs);
+        list = list.insert(newTerm);
+      }
+    }
+    return list;
+  }
   
 
   public static Collection s1bis(ATerm term, DomainInterpretation domain) {

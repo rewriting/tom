@@ -48,9 +48,17 @@ class Essai {
 
     PureFactory factory = new PureFactory();
     ATermList list = factory.makeList(expr.generate(5));
-    System.out.println(list);
+    System.out.println(list + "\n");
     ATermList list2 = list.append(expr.generate(5));
     System.out.println(list);
-    System.out.println(list2);
+    System.out.println(list2 + "\n");
+    ATermList list3 = list.insert(expr.generate(5));
+    System.out.println(list);
+    System.out.println(list3 + "\n");
+    
+    System.out.println("=======================================");
+    
+    term = factory.parse("gros(b(c(a(nill))),b(c(a(b(c(a(nill)))))),c(a(b(c(a(nill))))),a(b(c(a(nill)))),a(b(c(a(nill)))),a(b(c(a(nill)))))");
+    System.out.println(term instanceof ATermAppl);
   }
 }

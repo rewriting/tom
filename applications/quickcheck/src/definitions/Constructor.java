@@ -72,7 +72,7 @@ class Constructor {
     return lock;
   }
 
-  private int getSize() {
+  int getSize() {
     return fields.length;
   }
 

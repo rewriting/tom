@@ -216,7 +216,7 @@ public class ShrinkIterator {
     };
   }
 
-  public static ATermList toATermList(Iterator<ATerm> iterator) {
+  public static ATermList toATermList2(Iterator<ATerm> iterator) {
     ATermFactory factory = null;
     ATermList list = null;
     
@@ -229,6 +229,15 @@ public class ShrinkIterator {
       list = list.insert(aTerm);
     }
     return list;
+  }
+  
+  public static ATermList toATermList(Iterator<ATerm> iterator) {
+    if (!iterator.hasNext()) {
+      ATermFactory factory = new PureFactory();
+      return factory.makeList(); // unreachable
+    }
+    ATerm term = iterator.next();
+    return toATermList(iterator).insert(term);
   }
   
   // --------------------------- TESTS -----------------------------

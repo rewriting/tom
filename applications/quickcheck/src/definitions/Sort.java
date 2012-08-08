@@ -564,7 +564,7 @@ public class Sort implements Buildable {
     Constructor constructor = getCurrentCons(term);
     final List<Constructor> listSC = new LinkedList<Constructor>();
     for (Constructor cons : constructors) {
-      if (cons.isSubCons(constructor) && cons != constructor) {
+      if (cons.isSubCons(constructor) && cons != constructor && cons.getSize() < constructor.getSize()) {
         listSC.add(cons);
       }
     }

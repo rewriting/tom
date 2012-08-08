@@ -8,11 +8,10 @@ import aterm.ATerm;
 import aterm.ATermInt;
 import aterm.pure.PureFactory;
 import examples.Examples;
+import examples.ExamplesFormula;
 import examples.TestGen;
 import examples.sort.types.IntList;
 import java.util.*;
-import logic.ExamplesFormula;
-import logic.model.*;
 import logic.system.types.Formula;
 import org.junit.*;
 
