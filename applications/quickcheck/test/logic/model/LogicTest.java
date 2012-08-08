@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package logic;
+package logic.model;
 
 import aterm.ATerm;
 import aterm.ATermInt;
@@ -11,6 +11,7 @@ import examples.Examples;
 import examples.TestGen;
 import examples.sort.types.IntList;
 import java.util.*;
+import logic.ExamplesFormula;
 import logic.model.*;
 import logic.system.types.Formula;
 import org.junit.*;

@@ -5,6 +5,7 @@
 package logic.model;
 
 import aterm.ATerm;
+import aterm.ATermAppl;
 import aterm.ATermList;
 import aterm.pure.PureFactory;
 import java.util.Iterator;
@@ -28,6 +29,7 @@ public class Shrink_java {
     private s1Iterator(final ATerm term, DomainInterpretation domain) {
       this.domain = domain;
       ATermList args = getArgs(term);
+      this.stack = new Stack<ATermList>();
       stack.push(args);
       current = null;
     }
@@ -37,7 +39,10 @@ public class Shrink_java {
        * %match(term){ ATermAppl(fun, list) -> {return `list;} _ -> {throw new
        * UnsupportedOperationException("Operation not supported");} }
        */
-      return null; //unreachable
+      if(term instanceof ATermAppl){
+        return ((ATermAppl) term).getArguments();
+      }
+      throw new UnsupportedOperationException("Operation not supported");
     }
 
     @Override
@@ -215,5 +220,11 @@ public class Shrink_java {
       list = list.insert(aTerm);
     }
     return list;
+  }
+  
+  // --------------------------- TESTS -----------------------------
+  
+  static Iterator<ATerm> getS1Iterator(ATerm term, DomainInterpretation domain){
+    return new s1Iterator(term, domain);
   }
 }

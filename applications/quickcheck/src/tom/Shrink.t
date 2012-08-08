@@ -1,9 +1,11 @@
 package logic.model;
 
+import aterm.AFun;
 import aterm.ATerm;
+import aterm.ATermAppl;
+import aterm.ATermFactory;
 import aterm.ATermList;
 import aterm.ATermPlaceholder;
-import aterm.pure.PureFactory;
 import java.util.*;
 import tom.library.sl.Strategy;
 import tom.library.sl.VisitFailure;

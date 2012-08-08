@@ -77,39 +77,39 @@ public class ComplexityTest {
     }
   }
 
-  @Test
-  public void testComplexityNat() {
-    Scope scope = new Scope();
-
-    Sort nat = new Sort(scope, "nat");
-    nat.addConstructor("succ", nat);
-    nat.addConstructor("zero");
-
-    scope.setDependances();
-
-    int range = 200;
-    int nbrTest = 50;
-    // 5 minutes 48 secondes
-    testSize(nat, range, nbrTest);
-    assert true;
-  }
+//  @Test
+//  public void testComplexityNat() {
+//    Scope scope = new Scope();
+//
+//    Sort nat = new Sort(scope, "nat");
+//    nat.addConstructor("succ", nat);
+//    nat.addConstructor("zero");
+//
+//    scope.setDependances();
+//
+//    int range = 200;
+//    int nbrTest = 50;
+//    // 5 minutes 48 secondes
+//    testSize(nat, range, nbrTest);
+//    assert true;
+//  }
   
-  @Test
-  public void testComplexityExpr() {
-    Scope scope = new Scope();
-
-    Sort expr = new Sort(scope, "expr");
-    expr.addConstructor("zero");
-    expr.addConstructor("un");
-    expr.addConstructor("plus", expr, expr);
-    expr.addConstructor("mult", expr, expr);
-
-    scope.setDependances();
-
-    int range = 200;
-    int nbrTest = 50;
-    // 5 minutes 48 secondes
-    testSize(expr, range, nbrTest);
-    assert true;
-  }
+//  @Test
+//  public void testComplexityExpr() {
+//    Scope scope = new Scope();
+//
+//    Sort expr = new Sort(scope, "expr");
+//    expr.addConstructor("zero");
+//    expr.addConstructor("un");
+//    expr.addConstructor("plus", expr, expr);
+//    expr.addConstructor("mult", expr, expr);
+//
+//    scope.setDependances();
+//
+//    int range = 200;
+//    int nbrTest = 50;
+//    // 5 minutes 48 secondes
+//    testSize(expr, range, nbrTest);
+//    assert true;
+//  }
 }
