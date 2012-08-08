@@ -2,10 +2,12 @@
 
 EXAMPLES="car concString successeur vehicle"
 
+mkdir ../gen/ada
 for i in `echo $EXAMPLES`; do
 	echo "### Ada example: $i/ ###"
-	cd $i
+	cp -R $i ../gen/ada/.
+	pushd ../gen/ada/$i
 	sh ./build_and_run.sh
-	cd ..
+	popd
 done
 
