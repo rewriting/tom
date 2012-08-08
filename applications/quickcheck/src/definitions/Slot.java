@@ -7,6 +7,7 @@ package definitions;
 import aterm.AFun;
 import aterm.ATerm;
 import aterm.ATermAppl;
+import aterm.ATermFactory;
 import aterm.pure.PureFactory;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -17,6 +18,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author hubert
  */
 class Slot {
+  
+  private static ATermFactory factory;
 
   private Buildable type;
   private Constructor cons;
@@ -145,7 +148,10 @@ class Slot {
   }
 
   ATermAppl toATerm() {
-    PureFactory factory = new PureFactory();
+    if (factory == null) {
+      factory = new PureFactory();
+    }
+    //PureFactory factory = new PureFactory();
     ATerm[] listFields = new ATerm[deps.length];
     for (int i = 0; i < listFields.length; i++) {
       listFields[i] = deps[i].toATerm();

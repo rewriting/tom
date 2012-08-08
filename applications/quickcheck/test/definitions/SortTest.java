@@ -677,7 +677,7 @@ public class SortTest {
   public void testGeneratelist2() {
     Sort test = Examples.list2;
     System.out.println("Generate " + test.getName());
-    Slot slot = null;
+    Slot slot;
     String res = "not this";
     try {
       slot = test.generateSlot(100, Examples.paramDepth);
@@ -751,8 +751,8 @@ public class SortTest {
    */
 
   @Test
-  public void testOneConsIter(){
-    System.out.println("test oneConsIter");
+  public void testFundamentalOneConsIter(){
+    System.out.println("test Fundamental oneConsIter");
     ATerm term = Examples.expr.generate(10);
     Constructor cons = Examples.expr.getCons("plus");
     Iterator<ATerm> ite = Examples.expr.getOneConsIter(term, cons);
@@ -760,8 +760,8 @@ public class SortTest {
   }
 
   @Test
-  public void testMultiConsIter(){
-    System.out.println("test MultiConsIter");
+  public void testFundamentalMultiConsIter(){
+    System.out.println("test Fundamental MultiConsIter");
     ATerm term = Examples.expr.generate(10);
     Constructor c1 = Examples.expr.getCons("plus");
     Constructor c2 = Examples.expr.getCons("mult");
@@ -775,8 +775,8 @@ public class SortTest {
   }
 
   @Test
-  public void testLigthen(){
-    System.out.println("test ligthen hasNext()");
+  public void testFundamentalLigthen(){
+    System.out.println("test Fundamental ligthen hasNext()");
     ATerm term = Examples.expr.generate(10);
     Iterator<ATerm> ite = Examples.expr.lighten(term);
     LibTests.testIterator(ite,100, false);

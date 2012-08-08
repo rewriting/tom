@@ -5,11 +5,14 @@
 package logic.model;
 
 import aterm.ATerm;
+import aterm.ATermFactory;
 import aterm.ATermList;
 import aterm.pure.PureFactory;
 import definitions.Buildable;
 import examples.Examples;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import libtests.LibTests;
 import logic.model.BuildableDomain;
 import logic.model.DomainInterpretation;
@@ -48,13 +51,33 @@ public class ShrinkTest {
    * Tests of fundamental properties of iterators.
    */
   @Test
-  public void testOneConsIter() {
-    System.out.println("test oneConsIter");
+  public void testFundamentalS1IteratorOneArg() {
+    System.out.println("test fundamental s1Iterator one arg");
     Buildable sort = Examples.expr;
     ATerm term = sort.generate(10);
     DomainInterpretation domain = new BuildableDomain(sort);
     Iterator<ATerm> ite = ShrinkIterator.getS1Iterator(term, domain);
     LibTests.testIterator(ite, 10, false);
+  }
+  
+  @Test
+  public void testFundamentalS1IteratorList() {
+    System.out.println("test fundamental s1Iterator list");
+    Buildable sort = Examples.expr;
+    ATerm t1 = sort.generate(10);
+    ATerm t2 = sort.generate(10);
+    ATerm t3 = sort.generate(10);
+    ATerm t4 = sort.generate(10);
+    ATerm t5 = sort.generate(10);
+    List<ATerm> list = new LinkedList<ATerm>();
+    list.add(t1);
+    list.add(t2);
+    list.add(t3);
+    list.add(t4);
+    list.add(t5);
+    DomainInterpretation domain = new BuildableDomain(sort);
+    Iterator<ATerm> ite = ShrinkIterator.s1(list.iterator(), domain);
+    LibTests.testIterator(ite, 100, false);
   }
 
   /**
