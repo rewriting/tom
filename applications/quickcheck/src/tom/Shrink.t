@@ -149,6 +149,40 @@ public class Shrink{
     }
     return list;
   }
+
+  private static ATermList s1WithDepthLarge(ATerm term, DomainInterpretation domain, int depth){
+    ATermList res = s1WithDepthStrict(term, domain, depth);
+    if (res.isEmpty()) {
+      return term.getFactory().makeList(term);
+    } else {
+      return res;
+    }
+  }
+  
+  private static ATermList s2WithDepthLarge(ATerm term, DomainInterpretation domain, int depth){
+    ATermList res = s2WithDepthStrict(term, domain, depth);
+    if (res.isEmpty()) {
+      return term.getFactory().makeList(term);
+    } else {
+      return res;
+    }
+  }
+  
+  public static ATermList s1WithDepthLarge(ATermList list, DomainInterpretation domain, int depth){
+    if (list.isEmpty()) {
+      return list;
+    } else {
+      return s1WithDepthLarge(list.getFirst(), domain, depth).concat(s1WithDepthLarge(list.getNext(), domain, depth));
+    }
+  }
+  
+  public static ATermList s2WithDepthLarge(ATermList list, DomainInterpretation domain, int depth){
+    if (list.isEmpty()) {
+      return list;
+    } else {
+      return s2WithDepthLarge(list.getFirst(), domain, depth).concat(s2WithDepthLarge(list.getNext(), domain, depth));
+    }
+  }
   
 
   public static Collection s1bis(ATerm term, DomainInterpretation domain) {

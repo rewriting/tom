@@ -291,9 +291,7 @@ public class ShrinkTest {
     ATerm term = ExamplesTerms.sortTestShrink2_s2test;
     DomainInterpretation domain = new BuildableDomain(sort);
     ATermList result1 = Shrink.s2WithDepthStrict(term, domain, 0);
-    System.out.println(result1);
     ATermList result2 = ShrinkIterator.toATermList(ShrinkIterator.s2Strict(term, domain), term.getFactory());
-    System.out.println(result2);
     assert result1.equals(result2);
   }
 }

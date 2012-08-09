@@ -75,7 +75,7 @@ public class LogicTest {
     EvenInteger = new DomainInterpretation() {
 
       @Override
-      public ATerm chooseElement() {
+      public ATerm chooseElement(int n) {
         PureFactory factory = new PureFactory();
         return factory.makeInt(((int) (Math.random() * 1000)) * 2);
       }
@@ -104,7 +104,7 @@ public class LogicTest {
     Integer = new DomainInterpretation() {
 
       @Override
-      public ATerm chooseElement() {
+      public ATerm chooseElement(int n) {
         PureFactory factory = new PureFactory();
         return factory.makeInt((int) (Math.random() * 1000));
       }
@@ -175,7 +175,7 @@ public class LogicTest {
     DomainInterpretation EvenInteger_cheat = new DomainInterpretation() {
 
       @Override
-      public ATerm chooseElement() {
+      public ATerm chooseElement(int n) {
         PureFactory factory = new PureFactory();
         return factory.makeInt(4);
       }

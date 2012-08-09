@@ -24,8 +24,8 @@ public class BuildableDomain implements DomainInterpretation {
   }
 
   @Override
-  public ATerm chooseElement() {
-    return model.generate(20);
+  public ATerm chooseElement(int n) {
+    return model.generate(n);
   }
 
   @Override

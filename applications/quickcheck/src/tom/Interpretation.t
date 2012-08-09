@@ -70,11 +70,16 @@ public class Interpretation {
     if(domain == null){
       throw new UnsupportedOperationException("Domain " + domainName + " has no interpretation.");
     }
-    ATerm term = domain.chooseElement();
-    valuation.put(varName, term);
-    boolean res = validateFormula(f, valuation);
-    valuation.remove(varName);
-    return res;
+    for(int i = 0; i<20; i++){
+      ATerm term = domain.chooseElement(i);
+      valuation.put(varName, term);
+      boolean res = validateFormula(f, valuation);
+      valuation.remove(varName);
+      if(!res){
+        return false;
+      }
+    }
+    return true;
   }
 
   private CounterExample validateForallWithCE(String varName, String domainName, Formula f, Map<String, ATerm> valuation){
@@ -113,22 +118,18 @@ public class Interpretation {
     }
   }
 
-  private ATermList s1(String varName, ATermList list, DomainInterpretation domain, Formula f, Map<String, ATerm> valuation){
-    ATermList res = filterList(varName, Shrink.s1Large(list, domain), domain, f, valuation);
+  private ATermList s1(String varName, ATermList list, DomainInterpretation domain, Formula f, Map<String, ATerm> valuation, int depth){
+    ATermList res = filterList(varName, Shrink.s1WithDepthLarge(list, domain, depth), domain, f, valuation);
     if (res.equals(list)) {
       return list;
     } else {
-      return s1(varName, res, domain, f, valuation);
+      return s1(varName, res, domain, f, valuation, depth);
     }
   }
 
-  private ATermList s2(String varName, ATermList list, DomainInterpretation domain, Formula f, Map<String, ATerm> valuation){
-    ATermList res = filterList(varName, logic.model.ShrinkIterator.s2Large(list, domain), domain, f, valuation);
-    if (res.equals(list)) {
-      return list;
-    } else {
-      return s2(varName, res, domain, f, valuation);
-    }
+  private ATermList s2(String varName, ATermList list, DomainInterpretation domain, Formula f, Map<String, ATerm> valuation, int depth){
+    ATermList res = filterList(varName, Shrink.s2WithDepthLarge(list, domain, depth), domain, f, valuation);
+    return res;
   }
 
   private int sizeATerm(Visitable term){
@@ -167,8 +168,13 @@ public class Interpretation {
   private ATerm shrink(String varName, ATerm term, DomainInterpretation domain, Formula f, Map<String, ATerm> valuation){
     ATermFactory factory = term.getFactory();
     ATermList l0 = factory.makeList(term);
-    ATermList l1 = s1(varName, l0, domain, f, valuation);
-    ATermList l2 = s2(varName, l1, domain, f, valuation);
+    int depth = depth(term);
+    ATermList l1 = null;
+    ATermList l2 = null;
+    for(int i = 0; i<depth; i++){
+      l1 = s1(varName, l0, domain, f, valuation, i);
+      l2 = s2(varName, l1, domain, f, valuation, i);
+    }
     return minATerm(l2);
   }
 

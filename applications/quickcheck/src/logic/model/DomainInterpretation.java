@@ -19,7 +19,7 @@ public interface DomainInterpretation {
    *
    * @return
    */
-  public ATerm chooseElement();
+  public ATerm chooseElement(int n);
 
   /**
    * Tell whether given term is include in the set. This method is use in the

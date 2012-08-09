@@ -282,5 +282,5 @@ public class ShrinkIterator {
     }
     ATerm term = iterator.next();
     return toATermList(iterator, factory).insert(term);
-  }
+  } 
 }
