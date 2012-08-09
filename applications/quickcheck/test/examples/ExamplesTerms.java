@@ -11,6 +11,7 @@ public class ExamplesTerms {
   public static ATerm expr_T1Right;
   public static ATerm sortTestShrink2_s2test;
   public static ATerm[] sortTestShrink2_s2test_children = new ATerm[8];
+  public static ATerm nonS1_2_Shinkable;
 
   public static void init() {
     ATermFactory factory = new PureFactory();
@@ -34,5 +35,6 @@ public class ExamplesTerms {
     sortTestShrink2_s2test_children[5] = sortTestShrink2_s2test6;
     sortTestShrink2_s2test_children[6] = sortTestShrink2_s2test7;
     sortTestShrink2_s2test_children[7] = sortTestShrink2_s2test8;
+    nonS1_2_Shinkable = factory.parse("moyen(b(c(a(nill))),b(c(a(b(c(a(nill)))))),a(b(c(a(nill)))))");
   }
 }

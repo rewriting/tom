@@ -32,18 +32,18 @@ public class Shrink{
   }
 
 
-  private static ATermList s1_aux(ATermList list, DomainInterpretation domain){
+  private static ATermList s1Strict(ATermList list, DomainInterpretation domain){
     %match(list){
       concATerm() -> {return `concATerm();}
       concATerm(hd, tl*) -> {
         if(domain.includes(`hd)){
-          ATermList tail = `s1_aux(tl*, domain);
+          ATermList tail = `s1Strict(tl*, domain);
           return `concATerm(hd, tail*);
         } else {
           %match(`hd){
             ATermAppl(_, listFields) -> {
-              ATermList a = s1_aux(`listFields, domain);
-              ATermList b = s1_aux(`tl*, domain);
+              ATermList a = s1Strict(`listFields, domain);
+              ATermList b = s1Strict(`tl*, domain);
               return `concATerm(a*, b*);
             }
             _ -> {throw new UnsupportedOperationException();}
@@ -54,11 +54,23 @@ public class Shrink{
     return null; // unreachable
   }
 
-  public static ATermList s1(ATerm term, DomainInterpretation domain){
+  public static ATermList s1Strict(ATerm term, DomainInterpretation domain){
     ATermList list = null;
     breakmatch : {
       %match(term){
-        ATermAppl(_, listFields) -> {list = s1_aux(`listFields, domain); break breakmatch;}
+        ATermAppl(_, listFields) -> {list = s1Strict(`listFields, domain); break breakmatch;}
+        _ -> {throw new UnsupportedOperationException();}
+      }
+    }
+    return list;
+  }
+
+
+  public static ATermList s1Large(ATerm term, DomainInterpretation domain){
+    ATermList list = null;
+    breakmatch : {
+      %match(term){
+        ATermAppl(_, listFields) -> {list = s1Strict(`listFields, domain); break breakmatch;}
         _ -> {throw new UnsupportedOperationException();}
       }
     }
@@ -69,17 +81,17 @@ public class Shrink{
     }
   }
 
-  public static ATermList s1(ATermList list, DomainInterpretation domain){
+  public static ATermList s1Large(ATermList list, DomainInterpretation domain){
     if (list.isEmpty()){
       return list;
     }
     ATerm head = list.getFirst();
-    return s1(head, domain).concat(s1(list.getNext(), domain));
+    return s1Large(head, domain).concat(s1Large(list.getNext(), domain));
   }
 
   public static ATermList s1WithDepth(ATerm term, DomainInterpretation domain, int depth) {
     if (depth == 0) {
-      return s1(term, domain);
+      return s1Large(term, domain);
     }
 
     DomainInterpretation[] subDoms = domain.getDepsDomains();
@@ -111,7 +123,7 @@ public class Shrink{
     if (depth == 0) {
       ATermFactory factory = term.getFactory();
       ATermList list = factory.makeList(term);
-      return ShrinkIterator.s2(list, domain);
+      return ShrinkIterator.s2Large(list, domain);
     }
 
     DomainInterpretation[] subDoms = domain.getDepsDomains();

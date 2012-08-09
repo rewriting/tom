@@ -520,9 +520,10 @@ public class Sort implements Buildable {
       }
       // if an empty list of constructors is given
       if (monoIte == null) {
-        current = term;
-        hasnext = false;
-        return true;
+//        current = term;
+//        hasnext = false;
+//        return true;
+        return false;
       }
       if (monoIte.hasNext()) {
         current = monoIte.next();
@@ -561,6 +562,24 @@ public class Sort implements Buildable {
 
   @Override
   public Iterator<ATerm> lighten(ATerm term) {
+    return lightenStrict(term);
+  }
+  
+  private Iterator<ATerm> lightenStrict(ATerm term) {
+    Constructor constructor = getCurrentCons(term);
+    final List<Constructor> listSC = new LinkedList<Constructor>();
+    for (Constructor cons : constructors) {
+      if (cons.isSubCons(constructor) && cons != constructor && cons.getSize() < constructor.getSize()) {
+        listSC.add(cons);
+      }
+    }
+    Iterator<ATerm> res = new MultiConstructorIterator(term, listSC.iterator());
+    Iterator<ATerm> truc = new MultiConstructorIterator(term, listSC.iterator());
+    System.out.println(ShrinkIterator.toATermList(truc));
+    return res;
+  }
+  
+  private Iterator<ATerm> lightenLarge(ATerm term) {
     Constructor constructor = getCurrentCons(term);
     final List<Constructor> listSC = new LinkedList<Constructor>();
     for (Constructor cons : constructors) {
@@ -572,6 +591,8 @@ public class Sort implements Buildable {
       listSC.add(constructor);
     }
     Iterator<ATerm> res = new MultiConstructorIterator(term, listSC.iterator());
+    Iterator<ATerm> truc = new MultiConstructorIterator(term, listSC.iterator());
+    System.out.println(ShrinkIterator.toATermList(truc));
     return res;
   }
 

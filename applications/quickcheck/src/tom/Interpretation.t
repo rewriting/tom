@@ -114,7 +114,7 @@ public class Interpretation {
   }
 
   private ATermList s1(String varName, ATermList list, DomainInterpretation domain, Formula f, Map<String, ATerm> valuation){
-    ATermList res = filterList(varName, Shrink.s1(list, domain), domain, f, valuation);
+    ATermList res = filterList(varName, Shrink.s1Large(list, domain), domain, f, valuation);
     if (res.equals(list)) {
       return list;
     } else {
@@ -123,7 +123,7 @@ public class Interpretation {
   }
 
   private ATermList s2(String varName, ATermList list, DomainInterpretation domain, Formula f, Map<String, ATerm> valuation){
-    ATermList res = filterList(varName, logic.model.ShrinkIterator.s2(list, domain), domain, f, valuation);
+    ATermList res = filterList(varName, logic.model.ShrinkIterator.s2Large(list, domain), domain, f, valuation);
     if (res.equals(list)) {
       return list;
     } else {

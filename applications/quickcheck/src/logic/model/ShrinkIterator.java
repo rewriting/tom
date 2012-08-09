@@ -10,6 +10,8 @@ import aterm.ATermFactory;
 import aterm.ATermList;
 import aterm.pure.PureFactory;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Stack;
 
@@ -40,7 +42,7 @@ public class ShrinkIterator {
        * %match(term){ ATermAppl(fun, list) -> {return `list;} _ -> {throw new
        * UnsupportedOperationException("Operation not supported");} }
        */
-      if(term instanceof ATermAppl){
+      if (term instanceof ATermAppl) {
         return ((ATermAppl) term).getArguments();
       }
       throw new UnsupportedOperationException("Operation not supported");
@@ -92,9 +94,25 @@ public class ShrinkIterator {
     //</editor-fold>
   }
 
-  public static Iterator<ATerm> s1(final Iterator<ATerm> termIterator, final DomainInterpretation domain) {
+  public static Iterator<ATerm> s1Strict(ATerm term, final DomainInterpretation domain) {
+    return new s1Iterator(term, domain);
+  }
+
+  private static Iterator<ATerm> s1Large(ATerm term, final DomainInterpretation domain) {
+    Iterator<ATerm> res = s1Strict(term, domain);
+    Iterator<ATerm> tmp = s1Strict(term, domain);
+    if (!tmp.hasNext()) {
+      List<ATerm> list = new LinkedList<ATerm>();
+      list.add(term);
+      return list.iterator();
+    } else {
+      return res;
+    }
+  }
+
+  public static Iterator<ATerm> s1Large(final Iterator<ATerm> termIterator, final DomainInterpretation domain) {
     return new Iterator<ATerm>() {
-      //<editor-fold defaultstate="collapsed" desc="s1">
+      //<editor-fold defaultstate="collapsed" desc="s1Large">
       private Iterator<ATerm> globalIterator = termIterator;
       private DomainInterpretation dom = domain;
       private Iterator<ATerm> localIterator;
@@ -103,7 +121,7 @@ public class ShrinkIterator {
       public boolean hasNext() {
         if (localIterator == null) {
           if (globalIterator.hasNext()) {
-            localIterator = new s1Iterator(globalIterator.next(), dom);
+            localIterator = s1Large(globalIterator.next(), dom);
           } else {
             return false;
           }
@@ -111,7 +129,7 @@ public class ShrinkIterator {
         if (localIterator.hasNext()) {
           return true;
         } else if (globalIterator.hasNext()) {
-          localIterator = new s1Iterator(globalIterator.next(), dom);
+          localIterator = s1Large(globalIterator.next(), dom);
           return hasNext();
         } else {
           return false;
@@ -136,13 +154,32 @@ public class ShrinkIterator {
     };
   }
 
-  public static ATermList s1(ATermList list, DomainInterpretation domain) {
-    return toATermList(s1(toIterator(list), domain));
+  public static ATermList s1Large(ATermList list, DomainInterpretation domain) {
+    return toATermList(s1Large(toIterator(list), domain));
   }
 
-  public static Iterator<ATerm> s2(final Iterator<ATerm> termIterator, final DomainInterpretation domain) {
+  /*
+   * -------------------------- S2 -------------------------
+   */
+  public static Iterator<ATerm> s2Strict(ATerm term, final DomainInterpretation domain) {
+    return domain.lighten(term);
+  }
+
+  private static Iterator<ATerm> s2Large(ATerm term, final DomainInterpretation domain) {
+    Iterator<ATerm> res = s2Strict(term, domain);
+    Iterator<ATerm> tmp = s2Strict(term, domain);
+    if (!tmp.hasNext()) {
+      List<ATerm> list = new LinkedList<ATerm>();
+      list.add(term);
+      return list.iterator();
+    } else {
+      return res;
+    }
+  }
+
+  public static Iterator<ATerm> s2Large(final Iterator<ATerm> termIterator, final DomainInterpretation domain) {
     return new Iterator<ATerm>() {
-      //<editor-fold defaultstate="collapsed" desc="s2">
+      //<editor-fold defaultstate="collapsed" desc="s2Large">
       private Iterator<ATerm> globalIterator = termIterator;
       private DomainInterpretation dom = domain;
       private Iterator<ATerm> localIterator;
@@ -151,7 +188,7 @@ public class ShrinkIterator {
       public boolean hasNext() {
         if (localIterator == null) {
           if (globalIterator.hasNext()) {
-            localIterator = dom.lighten(globalIterator.next());
+            localIterator = s2Large(globalIterator.next(), dom);
           } else {
             return false;
           }
@@ -159,7 +196,7 @@ public class ShrinkIterator {
         if (localIterator.hasNext()) {
           return true;
         } else if (globalIterator.hasNext()) {
-          localIterator = dom.lighten(globalIterator.next());
+          localIterator = s2Large(globalIterator.next(), dom);
           return hasNext();
         } else {
           return false;
@@ -184,11 +221,13 @@ public class ShrinkIterator {
     };
   }
 
-  public static ATermList s2(ATermList list, DomainInterpretation domain) {
-    return toATermList(s2(toIterator(list), domain));
+  public static ATermList s2Large(ATermList list, DomainInterpretation domain) {
+    return toATermList(s2Large(toIterator(list), domain));
   }
 
-  // -------------------------- UTILS --------------------------
+  /*
+   * -------------------------- UTILS -----------------------
+   */
   public static Iterator<ATerm> toIterator(final ATermList list) {
     return new Iterator<ATerm>() {
       private ATermList state = list;
@@ -219,7 +258,7 @@ public class ShrinkIterator {
   public static ATermList toATermList2(Iterator<ATerm> iterator) {
     ATermFactory factory = null;
     ATermList list = null;
-    
+
     while (iterator.hasNext()) {
       ATerm aTerm = iterator.next();
       if (factory == null) {
@@ -230,7 +269,7 @@ public class ShrinkIterator {
     }
     return list;
   }
-  
+
   public static ATermList toATermList(Iterator<ATerm> iterator) {
     if (!iterator.hasNext()) {
       ATermFactory factory = new PureFactory();
@@ -239,10 +278,9 @@ public class ShrinkIterator {
     ATerm term = iterator.next();
     return toATermList(iterator).insert(term);
   }
-  
+
   // --------------------------- TESTS -----------------------------
-  
-  static Iterator<ATerm> getS1Iterator(ATerm term, DomainInterpretation domain){
+  static Iterator<ATerm> getS1Iterator(ATerm term, DomainInterpretation domain) {
     return new s1Iterator(term, domain);
   }
 }
