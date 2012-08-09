@@ -98,6 +98,7 @@ public class ShrinkIterator {
     return new s1Iterator(term, domain);
   }
 
+  @Deprecated
   private static Iterator<ATerm> s1Large(ATerm term, final DomainInterpretation domain) {
     Iterator<ATerm> res = s1Strict(term, domain);
     Iterator<ATerm> tmp = s1Strict(term, domain);
@@ -110,6 +111,7 @@ public class ShrinkIterator {
     }
   }
 
+  @Deprecated
   public static Iterator<ATerm> s1Large(final Iterator<ATerm> termIterator, final DomainInterpretation domain) {
     return new Iterator<ATerm>() {
       //<editor-fold defaultstate="collapsed" desc="s1Large">
@@ -154,6 +156,7 @@ public class ShrinkIterator {
     };
   }
 
+  @Deprecated
   public static ATermList s1Large(ATermList list, DomainInterpretation domain) {
     return toATermList(s1Large(toIterator(list), domain));
   }
@@ -165,6 +168,7 @@ public class ShrinkIterator {
     return domain.lighten(term);
   }
 
+  @Deprecated
   private static Iterator<ATerm> s2Large(ATerm term, final DomainInterpretation domain) {
     Iterator<ATerm> res = s2Strict(term, domain);
     Iterator<ATerm> tmp = s2Strict(term, domain);
@@ -177,6 +181,7 @@ public class ShrinkIterator {
     }
   }
 
+  @Deprecated
   public static Iterator<ATerm> s2Large(final Iterator<ATerm> termIterator, final DomainInterpretation domain) {
     return new Iterator<ATerm>() {
       //<editor-fold defaultstate="collapsed" desc="s2Large">
@@ -221,6 +226,7 @@ public class ShrinkIterator {
     };
   }
 
+  @Deprecated
   public static ATermList s2Large(ATermList list, DomainInterpretation domain) {
     return toATermList(s2Large(toIterator(list), domain));
   }

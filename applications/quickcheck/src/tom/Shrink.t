@@ -65,7 +65,7 @@ public class Shrink{
     return list;
   }
 
-
+  @Deprecated
   private static ATermList s1Large(ATerm term, DomainInterpretation domain){
     ATermList list = null;
     breakmatch : {
@@ -81,6 +81,7 @@ public class Shrink{
     }
   }
 
+  @Deprecated
   public static ATermList s1Large(ATermList list, DomainInterpretation domain){
     if (list.isEmpty()){
       return list;
@@ -89,9 +90,9 @@ public class Shrink{
     return s1Large(head, domain).concat(s1Large(list.getNext(), domain));
   }
 
-  public static ATermList s1WithDepth(ATerm term, DomainInterpretation domain, int depth) {
+  public static ATermList s1WithDepthStrict(ATerm term, DomainInterpretation domain, int depth) {
     if (depth == 0) {
-      return s1Large(term, domain);
+      return s1Strict(term, domain);
     }
 
     DomainInterpretation[] subDoms = domain.getDepsDomains();
@@ -105,7 +106,7 @@ public class Shrink{
     for (int childIndex = 0; childIndex < n; childIndex++) {
       ATerm child = args[childIndex];
       DomainInterpretation dom = getCorrespondingDomain(subDoms, child);
-      ATermList resS1 = s1WithDepth(child, dom, depth - 1);
+      ATermList resS1 = s1WithDepthStrict(child, dom, depth - 1);
 
       while (!resS1.isEmpty()) {
         ATerm[] newArgs = Arrays.copyOf(args, n); // here is necessary
@@ -119,11 +120,9 @@ public class Shrink{
     return list;
   }
 
-  public static ATermList s2WithDepth(ATerm term, DomainInterpretation domain, int depth) {
+  public static ATermList s2WithDepthStrict(ATerm term, DomainInterpretation domain, int depth) {
     if (depth == 0) {
-      ATermFactory factory = term.getFactory();
-      ATermList list = factory.makeList(term);
-      return ShrinkIterator.s2Large(list, domain);
+      return ShrinkIterator.toATermList(ShrinkIterator.s2Strict(term, domain));
     }
 
     DomainInterpretation[] subDoms = domain.getDepsDomains();
@@ -137,7 +136,7 @@ public class Shrink{
     for (int childIndex = 0; childIndex < n; childIndex++) {
       ATerm child = args[childIndex];
       DomainInterpretation dom = getCorrespondingDomain(subDoms, child);
-      ATermList resS2 = s2WithDepth(child, dom, depth - 1);
+      ATermList resS2 = s2WithDepthStrict(child, dom, depth - 1);
 
       while (!resS2.isEmpty()) {
         ATerm[] newArgs = Arrays.copyOf(args, n); // here is necessary

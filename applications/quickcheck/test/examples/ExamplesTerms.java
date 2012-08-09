@@ -12,6 +12,8 @@ public class ExamplesTerms {
   public static ATerm sortTestShrink2_s2test;
   public static ATerm[] sortTestShrink2_s2test_children = new ATerm[8];
   public static ATerm nonS1_2_Shinkable;
+  public static ATerm[] sortTestShrink2_s1depth_children = new ATerm[6];
+  public static ATerm[] sortTestShrink2_s2depth_children = new ATerm[2];
 
   public static void init() {
     ATermFactory factory = new PureFactory();
@@ -36,5 +38,13 @@ public class ExamplesTerms {
     sortTestShrink2_s2test_children[6] = sortTestShrink2_s2test7;
     sortTestShrink2_s2test_children[7] = sortTestShrink2_s2test8;
     nonS1_2_Shinkable = factory.parse("moyen(b(c(a(nill))),b(c(a(b(c(a(nill)))))),a(b(c(a(nill)))))");
+    sortTestShrink2_s1depth_children[0] = factory.parse("gros(b(c(a(nill))),b(c(a(b(c(a(nill)))))),c(a(b(c(a(nill))))),a(b(c(a(nill)))),a(b(c(a(b(c(a(nill))))))),a(b(c(a(b(c(a(nill))))))))");
+    sortTestShrink2_s1depth_children[1] = factory.parse("gros(b(c(a(nill))),b(c(a(b(c(a(nill)))))),c(a(b(c(a(nill))))),a(b(c(a(nill)))),a(b(c(a(nill)))),a(b(c(a(b(c(a(b(c(a(nill)))))))))))");
+    sortTestShrink2_s1depth_children[2] = factory.parse("gros(b(c(a(nill))),b(c(a(b(c(a(nill)))))),c(a(b(c(a(nill))))),a(nill),a(b(c(a(b(c(a(nill))))))),a(b(c(a(b(c(a(b(c(a(nill)))))))))))");
+    sortTestShrink2_s1depth_children[3] = factory.parse("gros(b(c(a(nill))),b(c(a(b(c(a(nill)))))),c(a(nill)),a(b(c(a(nill)))),a(b(c(a(b(c(a(nill))))))),a(b(c(a(b(c(a(b(c(a(nill)))))))))))");
+    sortTestShrink2_s1depth_children[4] = factory.parse("gros(b(c(a(nill))),b(c(a(nill))),c(a(b(c(a(nill))))),a(b(c(a(nill)))),a(b(c(a(b(c(a(nill))))))),a(b(c(a(b(c(a(b(c(a(nill)))))))))))");
+    sortTestShrink2_s1depth_children[5] = factory.parse("gros(nill,b(c(a(b(c(a(nill)))))),c(a(b(c(a(nill))))),a(b(c(a(nill)))),a(b(c(a(b(c(a(nill))))))),a(b(c(a(b(c(a(b(c(a(nill)))))))))))");
+    sortTestShrink2_s2depth_children[0] = factory.parse("gros(b(c(a(nill))),nill,c(a(b(c(a(nill))))),a(b(c(a(nill)))),a(b(c(a(b(c(a(nill))))))),a(b(c(a(b(c(a(b(c(a(nill)))))))))))");
+    sortTestShrink2_s2depth_children[1] = factory.parse("gros(nill,b(c(a(b(c(a(nill)))))),c(a(b(c(a(nill))))),a(b(c(a(nill)))),a(b(c(a(b(c(a(nill))))))),a(b(c(a(b(c(a(b(c(a(nill)))))))))))");
   }
 }
