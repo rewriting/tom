@@ -33,6 +33,12 @@ package body BTree is
     make(l,v,r)         { new BinaryTree'($v, $l, $r) } 
   }
 
+  %op TomBinaryTree leaf(value:int) {
+    is_fsym(t)        { (($t /= null) and then (($t.left = null) and ($t.right = null))) }
+    get_slot(value,t) { $t.all.value }
+    make(v)         { new BinaryTree'(null,$v,null) } 
+  }
+  
   %op TomBinaryTree empty() {
     is_fsym(t)        { $t = null }
     make()         { null } 
@@ -42,11 +48,35 @@ package body BTree is
  -- Example of use
  -----------------------------------------------------
 
-  procedure main is
-    n1 : access BinaryTree := new BinaryTree'(0,null,null);
-    n2 : access BinaryTree := `node(empty(),1,empty());
-    n3 : access BinaryTree := `node[value=2];
+  procedure print(n : access BinaryTree) is
   begin
-   null;
+    %match (n) {
+      empty() -> {
+        put_line( "empty" );
+      }
+      node(g,v,d) -> {
+        print(`g);
+        put_line( "This node has value " & Integer'image(`v));
+        print(`d);
+      }
+    }
+  end print;
+
+  procedure main is
+    n1 : access BinaryTree := new BinaryTree'(0,null,null); -- standard Ada constructor
+    n2 : access BinaryTree := `node(empty(),1,empty()); -- Tom constructor 
+    n3 : access BinaryTree := `node[value=2]; -- Tom constructor with default values
+  begin
+    %match (TomBinaryTree n1) {
+      node(empty(),v,empty()) -> {
+        put_line( "This node has value " & Integer'image(`v));
+      }
+    }
+    print( n2 );      
+    %match (n3) {
+      leaf(v) -> {
+        put_line( "This leaf has value " & Integer'image(`v));
+      }
+    }
   end Main;
 end BTree;
