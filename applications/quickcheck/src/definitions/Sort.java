@@ -574,8 +574,6 @@ public class Sort implements Buildable {
       }
     }
     Iterator<ATerm> res = new MultiConstructorIterator(term, listSC.iterator());
-    Iterator<ATerm> truc = new MultiConstructorIterator(term, listSC.iterator());
-    System.out.println(ShrinkIterator.toATermList(truc));
     return res;
   }
   
@@ -591,8 +589,6 @@ public class Sort implements Buildable {
       listSC.add(constructor);
     }
     Iterator<ATerm> res = new MultiConstructorIterator(term, listSC.iterator());
-    Iterator<ATerm> truc = new MultiConstructorIterator(term, listSC.iterator());
-    System.out.println(ShrinkIterator.toATermList(truc));
     return res;
   }
 

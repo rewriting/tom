@@ -66,7 +66,7 @@ public class Shrink{
   }
 
 
-  public static ATermList s1Large(ATerm term, DomainInterpretation domain){
+  private static ATermList s1Large(ATerm term, DomainInterpretation domain){
     ATermList list = null;
     breakmatch : {
       %match(term){

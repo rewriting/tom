@@ -101,15 +101,31 @@ public class ShrinkTest {
    * Tests of s1Strict method, of class Shrink.
    */
   @Test
-  public void testS1List() {
-    System.out.println("test s1 ATermList");
+  public void testS1StrictList() {
+    System.out.println("test s1 strict ATermList");
     Buildable sort = Examples.expr;
     ATerm term = ExamplesTerms.expr_T1;
     DomainInterpretation domain = new BuildableDomain(sort);
-    ATermList result = Shrink.s1Large(term, domain);
+    ATermList result = Shrink.s1Strict(term, domain);
     assert result.getChildCount() == 2;
     assert result.getChildAt(0).equals(ExamplesTerms.expr_T1Left);
     assert result.getChildAt(1).equals(ExamplesTerms.expr_T1Right);
+  }
+  
+  @Test
+  public void testS1LargeList() {
+    System.out.println("test s1 large ATermList");
+    Buildable sort = Examples.expr;
+    ATerm t1 = ExamplesTerms.expr_T1;
+    ATerm t2 = ExamplesTerms.expr_T1;
+    DomainInterpretation domain = new BuildableDomain(sort);
+    ATermFactory factory = t1.getFactory();
+    ATermList result = Shrink.s1Large(factory.makeList(t1).append(t2), domain);
+    assert result.getChildCount() == 4;
+    assert result.getChildAt(0).equals(ExamplesTerms.expr_T1Left);
+    assert result.getChildAt(1).equals(ExamplesTerms.expr_T1Right);
+    assert result.getChildAt(2).equals(ExamplesTerms.expr_T1Left);
+    assert result.getChildAt(3).equals(ExamplesTerms.expr_T1Right);
   }
 
   @Test
@@ -117,7 +133,6 @@ public class ShrinkTest {
     System.out.println("test s1 strict list non shrinkable");
     Buildable sort = Examples.sortTestShrink2;
     ATerm term = ExamplesTerms.nonS1_2_Shinkable;
-    ATermFactory factory = term.getFactory();
     DomainInterpretation domain = new BuildableDomain(sort);
     ATermList result = Shrink.s1Strict(term, domain);
     assert result.getChildCount() == 0;
