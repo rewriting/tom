@@ -40,12 +40,12 @@ public class DefaultValue {
   }
  
   %op Person person(firstname:String, lastname:String) {
-    is_fsym(t) { t instanceof Person }
-    get_slot(firstname,t) { t.getFirstname() }
-    get_slot(lastname,t) { t.getLastname() }
+    is_fsym(t) { $t instanceof Person }
+    get_slot(firstname,t) { $t.getFirstname() }
+    get_slot(lastname,t) { $t.getLastname() }
     get_default(firstname) { "Bob" }
     get_default(lastname) { "Doe" }
-    make(t0, t1) {  new Person(t0, t1) }
+    make(t0, t1) {  new Person($t0, $t1) }
   }
 
   public static void main(String[] args) {
