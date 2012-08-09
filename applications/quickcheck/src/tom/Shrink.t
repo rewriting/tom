@@ -122,7 +122,7 @@ public class Shrink{
 
   public static ATermList s2WithDepthStrict(ATerm term, DomainInterpretation domain, int depth) {
     if (depth == 0) {
-      return ShrinkIterator.toATermList(ShrinkIterator.s2Strict(term, domain));
+      return ShrinkIterator.toATermList(ShrinkIterator.s2Strict(term, domain), term.getFactory());
     }
 
     DomainInterpretation[] subDoms = domain.getDepsDomains();
