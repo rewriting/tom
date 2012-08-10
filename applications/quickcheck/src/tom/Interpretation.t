@@ -168,7 +168,7 @@ public class Interpretation {
     ATerm term = null;
     ATermList current = list;
     int sizeMin = Integer.MAX_VALUE;
-    while (current.isEmpty()) {
+    while (!current.isEmpty()) {
       int size = sizeATerm(current.getFirst());
       if (size < sizeMin) {
         term = current.getFirst();
@@ -194,7 +194,7 @@ public class Interpretation {
     int depth = depth(term);
     ATermList l1 = null;
     ATermList l2 = null;
-    for(int i = 0; i<depth; i++){
+    for(int i = 0; i<=depth; i++){
       l1 = s1(varName, l0, domain, f, valuation, i);
       l2 = s2(varName, l1, domain, f, valuation, i);
     }

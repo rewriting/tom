@@ -32,18 +32,18 @@ public class Shrink{
   }
 
 
-  private static ATermList s1Strict(ATermList list, DomainInterpretation domain){
+  private static ATermList s1Strict_aux(ATermList list, DomainInterpretation domain){
     %match(list){
       concATerm() -> {return `concATerm();}
       concATerm(hd, tl*) -> {
         if(domain.includes(`hd)){
-          ATermList tail = `s1Strict(tl*, domain);
+          ATermList tail = `s1Strict_aux(tl*, domain);
           return `concATerm(hd, tail*);
         } else {
           %match(`hd){
             ATermAppl(_, listFields) -> {
-              ATermList a = s1Strict(`listFields, domain);
-              ATermList b = s1Strict(`tl*, domain);
+              ATermList a = s1Strict_aux(`listFields, domain);
+              ATermList b = s1Strict_aux(`tl*, domain);
               return `concATerm(a*, b*);
             }
             _ -> {throw new UnsupportedOperationException();}
@@ -58,7 +58,12 @@ public class Shrink{
     ATermList list = null;
     breakmatch : {
       %match(term){
-        ATermAppl(_, listFields) -> {list = s1Strict(`listFields, domain); break breakmatch;}
+        ATermAppl(_, listFields) -> {list = s1Strict_aux(`listFields, domain); break breakmatch;}
+        ATermInt(_) -> {
+          System.out.println("WARNING: ATermInt are not shrinkable.");
+          list = term.getFactory().makeList(term);
+          return list;
+        }
         _ -> {throw new UnsupportedOperationException();}
       }
     }
@@ -66,11 +71,11 @@ public class Shrink{
   }
 
   @Deprecated
-  private static ATermList s1Large(ATerm term, DomainInterpretation domain){
+  private static ATermList s1Large_aux(ATerm term, DomainInterpretation domain){
     ATermList list = null;
     breakmatch : {
       %match(term){
-        ATermAppl(_, listFields) -> {list = s1Strict(`listFields, domain); break breakmatch;}
+        ATermAppl(_, listFields) -> {list = s1Strict_aux(`listFields, domain); break breakmatch;}
         _ -> {throw new UnsupportedOperationException();}
       }
     }
@@ -87,7 +92,7 @@ public class Shrink{
       return list;
     }
     ATerm head = list.getFirst();
-    return s1Large(head, domain).concat(s1Large(list.getNext(), domain));
+    return s1Large_aux(head, domain).concat(s1Large(list.getNext(), domain));
   }
 
   public static ATermList s1WithDepthStrict(ATerm term, DomainInterpretation domain, int depth) {
@@ -150,7 +155,7 @@ public class Shrink{
     return list;
   }
 
-  private static ATermList s1WithDepthLarge(ATerm term, DomainInterpretation domain, int depth){
+  private static ATermList s1WithDepthLarge_aux(ATerm term, DomainInterpretation domain, int depth){
     ATermList res = s1WithDepthStrict(term, domain, depth);
     if (res.isEmpty()) {
       return term.getFactory().makeList(term);
@@ -159,7 +164,7 @@ public class Shrink{
     }
   }
   
-  private static ATermList s2WithDepthLarge(ATerm term, DomainInterpretation domain, int depth){
+  private static ATermList s2WithDepthLarge_aux(ATerm term, DomainInterpretation domain, int depth){
     ATermList res = s2WithDepthStrict(term, domain, depth);
     if (res.isEmpty()) {
       return term.getFactory().makeList(term);
@@ -172,7 +177,7 @@ public class Shrink{
     if (list.isEmpty()) {
       return list;
     } else {
-      return s1WithDepthLarge(list.getFirst(), domain, depth).concat(s1WithDepthLarge(list.getNext(), domain, depth));
+      return s1WithDepthLarge_aux(list.getFirst(), domain, depth).concat(s1WithDepthLarge(list.getNext(), domain, depth));
     }
   }
 
@@ -181,7 +186,7 @@ public class Shrink{
     if (list.isEmpty()) {
       return list;
     } else {
-      return s2WithDepthLarge(list.getFirst(), domain, depth).concat(s2WithDepthLarge(list.getNext(), domain, depth));
+      return s2WithDepthLarge_aux(list.getFirst(), domain, depth).concat(s2WithDepthLarge(list.getNext(), domain, depth));
     }
   }
   
