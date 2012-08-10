@@ -188,19 +188,16 @@ public class Interpretation {
     return res + 1;
   }
 
-  private ATerm shrink(String varName, ATerm term, DomainInterpretation domain, Formula f, Map<String, ATerm> valuation){
+  private ATerm shrink(String varName, ATerm term, DomainInterpretation domain, Formula f, Map<String, ATerm> valuation) {
     ATermFactory factory = term.getFactory();
     ATermList l0 = factory.makeList(term);
     int depth = depth(term);
-    ATermList l1 = null;
-    ATermList l2 = null;
-    for(int i = 0; i<=depth; i++){
-      l1 = s1(varName, l0, domain, f, valuation, i);
-      l2 = s2(varName, l1, domain, f, valuation, i);
+    for(int i = 0; i <= depth; i++) {
+      l0 = s1(varName, l0, domain, f, valuation, i);
+      l0 = s2(varName, l0, domain, f, valuation, i);
     }
-    return minATerm(l2);
+    return minATerm(l0);
   }
-
 
   private CounterExample validateForallWithShrunkCE(String varName, String domainName, Formula f, Map<String, ATerm> valuation){
     DomainInterpretation domain = domain_map.get(domainName);

@@ -266,13 +266,13 @@ public class LogicTest {
     };
 
     map_pre.put("P", REV);
-    map_dom.put("D", List);
+    map_dom.put("D", domain);
 
     Interpretation interp_list = new Interpretation(map_pre, map_sig, map_dom);
 
     String res = interp_list.validateFormulaWithCE(formula, new HashMap<String, ATerm>()).toString();
     System.out.println(res);
-    assert res.equals("NoCE()");
+    assert res.equals("CEForall(\"x\",consList(b,consList(c,nill)),CEPredicate(\"P\",ListArgs(Var(\"x\"))))");
   }
 
   @Test

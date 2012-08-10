@@ -14,6 +14,7 @@ public class ExamplesTerms {
   public static ATerm nonS1_2_Shinkable;
   public static ATerm[] sortTestShrink2_s1depth_children = new ATerm[6];
   public static ATerm[] sortTestShrink2_s2depth_children = new ATerm[2];
+  public static ATerm listABS_T1;
 
   public static void init() {
     ATermFactory factory = new PureFactory();
@@ -46,5 +47,6 @@ public class ExamplesTerms {
     sortTestShrink2_s1depth_children[5] = factory.parse("gros(nill,b(c(a(b(c(a(nill)))))),c(a(b(c(a(nill))))),a(b(c(a(nill)))),a(b(c(a(b(c(a(nill))))))),a(b(c(a(b(c(a(b(c(a(nill)))))))))))");
     sortTestShrink2_s2depth_children[0] = factory.parse("gros(b(c(a(nill))),nill,c(a(b(c(a(nill))))),a(b(c(a(nill)))),a(b(c(a(b(c(a(nill))))))),a(b(c(a(b(c(a(b(c(a(nill)))))))))))");
     sortTestShrink2_s2depth_children[1] = factory.parse("gros(nill,b(c(a(b(c(a(nill)))))),c(a(b(c(a(nill))))),a(b(c(a(nill)))),a(b(c(a(b(c(a(nill))))))),a(b(c(a(b(c(a(b(c(a(nill)))))))))))");
+    listABS_T1 = factory.parse("consList(b,consList(b,consList(c,nill)))");
   }
 }
