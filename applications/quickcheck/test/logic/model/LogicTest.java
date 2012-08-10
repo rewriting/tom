@@ -155,7 +155,7 @@ public class LogicTest {
 
   @Test
   public void testInterpInt() {
-
+    System.out.println("test testInterpInt");
     Map<String, PredicateInterpretation> map_pre = new HashMap<String, PredicateInterpretation>();
     Map<String, SignatureInterpretation> map_sig = new HashMap<String, SignatureInterpretation>();
     Map<String, DomainInterpretation> map_dom = new HashMap<String, DomainInterpretation>();
@@ -170,7 +170,7 @@ public class LogicTest {
 
   @Test
   public void testInterpIntCE() {
-
+    System.out.println("test testInterpIntCE");
     Map<String, PredicateInterpretation> map_pre = new HashMap<String, PredicateInterpretation>();
     Map<String, SignatureInterpretation> map_sig = new HashMap<String, SignatureInterpretation>();
     Map<String, DomainInterpretation> map_dom = new HashMap<String, DomainInterpretation>();
@@ -212,7 +212,7 @@ public class LogicTest {
 
   @Test
   public void testInterpListCE() {
-
+    System.out.println("test testInterpListCE");
     Map<String, PredicateInterpretation> map_pre = new HashMap<String, PredicateInterpretation>();
     Map<String, SignatureInterpretation> map_sig = new HashMap<String, SignatureInterpretation>();
     Map<String, DomainInterpretation> map_dom = new HashMap<String, DomainInterpretation>();
@@ -227,8 +227,28 @@ public class LogicTest {
   }
 
   @Test
-  public void testInterpListCEFalse() {
+  public void testEVEN_ODD_CE() {
+    System.out.println("test testEVEN_ODD_CE");
+    Map<String, PredicateInterpretation> map_pre = new HashMap<String, PredicateInterpretation>();
+    Map<String, SignatureInterpretation> map_sig = new HashMap<String, SignatureInterpretation>();
+    Map<String, DomainInterpretation> map_dom = new HashMap<String, DomainInterpretation>();
 
+    map_pre.put("EVEN", EVEN);
+    map_pre.put("ODD", ODD);
+
+    map_dom.put("int", Integer);
+
+    map_sig.put("succ", succ);
+
+    Interpretation interp_list = new Interpretation(map_pre, map_sig, map_dom);
+
+    String res = interp_list.validateFormulaWithCE(even_odd, new HashMap<String, ATerm>()).toString();
+    assert res.equals("NoCE()");
+  }
+
+  @Test
+  public void testInterpListCEFalse() {
+    System.out.println("test shrink consList(b,consList(b,consList(c,nill)))");
     Map<String, PredicateInterpretation> map_pre = new HashMap<String, PredicateInterpretation>();
     Map<String, SignatureInterpretation> map_sig = new HashMap<String, SignatureInterpretation>();
     Map<String, DomainInterpretation> map_dom = new HashMap<String, DomainInterpretation>();
@@ -271,27 +291,54 @@ public class LogicTest {
     Interpretation interp_list = new Interpretation(map_pre, map_sig, map_dom);
 
     String res = interp_list.validateFormulaWithCE(formula, new HashMap<String, ATerm>()).toString();
-    System.out.println(res);
     assert res.equals("CEForall(\"x\",consList(b,consList(c,nill)),CEPredicate(\"P\",ListArgs(Var(\"x\"))))");
   }
 
   @Test
-  public void testEVEN_ODD_CE() {
-
+  public void testInterpListCEFalse2() {
+    System.out.println("test shrink consList(b,consList(c,consList(c,nill)))");
     Map<String, PredicateInterpretation> map_pre = new HashMap<String, PredicateInterpretation>();
     Map<String, SignatureInterpretation> map_sig = new HashMap<String, SignatureInterpretation>();
     Map<String, DomainInterpretation> map_dom = new HashMap<String, DomainInterpretation>();
 
-    map_pre.put("EVEN", EVEN);
-    map_pre.put("ODD", ODD);
+    DomainInterpretation domain = new DomainInterpretation() {
+      @Override
+      public ATerm chooseElement(int n) {
+        ATerm term = Examples.listABC.generate(0);
+        ATermFactory factory = term.getFactory();
+        return factory.parse("consList(b,consList(c,consList(c,nill)))");
+      }
 
-    map_dom.put("int", Integer);
+      @Override
+      public boolean includes(ATerm term) {
+        return examples.Examples.listABC.isTypeOf(term);
+      }
 
-    map_sig.put("succ", succ);
+      @Override
+      public Iterator<ATerm> lighten(ATerm term) {
+        return Examples.listABC.lighten(term);
+      }
+
+      @Override
+      public DomainInterpretation[] getDepsDomains() {
+        //TODO : this method can be optimized because it use currently all recursive dependences.
+        Set<Buildable> deps = Examples.listABC.getDependences();
+        DomainInterpretation[] res = new DomainInterpretation[deps.size()];
+        int i = 0;
+        for(Buildable buildable : deps) {
+          res[i] = new BuildableDomain(buildable);
+          i++;
+        }
+        return res;
+      }
+    };
+
+    map_pre.put("P", REV);
+    map_dom.put("D", domain);
 
     Interpretation interp_list = new Interpretation(map_pre, map_sig, map_dom);
 
-    String res = interp_list.validateFormulaWithCE(even_odd, new HashMap<String, ATerm>()).toString();
-    assert res.equals("NoCE()");
+    String res = interp_list.validateFormulaWithCE(formula, new HashMap<String, ATerm>()).toString();
+    assert res.equals("CEForall(\"x\",consList(b,consList(c,nill)),CEPredicate(\"P\",ListArgs(Var(\"x\"))))");
   }
 }

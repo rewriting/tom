@@ -21,6 +21,7 @@ public class TestGen {
     return null;
   }
 
+
   public static void main(String[] args){
     IntList a = `consList(a(),consList(b(),consList(c(), nill())));
     System.out.println(a);
