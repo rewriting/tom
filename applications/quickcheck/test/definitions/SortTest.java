@@ -749,18 +749,17 @@ public class SortTest {
   /**
    * Tests of fundamental properties of iterators.
    */
-
   @Test
-  public void testFundamentalOneConsIter(){
+  public void testFundamentalOneConsIter() {
     System.out.println("test Fundamental oneConsIter");
     ATerm term = Examples.expr.generate(10);
     Constructor cons = Examples.expr.getCons("plus");
     Iterator<ATerm> ite = Examples.expr.getOneConsIter(term, cons);
-    LibTests.testIterator(ite,10, false);
+    LibTests.testIterator(ite, 10, false);
   }
 
   @Test
-  public void testFundamentalMultiConsIter(){
+  public void testFundamentalMultiConsIter() {
     System.out.println("test Fundamental MultiConsIter");
     ATerm term = Examples.expr.generate(10);
     Constructor c1 = Examples.expr.getCons("plus");
@@ -771,14 +770,14 @@ public class SortTest {
     list.add(c2);
     list.add(c3);
     Iterator<ATerm> ite = Examples.expr.getMultiConsIter(term, list.iterator());
-    LibTests.testIterator(ite,100, false);
+    LibTests.testIterator(ite, 100, false);
   }
 
   @Test
-  public void testFundamentalLigthen(){
+  public void testFundamentalLigthen() {
     System.out.println("test Fundamental ligthen hasNext()");
     ATerm term = Examples.expr.generate(10);
     Iterator<ATerm> ite = Examples.expr.lighten(term);
-    LibTests.testIterator(ite,100, false);
+    LibTests.testIterator(ite, 100, false);
   }
 }

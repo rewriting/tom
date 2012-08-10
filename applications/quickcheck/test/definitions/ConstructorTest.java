@@ -12,7 +12,7 @@ import org.junit.*;
  * @author hubert
  */
 public class ConstructorTest {
-  
+
   public ConstructorTest() {
   }
 
@@ -23,12 +23,12 @@ public class ConstructorTest {
   @AfterClass
   public static void tearDownClass() throws Exception {
   }
-  
+
   @Before
   public void setUp() {
     Examples.init();
   }
-  
+
   @After
   public void tearDown() {
   }

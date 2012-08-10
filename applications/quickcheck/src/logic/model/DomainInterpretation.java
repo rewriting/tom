@@ -29,11 +29,11 @@ public interface DomainInterpretation {
    * @return true if term is from type interpreted by this.
    */
   public boolean includes(ATerm term);
-  
+
   /**
-   * 
+   *
    * @param term
-   * @return 
+   * @return
    */
   public Iterator<ATerm> lighten(ATerm term);
 

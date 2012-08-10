@@ -31,9 +31,9 @@ class StrategyMakeMaxDimExactly extends Strategy {
 
     //re-apply algorithm on same dimension fields in order to eliminate them
     int i = 0;
-    for (Slot field : listHigherDimFields) {
+    for(Slot field : listHigherDimFields) {
       Strategy req;
-      if (!param.requireTermination(field, ni)) {
+      if(!param.requireTermination(field, ni)) {
         req = new StrategyMakeMaxDimExactly();
       } else {
         req = new StrategyMakeMinimal();

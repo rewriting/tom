@@ -49,17 +49,17 @@ public class Sort implements Buildable {
 
   @Override
   public int getDimension() {
-    if (dimension != -1) {
+    if(dimension != -1) {
       return dimension;
     }
     int dim = 0;
     int add = 0;
-    if (isRec()) {
+    if(isRec()) {
       add = 1;
     }
-    for (Buildable typable : dependences) {
+    for(Buildable typable : dependences) {
       boolean dependsOn = typable.getDependences().contains(this);
-      if (!dependsOn) {
+      if(!dependsOn) {
         dim = Math.max(dim, typable.getDimension());
       }
     }
@@ -87,12 +87,12 @@ public class Sort implements Buildable {
    * Integer.MAX_VALUE if no path reaches a leaf.
    */
   private int minimalDepth() {
-    if (minDepth != -1 && minDepth != Integer.MAX_VALUE) {
+    if(minDepth != -1 && minDepth != Integer.MAX_VALUE) {
       return minDepth;
     }
     int res = Integer.MAX_VALUE;
-    for (Constructor constructor : constructors) {
-      if (constructor.isLocked()) {
+    for(Constructor constructor : constructors) {
+      if(constructor.isLocked()) {
         //this case should not directly happen if minimalDepth() is called by user:
         //only during recursive call.
         //the returned value is sensless
@@ -112,12 +112,12 @@ public class Sort implements Buildable {
    * Integer.MAX_VALUE if no path reaches a leaf.
    */
   private int minimalNodes() {
-    if (minNodes != -1 && minNodes != Integer.MAX_VALUE) {
+    if(minNodes != -1 && minNodes != Integer.MAX_VALUE) {
       return minNodes;
     }
     int res = Integer.MAX_VALUE;
-    for (Constructor constructor : constructors) {
-      if (constructor.isLocked()) {
+    for(Constructor constructor : constructors) {
+      if(constructor.isLocked()) {
         //this case should not directly happen if minimalNodes() is called by user:
         //only during recursive call.
         //the returned value is sensless
@@ -130,24 +130,24 @@ public class Sort implements Buildable {
   }
 
   Slot generateSlot(int n, StrategyParameters param) {
-    if (this.minimalDepth() == Integer.MAX_VALUE) {
+    if(this.minimalDepth() == Integer.MAX_VALUE) {
       throw new UnsupportedOperationException("Type " + this.getName() + " does not terminate.");
     }
     Slot slot = new Slot(this);
     HashSet<Slot> listHoles = new HashSet<Slot>();
     listHoles.add(slot);
-    while (!listHoles.isEmpty()) {
+    while(!listHoles.isEmpty()) {
 
       //retrieve set of maximal dimension terms
       int dimMax = 0;
       HashSet<Slot> toVisit = new HashSet<Slot>();
-      for (Slot term : listHoles) {
+      for(Slot term : listHoles) {
         int d = term.getDimension();
-        if (d > dimMax) {
+        if(d > dimMax) {
           dimMax = d;
           toVisit = new HashSet<Slot>();
         }
-        if (d == dimMax) {
+        if(d == dimMax) {
           toVisit.add(term);
         }
       }
@@ -157,9 +157,9 @@ public class Sort implements Buildable {
 
       //fill each maximal dimension term
       int i = 0;
-      for (Slot term : toVisit) {
+      for(Slot term : toVisit) {
         Strategy req;
-        if (!param.requireTermination(term, ns[i])) {
+        if(!param.requireTermination(term, ns[i])) {
           req = new StrategyMakeMaxDimAtMost();
         } else {
           req = new StrategyMakeMinimal();
@@ -185,7 +185,7 @@ public class Sort implements Buildable {
   @Override
   public boolean updateDependences() {
     Set<Buildable> depsClone = new HashSet<Buildable>(dependences);
-    for (Buildable deps : depsClone) {
+    for(Buildable deps : depsClone) {
       dependences.addAll(deps.getDependences());
     }
     //return true if there were changes
@@ -225,17 +225,17 @@ public class Sort implements Buildable {
    * @return choosen constructor
    */
   Constructor chooseAnyFiniteConstructor() {
-    if (constructors.isEmpty()) {
+    if(constructors.isEmpty()) {
       throw new UnsupportedOperationException("No constructor");
     }
     ArrayList<Constructor> copy = new ArrayList<Constructor>(constructors.size());
-    for (Constructor constructor : constructors) {
+    for(Constructor constructor : constructors) {
       copy.add(constructor);
     }
-    while (!copy.isEmpty()) {
+    while(!copy.isEmpty()) {
       int choice = (int) (Math.random() * copy.size());
       Constructor cons = copy.get(choice);
-      if (cons.minimalDepth() != Integer.MAX_VALUE) {
+      if(cons.minimalDepth() != Integer.MAX_VALUE) {
         return cons;
       }
       copy.remove(cons);
@@ -244,24 +244,24 @@ public class Sort implements Buildable {
   }
 
   Constructor chooseMaxDimConstructor() {
-    if (constructors.isEmpty()) {
+    if(constructors.isEmpty()) {
       throw new UnsupportedOperationException("No constructor");
     }
     ArrayList<Constructor> maxCons = new ArrayList<Constructor>(constructors.size());
     int max = 0;
-    for (Constructor constructor : constructors) {
-      if (constructor.minimalDepth() != Integer.MAX_VALUE) {
+    for(Constructor constructor : constructors) {
+      if(constructor.minimalDepth() != Integer.MAX_VALUE) {
         int dim = constructor.getDimention();
-        if (dim > max) {
+        if(dim > max) {
           maxCons = new ArrayList<Constructor>();
           max = dim;
         }
-        if (dim == max) {
+        if(dim == max) {
           maxCons.add(constructor);
         }
       }
     }
-    if (maxCons.isEmpty()) {
+    if(maxCons.isEmpty()) {
       throw new UnsupportedOperationException("No constructor is finite");
     } else {
       return maxCons.get((int) (Math.random() * maxCons.size()));
@@ -275,13 +275,13 @@ public class Sort implements Buildable {
    */
   Constructor chooseMinDepthConstructor() {
     ArrayList<Constructor> minCons = new ArrayList<Constructor>(constructors.size());
-    for (Constructor constructor : constructors) {
+    for(Constructor constructor : constructors) {
       int m = constructor.minimalDepth();
-      if (m == minimalDepth()) {
+      if(m == minimalDepth()) {
         minCons.add(constructor);
       }
     }
-    if (minCons.isEmpty()) {
+    if(minCons.isEmpty()) {
       throw new UnsupportedOperationException("Internal error happends when backtracking (" + getName() + " : " + minimalDepth() + ").");
     } else {
       return minCons.get((int) (Math.random() * minCons.size()));
@@ -295,13 +295,13 @@ public class Sort implements Buildable {
    */
   Constructor chooseMinNodesConstructor() {
     ArrayList<Constructor> minCons = new ArrayList<Constructor>(constructors.size());
-    for (Constructor constructor : constructors) {
+    for(Constructor constructor : constructors) {
       int m = constructor.minimalNodes();
-      if (m == minimalDepth()) {
+      if(m == minimalDepth()) {
         minCons.add(constructor);
       }
     }
-    if (minCons.isEmpty()) {
+    if(minCons.isEmpty()) {
       throw new UnsupportedOperationException("Internal error happends when backtracking (" + getName() + " : " + minimalDepth() + ").");
     } else {
       return minCons.get((int) (Math.random() * minCons.size()));
@@ -323,7 +323,7 @@ public class Sort implements Buildable {
   @Override
   public String toString() {
     String res = this.getName() + " : \n";
-    for (Constructor constructor : constructors) {
+    for(Constructor constructor : constructors) {
       res += "\t" + constructor + "\n";
     }
     return res;
@@ -331,8 +331,8 @@ public class Sort implements Buildable {
 
   private Constructor getCurrentCons(ATerm term) {
     String nameTerm = term.toString();
-    for (Constructor constructor : constructors) {
-      if (nameTerm.startsWith(constructor.getName())) {
+    for(Constructor constructor : constructors) {
+      if(nameTerm.startsWith(constructor.getName())) {
         return constructor;
       }
     }
@@ -369,11 +369,11 @@ public class Sort implements Buildable {
 
       // build the map which contains all possible fields
       int nbrChildren = term.getChildCount();
-      for (int i = 0; i < nbrChildren; i++) {
+      for(int i = 0; i < nbrChildren; i++) {
         ATerm field = (ATerm) term.getChildAt(i);
         String type = getType(field, listFieldsInit).getName();
         List<ATerm> occurences = mapInitialFields.get(type);
-        if (occurences == null) {
+        if(occurences == null) {
           occurences = new ArrayList<ATerm>();
           mapInitialFields.put(type, occurences);
         }
@@ -381,16 +381,16 @@ public class Sort implements Buildable {
       }
 
       // build the map which contains numbers of needed instances for each type.
-      for (int i = 0; i < cons.getFields().length; i++) {
+      for(int i = 0; i < cons.getFields().length; i++) {
         Buildable buildable = cons.getFields()[i];
         Integer n = mapCountConsFieldsType.get(buildable);
-        if (n == null) {
+        if(n == null) {
           n = 0;
         }
         mapCountConsFieldsType.put(buildable, n + 1);
       }
       progress = mapCountConsFieldsType.keySet().iterator();
-      if (progress.hasNext()) {
+      if(progress.hasNext()) {
         beingModified = progress.next();
       } else {
         beingModified = null;
@@ -401,9 +401,9 @@ public class Sort implements Buildable {
     }
 
     private Buildable getType(ATerm term, Buildable[] listFieldsInit) {
-      for (int i = 0; i < listFieldsInit.length; i++) {
+      for(int i = 0; i < listFieldsInit.length; i++) {
         Buildable type = listFieldsInit[i];
-        if (type.isTypeOf(term)) {
+        if(type.isTypeOf(term)) {
           return type;
         }
       }
@@ -412,13 +412,13 @@ public class Sort implements Buildable {
 
     @Override
     public boolean hasNext() {
-      if (current != null) {
+      if(current != null) {
         return true;
       }
-      if (!hasnext) {
+      if(!hasnext) {
         return false;
       }
-      if (beingModified == null) {
+      if(beingModified == null) {
         // if new constructor has no field
         AFun fun = factory.makeAFun(cons.getName(), 0, false);
         current = factory.makeAppl(fun);
@@ -428,8 +428,8 @@ public class Sort implements Buildable {
       int k = mapCountConsFieldsType.get(beingModified);
       List<ATerm> possibleFields = mapInitialFields.get(beingModified.getName());
       int n = possibleFields.size();
-      if (offset > n - k) {
-        if (progress.hasNext()) {
+      if(offset > n - k) {
+        if(progress.hasNext()) {
           beingModified = progress.next();
 //          offset = 0;
           offset = 1;
@@ -445,15 +445,15 @@ public class Sort implements Buildable {
 
       Map<Buildable, Integer> states = new HashMap<Buildable, Integer>();
 
-      for (int i = 0; i < args.length; i++) {
+      for(int i = 0; i < args.length; i++) {
         Buildable field = cons.getFields()[i];
         Integer occ = states.get(field);
-        if (occ == null) {
+        if(occ == null) {
           occ = 0;
         }
         states.put(field, occ + 1);
         int index = occ;
-        if (field == beingModified) {
+        if(field == beingModified) {
           index += offset;
         }
         ATerm value = mapInitialFields.get(field.getName()).get(index);
@@ -466,11 +466,11 @@ public class Sort implements Buildable {
 
     @Override
     public ATerm next() {
-      if (current != null) {
+      if(current != null) {
         ATerm res = current;
         current = null;
         return res;
-      } else if (hasNext()) {
+      } else if(hasNext()) {
         System.out.println("WARNING : the use of the methode next() is not preceded by hasNext().");
         ATerm res = current;
         current = null;
@@ -501,7 +501,7 @@ public class Sort implements Buildable {
       this.consIte = ite;
       this.term = term;
       this.current = null;
-      if (consIte.hasNext()) {
+      if(consIte.hasNext()) {
         Constructor c = consIte.next();
         monoIte = new OneConstructorIterator(term, c);
       } else {
@@ -512,23 +512,23 @@ public class Sort implements Buildable {
 
     @Override
     public boolean hasNext() {
-      if (current != null) {
+      if(current != null) {
         return true;
       }
-      if (!hasnext && current == null) {
+      if(!hasnext && current == null) {
         return false;
       }
       // if an empty list of constructors is given
-      if (monoIte == null) {
+      if(monoIte == null) {
 //        current = term;
 //        hasnext = false;
 //        return true;
         return false;
       }
-      if (monoIte.hasNext()) {
+      if(monoIte.hasNext()) {
         current = monoIte.next();
         return true;
-      } else if (consIte.hasNext()) {
+      } else if(consIte.hasNext()) {
         monoIte = new OneConstructorIterator(term, consIte.next());
         return hasNext();
       } else {
@@ -539,11 +539,11 @@ public class Sort implements Buildable {
 
     @Override
     public ATerm next() {
-      if (current != null) {
+      if(current != null) {
         ATerm res = current;
         current = null;
         return res;
-      } else if (hasNext()) {
+      } else if(hasNext()) {
         System.out.println("WARNING : the use of the methode next() is not preceded by hasNext().");
         ATerm res = current;
         current = null;
@@ -564,28 +564,28 @@ public class Sort implements Buildable {
   public Iterator<ATerm> lighten(ATerm term) {
     return lightenStrict(term);
   }
-  
+
   private Iterator<ATerm> lightenStrict(ATerm term) {
     Constructor constructor = getCurrentCons(term);
     final List<Constructor> listSC = new LinkedList<Constructor>();
-    for (Constructor cons : constructors) {
-      if (cons.isSubCons(constructor) && cons != constructor && cons.getSize() < constructor.getSize()) {
+    for(Constructor cons : constructors) {
+      if(cons.isSubCons(constructor) && cons != constructor && cons.getSize() < constructor.getSize()) {
         listSC.add(cons);
       }
     }
     Iterator<ATerm> res = new MultiConstructorIterator(term, listSC.iterator());
     return res;
   }
-  
+
   private Iterator<ATerm> lightenLarge(ATerm term) {
     Constructor constructor = getCurrentCons(term);
     final List<Constructor> listSC = new LinkedList<Constructor>();
-    for (Constructor cons : constructors) {
-      if (cons.isSubCons(constructor) && cons != constructor && cons.getSize() < constructor.getSize()) {
+    for(Constructor cons : constructors) {
+      if(cons.isSubCons(constructor) && cons != constructor && cons.getSize() < constructor.getSize()) {
         listSC.add(cons);
       }
     }
-    if (listSC.isEmpty()) {
+    if(listSC.isEmpty()) {
       listSC.add(constructor);
     }
     Iterator<ATerm> res = new MultiConstructorIterator(term, listSC.iterator());
@@ -602,8 +602,8 @@ public class Sort implements Buildable {
   }
 
   Constructor getCons(String name) {
-    for (Constructor constructor : constructors) {
-      if (name.startsWith(constructor.getName())) {
+    for(Constructor constructor : constructors) {
+      if(name.startsWith(constructor.getName())) {
         return constructor;
       }
     }

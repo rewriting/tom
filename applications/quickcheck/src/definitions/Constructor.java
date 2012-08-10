@@ -39,21 +39,21 @@ class Constructor {
    */
   boolean isSubCons(Constructor cons) {
     Map<Buildable, Integer> map = new HashMap<Buildable, Integer>();
-    for (Buildable buildable : cons.fields) {
+    for(Buildable buildable : cons.fields) {
       Integer n = map.get(buildable);
-      if (n==null){
+      if(n == null) {
         map.put(buildable, 1);
       } else {
         map.put(buildable, n + 1);
       }
     }
-    
-    for (Buildable buildable : fields) {
+
+    for(Buildable buildable : fields) {
       Integer n = map.get(buildable);
-      if (n==null) {
+      if(n == null) {
         return false;
-      } else if (n > 1){
-        map.put(buildable, n-1);
+      } else if(n > 1) {
+        map.put(buildable, n - 1);
       } else {
         map.remove(buildable);
       }
@@ -84,20 +84,20 @@ class Constructor {
    * locked.
    */
   int minimalDepth() {
-    if (fields.length == 0) {
+    if(fields.length == 0) {
       return 0;
     }
     lock = true;
     int res = 0;
-    for (int i = 0; i < fields.length; i++) {
+    for(int i = 0; i < fields.length; i++) {
       Buildable field = fields[i];
       int tmp = field.minimalSize(StrategyParameters.DistStrategy.DEPTH);
-      if (tmp == -1) {
+      if(tmp == -1) {
         //if one the constructors of the field is locked
         lock = false;
         return Integer.MAX_VALUE;
       }
-      if (tmp == Integer.MAX_VALUE) {
+      if(tmp == Integer.MAX_VALUE) {
         // if field can not lead to termination
         lock = false;
         return Integer.MAX_VALUE;
@@ -116,26 +116,26 @@ class Constructor {
    * locked.
    */
   int minimalNodes() {
-    if (fields.length == 0) {
+    if(fields.length == 0) {
       return 0;
     }
     lock = true;
     int res = 0;
-    for (int i = 0; i < fields.length; i++) {
+    for(int i = 0; i < fields.length; i++) {
       Buildable field = fields[i];
       int tmp = field.minimalSize(StrategyParameters.DistStrategy.NODES);
-      if (tmp == -1) {
+      if(tmp == -1) {
         // if one of the constructors of field is locked
         lock = false;
         return Integer.MAX_VALUE;
       }
-      if (tmp == Integer.MAX_VALUE) {
+      if(tmp == Integer.MAX_VALUE) {
         // if field can not lead to termination
         lock = false;
         return Integer.MAX_VALUE;
       }
       res += tmp;
-      if (Math.signum(res) * Math.signum(res - tmp) == -1) {
+      if(Math.signum(res) * Math.signum(res - tmp) == -1) {
         throw new RuntimeException("Number of steps overflows.");
       }
     }
@@ -165,7 +165,7 @@ class Constructor {
    */
   Slot[] giveATermDeps() {
     Slot[] res = new Slot[getSize()];
-    for (int i = 0; i < res.length; i++) {
+    for(int i = 0; i < res.length; i++) {
       res[i] = new Slot(fields[i]);
     }
     return res;
@@ -173,7 +173,7 @@ class Constructor {
 
   int getDimention() {
     int dimMax = 0;
-    for (Buildable field : fields) {
+    for(Buildable field : fields) {
       dimMax = Math.max(dimMax, field.getDimension());
     }
     return dimMax;

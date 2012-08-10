@@ -114,13 +114,13 @@ public class Examples {
     leafABC.addConstructor("a");
     leafABC.addConstructor("b");
     leafABC.addConstructor("c");
-    
+
     sortTestShrink2 = new Sort(scope, "u");
-    sortTestShrink2.addConstructor("gros",a,a,b,c,c,c);
-    sortTestShrink2.addConstructor("moyen", a,a,c);
-    sortTestShrink2.addConstructor("petit1", a,b);
-    sortTestShrink2.addConstructor("petit2", b,c);
-            
+    sortTestShrink2.addConstructor("gros", a, a, b, c, c, c);
+    sortTestShrink2.addConstructor("moyen", a, a, c);
+    sortTestShrink2.addConstructor("petit1", a, b);
+    sortTestShrink2.addConstructor("petit2", b, c);
+
     scope.setDependances();
   }
 }

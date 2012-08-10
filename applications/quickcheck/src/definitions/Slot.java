@@ -18,9 +18,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author hubert
  */
 class Slot {
-  
-  private static ATermFactory factory;
 
+  private static ATermFactory factory;
   private Buildable type;
   private Constructor cons;
   private Slot[] deps;
@@ -30,7 +29,7 @@ class Slot {
   }
 
   Slot[] chooseFiniteConstructor() {
-    if (type instanceof Sort) {
+    if(type instanceof Sort) {
       cons = ((Sort) type).chooseAnyFiniteConstructor();
       deps = cons.giveATermDeps();
     } else {
@@ -40,7 +39,7 @@ class Slot {
   }
 
   Slot[] chooseMinSizeConstructor(StrategyParameters.DistStrategy strategy) {
-    if (type instanceof Sort) {
+    if(type instanceof Sort) {
       switch (strategy) {
         case DEPTH:
           cons = ((Sort) type).chooseMinDepthConstructor();
@@ -59,7 +58,7 @@ class Slot {
   }
 
   Slot[] chooseMaxDimConstructor() {
-    if (type instanceof Sort) {
+    if(type instanceof Sort) {
       cons = ((Sort) type).chooseMaxDimConstructor();
       deps = cons.giveATermDeps();
     } else {
@@ -81,9 +80,9 @@ class Slot {
     String res = "";
     res += cons.getName() + "(";
     int i = 0;
-    for (Slot aTerm : deps) {
+    for(Slot aTerm : deps) {
       res += aTerm;
-      if (i != deps.length - 1) {
+      if(i != deps.length - 1) {
         res += ", ";
       }
       i++;
@@ -109,7 +108,7 @@ class Slot {
   private String toDot_aux(String way) {
     String res = new String();
     int i = 0;
-    for (Slot slot : deps) {
+    for(Slot slot : deps) {
       res += "\"" + way + "\"" + "->" + "\"" + way + i + "\"\n";
       res += slot.toDot_aux(way + i);
       i++;
@@ -137,7 +136,7 @@ class Slot {
     int root = n.intValue();
     String res = new String();
     int i = 0;
-    for (Slot slot : deps) {
+    for(Slot slot : deps) {
       res += "\"" + root + "\"" + "->" + "\"";
       n.incrementAndGet();
       res += n + "\"\n";
@@ -148,12 +147,12 @@ class Slot {
   }
 
   ATermAppl toATerm() {
-    if (factory == null) {
+    if(factory == null) {
       factory = new PureFactory();
     }
     //PureFactory factory = new PureFactory();
     ATerm[] listFields = new ATerm[deps.length];
-    for (int i = 0; i < listFields.length; i++) {
+    for(int i = 0; i < listFields.length; i++) {
       listFields[i] = deps[i].toATerm();
     }
     AFun fun = factory.makeAFun(cons.getName(), deps.length, false);

@@ -39,7 +39,7 @@ public class BuildableDomain implements DomainInterpretation {
     Set<Buildable> deps = model.getDependences();
     DomainInterpretation[] res = new DomainInterpretation[deps.size()];
     int i = 0;
-    for (Buildable buildable : deps) {
+    for(Buildable buildable : deps) {
       res[i] = new BuildableDomain(buildable);
       i++;
     }

@@ -42,7 +42,7 @@ public class ShrinkIterator {
        * %match(term){ ATermAppl(fun, list) -> {return `list;} _ -> {throw new
        * UnsupportedOperationException("Operation not supported");} }
        */
-      if (term instanceof ATermAppl) {
+      if(term instanceof ATermAppl) {
         return ((ATermAppl) term).getArguments();
       }
       throw new UnsupportedOperationException("Operation not supported");
@@ -50,20 +50,20 @@ public class ShrinkIterator {
 
     @Override
     public boolean hasNext() {
-      if (current != null) {
+      if(current != null) {
         return true;
       }
-      if (stack.empty()) {
+      if(stack.empty()) {
         return false;
       }
       ATermList args = stack.pop();
-      if (args.isEmpty()) {
+      if(args.isEmpty()) {
         return hasNext();
       }
       ATerm head = args.getFirst();
       ATermList tail = args.getNext();
       stack.push(tail);
-      if (domain.includes(head)) {
+      if(domain.includes(head)) {
         current = head;
         return true;
       }
@@ -73,11 +73,11 @@ public class ShrinkIterator {
 
     @Override
     public ATerm next() {
-      if (current != null) {
+      if(current != null) {
         ATerm res = current;
         current = null;
         return res;
-      } else if (hasNext()) {
+      } else if(hasNext()) {
         System.out.println("WARNING : the use of the methode next() is not preceded by hasNext().");
         ATerm res = current;
         current = null;
@@ -102,7 +102,7 @@ public class ShrinkIterator {
   private static Iterator<ATerm> s1Large(ATerm term, final DomainInterpretation domain) {
     Iterator<ATerm> res = s1Strict(term, domain);
     Iterator<ATerm> tmp = s1Strict(term, domain);
-    if (!tmp.hasNext()) {
+    if(!tmp.hasNext()) {
       List<ATerm> list = new LinkedList<ATerm>();
       list.add(term);
       return list.iterator();
@@ -121,16 +121,16 @@ public class ShrinkIterator {
 
       @Override
       public boolean hasNext() {
-        if (localIterator == null) {
-          if (globalIterator.hasNext()) {
+        if(localIterator == null) {
+          if(globalIterator.hasNext()) {
             localIterator = s1Large(globalIterator.next(), dom);
           } else {
             return false;
           }
         }
-        if (localIterator.hasNext()) {
+        if(localIterator.hasNext()) {
           return true;
-        } else if (globalIterator.hasNext()) {
+        } else if(globalIterator.hasNext()) {
           localIterator = s1Large(globalIterator.next(), dom);
           return hasNext();
         } else {
@@ -140,7 +140,7 @@ public class ShrinkIterator {
 
       @Override
       public ATerm next() {
-        if (hasNext()) {
+        if(hasNext()) {
           return localIterator.next();
         } else {
           throw new NoSuchElementException();
@@ -172,7 +172,7 @@ public class ShrinkIterator {
   private static Iterator<ATerm> s2Large(ATerm term, final DomainInterpretation domain) {
     Iterator<ATerm> res = s2Strict(term, domain);
     Iterator<ATerm> tmp = s2Strict(term, domain);
-    if (!tmp.hasNext()) {
+    if(!tmp.hasNext()) {
       List<ATerm> list = new LinkedList<ATerm>();
       list.add(term);
       return list.iterator();
@@ -191,16 +191,16 @@ public class ShrinkIterator {
 
       @Override
       public boolean hasNext() {
-        if (localIterator == null) {
-          if (globalIterator.hasNext()) {
+        if(localIterator == null) {
+          if(globalIterator.hasNext()) {
             localIterator = s2Large(globalIterator.next(), dom);
           } else {
             return false;
           }
         }
-        if (localIterator.hasNext()) {
+        if(localIterator.hasNext()) {
           return true;
-        } else if (globalIterator.hasNext()) {
+        } else if(globalIterator.hasNext()) {
           localIterator = s2Large(globalIterator.next(), dom);
           return hasNext();
         } else {
@@ -210,7 +210,7 @@ public class ShrinkIterator {
 
       @Override
       public ATerm next() {
-        if (hasNext()) {
+        if(hasNext()) {
           return localIterator.next();
         } else {
           throw new NoSuchElementException();
@@ -245,7 +245,7 @@ public class ShrinkIterator {
 
       @Override
       public ATerm next() {
-        if (hasNext()) {
+        if(hasNext()) {
           ATerm res = state.getFirst();
           state = state.getNext();
           return res;
@@ -265,9 +265,9 @@ public class ShrinkIterator {
     ATermFactory factory = null;
     ATermList list = null;
 
-    while (iterator.hasNext()) {
+    while(iterator.hasNext()) {
       ATerm aTerm = iterator.next();
-      if (factory == null) {
+      if(factory == null) {
         factory = aTerm.getFactory();
         list = factory.makeList();
       }
@@ -277,10 +277,10 @@ public class ShrinkIterator {
   }
 
   public static ATermList toATermList(Iterator<ATerm> iterator, ATermFactory factory) {
-    if (!iterator.hasNext()) {
+    if(!iterator.hasNext()) {
       return factory.makeList();
     }
     ATerm term = iterator.next();
     return toATermList(iterator, factory).insert(term);
-  } 
+  }
 }

@@ -21,12 +21,11 @@ import java.util.Set;
  * @author hubert
  */
 public final class Builtin {
-  
+
   /**
    * Representation of type Integer.
    */
   public final static Buildable Integer = new Buildable() {
-
     @Override
     public java.lang.String getName() {
       return "Integer";
@@ -69,12 +68,10 @@ public final class Builtin {
       return list.iterator();
     }
   };
-  
   /**
    * Representation of type String.
    */
   public final static Buildable String = new Buildable() {
-
     @Override
     public java.lang.String getName() {
       return "String";
@@ -94,7 +91,7 @@ public final class Builtin {
     public ATerm generate(int n) {
       PureFactory factory = new PureFactory();
       ATermList res = factory.makeList();
-      for (int i = 0; i < n; i++) {
+      for(int i = 0; i < n; i++) {
         res = factory.makeList(factory.makeInt((int) (Math.random() * 256)), res);
       }
       return res;

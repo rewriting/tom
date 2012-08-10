@@ -16,8 +16,8 @@ public class Scope {
   }
 
   void addType(Buildable t) {
-    for (Buildable typable : setOfTypes) {
-      if (typable.getName().equals(t.getName())) {
+    for(Buildable typable : setOfTypes) {
+      if(typable.getName().equals(t.getName())) {
         throw new UnsupportedOperationException("Type " + t.getName() + " already defined");
       }
     }
@@ -29,17 +29,17 @@ public class Scope {
    */
   public void setDependances() {
     boolean hasChanged = true;
-    while (hasChanged) {
+    while(hasChanged) {
       hasChanged = false;
-      for (Buildable type : setOfTypes) {
+      for(Buildable type : setOfTypes) {
         hasChanged = hasChanged || type.updateDependences();
       }
     }
   }
 
   Buildable searchType(String name) {
-    for (Buildable typable : setOfTypes) {
-      if (typable.getName().equals(name)) {
+    for(Buildable typable : setOfTypes) {
+      if(typable.getName().equals(name)) {
         return typable;
       }
     }

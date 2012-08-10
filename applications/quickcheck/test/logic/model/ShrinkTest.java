@@ -214,7 +214,7 @@ public class ShrinkTest {
     DomainInterpretation domain = new BuildableDomain(sort);
     ATermList result = ShrinkIterator.toATermList(ShrinkIterator.s2Strict(term, domain), term.getFactory());
     assert result.getChildCount() == 8;
-    for (int i = 0; i < 8; i++) {
+    for(int i = 0; i < 8; i++) {
       assert result.getChildAt(i).equals(ExamplesTerms.sortTestShrink2_s2test_children[i]);
     }
   }
@@ -228,7 +228,7 @@ public class ShrinkTest {
     DomainInterpretation domain = new BuildableDomain(sort);
     ATermList result = ShrinkIterator.s2Large(factory.makeList(term), domain);
     assert result.getChildCount() == 8;
-    for (int i = 0; i < 8; i++) {
+    for(int i = 0; i < 8; i++) {
       assert result.getChildAt(i).equals(ExamplesTerms.sortTestShrink2_s2test_children[i]);
     }
   }
@@ -266,7 +266,7 @@ public class ShrinkTest {
     DomainInterpretation domain = new BuildableDomain(sort);
     ATermList result = Shrink.s1WithDepthStrict(term, domain, 1);
     assert result.getLength() == 6;
-    for (int i = 0; i < result.getLength(); i++) {
+    for(int i = 0; i < result.getLength(); i++) {
       assert result.getChildAt(i).equals(ExamplesTerms.sortTestShrink2_s1depth_children[i]);
     }
   }
@@ -279,7 +279,7 @@ public class ShrinkTest {
     DomainInterpretation domain = new BuildableDomain(sort);
     ATermList result = Shrink.s2WithDepthStrict(term, domain, 1);
     assert result.getLength() == 2;
-    for (int i = 0; i < result.getLength(); i++) {
+    for(int i = 0; i < result.getLength(); i++) {
       assert result.getChildAt(i).equals(ExamplesTerms.sortTestShrink2_s2depth_children[i]);
     }
   }

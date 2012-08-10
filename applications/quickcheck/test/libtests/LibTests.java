@@ -13,17 +13,17 @@ import java.util.Iterator;
 public class LibTests {
 
   public static void testIterator(Iterator<?> ite, int n, boolean print) {
-    while (ite.hasNext()) {
-      for (int i = 0; i < n; i++) {
-        if (print) {
+    while(ite.hasNext()) {
+      for(int i = 0; i < n; i++) {
+        if(print) {
           System.out.println("true " + i);
         }
         assert ite.hasNext();
       }
       ite.next();
     }
-    for (int i = 0; i < n; i++) {
-      if (print) {
+    for(int i = 0; i < n; i++) {
+      if(print) {
         System.out.println("false " + i);
       }
       assert !ite.hasNext();

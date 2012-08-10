@@ -35,9 +35,9 @@ abstract class Strategy {
    */
   protected Set<Slot> dispatchFields(Slot[] fields, Set<Slot> res, int currentDim) {
     Set<Slot> listHigherDimFields = new HashSet<Slot>();
-    for (int i = 0; i < fields.length; i++) {
+    for(int i = 0; i < fields.length; i++) {
       Slot field = fields[i];
-      if (field.getDimension() < currentDim) {
+      if(field.getDimension() < currentDim) {
         res.add(field);
       } else {
         listHigherDimFields.add(field);

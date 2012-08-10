@@ -25,7 +25,7 @@ class ConstructorGom extends Constructor {
   static private Buildable[] extractFields(Method make, SortGom caller) {
     Class[] listClasses = make.getParameterTypes();
     Buildable[] res = new Buildable[listClasses.length];
-    for (int i = 0; i < res.length; i++) {
+    for(int i = 0; i < res.length; i++) {
       res[i] = caller.getScope().searchType(listClasses[i].getName());
     }
     return res;

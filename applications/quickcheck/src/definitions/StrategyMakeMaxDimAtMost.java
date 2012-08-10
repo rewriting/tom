@@ -17,7 +17,7 @@ class StrategyMakeMaxDimAtMost extends Strategy {
 
   @Override
   public Set<Slot> fillATerm(Slot aTerm, int ni, StrategyParameters param) {
-    if (param.getTerminationCriterion() == StrategyParameters.TerminationCriterion.FORECAST) {
+    if(param.getTerminationCriterion() == StrategyParameters.TerminationCriterion.FORECAST) {
       System.out.print("WARNING: current termination criterion ("
               + param.getTerminationCriterion()
               + ") does not seem to be compliant with StrategyMakeMaxDimAtMost. ");
@@ -42,15 +42,15 @@ class StrategyMakeMaxDimAtMost extends Strategy {
 
     //re-apply algorithm on same dimension fields in order to eliminate them
     int i = 0;
-    for (Slot field : listHigherDimFields) {
+    for(Slot field : listHigherDimFields) {
       Strategy req;
-      if (!param.requireTermination(field, ni)) {
+      if(!param.requireTermination(field, ni)) {
         req = new StrategyMakeMaxDimExactly();
       } else {
         req = new StrategyMakeMinimal();
       }
       int rand;
-      if (nis[i] == 0) {
+      if(nis[i] == 0) {
         rand = 0;
       } else {
         rand = 1 + (int) (Math.random() * nis[i]);

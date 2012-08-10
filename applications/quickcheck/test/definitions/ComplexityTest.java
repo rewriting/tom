@@ -42,7 +42,7 @@ public class ComplexityTest {
   private int getSize(Visitable term) {
     int n = term.getChildCount();
     int res = 0;
-    for (int i = 0; i < n; i++) {
+    for(int i = 0; i < n; i++) {
       res += getSize(term.getChildAt(i));
     }
     return res + 1;
@@ -58,9 +58,9 @@ public class ComplexityTest {
       Logger.getLogger(ComplexityTest.class.getName()).log(Level.SEVERE, null, ex);
     }
 
-    for (int n = 0; n < range; n++) {
+    for(int n = 0; n < range; n++) {
       float moyenne = 0;
-      for (int i = 0; i < nbrTest; i++) {
+      for(int i = 0; i < nbrTest; i++) {
         ATerm term = type.generate(n);
         moyenne += getSize(term);
       }
@@ -76,9 +76,9 @@ public class ComplexityTest {
       System.out.println(n + " : " + moyenne);
     }
   }
-  
+
   @Test
-  public void testTrue(){
+  public void testTrue() {
     assert true;
   }
 
@@ -97,7 +97,7 @@ public class ComplexityTest {
     testSize(nat, range, nbrTest);
     assert true;
   }
-  
+
   public void ComplexityExpr() {
     Scope scope = new Scope();
 

@@ -36,7 +36,6 @@ public class LogicTest {
   public LogicTest() {
 
     EVEN = new PredicateInterpretation() {
-
       @Override
       public boolean isTrue(List<ATerm> args) {
         ATermInt n = (ATermInt) args.get(0);
@@ -45,7 +44,6 @@ public class LogicTest {
     };
 
     ODD = new PredicateInterpretation() {
-
       @Override
       public boolean isTrue(List<ATerm> args) {
         ATermInt n = (ATermInt) args.get(0);
@@ -54,7 +52,6 @@ public class LogicTest {
     };
 
     succ = new SignatureInterpretation() {
-
       @Override
       public ATerm compute(List<ATerm> args) {
         PureFactory factory = new PureFactory();
@@ -64,7 +61,6 @@ public class LogicTest {
 
 
     REV_REV = new PredicateInterpretation() {
-
       @Override
       public boolean isTrue(List<ATerm> args) {
         IntList list = IntList.fromTerm(args.get(0));
@@ -73,7 +69,6 @@ public class LogicTest {
     };
 
     EvenInteger = new DomainInterpretation() {
-
       @Override
       public ATerm chooseElement(int n) {
         PureFactory factory = new PureFactory();
@@ -82,7 +77,7 @@ public class LogicTest {
 
       @Override
       public boolean includes(ATerm term) {
-        if (!(term instanceof ATermInt)) {
+        if(!(term instanceof ATermInt)) {
           return false;
         }
         return ((ATermInt) term).getInt() % 2 == 0;
@@ -102,7 +97,6 @@ public class LogicTest {
     };
 
     Integer = new DomainInterpretation() {
-
       @Override
       public ATerm chooseElement(int n) {
         PureFactory factory = new PureFactory();
@@ -173,7 +167,6 @@ public class LogicTest {
     map_pre.put("P", ODD);
 
     DomainInterpretation EvenInteger_cheat = new DomainInterpretation() {
-
       @Override
       public ATerm chooseElement(int n) {
         PureFactory factory = new PureFactory();

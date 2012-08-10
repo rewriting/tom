@@ -59,7 +59,7 @@ public class Interpretation {
     }
     return null; // unreachable
   }
- 
+
   /* =================================================================== */
   /*                            ValidateForall                           */
   /* =================================================================== */
@@ -87,20 +87,16 @@ public class Interpretation {
     if(domain == null){
       throw new UnsupportedOperationException("Domain " + domainName + " has no interpretation.");
     }
-    ATerm term = domain.chooseElement();
-    valuation.put(varName, term);
-    CounterExample cef = validateFormulaWithCE(f, valuation);
-    %match(cef){
-      NoCE() -> {
-        valuation.remove(varName);
-        return `NoCE();
-      }
-      _ -> {
-        valuation.remove(varName);
-        return `CEForall(varName, term, cef);
+    for(int i = 0; i<20; i++){
+      ATerm term = domain.chooseElement(i);
+      valuation.put(varName, term);
+      CounterExample cef = validateFormulaWithCE(f, valuation);
+      valuation.remove(varName);
+      %match(cef){
+        !NoCE() -> {return `CEForall(varName, term, cef);}
       }
     }
-    return null; // unreachable
+    return `NoCE();
   }
 
   private ATermList filterList(String varName, ATermList list, DomainInterpretation domain, Formula f, Map<String, ATerm> valuation) {

@@ -88,6 +88,6 @@ public interface Buildable {
    * @return
    */
   public boolean isTypeOf(ATerm term);
-  
+
   public Iterator<ATerm> lighten(ATerm term);
 }

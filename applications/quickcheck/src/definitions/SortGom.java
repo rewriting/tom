@@ -37,13 +37,13 @@ public class SortGom extends Sort {
     String pattern = "make";
     Method[] listMethods = classe.getDeclaredMethods();
     Method make = null;
-    for (int i = 0; i < listMethods.length; i++) {
+    for(int i = 0; i < listMethods.length; i++) {
       Method method = listMethods[i];
-      if (method.getName().equals(pattern)) {
+      if(method.getName().equals(pattern)) {
         make = method;
         break;
       }
-      if (i == listMethods.length - 1) {
+      if(i == listMethods.length - 1) {
         throw new UnsupportedOperationException("Method " + pattern + "() was not found in " + classe);
       }
     }
@@ -68,13 +68,13 @@ public class SortGom extends Sort {
   public Sort addConstructor(Class classe, String pattern) {
     Method[] listMethods = classe.getDeclaredMethods();
     Method make = null;
-    for (int i = 0; i < listMethods.length; i++) {
+    for(int i = 0; i < listMethods.length; i++) {
       Method method = listMethods[i];
-      if (method.getName().equals(pattern)) {
+      if(method.getName().equals(pattern)) {
         make = method;
         break;
       }
-      if (i == listMethods.length - 1) {
+      if(i == listMethods.length - 1) {
         throw new UnsupportedOperationException("Method " + pattern + "() was not found in " + classe);
       }
     }
