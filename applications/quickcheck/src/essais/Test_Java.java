@@ -4,6 +4,7 @@
  */
 package essais;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,5 +21,9 @@ public class Test_Java {
     Map<String, Integer> map = new HashMap<String, Integer>();
     Integer n = map.get("truc");
     System.out.println(n);
+    
+    String s = "machin()";
+    String[] tab = s.split("(");
+    System.out.println(Arrays.toString(tab));
   }
 }

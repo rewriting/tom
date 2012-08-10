@@ -167,7 +167,7 @@ public class Shrink{
       return res;
     }
   }
-  
+  @Deprecated
   public static ATermList s1WithDepthLarge(ATermList list, DomainInterpretation domain, int depth){
     if (list.isEmpty()) {
       return list;
@@ -175,7 +175,8 @@ public class Shrink{
       return s1WithDepthLarge(list.getFirst(), domain, depth).concat(s1WithDepthLarge(list.getNext(), domain, depth));
     }
   }
-  
+
+  @Deprecated
   public static ATermList s2WithDepthLarge(ATermList list, DomainInterpretation domain, int depth){
     if (list.isEmpty()) {
       return list;

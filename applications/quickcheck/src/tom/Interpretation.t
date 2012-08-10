@@ -114,8 +114,35 @@ public class Interpretation {
     }
   }
 
+  private ATermList s1_aux(String varName, ATermList list, DomainInterpretation domain, Formula f, Map<String, ATerm> valuation, int depth){
+    if(list.isEmpty()) {
+      return list;
+    }
+    ATerm head = list.getFirst();
+    ATermList shrunkHead = filterList(varName, Shrink.s1WithDepthStrict(head, domain, depth), domain, f, valuation);
+    if(shrunkHead.isEmpty()){
+      return s1_aux(varName, list.getNext(), domain, f, valuation, depth).insert(head);
+    } else {
+      return shrunkHead.concat(s1_aux(varName, list.getNext(), domain, f, valuation, depth));
+    }
+  }
+
+  private ATermList s2_aux(String varName, ATermList list, DomainInterpretation domain, Formula f, Map<String, ATerm> valuation, int depth){
+    if(list.isEmpty()) {
+      return list;
+    }
+    ATerm head = list.getFirst();
+    ATermList shrunkHead = filterList(varName, Shrink.s2WithDepthStrict(head, domain, depth), domain, f, valuation);
+    if(shrunkHead.isEmpty()){
+      return s2_aux(varName, list.getNext(), domain, f, valuation, depth).insert(head);
+    } else {
+      return shrunkHead.concat(s2_aux(varName, list.getNext(), domain, f, valuation, depth));
+    }
+  }
+
+
   private ATermList s1(String varName, ATermList list, DomainInterpretation domain, Formula f, Map<String, ATerm> valuation, int depth){
-    ATermList res = filterList(varName, Shrink.s1WithDepthLarge(list, domain, depth), domain, f, valuation);
+    ATermList res = s1_aux(varName, list, domain, f, valuation, depth);
     if (res.equals(list)) {
       return list;
     } else {
@@ -124,7 +151,7 @@ public class Interpretation {
   }
 
   private ATermList s2(String varName, ATermList list, DomainInterpretation domain, Formula f, Map<String, ATerm> valuation, int depth){
-    ATermList res = filterList(varName, Shrink.s2WithDepthLarge(list, domain, depth), domain, f, valuation);
+    ATermList res = s2_aux(varName, list, domain, f, valuation, depth);
     return res;
   }
 
@@ -180,19 +207,20 @@ public class Interpretation {
     if(domain == null){
       throw new UnsupportedOperationException("Domain " + domainName + " has no interpretation.");
     }
-    ATerm term = domain.chooseElement();
-    valuation.put(varName, term);
-    boolean res = validateFormula(f, valuation);
-    valuation.remove(varName);
-    if (res) {
-      return `NoCE();
-    } else {
-      ATerm shrunkTerm = shrink(varName, term, domain, f, valuation);
-      valuation.put(varName, shrunkTerm);
-      CounterExample cef = validateFormulaWithCE(f, valuation);
+    for(int i = 0; i<20; i++){
+      ATerm term = domain.chooseElement(i);
+      valuation.put(varName, term);
+      boolean res = validateFormula(f, valuation);
       valuation.remove(varName);
-      return `CEForall(varName, shrunkTerm, cef);
+      if(!res){
+        ATerm shrunkTerm = shrink(varName, term, domain, f, valuation);
+        valuation.put(varName, shrunkTerm);
+        CounterExample cef = validateFormulaWithCE(f, valuation);
+        valuation.remove(varName);
+        return `CEForall(varName, shrunkTerm, cef);
+      }
     }
+    return `NoCE();
   }
 
   /* =================================================================== */
@@ -280,7 +308,7 @@ public class Interpretation {
           return `NoCE();
         }
       }
-      Forall(varname, domain, f1) -> {return validateForallWithCE(`varname, `domain, `f1, valuation);}
+      Forall(varname, domain, f1) -> {return validateForallWithShrunkCE(`varname, `domain, `f1, valuation);}
       Exists(varname, domain, f1) -> {throw new UnsupportedOperationException("Exists logic is not yet implemented");}
     }
     return null; // unreachable

@@ -328,11 +328,22 @@ public class Sort implements Buildable {
     }
     return res;
   }
+  
+  private String getConsName(ATerm term){
+    String nameTerm = term.toString();
+    String res = "";
+    int i = 0;
+    while(i<nameTerm.length() && nameTerm.charAt(i) != '(') {
+      res += nameTerm.charAt(i);
+      i++;
+    }
+    return res;
+  }
 
   private Constructor getCurrentCons(ATerm term) {
-    String nameTerm = term.toString();
+    String consName = getConsName(term);
     for(Constructor constructor : constructors) {
-      if(nameTerm.startsWith(constructor.getName())) {
+      if(consName.equals(constructor.getName())) {
         return constructor;
       }
     }
@@ -341,7 +352,8 @@ public class Sort implements Buildable {
 
   @Override
   public boolean isTypeOf(ATerm term) {
-    return getCurrentCons(term) != null;
+    boolean res = getCurrentCons(term) != null;
+    return res;
   }
 
   private class OneConstructorIterator implements Iterator<ATerm> {

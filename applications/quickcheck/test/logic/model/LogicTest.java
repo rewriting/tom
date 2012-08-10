@@ -5,8 +5,10 @@
 package logic.model;
 
 import aterm.ATerm;
+import aterm.ATermFactory;
 import aterm.ATermInt;
 import aterm.pure.PureFactory;
+import definitions.Buildable;
 import examples.Examples;
 import examples.ExamplesFormula;
 import examples.TestGen;
@@ -31,6 +33,7 @@ public class LogicTest {
   private DomainInterpretation EvenInteger;
   // List interpretation
   private PredicateInterpretation REV_REV;
+  private PredicateInterpretation REV;
   private DomainInterpretation List;
 
   public LogicTest() {
@@ -65,6 +68,14 @@ public class LogicTest {
       public boolean isTrue(List<ATerm> args) {
         IntList list = IntList.fromTerm(args.get(0));
         return list.equals(TestGen.reverse(TestGen.reverse(list)));
+      }
+    };
+
+    REV = new PredicateInterpretation() {
+      @Override
+      public boolean isTrue(List<ATerm> args) {
+        IntList list = IntList.fromTerm(args.get(0));
+        return list.equals(TestGen.reverse(list));
       }
     };
 
@@ -212,6 +223,55 @@ public class LogicTest {
     Interpretation interp_list = new Interpretation(map_pre, map_sig, map_dom);
 
     String res = interp_list.validateFormulaWithCE(formula, new HashMap<String, ATerm>()).toString();
+    assert res.equals("NoCE()");
+  }
+
+  @Test
+  public void testInterpListCEFalse() {
+
+    Map<String, PredicateInterpretation> map_pre = new HashMap<String, PredicateInterpretation>();
+    Map<String, SignatureInterpretation> map_sig = new HashMap<String, SignatureInterpretation>();
+    Map<String, DomainInterpretation> map_dom = new HashMap<String, DomainInterpretation>();
+
+    DomainInterpretation domain = new DomainInterpretation() {
+      @Override
+      public ATerm chooseElement(int n) {
+        ATerm term = Examples.listABC.generate(0);
+        ATermFactory factory = term.getFactory();
+        return factory.parse("consList(b,consList(b,consList(c,nill)))");
+      }
+
+      @Override
+      public boolean includes(ATerm term) {
+        return examples.Examples.listABC.isTypeOf(term);
+      }
+
+      @Override
+      public Iterator<ATerm> lighten(ATerm term) {
+        return Examples.listABC.lighten(term);
+      }
+
+      @Override
+      public DomainInterpretation[] getDepsDomains() {
+        //TODO : this method can be optimized because it use currently all recursive dependences.
+        Set<Buildable> deps = Examples.listABC.getDependences();
+        DomainInterpretation[] res = new DomainInterpretation[deps.size()];
+        int i = 0;
+        for(Buildable buildable : deps) {
+          res[i] = new BuildableDomain(buildable);
+          i++;
+        }
+        return res;
+      }
+    };
+
+    map_pre.put("P", REV);
+    map_dom.put("D", List);
+
+    Interpretation interp_list = new Interpretation(map_pre, map_sig, map_dom);
+
+    String res = interp_list.validateFormulaWithCE(formula, new HashMap<String, ATerm>()).toString();
+    System.out.println(res);
     assert res.equals("NoCE()");
   }
 
