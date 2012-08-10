@@ -1,30 +1,52 @@
 '''Page de wiki de la génération automatique de termes dans TOM'''
 
-== Génération de termes ==
+= Génération de termes =
 
-=== Vocabulaire utilisé ===
+== Vocabulaire utilisé ==
 
 On travaillera avec des arbres et on usera naturellement du vocabulaire associé (noeud, feuille, ...). Un '''type''' est défini par un ensemble de '''constructeurs''', chacun représenté par un ensemble de types (les arguments). Un '''term''' est une instance d'un type.
 
-=== Présentation de l'algorithme ===
+== Présentation de l'algorithme ==
 
 L'algorithme que nous développerons ici permet de construire un terme algébrique de manière aléatoire.
 L'idée repose ici sur le concept de la dimention (à definir) d'un type. Voici une présentation informelle de l'algorithme paramétré par l'entier n : supposons que le terme que l'on veut construire est du type T de dimention d. 
  - initialisation : on pose c = d et L un ensemble de termes
 
-=== Choix de réalisation des "trous" ===
+== Choix de réalisation des "trous" ==
 
 Lors de la réalisation de l'algorithme, on définit le "front de propagation" (c'est à dire l'ensemble des noeuds dont ils faut s'occuper à l'étape suivante) comme une liste de noeuds incomplets car on ne connait que son type mais pas son constructeur ni ses champs.
 
-=== Utilisation des termes générés dans un contexte de  vérification de programme ===
+== Utilisation des termes générés dans un contexte de  vérification de programme ==
 
 On souhaite pouvoir décrire quel est le fonctionnement attendu du programme. On utilise pour cela les résultats des calculs de prédicats au niveau de la syntaxe. On donne un sens à une phrase logique en lui adjuvant un ou plusieurs modèle.
 
-==== Syntaxe ====
+=== Syntaxe ===
 
 Il est possible d'écrire des phrases mathématique telles que 
 
-$\forall
+<math>\forall x \in D, \; P(x) \Rightarrow Q(f(x))</math>
 
-== Réduction des contres-exemples ==
+On utilise pour cela la syntaxe suivante : 
 
+ Args = ListArgs(Term*)
+ 
+ Term = Var(name:String)
+     | Sig(name:String, args:Args)
+ 
+ Formula = Predicate(name:String, args:Args)
+        | And(f1:Formula, f2:Formula)
+        | Or(f1:Formula, f2:Formula)
+        | Imply(f1:Formula, f2:Formula)
+        | Not(f:Formula)
+        | Forall(var:String, domain:String, f:Formula)
+        | Exists(var:String, domain:String, f:Formula)
+
+La phrase mathématique précédente sera donc sous la forme
+
+ Forall("x", "D", Predicate("P", ListArgs(Sig("f", ListArgs(Var("x"))))))
+
+On peut ainsi essayer de décrire le fonctionnement d'un programme. Une fois la syntaxe écrite, il faut lui donner un sens. En effet, chaque mot qui n'est pas définit dans la grammaire doit être défini. Ainsi, on voudra dire que la phrase ci-dessus signifie
+
+''' Pour tout entier $x$, $x$ pair implique $x+1$ impair.'''
+
+= Réduction des contres-exemples =
