@@ -58,6 +58,20 @@ public class ShrinkTest {
     ATermIterator ite = ShrinkIterator.s1Strict(term, domain);
     LibTests.testIterator(ite, 10000000, false);
   }
+  
+  @Test
+  public void testFundamentalCloneS1IteratorOneArg() {
+    System.out.println("test fundamental Clone s1 iterator one arg");
+    Buildable sort = Examples.expr;
+    ATerm term = sort.generate(10);
+    DomainInterpretation domain = new BuildableDomain(sort);
+    ATermIterator ite = ShrinkIterator.s1Strict(term, domain);
+    ATermIterator ite2 = ite.clone();
+    ATermList l1 = ShrinkIterator.toATermList(ite, term.getFactory());
+    ATermList l2 = ShrinkIterator.toATermList(ite2, term.getFactory());
+    System.out.println(l2.getLength());
+    assert l1.equals(l2);
+  }
 
   @Test
   public void testFundamentalS1IteratorList() {
@@ -77,6 +91,31 @@ public class ShrinkTest {
     DomainInterpretation domain = new BuildableDomain(sort);
     ATermIterator ite = ShrinkIterator.s1Large(new ATermIteratorFromList(list), domain);
     LibTests.testIterator(ite, 10000000, false);
+  }
+  
+  @Ignore @Test
+  public void testFundamentalCloneS1IteratorList() {
+    System.out.println("test fundamental clone s1 iterator list");
+    Buildable sort = Examples.expr;
+    ATerm t1 = sort.generate(10);
+    ATerm t2 = sort.generate(10);
+    ATerm t3 = sort.generate(10);
+    ATerm t4 = sort.generate(10);
+    ATerm t5 = sort.generate(10);
+    List<ATerm> list = new LinkedList<ATerm>();
+    list.add(t1);
+    list.add(t2);
+    list.add(t3);
+    list.add(t4);
+    list.add(t5);
+    DomainInterpretation domain = new BuildableDomain(sort);
+    ATermIterator ite = ShrinkIterator.s1Large(new ATermIteratorFromList(list), domain);
+    ATermIterator ite2 = ite.clone();
+    ATermList l1 = ShrinkIterator.toATermList(ite, t1.getFactory());
+    ATermList l2 = ShrinkIterator.toATermList(ite2, t1.getFactory());
+    System.out.println(l1.getLength());
+    System.out.println(l2.getLength());
+    assert l1.equals(l2);
   }
 
   @Test
@@ -105,8 +144,23 @@ public class ShrinkTest {
     Buildable sort = Examples.expr;
     ATerm term = sort.generate(10);
     DomainInterpretation domain = new BuildableDomain(sort);
-    ATermIterator ite = ShrinkIterator.s1WithDepthStrict(term, domain, 100);
+    ATermIterator ite = ShrinkIterator.s1WithDepthStrict(term, domain, 1);
     LibTests.testIterator(ite, 10000000, false);
+  }
+  
+  @Test
+  public void testFundamentalCloneS1WithDepthStrict() {
+    System.out.println("test fundamental clone s1WithDepthStrict");
+    Buildable sort = Examples.expr;
+    ATerm term = sort.generate(10);
+    DomainInterpretation domain = new BuildableDomain(sort);
+    ATermIterator ite = ShrinkIterator.s1WithDepthStrict(term, domain, 1);
+    ATermIterator ite2 = ite.clone();
+    ATermList l1 = ShrinkIterator.toATermList(ite, term.getFactory());
+    ATermList l2 = ShrinkIterator.toATermList(ite2, term.getFactory());
+    System.out.println(l1.getLength());
+    System.out.println(l2.getLength());
+    assert l1.equals(l2);
   }
 
   /**

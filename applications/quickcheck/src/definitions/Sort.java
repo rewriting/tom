@@ -379,7 +379,7 @@ public class Sort implements Buildable {
       if(res.progress.hasNext()) {
         res.beingModified = res.progress.next();
       } else{
-        beingModified = null;
+        res.beingModified = null;
       }
       return res;
     }

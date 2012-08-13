@@ -219,7 +219,11 @@ public class Interpretation {
     @Override
     public ATermIterator clone(){
       S1_aux_class res = (S1_aux_class) super.clone();
-      res.shrunkHead = this.shrunkHead.clone();
+      if(shrunkHead == null) {
+        res.shrunkHead = null;
+      } else {
+        res.shrunkHead = this.shrunkHead.clone();
+      }
       return res;
     }
     
@@ -309,7 +313,11 @@ public class Interpretation {
     @Override
     public ATermIterator clone(){
       S2_aux_class res = (S2_aux_class) super.clone();
-      res.shrunkHead = this.shrunkHead.clone();
+      if(shrunkHead == null) {
+        res.shrunkHead = null;
+      } else {
+        res.shrunkHead = this.shrunkHead.clone();
+      }
       return res;
     }
     
@@ -422,6 +430,20 @@ public class Interpretation {
     return term;
   }
 
+  private ATerm minATerm(ATermIterator list) {
+    ATerm res = null;
+    int sizeMin = Integer.MAX_VALUE;
+    while(list.hasNext()){
+      ATerm term = list.next();
+      int size = sizeATerm(term);
+      if(size < sizeMin) {
+        res = term;
+        sizeMin = size;
+      }
+    }
+    return res;
+  }
+
   private int depth(Visitable term){
     int res = -1;
     int n = term.getChildCount();
@@ -432,8 +454,11 @@ public class Interpretation {
   }
 
   private ATerm shrink(String varName, ATerm term, DomainInterpretation domain, Formula f, Map<String, ATerm> valuation) {
-    ATermFactory factory = term.getFactory();
-    ATermList l0 = factory.makeList(term);
+//    ATermFactory factory = term.getFactory();
+//    ATermList l0 = factory.makeList(term);
+    List<ATerm> list = new LinkedList<ATerm>();
+    list.add(term);
+    ATermIterator l0 = new ATermIteratorFromList(list);
     int depth = depth(term);
     for(int i = 0; i <= depth; i++) {
       l0 = s1(varName, l0, domain, f, valuation, i);
@@ -554,4 +579,20 @@ public class Interpretation {
     return null; // unreachable
   }
 
+
+  /* =================================================================== */
+  /*                            Test                                     */
+  /* =================================================================== */
+
+  ATermIterator getFilter(String varName, ATermIterator list, DomainInterpretation domain, Formula f, Map<String, ATerm> valuation){
+    return new FilterList_class(varName, list, domain, f, valuation);
+  }
+  
+  ATermIterator getS1(ATermIterator list, String varName, DomainInterpretation domain, int depth, Formula f, Map<String, ATerm> valuation){
+    return new S1_aux_class(list, varName, domain, depth, f, valuation);
+  }
+  
+  ATermIterator getS2(ATermIterator list, String varName, DomainInterpretation domain, int depth, Formula f, Map<String, ATerm> valuation){
+    return new S2_aux_class(list, varName, domain, depth, f, valuation);
+  }
 }

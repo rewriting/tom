@@ -8,11 +8,13 @@ import aterm.AFun;
 import aterm.ATerm;
 import aterm.ATermAppl;
 import aterm.ATermIterator;
+import aterm.ATermList;
 import aterm.pure.PureFactory;
 import examples.Examples;
 import java.util.ArrayList;
 import java.util.Iterator;
 import libtests.LibTests;
+import logic.model.ShrinkIterator;
 import static org.junit.Assert.assertEquals;
 import org.junit.*;
 
@@ -758,6 +760,20 @@ public class SortTest {
     ATermIterator ite = Examples.expr.getOneConsIter(term, cons);
     LibTests.testIterator(ite, 10, false);
   }
+  
+  @Test
+  public void testFundamentalCloneOneConsIter() {
+    System.out.println("test Fundamental clone oneConsIter");
+    ATerm term = Examples.expr.generate(10);
+    Constructor cons = Examples.expr.getCons("plus");
+    ATermIterator ite = Examples.expr.getOneConsIter(term, cons);
+    ATermIterator ite2 = ite.clone();
+    ATermList l1 = ShrinkIterator.toATermList(ite, term.getFactory());
+    ATermList l2 = ShrinkIterator.toATermList(ite2, term.getFactory());
+    System.out.println(l1.getLength());
+    System.out.println(l2.getLength());
+    assert l1.equals(l2);
+  }
 
   @Test
   public void testFundamentalMultiConsIter() {
@@ -772,6 +788,26 @@ public class SortTest {
     list.add(c3);
     ATermIterator ite = Examples.expr.getMultiConsIter(term, list);
     LibTests.testIterator(ite, 100, false);
+  }
+  
+  @Test
+  public void testFundamentalCloneMultiConsIter() {
+    System.out.println("test Fundamental clone MultiConsIter");
+    ATerm term = Examples.expr.generate(10);
+    Constructor c1 = Examples.expr.getCons("plus");
+    Constructor c2 = Examples.expr.getCons("mult");
+    Constructor c3 = Examples.expr.getCons("un");
+    ArrayList<Constructor> list = new ArrayList<Constructor>();
+    list.add(c1);
+    list.add(c2);
+    list.add(c3);
+    ATermIterator ite = Examples.expr.getMultiConsIter(term, list);
+    ATermIterator ite2 = ite.clone();
+    ATermList l1 = ShrinkIterator.toATermList(ite, term.getFactory());
+    ATermList l2 = ShrinkIterator.toATermList(ite2, term.getFactory());
+    System.out.println(l1.getLength());
+    System.out.println(l2.getLength());
+    assert l1.equals(l2);
   }
 
   @Test

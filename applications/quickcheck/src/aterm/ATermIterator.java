@@ -4,8 +4,10 @@
  */
 package aterm;
 
+import aterm.pure.PureFactory;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import logic.model.ShrinkIterator;
 
 /**
  *
@@ -43,6 +45,11 @@ public abstract class ATermIterator implements Cloneable{
     } else {
       return true;
     }
+  }
+  
+  @Override
+  public String toString(){
+    return ShrinkIterator.toATermList(this.clone(), new PureFactory()).toString();
   }
 
 }

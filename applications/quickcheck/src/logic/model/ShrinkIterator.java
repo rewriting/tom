@@ -8,6 +8,7 @@ import aterm.AFun;
 import aterm.ATerm;
 import aterm.ATermAppl;
 import aterm.ATermFactory;
+import aterm.ATermInt;
 import aterm.ATermIterator;
 import aterm.ATermList;
 import java.util.Arrays;
@@ -56,12 +57,13 @@ public class ShrinkIterator {
     }
 
     private ATermList getArgs(ATerm term) {
-      /*
-       * %match(term){ ATermAppl(fun, list) -> {return `list;} _ -> {throw new
-       * UnsupportedOperationException("Operation not supported");} }
-       */
       if(term instanceof ATermAppl) {
         return ((ATermAppl) term).getArguments();
+      }
+      if(term instanceof ATermInt) {
+        System.out.println("WARNING: ATermInt are not shrinkable.");
+        ATermList list = term.getFactory().makeList(term);
+        return list;
       }
       throw new UnsupportedOperationException("Operation not supported");
     }
@@ -275,7 +277,11 @@ public class ShrinkIterator {
     @Override
     public ATermIterator clone() {
       S1depth res = (S1depth) super.clone();
-      res.localIte = this.localIte.clone();
+      if(this.localIte == null) {
+        res.localIte = null;
+      } else {
+        res.localIte = this.localIte.clone();
+      }
       return res;
     }
 
