@@ -13,9 +13,11 @@ import java.util.List;
  */
 public class ATermIteratorFromList extends ATermIterator{
   private final Iterator<ATerm> ite;
+  private List<ATerm> list;
   
   public ATermIteratorFromList(List<ATerm> list){
     this.ite = list.iterator();
+    this.list = list;
   }
 
   @Override
@@ -26,6 +28,11 @@ public class ATermIteratorFromList extends ATermIterator{
   @Override
   public ATerm next() {
     return ite.next();
+  }
+  
+  @Override
+  public ATermIterator clone(){
+    return new ATermIteratorFromList(list);
   }
   
 }

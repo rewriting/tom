@@ -162,6 +162,16 @@ public class ShrinkTest {
     System.out.println(l2.getLength());
     assert l1.equals(l2);
   }
+  
+//  @Test
+//  public void testFundamentalFilter() {
+//    System.out.println("test fundamental s1 iterator one arg");
+//    Buildable sort = Examples.expr;
+//    ATerm term = sort.generate(10);
+//    DomainInterpretation domain = new BuildableDomain(sort);
+//    ATermIterator ite = 
+//    LibTests.testIterator(ite, 10000000, false);
+//  }
 
   /**
    * Tests of s1Strict method, of class Shrink.

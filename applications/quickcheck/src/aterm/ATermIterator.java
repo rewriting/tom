@@ -36,7 +36,7 @@ public abstract class ATermIterator implements Cloneable{
       if(!c2.hasNext()) {
         return false;
       }
-      if(c1.next().equals(c2.next())) {
+      if(!c1.next().equals(c2.next())) {
         return false;
       }
     }

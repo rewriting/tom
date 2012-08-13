@@ -218,13 +218,15 @@ public class Interpretation {
     
     @Override
     public ATermIterator clone(){
-      S1_aux_class res = (S1_aux_class) super.clone();
-      if(shrunkHead == null) {
-        res.shrunkHead = null;
-      } else {
-        res.shrunkHead = this.shrunkHead.clone();
-      }
-      return res;
+      return new S1_aux_class(list.clone(), varName, domain, depth, f, valuation);
+//      S1_aux_class res = (S1_aux_class) super.clone();
+//      if(shrunkHead == null) {
+//        res.shrunkHead = null;
+//      } else {
+//        res.shrunkHead = this.shrunkHead.clone();
+//      }
+//      res.list = this.list.clone();
+//      return res;
     }
     
     public S1_aux_class(ATermIterator list, String varName, DomainInterpretation domain, int depth, Formula f, Map<String, ATerm> valuation){
@@ -312,13 +314,15 @@ public class Interpretation {
     
     @Override
     public ATermIterator clone(){
-      S2_aux_class res = (S2_aux_class) super.clone();
-      if(shrunkHead == null) {
-        res.shrunkHead = null;
-      } else {
-        res.shrunkHead = this.shrunkHead.clone();
-      }
-      return res;
+      return new S2_aux_class(list.clone(), varName, domain, depth, f, valuation);
+//      S2_aux_class res = (S2_aux_class) super.clone();
+//      if(shrunkHead == null) {
+//        res.shrunkHead = null;
+//      } else {
+//        res.shrunkHead = this.shrunkHead.clone();
+//      }
+//      res.list = this.list.clone();
+//      return res;
     }
     
     public S2_aux_class(ATermIterator list, String varName, DomainInterpretation domain, int depth, Formula f, Map<String, ATerm> valuation){
