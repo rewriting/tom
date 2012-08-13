@@ -521,8 +521,13 @@ public class Sort implements Buildable {
     @Override
     public ATermIterator clone(){
       MultiConstructorIterator res = (MultiConstructorIterator) super.clone();
-      res.monoIte = this.monoIte.clone();
       res.consIte = this.l.iterator();
+      if(res.consIte.hasNext()) {
+        Constructor c = res.consIte.next();
+        res.monoIte = new OneConstructorIterator(term, c);
+      } else {
+        res.monoIte = null;
+      }
       return res;
     }
 
