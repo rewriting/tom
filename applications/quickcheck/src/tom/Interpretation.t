@@ -2,10 +2,13 @@ package logic.model;
 
 import aterm.ATerm;
 import aterm.ATermFactory;
+import aterm.ATermIterator;
+import aterm.ATermIteratorFromList;
 import aterm.ATermList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import jjtraveler.Visitable;
 import logic.system.types.Args;
 import logic.system.types.CounterExample;
@@ -119,6 +122,74 @@ public class Interpretation {
     }
   }
 
+  private class FilterList_class extends ATermIterator {
+    //<editor-fold defaultstate="collapsed" desc="filterList">
+
+    private ATerm current = null;
+    private ATermIterator list;
+    //
+    private String varName;
+    private DomainInterpretation domain;
+    private Formula f;
+    private Map<String, ATerm> valuation;
+    
+    @Override
+    public FilterList_class clone(){
+      FilterList_class res = (FilterList_class) super.clone();
+      res.list = this.list.clone();
+      return res;
+    }
+
+    public FilterList_class(String varName, ATermIterator list, DomainInterpretation domain, Formula f, Map<String, ATerm> valuation) {
+      this.varName = varName;
+      this.list = list;
+      this.domain = domain;
+      this.f = f;
+      this.valuation = valuation;
+    }
+
+    @Override
+    public boolean hasNext() {
+      if(current != null) {
+        return true;
+      }
+      if(!list.hasNext()) {
+        return false;
+      }
+      ATerm head = list.next();
+      valuation.put(varName, head);
+      boolean isValide = validateFormula(f, valuation);
+      valuation.remove(varName);
+      if(isValide) {
+        return hasNext();
+      } else {
+        current = head;
+        return true;
+      }
+    }
+
+    @Override
+    public ATerm next() {
+      if(current != null) {
+        ATerm res = current;
+        current = null;
+        return res;
+      } else if(hasNext()) {
+        System.out.println("WARNING : the use of the methode next() is not preceded by hasNext().");
+        ATerm res = current;
+        current = null;
+        return res;
+      } else {
+        throw new NoSuchElementException();
+      }
+    }
+    //</editor-fold>
+  }
+
+  private ATermIterator filterList(final String varName, final ATermIterator list, DomainInterpretation domain, final Formula f, final Map<String, ATerm> valuation) {
+    return new FilterList_class(varName, list, domain, f, valuation);
+  }
+
   private ATermList s1_aux(String varName, ATermList list, DomainInterpretation domain, Formula f, Map<String, ATerm> valuation, int depth){
     if(list.isEmpty()) {
       return list;
@@ -130,6 +201,83 @@ public class Interpretation {
     } else {
       return shrunkHead.concat(s1_aux(varName, list.getNext(), domain, f, valuation, depth));
     }
+  }
+
+  private class S1_aux_class extends ATermIterator {
+    //<editor-fold defaultstate="collapsed" desc="s1_aux">
+
+    private ATerm current = null;
+    private ATermIterator shrunkHead = null;
+    //
+    private ATermIterator list;
+    private String varName;
+    private DomainInterpretation domain;
+    private int depth;
+    private Formula f;
+    private Map<String, ATerm> valuation;
+    
+    @Override
+    public ATermIterator clone(){
+      S1_aux_class res = (S1_aux_class) super.clone();
+      res.shrunkHead = this.shrunkHead.clone();
+      return res;
+    }
+    
+    public S1_aux_class(ATermIterator list, String varName, DomainInterpretation domain, int depth, Formula f, Map<String, ATerm> valuation){
+      this.list = list;
+      this.valuation = valuation;
+      this.varName = varName;
+      this.domain = domain;
+      this.depth = depth;
+      this.f = f;
+      this.valuation = valuation;
+    }
+
+    @Override
+    public boolean hasNext() {
+      if(current != null) {
+        return true;
+      }
+      if(shrunkHead == null) {
+        if(!list.hasNext()) {
+          return false;
+        }
+        ATerm head = list.next();
+        shrunkHead = filterList(varName, ShrinkIterator.s1WithDepthStrict(head, domain, depth), domain, f, valuation);
+        if(!shrunkHead.hasNext()) {
+          List<ATerm> tmp = new LinkedList<ATerm>();
+          tmp.add(head);
+          shrunkHead = new ATermIteratorFromList(tmp);
+        }
+      }
+      if(!shrunkHead.hasNext()) {
+        shrunkHead = null;
+        return hasNext();
+      }
+      current = shrunkHead.next();
+      return true;
+    }
+
+    @Override
+    public ATerm next() {
+      if(current != null) {
+        ATerm res = current;
+        current = null;
+        return res;
+      } else if(hasNext()) {
+        System.out.println("WARNING : the use of the methode next() is not preceded by hasNext().");
+        ATerm res = current;
+        current = null;
+        return res;
+      } else {
+        throw new NoSuchElementException();
+      }
+    }
+    //</editor-fold>
+  }
+
+  private ATermIterator s1_aux(String varName, ATermIterator list, DomainInterpretation domain, Formula f, Map<String, ATerm> valuation, int depth) {
+    return new S1_aux_class(list, varName, domain, depth, f, valuation);
   }
 
   private ATermList s2_aux(String varName, ATermList list, DomainInterpretation domain, Formula f, Map<String, ATerm> valuation, int depth){
@@ -145,6 +293,82 @@ public class Interpretation {
     }
   }
 
+  private class S2_aux_class extends ATermIterator {
+    //<editor-fold defaultstate="collapsed" desc="s2_aux">
+
+    private ATerm current = null;
+    private ATermIterator shrunkHead = null;
+    //
+    private ATermIterator list;
+    private String varName;
+    private DomainInterpretation domain;
+    private int depth;
+    private Formula f;
+    private Map<String, ATerm> valuation;
+    
+    @Override
+    public ATermIterator clone(){
+      S2_aux_class res = (S2_aux_class) super.clone();
+      res.shrunkHead = this.shrunkHead.clone();
+      return res;
+    }
+    
+    public S2_aux_class(ATermIterator list, String varName, DomainInterpretation domain, int depth, Formula f, Map<String, ATerm> valuation){
+      this.list = list;
+      this.valuation = valuation;
+      this.varName = varName;
+      this.domain = domain;
+      this.depth = depth;
+      this.f = f;
+      this.valuation = valuation;
+    }
+
+    @Override
+    public boolean hasNext() {
+      if(current != null) {
+        return true;
+      }
+      if(shrunkHead == null) {
+        if(!list.hasNext()) {
+          return false;
+        }
+        ATerm head = list.next();
+        shrunkHead = filterList(varName, ShrinkIterator.s2WithDepthStrict(head, domain, depth), domain, f, valuation);
+        if(!shrunkHead.hasNext()) {
+          List<ATerm> tmp = new LinkedList<ATerm>();
+          tmp.add(head);
+          shrunkHead = new ATermIteratorFromList(tmp);
+        }
+      }
+      if(!shrunkHead.hasNext()) {
+        shrunkHead = null;
+        return hasNext();
+      }
+      current = shrunkHead.next();
+      return true;
+    }
+
+    @Override
+    public ATerm next() {
+      if(current != null) {
+        ATerm res = current;
+        current = null;
+        return res;
+      } else if(hasNext()) {
+        System.out.println("WARNING : the use of the methode next() is not preceded by hasNext().");
+        ATerm res = current;
+        current = null;
+        return res;
+      } else {
+        throw new NoSuchElementException();
+      }
+    }
+    //</editor-fold>
+  }
+
+  private ATermIterator s2_aux(String varName, ATermIterator list, DomainInterpretation domain, Formula f, Map<String, ATerm> valuation, int depth) {
+    return new S2_aux_class(list, varName, domain, depth, f, valuation);
+  }
 
   private ATermList s1(String varName, ATermList list, DomainInterpretation domain, Formula f, Map<String, ATerm> valuation, int depth){
     ATermList res = s1_aux(varName, list, domain, f, valuation, depth);
@@ -155,8 +379,22 @@ public class Interpretation {
     }
   }
 
+  private ATermIterator s1(String varName, ATermIterator list, DomainInterpretation domain, Formula f, Map<String, ATerm> valuation, int depth) {
+    ATermIterator res = s1_aux(varName, list, domain, f, valuation, depth);
+    if(res.equals(list)) {
+      return list;
+    } else {
+      return s1(varName, res, domain, f, valuation, depth);
+    }
+  }
+
   private ATermList s2(String varName, ATermList list, DomainInterpretation domain, Formula f, Map<String, ATerm> valuation, int depth){
     ATermList res = s2_aux(varName, list, domain, f, valuation, depth);
+    return res;
+  }
+
+  private ATermIterator s2(String varName, ATermIterator list, DomainInterpretation domain, Formula f, Map<String, ATerm> valuation, int depth) {
+    ATermIterator res = s2_aux(varName, list, domain, f, valuation, depth);
     return res;
   }
 

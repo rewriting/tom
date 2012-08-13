@@ -5,6 +5,7 @@
 package logic.model;
 
 import aterm.ATerm;
+import aterm.ATermIterator;
 import definitions.Buildable;
 import java.util.Iterator;
 import java.util.Set;
@@ -47,7 +48,7 @@ public class BuildableDomain implements DomainInterpretation {
   }
 
   @Override
-  public Iterator<ATerm> lighten(ATerm term) {
+  public ATermIterator lighten(ATerm term) {
     return model.lighten(term);
   }
 }

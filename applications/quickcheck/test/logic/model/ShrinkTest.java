@@ -6,6 +6,8 @@ package logic.model;
 
 import aterm.ATerm;
 import aterm.ATermFactory;
+import aterm.ATermIterator;
+import aterm.ATermIteratorFromList;
 import aterm.ATermList;
 import definitions.Buildable;
 import examples.Examples;
@@ -53,7 +55,7 @@ public class ShrinkTest {
     Buildable sort = Examples.expr;
     ATerm term = sort.generate(10);
     DomainInterpretation domain = new BuildableDomain(sort);
-    Iterator<ATerm> ite = ShrinkIterator.s1Strict(term, domain);
+    ATermIterator ite = ShrinkIterator.s1Strict(term, domain);
     LibTests.testIterator(ite, 10000000, false);
   }
 
@@ -73,7 +75,7 @@ public class ShrinkTest {
     list.add(t4);
     list.add(t5);
     DomainInterpretation domain = new BuildableDomain(sort);
-    Iterator<ATerm> ite = ShrinkIterator.s1Large(list.iterator(), domain);
+    ATermIterator ite = ShrinkIterator.s1Large(new ATermIteratorFromList(list), domain);
     LibTests.testIterator(ite, 10000000, false);
   }
 
@@ -93,7 +95,7 @@ public class ShrinkTest {
     list.add(t4);
     list.add(t5);
     DomainInterpretation domain = new BuildableDomain(sort);
-    Iterator<ATerm> ite = ShrinkIterator.s2Large(list.iterator(), domain);
+    ATermIterator ite = ShrinkIterator.s2Large(new ATermIteratorFromList(list), domain);
     LibTests.testIterator(ite, 10000000, false);
   }
 
@@ -103,7 +105,7 @@ public class ShrinkTest {
     Buildable sort = Examples.expr;
     ATerm term = sort.generate(10);
     DomainInterpretation domain = new BuildableDomain(sort);
-    Iterator<ATerm> ite = ShrinkIterator.s1WithDepthStrict(term, domain, 100);
+    ATermIterator ite = ShrinkIterator.s1WithDepthStrict(term, domain, 100);
     LibTests.testIterator(ite, 10000000, false);
   }
 

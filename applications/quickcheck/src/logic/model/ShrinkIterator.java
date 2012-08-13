@@ -8,6 +8,7 @@ import aterm.AFun;
 import aterm.ATerm;
 import aterm.ATermAppl;
 import aterm.ATermFactory;
+import aterm.ATermIterator;
 import aterm.ATermList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -32,12 +33,19 @@ public class ShrinkIterator {
     throw new UnsupportedOperationException("The term " + term + " is not included in " + Arrays.toString(subDoms));
   }
 
-  private static class s1Iterator implements Iterator<ATerm> {
+  private static class s1Iterator extends ATermIterator {
     //<editor-fold defaultstate="collapsed" desc="ATermSameTypeIterator">
 
     private ATerm current;
     private Stack<ATermList> stack;
     private DomainInterpretation domain;
+
+    @Override
+    public ATermIterator clone() {
+      s1Iterator res = (s1Iterator) super.clone();
+      res.stack = (Stack<ATermList>) this.stack.clone();
+      return res;
+    }
 
     private s1Iterator(final ATerm term, DomainInterpretation domain) {
       this.domain = domain;
@@ -96,38 +104,45 @@ public class ShrinkIterator {
         throw new NoSuchElementException();
       }
     }
-
-    @Override
-    public void remove() {
-      throw new UnsupportedOperationException("Not supported yet.");
-    }
     //</editor-fold>
   }
 
-  public static Iterator<ATerm> s1Strict(ATerm term, final DomainInterpretation domain) {
+  public static ATermIterator s1Strict(ATerm term, final DomainInterpretation domain) {
     return new s1Iterator(term, domain);
   }
 
   @Deprecated
-  private static Iterator<ATerm> s1Large(ATerm term, final DomainInterpretation domain) {
-    Iterator<ATerm> res = s1Strict(term, domain);
-    Iterator<ATerm> tmp = s1Strict(term, domain);
+  private static ATermIterator s1Large(ATerm term, final DomainInterpretation domain) {
+    ATermIterator res = s1Strict(term, domain);
+    ATermIterator tmp = s1Strict(term, domain);
     if(!tmp.hasNext()) {
-      List<ATerm> list = new LinkedList<ATerm>();
+      final List<ATerm> list = new LinkedList<ATerm>();
       list.add(term);
-      return list.iterator();
+      return new ATermIterator() {
+        Iterator<ATerm> l = list.iterator();
+
+        @Override
+        public boolean hasNext() {
+          return l.hasNext();
+        }
+
+        @Override
+        public ATerm next() {
+          return l.next();
+        }
+      };
     } else {
       return res;
     }
   }
 
   @Deprecated
-  public static Iterator<ATerm> s1Large(final Iterator<ATerm> termIterator, final DomainInterpretation domain) {
-    return new Iterator<ATerm>() {
+  public static ATermIterator s1Large(final ATermIterator termIterator, final DomainInterpretation domain) {
+    return new ATermIterator() {
       //<editor-fold defaultstate="collapsed" desc="s1Large">
-      private Iterator<ATerm> globalIterator = termIterator;
+      private ATermIterator globalIterator = termIterator;
       private DomainInterpretation dom = domain;
-      private Iterator<ATerm> localIterator;
+      private ATermIterator localIterator;
 
       @Override
       public boolean hasNext() {
@@ -157,11 +172,6 @@ public class ShrinkIterator {
         }
 
       }
-
-      @Override
-      public void remove() {
-        throw new UnsupportedOperationException("Not supported yet.");
-      }
       //</editor-fold>
     };
   }
@@ -174,30 +184,41 @@ public class ShrinkIterator {
   /*
    * -------------------------- S2 -------------------------
    */
-  public static Iterator<ATerm> s2Strict(ATerm term, final DomainInterpretation domain) {
+  public static ATermIterator s2Strict(ATerm term, final DomainInterpretation domain) {
     return domain.lighten(term);
   }
 
   @Deprecated
-  private static Iterator<ATerm> s2Large(ATerm term, final DomainInterpretation domain) {
-    Iterator<ATerm> res = s2Strict(term, domain);
-    Iterator<ATerm> tmp = s2Strict(term, domain);
-    if(!tmp.hasNext()) {
-      List<ATerm> list = new LinkedList<ATerm>();
+  private static ATermIterator s2Large(ATerm term, final DomainInterpretation domain) {
+    ATermIterator res = s2Strict(term, domain);
+    if(!res.hasNext()) {
+      final List<ATerm> list = new LinkedList<ATerm>();
       list.add(term);
-      return list.iterator();
+      return new ATermIterator() {
+        private Iterator<ATerm> l = list.iterator();
+
+        @Override
+        public boolean hasNext() {
+          return l.hasNext();
+        }
+
+        @Override
+        public ATerm next() {
+          return l.next();
+        }
+      };
     } else {
       return res;
     }
   }
 
   @Deprecated
-  public static Iterator<ATerm> s2Large(final Iterator<ATerm> termIterator, final DomainInterpretation domain) {
-    return new Iterator<ATerm>() {
+  public static ATermIterator s2Large(final ATermIterator termIterator, final DomainInterpretation domain) {
+    return new ATermIterator() {
       //<editor-fold defaultstate="collapsed" desc="s2Large">
-      private Iterator<ATerm> globalIterator = termIterator;
+      private ATermIterator globalIterator = termIterator;
       private DomainInterpretation dom = domain;
-      private Iterator<ATerm> localIterator;
+      private ATermIterator localIterator;
 
       @Override
       public boolean hasNext() {
@@ -227,11 +248,6 @@ public class ShrinkIterator {
         }
 
       }
-
-      @Override
-      public void remove() {
-        throw new UnsupportedOperationException("Not supported yet.");
-      }
       //</editor-fold>
     };
   }
@@ -244,141 +260,165 @@ public class ShrinkIterator {
   /*
    * -------------------------- WithDepth -------------------------
    */
-  public static Iterator<ATerm> s1WithDepthStrict(final ATerm term, final DomainInterpretation domain, final int depth) {
+  private static class S1depth extends ATermIterator {
+    //<editor-fold defaultstate="collapsed" desc="s1WithDepthStrict">
+
+    private ATerm[] args;
+    private AFun fun;
+    private DomainInterpretation[] subDoms;
+    private int d;
+    //
+    private int childIndex = 0;
+    private ATerm current = null;
+    private ATermIterator localIte = null;
+
+    @Override
+    public ATermIterator clone() {
+      S1depth res = (S1depth) super.clone();
+      res.localIte = this.localIte.clone();
+      return res;
+    }
+
+    public S1depth(ATermAppl term, DomainInterpretation domain, int depth) {
+      this.args = ((ATermAppl) term).getArgumentArray();
+      this.fun = ((ATermAppl) term).getAFun();
+      this.subDoms = domain.getDepsDomains();
+      this.d = depth;
+    }
+
+    @Override
+    public boolean hasNext() {
+      if(current != null) {
+        return true;
+      }
+      if(childIndex >= args.length) {
+        return false;
+      }
+      if(localIte == null) {
+        ATerm child = args[childIndex];
+        DomainInterpretation dom = getCorrespondingDomain(subDoms, child);
+        localIte = s1WithDepthStrict(args[childIndex], dom, d - 1);
+      }
+      if(!localIte.hasNext()) {
+        childIndex++;
+        localIte = null;
+        return hasNext();
+      }
+      ATerm[] newArgs = Arrays.copyOf(args, args.length);
+      ATerm head = localIte.next();
+      newArgs[childIndex] = head;
+      ATerm newTerm = head.getFactory().makeAppl(fun, newArgs);
+      current = newTerm;
+      return true;
+    }
+
+    @Override
+    public ATerm next() {
+      if(current != null) {
+        ATerm res = current;
+        current = null;
+        return res;
+      } else if(hasNext()) {
+        System.out.println("WARNING : the use of the methode next() is not preceded by hasNext().");
+        ATerm res = current;
+        current = null;
+        return res;
+      } else {
+        throw new NoSuchElementException();
+      }
+    }
+    //</editor-fold>
+  }
+
+  private static class S2depth extends ATermIterator {
+    //<editor-fold defaultstate="collapsed" desc="s2WithDepthStrict">
+
+    private ATerm[] args;
+    private AFun fun;
+    private DomainInterpretation[] subDoms;
+    private int d;
+    //
+    private int childIndex = 0;
+    private ATerm current = null;
+    private ATermIterator localIte = null;
+
+    @Override
+    public ATermIterator clone() {
+      S1depth res = (S1depth) super.clone();
+      res.localIte = this.localIte.clone();
+      return res;
+    }
+
+    public S2depth(ATermAppl term, DomainInterpretation domain, int depth) {
+      this.args = ((ATermAppl) term).getArgumentArray();
+      this.fun = ((ATermAppl) term).getAFun();
+      this.subDoms = domain.getDepsDomains();
+      this.d = depth;
+    }
+
+    @Override
+    public boolean hasNext() {
+      if(current != null) {
+        return true;
+      }
+      if(childIndex >= args.length) {
+        return false;
+      }
+      if(localIte == null) {
+        ATerm child = args[childIndex];
+        DomainInterpretation dom = getCorrespondingDomain(subDoms, child);
+        localIte = s2WithDepthStrict(args[childIndex], dom, d - 1);
+      }
+      if(!localIte.hasNext()) {
+        childIndex++;
+        localIte = null;
+        return hasNext();
+      }
+      ATerm[] newArgs = Arrays.copyOf(args, args.length);
+      ATerm head = localIte.next();
+      newArgs[childIndex] = head;
+      ATerm newTerm = head.getFactory().makeAppl(fun, newArgs);
+      current = newTerm;
+      return true;
+    }
+
+    @Override
+    public ATerm next() {
+      if(current != null) {
+        ATerm res = current;
+        current = null;
+        return res;
+      } else if(hasNext()) {
+        System.out.println("WARNING : the use of the methode next() is not preceded by hasNext().");
+        ATerm res = current;
+        current = null;
+        return res;
+      } else {
+        throw new NoSuchElementException();
+      }
+    }
+    //</editor-fold>
+  }
+
+  public static ATermIterator s1WithDepthStrict(final ATerm term, final DomainInterpretation domain, final int depth) {
     if(depth == 0) {
       return s1Strict(term, domain);
     }
-    return new Iterator<ATerm>() {
-      //<editor-fold defaultstate="collapsed" desc="s1WithDepthStrict">
-      private ATerm[] args = ((ATermAppl) term).getArgumentArray();
-      private AFun fun = ((ATermAppl) term).getAFun();
-      private DomainInterpretation[] subDoms = domain.getDepsDomains();
-      private int d = depth;
-      //
-      private int childIndex = 0;
-      private ATerm current = null;
-      private Iterator<ATerm> localIte = null;
-      
-      @Override
-      public boolean hasNext() {
-        if(current != null) {
-          return true;
-        }
-        if(childIndex >= args.length) {
-          return false;
-        }
-        if(localIte == null) {
-          ATerm child = args[childIndex];
-          DomainInterpretation dom = getCorrespondingDomain(subDoms, child);
-          localIte = s1WithDepthStrict(args[childIndex], dom, d - 1);
-        }
-        if(!localIte.hasNext()) {
-          childIndex++;
-          localIte = null;
-          return hasNext();
-        }
-        ATerm[] newArgs = Arrays.copyOf(args, args.length);
-        ATerm head = localIte.next();
-        newArgs[childIndex] = head;
-        ATerm newTerm = head.getFactory().makeAppl(fun, newArgs);
-        current = newTerm;
-        return true;
-      }
-      
-      @Override
-      public ATerm next() {
-        if(current != null) {
-          ATerm res = current;
-          current = null;
-          return res;
-        } else if(hasNext()) {
-          System.out.println("WARNING : the use of the methode next() is not preceded by hasNext().");
-          ATerm res = current;
-          current = null;
-          return res;
-        } else {
-          throw new NoSuchElementException();
-        }
-      }
-      
-      @Override
-      public void remove() {
-        throw new UnsupportedOperationException("Not supported yet.");
-      }
-      //</editor-fold>
-    };
+    return new S1depth((ATermAppl) term, domain, depth);
   }
-  
-  public static Iterator<ATerm> s2WithDepthStrict(final ATerm term, final DomainInterpretation domain, final int depth) {
+
+  public static ATermIterator s2WithDepthStrict(final ATerm term, final DomainInterpretation domain, final int depth) {
     if(depth == 0) {
       return s2Strict(term, domain);
     }
-    return new Iterator<ATerm>() {
-      //<editor-fold defaultstate="collapsed" desc="s2WithDepthStrict">
-      private ATerm[] args = ((ATermAppl) term).getArgumentArray();
-      private AFun fun = ((ATermAppl) term).getAFun();
-      private DomainInterpretation[] subDoms = domain.getDepsDomains();
-      private int d = depth;
-      //
-      private int childIndex = 0;
-      private ATerm current = null;
-      private Iterator<ATerm> localIte = null;
-      
-      @Override
-      public boolean hasNext() {
-        if(current != null) {
-          return true;
-        }
-        if(childIndex >= args.length) {
-          return false;
-        }
-        if(localIte == null) {
-          ATerm child = args[childIndex];
-          DomainInterpretation dom = getCorrespondingDomain(subDoms, child);
-          localIte = s2WithDepthStrict(args[childIndex], dom, d - 1);
-        }
-        if(!localIte.hasNext()) {
-          childIndex++;
-          localIte = null;
-          return hasNext();
-        }
-        ATerm[] newArgs = Arrays.copyOf(args, args.length);
-        ATerm head = localIte.next();
-        newArgs[childIndex] = head;
-        ATerm newTerm = head.getFactory().makeAppl(fun, newArgs);
-        current = newTerm;
-        return true;
-      }
-      
-      @Override
-      public ATerm next() {
-        if(current != null) {
-          ATerm res = current;
-          current = null;
-          return res;
-        } else if(hasNext()) {
-          System.out.println("WARNING : the use of the methode next() is not preceded by hasNext().");
-          ATerm res = current;
-          current = null;
-          return res;
-        } else {
-          throw new NoSuchElementException();
-        }
-      }
-      
-      @Override
-      public void remove() {
-        throw new UnsupportedOperationException("Not supported yet.");
-      }
-      //</editor-fold>
-    };
+    return new S2depth((ATermAppl) term, domain, depth);
   }
 
   /*
    * -------------------------- UTILS -----------------------
    */
-  public static Iterator<ATerm> toIterator(final ATermList list) {
-    return new Iterator<ATerm>() {
+  public static ATermIterator toIterator(final ATermList list) {
+    return new ATermIterator() {
       private ATermList state = list;
 
       @Override
@@ -396,15 +436,10 @@ public class ShrinkIterator {
           throw new NoSuchElementException();
         }
       }
-
-      @Override
-      public void remove() {
-        state = state.removeElementAt(0);
-      }
     };
   }
 
-  public static ATermList toATermList2(Iterator<ATerm> iterator) {
+  public static ATermList toATermList2(ATermIterator iterator) {
     ATermFactory factory = null;
     ATermList list = null;
 
@@ -419,7 +454,7 @@ public class ShrinkIterator {
     return list;
   }
 
-  public static ATermList toATermList(Iterator<ATerm> iterator, ATermFactory factory) {
+  public static ATermList toATermList(ATermIterator iterator, ATermFactory factory) {
     if(!iterator.hasNext()) {
       return factory.makeList();
     }

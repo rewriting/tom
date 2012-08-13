@@ -6,6 +6,8 @@ package definitions;
 
 import aterm.ATerm;
 import aterm.ATermInt;
+import aterm.ATermIterator;
+import aterm.ATermIteratorFromList;
 import aterm.ATermList;
 import aterm.pure.PureFactory;
 import definitions.StrategyParameters.DistStrategy;
@@ -62,10 +64,10 @@ public final class Builtin {
     }
 
     @Override
-    public Iterator<ATerm> lighten(ATerm term) {
+    public ATermIterator lighten(ATerm term) {
       List<ATerm> list = new LinkedList<ATerm>();
       list.add(term);
-      return list.iterator();
+      return new ATermIteratorFromList(list);
     }
   };
   /**
@@ -113,10 +115,10 @@ public final class Builtin {
     }
 
     @Override
-    public Iterator<ATerm> lighten(ATerm term) {
+    public ATermIterator lighten(ATerm term) {
       List<ATerm> list = new LinkedList<ATerm>();
       list.add(term);
-      return list.iterator();
+      return new ATermIteratorFromList(list);
     }
   };
 

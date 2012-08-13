@@ -4,6 +4,7 @@ import aterm.AFun;
 import aterm.ATerm;
 import aterm.ATermAppl;
 import aterm.ATermFactory;
+import aterm.ATermIterator;
 import aterm.ATermList;
 import aterm.pure.PureFactory;
 import java.util.*;
@@ -356,7 +357,7 @@ public class Sort implements Buildable {
     return res;
   }
 
-  private class OneConstructorIterator implements Iterator<ATerm> {
+  private class OneConstructorIterator extends ATermIterator {
     //<editor-fold defaultstate="collapsed" desc="OneConstructorIterator">
 
     private ATerm current;
@@ -370,6 +371,18 @@ public class Sort implements Buildable {
     private Map<Buildable, Integer> mapCountConsFieldsType;
     private Constructor cons;
     private ATermFactory factory;
+    
+    @Override
+    public ATermIterator clone(){
+      OneConstructorIterator res = (OneConstructorIterator) super.clone();
+      res.progress = res.mapCountConsFieldsType.keySet().iterator();
+      if(res.progress.hasNext()) {
+        res.beingModified = res.progress.next();
+      } else{
+        beingModified = null;
+      }
+      return res;
+    }
 
     public OneConstructorIterator(ATerm term, Constructor cons) {
       this.cons = cons;
@@ -491,26 +504,31 @@ public class Sort implements Buildable {
         throw new NoSuchElementException();
       }
     }
-
-    @Override
-    public void remove() {
-      throw new UnsupportedOperationException("This method must not be used.");
-    }
     //</editor-fold>
   }
 
-  private class MultiConstructorIterator implements Iterator<ATerm> {
+  private class MultiConstructorIterator extends ATermIterator {
     //<editor-fold defaultstate="collapsed" desc="MultiConstructorIterator">
 
+    List<Constructor> l;
     private Iterator<Constructor> consIte;
     private ATerm term;
     //
     private ATerm current;
-    private Iterator<ATerm> monoIte;
+    private ATermIterator monoIte;
     private boolean hasnext;
+    
+    @Override
+    public ATermIterator clone(){
+      MultiConstructorIterator res = (MultiConstructorIterator) super.clone();
+      res.monoIte = this.monoIte.clone();
+      res.consIte = this.l.iterator();
+      return res;
+    }
 
-    public MultiConstructorIterator(ATerm term, Iterator<Constructor> ite) {
-      this.consIte = ite;
+    public MultiConstructorIterator(ATerm term, List<Constructor> ite) {
+      this.l = ite;
+      this.consIte = ite.iterator();
       this.term = term;
       this.current = null;
       if(consIte.hasNext()) {
@@ -564,20 +582,15 @@ public class Sort implements Buildable {
         throw new NoSuchElementException();
       }
     }
-
-    @Override
-    public void remove() {
-      throw new UnsupportedOperationException("Remove function must not be used.");
-    }
     //</editor-fold>
   }
 
   @Override
-  public Iterator<ATerm> lighten(ATerm term) {
+  public ATermIterator lighten(ATerm term) {
     return lightenStrict(term);
   }
 
-  private Iterator<ATerm> lightenStrict(ATerm term) {
+  private ATermIterator lightenStrict(ATerm term) {
     Constructor constructor = getCurrentCons(term);
     final List<Constructor> listSC = new LinkedList<Constructor>();
     for(Constructor cons : constructors) {
@@ -585,11 +598,11 @@ public class Sort implements Buildable {
         listSC.add(cons);
       }
     }
-    Iterator<ATerm> res = new MultiConstructorIterator(term, listSC.iterator());
+    ATermIterator res = new MultiConstructorIterator(term, listSC);
     return res;
   }
 
-  private Iterator<ATerm> lightenLarge(ATerm term) {
+  private ATermIterator lightenLarge(ATerm term) {
     Constructor constructor = getCurrentCons(term);
     final List<Constructor> listSC = new LinkedList<Constructor>();
     for(Constructor cons : constructors) {
@@ -600,7 +613,7 @@ public class Sort implements Buildable {
     if(listSC.isEmpty()) {
       listSC.add(constructor);
     }
-    Iterator<ATerm> res = new MultiConstructorIterator(term, listSC.iterator());
+    ATermIterator res = new MultiConstructorIterator(term, listSC);
     return res;
   }
 
@@ -609,7 +622,7 @@ public class Sort implements Buildable {
     return new OneConstructorIterator(term, cons);
   }
 
-  MultiConstructorIterator getMultiConsIter(ATerm term, Iterator<Constructor> ite) {
+  MultiConstructorIterator getMultiConsIter(ATerm term, List<Constructor> ite) {
     return new MultiConstructorIterator(term, ite);
   }
 

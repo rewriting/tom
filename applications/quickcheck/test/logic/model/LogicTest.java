@@ -7,6 +7,8 @@ package logic.model;
 import aterm.ATerm;
 import aterm.ATermFactory;
 import aterm.ATermInt;
+import aterm.ATermIterator;
+import aterm.ATermIteratorFromList;
 import aterm.pure.PureFactory;
 import definitions.Buildable;
 import examples.Examples;
@@ -100,10 +102,10 @@ public class LogicTest {
       }
 
       @Override
-      public Iterator<ATerm> lighten(ATerm term) {
+      public ATermIterator lighten(ATerm term) {
         List<ATerm> res = new ArrayList<ATerm>();
         res.add(term);
-        return res.iterator();
+        return new ATermIteratorFromList(res);
       }
     };
 
@@ -125,10 +127,10 @@ public class LogicTest {
       }
 
       @Override
-      public Iterator<ATerm> lighten(ATerm term) {
+      public ATermIterator lighten(ATerm term) {
         List<ATerm> res = new ArrayList<ATerm>();
         res.add(term);
-        return res.iterator();
+        return new ATermIteratorFromList(res);
       }
     };
 
@@ -195,10 +197,10 @@ public class LogicTest {
       }
 
       @Override
-      public Iterator<ATerm> lighten(ATerm term) {
+      public ATermIterator lighten(ATerm term) {
         List<ATerm> res = new ArrayList<ATerm>();
         res.add(term);
-        return res.iterator();
+        return new ATermIteratorFromList(res);
       }
     };
 
@@ -267,7 +269,7 @@ public class LogicTest {
       }
 
       @Override
-      public Iterator<ATerm> lighten(ATerm term) {
+      public ATermIterator lighten(ATerm term) {
         return Examples.listABC.lighten(term);
       }
 
@@ -315,7 +317,7 @@ public class LogicTest {
       }
 
       @Override
-      public Iterator<ATerm> lighten(ATerm term) {
+      public ATermIterator lighten(ATerm term) {
         return Examples.listABC.lighten(term);
       }
 

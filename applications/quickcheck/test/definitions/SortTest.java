@@ -7,6 +7,7 @@ package definitions;
 import aterm.AFun;
 import aterm.ATerm;
 import aterm.ATermAppl;
+import aterm.ATermIterator;
 import aterm.pure.PureFactory;
 import examples.Examples;
 import java.util.ArrayList;
@@ -754,7 +755,7 @@ public class SortTest {
     System.out.println("test Fundamental oneConsIter");
     ATerm term = Examples.expr.generate(10);
     Constructor cons = Examples.expr.getCons("plus");
-    Iterator<ATerm> ite = Examples.expr.getOneConsIter(term, cons);
+    ATermIterator ite = Examples.expr.getOneConsIter(term, cons);
     LibTests.testIterator(ite, 10, false);
   }
 
@@ -769,7 +770,7 @@ public class SortTest {
     list.add(c1);
     list.add(c2);
     list.add(c3);
-    Iterator<ATerm> ite = Examples.expr.getMultiConsIter(term, list.iterator());
+    ATermIterator ite = Examples.expr.getMultiConsIter(term, list);
     LibTests.testIterator(ite, 100, false);
   }
 
@@ -777,7 +778,7 @@ public class SortTest {
   public void testFundamentalLigthen() {
     System.out.println("test Fundamental ligthen hasNext()");
     ATerm term = Examples.expr.generate(10);
-    Iterator<ATerm> ite = Examples.expr.lighten(term);
+    ATermIterator ite = Examples.expr.lighten(term);
     LibTests.testIterator(ite, 100, false);
   }
 }

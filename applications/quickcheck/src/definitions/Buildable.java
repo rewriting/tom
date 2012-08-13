@@ -1,6 +1,7 @@
 package definitions;
 
 import aterm.ATerm;
+import aterm.ATermIterator;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -89,5 +90,5 @@ public interface Buildable {
    */
   public boolean isTypeOf(ATerm term);
 
-  public Iterator<ATerm> lighten(ATerm term);
+  public ATermIterator lighten(ATerm term);
 }

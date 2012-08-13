@@ -5,7 +5,7 @@
 package logic.model;
 
 import aterm.ATerm;
-import java.util.Iterator;
+import aterm.ATermIterator;
 
 /**
  * A class implementing this interface is an interpretation of a set.
@@ -35,7 +35,7 @@ public interface DomainInterpretation {
    * @param term
    * @return
    */
-  public Iterator<ATerm> lighten(ATerm term);
+  public ATermIterator lighten(ATerm term);
 
   /**
    * Gives all domains which current domain depends on. This function is used in
