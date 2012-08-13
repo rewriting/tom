@@ -13,14 +13,14 @@ import logic.model.ShrinkIterator;
  *
  * @author hubert
  */
-public abstract class ATermIterator implements Cloneable{
+public abstract class ATermIterator implements Cloneable {
 
   abstract public boolean hasNext();
 
   abstract public ATerm next();
-  
+
   @Override
-  public ATermIterator clone(){
+  public ATermIterator clone() {
     try {
       return (ATermIterator) super.clone();
     } catch (CloneNotSupportedException ex) {
@@ -28,8 +28,8 @@ public abstract class ATermIterator implements Cloneable{
     }
     return null;
   }
-  
-  public boolean equals(ATermIterator other){
+
+  public boolean equals(ATermIterator other) {
     ATermIterator c1 = this.clone();
     ATermIterator c2 = other.clone();
     while(c1.hasNext()) {
@@ -46,10 +46,9 @@ public abstract class ATermIterator implements Cloneable{
       return true;
     }
   }
-  
+
   @Override
-  public String toString(){
+  public String toString() {
     return ShrinkIterator.toATermList(this.clone(), new PureFactory()).toString();
   }
-
 }
