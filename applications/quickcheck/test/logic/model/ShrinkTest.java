@@ -54,7 +54,7 @@ public class ShrinkTest {
     ATerm term = sort.generate(10);
     DomainInterpretation domain = new BuildableDomain(sort);
     Iterator<ATerm> ite = ShrinkIterator.s1Strict(term, domain);
-    LibTests.testIterator(ite, 10, false);
+    LibTests.testIterator(ite, 10000000, false);
   }
 
   @Test
@@ -74,7 +74,7 @@ public class ShrinkTest {
     list.add(t5);
     DomainInterpretation domain = new BuildableDomain(sort);
     Iterator<ATerm> ite = ShrinkIterator.s1Large(list.iterator(), domain);
-    LibTests.testIterator(ite, 100, false);
+    LibTests.testIterator(ite, 10000000, false);
   }
 
   @Test
@@ -94,7 +94,17 @@ public class ShrinkTest {
     list.add(t5);
     DomainInterpretation domain = new BuildableDomain(sort);
     Iterator<ATerm> ite = ShrinkIterator.s2Large(list.iterator(), domain);
-    LibTests.testIterator(ite, 100, false);
+    LibTests.testIterator(ite, 10000000, false);
+  }
+
+  @Test
+  public void testFundamentalS1WithDepthStrict() {
+    System.out.println("test fundamental s1WithDepthStrict");
+    Buildable sort = Examples.expr;
+    ATerm term = sort.generate(10);
+    DomainInterpretation domain = new BuildableDomain(sort);
+    Iterator<ATerm> ite = ShrinkIterator.s1WithDepthStrict(term, domain, 100);
+    LibTests.testIterator(ite, 10000000, false);
   }
 
   /**
@@ -293,5 +303,31 @@ public class ShrinkTest {
     ATermList result1 = Shrink.s2WithDepthStrict(term, domain, 0);
     ATermList result2 = ShrinkIterator.toATermList(ShrinkIterator.s2Strict(term, domain), term.getFactory());
     assert result1.equals(result2);
+  }
+  
+  @Test
+  public void testDepthS1StrictIterator() {
+    System.out.println("test s1 strict depth iterator");
+    Buildable sort = Examples.sortTestShrink2;
+    ATerm term = ExamplesTerms.sortTestShrink2_s2test;
+    DomainInterpretation domain = new BuildableDomain(sort);
+    ATermList result = ShrinkIterator.toATermList(ShrinkIterator.s1WithDepthStrict(term, domain, 1), term.getFactory());
+    assert result.getLength() == 6;
+    for(int i = 0; i < result.getLength(); i++) {
+      assert result.getChildAt(result.getLength() - 1 - i).equals(ExamplesTerms.sortTestShrink2_s1depth_children[i]);
+    }
+  }
+
+  @Test
+  public void testDepthS2StrictIterator() {
+    System.out.println("test s2 strict depth iterator");
+    Buildable sort = Examples.sortTestShrink2;
+    ATerm term = ExamplesTerms.sortTestShrink2_s2test;
+    DomainInterpretation domain = new BuildableDomain(sort);
+    ATermList result = ShrinkIterator.toATermList(ShrinkIterator.s2WithDepthStrict(term, domain, 1), term.getFactory());
+    assert result.getLength() == 2;
+    for(int i = 0; i < result.getLength(); i++) {
+      assert result.getChildAt(result.getLength() - 1 - i).equals(ExamplesTerms.sortTestShrink2_s2depth_children[i]);
+    }
   }
 }

@@ -45,6 +45,7 @@ public class ExamplesTerms {
     sortTestShrink2_s1depth_children[3] = factory.parse("gros(b(c(a(nill))),b(c(a(b(c(a(nill)))))),c(a(nill)),a(b(c(a(nill)))),a(b(c(a(b(c(a(nill))))))),a(b(c(a(b(c(a(b(c(a(nill)))))))))))");
     sortTestShrink2_s1depth_children[4] = factory.parse("gros(b(c(a(nill))),b(c(a(nill))),c(a(b(c(a(nill))))),a(b(c(a(nill)))),a(b(c(a(b(c(a(nill))))))),a(b(c(a(b(c(a(b(c(a(nill)))))))))))");
     sortTestShrink2_s1depth_children[5] = factory.parse("gros(nill,b(c(a(b(c(a(nill)))))),c(a(b(c(a(nill))))),a(b(c(a(nill)))),a(b(c(a(b(c(a(nill))))))),a(b(c(a(b(c(a(b(c(a(nill)))))))))))");
+    
     sortTestShrink2_s2depth_children[0] = factory.parse("gros(b(c(a(nill))),nill,c(a(b(c(a(nill))))),a(b(c(a(nill)))),a(b(c(a(b(c(a(nill))))))),a(b(c(a(b(c(a(b(c(a(nill)))))))))))");
     sortTestShrink2_s2depth_children[1] = factory.parse("gros(nill,b(c(a(b(c(a(nill)))))),c(a(b(c(a(nill))))),a(b(c(a(nill)))),a(b(c(a(b(c(a(nill))))))),a(b(c(a(b(c(a(b(c(a(nill)))))))))))");
     listABS_T1 = factory.parse("consList(b,consList(b,consList(c,nill)))");

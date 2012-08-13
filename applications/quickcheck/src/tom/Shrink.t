@@ -155,6 +155,7 @@ public class Shrink{
     return list;
   }
 
+  @Deprecated
   private static ATermList s1WithDepthLarge_aux(ATerm term, DomainInterpretation domain, int depth){
     ATermList res = s1WithDepthStrict(term, domain, depth);
     if (res.isEmpty()) {
@@ -164,6 +165,7 @@ public class Shrink{
     }
   }
   
+  @Deprecated
   private static ATermList s2WithDepthLarge_aux(ATerm term, DomainInterpretation domain, int depth){
     ATermList res = s2WithDepthStrict(term, domain, depth);
     if (res.isEmpty()) {
