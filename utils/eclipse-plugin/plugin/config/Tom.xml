@@ -100,9 +100,6 @@
       <boolean name="wall" altName="W"
         description="Print warning"
         value="false"/>
-      <boolean name="lazyType" altName="l"
-        description="Use universal type"
-        value="false"/>
       <boolean name="pretty" altName="p"
         description="Generate readable code"
         value="false"/>

@@ -72,12 +72,13 @@ public class BackendPlugin extends TomGenericPlugin {
   %include { ../../library/mapping/java/sl.tom }
 
   /** the tabulation starting value */
-  private final static int defaultDeep = 2;
+  public final static int defaultDeep = 1;
 
   /** the declared options string */
   public static final String DECLARED_OPTIONS = 
     "<options>" +
     "<boolean name='noOutput' altName=''  description='Do not generate code' value='false'/>" +
+    "<boolean name='aCode'    altName='a'  description='Generate Ada code' value='false'/>" +
     "<boolean name='jCode'    altName='j' description='Generate Java code' value='true'/>" + 
     "<boolean name='csCode'   altName=''  description='Generate C# code' value='false'/>" + 
     "<boolean name='cCode'    altName='c' description='Generate C code' value='false'/>" +
@@ -91,6 +92,7 @@ public class BackendPlugin extends TomGenericPlugin {
   public static final String CAMLCODE = "camlCode"; 
   public static final String PCODE = "pCode"; 
   public static final String JCODE = "jCode"; 
+  public static final String ACODE = "aCode"; 
 
   /** the generated file name */
   private String generatedFileName = null;
@@ -122,6 +124,8 @@ public class BackendPlugin extends TomGenericPlugin {
             generator = new CamlGenerator(output, getOptionManager(), getSymbolTable());
           } else if(getOptionBooleanValue(BackendPlugin.PCODE)) {
             generator = new PythonGenerator(output, getOptionManager(), getSymbolTable());
+          } else if(getOptionBooleanValue("aCode")) {
+            generator = new AdaGenerator(output, getOptionManager(), getSymbolTable());
           } else if(getOptionBooleanValue("csCode")) {
             generator = new CSharpGenerator(output, getOptionManager(), getSymbolTable());
           } else if(getOptionBooleanValue(BackendPlugin.JCODE)) {
@@ -176,18 +180,27 @@ public class BackendPlugin extends TomGenericPlugin {
       setOptionValue(BackendPlugin.JCODE, Boolean.FALSE);
       setOptionValue(BackendPlugin.CCODE, Boolean.FALSE);
       setOptionValue(BackendPlugin.PCODE, Boolean.FALSE);
+      setOptionValue(BackendPlugin.ACODE, Boolean.FALSE);        
     } else if(optionName.equals(BackendPlugin.CCODE) && ((Boolean)optionValue).booleanValue() ) {
       setOptionValue(BackendPlugin.JCODE, Boolean.FALSE);
       setOptionValue(BackendPlugin.CAMLCODE, Boolean.FALSE);
       setOptionValue(BackendPlugin.PCODE, Boolean.FALSE);
+      setOptionValue(BackendPlugin.ACODE, Boolean.FALSE);        
     } else if(optionName.equals(BackendPlugin.JCODE) && ((Boolean)optionValue).booleanValue() ) {
       setOptionValue(BackendPlugin.CCODE, Boolean.FALSE);
       setOptionValue(BackendPlugin.CAMLCODE, Boolean.FALSE);
       setOptionValue(BackendPlugin.PCODE, Boolean.FALSE);
+      setOptionValue(BackendPlugin.ACODE, Boolean.FALSE);        
     } else if(optionName.equals(BackendPlugin.PCODE) && ((Boolean)optionValue).booleanValue() ) {
       setOptionValue(BackendPlugin.CCODE, Boolean.FALSE);
       setOptionValue(BackendPlugin.CAMLCODE, Boolean.FALSE);
       setOptionValue(BackendPlugin.JCODE, Boolean.FALSE);
+      setOptionValue(BackendPlugin.ACODE, Boolean.FALSE);        
+    } else if(optionName.equals(BackendPlugin.ACODE) && ((Boolean)optionValue).booleanValue() ) { 
+      setOptionValue(BackendPlugin.CCODE, Boolean.FALSE);
+      setOptionValue(BackendPlugin.CAMLCODE, Boolean.FALSE);
+      setOptionValue(BackendPlugin.JCODE, Boolean.FALSE);
+      setOptionValue(BackendPlugin.PCODE, Boolean.FALSE);
     }
   }
 
@@ -451,15 +464,6 @@ public class BackendPlugin extends TomGenericPlugin {
         }
       }
 
-      GetDefaultDecl[AstName=Name(opname),SlotName=Name(slotName),Expr=Code(code)] -> {
-        try {
-          String moduleName = stack.peek();
-          bp.getSymbolTable(moduleName).putGetDefault(`opname,`slotName,`code);
-        } catch (EmptyStackException e) {
-          System.out.println("No moduleName in stack");
-        }
-      }
-
       GetHeadDecl[Opname=Name(opname),Expr=Code(code)] -> {
         try {
           String moduleName = stack.peek();
@@ -554,6 +558,7 @@ public class BackendPlugin extends TomGenericPlugin {
         try {
           String moduleName = stack.peek();
           TomSymbol tomSymbol = TomBase.getSymbolFromName(`opname,bp.getSymbolTable(moduleName));
+          markStrategy.visitLight(tomSymbol);
         } catch (EmptyStackException e) {
           System.out.println("No moduleName in stack");
         }
