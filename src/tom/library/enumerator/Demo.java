@@ -2,10 +2,6 @@ package enumerator;
 
 import java.math.BigInteger;
 
-import fj.F;
-import fj.F2;
-import fj.Function;
-import fj.Unit;
 public class Demo {
 
 	public static void main(String args[]) {
@@ -17,14 +13,14 @@ public class Demo {
 		//System.out.println(boolEnum.get(0));
 
 		// enumerator for list of booleans
-		final F<Boolean,F<LList,LList>> cons = Function.curry(
-				new F2<Boolean,LList,LList>() { public LList f(Boolean head,LList tail) { return new Cons(head,tail); } });
+		final F2<Boolean,LList,LList> cons = 
+				new F2<Boolean,LList,LList>() { public LList apply(Boolean head,LList tail) { return new Cons(head,tail); } };
 
 		final Enumeration<LList> nilEnum = Enumeration.singleton((LList)new Nil());
 
 		F<Enumeration<LList>,Enumeration<LList>> f = new F<Enumeration<LList>,Enumeration<LList>>() {
-			public Enumeration<LList> f(final Enumeration<LList> e) {
-				return nilEnum.plus(consEnum(cons,boolEnum,e)).pay();
+			public Enumeration<LList> apply(final Enumeration<LList> e) {
+				return nilEnum.plus(consEnum(cons.curry(),boolEnum,e)).pay();
 			}
 		};
 		

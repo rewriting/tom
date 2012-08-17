@@ -6,11 +6,6 @@ import static java.math.BigInteger.ONE;
 import java.util.ArrayList;
 import java.util.List;
 
-import fj.F;
-import fj.F2;
-import fj.Function;
-import fj.P2;
-
 public class LazyList<A> {
 	P2<A,LazyList<A>> pair = null;
 	A cacheHead;
@@ -58,13 +53,13 @@ public class LazyList<A> {
 			return LazyList.<C>nil();
 		}
 		return fromPair(new P2<C,LazyList<C>>() {
-			public C _1() { return f.f(LazyList.this.head()).f(ys.head()); }
+			public C _1() { return f.apply(LazyList.this.head()).apply(ys.head()); }
 			public LazyList<C> _2() { return LazyList.this.tail().zipWith(ys.tail(), f); }
 		});
 	}
 
 	public final <B, C> LazyList<C> zipWith(final LazyList<B> ys, final F2<A, B, C> f) {
-		return zipWith(ys, Function.curry(f));
+		return zipWith(ys, f.curry());
 	}
 
 	public LazyList<A> append(final LazyList<A> s) {
@@ -111,7 +106,7 @@ public class LazyList<A> {
 			return LazyList.<B>nil();
 		}
 		return fromPair(new P2<B,LazyList<B>>() {
-			public B _1() { return f.f(LazyList.this.head()); }
+			public B _1() { return f.apply(LazyList.this.head()); }
 			public LazyList<B> _2() { return LazyList.this.tail().map(f); }
 		});
 	}
@@ -119,13 +114,13 @@ public class LazyList<A> {
 	public final <B> B foldLeft(final B neutral, final F<B, F<A, B>> f) {
 		B res = neutral;
 		for (LazyList<A> xs = this; !xs.isEmpty(); xs = xs.tail()) {
-			res = f.f(res).f(xs.head());
+			res = f.apply(res).apply(xs.head());
 		}
 		return res;
 	}
 
 	public final A foldLeft(final A neutral, final F2<A, A, A> f) {
-		return foldLeft(neutral, Function.curry(f));
+		return foldLeft(neutral, f.curry());
 	}
 
 	public final A index(final BigInteger i) {

@@ -3,9 +3,6 @@ package enumerator;
 import java.math.BigInteger;
 import static java.math.BigInteger.ZERO;
 import static java.math.BigInteger.ONE;
-import fj.F;
-import fj.F2;
-import fj.P2;
 
 public class Finite<A> {
 	private BigInteger card;
@@ -18,7 +15,7 @@ public class Finite<A> {
 
 	public static <A> Finite<A> empty() {
 		return new Finite<A>(ZERO, new F<BigInteger, A>() {
-			public A f(BigInteger i) {
+			public A apply(BigInteger i) {
 				throw new RuntimeException("index out of range");
 			}
 		});
@@ -26,7 +23,7 @@ public class Finite<A> {
 
 	public static <A> Finite<A> singleton(final A x) {
 		return new Finite<A>(ONE, new F<BigInteger, A>() {
-			public A f(BigInteger i) {
+			public A apply(BigInteger i) {
 				if (i.signum() == 0) {
 					return x;
 				} else {
@@ -49,12 +46,12 @@ public class Finite<A> {
 	}
 
 	public A get(BigInteger i) {
-		return indexer.f(i);
+		return indexer.apply(i);
 	}
 
 	public Finite<A> plus(final Finite<A> other) {
 		return new Finite<A>(card.add(other.card), new F<BigInteger, A>() {
-			public A f(BigInteger i) {
+			public A apply(BigInteger i) {
 				return (i.compareTo(card)<0) ? get(i) : other.get(i.subtract(card));
 			}
 		});
@@ -63,7 +60,7 @@ public class Finite<A> {
 	public <B> Finite<P2<A, B>> times(final Finite<B> other) {
 		return new Finite<P2<A, B>>(card.multiply(other.card),
 				new F<BigInteger, P2<A, B>>() {
-					public P2<A, B> f(BigInteger i) {
+					public P2<A, B> apply(BigInteger i) {
 						BigInteger[] qr = i.divideAndRemainder(other.card);
 						final BigInteger q = qr[0];
 						final BigInteger r = qr[1];
@@ -77,7 +74,7 @@ public class Finite<A> {
 	
 	public static <E> F2<Finite<E>, Finite<E>, Finite<E>> functorPlus() {
 		return new F2<Finite<E>, Finite<E>, Finite<E>>() {
-			public Finite<E> f(Finite<E> x, Finite<E> y) {
+			public Finite<E> apply(Finite<E> x, Finite<E> y) {
 				return x.plus(y);
 			}
 		};
@@ -85,19 +82,20 @@ public class Finite<A> {
 
 	public static <A,B> F2<Finite<A>, Finite<B>, Finite<P2<A, B>>> functorTimes() {
 		return new F2<Finite<A>, Finite<B>, Finite<P2<A, B>>>() {
-			public Finite<P2<A, B>> f(Finite<A> x, Finite<B> y) {
+			public Finite<P2<A, B>> apply(Finite<A> x, Finite<B> y) {
 				return x.times(y);
 			}
 		};
 	}
 
 	public <B> Finite<B> map(final F<A,B> f) {
-		return setIndexer(indexer.andThen(f));
+		//return setIndexer(indexer.andThen(f));
+		return setIndexer(f.o(indexer));
 	}
 
 	public static <A,B> Finite<B> apply(final Finite<F<A,B>> subject, final Finite<A> other) {
 		F<P2<F<A,B>,A>,B> pair = new F<P2<F<A,B>,A>,B>() {
-			public B f(P2<F<A,B>,A> p) { return p._1().f(p._2()); }
+			public B apply(P2<F<A,B>,A> p) { return p._1().apply(p._2()); }
 		};
 		return subject.times(other).map(pair);
 	}

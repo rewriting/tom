@@ -2,21 +2,14 @@ package enumerator;
 
 import java.math.BigInteger;
 
-import fj.F;
-import fj.F2;
-import fj.Function;
-import fj.P2;
-import fj.Unit;
-//import static Enumeration.apply;
-
 public class Bug {
 
 	public static void main(String args[]) {
 		final Enumeration<T> aEnum = Enumeration.singleton((T)new A());
 		
 		F<Enumeration<T>,Enumeration<T>> foo = new F<Enumeration<T>,Enumeration<T>>() {
-			public Enumeration<T> f(final Enumeration<T> e) {
-				final F<T,T> fooFunction = new F<T,T>() { public T f(T arg) { return new Foo(arg); } };
+			public Enumeration<T> apply(final Enumeration<T> e) {
+				final F<T,T> fooFunction = new F<T,T>() { public T apply(T arg) { return new Foo(arg); } };
 				return aEnum.plus(Enumeration.<T,T>apply(Enumeration.singleton(fooFunction),e).pay());
 				//return aEnum.plus(e.map(fooFunction).pay());
 			}
@@ -30,7 +23,6 @@ public class Bug {
 		//Enumeration<P2<T,T>> res  = TEnum.times(aEnum);
 		//Enumeration<P2<T,T>> res  = aEnum.times(TEnum);
 		
-		//listEnum.pay();
 		//TEnum.pay().get(0);
 
 		LazyList<Finite<T>> parts = res.parts();

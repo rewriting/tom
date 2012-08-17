@@ -1,7 +1,6 @@
 package enumerator;
 
-import fj.P1;
-import fj.P2;
+import java.math.BigInteger;
 
 public class LazyList_Test {
 
@@ -9,19 +8,19 @@ public class LazyList_Test {
 		LazyList<Integer> s = naturals(5);
 		
 		for(int i=0; i<5 ; i++) {
-			System.out.println("i=" + i + " --> " + s.index(i));
+			System.out.println("i=" + i + " --> " + s.index(BigInteger.valueOf(i)));
 		}
 		
 		LazyList<LazyList<Integer>> tails = s.tails();
 		for(int i=0; i<5 ; i++) {
 			System.out.print("tail " + i + " --> ");
-			for(int j=0; j<5 ; j++) { System.out.print(tails.index(i).index(j) + " "); }
+			for(int j=0; j<5 ; j++) { System.out.print(tails.index(BigInteger.valueOf(i)).index(BigInteger.valueOf(j)) + " "); }
 			System.out.println("...");
 		}
 		
 		LazyList<LazyList<Integer>> revs = s.reversals();
 		for(int i=0; i<5 ; i++) {
-			System.out.println("rev " + i + " --> " + revs.index(i).toList());
+			System.out.println("rev " + i + " --> " + revs.index(BigInteger.valueOf(i)).toList());
 		}
 	}
 

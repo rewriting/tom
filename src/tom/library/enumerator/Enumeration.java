@@ -3,13 +3,6 @@ package enumerator;
 import java.math.BigInteger;
 import static java.math.BigInteger.ZERO;
 import static java.math.BigInteger.ONE;
-import fj.F;
-import fj.F2;
-import fj.Function;
-import fj.P1;
-import fj.P2;
-import fj.function.BigIntegers;
-import fj.function.Integers;
 
 public class Enumeration<A> {
 	public LazyList<Finite<A>> cacheParts;
@@ -89,7 +82,7 @@ public class Enumeration<A> {
 	
 	public <B> Enumeration<B> map(final F<A,B> f) {
 		final F<Finite<A>,Finite<B>> g = new F<Finite<A>,Finite<B>>() {
-			public Finite<B> f(Finite<A> x) {
+			public Finite<B> apply(Finite<A> x) {
 				return x.map(f);
 			}
 		};
@@ -140,7 +133,7 @@ public class Enumeration<A> {
 	
 	private static <A,B> LazyList<Finite<P2<A,B>>> goX(final LazyList<Finite<A>> xs, final LazyList<Finite<B>> ry) {
 		F<LazyList<Finite<A>>, Finite<P2<A,B>>> fs = new F<LazyList<Finite<A>>, Finite<P2<A,B>>>() {
-			public Finite<P2<A,B>> f(LazyList<Finite<A>> x) {
+			public Finite<P2<A,B>> apply(LazyList<Finite<A>> x) {
 				return conv(x,ry);
 			} 
 		};
@@ -148,19 +141,19 @@ public class Enumeration<A> {
 	}
 	
 	private static <A,B> Finite<P2<A,B>> conv(final LazyList<Finite<A>> xs, final LazyList<Finite<B>> ys) {
-		F<Finite<A>, BigInteger> cardA = new F<Finite<A>, BigInteger>() { public BigInteger f(Finite<A> x) { return x.getCard(); } };
-		F<Finite<B>, BigInteger> cardB = new F<Finite<B>, BigInteger>() { public BigInteger f(Finite<B> x) { return x.getCard(); } };
+		F<Finite<A>, BigInteger> cardA = new F<Finite<A>, BigInteger>() { public BigInteger apply(Finite<A> x) { return x.getCard(); } };
+		F<Finite<B>, BigInteger> cardB = new F<Finite<B>, BigInteger>() { public BigInteger apply(Finite<B> x) { return x.getCard(); } };
         LazyList<BigInteger> xsCards = xs.map(cardA);
 		LazyList<BigInteger> ysCards = ys.map(cardB);
-		//F<BigInteger, F<BigInteger, BigInteger>> multiply = Function.curry(
-		//		new F2<BigInteger, BigInteger, BigInteger>() { public BigInteger f(BigInteger a, BigInteger b) { return a.multiply(b); } });
-		//F<BigInteger, F<BigInteger, BigInteger>> add = Function.curry(
-		//		new F2<BigInteger, BigInteger, BigInteger>() { public BigInteger f(BigInteger a, BigInteger b) { return a.add(b); } });
+		F2<BigInteger, BigInteger, BigInteger> multiply = 
+				new F2<BigInteger, BigInteger, BigInteger>() { public BigInteger apply(BigInteger a, BigInteger b) { return a.multiply(b); } };
+		F2<BigInteger, BigInteger, BigInteger> add = 
+				new F2<BigInteger, BigInteger, BigInteger>() { public BigInteger apply(BigInteger a, BigInteger b) { return a.add(b); } };
 
-		LazyList<BigInteger> cardsProducts = xsCards.zipWith(ysCards,BigIntegers.multiply);
-		BigInteger newCard = cardsProducts.foldLeft(ZERO,BigIntegers.add);
+		LazyList<BigInteger> cardsProducts = xsCards.zipWith(ysCards,multiply.curry());
+		BigInteger newCard = cardsProducts.foldLeft(ZERO,add.curry());
 		F<BigInteger, P2<A,B>> newIndexer = new F<BigInteger,P2<A,B>>() { 
-			public P2<A,B> f(BigInteger i) {
+			public P2<A,B> apply(BigInteger i) {
 				Finite<P2<A,B>> unionOfProducts = xs.zipWith(ys, Finite.<A,B>functorTimes())
 				.foldLeft(Finite.<P2<A,B>>empty(), Finite.<P2<A,B>>functorPlus()); 
 				return unionOfProducts.get(i);
@@ -172,8 +165,8 @@ public class Enumeration<A> {
 
 	public static <A,B> Enumeration<B> apply(final Enumeration<F<A,B>> subject, final Enumeration<A> other) {
 		F<P2<F<A,B>,A>,B> pair = new F<P2<F<A,B>,A>,B>() {
-			public B f(P2<F<A,B>,A> p) {
-				return p._1().f(p._2());
+			public B apply(P2<F<A,B>,A> p) {
+				return p._1().apply(p._2());
 			}
 		};
 		return subject.times(other).map(pair);
@@ -181,7 +174,7 @@ public class Enumeration<A> {
 	
 	public static <E> Enumeration<E> fix(final F<Enumeration<E>,Enumeration<E>> f) {
 		Enumeration<E> e = new Enumeration<E>((LazyList<Finite<E>>)null);
-		final Enumeration<E> res = f.f(e);
+		final Enumeration<E> res = f.apply(e);
 		e.p1 = new P1<LazyList<Finite<E>>>() {
 			public LazyList<Finite<E>> _1() { return res.cacheParts; }
 		};
