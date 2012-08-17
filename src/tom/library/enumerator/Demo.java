@@ -38,10 +38,10 @@ public class Demo {
 		//for(BigInteger i=Integer.MAX_VALUE-1 ; i<= Integer.MAX_VALUE ; i=i+10000) {
 		//	System.out.println(i + " --> " + listEnum.get(i));
 		//}
-		for(int p=0 ; p<10000 ; p=p+10) {
+		for(int p=0 ; p<10000 ; p=p+100) {
 			BigInteger i = java.math.BigInteger.TEN.pow(p);
-			System.out.println("10^" + p + " --> " /*+ listEnum.get(i)*/);
-			listEnum.get(i);
+			System.out.println("10^" + p + " --> " + listEnum.get(i).size());
+			//listEnum.get(i);
 		}
 		//System.out.println(listEnum.pay().get(0));
 		//listEnum.pay().get(0);
@@ -54,13 +54,18 @@ public class Demo {
 		return res;
 	}
 	
-	private static class LList {
+	private static abstract class LList {
+		public abstract int size();
 	}
 
 	private static class Nil extends LList {
 		public String toString() {
 			return "nil";
 		}
+		public int size() {
+			return 0;
+		}
+
 	}
 
 	private static class Cons extends LList {
@@ -74,6 +79,10 @@ public class Demo {
 
 		public String toString() {
 			return head + ":" + tail;
+		}
+		
+		public int size() {
+			return 1 + tail.size();
 		}
 	}
 
