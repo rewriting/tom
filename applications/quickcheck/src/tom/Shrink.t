@@ -31,7 +31,7 @@ public class Shrink{
     throw new UnsupportedOperationException("The term " + term + " is not included in " + Arrays.toString(subDoms));
   }
 
-
+  @Deprecated
   private static ATermList s1Strict_aux(ATermList list, DomainInterpretation domain){
     %match(list){
       concATerm() -> {return `concATerm();}
@@ -54,6 +54,7 @@ public class Shrink{
     return null; // unreachable
   }
 
+  @Deprecated
   public static ATermList s1Strict(ATerm term, DomainInterpretation domain){
     ATermList list = null;
     breakmatch : {
@@ -95,6 +96,7 @@ public class Shrink{
     return s1Large_aux(head, domain).concat(s1Large(list.getNext(), domain));
   }
 
+  @Deprecated
   public static ATermList s1WithDepthStrict(ATerm term, DomainInterpretation domain, int depth) {
     if (depth == 0) {
       return s1Strict(term, domain);
@@ -125,6 +127,7 @@ public class Shrink{
     return list;
   }
 
+  @Deprecated
   public static ATermList s2WithDepthStrict(ATerm term, DomainInterpretation domain, int depth) {
     if (depth == 0) {
       return ShrinkIterator.toATermList(ShrinkIterator.s2Strict(term, domain), term.getFactory());
@@ -155,42 +158,42 @@ public class Shrink{
     return list;
   }
 
-  @Deprecated
-  private static ATermList s1WithDepthLarge_aux(ATerm term, DomainInterpretation domain, int depth){
-    ATermList res = s1WithDepthStrict(term, domain, depth);
-    if (res.isEmpty()) {
-      return term.getFactory().makeList(term);
-    } else {
-      return res;
-    }
-  }
-  
-  @Deprecated
-  private static ATermList s2WithDepthLarge_aux(ATerm term, DomainInterpretation domain, int depth){
-    ATermList res = s2WithDepthStrict(term, domain, depth);
-    if (res.isEmpty()) {
-      return term.getFactory().makeList(term);
-    } else {
-      return res;
-    }
-  }
-  @Deprecated
-  public static ATermList s1WithDepthLarge(ATermList list, DomainInterpretation domain, int depth){
-    if (list.isEmpty()) {
-      return list;
-    } else {
-      return s1WithDepthLarge_aux(list.getFirst(), domain, depth).concat(s1WithDepthLarge(list.getNext(), domain, depth));
-    }
-  }
-
-  @Deprecated
-  public static ATermList s2WithDepthLarge(ATermList list, DomainInterpretation domain, int depth){
-    if (list.isEmpty()) {
-      return list;
-    } else {
-      return s2WithDepthLarge_aux(list.getFirst(), domain, depth).concat(s2WithDepthLarge(list.getNext(), domain, depth));
-    }
-  }
+//  @Deprecated
+//  private static ATermList s1WithDepthLarge_aux(ATerm term, DomainInterpretation domain, int depth){
+//    ATermList res = s1WithDepthStrict(term, domain, depth);
+//    if (res.isEmpty()) {
+//      return term.getFactory().makeList(term);
+//    } else {
+//      return res;
+//    }
+//  }
+//  
+//  @Deprecated
+//  private static ATermList s2WithDepthLarge_aux(ATerm term, DomainInterpretation domain, int depth){
+//    ATermList res = s2WithDepthStrict(term, domain, depth);
+//    if (res.isEmpty()) {
+//      return term.getFactory().makeList(term);
+//    } else {
+//      return res;
+//    }
+//  }
+//  @Deprecated
+//  private static ATermList s1WithDepthLarge(ATermList list, DomainInterpretation domain, int depth){
+//    if (list.isEmpty()) {
+//      return list;
+//    } else {
+//      return s1WithDepthLarge_aux(list.getFirst(), domain, depth).concat(s1WithDepthLarge(list.getNext(), domain, depth));
+//    }
+//  }
+//
+//  @Deprecated
+//  private static ATermList s2WithDepthLarge(ATermList list, DomainInterpretation domain, int depth){
+//    if (list.isEmpty()) {
+//      return list;
+//    } else {
+//      return s2WithDepthLarge_aux(list.getFirst(), domain, depth).concat(s2WithDepthLarge(list.getNext(), domain, depth));
+//    }
+//  }
   
 
   public static Collection s1bis(ATerm term, DomainInterpretation domain) {

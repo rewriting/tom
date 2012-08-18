@@ -106,7 +106,6 @@ public class Interpretation {
   /*                                 Shrink                              */
   /* =================================================================== */
 
-
   private ATermList filterList(String varName, ATermList list, DomainInterpretation domain, Formula f, Map<String, ATerm> valuation) {
     if (list.isEmpty()) {
       return list;
