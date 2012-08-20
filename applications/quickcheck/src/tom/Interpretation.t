@@ -481,6 +481,7 @@ public class Interpretation {
       boolean res = validateFormula(f, valuation);
       valuation.remove(varName);
       if(!res){
+        System.out.println("Counter example found !");
         ATerm shrunkTerm = shrink(varName, term, domain, f, valuation);
         valuation.put(varName, shrunkTerm);
         CounterExample cef = validateFormulaWithCE(f, valuation);
