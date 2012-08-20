@@ -85,7 +85,7 @@ public class Interpretation {
     return true;
   }
 
-  private CounterExample validateForallWithCE(String varName, String domainName, Formula f, Map<String, ATerm> valuation){
+  private CounterExample validateForallWithCE(String varName, String domainName, Formula f, Map<String, ATerm> valuation, int sizeMax){
     DomainInterpretation domain = domain_map.get(domainName);
     if(domain == null){
       throw new UnsupportedOperationException("Domain " + domainName + " has no interpretation.");
@@ -93,7 +93,7 @@ public class Interpretation {
     for(int i = 0; i<20; i++){
       ATerm term = domain.chooseElement(i);
       valuation.put(varName, term);
-      CounterExample cef = validateFormulaWithCE(f, valuation);
+      CounterExample cef = validateFormulaWithCE(f, valuation, sizeMax);
       valuation.remove(varName);
       %match(cef){
         !NoCE() -> {return `CEForall(varName, term, cef);}
@@ -470,12 +470,12 @@ public class Interpretation {
     return minATerm(l0);
   }
 
-  private CounterExample validateForallWithShrunkCE(String varName, String domainName, Formula f, Map<String, ATerm> valuation){
+  private CounterExample validateForallWithShrunkCE(String varName, String domainName, Formula f, Map<String, ATerm> valuation, int sizeMax){
     DomainInterpretation domain = domain_map.get(domainName);
     if(domain == null){
       throw new UnsupportedOperationException("Domain " + domainName + " has no interpretation.");
     }
-    for(int i = 0; i<20; i++){
+    for(int i = 0; i<sizeMax; i++){
       ATerm term = domain.chooseElement(i);
       valuation.put(varName, term);
       boolean res = validateFormula(f, valuation);
@@ -484,7 +484,7 @@ public class Interpretation {
         System.out.println("Counter example found !");
         ATerm shrunkTerm = shrink(varName, term, domain, f, valuation);
         valuation.put(varName, shrunkTerm);
-        CounterExample cef = validateFormulaWithCE(f, valuation);
+        CounterExample cef = validateFormulaWithCE(f, valuation, sizeMax);
         valuation.remove(varName);
         return `CEForall(varName, shrunkTerm, cef);
       }
@@ -516,7 +516,7 @@ public class Interpretation {
     return false; // unreachable
   }
 
-  public CounterExample validateFormulaWithCE(Formula f, Map<String, ATerm> valuation) {
+  public CounterExample validateFormulaWithCE(Formula f, Map<String, ATerm> valuation, int sizeMax) {
     %match(f){
       Predicate(name, args) -> {
         PredicateInterpretation interpretation = interp_pre.get(`name);
@@ -532,10 +532,10 @@ public class Interpretation {
         }
       }
       And(f1, f2) -> {
-        CounterExample cef1 = validateFormulaWithCE(`f1, valuation);
+        CounterExample cef1 = validateFormulaWithCE(`f1, valuation, sizeMax);
         %match(cef1){
           NoCE() -> {
-            CounterExample cef2 = validateFormulaWithCE(`f2, valuation);
+            CounterExample cef2 = validateFormulaWithCE(`f2, valuation, sizeMax);
             %match(cef2){
               NoCE() -> {return `NoCE();}
               _ -> {return `CEAnd(cef2);}
@@ -545,11 +545,11 @@ public class Interpretation {
         }
       }
       Or(f1, f2) -> {
-        CounterExample cef1 = validateFormulaWithCE(`f1, valuation);
+        CounterExample cef1 = validateFormulaWithCE(`f1, valuation, sizeMax);
         %match(cef1){
           NoCE() -> {return `NoCE();}
           _ -> {
-            CounterExample cef2 = validateFormulaWithCE(`f2, valuation);
+            CounterExample cef2 = validateFormulaWithCE(`f2, valuation, sizeMax);
             %match(cef2){
               NoCE() -> {return `NoCE();}
               _ -> {return `CEOr(cef1, cef2);}
@@ -560,7 +560,7 @@ public class Interpretation {
       Imply(f1, f2) -> {
         boolean valide = validateFormula(`f1, valuation);
         if(valide){
-          CounterExample cef2 = validateFormulaWithCE(`f2, valuation);
+          CounterExample cef2 = validateFormulaWithCE(`f2, valuation, sizeMax);
           %match(cef2){
             NoCE() -> {return `NoCE();}
             _ -> {return `CEImply(cef2);}
@@ -577,7 +577,7 @@ public class Interpretation {
           return `NoCE();
         }
       }
-      Forall(varname, domain, f1) -> {return validateForallWithShrunkCE(`varname, `domain, `f1, valuation);}
+      Forall(varname, domain, f1) -> {return validateForallWithShrunkCE(`varname, `domain, `f1, valuation, sizeMax);}
       Exists(varname, domain, f1) -> {throw new UnsupportedOperationException("Exists logic is not yet implemented");}
     }
     return null; // unreachable

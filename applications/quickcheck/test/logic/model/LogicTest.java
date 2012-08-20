@@ -208,7 +208,7 @@ public class LogicTest {
 
     Interpretation interp_int = new Interpretation(map_pre, map_sig, map_dom);
 
-    String res = interp_int.validateFormulaWithCE(formula, new HashMap<String, ATerm>()).toString();
+    String res = interp_int.validateFormulaWithCE(formula, new HashMap<String, ATerm>(), 20).toString();
     assert res.equals("CEForall(\"x\",4,CEPredicate(\"P\",ListArgs(Var(\"x\"))))");
   }
 
@@ -224,7 +224,7 @@ public class LogicTest {
 
     Interpretation interp_list = new Interpretation(map_pre, map_sig, map_dom);
 
-    String res = interp_list.validateFormulaWithCE(formula, new HashMap<String, ATerm>()).toString();
+    String res = interp_list.validateFormulaWithCE(formula, new HashMap<String, ATerm>(), 20).toString();
     assert res.equals("NoCE()");
   }
 
@@ -244,7 +244,7 @@ public class LogicTest {
 
     Interpretation interp_list = new Interpretation(map_pre, map_sig, map_dom);
 
-    String res = interp_list.validateFormulaWithCE(even_odd, new HashMap<String, ATerm>()).toString();
+    String res = interp_list.validateFormulaWithCE(even_odd, new HashMap<String, ATerm>(), 20).toString();
     assert res.equals("NoCE()");
   }
 
@@ -292,7 +292,7 @@ public class LogicTest {
 
     Interpretation interp_list = new Interpretation(map_pre, map_sig, map_dom);
 
-    String res = interp_list.validateFormulaWithCE(formula, new HashMap<String, ATerm>()).toString();
+    String res = interp_list.validateFormulaWithCE(formula, new HashMap<String, ATerm>(), 20).toString();
     assert res.equals("CEForall(\"x\",consList(b,consList(c,nill)),CEPredicate(\"P\",ListArgs(Var(\"x\"))))");
   }
 
@@ -340,7 +340,7 @@ public class LogicTest {
 
     Interpretation interp_list = new Interpretation(map_pre, map_sig, map_dom);
 
-    String res = interp_list.validateFormulaWithCE(formula, new HashMap<String, ATerm>()).toString();
+    String res = interp_list.validateFormulaWithCE(formula, new HashMap<String, ATerm>(), 20).toString();
     assert res.equals("CEForall(\"x\",consList(b,consList(c,nill)),CEPredicate(\"P\",ListArgs(Var(\"x\"))))");
   }
 }

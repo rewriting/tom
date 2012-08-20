@@ -58,7 +58,7 @@ public class TestPrintParse {
 
     Interpretation interp_int = new Interpretation(map_pre, map_sig, map_dom);
 
-    CounterExample ce = interp_int.validateFormulaWithCE(formula, new HashMap<String, ATerm>());
+    CounterExample ce = interp_int.validateFormulaWithCE(formula, new HashMap<String, ATerm>(), 1000);
     System.out.println(ce);
   }
 }
