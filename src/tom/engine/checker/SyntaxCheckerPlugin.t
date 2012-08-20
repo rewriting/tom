@@ -1,3 +1,4 @@
+
 /*
  *
  * TOM - To One Matching Compiler
@@ -173,12 +174,9 @@ public class SyntaxCheckerPlugin extends TomGenericPlugin {
     return -1;
   }
 
-  private boolean strictType = true;
-
   public void run(Map informationTracker) {
     //System.out.println("(debug) I'm in the Tom SyntaxChecker : TSM"+getStreamManager().toString());
     if(isActivated()) {
-      strictType = !getOptionBooleanValue("lazyType");
       long startChrono = System.currentTimeMillis();
       try {
         // clean up internals
@@ -240,7 +238,6 @@ public class SyntaxCheckerPlugin extends TomGenericPlugin {
         scp.verifyStrategy(`list);
         throw new tom.library.sl.VisitFailure();/* stop the top-down */
       }
-
       /*
        * %typeterm
        */
@@ -261,6 +258,26 @@ public class SyntaxCheckerPlugin extends TomGenericPlugin {
         scp.verifySymbol(SyntaxCheckerPlugin.OP_LIST, scp.getSymbolFromName(`tomName));
         throw new tom.library.sl.VisitFailure();/* stop the top-down */
       }
+      /*
+       * %transformation
+       */
+//      t@Transformation[TName=name,WithToList=wtlist,OrgTrack=ot] -> {
+//        /*test if a %transformtion is empty (not valid)*/
+//        if(`wtlist.isEmptyconcTomWithTo()) {
+//          %match(ot) {
+//            OriginTracking[FileName=fileName,Line=line] -> { 
+//              TomMessage.error(scp.getLogger(), `fileName, `line, TomMessage.emptyTransformation);
+//              return `t;
+//            }
+//          }
+//          TomMessage.error(scp.getLogger(), null, -1, TomMessage.emptyTransformation);
+//          return `t;
+//        }
+//        //TODO : verify transformation structure?
+//        //scp.verifyTransformation(`wtlist);
+//        throw new tom.library.sl.VisitFailure();/* stop the top-down*/
+//      }
+
     }
 
     visit Instruction {
@@ -505,7 +522,7 @@ matchblock:{
                  break matchblock;
                }
                // for a symbol
-               MakeDecl[Args=makeArgsList, OrgTrack=og@OriginTracking[FileName=fileName,Line=line]] -> {
+               debug@MakeDecl[Args=makeArgsList, OrgTrack=og@OriginTracking[FileName=fileName,Line=line]] -> {
                  if(!foundOpMake) {
                    foundOpMake = true;
                    `verifyMakeDeclArgs(makeArgsList, domainLength, og, symbolType);
@@ -1135,6 +1152,15 @@ matchL:  %match(subject,s) {
     }
   }
 
+  /*
+   * Verify structure of a %transformation
+   */
+//  private void verifyTransformation(TomWithToList wtlist) throws VisitFailure {
+    //TODO:
+    // - test if a withTerm exists (+args) -> here ?
+    // - test toTerm structure ?
+//  }
+
   /**
    * Analyse a term given an expected type and re-enter recursively on children
    */
@@ -1323,8 +1349,7 @@ matchblock:{
         return null;
       } else { // known symbol
         if (!getOptionBooleanValue("newtyper")) {//case of subtyping (-nt option activated)
-          if( strictType  || !topLevel ) {
-            //DEBUG System.out.println("ensureValidApplDisjunction!");
+          if( !topLevel ) {
             if(!ensureSymbolCodomain(TomBase.getSymbolCodomain(symbol), expectedType, TomMessage.invalidCodomain, res, fileName,decLine)) {
               return null;
             }
@@ -1345,7 +1370,7 @@ matchblock:{
             TomMessage.error(getLogger(),fileName,decLine, TomMessage.unknownSymbolInDisjunction,`dijName);
             return null;
           }
-          if( strictType  || !topLevel ) {
+          if( !topLevel ) {
             // ensure codomain is correct
             if(!ensureSymbolCodomain(TomBase.getSymbolCodomain(symbol), expectedType, TomMessage.invalidDisjunctionCodomain, `dijName, fileName,decLine)) {
               return null;
@@ -1404,7 +1429,7 @@ matchblock:{
       } else { // known symbol
         // ensure type correctness if necessary
         if (!getOptionBooleanValue("newtyper")) {//case of subtyping (-nt option activated)
-          if ( strictType  || !topLevel ) {
+          if ( !topLevel ) {
             if (!ensureSymbolCodomain(TomBase.getSymbolCodomain(symbol), expectedType, TomMessage.invalidCodomain, res, fileName,decLine)) {
               return null;
             }
@@ -1425,7 +1450,7 @@ matchblock:{
             TomMessage.error(getLogger(),fileName,decLine, TomMessage.unknownSymbolInDisjunction, `dijName);
             return null;
           }
-          if( strictType  || !topLevel ) {
+          if( !topLevel ) {
             // ensure codomain is correct
             if (!ensureSymbolCodomain(TomBase.getSymbolCodomain(symbol), expectedType, TomMessage.invalidDisjunctionCodomain, `dijName, fileName,decLine)) {
               return null;

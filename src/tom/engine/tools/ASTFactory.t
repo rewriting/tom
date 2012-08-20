@@ -193,6 +193,70 @@ public class ASTFactory {
     }
     return list;
   }
+///////////
+  /*public static TomWithToList makeTomWithToList(List<TomWithTo> argumentList){
+    TomWithToList list = `concTomWithTo();
+    for(int i=argumentList.size()-1; i>=0 ; i--) {
+      list = `concTomWithTo(argumentList.get(i),list*);
+    }
+    return list;
+  }*/
+  public static ElementaryTransformationList makeElementaryTransformationList(List<ElementaryTransformation> argumentList) {
+    ElementaryTransformationList list = `concElementaryTransformation();
+    for(int i=argumentList.size()-1; i>=0 ; i--) {
+      list = `concElementaryTransformation(argumentList.get(i),list*);
+    }
+    return list;
+  }
+
+  public static RuleInstructionList makeRuleInstructionList(List<RuleInstruction> argumentList) {
+    RuleInstructionList list = `concRuleInstruction();
+    for(int i=argumentList.size()-1; i>=0 ; i--) {
+      list = `concRuleInstruction(argumentList.get(i),list*);
+    }
+    return list;
+  }
+
+  public static InstructionList makeInstructionListFromInstructionCollection(List<Instruction> argumentList) {
+    InstructionList list = `concInstruction();
+    for(int i=argumentList.size()-1; i>=0 ; i--) {
+      list = `concInstruction(argumentList.get(i),list*);
+    }
+    return list;
+  }
+
+  public static RefClassTracelinkInstructionList makeRefClassTracelinkInstructionList(List<RefClassTracelinkInstruction> argumentList) {
+    RefClassTracelinkInstructionList list = `concRefClassTracelinkInstruction();
+    for(int i=argumentList.size()-1; i>=0 ; i--) {
+      list = `concRefClassTracelinkInstruction(argumentList.get(i),list*);
+    }
+    return list;
+  }
+
+  public static ResolveStratElementList makeResolveStratElementList(List<ResolveStratElement> argumentList){
+    ResolveStratElementList list = `concResolveStratElement();
+    for(int i=argumentList.size()-1; i>=0 ; i--) {
+      list = `concResolveStratElement(argumentList.get(i),list*);
+    }
+    return list;
+  }
+
+  public static ResolveStratBlockList makeResolveStratBlockList(List<ResolveStratBlock> argumentList){
+    ResolveStratBlockList list = `concResolveStratBlock();
+    for(int i=argumentList.size()-1; i>=0 ; i--) {
+      list = `concResolveStratBlock(argumentList.get(i),list*);
+    }
+    return list;
+  }
+
+  public static DeclarationList makeDeclarationList(List<Declaration> argumentList){
+    DeclarationList list = `concDeclaration();
+    for(int i=argumentList.size()-1; i>=0 ; i--) {
+      list = `concDeclaration(argumentList.get(i),list*);
+    }
+    return list;
+  }
+//////////
 
   public static TomSymbol makeSymbol(String symbolName, TomType resultType, TomTypeList typeList,
       PairNameDeclList pairNameDeclList, List optionList) {

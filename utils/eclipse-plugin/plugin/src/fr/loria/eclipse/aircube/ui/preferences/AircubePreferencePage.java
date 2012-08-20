@@ -37,7 +37,6 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import tom.engine.Tom;
-import tom.gom.Gom;
 
 /**
  * @author julien

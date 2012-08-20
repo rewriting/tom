@@ -105,8 +105,8 @@ public class GomDeleteParticipant extends DeleteParticipant {
 				}
 			} else if (Util.GOM_EXTENSION.equals(oldfile.getFileExtension())) {
 				// The IFile is a gom file
-				// we delete the genereted packages containing the modules name
-				ArrayList modules = Util.findModuleName(oldfile);
+				// we delete the generated packages containing the modules name
+				ArrayList<String> modules = Util.findModuleName(oldfile);
 				Path path = (Path) Util.getPathDestination(oldfile);
 				// no destination path was selected
 				boolean noDestinationPath = (path.toString().equals(oldfile

@@ -30,7 +30,6 @@ package fr.loria.eclipse.gom.builders;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
@@ -144,7 +143,7 @@ public class GomBuilder extends IncrementalProjectBuilder implements
 			}
 
 			// create a good command
-			ArrayList finalCommand = new ArrayList();
+			ArrayList<String> finalCommand = new ArrayList<String>();
 			finalCommand.add(resource.getLocation().toString());
 			
 			IJavaProject javaProject = (IJavaProject) JavaCore.create(getProject());

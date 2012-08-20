@@ -215,7 +215,7 @@ public class TypeCheckerPlugin extends TomGenericPlugin {
     }
 
     visit Declaration {
-      Strategy(_,_,visitList,orgTrack) -> {
+      Strategy(_,_,visitList,_,orgTrack) -> {
         tcp.currentTomStructureOrgTrack = `orgTrack;
         tcp.verifyStrategyVariable(`visitList);
         throw new tom.library.sl.VisitFailure();/* to stop the top-down */

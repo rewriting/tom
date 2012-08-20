@@ -67,9 +67,9 @@ public class Util {
 	 *            the gom file
 	 * @return the module list ( lower case)
 	 */
-	public static ArrayList findModuleName(IFile file) {
+	public static ArrayList<String> findModuleName(IFile file) {
 		Document doc = new Document();
-		ArrayList modules = new ArrayList();
+		ArrayList<String> modules = new ArrayList<String>();
 		BufferedReader reader = null;
 		try {
 			reader = new BufferedReader(new InputStreamReader(file
@@ -206,7 +206,7 @@ public class Util {
 				}
 				ClassPathDetector classpath = new ClassPathDetector(file
 						.getProject());
-				ArrayList resEntries = new ArrayList();
+				ArrayList<IClasspathEntry> resEntries = new ArrayList<IClasspathEntry>();
 				classpath.detectSourceFolders(resEntries);
 
 				if (resEntries.size() == 0) {

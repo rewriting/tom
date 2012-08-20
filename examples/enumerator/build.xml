@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the term enumerator example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <property name="example" value="enumerator"/>
+  <target name="build" depends="init">
+    <!-- copy resources in build -->
+    <copy todir="${examples.build}/${example}">
+      <fileset dir="${examples.dir}/${example}">
+        <include name="*.xml"/>
+      </fileset>
+    </copy>
+    <gombuild/>
+    <tom.preset srcdir="${examples.dir}"
+      destdir="${examples.gen}">          
+      <include name="${example}/**/*.t"/>
+    </tom.preset> 
+    <javacompile/>
+  </target>
+  <property name="distribute" value="yes"/>
+</project>

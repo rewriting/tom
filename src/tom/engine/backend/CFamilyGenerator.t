@@ -276,6 +276,116 @@ public abstract class CFamilyGenerator extends GenericGenerator {
     output.writeln();
   }
 
+  //TODO: to change, to move in JavaGenerator
+  protected String genResolveGetSlotCode(String tomName,
+                                         String varName,
+                                         String slotName) throws IOException {
+    return " (("+tomName+")"+varName+")."+slotName+" ";
+  }
+
+
+  //TODO: retrieve the information about the FQN of wName and extends
+  protected void buildResolveClass(String wName, String tName, String extendsName, String moduleName) throws
+    IOException {
+      String resolveStringName = "Resolve"+wName+tName;
+      String fqnwName = wName;
+      TomType subject = getSymbolTable(moduleName).getType(wName);
+      %match(subject) {
+        TLType[String=s] -> { fqnwName = `s; }
+      }
+output.write(%[private static class @resolveStringName@ extends @extendsName@ {
+  public String name;
+  public @fqnwName@ o;
+
+  public @resolveStringName@(@fqnwName@ o, String name) {
+    this.name = name;
+    this.o = o;
+  }
+}
+]%);
+    }
+
+  /*protected void buildTracelink(int deep, String type, String name, Expression expr, String moduleName) throws IOException {
+    output.write(type+" "+name+" = ");
+    generateExpression(deep,expr,moduleName);
+    output.writeln(";");
+  }*/
+ 
+  //TODO: move this code in JavaGenerator
+  protected String genResolveMakeCode(String funName,
+                                      BQTermList argList) throws IOException {
+    String args = "";
+    while(!argList.isEmptyconcBQTerm()) {
+      BQTerm arg = argList.getHeadconcBQTerm();
+matchBlock: {
+              %match(arg) {
+                BQVariable[AstName=Name(name)] -> {
+                  args = args+`name;
+                  break matchBlock;
+                }
+
+                _ -> {
+                  System.out.println("genResolveMakeCode: strange term: " + arg);
+                  throw new TomRuntimeException("genResolveMakeCode: strange term: " + arg);
+                }
+              }
+            }
+            argList = argList.getTailconcBQTerm();
+            if(!argList.isEmptyconcBQTerm()) {
+              args = args + ", ";
+            }
+    }
+    return "new "+funName+"("+args+")";
+  }
+
+  //TODO -> not called
+  protected void genResolveDeclMake(String prefix, String funName, TomType
+      returnType, BQTermList argList, String moduleName) throws IOException {
+    if(nodeclMode) {
+      return;
+    }
+
+    //language specific. is it the good place ? Is the JavaGenerator better ?
+    Instruction instr = `ExpressionToInstruction(Code(genResolveMakeCode(funName, argList)));
+
+    if(!inline) {
+      StringBuilder s = new StringBuilder();
+      s.append(modifier + TomBase.getTLType(returnType) + " " + prefix + funName + "(");
+      while(!argList.isEmptyconcBQTerm()) {
+        BQTerm arg = argList.getHeadconcBQTerm();
+matchBlock: {
+              %match(arg) {
+                BQVariable[AstName=Name(name), AstType=Type[TlType=tlType@TLType[]]] -> {
+                  s.append(TomBase.getTLCode(`tlType) + " " + `name);
+                  break matchBlock;
+                }
+
+                _ -> {
+                  System.out.println("genResolveDeclMake: strange term: " + arg);
+                  throw new TomRuntimeException("genResolveDeclMake: strange term: " + arg);
+                }
+              }
+            }
+            argList = argList.getTailconcBQTerm();
+            if(!argList.isEmptyconcBQTerm()) {
+              s.append(", ");
+            }
+      }
+      s.append(") { ");
+      output.writeln(s);
+      output.write("return ");
+      generateInstruction(0,instr,moduleName);
+      output.writeln(";");
+      output.writeln("}");
+    }
+  }
+
+  //TODO: move it in JavaGenerator
+  protected String genResolveIsFsymCode(String resolveStringName,
+                                        String varName) throws IOException {
+    return " ( "+varName+" instanceof "+resolveStringName+" ) ";
+  }
+
   protected void genDeclInstr(String returnType,
                          String declName,
                          String suffix,
@@ -415,10 +525,6 @@ public abstract class CFamilyGenerator extends GenericGenerator {
     String glType = TomBase.getTLType(listType);
 
     String utype = glType;
-    if(lazyType) {
-      utype = TomBase.getTLType(getUniversalType());
-    }
-
     String listCast = "(" + glType + ")";
     String get_slice = listCast + "tom_get_slice_" + name;
 
@@ -532,6 +638,7 @@ matchBlock: {
       s.append(") { ");
       output.writeln(s);
       output.write("return ");
+      //System.out.println("###DEBUG### backend, instr = "+instr);
       generateInstruction(0,instr,moduleName);
       output.writeln(";");
       output.writeln("}");

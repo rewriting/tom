@@ -45,7 +45,7 @@ public class TomVariableResolver extends TemplateVariableResolver {
 	protected String[] resolveAll(TemplateContext context) {
 		String[] proposals= new String[] { "${op}", "${sort}" }; //$NON-NLS-1$ //$NON-NLS-2$
 		
-		Arrays.sort(proposals, new Comparator() {
+		Arrays.sort(proposals, new Comparator<Object>() {
 
 			public int compare(Object o1, Object o2) {
 				return getCommonPrefixLength(getType(), (String) o2) - getCommonPrefixLength(getType(), (String) o1);

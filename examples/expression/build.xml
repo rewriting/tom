@@ -13,7 +13,8 @@
     -->
     <tom.preset srcdir="${examples.dir}"
                 destdir="${examples.gen}">
-      <include name="${example}/**/RecordStrict.t"/>
+      <include name="${example}/**/*.t"/>
+      <exclude name="${example}/**/Record.t"/>
     </tom.preset>
     <javacompile/>
   </target>

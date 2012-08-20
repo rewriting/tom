@@ -134,6 +134,8 @@ public class TomMessage extends BasicPlatformMessage {
   // parser.TomParserPlugin
   public static final TomMessage fileNotFound          =
       new TomMessage("File ''{0}'' not found");
+  public static final TomMessage unamedTransformationRule =
+      new TomMessage("A transformation rule has not been named in {0} transformation");
   public static final TomMessage tokenStreamException  =
       new TomMessage("TokenStreamException catched: {0}");
   public static final TomMessage recognitionException  =
@@ -267,6 +269,8 @@ public class TomMessage extends BasicPlatformMessage {
       new TomMessage("TOM parsing phase ({0,number,integer} ms)");
   public static final TomMessage tomSyntaxCheckingPhase =
       new TomMessage("TOM syntax checking phase ({0,number,integer} ms)");
+  public static final TomMessage tomTransformingPhase =
+      new TomMessage("TOM transforming phase ({0,number,integer} ms)");
   public static final TomMessage tomDesugaringPhase =
       new TomMessage("TOM desugaring phase ({0,number,integer} ms)");
   public static final TomMessage tomTypingPhase =
@@ -405,6 +409,12 @@ public class TomMessage extends BasicPlatformMessage {
       new TomMessage("Visited Type ''{0}'' is unknown.");
   public static final TomMessage emptyStrategy =
       new TomMessage("empty %strategy construct : at least one \"visit\" should be declared");
+
+  //transformation
+  public static final TomMessage emptyTransformation =
+      new TomMessage("empty %transformation construct : at least one \"<with> -> <to>\" should be declared");
+  public static final TomMessage invalidTransformationName =
+      new TomMessage("{0} is not a valid transformation name. Maybe it is already used as a symbol.");
 
   // rule
   public static final TomMessage incorrectRuleLHSClass   =

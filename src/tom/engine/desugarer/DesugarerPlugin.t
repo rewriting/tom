@@ -169,7 +169,8 @@ public class DesugarerPlugin extends TomGenericPlugin {
        *  - it is a builtin type
        *  - another option (if_sfsym, get_slot, etc) is already defined for this operator
        */
-      if(!getSymbolTable().isBuiltinType(TomBase.getTomType(TomBase.getSymbolCodomain(tomSymbol)))) {
+      //TODO - modified for %transformation ResolveMakeDecl
+      if(!getSymbolTable().isBuiltinType(TomBase.getTomType(TomBase.getSymbolCodomain(tomSymbol))) && !getSymbolTable().isResolveSymbol(tomSymbol)) {
         tomSymbol = addDefaultMake(tomSymbol);
         tomSymbol = addDefaultIsFsym(tomSymbol);
       }

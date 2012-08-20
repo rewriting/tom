@@ -1,3 +1,7 @@
+2012-08-06 pem
+ * remove lazyType option
+ * simplify Compiler.t: generate less Universal types
+
 2012-05-15 pem
  * merge subtype into master
  * bootstrap

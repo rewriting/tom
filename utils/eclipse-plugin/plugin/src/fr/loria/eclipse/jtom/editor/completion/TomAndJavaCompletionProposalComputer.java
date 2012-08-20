@@ -31,6 +31,8 @@ import java.util.List;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.ui.text.java.ContentAssistInvocationContext;
 import org.eclipse.jdt.ui.text.java.IJavaCompletionProposalComputer;
+import org.eclipse.jface.text.contentassist.ICompletionProposal;
+import org.eclipse.jface.text.contentassist.IContextInformation;
 
 /**
  * An extension point to allow the TOM completion words into java
@@ -52,7 +54,7 @@ public final class TomAndJavaCompletionProposalComputer implements
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalComputer#computeCompletionProposals(org.eclipse.jface.text.contentassist.TextContentAssistInvocationContext,
 	 *      org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public List computeCompletionProposals(
+	public List<ICompletionProposal> computeCompletionProposals(
 			ContentAssistInvocationContext context, IProgressMonitor monitor) {
 		return Arrays.asList(fProcessor.computeCompletionProposals(context
 				.getViewer(), context.getInvocationOffset()));
@@ -62,7 +64,7 @@ public final class TomAndJavaCompletionProposalComputer implements
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalComputer#computeContextInformation(org.eclipse.jface.text.contentassist.TextContentAssistInvocationContext,
 	 *      org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public List computeContextInformation(ContentAssistInvocationContext context, IProgressMonitor monitor) {
+	public List<IContextInformation> computeContextInformation(ContentAssistInvocationContext context, IProgressMonitor monitor) {
 		
 			return Arrays.asList(fProcessor.computeContextInformation(context
 					.getViewer(), context.getInvocationOffset()));

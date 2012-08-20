@@ -100,7 +100,7 @@ public class TomCodeScanner extends RuleBasedScanner {
 	// TextAttribute(TomColorProvider.getColor(TomColorProvider.TYPE)));
 
 	private void initRules() {
-		List rules = new ArrayList();
+		List<IRule> rules = new ArrayList<IRule>();
 		if (fileName != null) {
 			getInfoFromFile(rules);
 		}
@@ -194,7 +194,7 @@ public class TomCodeScanner extends RuleBasedScanner {
 	/**
 	 * 
 	 */
-	private void getInfoFromFile(List rules) {
+	private void getInfoFromFile(List<IRule> rules) {
 		String[] key = { "toto", "toto2" };
 		WordRule tomWordRule = new WordRule(new JavaWordDetector());
 		IToken keyword = new Token(new TextAttribute(colorProvider

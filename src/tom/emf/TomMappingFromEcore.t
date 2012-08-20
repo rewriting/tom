@@ -334,7 +334,7 @@ public class TomMappingFromEcore {
   }
 
 /**
-   * A dictionnary linking EMF classes with the corresponding tom mapping filename 
+   * A set of EMF classes 
    */
   private final static HashSet<Class<?>> tomEMFTypes = new HashSet<Class<?>>();
   static {
@@ -445,8 +445,9 @@ public class TomMappingFromEcore {
   private static String getType(java.io.Writer writer, EStructuralFeature sf) throws java.io.IOException {
 
     Class<?> c = sf.getEType().getInstanceClass();
-    String simplename = types.get(c);
-    String name = simplename;
+    //String simplename = types.get(c);
+    String argname = isBuiltin(sf)?types.get(c):(prefix+types.get(c));
+    String name = argname;
     if(sf.isMany()) {
       name += "EList";
       if(!lists.contains(c)) {
@@ -472,22 +473,22 @@ public class TomMappingFromEcore {
   equals(l1,l2) { $l1.equals($l2) }
 }
 
-%oparray @prefix+name@ @prefix+name@ ( @simplename@* ) {
+%oparray @prefix+name@ @prefix+name@ ( @argname@* ) {
   is_fsym(t) { $t instanceof org.eclipse.emf.common.util.EList<?> && ($t.size() == 0 || ($t.size()>0 && $t.get(0) instanceof @(decl[0]+decl[1])@)) }
   make_empty(n) { new org.eclipse.emf.common.util.BasicEList<@inst@>($n) }
-  make_append(e,l) { append@prefix+name@($e,$l) }
+  make_append(e,l) { append@name@($e,$l) }
   get_element(l,n) { $l.get($n) }
   get_size(l)      { $l.size() }
 }
 
-private static <O> org.eclipse.emf.common.util.EList<O> append@prefix+name@(O e,org.eclipse.emf.common.util.EList<O> l) {
+private static <O> org.eclipse.emf.common.util.EList<O> append@name@(O e,org.eclipse.emf.common.util.EList<O> l) {
   l.add(e);
   return l;
 }]%);
         lists.add(c);
       }
     }
-    return name;
+    return (sf.isMany()?prefix+name:name);
   }
 
   /**
@@ -496,7 +497,6 @@ private static <O> org.eclipse.emf.common.util.EList<O> append@prefix+name@(O e,
    */
   private static void extractFromEPackage(java.io.Writer writer, EPackage p) throws java.io.IOException {
     for(EClassifier eclf : p.getEClassifiers()) {
-      //System.out.println("(DEBUG) EClassifier.default = " + eclf.getName() + " / " + eclf.getDefaultValue());
       extractFromEClassifier(writer,eclf);
     }
     for(EPackage ep : p.getESubpackages()) {
@@ -590,7 +590,7 @@ private static <O> org.eclipse.emf.common.util.EList<O> append@prefix+name@(O e,
       dvalue = "\"" + dvalue + "\"";
     } else if(esftype.equals("boolean") || esftype.equals("int") ||
         esftype.equals("float") || esftype.equals("double") || 
-        esftype.equals("long") ) {
+        esftype.equals("long")) {
       //nothing
       //dvalue = sf.getDefaultValue();
     } else {
@@ -613,7 +613,7 @@ private static <O> org.eclipse.emf.common.util.EList<O> append@prefix+name@(O e,
         EClass ecl = (EClass) eclf;
         EList<EStructuralFeature> sfs = ecl.getEAllStructuralFeatures();
         StringBuffer s_types = new StringBuffer();
-        StringBuffer s_types2 = new StringBuffer();
+        //StringBuffer s_types2 = new StringBuffer();
         StringBuffer s = new StringBuffer();
         StringBuffer s2 = new StringBuffer();
         StringBuffer s_gets = new StringBuffer();
@@ -624,12 +624,12 @@ private static <O> org.eclipse.emf.common.util.EList<O> append@prefix+name@(O e,
             EClassifier type = sf.getEType();
             String sfname = (keywords.contains(sf.getName()) ? "_" : "")
                 + sf.getName();
-            s_types.append(sfname + " : " + prefix + getType(writer,sf) + ", ");
+            s_types.append(sfname + " : " + getType(writer,sf) + ", ");
             String[] decl = getClassDeclarations(type); // [canonical name, anonymous generic, generic type]
             writer.write("");
-            s_types2.append(", "
+            /*s_types2.append(", "
                 + (sf.isMany() ? "org.eclipse.emf.common.util.EList<" + decl[0] + decl[2] + ">" : decl[0] + decl[2])
-                + " " + sfname);
+                + " " + sfname);*/
             s.append(", " + sfname);
             s2.append(", $" + sfname);
             String na = boxType(sf.getEType().getInstanceClass())
@@ -647,7 +647,7 @@ private static <O> org.eclipse.emf.common.util.EList<O> append@prefix+name@(O e,
             if(sf.getDefaultValue()!=null) {
               s_defaults.append(genGetDefault(sf));
             }
-          }
+          } 
         }
         if(s_types.length() >= 2) {
           s_types.delete(s_types.length() - 2, s_types.length());
@@ -667,7 +667,8 @@ private static <O> org.eclipse.emf.common.util.EList<O> append@prefix+name@(O e,
 
 %op @prefix+ecl.getInstanceClass().getSimpleName()@ @prefix+cr@(@s_types@) {
   is_fsym(t) { $t instanceof @(decl[0]+decl[1])@ }@s_gets@ @s_defaults@
-  make(@(s.length() <= 2 ? "" : s.substring(2))@) { construct@prefix+cr@((@(EObject.class.isAssignableFrom(ecl.getInstanceClass()) ? ecl.getInstanceClass().getCanonicalName() : "org.eclipse.emf.ecore.EObject")@)@o1@.eINSTANCE.create((EClass)@o2@.eINSTANCE.getEClassifier("@ecl.getName()@")), new Object[]{ @(s2.length() <= 2 ? "" : s2.substring(2))@ }) }
+  make(@(s.length() <= 2 ? "" : s.substring(2))@) { construct@cr@((@(EObject.class.isAssignableFrom(ecl.getInstanceClass()) ? ecl.getInstanceClass().getCanonicalName() : "org.eclipse.emf.ecore.EObject")@)@o1@.eINSTANCE.create((EClass)@o2@.eINSTANCE.getEClassifier("@ecl.getName()@")), new Object[]{ @(s2.length() <= 2 ? "" : s2.substring(2))@ }) }
+  implement() { @genOpImplementContent(ecl.getInstanceClassName(), cr)@ }
 }
 
 public static <O extends org.eclipse.emf.ecore.EObject> O construct@prefix+cr@(O o, Object[] objs) {
@@ -694,17 +695,68 @@ public static <O extends org.eclipse.emf.ecore.EObject> O construct@prefix+cr@(O
           String o2 = eclf.getEPackage().getClass().getInterfaces()[eclf
             .getEPackage().getClass().getInterfaces().length - 1]
             .getCanonicalName();
-          String literal = lit.getLiteral();
-          String operatorName = cr+literal.replaceAll(" ","");
+          //Problem: lit.getLiteral() can be a non-alphanumerical symbol. Use
+          //name instead (a non alphanumerical name should not be valid
+          //String literal = lit.getLiteral();
+          String literalname = lit.getName();
+          String operatorName = cr+literalname.replaceAll(" ","");
           writer.write(%[
 
 %op @prefix+cr@ @prefix+operatorName@() {
-  is_fsym(t) { t == @(decl[0]+decl[1])@.get("@literal@") }
-  make() { (@(decl[0]+decl[2])@)@o1@.eINSTANCE.createFromString( (EDataType)@o2@.eINSTANCE.get@toUpperName(cr)@(), "@literal@") }
+  is_fsym(t) { t == @(decl[0]+decl[1])@.get("@literalname@") }
+  make() { (@(decl[0]+decl[2])@)@o1@.eINSTANCE.createFromString((EDataType)@o2@.eINSTANCE.get@toUpperName(cr)@(), "@literalname@") }
 }]%);
         }
       }
     }
+  }
+  
+  /*
+   * Default code generation of EMF works like this:
+   * interface -> full.qualified.name.A
+   * class     -> full.qualified.name.impl.AImpl
+   */
+  private static String genOpImplementContent(String eclname, String cr) {
+    return eclname.substring(0, eclname.lastIndexOf(cr))+"impl."+cr+"Impl";
+  }
+
+  /* TODO: to complete */
+  private static final Set<String> builtinSet = new HashSet<String>();
+  static {
+    builtinSet.add("String");
+    builtinSet.add("Boolean");
+    builtinSet.add("Byte");
+    builtinSet.add("Short");
+    builtinSet.add("Character");
+    builtinSet.add("Integer");
+    builtinSet.add("Long");
+    builtinSet.add("Float");
+    builtinSet.add("Double");
+    builtinSet.add("boolean");
+    builtinSet.add("int");
+    builtinSet.add("byte");
+    builtinSet.add("short");
+    builtinSet.add("char");
+    builtinSet.add("long");
+    builtinSet.add("float");
+    builtinSet.add("double");
+  }
+
+  /**
+   * This method tests the type of the parameter represented by the
+   * EStructuralFeature
+   * @param sf EStructuralFeature corresponding to a parameter we want to
+   * obtain the type
+   * @return true if the EStructuralFeature represents a parameter whose type
+   * is a primitive or implemented by a primitive type.
+   */
+  private static boolean isBuiltin(EStructuralFeature sf) {
+    String typename = sf.getEType().getName();
+    return builtinSet.contains(typename);
+  }
+
+  private static boolean isBuiltin(String typename) {
+    return builtinSet.contains(typename);
   }
 
 }

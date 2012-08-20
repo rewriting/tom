@@ -61,6 +61,8 @@
     <plugin name="AST Printer"
       class="tom.engine.newparser.converter.TreePrinterPlugin"/>
       -->
+    <plugin name="Code transformer"
+      class="tom.engine.transformer.TransformerPlugin"/>
     <plugin name="Syntax checker"
       class="tom.engine.checker.SyntaxCheckerApPlugin"/>
     <plugin name="Desugarer"
@@ -99,9 +101,6 @@
         value="false"/>
       <boolean name="wall" altName="W"
         description="Print warning"
-        value="false"/>
-      <boolean name="lazyType" altName="l"
-        description="Use universal type"
         value="false"/>
       <boolean name="pretty" altName="p"
         description="Generate readable code"
