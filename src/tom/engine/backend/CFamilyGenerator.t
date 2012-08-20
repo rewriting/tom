@@ -525,10 +525,6 @@ matchBlock: {
     String glType = TomBase.getTLType(listType);
 
     String utype = glType;
-    if(lazyType) {
-      utype = TomBase.getTLType(getUniversalType());
-    }
-
     String listCast = "(" + glType + ")";
     String get_slice = listCast + "tom_get_slice_" + name;
 

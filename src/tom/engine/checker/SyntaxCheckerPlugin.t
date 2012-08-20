@@ -174,12 +174,9 @@ public class SyntaxCheckerPlugin extends TomGenericPlugin {
     return -1;
   }
 
-  private boolean strictType = true;
-
   public void run(Map informationTracker) {
     //System.out.println("(debug) I'm in the Tom SyntaxChecker : TSM"+getStreamManager().toString());
     if(isActivated()) {
-      strictType = !getOptionBooleanValue("lazyType");
       long startChrono = System.currentTimeMillis();
       try {
         // clean up internals
@@ -1352,7 +1349,7 @@ matchblock:{
         return null;
       } else { // known symbol
         if (!getOptionBooleanValue("newtyper")) {//case of subtyping (-nt option activated)
-          if( strictType  || !topLevel ) {
+          if( !topLevel ) {
             if(!ensureSymbolCodomain(TomBase.getSymbolCodomain(symbol), expectedType, TomMessage.invalidCodomain, res, fileName,decLine)) {
               return null;
             }
@@ -1373,7 +1370,7 @@ matchblock:{
             TomMessage.error(getLogger(),fileName,decLine, TomMessage.unknownSymbolInDisjunction,`dijName);
             return null;
           }
-          if( strictType  || !topLevel ) {
+          if( !topLevel ) {
             // ensure codomain is correct
             if(!ensureSymbolCodomain(TomBase.getSymbolCodomain(symbol), expectedType, TomMessage.invalidDisjunctionCodomain, `dijName, fileName,decLine)) {
               return null;
@@ -1432,7 +1429,7 @@ matchblock:{
       } else { // known symbol
         // ensure type correctness if necessary
         if (!getOptionBooleanValue("newtyper")) {//case of subtyping (-nt option activated)
-          if ( strictType  || !topLevel ) {
+          if ( !topLevel ) {
             if (!ensureSymbolCodomain(TomBase.getSymbolCodomain(symbol), expectedType, TomMessage.invalidCodomain, res, fileName,decLine)) {
               return null;
             }
@@ -1453,7 +1450,7 @@ matchblock:{
             TomMessage.error(getLogger(),fileName,decLine, TomMessage.unknownSymbolInDisjunction, `dijName);
             return null;
           }
-          if( strictType  || !topLevel ) {
+          if( !topLevel ) {
             // ensure codomain is correct
             if (!ensureSymbolCodomain(TomBase.getSymbolCodomain(symbol), expectedType, TomMessage.invalidDisjunctionCodomain, `dijName, fileName,decLine)) {
               return null;

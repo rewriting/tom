@@ -181,6 +181,7 @@ public class TomParserPlugin extends TomGenericPlugin {
         // getting a parser 
         parser = newParser(currentReader, currentFileName, getOptionManager(), getStreamManager());
         // parsing
+
         setWorkingTerm(parser.input());
         /*
          * we update codomains which are constrained by a symbolName
@@ -240,8 +241,12 @@ public class TomParserPlugin extends TomGenericPlugin {
             new tom.engine.parser.antlr3.HostParser(getStreamManager(), getOptionManager());
           ANTLRReaderStream input = new ANTLRReaderStream(currentReader);
           input.name = currentFileName;
-          //System.out.println("CurrentFileName : "+currentFileName);
+          System.out.println("CurrentFileName : "+currentFileName);
+
+          long start = System.currentTimeMillis();
           Tree programAsAntrlTree = parser.parseProgram(input);
+          System.out.println("parsing antlr3 = " + (System.currentTimeMillis()-start) + " ms");
+
           CstProgram cst = (CstProgram)CSTAdaptor.getTerm(programAsAntrlTree);
 
           if(printcst) {

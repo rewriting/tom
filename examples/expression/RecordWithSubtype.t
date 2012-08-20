@@ -58,7 +58,7 @@ public class RecordWithSubtype {
     equals(t1,t2) {$t1.equals($t2)}
   }
 
-    // ------------------------------------------------------------
+  // ------------------------------------------------------------
   
   %op BinaryOperator BinaryOperator(first:Exp, second:Exp) {
     is_fsym(t) { $t instanceof BinaryOperator }
@@ -71,11 +71,17 @@ public class RecordWithSubtype {
     get_slot(first,t) { ((UnaryOperator)$t).first }
   }
 
+  %op CstExp CstExp() {
+    is_fsym(t) { $t instanceof CstExp }
+  }
+
   %op BinaryOperator Plus(first:Exp, second:Exp) {
     is_fsym(t) { $t instanceof Plus }
     get_slot(first,t) { ((Plus)$t).first }
     get_slot(second,t) { ((Plus)$t).second }
   }
+
+  // ------------------------------------------------------------
 
   %op BinaryOperator Mult(first:Exp, second:Exp) {
     is_fsym(t) { $t instanceof Mult }
@@ -88,10 +94,6 @@ public class RecordWithSubtype {
     get_slot(first,t) { ((Uminus)$t).first }
   }
 
-  %op CstExp CstExp() {
-    is_fsym(t) { $t instanceof CstExp }
-  }
-
   %op CstExp StringExp(value:String) {
     is_fsym(t) { $t instanceof StringExp }
     get_slot(value,t) { ((StringExp)$t).value }
@@ -102,7 +104,7 @@ public class RecordWithSubtype {
     get_slot(value,t) { ((IntExp)$t).value }
   }
 
-    // ------------------------------------------------------------
+  // ------------------------------------------------------------
   
   public final static void main(String[] args) {
     RecordWithSubtype test = new RecordWithSubtype();
@@ -238,7 +240,6 @@ public class RecordWithSubtype {
     }
     return t;
   }
-
   
   public boolean myEquals(Exp t1, Exp t2) {
     %match(t1, t2) {
@@ -257,7 +258,6 @@ public class RecordWithSubtype {
     }
     return false;
   }
-
  
 }
 

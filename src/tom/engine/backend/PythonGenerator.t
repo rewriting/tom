@@ -249,9 +249,6 @@ public class PythonGenerator extends GenericGenerator {
     //String tlEltType = getTLType(eltType);
 
     //String utype = glType;
-    //if(lazyType) {
-    //  utype = getTLType(getUniversalType());
-    //}
     
     String is_empty = "tom_is_empty_" + name + "_" + tomType;
     String equal_term = "tom_equal_term_" + tomType;
