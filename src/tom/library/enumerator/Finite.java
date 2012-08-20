@@ -8,6 +8,9 @@ public class Finite<A> {
 	private BigInteger card;
 	private F<BigInteger, A> indexer;
 
+	/**
+	 * constructors
+	 */
 	public Finite(BigInteger c, F<BigInteger, A> f) {
 		this.card = c;
 		this.indexer = f;
@@ -33,22 +36,23 @@ public class Finite<A> {
 		});
 	}
 
+	/**
+	 * cardinality of the set
+	 */
 	public BigInteger getCard() {
 		return card;
 	}
 
-	public Finite<A> setCard(BigInteger newCard) {
-		return new Finite<A>(newCard, indexer);
-	}
-
-	public <A> Finite<A> setIndexer(F<BigInteger, A> newIndexer) {
-		return new Finite<A>(card, newIndexer);
-	}
-
+	/**
+	 * retrieve an element
+	 */
 	public A get(BigInteger i) {
 		return indexer.apply(i);
 	}
 
+	/**
+	 * union of two sets
+	 */
 	public Finite<A> plus(final Finite<A> other) {
 		return new Finite<A>(card.add(other.card), new F<BigInteger, A>() {
 			public A apply(BigInteger i) {
@@ -57,6 +61,9 @@ public class Finite<A> {
 		});
 	}
 
+	/**
+	 * cartesian product of two sets
+	 */
 	public <B> Finite<P2<A, B>> times(final Finite<B> other) {
 		return new Finite<P2<A, B>>(card.multiply(other.card),
 				new F<BigInteger, P2<A, B>>() {
@@ -72,27 +79,16 @@ public class Finite<A> {
 				});
 	}
 	
-	public static <E> F2<Finite<E>, Finite<E>, Finite<E>> functorPlus() {
-		return new F2<Finite<E>, Finite<E>, Finite<E>>() {
-			public Finite<E> apply(Finite<E> x, Finite<E> y) {
-				return x.plus(y);
-			}
-		};
-	}
-
-	public static <A,B> F2<Finite<A>, Finite<B>, Finite<P2<A, B>>> functorTimes() {
-		return new F2<Finite<A>, Finite<B>, Finite<P2<A, B>>>() {
-			public Finite<P2<A, B>> apply(Finite<A> x, Finite<B> y) {
-				return x.times(y);
-			}
-		};
-	}
-
+	/**
+	 * compose a function with the indexer
+	 */
 	public <B> Finite<B> map(final F<A,B> f) {
-		//return setIndexer(indexer.andThen(f));
-		return setIndexer(f.o(indexer));
+		return new Finite<B>(card,f.o(indexer));
 	}
 
+	/**
+	 * apply a set of functions to a set of elements (cartesian product)
+	 */
 	public static <A,B> Finite<B> apply(final Finite<F<A,B>> subject, final Finite<A> other) {
 		F<P2<F<A,B>,A>,B> pair = new F<P2<F<A,B>,A>,B>() {
 			public B apply(P2<F<A,B>,A> p) { return p._1().apply(p._2()); }
@@ -104,12 +100,7 @@ public class Finite<A> {
 		String s = "[";
 		for(BigInteger i=ZERO ; i.compareTo(getCard())<0; i=i.add(ONE)) {
 			A elt = get(i);
-			if(elt instanceof P2) {
-				P2 p = (P2) elt;
-				s = s + "(" + p._1() + "," + p._2() + ")";
-			} else {
-				s = s + elt;
-			}
+			s += elt;
 			s += ",";
 		}
 		s = s + "]";
