@@ -18,3 +18,4 @@ applications/quickcheck/*.java
 applications/quickcheck/build
 applications/quickcheck/gen
 System.tom
+/src/tom/library/enumerator/nbproject/private/
