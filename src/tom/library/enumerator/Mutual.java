@@ -2,36 +2,42 @@ package enumerator;
 
 import java.math.BigInteger;
 
+import enumerator.mutual.types.*;
+
 public class Mutual {
 
     public static void main(String args[]) {
-        // enumerator for trees
-        // A = a | foo(B) | hoo(A)
-        // B = b | grr(A)
+    	/**
+    	 * module enumerator.Mutual
+    	 * abstract syntax
+    	 * 
+    	 * A = a() | foo(b:B) | hoo(a:A)
+    	 * B = b() | grr(a:A)
+    	 */
 
         System.out.println("START");
-
-        final Enumeration<B> bEnum = Enumeration.singleton((B) new bb());
+/*
+        final Enumeration<B> bEnum = Enumeration.singleton((B) enumerator.mutual.types.b.b.make());
 
 
         final F<B, A> foo =
                 new F<B, A>() {
                     public A apply(final B elem) {
-                        return new foo(elem);
+                        return enumerator.mutual.types.a.foo.make(elem);
                     }
                 };
 
         final F<A, A> hoo =
                 new F<A, A>() {
                     public A apply(final A elem) {
-                        return new hoo(elem);
+                        return enumerator.mutual.types.a.hoo.make(elem);
                     }
                 };
 
         final F<A, B> grr =
                 new F<A, B>() {
                     public B apply(final A elem) {
-                        return new grr(elem);
+                        return enumerator.mutual.types.b.grr.make(elem);
                     }
                 };
 
@@ -68,30 +74,38 @@ public class Mutual {
         Enumeration<A> mutEnum = Enumeration.fixMultiple(grrFun, bFun, fooFun, hooFun, aFun);
 
 		System.out.println("#trees of size 500 = card(parts[500]) = " + mutEnum.parts().index(BigInteger.valueOf(500)).getCard());
-                
+*/
+		Enumeration<A> enumA = MutualEnum.<A>instance().get(A.class);
+		System.out.println("#trees of size 500 = card(parts[500]) = " + enumA.parts().index(BigInteger.valueOf(500)).getCard());
+
         //listEnum.pay();
         System.out.println("Enumerator for " + "A");
         int n = 5;
         for (int i = 0; i < n; i++) {
             System.out.println("Get " + i + "th term: "
-                    + mutEnum.get(BigInteger.valueOf(i)));
+                    + enumA.get(BigInteger.valueOf(i)));
         }
 
-        LazyList<Finite<A>> parts = mutEnum.parts();
+        LazyList<Finite<A>> parts = enumA.parts();
         for (int i = 0; i < 5 && !parts.isEmpty(); i++) {
             System.out.println(i + " --> " + parts.head());
             parts = parts.tail();
         }
         for (int p = 0; p < 10000; p = p + 10) {
             BigInteger i = java.math.BigInteger.TEN.pow(p);
-            System.out.println("10^" + p + " --> " + mutEnum.get(i).size());
+            System.out.println("10^" + p + " --> " + enumA.get(i).toString().length());
             //listEnum.get(i);
         }
 
+        
+        
+        
     }
 
+ 
+    /*
     private static Enumeration<A> aEnum() {
-        Enumeration<A> res = Enumeration.singleton((A) new aa());
+        Enumeration<A> res = Enumeration.singleton((A) enumerator.mutual.types.a.a.make());
         return res;
     }
 
@@ -108,7 +122,7 @@ public class Mutual {
     }
     
     private static Enumeration<B> bEnum() {
-        Enumeration<B> res = Enumeration.singleton((B) new bb());
+        Enumeration<B> res = Enumeration.singleton((B) enumerator.mutual.types.b.b.make());
         return res;
     }
 
@@ -119,8 +133,6 @@ public class Mutual {
     }
 
     
-    
-
     private static abstract class A {
 
         public abstract int size();
@@ -204,5 +216,6 @@ public class Mutual {
             return 1+a.size();
         }
     }
+    */
     
 }

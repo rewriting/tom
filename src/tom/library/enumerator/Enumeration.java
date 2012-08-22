@@ -9,7 +9,7 @@ public class Enumeration<A> {
     public LazyList<Finite<A>> cacheParts;
     public P1<LazyList<Finite<A>>> p1;
 
-    private Enumeration(LazyList<Finite<A>> p) {
+    public Enumeration(LazyList<Finite<A>> p) {
         this.cacheParts = p;
     }
 
