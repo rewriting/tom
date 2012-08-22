@@ -150,12 +150,17 @@ public class Enumeration<A> {
 		F2<BigInteger, BigInteger, BigInteger> add = 
 				new F2<BigInteger, BigInteger, BigInteger>() { public BigInteger apply(BigInteger a, BigInteger b) { return a.add(b); } };
 
+		final F2<Finite<P2<A,B>>, Finite<P2<A,B>>, Finite<P2<A,B>>> finitePlus = 
+			new F2<Finite<P2<A,B>>, Finite<P2<A,B>>, Finite<P2<A,B>>>() { public Finite<P2<A,B>> apply(Finite<P2<A,B>> x, Finite<P2<A,B>> y) { return x.plus(y); } };		
+		final F2<Finite<A>, Finite<B>, Finite<P2<A, B>>> finiteTimes =
+			new F2<Finite<A>, Finite<B>, Finite<P2<A, B>>>() { public Finite<P2<A, B>> apply(Finite<A> x, Finite<B> y) { return x.times(y); } };
+		
 		LazyList<BigInteger> cardsProducts = xsCards.zipWith(ysCards,multiply.curry());
 		BigInteger newCard = cardsProducts.foldLeft(ZERO,add.curry());
 		F<BigInteger, P2<A,B>> newIndexer = new F<BigInteger,P2<A,B>>() { 
 			public P2<A,B> apply(BigInteger i) {
-				Finite<P2<A,B>> unionOfProducts = xs.zipWith(ys, Finite.<A,B>functorTimes())
-				.foldLeft(Finite.<P2<A,B>>empty(), Finite.<P2<A,B>>functorPlus()); 
+				Finite<P2<A,B>> unionOfProducts = xs.zipWith(ys, finiteTimes)
+				.foldLeft(Finite.<P2<A,B>>empty(), finitePlus); 
 				return unionOfProducts.get(i);
 			} 
 		};
