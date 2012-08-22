@@ -38,7 +38,8 @@ public class TestPrintParse {
       public boolean isTrue(List<ATerm> args) {
         Expr e;
         try {
-          e = Expr.fromTerm(args.get(0));
+//          e = Expr.fromTerm(args.get(0));
+          e = Expr.fromString(args.get(0).toString());
         } catch (IllegalArgumentException ex) {
           System.out.println(ex);
           return false;
