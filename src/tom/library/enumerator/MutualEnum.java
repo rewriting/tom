@@ -119,6 +119,7 @@ public class MutualEnum {
 	}
         
     public static Enumeration<A> getA() {
+//        Enumeration<A> enumA = (Enumeration<A>) MutualEnum.instance().map.get(A.class); // simpler but more unchecked cast (one per type)
         Enumeration<A> enumA = MutualEnum.instance().get(A.class);
         return enumA;
     }
