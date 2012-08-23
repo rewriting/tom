@@ -65,9 +65,9 @@ public class SimplePDLToPetriNoHash {
         Place p_running  = `Place(name + "_running", pn,ArcEList(), ArcEList(), 0);
         Place p_finished  = `Place(name + "_finished", pn,ArcEList(), ArcEList(), 0);
         String n1 = `name+"_start";
-        %tracelink(Transition, t_start, `Transition(n1, pn,ArcEList(), ArcEList(), 1, 1));
+        %tracelink(t_start:Transition, `Transition(n1, pn,ArcEList(), ArcEList(), 1, 1));
         n1 = `name+"_finish";
-        %tracelink(Transition, t_finish, `Transition(n1, pn,ArcEList(), ArcEList(), 1, 1));
+        %tracelink(t_finish:Transition, `Transition(n1, pn,ArcEList(), ArcEList(), 1, 1));
         
         `Arc(t_start, p_ready, pn,ArcKindnormal(), 1);
         `Arc(p_running, t_start, pn,ArcKindnormal(), 1);
@@ -92,14 +92,14 @@ public class SimplePDLToPetriNoHash {
         //System.out.println("Je suis un A");
         Place p_ready  = `Place(name + "_ready", pn,ArcEList(), ArcEList(), 1);
         String n1 = `name+"_started";
-        %tracelink(Place, p_started, `Place(n1, pn,ArcEList(), ArcEList(), 0));
+        %tracelink(p_started:Place, `Place(n1, pn,ArcEList(), ArcEList(), 0));
         Place p_running  = `Place(name+"_running", pn,ArcEList(), ArcEList(), 0);
         n1 = `name+"_finished";
-        %tracelink(Place, p_finished, `Place(n1, pn,ArcEList(), ArcEList(), 0));
+        %tracelink(p_finished:Place, `Place(n1, pn,ArcEList(), ArcEList(), 0));
         n1 = `name+"_start";
-        %tracelink(Transition, t_start, `Transition(n1, pn,ArcEList(), ArcEList(), 1, 1));
+        %tracelink(t_start:Transition, `Transition(n1, pn,ArcEList(), ArcEList(), 1, 1));
         n1 = `name+"_finish";
-        %tracelink(Transition, t_finish, `Transition(n1, pn,ArcEList(), ArcEList(), 1, 1));
+        %tracelink(t_finish:Transition, `Transition(n1, pn,ArcEList(), ArcEList(), 1, 1));
 
         `Arc(t_start, p_ready, pn,ArcKindnormal(), 1);
         `Arc(p_started, t_start, pn,ArcKindnormal(), 1);
