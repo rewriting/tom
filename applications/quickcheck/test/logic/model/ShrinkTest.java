@@ -55,7 +55,7 @@ public class ShrinkTest {
     Buildable sort = Examples.expr;
     ATerm term = sort.generate(10);
     DomainInterpretation domain = new BuildableDomain(sort);
-    ATermIterator ite = ShrinkIterator.s1StrictLazy(term, domain);
+    ATermIterator ite = LazyShrink.s1StrictLazy(term, domain);
     LibTests.testIterator(ite, 10000000, false);
   }
   
@@ -65,7 +65,7 @@ public class ShrinkTest {
     Buildable sort = Examples.expr;
     ATerm term = sort.generate(10);
     DomainInterpretation domain = new BuildableDomain(sort);
-    ATermIterator ite = ShrinkIterator.s1StrictLazy(term, domain);
+    ATermIterator ite = LazyShrink.s1StrictLazy(term, domain);
     ATermIterator ite2 = ite.clone();
     ATermList l1 = ite.toATermList(term.getFactory());
     ATermList l2 = ite2.toATermList(term.getFactory());
@@ -79,7 +79,7 @@ public class ShrinkTest {
     Buildable sort = Examples.expr;
     ATerm term = sort.generate(10);
     DomainInterpretation domain = new BuildableDomain(sort);
-    ATermIterator ite = ShrinkIterator.s2StrictLazy(term, domain);
+    ATermIterator ite = LazyShrink.s2StrictLazy(term, domain);
     LibTests.testIterator(ite, 10000000, false);
   }
   
@@ -89,7 +89,7 @@ public class ShrinkTest {
     Buildable sort = Examples.expr;
     ATerm term = sort.generate(10);
     DomainInterpretation domain = new BuildableDomain(sort);
-    ATermIterator ite = ShrinkIterator.s2StrictLazy(term, domain);
+    ATermIterator ite = LazyShrink.s2StrictLazy(term, domain);
     ATermIterator ite2 = ite.clone();
     ATermList l1 = ite.toATermList(term.getFactory());
     ATermList l2 = ite2.toATermList(term.getFactory());
@@ -113,7 +113,7 @@ public class ShrinkTest {
     list.add(t4);
     list.add(t5);
     DomainInterpretation domain = new BuildableDomain(sort);
-    ATermIterator ite = ShrinkIterator.s1LargeLazy(new ATermIteratorFromList(list), domain);
+    ATermIterator ite = LazyShrink.s1LargeLazy(new ATermIteratorFromList(list), domain);
     LibTests.testIterator(ite, 10000000, false);
   }
   
@@ -133,7 +133,7 @@ public class ShrinkTest {
     list.add(t4);
     list.add(t5);
     DomainInterpretation domain = new BuildableDomain(sort);
-    ATermIterator ite = ShrinkIterator.s1LargeLazy(new ATermIteratorFromList(list), domain);
+    ATermIterator ite = LazyShrink.s1LargeLazy(new ATermIteratorFromList(list), domain);
     ATermIterator ite2 = ite.clone();
     ATermList l1 = ite.toATermList(t1.getFactory());
     ATermList l2 = ite2.toATermList(t1.getFactory());
@@ -158,7 +158,7 @@ public class ShrinkTest {
     list.add(t4);
     list.add(t5);
     DomainInterpretation domain = new BuildableDomain(sort);
-    ATermIterator ite = ShrinkIterator.s2LargeLazy(new ATermIteratorFromList(list), domain);
+    ATermIterator ite = LazyShrink.s2LargeLazy(new ATermIteratorFromList(list), domain);
     LibTests.testIterator(ite, 10000000, false);
   }
 
@@ -168,7 +168,7 @@ public class ShrinkTest {
     Buildable sort = Examples.expr;
     ATerm term = sort.generate(10);
     DomainInterpretation domain = new BuildableDomain(sort);
-    ATermIterator ite = ShrinkIterator.s1WithDepthStrictLazy(term, domain, 1);
+    ATermIterator ite = LazyShrink.s1WithDepthStrictLazy(term, domain, 1);
     LibTests.testIterator(ite, 10000000, false);
   }
   
@@ -178,7 +178,7 @@ public class ShrinkTest {
     Buildable sort = Examples.expr;
     ATerm term = sort.generate(10);
     DomainInterpretation domain = new BuildableDomain(sort);
-    ATermIterator ite = ShrinkIterator.s1WithDepthStrictLazy(term, domain, 1);
+    ATermIterator ite = LazyShrink.s1WithDepthStrictLazy(term, domain, 1);
     ATermIterator ite2 = ite.clone();
     ATermList l1 = ite.toATermList(term.getFactory());
     ATermList l2 = ite2.toATermList(term.getFactory());
@@ -193,7 +193,7 @@ public class ShrinkTest {
     Buildable sort = Examples.expr;
     ATerm term = sort.generate(10);
     DomainInterpretation domain = new BuildableDomain(sort);
-    ATermIterator ite = ShrinkIterator.s2WithDepthStrictLazy(term, domain, 1);
+    ATermIterator ite = LazyShrink.s2WithDepthStrictLazy(term, domain, 1);
     LibTests.testIterator(ite, 10000000, false);
   }
   
@@ -203,7 +203,7 @@ public class ShrinkTest {
     Buildable sort = Examples.expr;
     ATerm term = sort.generate(10);
     DomainInterpretation domain = new BuildableDomain(sort);
-    ATermIterator ite = ShrinkIterator.s2WithDepthStrictLazy(term, domain, 1);
+    ATermIterator ite = LazyShrink.s2WithDepthStrictLazy(term, domain, 1);
     ATermIterator ite2 = ite.clone();
     ATermList l1 = ite.toATermList(term.getFactory());
     ATermList l2 = ite2.toATermList(term.getFactory());
@@ -274,7 +274,7 @@ public class ShrinkTest {
     Buildable sort = Examples.expr;
     ATerm term = ExamplesTerms.expr_T1;
     DomainInterpretation domain = new BuildableDomain(sort);
-    ATermList result = ShrinkIterator.s1StrictLazy(term, domain).toATermList(term.getFactory());
+    ATermList result = LazyShrink.s1StrictLazy(term, domain).toATermList(term.getFactory());
     assert result.getChildCount() == 2;
     assert result.getChildAt(0).equals(ExamplesTerms.expr_T1Left);
     assert result.getChildAt(1).equals(ExamplesTerms.expr_T1Right);
@@ -288,7 +288,7 @@ public class ShrinkTest {
     ATerm t2 = ExamplesTerms.expr_T1;
     DomainInterpretation domain = new BuildableDomain(sort);
     ATermFactory factory = t1.getFactory();
-    ATermList result = ShrinkIterator.s1Large(factory.makeList(t1).append(t2), domain);
+    ATermList result = LazyShrink.s1Large(factory.makeList(t1).append(t2), domain);
     assert result.getChildCount() == 4;
     assert result.getChildAt(0).equals(ExamplesTerms.expr_T1Left);
     assert result.getChildAt(1).equals(ExamplesTerms.expr_T1Right);
@@ -302,7 +302,7 @@ public class ShrinkTest {
     Buildable sort = Examples.sortTestShrink2;
     ATerm term = ExamplesTerms.nonS1_2_Shinkable;
     DomainInterpretation domain = new BuildableDomain(sort);
-    ATermList result = ShrinkIterator.s1StrictLazy(term, domain).toATermList(term.getFactory());
+    ATermList result = LazyShrink.s1StrictLazy(term, domain).toATermList(term.getFactory());
     assert result.getChildCount() == 0;
   }
 
@@ -313,7 +313,7 @@ public class ShrinkTest {
     ATerm term = ExamplesTerms.nonS1_2_Shinkable;
     DomainInterpretation domain = new BuildableDomain(sort);
     ATermFactory factory = term.getFactory();
-    ATermList result = ShrinkIterator.s1Large(factory.makeList(term), domain);
+    ATermList result = LazyShrink.s1Large(factory.makeList(term), domain);
     assert result.getChildCount() == 1;
     assert result.getChildAt(0).equals(ExamplesTerms.nonS1_2_Shinkable);
   }
@@ -327,7 +327,7 @@ public class ShrinkTest {
     Buildable sort = Examples.sortTestShrink2;
     ATerm term = ExamplesTerms.sortTestShrink2_s2test;
     DomainInterpretation domain = new BuildableDomain(sort);
-    ATermList result = ShrinkIterator.s2StrictLazy(term, domain).toATermList(term.getFactory());
+    ATermList result = LazyShrink.s2StrictLazy(term, domain).toATermList(term.getFactory());
     assert result.getChildCount() == 8;
     for(int i = 0; i < 8; i++) {
       assert result.getChildAt(i).equals(ExamplesTerms.sortTestShrink2_s2test_children[i]);
@@ -341,7 +341,7 @@ public class ShrinkTest {
     ATerm term = ExamplesTerms.sortTestShrink2_s2test;
     ATermFactory factory = term.getFactory();
     DomainInterpretation domain = new BuildableDomain(sort);
-    ATermList result = ShrinkIterator.s2Large(factory.makeList(term), domain);
+    ATermList result = LazyShrink.s2Large(factory.makeList(term), domain);
     assert result.getChildCount() == 8;
     for(int i = 0; i < 8; i++) {
       assert result.getChildAt(i).equals(ExamplesTerms.sortTestShrink2_s2test_children[i]);
@@ -354,7 +354,7 @@ public class ShrinkTest {
     Buildable sort = Examples.sortTestShrink2;
     ATerm term = ExamplesTerms.nonS1_2_Shinkable;
     DomainInterpretation domain = new BuildableDomain(sort);
-    ATermList result = ShrinkIterator.s2StrictLazy(term, domain).toATermList(term.getFactory());
+    ATermList result = LazyShrink.s2StrictLazy(term, domain).toATermList(term.getFactory());
     assert result.getChildCount() == 0;
   }
 
@@ -365,7 +365,7 @@ public class ShrinkTest {
     ATerm term = ExamplesTerms.nonS1_2_Shinkable;
     ATermFactory factory = term.getFactory();
     DomainInterpretation domain = new BuildableDomain(sort);
-    ATermList result = ShrinkIterator.s2Large(factory.makeList(term), domain);
+    ATermList result = LazyShrink.s2Large(factory.makeList(term), domain);
     assert result.getChildCount() == 1;
     assert result.getChildAt(0).equals(ExamplesTerms.nonS1_2_Shinkable);
   }
@@ -406,7 +406,7 @@ public class ShrinkTest {
     ATerm term = ExamplesTerms.sortTestShrink2_s2test;
     DomainInterpretation domain = new BuildableDomain(sort);
     ATermList result1 = Shrink.s2WithDepthStrict(term, domain, 0);
-    ATermList result2 = ShrinkIterator.s2StrictLazy(term, domain).toATermList(term.getFactory());
+    ATermList result2 = LazyShrink.s2StrictLazy(term, domain).toATermList(term.getFactory());
     assert result1.equals(result2);
   }
   
@@ -416,7 +416,7 @@ public class ShrinkTest {
     Buildable sort = Examples.sortTestShrink2;
     ATerm term = ExamplesTerms.sortTestShrink2_s2test;
     DomainInterpretation domain = new BuildableDomain(sort);
-    ATermList result = ShrinkIterator.s1WithDepthStrictLazy(term, domain, 1).toATermList(term.getFactory());
+    ATermList result = LazyShrink.s1WithDepthStrictLazy(term, domain, 1).toATermList(term.getFactory());
     assert result.getLength() == 6;
     for(int i = 0; i < result.getLength(); i++) {
       assert result.getChildAt(result.getLength() - 1 - i).equals(ExamplesTerms.sortTestShrink2_s1depth_children[i]);
@@ -429,7 +429,7 @@ public class ShrinkTest {
     Buildable sort = Examples.sortTestShrink2;
     ATerm term = ExamplesTerms.sortTestShrink2_s2test;
     DomainInterpretation domain = new BuildableDomain(sort);
-    ATermList result = ShrinkIterator.s2WithDepthStrictLazy(term, domain, 1).toATermList(term.getFactory());
+    ATermList result = LazyShrink.s2WithDepthStrictLazy(term, domain, 1).toATermList(term.getFactory());
     assert result.getLength() == 2;
     for(int i = 0; i < result.getLength(); i++) {
       assert result.getChildAt(result.getLength() - 1 - i).equals(ExamplesTerms.sortTestShrink2_s2depth_children[i]);

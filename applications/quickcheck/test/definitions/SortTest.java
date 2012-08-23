@@ -14,7 +14,7 @@ import examples.Examples;
 import java.util.ArrayList;
 import java.util.Iterator;
 import libtests.LibTests;
-import logic.model.ShrinkIterator;
+import logic.model.LazyShrink;
 import static org.junit.Assert.assertEquals;
 import org.junit.*;
 

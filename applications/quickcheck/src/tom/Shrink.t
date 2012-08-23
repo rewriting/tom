@@ -130,7 +130,7 @@ public class Shrink{
   @Deprecated
   public static ATermList s2WithDepthStrict(ATerm term, DomainInterpretation domain, int depth) {
     if (depth == 0) {
-      return ShrinkIterator.s2StrictLazy(term, domain).toATermList(term.getFactory());
+      return LazyShrink.s2StrictLazy(term, domain).toATermList(term.getFactory());
     }
 
     DomainInterpretation[] subDoms = domain.getDepsDomains();

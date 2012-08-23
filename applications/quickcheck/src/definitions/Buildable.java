@@ -90,5 +90,13 @@ public interface Buildable {
    */
   public boolean isTypeOf(ATerm term);
 
+  /**
+   * Gives new terms built from term by replacing its constructor by all
+   * constructors whose the set of arguments is include in the set of arguments
+   * of the constructor of term.
+   *
+   * @param term Term to shrink in changing its constructor.
+   * @return list of strictly smaller subterms.
+   */
   public ATermIterator lighten(ATerm term);
 }

@@ -5,10 +5,7 @@ import aterm.ATerm;
 import aterm.ATermAppl;
 import aterm.ATermFactory;
 import aterm.ATermIterator;
-import aterm.ATermList;
-import aterm.pure.PureFactory;
 import java.util.*;
-import logic.model.ShrinkIterator;
 
 /**
  * Represents implementation of any Sort type with Buildable formalism.

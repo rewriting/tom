@@ -7,7 +7,7 @@ package aterm;
 import aterm.pure.PureFactory;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import logic.model.ShrinkIterator;
+import logic.model.LazyShrink;
 
 /**
  * This class makes it possible to iterate over an list of ATerm. This
@@ -98,6 +98,6 @@ public abstract class ATermIterator implements Cloneable {
   @Override
   public String toString() {
     return this.toATermList(new PureFactory()).toString();
-//    return ShrinkIterator.toATermList(this.clone(), new PureFactory()).toString();
+//    return LazyShrink.toATermList(this.clone(), new PureFactory()).toString();
   }
 }

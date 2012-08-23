@@ -12,7 +12,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import jjtraveler.Visitable;
 import org.junit.*;
-import static org.junit.Assert.*;
 
 /**
  *

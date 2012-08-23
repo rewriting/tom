@@ -18,7 +18,9 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Stack;
 
-public class ShrinkIterator {
+public class LazyShrink {
+  
+  private LazyShrink(){}
 
   private static DomainInterpretation getCorrespondingDomain(DomainInterpretation[] subDoms, ATerm term) {
     for(int i = 0; i < subDoms.length; i++) {
@@ -203,7 +205,7 @@ public class ShrinkIterator {
    * @param domain domain containing term.
    * @return list of strictly smaller subterms.
    */
-  public static ATermIterator s2StrictLazy(ATerm term, final DomainInterpretation domain) {
+  /*private*/ static ATermIterator s2StrictLazy(ATerm term, final DomainInterpretation domain) {
     return domain.lighten(term);
   }
 

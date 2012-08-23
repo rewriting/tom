@@ -248,7 +248,7 @@ public class Interpretation {
           return false;
         }
         ATerm head = list.next();
-        shrunkHead = filterList(varName, ShrinkIterator.s1WithDepthStrictLazy(head, domain, depth), domain, f, valuation);
+        shrunkHead = filterList(varName, LazyShrink.s1WithDepthStrictLazy(head, domain, depth), domain, f, valuation);
         if(!shrunkHead.hasNext()) {
           List<ATerm> tmp = new LinkedList<ATerm>();
           tmp.add(head);
@@ -344,7 +344,7 @@ public class Interpretation {
           return false;
         }
         ATerm head = list.next();
-        shrunkHead = filterList(varName, ShrinkIterator.s2WithDepthStrictLazy(head, domain, depth), domain, f, valuation);
+        shrunkHead = filterList(varName, LazyShrink.s2WithDepthStrictLazy(head, domain, depth), domain, f, valuation);
         if(!shrunkHead.hasNext()) {
           List<ATerm> tmp = new LinkedList<ATerm>();
           tmp.add(head);
