@@ -10,6 +10,7 @@ import aterm.ATermAppl;
 import aterm.ATermFactory;
 import aterm.ATermInt;
 import aterm.ATermIterator;
+import aterm.ATermIteratorFromATermList;
 import aterm.ATermList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -180,7 +181,7 @@ public class ShrinkIterator {
 
   @Deprecated
   public static ATermList s1Large(ATermList list, DomainInterpretation domain) {
-    return s1Large(toIterator(list), domain).toATermList(list.getFactory());
+    return s1Large(new ATermIteratorFromATermList(list), domain).toATermList(list.getFactory());
   }
 
   /*
@@ -256,7 +257,7 @@ public class ShrinkIterator {
 
   @Deprecated
   public static ATermList s2Large(ATermList list, DomainInterpretation domain) {
-    return s2Large(toIterator(list), domain).toATermList(list.getFactory());
+    return s2Large(new ATermIteratorFromATermList(list), domain).toATermList(list.getFactory());
   }
 
   /*
@@ -427,42 +428,42 @@ public class ShrinkIterator {
   /*
    * -------------------------- UTILS -----------------------
    */
-  public static ATermIterator toIterator(final ATermList list) {
-    return new ATermIterator() {
-      private ATermList state = list;
+//  public static ATermIterator toIterator(final ATermList list) {
+//    return new ATermIterator() {
+//      private ATermList state = list;
+//
+//      @Override
+//      public boolean hasNext() {
+//        return !state.isEmpty();
+//      }
+//
+//      @Override
+//      public ATerm next() {
+//        if(hasNext()) {
+//          ATerm res = state.getFirst();
+//          state = state.getNext();
+//          return res;
+//        } else {
+//          throw new NoSuchElementException();
+//        }
+//      }
+//    };
+//  }
 
-      @Override
-      public boolean hasNext() {
-        return !state.isEmpty();
-      }
-
-      @Override
-      public ATerm next() {
-        if(hasNext()) {
-          ATerm res = state.getFirst();
-          state = state.getNext();
-          return res;
-        } else {
-          throw new NoSuchElementException();
-        }
-      }
-    };
-  }
-
-  public static ATermList toATermList2(ATermIterator iterator) {
-    ATermFactory factory = null;
-    ATermList list = null;
-
-    while(iterator.hasNext()) {
-      ATerm aTerm = iterator.next();
-      if(factory == null) {
-        factory = aTerm.getFactory();
-        list = factory.makeList();
-      }
-      list = list.insert(aTerm);
-    }
-    return list;
-  }
+//  public static ATermList toATermList2(ATermIterator iterator) {
+//    ATermFactory factory = null;
+//    ATermList list = null;
+//
+//    while(iterator.hasNext()) {
+//      ATerm aTerm = iterator.next();
+//      if(factory == null) {
+//        factory = aTerm.getFactory();
+//        list = factory.makeList();
+//      }
+//      list = list.insert(aTerm);
+//    }
+//    return list;
+//  }
 
 //  public static ATermList toATermList(ATermIterator iterator, ATermFactory factory) {
 //    if(!iterator.hasNext()) {
