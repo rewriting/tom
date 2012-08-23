@@ -167,7 +167,7 @@ public class LogicTest {
 
     Interpretation interp_int = new Interpretation(map_pre, map_sig, map_dom);
 
-    assert interp_int.validateFormula(formula, new HashMap<String, ATerm>());
+    assert interp_int.validateFormula(formula, new HashMap<String, ATerm>(), 20);
   }
 
   @Test
