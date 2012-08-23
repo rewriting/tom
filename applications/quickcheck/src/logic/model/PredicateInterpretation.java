@@ -18,7 +18,8 @@ public interface PredicateInterpretation {
    * Gives the result of the function which interprete a Predicate.
    *
    * @param args
-   * @return
+   * @return true if the evaluation of the predicate over given arguments is
+   * true.
    */
   public abstract boolean isTrue(List<ATerm> args);
 }

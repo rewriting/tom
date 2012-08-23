@@ -15,14 +15,14 @@ import aterm.ATermIterator;
 public interface DomainInterpretation {
 
   /**
-   * Choose an element in the interpreted set.
+   * Chooses an element in the interpreted set.
    *
    * @return
    */
   public ATerm chooseElement(int n);
 
   /**
-   * Tell whether given term is include in the set. This method is use in the
+   * Tells whether given term is include in the set. This method is use in the
    * shrink algorithm to fetch terms of given type.
    *
    * @param term
@@ -31,14 +31,16 @@ public interface DomainInterpretation {
   public boolean includes(ATerm term);
 
   /**
+   * Gives all terms that can be build by using constructors whose arguments are
+   * those of term.
    *
    * @param term
-   * @return
+   * @return list of all new terms
    */
   public ATermIterator lighten(ATerm term);
 
   /**
-   * Gives all domains which current domain depends on. This function is used in
+   * Gives all domains on which current domain depends. This function is used in
    * the shrink algorithm to shrink sub-term ao a term.
    *
    * @return array of depedences.
