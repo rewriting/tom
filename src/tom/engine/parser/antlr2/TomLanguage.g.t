@@ -1039,7 +1039,8 @@ tracelinkConstruct [Option orgTrack] returns [Instruction result] throws TomExce
   TomName elemTransfoName = `EmptyName();//will probably disappear
 }
     : 
-     t1:LPAREN t:ALL_ID COMMA n:ALL_ID COMMA (BACKQUOTE)? bqterm = plainBQTerm t2:RPAREN
+     //t1:LPAREN t:ALL_ID COMMA n:ALL_ID COMMA (BACKQUOTE)? bqterm = plainBQTerm t2:RPAREN
+     t1:LPAREN n:ALL_ID COLON t:ALL_ID COMMA (BACKQUOTE)? bqterm = plainBQTerm t2:RPAREN
      {
        TomName type=`Name(t.getText());
        TomName name=`Name(n.getText());
