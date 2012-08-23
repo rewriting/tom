@@ -1,0 +1,52 @@
+% !TEX root = ../shrink.tex
+
+\noind On définit une \textit{signature} $s \in \sig $ comme le quadruplet $(\type, \cons, \dom, \codom)$ où
+\begin{itemize}
+\item $\type$ est un ensemble de \textit{types},
+\item $\cons$ est un ensemble de \textit{constructeurs},
+\item $\dom : \cons \rightarrow \displaystyle{\bigcup_{n \in \N}} \type^n$ donne le \textit{domaine} d'un constructeur,
+\item $\codom : \cons \rightarrow \type$ donne le \textit{codomaine} d'un constructeur.\\
+\end{itemize}
+
+\noind L'\textit{arité} d'un constructeur $c \in \cons$ est l'entier $n$ tel que $\dom(c) \in \type^n$. On peut maintenant définir par induction ce qu'est un \textit{\ta}.
+\begin{itemize}
+\item Tout constructeur d'arité nulle est un terme.
+\item Pour tout constructeur $c \in \cons$ d'arité $n$ et les \tas $t_1, t_2, \dots, t_n$, alors $c(t_1, t_2, \dots, t_n)$ est un terme.
+\end{itemize}
+L'ensemble des \tas sur la signature $s$ est noté $\term_s$. Si $t = c(t1_, t_2, \dots, t_n)$, on dira que $c$ est le constructeur de $t$ et que $t_1, t_2, \dots, t_n$ sont ses \textit{\stds}et que $t_i$ est le $i$-ème \std\!\!. De même, un \textit{\st\!} de $t$ est soit un \std de $t$ soit un \st d'un des \stds de $t$. L'ensemble des \sts de $t$ est noté $\ST(t)$. Enfin, le \textit{chemin} $\omega_{t,t'}$ d'un \ta $t$ à l'un de ses \sts est une suite finie $u_1u_2\dots u_n \in \N^\N$ permettant de définir une suite de \tas $t_0t_1\dots t_n$ telle que 
+
+$$ 
+	\left\{
+		\begin{array}{c}
+			t_0 = t \\
+			t_n = t' \\
+			\forall k \in \ent{1,n}, \; t_k \mbox{ est le $u_k$-ème \st de $t_{k-1}$}
+		\end{array}
+	\right.
+$$
+\noind De par la structure d'arbre d'un terme, tout chemin entre deux \tas est unique. On peut donc définir la distance entre un \ta et l'un de ses \st comme la longueur du chemin les séparant. On utilisera également la concaténation de suites finies : si $\omega$ est une suite finie et $a$ une suite, alors $\omega a$ est la suite concaténée de $\omega$ et de $a$.\\
+
+\noind De plus, on dira qu'un \ta $t$ \textit{dérive} d'un type $T\in \type$ \ssi le constructeur de $t$ a $T$ pour codomaine. L'ensemble des \tas dérivant d'un type $T$ est noté $\DERIVE(T)$. On étendra cette notation aux termes : pour tout $t \in \term_s, \; \DERIVE(t)$ est l'ensemble des \tas dérivant du même type que $t$.\\
+
+\noind On pose également que la \textit{taille} d'un \ta est le nombre de constructeurs le composant, ou encore 
+
+$$\forall t = c(t_1, t_2, \dots, t_n) \in \term_s, \; \size(t) = 1 + \sum_{i=1}^n \size(t_i). $$
+
+
+\noind Ainsi, à partir d'un \ta $t \in \term_s$ faisant échouer la validation de la formule, on cherche à construire un \ta $t'$ de plus petite taille continuant de faire échouer la validation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

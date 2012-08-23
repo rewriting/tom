@@ -1,0 +1,11 @@
+% !TEX root = ../shrink.tex
+
+\noind Le second \algo \texttt{s2} est indépendant de \texttt{s1} mais cherche toujours à diminuer la taille de l'élément de départ. Cette fois ci, on raisonne uniquement au niveau de la racine du terme $t$. On cherche tous les constructeurs du type dont dérive $t$ qui sont \textit{inclus} dans le constructeur de $t$. Par \textit{inclus}, on veut dire que, si $n_{c,T}$ est le nombre d'arguments du constructeur $c$ de type $T$, 
+
+$$ \forall c_1, c_2 \in \cons, \; \mbox{$c_1$ est inclus dans $c_2$} \Leftrightarrow \forall T \in \type, \; n_{c_1, T} \leqslant n_{c_2, T}.$$
+
+\noind Pour chaque constructeur $c$ inclus dans le constructeur de $t$, on fait alterner les différentes combinaisons possibles en se limitant à la règle que chaque \std de $t$ soit au moins une fois présent dans les arguments d'un terme construit avec $c$.
+
+%\noind Une fois la liste des contre-exemples potentiels établie, on la filtre de la même manière que \texttt{s1} pour supprimer les termes qui ne sont pas des contres-exemples. Si, après filtrage, la liste des termes est vide, on retourne le terme initial.
+
+\noind L'\algo \texttt{s2} est exécuté après \texttt{s1}. La raison est que l'\algo \texttt{s2} est moins destructeur que le premier, à tel point qu'appliquer \texttt{s2} puis \texttt{s1} reviendrait à appliquer seulement \texttt{s1} et, au pire, ajouter les éléments obtenus en appliquant \texttt{s2} sur $t$ (en non plus sur les éléments de \texttt{s1}). En effet, l'algorithme \texttt{s1} cherche dans les différentes branches tous les \sts de même type que la racine. Or \texttt{s2} ne modifie par les branches. L'application de \texttt{s2} avant celle de \texttt{s1} ne changerait que très peu son résultat.

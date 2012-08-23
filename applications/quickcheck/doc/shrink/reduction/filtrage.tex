@@ -1,0 +1,36 @@
+% !TEX root = ../shrink.tex
+
+
+\noind Le filtrage $f$ permet de supprimer tous les \tas qui ne sont pas des contre-exemples. Si le résultat est l'ensemble vide, on lui ajoute l'élément initial. Finalement, on obtient
+
+$$ \forall t \in \term, \forall d \in \N \; f(\mathtt{s\mathit{i}Depth}(t, d)) = 
+	\left\{\begin{array}{cc}
+		f(\mathtt{s\mathit{i}Depth}(t, d)) & \mbox{si $f(\mathtt{s\mathit{i}Depth}(t, d)) \neq \emptyset $} \\
+		\{t\}& \mbox{sinon.}
+	\end{array}\right.
+$$
+
+\noind Passée cette fonction de filtrage, on se rend compte que l'on peut améliorer la fonction \texttt{s1} en continuant la descente de l'arbre pour trouver les \sts de même type que les \tas trouvés par l'\algo\!\!. On construit alors \texttt{s1}$'$ en itérant $f(\mathtt{s1Depth}(\cdot, d))$ sur chacun des termes de $f(\mathtt{s1Depth}(t, d))$ jusqu'à convergence.
+
+\begin{enumerate}
+	\item initialiser $E \define {t}$;
+	\item initialiser un nouvel ensemble vide $E'$.
+	\item pour tout élément $t'$ dans $E$
+	\begin{enumerate}
+		\item ajouter le résultat de $f(\mathtt{s1Depth}(t', d))$ à $E'$.
+	\end{enumerate}
+	\item si $E = E'$
+	\begin{enumerate}
+		\item alors on s'arrête
+		\item sinon on pose $E \define E'$ et on revient à 2
+	\end{enumerate}
+\end{enumerate}
+
+\noind La convergence de cet \algo ne fait pas de doute : Pour s'en convaincre, si $\left(E_n\right)_{n\in \N}$ est la suite des $E$ de l'\algo\!, on peut considérer la différence symétrique $ \delta_n = E_n \triangle E_{n+1}$. L'\algo est effectué de telle sorte que dès que un élément est présent dans $E_n$ et dans $E_{n+1}$ (il ne fait donc plus partie de $\delta_n$), alors il reste présent pour tout $n' > n$. On peut donc se contenter de réitèrer \texttt{s1\_aux} sur les éléments de $\delta_n \cap E_{n+1}$. On se rend alors compte que la taille maximale des éléments de $\delta_n$ décroit strictement entre deux $\delta_n$ non vides successifs, ce qui impose qu'il existe un $n$ tel que $\delta_n$ soit vide, c'est à dire que $E_n = E_{n+1}$.\\
+
+\noind En ce qui concerne $f \circ \mathtt{s2Depth}(\cdot, d)$, on n'a pas besoin de réitérer l'\algo car on travaille exclusivement sur les constructeurs du type de la racine : $$ \mathtt{s2}' = f \circ \mathtt{s2Depth}.$$
+
+
+
+
+

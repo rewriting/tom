@@ -1,0 +1,14 @@
+% !TEX root = ../shrink.tex
+
+\noind Une première méthode \texttt{s1} permettant de réduire un \ta $t$ consiste à remplacer $t$ par l'un de ses \sts dérivant du même type. On récupère tous les \sts dérivant du même type qui minimisent la distance entre eux et la racine. L'ensemble $\texttt{s1}(t)$ de ces termes est
+
+$$ \mathtt{s1}(t) = \{ t' \in \ST(t) \cap \DERIVE(t) \; \vert \; \nexists t'' \neq t', \exists a \in \N^\N,  \omega_{t, t'} = \omega_{t, t''}a\}$$
+
+\noind Cette fonction ne collecte que les \sts de même type que $t$ \textit{les plus proches} de $t$. On verra comment palier à ce problème dans la section \ref{filtrage}.
+
+
+
+
+
+
+

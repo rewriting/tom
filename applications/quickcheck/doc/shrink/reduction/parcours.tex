@@ -1,0 +1,14 @@
+% !TEX root = ../shrink.tex
+
+\noind Les deux \algos précédents ne réduisent le contre-exemple qu'en considération de son constructeur. C'est à dire qu'on ne profite de la réduction que sur un seul type (celui du terme à réduire). Pour réduire également les autres types, on choisit de ré-appliquer les deux \algos sur les termes obtenus après un premier passage, mais à des \textit{profondeurs}\footnote{La \textit{profondeur} d'un \st $t'$ d'un terme $t$ est la distance les séparant.} différentes. Cependant, le filtrage doit lui rester avec le même type (un filtrage sur un autre type n'aurait de toute façon pas de sens, car le filtrage est propre à un type).
+
+\noind Concrètement, on ajoute aux deux \algos \texttt{s1} et \texttt{s2} la notion de profondeur : si $t = c(t_1, t_2, \dots, t_n)$, alors on définit \texttt{s\textit{i}Depth} de la manière suivante :
+
+$$ \forall d \in \N, \; \mathtt{s\mathit{i}Depth} (t,d) = 
+	\left\{\begin{array}{cc}
+		\mathtt{s}i(t) & \mbox{si $d = 0$} \\
+		\displaystyle{\bigcup_{i \in \ent{1,n}}} \{c(t_1, \dots, t'_i, \dots, t_n)\}_{t'_i \in \mathtt{s\mathit{i}Depth(t,d-1)}}& \mbox{si $d \neq 0$}
+	\end{array}\right.
+$$
+
+

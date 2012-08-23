@@ -1,0 +1,178 @@
+% !TEX encoding = Windows Latin 1
+\documentclass[10pt]{article}
+
+\usepackage{geometry}
+\geometry{a4paper}
+\usepackage{amsmath}
+\usepackage{stmaryrd}
+\usepackage{listings}
+\usepackage{moreverb}
+\usepackage{amsfonts,amssymb,verbatim}
+\usepackage{amsthm}
+\usepackage{mathrsfs}
+\usepackage{graphicx}
+\usepackage[latin1]{inputenc}
+\usepackage{color}
+\usepackage[T1]{fontenc}
+\usepackage{lastpage}
+\usepackage[francais]{babel}
+\usepackage{fancyhdr}
+\usepackage{calc}
+\newcommand{\noind}{\noindent}
+\usepackage[bookmarks,colorlinks,breaklinks]{hyperref}  % PDF hyperlinks, with coloured links
+\definecolor{dullmagenta}{rgb}{0.4,0,0.4}   % #660066
+\definecolor{darkblue}{rgb}{0,0,0.4}
+\hypersetup{linkcolor=blue,citecolor=blue,filecolor=dullmagenta,urlcolor=darkblue} % coloured links
+%\hypersetup{linkcolor=black,citecolor=black,filecolor=black,urlcolor=black} % black links, for printed output
+
+\newcommand{\imp}[1]{\textit{\textbf{#1}} }
+
+\definecolor{lightgrey}{gray}{0.75}
+\definecolor{gris}{rgb}{0.9,0.9,0.9} 
+\definecolor{bleuclair}{rgb}{0.7,0.7,1}
+\lstset{ basicstyle={\ttfamily \small}, language=c, keywordstyle=\color{blue}, frame=lines, backgroundcolor=\color{gris}, breaklines = true, showstringspaces=false} 
+
+ 
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\K}{\mathbb{K}}
+
+\newcommand{\cons}{\mathcal{C}}
+%\renewcommand{\S}{\mathcal{S}}
+\newcommand{\sig}{\mathcal{S}}
+\newcommand{\D}{\mathcal{D}}
+\newcommand{\predicat}{\mathcal{P}}
+\newcommand{\F}{\mathcal{F}}
+\newcommand{\X}{\mathcal{X}}
+\newcommand{\type}{\mathcal{T}}
+\newcommand{\AND}{\vee}
+\newcommand{\OR}{\wedge}
+\newcommand{\NOT}[1]{\overline{#1}}
+\newcommand{\IMPLY}{\Rightarrow}
+\newcommand{\f}{\Sigma}
+\renewcommand{\d}{\Delta}
+\newcommand{\gom}{\texttt{Gom} }
+\newcommand{\valide}{\vDash}
+\newcommand{\nvalide}{\nvDash}
+\newcommand{\ssi}{si et seulement si }
+\newcommand{\define}{\overset{\mathrm{def}}=}
+\newcommand{\dom}{\mathtt{dom}}
+\newcommand{\codom}{\mathtt{codom}}
+\newcommand{\term}{\tau}
+\newcommand{\size}{\mathtt{size}}
+\newcommand{\ta}{terme algébrique }
+\newcommand{\tas}{termes algébriques }
+\newcommand{\st}{sous-terme }
+\newcommand{\sts}{sous-termes }
+\newcommand{\std}{sous-terme direct }
+\newcommand{\stds}{sous-termes directs }
+\newcommand{\ST}{\gamma}
+\newcommand{\DERIVE}{\delta}
+\newcommand{\algo}{algorithme }
+\newcommand{\algos}{algorithmes }
+\newcommand{\Algo}{Algorithme }
+\newcommand{\Algos}{Algorithmes }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\newcommand{\qc}{Quickcheck }
+
+
+\newcommand{\abs}[1]{\left| #1 \right|}
+\newcommand{\norme}[1]{\left\Vert #1 \right\Vert}
+\newcommand{\tribarre}[1]{\left\Vert \! \! \: \left| #1 \right| \! \!  \: \right\Vert}
+\newcommand{\dint}[1]{\displaystyle{\int} \! \!  \! \! \displaystyle{\int_{ #1}} }
+\newcommand{\tint}[1]{\displaystyle{\int} \! \!  \! \! \displaystyle{\int} \! \!  \! \! \displaystyle{\int_{#1}} }
+\newcommand{\scal}[1]{\left\langle #1 \right\rangle}
+\newcommand{\ent}[1]{\left\llbracket#1\right\rrbracket}
+\newcommand{\somme}[2]{\displaystyle{\sum_{#1}^{#2}}}
+\newcommand{\integrale}[2]{\displaystyle{\int_{#1}^{#2}}}
+\newcommand{\e}{\mathrm{e}}
+\def\jfrac#1#2{\raisebox{2pt}{$#1$}/\raisebox{-2pt}{$#2$}}   %%%%  jolie fraction
+
+
+
+\pagestyle{fancy}
+%\lhead{ \textit{QUICKCHECK} } 
+  %\chead{ }
+%\rhead{\textit{Réduction des contre-exemples}}
+
+%\fancyfoot{\cfoot{\thepage}}
+\renewcommand{\headrulewidth}{0.6pt}
+\definecolor{mygrey}{gray}{0.75}
+\renewcommand{\headrule}{{\color{lightgrey}
+ \hrule width\headwidth height\headrulewidth \vskip-\headrulewidth}}
+ 
+\theoremstyle{plain} 
+\newtheorem{theo}{Théorème } 
+\newtheorem{rappel}{Rappel du théorème }
+\newtheorem{lemme}{Lemme }
+
+\begin{document}
+
+%\section{Génération de termes}
+%	\subsection{Vocabulaire utilisé} \input{generation/voc.tex}
+%	\subsection{Présentation de l'algorithme} \input{generation/algo.tex}
+	
+\section{Utilisation des termes générés}\input{utilisation/verif.tex}
+	
+\section{Réduction des contre-exemples}
+	\input{reduction/reduction.tex}
+
+	
+	
+
+
+\end{document}  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,23 @@
+% !TEX root = ../shrink.tex
+
+\noind On peut maintenant exprimer l'algorithme de réduction des contre-exemples dans son ensemble. Si $t$ est un contre-exemple :
+
+\begin{enumerate}
+\item on pose $d$ la profondeur de $t$.
+\item on pose $E \define \{t\}$.
+\item pour $i$ variant de $0$ à $d$
+	\begin{enumerate}
+	\item on pose $E' \define \emptyset$.
+	\item pour tout élément $t'$ dans $E$.
+		\begin{enumerate}
+		\item on ajoute $\mathtt{s1}'(t', i)$ à $E'$.
+		\end{enumerate}
+	\item on pose $E'' \define \emptyset$.
+	\item pour tout élément $t'$ dans $E'$.
+		\begin{enumerate}
+		\item on ajoute $\mathtt{s2}'(t', i)$ à $E''$.
+		\end{enumerate}
+	\item $E \define E''$
+	\end{enumerate}
+\item on retourne le \ta de $E$ de taille minimale.
+\end{enumerate}
