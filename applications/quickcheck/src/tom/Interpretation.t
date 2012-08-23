@@ -282,6 +282,7 @@ public class Interpretation {
     return new S1_aux_class(list, varName, domain, depth, f, valuation, sizeMax);
   }
 
+  @Deprecated
   private ATermList s2_aux(String varName, ATermList list, DomainInterpretation domain, Formula f, Map<String, ATerm> valuation, int depth, int sizeMax){
     if(list.isEmpty()) {
       return list;
@@ -372,6 +373,7 @@ public class Interpretation {
     return new S2_aux_class(list, varName, domain, depth, f, valuation, sizeMax);
   }
 
+  @Deprecated
   private ATermList s1(String varName, ATermList list, DomainInterpretation domain, Formula f, Map<String, ATerm> valuation, int depth, int sizeMax){
     ATermList res = s1_aux(varName, list, domain, f, valuation, depth, sizeMax);
     if (res.equals(list)) {
@@ -390,6 +392,7 @@ public class Interpretation {
     }
   }
 
+  @Deprecated
   private ATermList s2(String varName, ATermList list, DomainInterpretation domain, Formula f, Map<String, ATerm> valuation, int depth, int sizeMax){
     ATermList res = s2_aux(varName, list, domain, f, valuation, depth, sizeMax);
     return res;
@@ -409,6 +412,7 @@ public class Interpretation {
     return res + 1;
   }
 
+  @Deprecated
   private ATerm minATerm(ATermList list){
     ATerm term = null;
     ATermList current = list;
