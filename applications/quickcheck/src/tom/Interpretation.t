@@ -496,6 +496,12 @@ public class Interpretation {
   /*                            ValidateFormula                          */
   /* =================================================================== */
 
+  /**
+   * Check whether a formula is valid upon given valuation.
+   * @param f
+   * @param valuation
+   * @return true if formula is valid
+   */
   public boolean validateFormula(Formula f, Map<String, ATerm> valuation) {
     %match(f){
       Predicate(name, args) -> {
@@ -515,7 +521,14 @@ public class Interpretation {
     }
     return false; // unreachable
   }
-
+  
+  /**
+   * Check whether a formula is valid upon given valuation.
+   * @param f
+   * @param valuation
+   * @param sizeMax maximal size of generated terms
+   * @return true if formula is valid
+   */
   public CounterExample validateFormulaWithCE(Formula f, Map<String, ATerm> valuation, int sizeMax) {
     %match(f){
       Predicate(name, args) -> {

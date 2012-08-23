@@ -19,7 +19,7 @@ public interface SignatureInterpretation {
    * Signature.
    *
    * @param args
-   * @return
+   * @return value returned by the interpretation.
    */
   public abstract ATerm compute(List<ATerm> args);
 }
