@@ -19,3 +19,10 @@ applications/quickcheck/build
 applications/quickcheck/gen
 System.tom
 /src/tom/library/enumerator/nbproject/private/
+*.log
+*.aux
+*.make
+applications/quickcheck/doc/shrink/shrink.d
+applications/quickcheck/doc/shrink/shrink.fls
+applications/quickcheck/doc/shrink/shrink.out
+applications/quickcheck/doc/shrink/shrink.pdf
