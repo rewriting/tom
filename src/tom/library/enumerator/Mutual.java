@@ -75,8 +75,11 @@ public class Mutual {
 
 		System.out.println("#trees of size 500 = card(parts[500]) = " + mutEnum.parts().index(BigInteger.valueOf(500)).getCard());
 */
-		Enumeration<A> enumA = MutualEnum.<A>instance().get(A.class);
+//		Enumeration<A> enumA = MutualEnum.instance().get(A.class); // we could declare enumA as Enumeration<B> and get runtime error
+		Enumeration<A> enumA = MutualEnum.getA(); 
 		System.out.println("#trees of size 500 = card(parts[500]) = " + enumA.parts().index(BigInteger.valueOf(500)).getCard());
+		Enumeration<B> enumB = MutualEnum.instance().get(B.class);
+		System.out.println("#trees of size 500 = card(parts[500]) = " + enumB.parts().index(BigInteger.valueOf(500)).getCard());
 
         //listEnum.pay();
         System.out.println("Enumerator for " + "A");
@@ -85,7 +88,12 @@ public class Mutual {
             System.out.println("Get " + i + "th term: "
                     + enumA.get(BigInteger.valueOf(i)));
         }
-
+        System.out.println("Enumerator for " + "B");
+        for (int i = 0; i < n; i++) {
+            System.out.println("Get " + i + "th term: "
+                    + enumB.get(BigInteger.valueOf(i)));
+        }
+        
         LazyList<Finite<A>> parts = enumA.parts();
         for (int i = 0; i < 5 && !parts.isEmpty(); i++) {
             System.out.println(i + " --> " + parts.head());

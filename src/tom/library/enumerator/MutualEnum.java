@@ -6,15 +6,14 @@
  */
 package enumerator;
 
-import java.util.HashMap;
-
 import enumerator.mutual.types.A;
 import enumerator.mutual.types.B;
+import java.util.HashMap;
 
 /**
  * will be automatically generated
  */
-public class MutualEnum<T> {
+public class MutualEnum {
 	private HashMap<Class<?>,Enumeration<?>> map;
 	
 	private MutualEnum() {
@@ -22,15 +21,15 @@ public class MutualEnum<T> {
 	}
 	private static MutualEnum instance = null;
 	
-	public static <T> MutualEnum<T> instance() {
+	public static  MutualEnum instance() {
 		if(instance==null) {
-			instance = new MutualEnum<T>();
+			instance = new MutualEnum();
 			instance.init();
 		}
 		return instance;
 	}
 	
-	public Enumeration<T> get(Class<?> c) {
+	public <T> Enumeration<T> get(Class<?> c) {
 		return (Enumeration<T>) map.get(c);
 	}
 	
@@ -118,4 +117,16 @@ public class MutualEnum<T> {
 		map.put(A.class,resA);
 
 	}
+        
+    public static Enumeration<A> getA() {
+        Enumeration<A> enumA = MutualEnum.instance().get(A.class);
+        return enumA;
+    }
+    
+    public static Enumeration<B> getB() {
+        Enumeration<B> enumB = MutualEnum.instance().get(B.class);
+        return enumB;
+    }
+
+
 }
