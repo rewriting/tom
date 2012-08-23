@@ -180,7 +180,7 @@ public class ShrinkIterator {
 
   @Deprecated
   public static ATermList s1Large(ATermList list, DomainInterpretation domain) {
-    return toATermList(s1Large(toIterator(list), domain), list.getFactory());
+    return s1Large(toIterator(list), domain).toATermList(list.getFactory());
   }
 
   /*
@@ -256,7 +256,7 @@ public class ShrinkIterator {
 
   @Deprecated
   public static ATermList s2Large(ATermList list, DomainInterpretation domain) {
-    return toATermList(s2Large(toIterator(list), domain), list.getFactory());
+    return s2Large(toIterator(list), domain).toATermList(list.getFactory());
   }
 
   /*
@@ -350,8 +350,12 @@ public class ShrinkIterator {
 
     @Override
     public ATermIterator clone() {
-      S1depth res = (S1depth) super.clone();
-      res.localIte = this.localIte.clone();
+      S2depth res = (S2depth) super.clone();
+      if(this.localIte == null) {
+        res.localIte = null;
+      } else {
+        res.localIte = this.localIte.clone();
+      }
       return res;
     }
 
@@ -460,11 +464,11 @@ public class ShrinkIterator {
     return list;
   }
 
-  public static ATermList toATermList(ATermIterator iterator, ATermFactory factory) {
-    if(!iterator.hasNext()) {
-      return factory.makeList();
-    }
-    ATerm term = iterator.next();
-    return toATermList(iterator, factory).insert(term);
-  }
+//  public static ATermList toATermList(ATermIterator iterator, ATermFactory factory) {
+//    if(!iterator.hasNext()) {
+//      return factory.makeList();
+//    }
+//    ATerm term = iterator.next();
+//    return toATermList(iterator, factory).insert(term);
+//  }
 }

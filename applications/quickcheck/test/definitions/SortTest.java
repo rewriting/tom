@@ -768,8 +768,8 @@ public class SortTest {
     Constructor cons = Examples.expr.getCons("plus");
     ATermIterator ite = Examples.expr.getOneConsIter(term, cons);
     ATermIterator ite2 = ite.clone();
-    ATermList l1 = ShrinkIterator.toATermList(ite, term.getFactory());
-    ATermList l2 = ShrinkIterator.toATermList(ite2, term.getFactory());
+    ATermList l1 = ite.toATermList(term.getFactory());
+    ATermList l2 = ite2.toATermList(term.getFactory());
     System.out.println(l1.getLength());
     System.out.println(l2.getLength());
     assert l1.equals(l2);
@@ -803,8 +803,8 @@ public class SortTest {
     list.add(c3);
     ATermIterator ite = Examples.expr.getMultiConsIter(term, list);
     ATermIterator ite2 = ite.clone();
-    ATermList l1 = ShrinkIterator.toATermList(ite, term.getFactory());
-    ATermList l2 = ShrinkIterator.toATermList(ite2, term.getFactory());
+    ATermList l1 = ite.toATermList(term.getFactory());
+    ATermList l2 = ite2.toATermList(term.getFactory());
     System.out.println(l1.getLength());
     System.out.println(l2.getLength());
     assert l1.equals(l2);
