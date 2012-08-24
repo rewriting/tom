@@ -8,10 +8,10 @@
 
 $$\forall x \in D, \; \left( (P(x)) \Rightarrow (Q(f(x))) \right)$$
 
-\noind Pour formaliser la syntaxe, on se munit d'un ensemble infini $\X$ de symboles de \textit{variables} et un ensemble $\sig$ de symboles de signatures. Chaque signature a une \textit{arité}. On peut alors définir la notion de termes de manière inductive :
+\noind Pour formaliser la syntaxe, on se munit d'un ensemble infini $\X$ de symboles de \textit{variables} et un ensemble $\sig$ de symboles de fonctions. Chaque fonction a une \textit{arité}. On peut alors définir la notion de termes de manière inductive :
 \begin{itemize}
 \item toute variable est un terme,
-\item toute signature d'arité 0 est un terme,
+\item tout symbole de fonction d'arité 0 est un terme,
 \item si $s$ est un symbole de fonction d'arité $n$, et que $t_1, t_2, \dots, t_n$ sont des termes, alors $s(t_1, t_2, \dots, t_n)$ est un terme.
 \end{itemize}
 L'ensemble de termes est noté $\term$.\\
@@ -88,7 +88,7 @@ $$\forall n \in \N, \; \f_{\d, n} \define \displaystyle{\bigcup_{E \in \d^n,F \i
 
 \noind $\f_{\d,n}$ est donc l'ensemble des fonctions d'arité $n$ dont le codomaine et le domaine sont des éléments de $\d$ et de $\d^n$, et $\f'_{\d, n}$ est l'ensemble des fonctions d'arité $n$ de codomaine $\{0,1\}$ et de domaine dans $\d^{n}$.
 
-\noind On peut interpréter une formule syntaxique issue d'un ensemble de signatures $\sig$, de prédicats $\predicat$ et de domaines $\D$ en lui associant une \textit{interprétation} $I$ qui est la connaissance d'un couple $(\d_I, \ent{\cdot}_I)$ où
+\noind On peut interpréter une formule syntaxique issue d'une signature $\sig$, de prédicats $\predicat$ et de domaines $\D$ en lui associant une \textit{interprétation} $I$ qui est la connaissance d'un couple $(\d_I, \ent{\cdot}_I)$ où
 \begin{itemize}
 \item $\d_I$ est un ensemble de domaines
 \item $\ent{\cdot}_I$ est une fonction telle que 
@@ -127,8 +127,8 @@ $$\scal{s(t_1, t_2, \dots,t_n) \vert \sigma}_I = \ent{s}_I\left(\scal{t_1 \vert 
 \begin{itemize}
 \item $ I \valide _\sigma P(t_1, t_2, \dots, t_n) \Leftrightarrow \ent{P}_I(\scal{t_1 \vert \sigma}_I, \scal{t_2 \vert \sigma}_I, \dots, \scal{t_n \vert \sigma}_I) = 1$
 \item $ I \valide_\sigma \NOT{F} \Leftrightarrow I \nvalide_\sigma F$
-\item $ I \valide_\sigma (F_1) \AND (F_2) \Leftrightarrow I \valide_\sigma F_1 \;\mathrm{et}\; I \valide_\sigma F_2$
-\item $ I \valide_\sigma (F_1) \OR (F_2) \Leftrightarrow I \valide_\sigma F_1 \;\mathrm{ou}\; I \valide_\sigma F_2$
+\item $ I \valide_\sigma (F_1) \AND (F_2) \Leftrightarrow I \valide_\sigma F_1 \;\mathrm{ou}\; I \valide_\sigma F_2$
+\item $ I \valide_\sigma (F_1) \OR (F_2) \Leftrightarrow I \valide_\sigma F_1 \;\mathrm{et}\; I \valide_\sigma F_2$
 \item $ I \valide_\sigma (F_1) \IMPLY (F_2) \Leftrightarrow I \nvalide_\sigma F_1 \;\mathrm{ou}\; I \valide_\sigma F_2$
 \item $ I \valide_\sigma \forall x \in D, (F) \Leftrightarrow \forall a \in \ent{D}_I, I \nvalide_{\sigma_{\{x \leftarrow a\}}} F$
 \item $ I \valide_\sigma \exists x \in D, (F) \Leftrightarrow \exists a \in \ent{D}_I, I \nvalide_{\sigma_{\{x \leftarrow a\}}} F$\\
@@ -160,7 +160,7 @@ $$ \forall t \in \term, \; \scal{t \vert \sigma}_I \mbox{est un \texttt{ATerm}}.
 
 $$ \forall P \in \predicat, \; \ent{P}_I : \mathtt{ATerm}^n \rightarrow \{0,1\} \mbox{ où $P$ est d'arité $n$}.$$
 
-\item les symboles de signatures de l'ensemble $\sig$ correspondent à des objets implémentant l'interface \texttt{SignatureInterpretation}. Chacune de ces interprétations doit fournir une méthode \texttt{compute} qui à une liste de termes associe la valeur souhaitée de l'interprétation du symbole dans ce cas.
+\item les symboles de fonctions de l'ensemble $\sig$ correspondent à des objets implémentant l'interface \texttt{FunctionInterpretation}. Chacune de ces interprétations doit fournir une méthode \texttt{compute} qui à une liste de termes associe la valeur souhaitée de l'interprétation du symbole dans ce cas.
 
 $$ \forall s \in \sig, \; \ent{s}_I : \mathtt{ATerm}^n \rightarrow \mathtt{ATerm} \mbox{ où $s$ est d'arité $n$}.$$
 

@@ -7,7 +7,7 @@
 $$ \forall d \in \N, \; \mathtt{s\mathit{i}Depth} (t,d) = 
 	\left\{\begin{array}{cc}
 		\mathtt{s}i(t) & \mbox{si $d = 0$} \\
-		\displaystyle{\bigcup_{i \in \ent{1,n}}} \{c(t_1, \dots, t'_i, \dots, t_n)\}_{t'_i \in \mathtt{s\mathit{i}Depth(t,d-1)}}& \mbox{si $d \neq 0$}
+		\displaystyle{\bigcup_{k \in \ent{1,n}}} \{c(t_1, \dots, t'_k, \dots, t_n)\}_{t'_k \in \mathtt{s\mathit{i}Depth(t_k,d-1)}}& \mbox{si $d \neq 0$}
 	\end{array}\right.
 $$
 

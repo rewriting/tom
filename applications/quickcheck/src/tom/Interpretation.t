@@ -67,6 +67,9 @@ public class Interpretation {
   /*                            ValidateForall                           */
   /* =================================================================== */
 
+  /**
+   * This function check whether a formula of type "forall x in D, F" is true or false
+   */
 
   private boolean validateForall(String varName, String domainName, Formula f, Map<String, ATerm> valuation, int sizeMax){
     DomainInterpretation domain = domain_map.get(domainName);
