@@ -12,7 +12,7 @@ import java.util.List;
  *
  * @author hubert
  */
-public interface SignatureInterpretation {
+public interface FunctionInterpretation {
 
   /**
    * Gives ATerm equivalente of the result of the function which interprete a

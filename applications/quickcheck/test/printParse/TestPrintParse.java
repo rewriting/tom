@@ -13,7 +13,7 @@ import logic.model.BuildableDomain;
 import logic.model.DomainInterpretation;
 import logic.model.Interpretation;
 import logic.model.PredicateInterpretation;
-import logic.model.SignatureInterpretation;
+import logic.model.FunctionInterpretation;
 import logic.system.types.CounterExample;
 import logic.system.types.Formula;
 
@@ -30,7 +30,7 @@ public class TestPrintParse {
     examples.Examples.init();
     Formula formula = examples.ExamplesFormula.f1;
     Map<String, PredicateInterpretation> map_pre = new HashMap<String, PredicateInterpretation>();
-    Map<String, SignatureInterpretation> map_sig = new HashMap<String, SignatureInterpretation>();
+    Map<String, FunctionInterpretation> map_sig = new HashMap<String, FunctionInterpretation>();
     Map<String, DomainInterpretation> map_dom = new HashMap<String, DomainInterpretation>();
 
     PredicateInterpretation pred_int = new PredicateInterpretation() {

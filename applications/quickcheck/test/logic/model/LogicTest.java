@@ -30,7 +30,7 @@ public class LogicTest {
   // Interger interpretation
   private PredicateInterpretation ODD;
   private PredicateInterpretation EVEN;
-  private SignatureInterpretation succ;
+  private FunctionInterpretation succ;
   private DomainInterpretation Integer;
   private DomainInterpretation EvenInteger;
   // List interpretation
@@ -56,7 +56,7 @@ public class LogicTest {
       }
     };
 
-    succ = new SignatureInterpretation() {
+    succ = new FunctionInterpretation() {
       @Override
       public ATerm compute(List<ATerm> args) {
         PureFactory factory = new PureFactory();
@@ -159,7 +159,7 @@ public class LogicTest {
   public void testInterpInt() {
     System.out.println("test testInterpInt");
     Map<String, PredicateInterpretation> map_pre = new HashMap<String, PredicateInterpretation>();
-    Map<String, SignatureInterpretation> map_sig = new HashMap<String, SignatureInterpretation>();
+    Map<String, FunctionInterpretation> map_sig = new HashMap<String, FunctionInterpretation>();
     Map<String, DomainInterpretation> map_dom = new HashMap<String, DomainInterpretation>();
 
     map_pre.put("P", EVEN);
@@ -174,7 +174,7 @@ public class LogicTest {
   public void testInterpIntCE() {
     System.out.println("test testInterpIntCE");
     Map<String, PredicateInterpretation> map_pre = new HashMap<String, PredicateInterpretation>();
-    Map<String, SignatureInterpretation> map_sig = new HashMap<String, SignatureInterpretation>();
+    Map<String, FunctionInterpretation> map_sig = new HashMap<String, FunctionInterpretation>();
     Map<String, DomainInterpretation> map_dom = new HashMap<String, DomainInterpretation>();
 
     map_pre.put("P", ODD);
@@ -216,7 +216,7 @@ public class LogicTest {
   public void testInterpListCE() {
     System.out.println("test testInterpListCE");
     Map<String, PredicateInterpretation> map_pre = new HashMap<String, PredicateInterpretation>();
-    Map<String, SignatureInterpretation> map_sig = new HashMap<String, SignatureInterpretation>();
+    Map<String, FunctionInterpretation> map_sig = new HashMap<String, FunctionInterpretation>();
     Map<String, DomainInterpretation> map_dom = new HashMap<String, DomainInterpretation>();
 
     map_pre.put("P", REV_REV);
@@ -232,7 +232,7 @@ public class LogicTest {
   public void testEVEN_ODD_CE() {
     System.out.println("test testEVEN_ODD_CE");
     Map<String, PredicateInterpretation> map_pre = new HashMap<String, PredicateInterpretation>();
-    Map<String, SignatureInterpretation> map_sig = new HashMap<String, SignatureInterpretation>();
+    Map<String, FunctionInterpretation> map_sig = new HashMap<String, FunctionInterpretation>();
     Map<String, DomainInterpretation> map_dom = new HashMap<String, DomainInterpretation>();
 
     map_pre.put("EVEN", EVEN);
@@ -252,7 +252,7 @@ public class LogicTest {
   public void testInterpListCEFalse() {
     System.out.println("test shrink consList(b,consList(b,consList(c,nill)))");
     Map<String, PredicateInterpretation> map_pre = new HashMap<String, PredicateInterpretation>();
-    Map<String, SignatureInterpretation> map_sig = new HashMap<String, SignatureInterpretation>();
+    Map<String, FunctionInterpretation> map_sig = new HashMap<String, FunctionInterpretation>();
     Map<String, DomainInterpretation> map_dom = new HashMap<String, DomainInterpretation>();
 
     DomainInterpretation domain = new DomainInterpretation() {
@@ -300,7 +300,7 @@ public class LogicTest {
   public void testInterpListCEFalse2() {
     System.out.println("test shrink consList(b,consList(c,consList(c,nill)))");
     Map<String, PredicateInterpretation> map_pre = new HashMap<String, PredicateInterpretation>();
-    Map<String, SignatureInterpretation> map_sig = new HashMap<String, SignatureInterpretation>();
+    Map<String, FunctionInterpretation> map_sig = new HashMap<String, FunctionInterpretation>();
     Map<String, DomainInterpretation> map_dom = new HashMap<String, DomainInterpretation>();
 
     DomainInterpretation domain = new DomainInterpretation() {
