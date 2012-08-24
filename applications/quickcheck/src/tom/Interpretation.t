@@ -94,6 +94,7 @@ public class Interpretation {
    * or false. It returns value NoCE() in case of validity of the formula, and 
    * description of the counter-example in the other case.  
    */
+  @Deprecated
   private CounterExample validateForallWithCE(String varName, String domainName, Formula f, Map<String, ATerm> valuation, int sizeMax){
     DomainInterpretation domain = domain_map.get(domainName);
     if(domain == null){
@@ -115,20 +116,20 @@ public class Interpretation {
   /*                                 Shrink                              */
   /* =================================================================== */
   @Deprecated
-  private ATermList filterList(String varName, ATermList list, DomainInterpretation domain, Formula f, Map<String, ATerm> valuation, int sizeMax) {
-    if (list.isEmpty()) {
-      return list;
+    private ATermList filterList(String varName, ATermList list, DomainInterpretation domain, Formula f, Map<String, ATerm> valuation, int sizeMax) {
+      if (list.isEmpty()) {
+        return list;
+      }
+      ATerm head = list.getFirst();
+      valuation.put(varName, head);
+      boolean res = validateFormula(f, valuation, sizeMax);
+      valuation.remove(varName);
+      if (res) {
+        return filterList(varName, list.getNext(), domain, f, valuation, sizeMax);
+      } else {
+        return filterList(varName, list.getNext(), domain, f, valuation, sizeMax).insert(head);
+      }
     }
-    ATerm head = list.getFirst();
-    valuation.put(varName, head);
-    boolean res = validateFormula(f, valuation, sizeMax);
-    valuation.remove(varName);
-    if (res) {
-      return filterList(varName, list.getNext(), domain, f, valuation, sizeMax);
-    } else {
-      return filterList(varName, list.getNext(), domain, f, valuation, sizeMax).insert(head);
-    }
-  }
 
   private class FilterList_class extends ATermIterator {
     //<editor-fold defaultstate="collapsed" desc="filterList">
@@ -141,13 +142,13 @@ public class Interpretation {
     private Formula f;
     private Map<String, ATerm> valuation;
     private int sizeMax;
-    
+
     @Override
-    public FilterList_class clone(){
-      FilterList_class res = (FilterList_class) super.clone();
-      res.list = this.list.clone();
-      return res;
-    }
+      public FilterList_class clone(){
+        FilterList_class res = (FilterList_class) super.clone();
+        res.list = this.list.clone();
+        return res;
+      }
 
     public FilterList_class(String varName, ATermIterator list, DomainInterpretation domain, Formula f, Map<String, ATerm> valuation, int sizeMax) {
       this.varName = varName;
@@ -159,40 +160,40 @@ public class Interpretation {
     }
 
     @Override
-    public boolean hasNext() {
-      if(current != null) {
-        return true;
+      public boolean hasNext() {
+        if(current != null) {
+          return true;
+        }
+        if(!list.hasNext()) {
+          return false;
+        }
+        ATerm head = list.next();
+        valuation.put(varName, head);
+        boolean isValide = validateFormula(f, valuation, sizeMax);
+        valuation.remove(varName);
+        if(isValide) {
+          return hasNext();
+        } else {
+          current = head;
+          return true;
+        }
       }
-      if(!list.hasNext()) {
-        return false;
-      }
-      ATerm head = list.next();
-      valuation.put(varName, head);
-      boolean isValide = validateFormula(f, valuation, sizeMax);
-      valuation.remove(varName);
-      if(isValide) {
-        return hasNext();
-      } else {
-        current = head;
-        return true;
-      }
-    }
 
     @Override
-    public ATerm next() {
-      if(current != null) {
-        ATerm res = current;
-        current = null;
-        return res;
-      } else if(hasNext()) {
-        System.out.println("WARNING : the use of the methode next() is not preceded by hasNext().");
-        ATerm res = current;
-        current = null;
-        return res;
-      } else {
-        throw new NoSuchElementException();
+      public ATerm next() {
+        if(current != null) {
+          ATerm res = current;
+          current = null;
+          return res;
+        } else if(hasNext()) {
+          System.out.println("WARNING : the use of the methode next() is not preceded by hasNext().");
+          ATerm res = current;
+          current = null;
+          return res;
+        } else {
+          throw new NoSuchElementException();
+        }
       }
-    }
     //</editor-fold>
   }
 
@@ -203,18 +204,18 @@ public class Interpretation {
     return new FilterList_class(varName, list, domain, f, valuation, sizeMax);
   }
   @Deprecated
-  private ATermList s1_aux(String varName, ATermList list, DomainInterpretation domain, Formula f, Map<String, ATerm> valuation, int depth, int sizeMax){
-    if(list.isEmpty()) {
-      return list;
+    private ATermList s1_aux(String varName, ATermList list, DomainInterpretation domain, Formula f, Map<String, ATerm> valuation, int depth, int sizeMax){
+      if(list.isEmpty()) {
+        return list;
+      }
+      ATerm head = list.getFirst();
+      ATermList shrunkHead = filterList(varName, Shrink.s1WithDepthStrict(head, domain, depth), domain, f, valuation, sizeMax);
+      if(shrunkHead.isEmpty()){
+        return s1_aux(varName, list.getNext(), domain, f, valuation, depth, sizeMax).insert(head);
+      } else {
+        return shrunkHead.concat(s1_aux(varName, list.getNext(), domain, f, valuation, depth, sizeMax));
+      }
     }
-    ATerm head = list.getFirst();
-    ATermList shrunkHead = filterList(varName, Shrink.s1WithDepthStrict(head, domain, depth), domain, f, valuation, sizeMax);
-    if(shrunkHead.isEmpty()){
-      return s1_aux(varName, list.getNext(), domain, f, valuation, depth, sizeMax).insert(head);
-    } else {
-      return shrunkHead.concat(s1_aux(varName, list.getNext(), domain, f, valuation, depth, sizeMax));
-    }
-  }
 
   private class S1_aux_class extends ATermIterator {
     //<editor-fold defaultstate="collapsed" desc="s1_aux">
@@ -229,12 +230,12 @@ public class Interpretation {
     private Formula f;
     private Map<String, ATerm> valuation;
     private int sizeMax;
-    
+
     @Override
-    public ATermIterator clone(){
-      return new S1_aux_class(list.clone(), varName, domain, depth, f, valuation, sizeMax);
-    }
-    
+      public ATermIterator clone(){
+        return new S1_aux_class(list.clone(), varName, domain, depth, f, valuation, sizeMax);
+      }
+
     public S1_aux_class(ATermIterator list, String varName, DomainInterpretation domain, int depth, Formula f, Map<String, ATerm> valuation, int sizeMax){
       this.list = list;
       this.valuation = valuation;
@@ -247,67 +248,67 @@ public class Interpretation {
     }
 
     @Override
-    public boolean hasNext() {
-      if(current != null) {
+      public boolean hasNext() {
+        if(current != null) {
+          return true;
+        }
+        if(shrunkHead == null) {
+          if(!list.hasNext()) {
+            return false;
+          }
+          ATerm head = list.next();
+          shrunkHead = filterList(varName, LazyShrink.s1WithDepthStrictLazy(head, domain, depth), domain, f, valuation, sizeMax);
+          if(!shrunkHead.hasNext()) {
+            List<ATerm> tmp = new LinkedList<ATerm>();
+            tmp.add(head);
+            shrunkHead = new ATermIteratorFromList(tmp);
+          }
+        }
+        if(!shrunkHead.hasNext()) {
+          shrunkHead = null;
+          return hasNext();
+        }
+        current = shrunkHead.next();
         return true;
       }
-      if(shrunkHead == null) {
-        if(!list.hasNext()) {
-          return false;
-        }
-        ATerm head = list.next();
-        shrunkHead = filterList(varName, LazyShrink.s1WithDepthStrictLazy(head, domain, depth), domain, f, valuation, sizeMax);
-        if(!shrunkHead.hasNext()) {
-          List<ATerm> tmp = new LinkedList<ATerm>();
-          tmp.add(head);
-          shrunkHead = new ATermIteratorFromList(tmp);
-        }
-      }
-      if(!shrunkHead.hasNext()) {
-        shrunkHead = null;
-        return hasNext();
-      }
-      current = shrunkHead.next();
-      return true;
-    }
 
     @Override
-    public ATerm next() {
-      if(current != null) {
-        ATerm res = current;
-        current = null;
-        return res;
-      } else if(hasNext()) {
-        System.out.println("WARNING : the use of the methode next() is not preceded by hasNext().");
-        ATerm res = current;
-        current = null;
-        return res;
-      } else {
-        throw new NoSuchElementException();
+      public ATerm next() {
+        if(current != null) {
+          ATerm res = current;
+          current = null;
+          return res;
+        } else if(hasNext()) {
+          System.out.println("WARNING : the use of the methode next() is not preceded by hasNext().");
+          ATerm res = current;
+          current = null;
+          return res;
+        } else {
+          throw new NoSuchElementException();
+        }
       }
-    }
     //</editor-fold>
   }
-/**
- * If a term is not shrinkable, one returns the term.
- */
+  /**
+   * If a term is not shrinkable, we returns the term.
+   */
   private ATermIterator s1_aux(String varName, ATermIterator list, DomainInterpretation domain, Formula f, Map<String, ATerm> valuation, int depth, int sizeMax) {
     return new S1_aux_class(list, varName, domain, depth, f, valuation, sizeMax);
   }
 
   @Deprecated
-  private ATermList s2_aux(String varName, ATermList list, DomainInterpretation domain, Formula f, Map<String, ATerm> valuation, int depth, int sizeMax){
-    if(list.isEmpty()) {
-      return list;
+    private ATermList s2_aux(String varName, ATermList list, DomainInterpretation domain, Formula f, Map<String, ATerm> valuation, int depth, int sizeMax){
+      if(list.isEmpty()) {
+        return list;
+      }
+      ATerm head = list.getFirst();
+      ATermList shrunkHead = filterList(varName, Shrink.s2WithDepthStrict(head, domain, depth), domain, f, valuation, sizeMax);
+      if(shrunkHead.isEmpty()){
+        return s2_aux(varName, list.getNext(), domain, f, valuation, depth, sizeMax).insert(head);
+      } else {
+        return shrunkHead.concat(s2_aux(varName, list.getNext(), domain, f, valuation, depth, sizeMax));
+      }
     }
-    ATerm head = list.getFirst();
-    ATermList shrunkHead = filterList(varName, Shrink.s2WithDepthStrict(head, domain, depth), domain, f, valuation, sizeMax);
-    if(shrunkHead.isEmpty()){
-      return s2_aux(varName, list.getNext(), domain, f, valuation, depth, sizeMax).insert(head);
-    } else {
-      return shrunkHead.concat(s2_aux(varName, list.getNext(), domain, f, valuation, depth, sizeMax));
-    }
-  }
 
   private class S2_aux_class extends ATermIterator {
     //<editor-fold defaultstate="collapsed" desc="s2_aux">
@@ -322,12 +323,12 @@ public class Interpretation {
     private Formula f;
     private Map<String, ATerm> valuation;
     private int sizeMax;
-    
+
     @Override
-    public ATermIterator clone(){
-      return new S2_aux_class(list.clone(), varName, domain, depth, f, valuation, sizeMax);
-    }
-    
+      public ATermIterator clone(){
+        return new S2_aux_class(list.clone(), varName, domain, depth, f, valuation, sizeMax);
+      }
+
     public S2_aux_class(ATermIterator list, String varName, DomainInterpretation domain, int depth, Formula f, Map<String, ATerm> valuation, int sizeMax){
       this.list = list;
       this.valuation = valuation;
@@ -340,62 +341,68 @@ public class Interpretation {
     }
 
     @Override
-    public boolean hasNext() {
-      if(current != null) {
+      public boolean hasNext() {
+        if(current != null) {
+          return true;
+        }
+        if(shrunkHead == null) {
+          if(!list.hasNext()) {
+            return false;
+          }
+          ATerm head = list.next();
+          shrunkHead = filterList(varName, LazyShrink.s2WithDepthStrictLazy(head, domain, depth), domain, f, valuation, sizeMax);
+          if(!shrunkHead.hasNext()) {
+            List<ATerm> tmp = new LinkedList<ATerm>();
+            tmp.add(head);
+            shrunkHead = new ATermIteratorFromList(tmp);
+          }
+        }
+        if(!shrunkHead.hasNext()) {
+          shrunkHead = null;
+          return hasNext();
+        }
+        current = shrunkHead.next();
         return true;
       }
-      if(shrunkHead == null) {
-        if(!list.hasNext()) {
-          return false;
-        }
-        ATerm head = list.next();
-        shrunkHead = filterList(varName, LazyShrink.s2WithDepthStrictLazy(head, domain, depth), domain, f, valuation, sizeMax);
-        if(!shrunkHead.hasNext()) {
-          List<ATerm> tmp = new LinkedList<ATerm>();
-          tmp.add(head);
-          shrunkHead = new ATermIteratorFromList(tmp);
-        }
-      }
-      if(!shrunkHead.hasNext()) {
-        shrunkHead = null;
-        return hasNext();
-      }
-      current = shrunkHead.next();
-      return true;
-    }
 
     @Override
-    public ATerm next() {
-      if(current != null) {
-        ATerm res = current;
-        current = null;
-        return res;
-      } else if(hasNext()) {
-        System.out.println("WARNING : the use of the methode next() is not preceded by hasNext().");
-        ATerm res = current;
-        current = null;
-        return res;
-      } else {
-        throw new NoSuchElementException();
+      public ATerm next() {
+        if(current != null) {
+          ATerm res = current;
+          current = null;
+          return res;
+        } else if(hasNext()) {
+          System.out.println("WARNING : the use of the methode next() is not preceded by hasNext().");
+          ATerm res = current;
+          current = null;
+          return res;
+        } else {
+          throw new NoSuchElementException();
+        }
       }
-    }
     //</editor-fold>
   }
-
+  /**
+   * If a term is not shrinkable, we returns the term.
+   */
   private ATermIterator s2_aux(String varName, ATermIterator list, DomainInterpretation domain, Formula f, Map<String, ATerm> valuation, int depth, int sizeMax) {
     return new S2_aux_class(list, varName, domain, depth, f, valuation, sizeMax);
   }
 
   @Deprecated
-  private ATermList s1(String varName, ATermList list, DomainInterpretation domain, Formula f, Map<String, ATerm> valuation, int depth, int sizeMax){
-    ATermList res = s1_aux(varName, list, domain, f, valuation, depth, sizeMax);
-    if (res.equals(list)) {
-      return list;
-    } else {
-      return s1(varName, res, domain, f, valuation, depth, sizeMax);
+    private ATermList s1(String varName, ATermList list, DomainInterpretation domain, Formula f, Map<String, ATerm> valuation, int depth, int sizeMax){
+      ATermList res = s1_aux(varName, list, domain, f, valuation, depth, sizeMax);
+      if (res.equals(list)) {
+        return list;
+      } else {
+        return s1(varName, res, domain, f, valuation, depth, sizeMax);
+      }
     }
-  }
 
+  /**
+   * This function reiterate s1 over all results of s1 in order to find
+   * smallest subterms which is a counter-example.
+   */
   private ATermIterator s1(String varName, ATermIterator list, DomainInterpretation domain, Formula f, Map<String, ATerm> valuation, int depth, int sizeMax) {
     ATermIterator res = s1_aux(varName, list, domain, f, valuation, depth, sizeMax);
     if(res.equals(list)) {
@@ -406,10 +413,10 @@ public class Interpretation {
   }
 
   @Deprecated
-  private ATermList s2(String varName, ATermList list, DomainInterpretation domain, Formula f, Map<String, ATerm> valuation, int depth, int sizeMax){
-    ATermList res = s2_aux(varName, list, domain, f, valuation, depth, sizeMax);
-    return res;
-  }
+    private ATermList s2(String varName, ATermList list, DomainInterpretation domain, Formula f, Map<String, ATerm> valuation, int depth, int sizeMax){
+      ATermList res = s2_aux(varName, list, domain, f, valuation, depth, sizeMax);
+      return res;
+    }
 
   private ATermIterator s2(String varName, ATermIterator list, DomainInterpretation domain, Formula f, Map<String, ATerm> valuation, int depth, int sizeMax) {
     ATermIterator res = s2_aux(varName, list, domain, f, valuation, depth, sizeMax);
@@ -426,20 +433,20 @@ public class Interpretation {
   }
 
   @Deprecated
-  private ATerm minATerm(ATermList list){
-    ATerm term = null;
-    ATermList current = list;
-    int sizeMin = Integer.MAX_VALUE;
-    while (!current.isEmpty()) {
-      int size = sizeATerm(current.getFirst());
-      if (size < sizeMin) {
-        term = current.getFirst();
-        sizeMin = size;
+    private ATerm minATerm(ATermList list){
+      ATerm term = null;
+      ATermList current = list;
+      int sizeMin = Integer.MAX_VALUE;
+      while (!current.isEmpty()) {
+        int size = sizeATerm(current.getFirst());
+        if (size < sizeMin) {
+          term = current.getFirst();
+          sizeMin = size;
+        }
+        current = current.getNext();
       }
-      current = current.getNext();
+      return term;
     }
-    return term;
-  }
 
   private ATerm minATerm(ATermIterator list) {
     ATerm res = null;
@@ -464,9 +471,12 @@ public class Interpretation {
     return res + 1;
   }
 
+  /**
+   * Apply both s1 and s2 for every depth in the term.
+   */
   private ATerm shrink(String varName, ATerm term, DomainInterpretation domain, Formula f, Map<String, ATerm> valuation, int sizeMax) {
-//    ATermFactory factory = term.getFactory();
-//    ATermList l0 = factory.makeList(term);
+    //    ATermFactory factory = term.getFactory();
+    //    ATermList l0 = factory.makeList(term);
     List<ATerm> list = new LinkedList<ATerm>();
     list.add(term);
     ATermIterator l0 = new ATermIteratorFromList(list);
@@ -477,7 +487,12 @@ public class Interpretation {
     }
     return minATerm(l0);
   }
-
+ 
+  /**
+   * Checks whether a formula of type "forall x in D, F" is true 
+   * or false. It returns value NoCE() in case of validity of the formula, and 
+   * description of the shrunk counter-example in the other case.  
+   */
   private CounterExample validateForallWithShrunkCE(String varName, String domainName, Formula f, Map<String, ATerm> valuation, int sizeMax){
     DomainInterpretation domain = domain_map.get(domainName);
     if(domain == null){
@@ -529,13 +544,14 @@ public class Interpretation {
     }
     return false; // unreachable
   }
-  
+
   /**
    * Check whether a formula is valid upon given valuation.
    * @param f
    * @param valuation
    * @param sizeMax maximal size of generated terms
-   * @return true if formula is valid
+   * @return NoCE() if no counter-examples were found, and else description
+   * of a shrunk counter-example.
    */
   public CounterExample validateFormulaWithCE(Formula f, Map<String, ATerm> valuation, int sizeMax) {
     %match(f){
@@ -612,11 +628,11 @@ public class Interpretation {
   ATermIterator getFilter(String varName, ATermIterator list, DomainInterpretation domain, Formula f, Map<String, ATerm> valuation, int sizeMax){
     return new FilterList_class(varName, list, domain, f, valuation, sizeMax);
   }
-  
+
   ATermIterator getS1(ATermIterator list, String varName, DomainInterpretation domain, int depth, Formula f, Map<String, ATerm> valuation, int sizeMax){
     return new S1_aux_class(list, varName, domain, depth, f, valuation, sizeMax);
   }
-  
+
   ATermIterator getS2(ATermIterator list, String varName, DomainInterpretation domain, int depth, Formula f, Map<String, ATerm> valuation, int sizeMax){
     return new S2_aux_class(list, varName, domain, depth, f, valuation, sizeMax);
   }

@@ -3,6 +3,10 @@ imports String int ATerm
 abstract syntax
 
 
+/**
+ * This signature define first order logic syntax.
+ */
+
 Args = ListArgs(Term*)
 
 Term = Var(name:String)
@@ -15,6 +19,18 @@ Formula = Predicate(name:String, args:Args)
         | Not(f:Formula)
         | Forall(var:String, domain:String, f:Formula)
         | Exists(var:String, domain:String, f:Formula)
+
+/**
+ * This structure makes it possible to describe precisely what a counter-exemple
+ * is. If no counter-example was found, NoCE() is returned. In the other cases, 
+ * each constructor gives information about found counter-example. For instance, 
+ * 
+ *          CEForall("x",4,CEPredicate("P",ListArgs(Var("x"))))
+ *
+ * means 
+ *
+ *          "For x = 4, P(x) is not true (as it was expected)"
+ */
 
 CounterExample = CEAnd(ce:CounterExample)                       // counter example if one membre is false
                | CEOr(ce1:CounterExample, ce2:CounterExample)
