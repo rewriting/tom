@@ -7,38 +7,106 @@
 <!-- the Compile on Save feature is turned off for the project. -->
 <!-- You can turn off the Compile on Save (or Deploy on Save) setting -->
 <!-- in the project's Project Properties dialog box.-->
-<project name="quickcheck" default="default" basedir=".">
-    <description>Builds, tests, and runs the project quickcheck.</description>
-    <import file="nbproject/build-impl.xml"/>
-    <!--
 
-    There exist several targets which are by default empty and which can be 
-    used for execution of your tasks. These targets are usually executed 
-    before and after some main targets. They are: 
+<!-- <project name="quickcheck" default="default" basedir="."> -->
+<project name="quickcheck" default="tombuild" basedir=".">
 
-      -pre-init:                 called before initialization of project properties
-      -post-init:                called after initialization of project properties
-      -pre-compile:              called before javac compilation
-      -post-compile:             called after javac compilation
-      -pre-compile-single:       called before javac compilation of single file
-      -post-compile-single:      called after javac compilation of single file
-      -pre-compile-test:         called before javac compilation of JUnit tests
-      -post-compile-test:        called after javac compilation of JUnit tests
-      -pre-compile-test-single:  called before javac compilation of single JUnit test
-      -post-compile-test-single: called after javac compilation of single JUunit test
-      -pre-jar:                  called before JAR building
-      -post-jar:                 called after JAR building
-      -post-clean:               called after cleaning build products
+  <description>Builds, tests, and runs the project quickcheck.</description>
+  <import file="nbproject/build-impl.xml"/>
 
-    (Targets beginning with '-' are not intended to be called on their own.)
 
-    Example of inserting an obfuscator after compilation could look like this:
 
-        <target name="-post-compile">
-            <obfuscate>
-                <fileset dir="${build.classes.dir}"/>
-            </obfuscate>
-        </target>
+  <property name="javacSource" value="1.5"/>
+  <property name="javacTarget" value="1.5"/>
+  <property name="optimize"   value="off"/> 
+  <property name="optimize2"   value="off"/>
+  <property name="inline"   value="on"/>
+
+  <property environment="env"/>
+  <property name="tom.home" value="${env.TOM_HOME}"/>
+  <import file="${tom.home}/lib/tom-common.xml"/>
+
+  <property name="quickcheck.dir"      location="."/>
+  <property name="quickcheck.src"      location="src"/>
+  <property name="quickcheck.test"     location="test"/>
+  <property name="quickcheck.gen"      location="gen"/>
+  <property name="quickcheck.build"    location="build"/>
+
+  <target name="tominit" depends="tom.init">
+    <mkdir dir="${quickcheck.build}"/>
+    <mkdir dir="${quickcheck.gen}"/>
+  </target>
+
+  <target name="tombuild" depends="tominit">
+    <gom.preset 
+        srcdir="${quickcheck.src}"
+        destdir="${quickcheck.gen}">
+      <include name="**/*.gom"/>
+    </gom.preset>
+
+    <tom.preset srcdir="${quickcheck.src}"
+        options="--genIntrospector"
+        destdir="${quickcheck.gen}">
+      <include name="**/*.t"/>
+      <exclude name="**/Representation.t"/>
+      <exclude name="**/RandomizerGenerator.t"/>
+      <exclude name="**/RandomTermGeneration.t"/>
+      <exclude name="**/Main.t"/>
+      <exclude name="**/Bug.t"/>
+      <exclude name="**/BugLight.t"/>
+    </tom.preset>
+
+    <javac.preset destdir="${quickcheck.build}" fork="yes">
+      <src path="${quickcheck.src}"/>
+      <src path="${quickcheck.gen}"/>
+      <src path="${quickcheck.test}"/>
+      <classpath refid="tom.classpath"/>
+      <include name="**/*.java"/>
+    </javac.preset>
+  </target>
+
+  <target name="clean" description="make clean">
+    <delete dir="${quickcheck.gen}"/>
+    <delete dir="${quickcheck.build}"/>
+  </target>
+
+
+
+
+
+
+
+
+
+<!--
+
+  There exist several targets which are by default empty and which can be 
+  used for execution of your tasks. These targets are usually executed 
+  before and after some main targets. They are: 
+
+  -pre-init:                 called before initialization of project properties
+  -post-init:                called after initialization of project properties
+  -pre-compile:              called before javac compilation
+  -post-compile:             called after javac compilation
+  -pre-compile-single:       called before javac compilation of single file
+  -post-compile-single:      called after javac compilation of single file
+  -pre-compile-test:         called before javac compilation of JUnit tests
+  -post-compile-test:        called after javac compilation of JUnit tests
+  -pre-compile-test-single:  called before javac compilation of single JUnit test
+  -post-compile-test-single: called after javac compilation of single JUunit test
+  -pre-jar:                  called before JAR building
+  -post-jar:                 called after JAR building
+  -post-clean:               called after cleaning build products
+
+  (Targets beginning with '-' are not intended to be called on their own.)
+
+  Example of inserting an obfuscator after compilation could look like this:
+
+  <target name="-post-compile">
+    <obfuscate>
+      <fileset dir="${build.classes.dir}"/>
+      </obfuscate>
+    </target>
 
     For list of available properties check the imported 
     nbproject/build-impl.xml file. 
@@ -47,28 +115,28 @@
     Another way to customize the build is by overriding existing main targets.
     The targets of interest are: 
 
-      -init-macrodef-javac:     defines macro for javac compilation
-      -init-macrodef-junit:     defines macro for junit execution
-      -init-macrodef-debug:     defines macro for class debugging
-      -init-macrodef-java:      defines macro for class execution
-      -do-jar-with-manifest:    JAR building (if you are using a manifest)
-      -do-jar-without-manifest: JAR building (if you are not using a manifest)
-      run:                      execution of project 
-      -javadoc-build:           Javadoc generation
-      test-report:              JUnit report generation
+    -init-macrodef-javac:     defines macro for javac compilation
+    -init-macrodef-junit:     defines macro for junit execution
+    -init-macrodef-debug:     defines macro for class debugging
+    -init-macrodef-java:      defines macro for class execution
+    -do-jar-with-manifest:    JAR building (if you are using a manifest)
+    -do-jar-without-manifest: JAR building (if you are not using a manifest)
+    run:                      execution of project 
+    -javadoc-build:           Javadoc generation
+    test-report:              JUnit report generation
 
     An example of overriding the target for project execution could look like this:
 
-        <target name="run" depends="quickcheck-impl.jar">
-            <exec dir="bin" executable="launcher.exe">
-                <arg file="${dist.jar}"/>
-            </exec>
-        </target>
+    <target name="run" depends="quickcheck-impl.jar">
+      <exec dir="bin" executable="launcher.exe">
+        <arg file="${dist.jar}"/>
+        </exec>
+      </target>
 
-    Notice that the overridden target depends on the jar target and not only on 
-    the compile target as the regular run target does. Again, for a list of available 
-    properties which you can use, check the target you are overriding in the
-    nbproject/build-impl.xml file. 
+      Notice that the overridden target depends on the jar target and not only on 
+      the compile target as the regular run target does. Again, for a list of available 
+      properties which you can use, check the target you are overriding in the
+      nbproject/build-impl.xml file. 
 
     -->
 </project>
