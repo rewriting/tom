@@ -20,11 +20,11 @@ public class Interpretation {
   %include{../system/system.tom}
   //private Map<String, Object> valuation;
   private Map<String, PredicateInterpretation> interp_pre;
-  private Map<String, SignatureInterpretation> interp_sig;
+  private Map<String, FunctionInterpretation> interp_sig;
   private Map<String, DomainInterpretation> domain_map;
 
   public Interpretation(Map<String, PredicateInterpretation> interp_pre,
-      Map<String, SignatureInterpretation> interp_sig, 
+      Map<String, FunctionInterpretation> interp_sig, 
       Map<String, DomainInterpretation> domain_map) {
     this.interp_pre = interp_pre;
     this.interp_sig = interp_sig;
@@ -52,7 +52,7 @@ public class Interpretation {
         }
         return res;}
       Sig(name, args) -> {
-        SignatureInterpretation interpretation = interp_sig.get(`name);
+        FunctionInterpretation interpretation = interp_sig.get(`name);
         if(interpretation == null){
           throw new UnsupportedOperationException("Signature " + `name + " has no interpretation.");
         }
@@ -68,7 +68,8 @@ public class Interpretation {
   /* =================================================================== */
 
   /**
-   * This function check whether a formula of type "forall x in D, F" is true or false
+   * This function check whether a formula of type "forall x in D, F" is true 
+   * or false.
    */
 
   private boolean validateForall(String varName, String domainName, Formula f, Map<String, ATerm> valuation, int sizeMax){
@@ -88,6 +89,11 @@ public class Interpretation {
     return true;
   }
 
+  /**
+   * Checks whether a formula of type "forall x in D, F" is true 
+   * or false. It returns value NoCE() in case of validity of the formula, and 
+   * description of the counter-example in the other case.  
+   */
   private CounterExample validateForallWithCE(String varName, String domainName, Formula f, Map<String, ATerm> valuation, int sizeMax){
     DomainInterpretation domain = domain_map.get(domainName);
     if(domain == null){
@@ -190,7 +196,9 @@ public class Interpretation {
     //</editor-fold>
   }
 
-  @Deprecated
+  /**
+   * Removes all terms which are not counter-examples.
+   */ 
   private ATermIterator filterList(final String varName, final ATermIterator list, DomainInterpretation domain, final Formula f, final Map<String, ATerm> valuation, int sizeMax) {
     return new FilterList_class(varName, list, domain, f, valuation, sizeMax);
   }
@@ -280,7 +288,9 @@ public class Interpretation {
     }
     //</editor-fold>
   }
-
+/**
+ * If a term is not shrinkable, one returns the term.
+ */
   private ATermIterator s1_aux(String varName, ATermIterator list, DomainInterpretation domain, Formula f, Map<String, ATerm> valuation, int depth, int sizeMax) {
     return new S1_aux_class(list, varName, domain, depth, f, valuation, sizeMax);
   }
