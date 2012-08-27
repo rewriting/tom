@@ -50,12 +50,14 @@ public class MutualEnum {
 
 		F<Enumeration<B>, Enumeration<A>> fooFun = new F<Enumeration<B>, Enumeration<A>>() {
 			public Enumeration<A> apply(final Enumeration<B> e) {
+				
 				F<B, A> foo = new F<B, A>() {
 					public A apply(final B elem) {
 						return enumerator.mutual.types.a.foo.make(elem);
 					}
 				};
 				return Enumeration.apply(Enumeration.singleton(foo), e).pay();
+				
 			}
 		};
 

@@ -1333,24 +1333,25 @@ lbl:ConcHook(_*,MakeHook[HookArguments=args],_*) -> {
    * generate  F<A, F<TTree, F<TTree, TTree>>>
    *        or F<E<A>, F<E<TTree>, F<E<TTree>, E<TTree>>>>
    */
-  private String buildFunctionDomain(boolean withEnumeration, SlotFieldList slots,ClassName extendsType) {
+  private String buildFunctionDomain(boolean withEnumeration, SlotFieldList slots,ClassName codomain) {
     // [A,Tree,Tree] Tree
     // F<A, F<TTree, F<TTree, TTree>>>
     String F = "tom.library.enumerator.F<";
     String E = "tom.library.enumerator.Enumeration<";
     if(slots.isEmptyConcSlotField()) {
       if(withEnumeration) {
-        return E+fullClassName(extendsType)+">";
+        return E+fullClassName(codomain)+">";
       } else {
-        return fullClassName(extendsType);
+        return fullClassName(codomain);
       }
     } else {
       SlotField head = slots.getHeadConcSlotField();
       SlotFieldList tail = slots.getTailConcSlotField();
+      String domain = convertBuiltinType(fullClassName(head.getDomain()));
       if(withEnumeration) {
-        return F+E+fullClassName(head.getDomain())+">,"+buildFunctionDomain(withEnumeration,tail,extendsType)+">";
+        return F+E+domain+">,"+buildFunctionDomain(withEnumeration,tail,codomain)+">";
       } else {
-        return F+fullClassName(head.getDomain())+","+buildFunctionDomain(withEnumeration,tail,extendsType)+">";
+        return F+domain+","+buildFunctionDomain(withEnumeration,tail,codomain)+">";
       }
     }
   }
@@ -1359,30 +1360,45 @@ lbl:ConcHook(_*,MakeHook[HookArguments=args],_*) -> {
    * given a domain and a codmain
    * generate nested new F() { apply() { ... } }
    */
-  private String buildNestedFunction(boolean withEnumeration,SlotFieldList slots,ClassName extendsType, int index, F<Integer,String> genBody) {
+  private String buildNestedFunction(boolean withEnumeration,SlotFieldList slots,ClassName codomain, int index, F<Integer,String> genBody) {
     // [A,Tree,Tree] Tree
     // F<A, F<TTree, F<TTree, TTree>>>
     if(!slots.isEmptyConcSlotField()) {
       SlotField head = slots.getHeadConcSlotField();
       SlotFieldList tail = slots.getTailConcSlotField();
-      String arg = fullClassName(head.getDomain());
+      String domain = convertBuiltinType(fullClassName(head.getDomain()));
       String E = "tom.library.enumerator.Enumeration<";
       if(withEnumeration) {
-        arg = E+arg+">";
+        domain = E+domain+">";
       }
       return %[
-        new @buildFunctionDomain(withEnumeration,slots,extendsType)@() {
-          public @buildFunctionDomain(withEnumeration,tail,extendsType)@ apply(final @arg@ t@index@) {
-            return @buildNestedFunction(withEnumeration,tail, extendsType, index+1, genBody)@;
+        new @buildFunctionDomain(withEnumeration,slots,codomain)@() {
+          public @buildFunctionDomain(withEnumeration,tail,codomain)@ apply(final @domain@ t@index@) {
+            return @buildNestedFunction(withEnumeration,tail, codomain, index+1, genBody)@;
           }
-        }
-        ]%;
+        }]%;
     } else {
       return genBody.apply(index);
     }
   }
 
+  private String convertBuiltinType(String domain) {
+    if(domain.equals("int")) {
+      return "java.lang.Integer";
+    } else if(domain.equals("long")) {
+      return "java.lang.Long";
+    } else if(domain.equals("char")) {
+      return "java.lang.Character";
+    } else if(domain.equals("boolean")) {
+      return "java.lang.Boolean";
+    } else if(domain.equals("float")) {
+      return "java.lang.Float";
+    } else if(domain.equals("double")) {
+      return "java.lang.Double";
+    }
 
+    return domain;
+  }
 
 
 /*
@@ -1412,23 +1428,31 @@ public static  F<Enumeration<A>,F<Enumeration<B>,Enumeration<A>>> funMake() {
 
   private void generateEnum(java.io.Writer writer) throws java.io.IOException {
 if(slotList.length() == 0) {
-    String E = "tom.library.enumerator.Enumeration<" + fullClassName(extendsType) + ">";
+    String E = "tom.library.enumerator.Enumeration<" + fullClassName(sortName) + ">";
     writer.write(%[
   public static tom.library.enumerator.F<@E@, @E@> funMake() {
 	  return new tom.library.enumerator.F<@E@, @E@>() {
 		  public @E@ apply(final @E@ e) {
-			  return tom.library.enumerator.Enumeration.singleton((@fullClassName(extendsType)@) make());
+			  return tom.library.enumerator.Enumeration.singleton((@fullClassName(sortName)@) make());
 		  }
 	  };
-  }
-  ]%);
+  } ]%);
 } else {
-
   final F<Integer,String> genMake = new F<Integer,String>() {
     public String apply(Integer index) {
+      SlotField[] array = slotList.getCollectionConcSlotField().toArray(new SlotField[1]);
       String res = "make(";
-      for(int i=1 ; i<index-1 ; i++) { res += "t"+i+","; }
-      res+="t"+(index-1)+")";
+      for(int i=1 ; i<index ; i++) { 
+        String arg = "t"+i;
+        ClassName domain = array[i-1].getDomain();
+        String sort = fullClassName(domain);
+        if(getGomEnvironment().isBuiltinClass(domain) && !sort.equals(convertBuiltinType(sort))) { // to avoid the aterm case
+          arg = convertBuiltinType(sort)+".valueOf(" + arg + ")";
+        }
+        res += arg;
+        if(i<index-1) { res += ","; }
+      }
+      res += ")";
       return res; 
     }
   };
@@ -1436,7 +1460,7 @@ if(slotList.length() == 0) {
   F<Integer,String> genBody = new F<Integer,String>() {
     public String apply(Integer index) {
       String E = "tom.library.enumerator.Enumeration";
-      String f = "(" + buildFunctionDomain(false,slotList,extendsType) + ") "+ buildNestedFunction(false,slotList,extendsType,1,genMake);
+      String f = "(" + buildFunctionDomain(false,slotList,sortName) + ") "+ buildNestedFunction(false,slotList,sortName,1,genMake);
       String sapply = E+".singleton("+f+")";
       for(int i=1 ; i<index ; i++) { sapply = %[@E@.apply(@sapply@,t@i@)]%; }
       if(index>0) {
@@ -1447,10 +1471,9 @@ if(slotList.length() == 0) {
   };
 
     writer.write(%[
-  public static @buildFunctionDomain(true,slotList,extendsType)@ funMake() {
-	  return @buildNestedFunction(true,slotList,extendsType,1,genBody)@;
-  }
-  ]%);
+  public static @buildFunctionDomain(true,slotList,sortName)@ funMake() {
+	  return @buildNestedFunction(true,slotList,sortName,1,genBody)@;
+  }]%);
 }
 
 
