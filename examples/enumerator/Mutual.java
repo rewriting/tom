@@ -17,65 +17,7 @@ public class Mutual {
     	 */
 
         System.out.println("START");
-/*
-        final Enumeration<B> bEnum = Enumeration.singleton((B) enumerator.mutual.types.b.b.make());
 
-
-        final F<B, A> foo =
-                new F<B, A>() {
-                    public A apply(final B elem) {
-                        return enumerator.mutual.types.a.foo.make(elem);
-                    }
-                };
-
-        final F<A, A> hoo =
-                new F<A, A>() {
-                    public A apply(final A elem) {
-                        return enumerator.mutual.types.a.hoo.make(elem);
-                    }
-                };
-
-        final F<A, B> grr =
-                new F<A, B>() {
-                    public B apply(final A elem) {
-                        return enumerator.mutual.types.b.grr.make(elem);
-                    }
-                };
-
-        F<Enumeration<A>, Enumeration<A>> aFun = new F<Enumeration<A>, Enumeration<A>>() {
-            public Enumeration<A> apply(final Enumeration<A> e) {
-                return aEnum(); // !!!! NO pay (is a constant)
-            }
-        };
-
-        F<Enumeration<B>, Enumeration<A>> fooFun = new F<Enumeration<B>, Enumeration<A>>() {
-            public Enumeration<A> apply(final Enumeration<B> e) {
-                return fooEnum(foo, e).pay();
-            }
-        };
-
-        F<Enumeration<A>, Enumeration<A>> hooFun = new F<Enumeration<A>, Enumeration<A>>() {
-            public Enumeration<A> apply(final Enumeration<A> e) {
-                return hooEnum(hoo, e).pay();
-            }
-        };
-
-        F<Enumeration<B>, Enumeration<B>> bFun = new F<Enumeration<B>, Enumeration<B>>() {
-            public Enumeration<B> apply(final Enumeration<B> e) {
-                return bEnum(); // !!!! NO pay (is a constant)
-            }
-        };
-
-        F<Enumeration<A>, Enumeration<B>> grrFun = new F<Enumeration<A>, Enumeration<B>>() {
-            public Enumeration<B> apply(final Enumeration<A> e) {
-                return grrEnum(grr, e).pay();
-            }
-        };
-
-        Enumeration<A> mutEnum = Enumeration.fixMultiple(grrFun, bFun, fooFun, hooFun, aFun);
-
-		System.out.println("#trees of size 500 = card(parts[500]) = " + mutEnum.parts().index(BigInteger.valueOf(500)).getCard());
-*/
 //		Enumeration<A> enumA = MutualEnum.instance().get(A.class); // we could declare enumA as Enumeration<B> and get runtime error
 		Enumeration<A> enumA = MutualEnum.getA(); 
 		System.out.println("#trees of size 500 = card(parts[500]) = " + enumA.parts().index(BigInteger.valueOf(500)).getCard());

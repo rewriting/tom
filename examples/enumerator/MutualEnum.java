@@ -37,68 +37,14 @@ public class MutualEnum {
 	 * B = b() | grr(a:A)
 	 */
 	private void init() {
-		
-		F<Enumeration<A>, Enumeration<A>> aFun = new F<Enumeration<A>, Enumeration<A>>() {
-			public Enumeration<A> apply(final Enumeration<A> e) {
-				return Enumeration.singleton((A) enumerator.mutual.types.a.a.make()); // !!!! NO pay (is a constant)
-			}
-		};
-
-		F<Enumeration<B>, Enumeration<A>> fooFun = new F<Enumeration<B>, Enumeration<A>>() {
-			public Enumeration<A> apply(final Enumeration<B> e) {
-				
-				F<B, A> foo = new F<B, A>() {
-					public A apply(final B elem) {
-						return enumerator.mutual.types.a.foo.make(elem);
-					}
-				};
-				return Enumeration.apply(Enumeration.singleton(foo), e).pay();
-				
-			}
-		};
-
-		F<Enumeration<A>, F<Enumeration<B>,Enumeration<A>>> hooFun = enumerator.mutual.types.a.hoo.funMake();
-		
-		/*
-		F<Enumeration<A>, Enumeration<A>> hooFun = new F<Enumeration<A>, Enumeration<A>>() {
-			public Enumeration<A> apply(final Enumeration<A> e) {
-				F<A, A> hoo = new F<A, A>() {
-					public A apply(final A elem) {
-						return enumerator.mutual.types.a.hoo.make(elem);
-					}
-				};
-				return Enumeration.apply(Enumeration.singleton(hoo), e).pay();
-			}
-		};
-*/
-		
-		
-		F<Enumeration<B>, Enumeration<B>> bFun = new F<Enumeration<B>, Enumeration<B>>() {
-			public Enumeration<B> apply(final Enumeration<B> e) {
-				return Enumeration.singleton((B) enumerator.mutual.types.b.b.make()); // !!!! NO pay (is a constant)
-			}
-		};
-
-		F<Enumeration<A>, Enumeration<B>> grrFun = new F<Enumeration<A>, Enumeration<B>>() {
-			public Enumeration<B> apply(final Enumeration<A> e) {
-				 F<A, B> grr = new F<A, B>() {
-					public B apply(final A elem) {
-						return enumerator.mutual.types.b.grr.make(elem);
-					}
-				};
-				return Enumeration.apply(Enumeration.singleton(grr), e).pay();
-			}
-		};
-
-
 		Enumeration<A> enumA = new Enumeration<A>((LazyList<Finite<A>>) null);
 		Enumeration<B> enumB = new Enumeration<B>((LazyList<Finite<B>>) null);
 
-		final Enumeration<A> _a = aFun.apply(enumA);
-		final Enumeration<A> _foo = fooFun.apply(enumB);
-		final Enumeration<A> _hoo = hooFun.apply(enumA).apply(enumB);
-		final Enumeration<B> _b = bFun.apply(enumB);
-		final Enumeration<B> _grr = grrFun.apply(enumA);
+		final Enumeration<A> _a = enumerator.mutual.types.a.a.funMake().apply(enumA);
+		final Enumeration<A> _foo = enumerator.mutual.types.a.foo.funMake().apply(enumB);
+		final Enumeration<A> _hoo = enumerator.mutual.types.a.hoo.funMake().apply(enumA).apply(enumB);
+		final Enumeration<B> _b = enumerator.mutual.types.b.b.funMake().apply(enumB);
+		final Enumeration<B> _grr = enumerator.mutual.types.b.grr.funMake().apply(enumA);
 
 		final Enumeration<A> sortA = _foo.plus(_hoo).plus(_a);
 		final Enumeration<B> sortB = _grr.plus(_b);
