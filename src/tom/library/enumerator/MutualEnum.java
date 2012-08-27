@@ -4,7 +4,7 @@
  * To change the template for this generated file go to
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
-package enumerator;
+package tom.library.enumerator;
 
 import enumerator.mutual.types.A;
 import enumerator.mutual.types.B;
@@ -33,28 +33,15 @@ public class MutualEnum {
 		return (Enumeration<T>) map.get(c);
 	}
 	
+	/**
+	 * module enumerator.Mutual
+	 * abstract syntax
+	 * 
+	 * A = a() | foo(b:B) | hoo(a:A)
+	 * B = b() | grr(a:A)
+	 */
 	private void init() {
-		final F<B, A> foo =
-			new F<B, A>() {
-			public A apply(final B elem) {
-				return enumerator.mutual.types.a.foo.make(elem);
-			}
-		};
-
-		final F<A, A> hoo =
-			new F<A, A>() {
-			public A apply(final A elem) {
-				return enumerator.mutual.types.a.hoo.make(elem);
-			}
-		};
-
-		final F<A, B> grr =
-			new F<A, B>() {
-			public B apply(final A elem) {
-				return enumerator.mutual.types.b.grr.make(elem);
-			}
-		};
-
+		
 		F<Enumeration<A>, Enumeration<A>> aFun = new F<Enumeration<A>, Enumeration<A>>() {
 			public Enumeration<A> apply(final Enumeration<A> e) {
 				return Enumeration.singleton((A) enumerator.mutual.types.a.a.make()); // !!!! NO pay (is a constant)
@@ -63,12 +50,22 @@ public class MutualEnum {
 
 		F<Enumeration<B>, Enumeration<A>> fooFun = new F<Enumeration<B>, Enumeration<A>>() {
 			public Enumeration<A> apply(final Enumeration<B> e) {
+				F<B, A> foo = new F<B, A>() {
+					public A apply(final B elem) {
+						return enumerator.mutual.types.a.foo.make(elem);
+					}
+				};
 				return Enumeration.apply(Enumeration.singleton(foo), e).pay();
 			}
 		};
 
 		F<Enumeration<A>, Enumeration<A>> hooFun = new F<Enumeration<A>, Enumeration<A>>() {
 			public Enumeration<A> apply(final Enumeration<A> e) {
+				F<A, A> hoo = new F<A, A>() {
+					public A apply(final A elem) {
+						return enumerator.mutual.types.a.hoo.make(elem);
+					}
+				};
 				return Enumeration.apply(Enumeration.singleton(hoo), e).pay();
 			}
 		};
@@ -81,40 +78,42 @@ public class MutualEnum {
 
 		F<Enumeration<A>, Enumeration<B>> grrFun = new F<Enumeration<A>, Enumeration<B>>() {
 			public Enumeration<B> apply(final Enumeration<A> e) {
+				 F<A, B> grr = new F<A, B>() {
+					public B apply(final A elem) {
+						return enumerator.mutual.types.b.grr.make(elem);
+					}
+				};
 				return Enumeration.apply(Enumeration.singleton(grr), e).pay();
 			}
 		};
 
-		//grrFun, bFun, fooFun, hooFun, aFun
 
-		Enumeration<A> ea = new Enumeration<A>((LazyList<Finite<A>>) null);
-		Enumeration<B> eb = new Enumeration<B>((LazyList<Finite<B>>) null);
+		Enumeration<A> enumA = new Enumeration<A>((LazyList<Finite<A>>) null);
+		Enumeration<B> enumB = new Enumeration<B>((LazyList<Finite<B>>) null);
 
-		final Enumeration<B> resgrr = grrFun.apply(ea);
-		final Enumeration<B> resb = bFun.apply(eb);
-		final Enumeration<A> resfoo = fooFun.apply(eb);
-		final Enumeration<A> reshoo = hooFun.apply(ea);
-		final Enumeration<A> resa = aFun.apply(ea);
+		final Enumeration<A> _a = aFun.apply(enumA);
+		final Enumeration<A> _foo = fooFun.apply(enumB);
+		final Enumeration<A> _hoo = hooFun.apply(enumA);
+		final Enumeration<B> _b = bFun.apply(enumB);
+		final Enumeration<B> _grr = grrFun.apply(enumA);
 
-		final Enumeration<A> resA = resfoo.plus(reshoo).plus(resa);
-		final Enumeration<B> resB = resgrr.plus(resb);
+		final Enumeration<A> sortA = _foo.plus(_hoo).plus(_a);
+		final Enumeration<B> sortB = _grr.plus(_b);
 
-		ea.p1 = new P1<LazyList<Finite<A>>>() {
-
+		enumA.p1 = new P1<LazyList<Finite<A>>>() {
 			public LazyList<Finite<A>> _1() {
-				return resA.parts();
+				return sortA.parts();
 			}
 		};
 
-		eb.p1 = new P1<LazyList<Finite<B>>>() {
-
+		enumB.p1 = new P1<LazyList<Finite<B>>>() {
 			public LazyList<Finite<B>> _1() {
-				return resB.parts();
+				return sortB.parts();
 			}
 		};
 
-		map.put(B.class,resB);
-		map.put(A.class,resA);
+		map.put(B.class,sortB);
+		map.put(A.class,sortA);
 
 	}
         

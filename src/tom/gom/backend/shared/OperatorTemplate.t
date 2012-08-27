@@ -34,6 +34,7 @@ import tom.gom.tools.GomEnvironment;
 import tom.gom.tools.error.GomRuntimeException;
 import tom.gom.adt.objects.types.*;
 import tom.platform.OptionManager;
+import tom.library.enumerator.F;
 
 public class OperatorTemplate extends TemplateHookedClass {
   ClassName abstractType;
@@ -157,6 +158,7 @@ public final class @className()@ extends @fullClassName(extendsType)@ implements
 ]%);
     }
 generateConstructor(writer);
+generateEnum(writer);
 
 if(slotList.length()>0) {
 
@@ -1325,6 +1327,136 @@ lbl:ConcHook(_*,MakeHook[HookArguments=args],_*) -> {
   }
 ]%);
 }
+
+  /*
+   * given a domain and a codmain
+   * generate  F<A, F<TTree, F<TTree, TTree>>>
+   *        or F<E<A>, F<E<TTree>, F<E<TTree>, E<TTree>>>>
+   */
+  private String buildFunctionDomain(boolean withEnumeration, SlotFieldList slots,ClassName extendsType) {
+    // [A,Tree,Tree] Tree
+    // F<A, F<TTree, F<TTree, TTree>>>
+    String F = "tom.library.enumerator.F<";
+    String E = "tom.library.enumerator.Enumeration<";
+    if(slots.isEmptyConcSlotField()) {
+      if(withEnumeration) {
+        return E+fullClassName(extendsType)+">";
+      } else {
+        return fullClassName(extendsType);
+      }
+    } else {
+      SlotField head = slots.getHeadConcSlotField();
+      SlotFieldList tail = slots.getTailConcSlotField();
+      if(withEnumeration) {
+        return F+E+fullClassName(head.getDomain())+">,"+buildFunctionDomain(withEnumeration,tail,extendsType)+">";
+      } else {
+        return F+fullClassName(head.getDomain())+","+buildFunctionDomain(withEnumeration,tail,extendsType)+">";
+      }
+    }
+  }
+
+  /*
+   * given a domain and a codmain
+   * generate nested new F() { apply() { ... } }
+   */
+  private String buildNestedFunction(boolean withEnumeration,SlotFieldList slots,ClassName extendsType, int index, F<Integer,String> genBody) {
+    // [A,Tree,Tree] Tree
+    // F<A, F<TTree, F<TTree, TTree>>>
+    if(!slots.isEmptyConcSlotField()) {
+      SlotField head = slots.getHeadConcSlotField();
+      SlotFieldList tail = slots.getTailConcSlotField();
+      String arg = fullClassName(head.getDomain());
+      String E = "tom.library.enumerator.Enumeration<";
+      if(withEnumeration) {
+        arg = E+arg+">";
+      }
+      return %[
+        new @buildFunctionDomain(withEnumeration,slots,extendsType)@() {
+          public @buildFunctionDomain(withEnumeration,tail,extendsType)@ apply(final @arg@ t@index@) {
+            return @buildNestedFunction(withEnumeration,tail, extendsType, index+1, genBody)@;
+          }
+        }
+        ]%;
+    } else {
+      return genBody.apply(index);
+    }
+  }
+
+
+
+
+/*
+public static  F<Enumeration<A>,F<Enumeration<B>,Enumeration<A>>> funMake() {
+	  return new F<Enumeration<A>,F<Enumeration<B>,Enumeration<A>>>() {
+		  public F<Enumeration<B>,Enumeration<A>> apply(final Enumeration<A> e1) {
+			  return new F<Enumeration<B>,Enumeration<A>>() {
+				  public Enumeration<A> apply(final Enumeration<B> e2) {
+					  
+					  F<A, F<B,A>> f = new F<A,F<B,A>>() {
+						  public F<B,A> apply(final A t1) {
+							  return new F<B,A>() {
+								  public A apply(final B t2) {
+									  return make(t1,t2);
+								  }
+							  };
+						  }
+					  };
+
+					  return Enumeration.apply(Enumeration.apply(  Enumeration.singleton(f)  , e1),e2).pay();
+				  }
+			  };
+		  }
+	  };
+  }
+   */
+
+  private void generateEnum(java.io.Writer writer) throws java.io.IOException {
+if(slotList.length() == 0) {
+    String E = "tom.library.enumerator.Enumeration<" + fullClassName(extendsType) + ">";
+    writer.write(%[
+  public static tom.library.enumerator.F<@E@, @E@> funMake() {
+	  return new tom.library.enumerator.F<@E@, @E@>() {
+		  public @E@ apply(final @E@ e) {
+			  return tom.library.enumerator.Enumeration.singleton((@fullClassName(extendsType)@) make());
+		  }
+	  };
+  }
+  ]%);
+} else {
+
+  final F<Integer,String> genMake = new F<Integer,String>() {
+    public String apply(Integer index) {
+      String res = "make(";
+      for(int i=1 ; i<index-1 ; i++) { res += "t"+i+","; }
+      res+="t"+(index-1)+")";
+      return res; 
+    }
+  };
+
+  F<Integer,String> genBody = new F<Integer,String>() {
+    public String apply(Integer index) {
+      String E = "tom.library.enumerator.Enumeration";
+      String f = "(" + buildFunctionDomain(false,slotList,extendsType) + ") "+ buildNestedFunction(false,slotList,extendsType,1,genMake);
+      String sapply = E+".singleton("+f+")";
+      for(int i=1 ; i<index ; i++) { sapply = %[@E@.apply(@sapply@,t@i@)]%; }
+      if(index>0) {
+        sapply = sapply + ".pay()";
+      }
+      return sapply;
+    }
+  };
+
+    writer.write(%[
+  public static @buildFunctionDomain(true,slotList,extendsType)@ funMake() {
+	  return @buildNestedFunction(true,slotList,extendsType,1,genBody)@;
+  }
+  ]%);
+}
+
+
+  }
+
+
 
   public SlotFieldList generateMakeHooks(
       HookList other,
