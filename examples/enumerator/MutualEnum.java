@@ -1,14 +1,10 @@
-/*
- * Created on Aug 22, 2012
- *
- * To change the template for this generated file go to
- * Window - Preferences - Java - Code Generation - Code and Comments
- */
-package tom.library.enumerator;
+package enumerator;
+
+import tom.library.enumerator.*;
+import java.util.HashMap;
 
 import enumerator.mutual.types.A;
 import enumerator.mutual.types.B;
-import java.util.HashMap;
 
 /**
  * will be automatically generated
@@ -61,6 +57,9 @@ public class MutualEnum {
 			}
 		};
 
+		F<Enumeration<A>, F<Enumeration<B>,Enumeration<A>>> hooFun = enumerator.mutual.types.a.hoo.funMake();
+		
+		/*
 		F<Enumeration<A>, Enumeration<A>> hooFun = new F<Enumeration<A>, Enumeration<A>>() {
 			public Enumeration<A> apply(final Enumeration<A> e) {
 				F<A, A> hoo = new F<A, A>() {
@@ -71,7 +70,9 @@ public class MutualEnum {
 				return Enumeration.apply(Enumeration.singleton(hoo), e).pay();
 			}
 		};
-
+*/
+		
+		
 		F<Enumeration<B>, Enumeration<B>> bFun = new F<Enumeration<B>, Enumeration<B>>() {
 			public Enumeration<B> apply(final Enumeration<B> e) {
 				return Enumeration.singleton((B) enumerator.mutual.types.b.b.make()); // !!!! NO pay (is a constant)
@@ -95,7 +96,7 @@ public class MutualEnum {
 
 		final Enumeration<A> _a = aFun.apply(enumA);
 		final Enumeration<A> _foo = fooFun.apply(enumB);
-		final Enumeration<A> _hoo = hooFun.apply(enumA);
+		final Enumeration<A> _hoo = hooFun.apply(enumA).apply(enumB);
 		final Enumeration<B> _b = bFun.apply(enumB);
 		final Enumeration<B> _grr = grrFun.apply(enumA);
 

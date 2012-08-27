@@ -1,6 +1,7 @@
-package tom.library.enumerator;
+package enumerator;
 
 import java.math.BigInteger;
+import tom.library.enumerator.*;
 
 public class DemoTree {
 

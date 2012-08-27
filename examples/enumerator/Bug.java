@@ -1,4 +1,4 @@
-package tom.library.enumerator;
+package enumerator;
 
 import java.math.BigInteger;
 
