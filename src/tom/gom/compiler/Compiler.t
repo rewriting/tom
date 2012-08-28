@@ -265,6 +265,7 @@ public class Compiler {
           `AbstractTypeClass(abstractTypeName,
                              tomMappingName,
                              classSortList,
+                             allOperatorClasses,
                              ConcHook());
         classList = `ConcGomClass(abstracttype,classList*);
 

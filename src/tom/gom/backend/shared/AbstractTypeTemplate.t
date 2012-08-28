@@ -36,6 +36,7 @@ import tom.platform.OptionManager;
 
 public class AbstractTypeTemplate extends TemplateHookedClass {
   ClassNameList sortList;
+  GomClassList operatorClasses;
 
   %include { ../../adt/objects/Objects.tom }
   boolean maximalsharing;
@@ -50,9 +51,9 @@ public class AbstractTypeTemplate extends TemplateHookedClass {
     super(gomClass,manager,tomHomePath,importList,mapping,gomEnvironment);
     this.maximalsharing = maximalsharing;
     %match(gomClass) {
-      AbstractTypeClass[SortList=sortList] -> {
+      AbstractTypeClass[SortList=sortList,OperatorClasses=ops] -> {
         this.sortList = `sortList;
-        //System.out.println("sortList = " + sortList);
+        this.operatorClasses = `ops;
         return;
       }
     }
@@ -318,21 +319,30 @@ writer.write(
 }
 
 private void generateEnum(java.io.Writer writer) throws java.io.IOException {
+  String P = "tom.library.enumerator.";
+  String E = "tom.library.enumerator.Enumeration";
 
-  writer.write(%[
-	  protected static java.util.HashMap<java.lang.Class<?>,tom.library.enumerator.Enumeration<?>> mapEnumeration =
-          new java.util.HashMap<java.lang.Class<?>,tom.library.enumerator.Enumeration<?>>();
+  writer.write(
+%[
+  /*
+   * Initialize the (cyclic) data-structure
+   * in order to generate/enumerate terms
+   */
+  protected static java.util.HashMap<java.lang.Class<?>,tom.library.enumerator.Enumeration<?>> mapEnumeration =
+    new java.util.HashMap<java.lang.Class<?>,tom.library.enumerator.Enumeration<?>>();
 
-	  protected static void initEnumeration() {
-  ]%);
+  protected static void initEnumeration() {
+]%);
   // generate a Enumeration for each class
     %match(sortList) {
       ConcClassName(_*,
           className@ClassName[Name=sortName],
           _*) -> {
-        String E = "tom.library.enumerator.Enumeration";
-        writer.write(%[@E@<@fullClassName(`className)@> enum@`sortName@ = new @E@<@fullClassName(`className)@>((tom.library.enumerator.LazyList<tom.library.enumerator.Finite<@fullClassName(`className)@>>) null);
-            ]%);
+        String fClassName = fullClassName(`className);
+        writer.write(
+%[
+    @E@<@fClassName@> enum@`sortName@ = new @E@<@fClassName@>((@P@LazyList<@P@Finite<@fClassName@>>) null);
+]%);
       }
     }
 
@@ -341,21 +351,44 @@ private void generateEnum(java.io.Writer writer) throws java.io.IOException {
       ConcClassName(_*,
           className@ClassName[Name=sortName],
           _*) -> {
-        String E = "tom.library.enumerator.Enumeration";
-        //writer.write(%[final @E@<@fullClassName(`className)@> sort@`sortName@ = @generateSum()@]%);
+        String fClassName = fullClassName(`className);
+        writer.write(
+%[
+    final @E@<@fClassName@> sort@`sortName@ = @generateSum(`className)@;
+    enum@`sortName@.p1 = new @P@P1<@P@LazyList<@P@Finite<@fClassName@>>>() {
+      public @P@LazyList<@P@Finite<@fClassName@>> _1() { return sort@`sortName@.parts(); }
+    };
+    @fClassName@.putEnumeration(sort@`sortName@);
+]%);
       }
     }
-  writer.write(%[
-    }
-  ]%);
+  writer.write(
+%[
+  }
+]%);
 
 }
 
 /*
  * build a.plus(b).plus(f);
  */
-private String generateSum() {
-  return "";
+private String generateSum(ClassName subjectSortName) {
+  String res = null;
+  %match(operatorClasses) {
+    ConcGomClass(_*,OperatorClass[ClassName=className, SortName=sortName, SlotFields=slotList],_*) && subjectSortName==`sortName -> {
+      String exp = fullClassName(`className) + ".funMake()";
+      %match(slotList) { 
+        ConcSlotField() -> {
+          exp += ".apply(enum" + subjectSortName.getName() + ")";
+        }
+        ConcSlotField(_*,SlotField[Domain=ClassName[Name=domainName]],_*) -> { 
+          exp += ".apply(enum" + `domainName + ")";
+        }
+      }
+      res = (res==null)?exp:res+".plus(" + exp + ")";
+    }
+  }
+  return res;
 }
 
 }

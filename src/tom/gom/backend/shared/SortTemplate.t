@@ -285,6 +285,9 @@ writer.write(%[
       "This "+this.getClass().getName()+" is not a list");
   }
 
+  /**
+    * retrieve an Enumeration associated to the current class
+    */
   public static tom.library.enumerator.Enumeration<@fullClassName()@> getEnumeration() {
     if(mapEnumeration.isEmpty()) { initEnumeration(); }    
     return (tom.library.enumerator.Enumeration<@fullClassName()@>) mapEnumeration.get(@fullClassName()@.class);
