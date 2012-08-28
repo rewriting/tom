@@ -52,6 +52,7 @@ public class AbstractTypeTemplate extends TemplateHookedClass {
     %match(gomClass) {
       AbstractTypeClass[SortList=sortList] -> {
         this.sortList = `sortList;
+        //System.out.println("sortList = " + sortList);
         return;
       }
     }
@@ -312,7 +313,77 @@ writer.write(
   public abstract Object clone();
 ]%);
   }
+  generateEnum(writer);
   writer.write("}\n"); // end of class
 }
 
+private void generateEnum(java.io.Writer writer) throws java.io.IOException {
+
+  writer.write(%[
+	  protected static java.util.HashMap<java.lang.Class<?>,tom.library.enumerator.Enumeration<?>> mapEnumeration =
+          new java.util.HashMap<java.lang.Class<?>,tom.library.enumerator.Enumeration<?>>();
+
+	  protected static void initEnumeration() {
+  ]%);
+  // generate a Enumeration for each class
+    %match(sortList) {
+      ConcClassName(_*,
+          className@ClassName[Name=sortName],
+          _*) -> {
+        String E = "tom.library.enumerator.Enumeration";
+        writer.write(%[@E@<@fullClassName(`className)@> enum@`sortName@ = new @E@<@fullClassName(`className)@>((tom.library.enumerator.LazyList<tom.library.enumerator.Finite<@fullClassName(`className)@>>) null);
+            ]%);
+      }
+    }
+
+  // generate a sort for each class
+    %match(sortList) {
+      ConcClassName(_*,
+          className@ClassName[Name=sortName],
+          _*) -> {
+        String E = "tom.library.enumerator.Enumeration";
+        //writer.write(%[final @E@<@fullClassName(`className)@> sort@`sortName@ = @generateSum()@]%);
+      }
+    }
+  writer.write(%[
+    }
+  ]%);
+
 }
+
+/*
+ * build a.plus(b).plus(f);
+ */
+private String generateSum() {
+  return "";
+}
+
+}
+
+/*
+
+		Enumeration<A> enumA = new Enumeration<A>((LazyList<Finite<A>>) null);
+		Enumeration<B> enumB = new Enumeration<B>((LazyList<Finite<B>>) null);
+
+		final Enumeration<A> sortA = enumerator.mutual.types.a.hoo.funMake().apply(enumA).apply(enumB)
+      .plus(enumerator.mutual.types.a.foo.funMake().apply(enumB))
+      .plus(enumerator.mutual.types.a.a.funMake().apply(enumA));
+
+		final Enumeration<B> sortB = enumerator.mutual.types.b.grr.funMake().apply(enumA)
+      .plus(enumerator.mutual.types.b.b.funMake().apply(enumB));
+
+		enumA.p1 = new P1<LazyList<Finite<A>>>() {
+			public LazyList<Finite<A>> _1() {
+				return sortA.parts();
+			}
+		};
+
+		enumB.p1 = new P1<LazyList<Finite<B>>>() {
+			public LazyList<Finite<B>> _1() {
+				return sortB.parts();
+			}
+		};
+
+    A.putEnumeration(sortA);
+    B.putEnumeration(sortB);
+*/

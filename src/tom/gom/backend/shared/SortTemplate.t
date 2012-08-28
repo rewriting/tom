@@ -284,6 +284,15 @@ writer.write(%[
     throw new IllegalArgumentException(
       "This "+this.getClass().getName()+" is not a list");
   }
+
+  public static tom.library.enumerator.Enumeration<@fullClassName()@> getEnumeration() {
+    if(mapEnumeration.isEmpty()) { initEnumeration(); }    
+    return (tom.library.enumerator.Enumeration<@fullClassName()@>) mapEnumeration.get(@fullClassName()@.class);
+  }
+  
+  public static tom.library.enumerator.Enumeration<@fullClassName()@> putEnumeration(tom.library.enumerator.Enumeration<@fullClassName()@> e) {
+    return (tom.library.enumerator.Enumeration<@fullClassName()@>) mapEnumeration.put(@fullClassName()@.class,e);
+  }
   ]%);
 
     /*
@@ -364,4 +373,6 @@ matchblock: {
 }
 ]%);
  }
+
+
 }
