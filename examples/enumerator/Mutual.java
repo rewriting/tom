@@ -9,11 +9,11 @@ public class Mutual {
 
   public static void main(String args[]) {
     /**
-     * module enumerator.Mutual
-     * abstract syntax
-     * 
-     * A = a() | foo(b:B) | hoo(a:A)
+     * this example use the Gom generator for the signature
+     * A = a() | foo(b:B) | hoo(a:A, b:B)
      * B = b() | grr(a:A)
+     * 
+     * just call A.getEnumeration() to enumerate sort A
      */
 
     System.out.println("START");
@@ -25,7 +25,7 @@ public class Mutual {
 
     //listEnum.pay();
     System.out.println("Enumerator for " + "A");
-    int n = 5;
+    int n = 10;
     for (int i = 0; i < n; i++) {
       System.out.println("Get " + i + "th term: "
           + enumA.get(BigInteger.valueOf(i)));
@@ -41,10 +41,9 @@ public class Mutual {
       System.out.println(i + " --> " + parts.head());
       parts = parts.tail();
     }
-    for (int p = 0; p < 10000; p = p + 10) {
+    for (int p = 0; p < 10000; p = p + 100) {
       BigInteger i = java.math.BigInteger.TEN.pow(p);
       System.out.println("10^" + p + " --> " + enumA.get(i).toString().length());
-      //listEnum.get(i);
     }
 
 

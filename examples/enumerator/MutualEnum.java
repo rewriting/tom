@@ -21,7 +21,7 @@ public class MutualEnum {
 		Enumeration<A> enumA = new Enumeration<A>((LazyList<Finite<A>>) null);
 		Enumeration<B> enumB = new Enumeration<B>((LazyList<Finite<B>>) null);
 
-		final Enumeration<A> sortA = enumerator.mutual.types.a.hoo.funMake().apply(enumA).apply(enumB)
+		final Enumeration<A> sortA = enumerator.mutual.types.a.hoo.funMake().apply(enumA).apply(Combinators.makeInt())
       .plus(enumerator.mutual.types.a.foo.funMake().apply(enumB))
       .plus(enumerator.mutual.types.a.a.funMake().apply(enumA));
 

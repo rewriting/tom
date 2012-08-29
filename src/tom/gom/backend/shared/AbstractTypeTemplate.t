@@ -332,6 +332,8 @@ private void generateEnum(java.io.Writer writer) throws java.io.IOException {
     new java.util.HashMap<java.lang.Class<?>,tom.library.enumerator.Enumeration<?>>();
 
   protected static void initEnumeration() {
+ tom.library.enumerator.Enumeration<Integer> enumint = tom.library.enumerator.Combinators.makeInt();
+  
 ]%);
   // generate a Enumeration for each class
     %match(sortList) {

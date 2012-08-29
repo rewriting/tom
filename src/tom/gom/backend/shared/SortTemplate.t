@@ -285,6 +285,26 @@ writer.write(%[
       "This "+this.getClass().getName()+" is not a list");
   }
 
+/*
+ protected static tom.library.enumerator.Enumeration<enumerator.mutual.types.A> sortA = null;
+
+ static final tom.library.enumerator.Enumeration<enumerator.mutual.types.A> enumA = 
+   new tom.library.enumerator.Enumeration<enumerator.mutual.types.A>((tom.library.enumerator.LazyList<tom.library.enumerator.Finite<enumerator.mutual.types.A>>) null);
+
+ public static tom.library.enumerator.Enumeration<enumerator.mutual.types.A> getEnumeration() {
+   if(sortA == null) { 
+     sortA = enumerator.mutual.types.a.a.funMake().apply(enumA)
+       .plus(enumerator.mutual.types.a.foo.funMake().apply(B.enumB))
+       .plus(enumerator.mutual.types.a.hoo.funMake().apply(enumA).apply(B.enumB));
+
+     enumA.p1 = new tom.library.enumerator.P1<tom.library.enumerator.LazyList<tom.library.enumerator.Finite<enumerator.mutual.types.A>>>() {
+       public tom.library.enumerator.LazyList<tom.library.enumerator.Finite<enumerator.mutual.types.A>> _1() { return sortA.parts(); }
+     };
+   }    
+   return sortA;
+ }
+*/
+
   /**
     * retrieve an Enumeration associated to the current class
     */
