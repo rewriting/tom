@@ -6,13 +6,13 @@ abstract syntax
 GomClass = AbstractTypeClass(ClassName:ClassName,
                              Mapping:ClassName,
                              SortList:ClassNameList,
-                             OperatorClasses:GomClassList,
                              Hooks:HookList)
          | SortClass(ClassName:ClassName,
                      AbstractType:ClassName,
                      Mapping:ClassName,
                      Operators:ClassNameList,
                      VariadicOperators:ClassNameList,
+                     OperatorClasses:GomClassList,
                      SlotFields:SlotFieldList,
                      Hooks:HookList)
          | OperatorClass(ClassName:ClassName,

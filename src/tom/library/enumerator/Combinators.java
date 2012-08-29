@@ -7,6 +7,7 @@ public class Combinators {
 	private static Enumeration<Boolean> enumboolean = null;
 	private static Enumeration<String> enumstring = null;
 
+	public static Enumeration<Integer> makeint() { return makeInt(); }
 	public static Enumeration<Integer> makeInt() {
 		if(enumint==null) {
 			final Enumeration<Integer> zeroEnum = Enumeration.singleton((Integer)0);
@@ -21,6 +22,7 @@ public class Combinators {
 		return enumint;
 	}
 	
+	public static Enumeration<Boolean> makeboolean() { return makeBoolean(); }
 	public static Enumeration<Boolean> makeBoolean() {
 		if(enumboolean==null) {
 			enumboolean = Enumeration.singleton(true).plus(Enumeration.singleton(false)).pay();

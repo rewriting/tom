@@ -38,6 +38,7 @@ public class SortTemplate extends TemplateHookedClass {
   ClassName abstractType;
   ClassNameList operatorList;
   ClassNameList variadicOperatorList;
+  GomClassList operatorClasses;
   SlotFieldList slotList;
   boolean maximalsharing;
 
@@ -56,10 +57,12 @@ public class SortTemplate extends TemplateHookedClass {
       SortClass[AbstractType=abstractType,
                 Operators=ops,
                 VariadicOperators=variops,
+                OperatorClasses=opclasses,
                 SlotFields=slots] -> {
         this.abstractType = `abstractType;
         this.operatorList = `ops;
         this.variadicOperatorList = `variops;
+        this.operatorClasses = `opclasses;
         this.slotList = `slots;
         return;
       }
@@ -285,37 +288,6 @@ writer.write(%[
       "This "+this.getClass().getName()+" is not a list");
   }
 
-/*
- protected static tom.library.enumerator.Enumeration<enumerator.mutual.types.A> sortA = null;
-
- static final tom.library.enumerator.Enumeration<enumerator.mutual.types.A> enumA = 
-   new tom.library.enumerator.Enumeration<enumerator.mutual.types.A>((tom.library.enumerator.LazyList<tom.library.enumerator.Finite<enumerator.mutual.types.A>>) null);
-
- public static tom.library.enumerator.Enumeration<enumerator.mutual.types.A> getEnumeration() {
-   if(sortA == null) { 
-     sortA = enumerator.mutual.types.a.a.funMake().apply(enumA)
-       .plus(enumerator.mutual.types.a.foo.funMake().apply(B.enumB))
-       .plus(enumerator.mutual.types.a.hoo.funMake().apply(enumA).apply(B.enumB));
-
-     enumA.p1 = new tom.library.enumerator.P1<tom.library.enumerator.LazyList<tom.library.enumerator.Finite<enumerator.mutual.types.A>>>() {
-       public tom.library.enumerator.LazyList<tom.library.enumerator.Finite<enumerator.mutual.types.A>> _1() { return sortA.parts(); }
-     };
-   }    
-   return sortA;
- }
-*/
-
-  /**
-    * retrieve an Enumeration associated to the current class
-    */
-  public static tom.library.enumerator.Enumeration<@fullClassName()@> getEnumeration() {
-    if(mapEnumeration.isEmpty()) { initEnumeration(); }    
-    return (tom.library.enumerator.Enumeration<@fullClassName()@>) mapEnumeration.get(@fullClassName()@.class);
-  }
-  
-  public static tom.library.enumerator.Enumeration<@fullClassName()@> putEnumeration(tom.library.enumerator.Enumeration<@fullClassName()@> e) {
-    return (tom.library.enumerator.Enumeration<@fullClassName()@>) mapEnumeration.put(@fullClassName()@.class,e);
-  }
   ]%);
 
     /*
@@ -375,6 +347,11 @@ matchblock: {
     if(hooks.containsTomCode()) {
       mapping.generate(writer);
     }
+
+    /*
+     * generate code for Enumerator
+     */
+    generateEnum(writer);
   }
 
   public void generateTomMapping(Writer writer) throws java.io.IOException {
@@ -396,6 +373,73 @@ matchblock: {
 }
 ]%);
  }
+
+private void generateEnum(java.io.Writer writer) throws java.io.IOException {
+  String P = "tom.library.enumerator.";
+  String E = "tom.library.enumerator.Enumeration";
+
+  writer.write(
+%[
+  /*
+   * Initialize the (cyclic) data-structure
+   * in order to generate/enumerate terms
+   */
+
+  protected static @E@<@fullClassName()@> sort@className()@ = null;
+  static final @E@<@fullClassName()@> enum@className()@ = new @E@<@fullClassName()@>((@P@LazyList<@P@Finite<@fullClassName()@>>) null);
+
+  public static @E@<@fullClassName()@> getEnumeration() {
+    if(sort@className()@ == null) { 
+      sort@className()@ = @generateSum()@
+     
+      enum@className()@.p1 = new @P@P1<@P@LazyList<@P@Finite<@fullClassName()@>>>() {
+      public @P@LazyList<@P@Finite<@fullClassName()@>> _1() { return sort@className()@.parts(); }
+    };
+
+    }
+    return sort@className()@;
+  }
+]%);
+
+}
+
+/*
+ * build a.plus(b).plus(f);
+ */
+private String generateSum() {
+  String res = null;
+  Set<String> toInitialize = new HashSet<String>();
+
+  %match(operatorClasses) {
+    ConcGomClass(_*,OperatorClass[ClassName=className, SortName=ClassName[Name=sortName], SlotFields=slotList],_*) && className()==`sortName -> {
+      String exp = fullClassName(`className) + ".funMake()";
+      %match(slotList) { 
+        ConcSlotField() -> {
+          exp += ".apply(" + fullClassName() + ".enum" + className() + ")";
+        }
+        ConcSlotField(_*,SlotField[Domain=domain@ClassName[Name=domainName]],_*) -> {
+          if(getGomEnvironment().isBuiltinClass(`domain)) {
+            exp += ".apply(tom.library.enumerator.Combinators.make" + `domainName + "())";
+          } else {
+            exp += ".apply(" + fullClassName(`domain) + ".enum" + `domainName + ")";
+            if(!fullClassName().equals(fullClassName(`domain))) {
+              toInitialize.add(fullClassName(`domain));
+            }
+          }
+        }
+      }
+      res = (res==null)?exp:res+"\n        .plus(" + exp + ")";
+    }
+  }
+  res += ";\n\n";
+  for(String className:toInitialize) {
+    res += "      " + className + ".getEnumeration();\n";
+  }
+
+  return res;
+}
+
+
 
 
 }

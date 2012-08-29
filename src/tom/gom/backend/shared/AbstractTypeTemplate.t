@@ -36,7 +36,6 @@ import tom.platform.OptionManager;
 
 public class AbstractTypeTemplate extends TemplateHookedClass {
   ClassNameList sortList;
-  GomClassList operatorClasses;
 
   %include { ../../adt/objects/Objects.tom }
   boolean maximalsharing;
@@ -51,9 +50,8 @@ public class AbstractTypeTemplate extends TemplateHookedClass {
     super(gomClass,manager,tomHomePath,importList,mapping,gomEnvironment);
     this.maximalsharing = maximalsharing;
     %match(gomClass) {
-      AbstractTypeClass[SortList=sortList,OperatorClasses=ops] -> {
+      AbstractTypeClass[SortList=sortList] -> {
         this.sortList = `sortList;
-        this.operatorClasses = `ops;
         return;
       }
     }
@@ -314,111 +312,8 @@ writer.write(
   public abstract Object clone();
 ]%);
   }
-  generateEnum(writer);
   writer.write("}\n"); // end of class
 }
 
-private void generateEnum(java.io.Writer writer) throws java.io.IOException {
-  String P = "tom.library.enumerator.";
-  String E = "tom.library.enumerator.Enumeration";
-
-  writer.write(
-%[
-  /*
-   * Initialize the (cyclic) data-structure
-   * in order to generate/enumerate terms
-   */
-  protected static java.util.HashMap<java.lang.Class<?>,tom.library.enumerator.Enumeration<?>> mapEnumeration =
-    new java.util.HashMap<java.lang.Class<?>,tom.library.enumerator.Enumeration<?>>();
-
-  protected static void initEnumeration() {
- tom.library.enumerator.Enumeration<Integer> enumint = tom.library.enumerator.Combinators.makeInt();
-  
-]%);
-  // generate a Enumeration for each class
-    %match(sortList) {
-      ConcClassName(_*,
-          className@ClassName[Name=sortName],
-          _*) -> {
-        String fClassName = fullClassName(`className);
-        writer.write(
-%[
-    @E@<@fClassName@> enum@`sortName@ = new @E@<@fClassName@>((@P@LazyList<@P@Finite<@fClassName@>>) null);
-]%);
-      }
-    }
-
-  // generate a sort for each class
-    %match(sortList) {
-      ConcClassName(_*,
-          className@ClassName[Name=sortName],
-          _*) -> {
-        String fClassName = fullClassName(`className);
-        writer.write(
-%[
-    final @E@<@fClassName@> sort@`sortName@ = @generateSum(`className)@;
-    enum@`sortName@.p1 = new @P@P1<@P@LazyList<@P@Finite<@fClassName@>>>() {
-      public @P@LazyList<@P@Finite<@fClassName@>> _1() { return sort@`sortName@.parts(); }
-    };
-    @fClassName@.putEnumeration(sort@`sortName@);
-]%);
-      }
-    }
-  writer.write(
-%[
-  }
-]%);
-
 }
 
-/*
- * build a.plus(b).plus(f);
- */
-private String generateSum(ClassName subjectSortName) {
-  String res = null;
-  %match(operatorClasses) {
-    ConcGomClass(_*,OperatorClass[ClassName=className, SortName=sortName, SlotFields=slotList],_*) && subjectSortName==`sortName -> {
-      String exp = fullClassName(`className) + ".funMake()";
-      %match(slotList) { 
-        ConcSlotField() -> {
-          exp += ".apply(enum" + subjectSortName.getName() + ")";
-        }
-        ConcSlotField(_*,SlotField[Domain=ClassName[Name=domainName]],_*) -> { 
-          exp += ".apply(enum" + `domainName + ")";
-        }
-      }
-      res = (res==null)?exp:res+".plus(" + exp + ")";
-    }
-  }
-  return res;
-}
-
-}
-
-/*
-
-		Enumeration<A> enumA = new Enumeration<A>((LazyList<Finite<A>>) null);
-		Enumeration<B> enumB = new Enumeration<B>((LazyList<Finite<B>>) null);
-
-		final Enumeration<A> sortA = enumerator.mutual.types.a.hoo.funMake().apply(enumA).apply(enumB)
-      .plus(enumerator.mutual.types.a.foo.funMake().apply(enumB))
-      .plus(enumerator.mutual.types.a.a.funMake().apply(enumA));
-
-		final Enumeration<B> sortB = enumerator.mutual.types.b.grr.funMake().apply(enumA)
-      .plus(enumerator.mutual.types.b.b.funMake().apply(enumB));
-
-		enumA.p1 = new P1<LazyList<Finite<A>>>() {
-			public LazyList<Finite<A>> _1() {
-				return sortA.parts();
-			}
-		};
-
-		enumB.p1 = new P1<LazyList<Finite<B>>>() {
-			public LazyList<Finite<B>> _1() {
-				return sortB.parts();
-			}
-		};
-
-    A.putEnumeration(sortA);
-    B.putEnumeration(sortB);
-*/

@@ -23,18 +23,22 @@ public class Mutual {
     Enumeration<B> enumB = B.getEnumeration();
     System.out.println("#trees of size 500 = card(parts[500]) = " + enumB.parts().index(BigInteger.valueOf(500)).getCard());
 
-    //listEnum.pay();
-    System.out.println("Enumerator for " + "A");
     int n = 10;
+
+    
+    System.out.println("Enumerator for " + "A");
     for (int i = 0; i < n; i++) {
       System.out.println("Get " + i + "th term: "
           + enumA.get(BigInteger.valueOf(i)));
     }
+    
+    
     System.out.println("Enumerator for " + "B");
     for (int i = 0; i < n; i++) {
       System.out.println("Get " + i + "th term: "
           + enumB.get(BigInteger.valueOf(i)));
     }
+    
 
     LazyList<Finite<A>> parts = enumA.parts();
     for (int i = 0; i < 5 && !parts.isEmpty(); i++) {
