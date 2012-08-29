@@ -30,8 +30,24 @@ public class Combinators {
 		return enumboolean;
 	}
 	
+
 	public static Enumeration<String> makeString() {
 		if(enumstring==null) {
+			char[] cs = "abcdefghijklmnopqrstuvwxyz".toCharArray();
+			Enumeration<String> res = Enumeration.singleton("");
+			for(char x:cs) {
+				res = res.plus(Enumeration.singleton(String.valueOf(x)));
+			}
+			
+			final F2<String,String,String> cons = new F2<String,String,String>() { 
+				public String apply(String head,String tail) { return head+tail; } 
+			};
+			F<Enumeration<String>,Enumeration<String>> f = new F<Enumeration<String>,Enumeration<String>>() {
+				public Enumeration<String> apply(final Enumeration<String> e) {
+					return Enumeration.apply(Enumeration.apply(Enumeration.singleton(cons.curry()),e),e).pay();
+				}
+			};
+			enumstring = Enumeration.fix(f);
 			/*
 			 final cs = "abcdefghijklmnopqrstuvwxyz".splitChars();
    final chars = _foldLeft(cs.map(singleton), empty(), (e1, e2) => e1 + e2);
@@ -42,17 +58,4 @@ public class Combinators {
 		return enumstring;
 	}
 	
-	
-	/*
-	P2<Finite<Integer>, LazyList<Finite<Integer>>> p2 = new P2<Finite<Integer>, LazyList<Finite<Integer>>>() {
-		  public Finite<Integer> _1() { return new Finite<Integer>(
-				  BigInteger.valueOf(Long.MAX_VALUE), 
-				  new F<BigInteger, Integer>() {
-					  public Integer apply(BigInteger i) { return Integer.valueOf(i.intValue()); }
-				  });
-		  }
-		  public LazyList<Finite<Integer>> _2() { return LazyList.nil(); }
-	  };
-	  Enumeration<Integer> enumint = new Enumeration<Integer>(LazyList.fromPair(p2));
-*/
 }
