@@ -20,7 +20,7 @@ public class Mutual {
     int n = 5;
 
     testEnumerator(Combinators.makeInt(), "int", 5);
-    //testEnumerator(Combinators.makeString(), "String", 5);
+    testEnumerator(Combinators.makeString(), "String", 5);
     testEnumerator(A.getEnumeration(), "A", 5);
     testEnumerator(B.getEnumeration(), "B", 5);
    

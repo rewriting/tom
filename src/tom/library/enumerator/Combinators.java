@@ -33,21 +33,54 @@ public class Combinators {
 
 	public static Enumeration<String> makeString() {
 		if(enumstring==null) {
+			/*
 			char[] cs = "abcdefghijklmnopqrstuvwxyz".toCharArray();
-			Enumeration<String> res = Enumeration.singleton("");
+			Enumeration<Character> res = Enumeration.empty();
 			for(char x:cs) {
-				res = res.plus(Enumeration.singleton(String.valueOf(x)));
+				res = res.plus(Enumeration.singleton(x));
 			}
-			
-			final F2<String,String,String> cons = new F2<String,String,String>() { 
-				public String apply(String head,String tail) { return head+tail; } 
+			final Enumeration<Character> charEnum = res;
+			final Enumeration<String> emptyEnum = Enumeration.empty();
+
+			final F2<Character,String,String> cons = new F2<Character,String,String>() { 
+				public String apply(Character head,String tail) { return head+tail; } 
 			};
 			F<Enumeration<String>,Enumeration<String>> f = new F<Enumeration<String>,Enumeration<String>>() {
 				public Enumeration<String> apply(final Enumeration<String> e) {
-					return Enumeration.apply(Enumeration.apply(Enumeration.singleton(cons.curry()),e),e).pay();
+					return emptyEnum.plus(Enumeration.apply(Enumeration.apply(Enumeration.singleton(cons.curry()),charEnum),e)).pay();
 				}
 			};
-			enumstring = Enumeration.fix(f);
+			*/
+			
+			char[] cs = "abcdefghijklmnopqrstuvwxyz".toCharArray();
+			Enumeration<Character> charEnum = Enumeration.empty();
+			for(char x:cs) {
+				charEnum = charEnum.plus(Enumeration.singleton(x));
+			}
+			
+			F2<Enumeration<Character>,Enumeration<String>,Enumeration<String>> funMake =
+			    new F2<Enumeration<Character>,Enumeration<String>,Enumeration<String>>() {
+			      public Enumeration<String> apply(final Enumeration<Character> e1, final Enumeration<String> e2) {
+			            return Enumeration.apply(Enumeration.apply(Enumeration.singleton(
+			            		(F<Character,F<String,String>>) 
+			            		new F2<Character,String,String>() {
+			            			public String apply(Character t1, final String t2) {
+			            				return t1+t2;
+			            			}
+			            		}.curry()),e1),e2).pay();
+			      }
+			};
+			
+			Enumeration<String> enumString = new Enumeration<String>((LazyList<Finite<String>>)null);
+			final Enumeration<String> sortString = funMake.apply(charEnum,enumString);
+			enumString.p1 = new P1<LazyList<Finite<String>>>() {
+				public LazyList<Finite<String>> _1() { return sortString.parts(); }
+			};
+
+			enumstring = sortString;
+			
+			
+			//enumstring = Enumeration.fix(f);
 			/*
 			 final cs = "abcdefghijklmnopqrstuvwxyz".splitChars();
    final chars = _foldLeft(cs.map(singleton), empty(), (e1, e2) => e1 + e2);
