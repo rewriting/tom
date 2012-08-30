@@ -19,6 +19,15 @@ public class Mutual {
     System.out.println("START");
     int n = 5;
 
+    /*
+    LazyList<Finite<String>> sparts = Combinators.makeString().parts();
+    for (int i = 0; i < 20 && !sparts.isEmpty(); i++) {
+        System.out.println(i + " --> " + sparts.head());
+        sparts = sparts.tail();
+      }
+    */
+    
+    
     testEnumerator(Combinators.makeInt(), "int", 5);
     testEnumerator(Combinators.makeString(), "String", 5);
     testEnumerator(A.getEnumeration(), "A", 5);
