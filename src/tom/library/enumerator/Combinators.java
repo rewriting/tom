@@ -1,12 +1,13 @@
 package tom.library.enumerator;
 
-import java.math.BigInteger;
+import aterm.ATerm;
 
 public class Combinators {
 	private static Enumeration<Integer> enumint = null;
 	private static Enumeration<Boolean> enumboolean = null;
+	private static Enumeration<Character> enumcharacter = null;
 	private static Enumeration<String> enumstring = null;
-
+	
 	public static Enumeration<Integer> makeint() { return makeInt(); }
 	public static Enumeration<Integer> makeInt() {
 		if(enumint==null) {
@@ -30,7 +31,20 @@ public class Combinators {
 		return enumboolean;
 	}
 	
-
+	public static Enumeration<Character> makechar() { return makeCharacter(); }
+	public static Enumeration<Character> makeCharacter() {
+		if(enumcharacter==null) {
+			char[] cs = "abcdefghijklmnopqrstuvwxyz".toCharArray();
+			Enumeration<Character> charEnum = Enumeration.empty();
+			for(char x:cs) {
+				charEnum = charEnum.plus(Enumeration.singleton(x));
+			}
+			enumcharacter = charEnum;
+			
+		}
+		return enumcharacter;
+	}
+	
 	public static Enumeration<String> makeString() {
 		if(enumstring==null) {
 			/*
@@ -52,12 +66,6 @@ public class Combinators {
 			};
 			*/
 			
-			char[] cs = "abcdefghijklmnopqrstuvwxyz".toCharArray();
-			Enumeration<Character> charEnum = Enumeration.empty();
-			for(char x:cs) {
-				charEnum = charEnum.plus(Enumeration.singleton(x));
-			}
-			
 			F2<Enumeration<Character>,Enumeration<String>,Enumeration<String>> funMake =
 			    new F2<Enumeration<Character>,Enumeration<String>,Enumeration<String>>() {
 			      public Enumeration<String> apply(final Enumeration<Character> e1, final Enumeration<String> e2) {
@@ -71,15 +79,12 @@ public class Combinators {
 			      }
 			};
 			
-			Enumeration<String> enumString = new Enumeration<String>((LazyList<Finite<String>>)null);
-			final Enumeration<String> sortString = funMake.apply(charEnum,enumString);
-			enumString.p1 = new P1<LazyList<Finite<String>>>() {
-				public LazyList<Finite<String>> _1() { return sortString.parts(); }
+			Enumeration<String> e = new Enumeration<String>((LazyList<Finite<String>>)null);
+			enumstring = funMake.apply(makeCharacter(),e);
+			e.p1 = new P1<LazyList<Finite<String>>>() {
+				public LazyList<Finite<String>> _1() { return enumstring.parts(); }
 			};
 
-			enumstring = sortString;
-			
-			
 			//enumstring = Enumeration.fix(f);
 			/*
 			 final cs = "abcdefghijklmnopqrstuvwxyz".splitChars();
@@ -91,4 +96,25 @@ public class Combinators {
 		return enumstring;
 	}
 	
+	/*
+	 * stubs for other builtins
+	 */
+	public static Enumeration<Long> makelong() { return makeLong(); }
+	public static Enumeration<Long> makeLong() {
+		throw new RuntimeException("not yet implemented");
+	}
+	
+	public static Enumeration<Float> makefloat() { return makeFloat(); }
+	public static Enumeration<Float> makeFloat() {
+		throw new RuntimeException("not yet implemented");
+	}
+	
+	public static Enumeration<Double> makedouble() { return makeDouble(); }
+	public static Enumeration<Double> makeDouble() {
+		throw new RuntimeException("not yet implemented");
+	}
+	
+	public static Enumeration<ATerm> makeATerm() {
+		throw new RuntimeException("not yet implemented");
+	}
 }

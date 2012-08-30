@@ -385,19 +385,18 @@ private void generateEnum(java.io.Writer writer) throws java.io.IOException {
    * in order to generate/enumerate terms
    */
 
-  protected static @E@<@fullClassName()@> sort@className()@ = null;
-  static final @E@<@fullClassName()@> enum@className()@ = new @E@<@fullClassName()@>((@P@LazyList<@P@Finite<@fullClassName()@>>) null);
+  protected static @E@<@fullClassName()@> enum@className()@ = null;
+  public static final @E@<@fullClassName()@> tmpenum@className()@ = new @E@<@fullClassName()@>((@P@LazyList<@P@Finite<@fullClassName()@>>) null);
 
   public static @E@<@fullClassName()@> getEnumeration() {
-    if(sort@className()@ == null) { 
-      sort@className()@ = @generateSum()@
-     
-      enum@className()@.p1 = new @P@P1<@P@LazyList<@P@Finite<@fullClassName()@>>>() {
-      public @P@LazyList<@P@Finite<@fullClassName()@>> _1() { return sort@className()@.parts(); }
-    };
+    if(enum@className()@ == null) { 
+      enum@className()@ = @generateSum()@
+      tmpenum@className()@.p1 = new @P@P1<@P@LazyList<@P@Finite<@fullClassName()@>>>() {
+        public @P@LazyList<@P@Finite<@fullClassName()@>> _1() { return enum@className()@.parts(); }
+      };
 
     }
-    return sort@className()@;
+    return enum@className()@;
   }
 ]%);
 
@@ -415,13 +414,13 @@ private String generateSum() {
       String exp = fullClassName(`className) + ".funMake()";
       %match(slotList) { 
         ConcSlotField() -> {
-          exp += ".apply(" + fullClassName() + ".enum" + className() + ")";
+          exp += ".apply(" + fullClassName() + ".tmpenum" + className() + ")";
         }
         ConcSlotField(_*,SlotField[Domain=domain@ClassName[Name=domainName]],_*) -> {
           if(getGomEnvironment().isBuiltinClass(`domain)) {
             exp += ".apply(tom.library.enumerator.Combinators.make" + `domainName + "())";
           } else {
-            exp += ".apply(" + fullClassName(`domain) + ".enum" + `domainName + ")";
+            exp += ".apply(" + fullClassName(`domain) + ".tmpenum" + `domainName + ")";
             if(!fullClassName().equals(fullClassName(`domain))) {
               toInitialize.add(fullClassName(`domain));
             }
