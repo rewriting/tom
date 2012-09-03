@@ -26,3 +26,6 @@ applications/quickcheck/doc/shrink/shrink.d
 applications/quickcheck/doc/shrink/shrink.fls
 applications/quickcheck/doc/shrink/shrink.out
 applications/quickcheck/doc/shrink/shrink.pdf
+applications/quickcheck/doc/shrink/shrink.bbl
+applications/quickcheck/doc/shrink/shrink.blg
+applications/quickcheck/doc/shrink/shrink.synctex.gz
