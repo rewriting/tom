@@ -710,16 +710,16 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
          int index = 0;
          
          TomTypeList makeTypes = types;//keep a copy of types
-		 String makeTlCode;
- 		  if (generateAdaCode) {
-	 		 makeTlCode = " new" + name.getText(); //function call
-		  } else {
-		 	 makeTlCode = "new " + name.getText() + "(";
-		  }
-				 
+         String makeTlCode;
+         if(generateAdaCode) {
+           makeTlCode = " new" + name.getText(); //function call
+         } else {
+           makeTlCode = "new " + name.getText() + "(";
+         }
+
          while(!makeTypes.isEmptyconcTomType()) {
-					 String argName = "t"+index;
-		   if (generateAdaCode && index == 0) { makeTlCode += "("; } // empty braces are not allowed in Ada
+           String argName = "t"+index;
+           if(generateAdaCode && index == 0) { makeTlCode += "("; } // empty braces are not allowed in Ada
            if (index>0) {//if many parameters
              makeTlCode = makeTlCode.concat(",");
            }
@@ -732,17 +732,17 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
            index++;
          }
 
-         if (generateAdaCode) {//JCB: ???
+         if(generateAdaCode) {
            if (index > 0) { makeTlCode += ")"; }
          } else {
            makeTlCode += ")";
          }
          TomType strategyType = `Type(concTypeOption(),"Strategy",EmptyTargetLanguageType());
-				 Option makeOption = `OriginTracking(Name(name.getText()),t.getLine(),currentFile());
-				 Declaration makeDecl = `MakeDecl(Name(name.getText()), strategyType, makeArgs, CodeToInstruction(TargetLanguageToCode(ITL(makeTlCode))), makeOption);
-          options.add(`DeclarationToOption(makeDecl));
+         Option makeOption = `OriginTracking(Name(name.getText()),t.getLine(),currentFile());
+         Declaration makeDecl = `MakeDecl(Name(name.getText()), strategyType, makeArgs, CodeToInstruction(TargetLanguageToCode(ITL(makeTlCode))), makeOption);
+         options.add(`DeclarationToOption(makeDecl));
 
-          // Define the is_fsym method.
+         // Define the is_fsym method.
           Option fsymOption = `OriginTracking(Name(name.getText()),t.getLine(),currentFile());
           String varname = "t";
           BQTerm fsymVar = `BQVariable(concOption(fsymOption),Name(varname),strategyType);

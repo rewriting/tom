@@ -1,0 +1,26 @@
+module System
+imports String int ATerm
+abstract syntax
+
+
+Args = ListArgs(Term*)
+
+Term = Var(name:String)
+     | Sig(name:String, args:Args)
+
+Formula = Predicate(name:String, args:Args)
+        | And(f1:Formula, f2:Formula)
+        | Or(f1:Formula, f2:Formula)
+        | Imply(f1:Formula, f2:Formula)
+        | Not(f:Formula)
+        | Forall(var:String, domain:String, f:Formula)
+        | Exists(var:String, domain:String, f:Formula)
+
+CounterExample = CEAnd(ce:CounterExample)                       // counter example if one membre is false
+               | CEOr(ce1:CounterExample, ce2:CounterExample)
+               | CEImply(ce2:CounterExample)                    // counter example only if first member is true
+               | CENot()                                        // counter example only if enclosed formula is true
+               | CEForall(varName:String, value:ATerm, ce:CounterExample)
+               | CEExists(varName:String, ce:CounterExample)
+               | CEPredicate(name:String, args:Args)
+               | NoCE()

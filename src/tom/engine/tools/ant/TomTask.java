@@ -179,7 +179,7 @@ public class TomTask extends MatchingTask {
    * @return a nested src element.
    */
   public Path createSrc() {
-    if (src == null) {
+    if(src == null) {
       src = new Path(getProject());
     }
     return src.createPath();
@@ -200,7 +200,7 @@ public class TomTask extends MatchingTask {
    * @param srcDir the source directories as a path
    */
   public void setSrcdir(Path srcDir) {
-    if (src == null) {
+    if(src == null) {
       src = srcDir;
     } else {
       src.append(srcDir);
@@ -256,7 +256,7 @@ public class TomTask extends MatchingTask {
    * @param path the importPath path
    */
   public void setImport(Path path) {
-    if (this.importPath == null) {
+    if(this.importPath == null) {
       this.importPath = path;
     } else {
       this.importPath.append(path);
@@ -264,7 +264,7 @@ public class TomTask extends MatchingTask {
   }
 
   public void addConfiguredTomincludedir(Path anInner) {
-    if (this.importPath == null) {
+    if(this.importPath == null) {
       this.importPath = anInner;
     } else {
       this.importPath.append(anInner);
@@ -331,7 +331,7 @@ public class TomTask extends MatchingTask {
     return newtyper;
   }
 
- /**
+  /**
    * If true, compiles with new parser enabled.
    * @param flag if true compile with new parser
    */
@@ -361,7 +361,7 @@ public class TomTask extends MatchingTask {
    */
   public void setCcode(boolean cCode) {
     this.cCode = cCode;
-    if (cCode) {
+    if(cCode) {
       camlCode = false;
       aCode = false;
     }
@@ -377,7 +377,7 @@ public class TomTask extends MatchingTask {
    */
   public void setCamlcode(boolean camlCode) {
     this.camlCode = camlCode;
-    if (camlCode) {
+    if(camlCode) {
       cCode = false;
       aCode = false;
     }
@@ -386,14 +386,14 @@ public class TomTask extends MatchingTask {
   public boolean getCamlcode() {
     return this.camlCode;
   }
-  
+
   /**
    * If true, generates Ada code
    * @param aCode if true generate ada code
    */
   public void setAcode(boolean aCode) {
     this.aCode = aCode;
-    if (aCode) {
+    if(aCode) {
       cCode = false;
       camlCode = false;
     }
@@ -463,7 +463,7 @@ public class TomTask extends MatchingTask {
     return genIntrospector;
   }
 
-  
+
   /**
    * If true, generates  protected functions instead of private
    * @param flag if true generates  protected functions instead of private
@@ -535,14 +535,14 @@ public class TomTask extends MatchingTask {
     // scan source directories and dest directory to build up
     // compile lists
     String[] list = src.list();
-    for (int i = 0; i < list.length; i++) {
+    for(int i = 0; i < list.length; i++) {
 
       File srcDir = getProject().resolveFile(list[i]);
 
-      if (!srcDir.exists()) {
+      if(!srcDir.exists()) {
         throw new BuildException("srcdir \""
-                                 + srcDir.getPath()
-                                 + "\" does not exist!", getLocation());
+            + srcDir.getPath()
+            + "\" does not exist!", getLocation());
       }
 
       DirectoryScanner ds = this.getDirectoryScanner(srcDir);
@@ -570,44 +570,43 @@ public class TomTask extends MatchingTask {
    * @param files    An array of filenames
    */
   protected void scanDir(File srcDir, File destDir, String[] files) {
-    if ((outputFile != null) && (files.length == 1)) {
+    if((outputFile != null) && (files.length == 1)) {
       GlobPatternMapper m = new GlobPatternMapper();
       m.setFrom(files[0]);
       m.setTo(outputFile.getPath());
       SourceFileScanner sfs = new SourceFileScanner(this);
       File[] newFiles = sfs.restrictAsFiles(files, srcDir, null, m);
 
-      if (newFiles.length > 0) {
+      if(newFiles.length > 0) {
         File[] newCompileList
           = new File[compileList.length + newFiles.length];
         System.arraycopy(compileList, 0, newCompileList, 0,
-                         compileList.length);
+            compileList.length);
         System.arraycopy(newFiles, 0, newCompileList,
-                         compileList.length, newFiles.length);
+            compileList.length, newFiles.length);
         compileList = newCompileList;
       }
     } else {
       GlobPatternMapper m = new GlobPatternMapper();
       m.setFrom("*.t");
-      if (cCode) {
+      if(cCode) {
         m.setTo("*.tom.c");
-      } else if (camlCode) {
+      } else if(camlCode) {
         m.setTo("*.tom.ml");
-      } else if (aCode) {
-		m.setTo("*.adb");
-	  } else {
+      } else if(aCode) {
+        m.setTo("*.adb");
+      } else {
         m.setTo("*.java");
       }
       SourceFileScanner sfs = new SourceFileScanner(this);
       File[] newFiles = sfs.restrictAsFiles(files, srcDir, destDir, m);
 
-      if (newFiles.length > 0) {
-        File[] newCompileList
-          = new File[compileList.length + newFiles.length];
+      if(newFiles.length > 0) {
+        File[] newCompileList = new File[compileList.length + newFiles.length];
         System.arraycopy(compileList, 0, newCompileList, 0,
-                         compileList.length);
+            compileList.length);
         System.arraycopy(newFiles, 0, newCompileList,
-                         compileList.length, newFiles.length);
+            compileList.length, newFiles.length);
         compileList = newCompileList;
       }
     }
@@ -629,25 +628,25 @@ public class TomTask extends MatchingTask {
    * @throws BuildException if all required attributes are not set
    */
   protected void checkParameters() throws BuildException {
-    if (configFile == null && getProject().getProperty("tom.home") == null) {
+    if(configFile == null && getProject().getProperty("tom.home") == null) {
       throw new BuildException(
           "config attribute has to be defined, or the tom.home property",
           getLocation());
     }
-    if (src == null) {
+    if(src == null) {
       throw new BuildException("srcdir attribute must be set!",
-                               getLocation());
+          getLocation());
     }
-    if (src.size() == 0) {
+    if(src.size() == 0) {
       throw new BuildException("srcdir attribute must be set!",
-                               getLocation());
+          getLocation());
     }
 
-    if (destDir != null && !destDir.isDirectory()) {
+    if(destDir != null && !destDir.isDirectory()) {
       throw new BuildException("destination directory \""
-                               + destDir
-                               + "\" does not exist "
-                               + "or is not a directory", getLocation());
+          + destDir
+          + "\" does not exist "
+          + "or is not a directory", getLocation());
     }
   }
 
@@ -656,12 +655,12 @@ public class TomTask extends MatchingTask {
    */
   protected void compile() {
 
-    if (compileList.length > 0) {
+    if(compileList.length > 0) {
       log("Compiling " + compileList.length + " source file"
           + (compileList.length == 1 ? "" : "s")
           + (destDir != null ? " to " + destDir : ""));
-      
-      if (logPropertiesFile != null) {
+
+      if(logPropertiesFile != null) {
         System.out.println("ANT task : properties = " + System.getProperty("java.util.logging.config.file"));
         System.setProperty(PluginPlatform.LOG_FILE,logPropertiesFile);
         Variable var = new Variable();
@@ -672,7 +671,7 @@ public class TomTask extends MatchingTask {
 
       /* If "tom.home" is defined in the ant project, pass it to tom */
       String tom_home = getProject().getProperty("tom.home");
-      if (tom_home != null) {
+      if(tom_home != null) {
         System.setProperty("tom.home",tom_home);
         Variable var = new Variable();
         var.setKey("tom.home");
@@ -684,7 +683,7 @@ public class TomTask extends MatchingTask {
 
       /* If "tom.platform.error.formatter" is defined in the ant project, pass it as a syst property for java */
       String platform_formatter = getProject().getProperty(PluginPlatform.FORMATTER);
-      if (platform_formatter != null) {
+      if(platform_formatter != null) {
         System.setProperty(PluginPlatform.FORMATTER,platform_formatter);
         Variable var = new Variable();
         var.setKey(PluginPlatform.FORMATTER);
@@ -694,7 +693,7 @@ public class TomTask extends MatchingTask {
 
       /* If "tom.platform.error.logfile" is defined in the ant project, pass it as a syst property for java */
       String platform_logfile = getProject().getProperty(PluginPlatform.LOG_FILE);
-      if (platform_logfile != null) {
+      if(platform_logfile != null) {
         System.setProperty(PluginPlatform.LOG_FILE,platform_logfile);
         Variable var = new Variable();
         var.setKey(PluginPlatform.LOG_FILE);
@@ -735,13 +734,13 @@ public class TomTask extends MatchingTask {
       if(optimize2 == true) {
         javaRunner.createArg().setValue("--optimize2");
       }
-      if (cCode) {
+      if(cCode) {
         javaRunner.createArg().setValue("--cCode");
       }
-      if (camlCode) {
+      if(camlCode) {
         javaRunner.createArg().setValue("--camlCode");
       }
-      if (aCode) {
+      if(aCode) {
         javaRunner.createArg().setValue("--aCode");
       }
       if(pretty == true) {
@@ -768,7 +767,7 @@ public class TomTask extends MatchingTask {
       if(multithread == true) {
         javaRunner.createArg().setValue("--multithread");
       }
-      for (int i = 0; i < compileList.length; i++) {
+      for(int i = 0; i < compileList.length; i++) {
         String filename = compileList[i].getAbsolutePath();
         javaRunner.createArg().setValue(filename);
       }

@@ -117,26 +117,27 @@ public class TomStreamManager {
 
     symbolTable.init(optionManager);
     // computes the input and output suffixes
-    // well, it would be better in the future if we let the generator append the output suffix itself
+    // well, it would be better in the future if we let the generator append
+    // the output suffix itself
     // so that's only temporary
 
-    if ( ((Boolean)optionManager.getOptionValue("cCode")).booleanValue() ) {
+    if (((Boolean)optionManager.getOptionValue("cCode")).booleanValue()) {
       inputSuffix = ".t";
       outputSuffix = ".tom.c";
 			importLanguageSubdir = "c";
-    } else if ( ((Boolean)optionManager.getOptionValue("camlCode")).booleanValue() ) {
+    } else if (((Boolean)optionManager.getOptionValue("camlCode")).booleanValue()) {
       inputSuffix = ".t";
       outputSuffix = ".tom.ml";
 			importLanguageSubdir = "caml";
-    } else if ( ((Boolean)optionManager.getOptionValue("jCode")).booleanValue() ) {
+    } else if (((Boolean)optionManager.getOptionValue("jCode")).booleanValue()) {
       inputSuffix = ".t";
       outputSuffix = ".java";
 			importLanguageSubdir = "java";
-    } else if ( ((Boolean)optionManager.getOptionValue("pCode")).booleanValue() ) {
+    } else if (((Boolean)optionManager.getOptionValue("pCode")).booleanValue()) {
       inputSuffix = ".t";
       outputSuffix = ".py";
 			importLanguageSubdir = "java";
-    } else if ( ((Boolean)optionManager.getOptionValue("aCode")).booleanValue() ) {
+    } else if (((Boolean)optionManager.getOptionValue("aCode")).booleanValue()) {
       inputSuffix = ".t";
       outputSuffix = ".adb";
 			importLanguageSubdir = "ada";
@@ -149,7 +150,7 @@ public class TomStreamManager {
     // paths are separated by File.pathSeparator
     StringTokenizer st = new StringTokenizer(imports, File.pathSeparator);
     try {
-      while( st.hasMoreTokens() ) {
+      while(st.hasMoreTokens()) {
         String next = st.nextToken();
         localUserImportList.add(new File(next).getCanonicalFile());
       }
@@ -188,7 +189,7 @@ public class TomStreamManager {
     //    [the packagePath] will be updated by the parser
     //    and reuse the inputFileName with a good suffix
     /* if using stdin, --output is mandatory */
-    if (!isUserOutputFile() && (localInputFileName.equals("-"))) {
+    if(!isUserOutputFile() && (localInputFileName.equals("-"))) {
       TomMessage.error(getLogger(), null, 0, TomMessage.expectingOOptionWhenStdin);
       return;
     }
@@ -241,7 +242,7 @@ public class TomStreamManager {
    */
   public List<File> getImportList() {
     List<File> importList = new ArrayList<File>(getUserImportList().size()+3);
-    for (File file : getUserImportList()) {
+    for(File file : getUserImportList()) {
       importList.add(file);
     }
     try {
@@ -305,7 +306,7 @@ public class TomStreamManager {
 
   public Reader getInputReader() {
     try {
-      if (!inputFileName.equals("-")) {
+      if(!inputFileName.equals("-")) {
         return new BufferedReader(new InputStreamReader(
               new FileInputStream(
                 new File(inputFileName).getCanonicalFile()),encoding));
@@ -402,9 +403,7 @@ public class TomStreamManager {
     // Look for importList
     for(int i=0 ; i<getImportList().size() ; i++) {
       file = new File(getImportList().get(i),fileName);
-        //System.out.println("*** try: " + file);
       if(file.exists()) {
-        //System.out.println("*** found: " + file);
         return file;
       }
     }

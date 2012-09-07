@@ -1,0 +1,17 @@
+module Sort
+abstract syntax
+Expr = zero()
+     | un()
+     | plus(a:Expr, b:Expr)
+     | mult(a:Expr, b:Expr)
+
+Surexpr = rien()
+        | wrapper(e:Expr)
+        | rec(s:Surexpr)
+
+Leaf = a()
+     | b()
+     | c()
+
+IntList = nill()
+        | consList(a:Leaf, tail:IntList)

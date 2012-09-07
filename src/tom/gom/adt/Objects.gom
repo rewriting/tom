@@ -12,6 +12,7 @@ GomClass = AbstractTypeClass(ClassName:ClassName,
                      Mapping:ClassName,
                      Operators:ClassNameList,
                      VariadicOperators:ClassNameList,
+                     OperatorClasses:GomClassList,
                      SlotFields:SlotFieldList,
                      Hooks:HookList)
          | OperatorClass(ClassName:ClassName,

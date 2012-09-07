@@ -116,6 +116,7 @@ public class Compiler {
         Set<SlotField> allSortSlots = new HashSet<SlotField>();
         ClassNameList allOperators = `ConcClassName();
         ClassNameList allVariadicOperators = `ConcClassName();
+        GomClassList allOperatorClasses = `ConcGomClass();
         %match(OperatorDeclList `oplist) {
           ConcOperator(_*,
               opdecl@OperatorDecl[Name=opname,
@@ -198,6 +199,7 @@ public class Compiler {
             }
             classForOperatorDecl.put(`opdecl,operatorClass);
             classList = `ConcGomClass(operatorClass,classList*);
+            allOperatorClasses = `ConcGomClass(operatorClass,allOperatorClasses*);
           }
         }
         // create the sort class and add it to the list
@@ -206,6 +208,7 @@ public class Compiler {
                                         mappingName,
                                         allOperators,
                                         allVariadicOperators,
+                                        allOperatorClasses,
                                         slotFieldListFromSet(allSortSlots),
                                         ConcHook());
         sortGomClassForSortDecl.put(`sortDecl,sortClass);
