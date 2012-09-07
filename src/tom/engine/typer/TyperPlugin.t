@@ -121,6 +121,8 @@ public class TyperPlugin extends TomGenericPlugin {
     if(newtyper==false) {
       try {
 
+        System.out.println("\nOld typer activated!: " + getStreamManager().getInputFileName());
+
         updateSymbolTable();
         //System.out.println("\nCode before type inference = \n" + getWorkingTerm());
 
@@ -148,8 +150,7 @@ public class TyperPlugin extends TomGenericPlugin {
         return;
       }
     } else {
-
-      System.out.println("\nNew typer activated!: " + getStreamManager().getInputFileName());
+      //System.out.println("\nNew typer activated!: " + getStreamManager().getInputFileName());
  
       try {
         updateSymbolTableNewTyper();
