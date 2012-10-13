@@ -29,7 +29,7 @@ import tom.library.utils.LinkClass;
 import tom.library.sl.*;
 import tom.library.emf.*;
 
-public class SimplePDLToPetriNoHash {
+public class SimplePDLToPetriNet {
 
   %include{ sl.tom }
   %include{ LinkClass.tom }
@@ -46,12 +46,12 @@ public class SimplePDLToPetriNoHash {
   %include{ TM3SimplePDLPackage.tom }
 
 
-  %typeterm SimplePDLToPetriNoHash { implement { SimplePDLToPetriNoHash }}
+  %typeterm SimplePDLToPetriNet { implement { SimplePDLToPetriNet }}
   
   private static PetriNet pn = null;
   private static LinkClass tom__linkClass;
 
-  public SimplePDLToPetriNoHash() {
+  public SimplePDLToPetriNet() {
     this.tom__linkClass = new LinkClass();
   }
 
@@ -178,7 +178,7 @@ public class SimplePDLToPetriNoHash {
       ws1.setParent(p_root);
       ws2.setParent(p_child);
     }
-    SimplePDLToPetriNoHash translator = new SimplePDLToPetriNoHash();
+    SimplePDLToPetriNet translator = new SimplePDLToPetriNet();
 
     try {
       translator.pn = `PetriNet(NodeEList(),ArcEList(),"main");

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-LOCAL_CLASSPATH=.:petrinetsemantics_updated_1.2.jar:simplepdlsemantics_updated_1.2.jar:$CLASSPATH
+LOCAL_CLASSPATH=.:./lib/petrinetsemantics_updated_1.2.jar:./lib/simplepdlsemantics_updated_1.2.jar:$CLASSPATH
 TOM_OPTS="-nt -p" #-i"
 FILE="SimplePDLToPetriNoHash"
 

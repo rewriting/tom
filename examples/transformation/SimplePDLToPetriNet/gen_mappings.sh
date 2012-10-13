@@ -15,7 +15,7 @@
 #OPTS=""
 OPTS="-nt"
 #echo "Generating SimplePDL mappings in '$OUTPUT/generated'…"
-emf-generate-mappings -cp .:./simplepdlsemantics_updated_1.2.jar $OPTS SimplePDLSemantics.DDMMSimplePDL.DDMMSimplePDLPackage SimplePDLSemantics.EDMMSimplePDL.EDMMSimplePDLPackage SimplePDLSemantics.SDMMSimplePDL.SDMMSimplePDLPackage SimplePDLSemantics.TM3SimplePDL.TM3SimplePDLPackage
+emf-generate-mappings -cp .:./lib/simplepdlsemantics_updated_1.2.jar $OPTS SimplePDLSemantics.DDMMSimplePDL.DDMMSimplePDLPackage SimplePDLSemantics.EDMMSimplePDL.EDMMSimplePDLPackage SimplePDLSemantics.SDMMSimplePDL.SDMMSimplePDLPackage SimplePDLSemantics.TM3SimplePDL.TM3SimplePDLPackage
 
 mv SimplePDLSemantics.DDMMSimplePDL.DDMMSimplePDLPackage.tom DDMMSimplePDLPackage.tom
 mv SimplePDLSemantics.EDMMSimplePDL.EDMMSimplePDLPackage.tom EDMMSimplePDLPackage.tom
@@ -23,7 +23,7 @@ mv SimplePDLSemantics.SDMMSimplePDL.SDMMSimplePDLPackage.tom SDMMSimplePDLPackag
 mv SimplePDLSemantics.TM3SimplePDL.TM3SimplePDLPackage.tom   TM3SimplePDLPackage.tom
 
 #echo "Generating PetriNet mappings in '$OUTPUT/generated'…"
-emf-generate-mappings -cp .:./petrinetsemantics_updated_1.2.jar $OPTS petrinetsemantics.DDMMPetriNet.DDMMPetriNetPackage petrinetsemantics.EDMMPetriNet.EDMMPetriNetPackage petrinetsemantics.SDMMPetriNet.SDMMPetriNetPackage petrinetsemantics.TM3PetriNet.TM3PetriNetPackage
+emf-generate-mappings -cp .:./lib/petrinetsemantics_updated_1.2.jar $OPTS petrinetsemantics.DDMMPetriNet.DDMMPetriNetPackage petrinetsemantics.EDMMPetriNet.EDMMPetriNetPackage petrinetsemantics.SDMMPetriNet.SDMMPetriNetPackage petrinetsemantics.TM3PetriNet.TM3PetriNetPackage
 
 mv petrinetsemantics.DDMMPetriNet.DDMMPetriNetPackage.tom DDMMPetriNetPackage.tom
 mv petrinetsemantics.EDMMPetriNet.EDMMPetriNetPackage.tom EDMMPetriNetPackage.tom
