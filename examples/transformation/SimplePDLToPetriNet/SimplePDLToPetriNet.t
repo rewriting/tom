@@ -194,11 +194,10 @@ public class SimplePDLToPetriNet {
        );
        */
 
-      //TODO: force the user to give the link as first parameter, and target
+      //NOTE: force the user to give the link as first parameter, and target
       //model as second one
       Strategy transformer = `SimplePDLToPetriNet(translator.tom__linkClass,translator.pn);
       transformer.visit(p_root, new EcoreContainmentIntrospector());
-      //TODO
       `TopDown(tom__StratResolve_SimplePDLToPetriNet(translator.tom__linkClass,translator.pn)).visit(translator.pn, new EcoreContainmentIntrospector());
 
       System.out.println("\nResult");

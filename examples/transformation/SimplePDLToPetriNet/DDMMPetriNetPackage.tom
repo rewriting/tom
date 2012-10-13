@@ -28,12 +28,12 @@
 
 %op ArcKind ArcKindnormal() {
   is_fsym(t) { t == petrinetsemantics.DDMMPetriNet.ArcKind.get("normal") }
-  make() { (petrinetsemantics.DDMMPetriNet.ArcKind)petrinetsemantics.DDMMPetriNet.DDMMPetriNetFactory.eINSTANCE.createFromString( (EDataType)petrinetsemantics.DDMMPetriNet.DDMMPetriNetPackage.eINSTANCE.getArcKind(), "normal") }
+  make() { (petrinetsemantics.DDMMPetriNet.ArcKind)petrinetsemantics.DDMMPetriNet.DDMMPetriNetFactory.eINSTANCE.createFromString((EDataType)petrinetsemantics.DDMMPetriNet.DDMMPetriNetPackage.eINSTANCE.getArcKind(), "normal") }
 }
 
 %op ArcKind ArcKindread_arc() {
   is_fsym(t) { t == petrinetsemantics.DDMMPetriNet.ArcKind.get("read_arc") }
-  make() { (petrinetsemantics.DDMMPetriNet.ArcKind)petrinetsemantics.DDMMPetriNet.DDMMPetriNetFactory.eINSTANCE.createFromString( (EDataType)petrinetsemantics.DDMMPetriNet.DDMMPetriNetPackage.eINSTANCE.getArcKind(), "read_arc") }
+  make() { (petrinetsemantics.DDMMPetriNet.ArcKind)petrinetsemantics.DDMMPetriNet.DDMMPetriNetFactory.eINSTANCE.createFromString((EDataType)petrinetsemantics.DDMMPetriNet.DDMMPetriNetPackage.eINSTANCE.getArcKind(), "read_arc") }
 }
 
 %include { int.tom }
