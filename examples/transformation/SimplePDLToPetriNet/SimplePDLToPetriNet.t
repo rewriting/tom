@@ -35,16 +35,15 @@ public class SimplePDLToPetriNet {
   %include{ LinkClass.tom }
   %include{ emf/ecore.tom }
 
-  %include{ DDMMPetriNetPackage.tom }
-  %include{ DDMMSimplePDLPackage.tom }
+  %include{ mappings/DDMMPetriNetPackage.tom }
+  %include{ mappings/DDMMSimplePDLPackage.tom }
 
-  %include{ EDMMPetriNetPackage.tom }
-  %include{ EDMMSimplePDLPackage.tom }
-  %include{ SDMMPetriNetPackage.tom }
-  %include{ SDMMSimplePDLPackage.tom }
-  %include{ TM3PetriNetPackage.tom }
-  %include{ TM3SimplePDLPackage.tom }
-
+  %include{ mappings/EDMMPetriNetPackage.tom }
+  %include{ mappings/EDMMSimplePDLPackage.tom }
+  %include{ mappings/SDMMPetriNetPackage.tom }
+  %include{ mappings/SDMMSimplePDLPackage.tom }
+  %include{ mappings/TM3PetriNetPackage.tom }
+  %include{ mappings/TM3SimplePDLPackage.tom }
 
   %typeterm SimplePDLToPetriNet { implement { SimplePDLToPetriNet }}
   
@@ -56,9 +55,7 @@ public class SimplePDLToPetriNet {
   }
 
 
-  //%transformation SimplePDLToPetriNet(tom__linkClass:LinkClass,pn:PetriNet) with(SimplePDLSemantics_updated.ecore) to(PetriNetSemantics_updated.ecore) {
-  %transformation SimplePDLToPetriNet(tom__linkClass:LinkClass,pn:PetriNet) : "SimplePDLSemantics_updated.ecore" -> "./PetriNetSemantics_updated.ecore" {
-  //%transformation SimplePDLToPetriNet(tom__linkClass:LinkClass,pn:PetriNet) : SimplePDLSemantics_updated.ecore -> PetriNetSemantics_updated.ecore {
+  %transformation SimplePDLToPetriNet(tom__linkClass:LinkClass,pn:PetriNet) : "metamodels/SimplePDLSemantics_updated.ecore" -> "metamodels/PetriNetSemantics_updated.ecore" {
 
     definition P2PN traversal `TopDown(P2PN(tom__linkClass,pn)) {
       p@Process[name=name] -> {
