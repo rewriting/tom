@@ -53,22 +53,22 @@ private static <O> org.eclipse.emf.common.util.EList<O> appendProcessElementELis
 
 %op WorkSequenceType WorkSequenceTypestartToStart() {
   is_fsym(t) { t == SimplePDLSemantics.DDMMSimplePDL.WorkSequenceType.get("startToStart") }
-  make() { (SimplePDLSemantics.DDMMSimplePDL.WorkSequenceType)SimplePDLSemantics.DDMMSimplePDL.DDMMSimplePDLFactory.eINSTANCE.createFromString( (EDataType)SimplePDLSemantics.DDMMSimplePDL.DDMMSimplePDLPackage.eINSTANCE.getWorkSequenceType(), "startToStart") }
+  make() { (SimplePDLSemantics.DDMMSimplePDL.WorkSequenceType)SimplePDLSemantics.DDMMSimplePDL.DDMMSimplePDLFactory.eINSTANCE.createFromString((EDataType)SimplePDLSemantics.DDMMSimplePDL.DDMMSimplePDLPackage.eINSTANCE.getWorkSequenceType(), "startToStart") }
 }
 
 %op WorkSequenceType WorkSequenceTypefinishToStart() {
   is_fsym(t) { t == SimplePDLSemantics.DDMMSimplePDL.WorkSequenceType.get("finishToStart") }
-  make() { (SimplePDLSemantics.DDMMSimplePDL.WorkSequenceType)SimplePDLSemantics.DDMMSimplePDL.DDMMSimplePDLFactory.eINSTANCE.createFromString( (EDataType)SimplePDLSemantics.DDMMSimplePDL.DDMMSimplePDLPackage.eINSTANCE.getWorkSequenceType(), "finishToStart") }
+  make() { (SimplePDLSemantics.DDMMSimplePDL.WorkSequenceType)SimplePDLSemantics.DDMMSimplePDL.DDMMSimplePDLFactory.eINSTANCE.createFromString((EDataType)SimplePDLSemantics.DDMMSimplePDL.DDMMSimplePDLPackage.eINSTANCE.getWorkSequenceType(), "finishToStart") }
 }
 
 %op WorkSequenceType WorkSequenceTypestartToFinish() {
   is_fsym(t) { t == SimplePDLSemantics.DDMMSimplePDL.WorkSequenceType.get("startToFinish") }
-  make() { (SimplePDLSemantics.DDMMSimplePDL.WorkSequenceType)SimplePDLSemantics.DDMMSimplePDL.DDMMSimplePDLFactory.eINSTANCE.createFromString( (EDataType)SimplePDLSemantics.DDMMSimplePDL.DDMMSimplePDLPackage.eINSTANCE.getWorkSequenceType(), "startToFinish") }
+  make() { (SimplePDLSemantics.DDMMSimplePDL.WorkSequenceType)SimplePDLSemantics.DDMMSimplePDL.DDMMSimplePDLFactory.eINSTANCE.createFromString((EDataType)SimplePDLSemantics.DDMMSimplePDL.DDMMSimplePDLPackage.eINSTANCE.getWorkSequenceType(), "startToFinish") }
 }
 
 %op WorkSequenceType WorkSequenceTypefinishToFinish() {
   is_fsym(t) { t == SimplePDLSemantics.DDMMSimplePDL.WorkSequenceType.get("finishToFinish") }
-  make() { (SimplePDLSemantics.DDMMSimplePDL.WorkSequenceType)SimplePDLSemantics.DDMMSimplePDL.DDMMSimplePDLFactory.eINSTANCE.createFromString( (EDataType)SimplePDLSemantics.DDMMSimplePDL.DDMMSimplePDLPackage.eINSTANCE.getWorkSequenceType(), "finishToFinish") }
+  make() { (SimplePDLSemantics.DDMMSimplePDL.WorkSequenceType)SimplePDLSemantics.DDMMSimplePDL.DDMMSimplePDLFactory.eINSTANCE.createFromString((EDataType)SimplePDLSemantics.DDMMSimplePDL.DDMMSimplePDLPackage.eINSTANCE.getWorkSequenceType(), "finishToFinish") }
 }
 
 %op WorkSequence WorkSequence(parent : Process, linkType : WorkSequenceType, predecessor : WorkDefinition, successor : WorkDefinition) {
