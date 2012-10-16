@@ -35,6 +35,10 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import java.io.File;
+import java.io.IOException;
+
+import tom.engine.exception.TomException;
 import tom.engine.exception.TomRuntimeException;
 
 import tom.engine.adt.tomsignature.*;
@@ -48,6 +52,7 @@ import tom.engine.adt.tominstruction.types.*;
 import tom.engine.adt.tomname.types.*;
 import tom.engine.adt.tomname.types.tomname.*;
 import tom.engine.adt.tomoption.types.*;
+import tom.engine.adt.tomoption.types.option.*;
 import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomslot.types.*;
@@ -74,7 +79,7 @@ import tom.library.sl.*;
  * The Transmorfer plugin.
  * Performs tree transformation and code expansion.
  *
- * TO BE DETAILED /!\
+ * TO BE DETAILED /!\
  * 1st step: Transformation - 
  * 
  * 
@@ -229,6 +234,13 @@ public class TransformerPlugin extends TomGenericPlugin {
       resolveNameList = `concTomName(Name(stringName),resolveNameList*);
     }
 
+    //TODO: check fileFrom and fileTo
+    try {
+    fileFrom = checkAndNormalizeFileName(fileFrom, "source", orgTrack);
+    fileTo = checkAndNormalizeFileName(fileTo, "target", orgTrack);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
     //Generation of Resolve strategy
     Declaration resolveStratDecl = `buildResolveStrat(transfoName, bqlist,
         transfoSymbol, rsblist, resolveNameList, fileFrom, fileTo, orgTrack);
@@ -942,6 +954,33 @@ if(!resolveNameSet.contains(resolveStringName)) {
           OriginTracking(Name("get_slot"),line,fileName)
           )
         );
+  }
+
+  private String checkAndNormalizeFileName(String fileName, String prefix,
+      Option orgTrack) throws TomException {
+    //first, normalize file name: spaces and separators
+    fileName = fileName.trim();
+    fileName = fileName.replace('\\',File.separatorChar);
+    fileName = fileName.replace('/',File.separatorChar);
+
+    File file = new File(fileName);
+    //isFile(): what is a "normal" file? ("not a directory" + which other
+    //condition?)
+    if(file.exists() && file.isFile()) {
+      try {
+        return file.getCanonicalPath();
+      } catch (IOException e) {
+        System.out.println("IO Exception when computing "+prefix+" metamodel file "+fileName);
+        e.printStackTrace();
+      }
+    } else {
+      throw new TomException(TomMessage.mmFileNotFound, new Object[]{prefix,
+          fileName, ((OriginTracking)orgTrack).getFileName(),
+          Integer.valueOf(((OriginTracking)orgTrack).getLine()),
+          ((OriginTracking)orgTrack).getFileName()});
+    }
+    //weel, nothing better?
+    return null;
   }
 
 }//class

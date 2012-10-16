@@ -873,8 +873,8 @@ transformationConstruct [Option orgTrack] returns [Declaration result] throws To
             }
            )*
          )? RPAREN
-         //WITH LPAREN src:ALL_ID RPAREN TO LPAREN dst:ALL_ID RPAREN
-          COLON src:ALL_ID ARROW dst:ALL_ID 
+          //COLON src:ALL_ID ARROW dst:ALL_ID 
+          COLON src:STRING ARROW dst:STRING 
         )
         LBRACE
         elementaryTransformationList[elemTransfoList, name.getText()]
@@ -928,8 +928,12 @@ transformationConstruct [Option orgTrack] returns [Declaration result] throws To
           putSymbol(name.getText(),astSymbol);
 
          updatePosition(t.getLine(),t.getColumn());
+         //remove enclosing ""
          String fileFrom = src.getText();
+         fileFrom = fileFrom.substring(1,fileFrom.length()-1);
          String fileTo = dst.getText();
+         fileTo = fileTo.substring(1,fileTo.length()-1);
+
          //Transformation construct
          result = `AbstractDecl(concDeclaration(Transformation(Name(name.getText()),types,astElemTransfoList,fileFrom,fileTo,orgTrack),SymbolDecl(Name(name.getText()))));
          selector().pop();

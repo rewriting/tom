@@ -174,6 +174,10 @@ public class TomMessage extends BasicPlatformMessage {
       new TomMessage("Included file ''{0}'' has already been parsed");
   public static final TomMessage errorWhileIncludingFile=
       new TomMessage("Exception ''{0}'' occurs in parsing file ''{1}'' included in file {2} at line {3,number,integer}: See stacktrace\n\n{4}");
+//TODO
+  public static final TomMessage mmFileNotFound  =
+      new TomMessage("{0} metamodel file ''{1}'' not found in file {2} at line {3,number,integer}");
+//
   public static final TomMessage gomFailure =
       new TomMessage("An error occured dealing with %gom input in ''{0}'' at line {1,number,integer}");
   public static final TomMessage gomInitFailure =
