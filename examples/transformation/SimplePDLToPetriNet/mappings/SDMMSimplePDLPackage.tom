@@ -14,17 +14,17 @@
 
 %op ExecutionState ExecutionStatenotStarted() {
   is_fsym(t) { t == SimplePDLSemantics.SDMMSimplePDL.ExecutionState.get("notStarted") }
-  make() { (SimplePDLSemantics.SDMMSimplePDL.ExecutionState)SimplePDLSemantics.SDMMSimplePDL.SDMMSimplePDLFactory.eINSTANCE.createFromString( (EDataType)SimplePDLSemantics.SDMMSimplePDL.SDMMSimplePDLPackage.eINSTANCE.getExecutionState(), "notStarted") }
+  make() { (SimplePDLSemantics.SDMMSimplePDL.ExecutionState)SimplePDLSemantics.SDMMSimplePDL.SDMMSimplePDLFactory.eINSTANCE.createFromString((EDataType)SimplePDLSemantics.SDMMSimplePDL.SDMMSimplePDLPackage.eINSTANCE.getExecutionState(), "notStarted") }
 }
 
 %op ExecutionState ExecutionStaterunning() {
   is_fsym(t) { t == SimplePDLSemantics.SDMMSimplePDL.ExecutionState.get("running") }
-  make() { (SimplePDLSemantics.SDMMSimplePDL.ExecutionState)SimplePDLSemantics.SDMMSimplePDL.SDMMSimplePDLFactory.eINSTANCE.createFromString( (EDataType)SimplePDLSemantics.SDMMSimplePDL.SDMMSimplePDLPackage.eINSTANCE.getExecutionState(), "running") }
+  make() { (SimplePDLSemantics.SDMMSimplePDL.ExecutionState)SimplePDLSemantics.SDMMSimplePDL.SDMMSimplePDLFactory.eINSTANCE.createFromString((EDataType)SimplePDLSemantics.SDMMSimplePDL.SDMMSimplePDLPackage.eINSTANCE.getExecutionState(), "running") }
 }
 
 %op ExecutionState ExecutionStatefinished() {
   is_fsym(t) { t == SimplePDLSemantics.SDMMSimplePDL.ExecutionState.get("finished") }
-  make() { (SimplePDLSemantics.SDMMSimplePDL.ExecutionState)SimplePDLSemantics.SDMMSimplePDL.SDMMSimplePDLFactory.eINSTANCE.createFromString( (EDataType)SimplePDLSemantics.SDMMSimplePDL.SDMMSimplePDLPackage.eINSTANCE.getExecutionState(), "finished") }
+  make() { (SimplePDLSemantics.SDMMSimplePDL.ExecutionState)SimplePDLSemantics.SDMMSimplePDL.SDMMSimplePDLFactory.eINSTANCE.createFromString((EDataType)SimplePDLSemantics.SDMMSimplePDL.SDMMSimplePDLPackage.eINSTANCE.getExecutionState(), "finished") }
 }
 
 %typeterm TimeState  {
@@ -35,17 +35,17 @@
 
 %op TimeState TimeStatetooEarly() {
   is_fsym(t) { t == SimplePDLSemantics.SDMMSimplePDL.TimeState.get("tooEarly") }
-  make() { (SimplePDLSemantics.SDMMSimplePDL.TimeState)SimplePDLSemantics.SDMMSimplePDL.SDMMSimplePDLFactory.eINSTANCE.createFromString( (EDataType)SimplePDLSemantics.SDMMSimplePDL.SDMMSimplePDLPackage.eINSTANCE.getTimeState(), "tooEarly") }
+  make() { (SimplePDLSemantics.SDMMSimplePDL.TimeState)SimplePDLSemantics.SDMMSimplePDL.SDMMSimplePDLFactory.eINSTANCE.createFromString((EDataType)SimplePDLSemantics.SDMMSimplePDL.SDMMSimplePDLPackage.eINSTANCE.getTimeState(), "tooEarly") }
 }
 
 %op TimeState TimeStateinTime() {
   is_fsym(t) { t == SimplePDLSemantics.SDMMSimplePDL.TimeState.get("inTime") }
-  make() { (SimplePDLSemantics.SDMMSimplePDL.TimeState)SimplePDLSemantics.SDMMSimplePDL.SDMMSimplePDLFactory.eINSTANCE.createFromString( (EDataType)SimplePDLSemantics.SDMMSimplePDL.SDMMSimplePDLPackage.eINSTANCE.getTimeState(), "inTime") }
+  make() { (SimplePDLSemantics.SDMMSimplePDL.TimeState)SimplePDLSemantics.SDMMSimplePDL.SDMMSimplePDLFactory.eINSTANCE.createFromString((EDataType)SimplePDLSemantics.SDMMSimplePDL.SDMMSimplePDLPackage.eINSTANCE.getTimeState(), "inTime") }
 }
 
 %op TimeState TimeStatetooLate() {
   is_fsym(t) { t == SimplePDLSemantics.SDMMSimplePDL.TimeState.get("tooLate") }
-  make() { (SimplePDLSemantics.SDMMSimplePDL.TimeState)SimplePDLSemantics.SDMMSimplePDL.SDMMSimplePDLFactory.eINSTANCE.createFromString( (EDataType)SimplePDLSemantics.SDMMSimplePDL.SDMMSimplePDLPackage.eINSTANCE.getTimeState(), "tooLate") }
+  make() { (SimplePDLSemantics.SDMMSimplePDL.TimeState)SimplePDLSemantics.SDMMSimplePDL.SDMMSimplePDLFactory.eINSTANCE.createFromString((EDataType)SimplePDLSemantics.SDMMSimplePDL.SDMMSimplePDLPackage.eINSTANCE.getTimeState(), "tooLate") }
 }
 
 %include { float.tom }

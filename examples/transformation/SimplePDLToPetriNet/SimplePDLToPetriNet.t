@@ -29,35 +29,33 @@ import tom.library.utils.LinkClass;
 import tom.library.sl.*;
 import tom.library.emf.*;
 
-public class SimplePDLToPetriNoHash {
+public class SimplePDLToPetriNet {
 
   %include{ sl.tom }
   %include{ LinkClass.tom }
   %include{ emf/ecore.tom }
 
-  %include{ DDMMPetriNetPackage.tom }
-  %include{ DDMMSimplePDLPackage.tom }
+  %include{ mappings/DDMMPetriNetPackage.tom }
+  %include{ mappings/DDMMSimplePDLPackage.tom }
 
-  %include{ EDMMPetriNetPackage.tom }
-  %include{ EDMMSimplePDLPackage.tom }
-  %include{ SDMMPetriNetPackage.tom }
-  %include{ SDMMSimplePDLPackage.tom }
-  %include{ TM3PetriNetPackage.tom }
-  %include{ TM3SimplePDLPackage.tom }
+  %include{ mappings/EDMMPetriNetPackage.tom }
+  %include{ mappings/EDMMSimplePDLPackage.tom }
+  %include{ mappings/SDMMPetriNetPackage.tom }
+  %include{ mappings/SDMMSimplePDLPackage.tom }
+  %include{ mappings/TM3PetriNetPackage.tom }
+  %include{ mappings/TM3SimplePDLPackage.tom }
 
-
-  %typeterm SimplePDLToPetriNoHash { implement { SimplePDLToPetriNoHash }}
+  %typeterm SimplePDLToPetriNet { implement { SimplePDLToPetriNet }}
   
   private static PetriNet pn = null;
   private static LinkClass tom__linkClass;
 
-  public SimplePDLToPetriNoHash() {
+  public SimplePDLToPetriNet() {
     this.tom__linkClass = new LinkClass();
   }
 
 
-  //%transformation SimplePDLToPetriNet(tom__linkClass:LinkClass,pn:PetriNet) with(SimplePDLSemantics_updated.ecore) to(PetriNetSemantics_updated.ecore) {
-  %transformation SimplePDLToPetriNet(tom__linkClass:LinkClass,pn:PetriNet) : SimplePDLSemantics_updated.ecore -> PetriNetSemantics_updated.ecore {
+  %transformation SimplePDLToPetriNet(tom__linkClass:LinkClass,pn:PetriNet) : "metamodels/SimplePDLSemantics_updated.ecore" -> "metamodels/PetriNetSemantics_updated.ecore" {
 
     definition P2PN traversal `TopDown(P2PN(tom__linkClass,pn)) {
       p@Process[name=name] -> {
@@ -65,9 +63,9 @@ public class SimplePDLToPetriNoHash {
         Place p_running  = `Place(name + "_running", pn,ArcEList(), ArcEList(), 0);
         Place p_finished  = `Place(name + "_finished", pn,ArcEList(), ArcEList(), 0);
         String n1 = `name+"_start";
-        %tracelink(Transition, t_start, `Transition(n1, pn,ArcEList(), ArcEList(), 1, 1));
+        %tracelink(t_start:Transition, `Transition(n1, pn,ArcEList(), ArcEList(), 1, 1));
         n1 = `name+"_finish";
-        %tracelink(Transition, t_finish, `Transition(n1, pn,ArcEList(), ArcEList(), 1, 1));
+        %tracelink(t_finish:Transition, `Transition(n1, pn,ArcEList(), ArcEList(), 1, 1));
         
         `Arc(t_start, p_ready, pn,ArcKindnormal(), 1);
         `Arc(p_running, t_start, pn,ArcKindnormal(), 1);
@@ -92,14 +90,14 @@ public class SimplePDLToPetriNoHash {
         //System.out.println("Je suis un A");
         Place p_ready  = `Place(name + "_ready", pn,ArcEList(), ArcEList(), 1);
         String n1 = `name+"_started";
-        %tracelink(Place, p_started, `Place(n1, pn,ArcEList(), ArcEList(), 0));
+        %tracelink(p_started:Place, `Place(n1, pn,ArcEList(), ArcEList(), 0));
         Place p_running  = `Place(name+"_running", pn,ArcEList(), ArcEList(), 0);
         n1 = `name+"_finished";
-        %tracelink(Place, p_finished, `Place(n1, pn,ArcEList(), ArcEList(), 0));
+        %tracelink(p_finished:Place, `Place(n1, pn,ArcEList(), ArcEList(), 0));
         n1 = `name+"_start";
-        %tracelink(Transition, t_start, `Transition(n1, pn,ArcEList(), ArcEList(), 1, 1));
+        %tracelink(t_start:Transition, `Transition(n1, pn,ArcEList(), ArcEList(), 1, 1));
         n1 = `name+"_finish";
-        %tracelink(Transition, t_finish, `Transition(n1, pn,ArcEList(), ArcEList(), 1, 1));
+        %tracelink(t_finish:Transition, `Transition(n1, pn,ArcEList(), ArcEList(), 1, 1));
 
         `Arc(t_start, p_ready, pn,ArcKindnormal(), 1);
         `Arc(p_started, t_start, pn,ArcKindnormal(), 1);
@@ -178,7 +176,7 @@ public class SimplePDLToPetriNoHash {
       ws1.setParent(p_root);
       ws2.setParent(p_child);
     }
-    SimplePDLToPetriNoHash translator = new SimplePDLToPetriNoHash();
+    SimplePDLToPetriNet translator = new SimplePDLToPetriNet();
 
     try {
       translator.pn = `PetriNet(NodeEList(),ArcEList(),"main");
@@ -194,11 +192,10 @@ public class SimplePDLToPetriNoHash {
        );
        */
 
-      //TODO: force the user to give the link as first parameter, and target
+      //NOTE: force the user to give the link as first parameter, and target
       //model as second one
       Strategy transformer = `SimplePDLToPetriNet(translator.tom__linkClass,translator.pn);
       transformer.visit(p_root, new EcoreContainmentIntrospector());
-      //TODO
       `TopDown(tom__StratResolve_SimplePDLToPetriNet(translator.tom__linkClass,translator.pn)).visit(translator.pn, new EcoreContainmentIntrospector());
 
       System.out.println("\nResult");

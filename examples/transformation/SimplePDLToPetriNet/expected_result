@@ -1,6 +1,6 @@
-This is the output from SimplePDLToPetriNet prototypes (quarteft repositolry).
+This is the output from SimplePDLToPetriNet prototypes (quarteft repository).
 The compilation and execution of SimplePDLToPetriNet.t use case should print
-the last block of this output (beginning at "After Resolve"):
+the last block of this output (beginning at "After Resolve", line 46):
 
 
 Starting…
