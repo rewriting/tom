@@ -177,12 +177,34 @@ public class CGenerator extends CFamilyGenerator {
     throw new TomRuntimeException("Function not yet supported in C");
   }
 
+  protected String genResolveMakeCode(String funName, BQTermList argList) throws IOException {
+    throw new TomRuntimeException("%transformation (ResolveMakeCode) not yet supported in C");
+  }
+
   protected void buildReferenceClass(int deep, String refname, RefClassTracelinkInstructionList refclassTInstructions, String  moduleName) {
     throw new TomRuntimeException("%transformation (ResolveReferenceClass) not yet supported in C");
   }
 
+  protected String genResolveIsFsymCode(String tomName, String varname) throws IOException {
+    throw new TomRuntimeException("%transformation (ResolveIsFsym) not yet supported in C");
+    //return "";
+  }
+
+  protected String genResolveGetSlotCode(String tomName, String varname, String slotName) throws IOException {
+    throw new TomRuntimeException("%transformation (ResolveGetSlot) not yet supported in C");
+    //return "";
+  }
+ 
+  protected void buildResolveClass(String wName, String tName, String extendsName, String moduleName) throws IOException {
+    throw new TomRuntimeException("%transformation (ResolveClass) not yet supported in C");
+  }
+
   protected void buildResolveInverseLinks(int deep, String fileFrom, String fileTo, TomNameList resolveNameList, String moduleName) throws IOException {
     throw new TomRuntimeException("%transformation (ResolveInverseLinks) not yet supported in C");
+  }
+
+  protected void genResolveDeclMake(String prefix, String funName, TomType returnType, BQTermList argList, String moduleName) throws IOException {
+    throw new TomRuntimeException("%transformation (ResolveMakeDecl) not yet supported in C");
   }
 
   protected void buildTracelink(int deep, String type, String name, Expression expr, String moduleName) throws IOException {

@@ -497,6 +497,10 @@ public class CamlGenerator extends GenericGenerator {
     throw new TomRuntimeException("%transformation (ResolveMakeDecl) not yet supported in Caml");
   }
 
+  protected String genResolveMakeCode(String funName, BQTermList argList) throws IOException {
+    throw new TomRuntimeException("%transformation (ResolveMakeCode) not yet supported in Caml");
+  }
+
   protected void buildReferenceClass(int deep, String refname, RefClassTracelinkInstructionList refclassTInstructions, String  moduleName) {
     throw new TomRuntimeException("%transformation (ResolveReferenceClass) not yet supported in Caml");
   }
