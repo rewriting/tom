@@ -249,9 +249,6 @@ public class PythonGenerator extends GenericGenerator {
     //String tlEltType = getTLType(eltType);
 
     //String utype = glType;
-    //if(lazyType) {
-    //  utype = getTLType(getUniversalType());
-    //}
     
     String is_empty = "tom_is_empty_" + name + "_" + tomType;
     String equal_term = "tom_equal_term_" + tomType;
@@ -300,9 +297,9 @@ public class PythonGenerator extends GenericGenerator {
     while(!argList.isEmptyconcBQTerm()) {
       BQTerm arg = argList.getHeadconcBQTerm();
 matchBlock: {
-              {{if ( (((Object)arg) instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )((Object)arg)) instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )(( tom.engine.adt.code.types.BQTerm )((Object)arg))) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) { tom.engine.adt.tomname.types.TomName  tomMatch104_1= (( tom.engine.adt.code.types.BQTerm )((Object)arg)).getAstName() ; tom.engine.adt.tomtype.types.TomType  tomMatch104_2= (( tom.engine.adt.code.types.BQTerm )((Object)arg)).getAstType() ;if ( (tomMatch104_1 instanceof tom.engine.adt.tomname.types.TomName) ) {if ( ((( tom.engine.adt.tomname.types.TomName )tomMatch104_1) instanceof tom.engine.adt.tomname.types.tomname.Name) ) {if ( (tomMatch104_2 instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )tomMatch104_2) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) { tom.engine.adt.tomtype.types.TargetLanguageType  tomMatch104_8= tomMatch104_2.getTlType() ;if ( (tomMatch104_8 instanceof tom.engine.adt.tomtype.types.TargetLanguageType) ) {if ( ((( tom.engine.adt.tomtype.types.TargetLanguageType )tomMatch104_8) instanceof tom.engine.adt.tomtype.types.targetlanguagetype.TLType) ) {
+              {{if ( (((Object)arg) instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )((Object)arg)) instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )(( tom.engine.adt.code.types.BQTerm )((Object)arg))) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) { tom.engine.adt.tomname.types.TomName  tomMatch117_1= (( tom.engine.adt.code.types.BQTerm )((Object)arg)).getAstName() ; tom.engine.adt.tomtype.types.TomType  tomMatch117_2= (( tom.engine.adt.code.types.BQTerm )((Object)arg)).getAstType() ;if ( (tomMatch117_1 instanceof tom.engine.adt.tomname.types.TomName) ) {if ( ((( tom.engine.adt.tomname.types.TomName )tomMatch117_1) instanceof tom.engine.adt.tomname.types.tomname.Name) ) {if ( (tomMatch117_2 instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )tomMatch117_2) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) { tom.engine.adt.tomtype.types.TargetLanguageType  tomMatch117_8= tomMatch117_2.getTlType() ;if ( (tomMatch117_8 instanceof tom.engine.adt.tomtype.types.TargetLanguageType) ) {if ( ((( tom.engine.adt.tomtype.types.TargetLanguageType )tomMatch117_8) instanceof tom.engine.adt.tomtype.types.targetlanguagetype.TLType) ) {
 
-                  s.append( tomMatch104_1.getString() );
+                  s.append( tomMatch117_1.getString() );
                   break matchBlock;
                 }}}}}}}}}}{if ( (((Object)arg) instanceof tom.engine.adt.code.types.BQTerm) ) {
 
@@ -432,5 +429,56 @@ matchBlock: {
     generateExpression(deep,exp,moduleName);
     output.write(";\n");
   } 
+
+  //FIXME
+  //TODO: to implement
+  protected String genResolveIsSortCode(String varName, String
+      resolveStringName) throws IOException {
+    throw new TomRuntimeException("%transformation (ResolveIsSort) not yet supported in Python");
+    //return "";
+  }
+
+  protected String genResolveIsFsymCode(String tomName, String varname) throws IOException {
+    throw new TomRuntimeException("%transformation (ResolveIsFsym) not yet supported in Python");
+    //return "";
+  }
+
+  protected String genResolveGetSlotCode(String tomName, String varname, String slotName) throws IOException {
+    throw new TomRuntimeException("%transformation (ResolveGetSlot) not yet supported in Python");
+    //return "";
+  }
+  
+  protected void buildResolveClass(String wName, String tName, String extendsName, String moduleName) throws IOException {
+    throw new TomRuntimeException("%transformation (ResolveClass) not yet supported in Python");
+  }
+
+  protected void buildResolveInverseLinks(int deep, String fileFrom, String fileTo, TomNameList resolveNameList, String moduleName) throws IOException {
+    throw new TomRuntimeException("%transformation (ResolveInverseLinks) not yet supported in Python");
+  }
+
+  protected void genResolveDeclMake(String prefix, String funName, TomType returnType, BQTermList argList, String moduleName) throws IOException {
+    throw new TomRuntimeException("%transformation (ResolveDeclMake) not yet supported in Python");
+  }
+
+  protected String genResolveMakeCode(String funName, BQTermList argList) throws IOException {
+    throw new TomRuntimeException("%transformation (ResolveMakeCode) not yet supported in Python");
+  }
+
+  protected void buildReferenceClass(int deep, String refname, RefClassTracelinkInstructionList refclassTInstructions, String  moduleName) {
+    throw new TomRuntimeException("%transformation (ResolveReferenceClass) not yet supported in Python");
+  }
+
+  protected void buildTracelink(int deep, String type, String name, Expression expr, String moduleName) throws IOException {
+    throw new TomRuntimeException("%transformation (Tracelink instruction) not  yet supported in Python");
+  }
+
+  protected void buildTracelinkPopulateResolve(int deep, String refClassName, TomNameList tracedLinks, BQTerm current, BQTerm link, String moduleName) throws IOException {
+    throw new TomRuntimeException("%transformation (TracelinkPopulateResolve instruction) not yet supported in Python");
+  }
+
+  //tmp
+  protected void buildResolve(int deep, BQTerm bqterm, String moduleName) throws IOException {
+    throw new TomRuntimeException("%transformation (Resolve2 instruction) not yet supported in Python");
+  }
 
 }

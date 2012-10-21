@@ -26,7 +26,13 @@
 package tom.engine.backend;
 
 import java.io.IOException;
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Set;
+import java.util.HashSet;
 
 import tom.engine.TomBase;
 import tom.engine.tools.OutputCode;
@@ -47,6 +53,16 @@ import tom.engine.adt.code.types.*;
 import tom.engine.tools.SymbolTable;
 import tom.platform.OptionManager;
 import tom.engine.exception.TomRuntimeException;
+
+import org.eclipse.emf.ecore.xmi.XMIResource;
+import org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl;
+import org.eclipse.emf.ecore.EClassifier;
+import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EEnum;
+import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.common.util.BasicEList;
 
 public class JavaGenerator extends CFamilyGenerator {
 
@@ -72,7 +88,8 @@ public class JavaGenerator extends CFamilyGenerator {
   }
 
 // ------------------------------------------------------------
-      
+        private static   tom.engine.adt.tominstruction.types.RefClassTracelinkInstructionList  tom_append_list_concRefClassTracelinkInstruction( tom.engine.adt.tominstruction.types.RefClassTracelinkInstructionList l1,  tom.engine.adt.tominstruction.types.RefClassTracelinkInstructionList  l2) {     if( l1.isEmptyconcRefClassTracelinkInstruction() ) {       return l2;     } else if( l2.isEmptyconcRefClassTracelinkInstruction() ) {       return l1;     } else if(  l1.getTailconcRefClassTracelinkInstruction() .isEmptyconcRefClassTracelinkInstruction() ) {       return  tom.engine.adt.tominstruction.types.refclasstracelinkinstructionlist.ConsconcRefClassTracelinkInstruction.make( l1.getHeadconcRefClassTracelinkInstruction() ,l2) ;     } else {       return  tom.engine.adt.tominstruction.types.refclasstracelinkinstructionlist.ConsconcRefClassTracelinkInstruction.make( l1.getHeadconcRefClassTracelinkInstruction() ,tom_append_list_concRefClassTracelinkInstruction( l1.getTailconcRefClassTracelinkInstruction() ,l2)) ;     }   }   private static   tom.engine.adt.tominstruction.types.RefClassTracelinkInstructionList  tom_get_slice_concRefClassTracelinkInstruction( tom.engine.adt.tominstruction.types.RefClassTracelinkInstructionList  begin,  tom.engine.adt.tominstruction.types.RefClassTracelinkInstructionList  end, tom.engine.adt.tominstruction.types.RefClassTracelinkInstructionList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyconcRefClassTracelinkInstruction()  ||  (end== tom.engine.adt.tominstruction.types.refclasstracelinkinstructionlist.EmptyconcRefClassTracelinkInstruction.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.engine.adt.tominstruction.types.refclasstracelinkinstructionlist.ConsconcRefClassTracelinkInstruction.make( begin.getHeadconcRefClassTracelinkInstruction() ,( tom.engine.adt.tominstruction.types.RefClassTracelinkInstructionList )tom_get_slice_concRefClassTracelinkInstruction( begin.getTailconcRefClassTracelinkInstruction() ,end,tail)) ;   }      private static <O> org.eclipse.emf.common.util.EList<O> appendEAnnotationEList(O e,org.eclipse.emf.common.util.EList<O> l) {   l.add(e);   return l; }    public static <O extends org.eclipse.emf.ecore.EObject> O constructEStringToStringMapEntry(O o, Object[] objs) {   int i=0;   EList<EStructuralFeature> sfes = o.eClass().getEAllStructuralFeatures();   for(EStructuralFeature esf : sfes) {     if(esf.isChangeable()) {       o.eSet(esf, objs[i]);       i++;     }   }   return o; }    private static <O> org.eclipse.emf.common.util.EList<O> appendEntryEList(O e,org.eclipse.emf.common.util.EList<O> l) {   l.add(e);   return l; }    public static <O extends org.eclipse.emf.ecore.EObject> O constructEObject(O o, Object[] objs) {   int i=0;   EList<EStructuralFeature> sfes = o.eClass().getEAllStructuralFeatures();   for(EStructuralFeature esf : sfes) {     if(esf.isChangeable()) {       o.eSet(esf, objs[i]);       i++;     }   }   return o; }    private static <O> org.eclipse.emf.common.util.EList<O> appendEObjectEList(O e,org.eclipse.emf.common.util.EList<O> l) {   l.add(e);   return l; }    public static <O extends org.eclipse.emf.ecore.EObject> O constructEAnnotation(O o, Object[] objs) {   int i=0;   EList<EStructuralFeature> sfes = o.eClass().getEAllStructuralFeatures();   for(EStructuralFeature esf : sfes) {     if(esf.isChangeable()) {       o.eSet(esf, objs[i]);       i++;     }   }   return o; }     private static <O> org.eclipse.emf.common.util.EList<O> appendEGenericTypeEList(O e,org.eclipse.emf.common.util.EList<O> l) {   l.add(e);   return l; }    public static <O extends org.eclipse.emf.ecore.EObject> O constructEGenericType(O o, Object[] objs) {   int i=0;   EList<EStructuralFeature> sfes = o.eClass().getEAllStructuralFeatures();   for(EStructuralFeature esf : sfes) {     if(esf.isChangeable()) {       o.eSet(esf, objs[i]);       i++;     }   }   return o; }    public static <O extends org.eclipse.emf.ecore.EObject> O constructETypeParameter(O o, Object[] objs) {   int i=0;   EList<EStructuralFeature> sfes = o.eClass().getEAllStructuralFeatures();   for(EStructuralFeature esf : sfes) {     if(esf.isChangeable()) {       o.eSet(esf, objs[i]);       i++;     }   }   return o; }    private static <O> org.eclipse.emf.common.util.EList<O> appendETypeParameterEList(O e,org.eclipse.emf.common.util.EList<O> l) {   l.add(e);   return l; }    public static <O extends org.eclipse.emf.ecore.EObject> O constructEAttribute(O o, Object[] objs) {   int i=0;   EList<EStructuralFeature> sfes = o.eClass().getEAllStructuralFeatures();   for(EStructuralFeature esf : sfes) {     if(esf.isChangeable()) {       o.eSet(esf, objs[i]);       i++;     }   }   return o; }    private static <O> org.eclipse.emf.common.util.EList<O> appendEClassEList(O e,org.eclipse.emf.common.util.EList<O> l) {   l.add(e);   return l; }    public static <O extends org.eclipse.emf.ecore.EObject> O constructEParameter(O o, Object[] objs) {   int i=0;   EList<EStructuralFeature> sfes = o.eClass().getEAllStructuralFeatures();   for(EStructuralFeature esf : sfes) {     if(esf.isChangeable()) {       o.eSet(esf, objs[i]);       i++;     }   }   return o; }    private static <O> org.eclipse.emf.common.util.EList<O> appendEParameterEList(O e,org.eclipse.emf.common.util.EList<O> l) {   l.add(e);   return l; }    private static <O> org.eclipse.emf.common.util.EList<O> appendEClassifierEList(O e,org.eclipse.emf.common.util.EList<O> l) {   l.add(e);   return l; }    public static <O extends org.eclipse.emf.ecore.EObject> O constructEOperation(O o, Object[] objs) {   int i=0;   EList<EStructuralFeature> sfes = o.eClass().getEAllStructuralFeatures();   for(EStructuralFeature esf : sfes) {     if(esf.isChangeable()) {       o.eSet(esf, objs[i]);       i++;     }   }   return o; }    private static <O> org.eclipse.emf.common.util.EList<O> appendEOperationEList(O e,org.eclipse.emf.common.util.EList<O> l) {   l.add(e);   return l; }    private static <O> org.eclipse.emf.common.util.EList<O> appendEStructuralFeatureEList(O e,org.eclipse.emf.common.util.EList<O> l) {   l.add(e);   return l; }    public static <O extends org.eclipse.emf.ecore.EObject> O constructEClass(O o, Object[] objs) {   int i=0;   EList<EStructuralFeature> sfes = o.eClass().getEAllStructuralFeatures();   for(EStructuralFeature esf : sfes) {     if(esf.isChangeable()) {       o.eSet(esf, objs[i]);       i++;     }   }   return o; }    public static <O extends org.eclipse.emf.ecore.EObject> O constructEDataType(O o, Object[] objs) {   int i=0;   EList<EStructuralFeature> sfes = o.eClass().getEAllStructuralFeatures();   for(EStructuralFeature esf : sfes) {     if(esf.isChangeable()) {       o.eSet(esf, objs[i]);       i++;     }   }   return o; }    public static <O extends org.eclipse.emf.ecore.EObject> O constructEEnumLiteral(O o, Object[] objs) {   int i=0;   EList<EStructuralFeature> sfes = o.eClass().getEAllStructuralFeatures();   for(EStructuralFeature esf : sfes) {     if(esf.isChangeable()) {       o.eSet(esf, objs[i]);       i++;     }   }   return o; }    private static <O> org.eclipse.emf.common.util.EList<O> appendEEnumLiteralEList(O e,org.eclipse.emf.common.util.EList<O> l) {   l.add(e);   return l; }    public static <O extends org.eclipse.emf.ecore.EObject> O constructEEnum(O o, Object[] objs) {   int i=0;   EList<EStructuralFeature> sfes = o.eClass().getEAllStructuralFeatures();   for(EStructuralFeature esf : sfes) {     if(esf.isChangeable()) {       o.eSet(esf, objs[i]);       i++;     }   }   return o; }    private static <O> org.eclipse.emf.common.util.EList<O> appendEPackageEList(O e,org.eclipse.emf.common.util.EList<O> l) {   l.add(e);   return l; }    public static <O extends org.eclipse.emf.ecore.EObject> O constructEPackage(O o, Object[] objs) {   int i=0;   EList<EStructuralFeature> sfes = o.eClass().getEAllStructuralFeatures();   for(EStructuralFeature esf : sfes) {     if(esf.isChangeable()) {       o.eSet(esf, objs[i]);       i++;     }   }   return o; }    public static <O extends org.eclipse.emf.ecore.EObject> O constructEFactory(O o, Object[] objs) {   int i=0;   EList<EStructuralFeature> sfes = o.eClass().getEAllStructuralFeatures();   for(EStructuralFeature esf : sfes) {     if(esf.isChangeable()) {       o.eSet(esf, objs[i]);       i++;     }   }   return o; }    private static <O> org.eclipse.emf.common.util.EList<O> appendEAttributeEList(O e,org.eclipse.emf.common.util.EList<O> l) {   l.add(e);   return l; }    public static <O extends org.eclipse.emf.ecore.EObject> O constructEReference(O o, Object[] objs) {   int i=0;   EList<EStructuralFeature> sfes = o.eClass().getEAllStructuralFeatures();   for(EStructuralFeature esf : sfes) {     if(esf.isChangeable()) {       o.eSet(esf, objs[i]);       i++;     }   }   return o; }        
+
 // ------------------------------------------------------------
 
   protected void buildExpBottom(int deep, TomType type, String moduleName) throws IOException {
@@ -113,6 +130,333 @@ public class JavaGenerator extends CFamilyGenerator {
     output.write(deep,"}");
   }
 
+  protected String genResolveMakeCode(String funName,
+                                      BQTermList argList) throws IOException {
+    String args = "";
+    while(!argList.isEmptyconcBQTerm()) {
+      BQTerm arg = argList.getHeadconcBQTerm();
+matchBlock: {
+              {{if ( (((Object)arg) instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )((Object)arg)) instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )(( tom.engine.adt.code.types.BQTerm )((Object)arg))) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) { tom.engine.adt.tomname.types.TomName  tomMatch109_1= (( tom.engine.adt.code.types.BQTerm )((Object)arg)).getAstName() ;if ( (tomMatch109_1 instanceof tom.engine.adt.tomname.types.TomName) ) {if ( ((( tom.engine.adt.tomname.types.TomName )tomMatch109_1) instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+
+                  args = args+ tomMatch109_1.getString() ;
+                  break matchBlock;
+                }}}}}}{if ( (((Object)arg) instanceof tom.engine.adt.code.types.BQTerm) ) {
+
+
+                  System.out.println("genResolveMakeCode: strange term: " + arg);
+                  throw new TomRuntimeException("genResolveMakeCode: strange term: " + arg);
+                }}}
+
+            }
+            argList = argList.getTailconcBQTerm();
+            if(!argList.isEmptyconcBQTerm()) {
+              args = args + ", ";
+            }
+    }
+    return "new "+funName+"("+args+")";
+  }
+
+  protected void genResolveDeclMake(String prefix, String funName, TomType
+      returnType, BQTermList argList, String moduleName) throws IOException {
+    if(nodeclMode) {
+      return;
+    }
+    Instruction instr =  tom.engine.adt.tominstruction.types.instruction.ExpressionToInstruction.make( tom.engine.adt.tomexpression.types.expression.Code.make(genResolveMakeCode(funName,argList)) ) ;
+    if(!inline) {
+      StringBuilder s = new StringBuilder();
+      s.append(modifier + TomBase.getTLType(returnType) + " " + prefix + funName + "(");
+      while(!argList.isEmptyconcBQTerm()) {
+        BQTerm arg = argList.getHeadconcBQTerm();
+matchBlock: {
+              {{if ( (((Object)arg) instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )((Object)arg)) instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )(( tom.engine.adt.code.types.BQTerm )((Object)arg))) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) { tom.engine.adt.tomname.types.TomName  tomMatch110_1= (( tom.engine.adt.code.types.BQTerm )((Object)arg)).getAstName() ; tom.engine.adt.tomtype.types.TomType  tomMatch110_2= (( tom.engine.adt.code.types.BQTerm )((Object)arg)).getAstType() ;if ( (tomMatch110_1 instanceof tom.engine.adt.tomname.types.TomName) ) {if ( ((( tom.engine.adt.tomname.types.TomName )tomMatch110_1) instanceof tom.engine.adt.tomname.types.tomname.Name) ) {if ( (tomMatch110_2 instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )tomMatch110_2) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) { tom.engine.adt.tomtype.types.TargetLanguageType  tomMatch110_8= tomMatch110_2.getTlType() ;if ( (tomMatch110_8 instanceof tom.engine.adt.tomtype.types.TargetLanguageType) ) {if ( ((( tom.engine.adt.tomtype.types.TargetLanguageType )tomMatch110_8) instanceof tom.engine.adt.tomtype.types.targetlanguagetype.TLType) ) {
+
+                  s.append(TomBase.getTLCode(tomMatch110_8) + " " +  tomMatch110_1.getString() );
+                  break matchBlock;
+                }}}}}}}}}}{if ( (((Object)arg) instanceof tom.engine.adt.code.types.BQTerm) ) {
+
+
+                  System.out.println("genResolveDeclMake: strange term: " + arg);
+                  throw new TomRuntimeException("genResolveDeclMake: strange term: " + arg);
+                }}}
+
+            }
+            argList = argList.getTailconcBQTerm();
+            if(!argList.isEmptyconcBQTerm()) {
+              s.append(", ");
+            }
+      }
+      s.append(") { ");
+      output.writeln(s);
+      output.write("return ");
+      generateInstruction(0,instr,moduleName);
+      output.writeln(";");
+      output.writeln("}");
+    }
+  }
+
+  //TODO: to move in JavaGenerator
+  /*protected String genResolveIsSortCode(String resolveStringName,
+                                        String varName) throws IOException {
+    return " "+varName+" instanceof "+resolveStringName+" ";
+  }*/
+
+  protected String genResolveIsFsymCode(String resolveStringName,
+                                        String varName) throws IOException {
+    return " ( "+varName+" instanceof "+resolveStringName+" ) ";
+  }
+
+  protected String genResolveGetSlotCode(String tomName,
+                                         String varName,
+                                         String slotName) throws IOException {
+    return " (("+tomName+")"+varName+")."+slotName+" ";
+  }
+
+  protected String getFullQualifiedNameFromTypeName(String name, String moduleName) {
+    String result = null;
+    TomType type = getSymbolTable(moduleName).getType(name);
+    return getFullQualifiedNameFromType(type);
+  }
+
+  protected String getFullQualifiedNameFromType(TomType type) {
+    String result = null;
+    {{if ( (((Object)type) instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )((Object)type)) instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )(( tom.engine.adt.tomtype.types.TomType )((Object)type))) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) { tom.engine.adt.tomtype.types.TargetLanguageType  tomMatch111_1= (( tom.engine.adt.tomtype.types.TomType )((Object)type)).getTlType() ;if ( (tomMatch111_1 instanceof tom.engine.adt.tomtype.types.TargetLanguageType) ) {if ( ((( tom.engine.adt.tomtype.types.TargetLanguageType )tomMatch111_1) instanceof tom.engine.adt.tomtype.types.targetlanguagetype.TLType) ) {
+ return result =  tomMatch111_1.getString() ; }}}}}}}
+
+    throw new RuntimeException("Should not be there: full qualified name of "+type+" is null");
+  }
+
+  //TODO: retrieve the information about the FQN of wName and extends
+  protected void buildResolveClass(String wName, String tName, String extendsName, String moduleName) throws
+    IOException {
+      String resolveStringName = "Resolve"+wName+tName;
+      //String fqnwName = wName;
+      //TomType type = getSymbolTable(moduleName).getType(wName);
+      //fqnwName = getFullQualifiedNameFromType(type);
+      String fqnwName = getFullQualifiedNameFromTypeName(wName, moduleName);
+      output.write("private static class "+resolveStringName+" extends "+extendsName+" {\n  public String name;\n  public "+fqnwName+" o;\n\n  public "+resolveStringName+"("+fqnwName+" o, String name) {\n    this.name = name;\n    this.o = o;\n  }\n}\n"
+
+
+
+
+
+
+
+
+);
+    }
+
+  //TODO: add attributes, get/set + EObject get(String)
+  //protected void buildReferenceClass(int deep, String refname,
+  //InstructionList instructions, String moduleName)a
+  protected void buildReferenceClass(int deep, String refname, RefClassTracelinkInstructionList refclassTInstructions, String moduleName)
+  throws IOException {
+    output.write("\npublic static class "+refname+" implements tom.library.utils.ReferenceClass {\n  "
+
+);
+    //RuleInstruction(TypeName:String,Term:TomTerm,Action:InstructionList,Options:OptionList)
+    //ReferenceClass(RefName:TomName,Fields:InstructionList)
+    //Tracelink(Type:TomName,Name:TomName,ElementaryTransfoName:TomName,Expr:Expression,OrgTrack:Option)//BQTerm, then blocklist
+    String getfunctionbody = "";
+    {{if ( (((Object)refclassTInstructions) instanceof tom.engine.adt.tominstruction.types.RefClassTracelinkInstructionList) ) {if ( (((( tom.engine.adt.tominstruction.types.RefClassTracelinkInstructionList )(( tom.engine.adt.tominstruction.types.RefClassTracelinkInstructionList )((Object)refclassTInstructions))) instanceof tom.engine.adt.tominstruction.types.refclasstracelinkinstructionlist.ConsconcRefClassTracelinkInstruction) || ((( tom.engine.adt.tominstruction.types.RefClassTracelinkInstructionList )(( tom.engine.adt.tominstruction.types.RefClassTracelinkInstructionList )((Object)refclassTInstructions))) instanceof tom.engine.adt.tominstruction.types.refclasstracelinkinstructionlist.EmptyconcRefClassTracelinkInstruction)) ) { tom.engine.adt.tominstruction.types.RefClassTracelinkInstructionList  tomMatch112__end__4=(( tom.engine.adt.tominstruction.types.RefClassTracelinkInstructionList )((Object)refclassTInstructions));do {{if (!( tomMatch112__end__4.isEmptyconcRefClassTracelinkInstruction() )) { tom.engine.adt.tominstruction.types.RefClassTracelinkInstruction  tomMatch112_9= tomMatch112__end__4.getHeadconcRefClassTracelinkInstruction() ;if ( (tomMatch112_9 instanceof tom.engine.adt.tominstruction.types.RefClassTracelinkInstruction) ) {if ( ((( tom.engine.adt.tominstruction.types.RefClassTracelinkInstruction )tomMatch112_9) instanceof tom.engine.adt.tominstruction.types.refclasstracelinkinstruction.RefClassTracelinkInstruction) ) { tom.engine.adt.tomname.types.TomName  tomMatch112_7= tomMatch112_9.getType() ; tom.engine.adt.tomname.types.TomName  tomMatch112_8= tomMatch112_9.getName() ;if ( (tomMatch112_7 instanceof tom.engine.adt.tomname.types.TomName) ) {if ( ((( tom.engine.adt.tomname.types.TomName )tomMatch112_7) instanceof tom.engine.adt.tomname.types.tomname.Name) ) { String  tom_type= tomMatch112_7.getString() ;if ( (tomMatch112_8 instanceof tom.engine.adt.tomname.types.TomName) ) {if ( ((( tom.engine.adt.tomname.types.TomName )tomMatch112_8) instanceof tom.engine.adt.tomname.types.tomname.Name) ) { String  tom_name= tomMatch112_8.getString() ;
+
+      output.write("\n  private "+tom_type+" "+tom_name+";\n  public "+tom_type+" get"+tom_name+"() { return "+tom_name+"; }\n  public void set"+tom_name+"("+tom_type+" value) { this."+tom_name+" = value; }\n"
+
+
+
+);
+      getfunctionbody = getfunctionbody+"if(name.equals(\""+tom_name+"\")) {\n        return get"+tom_name+"();\n    } else ";
+      }}}}}}}if ( tomMatch112__end__4.isEmptyconcRefClassTracelinkInstruction() ) {tomMatch112__end__4=(( tom.engine.adt.tominstruction.types.RefClassTracelinkInstructionList )((Object)refclassTInstructions));} else {tomMatch112__end__4= tomMatch112__end__4.getTailconcRefClassTracelinkInstruction() ;}}} while(!( (tomMatch112__end__4==(( tom.engine.adt.tominstruction.types.RefClassTracelinkInstructionList )((Object)refclassTInstructions))) ));}}}}
+
+
+    output.write("\n  public Object get(String name) {\n    "+getfunctionbody+" {\n      throw new RuntimeException(\"This field does not exist:\" + name);\n    }\n  }\n\n}\n\n"
+
+
+
+
+
+
+
+
+);
+
+  }
+
+  protected void buildTracelink(int deep, String type, String name, Expression expr, String moduleName) throws IOException {
+   output.write(type+" "+name+" = ");
+   generateExpression(deep,expr,moduleName);
+   output.writeln(";");
+  }
+
+  //TODO: update this procedure (tom__linkClass)
+  protected void buildTracelinkPopulateResolve(int deep, String refClassName, TomNameList tracedLinks, BQTerm current, BQTerm link, String moduleName) throws IOException {
+    String refVar = "var_"+refClassName.toLowerCase();
+    //create the ReferenceClass instance
+    output.write(refClassName+" "+refVar+" = new "+refClassName+"();");
+    //populate the newly created ReferenceClass by setting attributes
+    for(TomName name : tracedLinks.getCollectionconcTomName()){
+      String namestr = name.getString();
+      output.write(refVar+".set"+namestr+"("+namestr+");");
+    }
+    //save the ReferenceClass into  the LinkClass
+    //TODO: change this to be less specific (and add tom__linkClass:LinkClass
+    //as first parameter of all strategies)
+    //LinkClass class could be in the Tom library
+    generateBQTerm(deep, link, moduleName);
+    output.write(".put(");
+    generateBQTerm(deep, current, moduleName);
+    output.write(","+refVar+");");
+  }
+
+  protected void buildResolve(int deep, BQTerm bqterm, String moduleName) throws IOException {
+    generateBQTerm(deep, bqterm, moduleName);
+  }
+
+  //TODO: parameters are problematic
+  //TODO: specific to EMf
+  protected void buildResolveInverseLinks(int deep, String fileFrom, String fileTo, TomNameList resolveNameList, String moduleName) throws IOException {
+    //List<String> resolveList = getResolveNameList(resolveNameList);
+    //String toSet = genToSetFromResolveNameList(resolveNameList);
+
+    //result/accumulator to change ("acc")
+    output.write("\n  public static void resolveInverseLinks(EObject resolveNode, EObject newNode, EObject acc) {\n    ECrossReferenceAdapter adapter = new ECrossReferenceAdapter();\n    acc.eAdapters().add(adapter);\n    Collection<EStructuralFeature.Setting> references = adapter.getInverseReferences(resolveNode);\n\n        boolean toSet = (false\n        "+genToSetFromResolveNameList(resolveNameList)+"\n        );\n\n    for (EStructuralFeature.Setting setting:references) {\n      EObject current = setting.getEObject();\n"
+
+
+
+
+
+
+
+
+
+
+
+);
+    genTargetElementBlock(fileTo,moduleName);
+    output.write("\n    }\n  }\n"
+
+
+);
+  }
+
+  //TODO: find another way to generate these blocks. It would be better to
+  //avoid EMF dependancies
+  //protected void genTargetElementBlock(String fileTo) throws IOException  {
+  protected void genTargetElementBlock(String fileTo, String moduleName) throws IOException  {
+    XMIResourceImpl resource = new XMIResourceImpl();
+    Map opts = new HashMap();
+    opts.put(XMIResource.OPTION_SCHEMA_LOCATION, java.lang.Boolean.TRUE);
+    File input = new File(fileTo);
+    try {
+      resource.load(new FileInputStream(input),opts);//new HashMap());
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+    //org.eclipse.emf.ecore.impl.EPackageImpl
+    EPackage tmp = (EPackage)resource.getContents().get(0);
+    EList<EPackage> epkgs = tmp.getESubpackages();
+    if(epkgs.size()<0) {
+      epkgs = getEPackages(epkgs);
+    }
+    epkgs.add(tmp);
+    EList<EClassifier> ecls = new BasicEList<EClassifier>();
+    //retrieve all EClassifiers in the MM
+    for(EPackage epk : epkgs) {
+      ecls.addAll(epk.getEClassifiers());
+    }
+    //generate code for each EClassifier which is an EClass
+    for(EClassifier ecl : ecls) {
+      if(ecl instanceof EClass ) {//EEnum should not produce a block
+        if(!((EClass)ecl).isAbstract()) {
+          //String eclName = ecl.getName();
+          String eclFQName = getFullQualifiedNameFromTypeName(ecl.getName(),moduleName);
+          output.write("if (current instanceof "+eclFQName+") {\n        "+eclFQName+" newCurrent = ("+eclFQName+")current;\n      "
+
+);
+
+          EList<EStructuralFeature> sfs = ((EClass)ecl).getEAllStructuralFeatures();
+          int sfCounter = 0; //to avoid to gen blocks with only an exception
+          for(EStructuralFeature sf : sfs) {//many and builtin should not produce a block
+            if(sf.isChangeable() && !sf.isMany() && !isPrimitiveEMFType(sf) && !isEEnumType(sf)) {
+              if(sfCounter>0) {
+                output.write(" else ");
+              }
+              output.write("if(newCurrent.get"+firstToUpperCase(sf.getName())+"().equals(resolveNode) && toSet) {\n          newCurrent.set"+firstToUpperCase(sf.getName())+"(("+getTypeFromEStructuralFeature(sf)+")newNode); \n        } "
+
+);
+              sfCounter++;
+            }
+          }
+          if(sfCounter>0) {
+            output.write("else { throw new RuntimeException(\"should not be there\"); }");
+          }
+          output.write("} else ");
+        }
+      }
+    }
+    output.write(" { throw new RuntimeException(\"should not be there\"); }");
+  }
+
+  //TODO: change that!
+  private final static Set<String> primitiveEMFTypes = new HashSet<String>();
+  static {
+    primitiveEMFTypes.add("EInt");
+    primitiveEMFTypes.add("EBoolean");
+    primitiveEMFTypes.add("EString");
+    primitiveEMFTypes.add("EDouble");
+    primitiveEMFTypes.add("EDate");
+    primitiveEMFTypes.add("BigInteger");
+    primitiveEMFTypes.add("BigDecimal");
+    primitiveEMFTypes.add("Date");
+    primitiveEMFTypes.add("java.lang.String");
+    primitiveEMFTypes.add("byte");
+    primitiveEMFTypes.add("double");
+    primitiveEMFTypes.add("int");
+    primitiveEMFTypes.add("float");
+    primitiveEMFTypes.add("double");
+    primitiveEMFTypes.add("boolean");
+  }
+  protected boolean isPrimitiveEMFType(EStructuralFeature sf) {
+    return (primitiveEMFTypes.contains(sf.getName()) || primitiveEMFTypes.contains(sf.getEType().getInstanceClassName()));
+  }
+
+  protected boolean isEEnumType(EStructuralFeature sf) {
+    return (sf.getEType() instanceof EEnum);
+  }
+
+  protected String getTypeFromEStructuralFeature(EStructuralFeature sf) {
+    String result = sf.getEType().getInstanceClassName();
+    return ((result==null)?sf.getEType().getName():result);
+  }
+
+  protected String firstToUpperCase(String s) {
+    if(s.length()>1) {
+      return (s.substring(0,1).toUpperCase()+s.substring(1,s.length()));
+    } else {
+      return s.toUpperCase();
+    }
+  }
+
+  protected EList<org.eclipse.emf.ecore.EPackage> getEPackages(EList<org.eclipse.emf.ecore.EPackage> epkgs) {
+    for(EPackage epkg : epkgs ) {
+      EList<EPackage> sub = epkg.getESubpackages();
+      if(sub.size()>0) {
+        epkgs.addAll(getEPackages(sub));
+      }
+    }
+    return epkgs;
+  }
+
+
+  protected String genToSetFromResolveNameList(TomNameList resolveNameList) {
+    //List<String> result = new LinkedList<String>();
+    String result = "";
+    for(TomName tname : resolveNameList.getCollectionconcTomName()) {
+      result = result+" | resolveNode instanceof "+tname.getString();
+    }
+    return result;
+  }
+
   protected void buildClass(int deep, String tomName, TomType extendsType, BQTerm superTerm, Declaration declaration, String moduleName) throws IOException {
     TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(tomName);
     TomTypeList tomTypes = TomBase.getSymbolDomain(tomSymbol);
@@ -129,7 +473,7 @@ public class JavaGenerator extends CFamilyGenerator {
       names.add(name);
 
       // test if the argument is a Strategy
-      {{if ( (((Object)type) instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )((Object)type)) instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )(( tom.engine.adt.tomtype.types.TomType )((Object)type))) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) { String  tomMatch100_1= (( tom.engine.adt.tomtype.types.TomType )((Object)type)).getTomType() ;if ( true ) {if ( "Strategy".equals(tomMatch100_1) ) {
+      {{if ( (((Object)type) instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )((Object)type)) instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )(( tom.engine.adt.tomtype.types.TomType )((Object)type))) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) { String  tomMatch113_1= (( tom.engine.adt.tomtype.types.TomType )((Object)type)).getTomType() ;if ( true ) {if ( "Strategy".equals(tomMatch113_1) ) {
 
           stratChild.add(Integer.valueOf(index));
         }}}}}}}
@@ -141,11 +485,11 @@ public class JavaGenerator extends CFamilyGenerator {
     output.write(deep, stratmodifier + "class " + tomName);
     //write extends
 matchblock: {
-              {{if ( (((Object)extendsType) instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )((Object)extendsType)) instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )(( tom.engine.adt.tomtype.types.TomType )((Object)extendsType))) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) { tom.engine.adt.tomtype.types.TargetLanguageType  tomMatch101_1= (( tom.engine.adt.tomtype.types.TomType )((Object)extendsType)).getTlType() ;if ( (tomMatch101_1 instanceof tom.engine.adt.tomtype.types.TargetLanguageType) ) {if ( ((( tom.engine.adt.tomtype.types.TargetLanguageType )tomMatch101_1) instanceof tom.engine.adt.tomtype.types.targetlanguagetype.TLType) ) {
+              {{if ( (((Object)extendsType) instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )((Object)extendsType)) instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )(( tom.engine.adt.tomtype.types.TomType )((Object)extendsType))) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) { tom.engine.adt.tomtype.types.TargetLanguageType  tomMatch114_1= (( tom.engine.adt.tomtype.types.TomType )((Object)extendsType)).getTlType() ;if ( (tomMatch114_1 instanceof tom.engine.adt.tomtype.types.TargetLanguageType) ) {if ( ((( tom.engine.adt.tomtype.types.TargetLanguageType )tomMatch114_1) instanceof tom.engine.adt.tomtype.types.targetlanguagetype.TLType) ) {
 
-				output.write(deep," extends " +  tomMatch101_1.getString() );
+				output.write(deep," extends " +  tomMatch114_1.getString() );
         break matchblock;
-			}}}}}}{if ( (((Object)extendsType) instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )((Object)extendsType)) instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )(( tom.engine.adt.tomtype.types.TomType )((Object)extendsType))) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) { tom.engine.adt.tomtype.types.TargetLanguageType  tomMatch101_9= (( tom.engine.adt.tomtype.types.TomType )((Object)extendsType)).getTlType() ;if ( (tomMatch101_9 instanceof tom.engine.adt.tomtype.types.TargetLanguageType) ) {if ( ((( tom.engine.adt.tomtype.types.TargetLanguageType )tomMatch101_9) instanceof tom.engine.adt.tomtype.types.targetlanguagetype.EmptyTargetLanguageType) ) {
+			}}}}}}{if ( (((Object)extendsType) instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )((Object)extendsType)) instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )(( tom.engine.adt.tomtype.types.TomType )((Object)extendsType))) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) { tom.engine.adt.tomtype.types.TargetLanguageType  tomMatch114_9= (( tom.engine.adt.tomtype.types.TomType )((Object)extendsType)).getTlType() ;if ( (tomMatch114_9 instanceof tom.engine.adt.tomtype.types.TargetLanguageType) ) {if ( ((( tom.engine.adt.tomtype.types.TargetLanguageType )tomMatch114_9) instanceof tom.engine.adt.tomtype.types.targetlanguagetype.EmptyTargetLanguageType) ) {
 
 
 				output.write(deep," extends " +  (( tom.engine.adt.tomtype.types.TomType )((Object)extendsType)).getTomType() );
@@ -194,13 +538,13 @@ matchblock: {
     int stratChildCount = stratChild.size();
 
     output.writeln(deep, "public tom.library.sl.Visitable[] getChildren() {");
-    output.writeln(deep, "tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];");
-    output.writeln(deep, "stratChilds[0] = super.getChildAt(0);");
+    output.writeln(deep, "tom.library.sl.Visitable[] stratChildren = new tom.library.sl.Visitable[getChildCount()];");
+    output.writeln(deep, "stratChildren[0] = super.getChildAt(0);");
     for(int i = 0; i < stratChildCount; i++) {
       int j = (stratChild.get(i)).intValue();
-      output.writeln(deep, "stratChilds[" + (i+1) + "] = get" + names.get(j) + "();");
+      output.writeln(deep, "stratChildren[" + (i+1) + "] = get" + names.get(j) + "();");
     }
-    output.writeln(deep, "return stratChilds;}");
+    output.writeln(deep, "return stratChildren;}");
 
     output.writeln(deep, "public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {");
     output.writeln(deep,"super.setChildAt(0, children[0]);");
@@ -276,11 +620,11 @@ matchblock: {
     }
     output.writeln(deep,")");
 matchblock: {
-    {{if ( (((Object)throwsType) instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )((Object)throwsType)) instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )(( tom.engine.adt.tomtype.types.TomType )((Object)throwsType))) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) { tom.engine.adt.tomtype.types.TargetLanguageType  tomMatch103_1= (( tom.engine.adt.tomtype.types.TomType )((Object)throwsType)).getTlType() ;if ( (tomMatch103_1 instanceof tom.engine.adt.tomtype.types.TargetLanguageType) ) {if ( ((( tom.engine.adt.tomtype.types.TargetLanguageType )tomMatch103_1) instanceof tom.engine.adt.tomtype.types.targetlanguagetype.TLType) ) {
+    {{if ( (((Object)throwsType) instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )((Object)throwsType)) instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )(( tom.engine.adt.tomtype.types.TomType )((Object)throwsType))) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) { tom.engine.adt.tomtype.types.TargetLanguageType  tomMatch116_1= (( tom.engine.adt.tomtype.types.TomType )((Object)throwsType)).getTlType() ;if ( (tomMatch116_1 instanceof tom.engine.adt.tomtype.types.TargetLanguageType) ) {if ( ((( tom.engine.adt.tomtype.types.TargetLanguageType )tomMatch116_1) instanceof tom.engine.adt.tomtype.types.targetlanguagetype.TLType) ) {
 
-				output.write(deep," throws " +  tomMatch103_1.getString() );
+				output.write(deep," throws " +  tomMatch116_1.getString() );
         break matchblock;
-			}}}}}}{if ( (((Object)throwsType) instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )((Object)throwsType)) instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )(( tom.engine.adt.tomtype.types.TomType )((Object)throwsType))) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) { tom.engine.adt.tomtype.types.TargetLanguageType  tomMatch103_9= (( tom.engine.adt.tomtype.types.TomType )((Object)throwsType)).getTlType() ;if ( (tomMatch103_9 instanceof tom.engine.adt.tomtype.types.TargetLanguageType) ) {if ( ((( tom.engine.adt.tomtype.types.TargetLanguageType )tomMatch103_9) instanceof tom.engine.adt.tomtype.types.targetlanguagetype.EmptyTargetLanguageType) ) {
+			}}}}}}{if ( (((Object)throwsType) instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )((Object)throwsType)) instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )(( tom.engine.adt.tomtype.types.TomType )((Object)throwsType))) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) { tom.engine.adt.tomtype.types.TargetLanguageType  tomMatch116_9= (( tom.engine.adt.tomtype.types.TomType )((Object)throwsType)).getTlType() ;if ( (tomMatch116_9 instanceof tom.engine.adt.tomtype.types.TargetLanguageType) ) {if ( ((( tom.engine.adt.tomtype.types.TargetLanguageType )tomMatch116_9) instanceof tom.engine.adt.tomtype.types.targetlanguagetype.EmptyTargetLanguageType) ) {
 
 
 				output.write(deep," throws " +  (( tom.engine.adt.tomtype.types.TomType )((Object)throwsType)).getTomType() );

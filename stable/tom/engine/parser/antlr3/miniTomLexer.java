@@ -1,4 +1,4 @@
-// $ANTLR 3.2 Sep 23, 2009 12:02:23 /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g 2012-05-31 09:38:41
+// $ANTLR 3.2 Sep 23, 2009 12:02:23 /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g 2012-10-21 12:01:20
 
 package tom.engine.parser.antlr3;
 import org.antlr.runtime.tree.Tree;
@@ -14,397 +14,422 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class miniTomLexer extends Lexer {
-    public static final int concInstruction=191;
-    public static final int EmptyTargetLanguageType=212;
+    public static final int concInstruction=198;
+    public static final int EmptyTargetLanguageType=226;
     public static final int Cst_MatchTermConstraint=133;
-    public static final int MakeEmptyList=322;
+    public static final int MakeEmptyList=346;
     public static final int Cst_Label=77;
-    public static final int RSQUAREBR=371;
-    public static final int NumLessOrEqualThan=255;
+    public static final int RSQUAREBR=396;
+    public static final int NumLessOrEqualThan=269;
     public static final int GetHead=25;
-    public static final int KEYWORD_MAKE_EMPTY=380;
-    public static final int GREATEROREQU=354;
-    public static final int KEYWORD_GET_ELEMENT=382;
+    public static final int ResolveGetSlotDecl=333;
+    public static final int KEYWORD_MAKE_EMPTY=406;
+    public static final int GREATEROREQU=379;
+    public static final int KEYWORD_GET_ELEMENT=408;
     public static final int UsedSymbolConstructor=162;
-    public static final int VariableStar=230;
+    public static final int ResolveStratElement=171;
+    public static final int VariableStar=244;
     public static final int Cst_RecordAppl=81;
-    public static final int GetSlot=27;
     public static final int Cst_MakeEmptyArray=115;
-    public static final int KEYWORD_GET_TAIL=378;
-    public static final int EmptySymbol=171;
-    public static final int GetDefaultDecl=328;
+    public static final int GetSlot=27;
+    public static final int Tracelink=201;
+    public static final int EmptySymbol=178;
+    public static final int KEYWORD_GET_TAIL=404;
+    public static final int BQTermToDeclaration=320;
+    public static final int GetDefaultDecl=353;
     public static final int Cst_Symbol=53;
-    public static final int BQRecordAppl=287;
-    public static final int Automata=227;
+    public static final int BQRecordAppl=302;
+    public static final int Automata=241;
     public static final int Conditional=34;
     public static final int Cst_OriginTracking=76;
     public static final int Cst_NumGreaterOrEqualTo=126;
-    public static final int ACSymbolDecl=305;
+    public static final int ACSymbolDecl=321;
     public static final int Cst_UnamedVariableStar=83;
     public static final int FalseTL=32;
-    public static final int UNDERSCORE=361;
-    public static final int ANTI=360;
+    public static final int UNDERSCORE=386;
+    public static final int ANTI=385;
     public static final int Cst_Name=122;
-    public static final int AndConstraint=244;
-    public static final int KEYWORD_MAKE_INSERT=381;
-    public static final int NamedBlock=196;
-    public static final int CompiledPattern=193;
-    public static final int Strategy=315;
+    public static final int AndConstraint=258;
+    public static final int NamedBlock=206;
+    public static final int KEYWORD_MAKE_INSERT=407;
+    public static final int CompiledPattern=203;
+    public static final int concResolveStratBlock=173;
+    public static final int concResolveStratElement=165;
+    public static final int Strategy=339;
     public static final int Cst_TypetermConstruct=63;
-    public static final int LOWERTHAN=355;
-    public static final int MakeAddArray=317;
-    public static final int SL_COMMENT=398;
+    public static final int LOWERTHAN=380;
+    public static final int SL_COMMENT=423;
+    public static final int MakeAddArray=341;
     public static final int ConcCstSymbol=57;
-    public static final int KEYWORD_MAKE_APPEND=384;
-    public static final int EmptyDeclaration=307;
-    public static final int CodeToInstruction=208;
+    public static final int KEYWORD_MAKE_APPEND=410;
+    public static final int EmptyDeclaration=323;
+    public static final int BuildConsArray=289;
+    public static final int CodeToInstruction=218;
     public static final int Cst_NumLessThan=129;
-    public static final int BuildConsArray=275;
     public static final int ConcCstPairSlotBQTerm=97;
-    public static final int Codomain=219;
-    public static final int FalseTypeConstraint=301;
+    public static final int FalseTypeConstraint=316;
+    public static final int Codomain=233;
     public static final int GreaterThan=39;
-    public static final int CompositeBQTerm=291;
+    public static final int CompositeBQTerm=306;
     public static final int Cst_UnamedVariable=84;
-    public static final int AT=359;
-    public static final int AU=293;
+    public static final int AT=384;
+    public static final int AU=308;
     public static final int Cst_TheoryDEFAULT=54;
-    public static final int BuildEmptyArray=276;
-    public static final int AC=294;
+    public static final int AC=309;
+    public static final int BuildEmptyArray=290;
     public static final int ConstraintToExpression=14;
     public static final int GetTail=24;
     public static final int OrExpressionDisjunction=41;
-    public static final int Return=200;
+    public static final int Return=210;
     public static final int Cst_GetTail=113;
-    public static final int VariableHeadArray=269;
+    public static final int VariableHeadArray=283;
     public static final int MatchNumber=158;
     public static final int Cst_BQVarStar=138;
-    public static final int TrueConstraint=248;
-    public static final int KEYWORD_EQUALS=387;
-    public static final int DQMARK=364;
-    public static final int TextPosition=164;
-    public static final int DeclarationToOption=188;
+    public static final int TrueConstraint=262;
+    public static final int KEYWORD_EQUALS=412;
+    public static final int DQMARK=389;
+    public static final int TextPosition=174;
+    public static final int DeclarationToOption=195;
     public static final int Cst_IsEmpty=116;
-    public static final int HEX_DIGIT=395;
-    public static final int ListTail=267;
+    public static final int HEX_DIGIT=420;
+    public static final int ListTail=281;
     public static final int Cst_Variable=88;
-    public static final int MINUS=392;
-    public static final int SQUOTE=389;
-    public static final int ArraySymbolDecl=308;
-    public static final int concTypeOption=214;
+    public static final int MINUS=417;
+    public static final int SQUOTE=414;
+    public static final int ArraySymbolDecl=324;
+    public static final int concTypeOption=228;
     public static final int Cst_BQAppl=141;
     public static final int Cst_AnnotatedPattern=89;
-    public static final int COLON=346;
-    public static final int GetSizeDecl=319;
-    public static final int Match=195;
-    public static final int TomInclude=257;
-    public static final int concTomVisit=166;
+    public static final int COLON=371;
+    public static final int GetSizeDecl=343;
+    public static final int TomInclude=271;
+    public static final int Match=205;
+    public static final int concTomVisit=168;
     public static final int Cst_MakeEmptyList=106;
     public static final int BQTermToExpression=47;
-    public static final int KEYWORD_GET_DEFAULT=376;
-    public static final int ARROW=347;
-    public static final int GetHeadDecl=325;
-    public static final int AbstractBlock=198;
-    public static final int LONG=366;
+    public static final int ARROW=372;
+    public static final int KEYWORD_GET_DEFAULT=401;
+    public static final int GetHeadDecl=349;
+    public static final int AbstractBlock=208;
     public static final int Position=151;
+    public static final int LONG=391;
+    public static final int Transformation=338;
     public static final int LessThan=37;
     public static final int Cst_Implement=105;
     public static final int Cst_TermVariable=73;
-    public static final int CHAR=367;
-    public static final int DIFFERENT=358;
-    public static final int concCode=292;
+    public static final int CHAR=392;
+    public static final int DIFFERENT=383;
+    public static final int concCode=307;
     public static final int Cst_GetHead=117;
     public static final int Cst_GetSlot=111;
     public static final int Cst_BQConstant=134;
     public static final int Cst_Anti=90;
-    public static final int noTL=263;
-    public static final int FalseConstraint=247;
+    public static final int noTL=277;
+    public static final int FalseConstraint=261;
     public static final int Entry=167;
-    public static final int Let=204;
-    public static final int LPAR=341;
+    public static final int Let=214;
+    public static final int LPAR=366;
     public static final int Cst_ITL=135;
-    public static final int DOUBLE=368;
-    public static final int BQTermToInstruction=210;
+    public static final int BQTermToInstruction=220;
     public static final int NodeString=78;
     public static final int Cst_OrConstraint=130;
-    public static final int XMLAppl=232;
-    public static final int VISIT=345;
-    public static final int CompositeTL=290;
+    public static final int DOUBLE=393;
+    public static final int XMLAppl=246;
+    public static final int VISIT=370;
+    public static final int CompositeTL=305;
     public static final int Cst_Program=98;
-    public static final int Table=172;
-    public static final int concBQTerm=289;
-    public static final int TruePattern=225;
-    public static final int GetSlotDecl=329;
-    public static final int TypeForVariable=173;
-    public static final int concConstraint=236;
-    public static final int OR=351;
+    public static final int Table=179;
+    public static final int concBQTerm=304;
+    public static final int RuleInstruction=225;
+    public static final int TruePattern=239;
+    public static final int concElementaryTransformation=172;
+    public static final int GetSlotDecl=354;
+    public static final int TypeForVariable=180;
+    public static final int concConstraint=250;
+    public static final int OR=376;
     public static final int Cst_Make=107;
+    public static final int TransfoStratInfo=170;
     public static final int ConcCstBlock=120;
-    public static final int Cst_Appl=82;
     public static final int Cst_Type=100;
-    public static final int NumGreaterThan=254;
-    public static final int BQVariableStar=285;
+    public static final int Cst_Appl=82;
+    public static final int NumGreaterThan=268;
+    public static final int BQVariableStar=300;
     public static final int IsSort=11;
-    public static final int AssignArray=201;
+    public static final int AssignArray=211;
     public static final int Cst_ConstraintAction=75;
-    public static final int Unitary=295;
-    public static final int BuildConstant=281;
-    public static final int RBR=340;
-    public static final int OrConstraint=243;
-    public static final int KEYWORD_GET_SIZE=383;
-    public static final int AntiMatchConstraint=240;
-    public static final int LARROW=352;
+    public static final int Unitary=310;
+    public static final int BuildConstant=295;
+    public static final int RBR=365;
+    public static final int OrConstraint=257;
+    public static final int AntiMatchConstraint=254;
+    public static final int KEYWORD_GET_SIZE=409;
+    public static final int LARROW=377;
     public static final int EqualBQTerm=29;
-    public static final int VariableHeadList=270;
+    public static final int VariableHeadList=284;
+    public static final int ResolveInverseLinksDecl=336;
     public static final int Cst_PairPattern=69;
     public static final int UsedType=159;
-    public static final int LBR=338;
+    public static final int LBR=363;
     public static final int Begin=154;
-    public static final int TomNameToOption=187;
+    public static final int TomNameToOption=194;
     public static final int PositionName=144;
-    public static final int RawAction=192;
-    public static final int ImplicitXMLAttribut=178;
+    public static final int RawAction=202;
+    public static final int ResolveStratBlock=163;
+    public static final int ImplicitXMLAttribut=185;
     public static final int Cst_TermAppl=71;
-    public static final int WithSymbol=222;
-    public static final int COMMA=348;
-    public static final int EQUAL=372;
-    public static final int ImplicitXMLChild=177;
+    public static final int WithSymbol=236;
+    public static final int COMMA=373;
+    public static final int EQUAL=397;
     public static final int Cst_BQTermToBlock=60;
-    public static final int SubtypeDecl=221;
+    public static final int ImplicitXMLChild=184;
+    public static final int ResolveIsFsymDecl=334;
+    public static final int SubtypeDecl=235;
     public static final int Cst_BQRecordAppl=140;
     public static final int Cst_NumGreaterThan=127;
-    public static final int DIGIT=391;
+    public static final int DIGIT=416;
     public static final int ACMatchLoop=13;
-    public static final int ExpressionToInstruction=209;
+    public static final int ExpressionToInstruction=219;
     public static final int Cst_EmptyName=121;
-    public static final int concTomTerm=235;
+    public static final int concTomTerm=249;
     public static final int Negation=44;
-    public static final int If=207;
-    public static final int RecordAppl=233;
+    public static final int If=217;
+    public static final int RecordAppl=247;
     public static final int Cst_Equals=103;
-    public static final int Type=220;
+    public static final int Type=234;
     public static final int HOSTBLOCK=68;
     public static final int Cst_ConstantStar=85;
-    public static final int DEFAULT=400;
+    public static final int DEFAULT=425;
     public static final int IsEmptyList=23;
-    public static final int MakeEmptyArray=318;
-    public static final int AliasTo=250;
-    public static final int BQAppl=288;
-    public static final int BuildConsList=278;
-    public static final int Cst_NumLessOrEqualTo=128;
+    public static final int AliasTo=264;
+    public static final int MakeEmptyArray=342;
+    public static final int BQAppl=303;
+    public static final int BuildConsList=292;
     public static final int Cst_Slot=58;
+    public static final int Cst_NumLessOrEqualTo=128;
     public static final int ConcCstBQTerm=91;
     public static final int Cst_Constant=86;
-    public static final int OriginalText=183;
-    public static final int DeclarationToCode=260;
+    public static final int OriginalText=190;
     public static final int Cst_OpConstruct=66;
-    public static final int FalsePattern=224;
-    public static final int ModuleName=179;
+    public static final int DeclarationToCode=274;
+    public static final int FalsePattern=238;
+    public static final int ModuleName=186;
     public static final int ConcCstPairPattern=70;
     public static final int Cst_BQComposite=136;
     public static final int DoWhileExpression=12;
-    public static final int UNSIGNED_DOUBLE=393;
+    public static final int UNSIGNED_DOUBLE=418;
     public static final int ConcCstVisit=79;
-    public static final int AssignPositionTo=249;
-    public static final int TypeVar=216;
-    public static final int STAR=349;
-    public static final int FunctionDef=314;
-    public static final int KEYWORD_IS_EMPTY=379;
-    public static final int concDeclaration=304;
-    public static final int LETTER=390;
-    public static final int BQDefault=284;
-    public static final int ListSymbolDecl=309;
-    public static final int noOption=175;
-    public static final int DQUOTE=388;
+    public static final int AssignPositionTo=263;
+    public static final int TypeVar=230;
+    public static final int STAR=374;
+    public static final int FunctionDef=330;
+    public static final int KEYWORD_IS_EMPTY=405;
+    public static final int concDeclaration=319;
+    public static final int LETTER=415;
+    public static final int BQDefault=299;
+    public static final int ListSymbolDecl=325;
+    public static final int noOption=182;
+    public static final int DQUOTE=413;
     public static final int Cst_AndConstraint=131;
     public static final int Cst_OpListConstruct=64;
     public static final int EOF=-1;
-    public static final int concSlot=335;
-    public static final int SymbolOf=272;
-    public static final int PairNameDecl=333;
-    public static final int UnamedBlock=197;
-    public static final int IsEmptyDecl=323;
+    public static final int concSlot=360;
+    public static final int SymbolOf=286;
+    public static final int ResolveClassDecl=335;
+    public static final int PairNameDecl=358;
+    public static final int UnamedBlock=207;
+    public static final int IsEmptyDecl=347;
     public static final int concTomNumber=146;
-    public static final int KEYWORD_GET_HEAD=377;
-    public static final int CompiledMatch=194;
+    public static final int KEYWORD_GET_HEAD=403;
+    public static final int CompiledMatch=204;
     public static final int Cst_StrategyConstruct=59;
-    public static final int Class=312;
-    public static final int MethodDef=313;
+    public static final int Class=328;
+    public static final int MethodDef=329;
+    public static final int KEYWORD_GET_SLOT=399;
     public static final int Cst_IsSort=104;
-    public static final int KEYWORD_GET_SLOT=374;
-    public static final int MakeAddList=321;
+    public static final int MakeAddList=345;
     public static final int Code=10;
     public static final int AntiMatchExpression=35;
-    public static final int concTypeConstraint=300;
-    public static final int ListHead=268;
+    public static final int RefClassTracelinkInstruction=223;
+    public static final int concTypeConstraint=315;
+    public static final int ListHead=282;
     public static final int SubstractOne=20;
-    public static final int WS=397;
-    public static final int Equation=303;
-    public static final int Debug=180;
+    public static final int WS=422;
+    public static final int Equation=318;
+    public static final int Debug=187;
     public static final int TomInstructionToExpression=46;
-    public static final int TLType=213;
+    public static final int TLType=227;
     public static final int AntiName=142;
+    public static final int concRefClassTracelinkInstruction=222;
+    public static final int ReferencerBQTerm=297;
     public static final int AbsVar=150;
     public static final int GetSliceList=16;
-    public static final int Label=181;
-    public static final int concBQSlot=336;
-    public static final int IsSortConstraint=245;
-    public static final int DoWhile=206;
+    public static final int Label=188;
+    public static final int concBQSlot=361;
+    public static final int ImplementDecl=352;
+    public static final int IsSortConstraint=259;
+    public static final int DoWhile=216;
     public static final int Cst_GetSize=114;
-    public static final int PairSlotBQTerm=334;
+    public static final int PairSlotBQTerm=359;
     public static final int Cst_ConstantChar=50;
-    public static final int KEYWORD_MAKE=375;
-    public static final int LetRef=203;
+    public static final int KEYWORD_MAKE=400;
+    public static final int LetRef=213;
     public static final int GetSize=18;
-    public static final int IsSortDecl=326;
+    public static final int IsSortDecl=350;
     public static final int IsEmptyArray=22;
-    public static final int Assign=202;
+    public static final int Assign=212;
     public static final int AddOne=21;
     public static final int concTomName=147;
-    public static final int StructTable=169;
-    public static final int BQVariable=286;
-    public static final int TypeTermDecl=331;
-    public static final int NumDifferent=252;
-    public static final int concOption=189;
-    public static final int MatchConstraint=241;
+    public static final int StructTable=175;
+    public static final int BQVariable=301;
+    public static final int TypeTermDecl=356;
+    public static final int NumDifferent=266;
+    public static final int concOption=196;
+    public static final int MatchConstraint=255;
     public static final int Cst_OpArrayConstruct=65;
     public static final int NodeInt=119;
-    public static final int LOWEROREQU=356;
-    public static final int Subtype=302;
-    public static final int WhileDo=205;
+    public static final int LOWEROREQU=381;
+    public static final int Subtype=317;
+    public static final int WhileDo=215;
+    public static final int PIPE=387;
     public static final int Cst_MatchConstruct=67;
-    public static final int PIPE=362;
     public static final int EqualTerm=30;
     public static final int GetSliceArray=15;
     public static final int Or=42;
     public static final int ConcCstName=94;
-    public static final int BuildEmptyList=279;
-    public static final int Composite=283;
-    public static final int INTEGER=365;
-    public static final int concPairNameDecl=332;
-    public static final int TL=266;
+    public static final int Resolve=199;
+    public static final int Composite=298;
+    public static final int BuildEmptyList=293;
+    public static final int INTEGER=390;
+    public static final int concPairNameDecl=357;
+    public static final int TL=280;
     public static final int Cst_BQVar=139;
     public static final int UsedSymbolAC=160;
     public static final int Cst_VisitTerm=102;
-    public static final int OriginTracking=184;
-    public static final int OrConstraintDisjunction=242;
-    public static final int EmptyArrayConstraint=237;
+    public static final int OriginTracking=191;
+    public static final int OrConstraintDisjunction=256;
+    public static final int EmptyArrayConstraint=251;
     public static final int Integer=31;
+    public static final int concRuleInstruction=221;
     public static final int Save=152;
-    public static final int STRING=369;
+    public static final int STRING=394;
     public static final int ConcCstPattern=95;
-    public static final int concElementaryTheory=298;
-    public static final int KEYWORD_IS_SORT=386;
+    public static final int concElementaryTheory=313;
+    public static final int KEYWORD_IS_SORT=411;
     public static final int LessOrEqualThan=36;
-    public static final int Associative=296;
+    public static final int Associative=311;
     public static final int ConcCstConstraint=74;
     public static final int ConcCstOption=96;
     public static final int Cst_ConstantString=48;
     public static final int Cst_NumDifferent=124;
-    public static final int GeneratedMatch=185;
+    public static final int GeneratedMatch=192;
     public static final int Cst_GetDefault=112;
     public static final int ConcCstSlot=123;
     public static final int ListNumber=156;
     public static final int EmptyName=143;
     public static final int ConcCstConstraintAction=80;
-    public static final int Negate=246;
-    public static final int IntrospectorClass=311;
-    public static final int ConstraintInstruction=211;
+    public static final int Negate=260;
+    public static final int IntrospectorClass=327;
     public static final int RenamedVar=149;
-    public static final int BuildAppendList=277;
-    public static final int Variable=231;
-    public static final int MatchingTheory=182;
-    public static final int Tom=258;
-    public static final int Comment=264;
-    public static final int AbstractDecl=306;
+    public static final int ConstraintInstruction=224;
+    public static final int BuildAppendList=291;
+    public static final int MatchingTheory=189;
+    public static final int Variable=245;
+    public static final int Tom=272;
+    public static final int AbstractDecl=322;
+    public static final int Comment=278;
     public static final int Cst_MakeInsert=110;
     public static final int IsFsym=26;
-    public static final int EqualTermDecl=327;
+    public static final int EqualTermDecl=351;
     public static final int Bottom=45;
     public static final int GetElement=17;
     public static final int Cst_ConstantDouble=49;
     public static final int ConcCstOperator=93;
-    public static final int TargetLanguageToCode=262;
-    public static final int GREATERTHAN=353;
+    public static final int TargetLanguageToCode=276;
+    public static final int GREATERTHAN=378;
     public static final int Cst_GetElement=109;
-    public static final int AntiTerm=228;
+    public static final int AntiTerm=242;
+    public static final int concConstraintInstruction=197;
     public static final int Cst_TypeUnknown=99;
-    public static final int concConstraintInstruction=190;
-    public static final int GetElementDecl=320;
-    public static final int concTomEntry=168;
-    public static final int LONG_SUFFIX=394;
+    public static final int GetElementDecl=344;
+    public static final int concTomEntry=169;
+    public static final int LONG_SUFFIX=419;
     public static final int ConcCstTerm=92;
-    public static final int BuildTerm=280;
-    public static final int LSQUAREBR=370;
-    public static final int concTomSymbol=165;
-    public static final int ITL=265;
+    public static final int BuildTerm=294;
+    public static final int LSQUAREBR=395;
+    public static final int concTomSymbol=166;
+    public static final int TracelinkPopulateResolve=200;
+    public static final int ITL=279;
     public static final int Cst_MakeAppend=108;
     public static final int NameNumber=148;
-    public static final int GetTailDecl=324;
+    public static final int ReferenceClass=331;
+    public static final int GetTailDecl=348;
     public static final int UsedSymbolDestructor=161;
-    public static final int VisitTerm=163;
-    public static final int PairSlotAppl=337;
+    public static final int VisitTerm=164;
+    public static final int PairSlotAppl=362;
     public static final int OrConnector=40;
     public static final int Cst_ConstantLong=51;
-    public static final int SymbolDecl=310;
-    public static final int QMARK=363;
-    public static final int Syntactic=297;
+    public static final int QMARK=388;
+    public static final int SymbolDecl=326;
+    public static final int Syntactic=312;
     public static final int End=153;
-    public static final int PairNameOptions=299;
-    public static final int ESC=396;
+    public static final int PairNameOptions=314;
+    public static final int ESC=421;
     public static final int Cst_BQDefault=137;
-    public static final int IntegerPattern=223;
-    public static final int BuildAppendArray=274;
-    public static final int ExpressionToBQTerm=273;
+    public static final int ResolveMakeDecl=332;
+    public static final int IntegerPattern=237;
+    public static final int ExpressionToBQTerm=287;
+    public static final int BuildAppendArray=288;
     public static final int Cast=28;
-    public static final int AND=350;
+    public static final int AND=375;
     public static final int PatternNumber=157;
-    public static final int ML_COMMENT=399;
-    public static final int NumGreaterOrEqualThan=253;
+    public static final int ML_COMMENT=424;
+    public static final int NumGreaterOrEqualThan=267;
     public static final int Cst_PairSlotBQTerm=101;
     public static final int Cst_IsFsym=118;
     public static final int Cst_NumEqualTo=125;
     public static final int IndexNumber=155;
-    public static final int NumEqual=251;
-    public static final int IDENTIFIER=339;
-    public static final int FunctionCall=282;
+    public static final int NumEqual=265;
+    public static final int IDENTIFIER=364;
+    public static final int FunctionCall=296;
     public static final int Cst_MatchArgumentConstraint=132;
-    public static final int TomTermToOption=186;
-    public static final int KEYWORD_IS_FSYM=373;
-    public static final int IsFsymDecl=330;
-    public static final int TestVar=226;
+    public static final int TomTermToOption=193;
+    public static final int KEYWORD_IS_FSYM=398;
+    public static final int IsFsymDecl=355;
     public static final int Cst_VariableStar=87;
-    public static final int Symbol=170;
-    public static final int DOUBLEEQUAL=357;
-    public static final int EmptyType=217;
+    public static final int TestVar=240;
+    public static final int Symbol=177;
+    public static final int DOUBLEEQUAL=382;
+    public static final int EmptyType=231;
     public static final int And=43;
-    public static final int KEYWORD_IMPLEMENT=385;
+    public static final int KEYWORD_IMPLEMENT=402;
     public static final int Substract=19;
     public static final int Cst_IncludeConstruct=61;
     public static final int Cst_TheoryAC=55;
-    public static final int MakeDecl=316;
-    public static final int TermAppl=234;
-    public static final int TomSymbolToTomTerm=229;
-    public static final int DefinedSymbol=174;
-    public static final int BQTermToCode=259;
+    public static final int MakeDecl=340;
+    public static final int ResolveStratDecl=337;
+    public static final int TermAppl=248;
+    public static final int TomSymbolToTomTerm=243;
+    public static final int DefinedSymbol=181;
+    public static final int BQTermToCode=273;
+    public static final int ElementaryTransformation=176;
     public static final int TrueTL=33;
-    public static final int Cst_TheoryAU=56;
     public static final int GreaterOrEqualThan=38;
-    public static final int ACSymbol=176;
-    public static final int TypesToType=218;
-    public static final int NumLessThan=256;
+    public static final int Cst_TheoryAU=56;
+    public static final int ACSymbol=183;
+    public static final int TypesToType=232;
+    public static final int NumLessThan=270;
     public static final int Cst_ConstantInt=52;
-    public static final int concTomType=215;
+    public static final int concTomType=229;
     public static final int Cst_TermVariableStar=72;
-    public static final int Subterm=271;
-    public static final int InstructionToCode=261;
+    public static final int Subterm=285;
+    public static final int InstructionToCode=275;
     public static final int Name=145;
-    public static final int BQUOTE=344;
-    public static final int Nop=199;
-    public static final int RPAR=342;
-    public static final int EmptyListConstraint=238;
-    public static final int EXTENDS=343;
-    public static final int NumericConstraint=239;
+    public static final int BQUOTE=369;
+    public static final int Nop=209;
+    public static final int RPAR=367;
+    public static final int EmptyListConstraint=252;
+    public static final int EXTENDS=368;
+    public static final int NumericConstraint=253;
     public static final int Cst_MetaQuoteConstruct=62;
 
       // === DEBUG ============//
@@ -439,15 +464,15 @@ public class miniTomLexer extends Lexer {
         super(input,state);
 
     }
-    public String getGrammarFileName() { return "/home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g"; }
+    public String getGrammarFileName() { return "/Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g"; }
 
     // $ANTLR start "KEYWORD_IS_FSYM"
     public final void mKEYWORD_IS_FSYM() throws RecognitionException {
         try {
             int _type = KEYWORD_IS_FSYM;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:679:21: ( 'is_fsym' )
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:679:23: 'is_fsym'
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:687:21: ( 'is_fsym' )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:687:23: 'is_fsym'
             {
             match("is_fsym"); 
 
@@ -468,8 +493,8 @@ public class miniTomLexer extends Lexer {
         try {
             int _type = KEYWORD_GET_SLOT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:680:21: ( 'get_slot' )
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:680:23: 'get_slot'
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:688:21: ( 'get_slot' )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:688:23: 'get_slot'
             {
             match("get_slot"); 
 
@@ -490,8 +515,8 @@ public class miniTomLexer extends Lexer {
         try {
             int _type = KEYWORD_GET_DEFAULT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:681:21: ( 'get_default' )
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:681:23: 'get_default'
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:689:21: ( 'get_default' )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:689:23: 'get_default'
             {
             match("get_default"); 
 
@@ -512,8 +537,8 @@ public class miniTomLexer extends Lexer {
         try {
             int _type = KEYWORD_MAKE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:682:21: ( 'make' )
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:682:23: 'make'
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:690:21: ( 'make' )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:690:23: 'make'
             {
             match("make"); 
 
@@ -534,8 +559,8 @@ public class miniTomLexer extends Lexer {
         try {
             int _type = KEYWORD_GET_HEAD;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:683:21: ( 'get_head' )
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:683:23: 'get_head'
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:691:21: ( 'get_head' )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:691:23: 'get_head'
             {
             match("get_head"); 
 
@@ -556,8 +581,8 @@ public class miniTomLexer extends Lexer {
         try {
             int _type = KEYWORD_GET_TAIL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:684:21: ( 'get_tail' )
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:684:23: 'get_tail'
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:692:21: ( 'get_tail' )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:692:23: 'get_tail'
             {
             match("get_tail"); 
 
@@ -578,8 +603,8 @@ public class miniTomLexer extends Lexer {
         try {
             int _type = KEYWORD_IS_EMPTY;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:685:21: ( 'is_empty' )
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:685:23: 'is_empty'
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:693:21: ( 'is_empty' )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:693:23: 'is_empty'
             {
             match("is_empty"); 
 
@@ -600,8 +625,8 @@ public class miniTomLexer extends Lexer {
         try {
             int _type = KEYWORD_MAKE_EMPTY;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:686:21: ( 'make_empty' )
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:686:23: 'make_empty'
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:694:21: ( 'make_empty' )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:694:23: 'make_empty'
             {
             match("make_empty"); 
 
@@ -622,8 +647,8 @@ public class miniTomLexer extends Lexer {
         try {
             int _type = KEYWORD_MAKE_INSERT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:687:21: ( 'make_insert' )
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:687:23: 'make_insert'
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:695:21: ( 'make_insert' )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:695:23: 'make_insert'
             {
             match("make_insert"); 
 
@@ -644,8 +669,8 @@ public class miniTomLexer extends Lexer {
         try {
             int _type = KEYWORD_GET_ELEMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:688:21: ( 'get_element' )
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:688:23: 'get_element'
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:696:21: ( 'get_element' )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:696:23: 'get_element'
             {
             match("get_element"); 
 
@@ -666,8 +691,8 @@ public class miniTomLexer extends Lexer {
         try {
             int _type = KEYWORD_GET_SIZE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:689:21: ( 'get_size' )
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:689:23: 'get_size'
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:697:21: ( 'get_size' )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:697:23: 'get_size'
             {
             match("get_size"); 
 
@@ -688,8 +713,8 @@ public class miniTomLexer extends Lexer {
         try {
             int _type = KEYWORD_MAKE_APPEND;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:690:21: ( 'make_append' )
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:690:23: 'make_append'
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:698:21: ( 'make_append' )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:698:23: 'make_append'
             {
             match("make_append"); 
 
@@ -710,8 +735,8 @@ public class miniTomLexer extends Lexer {
         try {
             int _type = KEYWORD_IMPLEMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:691:21: ( 'implement' )
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:691:23: 'implement'
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:699:21: ( 'implement' )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:699:23: 'implement'
             {
             match("implement"); 
 
@@ -732,8 +757,8 @@ public class miniTomLexer extends Lexer {
         try {
             int _type = KEYWORD_IS_SORT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:692:21: ( 'is_sort' )
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:692:23: 'is_sort'
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:700:21: ( 'is_sort' )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:700:23: 'is_sort'
             {
             match("is_sort"); 
 
@@ -754,8 +779,8 @@ public class miniTomLexer extends Lexer {
         try {
             int _type = KEYWORD_EQUALS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:693:20: ( 'equals' )
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:693:22: 'equals'
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:701:20: ( 'equals' )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:701:22: 'equals'
             {
             match("equals"); 
 
@@ -776,8 +801,8 @@ public class miniTomLexer extends Lexer {
         try {
             int _type = ARROW;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:695:7: ( '->' )
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:695:9: '->'
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:703:7: ( '->' )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:703:9: '->'
             {
             match("->"); 
 
@@ -798,8 +823,8 @@ public class miniTomLexer extends Lexer {
         try {
             int _type = LBR;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:697:9: ( '{' )
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:697:12: '{'
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:705:9: ( '{' )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:705:12: '{'
             {
             match('{'); 
 
@@ -844,8 +869,8 @@ public class miniTomLexer extends Lexer {
         try {
             int _type = RBR;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:726:5: ( '}' )
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:726:7: '}'
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:734:5: ( '}' )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:734:7: '}'
             {
             match('}'); 
 
@@ -871,8 +896,8 @@ public class miniTomLexer extends Lexer {
         try {
             int _type = EXTENDS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:737:9: ( 'extends' )
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:737:11: 'extends'
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:745:9: ( 'extends' )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:745:11: 'extends'
             {
             match("extends"); 
 
@@ -892,8 +917,8 @@ public class miniTomLexer extends Lexer {
         try {
             int _type = VISIT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:738:9: ( 'visit' )
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:738:11: 'visit'
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:746:9: ( 'visit' )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:746:11: 'visit'
             {
             match("visit"); 
 
@@ -913,8 +938,8 @@ public class miniTomLexer extends Lexer {
         try {
             int _type = LARROW;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:740:8: ( '<<' )
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:740:10: '<<'
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:748:8: ( '<<' )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:748:10: '<<'
             {
             match("<<"); 
 
@@ -934,8 +959,8 @@ public class miniTomLexer extends Lexer {
         try {
             int _type = GREATEROREQU;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:741:14: ( '>=' )
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:741:16: '>='
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:749:14: ( '>=' )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:749:16: '>='
             {
             match(">="); 
 
@@ -955,8 +980,8 @@ public class miniTomLexer extends Lexer {
         try {
             int _type = LOWEROREQU;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:742:12: ( '<=' )
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:742:14: '<='
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:750:12: ( '<=' )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:750:14: '<='
             {
             match("<="); 
 
@@ -976,8 +1001,8 @@ public class miniTomLexer extends Lexer {
         try {
             int _type = GREATERTHAN;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:743:13: ( '>' )
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:743:15: '>'
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:751:13: ( '>' )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:751:15: '>'
             {
             match('>'); 
 
@@ -996,8 +1021,8 @@ public class miniTomLexer extends Lexer {
         try {
             int _type = LOWERTHAN;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:744:11: ( '<' )
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:744:13: '<'
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:752:11: ( '<' )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:752:13: '<'
             {
             match('<'); 
 
@@ -1016,8 +1041,8 @@ public class miniTomLexer extends Lexer {
         try {
             int _type = DOUBLEEQUAL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:745:13: ( '==' )
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:745:15: '=='
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:753:13: ( '==' )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:753:15: '=='
             {
             match("=="); 
 
@@ -1037,8 +1062,8 @@ public class miniTomLexer extends Lexer {
         try {
             int _type = DIFFERENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:746:11: ( '!=' )
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:746:13: '!='
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:754:11: ( '!=' )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:754:13: '!='
             {
             match("!="); 
 
@@ -1058,8 +1083,8 @@ public class miniTomLexer extends Lexer {
         try {
             int _type = AND;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:748:5: ( '&&' )
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:748:7: '&&'
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:756:5: ( '&&' )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:756:7: '&&'
             {
             match("&&"); 
 
@@ -1079,8 +1104,8 @@ public class miniTomLexer extends Lexer {
         try {
             int _type = OR;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:749:4: ( '||' )
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:749:6: '||'
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:757:4: ( '||' )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:757:6: '||'
             {
             match("||"); 
 
@@ -1100,8 +1125,8 @@ public class miniTomLexer extends Lexer {
         try {
             int _type = PIPE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:750:7: ( '|' )
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:750:9: '|'
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:758:7: ( '|' )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:758:9: '|'
             {
             match('|'); 
 
@@ -1120,8 +1145,8 @@ public class miniTomLexer extends Lexer {
         try {
             int _type = QMARK;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:751:7: ( '?' )
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:751:8: '?'
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:759:7: ( '?' )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:759:8: '?'
             {
             match('?'); 
 
@@ -1140,8 +1165,8 @@ public class miniTomLexer extends Lexer {
         try {
             int _type = DQMARK;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:752:8: ( '??' )
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:752:9: '??'
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:760:8: ( '??' )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:760:9: '??'
             {
             match("??"); 
 
@@ -1161,8 +1186,8 @@ public class miniTomLexer extends Lexer {
         try {
             int _type = EQUAL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:753:7: ( '=' )
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:753:9: '='
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:761:7: ( '=' )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:761:9: '='
             {
             match('='); 
 
@@ -1181,8 +1206,8 @@ public class miniTomLexer extends Lexer {
         try {
             int _type = LSQUAREBR;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:754:11: ( '[' )
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:754:13: '['
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:762:11: ( '[' )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:762:13: '['
             {
             match('['); 
 
@@ -1201,8 +1226,8 @@ public class miniTomLexer extends Lexer {
         try {
             int _type = RSQUAREBR;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:755:11: ( ']' )
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:755:13: ']'
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:763:11: ( ']' )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:763:13: ']'
             {
             match(']'); 
 
@@ -1221,8 +1246,8 @@ public class miniTomLexer extends Lexer {
         try {
             int _type = RPAR;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:756:7: ( ')' )
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:756:9: ')'
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:764:7: ( ')' )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:764:9: ')'
             {
             match(')'); 
 
@@ -1241,8 +1266,8 @@ public class miniTomLexer extends Lexer {
         try {
             int _type = LPAR;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:757:6: ( '(' )
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:757:8: '('
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:765:6: ( '(' )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:765:8: '('
             {
             match('('); 
 
@@ -1261,8 +1286,8 @@ public class miniTomLexer extends Lexer {
         try {
             int _type = COMMA;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:758:7: ( ',' )
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:758:9: ','
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:766:7: ( ',' )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:766:9: ','
             {
             match(','); 
 
@@ -1281,8 +1306,8 @@ public class miniTomLexer extends Lexer {
         try {
             int _type = STAR;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:759:6: ( '*' )
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:759:8: '*'
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:767:6: ( '*' )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:767:8: '*'
             {
             match('*'); 
 
@@ -1301,8 +1326,8 @@ public class miniTomLexer extends Lexer {
         try {
             int _type = UNDERSCORE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:760:11: ( '_' )
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:760:12: '_'
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:768:11: ( '_' )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:768:12: '_'
             {
             match('_'); 
 
@@ -1321,8 +1346,8 @@ public class miniTomLexer extends Lexer {
         try {
             int _type = AT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:761:4: ( '@' )
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:761:6: '@'
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:769:4: ( '@' )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:769:6: '@'
             {
             match('@'); 
 
@@ -1341,8 +1366,8 @@ public class miniTomLexer extends Lexer {
         try {
             int _type = ANTI;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:762:6: ( '!' )
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:762:8: '!'
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:770:6: ( '!' )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:770:8: '!'
             {
             match('!'); 
 
@@ -1361,8 +1386,8 @@ public class miniTomLexer extends Lexer {
         try {
             int _type = DQUOTE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:763:9: ( '\"' )
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:763:11: '\"'
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:771:9: ( '\"' )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:771:11: '\"'
             {
             match('\"'); 
 
@@ -1381,8 +1406,8 @@ public class miniTomLexer extends Lexer {
         try {
             int _type = SQUOTE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:764:9: ( '\\'' )
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:764:11: '\\''
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:772:9: ( '\\'' )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:772:11: '\\''
             {
             match('\''); 
 
@@ -1401,8 +1426,8 @@ public class miniTomLexer extends Lexer {
         try {
             int _type = BQUOTE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:765:10: ( '`' )
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:765:12: '`'
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:773:10: ( '`' )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:773:12: '`'
             {
             match('`'); 
 
@@ -1421,8 +1446,8 @@ public class miniTomLexer extends Lexer {
         try {
             int _type = COLON;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:766:9: ( ':' )
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:766:11: ':'
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:774:9: ( ':' )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:774:11: ':'
             {
             match(':'); 
 
@@ -1441,10 +1466,10 @@ public class miniTomLexer extends Lexer {
         try {
             int _type = IDENTIFIER;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:768:13: ( ( '_' )? LETTER ( LETTER | DIGIT | '_' | '.' )* )
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:768:15: ( '_' )? LETTER ( LETTER | DIGIT | '_' | '.' )*
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:776:13: ( ( '_' )? LETTER ( LETTER | DIGIT | '_' | '.' )* )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:776:15: ( '_' )? LETTER ( LETTER | DIGIT | '_' | '.' )*
             {
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:768:15: ( '_' )?
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:776:15: ( '_' )?
             int alt1=2;
             int LA1_0 = input.LA(1);
 
@@ -1453,7 +1478,7 @@ public class miniTomLexer extends Lexer {
             }
             switch (alt1) {
                 case 1 :
-                    // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:768:16: '_'
+                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:776:16: '_'
                     {
                     match('_'); 
 
@@ -1463,7 +1488,7 @@ public class miniTomLexer extends Lexer {
             }
 
             mLETTER(); 
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:768:29: ( LETTER | DIGIT | '_' | '.' )*
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:776:29: ( LETTER | DIGIT | '_' | '.' )*
             loop2:
             do {
                 int alt2=2;
@@ -1476,7 +1501,7 @@ public class miniTomLexer extends Lexer {
 
                 switch (alt2) {
             	case 1 :
-            	    // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:
+            	    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:
             	    {
             	    if ( input.LA(1)=='.'||(input.LA(1)>='0' && input.LA(1)<='9')||(input.LA(1)>='A' && input.LA(1)<='Z')||input.LA(1)=='_'||(input.LA(1)>='a' && input.LA(1)<='z') ) {
             	        input.consume();
@@ -1510,8 +1535,8 @@ public class miniTomLexer extends Lexer {
     // $ANTLR start "MINUS"
     public final void mMINUS() throws RecognitionException {
         try {
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:771:7: ( '-' )
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:771:9: '-'
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:779:7: ( '-' )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:779:9: '-'
             {
             match('-'); 
 
@@ -1528,10 +1553,10 @@ public class miniTomLexer extends Lexer {
         try {
             int _type = INTEGER;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:773:9: ( ( MINUS )? ( DIGIT )+ )
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:773:11: ( MINUS )? ( DIGIT )+
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:781:9: ( ( MINUS )? ( DIGIT )+ )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:781:11: ( MINUS )? ( DIGIT )+
             {
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:773:11: ( MINUS )?
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:781:11: ( MINUS )?
             int alt3=2;
             int LA3_0 = input.LA(1);
 
@@ -1540,7 +1565,7 @@ public class miniTomLexer extends Lexer {
             }
             switch (alt3) {
                 case 1 :
-                    // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:773:12: MINUS
+                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:781:12: MINUS
                     {
                     mMINUS(); 
 
@@ -1549,7 +1574,7 @@ public class miniTomLexer extends Lexer {
 
             }
 
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:773:20: ( DIGIT )+
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:781:20: ( DIGIT )+
             int cnt4=0;
             loop4:
             do {
@@ -1563,7 +1588,7 @@ public class miniTomLexer extends Lexer {
 
                 switch (alt4) {
             	case 1 :
-            	    // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:773:21: DIGIT
+            	    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:781:21: DIGIT
             	    {
             	    mDIGIT(); 
 
@@ -1593,7 +1618,7 @@ public class miniTomLexer extends Lexer {
     // $ANTLR start "UNSIGNED_DOUBLE"
     public final void mUNSIGNED_DOUBLE() throws RecognitionException {
         try {
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:775:17: ( ( DIGIT )+ '.' ( DIGIT )* | '.' ( DIGIT )+ )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:783:17: ( ( DIGIT )+ '.' ( DIGIT )* | '.' ( DIGIT )+ )
             int alt8=2;
             int LA8_0 = input.LA(1);
 
@@ -1611,9 +1636,9 @@ public class miniTomLexer extends Lexer {
             }
             switch (alt8) {
                 case 1 :
-                    // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:775:19: ( DIGIT )+ '.' ( DIGIT )*
+                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:783:19: ( DIGIT )+ '.' ( DIGIT )*
                     {
-                    // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:775:19: ( DIGIT )+
+                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:783:19: ( DIGIT )+
                     int cnt5=0;
                     loop5:
                     do {
@@ -1627,7 +1652,7 @@ public class miniTomLexer extends Lexer {
 
                         switch (alt5) {
                     	case 1 :
-                    	    // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:775:20: DIGIT
+                    	    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:783:20: DIGIT
                     	    {
                     	    mDIGIT(); 
 
@@ -1644,7 +1669,7 @@ public class miniTomLexer extends Lexer {
                     } while (true);
 
                     match('.'); 
-                    // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:775:30: ( DIGIT )*
+                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:783:30: ( DIGIT )*
                     loop6:
                     do {
                         int alt6=2;
@@ -1657,7 +1682,7 @@ public class miniTomLexer extends Lexer {
 
                         switch (alt6) {
                     	case 1 :
-                    	    // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:775:31: DIGIT
+                    	    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:783:31: DIGIT
                     	    {
                     	    mDIGIT(); 
 
@@ -1673,10 +1698,10 @@ public class miniTomLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:775:41: '.' ( DIGIT )+
+                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:783:41: '.' ( DIGIT )+
                     {
                     match('.'); 
-                    // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:775:45: ( DIGIT )+
+                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:783:45: ( DIGIT )+
                     int cnt7=0;
                     loop7:
                     do {
@@ -1690,7 +1715,7 @@ public class miniTomLexer extends Lexer {
 
                         switch (alt7) {
                     	case 1 :
-                    	    // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:775:46: DIGIT
+                    	    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:783:46: DIGIT
                     	    {
                     	    mDIGIT(); 
 
@@ -1722,10 +1747,10 @@ public class miniTomLexer extends Lexer {
         try {
             int _type = DOUBLE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:776:9: ( ( MINUS )? UNSIGNED_DOUBLE )
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:776:11: ( MINUS )? UNSIGNED_DOUBLE
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:784:9: ( ( MINUS )? UNSIGNED_DOUBLE )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:784:11: ( MINUS )? UNSIGNED_DOUBLE
             {
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:776:11: ( MINUS )?
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:784:11: ( MINUS )?
             int alt9=2;
             int LA9_0 = input.LA(1);
 
@@ -1734,7 +1759,7 @@ public class miniTomLexer extends Lexer {
             }
             switch (alt9) {
                 case 1 :
-                    // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:776:12: MINUS
+                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:784:12: MINUS
                     {
                     mMINUS(); 
 
@@ -1760,10 +1785,10 @@ public class miniTomLexer extends Lexer {
         try {
             int _type = LONG;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:777:9: ( ( MINUS )? ( DIGIT )+ LONG_SUFFIX )
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:777:11: ( MINUS )? ( DIGIT )+ LONG_SUFFIX
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:785:9: ( ( MINUS )? ( DIGIT )+ LONG_SUFFIX )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:785:11: ( MINUS )? ( DIGIT )+ LONG_SUFFIX
             {
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:777:11: ( MINUS )?
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:785:11: ( MINUS )?
             int alt10=2;
             int LA10_0 = input.LA(1);
 
@@ -1772,7 +1797,7 @@ public class miniTomLexer extends Lexer {
             }
             switch (alt10) {
                 case 1 :
-                    // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:777:12: MINUS
+                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:785:12: MINUS
                     {
                     mMINUS(); 
 
@@ -1781,7 +1806,7 @@ public class miniTomLexer extends Lexer {
 
             }
 
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:777:20: ( DIGIT )+
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:785:20: ( DIGIT )+
             int cnt11=0;
             loop11:
             do {
@@ -1795,7 +1820,7 @@ public class miniTomLexer extends Lexer {
 
                 switch (alt11) {
             	case 1 :
-            	    // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:777:21: DIGIT
+            	    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:785:21: DIGIT
             	    {
             	    mDIGIT(); 
 
@@ -1826,8 +1851,8 @@ public class miniTomLexer extends Lexer {
     // $ANTLR start "HEX_DIGIT"
     public final void mHEX_DIGIT() throws RecognitionException {
         try {
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:805:11: ( ( '0' .. '9' | 'A' .. 'F' | 'a' .. 'f' ) )
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:805:13: ( '0' .. '9' | 'A' .. 'F' | 'a' .. 'f' )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:813:11: ( ( '0' .. '9' | 'A' .. 'F' | 'a' .. 'f' ) )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:813:13: ( '0' .. '9' | 'A' .. 'F' | 'a' .. 'f' )
             {
             if ( (input.LA(1)>='0' && input.LA(1)<='9')||(input.LA(1)>='A' && input.LA(1)<='F')||(input.LA(1)>='a' && input.LA(1)<='f') ) {
                 input.consume();
@@ -1850,8 +1875,8 @@ public class miniTomLexer extends Lexer {
     // $ANTLR start "LONG_SUFFIX"
     public final void mLONG_SUFFIX() throws RecognitionException {
         try {
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:811:13: ( 'l' | 'L' )
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:819:13: ( 'l' | 'L' )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:
             {
             if ( input.LA(1)=='L'||input.LA(1)=='l' ) {
                 input.consume();
@@ -1876,11 +1901,11 @@ public class miniTomLexer extends Lexer {
         try {
             int _type = STRING;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:813:9: ( '\"' ( ESC | ~ ( '\"' | '\\\\' | '\\n' | '\\r' ) )* '\"' )
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:813:11: '\"' ( ESC | ~ ( '\"' | '\\\\' | '\\n' | '\\r' ) )* '\"'
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:821:9: ( '\"' ( ESC | ~ ( '\"' | '\\\\' | '\\n' | '\\r' ) )* '\"' )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:821:11: '\"' ( ESC | ~ ( '\"' | '\\\\' | '\\n' | '\\r' ) )* '\"'
             {
             match('\"'); 
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:813:15: ( ESC | ~ ( '\"' | '\\\\' | '\\n' | '\\r' ) )*
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:821:15: ( ESC | ~ ( '\"' | '\\\\' | '\\n' | '\\r' ) )*
             loop12:
             do {
                 int alt12=3;
@@ -1896,14 +1921,14 @@ public class miniTomLexer extends Lexer {
 
                 switch (alt12) {
             	case 1 :
-            	    // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:813:16: ESC
+            	    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:821:16: ESC
             	    {
             	    mESC(); 
 
             	    }
             	    break;
             	case 2 :
-            	    // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:813:20: ~ ( '\"' | '\\\\' | '\\n' | '\\r' )
+            	    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:821:20: ~ ( '\"' | '\\\\' | '\\n' | '\\r' )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='\t')||(input.LA(1)>='\u000B' && input.LA(1)<='\f')||(input.LA(1)>='\u000E' && input.LA(1)<='!')||(input.LA(1)>='#' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='\uFFFF') ) {
             	        input.consume();
@@ -1940,11 +1965,11 @@ public class miniTomLexer extends Lexer {
         try {
             int _type = CHAR;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:814:9: ( '\\'' ( ESC | ~ ( '\\'' | '\\n' | '\\r' | '\\\\' ) )+ '\\'' )
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:814:11: '\\'' ( ESC | ~ ( '\\'' | '\\n' | '\\r' | '\\\\' ) )+ '\\''
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:822:9: ( '\\'' ( ESC | ~ ( '\\'' | '\\n' | '\\r' | '\\\\' ) )+ '\\'' )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:822:11: '\\'' ( ESC | ~ ( '\\'' | '\\n' | '\\r' | '\\\\' ) )+ '\\''
             {
             match('\''); 
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:814:16: ( ESC | ~ ( '\\'' | '\\n' | '\\r' | '\\\\' ) )+
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:822:16: ( ESC | ~ ( '\\'' | '\\n' | '\\r' | '\\\\' ) )+
             int cnt13=0;
             loop13:
             do {
@@ -1961,14 +1986,14 @@ public class miniTomLexer extends Lexer {
 
                 switch (alt13) {
             	case 1 :
-            	    // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:814:18: ESC
+            	    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:822:18: ESC
             	    {
             	    mESC(); 
 
             	    }
             	    break;
             	case 2 :
-            	    // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:814:24: ~ ( '\\'' | '\\n' | '\\r' | '\\\\' )
+            	    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:822:24: ~ ( '\\'' | '\\n' | '\\r' | '\\\\' )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='\t')||(input.LA(1)>='\u000B' && input.LA(1)<='\f')||(input.LA(1)>='\u000E' && input.LA(1)<='&')||(input.LA(1)>='(' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='\uFFFF') ) {
             	        input.consume();
@@ -2007,8 +2032,8 @@ public class miniTomLexer extends Lexer {
     // $ANTLR start "LETTER"
     public final void mLETTER() throws RecognitionException {
         try {
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:817:8: ( 'A' .. 'Z' | 'a' .. 'z' )
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:825:8: ( 'A' .. 'Z' | 'a' .. 'z' )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:
             {
             if ( (input.LA(1)>='A' && input.LA(1)<='Z')||(input.LA(1)>='a' && input.LA(1)<='z') ) {
                 input.consume();
@@ -2031,8 +2056,8 @@ public class miniTomLexer extends Lexer {
     // $ANTLR start "DIGIT"
     public final void mDIGIT() throws RecognitionException {
         try {
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:819:7: ( '0' .. '9' )
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:819:9: '0' .. '9'
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:827:7: ( '0' .. '9' )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:827:9: '0' .. '9'
             {
             matchRange('0','9'); 
 
@@ -2049,10 +2074,10 @@ public class miniTomLexer extends Lexer {
         try {
             int _type = WS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:821:4: ( ( '\\r' | '\\n' | '\\t' | ' ' )* )
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:821:6: ( '\\r' | '\\n' | '\\t' | ' ' )*
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:829:4: ( ( '\\r' | '\\n' | '\\t' | ' ' )* )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:829:6: ( '\\r' | '\\n' | '\\t' | ' ' )*
             {
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:821:6: ( '\\r' | '\\n' | '\\t' | ' ' )*
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:829:6: ( '\\r' | '\\n' | '\\t' | ' ' )*
             loop14:
             do {
                 int alt14=2;
@@ -2065,7 +2090,7 @@ public class miniTomLexer extends Lexer {
 
                 switch (alt14) {
             	case 1 :
-            	    // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:
+            	    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:
             	    {
             	    if ( (input.LA(1)>='\t' && input.LA(1)<='\n')||input.LA(1)=='\r'||input.LA(1)==' ' ) {
             	        input.consume();
@@ -2102,12 +2127,12 @@ public class miniTomLexer extends Lexer {
         try {
             int _type = SL_COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:823:12: ( '//' (~ ( '\\n' | '\\r' ) )* ( '\\n' | '\\r' ( '\\n' )? )? )
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:823:14: '//' (~ ( '\\n' | '\\r' ) )* ( '\\n' | '\\r' ( '\\n' )? )?
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:831:12: ( '//' (~ ( '\\n' | '\\r' ) )* ( '\\n' | '\\r' ( '\\n' )? )? )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:831:14: '//' (~ ( '\\n' | '\\r' ) )* ( '\\n' | '\\r' ( '\\n' )? )?
             {
             match("//"); 
 
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:823:19: (~ ( '\\n' | '\\r' ) )*
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:831:19: (~ ( '\\n' | '\\r' ) )*
             loop15:
             do {
                 int alt15=2;
@@ -2120,7 +2145,7 @@ public class miniTomLexer extends Lexer {
 
                 switch (alt15) {
             	case 1 :
-            	    // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:823:20: ~ ( '\\n' | '\\r' )
+            	    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:831:20: ~ ( '\\n' | '\\r' )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='\t')||(input.LA(1)>='\u000B' && input.LA(1)<='\f')||(input.LA(1)>='\u000E' && input.LA(1)<='\uFFFF') ) {
             	        input.consume();
@@ -2140,7 +2165,7 @@ public class miniTomLexer extends Lexer {
                 }
             } while (true);
 
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:823:35: ( '\\n' | '\\r' ( '\\n' )? )?
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:831:35: ( '\\n' | '\\r' ( '\\n' )? )?
             int alt17=3;
             int LA17_0 = input.LA(1);
 
@@ -2152,17 +2177,17 @@ public class miniTomLexer extends Lexer {
             }
             switch (alt17) {
                 case 1 :
-                    // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:823:36: '\\n'
+                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:831:36: '\\n'
                     {
                     match('\n'); 
 
                     }
                     break;
                 case 2 :
-                    // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:823:41: '\\r' ( '\\n' )?
+                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:831:41: '\\r' ( '\\n' )?
                     {
                     match('\r'); 
-                    // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:823:45: ( '\\n' )?
+                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:831:45: ( '\\n' )?
                     int alt16=2;
                     int LA16_0 = input.LA(1);
 
@@ -2171,7 +2196,7 @@ public class miniTomLexer extends Lexer {
                     }
                     switch (alt16) {
                         case 1 :
-                            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:823:46: '\\n'
+                            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:831:46: '\\n'
                             {
                             match('\n'); 
 
@@ -2203,12 +2228,12 @@ public class miniTomLexer extends Lexer {
         try {
             int _type = ML_COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:824:12: ( '/*' ( options {greedy=false; } : . )* '*/' )
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:824:14: '/*' ( options {greedy=false; } : . )* '*/'
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:832:12: ( '/*' ( options {greedy=false; } : . )* '*/' )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:832:14: '/*' ( options {greedy=false; } : . )* '*/'
             {
             match("/*"); 
 
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:824:19: ( options {greedy=false; } : . )*
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:832:19: ( options {greedy=false; } : . )*
             loop18:
             do {
                 int alt18=2;
@@ -2233,7 +2258,7 @@ public class miniTomLexer extends Lexer {
 
                 switch (alt18) {
             	case 1 :
-            	    // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:824:47: .
+            	    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:832:47: .
             	    {
             	    matchAny(); 
 
@@ -2264,8 +2289,8 @@ public class miniTomLexer extends Lexer {
         try {
             int _type = DEFAULT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:828:9: ( . )
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:828:11: .
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:836:9: ( . )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:836:11: .
             {
             matchAny(); 
              _channel=HIDDEN;
@@ -2283,11 +2308,11 @@ public class miniTomLexer extends Lexer {
     // $ANTLR start "ESC"
     public final void mESC() throws RecognitionException {
         try {
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:832:3: ( '\\\\' ( 'n' | 'r' | 't' | 'b' | 'f' | '\"' | '\\'' | '\\\\' | ( 'u' )+ HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT | '0' .. '3' ( '0' .. '7' ( '0' .. '7' )? )? | '4' .. '7' ( '0' .. '7' )? ) )
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:832:5: '\\\\' ( 'n' | 'r' | 't' | 'b' | 'f' | '\"' | '\\'' | '\\\\' | ( 'u' )+ HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT | '0' .. '3' ( '0' .. '7' ( '0' .. '7' )? )? | '4' .. '7' ( '0' .. '7' )? )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:840:3: ( '\\\\' ( 'n' | 'r' | 't' | 'b' | 'f' | '\"' | '\\'' | '\\\\' | ( 'u' )+ HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT | '0' .. '3' ( '0' .. '7' ( '0' .. '7' )? )? | '4' .. '7' ( '0' .. '7' )? ) )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:840:5: '\\\\' ( 'n' | 'r' | 't' | 'b' | 'f' | '\"' | '\\'' | '\\\\' | ( 'u' )+ HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT | '0' .. '3' ( '0' .. '7' ( '0' .. '7' )? )? | '4' .. '7' ( '0' .. '7' )? )
             {
             match('\\'); 
-            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:833:5: ( 'n' | 'r' | 't' | 'b' | 'f' | '\"' | '\\'' | '\\\\' | ( 'u' )+ HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT | '0' .. '3' ( '0' .. '7' ( '0' .. '7' )? )? | '4' .. '7' ( '0' .. '7' )? )
+            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:841:5: ( 'n' | 'r' | 't' | 'b' | 'f' | '\"' | '\\'' | '\\\\' | ( 'u' )+ HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT | '0' .. '3' ( '0' .. '7' ( '0' .. '7' )? )? | '4' .. '7' ( '0' .. '7' )? )
             int alt23=11;
             switch ( input.LA(1) ) {
             case 'n':
@@ -2360,65 +2385,65 @@ public class miniTomLexer extends Lexer {
 
             switch (alt23) {
                 case 1 :
-                    // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:833:7: 'n'
+                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:841:7: 'n'
                     {
                     match('n'); 
 
                     }
                     break;
                 case 2 :
-                    // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:834:7: 'r'
+                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:842:7: 'r'
                     {
                     match('r'); 
 
                     }
                     break;
                 case 3 :
-                    // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:835:7: 't'
+                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:843:7: 't'
                     {
                     match('t'); 
 
                     }
                     break;
                 case 4 :
-                    // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:836:7: 'b'
+                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:844:7: 'b'
                     {
                     match('b'); 
 
                     }
                     break;
                 case 5 :
-                    // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:837:7: 'f'
+                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:845:7: 'f'
                     {
                     match('f'); 
 
                     }
                     break;
                 case 6 :
-                    // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:838:7: '\"'
+                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:846:7: '\"'
                     {
                     match('\"'); 
 
                     }
                     break;
                 case 7 :
-                    // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:839:7: '\\''
+                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:847:7: '\\''
                     {
                     match('\''); 
 
                     }
                     break;
                 case 8 :
-                    // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:840:7: '\\\\'
+                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:848:7: '\\\\'
                     {
                     match('\\'); 
 
                     }
                     break;
                 case 9 :
-                    // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:841:7: ( 'u' )+ HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
+                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:849:7: ( 'u' )+ HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
                     {
-                    // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:841:7: ( 'u' )+
+                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:849:7: ( 'u' )+
                     int cnt19=0;
                     loop19:
                     do {
@@ -2432,7 +2457,7 @@ public class miniTomLexer extends Lexer {
 
                         switch (alt19) {
                     	case 1 :
-                    	    // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:841:8: 'u'
+                    	    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:849:8: 'u'
                     	    {
                     	    match('u'); 
 
@@ -2456,10 +2481,10 @@ public class miniTomLexer extends Lexer {
                     }
                     break;
                 case 10 :
-                    // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:842:7: '0' .. '3' ( '0' .. '7' ( '0' .. '7' )? )?
+                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:850:7: '0' .. '3' ( '0' .. '7' ( '0' .. '7' )? )?
                     {
                     matchRange('0','3'); 
-                    // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:843:7: ( '0' .. '7' ( '0' .. '7' )? )?
+                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:851:7: ( '0' .. '7' ( '0' .. '7' )? )?
                     int alt21=2;
                     int LA21_0 = input.LA(1);
 
@@ -2468,10 +2493,10 @@ public class miniTomLexer extends Lexer {
                     }
                     switch (alt21) {
                         case 1 :
-                            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:844:9: '0' .. '7' ( '0' .. '7' )?
+                            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:852:9: '0' .. '7' ( '0' .. '7' )?
                             {
                             matchRange('0','7'); 
-                            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:845:9: ( '0' .. '7' )?
+                            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:853:9: ( '0' .. '7' )?
                             int alt20=2;
                             int LA20_0 = input.LA(1);
 
@@ -2480,7 +2505,7 @@ public class miniTomLexer extends Lexer {
                             }
                             switch (alt20) {
                                 case 1 :
-                                    // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:846:11: '0' .. '7'
+                                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:854:11: '0' .. '7'
                                     {
                                     matchRange('0','7'); 
 
@@ -2499,10 +2524,10 @@ public class miniTomLexer extends Lexer {
                     }
                     break;
                 case 11 :
-                    // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:849:7: '4' .. '7' ( '0' .. '7' )?
+                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:857:7: '4' .. '7' ( '0' .. '7' )?
                     {
                     matchRange('4','7'); 
-                    // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:850:7: ( '0' .. '7' )?
+                    // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:858:7: ( '0' .. '7' )?
                     int alt22=2;
                     int LA22_0 = input.LA(1);
 
@@ -2511,7 +2536,7 @@ public class miniTomLexer extends Lexer {
                     }
                     switch (alt22) {
                         case 1 :
-                            // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:851:7: '0' .. '7'
+                            // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:859:7: '0' .. '7'
                             {
                             matchRange('0','7'); 
 
@@ -2536,397 +2561,397 @@ public class miniTomLexer extends Lexer {
     // $ANTLR end "ESC"
 
     public void mTokens() throws RecognitionException {
-        // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:1:8: ( KEYWORD_IS_FSYM | KEYWORD_GET_SLOT | KEYWORD_GET_DEFAULT | KEYWORD_MAKE | KEYWORD_GET_HEAD | KEYWORD_GET_TAIL | KEYWORD_IS_EMPTY | KEYWORD_MAKE_EMPTY | KEYWORD_MAKE_INSERT | KEYWORD_GET_ELEMENT | KEYWORD_GET_SIZE | KEYWORD_MAKE_APPEND | KEYWORD_IMPLEMENT | KEYWORD_IS_SORT | KEYWORD_EQUALS | ARROW | LBR | RBR | EXTENDS | VISIT | LARROW | GREATEROREQU | LOWEROREQU | GREATERTHAN | LOWERTHAN | DOUBLEEQUAL | DIFFERENT | AND | OR | PIPE | QMARK | DQMARK | EQUAL | LSQUAREBR | RSQUAREBR | RPAR | LPAR | COMMA | STAR | UNDERSCORE | AT | ANTI | DQUOTE | SQUOTE | BQUOTE | COLON | IDENTIFIER | INTEGER | DOUBLE | LONG | STRING | CHAR | WS | SL_COMMENT | ML_COMMENT | DEFAULT )
+        // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:1:8: ( KEYWORD_IS_FSYM | KEYWORD_GET_SLOT | KEYWORD_GET_DEFAULT | KEYWORD_MAKE | KEYWORD_GET_HEAD | KEYWORD_GET_TAIL | KEYWORD_IS_EMPTY | KEYWORD_MAKE_EMPTY | KEYWORD_MAKE_INSERT | KEYWORD_GET_ELEMENT | KEYWORD_GET_SIZE | KEYWORD_MAKE_APPEND | KEYWORD_IMPLEMENT | KEYWORD_IS_SORT | KEYWORD_EQUALS | ARROW | LBR | RBR | EXTENDS | VISIT | LARROW | GREATEROREQU | LOWEROREQU | GREATERTHAN | LOWERTHAN | DOUBLEEQUAL | DIFFERENT | AND | OR | PIPE | QMARK | DQMARK | EQUAL | LSQUAREBR | RSQUAREBR | RPAR | LPAR | COMMA | STAR | UNDERSCORE | AT | ANTI | DQUOTE | SQUOTE | BQUOTE | COLON | IDENTIFIER | INTEGER | DOUBLE | LONG | STRING | CHAR | WS | SL_COMMENT | ML_COMMENT | DEFAULT )
         int alt24=56;
         alt24 = dfa24.predict(input);
         switch (alt24) {
             case 1 :
-                // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:1:10: KEYWORD_IS_FSYM
+                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:1:10: KEYWORD_IS_FSYM
                 {
                 mKEYWORD_IS_FSYM(); 
 
                 }
                 break;
             case 2 :
-                // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:1:26: KEYWORD_GET_SLOT
+                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:1:26: KEYWORD_GET_SLOT
                 {
                 mKEYWORD_GET_SLOT(); 
 
                 }
                 break;
             case 3 :
-                // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:1:43: KEYWORD_GET_DEFAULT
+                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:1:43: KEYWORD_GET_DEFAULT
                 {
                 mKEYWORD_GET_DEFAULT(); 
 
                 }
                 break;
             case 4 :
-                // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:1:63: KEYWORD_MAKE
+                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:1:63: KEYWORD_MAKE
                 {
                 mKEYWORD_MAKE(); 
 
                 }
                 break;
             case 5 :
-                // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:1:76: KEYWORD_GET_HEAD
+                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:1:76: KEYWORD_GET_HEAD
                 {
                 mKEYWORD_GET_HEAD(); 
 
                 }
                 break;
             case 6 :
-                // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:1:93: KEYWORD_GET_TAIL
+                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:1:93: KEYWORD_GET_TAIL
                 {
                 mKEYWORD_GET_TAIL(); 
 
                 }
                 break;
             case 7 :
-                // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:1:110: KEYWORD_IS_EMPTY
+                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:1:110: KEYWORD_IS_EMPTY
                 {
                 mKEYWORD_IS_EMPTY(); 
 
                 }
                 break;
             case 8 :
-                // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:1:127: KEYWORD_MAKE_EMPTY
+                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:1:127: KEYWORD_MAKE_EMPTY
                 {
                 mKEYWORD_MAKE_EMPTY(); 
 
                 }
                 break;
             case 9 :
-                // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:1:146: KEYWORD_MAKE_INSERT
+                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:1:146: KEYWORD_MAKE_INSERT
                 {
                 mKEYWORD_MAKE_INSERT(); 
 
                 }
                 break;
             case 10 :
-                // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:1:166: KEYWORD_GET_ELEMENT
+                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:1:166: KEYWORD_GET_ELEMENT
                 {
                 mKEYWORD_GET_ELEMENT(); 
 
                 }
                 break;
             case 11 :
-                // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:1:186: KEYWORD_GET_SIZE
+                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:1:186: KEYWORD_GET_SIZE
                 {
                 mKEYWORD_GET_SIZE(); 
 
                 }
                 break;
             case 12 :
-                // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:1:203: KEYWORD_MAKE_APPEND
+                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:1:203: KEYWORD_MAKE_APPEND
                 {
                 mKEYWORD_MAKE_APPEND(); 
 
                 }
                 break;
             case 13 :
-                // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:1:223: KEYWORD_IMPLEMENT
+                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:1:223: KEYWORD_IMPLEMENT
                 {
                 mKEYWORD_IMPLEMENT(); 
 
                 }
                 break;
             case 14 :
-                // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:1:241: KEYWORD_IS_SORT
+                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:1:241: KEYWORD_IS_SORT
                 {
                 mKEYWORD_IS_SORT(); 
 
                 }
                 break;
             case 15 :
-                // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:1:257: KEYWORD_EQUALS
+                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:1:257: KEYWORD_EQUALS
                 {
                 mKEYWORD_EQUALS(); 
 
                 }
                 break;
             case 16 :
-                // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:1:272: ARROW
+                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:1:272: ARROW
                 {
                 mARROW(); 
 
                 }
                 break;
             case 17 :
-                // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:1:278: LBR
+                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:1:278: LBR
                 {
                 mLBR(); 
 
                 }
                 break;
             case 18 :
-                // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:1:282: RBR
+                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:1:282: RBR
                 {
                 mRBR(); 
 
                 }
                 break;
             case 19 :
-                // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:1:286: EXTENDS
+                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:1:286: EXTENDS
                 {
                 mEXTENDS(); 
 
                 }
                 break;
             case 20 :
-                // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:1:294: VISIT
+                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:1:294: VISIT
                 {
                 mVISIT(); 
 
                 }
                 break;
             case 21 :
-                // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:1:300: LARROW
+                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:1:300: LARROW
                 {
                 mLARROW(); 
 
                 }
                 break;
             case 22 :
-                // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:1:307: GREATEROREQU
+                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:1:307: GREATEROREQU
                 {
                 mGREATEROREQU(); 
 
                 }
                 break;
             case 23 :
-                // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:1:320: LOWEROREQU
+                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:1:320: LOWEROREQU
                 {
                 mLOWEROREQU(); 
 
                 }
                 break;
             case 24 :
-                // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:1:331: GREATERTHAN
+                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:1:331: GREATERTHAN
                 {
                 mGREATERTHAN(); 
 
                 }
                 break;
             case 25 :
-                // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:1:343: LOWERTHAN
+                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:1:343: LOWERTHAN
                 {
                 mLOWERTHAN(); 
 
                 }
                 break;
             case 26 :
-                // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:1:353: DOUBLEEQUAL
+                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:1:353: DOUBLEEQUAL
                 {
                 mDOUBLEEQUAL(); 
 
                 }
                 break;
             case 27 :
-                // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:1:365: DIFFERENT
+                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:1:365: DIFFERENT
                 {
                 mDIFFERENT(); 
 
                 }
                 break;
             case 28 :
-                // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:1:375: AND
+                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:1:375: AND
                 {
                 mAND(); 
 
                 }
                 break;
             case 29 :
-                // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:1:379: OR
+                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:1:379: OR
                 {
                 mOR(); 
 
                 }
                 break;
             case 30 :
-                // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:1:382: PIPE
+                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:1:382: PIPE
                 {
                 mPIPE(); 
 
                 }
                 break;
             case 31 :
-                // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:1:387: QMARK
+                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:1:387: QMARK
                 {
                 mQMARK(); 
 
                 }
                 break;
             case 32 :
-                // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:1:393: DQMARK
+                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:1:393: DQMARK
                 {
                 mDQMARK(); 
 
                 }
                 break;
             case 33 :
-                // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:1:400: EQUAL
+                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:1:400: EQUAL
                 {
                 mEQUAL(); 
 
                 }
                 break;
             case 34 :
-                // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:1:406: LSQUAREBR
+                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:1:406: LSQUAREBR
                 {
                 mLSQUAREBR(); 
 
                 }
                 break;
             case 35 :
-                // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:1:416: RSQUAREBR
+                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:1:416: RSQUAREBR
                 {
                 mRSQUAREBR(); 
 
                 }
                 break;
             case 36 :
-                // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:1:426: RPAR
+                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:1:426: RPAR
                 {
                 mRPAR(); 
 
                 }
                 break;
             case 37 :
-                // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:1:431: LPAR
+                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:1:431: LPAR
                 {
                 mLPAR(); 
 
                 }
                 break;
             case 38 :
-                // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:1:436: COMMA
+                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:1:436: COMMA
                 {
                 mCOMMA(); 
 
                 }
                 break;
             case 39 :
-                // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:1:442: STAR
+                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:1:442: STAR
                 {
                 mSTAR(); 
 
                 }
                 break;
             case 40 :
-                // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:1:447: UNDERSCORE
+                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:1:447: UNDERSCORE
                 {
                 mUNDERSCORE(); 
 
                 }
                 break;
             case 41 :
-                // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:1:458: AT
+                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:1:458: AT
                 {
                 mAT(); 
 
                 }
                 break;
             case 42 :
-                // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:1:461: ANTI
+                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:1:461: ANTI
                 {
                 mANTI(); 
 
                 }
                 break;
             case 43 :
-                // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:1:466: DQUOTE
+                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:1:466: DQUOTE
                 {
                 mDQUOTE(); 
 
                 }
                 break;
             case 44 :
-                // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:1:473: SQUOTE
+                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:1:473: SQUOTE
                 {
                 mSQUOTE(); 
 
                 }
                 break;
             case 45 :
-                // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:1:480: BQUOTE
+                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:1:480: BQUOTE
                 {
                 mBQUOTE(); 
 
                 }
                 break;
             case 46 :
-                // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:1:487: COLON
+                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:1:487: COLON
                 {
                 mCOLON(); 
 
                 }
                 break;
             case 47 :
-                // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:1:493: IDENTIFIER
+                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:1:493: IDENTIFIER
                 {
                 mIDENTIFIER(); 
 
                 }
                 break;
             case 48 :
-                // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:1:504: INTEGER
+                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:1:504: INTEGER
                 {
                 mINTEGER(); 
 
                 }
                 break;
             case 49 :
-                // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:1:512: DOUBLE
+                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:1:512: DOUBLE
                 {
                 mDOUBLE(); 
 
                 }
                 break;
             case 50 :
-                // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:1:519: LONG
+                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:1:519: LONG
                 {
                 mLONG(); 
 
                 }
                 break;
             case 51 :
-                // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:1:524: STRING
+                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:1:524: STRING
                 {
                 mSTRING(); 
 
                 }
                 break;
             case 52 :
-                // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:1:531: CHAR
+                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:1:531: CHAR
                 {
                 mCHAR(); 
 
                 }
                 break;
             case 53 :
-                // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:1:536: WS
+                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:1:536: WS
                 {
                 mWS(); 
 
                 }
                 break;
             case 54 :
-                // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:1:539: SL_COMMENT
+                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:1:539: SL_COMMENT
                 {
                 mSL_COMMENT(); 
 
                 }
                 break;
             case 55 :
-                // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:1:550: ML_COMMENT
+                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:1:550: ML_COMMENT
                 {
                 mML_COMMENT(); 
 
                 }
                 break;
             case 56 :
-                // /home/jcb/workspace/gitexperiment/merge/src/tom/engine/parser/antlr3/miniTom.g:1:561: DEFAULT
+                // /Users/jcb/workspace/tom/src/tom/engine/parser/antlr3/miniTom.g:1:561: DEFAULT
                 {
                 mDEFAULT(); 
 

@@ -84,8 +84,10 @@ public class TypeExpanderPlugin extends GomGenericPlugin {
       java.io.StringWriter swriter = new java.io.StringWriter();
       try { tom.library.utils.Viewer.toTree(typedModuleList,swriter); }
       catch(java.io.IOException e) { e.printStackTrace(); }
-      GomMessage.fine(getLogger(), null, 0, GomMessage.typedModules, swriter);
-      GomMessage.info(getLogger(), null, 0, GomMessage.gomTypeExpansionPhase, 
+      GomMessage.fine(getLogger(), getStreamManager().getInputFileName(), 0,
+          GomMessage.typedModules, swriter);
+      GomMessage.info(getLogger(), getStreamManager().getInputFileName(), 0,
+          GomMessage.gomTypeExpansionPhase,
           (System.currentTimeMillis()-startChrono));
       if (intermediate) {
         Tools.generateOutput(getStreamManager().getOutputFileName()
@@ -103,8 +105,10 @@ public class TypeExpanderPlugin extends GomGenericPlugin {
       java.io.StringWriter swriter = new java.io.StringWriter();
       try{ tom.library.utils.Viewer.toTree(typedHookList,swriter); }
       catch(java.io.IOException e) { e.printStackTrace(); }
-      GomMessage.fine(getLogger(), null, 0, GomMessage.typedHooks, swriter);
-      GomMessage.info(getLogger(), null, 0, GomMessage.gomHookExpansionPhase, 
+      GomMessage.fine(getLogger(), getStreamManager().getInputFileName(), 0,
+          GomMessage.typedHooks, swriter);
+      GomMessage.info(getLogger(), getStreamManager().getInputFileName(), 0,
+          GomMessage.gomHookExpansionPhase,
           (System.currentTimeMillis()-startChrono));
       if (intermediate) {
         Tools.generateOutput(getStreamManager().getOutputFileName()
