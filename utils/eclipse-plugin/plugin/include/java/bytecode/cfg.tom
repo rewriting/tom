@@ -193,7 +193,7 @@
       int value = 1;
       if(o != null)
         value = ((Integer)o).intValue() + 1;
-      map.put(`c, new Integer(value));
+      map.put(`c, Integer.valueOf(value));
     }
   }
 }
@@ -210,7 +210,7 @@
         throw new tom.library.sl.VisitFailure();
       }
       int value = ((Integer)o).intValue() - 1;
-      map.put(`c, new Integer(value));
+      map.put(`c, Integer.valueOf(value));
     }
   }
 }
