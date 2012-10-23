@@ -47,6 +47,14 @@
 		}
  
 </template>
-	
+<template 
+		context="fr.loria.eclipse.jtom.template.tom" 
+		description="%tom.template.transformation.desc" 
+		id="fr.loria.eclipse.jtom.template.tom.transformation" 
+		name="%tom.template.transformation.name">%transformation ${MyTransfo}($params:Type) : "source_metamodel.ecore" -> "target_metamodel.ecore" { 
+  	definition MyElementaryTransformation traversal `TopDown(MyElementaryTransformation($params)) {
+  	  MyPattern -> { } 
+ 	 } 
+}</template>
 
 </templates>
