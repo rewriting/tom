@@ -1,9 +1,8 @@
 /*
   
     TOM - To One Matching Compiler
-
-    Copyright (C) 2004 INRIA
-	   			       Nancy, France.
+    
+    Copyright (c) 2004-2012, INRIA Nancy, France.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
