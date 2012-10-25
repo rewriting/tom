@@ -122,7 +122,7 @@ public class CSharpGenerator extends CFamilyGenerator {
       names.add(name);
 
       // test if the argument is a Strategy
-      {{if ( (((Object)type) instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )((Object)type)) instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )(( tom.engine.adt.tomtype.types.TomType )((Object)type))) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) { String  tomMatch92_1= (( tom.engine.adt.tomtype.types.TomType )((Object)type)).getTomType() ;if ( true ) {if ( "Strategy".equals(tomMatch92_1) ) {
+      {{if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )type) instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )(( tom.engine.adt.tomtype.types.TomType )type)) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) { String  tomMatch92_1= (( tom.engine.adt.tomtype.types.TomType )type).getTomType() ;if ( true ) {if ( "Strategy".equals(tomMatch92_1) ) {
 
           stratChild.add(Integer.valueOf(index));
         }}}}}}}
@@ -133,9 +133,9 @@ public class CSharpGenerator extends CFamilyGenerator {
     }
     output.write(deep, modifier + "class " + tomName);
     //write extends
-		{{if ( (((Object)extendsType) instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )((Object)extendsType)) instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )(( tom.engine.adt.tomtype.types.TomType )((Object)extendsType))) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) { tom.engine.adt.tomtype.types.TargetLanguageType  tomMatch93_2= (( tom.engine.adt.tomtype.types.TomType )((Object)extendsType)).getTlType() ;if ( (tomMatch93_2 instanceof tom.engine.adt.tomtype.types.TargetLanguageType) ) {if ( ((( tom.engine.adt.tomtype.types.TargetLanguageType )tomMatch93_2) instanceof tom.engine.adt.tomtype.types.targetlanguagetype.EmptyTargetLanguageType) ) {
+		{{if ( (extendsType instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )extendsType) instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )(( tom.engine.adt.tomtype.types.TomType )extendsType)) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) { tom.engine.adt.tomtype.types.TargetLanguageType  tomMatch93_2= (( tom.engine.adt.tomtype.types.TomType )extendsType).getTlType() ;if ( (tomMatch93_2 instanceof tom.engine.adt.tomtype.types.TargetLanguageType) ) {if ( ((( tom.engine.adt.tomtype.types.TargetLanguageType )tomMatch93_2) instanceof tom.engine.adt.tomtype.types.targetlanguagetype.EmptyTargetLanguageType) ) {
 
-				output.write(deep," : " +  (( tom.engine.adt.tomtype.types.TomType )((Object)extendsType)).getTomType() );
+				output.write(deep," : " +  (( tom.engine.adt.tomtype.types.TomType )extendsType).getTomType() );
 			}}}}}}}
 
     output.write(deep," {");
@@ -236,12 +236,12 @@ public class CSharpGenerator extends CFamilyGenerator {
     while(!varList.isEmptyconcBQTerm()) {
       BQTerm localVar = varList.getHeadconcBQTerm();
       matchBlock: {
-        {{if ( (((Object)localVar) instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )((Object)localVar)) instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )(( tom.engine.adt.code.types.BQTerm )((Object)localVar))) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {
+        {{if ( (localVar instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )localVar) instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )(( tom.engine.adt.code.types.BQTerm )localVar)) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {
 
-            output.write(deep,TomBase.getTLType( (( tom.engine.adt.code.types.BQTerm )((Object)localVar)).getAstType() ) + " ");
-            generateBQTerm(deep,(( tom.engine.adt.code.types.BQTerm )((Object)localVar)),moduleName);
+            output.write(deep,TomBase.getTLType( (( tom.engine.adt.code.types.BQTerm )localVar).getAstType() ) + " ");
+            generateBQTerm(deep,(( tom.engine.adt.code.types.BQTerm )localVar),moduleName);
             break matchBlock;
-          }}}}{if ( (((Object)localVar) instanceof tom.engine.adt.code.types.BQTerm) ) {
+          }}}}{if ( (localVar instanceof tom.engine.adt.code.types.BQTerm) ) {
 
             System.out.println("MakeFunction: strange term: " + localVar);
             throw new TomRuntimeException("MakeFunction: strange term: " + localVar);

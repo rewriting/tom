@@ -53,17 +53,17 @@ public class SortTemplate extends TemplateHookedClass {
                       GomEnvironment gomEnvironment) {
     super(gomClass,manager,tomHomePath,importList,mapping,gomEnvironment);
     this.maximalsharing = maximalsharing;
-    {{if ( (((Object)gomClass) instanceof tom.gom.adt.objects.types.GomClass) ) {if ( ((( tom.gom.adt.objects.types.GomClass )((Object)gomClass)) instanceof tom.gom.adt.objects.types.GomClass) ) {if ( ((( tom.gom.adt.objects.types.GomClass )(( tom.gom.adt.objects.types.GomClass )((Object)gomClass))) instanceof tom.gom.adt.objects.types.gomclass.SortClass) ) {
+    {{if ( (gomClass instanceof tom.gom.adt.objects.types.GomClass) ) {if ( ((( tom.gom.adt.objects.types.GomClass )gomClass) instanceof tom.gom.adt.objects.types.GomClass) ) {if ( ((( tom.gom.adt.objects.types.GomClass )(( tom.gom.adt.objects.types.GomClass )gomClass)) instanceof tom.gom.adt.objects.types.gomclass.SortClass) ) {
 
 
 
 
 
-        this.abstractType =  (( tom.gom.adt.objects.types.GomClass )((Object)gomClass)).getAbstractType() ;
-        this.operatorList =  (( tom.gom.adt.objects.types.GomClass )((Object)gomClass)).getOperators() ;
-        this.variadicOperatorList =  (( tom.gom.adt.objects.types.GomClass )((Object)gomClass)).getVariadicOperators() ;
-        this.operatorClasses =  (( tom.gom.adt.objects.types.GomClass )((Object)gomClass)).getOperatorClasses() ;
-        this.slotList =  (( tom.gom.adt.objects.types.GomClass )((Object)gomClass)).getSlotFields() ;
+        this.abstractType =  (( tom.gom.adt.objects.types.GomClass )gomClass).getAbstractType() ;
+        this.operatorList =  (( tom.gom.adt.objects.types.GomClass )gomClass).getOperators() ;
+        this.variadicOperatorList =  (( tom.gom.adt.objects.types.GomClass )gomClass).getVariadicOperators() ;
+        this.operatorClasses =  (( tom.gom.adt.objects.types.GomClass )gomClass).getOperatorClasses() ;
+        this.slotList =  (( tom.gom.adt.objects.types.GomClass )gomClass).getSlotFields() ;
         return;
       }}}}}
 
@@ -409,13 +409,13 @@ private String generateSum() {
   String res = null;
   Set<String> toInitialize = new HashSet<String>();
 
-  {{if ( (((Object)operatorClasses) instanceof tom.gom.adt.objects.types.GomClassList) ) {if ( (((( tom.gom.adt.objects.types.GomClassList )(( tom.gom.adt.objects.types.GomClassList )((Object)operatorClasses))) instanceof tom.gom.adt.objects.types.gomclasslist.ConsConcGomClass) || ((( tom.gom.adt.objects.types.GomClassList )(( tom.gom.adt.objects.types.GomClassList )((Object)operatorClasses))) instanceof tom.gom.adt.objects.types.gomclasslist.EmptyConcGomClass)) ) { tom.gom.adt.objects.types.GomClassList  tomMatch578__end__4=(( tom.gom.adt.objects.types.GomClassList )((Object)operatorClasses));do {{if (!( tomMatch578__end__4.isEmptyConcGomClass() )) { tom.gom.adt.objects.types.GomClass  tomMatch578_10= tomMatch578__end__4.getHeadConcGomClass() ;if ( (tomMatch578_10 instanceof tom.gom.adt.objects.types.GomClass) ) {if ( ((( tom.gom.adt.objects.types.GomClass )tomMatch578_10) instanceof tom.gom.adt.objects.types.gomclass.OperatorClass) ) { tom.gom.adt.objects.types.ClassName  tomMatch578_8= tomMatch578_10.getSortName() ;if ( (tomMatch578_8 instanceof tom.gom.adt.objects.types.ClassName) ) {if ( ((( tom.gom.adt.objects.types.ClassName )tomMatch578_8) instanceof tom.gom.adt.objects.types.classname.ClassName) ) { tom.gom.adt.objects.types.SlotFieldList  tom_slotList= tomMatch578_10.getSlotFields() ;if (  tomMatch578_8.getName() .equals(className()) ) {
+  {{if ( (operatorClasses instanceof tom.gom.adt.objects.types.GomClassList) ) {if ( (((( tom.gom.adt.objects.types.GomClassList )(( tom.gom.adt.objects.types.GomClassList )operatorClasses)) instanceof tom.gom.adt.objects.types.gomclasslist.ConsConcGomClass) || ((( tom.gom.adt.objects.types.GomClassList )(( tom.gom.adt.objects.types.GomClassList )operatorClasses)) instanceof tom.gom.adt.objects.types.gomclasslist.EmptyConcGomClass)) ) { tom.gom.adt.objects.types.GomClassList  tomMatch578_end_4=(( tom.gom.adt.objects.types.GomClassList )operatorClasses);do {{if (!( tomMatch578_end_4.isEmptyConcGomClass() )) { tom.gom.adt.objects.types.GomClass  tomMatch578_10= tomMatch578_end_4.getHeadConcGomClass() ;if ( (tomMatch578_10 instanceof tom.gom.adt.objects.types.GomClass) ) {if ( ((( tom.gom.adt.objects.types.GomClass )tomMatch578_10) instanceof tom.gom.adt.objects.types.gomclass.OperatorClass) ) { tom.gom.adt.objects.types.ClassName  tomMatch578_8= tomMatch578_10.getSortName() ;if ( (tomMatch578_8 instanceof tom.gom.adt.objects.types.ClassName) ) {if ( ((( tom.gom.adt.objects.types.ClassName )tomMatch578_8) instanceof tom.gom.adt.objects.types.classname.ClassName) ) { tom.gom.adt.objects.types.SlotFieldList  tom_slotList= tomMatch578_10.getSlotFields() ;if (  tomMatch578_8.getName() .equals(className()) ) {
 
       String exp = fullClassName( tomMatch578_10.getClassName() ) + ".funMake()";
-      {{if ( (((Object)tom_slotList) instanceof tom.gom.adt.objects.types.SlotFieldList) ) {if ( (((( tom.gom.adt.objects.types.SlotFieldList )(( tom.gom.adt.objects.types.SlotFieldList )((Object)tom_slotList))) instanceof tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField) || ((( tom.gom.adt.objects.types.SlotFieldList )(( tom.gom.adt.objects.types.SlotFieldList )((Object)tom_slotList))) instanceof tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField)) ) {if ( (( tom.gom.adt.objects.types.SlotFieldList )((Object)tom_slotList)).isEmptyConcSlotField() ) {
+      {{if ( (tom_slotList instanceof tom.gom.adt.objects.types.SlotFieldList) ) {if ( (((( tom.gom.adt.objects.types.SlotFieldList )(( tom.gom.adt.objects.types.SlotFieldList )tom_slotList)) instanceof tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField) || ((( tom.gom.adt.objects.types.SlotFieldList )(( tom.gom.adt.objects.types.SlotFieldList )tom_slotList)) instanceof tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField)) ) {if ( (( tom.gom.adt.objects.types.SlotFieldList )tom_slotList).isEmptyConcSlotField() ) {
 
           exp += ".apply(" + fullClassName() + ".tmpenum" + className() + ")";
-        }}}}{if ( (((Object)tom_slotList) instanceof tom.gom.adt.objects.types.SlotFieldList) ) {if ( (((( tom.gom.adt.objects.types.SlotFieldList )(( tom.gom.adt.objects.types.SlotFieldList )((Object)tom_slotList))) instanceof tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField) || ((( tom.gom.adt.objects.types.SlotFieldList )(( tom.gom.adt.objects.types.SlotFieldList )((Object)tom_slotList))) instanceof tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField)) ) { tom.gom.adt.objects.types.SlotFieldList  tomMatch579__end__6=(( tom.gom.adt.objects.types.SlotFieldList )((Object)tom_slotList));do {{if (!( tomMatch579__end__6.isEmptyConcSlotField() )) { tom.gom.adt.objects.types.SlotField  tomMatch579_10= tomMatch579__end__6.getHeadConcSlotField() ;if ( (tomMatch579_10 instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )tomMatch579_10) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { tom.gom.adt.objects.types.ClassName  tomMatch579_9= tomMatch579_10.getDomain() ;if ( (tomMatch579_9 instanceof tom.gom.adt.objects.types.ClassName) ) {if ( ((( tom.gom.adt.objects.types.ClassName )tomMatch579_9) instanceof tom.gom.adt.objects.types.classname.ClassName) ) { String  tom_domainName= tomMatch579_9.getName() ; tom.gom.adt.objects.types.ClassName  tom_domain=tomMatch579_9;
+        }}}}{if ( (tom_slotList instanceof tom.gom.adt.objects.types.SlotFieldList) ) {if ( (((( tom.gom.adt.objects.types.SlotFieldList )(( tom.gom.adt.objects.types.SlotFieldList )tom_slotList)) instanceof tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField) || ((( tom.gom.adt.objects.types.SlotFieldList )(( tom.gom.adt.objects.types.SlotFieldList )tom_slotList)) instanceof tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField)) ) { tom.gom.adt.objects.types.SlotFieldList  tomMatch579_end_6=(( tom.gom.adt.objects.types.SlotFieldList )tom_slotList);do {{if (!( tomMatch579_end_6.isEmptyConcSlotField() )) { tom.gom.adt.objects.types.SlotField  tomMatch579_10= tomMatch579_end_6.getHeadConcSlotField() ;if ( (tomMatch579_10 instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )tomMatch579_10) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { tom.gom.adt.objects.types.ClassName  tomMatch579_9= tomMatch579_10.getDomain() ;if ( (tomMatch579_9 instanceof tom.gom.adt.objects.types.ClassName) ) {if ( ((( tom.gom.adt.objects.types.ClassName )tomMatch579_9) instanceof tom.gom.adt.objects.types.classname.ClassName) ) { String  tom_domainName= tomMatch579_9.getName() ; tom.gom.adt.objects.types.ClassName  tom_domain=tomMatch579_9;
 
           if(getGomEnvironment().isBuiltinClass(tom_domain)) {
             exp += ".apply(tom.library.enumerator.Combinators.make" + tom_domainName+ "())";
@@ -425,10 +425,10 @@ private String generateSum() {
               toInitialize.add(fullClassName(tom_domain));
             }
           }
-        }}}}}if ( tomMatch579__end__6.isEmptyConcSlotField() ) {tomMatch579__end__6=(( tom.gom.adt.objects.types.SlotFieldList )((Object)tom_slotList));} else {tomMatch579__end__6= tomMatch579__end__6.getTailConcSlotField() ;}}} while(!( (tomMatch579__end__6==(( tom.gom.adt.objects.types.SlotFieldList )((Object)tom_slotList))) ));}}}}
+        }}}}}if ( tomMatch579_end_6.isEmptyConcSlotField() ) {tomMatch579_end_6=(( tom.gom.adt.objects.types.SlotFieldList )tom_slotList);} else {tomMatch579_end_6= tomMatch579_end_6.getTailConcSlotField() ;}}} while(!( (tomMatch579_end_6==(( tom.gom.adt.objects.types.SlotFieldList )tom_slotList)) ));}}}}
 
       res = (res==null)?exp:res+"\n        .plus(" + exp + ")";
-    }}}}}}if ( tomMatch578__end__4.isEmptyConcGomClass() ) {tomMatch578__end__4=(( tom.gom.adt.objects.types.GomClassList )((Object)operatorClasses));} else {tomMatch578__end__4= tomMatch578__end__4.getTailConcGomClass() ;}}} while(!( (tomMatch578__end__4==(( tom.gom.adt.objects.types.GomClassList )((Object)operatorClasses))) ));}}}}
+    }}}}}}if ( tomMatch578_end_4.isEmptyConcGomClass() ) {tomMatch578_end_4=(( tom.gom.adt.objects.types.GomClassList )operatorClasses);} else {tomMatch578_end_4= tomMatch578_end_4.getTailConcGomClass() ;}}} while(!( (tomMatch578_end_4==(( tom.gom.adt.objects.types.GomClassList )operatorClasses)) ));}}}}
 
   res += ";\n\n";
   for(String className:toInitialize) {

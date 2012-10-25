@@ -87,16 +87,16 @@ public class TNodeToXML {
    * @throws RuntimeException in case of problem in DocumentTypeNode
    */
   public void tnodeToXML(TNode n) {
-    {{if ( (((Object)n) instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )((Object)n)) instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )(( tom.library.adt.tnode.types.TNode )((Object)n))) instanceof tom.library.adt.tnode.types.tnode.DocumentNode) ) {
+    {{if ( (n instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )n) instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )(( tom.library.adt.tnode.types.TNode )n)) instanceof tom.library.adt.tnode.types.tnode.DocumentNode) ) {
 
         write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-        tnodeToXML( (( tom.library.adt.tnode.types.TNode )((Object)n)).getDocType() );
-        tnodeToXML( (( tom.library.adt.tnode.types.TNode )((Object)n)).getDocElem() );
+        tnodeToXML( (( tom.library.adt.tnode.types.TNode )n).getDocType() );
+        tnodeToXML( (( tom.library.adt.tnode.types.TNode )n).getDocElem() );
         write("\n");
         return;
-      }}}}{if ( (((Object)n) instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )((Object)n)) instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )(( tom.library.adt.tnode.types.TNode )((Object)n))) instanceof tom.library.adt.tnode.types.tnode.DocumentTypeNode) ) { String  tom_publicId= (( tom.library.adt.tnode.types.TNode )((Object)n)).getPublicId() ; String  tom_systemId= (( tom.library.adt.tnode.types.TNode )((Object)n)).getSystemId() ; String  tom_internalSubset= (( tom.library.adt.tnode.types.TNode )((Object)n)).getInternalSubset() ;
+      }}}}{if ( (n instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )n) instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )(( tom.library.adt.tnode.types.TNode )n)) instanceof tom.library.adt.tnode.types.tnode.DocumentTypeNode) ) { String  tom_publicId= (( tom.library.adt.tnode.types.TNode )n).getPublicId() ; String  tom_systemId= (( tom.library.adt.tnode.types.TNode )n).getSystemId() ; String  tom_internalSubset= (( tom.library.adt.tnode.types.TNode )n).getInternalSubset() ;
 
-        write("<!DOCTYPE "+ (( tom.library.adt.tnode.types.TNode )((Object)n)).getName() );
+        write("<!DOCTYPE "+ (( tom.library.adt.tnode.types.TNode )n).getName() );
         if (!tom_publicId.equals(TNodeToXML.UNDEF) && !tom_systemId.equals(TNodeToXML.UNDEF))
           write(" PUBLIC \""+tom_publicId+"\" \"");
         else if (!tom_systemId.equals(TNodeToXML.UNDEF) && tom_publicId.equals(TNodeToXML.UNDEF))
@@ -111,50 +111,50 @@ public class TNodeToXML {
         }
         write(">\n");
         return;
-      }}}}{if ( (((Object)n) instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )((Object)n)) instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )(( tom.library.adt.tnode.types.TNode )((Object)n))) instanceof tom.library.adt.tnode.types.tnode.ElementNode) ) { tom.library.adt.tnode.types.TNodeList  tomMatch748_17= (( tom.library.adt.tnode.types.TNode )((Object)n)).getChildList() ;if ( (((( tom.library.adt.tnode.types.TNodeList )tomMatch748_17) instanceof tom.library.adt.tnode.types.tnodelist.ConsconcTNode) || ((( tom.library.adt.tnode.types.TNodeList )tomMatch748_17) instanceof tom.library.adt.tnode.types.tnodelist.EmptyconcTNode)) ) {if ( tomMatch748_17.isEmptyconcTNode() ) {
+      }}}}{if ( (n instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )n) instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )(( tom.library.adt.tnode.types.TNode )n)) instanceof tom.library.adt.tnode.types.tnode.ElementNode) ) { tom.library.adt.tnode.types.TNodeList  tomMatch748_17= (( tom.library.adt.tnode.types.TNode )n).getChildList() ;if ( (((( tom.library.adt.tnode.types.TNodeList )tomMatch748_17) instanceof tom.library.adt.tnode.types.tnodelist.ConsconcTNode) || ((( tom.library.adt.tnode.types.TNodeList )tomMatch748_17) instanceof tom.library.adt.tnode.types.tnodelist.EmptyconcTNode)) ) {if ( tomMatch748_17.isEmptyconcTNode() ) {
 
-        write("<"+ (( tom.library.adt.tnode.types.TNode )((Object)n)).getName() );
-        tnodeListToXML( (( tom.library.adt.tnode.types.TNode )((Object)n)).getAttrList() );
+        write("<"+ (( tom.library.adt.tnode.types.TNode )n).getName() );
+        tnodeListToXML( (( tom.library.adt.tnode.types.TNode )n).getAttrList() );
         write("/>");
         return;
-      }}}}}}{if ( (((Object)n) instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )((Object)n)) instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )(( tom.library.adt.tnode.types.TNode )((Object)n))) instanceof tom.library.adt.tnode.types.tnode.ElementNode) ) { String  tom_name= (( tom.library.adt.tnode.types.TNode )((Object)n)).getName() ;
+      }}}}}}{if ( (n instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )n) instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )(( tom.library.adt.tnode.types.TNode )n)) instanceof tom.library.adt.tnode.types.tnode.ElementNode) ) { String  tom_name= (( tom.library.adt.tnode.types.TNode )n).getName() ;
 
         write("<"+tom_name);
-        tnodeListToXML( (( tom.library.adt.tnode.types.TNode )((Object)n)).getAttrList() );
+        tnodeListToXML( (( tom.library.adt.tnode.types.TNode )n).getAttrList() );
         write(">");
-        tnodeListToXML( (( tom.library.adt.tnode.types.TNode )((Object)n)).getChildList() );
+        tnodeListToXML( (( tom.library.adt.tnode.types.TNode )n).getChildList() );
         write("</"+tom_name+">");
         return;
-      }}}}{if ( (((Object)n) instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )((Object)n)) instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )(( tom.library.adt.tnode.types.TNode )((Object)n))) instanceof tom.library.adt.tnode.types.tnode.AttributeNode) ) {
+      }}}}{if ( (n instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )n) instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )(( tom.library.adt.tnode.types.TNode )n)) instanceof tom.library.adt.tnode.types.tnode.AttributeNode) ) {
 
-        if ( (( tom.library.adt.tnode.types.TNode )((Object)n)).getSpecified() .equals("true")) {
-          write(" " +  (( tom.library.adt.tnode.types.TNode )((Object)n)).getName() + "=\"" +  (( tom.library.adt.tnode.types.TNode )((Object)n)).getValue() + "\"");
+        if ( (( tom.library.adt.tnode.types.TNode )n).getSpecified() .equals("true")) {
+          write(" " +  (( tom.library.adt.tnode.types.TNode )n).getName() + "=\"" +  (( tom.library.adt.tnode.types.TNode )n).getValue() + "\"");
         }
         return;
-      }}}}{if ( (((Object)n) instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )((Object)n)) instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )(( tom.library.adt.tnode.types.TNode )((Object)n))) instanceof tom.library.adt.tnode.types.tnode.TextNode) ) {
+      }}}}{if ( (n instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )n) instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )(( tom.library.adt.tnode.types.TNode )n)) instanceof tom.library.adt.tnode.types.tnode.TextNode) ) {
 
-        write( (( tom.library.adt.tnode.types.TNode )((Object)n)).getData() );
+        write( (( tom.library.adt.tnode.types.TNode )n).getData() );
         return;
-      }}}}{if ( (((Object)n) instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )((Object)n)) instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )(( tom.library.adt.tnode.types.TNode )((Object)n))) instanceof tom.library.adt.tnode.types.tnode.CommentNode) ) {
+      }}}}{if ( (n instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )n) instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )(( tom.library.adt.tnode.types.TNode )n)) instanceof tom.library.adt.tnode.types.tnode.CommentNode) ) {
 
-        write("<!-- "+ (( tom.library.adt.tnode.types.TNode )((Object)n)).getData() +" -->");
+        write("<!-- "+ (( tom.library.adt.tnode.types.TNode )n).getData() +" -->");
         return;
-      }}}}{if ( (((Object)n) instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )((Object)n)) instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )(( tom.library.adt.tnode.types.TNode )((Object)n))) instanceof tom.library.adt.tnode.types.tnode.CDATASectionNode) ) {
+      }}}}{if ( (n instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )n) instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )(( tom.library.adt.tnode.types.TNode )n)) instanceof tom.library.adt.tnode.types.tnode.CDATASectionNode) ) {
 
-        write("<![CDATA["+ (( tom.library.adt.tnode.types.TNode )((Object)n)).getData() +"]]>");
+        write("<![CDATA["+ (( tom.library.adt.tnode.types.TNode )n).getData() +"]]>");
         return;
-      }}}}{if ( (((Object)n) instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )((Object)n)) instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )(( tom.library.adt.tnode.types.TNode )((Object)n))) instanceof tom.library.adt.tnode.types.tnode.ProcessingInstructionNode) ) {
+      }}}}{if ( (n instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )n) instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )(( tom.library.adt.tnode.types.TNode )n)) instanceof tom.library.adt.tnode.types.tnode.ProcessingInstructionNode) ) {
 
-        write("<?"+ (( tom.library.adt.tnode.types.TNode )((Object)n)).getTarget() +" "+ (( tom.library.adt.tnode.types.TNode )((Object)n)).getData() +"?>");
+        write("<?"+ (( tom.library.adt.tnode.types.TNode )n).getTarget() +" "+ (( tom.library.adt.tnode.types.TNode )n).getData() +"?>");
         return;
-      }}}}{if ( (((Object)n) instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )((Object)n)) instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )(( tom.library.adt.tnode.types.TNode )((Object)n))) instanceof tom.library.adt.tnode.types.tnode.EntityReferenceNode) ) {
+      }}}}{if ( (n instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )n) instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )(( tom.library.adt.tnode.types.TNode )n)) instanceof tom.library.adt.tnode.types.tnode.EntityReferenceNode) ) {
 
-        write("&"+ (( tom.library.adt.tnode.types.TNode )((Object)n)).getName() +";");
+        write("&"+ (( tom.library.adt.tnode.types.TNode )n).getName() +";");
         return;
-      }}}}{if ( (((Object)n) instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )((Object)n)) instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )(( tom.library.adt.tnode.types.TNode )((Object)n))) instanceof tom.library.adt.tnode.types.tnode.EmptyNode) ) {
+      }}}}{if ( (n instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )n) instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )(( tom.library.adt.tnode.types.TNode )n)) instanceof tom.library.adt.tnode.types.tnode.EmptyNode) ) {
 
         return;
-      }}}}{if ( (((Object)n) instanceof tom.library.adt.tnode.types.TNode) ) {
+      }}}}{if ( (n instanceof tom.library.adt.tnode.types.TNode) ) {
 
         System.out.println("Unknown type of TNode : "+n);
       }}}

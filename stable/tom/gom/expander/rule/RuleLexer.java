@@ -1,4 +1,4 @@
-// $ANTLR 3.2 Sep 23, 2009 12:02:23 /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g 2012-10-21 12:01:27
+// $ANTLR 3.2 Sep 23, 2009 12:02:23 /Users/jcb/workspace/tom/src/tom/gom/expander/rule/Rule.g 2012-10-25 19:59:17
 
 package tom.gom.expander.rule;
 
