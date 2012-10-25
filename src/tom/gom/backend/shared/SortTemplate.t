@@ -38,6 +38,7 @@ public class SortTemplate extends TemplateHookedClass {
   ClassName abstractType;
   ClassNameList operatorList;
   ClassNameList variadicOperatorList;
+  GomClassList operatorClasses;
   SlotFieldList slotList;
   boolean maximalsharing;
 
@@ -56,10 +57,12 @@ public class SortTemplate extends TemplateHookedClass {
       SortClass[AbstractType=abstractType,
                 Operators=ops,
                 VariadicOperators=variops,
+                OperatorClasses=opclasses,
                 SlotFields=slots] -> {
         this.abstractType = `abstractType;
         this.operatorList = `ops;
         this.variadicOperatorList = `variops;
+        this.operatorClasses = `opclasses;
         this.slotList = `slots;
         return;
       }
@@ -284,6 +287,7 @@ writer.write(%[
     throw new IllegalArgumentException(
       "This "+this.getClass().getName()+" is not a list");
   }
+
   ]%);
 
     /*
@@ -343,6 +347,11 @@ matchblock: {
     if(hooks.containsTomCode()) {
       mapping.generate(writer);
     }
+
+    /*
+     * generate code for Enumerator
+     */
+    generateEnum(writer);
   }
 
   public void generateTomMapping(Writer writer) throws java.io.IOException {
@@ -364,4 +373,72 @@ matchblock: {
 }
 ]%);
  }
+
+private void generateEnum(java.io.Writer writer) throws java.io.IOException {
+  String P = "tom.library.enumerator.";
+  String E = "tom.library.enumerator.Enumeration";
+
+  writer.write(
+%[
+  /*
+   * Initialize the (cyclic) data-structure
+   * in order to generate/enumerate terms
+   */
+
+  protected static @E@<@fullClassName()@> enum@className()@ = null;
+  public static final @E@<@fullClassName()@> tmpenum@className()@ = new @E@<@fullClassName()@>((@P@LazyList<@P@Finite<@fullClassName()@>>) null);
+
+  public static @E@<@fullClassName()@> getEnumeration() {
+    if(enum@className()@ == null) { 
+      enum@className()@ = @generateSum()@
+      tmpenum@className()@.p1 = new @P@P1<@P@LazyList<@P@Finite<@fullClassName()@>>>() {
+        public @P@LazyList<@P@Finite<@fullClassName()@>> _1() { return enum@className()@.parts(); }
+      };
+
+    }
+    return enum@className()@;
+  }
+]%);
+
+}
+
+/*
+ * build a.plus(b).plus(f);
+ */
+private String generateSum() {
+  String res = null;
+  Set<String> toInitialize = new HashSet<String>();
+
+  %match(operatorClasses) {
+    ConcGomClass(_*,OperatorClass[ClassName=className, SortName=ClassName[Name=sortName], SlotFields=slotList],_*) && className()==`sortName -> {
+      String exp = fullClassName(`className) + ".funMake()";
+      %match(slotList) { 
+        ConcSlotField() -> {
+          exp += ".apply(" + fullClassName() + ".tmpenum" + className() + ")";
+        }
+        ConcSlotField(_*,SlotField[Domain=domain@ClassName[Name=domainName]],_*) -> {
+          if(getGomEnvironment().isBuiltinClass(`domain)) {
+            exp += ".apply(tom.library.enumerator.Combinators.make" + `domainName + "())";
+          } else {
+            exp += ".apply(" + fullClassName(`domain) + ".tmpenum" + `domainName + ")";
+            if(!fullClassName().equals(fullClassName(`domain))) {
+              toInitialize.add(fullClassName(`domain));
+            }
+          }
+        }
+      }
+      res = (res==null)?exp:res+"\n        .plus(" + exp + ")";
+    }
+  }
+  res += ";\n\n";
+  for(String className:toInitialize) {
+    res += "      " + className + ".getEnumeration();\n";
+  }
+
+  return res;
+}
+
+
+
+
 }

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-EXAMPLES="btree car concString sl successeur vehicle"
+EXAMPLES="trees car concString sl successeur vehicle"
 
 mkdir -p ../gen/ada
 for i in `echo $EXAMPLES`; do

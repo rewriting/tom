@@ -290,9 +290,9 @@ public class CamlGenerator extends GenericGenerator {
     } 
     s.append(") = " + tlCode.getCode() + " ");
 
-    {{if ( (((Object)tlCode) instanceof tom.engine.adt.code.types.TargetLanguage) ) {if ( ((( tom.engine.adt.code.types.TargetLanguage )((Object)tlCode)) instanceof tom.engine.adt.code.types.TargetLanguage) ) {if ( ((( tom.engine.adt.code.types.TargetLanguage )(( tom.engine.adt.code.types.TargetLanguage )((Object)tlCode))) instanceof tom.engine.adt.code.types.targetlanguage.TL) ) { tom.engine.adt.tomsignature.types.TextPosition  tomMatch86_2= (( tom.engine.adt.code.types.TargetLanguage )((Object)tlCode)).getStart() ; tom.engine.adt.tomsignature.types.TextPosition  tomMatch86_3= (( tom.engine.adt.code.types.TargetLanguage )((Object)tlCode)).getEnd() ;if ( (tomMatch86_2 instanceof tom.engine.adt.tomsignature.types.TextPosition) ) {if ( ((( tom.engine.adt.tomsignature.types.TextPosition )tomMatch86_2) instanceof tom.engine.adt.tomsignature.types.textposition.TextPosition) ) { int  tom_startLine= tomMatch86_2.getLine() ;if ( (tomMatch86_3 instanceof tom.engine.adt.tomsignature.types.TextPosition) ) {if ( ((( tom.engine.adt.tomsignature.types.TextPosition )tomMatch86_3) instanceof tom.engine.adt.tomsignature.types.textposition.TextPosition) ) {
+    {{if ( (((Object)tlCode) instanceof tom.engine.adt.code.types.TargetLanguage) ) {if ( ((( tom.engine.adt.code.types.TargetLanguage )((Object)tlCode)) instanceof tom.engine.adt.code.types.TargetLanguage) ) {if ( ((( tom.engine.adt.code.types.TargetLanguage )(( tom.engine.adt.code.types.TargetLanguage )((Object)tlCode))) instanceof tom.engine.adt.code.types.targetlanguage.TL) ) { tom.engine.adt.tomsignature.types.TextPosition  tomMatch95_2= (( tom.engine.adt.code.types.TargetLanguage )((Object)tlCode)).getStart() ; tom.engine.adt.tomsignature.types.TextPosition  tomMatch95_3= (( tom.engine.adt.code.types.TargetLanguage )((Object)tlCode)).getEnd() ;if ( (tomMatch95_2 instanceof tom.engine.adt.tomsignature.types.TextPosition) ) {if ( ((( tom.engine.adt.tomsignature.types.TextPosition )tomMatch95_2) instanceof tom.engine.adt.tomsignature.types.textposition.TextPosition) ) { int  tom_startLine= tomMatch95_2.getLine() ;if ( (tomMatch95_3 instanceof tom.engine.adt.tomsignature.types.TextPosition) ) {if ( ((( tom.engine.adt.tomsignature.types.TextPosition )tomMatch95_3) instanceof tom.engine.adt.tomsignature.types.textposition.TextPosition) ) {
 
-        output.write(0,s, tom_startLine,  tomMatch86_3.getLine() - tom_startLine);
+        output.write(0,s, tom_startLine,  tomMatch95_3.getLine() - tom_startLine);
         return;
       }}}}}}}}{if ( (((Object)tlCode) instanceof tom.engine.adt.code.types.TargetLanguage) ) {if ( ((( tom.engine.adt.code.types.TargetLanguage )((Object)tlCode)) instanceof tom.engine.adt.code.types.TargetLanguage) ) {if ( ((( tom.engine.adt.code.types.TargetLanguage )(( tom.engine.adt.code.types.TargetLanguage )((Object)tlCode))) instanceof tom.engine.adt.code.types.targetlanguage.ITL) ) {
 
@@ -313,10 +313,10 @@ public class CamlGenerator extends GenericGenerator {
     while(!argList.isEmptyconcBQTerm()) {
       BQTerm arg = argList.getHeadconcBQTerm();
       matchBlock: {
-        {{if ( (((Object)arg) instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )((Object)arg)) instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )(( tom.engine.adt.code.types.BQTerm )((Object)arg))) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) { tom.engine.adt.tomname.types.TomName  tomMatch87_1= (( tom.engine.adt.code.types.BQTerm )((Object)arg)).getAstName() ;if ( (tomMatch87_1 instanceof tom.engine.adt.tomname.types.TomName) ) {if ( ((( tom.engine.adt.tomname.types.TomName )tomMatch87_1) instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+        {{if ( (((Object)arg) instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )((Object)arg)) instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )(( tom.engine.adt.code.types.BQTerm )((Object)arg))) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) { tom.engine.adt.tomname.types.TomName  tomMatch96_1= (( tom.engine.adt.code.types.BQTerm )((Object)arg)).getAstName() ;if ( (tomMatch96_1 instanceof tom.engine.adt.tomname.types.TomName) ) {if ( ((( tom.engine.adt.tomname.types.TomName )tomMatch96_1) instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
 
 
-            s.append( tomMatch87_1.getString() );
+            s.append( tomMatch96_1.getString() );
             break matchBlock;
           }}}}}}{if ( (((Object)arg) instanceof tom.engine.adt.code.types.BQTerm) ) {
 
@@ -468,4 +468,55 @@ public class CamlGenerator extends GenericGenerator {
     
   }
 
+  //FIXME
+  //TODO: to implement
+  protected String genResolveIsSortCode(String varName, String resolveStringName) throws IOException {
+    throw new TomRuntimeException("%transformation (ResolveIsSort) not yet supported in Caml");
+    //return "";
+  }
+
+  protected String genResolveIsFsymCode(String tomName, String varname) throws IOException {
+    throw new TomRuntimeException("%transformation (ResolveIsFsym) not yet supported in Caml");
+    //return "";
+  }
+
+  protected String genResolveGetSlotCode(String tomName, String varname, String slotName) throws IOException {
+    throw new TomRuntimeException("%transformation (ResolveGetSlot) not yet supported in Caml");
+    //return "";
+  }
+  
+  protected void buildResolveClass(String wName, String tName, String extendsName, String moduleName) throws IOException {
+    throw new TomRuntimeException("%transformation (ResolveClass) not yet supported in Caml");
+  }
+
+  protected void buildResolveInverseLinks(int deep, String fileFrom, String fileTo, TomNameList resolveNameList, String moduleName) throws IOException {
+    throw new TomRuntimeException("%transformation (ResolveInverseLinks) not yet supported in Caml");
+  }
+
+  protected void genResolveDeclMake(String prefix, String funName, TomType returnType, BQTermList argList, String moduleName) throws IOException {
+    throw new TomRuntimeException("%transformation (ResolveMakeDecl) not yet supported in Caml");
+  }
+
+  protected String genResolveMakeCode(String funName, BQTermList argList) throws IOException {
+    throw new TomRuntimeException("%transformation (ResolveMakeCode) not yet supported in Caml");
+  }
+
+  protected void buildReferenceClass(int deep, String refname, RefClassTracelinkInstructionList refclassTInstructions, String  moduleName) {
+    throw new TomRuntimeException("%transformation (ResolveReferenceClass) not yet supported in Caml");
+  }
+
+  protected void buildTracelink(int deep, String type, String name, Expression expr, String moduleName) throws IOException {
+    throw new TomRuntimeException("%transformation (Tracelink instruction) not yet supported in Caml");
+  }
+
+  protected void buildTracelinkPopulateResolve(int deep, String refClassName, TomNameList tracedLinks, BQTerm current, BQTerm link, String moduleName) throws IOException {
+    throw new TomRuntimeException("%transformation (TracelinkPopulateResolve instruction) not yet supported in Caml");
+  }
+
+  //tmp
+  protected void buildResolve(int deep, BQTerm bqterm, String moduleName) throws IOException {
+    throw new TomRuntimeException("%transformation (Resolve2 instruction) not yet supported in Caml");
+  }
+
+///
 }

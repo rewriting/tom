@@ -1,5 +1,7 @@
 package enumerator;
 
+import tom.library.enumerator.*;
+
 import java.math.BigInteger;
 
 public class Demo {
@@ -34,9 +36,6 @@ public class Demo {
 		};
 		
 		Enumeration<LList> listEnum = Enumeration.fix(f);
-
-		//listEnum.pay();
-		//listEnum.get(0);
 
 		LazyList<Finite<LList>> parts = listEnum.parts();
 		for(int i=0;i<10 && !parts.isEmpty();i++) {
@@ -98,7 +97,7 @@ public class Demo {
 
 	
 	/**
-	 * Tree
+	 * Tree of Nat
 	 */
 	
 	public static void treeOfNatural() {
@@ -123,10 +122,11 @@ public class Demo {
 		F<Nat,Tree<Nat>> _leaf = new F<Nat,Tree<Nat>>() { public Tree<Nat> apply(Nat x) { return new Leaf<Nat>(x); } };
 		final Enumeration<Tree<Nat>> leafEnum = Enumeration.apply(Enumeration.singleton(_leaf),natEnum);
 		
+		final F2<Tree<Nat>,Tree<Nat>,Tree<Nat>> _fork = new F2<Tree<Nat>,Tree<Nat>,Tree<Nat>>() { public Tree<Nat> apply(Tree<Nat> l, Tree<Nat> r) { return new Fork<Nat>(l,r); } };
 		F<Enumeration<Tree<Nat>>,Enumeration<Tree<Nat>>> forkEnum = new F<Enumeration<Tree<Nat>>,Enumeration<Tree<Nat>>>() {
 			public Enumeration<Tree<Nat>> apply(final Enumeration<Tree<Nat>> e) {
-				F2<Tree<Nat>,Tree<Nat>,Tree<Nat>> _fork = new F2<Tree<Nat>,Tree<Nat>,Tree<Nat>>() { public Tree<Nat> apply(Tree<Nat> l, Tree<Nat> r) { return new Fork<Nat>(l,r); } };
-				return leafEnum.plus(forkEnumAux(_fork.curry(), e)).pay();
+				return leafEnum.plus(Enumeration.apply(Enumeration.apply(Enumeration.singleton(_fork.curry()),e),e)).pay();
+				//return leafEnum.plus(forkEnumAux(_fork.curry(), e, e)).pay();
 			}
 		};
 		
@@ -155,8 +155,8 @@ public class Demo {
 		return res;
 	}
 	
-	private static Enumeration<Tree<Nat>> forkEnumAux(F<Tree<Nat>,F<Tree<Nat>,Tree<Nat>>> f, Enumeration<Tree<Nat>> e) {
-		return Enumeration.apply(Enumeration.apply(Enumeration.singleton(f),e),e);
+	private static Enumeration<Tree<Nat>> forkEnumAux(F<Tree<Nat>,F<Tree<Nat>,Tree<Nat>>> f, Enumeration<Tree<Nat>> e1, Enumeration<Tree<Nat>> e2) {
+		return Enumeration.apply(Enumeration.apply(Enumeration.singleton(f),e1),e2);
 	}
 	
 	private static abstract class Tree<A> {

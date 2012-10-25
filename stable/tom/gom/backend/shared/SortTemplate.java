@@ -38,10 +38,11 @@ public class SortTemplate extends TemplateHookedClass {
   ClassName abstractType;
   ClassNameList operatorList;
   ClassNameList variadicOperatorList;
+  GomClassList operatorClasses;
   SlotFieldList slotList;
   boolean maximalsharing;
 
-         private static   tom.gom.adt.objects.types.ClassNameList  tom_append_list_ConcClassName( tom.gom.adt.objects.types.ClassNameList l1,  tom.gom.adt.objects.types.ClassNameList  l2) {     if( l1.isEmptyConcClassName() ) {       return l2;     } else if( l2.isEmptyConcClassName() ) {       return l1;     } else if(  l1.getTailConcClassName() .isEmptyConcClassName() ) {       return  tom.gom.adt.objects.types.classnamelist.ConsConcClassName.make( l1.getHeadConcClassName() ,l2) ;     } else {       return  tom.gom.adt.objects.types.classnamelist.ConsConcClassName.make( l1.getHeadConcClassName() ,tom_append_list_ConcClassName( l1.getTailConcClassName() ,l2)) ;     }   }   private static   tom.gom.adt.objects.types.ClassNameList  tom_get_slice_ConcClassName( tom.gom.adt.objects.types.ClassNameList  begin,  tom.gom.adt.objects.types.ClassNameList  end, tom.gom.adt.objects.types.ClassNameList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyConcClassName()  ||  (end== tom.gom.adt.objects.types.classnamelist.EmptyConcClassName.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.gom.adt.objects.types.classnamelist.ConsConcClassName.make( begin.getHeadConcClassName() ,( tom.gom.adt.objects.types.ClassNameList )tom_get_slice_ConcClassName( begin.getTailConcClassName() ,end,tail)) ;   }    
+         private static   tom.gom.adt.objects.types.GomClassList  tom_append_list_ConcGomClass( tom.gom.adt.objects.types.GomClassList l1,  tom.gom.adt.objects.types.GomClassList  l2) {     if( l1.isEmptyConcGomClass() ) {       return l2;     } else if( l2.isEmptyConcGomClass() ) {       return l1;     } else if(  l1.getTailConcGomClass() .isEmptyConcGomClass() ) {       return  tom.gom.adt.objects.types.gomclasslist.ConsConcGomClass.make( l1.getHeadConcGomClass() ,l2) ;     } else {       return  tom.gom.adt.objects.types.gomclasslist.ConsConcGomClass.make( l1.getHeadConcGomClass() ,tom_append_list_ConcGomClass( l1.getTailConcGomClass() ,l2)) ;     }   }   private static   tom.gom.adt.objects.types.GomClassList  tom_get_slice_ConcGomClass( tom.gom.adt.objects.types.GomClassList  begin,  tom.gom.adt.objects.types.GomClassList  end, tom.gom.adt.objects.types.GomClassList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyConcGomClass()  ||  (end== tom.gom.adt.objects.types.gomclasslist.EmptyConcGomClass.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.gom.adt.objects.types.gomclasslist.ConsConcGomClass.make( begin.getHeadConcGomClass() ,( tom.gom.adt.objects.types.GomClassList )tom_get_slice_ConcGomClass( begin.getTailConcGomClass() ,end,tail)) ;   }      private static   tom.gom.adt.objects.types.SlotFieldList  tom_append_list_ConcSlotField( tom.gom.adt.objects.types.SlotFieldList l1,  tom.gom.adt.objects.types.SlotFieldList  l2) {     if( l1.isEmptyConcSlotField() ) {       return l2;     } else if( l2.isEmptyConcSlotField() ) {       return l1;     } else if(  l1.getTailConcSlotField() .isEmptyConcSlotField() ) {       return  tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField.make( l1.getHeadConcSlotField() ,l2) ;     } else {       return  tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField.make( l1.getHeadConcSlotField() ,tom_append_list_ConcSlotField( l1.getTailConcSlotField() ,l2)) ;     }   }   private static   tom.gom.adt.objects.types.SlotFieldList  tom_get_slice_ConcSlotField( tom.gom.adt.objects.types.SlotFieldList  begin,  tom.gom.adt.objects.types.SlotFieldList  end, tom.gom.adt.objects.types.SlotFieldList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyConcSlotField()  ||  (end== tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField.make( begin.getHeadConcSlotField() ,( tom.gom.adt.objects.types.SlotFieldList )tom_get_slice_ConcSlotField( begin.getTailConcSlotField() ,end,tail)) ;   }      private static   tom.gom.adt.objects.types.ClassNameList  tom_append_list_ConcClassName( tom.gom.adt.objects.types.ClassNameList l1,  tom.gom.adt.objects.types.ClassNameList  l2) {     if( l1.isEmptyConcClassName() ) {       return l2;     } else if( l2.isEmptyConcClassName() ) {       return l1;     } else if(  l1.getTailConcClassName() .isEmptyConcClassName() ) {       return  tom.gom.adt.objects.types.classnamelist.ConsConcClassName.make( l1.getHeadConcClassName() ,l2) ;     } else {       return  tom.gom.adt.objects.types.classnamelist.ConsConcClassName.make( l1.getHeadConcClassName() ,tom_append_list_ConcClassName( l1.getTailConcClassName() ,l2)) ;     }   }   private static   tom.gom.adt.objects.types.ClassNameList  tom_get_slice_ConcClassName( tom.gom.adt.objects.types.ClassNameList  begin,  tom.gom.adt.objects.types.ClassNameList  end, tom.gom.adt.objects.types.ClassNameList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyConcClassName()  ||  (end== tom.gom.adt.objects.types.classnamelist.EmptyConcClassName.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.gom.adt.objects.types.classnamelist.ConsConcClassName.make( begin.getHeadConcClassName() ,( tom.gom.adt.objects.types.ClassNameList )tom_get_slice_ConcClassName( begin.getTailConcClassName() ,end,tail)) ;   }    
 
   public SortTemplate(File tomHomePath,
                       OptionManager manager,
@@ -57,9 +58,11 @@ public class SortTemplate extends TemplateHookedClass {
 
 
 
+
         this.abstractType =  (( tom.gom.adt.objects.types.GomClass )((Object)gomClass)).getAbstractType() ;
         this.operatorList =  (( tom.gom.adt.objects.types.GomClass )((Object)gomClass)).getOperators() ;
         this.variadicOperatorList =  (( tom.gom.adt.objects.types.GomClass )((Object)gomClass)).getVariadicOperators() ;
+        this.operatorClasses =  (( tom.gom.adt.objects.types.GomClass )((Object)gomClass)).getOperatorClasses() ;
         this.slotList =  (( tom.gom.adt.objects.types.GomClass )((Object)gomClass)).getSlotFields() ;
         return;
       }}}}}
@@ -262,7 +265,8 @@ writer.write("\n}\n"
     }
 
     /* length and reverse prototypes, only usable on lists */
-    writer.write("\n  /**\n   * Returns the length of the list\n   *\n   * @return the length of the list\n   * @throws IllegalArgumentException if the term is not a list\n   */\n  public int length() {\n    throw new IllegalArgumentException(\n      \"This \"+this.getClass().getName()+\" is not a list\");\n  }\n\n  /**\n   * Returns an inverted term\n   *\n   * @return the inverted list\n   * @throws IllegalArgumentException if the term is not a list\n   */\n  public "+fullClassName()+" reverse() {\n    throw new IllegalArgumentException(\n      \"This \"+this.getClass().getName()+\" is not a list\");\n  }\n  "
+    writer.write("\n  /**\n   * Returns the length of the list\n   *\n   * @return the length of the list\n   * @throws IllegalArgumentException if the term is not a list\n   */\n  public int length() {\n    throw new IllegalArgumentException(\n      \"This \"+this.getClass().getName()+\" is not a list\");\n  }\n\n  /**\n   * Returns an inverted term\n   *\n   * @return the inverted list\n   * @throws IllegalArgumentException if the term is not a list\n   */\n  public "+fullClassName()+" reverse() {\n    throw new IllegalArgumentException(\n      \"This \"+this.getClass().getName()+\" is not a list\");\n  }\n\n  "
+
 
 
 
@@ -343,6 +347,11 @@ matchblock: {
     if(hooks.containsTomCode()) {
       mapping.generate(writer);
     }
+
+    /*
+     * generate code for Enumerator
+     */
+    generateEnum(writer);
   }
 
   public void generateTomMapping(Writer writer) throws java.io.IOException {
@@ -364,4 +373,72 @@ matchblock: {
 
 );
  }
+
+private void generateEnum(java.io.Writer writer) throws java.io.IOException {
+  String P = "tom.library.enumerator.";
+  String E = "tom.library.enumerator.Enumeration";
+
+  writer.write(
+"\n  /*\n   * Initialize the (cyclic) data-structure\n   * in order to generate/enumerate terms\n   */\n\n  protected static "+E+"<"+fullClassName()+"> enum"+className()+" = null;\n  public static final "+E+"<"+fullClassName()+"> tmpenum"+className()+" = new "+E+"<"+fullClassName()+">(("+P+"LazyList<"+P+"Finite<"+fullClassName()+">>) null);\n\n  public static "+E+"<"+fullClassName()+"> getEnumeration() {\n    if(enum"+className()+" == null) { \n      enum"+className()+" = "+generateSum()+"\n      tmpenum"+className()+".p1 = new "+P+"P1<"+P+"LazyList<"+P+"Finite<"+fullClassName()+">>>() {\n        public "+P+"LazyList<"+P+"Finite<"+fullClassName()+">> _1() { return enum"+className()+".parts(); }\n      };\n\n    }\n    return enum"+className()+";\n  }\n"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+);
+
+}
+
+/*
+ * build a.plus(b).plus(f);
+ */
+private String generateSum() {
+  String res = null;
+  Set<String> toInitialize = new HashSet<String>();
+
+  {{if ( (((Object)operatorClasses) instanceof tom.gom.adt.objects.types.GomClassList) ) {if ( (((( tom.gom.adt.objects.types.GomClassList )(( tom.gom.adt.objects.types.GomClassList )((Object)operatorClasses))) instanceof tom.gom.adt.objects.types.gomclasslist.ConsConcGomClass) || ((( tom.gom.adt.objects.types.GomClassList )(( tom.gom.adt.objects.types.GomClassList )((Object)operatorClasses))) instanceof tom.gom.adt.objects.types.gomclasslist.EmptyConcGomClass)) ) { tom.gom.adt.objects.types.GomClassList  tomMatch578__end__4=(( tom.gom.adt.objects.types.GomClassList )((Object)operatorClasses));do {{if (!( tomMatch578__end__4.isEmptyConcGomClass() )) { tom.gom.adt.objects.types.GomClass  tomMatch578_10= tomMatch578__end__4.getHeadConcGomClass() ;if ( (tomMatch578_10 instanceof tom.gom.adt.objects.types.GomClass) ) {if ( ((( tom.gom.adt.objects.types.GomClass )tomMatch578_10) instanceof tom.gom.adt.objects.types.gomclass.OperatorClass) ) { tom.gom.adt.objects.types.ClassName  tomMatch578_8= tomMatch578_10.getSortName() ;if ( (tomMatch578_8 instanceof tom.gom.adt.objects.types.ClassName) ) {if ( ((( tom.gom.adt.objects.types.ClassName )tomMatch578_8) instanceof tom.gom.adt.objects.types.classname.ClassName) ) { tom.gom.adt.objects.types.SlotFieldList  tom_slotList= tomMatch578_10.getSlotFields() ;if (  tomMatch578_8.getName() .equals(className()) ) {
+
+      String exp = fullClassName( tomMatch578_10.getClassName() ) + ".funMake()";
+      {{if ( (((Object)tom_slotList) instanceof tom.gom.adt.objects.types.SlotFieldList) ) {if ( (((( tom.gom.adt.objects.types.SlotFieldList )(( tom.gom.adt.objects.types.SlotFieldList )((Object)tom_slotList))) instanceof tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField) || ((( tom.gom.adt.objects.types.SlotFieldList )(( tom.gom.adt.objects.types.SlotFieldList )((Object)tom_slotList))) instanceof tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField)) ) {if ( (( tom.gom.adt.objects.types.SlotFieldList )((Object)tom_slotList)).isEmptyConcSlotField() ) {
+
+          exp += ".apply(" + fullClassName() + ".tmpenum" + className() + ")";
+        }}}}{if ( (((Object)tom_slotList) instanceof tom.gom.adt.objects.types.SlotFieldList) ) {if ( (((( tom.gom.adt.objects.types.SlotFieldList )(( tom.gom.adt.objects.types.SlotFieldList )((Object)tom_slotList))) instanceof tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField) || ((( tom.gom.adt.objects.types.SlotFieldList )(( tom.gom.adt.objects.types.SlotFieldList )((Object)tom_slotList))) instanceof tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField)) ) { tom.gom.adt.objects.types.SlotFieldList  tomMatch579__end__6=(( tom.gom.adt.objects.types.SlotFieldList )((Object)tom_slotList));do {{if (!( tomMatch579__end__6.isEmptyConcSlotField() )) { tom.gom.adt.objects.types.SlotField  tomMatch579_10= tomMatch579__end__6.getHeadConcSlotField() ;if ( (tomMatch579_10 instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )tomMatch579_10) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { tom.gom.adt.objects.types.ClassName  tomMatch579_9= tomMatch579_10.getDomain() ;if ( (tomMatch579_9 instanceof tom.gom.adt.objects.types.ClassName) ) {if ( ((( tom.gom.adt.objects.types.ClassName )tomMatch579_9) instanceof tom.gom.adt.objects.types.classname.ClassName) ) { String  tom_domainName= tomMatch579_9.getName() ; tom.gom.adt.objects.types.ClassName  tom_domain=tomMatch579_9;
+
+          if(getGomEnvironment().isBuiltinClass(tom_domain)) {
+            exp += ".apply(tom.library.enumerator.Combinators.make" + tom_domainName+ "())";
+          } else {
+            exp += ".apply(" + fullClassName(tom_domain) + ".tmpenum" + tom_domainName+ ")";
+            if(!fullClassName().equals(fullClassName(tom_domain))) {
+              toInitialize.add(fullClassName(tom_domain));
+            }
+          }
+        }}}}}if ( tomMatch579__end__6.isEmptyConcSlotField() ) {tomMatch579__end__6=(( tom.gom.adt.objects.types.SlotFieldList )((Object)tom_slotList));} else {tomMatch579__end__6= tomMatch579__end__6.getTailConcSlotField() ;}}} while(!( (tomMatch579__end__6==(( tom.gom.adt.objects.types.SlotFieldList )((Object)tom_slotList))) ));}}}}
+
+      res = (res==null)?exp:res+"\n        .plus(" + exp + ")";
+    }}}}}}if ( tomMatch578__end__4.isEmptyConcGomClass() ) {tomMatch578__end__4=(( tom.gom.adt.objects.types.GomClassList )((Object)operatorClasses));} else {tomMatch578__end__4= tomMatch578__end__4.getTailConcGomClass() ;}}} while(!( (tomMatch578__end__4==(( tom.gom.adt.objects.types.GomClassList )((Object)operatorClasses))) ));}}}}
+
+  res += ";\n\n";
+  for(String className:toInitialize) {
+    res += "      " + className + ".getEnumeration();\n";
+  }
+
+  return res;
+}
+
+
+
+
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2000-2009, INRIA
+ * Copyright (c) 2000-2012, INPL, INRIA
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,5 +35,7 @@
 %include { Position.tom }
 
 %include { sl/basic.tom }
+%include { sl/builtin.tom }
 %include { sl/graph.tom }
 %include { sl/composed.tom }
+

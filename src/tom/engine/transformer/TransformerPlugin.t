@@ -192,15 +192,15 @@ public class TransformerPlugin extends TomGenericPlugin {
     TomSymbol transfoSymbol = getSymbolTable().getSymbolFromName(strTransfoName);
     //elementary strategies generation
     %match(elemTransfoList) {
-      concElementaryTransformation(_*,ElementaryTransformation[ETName=etName@Name(eStratName),Traversal=traversal,AstRuleInstructionList=riList,Options=concOption(_*,ot@OriginTracking(_,_,_),_*)],_*) -> {
+      concElementaryTransformation(_*,ElementaryTransformation[ETName=etName@Name(eStratName),Traversal=traversalStrat,AstRuleInstructionList=riList,Options=concOption(_*,ot@OriginTracking(_,_,_),_*)],_*) -> {
         //generate elementary `Strategy, `ReferenceClass and `SymbolDecl
-        result.addAll(`genElementaryStrategy(etName,traversal,riList,transfoSymbol,ot));
+        result.addAll(`genElementaryStrategy(etName,traversalStrat,riList,transfoSymbol,ot));
         //Generate symbol for elementary strategy and put it into symbol table
         TomSymbol astElemStratSymbol = `generateElementaryStratSymbol(ot,
             etName, transfoDomain, transfoSymbol);
         getSymbolTable().putSymbol(`eStratName,astElemStratSymbol);
         //add the part of CompositeBQTerm transformer to bqlist
-        bqlist.add(`traversal);
+        bqlist.add(`traversalStrat);
       }
     }
        

@@ -122,7 +122,7 @@ public class CSharpGenerator extends CFamilyGenerator {
       names.add(name);
 
       // test if the argument is a Strategy
-      {{if ( (((Object)type) instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )((Object)type)) instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )(( tom.engine.adt.tomtype.types.TomType )((Object)type))) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) { String  tomMatch83_1= (( tom.engine.adt.tomtype.types.TomType )((Object)type)).getTomType() ;if ( true ) {if ( "Strategy".equals(tomMatch83_1) ) {
+      {{if ( (((Object)type) instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )((Object)type)) instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )(( tom.engine.adt.tomtype.types.TomType )((Object)type))) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) { String  tomMatch92_1= (( tom.engine.adt.tomtype.types.TomType )((Object)type)).getTomType() ;if ( true ) {if ( "Strategy".equals(tomMatch92_1) ) {
 
           stratChild.add(Integer.valueOf(index));
         }}}}}}}
@@ -133,7 +133,7 @@ public class CSharpGenerator extends CFamilyGenerator {
     }
     output.write(deep, modifier + "class " + tomName);
     //write extends
-		{{if ( (((Object)extendsType) instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )((Object)extendsType)) instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )(( tom.engine.adt.tomtype.types.TomType )((Object)extendsType))) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) { tom.engine.adt.tomtype.types.TargetLanguageType  tomMatch84_2= (( tom.engine.adt.tomtype.types.TomType )((Object)extendsType)).getTlType() ;if ( (tomMatch84_2 instanceof tom.engine.adt.tomtype.types.TargetLanguageType) ) {if ( ((( tom.engine.adt.tomtype.types.TargetLanguageType )tomMatch84_2) instanceof tom.engine.adt.tomtype.types.targetlanguagetype.EmptyTargetLanguageType) ) {
+		{{if ( (((Object)extendsType) instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )((Object)extendsType)) instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )(( tom.engine.adt.tomtype.types.TomType )((Object)extendsType))) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) { tom.engine.adt.tomtype.types.TargetLanguageType  tomMatch93_2= (( tom.engine.adt.tomtype.types.TomType )((Object)extendsType)).getTlType() ;if ( (tomMatch93_2 instanceof tom.engine.adt.tomtype.types.TargetLanguageType) ) {if ( ((( tom.engine.adt.tomtype.types.TargetLanguageType )tomMatch93_2) instanceof tom.engine.adt.tomtype.types.targetlanguagetype.EmptyTargetLanguageType) ) {
 
 				output.write(deep," : " +  (( tom.engine.adt.tomtype.types.TomType )((Object)extendsType)).getTomType() );
 			}}}}}}}
@@ -176,14 +176,14 @@ public class CSharpGenerator extends CFamilyGenerator {
     int stratChildCount = stratChild.size();
 
     output.write(deep, "override public tom.library.sl.Visitable[] getChildren() {");
-    output.write(deep, "tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];");
+    output.write(deep, "tom.library.sl.Visitable[] stratChildren = new tom.library.sl.Visitable[getChildCount()];");
     output.write(deep, "for (int i = 0; i < getChildCount(); i++) {");
-    output.write(deep, "stratChilds[i]=getChildAt(i);}");
+    output.write(deep, "stratChildren[i]=getChildAt(i);}");
     //for (int i = 0; i < stratChildCount; i++) {
     //  int j = (stratChild.get(i)).intValue();
-    //  output.write(deep, "stratChilds[" + i + "] = get" + names.get(j) + "();");
+    //  output.write(deep, "stratChildren[" + i + "] = get" + names.get(j) + "();");
     //}
-    output.write(deep, "return stratChilds;}");
+    output.write(deep, "return stratChildren;}");
 
     output.write(deep, "override public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {");
     output.write(deep, "for (int i = 0; i < getChildCount(); i++) {");
@@ -261,4 +261,46 @@ public class CSharpGenerator extends CFamilyGenerator {
     output.writeln(deep," }");
   }
 	
+  protected String genResolveMakeCode(String funName, BQTermList argList) throws IOException {
+    throw new TomRuntimeException("%transformation (ResolveMakeCode) not yet supported in CSharp");
+  }
+
+  protected void buildReferenceClass(int deep, String refname, RefClassTracelinkInstructionList refclassTInstructions, String  moduleName) {
+    throw new TomRuntimeException("%transformation (ResolveReferenceClass) not yet supported in CSharp");
+  }
+
+  protected String genResolveIsFsymCode(String tomName, String varname) throws IOException {
+    throw new TomRuntimeException("%transformation (ResolveIsFsym) not yet supported in CSharp");
+    //return "";
+  }
+
+  protected String genResolveGetSlotCode(String tomName, String varname, String slotName) throws IOException {
+    throw new TomRuntimeException("%transformation (ResolveGetSlot) not yet supported in CSharp");
+    //return "";
+  }
+  
+  protected void buildResolveClass(String wName, String tName, String extendsName, String moduleName) throws IOException {
+    throw new TomRuntimeException("%transformation (ResolveClass) not yet supported in CSharp");
+  }
+
+  protected void buildResolveInverseLinks(int deep, String fileFrom, String fileTo, TomNameList resolveNameList, String moduleName) throws IOException {
+    throw new TomRuntimeException("%transformation (ResolveInverseLinks) not yet supported in CSharp");
+  }
+
+  protected void genResolveDeclMake(String prefix, String funName, TomType returnType, BQTermList argList, String moduleName) throws IOException {
+    throw new TomRuntimeException("%transformation (ResolveMakeDecl) not yet supported in CSharp");
+  }
+
+  protected void buildTracelink(int deep, String type, String name, Expression expr, String moduleName) throws IOException {
+    throw new TomRuntimeException("%transformation (Tracelink instruction) not yet supported in CSharp");
+  }
+
+  protected void buildTracelinkPopulateResolve(int deep, String refClassName, TomNameList tracedLinks, BQTerm current, BQTerm link, String moduleName) throws IOException {
+    throw new TomRuntimeException("%transformation (TracelinkPopulateResolve instruction) not yet supported in CSharp");
+  }
+
+  //tmp
+  protected void buildResolve(int deep, BQTerm bqterm, String moduleName) throws IOException {
+    throw new TomRuntimeException("%transformation (Resolve2 instruction) not yet supported in CSharp");
+  }
 }

@@ -1,52 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates>
-
-	<template 
-		context="fr.loria.eclipse.jtom.template.tom" 
-		description="%tom.template.match.desc" 
-		id="fr.loria.eclipse.jtom.template.tom.match" 
+	<template context="fr.loria.eclipse.jtom.template.tom"
+		description="%tom.template.match.desc" id="fr.loria.eclipse.jtom.template.tom.match"
 		name="%tom.template.match.name">%match (${sort} ${varName}){
-			${op} -> { ${cursor} }
-}</template>
-		<template 
-		context="fr.loria.eclipse.jtom.template.tom" 
-		description="%tom.template.strategy.desc" 
-		id="fr.loria.eclipse.jtom.template.tom.strategy" 
-		name="%tom.template.strategy.name">%strategy ${MyStrat}() extends Identity()/Fail(){ 
-  	visit MyTerm {
-  	  MyPattern -> { } 
- 	 } 
-}</template>
-	<template 
-		context="fr.loria.eclipse.jtom.template.tom" 
-		description="%tom.template.include.desc" 
-		id="fr.loria.eclipse.jtom.template.tom.include" 
+		${op} -> { ${cursor} }
+		}
+	</template>
+	<template context="fr.loria.eclipse.jtom.template.tom"
+		description="%tom.template.strategy.desc" id="fr.loria.eclipse.jtom.template.tom.strategy"
+		name="%tom.template.strategy.name">%strategy ${MyStrat}() extends Identity()/Fail(){
+		visit MyTerm {
+		MyPattern -> { }
+		}
+		}
+	</template>
+	<template context="fr.loria.eclipse.jtom.template.tom"
+		description="%tom.template.include.desc" id="fr.loria.eclipse.jtom.template.tom.include"
 		name="%tom.template.include.name">%include { ${include} }
-</template>
-<template 
-		context="fr.loria.eclipse.jtom.template.tom" 
-		description="%tom.template.typeterm.desc" 
-		id="fr.loria.eclipse.jtom.template.tom.typeterm" 
-		name="%tom.template.typeterm.name">  %typeterm ${newType} {
-   implement { ${Type} }
-   is_sort(t) { t instanceof ${Type} }
-   equals(t1,t2) { t1.equals(t2) }
- }</template>
-<template 
-		context="fr.loria.eclipse.jtom.template.tom" 
-		description="%tom.template.op.desc" 
-		id="fr.loria.eclipse.jtom.template.tom.op" 
+	</template>
+	<template context="fr.loria.eclipse.jtom.template.tom"
+		description="%tom.template.typeterm.desc" id="fr.loria.eclipse.jtom.template.tom.typeterm"
+		name="%tom.template.typeterm.name"> %typeterm ${newType} {
+		implement { ${Type} }
+		is_sort(t) { t instanceof ${Type} }
+		equals(t1,t2) { t1.equals(t2) }
+		}
+	</template>
+	<template context="fr.loria.eclipse.jtom.template.tom"
+		description="%tom.template.op.desc" id="fr.loria.eclipse.jtom.template.tom.op"
 		name="%tom.template.op.name"> %op ${Type} newOp(${params:Type} ) { ${op} }
- 
-</template>
-<template 
-		context="fr.loria.eclipse.jtom.template.tom" 
-		description="%tom.template.gom.desc" 
-		id="fr.loria.eclipse.jtom.template.tom.gom" 
+	</template>
+	<template context="fr.loria.eclipse.jtom.template.tom"
+		description="%tom.template.gom.desc" id="fr.loria.eclipse.jtom.template.tom.gom"
 		name="%tom.template.gom.name">%gom { module MyModule
 		}
- 
-</template>
-	
-
+	</template>
+	<template context="fr.loria.eclipse.jtom.template.tom"
+		description="%tom.template.transformation.desc" id="fr.loria.eclipse.jtom.template.tom.transformation"
+		name="%tom.template.transformation.name">%transformation ${MyTransfo}($params:Type) :
+		"source_metamodel.ecore" -> "target_metamodel.ecore" {
+		definition MyElementaryTransformation traversal
+		`TopDown(MyElementaryTransformation($params)) {
+		MyPattern -> { }
+		}
+		}
+	</template>
+	<template context="fr.loria.eclipse.jtom.template.tom"
+		description="%tom.template.resolve.desc" id="fr.loria.eclipse.jtom.template.tom."
+		name="%tom.template.resolve.name">%resolve($srcElt:srcType,$tgtElt:tgtType);
+		}
+	</template>
+	<template context="fr.loria.eclipse.jtom.template.tom"
+		description="%tom.template.tracelink.desc" id="fr.loria.eclipse.jtom.template.tom.tracelink"
+		name="%tom.template.tracelink.name">%tracelink($elt:Type,BackQuoteTerm);
+		}
+	</template>
 </templates>

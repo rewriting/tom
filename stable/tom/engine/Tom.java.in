@@ -77,6 +77,10 @@ public class Tom {
   /** the console handler those level can be changed dynamically */
   private static Handler consoleHandler = null;
 
+  /**
+   * 0 -> Success
+   * 1 -> Failure
+   */
   public static void main(String[] args) {
     int errno = exec(args);
     System.exit(errno);
