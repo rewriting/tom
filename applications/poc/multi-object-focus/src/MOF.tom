@@ -3,10 +3,11 @@
 %typeterm Term {
   implement { Term }
   equals(t1,t2) {t1.equals(t2)}
+  is_sort(t)    { (t!= null) && (t instanceof Term) }
 }
 
 %op Term L(name:String) {
-  is_fsym(t)       { (t!= null) && (t instanceof Leaf) }
+  is_fsym(t)       { (t!= null) && (t instanceof L) }
   get_slot(name,t) { ((L) t).name                   }
   make(n)          { new L(n)                       }
 }

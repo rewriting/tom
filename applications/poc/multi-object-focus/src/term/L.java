@@ -1,5 +1,8 @@
+package term;
+
 import lib.MOFException;
 import lib.fun.Fun;
+import lib.zip.Zip;
 
 /**
  * Created with IntelliJ IDEA.
@@ -27,7 +30,5 @@ public class L extends Term {
         return false;
     }
 
-    public <X>     X   accept(TermVisitor<X> v)                              throws MOFException { return v.visitL(this);       }
-    public <Ans,Y> Ans acceptCPS(TermVisitorCPS<Ans,Y> v, Fun<Y,Ans> k) throws MOFException { return v.visitL_CPS(this, k); }
-
+    public <Ans,Y> Ans accept(TermVisitor<Y> v, Fun<Zip<Term,Y>,Ans> k) throws MOFException { return v.visit(this, k); }
 }
