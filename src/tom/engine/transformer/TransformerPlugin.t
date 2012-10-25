@@ -101,6 +101,8 @@ public class TransformerPlugin extends TomGenericPlugin {
   public static final String STRAT_RESOLVE_PREFIX = "tom__StratResolve_";
   public static final String RESOLVE_INVERSE_LINK_FUNCTION = "resolveInverseLinks";
   public static final String RESOLVE_ELEMENT_PREFIX = "Resolve";
+  public static final String RESOLVE_ELEMENT_ATTRIBUTE_NAME = "tom_resolve_element_attribute_name";
+  public static final String RESOLVE_ELEMENT_ATTRIBUTE_O = "tom_resolve_element_attribute_o";
   private static final TomType voidType = ASTFactory.makeType(`concTypeOption(),"undefined","void");
 
   private SymbolTable symbolTable;
@@ -613,8 +615,8 @@ public class TransformerPlugin extends TomGenericPlugin {
           concResolveStratElement(_*,ResolveStratElement(wname,rot),_*) -> {
             int rline = `rot.getLine();
             String rfileName = `rot.getFileName();
-            Slot sloto = genPairSlotAppl("o", rline, rfileName);
-            Slot slotname = genPairSlotAppl("name", rline, rfileName);
+            Slot sloto = genPairSlotAppl(TransformerPlugin.RESOLVE_ELEMENT_ATTRIBUTE_O, rline, rfileName);
+            Slot slotname = genPairSlotAppl(TransformerPlugin.RESOLVE_ELEMENT_ATTRIBUTE_NAME, rline, rfileName);
             
             TomTerm pattern = `RecordAppl(
                 concOption(rot),
@@ -648,8 +650,8 @@ public class TransformerPlugin extends TomGenericPlugin {
             TomType firstArgType = TomBase.getSlotType(transformationSymbol,firstArgument);
             BQTerm link = `BQVariable(concOption(),firstArgument,firstArgType);
             BQTerm res = `BQVariable(concOption(),Name("res"),ttype);
-            BQTerm first = `BQVariable(concOption(),Name("o"),SymbolTable.TYPE_UNKNOWN);
-            BQTerm second = `BQVariable(concOption(),Name("name"),SymbolTable.TYPE_UNKNOWN);
+            BQTerm first = `BQVariable(concOption(),Name(TransformerPlugin.RESOLVE_ELEMENT_ATTRIBUTE_O),SymbolTable.TYPE_UNKNOWN);
+            BQTerm second = `BQVariable(concOption(),Name(TransformerPlugin.RESOLVE_ELEMENT_ATTRIBUTE_NAME),SymbolTable.TYPE_UNKNOWN);
             //replace ITL() by FunctionCall()?
             //to change: language specific
             //Instruction referenceStatement = `LetRef(res,
@@ -848,8 +850,8 @@ if(!resolveNameSet.contains(resolveStringName)) {
         TomType tType = `Type(concTypeOption(),ttypename,EmptyTargetLanguageType());
 
         //generate PairNameDecl for parameters of Resolve elements
-        PairNameDecl objectPNDecl = transformer.genResolvePairNameDecl("o", resolveStringName, line, fileName, tType);
-        PairNameDecl namePNDecl = transformer.genResolvePairNameDecl("name", resolveStringName, line, fileName, tType);
+        PairNameDecl objectPNDecl = transformer.genResolvePairNameDecl(transformer.RESOLVE_ELEMENT_ATTRIBUTE_O, resolveStringName, line, fileName, tType);
+        PairNameDecl namePNDecl = transformer.genResolvePairNameDecl(transformer.RESOLVE_ELEMENT_ATTRIBUTE_NAME, resolveStringName, line, fileName, tType);
 
         List<PairNameDecl> resolvePairNameDeclList = new LinkedList<PairNameDecl>();
         resolvePairNameDeclList.add(objectPNDecl);
@@ -862,8 +864,8 @@ if(!resolveNameSet.contains(resolveStringName)) {
 );
 
         BQTermList makeArgs = `concBQTerm(
-            BQVariable(concOption(OriginTracking(Name("o"),line,fileName)),Name("o"),stype),
-            BQVariable(concOption(OriginTracking(Name("name"),line,fileName)),Name("name"),stringType)
+            BQVariable(concOption(OriginTracking(Name(transformer.RESOLVE_ELEMENT_ATTRIBUTE_O),line,fileName)),Name(transformer.RESOLVE_ELEMENT_ATTRIBUTE_O),stype),
+            BQVariable(concOption(OriginTracking(Name(transformer.RESOLVE_ELEMENT_ATTRIBUTE_NAME),line,fileName)),Name(transformer.RESOLVE_ELEMENT_ATTRIBUTE_NAME),stringType)
             );
 
         Declaration makeDecl = `ResolveMakeDecl(

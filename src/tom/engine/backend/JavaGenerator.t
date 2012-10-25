@@ -53,6 +53,7 @@ import tom.engine.adt.code.types.*;
 import tom.engine.tools.SymbolTable;
 import tom.platform.OptionManager;
 import tom.engine.exception.TomRuntimeException;
+import tom.engine.transformer.TransformerPlugin;
 
 import org.eclipse.emf.ecore.xmi.XMIResource;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl;
@@ -233,13 +234,15 @@ matchBlock: {
       //TomType type = getSymbolTable(moduleName).getType(wName);
       //fqnwName = getFullQualifiedNameFromType(type);
       String fqnwName = getFullQualifiedNameFromTypeName(wName, moduleName);
+      //TODO change this part of code generation: get attributes names from
+      //mappings? ; we currently use predefined strings (in TransformerPlugin)
       output.write(%[private static class @resolveStringName@ extends @extendsName@ {
-  public String name;
-  public @fqnwName@ o;
+  public String @TransformerPlugin.RESOLVE_ELEMENT_ATTRIBUTE_NAME@;
+  public @fqnwName@ @TransformerPlugin.RESOLVE_ELEMENT_ATTRIBUTE_O@;
 
   public @resolveStringName@(@fqnwName@ o, String name) {
-    this.name = name;
-    this.o = o;
+    this.@TransformerPlugin.RESOLVE_ELEMENT_ATTRIBUTE_NAME@ = name;
+    this.@TransformerPlugin.RESOLVE_ELEMENT_ATTRIBUTE_O@ = o;
   }
 }
 ]%);

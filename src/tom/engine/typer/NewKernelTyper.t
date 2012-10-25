@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  * 
  * Claudia Tavares  e-mail: Claudia.Tavares@loria.fr
- * Jean-Christophe Bach e-mail: Jeanchristophe.Bach@loria.fr
+ * Jean-Christophe Bach e-mail: Jeanchristophe.Bach@inria.fr
  *
  **/
 

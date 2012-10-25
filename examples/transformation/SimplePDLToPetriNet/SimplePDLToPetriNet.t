@@ -216,12 +216,12 @@ public class SimplePDLToPetriNet {
 
   %strategy PrintTransition() extends Identity() {
     visit Transition {
-      tr@ResolveWorkDefinitionTransition[o=o,name=name] -> {
+      tr@ResolveWorkDefinitionTransition[tom_resolve_element_attribute_name=name] -> {
         System.out.println("tr resolve " + `name);
         return `tr;
       }
 
-      ptr@ResolveProcessTransition[o=o,name=name] -> {
+      ptr@ResolveProcessTransition[tom_resolve_element_attribute_name=name] -> {
         System.out.println("tr process resolve " + `name);
         return `ptr;
       }
@@ -246,7 +246,7 @@ public class SimplePDLToPetriNet {
   
   %strategy PrintPlace() extends Identity() {
     visit Place {
-      pl@ResolveWorkDefinitionPlace[o=o,name=name] -> {
+      pl@ResolveWorkDefinitionPlace[tom_resolve_element_attribute_name=name] -> {
         System.out.println("pl resolve " + `name);
         return `pl;
       }
