@@ -1,0 +1,9 @@
+type
+> make run
+
+to build everything (code + doc) and run the simple test
+
+type
+> make test
+
+to rebuild everything and run the simple test.
