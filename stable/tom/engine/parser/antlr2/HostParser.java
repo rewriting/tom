@@ -341,10 +341,10 @@ public class HostParser extends antlr.LLkParser       implements HostParserToken
                 getOptionManager(), getStreamManager());
           //}
           Code astTom = parser.input();
-          {{if (tom_is_sort_Code(((Object)astTom))) {if (tom_is_sort_Code((( tom.engine.adt.code.types.Code )((Object)astTom)))) {if (tom_is_fun_sym_Tom((( tom.engine.adt.code.types.Code )(( tom.engine.adt.code.types.Code )((Object)astTom))))) { tom.engine.adt.code.types.CodeList  tomMatch1_1=tom_get_slot_Tom_CodeList((( tom.engine.adt.code.types.Code )((Object)astTom)));if (tom_is_fun_sym_concCode((( tom.engine.adt.code.types.CodeList )tomMatch1_1))) { tom.engine.adt.code.types.CodeList  tomMatch1__end__7=tomMatch1_1;do {{if (!(tom_is_empty_concCode_CodeList(tomMatch1__end__7))) {
+          {{if (tom_is_sort_Code(astTom)) {if (tom_is_sort_Code((( tom.engine.adt.code.types.Code )astTom))) {if (tom_is_fun_sym_Tom((( tom.engine.adt.code.types.Code )(( tom.engine.adt.code.types.Code )astTom)))) { tom.engine.adt.code.types.CodeList  tomMatch1_1=tom_get_slot_Tom_CodeList((( tom.engine.adt.code.types.Code )astTom));if (tom_is_fun_sym_concCode((( tom.engine.adt.code.types.CodeList )tomMatch1_1))) { tom.engine.adt.code.types.CodeList  tomMatch1_end_7=tomMatch1_1;do {{if (!(tom_is_empty_concCode_CodeList(tomMatch1_end_7))) {
 
-              list.add(tom_get_head_concCode_CodeList(tomMatch1__end__7));
-            }if (tom_is_empty_concCode_CodeList(tomMatch1__end__7)) {tomMatch1__end__7=tomMatch1_1;} else {tomMatch1__end__7=tom_get_tail_concCode_CodeList(tomMatch1__end__7);}}} while(!(tom_equal_term_CodeList(tomMatch1__end__7, tomMatch1_1)));}}}}}}
+              list.add(tom_get_head_concCode_CodeList(tomMatch1_end_7));
+            }if (tom_is_empty_concCode_CodeList(tomMatch1_end_7)) {tomMatch1_end_7=tomMatch1_1;} else {tomMatch1_end_7=tom_get_tail_concCode_CodeList(tomMatch1_end_7);}}} while(!(tom_equal_term_CodeList(tomMatch1_end_7, tomMatch1_1)));}}}}}}
 
         } catch (IOException e) {
           throw new TomRuntimeException("IOException catched in tomSplitter");

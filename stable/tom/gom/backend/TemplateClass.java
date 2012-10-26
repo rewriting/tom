@@ -58,9 +58,9 @@ public abstract class TemplateClass {
   }
 
   public String className(ClassName clsName) {
-    {{if ( (((Object)clsName) instanceof tom.gom.adt.objects.types.ClassName) ) {if ( ((( tom.gom.adt.objects.types.ClassName )((Object)clsName)) instanceof tom.gom.adt.objects.types.ClassName) ) {if ( ((( tom.gom.adt.objects.types.ClassName )(( tom.gom.adt.objects.types.ClassName )((Object)clsName))) instanceof tom.gom.adt.objects.types.classname.ClassName) ) {
+    {{if ( (clsName instanceof tom.gom.adt.objects.types.ClassName) ) {if ( ((( tom.gom.adt.objects.types.ClassName )clsName) instanceof tom.gom.adt.objects.types.ClassName) ) {if ( ((( tom.gom.adt.objects.types.ClassName )(( tom.gom.adt.objects.types.ClassName )clsName)) instanceof tom.gom.adt.objects.types.classname.ClassName) ) {
 
-        return  (( tom.gom.adt.objects.types.ClassName )((Object)clsName)).getName() ;
+        return  (( tom.gom.adt.objects.types.ClassName )clsName).getName() ;
       }}}}}
 
     throw new GomRuntimeException(
@@ -72,7 +72,7 @@ public abstract class TemplateClass {
   }
 
   public static String fullClassName(ClassName clsName) {
-    {{if ( (((Object)clsName) instanceof tom.gom.adt.objects.types.ClassName) ) {if ( ((( tom.gom.adt.objects.types.ClassName )((Object)clsName)) instanceof tom.gom.adt.objects.types.ClassName) ) {if ( ((( tom.gom.adt.objects.types.ClassName )(( tom.gom.adt.objects.types.ClassName )((Object)clsName))) instanceof tom.gom.adt.objects.types.classname.ClassName) ) { String  tom_pkgPrefix= (( tom.gom.adt.objects.types.ClassName )((Object)clsName)).getPkg() ; String  tom_name= (( tom.gom.adt.objects.types.ClassName )((Object)clsName)).getName() ;
+    {{if ( (clsName instanceof tom.gom.adt.objects.types.ClassName) ) {if ( ((( tom.gom.adt.objects.types.ClassName )clsName) instanceof tom.gom.adt.objects.types.ClassName) ) {if ( ((( tom.gom.adt.objects.types.ClassName )(( tom.gom.adt.objects.types.ClassName )clsName)) instanceof tom.gom.adt.objects.types.classname.ClassName) ) { String  tom_pkgPrefix= (( tom.gom.adt.objects.types.ClassName )clsName).getPkg() ; String  tom_name= (( tom.gom.adt.objects.types.ClassName )clsName).getName() ;
 
         if(tom_pkgPrefix.length()==0) {
           return tom_name;
@@ -90,9 +90,9 @@ public abstract class TemplateClass {
   }
 
   public String getPackage(ClassName clsName) {
-    {{if ( (((Object)clsName) instanceof tom.gom.adt.objects.types.ClassName) ) {if ( ((( tom.gom.adt.objects.types.ClassName )((Object)clsName)) instanceof tom.gom.adt.objects.types.ClassName) ) {if ( ((( tom.gom.adt.objects.types.ClassName )(( tom.gom.adt.objects.types.ClassName )((Object)clsName))) instanceof tom.gom.adt.objects.types.classname.ClassName) ) {
+    {{if ( (clsName instanceof tom.gom.adt.objects.types.ClassName) ) {if ( ((( tom.gom.adt.objects.types.ClassName )clsName) instanceof tom.gom.adt.objects.types.ClassName) ) {if ( ((( tom.gom.adt.objects.types.ClassName )(( tom.gom.adt.objects.types.ClassName )clsName)) instanceof tom.gom.adt.objects.types.classname.ClassName) ) {
 
-        return  (( tom.gom.adt.objects.types.ClassName )((Object)clsName)).getPkg() ;
+        return  (( tom.gom.adt.objects.types.ClassName )clsName).getPkg() ;
       }}}}}
 
     throw new GomRuntimeException(
@@ -100,9 +100,9 @@ public abstract class TemplateClass {
   }
 
   public String hasMethod(SlotField slot) {
-    {{if ( (((Object)slot) instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )((Object)slot)) instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )(( tom.gom.adt.objects.types.SlotField )((Object)slot))) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) {
+    {{if ( (slot instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )slot) instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )(( tom.gom.adt.objects.types.SlotField )slot)) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) {
 
-        return "has"+ (( tom.gom.adt.objects.types.SlotField )((Object)slot)).getName() ;
+        return "has"+ (( tom.gom.adt.objects.types.SlotField )slot).getName() ;
       }}}}}
 
     throw new GomRuntimeException(
@@ -122,7 +122,7 @@ public abstract class TemplateClass {
     * @param jmi true to generate a name with a capital letter
     */
   public String getMethod(SlotField slot,boolean jmi) {
-    {{if ( (((Object)slot) instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )((Object)slot)) instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )(( tom.gom.adt.objects.types.SlotField )((Object)slot))) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { String  tom_name= (( tom.gom.adt.objects.types.SlotField )((Object)slot)).getName() ;
+    {{if ( (slot instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )slot) instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )(( tom.gom.adt.objects.types.SlotField )slot)) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { String  tom_name= (( tom.gom.adt.objects.types.SlotField )slot).getName() ;
 
         if(jmi) {
           return "get"+jmize(tom_name);
@@ -140,7 +140,7 @@ public abstract class TemplateClass {
     * @param jmi true to generate a name with a capital letter
     */
   public String setMethod(SlotField slot,boolean jmi) {
-    {{if ( (((Object)slot) instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )((Object)slot)) instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )(( tom.gom.adt.objects.types.SlotField )((Object)slot))) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { String  tom_name= (( tom.gom.adt.objects.types.SlotField )((Object)slot)).getName() ;
+    {{if ( (slot instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )slot) instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )(( tom.gom.adt.objects.types.SlotField )slot)) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { String  tom_name= (( tom.gom.adt.objects.types.SlotField )slot).getName() ;
 
         if(jmi) {
           return "set"+jmize(tom_name);
@@ -159,9 +159,9 @@ public abstract class TemplateClass {
   }
 
   public String index(SlotField slot) {
-    {{if ( (((Object)slot) instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )((Object)slot)) instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )(( tom.gom.adt.objects.types.SlotField )((Object)slot))) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) {
+    {{if ( (slot instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )slot) instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )(( tom.gom.adt.objects.types.SlotField )slot)) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) {
 
-        return "index_"+ (( tom.gom.adt.objects.types.SlotField )((Object)slot)).getName() ;
+        return "index_"+ (( tom.gom.adt.objects.types.SlotField )slot).getName() ;
       }}}}}
 
     throw new GomRuntimeException(
@@ -169,9 +169,9 @@ public abstract class TemplateClass {
   }
 
   public String slotDomain(SlotField slot) {
-    {{if ( (((Object)slot) instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )((Object)slot)) instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )(( tom.gom.adt.objects.types.SlotField )((Object)slot))) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) {
+    {{if ( (slot instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )slot) instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )(( tom.gom.adt.objects.types.SlotField )slot)) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) {
 
-        return fullClassName( (( tom.gom.adt.objects.types.SlotField )((Object)slot)).getDomain() );
+        return fullClassName( (( tom.gom.adt.objects.types.SlotField )slot).getDomain() );
       }}}}}
 
     throw new GomRuntimeException(
@@ -183,9 +183,9 @@ public abstract class TemplateClass {
   }
 
   public String classFieldName(ClassName clsName) {
-    {{if ( (((Object)clsName) instanceof tom.gom.adt.objects.types.ClassName) ) {if ( ((( tom.gom.adt.objects.types.ClassName )((Object)clsName)) instanceof tom.gom.adt.objects.types.ClassName) ) {if ( ((( tom.gom.adt.objects.types.ClassName )(( tom.gom.adt.objects.types.ClassName )((Object)clsName))) instanceof tom.gom.adt.objects.types.classname.ClassName) ) {
+    {{if ( (clsName instanceof tom.gom.adt.objects.types.ClassName) ) {if ( ((( tom.gom.adt.objects.types.ClassName )clsName) instanceof tom.gom.adt.objects.types.ClassName) ) {if ( ((( tom.gom.adt.objects.types.ClassName )(( tom.gom.adt.objects.types.ClassName )clsName)) instanceof tom.gom.adt.objects.types.classname.ClassName) ) {
 
-        return  (( tom.gom.adt.objects.types.ClassName )((Object)clsName)).getName() .toLowerCase();
+        return  (( tom.gom.adt.objects.types.ClassName )clsName).getName() .toLowerCase();
       }}}}}
 
     throw new GomRuntimeException(
@@ -194,7 +194,7 @@ public abstract class TemplateClass {
 
   public void toStringSlotField(StringBuilder res, SlotField slot,
                                 String element, String buffer) {
-    {{if ( (((Object)slot) instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )((Object)slot)) instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )(( tom.gom.adt.objects.types.SlotField )((Object)slot))) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { tom.gom.adt.objects.types.ClassName  tom_domain= (( tom.gom.adt.objects.types.SlotField )((Object)slot)).getDomain() ;
+    {{if ( (slot instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )slot) instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )(( tom.gom.adt.objects.types.SlotField )slot)) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { tom.gom.adt.objects.types.ClassName  tom_domain= (( tom.gom.adt.objects.types.SlotField )slot).getDomain() ;
 
         if(!getGomEnvironment().isBuiltinClass(tom_domain)) {
           res.append(""+element+".toStringBuilder("+buffer+");\n"
@@ -312,7 +312,7 @@ public abstract class TemplateClass {
   }
 
   public void toATermSlotField(StringBuilder res, SlotField slot) {
-    {{if ( (((Object)slot) instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )((Object)slot)) instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )(( tom.gom.adt.objects.types.SlotField )((Object)slot))) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { tom.gom.adt.objects.types.ClassName  tom_domain= (( tom.gom.adt.objects.types.SlotField )((Object)slot)).getDomain() ;
+    {{if ( (slot instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )slot) instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )(( tom.gom.adt.objects.types.SlotField )slot)) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { tom.gom.adt.objects.types.ClassName  tom_domain= (( tom.gom.adt.objects.types.SlotField )slot).getDomain() ;
 
         if(!getGomEnvironment().isBuiltinClass(tom_domain)) {
           res.append(getMethod(slot));
@@ -359,7 +359,7 @@ public abstract class TemplateClass {
   }
 
   public void fromATermSlotField(StringBuilder buffer, SlotField slot, String appl, String atConv) {
-    {{if ( (((Object)slot) instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )((Object)slot)) instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )(( tom.gom.adt.objects.types.SlotField )((Object)slot))) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { tom.gom.adt.objects.types.ClassName  tom_domain= (( tom.gom.adt.objects.types.SlotField )((Object)slot)).getDomain() ;
+    {{if ( (slot instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )slot) instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )(( tom.gom.adt.objects.types.SlotField )slot)) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { tom.gom.adt.objects.types.ClassName  tom_domain= (( tom.gom.adt.objects.types.SlotField )slot).getDomain() ;
 
         if(!getGomEnvironment().isBuiltinClass(tom_domain)) {
           buffer.append(fullClassName(tom_domain));
@@ -457,9 +457,9 @@ public abstract class TemplateClass {
       SlotField slot = slotList.getHeadConcSlotField();
       slotList = slotList.getTailConcSlotField();
       if (index>0) { writer.write(", "); }
-      {{if ( (((Object)slot) instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )((Object)slot)) instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )(( tom.gom.adt.objects.types.SlotField )((Object)slot))) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { tom.gom.adt.objects.types.ClassName  tomMatch545_2= (( tom.gom.adt.objects.types.SlotField )((Object)slot)).getDomain() ;if ( (tomMatch545_2 instanceof tom.gom.adt.objects.types.ClassName) ) {if ( ((( tom.gom.adt.objects.types.ClassName )tomMatch545_2) instanceof tom.gom.adt.objects.types.classname.ClassName) ) {
+      {{if ( (slot instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )slot) instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )(( tom.gom.adt.objects.types.SlotField )slot)) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { tom.gom.adt.objects.types.ClassName  tomMatch545_2= (( tom.gom.adt.objects.types.SlotField )slot).getDomain() ;if ( (tomMatch545_2 instanceof tom.gom.adt.objects.types.ClassName) ) {if ( ((( tom.gom.adt.objects.types.ClassName )tomMatch545_2) instanceof tom.gom.adt.objects.types.classname.ClassName) ) {
 
-          writer.write( (( tom.gom.adt.objects.types.SlotField )((Object)slot)).getName() );
+          writer.write( (( tom.gom.adt.objects.types.SlotField )slot).getName() );
           writer.write(":");
           writer.write( tomMatch545_2.getName() );
           index++;

@@ -290,11 +290,11 @@ public class CamlGenerator extends GenericGenerator {
     } 
     s.append(") = " + tlCode.getCode() + " ");
 
-    {{if ( (((Object)tlCode) instanceof tom.engine.adt.code.types.TargetLanguage) ) {if ( ((( tom.engine.adt.code.types.TargetLanguage )((Object)tlCode)) instanceof tom.engine.adt.code.types.TargetLanguage) ) {if ( ((( tom.engine.adt.code.types.TargetLanguage )(( tom.engine.adt.code.types.TargetLanguage )((Object)tlCode))) instanceof tom.engine.adt.code.types.targetlanguage.TL) ) { tom.engine.adt.tomsignature.types.TextPosition  tomMatch95_2= (( tom.engine.adt.code.types.TargetLanguage )((Object)tlCode)).getStart() ; tom.engine.adt.tomsignature.types.TextPosition  tomMatch95_3= (( tom.engine.adt.code.types.TargetLanguage )((Object)tlCode)).getEnd() ;if ( (tomMatch95_2 instanceof tom.engine.adt.tomsignature.types.TextPosition) ) {if ( ((( tom.engine.adt.tomsignature.types.TextPosition )tomMatch95_2) instanceof tom.engine.adt.tomsignature.types.textposition.TextPosition) ) { int  tom_startLine= tomMatch95_2.getLine() ;if ( (tomMatch95_3 instanceof tom.engine.adt.tomsignature.types.TextPosition) ) {if ( ((( tom.engine.adt.tomsignature.types.TextPosition )tomMatch95_3) instanceof tom.engine.adt.tomsignature.types.textposition.TextPosition) ) {
+    {{if ( (tlCode instanceof tom.engine.adt.code.types.TargetLanguage) ) {if ( ((( tom.engine.adt.code.types.TargetLanguage )tlCode) instanceof tom.engine.adt.code.types.TargetLanguage) ) {if ( ((( tom.engine.adt.code.types.TargetLanguage )(( tom.engine.adt.code.types.TargetLanguage )tlCode)) instanceof tom.engine.adt.code.types.targetlanguage.TL) ) { tom.engine.adt.tomsignature.types.TextPosition  tomMatch95_2= (( tom.engine.adt.code.types.TargetLanguage )tlCode).getStart() ; tom.engine.adt.tomsignature.types.TextPosition  tomMatch95_3= (( tom.engine.adt.code.types.TargetLanguage )tlCode).getEnd() ;if ( (tomMatch95_2 instanceof tom.engine.adt.tomsignature.types.TextPosition) ) {if ( ((( tom.engine.adt.tomsignature.types.TextPosition )tomMatch95_2) instanceof tom.engine.adt.tomsignature.types.textposition.TextPosition) ) { int  tom_startLine= tomMatch95_2.getLine() ;if ( (tomMatch95_3 instanceof tom.engine.adt.tomsignature.types.TextPosition) ) {if ( ((( tom.engine.adt.tomsignature.types.TextPosition )tomMatch95_3) instanceof tom.engine.adt.tomsignature.types.textposition.TextPosition) ) {
 
         output.write(0,s, tom_startLine,  tomMatch95_3.getLine() - tom_startLine);
         return;
-      }}}}}}}}{if ( (((Object)tlCode) instanceof tom.engine.adt.code.types.TargetLanguage) ) {if ( ((( tom.engine.adt.code.types.TargetLanguage )((Object)tlCode)) instanceof tom.engine.adt.code.types.TargetLanguage) ) {if ( ((( tom.engine.adt.code.types.TargetLanguage )(( tom.engine.adt.code.types.TargetLanguage )((Object)tlCode))) instanceof tom.engine.adt.code.types.targetlanguage.ITL) ) {
+      }}}}}}}}{if ( (tlCode instanceof tom.engine.adt.code.types.TargetLanguage) ) {if ( ((( tom.engine.adt.code.types.TargetLanguage )tlCode) instanceof tom.engine.adt.code.types.TargetLanguage) ) {if ( ((( tom.engine.adt.code.types.TargetLanguage )(( tom.engine.adt.code.types.TargetLanguage )tlCode)) instanceof tom.engine.adt.code.types.targetlanguage.ITL) ) {
 
 
         output.write(s);
@@ -313,12 +313,12 @@ public class CamlGenerator extends GenericGenerator {
     while(!argList.isEmptyconcBQTerm()) {
       BQTerm arg = argList.getHeadconcBQTerm();
       matchBlock: {
-        {{if ( (((Object)arg) instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )((Object)arg)) instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )(( tom.engine.adt.code.types.BQTerm )((Object)arg))) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) { tom.engine.adt.tomname.types.TomName  tomMatch96_1= (( tom.engine.adt.code.types.BQTerm )((Object)arg)).getAstName() ;if ( (tomMatch96_1 instanceof tom.engine.adt.tomname.types.TomName) ) {if ( ((( tom.engine.adt.tomname.types.TomName )tomMatch96_1) instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+        {{if ( (arg instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )arg) instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )(( tom.engine.adt.code.types.BQTerm )arg)) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) { tom.engine.adt.tomname.types.TomName  tomMatch96_1= (( tom.engine.adt.code.types.BQTerm )arg).getAstName() ;if ( (tomMatch96_1 instanceof tom.engine.adt.tomname.types.TomName) ) {if ( ((( tom.engine.adt.tomname.types.TomName )tomMatch96_1) instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
 
 
             s.append( tomMatch96_1.getString() );
             break matchBlock;
-          }}}}}}{if ( (((Object)arg) instanceof tom.engine.adt.code.types.BQTerm) ) {
+          }}}}}}{if ( (arg instanceof tom.engine.adt.code.types.BQTerm) ) {
 
 
             System.out.println("genDeclMake: strange term: " + arg);
@@ -441,12 +441,12 @@ public class CamlGenerator extends GenericGenerator {
 
 
   public void generateInstruction(int deep, Instruction subject, String moduleName) throws IOException {
-    {{if ( (((Object)subject) instanceof tom.engine.adt.tominstruction.types.Instruction) ) {if ( ((( tom.engine.adt.tominstruction.types.Instruction )((Object)subject)) instanceof tom.engine.adt.tominstruction.types.Instruction) ) {if ( ((( tom.engine.adt.tominstruction.types.Instruction )(( tom.engine.adt.tominstruction.types.Instruction )((Object)subject))) instanceof tom.engine.adt.tominstruction.types.instruction.Nop) ) {buildNop()
+    {{if ( (subject instanceof tom.engine.adt.tominstruction.types.Instruction) ) {if ( ((( tom.engine.adt.tominstruction.types.Instruction )subject) instanceof tom.engine.adt.tominstruction.types.Instruction) ) {if ( ((( tom.engine.adt.tominstruction.types.Instruction )(( tom.engine.adt.tominstruction.types.Instruction )subject)) instanceof tom.engine.adt.tominstruction.types.instruction.Nop) ) {buildNop()
 
 
 ;
         return;
-      }}}}{if ( (((Object)subject) instanceof tom.engine.adt.tominstruction.types.Instruction) ) {
+      }}}}{if ( (subject instanceof tom.engine.adt.tominstruction.types.Instruction) ) {
 
 
         super.generateInstruction(deep, subject, moduleName);

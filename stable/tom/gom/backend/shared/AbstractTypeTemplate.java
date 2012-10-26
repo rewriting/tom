@@ -49,9 +49,9 @@ public class AbstractTypeTemplate extends TemplateHookedClass {
                               GomEnvironment gomEnvironment){
     super(gomClass,manager,tomHomePath,importList,mapping,gomEnvironment);
     this.maximalsharing = maximalsharing;
-    {{if ( (((Object)gomClass) instanceof tom.gom.adt.objects.types.GomClass) ) {if ( ((( tom.gom.adt.objects.types.GomClass )((Object)gomClass)) instanceof tom.gom.adt.objects.types.GomClass) ) {if ( ((( tom.gom.adt.objects.types.GomClass )(( tom.gom.adt.objects.types.GomClass )((Object)gomClass))) instanceof tom.gom.adt.objects.types.gomclass.AbstractTypeClass) ) {
+    {{if ( (gomClass instanceof tom.gom.adt.objects.types.GomClass) ) {if ( ((( tom.gom.adt.objects.types.GomClass )gomClass) instanceof tom.gom.adt.objects.types.GomClass) ) {if ( ((( tom.gom.adt.objects.types.GomClass )(( tom.gom.adt.objects.types.GomClass )gomClass)) instanceof tom.gom.adt.objects.types.gomclass.AbstractTypeClass) ) {
 
-        this.sortList =  (( tom.gom.adt.objects.types.GomClass )((Object)gomClass)).getSortList() ;
+        this.sortList =  (( tom.gom.adt.objects.types.GomClass )gomClass).getSortList() ;
         return;
       }}}}}
 

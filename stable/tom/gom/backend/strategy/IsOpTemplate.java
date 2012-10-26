@@ -44,17 +44,17 @@ public class IsOpTemplate extends TemplateClass {
   public IsOpTemplate(GomClass gomClass, GomEnvironment gomEnvironment) {
     super(gomClass,gomEnvironment);
     ClassName clsName = this.className;
-    {{if ( (((Object)clsName) instanceof tom.gom.adt.objects.types.ClassName) ) {if ( ((( tom.gom.adt.objects.types.ClassName )((Object)clsName)) instanceof tom.gom.adt.objects.types.ClassName) ) {if ( ((( tom.gom.adt.objects.types.ClassName )(( tom.gom.adt.objects.types.ClassName )((Object)clsName))) instanceof tom.gom.adt.objects.types.classname.ClassName) ) {
+    {{if ( (clsName instanceof tom.gom.adt.objects.types.ClassName) ) {if ( ((( tom.gom.adt.objects.types.ClassName )clsName) instanceof tom.gom.adt.objects.types.ClassName) ) {if ( ((( tom.gom.adt.objects.types.ClassName )(( tom.gom.adt.objects.types.ClassName )clsName)) instanceof tom.gom.adt.objects.types.classname.ClassName) ) {
 
-        String newpkg =  (( tom.gom.adt.objects.types.ClassName )((Object)clsName)).getPkg() .replaceFirst(".types.",".strategy.");
-        String newname = "Is_"+ (( tom.gom.adt.objects.types.ClassName )((Object)clsName)).getName() ;
+        String newpkg =  (( tom.gom.adt.objects.types.ClassName )clsName).getPkg() .replaceFirst(".types.",".strategy.");
+        String newname = "Is_"+ (( tom.gom.adt.objects.types.ClassName )clsName).getName() ;
         this.className =  tom.gom.adt.objects.types.classname.ClassName.make(newpkg, newname) ;
-      }}}}}{{if ( (((Object)gomClass) instanceof tom.gom.adt.objects.types.GomClass) ) {if ( ((( tom.gom.adt.objects.types.GomClass )((Object)gomClass)) instanceof tom.gom.adt.objects.types.GomClass) ) {if ( ((( tom.gom.adt.objects.types.GomClass )(( tom.gom.adt.objects.types.GomClass )((Object)gomClass))) instanceof tom.gom.adt.objects.types.gomclass.OperatorClass) ) {
+      }}}}}{{if ( (gomClass instanceof tom.gom.adt.objects.types.GomClass) ) {if ( ((( tom.gom.adt.objects.types.GomClass )gomClass) instanceof tom.gom.adt.objects.types.GomClass) ) {if ( ((( tom.gom.adt.objects.types.GomClass )(( tom.gom.adt.objects.types.GomClass )gomClass)) instanceof tom.gom.adt.objects.types.gomclass.OperatorClass) ) {
 
 
 
-        this.operator =  (( tom.gom.adt.objects.types.GomClass )((Object)gomClass)).getClassName() ;
-        this.slotList =  (( tom.gom.adt.objects.types.GomClass )((Object)gomClass)).getSlotFields() ;
+        this.operator =  (( tom.gom.adt.objects.types.GomClass )gomClass).getClassName() ;
+        this.slotList =  (( tom.gom.adt.objects.types.GomClass )gomClass).getSlotFields() ;
         return;
       }}}}}
 
