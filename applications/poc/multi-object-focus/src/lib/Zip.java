@@ -103,16 +103,15 @@ public class Zip<T,S> {
      * Given a term s:S it returns the zipper on s with the focus placed at its root. More concretely, a zipper
      * with an empty context (the identity function) and s as focus.
      *
-     * @param <T> a supper type of S.
-     * @param <S> the type of the focus.
-     * @param s the focus.
+     * @param <T> type of t.
+     * @param t the focus.
      * @return a zipper with focus s and empty context.
      */
-    public static <T,S extends T> Zip<T,S> unit(S s) {
-        return new Zip<T,S>( new Fun<S, T>() {
-                               public T apply(S arg) throws MOFException { return arg; }
+    public static <T> Zip<T,T> unit(T t) {
+        return new Zip<T,T>( new Fun<T, T>() {
+                               public T apply(T arg) throws MOFException { return arg; }
                              }
-                           , s
+                           , t
                            );
 
     }
