@@ -10,12 +10,6 @@ package lib.sl;
 
 import lib.*;
 
-import lib.MOFException;
-import lib.fun.Fun;
-import lib.fun.FunLib;
-import lib.zip.Zip;
-import lib.zip.ZipLib;
-
 public abstract class Visitor<X,Y> {
   public abstract <Ans> Ans visit(X x, Fun<Zip<X, Y>, Ans> k) throws MOFException;
 
@@ -40,7 +34,7 @@ public abstract class Visitor<X,Y> {
 
   }
 
-  public Visitor<X,Y> choice(final Visitor <X,Y> v) {
+  public Visitor<X,Y> or(final Visitor <X,Y> v) {
       final Visitor<X,Y> t = this;
       return new Visitor<X,Y>() {
          public <Ans> Ans visit(final X x, final Fun<Zip<X,Y>,Ans> k) throws MOFException {
@@ -67,10 +61,32 @@ public abstract class Visitor<X,Y> {
        public <Ans> Ans visit(final X x, final Fun<Zip<X,X>,Ans> k) throws MOFException {
          return t.visit(x , new Fun<Zip<X,Y>,Ans>() {
                               public Ans apply(Zip<X,Y> z) throws MOFException {
-                                 return k.apply(ZipLib.unit(z.run())); }}
+                                 return k.apply(Zip.unit(z.run())); }}
                        );
        }};
   }
 
 
+
+// Static Methods
+public static <X,Y extends X> Visitor<X,Y> map(final Fun<X,Y> f) {
+    return new Visitor<X,Y>() {
+        public <Ans> Ans visit(X x, Fun<Zip<X,Y>,Ans> k) throws MOFException { return k.apply((Zip<X,Y>)Zip.unit(f.apply(x))); } }; // Zip.unit(Y): Zip<X,Y extends X>
+}
+
+    public static <X,Y> Visitor<X,Y> lift(final Fun<X,Zip<X,Y>> f) {
+        return new Visitor<X,Y>() {
+            public <Ans> Ans visit(X x, Fun<Zip<X,Y>,Ans> k) throws MOFException {
+                return k.apply(f.apply(x));
+            }};
+    }
+
+    public static <X,Y> Visitor<X,Y> fix(final Fun<Visitor<X,Y>,Visitor<X,Y>> f) throws MOFException {
+        final Ref<Visitor<X,Y>> fixpoint = null ;
+        fixpoint.set( new Visitor<X, Y>() {
+            public <Ans> Ans visit(X x, Fun<Zip<X, Y>, Ans> k) throws MOFException {
+                return f.apply(fixpoint.value).visit(x,k);
+            }});
+        return fixpoint.value;
+    }
 }

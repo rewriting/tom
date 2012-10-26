@@ -1,7 +1,4 @@
-package lib.cps;
-
-import lib.MOFException;
-import lib.fun.Fun;
+package lib;
 
 /**
  * Created with IntelliJ IDEA.
@@ -17,4 +14,8 @@ public abstract class Cps<Ans,X> extends Fun<Fun<X,Ans>,Ans> {
      return t.apply(new Fun<X,Ans>() { public Ans apply(      X          x) throws MOFException {
      return f.apply(x).apply(k) ;}});}};
   }
+
+    public static <Ans,X> Cps<Ans,X> unit(final X x) {
+        return new Cps<Ans,X>() { public Ans apply(Fun<X,Ans> k) throws MOFException { return k.apply(x); } } ;
+    }
 }

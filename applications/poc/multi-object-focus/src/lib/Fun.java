@@ -1,6 +1,4 @@
-package lib.fun;
-
-import lib.*;
+package lib;
 
 /**
  * Created with IntelliJ IDEA.
@@ -29,4 +27,6 @@ public abstract class Fun<A,B> {
                  public P<B,D> apply(P<A,C> p) throws MOFException { return new P<B,D>(f.apply(p.left), g.apply(p.right)) ; }
                } ;
     }
+
+    public static <T> Fun<T,T> id(T t) { return new Fun<T,T>() { public T apply(T u) { return u; } }; }
 }

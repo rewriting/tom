@@ -8,10 +8,8 @@
 // Terms
 package term;
 
-import lib.MOFException;
-import lib.fun.Fun;
+import lib.*;
 import lib.sl.*;
-import lib.zip.*;
 
 
 public abstract class Term {

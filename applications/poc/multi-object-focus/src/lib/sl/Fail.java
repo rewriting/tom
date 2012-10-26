@@ -8,9 +8,9 @@ package lib.sl;
  * To change this template use File | Settings | File Templates.
  */
 
+import lib.Fun;
 import lib.MOFException;
-import lib.fun.*;
-import lib.zip.*;
+import lib.Zip;
 
 public class Fail<X,Y> extends Visitor<X,Y> {
    public <Ans> Ans visit(X x, Fun<Zip<X, Y>,Ans> k) throws MOFException { throw new MOFException(); }
