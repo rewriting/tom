@@ -9,7 +9,7 @@ import lib.*;
  * Time: 17:13
  * To change this template use File | Settings | File Templates.
  */
-// A simple leaf
+// %op Term L( name:String )
 public class L extends Term {
     public String name ;
 

@@ -9,9 +9,14 @@ import lib.*;
  * Time: 17:13
  * To change this template use File | Settings | File Templates.
  */
-// Binary node
+
+/**
+ * %op Term F(fsym:string, left:Term, right: Term)
+ */
 public class F extends Term {
+
     public String fsym ;
+
     public Term   left ;
     public Term   right;
 

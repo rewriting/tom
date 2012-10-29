@@ -20,7 +20,7 @@ public class MOF {
 
     public static void main(String[] args) throws MOFException {
     System.out.println("MOF POC\n");
-    Visitor<Term,Term> w = TSL.one.seq(v);
+    Visitor<Term,Term> w = TSL.one(v);
     System.out.println(w.run(t));
   }
 

@@ -11,7 +11,7 @@ package term;
 import lib.*;
 import lib.sl.*;
 
-
-public abstract class Term {
-    public <Ans,Y> Ans accept(Visitor<Term,Y> v, Fun<Zip<Term,Y>,Ans> k) throws MOFException { return v.visit(this,k); }
-}
+/**
+ * Abstract class of terms. It has two operators: L (leaves) and F (inner nodes)
+ */
+public abstract class Term { }

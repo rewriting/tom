@@ -10,9 +10,15 @@ package term;
 import lib.*;
 import lib.sl.*;
 
+/**
+ * Basic strategies on terms.
+ */
 public class TSL {
     %include{Term.tom}
 
+    /**
+     * l = Id on leaves (L) and Fail otherwise
+     */
     public static final Visitor<Term,Term> l = Visitor.map( new Fun<Term,Term>(){
         public Term apply(Term t) throws MOFException {
             %match(t) {
@@ -23,6 +29,9 @@ public class TSL {
         }
     });
 
+    /**
+     * Set the focus on the left member of the input t (if t=F(..)) if possible, fails otherwise.
+     */
     public static final Visitor<Term,Term> f1 = Visitor.lift( new Fun<Term,Zip<Term,Term>>(){
         public Zip<Term,Term> apply(final Term t) throws MOFException {
             %match(t) {
@@ -36,6 +45,9 @@ public class TSL {
         }
     });
 
+    /**
+     * Set the focus on the right member of the input t (if t=F(..)) if possible, fails otherwise.
+     */
     public static final Visitor<Term,Term> f2 = Visitor.lift( new Fun<Term,Zip<Term,Term>>(){
         public Zip<Term,Term> apply(final Term t) throws MOFException {
             %match(t) {
@@ -50,9 +62,22 @@ public class TSL {
     });
 
 
-    public static final Visitor<Term,Term> one = f1.or(f2) ;
+    /**
+     * Try the left member of the input. Backtrack on the right member on failure.
+     */
+    public static final Visitor<Term,Term> leftOrRight = f1.or(f2) ;
+
+    /**
+     * The standard strategy one.
+     */
+    public static final Visitor<Term,Term> one(Visitor<Term,Term> s) {
+        return f1.or(f2).seq(s).reset().up();
+    }
 
 
+    /**
+     * Split the focus on both the left and right member of the input t (if t=F(..)) if possible, fails otherwise.
+     */
     public static final Visitor<Term,P<Term,Term>> two = Visitor.lift( new Fun<Term,Zip<Term,P<Term,Term>>>(){
         public Zip<Term,P<Term,Term>> apply(final Term t) throws MOFException {
             %match(t) {

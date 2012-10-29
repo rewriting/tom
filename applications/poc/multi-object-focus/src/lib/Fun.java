@@ -12,8 +12,8 @@ package lib;
  * Abstract class of functions. A Fun<X,Y> is a function from X to Y. The abstract method apply is the actual function
  * and the only one to be defined in order to instantiate the class.
  *
- * @param <X> the domain.
- * @param <Y> to codomain.
+ * @param <A> the domain.
+ * @param <B> to codomain.
  * @return a function fron X to Y.
  */
 public abstract class Fun<A,B> {
