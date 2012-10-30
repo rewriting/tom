@@ -12,5 +12,5 @@ import lib.*;
 
 /** The Id Visitor. It just returns its input */
 public class Id<X> extends Visitor<X,X> {
-  public <Ans> Ans visit(X x, Fun<Zip<X, X>,Ans> k) throws MOFException { return k.apply(Zip.unit(x)); }
+  public <T,Ans> Ans visitZK(Zip<T,X> z, Fun<Zip<X, X>,Ans> k) throws MOFException { return k.apply(Zip.unit(z.focus)); }
 }

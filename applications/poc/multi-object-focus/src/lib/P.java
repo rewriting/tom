@@ -28,4 +28,6 @@ public class P<X,Y> {
         }
         return false;
     }
+
+    public static <X,Y> P<X,Y> mkP(X l,Y r) { return new P<X,Y>(l,r); }
 }

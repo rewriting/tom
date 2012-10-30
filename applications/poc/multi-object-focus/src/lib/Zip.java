@@ -30,6 +30,7 @@ public class Zip<T,S> {
      * The context function comtext: S->T
      */
     public Fun<S,T> context;
+    public Env      env;
 
     /**
      * The term at the focus
@@ -45,6 +46,7 @@ public class Zip<T,S> {
     public Zip(Fun<S, T> c, S f) {
         context = c;
         focus   = f;
+        env     = new Env();
     }
 
     /**
@@ -78,6 +80,13 @@ public class Zip<T,S> {
                             , zf.focus
                             ) ;
     }
+
+
+
+    public <R> Zip<T,R> merge(Zip<S,R> z) {
+        return new Zip<T,R>( this.context.compose(z.context) , z.focus);
+    }
+
 
 
     /**
@@ -135,6 +144,4 @@ public class Zip<T,S> {
             public Zip<Y,Y> apply(X x) throws MOFException { return unit(f.apply(x));}
         };
     }
-
-
 }
