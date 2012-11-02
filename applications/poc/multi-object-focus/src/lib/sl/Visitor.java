@@ -49,6 +49,10 @@ public abstract class Visitor<X,Y> {
     }
 
 
+    public Zip<X,Y> visitUZ(X x) throws MOFException {
+        return visitZ(Zip.unit(x));
+    }
+
     /**
      * #visit(x) run the visitor on x (the focus is placed at the root of x) and return the resulting term.
      * <p>

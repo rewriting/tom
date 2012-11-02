@@ -1,7 +1,6 @@
 all: src/MOF.class
 
-tom: src/MOF.t src/term/TSL.t
-	cd src/ && tom -v -p term/TSL.t
+tom: src/MOF.t
 	cd src/ && tom -v -p MOF.t
 
 src/MOF.class: src/MOF.java  
@@ -17,7 +16,7 @@ javadoc: tom
 
 clean:
 	find . -name "*.class" -delete
-	rm -fr src/term/TSL.java src/MOF.java doc/
+	rm -fr src/term/TSL.java src/MOF.java doc/ src/mof/
 
 run: src/MOF.class
 	cd src/ && java MOF

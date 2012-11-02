@@ -144,4 +144,10 @@ public class Zip<T,S> {
             public Zip<Y,Y> apply(X x) throws MOFException { return unit(f.apply(x));}
         };
     }
+
+
+    public String toString() {
+       return "Zip(" + context.toString() + ", " + focus.toString() +")";
+
+    }
 }
