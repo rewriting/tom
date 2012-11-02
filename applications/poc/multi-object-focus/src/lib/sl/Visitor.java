@@ -222,11 +222,40 @@ public abstract class Visitor<X,Y> {
      * @return the fixed point of f.
      */
     public static <X,Y> Visitor<X,Y> fix(final Fun<Visitor<X,Y>,Visitor<X,Y>> f) throws MOFException {
-        final Ref<Visitor<X,Y>> fixpoint = null ;
+        final Ref<Visitor<X,Y>> fixpoint = new Ref<Visitor<X, Y>>(null) ;
         fixpoint.set( new Visitor<X, Y>() {
             public <T,Ans> Ans visitZK(Zip<T,X> z, Fun<Zip<X, Y>, Ans> k) throws MOFException {
                 return f.apply(fixpoint.value).visitZK(z,k);
             }});
         return fixpoint.value;
     }
+
+
+
+    public static <X> Visitor<X,X> sltry(Visitor<X,X> s) throws MOFException {
+        return s.or(new Id<X>());
+    }
+
+
+    public static <X> Visitor<X,X> repeat(Visitor<X,X> s) throws MOFException {
+        return fix(new Fun<Visitor<X,X>,Visitor<X,X>>(){ public Visitor<X,X> apply(Visitor<X,X> v) throws MOFException {
+            return v.seq(v).or(new Id<X>());
+        }});
+    }
+
+
+    /**
+     * Not inverses success and failure. On Failure, it is Id and on success it fails.
+     *
+     * @param <X> type if the input
+     */
+    public static <X> Visitor<X,X> not(final Visitor<X,X> v) {
+       return new Visitor<X,X>() { public <T,Ans> Ans visitZK(Zip<T,X> z, Fun<Zip<X,X>,Ans> k) throws MOFException {
+         try { v.visitZK(z,k);
+              throw new MOFException();
+             }
+         catch (MOFException e) { return k.apply(Zip.unit(z.focus)); }
+       }};
+    }
+
 }

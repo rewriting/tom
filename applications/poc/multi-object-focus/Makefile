@@ -1,14 +1,12 @@
-all: src/MOF.class
+all: src/Main.class
 
-tom: src/MOF.t
+src/MOF.java: src/MOF.t
 	cd src/ && tom -v -p MOF.t
 
-src/MOF.class: src/MOF.java  
-	cd src/ && javac MOF.java
+src/Main.class: src/Main.java src/MOF.java
+	cd src/ && javac Main.java
 
-src/MOF.java: javadoc
-
-javadoc: tom
+javadoc: src/MOF.java
 	[ -e doc ] || mkdir doc/
 	cd src/ && javadoc -d ../doc/ `find . -iname "*.java"`
 
@@ -16,9 +14,9 @@ javadoc: tom
 
 clean:
 	find . -name "*.class" -delete
-	rm -fr src/term/TSL.java src/MOF.java doc/ src/mof/
+	rm -fr src/term/TSL.java src/MOF.java doc/ src/mof/ out/*
 
-run: src/MOF.class
-	cd src/ && java MOF
+run: src/Main.class
+	cd src/ && java Main
 
 test: clean all run

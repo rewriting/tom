@@ -2,31 +2,32 @@ import lib.*;
 import lib.sl.*;
 import tom.library.sl.Visitable;
 
-import mof.term.types.*;
+import mof.expr.types.*;
 
 public class MOF {
     %include { string.tom }
 
     %gom {
-        module Term
-        imports String
+        module Expr
+        imports String int
         abstract syntax
-        Term = L(name:String)
-             | F(fsym:String, left:Term, right:Term)
+        Expr = I(x:int)
+             | P(e1:Expr, e2:Expr)
+             | M(e1:Expr, e2:Expr)
     }
 
-    public static Term t = `F("f",L("totp"),L("toto"));
+    public static Expr e = `M(I(3),P(I(1),I(1)));
 
     /*
      Instead of defining a visitor by defining visitZK, we build one by mapping a function into a Visitor
-     getChildAt can give either a Term or a String, so we define the function on their common super type.
+     getChildAt can give either a Expr or a int, so we define the function on their common super type.
       */
 
     public static Visitor<Visitable,Visitable> v = Visitor.map( new Fun<Visitable,Visitable>() {
         public Visitable apply(Visitable u) throws MOFException {
 
             // usual printf debuging
-            System.out.println("toto->titi: recieved " + u.toString());
+            System.out.println("reducing " + u.toString());
 
             /*
              The match is only defined on Term and NOT String, so we fail on String!
@@ -34,20 +35,22 @@ public class MOF {
              and Term.
               */
 
-            if (!(u instanceof Term)) throw new MOFException();
+            if (!(u instanceof Expr)) throw new MOFException();
 
             /*
              Now that we are on terms, we can match.
              */
             %match(u) {
-                L("toto") -> { return `L("titi");        }
+                I(x)         -> { return `I(x    ); }
+                P(I(x),I(y)) -> { return `I(x + y); }
+                M(I(x),I(y)) -> { return `I(x * y); }
                 _         -> { throw new MOFException(); }
             };
             return null;
         }});
 
 
-    public static void main(String[] args) throws MOFException {
+    public static void run() throws MOFException {
         System.out.println("MOF POC\n");
 
         /*
@@ -62,10 +65,10 @@ public class MOF {
           at the end of reset, the focus is still placed on a (rewritten) child. "up" rebuild the
           parent.
          */
-        Visitor<Visitable,Visitable> w = new SelectChild<Visitable,Visitable>().seq(v).reset().up();
+        Visitor<Visitable,Visitable> w = All.bottomUp(Visitor.sltry(v));
 
         // The show must go on!
-        System.out.println(w.visit(t));
+        System.out.println(w.visit(e));
     }
 
 
