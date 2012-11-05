@@ -55,13 +55,15 @@ public class SimplePDLToPetriNet {
   }
 
 
-  %transformation SimplePDLToPetriNet(tom__linkClass:LinkClass,pn:PetriNet) : "metamodels/SimplePDLSemantics_updated.ecore" -> "metamodels/PetriNetSemantics_updated.ecore" {
+  %transformation SimplePDLToPetriNet(tom__linkClass:LinkClass,pn:PetriNet) : "metamodels/SimplePDLSemantics.ecore" -> "metamodels/PetriNetSemantics.ecore" {
 
     definition P2PN traversal `TopDown(P2PN(tom__linkClass,pn)) {
       p@Process[name=name] -> {
         Place p_ready  = `Place(name + "_ready", pn,ArcEList(), ArcEList(), 1);
-        Place p_running  = `Place(name + "_running", pn,ArcEList(), ArcEList(), 0);
-        Place p_finished  = `Place(name + "_finished", pn,ArcEList(), ArcEList(), 0);
+        //Place p_running  = `Place(name + "_running", pn, ArcEList(), ArcEList(), 0);
+        Place p_running  = `Place[name=(name+"_running"),net=pn,outgoings=ArcEList(),incomings=ArcEList()];
+        //Place p_finished  = `Place(name + "_finished", pn,ArcEList(), ArcEList(), 0);
+        Place p_finished = `Place[name=(name+"_finished"),net=pn,outgoings=ArcEList(),incomings=ArcEList()];
         String n1 = `name+"_start";
         %tracelink(t_start:Transition, `Transition(n1, pn,ArcEList(), ArcEList(), 1, 1));
         n1 = `name+"_finish";
@@ -145,16 +147,20 @@ public class SimplePDLToPetriNet {
     Map opts = new HashMap();
     opts.put(XMIResource.OPTION_SCHEMA_LOCATION, java.lang.Boolean.TRUE);
 
+    //Loading an instance of SimplePDL MM (.xmi)
     if (args.length>0) {
+      System.out.println("Using given model instance: "+args[0]);
       DDMMSimplePDLPackage packageInstance = DDMMSimplePDLPackage.eINSTANCE;
       File input = new File(args[0]);
       try {
         resource.load(new FileInputStream(input),opts);
       } catch (Exception e) {
-        e.printStackTrace();
+        System.err.println("Exception occured while loading the resource file: " + e.getMessage()); 
+        //e.printStackTrace();
       }
       p_root = (SimplePDLSemantics.DDMMSimplePDL.Process) resource.getContents().get(0);
     } else {
+      //writing an instance of SimplePDL from scratch, by using Tom
       System.out.println("No model instance given in argument. Using default hardcoded model.");
       WorkDefinition wd1 = `WorkDefinition(null,WorkSequenceEList(),WorkSequenceEList(),"A",null);
       WorkDefinition wd2 = `WorkDefinition(null,WorkSequenceEList(),WorkSequenceEList(),"B",null);

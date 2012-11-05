@@ -1,8 +1,9 @@
 FILE=SimplePDLToPetriNet
 LOCAL_CLASSPATH=.:lib/petrinetsemantics_updated_1.2.jar:lib/simplepdlsemantics_updated_1.2.jar:${CLASSPATH}
-OPTS="-nt -p"
+OPTS=-p
+#OPTS=-nt -p
 
-default: run
+default: ${FILE}.class
 
 run: ${FILE}.class
 	java -cp ${LOCAL_CLASSPATH} ${FILE} $1
