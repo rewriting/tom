@@ -10,10 +10,11 @@ package lib.sl;
 import lib.Fun;
 import lib.MOFException;
 import lib.Zip;
+import lib.P;
 import tom.library.sl.Visitable;
 
 /**
- * A visitor that take a Visitable node as input and set the focus on a child (left to right). If the visitor
+ * A visitor that take a Visitable node as input and set TWO focuses on two childrens (left to right). If the visitor
  * chain fails on a subterm, it backtraks to use the next one. If all fail it fails.
  * <p>
  * IMPORTANT: this component uses getChildAt to a get a child and cast it to Y. Y can be used in
@@ -23,14 +24,15 @@ import tom.library.sl.Visitable;
  *
  * @param <X> the type of the Visitable node
  */
-public class SelectChild<X extends Visitable, Y extends Visitable> extends Visitor<X,Y> {
+public class SelectChild2<X extends Visitable, Y extends Visitable> extends Visitor<X,P<Y,Y>> {
 
-    public <T,Ans> Ans visitZK(Zip<T,X> z, Fun<Zip<X,Y>,Ans> k) throws MOFException {
-         for (int i = 0; i < z.focus.getChildCount(); i++)
-         {
-             try { return new Child<X,Y>(i).visitZK(z,k); }
-             catch (MOFException e) {}
-         }
-         throw new MOFException();
+    public <T,Ans> Ans visitZK(Zip<T,X> z, Fun<Zip<X,P<Y,Y>>,Ans> k) throws MOFException {
+        for (int i = 0     ; i < z.focus.getChildCount(); i++)
+        for (int j = i + 1 ; j < z.focus.getChildCount(); j++)
+        {
+            try { return new Child2<X,Y>(i,j).visitZK(z,k); }
+            catch (MOFException e) {}
+        }
+        throw new MOFException();
     }
 }
