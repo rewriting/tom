@@ -38,33 +38,12 @@ public class All<X extends Visitable> extends Visitor<X,X> {
     public <Y extends Visitable, Z> All(final Visitor<Y,Z> s) {
         visitor = new Visitor<X, X>() {
             public <T,Ans> Ans visitZK(Zip<T,X> z, Fun<Zip<X,X>,Ans>  k) throws MOFException {
-                return all_aux(s,k,z,0);
-            }};
+                X x = z.focus;
+                Y[] childrens = (Y[])(x.getChildren());
+                for(int i= 0; i < childrens.length; i++) { childrens[i] = s.visit(childrens[i]); }
+                return k.apply((Zip<X,X>)(Zip.unit(x.setChildren(childrens))));
+        };};
     }
-
-
-    /*
-      This is the actual recursive function for All. It applies s on every child of the input by:
-
-        let Vi = tChild(i).seq(s).up() the visitor that focus on a child of its input, apply s and rebuild the
-         parent.
-
-        z0 = input zipper
-        z1 = V0(z0)
-        z2 = V1(z1)
-        ...
-        zn = output zipper
-
-        Then zn is given to the continuation.
-     */
-    private <Y extends Visitable, Z, T, Ans> Ans all_aux(Visitor<Y,Z> s, Fun<Zip<X,X>,Ans>  k, Zip<T,X> z, int i) throws MOFException {
-        X t = z.focus;
-        if (i >= t.getChildCount()) { return k.apply(Zip.unit(t)); }
-        else { return all_aux(s,k, (new Child<X,Y>(i)).seq(s).up().visitZ(z),i+1); }
-    }
-
-
-
 
     public static <X extends Visitable> Visitor<X,X> bottomUp(final Visitor<X,X> s) throws MOFException {
         return fix(new Fun<Visitor<X,X>,Visitor<X,X>>(){ public Visitor<X,X> apply(Visitor<X,X> v) throws MOFException {

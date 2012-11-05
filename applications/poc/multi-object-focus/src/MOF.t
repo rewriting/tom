@@ -41,7 +41,6 @@ public class MOF {
              Now that we are on terms, we can match.
              */
             %match(u) {
-                I(x)         -> { return `I(x    ); }
                 P(I(x),I(y)) -> { return `I(x + y); }
                 M(I(x),I(y)) -> { return `I(x * y); }
                 _         -> { throw new MOFException(); }
@@ -65,7 +64,7 @@ public class MOF {
           at the end of reset, the focus is still placed on a (rewritten) child. "up" rebuild the
           parent.
          */
-        Visitor<Visitable,Visitable> w = All.bottomUp(Visitor.sltry(v));
+        Visitor<Visitable,Visitable> w = All.innerMost(v);
 
         // The show must go on!
         System.out.println(w.visit(e));
