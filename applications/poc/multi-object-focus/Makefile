@@ -14,9 +14,9 @@ javadoc: src/MOF.java
 
 clean:
 	find . -name "*.class" -delete
-	rm -fr src/term/TSL.java src/MOF.java doc/ src/mof/ out/*
+	rm -fr src/term/TSL.java src/MOF.java doc/ src/mof/ out/* out.xml
 
 run: src/Main.class
-	cd src/ && java Main
+	cd src/ && java Main | tee ../out.xml
 
 test: clean all run

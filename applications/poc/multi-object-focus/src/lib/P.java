@@ -11,7 +11,7 @@ package lib;
 import tom.library.sl.Visitable;
 
 // Pair Constructor: (X,Y) lib.P(X, Y)
-public class P<X,Y> implements Visitable {
+public class P<X,Y> /*implements Visitable*/ {
     public X left ;
     public Y right;
 
@@ -21,7 +21,7 @@ public class P<X,Y> implements Visitable {
     }
 
     public String toString() {
-        return "lib.P(" + left.toString() + " , " + right.toString() + ")";
+        return "<P><left>" + left.toString() + "</left>\n<right>" + right.toString() + "</right></P>";
     }
 
     public boolean equals(Object o) {
@@ -34,7 +34,7 @@ public class P<X,Y> implements Visitable {
 
     public static <X,Y> P<X,Y> mkP(X l,Y r) { return new P<X,Y>(l,r); }
 
-
+/*
     public Visitable[] getChildren() {
         Visitable[] arr  = new Visitable[2];
         arr[0] = (Visitable)left ;
@@ -59,4 +59,6 @@ public class P<X,Y> implements Visitable {
     public int getChildCount() {
         return 2;
     }
+*/
+
 }

@@ -10,6 +10,8 @@ package lib.sl;
 
 import lib.*;
 
+import java.util.zip.ZipOutputStream;
+
 /**
  * Abstract class of strategies. A Visitor<X,Y> is essentially a function from X to a Y. Whereas functions Fun<X,Y>,
  * a visitor is able to use backtracking (thanks to CPS) and rebuild an X from an Y. Redefine the abstract method
@@ -257,5 +259,32 @@ public abstract class Visitor<X,Y> {
          catch (MOFException e) { return k.apply(Zip.unit(z.focus)); }
        }};
     }
+
+
+    /**
+     * Make a visitor that behave like this but traces inputs and outputs
+     */
+    public Visitor<X,Y> trace(final String name) {
+        final Visitor<X,Y> v = this;
+        return new Visitor<X,Y>() { public <T,Ans> Ans visitZK(Zip<T,X> z, final Fun<Zip<X,Y>,Ans> k) throws MOFException {
+            System.out.println("<" + name + ">");
+            System.out.println("<input>" + z.toString() + "</input>");
+
+            Fun<Zip<X,Y>,Ans> tracedk = new Fun<Zip<X,Y>,Ans>() { public Ans apply(Zip<X,Y> output) throws MOFException {
+                System.out.println("<output>" + output.toString() + "</output>");
+                System.out.println("</" + name + ">");
+                try { return k.apply(output); }
+                catch (MOFException e) {  System.out.println("<cont-failed/><" + name + "><input>RERUN</input>");
+                                          throw new MOFException();
+                                       }
+            }};
+
+            try { return v.visitZK(z,tracedk); }
+            catch (MOFException e) { System.out.println("<visitor-failed/></" + name + ">");
+                                     throw new MOFException();
+                                   }
+        }};
+    }
+
 
 }

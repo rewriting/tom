@@ -29,13 +29,18 @@ public class Zip<T,S> {
     /**
      * The context function comtext: S->T
      */
-    public Fun<S,T> context;
-    public Env      env;
+    public final Fun<S,T> context;
+    public final Env      env;
 
     /**
      * The term at the focus
      */
     public S        focus;
+
+    /*
+      cached = context(focus)
+     */
+    private T cached = null;
 
     /**
      * Make a zipper with context c and focus f.
@@ -55,7 +60,10 @@ public class Zip<T,S> {
      * @return the whole term.
      * @throws MOFException
      */
-    public T run() throws MOFException { return context.apply(focus); }
+    public T run() throws MOFException {
+        if (cached == null) cached = context.apply(focus);
+        return cached;
+    }
 
     /**
      * Replace the term at focus by another one. this is NOT modified, instead a new zipper is created!
@@ -146,8 +154,12 @@ public class Zip<T,S> {
     }
 
 
-    public String toString() {
-       return "Zip(" + context.toString() + ", " + focus.toString() +")";
+    public String toString()  {
+        String whole;
+        try                    { whole = this.run().toString()    ; }
+        catch (MOFException e) { whole = "Exception: MOFException"; }
+
+        return "<Zip>\n<focus>" + focus.toString() +"</focus>\n<whole>" + whole + "</whole>\n</Zip>";
 
     }
 }
