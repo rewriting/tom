@@ -239,9 +239,9 @@ public abstract class Visitor<X,Y> {
     }
 
 
-    public static <X> Visitor<X,X> repeat(Visitor<X,X> s) throws MOFException {
+    public static <X> Visitor<X,X> repeat(final Visitor<X,X> s) throws MOFException {
         return fix(new Fun<Visitor<X,X>,Visitor<X,X>>(){ public Visitor<X,X> apply(Visitor<X,X> v) throws MOFException {
-            return v.seq(v).or(new Id<X>());
+            return sltry(s.seq(v));
         }});
     }
 
@@ -266,21 +266,28 @@ public abstract class Visitor<X,Y> {
      */
     public Visitor<X,Y> trace(final String name) {
         final Visitor<X,Y> v = this;
-        return new Visitor<X,Y>() { public <T,Ans> Ans visitZK(Zip<T,X> z, final Fun<Zip<X,Y>,Ans> k) throws MOFException {
+        return new Visitor<X,Y>() { public <T,Ans> Ans visitZK(final Zip<T,X> z, final Fun<Zip<X,Y>,Ans> k) throws MOFException {
             System.out.println("<" + name + ">");
             System.out.println("<input>" + z.toString() + "</input>");
 
             Fun<Zip<X,Y>,Ans> tracedk = new Fun<Zip<X,Y>,Ans>() { public Ans apply(Zip<X,Y> output) throws MOFException {
-                System.out.println("<output>" + output.toString() + "</output>");
-                System.out.println("</" + name + ">");
-                try { return k.apply(output); }
-                catch (MOFException e) {  System.out.println("<cont-failed/><" + name + "><input>RERUN</input>");
+                System.out.println("<trying><output>" + output.toString() + "</output>");
+                try                    { Ans res = k.apply(output);
+                                         System.out.println("<continuation-success>" + res.toString() + "</continuation-success>");
+                                         System.out.println("</trying>");
+                                         return res;
+                                       }
+                catch (MOFException e) {  System.out.println("<contiuation-failure/>");
+                                          System.out.println("</trying>");
                                           throw new MOFException();
                                        }
             }};
 
-            try { return v.visitZK(z,tracedk); }
-            catch (MOFException e) { System.out.println("<visitor-failed/></" + name + ">");
+            try                    { Ans ans = v.visitZK(z,tracedk);
+                                     System.out.println("<visitor-success/></" + name + ">");
+                                     return ans;
+                                   }
+            catch (MOFException e) { System.out.println("<visitor-failure/></" + name + ">");
                                      throw new MOFException();
                                    }
         }};
