@@ -34,6 +34,21 @@ public class P<X,Y> /*implements Visitable*/ {
 
     public static <X,Y> P<X,Y> mkP(X l,Y r) { return new P<X,Y>(l,r); }
 
+
+    public Zip<P<X,Y>,X> zipLeft() {
+        return Zip.mkZip( new Fun<X,P<X,Y>> () { public P<X,Y> apply(X x) {
+                               return P.mkP(x, right) ; } }
+                        , left
+                        );
+    }
+
+    public Zip<P<X,Y>,Y> zipRight() {
+        return Zip.mkZip( new Fun<Y,P<X,Y>> () { public P<X,Y> apply(Y y) {
+                               return P.mkP(left, y) ; } }
+                        , right
+                        );
+    }
+
 /*
     public Visitable[] getChildren() {
         Visitable[] arr  = new Visitable[2];

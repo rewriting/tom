@@ -1,4 +1,5 @@
 import com.sun.tools.internal.xjc.reader.xmlschema.bindinfo.BIConversion;
+import jjtraveler.VisitableList;
 import jjtraveler.graph.VisitedTest;
 import lib.*;
 import lib.sl.*;
@@ -10,6 +11,15 @@ import mof.tree.types.*;
 
 public class MOF {
     %include { string.tom }
+
+    /*
+      **************************
+      *                        *
+      *  SINGLE FOCUS EXAMPLE  *
+      *                        *
+      * ************************
+     */
+
 
     %gom {
         module Expr
@@ -194,10 +204,67 @@ public class MOF {
         System.out.println("</Tree>\n");
     }
 
+
+    /**
+     * This example is essentially the same as above but this time we not only want to replace one pair of leaves but
+     * all pairs.
+     */
+
+    /**
+     *  A visitor that exchange two leaves if the first one is lesser than the second one. It takes the two focus as a
+     *  pair of visitable terms: P<Visitable,Visitable> Then it match the two terms/members of the pair.
+     */
+    public static Visitor<P<Visitable,Visitable>, P<Visitable,Visitable>> vorder = Visitor.map(
+            new Fun<P<Visitable,Visitable>, P<Visitable,Visitable>>() {
+                public P<Visitable,Visitable> apply(P<Visitable,Visitable> u) throws MOFException {
+                    /*
+                    The match on the two focuses
+                    */
+
+                    %match {
+                        L(x) << u.left && L(y) << u.right && x < y -> { return P.mkP((Visitable)(`L(y))
+                                                                                    ,(Visitable)(`L(x))
+                                                                                    );
+                        }
+                    };
+                    throw new MOFException();
+                }});
+
+
+    public static void runOrder() throws MOFException {
+        System.out.println("<Order>\n");
+        System.out.println("<exampleDepth>" + exampleDepth + "</exampleDepth>\n");
+        System.out.println("<exampleTree>"  + exampleTree  + "</exampleTree>\n");
+
+
+        Visitor<Visitable,Visitable>                           select1     = new SelectChild<Visitable,Visitable>();
+        Visitor<Visitable,P<Visitable,Visitable>>              select2     = new SelectChild2<Visitable, Visitable>();
+
+        Var<P<Visitable,Visitable>,P<Visitable,Visitable>>     x           = new Var<P<Visitable, Visitable>, P<Visitable, Visitable>>();
+        Visitor<P<Visitable,Visitable>,P<Visitable,Visitable>> tracedOrder = vorder.trace("vorder");
+
+        Visitor<Visitable,P<Visitable,Visitable>>              visitor     =
+                select2.seq(x.set(select1.times(select1).seq(x).trace("fix")));
+
+
+
+        /*
+         The show must go on! Note that we use visitUZ instead of visit. We want to show where the two focuses are
+         at the end of the computation and not only the resulting whole term (which you can still see on the "whole"
+         xml node of the zipper toString.
+          */
+        try                    { showresult(visitor.visitUZ(exampleTree)); }
+        catch (MOFException e) { System.out.print("<stategy-failed/>") ; }
+
+        System.out.println("</Order>\n");
+    }
+
+
     public static void run() throws MOFException {
         System.out.println("<MOF-POC>\n\n");
         //runExpr();
-        runTree();
+        //runTree();
+        runOrder();
         System.out.println("</MOF-POC>\n\n");
     }
 

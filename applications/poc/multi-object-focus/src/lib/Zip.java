@@ -8,6 +8,8 @@
 
 package lib;
 
+import tom.library.sl.Visitable;
+
 /**
  * Class Zip implements a generic zipper. Let t be a term, you can think of a zipper on t as a pointer on a subterm
  * of t. A zipper is made of two things: a subterm u and the context of u (think of it as a function that when given u
@@ -66,12 +68,34 @@ public class Zip<T,S> {
     }
 
     /**
+     * Run the zipper with a different subterm than the focus.
+     *
+     * @param s the subterm to use instead of the focus.
+     * @throws MOFException
+     */
+    public T runWith(S s) throws MOFException { return context.apply(s); }
+
+
+    /**
      * Replace the term at focus by another one. this is NOT modified, instead a new zipper is created!
      *
      * @param s the new subterm.
      * @return a new zipper with same context as this but with s as subterm.
      */
     public Zip<T,S> replace(S s) { return new Zip<T,S>(context,s); }
+
+
+    /**
+     * Set the focus as a zipper.
+     *
+     */
+    public Zip<T,Zip<S,S>> extend() {
+        final Zip<T,S> t = this;
+        return mkZip( new Fun<Zip<S,S>,T>() { public T apply(Zip<S,S> z) throws MOFException { return t.runWith(z.run()); }}
+                    , unit(focus)
+                    );
+    }
+
 
     /**
      * Move the focus. Given a function that when applied to the subterm u returns a zipper on u (which means that the
@@ -161,5 +185,14 @@ public class Zip<T,S> {
 
         return "<Zip>\n<focus>" + focus.toString() +"</focus>\n<whole>" + whole + "</whole>\n</Zip>";
 
+    }
+
+
+    public static Zip<Visitable,Visitable> child(final Visitable t, final int i) throws MOFException {
+        if (i >= t.getChildCount()) throw new MOFException() ;
+        else return mkZip( new Fun<Visitable,Visitable>() { public Visitable apply(Visitable y) {
+                                   return t.setChildAt(i,y); }}
+                         , t.getChildAt(i)
+                         );
     }
 }
