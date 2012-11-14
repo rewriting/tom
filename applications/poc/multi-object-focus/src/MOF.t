@@ -1,6 +1,3 @@
-import com.sun.tools.internal.xjc.reader.xmlschema.bindinfo.BIConversion;
-import jjtraveler.VisitableList;
-import jjtraveler.graph.VisitedTest;
 import lib.*;
 import lib.sl.*;
 import tom.library.sl.Visitable;
@@ -33,6 +30,7 @@ public class MOF {
     public static void showresult(Object x) { System.out.println("<result>" + x.toString() + "</result>"); }
 
     public static Expr e = `M(I(3),P(I(1),I(1)));
+
 
     /*
      Instead of defining a visitor by defining visitZK, we build one by mapping a function into a Visitor
@@ -67,7 +65,7 @@ public class MOF {
         /*
          .
          */
-        Visitor<Visitable,Visitable> w = All.innerMost(v.trace("v"));
+        Visitor<Visitable,Visitable> w = Visitor.innerMost(v.trace("v"));
 
         // The show must go on!
         showresult(w.visit(e));
@@ -167,7 +165,7 @@ public class MOF {
          is very close to onceBottumUp but does not require neither a strategy as argument nor a specific
          Mu but only repeat.
         */
-        Visitor<Visitable,Visitable> selectBottomUp = Visitor.repeat(new SelectChild<Visitable, Visitable>());
+        Visitor<Visitable,Visitable> selectBottomUp = Visitor.repeat(Visitor.forSome);
 
         /*
           The previous visitor will be used twice and we want to be able to distinguish each instances so we use
@@ -184,7 +182,7 @@ public class MOF {
           A simple instance of SelectChild2 on visitable objects. It selects 2 children of an operator and, if the
           selected pair makes the rest the computation to fail, it backtrack until finding a good one.
          */
-        Visitor<Visitable,P<Visitable,Visitable>> select2 = new SelectChild2<Visitable, Visitable>();
+        Visitor<Visitable,P<Visitable,Visitable>> select2 = Visitor.forSome2;
 
         /*
           The core of the example: select2 gives 2 children, each instance of selectBottomUp is applied on a child
@@ -237,14 +235,15 @@ public class MOF {
         System.out.println("<exampleTree>"  + exampleTree  + "</exampleTree>\n");
 
 
-        Visitor<Visitable,Visitable>                           select1     = new SelectChild<Visitable,Visitable>();
-        Visitor<Visitable,P<Visitable,Visitable>>              select2     = new SelectChild2<Visitable, Visitable>();
+        Visitor<Visitable,Visitable>                           left     = Visitor.forAll.trace("LEFT");
+        Visitor<Visitable,Visitable>                           right    = Visitor.forAll.trace("RIGHT");
+
 
         Var<P<Visitable,Visitable>,P<Visitable,Visitable>>     x           = new Var<P<Visitable, Visitable>, P<Visitable, Visitable>>();
         Visitor<P<Visitable,Visitable>,P<Visitable,Visitable>> tracedOrder = vorder.trace("vorder");
 
         Visitor<Visitable,P<Visitable,Visitable>>              visitor     =
-                select2.seq(x.set(select1.times(select1).seq(x).trace("fix")));
+                Visitor.forSome2.seq(x.set(left.times(right).seq(x).seq(Visitor.sltry(tracedOrder)).trace("fix")));
 
 
 
@@ -262,8 +261,8 @@ public class MOF {
 
     public static void run() throws MOFException {
         System.out.println("<MOF-POC>\n\n");
-        //runExpr();
-        //runTree();
+        runExpr();
+        runTree();
         runOrder();
         System.out.println("</MOF-POC>\n\n");
     }

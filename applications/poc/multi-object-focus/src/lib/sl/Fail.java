@@ -14,5 +14,5 @@ import lib.Zip;
 
 /** The Fail Visitor. It throws MOFException regardless of its input */
 public class Fail<X,Y> extends Visitor<X,Y> {
-   public <T,Ans> Ans visitZK(Zip<T,X> z, Fun<Zip<X, Y>,Ans> k) throws MOFException { throw new MOFException(); }
+   public <T> X visitZK(Zip<T,X> z, Fun<Zip<X, Y>,Zip<X, Y>> k) throws MOFException { throw new MOFException(); }
 }

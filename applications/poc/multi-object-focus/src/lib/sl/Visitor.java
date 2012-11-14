@@ -9,8 +9,8 @@
 package lib.sl;
 
 import lib.*;
+import tom.library.sl.Visitable;
 
-import java.util.zip.ZipOutputStream;
 
 /**
  * Abstract class of strategies. A Visitor<X,Y> is essentially a function from X to a Y. Whereas functions Fun<X,Y>,
@@ -35,7 +35,7 @@ public abstract class Visitor<X,Y> {
      * @throws MOFException to backtrack.
      * @see Zip
      */
-    public abstract <T,R,A> Cps<R,A> visitZK(Zip<T,X> z, Fun<Zip<X,Y>,Cps<R,A>> k) throws MOFException;
+    public abstract <T> X visitZK(Zip<T,X> z, Fun<Zip<X,Y>, Zip<X,Y>> k) throws MOFException;
 
 
     /**
@@ -46,12 +46,12 @@ public abstract class Visitor<X,Y> {
      * @return the zipper Zip<T,Y>
      * @throws MOFException
      */
-    public <T> Zip<X,Y> visitZ(Zip<T,X> zx) throws MOFException {
-       return Cps.run(visitZK(zx, new Return<Zip<X,Y>,Zip<X,Y>>()));
+    public <T,Z> X visitZ(Zip<T,X> zx) throws MOFException {
+       return visitZK(zx, new IdF<Zip<X, Y>>());
     }
 
 
-    public Zip<X,Y> visitUZ(X x) throws MOFException {
+    public X visitUZ(X x) throws MOFException {
         return visitZ(Zip.unit(x));
     }
 
@@ -65,28 +65,27 @@ public abstract class Visitor<X,Y> {
      * @throws MOFException
      */
     public X visit(X x) throws MOFException {
-        return visitZ(Zip.unit(x)).run();
+        return visitZ(Zip.unit(x));
     }
 
 
+
+
     /**
-     * A visitor backtracks by capturing its context as the continuation k. reset prevents this visitor from capturing
-     * the context further than this point. For example: consider the visitor this.reset().seq(another_visotor), thanks
-     * to reset, this can not capture antother_visitor. Se Shift/Reset in CPS for more details.
+     * Computes the sequence of this visitor and the one given as argument. The output of this (Zip<X,Y>) is merged with
+     * this' input (Zip<T,X>). The result (Zip<T,Y>) is then given to v.
      *
-     * @return The same visitor as this but which can not capture its context further.
+     * @param v a visitor takins results of this as input.
+     * @return the sequence of this and v.
      */
-    public Visitor<X,Y> reset() {
+    public <Z> Visitor<X,Z> seq(final Visitor <Y,Z> v) {
         final Visitor<X,Y> t = this;
-        return new Visitor<X,Y>() {
-            public <T,R,A> Cps<R,A> visitZK(final Zip<T,X> z, final Fun<Zip<X,Y>,Cps<R,A>> k) throws MOFException {
-               return new Cps<R,A>() {
-                   public R apply(final Fun<A,R> mk) throws MOFException {
-                       return t.visitZK(z, new Return<R, Zip<X, Y>>()).apply(new Fun<Zip<X,Y>,R>() { public R apply(Zip<X,Y> zxy) throws MOFException {
-                           return k.apply(zxy).apply(mk);
-                       }});
-                   }};
-               }};
+        return new Visitor<X,Z>() {
+            public <T> X visitZK(final Zip<T,X> z, final Fun<Zip<X,Z>,Zip<X,Z>> k) throws MOFException {
+                return            t.visitZK(z          , new Fun<Zip<X,Y>,Zip<X,Y>>() { public Zip<X,Y> apply(final Zip<X,Y> zt) throws MOFException {
+                    return zt.replace(v.visitZK(z.merge(zt), new Fun<Zip<Y,Z>,Zip<Y,Z>>() { public Zip<Y,Z> apply(final Zip<Y,Z> zv) throws MOFException {
+                        return zv.replace(k.apply(zt.merge(zv)).focus);
+                    }})) ;}}) ;}} ;
     }
 
 
@@ -100,11 +99,31 @@ public abstract class Visitor<X,Y> {
     public Visitor<X,Y> or(final Visitor <X,Y> v) {
         final Visitor<X,Y> t = this;
         return new Visitor<X,Y>() {
-            public <T,R,A> Cps<R,A> visitZK(final Zip<T,X> z, final Fun<Zip<X,Y>,Cps<R,A>> k) throws MOFException {
+            public <T> X visitZK(final Zip<T,X> z, final Fun<Zip<X,Y>,Zip<X,Y>> k) throws MOFException {
                 try                    { return t.visitZK(z, k); }
                 catch (MOFException e) { return v.visitZK(z, k); }
             }};
     }
+
+
+
+    /**
+     * A visitor backtracks by capturing its context as the continuation k. reset prevents this visitor from capturing
+     * the context further than this point. For example: consider the visitor this.reset().seq(another_visotor), thanks
+     * to reset, this can not capture antother_visitor. Se Shift/Reset in CPS for more details.
+     *
+     * @return The same visitor as this but which can not capture its context further.
+     */
+    public Visitor<X,X> reset() {
+        final Visitor<X,Y> t = this;
+        return new Visitor<X,X>() {
+            public <T> X visitZK(final Zip<T,X> z, final Fun<Zip<X,X>,Zip<X,X>> k) throws MOFException {
+               return k.apply(Zip.unit(t.visitZ(z))).run();
+        }};
+    }
+
+
+
 
 
     /**
@@ -115,15 +134,20 @@ public abstract class Visitor<X,Y> {
     public Visitor<X,X> up() {
         final Visitor<X,Y> t = this;
         return new Visitor<X,X>() {
-            public <T,R,A> Cps<R,A> visitZK(final Zip<T,X> x, final Fun<Zip<X,X>,Cps<R,A>> k) throws MOFException {
-                return t.visitZK(x, new Fun<Zip<X, Y>, Cps<R, A>>() {
-                    public Cps<R,A> apply(Zip<X, Y> z) throws MOFException {
-                        return k.apply(Zip.unit(z.run()));
+            public <T> X visitZK(final Zip<T,X> x, final Fun<Zip<X,X>,Zip<X,X>> k) throws MOFException {
+                return t.visitZK(x, new Fun<Zip<X, Y>, Zip<X, Y>>() {
+                    public Zip<X,Y> apply(Zip<X, Y> z) throws MOFException {
+                        return (Zip<X,Y>)(k.apply(Zip.unit(z.run())));
                     }
                 }
                 );
             }};
     }
+
+
+
+
+
 
     /**
      * Computes the product of this visitor and the one given as argument. The product of a Visitor<X,Y> and a
@@ -137,66 +161,50 @@ public abstract class Visitor<X,Y> {
     public <R,S> Visitor<P<X,R>,P<Y,S>> times (final Visitor<R,S> v) {
         final Visitor<X,Y> t = this;
         return new Visitor<P<X,R>,P<Y,S>>() {
-            public <T,A,Z,Q> Cps<A,P<Z,Q>> visitZK(final Zip<T,P<X,R>> zxr, final Fun< Zip<P<X,R>,P<Y,S>> , Cps<A,P<Z,Q>> > k) throws MOFException {
-                return new Cps<A,P<Z,Q>>() { public A apply(final Fun<P<Z,Q>,A> mk) throws MOFException {
+            public <T> P<X,R> visitZK(final Zip<T,P<X,R>> zxr, final Fun< Zip<P<X,R>,P<Y,S>> , Zip<P<X,R>,P<Y,S>> > k) throws MOFException {
 
-                    // The zipper for this
-                    final Zip<T,X> zt = zxr.merge(zxr.focus.zipLeft());
+               // A reference on a zipper on R
+               final Ref<Zip<T,R>> zr = new Ref<Zip<T, R>>(zxr.merge(zxr.focus.zipRight()));
 
-                    // The zipper for v
-                    final Zip<T,R> zv = zxr.merge(zxr.focus.zipRight());
+               // the continuation for this
+               Fun<Zip<X,Y>,Zip<X,Y>> kt = new Fun<Zip<X,Y>,Zip<X, Y>>() { public Zip<X,Y> apply(final Zip<X,Y> zt) throws MOFException {
 
-                    // the meta continuation for this
-                    final Fun<Z,A> mkt = (Fun<Z,A>)Fun.curry(mk);
+                   // A mutable variable to hold the current Zip<X,Y>
+                   final Ref<Zip<X,Y>> zxy = new Ref<Zip<X,Y>>(zt);
 
-                    // the continuation for this
-                    Fun<Zip<X,Y>,Cps<A,Z>> kt = new Fun<Zip<X,Y>,Cps<A,Z>>() { public Cps<A,Z> apply(final Zip<X,Y> zxy) {
-                        return new Cps<A,Z>() { public A apply(final Fun<Z,A> ktmk) throws MOFException {
+                   // the continuation for v
+                   Fun<Zip<R,S>,Zip<R,S>> kv = new Fun<Zip<R,S>,Zip<R, S>>() { public Zip<R,S> apply(final Zip<R,S> zrs) throws MOFException {
+                       final Zip<P<X,R>,P<Y,S>> res = k.apply(zxy.value.times(zrs));
 
-                            // the meta contination for v
-                            final Fun<Q,A> mkv = (Fun<Q,A>)Fun.swap((Fun<Z,Fun<Q,A>>)ktmk);
+                       // The new zipper Zip<X,Y>
+                       zxy.set( Zip.mkZip( new Fun<Y,X>() { public X apply(Y y) throws MOFException {
+                                                   return res.context.apply(P.mkP(y, res.focus.right )).left; }}
+                                         , res.focus.left
+                                         ));
 
+                       // The new zipper Zip<R,S>
+                       return  Zip.mkZip( new Fun<S,R>() { public R apply(S s) throws MOFException {
+                                                   return res.context.apply(P.mkP(res.focus.left, s )).right; }}
+                                        , res.focus.right
+                                        );
+                   }};
 
-                            // the continuation for v
-                            Fun<Zip<R,S>,Cps<A,Q>> kv = new Fun<Zip<R,S>,Cps<A,Q>>() { public Cps<A,Q> apply(final Zip<R,S> zrs) {
-                              return new Cps<A,Q>() { public A apply(final Fun<Q,A> kvmk) throws MOFException {
+                   // We let v do its job and give back an R
+                   R r = v.visitZK(zr.value, kv);
 
-                                  // Meta continuation for k
-                                  Fun<P<Z,Q>,A> kmk = new Fun<P<Z,Q>,A>() { public A apply(P<Z,Q> p) throws MOFException {
-                                      return ((Fun<Q,Fun<Z,A>>)kvmk).apply(p.right).apply(p.left);
-                                  }};
+                   // We set zr ready for next iteration or return
+                   zr.set(zr.value.replace(r));
 
-                                  return k.apply(zxy.times(zrs)).apply(kmk);
-                              }};
-                            }};
+                   // We return the rewritten value of zxy
+                   return zxy.value;
+               }};
 
+               X x = t.visitZK(zxr.merge(zxr.focus.zipLeft()), kt);
 
-
-                            return v.visitZK(zv,kv).apply(mkv);
-                        }};
-                    }};
-
-                    return t.visitZK(zt,kt).apply(mkt);
-                }};
+               return P.mkP(x,zr.value.focus);
         }};
     }
 
-    /**
-     * Computes the sequence of this visitor and the one given as argument. The output of this (Zip<X,Y>) is merged with
-     * this' input (Zip<T,X>). The result (Zip<T,Y>) is then given to v.
-     *
-     * @param v a visitor takins results of this as input.
-     * @return the sequence of this and v.
-     */
-    public <Z> Visitor<X,Z> seq(final Visitor <Y,Z> v) {
-        final Visitor<X,Y> t = this;
-        return new Visitor<X,Z>() {
-            public <T,R,A> Cps<R,A> visitZK(final Zip<T,X> z, final Fun<Zip<X,Z>,Cps<R,A>> k) throws MOFException {
-                return t.visitZK(z           , new Fun<Zip<X,Y>,Cps<R,A>>() { public Cps<R,A> apply(final Zip<X,Y> zt) throws MOFException {
-                return v.visitZK(z.merge(zt) , new Fun<Zip<Y,Z>,Cps<R,A>>() { public Cps<R,A> apply(final Zip<Y,Z> zv) throws MOFException {
-                return k.apply(zt.merge(zv)); }}) ;}}) ;}} ;
-
-    }
 
 
 
@@ -210,8 +218,8 @@ public abstract class Visitor<X,Y> {
      */
     public static <X> Visitor<X,X> map(final Fun<X,X> f) {
         return new Visitor<X,X>() {
-            public <T,R,A> Cps<R,A> visitZK(Zip<T,X> z, Fun<Zip<X,X>,Cps<R,A>> k) throws MOFException {
-                return k.apply(Zip.unit(f.apply(z.focus)));
+            public <T> X visitZK(Zip<T,X> z, Fun<Zip<X,X>,Zip<X,X>> k) throws MOFException {
+                return k.apply(Zip.unit(f.apply(z.focus))).run();
             } };
     }
 
@@ -226,8 +234,8 @@ public abstract class Visitor<X,Y> {
      */
     public static <X,Y> Visitor<X,Y> lift(final Fun<X,Zip<X,Y>> f) {
         return new Visitor<X,Y>() {
-            public <T,R,A> Cps<R,A> visitZK(Zip<T,X> z, Fun<Zip<X,Y>,Cps<R,A>> k) throws MOFException {
-                return k.apply(f.apply(z.focus));
+            public <T> X visitZK(Zip<T,X> z, Fun<Zip<X,Y>,Zip<X,Y>> k) throws MOFException {
+                return k.apply(f.apply(z.focus)).run();
             }};
     }
 
@@ -242,7 +250,7 @@ public abstract class Visitor<X,Y> {
     public static <X,Y> Visitor<X,Y> fix(final Fun<Visitor<X,Y>,Visitor<X,Y>> f) throws MOFException {
         final Ref<Visitor<X,Y>> fixpoint = new Ref<Visitor<X, Y>>(null) ;
         fixpoint.set( new Visitor<X, Y>() {
-            public <T,R,A> Cps<R,A> visitZK(Zip<T,X> z, Fun<Zip<X, Y>, Cps<R,A>> k) throws MOFException {
+            public <T> X visitZK(Zip<T,X> z, Fun<Zip<X, Y>, Zip<X, Y>> k) throws MOFException {
                 return f.apply(fixpoint.value).visitZK(z,k);
             }});
         return fixpoint.value;
@@ -268,11 +276,11 @@ public abstract class Visitor<X,Y> {
      * @param <X> type if the input
      */
     public static <X> Visitor<X,X> not(final Visitor<X,X> v) {
-       return new Visitor<X,X>() { public <T,R,A> Cps<R,A> visitZK(Zip<T,X> z, Fun<Zip<X,X>,Cps<R,A>> k) throws MOFException {
+       return new Visitor<X,X>() { public <T> X visitZK(Zip<T,X> z, Fun<Zip<X,X>,Zip<X,X>> k) throws MOFException {
          try { v.visitZK(z,k);
               throw new MOFException();
              }
-         catch (MOFException e) { return k.apply(Zip.unit(z.focus)); }
+         catch (MOFException e) { return k.apply(Zip.unit(z.focus)).run(); }
        }};
     }
 
@@ -282,13 +290,13 @@ public abstract class Visitor<X,Y> {
      */
     public Visitor<X,Y> trace(final String name) {
         final Visitor<X,Y> v = this;
-        return new Visitor<X,Y>() { public <T,R,A> Cps<R,A> visitZK(final Zip<T,X> z, final Fun<Zip<X,Y>,Cps<R,A>> k) throws MOFException {
+        return new Visitor<X,Y>() { public <T> X visitZK(final Zip<T,X> z, final Fun<Zip<X,Y>,Zip<X,Y>> k) throws MOFException {
             System.out.println("<" + name + ">");
             System.out.println("<input>" + z.toString() + "</input>");
 
-            Fun<Zip<X,Y>,Cps<R,A>> tracedk = new Fun<Zip<X,Y>,Cps<R, A>>() { public Cps<R,A> apply(Zip<X,Y> output) throws MOFException {
+            Fun<Zip<X,Y>,Zip<X,Y>> tracedk = new Fun<Zip<X,Y>,Zip<X,Y>>() { public Zip<X,Y> apply(Zip<X,Y> output) throws MOFException {
                 System.out.println("<trying><output>" + output.toString() + "</output>");
-                try                    { Cps<R,A> res = k.apply(output);
+                try                    { Zip<X,Y> res = k.apply(output);
                                          System.out.println("<continuation-success/>");
                                          System.out.println("</trying>");
                                          return res;
@@ -299,7 +307,7 @@ public abstract class Visitor<X,Y> {
                                        }
             }};
 
-            try                    { Cps<R,A> ans = v.visitZK(z,tracedk);
+            try                    { X ans = v.visitZK(z,tracedk);
                                      System.out.println("<visitor-success/></" + name + ">");
                                      return ans;
                                    }
@@ -309,5 +317,179 @@ public abstract class Visitor<X,Y> {
         }};
     }
 
+
+
+
+    public static Visitor<Visitable,Visitable> child(final int i) {
+        return new Visitor<Visitable, Visitable>() {
+            public <T> Visitable visitZK(Zip<T,Visitable> z, Fun<Zip<Visitable,Visitable>,Zip<Visitable,Visitable>> k) throws MOFException {
+                Visitable t = z.focus;
+                if (i >= t.getChildCount()) throw new MOFException() ;
+                else return k.apply(Zip.child(t,i)).run();
+            }};
+    }
+
+
+
+    /**
+     * Build a Visitor setting the 2 focuses on the i-th and j-th children.
+     *
+     * @param i
+     * @param j
+     * @return a Visitor<Visitable,Visitable> that sets the focus on the i-th child.
+     */
+    public static Visitor<Visitable,P<Visitable,Visitable>> child2(final int i, final int j) {
+        return new Visitor<Visitable, P<Visitable, Visitable>>() {
+            public <T> Visitable visitZK(Zip<T,Visitable> z, Fun<Zip<Visitable,P<Visitable,Visitable>>,Zip<Visitable,P<Visitable,Visitable>>> k) throws MOFException {
+                final Visitable x = z.focus;
+
+                if (Math.max(i,j) >= x.getChildCount() ) throw new MOFException() ;
+                else return k.apply(Zip.mkZip( new Fun<P<Visitable,Visitable>,Visitable>() { public Visitable apply(P<Visitable,Visitable> p) {
+                    Visitable[] childrens = x.getChildren();
+                    childrens[i] = p.left;
+                    childrens[j] = p.right;
+                    return x.setChildren(childrens);
+                }}
+                        , P.mkP(x.getChildAt(i), x.getChildAt(j))
+                )).run();
+            }};
+    }
+
+
+    /**
+     * A visitor that take a Visitable node as input and set the focus on a child (left to right). If the visitor
+     * chain fails on a subterm, it backtraks to use the next one. If all fail it fails.
+     * <p>
+     * IMPORTANT: this component uses getChildAt to a get a child and cast it to Y. Y can be used in
+     *  to ways:
+     *  - Instantiate Y by Visitable to avoid cast errors if getChildAt can return values not of type Y.
+     *  - If getChildAt returns ALWAYS a value on type Y on the input then use a more specific Y.
+     *
+     * @param <X> the type of the Visitable node
+     */
+    public static Visitor<Visitable,Visitable> forSome = new Visitor<Visitable, Visitable>() {
+        public <T> Visitable visitZK(Zip<T,Visitable> z, Fun<Zip<Visitable,Visitable>,Zip<Visitable,Visitable>> k) throws MOFException {
+            for (int i = 0; i < z.focus.getChildCount(); i++)
+            {
+                try { return child(i).visitZK(z,k); }
+                catch (MOFException e) {}
+            }
+            throw new MOFException();
+        }
+    };
+
+
+
+
+    /**
+     * A visitor that take a Visitable node as input and set TWO focuses on two childrens (left to right). If the visitor
+     * chain fails on a subterm, it backtraks to use the next one. If all fail it fails.
+     * <p>
+     * IMPORTANT: this component uses getChildAt to a get a child and cast it to Y. Y can be used in
+     *  to ways:
+     *  - Instantiate Y by Visitable to avoid cast errors if getChildAt can return values not of type Y.
+     *  - If getChildAt returns ALWAYS a value on type Y on the input then use a more specific Y.
+     *
+     * @param <X> the type of the Visitable node
+     */
+    public static Visitor<Visitable,P<Visitable,Visitable>> forSome2 = new Visitor<Visitable, P<Visitable, Visitable>>() {
+        public <T> Visitable visitZK(Zip<T, Visitable> z, Fun<Zip<Visitable, P<Visitable, Visitable>>, Zip<Visitable, P<Visitable, Visitable>>> k) throws MOFException {
+            for (int i = 0     ; i < z.focus.getChildCount(); i++)
+                for (int j = i + 1 ; j < z.focus.getChildCount(); j++)
+                {
+                    try { return child2(i,j).visitZK(z,k); }
+                    catch (MOFException e) {}
+                }
+            throw new MOFException();
+        }
+    };
+
+
+
+
+    public static Visitor<Visitable,Visitable> forAll = new Visitor<Visitable, Visitable>() {
+       public <T> Visitable visitZK(final Zip<T,Visitable> z, Fun<Zip<Visitable,Visitable>,Zip<Visitable,Visitable>> k) throws MOFException {
+         final Visitable   x        = z.focus;
+         final Visitable[] children = x.getChildren();
+         final int         length   = children.length;
+
+         for(int i= 0; i < children.length; i++) {
+             children[i] = k.apply(Zip.child(x,i)).focus;
+         }
+
+         return x.setChildren(children);
+        }
+    };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
+     * new One<X>(s:Visitor<Y,Z>) = new SelectChild<X,Y>().seq(s).reset().up()
+     *   with X,Y <= Visitable.
+     * One tries to apply s to exactly one child (left to right) of its input.
+     */
+    public static Visitor<Visitable,Visitable> one(Visitor<Visitable,Visitable> s) {
+        return forSome.seq(s).reset().up();
+    }
+
+    public static Visitor<Visitable,Visitable> onceBottomUp(final Visitor<Visitable,Visitable> s) throws MOFException {
+        return fix(new Fun<Visitor<Visitable,Visitable>,Visitor<Visitable,Visitable>>(){ public Visitor<Visitable,Visitable> apply(Visitor<Visitable,Visitable> v) throws MOFException {
+                return one(v).or(s);
+            }});
+    }
+
+
+    /**
+     * new Two<X>(s:Visitor<P<Y,Y>,Z>) = new SelectChild2<X,Y>().seq(s).reset().up()
+     *   with X,Y <= Visitable.
+     * One tries to apply s to exactly two children (left to right) of its input.
+     */
+    public static Visitor<Visitable,Visitable> two(Visitor<P<Visitable,Visitable>,P<Visitable,Visitable>> s) {
+        return forSome2.seq(s).reset().up();
+    }
+
+
+
+    /**
+     * A visitor that apply another visitor (s: Visitor<Y,Z>) to every children of a Visitable node
+     * and fails it at least one does: All(s)(f(t1,..,tn)) = f(s(t1),..,s(tn))
+     */
+    public static Visitor<Visitable,Visitable> all(Visitor<Visitable,Visitable> s) {
+        return forAll.seq(s).reset();
+    }
+
+    public static Visitor<Visitable,Visitable> bottomUp(final Visitor<Visitable,Visitable> s) throws MOFException {
+            return fix(new Fun<Visitor<Visitable,Visitable>,Visitor<Visitable,Visitable>>(){ public Visitor<Visitable,Visitable> apply(Visitor<Visitable,Visitable> v) throws MOFException {
+                return (all(v)).seq(s);
+            }});
+        }
+
+
+        public static Visitor<Visitable,Visitable> topDown(final Visitor<Visitable,Visitable> s) throws MOFException {
+            return fix(new Fun<Visitor<Visitable,Visitable>,Visitor<Visitable,Visitable>>(){ public Visitor<Visitable,Visitable> apply(Visitor<Visitable,Visitable> v) throws MOFException {
+                return s.seq(all(v));
+            }});
+        }
+
+        public static Visitor<Visitable,Visitable> innerMost(final Visitor<Visitable,Visitable> s) throws MOFException {
+            return fix(new Fun<Visitor<Visitable,Visitable>,Visitor<Visitable,Visitable>>(){ public Visitor<Visitable,Visitable> apply(Visitor<Visitable,Visitable> v) throws MOFException {
+                return (all(v)).seq(Visitor.sltry(s.seq(v)));
+            }});
+        }
 
 }
