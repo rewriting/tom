@@ -1,9 +1,10 @@
 package lib.sl;
 
-import lib.Fun;
-import lib.MOFException;
-import lib.Zip;
+import lib.*;
+import org.omg.CORBA.AnySeqHolder;
 import tom.library.sl.Visitable;
+
+import javax.swing.plaf.basic.BasicSplitPaneUI;
 
 /**
  * Created with IntelliJ IDEA.
@@ -13,27 +14,33 @@ import tom.library.sl.Visitable;
  * To change this template use File | Settings | File Templates.
  */
 
-public class ForAll extends Visitor<Visitable,Visitable> {
-    public <Ans,T> Visitable visitZK(final Zip<T,Visitable> z, Fun<Zip<Visitable,Visitable>,Fun<Zip<Visitable,Visitable>,Ans>> k, Fun<Fun<Zip<Visitable,Visitable>,Ans>>) throws MOFException {
-        final Visitable   x         = z.focus;
-        final Visitable[] childrens = x.getChildren();
-        final int         length    = childrens.length;
+public class ForAll<T> extends Visitor<T,Visitable,Visitable,Zip<Visitable,Visitable>> {
+    public <Ans> Cps<Ans,Zip<Visitable,Visitable>> visitZK(final Zip<T,Visitable> z, final Fun<Zip<Visitable,Visitable>,Cps<Ans,Zip<Visitable,Visitable>>> k)  {
+        final Visitable   x        = z.focus;
+        final Visitable[] children = x.getChildren();
+        final int         length   = children.length;
 
-        if (length == 0) mk.apply(Zip.unit(x));
-        else k.apply(Zip.child(x,0)).apply( new Fun<Visitable,Visitable>() { public Visitable apply(Visitable y) {
+        return new Cps<Ans,Zip<Visitable,Visitable>>() {
+            public Ans apply(final Fun<Zip<Visitable,Visitable>,Ans> mk) throws MOFException {
 
-             )
+                Fun<Integer,Ans> iter = new Fun<Integer,Ans>() {
+                    public Ans apply(final Integer pos) throws MOFException {
+                        final Fun<Integer,Ans> me = this;
+                        if (pos < length) {
 
-        for(int i= 0; i < childrens.length; i++) {
-            final int j = i;
-            Zip<T,Visitable> zyj = Zip.mkZip(new Fun<Visitable, T>() { public T apply(Visitable y) throws MOFException {
-                return z.replace(x.setChildAt(j,y)).run();
-            }}
-                    , childrens[i]
-            ) ;
-            childrens[i] = k.apply(zyj);
-        }
+                            Fun<Zip<Visitable,Visitable>,Ans> kmk = new Fun<Zip<Visitable,Visitable>,Ans>() {
+                                public Ans apply(Zip<Visitable,Visitable> y) throws MOFException {
+                                      children[pos] = y.run();
+                                      return me.apply(pos + 1);
+                            }};
 
-        return x.setChildren(childrens);
+                            return k.apply(Zip.child(x,pos)).apply(kmk);
+                        }
+                        else return mk.apply(Zip.unit(x.setChildren(children)));
+                    }
+                };
+
+                return iter.apply(0);
+            }};
     }
 }

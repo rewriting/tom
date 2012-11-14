@@ -19,15 +19,7 @@ clean:
 	rm -fr src/term/TSL.java src/MOF.java doc/ src/mof/ out/* out.xml
 
 run: src/Main.class
-	cd src/ && java Main > ../out.xml
-	@echo
-	@echo "************************************"
-	@echo "*    OUTPUT WRITTEN IN out.xml     *"
-	@echo "*                                  *"
-	@echo "*    Open it in any xml viewer     *"
-	@echo "*    to see beatiful trace trees   *"
-	@echo "************************************"
-	@echo
+	cd src/ && java Main | tee ../out.xml
 
 test: clean run
 

@@ -1,4 +1,4 @@
-package lib.sl;
+package lib;
 
 import lib.Cps;
 import lib.Fun;

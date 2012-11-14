@@ -27,11 +27,13 @@ public class Ref<X> {
      * @param x
      * @return a Ref<X>
      */
-    public      Ref(X x) { value = x; }
+    public      Ref(X x) { value = x   ; }
+    public      Ref()    { value = null; }
+
 
     /**
      * Set the inner value
      * @param x the new value
      */
-    public void set(X x) { value = x; }
+    public X set(X x) { value = x; return this.value;  }
 }

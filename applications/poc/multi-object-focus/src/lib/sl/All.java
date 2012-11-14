@@ -37,21 +37,10 @@ public class All<X extends Visitable> extends Visitor<X,X> {
 
     public <Y extends Visitable, Z> All(final Visitor<Y,Z> s) {
         visitor = new Visitor<X, X>() {
-            public <T,Ans> Ans visitZK(final Zip<T,X> z, Fun<Zip<X,X>,Ans>  k) throws MOFException {
-                final X x = z.focus;
+            public <T,Ans> Ans visitZK(Zip<T,X> z, Fun<Zip<X,X>,Ans>  k) throws MOFException {
+                X x = z.focus;
                 Y[] childrens = (Y[])(x.getChildren());
-                for(int i= 0; i < childrens.length; i++) {
-                    final int j = i;
-
-                    // The zipper for the j-th child.
-                    Zip<T,Y> zyj = Zip.mkZip(new Fun<Y, T>() { public T apply(Y y) throws MOFException {
-                                                  return z.replace((X)(x.setChildAt(j,y))).run();
-                                                }}
-                                            , childrens[i]
-                                            ) ;
-
-                    childrens[i] = s.visitZ(zyj).run();
-                }
+                for(int i= 0; i < childrens.length; i++) { childrens[i] = s.visit(childrens[i]); }
                 return k.apply((Zip<X,X>)(Zip.unit(x.setChildren(childrens))));
         };};
     }
