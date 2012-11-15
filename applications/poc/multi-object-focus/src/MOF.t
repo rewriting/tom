@@ -96,7 +96,7 @@ public class MOF {
 
 
     /** The depth of the example tree */
-    final static int exampleDepth = 3;
+    final static int exampleDepth = 4;
 
 
     /*
@@ -235,15 +235,16 @@ public class MOF {
         System.out.println("<exampleTree>"  + exampleTree  + "</exampleTree>\n");
 
 
-        Visitor<Visitable,Visitable>                           left     = Visitor.forAll.trace("LEFT");
-        Visitor<Visitable,Visitable>                           right    = Visitor.forAll.trace("RIGHT");
+        Visitor<Visitable,Visitable>  left     = Visitor.forAll.trace("left");
+        Visitor<Visitable,Visitable>  right    = Visitor.forAll.trace("right");
+
 
 
         Var<P<Visitable,Visitable>,P<Visitable,Visitable>>     x           = new Var<P<Visitable, Visitable>, P<Visitable, Visitable>>();
         Visitor<P<Visitable,Visitable>,P<Visitable,Visitable>> tracedOrder = vorder.trace("vorder");
 
         Visitor<Visitable,P<Visitable,Visitable>>              visitor     =
-                Visitor.forSome2.seq(x.set(left.times(right).seq(x).seq(Visitor.sltry(tracedOrder)).trace("fix")));
+                Visitor.forSome2.seq(x.set(left.times(right).seq(x).seq(Visitor.sltry(tracedOrder)).reset()));
 
 
 

@@ -413,7 +413,17 @@ public abstract class Visitor<X,Y> {
          final int         length   = children.length;
 
          for(int i= 0; i < children.length; i++) {
-             children[i] = k.apply(Zip.child(x,i)).focus;
+             final int fi = i;
+
+             Zip<Visitable,Visitable> zi = Zip.mkZip( new Fun<Visitable,Visitable>() { public Visitable apply(Visitable y) {
+                                                          Visitable oldval = children[fi];             children[fi] = y;
+                                                          Visitable res    = x.setChildren(children);  children[fi] = oldval;
+                                                          return res;
+                                                      }}
+                                                    , children[i]
+                                                    );
+
+             children[i] = k.apply(zi).focus;
          }
 
          return x.setChildren(children);
