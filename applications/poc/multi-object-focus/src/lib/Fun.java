@@ -83,6 +83,4 @@ public abstract class Fun<A,B> {
                 return f.apply(a).apply(b);
             }};}};
     }
-
-
 }
