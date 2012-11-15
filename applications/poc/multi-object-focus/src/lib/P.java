@@ -32,9 +32,21 @@ public class P<X,Y> /*implements Visitable*/ {
         return false;
     }
 
+
+    /**
+     * Behave like the constructor but requires less type arguments.
+     * @param l left/first member of the pair
+     * @param <X> type of l
+     * @param r right/second member of the pair
+     * @param <Y> type of r
+     * @return
+     */
     public static <X,Y> P<X,Y> mkP(X l,Y r) { return new P<X,Y>(l,r); }
 
 
+    /**
+     * Gives the zipper whose focus in the left/first member of the pair
+     */
     public Zip<P<X,Y>,X> zipLeft() {
         return Zip.mkZip( new Fun<X,P<X,Y>> () { public P<X,Y> apply(X x) {
                                return P.mkP(x, right) ; } }
@@ -42,6 +54,9 @@ public class P<X,Y> /*implements Visitable*/ {
                         );
     }
 
+    /**
+     * Gives the zipper whose focus in the right/second member of the pair
+     */
     public Zip<P<X,Y>,Y> zipRight() {
         return Zip.mkZip( new Fun<Y,P<X,Y>> () { public P<X,Y> apply(Y y) {
                                return P.mkP(left, y) ; } }

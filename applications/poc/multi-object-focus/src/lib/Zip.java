@@ -178,6 +178,8 @@ public class Zip<T,S> {
     }
 
 
+
+
     public String toString()  {
         String whole;
         try                    { whole = this.run().toString()    ; }
@@ -188,6 +190,14 @@ public class Zip<T,S> {
     }
 
 
+    /**
+     * From a Visitable term t, give the zipper whose focus is in the i-th child.
+     *
+     * @param t whole term
+     * @param i the child at which the focus must be put on.
+     * @return  the zipper.
+     * @throws MOFException
+     */
     public static Zip<Visitable,Visitable> child(final Visitable t, final int i) throws MOFException {
         if (i >= t.getChildCount()) throw new MOFException() ;
         else return mkZip( new Fun<Visitable,Visitable>() { public Visitable apply(Visitable y) {

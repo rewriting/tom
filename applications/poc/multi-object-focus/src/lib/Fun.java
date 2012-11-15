@@ -69,7 +69,9 @@ public abstract class Fun<A,B> {
     public static <T> Fun<T,T> id(T t) { return new Fun<T,T>() { public T apply(T u) { return u; } }; }
 
 
-
+    /**
+     * Curryfies a function f:Fun<P<A,B>,C> into Fun<A,Fun<B,C>>
+     */
     public static <A,B,C> Fun<A,Fun<B,C>> curry(final Fun<P<A,B>,C> f) {
        return new Fun<A,Fun<B, C>>() { public Fun<B,C> apply(final A a) {
          return new Fun<B,C>() { public C apply(B b) throws MOFException {
@@ -77,6 +79,10 @@ public abstract class Fun<A,B> {
          }};}};
     }
 
+
+    /**
+     * Swap arguments of a function Fun<A,Fun<B,C>>
+     */
     public static <A,B,C> Fun<B,Fun<A,C>> swap(final Fun<A,Fun<B,C>> f) {
         return new Fun<B,Fun<A, C>>() { public Fun<A,C> apply(final B b) {
             return new Fun<A,C>() { public C apply(A a) throws MOFException {

@@ -1,9 +1,11 @@
 import lib.*;
 import lib.sl.*;
-import tom.library.sl.Visitable;
+import tom.library.sl.*;
 
 import mof.expr.types.*;
 import mof.tree.types.*;
+import mof.msos.types.*;
+
 
 
 public class MOF {
@@ -196,7 +198,7 @@ public class MOF {
          at the end of the computation and not only the resulting whole term (which you can still see on the "whole"
          xml node of the zipper toString.
           */
-        try                    { showresult(wtree.visitUZ(exampleTree)); }
+        try                    { showresult(wtree.visit(exampleTree)); }
         catch (MOFException e) { System.out.print("<stategy-failed/>") ; }
 
         System.out.println("</Tree>\n");
@@ -253,20 +255,185 @@ public class MOF {
          at the end of the computation and not only the resulting whole term (which you can still see on the "whole"
          xml node of the zipper toString.
           */
-        try                    { showresult(visitor.visitUZ(exampleTree)); }
+        try                    { showresult(visitor.visit(exampleTree)); }
         catch (MOFException e) { System.out.print("<stategy-failed/>") ; }
 
         System.out.println("</Order>\n");
     }
 
 
-    public static void run() throws MOFException {
-        System.out.println("<MOF-POC>\n\n");
-        runExpr();
-        runTree();
-        runOrder();
-        System.out.println("</MOF-POC>\n\n");
+    /*
+     **************************
+     *                        *
+     *      MUDULAR SOS       *
+     *                        *
+     * ************************
+    */
+
+    %gom {
+        module MSOS
+        imports String int
+        abstract syntax
+
+        Arith = Val(val:int)
+              | Var(name:String)
+              | Plus(a1:Arith, a2:Arith)
+              | Mult(a1:Arith, a2:Arith)
+
+
+        Assoc = Assoc(name:String, val:int)
+        Mem   = Mem(Assoc*)
+
+        Stmt  = Set(name:String, a:Arith)
+              | Nop()
+
+        Pgrm  = Pgrm(Stmt*)
+
+        module MSOS:rules() {
+            Mem(x*, Assoc(n,_), y*, Assoc(n,v), z*) -> Mem(x*, y*, Assoc(n,v), z*)
+            Pgrm(x*,Nop(),y*)                       -> Pgrm(x*,y*)
+        }
     }
 
+    %include{sl.tom}
+
+    public static Pgrm examplePgrm = `Pgrm( Set("x",Val(1)),
+                                            Set("y",Val(2)),
+                                            Set("z",Val(3))
+                                          );
+
+    public static Visitor<Visitable,Visitable> groundEval = Visitor.map(
+            new Fun<Visitable,Visitable>() {
+                public Visitable apply(Visitable u) throws MOFException {
+                    /*
+                    The match on the two focuses
+                    */
+
+                    %match(u) {
+                      Plus(Val(x),Val(y)) -> { return `Val(x + y); }
+                      Mult(Val(x),Val(y)) -> { return `Val(x * y); }
+
+                    };
+                    throw new MOFException();
+                }}).trace("groundEval");
+
+
+
+    public static Visitor<P<Visitable,Visitable>, P<Visitable,Visitable>> varEval = Visitor.map(
+            new Fun<P<Visitable,Visitable>, P<Visitable,Visitable>>() {
+                public P<Visitable,Visitable> apply(P<Visitable,Visitable> u) throws MOFException {
+                    /*
+                    The match on the two focuses
+                    */
+
+                    %match {
+                        Var(x) << u.left && a@Assoc(y,i) << u.right && x == y -> {
+                                 return P.mkP( (Visitable)(`Val(i))
+                                             , (Visitable)(`a)
+                                             );
+                        }
+                    };
+                    throw new MOFException();
+                }}).trace("varEval");
+
+
+    public static Visitor<P<Visitable,Visitable>, P<Visitable,Visitable>> stmtEval = Visitor.map(
+            new Fun<P<Visitable,Visitable>, P<Visitable,Visitable>>() {
+                public P<Visitable,Visitable> apply(P<Visitable,Visitable> u) throws MOFException {
+                    /*
+                    The match on the two focuses
+                    */
+
+                    %match {
+                        Set(x, Val(i)) << u.left && m@Mem(_*) << u.right -> {
+                                return P.mkP( (Visitable)`Nop()
+                                            , (Visitable)`Mem(m, Assoc(x,i))
+                                            );
+                        }
+                    };
+                    throw new MOFException();
+                }}).trace("stmtEval");
+
+
+    /**
+     * Pierre-Etienne, regarde ici:
+     *
+     * Strategie prennant un Pgrm ou Stmt en entree et l'affichant sur la sortie standard.
+     *
+     * Elle sera appliquee a All pour voir sur quels sous termes All decide de l'appeler
+     */
+    %strategy Print() extends Identity() {
+        visit Stmt {
+            x -> { System.out.println("<Print>" + `x.toString() + "</Print>"); }
+        }
+
+        visit Pgrm {
+            x -> { System.out.println("<Print>" + `x.toString() + "</Print>"); }
+        }
+    }
+
+
+
+
+    public static void runMSOS() throws MOFException {
+        System.out.println("<MSOS>\n");
+        System.out.println("<examplePgrm>"  + examplePgrm  + "</examplePgrm>\n");
+
+
+        /* Pierre-Etienne, regarde ici
+           examplePrgm =  Pgrm(Set("x",Val(1)),Set("y",Val(2)),Set("z",Val(3)))
+
+           donc avec 3 enfants. On s'attend a ce que All apelle Print sur chacun d'eux. Mais l'execution donne:
+
+              <Print>Set("x",Val(1))</Print>
+              <Print>Pgrm(Set("y",Val(2)),Set("z",Val(3)))</Print>
+
+              Ce qui donne bien que All a appliquer Print sur la tete et la queue de examplePgrm
+         */
+        try { `All(Print()).visit(examplePgrm); }
+        catch (Exception e) { }
+
+        Visitor<Visitable,Visitable> idv = new Id<Visitable>();
+
+
+        Visitor<P<Visitable,Visitable>, P<Visitable,Visitable>> realGroundEval = idv.times(Visitor.forSome).seq(groundEval.times(idv)).up();
+        Visitor<P<Visitable,Visitable>, P<Visitable,Visitable>> arithEval      = realGroundEval.or(varEval).trace("arithEval");
+        Visitor<P<Visitable,Visitable>, P<Visitable,Visitable>> phase1         = Visitor.forAll.trace("forAll-1").times(idv).trace("phase-1");
+        Visitor<P<Visitable,Visitable>, P<Visitable,Visitable>> phase2         = Visitor.forAll.trace("forAll-2").times(idv).trace("phase-2");
+
+        Var<P<Visitable,Visitable>,P<Visitable,Visitable>>      x              = new Var<P<Visitable, Visitable>, P<Visitable, Visitable>>();
+
+
+        Visitor<P<Visitable,Visitable>, P<Visitable,Visitable>> realStmtEval   =
+                phase1.seq(x.set(phase2.seq(x).seq(Visitor.sltry(arithEval)).reset()).trace("fix")).trace("phase-1and2").seq(Visitor.sltry(stmtEval).trace("stmtEval")).trace("realStmtEval");
+
+
+
+
+
+
+        /*
+         The show must go on! Note that we use visitUZ instead of visit. We want to show where the two focuses are
+         at the end of the computation and not only the resulting whole term (which you can still see on the "whole"
+         xml node of the zipper toString.
+          */
+        /*try                    { showresult(realStmtEval.visit(P.mkP( (Visitable)examplePgrm
+                                                                      , (Visitable)(`Mem())
+                                                                      )));
+                               }
+        catch (MOFException e) { System.out.print("<stategy-failed/>") ; }*/
+
+        System.out.println("</MSOS>\n");
+    }
+
+
+    public static void run() throws MOFException {
+        System.out.println("<MOF-POC>\n\n");
+        //runExpr();
+        //runTree();
+        //runOrder();
+        runMSOS();
+        System.out.println("</MOF-POC>\n\n");
+    }
 
 }

@@ -27,6 +27,10 @@ public abstract class Visitor<X,Y> {
      * and its context (Zip<T,Y>). As a CPS method it takes the rest of the computation (its own evaluation context) as
      * the argument #k. So #visit can easily implement some backtracking. See <b>Continuation Passing Style</b> for a
      * full description of this design pattern.
+     * <p>
+     * IMPORTANT: The return type of the continuation k must be Zip<X,Y> to ensure that a value of type Y can be computed
+     *            fron the result of k. This is mandatory for forAll! The return type of #visitZK is X to type forAll
+     *            correctly.
      *
      * @param z the input zipper.
      * @param k the continuation.
@@ -50,14 +54,10 @@ public abstract class Visitor<X,Y> {
     }
 
 
-    public X visitUZ(X x) throws MOFException {
-        return visitZ(Zip.unit(x));
-    }
-
     /**
      * #visit(x) run the visitor on x (the focus is placed at the root of x) and return the resulting term.
      * <p>
-     * visit(x) = visitZ(Zip.unit(x)).run()
+     * visit(x) = visitZ(Zip.unit(x))
      *
      * @param x the input term.
      * @return the final term.
@@ -127,6 +127,9 @@ public abstract class Visitor<X,Y> {
 
     /**
      * It applies this and then compose by the zipper's context.
+     * <p>
+     * IMPORTANT: UNSAFE!!! Be sure that this does NOT expect the result of its continuation to be Zip<X.Y>. It works
+     *            on visitors not using the result of the contination like forSom but NOT like forAll.
      *
      * @return the same visitor as this but with the focus set on the root of the term.
      */
@@ -150,8 +153,24 @@ public abstract class Visitor<X,Y> {
 
     /**
      * Computes the product of this visitor and the one given as argument. The product of a Visitor<X,Y> and a
-     * Visitor<A,B> is a Visitor<X * A , Y * B> where X * A is the cartesian product of X and A (i.e. pairs (x,a)
-     * for x:X and a:A).
+     * Visitor<R,S> is a Visitor<X * R , Y * S> where X * R is the cartesian product of X and R (i.e. pairs (x,r)
+     * for x:X and r:R).
+     * <p>
+     * Let us take x = f(a,b) : X and r = g(c,d) and consider:
+     *   forAll.times(forAll).seq(avisitor)
+     * <p>
+     *   The goal is to apply avisitor on every pair on subterms, i.e. on (a,c), (a,d), (b,c) and (b,d). The visitor
+     *   avisitor MUST compute for any such pair, another pair on the same positions! Applying avisotor on each of the
+     *   pairs above would give: (a',c'), (a'',d'), (b',c'') and (b'',d''). There would be 2 possible result value for
+     *   every subterm. Instead the result the application of a pair is used for another one instead of the original
+     *   value. For example, the real senario here is:
+     *
+     *     (a , c ) --- avisitor ---> (a' ,c' )
+     *     (a', d ) --- avisitor ---> (a'',d' )
+     *     (b , c') --- avisitor ---> (b' ,c'')
+     *     (b', d') --- avisitor ---> (b'',d'')
+     * <p>
+     *   z in {a,b,c,d} is then replaced by z''.
      *
      * @param v the second visitor of the product.
      * @return the product of this visitor and v.
@@ -204,10 +223,10 @@ public abstract class Visitor<X,Y> {
         }};
     }
 
-
-
-
     // Static Methods
+
+
+
     /**
      * map transform a function into a visitor. Very useful to define visitors without having to deal with boring
      * bookkeeping. Note that the function has to be an endomorphism (from X to X), Y has to be a subtype of X.
@@ -222,8 +241,6 @@ public abstract class Visitor<X,Y> {
             } };
     }
 
-
-    // Static Methods
     /**
      * map transform a function into a visitor. Wheras map, Y does not have to be a subtype of X BUT the function
      * must return a zipper Zip<X,Y>, and not just Y.
@@ -238,8 +255,6 @@ public abstract class Visitor<X,Y> {
             }};
     }
 
-
-    // Static Methods
     /**
      * fix compute the fixed point of a function from visitors to visitors. It is useful to define recursive visitors.
      *
@@ -256,7 +271,14 @@ public abstract class Visitor<X,Y> {
     }
 
 
-
+    /**
+     *
+     *
+     * @param s
+     * @param <X>
+     * @return
+     * @throws MOFException
+     */
     public static <X> Visitor<X,X> sltry(Visitor<X,X> s) throws MOFException {
         return s.or(new Id<X>());
     }

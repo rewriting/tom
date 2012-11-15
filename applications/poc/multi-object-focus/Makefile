@@ -3,7 +3,7 @@ all: help
 build: src/Main.class
 
 src/MOF.java: src/MOF.t
-	cd src/ && tom -v -p MOF.t
+	cd src/ && tom -v -p -gi MOF.t
 
 src/Main.class: src/Main.java src/MOF.java
 	cd src/ && javac Main.java
