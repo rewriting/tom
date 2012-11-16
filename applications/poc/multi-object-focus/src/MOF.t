@@ -282,11 +282,11 @@ public class MOF {
 
 
         Assoc = Assoc(name:String, val:int)
-        Mem   = Mem(Assoc*)
 
         Stmt  = Set(name:String, a:Arith)
               | Nop()
 
+        Mem   = Mem(Assoc*)
         Pgrm  = Pgrm(Stmt*)
 
         module MSOS:rules() {
@@ -390,7 +390,10 @@ public class MOF {
 
               Ce qui donne bien que All a appliquer Print sur la tete et la queue de examplePgrm
          */
-        try { `All(Print()).visit(examplePgrm); }
+        Visitable w  = ConsWrapper.mk(examplePgrm);
+        System.out.println("<Wrapper>" + w.toString() + "</Wrapper>");
+        System.out.println("<Children>" + w.getChildren().toString() + "</Children>");
+        try { `All(Print()).visit(w); }
         catch (Exception e) { }
 
         Visitor<Visitable,Visitable> idv = new Id<Visitable>();
