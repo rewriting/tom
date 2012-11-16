@@ -12,28 +12,54 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 public class ConsWrapper implements Visitable {
-    public Visitable x;
+    private Visitable   x;
+    private Visitable[] cachedChildren = null;
+    private Visitable   empty          = null;
+
+
+    public Visitable getTerm() { return x; }
+
+    public String toString() {
+        return x.toString();
+    }
+
+    public Visitable[] getCachedChildren()
+    { if (cachedChildren == null)
+      {
+          ArrayList<Visitable> children = new ArrayList<Visitable>(10);
+          Visitable tail  = x;
+          int       pos   = 0;
+
+          while (tail.getChildCount() == 2)
+          {
+              children.add(tail.getChildAt(0));
+              tail = tail.getChildAt(1);
+          }
+
+          if (tail.getChildCount() == 0) empty = tail;
+          else throw new RuntimeException("ConsWrapper: " + tail.toString() + " should be empty");
+
+//          System.out.println("<getChildren>" + children.toString() + "</getChildren>");
+          return children.toArray(new Visitable[0]);
+      }
+      return cachedChildren ;
+    }
+
+    public static Visitable unwrap(Visitable y) {
+        if (y instanceof ConsWrapper) { return ((ConsWrapper) y).getTerm(); }
+        else return y;
+    }
 
     private ConsWrapper(Visitable term) {
        x = term;
     }
 
     public int getChildCount() {
-        Visitable tail  = x;
-        int       count = 0;
-        while (tail.getChildCount() == 2)
-        { count += 1;
-          tail = tail.getChildAt(2);
-        }
-        System.out.println("<getChildCount>" + (count + tail.getChildCount()) + "</getChildCount>");
-        return count + tail.getChildCount();
+        return getCachedChildren().length;
     }
 
     public Visitable getChildAt(int i) {
-        Visitable tail  = x;
-        for (int pos = 0; pos < i; pos++) tail = tail.getChildAt(1);
-        System.out.println("<getChildAt><At>" + i + "</At><Value>" + tail.getChildAt(0).toString() + "</Value></getChildAt>");
-        return tail.getChildAt(0);
+        return getCachedChildren()[i];
     }
 
     public Visitable setChildAt(int i, Visitable y) {
@@ -41,14 +67,14 @@ public class ConsWrapper implements Visitable {
         Visitable tail  = x;
 
 
-        // must contains the Cons from position 0 to i (not included)
+        // must contains the Heads from position 0 to i (not included)
         Visitable[] upToi = new Visitable[i];
 
 
         // We store in upToi all the Cons from pos = 0 to i (included)
         for (pos = 0; pos < i; pos++)
         {
-            upToi[pos] = tail;
+            upToi[pos] = tail.getChildAt(0);
             tail       = tail.getChildAt(1);
         }
 
@@ -58,66 +84,56 @@ public class ConsWrapper implements Visitable {
         // We have to rebuild the term: i.e. applying recursively all the Cons we stored.
         for (pos = i - 1; pos >= 0; pos--)
         {
-            tail = upToi[pos].setChildren(new Visitable[] { upToi[pos].getChildAt(0)  , tail });
+            tail = x.setChildren(new Visitable[]{upToi[pos], tail});
         }
 
-        System.out.println("<setChildAt><At>" + i + "</At><Value>" + tail.toString() + "</Value></setChildAt>");
+        //System.out.println("<setChildAt><At>" + i + "</At><Value>" + tail.toString() + "</Value></setChildAt>");
         return tail;
     }
 
     public Visitable[] getChildren() {
-        ArrayList<Visitable> children = new ArrayList<Visitable>(10);
-        Visitable tail  = x;
-        int       pos   = 0;
-        while (tail.getChildCount() == 2)
-        { children.add(tail.getChildAt(0));
-          tail = tail.getChildAt(1);
-        }
-        System.out.println("<getChildren>" + children.toString() + "</getChildren>");
-        return children.toArray(new Visitable[0]);
+        return getCachedChildren().clone();
     }
 
     public Visitable setChildren(Visitable[] children) {
-        int       pos   = 0;
-        Visitable tail  = x;
+        if (x.getChildCount() == 0) throw new RuntimeException("ConsWrapper: can not build non empty conc from empty ones");
 
-        // must contains the Cons from position 0 to i (not included)
-        Visitable[] spine = new Visitable[children.length];
+        Visitable res  = empty;
+        for (int pos = children.length - 1; pos >= 0; pos--)
+            res = x.setChildren(new Visitable[] { children[pos] , res });
 
-        // We store in upToi all the Cons from pos = 0 to i (included)
-        for (pos = 0; pos < children.length - 1 ; pos++)
-        {   spine[pos] = tail;
-            tail       = tail.getChildAt(1);
-        }
-
-        // Tail is now empty
-
-        // We have to rebuild the term: i.e. applying recursively all the Cons we stored.
-        for (pos = children.length - 1 ; pos >= 0 ; pos--)
-            tail = spine[pos].setChildren(new Visitable[] { children[pos]  , tail });
-
-        System.out.println("<setChildren>" + tail + "</setChildren>");
-        return tail;
+//        System.out.println("<setChildren>" + res + "</setChildren>");
+        return res;
     }
 
     public static Visitable mk(Visitable x) {
-        System.out.print("<ConsWrapper-input>" + x.toString() + "</ConsWrapper-input>");
+        //System.out.print("<ConsWrapper-input>" + x.toString() + "</ConsWrapper-input>");
         try { Field f = x.getClass().getDeclaredField("symbolName");
               f.setAccessible(true);
               Object v = f.get(x);
               if (v instanceof String)
               {  String s = (String)v;
                  if (s.startsWith("Cons")) return new ConsWrapper(x);
-                 else { System.out.print("<NotConsBut>" + s + "</NotConsBut>");
+                 else {
+                        //System.out.print("<NotConsBut>" + s + "</NotConsBut>");
                         return x;
                       }
               }
-              else { System.out.print("<NotStringBut>" + v.getClass().getName() + "</NotStringBut>");
+              else {
+                     //System.out.print("<NotStringBut>" + v.getClass().getName() + "</NotStringBut>");
                      return x;
                    }
         }
-        catch (NoSuchFieldException   e) { System.out.print("<NoSuchFieldException>" + x.getClass().getName() + "</NoSuchFieldException>");  return x; }
-        catch (IllegalAccessException e) { System.out.print("<IllegalAccessException/>");return x; }
+        catch (NoSuchFieldException   e)
+        {
+            //System.out.print("<NoSuchFieldException>" + x.getClass().getName() + "</NoSuchFieldException>");
+            return x;
+        }
+        catch (IllegalAccessException e)
+        {
+            //System.out.print("<IllegalAccessException/>");
+            return x;
+        }
 
     }
 }

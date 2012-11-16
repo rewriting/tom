@@ -297,9 +297,9 @@ public class MOF {
 
     %include{sl.tom}
 
-    public static Pgrm examplePgrm = `Pgrm( Set("x",Val(1)),
-                                            Set("y",Val(2)),
-                                            Set("z",Val(3))
+    public static Pgrm examplePgrm = `Pgrm( Set("x",Mult(Plus(Val(1),Val(2)), Val(4))),
+                                            Set("y",Mult(Var("x"),Val(5))),
+                                            Set("z",Mult(Var("y"),Var("x")))
                                           );
 
     public static Visitor<Visitable,Visitable> groundEval = Visitor.map(
@@ -370,6 +370,12 @@ public class MOF {
         visit Pgrm {
             x -> { System.out.println("<Print>" + `x.toString() + "</Print>"); }
         }
+        visit Assoc {
+            x -> { System.out.println("<Print>" + `x.toString() + "</Print>"); }
+        }
+        visit Mem {
+            x -> { System.out.println("<Print>" + `x.toString() + "</Print>"); }
+        }
     }
 
 
@@ -390,25 +396,26 @@ public class MOF {
 
               Ce qui donne bien que All a appliquer Print sur la tete et la queue de examplePgrm
          */
-        Visitable w  = ConsWrapper.mk(examplePgrm);
-        System.out.println("<Wrapper>" + w.toString() + "</Wrapper>");
-        System.out.println("<Children>" + w.getChildren().toString() + "</Children>");
-        try { `All(Print()).visit(w); }
+        Visitable prog  = ConsWrapper.mk(examplePgrm);
+        Mem mem         = `Mem();
+
+        try { `All(Print()).visit(mem); }
         catch (Exception e) { }
 
         Visitor<Visitable,Visitable> idv = new Id<Visitable>();
 
 
-        Visitor<P<Visitable,Visitable>, P<Visitable,Visitable>> realGroundEval = idv.times(Visitor.forSome).seq(groundEval.times(idv)).up();
-        Visitor<P<Visitable,Visitable>, P<Visitable,Visitable>> arithEval      = realGroundEval.or(varEval).trace("arithEval");
-        Visitor<P<Visitable,Visitable>, P<Visitable,Visitable>> phase1         = Visitor.forAll.trace("forAll-1").times(idv).trace("phase-1");
-        Visitor<P<Visitable,Visitable>, P<Visitable,Visitable>> phase2         = Visitor.forAll.trace("forAll-2").times(idv).trace("phase-2");
+        Visitor<P<Visitable,Visitable>, P<Visitable,Visitable>> realGroundEval = groundEval.times(idv);
+        Visitor<P<Visitable,Visitable>, P<Visitable,Visitable>> realVarEval    = idv.times(Visitor.forSome).seq(varEval);
+        Visitor<P<Visitable,Visitable>, P<Visitable,Visitable>> arithEval      = realGroundEval.or(realVarEval);
+        Visitor<P<Visitable,Visitable>, P<Visitable,Visitable>> phase1         = Visitor.forAll.trace("EachStatement").times(idv);
+        Visitor<P<Visitable,Visitable>, P<Visitable,Visitable>> phase2         = Visitor.forAll.times(idv);
 
         Var<P<Visitable,Visitable>,P<Visitable,Visitable>>      x              = new Var<P<Visitable, Visitable>, P<Visitable, Visitable>>();
 
 
         Visitor<P<Visitable,Visitable>, P<Visitable,Visitable>> realStmtEval   =
-                phase1.seq(x.set(phase2.seq(x).seq(Visitor.sltry(arithEval)).reset()).trace("fix")).trace("phase-1and2").seq(Visitor.sltry(stmtEval).trace("stmtEval")).trace("realStmtEval");
+                phase1.seq(x.set(phase2.seq(x).seq(Visitor.repeat(arithEval)).reset())).seq(Visitor.sltry(stmtEval));
 
 
 
@@ -420,11 +427,9 @@ public class MOF {
          at the end of the computation and not only the resulting whole term (which you can still see on the "whole"
          xml node of the zipper toString.
           */
-        /*try                    { showresult(realStmtEval.visit(P.mkP( (Visitable)examplePgrm
-                                                                      , (Visitable)(`Mem())
-                                                                      )));
+        try                    { showresult(realStmtEval.visit(P.mkP( prog , (Visitable)mem )));
                                }
-        catch (MOFException e) { System.out.print("<stategy-failed/>") ; }*/
+        catch (MOFException e) { System.out.print("<stategy-failed/>") ; }
 
         System.out.println("</MSOS>\n");
     }
@@ -432,9 +437,9 @@ public class MOF {
 
     public static void run() throws MOFException {
         System.out.println("<MOF-POC>\n\n");
-        //runExpr();
-        //runTree();
-        //runOrder();
+        runExpr();
+        runTree();
+        runOrder();
         runMSOS();
         System.out.println("</MOF-POC>\n\n");
     }

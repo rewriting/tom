@@ -8,6 +8,7 @@
 
 package lib;
 
+import lib.sl.ConsWrapper;
 import tom.library.sl.Visitable;
 
 /**
@@ -199,9 +200,10 @@ public class Zip<T,S> {
      * @throws MOFException
      */
     public static Zip<Visitable,Visitable> child(final Visitable t, final int i) throws MOFException {
+        Visitable u = ConsWrapper.mk(t);
         if (i >= t.getChildCount()) throw new MOFException() ;
         else return mkZip( new Fun<Visitable,Visitable>() { public Visitable apply(Visitable y) {
-                                   return t.setChildAt(i,y); }}
+                                   return ConsWrapper.unwrap(t.setChildAt(i,y)); }}
                          , t.getChildAt(i)
                          );
     }

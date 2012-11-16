@@ -344,7 +344,7 @@ public abstract class Visitor<X,Y> {
     public static Visitor<Visitable,Visitable> child(final int i) {
         return new Visitor<Visitable, Visitable>() {
             public <T> Visitable visitZK(Zip<T,Visitable> z, Fun<Zip<Visitable,Visitable>,Zip<Visitable,Visitable>> k) throws MOFException {
-                Visitable t = z.focus;
+                Visitable t = ConsWrapper.mk(z.focus);
                 if (i >= t.getChildCount()) throw new MOFException() ;
                 else return k.apply(Zip.child(t,i)).run();
             }};
@@ -362,14 +362,14 @@ public abstract class Visitor<X,Y> {
     public static Visitor<Visitable,P<Visitable,Visitable>> child2(final int i, final int j) {
         return new Visitor<Visitable, P<Visitable, Visitable>>() {
             public <T> Visitable visitZK(Zip<T,Visitable> z, Fun<Zip<Visitable,P<Visitable,Visitable>>,Zip<Visitable,P<Visitable,Visitable>>> k) throws MOFException {
-                final Visitable x = z.focus;
+                final Visitable x = ConsWrapper.mk(z.focus);
 
                 if (Math.max(i,j) >= x.getChildCount() ) throw new MOFException() ;
                 else return k.apply(Zip.mkZip( new Fun<P<Visitable,Visitable>,Visitable>() { public Visitable apply(P<Visitable,Visitable> p) {
                     Visitable[] childrens = x.getChildren();
                     childrens[i] = p.left;
                     childrens[j] = p.right;
-                    return x.setChildren(childrens);
+                    return ConsWrapper.unwrap(x.setChildren(childrens));
                 }}
                         , P.mkP(x.getChildAt(i), x.getChildAt(j))
                 )).run();
@@ -390,7 +390,7 @@ public abstract class Visitor<X,Y> {
      */
     public static Visitor<Visitable,Visitable> forSome = new Visitor<Visitable, Visitable>() {
         public <T> Visitable visitZK(Zip<T,Visitable> z, Fun<Zip<Visitable,Visitable>,Zip<Visitable,Visitable>> k) throws MOFException {
-            for (int i = 0; i < z.focus.getChildCount(); i++)
+            for (int i = 0; i < ConsWrapper.mk(z.focus).getChildCount(); i++)
             {
                 try { return child(i).visitZK(z,k); }
                 catch (MOFException e) {}
@@ -415,8 +415,9 @@ public abstract class Visitor<X,Y> {
      */
     public static Visitor<Visitable,P<Visitable,Visitable>> forSome2 = new Visitor<Visitable, P<Visitable, Visitable>>() {
         public <T> Visitable visitZK(Zip<T, Visitable> z, Fun<Zip<Visitable, P<Visitable, Visitable>>, Zip<Visitable, P<Visitable, Visitable>>> k) throws MOFException {
-            for (int i = 0     ; i < z.focus.getChildCount(); i++)
-                for (int j = i + 1 ; j < z.focus.getChildCount(); j++)
+            Visitable t = ConsWrapper.mk(z.focus);
+            for (int i = 0     ; i < t.getChildCount(); i++)
+                for (int j = i + 1 ; j < t.getChildCount(); j++)
                 {
                     try { return child2(i,j).visitZK(z,k); }
                     catch (MOFException e) {}
@@ -430,7 +431,7 @@ public abstract class Visitor<X,Y> {
 
     public static Visitor<Visitable,Visitable> forAll = new Visitor<Visitable, Visitable>() {
        public <T> Visitable visitZK(final Zip<T,Visitable> z, Fun<Zip<Visitable,Visitable>,Zip<Visitable,Visitable>> k) throws MOFException {
-         final Visitable   x        = z.focus;
+         final Visitable   x        = ConsWrapper.mk(z.focus);
          final Visitable[] children = x.getChildren();
          final int         length   = children.length;
 
@@ -440,7 +441,7 @@ public abstract class Visitor<X,Y> {
              Zip<Visitable,Visitable> zi = Zip.mkZip( new Fun<Visitable,Visitable>() { public Visitable apply(Visitable y) {
                                                           Visitable oldval = children[fi];             children[fi] = y;
                                                           Visitable res    = x.setChildren(children);  children[fi] = oldval;
-                                                          return res;
+                                                          return ConsWrapper.unwrap(res);
                                                       }}
                                                     , children[i]
                                                     );
@@ -448,7 +449,7 @@ public abstract class Visitor<X,Y> {
              children[i] = k.apply(zi).focus;
          }
 
-         return x.setChildren(children);
+         return ConsWrapper.unwrap(x.setChildren(children));
         }
     };
 
