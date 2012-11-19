@@ -238,8 +238,8 @@ public class TransformerPlugin extends TomGenericPlugin {
 
     //TODO: check fileFrom and fileTo
     try {
-    fileFrom = checkAndNormalizeFileName(fileFrom, "source", orgTrack);
-    fileTo = checkAndNormalizeFileName(fileTo, "target", orgTrack);
+      fileFrom = checkAndNormalizeFileName(fileFrom, "source", orgTrack);
+      fileTo = checkAndNormalizeFileName(fileTo, "target", orgTrack);
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -981,7 +981,7 @@ if(!resolveNameSet.contains(resolveStringName)) {
           Integer.valueOf(((OriginTracking)orgTrack).getLine()),
           ((OriginTracking)orgTrack).getFileName()});
     }
-    //weel, nothing better?
+    //well, nothing better?
     return null;
   }
 
