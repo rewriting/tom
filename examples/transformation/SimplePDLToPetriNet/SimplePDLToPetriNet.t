@@ -65,10 +65,12 @@ public class SimplePDLToPetriNet {
         //Place p_finished  = `Place(name + "_finished", pn,ArcEList(), ArcEList(), 0);
         Place p_finished = `Place[name=(name+"_finished"),net=pn,outgoings=ArcEList(),incomings=ArcEList()];
         String n1 = `name+"_start";
+        //%tracelink(t_start:Transition, `Transition(n1, pn,ArcEList(), ArcEList(), 1, 1));
         %tracelink(t_start:Transition, `Transition(n1, pn,ArcEList(), ArcEList(), 1, 1));
         n1 = `name+"_finish";
         %tracelink(t_finish:Transition, `Transition(n1, pn,ArcEList(), ArcEList(), 1, 1));
         
+        //`Arc(t_start, p_ready, pn,ArcKindnormal(), 1);
         `Arc(t_start, p_ready, pn,ArcKindnormal(), 1);
         `Arc(p_running, t_start, pn,ArcKindnormal(), 1);
         `Arc(t_finish, p_running, pn,ArcKindnormal(), 1);
@@ -87,7 +89,7 @@ public class SimplePDLToPetriNet {
       }
     }
 
-    definition WD2PN traversal `TopDown(WD2PN(tom__linkClass,pn)) {
+    definition WD2PN traversal `BottomUp(WD2PN(tom__linkClass,pn)) {
       wd@WorkDefinition[name=name] -> {
         //System.out.println("Je suis un A");
         Place p_ready  = `Place(name + "_ready", pn,ArcEList(), ArcEList(), 1);
@@ -108,6 +110,7 @@ public class SimplePDLToPetriNet {
         `Arc(p_finished, t_finish, pn,ArcKindnormal(), 1);
 
         SimplePDLSemantics.DDMMSimplePDL.Process parent = `wd.getParent();
+        //TODO Transition source = %resolve(parent:Process,t_start:Transition);
         Transition source = %resolve(parent:Process,t_start:Transition);
         source.setNet(pn);
         Arc tmpDistribute = `Arc(p_ready,source,pn,ArcKindnormal(), 1);
@@ -142,11 +145,20 @@ public class SimplePDLToPetriNet {
   public static void main(String[] args) {
     System.out.println("\nStarting…\n");
 
-    XMIResourceImpl resource = new XMIResourceImpl();
-    SimplePDLSemantics.DDMMSimplePDL.Process p_root;
+    XMIResourceFactoryImpl resourceFactory = new XMIResourceFactoryImpl();
+    //Resource //XMIResource //XMIResourceImpl
+    //XMIResource resource = resourceFactory.createResource(org.eclipse.emf.common.util.URI.createURI("http://simplepdl2petrinetsemantics/1.0")); //simplepdl.ddmm
+    XMIResource resource = new XMIResourceImpl();
+
+    /*
+     * Save the resource using OPTION_SCHEMA_LOCATION save option to produce 
+     * xsi:schemaLocation attribute in the document
+    */
     Map opts = new HashMap();
     opts.put(XMIResource.OPTION_SCHEMA_LOCATION, java.lang.Boolean.TRUE);
 
+    SimplePDLSemantics.DDMMSimplePDL.Process p_root;
+    
     //Loading an instance of SimplePDL MM (.xmi)
     if (args.length>0) {
       System.out.println("Using given model instance: "+args[0]);
@@ -181,6 +193,9 @@ public class SimplePDLToPetriNet {
 
       ws1.setParent(p_root);
       ws2.setParent(p_child);
+
+      //add the source model to the resource (to be serializable)
+      resource.getContents().add(p_root);
     }
     SimplePDLToPetriNet translator = new SimplePDLToPetriNet();
 
@@ -206,6 +221,33 @@ public class SimplePDLToPetriNet {
 
       System.out.println("\nResult");
       `Sequence(TopDown(PrintTransition()),TopDown(PrintPlace())).visit(translator.pn, new EcoreContainmentIntrospector());
+
+
+      //let's save the resulting model
+      System.out.println("\nBacking up into petrinet_process.xmi");
+      String resultingFileName = "resultingPetrinet.xmi";
+      URI uri = org.eclipse.emf.common.util.URI.createURI(resultingFileName);
+      org.eclipse.emf.ecore.resource.Resource resultingResource = (XMIResource)resourceFactory.createResource(uri);
+      resultingResource.getContents().add(translator.pn);
+      //resultingResource.getContents().add(translator.tom__linkClass);
+      //File output = new File(".",resultingFileName);
+      try {
+        //FileOutputStream outputStream = new FileOutputStream(output);
+
+        //resource.save(outputStream, opts);
+        resultingResource.save(opts);
+
+        System.out.println("\nresultingResource.getContents() =\n" + resultingResource.getContents());
+        System.out.println("\nresultingResource.getContents().get(0) =\n" + resultingResource.getContents().get(0));
+      } catch (Exception e) {
+        System.err.println("Exception occured while saving the resulting model as "+resultingFileName+" file" + e.getMessage()); 
+        e.printStackTrace();
+      }
+
+
+
+
+
 
     } catch(VisitFailure e) {
       System.out.println("strategy fail");

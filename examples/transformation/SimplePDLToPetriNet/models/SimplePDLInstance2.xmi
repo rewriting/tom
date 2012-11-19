@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ASCII"?>
-<simplepdl.ddmm:Process xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:simplepdl.ddmm="simplepdl.ddmm" xsi:schemaLocation="simplepdl.ddmm SimplePDLSemantics_updated.ecore#//DDMMSimplePDL" name="root">
+<simplepdl.ddmm:Process xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:simplepdl.ddmm="simplepdl.ddmm" xsi:schemaLocation="simplepdl.ddmm SimplePDLSemantics.ecore#//DDMMSimplePDL" name="root">
   <processElements xsi:type="simplepdl.ddmm:WorkDefinition" linksToSuccessors="//@processElements.2 //@processElements.4" name="R1">
     <process name="child1">
       <processElements xsi:type="simplepdl.ddmm:WorkDefinition" linksToSuccessors="//@processElements.0/@process/@processElements.3 //@processElements.0/@process/@processElements.4" name="C11"/>
