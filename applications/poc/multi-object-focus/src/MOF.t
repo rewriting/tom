@@ -318,6 +318,24 @@ public class MOF {
                 }}).trace("groundEval");
 
 
+    public static Visitor<Visitable,Visitable> groundEvalModulo(final int n) {
+            return Visitor.map(
+            new Fun<Visitable,Visitable>() {
+                public Visitable apply(Visitable u) throws MOFException {
+                    /*
+                    The match on the two focuses
+                    */
+
+                    %match(u) {
+                        Plus(Val(x),Val(y)) -> { return `Val((x + y) % n); }
+                        Mult(Val(x),Val(y)) -> { return `Val((x * y) % n); }
+
+                    };
+                    throw new MOFException();
+                }}).trace("groundEval");
+    }
+
+
 
     public static Visitor<P<Visitable,Visitable>, P<Visitable,Visitable>> varEval = Visitor.map(
             new Fun<P<Visitable,Visitable>, P<Visitable,Visitable>>() {
@@ -379,8 +397,6 @@ public class MOF {
     }
 
 
-
-
     public static void runMSOS() throws MOFException {
         System.out.println("<MSOS>\n");
         System.out.println("<examplePgrm>"  + examplePgrm  + "</examplePgrm>\n");
@@ -405,31 +421,53 @@ public class MOF {
         Visitor<Visitable,Visitable> idv = new Id<Visitable>();
 
 
-        Visitor<P<Visitable,Visitable>, P<Visitable,Visitable>> realGroundEval = groundEval.times(idv);
         Visitor<P<Visitable,Visitable>, P<Visitable,Visitable>> realVarEval    = idv.times(Visitor.forSome).seq(varEval);
-        Visitor<P<Visitable,Visitable>, P<Visitable,Visitable>> arithEval      = realGroundEval.or(realVarEval);
         Visitor<P<Visitable,Visitable>, P<Visitable,Visitable>> phase1         = Visitor.forAll.trace("EachStatement").times(idv);
         Visitor<P<Visitable,Visitable>, P<Visitable,Visitable>> phase2         = Visitor.forAll.times(idv);
 
+
+        /**
+         * In this example we run groundEval which means we add and mult in group Z
+         */
+        System.out.println("<Z>\n");
+
+
+        Visitor<P<Visitable,Visitable>, P<Visitable,Visitable>> realGroundEval = groundEval.times(idv);
+        Visitor<P<Visitable,Visitable>, P<Visitable,Visitable>> arithEval      = realGroundEval.or(realVarEval);
         Var<P<Visitable,Visitable>,P<Visitable,Visitable>>      x              = new Var<P<Visitable, Visitable>, P<Visitable, Visitable>>();
-
-
         Visitor<P<Visitable,Visitable>, P<Visitable,Visitable>> realStmtEval   =
                 phase1.seq(x.set(phase2.seq(x).seq(Visitor.repeat(arithEval)).reset())).seq(Visitor.sltry(stmtEval));
 
 
-
-
-
-
-        /*
-         The show must go on! Note that we use visitUZ instead of visit. We want to show where the two focuses are
-         at the end of the computation and not only the resulting whole term (which you can still see on the "whole"
-         xml node of the zipper toString.
-          */
         try                    { showresult(realStmtEval.visit(P.mkP( prog , (Visitable)mem )));
                                }
         catch (MOFException e) { System.out.print("<stategy-failed/>") ; }
+
+        System.out.println("</Z>\n");
+
+
+
+        /**
+         * In this example we run groundEvalModulo which means we add and mult in group Zn
+         */
+
+
+        int modulo = 7;
+        System.out.println("<Z" + modulo + ">\n");
+
+        Visitor<P<Visitable,Visitable>, P<Visitable,Visitable>> realGroundEvalModulo = groundEvalModulo(modulo).times(idv);
+        Visitor<P<Visitable,Visitable>, P<Visitable,Visitable>> arithEvalModulo      = realGroundEvalModulo.or(realVarEval);
+        Var<P<Visitable,Visitable>,P<Visitable,Visitable>>      y                    = new Var<P<Visitable, Visitable>, P<Visitable, Visitable>>();
+        Visitor<P<Visitable,Visitable>, P<Visitable,Visitable>> realStmtEvalModulo   =
+                phase1.seq(y.set(phase2.seq(y).seq(Visitor.repeat(arithEvalModulo)).reset())).seq(Visitor.sltry(stmtEval));
+
+
+        try                    { showresult(realStmtEvalModulo.visit(P.mkP( prog , (Visitable)mem )));
+                               }
+        catch (MOFException e) { System.out.print("<stategy-failed/>") ; }
+
+
+        System.out.println("</Z" + modulo + ">\n");
 
         System.out.println("</MSOS>\n");
     }
