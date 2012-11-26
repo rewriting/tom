@@ -412,7 +412,7 @@ public class MOF {
 
               Ce qui donne bien que All a appliquer Print sur la tete et la queue de examplePgrm
          */
-        Visitable prog  = ConsWrapper.mk(examplePgrm);
+        Visitable prog  = examplePgrm;
         Mem mem         = `Mem();
 
         try { `All(Print()).visit(mem); }
