@@ -290,12 +290,12 @@ public class ExpanderPlugin extends TomGenericPlugin {
                                     sizeVar,
                                     BQTermToExpression(size),
                                   LetRef(
-                                    objectArrayVar,
-                                    BQTermToExpression(children),
-                                  LetRef(
                                     vVar,
                                     Cast(type,BQTermToExpression(objectVar)),
-                                    AbstractBlock(concInstruction(
+                                  LetRef(
+                                    objectArrayVar,
+                                    BQTermToExpression(children),
+                                   AbstractBlock(concInstruction(
                                      Assign(vVar,BQTermToExpression(vVar)),
                                      WhileDo(
                                         LessThan(BQTermToExpression(intVar),BQTermToExpression(sizeVar)),
