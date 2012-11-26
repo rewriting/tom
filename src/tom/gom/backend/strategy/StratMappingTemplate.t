@@ -64,6 +64,7 @@ public class StratMappingTemplate extends MappingTemplateClass {
     }
     %match(operatorClasses) {
       ConcGomClass(_*,op@OperatorClass[],_*) -> {
+        //TODO: change the generation for Empty and Cons constructors
         writer.write(
             (new tom.gom.backend.strategy.SOpTemplate(`op,getGomEnvironment())).generateMapping());
         writer.write(
@@ -79,7 +80,8 @@ public class StratMappingTemplate extends MappingTemplateClass {
         writer.write(%[
   %op Strategy _@className(`vopName)@(sub:Strategy) {
     is_fsym(t) { false }
-    make(sub)  { `mu(MuVar("x_@className(`vopName)@"),Choice(_@className(`cons)@(sub,MuVar("x_@className(`vopName)@")),_@className(`empty)@())) }
+    make(sub)  {
+    `Choice(When_@className(`cons)@(All(sub)),When_@className(`empty)@(Identity())) }
   }
   ]%);
       }

@@ -45,6 +45,7 @@ public class OperatorTemplate extends TemplateHookedClass {
   boolean multithread;
   boolean maximalsharing;
   boolean jmicompatible;
+  boolean variadicconstructor;
 
   %include { ../../adt/objects/Objects.tom}
 
@@ -69,6 +70,8 @@ public class OperatorTemplate extends TemplateHookedClass {
                     Comments=comments] -> {
         this.abstractType = `abstractType;
         this.extendsType = `extendsType;
+        this.variadicconstructor =
+          gomEnvironment.getSymbolTable().isVariadic(extendsType.getName());
         this.sortName = `sortName;
         this.slotList = `slots;
         this.comments = `comments;
@@ -577,11 +580,8 @@ generateGetters(writer);
    * @@throws IndexOutOfBoundsException if the index out of range
    */
   public tom.library.sl.Visitable getChildAt(int index) {
-    switch(index) {
-@getCases()@
-      default: throw new IndexOutOfBoundsException();
-    }
-  }
+    @getchildat()@
+ }
 
   /**
    * Set the child at the specified index
@@ -593,10 +593,7 @@ generateGetters(writer);
    * @@throws IndexOutOfBoundsException if the index out of range
    */
   public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable v) {
-    switch(index) {
-@makeCases("v")@
-      default: throw new IndexOutOfBoundsException();
-    }
+    @setchildat("v")@
   }
 
   /**
@@ -608,8 +605,8 @@ generateGetters(writer);
    */
   @@SuppressWarnings("unchecked")
   public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {
-    if (children.length == @slotList.length()@ @arrayCheck("children")@) {
-      return @arrayMake("children")@;
+    if (children.length == getChildCount() @arrayCheck("children")@) {
+      @arrayMake("children")@
     } else {
       throw new IndexOutOfBoundsException();
     }
@@ -621,7 +618,7 @@ generateGetters(writer);
    * @@return the children of the term
    */
   public tom.library.sl.Visitable[] getChildren() {
-    return new tom.library.sl.Visitable[] { @visitableList(slotList)@ };
+    @getchildren(slotList)@
   }
 ]%);
 
@@ -1071,125 +1068,225 @@ private void generateEnum(java.io.Writer writer) throws java.io.IOException {
     return res.toString();
   }
 
-  private String getCases() {
-    StringBuilder res = new StringBuilder();
-    int index = 0;
-    %match(slotList) {
-      ConcSlotField(_*,SlotField[Name=fieldName,Domain=domain],_*) -> {
-        if (!getGomEnvironment().isBuiltinClass(`domain)) {
-          res.append("      case ");
-          res.append(index);
-          res.append(": return ");
-          res.append(fieldName(`fieldName));
-          res.append(";\n");
-          index++;
-        } else {
-          res.append("      case ");
-          res.append(index);
-          res.append(": return new tom.library.sl.VisitableBuiltin<");
-          res.append(primitiveToReferenceType(fullClassName(`domain)));
-          res.append(">(");
-          res.append(fieldName(`fieldName));
-          res.append(");\n");
-          index++;
+  private String getchildat() {
+    if (variadicconstructor) {
+      // use the methods of the Collection interface
+      return "return toArray(new tom.library.sl.Visitable[]{})[index];";
+    } else {
+      StringBuilder res = new StringBuilder("    switch(index) {\n");
+      int index = 0;
+      %match(slotList) {
+        ConcSlotField(_*,SlotField[Name=fieldName,Domain=domain],_*) -> {
+          if (!getGomEnvironment().isBuiltinClass(`domain)) {
+            res.append("      case ");
+            res.append(index);
+            res.append(": return ");
+            res.append(fieldName(`fieldName));
+            res.append(";\n");
+            index++;
+          } else {
+            res.append("      case ");
+            res.append(index);
+            res.append(": return new tom.library.sl.VisitableBuiltin<");
+            res.append(primitiveToReferenceType(fullClassName(`domain)));
+            res.append(">(");
+            res.append(fieldName(`fieldName));
+            res.append(");\n");
+            index++;
+          }
         }
       }
+      res.append("      default: throw new IndexOutOfBoundsException();\n }");
+      return res.toString();
     }
-    return res.toString();
   }
 
-  private String visitableList(SlotFieldList slots) {
-    StringBuilder res = new StringBuilder();
-    while(!slots.isEmptyConcSlotField()) {
-      SlotField head = slots.getHeadConcSlotField();
-      slots = slots.getTailConcSlotField();
-      %match(head) {
-        SlotField[Domain=domain,Name=name] -> {
-          if (res.length()!=0) {
-            res.append(", ");
+  private String getchildren(SlotFieldList slots) {
+    if (variadicconstructor) {
+      // use the methods of the Collection interface
+      return "return toArray(new tom.library.sl.Visitable[]{});";
+    } else {
+      StringBuilder res = new StringBuilder("return new tom.library.sl.Visitable[] { ");
+      boolean is_first_slot = true;
+      while(!slots.isEmptyConcSlotField()) {
+        SlotField head = slots.getHeadConcSlotField();
+        slots = slots.getTailConcSlotField();
+        %match(head) {
+          SlotField[Domain=domain,Name=name] -> {
+            if (is_first_slot) {
+              is_first_slot =  false;
+            } else {
+              res.append(", ");
+            }
+            res.append(" ");
+            if (!getGomEnvironment().isBuiltinClass(`domain)) {
+              res.append(fieldName(`name));
+            } else {
+              res.append("new tom.library.sl.VisitableBuiltin<");
+              res.append(primitiveToReferenceType(fullClassName(`domain)));
+              res.append(">(");
+              res.append(fieldName(`name));
+              res.append(")");
+            }
           }
-          res.append(" ");
-        if (!getGomEnvironment().isBuiltinClass(`domain)) {
-          res.append(fieldName(`name));
-        } else {
-          res.append("new tom.library.sl.VisitableBuiltin<");
-          res.append(primitiveToReferenceType(fullClassName(`domain)));
-          res.append(">(");
-          res.append(fieldName(`name));
-          res.append(")");
-        }
         }
       }
+      res.append(" }; ");
+      return res.toString();
     }
-    return res.toString();
   }
 
 
   private String visitableCount() {
     if(className().equals("ConsPath"+sortName.getName())) {
       return "0";
-    } else {
-      return ""+slotList.length();
+    } else if(variadicconstructor) {
+      // use the methods of the Collection interface
+      return "length()";
+    } else { return ""+slotList.length();
     }
   }
 
   private String arrayMake(String arrayName) {
-    StringBuilder res = new StringBuilder("make(");
-    int index = 0;
-    %match(slotList) {
-      ConcSlotField(_*,SlotField[Domain=domain],_*) -> {
-        if(index>0) { res.append(", "); }
-       if (!getGomEnvironment().isBuiltinClass(`domain)) {
-         res.append("(");
-         res.append(fullClassName(`domain));
-         res.append(") ");
-         res.append(arrayName);
-         res.append("[");
-         res.append(index);
-         res.append("]");
-       } else {
-         res.append("((tom.library.sl.VisitableBuiltin<");
-         res.append(primitiveToReferenceType(fullClassName(`domain)));
-         res.append(">)");
-         res.append(arrayName);
-         res.append("[");
-         res.append(index);
-         res.append("])");
-         res.append(".getBuiltin()");
-       }
-       index++;
+    if(variadicconstructor) {
+      if (className.getName().startsWith("Cons")) {
+        /* get the domain type of the constructor */
+        %match(slotList) {
+          ConcSlotField(SlotField[Domain=domainclass],_*) -> {
+            if (!getGomEnvironment().isBuiltinClass(`domainclass)) {
+              return %[
+               @fullClassName(`domainclass)@[] typed_children = new @fullClassName(`domainclass)@[children.length];
+              for (int i=0; i<children.length; i++) {
+                typed_children[i] = (@fullClassName(`domainclass)@) children[i]; 
+              }
+              return fromArray(typed_children);
+              ]%;
+            } else {
+              return %[
+                tom.library.sl.VisitableBuiltin<@primitiveToReferenceType(fullClassName(`domainclass))@>[] reference_children = (tom.library.sl.VisitableBuiltin<@primitiveToReferenceType(fullClassName(`domainclass))@>[]) children; 
+              @fullClassName(`domainclass)@[] builtin_children = new @fullClassName(`domainclass)@[children.length];
+              for (int i=0; i<children.length; i++) {
+                builtin_children[i] = reference_children[i].getBuiltin(); 
+              }
+              return fromArray(builtin_children);
+              ]%;
+            }
+          }
+        }
+      } 
+      /* Empty constructor */
+      return "return this;";
+    } else { 
+      StringBuilder res = new StringBuilder("return make(");
+      int index = 0;
+      %match(slotList) {
+        ConcSlotField(_*,SlotField[Domain=domain],_*) -> {
+          if(index>0) { res.append(", "); }
+          if (!getGomEnvironment().isBuiltinClass(`domain)) {
+            res.append("(");
+            res.append(fullClassName(`domain));
+            res.append(") ");
+            res.append(arrayName);
+            res.append("[");
+            res.append(index);
+            res.append("]");
+          } else {
+            res.append("((tom.library.sl.VisitableBuiltin<");
+            res.append(primitiveToReferenceType(fullClassName(`domain)));
+            res.append(">)");
+            res.append(arrayName);
+            res.append("[");
+            res.append(index);
+            res.append("])");
+            res.append(".getBuiltin()");
+          }
+          index++;
+        }
       }
+      res.append(");");
+      return res.toString();
     }
-    res.append(")");
-    return res.toString();
   }
 
   private String arrayCheck(String arrayName) {
     StringBuilder res = new StringBuilder();
-    int index = 0;
-    %match(slotList) {
-      ConcSlotField(_*,SlotField[Domain=domain],_*) -> {
-       if (!getGomEnvironment().isBuiltinClass(`domain)) {
-         res.append(%[ && @arrayName@[@index@] instanceof @fullClassName(`domain)@]%);
-       } else {
-         res.append(%[ && @arrayName@[@index@] instanceof tom.library.sl.VisitableBuiltin]%);
-       }
-       index++;
+    if(variadicconstructor) {
+      if (className.getName().startsWith("Cons")) {
+        /* get the domain type of the constructor */
+        %match(slotList) {
+          ConcSlotField(SlotField[Domain=domain],_*) -> {
+              //TODO test that each child is of type domain
+              // this has to be done dynamically (we do not know statically the
+              //number of children)
+              return "";
+            }
+          }
+      } else {
+        /* empty constructor */ 
+        return "";
+      }
+    } else {
+      int index = 0;
+      %match(slotList) {
+        ConcSlotField(_*,SlotField[Domain=domain],_*) -> {
+          if (!getGomEnvironment().isBuiltinClass(`domain)) {
+            res.append(%[ && @arrayName@[@index@] instanceof @fullClassName(`domain)@]%);
+          } else {
+            res.append(%[ && @arrayName@[@index@] instanceof tom.library.sl.VisitableBuiltin]%);
+          }
+          index++;
+        }
       }
     }
     return res.toString();
   }
-private String makeCases(String argName) {
-  StringBuilder res = new StringBuilder();
-  int index = 0;
-  %match(slotList) {
-    ConcSlotField(_*,SlotField[],_*) -> {
-      res.append("      case "+index+": return make("+generateMakeArgsFor(index, argName)+");\n");
-      index++;
+
+private String setchildat(String argName) {
+  if(variadicconstructor) {
+    if (className.getName().startsWith("Cons")) {
+    /* get the domain type of the constructor */
+     %match(slotList) {
+      ConcSlotField(SlotField[Domain=domainclass],_*) -> {
+        String domain = fullClassName(`domainclass); 
+        StringBuilder res = new StringBuilder();
+        res.append(%[
+      @primitiveToReferenceType(domain)@[] children = toArray(new @primitiveToReferenceType(domain)@[]{});
+            ]%);
+            if (!getGomEnvironment().isBuiltinClass(`domainclass)) {
+              res.append(%[
+     children[index] = (@domain@) @argName@;
+     return fromArray(children);
+                  ]%);
+            } else {
+              res.append(%[
+      @domain@[] primitive_children = new @domain@[children.length];
+      for(int i =0; i< children.length ; i++) {
+        primitive_children[i] = children[i]; 
+      }
+      primitive_children[index] = ((tom.library.sl.VisitableBuiltin<@primitiveToReferenceType(domain)@>) @argName@).getBuiltin();
+     return fromArray(primitive_children);
+                  ]%);
+            }
+            return res.toString();
+      }
+     }
     }
+    /* Empty constructor */
+    return "throw new IndexOutOfBoundsException();";
+  } else {
+    StringBuilder res = new StringBuilder("    switch(index) {\n");
+    int index = 0;
+    %match(slotList) {
+      ConcSlotField(_*,SlotField[],_*) -> {
+        res.append("      case "+index+": return make("+generateMakeArgsFor(index, argName)+");\n");
+        index++;
+      }
+    }
+    res.append("      default: throw new IndexOutOfBoundsException();\n }");
+    return res.toString();
   }
-  return res.toString();
 }
+
 private String generateMakeArgsFor(int argIndex, String argName) {
   StringBuilder res = new StringBuilder();
   int index = 0;
