@@ -237,7 +237,12 @@ public class ExpanderPlugin extends TomGenericPlugin {
                     concTomSymbol(_*, symbol@Symbol[AstName=opName], _*) -> {
                       Instruction inst = `Nop();
                       if ( TomBase.isListOperator(`symbol) ) {
-                        inst = `If(IsFsym(opName,var),If(IsEmptyList(opName,var),Return(Composite(CompositeTL(ITL("0")))),Return(Composite(CompositeTL(ITL("2"))))),Nop());
+                        inst =
+                          `If(IsFsym(opName,var),If(IsEmptyList(opName,var),Return(Composite(CompositeTL(ITL("0")))),
+                                  Return(Composite(
+                                      CompositeTL(ITL("1 + getChildCount(")),
+                                      CompositeBQTerm(ExpressionToBQTerm(GetTail(opName,var))),
+                                      CompositeTL(ITL(")"))))), Nop());
                       } else if ( TomBase.isArrayOperator(`symbol) ) {
                         inst = `If(IsFsym(opName,var), Return(ExpressionToBQTerm(GetSize(opName,var))),Nop());
                       } else {
@@ -272,19 +277,42 @@ public class ExpanderPlugin extends TomGenericPlugin {
                     %match(symbol) {
                       Symbol[AstName=symbolName,TypesToType=TypesToType[Domain=domain,Codomain=codomain]] -> {
                         if(TomBase.isListOperator(symbol)) {
-                          Instruction return_array = `CodeToInstruction(BQTermToCode(Composite(
-                                  CompositeTL(ITL("return new Object[]{")),
-                                  CompositeBQTerm(ExpressionToBQTerm(GetHead(symbolName,domain.getHeadconcTomType(),var))),
-                                  CompositeTL(ITL(",")),
-                                  CompositeBQTerm(ExpressionToBQTerm(GetTail(symbolName,var))),
-                                  CompositeTL(ITL("};"))
-                                  )));
+                          BQTerm emptyArray = `Composite(CompositeTL(ITL("new Object[]{}")));
+                          BQTerm size = `Composite(CompositeTL(ITL("getChildCount(o)")));
+                          BQTerm vVar = `BQVariable(concOption(),Name("vv"),codomain);
+                          BQTerm sizeVar = `BQVariable(concOption(),Name("size"),intType);
+                          BQTerm children =
+                            `Composite(CompositeTL(ITL("new Object[")),CompositeBQTerm(sizeVar),CompositeTL(ITL("]"))); Instruction return_array = 
+                                  `LetRef(
+                                    intVar,
+                                    Integer(0),
+                                  LetRef(
+                                    sizeVar,
+                                    BQTermToExpression(size),
+                                  LetRef(
+                                    objectArrayVar,
+                                    BQTermToExpression(children),
+                                  LetRef(
+                                    vVar,
+                                    Cast(type,BQTermToExpression(objectVar)),
+                                    AbstractBlock(concInstruction(
+                                     Assign(vVar,BQTermToExpression(vVar)),
+                                     WhileDo(
+                                        LessThan(BQTermToExpression(intVar),BQTermToExpression(sizeVar)),
+                                        AbstractBlock(concInstruction(
+                                          AssignArray(objectArrayVar, intVar, GetHead(symbolName,domain.getHeadconcTomType(),vVar)), 
+                                          Assign(vVar, GetTail(symbolName,vVar)),
+                                          Assign(intVar, AddOne(intVar))
+                                        ))
+                                      ),
+                                      Return(objectArrayVar)
+                                      ))))));
                           //default case (used for builtins too)                     
                           Instruction return_emptyArray = `CodeToInstruction(TargetLanguageToCode(ITL("return new Object[]{};")));
                           Instruction inst = `If(IsFsym(symbolName,var),If(IsEmptyList(symbolName,var),return_emptyArray,return_array),Nop());
                           instructionsForSort = `concInstruction(instructionsForSort*,inst);
                         } else if(TomBase.isArrayOperator(symbol)) {
-                          // contrary to list operators, we consider that the children of an array are all its elements
+                          // we consider that the children of an array are all its elements
                           BQTerm emptyArray = `Composite(CompositeTL(ITL("new Object[]{}")));
                           BQTerm children = `Composite(CompositeTL(ITL("new Object[getChildCount(o)]")));
                           Instruction inst = 
@@ -371,14 +399,27 @@ public class ExpanderPlugin extends TomGenericPlugin {
                       Symbol[AstName=symbolName,TypesToType=TypesToType] -> {
                         if (TomBase.isListOperator(symbol)) {
                           %match(TypesToType) {
-                            TypesToType[Domain=concTomType(domain)] -> {
+                            TypesToType[Domain=concTomType(domain),Codomain=codomain] -> {
+                              BQTerm res = `BQVariable(concOption(),Name("res"),codomain);
                               Instruction inst = 
                                 `If(IsFsym(symbolName,var),
                                     If(BQTermToExpression(Composite(CompositeTL(ITL("children.length==0")))),
                                       Return(BuildEmptyList(symbolName)),
-                                      Return(BuildConsList(symbolName,Composite(CompositeTL(ITL("("+symbolTable.builtinToWrapper(domain.getTomType())+")children[0]"))),ExpressionToBQTerm(Cast(type,BQTermToExpression(Composite(CompositeTL(ITL("children[1]"))))))))
-                                      )
-                                    ,Nop());
+                                      LetRef(
+                                        intVar,
+                                        BQTermToExpression(Composite(CompositeTL(ITL("children.length")))),
+                                        LetRef(
+                                          res,
+                                          BQTermToExpression(BuildEmptyList(symbolName)),
+                                          AbstractBlock(concInstruction(
+                                              WhileDo(
+                                                GreaterThan(BQTermToExpression(intVar),Integer(0)),
+                                                AbstractBlock(concInstruction(
+                                                    Assign(intVar, SubstractOne(intVar)),
+                                                    Assign(res, BQTermToExpression(BuildConsList(symbolName, Composite(CompositeTL(ITL("("+symbolTable.builtinToWrapper(domain.getTomType())+")children[i]"))), res)))
+                                                    ))),
+                                              Return(res)))))),
+                                    Nop());
                               instructionsForSort = `concInstruction(instructionsForSort*,inst);
                             }
                           }
@@ -401,7 +442,8 @@ public class ExpanderPlugin extends TomGenericPlugin {
                                                 GreaterThan(BQTermToExpression(intVar),Integer(0)),
                                                 AbstractBlock(concInstruction(
                                                     Assign(intVar, SubstractOne(intVar)),
-                                                    Assign(res, BQTermToExpression(BuildConsArray(symbolName, ExpressionToBQTerm(Cast(domain,BQTermToExpression(Composite(CompositeTL(ITL("children[i]")))))), res)))
+                                                    Assign(res,
+                                                      BQTermToExpression(BuildConsArray(symbolName, Composite(CompositeTL(ITL("("+symbolTable.builtinToWrapper(domain.getTomType())+")children[i]"))), res)))
                                                     ))),
                                               Return(res)))))),
                                     Nop());
