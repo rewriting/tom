@@ -8,6 +8,8 @@ package lib;
  * To change this template use File | Settings | File Templates.
  */
 
+import tom.library.sl.VisitFailure;
+
 /**
  * Abstract class of functions. A Fun<X,Y> is a function from X to Y. The abstract method apply is the actual function
  * and the only one to be defined in order to instantiate the class.
@@ -23,10 +25,10 @@ public abstract class Fun<A,B> {
      *
      * @param arg the argument.
      * @return the return value.
-     * @throws MOFException
-     * @see MOFException
+     * @throws VisitFailure
+     * @see VisitFailure
      */
-    public abstract B apply(A arg) throws MOFException;
+    public abstract B apply(A arg) throws VisitFailure;
 
     /**
      * The left functional composition.
@@ -36,7 +38,7 @@ public abstract class Fun<A,B> {
      */
     public <C> Fun<A,C> andthen (final Fun<B,C> g) {
         final Fun<A,B> f = this;
-        return new Fun<A,C>() {  public C apply(A a) throws MOFException { return g.apply(f.apply(a)); } } ;
+        return new Fun<A,C>() {  public C apply(A a) throws VisitFailure { return g.apply(f.apply(a)); } } ;
     }
 
     /**
@@ -47,7 +49,7 @@ public abstract class Fun<A,B> {
      */
     public <C> Fun<C,B> compose (final Fun<C,A> g) {
         final Fun<A,B> f = this;
-        return new Fun<C,B>() { public B apply(C a) throws MOFException { return f.apply(g.apply(a)); } } ;
+        return new Fun<C,B>() { public B apply(C a) throws VisitFailure { return f.apply(g.apply(a)); } } ;
     }
 
 
@@ -62,7 +64,7 @@ public abstract class Fun<A,B> {
     public <C,D> Fun<P<A,C>,P<B,D>> times(final Fun<C,D> g) {
         final Fun<A,B> f = this;
         return new Fun<P<A,C>,P<B,D>>() {
-                 public P<B,D> apply(P<A,C> p) throws MOFException { return new P<B,D>(f.apply(p.left), g.apply(p.right)) ; }
+                 public P<B,D> apply(P<A,C> p) throws VisitFailure { return new P<B,D>(f.apply(p.left), g.apply(p.right)) ; }
                } ;
     }
 
@@ -74,7 +76,7 @@ public abstract class Fun<A,B> {
      */
     public static <A,B,C> Fun<A,Fun<B,C>> curry(final Fun<P<A,B>,C> f) {
        return new Fun<A,Fun<B, C>>() { public Fun<B,C> apply(final A a) {
-         return new Fun<B,C>() { public C apply(B b) throws MOFException {
+         return new Fun<B,C>() { public C apply(B b) throws VisitFailure {
            return f.apply(P.mkP(a,b));
          }};}};
     }
@@ -85,7 +87,7 @@ public abstract class Fun<A,B> {
      */
     public static <A,B,C> Fun<B,Fun<A,C>> swap(final Fun<A,Fun<B,C>> f) {
         return new Fun<B,Fun<A, C>>() { public Fun<A,C> apply(final B b) {
-            return new Fun<A,C>() { public C apply(A a) throws MOFException {
+            return new Fun<A,C>() { public C apply(A a) throws VisitFailure {
                 return f.apply(a).apply(b);
             }};}};
     }

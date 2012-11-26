@@ -1,4 +1,4 @@
-import lib.MOFException;
+import tom.library.sl.VisitFailure;
 
 /**
  * Created with IntelliJ IDEA.
@@ -8,7 +8,7 @@ import lib.MOFException;
  * To change this template use File | Settings | File Templates.
  */
 public class Main {
-    public static void main(String[] args) throws MOFException {
+    public static void main(String[] args) throws VisitFailure {
         MOF.run();
     }
 }

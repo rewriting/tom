@@ -9,6 +9,8 @@
 package lib;
 
 import tom.library.sl.Visitable;
+import tom.library.sl.VisitFailure;
+
 
 /**
  * Class Zip implements a generic zipper. Let t be a term, you can think of a zipper on t as a pointer on a subterm
@@ -60,9 +62,9 @@ public class Zip<T,S> {
      * Gives the whole term, i.e. the context applied to the term at the focus
 
      * @return the whole term.
-     * @throws MOFException
+     * @throws VisitFailure
      */
-    public T run() throws MOFException {
+    public T run() throws VisitFailure {
         if (cached == null) cached = context.apply(focus);
         return cached;
     }
@@ -71,9 +73,9 @@ public class Zip<T,S> {
      * Run the zipper with a different subterm than the focus.
      *
      * @param s the subterm to use instead of the focus.
-     * @throws MOFException
+     * @throws VisitFailure
      */
-    public T runWith(S s) throws MOFException { return context.apply(s); }
+    public T runWith(S s) throws VisitFailure { return context.apply(s); }
 
 
     /**
@@ -91,7 +93,7 @@ public class Zip<T,S> {
      */
     public Zip<T,Zip<S,S>> extend() {
         final Zip<T,S> t = this;
-        return mkZip( new Fun<Zip<S,S>,T>() { public T apply(Zip<S,S> z) throws MOFException { return t.runWith(z.run()); }}
+        return mkZip( new Fun<Zip<S,S>,T>() { public T apply(Zip<S,S> z) throws VisitFailure { return t.runWith(z.run()); }}
                     , unit(focus)
                     );
     }
@@ -105,7 +107,7 @@ public class Zip<T,S> {
      * @param f a function that given the subterm/focus of this, gives a zipper on it.
      * @return a new zipper with its focus moved.
      */
-    public <R> Zip<T,R> refocus(Fun<S, Zip<S,R>> f) throws MOFException {
+    public <R> Zip<T,R> refocus(Fun<S, Zip<S,R>> f) throws VisitFailure {
         final Zip<T,S> thiszip = this;
         final Zip<S,R> zf      = f.apply(thiszip.focus);
         return new Zip<T, R>( this.context.compose(zf.context)
@@ -150,7 +152,7 @@ public class Zip<T,S> {
      */
     public static <T> Zip<T,T> unit(T t) {
         return new Zip<T,T>( new Fun<T, T>() {
-                               public T apply(T arg) throws MOFException { return arg; }
+                               public T apply(T arg) throws VisitFailure { return arg; }
                              }
                            , t
                            );
@@ -163,7 +165,7 @@ public class Zip<T,S> {
      */
     public static <T,S,R> Zip<T,R> join(final Zip<T,Zip<S,R>> z) {
         final Zip<S,R> zs = z.focus;
-        return new Zip<T, R>( new Fun<R,T>() { public T apply(R r) throws MOFException { return z.context.apply(zs.replace(r)); } }
+        return new Zip<T, R>( new Fun<R,T>() { public T apply(R r) throws VisitFailure { return z.context.apply(zs.replace(r)); } }
                 , zs.focus
         ) ;
     }
@@ -173,7 +175,7 @@ public class Zip<T,S> {
      */
     public static <X,Y> Fun<X,Zip<Y,Y>> lift(final Fun<X,Y> f) {
         return new Fun<X,Zip<Y,Y>>() {
-            public Zip<Y,Y> apply(X x) throws MOFException { return unit(f.apply(x));}
+            public Zip<Y,Y> apply(X x) throws VisitFailure { return unit(f.apply(x));}
         };
     }
 
@@ -183,7 +185,7 @@ public class Zip<T,S> {
     public String toString()  {
         String whole;
         try                    { whole = this.run().toString()    ; }
-        catch (MOFException e) { whole = "Exception: MOFException"; }
+        catch (VisitFailure e) { whole = "Exception: VisitFailure"; }
 
         return "<Zip>\n<focus>" + focus.toString() +"</focus>\n<whole>" + whole + "</whole>\n</Zip>";
 
@@ -196,11 +198,11 @@ public class Zip<T,S> {
      * @param t whole term
      * @param i the child at which the focus must be put on.
      * @return  the zipper.
-     * @throws MOFException
+     * @throws VisitFailure
      */
-    public static Zip<Visitable,Visitable> child(final Visitable t, final int i) throws MOFException {
+    public static Zip<Visitable,Visitable> child(final Visitable t, final int i) throws VisitFailure {
         final Visitable u = /*ConsWrapper.mk*/ t;
-        if (i >= u.getChildCount()) throw new MOFException() ;
+        if (i >= u.getChildCount()) throw new VisitFailure() ;
         else return mkZip( new Fun<Visitable,Visitable>() { public Visitable apply(Visitable y) {
                                    return u.setChildAt(i,y); }}
                          , u.getChildAt(i)

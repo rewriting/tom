@@ -1,7 +1,7 @@
 package lib.sl;
 
 import lib.Fun;
-import lib.MOFException;
+import tom.library.sl.VisitFailure;
 import lib.Zip;
 
 /**
@@ -29,5 +29,5 @@ public class VisitorProxy<X,Y> extends Visitor<X,Y> {
     /**
      * Just call this.visitor.visitZK
      */
-    public <T> X visitZK(Zip<T,X> z, Fun<Zip<X,Y>,Zip<X,Y>> k) throws MOFException { return visitor.visitZK(z,k); }
+    public <T> X visitZK(Zip<T,X> z, Fun<Zip<X,Y>,Zip<X,Y>> k) throws VisitFailure { return visitor.visitZK(z,k); }
 }
