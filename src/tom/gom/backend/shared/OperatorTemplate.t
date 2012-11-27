@@ -1176,7 +1176,11 @@ private void generateEnum(java.io.Writer writer) throws java.io.IOException {
               ]%;
             } else {
               return %[
-              return this;
+               @fullClassName(`domainclass)@[] builtin_children = new @fullClassName(`domainclass)@[children.length];
+               for (int i=0; i<children.length; i++) {
+                 builtin_children[i] = ((tom.library.sl.VisitableBuiltin<@primitiveToReferenceType(fullClassName(`domainclass))@>) children[i]).getBuiltin(); 
+               }
+               return fromArray(builtin_children);
               ]%;
             }
           }
@@ -1268,11 +1272,11 @@ private String setchildat(String argName) {
             } else {
               res.append(%[
       @domain@[] primitive_children = new @domain@[children.length];
-      for(int i =0; i< children.length ; i++) {
+      for(int i =0; i<children.length; i++) {
         primitive_children[i] = children[i]; 
       }
       primitive_children[index] = ((tom.library.sl.VisitableBuiltin<@primitiveToReferenceType(domain)@>) @argName@).getBuiltin();
-     return fromArray(primitive_children);
+      return fromArray(primitive_children);
                   ]%);
             }
             return res.toString();
