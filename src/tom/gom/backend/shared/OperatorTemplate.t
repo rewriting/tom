@@ -71,6 +71,8 @@ public class OperatorTemplate extends TemplateHookedClass {
         this.abstractType = `abstractType;
         this.extendsType = `extendsType;
         this.variadicconstructor =
+          // add a condition to detect variadic operators with the same name as their sort
+          ! extendsType.equals(sortName) &&
           gomEnvironment.getSymbolTable().isVariadic(extendsType.getName());
         this.sortName = `sortName;
         this.slotList = `slots;
