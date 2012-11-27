@@ -1073,7 +1073,7 @@ private void generateEnum(java.io.Writer writer) throws java.io.IOException {
   private String getchildat() {
     if (variadicconstructor) {
       // use the methods of the Collection interface
-      return "return toArray(new tom.library.sl.Visitable[]{})[index];";
+      return "return getChildren()[index];";
     } else {
       StringBuilder res = new StringBuilder("    switch(index) {\n");
       int index = 0;
@@ -1106,7 +1106,18 @@ private void generateEnum(java.io.Writer writer) throws java.io.IOException {
   private String getchildren(SlotFieldList slots) {
     if (variadicconstructor) {
       // use the methods of the Collection interface
-      return "return toArray(new tom.library.sl.Visitable[]{});";
+      return %[
+        Object[] object_children = toArray();
+        tom.library.sl.Visitable[] children = new tom.library.sl.Visitable[object_children.length];
+        for (int i=0; i<object_children.length; i++) {
+          if (object_children[i] instanceof tom.library.sl.Visitable) {
+            children[i] = (tom.library.sl.Visitable) object_children[i];
+          } else {
+            children[i] = new tom.library.sl.VisitableBuiltin(children[i]);
+          }
+        }
+        return children;
+      ]%;
     } else {
       StringBuilder res = new StringBuilder("return new tom.library.sl.Visitable[] { ");
       boolean is_first_slot = true;
@@ -1165,12 +1176,7 @@ private void generateEnum(java.io.Writer writer) throws java.io.IOException {
               ]%;
             } else {
               return %[
-                tom.library.sl.VisitableBuiltin<@primitiveToReferenceType(fullClassName(`domainclass))@>[] reference_children = (tom.library.sl.VisitableBuiltin<@primitiveToReferenceType(fullClassName(`domainclass))@>[]) children; 
-              @fullClassName(`domainclass)@[] builtin_children = new @fullClassName(`domainclass)@[children.length];
-              for (int i=0; i<children.length; i++) {
-                builtin_children[i] = reference_children[i].getBuiltin(); 
-              }
-              return fromArray(builtin_children);
+              return this;
               ]%;
             }
           }
