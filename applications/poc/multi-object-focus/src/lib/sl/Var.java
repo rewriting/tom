@@ -1,6 +1,6 @@
 package lib.sl;
 
-import lib.MOFException;
+import tom.library.sl.VisitFailure;
 import lib.Zip;
 import lib.Fun;
 

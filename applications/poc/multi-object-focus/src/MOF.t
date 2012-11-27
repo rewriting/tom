@@ -40,7 +40,7 @@ public class MOF {
       */
 
     public static Visitor<Visitable,Visitable> v = Visitor.map( new Fun<Visitable,Visitable>() {
-        public Visitable apply(Visitable u) throws MOFException {
+        public Visitable apply(Visitable u) throws VisitFailure {
 
             /*
              The match is only defined on Term and NOT String, so we fail on String!
@@ -48,7 +48,7 @@ public class MOF {
              and Term.
               */
 
-            if (!(u instanceof Expr)) throw new MOFException();
+            if (!(u instanceof Expr)) throw new VisitFailure();
 
             /*
              Now that we are on terms, we can match.
@@ -58,10 +58,10 @@ public class MOF {
                 M(I(x),I(y)) -> { return `I(x * y);                               }
 
             };
-            throw new MOFException();
+            throw new VisitFailure();
         }});
 
-    public static void runExpr() throws MOFException {
+    public static void runExpr() throws VisitFailure {
         System.out.println("<Expr>\n");
 
         /*
@@ -135,7 +135,7 @@ public class MOF {
      */
     public static Visitor<P<Visitable,Visitable>, P<Visitable,Visitable>> vtree = Visitor.map(
         new Fun<P<Visitable,Visitable>, P<Visitable,Visitable>>() {
-        public P<Visitable,Visitable> apply(P<Visitable,Visitable> u) throws MOFException {
+        public P<Visitable,Visitable> apply(P<Visitable,Visitable> u) throws VisitFailure {
             /*
              The match on the two focuses
              */
@@ -146,13 +146,13 @@ public class MOF {
                                                                                                       );
                                                                                         }
             };
-            throw new MOFException();
+            throw new VisitFailure();
         }});
 
 
 
 
-    public static void runTree() throws MOFException {
+    public static void runTree() throws VisitFailure {
         System.out.println("<Tree>\n");
         System.out.println("<exampleDepth>" + exampleDepth + "</exampleDepth>\n");
         System.out.println("<leftSide>"     + leftSide     + "</leftSide>\n");
@@ -199,7 +199,7 @@ public class MOF {
          xml node of the zipper toString.
           */
         try                    { showresult(wtree.visit(exampleTree)); }
-        catch (MOFException e) { System.out.print("<stategy-failed/>") ; }
+        catch (VisitFailure e) { System.out.print("<stategy-failed/>") ; }
 
         System.out.println("</Tree>\n");
     }
@@ -216,7 +216,7 @@ public class MOF {
      */
     public static Visitor<P<Visitable,Visitable>, P<Visitable,Visitable>> vorder = Visitor.map(
             new Fun<P<Visitable,Visitable>, P<Visitable,Visitable>>() {
-                public P<Visitable,Visitable> apply(P<Visitable,Visitable> u) throws MOFException {
+                public P<Visitable,Visitable> apply(P<Visitable,Visitable> u) throws VisitFailure {
                     /*
                     The match on the two focuses
                     */
@@ -227,11 +227,11 @@ public class MOF {
                                                                                     );
                         }
                     };
-                    throw new MOFException();
+                    throw new VisitFailure();
                 }});
 
 
-    public static void runOrder() throws MOFException {
+    public static void runOrder() throws VisitFailure {
         System.out.println("<Order>\n");
         System.out.println("<exampleDepth>" + exampleDepth + "</exampleDepth>\n");
         System.out.println("<exampleTree>"  + exampleTree  + "</exampleTree>\n");
@@ -256,7 +256,7 @@ public class MOF {
          xml node of the zipper toString.
           */
         try                    { showresult(visitor.visit(exampleTree)); }
-        catch (MOFException e) { System.out.print("<stategy-failed/>") ; }
+        catch (VisitFailure e) { System.out.print("<stategy-failed/>") ; }
 
         System.out.println("</Order>\n");
     }
@@ -304,7 +304,7 @@ public class MOF {
 
     public static Visitor<Visitable,Visitable> groundEval = Visitor.map(
             new Fun<Visitable,Visitable>() {
-                public Visitable apply(Visitable u) throws MOFException {
+                public Visitable apply(Visitable u) throws VisitFailure {
                     /*
                     The match on the two focuses
                     */
@@ -314,14 +314,14 @@ public class MOF {
                       Mult(Val(x),Val(y)) -> { return `Val(x * y); }
 
                     };
-                    throw new MOFException();
+                    throw new VisitFailure();
                 }}).trace("groundEval");
 
 
     public static Visitor<Visitable,Visitable> groundEvalModulo(final int n) {
             return Visitor.map(
             new Fun<Visitable,Visitable>() {
-                public Visitable apply(Visitable u) throws MOFException {
+                public Visitable apply(Visitable u) throws VisitFailure {
                     /*
                     The match on the two focuses
                     */
@@ -331,7 +331,7 @@ public class MOF {
                         Mult(Val(x),Val(y)) -> { return `Val((x * y) % n); }
 
                     };
-                    throw new MOFException();
+                    throw new VisitFailure();
                 }}).trace("groundEval");
     }
 
@@ -339,7 +339,7 @@ public class MOF {
 
     public static Visitor<P<Visitable,Visitable>, P<Visitable,Visitable>> varEval = Visitor.map(
             new Fun<P<Visitable,Visitable>, P<Visitable,Visitable>>() {
-                public P<Visitable,Visitable> apply(P<Visitable,Visitable> u) throws MOFException {
+                public P<Visitable,Visitable> apply(P<Visitable,Visitable> u) throws VisitFailure {
                     /*
                     The match on the two focuses
                     */
@@ -351,13 +351,13 @@ public class MOF {
                                              );
                         }
                     };
-                    throw new MOFException();
+                    throw new VisitFailure();
                 }}).trace("varEval");
 
 
     public static Visitor<P<Visitable,Visitable>, P<Visitable,Visitable>> stmtEval = Visitor.map(
             new Fun<P<Visitable,Visitable>, P<Visitable,Visitable>>() {
-                public P<Visitable,Visitable> apply(P<Visitable,Visitable> u) throws MOFException {
+                public P<Visitable,Visitable> apply(P<Visitable,Visitable> u) throws VisitFailure {
                     /*
                     The match on the two focuses
                     */
@@ -369,7 +369,7 @@ public class MOF {
                                             );
                         }
                     };
-                    throw new MOFException();
+                    throw new VisitFailure();
                 }}).trace("stmtEval");
 
 
@@ -397,7 +397,7 @@ public class MOF {
     }
 
 
-    public static void runMSOS() throws MOFException {
+    public static void runMSOS() throws VisitFailure {
         System.out.println("<MSOS>\n");
         System.out.println("<examplePgrm>"  + examplePgrm  + "</examplePgrm>\n");
 
@@ -412,7 +412,7 @@ public class MOF {
 
               Ce qui donne bien que All a appliquer Print sur la tete et la queue de examplePgrm
          */
-        Visitable prog  = ConsWrapper.mk(examplePgrm);
+        Visitable prog  = examplePgrm;
         Mem mem         = `Mem();
 
         try { `All(Print()).visit(mem); }
@@ -441,7 +441,7 @@ public class MOF {
 
         try                    { showresult(realStmtEval.visit(P.mkP( prog , (Visitable)mem )));
                                }
-        catch (MOFException e) { System.out.print("<stategy-failed/>") ; }
+        catch (VisitFailure e) { System.out.print("<stategy-failed/>") ; }
 
         System.out.println("</Z>\n");
 
@@ -464,7 +464,7 @@ public class MOF {
 
         try                    { showresult(realStmtEvalModulo.visit(P.mkP( prog , (Visitable)mem )));
                                }
-        catch (MOFException e) { System.out.print("<stategy-failed/>") ; }
+        catch (VisitFailure e) { System.out.print("<stategy-failed/>") ; }
 
 
         System.out.println("</Z" + modulo + ">\n");
@@ -473,7 +473,7 @@ public class MOF {
     }
 
 
-    public static void run() throws MOFException {
+    public static void run() throws VisitFailure {
         System.out.println("<MOF-POC>\n\n");
         runExpr();
         runTree();
