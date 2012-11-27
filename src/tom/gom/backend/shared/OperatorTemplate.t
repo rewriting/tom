@@ -1113,7 +1113,7 @@ private void generateEnum(java.io.Writer writer) throws java.io.IOException {
           if (object_children[i] instanceof tom.library.sl.Visitable) {
             children[i] = (tom.library.sl.Visitable) object_children[i];
           } else {
-            children[i] = new tom.library.sl.VisitableBuiltin(children[i]);
+            children[i] = new tom.library.sl.VisitableBuiltin(object_children[i]);
           }
         }
         return children;

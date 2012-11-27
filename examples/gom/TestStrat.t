@@ -66,13 +66,13 @@ public class TestStrat {
     } catch (VisitFailure e) {
       Assert.fail("catched VisitFailure");
     }
-    Assert.assertEquals(result.toString(),"conc(4,3,3)");
+    Assert.assertEquals("conc(5,3,2)",result.toString());
   }
 
   @Test
   public void testBottomUp() {
     VList subject = genere(max);
-    Strategy rule = new RewriteSystem();
+    Strategy rule = new RewriteSystem2();
     VList result = null;
     try {
       result = `BottomUp(Try(rule)).visit(subject);
@@ -106,4 +106,25 @@ public class TestStrat {
       throw new VisitFailure();
     }
   }
+
+  class RewriteSystem2 extends tom.library.sl.AbstractStrategyBasic {
+    public RewriteSystem2() {
+      super(`Fail());
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T visitLight(T v, Introspector i) throws VisitFailure {
+        if (v != null && v instanceof VisitableBuiltin) {
+          Integer value = ((VisitableBuiltin<Integer>) v).getBuiltin();
+          //System.out.println(" value "+value);
+          if (value != null) {
+            return (T) new VisitableBuiltin<Integer>(value+1);
+          }
+      }
+      //fail
+      throw new VisitFailure();
+    }
+
+  }
+
 }
