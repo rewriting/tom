@@ -65,7 +65,7 @@ public class TestPolygraphes {
 	c0(g("dup",1,2),id(1)),
 	c0(id(1),g("suc",1,1),g("suc",1,1)),
 	c0(g("suc",1,1),g("add",2,1)));
-    assertTrue(res == expectedRes);
+    assertEquals(expectedRes,res);
   }
     
 }

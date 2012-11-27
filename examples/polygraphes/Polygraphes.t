@@ -98,12 +98,37 @@ public class Polygraphes {
 
   public static TwoPath computeNF(TwoPath res) {
     try {
-      res = (TwoPath) `Repeat(OnceTopDown(Splitting())).visit(res);
-      res = (TwoPath) `Repeat(OnceTopDown(Gravity())).visit(res);
+      res = (TwoPath)
+        `Repeat(mu(MuVar("x"),Choice(Splitting(),CombOne(MuVar("x"))))).visitLight(res);
+      res = (TwoPath)
+        `Repeat(mu(MuVar("x"),Choice(Gravity(),CombOne(MuVar("x"))))).visitLight(res);
     } catch(VisitFailure e) {
       throw new tom.engine.exception.TomRuntimeException("strange term: " + res);
     }
     return res;
+  }
+
+  %strategy CombOne(s: Strategy) extends One(s) {
+    visit TwoPath {
+      c0(head,tail*) -> {
+        try {
+          TwoPath newhead = s.visitLight(`head);
+          return `c0(newhead, tail*);
+        } catch (VisitFailure e) {
+          TwoPath newtail = s.visitLight(`tail);
+          return `c0(head, newtail*);
+        }
+      }
+      c1(head,tail*) -> {
+        try {
+          TwoPath newhead = s.visitLight(`head);
+          return `c1(newhead, tail*);
+        } catch (VisitFailure e) {
+          TwoPath newtail = s.visitLight(`tail);
+          return `c1(head, newtail*);
+        }
+      }
+    }
   }
 
   %strategy Print() extends Identity() {
@@ -159,6 +184,7 @@ public class Polygraphes {
       */
     }
   }
+
 
   %strategy Gravity() extends Fail() {
     visit TwoPath {
