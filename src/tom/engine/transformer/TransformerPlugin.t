@@ -177,12 +177,17 @@ public class TransformerPlugin extends TomGenericPlugin {
 
     HashSet<String> withNameSet = new HashSet<String>();
     HashSet<String> toNameSet = new HashSet<String>();
+      
+    //used for modular prototype
+    HashSet<Instruction> resolveSet = new HashSet<Instruction>();
     try {
       //This strategy call makes lots of side effects:
       //- on resolveNameSet
       //- on result (add created declarations)
       //- on withNameSet and on toNameSet
-      `TopDown(GenResolveElement(this,resolveNameSet,result,withNameSet,toNameSet)).visitLight(elemTransfoList);
+      //
+      //- resolveSet
+      `TopDown(GenResolveElement(this,resolveNameSet,result,withNameSet,toNameSet,resolveSet)).visitLight(elemTransfoList);
     } catch (VisitFailure e) {
       throw new TomRuntimeException("TransformerPlugin.GenResolveElement: fail on " + transfo);
     }
@@ -244,10 +249,18 @@ public class TransformerPlugin extends TomGenericPlugin {
       e.printStackTrace();
     }
     //Generation of Resolve strategy
+    //TODO: remove bqlist because it is useless
     Declaration resolveStratDecl = `buildResolveStrat(transfoName, bqlist,
         transfoSymbol, rsblist, resolveNameList, fileFrom, fileTo, orgTrack);
+
     //add it to DeclarationList
     result.add(resolveStratDecl);
+
+    Declaration elementaryResolves = buildModularResolveStrat(resolveSet,
+        transfoSymbol, resolveNameList, fileFrom, fileTo, orgTrack);
+
+    result.add(elementaryResolves);
+
     //TODO: test hook
     //result.add(inverseLinks);
 
@@ -607,35 +620,38 @@ public class TransformerPlugin extends TomGenericPlugin {
 
     %match(rsbList) {
       concResolveStratBlock(_*,ResolveStratBlock(tname,rseList),_*) -> {
+        //we build here visit blocks
         TomType ttype = `Type(concTypeOption(),tname,EmptyTargetLanguageType());
         //TODO: to check
         List<ConstraintInstruction> ciList = new LinkedList<ConstraintInstruction>();
+        //we build here pattern->action blocks
         %match(rseList) {
           // "wName" is no longer useful -> signature to change
           concResolveStratElement(_*,ResolveStratElement(wname,rot),_*) -> {
+            //left-hand side (pattern) is built here
             int rline = `rot.getLine();
             String rfileName = `rot.getFileName();
             Slot sloto = genPairSlotAppl(TransformerPlugin.RESOLVE_ELEMENT_ATTRIBUTE_O, rline, rfileName);
             Slot slotname = genPairSlotAppl(TransformerPlugin.RESOLVE_ELEMENT_ATTRIBUTE_NAME, rline, rfileName);
-            
+
             TomTerm pattern = `RecordAppl(
                 concOption(rot),
                 concTomName(rot.getAstName()),
                 concSlot(sloto,slotname),
                 concConstraint(
-                    AliasTo(
-                      Variable(
-                        concOption(OriginTracking(
-                            Name("tom__resolve"),
-                            rot.getLine(),
-                            rot.getFileName())),
-                        Name("tom__resolve"),
-                        getSymbolTable().TYPE_UNKNOWN,
-                        concConstraint()
-                        )
+                  AliasTo(
+                    Variable(
+                      concOption(OriginTracking(
+                          Name("tom__resolve"),
+                          rot.getLine(),
+                          rot.getFileName())),
+                      Name("tom__resolve"),
+                      getSymbolTable().TYPE_UNKNOWN,
+                      concConstraint()
                       )
                     )
-                  );
+                  )
+                );
             //getSymbolTable().TYPE_UNKNOWN <->
             //Type(concTypeOption(),"unknown type",EmptyTargetLanguageType()),
 
@@ -648,13 +664,13 @@ public class TransformerPlugin extends TomGenericPlugin {
             TomName firstArgument = TomBase.getSlotName(transformationSymbol,0);
             TomName secondArgument = TomBase.getSlotName(transformationSymbol,1);
             TomType firstArgType = TomBase.getSlotType(transformationSymbol,firstArgument);
+            //build BQTerm for instruction that retrieve element by using links model
             BQTerm link = `BQVariable(concOption(),firstArgument,firstArgType);
             BQTerm res = `BQVariable(concOption(),Name("res"),ttype);
             BQTerm first = `BQVariable(concOption(),Name(TransformerPlugin.RESOLVE_ELEMENT_ATTRIBUTE_O),SymbolTable.TYPE_UNKNOWN);
             BQTerm second = `BQVariable(concOption(),Name(TransformerPlugin.RESOLVE_ELEMENT_ATTRIBUTE_NAME),SymbolTable.TYPE_UNKNOWN);
             //replace ITL() by FunctionCall()?
             //to change: language specific
-            //Instruction referenceStatement = `LetRef(res,
             Instruction referenceStatement = `AbstractBlock(concInstruction(
                   CodeToInstruction(TargetLanguageToCode(ITL(TomBase.getTLType(getSymbolTable().getType(tname))))),
                   Assign(res,
@@ -668,11 +684,12 @@ public class TransformerPlugin extends TomGenericPlugin {
                           )))
                     )
                   ));
-
+            //build `resolveInverseLinks(tom__arg, res, model)
             BQTerm model = `BQVariable(concOption(),secondArgument,SymbolTable.TYPE_UNKNOWN);
             Instruction resolveStatement = `BQTermToInstruction(FunctionCall(
                   Name(TransformerPlugin.RESOLVE_INVERSE_LINK_FUNCTION), getSymbolTable().getVoidType(),
                   concBQTerm(subject,res,model)));
+            //build return res;
             Instruction returnStatement = `Return(Composite(CompositeTL(ITL("res"))));
             /*referenceStatement,*/ 
             InstructionList instructions = `concInstruction(referenceStatement,resolveStatement, CodeToInstruction(TargetLanguageToCode(ITL(";"))), returnStatement);
@@ -818,9 +835,9 @@ public class TransformerPlugin extends TomGenericPlugin {
   }
 
 
-  %strategy GenResolveElement(transformer:TransformerPlugin,resolveNameSet:HashSet,result:List,withNameSet:HashSet,toNameSet:HashSet) extends Identity() {
+  %strategy GenResolveElement(transformer:TransformerPlugin,resolveNameSet:HashSet,result:List,withNameSet:HashSet,toNameSet:HashSet,resolveSet:HashSet) extends Identity() {
     visit Instruction {
-      Resolve[Src=sname,SType=stypename,Target=tname,TType=ttypename,OrgTrack=ot] -> {
+      r@Resolve[Src=sname,SType=stypename,Target=tname,TType=ttypename,OrgTrack=ot] -> {
         String resolveStringName = transformer.RESOLVE_ELEMENT_PREFIX+`stypename+`ttypename;
         int line = `ot.getLine();
         String fileName = `ot.getFileName();
@@ -829,6 +846,9 @@ if(!resolveNameSet.contains(resolveStringName)) {
         //used for generation of ResolveStratElement and ResolveStratBlock
         withNameSet.add(`stypename);
         toNameSet.add(`ttypename);
+
+        //used for modular prototype
+        resolveSet.add(`r);
 
         DeclarationList resolveTTDecl= `concDeclaration(
             IsSortDecl(
@@ -983,6 +1003,195 @@ if(!resolveNameSet.contains(resolveStringName)) {
     }
     //well, nothing better?
     return null;
+  }
+
+  /*
+   * Prototype of modular resolve strategy there is a lot of code dupplication
+   */
+  private Declaration buildModularResolveStrat(HashSet<Instruction> resolveSet, TomSymbol
+      transformationSymbol, TomNameList resolveNameList, String fileFrom,
+      String fileTo, Option ot) {
+    //elementaty resolve + symbol
+    List<Declaration> resolveList = new LinkedList<Declaration>();
+
+
+    List<TomVisit> visitList = new LinkedList<TomVisit>();
+    List<ConstraintInstruction> ciList = new LinkedList<ConstraintInstruction>();
+    //for each elementary resolve
+    for(Instruction resolve:resolveSet) {
+
+      // elementary resolve startegy
+
+      String sType = resolve.getSType();
+      String tType = resolve.getTType();
+      String resolveStringName =
+        TransformerPlugin.RESOLVE_ELEMENT_PREFIX+sType+tType;
+
+      //create pattern->action block
+      //create pattern: tom__arg@ResolveWorkDefinitionPlace[o=o,name=name] -> 
+
+      Option rot = `OriginTracking(Name(resolveStringName),ot.getLine(),ot.getFileName());
+
+      int rline = `rot.getLine();
+      String rfileName = `rot.getFileName();
+      Slot sloto = genPairSlotAppl(TransformerPlugin.RESOLVE_ELEMENT_ATTRIBUTE_O, rline, rfileName);
+      Slot slotname = genPairSlotAppl(TransformerPlugin.RESOLVE_ELEMENT_ATTRIBUTE_NAME, rline, rfileName);
+
+      TomTerm pattern = `RecordAppl(
+          concOption(rot),
+          concTomName(rot.getAstName()),
+          concSlot(sloto,slotname),
+          concConstraint(
+            AliasTo(
+              Variable(
+                concOption(OriginTracking(
+                    Name("tom__resolve"),
+                    rline,
+                    rfileName)),
+                Name("tom__resolve"),
+                getSymbolTable().TYPE_UNKNOWN,
+                concConstraint()
+                )
+              )
+            )
+          );
+
+      TomType ttype = `Type(concTypeOption(),tType,EmptyTargetLanguageType());
+
+      //create "Place res = (Place) tom__linkClass.get(`o).get(`name);"
+      BQTerm subject = `BQVariable(concOption(),Name("tom__arg"),ttype);
+      Constraint constraint = `AndConstraint(TrueConstraint(),
+          MatchConstraint(pattern,subject,ttype));
+      TomName firstArgument = TomBase.getSlotName(transformationSymbol,0);
+      TomName secondArgument = TomBase.getSlotName(transformationSymbol,1);
+      TomType firstArgType = TomBase.getSlotType(transformationSymbol,firstArgument);
+
+      BQTerm link = `BQVariable(concOption(),firstArgument,firstArgType);
+      BQTerm res = `BQVariable(concOption(),Name("res"),ttype);
+      BQTerm first = `BQVariable(concOption(),Name(TransformerPlugin.RESOLVE_ELEMENT_ATTRIBUTE_O),SymbolTable.TYPE_UNKNOWN);
+      BQTerm second = `BQVariable(concOption(),Name(TransformerPlugin.RESOLVE_ELEMENT_ATTRIBUTE_NAME),SymbolTable.TYPE_UNKNOWN);
+      //replace ITL() by FunctionCall()?
+      //to change: language specific
+      Instruction referenceStatement = `AbstractBlock(concInstruction(
+            CodeToInstruction(TargetLanguageToCode(ITL(TomBase.getTLType(getSymbolTable().getType(tType))))),
+            Assign(res,
+              Cast(ttype,BQTermToExpression(Composite(
+                    CompositeBQTerm(link),
+                    CompositeTL(ITL(".get(")),
+                    CompositeBQTerm(first),
+                    CompositeTL(ITL(").get(")),
+                    CompositeBQTerm(second),
+                    CompositeTL(ITL(")"))
+                    )))
+              )
+            ));
+      BQTerm model = `BQVariable(concOption(),secondArgument,SymbolTable.TYPE_UNKNOWN);
+      Instruction resolveStatement = `BQTermToInstruction(FunctionCall(
+            Name(TransformerPlugin.RESOLVE_INVERSE_LINK_FUNCTION), getSymbolTable().getVoidType(),
+            concBQTerm(subject,res,model)));
+
+      //create "return res;"
+      Instruction returnStatement = `Return(Composite(CompositeTL(ITL("res"))));
+
+      InstructionList instructions = `concInstruction(referenceStatement,resolveStatement, CodeToInstruction(TargetLanguageToCode(ITL(";"))), returnStatement);
+      ciList.add(`ConstraintInstruction(constraint, AbstractBlock(instructions),concOption(rot)));
+
+      //creates VisitTerm: one for each elementary resolve strategy (one for each
+      //type of resolve)
+      visitList.add(`VisitTerm(ttype,
+            ASTFactory.makeConstraintInstructionList(ciList),
+            concOption(ot)));
+
+      ciList.clear(); //reset ConstraintInstructionList
+
+      //strategy name
+      String stringRSname =
+        TransformerPlugin.STRAT_RESOLVE_PREFIX+sType+tType;
+      TomName rsname = `Name(stringRSname);
+
+      //extends BQTerm
+      BQTerm extendsTerm = `BQAppl(concOption(ot),Name("Identity"),concBQTerm());
+      //visit list
+      TomVisitList astVisitList = `ASTFactory.makeTomVisitList(visitList);
+      visitList.clear(); // reset visit list as an elementary resolve should only have one visit
+      //option
+      int line = ot.getLine();
+      String fileName = ot.getFileName();
+      Option orgTrack = `OriginTracking(Name("Strategy"),line,fileName);
+      //"hook" inverselinks: to change ???
+      Declaration inverseLinks = `ResolveInverseLinksDecl(resolveNameList,fileFrom,fileTo);
+
+      Declaration resolveStrat = `Strategy(rsname, extendsTerm, astVisitList,
+          concDeclaration(inverseLinks), orgTrack);
+
+      ///////
+      //corresponding symbol
+      List<Option> options = new LinkedList<Option>();
+      options.add(ot);
+      //definition of make.
+      //code generation of IsFsymDecl
+      TomType strategyType = `Type(concTypeOption(),"Strategy",EmptyTargetLanguageType());
+      /* Arguments of the strategy. For the moment, nothing, but it will be
+         necessary */
+      BQTermList makeArgs = `concBQTerm();
+      BQTermList params = `concBQTerm();
+      //parameters
+      String makeTlCode = "new "+stringRSname+"(";
+      int index = 0;
+      TomTypeList transfoDomain = TomBase.getSymbolDomain(transformationSymbol);
+      TomTypeList makeTypes = transfoDomain; //`concTomType();
+      while(!makeTypes.isEmptyconcTomType()) {
+        String argName = "t"+index;
+        if (index>0) {//if many parameters
+          makeTlCode = makeTlCode.concat(",");
+        }
+        makeTlCode += argName;
+
+        BQTerm arg = `BQVariable(concOption(),Name(argName),makeTypes.getHeadconcTomType());
+        makeArgs = `concBQTerm(makeArgs*,arg);
+        params = `concBQTerm(params*,Composite(CompositeBQTerm(arg)));//build part of CompositeBQTerm
+
+        makeTypes = makeTypes.getTailconcTomType();
+        index++;
+      }
+      makeTlCode += ")";
+      //should not be ot, since the line number is different, but here, we use ot
+      Option makeOption = `OriginTracking(rsname,line,fileName);
+
+      Declaration makeDecl = `MakeDecl(rsname, strategyType, makeArgs,
+          CodeToInstruction(TargetLanguageToCode(ITL(makeTlCode))), makeOption);
+      options.add(`DeclarationToOption(makeDecl));
+
+      //definition of the is_fsym method.
+      //should not be ot, since the line number is different, but here, we use ot
+      Option fsymOption = `OriginTracking(rsname,line,fileName);
+      String varname = "t";
+      BQTerm fsymVar = `BQVariable(concOption(fsymOption),Name(varname),strategyType);
+      String code = ASTFactory.abstractCode("($"+varname+" instanceof "+stringRSname+")",varname);
+      Declaration fsymDecl = `IsFsymDecl(rsname,fsymVar,Code(code),fsymOption);
+      options.add(`DeclarationToOption(fsymDecl));
+
+      //TomType transfoCodomain = TomBase.getSymbolCodomain(transformationSymbol);
+      //types <-> `concTomType() (no param)
+      //slots <-> `concPairNameDecl() (no param)
+      //PairNameDeclList paramDecl = transformationSymbol.getPairNameDeclList();
+
+      PairNameDeclList paramDecl =
+        genStratPairNameDeclListFromTransfoSymbol(rsname,transformationSymbol);
+
+      //////
+      TomSymbol astSymbol = ASTFactory.makeSymbol(stringRSname, strategyType,
+          transfoDomain, paramDecl, options);
+      getSymbolTable().putSymbol(stringRSname,astSymbol);
+
+      //add newly created resolve strategy to declaration list
+      resolveList.add(resolveStrat);
+      //add newly created symbol to declaration list
+      resolveList.add(`SymbolDecl(rsname));
+    }
+    //return `AbstractDecl(resolveList);
+    return `AbstractDecl(ASTFactory.makeDeclarationList(resolveList));
+    //return resolveList;
   }
 
 }//class
