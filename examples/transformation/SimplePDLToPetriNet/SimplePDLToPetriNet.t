@@ -215,13 +215,33 @@ public class SimplePDLToPetriNet {
 
       //NOTE: force the user to give the link as first parameter, and target
       //model as second one
+
+      //Monolithic version
+      /*System.out.println("Monolithic version");
       Strategy transformer = `SimplePDLToPetriNet(translator.tom__linkClass,translator.pn);
       transformer.visit(p_root, new EcoreContainmentIntrospector());
       `TopDown(tom__StratResolve_SimplePDLToPetriNet(translator.tom__linkClass,translator.pn)).visit(translator.pn, new EcoreContainmentIntrospector());
+      */
+
+     //modular version
+      System.out.println("Modular version");
+
+      Strategy transformer = `TopDown(Sequence(
+            WD2PN(translator.tom__linkClass,translator.pn),
+            P2PN(translator.tom__linkClass,translator.pn),
+            WS2PN(translator.tom__linkClass,translator.pn))
+          );
+      transformer.visit(p_root, new EcoreContainmentIntrospector());
+
+      Strategy resolve = `TopDown(Sequence(
+            tom__StratResolve_WorkDefinitionPlace(translator.tom__linkClass,translator.pn),
+            tom__StratResolve_WorkDefinitionTransition(translator.tom__linkClass,translator.pn),
+            tom__StratResolve_ProcessTransition(translator.tom__linkClass,translator.pn)
+            ));
+      resolve.visit(translator.pn, new EcoreContainmentIntrospector());
 
       System.out.println("\nResult");
       `Sequence(TopDown(PrintTransition()),TopDown(PrintPlace())).visit(translator.pn, new EcoreContainmentIntrospector());
-
 
       //let's save the resulting model
       System.out.println("\nBacking up into petrinet_process.xmi");
