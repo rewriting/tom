@@ -641,33 +641,20 @@ import @prefix@.types.@`name.toLowerCase()@.Path@`name@;
 
   %strategy PathForPattern() extends Identity(){
     visit Term {
-      //treatment for the first rise
-      PathTerm(-1,tail*) -> {
-        return `PathForPattern().visit(`tail);
-      }
-
-      //detect rises into a TermList comb and remove it
-      PathTerm(sublist@!PathTerm(_*,!-2,_*),-1,tail*) && (!PathTerm()<<sublist)-> {
-        //TODO: avoid the compilation warning
-        // because it generates a  disjunction which is not fully supported with associative operators
-        int upcount = `sublist.length();
-        Term newtail = `PathForPattern().visit(`tail);
-        return `PathTerm(-upcount,newtail*);
-      }
-
-      // special treatment for the last rise into a TermList to the root
-      //PathTerm()<<tail cooresponds to cycle
-      PathTerm(sublist@!PathTerm(_*,!-2,_*),tail*) && (PathTerm(1,_*)<<tail || PathTerm(2,_*)<<tail || PathTerm()<<tail) && (!PathTerm()<<sublist) -> {
-        int downcount = `sublist.length();
-        Term newtail = `PathForPattern().visit(`tail*);
-        return `PathTerm(-downcount,newtail*);
-      }
-
-      //detect descents into a TermList comb and remove it
-      PathTerm(sublist@!PathTerm(_*,!2,_*),1,tail*) && (!PathTerm()<<sublist)-> {
-        int downcount = `sublist.length();
-        Term newtail = `PathForPattern().visit(`tail);
-        return `PathTerm(downcount,newtail*);
+      PathTerm(x,y,tail*) -> {
+        if (`x<0 & `y==-2) {
+          //detect a rise in a TermList to elimnate
+          Term newtail = `PathForPattern().visit(`tail);
+          return `PathTerm(x,newtail*);
+        } else if (`x==2 && `y>0) {
+          //detect a descent in a TermList to elimnate
+          Term newtail = `PathForPattern().visit(`tail);
+          return `PathTerm(y,newtail*);
+        } else {
+          //default case
+          Term newtail = `PathForPattern().visit(`tail);
+          return `PathTerm(x,y,newtail*);
+        }
       }
     }
   }
