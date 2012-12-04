@@ -642,7 +642,7 @@ import @prefix@.types.@`name.toLowerCase()@.Path@`name@;
   %strategy PathForPattern() extends Identity(){
     visit Term {
       PathTerm(x,y,tail*) -> {
-        if (`x<0 & `y==-2) {
+        if (`x<0 && `y==-2) {
           //detect a rise in a TermList to elimnate
           Term newtail = `PathForPattern().visit(`tail);
           return `PathTerm(x,newtail*);
