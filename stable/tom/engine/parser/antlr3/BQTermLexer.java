@@ -1,4 +1,4 @@
-// $ANTLR 3.2 Sep 23, 2009 12:02:23 /Users/balland/tmp/tom/src/tom/engine/parser/antlr3/BQTermLexer.g 2012-12-05 08:46:14
+// $ANTLR 3.2 Sep 23, 2009 12:02:23 /Users/balland/tmp/tom/src/tom/engine/parser/antlr3/BQTermLexer.g 2012-12-05 11:57:25
 
 package tom.engine.parser.antlr3;
 
