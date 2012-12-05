@@ -108,10 +108,10 @@ public class ToolBox {
       map.put(accessObj[i],accessFlags[i]);
     }
 
-    {{if ( (list instanceof tom.library.adt.bytecode.types.AccessList) ) {if ( (((( tom.library.adt.bytecode.types.AccessList )(( tom.library.adt.bytecode.types.AccessList )list)) instanceof tom.library.adt.bytecode.types.accesslist.ConsAccessList) || ((( tom.library.adt.bytecode.types.AccessList )(( tom.library.adt.bytecode.types.AccessList )list)) instanceof tom.library.adt.bytecode.types.accesslist.EmptyAccessList)) ) { tom.library.adt.bytecode.types.AccessList  tomMatch738_end_4=(( tom.library.adt.bytecode.types.AccessList )list);do {{if (!( tomMatch738_end_4.isEmptyAccessList() )) {
+    {{if ( (list instanceof tom.library.adt.bytecode.types.AccessList) ) {if ( (((( tom.library.adt.bytecode.types.AccessList )(( tom.library.adt.bytecode.types.AccessList )list)) instanceof tom.library.adt.bytecode.types.accesslist.ConsAccessList) || ((( tom.library.adt.bytecode.types.AccessList )(( tom.library.adt.bytecode.types.AccessList )list)) instanceof tom.library.adt.bytecode.types.accesslist.EmptyAccessList)) ) { tom.library.adt.bytecode.types.AccessList  tomMatch744_end_4=(( tom.library.adt.bytecode.types.AccessList )list);do {{if (!( tomMatch744_end_4.isEmptyAccessList() )) {
 
-        value = value | (map.get( tomMatch738_end_4.getHeadAccessList() )).intValue();
-      }if ( tomMatch738_end_4.isEmptyAccessList() ) {tomMatch738_end_4=(( tom.library.adt.bytecode.types.AccessList )list);} else {tomMatch738_end_4= tomMatch738_end_4.getTailAccessList() ;}}} while(!( (tomMatch738_end_4==(( tom.library.adt.bytecode.types.AccessList )list)) ));}}}}
+        value = value | (map.get( tomMatch744_end_4.getHeadAccessList() )).intValue();
+      }if ( tomMatch744_end_4.isEmptyAccessList() ) {tomMatch744_end_4=(( tom.library.adt.bytecode.types.AccessList )list);} else {tomMatch744_end_4= tomMatch744_end_4.getTailAccessList() ;}}} while(!( (tomMatch744_end_4==(( tom.library.adt.bytecode.types.AccessList )list)) ));}}}}
 
     return value;   
   }

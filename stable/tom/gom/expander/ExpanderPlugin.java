@@ -79,12 +79,7 @@ public class ExpanderPlugin extends GomGenericPlugin {
     boolean intermediate = getOptionBooleanValue("intermediate");
     Expander expander = new Expander(getGomEnvironment());
     modules = expander.expand(module);
-    // for the moment, symbol table is only initialized for termgraph and freshgom
-    if (getOptionBooleanValue("termgraph")
-        || getOptionBooleanValue("termpointer")
-        || getOptionBooleanValue("fresh")) {
-      getGomEnvironment().initSymbolTable(modules);
-    }
+    getGomEnvironment().initSymbolTable(modules);
     if (null == modules) {
       GomMessage.error(getLogger(),
           getStreamManager().getInputFileName(),0,
