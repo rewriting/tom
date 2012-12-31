@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
@@ -63,7 +64,7 @@ import fr.loria.eclipse.jtom.JtomPlugin;
  * @author julien
  */
 public class TomBuilder extends IncrementalProjectBuilder implements
-IResourceDeltaVisitor, IResourceVisitor {
+		IResourceDeltaVisitor, IResourceVisitor {
 
 	private static HashMap<IResource, RuntimeAlert> errorMap = new HashMap<IResource, RuntimeAlert>();
 
@@ -75,10 +76,10 @@ IResourceDeltaVisitor, IResourceVisitor {
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.core.internal.events.InternalBuilder#build(int,
-	 *      java.util.Map, org.eclipse.core.runtime.IProgressMonitor)
+	 * java.util.Map, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor)
-	throws CoreException {
+			throws CoreException {
 		if (kind == IncrementalProjectBuilder.FULL_BUILD) {
 			fullBuild(monitor);
 		} else {
@@ -93,7 +94,7 @@ IResourceDeltaVisitor, IResourceVisitor {
 	}
 
 	protected void fullBuild(final IProgressMonitor monitor)
-	throws CoreException {
+			throws CoreException {
 		getProject().accept(this /* as a IResourceVisitor */);
 	}
 
@@ -105,8 +106,8 @@ IResourceDeltaVisitor, IResourceVisitor {
 
 	public boolean visit(IResource resource) throws CoreException {
 		IPath path = resource.getFullPath();
-		String tomExt = JtomPlugin.getDefault().getPreferenceStore().getString(
-				JtomPlugin.TOM_EXTENSION_PREFERENCE);
+		String tomExt = JtomPlugin.getDefault().getPreferenceStore()
+				.getString(JtomPlugin.TOM_EXTENSION_PREFERENCE);
 		if (tomExt.equals(path.getFileExtension())) {
 			// Only build if the resource is included as a source CLASSPATH.
 			IJavaProject jProject = JavaCore.create(getProject());
@@ -116,8 +117,8 @@ IResourceDeltaVisitor, IResourceVisitor {
 				IResource lookedResource = resource.getParent();
 				while (packageFragmentRoot == null) {
 					packageFragmentRoot = jProject
-					.findPackageFragmentRoot(lookedResource
-							.getFullPath());
+							.findPackageFragmentRoot(lookedResource
+									.getFullPath());
 					lookedResource = lookedResource.getParent();
 					if (!jProject.isOnClasspath(lookedResource)) {
 						break;
@@ -154,23 +155,23 @@ IResourceDeltaVisitor, IResourceVisitor {
 			try {
 				QualifiedName qName = new QualifiedName(
 						JtomPlugin.USE_CUSTOM_COMMAND_PROPERTY, resource
-						.getLocation().toString());
+								.getLocation().toString());
 				String commandType = resource.getPersistentProperty(qName);
 				if (commandType == null || commandType.equals("true")) {
 					qName = new QualifiedName(
 							JtomPlugin.CUSTOM_COMMAND_PROPERTY, resource
-							.getLocation().toString());
+									.getLocation().toString());
 					command = resource.getPersistentProperty(qName);
 				} else {
 					qName = new QualifiedName(
 							JtomPlugin.GENERATED_COMMAND_PROPERTY, resource
-							.getLocation().toString());
+									.getLocation().toString());
 					command = resource.getPersistentProperty(qName);
 				}
 			} catch (CoreException e) {
 				System.out
-				.println("TomBuilder: Exception catched getting resource command line "
-						+ e.getMessage());
+						.println("TomBuilder: Exception catched getting resource command line "
+								+ e.getMessage());
 			}
 			if (command == null
 					|| (command != null && command.trim().equals(""))) {
@@ -203,16 +204,41 @@ IResourceDeltaVisitor, IResourceVisitor {
 				marker.setAttribute(IMarker.LINE_NUMBER, 1);
 				marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING);
 				marker.setAttribute(IMarker.MESSAGE,
-				"Nogeneration property set, update Tom property");
+						"Nogeneration property set, update Tom property");
 				marker.setAttribute(IMarker.LOCATION, 1);
 				System.out.println("TomBuilder: Nogeneration aborting...");
 				nogenerationSet.add(resource);
 				return;
 			}
 
-			// generate destdir if necessary
+			// By default, destDir is "<projectname>/src" folder under the local
+			// workspace directory. If user create its project in another 
+			// location, java generated source files will be in a wrong place
 			String destdirPath = jProject.getProject().getParent()
-			.getLocation().append(packageFragmentRoot).toString();
+					.getLocation().append(packageFragmentRoot).toString();
+
+			// Get the list of project's source folders
+			List<String> sourcesAbsPaths = new ArrayList<String>();
+			for (IPackageFragmentRoot fragment : jProject
+					.getAllPackageFragmentRoots()) {
+				if (fragment.getKind() == IPackageFragmentRoot.K_SOURCE) {
+					sourcesAbsPaths.add(fragment.getCorrespondingResource()
+							.getLocation().toFile().getAbsolutePath());
+				}
+			}
+
+			// Find the resource's parents which is a project's source folder
+			File checkedLoc = resource.getLocation().toFile();
+			do {
+				if (sourcesAbsPaths.contains(checkedLoc.getAbsolutePath())) {
+					destdirPath = checkedLoc.getAbsolutePath();
+					break;
+				}
+				checkedLoc = checkedLoc.getParentFile();
+			} while (checkedLoc != null);
+
+			// generate destdir if necessary
+
 			if (!destdir && !output) {
 				finalCommandList.add("--destdir");
 				finalCommandList.add(destdirPath);
@@ -226,13 +252,17 @@ IResourceDeltaVisitor, IResourceVisitor {
 
 			// the used tom.xml
 			try {
-				String xmlConfigFile = FileLocator.resolve(
-						JtomPlugin.getDefault().getBundle().getEntry(
-								"config" + File.separator + "Tom.xml"))
-								.getPath();
+				String xmlConfigFile = FileLocator
+						.resolve(
+								JtomPlugin
+										.getDefault()
+										.getBundle()
+										.getEntry(
+												"config" + File.separator
+														+ "Tom.xml")).getPath();
 				finalCommandList.add("-X");
 				finalCommandList
-				.add(new File(xmlConfigFile).getCanonicalPath());
+						.add(new File(xmlConfigFile).getCanonicalPath());
 			} catch (Exception e) {
 				System.out.println("TomBuilder: Error getting xml config file");
 			}
@@ -250,14 +280,14 @@ IResourceDeltaVisitor, IResourceVisitor {
 				java.util.List<String> l = new ArrayList<String>();
 				l.add(tomFilePath.toString());
 				PluginPlatform platform = PluginPlatformFactory.getInstance()
-				.create(commandArgs, Tom.LOG_RADICAL, l);
+						.create(commandArgs, Tom.LOG_RADICAL, l);
 				if (platform == null) {
 					IMarker marker = resource.createMarker(IMarker.PROBLEM);
 					marker.setAttribute(IMarker.LINE_NUMBER, 1);
 					marker.setAttribute(IMarker.SEVERITY,
 							IMarker.SEVERITY_ERROR);
 					marker.setAttribute(IMarker.MESSAGE,
-					"Unable to create a PluginPlatform");
+							"Unable to create a PluginPlatform");
 					marker.setAttribute(IMarker.LOCATION, 1);
 					System.out.println("Unable to create a PluginPlatform");
 					return;
@@ -276,8 +306,8 @@ IResourceDeltaVisitor, IResourceVisitor {
 				// if the generation was successful
 				if (generationSuccess == 0
 						&& platform.getLastGeneratedObjects().get(0) != null) {
-					generatedFile = new File((String) (platform
-							.getLastGeneratedObjects().get(0)));
+					generatedFile = new File(
+							(String) (platform.getLastGeneratedObjects().get(0)));
 					generationMap.put(resource, generatedFile);
 					needRefresh = true;
 				} else {
@@ -291,10 +321,10 @@ IResourceDeltaVisitor, IResourceVisitor {
 				}
 
 				RuntimeAlert globalAlert = platform.getGlobalStatusHandler()
-				.getAlertForInput("-");
+						.getAlertForInput("-");
 				RuntimeAlert currentPlatformAlert = platform
-				.getGlobalStatusHandler().getAlertForInput(
-						tomFilePath.toString());
+						.getGlobalStatusHandler().getAlertForInput(
+								tomFilePath.toString());
 				if (currentPlatformAlert == null) {
 					currentPlatformAlert = new RuntimeAlert();
 				}
@@ -304,7 +334,7 @@ IResourceDeltaVisitor, IResourceVisitor {
 					// for obtaining the correct line number and the correct
 					// file name
 					Alert alertTom = currentPlatformAlert.getErrors()
-					.getHeadconcAlert();
+							.getHeadconcAlert();
 					AlertList gomErrors = globalAlert.getErrors();
 					while (!gomErrors.isEmptyconcAlert()) {
 						Alert alertGom = gomErrors.getHeadconcAlert();
@@ -319,8 +349,8 @@ IResourceDeltaVisitor, IResourceVisitor {
 				// than the
 				// errors will corespond to the included file and no the the
 				// current one
-				Iterator<?> it = platform.getGlobalStatusHandler().getAlertMap()
-				.keySet().iterator();
+				Iterator<?> it = platform.getGlobalStatusHandler()
+						.getAlertMap().keySet().iterator();
 				while (it.hasNext()) {
 					String fileName = (String) it.next();
 					// avoid duplications
@@ -330,12 +360,12 @@ IResourceDeltaVisitor, IResourceVisitor {
 						continue;
 					}
 					RuntimeAlert ra = (RuntimeAlert) platform
-					.getAlertForInput(fileName);
+							.getAlertForInput(fileName);
 					AlertList errors = ra.getErrors();
 					while (!errors.isEmptyconcAlert()) {
 						Alert alert = errors.getHeadconcAlert();
-						currentPlatformAlert.addError(alert.getMessage(), alert
-								.getFile(), 1);
+						currentPlatformAlert.addError(alert.getMessage(),
+								alert.getFile(), 1);
 						errors = errors.getTailconcAlert();
 					}
 				}
@@ -346,8 +376,9 @@ IResourceDeltaVisitor, IResourceVisitor {
 
 				// refresh folder
 				if (needRefresh && generatedFile != null) {
-					IPath generatedResourcePath = new Path(generatedFile
-							.getParent()).setDevice(null).removeFirstSegments(
+					IPath generatedResourcePath = new Path(
+							generatedFile.getParent()).setDevice(null)
+							.removeFirstSegments(
 									getProject().getLocation().segmentCount());
 					IResource generatedResource = getProject().findMember(
 							generatedResourcePath);
@@ -370,15 +401,15 @@ IResourceDeltaVisitor, IResourceVisitor {
 	/**
 	 * Handles the includes - both the from the user and the ones needed for tom
 	 * 
-	 * @param finalCommandList -
-	 *            the command list to add the "--import" to
+	 * @param finalCommandList
+	 *            - the command list to add the "--import" to
 	 * @throws IOException
 	 */
 	public static void manageIncludes(ArrayList<String> finalCommandList)
-	throws IOException {
+			throws IOException {
 
 		String includedFile = JtomPlugin.getDefault().getPreferenceStore()
-		.getString(JtomPlugin.TOM_INCLUDE_PREFERENCE);
+				.getString(JtomPlugin.TOM_INCLUDE_PREFERENCE);
 
 		// use plug-in default include path
 		String defaultIncludedFile = FileLocator.resolve(
@@ -389,9 +420,9 @@ IResourceDeltaVisitor, IResourceVisitor {
 
 		// String defaultJavaIncludedFile = defaultIncludedFile + "java" +
 		String canonicalIncludedFile = new File(includedFile)
-		.getCanonicalFile().toString()
-		+ File.pathSeparator
-		+ new File(defaultIncludedFile).getCanonicalFile().toString();
+				.getCanonicalFile().toString()
+				+ File.pathSeparator
+				+ new File(defaultIncludedFile).getCanonicalFile().toString();
 		String paths[] = canonicalIncludedFile.split(File.pathSeparator);
 		for (int i = 0; i < paths.length; i++) {
 			if (!paths[i].equals("") && !paths[i].contains(".svn")) {
@@ -439,7 +470,7 @@ IResourceDeltaVisitor, IResourceVisitor {
 		while (it.hasNext()) {
 			IResource resource = (IResource) it.next();
 			error = ((RuntimeAlert) errorMap.get(resource)).getErrors()
-			.getChildCount();
+					.getChildCount();
 			res += resource.toString() + " " + error + "\n";
 			totalError += error;
 		}
