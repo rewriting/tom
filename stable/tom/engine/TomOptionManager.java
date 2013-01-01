@@ -2,7 +2,7 @@
  *
  * TOM - To One Matching Compiler
  *
- * Copyright (c) 2000-2012, INPL, INRIA
+ * Copyright (c) 2000-2013, INPL, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -345,7 +345,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
    */
   public static void displayVersion() {
     System.out.println("\njtom " + Tom.VERSION + "\n" +
-        "Copyright (c) 2000-2012, INPL, INRIA, Nancy, France.\n");
+        "Copyright (c) 2000-2013, INPL, INRIA, Nancy, France.\n");
   }
 
   /**
