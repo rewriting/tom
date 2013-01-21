@@ -40,7 +40,7 @@ public class ConsWrapper implements Visitable {
           else throw new RuntimeException("ConsWrapper: " + tail.toString() + " should be empty");
 
 //          System.out.println("<getChildren>" + children.toString() + "</getChildren>");
-          return children.toArray(new Visitable[0]);
+          cachedChildren = children.toArray(new Visitable[0]);
       }
       return cachedChildren ;
     }

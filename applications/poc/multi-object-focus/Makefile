@@ -1,3 +1,5 @@
+TOMGENERATED=src/MOF.java src/MiniML.java
+
 all: help
 
 build: src/Main.class
@@ -5,10 +7,13 @@ build: src/Main.class
 src/MOF.java: src/MOF.t
 	cd src/ && tom -v -p -gi MOF.t
 
-src/Main.class: src/Main.java src/MOF.java
+src/MiniML.java: src/MiniML.t
+	cd src/ && tom -v -p -gi MiniML.t
+
+src/Main.class: src/Main.java ${TOMGENERATED}
 	cd src/ && javac Main.java
 
-javadoc: src/MOF.java
+javadoc: ${TOMGENERATED}
 	[ -e doc ] || mkdir doc/
 	cd src/ && javadoc -d ../doc/ `find . -iname "*.java"`
 
@@ -16,7 +21,7 @@ javadoc: src/MOF.java
 
 clean:
 	find . -name "*.class" -delete
-	rm -fr src/term/TSL.java src/MOF.java doc/ src/mof/ out/* out.xml
+	rm -fr src/term/TSL.java ${TOMGENERATED} doc/ src/mof/ src/miniml out/* out.xml
 
 run: src/Main.class
 	cd src/ && java Main > ../out.xml
