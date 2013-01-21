@@ -1,7 +1,7 @@
 /*
  * Gom
  *
- * Copyright (c) 2006-2012, INPL, INRIA
+ * Copyright (c) 2006-2013, INPL, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -70,9 +70,11 @@ public class OperatorTemplate extends TemplateHookedClass {
                     Comments=comments] -> {
         this.abstractType = `abstractType;
         this.extendsType = `extendsType;
-        this.variadicconstructor =
-          gomEnvironment.getSymbolTable().isVariadic(extendsType.getName());
         this.sortName = `sortName;
+        this.variadicconstructor =
+          // add a condition to detect variadic operators with the same name as their sort
+          ! sortName.equals(extendsType) &&
+          gomEnvironment.getSymbolTable().isVariadic(extendsType.getName());
         this.slotList = `slots;
         this.comments = `comments;
         return;
@@ -106,7 +108,23 @@ public final class @className()@ extends @fullClassName(extendsType)@ implements
   private @className()@() {}
   private int hashCode;
   private static @className()@ gomProto = new @className()@();
-  ]%);
+  ]%); 
+    if(variadicconstructor) {
+      /* get the domain type of the constructor */
+      %match(slotList) {
+        ConcSlotField(SlotField[Domain=domainclass],_*) -> {
+          if (!getGomEnvironment().isBuiltinClass(`domainclass)) {
+            writer.write(%[
+   private @fullClassName(`domainclass)@[] children;
+                ]%);
+          } else {
+            writer.write(%[
+   private tom.library.sl.VisitableBuiltin<@primitiveToReferenceType(fullClassName(`domainclass))@>[] children;
+   ]%);
+          }
+        }
+      }
+    } 
   } else {
     writer.write(%[
 
@@ -123,7 +141,22 @@ public final class @className()@ extends @fullClassName(extendsType)@ implements
   @generateBlock()@
   private static String symbolName = "@className()@";
 ]%);
-
+    if(variadicconstructor) {
+      /* get the domain type of the constructor */
+      %match(slotList) {
+        ConcSlotField(SlotField[Domain=domainclass],_*) -> {
+       if (!getGomEnvironment().isBuiltinClass(`domainclass)) {
+          writer.write(%[
+   private @fullClassName(`domainclass)@[] children;
+          ]%);
+        } else {
+          writer.write(%[
+   private tom.library.sl.VisitableBuiltin<@primitiveToReferenceType(fullClassName(`domainclass))@>[] children;
+          ]%);
+        }
+        }
+      }
+    }
 
 // generate a private constructor that takes as arguments the operator arguments
   writer.write(%[
@@ -1071,7 +1104,7 @@ private void generateEnum(java.io.Writer writer) throws java.io.IOException {
   private String getchildat() {
     if (variadicconstructor) {
       // use the methods of the Collection interface
-      return "return toArray(new tom.library.sl.Visitable[]{})[index];";
+      return "return getChildren()[index];";
     } else {
       StringBuilder res = new StringBuilder("    switch(index) {\n");
       int index = 0;
@@ -1104,9 +1137,39 @@ private void generateEnum(java.io.Writer writer) throws java.io.IOException {
   private String getchildren(SlotFieldList slots) {
     if (variadicconstructor) {
       // use the methods of the Collection interface
-      return "return toArray(new tom.library.sl.Visitable[]{});";
+      if (className.getName().startsWith("Cons")) {
+        %match(slotList) {
+          ConcSlotField(SlotField[Domain=domainclass],_*) -> {
+            if (!getGomEnvironment().isBuiltinClass(`domainclass)) {
+              return %[
+        if (children == null) {
+          children = toArray(new @fullClassName(`domainclass)@[]{});
+        }
+        return java.util.Arrays.copyOf(children,children.length);
+      ]%;
+            } else {
+              String reference_type = primitiveToReferenceType(fullClassName(`domainclass));
+              return %[
+        if (children == null) {
+          @reference_type@[] object_children = toArray(new @reference_type@[]{});
+          children = new tom.library.sl.VisitableBuiltin[object_children.length];
+          for (int i=0; i<object_children.length; i++) {
+              children[i] = new tom.library.sl.VisitableBuiltin(object_children[i]);
+          }
+        }
+        return java.util.Arrays.copyOf(children,children.length);
+      ]%;
+            }
+          }
+        }
+      } 
+      // default case: empty constructor
+      return %[
+        return new tom.library.sl.Visitable[]{};
+      ]%;
     } else {
-      StringBuilder res = new StringBuilder("return new tom.library.sl.Visitable[] { ");
+      StringBuilder res = new StringBuilder();
+      res.append("return new tom.library.sl.Visitable[] {");
       boolean is_first_slot = true;
       while(!slots.isEmptyConcSlotField()) {
         SlotField head = slots.getHeadConcSlotField();
@@ -1131,7 +1194,7 @@ private void generateEnum(java.io.Writer writer) throws java.io.IOException {
           }
         }
       }
-      res.append(" }; ");
+      res.append("};");
       return res.toString();
     }
   }
@@ -1142,7 +1205,7 @@ private void generateEnum(java.io.Writer writer) throws java.io.IOException {
       return "0";
     } else if(variadicconstructor) {
       // use the methods of the Collection interface
-      return "length()";
+      return "getChildren().length";
     } else { return ""+slotList.length();
     }
   }
@@ -1162,13 +1225,13 @@ private void generateEnum(java.io.Writer writer) throws java.io.IOException {
               return fromArray(typed_children);
               ]%;
             } else {
+              String builtin_type = fullClassName(`domainclass);
               return %[
-                tom.library.sl.VisitableBuiltin<@primitiveToReferenceType(fullClassName(`domainclass))@>[] reference_children = (tom.library.sl.VisitableBuiltin<@primitiveToReferenceType(fullClassName(`domainclass))@>[]) children; 
-              @fullClassName(`domainclass)@[] builtin_children = new @fullClassName(`domainclass)@[children.length];
-              for (int i=0; i<children.length; i++) {
-                builtin_children[i] = reference_children[i].getBuiltin(); 
-              }
-              return fromArray(builtin_children);
+               @builtin_type@[] builtin_children = new @builtin_type@[children.length];
+               for (int i=0; i<children.length; i++) {
+                 builtin_children[i] = ((tom.library.sl.VisitableBuiltin<@primitiveToReferenceType(builtin_type)@>) children[i]).getBuiltin(); 
+               }
+               return fromArray(builtin_children);
               ]%;
             }
           }
@@ -1249,22 +1312,26 @@ private String setchildat(String argName) {
       ConcSlotField(SlotField[Domain=domainclass],_*) -> {
         String domain = fullClassName(`domainclass); 
         StringBuilder res = new StringBuilder();
-        res.append(%[
-      @primitiveToReferenceType(domain)@[] children = toArray(new @primitiveToReferenceType(domain)@[]{});
-            ]%);
+        String class_name = fullClassName(`domainclass);
             if (!getGomEnvironment().isBuiltinClass(`domainclass)) {
               res.append(%[
-     children[index] = (@domain@) @argName@;
-     return fromArray(children);
+      tom.library.sl.Visitable[] children = getChildren();
+      @class_name@[] new_children = new @class_name@[children.length];
+      for(int i =0; i<children.length; i++) {
+        new_children[i] = ((@class_name@) children[i]); 
+      }
+     new_children[index] = (@domain@) @argName@;
+     return fromArray(new_children);
                   ]%);
             } else {
               res.append(%[
-      @domain@[] primitive_children = new @domain@[children.length];
-      for(int i =0; i< children.length ; i++) {
-        primitive_children[i] = children[i]; 
+      tom.library.sl.Visitable[] children = getChildren();
+      @class_name@[] new_children = new @class_name@[children.length];
+      for(int i =0; i<children.length; i++) {
+        new_children[i] = ((tom.library.sl.VisitableBuiltin<@primitiveToReferenceType(class_name)@>) children[i]).getBuiltin(); 
       }
-      primitive_children[index] = ((tom.library.sl.VisitableBuiltin<@primitiveToReferenceType(domain)@>) @argName@).getBuiltin();
-     return fromArray(primitive_children);
+      new_children[index] = ((tom.library.sl.VisitableBuiltin<@primitiveToReferenceType(class_name)@>) @argName@).getBuiltin();
+      return fromArray(new_children);
                   ]%);
             }
             return res.toString();

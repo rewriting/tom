@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2012, INPL, INRIA
+ * Copyright (c) 2004-2013, INPL, INRIA
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -159,10 +159,35 @@ public class TestHandWrittenMapping {
     }
 
   @Test
-    public void testOpList() {
+    public void testOpList1() {
       try {
         List l = `l(a(),a(),a());
         assertEquals(`l(f(a()),f(a()),f(a())), `All(R2()).visit(l, new LocalIntrospector()));
+      } catch (VisitFailure e) { fail(); }
+    }
+
+
+  @Test
+    public void testOpList2() {
+      try {
+        List t = `l(f(f(f(a()))),a(),f(f(f(a()))));
+        assertEquals(`l(f(a()),a(),f(a())), `TopDown(R()).visit(t, new LocalIntrospector()));
+      } catch (VisitFailure e) { fail(); }
+    }
+
+  @Test
+    public void testOpList3() {
+      try {
+        List t = `l(f(a()),a(),f(a()));
+        assertEquals(`l(f(f(a())),f(a()),f(f(a()))), `BottomUp(R2()).visit(t, new LocalIntrospector()));
+      } catch (VisitFailure e) { fail(); }
+    }
+
+  @Test
+    public void testOpList4() {
+      try {
+        List t = `l(f(f(f(a()))),a(),f(f(f(a()))));
+        assertEquals(`l(a(),a(),a()), `InnermostId(R()).visit(t, new LocalIntrospector()));
       } catch (VisitFailure e) { fail(); }
     }
 
@@ -197,8 +222,6 @@ public class TestHandWrittenMapping {
         assertEquals(`t(a(),a(),a()), `InnermostId(R()).visit(t, new LocalIntrospector()));
       } catch (VisitFailure e) { fail(); }
     }
-
-
 
   public static void main(String[] args) {
     org.junit.runner.JUnitCore.main(TestHandWrittenMapping.class.getName());

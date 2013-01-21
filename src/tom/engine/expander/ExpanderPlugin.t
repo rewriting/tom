@@ -2,7 +2,7 @@
  * 
  * TOM - To One Matching Expander
  * 
- * Copyright (c) 2000-2012, INPL, INRIA
+ * Copyright (c) 2000-2013, INPL, INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -290,12 +290,12 @@ public class ExpanderPlugin extends TomGenericPlugin {
                                     sizeVar,
                                     BQTermToExpression(size),
                                   LetRef(
-                                    objectArrayVar,
-                                    BQTermToExpression(children),
-                                  LetRef(
                                     vVar,
                                     Cast(type,BQTermToExpression(objectVar)),
-                                    AbstractBlock(concInstruction(
+                                  LetRef(
+                                    objectArrayVar,
+                                    BQTermToExpression(children),
+                                   AbstractBlock(concInstruction(
                                      Assign(vVar,BQTermToExpression(vVar)),
                                      WhileDo(
                                         LessThan(BQTermToExpression(intVar),BQTermToExpression(sizeVar)),

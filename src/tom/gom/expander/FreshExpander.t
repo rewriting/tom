@@ -1,7 +1,7 @@
 /*
  * Gom
  *
- * Copyright (c) 2000-2012, INPL, INRIA
+ * Copyright (c) 2000-2013, INPL, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -470,9 +470,9 @@ public class FreshExpander {
 
   %strategy AddHook(sort:String,hook:Production) extends Fail() {
     visit ProductionList {
-      ConcProduction(p@SortType[Type=GomType[Name=n]],ps*) -> {
+      ConcProduction(before*,p@SortType[Type=GomType[Name=n]],after*) -> {
         if(`n.equals(sort)) {
-          return `ConcProduction(p,hook,ps*);
+          return `ConcProduction(before*,p,hook,after*);
         }
       }
     }
