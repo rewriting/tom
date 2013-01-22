@@ -1,3 +1,15 @@
+// START OF M4 MACROS
+changequote(`[[', `]]')
+
+define([[VISITORMAP]],
+[[public static Visitor<$2,$3> $1 = Visitor.map( new Fun<$2,$3>() {
+  public $3 apply($2 $4) throws VisitFailure {
+    $5
+ }});]])
+
+// END OF M4 MACROS
+
+
 import lib.*;
 import lib.sl.*;
 import tom.library.sl.*;
@@ -86,16 +98,7 @@ public class MiniML {
 
     %include{sl.tom}
 
-
-define(`VISITOR',
-`public static Visitor<$2,$3> $1 = Visitor.map( new Fun<$2,$3>() {
-    public $3 apply($2 arg) throws VisitFailure {
-      $4
-    }});'
-)
-
-    public static Visitor<Visitable,Visitable> code_reduction = Visitor.map( new Fun<Visitable,Visitable>() {
-        public Visitable apply(Visitable u) throws VisitFailure {
+    VISITORMAP(code_reduction, Visitable , Visitable , u , [[
 
             if (!(u instanceof Code)) throw new VisitFailure();
 
@@ -132,11 +135,9 @@ define(`VISITOR',
                 Member(Val(Obj(Env(_*, EnvAssoc(n, v), _*))), n) -> { return `v;                                              }
             };
             throw new VisitFailure();
-        }});
+    ]])
 
-
-    public static Visitor<P<Visitable,Visitable>,P<Visitable,Visitable>> var = Visitor.map( new Fun<P<Visitable,Visitable>,P<Visitable,Visitable>>() {
-        public P<Visitable,Visitable> apply(P<Visitable,Visitable> p) throws VisitFailure {
+    VISITORMAP(var, [[ P<Visitable,Visitable> ]] , [[ P<Visitable,Visitable> ]] , p , [[
 
             Visitable code  = p.left;
             Visitable assoc = p.right;
@@ -144,18 +145,14 @@ define(`VISITOR',
             if (!(code  instanceof Code    )) throw new VisitFailure();
             if (!(assoc instanceof EnvAssoc)) throw new VisitFailure();
 
-            /*
-             Now that we are on Code * EnvAssoc, we can match.
-             */
             %match {
                 Var(x) << code && EnvAssoc(y, v) << assoc && x == y -> { return P.mkP((Visitable)`Val(v), assoc);                               }
             };
             throw new VisitFailure();
-        }});
+    ]])
 
 
-    public static Visitor<P<Visitable,Visitable>,P<Visitable,Visitable>> ref = Visitor.map( new Fun<P<Visitable,Visitable>,P<Visitable,Visitable>>() {
-        public P<Visitable,Visitable> apply(P<Visitable,Visitable> p) throws VisitFailure {
+    VISITORMAP(ref, [[ P<Visitable,Visitable> ]], [[ P<Visitable,Visitable> ]] , p , [[
 
             Visitable code  = p.left;
             Visitable assoc = p.right;
@@ -171,10 +168,9 @@ define(`VISITOR',
                 Assign(Val(Ptr(i)), Val(v)) << code && MemAssoc(i, _) << assoc -> { return P.mkP((Visitable)`Val(Unit()), (Visitable)`MemAssoc(i, v));  }
             };
             throw new VisitFailure();
-        }});
+    ]])
 
-    public static Visitor<P<Visitable,Visitable>,P<Visitable,Visitable>> input = Visitor.map( new Fun<P<Visitable,Visitable>,P<Visitable,Visitable>>() {
-        public P<Visitable,Visitable> apply(P<Visitable,Visitable> p) throws VisitFailure {
+    VISITORMAP(input, [[ P<Visitable,Visitable> ]] , [[ P<Visitable,Visitable> ]] , p , [[
 
             Visitable code  = p.left;
             Visitable inputs = p.right;
@@ -189,10 +185,9 @@ define(`VISITOR',
                 Read() << code && Inputs(v,x*) << inputs -> { return P.mkP((Visitable)`x , (Visitable)`Inputs(x*) );  }
             };
             throw new VisitFailure();
-        }});
+    ]])
 
-    public static Visitor<P<Visitable,Visitable>,P<Visitable,Visitable>> output = Visitor.map( new Fun<P<Visitable,Visitable>,P<Visitable,Visitable>>() {
-        public P<Visitable,Visitable> apply(P<Visitable,Visitable> p) throws VisitFailure {
+    VISITORMAP(output , [[ P<Visitable,Visitable> ]] , [[ P<Visitable,Visitable> ]] , p , [[
 
             Visitable code    = p.left;
             Visitable outputs = p.right;
@@ -207,7 +202,7 @@ define(`VISITOR',
                 Write(Val(v)) << code && Outputs(x*) << outputs -> { return P.mkP((Visitable)`Val(Unit()) , (Visitable)`Outputs(x*,v) );  }
             };
             throw new VisitFailure();
-        }});
+    ]])
 
     public static void run() throws VisitFailure {
         System.out.println("<MiniML>\n\n");

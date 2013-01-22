@@ -1,5 +1,5 @@
 TOMGENERATED=src/MOF.java src/MiniML.java
-M4GENERATED=src/MOF.t src/MiniML.t
+M4GENERATED=src/MiniML.t
 
 GENERATED=${TOMGENERATED} ${M4GENERATED}
 
@@ -7,11 +7,11 @@ all: help
 
 build: src/Main.class
 
-src/MOF.java: src/MOF.m4
-	cd src/ && m4 MOF.m4    >MOF.t     && tom -v -p MOF.t
+src/MOF.java: src/MOF.t
+	cd src/ && tom -v -p MOF.t
 
 src/MiniML.java: src/MiniML.m4
-	cd src/ && m4 MiniML.m4 >MiniML.m4 && tom -v -p MiniML.t
+	cd src/ && m4 MiniML.m4 >MiniML.t && tom -v -p MiniML.t
 
 src/Main.class: src/Main.java ${TOMGENERATED}
 	cd src/ && javac Main.java

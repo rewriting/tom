@@ -1,3 +1,83 @@
 type:
 > make 
 to get the help
+
+
+
+
+
+
+
+    public static Visitor<P<Visitable,Visitable>,P<Visitable,Visitable>> var = Visitor.map( new Fun<P<Visitable,Visitable>,P<Visitable,Visitable>>() {
+        public P<Visitable,Visitable> apply(P<Visitable,Visitable> p) throws VisitFailure {
+
+            Visitable code  = p.left;
+            Visitable assoc = p.right;
+
+            if (!(code  instanceof Code    )) throw new VisitFailure();
+            if (!(assoc instanceof EnvAssoc)) throw new VisitFailure();
+
+            /*
+             Now that we are on Code * EnvAssoc, we can match.
+             */
+            %match {
+                Var(x) << code && EnvAssoc(y, v) << assoc && x == y -> { return P.mkP((Visitable)`Val(v), assoc);                               }
+            };
+            throw new VisitFailure();
+        }});
+
+
+    public static Visitor<P<Visitable,Visitable>,P<Visitable,Visitable>> ref = Visitor.map( new Fun<P<Visitable,Visitable>,P<Visitable,Visitable>>() {
+        public P<Visitable,Visitable> apply(P<Visitable,Visitable> p) throws VisitFailure {
+
+            Visitable code  = p.left;
+            Visitable assoc = p.right;
+
+            if (!(code  instanceof Code    )) throw new VisitFailure();
+            if (!(assoc instanceof MemAssoc)) throw new VisitFailure();
+
+            /*
+             Now that we are on Code * EnvAssoc, we can match.
+             */
+            %match {
+                Bang(  Val(Ptr(i))        ) << code && MemAssoc(i, v) << assoc -> { return P.mkP((Visitable)`Val(v)     , assoc                     );  }
+                Assign(Val(Ptr(i)), Val(v)) << code && MemAssoc(i, _) << assoc -> { return P.mkP((Visitable)`Val(Unit()), (Visitable)`MemAssoc(i, v));  }
+            };
+            throw new VisitFailure();
+        }});
+
+    public static Visitor<P<Visitable,Visitable>,P<Visitable,Visitable>> input = Visitor.map( new Fun<P<Visitable,Visitable>,P<Visitable,Visitable>>() {
+        public P<Visitable,Visitable> apply(P<Visitable,Visitable> p) throws VisitFailure {
+
+            Visitable code  = p.left;
+            Visitable inputs = p.right;
+
+            if (!(code   instanceof Code    )) throw new VisitFailure();
+            if (!(inputs instanceof Inputs  )) throw new VisitFailure();
+
+            /*
+             Now that we are on Code * EnvAssoc, we can match.
+             */
+            %match {
+                Read() << code && Inputs(v,x*) << inputs -> { return P.mkP((Visitable)`x , (Visitable)`Inputs(x*) );  }
+            };
+            throw new VisitFailure();
+        }});
+
+    public static Visitor<P<Visitable,Visitable>,P<Visitable,Visitable>> output = Visitor.map( new Fun<P<Visitable,Visitable>,P<Visitable,Visitable>>() {
+        public P<Visitable,Visitable> apply(P<Visitable,Visitable> p) throws VisitFailure {
+
+            Visitable code    = p.left;
+            Visitable outputs = p.right;
+
+            if (!(code    instanceof Code     )) throw new VisitFailure();
+            if (!(outputs instanceof Outputs  )) throw new VisitFailure();
+
+            /*
+             Now that we are on Code * EnvAssoc, we can match.
+             */
+            %match {
+                Write(Val(v)) << code && Outputs(x*) << outputs -> { return P.mkP((Visitable)`Val(Unit()) , (Visitable)`Outputs(x*,v) );  }
+            };
+            throw new VisitFailure();
+        }});
