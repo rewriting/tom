@@ -1,16 +1,11 @@
 // START OF M4 MACROS
 changequote(`[[', `]]')
 
-define([[VISITORMAP]],
-[[public static Visitor<$2,$3> $1 = Visitor.map( new Fun<$2,$3>() {
-  public $3 apply($2 $4) throws VisitFailure {
-    $5
- }});]])
-
 // END OF M4 MACROS
 
 
-import lib.*;
+import lib.Fun;
+import lib.P;
 import lib.sl.*;
 import tom.library.sl.*;
 
@@ -35,14 +30,10 @@ public class MiniML {
         Mem      = Mem( MemAssoc* )
 
         Val      = Unit()
-
                  | Int( i:int )
                  | Bool( b:boolean )
-
-                 | Closure( code:Code , env:Env )
-
+                 | Closure( env:Env , arg:String , body:Code )
                  | Ptr( addr:int )
-
                  | Obj( members:Env )
 
         BinOp  = Add()
@@ -98,7 +89,35 @@ public class MiniML {
 
     %include{sl.tom}
 
-    VISITORMAP(code_reduction, Visitable , Visitable , u , [[
+    define([[VISITORMAP]], [[public static Visitor<$2,$3> $1 = Visitor.map( new Fun<$2,$3>() {
+        public $3 apply($2 $4) throws VisitFailure {
+            $5
+        }});]])
+
+
+    define([[CODE_TYPE]],[[Visitable]])
+    define([[ENVASSOC_TYPE]],[[Visitable]])
+    define([[ENV_TYPE]],[[Visitable]])
+    define([[CODE_ENV]],[[P<CODE_TYPE,ENV_TYPE>]])
+
+    define([[MEMASSOC_TYPE]],[[Visitable]])
+    define([[MEM_TYPE]],[[Visitable]])
+    define([[MEMORY_TYPE]],[[P<Integer,MEM_TYPE>]])
+
+    define([[INPUTS_TYPE]],[[Visitable]])
+    define([[OUTPUTS_TYPE]],[[Visitable]])
+    define([[INPUTS_OUTPUTS]],[[P<INPUTS_TYPE,OUTPUTS_TYPE>]])
+
+    define([[WORLD_TYPE]],[[P<MEMORY_TYPE,INPUTS_OUTPUTS>]])
+
+    define([[CONFIGURATION_TYPE]],[[P<CODE_ENV,WORLD_TYPE>]])
+
+
+    /*
+     * Simple reduction with only one focus and no need of control
+     */
+
+    VISITORMAP(code_reduction, CODE_TYPE , CODE_TYPE , u , [[
 
             if (!(u instanceof Code)) throw new VisitFailure();
 
@@ -137,10 +156,19 @@ public class MiniML {
             throw new VisitFailure();
     ]])
 
-    VISITORMAP(var, [[ P<Visitable,Visitable> ]] , [[ P<Visitable,Visitable> ]] , p , [[
 
-            Visitable code  = p.left;
-            Visitable assoc = p.right;
+    // Its global version
+    public static Visitor<CONFIGURATION_TYPE,CONFIGURATION_TYPE> code_reduction_global = code_reduction.times(new Id<ENV_TYPE>()).times(new Id<WORLD_TYPE>());
+
+
+
+    /*
+     * Reduction of Var: two focuses, one on Code and one on a EnvAssoc
+     */
+    VISITORMAP(var, [[ P<CODE_TYPE,ENVASSOC_TYPE> ]] , [[ P<CODE_TYPE,ENVASSOC_TYPE> ]] , p , [[
+
+            CODE_TYPE     code  = p.left;
+            ENVASSOC_TYPE assoc = p.right;
 
             if (!(code  instanceof Code    )) throw new VisitFailure();
             if (!(assoc instanceof EnvAssoc)) throw new VisitFailure();
@@ -151,11 +179,44 @@ public class MiniML {
             throw new VisitFailure();
     ]])
 
+    // Its iteration on every EnvAssoc
+    public static Visitor<P<CODE_TYPE,ENV_TYPE>,P<CODE_TYPE,ENV_TYPE>> var_iter = (new Id<CODE_TYPE>()).times(Visitor.forSome).seq(var).reset();
 
-    VISITORMAP(ref, [[ P<Visitable,Visitable> ]], [[ P<Visitable,Visitable> ]] , p , [[
 
-            Visitable code  = p.left;
-            Visitable assoc = p.right;
+    /*
+     * Reduction of Fun
+     */
+
+    VISITORMAP(fun, [[ P<CODE_TYPE,ENV_TYPE> ]] , [[ P<CODE_TYPE,ENV_TYPE> ]] , p , [[
+
+            CODE_TYPE code  = p.left;
+            ENV_TYPE  env   = p.right;
+
+            if (!(code  instanceof Code    )) throw new VisitFailure();
+            if (!(env   instanceof Env     )) throw new VisitFailure();
+
+            %match {
+              Fun(n,c) << code  -> { return P.mkP((CODE_TYPE)`Val(Closure((Env)env,n,c)), env);                               }
+            };
+            throw new VisitFailure();
+    ]])
+
+    // Choice of Var or Fun
+    public static Visitor<P<CODE_TYPE,ENV_TYPE>,P<CODE_TYPE,ENV_TYPE>> var_or_fun = var_iter.or(fun);
+
+
+    // Their global version
+    public static Visitor<CONFIGURATION_TYPE,CONFIGURATION_TYPE> var_of_fun_global = var_or_fun.times(new Id<WORLD_TYPE>());
+
+
+    /*
+     * Memory management
+     */
+
+    VISITORMAP(assign , [[ P<CODE_TYPE,MEMASSOC_TYPE> ]], [[ P<CODE_TYPE,MEMASSOC_TYPE> ]] , p , [[
+
+            CODE_TYPE     code  = p.left;
+            MEMASSOC_TYPE assoc = p.right;
 
             if (!(code  instanceof Code    )) throw new VisitFailure();
             if (!(assoc instanceof MemAssoc)) throw new VisitFailure();
@@ -164,16 +225,55 @@ public class MiniML {
              Now that we are on Code * EnvAssoc, we can match.
              */
             %match {
-                Bang(  Val(Ptr(i))        ) << code && MemAssoc(i, v) << assoc -> { return P.mkP((Visitable)`Val(v)     , assoc                     );  }
-                Assign(Val(Ptr(i)), Val(v)) << code && MemAssoc(i, _) << assoc -> { return P.mkP((Visitable)`Val(Unit()), (Visitable)`MemAssoc(i, v));  }
+                Bang(  Val(Ptr(i))        ) << code && MemAssoc(i, v) << assoc -> { return P.mkP((CODE_TYPE)`Val(v)     , assoc                     );  }
+                Assign(Val(Ptr(i)), Val(v)) << code && MemAssoc(i, _) << assoc -> { return P.mkP((CODE_TYPE)`Val(Unit()), (MEMASSOC_TYPE)`MemAssoc(i, v));  }
             };
             throw new VisitFailure();
     ]])
 
-    VISITORMAP(input, [[ P<Visitable,Visitable> ]] , [[ P<Visitable,Visitable> ]] , p , [[
+    // Iteration over MemAssoc
+    public static Visitor<P<CODE_TYPE,MEM_TYPE>,P<CODE_TYPE,MEM_TYPE>> assign_iter = (new Id<CODE_TYPE>()).times(Visitor.forSome).seq(assign).reset();
 
-            Visitable code  = p.left;
-            Visitable inputs = p.right;
+    /*
+     * Handling of Ref
+     */
+
+    VISITORMAP(ref, [[ P<CODE_TYPE,MEMORY_TYPE> ]] , [[ P<CODE_TYPE,MEMORY_TYPE> ]] , arg , [[
+
+            CODE_TYPE   code      = arg.left ;
+            MEMORY_TYPE memory    = arg.right ;
+            Integer     next_addr = memory.left ;
+            MEM_TYPE    mem       = memory.right ;
+
+            if (!(code instanceof Code )) throw new VisitFailure();
+            if (!(mem  instanceof Mem  )) throw new VisitFailure();
+
+            %match {
+                Ref(Val(v)) << code && Mem(x*) << mem -> { return P.mkP( (CODE_TYPE)`Val(Ptr(next_addr))
+                                                                       , P.mkP( next_addr + 1
+                                                                              , (MEM_TYPE)`Mem(x*, MemAssoc(next_addr, v))
+                                                                              )
+                                                                       ) ;
+                                                         }
+            };
+            throw new VisitFailure();
+    ]])
+
+
+    // Choice of Ref or Assign
+    public static Visitor<P<CODE_TYPE,MEM_TYPE>,P<CODE_TYPE,MEM_TYPE>> ref_or_assign = ref.or(assign_iter);
+
+
+
+    /*
+     * Inputs and Outputs
+     */
+
+
+    VISITORMAP(input, [[ P<CODE_TYPE,INPUTS_TYPE> ]] , [[ P<CODE_TYPE,INPUTS_TYPE> ]] , p , [[
+
+            CODE_TYPE    code  = p.left;
+            INPUTS_TYPE inputs = p.right;
 
             if (!(code   instanceof Code    )) throw new VisitFailure();
             if (!(inputs instanceof Inputs  )) throw new VisitFailure();
@@ -182,15 +282,20 @@ public class MiniML {
              Now that we are on Code * EnvAssoc, we can match.
              */
             %match {
-                Read() << code && Inputs(v,x*) << inputs -> { return P.mkP((Visitable)`x , (Visitable)`Inputs(x*) );  }
+                Read() << code && Inputs(v,x*) << inputs -> { return P.mkP((CODE_TYPE)`x , (INPUTS_TYPE)`Inputs(x*) );  }
             };
             throw new VisitFailure();
     ]])
 
-    VISITORMAP(output , [[ P<Visitable,Visitable> ]] , [[ P<Visitable,Visitable> ]] , p , [[
+    // Its version on INPUTS_OUTPUTS
+    public static Visitor<P<CODE_TYPE,INPUTS_OUTPUTS>,P<CODE_TYPE,INPUTS_OUTPUTS>> inputs_up =
+       (new Id<CODE_TYPE>()).times(new Left<INPUTS_TYPE,OUTPUTS_TYPE>()).seq(inputs);
 
-            Visitable code    = p.left;
-            Visitable outputs = p.right;
+
+    VISITORMAP(output , [[ P<CODE_TYPE,OUTPUTS_TYPE> ]] , [[ P<CODE_TYPE,OUTPUTS_TYPE> ]] , p , [[
+
+            CODE_TYPE    code    = p.left;
+            OUTPUTS_TYPE outputs = p.right;
 
             if (!(code    instanceof Code     )) throw new VisitFailure();
             if (!(outputs instanceof Outputs  )) throw new VisitFailure();
@@ -199,10 +304,25 @@ public class MiniML {
              Now that we are on Code * EnvAssoc, we can match.
              */
             %match {
-                Write(Val(v)) << code && Outputs(x*) << outputs -> { return P.mkP((Visitable)`Val(Unit()) , (Visitable)`Outputs(x*,v) );  }
+                Write(Val(v)) << code && Outputs(x*) << outputs -> { return P.mkP((CODE_TYPE)`Val(Unit()) , (OUTPUTS_TYPE)`Outputs(x*,v) );  }
             };
             throw new VisitFailure();
     ]])
+
+    // Its version on INPUTS_OUTPUTS
+    public static Visitor<P<CODE_TYPE,INPUTS_OUTPUTS>,P<CODE_TYPE,INPUTS_OUTPUTS>> outputs_up =
+            (new Id<CODE_TYPE>()).times(new Right<INPUTS_TYPE,OUTPUTS_TYPE>()).seq(outputs);
+
+
+    // Inputs or Outputs
+    public static Visitor<P<CODE_TYPE,INPUTS_OUTPUTS>,P<CODE_TYPE,INPUTS_OUTPUTS>> inputs_or_outputs = inputs_up.or(outputs_up);
+
+    // Their global version
+    public static Visitor<CONFIGURATION_TYPE,CONFIGURATION_TYPE> inputs_or_outputs_global =
+            (new Id<CODE_ENV>()).times((new Id<MEMORY_TYPE>()).times(inputs_or_outputs));
+
+
+
 
     public static void run() throws VisitFailure {
         System.out.println("<MiniML>\n\n");

@@ -511,19 +511,18 @@ public abstract class Visitor<X,Y> {
             return fix(new Fun<Visitor<Visitable,Visitable>,Visitor<Visitable,Visitable>>(){ public Visitor<Visitable,Visitable> apply(Visitor<Visitable,Visitable> v) throws VisitFailure {
                 return (all(v)).seq(s);
             }});
-        }
+    }
 
 
-        public static Visitor<Visitable,Visitable> topDown(final Visitor<Visitable,Visitable> s) throws VisitFailure {
+    public static Visitor<Visitable,Visitable> topDown(final Visitor<Visitable,Visitable> s) throws VisitFailure {
             return fix(new Fun<Visitor<Visitable,Visitable>,Visitor<Visitable,Visitable>>(){ public Visitor<Visitable,Visitable> apply(Visitor<Visitable,Visitable> v) throws VisitFailure {
                 return s.seq(all(v));
             }});
-        }
+    }
 
-        public static Visitor<Visitable,Visitable> innerMost(final Visitor<Visitable,Visitable> s) throws VisitFailure {
-            return fix(new Fun<Visitor<Visitable,Visitable>,Visitor<Visitable,Visitable>>(){ public Visitor<Visitable,Visitable> apply(Visitor<Visitable,Visitable> v) throws VisitFailure {
+    public static Visitor<Visitable,Visitable> innerMost(final Visitor<Visitable,Visitable> s) throws VisitFailure {
+           return fix(new Fun<Visitor<Visitable,Visitable>,Visitor<Visitable,Visitable>>(){ public Visitor<Visitable,Visitable> apply(Visitor<Visitable,Visitable> v) throws VisitFailure {
                 return (all(v)).seq(Visitor.sltry(s.seq(v)));
             }});
-        }
-
+    }
 }
