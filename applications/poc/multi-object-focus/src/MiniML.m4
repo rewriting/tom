@@ -232,7 +232,8 @@ public class MiniML {
     ]])
 
     // Iteration over MemAssoc
-    public static Visitor<P<CODE_TYPE,MEM_TYPE>,P<CODE_TYPE,MEM_TYPE>> assign_iter = (new Id<CODE_TYPE>()).times(Visitor.forSome).seq(assign).reset();
+    public static Visitor<P<CODE_TYPE,MEMORY_TYPE>,P<CODE_TYPE,MEMORY_TYPE>> assign_iter =
+            (new Id<CODE_TYPE>()).times((new Right<Integer,MEM_TYPE>()).seq(Visitor.forSome)).seq(assign).reset();
 
     /*
      * Handling of Ref
@@ -261,8 +262,11 @@ public class MiniML {
 
 
     // Choice of Ref or Assign
-    public static Visitor<P<CODE_TYPE,MEM_TYPE>,P<CODE_TYPE,MEM_TYPE>> ref_or_assign = ref.or(assign_iter);
+    public static Visitor<P<CODE_TYPE,MEMORY_TYPE>,P<CODE_TYPE,MEMORY_TYPE>> ref_or_assign = ref.or(assign_iter);
 
+    // Their global version
+    public static Visitor<CONFIGURATION_TYPE,CONFIGURATION_TYPE> ref_or_assign_global =
+            (new Left<CODE_TYPE,ENV_TYPE>()).times(new Left<MEMORY_TYPE,INPUTS_OUTPUTS>()).seq(ref_or_assign).up();
 
 
     /*
@@ -270,7 +274,7 @@ public class MiniML {
      */
 
 
-    VISITORMAP(input, [[ P<CODE_TYPE,INPUTS_TYPE> ]] , [[ P<CODE_TYPE,INPUTS_TYPE> ]] , p , [[
+    VISITORMAP(inputs, [[ P<CODE_TYPE,INPUTS_TYPE> ]] , [[ P<CODE_TYPE,INPUTS_TYPE> ]] , p , [[
 
             CODE_TYPE    code  = p.left;
             INPUTS_TYPE inputs = p.right;
@@ -289,10 +293,10 @@ public class MiniML {
 
     // Its version on INPUTS_OUTPUTS
     public static Visitor<P<CODE_TYPE,INPUTS_OUTPUTS>,P<CODE_TYPE,INPUTS_OUTPUTS>> inputs_up =
-       (new Id<CODE_TYPE>()).times(new Left<INPUTS_TYPE,OUTPUTS_TYPE>()).seq(inputs);
+       (new Id<CODE_TYPE>()).times(new Left<INPUTS_TYPE,OUTPUTS_TYPE>()).seq(inputs).up();
 
 
-    VISITORMAP(output , [[ P<CODE_TYPE,OUTPUTS_TYPE> ]] , [[ P<CODE_TYPE,OUTPUTS_TYPE> ]] , p , [[
+    VISITORMAP(outputs , [[ P<CODE_TYPE,OUTPUTS_TYPE> ]] , [[ P<CODE_TYPE,OUTPUTS_TYPE> ]] , p , [[
 
             CODE_TYPE    code    = p.left;
             OUTPUTS_TYPE outputs = p.right;
@@ -311,7 +315,7 @@ public class MiniML {
 
     // Its version on INPUTS_OUTPUTS
     public static Visitor<P<CODE_TYPE,INPUTS_OUTPUTS>,P<CODE_TYPE,INPUTS_OUTPUTS>> outputs_up =
-            (new Id<CODE_TYPE>()).times(new Right<INPUTS_TYPE,OUTPUTS_TYPE>()).seq(outputs);
+            (new Id<CODE_TYPE>()).times(new Right<INPUTS_TYPE,OUTPUTS_TYPE>()).seq(outputs).up();
 
 
     // Inputs or Outputs
@@ -319,9 +323,16 @@ public class MiniML {
 
     // Their global version
     public static Visitor<CONFIGURATION_TYPE,CONFIGURATION_TYPE> inputs_or_outputs_global =
-            (new Id<CODE_ENV>()).times((new Id<MEMORY_TYPE>()).times(inputs_or_outputs));
+            (new Left<CODE_TYPE,ENV_TYPE>()).times(new Right<MEMORY_TYPE,INPUTS_OUTPUTS>()).seq(inputs_or_outputs).up();
 
 
+
+
+
+
+    // All together
+    public static Visitor<CONFIGURATION_TYPE,CONFIGURATION_TYPE> all =
+            code_reduction_global.or(var_of_fun_global).or(ref_or_assign_global).or(inputs_or_outputs_global);
 
 
     public static void run() throws VisitFailure {
