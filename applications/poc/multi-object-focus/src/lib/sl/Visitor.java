@@ -124,14 +124,11 @@ public abstract class Visitor<X,Y> {
     }
 
 
-
-
-
     /**
      * It applies this and then compose by the zipper's context.
      * <p>
      * IMPORTANT: UNSAFE!!! Be sure that this does NOT expect the result of its continuation to be Zip<X.Y>. It works
-     *            on visitors not using the result of the contination like forSom but NOT like forAll.
+     *            on visitors not using the focus the result of the contination like forSome but NOT like forAll.
      *
      * @return the same visitor as this but with the focus set on the root of the term.
      */
@@ -227,6 +224,29 @@ public abstract class Visitor<X,Y> {
 
     // Static Methods
 
+    /**
+     * A visitor for control flow manipulation. e is a function capturing the continuation as
+     * a visitor and building a new context. This is the visitor's version of Danvy's shift.
+     *
+     * @param e Fun<Visitor<X,X>,Visitor<X,Y>>
+     * @return
+     */
+    public static <X,Y> Visitor<X,X> shift(final Fun< Visitor<X,X> , Visitor<X,Y> > e) {
+        return new Visitor<X,X>() {
+            public <T> X visitZK(Zip<T,X> z, final Fun<Zip<X,X>,Zip<X,X>> k) throws VisitFailure {
+
+                // The visitor equivalent to the continuation k
+                Visitor<X,X> vk = new Visitor<X,X>() {
+                                    public <T> X visitZK(Zip<T,X> z, Fun<Zip<X,X>,Zip<X,X>> k2) throws VisitFailure {
+                                      return k2.apply(k.apply(Zip.unit(z.focus))).run();
+                                    }
+                                  };
+
+                // It's basically e(k) but wrapped with visitors
+                return e.apply(vk).visitZ(z);
+            }
+        };
+    }
 
 
     /**
@@ -524,5 +544,6 @@ public abstract class Visitor<X,Y> {
            return fix(new Fun<Visitor<Visitable,Visitable>,Visitor<Visitable,Visitable>>(){ public Visitor<Visitable,Visitable> apply(Visitor<Visitable,Visitable> v) throws VisitFailure {
                 return (all(v)).seq(Visitor.sltry(s.seq(v)));
             }});
+
     }
 }

@@ -326,10 +326,6 @@ public class MiniML {
             (new Left<CODE_TYPE,ENV_TYPE>()).times(new Right<MEMORY_TYPE,INPUTS_OUTPUTS>()).seq(inputs_or_outputs).up();
 
 
-
-
-
-
     // All together
     public static Visitor<CONFIGURATION_TYPE,CONFIGURATION_TYPE> all =
             code_reduction_global.or(var_of_fun_global).or(ref_or_assign_global).or(inputs_or_outputs_global);
