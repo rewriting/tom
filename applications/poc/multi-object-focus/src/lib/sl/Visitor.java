@@ -123,33 +123,6 @@ public abstract class Visitor<X,Y> {
         }};
     }
 
-
-    /**
-     * It applies this and then compose by the zipper's context.
-     * <p>
-     * IMPORTANT: UNSAFE!!! Be sure that this does NOT expect the result of its continuation to be Zip<X.Y>. It works
-     *            on visitors not using the focus the result of the contination like forSome but NOT like forAll.
-     *
-     * @return the same visitor as this but with the focus set on the root of the term.
-     */
-    public Visitor<X,X> up() {
-        final Visitor<X,Y> t = this;
-        return new Visitor<X,X>() {
-            public <T> X visitZK(final Zip<T,X> x, final Fun<Zip<X,X>,Zip<X,X>> k) throws VisitFailure {
-                return t.visitZK(x, new Fun<Zip<X, Y>, Zip<X, Y>>() {
-                    public Zip<X,Y> apply(Zip<X, Y> z) throws VisitFailure {
-                        return (Zip<X,Y>)(k.apply(Zip.unit(z.run())));
-                    }
-                }
-                );
-            }};
-    }
-
-
-
-
-
-
     /**
      * Computes the product of this visitor and the one given as argument. The product of a Visitor<X,Y> and a
      * Visitor<R,S> is a Visitor<X * R , Y * S> where X * R is the cartesian product of X and R (i.e. pairs (x,r)
@@ -238,6 +211,13 @@ public abstract class Visitor<X,Y> {
                 // The visitor equivalent to the continuation k
                 Visitor<X,X> vk = new Visitor<X,X>() {
                                     public <T> X visitZK(Zip<T,X> z, Fun<Zip<X,X>,Zip<X,X>> k2) throws VisitFailure {
+                                      //System.out.println("<shiftKV>");
+                                      //System.out.println("<subject>" + z.toString() + "</subject>");
+                                      //Zip<X,X> ansk = k.apply(Zip.unit(z.focus));
+                                      //System.out.println("<ansK>" + ansk.toString() + "</ansK>");
+                                      //Zip<X,X> ansk2 = k2.apply(ansk);
+                                      //System.out.println("<ansMK>" + ansk2.toString() + "</ansMK>");
+                                      //System.out.println("</shiftKV>");
                                       return k2.apply(k.apply(Zip.unit(z.focus))).run();
                                     }
                                   };
@@ -283,7 +263,7 @@ public abstract class Visitor<X,Y> {
      * @param f a function from visitors to visitors.
      * @return the fixed point of f.
      */
-    public static <X,Y> Visitor<X,Y> fix(final Fun<Visitor<X,Y>,Visitor<X,Y>> f) throws VisitFailure {
+    public static <X,Y> Visitor<X,Y> fix(final Fun<Visitor<X,Y>,Visitor<X,Y>> f) {
         final Ref<Visitor<X,Y>> fixpoint = new Ref<Visitor<X, Y>>(null) ;
         fixpoint.set( new Visitor<X, Y>() {
             public <T> X visitZK(Zip<T,X> z, Fun<Zip<X, Y>, Zip<X, Y>> k) throws VisitFailure {
@@ -301,12 +281,12 @@ public abstract class Visitor<X,Y> {
      * @return
      * @throws VisitFailure
      */
-    public static <X> Visitor<X,X> sltry(Visitor<X,X> s) throws VisitFailure {
+    public static <X> Visitor<X,X> sltry(Visitor<X,X> s) {
         return s.or(new Id<X>());
     }
 
 
-    public static <X> Visitor<X,X> repeat(final Visitor<X,X> s) throws VisitFailure {
+    public static <X> Visitor<X,X> repeat(final Visitor<X,X> s) {
         return fix(new Fun<Visitor<X,X>,Visitor<X,X>>(){ public Visitor<X,X> apply(Visitor<X,X> v) throws VisitFailure {
             return s.seq(v).or(new Id<X>());
         }});
@@ -351,6 +331,7 @@ public abstract class Visitor<X,Y> {
             }};
 
             try                    { X ans = v.visitZK(z,tracedk);
+                                     System.out.println("<ans>" + ans.toString() + "</ans>");
                                      System.out.println("<visitor-success/></" + name + ">");
                                      return ans;
                                    }
@@ -477,28 +458,13 @@ public abstract class Visitor<X,Y> {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     /**
      * new One<X>(s:Visitor<Y,Z>) = new SelectChild<X,Y>().seq(s).reset().up()
      *   with X,Y <= Visitable.
      * One tries to apply s to exactly one child (left to right) of its input.
      */
     public static Visitor<Visitable,Visitable> one(Visitor<Visitable,Visitable> s) {
-        return forSome.seq(s).reset().up();
+        return forSome.seq(s).reset();
     }
 
     public static Visitor<Visitable,Visitable> onceBottomUp(final Visitor<Visitable,Visitable> s) throws VisitFailure {
@@ -514,7 +480,7 @@ public abstract class Visitor<X,Y> {
      * One tries to apply s to exactly two children (left to right) of its input.
      */
     public static Visitor<Visitable,Visitable> two(Visitor<P<Visitable,Visitable>,P<Visitable,Visitable>> s) {
-        return forSome2.seq(s).reset().up();
+        return forSome2.seq(s).reset();
     }
 
 

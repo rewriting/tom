@@ -9,7 +9,7 @@ import tom.library.sl.VisitFailure;
  */
 public class Main {
     public static void main(String[] args) throws VisitFailure {
-        MOF.run();
+        //MOF.run();
         MiniML.run();
     }
 }

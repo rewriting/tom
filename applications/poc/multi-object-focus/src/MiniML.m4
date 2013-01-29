@@ -1,4 +1,7 @@
 // START OF M4 MACROS
+
+import lib.sl.Visitor;
+
 changequote(`[[', `]]')
 
 // END OF M4 MACROS
@@ -6,6 +9,8 @@ changequote(`[[', `]]')
 
 import lib.Fun;
 import lib.P;
+import lib.Ref;
+import lib.Zip;
 import lib.sl.*;
 import tom.library.sl.*;
 
@@ -53,6 +58,7 @@ public class MiniML {
 
         UniOp  = Minus()
                | Neg()
+               | Nep()
 
 
         Code  = Val( val:Val )
@@ -94,6 +100,15 @@ public class MiniML {
             $5
         }});]])
 
+    define([[VISITORLIFT]], [[public static Visitor<$2,$3> $1 = Visitor.lift( new Fun<$2,Zip<$2,$3>>() {
+        public Zip<$2,$3> apply(final $2 $4) throws VisitFailure {
+            $5
+        }});]])
+
+    define([[FUNCTION]], [[new Fun<$1,$2>() {
+        public $2 apply(final $1 $3) throws VisitFailure {
+            $4
+        }}]])
 
     define([[CODE_TYPE]],[[Visitable]])
     define([[ENVASSOC_TYPE]],[[Visitable]])
@@ -117,7 +132,7 @@ public class MiniML {
      * Simple reduction with only one focus and no need of control
      */
 
-    VISITORMAP(code_reduction, CODE_TYPE , CODE_TYPE , u , [[
+    VISITORMAP(code_reduction_single, CODE_TYPE , CODE_TYPE , u , [[
 
             if (!(u instanceof Code)) throw new VisitFailure();
 
@@ -127,6 +142,7 @@ public class MiniML {
             %match(u) {
                 UniOp(Minus() , Val(Int( i)))                    -> { return `Val(Int( -i));                                 }
                 UniOp(Neg()   , Val(Bool(b)))                    -> { return `Val(Bool(!b));                                 }
+                UniOp(Nep()   , Val(Bool(b)))                    -> { return `Val(Bool(!b));                                 }
 
 
                 BinOp(Val(Int(i))  , Add()  , Val(Int(j)))       -> { return `Val(Int(i + j));                               }
@@ -151,14 +167,63 @@ public class MiniML {
 
                 Seq(Val(_), c)                                   -> { return `c;                                              }
 
+                Let(n , d , b)                                   -> { return `App(Fun(n,b),d);                                }
+                While(c,b)                                       -> { return `If(c, Seq(b,While(c,b)), Val(Unit()));          }
+
                 Member(Val(Obj(Env(_*, EnvAssoc(n, v), _*))), n) -> { return `v;                                              }
             };
             throw new VisitFailure();
     ]])
 
 
+    public static Visitor<CODE_TYPE,CODE_TYPE> code_reduction = code_reduction_single.trace("code_reduction_single");
+
+    VISITORLIFT(code_inner_eval , CODE_TYPE , CODE_TYPE , u , [[
+
+           if (!(u instanceof Code)) throw new VisitFailure();
+
+            /*
+             Now that we are on Code, we can match.
+             */
+           %match(u) {
+               UniOp(op , y)           -> { return Zip.mkZip( FUNCTION( CODE_TYPE , CODE_TYPE , a , [[ return (CODE_TYPE)`UniOp(op, (Code) a        ); ]] ) , (CODE_TYPE)`y ); }
+
+               BinOp(Val(v) , op  , y) -> { final Val w = `v;
+                                            return Zip.mkZip( FUNCTION( CODE_TYPE , CODE_TYPE , a , [[ return (CODE_TYPE)`BinOp(Val(w), op, (Code) a); ]] ) , (CODE_TYPE)`y );
+                                          }
+               BinOp(x      , op  , y) -> { return Zip.mkZip( FUNCTION( CODE_TYPE , CODE_TYPE , a , [[ return (CODE_TYPE)`BinOp((Code) a     , op, y); ]] ) , (CODE_TYPE)`x ); }
+
+               If(x  , t , e)          -> { return Zip.mkZip( FUNCTION( CODE_TYPE , CODE_TYPE , a , [[ return (CODE_TYPE)`If((Code) a, t, e)         ; ]] ) , (CODE_TYPE)`x ); }
+
+               Seq(x, y)               -> { return Zip.mkZip( FUNCTION( CODE_TYPE , CODE_TYPE , a , [[ return (CODE_TYPE)`Seq((Code) a, y)           ; ]] ) , (CODE_TYPE)`x ); }
+
+               Member(x , n)           -> { return Zip.mkZip( FUNCTION( CODE_TYPE , CODE_TYPE , a , [[ return (CODE_TYPE)`Member((Code) a, n)        ; ]] ) , (CODE_TYPE)`x ); }
+
+               App(Val(v), y)          -> { final Val w = `v;
+                                            return Zip.mkZip( FUNCTION( CODE_TYPE , CODE_TYPE , a , [[ return (CODE_TYPE)`App(Val(w), (Code) a)      ; ]] ) , (CODE_TYPE)`y );
+                                          }
+               App(x     , y)          -> { return Zip.mkZip( FUNCTION( CODE_TYPE , CODE_TYPE , a , [[ return (CODE_TYPE)`App((Code) a , y)          ; ]] ) , (CODE_TYPE)`x ); }
+
+           };
+           throw new VisitFailure();
+    ]])
+
+
+    public static Visitor<CODE_TYPE,CODE_TYPE> code_inner_up = Visitor.[[shift]](
+       FUNCTION( [[Visitor<CODE_TYPE,CODE_TYPE>]] , [[Visitor<CODE_TYPE,CODE_TYPE>]] , v , [[return code_inner_eval.trace("code_inner_eval").seq(v).reset().seq(v); ]])
+    );
+/*    public static Visitor<CODE_TYPE,CODE_TYPE> code_inner_up = Visitor.[[shift]](
+                FUNCTION( [[Visitor<CODE_TYPE,CODE_TYPE>]] , [[Visitor<CODE_TYPE,CODE_TYPE>]] , v , [[return code_inner_eval.trace("code_inner_eval").up(); ]])
+            );
+*/
+
+
+    // Code reduction or inner eval
+    public static Visitor<CODE_TYPE,CODE_TYPE> code_all = code_reduction.or(code_inner_up.trace("code_inner_up"));
+
+
     // Its global version
-    public static Visitor<CONFIGURATION_TYPE,CONFIGURATION_TYPE> code_reduction_global = code_reduction.times(new Id<ENV_TYPE>()).times(new Id<WORLD_TYPE>());
+    public static Visitor<CONFIGURATION_TYPE,CONFIGURATION_TYPE> code_all_global = code_all.times(new Id<ENV_TYPE>()).times(new Id<WORLD_TYPE>());
 
 
 
@@ -201,12 +266,44 @@ public class MiniML {
             throw new VisitFailure();
     ]])
 
+    VISITORMAP(app_eval_inner, [[ P<CODE_TYPE,ENV_TYPE> ]] , [[ P<CODE_TYPE,ENV_TYPE> ]] , p , [[
+
+            CODE_TYPE code  = p.left;
+            ENV_TYPE  env   = p.right;
+
+            if (!(code  instanceof Code    )) throw new VisitFailure();
+            if (!(env   instanceof Env     )) throw new VisitFailure();
+
+            %match {
+              App(Val(Closure(clsenv, arg, body)) , Val(v)) << code  -> { return P.mkP((CODE_TYPE)`body , (ENV_TYPE)`clsenv);                               }
+            };
+            throw new VisitFailure();
+    ]])
+
+
+    public static Visitor<ENV_TYPE,ENV_TYPE> getEnv(final Ref<ENV_TYPE> ref) {
+        return Visitor.map ( FUNCTION( ENV_TYPE , ENV_TYPE , v , [[ ref.set(v) ; return v; ]] ) );
+    }
+
+    public static Visitor<ENV_TYPE,ENV_TYPE> setEnv(final Ref<ENV_TYPE> ref) {
+        return Visitor.map ( FUNCTION( ENV_TYPE , ENV_TYPE , v , [[ return ref.value; ]] ) );
+    }
+
+
+    public static Visitor<P<CODE_TYPE,ENV_TYPE>,P<CODE_TYPE,ENV_TYPE>> app_eval = Visitor.[[shift]](
+            FUNCTION( [[Visitor<P<CODE_TYPE,ENV_TYPE>,P<CODE_TYPE,ENV_TYPE>>]] , [[Visitor<P<CODE_TYPE,ENV_TYPE>,P<CODE_TYPE,ENV_TYPE>>]] , v , [[
+                               Ref<ENV_TYPE> ref = new Ref<ENV_TYPE>();
+                               Visitor<CODE_TYPE,CODE_TYPE> idc = new Id<CODE_TYPE>();
+                               return idc.times(getEnv(ref)).seq(app_eval_inner).seq(v).seq(idc.times(setEnv(ref))).reset();
+                          ]]));
+
+
     // Choice of Var or Fun
-    public static Visitor<P<CODE_TYPE,ENV_TYPE>,P<CODE_TYPE,ENV_TYPE>> var_or_fun = var_iter.or(fun);
+    public static Visitor<P<CODE_TYPE,ENV_TYPE>,P<CODE_TYPE,ENV_TYPE>> var_fun_app = var_iter.trace("var_iter").or(fun.trace("fun")).or(app_eval.trace("app_eval"));
 
 
     // Their global version
-    public static Visitor<CONFIGURATION_TYPE,CONFIGURATION_TYPE> var_of_fun_global = var_or_fun.times(new Id<WORLD_TYPE>());
+    public static Visitor<CONFIGURATION_TYPE,CONFIGURATION_TYPE> var_fun_app_global = var_fun_app.times(new Id<WORLD_TYPE>());
 
 
     /*
@@ -262,11 +359,11 @@ public class MiniML {
 
 
     // Choice of Ref or Assign
-    public static Visitor<P<CODE_TYPE,MEMORY_TYPE>,P<CODE_TYPE,MEMORY_TYPE>> ref_or_assign = ref.or(assign_iter);
+    public static Visitor<P<CODE_TYPE,MEMORY_TYPE>,P<CODE_TYPE,MEMORY_TYPE>> ref_or_assign = ref.trace("ref").or(assign_iter.trace("assign_iter"));
 
     // Their global version
     public static Visitor<CONFIGURATION_TYPE,CONFIGURATION_TYPE> ref_or_assign_global =
-            (new Left<CODE_TYPE,ENV_TYPE>()).times(new Left<MEMORY_TYPE,INPUTS_OUTPUTS>()).seq(ref_or_assign).up();
+            (new Left<CODE_TYPE,ENV_TYPE>()).times(new Left<MEMORY_TYPE,INPUTS_OUTPUTS>()).seq(ref_or_assign).reset();
 
 
     /*
@@ -293,7 +390,7 @@ public class MiniML {
 
     // Its version on INPUTS_OUTPUTS
     public static Visitor<P<CODE_TYPE,INPUTS_OUTPUTS>,P<CODE_TYPE,INPUTS_OUTPUTS>> inputs_up =
-       (new Id<CODE_TYPE>()).times(new Left<INPUTS_TYPE,OUTPUTS_TYPE>()).seq(inputs).up();
+       (new Id<CODE_TYPE>()).times(new Left<INPUTS_TYPE,OUTPUTS_TYPE>()).seq(inputs.trace("inputs")).reset();
 
 
     VISITORMAP(outputs , [[ P<CODE_TYPE,OUTPUTS_TYPE> ]] , [[ P<CODE_TYPE,OUTPUTS_TYPE> ]] , p , [[
@@ -315,24 +412,46 @@ public class MiniML {
 
     // Its version on INPUTS_OUTPUTS
     public static Visitor<P<CODE_TYPE,INPUTS_OUTPUTS>,P<CODE_TYPE,INPUTS_OUTPUTS>> outputs_up =
-            (new Id<CODE_TYPE>()).times(new Right<INPUTS_TYPE,OUTPUTS_TYPE>()).seq(outputs).up();
+            (new Id<CODE_TYPE>()).times(new Right<INPUTS_TYPE,OUTPUTS_TYPE>()).seq(outputs.trace("outputs")).reset();
 
 
     // Inputs or Outputs
-    public static Visitor<P<CODE_TYPE,INPUTS_OUTPUTS>,P<CODE_TYPE,INPUTS_OUTPUTS>> inputs_or_outputs = inputs_up.or(outputs_up);
+    public static Visitor<P<CODE_TYPE,INPUTS_OUTPUTS>,P<CODE_TYPE,INPUTS_OUTPUTS>> inputs_or_outputs = inputs_up.trace("inputs_up").or(outputs_up.trace("outputs_up"));
 
     // Their global version
     public static Visitor<CONFIGURATION_TYPE,CONFIGURATION_TYPE> inputs_or_outputs_global =
-            (new Left<CODE_TYPE,ENV_TYPE>()).times(new Right<MEMORY_TYPE,INPUTS_OUTPUTS>()).seq(inputs_or_outputs).up();
+            (new Left<CODE_TYPE,ENV_TYPE>()).times(new Right<MEMORY_TYPE,INPUTS_OUTPUTS>()).seq(inputs_or_outputs).reset();
 
 
-    // All together
-    public static Visitor<CONFIGURATION_TYPE,CONFIGURATION_TYPE> all =
-            code_reduction_global.or(var_of_fun_global).or(ref_or_assign_global).or(inputs_or_outputs_global);
+    // All together, one step
+    public static Visitor<CONFIGURATION_TYPE,CONFIGURATION_TYPE> all_once =
+            code_all_global.or(var_fun_app_global).or(ref_or_assign_global).or(inputs_or_outputs_global);
 
+    // All together, nornal form
+    public static Visitor<CONFIGURATION_TYPE,CONFIGURATION_TYPE> all_normal =
+            Visitor.repeat(all_once);
+
+
+    public static CONFIGURATION_TYPE programToConfiguration(Code program) {
+        ENV_TYPE            empty_env     = `Env();
+        CODE_ENV            code_env      = P.mkP( (CODE_TYPE)program , empty_env);
+
+        MEM_TYPE            empty_mem     = `Mem();
+        MEMORY_TYPE         empty_memory  = P.mkP(0, empty_mem);
+
+        INPUTS_TYPE         empty_inputs  = `Inputs();
+        OUTPUTS_TYPE        empty_outputs = `Outputs();
+        INPUTS_OUTPUTS      empty_io      = P.mkP(empty_inputs,empty_outputs);
+
+        WORLD_TYPE          empty_world   = P.mkP(empty_memory, empty_io);
+
+        return P.mkP(code_env, empty_world);
+    }
 
     public static void run() throws VisitFailure {
         System.out.println("<MiniML>\n\n");
+        Code program = `UniOp(Neg(), UniOp( Nep(), Val(Bool(true))));
+        showresult(code_all_global.seq(code_all_global).visit(programToConfiguration(program)));
         System.out.println("</MiniML>\n\n");
     }
 
