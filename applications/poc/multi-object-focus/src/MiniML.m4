@@ -58,8 +58,6 @@ public class MiniML {
 
         UniOp  = Minus()
                | Neg()
-               | Nep()
-
 
         Code  = Val( val:Val )
               | UniOp( uniop:UniOp , code:Code )
@@ -142,8 +140,6 @@ public class MiniML {
             %match(u) {
                 UniOp(Minus() , Val(Int( i)))                    -> { return `Val(Int( -i));                                 }
                 UniOp(Neg()   , Val(Bool(b)))                    -> { return `Val(Bool(!b));                                 }
-                UniOp(Nep()   , Val(Bool(b)))                    -> { return `Val(Bool(!b));                                 }
-
 
                 BinOp(Val(Int(i))  , Add()  , Val(Int(j)))       -> { return `Val(Int(i + j));                               }
                 BinOp(Val(Int(i))  , Sub()  , Val(Int(j)))       -> { return `Val(Int(i - j));                               }
@@ -193,7 +189,7 @@ public class MiniML {
                                           }
                BinOp(x      , op  , y) -> { return Zip.mkZip( FUNCTION( CODE_TYPE , CODE_TYPE , a , [[ return (CODE_TYPE)`BinOp((Code) a     , op, y); ]] ) , (CODE_TYPE)`x ); }
 
-               If(x  , t , e)          -> { return Zip.mkZip( FUNCTION( CODE_TYPE , CODE_TYPE , a , [[ return (CODE_TYPE)`If((Code) a, t, e)         ; ]] ) , (CODE_TYPE)`x ); }
+               If(x , t , e)           -> { return Zip.mkZip( FUNCTION( CODE_TYPE , CODE_TYPE , a , [[ return (CODE_TYPE)`If((Code) a, t, e)         ; ]] ) , (CODE_TYPE)`x ); }
 
                Seq(x, y)               -> { return Zip.mkZip( FUNCTION( CODE_TYPE , CODE_TYPE , a , [[ return (CODE_TYPE)`Seq((Code) a, y)           ; ]] ) , (CODE_TYPE)`x ); }
 
@@ -212,10 +208,6 @@ public class MiniML {
     public static Visitor<CODE_TYPE,CODE_TYPE> code_inner_up = Visitor.[[shift]](
        FUNCTION( [[Visitor<CODE_TYPE,CODE_TYPE>]] , [[Visitor<CODE_TYPE,CODE_TYPE>]] , v , [[return code_inner_eval.trace("code_inner_eval").seq(v).reset().seq(v); ]])
     );
-/*    public static Visitor<CODE_TYPE,CODE_TYPE> code_inner_up = Visitor.[[shift]](
-                FUNCTION( [[Visitor<CODE_TYPE,CODE_TYPE>]] , [[Visitor<CODE_TYPE,CODE_TYPE>]] , v , [[return code_inner_eval.trace("code_inner_eval").up(); ]])
-            );
-*/
 
 
     // Code reduction or inner eval
@@ -239,7 +231,7 @@ public class MiniML {
             if (!(assoc instanceof EnvAssoc)) throw new VisitFailure();
 
             %match {
-                Var(x) << code && EnvAssoc(y, v) << assoc && x == y -> { return P.mkP((Visitable)`Val(v), assoc);                               }
+                Var(x) << code && EnvAssoc(x, v) << assoc -> { return P.mkP((Visitable)`Val(v), assoc);                               }
             };
             throw new VisitFailure();
     ]])
@@ -275,7 +267,7 @@ public class MiniML {
             if (!(env   instanceof Env     )) throw new VisitFailure();
 
             %match {
-              App(Val(Closure(clsenv, arg, body)) , Val(v)) << code  -> { return P.mkP((CODE_TYPE)`body , (ENV_TYPE)`clsenv);                               }
+              App(Val(Closure(Env(x*), arg, body)) , Val(v)) << code  -> { return P.mkP((CODE_TYPE)`body , (ENV_TYPE)`Env(x, EnvAssoc(arg, v))); }
             };
             throw new VisitFailure();
     ]])
@@ -383,7 +375,7 @@ public class MiniML {
              Now that we are on Code * EnvAssoc, we can match.
              */
             %match {
-                Read() << code && Inputs(v,x*) << inputs -> { return P.mkP((CODE_TYPE)`x , (INPUTS_TYPE)`Inputs(x*) );  }
+                Read() << code && Inputs(v,x*) << inputs -> { return P.mkP((CODE_TYPE)`Val(v) , (INPUTS_TYPE)`Inputs(x*) );  }
             };
             throw new VisitFailure();
     ]])
@@ -432,16 +424,15 @@ public class MiniML {
             Visitor.repeat(all_once);
 
 
-    public static CONFIGURATION_TYPE programToConfiguration(Code program) {
+    public static CONFIGURATION_TYPE programToConfiguration(Code program, Inputs inputs) {
         ENV_TYPE            empty_env     = `Env();
         CODE_ENV            code_env      = P.mkP( (CODE_TYPE)program , empty_env);
 
         MEM_TYPE            empty_mem     = `Mem();
         MEMORY_TYPE         empty_memory  = P.mkP(0, empty_mem);
 
-        INPUTS_TYPE         empty_inputs  = `Inputs();
         OUTPUTS_TYPE        empty_outputs = `Outputs();
-        INPUTS_OUTPUTS      empty_io      = P.mkP(empty_inputs,empty_outputs);
+        INPUTS_OUTPUTS      empty_io      = P.mkP((INPUTS_TYPE)inputs,empty_outputs);
 
         WORLD_TYPE          empty_world   = P.mkP(empty_memory, empty_io);
 
@@ -450,8 +441,11 @@ public class MiniML {
 
     public static void run() throws VisitFailure {
         System.out.println("<MiniML>\n\n");
-        Code program = `UniOp(Neg(), UniOp( Nep(), Val(Bool(true))));
-        showresult(code_all_global.seq(code_all_global).visit(programToConfiguration(program)));
+
+        Code   program = `If( UniOp(Neg(), Read()) , Write(Val(Int(13))) , Write(Val(Int(17))) );
+        Inputs inputs  = `Inputs(Bool(true));
+
+        showresult(all_normal.visit(programToConfiguration(program,inputs)));
         System.out.println("</MiniML>\n\n");
     }
 
