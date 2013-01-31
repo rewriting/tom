@@ -154,12 +154,12 @@ public class MiniML {
                 BinOp(Val(Bool(i)) , And()  , Val(Bool(j)))      -> { return `Val(Bool(i & j));                              }
                 BinOp(Val(Bool(i)) , Or()   , Val(Bool(j)))      -> { return `Val(Bool(i | j));                              }
 
-                BinOp(x            , Eq()   , y           )      -> { return `Val(Bool(true()));                               }
-                BinOp(_            , Eq()   , _           )      -> { return `Val(Bool(false()));                              }
+                BinOp(x            , Eq()   , y           )      -> { return `Val(Bool(true()));                              }
+                BinOp(_            , Eq()   , _           )      -> { return `Val(Bool(false()));                             }
 
 
-                If(Val(Bool(true()))  , t , _ )                        -> { System.out.println("If true" ) ; return `t;                                              }
-                If(Val(Bool(false())) , _ , e )                        -> { System.out.println("If false") ;return `e;                                              }
+                If(Val(Bool(true()))  , t , _ )                  -> { return `t;                                              }
+                If(Val(Bool(false())) , _ , e )                  -> { return `e;                                              }
 
                 Seq(Val(_), c)                                   -> { return `c;                                              }
 
