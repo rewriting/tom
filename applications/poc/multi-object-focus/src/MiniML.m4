@@ -154,12 +154,12 @@ public class MiniML {
                 BinOp(Val(Bool(i)) , And()  , Val(Bool(j)))      -> { return `Val(Bool(i & j));                              }
                 BinOp(Val(Bool(i)) , Or()   , Val(Bool(j)))      -> { return `Val(Bool(i | j));                              }
 
-                BinOp(x            , Eq()   , y           )      -> { return `Val(Bool(true));                               }
-                BinOp(_            , Eq()   , _           )      -> { return `Val(Bool(false));                              }
+                BinOp(x            , Eq()   , y           )      -> { return `Val(Bool(true()));                               }
+                BinOp(_            , Eq()   , _           )      -> { return `Val(Bool(false()));                              }
 
 
-                If(Val(true)  , t , _ )                          -> { return `t;                                              }
-                If(Val(false) , _ , e )                          -> { return `e;                                              }
+                If(Val(Bool(true()))  , t , _ )                        -> { System.out.println("If true" ) ; return `t;                                              }
+                If(Val(Bool(false())) , _ , e )                        -> { System.out.println("If false") ;return `e;                                              }
 
                 Seq(Val(_), c)                                   -> { return `c;                                              }
 
@@ -442,8 +442,8 @@ public class MiniML {
     public static void run() throws VisitFailure {
         System.out.println("<MiniML>\n\n");
 
-        Code   program = `If( UniOp(Neg(), Read()) , Write(Val(Int(13))) , Write(Val(Int(17))) );
-        Inputs inputs  = `Inputs(Bool(true));
+        Code   program = `If( UniOp(Neg() , Read()) , Write(Val(Int(13))) , Write(Val(Int(17))) );
+        Inputs inputs  = `Inputs(Bool(true()));
 
         showresult(all_normal.visit(programToConfiguration(program,inputs)));
         System.out.println("</MiniML>\n\n");

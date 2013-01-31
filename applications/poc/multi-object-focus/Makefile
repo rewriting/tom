@@ -11,7 +11,7 @@ src/MOF.java: src/MOF.t
 	cd src/ && tom -v -p MOF.t
 
 src/MiniML.java: src/MiniML.m4
-	cd src/ && m4 MiniML.m4 >MiniML.t && tom -v -p MiniML.t
+	cd src/ && m4 MiniML.m4 >MiniML.t && tom -v MiniML.t
 
 src/Main.class: src/Main.java ${TOMGENERATED}
 	cd src/ && javac Main.java
