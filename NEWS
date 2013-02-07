@@ -1,3 +1,23 @@
+version 2.10:
+  - new type engine with subtyping used by default
+  - added high-level transformation constructions
+    - %transformation
+    - %resolve
+    - %tracelink
+    - op_implement (mappings)
+  - added Ada backend
+    - Ada mappings
+    - Ada version of sl
+  - Tom-EMF
+    - added -prefix option
+    - added -nt option (took subtyping in account during generation)
+    - fix various bugs (EEnum, subtyping, special characters replacement,
+      naming conventions, 
+  - fix: backquote char is now allowed in %match subject
+  - bugfix
+    - #13741: Problem in generated introspector with %oparray
+    - #14128: Make strategies for constructors with builtin children
+
 version 2.9:
   - added bracket notation for backquote-terms: `f[arg1=a()]
   - add the possibility to define default-value in a %op

@@ -198,8 +198,8 @@
  * fix TestHandWrittenMapping.t
 
 2012-04-20 emilie
- * fix the generated code for the introspacetor of array operators. We consider 
-   that the children of such operators are all its elements.
+ * fix the generated code for the introspacetor of array operators (bug #13741).
+We consider that the children of such operators are all its elements.
 
 2012-04-13 jcb
  * bootstrap to integrate Emilie's bugfix #14128 into stable branch
