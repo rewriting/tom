@@ -24,7 +24,7 @@ How to prepare a release:
   - build.bat
   - ensure that newly created Tom binary is the good version with the following
     command: jtom\stable\dist\bin\tom --version
-  - launch utils\installKit\tomInstallScript.iss (by clicking on it if InnoDB is
+  - launch utils\installKit\tomInstallScript.iss (by clicking on it if InnoDB is
     installed)
 
 - create distfiles:
@@ -35,8 +35,8 @@ How to prepare a release:
 - upload manual
 
 - update Changelog, commit, tag the release with
-  git tag -a tags/tom-2.8 -m "* version 2.8"
-  git push origin tags/tom-2.8 (only one tag)
+  git tag -a tags/tom-2.10 -m "* version 2.10"
+  git push origin tags/tom-2.10 (only one tag)
   or
   git push --tags (all tags)
 
