@@ -1,11 +1,169 @@
+2013-01-31 ccalves
+ * Multi Object Focus
+   - shift added
+   - up removed
+   - delimitated continuations
+   - added macros system to have readable types
+
+2012-12-31 jcb
+ * Tom-2.10-rc2
+ * add instances of SimplePDL models for SimplePDLToPetriNet example
+ * update Eclipse plugin
+
 2012-12-10 pem
  * change semantics of all: getChildren returns an array of children for
  list-operators
  * bootstrap and bootinstall
 
+2012-10-25 jcb
+ * bootstrap and bootinstall to prepare Tom-2.10-rc1
+ * change otion message (default used typer)
+ * update SimplePDLToPetriNet example
+ * change resolve elements generation (attributes names) to limit names clashes
+
+2012-10-24 jcb
+ * add %tracelink and %resolve to Eclipse plugin
+
+2012-10-23 jcb
+ * update Eclipse plugin:
+   - add %transformation
+   - add Ada libraries
+   - update Java mappings and libraries
+
+2012-10-21 jcb
+ * fix transformer plugin :
+   - move language specific code
+   - clean code in backend plugin
+ * bootstrap
+
+2012-10-21 jcb
+ * TransformerPlugin: fix clash names
+
+2012-10-16 jcb
+ * transformation:
+   - fix to import .ecore file from othe directories than .
+   - fix mappings generation (SimplePDLToPetriNet example)
+ * merge transformation branch into master one
+
+2012-10-13 jcb
+ * fix and clean SimplePDLToPetriNet example
+
+2012-09-07 jcb
+ * remove "New Typer activated" message in typing phase
+
+2012-08-30 mpantel
+ * add Ada examples
+
+2012-08-23 jcb
+ * transformation: %tracelink syntax change (+update example)
+
+2012-08-09 mpantel
+ * add and improve Ada examples (btree)
+
+2012-08-09 jcb
+ * add DefaultValue.t example to show how to use backquote with get_default
+
+2012-08-08 jcb
+ * merge merge-master-ada branch into master
+
+2012-08-08 mpantel
+ * Add Tom Ada strategy use examples
+
+2012-08-07 mpantel
+ * Add Ada examples
+
+2012-08-07 jcb
+ * merge tom-ada from 07/09/2011 into master
+ * update AdaGenerator to implement abstract methods from transformation branch
+
 2012-08-06 pem
  * remove lazyType option
  * simplify Compiler.t: generate less Universal types
+
+2012-07-30 jcb
+ * fix utils/LinkClass (transformation)
+ * update Eclipse plugin (add 2.10 feature, fixes, etc.)
+
+2012-07-27 jcb
+ * fix Eclipse plugin to handle Tom signature changes
+ * fix Eclipse plugin to remove few hundreds of warnings
+
+2012-07-26 jcb
+ * Tom-EMF:
+   - fix EEnum case to avoid mappings generation containing non
+ alpha-numerical   characters: use of 'name' instead of 'literal' for
+ EEnumLiteral ('+'->'Plus')
+   - fix side effect of -prefix option
+
+2012-07-25 jcb
+ * Tom-EMF: fix prefix option for variadic operators
+
+2012-07-16 jcb
+ * modify and simplify signature (transformation)
+ * change resolve generation
+ * update SimplePDLToPetriNet example to conforme with new %transformation
+ syntax
+ * clean and simplify TransformerPlugin code
+ * Simplify and clean %transformation parsing
+
+2012-07-02 jcb
+ * fix Ecore mappings (EObject does not extends EObject)
+ * Tom-EMF: change options management
+ * Tom-EMF: add prefix option to avoid names clashes
+
+2012-06-22 jcb
+ * add Eclipse plugin sources into git repository + first updates
+
+2012-06-13 jcb
+ * fix plugins to print file names when "-v" option si enabled
+
+2012-06-06 jcb
+ * fix TransformerPlugin -> working prototype
+ * change backend to have working transformation prototype
+ * add a working use case for %transformation: SimplePDLToPetriNet
+
+2012-06-05 jcb
+ * clean transformation signature, remove ueless constructors
+
+2012-06-01 jcb
+ * GrammarNazi time: fix typo s/childs/children whole Tom compiler+Gom+library
+ * transformation: remove static methods
+
+2012-05-31 jcb
+ * transformation: fix ResolveStratInstruction generation 
+ * import master modifications, merge transformation and master
+ * bootstrap
+
+2012-05-31 pem
+ * make generation of ResolveStrat more abstract
+
+2012-05-24 jcb
+ * fix Full Qualified Name bug
+ * transformation:
+   - update %transformation backend + fix multiple code generation
+   - update parser to prepare syntax changes
+   - update TransformerPlugin (Resolve part)
+
+2012-05-21 jcb
+ * update Windows iss script: CLASSPATH modification (EMF libraries)
+ * fix parser to allow backquote char in %match subject
+
+2012-05-18 pem
+ * NewKernelTyper: syntactic improvments
+
+2012-05-16 pem
+ * integrate Claudia's fix
+ * add Claudia's fix to stable version
+
+2012-05-16 jcb
+ * remove dead code and unused tokens in Tom parser
+ * fix build.xml (continuous integration tasks)
+ * fix Tom-EMF and port it into stable
+ * update Windows iss script
+
+2012-05-16 tavaresc
+ * NewKernelTyper: fix tactic to avoid variable capture
+ * add an example
 
 2012-05-15 pem
  * merge subtype into master
@@ -16,8 +174,178 @@
  * improved newtyper efficiency
  * merge with master branch
 
+2012-05-14 tonio
+ * Be more specific about types in the used hamcrest Matchers
+ * update tests
+
+2012-05-11 jcb
+ * add a temporary transformation example
+ * integrate %transformation, %tracelink and %resolve
+ * add ReferenceClass
+
+2012-05-10 tonio
+ * simplify Gom adt
+
+2012-05-08 tonio
+ * simplify Gom ast
+ * update junit library to 4.10
+ * update examples and tests
+
+2012-04-25 jcb
+ * port Emilie's bugfix into stable branch
+
+2012-04-23 jcb
+ * fix TestHandWrittenMapping.t
+
+2012-04-20 emilie
+ * fix the generated code for the introspacetor of array operators. We consider 
+   that the children of such operators are all its elements.
+
+2012-04-13 jcb
+ * bootstrap to integrate Emilie's bugfix #14128 into stable branch
+
+2012-04-11 emilie
+ * fix the bug #14128: the Make_ strategy's children are now identical to all 
+   its slots (including the builtin slots thanks to the VisitableBuiltin wrapper)
+
+2012-04-10 emilie
+ * add sl test
+ * update ExpanderPlugin
+
+2012-04-10 jcb
+ * transformation: add ReferenceClass, update backend, remove first implem. of 
+   specialized backquote
+
+2012-04-04 jcb
+ * add org.eclipse.emf.ecore.xmi jar archive in distributed libs
+ * Tom-EMF: change naming convention of EEnum types
+
+2012-03-20 jcb
+ * add/change MakeDecl corresponding to a Transformation
+ * modify construct to be handled as a common strategy -> pb with make
+ * remove link model generation to try to have an intermediate working version
+ * add Transfo2 example
+
+2012-03-15 jcb
+ * fix bug in ResolveStratDecl transformation
+
+2012-03-07 jcb
+ * transformation: parser, transformer, backend
+
+2012-02-23 emilie
+ * new examples of hand-written introspectors (Java Integer & Swing components)
+ * fix a bug (two instances of BoulderDash2D were created)
+
+2012-02-23 jcb
+ * add a default %op implent generation in the EMF mappings generator
+
+2012-02-17 tavaresc
+ * fix subtyping examples
+
+2012-01-05 jcb
+ * transformation
+
+2011-12-27 jcb
+ * add %op implement extension
+
+2011-12-16 jcb
+ * merge masten into transformation
+ * change Tom-EMF
+
 2011-12-09 tavaresc
  * newtyper: add verification for types of each variable in pattern.
+
+2011-11-07 jcb
+ * minor update of EcoreContainmentIntrospector
+
+2011-10-27 jcb
+ * add generation of intermediate files in DesugarerPlugin (-i option)
+
+2011-10-14 jcb
+ * bootstrap and bootinstall -> tom-2.9
+
+2011-10-08 tavaresc
+ * Fix type constraint for a 'match' (tPattern <: tSubject).
+ * Exclude Record and TestRecord from junit tests with new typer
+
+2011-10-04 tavaresc
+ * update type inference with fix of type errors
+ * bootstrap and bootinstall -> tom-2.9-rc2
+
+2011-10-04 francois
+ * parserv3: fix parsing of a << T b(c,d) in a match constraint
+
+2011-10-04 jcb
+ * bootstrap and bootinstall -> tom-2.9-rc1
+
+2011-09-30 tavaresc
+ * update new typer verbose mode (number of constraints and type * variables)
+ * Add explanation about optimization of typer wrt its formalisation.
+
+2011-09-30 jcb
+ * fix Tom-EMF to handle reserved keywords as constructors arguments
+ * fix error message in case of incompatible get_default decl
+ * re-generate ecore mapping to fix reserved keywords problem
+
+2011-09-30 francois
+ * parserv3: fix import problem
+
+2011-09-29 jcb
+ * add a specific case for EcorePackage mapping generation
+ * new ecore.tom mapping including subtyping
+
+2011-09-29 francois
+ * parserv3: fix the noOption FileName case
+ * parserv3: fix cast parsing
+
+2011-09-27 pem
+ * one more bootstrap
+
+2011-09-27 jcb
+ * bootstrap
+
+2011-09-23 jcb
+ * merge master into subtype
+
+2011-09-22 francois
+ * parserv3: fix Composite in parser
+
+2011-09-20 francois
+ * parserv3: fix problem with string in BQ parser
+
+2011-09-19 tavaresc
+ * Name constraint resolution methods as in my thesis. 
+ * Remove unnecessary method replaceInInputTVarList.
+
+2011-09-19 francois
+ * parserv3: fix a problem with IDENTIFIER-DIGIT in parser
+
+
+2011-09-16 francois
+ * parserv3: fix bug on %include
+
+2011-09-12 tavaresc
+ * Fix non-linearity of star variables (used also as simple variables)
+ * Fix regression tests to use newtyper
+ * Fix error caused by a bug of constraint disjunction
+
+2011-09-11 pem
+ * parser v3: translate BQ constructs
+
+2011-09-10 pem
+ * technical commit to merge
+ * reorganize plugins and parsers
+ * moved newparser into tom/engine/parser/antlr3
+ * tom/engine/newparser is no longer used
+ * translate TypetermConstruct
+ * removed get_implementation construct
+ * print symbolTable
+ * fill symbolTable using %op
+ * removed single line comments in %strategy * add OriginTracking to Symbol in 
+   Converter
+
+2011-09-09 tavaresc
+ * Fix non-linearity of star variables also used as simple variables
 
 2011-09-09 francois
  * newparser: fix %gom
@@ -28,6 +356,7 @@
 
 2011-09-09 jcb
  * newparser: fix and improve backquote
+ * parser v3: add optionlsit in BQ*
 
 2011-09-08 tavaresc
  * add example to deal with non-linear star variables
