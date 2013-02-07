@@ -1,0 +1,60 @@
+Tom 2.10 announcement
+--------------------
+
+It is our great privilege and pleasure to announce the availability of
+Tom version 2.10.
+
+This release continues our work on the integration of pattern matching
+and rule based programming facilities into Java and C.
+
+Tom is a pattern matching compiler developed at LORIA, Inria and Université de
+Lorraine. It is particularly well-suited for programming various
+transformations on trees/terms and XML based documents. Its design follows our
+research on the semantics and the efficient compilation of rule based
+languages.
+
+Many applications have been developed in Tom, both in academia and
+industry. Among them, let us mention:
+  - the Tom compiler itself
+  - languages semantics, interpreters and program transformation tools
+  - a generator of canonical abstract syntax trees (Gom)
+  - a proof assistant for supernatural deduction
+  - a compiler algorithm for anti-pattern matching and disunification
+  - model transformations using EMF (e.g. AADL2Fiacre within Quarteft project)
+
+Tom is a complex compiler which adds powerful constructs to Java and C:
+rewrite rules, strategies, non linear syntactic matching, associative
+matching with neutral element (a.k.a. list-matching), XML based pattern
+matching, string matching, and equational rewriting.
+This offers the possibility to analyze and transform any kind of
+data-structure. Tom can be used for large scale developments and
+applications. It comes with a detailed documentation, as well as with
+programming and debugging support.
+
+This new release contains many improvements and new features:
+
+  - the compiler uses by default the new type-inference engine released as
+    alpha in Tom-2.9. It supports now subtypes.
+
+  - the new tool to connect Tom with EMF (Eclipse Modeling Framework) which was
+    released in Tom-2.9 has been improved. Several bugs have been fixed, code
+    generation has been modified to handle specific cases. A prefix can be
+    added to avoid names clashes, and subtype generation is triggered by -nt
+    option.
+
+  - a prototype of models transformations module has been integrated. New
+    high-level constructs have been designed to handle EMF Ecore models
+    transformations.
+
+  - an Ada backend has been added added to Tom compiler. Strategies can be used
+    in Ada.
+
+  - compiler has been improved and few bugs have been tracked and fixed (#13741
+    and #14128)
+
+Tom is available, in open source (GPL/BSD License), from the web page:
+
+  http://tom.loria.fr/
+
+  Best regards,
+  Tom's development team
