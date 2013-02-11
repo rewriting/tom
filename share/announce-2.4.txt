@@ -7,11 +7,11 @@ Tom version 2.4.
 This release continues our work on the integration of pattern matching
 and rule based programming facilities into C and Java.
 
-Tom is a pattern matching compiler developed at INRIA. It is
+Tom is a pattern matching compiler developed at Inria. It is
 particularly well-suited for programming various transformations on
 trees/terms and XML based documents. Its design follows our research on
 the efficient compilation of rule based languages (e.g. ELAN, developed
-at INRIA-Loria).
+at Inria-Loria).
 
 Many applications have been developed in Tom. Among them, let us mention:
  - the Tom compiler itself

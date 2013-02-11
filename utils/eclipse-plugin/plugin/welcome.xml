@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?> 
 <welcomePage title="Tom" format="wrap">
 
-<intro>Tom is a pattern matching compiler, developed at INRIA, is particularly 
+<intro>Tom is a pattern matching compiler, developed at Inria, is particularly 
 well-suited for programming various transformations on trees/terms.
 Its design follows our research on rule based languages, and our experiences on
 the efficient compilation of ELAN developed by the Protheo group.

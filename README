@@ -6,7 +6,7 @@ TOM - To One Matching Compiler
   What is it?
   -----------
 
-  Tom is a pattern matching compiler, developed at INRIA. It is
+  Tom is a pattern matching compiler, developed at Inria. It is
   particularly well-suited for programming various transformations on
   trees/terms.
 

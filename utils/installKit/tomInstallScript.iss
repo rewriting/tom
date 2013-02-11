@@ -6,7 +6,7 @@
 [Setup]
 AppName=Tom
 AppVerName=Tom version 2.10-rc3
-DefaultDirName={pf}\INRIA\Tom
+DefaultDirName={pf}\Inria\Tom
 DefaultGroupName=Tom
 UninstallDisplayIcon={app}\Tom.exe
 SourceDir=../../stable/dist

@@ -14882,7 +14882,7 @@
 		    (object Attribute
 			tool       	"Java"
 			name       	"JavadocDefaultAuthor"
-			value      	"Equipe Protheo - INRIA Lorraine")
+			value      	"Equipe Protheo - Inria Lorraine")
 		    (object Attribute
 			tool       	"Java"
 			name       	"JavadocDefaultVersion"
