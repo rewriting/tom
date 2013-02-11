@@ -1,4 +1,4 @@
-  /*  * Copyright (c) 2005-2013, INPL, INRIA
+  /*  * Copyright (c) 2005-2013, Universite de Lorraine, Inria
   * All rights reserved.
   * 
   * Redistribution and use in source and binary forms, with or without

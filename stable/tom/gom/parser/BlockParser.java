@@ -3,7 +3,7 @@
   /*
    * Gom
    *
-   * Copyright (c) 2010, INPL, INRIA
+   * Copyright (c) 2010, Universite de Lorraine, Inria
    * Nancy, France.
    *
    * This program is free software; you can redistribute it and/or modify

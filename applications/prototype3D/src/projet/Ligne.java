@@ -3,7 +3,7 @@ package projet;
 /*
  * Ligne class.
  * 
- * Copyright (c) 2000-2013, INPL, INRIA
+ * Copyright (c) 2000-2013, Universite de Lorraine, Inria
  * Nancy, France.
  * 
  * This program is free software: you can redistribute it and/or modify it under
