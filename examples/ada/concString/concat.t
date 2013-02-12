@@ -17,7 +17,7 @@ package body Concat is
 			}
 			
 			concString(nom*, '=', '"', valeur*, '"', ' ', reste*) -> {
-				--Extraction des différents champs
+				--Extraction des differents champs
 				put_line("Nom: '" & acc2str(`nom*) & "' Valeur: '" & acc2str(`valeur*) & "'");
 				extraireValeur(`reste*);
 				return;
@@ -49,7 +49,7 @@ package body Concat is
 
 		%match(S) {
 			concString(before*,'l',after*) -> {
-				put_line("Présence dans S d'un 'l' après '" & acc2str(`before*) & "' et avant '" & acc2str(`after*) & "'");
+				put_line("Presence dans S d'un 'l' après '" & acc2str(`before*) & "' et avant '" & acc2str(`after*) & "'");
 			}
 		}
 		put_line("");

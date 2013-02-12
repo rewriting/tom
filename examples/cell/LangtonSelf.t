@@ -35,7 +35,7 @@
  * 	de Langton.
  * 	Remarque : les regles sont definies a rotation pres, 
  *	donc on commence par calculer un representant "canonique" 
- *	du membre gauche et seules les regles appliquées aux 
+ *	du membre gauche et seules les regles appliquees aux 
  *	representants canoniques sont ecrites.
  */
  
