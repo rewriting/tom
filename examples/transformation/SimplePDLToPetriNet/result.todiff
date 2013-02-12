@@ -1,6 +1,6 @@
 java -cp .:lib/petrinetsemantics_updated_1.2.jar:lib/simplepdlsemantics_updated_1.2.jar:/home/jcb/workspace/gitexperiment/jtom2/src/dist/lib/tom-runtime-full.jar:/home/jcb/workspace/gitexperiment/jtom2/src/distlib/tom-compiler-full.jar:/home/jcb/workspace/ipp/work/lib/jgll.jar:/home/jcb/workspace/gitexperiment/jtom2/src/dist/lib/tools/org.eclipse.emf.common_2.5.0.v200906151043.jar:/home/jcb/workspace/gitexperiment/jtom2/src/dist/lib/tools/org.eclipse.emf.ecore_2.5.0.v200906151043.jar:/home/jcb/workspace/gitexperiment/jtom2/src/dist/lib/tools/org.eclipse.emf.ecore.xmi_2.5.0.v200906151043.jar:. SimplePDLToPetriNet 
 
-Starting…
+Starting...
 
 No model instance given in argument. Using default hardcoded model.
 

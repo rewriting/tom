@@ -138,7 +138,7 @@ public class SimplePDLToPetriNet {
   }
 
   public static void main(String[] args) {
-    System.out.println("\nStarting…\n");
+    System.out.println("\nStarting...\n");
 
     XMIResourceImpl resource = new XMIResourceImpl();
     SimplePDLSemantics.DDMMSimplePDL.Process p_root;
