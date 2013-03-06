@@ -170,6 +170,12 @@
         <include name="${example}/**/*.jrag"/>
         <include name="${example}/**/*.jadd"/>
         <include name="${example}/**/*.ast"/>
+        <include name="${example}/**/*.ads"/>
+        <include name="${example}/**/*.adb"/>
+        <include name="${example}/**/*.sh"/>
+        <include name="${example}/**/*.ecore"/>
+        <include name="${example}/**/*.xmi"/>
+        <include name="${example}/**/*.jar"/>
         <include name="${example}/**/Makefile"/>
         <include name="${example}/**/*.html"/>
         <include name="${example}/**/*.gif"/>

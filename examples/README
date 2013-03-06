@@ -79,6 +79,9 @@ To relax, take a look at quine example
   Small program to show how to use AC (Associative-Commutative) matching
   Concepts: ac-matching, gom
 
+* ada
+  Early test of the Tom Ada compiler
+
 * addressbook
   Small implementation of a database
   Concepts: apigen, list-matching, gom
@@ -132,13 +135,6 @@ To relax, take a look at quine example
 * bdd
   Resolution of the N-Queens chess problem, using BDDs (Binary Decision Diagrams)
 
-* bpel
-  transformation of BPEL specification
-  This example contains an example that constructs from a BPEL specification in
-  XML the corresponding work flow graph. This example is based on the
-  implementation of termgraph in Gom. See the termgraph example.
-  Concepts: Gom Termgraph, XML pattern matching
-
 * boulderdash
   Simulate how rocks go down in the boulder-dash game
   Coordinate system for Java 2D and used Topology:
@@ -150,6 +146,13 @@ To relax, take a look at quine example
  |    |
  Y    S
   Concepts: apigen, virtual mapping
+
+* bpel
+  transformation of BPEL specification
+  This example contains an example that constructs from a BPEL specification in
+  XML the corresponding work flow graph. This example is based on the
+  implementation of termgraph in Gom. See the termgraph example.
+  Concepts: Gom Termgraph, XML pattern matching
 
 * builtin
   Shows how to use builtin integer and string
@@ -185,9 +188,15 @@ To relax, take a look at quine example
 * debugger
   A small debugger for strategies
 
+* defaultvalues
+  Illustrates the use of default values for constructors
+
 * dom
   XML manipulation based on DOM
   Concepts: XML, list-matching, DOM
+
+* enumerator
+  Generator of algebraic terms, based on Feat
 
 * expression
   Simplification of algebraic expressions
@@ -346,6 +355,8 @@ To relax, take a look at quine example
   Calculus of strutures
   Concepts: complex list-matching, exploration strategies
 
+* subtypeinference
+
 * subtyping
   Prototypes for type checking and type inference
   Concepts: type systems, constraint resolution
@@ -365,6 +376,9 @@ To relax, take a look at quine example
 
 * tomjastadd
   Use of Jastadd with Tom
+
+* transformation
+  Examples of EMF model transformation
 
 * tutorial
   Examples introduced in the tutorial

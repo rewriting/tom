@@ -61,7 +61,9 @@
 
   <target name="sub.all">
     <subant target="build">
-      <fileset dir="." includes="*/build.xml"/>
+      <fileset dir="." 
+        includes="*/build.xml" 
+      />
     </subant>
   </target>
 
