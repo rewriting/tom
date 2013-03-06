@@ -26,4 +26,4 @@ Other contributors:
     Marian Vittek             Initial design of Tom
     Antoine Floch             Improvment of EcoreContainmentIntrospector
     Claudia Tavares           Type inference engine (+subtyping)
-    Francois Prugniel         
+    Marc Pantel               Design of model transformation extensions, Ada backend
