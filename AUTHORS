@@ -9,6 +9,7 @@ Main contributors:
     Julien Guyon              Eclipse plugin
     Radu Kopetz               Compiler, anti-patterns
     Bertrand Tavernier        CRIL Technology
+    Claudia Tavares           Type inference engine (+subtyping)
 
 Other contributors:
     Gregory Andrien           Plugin-Platform
@@ -25,5 +26,4 @@ Other contributors:
     Eelco Visser              Discussions and %match construct
     Marian Vittek             Initial design of Tom
     Antoine Floch             Improvment of EcoreContainmentIntrospector
-    Claudia Tavares           Type inference engine (+subtyping)
     Marc Pantel               Design of model transformation extensions, Ada backend
