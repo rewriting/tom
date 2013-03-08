@@ -482,4 +482,35 @@ public class MOF {
         System.out.println("</MOF-POC>\n\n");
     }
 
+    /*
+     **************************
+     *                        *
+     *      MUDULAR SOS       *
+     *                        *
+     * ************************
+    */
+
+    %gom {
+        module LANG
+        imports String int
+        abstract syntax
+
+        Arith = Val(val:int)
+              | Var(name:String)
+              | Plus(a1:Arith, a2:Arith)
+              | Mult(a1:Arith, a2:Arith)
+
+        Assoc = Assoc(name:String, val:int)
+
+        Stmt  = Set(name:String, a:Arith)
+              | Nop()
+
+        Mem   = Mem(Assoc*)
+        Pgrm  = Pgrm(Stmt*)
+
+        module MSOS:rules() {
+            Mem(x*, Assoc(n,_), y*, Assoc(n,v), z*) -> Mem(x*, y*, Assoc(n,v), z*)
+            Pgrm(x*,Nop(),y*)                       -> Pgrm(x*,y*)
+        }
+    }
 }
