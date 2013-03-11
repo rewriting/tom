@@ -186,30 +186,37 @@ public class MiniML {
              Now that we are on Code, we can match.
              */
            %match(u) {
-               UniOp(op , y)           -> { return Zip.mkZip( FUNCTION( CODE_TYPE , CODE_TYPE , a , [[ return (CODE_TYPE)`UniOp(op, (Code) a        ); ]] ) , (CODE_TYPE)`y ); }
+               UniOp(op , y)                     -> { return Zip.mkZip( FUNCTION( CODE_TYPE , CODE_TYPE , a , [[ return (CODE_TYPE)`UniOp(op, (Code) a        ); ]] ) , (CODE_TYPE)`y ); }
 
-               BinOp(Val(v) , op  , y) -> { final Val w = `v;
-                                            return Zip.mkZip( FUNCTION( CODE_TYPE , CODE_TYPE , a , [[ return (CODE_TYPE)`BinOp(Val(w), op, (Code) a); ]] ) , (CODE_TYPE)`y );
-                                          }
-               BinOp(x      , op  , y) -> { return Zip.mkZip( FUNCTION( CODE_TYPE , CODE_TYPE , a , [[ return (CODE_TYPE)`BinOp((Code) a     , op, y); ]] ) , (CODE_TYPE)`x ); }
+               BinOp(Val(v) , op  , y)           -> { final Val w = `v;
+                                                      return Zip.mkZip( FUNCTION( CODE_TYPE , CODE_TYPE , a , [[ return (CODE_TYPE)`BinOp(Val(w), op, (Code) a); ]] ) , (CODE_TYPE)`y );
+                                                    }
+               BinOp(x      , op  , y)           -> { return Zip.mkZip( FUNCTION( CODE_TYPE , CODE_TYPE , a , [[ return (CODE_TYPE)`BinOp((Code) a     , op, y); ]] ) , (CODE_TYPE)`x ); }
 
-               If(x , t , e)           -> { return Zip.mkZip( FUNCTION( CODE_TYPE , CODE_TYPE , a , [[ return (CODE_TYPE)`If((Code) a, t, e)         ; ]] ) , (CODE_TYPE)`x ); }
+               If(x , t , e)                     -> { return Zip.mkZip( FUNCTION( CODE_TYPE , CODE_TYPE , a , [[ return (CODE_TYPE)`If((Code) a, t, e)         ; ]] ) , (CODE_TYPE)`x ); }
 
-               Seq(x, y)               -> { return Zip.mkZip( FUNCTION( CODE_TYPE , CODE_TYPE , a , [[ return (CODE_TYPE)`Seq((Code) a, y)           ; ]] ) , (CODE_TYPE)`x ); }
+               Seq(x, y)                         -> { return Zip.mkZip( FUNCTION( CODE_TYPE , CODE_TYPE , a , [[ return (CODE_TYPE)`Seq((Code) a, y)           ; ]] ) , (CODE_TYPE)`x ); }
 
-               Member(x , n)           -> { return Zip.mkZip( FUNCTION( CODE_TYPE , CODE_TYPE , a , [[ return (CODE_TYPE)`Member((Code) a, n)        ; ]] ) , (CODE_TYPE)`x ); }
+               Member(x , n)                     -> { return Zip.mkZip( FUNCTION( CODE_TYPE , CODE_TYPE , a , [[ return (CODE_TYPE)`Member((Code) a, n)        ; ]] ) , (CODE_TYPE)`x ); }
 
-               App(Val(_), Val(_))     -> { throw new VisitFailure(); }
-               App(Val(v), y)          -> { final Val w = `v;
-                                            return Zip.mkZip( FUNCTION( CODE_TYPE , CODE_TYPE , a , [[ return (CODE_TYPE)`App(Val(w), (Code) a)      ; ]] ) , (CODE_TYPE)`y );
-                                          }
-               App(x     , y)          -> { return Zip.mkZip( FUNCTION( CODE_TYPE , CODE_TYPE , a , [[ return (CODE_TYPE)`App((Code) a , y)          ; ]] ) , (CODE_TYPE)`x ); }
 
-               LetRec(n, Val(x), y)    -> { throw new VisitFailure(); }
-               LetRec(n, x     , y)    -> { return Zip.mkZip( FUNCTION( CODE_TYPE , CODE_TYPE , a , [[ return (CODE_TYPE)`LetRec(n, (Code)a ,     y) ; ]] ) , (CODE_TYPE)`x ); }
+               Bang(x @ ! Val(_))                -> { return Zip.mkZip( FUNCTION( CODE_TYPE , CODE_TYPE , a , [[ return (CODE_TYPE)`Bang((Code) a)             ; ]] ) , (CODE_TYPE)`x ); }
 
-               Write(Val(_))           -> { throw new VisitFailure(); }
-               Write(x)                -> { return Zip.mkZip( FUNCTION( CODE_TYPE , CODE_TYPE , a , [[ return (CODE_TYPE)`Write((Code)a)             ; ]] ) , (CODE_TYPE)`x ); }
+               Assign(Val(_), Val(_))            -> { throw new VisitFailure(); }
+               Assign(Val(v), y )                -> { final Val w = `v;
+                                                      return Zip.mkZip( FUNCTION( CODE_TYPE , CODE_TYPE , a , [[ return (CODE_TYPE)`Assign(Val(w), (Code) a)   ; ]] ) , (CODE_TYPE)`y );
+                                                    }
+               Assign(x , y )                    -> { return Zip.mkZip( FUNCTION( CODE_TYPE , CODE_TYPE , a , [[ return (CODE_TYPE)`Assign((Code) a , y)       ; ]] ) , (CODE_TYPE)`x ); }
+
+               App(Val(_), Val(_))               -> { throw new VisitFailure(); }
+               App(Val(v), y )                   -> { final Val w = `v;
+                                                      return Zip.mkZip( FUNCTION( CODE_TYPE , CODE_TYPE , a , [[ return (CODE_TYPE)`App(Val(w), (Code) a)      ; ]] ) , (CODE_TYPE)`y );
+                                                    }
+               App(x , y )                       -> { return Zip.mkZip( FUNCTION( CODE_TYPE , CODE_TYPE , a , [[ return (CODE_TYPE)`App((Code) a , y)          ; ]] ) , (CODE_TYPE)`x ); }
+
+               LetRec(n, x @ ! Val(_) , y)       -> { return Zip.mkZip( FUNCTION( CODE_TYPE , CODE_TYPE , a , [[ return (CODE_TYPE)`LetRec(n, (Code)a ,     y) ; ]] ) , (CODE_TYPE)`x ); }
+
+               Write(x @ ! Val(_))               -> { return Zip.mkZip( FUNCTION( CODE_TYPE , CODE_TYPE , a , [[ return (CODE_TYPE)`Write((Code)a)             ; ]] ) , (CODE_TYPE)`x ); }
 
            };
            throw new VisitFailure();
@@ -479,22 +486,31 @@ public class MiniML {
     public static void run() throws VisitFailure {
         System.out.println("<MiniML>\n\n");
 
-        Code  one      = `Val(Int(1));
-        Code  n        = `Var("n");
-        Code   fact    = `Var("fact");
+        Code  zero       = `Val(Int(0));
+        Code  one        = `Val(Int(1));
+        Code  n          = `Var("n");
+        Code  fact       = `Var("fact");
 
-        Code  factfun  = `Fun("n", If( BinOp( n , LE() , one )
-                                     , one
-                                     , BinOp( App( Var("fact") , BinOp( n , Sub() , one) )
-                                            , Mult()
-                                            , n
-                                            )
-                                     ));
+        Code  valcounter = `Bang(Var("counter"));
+
+        Code  factfun  = `Fun("n", Seq( Assign( Var( "counter" )
+                                              , BinOp( valcounter , Add() , one)
+                                              )
+                                      , If( BinOp( n , LE() , one )
+                                          , one
+                                          , BinOp( App( Var("fact") , BinOp( n , Sub() , one) )
+                                                 , Mult()
+                                                 , n
+                                                 )
+                                          )
+                                      )
+                             );
 
         Code   in      = `Write(App(fact, Read()));
 
-        Code   program = `LetRec("fact", factfun , in);
-        Inputs inputs  = `Inputs(Int(5));
+        Code   factDcl = `LetRec("fact", factfun , Seq( Seq(in,in) , Write(valcounter)));
+        Code   program = `Let( "counter" , Ref(zero) , factDcl);
+        Inputs inputs  = `Inputs(Int(5),Int(7));
 
         showresult(all_normal.visit(programToConfiguration(program,inputs)));
         System.out.println("</MiniML>\n\n");
