@@ -1858,12 +1858,4 @@
     <clover-clean keepdb="true"/>
   </target>
 
-  <!-- <target name="tags">
-    <exec>
-      find /Volumes/Home/pem/workspace/jtom/src/tom \( -name "*.t" -o
-      -name "*.java" \) | xargs etags - -language=java
-    </exec>
-  </target>
-  -->
-
 </project>
