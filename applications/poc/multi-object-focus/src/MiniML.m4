@@ -33,11 +33,12 @@ public class MiniML {
 
         Env      = Env( EnvAssoc* )
         Mem      = Mem( MemAssoc* )
+        Names    = Names( String* )
 
         Val      = Unit()
                  | Int( i:int )
                  | Bool( b:boolean )
-                 | Closure( env:Env , arg:String , body:Code )
+                 | Closure( env:Env , recs:Names , arg:String , body:Code )
                  | Ptr( addr:int )
                  | Obj( members:Env )
 
@@ -82,12 +83,15 @@ public class MiniML {
               | Read()
               | Write( body:Code )
 
+              | LetRec( name:String, def:Code, body:Code )
+
         Inputs   = Inputs(Val*)
         Outputs  = Outputs(Val*)
 
         module MiniML:rules() {
             Env(x*, EnvAssoc(n,_), y*, EnvAssoc(n,v), z*) -> Env(x*, y*, EnvAssoc(n,v), z*)
             Mem(x*, MemAssoc(n,_), y*, MemAssoc(n,v), z*) -> Mem(x*, y*, MemAssoc(n,v), z*)
+            Names(x*, s , y*, s, z*)                      -> Names(x*, y*, s, z*)
         }
     }
 
@@ -195,10 +199,17 @@ public class MiniML {
 
                Member(x , n)           -> { return Zip.mkZip( FUNCTION( CODE_TYPE , CODE_TYPE , a , [[ return (CODE_TYPE)`Member((Code) a, n)        ; ]] ) , (CODE_TYPE)`x ); }
 
+               App(Val(_), Val(_))     -> { throw new VisitFailure(); }
                App(Val(v), y)          -> { final Val w = `v;
                                             return Zip.mkZip( FUNCTION( CODE_TYPE , CODE_TYPE , a , [[ return (CODE_TYPE)`App(Val(w), (Code) a)      ; ]] ) , (CODE_TYPE)`y );
                                           }
                App(x     , y)          -> { return Zip.mkZip( FUNCTION( CODE_TYPE , CODE_TYPE , a , [[ return (CODE_TYPE)`App((Code) a , y)          ; ]] ) , (CODE_TYPE)`x ); }
+
+               LetRec(n, Val(x), y)    -> { throw new VisitFailure(); }
+               LetRec(n, x     , y)    -> { return Zip.mkZip( FUNCTION( CODE_TYPE , CODE_TYPE , a , [[ return (CODE_TYPE)`LetRec(n, (Code)a ,     y) ; ]] ) , (CODE_TYPE)`x ); }
+
+               Write(Val(_))           -> { throw new VisitFailure(); }
+               Write(x)                -> { return Zip.mkZip( FUNCTION( CODE_TYPE , CODE_TYPE , a , [[ return (CODE_TYPE)`Write((Code)a)             ; ]] ) , (CODE_TYPE)`x ); }
 
            };
            throw new VisitFailure();
@@ -253,10 +264,31 @@ public class MiniML {
             if (!(env   instanceof Env     )) throw new VisitFailure();
 
             %match {
-              Fun(n,c) << code  -> { return P.mkP((CODE_TYPE)`Val(Closure((Env)env,n,c)), env);                               }
+              Fun(n,c) << code -> { return P.mkP((CODE_TYPE)`Val(Closure((Env)env, Names(), n,c)), env                        ); }
             };
             throw new VisitFailure();
     ]])
+
+    public static Env addRecs(Names names, ENV_TYPE env) throws VisitFailure {
+        if (!(env   instanceof Env     )) throw new VisitFailure();
+
+        //System.out.println("<addRecs><input><names>" + names.toString() + "</names>\n<env>" + env.toString() + "</env></input>\n");
+
+        %match {
+          Names(a*, x, b*) << names && Env(c*, EnvAssoc(x, v), d*) << env -> { //System.out.println("<branch>1</branch>\n");
+                                                                               Env e2 = addRecs(`Names(a*,b*) , `Env(c*,d*));
+                                                                               //System.out.println("<branch>1.1</branch>\n");
+                                                                               Env r = `Env(EnvAssoc(x,v) , e2*);
+                                                                               //System.out.println("<output>"+ r.toString() + "</output>\n</addRecs>\n");
+                                                                               return r;
+                                                                             }
+          Names(_*)          << names && Env(_*)                     << env -> {//  System.out.println("<branch>2</branch>");
+                                                                                Env r = `Env();
+                                                                                //System.out.println("<branch>2.1</branch><output>" + r.toString() + "</output></addRecs>\n");
+                                                                                return r; }
+        };
+        throw new RuntimeException("addRecs: Reached dead code ... this should not be happening!");
+    }
 
     VISITORMAP(app_eval_inner, [[ P<CODE_TYPE,ENV_TYPE> ]] , [[ P<CODE_TYPE,ENV_TYPE> ]] , p , [[
 
@@ -266,8 +298,13 @@ public class MiniML {
             if (!(code  instanceof Code    )) throw new VisitFailure();
             if (!(env   instanceof Env     )) throw new VisitFailure();
 
+            Env envCasted = (Env)env;
+
             %match {
-              App(Val(Closure(Env(x*), arg, body)) , Val(v)) << code  -> { return P.mkP((CODE_TYPE)`body , (ENV_TYPE)`Env(x, EnvAssoc(arg, v))); }
+              App(Val(Closure(Env(x*), names, arg, body)) , Val(v))  << code -> { Env e2 = addRecs(`names, `env);
+                                                                                  return P.mkP((CODE_TYPE)`body , (ENV_TYPE)`Env(x*, EnvAssoc(arg, v), e2*));
+                                                                                }
+              LetRec(x,Val(Closure(Env(e*), Names(n*), y, b)), body) << code -> { return P.mkP((CODE_TYPE)`body , (ENV_TYPE)`Env(envCasted*, EnvAssoc(x , Closure(Env(e*), Names(n*,x), y , b)))); }
             };
             throw new VisitFailure();
     ]])
@@ -442,8 +479,22 @@ public class MiniML {
     public static void run() throws VisitFailure {
         System.out.println("<MiniML>\n\n");
 
-        Code   program = `If( UniOp(Neg() , Read()) , Write(Val(Int(13))) , Write(Val(Int(17))) );
-        Inputs inputs  = `Inputs(Bool(true()));
+        Code  one      = `Val(Int(1));
+        Code  n        = `Var("n");
+        Code   fact    = `Var("fact");
+
+        Code  factfun  = `Fun("n", If( BinOp( n , LE() , one )
+                                     , one
+                                     , BinOp( App( Var("fact") , BinOp( n , Sub() , one) )
+                                            , Mult()
+                                            , n
+                                            )
+                                     ));
+
+        Code   in      = `Write(App(fact, Read()));
+
+        Code   program = `LetRec("fact", factfun , in);
+        Inputs inputs  = `Inputs(Int(5));
 
         showresult(all_normal.visit(programToConfiguration(program,inputs)));
         System.out.println("</MiniML>\n\n");

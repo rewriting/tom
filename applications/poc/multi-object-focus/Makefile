@@ -1,4 +1,4 @@
-TOMGENERATED=src/MOF.java src/MiniML.java
+TOMGENERATED=src/MiniML.java
 M4GENERATED=src/MiniML.t
 
 GENERATED=${TOMGENERATED} ${M4GENERATED}
@@ -28,13 +28,14 @@ clean:
 
 run: src/Main.class
 	cd src/ && java Main > ../out.xml
+	xmllint --recover out.xml | xmllint -format - > outtidy.xml
 	@echo
-	@echo "************************************"
-	@echo "*    OUTPUT WRITTEN IN out.xml     *"
-	@echo "*                                  *"
-	@echo "*    Open it in any xml viewer     *"
-	@echo "*    to see beatiful trace trees   *"
-	@echo "************************************"
+	@echo "**************************************"
+	@echo "*    OUTPUT WRITTEN IN outtidy.xml   *"
+	@echo "*                                    *"
+	@echo "*    Open it in any xml viewer       *"
+	@echo "*    to see beatiful trace trees     *"
+	@echo "**************************************"
 	@echo
 
 test: clean run
