@@ -185,38 +185,41 @@ public class MiniML {
             /*
              Now that we are on Code, we can match.
              */
+
+           define([[ZIPPER]], [[Zip.mkZip( FUNCTION( CODE_TYPE , CODE_TYPE , hole ,  [[ return (CODE_TYPE)$1 ; ]] ) ,  (CODE_TYPE)$2 )]] )
+
            %match(u) {
-               UniOp(op , y)                     -> { return Zip.mkZip( FUNCTION( CODE_TYPE , CODE_TYPE , a , [[ return (CODE_TYPE)`UniOp(op, (Code) a        ); ]] ) , (CODE_TYPE)`y ); }
+               UniOp(op , y)                     -> { return ZIPPER( [[ `UniOp(op, (Code)hole )        ]] , `y ); }
 
                BinOp(Val(v) , op  , y)           -> { final Val w = `v;
-                                                      return Zip.mkZip( FUNCTION( CODE_TYPE , CODE_TYPE , a , [[ return (CODE_TYPE)`BinOp(Val(w), op, (Code) a); ]] ) , (CODE_TYPE)`y );
+                                                      return ZIPPER( [[ `BinOp(Val(w), op, (Code)hole) ]] , `y  );
                                                     }
-               BinOp(x      , op  , y)           -> { return Zip.mkZip( FUNCTION( CODE_TYPE , CODE_TYPE , a , [[ return (CODE_TYPE)`BinOp((Code) a     , op, y); ]] ) , (CODE_TYPE)`x ); }
+               BinOp(x      , op  , y)           -> { return ZIPPER( [[ `BinOp((Code)hole    , op, y)  ]] , `x ); }
 
-               If(x , t , e)                     -> { return Zip.mkZip( FUNCTION( CODE_TYPE , CODE_TYPE , a , [[ return (CODE_TYPE)`If((Code) a, t, e)         ; ]] ) , (CODE_TYPE)`x ); }
+               If(x , t , e)                     -> { return ZIPPER( [[ `If((Code)hole, t, e)          ]] , `x ); }
 
-               Seq(x, y)                         -> { return Zip.mkZip( FUNCTION( CODE_TYPE , CODE_TYPE , a , [[ return (CODE_TYPE)`Seq((Code) a, y)           ; ]] ) , (CODE_TYPE)`x ); }
+               Seq(x, y)                         -> { return ZIPPER( [[ `Seq((Code)hole, y)            ]] , `x ); }
 
-               Member(x , n)                     -> { return Zip.mkZip( FUNCTION( CODE_TYPE , CODE_TYPE , a , [[ return (CODE_TYPE)`Member((Code) a, n)        ; ]] ) , (CODE_TYPE)`x ); }
+               Member(x , n)                     -> { return ZIPPER( [[ `Member((Code)hole, n)         ]] , `x ); }
 
 
-               Bang(x @ ! Val(_))                -> { return Zip.mkZip( FUNCTION( CODE_TYPE , CODE_TYPE , a , [[ return (CODE_TYPE)`Bang((Code) a)             ; ]] ) , (CODE_TYPE)`x ); }
+               Bang(x @ ! Val(_))                -> { return ZIPPER( [[ `Bang((Code)hole)              ]] , `x ); }
 
                Assign(Val(_), Val(_))            -> { throw new VisitFailure(); }
                Assign(Val(v), y )                -> { final Val w = `v;
-                                                      return Zip.mkZip( FUNCTION( CODE_TYPE , CODE_TYPE , a , [[ return (CODE_TYPE)`Assign(Val(w), (Code) a)   ; ]] ) , (CODE_TYPE)`y );
+                                                      return ZIPPER( [[ `Assign(Val(w), (Code)hole)    ]] , `y );
                                                     }
-               Assign(x , y )                    -> { return Zip.mkZip( FUNCTION( CODE_TYPE , CODE_TYPE , a , [[ return (CODE_TYPE)`Assign((Code) a , y)       ; ]] ) , (CODE_TYPE)`x ); }
+               Assign(x , y )                    -> { return ZIPPER( [[ `Assign((Code)hole, y)         ]] , `x ); }
 
                App(Val(_), Val(_))               -> { throw new VisitFailure(); }
                App(Val(v), y )                   -> { final Val w = `v;
-                                                      return Zip.mkZip( FUNCTION( CODE_TYPE , CODE_TYPE , a , [[ return (CODE_TYPE)`App(Val(w), (Code) a)      ; ]] ) , (CODE_TYPE)`y );
+                                                      return ZIPPER( [[ `App(Val(w), (Code)hole)       ]] , `y );
                                                     }
-               App(x , y )                       -> { return Zip.mkZip( FUNCTION( CODE_TYPE , CODE_TYPE , a , [[ return (CODE_TYPE)`App((Code) a , y)          ; ]] ) , (CODE_TYPE)`x ); }
+               App(x , y )                       -> { return ZIPPER( [[ `App((Code)hole , y)           ]] , `x ); }
 
-               LetRec(n, x @ ! Val(_) , y)       -> { return Zip.mkZip( FUNCTION( CODE_TYPE , CODE_TYPE , a , [[ return (CODE_TYPE)`LetRec(n, (Code)a ,     y) ; ]] ) , (CODE_TYPE)`x ); }
+               LetRec(n, x @ ! Val(_) , y)       -> { return ZIPPER( [[ `LetRec(n, (Code)hole,     y)  ]] , `x ); }
 
-               Write(x @ ! Val(_))               -> { return Zip.mkZip( FUNCTION( CODE_TYPE , CODE_TYPE , a , [[ return (CODE_TYPE)`Write((Code)a)             ; ]] ) , (CODE_TYPE)`x ); }
+               Write(x @ ! Val(_))               -> { return ZIPPER( [[ `Write((Code)hole)             ]] , `x ); }
 
            };
            throw new VisitFailure();
