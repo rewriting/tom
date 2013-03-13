@@ -18,11 +18,11 @@ import java.util.*;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
+import java.io.Writer;
 import java.io.BufferedWriter;
 import java.io.OutputStreamWriter;
 import java.io.FileOutputStream;
+import java.io.FileInputStream;
 
 import tom.library.utils.ReferenceClass;
 import tom.library.utils.LinkClass;
@@ -47,6 +47,7 @@ public class SimplePDLToPetriNet {
 
   %typeterm SimplePDLToPetriNet { implement { SimplePDLToPetriNet }}
   
+  private static Writer writer;
   private static PetriNet pn = null;
   private static LinkClass tom__linkClass;
 
@@ -198,11 +199,27 @@ public class SimplePDLToPetriNet {
       transformer.visit(p_root, new EcoreContainmentIntrospector());
       `TopDown(tom__StratResolve_SimplePDLToPetriNet(translator.tom__linkClass,translator.pn)).visit(translator.pn, new EcoreContainmentIntrospector());
 
+
+      //for generation of textual Petri nets usable as input for TINA
+      String outputName = "resultingPetri.net";
+      writer = new BufferedWriter(new OutputStreamWriter(new
+            FileOutputStream(new File(outputName))));
+
       System.out.println("\nResult");
-      `Sequence(TopDown(PrintTransition()),TopDown(PrintPlace())).visit(translator.pn, new EcoreContainmentIntrospector());
+      `Sequence(TopDown(PrintTransition()),TopDown(PrintPlace())).visit(translator.pn,
+          new EcoreContainmentIntrospector());
+
+      System.out.println("\nFinish to generate "+outputName+" file, usable as input for TINA");
+      writer.flush();
+      writer.close();
+      System.out.println("done.");
 
     } catch(VisitFailure e) {
-      System.out.println("strategy fail");
+      System.out.println("strategy fail!");
+    } catch(java.io.FileNotFoundException e) {
+      System.out.println("Cannot create Petri net output file.");
+    } catch (java.io.IOException e) {
+      System.out.println("Petri net save failed!");
     }
   }
 
@@ -227,8 +244,8 @@ public class SimplePDLToPetriNet {
       }
 
       Transition[name=name,incomings=sources,outgoings=targets] -> {
-        String s = "";
-        String t = "";
+        String s = " ";
+        String t = " ";
         %match {
          ArcEList(_*,Arc[kind=k,weight=w,source=node],_*) << sources && Place[name=placename]<< node -> {
            s += `placename + ((`k==`ArcKindread_arc())?"?":"*") + `w + " "; 
@@ -237,7 +254,7 @@ public class SimplePDLToPetriNet {
            t += `placename + ((`k==`ArcKindread_arc())?"?":"*") + `w + " "; 
          }
         }
-        System.out.println("tr " + `name + " " + s + " --> " + t);
+        multiPrint("tr " + `name + s + "->" + t);
       }
 
       
@@ -252,10 +269,22 @@ public class SimplePDLToPetriNet {
       }
 
       Place[name=name,initialMarking=w] && w!=0 -> {
-        System.out.println("pl " + `name + " " + `w);
+        multiPrint("pl " + `name + " " + "(" + `w + ")");
       }
 
     }
   }
-  
+ 
+  public static void multiPrint(String s) {
+    System.out.println(s);
+    try {
+      writer.write(s+"\n");
+    } catch (java.io.IOException e) {
+      System.out.println("Petri net save failed!");
+    }
+  }
+
+
+
+
 }
