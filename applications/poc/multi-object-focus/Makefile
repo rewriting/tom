@@ -27,8 +27,7 @@ clean:
 	rm -fr src/term/TSL.java ${GENERATED} doc/ src/mof/ src/miniml out/* out.xml
 
 run: src/Main.class
-	cd src/ && java Main > ../out.xml
-	xmllint --recover out.xml | xmllint -format - > outtidy.xml
+	cd src/ && java Main | xmllint --recover - | xmllint --format - > ../out.xml
 	@echo
 	@echo "**************************************"
 	@echo "*    OUTPUT WRITTEN IN outtidy.xml   *"
