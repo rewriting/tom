@@ -1,3 +1,22 @@
+2013-03-21 jcb
+ * bootstrap and bootinstall -> Tom-2.10
+
+2013-03-13 jcb
+ * change output of transformation/simplepdltopetrinet example to be directly
+ handled by TINA toolbox
+
+2013-03-11 jcb
+ * update transformation/simplepdltopetrinet example (re-organization)
+
+2013-03-07 jcb
+ * update authors list
+
+2013-02-12 jcb
+ * minor fixes
+   - licence update (add "Universite de Lorraine")
+   - fix Inria name: s/INRIA/Inria
+   - remove utf-8 and accented characters
+
 2013-02-08 jcb
  * bootstrap and bootinstall -> Tom-2.10-rc3
 
