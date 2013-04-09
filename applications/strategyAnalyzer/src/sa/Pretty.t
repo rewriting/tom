@@ -156,6 +156,9 @@ public class Pretty {
 
   public String generateTom(List<Rule> bag, Map<String,Integer> sig, String classname) {
     sig.put("Bottom",1);
+    if(Main.options.exact) {
+      sig.put("Dummy",0);
+    }
     if(Main.options.generic) {
       sig.put("BottomList",1);
       sig.put("Appl",2);
