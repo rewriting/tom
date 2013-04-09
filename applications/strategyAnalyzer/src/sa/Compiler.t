@@ -87,6 +87,8 @@ public class Compiler {
             // use AST-syntax because lhs and rhs are already encoded
             bag.add(`Rule(Appl(r,TermList(lhs)),rhs));
             bag.add(`Rule(Appl(r,TermList(At(tools.encode("INTERNALX"),Anti(lhs)))),tools.encode("Bottom(INTERNALX)")));
+            // propagate failure; if the rule is applied to the result of a strategy that failed then the result is a failure
+            bag.add(`Rule(Appl(r,TermList(tools.encode("Bottom(INTERNALX)"))),tools.encode("Bottom(INTERNALX)")));
           }
         }
         return r;
@@ -117,14 +119,34 @@ public class Compiler {
       StratIdentity() -> {
         String id = getName("id");
         generatedSignature.put(id,1);
-        bag.add(tools.encodeRule(%[rule(@id@(X), X)]%));
+        if( !Main.options.exact ){
+          bag.add(tools.encodeRule(%[rule(@id@(X), X)]%));
+          // Bottom of Bottom is Bottom
+          // this is not necessary if exact reduction - in this case Bottom is propagated immediately 
+          bag.add(tools.encodeRule(%[rule(Bottom(Bottom(X)), Bottom(X))]%));
+       } else { 
+          // the rule cannot be applied on arguments containing fresh variables but only on terms from the signature or Bottom
+          // normally it will follow reduction in original TRS
+          bag.add(tools.encodeRule(%[rule(@id@(at(X,anti(Dummy()))), X)]%));
+          bag.add(tools.encodeRule(%[rule(@id@(Bottom(X)), Bottom(X))]%));
+        }
         return id;
       }
 
       StratFail() -> {
         String fail = getName("fail");
         generatedSignature.put(fail,1);
-        bag.add(tools.encodeRule(%[rule(@fail@(X), Bottom(X))]%));
+        if( !Main.options.exact ){
+          bag.add(tools.encodeRule(%[rule(@fail@(X), Bottom(X))]%));
+          // Bottom of Bottom is Bottom
+          // this is not necessary if exact reduction - in this case Bottom is propagated immediately 
+          bag.add(tools.encodeRule(%[rule(Bottom(Bottom(X)), Bottom(X))]%));
+       } else { 
+          // the rule cannot be applied on arguments containing fresh variables but only on terms from the signature or Bottom
+          // normally it will follow reduction in original TRS
+          bag.add(tools.encodeRule(%[rule(@fail@(at(X,anti(Dummy()))), Bottom(X))]%));
+          bag.add(tools.encodeRule(%[rule(@fail@(Bottom(X)), Bottom(X))]%));
+        }
         return fail;
       }
 
@@ -132,8 +154,23 @@ public class Compiler {
         String n1 = compileStrat(bag,extractedSignature,generatedSignature,`s1);
         String n2 = compileStrat(bag,extractedSignature,generatedSignature,`s2);
         String seq = getName("seq");
+        String seq2 = getName("seq2");
         generatedSignature.put(seq,1);
-        bag.add(tools.encodeRule(%[rule(@seq@(X), @n2@(@n1@(X)))]%));
+        generatedSignature.put(seq2,2);
+        if( !Main.options.exact ){
+          //           bag.add(tools.encodeRule(%[rule(@seq@(X), @n2@(@n1@(X)))]%)); // old version - doesn't keep track of input
+          bag.add(tools.encodeRule(%[rule(@seq@(X), @seq2@(@n2@(@n1@(X)),X))]%));
+          // Bottom of Bottom is Bottom
+          // this is not necessary if exact reduction - in this case Bottom is propagated immediately 
+          bag.add(tools.encodeRule(%[rule(Bottom(Bottom(X)), Bottom(X))]%));
+       } else { 
+          // the rule cannot be applied on arguments containing fresh variables but only on terms from the signature or Bottom
+          // normally it will follow reduction in original TRS
+          bag.add(tools.encodeRule(%[rule(@seq@(at(X,anti(Dummy()))), @seq2@(@n2@(@n1@(X)),X))]%));
+          bag.add(tools.encodeRule(%[rule(@seq@(Bottom(X)), Bottom(X))]%));
+        }
+        bag.add(tools.encodeRule(%[rule(@seq2@(Bottom(Y),X), Bottom(X))]%));
+        bag.add(tools.encodeRule(%[rule(@seq2@(at(X,anti(Bottom(Y))),Z), X)]%));
         return seq;
       }
 
@@ -144,7 +181,9 @@ public class Compiler {
         String choice2 = getName("choice");
         generatedSignature.put(choice,1);
         generatedSignature.put(choice2,1);
-        bag.add(tools.encodeRule(%[rule(@choice@(X), @choice2@(@n1@(X)))]%));
+        //         bag.add(tools.encodeRule(%[rule(@choice@(X), @choice2@(@n1@(X)))]%)); // old version - Bottom not propagated directly
+        bag.add(tools.encodeRule(%[rule(@choice@(at(X,anti(Dummy()))),  @choice2@(@n1@(X)) )]%));
+        bag.add(tools.encodeRule(%[rule(@choice@(Bottom(X)), Bottom(X))]%));
         bag.add(tools.encodeRule(%[rule(@choice2@(Bottom(X)), @n2@(X))]%));
         bag.add(tools.encodeRule(%[rule(@choice2@(at(X,anti(Bottom(Y)))), X)]%));
         return choice;
@@ -154,9 +193,10 @@ public class Compiler {
         String phi_s = compileStrat(bag,extractedSignature,generatedSignature,`s);
         String all = getName("all");
         generatedSignature.put(all,1);
-        Iterator<String> it = extractedSignature.keySet().iterator();
-        while(it.hasNext()) {
-          String name = it.next();
+        //         Iterator<String> it = extractedSignature.keySet().iterator();
+        //         while(it.hasNext()) {
+        //           String name = it.next();
+        for(String name : extractedSignature.keySet()) {
           int arity = generatedSignature.get(name);
           int arity_all = arity+1;
           if(arity==0) {
@@ -173,7 +213,9 @@ public class Compiler {
                 lx += ",X"+i;
                 rx += ","+phi_s+"(X"+i+")";
               }
-              bag.add(tools.encodeRule(%[rule(@all@(@name@(@lx@)), @all_n@(@rx@,@name@(@lx@)))]%));
+              bag.add(tools.encodeRule(%[rule(@all@(@name@(@lx@)), @all_n@(@rx@,@name@(@lx@)))]%)); 
+              // propagate Bottom  (otherwise not reduced and leads to bug in Sequence)
+              bag.add(tools.encodeRule(%[rule(@all@(Bottom(X)), Bottom(X) )]%));               
             }
 
             // generate success rules
@@ -210,9 +252,10 @@ public class Compiler {
         String phi_s = compileStrat(bag,extractedSignature,generatedSignature,`s);
         String one = getName("one");
         generatedSignature.put(one,1);
-        Iterator<String> it = extractedSignature.keySet().iterator();
-        while(it.hasNext()) {
-          String name = it.next();
+        //         Iterator<String> it = extractedSignature.keySet().iterator();
+        //         while(it.hasNext()) {
+        //           String name = it.next();
+        for(String name : extractedSignature.keySet()) {
           int arity = generatedSignature.get(name);
           if(arity==0) {
             bag.add(tools.encodeRule(%[rule(@one@(@name@), Bottom(@name@))]%));
@@ -229,6 +272,8 @@ public class Compiler {
                 rx += ",X"+i;
               }
               bag.add(tools.encodeRule(%[rule(@one@(@name@(@lx@)), @one_n@_1(@rx@))]%));
+              // propagate Bottom  (otherwise not reduced and leads to bug in Sequence)
+              bag.add(tools.encodeRule(%[rule(@one@(Bottom(X)), Bottom(X) )]%));               
             }
 
             for(int i=1 ; i<=arity ; i++) {
@@ -726,8 +771,6 @@ public class Compiler {
               } else {
                 Map<String,Integer> signature = (Map<String,Integer>)extractedSignature;
                 // add g(Z1,...) ... h(Z1,...)
-                extractedSignature.put("Bottom",1);
-                // add Bottom(Z1) to propagate failure 
                 for(String otherName:signature.keySet()) {
                   if(!`name.equals(otherName)) {
                     int arity = signature.get(otherName);

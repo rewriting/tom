@@ -87,15 +87,15 @@ public class Main {
       RuleParser ruleParser = new RuleParser(tokens);
       Tree b = (Tree) ruleParser.expressionlist().getTree();
       ExpressionList expl = (ExpressionList) RuleAdaptor.getTerm(b);
-      System.out.println(pretty.toString(expl));
-      System.out.println("------------------------------------------   ");
+      //       System.out.println(pretty.toString(expl));
+      //       System.out.println("------------------------------------------   ");
 
       // Transforms Let(name,exp,body) into body[name/exp]
       ExpressionList expandl = Compiler.expand(expl);
       //       System.out.println(expandl);
 
-      System.out.println(pretty.toString(expandl));
-      System.out.println("------------------------------------------   ");
+      //       System.out.println(pretty.toString(expandl));
+      //       System.out.println("------------------------------------------   ");
 
       Map<String,Integer> generatedSignature = new HashMap<String,Integer>();
       Map<String,Integer> extractedSignature = new HashMap<String,Integer>();
