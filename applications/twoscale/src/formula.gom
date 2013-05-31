@@ -7,7 +7,8 @@ module formula
       | Var(name:String)
       | Plus(e1:Exp, e2:Exp)
       | Minus(e1:Exp, e2:Exp)
-      | Mult(e1:Exp, e2:Exp)
+      | Mult(Exp*)
+	  | Uminus(e1 : Exp)
       | O(oname:Epsilon)
       | Integral(domain:Region, body:Exp, variable:Exp )
       | Partial(body:Exp, variable:Exp )
@@ -24,7 +25,9 @@ module formula:rules() {
     Partial(o@O(Epsilon(_)),_) -> o
     Integral(domain,o@O(Epsilon(_)),_) -> o
     Sum(domain,o@O(Epsilon(_)),_) -> o
-
+    Minus(a,b) -> Plus(a,Uminus(b))
+	Uminus(Uminus(a)) -> a
+	
     //Plus(o@O(Epsilon(_)),o) -> o
     //Mult(_,o@O(Epsilon(_))) -> o
 
@@ -53,18 +56,14 @@ Plus:make(e1,e2) {
 
   }
 }
-
-Mult:make(e1,e2) {
+/*
+Mult:make_insert(e1,e2) {
   %match(Exp e1, Exp e2) {
-    o@O(Epsilon(_)),_ -> { return `o; }
-    _,o@O(Epsilon(_)) -> { return `o; }
-    CstInt(x),CstInt(y) -> { return `CstInt(x * y); }
-    CstInt(x),Mult(CstInt(y),z) -> { return `Mult(CstInt(x * y),z); }
-    Mult(x,y),z -> { return `Mult(x,Mult(y,z)); }
-    o@CstInt(_),Mult(x,y) -> { return `Mult(x,Mult(o,y)); }
+    o@O(Epsilon(_)),_-> { return `o; }
+    CstInt(x),Mult(C1*,CstInt(y),C2*) -> { return `Mult(CstInt(x * y),C1*,C2*); }
   }
 }
-
+*/
 ExpList = concExp(Exp*)
 
 Symbol = Symbol(name:String)
@@ -72,6 +71,7 @@ Symbol = Symbol(name:String)
 Region =
        | Interval(inf:Exp, sup:Exp)
        | Domain(name:String)
+	   | Boundary(name:String)
 
 //DVariable = 
 //         | D(name:String)
