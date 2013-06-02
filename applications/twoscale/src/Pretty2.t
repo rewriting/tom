@@ -14,8 +14,9 @@ public class Pretty2 {
     %match(e) {
       CstInt(v) -> { return ""+`v; }
       Var(name) -> { return `name + ""; }
-      Plus(e1,e2) -> { return pretty(`e1) + "+" + pretty(`e2); }
+      Plus(e1,e2) -> { return pretty(`e1) + "+$$ $$" + pretty(`e2); }
 	  Minus(e1,e2) -> { return pretty(`e1) + "-" + pretty(`e2); }
+	  Uminus(e1) -> { return "-"+pretty(`e1); }
       Mult(e1,e2*) -> { return pretty(`e1)  + (`e2.isEmptyMult()?"":("\\times " +pretty(`e2*))); }
       O(eps) -> { return "O(" + pretty(`eps) + ")"; }
       Index(body,indexname) -> { return "{"+pretty(`body)+"}" + "_{" + `indexname+"}"; }
