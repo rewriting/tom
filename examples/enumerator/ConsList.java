@@ -3,10 +3,10 @@ package enumerator;
 import java.math.BigInteger;
 import tom.library.enumerator.*;
 
-import enumerator.testlist.types.*;
+import enumerator.conslist.types.*;
 
 // Enumerator for lists
-public class TestList {
+public class ConsList {
 
   /*
 		This example use the Gom generator for the signature
