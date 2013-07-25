@@ -1,0 +1,11 @@
+module examples.lists.AssortedList
+	imports int String boolean
+	abstract syntax
+
+	AssList = cons(Value*)
+	
+	Value = bl(b:boolean)
+			  | cst(i:int)
+			  | var(v:Value)
+			  | name(s:String)
+

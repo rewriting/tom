@@ -1,0 +1,7 @@
+DemoSimplest.swap(DemoSimplest.swap(e:Foo)) == e:Foo
+
+// True == False => (DemoSimplest.swap(DemoSimplest.swap(e:Foo)) == e:Foo		)
+
+// DemoSimplest.swap(DemoSimplest.swap(e:Foo)) != e:Foo
+
+// DemoSimplest.swap(e:Foo)==DemoSimplest.swap(e:Foo) => ( DemoSimplest.swap(DemoSimplest.swap(e:Foo)) != e:Foo )

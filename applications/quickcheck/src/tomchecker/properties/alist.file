@@ -1,0 +1,20 @@
+//size(addFirst(list,el)) == size(list) + 1
+( DemoAList.size(DemoAList.addFirst(l:AList,el:Elem)) == DemoAList.plusOne(DemoAList.size(l:AList)) )
+
+//get(addFirst(list,el)) == el
+//( DemoAList.get(DemoAList.addFirst(l:AList,el:Elem),DemoAList.zero()) == el:Elem )
+
+//if(list != empty) and if(el1 != el2) then (getIndexOf(list,el1) + 1) == getIndexOf(addFirst(list,el2),el1) 
+//doesnt work
+//( DemoAList.isEqual(elo:Elem,elt:Elem) && DemoAList.isEmpty(l:AList) == False ) => ( DemoAList.plusOne(DemoAList.getIndexOf(l:AList,elo:Elem)) == DemoAList.getIndexOf(DemoAList.addFirst(l:AList,elt:Elem),elo:Elem) )
+
+//if(list != empty) and if(el1 != el2) and if(list.contains(el1)) then (getIndexOf(list,el1) + 1) == getIndexOf(addFirst(list,el2),el1)
+//smallcheck for depth 10 : 30664 inputs, 27914 of which do not meet the precondition. 2750 passed the test
+//quickcheck for depth 10:  default number of tests is 1270 for the total cardinality of 30664. 1261 passed the test.                 
+//DemoAList.isEmpty(l:AList) == False => ( DemoAList.isEqual(elo:Elem,elt:Elem) == False => ( (DemoAList.contains(l:AList, elo:Elem) == True => (DemoAList.plusOne(DemoAList.getIndexOf(l:AList,elo:Elem)) == DemoAList.getIndexOf(DemoAList.addFirst(l:AList,elt:Elem),elo:Elem)) ) )
+
+/*--------------------FALSIFIED PROPERTIES---------------------*/
+//if(list != empty) and if(list.contains(el1)) then (getIndexOf(list,el1) + 1) == getIndexOf(addFirst(list,el2),el1)
+//DemoAList.isEmpty(l:AList) == False => ( (DemoAList.contains(l:AList, elo:Elem) == True => (DemoAList.plusOne(DemoAList.getIndexOf(l:AList,elo:Elem)) == DemoAList.getIndexOf(DemoAList.addFirst(l:AList,elt:Elem),elo:Elem)) )
+//if(list != empty) and if (index < size) then get(index) != null
+//ProgramToTest.isEmpty(l:AList) == False => ( ProgramToTest.isNegative(index:Integer) == False => ( (ProgramToTest.isLess(index:Integer,ProgramToTest.size(l:AList)) == True => ( ProgramToTest.isNull(ProgramToTest.get(l:AList, index:Integer)) == False ) ) )

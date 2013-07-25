@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the checker" default="build" basedir=".">
+
+  <property environment="env"/>
+  <property name="tom.home" value="${env.TOM_HOME}"/>
+  <import file="${tom.home}/lib/tom-common.xml"/>
+
+  <property name="src" location="src"/>
+  <property name="gen" location="gen"/>
+  <property name="build" location="build"/>
+  <property name="tomchecker" value="tomchecker"/>
+  <property name="examples" value="examples"/>
+
+  <target name="clean" description="Cleans gen and build directory">
+    <delete dir="${gen}"/>
+    <delete dir="${build}"/>
+  </target>
+
+  <target name="build" depends="tom.init">
+    <mkdir dir="${gen}"/>
+
+    <gom.preset srcdir="${src}"
+      destdir="${gen}">
+      <include name="**/*.gom"/>
+    </gom.preset>	
+        
+     <gomantlradapter.preset
+      srcdir="${src}"
+      destdir="${gen}"
+      package="${tomchecker}">
+      <include name="${tomchecker}/**/PropLang.gom"/>
+    </gomantlradapter.preset>
+
+     <taskdef name="antlr3"
+      classname="org.apache.tools.ant.antlr.ANTLR3">
+      <classpath refid="tom.classpath"/>
+    </taskdef>
+    <antlr3 target="${src}/${tomchecker}/PropLang.g"
+      outputdirectory="${gen}/${tomchecker}"
+      libdirectory="${gen}/${tomchecker}/proplang"
+      multithreaded="true">
+      <classpath refid="tom.classpath"/>
+    </antlr3>
+
+
+    <tom.preset srcdir="${src}"  		        
+      destdir="${gen}">
+      <include name="**/*.t"/>
+    </tom.preset>
+    
+    <mkdir dir="${build}"/>
+    <javac.preset
+      includeantruntime="false"
+      destdir="${build}">
+      <src path="${src}/${tomchecker}"/>
+      <src path="${src}/${examples}"/>
+      <src path="${gen}"/>
+      <classpath refid="tom.classpath"/>
+<!--			<compilerarg value="-Xlint"/> -->
+    </javac.preset>
+  </target>
+
+</project>
+

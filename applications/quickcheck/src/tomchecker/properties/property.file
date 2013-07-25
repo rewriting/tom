@@ -1,0 +1,80 @@
+// ( (! True == False )  ||  (True != True ) ) => ( (MyProgram.isShort(s:String) == True ) ||   (MyProgram.isShort(s:String) == True ) )
+
+//MyProgram.isShort(s:String) == True
+
+// MyProgram.containsNoA(s:String) == True
+
+//MyProgram.isShort(s:String) == False => ( (MyProgram.containsA(s:String) != True) || (MyProgram.isPalindrome(s:String) != True) )
+
+//MyProgram.isShort(s:String) == False => ( MyProgram.containsA(s:String) == True => (MyProgram.isPalindrome(s:String) != True) )
+
+
+//Exists s:String . (MyProgram.isPalindrome(s:String) != True))
+//s:String.length > 3 (Exists z:String . MyProgram.substring(z,s) == True )
+//(s:String).length() > 3 => (MyProgram.isPalindrome(s:String) != True))
+//i:int > 0 => isEven(i)
+
+//MyProgram.isBigger(l:MyList) == True => ( MyProgram.contains(l:MyList,v:Value) == True )
+
+/*------------LATEST-------------------------------------*/
+
+//size(addFirst(list,el)) == size(list) + 1
+//( MyProgram.size(MyProgram.addFirst(l:AList,el:Elem)) == MyProgram.plusOne(MyProgram.size(l:AList)) )
+
+//get(addFirst(list,el)) == el
+//( MyProgram.get(MyProgram.addFirst(l:AList,el:Elem),MyProgram.zero()) == el:Elem )
+
+//if(list != empty) and if(el1 != el2) then (getIndexOf(list,el1) + 1) == getIndexOf(addFirst(list,el2),el1) 
+//doesnt work
+//( MyProgram.isEqual(elo:Elem,elt:Elem) && MyProgram.isEmpty(l:AList) == False ) => ( MyProgram.plusOne(MyProgram.getIndexOf(l:AList,elo:Elem)) == MyProgram.getIndexOf(MyProgram.addFirst(l:AList,elt:Elem),elo:Elem) )
+
+//if(list != empty) and if(el1 != el2) and if(list.contains(el1)) then (getIndexOf(list,el1) + 1) == getIndexOf(addFirst(list,el2),el1)
+//smallcheck for depth 10 : 30664 inputs, 27914 of which do not meet the precondition. 2750 passed the test
+//quickcheck for depth 10:  default number of tests is 1270 for the total cardinality of 30664. 1261 passed the test.                 
+//MyProgram.isEmpty(l:AList) == False => ( MyProgram.isEqual(elo:Elem,elt:Elem) == False => ( (MyProgram.contains(l:AList, elo:Elem) == True => (MyProgram.plusOne(MyProgram.getIndexOf(l:AList,elo:Elem)) == MyProgram.getIndexOf(MyProgram.addFirst(l:AList,elt:Elem),elo:Elem)) ) )
+
+/*--------------------FALSIFIED PROPERTIES---------------------*/
+//if(list != empty) and if(list.contains(el1)) then (getIndexOf(list,el1) + 1) == getIndexOf(addFirst(list,el2),el1)
+//MyProgram.isEmpty(l:AList) == False => ( (MyProgram.contains(l:AList, elo:Elem) == True => (MyProgram.plusOne(MyProgram.getIndexOf(l:AList,elo:Elem)) == MyProgram.getIndexOf(MyProgram.addFirst(l:AList,elt:Elem),elo:Elem)) )
+//if(list != empty) and if (index < size) then get(index) != null
+//ProgramToTest.isEmpty(l:AList) == False => ( ProgramToTest.isNegative(index:Integer) == False => ( (ProgramToTest.isLess(index:Integer,ProgramToTest.size(l:AList)) == True => ( ProgramToTest.isNull(ProgramToTest.get(l:AList, index:Integer)) == False ) ) )
+
+/*------------LATEST-----------------------------------*/
+
+//NOT WORKING MyProgram.isBigger(MyProgram.size(l:MyList),2) == True => (MyProgram.contains(l:MyList,v:Value) == True)
+
+// MyProgram.isShort(s:String) == False => ( MyProgram.isPalindrome(s:String) != True )
+
+// (MyProgram.containsA(s:String) != True) || (MyProgram.isPalindrome(s:String) != True)
+
+// MyProgram.reverse(MyProgram.reverse(s:String)) EQ s:String  
+
+//MyProgram.setElement(MyProgram.setElement(e:Foo,h:Hoo),h:Hoo) == MyProgram.setElement(e:Foo,h:Hoo)
+
+MyProgram.swap(MyProgram.swap(e:Foo)) == e:Foo
+
+// MyProgram.zero() == MyProgram.zero()
+
+// MyProgram.isSmall(n:Integer) == True  
+
+// MyProgram.isFancy(f:Foo) == True => (MyProgram.swap(MyProgram.swap(f:Foo)) == f:Foo)
+												
+// True == False => (MyProgram.swap(MyProgram.swap(e:Foo)) == e:Foo		)
+
+// MyProgram.swap(m:Hoo) == MyProgram.swap(k:Hoo) => (MyProgram.swap(MyProgram.swap(e:Foo)) != e:Foo)
+
+
+// MyProgram.swap(MyProgram.swap(e:Hoo)) == e:Hoo
+
+
+
+
+// MyProgram.swap(MyProgram.swap(e:Hoo)) != e:Hoo
+
+//MyProgram.swap(e:Foo)==MyProgram.swap(e:Foo) => ( MyProgram.swap(MyProgram.swap(e:Foo)) != e:Foo )
+
+// MyProgram.swap(MyProgram.swap(MyProgram.swap(e:Foo, h:Hoo), h:Hoo),h:Hoo) == MyProgram.swap(e:Foo,f:Hoo)
+
+// MyProgram.swap(MyProgram.swap(e:Foo, h:Hoo),h:Hoo) == Toto.foo(e:Foo,f:Hoo)
+
+//swap(swap(swap(f:Foo, h:Hoo), e:Hoo), k:Hoo) == swap(e:Foo,f:Hoo)

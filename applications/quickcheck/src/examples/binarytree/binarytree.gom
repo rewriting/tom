@@ -1,0 +1,10 @@
+module examples.trees.BinaryTree
+  imports int
+  abstract syntax
+
+	Node = nothing()
+			 | add(c:Constant, r:Node, l:Node)
+
+  Constant = c1()
+		       | c2()
+  	 		   | nat(i:int)

@@ -1,0 +1,16 @@
+module examples.simplest.Dummy
+  imports int String
+  abstract syntax
+ 	  
+  Foo = a() 
+      | b() 
+      | c() 
+      | foo(e:Foo)
+      | goo(e:Foo)
+      | hoo(h:Hoo)
+      | koo(k:Koo)	
+
+  Hoo = h()
+  		| m()
+  		
+  Koo = k()

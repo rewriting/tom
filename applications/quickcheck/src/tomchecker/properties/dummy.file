@@ -1,0 +1,21 @@
+DemoDummy.swap(DemoDummy.swap(e:Foo)) == e:Foo
+
+// DemoDummy.isFancy(f:Foo) == True => (DemoDummy.swap(DemoDummy.swap(f:Foo)) == f:Foo)
+												
+// True == False => (DemoDummy.swap(DemoDummy.swap(e:Foo)) == e:Foo		)
+
+// DemoDummy.swap(m:Hoo) == DemoDummy.swap(k:Hoo) => (DemoDummy.swap(DemoDummy.swap(e:Foo)) != e:Foo)
+
+// DemoDummy.swap(DemoDummy.swap(e:Hoo)) == e:Hoo
+
+// DemoDummy.swap(DemoDummy.swap(e:Hoo)) != e:Hoo
+
+//DemoDummy.swap(e:Foo)==DemoDummy.swap(e:Foo) => ( DemoDummy.swap(DemoDummy.swap(e:Foo)) != e:Foo )
+
+// DemoDummy.swap(DemoDummy.swap(DemoDummy.swap(e:Foo, h:Hoo), h:Hoo),h:Hoo) == DemoDummy.swap(e:Foo,f:Hoo)
+
+// DemoDummy.swap(DemoDummy.swap(e:Foo, h:Hoo),h:Hoo) == Toto.foo(e:Foo,f:Hoo)
+
+//swap(swap(swap(f:Foo, h:Hoo), e:Hoo), k:Hoo) == swap(e:Foo,f:Hoo)
+
+//DemoDummy.setElement(DemoDummy.setElement(e:Foo,h:Hoo),h:Hoo) == DemoDummy.setElement(e:Foo,h:Hoo)

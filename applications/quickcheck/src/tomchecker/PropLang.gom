@@ -1,0 +1,31 @@
+module tomchecker.PropLang
+	imports int String 
+	abstract syntax
+	
+	Property = Check(c:Cond)
+      		 | Implies(c:Cond, p:Property)
+      		 | Exists(e1:Expr, p:Property)
+
+    Cond = Same(e1:Expr,e2:Expr)
+       | Diff(e1:Expr,e2:Expr)
+       | Eq(e1:Expr,e2:Expr)
+       | Neq(e1:Expr,e2:Expr)
+       | And(c1:Cond,c2:Cond)
+       | Or(c1:Cond,c2:Cond)
+       | Neg(c:Cond)
+       | Gre(e1:Expr,e2:Expr)
+       | Geq(e1:Expr,e2:Expr)
+       | Less(e1:Expr,e2:Expr)
+       | Leq(e1:Expr,e2:Expr)
+
+	Expr = Func(name:String,arg:Args)
+		| Var(name:String,type:String)
+		| Null()
+		| True() 
+		| False()
+		| Nat(i:int)
+		| Len(name:String)
+
+	Args = Arg(Expr*)
+
+    PropList = PropList(Property*)	
