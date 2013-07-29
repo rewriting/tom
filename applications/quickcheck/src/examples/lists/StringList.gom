@@ -1,0 +1,8 @@
+module examples.lists.StringList
+  imports int String
+  abstract syntax
+ 	  
+  ListStr = cons(Elem*)
+
+  Elem = single(str: String)
+       | many(str: String, list: ListStr)
