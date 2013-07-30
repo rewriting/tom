@@ -18,7 +18,7 @@ public class ConsList {
 						 | b()
 						 | nat(i:int)
  
-   */
+  */
 
 	private static void testEnumerator(Enumeration<?> e,String title, int n) {
 		System.out.println("Enumerator for " + title);
