@@ -2,9 +2,6 @@ package examples.lists;
 
 import examples.lists.stringlist.types.*;
 
-import java.math.BigInteger;
-import tom.library.enumerator.*;
-
 public class DemoStringList {
 
 	%include{ stringlist/StringList.tom }
@@ -53,7 +50,8 @@ public class DemoStringList {
     System.out.println( "prettyListStr(list1): " + prettyListStr(list1) );
     System.out.println( "prettyListStr(list2): " + prettyListStr(list2) );
 
-// Does not working
+//    Does not working
+
 //		System.out.println("------------------- Use of the enumerator library -----------------");
 
 //    Enumeration<ListStr> enumLS = ListStr.getEnumeration();

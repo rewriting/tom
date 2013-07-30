@@ -8,9 +8,7 @@ public class DemoAList {
 
   %include { alist/AList.tom }
 
-
-
-  // ---------------- prettyPrinter -----------------------------------------------------------------
+  // ---------------- prettyPrinter ---------------------------------------------------------------
 	public static String prettyAList(AList list) {  
 		%match (list){
 			empty() -> {  return "nil"; }
@@ -26,7 +24,7 @@ public class DemoAList {
 		return "";
 	}
 
-  // ---------------- size --------------------------------------------------------------------------  
+  // ---------------- size ------------------------------------------------------------------------
 	public static int size(AList list) {  
 		%match (list){
 			empty() -> {  return 0; }
@@ -35,12 +33,12 @@ public class DemoAList {
 		return -1;
 	}
 
-  // ---------------- addFirst ----------------------------------------------------------------------  
+  // ---------------- addFirst --------------------------------------------------------------------
 	public static AList addFirst(AList list, Elem el) {
 		return `con(el,list);
 	}
 
-  // ---------------- getIndexOf -------------------------------------------------------------------
+  // ---------------- getIndexOf ------------------------------------------------------------------
 	public static int getIndexOf(AList list, Elem el) {
 		int currIndex = 0;
 		return getIndexOf(list, el, currIndex);
@@ -55,7 +53,7 @@ public class DemoAList {
 		return -1;
 	}
 
-  // ---------------- contains ---------------------------------------------------------------------
+  // ---------------- contains --------------------------------------------------------------------
 	public static boolean contains(AList list, Elem el) {
 		%match (list){
 			empty() -> { return false; }
@@ -65,7 +63,7 @@ public class DemoAList {
 		return false;
 	}
 
-  // ---------------- get ---------------------------------------------------------------------------  
+  // ---------------- get -------------------------------------------------------------------------
 	public static Elem get(AList list, int index) {
 		int currIndex = 0;
 		return get(list, index, currIndex);
@@ -82,12 +80,12 @@ public class DemoAList {
 		return null;
 	}
 
-  // ---------------- isNull ------------------------------------------------------------------------
+  // ---------------- isNull ----------------------------------------------------------------------
 	public static boolean isNull(Elem el) {
-		return el == null;
+		return ( el == null );
 	}
 
-  // ---------------- isEmpty ----------------------------------------------------------------------
+  // ---------------- isEmpty ---------------------------------------------------------------------
 	public static boolean isEmpty(AList list) {
 		%match (list){
 			empty() -> {  return true; }
@@ -95,7 +93,7 @@ public class DemoAList {
 		return false;
 	}
 
-  // ---------------- isEquals -----------------------------------------------------------------------
+  // ---------------- isEquals --------------------------------------------------------------------
 	public static boolean isEquals(Elem el1, Elem el2){
 
 		// We have to treat null pointers separetely
@@ -108,23 +106,7 @@ public class DemoAList {
 		else { return false; }
 	}
 
-  // ---------------- isLess ------------------------------------------------------------------------
-  //	public static boolean isLess(int index, int size) {
-  //	  return index < size;
-  //  }
-
-  // ---------------- isNegative --------------------------------------------------------------------
-  //	public static boolean isNegative(int index) {
-  //	  return index < 0;
-  //  }
-
-  // ---------------- plusOne -----------------------------------------------------------------------
-  //	public static int plusOne(int size) {
-  //		size = size + 1;
-  //		return size;
-  //	}
-
-  // ---------------- main --------------------------------------------------------------------------
+  // ---------------- main ------------------------------------------------------------------------
   public static void main(String args[]) {    
 
 		AList alist1 = `con(cs(4),con(cs(3),con(cs(5),con(cs(8),empty()))));
