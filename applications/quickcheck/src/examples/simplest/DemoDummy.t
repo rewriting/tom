@@ -6,6 +6,7 @@ public class DemoDummy {
 
   %include{ dummy/Dummy.tom }
 
+  // ---------------- swap(Foo foo) ---------------------------------
   public static Foo swap(Foo foo){
     %match(foo) {
       a() -> { return `b(); }
@@ -17,6 +18,7 @@ public class DemoDummy {
     return `a();
   }
 
+  // ---------------- isFancy(Foo foo) ------------------------------
   public static Boolean isFancy(Foo foo){
     %match(foo) {
       a() -> { return true; }
@@ -28,6 +30,7 @@ public class DemoDummy {
     return false;
   }
 
+  // ---------------- isFlat(Foo foo) -------------------------------
   public static Boolean isFlat(Foo foo){
     %match(foo) {
       a() -> { return true; }
@@ -37,6 +40,7 @@ public class DemoDummy {
     return false;
   }
 
+  // ---------------- swap(Hoo h) -----------------------------------
   public static Hoo swap(Hoo h){
     %match(h) {
       h() -> { return `m(); }
@@ -45,6 +49,7 @@ public class DemoDummy {
     return h;
   }
 
+  // ---------------- setElement(Foo f, Hoo h) ----------------------
   public static Foo setElement(Foo f, Hoo h){
     %match(f) {
       hoo(_) -> { return `hoo(h); }
@@ -52,6 +57,7 @@ public class DemoDummy {
     return f;
   }
 
+  // ---------------- main ------------------------------------------
   public static void main(String args[]) {    
 		
 		Foo term1 = `a();
@@ -63,22 +69,24 @@ public class DemoDummy {
 		Hoo term6 = `h();
 		Koo term7 = `k();
 
-		// public static Foo swap(Foo foo)
 		System.out.println("\n");
+
+		System.out.println("------------- Call to : Foo swap(Foo foo) ----------------------------");
 		System.out.println( "swap(" + term1 + ") = " + swap(term1) );
 		System.out.println( "swap(" + term2 + ") = " + swap(term2) + "\n");
 
-		// public static Boolean isFancy(Foo foo)
+		System.out.println("------------- Call to : Boolean isFancy(Foo foo) ---------------------");
 		System.out.println( "isFancy(" + term3 + ") = " + isFancy(term3) );
 		System.out.println( "isFancy(" + term4 + ") = " + isFancy(term4) + "\n");
 
-		// public static Boolean isFlat(Foo foo)
+		System.out.println("------------- Call to : Boolean isFlat(Foo foo) ----------------------");
 		System.out.println( "isFlat(" + term5 + ") = " + isFlat(term5) + "\n");
 
-		// public static Hoo swap(Hoo h)
+		System.out.println("------------- Call to : Hoo swap(Hoo h) ------------------------------");
 		System.out.println( "swap(" + term6 + ") = " + swap(term6) + "\n");
 	
-	  // public static Foo setElement(Foo f, Hoo h)
+
+		System.out.println("------------- Call to : Foo setElement(Foo f, Hoo h) -----------------");
 		System.out.println( "setElement(" + term4 + ", " + term6 + ") = " + setElement(term4, term6));
 
 		System.out.println("\n");
