@@ -52,48 +52,6 @@ public class DemoDummy {
     return f;
   }
 
-
-  public static int zero(){
-    return 0;
-  }
-
-  public static Boolean isShort(String s){
-    return s.length() < 5;
-  }
-
-  public static Boolean containsNoA(String s){
-    return !( s.length()!=0 && (s.charAt(0)=='a' && s.charAt(s.length()/2)=='a' &&  s.charAt(s.length()-1)=='a') )  ;
-  }
-
-  public static Boolean containsA(String s){
-    return s.length()!=0 && (s.charAt(0)=='a' && s.charAt(s.length()-1)=='a');
-  }
-
-  public static Boolean isPalindrome(String s){
-    Boolean res = true;
-    if(s.length()<2){
-      res=false;
-    }
-    for(int i=0; i< s.length()/2; i++){
-      if(s.charAt(i)!=s.charAt(s.length()-1-i)){
-        res=false;
-      }
-    }
-    return res;
-  }
-
-  public static Boolean isSmall(int n){
-    return n < 4;
-  }
-
-  public static String reverse(String s){
-    return new StringBuilder(s).reverse().toString();
-  }
-
-
-
-
-
   public static void main(String args[]) {    
 		
 		Foo term1 = `a();
@@ -106,7 +64,8 @@ public class DemoDummy {
 		Koo term7 = `k();
 
 		// public static Foo swap(Foo foo)
-		System.out.println( "\nswap(" + term1 + ") = " + swap(term1) );
+		System.out.println("\n");
+		System.out.println( "swap(" + term1 + ") = " + swap(term1) );
 		System.out.println( "swap(" + term2 + ") = " + swap(term2) + "\n");
 
 		// public static Boolean isFancy(Foo foo)
@@ -119,9 +78,10 @@ public class DemoDummy {
 		// public static Hoo swap(Hoo h)
 		System.out.println( "swap(" + term6 + ") = " + swap(term6) + "\n");
 	
-	  // public static Foo setElement(Foo f, Hoo h){
-		System.out.println( "setElement(" + term4 + ", " + term6 + ") = " + setElement(term4, term6) + "\n");
-	
+	  // public static Foo setElement(Foo f, Hoo h)
+		System.out.println( "setElement(" + term4 + ", " + term6 + ") = " + setElement(term4, term6));
+
+		System.out.println("\n");
   }
 
 }
