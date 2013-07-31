@@ -777,8 +777,8 @@ public class TransformerPlugin extends TomGenericPlugin {
     PairNameDeclList result = `concPairNameDecl();
     PairNameDeclList transformationParameters = transformationSymbol.getPairNameDeclList();
     %match(transformationParameters) {
-      concPairNameDecl(_*,PairNameDecl[SlotName=name,
-                                       SlotDecl=decl@GetSlotDecl[SlotName=slotname,Variable=bq,Expr=expr,OrgTrack=ot]],_*) -> {
+      concPairNameDecl(_*,PairNameDecl(name,
+                                       GetSlotDecl[SlotName=slotname,Variable=bq,Expr=expr,OrgTrack=ot]),_*) -> {
         PairNameDecl pnd = `PairNameDecl(name,GetSlotDecl(stratName,slotname,bq,expr,ot));
         result = `concPairNameDecl(result*,pnd);
       }
