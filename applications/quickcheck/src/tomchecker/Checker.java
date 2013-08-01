@@ -12,38 +12,49 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-
 public class Checker {
 
-	public static <T> void quickCheckProd1(int depth,  Enumeration< Product1<T> > enumeration, F< Product1<T>, Boolean> prop, 
-                                         int verbose, int shrink, int quotient, Set<F<Product1<T>, Boolean>> condBag, BigInteger defaultNumOfTest) {
+	// ---------------- QuickCheck Prod1 by default -------------------------------------------------
+	public static <T> void quickCheckProd1(int depth,  Enumeration< Product1<T> > enumeration,
+								F<Product1<T>, Boolean> prop, int verbose, int shrink, int quotient,
+								Set<F<Product1<T>, Boolean>> condBag, BigInteger defaultNumOfTest) {
 		
 		long startTime = System.currentTimeMillis();
 		Map<Integer, Product1<T>> counterExamples = new HashMap<Integer, Product1<T>>();
-		quickCheckProd1(depth, enumeration, prop, verbose, shrink, quotient, condBag, counterExamples, defaultNumOfTest, startTime);
+
+		quickCheckProd1(depth, enumeration, prop, verbose, shrink, quotient, condBag, counterExamples,
+										defaultNumOfTest, startTime);
 	}
 
+	// ---------------- QuickCheck Prod1 ------------------------------------------------------------
 	// TODO: if shrink - remember tested inputs to avoid playing them again
-	public static <T> void quickCheckProd1(int depth,  Enumeration< Product1<T> > enumeration, F<Product1<T>, Boolean> prop, 
-                                         int verbose, int shrink, int quotient, Set<F<Product1<T>, Boolean>> condBag,
-                                         Map<Integer, Product1<T>> counterExamples, BigInteger defaultNumOfTest, long 	startTime) {
+	public static <T> void quickCheckProd1(int depth,  Enumeration< Product1<T> > enumeration,
+								F<Product1<T>, Boolean> prop, int verbose, int shrink, int quotient,
+								Set<F<Product1<T>, Boolean>> condBag, Map<Integer, Product1<T>> counterExamples,
+								BigInteger defaultNumOfTest, long startTime) {
 		
     Product1<T> input = null;
-    LazyList<Finite<Product1<T>>> parts = enumeration.parts();	
+    LazyList<Finite<Product1<T>>> parts = enumeration.parts();
     Set<BigInteger> testedInputs = new HashSet<BigInteger>();
     Random rand = new Random();
 
-    BigInteger totalSize = BigInteger.ZERO;
+		final BigInteger ZERO = BigInteger.ZERO;
+		final BigInteger ONE = BigInteger.ONE;
+
+    BigInteger totalSize = ZERO;
     BigInteger[] nbProbes = new BigInteger[depth];
-    int numOfPart = 0;
-    BigInteger numOfTestCase = BigInteger.ONE;
-    BigInteger maxNumOfTestCase = BigInteger.ONE;
+    BigInteger numOfTestCase = ONE;
+
+		// TODO Il me semble que maxNumOfTestCase ne sert à rien
+    BigInteger maxNumOfTestCase = ONE;
     Boolean failed = false;
+		// ratio = totalSize / quotient, but totalSize has not been calculated yet
+    BigInteger ratio;
 
     logMessage(1, verbose,"RANDOM CHECK AT DEPTH " + depth);
 
-    // if no smaller counter example    
-    if(depth == 0){ 
+    // if no smaller counter example
+    if(depth == 0){
       assert false :  "FAILED  tests: " + counterExamples;
     }
 
@@ -52,75 +63,100 @@ public class Checker {
       nbProbes[i] = parts.head().getCard();
       totalSize = totalSize.add(nbProbes[i]);
       parts = parts.tail();
-      numOfPart++;
     }
+
     logMessage(2, verbose,"TOTAL number of inputs " + totalSize);
 
-    quotient++; // at least 1
-    if(totalSize.divide(BigInteger.valueOf(quotient)).compareTo(BigInteger.ZERO) == 0){
-      defaultNumOfTest =  BigInteger.ONE;
+		// Calculate default number of tests
+		// quotient should be at least 1
+		if(quotient == 0){
+			quotient = 1;
+		}
+		
+		ratio = totalSize.divide(BigInteger.valueOf(quotient));
+
+    if(ratio.compareTo(ZERO) == 0){
+      defaultNumOfTest =  ONE;
     }else{
-      do {
+			do {
         defaultNumOfTest = new BigInteger(totalSize.bitLength(), rand);
-      } while(defaultNumOfTest.compareTo(totalSize.divide(BigInteger.valueOf(quotient))) >= 0);
-      defaultNumOfTest = defaultNumOfTest.add(BigInteger.ONE);
+      }while(defaultNumOfTest.compareTo(ratio) >= 0);
+      	defaultNumOfTest = defaultNumOfTest.add(ONE);
     }
-    logMessage(2, verbose, "DEFAULT number of tests " + defaultNumOfTest);
-    for(int i = 0; i < numOfPart; i++) {	 
-      if(nbProbes[i].compareTo(BigInteger.ZERO) == 1) { // if not an empty part
-	    	if(((nbProbes[i].multiply(defaultNumOfTest)).divide(totalSize)).compareTo(BigInteger.ZERO) == 0) {
-	        nbProbes[i] = BigInteger.ONE;
-	    	} else {
-	        nbProbes[i] = (nbProbes[i].multiply(defaultNumOfTest)).divide(totalSize);
+
+		logMessage(2, verbose, "DEFAULT number of tests " + defaultNumOfTest);
+
+		// Recompute number of test inputs to distribute test cases uniformly among depths
+    for(int i = 0; i < depth; i++) {
+			// if not an empty part
+      if(nbProbes[i].compareTo(ZERO) == 1) {
+		    BigInteger proportion = (nbProbes[i].multiply(defaultNumOfTest)).divide(totalSize);
+	    	if( proportion.compareTo(ZERO) == 0 ) {
+	        nbProbes[i] = ONE;
+	    	}else {
+	        nbProbes[i] = proportion;
 	    	}
       }
     }
 
-    // perform tests for each part
+    // Perform tests for each part
     parts = enumeration.parts();
-    for(int i = 0; i < numOfPart; i++) {
+    for(int i = 0; i < depth; i++) {
       BigInteger card = parts.head().getCard();
-      BigInteger index = BigInteger.ZERO;
+      BigInteger index = ZERO;
       testedInputs.clear();
+
       logMessage(2, verbose,"AT DEPTH " + i + " SHOULD GENERATE :" + nbProbes[i] + " random inputs for the set with cardinality = " + card);
-      BigInteger j = BigInteger.ZERO;
-      BigInteger maxLimit = BigInteger.ZERO;
-      while(j.compareTo(nbProbes[i]) == -1 && !failed && maxLimit.compareTo(min(card,BigInteger.valueOf(Integer.MAX_VALUE))) <= 0) {
+
+			// Il me semble que j et maxLimit varient de la même façon, donc je peux peut-être les remplacer par une seule variable
+      BigInteger j = ZERO;
+      BigInteger maxLimit = ZERO;
+      int temp = maxLimit.compareTo(min(card,BigInteger.valueOf(Integer.MAX_VALUE)));
+
+      while(j.compareTo(nbProbes[i]) == -1 && !failed && temp <= 0) {
         Boolean implication = true;
-  	    maxLimit = maxLimit.add(BigInteger.ONE);
+
         // get an input that hasn't been tested yet 
       	do {
           index = new BigInteger(card.bitLength(), rand);
           logMessage(5, verbose, "TRY: " + index);
       	} while(index.compareTo(card) >= 0 || testedInputs.contains(index));
+
         // input = enumeration.parts().index(BigInteger.valueOf(i)).get(index);
         input = parts.head().get(index);
         logMessage(3, verbose, "depth: " + i + " input: " + input);
-        // if there is any implication, then check if they are satisfied; otherwise pick another input 
-	    for(F<Product1<T>, Boolean> entry : condBag) {
-	    	if(!entry.apply(input)) {
+        // if there is any implication, then check if they are satisfied; otherwise pick another input
+			  for(F<Product1<T>, Boolean> entry : condBag) {
+			  	if(!entry.apply(input)) {
 //	    		logMessage(4, verbose, "pre-condition not satisfied by the input: " + input);
-	            implication = false;
-	            break;
-	          }
-	    }
+	          implication = false;
+	          break;
+	        }
+			  }
+
         if(!implication) {
-        	logMessage(4, verbose, "pre-condition not satisfied by the input: " + input);
+      		logMessage(4, verbose, "pre-condition not satisfied by the input: " + input);
         	continue;
         }
 
-        // new input here so we can test it
-        numOfTestCase = numOfTestCase.add(BigInteger.ONE);
+        // new input found, so we can test it
+        numOfTestCase = numOfTestCase.add(ONE);
         testedInputs.add(index);
         if(!prop.apply(input)) {
         	counterExamples.put(i, input);
 	        failed = true;
 	        if(shrink > 0) { // look for counter examples in smaller depths
 	        	logMessage(3, verbose,"SHRINKING at depth " + i + "  " + input);
-	        	quickCheckProd1(i, enumeration, prop, verbose, shrink, quotient/shrink, condBag, counterExamples, defaultNumOfTest, startTime);
+						// Note the first argument : it adjusts the depth to simulate a shrink
+	        	quickCheckProd1(i, enumeration, prop, verbose, shrink, quotient/shrink, condBag, 
+														counterExamples, defaultNumOfTest, startTime);
 	        }
         }
-	    	j = j.add(BigInteger.ONE);
+
+	    	j = j.add(ONE);
+  	    maxLimit = maxLimit.add(ONE);
+				temp = maxLimit.compareTo(min(card,BigInteger.valueOf(Integer.MAX_VALUE)));
+
       }
 
       logMessage(2, verbose,"AT DEPTH " + i + " GENERATED " + testedInputs.size() + " random inputs for the set with cardinality = " + card);
@@ -136,6 +172,7 @@ public class Checker {
       }
       parts = parts.tail();
     }
+
     if(counterExamples.size() == 0){
       long endTime = System.currentTimeMillis();
       double time = (endTime - startTime) / 1000;
@@ -145,17 +182,22 @@ public class Checker {
     
   }
  	
-	public static <T1,T2> void quickCheckProd2(int depth,  Enumeration< Product2<T1,T2> > enumeration, F< Product2<T1,T2>, Boolean> prop, 
-                                             int verbose, int shrink, int quotient, Set<F<Product2<T1,T2>, Boolean>> condBag, BigInteger defaultNumOfTest) {
+	// ---------------- QuickCheck Prod2 by default -------------------------------------------------
+	public static <T1,T2> void quickCheckProd2(int depth,  Enumeration< Product2<T1,T2> > enumeration,
+								F< Product2<T1,T2>, Boolean> prop, int verbose, int shrink, int quotient,
+								Set<F<Product2<T1,T2>, Boolean>> condBag, BigInteger defaultNumOfTest) {
 
 		long startTime = System.currentTimeMillis(); 
 		HashMap<Integer, Product2<T1,T2>> counterExamples = new HashMap<Integer, Product2<T1,T2>>();
+
 		quickCheckProd2(depth, enumeration, prop, verbose, shrink, quotient, condBag, counterExamples, defaultNumOfTest, startTime);
 	}
 
-  public static <T1,T2> void  quickCheckProd2(int depth,  Enumeration< Product2<T1,T2> > enumeration, F< Product2<T1,T2>, Boolean> prop, 
-                                              int verbose, int shrink, int quotient, Set<F<Product2<T1,T2>, Boolean>> condBag,
-                                              Map<Integer, Product2<T1,T2>> counterExamples, BigInteger defaultNumOfTest, long startTime) {
+	// ---------------- QuickCheck Prod2 ------------------------------------------------------------
+  public static <T1,T2> void  quickCheckProd2(int depth,  Enumeration<Product2<T1,T2>> enumeration,
+								F< Product2<T1,T2>, Boolean> prop, int verbose, int shrink, int quotient,
+								Set<F<Product2<T1,T2>, Boolean>> condBag, Map<Integer, Product2<T1,T2>>
+								counterExamples, BigInteger defaultNumOfTest, long startTime) {
 	   
     Product2<T1,T2> input=null;
     LazyList<Finite<Product2<T1,T2>>> parts = enumeration.parts();
@@ -271,17 +313,22 @@ public class Checker {
     }
   }
 	
-	public static <T1,T2,T3> void quickCheckProd3(int depth,  Enumeration< Product3<T1,T2,T3> > enumeration, F< Product3<T1,T2,T3>, Boolean> prop, 
-                                                int verbose, int shrink, int quotient, Set<F< Product3<T1,T2,T3>, Boolean>> condBag, BigInteger defaultNumOfTest) {
+	// ---------------- QuickCheck Prod3 by default -------------------------------------------------
+	public static <T1,T2,T3> void quickCheckProd3(int depth,  Enumeration< Product3<T1,T2,T3> >
+								enumeration, F< Product3<T1,T2,T3>, Boolean> prop, int verbose, int shrink, int
+								quotient, Set<F< Product3<T1,T2,T3>, Boolean>> condBag, BigInteger defaultNumOfTest){
 		
 		long startTime = System.currentTimeMillis();  
-		HashMap<Integer, Product3<T1,T2,T3>> counterExamples = new HashMap<Integer, Product3<T1,T2,T3>>();
-		quickCheckProd3(depth, enumeration, prop, verbose, shrink, quotient, condBag, counterExamples, defaultNumOfTest, startTime);
+		HashMap<Integer, Product3<T1,T2,T3>> counterExamples = new HashMap<Integer,Product3<T1,T2,T3>>();
+		quickCheckProd3(depth, enumeration, prop, verbose, shrink, quotient, condBag, counterExamples,
+								defaultNumOfTest, startTime);
 	}
 
-  public static <T1,T2,T3> void  quickCheckProd3(int depth,  Enumeration< Product3<T1,T2,T3> > enumeration, F< Product3<T1,T2,T3>, Boolean> prop,
-                                                 int verbose, int shrink, int quotient, Set<F<Product3<T1,T2,T3>, Boolean>> condBag,
-                                                 Map<Integer, Product3<T1,T2,T3>> counterExamples, BigInteger defaultNumOfTest, long startTime) {
+	// ---------------- QuickCheck Prod3 ------------------------------------------------------------
+  public static <T1,T2,T3> void  quickCheckProd3(int depth,  Enumeration< Product3<T1,T2,T3> >
+								enumeration, F< Product3<T1,T2,T3>, Boolean> prop, int verbose, int shrink, int
+								quotient, Set<F<Product3<T1,T2,T3>, Boolean>> condBag, Map<Integer,
+								Product3<T1,T2,T3>> counterExamples, BigInteger defaultNumOfTest, long startTime) {
 	
     Product3<T1,T2,T3> input=null;
     LazyList<Finite<Product3<T1,T2,T3>>> parts = enumeration.parts();
@@ -400,13 +447,15 @@ public class Checker {
         System.out.println("Finished in " + time + " seconds");
     }
   }
-  
+
+	// ---------------- Log Message -----------------------------------------------------------------
   public static void  logMessage(Integer level, int verbose, String message) {
     if(level <= verbose){
       System.out.println(message);
     }
   }  
   
+	// ---------------- Big Integer -----------------------------------------------------------------
   private static BigInteger min(BigInteger n1, BigInteger n2){
     if(n1.compareTo(n2) <= 0) {
       return n1;
@@ -415,13 +464,12 @@ public class Checker {
     }
   }
 
-  // ***********************************
-  // SMALLCHECK
-  // ***********************************
-
-  public static <T> void smallCheckProd1(int depth,  Enumeration< Product1<T> > enumeration, F< Product1<T>, Boolean> prop, int verbose, Set<F< Product1<T>, Boolean>> condBag, Boolean existential) {
+	// ---------------- SmallCheck Prod1 ------------------------------------------------------------
+  public static <T> void smallCheckProd1(int depth,  Enumeration< Product1<T> > enumeration,
+								F<Product1<T>, Boolean> prop, int verbose, Set<F< Product1<T>, Boolean>> condBag,
+								Boolean existential) {
 	
-	long startTime = System.currentTimeMillis();
+		long startTime = System.currentTimeMillis();
     Product1<T> args;
     LazyList<Finite<Product1<T>>> parts = enumeration.parts();
     Finite<Product1<T>> part = null;
@@ -474,10 +522,12 @@ public class Checker {
     System.out.println("Finished in " + time + " seconds");
   }
 
-     
-  public static <T1,T2> void smallCheckProd2(int depth,  Enumeration< Product2<T1,T2> > enumeration, F< Product2<T1,T2>, Boolean> prop, int verbose, Set<F< Product2<T1,T2>, Boolean>> condBag, Boolean existential) {
+	// ---------------- SmallCheck Prod2 ------------------------------------------------------------
+  public static <T1,T2> void smallCheckProd2(int depth,  Enumeration< Product2<T1,T2> > enumeration,
+								F< Product2<T1,T2>, Boolean> prop, int verbose, Set<F< Product2<T1,T2>, Boolean>>
+								condBag, Boolean existential) {
 	  
-	long startTime = System.currentTimeMillis();  
+		long startTime = System.currentTimeMillis();  
     Product2<T1,T2> args;
     LazyList<Finite<Product2<T1,T2>>> parts = enumeration.parts(); 
     Finite<Product2<T1,T2>> part = null;
@@ -531,10 +581,12 @@ public class Checker {
     System.out.println("Finished in " + time + " seconds");
   }
 
-     
-  public static <T1,T2,T3> void smallCheckProd3(int depth,  Enumeration< Product3<T1,T2,T3> > enumeration, F< Product3<T1,T2,T3>, Boolean> prop, int verbose, Set<F< Product3<T1,T2,T3>, Boolean>> condBag, Boolean existential) {
+	// ---------------- SmallCheck Prod3 ------------------------------------------------------------
+  public static <T1,T2,T3> void smallCheckProd3(int depth,  Enumeration< Product3<T1,T2,T3> >
+								enumeration, F< Product3<T1,T2,T3>, Boolean> prop, int verbose, 
+								Set<F<Product3<T1,T2,T3>, Boolean>> condBag, Boolean existential) {
 	  
-	long startTime = System.currentTimeMillis();  
+		long startTime = System.currentTimeMillis();  
     Product3<T1,T2,T3> args;
     LazyList<Finite<Product3<T1,T2,T3>>> parts = enumeration.parts(); 
     Finite<Product3<T1,T2,T3>> part = null;
