@@ -402,7 +402,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
   }
 
   /*
-   * generate the function declaration when no substituion has been done
+   * generate the function declaration when no substitution has been done
    */
   protected void buildIsFsymDecl(int deep, String tomName, String varname,
                                  TargetLanguageType tlType, Expression code, String moduleName) throws IOException {

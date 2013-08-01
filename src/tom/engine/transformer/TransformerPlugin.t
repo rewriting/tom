@@ -107,6 +107,7 @@ public class TransformerPlugin extends TomGenericPlugin {
 
   private SymbolTable symbolTable;
   private int freshCounter = 0;
+  private boolean resolveFlag = false;
 
   public void setSymbolTable(SymbolTable symbolTable) {
     this.symbolTable = symbolTable;
@@ -177,12 +178,14 @@ public class TransformerPlugin extends TomGenericPlugin {
 
     HashSet<String> withNameSet = new HashSet<String>();
     HashSet<String> toNameSet = new HashSet<String>();
+
+    ElementaryTransformationList etl = `concElementaryTransformation();
     try {
       //This strategy call makes lots of side effects:
       //- on resolveNameSet
       //- on result (add created declarations)
       //- on withNameSet and on toNameSet
-      `TopDown(GenResolveElement(this,resolveNameSet,result,withNameSet,toNameSet)).visitLight(elemTransfoList);
+      etl = `TopDown(GenResolveElement(this,resolveNameSet,result,withNameSet,toNameSet)).visitLight(elemTransfoList);
     } catch (VisitFailure e) {
       throw new TomRuntimeException("TransformerPlugin.GenResolveElement: fail on " + transfo);
     }
@@ -191,7 +194,8 @@ public class TransformerPlugin extends TomGenericPlugin {
     String strTransfoName = transfoName.getString();
     TomSymbol transfoSymbol = getSymbolTable().getSymbolFromName(strTransfoName);
     //elementary strategies generation
-    %match(elemTransfoList) {
+    //%match(elemTransfoList) {
+    %match(etl) {
       concElementaryTransformation(_*,ElementaryTransformation[ETName=etName@Name(eStratName),Traversal=traversalStrat,AstRuleInstructionList=riList,Options=concOption(_*,ot@OriginTracking(_,_,_),_*)],_*) -> {
         //generate elementary `Strategy, `ReferenceClass and `SymbolDecl
         result.addAll(`genElementaryStrategy(etName,traversalStrat,riList,transfoSymbol,ot));
@@ -203,7 +207,10 @@ public class TransformerPlugin extends TomGenericPlugin {
         bqlist.add(`traversalStrat);
       }
     }
-       
+     
+
+    if(resolveFlag) {
+
     //retrieve %transformation line number and current file name to forge
     //Resolve elements options
     int line = orgTrack.getLine();
@@ -248,6 +255,9 @@ public class TransformerPlugin extends TomGenericPlugin {
         transfoSymbol, rsblist, resolveNameList, fileFrom, fileTo, orgTrack);
     //add it to DeclarationList
     result.add(resolveStratDecl);
+
+    }//end if(resolveFlag)
+
     //TODO: test hook
     //result.add(inverseLinks);
 
@@ -266,33 +276,29 @@ public class TransformerPlugin extends TomGenericPlugin {
     return ASTFactory.makeDeclarationList(result);
   }//processSubDecl
 
-
   /**
    * Generate the `Strategy corresponding to an `ElementaryTransformation
-   * @param strategyName the naem of the strategy (elementary transformation)
+   * @param strategyName the name of the strategy (elementary transformation)
    * @param traversal the traversal strategy which have been given to the
    * elementary transformation. It is used in the "transformer" strategy
    * composition.
    * @param riList the list of rules composing the elementary transformation
    * @param transfoSymbol the symbol of the transformation
    * @param orgTrack an option to track the construct
-   * @return DeclarationList containclieng the `Strategy, the `SymbolDecl and a
-   * `ReferenceClass
+   * @return DeclarationList containclieng the `Strategy, the `SymbolDecl 
+   * and a `ReferenceClass
    */
   private List<Declaration> genElementaryStrategy(TomName strategyName,
                                                   BQTerm traversal,
                                                   RuleInstructionList riList,
                                                   TomSymbol transfoSymbol,
                                                   Option orgTrack) {
-    String strName = strategyName.getString();
-    TomName refClassName = `Name(TransformerPlugin.REFCLASS_PREFIX+strName);
-    Declaration symbol = `SymbolDecl(strategyName);
-
     //build visitList
     List<ConstraintInstruction> ciList = new LinkedList<ConstraintInstruction>();
-    List<RefClassTracelinkInstruction> refclassTInstructionList = new LinkedList<RefClassTracelinkInstruction>();
-
+    List<RefClassTracelinkInstruction> refclassTInstructionList = new
+      LinkedList<RefClassTracelinkInstruction>();
     TomType vType = null;
+    List<Declaration> result = new LinkedList<Declaration>();
     %match(riList) {
       concRuleInstruction(_*,RuleInstruction[TypeName=type,Term=term,Action=instr,Options=opts],_*) -> {
         List<TomName> nameList = new LinkedList<TomName>();
@@ -306,55 +312,76 @@ public class TransformerPlugin extends TomGenericPlugin {
         //links to be set
         TomNameList tracedLinks = ASTFactory.makeNameList(nameList);
         BQTerm current = genTracelinkPopulateResolveCurrent(`term);
-        //TODO: change that
-        if(current==null){
-          throw new TomRuntimeException("TransformerPlugin.process: fail to generate tracelink backquote terme corresponding to "+`term);
-        } 
-        TomName firstArgument = TomBase.getSlotName(transfoSymbol,0);
-        TomType firstArgType = TomBase.getSlotType(transfoSymbol,firstArgument);
-        BQTerm link = `BQVariable(concOption(),firstArgument,firstArgType);
-        Instruction tracelinkPopResolveInstruction = `TracelinkPopulateResolve(refClassName,tracedLinks,current,link);
-
+        /*cases:
+        !tracelink ^  resolve => err
+        !tracelink ^ !resolve => OK, but no need to execute this part of code
+         tracelink ^  resolve => OK
+         tracelink ^ !resolve => OK
+        */
+        InstructionList instrList = `concInstruction();
+        if(current==null) {
+          if(resolveFlag) {//if there is a resolve while no tracelink: err
+            throw new TomRuntimeException("TransformerPlugin.process: fail to generate tracelink backquote term corresponding to "+`term);
+          }
+          //in case there is no tracelink
+          instrList = `concInstruction(instr*);
+        } else {//in case there is at least one tracelink
+          TomName firstArgument = TomBase.getSlotName(transfoSymbol,0);
+          TomType firstArgType = TomBase.getSlotType(transfoSymbol,
+                                                     firstArgument);
+          BQTerm link = `BQVariable(concOption(),firstArgument,firstArgType);
+          TomName refClassName =
+            `Name(TransformerPlugin.REFCLASS_PREFIX+strategyName.getString());
+          Instruction tracelinkPopResolveInstruction =
+            `TracelinkPopulateResolve(refClassName,tracedLinks,current,link);
+          instrList = `concInstruction(instr*,tracelinkPopResolveInstruction);
+          RefClassTracelinkInstructionList refclassInstructions = ASTFactory.makeRefClassTracelinkInstructionList(refclassTInstructionList);
+        //TODO: use Class(AstName:TomName,ExtendsType:TomType,SuperTerm:BQTerm,Declaration:Declaration)
+        Declaration refClass = `ReferenceClass(refClassName,refclassInstructions);
+        result.add(refClass);
+        }//case tracelink
         vType = `Type(concTypeOption(),type,EmptyTargetLanguageType());
         //add a test on vType here: if(vType!=null && vType!=)
         BQTerm subject = `BQVariable(concOption(),
                                      Name("tom__arg"),
                                      vType);
         Constraint constraint = `AndConstraint(TrueConstraint(),
-                                               MatchConstraint(term,subject,vType));
+                                               MatchConstraint(term,
+                                                               subject,
+                                                               vType)
+                                               );
         ciList.add(`ConstraintInstruction(
                          constraint,
                          RawAction(If(
                            TrueTL(),
-                           AbstractBlock(concInstruction(instr*,tracelinkPopResolveInstruction)),
+                           AbstractBlock(instrList),
                            Nop())),
                          opts)
                 );
       }
     }
-    RefClassTracelinkInstructionList refclassInstructions = ASTFactory.makeRefClassTracelinkInstructionList(refclassTInstructionList);
-
-    //TODO: use Class(AstName:TomName,ExtendsType:TomType,SuperTerm:BQTerm,Declaration:Declaration)
-    Declaration refClass = `ReferenceClass(refClassName,refclassInstructions);
-
+    ConstraintInstructionList astCiList =
+      ASTFactory.makeConstraintInstructionList(ciList);
+    //build the strategy (elementary transformation)
     LinkedList<Option> list = new LinkedList<Option>();
     list.add(orgTrack);
     OptionList options = ASTFactory.makeOptionList(list);
-
-    ConstraintInstructionList astCiList = ASTFactory.makeConstraintInstructionList(ciList);
     List<TomVisit> visitList = new LinkedList<TomVisit>();
-
     visitList.add(`VisitTerm(vType,astCiList,options));
     TomVisitList astVisitList = ASTFactory.makeTomVisitList(visitList);
 
-    BQTerm extendsTerm = `BQAppl(concOption(OriginTracking(strategyName,orgTrack.getLine(),orgTrack.getFileName())),Name("Identity"),concBQTerm());
-
-    Declaration strategy = `Strategy(strategyName,extendsTerm,astVisitList,concDeclaration(),orgTrack);
-
-    List<Declaration> result = new LinkedList<Declaration>();
-    result.add(refClass);
+    BQTerm extendsTerm = `BQAppl(concOption(OriginTracking(strategyName, 
+                                               orgTrack.getLine(), 
+                                               orgTrack.getFileName())), 
+                                            Name("Identity"),concBQTerm());
+    Declaration strategy = `Strategy(strategyName, 
+                                     extendsTerm,
+                                     astVisitList,
+                                     concDeclaration(),
+                                     orgTrack);
+    //add forged strategy + symbol to the declarations list
     result.add(strategy);
-    result.add(symbol);
+    result.add(`SymbolDecl(strategyName));
     return result;
   }//genElementaryStrategy
 
@@ -777,8 +804,8 @@ public class TransformerPlugin extends TomGenericPlugin {
     PairNameDeclList result = `concPairNameDecl();
     PairNameDeclList transformationParameters = transformationSymbol.getPairNameDeclList();
     %match(transformationParameters) {
-      concPairNameDecl(_*,PairNameDecl[SlotName=name,
-                                       SlotDecl=decl@GetSlotDecl[SlotName=slotname,Variable=bq,Expr=expr,OrgTrack=ot]],_*) -> {
+      concPairNameDecl(_*,PairNameDecl(name,
+                                       GetSlotDecl[SlotName=slotname,Variable=bq,Expr=expr,OrgTrack=ot]),_*) -> {
         PairNameDecl pnd = `PairNameDecl(name,GetSlotDecl(stratName,slotname,bq,expr,ot));
         result = `concPairNameDecl(result*,pnd);
       }
@@ -821,6 +848,9 @@ public class TransformerPlugin extends TomGenericPlugin {
   %strategy GenResolveElement(transformer:TransformerPlugin,resolveNameSet:HashSet,result:List,withNameSet:HashSet,toNameSet:HashSet) extends Identity() {
     visit Instruction {
       Resolve[Src=sname,SType=stypename,Target=tname,TType=ttypename,OrgTrack=ot] -> {
+        //try to say that a resolve node has been found
+        transformer.resolveFlag = true;
+
         String resolveStringName = transformer.RESOLVE_ELEMENT_PREFIX+`stypename+`ttypename;
         int line = `ot.getLine();
         String fileName = `ot.getFileName();
@@ -981,7 +1011,7 @@ if(!resolveNameSet.contains(resolveStringName)) {
           Integer.valueOf(((OriginTracking)orgTrack).getLine()),
           ((OriginTracking)orgTrack).getFileName()});
     }
-    //weel, nothing better?
+    //well, nothing better?
     return null;
   }
 
