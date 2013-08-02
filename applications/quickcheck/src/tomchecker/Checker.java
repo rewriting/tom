@@ -14,6 +14,10 @@ import java.util.Map.Entry;
 
 public class Checker {
 
+	// Definition of constants
+	public static final BigInteger ZERO = BigInteger.ZERO;
+	public static final BigInteger ONE = BigInteger.ONE;
+
 	// ---------------- QuickCheck Prod1 by default -------------------------------------------------
 	public static <T> void quickCheckProd1(int depth,  Enumeration< Product1<T> > enumeration,
 								F<Product1<T>, Boolean> prop, int verbose, int shrink, int quotient,
@@ -33,23 +37,9 @@ public class Checker {
 								Set<F<Product1<T>, Boolean>> condBag, Map<Integer, Product1<T>> counterExamples,
 								BigInteger defaultNumOfTest, long startTime) {
 		
-    Product1<T> input = null;
     LazyList<Finite<Product1<T>>> parts = enumeration.parts();
-    Set<BigInteger> testedInputs = new HashSet<BigInteger>();
-    Random rand = new Random();
-
-		final BigInteger ZERO = BigInteger.ZERO;
-		final BigInteger ONE = BigInteger.ONE;
-
     BigInteger totalSize = ZERO;
     BigInteger[] nbProbes = new BigInteger[depth];
-    BigInteger numOfTestCase = ONE;
-
-		// TODO Il me semble que maxNumOfTestCase ne sert à rien
-    BigInteger maxNumOfTestCase = ONE;
-    Boolean failed = false;
-		// ratio = totalSize / quotient, but totalSize has not been calculated yet
-    BigInteger ratio;
 
     logMessage(1, verbose,"RANDOM CHECK AT DEPTH " + depth);
 
@@ -58,39 +48,79 @@ public class Checker {
       assert false :  "FAILED  tests: " + counterExamples;
     }
 
-    // computes total size and number of probes for each depth
+		// Computes totalSize and number of probes for each depth
+		totalSize = sizeAndProbes(depth, parts, nbProbes);
+    logMessage(2, verbose,"TOTAL number of inputs " + totalSize);
+
+		// Calculate the Default Number of Tests
+		defaultNumOfTest = calcDNT(quotient, totalSize);
+		logMessage(2, verbose, "DEFAULT number of tests " + defaultNumOfTest);
+
+		// Recompute number of test inputs to distribute test cases among depths
+		recomputeProbes(depth, nbProbes, defaultNumOfTest, totalSize);
+
+		// Perform tests for each enumeration part
+		performTests(parts, nbProbes, condBag, prop, counterExamples, shrink, enumeration, verbose,
+								 quotient, defaultNumOfTest, startTime, depth);
+    
+  }
+
+
+	// ---------------- Size And Probes -------------------------------------------------------------
+	// Computes totalSize and number of probes for each depth
+	public static <T> BigInteger sizeAndProbes(int depth, LazyList<Finite<Product1<T>>> parts,
+																						 BigInteger[] nbProbes){
+
+		BigInteger totalSize = ZERO;
+
     for(int i = 0; i < depth && !parts.isEmpty(); i++) {
       nbProbes[i] = parts.head().getCard();
       totalSize = totalSize.add(nbProbes[i]);
       parts = parts.tail();
     }
 
-    logMessage(2, verbose,"TOTAL number of inputs " + totalSize);
+		return totalSize;
+	}
 
-		// Calculate default number of tests
-		// quotient should be at least 1
-		if(quotient == 0){
-			quotient = 1;
+	// ---------------- Calculate the Default Number of Tests ---------------------------------------
+		public static BigInteger calcDNT (int quotient, BigInteger totalSize){
+
+			BigInteger defaultNumOfTest;
+			Random rand = new Random();
+			BigInteger ratio;
+
+			// quotient should be at least 1
+			if(quotient == 0){
+				quotient = 1;
+			}
+	
+			ratio = totalSize.divide(BigInteger.valueOf(quotient));
+
+		  if(ratio.compareTo(ZERO) == 0){
+		    defaultNumOfTest =  ONE;
+		  }else {
+
+				do {
+		      defaultNumOfTest = new BigInteger(totalSize.bitLength(), rand);
+		    }while(defaultNumOfTest.compareTo(ratio) >= 0);
+	    	
+				defaultNumOfTest = defaultNumOfTest.add(ONE);
+		  }
+
+			return defaultNumOfTest;
 		}
-		
-		ratio = totalSize.divide(BigInteger.valueOf(quotient));
 
-    if(ratio.compareTo(ZERO) == 0){
-      defaultNumOfTest =  ONE;
-    }else{
-			do {
-        defaultNumOfTest = new BigInteger(totalSize.bitLength(), rand);
-      }while(defaultNumOfTest.compareTo(ratio) >= 0);
-      	defaultNumOfTest = defaultNumOfTest.add(ONE);
-    }
 
-		logMessage(2, verbose, "DEFAULT number of tests " + defaultNumOfTest);
+	// ---------------- Recompute Probes ------------------------------------------------------------
+	// Recompute number of test inputs to distribute test cases among depths
+	public static void recomputeProbes (int depth, BigInteger[] nbProbes, BigInteger defaultNumOfTest,
+																			BigInteger totalSize) {
+		BigInteger proportion;
 
-		// Recompute number of test inputs to distribute test cases uniformly among depths
     for(int i = 0; i < depth; i++) {
 			// if not an empty part
       if(nbProbes[i].compareTo(ZERO) == 1) {
-		    BigInteger proportion = (nbProbes[i].multiply(defaultNumOfTest)).divide(totalSize);
+		    proportion = (nbProbes[i].multiply(defaultNumOfTest)).divide(totalSize);
 	    	if( proportion.compareTo(ZERO) == 0 ) {
 	        nbProbes[i] = ONE;
 	    	}else {
@@ -99,8 +129,27 @@ public class Checker {
       }
     }
 
-    // Perform tests for each part
-    parts = enumeration.parts();
+	}
+
+	// ---------------- Perform Tests ---------------------------------------------------------------
+  // Perform tests for each enumeration part
+	public static <T> void performTests( LazyList<Finite<Product1<T>>> parts, BigInteger[] nbProbes,
+													Set<F<Product1<T>, Boolean>> condBag, F<Product1<T>, Boolean> prop,
+													Map<Integer,Product1<T>> counterExamples, int shrink,
+													Enumeration< Product1<T> > enumeration, int verbose, int quotient,
+													BigInteger defaultNumOfTest, long startTime, int depth ) {
+
+		Product1<T> input = null;
+    Set<BigInteger> testedInputs = new HashSet<BigInteger>();
+
+		// TODO	: peut-être que je peux remplacer numOfTestCase, pour optimiser le code -> voir s'il n'y a pas de compteur qui varie pareillement
+
+		BigInteger numOfTestCase = ONE;
+    Boolean failed = false;
+		Random rand = new Random();
+
+		parts = enumeration.parts();
+
     for(int i = 0; i < depth; i++) {
       BigInteger card = parts.head().getCard();
       BigInteger index = ZERO;
@@ -108,15 +157,16 @@ public class Checker {
 
       logMessage(2, verbose,"AT DEPTH " + i + " SHOULD GENERATE :" + nbProbes[i] + " random inputs for the set with cardinality = " + card);
 
-			// Il me semble que j et maxLimit varient de la même façon, donc je peux peut-être les remplacer par une seule variable
-      BigInteger j = ZERO;
-      BigInteger maxLimit = ZERO;
-      int temp = maxLimit.compareTo(min(card,BigInteger.valueOf(Integer.MAX_VALUE)));
+      BigInteger counter = ZERO;
+      int limit = counter.compareTo(min(card,BigInteger.valueOf(Integer.MAX_VALUE)));
 
-      while(j.compareTo(nbProbes[i]) == -1 && !failed && temp <= 0) {
+      while(counter.compareTo(nbProbes[i]) == -1 && !failed && limit <= 0) {
         Boolean implication = true;
 
-        // get an input that hasn't been tested yet 
+
+				// TODO : maybe I may write following lines as a function, such as: isValideInput()
+				// or alreadyTested()
+        // Get an input that hasn't been tested yet 
       	do {
           index = new BigInteger(card.bitLength(), rand);
           logMessage(5, verbose, "TRY: " + index);
@@ -125,10 +175,11 @@ public class Checker {
         // input = enumeration.parts().index(BigInteger.valueOf(i)).get(index);
         input = parts.head().get(index);
         logMessage(3, verbose, "depth: " + i + " input: " + input);
-        // if there is any implication, then check if they are satisfied; otherwise pick another input
+
+        // If there is any implication, then check if they are satisfied,
+				// otherwise pick another input
 			  for(F<Product1<T>, Boolean> entry : condBag) {
 			  	if(!entry.apply(input)) {
-//	    		logMessage(4, verbose, "pre-condition not satisfied by the input: " + input);
 	          implication = false;
 	          break;
 	        }
@@ -139,8 +190,12 @@ public class Checker {
         	continue;
         }
 
-        // new input found, so we can test it
+        // New input found, so we can test it
         numOfTestCase = numOfTestCase.add(ONE);
+
+				// TODO: erase this println
+				System.out.println("numOfTestCase: " + numOfTestCase);
+
         testedInputs.add(index);
         if(!prop.apply(input)) {
         	counterExamples.put(i, input);
@@ -153,9 +208,8 @@ public class Checker {
 	        }
         }
 
-	    	j = j.add(ONE);
-  	    maxLimit = maxLimit.add(ONE);
-				temp = maxLimit.compareTo(min(card,BigInteger.valueOf(Integer.MAX_VALUE)));
+	    	counter = counter.add(ONE);
+				limit = counter.compareTo(min(card,BigInteger.valueOf(Integer.MAX_VALUE)));
 
       }
 
@@ -166,8 +220,8 @@ public class Checker {
         for(Integer size: counterExamples.keySet()){
           errorMessage += "\n\t " + counterExamples.get(size) + " in depth " + size;
         }
-        long end = System.currentTimeMillis();
-        double time = (end - startTime) / 1000;
+        long endTime = System.currentTimeMillis();
+        double time = (endTime - startTime) / 1000;
         assert false :  errorMessage + "\n" + "Finished in " + time + " seconds";
       }
       parts = parts.tail();
@@ -179,8 +233,8 @@ public class Checker {
       System.out.println("OK, passed " + numOfTestCase + " tests");
       System.out.println("Finished in " + time + " seconds");
     }
-    
-  }
+
+	}
  	
 	// ---------------- QuickCheck Prod2 by default -------------------------------------------------
 	public static <T1,T2> void quickCheckProd2(int depth,  Enumeration< Product2<T1,T2> > enumeration,
