@@ -144,15 +144,13 @@ public class Checker {
 
 		// TODO	: peut-être que je peux remplacer numOfTestCase, pour optimiser le code -> voir s'il n'y a pas de compteur qui varie pareillement
 
-		BigInteger numOfTestCase = ONE;
+		BigInteger numOfTestCase = ZERO;
     Boolean failed = false;
-		Random rand = new Random();
 
 		parts = enumeration.parts();
 
     for(int i = 0; i < depth; i++) {
       BigInteger card = parts.head().getCard();
-      BigInteger index = ZERO;
       testedInputs.clear();
 
       logMessage(2, verbose,"AT DEPTH " + i + " SHOULD GENERATE :" + nbProbes[i] + " random inputs for the set with cardinality = " + card);
@@ -161,52 +159,22 @@ public class Checker {
       int limit = counter.compareTo(min(card,BigInteger.valueOf(Integer.MAX_VALUE)));
 
       while(counter.compareTo(nbProbes[i]) == -1 && !failed && limit <= 0) {
-        Boolean implication = true;
 
+				input =	chooseValidInput (card, verbose, testedInputs, parts, condBag, i);
 
-				// TODO : maybe I may write following lines as a function, such as: isValideInput()
-				// or alreadyTested()
-        // Get an input that hasn't been tested yet 
-      	do {
-          index = new BigInteger(card.bitLength(), rand);
-          logMessage(5, verbose, "TRY: " + index);
-      	} while(index.compareTo(card) >= 0 || testedInputs.contains(index));
+				// New input found, so we can test it
+				numOfTestCase = numOfTestCase.add(ONE);
 
-        // input = enumeration.parts().index(BigInteger.valueOf(i)).get(index);
-        input = parts.head().get(index);
-        logMessage(3, verbose, "depth: " + i + " input: " + input);
-
-        // If there is any implication, then check if they are satisfied,
-				// otherwise pick another input
-			  for(F<Product1<T>, Boolean> entry : condBag) {
-			  	if(!entry.apply(input)) {
-	          implication = false;
-	          break;
-	        }
-			  }
-
-        if(!implication) {
-      		logMessage(4, verbose, "pre-condition not satisfied by the input: " + input);
-        	continue;
-        }
-
-        // New input found, so we can test it
-        numOfTestCase = numOfTestCase.add(ONE);
-
-				// TODO: erase this println
-				System.out.println("numOfTestCase: " + numOfTestCase);
-
-        testedInputs.add(index);
-        if(!prop.apply(input)) {
-        	counterExamples.put(i, input);
-	        failed = true;
-	        if(shrink > 0) { // look for counter examples in smaller depths
-	        	logMessage(3, verbose,"SHRINKING at depth " + i + "  " + input);
+		    if(!prop.apply(input)) {
+		    	counterExamples.put(i, input);
+		      failed = true;
+		      if(shrink > 0) { // look for counter examples in smaller depths
+		      	logMessage(3, verbose,"SHRINKING at depth " + i + "  " + input);
 						// Note the first argument : it adjusts the depth to simulate a shrink
-	        	quickCheckProd1(i, enumeration, prop, verbose, shrink, quotient/shrink, condBag, 
+		      	quickCheckProd1(i, enumeration, prop, verbose, shrink, quotient/shrink, condBag, 
 														counterExamples, defaultNumOfTest, startTime);
-	        }
-        }
+		      }
+		    }
 
 	    	counter = counter.add(ONE);
 				limit = counter.compareTo(min(card,BigInteger.valueOf(Integer.MAX_VALUE)));
@@ -224,7 +192,9 @@ public class Checker {
         double time = (endTime - startTime) / 1000;
         assert false :  errorMessage + "\n" + "Finished in " + time + " seconds";
       }
+
       parts = parts.tail();
+
     }
 
     if(counterExamples.size() == 0){
@@ -234,6 +204,49 @@ public class Checker {
       System.out.println("Finished in " + time + " seconds");
     }
 
+	}
+
+	// ---------------- Find a valid input to be tested ---------------------------------------------
+	// A valid input does not mean that the input will not fail
+	public static <T> Product1<T> chooseValidInput (BigInteger card, int verbose, Set<BigInteger>
+																								testedInputs, LazyList<Finite<Product1<T>>> parts,
+																								Set<F<Product1<T>, Boolean>> condBag, int currDepth){
+
+		Product1<T> input = null;
+    BigInteger index;
+		Random rand = new Random();
+		Boolean implication = false;
+
+		while(!implication){
+    	index = new BigInteger(card.bitLength(), rand);
+	    logMessage(5, verbose, "TRY: " + index);
+
+      // Get an input that hasn't been tested yet
+			if( index.compareTo(card) >= 0 || testedInputs.contains(index) ){
+				continue;
+			}else{
+				implication = true;
+				input = parts.head().get(index);
+				logMessage(3, verbose, "depth: " + currDepth + " input: " + input);
+
+			  /*
+				* If there is any implication, then check if they are satisfied.
+				* Otherwise pick another input
+				*/
+			  for(F<Product1<T>, Boolean> entry : condBag) {
+					if(!entry.apply(input)) {
+						implication = false;
+		        break;
+	        }
+				}
+				if(!implication){
+        	logMessage(4, verbose, "pre-condition not satisfied by the input: " + input);
+					continue;
+				}
+	      testedInputs.add(index);
+		  }
+		}
+		return input;
 	}
  	
 	// ---------------- QuickCheck Prod2 by default -------------------------------------------------
