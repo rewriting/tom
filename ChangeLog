@@ -1,3 +1,22 @@
+2013-08-08 jcb
+ * fix EMF mappings generation:
+   - when using a prefix, prefix is not doubled anymore for variadic operators,
+   naming convention is now consistent, should fix bug #16061
+   - when using a prefix, EMF Ecore types (defined in emf/ecore.tom) are not
+   generated (they were generated with the prefix), so do their corresponding
+   variadic operator 
+   - EStringToStringMapEntry has been added to Ecore types, Entry mapping is
+   not generated anymore (already defined in emf/ecore.tom) 
+   - fix multiple inclusion of builtin (and ecore) mappings: when builtin and
+   ecore types were found, an %include was generated even if it had already
+   been generated previously
+
+2013-08-05 jcb
+ * add UML2 mappings
+
+2013-08-01 jcb
+ * fix bug occuring when no resolve and no tracelink are used
+
 2013-03-21 jcb
  * bootstrap and bootinstall -> Tom-2.10
 
