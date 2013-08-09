@@ -1,5 +1,11 @@
+2013-08-09 jcb
+ * fix Tom-EMF mappings generation: when using the -prefix option in
+ conjunction of the -nt one (use of subtyping), if the super type is an Ecore
+ type, it now correctly generated (including ecore.tom and without any prefix)
+ * this should be extended in the future for useful libraries such as uml2.tom
+
 2013-08-08 jcb
- * fix EMF mappings generation:
+ * fix Tom-EMF mappings generation:
    - when using a prefix, prefix is not doubled anymore for variadic operators,
    naming convention is now consistent, should fix bug #16061
    - when using a prefix, EMF Ecore types (defined in emf/ecore.tom) are not

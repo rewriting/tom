@@ -279,14 +279,21 @@ public class TomMappingFromEcore {
       n = n + is;
       types.put(c, n);
       String type = tomTypes.get(c);
-      if(tomTypes.containsKey(c) && !includedMappings.contains(type)) {
-        includedMappings.add(type);
-        writer.write("\n\n%include { " + type + ".tom }");
-      //BUG!
-      } else if(tomEMFTypes.contains(c) && !genEcoreMapping && !includedMappings.contains("emf/ecore.tom")) {
-        //add ecore mappings if needed, when not generating the EcorePackage mapping itself
-        includedMappings.add("emf/ecore.tom");
-        writer.write("\n\n%include { emf/ecore.tom }");
+      if(tomTypes.containsKey(c)) {
+        //add builtin mappings if needed
+        if(!includedMappings.contains(type)){
+          includedMappings.add(type);
+          writer.write("\n\n%include { " + type + ".tom }");
+        }
+      } else if(tomEMFTypes.contains(c) && !genEcoreMapping) {
+        //add ecore mappings if needed
+        if(!includedMappings.contains("emf/ecore.tom")) {
+          includedMappings.add("emf/ecore.tom");
+          writer.write("\n\n%include { emf/ecore.tom }");
+        }
+        //else nothing: ecore.tom has already been included, the mapping has
+        //already been generated
+
       //BUG!
 /*      } else if(tomEMFTypes.contains(c) && !genUMLMapping) {
         //add ecore mappings if needed, when not generating the UMLPackage mapping itself
@@ -309,8 +316,14 @@ public class TomMappingFromEcore {
     if((eclf instanceof EClass)) {
       if(!((EClass)eclf).getESuperTypes().isEmpty()) {
         //should be a collection with one and only one element
+        //-> not exactly: in Java there is no multiple inheritance with
+        //classes, but it is possible with interfaces
+        //A totally new mechanism should be implemented to handle multiple
+        //inheritance
         for (EClass supertype:((EClass)eclf).getESuperTypes()) {
-          result = result + " extends "+ prefix + supertype.getName();
+          String superName = supertype.getName();
+          result = result + " extends "+(isEcoreType(superName)?superName:(prefix+superName));
+          //result = result + " extends "+ prefix + supertype.getName();
         }
       } else {
         if(!(eclf.getInstanceClassName().equals("EObject"))) {
@@ -776,10 +789,10 @@ public static <O extends org.eclipse.emf.ecore.EObject> O construct@prefix+cr@(O
   static {
     ecoreSet.add("EAttribute");
     ecoreSet.add("EAnnotation");
+    ecoreSet.add("EModelElement"); 
     ecoreSet.add("EStructuralFeature");
     ecoreSet.add("EObject");
     ecoreSet.add("EDataType");
-    ecoreSet.add("EModelElement");
     ecoreSet.add("EEnumLiteral");
     ecoreSet.add("EClassifier");
     ecoreSet.add("ETypeParameter");
