@@ -11,7 +11,7 @@ public class DemoAssortedList {
   // ---------------- Size ------------------------------------------------------------------------
 	public static int sizeAssList(AssList list) {
 		%match (list){
-			cons() -> {  return 0; }
+			cons() -> { return 0; }
 			cons(v) -> { return sizeValue(`v); }
 			cons(v,t*) -> { return sizeValue(`v) + sizeAssList(`t); }
 		}
@@ -20,8 +20,8 @@ public class DemoAssortedList {
 
 	public static int sizeValue(Value v) {	
 		%match (v){	
-			bl(_) -> {  return 1; }
-			cst(_) -> { return 1; }
+			bl(_)   -> { return 1; }
+			cst(_)  -> { return 1; }
 			var(v1) -> { return 1 + sizeValue(`v1); }
 			name(_) -> { return 1; }
 		}
@@ -116,7 +116,7 @@ public class DemoAssortedList {
 		%match (list){
 			cons() -> { return -1; }
 			cons(v) && v==val -> { return currIndex; }
-      cons(v,t*) && v==val -> { return currIndex; }
+      cons(v,_) && v==val -> { return currIndex; }
       cons(_,t*) -> { currIndex++; return getIndexOf(`t, val, currIndex); }
 		}
 		return -1;

@@ -93,8 +93,8 @@ public class DemoAList {
 		return false;
 	}
 
-  // ---------------- isEquals --------------------------------------------------------------------
-	public static boolean isEquals(Elem el1, Elem el2){
+  // ---------------- isEqual ---------------------------------------------------------------------
+	public static boolean isEqual(Elem el1, Elem el2){
 
 		// We have to treat null pointers separetely
 		if(el1 == null && el2 == null) { return true; }
@@ -105,8 +105,29 @@ public class DemoAList {
 		else if( (el1).compareTo(el2) == 0 ) { return true; }
 		else { return false; }
 	}
+	
+  // ---------------- Zero ------------------------------------------------------------------------
+  public static int zero(){
+    return 0;
+  }
+  
+  // ---------------- Plus One --------------------------------------------------------------------
+	public static int plusOne(int size) {
+		size = size + 1;
+		return size;
+	}
+	
+  // ---------------- Is Negative -----------------------------------------------------------------
+	public static boolean isNegative(int index) {
+	  return (index < 0);
+  }
 
-  // ---------------- main ------------------------------------------------------------------------
+  // ---------------- Is Less ---------------------------------------------------------------------
+	public static boolean isLess(int index, int size) {
+	  return (index < size);
+  }
+
+  // ---------------- Main ------------------------------------------------------------------------
   public static void main(String args[]) {    
 
 		AList alist1 = `con(cs(4),con(cs(3),con(cs(5),con(cs(8),empty()))));
@@ -187,8 +208,8 @@ public class DemoAList {
 
 		System.out.println("------------------- Is Equals ---------------------------------------");
 		int index1 = 0, index2 = 0;
-		b = isEquals( get(alist1,index1), get(alist2,index2) );
-		System.out.println("Is " + get(alist1,index1) + " equals to " + get(alist2,index2) + "?");
+		b = isEqual( get(alist1,index1), get(alist2,index2) );
+		System.out.println("Is " + get(alist1,index1) + " equal to " + get(alist2,index2) + "?");
 		System.out.println("Response: " + b);
 
 		System.out.print("\n");
