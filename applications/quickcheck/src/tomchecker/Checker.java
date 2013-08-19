@@ -43,10 +43,13 @@ public class Checker {
 
     logMessage(1, verbose,"RANDOM CHECK AT DEPTH " + depth);
 
-    // if no smaller counter example
+    // If no smaller counter example
     if(depth == 0){
       assert false :  "FAILED  tests: " + counterExamples;
     }
+
+		// Verify and recompute (if necessary) the input value for depth
+		depth = recomputeDepth1(depth, parts);
 
 		// Computes totalSize and number of probes for each depth
 		totalSize = sizeAndProbes(depth, parts, nbProbes);
@@ -65,6 +68,20 @@ public class Checker {
     
   }
 
+	// ---------------- Recompute Depth -------------------------------------------------------------
+	/*
+	 * If the enumeration has a very small valid depth (less than that passed as argument), it have to 
+	 * be recomputed, but we need to be attentive to infinite depths
+	*/ 
+	public static <T> int recomputeDepth1(int depth, LazyList<Finite<Product1<T>>> parts){
+
+		int suitableDepth = 0;
+    while( suitableDepth < depth && !parts.isEmpty() ){
+      parts = parts.tail();
+	    suitableDepth++;
+    }
+    return suitableDepth;
+	}
 
 	// ---------------- Size And Probes -------------------------------------------------------------
 	// Computes totalSize and number of probes for each depth
@@ -73,12 +90,12 @@ public class Checker {
 
 		BigInteger totalSize = ZERO;
 
-    for(int i = 0; i < depth && !parts.isEmpty(); i++) {
+    for(int i = 0; i < depth; i++) {
       nbProbes[i] = parts.head().getCard();
       totalSize = totalSize.add(nbProbes[i]);
       parts = parts.tail();
     }
-
+    
 		return totalSize;
 	}
 
@@ -116,7 +133,7 @@ public class Checker {
 	public static void recomputeProbes (int depth, BigInteger[] nbProbes, BigInteger defaultNumOfTest,
 																			BigInteger totalSize) {
 		BigInteger proportion;
-
+		
     for(int i = 0; i < depth; i++) {
 			// if not an empty part
       if(nbProbes[i].compareTo(ZERO) == 1) {
@@ -141,14 +158,12 @@ public class Checker {
 
 		Product1<T> input = null;
     Set<BigInteger> testedInputs = new HashSet<BigInteger>();
-
-		// TODO	: peut-être que je peux remplacer numOfTestCase, pour optimiser le code -> voir s'il n'y a pas de compteur qui varie pareillement
-
 		BigInteger numOfTestCase = ZERO;
     Boolean failed = false;
 
 		parts = enumeration.parts();
 
+searchInDepths:
     for(int i = 0; i < depth; i++) {
       BigInteger card = parts.head().getCard();
       testedInputs.clear();
@@ -161,6 +176,15 @@ public class Checker {
       while(counter.compareTo(nbProbes[i]) == -1 && !failed && limit <= 0) {
 
 				input =	chooseValidInput (card, verbose, testedInputs, parts, condBag, i);
+				
+				/*
+				* If there is no valid input from a depth (all inputs from a depth have not 
+				* satisfied the pre-conditions )
+				*/ 
+				if(input == null){
+		      logMessage(2, verbose,"AT DEPTH " + i + " no input from the set with cardinality " + card + " have satisfied the pre-conditions");
+					continue searchInDepths;
+				}
 
 				// New input found, so we can test it
 				numOfTestCase = numOfTestCase.add(ONE);
@@ -216,16 +240,19 @@ public class Checker {
     BigInteger index;
 		Random rand = new Random();
 		Boolean implication = false;
+		Boolean foundValidInput = false;
 
-		while(!implication){
+		// Contains the inputs that have not satified the pre-conditions
+		List<BigInteger> preCondNotSatisfied = new ArrayList();
+
+		while(!foundValidInput){
     	index = new BigInteger(card.bitLength(), rand);
 	    logMessage(5, verbose, "TRY: " + index);
 
       // Get an input that hasn't been tested yet
-			if( index.compareTo(card) >= 0 || testedInputs.contains(index) ){
+			if( index.compareTo(card) >= 0 || testedInputs.contains(index) || preCondNotSatisfied.contains(index) ) {
 				continue;
 			}else{
-				implication = true;
 				input = parts.head().get(index);
 				logMessage(3, verbose, "depth: " + currDepth + " input: " + input);
 
@@ -235,20 +262,30 @@ public class Checker {
 				*/
 			  for(F<Product1<T>, Boolean> entry : condBag) {
 					if(!entry.apply(input)) {
-						implication = false;
-		        break;
+						implication = true;
+						preCondNotSatisfied.add(index);
+						break;
 	        }
 				}
-				if(!implication){
+				
+				if(implication){
         	logMessage(4, verbose, "pre-condition not satisfied by the input: " + input);
-					continue;
+					// If all inputs from a depth have not satisfied the pre-conditions
+					BigInteger size = BigInteger.valueOf( preCondNotSatisfied.size() );
+					if( size.compareTo(card) >= 0 ){
+						return null;
+					}else{
+						implication = false;
+						continue;
+					}
 				}
+				foundValidInput = true;
 	      testedInputs.add(index);
 		  }
 		}
 		return input;
 	}
- 	
+
 	// ---------------- QuickCheck Prod2 by default -------------------------------------------------
 	public static <T1,T2> void quickCheckProd2(int depth,  Enumeration< Product2<T1,T2> > enumeration,
 								F< Product2<T1,T2>, Boolean> prop, int verbose, int shrink, int quotient,
@@ -302,7 +339,7 @@ public class Checker {
       defaultNumOfTest = defaultNumOfTest.add(BigInteger.ONE);
     }
     logMessage(2, verbose, "DEFAULT number of tests " + defaultNumOfTest);
-    for(int i = 0; i < numOfPart; i++) {	 
+    for(int i = 0; i < numOfPart; i++) {
       if(nbProbes[i].compareTo(BigInteger.ZERO) == 1) { // if not an empty part
 	    	if(((nbProbes[i].multiply(defaultNumOfTest)).divide(totalSize)).compareTo(BigInteger.ZERO) == 0) {
 	        nbProbes[i] = BigInteger.ONE;
@@ -383,22 +420,29 @@ public class Checker {
 	// ---------------- QuickCheck Prod3 by default -------------------------------------------------
 	public static <T1,T2,T3> void quickCheckProd3(int depth,  Enumeration< Product3<T1,T2,T3> >
 								enumeration, F< Product3<T1,T2,T3>, Boolean> prop, int verbose, int shrink, int
-								quotient, Set<F< Product3<T1,T2,T3>, Boolean>> condBag, BigInteger defaultNumOfTest){
-		
-		long startTime = System.currentTimeMillis();  
-		HashMap<Integer, Product3<T1,T2,T3>> counterExamples = new HashMap<Integer,Product3<T1,T2,T3>>();
-		quickCheckProd3(depth, enumeration, prop, verbose, shrink, quotient, condBag, counterExamples,
-								defaultNumOfTest, startTime);
+								quotient, Set<F< Product3<T1,T2,T3>, Boolean>> preCond, BigInteger defaultNumOfTest){
+
+		long startTime = System.currentTimeMillis();
+		Map<Integer, Product3<T1,T2,T3>> counterExamples = new HashMap<Integer,Product3<T1,T2,T3>>();
+
+		quickCheckProd3(depth, enumeration, prop, verbose, shrink, quotient, preCond, counterExamples,
+										defaultNumOfTest, startTime);
+										
 	}
 
 	// ---------------- QuickCheck Prod3 ------------------------------------------------------------
-  public static <T1,T2,T3> void  quickCheckProd3(int depth,  Enumeration< Product3<T1,T2,T3> >
+  public static <T1,T2,T3> void quickCheckProd3(int depth,  Enumeration<Product3<T1,T2,T3>>
 								enumeration, F< Product3<T1,T2,T3>, Boolean> prop, int verbose, int shrink, int
 								quotient, Set<F<Product3<T1,T2,T3>, Boolean>> condBag, Map<Integer,
 								Product3<T1,T2,T3>> counterExamples, BigInteger defaultNumOfTest, long startTime) {
-	
-    Product3<T1,T2,T3> input=null;
+
+    Product3<T1,T2,T3> input = null;
+
+		//TODO: BUG
+		System.out.println("The bug is right here!!!!!!!!!!!!!");
     LazyList<Finite<Product3<T1,T2,T3>>> parts = enumeration.parts();
+
+		depth = recomputeDepth3(depth, parts);
 
     Set<BigInteger> testedInputs = new HashSet<BigInteger>();
     Random rand = new Random();
@@ -514,6 +558,17 @@ public class Checker {
         System.out.println("Finished in " + time + " seconds");
     }
   }
+
+	// ---------------- Recompute Depth -------------------------------------------------------------
+	public static <T1,T2,T3> int recomputeDepth3(int depth, LazyList<Finite<Product3<T1,T2,T3>>> parts){
+
+		int suitableDepth = 0;
+    while( suitableDepth < depth && !parts.isEmpty() ){
+      parts = parts.tail();
+	    suitableDepth++;
+    }
+    return suitableDepth;
+	}
 
 	// ---------------- Log Message -----------------------------------------------------------------
   public static void  logMessage(Integer level, int verbose, String message) {
