@@ -1,6 +1,12 @@
-//TODO: I think that proposing to users which property they want to test is a good idea. Or even better, we should propose which files they want to test and afterwards, which property(ies).
-
 //TODO: il me semble que l'on ne peut pas choisir seule la méthode smallcheck pour vérifier un fichier, soit il fait appel aux deux méthodes soit qu'à quickcheck
+
+//TODO: Il faut comprendre à quoi sert projs variable, notamment dans le fichier Testing.java. In addition, projs is not a good name. (maybe I can modify prettyPrint, and remove the second parameter)
+
+//TODO: it seems that existential is never used, even though in the Checker.java file, because even if it's set to true, it never reaches the last return. Therefore, maybe I can delete the second parameter from generateEnumerations function
+
+//TODO: understand "index"
+
+//TODO: run the program with many properties at the same time
 
 package tomchecker;
 
@@ -43,15 +49,15 @@ public class Translator{
 		equals(l1,l2)  { $l1.equals($l2) }
 	}
 
-	%strategy CollectVariables(bag:Map) extends Identity() {
+	%strategy CollectVariables(varSet:Map) extends Identity() {
 		visit Expr {
 			Var(name,type) -> {
-				if(bag.get(`name) != null) {
-					if(!bag.get(`name).equals(`type)) {
+				if(varSet.get(`name) != null) {
+					if(!varSet.get(`name).equals(`type)) {
 						throw new RuntimeException("Same variable with two different types :  " + `name);
 					}
 				}else {
-					bag.put(`name,`type);
+					varSet.put(`name,`type);
 				}
 			}
 		}
@@ -65,25 +71,22 @@ public class Translator{
 	* @return a Map(name:type) of all Variables occuring in p
 	*/
 	public static Map<String,String> variableSet(Property p) {
-		Map<String,String> bag = new HashMap<String,String>();
+		Map<String,String> varSet = new HashMap<String,String>();
 		try {
-			`BottomUp(CollectVariables(bag)).visitLight(p);
+			`BottomUp(CollectVariables(varSet)).visitLight(p);
 		} catch(VisitFailure e) { }
-		return bag;
+		return varSet;
 	}
 
-	//TODO: improve indentation
 	// ---------------- Generate Code ---------------------------------------------------------------
 	public static String generateCode(PropList properties, int index, Map<String,String> methodCalls) {
-
     StringBuffer methods = new StringBuffer();
 
     %match (properties){
       PropList(property,t*) -> {
       	index++;
-        methods.append(generateMethod(`property, index));
-        //TODO: maybe I can modify prettyPrint, and remove the second parameter
         methodCalls.put("checkProperty" + index, prettyProperty(`property, null));
+        methods.append(generateMethod(`property, index));
         if(!`t.isEmptyPropList()){
           methods.append(generateCode(`t, index, methodCalls));
         }
@@ -94,13 +97,11 @@ public class Translator{
 
 	// ---------------- Generate Method -------------------------------------------------------------
 	public static String generateMethod(Property property, int index) {
-	
     Map<String,String> varSet = variableSet(property);
     Map<String,String> projs = new HashMap<String,String>();
     int i = 1;
+
     for(String varName: varSet.keySet()){
-      //TODO: maybe I can delete projs. It contains a set view of the keys contained in bag
-	  	//TODO : projs is not a good name
       projs.put(varName, "proj" + (i));
 	  	i++;
     }
@@ -111,9 +112,9 @@ public class Translator{
 			%[
 				@CR+TAB@ //@`prettyProperty(property,null)@
 				@CR+TAB@ public static void checkProperty@index@(){
-				@CR+TAB+TAB@ Set<F< @product@, Boolean>> condBag = new HashSet<F< @product@, Boolean>>();
+				@CR+TAB+TAB@ Set<F< @product@, Boolean>> preCond = new HashSet<F< @product@, Boolean>>();
 				@CR+TAB+TAB@ @generateBodyMethod(`property, varSet, projs, 0, product)@
-			}; 
+				@CR+TAB@ };
 			]%;
  	}
 
@@ -121,31 +122,31 @@ public class Translator{
 	public static String generateBodyMethod(Property property, Map<String,String> varSet,
 																					Map<String,String> projs, int index, String product) {
 
-    String body = "";
-    //TODO: it seems that existential is never used, because even if it's set to true, it never reaches the last return. Therefore, maybe I can delete the second parameter from generateEnumerations function
     Boolean existential = false;
-    
+
     %match(property) {
 			Check(c) -> {
-				body += generateFClass(`c, varSet, projs, 0, product);
+    		return generateFClass(`c, projs, 0, product) +
+    					 generateEnumerations(varSet, existential, product);
 			}
 		  Implies(c,p) -> {
 		  	index++;
-	  		return  generateFClass(`c, varSet, projs, index, product) +"\n\n\t\t"+
-	  						generateBodyMethod(`p, varSet, projs, index, product);
+	  		return generateFClass(`c, projs, index, product) +
+	  					 generateBodyMethod(`p, varSet, projs, index, product);
   		}
 		  Exists(_,p) -> {
 		  	existential = true;
 		  	return generateBodyMethod(`p, varSet, projs, index, product);
 	  	}
 		}
-		return body + "\n" + generateEnumerations(varSet, existential, product);
+		return "";
 	}
 
+	//TODO: il faut comprendre l'usage de index dans cette fonction
 	// ---------------- Generate FClass ---------------------------------------------------------------
   // Generate the function corresponding to the property
-	public static String generateFClass(Cond cond, Map<String,String> bag, Map<String,String> projs,
-																			int index, String product) {
+	public static String generateFClass(Cond cond, Map<String,String> projs, int index,
+																			String product) {
 
     // Function name
     String funcName = index == 0 ? " prop" : " cond" + index;
@@ -164,7 +165,7 @@ public class Translator{
 
     if(!funcName.contains("prop")) {
     	result.append(
-    		%[ @CR+TAB+TAB@ condBag.add(@funcName@); ]%
+    		%[ @CR+TAB+TAB@ preCond.add(@funcName@); ]%
       );
     }
 
@@ -181,7 +182,7 @@ public class Translator{
 
     // Declaration of enumeration
     result.append(
-    	%[ @CR+TAB+TAB@ Enumeration< @product@ > params = @product.substring(0,8)@.enumerate(]%
+    	%[ @CR+TAB+TAB@ Enumeration< @product@ > enumeration = @product.substring(0,8)@.enumerate(]%
    	);
    	
     // Generate the enumerations
@@ -221,26 +222,30 @@ public class Translator{
     int numberOfTest = options.numOfTest;
     int quotient = options.q;
 
-    //e.g. quickCheck(15, enumeration1, enumeration2 etc.)
-    if(options.quick){
+		// Methods to test fonctions
+    result.append(%[
+			@CR+TAB+TAB@ try{ ]%);
+
+		// QuickCheck
+		if(options.quick){
       result.append(%[
-				@CR+TAB+TAB+TAB@ try{
-					@CR+TAB+TAB+TAB+TAB@ System.out.println("--Random Check--");
-					@CR+TAB+TAB+TAB+TAB@ Checker.quickCheckProd@numOfType@(@options.level@, params, prop, @verbose@, @shrink@, @quotient@, condBag, BigInteger.valueOf(@numberOfTest@));
-				@CR+TAB+TAB+TAB@ }catch(AssertionError err){
-					@CR+TAB+TAB+TAB+TAB@ System.out.println(err.getMessage());
-				@CR+TAB+TAB+TAB@ } ]%);
-    }
-    
-    if(options.small){
-      result.append(%[                        
-				@CR+TAB+TAB+TAB@ try{
-					@CR+TAB+TAB+TAB+TAB@ System.out.println("--Exhaustive Check--");
-					@CR+TAB+TAB+TAB+TAB@ Checker.smallCheckProd@numOfType@(@options.level@, params, prop, @verbose@, condBag, @existential@);
-				@CR+TAB+TAB+TAB@ }catch(AssertionError err){
-				@CR+TAB+TAB+TAB+TAB@ System.out.println(err.getMessage());
-				@CR+TAB+TAB+TAB@ } ]%);
-    }
+				@CR+TAB+TAB+TAB@ System.out.println("--Random Check--");
+				@CR+TAB+TAB+TAB@ Checker.quickCheckProd@numOfType@(@options.level@, enumeration, prop, @verbose@, @shrink@, @quotient@, preCond, BigInteger.valueOf(@numberOfTest@)); ]%);
+		}
+
+		// SmallCheck
+		if(options.small){
+      result.append(%[
+				@CR+TAB+TAB+TAB@ System.out.println("--Exhaustive Check--");
+				@CR+TAB+TAB+TAB@ Checker.smallCheckProd@numOfType@(@options.level@, enumeration, prop, @verbose@, preCond, @existential@); ]%);
+		}
+		
+    result.append(%[
+			@CR+TAB+TAB@ }catch(AssertionError err){
+			@CR+TAB+TAB+TAB@ System.out.println(err.getMessage());
+			@CR+TAB+TAB@ } ]%
+		);
+
     return result.toString();
 	}
 
@@ -249,16 +254,20 @@ public class Translator{
     int numOfType = varSet.size();
 
     StringBuffer product = new StringBuffer("Product");
-    product.append(numOfType == 0 ? 1 : numOfType);
-    product.append("<");
-    for(String var: varSet.keySet()){
-      product.append(varSet.get(var) + ",");
-		}
-    if(numOfType == 0){// if no parameters fake a String one
-      product.append("String"+",");
-    }
-    product.replace(product.length()-1, product.length(),">");
 
+		// If no parameters, fake a String one
+		if(numOfType == 0){
+      product.append("1<String>");
+      return product.toString();
+		} else{
+			product.append(numOfType+"<");
+	    for(String varName: varSet.keySet()){
+	    	// varSet.get(varName) returns the variable's datatype
+	      product.append(varSet.get(varName) + ",");
+			}
+      int length = product.length();
+      product.replace(length-1, length,">");
+		}
     return product.toString();
   }
 
@@ -267,12 +276,12 @@ public class Translator{
 	/**
 	* Pretty-print the property
 	* @param prop: the Property to be printed
-	* @param code: if true, print the corresponding Java; if false print human-readable text
+	* @param code: if !null, print the corresponding Java; if null, print human-readable text
 	* @return the corresponding String
 	*/
 	public static String prettyPropList(PropList propList, Map<String,String> projs) {
 		%match(propList) {
-			PropList(p) -> { return prettyProperty(`p,projs); }
+			PropList(p)    -> { return prettyProperty(`p,projs); }
 			PropList(p,l*) -> { return prettyProperty(`p,projs) + "\n\t" + prettyPropList(`l,projs); }
 		}
 		return "";
@@ -375,16 +384,16 @@ public class Translator{
       Var(name, type) -> {
 	      // if a real pretty print
         if(projs == null){
-          return `name + ":" + `type ; 
+          return `name + ":" + `type ;
         } else {
-          return "args." + projs.get(`name); 
+          return "args." + projs.get(`name);
         }
       }
-      Null() -> { return "null"; }
-      True() -> { return "true"; }
-      False() -> { return "false"; }
+      Null()    -> { return "null"; }
+      True()    -> { return "true"; }
+      False()   -> { return "false"; }
       Len(name) -> { return `name + %[.length()]% ; }
-      Nat(i) -> { return Integer.toString(`i); }
+      Nat(i)    -> { return Integer.toString(`i); }
     }
 		return "";
 	}
@@ -392,7 +401,7 @@ public class Translator{
 	// ---------------- Pretty Print Args -----------------------------------------------------------
 	public static String prettyArgs(Args arg, Map<String,String> projs) {
 		%match (arg){
-			Arg(e) -> { return prettyExpr(`e,projs); }
+			Arg(e)    -> { return prettyExpr(`e,projs); }
 			Arg(e,t*) -> { return prettyExpr(`e,projs) + "," + prettyArgs(`t,projs); }
 		}
 		return "";
@@ -411,7 +420,6 @@ public class Translator{
 		//Constructing the content of check file
     String pkg = options.pkg == null ? "testedFile" : options.pkg;
 
-		//TODO: it's a good idea to retrieve the imports from the original tom file, for each program
 		String testingContent = 
 			%[ @CR@ package @pkg@;
 				 @CR@ import tom.library.enumerator.*;
@@ -421,9 +429,11 @@ public class Translator{
 				 @CR@ import java.math.BigInteger;
 				 @CR@ import tomchecker.*; ]%;
 
-		for(String imp: typesPath) {
-			testingContent +=
-				%[ @CR@ import @imp@;]%;
+		if(!typesPath.contains("no imports")){
+			for(String imp: typesPath) {
+				testingContent +=
+					%[ @CR@ import @imp@;]%;
+			}
 		}
 
 		for(String imp: programPath) {
@@ -435,6 +445,7 @@ public class Translator{
 			@CR@ public class Testing { ]%;
 
     // Generate code
+    // methodCalls<String:checkPropertyX, String:ClassName.function(variable:Type)>
     Map<String,String> methodCalls = new HashMap<String,String>();
 		testingContent += generateCode(properties,0,methodCalls);
 
@@ -507,12 +518,8 @@ public class Translator{
 
 	}
 
-	// ---------------- Command Line Options --------------------------------------------------------
-	protected static Options options = new Options();
-
-	// ---------------- Main ------------------------------------------------------------------------
-	public static void main(String[] args)  {
-
+	// ---------------- Parse Command Line Arguments ------------------------------------------------
+	public static void parseComLineArgs(String[] args){
 		// command line options
 		CmdLineParser optionParser = new CmdLineParser(options);
 		optionParser.setUsageWidth(80);
@@ -520,13 +527,12 @@ public class Translator{
 		System.out.println("\n------------------------------------------");
 
 		try {
-			// Parse the arguments
 			optionParser.parseArgument(args);
 
 			if( options.help || options.h ) {
 				throw new CmdLineException("Help");
 			}
-      
+	    
 		}catch( CmdLineException e ) {
 			// If there's a problem in the command line, this will report an error message.
 			System.err.println(e.getMessage());
@@ -539,6 +545,7 @@ public class Translator{
 
 		// Print current options
 		System.out.println("OPTIONS:");
+	
 		try {
 			Class c = options.getClass();
 			Field[] fields = c.getDeclaredFields();
@@ -559,9 +566,19 @@ public class Translator{
 		} catch (java.lang.IllegalAccessException ef) {
 			System.err.println("No field: " + ef);
 		}
-		
+	
 		System.out.println("\n------------------------------------------");
+	}
 
+	// ---------------- Command Line Options --------------------------------------------------------
+	protected static Options options = new Options();
+
+	// ---------------- Main ------------------------------------------------------------------------
+	public static void main(String[] args)  {
+	
+		// Parse the command line arguments
+		parseComLineArgs(args);
+		
 		// Parse and test property
 		try {
 			InputStream fileInput = System.in;
