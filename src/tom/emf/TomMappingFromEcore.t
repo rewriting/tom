@@ -90,11 +90,22 @@ public class TomMappingFromEcore {
    * true if the EPackage to generate is EcorePackage itself
    */
   private static boolean genEcoreMapping = false;
+  
+  /**
+   * true if the EPackage to generate is UMLPackage itself
+   */
+  private static boolean genUMLMapping = false;
 
   /**
    * A dictionnary linking a class with his generated type name
    */
   private final static HashMap<Class<?>, String> types = new HashMap<Class<?>, String>();
+
+  /**
+   * Already included mappings
+   * Is it really useful?
+   */
+  private static final Set<String> includedMappings = new HashSet<String>();
 
   /**
    * Prefix to add to mappings (%typeterm and %op). There is no prefix by
@@ -211,12 +222,15 @@ public class TomMappingFromEcore {
             //specific case of EcorePackage mapping generation
             if(ePackageNameList.get(i).equals("org.eclipse.emf.ecore.EcorePackage")) {
               genEcoreMapping = true;
+            } else if(ePackageNameList.get(i).equals("org.eclipse.uml2.uml.UMLPackage")) {
+              genUMLMapping = true;
             }
             extractFromEPackage(writer, (EPackage) Class.forName(ePackageNameList.get(i)).getField("eINSTANCE").get(null));
             writer.flush();
             writer.close();
             //reset
             genEcoreMapping = false;
+            genUMLMapping = false;
           }
         } catch (Exception e) {
           e.printStackTrace();
@@ -264,11 +278,26 @@ public class TomMappingFromEcore {
       }
       n = n + is;
       types.put(c, n);
+      String type = tomTypes.get(c);
       if(tomTypes.containsKey(c)) {
-        writer.write("\n\n%include { " + tomTypes.get(c) + ".tom }");
+        //add builtin mappings if needed
+        if(!includedMappings.contains(type)){
+          includedMappings.add(type);
+          writer.write("\n\n%include { " + type + ".tom }");
+        }
       } else if(tomEMFTypes.contains(c) && !genEcoreMapping) {
-        //add ecore mappings if needed, when not generating the EcorePackage mapping itself
-        writer.write("\n\n%include { emf/ecore.tom }");
+        //add ecore mappings if needed
+        if(!includedMappings.contains("emf/ecore.tom")) {
+          includedMappings.add("emf/ecore.tom");
+          writer.write("\n\n%include { emf/ecore.tom }");
+        }
+        //else nothing: ecore.tom has already been included, the mapping has
+        //already been generated
+
+      //BUG!
+/*      } else if(tomEMFTypes.contains(c) && !genUMLMapping) {
+        //add ecore mappings if needed, when not generating the UMLPackage mapping itself
+        writer.write("\n\n%include { emf/uml2.tom }");*/
       } else {
         String[] decl = getClassDeclarations(eclf); // [canonical name, anonymous generic, generic type]
         writer.write(%[
@@ -287,8 +316,14 @@ public class TomMappingFromEcore {
     if((eclf instanceof EClass)) {
       if(!((EClass)eclf).getESuperTypes().isEmpty()) {
         //should be a collection with one and only one element
+        //-> not exactly: in Java there is no multiple inheritance with
+        //classes, but it is possible with interfaces
+        //A totally new mechanism should be implemented to handle multiple
+        //inheritance
         for (EClass supertype:((EClass)eclf).getESuperTypes()) {
-          result = result + " extends "+ prefix + supertype.getName();
+          String superName = supertype.getName();
+          result = result + " extends "+(isEcoreType(superName)?superName:(prefix+superName));
+          //result = result + " extends "+ prefix + supertype.getName();
         }
       } else {
         if(!(eclf.getInstanceClassName().equals("EObject"))) {
@@ -333,7 +368,7 @@ public class TomMappingFromEcore {
     tomTypes.put(WeakHashMap.class, "util/types/WeakHashMap");
   }
 
-/**
+  /**
    * A set of EMF classes 
    */
   private final static HashSet<Class<?>> tomEMFTypes = new HashSet<Class<?>>();
@@ -366,11 +401,20 @@ public class TomMappingFromEcore {
     tomEMFTypes.add(org.eclipse.emf.ecore.util.FeatureMap.class);
     tomEMFTypes.add(org.eclipse.emf.common.util.TreeIterator.class);
     tomEMFTypes.add(org.eclipse.emf.common.util.DiagnosticChain.class);
-    tomEMFTypes.add(org.eclipse.emf.ecore.resource.Resource .class);
+    tomEMFTypes.add(org.eclipse.emf.ecore.resource.Resource.class);
     tomEMFTypes.add(byte.class);
     tomEMFTypes.add(java.util.Date.class);
     tomEMFTypes.add(Class.class);
+    tomEMFTypes.add(java.util.Map.Entry.class);
   }
+
+  /**
+   * Set of UML classes 
+   */
+ /*private final static HashSet<Class<?>> tomUMLType = new HashSet<Class<?>>();
+  static {
+    tomUMLTypes.add(org.eclipse.uml2.uml..class);
+  }*/
 
 
   /** A list of java reserved keywords for variable naming
@@ -443,17 +487,14 @@ public class TomMappingFromEcore {
    * @return type of sf
    */
   private static String getType(java.io.Writer writer, EStructuralFeature sf) throws java.io.IOException {
-
     Class<?> c = sf.getEType().getInstanceClass();
     //String simplename = types.get(c);
-    String argname = isBuiltin(sf)?types.get(c):(prefix+types.get(c));
+    String argname = (isBuiltin(sf)||isEcoreType(sf))?types.get(c):(prefix+types.get(c));
     String name = argname;
-    if(sf.isMany()) {
+    if(sf.isMany() && !isEcoreType(sf)) {
       name += "EList";
-      if(!lists.contains(c)) {
-
+      if(!lists.contains(c)) {//mapping has not already been generated
         String[] decl = getClassDeclarations(sf.getEType()); // [canonical name, anonymous generic, generic type]
-
         /*String inst = (EObject.class.isAssignableFrom(sf.getEType()
             .getInstanceClass()) ? decl[0] + decl[2] :
             "org.eclipse.emf.ecore.EObject");*/
@@ -467,13 +508,13 @@ public class TomMappingFromEcore {
         }
         writer.write(%[
 
-%typeterm @prefix+name@ {
+%typeterm @name@ {
   implement { org.eclipse.emf.common.util.EList<@inst@> }
   is_sort(t) { $t instanceof org.eclipse.emf.common.util.EList<?> && (((org.eclipse.emf.common.util.EList<@inst@>)$t).size() == 0 || (((org.eclipse.emf.common.util.EList<@inst@>)$t).size()>0 && ((org.eclipse.emf.common.util.EList<@inst@>)$t).get(0) instanceof @(decl[0]+decl[1])@)) }
   equals(l1,l2) { $l1.equals($l2) }
 }
 
-%oparray @prefix+name@ @prefix+name@ ( @argname@* ) {
+%oparray @name@ @name@ ( @argname@* ) {
   is_fsym(t) { $t instanceof org.eclipse.emf.common.util.EList<?> && ($t.size() == 0 || ($t.size()>0 && $t.get(0) instanceof @(decl[0]+decl[1])@)) }
   make_empty(n) { new org.eclipse.emf.common.util.BasicEList<@inst@>($n) }
   make_append(e,l) { append@name@($e,$l) }
@@ -488,7 +529,8 @@ private static <O> org.eclipse.emf.common.util.EList<O> append@name@(O e,org.ecl
         lists.add(c);
       }
     }
-    return (sf.isMany()?prefix+name:name);
+    //return (sf.isMany()?prefix+name:name);
+    return name;
   }
 
   /**
@@ -653,7 +695,7 @@ private static <O> org.eclipse.emf.common.util.EList<O> append@name@(O e,org.ecl
           s_types.delete(s_types.length() - 2, s_types.length());
         }
         if(!ecl.isAbstract()) {
-          String cr = eclf.getName();
+          String cr = eclf.getName();//why this variable name? what does cr mean?
           String[] decl = getClassDeclarations(eclf); // [canonical name, anonymous generic, generic type]
           String o1 = ecl.getEPackage().getEFactoryInstance().getClass()
             .getInterfaces()[ecl.getEPackage().getClass()
@@ -662,12 +704,12 @@ private static <O> org.eclipse.emf.common.util.EList<O> append@name@(O e,org.ecl
             .getCanonicalName();
           //avoid to generate mappings already been defined in ecore.tom
           //except if the goal is to generate the EcorePackage mapping itself
-          if(genEcoreMapping || !tomEMFTypes.contains(eclf.getInstanceClass())) {
+          if(genEcoreMapping || genUMLMapping || !tomEMFTypes.contains(eclf.getInstanceClass())) {
             writer.write(%[
 
 %op @prefix+ecl.getInstanceClass().getSimpleName()@ @prefix+cr@(@s_types@) {
   is_fsym(t) { $t instanceof @(decl[0]+decl[1])@ }@s_gets@ @s_defaults@
-  make(@(s.length() <= 2 ? "" : s.substring(2))@) { construct@cr@((@(EObject.class.isAssignableFrom(ecl.getInstanceClass()) ? ecl.getInstanceClass().getCanonicalName() : "org.eclipse.emf.ecore.EObject")@)@o1@.eINSTANCE.create((EClass)@o2@.eINSTANCE.getEClassifier("@ecl.getName()@")), new Object[]{ @(s2.length() <= 2 ? "" : s2.substring(2))@ }) }
+  make(@(s.length() <= 2 ? "" : s.substring(2))@) { construct@prefix+cr@((@(EObject.class.isAssignableFrom(ecl.getInstanceClass()) ? ecl.getInstanceClass().getCanonicalName() : "org.eclipse.emf.ecore.EObject")@)@o1@.eINSTANCE.create((EClass)@o2@.eINSTANCE.getEClassifier("@ecl.getName()@")), new Object[]{ @(s2.length() <= 2 ? "" : s2.substring(2))@ }) }
   implement() { @genOpImplementContent(ecl.getInstanceClassName(), cr)@ }
 }
 
@@ -712,7 +754,7 @@ public static <O extends org.eclipse.emf.ecore.EObject> O construct@prefix+cr@(O
   }
   
   /*
-   * Default code generation of EMF works like this:
+   * Default code generation of EMF works like this:
    * interface -> full.qualified.name.A
    * class     -> full.qualified.name.impl.AImpl
    */
@@ -720,10 +762,11 @@ public static <O extends org.eclipse.emf.ecore.EObject> O construct@prefix+cr@(O
     return eclname.substring(0, eclname.lastIndexOf(cr))+"impl."+cr+"Impl";
   }
 
-  /* TODO: to complete */
+  /* TODO: to complete */
   private static final Set<String> builtinSet = new HashSet<String>();
   static {
     builtinSet.add("String");
+    builtinSet.add("EString");//it is directly mapped to String
     builtinSet.add("Boolean");
     builtinSet.add("Byte");
     builtinSet.add("Short");
@@ -742,6 +785,45 @@ public static <O extends org.eclipse.emf.ecore.EObject> O construct@prefix+cr@(O
     builtinSet.add("double");
   }
 
+  private static final Set<String> ecoreSet = new HashSet<String>();
+  static {
+    ecoreSet.add("EAttribute");
+    ecoreSet.add("EAnnotation");
+    ecoreSet.add("EModelElement"); 
+    ecoreSet.add("EStructuralFeature");
+    ecoreSet.add("EObject");
+    ecoreSet.add("EDataType");
+    ecoreSet.add("EEnumLiteral");
+    ecoreSet.add("EClassifier");
+    ecoreSet.add("ETypeParameter");
+    ecoreSet.add("EGenericType");
+    ecoreSet.add("EReference");
+    ecoreSet.add("EPackage");
+    ecoreSet.add("EClass");
+    ecoreSet.add("EParameter");
+    ecoreSet.add("EOperation");
+    ecoreSet.add("EList");
+    ecoreSet.add("ETypedElement");
+    ecoreSet.add("EFactory");
+    ecoreSet.add("EEnum");
+    ecoreSet.add("Enumerator");
+    ecoreSet.add("ENamedElement");
+    ecoreSet.add("BigInteger");
+    ecoreSet.add("BigDecimal");
+    ecoreSet.add("ResourceSet");
+    ecoreSet.add("Entry");//  Map.Entry and FeatureMap.Entry
+    ecoreSet.add("EStringToStringMapEntry");//
+    //ecoreSet.add("Map.Entry");// corresponding Tom type: Entry
+    //ecoreSet.add("Map$Entry");// corresponding Tom type: Entry
+    //ecoreSet.add("FeatureMap.Entry");// corresponding Tom type: Entry1
+    //ecoreSet.add("FeatureMap$Entry");// corresponding Tom type: Entry1
+    ecoreSet.add("FeatureMap");
+    ecoreSet.add("TreeIterator");
+    ecoreSet.add("DiagnosticChain");
+    ecoreSet.add("Resource");
+    ecoreSet.add("Date");
+  }
+
   /**
    * This method tests the type of the parameter represented by the
    * EStructuralFeature
@@ -757,6 +839,15 @@ public static <O extends org.eclipse.emf.ecore.EObject> O construct@prefix+cr@(O
 
   private static boolean isBuiltin(String typename) {
     return builtinSet.contains(typename);
+  }
+
+  private static boolean isEcoreType(EStructuralFeature sf) {
+    String typename = sf.getEType().getName();
+    return ecoreSet.contains(typename);
+  }
+
+  private static boolean isEcoreType(String typename) {
+    return ecoreSet.contains(typename);
   }
 
 }
