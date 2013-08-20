@@ -99,7 +99,7 @@ public class TomMappingFromEcore {
   private static boolean genUMLMapping = false;
 
   /**
-   * A dictionnary linking a class with his generated type name
+   * A dictionary linking a class with his generated type name
    */
   private final static HashMap<java.lang.Class<?>, String> types = new HashMap<java.lang.Class<?>, String>();
 
@@ -340,7 +340,7 @@ public class TomMappingFromEcore {
   }
 
   /**
-   * A dictinonary linking standard java classes with the corresponding tom mapping filename 
+   * A dictionary linking standard java classes with the corresponding tom mapping filename 
    */
   private final static HashMap<java.lang.Class<?>, String> tomTypes = new HashMap<java.lang.Class<?>, String>();
   static {
@@ -811,7 +811,7 @@ private static <O> org.eclipse.emf.common.util.EList<O> append@name@(O e,org.ecl
   }
 
   /**
-   * A dictonnary containing the matching java boxed class of a java primitive class
+   * A dictionary containing the matching java boxed class of a java primitive class
    */
   private final static HashMap<java.lang.Class<?>, java.lang.Class<?>> primitiveToBoxed = new HashMap<java.lang.Class<?>, java.lang.Class<?>>();
   static {
