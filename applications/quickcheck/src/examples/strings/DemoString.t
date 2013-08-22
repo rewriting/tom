@@ -4,27 +4,38 @@ public class DemoString {
 
   // ---------------- isShort ---------------------------------------------------------------------
   public static Boolean isShort(String s){
-    return s.length() < 5;
+    return s.length() < 3;
   }
 
   // ---------------- containsNoA -----------------------------------------------------------------
   public static Boolean containsNoA(String s){
-		if( s.indexOf('a') == -1 && s.indexOf('A') == -1 ) { return true; }
-		else { return false; }
+		if( s.indexOf('a') == -1 && s.indexOf('A') == -1 ) {
+			return true;
+		}
+		return false;
   }
 
   // ---------------- containsA -------------------------------------------------------------------
   public static Boolean containsA(String s){
-		if( s.indexOf('a') == -1 && s.indexOf('A') == -1 ) { return false; }
-		else { return true; }
+		if( s.indexOf('a') == -1 && s.indexOf('A') == -1 ) {
+			return false;
+		}
+		return true;
   }
 
   // ---------------- isPalindrome ----------------------------------------------------------------
   public static Boolean isPalindrome(String s){
-    if(s.length()<2){ return false; }
-		s = s.replaceAll("\\s",""); // Removes all whitespaces and non visible characters such as tab, \n .
-    for(int i=0; i< s.length()/2; i++){
-      if( s.charAt(i) != s.charAt(s.length()-1-i) ) { return false; }
+    if(s.length()<2){
+    	return false;
+  	}
+  	
+  	// Removes all whitespaces and non visible characters such as tab, \n .
+		s = s.replaceAll("\\s","");
+		
+    for(int i=0; i < s.length()/2; i++){
+      if( s.charAt(i) != s.charAt(s.length()-1-i) ) {
+      	return false;
+    	}
     }
     return true;
   }
