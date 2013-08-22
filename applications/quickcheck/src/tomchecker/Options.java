@@ -1,3 +1,5 @@
+//TODO: rename level to depth
+
 package tomchecker;
 
 import org.kohsuke.args4j.*;
@@ -23,7 +25,7 @@ public class Options {
   public File in = null;
 
   @Option(name="-pkg",usage="package")
-  public String pkg = "tester";
+  public String pkg = "tested";
 
   @Option(name="-l",usage="test level",metaVar="LEVEL")
   public int level = 5;
@@ -41,7 +43,7 @@ public class Options {
   public boolean small = false;
 
   @Option(name="-quick",usage="quick")
-  public boolean quick = true;
+  public boolean quick = false;
   
   @Option(name="-printj",usage="print java")
   public boolean printj = false;
@@ -49,7 +51,6 @@ public class Options {
   @Option(name="-numt",usage="used to compute number of tests")
   public int numOfTest = 1000;
   
-
   // receives other command line parameters than options
   @Argument
   public List<String> arguments = new ArrayList<String>();

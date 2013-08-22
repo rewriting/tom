@@ -2,11 +2,17 @@
 
 //TODO: Il faut comprendre à quoi sert projs variable, notamment dans le fichier Testing.java. In addition, projs is not a good name. (maybe I can modify prettyPrint, and remove the second parameter)
 
-//TODO: it seems that existential is never used, even though in the Checker.java file, because even if it's set to true, it never reaches the last return. Therefore, maybe I can delete the second parameter from generateEnumerations function
-
 //TODO: understand "index"
 
 //TODO: run the program with many properties at the same time
+
+//TODO Bien organiser et séparer les fichier property.file
+
+//TODO : comment as many properties as possible in the properties files
+
+//TODO : Vérifier si les implications et l'existential sont bien créés
+
+//TODO: rename level to depth
 
 package tomchecker;
 
@@ -108,35 +114,37 @@ public class Translator{
 
     String product = generateProductType(varSet);
 
+		// Existential Quantifier
+    Boolean existential = false;
+
 		return
 			%[
 				@CR+TAB@ //@`prettyProperty(property,null)@
 				@CR+TAB@ public static void checkProperty@index@(){
 				@CR+TAB+TAB@ Set<F< @product@, Boolean>> preCond = new HashSet<F< @product@, Boolean>>();
-				@CR+TAB+TAB@ @generateBodyMethod(`property, varSet, projs, 0, product)@
+				@CR+TAB+TAB@ @generateBodyMethod(`property, varSet, projs, 0, product, existential)@
 				@CR+TAB@ };
 			]%;
  	}
 
 	// ---------------- Generate Body Method --------------------------------------------------------
 	public static String generateBodyMethod(Property property, Map<String,String> varSet,
-																					Map<String,String> projs, int index, String product) {
-
-    Boolean existential = false;
+																					Map<String,String> projs, int index, String product,
+																					Boolean existential) {
 
     %match(property) {
 			Check(c) -> {
     		return generateFClass(`c, projs, 0, product) +
-    					 generateEnumerations(varSet, existential, product);
+    					 generateEnumerations(varSet, product, existential);
 			}
 		  Implies(c,p) -> {
 		  	index++;
 	  		return generateFClass(`c, projs, index, product) +
-	  					 generateBodyMethod(`p, varSet, projs, index, product);
+	  					 generateBodyMethod(`p, varSet, projs, index, product, existential);
   		}
-		  Exists(_,p) -> {
+		  Exists(p) -> {
 		  	existential = true;
-		  	return generateBodyMethod(`p, varSet, projs, index, product);
+		  	return generateBodyMethod(`p, varSet, projs, index, product, existential);
 	  	}
 		}
 		return "";
@@ -174,8 +182,8 @@ public class Translator{
 
 	// ---------------- Generate Enumerations -------------------------------------------------------
   // Generate the enumerations for the property and the corresponding check calls
-	public static String generateEnumerations(Map<String,String> varSet, boolean existential,
-																						String product) {
+	public static String generateEnumerations(Map<String,String> varSet, String product,
+																						boolean existential) {
 
     int numOfType = varSet.size();
     StringBuffer result = new StringBuffer("");
@@ -226,11 +234,14 @@ public class Translator{
     result.append(%[
 			@CR+TAB+TAB@ try{ ]%);
 
-		// QuickCheck
-		if(options.quick){
+		/*
+		 * QuickCheck : is the default method test, that is to say, if the user do not specify a method for testing,
+		 * quickCheck will be used
+		*/ 
+		if( (options.quick==false && options.small==false) || (options.quick==true) ){
       result.append(%[
 				@CR+TAB+TAB+TAB@ System.out.println("--Random Check--");
-				@CR+TAB+TAB+TAB@ Checker.quickCheckProd@numOfType@(@options.level@, enumeration, prop, @verbose@, @shrink@, @quotient@, preCond, BigInteger.valueOf(@numberOfTest@)); ]%);
+				@CR+TAB+TAB+TAB@ Checker.quickCheckProd@numOfType@(@options.level@, enumeration, prop, @verbose@, @shrink@, @quotient@, preCond, BigInteger.valueOf(@numberOfTest@), @existential@); ]%);
 		}
 
 		// SmallCheck
@@ -296,9 +307,12 @@ public class Translator{
 			Implies(cond, prop) -> {
 				return prettyCond(`cond,projs) + " ==> ( " + prettyProperty(`prop,projs) + " )";
 			}
-			Exists(exp, prop) -> {
-				return "Exists " + prettyExpr(`exp,projs) + " . ( " + prettyProperty(`prop,projs) + " )";
+			Exists(prop) -> {
+				return "Exists( " + prettyProperty(`prop,projs) + " )";
 			}
+//			Exists(exp, prop) -> {
+//				return "Exists " + prettyExpr(`exp,projs) + " . ( " + prettyProperty(`prop,projs) + " )";
+//			}
 		}
 		return "";
 	}
@@ -420,7 +434,7 @@ public class Translator{
 		//Constructing the content of check file
     String pkg = options.pkg == null ? "testedFile" : options.pkg;
 
-		String testingContent = 
+		String testingContent =
 			%[ @CR@ package @pkg@;
 				 @CR@ import tom.library.enumerator.*;
 				 @CR@ import java.util.Random;
@@ -445,7 +459,7 @@ public class Translator{
 			@CR@ public class Testing { ]%;
 
     // Generate code
-    // methodCalls<String:checkPropertyX, String:ClassName.function(variable:Type)>
+    // methodCalls<String: checkPropertyX, String: Class.function(variable:Type)>
     Map<String,String> methodCalls = new HashMap<String,String>();
 		testingContent += generateCode(properties,0,methodCalls);
 
@@ -576,10 +590,10 @@ public class Translator{
 	// ---------------- Main ------------------------------------------------------------------------
 	public static void main(String[] args)  {
 	
-		// Parse the command line arguments
+		// Parse the command line arguments (using args4j)
 		parseComLineArgs(args);
 		
-		// Parse and test property
+		// Parse the properties (using ANTLR)
 		try {
 			InputStream fileInput = System.in;
 
@@ -601,6 +615,7 @@ public class Translator{
 				System.out.println("Generated CODE:\n---------------------------");
 			}
 			
+			// Test the properties
 			/* 
 			* If arrays are empty, then there is no import. Without import, there cannot be a check file
 			* We can have none if the tested class is in the same package

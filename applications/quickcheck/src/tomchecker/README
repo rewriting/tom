@@ -1,34 +1,23 @@
-# run with
+To run the tests:
 
-cd build
+1) Go to quickCheck directory
+2) Enter : ant
+3) Then copy and paste one of the following commands
+4) Note: you might use other options as well, such as -printj, -small, etc. For more details, have a
+	 look at Options.java file, located at quickcheck/src/tomchecker directory
+5) If your test does not need to import any types, you have to write "no imports", as in the test DemoString.t
 
-// To test binary trees
-java tomchecker/Translator -impt "examples.trees.binarytree.types.*" -impp "examples.trees.DemoBinaryTree" -i ../src/tomchecker/properties/binaryTree.file  -l 1 -q 2 -s 1  -v 1
+// To test DemoBinaryTree.t :
+java tomchecker/Translator -impt "examples.trees.binarytree.types.*" -impp "examples.trees.DemoBinaryTree" -i ../src/tomchecker/properties/binaryTree.file  -l 10 -q 2000 -s 100  -v 1 -quick
 
+// To test DemoAssortedList.t :
+java tomchecker/Translator -impt "examples.lists.assortedlist.types.*" -impp "examples.lists.DemoAssortedList" -i ../src/tomchecker/properties/assortedlist.file  -l 10 -q 2000 -s 2000  -v 1 -quick
 
-// To test Dummy
-java tomchecker/Translator -impt "examples.simplest.dummy.types.*" -impp "examples.simplest.DemoDummy" -i ../src/tomchecker/properties/dummy.file  -l 1 -q 2 -s 1  -v 1
+// To test DemoAList.t :
+java tomchecker/Translator -impt "examples.lists.alist.types.*" -impp "examples.lists.DemoAList" -i ../src/tomchecker/properties/alist.file  -l 10 -q 2000 -s 2000  -v 1 -quick
 
-// To test AList
-java tomchecker/Translator -impt "examples.alist.types.*" -impp "examples.DemoAList" -i ../src/tomchecker/properties/alist.file  -l 1 -q 2 -s 1  -v 1
+// To test DemoDummy.t :
+java tomchecker/Translator -impt "examples.simplest.dummy.types.*" -impp "examples.simplest.DemoDummy" -i ../src/tomchecker/properties/dummy.file  -l 10 -q 2000 -s 100  -v 1 -quick
 
-
-//-------------- Deprecated -----------------------------------------------------------------------
-
-
-// Deprecated
-java tomchecker/Translator -impt "examples.dummy.types.*" -impp "examples.MyProgram" -i ../src/tomchecker/property.file  -l 100 -q 2000 -s 100  -v 1
-
-// Up to date
-java tomchecker/Translator -impt "examples.dummy.types.*" -impp "examples.MyProgram" -i ../src/tomchecker/property.file  -l 100 -q 2000 -s 100  -v 1
-
-
-java tomchecker/Translator -impt "examples.dummy.types.*" -impp "examples.MyProgram" -i /Users/cirstea/PAPERS/tom-research-work/cosay/exampleQcSc/src/tomchecker/property.file  -l 100 -q 2000 -s 100  -v 1 -small
-
-java tomchecker/Translator -impp "examples.dummy.types.*" -impt "examples.MyProgram" -i /Users/cirstea/PAPERS/tom-research-work/cosay/exampleQcSc/src/tomchecker/property.file -l 40 -q 10000 -s 10 -v 1
-
-# 24.06.2013
-java tomchecker/Translator -impt "examples.mydata.types.*" -impp "examples.MyProgram" -i /Users/cosay/cosay/exampleQcSc/src/tomchecker/property.file  -l 10 -q 20 -s 1  -v 4 -small -numt 2000 -printj
-
-#25.06.2013
-java tomchecker/Translator -impt "examples.mylist.types.*" -impp "examples.ProgramToTest" -i /Users/cosay/cosay/exampleQcSc/src/tomchecker/property.file  -l 10 -q 20 -s 1  -v 4 -small -numt 2000 -printj
+// To test DemoString.t :
+java tomchecker/Translator -impt "no imports" -impp "examples.strings.DemoString" -i ../src/tomchecker/properties/string.file  -l 10 -q 2000 -s 2000  -v 1 -small

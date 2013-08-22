@@ -21,20 +21,21 @@ options {
  * PARSER RULES
 *----------------------------------------------------------------------------------*/
 
-top:
-// top start rule has been replaced with input
-//input :
-	(property)*  EOF -> ^(PropList (property)*);
+//top:
+//	(existential)*  EOF -> ^(PropList (property)*);
 
-// property:
-//   c=cond (  '=>' '(' p=property ')' -> ^(Implies $c $p)
-//            |                        -> ^(Check $c) )
-// ;
+top:
+	(existential)*  EOF -> ^(PropList (existential)*);
+
+existential:
+	(eq='$')? prop=property ->{eq!=null}? ^(Exists $prop)
+	-> $prop
+;
 
 property:
-  c=cond (IMPLIES '(' p=property ')')?
+  c= cond (IMPLIES '(' p=property ')')?
 	  -> {p!=null}?  ^(Implies $c $p)
-    -> ^(Check $c) 
+    -> ^(Check $c)
 ;
 
 cond:
@@ -55,11 +56,11 @@ atom:
    | comp
 ;
 
-comp: 
+comp:
   e1=exp ( '==' e2=exp -> ^(Same $e1 $e2)
          | '!=' e2=exp -> ^(Diff $e1 $e2)
-         | 'EQ' e2=exp -> ^(Eq $e1 $e2)
-         | 'NEQ' e2=exp -> ^(Neq $e1 $e2)
+         | 'EQ' e2=exp -> ^(Eq $e1 $e2) // Existential Quantifier
+         | 'NEQ' e2=exp -> ^(Neq $e1 $e2) // Not Existential Quantifier
          | '>' e2=exp -> ^(Gre $e1 $e2)
          | '>=' e2=exp -> ^(Geq $e1 $e2)
          | '<' e2=exp -> ^(Less $e1 $e2)
@@ -86,23 +87,11 @@ args:
  * LEXER RULES
 *----------------------------------------------------------------------------------*/
 
-// Deprecated method for declaring INT
-//INT : ('0'..'9')('0'..'9')*;
 INT : '0'..'9'+ ;	
 
-// Deprecated method for declaring ID
 ID : ('a'..'z'|'A'..'Z'|'\.')+;
-//ID : ('a'..'z'|'A'..'Z'|'_'|'\.') ('a'..'z'|'A'..'Z'|'0'..'9'|'_'|'\.')*;
-
-// WS stands for White Space
-// Deprecated method for declaring WS
-//WS : (' ' | '\t' | ( '\r\n' | '\n' | '\r')) {$channel=HIDDEN;} ; 
 
 WS : ( '\t' | ' ' | '\r' | '\n'| '\u000C' )+ { $channel = HIDDEN; };
-
-// Deprecated method for comments
-//SLCOMMENT : '//' (~('\n'|'\r'))* ('\n'|'\r'('\n')?)?  {$channel=HIDDEN;} ;
-//MLCOMMENT : '/*' .* '*/' {$channel=HIDDEN;} ;
 
 COMMENT
     :   '//' ~('\n'|'\r')* '\r'? '\n' {$channel=HIDDEN;}
