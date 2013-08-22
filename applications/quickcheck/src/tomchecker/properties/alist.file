@@ -1,3 +1,5 @@
+//TODO: il faut créer des exemples pour Existential Quantifier
+
 // ---------------- AList Properties --------------------------------------------------------------
 
 //DemoAList.size(DemoAList.addFirst(l:AList,el:Elem)) == DemoAList.size(DemoAList.addFirst(l:AList,el:Elem))
@@ -54,3 +56,5 @@
 //		)
 //	)
 //)
+
+// ---------------- Use of Existential Quantifiers (represented by $ character) -------------------
