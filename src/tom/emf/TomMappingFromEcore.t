@@ -95,8 +95,9 @@ public class TomMappingFromEcore {
   
   /**
    * true if the EPackage to generate is UMLPackage itself
+   * (uml2.uml.UMLPackage)
    */
-  private static boolean genUMLMapping = false;
+  private static boolean genUML2Mapping = false;
 
   /**
    * A dictionary linking a class with his generated type name
@@ -225,14 +226,14 @@ public class TomMappingFromEcore {
             if(ePackageNameList.get(i).equals("org.eclipse.emf.ecore.EcorePackage")) {
               genEcoreMapping = true;
             } else if(ePackageNameList.get(i).equals("org.eclipse.uml2.uml.UMLPackage")) {
-              genUMLMapping = true;
+              genUML2Mapping = true;
             }
             extractFromEPackage(writer, (EPackage) java.lang.Class.forName(ePackageNameList.get(i)).getField("eINSTANCE").get(null));
             writer.flush();
             writer.close();
             //reset
             genEcoreMapping = false;
-            genUMLMapping = false;
+            genUML2Mapping = false;
           }
         } catch (Exception e) {
           e.printStackTrace();
@@ -295,12 +296,12 @@ public class TomMappingFromEcore {
         }
         //else nothing: ecore.tom has already been included, the mapping has
         //already been generated
-      /*} else if(tomUMLTypes.contains(c) && !genUMLMapping) {
+      } else if(tomUML2Types.contains(c) && !genUML2Mapping) {
         //add uml2 mappings if needed
         if(!includedMappings.contains("emf/uml2.tom")) {
           includedMappings.add("emf/uml2.tom");
           writer.write("\n\n%include { emf/uml2.tom }");
-        } */
+        } 
         //else nothing: uml2.tom has already been included, the mapping has
         //already been generated
       } else {
@@ -327,7 +328,7 @@ public class TomMappingFromEcore {
         //inheritance
         for (EClass supertype:((EClass)eclf).getESuperTypes()) {
           String superName = supertype.getName();
-          result = result + " extends "+(isEcoreType(superName)?superName:(prefix+superName));
+          result = result + " extends "+((isEcoreType(superName)||isUML2Type(superName))?superName:(prefix+superName));
           //result = result + " extends "+ prefix + supertype.getName();
         }
       } else {
@@ -374,7 +375,7 @@ public class TomMappingFromEcore {
   }
 
   /**
-   * A set of EMF classes 
+   * Set of EMF classes which are in the emf/ecore.tom mapping.
    */
   private final static HashSet<java.lang.Class<?>> tomEMFTypes = new HashSet<java.lang.Class<?>>();
   static {
@@ -414,274 +415,274 @@ public class TomMappingFromEcore {
   }
 
   /**
-   * Set of UML classes 
+   * Set of UML classes which are in the emf/uml2.tom mapping. 
    */
-/* private final static HashSet<java.lang.Class<?>> tomUMLTypes = new HashSet<java.lang.Class<?>>();
+ private final static HashSet<java.lang.Class<?>> tomUML2Types = new HashSet<java.lang.Class<?>>();
   static {
-    tomUMLTypes.add(org.eclipse.uml2.uml.Comment.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.Element.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.Package.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.VisibilityKind.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.Dependency.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.StringExpression.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.TemplateParameter.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.TemplateSignature.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.TemplateableElement.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.TemplateBinding.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.TemplateParameterSubstitution.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.ParameterableElement.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.Type.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.ValueSpecification.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.NamedElement.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.ElementImport.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.PackageableElement.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.Namespace.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.PackageImport.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.Constraint.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.PackageMerge.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.ProfileApplication.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.Profile.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.Stereotype.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.Generalization.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.Classifier.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.GeneralizationSet.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.Substitution.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.OpaqueExpression.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.Behavior.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.CollaborationUse.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.Collaboration.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.UseCase.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.InterfaceRealization.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.Interface.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.Property.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.ConnectorEnd.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.ConnectableElement.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.Deployment.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.DeployedArtifact.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.DeploymentSpecification.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.Artifact.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.Manifestation.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.Operation.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.Parameter.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.ParameterSet.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.ParameterDirectionKind.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.ParameterEffectKind.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.CallConcurrencyKind.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.Class.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.Connector.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.Association.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.ConnectorKind.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.Port.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.DataType.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.AggregationKind.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.ProtocolStateMachine.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.Trigger.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.Event.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.Reception.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.Signal.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.BehavioralFeature.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.Region.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.Vertex.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.Transition.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.TransitionKind.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.State.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.StateMachine.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.Pseudostate.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.PseudostateKind.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.ConnectionPointReference.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.ProtocolConformance.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.DeploymentTarget.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.BehavioredClassifier.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.Include.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.Extend.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.ExtensionPoint.class); 
-    tomUMLTypes.add(org.eclipse.uml2.uml.Image.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.DirectedRelationship.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.Relationship.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.TypedElement.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.RedefinableElement.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.Feature.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.Realization.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.Abstraction.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.MultiplicityElement.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.EncapsulatedClassifier.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.StructuredClassifier.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.Extension.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.ExtensionEnd.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.Model.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.OperationTemplateParameter.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.StructuralFeature.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.ConnectableElementTemplateParameter.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.RedefinableTemplateSignature.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.ClassifierTemplateParameter.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.Expression.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.Usage.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.Enumeration.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.EnumerationLiteral.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.Slot.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.InstanceSpecification.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.PrimitiveType.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.LiteralSpecification.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.LiteralInteger.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.LiteralString.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.LiteralBoolean.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.LiteralNull.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.InstanceValue.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.LiteralUnlimitedNatural.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.OpaqueBehavior.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.FunctionBehavior.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.OpaqueAction.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.StructuredActivityNode.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.Activity.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.Variable.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.ActivityNode.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.ActivityEdge.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.ActivityPartition.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.InterruptibleActivityRegion.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.ActivityGroup.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.ExceptionHandler.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.ExecutableNode.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.ObjectNode.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.ObjectNodeOrderingKind.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.InputPin.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.OutputPin.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.Action.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.Pin.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.CallAction.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.InvocationAction.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.SendSignalAction.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.CallOperationAction.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.CallBehaviorAction.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.SequenceNode.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.ControlNode.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.ControlFlow.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.InitialNode.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.ActivityParameterNode.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.ValuePin.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.Message.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.MessageSort.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.MessageEnd.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.Interaction.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.Lifeline.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.PartDecomposition.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.GeneralOrdering.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.OccurrenceSpecification.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.InteractionOperand.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.InteractionConstraint.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.InteractionFragment.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.Gate.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.MessageKind.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.InteractionUse.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.ExecutionSpecification.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.StateInvariant.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.ActionExecutionSpecification.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.BehaviorExecutionSpecification.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.ExecutionEvent.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.CreationEvent.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.DestructionEvent.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.SendOperationEvent.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.MessageEvent.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.SendSignalEvent.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.MessageOccurrenceSpecification.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.ExecutionOccurrenceSpecification.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.ReceiveOperationEvent.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.ReceiveSignalEvent.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.Actor.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.CallEvent.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.ChangeEvent.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.SignalEvent.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.AnyReceiveEvent.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.ForkNode.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.FlowFinalNode.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.FinalNode.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.CentralBufferNode.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.MergeNode.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.DecisionNode.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.ObjectFlow.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.ActivityFinalNode.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.ComponentRealization.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.Component.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.Node.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.CommunicationPath.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.Device.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.ExecutionEnvironment.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.CombinedFragment.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.InteractionOperatorKind.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.Continuation.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.ConsiderIgnoreFragment.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.CreateObjectAction.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.DestroyObjectAction.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.TestIdentityAction.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.ReadSelfAction.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.StructuralFeatureAction.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.ReadStructuralFeatureAction.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.WriteStructuralFeatureAction.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.ClearStructuralFeatureAction.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.RemoveStructuralFeatureValueAction.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.AddStructuralFeatureValueAction.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.LinkAction.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.LinkEndData.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.QualifierValue.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.ReadLinkAction.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.LinkEndCreationData.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.CreateLinkAction.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.WriteLinkAction.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.DestroyLinkAction.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.LinkEndDestructionData.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.ClearAssociationAction.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.BroadcastSignalAction.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.SendObjectAction.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.ValueSpecificationAction.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.TimeExpression.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.Observation.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.Duration.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.DurationInterval.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.Interval.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.TimeConstraint.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.IntervalConstraint.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.TimeInterval.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.DurationConstraint.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.TimeObservation.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.DurationObservation.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.FinalState.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.TimeEvent.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.VariableAction.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.ReadVariableAction.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.WriteVariableAction.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.ClearVariableAction.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.AddVariableValueAction.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.RemoveVariableValueAction.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.RaiseExceptionAction.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.ActionInputPin.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.InformationItem.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.InformationFlow.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.ReadExtentAction.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.ReclassifyObjectAction.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.ReadIsClassifiedObjectAction.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.StartClassifierBehaviorAction.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.ReadLinkObjectEndAction.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.ReadLinkObjectEndQualifierAction.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.CreateLinkObjectAction.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.AcceptEventAction.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.AcceptCallAction.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.ReplyAction.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.UnmarshallAction.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.ReduceAction.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.StartObjectBehaviorAction.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.JoinNode.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.DataStoreNode.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.ConditionalNode.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.Clause.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.LoopNode.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.ExpansionNode.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.ExpansionRegion.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.ExpansionKind.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.ProtocolTransition.class);
-    tomUMLTypes.add(org.eclipse.uml2.uml.AssociationClass.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.Comment.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.Element.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.Package.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.VisibilityKind.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.Dependency.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.StringExpression.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.TemplateParameter.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.TemplateSignature.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.TemplateableElement.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.TemplateBinding.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.TemplateParameterSubstitution.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.ParameterableElement.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.Type.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.ValueSpecification.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.NamedElement.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.ElementImport.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.PackageableElement.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.Namespace.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.PackageImport.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.Constraint.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.PackageMerge.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.ProfileApplication.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.Profile.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.Stereotype.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.Generalization.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.Classifier.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.GeneralizationSet.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.Substitution.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.OpaqueExpression.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.Behavior.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.CollaborationUse.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.Collaboration.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.UseCase.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.InterfaceRealization.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.Interface.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.Property.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.ConnectorEnd.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.ConnectableElement.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.Deployment.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.DeployedArtifact.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.DeploymentSpecification.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.Artifact.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.Manifestation.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.Operation.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.Parameter.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.ParameterSet.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.ParameterDirectionKind.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.ParameterEffectKind.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.CallConcurrencyKind.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.Class.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.Connector.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.Association.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.ConnectorKind.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.Port.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.DataType.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.AggregationKind.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.ProtocolStateMachine.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.Trigger.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.Event.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.Reception.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.Signal.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.BehavioralFeature.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.Region.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.Vertex.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.Transition.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.TransitionKind.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.State.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.StateMachine.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.Pseudostate.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.PseudostateKind.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.ConnectionPointReference.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.ProtocolConformance.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.DeploymentTarget.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.BehavioredClassifier.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.Include.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.Extend.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.ExtensionPoint.class); 
+    tomUML2Types.add(org.eclipse.uml2.uml.Image.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.DirectedRelationship.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.Relationship.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.TypedElement.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.RedefinableElement.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.Feature.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.Realization.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.Abstraction.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.MultiplicityElement.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.EncapsulatedClassifier.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.StructuredClassifier.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.Extension.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.ExtensionEnd.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.Model.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.OperationTemplateParameter.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.StructuralFeature.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.ConnectableElementTemplateParameter.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.RedefinableTemplateSignature.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.ClassifierTemplateParameter.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.Expression.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.Usage.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.Enumeration.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.EnumerationLiteral.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.Slot.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.InstanceSpecification.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.PrimitiveType.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.LiteralSpecification.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.LiteralInteger.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.LiteralString.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.LiteralBoolean.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.LiteralNull.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.InstanceValue.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.LiteralUnlimitedNatural.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.OpaqueBehavior.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.FunctionBehavior.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.OpaqueAction.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.StructuredActivityNode.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.Activity.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.Variable.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.ActivityNode.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.ActivityEdge.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.ActivityPartition.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.InterruptibleActivityRegion.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.ActivityGroup.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.ExceptionHandler.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.ExecutableNode.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.ObjectNode.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.ObjectNodeOrderingKind.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.InputPin.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.OutputPin.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.Action.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.Pin.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.CallAction.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.InvocationAction.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.SendSignalAction.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.CallOperationAction.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.CallBehaviorAction.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.SequenceNode.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.ControlNode.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.ControlFlow.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.InitialNode.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.ActivityParameterNode.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.ValuePin.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.Message.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.MessageSort.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.MessageEnd.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.Interaction.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.Lifeline.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.PartDecomposition.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.GeneralOrdering.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.OccurrenceSpecification.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.InteractionOperand.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.InteractionConstraint.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.InteractionFragment.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.Gate.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.MessageKind.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.InteractionUse.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.ExecutionSpecification.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.StateInvariant.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.ActionExecutionSpecification.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.BehaviorExecutionSpecification.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.ExecutionEvent.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.CreationEvent.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.DestructionEvent.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.SendOperationEvent.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.MessageEvent.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.SendSignalEvent.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.MessageOccurrenceSpecification.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.ExecutionOccurrenceSpecification.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.ReceiveOperationEvent.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.ReceiveSignalEvent.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.Actor.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.CallEvent.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.ChangeEvent.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.SignalEvent.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.AnyReceiveEvent.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.ForkNode.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.FlowFinalNode.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.FinalNode.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.CentralBufferNode.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.MergeNode.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.DecisionNode.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.ObjectFlow.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.ActivityFinalNode.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.ComponentRealization.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.Component.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.Node.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.CommunicationPath.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.Device.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.ExecutionEnvironment.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.CombinedFragment.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.InteractionOperatorKind.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.Continuation.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.ConsiderIgnoreFragment.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.CreateObjectAction.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.DestroyObjectAction.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.TestIdentityAction.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.ReadSelfAction.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.StructuralFeatureAction.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.ReadStructuralFeatureAction.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.WriteStructuralFeatureAction.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.ClearStructuralFeatureAction.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.RemoveStructuralFeatureValueAction.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.AddStructuralFeatureValueAction.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.LinkAction.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.LinkEndData.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.QualifierValue.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.ReadLinkAction.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.LinkEndCreationData.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.CreateLinkAction.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.WriteLinkAction.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.DestroyLinkAction.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.LinkEndDestructionData.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.ClearAssociationAction.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.BroadcastSignalAction.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.SendObjectAction.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.ValueSpecificationAction.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.TimeExpression.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.Observation.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.Duration.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.DurationInterval.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.Interval.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.TimeConstraint.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.IntervalConstraint.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.TimeInterval.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.DurationConstraint.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.TimeObservation.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.DurationObservation.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.FinalState.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.TimeEvent.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.VariableAction.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.ReadVariableAction.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.WriteVariableAction.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.ClearVariableAction.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.AddVariableValueAction.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.RemoveVariableValueAction.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.RaiseExceptionAction.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.ActionInputPin.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.InformationItem.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.InformationFlow.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.ReadExtentAction.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.ReclassifyObjectAction.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.ReadIsClassifiedObjectAction.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.StartClassifierBehaviorAction.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.ReadLinkObjectEndAction.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.ReadLinkObjectEndQualifierAction.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.CreateLinkObjectAction.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.AcceptEventAction.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.AcceptCallAction.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.ReplyAction.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.UnmarshallAction.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.ReduceAction.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.StartObjectBehaviorAction.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.JoinNode.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.DataStoreNode.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.ConditionalNode.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.Clause.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.LoopNode.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.ExpansionNode.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.ExpansionRegion.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.ExpansionKind.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.ProtocolTransition.class);
+    tomUML2Types.add(org.eclipse.uml2.uml.AssociationClass.class);
   }
-*/
 
-  /** A list of java reserved keywords for variable naming
+  /** 
+   * A list of java reserved keywords for variable naming
    */
   private final static List<String> keywords = java.util.Arrays.asList(new
       String[] { "abstract", "continue", "for", "new", "switch", "assert",
@@ -753,9 +754,12 @@ public class TomMappingFromEcore {
   private static String getType(java.io.Writer writer, EStructuralFeature sf) throws java.io.IOException {
     java.lang.Class<?> c = sf.getEType().getInstanceClass();
     //String simplename = types.get(c);
-    String argname = (isBuiltin(sf)||isEcoreType(sf))?types.get(c):(prefix+types.get(c));
+    boolean boolCondition = (isEcoreType(sf) || isUML2Type(sf));
+    String argname = (isBuiltin(sf)||boolCondition)?types.get(c):(prefix+types.get(c));
     String name = argname;
-    if(sf.isMany() && !isEcoreType(sf)) {
+    //if(sf.isMany() && !isEcoreType(sf) && !isUML2Type(sf)) {
+    //if(sf.isMany() && !boolCondition) {
+    if(sf.isMany()) {
       name += "EList";
       if(!lists.contains(c)) {//mapping has not already been generated
         String[] decl = getClassDeclarations(sf.getEType()); // [canonical name, anonymous generic, generic type]
@@ -770,6 +774,7 @@ public class TomMappingFromEcore {
         } else {
           inst = "org.eclipse.emf.ecore.EObject";
         }
+        if(!boolCondition && !name.equals("StringEList")) {
         writer.write(%[
 
 %typeterm @name@ {
@@ -791,6 +796,13 @@ private static <O> org.eclipse.emf.common.util.EList<O> append@name@(O e,org.ecl
   return l;
 }]%);
         lists.add(c);
+        }
+      } else if(name.equals("StringEList")) {
+        writer.write(%[
+
+%include{ emf/StringEList.tom }
+]%);
+        includedMappings.add("emf/StringEList.tom");
       }
     }
     //return (sf.isMany()?prefix+name:name);
@@ -909,12 +921,16 @@ private static <O> org.eclipse.emf.common.util.EList<O> append@name@(O e,org.ecl
 
   /**
    * Generate classifier mapping
+   * @param writer writer the result is given to
    * @param eclf classifier to extract
    */
   private static void extractFromEClassifier(java.io.Writer writer, EClassifier eclf) throws java.io.IOException {
     if(!classifiers.contains(eclf)) {
       extractType(writer,eclf);
       classifiers.add(eclf);
+      //
+      java.lang.Class<?> c = eclf.getInstanceClass();
+      boolean isUML2orEMF = (tomEMFTypes.contains(c)||tomUML2Types.contains(c));
       if(eclf instanceof EClass) {
         EClass ecl = (EClass) eclf;
         EList<EStructuralFeature> sfs = ecl.getEAllStructuralFeatures();
@@ -968,7 +984,9 @@ private static <O> org.eclipse.emf.common.util.EList<O> append@name@(O e,org.ecl
             .getCanonicalName();
           //avoid to generate mappings already been defined in ecore.tom
           //except if the goal is to generate the EcorePackage mapping itself
-          if(genEcoreMapping || genUMLMapping || !tomEMFTypes.contains(eclf.getInstanceClass())) {
+
+          //if(genEcoreMapping || genUML2Mapping || !tomEMFTypes.contains(eclf.getInstanceClass())) {
+          if(genEcoreMapping || genUML2Mapping || !isUML2orEMF) {
             writer.write(%[
 
 %op @prefix+ecl.getInstanceClass().getSimpleName()@ @prefix+cr@(@s_types@) {
@@ -994,33 +1012,41 @@ public static <O extends org.eclipse.emf.ecore.EObject> O construct@prefix+cr@(O
         EEnum en = (EEnum) eclf;
         String cr = eclf.getName();
         String[] decl = getClassDeclarations(eclf); // [canonical name, anonymous generic, generic type]
-        for(EEnumLiteral lit : en.getELiterals()) {
-          String o1 = eclf.getEPackage().getEFactoryInstance().getClass()
-            .getInterfaces()[eclf.getEPackage().getClass()
-            .getInterfaces().length - 1].getCanonicalName();
-          String o2 = eclf.getEPackage().getClass().getInterfaces()[eclf
-            .getEPackage().getClass().getInterfaces().length - 1]
-            .getCanonicalName();
-          //Problem: lit.getLiteral() can be a non-alphanumerical symbol. Use
-          //name instead (a non alphanumerical name should not be valid
-          //String literal = lit.getLiteral();
-          String literalname = lit.getName();
-          String operatorName = cr+literalname.replaceAll(" ","");
-          writer.write(%[
+          //if(genEcoreMapping || genUML2Mapping || !tomEMFTypes.contains(eclf.getInstanceClass())
+        if(genEcoreMapping || genUML2Mapping || !isUML2orEMF) {
+          for(EEnumLiteral lit : en.getELiterals()) {
+            String o1 = eclf.getEPackage().getEFactoryInstance().getClass()
+              .getInterfaces()[eclf.getEPackage().getClass()
+              .getInterfaces().length - 1].getCanonicalName();
+            String o2 = eclf.getEPackage().getClass().getInterfaces()[eclf
+              .getEPackage().getClass().getInterfaces().length - 1]
+              .getCanonicalName();
+            //Problem: lit.getLiteral() can be a non-alphanumerical symbol. Use
+            //name instead (a non alphanumerical name should not be valid
+            //String literal = lit.getLiteral();
+            String literalname = lit.getName();
+            String operatorName = cr+literalname.replaceAll(" ","");
+            writer.write(%[
 
 %op @prefix+cr@ @prefix+operatorName@() {
   is_fsym(t) { t == @(decl[0]+decl[1])@.get("@literalname@") }
   make() { (@(decl[0]+decl[2])@)@o1@.eINSTANCE.createFromString((EDataType)@o2@.eINSTANCE.get@toUpperName(cr)@(), "@literalname@") }
 }]%);
+          }
         }
       }
     }
   }
   
-  /*
+  /**
+   * This function generates the content of %op implement block following the
+   * EMF naming scheme.
    * Default code generation of EMF works like this:
    * interface -> full.qualified.name.A
    * class     -> full.qualified.name.impl.AImpl
+   * @param eclname the instance class name of the EClass we want to generate the %op implement block
+   * @param cr the name of the EClassifier 
+   * @return a string corresponding to the content of the %op implement block
    */
   private static String genOpImplementContent(String eclname, String cr) {
     return eclname.substring(0, eclname.lastIndexOf(cr))+"impl."+cr+"Impl";
@@ -1049,6 +1075,32 @@ public static <O extends org.eclipse.emf.ecore.EObject> O construct@prefix+cr@(O
     builtinSet.add("double");
   }
 
+  /**
+   * This method tests if the type of the parameter represented by the
+   * EStructuralFeature is a builtin type
+   * @param sf EStructuralFeature corresponding to a parameter we want to
+   * obtain the type
+   * @return true if the EStructuralFeature represents a parameter whose type
+   * is a primitive or implemented by a primitive type.
+   */
+  private static boolean isBuiltin(EStructuralFeature sf) {
+    String typename = sf.getEType().getName();
+    return builtinSet.contains(typename);
+  }
+
+  /**
+   * This method tests if the type of the parameter represented by the
+   * String is a builtin type
+   * @param typename String corresponding to the name of a parameter we want to
+   * obtain the type
+   * @return true if the String represents the name of a parameter whose type
+   * is a primitive or implemented by a primitive type.
+   */
+  private static boolean isBuiltin(String typename) {
+    return builtinSet.contains(typename);
+  }
+
+  /* Set of Ecore types names */
   private static final Set<String> ecoreSet = new HashSet<String>();
   static {
     ecoreSet.add("EAttribute");
@@ -1089,29 +1141,319 @@ public static <O extends org.eclipse.emf.ecore.EObject> O construct@prefix+cr@(O
   }
 
   /**
-   * This method tests the type of the parameter represented by the
-   * EStructuralFeature
+   * This method tests if the type of the parameter represented by the
+   * EStructuralFeature is an Ecore type
    * @param sf EStructuralFeature corresponding to a parameter we want to
    * obtain the type
    * @return true if the EStructuralFeature represents a parameter whose type
-   * is a primitive or implemented by a primitive type.
+   * is an Ecore type.
    */
-  private static boolean isBuiltin(EStructuralFeature sf) {
-    String typename = sf.getEType().getName();
-    return builtinSet.contains(typename);
-  }
-
-  private static boolean isBuiltin(String typename) {
-    return builtinSet.contains(typename);
-  }
-
   private static boolean isEcoreType(EStructuralFeature sf) {
     String typename = sf.getEType().getName();
     return ecoreSet.contains(typename);
   }
 
+  /**
+   * This method tests if the type of the parameter represented by the
+   * String is an Ecore type
+   * @param typename String corresponding to the name of a parameter we want to
+   * obtain the type
+   * @return true if the String represents the name of a parameter whose type
+   * is an Ecore type.
+   */
   private static boolean isEcoreType(String typename) {
     return ecoreSet.contains(typename);
   }
 
-}
+  /* Set of UML2 types names */
+  private static final Set<String> uml2Set = new HashSet<String>();
+  static {
+    uml2Set.add("Comment");
+    uml2Set.add("Element");
+    uml2Set.add("Package");
+    uml2Set.add("VisibilityKind");
+    uml2Set.add("Dependency");
+    uml2Set.add("StringExpression");
+    uml2Set.add("TemplateParameter");
+    uml2Set.add("TemplateSignature");
+    uml2Set.add("TemplateableElement");
+    uml2Set.add("TemplateBinding");
+    uml2Set.add("TemplateParameterSubstitution");
+    uml2Set.add("ParameterableElement");
+    uml2Set.add("Type");
+    uml2Set.add("ValueSpecification");
+    uml2Set.add("NamedElement");
+    uml2Set.add("ElementImport");
+    uml2Set.add("PackageableElement");
+    uml2Set.add("Namespace");
+    uml2Set.add("PackageImport");
+    uml2Set.add("Constraint");
+    uml2Set.add("PackageMerge");
+    uml2Set.add("ProfileApplication");
+    uml2Set.add("Profile");
+    uml2Set.add("Stereotype");
+    uml2Set.add("Generalization");
+    uml2Set.add("Classifier");
+    uml2Set.add("GeneralizationSet");
+    uml2Set.add("Substitution");
+    uml2Set.add("OpaqueExpression");
+    uml2Set.add("Behavior");
+    uml2Set.add("CollaborationUse");
+    uml2Set.add("Collaboration");
+    uml2Set.add("UseCase");
+    uml2Set.add("InterfaceRealization");
+    uml2Set.add("Interface");
+    uml2Set.add("Property");
+    uml2Set.add("ConnectorEnd");
+    uml2Set.add("ConnectableElement");
+    uml2Set.add("Deployment");
+    uml2Set.add("DeployedArtifact");
+    uml2Set.add("DeploymentSpecification");
+    uml2Set.add("Artifact");
+    uml2Set.add("Manifestation");
+    uml2Set.add("Operation");
+    uml2Set.add("Parameter");
+    uml2Set.add("ParameterSet");
+    uml2Set.add("ParameterDirectionKind");
+    uml2Set.add("ParameterEffectKind");
+    uml2Set.add("CallConcurrencyKind");
+    uml2Set.add("Class");//be careful, could potentially lead to a name clash
+    uml2Set.add("Connector");
+    uml2Set.add("Association");
+    uml2Set.add("ConnectorKind");
+    uml2Set.add("Port");
+    uml2Set.add("DataType");
+    uml2Set.add("AggregationKind");
+    uml2Set.add("ProtocolStateMachine");
+    uml2Set.add("Trigger");
+    uml2Set.add("Event");
+    uml2Set.add("Reception");
+    uml2Set.add("Signal");
+    uml2Set.add("BehavioralFeature");
+    uml2Set.add("Region");
+    uml2Set.add("Vertex");
+    uml2Set.add("Transition");
+    uml2Set.add("TransitionKind");
+    uml2Set.add("State");
+    uml2Set.add("StateMachine");
+    uml2Set.add("Pseudostate");
+    uml2Set.add("PseudostateKind");
+    uml2Set.add("ConnectionPointReference");
+    uml2Set.add("ProtocolConformance");
+    uml2Set.add("DeploymentTarget");
+    uml2Set.add("BehavioredClassifier");
+    uml2Set.add("Include");
+    uml2Set.add("Extend");
+    uml2Set.add("ExtensionPoint"); 
+    uml2Set.add("Image");
+    uml2Set.add("DirectedRelationship");
+    uml2Set.add("Relationship");
+    uml2Set.add("TypedElement");
+    uml2Set.add("RedefinableElement");
+    uml2Set.add("Feature");
+    uml2Set.add("Realization");
+    uml2Set.add("Abstraction");
+    uml2Set.add("MultiplicityElement");
+    uml2Set.add("EncapsulatedClassifier");
+    uml2Set.add("StructuredClassifier");
+    uml2Set.add("Extension");
+    uml2Set.add("ExtensionEnd");
+    uml2Set.add("Model");
+    uml2Set.add("OperationTemplateParameter");
+    uml2Set.add("StructuralFeature");
+    uml2Set.add("ConnectableElementTemplateParameter");
+    uml2Set.add("RedefinableTemplateSignature");
+    uml2Set.add("ClassifierTemplateParameter");
+    uml2Set.add("Expression");
+    uml2Set.add("Usage");
+    uml2Set.add("Enumeration");
+    uml2Set.add("EnumerationLiteral");
+    uml2Set.add("Slot");
+    uml2Set.add("InstanceSpecification");
+    uml2Set.add("PrimitiveType");
+    uml2Set.add("LiteralSpecification");
+    uml2Set.add("LiteralInteger");
+    uml2Set.add("LiteralString");
+    uml2Set.add("LiteralBoolean");
+    uml2Set.add("LiteralNull");
+    uml2Set.add("InstanceValue");
+    uml2Set.add("LiteralUnlimitedNatural");
+    uml2Set.add("OpaqueBehavior");
+    uml2Set.add("FunctionBehavior");
+    uml2Set.add("OpaqueAction");
+    uml2Set.add("StructuredActivityNode");
+    uml2Set.add("Activity");
+    uml2Set.add("Variable");
+    uml2Set.add("ActivityNode");
+    uml2Set.add("ActivityEdge");
+    uml2Set.add("ActivityPartition");
+    uml2Set.add("InterruptibleActivityRegion");
+    uml2Set.add("ActivityGroup");
+    uml2Set.add("ExceptionHandler");
+    uml2Set.add("ExecutableNode");
+    uml2Set.add("ObjectNode");
+    uml2Set.add("ObjectNodeOrderingKind");
+    uml2Set.add("InputPin");
+    uml2Set.add("OutputPin");
+    uml2Set.add("Action");
+    uml2Set.add("Pin");
+    uml2Set.add("CallAction");
+    uml2Set.add("InvocationAction");
+    uml2Set.add("SendSignalAction");
+    uml2Set.add("CallOperationAction");
+    uml2Set.add("CallBehaviorAction");
+    uml2Set.add("SequenceNode");
+    uml2Set.add("ControlNode");
+    uml2Set.add("ControlFlow");
+    uml2Set.add("InitialNode");
+    uml2Set.add("ActivityParameterNode");
+    uml2Set.add("ValuePin");
+    uml2Set.add("Message");
+    uml2Set.add("MessageSort");
+    uml2Set.add("MessageEnd");
+    uml2Set.add("Interaction");
+    uml2Set.add("Lifeline");
+    uml2Set.add("PartDecomposition");
+    uml2Set.add("GeneralOrdering");
+    uml2Set.add("OccurrenceSpecification");
+    uml2Set.add("InteractionOperand");
+    uml2Set.add("InteractionConstraint");
+    uml2Set.add("InteractionFragment");
+    uml2Set.add("Gate");
+    uml2Set.add("MessageKind");
+    uml2Set.add("InteractionUse");
+    uml2Set.add("ExecutionSpecification");
+    uml2Set.add("StateInvariant");
+    uml2Set.add("ActionExecutionSpecification");
+    uml2Set.add("BehaviorExecutionSpecification");
+    uml2Set.add("ExecutionEvent");
+    uml2Set.add("CreationEvent");
+    uml2Set.add("DestructionEvent");
+    uml2Set.add("SendOperationEvent");
+    uml2Set.add("MessageEvent");
+    uml2Set.add("SendSignalEvent");
+    uml2Set.add("MessageOccurrenceSpecification");
+    uml2Set.add("ExecutionOccurrenceSpecification");
+    uml2Set.add("ReceiveOperationEvent");
+    uml2Set.add("ReceiveSignalEvent");
+    uml2Set.add("Actor");
+    uml2Set.add("CallEvent");
+    uml2Set.add("ChangeEvent");
+    uml2Set.add("SignalEvent");
+    uml2Set.add("AnyReceiveEvent");
+    uml2Set.add("ForkNode");
+    uml2Set.add("FlowFinalNode");
+    uml2Set.add("FinalNode");
+    uml2Set.add("CentralBufferNode");
+    uml2Set.add("MergeNode");
+    uml2Set.add("DecisionNode");
+    uml2Set.add("ObjectFlow");
+    uml2Set.add("ActivityFinalNode");
+    uml2Set.add("ComponentRealization");
+    uml2Set.add("Component");
+    uml2Set.add("Node");
+    uml2Set.add("CommunicationPath");
+    uml2Set.add("Device");
+    uml2Set.add("ExecutionEnvironment");
+    uml2Set.add("CombinedFragment");
+    uml2Set.add("InteractionOperatorKind");
+    uml2Set.add("Continuation");
+    uml2Set.add("ConsiderIgnoreFragment");
+    uml2Set.add("CreateObjectAction");
+    uml2Set.add("DestroyObjectAction");
+    uml2Set.add("TestIdentityAction");
+    uml2Set.add("ReadSelfAction");
+    uml2Set.add("StructuralFeatureAction");
+    uml2Set.add("ReadStructuralFeatureAction");
+    uml2Set.add("WriteStructuralFeatureAction");
+    uml2Set.add("ClearStructuralFeatureAction");
+    uml2Set.add("RemoveStructuralFeatureValueAction");
+    uml2Set.add("AddStructuralFeatureValueAction");
+    uml2Set.add("LinkAction");
+    uml2Set.add("LinkEndData");
+    uml2Set.add("QualifierValue");
+    uml2Set.add("ReadLinkAction");
+    uml2Set.add("LinkEndCreationData");
+    uml2Set.add("CreateLinkAction");
+    uml2Set.add("WriteLinkAction");
+    uml2Set.add("DestroyLinkAction");
+    uml2Set.add("LinkEndDestructionData");
+    uml2Set.add("ClearAssociationAction");
+    uml2Set.add("BroadcastSignalAction");
+    uml2Set.add("SendObjectAction");
+    uml2Set.add("ValueSpecificationAction");
+    uml2Set.add("TimeExpression");
+    uml2Set.add("Observation");
+    uml2Set.add("Duration");
+    uml2Set.add("DurationInterval");
+    uml2Set.add("Interval");
+    uml2Set.add("TimeConstraint");
+    uml2Set.add("IntervalConstraint");
+    uml2Set.add("TimeInterval");
+    uml2Set.add("DurationConstraint");
+    uml2Set.add("TimeObservation");
+    uml2Set.add("DurationObservation");
+    uml2Set.add("FinalState");
+    uml2Set.add("TimeEvent");
+    uml2Set.add("VariableAction");
+    uml2Set.add("ReadVariableAction");
+    uml2Set.add("WriteVariableAction");
+    uml2Set.add("ClearVariableAction");
+    uml2Set.add("AddVariableValueAction");
+    uml2Set.add("RemoveVariableValueAction");
+    uml2Set.add("RaiseExceptionAction");
+    uml2Set.add("ActionInputPin");
+    uml2Set.add("InformationItem");
+    uml2Set.add("InformationFlow");
+    uml2Set.add("ReadExtentAction");
+    uml2Set.add("ReclassifyObjectAction");
+    uml2Set.add("ReadIsClassifiedObjectAction");
+    uml2Set.add("StartClassifierBehaviorAction");
+    uml2Set.add("ReadLinkObjectEndAction");
+    uml2Set.add("ReadLinkObjectEndQualifierAction");
+    uml2Set.add("CreateLinkObjectAction");
+    uml2Set.add("AcceptEventAction");
+    uml2Set.add("AcceptCallAction");
+    uml2Set.add("ReplyAction");
+    uml2Set.add("UnmarshallAction");
+    uml2Set.add("ReduceAction");
+    uml2Set.add("StartObjectBehaviorAction");
+    uml2Set.add("JoinNode");
+    uml2Set.add("DataStoreNode");
+    uml2Set.add("ConditionalNode");
+    uml2Set.add("Clause");
+    uml2Set.add("LoopNode");
+    uml2Set.add("ExpansionNode");
+    uml2Set.add("ExpansionRegion");
+    uml2Set.add("ExpansionKind");
+    uml2Set.add("ProtocolTransition");
+    uml2Set.add("AssociationClass");
+    uml2Set.add("StringEList");//specific
+  }
+
+  /**
+   * This method tests if the type of the parameter represented by the
+   * EStructuralFeature is an UML2 type
+   * @param sf EStructuralFeature corresponding to a parameter we want to
+   * obtain the type
+   * @return true if the EStructuralFeature represents a parameter whose type
+   * is an UML2 type.
+   */
+  private static boolean isUML2Type(EStructuralFeature sf) {
+    String typename = sf.getEType().getName();
+    return uml2Set.contains(typename);
+  }
+
+  /**
+   * This method tests if the type of the parameter represented by the
+   * String is an UML2 type
+   * @param typename String corresponding to the name of a parameter we want to
+   * obtain the type
+   * @return true if the String represents the name of a parameter whose type
+   * is an UML2 type.
+   */
+  private static boolean isUML2Type(String typename) {
+    return uml2Set.contains(typename);
+  }
+
+}//class
