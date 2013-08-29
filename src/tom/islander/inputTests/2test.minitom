@@ -1,3 +1,0 @@
-%match(subject) {
-  f(a(),g(y)) && ( g(z) << y || f(z,_) << y ) -> { System.out.println }
-}

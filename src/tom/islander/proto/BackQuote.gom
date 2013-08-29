@@ -1,9 +1,0 @@
-module BackQuote
-imports String Host Tom
-abstract syntax
-
-BackQuoteConstruct = BQVariable(Name:String)
-                   | BQVariableStar(Name:String)
-                   | BQUnamedVariable()
-                   | BQUnamedVariableStar()
-//       | BQComposite(Name:String)
