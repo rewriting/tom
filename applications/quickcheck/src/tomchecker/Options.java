@@ -1,5 +1,3 @@
-//TODO: rename level to depth
-
 package tomchecker;
 
 import org.kohsuke.args4j.*;
@@ -19,7 +17,7 @@ public class Options {
   public List<String> importTypes;
 
   @Option(name="-impp",usage="imports package", multiValued = true)
-  public List<String> importPackage;
+  public String importPackage;
 
   @Option(name="-i",usage="input this file",metaVar="INPUT")
   public File in = null;
@@ -27,14 +25,14 @@ public class Options {
   @Option(name="-pkg",usage="package")
   public String pkg = "tested";
 
-  @Option(name="-l",usage="test level",metaVar="LEVEL")
-  public int level = 5;
+  @Option(name="-d",usage="depth test",metaVar="DEPTH")
+  public int depth = 5;
 
   @Option(name="-v",usage="verbose")
   public int v = 0;
   
   @Option(name="-s",usage="shrink")
-  public int s = 0;
+  public boolean s = true;
   
   @Option(name="-q",usage="quotient")
   public int q = 2;

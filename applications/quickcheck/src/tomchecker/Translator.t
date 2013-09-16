@@ -1,19 +1,3 @@
-//TODO: il me semble que l'on ne peut pas choisir seule la méthode smallcheck pour vérifier un fichier, soit il fait appel aux deux méthodes soit qu'à quickcheck
-
-//TODO: Il faut comprendre à quoi sert projs variable, notamment dans le fichier Testing.java. In addition, projs is not a good name. (maybe I can modify prettyPrint, and remove the second parameter)
-
-//TODO: understand "index"
-
-//TODO: run the program with many properties at the same time
-
-//TODO Bien organiser et séparer les fichier property.file
-
-//TODO : comment as many properties as possible in the properties files
-
-//TODO : Vérifier si les implications et l'existential sont bien créés
-
-//TODO: rename level to depth
-
 package tomchecker;
 
 import tomchecker.proplang.PropLangAdaptor;
@@ -85,24 +69,26 @@ public class Translator{
 	}
 
 	// ---------------- Generate Code ---------------------------------------------------------------
-	public static String generateCode(PropList properties, int index, Map<String,String> methodCalls) {
-    StringBuffer methods = new StringBuffer();
+	public static String generateCode(PropList properties, int indexMethod, Map<String,String> methodCalls) {
+    StringBuffer code = new StringBuffer();
 
     %match (properties){
       PropList(property,t*) -> {
-      	index++;
-        methodCalls.put("checkProperty" + index, prettyProperty(`property, null));
-        methods.append(generateMethod(`property, index));
+      	indexMethod++;
+        methodCalls.put("checkProperty" + indexMethod, prettyProperty(`property, null));
+        code.append(generateMethod(`property, indexMethod));
         if(!`t.isEmptyPropList()){
-          methods.append(generateCode(`t, index, methodCalls));
+          code.append(generateCode(`t, indexMethod, methodCalls));
         }
       }
     }
-		return methods.toString();
+    
+		return code.toString();
 	}
 
 	// ---------------- Generate Method -------------------------------------------------------------
-	public static String generateMethod(Property property, int index) {
+	public static String generateMethod(Property property, int indexMethod) {
+    StringBuffer method = new StringBuffer();
     Map<String,String> varSet = variableSet(property);
     Map<String,String> projs = new HashMap<String,String>();
     int i = 1;
@@ -117,19 +103,23 @@ public class Translator{
 		// Existential Quantifier
     Boolean existential = false;
 
-		return
+		method.append(
 			%[
 				@CR+TAB@ //@`prettyProperty(property,null)@
-				@CR+TAB@ public static void checkProperty@index@(){
+				@CR+TAB@ public static void checkProperty@indexMethod@(){
 				@CR+TAB+TAB@ Set<F< @product@, Boolean>> preCond = new HashSet<F< @product@, Boolean>>();
 				@CR+TAB+TAB@ @generateBodyMethod(`property, varSet, projs, 0, product, existential)@
-				@CR+TAB@ };
-			]%;
- 	}
+				@CR+TAB@ }
+			]%
+		);
+
+		return method.toString();
+		
+	}
 
 	// ---------------- Generate Body Method --------------------------------------------------------
 	public static String generateBodyMethod(Property property, Map<String,String> varSet,
-																					Map<String,String> projs, int index, String product,
+																					Map<String,String> projs, int indexBody, String product,
 																					Boolean existential) {
 
     %match(property) {
@@ -138,36 +128,35 @@ public class Translator{
     					 generateEnumerations(varSet, product, existential);
 			}
 		  Implies(c,p) -> {
-		  	index++;
-	  		return generateFClass(`c, projs, index, product) +
-	  					 generateBodyMethod(`p, varSet, projs, index, product, existential);
+		  	indexBody++;
+	  		return generateFClass(`c, projs, indexBody, product) +
+	  					 generateBodyMethod(`p, varSet, projs, indexBody, product, existential);
   		}
 		  Exists(p) -> {
 		  	existential = true;
-		  	return generateBodyMethod(`p, varSet, projs, index, product, existential);
+		  	return generateBodyMethod(`p, varSet, projs, indexBody, product, existential);
 	  	}
 		}
 		return "";
 	}
 
-	//TODO: il faut comprendre l'usage de index dans cette fonction
 	// ---------------- Generate FClass ---------------------------------------------------------------
   // Generate the function corresponding to the property
-	public static String generateFClass(Cond cond, Map<String,String> projs, int index,
+	public static String generateFClass(Cond cond, Map<String,String> projs, int indexBody,
 																			String product) {
 
     // Function name
-    String funcName = index == 0 ? " prop" : " cond" + index;
+    String funcName = indexBody == 0 ? " prop" : " cond" + indexBody;
 
     StringBuffer result = new StringBuffer("");
 
-    // Pretty comment: e.g. swap(swap)) = e
     result.append(
-			%[ @CR+TAB+TAB@ F< @product@, Boolean> @funcName@ = new F< @product@, Boolean>() {
-				 @CR+TAB+TAB+TAB@ public Boolean apply(@product@ args) {
-				 @CR+TAB+TAB+TAB+TAB@ return @`prettyCond(cond, projs)@;
-				 @CR+TAB+TAB+TAB@ }
-				 @CR+TAB+TAB@ };
+			%[
+				@CR+TAB+TAB@ F< @product@, Boolean> @funcName@ = new F< @product@, Boolean>() {
+				@CR+TAB+TAB+TAB@ public Boolean apply(@product@ args) {
+				@CR+TAB+TAB+TAB+TAB@ return @`prettyCond(cond, projs)@;
+				@CR+TAB+TAB+TAB@ }
+				@CR+TAB+TAB@ };
 			]%
    	);
 
@@ -226,7 +215,7 @@ public class Translator{
     result.replace(start, end,");");
 
     int verbose = options.v;
-    int shrink = options.s;
+    boolean shrink = options.s;
     int numberOfTest = options.numOfTest;
     int quotient = options.q;
 
@@ -241,14 +230,14 @@ public class Translator{
 		if( (options.quick==false && options.small==false) || (options.quick==true) ){
       result.append(%[
 				@CR+TAB+TAB+TAB@ System.out.println("--Random Check--");
-				@CR+TAB+TAB+TAB@ Checker.quickCheckProd@numOfType@(@options.level@, enumeration, prop, @verbose@, @shrink@, @quotient@, preCond, BigInteger.valueOf(@numberOfTest@), @existential@); ]%);
+				@CR+TAB+TAB+TAB@ Checker.quickCheckProd@numOfType@(@options.depth@, enumeration, prop, @verbose@, @shrink@, @quotient@, preCond, BigInteger.valueOf(@numberOfTest@), @existential@); ]%);
 		}
 
 		// SmallCheck
 		if(options.small){
       result.append(%[
 				@CR+TAB+TAB+TAB@ System.out.println("--Exhaustive Check--");
-				@CR+TAB+TAB+TAB@ Checker.smallCheckProd@numOfType@(@options.level@, enumeration, prop, @verbose@, preCond, @existential@); ]%);
+				@CR+TAB+TAB+TAB@ Checker.smallCheckProd@numOfType@(@options.depth@, enumeration, prop, @verbose@, preCond, @existential@); ]%);
 		}
 		
     result.append(%[
@@ -428,8 +417,8 @@ public class Translator{
 	* @param typesPath imports for types
 	* @param programPath imports for functions
 	*/	
-	public static void propertyCheck(PropList properties, List<String> typesPath,
-																	 List<String> programPath) throws IOException {
+	public static void propertyCheck(PropList properties, List<String> typesPath, String programPath)
+																	 throws IOException {
  
 		//Constructing the content of check file
     String pkg = options.pkg == null ? "testedFile" : options.pkg;
@@ -443,6 +432,7 @@ public class Translator{
 				 @CR@ import java.math.BigInteger;
 				 @CR@ import tomchecker.*; ]%;
 
+		// Types Path
 		if(!typesPath.contains("no imports")){
 			for(String imp: typesPath) {
 				testingContent +=
@@ -450,10 +440,9 @@ public class Translator{
 			}
 		}
 
-		for(String imp: programPath) {
-			testingContent +=
-				%[ @CR@ import @imp@; ]%;
-		}
+		// Program Path
+		testingContent +=
+			%[ @CR@ import @programPath@; ]%;
 
 		testingContent += %[
 			@CR@ public class Testing { ]%;
@@ -473,7 +462,7 @@ public class Translator{
 				@CR+TAB+TAB@ System.out.println("@methodCalls.get(call)@");
 				@CR+TAB+TAB@ @call@(); ]%;
   	}
-
+  	
     testingContent += %[
 			@CR+TAB@ }
 		 	@CR@ }
@@ -604,7 +593,7 @@ public class Translator{
 			PropLangLexer lexer = new PropLangLexer(new ANTLRInputStream(fileInput));
 			CommonTokenStream tokens = new CommonTokenStream(lexer);
 			PropLangParser parser = new PropLangParser(tokens);
-
+			
 			// Parse the input expression 
 			Tree b = (Tree) parser.top().getTree();
 			PropList properties = (PropList) PropLangAdaptor.getTerm(b);
@@ -619,7 +608,7 @@ public class Translator{
 			/* 
 			* If arrays are empty, then there is no import. Without import, there cannot be a check file
 			* We can have none if the tested class is in the same package
-  		*/ 
+  		*/
 			propertyCheck(properties, options.importTypes, options.importPackage);
 
 		} catch(Exception e) {
