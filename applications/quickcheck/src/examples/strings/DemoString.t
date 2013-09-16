@@ -49,7 +49,7 @@ public class DemoString {
   public static Boolean subString(String s, String z) {
 	  return s.contains(z);
   }
-
+  
   // ---------------- main ------------------------------------------------------------------------
   public static void main(String args[]) {
 			
@@ -97,7 +97,7 @@ public class DemoString {
 		System.out.println( "subString(" + s2 + "," + sub1 + ") = " + subString(s2,sub1) );
 		System.out.println( "subString(" + s3 + "," + sub2 + ") = " + subString(s3,sub2) );
 		System.out.println( "subString(" + s5 + "," + sub3 + ") = " + subString(s5,sub3) );
-
+		
 		System.out.print("\n");
 	}
 
