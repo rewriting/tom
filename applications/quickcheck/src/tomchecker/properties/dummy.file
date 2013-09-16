@@ -14,7 +14,15 @@
 
 //DemoDummy.swap(DemoDummy.swap(e:Hoo)) != e:Hoo
 
-//DemoDummy.swap(e:Foo)==DemoDummy.swap(e:Foo) => ( DemoDummy.swap(DemoDummy.swap(e:Foo)) != e:Foo )
+//DemoDummy.swap(e:Foo) == DemoDummy.swap(e:Foo) => (
+//	DemoDummy.swap(DemoDummy.swap(e:Foo)) != e:Foo
+//)
+
+//DemoDummy.swap(m:Hoo) == DemoDummy.swap(k:Hoo) => (
+//	DemoDummy.swap(DemoDummy.swap(e:Foo)) != e:Foo
+//)
+
+//DemoDummy.setElement(DemoDummy.setElement(e:Foo,h:Hoo),h:Hoo) == DemoDummy.setElement(e:Foo,h:Hoo)
 
 // ---------------- Use of Existential Quantifiers (represented by $ character) -------------------
 
@@ -30,16 +38,12 @@
 
 //$ DemoDummy.swap(DemoDummy.swap(e:Hoo)) != e:Hoo
 
-//$ DemoDummy.swap(e:Foo)==DemoDummy.swap(e:Foo) => ( DemoDummy.swap(DemoDummy.swap(e:Foo)) != e:Foo )
+//$ DemoDummy.swap(e:Foo) == DemoDummy.swap(e:Foo) => (
+//		DemoDummy.swap(DemoDummy.swap(e:Foo)) != e:Foo
+//	)
 
+//$	DemoDummy.swap(m:Hoo) == DemoDummy.swap(k:Hoo) => (
+//		DemoDummy.swap(DemoDummy.swap(e:Foo)) != e:Foo
+//	)
 
-// ------- Not tested yet ----------------
-//DemoDummy.swap(m:Hoo) == DemoDummy.swap(k:Hoo) => (DemoDummy.swap(DemoDummy.swap(e:Foo)) != e:Foo)
-
-//Tested by QuickCheckProd2
-//DemoDummy.setElement(DemoDummy.setElement(e:Foo,h:Hoo),h:Hoo) == DemoDummy.setElement(e:Foo,h:Hoo)
-
-//$ DemoDummy.swap(m:Hoo) == DemoDummy.swap(k:Hoo) => (DemoDummy.swap(DemoDummy.swap(e:Foo)) != e:Foo)
-
-//Tested by QuickCheckProd2
 //$ DemoDummy.setElement(DemoDummy.setElement(e:Foo,h:Hoo),h:Hoo) == DemoDummy.setElement(e:Foo,h:Hoo)
