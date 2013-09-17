@@ -299,9 +299,6 @@ public class Translator{
 			Exists(prop) -> {
 				return "Exists( " + prettyProperty(`prop,projs) + " )";
 			}
-//			Exists(exp, prop) -> {
-//				return "Exists " + prettyExpr(`exp,projs) + " . ( " + prettyProperty(`prop,projs) + " )";
-//			}
 		}
 		return "";
 	}
