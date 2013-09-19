@@ -201,7 +201,9 @@ public class SimplePDLToPetriNet {
 
 
       //for generation of textual Petri nets usable as input for TINA
-      String outputName = "resultingPetri.net";
+
+      String prefix = args[0].substring(0, args[0].lastIndexOf('.'));
+      String outputName = prefix+"_resultingPetri.net";
       writer = new BufferedWriter(new OutputStreamWriter(new
             FileOutputStream(new File(outputName))));
 
