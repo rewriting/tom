@@ -1,5 +1,0 @@
-%include{ File1.tom }
-{return res;}
-package.class.method(T x, int y)
-%include{ File2.tom }
-{ return some.Composite.Term(); }

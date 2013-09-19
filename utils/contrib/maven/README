@@ -1,0 +1,12 @@
+==========
+2012-11-05
+==========
+
+Contribution from Philip Feucht, email: feucht@uni-koblenz.de
+Download page: http://iwmuser.uni-koblenz.de/~feucht/tom/tomStrings.zip
+
+This is an adaptation of jtom/examples/strings/ to Maven. It can be used as a
+starting point for projects. To get it running one may has to deploy the
+tom-runtime into a local repo. 
+
+Search for "maven deploy file" on your favorite research engine if in trouble.
