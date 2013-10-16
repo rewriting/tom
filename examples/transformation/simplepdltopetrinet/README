@@ -65,7 +65,10 @@ The following message should appear in standard output:
 # transitions        60082         12         12          0          0 #
 
 WARNING: Executing the same command on the second example will provoke the use
-of a huge amount of memory. Be sure to have few GB of free RAM.
+of a huge amount of memory. Be sure to have few GB of free RAM. For instance,
+the graphe reachability construction has been attempted on a 24 GB RAM server,
+and when checking the result 4 days after the beginning, the process was not
+finished and all RAM was used. The process has been stopped.
 
 Checking properties:
 
