@@ -27,11 +27,14 @@ Le générateur de modèles. Un type de modèle généré :
   virtuelle).
 
 models :
-Modèles en entrée, les bench*xmi ont été générés (sérialisation de ce que le
-générateur produit, utiles pour la transfo en ATL)
+Modèles utilisés en entrée. Les bench*.xmi ont été générés (sérialisation de ce
+que le générateur produit, utiles pour la transfo en ATL).
+Note : les fichier .xmi dont la taille dépasse 1 Mo (4000WD et +) ne sont pas
+intégrés au dépôt Git. Pour information, un modèle généré de 10000WD pèse 32Mo,
+160Mo pour 500000WD.
 
 results :
-Des réseaux de Petri résultaant, ainsi que les fichires de temps (*txt) pour
+Des réseaux de Petri résultaant, ainsi que les fichiers de temps (*txt) pour
 les benchs à 10 exécutions)
 
 snapshots :
@@ -42,6 +45,7 @@ expected :
 Quelques résultats attendus, pas utile pour les bench
 
 metamodels :
-Les MM src et tgt
+Les MM src et tgt.
 
-
+mappings :
+Les mappings générés par Tom-EMF.
