@@ -1,0 +1,120 @@
+
+
+%typeterm PNScenario  extends EObject {
+  implement { petrinetsemantics.TM3PetriNet.PNScenario }
+  is_sort(t) { $t instanceof petrinetsemantics.TM3PetriNet.PNScenario }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+
+%typeterm PNTrace  extends EObject {
+  implement { petrinetsemantics.TM3PetriNet.PNTrace }
+  is_sort(t) { $t instanceof petrinetsemantics.TM3PetriNet.PNTrace }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+
+%op PNTrace PNTrace(scenario : PNScenario) {
+  is_fsym(t) { $t instanceof petrinetsemantics.TM3PetriNet.PNTrace }
+  get_slot(scenario, t) { (petrinetsemantics.TM3PetriNet.PNScenario)$t.eGet($t.eClass().getEStructuralFeature("scenario")) } 
+  make(scenario) { constructPNTrace((petrinetsemantics.TM3PetriNet.PNTrace)petrinetsemantics.TM3PetriNet.TM3PetriNetFactory.eINSTANCE.create((EClass)petrinetsemantics.TM3PetriNet.TM3PetriNetPackage.eINSTANCE.getEClassifier("PNTrace")), new Object[]{ $scenario }) }
+  implement() { petrinetsemantics.TM3PetriNet.impl.PNTraceImpl }
+}
+
+public static <O extends org.eclipse.emf.ecore.EObject> O constructPNTrace(O o, Object[] objs) {
+  int i=0;
+  EList<EStructuralFeature> sfes = o.eClass().getEAllStructuralFeatures();
+  for(EStructuralFeature esf : sfes) {
+    if(esf.isChangeable()) {
+      o.eSet(esf, objs[i]);
+      i++;
+    }
+  }
+  return o;
+}
+
+%typeterm PNTraceEList {
+  implement { org.eclipse.emf.common.util.EList<petrinetsemantics.TM3PetriNet.PNTrace> }
+  is_sort(t) { $t instanceof org.eclipse.emf.common.util.EList<?> && (((org.eclipse.emf.common.util.EList<petrinetsemantics.TM3PetriNet.PNTrace>)$t).size() == 0 || (((org.eclipse.emf.common.util.EList<petrinetsemantics.TM3PetriNet.PNTrace>)$t).size()>0 && ((org.eclipse.emf.common.util.EList<petrinetsemantics.TM3PetriNet.PNTrace>)$t).get(0) instanceof petrinetsemantics.TM3PetriNet.PNTrace)) }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+
+%oparray PNTraceEList PNTraceEList ( PNTrace* ) {
+  is_fsym(t) { $t instanceof org.eclipse.emf.common.util.EList<?> && ($t.size() == 0 || ($t.size()>0 && $t.get(0) instanceof petrinetsemantics.TM3PetriNet.PNTrace)) }
+  make_empty(n) { new org.eclipse.emf.common.util.BasicEList<petrinetsemantics.TM3PetriNet.PNTrace>($n) }
+  make_append(e,l) { appendPNTraceEList($e,$l) }
+  get_element(l,n) { $l.get($n) }
+  get_size(l)      { $l.size() }
+}
+
+private static <O> org.eclipse.emf.common.util.EList<O> appendPNTraceEList(O e,org.eclipse.emf.common.util.EList<O> l) {
+  l.add(e);
+  return l;
+}
+
+%typeterm PNSimEvent  extends EObject {
+  implement { petrinetsemantics.TM3PetriNet.PNSimEvent }
+  is_sort(t) { $t instanceof petrinetsemantics.TM3PetriNet.PNSimEvent }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+
+%op PNSimEvent PNSimEvent(internal : boolean, date : int, name : String) {
+  is_fsym(t) { $t instanceof petrinetsemantics.TM3PetriNet.PNSimEvent }
+  get_slot(internal, t) { (java.lang.Boolean)$t.eGet($t.eClass().getEStructuralFeature("internal")) }
+  get_slot(date, t) { (java.lang.Integer)$t.eGet($t.eClass().getEStructuralFeature("date")) }
+  get_slot(name, t) { (java.lang.String)$t.eGet($t.eClass().getEStructuralFeature("name")) } 
+  get_default(internal) { false }
+  get_default(date) { 0 }
+  get_default(name) { "" }
+  make(internal, date, name) { constructPNSimEvent((petrinetsemantics.TM3PetriNet.PNSimEvent)petrinetsemantics.TM3PetriNet.TM3PetriNetFactory.eINSTANCE.create((EClass)petrinetsemantics.TM3PetriNet.TM3PetriNetPackage.eINSTANCE.getEClassifier("PNSimEvent")), new Object[]{ $internal, $date, $name }) }
+  implement() { petrinetsemantics.TM3PetriNet.impl.PNSimEventImpl }
+}
+
+public static <O extends org.eclipse.emf.ecore.EObject> O constructPNSimEvent(O o, Object[] objs) {
+  int i=0;
+  EList<EStructuralFeature> sfes = o.eClass().getEAllStructuralFeatures();
+  for(EStructuralFeature esf : sfes) {
+    if(esf.isChangeable()) {
+      o.eSet(esf, objs[i]);
+      i++;
+    }
+  }
+  return o;
+}
+
+%typeterm PNSimEventEList {
+  implement { org.eclipse.emf.common.util.EList<petrinetsemantics.TM3PetriNet.PNSimEvent> }
+  is_sort(t) { $t instanceof org.eclipse.emf.common.util.EList<?> && (((org.eclipse.emf.common.util.EList<petrinetsemantics.TM3PetriNet.PNSimEvent>)$t).size() == 0 || (((org.eclipse.emf.common.util.EList<petrinetsemantics.TM3PetriNet.PNSimEvent>)$t).size()>0 && ((org.eclipse.emf.common.util.EList<petrinetsemantics.TM3PetriNet.PNSimEvent>)$t).get(0) instanceof petrinetsemantics.TM3PetriNet.PNSimEvent)) }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+
+%oparray PNSimEventEList PNSimEventEList ( PNSimEvent* ) {
+  is_fsym(t) { $t instanceof org.eclipse.emf.common.util.EList<?> && ($t.size() == 0 || ($t.size()>0 && $t.get(0) instanceof petrinetsemantics.TM3PetriNet.PNSimEvent)) }
+  make_empty(n) { new org.eclipse.emf.common.util.BasicEList<petrinetsemantics.TM3PetriNet.PNSimEvent>($n) }
+  make_append(e,l) { appendPNSimEventEList($e,$l) }
+  get_element(l,n) { $l.get($n) }
+  get_size(l)      { $l.size() }
+}
+
+private static <O> org.eclipse.emf.common.util.EList<O> appendPNSimEventEList(O e,org.eclipse.emf.common.util.EList<O> l) {
+  l.add(e);
+  return l;
+}
+
+%op PNScenario PNScenario(traces : PNTraceEList, simEvents : PNSimEventEList) {
+  is_fsym(t) { $t instanceof petrinetsemantics.TM3PetriNet.PNScenario }
+  get_slot(traces, t) { (org.eclipse.emf.common.util.EList<petrinetsemantics.TM3PetriNet.PNTrace>)$t.eGet($t.eClass().getEStructuralFeature("traces")) }
+  get_slot(simEvents, t) { (org.eclipse.emf.common.util.EList<petrinetsemantics.TM3PetriNet.PNSimEvent>)$t.eGet($t.eClass().getEStructuralFeature("simEvents")) } 
+  make(traces, simEvents) { constructPNScenario((petrinetsemantics.TM3PetriNet.PNScenario)petrinetsemantics.TM3PetriNet.TM3PetriNetFactory.eINSTANCE.create((EClass)petrinetsemantics.TM3PetriNet.TM3PetriNetPackage.eINSTANCE.getEClassifier("PNScenario")), new Object[]{ $traces, $simEvents }) }
+  implement() { petrinetsemantics.TM3PetriNet.impl.PNScenarioImpl }
+}
+
+public static <O extends org.eclipse.emf.ecore.EObject> O constructPNScenario(O o, Object[] objs) {
+  int i=0;
+  EList<EStructuralFeature> sfes = o.eClass().getEAllStructuralFeatures();
+  for(EStructuralFeature esf : sfes) {
+    if(esf.isChangeable()) {
+      o.eSet(esf, objs[i]);
+      i++;
+    }
+  }
+  return o;
+}

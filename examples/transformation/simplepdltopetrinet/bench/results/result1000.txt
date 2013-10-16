@@ -1,0 +1,120 @@
+Test 1 :
+
+Starting...
+
+Generation of a process composed of 1000 WD.
+Generation done in 496 (ms).
+Transformation done in:
+  phase#1: 710 (ms).
+  phase#2: 491112 (ms).
+  total  : 491822 (ms).
+
+done.
+Test 2 :
+
+Starting...
+
+Generation of a process composed of 1000 WD.
+Generation done in 1823 (ms).
+Transformation done in:
+  phase#1: 2039 (ms).
+  phase#2: 434307 (ms).
+  total  : 436346 (ms).
+
+done.
+Test 3 :
+
+Starting...
+
+Generation of a process composed of 1000 WD.
+Generation done in 777 (ms).
+Transformation done in:
+  phase#1: 889 (ms).
+  phase#2: 531738 (ms).
+  total  : 532627 (ms).
+
+done.
+Test 4 :
+
+Starting...
+
+Generation of a process composed of 1000 WD.
+Generation done in 905 (ms).
+Transformation done in:
+  phase#1: 1062 (ms).
+  phase#2: 538902 (ms).
+  total  : 539964 (ms).
+
+done.
+Test 5 :
+
+Starting...
+
+Generation of a process composed of 1000 WD.
+Generation done in 452 (ms).
+Transformation done in:
+  phase#1: 654 (ms).
+  phase#2: 498051 (ms).
+  total  : 498705 (ms).
+
+done.
+Test 6 :
+
+Starting...
+
+Generation of a process composed of 1000 WD.
+Generation done in 483 (ms).
+Transformation done in:
+  phase#1: 672 (ms).
+  phase#2: 512923 (ms).
+  total  : 513595 (ms).
+
+done.
+Test 7 :
+
+Starting...
+
+Generation of a process composed of 1000 WD.
+Generation done in 1021 (ms).
+Transformation done in:
+  phase#1: 1356 (ms).
+  phase#2: 531952 (ms).
+  total  : 533308 (ms).
+
+done.
+Test 8 :
+
+Starting...
+
+Generation of a process composed of 1000 WD.
+Generation done in 778 (ms).
+Transformation done in:
+  phase#1: 1311 (ms).
+  phase#2: 511142 (ms).
+  total  : 512453 (ms).
+
+done.
+Test 9 :
+
+Starting...
+
+Generation of a process composed of 1000 WD.
+Generation done in 1491 (ms).
+Transformation done in:
+  phase#1: 2108 (ms).
+  phase#2: 473103 (ms).
+  total  : 475211 (ms).
+
+done.
+Test 10 :
+
+Starting...
+
+Generation of a process composed of 1000 WD.
+Generation done in 476 (ms).
+Transformation done in:
+  phase#1: 759 (ms).
+  phase#2: 549499 (ms).
+  total  : 550258 (ms).
+
+done.

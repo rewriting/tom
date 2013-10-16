@@ -1,0 +1,48 @@
+Generation of a process composed of 10 WD.
+Generation done in 251 (ms).
+Transformation done in:
+  phase#1: 19 (ms).
+  phase#2: 80 (ms).
+  total  : 99 (ms).
+
+Generation of a process composed of 100 WD.
+Generation done in 269 (ms).
+Transformation done in:
+  phase#1: 76 (ms).
+  phase#2: 891 (ms).
+  total  : 967 (ms).
+
+Generation of a process composed of 500 WD.
+Generation done in 317 (ms).
+Transformation done in:
+  phase#1: 249 (ms).
+  phase#2: 45768 (ms).
+  total  : 46017 (ms).
+
+Generation of a process composed of 1000 WD.
+Generation done in 369 (ms).
+Transformation done in:
+  phase#1: 522 (ms).
+  phase#2: 437047 (ms).
+  total  : 437569 (ms).
+
+2000 sur filip
+Generation done in 911 (ms).
+Saving into .xmi file.
+Model saved into .xmi file.
+Transformation done in:
+  phase#1: 1329 (ms).
+  phase#2: 3478385 (ms).
+  total  : 3479714 (ms).
+
+
+(motu-one)
+Generation of a process composed of 5000 WD.
+Generation done in 912 (ms).
+Transformation done in:
+  phase#1: 3409 (ms).
+  phase#2: 29158009 (ms).
+  total  : 29161418 (ms).
+
+  ~8h 6min 1s => déraisonnable sur une machine normale
+

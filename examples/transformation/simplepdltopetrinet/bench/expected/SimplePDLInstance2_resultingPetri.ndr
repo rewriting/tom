@@ -1,0 +1,216 @@
+t 315.0 390.0 root_start 0 w n
+t 405.0 425.0 root_finish 0 w n
+t 230.0 205.0 child1_start 0 w n
+t 325.0 165.0 child1_finish 0 w n
+t 235.0 330.0 R1_start 0 w n
+t 365.0 290.0 R1_finish 0 w n
+t 245.0 590.0 child2_start 0 w n
+t 210.0 635.0 child2_finish 0 w n
+t 225.0 455.0 R2_start 0 w n
+t 310.0 510.0 R2_finish 0 w n
+t 120.0 160.0 C11_start 0 w n
+t 210.0 85.0 C11_finish 0 w n
+t 275.0 85.0 C12_start 0 w n
+t 375.0 45.0 C12_finish 0 w n
+t 135.0 120.0 C13_start 0 w n
+t 250.0 55.0 C13_finish 0 w n
+t 390.0 160.0 C14_start 0 w n
+t 365.0 75.0 C14_finish 0 w n
+t 365.0 635.0 C21_start 0 w n
+t 330.0 695.0 C21_finish 0 w n
+t 310.0 710.0 C22_start 0 w n
+t 190.0 730.0 C22_finish 0 w n
+t 365.0 670.0 C23_start 0 w n
+t 290.0 745.0 C23_finish 0 w n
+t 125.0 590.0 C24_start 0 w n
+t 70.0 625.0 C24_finish 0 w n
+t 215.0 720.0 C25_start 0 w n
+t 135.0 750.0 C25_finish 0 w n
+t 110.0 615.0 C26_start 0 w n
+t 100.0 705.0 C26_finish 0 w n
+t 400.0 405.0 R3_start 0 w n
+t 525.0 405.0 R3_finish 0 w n
+p 270.0 375.0 root_ready 1 n
+p 360.0 410.0 root_running 0 n
+p 280.0 340.0 R1_ready 1 n
+p 270.0 435.0 R2_ready 1 n
+p 360.0 380.0 R3_ready 1 n
+p 400.0 345.0 R1_finished 0 n
+p 370.0 470.0 R2_finished 0 n
+p 475.0 425.0 R3_finished 0 n
+p 455.0 455.0 root_finished 0 n
+p 225.0 265.0 child1_ready 1 n
+p 275.0 190.0 child1_running 0 n
+p 170.0 200.0 C11_ready 1 n
+p 235.0 150.0 C12_ready 1 n
+p 175.0 175.0 C13_ready 1 n
+p 305.0 190.0 C14_ready 1 n
+p 275.0 125.0 C11_finished 0 n
+p 370.0 115.0 C12_finished 0 n
+p 315.0 105.0 C13_finished 0 n
+p 375.0 135.0 C14_finished 0 n
+p 355.0 225.0 child1_finished 0 n
+p 210.0 390.0 R1_started 0 n
+p 305.0 305.0 R1_running 0 n
+p 235.0 520.0 child2_ready 1 n
+p 220.0 595.0 child2_running 0 n
+p 305.0 590.0 C21_ready 1 n
+p 280.0 640.0 C22_ready 1 n
+p 310.0 620.0 C23_ready 1 n
+p 185.0 565.0 C24_ready 1 n
+p 230.0 645.0 C25_ready 1 n
+p 175.0 590.0 C26_ready 1 n
+p 265.0 665.0 C21_finished 0 n
+p 170.0 645.0 C22_finished 0 n
+p 245.0 695.0 C23_finished 0 n
+p 145.0 620.0 C24_finished 0 n
+p 160.0 695.0 C25_finished 0 n
+p 155.0 670.0 C26_finished 0 n
+p 255.0 565.0 child2_finished 0 n
+p 165.0 440.0 R2_started 0 n
+p 265.0 475.0 R2_running 0 n
+p 80.0 125.0 C11_started 0 n
+p 150.0 95.0 C11_running 0 n
+p 325.0 50.0 C12_started 0 n
+p 300.0 30.0 C12_running 0 n
+p 85.0 80.0 C13_started 0 n
+p 180.0 60.0 C13_running 0 n
+p 455.0 135.0 C14_started 0 n
+p 415.0 95.0 C14_running 0 n
+p 375.0 710.0 C21_started 0 n
+p 400.0 675.0 C21_running 0 n
+p 335.0 780.0 C22_started 0 n
+p 255.0 755.0 C22_running 0 n
+p 435.0 695.0 C23_started 0 n
+p 350.0 740.0 C23_running 0 n
+p 55.0 595.0 C24_started 0 n
+p 70.0 570.0 C24_running 0 n
+p 230.0 785.0 C25_started 0 n
+p 175.0 775.0 C25_running 0 n
+p 40.0 620.0 C26_started 0 n
+p 65.0 670.0 C26_running 0 n
+p 455.0 420.0 R3_started 0 n
+p 465.0 385.0 R3_running 0 n
+e root_ready root_start 1 n
+e root_start R3_ready 1 n
+e root_start R2_ready 1 n
+e root_start R1_ready 1 n
+e root_start root_running 1 n
+e root_running root_finish 1 n
+e R3_finished root_finish ?1 n
+e R2_finished root_finish ?1 n
+e R1_finished root_finish ?1 n
+e root_finish root_finished 1 n
+e child1_ready child1_start 1 n
+e child1_start C14_ready 1 n
+e child1_start C13_ready 1 n
+e child1_start C12_ready 1 n
+e child1_start C11_ready 1 n
+e child1_start child1_running 1 n
+e child1_running child1_finish 1 n
+e C14_finished child1_finish ?1 n
+e C13_finished child1_finish ?1 n
+e C12_finished child1_finish ?1 n
+e C11_finished child1_finish ?1 n
+e child1_finish child1_finished 1 n
+e R1_ready R1_start 1 n
+e R1_start child1_ready 1 n
+e R1_start R1_running 1 n
+e R1_start R1_started 1 n
+e R1_running R1_finish 1 n
+e child1_finished R1_finish ?1 n
+e R1_finish R1_finished 1 n
+e child2_ready child2_start 1 n
+e child2_start C26_ready 1 n
+e child2_start C25_ready 1 n
+e child2_start C24_ready 1 n
+e child2_start C23_ready 1 n
+e child2_start C22_ready 1 n
+e child2_start C21_ready 1 n
+e child2_start child2_running 1 n
+e child2_running child2_finish 1 n
+e C26_finished child2_finish ?1 n
+e C25_finished child2_finish ?1 n
+e C24_finished child2_finish ?1 n
+e C23_finished child2_finish ?1 n
+e C22_finished child2_finish ?1 n
+e C21_finished child2_finish ?1 n
+e child2_finish child2_finished 1 n
+e R2_ready R2_start 1 n
+e R1_started R2_start ?1 n
+e R2_start child2_ready 1 n
+e R2_start R2_running 1 n
+e R2_start R2_started 1 n
+e R2_running R2_finish 1 n
+e child2_finished R2_finish ?1 n
+e R2_finish R2_finished 1 n
+e C11_ready C11_start 1 n
+e C11_start C11_running 1 n
+e C11_start C11_started 1 n
+e C11_running C11_finish 1 n
+e C11_finish C11_finished 1 n
+e C12_ready C12_start 1 n
+e C11_finished C12_start ?1 n
+e C12_start C12_running 1 n
+e C12_start C12_started 1 n
+e C12_running C12_finish 1 n
+e C12_finish C12_finished 1 n
+e C13_ready C13_start 1 n
+e C11_started C13_start ?1 n
+e C13_start C13_running 1 n
+e C13_start C13_started 1 n
+e C13_running C13_finish 1 n
+e C13_finish C13_finished 1 n
+e C14_ready C14_start 1 n
+e C14_start C14_running 1 n
+e C14_start C14_started 1 n
+e C14_running C14_finish 1 n
+e C13_finished C14_finish ?1 n
+e C12_started C14_finish ?1 n
+e C14_finish C14_finished 1 n
+e C21_ready C21_start 1 n
+e C21_start C21_running 1 n
+e C21_start C21_started 1 n
+e C21_running C21_finish 1 n
+e C21_finish C21_finished 1 n
+e C22_ready C22_start 1 n
+e C21_started C22_start ?1 n
+e C22_start C22_running 1 n
+e C22_start C22_started 1 n
+e C22_running C22_finish 1 n
+e C22_finish C22_finished 1 n
+e C23_ready C23_start 1 n
+e C21_started C23_start ?1 n
+e C23_start C23_running 1 n
+e C23_start C23_started 1 n
+e C23_running C23_finish 1 n
+e C23_finish C23_finished 1 n
+e C24_ready C24_start 1 n
+e C22_finished C24_start ?1 n
+e C24_start C24_running 1 n
+e C24_start C24_started 1 n
+e C24_running C24_finish 1 n
+e C24_finish C24_finished 1 n
+e C25_ready C25_start 1 n
+e C23_finished C25_start ?1 n
+e C25_start C25_running 1 n
+e C25_start C25_started 1 n
+e C25_running C25_finish 1 n
+e C25_finish C25_finished 1 n
+e C26_ready C26_start 1 n
+e C24_finished C26_start ?1 n
+e C26_start C26_running 1 n
+e C26_start C26_started 1 n
+e C26_running C26_finish 1 n
+e C25_finished C26_finish ?1 n
+e C26_finish C26_finished 1 n
+e R3_ready R3_start 1 n
+e R2_finished R3_start ?1 n
+e R1_finished R3_start ?1 n
+e R3_start R3_running 1 n
+e R3_start R3_started 1 n
+e R3_running R3_finish 1 n
+e R3_finish R3_finished 1 n
+h SimplePDLInstance2_resultingPetri small
+
+
