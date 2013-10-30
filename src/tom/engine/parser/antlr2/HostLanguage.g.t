@@ -1014,6 +1014,9 @@ TRANSFORMATION
 TRACELINK
     : "%tracelink" {selector().push("tomlexer");}
     ;
+//RESOLVELINK
+//    : "%resolvelink" {selector().push("tomlexer");}
+//    ;
 RESOLVE
     : "%resolve" {selector().push("tomlexer");}
     ;
