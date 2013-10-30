@@ -141,7 +141,13 @@ public class SimplePDLToPetriNet {
   public static void main(String[] args) {
     System.out.println("\nStarting...\n");
 
-    XMIResourceImpl resource = new XMIResourceImpl();
+    //System.out.println("Generation of a process composed of "+args[0]+" WD.");
+    //long startChrono = System.currentTimeMillis();
+    //SimplePDLSemantics.DDMMSimplePDL.Process p_root = GenModel.getModel(Integer.parseInt(args[0]));
+    //long duration = System.currentTimeMillis()-startChrono;
+    //System.out.println("Generation done in "+duration+" (ms).");
+
+    XMIResource resource = new XMIResourceImpl();
     SimplePDLSemantics.DDMMSimplePDL.Process p_root;
     Map opts = new HashMap();
     opts.put(XMIResource.OPTION_SCHEMA_LOCATION, java.lang.Boolean.TRUE);
@@ -196,13 +202,23 @@ public class SimplePDLToPetriNet {
       //NOTE: force the user to give the link as first parameter, and target
       //model as second one
       Strategy transformer = `SimplePDLToPetriNet(translator.tom__linkClass,translator.pn);
+      //long startChrono = System.currentTimeMillis();
       transformer.visit(p_root, new EcoreContainmentIntrospector());
+      //long t1duration = System.currentTimeMillis()-startChrono;
       `TopDown(tom__StratResolve_SimplePDLToPetriNet(translator.tom__linkClass,translator.pn)).visit(translator.pn, new EcoreContainmentIntrospector());
-
+      //long endChrono = System.currentTimeMillis();
+      //long t2duration = endChrono-startChrono-t1duration;
+      //long totalduration = endChrono-startChrono;
+      //System.out.println("Transformation done in:\n  phase#1: "+t1duration+" (ms).\n  phase#2: "+t2duration+" (ms).\n  total  : "+totalduration+" (ms).\n");
 
       //for generation of textual Petri nets usable as input for TINA
-
+      //with .xmi
       String prefix = args[0].substring(0, args[0].lastIndexOf('.'));
+      
+      //for tests
+      // no output needed
+      /* */
+      //String prefix = args[0];
       String outputName = prefix+"_resultingPetri.net";
       writer = new BufferedWriter(new OutputStreamWriter(new
             FileOutputStream(new File(outputName))));
@@ -214,6 +230,7 @@ public class SimplePDLToPetriNet {
       System.out.println("\nFinish to generate "+outputName+" file, usable as input for TINA");
       writer.flush();
       writer.close();
+      
       System.out.println("done.");
 
     } catch(VisitFailure e) {
