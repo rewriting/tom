@@ -29,10 +29,10 @@ import java.io.Writer;
 import tom.library.utils.LinkClass;
 import tom.library.sl.*;
 import tom.library.emf.*;
-import tom.library.utils.MyECrossReferenceAdapter;
+//import tom.library.utils.MyECrossReferenceAdapter;
 
 
-public class SimplePDLToPetriNet {
+public class SimplePDLToPetriNet_noresolve {
 
   %include{ sl.tom }
   %include{ LinkClass.tom }
@@ -48,18 +48,18 @@ public class SimplePDLToPetriNet {
   %include{ mappings/TM3PetriNetPackage.tom }
   %include{ mappings/TM3SimplePDLPackage.tom }
 
-  %typeterm SimplePDLToPetriNet { implement { SimplePDLToPetriNet }}
+  %typeterm SimplePDLToPetriNet_noresolve { implement { SimplePDLToPetriNet_no_resolve }}
   
   private static Writer writer;
   private static PetriNet pn = null;
   private static LinkClass tom__linkClass;
 
-  public SimplePDLToPetriNet() {
+  public SimplePDLToPetriNet_noresolve() {
     this.tom__linkClass = new LinkClass();
   }
 
 
-  %transformation SimplePDLToPetriNet(tom__linkClass:LinkClass,pn:PetriNet) : "metamodels/SimplePDLSemantics_updated.ecore" -> "metamodels/PetriNetSemantics_updated.ecore" {
+  %transformation SimplePDLToPetriNet_noresolve(tom__linkClass:LinkClass,pn:PetriNet) : "metamodels/SimplePDLSemantics_updated.ecore" -> "metamodels/PetriNetSemantics_updated.ecore" {
 
     definition P2PN traversal `TopDown(P2PN(tom__linkClass,pn)) {
       p@Process[name=name] -> {
@@ -76,7 +76,7 @@ public class SimplePDLToPetriNet {
         `Arc(t_finish, p_running, pn,ArcKindnormal(), 1);
         `Arc(p_finished, t_finish, pn,ArcKindnormal(), 1);
 
-        WorkDefinition from = `p.getFrom();
+        /*WorkDefinition from = `p.getFrom();
         if (from!=null) {
           Transition source = %resolve(from:WorkDefinition,t_start:Transition);
           source.setNet(pn);
@@ -85,7 +85,7 @@ public class SimplePDLToPetriNet {
           Transition target = %resolve(from:WorkDefinition,t_finish:Transition);
           target.setNet(pn);
           Arc tmpZoomOut = `Arc(target,p_finished,pn,ArcKindread_arc(), 1);
-        }
+        }*/
       }
     }
 
@@ -110,14 +110,14 @@ public class SimplePDLToPetriNet {
         `Arc(p_finished, t_finish, pn,ArcKindnormal(), 1);
 
         //TEST without any resolve
-        SimplePDLSemantics.DDMMSimplePDL.Process parent = `wd.getParent();
+        /*SimplePDLSemantics.DDMMSimplePDL.Process parent = `wd.getParent();
         Transition source = %resolve(parent:Process,t_start:Transition);
         source.setNet(pn);
         Arc tmpDistribute = `Arc(p_ready,source,pn,ArcKindnormal(), 1);
 
         Transition target = %resolve(parent:Process,t_finish:Transition);
         target.setNet(pn);
-        Arc tmpRejoin = `Arc(target,p_finished,pn,ArcKindread_arc(), 1);
+        Arc tmpRejoin = `Arc(target,p_finished,pn,ArcKindread_arc(), 1);*/
       }
     }
 
@@ -127,12 +127,15 @@ public class SimplePDLToPetriNet {
         Transition target= null;
         WorkDefinition pre = `p;
         WorkDefinition suc = `s;
+        //We replace resolve creation by "true" elements; a Petri net
+        //is created if a WS is present, therefore we can compare execution
+        //time of the first phase
         %match(linkType) { 
-          (WorkSequenceTypefinishToFinish|WorkSequenceTypefinishToStart)[] -> { source = %resolve(pre:WorkDefinition,p_finished:Place); }
-          (WorkSequenceTypestartToStart|WorkSequenceTypestartToFinish)[]   -> { source = %resolve(pre:WorkDefinition,p_started:Place); }
+          (WorkSequenceTypefinishToFinish|WorkSequenceTypefinishToStart)[] -> { source  = `Place("p_finished_if_it_was_a_resolve", pn,ArcEList(), ArcEList(), 1); }
+          (WorkSequenceTypestartToStart|WorkSequenceTypestartToFinish)[]   -> { source  = `Place("p_started_if_it_was_a_resolve", pn,ArcEList(), ArcEList(), 1); }
 
-          (WorkSequenceTypefinishToStart|WorkSequenceTypestartToStart)[]   -> { target = %resolve(suc:WorkDefinition,t_start:Transition); }
-          (WorkSequenceTypestartToFinish|WorkSequenceTypefinishToFinish)[] -> { target = %resolve(suc:WorkDefinition,t_finish:Transition); }
+          (WorkSequenceTypefinishToStart|WorkSequenceTypestartToStart)[]   -> { target = `Transition("t_start_if_it_was_a_resolve", pn,ArcEList(), ArcEList(), 1, 1); }
+          (WorkSequenceTypestartToFinish|WorkSequenceTypefinishToFinish)[] -> { target = `Transition("t_finish_if_it_was_a_resolve", pn,ArcEList(), ArcEList(), 1, 1); }
         }
         source.setNet(pn);
         target.setNet(pn);
@@ -192,7 +195,7 @@ public class SimplePDLToPetriNet {
       ws1.setParent(p_root);
       ws2.setParent(p_child);
     }*/
-    SimplePDLToPetriNet translator = new SimplePDLToPetriNet();
+    SimplePDLToPetriNet_noresolve translator = new SimplePDLToPetriNet_noresolve();
 
     try {
       translator.pn = `PetriNet(NodeEList(),ArcEList(),"main");
@@ -210,15 +213,16 @@ public class SimplePDLToPetriNet {
 
       //NOTE: force the user to give the link as first parameter, and target
       //model as second one
-      Strategy transformer = `SimplePDLToPetriNet(translator.tom__linkClass,translator.pn);
+      Strategy transformer = `SimplePDLToPetriNet_noresolve(translator.tom__linkClass,translator.pn);
       startChrono = System.currentTimeMillis();
       transformer.visit(p_root, new EcoreContainmentIntrospector());
       long t1duration = System.currentTimeMillis()-startChrono;
-      `TopDown(tom__StratResolve_SimplePDLToPetriNet(translator.tom__linkClass,translator.pn)).visit(translator.pn, new EcoreContainmentIntrospector());
+      //`TopDown(tom__StratResolve_SimplePDLToPetriNet_noresolve(translator.tom__linkClass,translator.pn)).visit(translator.pn, new EcoreContainmentIntrospector());
       long endChrono = System.currentTimeMillis();
-      long t2duration = endChrono-startChrono-t1duration;
+      //long t2duration = endChrono-startChrono-t1duration;
       long totalduration = endChrono-startChrono;
-      System.out.println("Transformation done in:\n  phase#1: "+t1duration+" (ms).\n  phase#2: "+t2duration+" (ms).\n  total  : "+totalduration+" (ms).\n");
+      //System.out.println("Transformation done in:\n  phase#1: "+t1duration+" (ms).\n  phase#2: "+t2duration+" (ms).\n  total  : "+totalduration+" (ms).\n");
+      System.out.println("Transformation done in:\n  phase#1: "+t1duration+" (ms).\n  total  : "+totalduration+" (ms).\n");
 
       //for generation of textual Petri nets usable as input for TINA
 
@@ -262,16 +266,16 @@ public class SimplePDLToPetriNet {
 
   %strategy PrintTransition() extends Identity() {
     visit Transition {
-      tr@ResolveWorkDefinitionTransition[tom_resolve_element_attribute_name=name] -> {
+      /*tr@ResolveWorkDefinitionTransition[tom_resolve_element_attribute_name=name] -> {
         System.out.println("tr resolve " + `name);
         return `tr;
-      }
+      }*/
 
-      ptr@ResolveProcessTransition[tom_resolve_element_attribute_name=name] -> {
+      /*ptr@ResolveProcessTransition[tom_resolve_element_attribute_name=name] -> {
 
         System.out.println("tr process resolve " + `name);
         return `ptr;
-      }
+      }*/
 
       Transition[name=name,incomings=sources,outgoings=targets] -> {
         String s = " ";
@@ -293,10 +297,10 @@ public class SimplePDLToPetriNet {
   
   %strategy PrintPlace() extends Identity() {
     visit Place {
-      pl@ResolveWorkDefinitionPlace[tom_resolve_element_attribute_name=name] -> {
+      /*pl@ResolveWorkDefinitionPlace[tom_resolve_element_attribute_name=name] -> {
         System.out.println("pl resolve " + `name);
         return `pl;
-      }
+      }*/
 
       Place[name=name,initialMarking=w] && w!=0 -> {
         multiPrint("pl " + `name + " " + "(" + `w + ")");

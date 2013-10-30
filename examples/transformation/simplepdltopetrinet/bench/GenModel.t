@@ -16,8 +16,40 @@ public class GenModel {
   %include{ emf/ecore.tom }
   %include{ mappings/DDMMSimplePDLPackage.tom }
 
+  /*
+     Example #1:
+      - 1 Process composed of N WD
+      - variant :
+        a) WD are linked by finish2start WS
+        b) WD are independant, therefore there is no WS
+        c) WD are fully independant, the Process is not modelized and
+           synchronized with WD
+   */
+
+  /*public static SimplePDLSemantics.DDMMSimplePDL.Process getModel(int exNbr,
+      char variant, int wdNbr) {
+    switch(exNbr) {
+      case 1:
+        return example1(variant, wdNbr);
+    }
+    return null;
+  }
+
+  public static SimplePDLSemantics.DDMMSimplePDL.Process example1(char variant,
+      int wdNbr) {
+    switch(variant) {
+      case 'a':
+        return getModel1a(wdNbr, );
+      case 'b':
+      return ;
+    }
+    return null;
+  }*/
+
+
   //public static void main(String[] args) {
-  public static SimplePDLSemantics.DDMMSimplePDL.Process getModel(int wdNbr) {
+  public static SimplePDLSemantics.DDMMSimplePDL.Process getModel(int wdNbr,
+      boolean hasWS) {
     SimplePDLSemantics.DDMMSimplePDL.Process p_root = `Process("root",ProcessElementEList(),null);
 
     //ProcessElementEList pel = `ProcessElementEList();
@@ -27,18 +59,24 @@ public class GenModel {
       `WorkDefinition(null,WorkSequenceEList(),WorkSequenceEList(),"WD0",null);
     pel = `ProcessElementEList(wd0);
 
-    WorkDefinition wd1 = null;
-    WorkSequence ws1 = null;
     String name = "";
-    for(int i=1;i<wdNbr;i++) {
-      name = "WD"+i;
-      wd1 = `WorkDefinition(null,WorkSequenceEList(),WorkSequenceEList(),name,null);
-      pel = `ProcessElementEList(wd1,pel*);
-      //pel = pel.append(wd1);
-      ws1 = `WorkSequence(null,WorkSequenceTypefinishToStart(),wd0,wd1);
-      pel = `ProcessElementEList(ws1,pel*);
-      //pel = pel.append(ws1);
-      wd0 = wd1;
+    WorkDefinition wd1 = null;
+    if(hasWS) {
+      WorkSequence ws1 = null;
+      for(int i=1;i<wdNbr;i++) {
+        name = "WD"+i;
+        wd1 = `WorkDefinition(null,WorkSequenceEList(),WorkSequenceEList(),name,null);
+        pel = `ProcessElementEList(wd1,pel*);
+        ws1 = `WorkSequence(null,WorkSequenceTypefinishToStart(),wd0,wd1);
+        pel = `ProcessElementEList(ws1,pel*);
+        wd0 = wd1;
+      }
+    } else {
+      for(int i=1;i<wdNbr;i++) {
+        name = "WD"+i;
+        wd1 = `WorkDefinition(null,WorkSequenceEList(),WorkSequenceEList(),name,null);
+        pel = `ProcessElementEList(wd1,pel*);
+      }
     }
     p_root = `Process("root",pel,null);
     %match(pel) {
@@ -92,12 +130,12 @@ public class GenModel {
     }
   }
 
-  public static void genXMIModel(int wdNbr) {
+  public static void genXMIModel(int wdNbr, boolean hasWS) {
     XMIResource resource = new XMIResourceImpl();
     //getModel(wdNbr)
-    SimplePDLSemantics.DDMMSimplePDL.Process process = getModel(wdNbr);
+    SimplePDLSemantics.DDMMSimplePDL.Process process = getModel(wdNbr, hasWS);
     resource.getContents().add(process);
-    File output = new File(".","bench"+wdNbr+".xmi");
+    File output = new File(".","bench"+wdNbr+(hasWS?"wWS":"noWS")+".xmi");
     try {
     FileOutputStream outputStream = new FileOutputStream(output);
     resource.save(outputStream, new HashMap<Object,Object>());
