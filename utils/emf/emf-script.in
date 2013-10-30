@@ -69,7 +69,7 @@ fi
 TOM_LIB="${@TOM_HOME@}/lib"
 TOM_JAR="${TOM_LIB}/tom-compiler-full.jar:${TOM_LIB}/tom-runtime-full.jar"
 #TOM_EMF="${TOM_LIB}/tools/org.eclipse.emf.common_2.5.0.v200906151043.jar:${TOM_LIB}/tools/org.eclipse.emf.ecore_2.5.0.v200906151043.jar"
-TOM_EMF=`echo ${TOM_LIB}/tools/org.eclipse.emf.*.jar | tr ' ' ':'`
+TOM_EMF=`echo ${TOM_LIB}/tools/org.eclipse.*.jar | tr ' ' ':'`
 
 JAVACMD=java$JAVA_ARGS
 

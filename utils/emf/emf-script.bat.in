@@ -32,7 +32,7 @@ set TOM_JAR=%TOM_LIB%\tom-compiler-full.jar;%TOM_LIB%\tom-runtime-full.jar
 
 rem This loops doesn't seem to work correctly
 rem set TOM_EMF=
-rem for /f "delims=" %%a in ('dir /b %TOM_LIB%\tools\org.eclipse.emf.*.jar') do (
+rem for /f "delims=" %%a in ('dir /b %TOM_LIB%\tools\org.eclipse.*.jar') do (
 rem call :SUBROUTINE %%a
 rem )
 
