@@ -28,13 +28,66 @@ package tom.library.utils;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentHashMap;
 import org.eclipse.emf.ecore.EObject;
+import java.util.Set;
+import java.util.HashSet;
 
 public class LinkClass {
   private ConcurrentMap<EObject,ReferenceClass> table;
+  /* 
+   * Test a new way of implementing resolution phase
+   * If this approach is kept, we should rename the class, the functions and
+   * the attributes.
+   * Implementation and data structures might also be changed
+   * */
+  private Set<EObject> tracedReferences;
+  private Set<EObject> resolveObjects;
 
   public LinkClass() {
     this.table = new ConcurrentHashMap<EObject,ReferenceClass>();
+    this.tracedReferences = new HashSet<EObject>();
+    this.resolveObjects = new HashSet<EObject>();
   }
+
+  /* tracedReferences related functions */
+  public Set<EObject> getTraced() {
+    return this.tracedReferences;
+  }
+
+  public boolean keepTrace(EObject traced) {
+    return this.tracedReferences.add(traced);
+  }
+
+  public boolean remove(EObject o) {
+    return this.tracedReferences.remove(o);
+  }
+
+  public boolean hasBeenReferenced(EObject o) {
+    return this.tracedReferences.contains(o);
+  }
+
+  public int tracedSize() {
+    return this.tracedReferences.size();
+  }
+
+  /* resolveObjects related functions */
+
+  public Set<EObject> getResolve() {
+    return this.resolveObjects;
+  }
+
+  public boolean traceResolve(EObject resolve) {
+    return this.resolveObjects.add(resolve);
+  }
+
+  public boolean resolveExists(EObject resolve) {
+    return this.resolveObjects.contains(resolve);
+  }
+
+  public int resolveObjectsSize() {
+    return this.resolveObjects.size();
+  }
+
+////////////////
 
   public ReferenceClass put(EObject key, ReferenceClass value) {
     return this.table.put(key,value);
