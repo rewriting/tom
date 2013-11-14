@@ -1,0 +1,120 @@
+
+
+%typeterm SPDLScenario  extends EObject {
+  implement { SimplePDLSemantics.TM3SimplePDL.SPDLScenario }
+  is_sort(t) { $t instanceof SimplePDLSemantics.TM3SimplePDL.SPDLScenario }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+
+%typeterm SPDLTrace  extends EObject {
+  implement { SimplePDLSemantics.TM3SimplePDL.SPDLTrace }
+  is_sort(t) { $t instanceof SimplePDLSemantics.TM3SimplePDL.SPDLTrace }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+
+%op SPDLTrace SPDLTrace(scenario : SPDLScenario) {
+  is_fsym(t) { $t instanceof SimplePDLSemantics.TM3SimplePDL.SPDLTrace }
+  get_slot(scenario, t) { (SimplePDLSemantics.TM3SimplePDL.SPDLScenario)$t.eGet($t.eClass().getEStructuralFeature("scenario")) } 
+  make(scenario) { constructSPDLTrace((SimplePDLSemantics.TM3SimplePDL.SPDLTrace)SimplePDLSemantics.TM3SimplePDL.TM3SimplePDLFactory.eINSTANCE.create((EClass)SimplePDLSemantics.TM3SimplePDL.TM3SimplePDLPackage.eINSTANCE.getEClassifier("SPDLTrace")), new Object[]{ $scenario }) }
+  implement() { SimplePDLSemantics.TM3SimplePDL.impl.SPDLTraceImpl }
+}
+
+public static <O extends org.eclipse.emf.ecore.EObject> O constructSPDLTrace(O o, Object[] objs) {
+  int i=0;
+  EList<EStructuralFeature> sfes = o.eClass().getEAllStructuralFeatures();
+  for(EStructuralFeature esf : sfes) {
+    if(esf.isChangeable()) {
+      o.eSet(esf, objs[i]);
+      i++;
+    }
+  }
+  return o;
+}
+
+%typeterm SPDLTraceEList {
+  implement { org.eclipse.emf.common.util.EList<SimplePDLSemantics.TM3SimplePDL.SPDLTrace> }
+  is_sort(t) { $t instanceof org.eclipse.emf.common.util.EList<?> && (((org.eclipse.emf.common.util.EList<SimplePDLSemantics.TM3SimplePDL.SPDLTrace>)$t).size() == 0 || (((org.eclipse.emf.common.util.EList<SimplePDLSemantics.TM3SimplePDL.SPDLTrace>)$t).size()>0 && ((org.eclipse.emf.common.util.EList<SimplePDLSemantics.TM3SimplePDL.SPDLTrace>)$t).get(0) instanceof SimplePDLSemantics.TM3SimplePDL.SPDLTrace)) }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+
+%oparray SPDLTraceEList SPDLTraceEList ( SPDLTrace* ) {
+  is_fsym(t) { $t instanceof org.eclipse.emf.common.util.EList<?> && ($t.size() == 0 || ($t.size()>0 && $t.get(0) instanceof SimplePDLSemantics.TM3SimplePDL.SPDLTrace)) }
+  make_empty(n) { new org.eclipse.emf.common.util.BasicEList<SimplePDLSemantics.TM3SimplePDL.SPDLTrace>($n) }
+  make_append(e,l) { appendSPDLTraceEList($e,$l) }
+  get_element(l,n) { $l.get($n) }
+  get_size(l)      { $l.size() }
+}
+
+private static <O> org.eclipse.emf.common.util.EList<O> appendSPDLTraceEList(O e,org.eclipse.emf.common.util.EList<O> l) {
+  l.add(e);
+  return l;
+}
+
+%typeterm SPDLSimEvent  extends EObject {
+  implement { SimplePDLSemantics.TM3SimplePDL.SPDLSimEvent }
+  is_sort(t) { $t instanceof SimplePDLSemantics.TM3SimplePDL.SPDLSimEvent }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+
+%op SPDLSimEvent SPDLSimEvent(internal : boolean, date : int, name : String) {
+  is_fsym(t) { $t instanceof SimplePDLSemantics.TM3SimplePDL.SPDLSimEvent }
+  get_slot(internal, t) { (java.lang.Boolean)$t.eGet($t.eClass().getEStructuralFeature("internal")) }
+  get_slot(date, t) { (java.lang.Integer)$t.eGet($t.eClass().getEStructuralFeature("date")) }
+  get_slot(name, t) { (java.lang.String)$t.eGet($t.eClass().getEStructuralFeature("name")) } 
+  get_default(internal) { false }
+  get_default(date) { 0 }
+  get_default(name) { "" }
+  make(internal, date, name) { constructSPDLSimEvent((SimplePDLSemantics.TM3SimplePDL.SPDLSimEvent)SimplePDLSemantics.TM3SimplePDL.TM3SimplePDLFactory.eINSTANCE.create((EClass)SimplePDLSemantics.TM3SimplePDL.TM3SimplePDLPackage.eINSTANCE.getEClassifier("SPDLSimEvent")), new Object[]{ $internal, $date, $name }) }
+  implement() { SimplePDLSemantics.TM3SimplePDL.impl.SPDLSimEventImpl }
+}
+
+public static <O extends org.eclipse.emf.ecore.EObject> O constructSPDLSimEvent(O o, Object[] objs) {
+  int i=0;
+  EList<EStructuralFeature> sfes = o.eClass().getEAllStructuralFeatures();
+  for(EStructuralFeature esf : sfes) {
+    if(esf.isChangeable()) {
+      o.eSet(esf, objs[i]);
+      i++;
+    }
+  }
+  return o;
+}
+
+%typeterm SPDLSimEventEList {
+  implement { org.eclipse.emf.common.util.EList<SimplePDLSemantics.TM3SimplePDL.SPDLSimEvent> }
+  is_sort(t) { $t instanceof org.eclipse.emf.common.util.EList<?> && (((org.eclipse.emf.common.util.EList<SimplePDLSemantics.TM3SimplePDL.SPDLSimEvent>)$t).size() == 0 || (((org.eclipse.emf.common.util.EList<SimplePDLSemantics.TM3SimplePDL.SPDLSimEvent>)$t).size()>0 && ((org.eclipse.emf.common.util.EList<SimplePDLSemantics.TM3SimplePDL.SPDLSimEvent>)$t).get(0) instanceof SimplePDLSemantics.TM3SimplePDL.SPDLSimEvent)) }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+
+%oparray SPDLSimEventEList SPDLSimEventEList ( SPDLSimEvent* ) {
+  is_fsym(t) { $t instanceof org.eclipse.emf.common.util.EList<?> && ($t.size() == 0 || ($t.size()>0 && $t.get(0) instanceof SimplePDLSemantics.TM3SimplePDL.SPDLSimEvent)) }
+  make_empty(n) { new org.eclipse.emf.common.util.BasicEList<SimplePDLSemantics.TM3SimplePDL.SPDLSimEvent>($n) }
+  make_append(e,l) { appendSPDLSimEventEList($e,$l) }
+  get_element(l,n) { $l.get($n) }
+  get_size(l)      { $l.size() }
+}
+
+private static <O> org.eclipse.emf.common.util.EList<O> appendSPDLSimEventEList(O e,org.eclipse.emf.common.util.EList<O> l) {
+  l.add(e);
+  return l;
+}
+
+%op SPDLScenario SPDLScenario(traces : SPDLTraceEList, simEvents : SPDLSimEventEList) {
+  is_fsym(t) { $t instanceof SimplePDLSemantics.TM3SimplePDL.SPDLScenario }
+  get_slot(traces, t) { (org.eclipse.emf.common.util.EList<SimplePDLSemantics.TM3SimplePDL.SPDLTrace>)$t.eGet($t.eClass().getEStructuralFeature("traces")) }
+  get_slot(simEvents, t) { (org.eclipse.emf.common.util.EList<SimplePDLSemantics.TM3SimplePDL.SPDLSimEvent>)$t.eGet($t.eClass().getEStructuralFeature("simEvents")) } 
+  make(traces, simEvents) { constructSPDLScenario((SimplePDLSemantics.TM3SimplePDL.SPDLScenario)SimplePDLSemantics.TM3SimplePDL.TM3SimplePDLFactory.eINSTANCE.create((EClass)SimplePDLSemantics.TM3SimplePDL.TM3SimplePDLPackage.eINSTANCE.getEClassifier("SPDLScenario")), new Object[]{ $traces, $simEvents }) }
+  implement() { SimplePDLSemantics.TM3SimplePDL.impl.SPDLScenarioImpl }
+}
+
+public static <O extends org.eclipse.emf.ecore.EObject> O constructSPDLScenario(O o, Object[] objs) {
+  int i=0;
+  EList<EStructuralFeature> sfes = o.eClass().getEAllStructuralFeatures();
+  for(EStructuralFeature esf : sfes) {
+    if(esf.isChangeable()) {
+      o.eSet(esf, objs[i]);
+      i++;
+    }
+  }
+  return o;
+}

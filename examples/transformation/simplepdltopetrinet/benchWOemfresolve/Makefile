@@ -1,6 +1,6 @@
 FILE=SimplePDLToPetriNet
 FILE_NOR=SimplePDLToPetriNet_noresolve
-WD=500
+WD=100
 HASWS=true #false #
 #ARG=models/DefaultSimplePDLInstance.xmi
 #ARG=models/SimplePDLInstance2.xmi
@@ -16,8 +16,8 @@ default: run
 %.java: %.t
 	tom ${OPTS} $< 
 
-noresolve: ${FILE_NOR}.class
-	java -cp ${LOCAL_CLASSPATH} ${FILE_NOR} ${WD} ${HASWS}
+#noresolve: ${FILE_NOR}.class
+#	java -cp ${LOCAL_CLASSPATH} ${FILE_NOR} ${WD} ${HASWS}
 
 run: ${FILE}.class
 	java -cp ${LOCAL_CLASSPATH} ${FILE} ${WD} ${HASWS}
@@ -25,12 +25,12 @@ run: ${FILE}.class
 ${FILE}.java:
 	tom ${OPTS} ${FILE} GenModel.t
 
-${FILE_NOR}.java:
-	tom ${OPTS} ${FILE_NOR} GenModel.t
+#${FILE_NOR}.java:
+#	tom ${OPTS} ${FILE_NOR} GenModel.t
 
-${FILE}.class: ${FILE}.java
+${FILE}.class: ${FILE}.java GenModel.java
 	javac -cp ${LOCAL_CLASSPATH} ${FILE}.java
 
 clean:
-	rm -f *class ${FILE}.java ${FILE_NOR}.java GenModel.java
-
+	#rm -f *class ${FILE}.java ${FILE_NOR}.java
+	rm -f *class GenModel.java

@@ -1,0 +1,51 @@
+======
+README
+======
+
+-------
+Contenu
+-------
+
+Makefile :
+Compile, lance la transfo avec 10 en argument par défaut.
+
+bench.sh <arg> :
+Lance 10 exécutions de la transformation pour <arg> WD (donc deux fois plus de
+sources)
+
+SimplePDLToPetriNet.t :
+La transformation initiale. J'ai éliminé l'affichage en sourtie ainsi que la
+génération du fichier de sortie pour TINA. Je laisse en affichage les mesures
+de temps des phases (je mesure aussi la génération du modèle, mais c'est au
+début)
+
+GenModel.t :
+Le générateur de modèles. Un type de modèle généré :
+- 1 Processus composé de N WD (N étant l'argument de la fonction de
+  génération), tous chaînés par des WS f2s.
+- TODO: faire le même, sans WS (et éventuellement sans P, juste une racine
+  virtuelle).
+
+models :
+Modèles utilisés en entrée. Les bench*.xmi ont été générés (sérialisation de ce
+que le générateur produit, utiles pour la transfo en ATL).
+Note : les fichier .xmi dont la taille dépasse 1 Mo (4000WD et +) ne sont pas
+intégrés au dépôt Git. Pour information, un modèle généré de 10000WD pèse 32Mo,
+160Mo pour 500000WD.
+
+results :
+Des réseaux de Petri résultaant, ainsi que les fichiers de temps (*txt) pour
+les benchs à 10 exécutions)
+
+snapshots :
+Images issues de jprofiler, j'en laisse une seule pour le moment, les autres
+étant similaires.
+
+expected :
+Quelques résultats attendus, pas utile pour les bench
+
+metamodels :
+Les MM src et tgt.
+
+mappings :
+Les mappings générés par Tom-EMF.

@@ -1,0 +1,80 @@
+
+
+%typeterm DynamicWorkDefinition  extends WorkDefinition {
+  implement { SimplePDLSemantics.SDMMSimplePDL.DynamicWorkDefinition }
+  is_sort(t) { $t instanceof SimplePDLSemantics.SDMMSimplePDL.DynamicWorkDefinition }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+
+%typeterm ExecutionState  {
+  implement { SimplePDLSemantics.SDMMSimplePDL.ExecutionState }
+  is_sort(t) { $t instanceof SimplePDLSemantics.SDMMSimplePDL.ExecutionState }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+
+%op ExecutionState ExecutionStatenotStarted() {
+  is_fsym(t) { t == SimplePDLSemantics.SDMMSimplePDL.ExecutionState.get("notStarted") }
+  make() { (SimplePDLSemantics.SDMMSimplePDL.ExecutionState)SimplePDLSemantics.SDMMSimplePDL.SDMMSimplePDLFactory.eINSTANCE.createFromString((EDataType)SimplePDLSemantics.SDMMSimplePDL.SDMMSimplePDLPackage.eINSTANCE.getExecutionState(), "notStarted") }
+}
+
+%op ExecutionState ExecutionStaterunning() {
+  is_fsym(t) { t == SimplePDLSemantics.SDMMSimplePDL.ExecutionState.get("running") }
+  make() { (SimplePDLSemantics.SDMMSimplePDL.ExecutionState)SimplePDLSemantics.SDMMSimplePDL.SDMMSimplePDLFactory.eINSTANCE.createFromString((EDataType)SimplePDLSemantics.SDMMSimplePDL.SDMMSimplePDLPackage.eINSTANCE.getExecutionState(), "running") }
+}
+
+%op ExecutionState ExecutionStatefinished() {
+  is_fsym(t) { t == SimplePDLSemantics.SDMMSimplePDL.ExecutionState.get("finished") }
+  make() { (SimplePDLSemantics.SDMMSimplePDL.ExecutionState)SimplePDLSemantics.SDMMSimplePDL.SDMMSimplePDLFactory.eINSTANCE.createFromString((EDataType)SimplePDLSemantics.SDMMSimplePDL.SDMMSimplePDLPackage.eINSTANCE.getExecutionState(), "finished") }
+}
+
+%typeterm TimeState  {
+  implement { SimplePDLSemantics.SDMMSimplePDL.TimeState }
+  is_sort(t) { $t instanceof SimplePDLSemantics.SDMMSimplePDL.TimeState }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+
+%op TimeState TimeStatetooEarly() {
+  is_fsym(t) { t == SimplePDLSemantics.SDMMSimplePDL.TimeState.get("tooEarly") }
+  make() { (SimplePDLSemantics.SDMMSimplePDL.TimeState)SimplePDLSemantics.SDMMSimplePDL.SDMMSimplePDLFactory.eINSTANCE.createFromString((EDataType)SimplePDLSemantics.SDMMSimplePDL.SDMMSimplePDLPackage.eINSTANCE.getTimeState(), "tooEarly") }
+}
+
+%op TimeState TimeStateinTime() {
+  is_fsym(t) { t == SimplePDLSemantics.SDMMSimplePDL.TimeState.get("inTime") }
+  make() { (SimplePDLSemantics.SDMMSimplePDL.TimeState)SimplePDLSemantics.SDMMSimplePDL.SDMMSimplePDLFactory.eINSTANCE.createFromString((EDataType)SimplePDLSemantics.SDMMSimplePDL.SDMMSimplePDLPackage.eINSTANCE.getTimeState(), "inTime") }
+}
+
+%op TimeState TimeStatetooLate() {
+  is_fsym(t) { t == SimplePDLSemantics.SDMMSimplePDL.TimeState.get("tooLate") }
+  make() { (SimplePDLSemantics.SDMMSimplePDL.TimeState)SimplePDLSemantics.SDMMSimplePDL.SDMMSimplePDLFactory.eINSTANCE.createFromString((EDataType)SimplePDLSemantics.SDMMSimplePDL.SDMMSimplePDLPackage.eINSTANCE.getTimeState(), "tooLate") }
+}
+
+%include { float.tom }
+
+%op DynamicWorkDefinition DynamicWorkDefinition(parent : Process, linksToPredecessors : WorkSequenceEList, linksToSuccessors : WorkSequenceEList, name : String, process : Process, state : ExecutionState, time : TimeState, timeElapsed : float) {
+  is_fsym(t) { $t instanceof SimplePDLSemantics.SDMMSimplePDL.DynamicWorkDefinition }
+  get_slot(parent, t) { (SimplePDLSemantics.DDMMSimplePDL.Process)$t.eGet($t.eClass().getEStructuralFeature("parent")) }
+  get_slot(linksToPredecessors, t) { (org.eclipse.emf.common.util.EList<SimplePDLSemantics.DDMMSimplePDL.WorkSequence>)$t.eGet($t.eClass().getEStructuralFeature("linksToPredecessors")) }
+  get_slot(linksToSuccessors, t) { (org.eclipse.emf.common.util.EList<SimplePDLSemantics.DDMMSimplePDL.WorkSequence>)$t.eGet($t.eClass().getEStructuralFeature("linksToSuccessors")) }
+  get_slot(name, t) { (java.lang.String)$t.eGet($t.eClass().getEStructuralFeature("name")) }
+  get_slot(process, t) { (SimplePDLSemantics.DDMMSimplePDL.Process)$t.eGet($t.eClass().getEStructuralFeature("process")) }
+  get_slot(state, t) { (SimplePDLSemantics.SDMMSimplePDL.ExecutionState)$t.eGet($t.eClass().getEStructuralFeature("state")) }
+  get_slot(time, t) { (SimplePDLSemantics.SDMMSimplePDL.TimeState)$t.eGet($t.eClass().getEStructuralFeature("time")) }
+  get_slot(timeElapsed, t) { (java.lang.Float)$t.eGet($t.eClass().getEStructuralFeature("timeElapsed")) } 
+  get_default(state) { `ExecutionStatenotStarted() }
+  get_default(time) { `TimeStatetooEarly() }
+  get_default(timeElapsed) { 0.0 }
+  make(parent, linksToPredecessors, linksToSuccessors, name, process, state, time, timeElapsed) { constructDynamicWorkDefinition((SimplePDLSemantics.SDMMSimplePDL.DynamicWorkDefinition)SimplePDLSemantics.SDMMSimplePDL.SDMMSimplePDLFactory.eINSTANCE.create((EClass)SimplePDLSemantics.SDMMSimplePDL.SDMMSimplePDLPackage.eINSTANCE.getEClassifier("DynamicWorkDefinition")), new Object[]{ $parent, $linksToPredecessors, $linksToSuccessors, $name, $process, $state, $time, $timeElapsed }) }
+  implement() { SimplePDLSemantics.SDMMSimplePDL.impl.DynamicWorkDefinitionImpl }
+}
+
+public static <O extends org.eclipse.emf.ecore.EObject> O constructDynamicWorkDefinition(O o, Object[] objs) {
+  int i=0;
+  EList<EStructuralFeature> sfes = o.eClass().getEAllStructuralFeatures();
+  for(EStructuralFeature esf : sfes) {
+    if(esf.isChangeable()) {
+      o.eSet(esf, objs[i]);
+      i++;
+    }
+  }
+  return o;
+}

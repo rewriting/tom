@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="ASCII"?>
+<simplepdl.ddmm:Process xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:simplepdl.ddmm="simplepdl.ddmm" name="root">
+  <processElements xsi:type="simplepdl.ddmm:WorkSequence" linkType="finishToStart" predecessor="//@processElements.3" successor="//@processElements.1"/>
+  <processElements xsi:type="simplepdl.ddmm:WorkDefinition" linksToPredecessors="//@processElements.0" name="WD9"/>
+  <processElements xsi:type="simplepdl.ddmm:WorkSequence" linkType="finishToStart" predecessor="//@processElements.5" successor="//@processElements.3"/>
+  <processElements xsi:type="simplepdl.ddmm:WorkDefinition" linksToPredecessors="//@processElements.2" linksToSuccessors="//@processElements.0" name="WD8"/>
+  <processElements xsi:type="simplepdl.ddmm:WorkSequence" linkType="finishToStart" predecessor="//@processElements.7" successor="//@processElements.5"/>
+  <processElements xsi:type="simplepdl.ddmm:WorkDefinition" linksToPredecessors="//@processElements.4" linksToSuccessors="//@processElements.2" name="WD7"/>
+  <processElements xsi:type="simplepdl.ddmm:WorkSequence" linkType="finishToStart" predecessor="//@processElements.9" successor="//@processElements.7"/>
+  <processElements xsi:type="simplepdl.ddmm:WorkDefinition" linksToPredecessors="//@processElements.6" linksToSuccessors="//@processElements.4" name="WD6"/>
+  <processElements xsi:type="simplepdl.ddmm:WorkSequence" linkType="finishToStart" predecessor="//@processElements.11" successor="//@processElements.9"/>
+  <processElements xsi:type="simplepdl.ddmm:WorkDefinition" linksToPredecessors="//@processElements.8" linksToSuccessors="//@processElements.6" name="WD5"/>
+  <processElements xsi:type="simplepdl.ddmm:WorkSequence" linkType="finishToStart" predecessor="//@processElements.13" successor="//@processElements.11"/>
+  <processElements xsi:type="simplepdl.ddmm:WorkDefinition" linksToPredecessors="//@processElements.10" linksToSuccessors="//@processElements.8" name="WD4"/>
+  <processElements xsi:type="simplepdl.ddmm:WorkSequence" linkType="finishToStart" predecessor="//@processElements.15" successor="//@processElements.13"/>
+  <processElements xsi:type="simplepdl.ddmm:WorkDefinition" linksToPredecessors="//@processElements.12" linksToSuccessors="//@processElements.10" name="WD3"/>
+  <processElements xsi:type="simplepdl.ddmm:WorkSequence" linkType="finishToStart" predecessor="//@processElements.17" successor="//@processElements.15"/>
+  <processElements xsi:type="simplepdl.ddmm:WorkDefinition" linksToPredecessors="//@processElements.14" linksToSuccessors="//@processElements.12" name="WD2"/>
+  <processElements xsi:type="simplepdl.ddmm:WorkSequence" linkType="finishToStart" predecessor="//@processElements.18" successor="//@processElements.17"/>
+  <processElements xsi:type="simplepdl.ddmm:WorkDefinition" linksToPredecessors="//@processElements.16" linksToSuccessors="//@processElements.14" name="WD1"/>
+  <processElements xsi:type="simplepdl.ddmm:WorkDefinition" linksToSuccessors="//@processElements.16" name="WD0"/>
+</simplepdl.ddmm:Process>

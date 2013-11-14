@@ -1,0 +1,185 @@
+
+
+%typeterm PetriNet  extends EObject {
+  implement { petrinetsemantics.DDMMPetriNet.PetriNet }
+  is_sort(t) { $t instanceof petrinetsemantics.DDMMPetriNet.PetriNet }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+
+%typeterm Node  extends EObject {
+  implement { petrinetsemantics.DDMMPetriNet.Node }
+  is_sort(t) { $t instanceof petrinetsemantics.DDMMPetriNet.Node }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+
+%include { string.tom }
+
+%typeterm Arc  extends EObject {
+  implement { petrinetsemantics.DDMMPetriNet.Arc }
+  is_sort(t) { $t instanceof petrinetsemantics.DDMMPetriNet.Arc }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+
+%typeterm ArcKind  {
+  implement { petrinetsemantics.DDMMPetriNet.ArcKind }
+  is_sort(t) { $t instanceof petrinetsemantics.DDMMPetriNet.ArcKind }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+
+%op ArcKind ArcKindnormal() {
+  is_fsym(t) { t == petrinetsemantics.DDMMPetriNet.ArcKind.get("normal") }
+  make() { (petrinetsemantics.DDMMPetriNet.ArcKind)petrinetsemantics.DDMMPetriNet.DDMMPetriNetFactory.eINSTANCE.createFromString((EDataType)petrinetsemantics.DDMMPetriNet.DDMMPetriNetPackage.eINSTANCE.getArcKind(), "normal") }
+}
+
+%op ArcKind ArcKindread_arc() {
+  is_fsym(t) { t == petrinetsemantics.DDMMPetriNet.ArcKind.get("read_arc") }
+  make() { (petrinetsemantics.DDMMPetriNet.ArcKind)petrinetsemantics.DDMMPetriNet.DDMMPetriNetFactory.eINSTANCE.createFromString((EDataType)petrinetsemantics.DDMMPetriNet.DDMMPetriNetPackage.eINSTANCE.getArcKind(), "read_arc") }
+}
+
+%include { int.tom }
+
+%op Arc Arc(target : Node, source : Node, net : PetriNet, kind : ArcKind, weight : int) {
+  is_fsym(t) { $t instanceof petrinetsemantics.DDMMPetriNet.Arc }
+  get_slot(target, t) { (petrinetsemantics.DDMMPetriNet.Node)$t.eGet($t.eClass().getEStructuralFeature("target")) }
+  get_slot(source, t) { (petrinetsemantics.DDMMPetriNet.Node)$t.eGet($t.eClass().getEStructuralFeature("source")) }
+  get_slot(net, t) { (petrinetsemantics.DDMMPetriNet.PetriNet)$t.eGet($t.eClass().getEStructuralFeature("net")) }
+  get_slot(kind, t) { (petrinetsemantics.DDMMPetriNet.ArcKind)$t.eGet($t.eClass().getEStructuralFeature("kind")) }
+  get_slot(weight, t) { (java.lang.Integer)$t.eGet($t.eClass().getEStructuralFeature("weight")) } 
+  get_default(kind) { `ArcKindnormal() }
+  get_default(weight) { 0 }
+  make(target, source, net, kind, weight) { constructArc((petrinetsemantics.DDMMPetriNet.Arc)petrinetsemantics.DDMMPetriNet.DDMMPetriNetFactory.eINSTANCE.create((EClass)petrinetsemantics.DDMMPetriNet.DDMMPetriNetPackage.eINSTANCE.getEClassifier("Arc")), new Object[]{ $target, $source, $net, $kind, $weight }) }
+  implement() { petrinetsemantics.DDMMPetriNet.impl.ArcImpl }
+}
+
+public static <O extends org.eclipse.emf.ecore.EObject> O constructArc(O o, Object[] objs) {
+  int i=0;
+  EList<EStructuralFeature> sfes = o.eClass().getEAllStructuralFeatures();
+  for(EStructuralFeature esf : sfes) {
+    if(esf.isChangeable()) {
+      o.eSet(esf, objs[i]);
+      i++;
+    }
+  }
+  return o;
+}
+
+%typeterm ArcEList {
+  implement { org.eclipse.emf.common.util.EList<petrinetsemantics.DDMMPetriNet.Arc> }
+  is_sort(t) { $t instanceof org.eclipse.emf.common.util.EList<?> && (((org.eclipse.emf.common.util.EList<petrinetsemantics.DDMMPetriNet.Arc>)$t).size() == 0 || (((org.eclipse.emf.common.util.EList<petrinetsemantics.DDMMPetriNet.Arc>)$t).size()>0 && ((org.eclipse.emf.common.util.EList<petrinetsemantics.DDMMPetriNet.Arc>)$t).get(0) instanceof petrinetsemantics.DDMMPetriNet.Arc)) }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+
+%oparray ArcEList ArcEList ( Arc* ) {
+  is_fsym(t) { $t instanceof org.eclipse.emf.common.util.EList<?> && ($t.size() == 0 || ($t.size()>0 && $t.get(0) instanceof petrinetsemantics.DDMMPetriNet.Arc)) }
+  make_empty(n) { new org.eclipse.emf.common.util.BasicEList<petrinetsemantics.DDMMPetriNet.Arc>($n) }
+  make_append(e,l) { appendArcEList($e,$l) }
+  get_element(l,n) { $l.get($n) }
+  get_size(l)      { $l.size() }
+}
+
+private static <O> org.eclipse.emf.common.util.EList<O> appendArcEList(O e,org.eclipse.emf.common.util.EList<O> l) {
+  l.add(e);
+  return l;
+}
+
+%typeterm NodeEList {
+  implement { org.eclipse.emf.common.util.EList<petrinetsemantics.DDMMPetriNet.Node> }
+  is_sort(t) { $t instanceof org.eclipse.emf.common.util.EList<?> && (((org.eclipse.emf.common.util.EList<petrinetsemantics.DDMMPetriNet.Node>)$t).size() == 0 || (((org.eclipse.emf.common.util.EList<petrinetsemantics.DDMMPetriNet.Node>)$t).size()>0 && ((org.eclipse.emf.common.util.EList<petrinetsemantics.DDMMPetriNet.Node>)$t).get(0) instanceof petrinetsemantics.DDMMPetriNet.Node)) }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+
+%oparray NodeEList NodeEList ( Node* ) {
+  is_fsym(t) { $t instanceof org.eclipse.emf.common.util.EList<?> && ($t.size() == 0 || ($t.size()>0 && $t.get(0) instanceof petrinetsemantics.DDMMPetriNet.Node)) }
+  make_empty(n) { new org.eclipse.emf.common.util.BasicEList<petrinetsemantics.DDMMPetriNet.Node>($n) }
+  make_append(e,l) { appendNodeEList($e,$l) }
+  get_element(l,n) { $l.get($n) }
+  get_size(l)      { $l.size() }
+}
+
+private static <O> org.eclipse.emf.common.util.EList<O> appendNodeEList(O e,org.eclipse.emf.common.util.EList<O> l) {
+  l.add(e);
+  return l;
+}
+
+%op PetriNet PetriNet(nodes : NodeEList, arcs : ArcEList, name : String) {
+  is_fsym(t) { $t instanceof petrinetsemantics.DDMMPetriNet.PetriNet }
+  get_slot(nodes, t) { (org.eclipse.emf.common.util.EList<petrinetsemantics.DDMMPetriNet.Node>)$t.eGet($t.eClass().getEStructuralFeature("nodes")) }
+  get_slot(arcs, t) { (org.eclipse.emf.common.util.EList<petrinetsemantics.DDMMPetriNet.Arc>)$t.eGet($t.eClass().getEStructuralFeature("arcs")) }
+  get_slot(name, t) { (java.lang.String)$t.eGet($t.eClass().getEStructuralFeature("name")) } 
+  make(nodes, arcs, name) { constructPetriNet((petrinetsemantics.DDMMPetriNet.PetriNet)petrinetsemantics.DDMMPetriNet.DDMMPetriNetFactory.eINSTANCE.create((EClass)petrinetsemantics.DDMMPetriNet.DDMMPetriNetPackage.eINSTANCE.getEClassifier("PetriNet")), new Object[]{ $nodes, $arcs, $name }) }
+  implement() { petrinetsemantics.DDMMPetriNet.impl.PetriNetImpl }
+}
+
+public static <O extends org.eclipse.emf.ecore.EObject> O constructPetriNet(O o, Object[] objs) {
+  int i=0;
+  EList<EStructuralFeature> sfes = o.eClass().getEAllStructuralFeatures();
+  for(EStructuralFeature esf : sfes) {
+    if(esf.isChangeable()) {
+      o.eSet(esf, objs[i]);
+      i++;
+    }
+  }
+  return o;
+}
+
+%typeterm Transition  extends Node {
+  implement { petrinetsemantics.DDMMPetriNet.Transition }
+  is_sort(t) { $t instanceof petrinetsemantics.DDMMPetriNet.Transition }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+
+%op Transition Transition(name : String, net : PetriNet, outgoings : ArcEList, incomings : ArcEList, min_time : int, max_time : int) {
+  is_fsym(t) { $t instanceof petrinetsemantics.DDMMPetriNet.Transition }
+  get_slot(name, t) { (java.lang.String)$t.eGet($t.eClass().getEStructuralFeature("name")) }
+  get_slot(net, t) { (petrinetsemantics.DDMMPetriNet.PetriNet)$t.eGet($t.eClass().getEStructuralFeature("net")) }
+  get_slot(outgoings, t) { (org.eclipse.emf.common.util.EList<petrinetsemantics.DDMMPetriNet.Arc>)$t.eGet($t.eClass().getEStructuralFeature("outgoings")) }
+  get_slot(incomings, t) { (org.eclipse.emf.common.util.EList<petrinetsemantics.DDMMPetriNet.Arc>)$t.eGet($t.eClass().getEStructuralFeature("incomings")) }
+  get_slot(min_time, t) { (java.lang.Integer)$t.eGet($t.eClass().getEStructuralFeature("min_time")) }
+  get_slot(max_time, t) { (java.lang.Integer)$t.eGet($t.eClass().getEStructuralFeature("max_time")) } 
+  get_default(min_time) { 0 }
+  get_default(max_time) { 0 }
+  make(name, net, outgoings, incomings, min_time, max_time) { constructTransition((petrinetsemantics.DDMMPetriNet.Transition)petrinetsemantics.DDMMPetriNet.DDMMPetriNetFactory.eINSTANCE.create((EClass)petrinetsemantics.DDMMPetriNet.DDMMPetriNetPackage.eINSTANCE.getEClassifier("Transition")), new Object[]{ $name, $net, $outgoings, $incomings, $min_time, $max_time }) }
+  implement() { petrinetsemantics.DDMMPetriNet.impl.TransitionImpl }
+}
+
+public static <O extends org.eclipse.emf.ecore.EObject> O constructTransition(O o, Object[] objs) {
+  int i=0;
+  EList<EStructuralFeature> sfes = o.eClass().getEAllStructuralFeatures();
+  for(EStructuralFeature esf : sfes) {
+    if(esf.isChangeable()) {
+      o.eSet(esf, objs[i]);
+      i++;
+    }
+  }
+  return o;
+}
+
+%typeterm Place  extends Node {
+  implement { petrinetsemantics.DDMMPetriNet.Place }
+  is_sort(t) { $t instanceof petrinetsemantics.DDMMPetriNet.Place }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+
+%op Place Place(name : String, net : PetriNet, outgoings : ArcEList, incomings : ArcEList, initialMarking : int) {
+  is_fsym(t) { $t instanceof petrinetsemantics.DDMMPetriNet.Place }
+  get_slot(name, t) { (java.lang.String)$t.eGet($t.eClass().getEStructuralFeature("name")) }
+  get_slot(net, t) { (petrinetsemantics.DDMMPetriNet.PetriNet)$t.eGet($t.eClass().getEStructuralFeature("net")) }
+  get_slot(outgoings, t) { (org.eclipse.emf.common.util.EList<petrinetsemantics.DDMMPetriNet.Arc>)$t.eGet($t.eClass().getEStructuralFeature("outgoings")) }
+  get_slot(incomings, t) { (org.eclipse.emf.common.util.EList<petrinetsemantics.DDMMPetriNet.Arc>)$t.eGet($t.eClass().getEStructuralFeature("incomings")) }
+  get_slot(initialMarking, t) { (java.lang.Integer)$t.eGet($t.eClass().getEStructuralFeature("initialMarking")) } 
+  get_default(initialMarking) { 0 }
+  make(name, net, outgoings, incomings, initialMarking) { constructPlace((petrinetsemantics.DDMMPetriNet.Place)petrinetsemantics.DDMMPetriNet.DDMMPetriNetFactory.eINSTANCE.create((EClass)petrinetsemantics.DDMMPetriNet.DDMMPetriNetPackage.eINSTANCE.getEClassifier("Place")), new Object[]{ $name, $net, $outgoings, $incomings, $initialMarking }) }
+  implement() { petrinetsemantics.DDMMPetriNet.impl.PlaceImpl }
+}
+
+public static <O extends org.eclipse.emf.ecore.EObject> O constructPlace(O o, Object[] objs) {
+  int i=0;
+  EList<EStructuralFeature> sfes = o.eClass().getEAllStructuralFeatures();
+  for(EStructuralFeature esf : sfes) {
+    if(esf.isChangeable()) {
+      o.eSet(esf, objs[i]);
+      i++;
+    }
+  }
+  return o;
+}

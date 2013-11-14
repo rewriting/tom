@@ -1,0 +1,169 @@
+P2PN
+//useless for the moment
+//HERE (tracelink)
+//tom__linkClass.keepTrace(t_start);
+//tom__linkClass.keepTrace(t_finish);
+
+
+//useful: to change the resolution paradigm (strategy that traverse the whole
+//model shoud be changed to only traverse the resolve ojects set)
+//HERE (resolve objects)
+tom__linkClass.traceResolve(source);
+tom__linkClass.traceResolve(target);
+
+//useful: trace arcs that reference resolve objects
+//HERE (referencers of resolve objects)
+tom__linkClass.keepTrace(tmpZoomIn);
+tom__linkClass.keepTrace(tmpZoomOut);
+
+
+
+
+
+WD2PN
+//useless for the moment
+//HERE (tracelink)
+//tom__linkClass.keepTrace(p_started);
+//tom__linkClass.keepTrace(p_finished);
+//tom__linkClass.keepTrace(t_start);
+//tom__linkClass.keepTrace(t_finish);
+
+//useful: to change the resolution paradigm (strategy that
+//traverse the whole model shoud be changed to only traverse the
+//resolve ojects set)
+//HERE (resolve objects)
+tom__linkClass.traceResolve(source);
+tom__linkClass.traceResolve(target);
+
+//useful: trace arcs that reference resolve objects
+//HERE (referencers of resolve objects)
+tom__linkClass.keepTrace(tmpDistribute);
+tom__linkClass.keepTrace(tmpRejoin);
+
+
+
+WS2PN
+//useful: to change the resolution paradigm (strategy that
+//traverse the whole model shoud be changed to only traverse the
+//resolve ojects set)
+//HERE (resolve objects)
+tom__linkClass.traceResolve(source);
+tom__linkClass.traceResolve(target);
+
+//useful: trace arcs that reference resolve objects
+//HERE (referencers of resolve objects)
+tom__linkClass.keepTrace(tmp);
+
+
+
+??     tom__linkClass.keepTrace(pn);
+
+=======
+
+main()
+
+        System.out.println("### DEBUG ### between transfo and resolve");
+        java.util.Set<EObject> traced = translator.tom__linkClass.getTraced();
+        int i=0;
+        for (EObject current : traced) {
+          System.out.println("#"+i+" current=\n"+current);
+          i++;
+        }
+        System.out.println("### /DEBUG ### between transfo and resolve\n");
+
+=======
+
+
+
+resolveInverseLinks()
+
+System.out.println("current=\n"+current);
+
+System.out.println("(instanceof PetriNet)");
+
+System.out.println("(instanceof Transition)");
+System.out.println("current=\n"+current);
+
+System.out.println("newCurrent=\n"+newCurrent);
+System.out.println("newCurrent.getNet() =\n"+newCurrent.getNet());
+System.out.println("newCurrent.getNet().equals(resolveNode) =\n"+newCurrent.getNet().equals(resolveNode));
+System.out.println("resolveNode =\n"+resolveNode);
+System.out.println("toSet = "+toSet);
+
+System.out.println("(instanceof Place)");
+
+
+} else if (current instanceof  petrinetsemantics.DDMMPetriNet.Transition ) {
+System.out.println("(it is a Transition)");
+          petrinetsemantics.DDMMPetriNet.Transition  newCurrent = ( petrinetsemantics.DDMMPetriNet.Transition )current;
+System.out.println("newCurrent=\n"+newCurrent);
+System.out.println("newCurrent.getNet() =\n"+newCurrent.getNet());
+System.out.println("newCurrent.getNet().equals(resolveNode) =\n"+newCurrent.getNet().equals(resolveNode));
+System.out.println("resolveNode =\n"+resolveNode);
+System.out.println("toSet       = "+toSet);
+          if(newCurrent.getNet().equals(resolveNode) && toSet) {
+            newCurrent.setNet((PetriNet)newNode); 
+          } else { throw new RuntimeException("should not be there"); }
+
+        } else if (current instanceof  petrinetsemantics.DDMMPetriNet.Place ) {
+
+
+
+supprimer les exceptions
+
+
+=====
+
+
+public static class tom__StratResolve_SimplePDLToPetriNet extends tom.library.sl.AbstractStrategyBasic {
+static private  tom.library.utils.LinkClass  tom__linkClass;
+
+=====
+
+nouvelle stratégie resolve :
+
+dans le main, appel :
+
+resolve(translator);
+
+Fonction à la place de la stratégie :
+
+    public static void resolve(SimplePDLToPetriNet translator) {
+      for(EObject resolveNode : tom__linkClass.getResolve()) {
+        if(resolveNode instanceof Place) {
+          if(resolveNode instanceof ResolveWorkDefinitionPlace) {
+            String name = ((ResolveWorkDefinitionPlace)resolveNode).tom_resolve_element_attribute_name;
+            SimplePDLSemantics.DDMMSimplePDL.WorkDefinition o = ((ResolveWorkDefinitionPlace)resolveNode).tom_resolve_element_attribute_o;
+            petrinetsemantics.DDMMPetriNet.Place newNode = (petrinetsemantics.DDMMPetriNet.Place) translator.tom__linkClass.get(o).get(name);
+            customResolveInverseLinks(resolveNode, newNode, translator.pn);
+          } else { 
+            throw new RuntimeException("should not be there"); 
+          }
+        } else if(resolveNode instanceof Transition) {
+          if(resolveNode instanceof ResolveWorkDefinitionTransition) {
+            String name = ((ResolveWorkDefinitionTransition)resolveNode).tom_resolve_element_attribute_name;
+            SimplePDLSemantics.DDMMSimplePDL.WorkDefinition o = ((ResolveWorkDefinitionTransition)resolveNode).tom_resolve_element_attribute_o;
+            petrinetsemantics.DDMMPetriNet.Transition newNode = (petrinetsemantics.DDMMPetriNet.Transition) translator.tom__linkClass.get(o).get(name);
+            customResolveInverseLinks(resolveNode, newNode, translator.pn);
+          } else if(resolveNode instanceof ResolveProcessTransition) {
+            String name = ((ResolveProcessTransition)resolveNode).tom_resolve_element_attribute_name;
+            SimplePDLSemantics.DDMMSimplePDL.Process o = ((ResolveProcessTransition)resolveNode).tom_resolve_element_attribute_o;
+            petrinetsemantics.DDMMPetriNet.Transition newNode = (petrinetsemantics.DDMMPetriNet.Transition) translator.tom__linkClass.get(o).get(name);
+            customResolveInverseLinks(resolveNode, newNode, translator.pn);
+          } else {
+            throw new RuntimeException("should not be there");
+          }
+        } else {
+          throw new RuntimeException("should not be there");
+        }
+        translator.pn.getNodes().remove(resolveNode);
+      }
+    }
+
+customResolveInverseLinks == resolveInverseLinks, mais hors de la stratégie
+  resolve, et avec la ligne :
+  java.util.Set<EObject> traced = tom__linkClass.getTraced();
+à la place de :
+  java.util.Set<EObject> traced = tom__StratResolve_SimplePDLToPetriNet.tom__linkClass.getTraced();
+
+

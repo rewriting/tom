@@ -1,33 +1,36 @@
 import org.eclipse.emf.common.util.*;
 import org.eclipse.emf.ecore.*;
 import org.eclipse.emf.ecore.util.ECrossReferenceAdapter;
-import org.eclipse.emf.ecore.xmi.*;
-import org.eclipse.emf.ecore.xmi.impl.*;
+
+//import org.eclipse.emf.ecore.xmi.*;
+//import org.eclipse.emf.ecore.xmi.impl.*;
 
 import SimplePDLSemantics.DDMMSimplePDL.*;
 import petrinetsemantics.DDMMPetriNet.*;
 
-import SimplePDLSemantics.EDMMSimplePDL.*;
-import petrinetsemantics.EDMMPetriNet.*;
-import SimplePDLSemantics.SDMMSimplePDL.*;
-import petrinetsemantics.SDMMPetriNet.*;
-import SimplePDLSemantics.TM3SimplePDL.*;
+//import SimplePDLSemantics.EDMMSimplePDL.*;
+//import petrinetsemantics.EDMMPetriNet.*;
+//import SimplePDLSemantics.SDMMSimplePDL.*;
+//import petrinetsemantics.SDMMPetriNet.*;
+//import SimplePDLSemantics.TM3SimplePDL.*;
 import petrinetsemantics.TM3PetriNet.*;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ConcurrentHashMap;
-import java.io.File;
+//import java.util.concurrent.ConcurrentMap;
+//import java.util.concurrent.ConcurrentHashMap;
+//import java.io.File;
 import java.io.Writer;
-import java.io.BufferedWriter;
-import java.io.OutputStreamWriter;
-import java.io.FileOutputStream;
-import java.io.FileInputStream;
+//import java.io.BufferedWriter;
+//import java.io.OutputStreamWriter;
+//import java.io.FileOutputStream;
+//import java.io.FileInputStream;
 
 import tom.library.utils.ReferenceClass;
 import tom.library.utils.LinkClass;
 import tom.library.sl.*;
 import tom.library.emf.*;
+//import tom.library.utils.MyECrossReferenceAdapter;
+
 
 public class SimplePDLToPetriNet {
 
@@ -35,7 +38,6 @@ public class SimplePDLToPetriNet {
   %include{ LinkClass.tom }
   %include{ emf/ecore.tom }
 
-  //%include{ mappings/MyLinkClass.tom }
   %include{ mappings/DDMMPetriNetPackage.tom }
   %include{ mappings/DDMMSimplePDLPackage.tom }
 
@@ -68,13 +70,11 @@ public class SimplePDLToPetriNet {
         %tracelink(t_start:Transition, `Transition(n1, pn,ArcEList(), ArcEList(), 1, 1));
         n1 = `name+"_finish";
         %tracelink(t_finish:Transition, `Transition(n1, pn,ArcEList(), ArcEList(), 1, 1));
-
+        
 //HERE (tracelink)
-tom__linkClass.keepTrace(t_start);
+//tom__linkClass.keepTrace(t_start);
 //HERE (tracelink)
-tom__linkClass.keepTrace(t_finish);
-
-
+//tom__linkClass.keepTrace(t_finish);
 
         `Arc(t_start, p_ready, pn,ArcKindnormal(), 1);
         `Arc(p_running, t_start, pn,ArcKindnormal(), 1);
@@ -95,8 +95,6 @@ tom__linkClass.keepTrace(t_finish);
 tom__linkClass.keepTrace(tmpZoomIn);
 //HERE (resolve)
 tom__linkClass.keepTrace(tmpZoomOut);
-
-
         }
       }
     }
@@ -131,6 +129,7 @@ tom__linkClass.keepTrace(t_finish);
         `Arc(t_finish, p_running, pn,ArcKindnormal(), 1);
         `Arc(p_finished, t_finish, pn,ArcKindnormal(), 1);
 
+        //TEST without any resolve
         SimplePDLSemantics.DDMMSimplePDL.Process parent = `wd.getParent();
         Transition source = %resolve(parent:Process,t_start:Transition);
         source.setNet(pn);
@@ -163,6 +162,7 @@ tom__linkClass.keepTrace(tmpRejoin);
         }
         source.setNet(pn);
         target.setNet(pn);
+
         Arc tmp = `Arc(target,source, pn,ArcKindread_arc(), 1);  
 //HERE (resolve)
 tom__linkClass.keepTrace(tmp);
@@ -172,14 +172,19 @@ tom__linkClass.keepTrace(tmp);
 
   public static void main(String[] args) {
     System.out.println("\nStarting...\n");
+    boolean hasWS = Boolean.parseBoolean(args[1]);
+    System.out.println("Generation of a process composed of "+args[0]+" WD. ("+(hasWS?"with":"without")+" WS)");
+    long startChrono = System.currentTimeMillis();
+    //GenModel.genXMIModel(Integer.parseInt(args[0]));
+    SimplePDLSemantics.DDMMSimplePDL.Process p_root = GenModel.getModel(Integer.parseInt(args[0]),hasWS);
+    long duration = System.currentTimeMillis()-startChrono;
+    System.out.println("Generation done in "+duration+" (ms).");
 
-    //System.out.println("Generation of a process composed of "+args[0]+" WD.");
-    //long startChrono = System.currentTimeMillis();
-    //SimplePDLSemantics.DDMMSimplePDL.Process p_root = GenModel.getModel(Integer.parseInt(args[0]));
-    //long duration = System.currentTimeMillis()-startChrono;
-    //System.out.println("Generation done in "+duration+" (ms).");
+    //save to .xmi
+    //System.out.println("Saving into .xmi file.");
+    //GenModel.saveToXMI(p_root,"bench"+args[0]+(hasWS?"with":"without"));
 
-    XMIResource resource = new XMIResourceImpl();
+    /*XMIResourceImpl resource = new XMIResourceImpl();
     SimplePDLSemantics.DDMMSimplePDL.Process p_root;
     Map opts = new HashMap();
     opts.put(XMIResource.OPTION_SCHEMA_LOCATION, java.lang.Boolean.TRUE);
@@ -214,7 +219,7 @@ tom__linkClass.keepTrace(tmp);
 
       ws1.setParent(p_root);
       ws2.setParent(p_child);
-    }
+    }*/
     SimplePDLToPetriNet translator = new SimplePDLToPetriNet();
 
     try {
@@ -234,23 +239,24 @@ tom__linkClass.keepTrace(tmp);
       //NOTE: force the user to give the link as first parameter, and target
       //model as second one
       Strategy transformer = `SimplePDLToPetriNet(translator.tom__linkClass,translator.pn);
-      //long startChrono = System.currentTimeMillis();
+      startChrono = System.currentTimeMillis();
       transformer.visit(p_root, new EcoreContainmentIntrospector());
-      //long t1duration = System.currentTimeMillis()-startChrono;
+      long t1duration = System.currentTimeMillis()-startChrono;
       `TopDown(tom__StratResolve_SimplePDLToPetriNet(translator.tom__linkClass,translator.pn)).visit(translator.pn, new EcoreContainmentIntrospector());
-      //long endChrono = System.currentTimeMillis();
-      //long t2duration = endChrono-startChrono-t1duration;
-      //long totalduration = endChrono-startChrono;
-      //System.out.println("Transformation done in:\n  phase#1: "+t1duration+" (ms).\n  phase#2: "+t2duration+" (ms).\n  total  : "+totalduration+" (ms).\n");
+      long endChrono = System.currentTimeMillis();
+      long t2duration = endChrono-startChrono-t1duration;
+      long totalduration = endChrono-startChrono;
+      System.out.println("Transformation done in:\n  phase#1: "+t1duration+" (ms).\n  phase#2: "+t2duration+" (ms).\n  total  : "+totalduration+" (ms).\n");
 
       //for generation of textual Petri nets usable as input for TINA
+
       //with .xmi
-      String prefix = args[0].substring(0, args[0].lastIndexOf('.'));
+      //String prefix = args[0].substring(0, args[0].lastIndexOf('.'));
       
       //for tests
       // no output needed
-      /* */
-      //String prefix = args[0];
+      /*
+      String prefix = args[0];
       String outputName = prefix+"_resultingPetri.net";
       writer = new BufferedWriter(new OutputStreamWriter(new
             FileOutputStream(new File(outputName))));
@@ -262,16 +268,16 @@ tom__linkClass.keepTrace(tmp);
       System.out.println("\nFinish to generate "+outputName+" file, usable as input for TINA");
       writer.flush();
       writer.close();
-      
+      */
       System.out.println("done.");
 
     } catch(VisitFailure e) {
       System.out.println("strategy fail!");
-    } catch(java.io.FileNotFoundException e) {
+    } /*catch(java.io.FileNotFoundException e) {
       System.out.println("Cannot create Petri net output file.");
     } catch (java.io.IOException e) {
       System.out.println("Petri net save failed!");
-    }
+    }*/
   }
 
   %strategy PrintArc() extends Identity() {
@@ -290,6 +296,7 @@ tom__linkClass.keepTrace(tmp);
       }
 
       ptr@ResolveProcessTransition[tom_resolve_element_attribute_name=name] -> {
+
         System.out.println("tr process resolve " + `name);
         return `ptr;
       }

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="ASCII"?>
+<simplepdl.ddmm:Process xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:simplepdl.ddmm="simplepdl.ddmm" xsi:schemaLocation="simplepdl.ddmm SimplePDLSemantics.ecore#//DDMMSimplePDL" name="root">
+  <processElements xsi:type="simplepdl.ddmm:WorkDefinition" linksToSuccessors="//@processElements.2" name="A"/>
+  <processElements xsi:type="simplepdl.ddmm:WorkDefinition" linksToPredecessors="//@processElements.2" name="B">
+    <process name="child">
+      <processElements xsi:type="simplepdl.ddmm:WorkDefinition" linksToSuccessors="//@processElements.1/@process/@processElements.2" name="C"/>
+      <processElements xsi:type="simplepdl.ddmm:WorkDefinition" linksToPredecessors="//@processElements.1/@process/@processElements.2" name="D"/>
+      <processElements xsi:type="simplepdl.ddmm:WorkSequence" linkType="startToFinish" predecessor="//@processElements.1/@process/@processElements.0" successor="//@processElements.1/@process/@processElements.1"/>
+    </process>
+  </processElements>
+  <processElements xsi:type="simplepdl.ddmm:WorkSequence" predecessor="//@processElements.0" successor="//@processElements.1"/>
+</simplepdl.ddmm:Process>
