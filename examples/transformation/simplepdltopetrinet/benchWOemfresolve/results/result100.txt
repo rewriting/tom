@@ -1,0 +1,124 @@
+===============
+Test with 100 WD
+===============
+
+Test 100.1 :
+
+Starting...
+
+Generation of a process composed of 100 WD. (with WS)
+Generation done in 226 (ms).
+Transformation done in:
+  phase#1: 66 (ms).
+  phase#2: 40 (ms).
+  total  : 106 (ms).
+
+done.
+Test 100.2 :
+
+Starting...
+
+Generation of a process composed of 100 WD. (with WS)
+Generation done in 232 (ms).
+Transformation done in:
+  phase#1: 65 (ms).
+  phase#2: 39 (ms).
+  total  : 104 (ms).
+
+done.
+Test 100.3 :
+
+Starting...
+
+Generation of a process composed of 100 WD. (with WS)
+Generation done in 231 (ms).
+Transformation done in:
+  phase#1: 66 (ms).
+  phase#2: 41 (ms).
+  total  : 107 (ms).
+
+done.
+Test 100.4 :
+
+Starting...
+
+Generation of a process composed of 100 WD. (with WS)
+Generation done in 229 (ms).
+Transformation done in:
+  phase#1: 67 (ms).
+  phase#2: 40 (ms).
+  total  : 107 (ms).
+
+done.
+Test 100.5 :
+
+Starting...
+
+Generation of a process composed of 100 WD. (with WS)
+Generation done in 231 (ms).
+Transformation done in:
+  phase#1: 67 (ms).
+  phase#2: 39 (ms).
+  total  : 106 (ms).
+
+done.
+Test 100.6 :
+
+Starting...
+
+Generation of a process composed of 100 WD. (with WS)
+Generation done in 225 (ms).
+Transformation done in:
+  phase#1: 65 (ms).
+  phase#2: 41 (ms).
+  total  : 106 (ms).
+
+done.
+Test 100.7 :
+
+Starting...
+
+Generation of a process composed of 100 WD. (with WS)
+Generation done in 235 (ms).
+Transformation done in:
+  phase#1: 67 (ms).
+  phase#2: 40 (ms).
+  total  : 107 (ms).
+
+done.
+Test 100.8 :
+
+Starting...
+
+Generation of a process composed of 100 WD. (with WS)
+Generation done in 224 (ms).
+Transformation done in:
+  phase#1: 68 (ms).
+  phase#2: 39 (ms).
+  total  : 107 (ms).
+
+done.
+Test 100.9 :
+
+Starting...
+
+Generation of a process composed of 100 WD. (with WS)
+Generation done in 233 (ms).
+Transformation done in:
+  phase#1: 71 (ms).
+  phase#2: 40 (ms).
+  total  : 111 (ms).
+
+done.
+Test 100.10 :
+
+Starting...
+
+Generation of a process composed of 100 WD. (with WS)
+Generation done in 233 (ms).
+Transformation done in:
+  phase#1: 68 (ms).
+  phase#2: 40 (ms).
+  total  : 108 (ms).
+
+done.

@@ -1,0 +1,124 @@
+===============
+Test with 10 WD
+===============
+
+Test 10.1 :
+
+Starting...
+
+Generation of a process composed of 10 WD. (with WS)
+Generation done in 215 (ms).
+Transformation done in:
+  phase#1: 16 (ms).
+  phase#2: 2 (ms).
+  total  : 18 (ms).
+
+done.
+Test 10.2 :
+
+Starting...
+
+Generation of a process composed of 10 WD. (with WS)
+Generation done in 210 (ms).
+Transformation done in:
+  phase#1: 17 (ms).
+  phase#2: 2 (ms).
+  total  : 19 (ms).
+
+done.
+Test 10.3 :
+
+Starting...
+
+Generation of a process composed of 10 WD. (with WS)
+Generation done in 212 (ms).
+Transformation done in:
+  phase#1: 16 (ms).
+  phase#2: 2 (ms).
+  total  : 18 (ms).
+
+done.
+Test 10.4 :
+
+Starting...
+
+Generation of a process composed of 10 WD. (with WS)
+Generation done in 210 (ms).
+Transformation done in:
+  phase#1: 16 (ms).
+  phase#2: 3 (ms).
+  total  : 19 (ms).
+
+done.
+Test 10.5 :
+
+Starting...
+
+Generation of a process composed of 10 WD. (with WS)
+Generation done in 210 (ms).
+Transformation done in:
+  phase#1: 16 (ms).
+  phase#2: 3 (ms).
+  total  : 19 (ms).
+
+done.
+Test 10.6 :
+
+Starting...
+
+Generation of a process composed of 10 WD. (with WS)
+Generation done in 210 (ms).
+Transformation done in:
+  phase#1: 16 (ms).
+  phase#2: 2 (ms).
+  total  : 18 (ms).
+
+done.
+Test 10.7 :
+
+Starting...
+
+Generation of a process composed of 10 WD. (with WS)
+Generation done in 214 (ms).
+Transformation done in:
+  phase#1: 16 (ms).
+  phase#2: 2 (ms).
+  total  : 18 (ms).
+
+done.
+Test 10.8 :
+
+Starting...
+
+Generation of a process composed of 10 WD. (with WS)
+Generation done in 208 (ms).
+Transformation done in:
+  phase#1: 17 (ms).
+  phase#2: 2 (ms).
+  total  : 19 (ms).
+
+done.
+Test 10.9 :
+
+Starting...
+
+Generation of a process composed of 10 WD. (with WS)
+Generation done in 211 (ms).
+Transformation done in:
+  phase#1: 17 (ms).
+  phase#2: 3 (ms).
+  total  : 20 (ms).
+
+done.
+Test 10.10 :
+
+Starting...
+
+Generation of a process composed of 10 WD. (with WS)
+Generation done in 216 (ms).
+Transformation done in:
+  phase#1: 16 (ms).
+  phase#2: 2 (ms).
+  total  : 18 (ms).
+
+done.
