@@ -1,6 +1,6 @@
 FILE=SimplePDLToPetriNet
 FILE_NOR=SimplePDLToPetriNet_noresolve
-WD=100
+WD=1000
 HASWS=true #false #
 #ARG=models/DefaultSimplePDLInstance.xmi
 #ARG=models/SimplePDLInstance2.xmi

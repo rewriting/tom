@@ -1917,13 +1917,13 @@ public class SimplePDLToPetriNet {
                 //traverse the whole model shoud be changed to only traverse
                 //the resolve ojects set)
                 //HERE (resolve objects)
-                tom__linkClass.traceResolve(source);
-                tom__linkClass.traceResolve(target);
+                //tom__linkClass.traceResolve(source);
+                //tom__linkClass.traceResolve(target);
 
                 //useful: trace arcs that reference resolve objects
                 //HERE (referencers of resolve objects)
-                tom__linkClass.keepTrace(tmpZoomIn);
-                tom__linkClass.keepTrace(tmpZoomOut);
+                tom__linkClass.keepTrace(source,tmpZoomIn);
+                tom__linkClass.keepTrace(target,tmpZoomOut);
               }
 
               tom__reference_class_P2PN var_tom__reference_class_p2pn = new tom__reference_class_P2PN();var_tom__reference_class_p2pn.sett_start(t_start);var_tom__reference_class_p2pn.sett_finish(t_finish);tom__linkClass.put(tom_p,var_tom__reference_class_p2pn);}
@@ -2105,13 +2105,13 @@ public class SimplePDLToPetriNet {
               //traverse the whole model shoud be changed to only traverse the
               //resolve ojects set)
               //HERE (resolve objects)
-              tom__linkClass.traceResolve(source);
-              tom__linkClass.traceResolve(target);
+              //tom__linkClass.traceResolve(source);
+              //tom__linkClass.traceResolve(target);
 
               //useful: trace arcs that reference resolve objects
               //HERE (resolve)
-              tom__linkClass.keepTrace(tmpDistribute);
-              tom__linkClass.keepTrace(tmpRejoin);
+              tom__linkClass.keepTrace(source,tmpDistribute);
+              tom__linkClass.keepTrace(target,tmpRejoin);
 
 
               tom__reference_class_WD2PN var_tom__reference_class_wd2pn = new tom__reference_class_WD2PN();var_tom__reference_class_wd2pn.setp_started(p_started);var_tom__reference_class_wd2pn.setp_finished(p_finished);var_tom__reference_class_wd2pn.sett_start(t_start);var_tom__reference_class_wd2pn.sett_finish(t_finish);tom__linkClass.put(tom_wd,var_tom__reference_class_wd2pn);}
@@ -2333,13 +2333,14 @@ public class SimplePDLToPetriNet {
               //traverse the whole model shoud be changed to only traverse the
               //resolve ojects set)
               //HERE (resolve objects)
-              tom__linkClass.traceResolve(source);
-              tom__linkClass.traceResolve(target);
+              //tom__linkClass.traceResolve(source);
+              //tom__linkClass.traceResolve(target);
 
               Arc tmp = 
                 tom_make_Arc(target,source,pn,tom_make_ArcKindread_arc(),1);  
               //HERE (resolve)
-              tom__linkClass.keepTrace(tmp);
+              tom__linkClass.keepTrace(source,tmp);
+              tom__linkClass.keepTrace(target,tmp);
 
               tom__reference_class_WS2PN var_tom__reference_class_ws2pn = new tom__reference_class_WS2PN();tom__linkClass.put((( SimplePDLSemantics.DDMMSimplePDL.WorkSequence )tom__arg),var_tom__reference_class_ws2pn);}
           }
@@ -2392,12 +2393,12 @@ public class SimplePDLToPetriNet {
 
     public static void resolveInverseLinks(EObject resolveNode, EObject newNode, EObject acc) {
       //Work in progress: optimization of generated resolve phase
-      //trying to hook the EMFÂ adapter
+      //trying to hook the EMF adapter
       boolean toSet = (false
           | resolveNode instanceof ResolveWorkDefinitionTransition | resolveNode instanceof ResolveWorkDefinitionPlace | resolveNode instanceof ResolveProcessTransition
           );
 
-      java.util.Set<EObject> traced = tom__StratResolve_SimplePDLToPetriNet.tom__linkClass.getTraced();
+      java.util.Set<EObject> traced = tom__StratResolve_SimplePDLToPetriNet.tom__linkClass.getTraced(resolveNode);
       for (EObject current : traced) {
 
         if (current instanceof  petrinetsemantics.DDMMPetriNet.PetriNet ) {
@@ -2691,13 +2692,13 @@ resolve(translator);
 
     public static void customResolveInverseLinks(EObject resolveNode, EObject newNode, EObject acc) {
       //Work in progress: optimization of generated resolve phase
-      //trying to hook the EMFÂ adapter
+      //trying to hook the EMF adapter
       boolean toSet = (false
           | resolveNode instanceof ResolveWorkDefinitionTransition | resolveNode instanceof ResolveWorkDefinitionPlace | resolveNode instanceof ResolveProcessTransition
           );
 
       //java.util.Set<EObject> traced = tom__StratResolve_SimplePDLToPetriNet.tom__linkClass.getTraced();
-      java.util.Set<EObject> traced = tom__linkClass.getTraced();
+      java.util.Set<EObject> traced = tom__linkClass.getTraced(resolveNode);
       for (EObject current : traced) {
 
         if (current instanceof  petrinetsemantics.DDMMPetriNet.PetriNet ) {
