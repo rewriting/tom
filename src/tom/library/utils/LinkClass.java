@@ -30,6 +30,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.eclipse.emf.ecore.EObject;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.HashMap;
 
 public class LinkClass {
   private ConcurrentMap<EObject,ReferenceClass> table;
@@ -39,53 +40,67 @@ public class LinkClass {
    * the attributes.
    * Implementation and data structures might also be changed
    * */
-  private Set<EObject> tracedReferences;
-  private Set<EObject> resolveObjects;
+  //private Set<EObject> tracedReferences;
+  //private Set<EObject> resolveObjects;
+  
+  private HashMap<EObject,Set<EObject>> map;
 
   public LinkClass() {
     this.table = new ConcurrentHashMap<EObject,ReferenceClass>();
-    this.tracedReferences = new HashSet<EObject>();
-    this.resolveObjects = new HashSet<EObject>();
+    //this.tracedReferences = new HashSet<EObject>();
+    //this.resolveObjects = new HashSet<EObject>();
+    this.map = new HashMap<EObject,Set<EObject>>();
   }
 
   /* tracedReferences related functions */
-  public Set<EObject> getTraced() {
-    return this.tracedReferences;
+  public Set<EObject> getTraced(EObject resolveNode) {
+    Set<EObject> s = map.get(resolveNode);
+    if(s == null) {
+      s = new HashSet<EObject>();
+    }
+    return s;
   }
 
-  public boolean keepTrace(EObject traced) {
-    return this.tracedReferences.add(traced);
+  public boolean keepTrace(EObject resolveNode, EObject traced) {
+    boolean res = false;
+    Set<EObject> s = map.get(resolveNode);
+    if(s == null) {
+      s = new HashSet<EObject>();
+    } 
+    res = s.add(traced);
+    map.put(resolveNode,s);
+    return res;
   }
 
-  public boolean remove(EObject o) {
-    return this.tracedReferences.remove(o);
-  }
+  //public boolean remove(EObject o) {
+  //  return this.tracedReferences.remove(o);
+  //}
 
-  public boolean hasBeenReferenced(EObject o) {
-    return this.tracedReferences.contains(o);
-  }
+  //public boolean hasBeenReferenced(EObject o) {
+  //  return this.tracedReferences.contains(o);
+  //}
 
-  public int tracedSize() {
-    return this.tracedReferences.size();
-  }
+  //public int tracedSize() {
+  //  return this.tracedReferences.size();
+  //}
 
   /* resolveObjects related functions */
 
   public Set<EObject> getResolve() {
-    return this.resolveObjects;
+    return map.keySet();
   }
 
-  public boolean traceResolve(EObject resolve) {
-    return this.resolveObjects.add(resolve);
-  }
+  //public boolean traceResolve(EObject resolve) {
+  //  return this.resolveObjects.add(resolve);
+  //}
 
-  public boolean resolveExists(EObject resolve) {
-    return this.resolveObjects.contains(resolve);
-  }
+  //public boolean resolveExists(EObject resolve) {
+  //  return this.resolveObjects.contains(resolve);
+  //}
 
-  public int resolveObjectsSize() {
-    return this.resolveObjects.size();
-  }
+  //public int resolveObjectsSize() {
+  //  return this.resolveObjects.size();
+  //}
 
 ////////////////
 
