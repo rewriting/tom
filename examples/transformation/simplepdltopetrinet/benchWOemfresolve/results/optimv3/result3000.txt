@@ -1,0 +1,124 @@
+===============
+Test with 3000 WD
+===============
+
+Test 3000.1 :
+
+Starting...
+
+Generation of a process composed of 3000 WD. (with WS)
+Generation done in 737 (ms).
+Transformation done in:
+  phase#1: 2115 (ms).
+  phase#2: 349 (ms).
+  total  : 2464 (ms).
+
+done.
+Test 3000.2 :
+
+Starting...
+
+Generation of a process composed of 3000 WD. (with WS)
+Generation done in 734 (ms).
+Transformation done in:
+  phase#1: 2135 (ms).
+  phase#2: 360 (ms).
+  total  : 2495 (ms).
+
+done.
+Test 3000.3 :
+
+Starting...
+
+Generation of a process composed of 3000 WD. (with WS)
+Generation done in 754 (ms).
+Transformation done in:
+  phase#1: 2108 (ms).
+  phase#2: 345 (ms).
+  total  : 2453 (ms).
+
+done.
+Test 3000.4 :
+
+Starting...
+
+Generation of a process composed of 3000 WD. (with WS)
+Generation done in 732 (ms).
+Transformation done in:
+  phase#1: 2115 (ms).
+  phase#2: 374 (ms).
+  total  : 2489 (ms).
+
+done.
+Test 3000.5 :
+
+Starting...
+
+Generation of a process composed of 3000 WD. (with WS)
+Generation done in 734 (ms).
+Transformation done in:
+  phase#1: 1922 (ms).
+  phase#2: 384 (ms).
+  total  : 2306 (ms).
+
+done.
+Test 3000.6 :
+
+Starting...
+
+Generation of a process composed of 3000 WD. (with WS)
+Generation done in 726 (ms).
+Transformation done in:
+  phase#1: 2148 (ms).
+  phase#2: 355 (ms).
+  total  : 2503 (ms).
+
+done.
+Test 3000.7 :
+
+Starting...
+
+Generation of a process composed of 3000 WD. (with WS)
+Generation done in 734 (ms).
+Transformation done in:
+  phase#1: 1906 (ms).
+  phase#2: 345 (ms).
+  total  : 2251 (ms).
+
+done.
+Test 3000.8 :
+
+Starting...
+
+Generation of a process composed of 3000 WD. (with WS)
+Generation done in 721 (ms).
+Transformation done in:
+  phase#1: 1943 (ms).
+  phase#2: 355 (ms).
+  total  : 2298 (ms).
+
+done.
+Test 3000.9 :
+
+Starting...
+
+Generation of a process composed of 3000 WD. (with WS)
+Generation done in 732 (ms).
+Transformation done in:
+  phase#1: 1919 (ms).
+  phase#2: 344 (ms).
+  total  : 2263 (ms).
+
+done.
+Test 3000.10 :
+
+Starting...
+
+Generation of a process composed of 3000 WD. (with WS)
+Generation done in 720 (ms).
+Transformation done in:
+  phase#1: 1914 (ms).
+  phase#2: 345 (ms).
+  total  : 2259 (ms).
+
+done.
