@@ -1,0 +1,48 @@
+tr root_start root_ready*1 -> root_running*1 R3_ready*1 R1_ready*1 R2_ready*1 
+tr root_finish root_running*1 R2_finished?1 R3_finished?1 R1_finished?1 -> root_finished*1 
+tr child1_start child1_ready*1 -> child1_running*1 C13_ready*1 C14_ready*1 C12_ready*1 C11_ready*1 
+tr child1_finish child1_running*1 C14_finished?1 C12_finished?1 C13_finished?1 C11_finished?1 -> child1_finished*1 
+tr child2_start child2_ready*1 -> child2_running*1 C26_ready*1 C21_ready*1 C25_ready*1 C24_ready*1 C22_ready*1 C23_ready*1 
+tr child2_finish child2_running*1 C24_finished?1 C21_finished?1 C22_finished?1 C23_finished?1 C26_finished?1 C25_finished?1 -> child2_finished*1 
+tr R1_start R1_ready*1 -> R1_started*1 R1_running*1 child1_ready*1 
+tr R1_finish R1_running*1 child1_finished?1 -> R1_finished*1 
+tr C11_start C11_ready*1 -> C11_started*1 C11_running*1 
+tr C11_finish C11_running*1 -> C11_finished*1 
+tr C12_start C12_ready*1 C11_finished?1 -> C12_started*1 C12_running*1 
+tr C12_finish C12_running*1 -> C12_finished*1 
+tr C13_start C13_ready*1 C11_started?1 -> C13_started*1 C13_running*1 
+tr C13_finish C13_running*1 -> C13_finished*1 
+tr C14_start C14_ready*1 -> C14_started*1 C14_running*1 
+tr C14_finish C14_running*1 C12_started?1 C13_finished?1 -> C14_finished*1 
+tr R2_start R2_ready*1 R1_started?1 -> R2_started*1 R2_running*1 child2_ready*1 
+tr R2_finish R2_running*1 child2_finished?1 -> R2_finished*1 
+tr C21_start C21_ready*1 -> C21_started*1 C21_running*1 
+tr C21_finish C21_running*1 -> C21_finished*1 
+tr C22_start C22_ready*1 C21_started?1 -> C22_started*1 C22_running*1 
+tr C22_finish C22_running*1 -> C22_finished*1 
+tr C23_start C23_ready*1 C21_started?1 -> C23_started*1 C23_running*1 
+tr C23_finish C23_running*1 -> C23_finished*1 
+tr C24_start C24_ready*1 C22_finished?1 -> C24_started*1 C24_running*1 
+tr C24_finish C24_running*1 -> C24_finished*1 
+tr C25_start C25_ready*1 C23_finished?1 -> C25_started*1 C25_running*1 
+tr C25_finish C25_running*1 -> C25_finished*1 
+tr C26_start C26_ready*1 C24_finished?1 -> C26_started*1 C26_running*1 
+tr C26_finish C26_running*1 C25_finished?1 -> C26_finished*1 
+tr R3_start R3_ready*1 R1_finished?1 R2_finished?1 -> R3_started*1 R3_running*1 
+tr R3_finish R3_running*1 -> R3_finished*1 
+pl root_ready (1)
+pl child1_ready (1)
+pl child2_ready (1)
+pl R1_ready (1)
+pl C11_ready (1)
+pl C12_ready (1)
+pl C13_ready (1)
+pl C14_ready (1)
+pl R2_ready (1)
+pl C21_ready (1)
+pl C22_ready (1)
+pl C23_ready (1)
+pl C24_ready (1)
+pl C25_ready (1)
+pl C26_ready (1)
+pl R3_ready (1)

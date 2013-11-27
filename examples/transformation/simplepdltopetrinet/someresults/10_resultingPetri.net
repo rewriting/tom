@@ -1,0 +1,40 @@
+Generation of a process composed of 10 WD.
+Generation done in 251 (ms).
+Transformation done in:
+  phase#1: 20 (ms).
+  phase#2: 1381156456277 (ms).
+  total  : 103 (ms).
+
+tr root_start root_ready*1 -> root_running*1 WD9_ready*1 WD8_ready*1 WD7_ready*1 WD6_ready*1 WD5_ready*1 WD4_ready*1 WD3_ready*1 WD2_ready*1 WD1_ready*1 WD0_ready*1 
+tr root_finish root_running*1 WD9_finished?1 WD8_finished?1 WD7_finished?1 WD6_finished?1 WD5_finished?1 WD4_finished?1 WD3_finished?1 WD2_finished?1 WD1_finished?1 WD0_finished?1 -> root_finished*1 
+tr WD9_start WD9_ready*1 WD8_finished?1 -> WD9_started*1 WD9_running*1 
+tr WD9_finish WD9_running*1 -> WD9_finished*1 
+tr WD8_start WD8_ready*1 WD7_finished?1 -> WD8_started*1 WD8_running*1 
+tr WD8_finish WD8_running*1 -> WD8_finished*1 
+tr WD7_start WD7_ready*1 WD6_finished?1 -> WD7_started*1 WD7_running*1 
+tr WD7_finish WD7_running*1 -> WD7_finished*1 
+tr WD6_start WD6_ready*1 WD5_finished?1 -> WD6_started*1 WD6_running*1 
+tr WD6_finish WD6_running*1 -> WD6_finished*1 
+tr WD5_start WD5_ready*1 WD4_finished?1 -> WD5_started*1 WD5_running*1 
+tr WD5_finish WD5_running*1 -> WD5_finished*1 
+tr WD4_start WD4_ready*1 WD3_finished?1 -> WD4_started*1 WD4_running*1 
+tr WD4_finish WD4_running*1 -> WD4_finished*1 
+tr WD3_start WD3_ready*1 WD2_finished?1 -> WD3_started*1 WD3_running*1 
+tr WD3_finish WD3_running*1 -> WD3_finished*1 
+tr WD2_start WD2_ready*1 WD1_finished?1 -> WD2_started*1 WD2_running*1 
+tr WD2_finish WD2_running*1 -> WD2_finished*1 
+tr WD1_start WD1_ready*1 WD0_finished?1 -> WD1_started*1 WD1_running*1 
+tr WD1_finish WD1_running*1 -> WD1_finished*1 
+tr WD0_start WD0_ready*1 -> WD0_started*1 WD0_running*1 
+tr WD0_finish WD0_running*1 -> WD0_finished*1 
+pl root_ready (1)
+pl WD9_ready (1)
+pl WD8_ready (1)
+pl WD7_ready (1)
+pl WD6_ready (1)
+pl WD5_ready (1)
+pl WD4_ready (1)
+pl WD3_ready (1)
+pl WD2_ready (1)
+pl WD1_ready (1)
+pl WD0_ready (1)
