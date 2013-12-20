@@ -1,0 +1,11 @@
+module examples.simplest.Term
+  imports int float String
+  abstract syntax
+ 	  
+  Term = a() 
+      | b() 
+      | c() 
+      | f(x:Term, v:int)
+      | g(x:Term, s:int)
+      | h(x:Term, y:Term)
+
