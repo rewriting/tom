@@ -930,7 +930,23 @@ private static <O> org.eclipse.emf.common.util.EList<O> appendClassifierEList(O 
   equals(l1,l2) { $l1.equals($l2) }
 }
 
-%typeterm StringEList {
+//Should not it be in ecore.tom? Contrary to UML2, EMF Ecore does not have
+//String* therefore no need of StringEList. That is the reason why this
+//(automagically generated) mapping is here. But it is strongly related to EMF
+//Ecore. It could be added to ecore.tom or put in a separated StringEList.tom
+//file.
+//integration into ecore.tom or into a separated file
+//pro:
+//  - more logical
+//con:
+//  - harder to maintain (after generation of new ecore.tom mapping a manual
+//  task has to be done, and also for uml2.tom)
+//  - currently, it is completely automated (emf-generate-mappings for EMF
+//  Ecore and UML2
+
+%include{ emf/StringEList.tom }
+
+/*%typeterm StringEList {
   implement { org.eclipse.emf.common.util.EList<java.lang.Object> }
   is_sort(t) { $t instanceof org.eclipse.emf.common.util.EList<?> && (((org.eclipse.emf.common.util.EList<java.lang.Object>)$t).size() == 0 || (((org.eclipse.emf.common.util.EList<java.lang.Object>)$t).size()>0 && ((org.eclipse.emf.common.util.EList<java.lang.Object>)$t).get(0) instanceof java.lang.String)) }
   equals(l1,l2) { $l1.equals($l2) }
@@ -947,7 +963,8 @@ private static <O> org.eclipse.emf.common.util.EList<O> appendClassifierEList(O 
 private static <O> org.eclipse.emf.common.util.EList<O> appendStringEList(O e,org.eclipse.emf.common.util.EList<O> l) {
   l.add(e);
   return l;
-}
+}*/
+//
 
 %typeterm Behavior  {
   implement { org.eclipse.uml2.uml.Behavior }

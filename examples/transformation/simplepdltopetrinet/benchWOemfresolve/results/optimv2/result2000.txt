@@ -1,0 +1,124 @@
+===============
+Test with 2000 WD
+===============
+
+Test 2000.1 :
+
+Starting...
+
+Generation of a process composed of 2000 WD. (with WS)
+Generation done in 437 (ms).
+Transformation done in:
+  phase#1: 908 (ms).
+  phase#2: 6750 (ms).
+  total  : 7658 (ms).
+
+done.
+Test 2000.2 :
+
+Starting...
+
+Generation of a process composed of 2000 WD. (with WS)
+Generation done in 452 (ms).
+Transformation done in:
+  phase#1: 905 (ms).
+  phase#2: 6920 (ms).
+  total  : 7825 (ms).
+
+done.
+Test 2000.3 :
+
+Starting...
+
+Generation of a process composed of 2000 WD. (with WS)
+Generation done in 425 (ms).
+Transformation done in:
+  phase#1: 896 (ms).
+  phase#2: 6714 (ms).
+  total  : 7610 (ms).
+
+done.
+Test 2000.4 :
+
+Starting...
+
+Generation of a process composed of 2000 WD. (with WS)
+Generation done in 440 (ms).
+Transformation done in:
+  phase#1: 935 (ms).
+  phase#2: 6877 (ms).
+  total  : 7812 (ms).
+
+done.
+Test 2000.5 :
+
+Starting...
+
+Generation of a process composed of 2000 WD. (with WS)
+Generation done in 449 (ms).
+Transformation done in:
+  phase#1: 994 (ms).
+  phase#2: 7040 (ms).
+  total  : 8034 (ms).
+
+done.
+Test 2000.6 :
+
+Starting...
+
+Generation of a process composed of 2000 WD. (with WS)
+Generation done in 435 (ms).
+Transformation done in:
+  phase#1: 868 (ms).
+  phase#2: 6764 (ms).
+  total  : 7632 (ms).
+
+done.
+Test 2000.7 :
+
+Starting...
+
+Generation of a process composed of 2000 WD. (with WS)
+Generation done in 427 (ms).
+Transformation done in:
+  phase#1: 876 (ms).
+  phase#2: 6672 (ms).
+  total  : 7548 (ms).
+
+done.
+Test 2000.8 :
+
+Starting...
+
+Generation of a process composed of 2000 WD. (with WS)
+Generation done in 404 (ms).
+Transformation done in:
+  phase#1: 854 (ms).
+  phase#2: 6697 (ms).
+  total  : 7551 (ms).
+
+done.
+Test 2000.9 :
+
+Starting...
+
+Generation of a process composed of 2000 WD. (with WS)
+Generation done in 425 (ms).
+Transformation done in:
+  phase#1: 899 (ms).
+  phase#2: 6755 (ms).
+  total  : 7654 (ms).
+
+done.
+Test 2000.10 :
+
+Starting...
+
+Generation of a process composed of 2000 WD. (with WS)
+Generation done in 444 (ms).
+Transformation done in:
+  phase#1: 877 (ms).
+  phase#2: 6919 (ms).
+  total  : 7796 (ms).
+
+done.

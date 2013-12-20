@@ -1,0 +1,77 @@
+t 440.0 460.0 root_start 0 w n
+t 545.0 350.0 root_finish 0 w n
+t 240.0 260.0 child_start 0 w n
+t 335.0 160.0 child_finish 0 w n
+t 330.0 380.0 B_start 0 w n
+t 435.0 265.0 B_finish 0 w n
+t 410.0 495.0 A_start 0 w n
+t 575.0 475.0 A_finish 0 w n
+t 225.0 95.0 C_start 0 w n
+t 335.0 25.0 C_finish 0 w n
+t 100.0 245.0 D_start 0 w n
+t 170.0 130.0 D_finish 0 w n
+p 405.0 540.0 root_ready 1 n
+p 500.0 410.0 root_running 0 n
+p 455.0 530.0 A_ready 1 n
+p 380.0 415.0 B_ready 1 n
+p 595.0 405.0 A_finished 0 n
+p 500.0 290.0 B_finished 0 n
+p 615.0 320.0 root_finished 0 n
+p 270.0 330.0 child_ready 1 n
+p 290.0 220.0 child_running 0 n
+p 220.0 190.0 C_ready 1 n
+p 165.0 280.0 D_ready 1 n
+p 365.0 90.0 C_finished 0 n
+p 260.0 135.0 D_finished 0 n
+p 400.0 195.0 child_finished 0 n
+p 345.0 455.0 A_started 0 n
+p 270.0 425.0 B_started 0 n
+p 380.0 325.0 B_running 0 n
+p 505.0 510.0 A_running 0 n
+p 165.0 70.0 C_started 0 n
+p 270.0 30.0 C_running 0 n
+p 35.0 270.0 D_started 0 n
+p 105.0 175.0 D_running 0 n
+e root_ready root_start 1 n
+e root_start B_ready 1 n
+e root_start A_ready 1 n
+e root_start root_running 1 n
+e root_running root_finish 1 n
+e B_finished root_finish ?1 n
+e A_finished root_finish ?1 n
+e root_finish root_finished 1 n
+e child_ready child_start 1 n
+e child_start D_ready 1 n
+e child_start C_ready 1 n
+e child_start child_running 1 n
+e child_running child_finish 1 n
+e D_finished child_finish ?1 n
+e C_finished child_finish ?1 n
+e child_finish child_finished 1 n
+e B_ready B_start 1 n
+e A_started B_start ?1 n
+e B_start child_ready 1 n
+e B_start B_running 1 n
+e B_start B_started 1 n
+e B_running B_finish 1 n
+e child_finished B_finish ?1 n
+e B_finish B_finished 1 n
+e A_ready A_start 1 n
+e A_start A_running 1 n
+e A_start A_started 1 n
+e A_running A_finish 1 n
+e A_finish A_finished 1 n
+e C_ready C_start 1 n
+e C_start C_running 1 n
+e C_start C_started 1 n
+e C_running C_finish 1 n
+e C_finish C_finished 1 n
+e D_ready D_start 1 n
+e D_start D_running 1 n
+e D_start D_started 1 n
+e D_running D_finish 1 n
+e C_started D_finish ?1 n
+e D_finish D_finished 1 n
+h DefaultSimplePDLInstance_resultingPetri small
+
+

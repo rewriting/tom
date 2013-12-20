@@ -1,0 +1,120 @@
+Test 1 :
+
+Starting...
+
+Generation of a process composed of 10 WD.
+Generation done in 255 (ms).
+Transformation done in:
+  phase#1: 20 (ms).
+  phase#2: 86 (ms).
+  total  : 106 (ms).
+
+done.
+Test 2 :
+
+Starting...
+
+Generation of a process composed of 10 WD.
+Generation done in 257 (ms).
+Transformation done in:
+  phase#1: 20 (ms).
+  phase#2: 80 (ms).
+  total  : 100 (ms).
+
+done.
+Test 3 :
+
+Starting...
+
+Generation of a process composed of 10 WD.
+Generation done in 259 (ms).
+Transformation done in:
+  phase#1: 20 (ms).
+  phase#2: 80 (ms).
+  total  : 100 (ms).
+
+done.
+Test 4 :
+
+Starting...
+
+Generation of a process composed of 10 WD.
+Generation done in 259 (ms).
+Transformation done in:
+  phase#1: 20 (ms).
+  phase#2: 86 (ms).
+  total  : 106 (ms).
+
+done.
+Test 5 :
+
+Starting...
+
+Generation of a process composed of 10 WD.
+Generation done in 255 (ms).
+Transformation done in:
+  phase#1: 20 (ms).
+  phase#2: 82 (ms).
+  total  : 102 (ms).
+
+done.
+Test 6 :
+
+Starting...
+
+Generation of a process composed of 10 WD.
+Generation done in 255 (ms).
+Transformation done in:
+  phase#1: 19 (ms).
+  phase#2: 84 (ms).
+  total  : 103 (ms).
+
+done.
+Test 7 :
+
+Starting...
+
+Generation of a process composed of 10 WD.
+Generation done in 261 (ms).
+Transformation done in:
+  phase#1: 20 (ms).
+  phase#2: 80 (ms).
+  total  : 100 (ms).
+
+done.
+Test 8 :
+
+Starting...
+
+Generation of a process composed of 10 WD.
+Generation done in 257 (ms).
+Transformation done in:
+  phase#1: 19 (ms).
+  phase#2: 87 (ms).
+  total  : 106 (ms).
+
+done.
+Test 9 :
+
+Starting...
+
+Generation of a process composed of 10 WD.
+Generation done in 265 (ms).
+Transformation done in:
+  phase#1: 20 (ms).
+  phase#2: 81 (ms).
+  total  : 101 (ms).
+
+done.
+Test 10 :
+
+Starting...
+
+Generation of a process composed of 10 WD.
+Generation done in 264 (ms).
+Transformation done in:
+  phase#1: 20 (ms).
+  phase#2: 86 (ms).
+  total  : 106 (ms).
+
+done.

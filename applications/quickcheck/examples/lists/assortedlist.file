@@ -1,0 +1,15 @@
+// ---------------- Assorted List Properties ------------------------------------------------------
+
+// TODO: This test does not work. It causes a NullPointerException at
+//	LazyList<Finite<Product3<T1,T2,T3>>> parts = enumeration.parts()
+//	in Checker.quickCheckProd3
+
+DemoAssortedList.isBigger(l:AssList, i:Integer) == True => (
+	DemoAssortedList.contains(l:AssList,v:Value) == True
+)
+
+// ---------------- Use of Existential Quantifiers (represented by $ character) -------------------
+
+//$	DemoAssortedList.isBigger(l:AssList, i:Integer) == True => (
+//		DemoAssortedList.contains(l:AssList,v:Value) == True
+//	)

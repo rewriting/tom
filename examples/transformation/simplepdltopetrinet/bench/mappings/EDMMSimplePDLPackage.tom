@@ -1,0 +1,79 @@
+
+
+%typeterm Event  extends SPDLSimEvent {
+  implement { SimplePDLSemantics.EDMMSimplePDL.Event }
+  is_sort(t) { $t instanceof SimplePDLSemantics.EDMMSimplePDL.Event }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+
+%include { boolean.tom }
+
+%include { int.tom }
+
+%typeterm WorkDefinitionEvent  extends Event {
+  implement { SimplePDLSemantics.EDMMSimplePDL.WorkDefinitionEvent }
+  is_sort(t) { $t instanceof SimplePDLSemantics.EDMMSimplePDL.WorkDefinitionEvent }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+
+%typeterm StartWD  extends WorkDefinitionEvent {
+  implement { SimplePDLSemantics.EDMMSimplePDL.StartWD }
+  is_sort(t) { $t instanceof SimplePDLSemantics.EDMMSimplePDL.StartWD }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+
+%op StartWD StartWD(internal : boolean, date : int, name : String, workdefinition : WorkDefinition) {
+  is_fsym(t) { $t instanceof SimplePDLSemantics.EDMMSimplePDL.StartWD }
+  get_slot(internal, t) { (java.lang.Boolean)$t.eGet($t.eClass().getEStructuralFeature("internal")) }
+  get_slot(date, t) { (java.lang.Integer)$t.eGet($t.eClass().getEStructuralFeature("date")) }
+  get_slot(name, t) { (java.lang.String)$t.eGet($t.eClass().getEStructuralFeature("name")) }
+  get_slot(workdefinition, t) { (SimplePDLSemantics.DDMMSimplePDL.WorkDefinition)$t.eGet($t.eClass().getEStructuralFeature("workdefinition")) } 
+  get_default(internal) { false }
+  get_default(date) { 0 }
+  get_default(name) { "" }
+  make(internal, date, name, workdefinition) { constructStartWD((SimplePDLSemantics.EDMMSimplePDL.StartWD)SimplePDLSemantics.EDMMSimplePDL.EDMMSimplePDLFactory.eINSTANCE.create((EClass)SimplePDLSemantics.EDMMSimplePDL.EDMMSimplePDLPackage.eINSTANCE.getEClassifier("StartWD")), new Object[]{ $internal, $date, $name, $workdefinition }) }
+  implement() { SimplePDLSemantics.EDMMSimplePDL.impl.StartWDImpl }
+}
+
+public static <O extends org.eclipse.emf.ecore.EObject> O constructStartWD(O o, Object[] objs) {
+  int i=0;
+  EList<EStructuralFeature> sfes = o.eClass().getEAllStructuralFeatures();
+  for(EStructuralFeature esf : sfes) {
+    if(esf.isChangeable()) {
+      o.eSet(esf, objs[i]);
+      i++;
+    }
+  }
+  return o;
+}
+
+%typeterm FinishWD  extends WorkDefinitionEvent {
+  implement { SimplePDLSemantics.EDMMSimplePDL.FinishWD }
+  is_sort(t) { $t instanceof SimplePDLSemantics.EDMMSimplePDL.FinishWD }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+
+%op FinishWD FinishWD(internal : boolean, date : int, name : String, workdefinition : WorkDefinition) {
+  is_fsym(t) { $t instanceof SimplePDLSemantics.EDMMSimplePDL.FinishWD }
+  get_slot(internal, t) { (java.lang.Boolean)$t.eGet($t.eClass().getEStructuralFeature("internal")) }
+  get_slot(date, t) { (java.lang.Integer)$t.eGet($t.eClass().getEStructuralFeature("date")) }
+  get_slot(name, t) { (java.lang.String)$t.eGet($t.eClass().getEStructuralFeature("name")) }
+  get_slot(workdefinition, t) { (SimplePDLSemantics.DDMMSimplePDL.WorkDefinition)$t.eGet($t.eClass().getEStructuralFeature("workdefinition")) } 
+  get_default(internal) { false }
+  get_default(date) { 0 }
+  get_default(name) { "" }
+  make(internal, date, name, workdefinition) { constructFinishWD((SimplePDLSemantics.EDMMSimplePDL.FinishWD)SimplePDLSemantics.EDMMSimplePDL.EDMMSimplePDLFactory.eINSTANCE.create((EClass)SimplePDLSemantics.EDMMSimplePDL.EDMMSimplePDLPackage.eINSTANCE.getEClassifier("FinishWD")), new Object[]{ $internal, $date, $name, $workdefinition }) }
+  implement() { SimplePDLSemantics.EDMMSimplePDL.impl.FinishWDImpl }
+}
+
+public static <O extends org.eclipse.emf.ecore.EObject> O constructFinishWD(O o, Object[] objs) {
+  int i=0;
+  EList<EStructuralFeature> sfes = o.eClass().getEAllStructuralFeatures();
+  for(EStructuralFeature esf : sfes) {
+    if(esf.isChangeable()) {
+      o.eSet(esf, objs[i]);
+      i++;
+    }
+  }
+  return o;
+}

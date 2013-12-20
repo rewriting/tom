@@ -321,9 +321,17 @@ public static class @refname@ implements tom.library.utils.ReferenceClass {
     //String toSet = genToSetFromResolveNameList(resolveNameList);
 
     //result/accumulator to change ("acc")
+
+    //TODO:
+    //Work in progress: optimization of resolve phase. trying to hook the
+    //EMF adapter by adding custom data structure or custom functions
     output.write(%[
   public static void resolveInverseLinks(EObject resolveNode, EObject newNode, EObject acc) {
+    //Work in progress: optimization of generated resolve phase
+    //trying to hook the EMF adapter
     ECrossReferenceAdapter adapter = new ECrossReferenceAdapter();
+    //MyECrossReferenceAdapter adapter = new tom.library.utils.MyECrossReferenceAdapter();
+
     acc.eAdapters().add(adapter);
     Collection<EStructuralFeature.Setting> references = adapter.getInverseReferences(resolveNode);
 

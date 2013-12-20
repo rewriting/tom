@@ -1,0 +1,120 @@
+Test 1 :
+
+Starting...
+
+Generation of a process composed of 500 WD.
+Generation done in 317 (ms).
+Transformation done in:
+  phase#1: 255 (ms).
+  phase#2: 46173 (ms).
+  total  : 46428 (ms).
+
+done.
+Test 2 :
+
+Starting...
+
+Generation of a process composed of 500 WD.
+Generation done in 322 (ms).
+Transformation done in:
+  phase#1: 253 (ms).
+  phase#2: 45870 (ms).
+  total  : 46123 (ms).
+
+done.
+Test 3 :
+
+Starting...
+
+Generation of a process composed of 500 WD.
+Generation done in 317 (ms).
+Transformation done in:
+  phase#1: 249 (ms).
+  phase#2: 45949 (ms).
+  total  : 46198 (ms).
+
+done.
+Test 4 :
+
+Starting...
+
+Generation of a process composed of 500 WD.
+Generation done in 314 (ms).
+Transformation done in:
+  phase#1: 243 (ms).
+  phase#2: 45928 (ms).
+  total  : 46171 (ms).
+
+done.
+Test 5 :
+
+Starting...
+
+Generation of a process composed of 500 WD.
+Generation done in 321 (ms).
+Transformation done in:
+  phase#1: 246 (ms).
+  phase#2: 46018 (ms).
+  total  : 46264 (ms).
+
+done.
+Test 6 :
+
+Starting...
+
+Generation of a process composed of 500 WD.
+Generation done in 314 (ms).
+Transformation done in:
+  phase#1: 257 (ms).
+  phase#2: 48829 (ms).
+  total  : 49086 (ms).
+
+done.
+Test 7 :
+
+Starting...
+
+Generation of a process composed of 500 WD.
+Generation done in 317 (ms).
+Transformation done in:
+  phase#1: 255 (ms).
+  phase#2: 45952 (ms).
+  total  : 46207 (ms).
+
+done.
+Test 8 :
+
+Starting...
+
+Generation of a process composed of 500 WD.
+Generation done in 328 (ms).
+Transformation done in:
+  phase#1: 247 (ms).
+  phase#2: 47816 (ms).
+  total  : 48063 (ms).
+
+done.
+Test 9 :
+
+Starting...
+
+Generation of a process composed of 500 WD.
+Generation done in 333 (ms).
+Transformation done in:
+  phase#1: 262 (ms).
+  phase#2: 46136 (ms).
+  total  : 46398 (ms).
+
+done.
+Test 10 :
+
+Starting...
+
+Generation of a process composed of 500 WD.
+Generation done in 317 (ms).
+Transformation done in:
+  phase#1: 259 (ms).
+  phase#2: 45804 (ms).
+  total  : 46063 (ms).
+
+done.

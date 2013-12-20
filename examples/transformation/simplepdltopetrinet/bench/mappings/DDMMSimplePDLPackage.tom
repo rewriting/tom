@@ -1,0 +1,185 @@
+
+
+%typeterm Process  extends EObject {
+  implement { SimplePDLSemantics.DDMMSimplePDL.Process }
+  is_sort(t) { $t instanceof SimplePDLSemantics.DDMMSimplePDL.Process }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+
+%include { string.tom }
+
+%typeterm ProcessElement  extends EObject {
+  implement { SimplePDLSemantics.DDMMSimplePDL.ProcessElement }
+  is_sort(t) { $t instanceof SimplePDLSemantics.DDMMSimplePDL.ProcessElement }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+
+%typeterm ProcessElementEList {
+  implement { org.eclipse.emf.common.util.EList<SimplePDLSemantics.DDMMSimplePDL.ProcessElement> }
+  is_sort(t) { $t instanceof org.eclipse.emf.common.util.EList<?> && (((org.eclipse.emf.common.util.EList<SimplePDLSemantics.DDMMSimplePDL.ProcessElement>)$t).size() == 0 || (((org.eclipse.emf.common.util.EList<SimplePDLSemantics.DDMMSimplePDL.ProcessElement>)$t).size()>0 && ((org.eclipse.emf.common.util.EList<SimplePDLSemantics.DDMMSimplePDL.ProcessElement>)$t).get(0) instanceof SimplePDLSemantics.DDMMSimplePDL.ProcessElement)) }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+
+%oparray ProcessElementEList ProcessElementEList ( ProcessElement* ) {
+  is_fsym(t) { $t instanceof org.eclipse.emf.common.util.EList<?> && ($t.size() == 0 || ($t.size()>0 && $t.get(0) instanceof SimplePDLSemantics.DDMMSimplePDL.ProcessElement)) }
+  make_empty(n) { new org.eclipse.emf.common.util.BasicEList<SimplePDLSemantics.DDMMSimplePDL.ProcessElement>($n) }
+  make_append(e,l) { appendProcessElementEList($e,$l) }
+  get_element(l,n) { $l.get($n) }
+  get_size(l)      { $l.size() }
+}
+
+private static <O> org.eclipse.emf.common.util.EList<O> appendProcessElementEList(O e,org.eclipse.emf.common.util.EList<O> l) {
+  l.add(e);
+  return l;
+}
+
+%typeterm WorkDefinition  extends ProcessElement {
+  implement { SimplePDLSemantics.DDMMSimplePDL.WorkDefinition }
+  is_sort(t) { $t instanceof SimplePDLSemantics.DDMMSimplePDL.WorkDefinition }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+
+%typeterm WorkSequence  extends ProcessElement {
+  implement { SimplePDLSemantics.DDMMSimplePDL.WorkSequence }
+  is_sort(t) { $t instanceof SimplePDLSemantics.DDMMSimplePDL.WorkSequence }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+
+%typeterm WorkSequenceType  {
+  implement { SimplePDLSemantics.DDMMSimplePDL.WorkSequenceType }
+  is_sort(t) { $t instanceof SimplePDLSemantics.DDMMSimplePDL.WorkSequenceType }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+
+%op WorkSequenceType WorkSequenceTypestartToStart() {
+  is_fsym(t) { t == SimplePDLSemantics.DDMMSimplePDL.WorkSequenceType.get("startToStart") }
+  make() { (SimplePDLSemantics.DDMMSimplePDL.WorkSequenceType)SimplePDLSemantics.DDMMSimplePDL.DDMMSimplePDLFactory.eINSTANCE.createFromString((EDataType)SimplePDLSemantics.DDMMSimplePDL.DDMMSimplePDLPackage.eINSTANCE.getWorkSequenceType(), "startToStart") }
+}
+
+%op WorkSequenceType WorkSequenceTypefinishToStart() {
+  is_fsym(t) { t == SimplePDLSemantics.DDMMSimplePDL.WorkSequenceType.get("finishToStart") }
+  make() { (SimplePDLSemantics.DDMMSimplePDL.WorkSequenceType)SimplePDLSemantics.DDMMSimplePDL.DDMMSimplePDLFactory.eINSTANCE.createFromString((EDataType)SimplePDLSemantics.DDMMSimplePDL.DDMMSimplePDLPackage.eINSTANCE.getWorkSequenceType(), "finishToStart") }
+}
+
+%op WorkSequenceType WorkSequenceTypestartToFinish() {
+  is_fsym(t) { t == SimplePDLSemantics.DDMMSimplePDL.WorkSequenceType.get("startToFinish") }
+  make() { (SimplePDLSemantics.DDMMSimplePDL.WorkSequenceType)SimplePDLSemantics.DDMMSimplePDL.DDMMSimplePDLFactory.eINSTANCE.createFromString((EDataType)SimplePDLSemantics.DDMMSimplePDL.DDMMSimplePDLPackage.eINSTANCE.getWorkSequenceType(), "startToFinish") }
+}
+
+%op WorkSequenceType WorkSequenceTypefinishToFinish() {
+  is_fsym(t) { t == SimplePDLSemantics.DDMMSimplePDL.WorkSequenceType.get("finishToFinish") }
+  make() { (SimplePDLSemantics.DDMMSimplePDL.WorkSequenceType)SimplePDLSemantics.DDMMSimplePDL.DDMMSimplePDLFactory.eINSTANCE.createFromString((EDataType)SimplePDLSemantics.DDMMSimplePDL.DDMMSimplePDLPackage.eINSTANCE.getWorkSequenceType(), "finishToFinish") }
+}
+
+%op WorkSequence WorkSequence(parent : Process, linkType : WorkSequenceType, predecessor : WorkDefinition, successor : WorkDefinition) {
+  is_fsym(t) { $t instanceof SimplePDLSemantics.DDMMSimplePDL.WorkSequence }
+  get_slot(parent, t) { (SimplePDLSemantics.DDMMSimplePDL.Process)$t.eGet($t.eClass().getEStructuralFeature("parent")) }
+  get_slot(linkType, t) { (SimplePDLSemantics.DDMMSimplePDL.WorkSequenceType)$t.eGet($t.eClass().getEStructuralFeature("linkType")) }
+  get_slot(predecessor, t) { (SimplePDLSemantics.DDMMSimplePDL.WorkDefinition)$t.eGet($t.eClass().getEStructuralFeature("predecessor")) }
+  get_slot(successor, t) { (SimplePDLSemantics.DDMMSimplePDL.WorkDefinition)$t.eGet($t.eClass().getEStructuralFeature("successor")) } 
+  get_default(linkType) { `WorkSequenceTypestartToStart() }
+  make(parent, linkType, predecessor, successor) { constructWorkSequence((SimplePDLSemantics.DDMMSimplePDL.WorkSequence)SimplePDLSemantics.DDMMSimplePDL.DDMMSimplePDLFactory.eINSTANCE.create((EClass)SimplePDLSemantics.DDMMSimplePDL.DDMMSimplePDLPackage.eINSTANCE.getEClassifier("WorkSequence")), new Object[]{ $parent, $linkType, $predecessor, $successor }) }
+  implement() { SimplePDLSemantics.DDMMSimplePDL.impl.WorkSequenceImpl }
+}
+
+public static <O extends org.eclipse.emf.ecore.EObject> O constructWorkSequence(O o, Object[] objs) {
+  int i=0;
+  EList<EStructuralFeature> sfes = o.eClass().getEAllStructuralFeatures();
+  for(EStructuralFeature esf : sfes) {
+    if(esf.isChangeable()) {
+      o.eSet(esf, objs[i]);
+      i++;
+    }
+  }
+  return o;
+}
+
+%typeterm WorkSequenceEList {
+  implement { org.eclipse.emf.common.util.EList<SimplePDLSemantics.DDMMSimplePDL.WorkSequence> }
+  is_sort(t) { $t instanceof org.eclipse.emf.common.util.EList<?> && (((org.eclipse.emf.common.util.EList<SimplePDLSemantics.DDMMSimplePDL.WorkSequence>)$t).size() == 0 || (((org.eclipse.emf.common.util.EList<SimplePDLSemantics.DDMMSimplePDL.WorkSequence>)$t).size()>0 && ((org.eclipse.emf.common.util.EList<SimplePDLSemantics.DDMMSimplePDL.WorkSequence>)$t).get(0) instanceof SimplePDLSemantics.DDMMSimplePDL.WorkSequence)) }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+
+%oparray WorkSequenceEList WorkSequenceEList ( WorkSequence* ) {
+  is_fsym(t) { $t instanceof org.eclipse.emf.common.util.EList<?> && ($t.size() == 0 || ($t.size()>0 && $t.get(0) instanceof SimplePDLSemantics.DDMMSimplePDL.WorkSequence)) }
+  make_empty(n) { new org.eclipse.emf.common.util.BasicEList<SimplePDLSemantics.DDMMSimplePDL.WorkSequence>($n) }
+  make_append(e,l) { appendWorkSequenceEList($e,$l) }
+  get_element(l,n) { $l.get($n) }
+  get_size(l)      { $l.size() }
+}
+
+private static <O> org.eclipse.emf.common.util.EList<O> appendWorkSequenceEList(O e,org.eclipse.emf.common.util.EList<O> l) {
+  l.add(e);
+  return l;
+}
+
+%op WorkDefinition WorkDefinition(parent : Process, linksToPredecessors : WorkSequenceEList, linksToSuccessors : WorkSequenceEList, name : String, process : Process) {
+  is_fsym(t) { $t instanceof SimplePDLSemantics.DDMMSimplePDL.WorkDefinition }
+  get_slot(parent, t) { (SimplePDLSemantics.DDMMSimplePDL.Process)$t.eGet($t.eClass().getEStructuralFeature("parent")) }
+  get_slot(linksToPredecessors, t) { (org.eclipse.emf.common.util.EList<SimplePDLSemantics.DDMMSimplePDL.WorkSequence>)$t.eGet($t.eClass().getEStructuralFeature("linksToPredecessors")) }
+  get_slot(linksToSuccessors, t) { (org.eclipse.emf.common.util.EList<SimplePDLSemantics.DDMMSimplePDL.WorkSequence>)$t.eGet($t.eClass().getEStructuralFeature("linksToSuccessors")) }
+  get_slot(name, t) { (java.lang.String)$t.eGet($t.eClass().getEStructuralFeature("name")) }
+  get_slot(process, t) { (SimplePDLSemantics.DDMMSimplePDL.Process)$t.eGet($t.eClass().getEStructuralFeature("process")) } 
+  make(parent, linksToPredecessors, linksToSuccessors, name, process) { constructWorkDefinition((SimplePDLSemantics.DDMMSimplePDL.WorkDefinition)SimplePDLSemantics.DDMMSimplePDL.DDMMSimplePDLFactory.eINSTANCE.create((EClass)SimplePDLSemantics.DDMMSimplePDL.DDMMSimplePDLPackage.eINSTANCE.getEClassifier("WorkDefinition")), new Object[]{ $parent, $linksToPredecessors, $linksToSuccessors, $name, $process }) }
+  implement() { SimplePDLSemantics.DDMMSimplePDL.impl.WorkDefinitionImpl }
+}
+
+public static <O extends org.eclipse.emf.ecore.EObject> O constructWorkDefinition(O o, Object[] objs) {
+  int i=0;
+  EList<EStructuralFeature> sfes = o.eClass().getEAllStructuralFeatures();
+  for(EStructuralFeature esf : sfes) {
+    if(esf.isChangeable()) {
+      o.eSet(esf, objs[i]);
+      i++;
+    }
+  }
+  return o;
+}
+
+%op Process Process(name : String, processElements : ProcessElementEList, from : WorkDefinition) {
+  is_fsym(t) { $t instanceof SimplePDLSemantics.DDMMSimplePDL.Process }
+  get_slot(name, t) { (java.lang.String)$t.eGet($t.eClass().getEStructuralFeature("name")) }
+  get_slot(processElements, t) { (org.eclipse.emf.common.util.EList<SimplePDLSemantics.DDMMSimplePDL.ProcessElement>)$t.eGet($t.eClass().getEStructuralFeature("processElements")) }
+  get_slot(from, t) { (SimplePDLSemantics.DDMMSimplePDL.WorkDefinition)$t.eGet($t.eClass().getEStructuralFeature("from")) } 
+  make(name, processElements, from) { constructProcess((SimplePDLSemantics.DDMMSimplePDL.Process)SimplePDLSemantics.DDMMSimplePDL.DDMMSimplePDLFactory.eINSTANCE.create((EClass)SimplePDLSemantics.DDMMSimplePDL.DDMMSimplePDLPackage.eINSTANCE.getEClassifier("Process")), new Object[]{ $name, $processElements, $from }) }
+  implement() { SimplePDLSemantics.DDMMSimplePDL.impl.ProcessImpl }
+}
+
+public static <O extends org.eclipse.emf.ecore.EObject> O constructProcess(O o, Object[] objs) {
+  int i=0;
+  EList<EStructuralFeature> sfes = o.eClass().getEAllStructuralFeatures();
+  for(EStructuralFeature esf : sfes) {
+    if(esf.isChangeable()) {
+      o.eSet(esf, objs[i]);
+      i++;
+    }
+  }
+  return o;
+}
+
+%typeterm Guidance  extends ProcessElement {
+  implement { SimplePDLSemantics.DDMMSimplePDL.Guidance }
+  is_sort(t) { $t instanceof SimplePDLSemantics.DDMMSimplePDL.Guidance }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+
+%op Guidance Guidance(parent : Process, element : ProcessElementEList, text : String) {
+  is_fsym(t) { $t instanceof SimplePDLSemantics.DDMMSimplePDL.Guidance }
+  get_slot(parent, t) { (SimplePDLSemantics.DDMMSimplePDL.Process)$t.eGet($t.eClass().getEStructuralFeature("parent")) }
+  get_slot(element, t) { (org.eclipse.emf.common.util.EList<SimplePDLSemantics.DDMMSimplePDL.ProcessElement>)$t.eGet($t.eClass().getEStructuralFeature("element")) }
+  get_slot(text, t) { (java.lang.String)$t.eGet($t.eClass().getEStructuralFeature("text")) } 
+  make(parent, element, text) { constructGuidance((SimplePDLSemantics.DDMMSimplePDL.Guidance)SimplePDLSemantics.DDMMSimplePDL.DDMMSimplePDLFactory.eINSTANCE.create((EClass)SimplePDLSemantics.DDMMSimplePDL.DDMMSimplePDLPackage.eINSTANCE.getEClassifier("Guidance")), new Object[]{ $parent, $element, $text }) }
+  implement() { SimplePDLSemantics.DDMMSimplePDL.impl.GuidanceImpl }
+}
+
+public static <O extends org.eclipse.emf.ecore.EObject> O constructGuidance(O o, Object[] objs) {
+  int i=0;
+  EList<EStructuralFeature> sfes = o.eClass().getEAllStructuralFeatures();
+  for(EStructuralFeature esf : sfes) {
+    if(esf.isChangeable()) {
+      o.eSet(esf, objs[i]);
+      i++;
+    }
+  }
+  return o;
+}

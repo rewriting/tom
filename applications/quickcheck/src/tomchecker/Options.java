@@ -17,22 +17,22 @@ public class Options {
   public List<String> importTypes;
 
   @Option(name="-impp",usage="imports package", multiValued = true)
-  public List<String> importPackage;
+  public String importPackage;
 
   @Option(name="-i",usage="input this file",metaVar="INPUT")
   public File in = null;
 
   @Option(name="-pkg",usage="package")
-  public String pkg = "tester";
+  public String pkg = "tested";
 
-  @Option(name="-l",usage="test level",metaVar="LEVEL")
-  public int level = 5;
+  @Option(name="-d",usage="depth test",metaVar="DEPTH")
+  public int depth = 5;
 
   @Option(name="-v",usage="verbose")
   public int v = 0;
   
   @Option(name="-s",usage="shrink")
-  public int s = 0;
+  public boolean s = true;
   
   @Option(name="-q",usage="quotient")
   public int q = 2;
@@ -41,7 +41,7 @@ public class Options {
   public boolean small = false;
 
   @Option(name="-quick",usage="quick")
-  public boolean quick = true;
+  public boolean quick = false;
   
   @Option(name="-printj",usage="print java")
   public boolean printj = false;
@@ -49,7 +49,6 @@ public class Options {
   @Option(name="-numt",usage="used to compute number of tests")
   public int numOfTest = 1000;
   
-
   // receives other command line parameters than options
   @Argument
   public List<String> arguments = new ArrayList<String>();

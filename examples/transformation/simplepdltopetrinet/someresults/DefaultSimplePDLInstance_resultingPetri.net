@@ -1,0 +1,18 @@
+tr root_start root_ready*1 -> root_running*1 B_ready*1 A_ready*1 
+tr root_finish root_running*1 A_finished?1 B_finished?1 -> root_finished*1 
+tr A_start A_ready*1 -> A_started*1 A_running*1 
+tr A_finish A_running*1 -> A_finished*1 
+tr B_start B_ready*1 A_started?1 -> B_started*1 B_running*1 child_ready*1 
+tr B_finish B_running*1 child_finished?1 -> B_finished*1 
+tr child_start child_ready*1 -> child_running*1 D_ready*1 C_ready*1 
+tr child_finish child_running*1 C_finished?1 D_finished?1 -> child_finished*1 
+tr C_start C_ready*1 -> C_started*1 C_running*1 
+tr C_finish C_running*1 -> C_finished*1 
+tr D_start D_ready*1 -> D_started*1 D_running*1 
+tr D_finish D_running*1 C_started?1 -> D_finished*1 
+pl root_ready (1)
+pl A_ready (1)
+pl B_ready (1)
+pl child_ready (1)
+pl C_ready (1)
+pl D_ready (1)

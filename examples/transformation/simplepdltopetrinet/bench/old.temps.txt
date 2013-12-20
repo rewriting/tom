@@ -1,0 +1,30 @@
+Generation of a process composed of 10 WD.
+Generation done in 251 (ms).
+Transformation done in:
+  phase#1: 20 (ms).
+  phase#2: 1381156456277 (ms).
+  total  : 103 (ms).
+
+Generation of a process composed of 100 WD.
+Generation done in 337 (ms).
+Transformation done in:
+  phase#1: 95 (ms).
+  phase#2: 1381156585348 (ms).
+  total  : 1179 (ms).
+
+Generation of a process composed of 500 WD.
+Generation done in 316 (ms).
+Transformation done in:
+  phase#1: 244 (ms).
+  phase#2: 1381156661603 (ms).
+  total  : 46200 (ms).
+
+Generation of a process composed of 1000 WD.
+Generation done in 381 (ms).
+Transformation done in:
+  phase#1: 550 (ms).
+  phase#2: 1381157624068 (ms).
+  total  : 317444 (ms).
+
+
+

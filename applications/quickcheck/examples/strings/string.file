@@ -1,0 +1,71 @@
+// ---------------- String Properties -------------------------------------------------------------
+
+//( (! True == False )  ||  (True != True ) ) => (
+// 	(DemoString.isShort(s:String) == True ) || (DemoString.isShort(s:String) == True )
+//)
+
+DemoString.isShort(s:String) == True
+
+//DemoString.containsNoA(s:String) == True
+
+//DemoString.isShort(s:String) == False => (
+//	(DemoString.containsA(s:String) != True) || (DemoString.isPalindrome(s:String) != True)
+//)
+
+//DemoString.isShort(s:String) == False => (
+//	DemoString.containsA(s:String) == True => (
+//		DemoString.isPalindrome(s:String) != True
+//	)
+//)
+
+//DemoString.isPalindrome(s:String) != True
+
+//DemoString.isShort(s:String) == False => (
+//	DemoString.isPalindrome(s:String) != True
+//)
+
+// DemoString.reverse(DemoString.reverse(s:String)) EQ s:String
+
+//(DemoString.containsA(s:String) != True) || (DemoString.isPalindrome(s:String) != True)
+
+// ---------------- Use of Existential Quantifiers (represented by $ character) -------------------
+
+//$ DemoString.isShort(s:String) == True
+
+//$ DemoString.isShort(s:String) == False
+
+//$ DemoString.isShort(s:String) == False => (
+//	 DemoString.containsNoA(s:String) == True
+//	)
+
+//$ DemoString.isShort(s:String) == False => (
+//		(DemoString.containsA(s:String) != True) || (DemoString.isPalindrome(s:String) != True)
+//	)
+
+//$ DemoString.isShort(s:String) == False => (
+//		DemoString.containsA(s:String) == True => (
+//			DemoString.isPalindrome(s:String) != True
+//		)
+//	)
+
+//$	DemoString.isShort(s:String) == False => (
+//		DemoString.isPalindrome(s:String) != True
+//	)
+
+//$ DemoString.isShort(s:String) != True => (
+//		DemoString.containsA(s:String) != True || DemoString.isPalindrome(s:String) != True
+//	)
+
+//$ DemoString.isShort(s:String) == False => (
+//		DemoString.reverse(DemoString.reverse(s:String)) EQ s:String
+//	)
+
+//$ DemoString.isShort(s:String) == False => (
+//		DemoString.isShort(z:String) ==  True => (
+//			DemoString.subString(s:String,z:String) ==  True
+//		)
+//	)
+
+//$ (DemoString.isShort(s:String) == True) &&
+//		(DemoString.isShort(z:String) == True) &&
+//			(DemoString.isShort(w:String) == True)

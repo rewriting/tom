@@ -1,0 +1,120 @@
+======
+README
+======
+
+What does this example do?
+
+This example is the transformation of a SimplePDL (light xSPEM) process into
+its Petri net representation, by using Tom models transformations constructs.
+This example is written in Tom+Java+EMF.
+
+How to compile and run?
+  make clean
+  make
+
+What does these commands do?
+  tom -nt -p SimplePDLToPetriNet.t
+  javac -cp ${LOCAL_CLASSPATH} SimplePDLToPetriNet.java //loads lib/*jar files
+  java -cp ${LOCAL_CLASSPATH} SimplePDLToPetriNet models/DefaultSimplePDLInstance.xmi
+
+The model used for the default run is models/DefaultSimplePDLInstance.xmi
+When no model is given as parameter, an hardcoded model is used: it corresponds
+to models/DefaultSimplePDLInstance.xmi, but totally created with Tom constructs
+(the .xmi file is not loaded)
+A second example is available: models/SimplePDLInstance2.xmi
+Of course, it is possible to use any othe input model which conforms to
+metamodels/SimplePDLSemantics_updated.ecore
+
+The result is printed in standard output, and a file is also generated (<name
+of the model>_resultingPetri.net). This latest is readable by TINA.
+
+Generated files for both examples can be found in expected/ folder: 
+  expected/DefaultSimplePDLInstance_resultingPetri.net
+  expected/SimplePDLInstance2_resultingPetri.net
+
+===================
+
+After the transformation
+
+Version: TINA toolbox 3.1.0
+
+Visualizer:
+
+Open the .net file to visualize it as follows:
+  ~/tina-3.1.0/bin/nd models/DefaultSimplePDLInstance_resultingPetri.net
+  ~/tina-3.1.0/bin/nd models/SimplePDLInstance2_resultingPetri.net
+
+Petri nets can be saved as .ndr files from the GUI. Two .ndr files can be found
+in the dedicated directory:
+  expected/DefaultSimplePDLInstance_resultingPetri.ndr
+  expected/SimplePDLInstance2_resultingPetri.ndr
+
+Riachability Graph:
+
+To construct the reachability graph, one has to use tina which takes .ndr file
+and generate a graph in proprietary format .ktz. The following command
+illustrates the operation:
+  ~/tina-3.1.0/bin/tina -C expected/DefaultSimplePDLInstance_resultingPetri.ndr DefaultSimplePDLInstance_resultingPetri.ktz
+
+The following message should appear in standard output:
+
+# net DefaultSimplePDLInstance_resultingPetri, 22 places, 12 transitions#
+# bounded, not live, possibly reversible                               #
+# abstraction        count      props      psets       dead       live #
+#      states        12523         22      12523          1          1 # 
+# transitions        60082         12         12          0          0 #
+
+WARNING: Executing the same command on the second example will provoke the use
+of a huge amount of memory. Be sure to have few GB of free RAM. For instance,
+the graphe reachability construction has been attempted on a 24 GB RAM server,
+and when checking the result 4 days after the beginning, the process was not
+finished and all RAM was used. The process has been stopped.
+
+Checking properties:
+
+Before checking properties, one has to write a formula and the properties.
+Then, selt will be able to check them.
+
+formulae and properties:
+Two .ltl files can be found:
+  expected/defaultInstance_finished.ltl
+  expected/SimplePDLInstance2_finished.ltl
+
+Let's explein the first one:
+
+  op finished = T /\ A_finished /\ B_finished /\ C_finished /\ D_finished;
+  
+  [] (finished => dead);
+  [] (dead => finished);
+  [] <> dead ;
+  - <> finished;
+  
+The first line corresponds to the formula. The operator finished is defined as
+"true and A_finished and B_finished and C_finished and D_finished".
+
+The four others lines correspond to four properties to check:
+  [] (finished => dead);
+  can be translated by "always (finished implies deadlock)" which means that in
+  any cases, the finished state implies the deadlock property.
+
+  [] (dead => finished);
+  can be translated by "always (deadlock implies finished)", which means that
+  in any cases, the deadlock property implies the finished state.
+
+  [] <> dead ;
+  can be translated by "always eventually deadlock", which means that a
+  deadlock can be happen.
+
+  - <> finished;
+  can be translated by "non eventually finished", which means that it never
+  reach finished.
+
+For more details on selt syntax and LTL, please refer to the manual:
+http://projects.laas.fr/tina//manuals/selt.html#5
+
+Check:
+By using .ktz and .ltl files, selt checks properties defined in .ltl:
+  ~/tina-3.1.0/bin/selt expected/DefaultSimplePDLInstance_resultingPetri.ktz models/defaultInstance_finished.ltl >> DefaultSimplePDLInstance_result.selt
+
+The result can be found in expected/DefaultSimplePDLInstance_result.selt.
+

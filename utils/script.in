@@ -62,7 +62,7 @@ fi
 
 # set TOM_LIB location
 TOM_LIB="${@TOM_HOME@}/lib"
-EMF_LIB="${TOM_LIB}/tools/org.eclipse.emf.common_2.5.0.v200906151043.jar:${TOM_LIB}/tools/org.eclipse.emf.ecore_2.5.0.v200906151043.jar:${TOM_LIB}/tools/org.eclipse.emf.ecore.xmi_2.5.0.v200906151043.jar"
+EMF_LIB="${TOM_LIB}/tools/org.eclipse.emf.common_2.5.0.v200906151043.jar:${TOM_LIB}/tools/org.eclipse.emf.ecore_2.5.0.v200906151043.jar:${TOM_LIB}/tools/org.eclipse.emf.ecore.xmi_2.5.0.v200906151043.jar:${TOM_LIB}/tools/org.eclipse.uml2.uml_3.2.100.v201108110105.jar"
 
 TOM_JAR="${TOM_LIB}/tom-compiler-full.jar:${TOM_LIB}/tom-runtime-full.jar:${EMF_LIB}"
 JAVACMD=java$JAVA_ARGS

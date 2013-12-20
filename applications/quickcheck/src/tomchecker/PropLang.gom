@@ -1,12 +1,14 @@
 module tomchecker.PropLang
 	imports int String 
 	abstract syntax
+
+  PropList = PropList(Property*)
 	
 	Property = Check(c:Cond)
       		 | Implies(c:Cond, p:Property)
-      		 | Exists(e1:Expr, p:Property)
+	     		 | Exists(p:Property)
 
-    Cond = Same(e1:Expr,e2:Expr)
+  Cond = Same(e1:Expr,e2:Expr)
        | Diff(e1:Expr,e2:Expr)
        | Eq(e1:Expr,e2:Expr)
        | Neq(e1:Expr,e2:Expr)
@@ -19,13 +21,11 @@ module tomchecker.PropLang
        | Leq(e1:Expr,e2:Expr)
 
 	Expr = Func(name:String,arg:Args)
-		| Var(name:String,type:String)
-		| Null()
-		| True() 
-		| False()
-		| Nat(i:int)
-		| Len(name:String)
+	     | Var(name:String,type:String)
+	     | Null()
+	     | True() 
+	     | False()
+	     | Nat(i:int)
+	     | Len(name:String)
 
 	Args = Arg(Expr*)
-
-    PropList = PropList(Property*)	

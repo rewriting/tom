@@ -1,1 +1,7 @@
-DemoBinaryTree.noLeafNodes(n:Node) == True
+// ---------------- Binary Tree Properties --------------------------------------------------------
+
+//DemoBinaryTree.noLeafNodes(n:Node) == True
+
+// ---------------- Use of Existential Quantifiers (represented by $ character) -------------------
+
+$ DemoBinaryTree.noLeafNodes(n:Node) == True

@@ -6,7 +6,7 @@
 //DemoAList.get(list:AList,index:Integer) != Null
 
 
-//DemoAList.isEmpty(l:AList) == False
+DemoAList.isEmpty(l:AList) == False
 
 
 //DemoAList.get(DemoAList.addFirst(l:AList,el:Elem),DemoAList.zero()) == el:Elem
@@ -54,3 +54,54 @@
 //		)
 //	)
 //)
+
+// ---------------- Use of Existential Quantifiers (represented by $ character) -------------------
+
+//$ DemoAList.size(DemoAList.addFirst(l:AList,el:Elem)) == DemoAList.size(DemoAList.addFirst(l:AList,el:Elem))
+
+//$ DemoAList.get(list:AList,index:Integer) != Null
+
+//$ DemoAList.isEmpty(l:AList) == False
+
+//$ DemoAList.get(DemoAList.addFirst(l:AList,el:Elem),DemoAList.zero()) == el:Elem
+
+//$ DemoAList.get(DemoAList.addFirst(l:AList,el:Elem),DemoAList.zero()) == el:Elem
+
+//$ DemoAList.size(DemoAList.addFirst(l:AList,el:Elem)) == DemoAList.plusOne(DemoAList.size(l:AList))
+
+// ----- if(list != empty) and if(el1 != el2) then (getIndexOf(list,el1) + 1) == getIndexOf(addFirst(list,el2),el1) -----
+//$ DemoAList.isEmpty(l:AList) == False && (
+//		DemoAList.isEqual(elOne:Elem,elTwo:Elem) == False => (
+//			DemoAList.plusOne(DemoAList.getIndexOf(l:AList,elOne:Elem)) ==
+//				DemoAList.getIndexOf(DemoAList.addFirst(l:AList,elTwo:Elem),elOne:Elem)
+//		)
+//	)
+
+// ----- if(list != empty) and if(el1 != el2) and if(list.contains(el1)) then (getIndexOf(list,el1) + 1) == getIndexOf(addFirst(list,el2),el1) -----
+//$ DemoAList.isEmpty(l:AList) == False => (
+//		DemoAList.isEqual(elOne:Elem,elTwo:Elem) == False => (
+//			DemoAList.contains(l:AList, elOne:Elem) == True => (
+//				DemoAList.plusOne(DemoAList.getIndexOf(l:AList,elOne:Elem)) ==
+//					DemoAList.getIndexOf(DemoAList.addFirst(l:AList,elTwo:Elem),elOne:Elem)
+//			)
+//		)
+//	)
+
+
+// ----- if(list != empty) and if(list.contains(el1)) then (getIndexOf(list,el1) + 1) == getIndexOf(addFirst(list,el2),el1) -----
+//$	DemoAList.isEmpty(l:AList) == False => (
+//		DemoAList.contains(l:AList, elOne:Elem) == True => (
+//			DemoAList.plusOne(DemoAList.getIndexOf(l:AList,elOne:Elem)) ==
+//				DemoAList.getIndexOf(DemoAList.addFirst(l:AList,elTwo:Elem),elOne:Elem)
+//		)
+//	)
+
+
+// ----- if(list != empty) and if (index < size) then get(index) != null -----
+//$	DemoAList.isEmpty(l:AList) == False => (
+//		DemoAList.isNegative(index:Integer) == False => (
+//			DemoAList.isLess(index:Integer,DemoAList.size(l:AList)) == True => (
+//				DemoAList.isNull(DemoAList.get(l:AList, index:Integer)) == False
+//			)
+//		)
+//	)

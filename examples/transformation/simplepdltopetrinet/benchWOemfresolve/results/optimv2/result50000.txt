@@ -1,0 +1,124 @@
+===============
+Test with 50000 WD
+===============
+
+Test 50000.1 :
+
+Starting...
+
+Generation of a process composed of 50000 WD. (with WS)
+Generation done in 58708 (ms).
+Transformation done in:
+  phase#1: 322113 (ms).
+  phase#2: 10593295 (ms).
+  total  : 10915408 (ms).
+
+done.
+Test 50000.2 :
+
+Starting...
+
+Generation of a process composed of 50000 WD. (with WS)
+Generation done in 60824 (ms).
+Transformation done in:
+  phase#1: 323147 (ms).
+  phase#2: 10648941 (ms).
+  total  : 10972088 (ms).
+
+done.
+Test 50000.3 :
+
+Starting...
+
+Generation of a process composed of 50000 WD. (with WS)
+Generation done in 59930 (ms).
+Transformation done in:
+  phase#1: 321743 (ms).
+  phase#2: 10521350 (ms).
+  total  : 10843093 (ms).
+
+done.
+Test 50000.4 :
+
+Starting...
+
+Generation of a process composed of 50000 WD. (with WS)
+Generation done in 59802 (ms).
+Transformation done in:
+  phase#1: 322068 (ms).
+  phase#2: 10786874 (ms).
+  total  : 11108942 (ms).
+
+done.
+Test 50000.5 :
+
+Starting...
+
+Generation of a process composed of 50000 WD. (with WS)
+Generation done in 57755 (ms).
+Transformation done in:
+  phase#1: 322478 (ms).
+  phase#2: 10793834 (ms).
+  total  : 11116312 (ms).
+
+done.
+Test 50000.6 :
+
+Starting...
+
+Generation of a process composed of 50000 WD. (with WS)
+Generation done in 61097 (ms).
+Transformation done in:
+  phase#1: 322911 (ms).
+  phase#2: 10782016 (ms).
+  total  : 11104927 (ms).
+
+done.
+Test 50000.7 :
+
+Starting...
+
+Generation of a process composed of 50000 WD. (with WS)
+Generation done in 59916 (ms).
+Transformation done in:
+  phase#1: 322832 (ms).
+  phase#2: 10820663 (ms).
+  total  : 11143495 (ms).
+
+done.
+Test 50000.8 :
+
+Starting...
+
+Generation of a process composed of 50000 WD. (with WS)
+Generation done in 58382 (ms).
+Transformation done in:
+  phase#1: 329949 (ms).
+  phase#2: 10713623 (ms).
+  total  : 11043572 (ms).
+
+done.
+Test 50000.9 :
+
+Starting...
+
+Generation of a process composed of 50000 WD. (with WS)
+Generation done in 59188 (ms).
+Transformation done in:
+  phase#1: 322270 (ms).
+  phase#2: 10788734 (ms).
+  total  : 11111004 (ms).
+
+done.
+Test 50000.10 :
+
+Starting...
+
+Generation of a process composed of 50000 WD. (with WS)
+Generation done in 58303 (ms).
+Transformation done in:
+  phase#1: 322707 (ms).
+  phase#2: 10716568 (ms).
+  total  : 11039275 (ms).
+
+done.

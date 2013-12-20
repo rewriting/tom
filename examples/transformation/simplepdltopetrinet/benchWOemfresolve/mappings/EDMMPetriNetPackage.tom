@@ -1,0 +1,44 @@
+
+
+%typeterm PetriNetEvent  extends PNSimEvent {
+  implement { petrinetsemantics.EDMMPetriNet.PetriNetEvent }
+  is_sort(t) { $t instanceof petrinetsemantics.EDMMPetriNet.PetriNetEvent }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+
+%include { boolean.tom }
+
+%typeterm FireTransitionEvent  extends PetriNetEvent {
+  implement { petrinetsemantics.EDMMPetriNet.FireTransitionEvent }
+  is_sort(t) { $t instanceof petrinetsemantics.EDMMPetriNet.FireTransitionEvent }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+
+%include { double.tom }
+
+%op FireTransitionEvent FireTransitionEvent(internal : boolean, date : int, name : String, time : double, firedTransition : Transition) {
+  is_fsym(t) { $t instanceof petrinetsemantics.EDMMPetriNet.FireTransitionEvent }
+  get_slot(internal, t) { (java.lang.Boolean)$t.eGet($t.eClass().getEStructuralFeature("internal")) }
+  get_slot(date, t) { (java.lang.Integer)$t.eGet($t.eClass().getEStructuralFeature("date")) }
+  get_slot(name, t) { (java.lang.String)$t.eGet($t.eClass().getEStructuralFeature("name")) }
+  get_slot(time, t) { (java.lang.Double)$t.eGet($t.eClass().getEStructuralFeature("time")) }
+  get_slot(firedTransition, t) { (petrinetsemantics.DDMMPetriNet.Transition)$t.eGet($t.eClass().getEStructuralFeature("firedTransition")) } 
+  get_default(internal) { false }
+  get_default(date) { 0 }
+  get_default(name) { "" }
+  get_default(time) { 0.0 }
+  make(internal, date, name, time, firedTransition) { constructFireTransitionEvent((petrinetsemantics.EDMMPetriNet.FireTransitionEvent)petrinetsemantics.EDMMPetriNet.EDMMPetriNetFactory.eINSTANCE.create((EClass)petrinetsemantics.EDMMPetriNet.EDMMPetriNetPackage.eINSTANCE.getEClassifier("FireTransitionEvent")), new Object[]{ $internal, $date, $name, $time, $firedTransition }) }
+  implement() { petrinetsemantics.EDMMPetriNet.impl.FireTransitionEventImpl }
+}
+
+public static <O extends org.eclipse.emf.ecore.EObject> O constructFireTransitionEvent(O o, Object[] objs) {
+  int i=0;
+  EList<EStructuralFeature> sfes = o.eClass().getEAllStructuralFeatures();
+  for(EStructuralFeature esf : sfes) {
+    if(esf.isChangeable()) {
+      o.eSet(esf, objs[i]);
+      i++;
+    }
+  }
+  return o;
+}
