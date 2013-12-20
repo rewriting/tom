@@ -1,1 +1,16 @@
-New implementation of Quickcheck by Fellype
+New implementation of Quickcheck by FellypeA
+
+* To compile the sources:
+  ant
+
+* To generate the property checker:
+
+  // To test simplest
+  java tomchecker/Translator -impt "examples.simplest.dummy.types.*" -impp "examples.simplest.DemoDummy" -i ../examples/simplest/DummyProp.file  -l 1 -q 2 -s 1  -v 1
+
+  // To test AList
+  java tomchecker/Translator -impt "examples.lists.alist.types.*" -impp "examples.lists.DemoAList" -i ../examples/lists/alist.file  -l 1 -q 2 -s 1  -v 1
+
+  // To test binary trees
+  java tomchecker/Translator -impt "examples.trees.binarytree.types.*" -impp "examples.trees.DemoBinaryTree" -i ../examples/binarytree/binaryTree.file  -l 1 -q 2 -s 1  -v 1
+

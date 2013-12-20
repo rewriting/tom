@@ -44,7 +44,7 @@ public class Checker {
     logMessage(1, verbose,"RANDOM CHECK AT DEPTH " + depth);
 
     // If no smaller counter example
-    if(depth == 0){
+    if(depth == 0) {
       assert false :  "FAILED  tests: " + counterExamples;
     }
 
@@ -73,10 +73,10 @@ public class Checker {
 	 * If the enumeration has a very small valid depth (less than that passed as argument), it have to 
 	 * be recomputed, but we need to be attentive to infinite depths
 	*/ 
-	public static <T> int recomputeDepth1(int depth, LazyList<Finite<Product1<T>>> parts){
+	public static <T> int recomputeDepth1(int depth, LazyList<Finite<Product1<T>>> parts) {
 
 		int suitableDepth = 0;
-    while( suitableDepth < depth && !parts.isEmpty() ){
+    while( suitableDepth < depth && !parts.isEmpty() ) {
       parts = parts.tail();
 	    suitableDepth++;
     }
@@ -86,7 +86,7 @@ public class Checker {
 	// ---------------- Size And Probes -------------------------------------------------------------
 	// Computes totalSize and number of probes for each depth
 	public static <T> BigInteger sizeAndProbes(int depth, LazyList<Finite<Product1<T>>> parts,
-																						 BigInteger[] nbProbes){
+																						 BigInteger[] nbProbes) {
 
 		BigInteger totalSize = ZERO;
 
@@ -100,20 +100,20 @@ public class Checker {
 	}
 
 	// ---------------- Calculate the Default Number of Tests ---------------------------------------
-		public static BigInteger calcDNT (int quotient, BigInteger totalSize){
+		public static BigInteger calcDNT (int quotient, BigInteger totalSize) {
 
 			BigInteger defaultNumOfTest;
 			Random rand = new Random();
 			BigInteger ratio;
 
 			// quotient should be at least 1
-			if(quotient == 0){
+			if(quotient == 0) {
 				quotient = 1;
 			}
 	
 			ratio = totalSize.divide(BigInteger.valueOf(quotient));
 
-		  if(ratio.compareTo(ZERO) == 0){
+		  if(ratio.compareTo(ZERO) == 0) {
 		    defaultNumOfTest =  ONE;
 		  }else {
 
@@ -181,7 +181,7 @@ searchInDepths:
 				* If there is no valid input from a depth (all inputs from a depth have not 
 				* satisfied the pre-conditions )
 				*/ 
-				if(input == null){
+				if(input == null) {
 		      logMessage(2, verbose,"AT DEPTH " + i + " no input from the set with cardinality " + card + " have satisfied the pre-conditions");
 					continue searchInDepths;
 				}
@@ -207,9 +207,9 @@ searchInDepths:
 
       logMessage(2, verbose,"AT DEPTH " + i + " GENERATED " + testedInputs.size() + " random inputs for the set with cardinality = " + card);
 
-      if(failed){
+      if(failed) {
         String errorMessage = "FAILED test(s): ";
-        for(Integer size: counterExamples.keySet()){
+        for(Integer size: counterExamples.keySet()) {
           errorMessage += "\n\t " + counterExamples.get(size) + " in depth " + size;
         }
         long endTime = System.currentTimeMillis();
@@ -221,7 +221,7 @@ searchInDepths:
 
     }
 
-    if(counterExamples.size() == 0){
+    if(counterExamples.size() == 0) {
       long endTime = System.currentTimeMillis();
       double time = (endTime - startTime) / 1000;
       System.out.println("OK, passed " + numOfTestCase + " tests");
@@ -234,7 +234,7 @@ searchInDepths:
 	// A valid input does not mean that the input will not fail
 	public static <T> Product1<T> chooseValidInput (BigInteger card, int verbose, Set<BigInteger>
 																								testedInputs, LazyList<Finite<Product1<T>>> parts,
-																								Set<F<Product1<T>, Boolean>> condBag, int currDepth){
+																								Set<F<Product1<T>, Boolean>> condBag, int currDepth) {
 
 		Product1<T> input = null;
     BigInteger index;
@@ -245,7 +245,7 @@ searchInDepths:
 		// Contains the inputs that have not satified the pre-conditions
 		List<BigInteger> preCondNotSatisfied = new ArrayList();
 
-		while(!foundValidInput){
+		while(!foundValidInput) {
     	index = new BigInteger(card.bitLength(), rand);
 	    logMessage(5, verbose, "TRY: " + index);
 
@@ -268,11 +268,11 @@ searchInDepths:
 	        }
 				}
 				
-				if(implication){
+				if(implication) {
         	logMessage(4, verbose, "pre-condition not satisfied by the input: " + input);
 					// If all inputs from a depth have not satisfied the pre-conditions
 					BigInteger size = BigInteger.valueOf( preCondNotSatisfied.size() );
-					if( size.compareTo(card) >= 0 ){
+					if( size.compareTo(card) >= 0 ) {
 						return null;
 					}else{
 						implication = false;
@@ -318,7 +318,7 @@ searchInDepths:
     int numOfPart = 0;
     logMessage(1,verbose,"RANDOM CHECK AT DEPTH " + depth);
     // if no smaller counter example    
-    if(depth == 0){ 
+    if(depth == 0) { 
       assert false :  "FAILED  tests: " + counterExamples;
     }
     // computes total size and number of probes for each depth
@@ -330,7 +330,7 @@ searchInDepths:
     }
     logMessage(2, verbose,"TOTAL number of inputs " + totalSize);
     quotient++; // at least 1
-    if(totalSize.divide(BigInteger.valueOf(quotient)).compareTo(BigInteger.ZERO) == 0){
+    if(totalSize.divide(BigInteger.valueOf(quotient)).compareTo(BigInteger.ZERO) == 0) {
       defaultNumOfTest =  BigInteger.ONE;
     }else{
       do {
@@ -398,9 +398,9 @@ searchInDepths:
 
       logMessage(2, verbose,"AT DEPTH " + i + " GENERATED " + testedInputs.size() + " random inputs for the set with cardinality = " + card);
 
-      if(failed){
+      if(failed) {
         String errorMessage = "FAILED test(s): ";
-        for(Integer size: counterExamples.keySet()){
+        for(Integer size: counterExamples.keySet()) {
         	errorMessage += "\n\t " + counterExamples.get(size) + " in depth " + size;
         }
         long end = System.currentTimeMillis();
@@ -409,7 +409,7 @@ searchInDepths:
       }
       parts = parts.tail();
     }
-    if(counterExamples.size() == 0){
+    if(counterExamples.size() == 0) {
     	long endTime = System.currentTimeMillis();
         double time = (endTime - startTime) / 1000;
         System.out.println("OK, passed " + numOfTestCase + " tests");
@@ -420,7 +420,7 @@ searchInDepths:
 	// ---------------- QuickCheck Prod3 by default -------------------------------------------------
 	public static <T1,T2,T3> void quickCheckProd3(int depth,  Enumeration< Product3<T1,T2,T3> >
 								enumeration, F< Product3<T1,T2,T3>, Boolean> prop, int verbose, int shrink, int
-								quotient, Set<F< Product3<T1,T2,T3>, Boolean>> preCond, BigInteger defaultNumOfTest){
+								quotient, Set<F< Product3<T1,T2,T3>, Boolean>> preCond, BigInteger defaultNumOfTest) {
 
 		long startTime = System.currentTimeMillis();
 		Map<Integer, Product3<T1,T2,T3>> counterExamples = new HashMap<Integer,Product3<T1,T2,T3>>();
@@ -458,7 +458,7 @@ searchInDepths:
     logMessage(1,verbose,"RANDOM CHECK AT DEPTH " + depth);
 
     // if no smaller counter example    
-    if(depth == 0){ 
+    if(depth == 0) { 
       assert false :  "FAILED  tests: " + counterExamples;
     }
 
@@ -472,7 +472,7 @@ searchInDepths:
     logMessage(2, verbose,"TOTAL number of inputs " + totalSize);
 
     quotient++; // at least 1
-    if(totalSize.divide(BigInteger.valueOf(quotient)).compareTo(BigInteger.ZERO) == 0){
+    if(totalSize.divide(BigInteger.valueOf(quotient)).compareTo(BigInteger.ZERO) == 0) {
       defaultNumOfTest =  BigInteger.ONE;
     }else{
       do {
@@ -540,9 +540,9 @@ searchInDepths:
 
       logMessage(2, verbose,"AT DEPTH " + i + " GENERATED " + testedInputs.size() + " random inputs for the set with cardinality = " + card);
 
-      if(failed){
+      if(failed) {
         String errorMessage = "FAILED test(s): ";
-        for(Integer size: counterExamples.keySet()){
+        for(Integer size: counterExamples.keySet()) {
         	errorMessage += "\n\t " + counterExamples.get(size) + " in depth " + size;
         }
         long end = System.currentTimeMillis();
@@ -551,7 +551,7 @@ searchInDepths:
       }
       parts = parts.tail();
     }
-    if(counterExamples.size() == 0){
+    if(counterExamples.size() == 0) {
     	long endTime = System.currentTimeMillis();
     	double time = (endTime - startTime) / 1000;
         System.out.println("OK, passed " + numOfTestCase + " tests");
@@ -560,10 +560,10 @@ searchInDepths:
   }
 
 	// ---------------- Recompute Depth -------------------------------------------------------------
-	public static <T1,T2,T3> int recomputeDepth3(int depth, LazyList<Finite<Product3<T1,T2,T3>>> parts){
+	public static <T1,T2,T3> int recomputeDepth3(int depth, LazyList<Finite<Product3<T1,T2,T3>>> parts) {
 
 		int suitableDepth = 0;
-    while( suitableDepth < depth && !parts.isEmpty() ){
+    while( suitableDepth < depth && !parts.isEmpty() ) {
       parts = parts.tail();
 	    suitableDepth++;
     }
@@ -572,13 +572,13 @@ searchInDepths:
 
 	// ---------------- Log Message -----------------------------------------------------------------
   public static void  logMessage(Integer level, int verbose, String message) {
-    if(level <= verbose){
+    if(level <= verbose) {
       System.out.println(message);
     }
   }  
   
 	// ---------------- Big Integer -----------------------------------------------------------------
-  private static BigInteger min(BigInteger n1, BigInteger n2){
+  private static BigInteger min(BigInteger n1, BigInteger n2) {
     if(n1.compareTo(n2) <= 0) {
       return n1;
     } else {
