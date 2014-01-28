@@ -1,0 +1,24 @@
+TODO (last modification: 2014-01-28)
+
+different cases to solve, with potential problems:
+- generation of EMF and UML2 libraries vs generation of any other library
+- usage of -prefix option or not
+- %include{emf/ecore}
+- case of builtin types (Tom builtin, EMF ones)
+- %oparray generation
+- names clashes with EMF and UML libraries => mappings not generated or
+  multiple definitions
+=> need of a complete review of options management
+
+- mappings generation from .ecore files instead of Java library
+- Ada extension. A prototype should have be done, where is it? can it be
+  adapted and integrated? At least, can the formalization (matching between
+  mappings and EClass, etc.) be retrieved?
+- transform "Tom-EMF" to "Tom-Models" by adding:
+  - GMS support: EMF-like framework for Ada)
+  - KMS support
+- call of Tom-EMF directly from Tom, as Tom can call Gom?
+- additional output: Gom format?
+- Gom2Ecore? (or mappings2Ecore)
+
+
