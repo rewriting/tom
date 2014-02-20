@@ -1,0 +1,10 @@
+module examples.ConsList
+imports int
+abstract syntax
+
+  List = nil()
+       | cons(e:Elem, l:List)
+
+  Elem = a()
+       | b()
+       | nat(i:int)

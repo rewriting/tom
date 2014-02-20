@@ -1,0 +1,180 @@
+package tom.library.enumerator;
+
+import static org.junit.Assert.*;
+
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
+
+import java.math.BigInteger;
+
+import static java.math.BigInteger.ZERO;
+import static java.math.BigInteger.ONE;
+
+public class FiniteTest {
+
+	@Test
+	public void testCardinalOfSum() {
+		 Finite<String> empty = Finite.empty();
+		 Finite<String> a = Finite.singleton("a");
+		 Finite<String> b = Finite.singleton("b");
+		 Finite<String> c = Finite.singleton("c");
+		 assertEquals(empty.plus(empty).getCard(), ZERO);
+		 assertEquals(empty.plus(a).getCard(), ONE);
+		 assertEquals(a.plus(empty).getCard(), ONE);
+		 assertEquals(a.plus(b).getCard(), BigInteger.valueOf(2));
+		 assertEquals(a.plus(b).plus(c).getCard(), BigInteger.valueOf(3));
+		 assertEquals(a.plus(b.plus(c)).getCard(), BigInteger.valueOf(3));
+	}
+	
+	@Test
+	public void testCardinalOfProd() {
+		 Finite<String> empty = Finite.empty();
+		 Finite<String> a = Finite.singleton("a");
+		 Finite<String> b = Finite.singleton("b");
+		 Finite<String> ab = a.plus(b);
+		 assertEquals(empty.times(empty).getCard(), ZERO);
+		 assertEquals(empty.times(a).getCard(), ZERO);
+		 assertEquals(a.times(empty).getCard(), ZERO);
+		 assertEquals(a.times(b).getCard(), ONE);
+		 assertEquals(ab.times(a).getCard(), BigInteger.valueOf(2));
+		 assertEquals(a.times(ab).getCard(), BigInteger.valueOf(2));
+		 assertEquals(ab.times(ab).getCard(), BigInteger.valueOf(4));
+		 assertEquals(ab.times(ab).times(ab).getCard(), BigInteger.valueOf(8));
+		 assertEquals(ab.times(ab.times(ab)).getCard(), BigInteger.valueOf(8));
+	}
+
+	@Test
+	public void testCardinalOfMap() {
+		 Finite<Integer> empty = Finite.empty();
+		 Finite<Integer> a = Finite.singleton(1);
+		 Finite<Integer> b = Finite.singleton(2);
+		 F<Integer,Integer> f = new F<Integer,Integer>() {
+			 public Integer apply(Integer arg) {
+				 return arg + 1 ;
+			 }
+		 };
+		 
+		 assertEquals(empty.map(f).getCard(), empty.getCard());
+		 assertEquals(a.map(f).getCard(), a.getCard());
+		 assertEquals(a.plus(b).map(f).getCard(), a.plus(b).getCard());
+		 
+		 F<P2<Integer,Integer>,Integer> g = new F<P2<Integer,Integer>,Integer>() {
+			 public Integer apply(P2<Integer,Integer> p) {
+				 return p._1() + p._2() ;
+			 }
+		 };
+		 assertEquals(a.plus(b).times(a).map(g).getCard(), a.plus(b).times(a).getCard());
+	}
+	
+	@Test
+	public void testCardinalOfApply() {
+		F<Integer,Integer> f1 = new F<Integer,Integer>() {
+			 public Integer apply(Integer arg) {
+				 return arg + 1 ;
+			 }
+		 };
+		 F<Integer,Integer> f2 = new F<Integer,Integer>() {
+			 public Integer apply(Integer arg) {
+				 return arg + 2 ;
+			 }
+		 };
+		 
+		 Finite<F<Integer,Integer>> empty = Finite.empty();
+		 Finite<F<Integer,Integer>> fun1 = Finite.singleton(f1);
+		 Finite<F<Integer,Integer>> fun2 = Finite.singleton(f2);
+		 Finite<Integer> one = Finite.singleton(1);
+		 Finite<Integer> two = Finite.singleton(2);
+		 
+		 assertEquals(one.applyFiniteFunctions(empty).getCard(), ZERO);
+		 assertEquals(one.plus(two).applyFiniteFunctions(empty).getCard(), ZERO);
+		 assertEquals(one.applyFiniteFunctions(fun1).getCard(), ONE);
+		 assertEquals(one.plus(two).applyFiniteFunctions(fun1).getCard(), BigInteger.valueOf(2));
+		 assertEquals(one.applyFiniteFunctions(fun1.plus(fun2)).getCard(), BigInteger.valueOf(2));
+		 assertEquals(one.plus(two).applyFiniteFunctions(fun1.plus(fun2)).getCard(), BigInteger.valueOf(4));
+	}
+	
+	//@Rule
+	//public ExpectedException exception = ExpectedException.none();
+
+	@Test
+	public void testIndexEmpty() {
+		 Finite<String> empty = Finite.empty();
+		 for (int i = 0; i < 100; i++) {
+			 try {
+				 empty.get(BigInteger.valueOf(i));;
+				 fail( "My method didn't throw when I expected it to" );
+			 } catch (RuntimeException expectedException) {}
+		 }
+	}
+	
+	@Test
+	public void testIndexSingleton() {
+		 Finite<String> a = Finite.singleton("a");
+		 for (int i = 1; i < 100; i++) {
+			 try {
+				 a.get(BigInteger.valueOf(i));;
+				 fail( "My method didn't throw when I expected it to" );
+			 } catch (RuntimeException expectedException) {}
+		 }
+		 assertEquals(a.get(ZERO), "a");
+	}
+	
+	@Test
+	public void testIndexSum() {
+		 Finite<String> a = Finite.singleton("a");
+		 Finite<String> b = Finite.singleton("b");
+		 Finite<String> c = Finite.singleton("c");
+		 
+		 Finite<String> sum1 = a.plus(b).plus(c);
+		 Finite<String> sum2 = a.plus(b.plus(c));
+		 
+		 assertEquals(sum1.get(ZERO), "a");
+		 assertEquals(sum1.get(ONE), "b");
+		 assertEquals(sum1.get(BigInteger.valueOf(2)), "c");
+		 for (int i = 3; i < 100; i++) {
+			 try {
+				 sum1.get(BigInteger.valueOf(i));;
+				 fail( "My method didn't throw when I expected it to" );
+			 } catch (RuntimeException expectedException) {}
+		 }
+		 
+		 assertEquals(sum2.get(ZERO), "a");
+		 assertEquals(sum2.get(ONE), "b");
+		 assertEquals(sum2.get(BigInteger.valueOf(2)), "c");
+		 for (int i = 3; i < 100; i++) {
+			 try {
+				 sum2.get(BigInteger.valueOf(i));;
+				 fail( "My method didn't throw when I expected it to" );
+			 } catch (RuntimeException expectedException) {}
+		 }
+
+	}
+	
+	@Test
+	public void testIndexProd() {
+		 Finite<String> a = Finite.singleton("a");
+		 Finite<String> b = Finite.singleton("b");
+		 Finite<P2<String,String>> prod = a.plus(b).times(a.plus(b));
+		 
+		 assertEquals(prod.get(BigInteger.valueOf(0))._1(),"a");
+		 assertEquals(prod.get(BigInteger.valueOf(0))._2(),"a");
+		 assertEquals(prod.get(BigInteger.valueOf(1))._1(),"a");
+		 assertEquals(prod.get(BigInteger.valueOf(1))._2(),"b");
+		 assertEquals(prod.get(BigInteger.valueOf(2))._1(),"b");
+		 assertEquals(prod.get(BigInteger.valueOf(2))._2(),"a");
+		 assertEquals(prod.get(BigInteger.valueOf(3))._1(),"b");
+		 assertEquals(prod.get(BigInteger.valueOf(3))._2(),"b");
+		 
+		 for (int i = 4; i < 100; i++) {
+			 try {
+				 prod.get(BigInteger.valueOf(i));;
+				 fail( "My method didn't throw when I expected it to" );
+			 } catch (RuntimeException expectedException) {}
+		 }
+	}
+	
+	
+	
+}

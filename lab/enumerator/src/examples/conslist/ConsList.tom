@@ -1,0 +1,46 @@
+
+%include { int.tom }
+
+%typeterm Elem {
+  implement { enumerator.conslist.types.Elem }
+  is_sort(t) { ($t instanceof enumerator.conslist.types.Elem) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm List {
+  implement { enumerator.conslist.types.List }
+  is_sort(t) { ($t instanceof enumerator.conslist.types.List) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+%op Elem a() {
+  is_fsym(t) { ($t instanceof enumerator.conslist.types.elem.a) }
+  make() { enumerator.conslist.types.elem.a.make() }
+}
+
+%op Elem b() {
+  is_fsym(t) { ($t instanceof enumerator.conslist.types.elem.b) }
+  make() { enumerator.conslist.types.elem.b.make() }
+}
+
+%op Elem nat(i:int) {
+  is_fsym(t) { ($t instanceof enumerator.conslist.types.elem.nat) }
+  get_slot(i, t) { $t.geti() }
+  make(t0) { enumerator.conslist.types.elem.nat.make($t0) }
+}
+
+%op List nil() {
+  is_fsym(t) { ($t instanceof enumerator.conslist.types.list.nil) }
+  make() { enumerator.conslist.types.list.nil.make() }
+}
+
+%op List cons(e:Elem, l:List) {
+  is_fsym(t) { ($t instanceof enumerator.conslist.types.list.cons) }
+  get_slot(e, t) { $t.gete() }
+  get_slot(l, t) { $t.getl() }
+  make(t0, t1) { enumerator.conslist.types.list.cons.make($t0, $t1) }
+}
+
