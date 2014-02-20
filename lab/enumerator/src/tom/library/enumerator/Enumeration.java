@@ -4,7 +4,6 @@ import java.math.BigInteger;
 import java.util.*;
 
 import static java.math.BigInteger.ZERO;
-import static java.math.BigInteger.ONE;
 
 public class Enumeration<A> {
 
@@ -279,7 +278,7 @@ public class Enumeration<A> {
     			return arg.toList();
     		}
     	};
-    	return cacheParts.map(f).toList();
+    	return parts().map(f).toList();
     }
     
     public static <A> Enumeration<A> fromList(List<List<A>> l) {
@@ -291,6 +290,16 @@ public class Enumeration<A> {
     	};
     	return new Enumeration<A>(res.map(f));
     }
+    
+    @SuppressWarnings("rawtypes")
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof Enumeration) {
+			return this.toList().equals(((Enumeration) obj).toList());
+		}
+		return super.equals(obj);
+	}
+
     
     public String toString() {
 		return toList().toString();

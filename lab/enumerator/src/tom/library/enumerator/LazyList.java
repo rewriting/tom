@@ -1,10 +1,9 @@
 package tom.library.enumerator;
 
-import java.math.BigInteger;
-
-import static java.math.BigInteger.ZERO;
 import static java.math.BigInteger.ONE;
+import static java.math.BigInteger.ZERO;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +13,7 @@ import java.util.List;
 
 public class LazyList<A> {
 	/**
-	 * head and tail stored in a pair this ensures lazyness
+	 * head and tail stored in a pair this ensures laziness
 	 */
 	private P2<A, LazyList<A>> pair = null;
 
@@ -232,13 +231,31 @@ public class LazyList<A> {
 
 	public static <A> LazyList<A> fromList(List<A> l) {
 		LazyList<A> res = LazyList.nil();
-    	for(A e:l) {
-    		res.append(LazyList.singleton(e));
-    	}
-    	return res;
+		for(A e:l) {
+			res = res.append(LazyList.singleton(e));
+		}
+		return res;
 	}
+
 	
 	public String toString() {
 		return toList().toString();
 	}
+
+	public LazyList<A> prefix(int size) {
+		LazyList<A> prefix = LazyList.nil();
+		for (int i = 0; i < size; i++) {
+			prefix = prefix.append(LazyList.singleton(index(BigInteger.valueOf(i))));
+		}
+		return prefix;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+	if (obj instanceof LazyList) {
+		return toList().equals(((LazyList)obj).toList());
+	}
+		return super.equals(obj);
+	}
+	
 }

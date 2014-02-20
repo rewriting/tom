@@ -136,15 +136,13 @@ public class Finite<A> {
 	
 	public String toString() {
 		return toList().toString();
-		/*
-		String s = "[";
-		for(BigInteger i=ZERO ; i.compareTo(getCard())<0; i=i.add(ONE)) {
-			A elt = get(i);
-			s += elt;
-			s += ",";
-		}
-		s = s + "]";
-		return s;
-		*/
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+	if (obj instanceof Finite) {
+		return toList().equals(((Finite)obj).toList());
+	}
+		return super.equals(obj);
 	}
 }
