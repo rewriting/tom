@@ -1,6 +1,8 @@
 package tom.library.enumerator;
 
 import java.math.BigInteger;
+import java.util.*;
+
 import static java.math.BigInteger.ZERO;
 import static java.math.BigInteger.ONE;
 
@@ -270,4 +272,28 @@ public class Enumeration<A> {
 
         return resA;
     }
+    
+    public List<List<A>> toList() {
+    	F<Finite<A>,List<A>> f = new F<Finite<A>,List<A>>() {
+    		public List<A> apply(Finite<A> arg) {
+    			return arg.toList();
+    		}
+    	};
+    	return cacheParts.map(f).toList();
+    }
+    
+    public static <A> Enumeration<A> fromList(List<List<A>> l) {
+    	LazyList<List<A>> res = LazyList.fromList(l);
+    	F<List<A>,Finite<A>> f = new F<List<A>,Finite<A>>() {
+    		public Finite<A> apply(List<A> arg) {
+    			return Finite.fromList(arg);
+    		}
+    	};
+    	return new Enumeration<A>(res.map(f));
+    }
+    
+    public String toString() {
+		return toList().toString();
+    }
+    
 }

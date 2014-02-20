@@ -1,8 +1,10 @@
 package tom.library.enumerator;
 
 import java.math.BigInteger;
+
 import static java.math.BigInteger.ZERO;
 import static java.math.BigInteger.ONE;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -228,6 +230,14 @@ public class LazyList<A> {
 		return res;
 	}
 
+	public static <A> LazyList<A> fromList(List<A> l) {
+		LazyList<A> res = LazyList.nil();
+    	for(A e:l) {
+    		res.append(LazyList.singleton(e));
+    	}
+    	return res;
+	}
+	
 	public String toString() {
 		return toList().toString();
 	}

@@ -2,12 +2,11 @@ package tom.library.enumerator;
 
 import static org.junit.Assert.*;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
 
 import java.math.BigInteger;
+import java.util.Arrays;
+import java.util.List;
 
 import static java.math.BigInteger.ZERO;
 import static java.math.BigInteger.ONE;
@@ -103,7 +102,7 @@ public class FiniteTest {
 		Finite<String> empty = Finite.empty();
 		for (int i = 0; i < 100; i++) {
 			try {
-				empty.get(BigInteger.valueOf(i));;
+				empty.get(BigInteger.valueOf(i));
 				fail( "My method didn't throw when I expected it to" );
 			} catch (RuntimeException expectedException) {}
 		}
@@ -114,7 +113,7 @@ public class FiniteTest {
 		Finite<String> a = Finite.singleton("a");
 		for (int i = 1; i < 100; i++) {
 			try {
-				a.get(BigInteger.valueOf(i));;
+				a.get(BigInteger.valueOf(i));
 				fail( "My method didn't throw when I expected it to" );
 			} catch (RuntimeException expectedException) {}
 		}
@@ -145,7 +144,7 @@ public class FiniteTest {
 		assertEquals(sum2.get(BigInteger.valueOf(2)), "c");
 		for (int i = 3; i < 100; i++) {
 			try {
-				sum2.get(BigInteger.valueOf(i));;
+				sum2.get(BigInteger.valueOf(i));
 				fail( "My method didn't throw when I expected it to" );
 			} catch (RuntimeException expectedException) {}
 		}
@@ -166,11 +165,11 @@ public class FiniteTest {
 		assertEquals(prod.get(BigInteger.valueOf(2))._2(),"a");
 		assertEquals(prod.get(BigInteger.valueOf(3))._1(),"b");
 		assertEquals(prod.get(BigInteger.valueOf(3))._2(),"b");
-
-		for (int i = 4; i < 100; i++) {
+		
+		for (int i = 4; i < 5; i++) {
 			try {
-				prod.get(BigInteger.valueOf(i));;
-				fail( "My method didn't throw when I expected it to" );
+				prod.get(BigInteger.valueOf(i));
+				fail( "My method didn't throw when I expected it to");
 			} catch (RuntimeException expectedException) {}
 		}
 	}
@@ -220,5 +219,14 @@ public class FiniteTest {
 		}
 	}
 
+	@Test
+	public void testFromList() {
+		assertEquals(Finite.fromList(Arrays.asList()).getCard(), ZERO);
+		assertEquals(Finite.fromList(Arrays.asList(1)).get(ZERO), new Integer(1));
+
+		List<Integer> l = Arrays.asList(1,2,3);
+		Finite<Integer> a = Finite.fromList(l); 
+		assertEquals(a.getCard(), BigInteger.valueOf(l.size()));
+	}
 
 }
