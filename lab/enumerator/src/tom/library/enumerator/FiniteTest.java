@@ -175,6 +175,20 @@ public class FiniteTest {
 		 }
 	}
 	
+	@Test
+	public void testIndexMap() {
+		 Finite<Integer> fin = Finite.singleton(1).plus(Finite.singleton(2)).plus(Finite.singleton(3));
+		 F<Integer,Integer> f = new F<Integer,Integer>() {
+			 public Integer apply(Integer arg) {
+				 return 2*arg ;
+			 }
+		 };
+		 Finite<Integer> finDoubled = fin.map(f);
+		 
+		 assertEquals(finDoubled.get(BigInteger.valueOf(0)), new Integer(2));
+		 assertEquals(finDoubled.get(BigInteger.valueOf(1)), new Integer(4));
+		 assertEquals(finDoubled.get(BigInteger.valueOf(2)), new Integer(6));
+	}
 	
 	
 }
