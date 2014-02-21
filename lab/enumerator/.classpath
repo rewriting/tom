@@ -6,5 +6,6 @@
 	<classpathentry kind="lib" path="lib/aterm.jar"/>
 	<classpathentry kind="lib" path="lib/jjtraveler.jar"/>
 	<classpathentry kind="lib" path="lib/shared-objects.jar"/>
+	<classpathentry kind="lib" path="lib/tom-tiny-library.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
