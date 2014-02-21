@@ -27,6 +27,18 @@ public class EnumerationTest {
 	}
 	
 	@Test
+	public void testPay() {
+		Enumeration<Object> empty = Enumeration.empty();
+		Enumeration<Object> expected = new Enumeration(LazyList.cons(Finite.empty(), LazyList.nil()));
+		assertEquals(expected, empty.pay());
+		Enumeration<Integer> e = Enumeration.fromList(
+				Arrays.asList(Arrays.asList(1,2),new ArrayList<Integer>(),Arrays.asList(3)));
+		Enumeration<Integer> expected2 = Enumeration.fromList(
+				Arrays.asList(new ArrayList<Integer>(),Arrays.asList(1,2),new ArrayList<Integer>(),Arrays.asList(3)));
+		assertEquals(expected2, e.pay());
+	}
+	
+	@Test
 	public void testPlus() {
 		Enumeration<Integer> e1 = Enumeration.fromList(
 				Arrays.asList(Arrays.asList(1,2),Arrays.asList(3,4)));
