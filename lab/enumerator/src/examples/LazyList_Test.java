@@ -26,10 +26,7 @@ public class LazyList_Test {
 	}
 
 	private static LazyList<Integer> naturals(final int n) {
-		return LazyList.<Integer>fromPair(new P2<Integer,LazyList<Integer>>() {
-			public Integer _1() { return n; }
-			public LazyList<Integer> _2() { return naturals(n+1); }
-		});
+		return LazyList.cons(n, naturals(n+1));
 	}
 
 }

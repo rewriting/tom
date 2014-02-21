@@ -316,7 +316,6 @@ public class Enumeration<A> {
     	return new Enumeration<A>(res.map(f));
     }
     
-    @SuppressWarnings("rawtypes")
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof Enumeration) {
