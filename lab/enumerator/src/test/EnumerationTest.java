@@ -16,20 +16,20 @@ public class EnumerationTest {
 
 	@Test
 	public void testEmpty() {
-	Enumeration<Object> empty = Enumeration.empty();
-	assertEquals(LazyList.nil(), empty.parts());
+		Enumeration<Object> empty = Enumeration.empty();
+		assertEquals(LazyList.nil(), empty.parts());
 	}
-	
+
 	@Test
 	public void testSingleton() {
 		Enumeration<String> singleton = Enumeration.singleton("foo");
 		assertEquals(Arrays.asList(Arrays.asList("foo")), singleton.toList());
 	}
-	
+
 	@Test
 	public void testPay() {
 		Enumeration<Object> empty = Enumeration.empty();
-		Enumeration<Object> expected = new Enumeration(LazyList.cons(Finite.empty(), LazyList.nil()));
+		Enumeration<Object> expected = new Enumeration(LazyList.singleton(Finite.empty()));
 		assertEquals(expected, empty.pay());
 		Enumeration<Integer> e = Enumeration.fromList(
 				Arrays.asList(Arrays.asList(1,2),new ArrayList<Integer>(),Arrays.asList(3)));
@@ -37,7 +37,7 @@ public class EnumerationTest {
 				Arrays.asList(new ArrayList<Integer>(),Arrays.asList(1,2),new ArrayList<Integer>(),Arrays.asList(3)));
 		assertEquals(expected2, e.pay());
 	}
-	
+
 	@Test
 	public void testPlus() {
 		Enumeration<Integer> e1 = Enumeration.fromList(
@@ -150,7 +150,7 @@ public class EnumerationTest {
 
 		assertEquals(expected, Enumeration.apply(f, e));
 	}
-	
+
 	@Test
 	public void testFix() {
 		F<Enumeration<String>, Enumeration<String>> f = new F<Enumeration<String>, Enumeration<String>>() {
@@ -165,11 +165,11 @@ public class EnumerationTest {
 			prefix.add(Finite.singleton("foo"));
 		}
 		List<Finite<String>> enumPrefix = e.parts()
-                  .prefix(prefix.size())
-                  .toList();
+				.prefix(prefix.size())
+				.toList();
 		assertEquals(prefix, enumPrefix);
 	}
-	
+
 	@Test
 	public void testKnot() {
 		F<Enumeration<String>, Enumeration<String>> f = new F<Enumeration<String>, Enumeration<String>>() {
@@ -181,5 +181,5 @@ public class EnumerationTest {
 		Enumeration<String> e = Enumeration.fix(f);
 		assertSame(e.parts(), e.parts().tail());
 	}
-	
+
 }
