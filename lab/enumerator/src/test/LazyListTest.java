@@ -1,4 +1,4 @@
-package tom.library.enumerator;
+package test;
 
 import static org.junit.Assert.*;
 
@@ -6,6 +6,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
+
+import tom.library.enumerator.LazyList;
+import tom.library.enumerator.P1;
 
 public class LazyListTest {
 

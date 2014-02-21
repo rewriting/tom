@@ -1,10 +1,16 @@
-package tom.library.enumerator;
+package test;
 
 import static org.junit.Assert.*;
 
 import java.util.*;
 
 import org.junit.Test;
+
+import tom.library.enumerator.Enumeration;
+import tom.library.enumerator.F;
+import tom.library.enumerator.Finite;
+import tom.library.enumerator.LazyList;
+import tom.library.enumerator.P2;
 
 public class EnumerationTest {
 
