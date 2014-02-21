@@ -1,9 +1,10 @@
 package tom.library.enumerator;
 
-import static java.math.BigInteger.ONE;
-import static java.math.BigInteger.ZERO;
-
 import java.math.BigInteger;
+
+import static java.math.BigInteger.ZERO;
+import static java.math.BigInteger.ONE;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,71 +12,46 @@ import java.util.List;
  * A lazy list, possibly infinite.
  */
 
-public class LazyList<A> {
+public abstract class LazyList<A> {
 	/**
-	 * head and tail stored in a pair this ensures laziness
+	 * head and tail stored in a pair this ensures lazyness
 	 */
-	private P2<A, LazyList<A>> pair = null;
-
-	private A cacheHead;
-	private LazyList<A> cacheTail;
-
-	private LazyList() {
-	}
 
 	/**
 	 * constructors
 	 */
-	public static <A> LazyList<A> fromPair(P2<A, LazyList<A>> p) {
-		LazyList<A> res = new LazyList<A>();
-		res.pair = p;
-		return res;
-	}
 
 	public static <A> LazyList<A> nil() {
-		return fromPair(null);
+		return new Empty<A>();
 	}
 
 	public static <A> LazyList<A> singleton(final A x) {
-		return fromPair(new P2<A, LazyList<A>>() {
-			public A _1() {
-				return x;
-			}
-
-			public LazyList<A> _2() {
-				return LazyList.nil();
-			}
-		});
+		return cons(x, LazyList.<A> nil()); //!\\ notation
 	}
 
+	public static <A> LazyList<A> cons(final A e, final P1<LazyList<A>> p1) {
+		return new Cons<A>(e,p1);
+	}
+
+	public static <A> LazyList<A> cons(final A e, final LazyList<A> s) {
+		return new Cons<A>(e,new P1<LazyList<A>>() { public LazyList<A> _1() { return s; } });
+	}
 	/**
 	 * access to the head of the list store the result in cacheHead for further
 	 * access
 	 */
-	public A head() {
-		if (cacheHead == null) {
-			cacheHead = pair._1();
-		}
-		return cacheHead;
-	}
+	public abstract A head();
 
 	/**
 	 * access to the tail of the list store the result in cacheTail for further
 	 * access
 	 */
-	public LazyList<A> tail() {
-		if (cacheTail == null) {
-			cacheTail = pair._2();
-		}
-		return cacheTail;
-	}
+	public abstract LazyList<A> tail();
 
 	/**
 	 * true when the list is empty
 	 */
-	public boolean isEmpty() {
-		return pair == null;
-	}
+	public abstract boolean isEmpty();
 
 	/**
 	 * [: [a,b,c,d].zipWith([x,y,z], f) :] is [: [f(a,z), f(b,y), f(c,z)] :].
@@ -84,15 +60,7 @@ public class LazyList<A> {
 		if (this.isEmpty() || ys.isEmpty()) {
 			return LazyList.<C> nil();
 		}
-		return fromPair(new P2<C, LazyList<C>>() {
-			public C _1() {
-				return f.apply(LazyList.this.head()).apply(ys.head());
-			}
-
-			public LazyList<C> _2() {
-				return LazyList.this.tail().zipWith(ys.tail(), f);
-			}
-		});
+		return cons(f.apply(head()).apply(ys.head()), tail().zipWith(ys.tail(), f));
 	}
 
 	public final <B, C> LazyList<C> zipWith(final LazyList<B> ys, final F2<A, B, C> f) {
@@ -106,15 +74,7 @@ public class LazyList<A> {
 		if (this.isEmpty()) {
 			return s;
 		}
-		return fromPair(new P2<A, LazyList<A>>() {
-			public A _1() {
-				return LazyList.this.head();
-			}
-
-			public LazyList<A> _2() {
-				return LazyList.this.tail().append(s);
-			}
-		});
+		return cons(head(),tail().append(s));
 	}
 
 	/**
@@ -124,15 +84,7 @@ public class LazyList<A> {
 		if (this.isEmpty()) {
 			return LazyList.singleton(LazyList.<A> nil());
 		}
-		return fromPair(new P2<LazyList<A>, LazyList<LazyList<A>>>() {
-			public LazyList<A> _1() {
-				return LazyList.this;
-			}
-
-			public LazyList<LazyList<A>> _2() {
-				return LazyList.this.tail().tails();
-			}
-		});
+		return cons(this,tail().tails());
 	}
 
 	/**
@@ -144,26 +96,10 @@ public class LazyList<A> {
 
 	private LazyList<LazyList<A>> reversalsAux(final LazyList<A> rev) {
 		if (isEmpty()) {
-			return LazyList.nil();
+			return nil();
 		}
-		final LazyList<A> newrev = LazyList.fromPair(new P2<A, LazyList<A>>() {
-			public A _1() {
-				return head();
-			}
-
-			public LazyList<A> _2() {
-				return rev;
-			}
-		});
-		return LazyList.fromPair(new P2<LazyList<A>, LazyList<LazyList<A>>>() {
-			public LazyList<A> _1() {
-				return newrev;
-			}
-
-			public LazyList<LazyList<A>> _2() {
-				return tail().reversalsAux(newrev);
-			}
-		});
+		final LazyList<A> newrev = cons(head(),rev);
+		return cons(newrev,tail().reversalsAux(newrev));
 	}
 
 	/**
@@ -173,15 +109,7 @@ public class LazyList<A> {
 		if (this.isEmpty()) {
 			return LazyList.<B> nil();
 		}
-		return fromPair(new P2<B, LazyList<B>>() {
-			public B _1() {
-				return f.apply(LazyList.this.head());
-			}
-
-			public LazyList<B> _2() {
-				return LazyList.this.tail().map(f);
-			}
-		});
+		return cons(f.apply(head()), tail().map(f));
 	}
 
 	/**
@@ -231,15 +159,61 @@ public class LazyList<A> {
 
 	public static <A> LazyList<A> fromList(List<A> l) {
 		LazyList<A> res = LazyList.nil();
-		for(A e:l) {
-			res = res.append(LazyList.singleton(e));
+		for(int i=l.size()-1 ; i>=0 ; i--) {
+			res = cons(l.get(i),res);
 		}
 		return res;
 	}
 
-	
 	public String toString() {
 		return toList().toString();
+	}
+
+	private static class Empty<A> extends LazyList<A> {
+		protected Empty() {
+			super();
+		}
+
+		public A head() {
+			throw new RuntimeException("cannot get head of an empty list");
+		}
+
+		public LazyList<A> tail() {
+			throw new RuntimeException("cannot get tail of an empty list");
+		}
+
+		public boolean isEmpty() {
+			return true;
+		}
+
+	}
+
+	private static class Cons<A> extends LazyList<A> {
+		private A head;
+		private P1<LazyList<A>> lazyTail;
+		private LazyList<A> cacheTail;
+
+		protected Cons(A x, P1<LazyList<A>> p1) {
+			super();
+			head = x;
+			lazyTail = p1;		
+		}
+		
+		public A head() {
+			return head;	
+		}
+
+		public LazyList<A> tail() {
+			if (cacheTail == null) {
+				cacheTail = lazyTail._1();
+			}
+			return cacheTail;	
+		}
+
+		public boolean isEmpty() {
+			return false;
+		}
+
 	}
 
 	public LazyList<A> prefix(int size) {

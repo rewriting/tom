@@ -64,9 +64,16 @@ public class Enumeration<A> {
     }
     
     private static <A> LazyList<Finite<A>> zipPlus(final LazyList<Finite<A>> xs, final LazyList<Finite<A>> ys) {
-        if (xs.isEmpty() || ys.isEmpty()) {
-            return xs.append(ys);
-        }
+    	if (xs.isEmpty() || ys.isEmpty()) {
+    		return xs.append(ys);
+    	}
+    	return LazyList.cons(xs.head().plus(ys.head()),
+    			new P1<LazyList<Finite<A>>>() {
+    		public LazyList<Finite<A>> _1() {
+    			return zipPlus(xs.tail(), ys.tail());
+    		}
+    	});
+    	/*
         return LazyList.fromPair(new P2<Finite<A>, LazyList<Finite<A>>>() {
             public Finite<A> _1() {
                 return xs.head().plus(ys.head());
@@ -76,6 +83,7 @@ public class Enumeration<A> {
                 return zipPlus(xs.tail(), ys.tail());
             }
         });
+        */
     }
 
     public <B> Enumeration<B> map(final F<A, B> f) {
@@ -96,6 +104,13 @@ public class Enumeration<A> {
         return new Enumeration<A>(
                 new P1<LazyList<Finite<A>>>() {
                     public LazyList<Finite<A>> _1() {
+                    	return LazyList.cons(Finite.<A>empty(),
+                    			new P1<LazyList<Finite<A>>>() {
+                    		public LazyList<Finite<A>> _1() {
+                    			return Enumeration.this.parts();
+                    		}
+                    	});
+                    	/*
                         return LazyList.<Finite<A>>fromPair(
                                 new P2<Finite<A>, LazyList<Finite<A>>>() {
 
@@ -107,6 +122,7 @@ public class Enumeration<A> {
                                         return Enumeration.this.parts();
                                     }
                                 });
+                                */
                     }
                 });
     }
@@ -132,6 +148,14 @@ public class Enumeration<A> {
     }
 
     private static <A, B> LazyList<Finite<P2<A, B>>> goY(final LazyList<Finite<A>> xs, final LazyList<LazyList<Finite<B>>> rys) {
+    	return LazyList.cons(conv(xs, rys.head()),
+    			new P1<LazyList<Finite<P2<A, B>>>>() {
+    		public LazyList<Finite<P2<A, B>>> _1() {
+    			return (rys.tail().isEmpty()) ? goX(xs, rys.head()) : goY(xs, rys.tail());
+    		}
+    	});
+    	
+    	/*
         return LazyList.fromPair(new P2<Finite<P2<A, B>>, LazyList<Finite<P2<A, B>>>>() {
 
             public Finite<P2<A, B>> _1() {
@@ -142,6 +166,7 @@ public class Enumeration<A> {
                 return (rys.tail().isEmpty()) ? goX(xs, rys.head()) : goY(xs, rys.tail());
             }
         });
+        */
     }
 
     private static <A, B> LazyList<Finite<P2<A, B>>> goX(final LazyList<Finite<A>> xs, final LazyList<Finite<B>> ry) {
