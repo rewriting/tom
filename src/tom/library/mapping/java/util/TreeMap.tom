@@ -33,7 +33,7 @@
 %include { types/TreeMap.tom }
 
 %oplist TreeMap concTreeMap(MapEntry*) {
-  is_fsym(m)       { ($m!= null) && ($m instanceof java.util.TreeMap) }
+  is_fsym(m)       { ($m instanceof java.util.TreeMap) }
   make_empty()     { new java.util.TreeMap() }
   make_insert(e,m) { treeMapAppend($e,$m) }
   get_head(m)      { treeMapGetHead($m) }

@@ -37,7 +37,7 @@
 }
 
 %oplist String concString(char*) {
-  is_fsym(t) { $t!= null && $t instanceof String }
+  is_fsym(t) { $t instanceof String }
   make_empty() { "" }
   make_insert(c,s) { $c+$s }
   get_head(s) { $s.charAt(0) }

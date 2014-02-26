@@ -68,6 +68,9 @@ public class Enumeration<A> {
         throw new RuntimeException("index " + i + " out of range");
     }
     
+    /*
+     * zipPlus([f1,f2,f3], [g1,g2]) = [f1+g1, f2+g2] 
+     */
     private static <A> LazyList<Finite<A>> zipPlus(final LazyList<Finite<A>> xs, final LazyList<Finite<A>> ys) {
     	if (xs.isEmpty() || ys.isEmpty()) {
     		return xs.append(ys);

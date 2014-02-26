@@ -37,7 +37,7 @@
 }
 
 %op Character Char(c:char) {
-  is_fsym(t) { ($t!= null) && ($t instanceof Character) }
+  is_fsym(t) { ($t instanceof Character) }
   get_slot(c,t) { $t.charValue() }
   make(c) { new Character($c) }
 }

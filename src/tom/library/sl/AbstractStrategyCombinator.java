@@ -51,7 +51,7 @@ public abstract class AbstractStrategyCombinator extends AbstractStrategy {
   /** 
    * Initializes subterm
    */
-  protected void initSubterm() {
+  final protected void initSubterm() {
     arguments = new Strategy[] {};
   }
 
@@ -60,7 +60,7 @@ public abstract class AbstractStrategyCombinator extends AbstractStrategy {
    *
    * @param v1 first Strategy to add to the array
    */
-  protected void initSubterm(Strategy v1) {
+  final protected void initSubterm(Strategy v1) {
     arguments = new Strategy[] {v1};
   }
   

@@ -20,16 +20,18 @@ public class EnumerationTest {
 		assertEquals(LazyList.nil(), empty.parts());
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testSingleton() {
 		Enumeration<String> singleton = Enumeration.singleton("foo");
 		assertEquals(Arrays.asList(Arrays.asList("foo")), singleton.toList());
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testPay() {
 		Enumeration<Object> empty = Enumeration.empty();
-		Enumeration<Object> expected = new Enumeration(LazyList.singleton(Finite.empty()));
+		Enumeration<Object> expected = new Enumeration<Object>(LazyList.singleton(Finite.empty()));
 		assertEquals(expected, empty.pay());
 		Enumeration<Integer> e = Enumeration.fromList(
 				Arrays.asList(Arrays.asList(1,2),new ArrayList<Integer>(),Arrays.asList(3)));
@@ -38,34 +40,32 @@ public class EnumerationTest {
 		assertEquals(expected2, e.pay());
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testPlus() {
 		Enumeration<Integer> e1 = Enumeration.fromList(
 				Arrays.asList(Arrays.asList(1,2),Arrays.asList(3,4)));
 		Enumeration<Integer> e2 = Enumeration.fromList(
-				Arrays.asList(new ArrayList<Integer>(),Arrays.asList(5,6),Arrays.asList(7)));
+				Arrays.asList(new ArrayList<Integer>(), Arrays.asList(5,6), Arrays.asList(7)));
 		Enumeration<Integer> expected = Enumeration.fromList(
-				Arrays.asList(Arrays.asList(1,2),Arrays.asList(3,4,5,6),Arrays.asList(7)));
+				Arrays.asList(Arrays.asList(1,2), Arrays.asList(3,4,5,6), Arrays.asList(7)));
 		Enumeration<Integer> empty = Enumeration.empty();
 		assertEquals(e1,e1.plus(empty));
 		assertEquals(e1,empty.plus(e1));
+		// [[1,2], [3,4]] + [[], [5,6], [7]] = [[1,2], [3,4,5,6], [7]]
 		assertEquals(expected,e1.plus(e2));
 	}
 
 	private P2<Integer,Integer> p(final Integer i, final Integer j) {
 		return new P2<Integer, Integer>() {
-			public Integer _1() {
-				return i;
-			}
-
-			public Integer _2() {
-				return j;
-			}
+			public Integer _1() { return i; }
+			public Integer _2() { return j; }
 		};
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
-	public void testMult() {
+	public void testTimes() {
 		Enumeration<Integer> e1 = Enumeration.fromList(
 				Arrays.asList(Arrays.asList(1),Arrays.asList(2,3),Arrays.asList(4)));
 		Enumeration<Integer> e2 = Enumeration.fromList(
@@ -78,12 +78,22 @@ public class EnumerationTest {
 						Arrays.asList(p(2, 8), p(3, 8), p(4, 7)),
 						Arrays.asList(p(4, 8)),
 						new ArrayList<P2<Integer,Integer>>()));
-
+		/*
+		 * [[1], [2,3], [4]] x [[5,6], [7], [8]] = [
+		 *                                          [(1,5), (1,6)],
+		 *                                          [(1,7), (2,5), (2,6), (3,5), (3,6)],
+		 *                                          [(1,8), (2,7), (3,7), (4,5), (4,6)],
+		 *                                          [(2,8), (3,8), (4,7)],
+		 *                                          [(4,8)],
+		 *                                          []
+		 *                                         ]
+		 */
 		assertEquals(Enumeration.empty().times(e1), Enumeration.empty());
 		assertEquals(e1.times(Enumeration.empty()), Enumeration.empty());
 		assertEquals(expected, e1.times(e2));
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testMap() {
 		Enumeration<Integer> e = Enumeration.fromList(
@@ -109,6 +119,7 @@ public class EnumerationTest {
 		assertEquals(expected, e.map(f));
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testApply() {
 		F<Integer, Integer> f1 = new F<Integer, Integer>() {
@@ -147,7 +158,13 @@ public class EnumerationTest {
 						Arrays.asList(5, 7, 5 * 2, 7 * 2, 1 * 3, 3 * 3),
 						Arrays.asList(5 * 3, 7 * 3),
 						new ArrayList<Integer>()));
-
+		/*
+		 *  [[*1,*2],[*3]].[[1,3],[5,7]] = [
+		 *                                  [1*1,3*1, 1*2,3*2],
+		 *                                  [5*1,7*1, 5*2,7*2, 1*3, 3*3],
+		 *                                  [5*3, 7*3]
+		 *                                 ]
+		 */
 		assertEquals(expected, Enumeration.apply(f, e));
 	}
 

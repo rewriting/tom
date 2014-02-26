@@ -1,6 +1,7 @@
 Current developers:
     Jean-Christophe Bach      e-mail: Jeanchristophe.Bach@inria.fr
     Emilie Balland            e-mail: Emilie.Balland@inria.fr
+    Horatiu Cirstea           e-mail: Horatiu.Cirstea@loria.fr
     Pierre-Etienne Moreau     e-mail: Pierre-Etienne.Moreau@loria.fr
     Antoine Reilles           e-mail: Antoine.Reilles@loria.fr
 
@@ -15,7 +16,7 @@ Other contributors:
     Gregory Andrien           Plugin-Platform
     Mark van den Brand        Discussions
     Guillaume Darmont         XML extension
-    Eric Deplagne             first ANTLR plugin
+    Eric Deplagne             First ANTLR plugin
     Maxime Gabut              New Tom parser using antlr v3
     Stephane Hrvatin          ANTLR based parser
     Anne-Claire Lonchamp      Constraint extension

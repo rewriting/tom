@@ -33,7 +33,7 @@
 %include { types/HashMap.tom }
 
 %oplist HashMap concHashMap(MapEntry*) {
-  is_fsym(m)       { ($m!= null) && ($m instanceof java.util.HashMap) }
+  is_fsym(m)       { ($m instanceof java.util.HashMap) }
   make_empty()     { new java.util.HashMap() }
   make_insert(e,m) { hashMapAppend($e,$m) }
   get_head(m)      { hashMapGetHead($m) }
