@@ -1,16 +1,22 @@
 package tom.library.enumerator;
 
 import java.math.BigInteger;
+import java.util.*;
+
 import static java.math.BigInteger.ZERO;
-import static java.math.BigInteger.ONE;
 
 public class Enumeration<A> {
 
     private LazyList<Finite<A>> cacheParts;
     public P1<LazyList<Finite<A>>> p1;
 
-    public Enumeration(LazyList<Finite<A>> p) {
+    public Enumeration(final LazyList<Finite<A>> p) {
         this.cacheParts = p;
+        this.p1 = new P1<LazyList<Finite<A>>>() {
+    		public LazyList<Finite<A>> _1() {
+    			return p;
+    		}
+    	};
     }
 
     public Enumeration(P1<LazyList<Finite<A>>> p1) {
@@ -63,18 +69,15 @@ public class Enumeration<A> {
     }
     
     private static <A> LazyList<Finite<A>> zipPlus(final LazyList<Finite<A>> xs, final LazyList<Finite<A>> ys) {
-        if (xs.isEmpty() || ys.isEmpty()) {
-            return xs.append(ys);
-        }
-        return LazyList.fromPair(new P2<Finite<A>, LazyList<Finite<A>>>() {
-            public Finite<A> _1() {
-                return xs.head().plus(ys.head());
-            }
-
-            public LazyList<Finite<A>> _2() {
-                return zipPlus(xs.tail(), ys.tail());
-            }
-        });
+    	if (xs.isEmpty() || ys.isEmpty()) {
+    		return xs.append(ys);
+    	}
+    	P1<LazyList<Finite<A>>> p = new P1<LazyList<Finite<A>>>() {
+    		public LazyList<Finite<A>> _1() {
+    			return zipPlus(xs.tail(), ys.tail());
+    		}
+    	};
+    	return LazyList.cons(xs.head().plus(ys.head()),p);
     }
 
     public <B> Enumeration<B> map(final F<A, B> f) {
@@ -95,17 +98,15 @@ public class Enumeration<A> {
         return new Enumeration<A>(
                 new P1<LazyList<Finite<A>>>() {
                     public LazyList<Finite<A>> _1() {
-                        return LazyList.<Finite<A>>fromPair(
-                                new P2<Finite<A>, LazyList<Finite<A>>>() {
-
-                                    public Finite<A> _1() {
-                                        return Finite.<A>empty();
-                                    }
-
-                                    public LazyList<Finite<A>> _2() {
-                                        return Enumeration.this.parts();
-                                    }
-                                });
+                    	return LazyList.cons(Finite.<A>empty(), p1);
+                    	/*
+                    	P1<LazyList<Finite<A>>> p = new P1<LazyList<Finite<A>>>() {
+                    		public LazyList<Finite<A>> _1() {
+                    			return Enumeration.this.parts();
+                    		}
+                    	};
+                    	return LazyList.cons(Finite.<A>empty(), p);
+                    	*/
                     }
                 });
     }
@@ -131,21 +132,16 @@ public class Enumeration<A> {
     }
 
     private static <A, B> LazyList<Finite<P2<A, B>>> goY(final LazyList<Finite<A>> xs, final LazyList<LazyList<Finite<B>>> rys) {
-        return LazyList.fromPair(new P2<Finite<P2<A, B>>, LazyList<Finite<P2<A, B>>>>() {
-
-            public Finite<P2<A, B>> _1() {
-                return conv(xs, rys.head());
-            }
-
-            public LazyList<Finite<P2<A, B>>> _2() {
-                return (rys.tail().isEmpty()) ? goX(xs, rys.head()) : goY(xs, rys.tail());
-            }
-        });
+    	P1<LazyList<Finite<P2<A, B>>>> p = new P1<LazyList<Finite<P2<A, B>>>>() {
+    		public LazyList<Finite<P2<A, B>>> _1() {
+    			return (rys.tail().isEmpty()) ? goX(xs, rys.head()) : goY(xs, rys.tail());
+    		}
+    	};
+    	return LazyList.cons(conv(xs, rys.head()), p);
     }
 
     private static <A, B> LazyList<Finite<P2<A, B>>> goX(final LazyList<Finite<A>> xs, final LazyList<Finite<B>> ry) {
         F<LazyList<Finite<A>>, Finite<P2<A, B>>> fs = new F<LazyList<Finite<A>>, Finite<P2<A, B>>>() {
-
             public Finite<P2<A, B>> apply(LazyList<Finite<A>> x) {
                 return conv(x, ry);
             }
@@ -170,14 +166,12 @@ public class Enumeration<A> {
         LazyList<BigInteger> ysCards = ys.map(cardB);
         F2<BigInteger, BigInteger, BigInteger> multiply =
                 new F2<BigInteger, BigInteger, BigInteger>() {
-
                     public BigInteger apply(BigInteger a, BigInteger b) {
                         return a.multiply(b);
                     }
                 };
         F2<BigInteger, BigInteger, BigInteger> add =
                 new F2<BigInteger, BigInteger, BigInteger>() {
-
                     public BigInteger apply(BigInteger a, BigInteger b) {
                         return a.add(b);
                     }
@@ -185,14 +179,12 @@ public class Enumeration<A> {
 
         final F2<Finite<P2<A, B>>, Finite<P2<A, B>>, Finite<P2<A, B>>> finitePlus =
                 new F2<Finite<P2<A, B>>, Finite<P2<A, B>>, Finite<P2<A, B>>>() {
-
                     public Finite<P2<A, B>> apply(Finite<P2<A, B>> x, Finite<P2<A, B>> y) {
                         return x.plus(y);
                     }
                 };
         final F2<Finite<A>, Finite<B>, Finite<P2<A, B>>> finiteTimes =
                 new F2<Finite<A>, Finite<B>, Finite<P2<A, B>>>() {
-
                     public Finite<P2<A, B>> apply(Finite<A> x, Finite<B> y) {
                         return x.times(y);
                     }
@@ -270,4 +262,37 @@ public class Enumeration<A> {
 
         return resA;
     }
+    
+    public List<List<A>> toList() {
+    	F<Finite<A>,List<A>> f = new F<Finite<A>,List<A>>() {
+    		public List<A> apply(Finite<A> arg) {
+    			return arg.toList();
+    		}
+    	};
+    	return parts().map(f).toList();
+    }
+    
+    public static <A> Enumeration<A> fromList(List<List<A>> l) {
+    	LazyList<List<A>> res = LazyList.fromList(l);
+    	F<List<A>,Finite<A>> f = new F<List<A>,Finite<A>>() {
+    		public Finite<A> apply(List<A> arg) {
+    			return Finite.fromList(arg);
+    		}
+    	};
+    	return new Enumeration<A>(res.map(f));
+    }
+    
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof Enumeration) {
+			return this.toList().equals(((Enumeration) obj).toList());
+		}
+		return super.equals(obj);
+	}
+
+    
+    public String toString() {
+		return toList().toString();
+    }
+    
 }

@@ -9,7 +9,7 @@ public class Combinators {
 	private static Enumeration<Boolean> enumboolean = null;
 	private static Enumeration<Character> enumcharacter = null;
 	private static Enumeration<String> enumstring = null;
-	
+
 	private static Enumeration<Integer> enumexpint = null;
 
 	public static Enumeration<Integer> makeint() { return makeInt(); }
@@ -26,39 +26,35 @@ public class Combinators {
 		}
 		return enumint;
 	}
-	
+
 	public static Enumeration<Integer> makeInt() {
 		if(enumexpint==null) {
 			enumexpint = Enumeration.singleton(0).plus(new Enumeration<Integer>(naturals(0)));
 		}
 		return enumexpint;
 	}
-	
-	private static LazyList<Finite<Integer>> naturals(final int p) {
-		return LazyList.fromPair(new P2<Finite<Integer>,LazyList<Finite<Integer>>>() {
-			public Finite<Integer> _1() {
-				// build Finite from 2^p to 2^(p+1)-1
-				//p=3 => 8, 9, 10, 11, 12, 14, 14, 15
-				final BigInteger two = BigInteger.valueOf(2);
-				final BigInteger n = two.pow(p);
-				return new Finite<Integer>(n.multiply(two),new F<BigInteger,Integer>() {
-					public Integer apply(BigInteger index) {
-						BigInteger qr[] = index.divideAndRemainder(two);
-						if(qr[1].equals(BigInteger.ZERO)) {
-							return (int) qr[0].add(n).longValue();
-						} else {
-							return -(int) qr[0].add(n).longValue();
 
-						}
-					}
-				});	
+	private static LazyList<Finite<Integer>> naturals(final int p) {
+		// build Finite from 2^p to 2^(p+1)-1
+		//p=3 => 8, 9, 10, 11, 12, 14, 14, 15
+		final BigInteger two = BigInteger.valueOf(2);
+		final BigInteger n = two.pow(p);
+		Finite<Integer> head = new Finite<Integer>(n.multiply(two),new F<BigInteger,Integer>() {
+			public Integer apply(BigInteger index) {
+				BigInteger qr[] = index.divideAndRemainder(two);
+				if(qr[1].equals(BigInteger.ZERO)) {
+					return (int) qr[0].add(n).longValue();
+				} else {
+					return -(int) qr[0].add(n).longValue();
+
+				}
 			}
-			public LazyList<Finite<Integer>> _2() {
-				return naturals(p+1);
-			}
-		});
+		});	
+		LazyList<Finite<Integer>> tail = naturals(p+1);
+		return LazyList.cons(head, tail);			
+
 	}
-	
+
 	public static Enumeration<Boolean> makeboolean() { return makeBoolean(); }
 	public static Enumeration<Boolean> makeBoolean() {
 		if(enumboolean==null) {
@@ -66,7 +62,7 @@ public class Combinators {
 		}
 		return enumboolean;
 	}
-	
+
 	public static Enumeration<Character> makechar() { return makeCharacter(); }
 	public static Enumeration<Character> makeCharacter() {
 		if(enumcharacter==null) {
@@ -76,11 +72,11 @@ public class Combinators {
 				charEnum = charEnum.plus(Enumeration.singleton(x));
 			}
 			enumcharacter = charEnum;
-			
+
 		}
 		return enumcharacter;
 	}
-	
+
 	public static Enumeration<String> makeString() {
 		if(enumstring==null) {
 			/*
@@ -101,23 +97,23 @@ public class Combinators {
 				}
 			};
 			enumstring = Enumeration.fix(f);
-			*/
+			 */
 
 			F2<Enumeration<Character>,Enumeration<String>,Enumeration<String>> funMake =
-			    new F2<Enumeration<Character>,Enumeration<String>,Enumeration<String>>() {
-			      public Enumeration<String> apply(final Enumeration<Character> e1, final Enumeration<String> e2) {
-			            return Enumeration.apply(Enumeration.apply(Enumeration.singleton(
-			            		new F2<Character,String,String>() {
-			            			public String apply(Character t1, final String t2) {
-			            				return t1+t2;
-			            			}
-			            		}.curry()),e1),e2).pay();
-			      }
+					new F2<Enumeration<Character>,Enumeration<String>,Enumeration<String>>() {
+				public Enumeration<String> apply(final Enumeration<Character> e1, final Enumeration<String> e2) {
+					return Enumeration.apply(Enumeration.apply(Enumeration.singleton(
+							new F2<Character,String,String>() {
+								public String apply(Character t1, final String t2) {
+									return t1+t2;
+								}
+							}.curry()),e1),e2).pay();
+				}
 			};
-			
+
 			Enumeration<String> tmpenum = new Enumeration<String>((LazyList<Finite<String>>)null);
 			enumstring = Enumeration.singleton("").plus(funMake.apply(makeCharacter(),tmpenum));
-			
+
 			tmpenum.p1 = new P1<LazyList<Finite<String>>>() {
 				public LazyList<Finite<String>> _1() { return enumstring.parts(); }
 			};
@@ -125,7 +121,7 @@ public class Combinators {
 		}
 		return enumstring;
 	}
-	
+
 	/*
 	 * stubs for other builtins
 	 */
@@ -133,17 +129,17 @@ public class Combinators {
 	public static Enumeration<Long> makeLong() {
 		throw new RuntimeException("not yet implemented");
 	}
-	
+
 	public static Enumeration<Float> makefloat() { return makeFloat(); }
 	public static Enumeration<Float> makeFloat() {
 		throw new RuntimeException("not yet implemented");
 	}
-	
+
 	public static Enumeration<Double> makedouble() { return makeDouble(); }
 	public static Enumeration<Double> makeDouble() {
 		throw new RuntimeException("not yet implemented");
 	}
-	
+
 	public static Enumeration<ATerm> makeATerm() {
 		throw new RuntimeException("not yet implemented");
 	}

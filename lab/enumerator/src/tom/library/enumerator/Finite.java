@@ -1,6 +1,9 @@
 package tom.library.enumerator;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
+
 import static java.math.BigInteger.ZERO;
 import static java.math.BigInteger.ONE;
 
@@ -59,9 +62,14 @@ public class Finite<A> {
 	 * union of two sets
 	 */
 	public Finite<A> plus(final Finite<A> other) {
-		return new Finite<A>(card.add(other.card), new F<BigInteger, A>() {
+		final BigInteger newCard = card.add(other.card);
+		return new Finite<A>(newCard, new F<BigInteger, A>() {
 			public A apply(BigInteger i) {
-				return (i.compareTo(card)<0) ? indexer.apply(i) : other.indexer.apply(i.subtract(card));
+				if(i.compareTo(newCard) < 0) {
+					return (i.compareTo(card)<0) ? indexer.apply(i) : other.indexer.apply(i.subtract(card));
+				} else {
+					throw new RuntimeException("index out of range");
+				}
 			}
 		});
 	}
@@ -70,16 +78,23 @@ public class Finite<A> {
 	 * cartesian product of two sets
 	 */
 	public <B> Finite<P2<A, B>> times(final Finite<B> other) {
-		return new Finite<P2<A, B>>(card.multiply(other.card),
+		final BigInteger newCard = card.multiply(other.card);
+
+		return new Finite<P2<A, B>>(newCard,
 				new F<BigInteger, P2<A, B>>() {
 					public P2<A, B> apply(BigInteger i) {
-						BigInteger[] qr = i.divideAndRemainder(other.card);
-						final BigInteger q = qr[0];
-						final BigInteger r = qr[1];
-						return new P2<A, B>() {
-							public A _1() { return Finite.this.indexer.apply(q); }
-							public B _2() { return other.indexer.apply(r); }
-						};
+						if(i.compareTo(newCard) < 0) {
+							BigInteger[] qr = i.divideAndRemainder(other.card);
+							final BigInteger q = qr[0];
+							final BigInteger r = qr[1];
+
+							return new P2<A, B>() {
+								public A _1() { return Finite.this.indexer.apply(q); }
+								public B _2() { return other.indexer.apply(r); }
+							};
+						} else {
+							throw new RuntimeException("index out of range");
+						}
 					}
 				});
 	}
@@ -102,14 +117,32 @@ public class Finite<A> {
 		return subject.times(Finite.this).map(pair);
 	}
 	
-	public String toString() {
-		String s = "[";
+	List<A> toList() {
+		List<A> res = new ArrayList<A>();
 		for(BigInteger i=ZERO ; i.compareTo(getCard())<0; i=i.add(ONE)) {
 			A elt = get(i);
-			s += elt;
-			s += ",";
+			res.add(elt);
 		}
-		s = s + "]";
-		return s;
+		return res;
+	}
+	
+	public static <A> Finite<A> fromList(List<A> arg) {
+		Finite<A> res = Finite.empty();
+		for(A e:arg) {
+			res = res.plus(Finite.singleton(e));
+		}
+		return res;
+	}
+	
+	public String toString() {
+		return toList().toString();
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+	if (obj instanceof Finite) {
+		return toList().equals(((Finite)obj).toList());
+	}
+		return super.equals(obj);
 	}
 }
