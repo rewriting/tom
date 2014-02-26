@@ -152,21 +152,32 @@ public class Enumeration<A> {
         return xs.tail().tails().map(fs);
     }
 
-    private static <A, B> Finite<P2<A, B>> conv(final LazyList<Finite<A>> xs, final LazyList<Finite<B>> ys) {
+    private static <A, B> Finite<P2<A, B>> conv(LazyList<Finite<A>> xs, LazyList<Finite<B>> ys) {
+    	Finite<P2<A,B>> result = Finite.empty();
+    	if(ys.isEmpty()) { return result; }
+    	while(true) {
+    		if(xs.isEmpty()) { return result; }
+    		result = result.plus(xs.head().times(ys.head()));
+    		ys = ys.tail();
+    		if(ys.isEmpty()) { return result; }
+    		xs = xs.tail();
+    	}
+    	/*
         F<Finite<A>, BigInteger> cardA = new F<Finite<A>, BigInteger>() {
-
             public BigInteger apply(Finite<A> x) {
                 return x.getCard();
             }
         };
+        
         F<Finite<B>, BigInteger> cardB = new F<Finite<B>, BigInteger>() {
-
             public BigInteger apply(Finite<B> x) {
                 return x.getCard();
             }
         };
+        
         LazyList<BigInteger> xsCards = xs.map(cardA);
         LazyList<BigInteger> ysCards = ys.map(cardB);
+        
         F2<BigInteger, BigInteger, BigInteger> multiply =
                 new F2<BigInteger, BigInteger, BigInteger>() {
                     public BigInteger apply(BigInteger a, BigInteger b) {
@@ -204,11 +215,11 @@ public class Enumeration<A> {
         };
 
         return new Finite<P2<A, B>>(newCard, newIndexer);
+        */
     }
 
     public static <A, B> Enumeration<B> apply(final Enumeration<F<A, B>> subject, final Enumeration<A> other) {
         F<P2<F<A, B>, A>, B> pair = new F<P2<F<A, B>, A>, B>() {
-
             public B apply(P2<F<A, B>, A> p) {
                 return p._1().apply(p._2());
             }
