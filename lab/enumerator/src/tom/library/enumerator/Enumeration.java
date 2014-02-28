@@ -154,7 +154,7 @@ public class Enumeration<A> {
 
     private static <A, B> Finite<P2<A, B>> conv(LazyList<Finite<A>> xs, LazyList<Finite<B>> ys) {
     	Finite<P2<A,B>> result = Finite.empty();
-    	if(ys.isEmpty()) { return result; }
+		if(ys.isEmpty()) { return result; }
     	while(true) {
     		if(xs.isEmpty()) { return result; }
     		result = result.plus(xs.head().times(ys.head()));
@@ -162,6 +162,7 @@ public class Enumeration<A> {
     		if(ys.isEmpty()) { return result; }
     		xs = xs.tail();
     	}
+    	
     	/*
         F<Finite<A>, BigInteger> cardA = new F<Finite<A>, BigInteger>() {
             public BigInteger apply(Finite<A> x) {

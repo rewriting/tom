@@ -84,7 +84,7 @@ public abstract class LazyList<A> {
 		if (this.isEmpty()) {
 			return LazyList.singleton(LazyList.<A> nil());
 		}
-		return cons(this,tail().tails());
+		return cons(this, new P1<LazyList<LazyList<A>>>() { public LazyList<LazyList<A>> _1() { return LazyList.this.tail().tails(); } });
 	}
 
 	/**
@@ -99,7 +99,7 @@ public abstract class LazyList<A> {
 			return nil();
 		}
 		final LazyList<A> newrev = cons(head(),rev);
-		return cons(newrev,tail().reversalsAux(newrev));
+		return cons(newrev, new P1<LazyList<LazyList<A>>>() { public LazyList<LazyList<A>> _1() { return LazyList.this.tail().reversalsAux(newrev); } });
 	}
 
 	/**
@@ -109,7 +109,7 @@ public abstract class LazyList<A> {
 		if (this.isEmpty()) {
 			return LazyList.<B> nil();
 		}
-		return cons(f.apply(head()), tail().map(f));
+		return cons(f.apply(head()), new P1<LazyList<B>>() { public LazyList<B> _1() { return LazyList.this.tail().map(f); } });
 	}
 
 	/**
@@ -226,9 +226,9 @@ public abstract class LazyList<A> {
 	
 	@Override
 	public boolean equals(Object obj) {
-	if (obj instanceof LazyList) {
-		return toList().equals(((LazyList)obj).toList());
-	}
+		if (obj instanceof LazyList) {
+			return toList().equals(((LazyList)obj).toList());
+		}
 		return super.equals(obj);
 	}
 	

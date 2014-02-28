@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.junit.Test;
 
+import tom.library.enumerator.F;
 import tom.library.enumerator.LazyList;
 import tom.library.enumerator.P1;
 
@@ -100,4 +101,44 @@ public class LazyListTest {
 		}
 	}
 
+	@Test
+	public void testTails() {
+		LazyList<Integer> nat = naturals(7);
+		LazyList<LazyList<Integer>> tails = nat.tails();
+
+		for(int i = 7 ; i<100 ; i++) {
+			LazyList<Integer> l = tails.head();
+			assertEquals(new Integer(i), l.head());
+			tails = tails.tail();
+		}
+	}
+
+	@Test
+	public void testReversals() {
+		LazyList<Integer> nat = naturals(1);
+		LazyList<LazyList<Integer>> rev = nat.reversals();
+
+		for(int i = 1 ; i<100 ; i++) {
+			LazyList<Integer> l = rev.head();
+			assertEquals(new Integer(i), l.head());
+			rev = rev.tail();
+		}
+	}
+	
+	@Test
+	public void testMap() {
+		F<Integer, Integer> f2 = new F<Integer, Integer>() {
+			public Integer apply(Integer n) {
+				return n * 2;
+			}
+		};
+
+		LazyList<Integer> nat = naturals(1);
+		LazyList<Integer> l = nat.map(f2);
+		for(int i = 1 ; i<100 ; i++) {
+			assertEquals(f2.apply(i), l.head());
+			l = l.tail();
+		}
+	}
+	
 }

@@ -6,7 +6,7 @@ import java.math.BigInteger;
 
 public class Demo {
 	public static void main(String args[]) {
-		//listOfBool();
+		listOfBool();
 		treeOfNatural();
 		
 		System.out.println("the end");
@@ -17,7 +17,6 @@ public class Demo {
 	 */
 	public static void listOfBool() {
 		// examples for booleans
-
 		Enumeration<Boolean> trueEnum = Enumeration.singleton(true);
 		Enumeration<Boolean> falseEnum = Enumeration.singleton(false);
 		final Enumeration<Boolean> boolEnum = trueEnum.plus(falseEnum).pay();
@@ -38,7 +37,7 @@ public class Demo {
 		Enumeration<LList> listEnum = Enumeration.fix(f);
 
 		LazyList<Finite<LList>> parts = listEnum.parts();
-		for(int i=0;i<10 && !parts.isEmpty();i++) {
+		for(int i=0 ; i<10 && !parts.isEmpty() ; i++) {
 			System.out.println(i + " --> " + parts.head());
 			parts=parts.tail();
 		}
@@ -46,11 +45,12 @@ public class Demo {
 		//for(BigInteger i=Integer.MAX_VALUE-1 ; i<= Integer.MAX_VALUE ; i=i+10000) {
 		//	System.out.println(i + " --> " + listEnum.get(i));
 		//}
+		/*
 		for(int p=0 ; p<10000 ; p=p+100) {
 			BigInteger i = java.math.BigInteger.TEN.pow(p);
 			System.out.println("10^" + p + " --> " + listEnum.get(i).size());
-			//listEnum.get(i);
 		}
+		*/
 		//System.out.println(listEnum.pay().get(0));
 		//listEnum.pay().get(0);
 	}
@@ -74,7 +74,6 @@ public class Demo {
 		public int size() {
 			return 0;
 		}
-
 	}
 
 	private static class Cons extends LList {
