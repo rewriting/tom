@@ -127,11 +127,11 @@ public class Enumeration<A> {
     /**
      * tools for LazyList
      */
-    private static <A, B> LazyList<Finite<P2<A, B>>> prod(LazyList<Finite<A>> xs, final LazyList<LazyList<Finite<B>>> ys) {
-        if (xs.isEmpty() || ys.isEmpty()) {
+    private static <A, B> LazyList<Finite<P2<A, B>>> prod(LazyList<Finite<A>> xs, final LazyList<LazyList<Finite<B>>> rys) {
+        if (xs.isEmpty() || rys.isEmpty()) {
             return LazyList.nil();
         }
-        return goY(xs, ys);
+        return goY(xs, rys);
     }
 
     private static <A, B> LazyList<Finite<P2<A, B>>> goY(final LazyList<Finite<A>> xs, final LazyList<LazyList<Finite<B>>> rys) {
