@@ -14,34 +14,22 @@ import static java.math.BigInteger.ONE;
  */
 public class Finite<A> {
 	private BigInteger card;
-	private F<BigInteger, A> indexer;
+	private Operation op;
 
 	/**
 	 * constructors
 	 */
-	public Finite(BigInteger c, F<BigInteger, A> f) {
+	public Finite(BigInteger c, Operation o) {
 		this.card = c;
-		this.indexer = f;
+		this.op = o;
 	}
 
 	public static <A> Finite<A> empty() {
-		return new Finite<A>(ZERO, new F<BigInteger, A>() {
-			public A apply(BigInteger i) {
-				throw new RuntimeException("index out of range");
-			}
-		});
+		return new Finite<A>(ZERO, new OEmpty());
 	}
 
 	public static <A> Finite<A> singleton(final A x) {
-		return new Finite<A>(ONE, new F<BigInteger, A>() {
-			public A apply(BigInteger i) {
-				if (i.signum() == 0) {
-					return x;
-				} else {
-					throw new RuntimeException("index out of range");
-				}
-			}
-		});
+		return new Finite<A>(ONE, new OSingleton<A>(x));
 	}
 
 	/**
@@ -145,4 +133,54 @@ public class Finite<A> {
 	}
 		return super.equals(obj);
 	}
+	
+	/*
+	 * classes for VM
+	 */
+	private static abstract class Instruction {
+		protected int code;	
+		protected static int DONE  = 1;
+		protected static int MAP   = 2;
+		protected static int PAIR1 = 3;
+		protected static int PAIR2 = 4;
+
+		public int getCode() { return this.code; }
+	}
+	
+	private static class Done extends Instruction {
+		public Done() {	this.code = DONE; }
+	}
+	
+	private static class Map extends Instruction {
+		public F fun;
+		public Map(F f) { this.code = MAP; this.fun = f; }
+	}
+	
+	private static abstract class Operation {
+		protected int code;	
+		protected static int ADD       = 1;
+		protected static int MULT      = 2;
+		protected static int EMPTY     = 3;
+		protected static int SINGLETON = 4;
+		protected static int MAP       = 5;
+
+		public int getCode() { return this.code; }
+	}
+	
+	private static class OEmpty extends Operation {
+		public OEmpty() { this.code = EMPTY; }
+	}
+	
+	private static class OSingleton<A> extends Operation {
+		A value;
+		public OSingleton(A v) { this.code = SINGLETON; this.value = v; }
+	}
+	
+	private static class OMap extends Operation {
+		public Finite finite;
+		public F fun;
+		public OMap(Finite fin, F f) { this.code = MAP; this.finite = fin; this.fun = f; }
+	}
+	
+	
 }
