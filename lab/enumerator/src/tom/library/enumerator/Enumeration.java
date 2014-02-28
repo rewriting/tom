@@ -152,6 +152,9 @@ public class Enumeration<A> {
         return xs.tail().tails().map(fs);
     }
 
+    /*
+     * 
+     */
     private static <A, B> Finite<P2<A, B>> conv(final LazyList<Finite<A>> xs, final LazyList<Finite<B>> ys) {
         F<Finite<A>, BigInteger> cardA = new F<Finite<A>, BigInteger>() {
 
