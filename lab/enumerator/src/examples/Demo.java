@@ -37,7 +37,7 @@ public class Demo {
 		Enumeration<LList> listEnum = Enumeration.fix(f);
 
 		LazyList<Finite<LList>> parts = listEnum.parts();
-		for(int i=0 ; i<10 && !parts.isEmpty() ; i++) {
+		for(int i=0 ; i<5 && !parts.isEmpty() ; i++) {
 			System.out.println(i + " --> " + parts.head());
 			parts=parts.tail();
 		}

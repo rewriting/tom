@@ -44,7 +44,7 @@ public class Finite<A> {
 	 * retrieve an element
 	 */
 	public A get(BigInteger i) {
-		return eval(i);
+		return (A) eval(i);
 	}
 
 	/**
@@ -110,8 +110,10 @@ public class Finite<A> {
 		return super.equals(obj);
 	}
 
-	private A eval(BigInteger index) {
+	private Object eval(BigInteger index) {
 		Stack<Instruction> stack = new Stack<Instruction>();
+		stack.push(new IDone());
+		
 		Operation op = this.operation;
 		Object val = null;
 		boolean evalOp = true;
@@ -129,20 +131,19 @@ public class Finite<A> {
 					break;
 				case Operation.EMPTY:
 					throw new RuntimeException("index out of range");
-					break;
 				case Operation.MULT:
 					OMult mul = (OMult) op;
 					BigInteger[] qr = index.divideAndRemainder(mul.finite2.card);
 					final BigInteger q = qr[0];
 					final BigInteger r = qr[1];
 					index = q;
-					stack.push(new IPair1(mul.finite2,r));
+					stack.push(new IP2(mul.finite2,r));
 					op = mul.finite1.operation;
 					break;
 				case Operation.SINGLETON:
-					OSingleton<A> sing = (OSingleton) op;
+					OSingleton<A> singleton = (OSingleton) op;
 					if (index.compareTo(ZERO) == 0) {
-						val = sing.value;
+						val = singleton.value;
 						evalOp = false;
 					} else {
 						throw new RuntimeException("index out of range");
@@ -160,31 +161,29 @@ public class Finite<A> {
 				case Instruction.DONE:
 					return val;
 				case Instruction.MAP:
-					IMap<A> map = (IMap) inst;
+					IMap map = (IMap) inst;
 					val = map.fun.apply(val);
 					break;
-				case Instruction.PAIR2:
-					IPair2<A> pair2 = (IPair2) inst;
-					val = pa(pair2.snd, val);
+				case Instruction.P1:
+					IP1 p1 = (IP1) inst;
+					val = pair_o(p1.val, val);
 					break;
-				case Instruction.PAIR1:
-					IPair1 pair1 = (IPair1) inst;
-					op = pair1.finite.operation;
-					index = pair1.r;
-					stack.push(new IPair2<A>(val));
+				case Instruction.P2:
+					IP2 p2 = (IP2) inst;
+					op = p2.finite.operation;
+					index = p2.r;
+					stack.push(new IP1(val));
 					evalOp = true;
 					break;
 				}
 			}
-
-
 		}
 	}
 
-	private P2<A,A> pa(final A i, final A j) {
-		return new P2<A, A>() {
-			public A _1() { return i; }
-			public A _2() { return j; }
+	private P2<Object,Object> pair_o(final Object i, final Object j) {
+		return new P2<Object, Object>() {
+			public Object _1() { return i; }
+			public Object _2() { return j; }
 		};
 	}
 	
@@ -193,10 +192,10 @@ public class Finite<A> {
 	 */
 	private static abstract class Instruction {
 		protected int code;	
-		protected static int DONE  = 1;
-		protected static int MAP   = 2;
-		protected static int PAIR1 = 3;
-		protected static int PAIR2 = 4;
+		protected final static int DONE  = 1;
+		protected final static int MAP   = 2;
+		protected final static int P2 = 3;
+		protected final static int P1 = 4;
 
 		public int getCode() { return this.code; }
 	}
@@ -210,24 +209,24 @@ public class Finite<A> {
 		public IMap(F<A,A> f) { this.code = MAP; this.fun = f; }
 	}
 
-	private static class IPair1 extends Instruction {
+	private static class IP2 extends Instruction {
 		public Finite finite;
 		public BigInteger r;
-		public IPair1(Finite fin, BigInteger r) { this.code = PAIR1; this.finite = fin; this.r = r; }
+		public IP2(Finite fin, BigInteger r) { this.code = P2; this.finite = fin; this.r = r; }
 	}
 
-	private static class IPair2<A> extends Instruction {
-		public A snd;
-		public IPair2(A x) { this.code = PAIR2; this.snd = x; }
+	private static class IP1 extends Instruction {
+		public Object val;
+		public IP1(Object val) { this.code = P1; this.val = val; }
 	}
 
 	private static abstract class Operation {
 		protected int code;	
-		protected static int ADD       = 1;
-		protected static int MULT      = 2;
-		protected static int EMPTY     = 3;
-		protected static int SINGLETON = 4;
-		protected static int MAP       = 5;
+		protected final static int ADD       = 1;
+		protected final static int MULT      = 2;
+		protected final static int EMPTY     = 3;
+		protected final static int SINGLETON = 4;
+		protected final static int MAP       = 5;
 
 		public int getCode() { return this.code; }
 	}
