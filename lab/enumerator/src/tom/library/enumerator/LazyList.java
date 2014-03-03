@@ -189,8 +189,8 @@ public abstract class LazyList<A> {
 	}
 
 	private static class Cons<A> extends LazyList<A> {
-		private A head;
-		private P1<LazyList<A>> lazyTail;
+		private final A head;
+		private final P1<LazyList<A>> lazyTail;
 		private LazyList<A> cacheTail;
 
 		protected Cons(A x, P1<LazyList<A>> p1) {
@@ -206,8 +206,9 @@ public abstract class LazyList<A> {
 		public LazyList<A> tail() {
 			if (cacheTail == null) {
 				cacheTail = lazyTail._1();
+				//lazyTail = null;
 			}
-			return cacheTail;	
+			return cacheTail;
 		}
 
 		public boolean isEmpty() {

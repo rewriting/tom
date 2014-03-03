@@ -3,8 +3,6 @@ package tom.library.enumerator;
 import java.math.BigInteger;
 import java.util.*;
 
-import static java.math.BigInteger.ZERO;
-
 public class Enumeration<A> {
 
     private LazyList<Finite<A>> cacheParts;
@@ -61,8 +59,8 @@ public class Enumeration<A> {
             if (i.compareTo(card) < 0) {
                 return head.get(i);
             } else {
-                ps = ps.tail();
-                i = i.subtract(card);
+            	ps = ps.tail();
+            	i = i.subtract(card);
             }
         }
         throw new RuntimeException("index " + i + " out of range");
@@ -162,61 +160,6 @@ public class Enumeration<A> {
     		if(ys.isEmpty()) { return result; }
     		xs = xs.tail();
     	}
-    	
-    	/*
-        F<Finite<A>, BigInteger> cardA = new F<Finite<A>, BigInteger>() {
-            public BigInteger apply(Finite<A> x) {
-                return x.getCard();
-            }
-        };
-        
-        F<Finite<B>, BigInteger> cardB = new F<Finite<B>, BigInteger>() {
-            public BigInteger apply(Finite<B> x) {
-                return x.getCard();
-            }
-        };
-        
-        LazyList<BigInteger> xsCards = xs.map(cardA);
-        LazyList<BigInteger> ysCards = ys.map(cardB);
-        
-        F2<BigInteger, BigInteger, BigInteger> multiply =
-                new F2<BigInteger, BigInteger, BigInteger>() {
-                    public BigInteger apply(BigInteger a, BigInteger b) {
-                        return a.multiply(b);
-                    }
-                };
-        F2<BigInteger, BigInteger, BigInteger> add =
-                new F2<BigInteger, BigInteger, BigInteger>() {
-                    public BigInteger apply(BigInteger a, BigInteger b) {
-                        return a.add(b);
-                    }
-                };
-
-        final F2<Finite<P2<A, B>>, Finite<P2<A, B>>, Finite<P2<A, B>>> finitePlus =
-                new F2<Finite<P2<A, B>>, Finite<P2<A, B>>, Finite<P2<A, B>>>() {
-                    public Finite<P2<A, B>> apply(Finite<P2<A, B>> x, Finite<P2<A, B>> y) {
-                        return x.plus(y);
-                    }
-                };
-        final F2<Finite<A>, Finite<B>, Finite<P2<A, B>>> finiteTimes =
-                new F2<Finite<A>, Finite<B>, Finite<P2<A, B>>>() {
-                    public Finite<P2<A, B>> apply(Finite<A> x, Finite<B> y) {
-                        return x.times(y);
-                    }
-                };
-
-        LazyList<BigInteger> cardsProducts = xsCards.zipWith(ysCards, multiply.curry());
-        BigInteger newCard = cardsProducts.foldLeft(ZERO, add.curry());
-        F<BigInteger, P2<A, B>> newIndexer = new F<BigInteger, P2<A, B>>() {
-
-            public P2<A, B> apply(BigInteger i) {
-                Finite<P2<A, B>> unionOfProducts = xs.zipWith(ys, finiteTimes).foldLeft(Finite.<P2<A, B>>empty(), finitePlus);
-                return unionOfProducts.get(i);
-            }
-        };
-
-        return new Finite<P2<A, B>>(newCard, newIndexer);
-        */
     }
 
     public static <A, B> Enumeration<B> apply(final Enumeration<F<A, B>> subject, final Enumeration<A> other) {
