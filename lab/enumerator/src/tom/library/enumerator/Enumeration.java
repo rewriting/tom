@@ -100,20 +100,11 @@ public class Enumeration<A> {
                 new P1<LazyList<Finite<A>>>() {
                     public LazyList<Finite<A>> _1() {
                     	return LazyList.cons(Finite.<A>empty(), p1);
-                    	/*
-                    	P1<LazyList<Finite<A>>> p = new P1<LazyList<Finite<A>>>() {
-                    		public LazyList<Finite<A>> _1() {
-                    			return Enumeration.this.parts();
-                    		}
-                    	};
-                    	return LazyList.cons(Finite.<A>empty(), p);
-                    	*/
                     }
                 });
     }
 
     public <B> Enumeration<P2<A, B>> times(final Enumeration<B> other) {
-        //return new Enumeration<P2<A,B>>(prod(this.parts, other.parts.reversals()));
         return new Enumeration<P2<A, B>>(
                 new P1<LazyList<Finite<P2<A, B>>>>() {
                     public LazyList<Finite<P2<A, B>>> _1() {

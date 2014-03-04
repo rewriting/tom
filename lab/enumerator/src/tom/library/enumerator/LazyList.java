@@ -33,9 +33,11 @@ public abstract class LazyList<A> {
 		return new Cons<A>(e,p1);
 	}
 
+	
 	public static <A> LazyList<A> cons(final A e, final LazyList<A> s) {
 		return new Cons<A>(e,new P1<LazyList<A>>() { public LazyList<A> _1() { return s; } });
 	}
+	
 	/**
 	 * access to the head of the list store the result in cacheHead for further
 	 * access
@@ -169,6 +171,9 @@ public abstract class LazyList<A> {
 		return toList().toString();
 	}
 
+	/*
+	 * Empty
+	 */
 	private static class Empty<A> extends LazyList<A> {
 		protected Empty() {
 			super();
@@ -188,6 +193,9 @@ public abstract class LazyList<A> {
 
 	}
 
+	/*
+	 * Cons
+	 */
 	private static class Cons<A> extends LazyList<A> {
 		private final A head;
 		private final P1<LazyList<A>> lazyTail;
