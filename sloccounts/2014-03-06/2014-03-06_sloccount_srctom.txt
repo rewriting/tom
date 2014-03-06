@@ -1,0 +1,117 @@
+==========
+2014-03-06
+==========
+
+sloccount src/ 
+
+Creating filelist for build
+Have a non-directory at the top, so creating directory top_dir
+Adding /home/jcb/workspace/gitexperiment/master/src//CODING_STYLE to top_dir
+Creating filelist for config
+Adding /home/jcb/workspace/gitexperiment/master/src//DEVELOPPER_GUIDE to top_dir
+Creating filelist for dist
+Creating filelist for gen
+Creating filelist for lib
+Adding /home/jcb/workspace/gitexperiment/master/src//NOTES to top_dir
+Creating filelist for tom
+Categorizing files.
+Finding a working MD5 command....
+Found a working MD5 command.
+Warning: in tom, number of duplicates=126
+Computing results.
+
+
+SLOC	Directory	SLOC-by-Language (Sorted)
+464712  gen             java=431109,tom=33603
+45007   tom             tom=34716,java=7573,python=1746,gom=972
+18187   dist            tom=15148,ada=2074,sh=486,python=412,lisp=36,java=31
+0       build           (none)
+0       config          (none)
+0       lib             (none)
+0       top_dir         (none)
+
+
+Totals grouped by language (dominant language first):
+java:        438713 (83.10%)
+tom:          83467 (15.81%)
+python:        2158 (0.41%)
+ada:           2074 (0.39%)
+gom:            972 (0.18%)
+sh:             486 (0.09%)
+lisp:            36 (0.01%)
+
+
+
+
+Total Physical Source Lines of Code (SLOC)                = 527,906
+Development Effort Estimate, Person-Years (Person-Months) = 144.45 (1,733.39)
+ (Basic COCOMO model, Person-Months = 2.4 * (KSLOC**1.05))
+Schedule Estimate, Years (Months)                         = 3.54 (42.53)
+ (Basic COCOMO model, Months = 2.5 * (person-months**0.38))
+Estimated Average Number of Developers (Effort/Schedule)  = 40.75
+Total Estimated Cost to Develop                           = $ 19,513,090
+ (average salary = $56,286/year, overhead = 2.40).
+SLOCCount, Copyright (C) 2001-2004 David A. Wheeler
+SLOCCount is Open Source Software/Free Software, licensed under the GNU GPL.
+SLOCCount comes with ABSOLUTELY NO WARRANTY, and you are welcome to
+redistribute it under certain conditions as specified by the GNU GPL license;
+see the documentation for details.
+Please credit this data as "generated using David A. Wheeler's 'SLOCCount'."
+
+---------------------------
+
+sloccount src/tom/ 
+
+Have a non-directory at the top, so creating directory top_dir
+Adding /home/jcb/workspace/gitexperiment/master/src/tom//backquote.build.xml to top_dir
+Creating filelist for emf
+Creating filelist for engine
+Adding /home/jcb/workspace/gitexperiment/master/src/tom//fusion.build.xml to top_dir
+Creating filelist for gom
+Creating filelist for library
+Adding /home/jcb/workspace/gitexperiment/master/src/tom//newtom.build.xml to top_dir
+Creating filelist for platform
+Adding /home/jcb/workspace/gitexperiment/master/src/tom//proto.build.xml to top_dir
+Adding /home/jcb/workspace/gitexperiment/master/src/tom//tom.build.xml to top_dir
+Categorizing files.
+Finding a working MD5 command....
+Found a working MD5 command.
+Computing results.
+
+
+SLOC	Directory	SLOC-by-Language (Sorted)
+23628   engine          tom=20467,java=2690,gom=471
+21726   library         tom=15062,java=2547,ada=2074,python=1746,gom=297
+11494   gom             tom=9572,java=1734,gom=188
+1479    emf             tom=1479
+1034    platform        java=602,tom=416,gom=16
+0       top_dir         (none)
+
+
+Totals grouped by language (dominant language first):
+tom:          46996 (79.17%)
+java:          7573 (12.76%)
+ada:           2074 (3.49%)
+python:        1746 (2.94%)
+gom:            972 (1.64%)
+
+
+
+
+Total Physical Source Lines of Code (SLOC)                = 59,361
+Development Effort Estimate, Person-Years (Person-Months) = 14.56 (174.74)
+ (Basic COCOMO model, Person-Months = 2.4 * (KSLOC**1.05))
+Schedule Estimate, Years (Months)                         = 1.48 (17.78)
+ (Basic COCOMO model, Months = 2.5 * (person-months**0.38))
+Estimated Average Number of Developers (Effort/Schedule)  = 9.83
+Total Estimated Cost to Develop                           = $ 1,967,061
+ (average salary = $56,286/year, overhead = 2.40).
+SLOCCount, Copyright (C) 2001-2004 David A. Wheeler
+SLOCCount is Open Source Software/Free Software, licensed under the GNU GPL.
+SLOCCount comes with ABSOLUTELY NO WARRANTY, and you are welcome to
+redistribute it under certain conditions as specified by the GNU GPL license;
+see the documentation for details.
+Please credit this data as "generated using David A. Wheeler's 'SLOCCount'."
+
+---------------------------
+

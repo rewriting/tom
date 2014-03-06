@@ -1,0 +1,25 @@
+=================
+sloccount results
+=================
+
+Jean-Christophe Bach  e-mail: jeanchristophe.bach@inria.fr
+
+gen_sloccount.sh is a simple script which calls sloccount to count source lines
+of code of the Tom project. In the current version, this script only counts
+lines in src/tom, examples and test directories. Nevertheless, it can be easily
+extended by adding derectory names in the $DIRS variable.
+
+To imake this script properly work:
+
+1. install sloccount
+
+2. create tom_count and gom_count executables and put it with other counters.
+   They can be copied from java_count or other generic counters.
+
+3. add the following lines in your break_filelist file (can be usually found in
+   /usr/libexec/sloccount/)
+
+   "gom" => "gom",
+   "t" => "tom" ,"tom" => "tom",
+
+This should be sufficient.
