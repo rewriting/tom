@@ -1,0 +1,124 @@
+===============
+Test with 500 WD
+===============
+
+Test 500.1 :
+
+Starting...
+
+Generation of a process composed of 500 WD. (with WS)
+Generation done in 319 (ms).
+Transformation done in:
+  phase#1: 246 (ms).
+  phase#2: 114 (ms).
+  total  : 360 (ms).
+
+done.
+Test 500.2 :
+
+Starting...
+
+Generation of a process composed of 500 WD. (with WS)
+Generation done in 309 (ms).
+Transformation done in:
+  phase#1: 255 (ms).
+  phase#2: 86 (ms).
+  total  : 341 (ms).
+
+done.
+Test 500.3 :
+
+Starting...
+
+Generation of a process composed of 500 WD. (with WS)
+Generation done in 312 (ms).
+Transformation done in:
+  phase#1: 242 (ms).
+  phase#2: 120 (ms).
+  total  : 362 (ms).
+
+done.
+Test 500.4 :
+
+Starting...
+
+Generation of a process composed of 500 WD. (with WS)
+Generation done in 307 (ms).
+Transformation done in:
+  phase#1: 249 (ms).
+  phase#2: 108 (ms).
+  total  : 357 (ms).
+
+done.
+Test 500.5 :
+
+Starting...
+
+Generation of a process composed of 500 WD. (with WS)
+Generation done in 309 (ms).
+Transformation done in:
+  phase#1: 252 (ms).
+  phase#2: 106 (ms).
+  total  : 358 (ms).
+
+done.
+Test 500.6 :
+
+Starting...
+
+Generation of a process composed of 500 WD. (with WS)
+Generation done in 306 (ms).
+Transformation done in:
+  phase#1: 247 (ms).
+  phase#2: 118 (ms).
+  total  : 365 (ms).
+
+done.
+Test 500.7 :
+
+Starting...
+
+Generation of a process composed of 500 WD. (with WS)
+Generation done in 308 (ms).
+Transformation done in:
+  phase#1: 409 (ms).
+  phase#2: 59 (ms).
+  total  : 468 (ms).
+
+done.
+Test 500.8 :
+
+Starting...
+
+Generation of a process composed of 500 WD. (with WS)
+Generation done in 411 (ms).
+Transformation done in:
+  phase#1: 489 (ms).
+  phase#2: 59 (ms).
+  total  : 548 (ms).
+
+done.
+Test 500.9 :
+
+Starting...
+
+Generation of a process composed of 500 WD. (with WS)
+Generation done in 624 (ms).
+Transformation done in:
+  phase#1: 473 (ms).
+  phase#2: 106 (ms).
+  total  : 579 (ms).
+
+done.
+Test 500.10 :
+
+Starting...
+
+Generation of a process composed of 500 WD. (with WS)
+Generation done in 467 (ms).
+Transformation done in:
+  phase#1: 498 (ms).
+  phase#2: 71 (ms).
+  total  : 569 (ms).
+
+done.

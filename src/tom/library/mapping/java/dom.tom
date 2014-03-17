@@ -182,7 +182,7 @@ public static java.util.ArrayList tom_mapping_newTNodeList() {
 }
 
 %oparray TNodeList concTNode( TNode* ) {
-	is_fsym(t) { ($t!= null) && ($t instanceof java.util.ArrayList) }
+	is_fsym(t) { ($t instanceof java.util.ArrayList) }
 	make_empty(n) { new java.util.ArrayList($n) }
 	make_append(e,l) { tom_mapping_add($e,(java.util.ArrayList)$l)  }
 	get_element(l,n) { ((org.w3c.dom.Node)($l.get($n))) }

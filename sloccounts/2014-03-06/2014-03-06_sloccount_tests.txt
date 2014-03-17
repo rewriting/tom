@@ -1,0 +1,184 @@
+==========
+2014-03-06
+==========
+
+sloccount --filecount test/
+
+Creating filelist for acmatching
+Creating filelist for andor
+Creating filelist for antipatterns
+Have a non-directory at the top, so creating directory top_dir
+Adding /home/jcb/workspace/gitexperiment/master/test//Array.t to top_dir
+Creating filelist for backquote
+Adding /home/jcb/workspace/gitexperiment/master/test//build.bat to top_dir
+Adding /home/jcb/workspace/gitexperiment/master/test//build.sh to top_dir
+Adding /home/jcb/workspace/gitexperiment/master/test//build.xml to top_dir
+Adding /home/jcb/workspace/gitexperiment/master/test//cfib1.t to top_dir
+Creating filelist for error
+Creating filelist for gom
+Adding /home/jcb/workspace/gitexperiment/master/test//loulou.t to top_dir
+Creating filelist for numeric
+Adding /home/jcb/workspace/gitexperiment/master/test//Peano.t to top_dir
+Adding /home/jcb/workspace/gitexperiment/master/test//Record.t to top_dir
+Creating filelist for regress
+Creating filelist for rule
+Creating filelist for sl
+Adding /home/jcb/workspace/gitexperiment/master/test//TestAlgebraic.t to top_dir
+Adding /home/jcb/workspace/gitexperiment/master/test//TestArray2.t to top_dir
+Adding /home/jcb/workspace/gitexperiment/master/test//TestArrayNonLinear.t to top_dir
+Adding /home/jcb/workspace/gitexperiment/master/test//TestArray.t to top_dir
+Adding /home/jcb/workspace/gitexperiment/master/test//TestBackQuote.t to top_dir
+Adding /home/jcb/workspace/gitexperiment/master/test//TestBuiltin.t to top_dir
+Adding /home/jcb/workspace/gitexperiment/master/test//TestConstraintCombination.t to top_dir
+Adding /home/jcb/workspace/gitexperiment/master/test//TestConstraintCombinationWithSubtype.t to top_dir
+Adding /home/jcb/workspace/gitexperiment/master/test//TestLabel.t to top_dir
+Adding /home/jcb/workspace/gitexperiment/master/test//TestList2.t to top_dir
+Adding /home/jcb/workspace/gitexperiment/master/test//TestListNonLinear.t to top_dir
+Adding /home/jcb/workspace/gitexperiment/master/test//TestList.t to top_dir
+Adding /home/jcb/workspace/gitexperiment/master/test//TestMatchInference.t to top_dir
+Adding /home/jcb/workspace/gitexperiment/master/test//TestMatch.t to top_dir
+Adding /home/jcb/workspace/gitexperiment/master/test//TestNonVarSubjects.t to top_dir
+Adding /home/jcb/workspace/gitexperiment/master/test//TestOptimizer.t to top_dir
+Adding /home/jcb/workspace/gitexperiment/master/test//TestPeano.t to top_dir
+Adding /home/jcb/workspace/gitexperiment/master/test//TestRecord.t to top_dir
+Adding /home/jcb/workspace/gitexperiment/master/test//TestReflectiveStrategy.t to top_dir
+Adding /home/jcb/workspace/gitexperiment/master/test//TestStrategy.t to top_dir
+Adding /home/jcb/workspace/gitexperiment/master/test//TestSublists.t to top_dir
+Adding /home/jcb/workspace/gitexperiment/master/test//Test.t to top_dir
+Adding /home/jcb/workspace/gitexperiment/master/test//TestVarVarStar.t to top_dir
+Adding /home/jcb/workspace/gitexperiment/master/test//TomList.t to top_dir
+Creating filelist for xml
+Categorizing files.
+Finding a working MD5 command....
+Found a working MD5 command.
+Computing results.
+
+
+#Files	Directory	#Files-by-Language (Sorted)
+52      gom             tom=28,gom=16,java=8
+30      top_dir         tom=29,sh=1
+19      error           tom=18,sh=1
+16      sl              tom=15,gom=1
+13      regress         tom=13
+6       rule            tom=6
+6       xml             tom=6
+5       antipatterns    tom=5
+3       andor           tom=3
+3       backquote       tom=2,gom=1
+2       acmatching      tom=2
+1       numeric         tom=1
+
+
+Totals grouped by language (dominant language first):
+tom:            128 (82.05%)
+gom:             18 (11.54%)
+java:             8 (5.13%)
+sh:               2 (1.28%)
+
+
+
+
+Total Number of Files = 156
+Total Number of Source Code Files = 156
+SLOCCount, Copyright (C) 2001-2004 David A. Wheeler
+SLOCCount is Open Source Software/Free Software, licensed under the GNU GPL.
+SLOCCount comes with ABSOLUTELY NO WARRANTY, and you are welcome to
+redistribute it under certain conditions as specified by the GNU GPL license;
+see the documentation for details.
+Please credit this data as "generated using David A. Wheeler's 'SLOCCount'."
+
+---------------------------
+
+sloccount test/
+
+Creating filelist for acmatching
+Creating filelist for andor
+Creating filelist for antipatterns
+Have a non-directory at the top, so creating directory top_dir
+Adding /home/jcb/workspace/gitexperiment/master/test//Array.t to top_dir
+Creating filelist for backquote
+Adding /home/jcb/workspace/gitexperiment/master/test//build.bat to top_dir
+Adding /home/jcb/workspace/gitexperiment/master/test//build.sh to top_dir
+Adding /home/jcb/workspace/gitexperiment/master/test//build.xml to top_dir
+Adding /home/jcb/workspace/gitexperiment/master/test//cfib1.t to top_dir
+Creating filelist for error
+Creating filelist for gom
+Adding /home/jcb/workspace/gitexperiment/master/test//loulou.t to top_dir
+Creating filelist for numeric
+Adding /home/jcb/workspace/gitexperiment/master/test//Peano.t to top_dir
+Adding /home/jcb/workspace/gitexperiment/master/test//Record.t to top_dir
+Creating filelist for regress
+Creating filelist for rule
+Creating filelist for sl
+Adding /home/jcb/workspace/gitexperiment/master/test//TestAlgebraic.t to top_dir
+Adding /home/jcb/workspace/gitexperiment/master/test//TestArray2.t to top_dir
+Adding /home/jcb/workspace/gitexperiment/master/test//TestArrayNonLinear.t to top_dir
+Adding /home/jcb/workspace/gitexperiment/master/test//TestArray.t to top_dir
+Adding /home/jcb/workspace/gitexperiment/master/test//TestBackQuote.t to top_dir
+Adding /home/jcb/workspace/gitexperiment/master/test//TestBuiltin.t to top_dir
+Adding /home/jcb/workspace/gitexperiment/master/test//TestConstraintCombination.t to top_dir
+Adding /home/jcb/workspace/gitexperiment/master/test//TestConstraintCombinationWithSubtype.t to top_dir
+Adding /home/jcb/workspace/gitexperiment/master/test//TestLabel.t to top_dir
+Adding /home/jcb/workspace/gitexperiment/master/test//TestList2.t to top_dir
+Adding /home/jcb/workspace/gitexperiment/master/test//TestListNonLinear.t to top_dir
+Adding /home/jcb/workspace/gitexperiment/master/test//TestList.t to top_dir
+Adding /home/jcb/workspace/gitexperiment/master/test//TestMatchInference.t to top_dir
+Adding /home/jcb/workspace/gitexperiment/master/test//TestMatch.t to top_dir
+Adding /home/jcb/workspace/gitexperiment/master/test//TestNonVarSubjects.t to top_dir
+Adding /home/jcb/workspace/gitexperiment/master/test//TestOptimizer.t to top_dir
+Adding /home/jcb/workspace/gitexperiment/master/test//TestPeano.t to top_dir
+Adding /home/jcb/workspace/gitexperiment/master/test//TestRecord.t to top_dir
+Adding /home/jcb/workspace/gitexperiment/master/test//TestReflectiveStrategy.t to top_dir
+Adding /home/jcb/workspace/gitexperiment/master/test//TestStrategy.t to top_dir
+Adding /home/jcb/workspace/gitexperiment/master/test//TestSublists.t to top_dir
+Adding /home/jcb/workspace/gitexperiment/master/test//Test.t to top_dir
+Adding /home/jcb/workspace/gitexperiment/master/test//TestVarVarStar.t to top_dir
+Adding /home/jcb/workspace/gitexperiment/master/test//TomList.t to top_dir
+Creating filelist for xml
+Categorizing files.
+Finding a working MD5 command....
+Found a working MD5 command.
+Computing results.
+
+
+SLOC	Directory	SLOC-by-Language (Sorted)
+4189    top_dir         tom=4174,sh=15
+3267    gom             tom=2161,java=909,gom=197
+2322    sl              tom=2311,gom=11
+1052    rule            tom=1052
+869     xml             tom=869
+867     antipatterns    tom=867
+781     error           tom=722,sh=59
+757     andor           tom=757
+223     acmatching      tom=223
+212     backquote       tom=202,gom=10
+212     regress         tom=212
+162     numeric         tom=162
+
+
+Totals grouped by language (dominant language first):
+tom:          13712 (91.95%)
+java:           909 (6.10%)
+gom:            218 (1.46%)
+sh:              74 (0.50%)
+
+
+
+
+Total Physical Source Lines of Code (SLOC)                = 14,913
+Development Effort Estimate, Person-Years (Person-Months) = 3.41 (40.97)
+ (Basic COCOMO model, Person-Months = 2.4 * (KSLOC**1.05))
+Schedule Estimate, Years (Months)                         = 0.85 (10.25)
+ (Basic COCOMO model, Months = 2.5 * (person-months**0.38))
+Estimated Average Number of Developers (Effort/Schedule)  = 4.00
+Total Estimated Cost to Develop                           = $ 461,195
+ (average salary = $56,286/year, overhead = 2.40).
+SLOCCount, Copyright (C) 2001-2004 David A. Wheeler
+SLOCCount is Open Source Software/Free Software, licensed under the GNU GPL.
+SLOCCount comes with ABSOLUTELY NO WARRANTY, and you are welcome to
+redistribute it under certain conditions as specified by the GNU GPL license;
+see the documentation for details.
+Please credit this data as "generated using David A. Wheeler's 'SLOCCount'."
+
+---------------------------
+

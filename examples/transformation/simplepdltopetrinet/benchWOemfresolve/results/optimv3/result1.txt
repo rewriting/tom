@@ -1,0 +1,124 @@
+===============
+Test with 1 WD
+===============
+
+Test 1.1 :
+
+Starting...
+
+Generation of a process composed of 1 WD. (with WS)
+Generation done in 260 (ms).
+Transformation done in:
+  phase#1: 21 (ms).
+  phase#2: 0 (ms).
+  total  : 21 (ms).
+
+done.
+Test 1.2 :
+
+Starting...
+
+Generation of a process composed of 1 WD. (with WS)
+Generation done in 252 (ms).
+Transformation done in:
+  phase#1: 13 (ms).
+  phase#2: 1 (ms).
+  total  : 14 (ms).
+
+done.
+Test 1.3 :
+
+Starting...
+
+Generation of a process composed of 1 WD. (with WS)
+Generation done in 249 (ms).
+Transformation done in:
+  phase#1: 13 (ms).
+  phase#2: 1 (ms).
+  total  : 14 (ms).
+
+done.
+Test 1.4 :
+
+Starting...
+
+Generation of a process composed of 1 WD. (with WS)
+Generation done in 248 (ms).
+Transformation done in:
+  phase#1: 14 (ms).
+  phase#2: 1 (ms).
+  total  : 15 (ms).
+
+done.
+Test 1.5 :
+
+Starting...
+
+Generation of a process composed of 1 WD. (with WS)
+Generation done in 250 (ms).
+Transformation done in:
+  phase#1: 13 (ms).
+  phase#2: 1 (ms).
+  total  : 14 (ms).
+
+done.
+Test 1.6 :
+
+Starting...
+
+Generation of a process composed of 1 WD. (with WS)
+Generation done in 248 (ms).
+Transformation done in:
+  phase#1: 13 (ms).
+  phase#2: 1 (ms).
+  total  : 14 (ms).
+
+done.
+Test 1.7 :
+
+Starting...
+
+Generation of a process composed of 1 WD. (with WS)
+Generation done in 246 (ms).
+Transformation done in:
+  phase#1: 13 (ms).
+  phase#2: 1 (ms).
+  total  : 14 (ms).
+
+done.
+Test 1.8 :
+
+Starting...
+
+Generation of a process composed of 1 WD. (with WS)
+Generation done in 246 (ms).
+Transformation done in:
+  phase#1: 14 (ms).
+  phase#2: 0 (ms).
+  total  : 14 (ms).
+
+done.
+Test 1.9 :
+
+Starting...
+
+Generation of a process composed of 1 WD. (with WS)
+Generation done in 247 (ms).
+Transformation done in:
+  phase#1: 13 (ms).
+  phase#2: 0 (ms).
+  total  : 13 (ms).
+
+done.
+Test 1.10 :
+
+Starting...
+
+Generation of a process composed of 1 WD. (with WS)
+Generation done in 246 (ms).
+Transformation done in:
+  phase#1: 13 (ms).
+  phase#2: 0 (ms).
+  total  : 13 (ms).
+
+done.

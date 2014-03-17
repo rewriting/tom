@@ -1,0 +1,124 @@
+===============
+Test with 1000 WD
+===============
+
+Test 1000.1 :
+
+Starting...
+
+Generation of a process composed of 1000 WD. (with WS)
+Generation done in 687 (ms).
+Transformation done in:
+  phase#1: 862 (ms).
+  phase#2: 76 (ms).
+  total  : 938 (ms).
+
+done.
+Test 1000.2 :
+
+Starting...
+
+Generation of a process composed of 1000 WD. (with WS)
+Generation done in 357 (ms).
+Transformation done in:
+  phase#1: 549 (ms).
+  phase#2: 76 (ms).
+  total  : 625 (ms).
+
+done.
+Test 1000.3 :
+
+Starting...
+
+Generation of a process composed of 1000 WD. (with WS)
+Generation done in 358 (ms).
+Transformation done in:
+  phase#1: 500 (ms).
+  phase#2: 101 (ms).
+  total  : 601 (ms).
+
+done.
+Test 1000.4 :
+
+Starting...
+
+Generation of a process composed of 1000 WD. (with WS)
+Generation done in 350 (ms).
+Transformation done in:
+  phase#1: 517 (ms).
+  phase#2: 73 (ms).
+  total  : 590 (ms).
+
+done.
+Test 1000.5 :
+
+Starting...
+
+Generation of a process composed of 1000 WD. (with WS)
+Generation done in 358 (ms).
+Transformation done in:
+  phase#1: 519 (ms).
+  phase#2: 73 (ms).
+  total  : 592 (ms).
+
+done.
+Test 1000.6 :
+
+Starting...
+
+Generation of a process composed of 1000 WD. (with WS)
+Generation done in 361 (ms).
+Transformation done in:
+  phase#1: 497 (ms).
+  phase#2: 95 (ms).
+  total  : 592 (ms).
+
+done.
+Test 1000.7 :
+
+Starting...
+
+Generation of a process composed of 1000 WD. (with WS)
+Generation done in 361 (ms).
+Transformation done in:
+  phase#1: 506 (ms).
+  phase#2: 111 (ms).
+  total  : 617 (ms).
+
+done.
+Test 1000.8 :
+
+Starting...
+
+Generation of a process composed of 1000 WD. (with WS)
+Generation done in 360 (ms).
+Transformation done in:
+  phase#1: 547 (ms).
+  phase#2: 75 (ms).
+  total  : 622 (ms).
+
+done.
+Test 1000.9 :
+
+Starting...
+
+Generation of a process composed of 1000 WD. (with WS)
+Generation done in 360 (ms).
+Transformation done in:
+  phase#1: 516 (ms).
+  phase#2: 74 (ms).
+  total  : 590 (ms).
+
+done.
+Test 1000.10 :
+
+Starting...
+
+Generation of a process composed of 1000 WD. (with WS)
+Generation done in 356 (ms).
+Transformation done in:
+  phase#1: 492 (ms).
+  phase#2: 135 (ms).
+  total  : 627 (ms).
+
+done.

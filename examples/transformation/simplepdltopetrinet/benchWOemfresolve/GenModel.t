@@ -10,6 +10,8 @@ import java.io.FileOutputStream;
 
 import SimplePDLSemantics.DDMMSimplePDL.*;
 
+import tom.library.emf.*;
+
 public class GenModel {
 
   //%include{ sl.tom }
@@ -47,12 +49,10 @@ public class GenModel {
   }*/
 
 
-  //public static void main(String[] args) {
   public static SimplePDLSemantics.DDMMSimplePDL.Process getModel(int wdNbr,
       boolean hasWS) {
     SimplePDLSemantics.DDMMSimplePDL.Process p_root = `Process("root",ProcessElementEList(),null);
 
-    //ProcessElementEList pel = `ProcessElementEList();
     org.eclipse.emf.common.util.EList<SimplePDLSemantics.DDMMSimplePDL.ProcessElement> pel = `ProcessElementEList();
 
     WorkDefinition wd0 =
@@ -84,7 +84,6 @@ public class GenModel {
         `x.setParent(p_root);
       }
     }
-    //print(p_root);
     return p_root;
   }
 
@@ -95,10 +94,8 @@ public class GenModel {
         print(`pelist);
       }
     }
-    //System.out.println("\n===\n");
   }
 
-  //public static void print(SimplePDLSemantics.DDMMSimplePDL.ProcessElementEList pelist) {
   public static void print(org.eclipse.emf.common.util.EList<SimplePDLSemantics.DDMMSimplePDL.ProcessElement> pelist) {
     %match(pelist) {
       ProcessElementEList(_*,WorkSequence(_,type,pre,succ),_*) -> {
@@ -113,9 +110,6 @@ public class GenModel {
       }
     }
   }
-  //public static void print(SimplePDLSemantics.DDMMSimplePDL.WorkDefinition wd) {
-  //  System.out.println();
-  //}
 
   public static void saveToXMI(SimplePDLSemantics.DDMMSimplePDL.Process process, String name) {
     XMIResource resource = new XMIResourceImpl();
@@ -175,7 +169,7 @@ System.out.println("Generated model saved.");
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
-}
+    }
 
 
 

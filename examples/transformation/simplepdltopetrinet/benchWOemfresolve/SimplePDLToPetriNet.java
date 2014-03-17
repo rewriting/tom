@@ -1883,13 +1883,6 @@ public class SimplePDLToPetriNet {
               Transition t_finish = tom_make_Transition(n1,pn,tom_empty_array_ArcEList(0),tom_empty_array_ArcEList(0),1,1);
               ;
 
-              //useless for the moment
-              //HERE (tracelink)
-              //tom__linkClass.keepTrace(t_start);
-              //HERE (tracelink)
-              //tom__linkClass.keepTrace(t_finish);
-
-
               tom_make_Arc(t_start,p_ready,pn,tom_make_ArcKindnormal(),1);
 
               tom_make_Arc(p_running,t_start,pn,tom_make_ArcKindnormal(),1);
@@ -1912,13 +1905,6 @@ public class SimplePDLToPetriNet {
                 target.setNet(pn);
                 Arc tmpZoomOut = 
                   tom_make_Arc(target,p_finished,pn,tom_make_ArcKindread_arc(),1);
-
-                //useful: to change the resolution paradigm (strategy that
-                //traverse the whole model shoud be changed to only traverse
-                //the resolve ojects set)
-                //HERE (resolve objects)
-                //tom__linkClass.traceResolve(source);
-                //tom__linkClass.traceResolve(target);
 
                 //useful: trace arcs that reference resolve objects
                 //HERE (referencers of resolve objects)
@@ -2067,15 +2053,6 @@ public class SimplePDLToPetriNet {
               Transition t_finish = tom_make_Transition(n1,pn,tom_empty_array_ArcEList(0),tom_empty_array_ArcEList(0),1,1);
               ;
 
-              //useless for the moment
-              //HERE (tracelink)
-              //tom__linkClass.keepTrace(p_started);
-              //tom__linkClass.keepTrace(p_finished);
-              //tom__linkClass.keepTrace(t_start);
-              //tom__linkClass.keepTrace(t_finish);
-
-
-
               tom_make_Arc(t_start,p_ready,pn,tom_make_ArcKindnormal(),1);
 
               tom_make_Arc(p_started,t_start,pn,tom_make_ArcKindnormal(),1);
@@ -2086,7 +2063,7 @@ public class SimplePDLToPetriNet {
 
               tom_make_Arc(p_finished,t_finish,pn,tom_make_ArcKindnormal(),1);
 
-              //TEST without any resolve // ??? FIXME
+              //TEST without any resolve // why this comment??? FIXME
               SimplePDLSemantics.DDMMSimplePDL.Process parent = 
                 tom_wd.getParent();
               Transition source = 
@@ -2100,13 +2077,6 @@ public class SimplePDLToPetriNet {
               target.setNet(pn);
               Arc tmpRejoin = 
                 tom_make_Arc(target,p_finished,pn,tom_make_ArcKindread_arc(),1);
-
-              //useful: to change the resolution paradigm (strategy that
-              //traverse the whole model shoud be changed to only traverse the
-              //resolve ojects set)
-              //HERE (resolve objects)
-              //tom__linkClass.traceResolve(source);
-              //tom__linkClass.traceResolve(target);
 
               //useful: trace arcs that reference resolve objects
               //HERE (resolve)
@@ -2329,13 +2299,6 @@ public class SimplePDLToPetriNet {
               source.setNet(pn);
               target.setNet(pn);
 
-              //useful: to change the resolution paradigm (strategy that
-              //traverse the whole model shoud be changed to only traverse the
-              //resolve ojects set)
-              //HERE (resolve objects)
-              //tom__linkClass.traceResolve(source);
-              //tom__linkClass.traceResolve(target);
-
               Arc tmp = 
                 tom_make_Arc(target,source,pn,tom_make_ArcKindread_arc(),1);  
               //HERE (resolve)
@@ -2393,7 +2356,7 @@ public class SimplePDLToPetriNet {
 
     public static void resolveInverseLinks(EObject resolveNode, EObject newNode, EObject acc) {
       //Work in progress: optimization of generated resolve phase
-      //trying to hook the EMF adapter
+      //trying to hook the EMF adapter
       boolean toSet = (false
           | resolveNode instanceof ResolveWorkDefinitionTransition | resolveNode instanceof ResolveWorkDefinitionPlace | resolveNode instanceof ResolveProcessTransition
           );
@@ -2527,6 +2490,13 @@ public class SimplePDLToPetriNet {
     }
     private static  tom.library.sl.Strategy  tom_make_SimplePDLToPetriNet( tom.library.utils.LinkClass  t0,  petrinetsemantics.DDMMPetriNet.PetriNet  t1) { 
       return tom_cons_list_Sequence(tom_make_TopDown(tom_make_P2PN(tom__linkClass,pn)),tom_cons_list_Sequence(tom_make_TopDown(tom_make_WD2PN(tom__linkClass,pn)),tom_cons_list_Sequence(tom_make_TopDown(tom_make_WS2PN(tom__linkClass,pn)),tom_empty_list_Sequence())));
+
+      //Version alternative (v4)
+/*      return tom_make_TopDown( tom_cons_list_Sequence(
+            tom_make_P2PN(tom__linkClass,pn),
+            tom_cons_list_Sequence(tom_make_WD2PN(tom__linkClass,pn),
+              tom_cons_list_Sequence(tom_make_WS2PN(tom__linkClass,pn),
+                tom_empty_list_Sequence()))));*/
     }
 
 
@@ -2591,10 +2561,15 @@ public class SimplePDLToPetriNet {
 
         /*//transformer is equivalent to:
           Strategy transformer = `Sequence(
-          TopDown(Process2PetriNet(translator)),
-          TopDown(WorkDefinition2PetriNet(translator)),
-          TopDown(WorkSequence2PetriNet(translator))
+            TopDown(Process2PetriNet(translator)),
+            TopDown(WorkDefinition2PetriNet(translator)),
+            TopDown(WorkSequence2PetriNet(translator))
           );
+          //This would be better:
+          Strategy transformer = `TopDown(Sequence(
+            Process2PetriNet(translator),
+            WorkDefinition2PetriNet(translator),
+            WorkSequence2PetriNet(translator))
           */
 
         //NOTE: force the user to give the link as first parameter, and target
@@ -2605,14 +2580,16 @@ public class SimplePDLToPetriNet {
         transformer.visit(p_root, new EcoreContainmentIntrospector());
         long t1duration = System.currentTimeMillis()-startChrono;
 
-        /*System.out.println("### DEBUG ### between transfo and resolve");
+        /*
+        System.out.println("### DEBUG ### between transfo and resolve");
         java.util.Set<EObject> traced = translator.tom__linkClass.getTraced();
         int i=0;
         for (EObject current : traced) {
           System.out.println("#"+i+" current=\n"+current);
           i++;
         }
-        System.out.println("### /DEBUG ### between transfo and resolve\n");*/
+        System.out.println("### /DEBUG ### between transfo and resolve\n");
+        */
 
 
         //startChrono = System.currentTimeMillis();
@@ -2647,6 +2624,7 @@ resolve(translator);
            writer.flush();
            writer.close();
            */
+
         System.out.println("done.");
 
       } catch(VisitFailure e) {
@@ -2658,6 +2636,7 @@ resolve(translator);
       }*/
     }
 
+    //HERE: let's add a DIY resolution phase
     public static void resolve(SimplePDLToPetriNet translator) {
       for(EObject resolveNode : tom__linkClass.getResolve()) {
         if(resolveNode instanceof Place) {
@@ -2692,7 +2671,7 @@ resolve(translator);
 
     public static void customResolveInverseLinks(EObject resolveNode, EObject newNode, EObject acc) {
       //Work in progress: optimization of generated resolve phase
-      //trying to hook the EMF adapter
+      //trying to hook the EMF adapter
       boolean toSet = (false
           | resolveNode instanceof ResolveWorkDefinitionTransition | resolveNode instanceof ResolveWorkDefinitionPlace | resolveNode instanceof ResolveProcessTransition
           );
@@ -2886,7 +2865,6 @@ resolve(translator);
           if (tom_is_sort_Transition(tom__arg)) {
             if (tom_is_sort_Transition((( petrinetsemantics.DDMMPetriNet.Transition )tom__arg))) {
               if (tom_is_fun_sym_ResolveProcessTransition((( petrinetsemantics.DDMMPetriNet.Transition )(( petrinetsemantics.DDMMPetriNet.Transition )tom__arg)))) {
-
 
                 System.out.println("tr process resolve " + 
                     tom_get_slot_ResolveProcessTransition_tom_resolve_element_attribute_name((( petrinetsemantics.DDMMPetriNet.Transition )tom__arg)));

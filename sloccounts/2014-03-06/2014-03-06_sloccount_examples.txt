@@ -1,0 +1,387 @@
+==========
+2014-03-06
+==========
+
+sloccount --filecount examples/
+
+Creating filelist for acmatching
+Creating filelist for ada
+Creating filelist for addressbook
+Creating filelist for analysis
+Creating filelist for antipattern
+Creating filelist for appletxml
+Creating filelist for bdd
+Creating filelist for boulderdash
+Creating filelist for bpel
+Have a non-directory at the top, so creating directory top_dir
+Adding /home/jcb/workspace/gitexperiment/master/examples//build.bat to top_dir
+Adding /home/jcb/workspace/gitexperiment/master/examples//build.sh to top_dir
+Adding /home/jcb/workspace/gitexperiment/master/examples//build.xml to top_dir
+Creating filelist for builtin
+Creating filelist for bytecode
+Creating filelist for caml
+Creating filelist for cell
+Adding /home/jcb/workspace/gitexperiment/master/examples//common.xml to top_dir
+Creating filelist for cps
+Creating filelist for csharp
+Creating filelist for csmaca
+Creating filelist for debugger
+Creating filelist for deepmatch
+Creating filelist for defaultvalue
+Creating filelist for dist
+Creating filelist for dom
+Creating filelist for enumerator
+Creating filelist for expression
+Creating filelist for freshgom
+Creating filelist for gasel
+Creating filelist for generics
+Creating filelist for gom
+Creating filelist for gomoku
+Creating filelist for gterm
+Creating filelist for integerc
+Creating filelist for labyrinth
+Creating filelist for lambdacalculi
+Creating filelist for lazyml
+Creating filelist for lib
+Creating filelist for list
+Creating filelist for lsystems
+Creating filelist for master
+Creating filelist for matching
+Creating filelist for meta
+Creating filelist for mgs
+Creating filelist for miniml
+Creating filelist for modeltrans
+Creating filelist for multigraph
+Creating filelist for nspk
+Creating filelist for old
+Creating filelist for p3p
+Creating filelist for parser
+Creating filelist for peano
+Creating filelist for poly
+Creating filelist for polygraphes
+Creating filelist for prodrule
+Creating filelist for propp
+Creating filelist for python
+Creating filelist for quine
+Creating filelist for rbtree
+Adding /home/jcb/workspace/gitexperiment/master/examples//README to top_dir
+Adding /home/jcb/workspace/gitexperiment/master/examples//runExamples.sh to top_dir
+Creating filelist for servlet
+Creating filelist for set
+Creating filelist for strategy
+Creating filelist for strategycompiler
+Creating filelist for strings
+Creating filelist for structure
+Creating filelist for subtypeinference
+Creating filelist for subtyping
+Creating filelist for tactics
+Creating filelist for termgraph
+Creating filelist for tomjastadd
+Creating filelist for transformation
+Creating filelist for tutorial
+Creating filelist for typeinference
+Creating filelist for why
+Creating filelist for xml
+Creating filelist for xquery
+Categorizing files.
+Finding a working MD5 command....
+Found a working MD5 command.
+Warning: in transformation, number of duplicates=80
+Computing results.
+
+
+#Files	Directory	#Files-by-Language (Sorted)
+153     xquery          java=84,tom=69
+131     transformation  java=72,tom=41,sh=16,gom=2
+40      typeinference   tom=40
+37      ada             ada=21,tom=10,sh=6
+28      antipattern     tom=25,gom=2,java=1
+25      strategy        tom=20,java=4,gom=1
+23      subtypeinference tom=23
+20      gom             tom=11,gom=7,java=2
+19      builtin         tom=13,java=5,gom=1
+17      master          tom=17
+16      gterm           java=13,tom=3
+15      lsystems        tom=9,java=6
+14      lazyml          tom=9,ml=3,gom=1,haskell=1
+14      poly            tom=10,gom=3,java=1
+13      expression      java=10,tom=3
+13      xml             tom=12,java=1
+12      cell            java=9,tom=3
+11      caml            tom=6,ml=5
+10      strategycompiler tom=8,java=2
+10      termgraph       tom=7,gom=3
+9       analysis        tom=4,gom=3,java=2
+9       debugger        tom=9
+9       miniml          tom=8,gom=1
+8       enumerator      java=6,gom=2
+8       list            tom=5,java=3
+8       tutorial        tom=7,java=1
+7       cps             tom=4,ml=2,gom=1
+7       freshgom        tom=4,gom=2,ml=1
+7       integerc        tom=7
+7       parser          gom=3,tom=2,java=2
+7       peano           tom=5,gom=1,java=1
+7       tomjastadd      java=5,tom=2
+6       bytecode        tom=3,java=3
+6       prodrule        tom=5,java=1
+6       subtyping       tom=4,gom=2
+5       addressbook     tom=4,gom=1
+5       boulderdash     java=3,gom=1,tom=1
+5       labyrinth       tom=2,java=2,gom=1
+5       lambdacalculi   tom=4,gom=1
+4       bdd             tom=2,gom=1,java=1
+4       generics        tom=3,gom=1
+4       gomoku          tom=3,gom=1
+4       mgs             tom=3,gom=1
+4       propp           tom=3,gom=1
+4       python          python=3,tom=1
+3       acmatching      tom=2,gom=1
+3       appletxml       tom=2,java=1
+3       dom             tom=3
+3       nspk            gom=1,tom=1,java=1
+3       old             tom=3
+3       p3p             tom=2,java=1
+3       polygraphes     tom=2,gom=1
+3       rbtree          tom=2,gom=1
+3       structure       gom=1,tom=1,java=1
+2       bpel            gom=1,tom=1
+2       csharp          gom=1,tom=1
+2       deepmatch       tom=2
+2       defaultvalue    tom=1,java=1
+2       gasel           tom=2
+2       modeltrans      tom=2
+2       multigraph      gom=1,tom=1
+2       quine           tom=1,java=1
+2       set             gom=1,tom=1
+2       strings         tom=1,java=1
+2       tactics         gom=1,tom=1
+2       top_dir         sh=2
+1       csmaca          tom=1
+1       matching        tom=1
+1       meta            tom=1
+1       servlet         tom=1
+0       dist            (none)
+0       lib             (none)
+0       why             (none)
+
+
+Totals grouped by language (dominant language first):
+tom:            470 (56.56%)
+java:           247 (29.72%)
+gom:             54 (6.50%)
+sh:              24 (2.89%)
+ada:             21 (2.53%)
+ml:              11 (1.32%)
+python:           3 (0.36%)
+haskell:          1 (0.12%)
+
+
+
+
+Total Number of Files = 831
+Total Number of Source Code Files = 831
+SLOCCount, Copyright (C) 2001-2004 David A. Wheeler
+SLOCCount is Open Source Software/Free Software, licensed under the GNU GPL.
+SLOCCount comes with ABSOLUTELY NO WARRANTY, and you are welcome to
+redistribute it under certain conditions as specified by the GNU GPL license;
+see the documentation for details.
+Please credit this data as "generated using David A. Wheeler's 'SLOCCount'."
+
+
+---------------------------
+
+sloccount examples/
+
+Creating filelist for acmatching
+Creating filelist for ada
+Creating filelist for addressbook
+Creating filelist for analysis
+Creating filelist for antipattern
+Creating filelist for appletxml
+Creating filelist for bdd
+Creating filelist for boulderdash
+Creating filelist for bpel
+Have a non-directory at the top, so creating directory top_dir
+Adding /home/jcb/workspace/gitexperiment/master/examples//build.bat to top_dir
+Adding /home/jcb/workspace/gitexperiment/master/examples//build.sh to top_dir
+Adding /home/jcb/workspace/gitexperiment/master/examples//build.xml to top_dir
+Creating filelist for builtin
+Creating filelist for bytecode
+Creating filelist for caml
+Creating filelist for cell
+Adding /home/jcb/workspace/gitexperiment/master/examples//common.xml to top_dir
+Creating filelist for cps
+Creating filelist for csharp
+Creating filelist for csmaca
+Creating filelist for debugger
+Creating filelist for deepmatch
+Creating filelist for defaultvalue
+Creating filelist for dist
+Creating filelist for dom
+Creating filelist for enumerator
+Creating filelist for expression
+Creating filelist for freshgom
+Creating filelist for gasel
+Creating filelist for generics
+Creating filelist for gom
+Creating filelist for gomoku
+Creating filelist for gterm
+Creating filelist for integerc
+Creating filelist for labyrinth
+Creating filelist for lambdacalculi
+Creating filelist for lazyml
+Creating filelist for lib
+Creating filelist for list
+Creating filelist for lsystems
+Creating filelist for master
+Creating filelist for matching
+Creating filelist for meta
+Creating filelist for mgs
+Creating filelist for miniml
+Creating filelist for modeltrans
+Creating filelist for multigraph
+Creating filelist for nspk
+Creating filelist for old
+Creating filelist for p3p
+Creating filelist for parser
+Creating filelist for peano
+Creating filelist for poly
+Creating filelist for polygraphes
+Creating filelist for prodrule
+Creating filelist for propp
+Creating filelist for python
+Creating filelist for quine
+Creating filelist for rbtree
+Adding /home/jcb/workspace/gitexperiment/master/examples//README to top_dir
+Adding /home/jcb/workspace/gitexperiment/master/examples//runExamples.sh to top_dir
+Creating filelist for servlet
+Creating filelist for set
+Creating filelist for strategy
+Creating filelist for strategycompiler
+Creating filelist for strings
+Creating filelist for structure
+Creating filelist for subtypeinference
+Creating filelist for subtyping
+Creating filelist for tactics
+Creating filelist for termgraph
+Creating filelist for tomjastadd
+Creating filelist for transformation
+Creating filelist for tutorial
+Creating filelist for typeinference
+Creating filelist for why
+Creating filelist for xml
+Creating filelist for xquery
+Categorizing files.
+Finding a working MD5 command....
+Found a working MD5 command.
+Warning: in transformation, number of duplicates=80
+Computing results.
+
+
+SLOC	Directory	SLOC-by-Language (Sorted)
+78302   transformation  tom=43001,java=35115,sh=162,gom=24
+12232   xquery          tom=9715,java=2517
+5712    subtypeinference tom=5712
+2919    antipattern     tom=2801,gom=111,java=7
+2352    lazyml          tom=2200,gom=90,ml=40,haskell=22
+2207    ada             tom=2010,ada=168,sh=29
+1244    cell            java=732,tom=512
+1234    strategy        tom=1150,java=78,gom=6
+1234    subtyping       tom=1168,gom=66
+1139    master          tom=1139
+1099    strategycompiler tom=1003,java=96
+1065    lsystems        tom=877,java=188
+975     miniml          tom=919,gom=56
+962     tomjastadd      java=791,tom=171
+961     typeinference   tom=961
+896     gterm           java=705,tom=191
+873     xml             tom=866,java=7
+870     gom             tom=736,gom=79,java=55
+838     termgraph       tom=769,gom=69
+797     poly            tom=714,gom=63,java=20
+737     analysis        tom=638,java=55,gom=44
+721     integerc        tom=721
+665     expression      tom=534,java=131
+647     structure       tom=495,java=77,gom=75
+636     freshgom        tom=455,ml=138,gom=43
+626     cps             tom=473,ml=118,gom=35
+615     bytecode        tom=496,java=119
+613     builtin         tom=475,java=133,gom=5
+607     prodrule        tom=547,java=60
+595     gomoku          tom=588,gom=7
+521     propp           tom=482,gom=39
+507     lambdacalculi   tom=474,gom=33
+488     caml            tom=341,ml=147
+476     set             tom=467,gom=9
+461     mgs             tom=456,gom=5
+459     list            tom=321,java=138
+447     labyrinth       tom=240,java=195,gom=12
+439     nspk            tom=359,java=49,gom=31
+407     python          python=288,tom=119
+403     enumerator      java=390,gom=13
+394     tutorial        tom=379,java=15
+390     boulderdash     java=205,tom=180,gom=5
+356     csmaca          tom=356
+347     bdd             tom=255,gom=70,java=22
+341     bpel            tom=312,gom=29
+339     debugger        tom=339
+325     gasel           tom=325
+304     generics        tom=289,gom=15
+264     old             tom=264
+263     rbtree          tom=253,gom=10
+234     parser          tom=157,java=40,gom=37
+222     deepmatch       tom=222
+221     peano           tom=175,java=42,gom=4
+188     polygraphes     tom=160,gom=28
+148     p3p             tom=132,java=16
+147     appletxml       tom=102,java=45
+142     addressbook     tom=136,gom=6
+141     servlet         tom=141
+120     dom             tom=120
+85      modeltrans      tom=85
+74      multigraph      tom=66,gom=8
+64      strings         java=34,tom=30
+63      quine           java=40,tom=23
+60      matching        tom=60
+56      tactics         tom=50,gom=6
+54      defaultvalue    tom=30,java=24
+52      acmatching      tom=44,gom=8
+31      top_dir         sh=31
+26      csharp          tom=21,gom=5
+21      meta            tom=21
+0       dist            (none)
+0       lib             (none)
+0       why             (none)
+
+
+Totals grouped by language (dominant language first):
+tom:          90023 (66.95%)
+java:         42141 (31.34%)
+gom:           1146 (0.85%)
+ml:             443 (0.33%)
+python:         288 (0.21%)
+sh:             222 (0.17%)
+ada:            168 (0.12%)
+haskell:         22 (0.02%)
+
+
+
+
+Total Physical Source Lines of Code (SLOC)                = 134,453
+Development Effort Estimate, Person-Years (Person-Months) = 34.36 (412.30)
+ (Basic COCOMO model, Person-Months = 2.4 * (KSLOC**1.05))
+Schedule Estimate, Years (Months)                         = 2.05 (24.64)
+ (Basic COCOMO model, Months = 2.5 * (person-months**0.38))
+Estimated Average Number of Developers (Effort/Schedule)  = 16.73
+Total Estimated Cost to Develop                           = $ 4,641,311
+ (average salary = $56,286/year, overhead = 2.40).
+SLOCCount, Copyright (C) 2001-2004 David A. Wheeler
+SLOCCount is Open Source Software/Free Software, licensed under the GNU GPL.
+SLOCCount comes with ABSOLUTELY NO WARRANTY, and you are welcome to
+redistribute it under certain conditions as specified by the GNU GPL license;
+see the documentation for details.
+Please credit this data as "generated using David A. Wheeler's 'SLOCCount'."
+
+---------------------------
+

@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (c) 2006-2013, Universite de Lorraine, Inria
+ * Copyright (c) 2006-2014, Universite de Lorraine, Inria
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -33,7 +33,7 @@
 %include { types/Object.tom }
 
 %oplist LinkedList concLinkedList(Object*) {
-  is_fsym(l)       { ($l!= null) && ($l instanceof java.util.LinkedList) }
+  is_fsym(l)       { ($l instanceof java.util.LinkedList) }
   make_empty()     { new java.util.LinkedList() }
   make_insert(o,l) { concLinkedListAppend($o,$l) }
   get_head(l)      { $l.getFirst() }

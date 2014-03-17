@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (c) 2006-2013, Universite de Lorraine, Inria
+ * Copyright (c) 2006-2014, Universite de Lorraine, Inria
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -33,7 +33,7 @@
 %include { types/Object.tom }
 
 %oplist TreeSet concTreeSet(Object*) {
-  is_fsym(s)       { ($s!= null) && ($s instanceof java.util.TreeSet) }
+  is_fsym(s)       { ($s instanceof java.util.TreeSet) }
   make_empty()     { new java.util.TreeSet() }
   make_insert(o,s) { treeSetAppend($o,$s) }
   get_head(s)      { treeSetGetHead($s) }

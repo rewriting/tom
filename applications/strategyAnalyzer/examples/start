@@ -8,10 +8,10 @@
 //mu x .(((r1<+r2);x) <+ identity)
 
 
- let S=signature {a:0, b:0, c:0, f:1, g:2} in
- let r1 = { a() -> b() } in 
- let r2 = { b() -> c() } in 
-r1 ; r2
+// let S=signature {a:0, b:0, c:0, f:1, g:2} in
+// let r1 = { a() -> b() } in 
+// let r2 = { b() -> c() } in 
+//r1 ; r2
 // r1 <+ fail
 // one(r1)
 
@@ -151,3 +151,22 @@ r1 ; r2
 // rep1; rep2
 // // let obu = mu y.(one(y)<+r) in
 // // mu x .((obu;x) <+ identity)
+
+
+// let S=signature {a:0, b:0, c:0, d:0, f:1} in
+// let r1 = { f(a()) -> c() } in 
+// let r2 = { a() -> b() } in 
+// let r3 = { a() -> c() } in 
+// let r4 = { f(c()) -> d() } in 
+// let obu1 = mu y.(one(y)<+r1) in
+// let obu2 = mu y.(one(y)<+r2) in
+// let obu3 = mu y.(one(y)<+r3) in
+// let obu4 = mu y.(one(y)<+r4) in
+// let obu = obu1 <+ obu2 <+ obu3 <+ obu4 in
+// mu x .((obu;x) <+ identity)
+
+let S=signature {a:0, b:0, c:0, s:0, f:1} in
+let r1 = { f(s(x)) -> a() } in 
+let r2 = { f(x) -> b() } in 
+r1 <+ r2
+

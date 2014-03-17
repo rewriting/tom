@@ -2,7 +2,7 @@
  *
  * PrintGomModule
  *
- * Copyright (c) 2007-2013, Universite de Lorraine, Inria
+ * Copyright (c) 2007-2014, Universite de Lorraine, Inria
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify

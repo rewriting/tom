@@ -1,25 +1,27 @@
 New implementation of Quickcheck by Fellype
 
-To run the tests:
+* To compile the sources:
+  ant
 
-1) Go to quickCheck directory
-2) Enter : ant
-3) Then copy and paste one of the following commands
-4) Note: you might use other options as well, such as -printj, -small, etc. For more details, have a
-	 look at Options.java file, located at quickcheck/src/tomchecker directory
-5) If your test does not need to import any types, you have to write "no imports", as in the test DemoString.t
+* To generate the property checker:
 
 # To test DemoBinaryTree.t :
-$ java tomchecker/Translator -impt "examples.trees.binarytree.types.*" -impp "examples.trees.DemoBinaryTree" -i ../src/tomchecker/properties/binaryTree.file  -d 10 -q 2000 -s true  -v 1 -quick
+  java tomchecker/Translator -impt "examples.trees.binarytree.types.*" -impp "examples.trees.DemoBinaryTree" -i ../examples/binarytree/binaryTree.file  -d 10 -q 2000 -s true  -v 1 -quick
 
 # To test DemoAssortedList.t :
-$ java tomchecker/Translator -impt "examples.lists.assortedlist.types.*" -impp "examples.lists.DemoAssortedList" -i ../src/tomchecker/properties/assortedlist.file  -d 10 -q 2000 -s true  -v 1 -quick
+  java tomchecker/Translator -impt "examples.lists.assortedlist.types.*" -impp "examples.lists.DemoAssortedList" -i ../examples/lists/assortedlist.file  -d 10 -q 2000 -s true  -v 1 -quick
 
 # To test DemoAList.t :
-$ java tomchecker/Translator -impt "examples.lists.alist.types.*" -impp "examples.lists.DemoAList" -i ../src/tomchecker/properties/alist.file  -d 10 -q 2000 -s true  -v 1 -quick
+  java tomchecker/Translator -impt "examples.lists.alist.types.*" -impp "examples.lists.DemoAList" -i ../examples/lists/alist.file  -d 10 -q 2000 -s true  -v 1 -quick
 
 # To test DemoDummy.t :
-$ java tomchecker/Translator -impt "examples.simplest.dummy.types.*" -impp "examples.simplest.DemoDummy" -i ../src/tomchecker/properties/dummy.file  -d 10 -q 2000 -s true  -v 1 -quick
+  java tomchecker/Translator -impt "examples.simplest.dummy.types.*" -impp "examples.simplest.DemoDummy" -i ../examples/simplest/dummy.file  -d 10 -q 2000 -s true  -v 1 -quick
 
 # To test DemoString.t :
-$ java tomchecker/Translator -impt "no imports" -impp "examples.strings.DemoString" -i ../src/tomchecker/properties/string.file  -d 10 -q 2000 -s false  -v 1 -small
+$ java tomchecker/Translator -impt "no imports" -impp "examples.strings.DemoString" -i ../examples/strings/string.file  -d 10 -q 2000 -s false  -v 1 -small
+
+
+* Note: you might use other options as well, such as -printj, -small, etc. For more details, have a
+	 look at Options.java file, located at quickcheck/src/tomchecker directory
+* If your test does not need to import any types, you have to write "no imports", as in the test DemoString.t
+

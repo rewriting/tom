@@ -19,8 +19,10 @@
   <target name="build" depends="tom.init">
     <mkdir dir="${gen}"/>
 
-    <gom.preset srcdir="${src}"
+    <gom.preset 
       destdir="${gen}">
+      <src path="${src}/${tomchecker}"/>
+      <src path="${examples}"/>
       <include name="**/*.gom"/>
     </gom.preset>	
         
@@ -42,9 +44,10 @@
       <classpath refid="tom.classpath"/>
     </antlr3>
 
-
-    <tom.preset srcdir="${src}"  		        
+    <tom.preset
       destdir="${gen}">
+      <src path="${src}/${tomchecker}"/>
+      <src path="${examples}"/>
       <include name="**/*.t"/>
     </tom.preset>
     
@@ -53,7 +56,7 @@
       includeantruntime="false"
       destdir="${build}">
       <src path="${src}/${tomchecker}"/>
-      <src path="${src}/${examples}"/>
+      <src path="${examples}"/>
       <src path="${gen}"/>
       <classpath refid="tom.classpath"/>
 <!--			<compilerarg value="-Xlint"/> -->

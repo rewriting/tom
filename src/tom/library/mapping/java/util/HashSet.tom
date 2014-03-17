@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (c) 2006-2013, Universite de Lorraine, Inria
+ * Copyright (c) 2006-2014, Universite de Lorraine, Inria
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -33,7 +33,7 @@
 %include { types/Object.tom }
 
 %oplist HashSet concHashSet(Object*) {
-  is_fsym(s)       { ($s!= null) && ($s instanceof java.util.HashSet) }
+  is_fsym(s)       { ($s instanceof java.util.HashSet) }
   make_empty()     { new java.util.HashSet() }
   make_insert(o,s) { hashSetAppend($o,$s) }
   get_head(s)      { hashSetGetHead($s) }

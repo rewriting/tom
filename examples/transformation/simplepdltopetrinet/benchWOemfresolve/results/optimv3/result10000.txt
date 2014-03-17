@@ -1,0 +1,124 @@
+===============
+Test with 10000 WD
+===============
+
+Test 10000.1 :
+
+Starting...
+
+Generation of a process composed of 10000 WD. (with WS)
+Generation done in 4150 (ms).
+Transformation done in:
+  phase#1: 17673 (ms).
+  phase#2: 3289 (ms).
+  total  : 20962 (ms).
+
+done.
+Test 10000.2 :
+
+Starting...
+
+Generation of a process composed of 10000 WD. (with WS)
+Generation done in 4104 (ms).
+Transformation done in:
+  phase#1: 17435 (ms).
+  phase#2: 3299 (ms).
+  total  : 20734 (ms).
+
+done.
+Test 10000.3 :
+
+Starting...
+
+Generation of a process composed of 10000 WD. (with WS)
+Generation done in 4118 (ms).
+Transformation done in:
+  phase#1: 17566 (ms).
+  phase#2: 3281 (ms).
+  total  : 20847 (ms).
+
+done.
+Test 10000.4 :
+
+Starting...
+
+Generation of a process composed of 10000 WD. (with WS)
+Generation done in 4315 (ms).
+Transformation done in:
+  phase#1: 19351 (ms).
+  phase#2: 3262 (ms).
+  total  : 22613 (ms).
+
+done.
+Test 10000.5 :
+
+Starting...
+
+Generation of a process composed of 10000 WD. (with WS)
+Generation done in 4141 (ms).
+Transformation done in:
+  phase#1: 17517 (ms).
+  phase#2: 3291 (ms).
+  total  : 20808 (ms).
+
+done.
+Test 10000.6 :
+
+Starting...
+
+Generation of a process composed of 10000 WD. (with WS)
+Generation done in 4119 (ms).
+Transformation done in:
+  phase#1: 17299 (ms).
+  phase#2: 3251 (ms).
+  total  : 20550 (ms).
+
+done.
+Test 10000.7 :
+
+Starting...
+
+Generation of a process composed of 10000 WD. (with WS)
+Generation done in 4105 (ms).
+Transformation done in:
+  phase#1: 17387 (ms).
+  phase#2: 3288 (ms).
+  total  : 20675 (ms).
+
+done.
+Test 10000.8 :
+
+Starting...
+
+Generation of a process composed of 10000 WD. (with WS)
+Generation done in 4120 (ms).
+Transformation done in:
+  phase#1: 17499 (ms).
+  phase#2: 3298 (ms).
+  total  : 20797 (ms).
+
+done.
+Test 10000.9 :
+
+Starting...
+
+Generation of a process composed of 10000 WD. (with WS)
+Generation done in 4125 (ms).
+Transformation done in:
+  phase#1: 17387 (ms).
+  phase#2: 3301 (ms).
+  total  : 20688 (ms).
+
+done.
+Test 10000.10 :
+
+Starting...
+
+Generation of a process composed of 10000 WD. (with WS)
+Generation done in 4118 (ms).
+Transformation done in:
+  phase#1: 17426 (ms).
+  phase#2: 3270 (ms).
+  total  : 20696 (ms).
+
+done.

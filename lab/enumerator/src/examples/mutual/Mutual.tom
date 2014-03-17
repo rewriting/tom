@@ -1,0 +1,47 @@
+
+%include { int.tom }
+
+%typeterm A {
+  implement { enumerator.mutual.types.A }
+  is_sort(t) { ($t instanceof enumerator.mutual.types.A) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm B {
+  implement { enumerator.mutual.types.B }
+  is_sort(t) { ($t instanceof enumerator.mutual.types.B) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+%op A a() {
+  is_fsym(t) { ($t instanceof enumerator.mutual.types.a.a) }
+  make() { enumerator.mutual.types.a.a.make() }
+}
+
+%op A foo(b:B) {
+  is_fsym(t) { ($t instanceof enumerator.mutual.types.a.foo) }
+  get_slot(b, t) { $t.getb() }
+  make(t0) { enumerator.mutual.types.a.foo.make($t0) }
+}
+
+%op A hoo(a:A, v:int) {
+  is_fsym(t) { ($t instanceof enumerator.mutual.types.a.hoo) }
+  get_slot(a, t) { $t.geta() }
+  get_slot(v, t) { $t.getv() }
+  make(t0, t1) { enumerator.mutual.types.a.hoo.make($t0, $t1) }
+}
+
+%op B b() {
+  is_fsym(t) { ($t instanceof enumerator.mutual.types.b.b) }
+  make() { enumerator.mutual.types.b.b.make() }
+}
+
+%op B grr(a:A) {
+  is_fsym(t) { ($t instanceof enumerator.mutual.types.b.grr) }
+  get_slot(a, t) { $t.geta() }
+  make(t0) { enumerator.mutual.types.b.grr.make($t0) }
+}
+

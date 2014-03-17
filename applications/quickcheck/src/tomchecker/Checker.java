@@ -45,7 +45,7 @@ public class Checker {
     logMessage(1, verbose,"RANDOM CHECK AT DEPTH " + depth);
 
     // If no smaller counter example
-    if(depth == 0){
+    if(depth == 0) {
       assert false :  "FAILED  tests: " + counterExamples;
     }
 
@@ -85,7 +85,7 @@ public class Checker {
 		LazyList<Finite<Product1<T>>> parts = enumeration.parts();
 		
 		int suitableDepth = 0;
-    while( suitableDepth < depth && !parts.isEmpty() ){
+    while( suitableDepth < depth && !parts.isEmpty() ) {
       parts = parts.tail();
 	    suitableDepth++;
     }
@@ -337,7 +337,7 @@ public class Checker {
 		// Contains the inputs that have not satified the pre-conditions
 		List<BigInteger> preCondNotSatisfied = new ArrayList();
 
-		while(!foundValidInput){
+		while(!foundValidInput) {
     	index = new BigInteger(card.bitLength(), rand);
 	    logMessage(5, verbose, "TRY: " + index);
 	    
@@ -360,11 +360,11 @@ public class Checker {
 	        }
 				}
 				
-				if(implication){
+				if(implication) {
         	logMessage(4, verbose, "pre-condition not satisfied by the input: " + input);
 					// If all inputs from a depth have not satisfied the pre-conditions
 					BigInteger size = BigInteger.valueOf( preCondNotSatisfied.size() );
-					if( size.compareTo(card) >= 0 ){
+					if( size.compareTo(card) >= 0 ) {
 						return null;
 					}else{
 						implication = false;
@@ -404,7 +404,7 @@ public class Checker {
     logMessage(1,verbose,"RANDOM CHECK AT DEPTH " + depth);
 
     // if no smaller counter example    
-    if(depth == 0){ 
+    if(depth == 0) { 
       assert false :  "FAILED  tests: " + counterExamples;
     }
     
@@ -1026,7 +1026,7 @@ public class Checker {
   }  
   
 	// ---------------- Big Integer -----------------------------------------------------------------
-  private static BigInteger min(BigInteger n1, BigInteger n2){
+  private static BigInteger min(BigInteger n1, BigInteger n2) {
     if(n1.compareTo(n2) <= 0) {
       return n1;
     } else {

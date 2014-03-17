@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (c) 2000-2013, Universite de Lorraine, Inria
+ * Copyright (c) 2000-2014, Universite de Lorraine, Inria
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -51,7 +51,7 @@ public abstract class AbstractStrategyCombinator extends AbstractStrategy {
   /** 
    * Initializes subterm
    */
-  protected void initSubterm() {
+  final protected void initSubterm() {
     arguments = new Strategy[] {};
   }
 
@@ -60,7 +60,7 @@ public abstract class AbstractStrategyCombinator extends AbstractStrategy {
    *
    * @param v1 first Strategy to add to the array
    */
-  protected void initSubterm(Strategy v1) {
+  final protected void initSubterm(Strategy v1) {
     arguments = new Strategy[] {v1};
   }
   

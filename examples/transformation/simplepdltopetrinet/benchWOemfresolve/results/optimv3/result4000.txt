@@ -1,0 +1,124 @@
+===============
+Test with 4000 WD
+===============
+
+Test 4000.1 :
+
+Starting...
+
+Generation of a process composed of 4000 WD. (with WS)
+Generation done in 990 (ms).
+Transformation done in:
+  phase#1: 3545 (ms).
+  phase#2: 580 (ms).
+  total  : 4125 (ms).
+
+done.
+Test 4000.2 :
+
+Starting...
+
+Generation of a process composed of 4000 WD. (with WS)
+Generation done in 979 (ms).
+Transformation done in:
+  phase#1: 3503 (ms).
+  phase#2: 578 (ms).
+  total  : 4081 (ms).
+
+done.
+Test 4000.3 :
+
+Starting...
+
+Generation of a process composed of 4000 WD. (with WS)
+Generation done in 979 (ms).
+Transformation done in:
+  phase#1: 3517 (ms).
+  phase#2: 581 (ms).
+  total  : 4098 (ms).
+
+done.
+Test 4000.4 :
+
+Starting...
+
+Generation of a process composed of 4000 WD. (with WS)
+Generation done in 982 (ms).
+Transformation done in:
+  phase#1: 3527 (ms).
+  phase#2: 582 (ms).
+  total  : 4109 (ms).
+
+done.
+Test 4000.5 :
+
+Starting...
+
+Generation of a process composed of 4000 WD. (with WS)
+Generation done in 987 (ms).
+Transformation done in:
+  phase#1: 3504 (ms).
+  phase#2: 557 (ms).
+  total  : 4061 (ms).
+
+done.
+Test 4000.6 :
+
+Starting...
+
+Generation of a process composed of 4000 WD. (with WS)
+Generation done in 997 (ms).
+Transformation done in:
+  phase#1: 3509 (ms).
+  phase#2: 577 (ms).
+  total  : 4086 (ms).
+
+done.
+Test 4000.7 :
+
+Starting...
+
+Generation of a process composed of 4000 WD. (with WS)
+Generation done in 982 (ms).
+Transformation done in:
+  phase#1: 3514 (ms).
+  phase#2: 561 (ms).
+  total  : 4075 (ms).
+
+done.
+Test 4000.8 :
+
+Starting...
+
+Generation of a process composed of 4000 WD. (with WS)
+Generation done in 1042 (ms).
+Transformation done in:
+  phase#1: 3524 (ms).
+  phase#2: 593 (ms).
+  total  : 4117 (ms).
+
+done.
+Test 4000.9 :
+
+Starting...
+
+Generation of a process composed of 4000 WD. (with WS)
+Generation done in 988 (ms).
+Transformation done in:
+  phase#1: 3149 (ms).
+  phase#2: 582 (ms).
+  total  : 3731 (ms).
+
+done.
+Test 4000.10 :
+
+Starting...
+
+Generation of a process composed of 4000 WD. (with WS)
+Generation done in 1002 (ms).
+Transformation done in:
+  phase#1: 3498 (ms).
+  phase#2: 557 (ms).
+  total  : 4055 (ms).
+
+done.

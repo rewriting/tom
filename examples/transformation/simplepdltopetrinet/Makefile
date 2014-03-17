@@ -1,6 +1,7 @@
 MAINFILE=SimplePDLToPetriNet
 WD=10
 HASWS=true #false #
+ARGS=${WD} ${HASWS}
 ARG=models/DefaultSimplePDLInstance.xmi
 #ARG=models/SimplePDLInstance2.xmi
 LOCAL_CLASSPATH=.:lib/petrinetsemantics_updated_1.2.jar:lib/simplepdlsemantics_updated_1.2.jar:${CLASSPATH}
@@ -16,6 +17,7 @@ default: run
 
 run: ${MAINFILE}.class
 	java -cp ${LOCAL_CLASSPATH} ${MAINFILE} ${ARG}
+#	java -cp ${LOCAL_CLASSPATH} ${MAINFILE} ${ARGS}
 
 GenModel.java: GenModel.t
 	tom ${OPTS} GenModel.t

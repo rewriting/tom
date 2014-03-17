@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (c) 2006-2013, Universite de Lorraine, Inria
+ * Copyright (c) 2006-2014, Universite de Lorraine, Inria
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -33,7 +33,7 @@
 %include { types/HashMap.tom }
 
 %oplist HashMap concHashMap(MapEntry*) {
-  is_fsym(m)       { ($m!= null) && ($m instanceof java.util.HashMap) }
+  is_fsym(m)       { ($m instanceof java.util.HashMap) }
   make_empty()     { new java.util.HashMap() }
   make_insert(e,m) { hashMapAppend($e,$m) }
   get_head(m)      { hashMapGetHead($m) }

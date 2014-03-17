@@ -3,7 +3,7 @@
  *
  * TOM - To One Matching Compiler
  *
- * Copyright (c) 2000-2013, Inria
+ * Copyright (c) 2000-2014, Inria
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
