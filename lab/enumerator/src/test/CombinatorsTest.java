@@ -71,4 +71,57 @@ public class CombinatorsTest {
 		}
 		assertEquals(100, bag.size());
 	}
+	
+	@Test
+	public void testListBoolean() {
+		Enumeration<Boolean> e = Combinators.makeboolean();
+		Enumeration<List<Boolean>> el = Combinators.listOf(e);
+		int size = 0;
+
+		for (int i = 0; i < 100; i++) {
+			List<Boolean> l = el.get(BigInteger.valueOf(i));
+			//System.out.println(l);
+			assertTrue(l.size() >= size);
+			size = l.size();
+		}
+	}
+	
+	@Test
+	public void testListInteger() {
+		Enumeration<Integer> e = Combinators.makeint();
+		Enumeration<List<Integer>> el = Combinators.listOf(e);
+		Set<List<Integer>> bag = new HashSet<List<Integer>>();
+
+		for (int i = 0; i < 100; i++) {
+			List<Integer> l = el.get(BigInteger.valueOf(i));
+			//System.out.println(l);
+			bag.add(l);
+		}
+		assertEquals(100, bag.size());
+	}
+	
+	@Test
+	public void testSetBoolean() {
+		Enumeration<Boolean> e = Combinators.makeboolean();
+		Enumeration<List<Boolean>> el = Combinators.listOf(e);
+
+		for (int i = 0; i < 100; i++) {
+			List<Boolean> l = el.get(BigInteger.valueOf(i));
+			System.out.println(l);
+		}
+	}
+	
+	@Test
+	public void testSetInteger() {
+		Enumeration<Integer> e = Combinators.makeint();
+		Enumeration<Set<Integer>> el = Combinators.setOf(e);
+		Set<Set<Integer>> bag = new HashSet<Set<Integer>>();
+
+		for (int i = 0; i < 100; i++) {
+			Set<Integer> l = el.get(BigInteger.valueOf(i));
+			System.out.println(l);
+			bag.add(l);
+		}
+		//assertEquals(100, bag.size());
+	}
 }

@@ -1,6 +1,10 @@
 package tom.library.enumerator;
 
 import java.math.BigInteger;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 import aterm.ATerm;
 
@@ -9,7 +13,9 @@ public class Combinators {
 	private static Enumeration<Integer> enumpint = null;
 
 	private static Enumeration<Boolean> enumboolean = null;
+	
 	private static Enumeration<Character> enumcharacter = null;
+	
 	private static Enumeration<String> enumstring = null;
 
 	private static Enumeration<Long> enumlong = null;
@@ -17,15 +23,13 @@ public class Combinators {
 
 	private static Enumeration<Float> enumfloat = null;
 	private static Enumeration<Float> enumpfloat = null;
-
-	
-	public static Enumeration<Integer> makenat() { return makePositiveInteger(); }
 	
 	private static F<Integer,Integer> plusOneInteger = new F<Integer,Integer>() { public Integer apply(Integer x) { return x+1; } };
 	private static F<Integer,Integer> oppositeInteger = new F<Integer,Integer>() { public Integer apply(Integer x) { return -x; } };
 	private static F<Long,Long> plusOneLong = new F<Long,Long>() { public Long apply(Long x) { return x+1; } };
 	private static F<Long,Long> oppositeLong = new F<Long,Long>() { public Long apply(Long x) { return -x; } };
 	
+	public static Enumeration<Integer> makenat() { return makePositiveInteger(); }
 	public static Enumeration<Integer> makePositiveInteger() {
 		if(enumpint==null) {
 			final Enumeration<Integer> zeroEnum = Enumeration.singleton(0);
@@ -192,4 +196,90 @@ public class Combinators {
 	public static Enumeration<ATerm> makeATerm() {
 		throw new RuntimeException("not yet implemented");
 	}
+	
+	/*
+	 * lists
+	 */
+	public static <A> Enumeration<List<A>>  listOf(final Enumeration<A> e) {
+		final F2<A,LList<A>,LList<A>> cons = 
+				new F2<A,LList<A>,LList<A>>() { public LList<A> apply(A head,LList<A> tail) { return new Cons<A>(head,tail); } };
+				
+		final Enumeration<LList<A>> nilEnum = Enumeration.singleton((LList<A>)new Nil<A>());
+		
+		F<Enumeration<LList<A>>,Enumeration<LList<A>>> f = new F<Enumeration<LList<A>>,Enumeration<LList<A>>>() {
+			public Enumeration<LList<A>> apply(final Enumeration<LList<A>> arg2) {
+				return nilEnum.plus(consEnum(cons.curry(),e,arg2)).pay();
+			}
+		};
+		
+		final Enumeration<LList<A>> listEnum = Enumeration.fix(f);
+		final F<LList<A>,List<A>> toList = new F<LList<A>,List<A>>() { public List<A> apply(LList<A> x) { return x.toList(); } };
+		
+		return listEnum.map(toList);
+	}
+	
+	public static <A> Enumeration<Set<A>> setOf(final Enumeration<A> e) {
+		final F<List<A>,Set<A>> toSet = new F<List<A>,Set<A>>() { public Set<A> apply(List<A> x) { 
+			Set<A> res = new HashSet<A>();
+			for(A a:x) { res.add(a); }
+			return res;
+		} };
+		return listOf(e).map(toSet);
+	}
+
+	private static <A> Enumeration<LList<A>> consEnum(F<A,F<LList<A>,LList<A>>> cons, Enumeration<A> aEnum, Enumeration<LList<A>> e) {
+		Enumeration<F<A,F<LList<A>,LList<A>>>> singletonCons = Enumeration.singleton(cons);
+		Enumeration<F<LList<A>,LList<A>>> singletonConsBoolEnum = Enumeration.apply(singletonCons,aEnum);
+		Enumeration<LList<A>> res = Enumeration.apply(singletonConsBoolEnum,e);
+		return res;
+	}
+	
+	private static abstract class LList<A> {
+		public abstract int size();
+		public abstract boolean isEmpty();
+		public List<A> toList() {
+			LList<A> tmp = this;
+			List<A> res = new LinkedList<A>();
+			while(!tmp.isEmpty()) {
+				res.add(0,((Cons<A>)tmp).head);
+				tmp = ((Cons<A>)tmp).tail;
+			}
+			return res;
+		}
+		
+	}
+
+	private static class Nil<A> extends LList<A> {
+		public String toString() {
+			return "nil";
+		}
+		public boolean isEmpty() {
+			return true;
+		}
+		public int size() {
+			return 0;
+		}
+	}
+
+	private static class Cons<A> extends LList<A> {
+		private A head;
+		private LList<A> tail;
+
+		public Cons(A h, LList<A> t) {
+			this.head = h;
+			this.tail = t;
+		}
+
+		public String toString() {
+			return head + ":" + tail;
+		}
+		
+		public boolean isEmpty() {
+			return false;
+		}
+		public int size() {
+			return 1 + tail.size();
+		}
+	}
+	
 }
