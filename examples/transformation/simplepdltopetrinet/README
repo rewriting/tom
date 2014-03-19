@@ -49,7 +49,7 @@ in the dedicated directory:
   expected/DefaultSimplePDLInstance_resultingPetri.ndr
   expected/SimplePDLInstance2_resultingPetri.ndr
 
-Riachability Graph:
+Reachability Graph:
 
 To construct the reachability graph, one has to use tina which takes .ndr file
 and generate a graph in proprietary format .ktz. The following command
@@ -66,7 +66,7 @@ The following message should appear in standard output:
 
 WARNING: Executing the same command on the second example will provoke the use
 of a huge amount of memory. Be sure to have few GB of free RAM. For instance,
-the graphe reachability construction has been attempted on a 24 GB RAM server,
+the graph reachability construction has been attempted on a 24 GB RAM server,
 and when checking the result 4 days after the beginning, the process was not
 finished and all RAM was used. The process has been stopped.
 
@@ -80,7 +80,7 @@ Two .ltl files can be found:
   expected/defaultInstance_finished.ltl
   expected/SimplePDLInstance2_finished.ltl
 
-Let's explein the first one:
+Let's explain the first one:
 
   op finished = T /\ A_finished /\ B_finished /\ C_finished /\ D_finished;
   
