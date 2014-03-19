@@ -56,7 +56,18 @@ public class CombinatorsTest {
 
 		for (int i = 0; i < 100; i++) {
 			bag.add(e.get(BigInteger.valueOf(i)));
-			System.out.println(e.get(BigInteger.valueOf(i)));
+			//System.out.println(e.get(BigInteger.valueOf(i)));
+		}
+		assertEquals(100, bag.size());
+	}
+	
+	@Test
+	public void testMakeLong() {
+		Enumeration<Long> e = Combinators.makelong();
+		Set<Long> bag = new HashSet<Long>();
+
+		for (int i = 0; i < 100; i++) {
+			bag.add(e.get(BigInteger.valueOf(i)));
 		}
 		assertEquals(100, bag.size());
 	}

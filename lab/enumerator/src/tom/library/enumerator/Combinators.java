@@ -6,44 +6,72 @@ import aterm.ATerm;
 
 public class Combinators {
 	private static Enumeration<Integer> enumint = null;
+	private static Enumeration<Integer> enumpint = null;
+
 	private static Enumeration<Boolean> enumboolean = null;
 	private static Enumeration<Character> enumcharacter = null;
 	private static Enumeration<String> enumstring = null;
 
-	private static Enumeration<Integer> enumexpint = null;
+	private static Enumeration<Long> enumlong = null;
+	private static Enumeration<Long> enumplong = null;
 
-	public static Enumeration<Integer> makeint() { return makeInt(); }
+	private static Enumeration<Float> enumfloat = null;
+	private static Enumeration<Float> enumpfloat = null;
+
 	
-	public static Enumeration<Integer> makenat() { return makeNatural(); }
+	public static Enumeration<Integer> makenat() { return makePositiveInteger(); }
 	
-	private static F<Integer,Integer> plusOne = new F<Integer,Integer>() { public Integer apply(Integer x) { return x+1; } };
-	private static F<Integer,Integer> opposite = new F<Integer,Integer>() { public Integer apply(Integer x) { return -x; } };
+	private static F<Integer,Integer> plusOneInteger = new F<Integer,Integer>() { public Integer apply(Integer x) { return x+1; } };
+	private static F<Integer,Integer> oppositeInteger = new F<Integer,Integer>() { public Integer apply(Integer x) { return -x; } };
+	private static F<Long,Long> plusOneLong = new F<Long,Long>() { public Long apply(Long x) { return x+1; } };
+	private static F<Long,Long> oppositeLong = new F<Long,Long>() { public Long apply(Long x) { return -x; } };
 	
-	public static Enumeration<Integer> makeNatural() {
-		if(enumint==null) {
-			final Enumeration<Integer> zeroEnum = Enumeration.singleton((Integer)0);
+	public static Enumeration<Integer> makePositiveInteger() {
+		if(enumpint==null) {
+			final Enumeration<Integer> zeroEnum = Enumeration.singleton(0);
 			F<Enumeration<Integer>,Enumeration<Integer>> sucEnum = new F<Enumeration<Integer>,Enumeration<Integer>>() {
 				public Enumeration<Integer> apply(final Enumeration<Integer> e) {
-					return zeroEnum.plus(Enumeration.apply(Enumeration.singleton(plusOne),e)).pay();
+					return zeroEnum.plus(Enumeration.apply(Enumeration.singleton(plusOneInteger),e)).pay();
 				}
 			};
-			enumint = Enumeration.fix(sucEnum);
+			enumpint = Enumeration.fix(sucEnum);
+		}
+		return enumpint;
+	}
+
+	public static Enumeration<Long> makelong() { return makeLong(); }
+	public static Enumeration<Long> makeLong() {
+		if(enumlong==null) {
+			Enumeration<Long> natsPlusOne = makePositiveLong().map(plusOneLong);
+			enumlong = Enumeration.singleton(0L).plus(natsPlusOne.plus(natsPlusOne.map(oppositeLong))).pay();
+		}
+		return enumlong;
+	}
+
+	public static Enumeration<Long> makePositiveLong() {
+		if(enumplong==null) {
+			final Enumeration<Long> zeroEnum = Enumeration.singleton(0L);
+			F<Enumeration<Long>,Enumeration<Long>> sucEnum = new F<Enumeration<Long>,Enumeration<Long>>() {
+				public Enumeration<Long> apply(final Enumeration<Long> e) {
+					return zeroEnum.plus(Enumeration.apply(Enumeration.singleton(plusOneLong),e)).pay();
+				}
+			};
+			enumplong = Enumeration.fix(sucEnum);
+		}
+		return enumplong;
+	}
+
+	public static Enumeration<Integer> makeint() { return makeInteger(); }
+	public static Enumeration<Integer> makeInteger() {
+		if(enumint==null) {
+			//enumexpint = Enumeration.singleton(0).plus(new Enumeration<Integer>(naturals(0)));
+			Enumeration<Integer> natsPlusOne = makePositiveInteger().map(plusOneInteger);
+			enumint = Enumeration.singleton(0).plus(natsPlusOne.plus(natsPlusOne.map(oppositeInteger))).pay();
 		}
 		return enumint;
 	}
-
-	public static Enumeration<Integer> makeInt() {
-		if(enumexpint==null) {
-			//enumexpint = Enumeration.singleton(0).plus(new Enumeration<Integer>(naturals(0)));
-			
-			//final natsPlusOne = nats.map((n) => n + 1);
-			//return singleton(0) + (natsPlusOne + natsPlusOne.map((n) => -n)).pay();
-			Enumeration<Integer> natsPlusOne = makeNatural().map(plusOne);
-			enumexpint = Enumeration.singleton(0).plus(natsPlusOne.plus(natsPlusOne.map(opposite))).pay();
-		}
-		return enumexpint;
-	}
-
+	
+	
 	/*
 	private static LazyList<Finite<Integer>> naturals(final int p) {
 		// build Finite from 2^p to 2^(p+1)-1
@@ -137,16 +165,25 @@ public class Combinators {
 	/*
 	 * stubs for other builtins
 	 */
-	public static Enumeration<Long> makelong() { return makeLong(); }
-	public static Enumeration<Long> makeLong() {
-		throw new RuntimeException("not yet implemented");
-	}
-
+	
 	public static Enumeration<Float> makefloat() { return makeFloat(); }
 	public static Enumeration<Float> makeFloat() {
+		if(enumfloat==null) {
+			enumfloat = null;
+		}
+		//return enumfloat;
 		throw new RuntimeException("not yet implemented");
+
 	}
 
+	public static Enumeration<Float> makePositiveFloat() {
+		if(enumpfloat==null) {
+			enumpfloat = null;
+		}
+		//return enumpfloat;	
+		throw new RuntimeException("not yet implemented");
+	}
+	
 	public static Enumeration<Double> makedouble() { return makeDouble(); }
 	public static Enumeration<Double> makeDouble() {
 		throw new RuntimeException("not yet implemented");
