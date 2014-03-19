@@ -18,6 +18,8 @@ How to prepare a release:
 - update javadoc on the web site
 
 (- prepare the eclipse plugin)
+(- prepare ecore and uml2 mappings: only needed if the library is changed,
+   please read src/tom/library/mapping/java/emf/README)
 
 - prepare installation kit for Windows
   - build.bat clean.all

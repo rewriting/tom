@@ -216,25 +216,45 @@ public class TomMappingFromEcore {
         }
 
         try {
-          for(int i=0;i<ePackageNameList.size();i++) {
-            File output = new File(".",ePackageNameList.get(i)+".tom");
+          /*
+          //performances tests
+          long startLocalChrono = 0;
+          long duration = 0;
+          System.out.println("Mappings generation, start global chrono");
+          long startChrono = System.currentTimeMillis();
+          */
+          for(String epn : ePackageNameList) {
+            //performances tests
+            //startLocalChrono = System.currentTimeMillis();
+            File output = new File(".",epn+".tom");
             Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output)));
             //libraries are not necessarily under GPL
             //uncomment the following line when re-generating ecore.tom mapping
             //genLicence(writer);
             //specific case of EcorePackage mapping generation
-            if(ePackageNameList.get(i).equals("org.eclipse.emf.ecore.EcorePackage")) {
+            if(epn.equals("org.eclipse.emf.ecore.EcorePackage")) {
               genEcoreMapping = true;
-            } else if(ePackageNameList.get(i).equals("org.eclipse.uml2.uml.UMLPackage")) {
+            } else if(epn.equals("org.eclipse.uml2.uml.UMLPackage")) {
               genUML2Mapping = true;
             }
-            extractFromEPackage(writer, (EPackage) java.lang.Class.forName(ePackageNameList.get(i)).getField("eINSTANCE").get(null));
+            extractFromEPackage(writer, (EPackage) java.lang.Class.forName(epn).getField("eINSTANCE").get(null));
             writer.flush();
             writer.close();
+            /*
+            //performances tests
+            duration = System.currentTimeMillis()-startLocalChrono;
+            System.out.println("Generation of "+epn+".tom done in "+duration+" (ms).");
+             */
             //reset
             genEcoreMapping = false;
             genUML2Mapping = false;
           }
+          /*
+          //performances tests
+          long totalDuration = System.currentTimeMillis()-startChrono;
+          System.out.println("Complete generation done in "+totalDuration+" (ms).");
+          */
+
         } catch (Exception e) {
           e.printStackTrace();
         }
@@ -359,6 +379,7 @@ public class TomMappingFromEcore {
     tomTypes.put(LinkedList.class, "util/LinkedList");
     tomTypes.put(Object.class, "util/Object");
     tomTypes.put(TreeMap.class, "util/TreeMap");
+    tomTypes.put(Map.Entry.class, "util/MapEntry");
     tomTypes.put(TreeSet.class, "util/TreeSet");
     tomTypes.put(AbstractCollection.class, "util/types/AbstractCollection");
     tomTypes.put(AbstractList.class, "util/types/AbstractList");
@@ -984,10 +1005,35 @@ private static <O> org.eclipse.emf.common.util.EList<O> append@name@(O e,org.ecl
             .getCanonicalName();
           //avoid to generate mappings already been defined in ecore.tom
           //except if the goal is to generate the EcorePackage mapping itself
-
+          //idem for UML2
           //if(genEcoreMapping || genUML2Mapping || !tomEMFTypes.contains(eclf.getInstanceClass())) {
+          //FIXME - TODO - CHECK: quick fix!
           if(genEcoreMapping || genUML2Mapping || !isUML2orEMF) {
-            writer.write(%[
+            //isUML2orEMF : (tomEMFTypes.contains(c)||tomUML2Types.contains(c));
+            //TEST: are these tests OK?
+            //we want to genereate code when:
+            //  - it the ecore MM mappings generation
+            //  - it the UML2 MM mappings generation
+            //  - it the generation of types which are not EMF types nor UML types
+            //When we generate Ecore and if the type is an UML2 type, whe want to include the uml2 mapping (if not already included)
+            if (genEcoreMapping && tomUML2Types.contains(c)) {
+              if (!includedMappings.contains("emf/uml2.tom")) {
+                writer.write(%[ 
+                  %include { emf/uml2.tom } 
+                  ]%);
+                includedMappings.add("emf/uml2.tom");
+              }
+            //When we generate UML2 and if the type is an Ecore type, whe want to include the ecore mapping (if not already included)
+            } else if (genUML2Mapping && tomEMFTypes.contains(c)) {
+              if (!includedMappings.contains("emf/ecore.tom")) {
+                writer.write(%[ 
+                  %include { emf/ecore.tom } 
+                  ]%);
+                includedMappings.add("emf/ecore.tom");
+              }
+            //otherwise we generate the mapping
+            } else {
+              writer.write(%[
 
 %op @prefix+ecl.getInstanceClass().getSimpleName()@ @prefix+cr@(@s_types@) {
   is_fsym(t) { $t instanceof @(decl[0]+decl[1])@ }@s_gets@ @s_defaults@
@@ -1007,6 +1053,7 @@ public static <O extends org.eclipse.emf.ecore.EObject> O construct@prefix+cr@(O
   return o;
 }]%);
           }
+        }
         }
       } else if(eclf instanceof EEnum) {
         EEnum en = (EEnum) eclf;
@@ -1049,7 +1096,23 @@ public static <O extends org.eclipse.emf.ecore.EObject> O construct@prefix+cr@(O
    * @return a string corresponding to the content of the %op implement block
    */
   private static String genOpImplementContent(String eclname, String cr) {
-    return eclname.substring(0, eclname.lastIndexOf(cr))+"impl."+cr+"Impl";
+    //specific case for map-typed features: they use EStringToStringMapEntry
+    //which has <<MapEntry>> Stereotype (instanceClassName==java.util.Map$Entry)
+    //implement() has to be org.eclipse.emf.ecore.impl.EStringToStringMapEntryImpl
+    //but eclname.substring(..)!="org.eclipse.emf.ecore.", therefore...
+    //return "org.eclipse.emf.ecore.impl."+cr+"Impl";
+    //a better solution should be implemented TODO FIXME CHECK
+    String fqnPrefix;
+    if (cr.equals("EStringToStringMapEntry")) {
+      //return "org.eclipse.emf.ecore.impl."+cr+"Impl";
+      fqnPrefix = "org.eclipse.emf.ecore.";
+    } else {
+      //return eclname.substring(0, eclname.lastIndexOf(cr))+"impl."+cr+"Impl";
+      fqnPrefix = eclname.substring(0, eclname.lastIndexOf(cr));
+    }
+    //unreadable (too long)
+    //return (cr.equals("EStringToStringMapEntry")?"org.eclipse.emf.ecore.":eclname.substring(0,eclname.lastIndexOf(cr)))+"impl."+cr+"Impl";
+    return fqnPrefix+"impl."+cr+"Impl";
   }
 
   /* TODO: to complete */
