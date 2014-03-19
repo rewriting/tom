@@ -13,13 +13,18 @@ public class Combinators {
 	private static Enumeration<Integer> enumexpint = null;
 
 	public static Enumeration<Integer> makeint() { return makeInt(); }
-	public static Enumeration<Integer> makeLinearInt() {
+	
+	public static Enumeration<Integer> makenat() { return makeNatural(); }
+	
+	private static F<Integer,Integer> plusOne = new F<Integer,Integer>() { public Integer apply(Integer x) { return x+1; } };
+	private static F<Integer,Integer> opposite = new F<Integer,Integer>() { public Integer apply(Integer x) { return -x; } };
+	
+	public static Enumeration<Integer> makeNatural() {
 		if(enumint==null) {
 			final Enumeration<Integer> zeroEnum = Enumeration.singleton((Integer)0);
 			F<Enumeration<Integer>,Enumeration<Integer>> sucEnum = new F<Enumeration<Integer>,Enumeration<Integer>>() {
 				public Enumeration<Integer> apply(final Enumeration<Integer> e) {
-					F<Integer,Integer> _suc = new F<Integer,Integer>() { public Integer apply(Integer x) { return x+1; } };
-					return zeroEnum.plus(Enumeration.apply(Enumeration.singleton(_suc),e)).pay();
+					return zeroEnum.plus(Enumeration.apply(Enumeration.singleton(plusOne),e)).pay();
 				}
 			};
 			enumint = Enumeration.fix(sucEnum);
@@ -29,11 +34,17 @@ public class Combinators {
 
 	public static Enumeration<Integer> makeInt() {
 		if(enumexpint==null) {
-			enumexpint = Enumeration.singleton(0).plus(new Enumeration<Integer>(naturals(0)));
+			//enumexpint = Enumeration.singleton(0).plus(new Enumeration<Integer>(naturals(0)));
+			
+			//final natsPlusOne = nats.map((n) => n + 1);
+			//return singleton(0) + (natsPlusOne + natsPlusOne.map((n) => -n)).pay();
+			Enumeration<Integer> natsPlusOne = makeNatural().map(plusOne);
+			enumexpint = Enumeration.singleton(0).plus(natsPlusOne.plus(natsPlusOne.map(opposite))).pay();
 		}
 		return enumexpint;
 	}
 
+	/*
 	private static LazyList<Finite<Integer>> naturals(final int p) {
 		// build Finite from 2^p to 2^(p+1)-1
 		//p=3 => 8, 9, 10, 11, 12, 14, 14, 15
@@ -54,7 +65,8 @@ public class Combinators {
 		return LazyList.cons(head, tail);			
 
 	}
-
+*/
+	
 	public static Enumeration<Boolean> makeboolean() { return makeBoolean(); }
 	public static Enumeration<Boolean> makeBoolean() {
 		if(enumboolean==null) {
