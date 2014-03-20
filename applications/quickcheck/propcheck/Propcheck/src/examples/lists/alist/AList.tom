@@ -1,0 +1,40 @@
+
+%include { boolean.tom }
+
+%include { string.tom }
+
+%include { int.tom }
+
+%typeterm AList {
+  implement { examples.lists.alist.types.AList }
+  is_sort(t) { ($t instanceof examples.lists.alist.types.AList) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm Elem {
+  implement { examples.lists.alist.types.Elem }
+  is_sort(t) { ($t instanceof examples.lists.alist.types.Elem) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+%op AList empty() {
+  is_fsym(t) { ($t instanceof examples.lists.alist.types.alist.empty) }
+  make() { examples.lists.alist.types.alist.empty.make() }
+}
+
+%op AList con(head:Elem, tail:AList) {
+  is_fsym(t) { ($t instanceof examples.lists.alist.types.alist.con) }
+  get_slot(head, t) { $t.gethead() }
+  get_slot(tail, t) { $t.gettail() }
+  make(t0, t1) { examples.lists.alist.types.alist.con.make($t0, $t1) }
+}
+
+%op Elem cs(i:int) {
+  is_fsym(t) { ($t instanceof examples.lists.alist.types.elem.cs) }
+  get_slot(i, t) { $t.geti() }
+  make(t0) { examples.lists.alist.types.elem.cs.make($t0) }
+}
+
