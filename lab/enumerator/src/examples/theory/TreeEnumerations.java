@@ -1,28 +1,12 @@
 package examples.theory;
 
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.junit.contrib.theories.ParameterSignature;
-import org.junit.contrib.theories.ParameterSupplier;
-import org.junit.contrib.theories.PotentialAssignment;
-
 import tom.library.enumerator.Enumeration;
 import tom.library.enumerator.F;
 import tom.library.enumerator.F2;
 
-public class RandomNaturalTreeValueSupplier extends ParameterSupplier {
+public final class TreeEnumerations {
 
-	int samplesize = 100;
-
-	@Override
-	public List<PotentialAssignment> getValueSources(ParameterSignature signature) {
-		samplesize = signature.getAnnotation(ForAllNaturalTree.class).sampleSize();
-		return treesOfNatural(samplesize);
-	}
-
-	public static final List<PotentialAssignment> treesOfNatural(int size) {
+	public static final Enumeration<Tree<Nat>> makeTreeNatEnumeration() {
 		final Enumeration<Nat> zeroEnum = Enumeration.singleton((Nat)new Zero());
 
 		F<Enumeration<Nat>,Enumeration<Nat>> sucEnum = new F<Enumeration<Nat>,Enumeration<Nat>>() {
@@ -42,30 +26,7 @@ public class RandomNaturalTreeValueSupplier extends ParameterSupplier {
 				return leafEnum.plus(Enumeration.apply(Enumeration.apply(Enumeration.singleton(_fork.curry()),e),e)).pay();
 			}
 		};
-		final Enumeration<Tree<Nat>> treeEnum = Enumeration.fix(forkEnum);
-
-		List<PotentialAssignment> l = new ArrayList<PotentialAssignment>();
-		
-		for (int i = 0; i < size; i++) {
-			
-			final BigInteger j = BigInteger.valueOf(i);
-
-			PotentialAssignment assignment = new PotentialAssignment() {
-
-				@Override
-				public Object getValue() throws CouldNotGenerateValueException {
-					return treeEnum.get(j);
-				}
-
-				@Override
-				public String getDescription() throws CouldNotGenerateValueException {
-					// TODO Auto-generated method stub
-					return null;
-				}
-			};
-			l.add(assignment);
-		}
-		return l;
+		return Enumeration.fix(forkEnum);
 	}
 
 	private static Enumeration<Nat> sucEnumAux(F<Nat,Nat> suc, Enumeration<Nat> e) {
@@ -73,8 +34,5 @@ public class RandomNaturalTreeValueSupplier extends ParameterSupplier {
 		Enumeration<Nat> res = Enumeration.apply(singletonSuc,e);
 		return res;
 	}
-
-
-
 
 }
