@@ -19,9 +19,5 @@ import org.junit.contrib.theories.ParametersSuppliedBy;
 public @interface RandomForAll {
 
 	public int maxDepth() default 100;
-	
-	//TODO this parameter could be inferred with the class name of the parameter
-	public String enumerationName();
-
-	
+		
 }

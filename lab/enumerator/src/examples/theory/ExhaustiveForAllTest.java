@@ -33,14 +33,14 @@ public class ExhaustiveForAllTest {
 	}
 
 	@Theory
-	public void testPlusOne(@ExhaustiveForAll(sampleSize=200, enumerationName = "TreeNat") Tree<Nat> t) {
+	public void testPlusOne(@ExhaustiveForAll(sampleSize=200) Tree<Nat> t) {
 		System.out.println(t);
 		// just test if the size is preserved by plusOne	
 		assertEquals(plusOne(t).size(), t.size());
 	}
 	
 	@Theory
-	public void testString(@ExhaustiveForAll(sampleSize=10, enumerationName = "String") String s) {
+	public void testString(@ExhaustiveForAll(sampleSize=10) String s) {
 		System.out.println(s);
 	}
 
