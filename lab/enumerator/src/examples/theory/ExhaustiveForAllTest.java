@@ -2,25 +2,14 @@ package examples.theory;
 
 import static org.junit.Assert.assertEquals;
 
-import java.math.BigInteger;
-
-import org.junit.contrib.theories.DataPoint;
 import org.junit.contrib.theories.Theories;
 import org.junit.contrib.theories.Theory;
 import org.junit.runner.RunWith;
 
-import tom.library.enumerator.Enumeration;
-import tom.library.enumerator.F;
-import tom.library.enumerator.F2;
-
 @RunWith(Theories.class)
 public class ExhaustiveForAllTest {
 
-	//	@DataPoint
-	//	public static final Tree<Nat> value = treeOfNatural(1000);
-
-
-	// TODO: rewrite later with Tom strategies
+	//simple function to test theories
 	public Tree<Nat> plusOne(Tree<Nat> v) {
 		if (v instanceof Leaf) {
 			Leaf<Nat> t = (Leaf<Nat>) v;
@@ -33,14 +22,13 @@ public class ExhaustiveForAllTest {
 	}
 
 	@Theory
-	public void testPlusOne(@ExhaustiveForAll(sampleSize=200) Tree<Nat> t) {
-		System.out.println(t);
+	public void testPlusOne(@ExhaustiveForAll(sampleSize=1000) Tree<Nat> t) {
 		// just test if the size is preserved by plusOne	
 		assertEquals(plusOne(t).size(), t.size());
 	}
-	
+
 	@Theory
-	public void testString(@ExhaustiveForAll(sampleSize=10) String s) {
+	public void testString(@ExhaustiveForAll(sampleSize=1000) String s) {
 		System.out.println(s);
 	}
 

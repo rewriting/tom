@@ -17,13 +17,14 @@ public class ExhaustiveValueSupplier extends ParameterSupplier {
 	HashMap<String, Enumeration> enumerations;
 	
 	public ExhaustiveValueSupplier() {
-		enumerations = new HashMap<>();
+		enumerations = new HashMap<String, Enumeration>();
 		enumerations.put("examples.theory.Tree<examples.theory.Nat>", TreeEnumerations.makeTreeNatEnumeration());
-		enumerations.put("java.lang.String", Combinators.makeString());
+		enumerations.put("class java.lang.String", Combinators.makeString());
 	}
 	@Override
 	public List<PotentialAssignment> getValueSources(ParameterSignature signature) {
 		String parameterClassName = signature.getType().toString();
+		System.out.println(parameterClassName);
 		int samplesize = signature.getAnnotation(ExhaustiveForAll.class).sampleSize();
 		final Enumeration enumeration = enumerations.get(parameterClassName);
 		List<PotentialAssignment> l = new ArrayList<PotentialAssignment>();
