@@ -20,7 +20,7 @@ public class Mutual {
     int n = 10;
 
     
-    LazyList<Finite<Integer>> sparts = Combinators.makeInt().parts();
+    LazyList<Finite<Integer>> sparts = Combinators.makeInteger().parts();
     for (int i = 0; i < 5 && !sparts.isEmpty(); i++) {
         System.out.println(i + " --> " + sparts.head());
         sparts = sparts.tail();
@@ -28,7 +28,7 @@ public class Mutual {
     
     
     
-    testEnumerator(Combinators.makeInt(), "int", 5);
+    testEnumerator(Combinators.makeInteger(), "int", 5);
     testEnumerator(Combinators.makeString(), "String", 5);
     testEnumerator(A.getEnumeration(), "A", 10);
     testEnumerator(B.getEnumeration(), "B", 10);
