@@ -8,8 +8,6 @@ import java.lang.annotation.Target;
 
 import org.junit.contrib.theories.ParametersSuppliedBy;
 
-import tom.library.enumerator.Enumeration;
-
 /**
  * Mark a parameter of a {@link org.junit.contrib.theories.Theory Theory} method with this annotation to have
  * generated values supplied to it exhaustively as in SmallCheck.

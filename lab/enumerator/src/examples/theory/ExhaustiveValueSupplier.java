@@ -18,6 +18,7 @@ public class ExhaustiveValueSupplier extends ParameterSupplier {
 	
 	public ExhaustiveValueSupplier() {
 		enumerations = new HashMap<String, Enumeration>();
+		// TODO use types instead of the type names
 		enumerations.put("examples.theory.Tree<examples.theory.Nat>", TreeEnumerations.makeTreeNatEnumeration());
 		enumerations.put("class java.lang.String", Combinators.makeString());
 	}
