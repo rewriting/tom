@@ -1,0 +1,67 @@
+module formule
+  imports int boolean String
+  abstract syntax 
+  
+	Exp = 
+		  | CstInt(value:int)
+      | Var(name:String,indice:String)
+
+		  | O(oname:Exp)
+
+		  | Plus(e1:Exp, e2:Exp)
+		  | Minus(e1:Exp, e2:Exp)
+		  | Mult(e1:Exp, e2:Exp)
+		  |	Div(e1:Exp, e2:Exp)
+		  | Uminus(e1:Exp)
+      | Power(e:Exp,ind:int)
+
+      | Integral(domaine:Region,  mainExp:Exp, vars:ExpList)
+		  | Partial(body:Exp, vars:ExpList )
+		  | Sum(domaine:Region, mainExp:Exp, variable:Exp)
+
+      |	Function(symbol:Exp, indice: String, args:ExpList)
+
+		//| FunctionGreenRule(exp1:Exp,varIndice:Exp,indice:Exp, fonctionDs:Exp)
+// 		  | IndiceGreenRule(symbole:Exp,variable:Exp,indice:Exp)
+		  | Epsilon(number:int)
+		
+	Region =
+		| 	Intersectiondomain (name1:String, name2:String)
+		| 	Domain (name:String)
+		|	Interval (inf:Exp, sup:Exp)
+		|	PartialDomain(name:String)
+		
+      
+    ExpList = concExp(Exp*)
+	
+
+	Mult:make(e1,e2) {
+		%match(Exp e1, Exp e2){
+		 CstInt(x),CstInt(y) -> { return `CstInt(x * y); }
+		CstInt(x),Mult(CstInt(y),z) -> { return `Mult(CstInt(x * y),z); }
+		o@O(Epsilon(_)),o -> { return `o; }
+		o@O(Epsilon(_)),Mult(o,z) -> { return `Mult(o,z); }
+
+		Mult(x,y),z -> { return `Mult(x,Mult(y,z)); }
+		o@O(Epsilon(_)),Mult(x,y) -> { return `Mult(x,Mult(o,y)); }
+		o@CstInt(_),Mult(x@!O(Epsilon(_)),y) -> { return `Mult(x,Mult(o,y)); }
+		o@O(Epsilon(_)),c@CstInt(_) -> { return `Mult(c,o); }
+		}
+	}
+	
+	Plus:make(e1,e2) {
+	  %match(Exp e1, Exp e2) {
+		CstInt(x),CstInt(y) -> { return `CstInt(x+y); }
+		CstInt(x),Plus(CstInt(y),z) -> { return `Plus(CstInt(x+y),z); }
+		o@O(Epsilon(_)),o -> { return `o; }
+		o@O(Epsilon(_)),Plus(o,z) -> { return `Plus(o,z); }
+
+		Plus(x,y),z -> { return `Plus(x,Plus(y,z)); }
+		o@O(Epsilon(_)),Plus(x,y) -> { return `Plus(x,Plus(o,y)); }
+		o@CstInt(_),Plus(x@!O(Epsilon(_)),y) -> { return `Plus(x,Plus(o,y)); }
+		o@O(Epsilon(_)),c@CstInt(_) -> { return `Plus(c,o); }
+		
+	   
+
+	  }
+	}
