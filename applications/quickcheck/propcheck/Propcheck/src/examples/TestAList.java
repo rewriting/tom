@@ -97,6 +97,21 @@ public class TestAList {
 		implies(!DemoAList.isEmpty(l) && DemoAList.size(l) > i, DemoAList.get(l, i) != null);
 	}};
 
+
+
+
+	/**
+	 * if(list != empty) and if (index < size) then get(index) != null
+	 */
+	Property3<AList, Elem, Integer> prop3Bis = new Property3<AList, Elem, Integer>() {
+    public void apply(AList l, Elem e, Integer i) {
+
+			implies(!DemoAList.isEmpty(l) && DemoAList.size(l) > i, 
+              false);
+//               (DemoAList.getIndexOf(l, DemoAList.get(l,i)) + 1) == DemoAList.getIndexOf(DemoAList.addFirst(l, e), DemoAList.get(l,i)));
+
+	}};
+
 	/**
 	 * main method
 	 * @param args
@@ -112,25 +127,27 @@ public class TestAList {
 		Enumeration<AList> enumList = AList.getEnumeration();
 		Enumeration<Elem> enumElem = Elem.getEnumeration();
 		Enumeration<Integer> enumInt = Combinators.makeLinearInt();
-		/*Enumeration<Elem> enumElem2 = Elem.getEnumeration();*/
+		Enumeration<Elem> enumElem2 = Elem.getEnumeration();
 
-		/*
-		System.out.println("run test addFirstElement");
-		Quickcheck.make(1000).forAll(enumList, enumElem, addFirstElement).run();
-		System.out.println("\n\nrun test falseProp");
-		Quickcheck.make().forAll(enumList, falseProp).run();
-
-		System.out.println("test implications prop3");
-		Quickcheck.make().forAll(enumList, enumElem, enumElem2, prop3).run();
-
-		System.out.println("test implications prop4");
-		Quickcheck.make().forAll(enumList, enumElem, prop4).run();
-		 
-		System.out.println("test implications prop4False");
-		Quickcheck.make().forAll(enumList, enumElem, prop4False).run();
-		*/
 		
-		System.out.println("test implications prop5");
-		Quickcheck.make().forAll(enumList, enumInt, prop5).run();
+// 		System.out.println("run test addFirstElement");
+// 		Quickcheck.make(1000).forAll(enumList, enumElem, addFirstElement).run();
+// 		System.out.println("\n\nrun test falseProp");
+// 		Quickcheck.make().forAll(enumList, falseProp).run();
+
+// 		System.out.println("test implications prop3");
+// 		Quickcheck.make().forAll(enumList, enumElem, enumElem2, prop3).run();
+
+// 		System.out.println("test implications prop4");
+// 		Quickcheck.make().forAll(enumList, enumElem, prop4).run();
+		 
+// 		System.out.println("test implications prop4False");
+// 		Quickcheck.make().forAll(enumList, enumElem, prop4False).run();
+		
+// 		System.out.println("test implications prop5");
+// 		Quickcheck.make().forAll(enumList, enumInt, prop5).run();
+
+	 		System.out.println("test prop3 bis");
+      Quickcheck.make().forAll(enumList, enumElem, enumInt, prop3Bis).run();
 	}
 }
