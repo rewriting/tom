@@ -65,6 +65,7 @@ public class Combinators {
 	}
 
 	public static Enumeration<Integer> makeint() { return makeInteger(); }
+	public static Enumeration<Integer> makeLinearInt() { return makeInteger(); }
 	public static Enumeration<Integer> makeInteger() {
 		if(enumint==null) {
 			//enumexpint = Enumeration.singleton(0).plus(new Enumeration<Integer>(naturals(0)));
