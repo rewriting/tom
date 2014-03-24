@@ -7,99 +7,97 @@ public class DemoTree {
 
     public static void main(String args[]) {
         // examples for trees
-        // TTree = Leat(A) | Node(A,TTree,TTree)
+        // TTree = Leaf(A) | Node(A,TTree,TTree)
         // A = a | b
 
         System.out.println("START");
 
         Enumeration<A> aEnum = Enumeration.singleton((A) new aa());
         Enumeration<A> bEnum = Enumeration.singleton((A) new bb());
-//        final Enumeration<A> AEnum = aEnum.plus(bEnum).pay();
         final Enumeration<A> AEnum = aEnum.plus(bEnum);
+        final Enumeration<String> StringEnum = Enumeration.singleton("f").plus(Enumeration.singleton("g"));
 
-        int n = 2;
         System.out.println("Enumerator for " + "A");
-        for (int i = 0; i < n; i++) {
-            System.out.println("Get " + i + "th term: "
-                    + AEnum.get(BigInteger.valueOf(i)));
+        for (int i = 0; i < 2; i++) {
+        	System.out.println("Get " + i + "th term: " + AEnum.get(BigInteger.valueOf(i)));
         }
 
-        Enumeration<Boolean> trueEnum = Enumeration.singleton(true);
-        Enumeration<Boolean> falseEnum = Enumeration.singleton(false);
-        final Enumeration<Boolean> boolEnum = trueEnum.plus(falseEnum).pay();
-        //System.out.println(boolEnum.get(0));
-
-
-        final F<A, TTree> leaf =
-                new F<A, TTree>() {
-                    public TTree apply(final A elem) {
-                        return new Leaf(elem);
-                    }
-                };
-
-        final F<A, F<TTree, F<TTree, TTree>>> node =
-                new F<A, F<TTree, F<TTree, TTree>>>() {
-                    public F<TTree, F<TTree, TTree>> apply(final A head) {
-                        return new F<TTree, F<TTree, TTree>>() {
-                            public F<TTree, TTree> apply(final TTree t1) {
-                                return new F<TTree, TTree>() {
-                                    public TTree apply(final TTree t2) {
-                                        return new Node(head, t1, t2);
-                                    }
-                                };
-                            }
-                        };
-                    }
-                };
-
         F<Enumeration<TTree>, Enumeration<TTree>> f = new F<Enumeration<TTree>, Enumeration<TTree>>() {
-
             public Enumeration<TTree> apply(final Enumeration<TTree> e) {
-                return leafEnum(leaf, AEnum).plus(nodeEnum(node, AEnum, e).pay());
+                return leafEnum(getLeafFunction(), AEnum).plus(nodeEnum(getNodeFunction(), StringEnum, e).pay());
             }
         };
 
-        Enumeration<TTree> listEnum = Enumeration.fix(f);
+        Enumeration<TTree> treeEnum = Enumeration.fix(f);
 
         //listEnum.pay();
         System.out.println("Enumerator for " + "TTree");
-        n = 20;
-        for (int i = 0; i < n; i++) {
-            System.out.println("Get " + i + "th term: "
-                    + listEnum.get(BigInteger.valueOf(i)));
+        for (int i = 0; i < 20; i++) {
+            System.out.println("Get " + i + "th term: " + treeEnum.get(BigInteger.valueOf(i)));
         }
 
-        LazyList<Finite<TTree>> parts = listEnum.parts();
+        LazyList<Finite<TTree>> parts = treeEnum.parts();
         for (int i = 0; i < 3 && !parts.isEmpty(); i++) {
             System.out.println(i + " --> " + parts.head());
             parts = parts.tail();
         }
 
-//
-        for (int p = 0; p < 10000; p = p + 100) {
+        for (int p = 0; p < 500; p = p + 100) {
             BigInteger i = java.math.BigInteger.TEN.pow(p);
-            System.out.println("10^" + p + " --> " + listEnum.get(i).size());
-            //listEnum.get(i);
+            System.out.println("10^" + p + " --> " + treeEnum.get(i).size());
         }
 
     }
 
+    /*
+     * elem -> Leaf(elem)
+     */
+    private static F<A, TTree> getLeafFunction() {
+    	return new F<A, TTree>() {
+    		public TTree apply(final A elem) {
+    			return new Leaf(elem);
+    		}
+    	};
+    }
+
+    /*
+     * head -> t1 -> t2 -> Node(head, t1, t2)
+     */
+    private static F<String, F<TTree, F<TTree, TTree>>> getNodeFunction() {
+    	return new F<String, F<TTree, F<TTree, TTree>>>() {
+    		public F<TTree, F<TTree, TTree>> apply(final String head) {
+    			return new F<TTree, F<TTree, TTree>>() {
+    				public F<TTree, TTree> apply(final TTree t1) {
+    					return new F<TTree, TTree>() {
+    						public TTree apply(final TTree t2) {
+    							return new Node(head, t1, t2);
+    						}
+    					};
+    				}
+    			};
+    		}
+    	};
+    }
+    
     private static Enumeration<TTree> leafEnum(F<A, TTree> leaf, Enumeration<A> AEnum) {
         Enumeration<F<A, TTree>> singletonLeaf = Enumeration.singleton(leaf);
         Enumeration<TTree> res = Enumeration.apply(singletonLeaf, AEnum);
         return res;
     }
 
-    private static Enumeration<TTree> nodeEnum(F<A, F<TTree, F<TTree, TTree>>> node, Enumeration<A> AEnum, Enumeration<TTree> e) {
-        Enumeration<F<A, F<TTree, F<TTree, TTree>>>> singletonNode = Enumeration.singleton(node);
+    private static Enumeration<TTree> nodeEnum(F<String, F<TTree, F<TTree, TTree>>> node, Enumeration<String> AEnum, Enumeration<TTree> e) {
+        Enumeration<F<String, F<TTree, F<TTree, TTree>>>> singletonNode = Enumeration.singleton(node);
         Enumeration<F<TTree, F<TTree, TTree>>> singletonNodeHeadEnum = Enumeration.apply(singletonNode, AEnum);
         Enumeration<F<TTree, TTree>> singletonNodeArg1 = Enumeration.apply(singletonNodeHeadEnum, e);
         Enumeration<TTree> res = Enumeration.apply(singletonNodeArg1, e);
         return res;
     }
 
+    // examples for trees
+    // TTree = Leaf(A) | Node(String,TTree,TTree)
+    // A = a | b
+    // String = "f" | "g"
     private static abstract class TTree {
-
         public abstract int size();
     }
 
@@ -112,7 +110,8 @@ public class DemoTree {
         }
 
         public String toString() {
-            return "[" + elem + "]";
+            //return "[" + elem + "]";
+        	return elem.toString();
         }
 
         public int size() {
@@ -122,21 +121,21 @@ public class DemoTree {
 
     private static class Node extends TTree {
 
-        private A head;
+        private String head;
         private TTree t1, t2;
 
-        public Node(A h, TTree t1, TTree t2) {
+        public Node(String h, TTree t1, TTree t2) {
             this.head = h;
             this.t1 = t1;
             this.t2 = t2;
         }
 
         public String toString() {
-            return head + "-(" + t1 + "," + t2 + ")";
+            return head + "(" + t1 + "," + t2 + ")";
         }
 
         public int size() {
-            return head.size() + t1.size() + t2.size();
+            return 1 + t1.size() + t2.size();
         }
     }
 
