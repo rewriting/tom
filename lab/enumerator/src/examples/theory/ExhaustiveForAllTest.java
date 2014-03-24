@@ -6,6 +6,9 @@ import org.junit.contrib.theories.Theories;
 import org.junit.contrib.theories.Theory;
 import org.junit.runner.RunWith;
 
+import com.pholser.junit.quickcheck.ForAll;
+import com.pholser.junit.quickcheck.From;
+
 @RunWith(Theories.class)
 public class ExhaustiveForAllTest {
 
@@ -27,11 +30,16 @@ public class ExhaustiveForAllTest {
 		assertEquals(plusOne(t).size(), t.size());
 	}
 
+//	@Theory
+//	public void testString(@ExhaustiveForAll(sampleSize=1000) String s) {
+//		System.out.println(s);
+//	}
+
+
 	@Theory
-	public void testString(@ExhaustiveForAll(sampleSize=1000) String s) {
-		System.out.println(s);
+	public void testStringQuickcheck(@ForAll int n) {
+		System.out.println("Quick: "+n);
 	}
-
-
+ 
 
 }
