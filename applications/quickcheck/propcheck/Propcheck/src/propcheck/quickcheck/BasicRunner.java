@@ -21,6 +21,7 @@ public abstract class BasicRunner implements Runner {
 	public int getNumOfTest() {
 		return numOfTest;
 	}
+	
 	void printResult(int generatedCase, int testedCase, boolean error) {
 		if (error) {
 			printError(generatedCase, testedCase);
@@ -52,5 +53,13 @@ public abstract class BasicRunner implements Runner {
 	
 	int getNextRandom(Random rand, int min, int max) {
 		return rand.nextInt((max - min) + 1) + min;
+	}
+	
+	<A, B> void printCounterModel(A a, B b) {
+		SimpleLogger.log(String.format("Counter model found:\n%s\n%s", a, b));
+	}
+	
+	<A, B, C> void printCounterModel(A a, B b, C c) {
+		SimpleLogger.log(String.format("\nCounter model found:\n[%s]\n[%s]\n[%s]", a, b, c));
 	}
 }
