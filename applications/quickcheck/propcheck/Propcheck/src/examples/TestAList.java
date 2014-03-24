@@ -107,8 +107,8 @@ public class TestAList {
     public void apply(AList l, Elem e, Integer i) {
 
 			implies(!DemoAList.isEmpty(l) && DemoAList.size(l) > i, 
-              false);
-//               (DemoAList.getIndexOf(l, DemoAList.get(l,i)) + 1) == DemoAList.getIndexOf(DemoAList.addFirst(l, e), DemoAList.get(l,i)));
+//              false);
+               (DemoAList.getIndexOf(l, DemoAList.get(l,i)) + 1) == DemoAList.getIndexOf(DemoAList.addFirst(l, e), DemoAList.get(l,i)));
 
 	}};
 
