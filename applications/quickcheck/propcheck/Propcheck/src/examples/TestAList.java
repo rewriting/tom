@@ -36,6 +36,17 @@ public class TestAList {
 	};
 
 	/**
+	 * DemoAList.isEmpty(l:AList) == False
+	 */
+	Property<AList> listNotEmpty = new Property<AList>() {
+
+		@Override
+		public void apply(AList l) {
+			equalsTo(DemoAList.isEmpty(l), false);
+		}
+	};
+	
+	/**
 	 * if(list != empty) and if(list.contains(el1)) then (getIndexOf(list,el1) + 1) == getIndexOf(addFirst(list,el2),el1)
 	 * 
 	 * This check take so much time because the generated element hardly a member of the list (the chance is slim) 
@@ -132,11 +143,15 @@ public class TestAList {
 		
 // 		System.out.println("run test addFirstElement");
 // 		Quickcheck.make(1000).forAll(enumList, enumElem, addFirstElement).run();
-// 		System.out.println("\n\nrun test falseProp");
+ 		
+//		System.out.println("\n\nrun test falseProp");
 // 		Quickcheck.make().forAll(enumList, falseProp).run();
+ 		
+ 		System.out.println("\n\nrun test list not empty");
+ 		Quickcheck.make().forAll(enumList, listNotEmpty).run();
 
- 		System.out.println("test implications prop3");
- 		Quickcheck.make().forAll(enumList, enumElem, enumElem2, prop3).run();
+// 		System.out.println("test implications prop3");
+// 		Quickcheck.make().forAll(enumList, enumElem, enumElem2, prop3).run();
 
  		/*System.out.println("test implications prop4");
  		Quickcheck.make().forAll(enumList, enumElem, prop4).run();

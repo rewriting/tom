@@ -1,46 +1,49 @@
 package propcheck.quickcheck;
 
-import java.math.BigInteger;
-import java.util.Random;
-
 import propcheck.assertion.NotTestedSkip;
+import propcheck.generator.quickcheck.RandomGenerator1;
 import propcheck.property.Property;
 import tom.library.enumerator.Enumeration;
 
 class QuickcheckRunner1<A> extends BasicRunner {
 
-	private Enumeration<A> enumeration;
+	private RandomGenerator1<A> generator;
 	private Property<A> property;
 
 
 	QuickcheckRunner1(Enumeration<A> enumeration, Property<A> property) {
-		this.enumeration = enumeration;
-		this.property = property;
+		init(enumeration, property);
 	}
 
 	QuickcheckRunner1(Enumeration<A> enumeration, Property<A> property, int numberOfTest) {
-		this.enumeration = enumeration;
-		this.property = property;
+		init(enumeration, property);
 		this.numOfTest = numberOfTest;
 	}
 
+	private void init(Enumeration<A> enumeration, Property<A> property) {
+		generator = new RandomGenerator1<A>(enumeration);
+		this.property = property;
+		
+	}
+	
 	@Override
 	public void run() {
-		Random rand = new Random();
 		int generatedTest = 0;
 		int tested = 0;
 		boolean errorFound = false;
+		
+		A input = null;
 		while (tested < numOfTest) {
 			try {
-				// get random number, uniform distributed
-				int val = getNextRandom(rand, 0, numOfTest);				
-				A input = enumeration.get(BigInteger.valueOf(val));
-				
-				generatedTest++;
-				
-				property.apply(input);
-				tested++;
-				printTestMarker(generatedTest, TESTED_MARKER);
+				input = generator.generateNext();
+				if (input != null) {
+					generatedTest++;
+					
+					property.apply(input);
+					tested++;
+					printTestMarker(generatedTest, TESTED_MARKER);
+				}
+				generator.moveToNextPart();
 			} catch (NotTestedSkip skip) {
 				printTestMarker(generatedTest, SKIPPED_MARKER);
 			} catch (AssertionError error) {
@@ -51,5 +54,8 @@ class QuickcheckRunner1<A> extends BasicRunner {
 			}
 		}
 		printResult(generatedTest, tested, errorFound);
+		if (errorFound) {
+			printCounterModel(input);
+		}
 	}
 }

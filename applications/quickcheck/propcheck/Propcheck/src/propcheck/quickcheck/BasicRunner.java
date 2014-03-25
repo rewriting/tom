@@ -55,6 +55,10 @@ public abstract class BasicRunner implements Runner {
 		return rand.nextInt((max - min) + 1) + min;
 	}
 	
+	<A> void printCounterModel(A a) {
+		SimpleLogger.log(String.format("Counter model found:\n%s", a));
+	}
+	
 	<A, B> void printCounterModel(A a, B b) {
 		SimpleLogger.log(String.format("Counter model found:\n%s\n%s", a, b));
 	}
