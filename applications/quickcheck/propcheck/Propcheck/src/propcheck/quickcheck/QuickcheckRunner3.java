@@ -1,6 +1,7 @@
 package propcheck.quickcheck;
 
 import propcheck.assertion.NotTestedSkip;
+import propcheck.product.EnumProduct2;
 import propcheck.property.Property3;
 import tom.library.enumerator.Enumeration;
 

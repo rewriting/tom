@@ -1,16 +1,15 @@
-package propcheck.quickcheck;
+package propcheck.product;
 
 import java.math.BigInteger;
 import java.util.Random;
 
-import propcheck.product.Product2;
 import tom.library.enumerator.Enumeration;
 import tom.library.enumerator.Finite;
 import tom.library.enumerator.LazyList;
 
 /**
  * Generates random value from the product of given enumerations. 
- * For pair see {@link EnumProduct}
+ * For triplet see {@link EnumProduct2} 
  * 
  * TODO merge {@link EnumProduct} and {@link EnumProduct2} to a class if possible, or create a factory
  * 
@@ -18,24 +17,23 @@ import tom.library.enumerator.LazyList;
  *
  * @param <A>
  * @param <B>
- * @param <C>
  */
-public class EnumProduct2<A, B, C> {
+public class EnumProduct<A, B> {
 	
-	Enumeration<Product2<A, B, C>> product;
-	LazyList<Finite<Product2<A, B, C>>> parts;
+	Enumeration<Product<A, B>> product;
+	LazyList<Finite<Product<A, B>>> parts;
 	
 	BigInteger index;
 	BigInteger card;
 	
 	Random random;
 	
-	public EnumProduct2(Enumeration<A> enumA, Enumeration<B> enumB, Enumeration<C> enumC) {
-		buildProduct(enumA, enumB, enumC);
+	public EnumProduct(Enumeration<A> enumA, Enumeration<B> enumB) {
+		buildProduct(enumA, enumB);
 	}
 	
-	public void buildProduct(Enumeration<A> enumA, Enumeration<B> enumB, Enumeration<C> enumC) {
-		product = Product2.enumerate(enumA, enumB, enumC);
+	public void buildProduct(Enumeration<A> enumA, Enumeration<B> enumB) {
+		product = Product.enumerate(enumA, enumB);
 		parts = product.parts();
 	}
 	
@@ -47,12 +45,8 @@ public class EnumProduct2<A, B, C> {
 		index = new BigInteger(card.bitLength(), random);
 	}
 	
-	public Product2<A, B, C> generateNext() {
-		//Product2<A, B, C> p = null;
+	public Product<A, B> generateNext() {
 		buildIndex();
-		/*if (index.compareTo(card) < 0) {
-			p = parts.head().get(index);
-		}*/
 		while (index.compareTo(card) >= 0) {
 			moveToNextPart();
 			buildIndex();
