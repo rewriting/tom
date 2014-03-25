@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="src" path="src2"/>
+	<classpathentry kind="src" path="src3"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/aterm.jar"/>
@@ -14,5 +14,6 @@
 	<classpathentry kind="lib" path="lib/junit-quickcheck-core-0.2.jar"/>
 	<classpathentry kind="lib" path="lib/junit-quickcheck-generators-0.2.jar"/>
 	<classpathentry kind="lib" path="lib/ognl-3.0.jar"/>
+	<classpathentry kind="lib" path="lib/jcheck-0.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
