@@ -39,7 +39,7 @@ public class ExhaustiveForAllTest {
 
 
 	@Theory
-	public void testStringQuickcheck(@ForAll @From({MyGenerator.class}) int n) {
+	public void testStringQuickcheck(@ForAll(sampleSize=20) @From({MyGenerator.class}) int n) {
 		System.out.println("Quick: "+n);
 	}
  
