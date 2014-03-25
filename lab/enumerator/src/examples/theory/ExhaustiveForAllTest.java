@@ -12,6 +12,8 @@ import com.pholser.junit.quickcheck.From;
 @RunWith(Theories.class)
 public class ExhaustiveForAllTest {
 
+	int i;
+	
 	//simple function to test theories
 	public Tree<Nat> plusOne(Tree<Nat> v) {
 		if (v instanceof Leaf) {
@@ -37,9 +39,11 @@ public class ExhaustiveForAllTest {
 
 
 	@Theory
-	public void testStringQuickcheck(@ForAll int n) {
+	public void testStringQuickcheck(@ForAll @From({MyGenerator.class}) int n) {
 		System.out.println("Quick: "+n);
 	}
  
+
+   
 
 }

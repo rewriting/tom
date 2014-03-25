@@ -13,5 +13,6 @@
 	<classpathentry kind="lib" path="lib/junit-theories-4.11.jar" sourcepath="/Users/balland/.m2/repository/org/junit/contrib/junit-theories/4.11/junit-theories-4.11-sources.jar"/>
 	<classpathentry kind="lib" path="lib/junit-quickcheck-core-0.2.jar"/>
 	<classpathentry kind="lib" path="lib/junit-quickcheck-generators-0.2.jar"/>
+	<classpathentry kind="lib" path="/Users/cirstea/tom/lab/enumerator/lib/ognl-3.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
