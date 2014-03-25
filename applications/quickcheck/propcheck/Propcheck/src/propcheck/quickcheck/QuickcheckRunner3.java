@@ -1,8 +1,5 @@
 package propcheck.quickcheck;
 
-import java.math.BigInteger;
-import java.util.Random;
-
 import propcheck.assertion.NotTestedSkip;
 import propcheck.property.Property3;
 import tom.library.enumerator.Enumeration;
@@ -39,7 +36,7 @@ class QuickcheckRunner3<A, B, C> extends BasicRunner {
 	
 	@Override
 	public void run() {
-		Random rand = new Random();
+		//Random rand = new Random();
 		int generatedTest = 0;
 		int tested = 0;
 		boolean errorFound = false;

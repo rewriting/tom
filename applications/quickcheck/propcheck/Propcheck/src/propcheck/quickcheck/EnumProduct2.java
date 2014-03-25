@@ -3,7 +3,6 @@ package propcheck.quickcheck;
 import java.math.BigInteger;
 import java.util.Random;
 
-import propcheck.product.Product;
 import propcheck.product.Product2;
 import tom.library.enumerator.Enumeration;
 import tom.library.enumerator.Finite;

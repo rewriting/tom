@@ -1,11 +1,7 @@
 package propcheck.quickcheck;
 
-import java.math.BigInteger;
-import java.util.Random;
-
 import propcheck.assertion.NotTestedSkip;
 import propcheck.property.Property2;
-import propcheck.tools.SimpleLogger;
 import tom.library.enumerator.Enumeration;
 
 class QuickcheckRunner2<A, B> extends BasicRunner {

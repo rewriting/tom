@@ -6,6 +6,7 @@ import java.util.List;
 import propcheck.property.Property;
 import propcheck.property.Property2;
 import propcheck.property.Property3;
+import propcheck.tools.SimpleLogger;
 import tom.library.enumerator.Enumeration;
 
 public class Quickcheck {
@@ -55,8 +56,7 @@ public class Quickcheck {
 	 */
 	public void run() {
 		if (runners.size() == 0) {
-			// TODO throw an exception
-			System.out.println("Quickcheck.run(): " + "no property added");
+			SimpleLogger.log("Quickcheck.run(): " + "no property to check");
 		}
 		for (Runner runner : runners) {
 			runner.run();
