@@ -1,4 +1,4 @@
-package examples.theory;
+package tom.library.theory;
 
 import java.math.BigInteger;
 import java.util.ArrayList;

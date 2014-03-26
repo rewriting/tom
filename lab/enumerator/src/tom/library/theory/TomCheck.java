@@ -1,4 +1,4 @@
-package examples.theory;
+package tom.library.theory;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -11,6 +11,7 @@ import org.junit.contrib.theories.Theories;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.InitializationError;
 
+import examples.theory.Enum;
 import tom.library.enumerator.Enumeration;
 
 public final class TomCheck extends Theories {

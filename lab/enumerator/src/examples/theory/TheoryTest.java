@@ -7,6 +7,9 @@ import org.junit.runner.RunWith;
 
 import tom.library.enumerator.Combinators;
 import tom.library.enumerator.Enumeration;
+import tom.library.theory.ExhaustiveForAll;
+import tom.library.theory.RandomForAll;
+import tom.library.theory.TomCheck;
 
 import com.pholser.junit.quickcheck.ForAll;
 import com.pholser.junit.quickcheck.From;
