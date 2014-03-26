@@ -12,7 +12,7 @@ import com.pholser.junit.quickcheck.ForAll;
 import com.pholser.junit.quickcheck.From;
 
 @RunWith(TomCheck.class)
-public class ExhaustiveForAllTest {
+public class TheoryTest {
 
 	@Enum
 	public static Enumeration<Tree<Nat>> treeEnum = TreeEnumerations.makeTreeNatEnumeration();
@@ -33,10 +33,19 @@ public class ExhaustiveForAllTest {
 	}
 
 	@Theory
-	public void testPlusOne(@ExhaustiveForAll(sampleSize=1000) Tree<Nat> t) {
-		// just test if the size is preserved by plusOne	
+	public void testPlusOne1(@ExhaustiveForAll(sampleSize=10) Tree<Nat> t) {
+		// just test if the size is preserved by plusOne
+		System.out.println(t);
 		assertEquals(plusOne(t).size(), t.size());
 	}
+	
+	@Theory
+	public void testPlusOne2(@RandomForAll(maxDepth=10) Tree<Nat> t) {
+		// just test if the size is preserved by plusOne	
+		System.out.println(t);
+		assertEquals(plusOne(t).size(), t.size());
+	}
+	
 
 	//	@Theory
 	//	public void testString(@ExhaustiveForAll(sampleSize=1000) String s) {

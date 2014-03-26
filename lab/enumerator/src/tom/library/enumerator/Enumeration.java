@@ -1,7 +1,7 @@
 package tom.library.enumerator;
 
 import java.math.BigInteger;
-import java.util.*;
+import java.util.List;
 
 public class Enumeration<A> {
 
