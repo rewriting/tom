@@ -64,6 +64,8 @@ public abstract class BasicRunner implements Runner {
 	}
 	
 	<A, B, C> void printCounterModel(A a, B b, C c) {
-		SimpleLogger.log(String.format("\nCounter model found:\n[%s]\n[%s]\n[%s]", a, b, c));
+		SimpleLogger.log(String.format("\nCounter example found:\n[%s]\n[%s]\n[%s]", a, b, c));
 	}
+	
+	// TODO print the elapsed time of the test at the end of the test
 }
