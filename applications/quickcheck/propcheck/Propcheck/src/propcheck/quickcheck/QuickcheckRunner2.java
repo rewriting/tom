@@ -1,11 +1,8 @@
 package propcheck.quickcheck;
 
-import java.math.BigInteger;
-import java.util.Random;
-
 import propcheck.assertion.NotTestedSkip;
+import propcheck.generator.quickcheck.RandomGenerator2;
 import propcheck.property.Property2;
-import propcheck.tools.SimpleLogger;
 import tom.library.enumerator.Enumeration;
 
 class QuickcheckRunner2<A, B> extends BasicRunner {
@@ -13,7 +10,7 @@ class QuickcheckRunner2<A, B> extends BasicRunner {
 	/*private Enumeration<A> enumA;
 	private Enumeration<B> enumB;*/
 	private Property2<A, B> property;
-	private EnumProduct<A, B> enumProduct;
+	private RandomGenerator2<A, B> generator;
 	
 	
 	QuickcheckRunner2(Enumeration<A> enumA, Enumeration<B> enumB, Property2<A, B> property) {
@@ -29,7 +26,7 @@ class QuickcheckRunner2<A, B> extends BasicRunner {
 	private void init(Enumeration<A> enumA, Enumeration<B> enumB, Property2<A, B> property) {
 		/*this.enumA = enumA;
 		this.enumB = enumB;*/
-		this.enumProduct = new EnumProduct<A, B>(enumA, enumB);
+		this.generator = new RandomGenerator2<A, B>(enumA, enumB);
 		this.property = property;
 	}
 	
@@ -44,13 +41,8 @@ class QuickcheckRunner2<A, B> extends BasicRunner {
 		B inputB = null;
 		while (tested < numOfTest) {
 			try {
-				// get random number, uniform distributed
-				/*int val = getNextRandom(rand, 0, numOfTest);
-				A inputA = enumA.get(BigInteger.valueOf(val));
-				B inputB = enumB.get(BigInteger.valueOf(val));*/
-				
-				inputA = enumProduct.generateNext().p1();
-				inputB = enumProduct.generateNext().p2();
+				inputA = generator.generateNext().p1();
+				inputB = generator.generateNext().p2();
 				
 				if (inputA != null && inputB != null) {
 					generatedTest++;
@@ -59,7 +51,7 @@ class QuickcheckRunner2<A, B> extends BasicRunner {
 					tested++;
 					printTestMarker(generatedTest, TESTED_MARKER);
 				}
-				enumProduct.moveToNextPart();
+				generator.moveToNextPart();
 			} catch (NotTestedSkip skip) {
 				printTestMarker(generatedTest, SKIPPED_MARKER);
 			} catch (AssertionError error) {

@@ -1,4 +1,4 @@
-package propcheck.quickcheck;
+package propcheck.generator.quickcheck;
 
 import java.math.BigInteger;
 import java.util.Random;
@@ -10,16 +10,16 @@ import tom.library.enumerator.LazyList;
 
 /**
  * Generates random value from the product of given enumerations. 
- * For triplet see {@link EnumProduct2} 
+ * For triplet see {@link RandomGenerator3} 
  * 
- * TODO merge {@link EnumProduct} and {@link EnumProduct2} to a class if possible, or create a factory
+ * TODO merge {@link RandomGenerator1}, {@link RandomGenerator2} and {@link RandomGenerator3} to a class if possible, or create a factory
  * 
  * @author nauval
  *
  * @param <A>
  * @param <B>
  */
-public class EnumProduct<A, B> {
+public class RandomGenerator2<A, B> {
 	
 	Enumeration<Product<A, B>> product;
 	LazyList<Finite<Product<A, B>>> parts;
@@ -29,11 +29,16 @@ public class EnumProduct<A, B> {
 	
 	Random random;
 	
-	public EnumProduct(Enumeration<A> enumA, Enumeration<B> enumB) {
-		buildProduct(enumA, enumB);
+	public RandomGenerator2(Enumeration<A> enumA, Enumeration<B> enumB) {
+		buildEnumeration(enumA, enumB);
 	}
 	
-	public void buildProduct(Enumeration<A> enumA, Enumeration<B> enumB) {
+	/**
+	 * Builds enumerations of product of enumerations
+	 * @param enumA
+	 * @param enumB
+	 */
+	public void buildEnumeration(Enumeration<A> enumA, Enumeration<B> enumB) {
 		product = Product.enumerate(enumA, enumB);
 		parts = product.parts();
 	}

@@ -55,11 +55,17 @@ public abstract class BasicRunner implements Runner {
 		return rand.nextInt((max - min) + 1) + min;
 	}
 	
+	<A> void printCounterModel(A a) {
+		SimpleLogger.log(String.format("Counter model found:\n%s", a));
+	}
+	
 	<A, B> void printCounterModel(A a, B b) {
 		SimpleLogger.log(String.format("Counter model found:\n%s\n%s", a, b));
 	}
 	
 	<A, B, C> void printCounterModel(A a, B b, C c) {
-		SimpleLogger.log(String.format("\nCounter model found:\n[%s]\n[%s]\n[%s]", a, b, c));
+		SimpleLogger.log(String.format("\nCounter example found:\n[%s]\n[%s]\n[%s]", a, b, c));
 	}
+	
+	// TODO print the elapsed time of the test at the end of the test
 }
