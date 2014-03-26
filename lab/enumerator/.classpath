@@ -1,19 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="src" path="src2"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="lib/aterm.jar"/>
-	<classpathentry kind="lib" path="lib/jjtraveler.jar"/>
-	<classpathentry kind="lib" path="lib/shared-objects.jar"/>
-	<classpathentry kind="lib" path="lib/tom-tiny-library.jar"/>
-	<classpathentry kind="lib" path="lib/javaruntype-1.2.jar"/>
 	<classpathentry kind="lib" path="lib/antlr-runtime-3.1.2.jar"/>
-	<classpathentry kind="lib" path="lib/junit-theories-4.11.jar" sourcepath="/Users/balland/.m2/repository/org/junit/contrib/junit-theories/4.11/junit-theories-4.11-sources.jar"/>
+	<classpathentry kind="lib" path="lib/aterm.jar"/>
+	<classpathentry kind="lib" path="lib/javaruntype-1.2.jar"/>
+	<classpathentry kind="lib" path="lib/jcheck-0.1.jar"/>
+	<classpathentry kind="lib" path="lib/jjtraveler.jar"/>
 	<classpathentry kind="lib" path="lib/junit-quickcheck-core-0.2.jar"/>
 	<classpathentry kind="lib" path="lib/junit-quickcheck-generators-0.2.jar"/>
+	<classpathentry kind="lib" path="lib/junit-theories-4.11.jar"/>
 	<classpathentry kind="lib" path="lib/ognl-3.0.jar"/>
-	<classpathentry kind="lib" path="lib/jcheck-0.1.jar"/>
+	<classpathentry kind="lib" path="lib/shared-objects.jar"/>
+	<classpathentry kind="lib" path="lib/tom-tiny-library.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

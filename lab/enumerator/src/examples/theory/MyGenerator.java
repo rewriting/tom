@@ -1,7 +1,6 @@
 package examples.theory;
 
 import java.math.BigInteger;
-import java.util.HashMap;
 
 import tom.library.enumerator.Combinators;
 import tom.library.enumerator.Enumeration;

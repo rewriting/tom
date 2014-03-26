@@ -2,17 +2,23 @@ package examples.theory;
 
 import static org.junit.Assert.assertEquals;
 
-import org.junit.contrib.theories.Theories;
 import org.junit.contrib.theories.Theory;
 import org.junit.runner.RunWith;
+
+import tom.library.enumerator.Combinators;
+import tom.library.enumerator.Enumeration;
 
 import com.pholser.junit.quickcheck.ForAll;
 import com.pholser.junit.quickcheck.From;
 
-@RunWith(Theories.class)
+@RunWith(TomCheck.class)
 public class ExhaustiveForAllTest {
 
-	int i;
+	@Enum
+	public static Enumeration<Tree<Nat>> treeEnum = TreeEnumerations.makeTreeNatEnumeration();
+
+	@Enum	
+	public static Enumeration<String> stringEnum = Combinators.makeString();
 	
 	//simple function to test theories
 	public Tree<Nat> plusOne(Tree<Nat> v) {
@@ -32,18 +38,18 @@ public class ExhaustiveForAllTest {
 		assertEquals(plusOne(t).size(), t.size());
 	}
 
-//	@Theory
-//	public void testString(@ExhaustiveForAll(sampleSize=1000) String s) {
-//		System.out.println(s);
-//	}
+	//	@Theory
+	//	public void testString(@ExhaustiveForAll(sampleSize=1000) String s) {
+	//		System.out.println(s);
+	//	}
 
 
 	@Theory
 	public void testStringQuickcheck(@ForAll(sampleSize=20) @From({MyGenerator.class}) int n) {
 		System.out.println("Quick: "+n);
 	}
- 
 
-   
+
+
 
 }
