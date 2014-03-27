@@ -26,19 +26,16 @@ public abstract class LazyList<A> {
 	}
 
 	public static <A> LazyList<A> singleton(final A x) {
-		return cons(x, LazyList.<A> nil()); // !\\ notation
+		return cons(x, new P1<LazyList<A>>() {
+			@Override
+			public LazyList<A> _1() {
+				return LazyList.<A> nil();
+			}
+		});
 	}
 
 	public static <A> LazyList<A> cons(final A e, final P1<LazyList<A>> p1) {
 		return new Cons<A>(e, p1);
-	}
-
-	public static <A> LazyList<A> cons(final A e, final LazyList<A> s) {
-		return new Cons<A>(e, new P1<LazyList<A>>() {
-			public LazyList<A> _1() {
-				return s;
-			}
-		});
 	}
 
 	/**
@@ -67,7 +64,12 @@ public abstract class LazyList<A> {
 			return LazyList.<C> nil();
 		}
 		return cons(f.apply(head()).apply(ys.head()),
-				tail().zipWith(ys.tail(), f));
+				new P1<LazyList<C>>() {
+			@Override
+			public LazyList<C> _1() {
+				return 	tail().zipWith(ys.tail(), f);
+			}
+		});	
 	}
 
 	public final <B, C> LazyList<C> zipWith(final LazyList<B> ys,
@@ -114,7 +116,11 @@ public abstract class LazyList<A> {
 		if (isEmpty()) {
 			return nil();
 		}
-		final LazyList<A> newrev = cons(head(), rev);
+		final LazyList<A> newrev = cons(head(), new P1<LazyList<A>>() {
+			public tom.library.enumerator.LazyList<A> _1() {
+				return rev;
+			};
+		});
 		return cons(newrev, new P1<LazyList<LazyList<A>>>() {
 			public LazyList<LazyList<A>> _1() {
 				return LazyList.this.tail().reversalsAux(newrev);
@@ -196,7 +202,12 @@ public abstract class LazyList<A> {
 	public static <A> LazyList<A> fromList(List<A> l) {
 		LazyList<A> res = LazyList.nil();
 		for (int i = l.size() - 1; i >= 0; i--) {
-			res = cons(l.get(i), res);
+			final LazyList<A> tail = res;
+			res = cons(l.get(i), new P1<LazyList<A>>() {
+				public tom.library.enumerator.LazyList<A> _1() {
+					return tail;
+				};
+			});
 		}
 		return res;
 	}
@@ -271,7 +282,7 @@ public abstract class LazyList<A> {
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof LazyList) {
-			return toList().equals(((LazyList) obj).toList());
+			return toList().equals(((LazyList<?>) obj).toList());
 		}
 		return super.equals(obj);
 	}

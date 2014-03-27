@@ -108,7 +108,7 @@ public class Finite<A> {
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof Finite) {
-			return toList().equals(((Finite)obj).toList());
+			return toList().equals(((Finite<?>)obj).toList());
 		}
 		return super.equals(obj);
 	}

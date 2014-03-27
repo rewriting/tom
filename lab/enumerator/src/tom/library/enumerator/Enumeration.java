@@ -110,7 +110,10 @@ public class Enumeration<A> {
     				public LazyList<Finite<A>> _1() {
     					LazyList<Finite<A>> res = LazyList.cons(Finite.<A>empty(), p1);
     					for(int i=1 ; i<n ; i++) {
-    						res = LazyList.cons(Finite.<A>empty(), res);
+    						final LazyList<Finite<A>> tail = res;
+    						res = LazyList.cons(Finite.<A>empty(), new P1<LazyList<Finite<A>>>() {
+    							public LazyList<Finite<A>> _1() { return tail; };
+    						});
     					}
     					return res;
     				}
@@ -250,7 +253,7 @@ public class Enumeration<A> {
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof Enumeration) {
-			return this.toList().equals(((Enumeration) obj).toList());
+			return this.toList().equals(((Enumeration<?>) obj).toList());
 		}
 		return super.equals(obj);
 	}
