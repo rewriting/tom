@@ -371,35 +371,15 @@ public abstract class Exp extends examples.parser.rec.RecAbstractType  {
 
   public static tom.library.enumerator.Enumeration<examples.parser.rec.types.Exp> getEnumeration() {
     if(enumExp == null) { 
-      enumExp = examples.parser.rec.types.exp.Id.funMake().apply(tom.library.enumerator.Combinators.makeString())
-    		  
+      enumExp = examples.parser.rec.types.exp.Id.funMake().apply(tom.library.enumerator.Combinators.makeString())	  
         .plus(examples.parser.rec.types.exp.Num.funMake().apply(tom.library.enumerator.Combinators.makeint()))
         .plus(examples.parser.rec.types.exp.OpExp.funMake().apply(examples.parser.rec.types.Exp.tmpenumExp).apply(examples.parser.rec.types.Op.tmpenumOp).apply(examples.parser.rec.types.Exp.tmpenumExp))
-        //.plus(examples.parser.rec.types.exp.SeqExp.funMake().apply(examples.parser.rec.types.Stm.tmpenumStm).apply(examples.parser.rec.types.Exp.tmpenumExp))
+        .plus(examples.parser.rec.types.exp.SeqExp.funMake().apply(examples.parser.rec.types.Stm.tmpenumStm).apply(examples.parser.rec.types.Exp.tmpenumExp))
         .plus(examples.parser.rec.types.exp.True.funMake().apply(examples.parser.rec.types.Exp.tmpenumExp))
-        //.plus(examples.parser.rec.types.exp.False.funMake().apply(examples.parser.rec.types.Exp.tmpenumExp))
-        //.plus(examples.parser.rec.types.exp.NotExp.funMake().apply(examples.parser.rec.types.Exp.tmpenumExp));
+        .plus(examples.parser.rec.types.exp.False.funMake().apply(examples.parser.rec.types.Exp.tmpenumExp))
+        .plus(examples.parser.rec.types.exp.NotExp.funMake().apply(examples.parser.rec.types.Exp.tmpenumExp));
 ;
-      
-      /*
-       * BUG : plus not commutative
-       * True should be BEFORE Num
-       */
-      enumExp = 
-    		  
-    		  examples.parser.rec.types.exp.Num.funMake().apply(tom.library.enumerator.Combinators.makeint()).plus(
-    		  examples.parser.rec.types.exp.True.funMake().apply(examples.parser.rec.types.Exp.tmpenumExp))
-
-    		  //examples.parser.rec.types.exp.True.funMake().apply(examples.parser.rec.types.Exp.tmpenumExp)
-    		  //examples.parser.rec.types.exp.Id.funMake().apply(tom.library.enumerator.Combinators.makeString())
-    		  //.plus(examples.parser.rec.types.exp.Num.funMake().apply(tom.library.enumerator.Combinators.makeint()))
-    		  //.plus(examples.parser.rec.types.exp.False.funMake().apply(examples.parser.rec.types.Exp.tmpenumExp))
-    		  //.plus(examples.parser.rec.types.exp.NotExp.funMake().apply(examples.parser.rec.types.Exp.tmpenumExp))
-    		  //.plus(examples.parser.rec.types.exp.Id.funMake().apply(tom.library.enumerator.Combinators.makeString()))
-    		  //.plus(examples.parser.rec.types.exp.OpExp.funMake().apply(examples.parser.rec.types.Exp.tmpenumExp).apply(examples.parser.rec.types.Op.tmpenumOp).apply(examples.parser.rec.types.Exp.tmpenumExp))
-;
-
-      
+  
       examples.parser.rec.types.Stm.getEnumeration();
       examples.parser.rec.types.Op.getEnumeration();
 

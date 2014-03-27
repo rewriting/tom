@@ -394,12 +394,15 @@ public abstract class Stm extends examples.parser.rec.RecAbstractType  {
   public static tom.library.enumerator.Enumeration<examples.parser.rec.types.Stm> getEnumeration() {
     if(enumStm == null) { 
       enumStm = examples.parser.rec.types.stm.Assign.funMake().apply(tom.library.enumerator.Combinators.makeString()).apply(examples.parser.rec.types.Exp.tmpenumExp)
-        //.plus(examples.parser.rec.types.stm.Print.funMake().apply(examples.parser.rec.types.ExpList.tmpenumExpList))
+        .plus(examples.parser.rec.types.stm.Print.funMake().apply(examples.parser.rec.types.ExpList.tmpenumExpList))
         .plus(examples.parser.rec.types.stm.If.funMake().apply(examples.parser.rec.types.Exp.tmpenumExp).apply(examples.parser.rec.types.Stm.tmpenumStm).apply(examples.parser.rec.types.Stm.tmpenumStm))
-        .plus(examples.parser.rec.types.stm.While.funMake().apply(examples.parser.rec.types.Exp.tmpenumExp).apply(examples.parser.rec.types.Stm.tmpenumStm));
-
+        .plus(examples.parser.rec.types.stm.While.funMake().apply(examples.parser.rec.types.Exp.tmpenumExp).apply(examples.parser.rec.types.Stm.tmpenumStm))
+        .plus(examples.parser.rec.types.stm.EmptySeq.funMake().apply(examples.parser.rec.types.Stm.tmpenumStm))
+        .plus(examples.parser.rec.types.stm.ConsSeq.funMake().apply(examples.parser.rec.types.Stm.tmpenumStm).apply(examples.parser.rec.types.Stm.tmpenumStm))
+        ;
+      
       examples.parser.rec.types.Exp.getEnumeration();
-      //examples.parser.rec.types.ExpList.getEnumeration();
+      examples.parser.rec.types.ExpList.getEnumeration();
 
       tmpenumStm.p1 = new tom.library.enumerator.P1<tom.library.enumerator.LazyList<tom.library.enumerator.Finite<examples.parser.rec.types.Stm>>>() {
         public tom.library.enumerator.LazyList<tom.library.enumerator.Finite<examples.parser.rec.types.Stm>> _1() { return enumStm.parts(); }

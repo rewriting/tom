@@ -217,7 +217,17 @@ public abstract class ExpList extends examples.parser.rec.RecAbstractType  {
     if(enumExpList == null) { 
       enumExpList = null;
 
-
+      /*
+       * TO GENERATE
+       */
+      
+      
+      enumExpList = examples.parser.rec.types.explist.EmptyExpList.funMake().apply(examples.parser.rec.types.ExpList.tmpenumExpList)
+    		  .plus(examples.parser.rec.types.explist.ConsExpList.funMake().apply(examples.parser.rec.types.Exp.tmpenumExp).apply(examples.parser.rec.types.ExpList.tmpenumExpList))
+    	;
+      examples.parser.rec.types.Exp.getEnumeration();
+  
+      
       tmpenumExpList.p1 = new tom.library.enumerator.P1<tom.library.enumerator.LazyList<tom.library.enumerator.Finite<examples.parser.rec.types.ExpList>>>() {
         public tom.library.enumerator.LazyList<tom.library.enumerator.Finite<examples.parser.rec.types.ExpList>> _1() { return enumExpList.parts(); }
       };
