@@ -33,7 +33,7 @@ public class Demo {
 
 				F<Enumeration<LList>,Enumeration<LList>> f = new F<Enumeration<LList>,Enumeration<LList>>() {
 					public Enumeration<LList> apply(final Enumeration<LList> e) {
-						return nilEnum.plus(consEnum(cons.curry(),boolEnum,e)).pay();
+						return consEnum(cons.curry(),boolEnum,e).plus(nilEnum).pay();
 					}
 				};
 
