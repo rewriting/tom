@@ -63,6 +63,9 @@ public class EnumerationTest {
 				Arrays.asList(Arrays.asList(1,2), Arrays.asList(5,6,3,4), Arrays.asList(7)));
 		assertEquals(expected2,e2.plus(e1));
 		
+
+		// test plus commutativity
+		//assertEquals(e2.plus(e1),e1.plus(e2));		
 	}
 
 	private P2<Integer,Integer> p(final Integer i, final Integer j) {

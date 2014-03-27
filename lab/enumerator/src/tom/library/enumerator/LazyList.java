@@ -76,6 +76,9 @@ public abstract class LazyList<A> {
 		if (this.isEmpty()) {
 			return s;
 		}
+		if (s.isEmpty()) {
+			return this;
+		}
 		return cons(head(),tail().append(s));
 	}
 

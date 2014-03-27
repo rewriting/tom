@@ -36,7 +36,6 @@ public class Demo {
 			public Enumeration<LList> apply(final Enumeration<LList> e) {
 				//return nilEnum.plus(consEnum(cons.curry(),boolEnum,e)).pay();
 				return consEnum(cons.curry(),boolEnum,e).plus(nilEnum).pay();
-
 			}
 		};
 
