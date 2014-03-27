@@ -104,6 +104,19 @@ public class Enumeration<A> {
                 });
     }
 
+    public Enumeration<A> pay(final int n) {
+    	return new Enumeration<A>(
+    			new P1<LazyList<Finite<A>>>() {
+    				public LazyList<Finite<A>> _1() {
+    					LazyList<Finite<A>> res = LazyList.cons(Finite.<A>empty(), p1);
+    					for(int i=1 ; i<n ; i++) {
+    						res = LazyList.cons(Finite.<A>empty(), res);
+    					}
+    					return res;
+    				}
+    			});
+    }
+    
     public <B> Enumeration<P2<A, B>> times(final Enumeration<B> other) {
         return new Enumeration<P2<A, B>>(
                 new P1<LazyList<Finite<P2<A, B>>>>() {

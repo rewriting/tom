@@ -26,43 +26,43 @@ public class Demo {
 		//System.out.println(boolEnum.get(0));
 
 		// examples for list of booleans
-		final F2<Boolean,LList,LList> cons = 
-				new F2<Boolean,LList,LList>() { public LList apply(Boolean head,LList tail) { return new Cons(head,tail); } };
+		final F2<Boolean,LList,LList> cons = new F2<Boolean,LList,LList>() {
+			public LList apply(Boolean head,LList tail) { return new Cons(head,tail); } 
+		};
 
-				final Enumeration<LList> nilEnum = Enumeration.singleton((LList)new Nil());
+		final Enumeration<LList> nilEnum = Enumeration.singleton((LList)new Nil());
 
-				F<Enumeration<LList>,Enumeration<LList>> f = new F<Enumeration<LList>,Enumeration<LList>>() {
-					public Enumeration<LList> apply(final Enumeration<LList> e) {
-						return nilEnum.plus(consEnum(cons.curry(),boolEnum,e)).pay();
-					}
-				};
+		F<Enumeration<LList>,Enumeration<LList>> f = new F<Enumeration<LList>,Enumeration<LList>>() {
+			public Enumeration<LList> apply(final Enumeration<LList> e) {
+				//return nilEnum.plus(consEnum(cons.curry(),boolEnum,e)).pay();
+				return consEnum(cons.curry(),boolEnum,e).plus(nilEnum).pay();
 
-				Enumeration<LList> listEnum = Enumeration.fix(f);
+			}
+		};
 
-				LazyList<Finite<LList>> parts = listEnum.parts();
-				for(int i=0 ; i<5 && !parts.isEmpty() ; i++) {
-					System.out.println(i + " --> " + parts.head());
-					parts=parts.tail();
-				}
+		Enumeration<LList> listEnum = Enumeration.fix(f);
 
-				//for(BigInteger i=Integer.MAX_VALUE-1 ; i<= Integer.MAX_VALUE ; i=i+10000) {
-				//	System.out.println(i + " --> " + listEnum.get(i));
-				//}
-				/*
+		LazyList<Finite<LList>> parts = listEnum.parts();
+		for(int i=0 ; i<8 && !parts.isEmpty() ; i++) {
+			System.out.println(i + " --> " + parts.head());
+			parts=parts.tail();
+		}
+
+		//for(BigInteger i=Integer.MAX_VALUE-1 ; i<= Integer.MAX_VALUE ; i=i+10000) {
+		//	System.out.println(i + " --> " + listEnum.get(i));
+		//}
+		/*
 		for(int p=0 ; p<10000 ; p=p+100) {
 			BigInteger i = java.math.BigInteger.TEN.pow(p);
 			System.out.println("10^" + p + " --> " + listEnum.get(i).size());
 		}
-				 */
-				//System.out.println(listEnum.pay().get(0));
-				//listEnum.pay().get(0);
+		 */
+		//System.out.println(listEnum.pay().get(0));
+		//listEnum.pay().get(0);
 	}
 
 	private static Enumeration<LList> consEnum(F<Boolean,F<LList,LList>> cons, Enumeration<Boolean> boolEnum, Enumeration<LList> e) {
-		Enumeration<F<Boolean,F<LList,LList>>> singletonCons = Enumeration.singleton(cons);
-		Enumeration<F<LList,LList>> singletonConsBoolEnum = Enumeration.apply(singletonCons,boolEnum);
-		Enumeration<LList> res = Enumeration.apply(singletonConsBoolEnum,e);
-		return res;
+		return Enumeration.apply(Enumeration.apply(Enumeration.singleton(cons),boolEnum),e);
 	}
 
 
