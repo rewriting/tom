@@ -1,0 +1,220 @@
+
+%include { string.tom }
+
+%include { int.tom }
+
+%typeterm Op {
+  implement { parser.rec.types.Op }
+  is_sort(t) { ($t instanceof parser.rec.types.Op) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm Pair {
+  implement { parser.rec.types.Pair }
+  is_sort(t) { ($t instanceof parser.rec.types.Pair) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm Table {
+  implement { parser.rec.types.Table }
+  is_sort(t) { ($t instanceof parser.rec.types.Table) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm Stm {
+  implement { parser.rec.types.Stm }
+  is_sort(t) { ($t instanceof parser.rec.types.Stm) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm Exp {
+  implement { parser.rec.types.Exp }
+  is_sort(t) { ($t instanceof parser.rec.types.Exp) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm ExpList {
+  implement { parser.rec.types.ExpList }
+  is_sort(t) { ($t instanceof parser.rec.types.ExpList) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+%op Op Plus() {
+  is_fsym(t) { ($t instanceof parser.rec.types.op.Plus) }
+  make() { parser.rec.types.op.Plus.make() }
+}
+
+%op Op Minus() {
+  is_fsym(t) { ($t instanceof parser.rec.types.op.Minus) }
+  make() { parser.rec.types.op.Minus.make() }
+}
+
+%op Op Times() {
+  is_fsym(t) { ($t instanceof parser.rec.types.op.Times) }
+  make() { parser.rec.types.op.Times.make() }
+}
+
+%op Op Div() {
+  is_fsym(t) { ($t instanceof parser.rec.types.op.Div) }
+  make() { parser.rec.types.op.Div.make() }
+}
+
+%op Op And() {
+  is_fsym(t) { ($t instanceof parser.rec.types.op.And) }
+  make() { parser.rec.types.op.And.make() }
+}
+
+%op Op Or() {
+  is_fsym(t) { ($t instanceof parser.rec.types.op.Or) }
+  make() { parser.rec.types.op.Or.make() }
+}
+
+%op Op Equal() {
+  is_fsym(t) { ($t instanceof parser.rec.types.op.Equal) }
+  make() { parser.rec.types.op.Equal.make() }
+}
+
+%op Pair Pair(Value:int, Table:Table) {
+  is_fsym(t) { ($t instanceof parser.rec.types.pair.Pair) }
+  get_slot(Value, t) { $t.getValue() }
+  get_slot(Table, t) { $t.getTable() }
+  make(t0, t1) { parser.rec.types.pair.Pair.make($t0, $t1) }
+}
+
+%op Table Table(Name:String, Value:int, Tail:Table) {
+  is_fsym(t) { ($t instanceof parser.rec.types.table.Table) }
+  get_slot(Name, t) { $t.getName() }
+  get_slot(Value, t) { $t.getValue() }
+  get_slot(Tail, t) { $t.getTail() }
+  make(t0, t1, t2) { parser.rec.types.table.Table.make($t0, $t1, $t2) }
+}
+
+%op Table EmptyTable() {
+  is_fsym(t) { ($t instanceof parser.rec.types.table.EmptyTable) }
+  make() { parser.rec.types.table.EmptyTable.make() }
+}
+
+%op Stm EmptySeq() {
+  is_fsym(t) { ($t instanceof parser.rec.types.stm.EmptySeq) }
+  make() { parser.rec.types.stm.EmptySeq.make() }
+}
+
+%op Stm ConsSeq(HeadSeq:Stm, TailSeq:Stm) {
+  is_fsym(t) { ($t instanceof parser.rec.types.stm.ConsSeq) }
+  get_slot(HeadSeq, t) { $t.getHeadSeq() }
+  get_slot(TailSeq, t) { $t.getTailSeq() }
+  make(t0, t1) { parser.rec.types.stm.ConsSeq.make($t0, $t1) }
+}
+
+%op Stm Assign(Name:String, Exp:Exp) {
+  is_fsym(t) { ($t instanceof parser.rec.types.stm.Assign) }
+  get_slot(Name, t) { $t.getName() }
+  get_slot(Exp, t) { $t.getExp() }
+  make(t0, t1) { parser.rec.types.stm.Assign.make($t0, $t1) }
+}
+
+%op Stm Print(List:ExpList) {
+  is_fsym(t) { ($t instanceof parser.rec.types.stm.Print) }
+  get_slot(List, t) { $t.getList() }
+  make(t0) { parser.rec.types.stm.Print.make($t0) }
+}
+
+%op Stm If(cond:Exp, s1:Stm, s2:Stm) {
+  is_fsym(t) { ($t instanceof parser.rec.types.stm.If) }
+  get_slot(cond, t) { $t.getcond() }
+  get_slot(s1, t) { $t.gets1() }
+  get_slot(s2, t) { $t.gets2() }
+  make(t0, t1, t2) { parser.rec.types.stm.If.make($t0, $t1, $t2) }
+}
+
+%op Stm While(cond:Exp, s1:Stm) {
+  is_fsym(t) { ($t instanceof parser.rec.types.stm.While) }
+  get_slot(cond, t) { $t.getcond() }
+  get_slot(s1, t) { $t.gets1() }
+  make(t0, t1) { parser.rec.types.stm.While.make($t0, $t1) }
+}
+
+%op Exp Id(Name:String) {
+  is_fsym(t) { ($t instanceof parser.rec.types.exp.Id) }
+  get_slot(Name, t) { $t.getName() }
+  make(t0) { parser.rec.types.exp.Id.make($t0) }
+}
+
+%op Exp Num(Value:int) {
+  is_fsym(t) { ($t instanceof parser.rec.types.exp.Num) }
+  get_slot(Value, t) { $t.getValue() }
+  make(t0) { parser.rec.types.exp.Num.make($t0) }
+}
+
+%op Exp OpExp(Exp1:Exp, Op:Op, Exp2:Exp) {
+  is_fsym(t) { ($t instanceof parser.rec.types.exp.OpExp) }
+  get_slot(Exp1, t) { $t.getExp1() }
+  get_slot(Op, t) { $t.getOp() }
+  get_slot(Exp2, t) { $t.getExp2() }
+  make(t0, t1, t2) { parser.rec.types.exp.OpExp.make($t0, $t1, $t2) }
+}
+
+%op Exp SeqExp(Stm:Stm, Exp:Exp) {
+  is_fsym(t) { ($t instanceof parser.rec.types.exp.SeqExp) }
+  get_slot(Stm, t) { $t.getStm() }
+  get_slot(Exp, t) { $t.getExp() }
+  make(t0, t1) { parser.rec.types.exp.SeqExp.make($t0, $t1) }
+}
+
+%op Exp True() {
+  is_fsym(t) { ($t instanceof parser.rec.types.exp.True) }
+  make() { parser.rec.types.exp.True.make() }
+}
+
+%op Exp False() {
+  is_fsym(t) { ($t instanceof parser.rec.types.exp.False) }
+  make() { parser.rec.types.exp.False.make() }
+}
+
+%op Exp NotExp(Exp1:Exp) {
+  is_fsym(t) { ($t instanceof parser.rec.types.exp.NotExp) }
+  get_slot(Exp1, t) { $t.getExp1() }
+  make(t0) { parser.rec.types.exp.NotExp.make($t0) }
+}
+
+%op ExpList EmptyExpList() {
+  is_fsym(t) { ($t instanceof parser.rec.types.explist.EmptyExpList) }
+  make() { parser.rec.types.explist.EmptyExpList.make() }
+}
+
+%op ExpList ConsExpList(HeadExpList:Exp, TailExpList:ExpList) {
+  is_fsym(t) { ($t instanceof parser.rec.types.explist.ConsExpList) }
+  get_slot(HeadExpList, t) { $t.getHeadExpList() }
+  get_slot(TailExpList, t) { $t.getTailExpList() }
+  make(t0, t1) { parser.rec.types.explist.ConsExpList.make($t0, $t1) }
+}
+
+
+%oplist Stm Seq(Stm*) {
+  is_fsym(t) { (($t instanceof parser.rec.types.stm.ConsSeq) || ($t instanceof parser.rec.types.stm.EmptySeq)) }
+  make_empty() { parser.rec.types.stm.EmptySeq.make() }
+  make_insert(e,l) { parser.rec.types.stm.ConsSeq.make($e,$l) }
+  get_head(l) { $l.getHeadSeq() }
+  get_tail(l) { $l.getTailSeq() }
+  is_empty(l) { $l.isEmptySeq() }
+}
+
+%oplist ExpList ExpList(Exp*) {
+  is_fsym(t) { (($t instanceof parser.rec.types.explist.ConsExpList) || ($t instanceof parser.rec.types.explist.EmptyExpList)) }
+  make_empty() { parser.rec.types.explist.EmptyExpList.make() }
+  make_insert(e,l) { parser.rec.types.explist.ConsExpList.make($e,$l) }
+  get_head(l) { $l.getHeadExpList() }
+  get_tail(l) { $l.getTailExpList() }
+  is_empty(l) { $l.isEmptyExpList() }
+}
