@@ -11,7 +11,6 @@ import tom.library.theory.Enum;
 import tom.library.theory.ExhaustiveForAll;
 import tom.library.theory.RandomForAll;
 import tom.library.theory.TomCheck;
-import examples.Enumerations;
 import examples.data.treenat.Fork;
 import examples.data.treenat.Leaf;
 import examples.data.treenat.Nat;
@@ -22,7 +21,7 @@ import examples.data.treenat.Tree;
 public class TomCheckTest {
 
 	@Enum
-	public static Enumeration<Tree<Nat>> treeEnum = Enumerations.makeTreeNatEnumeration();
+	public static Enumeration<Tree<Nat>> treeEnum = Tree.getEnumeration(Nat.getEnumeration());
 
 	@Enum	
 	public static Enumeration<String> stringEnum = Combinators.makeString();

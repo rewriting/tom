@@ -12,6 +12,7 @@ public class Demo {
 	public static void main(String args[]) {
 		listOfBool();
 		treeOfNatural();
+		System.out.println("END");
 	}
 
 	/**
@@ -103,14 +104,14 @@ public class Demo {
 
 	public static void treeOfNatural() {
 
-		LazyList<Finite<Nat>> parts = Enumerations.makeNatEnumeration().parts();
+		LazyList<Finite<Nat>> parts = Nat.getEnumeration().parts();
 
 		for(int i=0;i<10 && !parts.isEmpty();i++) {
 			System.out.println(i + " --> " + parts.head());
 			parts=parts.tail();
 		}
 
-		Enumeration<Tree<Nat>> treeEnum = Enumerations.makeTreeNatEnumeration();
+		Enumeration<Tree<Nat>> treeEnum = Tree.getEnumeration(Nat.getEnumeration());
 		LazyList<Finite<Tree<Nat>>> tparts = treeEnum.parts();
 
 		for(int i=0;i<10 && !tparts.isEmpty();i++) {
