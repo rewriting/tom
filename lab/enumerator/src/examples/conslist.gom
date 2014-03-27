@@ -1,4 +1,4 @@
-module examples.ConsList
+module examples.data.ConsList
 imports int
 abstract syntax
 

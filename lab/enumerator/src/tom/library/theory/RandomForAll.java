@@ -18,6 +18,6 @@ import org.junit.contrib.theories.ParametersSuppliedBy;
 @Retention(RUNTIME)
 public @interface RandomForAll {
 
-	public int maxDepth() default 100;
+	public int sampleSize() default 100;
 		
 }
