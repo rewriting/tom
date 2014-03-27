@@ -36,14 +36,14 @@ public class TheoryTest {
 	}
 
 	@Theory
-	public void testPlusOne1(@ExhaustiveForAll(sampleSize=10) Tree<Nat> t) {
+	public void testPlusOne1(@ExhaustiveForAll(maxDepth=20) Tree<Nat> t) {
 		// just test if the size is preserved by plusOne
 		System.out.println(t);
 		assertEquals(plusOne(t).size(), t.size());
 	}
 	
 	@Theory
-	public void testPlusOne2(@RandomForAll(maxDepth=10) Tree<Nat> t) {
+	public void testPlusOne2(@RandomForAll(sampleSize=20) Tree<Nat> t) {
 		// just test if the size is preserved by plusOne	
 		System.out.println(t);
 		assertEquals(plusOne(t).size(), t.size());

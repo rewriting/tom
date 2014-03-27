@@ -9,35 +9,46 @@ import org.junit.contrib.theories.ParameterSupplier;
 import org.junit.contrib.theories.PotentialAssignment;
 
 import tom.library.enumerator.Enumeration;
+import tom.library.enumerator.Finite;
+import tom.library.enumerator.LazyList;
 
 public class ExhaustiveValueSupplier extends ParameterSupplier {
-	
+
 	@Override
 	public List<PotentialAssignment> getValueSources(ParameterSignature signature) {
-		int samplesize = signature.getAnnotation(ExhaustiveForAll.class).sampleSize();
+		int maxdepth = signature.getAnnotation(ExhaustiveForAll.class).maxDepth();
 		final Enumeration<?> enumeration = TomCheck.get(signature.getType());
 		List<PotentialAssignment> l = new ArrayList<PotentialAssignment>();
-		
-		for (int i = 0; i < samplesize; i++) {
-			
-			final BigInteger j = BigInteger.valueOf(i);
+		LazyList<?> parts = enumeration.parts();
 
-			PotentialAssignment assignment = new PotentialAssignment() {
+		for (int i = 0; i < maxdepth; i++) {
+			final Finite<?> part = (Finite<?>) parts.head();
+			parts = parts.tail();
+			if (part == null) break;
+			if (! part.equals(Finite.empty())) {
+				BigInteger card = part.getCard();
+				for (int j = 0; j < card.intValue(); j++) {
 
-				@Override
-				public Object getValue() throws CouldNotGenerateValueException {
-					return enumeration.get(j);
+					final BigInteger jj = BigInteger.valueOf(j);
+
+					PotentialAssignment assignment = new PotentialAssignment() {
+
+						@Override
+						public Object getValue() throws CouldNotGenerateValueException {
+							return part.get(jj);
+						}
+
+						@Override
+						public String getDescription() throws CouldNotGenerateValueException {
+							return null;
+						}
+					};
+					l.add(assignment);
 				}
-
-				@Override
-				public String getDescription() throws CouldNotGenerateValueException {
-					return null;
-				}
-			};
-			l.add(assignment);
+			}
 		}
 		return l;
 	}
-	
+
 
 }

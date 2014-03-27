@@ -19,6 +19,6 @@ import org.junit.contrib.theories.ParametersSuppliedBy;
 
 public @interface ExhaustiveForAll {
 
-	public int sampleSize() default 100;
+	public int 	maxDepth() default 100;
 	
 }
