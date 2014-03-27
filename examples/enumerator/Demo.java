@@ -142,7 +142,7 @@ public class Demo {
 		System.out.println("#trees of size 50 = card(parts[50]) = " + card50);
 		System.out.println("#trees of size 500 = card(parts[500]) = " + treeEnum.parts().index(BigInteger.valueOf(500)).getCard());
 
-		for(int p=0 ; p<=1000 ; p=p+100) {
+		for(int p=0 ; p<=10000 ; p=p+1000) {
 			BigInteger i = java.math.BigInteger.TEN.pow(p);
 			System.out.println("10^" + p + "-th tree has size " + treeEnum.get(i).size());
 		}
