@@ -1,8 +1,11 @@
 package test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -20,14 +23,12 @@ public class EnumerationTest {
 		assertEquals(LazyList.nil(), empty.parts());
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void testSingleton() {
 		Enumeration<String> singleton = Enumeration.singleton("foo");
 		assertEquals(Arrays.asList(Arrays.asList("foo")), singleton.toList());
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void testPay() {
 		Enumeration<Object> empty = Enumeration.empty();
@@ -40,7 +41,6 @@ public class EnumerationTest {
 		assertEquals(expected2, e.pay());
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void testPlus() {
 		Enumeration<Integer> e1 = Enumeration.fromList(
@@ -63,7 +63,6 @@ public class EnumerationTest {
 		};
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void testTimes() {
 		Enumeration<Integer> e1 = Enumeration.fromList(
@@ -93,7 +92,6 @@ public class EnumerationTest {
 		assertEquals(expected, e1.times(e2));
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void testMap() {
 		Enumeration<Integer> e = Enumeration.fromList(
@@ -119,7 +117,6 @@ public class EnumerationTest {
 		assertEquals(expected, e.map(f));
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void testApply() {
 		F<Integer, Integer> f1 = new F<Integer, Integer>() {

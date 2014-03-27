@@ -3,10 +3,8 @@ package examples;
 import java.util.Arrays;
 
 import tom.library.enumerator.F;
-import tom.library.enumerator.Finite;
 import tom.library.enumerator.LazyList;
 import tom.library.enumerator.P1;
-import tom.library.enumerator.P2;
 
 public class Convolution {
 

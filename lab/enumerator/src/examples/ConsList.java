@@ -3,8 +3,7 @@ package examples;
 import java.math.BigInteger;
 
 import tom.library.enumerator.*;
-
-import examples.conslist.types.*;
+import examples.data.conslist.types.*;
 
 // Enumerator for lists
 public class ConsList {

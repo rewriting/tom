@@ -1,23 +1,21 @@
 package test;
 
-import static org.junit.Assert.*;
+import static java.math.BigInteger.ONE;
+import static java.math.BigInteger.ZERO;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.math.BigInteger;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.junit.Test;
 
 import tom.library.enumerator.Combinators;
 import tom.library.enumerator.Enumeration;
-import tom.library.enumerator.F;
-import tom.library.enumerator.Finite;
-import tom.library.enumerator.P2;
-
-import java.math.BigInteger;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import static java.math.BigInteger.ZERO;
-import static java.math.BigInteger.ONE;
 
 public class CombinatorsTest {
 
@@ -25,7 +23,7 @@ public class CombinatorsTest {
 	public void testMakeBoolean() {
 		Enumeration<Boolean> e = Combinators.makeboolean();
 		Boolean b1 = e.get(ZERO);
-		assertEquals(true || false, b1);
+		assertTrue(b1.equals(true) || b1.equals(false));
 		Boolean b2 = e.get(ONE);
 		assertNotEquals(b2, b1);
 		
