@@ -20,11 +20,9 @@ import examples.data.treenat.Tree;
 @RunWith(TomCheck.class)
 public class TomCheckTest {
 
-	@Enum
-	public static Enumeration<Tree<Nat>> treeEnum = Tree.getEnumeration(Nat.getEnumeration());
+	@Enum public static Enumeration<Tree<Nat>> treeEnum = Tree.getEnumeration(Nat.getEnumeration());
 
-	@Enum	
-	public static Enumeration<String> stringEnum = Combinators.makeString();
+	@Enum public static Enumeration<String> stringEnum = Combinators.makeString();
 	
 	//simple function to test theories
 	public Tree<Nat> plusOne(Tree<Nat> v) {

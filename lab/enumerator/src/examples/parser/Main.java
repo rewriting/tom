@@ -1,18 +1,18 @@
 package examples.parser;
 
-import java.io.DataInputStream;
+import java.io.FileInputStream;
 
-import tom.library.sl.*;
-
-import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.ANTLRInputStream;
+import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.tree.Tree;
 
+import tom.library.sl.VisitFailure;
 import examples.parser.rec.RecAdaptor;
-import examples.parser.rec.types.*;
-
-import java.io.*;
-import java.util.*;
+import examples.parser.rec.types.Exp;
+import examples.parser.rec.types.ExpList;
+import examples.parser.rec.types.Pair;
+import examples.parser.rec.types.Stm;
+import examples.parser.rec.types.Table;
 
 public class Main {
 
