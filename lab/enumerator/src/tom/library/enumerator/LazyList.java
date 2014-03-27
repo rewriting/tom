@@ -151,6 +151,17 @@ public abstract class LazyList<A> {
 		}
 	}
 
+	
+	public LazyList<A> take(final long maxSize) {
+		if (maxSize > 0) {
+			return LazyList.<A>cons(this.head(), new P1<LazyList<A>>() {
+				public LazyList<A> _1() { return LazyList.this.tail().take(maxSize-1); }
+			});			
+		} else {
+			return LazyList.nil();
+		}
+	}
+	
 	public List<A> toList() {
 		List<A> res = new ArrayList<A>();
 		for (LazyList<A> xs = this; !xs.isEmpty(); xs = xs.tail()) {

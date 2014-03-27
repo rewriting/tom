@@ -112,8 +112,14 @@ public class Combinators {
 		if(enumcharacter==null) {
 			char[] cs = "abcdefghijklmnopqrstuvwxyz".toCharArray();
 			Enumeration<Character> charEnum = Enumeration.empty();
+			int price = 0;
 			for(char x:cs) {
-				charEnum = charEnum.plus(Enumeration.singleton(x));
+				Enumeration e = Enumeration.singleton(x);
+				//for(int i=0 ; i<price/2 ; i++) {
+				//	e = e.pay();
+				//}
+				//price++;
+				charEnum = charEnum.plus(e);
 			}
 			enumcharacter = charEnum;
 
@@ -146,12 +152,18 @@ public class Combinators {
 			F2<Enumeration<Character>,Enumeration<String>,Enumeration<String>> funMake =
 					new F2<Enumeration<Character>,Enumeration<String>,Enumeration<String>>() {
 				public Enumeration<String> apply(final Enumeration<Character> e1, final Enumeration<String> e2) {
-					return Enumeration.apply(Enumeration.apply(Enumeration.singleton(
+					Enumeration<String> res = Enumeration.apply(Enumeration.apply(Enumeration.singleton(
 							new F2<Character,String,String>() {
 								public String apply(Character t1, final String t2) {
 									return t1+t2;
 								}
-							}.curry()),e1),e2).pay();
+							}.curry()),e1),e2);
+					int price = 2;
+					for(int i=0 ; i<price ; i++) {
+						res = res.pay();
+					}
+					
+					return res;
 				}
 			};
 
@@ -159,7 +171,7 @@ public class Combinators {
 			enumstring = Enumeration.singleton("").plus(funMake.apply(makeCharacter(),tmpenum));
 
 			tmpenum.p1 = new P1<LazyList<Finite<String>>>() {
-				public LazyList<Finite<String>> _1() { return enumstring.parts(); }
+				public LazyList<Finite<String>> _1() { return enumstring.parts().take(100); }
 			};
 
 		}
