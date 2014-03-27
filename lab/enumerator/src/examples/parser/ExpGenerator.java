@@ -23,8 +23,8 @@ public class ExpGenerator extends Generator<Exp> {
     @Override public Exp generate(SourceOfRandomness random, GenerationStatus status) {
         Random rnd = new Random();
         BigInteger r = new BigInteger(next.bitLength(), rnd);
-        next = next.add(r);
-        //next = next.add(BigInteger.ONE);
+        //next = next.add(r);
+        next = next.add(BigInteger.ONE);
         //System.out.println(next);
         return enumeration.get(next);
     }
