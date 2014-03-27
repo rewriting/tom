@@ -54,6 +54,8 @@ public class EnumerationTest {
 		assertEquals(e1,empty.plus(e1));
 		// [[1,2], [3,4]] + [[], [5,6], [7]] = [[1,2], [3,4,5,6], [7]]
 		assertEquals(expected,e1.plus(e2));
+		// test plus commutativity
+		assertEquals(e2.plus(e1),e1.plus(e2));		
 	}
 
 	private P2<Integer,Integer> p(final Integer i, final Integer j) {

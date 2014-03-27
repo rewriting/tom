@@ -386,10 +386,11 @@ public abstract class Exp extends examples.parser.rec.RecAbstractType  {
        * True should be BEFORE Num
        */
       enumExp = 
-    		  examples.parser.rec.types.exp.Num.funMake().apply(tom.library.enumerator.Combinators.makeint())
+    		  examples.parser.rec.types.exp.True.funMake().apply(examples.parser.rec.types.Exp.tmpenumExp).plus(
+
+    		  examples.parser.rec.types.exp.Num.funMake().apply(tom.library.enumerator.Combinators.makeint()))
     		  //examples.parser.rec.types.exp.True.funMake().apply(examples.parser.rec.types.Exp.tmpenumExp)
     		  //examples.parser.rec.types.exp.Id.funMake().apply(tom.library.enumerator.Combinators.makeString())
-    		  .plus(examples.parser.rec.types.exp.True.funMake().apply(examples.parser.rec.types.Exp.tmpenumExp))
     		  //.plus(examples.parser.rec.types.exp.Num.funMake().apply(tom.library.enumerator.Combinators.makeint()))
     		  //.plus(examples.parser.rec.types.exp.False.funMake().apply(examples.parser.rec.types.Exp.tmpenumExp))
     		  //.plus(examples.parser.rec.types.exp.NotExp.funMake().apply(examples.parser.rec.types.Exp.tmpenumExp))
