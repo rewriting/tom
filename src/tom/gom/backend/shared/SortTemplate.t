@@ -409,6 +409,9 @@ private String generateSum() {
   String res = null;
   Set<String> toInitialize = new HashSet<String>();
 
+  //System.out.println("operatorClasses = " + operatorClasses);
+  //System.out.println("variadicOperatorList = " + variadicOperatorList);
+
   %match(operatorClasses) {
     ConcGomClass(_*,OperatorClass[ClassName=className, SortName=ClassName[Name=sortName], SlotFields=slotList],_*) && className()==`sortName -> {
       String exp = fullClassName(`className) + ".funMake()";
@@ -429,7 +432,35 @@ private String generateSum() {
       }
       res = (res==null)?exp:res+"\n        .plus(" + exp + ")";
     }
+
+    ConcGomClass(_*,VariadicOperatorClass[ClassName=className, SortName=ClassName[Name=sortName], 
+        Empty=OperatorClass[ClassName=emptyClassName, SortName=ClassName[Name=emptySortName], SlotFields=emptySlotList], 
+        Cons=OperatorClass[ClassName=consClassName, SortName=ClassName[Name=consSortName], SlotFields=consSlotList]
+        ],_*) && className()==`sortName -> {
+      String exp = fullClassName(`emptyClassName) + ".funMake().apply(" + fullClassName() + ".tmpenum" + className() + ")";
+      res = (res==null)?exp:res+"\n        .plus(" + exp + ")";
+      
+      exp = fullClassName(`consClassName) + ".funMake()";
+      %match(consSlotList) { 
+        ConcSlotField() -> {
+          exp += ".apply(" + fullClassName() + ".tmpenum" + className() + ")";
+        }
+        ConcSlotField(_*,SlotField[Domain=domain@ClassName[Name=domainName]],_*) -> {
+          if(getGomEnvironment().isBuiltinClass(`domain)) {
+            exp += ".apply(tom.library.enumerator.Combinators.make" + `domainName + "())";
+          } else {
+            exp += ".apply(" + fullClassName(`domain) + ".tmpenum" + `domainName + ")";
+            if(!fullClassName().equals(fullClassName(`domain))) {
+              toInitialize.add(fullClassName(`domain));
+            }
+          }
+        }
+      }
+      res = (res==null)?exp:res+"\n        .plus(" + exp + ")";
+    }
+
   }
+
   res += ";\n\n";
   for(String className:toInitialize) {
     res += "      " + className + ".getEnumeration();\n";

@@ -397,6 +397,9 @@ public abstract class Stm extends examples.parser.rec.RecAbstractType  {
         .plus(examples.parser.rec.types.stm.Print.funMake().apply(examples.parser.rec.types.ExpList.tmpenumExpList))
         .plus(examples.parser.rec.types.stm.If.funMake().apply(examples.parser.rec.types.Exp.tmpenumExp).apply(examples.parser.rec.types.Stm.tmpenumStm).apply(examples.parser.rec.types.Stm.tmpenumStm))
         .plus(examples.parser.rec.types.stm.While.funMake().apply(examples.parser.rec.types.Exp.tmpenumExp).apply(examples.parser.rec.types.Stm.tmpenumStm))
+        /*
+         * TO GENERATE
+         */
         .plus(examples.parser.rec.types.stm.EmptySeq.funMake().apply(examples.parser.rec.types.Stm.tmpenumStm))
         .plus(examples.parser.rec.types.stm.ConsSeq.funMake().apply(examples.parser.rec.types.Stm.tmpenumStm).apply(examples.parser.rec.types.Stm.tmpenumStm))
         ;
