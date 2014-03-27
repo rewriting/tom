@@ -47,15 +47,25 @@ public class EnumerationTest {
 				Arrays.asList(Arrays.asList(1,2),Arrays.asList(3,4)));
 		Enumeration<Integer> e2 = Enumeration.fromList(
 				Arrays.asList(new ArrayList<Integer>(), Arrays.asList(5,6), Arrays.asList(7)));
-		Enumeration<Integer> expected = Enumeration.fromList(
-				Arrays.asList(Arrays.asList(1,2), Arrays.asList(3,4,5,6), Arrays.asList(7)));
+		
 		Enumeration<Integer> empty = Enumeration.empty();
+		assertEquals(empty,empty.plus(empty));
 		assertEquals(e1,e1.plus(empty));
 		assertEquals(e1,empty.plus(e1));
+		
 		// [[1,2], [3,4]] + [[], [5,6], [7]] = [[1,2], [3,4,5,6], [7]]
-		assertEquals(expected,e1.plus(e2));
+		Enumeration<Integer> expected1 = Enumeration.fromList(
+				Arrays.asList(Arrays.asList(1,2), Arrays.asList(3,4,5,6), Arrays.asList(7)));
+		assertEquals(expected1,e1.plus(e2));
+		
+		// [[], [5,6], [7]] + [[1,2], [3,4]] = [[1,2], [5,6,3,4], [7]]
+		Enumeration<Integer> expected2 = Enumeration.fromList(
+				Arrays.asList(Arrays.asList(1,2), Arrays.asList(5,6,3,4), Arrays.asList(7)));
+		assertEquals(expected2,e2.plus(e1));
+		
+
 		// test plus commutativity
-		assertEquals(e2.plus(e1),e1.plus(e2));		
+		//assertEquals(e2.plus(e1),e1.plus(e2));		
 	}
 
 	private P2<Integer,Integer> p(final Integer i, final Integer j) {
