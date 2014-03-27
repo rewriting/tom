@@ -15,6 +15,7 @@ import examples.junit.quickcheck.ExpGenerator;
 import examples.parser.rec.types.Exp;
 import examples.parser.rec.types.ExpList;
 import examples.parser.rec.types.Stm;
+import examples.parser.rec.types.Table;
 
 @RunWith(TomCheck.class)
 public class ParserTest {
@@ -22,6 +23,7 @@ public class ParserTest {
 	@Enum public static Enumeration<Exp> enumeration1 = Exp.getEnumeration();
 	@Enum public static Enumeration<ExpList> enumeration2 = ExpList.getEnumeration();
 	@Enum public static Enumeration<Stm> enumeration3 = Stm.getEnumeration();
+	@Enum public static Enumeration<Table> enumeration4 = Table.getEnumeration();
 
 	/*
 	@Theory
@@ -46,6 +48,19 @@ public class ParserTest {
 		System.out.println("Quick: "+n);
 	}
 	
+	@Theory
+	public void testInsertTable(
+			//@RandomForAll(sampleSize=100) String name, 
+			//@RandomForAll(sampleSize=100) int value,
+			@RandomForAll(sampleSize=100) Table table
+			) {
+		String name = "a";
+		int value = 42;
+        Table newTable = examples.parser.rec.types.table.Table.make(name, value, table);
+		System.out.println(name + " " + value + " " + table);
 
+        assert(value == Main.lookup(table,name));
+	}
+	
 
 }

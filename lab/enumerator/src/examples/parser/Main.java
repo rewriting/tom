@@ -40,7 +40,7 @@ public class Main {
     }
   }
 
-  private int lookup(Table table, String key) {
+  public static int lookup(Table table, String key) {
     {{if (tom_is_sort_Table(table)) {if (tom_is_sort_Table((( examples.parser.rec.types.Table )table))) {if (tom_is_fun_sym_Table((( examples.parser.rec.types.Table )(( examples.parser.rec.types.Table )table)))) {
 
         if(key==tom_get_slot_Table_Name((( examples.parser.rec.types.Table )table))) {
