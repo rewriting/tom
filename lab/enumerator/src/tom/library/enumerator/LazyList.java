@@ -179,11 +179,11 @@ public abstract class LazyList<A> {
 		}
 	}
 
-	public LazyList<A> take(final long maxSize) {
-		if (maxSize > 0) {
+	public LazyList<A> take(final BigInteger maxSize) {
+		if (maxSize.compareTo(ZERO) > 0) {
 			return LazyList.<A> cons(this.head(), new P1<LazyList<A>>() {
 				public LazyList<A> _1() {
-					return LazyList.this.tail().take(maxSize - 1);
+					return LazyList.this.tail().take(maxSize.subtract(ONE));
 				}
 			});
 		} else {
