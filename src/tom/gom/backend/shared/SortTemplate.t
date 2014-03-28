@@ -386,7 +386,7 @@ private void generateEnum(java.io.Writer writer) throws java.io.IOException {
    */
 
   protected static @E@<@fullClassName()@> enum@className()@ = null;
-  public static final @E@<@fullClassName()@> tmpenum@className()@ = new @E@<@fullClassName()@>((@P@LazyList<@P@Finite<@fullClassName()@>>) null);
+  static final @E@<@fullClassName()@> tmpenum@className()@ = new @E@<@fullClassName()@>((@P@LazyList<@P@Finite<@fullClassName()@>>) null);
 
   public static @E@<@fullClassName()@> getEnumeration() {
     if(enum@className()@ == null) { 
