@@ -1,0 +1,40 @@
+
+%include { boolean.tom }
+
+%include { string.tom }
+
+%include { int.tom }
+
+%typeterm BList {
+  implement { examples.lists.blist.blist.types.BList }
+  is_sort(t) { ($t instanceof examples.lists.blist.blist.types.BList) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm Elem {
+  implement { examples.lists.blist.blist.types.Elem }
+  is_sort(t) { ($t instanceof examples.lists.blist.blist.types.Elem) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+%op BList empty() {
+  is_fsym(t) { ($t instanceof examples.lists.blist.blist.types.blist.empty) }
+  make() { examples.lists.blist.blist.types.blist.empty.make() }
+}
+
+%op BList con(head:Elem, tail:BList) {
+  is_fsym(t) { ($t instanceof examples.lists.blist.blist.types.blist.con) }
+  get_slot(head, t) { $t.gethead() }
+  get_slot(tail, t) { $t.gettail() }
+  make(t0, t1) { examples.lists.blist.blist.types.blist.con.make($t0, $t1) }
+}
+
+%op Elem cs(i:int) {
+  is_fsym(t) { ($t instanceof examples.lists.blist.blist.types.elem.cs) }
+  get_slot(i, t) { $t.geti() }
+  make(t0) { examples.lists.blist.blist.types.elem.cs.make($t0) }
+}
+
