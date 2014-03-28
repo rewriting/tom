@@ -32,8 +32,8 @@ public class RandomValueSupplier extends ParameterSupplier {
 		LazyList<?> parts = enumeration.parts();
 		int i = 0;
 		while (i < samplesize) {
+			if (parts.isEmpty()) break;
 			final Finite<?> part = (Finite<?>) parts.head();
-			if (part == null) break;
 			parts = parts.tail();
 			BigInteger card = part.getCard();
 			if (! card.equals(BigInteger.ZERO)) {

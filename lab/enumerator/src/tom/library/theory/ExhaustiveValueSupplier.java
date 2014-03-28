@@ -22,9 +22,9 @@ public class ExhaustiveValueSupplier extends ParameterSupplier {
 		LazyList<?> parts = enumeration.parts();
 
 		for (int i = 0; i < maxdepth; i++) {
+			if (parts.isEmpty()) break;
 			final Finite<?> part = (Finite<?>) parts.head();
 			parts = parts.tail();
-			if (part == null) break;
 			if (! part.equals(Finite.empty())) {
 				BigInteger card = part.getCard();
 				for (int j = 0; j < card.intValue(); j++) {

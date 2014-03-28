@@ -23,8 +23,10 @@ public class TomCheckTest {
 	@Enum public static Enumeration<Tree<Nat>> treeEnum = Tree.getEnumeration(Nat.getEnumeration());
 
 	@Enum public static Enumeration<String> stringEnum = Combinators.makeString();
-	
-	//simple function to test theories
+
+	@Enum public static Enumeration<Integer> intEnum = Combinators.makeInteger();
+
+	// simple function to test theories
 	public Tree<Nat> plusOne(Tree<Nat> v) {
 		if (v instanceof Leaf) {
 			Leaf<Nat> t = (Leaf<Nat>) v;
@@ -37,26 +39,28 @@ public class TomCheckTest {
 	}
 
 	@Theory
-	public void testPlusOne1(@ExhaustiveForAll(maxDepth=20) Tree<Nat> t) {
+	public void testPlusOne1(@ExhaustiveForAll(maxDepth = 20) Tree<Nat> t) {
 		// just test if the size is preserved by plusOne
 		System.out.println(t);
 		assertEquals(plusOne(t).size(), t.size());
 	}
-	
+
 	@Theory
-	public void testPlusOne2(@RandomForAll(sampleSize=20) Tree<Nat> t) {
-		// just test if the size is preserved by plusOne	
+	public void testPlusOne2(@RandomForAll(sampleSize = 20) Tree<Nat> t) {
+		// just test if the size is preserved by plusOne
 		System.out.println(t);
 		assertEquals(plusOne(t).size(), t.size());
 	}
-	
 
 	@Theory
-	public void testString(@RandomForAll(sampleSize=50) String s) {
-			System.out.println(s);
+	public void testString(@RandomForAll(sampleSize = 50) String s) {
+		System.out.println(s);
 	}
 
-
-
+	@Theory
+	public void testMulti(@RandomForAll(sampleSize = 10) String s,
+			@RandomForAll(sampleSize = 5) Integer i) {
+		System.out.println(s + " " + i);
+	}
 
 }
