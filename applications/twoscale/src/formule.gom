@@ -19,7 +19,7 @@ module formule
 		  | Partial(body:Exp, vars:ExpList )
 		  | Sum(domaine:Region, mainExp:Exp, variable:Exp)
 
-      |	Function(symbol:Exp, indice: String, args:ExpList)
+      |	Function(symbol:String, indice: String, args:ExpList)
 
 		//| FunctionGreenRule(exp1:Exp,varIndice:Exp,indice:Exp, fonctionDs:Exp)
 // 		  | IndiceGreenRule(symbole:Exp,variable:Exp,indice:Exp)
