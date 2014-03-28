@@ -1,5 +1,6 @@
 package tom.library.enumerator;
 
+import java.math.BigInteger;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -158,11 +159,13 @@ public class Combinators {
 									return t1+t2;
 								}
 							}.curry()),e1),e2);
+					/*
 					int price = 2;
 					for(int i=0 ; i<price ; i++) {
 						res = res.pay();
 					}
-					
+					*/
+					res = res.pay();
 					return res;
 				}
 			};
@@ -171,7 +174,7 @@ public class Combinators {
 			enumstring = Enumeration.singleton("").plus(funMake.apply(makeCharacter(),tmpenum));
 
 			tmpenum.p1 = new P1<LazyList<Finite<String>>>() {
-				public LazyList<Finite<String>> _1() { return enumstring.parts().take(100); }
+				public LazyList<Finite<String>> _1() { return enumstring.parts().take(BigInteger.valueOf(100)); }
 			};
 
 		}

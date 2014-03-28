@@ -26,7 +26,7 @@ public class ExpGenerator extends Generator<Exp> {
 		BigInteger r = new BigInteger(next.bitLength(), rnd);
 		next = next.add(r);
 //		 next = next.add(BigInteger.ONE);
-		 System.out.println(next);
+//		 System.out.println(next);
 		return enumeration.get(next);
 	}
 }

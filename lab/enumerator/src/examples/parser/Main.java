@@ -41,16 +41,17 @@ public class Main {
   }
 
   public static int lookup(Table table, String key) {
-    {{if (tom_is_sort_Table(table)) {if (tom_is_sort_Table((( examples.parser.rec.types.Table )table))) {if (tom_is_fun_sym_Table((( examples.parser.rec.types.Table )(( examples.parser.rec.types.Table )table)))) {
-
-        if(key==tom_get_slot_Table_Name((( examples.parser.rec.types.Table )table))) {
-          return tom_get_slot_Table_Value((( examples.parser.rec.types.Table )table));
-        } else {
-          return lookup(tom_get_slot_Table_Tail((( examples.parser.rec.types.Table )table)),key);
-        }
-      }}}}}
-
-    return 0;
+	  if (tom_is_fun_sym_Table(table)) {
+		  //if (key == tom_get_slot_Table_Name(table)) { // FIRST BUG FOUND
+		  if (key.equals(tom_get_slot_Table_Name(table))) {
+			  return tom_get_slot_Table_Value(table);
+		  } else {
+			  return lookup(
+					  tom_get_slot_Table_Tail(((examples.parser.rec.types.Table) table)),
+					  key);
+		  }
+	  }
+	  return 0;
   }
 
   private void interp(Stm s) {
