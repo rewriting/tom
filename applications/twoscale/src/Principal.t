@@ -34,18 +34,30 @@ public class Principal {
 // 		Print p = new Print();
 		
 		Exp un = `CstInt(1);
-		Exp n = `Var("n","2");
-    System.out.println("n="+n);
+		Exp x = `Var("x","2");
+    System.out.println("x="+x);
+		Exp y = `Var("y","2");
+    System.out.println("y="+y);
     ExpList el = `concExp();
     System.out.println("Empty ExpList="+el);
 
     Exp fun = `Function("foo","5",el);
     System.out.println("Foo="+fun);
-    Exp func = `Function("foo","5",concExp(n));
+    Exp func = `Function("foo","5",concExp(x));
     System.out.println("Foo="+func);
-    Exp funny = `Function("foo","5",concExp(n,n));
+    Exp funny = `Function("foo","5",concExp(x,y));
     System.out.println("Foo="+funny);
+    Exp part = `Partial(funny,concExp(x,y));
+    System.out.println("Part="+part);
 
+    try{
+      Exp fifi = `A3().visit(func);
+      System.out.println("Foo apres A3="+fifi);
+      Exp dpart = `A3().visit(part);
+      System.out.println("Part apres A3="+dpart);
+		}catch(VisitFailure error){
+			System.out.println("Essaie encore");
+		}
 
 // 		Region intervalle = `Interval(un,n);
 // 		Region domaine = `Domain("omega");
@@ -140,7 +152,43 @@ public class Principal {
 // 			System.out.println("Essaie encore");
 // 		}
 		
-// 	}
+	}
+
+  %strategy A3() extends Identity(){
+		visit Exp{
+      Function(b,i,v) -> Function(b,i,v)
+      Partial(Function(b,i,args),vars) -> {
+//         return `Function(b,i,derivate(args,vars));
+        return `Function(b,i,derivative(vars).visit(args));
+      }
+      }
+	}
+
+
+  %strategy derivative(ExpList vars) extends Fail(){
+		visit ExpList{
+      concExp() -> concExp()
+        concExp(a,A*) -> {
+        ExpList tail=`A*;
+        ExpList dl=`derivative(vars).visit(tail);
+        return `concExp(Partial(a,vars),dl*);
+      }
+      }
+	}
+
+
+  public static ExpList derivate(ExpList args, ExpList vars){
+    %match(args){
+      concExp() -> { return `concExp();}
+      concExp(a,A*) -> {
+        ExpList dl=`derivate(A*,vars);
+        return `concExp(Partial(a,vars),dl*);
+      }
+    }
+    return `concExp();
+	}
+
+  
 	
 // 	%strategy T() extends Identity(){
 // 		visit Exp{
@@ -261,4 +309,4 @@ public class Principal {
 // 	}
 
 }
-}
+
