@@ -66,4 +66,18 @@ class QuickcheckRunner2<A, B> extends BasicRunner {
 			printCounterModel(inputA, inputB);
 		}
 	}
+
+	@Override
+	<A> void shrinkCounterExample(A inputA) {
+		
+	}
+
+	@Override
+	<A, B> void shrinkCounterExample(A inputA, B inputB) {
+	}
+
+	@Override
+	<A, B, C> void shrinkCounterExample(A inputA, B inputB, C inputC) {
+		
+	}
 }

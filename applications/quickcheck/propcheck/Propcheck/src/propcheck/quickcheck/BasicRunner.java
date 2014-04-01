@@ -22,6 +22,12 @@ public abstract class BasicRunner implements Runner {
 		return numOfTest;
 	}
 	
+	abstract <A> void shrinkCounterExample(A inputA);
+	
+	abstract <A, B> void shrinkCounterExample(A inputA, B inputB);
+	
+	abstract <A, B, C> void shrinkCounterExample(A inputA, B inputB, C inputC);
+	
 	void printResult(int generatedCase, int testedCase, boolean error) {
 		if (error) {
 			printError(generatedCase, testedCase);
