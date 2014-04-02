@@ -18,4 +18,10 @@ public interface Shrink<A> {
 	 * Sets current term
 	 */
 	public void setCurrentTerm(A term);
+	
+	/**
+	 * 
+	 * @return true if the term can be shrunk
+	 */
+	public boolean hasNextSubterm();
 }

@@ -14,6 +14,7 @@ public class PropcheckShink<A> implements Shrink<A> {
 	private SubtermTraverser<A> traverser;
 	
 	private int index = 0;
+	private boolean isNewInstance = true;
 
 	public PropcheckShink(A term) {
 		init(term);
@@ -31,12 +32,22 @@ public class PropcheckShink<A> implements Shrink<A> {
 		} else {
 			indexes.clear();
 		}
-		
 		traverser = SubtermTraverser.make(term);
 		// add constants
 		subterms.addAll(traverser.getConstants());
+		
+		// if is not newly instantiated, init() called from setTerm
+		// then index should be 1 if there is constant
+		if (!isNewInstance && !subterms.isEmpty()) {
+			index = 1;
+		} else {
+			index = 0;
+		}
+		
 		// add immediate subterms
 		addSubtermsToList(retrieveSubterms(term));
+		
+		
 	}
 	
 	public void addSubtermsToList(List<A> retrievedSubterms) {
@@ -48,6 +59,7 @@ public class PropcheckShink<A> implements Shrink<A> {
 		}
 	}
 	
+	@Override
 	public boolean hasNextSubterm() {
 		if (index < subterms.size()) {
 			return true;
@@ -99,6 +111,7 @@ public class PropcheckShink<A> implements Shrink<A> {
 
 	@Override
 	public void setCurrentTerm(A term) {
+		isNewInstance = false;
 		init(term);
 	}
 }

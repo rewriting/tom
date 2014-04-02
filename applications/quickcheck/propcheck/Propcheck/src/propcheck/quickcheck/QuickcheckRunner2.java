@@ -3,6 +3,8 @@ package propcheck.quickcheck;
 import propcheck.assertion.NotTestedSkip;
 import propcheck.generator.quickcheck.RandomGenerator2;
 import propcheck.property.Property2;
+import propcheck.shrink.PropcheckShink;
+import propcheck.shrink.Shrink;
 import tom.library.enumerator.Enumeration;
 
 class QuickcheckRunner2<A, B> extends BasicRunner {
@@ -65,19 +67,12 @@ class QuickcheckRunner2<A, B> extends BasicRunner {
 		if (errorFound) {
 			printCounterModel(inputA, inputB);
 		}
+		shrink(inputA, inputB);
+	}
+	
+	void shrink(A inputA, B inputB) {
+		ShrinkRunner shrink = BasicRunnerFactory.make().get(inputA, inputB, property);
+		shrink.run();
 	}
 
-	@Override
-	<A> void shrinkCounterExample(A inputA) {
-		
-	}
-
-	@Override
-	<A, B> void shrinkCounterExample(A inputA, B inputB) {
-	}
-
-	@Override
-	<A, B, C> void shrinkCounterExample(A inputA, B inputB, C inputC) {
-		
-	}
 }

@@ -59,19 +59,23 @@ class QuickcheckRunner3<A, B, C> extends BasicRunner {
 		if (errorFound) {
 			printCounterModel(inputA, inputB, inputC);
 		}
+		shrink(inputA, inputB, inputC);
 	}
 
-	@Override
-	<A> void shrinkCounterExample(A inputA) {
-		
+	void shrink(A inputA, B inputB, C inputC) {
+		BasicRunnerFactory.make().get(inputA, inputB, inputC, property).run();
 	}
-
-	@Override
-	<A, B> void shrinkCounterExample(A inputA, B inputB) {
-	}
-
-	@Override
-	<A, B, C> void shrinkCounterExample(A inputA, B inputB, C inputC) {
-		
-	}
+//	@Override
+//	<A> void shrinkCounterExample(A inputA) {
+//		
+//	}
+//
+//	@Override
+//	<A, B> void shrinkCounterExample(A inputA, B inputB) {
+//	}
+//
+//	@Override
+//	<A, B, C> void shrinkCounterExample(A inputA, B inputB, C inputC) {
+//		
+//	}
 }
