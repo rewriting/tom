@@ -12,7 +12,7 @@ public class ShrinkRunner2<A, B> implements ShrinkRunner {
 	private A rootTermA;
 	private B rootTermB;
 	private Property2<A, B> property;
-	private int shrunkCount = 1;
+	private int shrunkCount = 0;
 	
 	public ShrinkRunner2(A termA, B termB, Property2<A, B> property) {
 		this.rootTermA = termA;
@@ -28,15 +28,16 @@ public class ShrinkRunner2<A, B> implements ShrinkRunner {
 		B inputB = rootTermB;
 		
 		// apply for inputA
-		inputA = applyA(shrinkerA, inputA, inputB);
+		A cexA = applyA(shrinkerA, inputA, inputB);
 		
 		// apply for inputB
-		inputB = applyB(shrinkerB, inputA, inputB);
+		B cexB = applyB(shrinkerB, inputA, inputB);
 		
-		print(shrunkCount, inputA, inputB);
+		print(shrunkCount, cexA, cexB);
 	}
 
 	private B applyB(Shrink<B> shrinkerB, A inputA, B inputB) {
+		B cex = inputB;
 		while (shrinkerB.hasNextSubterm()) {
 			inputB = shrinkerB.getNextshrinkedTerm();
 			try {
@@ -46,13 +47,15 @@ public class ShrinkRunner2<A, B> implements ShrinkRunner {
 			} catch (AssertionError error) {
 				// assign shrinker to shrink the counter example
 				shrinkerB.setCurrentTerm(inputB);
+				cex = inputB;
 				shrunkCount ++;
 			}
 		}
-		return inputB;
+		return cex;
 	}
 
 	private A applyA(Shrink<A> shrinkerA, A inputA, B inputB) {
+		A cex = inputA;
 		while (shrinkerA.hasNextSubterm()) {
 			inputA = shrinkerA.getNextshrinkedTerm();
 			try {
@@ -62,10 +65,11 @@ public class ShrinkRunner2<A, B> implements ShrinkRunner {
 			} catch (AssertionError error) {
 				// assign shrinker to shrink the counter example
 				shrinkerA.setCurrentTerm(inputA);
+				cex = inputA;
 				shrunkCount ++;
 			}
 		}
-		return inputA;
+		return cex;
 	}
 	
 	void print(int shrunk, A inputA, B inputB) {

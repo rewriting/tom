@@ -14,7 +14,7 @@ public class ShrinkRunner3<A, B, C> implements ShrinkRunner {
 	private B rootTermB;
 	private C rootTermC;
 	private Property3<A, B, C> property;
-	private int shrunkCount = 1;
+	private int shrunkCount = 0;
 	
 	public ShrinkRunner3(A termA, B termB, C termC, Property3<A, B, C> property) {
 		this.rootTermA = termA;
@@ -33,18 +33,19 @@ public class ShrinkRunner3<A, B, C> implements ShrinkRunner {
 		C inputC = rootTermC;
 		
 		// apply for inputA
-		inputA = applyA(shrinkerA, inputA, inputB, inputC);
+		A cexA = applyA(shrinkerA, inputA, inputB, inputC);
 		
 		// apply for inputB
-		inputB = applyB(shrinkerB, inputA, inputB, inputC);
+		B cexB = applyB(shrinkerB, inputA, inputB, inputC);
 		
 		// apply for inputB
-		inputC = applyC(shrinkerC, inputA, inputB, inputC);
+		C cexC = applyC(shrinkerC, inputA, inputB, inputC);
 		
-		print(shrunkCount, inputA, inputB, inputC);
+		print(shrunkCount, cexA, cexB, cexC);
 	}
 
 	private B applyB(Shrink<B> shrinkerB, A inputA, B inputB, C inputC) {
+		B cex = inputB;
 		while (shrinkerB.hasNextSubterm()) {
 			inputB = shrinkerB.getNextshrinkedTerm();
 			try {
@@ -54,13 +55,15 @@ public class ShrinkRunner3<A, B, C> implements ShrinkRunner {
 			} catch (AssertionError error) {
 				// assign shrinker to shrink the counter example
 				shrinkerB.setCurrentTerm(inputB);
+				cex = inputB;
 				shrunkCount ++;
 			}
 		}
-		return inputB;
+		return cex;
 	}
 
 	private A applyA(Shrink<A> shrinkerA, A inputA, B inputB, C inputC) {
+		A cex = inputA;
 		while (shrinkerA.hasNextSubterm()) {
 			inputA = shrinkerA.getNextshrinkedTerm();
 			try {
@@ -70,13 +73,15 @@ public class ShrinkRunner3<A, B, C> implements ShrinkRunner {
 			} catch (AssertionError error) {
 				// assign shrinker to shrink the counter example
 				shrinkerA.setCurrentTerm(inputA);
+				cex = inputA;
 				shrunkCount ++;
 			}
 		}
-		return inputA;
+		return cex;
 	}
 	
 	private C applyC(Shrink<C> shrinkerC, A inputA, B inputB, C inputC) {
+		C cex = inputC;
 		while (shrinkerC.hasNextSubterm()) {
 			inputC = shrinkerC.getNextshrinkedTerm();
 			try {
@@ -86,10 +91,11 @@ public class ShrinkRunner3<A, B, C> implements ShrinkRunner {
 			} catch (AssertionError error) {
 				// assign shrinker to shrink the counter example
 				shrinkerC.setCurrentTerm(inputC);
+				cex = inputC;
 				shrunkCount ++;
 			}
 		}
-		return inputC;
+		return cex;
 	}
 	
 	void print(int shrunk, A inputA, B inputB, C inputC) {

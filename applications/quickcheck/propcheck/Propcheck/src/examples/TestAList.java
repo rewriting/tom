@@ -150,19 +150,19 @@ public class TestAList {
 // 		System.out.println("\n\nrun test list not empty");
 // 		Quickcheck.make().forAll(enumList, listNotEmpty).run();
 
- 		System.out.println("test implications prop3");
- 		Quickcheck.make().forAll(enumList, enumElem, enumElem2, prop3).run();
+// 		System.out.println("test implications prop3");
+// 		Quickcheck.make().forAll(enumList, enumElem, enumElem2, prop3).run();
 
- 		/*System.out.println("test implications prop4");
- 		Quickcheck.make().forAll(enumList, enumElem, prop4).run();
-		 
- 		System.out.println("test implications prop4False");
- 		Quickcheck.make().forAll(enumList, enumElem, prop4False).run();
-		
- 		System.out.println("test implications prop5");
- 		Quickcheck.make().forAll(enumList, enumInt, prop5).run();
+// 		System.out.println("test implications prop4");
+// 		Quickcheck.make().forAll(enumList, enumElem, prop4).run();
+//		 
+// 		System.out.println("test implications prop4False");
+// 		Quickcheck.make().forAll(enumList, enumElem, prop4False).run();
+//		
+// 		System.out.println("test implications prop5");
+// 		Quickcheck.make().forAll(enumList, enumInt, prop5).run();
 
 	 	System.out.println("test prop3 bis");
-        Quickcheck.make().forAll(enumList, enumElem, enumInt, prop3Bis).run();*/
+        Quickcheck.make().forAll(enumList, enumElem, enumInt, prop3Bis).run();
 	}
 }

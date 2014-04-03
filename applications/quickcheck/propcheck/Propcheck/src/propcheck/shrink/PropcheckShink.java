@@ -38,12 +38,13 @@ public class PropcheckShink<A> implements Shrink<A> {
 		
 		// if is not newly instantiated, init() called from setTerm
 		// then index should be 1 if there is constant
-		if (!isNewInstance && !subterms.isEmpty()) {
+		// --> not needed
+		/*if (!isNewInstance && !subterms.isEmpty()) {
 			index = 1;
 		} else {
 			index = 0;
-		}
-		
+		}*/
+		index = 0;
 		// add immediate subterms
 		addSubtermsToList(retrieveSubterms(term));
 		

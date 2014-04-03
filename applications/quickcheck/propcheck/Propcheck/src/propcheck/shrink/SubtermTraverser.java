@@ -25,26 +25,29 @@ public class SubtermTraverser<E> {
 	}
 	
 	/**
-	 * If the input term is a constant (constructor without parameters) then it will return empty list
+	 * If the input term does not have constants (constructors without parameters) then it will return empty list
+	 * 
 	 * @param term
 	 * @return
 	 */
 	public List<E> getConstants(E term) {
 		List<E> csts = new ArrayList<E>();
 		Enumeration<E> en = getEnumerationFromTerm(term);
+		
+		if (en != null) {
+			BigInteger card = en.parts().head().getCard();
+			BigInteger bigIndex = BigInteger.ZERO; 
 
-		BigInteger card = en.parts().head().getCard();
-		BigInteger bigIndex = BigInteger.ZERO; 
-
-		while (card.compareTo(bigIndex) > 0) {
-			csts.add(en.get(bigIndex));
-			bigIndex = bigIndex.add(BigInteger.ONE);
+			while (card.compareTo(bigIndex) > 0) {
+				csts.add(en.get(bigIndex));
+				bigIndex = bigIndex.add(BigInteger.ONE);
+			}
 		}
 		
 		// clear the list if the input term is a constant
-		if (csts.contains(term)) {
+		/*if (csts.contains(term)) {
 			csts.clear();
-		}
+		}*/
 		return csts;
 	}
 	
@@ -52,15 +55,20 @@ public class SubtermTraverser<E> {
 		return new ArrayList<E>(constants);
 	}
 	
-	
+	/**
+	 * Get enumeration for a term, if a term does not have an enumeration (not a tom term) then
+	 * it will return null
+	 * @param term
+	 * @return {@link Enumeration} of the term, if no enumeration found then returns null
+	 */
 	@SuppressWarnings("unchecked")
 	public Enumeration<E> getEnumerationFromTerm(E term) {
 		Enumeration<E> en = null;
 		try {
 			en = (Enumeration<E>) ShrinkTools.invokeStaticMethodFromSuperclass(term, METHOD_GET_ENUMERATION);
 		} catch (ShrinkException e) {
-			// TODO decide what to do for this exception
-			e.printStackTrace();
+			// if no enumeration found then assign en to null
+			en = null;
 		}
 		return en;
 	}

@@ -10,6 +10,7 @@ public class ShrinkRunner1<A> implements ShrinkRunner {
 
 	private A rootTerm;
 	private Property<A> property;
+	private int shrunkCount = 0;
 	
 	public ShrinkRunner1(A term, Property<A> property) {
 		this.rootTerm = term;
@@ -19,8 +20,8 @@ public class ShrinkRunner1<A> implements ShrinkRunner {
 	@Override
 	public void run() {
 		Shrink<A> shrinker = new PropcheckShink<A>(rootTerm);
-		A input = null;
-		int shrunkCount = 1;
+		A input = rootTerm;
+		A cex = input;
 		while (shrinker.hasNextSubterm()) {
 			input = shrinker.getNextshrinkedTerm();
 			try {
@@ -30,10 +31,11 @@ public class ShrinkRunner1<A> implements ShrinkRunner {
 			} catch (AssertionError error) {
 				// assign shrinker to shrink the counter example
 				shrinker.setCurrentTerm(input);
+				cex = input;
 				shrunkCount ++;
 			}
 		}
-		print(shrunkCount, input);
+		print(shrunkCount, cex);
 	}
 	
 	void print(int shrunk, A input) {
