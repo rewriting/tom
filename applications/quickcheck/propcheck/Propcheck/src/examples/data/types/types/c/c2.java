@@ -1,24 +1,24 @@
 
-package examples.lists.blist.blist.types.blist;
+package examples.data.types.types.c;
 
 
 
-public final class empty extends examples.lists.blist.blist.types.BList implements tom.library.sl.Visitable  {
+public final class c2 extends examples.data.types.types.C implements tom.library.sl.Visitable  {
   
-  private static String symbolName = "empty";
+  private static String symbolName = "c2";
 
 
-  private empty() {}
+  private c2() {}
   private static int hashCode = hashFunction();
-  private static empty gomProto = (empty) factory.build(new empty());
+  private static c2 gomProto = (c2) factory.build(new c2());
   
   /**
-   * Constructor that builds a term rooted by empty
+   * Constructor that builds a term rooted by c2
    *
-   * @return a term rooted by empty
+   * @return a term rooted by c2
    */
 
-  public static empty make() {
+  public static c2 make() {
 
     return gomProto;
 
@@ -33,7 +33,7 @@ public final class empty extends examples.lists.blist.blist.types.BList implemen
    */
   @Override
   public String symbolName() {
-    return "empty";
+    return "c2";
   }
 
   /**
@@ -54,7 +54,7 @@ public final class empty extends examples.lists.blist.blist.types.BList implemen
   public shared.SharedObject duplicate() {
     // the proto is a constant object: no need to clone it
     return this;
-    //return new empty();
+    //return new c2();
   }
 
   /**
@@ -64,7 +64,7 @@ public final class empty extends examples.lists.blist.blist.types.BList implemen
    */
   @Override
   public void toStringBuilder(java.lang.StringBuilder buffer) {
-    buffer.append("empty(");
+    buffer.append("c2(");
     
     buffer.append(")");
   }
@@ -86,7 +86,7 @@ public final class empty extends examples.lists.blist.blist.types.BList implemen
      * In case of invalid argument, throw a ClassCastException, as the java api
      * asks for it
      */
-    examples.lists.blist.blist.BListAbstractType ao = (examples.lists.blist.blist.BListAbstractType) o;
+    examples.data.types.TypesAbstractType ao = (examples.data.types.TypesAbstractType) o;
     /* return 0 for equality */
     if (ao == this) { return 0; }
     /* compare the symbols */
@@ -113,7 +113,7 @@ public final class empty extends examples.lists.blist.blist.types.BList implemen
      * In case of invalid argument, throw a ClassCastException, as the java api
      * asks for it
      */
-    examples.lists.blist.blist.BListAbstractType ao = (examples.lists.blist.blist.BListAbstractType) o;
+    examples.data.types.TypesAbstractType ao = (examples.data.types.TypesAbstractType) o;
     /* return 0 for equality */
     if (ao == this) { return 0; }
     /* use the hash values to discriminate */
@@ -143,10 +143,10 @@ public final class empty extends examples.lists.blist.blist.types.BList implemen
    * Checks if a SharedObject is equivalent to the current object
    *
    * @param obj SharedObject to test
-   * @return true if obj is a empty and its members are equal, else false
+   * @return true if obj is a c2 and its members are equal, else false
    */
   public final boolean equivalent(shared.SharedObject obj) {
-    if(obj instanceof empty) {
+    if(obj instanceof c2) {
 
       return true;
     }
@@ -154,14 +154,14 @@ public final class empty extends examples.lists.blist.blist.types.BList implemen
   }
 
 
-   //BList interface
+   //C interface
   /**
-   * Returns true if the term is rooted by the symbol empty
+   * Returns true if the term is rooted by the symbol c2
    *
-   * @return true, because this is rooted by empty
+   * @return true, because this is rooted by c2
    */
   @Override
-  public boolean isempty() {
+  public boolean isc2() {
     return true;
   }
   
@@ -184,13 +184,13 @@ public final class empty extends examples.lists.blist.blist.types.BList implemen
   }
 
   /**
-   * Apply a conversion on the ATerm contained in the String and returns a examples.lists.blist.blist.types.BList from it
+   * Apply a conversion on the ATerm contained in the String and returns a examples.data.types.types.C from it
    *
    * @param trm ATerm to convert into a Gom term
    * @param atConv ATerm Converter used to convert the ATerm
    * @return the Gom term
    */
-  public static examples.lists.blist.blist.types.BList fromTerm(aterm.ATerm trm, tom.library.utils.ATermConverter atConv) {
+  public static examples.data.types.types.C fromTerm(aterm.ATerm trm, tom.library.utils.ATermConverter atConv) {
     trm = atConv.convert(trm);
     if(trm instanceof aterm.ATermAppl) {
       aterm.ATermAppl appl = (aterm.ATermAppl) trm;
@@ -277,7 +277,7 @@ public final class empty extends examples.lists.blist.blist.types.BList implemen
     int a, b, c;
     /* Set up the internal state */
     a = 0x9e3779b9; /* the golden ratio; an arbitrary value */
-    b = (2094440766<<8);
+    b = (-1702608398<<8);
     c = getArity();
     /* -------------------------------------- handle most of the key */
     /* ------------------------------------ handle the last 11 bytes */
@@ -299,10 +299,10 @@ public final class empty extends examples.lists.blist.blist.types.BList implemen
     * function that returns functional version of the current operator
     * need for initializing the Enumerator
     */
-  public static tom.library.enumerator.F<tom.library.enumerator.Enumeration<examples.lists.blist.blist.types.BList>, tom.library.enumerator.Enumeration<examples.lists.blist.blist.types.BList>> funMake() {
-    return new tom.library.enumerator.F<tom.library.enumerator.Enumeration<examples.lists.blist.blist.types.BList>, tom.library.enumerator.Enumeration<examples.lists.blist.blist.types.BList>>() {
-      public tom.library.enumerator.Enumeration<examples.lists.blist.blist.types.BList> apply(final tom.library.enumerator.Enumeration<examples.lists.blist.blist.types.BList> e) {
-        return tom.library.enumerator.Enumeration.singleton((examples.lists.blist.blist.types.BList) make());
+  public static tom.library.enumerator.F<tom.library.enumerator.Enumeration<examples.data.types.types.C>, tom.library.enumerator.Enumeration<examples.data.types.types.C>> funMake() {
+    return new tom.library.enumerator.F<tom.library.enumerator.Enumeration<examples.data.types.types.C>, tom.library.enumerator.Enumeration<examples.data.types.types.C>>() {
+      public tom.library.enumerator.Enumeration<examples.data.types.types.C> apply(final tom.library.enumerator.Enumeration<examples.data.types.types.C> e) {
+        return tom.library.enumerator.Enumeration.singleton((examples.data.types.types.C) make());
       }
     };
   }

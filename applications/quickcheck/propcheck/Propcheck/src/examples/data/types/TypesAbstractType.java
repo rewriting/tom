@@ -1,5 +1,5 @@
 
-package examples.lists.blist.blist;
+package examples.data.types;
 
 
 /**
@@ -9,12 +9,12 @@ package examples.lists.blist.blist;
   * <tt>==</tt>.
   */
 
-public abstract class BListAbstractType implements shared.SharedObjectWithID, tom.library.sl.Visitable, Comparable  {
+public abstract class TypesAbstractType implements shared.SharedObjectWithID, tom.library.sl.Visitable, Comparable  {
   /**
    * Sole constructor.  (For invocation by subclass
    * constructors, typically implicit.)
    */
-  protected BListAbstractType() {}
+  protected TypesAbstractType() {}
 
 
 

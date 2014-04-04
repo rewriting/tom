@@ -1,0 +1,13 @@
+module examples.data.Types
+imports int
+abstract syntax
+ 	  
+A = a1() | a2() | a3() 
+	| foo(b:B) 
+	| hoo(a:A,v:int)
+	
+B = b1() | b2() | b3() 
+	| goo(a:A)
+	
+C = c1() | c2() | c3()
+	| coo(a:A, b:B, c:C, aa:A)

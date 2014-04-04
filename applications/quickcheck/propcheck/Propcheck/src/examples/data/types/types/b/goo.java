@@ -1,43 +1,40 @@
 
-package examples.lists.blist.blist.types.blist;
+package examples.data.types.types.b;
 
 
 
-public final class con extends examples.lists.blist.blist.types.BList implements tom.library.sl.Visitable  {
+public final class goo extends examples.data.types.types.B implements tom.library.sl.Visitable  {
   
-  private static String symbolName = "con";
+  private static String symbolName = "goo";
 
 
-  private con() {}
+  private goo() {}
   private int hashCode;
-  private static con gomProto = new con();
-    private examples.lists.blist.blist.types.Elem _head;
-  private examples.lists.blist.blist.types.BList _tail;
+  private static goo gomProto = new goo();
+    private examples.data.types.types.A _a;
 
   /**
-   * Constructor that builds a term rooted by con
+   * Constructor that builds a term rooted by goo
    *
-   * @return a term rooted by con
+   * @return a term rooted by goo
    */
 
-  public static con make(examples.lists.blist.blist.types.Elem _head, examples.lists.blist.blist.types.BList _tail) {
+  public static goo make(examples.data.types.types.A _a) {
 
     // use the proto as a model
-    gomProto.initHashCode( _head,  _tail);
-    return (con) factory.build(gomProto);
+    gomProto.initHashCode( _a);
+    return (goo) factory.build(gomProto);
 
   }
 
   /**
    * Initializes attributes and hashcode of the class
    *
-   * @param  _head
-   * @param _tail
-   * @param hashCode hashCode of con
+   * @param  _a
+   * @param hashCode hashCode of goo
    */
-  private void init(examples.lists.blist.blist.types.Elem _head, examples.lists.blist.blist.types.BList _tail, int hashCode) {
-    this._head = _head;
-    this._tail = _tail;
+  private void init(examples.data.types.types.A _a, int hashCode) {
+    this._a = _a;
 
     this.hashCode = hashCode;
   }
@@ -45,12 +42,10 @@ public final class con extends examples.lists.blist.blist.types.BList implements
   /**
    * Initializes attributes and hashcode of the class
    *
-   * @param  _head
-   * @param _tail
+   * @param  _a
    */
-  private void initHashCode(examples.lists.blist.blist.types.Elem _head, examples.lists.blist.blist.types.BList _tail) {
-    this._head = _head;
-    this._tail = _tail;
+  private void initHashCode(examples.data.types.types.A _a) {
+    this._a = _a;
 
     this.hashCode = hashFunction();
   }
@@ -64,7 +59,7 @@ public final class con extends examples.lists.blist.blist.types.BList implements
    */
   @Override
   public String symbolName() {
-    return "con";
+    return "goo";
   }
 
   /**
@@ -73,7 +68,7 @@ public final class con extends examples.lists.blist.blist.types.BList implements
    * @return the arity of the symbol
    */
   private int getArity() {
-    return 2;
+    return 1;
   }
 
   /**
@@ -82,8 +77,8 @@ public final class con extends examples.lists.blist.blist.types.BList implements
    * @return a clone of the SharedObject
    */
   public shared.SharedObject duplicate() {
-    con clone = new con();
-    clone.init( _head,  _tail, hashCode);
+    goo clone = new goo();
+    clone.init( _a, hashCode);
     return clone;
   }
   
@@ -94,10 +89,8 @@ public final class con extends examples.lists.blist.blist.types.BList implements
    */
   @Override
   public void toStringBuilder(java.lang.StringBuilder buffer) {
-    buffer.append("con(");
-    _head.toStringBuilder(buffer);
-buffer.append(",");
-    _tail.toStringBuilder(buffer);
+    buffer.append("goo(");
+    _a.toStringBuilder(buffer);
 
     buffer.append(")");
   }
@@ -119,22 +112,17 @@ buffer.append(",");
      * In case of invalid argument, throw a ClassCastException, as the java api
      * asks for it
      */
-    examples.lists.blist.blist.BListAbstractType ao = (examples.lists.blist.blist.BListAbstractType) o;
+    examples.data.types.TypesAbstractType ao = (examples.data.types.TypesAbstractType) o;
     /* return 0 for equality */
     if (ao == this) { return 0; }
     /* compare the symbols */
     int symbCmp = this.symbolName().compareTo(ao.symbolName());
     if (symbCmp != 0) { return symbCmp; }
     /* compare the children */
-    con tco = (con) ao;
-    int _headCmp = (this._head).compareToLPO(tco._head);
-    if(_headCmp != 0) {
-      return _headCmp;
-    }
-
-    int _tailCmp = (this._tail).compareToLPO(tco._tail);
-    if(_tailCmp != 0) {
-      return _tailCmp;
+    goo tco = (goo) ao;
+    int _aCmp = (this._a).compareToLPO(tco._a);
+    if(_aCmp != 0) {
+      return _aCmp;
     }
 
     throw new RuntimeException("Unable to compare");
@@ -156,7 +144,7 @@ buffer.append(",");
      * In case of invalid argument, throw a ClassCastException, as the java api
      * asks for it
      */
-    examples.lists.blist.blist.BListAbstractType ao = (examples.lists.blist.blist.BListAbstractType) o;
+    examples.data.types.TypesAbstractType ao = (examples.data.types.TypesAbstractType) o;
     /* return 0 for equality */
     if (ao == this) { return 0; }
     /* use the hash values to discriminate */
@@ -167,15 +155,10 @@ buffer.append(",");
     int symbCmp = this.symbolName().compareTo(ao.symbolName());
     if (symbCmp != 0) { return symbCmp; }
     /* last resort: compare the children */
-    con tco = (con) ao;
-    int _headCmp = (this._head).compareTo(tco._head);
-    if(_headCmp != 0) {
-      return _headCmp;
-    }
-
-    int _tailCmp = (this._tail).compareTo(tco._tail);
-    if(_tailCmp != 0) {
-      return _tailCmp;
+    goo tco = (goo) ao;
+    int _aCmp = (this._a).compareTo(tco._a);
+    if(_aCmp != 0) {
+      return _aCmp;
     }
 
     throw new RuntimeException("Unable to compare");
@@ -196,69 +179,48 @@ buffer.append(",");
    * Checks if a SharedObject is equivalent to the current object
    *
    * @param obj SharedObject to test
-   * @return true if obj is a con and its members are equal, else false
+   * @return true if obj is a goo and its members are equal, else false
    */
   public final boolean equivalent(shared.SharedObject obj) {
-    if(obj instanceof con) {
+    if(obj instanceof goo) {
 
-      con peer = (con) obj;
-      return _head==peer._head && _tail==peer._tail && true;
+      goo peer = (goo) obj;
+      return _a==peer._a && true;
     }
     return false;
   }
 
 
-   //BList interface
+   //B interface
   /**
-   * Returns true if the term is rooted by the symbol con
+   * Returns true if the term is rooted by the symbol goo
    *
-   * @return true, because this is rooted by con
+   * @return true, because this is rooted by goo
    */
   @Override
-  public boolean iscon() {
+  public boolean isgoo() {
     return true;
   }
   
   /**
-   * Returns the attribute examples.lists.blist.blist.types.Elem
+   * Returns the attribute examples.data.types.types.A
    *
-   * @return the attribute examples.lists.blist.blist.types.Elem
+   * @return the attribute examples.data.types.types.A
    */
   @Override
-  public examples.lists.blist.blist.types.Elem gethead() {
-    return _head;
+  public examples.data.types.types.A geta() {
+    return _a;
   }
 
   /**
-   * Sets and returns the attribute examples.lists.blist.blist.types.BList
+   * Sets and returns the attribute examples.data.types.types.B
    *
    * @param set_arg the argument to set
-   * @return the attribute examples.lists.blist.blist.types.Elem which just has been set
+   * @return the attribute examples.data.types.types.A which just has been set
    */
   @Override
-  public examples.lists.blist.blist.types.BList sethead(examples.lists.blist.blist.types.Elem set_arg) {
-    return make(set_arg, _tail);
-  }
-  
-  /**
-   * Returns the attribute examples.lists.blist.blist.types.BList
-   *
-   * @return the attribute examples.lists.blist.blist.types.BList
-   */
-  @Override
-  public examples.lists.blist.blist.types.BList gettail() {
-    return _tail;
-  }
-
-  /**
-   * Sets and returns the attribute examples.lists.blist.blist.types.BList
-   *
-   * @param set_arg the argument to set
-   * @return the attribute examples.lists.blist.blist.types.BList which just has been set
-   */
-  @Override
-  public examples.lists.blist.blist.types.BList settail(examples.lists.blist.blist.types.BList set_arg) {
-    return make(_head, set_arg);
+  public examples.data.types.types.B seta(examples.data.types.types.A set_arg) {
+    return make(set_arg);
   }
   
   /* AbstractType */
@@ -276,23 +238,23 @@ buffer.append(",");
     }
     return atermFactory.makeAppl(
       atermFactory.makeAFun(symbolName(),getArity(),false),
-      new aterm.ATerm[] {gethead().toATerm(), gettail().toATerm()});
+      new aterm.ATerm[] {geta().toATerm()});
   }
 
   /**
-   * Apply a conversion on the ATerm contained in the String and returns a examples.lists.blist.blist.types.BList from it
+   * Apply a conversion on the ATerm contained in the String and returns a examples.data.types.types.B from it
    *
    * @param trm ATerm to convert into a Gom term
    * @param atConv ATerm Converter used to convert the ATerm
    * @return the Gom term
    */
-  public static examples.lists.blist.blist.types.BList fromTerm(aterm.ATerm trm, tom.library.utils.ATermConverter atConv) {
+  public static examples.data.types.types.B fromTerm(aterm.ATerm trm, tom.library.utils.ATermConverter atConv) {
     trm = atConv.convert(trm);
     if(trm instanceof aterm.ATermAppl) {
       aterm.ATermAppl appl = (aterm.ATermAppl) trm;
       if(symbolName.equals(appl.getName()) && !appl.getAFun().isQuoted()) {
         return make(
-examples.lists.blist.blist.types.Elem.fromTerm(appl.getArgument(0),atConv), examples.lists.blist.blist.types.BList.fromTerm(appl.getArgument(1),atConv)
+examples.data.types.types.A.fromTerm(appl.getArgument(0),atConv)
         );
       }
     }
@@ -306,7 +268,7 @@ examples.lists.blist.blist.types.Elem.fromTerm(appl.getArgument(0),atConv), exam
    * @return the number of children of the term
    */
   public int getChildCount() {
-    return 2;
+    return 1;
   }
 
   /**
@@ -319,8 +281,7 @@ examples.lists.blist.blist.types.Elem.fromTerm(appl.getArgument(0),atConv), exam
    */
   public tom.library.sl.Visitable getChildAt(int index) {
         switch(index) {
-      case 0: return _head;
-      case 1: return _tail;
+      case 0: return _a;
       default: throw new IndexOutOfBoundsException();
  }
  }
@@ -336,8 +297,7 @@ examples.lists.blist.blist.types.Elem.fromTerm(appl.getArgument(0),atConv), exam
    */
   public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable v) {
         switch(index) {
-      case 0: return make((examples.lists.blist.blist.types.Elem) v, _tail);
-      case 1: return make(_head, (examples.lists.blist.blist.types.BList) v);
+      case 0: return make((examples.data.types.types.A) v);
       default: throw new IndexOutOfBoundsException();
  }
   }
@@ -347,12 +307,12 @@ examples.lists.blist.blist.types.Elem.fromTerm(appl.getArgument(0),atConv), exam
    *
    * @param children array of children to set
    * @return an array of children which just were set
-   * @throws IndexOutOfBoundsException if length of "children" is different than 2
+   * @throws IndexOutOfBoundsException if length of "children" is different than 1
    */
   @SuppressWarnings("unchecked")
   public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {
-    if (children.length == getChildCount()  && children[0] instanceof examples.lists.blist.blist.types.Elem && children[1] instanceof examples.lists.blist.blist.types.BList) {
-      return make((examples.lists.blist.blist.types.Elem) children[0], (examples.lists.blist.blist.types.BList) children[1]);
+    if (children.length == getChildCount()  && children[0] instanceof examples.data.types.types.A) {
+      return make((examples.data.types.types.A) children[0]);
     } else {
       throw new IndexOutOfBoundsException();
     }
@@ -364,7 +324,7 @@ examples.lists.blist.blist.types.Elem.fromTerm(appl.getArgument(0),atConv), exam
    * @return the children of the term
    */
   public tom.library.sl.Visitable[] getChildren() {
-    return new tom.library.sl.Visitable[] { _head,  _tail};
+    return new tom.library.sl.Visitable[] { _a};
   }
 
     /**
@@ -377,12 +337,11 @@ examples.lists.blist.blist.types.Elem.fromTerm(appl.getArgument(0),atConv), exam
     int a, b, c;
     /* Set up the internal state */
     a = 0x9e3779b9; /* the golden ratio; an arbitrary value */
-    b = (-1677847396<<8);
+    b = (-349854183<<8);
     c = getArity();
     /* -------------------------------------- handle most of the key */
     /* ------------------------------------ handle the last 11 bytes */
-    a += (_head.hashCode() << 8);
-    a += (_tail.hashCode());
+    a += (_a.hashCode());
 
     a -= b; a -= c; a ^= (c >> 13);
     b -= c; b -= a; b ^= (a << 8);
@@ -401,26 +360,16 @@ examples.lists.blist.blist.types.Elem.fromTerm(appl.getArgument(0),atConv), exam
     * function that returns functional version of the current operator
     * need for initializing the Enumerator
     */
-  public static tom.library.enumerator.F<tom.library.enumerator.Enumeration<examples.lists.blist.blist.types.Elem>,tom.library.enumerator.F<tom.library.enumerator.Enumeration<examples.lists.blist.blist.types.BList>,tom.library.enumerator.Enumeration<examples.lists.blist.blist.types.BList>>> funMake() {
+  public static tom.library.enumerator.F<tom.library.enumerator.Enumeration<examples.data.types.types.A>,tom.library.enumerator.Enumeration<examples.data.types.types.B>> funMake() {
     return 
-        new tom.library.enumerator.F<tom.library.enumerator.Enumeration<examples.lists.blist.blist.types.Elem>,tom.library.enumerator.F<tom.library.enumerator.Enumeration<examples.lists.blist.blist.types.BList>,tom.library.enumerator.Enumeration<examples.lists.blist.blist.types.BList>>>() {
-          public tom.library.enumerator.F<tom.library.enumerator.Enumeration<examples.lists.blist.blist.types.BList>,tom.library.enumerator.Enumeration<examples.lists.blist.blist.types.BList>> apply(final tom.library.enumerator.Enumeration<examples.lists.blist.blist.types.Elem> t1) {
-            return 
-        new tom.library.enumerator.F<tom.library.enumerator.Enumeration<examples.lists.blist.blist.types.BList>,tom.library.enumerator.Enumeration<examples.lists.blist.blist.types.BList>>() {
-          public tom.library.enumerator.Enumeration<examples.lists.blist.blist.types.BList> apply(final tom.library.enumerator.Enumeration<examples.lists.blist.blist.types.BList> t2) {
-            return tom.library.enumerator.Enumeration.apply(tom.library.enumerator.Enumeration.apply(tom.library.enumerator.Enumeration.singleton((tom.library.enumerator.F<examples.lists.blist.blist.types.Elem,tom.library.enumerator.F<examples.lists.blist.blist.types.BList,examples.lists.blist.blist.types.BList>>) 
-        new tom.library.enumerator.F<examples.lists.blist.blist.types.Elem,tom.library.enumerator.F<examples.lists.blist.blist.types.BList,examples.lists.blist.blist.types.BList>>() {
-          public tom.library.enumerator.F<examples.lists.blist.blist.types.BList,examples.lists.blist.blist.types.BList> apply(final examples.lists.blist.blist.types.Elem t1) {
-            return 
-        new tom.library.enumerator.F<examples.lists.blist.blist.types.BList,examples.lists.blist.blist.types.BList>() {
-          public examples.lists.blist.blist.types.BList apply(final examples.lists.blist.blist.types.BList t2) {
-            return make(t1,t2);
+        new tom.library.enumerator.F<tom.library.enumerator.Enumeration<examples.data.types.types.A>,tom.library.enumerator.Enumeration<examples.data.types.types.B>>() {
+          public tom.library.enumerator.Enumeration<examples.data.types.types.B> apply(final tom.library.enumerator.Enumeration<examples.data.types.types.A> t1) {
+            return tom.library.enumerator.Enumeration.apply(tom.library.enumerator.Enumeration.singleton((tom.library.enumerator.F<examples.data.types.types.A,examples.data.types.types.B>) 
+        new tom.library.enumerator.F<examples.data.types.types.A,examples.data.types.types.B>() {
+          public examples.data.types.types.B apply(final examples.data.types.types.A t1) {
+            return make(t1);
           }
-        };
-          }
-        }),t1),t2).pay();
-          }
-        };
+        }),t1).pay();
           }
         };
   }

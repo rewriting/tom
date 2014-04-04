@@ -1,40 +1,43 @@
 
-package examples.lists.blist.blist.types.elem;
+package examples.data.types.types.a;
 
 
 
-public final class cs extends examples.lists.blist.blist.types.Elem implements tom.library.sl.Visitable  {
+public final class hoo extends examples.data.types.types.A implements tom.library.sl.Visitable  {
   
-  private static String symbolName = "cs";
+  private static String symbolName = "hoo";
 
 
-  private cs() {}
+  private hoo() {}
   private int hashCode;
-  private static cs gomProto = new cs();
-    private int _i;
+  private static hoo gomProto = new hoo();
+    private examples.data.types.types.A _a;
+  private int _v;
 
   /**
-   * Constructor that builds a term rooted by cs
+   * Constructor that builds a term rooted by hoo
    *
-   * @return a term rooted by cs
+   * @return a term rooted by hoo
    */
 
-  public static cs make(int _i) {
+  public static hoo make(examples.data.types.types.A _a, int _v) {
 
     // use the proto as a model
-    gomProto.initHashCode( _i);
-    return (cs) factory.build(gomProto);
+    gomProto.initHashCode( _a,  _v);
+    return (hoo) factory.build(gomProto);
 
   }
 
   /**
    * Initializes attributes and hashcode of the class
    *
-   * @param  _i
-   * @param hashCode hashCode of cs
+   * @param  _a
+   * @param _v
+   * @param hashCode hashCode of hoo
    */
-  private void init(int _i, int hashCode) {
-    this._i = _i;
+  private void init(examples.data.types.types.A _a, int _v, int hashCode) {
+    this._a = _a;
+    this._v = _v;
 
     this.hashCode = hashCode;
   }
@@ -42,10 +45,12 @@ public final class cs extends examples.lists.blist.blist.types.Elem implements t
   /**
    * Initializes attributes and hashcode of the class
    *
-   * @param  _i
+   * @param  _a
+   * @param _v
    */
-  private void initHashCode(int _i) {
-    this._i = _i;
+  private void initHashCode(examples.data.types.types.A _a, int _v) {
+    this._a = _a;
+    this._v = _v;
 
     this.hashCode = hashFunction();
   }
@@ -59,7 +64,7 @@ public final class cs extends examples.lists.blist.blist.types.Elem implements t
    */
   @Override
   public String symbolName() {
-    return "cs";
+    return "hoo";
   }
 
   /**
@@ -68,7 +73,7 @@ public final class cs extends examples.lists.blist.blist.types.Elem implements t
    * @return the arity of the symbol
    */
   private int getArity() {
-    return 1;
+    return 2;
   }
 
   /**
@@ -77,8 +82,8 @@ public final class cs extends examples.lists.blist.blist.types.Elem implements t
    * @return a clone of the SharedObject
    */
   public shared.SharedObject duplicate() {
-    cs clone = new cs();
-    clone.init( _i, hashCode);
+    hoo clone = new hoo();
+    clone.init( _a,  _v, hashCode);
     return clone;
   }
   
@@ -89,8 +94,10 @@ public final class cs extends examples.lists.blist.blist.types.Elem implements t
    */
   @Override
   public void toStringBuilder(java.lang.StringBuilder buffer) {
-    buffer.append("cs(");
-    buffer.append(_i);
+    buffer.append("hoo(");
+    _a.toStringBuilder(buffer);
+buffer.append(",");
+    buffer.append(_v);
 
     buffer.append(")");
   }
@@ -112,16 +119,21 @@ public final class cs extends examples.lists.blist.blist.types.Elem implements t
      * In case of invalid argument, throw a ClassCastException, as the java api
      * asks for it
      */
-    examples.lists.blist.blist.BListAbstractType ao = (examples.lists.blist.blist.BListAbstractType) o;
+    examples.data.types.TypesAbstractType ao = (examples.data.types.TypesAbstractType) o;
     /* return 0 for equality */
     if (ao == this) { return 0; }
     /* compare the symbols */
     int symbCmp = this.symbolName().compareTo(ao.symbolName());
     if (symbCmp != 0) { return symbCmp; }
     /* compare the children */
-    cs tco = (cs) ao;
-    if( this._i != tco._i) {
-      return (this._i < tco._i)?-1:1;
+    hoo tco = (hoo) ao;
+    int _aCmp = (this._a).compareToLPO(tco._a);
+    if(_aCmp != 0) {
+      return _aCmp;
+    }
+
+    if( this._v != tco._v) {
+      return (this._v < tco._v)?-1:1;
     }
 
     throw new RuntimeException("Unable to compare");
@@ -143,7 +155,7 @@ public final class cs extends examples.lists.blist.blist.types.Elem implements t
      * In case of invalid argument, throw a ClassCastException, as the java api
      * asks for it
      */
-    examples.lists.blist.blist.BListAbstractType ao = (examples.lists.blist.blist.BListAbstractType) o;
+    examples.data.types.TypesAbstractType ao = (examples.data.types.TypesAbstractType) o;
     /* return 0 for equality */
     if (ao == this) { return 0; }
     /* use the hash values to discriminate */
@@ -154,9 +166,14 @@ public final class cs extends examples.lists.blist.blist.types.Elem implements t
     int symbCmp = this.symbolName().compareTo(ao.symbolName());
     if (symbCmp != 0) { return symbCmp; }
     /* last resort: compare the children */
-    cs tco = (cs) ao;
-    if( this._i != tco._i) {
-      return (this._i < tco._i)?-1:1;
+    hoo tco = (hoo) ao;
+    int _aCmp = (this._a).compareTo(tco._a);
+    if(_aCmp != 0) {
+      return _aCmp;
+    }
+
+    if( this._v != tco._v) {
+      return (this._v < tco._v)?-1:1;
     }
 
     throw new RuntimeException("Unable to compare");
@@ -177,27 +194,48 @@ public final class cs extends examples.lists.blist.blist.types.Elem implements t
    * Checks if a SharedObject is equivalent to the current object
    *
    * @param obj SharedObject to test
-   * @return true if obj is a cs and its members are equal, else false
+   * @return true if obj is a hoo and its members are equal, else false
    */
   public final boolean equivalent(shared.SharedObject obj) {
-    if(obj instanceof cs) {
+    if(obj instanceof hoo) {
 
-      cs peer = (cs) obj;
-      return _i==peer._i && true;
+      hoo peer = (hoo) obj;
+      return _a==peer._a && _v==peer._v && true;
     }
     return false;
   }
 
 
-   //Elem interface
+   //A interface
   /**
-   * Returns true if the term is rooted by the symbol cs
+   * Returns true if the term is rooted by the symbol hoo
    *
-   * @return true, because this is rooted by cs
+   * @return true, because this is rooted by hoo
    */
   @Override
-  public boolean iscs() {
+  public boolean ishoo() {
     return true;
+  }
+  
+  /**
+   * Returns the attribute examples.data.types.types.A
+   *
+   * @return the attribute examples.data.types.types.A
+   */
+  @Override
+  public examples.data.types.types.A geta() {
+    return _a;
+  }
+
+  /**
+   * Sets and returns the attribute examples.data.types.types.A
+   *
+   * @param set_arg the argument to set
+   * @return the attribute examples.data.types.types.A which just has been set
+   */
+  @Override
+  public examples.data.types.types.A seta(examples.data.types.types.A set_arg) {
+    return make(set_arg, _v);
   }
   
   /**
@@ -206,19 +244,19 @@ public final class cs extends examples.lists.blist.blist.types.Elem implements t
    * @return the attribute int
    */
   @Override
-  public int geti() {
-    return _i;
+  public int getv() {
+    return _v;
   }
 
   /**
-   * Sets and returns the attribute examples.lists.blist.blist.types.Elem
+   * Sets and returns the attribute examples.data.types.types.A
    *
    * @param set_arg the argument to set
    * @return the attribute int which just has been set
    */
   @Override
-  public examples.lists.blist.blist.types.Elem seti(int set_arg) {
-    return make(set_arg);
+  public examples.data.types.types.A setv(int set_arg) {
+    return make(_a, set_arg);
   }
   
   /* AbstractType */
@@ -236,23 +274,23 @@ public final class cs extends examples.lists.blist.blist.types.Elem implements t
     }
     return atermFactory.makeAppl(
       atermFactory.makeAFun(symbolName(),getArity(),false),
-      new aterm.ATerm[] {(aterm.ATerm) atermFactory.makeInt(geti())});
+      new aterm.ATerm[] {geta().toATerm(), (aterm.ATerm) atermFactory.makeInt(getv())});
   }
 
   /**
-   * Apply a conversion on the ATerm contained in the String and returns a examples.lists.blist.blist.types.Elem from it
+   * Apply a conversion on the ATerm contained in the String and returns a examples.data.types.types.A from it
    *
    * @param trm ATerm to convert into a Gom term
    * @param atConv ATerm Converter used to convert the ATerm
    * @return the Gom term
    */
-  public static examples.lists.blist.blist.types.Elem fromTerm(aterm.ATerm trm, tom.library.utils.ATermConverter atConv) {
+  public static examples.data.types.types.A fromTerm(aterm.ATerm trm, tom.library.utils.ATermConverter atConv) {
     trm = atConv.convert(trm);
     if(trm instanceof aterm.ATermAppl) {
       aterm.ATermAppl appl = (aterm.ATermAppl) trm;
       if(symbolName.equals(appl.getName()) && !appl.getAFun().isQuoted()) {
         return make(
-convertATermToInt(appl.getArgument(0), atConv)
+examples.data.types.types.A.fromTerm(appl.getArgument(0),atConv), convertATermToInt(appl.getArgument(1), atConv)
         );
       }
     }
@@ -266,7 +304,7 @@ convertATermToInt(appl.getArgument(0), atConv)
    * @return the number of children of the term
    */
   public int getChildCount() {
-    return 1;
+    return 2;
   }
 
   /**
@@ -279,7 +317,8 @@ convertATermToInt(appl.getArgument(0), atConv)
    */
   public tom.library.sl.Visitable getChildAt(int index) {
         switch(index) {
-      case 0: return new tom.library.sl.VisitableBuiltin<java.lang.Integer>(_i);
+      case 0: return _a;
+      case 1: return new tom.library.sl.VisitableBuiltin<java.lang.Integer>(_v);
       default: throw new IndexOutOfBoundsException();
  }
  }
@@ -295,7 +334,8 @@ convertATermToInt(appl.getArgument(0), atConv)
    */
   public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable v) {
         switch(index) {
-      case 0: return make(geti());
+      case 0: return make((examples.data.types.types.A) v, getv());
+      case 1: return make(_a, getv());
       default: throw new IndexOutOfBoundsException();
  }
   }
@@ -305,12 +345,12 @@ convertATermToInt(appl.getArgument(0), atConv)
    *
    * @param children array of children to set
    * @return an array of children which just were set
-   * @throws IndexOutOfBoundsException if length of "children" is different than 1
+   * @throws IndexOutOfBoundsException if length of "children" is different than 2
    */
   @SuppressWarnings("unchecked")
   public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {
-    if (children.length == getChildCount()  && children[0] instanceof tom.library.sl.VisitableBuiltin) {
-      return make(((tom.library.sl.VisitableBuiltin<java.lang.Integer>)children[0]).getBuiltin());
+    if (children.length == getChildCount()  && children[0] instanceof examples.data.types.types.A && children[1] instanceof tom.library.sl.VisitableBuiltin) {
+      return make((examples.data.types.types.A) children[0], ((tom.library.sl.VisitableBuiltin<java.lang.Integer>)children[1]).getBuiltin());
     } else {
       throw new IndexOutOfBoundsException();
     }
@@ -322,7 +362,7 @@ convertATermToInt(appl.getArgument(0), atConv)
    * @return the children of the term
    */
   public tom.library.sl.Visitable[] getChildren() {
-    return new tom.library.sl.Visitable[] { new tom.library.sl.VisitableBuiltin<java.lang.Integer>(_i)};
+    return new tom.library.sl.Visitable[] { _a,  new tom.library.sl.VisitableBuiltin<java.lang.Integer>(_v)};
   }
 
     /**
@@ -335,11 +375,12 @@ convertATermToInt(appl.getArgument(0), atConv)
     int a, b, c;
     /* Set up the internal state */
     a = 0x9e3779b9; /* the golden ratio; an arbitrary value */
-    b = (-741035578<<8);
+    b = (-485632650<<8);
     c = getArity();
     /* -------------------------------------- handle most of the key */
     /* ------------------------------------ handle the last 11 bytes */
-    a += (_i);
+    a += (_a.hashCode() << 8);
+    a += (_v);
 
     a -= b; a -= c; a ^= (c >> 13);
     b -= c; b -= a; b ^= (a << 8);
@@ -358,16 +399,26 @@ convertATermToInt(appl.getArgument(0), atConv)
     * function that returns functional version of the current operator
     * need for initializing the Enumerator
     */
-  public static tom.library.enumerator.F<tom.library.enumerator.Enumeration<java.lang.Integer>,tom.library.enumerator.Enumeration<examples.lists.blist.blist.types.Elem>> funMake() {
+  public static tom.library.enumerator.F<tom.library.enumerator.Enumeration<examples.data.types.types.A>,tom.library.enumerator.F<tom.library.enumerator.Enumeration<java.lang.Integer>,tom.library.enumerator.Enumeration<examples.data.types.types.A>>> funMake() {
     return 
-        new tom.library.enumerator.F<tom.library.enumerator.Enumeration<java.lang.Integer>,tom.library.enumerator.Enumeration<examples.lists.blist.blist.types.Elem>>() {
-          public tom.library.enumerator.Enumeration<examples.lists.blist.blist.types.Elem> apply(final tom.library.enumerator.Enumeration<java.lang.Integer> t1) {
-            return tom.library.enumerator.Enumeration.apply(tom.library.enumerator.Enumeration.singleton((tom.library.enumerator.F<java.lang.Integer,examples.lists.blist.blist.types.Elem>) 
-        new tom.library.enumerator.F<java.lang.Integer,examples.lists.blist.blist.types.Elem>() {
-          public examples.lists.blist.blist.types.Elem apply(final java.lang.Integer t1) {
-            return make(java.lang.Integer.valueOf(t1));
+        new tom.library.enumerator.F<tom.library.enumerator.Enumeration<examples.data.types.types.A>,tom.library.enumerator.F<tom.library.enumerator.Enumeration<java.lang.Integer>,tom.library.enumerator.Enumeration<examples.data.types.types.A>>>() {
+          public tom.library.enumerator.F<tom.library.enumerator.Enumeration<java.lang.Integer>,tom.library.enumerator.Enumeration<examples.data.types.types.A>> apply(final tom.library.enumerator.Enumeration<examples.data.types.types.A> t1) {
+            return 
+        new tom.library.enumerator.F<tom.library.enumerator.Enumeration<java.lang.Integer>,tom.library.enumerator.Enumeration<examples.data.types.types.A>>() {
+          public tom.library.enumerator.Enumeration<examples.data.types.types.A> apply(final tom.library.enumerator.Enumeration<java.lang.Integer> t2) {
+            return tom.library.enumerator.Enumeration.apply(tom.library.enumerator.Enumeration.apply(tom.library.enumerator.Enumeration.singleton((tom.library.enumerator.F<examples.data.types.types.A,tom.library.enumerator.F<java.lang.Integer,examples.data.types.types.A>>) 
+        new tom.library.enumerator.F<examples.data.types.types.A,tom.library.enumerator.F<java.lang.Integer,examples.data.types.types.A>>() {
+          public tom.library.enumerator.F<java.lang.Integer,examples.data.types.types.A> apply(final examples.data.types.types.A t1) {
+            return 
+        new tom.library.enumerator.F<java.lang.Integer,examples.data.types.types.A>() {
+          public examples.data.types.types.A apply(final java.lang.Integer t2) {
+            return make(t1,java.lang.Integer.valueOf(t2));
           }
-        }),t1).pay();
+        };
+          }
+        }),t1),t2).pay();
+          }
+        };
           }
         };
   }
