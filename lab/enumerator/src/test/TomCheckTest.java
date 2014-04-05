@@ -8,9 +8,12 @@ import org.junit.runner.RunWith;
 import tom.library.enumerator.Combinators;
 import tom.library.enumerator.Enumeration;
 import tom.library.theory.Enum;
+import tom.library.theory.ExhaustiveCheck;
 import tom.library.theory.ExhaustiveForAll;
+import tom.library.theory.RandomCheck;
 import tom.library.theory.RandomForAll;
 import tom.library.theory.TomCheck;
+import tom.library.theory.TomForAll;
 import examples.data.treenat.Fork;
 import examples.data.treenat.Leaf;
 import examples.data.treenat.Nat;
@@ -39,6 +42,16 @@ public class TomCheckTest {
 	}
 
 	@Theory
+	public void testTom1(@TomForAll @RandomCheck(sampleSize = 10) Tree<Nat> t) {
+		System.out.println(t);
+	}
+
+	@Theory
+	public void testTom2(@TomForAll @ExhaustiveCheck(maxDepth = 10) Tree<Nat> t) {
+		System.out.println(t);
+	}
+	
+	@Theory
 	public void testPlusOne1(@ExhaustiveForAll(maxDepth = 20) Tree<Nat> t) {
 		// just test if the size is preserved by plusOne
 		System.out.println(t);
@@ -62,5 +75,7 @@ public class TomCheckTest {
 			@RandomForAll(sampleSize = 5) Integer i) {
 		System.out.println(s + " " + i);
 	}
+
+
 
 }

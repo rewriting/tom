@@ -8,23 +8,19 @@ import java.lang.annotation.Target;
 
 import org.junit.contrib.theories.ParametersSuppliedBy;
 
-
 // CHANTIER
-public class TomForAll {
 
-	
-	/**
-	 * Mark a parameter of a {@link org.junit.contrib.theories.Theory Theory} method with this annotation to have
-	 * generated values supplied to it exhaustively as in SmallCheck.
-	 */
+/**
+ * Mark a parameter of a {@link org.junit.contrib.theories.Theory Theory} method
+ * with this annotation to have generated values supplied to it exhaustively as
+ * in SmallCheck.
+ */
 
-	@ParametersSuppliedBy(TomValueSupplier.class)
-	@Target(PARAMETER)
-	@Retention(RUNTIME)
+@ParametersSuppliedBy(TomValueSupplier.class)
+@Target(PARAMETER)
+@Retention(RUNTIME)
+public @interface TomForAll {
 
-	public @interface ExhaustiveForAll {
+	public int sampleSize() default 100;
 
-		public int 	maxDepth() default 100;
-		
-	}
 }
