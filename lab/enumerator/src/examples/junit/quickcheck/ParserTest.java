@@ -19,7 +19,7 @@ public class ParserTest {
 //	}
 
 	@Theory
-	public void testExp(@ForAll(sampleSize = 10) @From({ ExpGenerator.class }) Exp n) {
+	public void testExp(@ForAll(sampleSize = 10000) @From({ ExpGenerator.class }) Exp n) {
 		System.out.println("Exp: " + n);
 	}
 	
