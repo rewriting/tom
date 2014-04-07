@@ -1,0 +1,11 @@
+module examples.queues.Queue
+imports int
+abstract syntax
+
+  Queue = empty()
+        | add(e:Elem, q:Queue)
+        | remove(q:Queue)
+
+  Elem = val(v:int)
+       | top(q:Queue)
+
