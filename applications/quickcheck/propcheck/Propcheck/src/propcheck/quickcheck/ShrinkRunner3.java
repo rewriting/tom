@@ -4,7 +4,7 @@ import propcheck.assertion.NotTestedSkip;
 import propcheck.property.Property;
 import propcheck.property.Property2;
 import propcheck.property.Property3;
-import propcheck.shrink.PropcheckShink;
+import propcheck.shrink.PropcheckShrink;
 import propcheck.shrink.Shrink;
 import propcheck.tools.SimpleLogger;
 
@@ -25,9 +25,9 @@ public class ShrinkRunner3<A, B, C> implements ShrinkRunner {
 	
 	@Override
 	public void run() {
-		Shrink<A> shrinkerA = new PropcheckShink<A>(rootTermA);
-		Shrink<B> shrinkerB = new PropcheckShink<B>(rootTermB);
-		Shrink<C> shrinkerC = new PropcheckShink<C>(rootTermC);
+		Shrink<A> shrinkerA = new PropcheckShrink<A>(rootTermA);
+		Shrink<B> shrinkerB = new PropcheckShrink<B>(rootTermB);
+		Shrink<C> shrinkerC = new PropcheckShrink<C>(rootTermC);
 		A inputA = rootTermA;
 		B inputB = rootTermB;
 		C inputC = rootTermC;

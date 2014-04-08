@@ -9,7 +9,7 @@ import java.util.Random;
 import org.junit.Before;
 import org.junit.Test;
 
-import propcheck.shrink.PropcheckShink;
+import propcheck.shrink.PropcheckShrink;
 import examples.lists.alist.types.AList;
 import tom.library.enumerator.Enumeration;
 import tom.library.enumerator.Finite;
@@ -36,15 +36,15 @@ public class PropcheckShinkTest {
 	AList bigTerm;
 	AList constant;
 	
-	PropcheckShink<AList> classUnderTest;
-	PropcheckShink<AList> classUnderTest2;
+	PropcheckShrink<AList> classUnderTest;
+	PropcheckShrink<AList> classUnderTest2;
 	@Before
 	public void setUp() throws Exception {
 		bigTerm = getTerm(AList.getEnumeration(), 150);
 		smallTerm = getTerm(AList.getEnumeration(), 6);
 		constant = getTerm(AList.getEnumeration(), 1);
-		classUnderTest = new PropcheckShink<AList>(smallTerm);
-		classUnderTest2 = new PropcheckShink<AList>(bigTerm);
+		classUnderTest = new PropcheckShrink<AList>(smallTerm);
+		classUnderTest2 = new PropcheckShrink<AList>(bigTerm);
 	}
 
 	@Test

@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
-public class PropcheckShink<A> implements Shrink<A> {
+public class PropcheckShrink<A> implements Shrink<A> {
 
 	private List<A> subterms = null;
 	private Queue<Integer> indexes = null;
@@ -16,7 +16,7 @@ public class PropcheckShink<A> implements Shrink<A> {
 	private int index = 0;
 	private boolean isNewInstance = true;
 
-	public PropcheckShink(A term) {
+	public PropcheckShrink(A term) {
 		init(term);
 	}
 

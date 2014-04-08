@@ -74,16 +74,35 @@ public class SubtermTraverser<E> {
 	}
 	
 	public List<E> getSubterms(E term) {
-		Class<?> sort = term.getClass().getSuperclass();
+		/*Class<?> sort = term.getClass().getSuperclass();
 		List<E> subterms = new ArrayList<E>();
 		int childCount = getChildCount(term);
 		for (int i = 0; i < childCount; i++) {
 			E c = getChildAt(term, i); 
 			if (c.getClass().getSuperclass().equals(sort) && !isConstant(c)) {
 				subterms.add(c);
+			} else if (!isConstant(c)) {
+				// recursively retrieve subterms
+				
+			}
+		}*/
+		List<E> subterms = new ArrayList<E>();
+		Class<?> sort = term.getClass().getSuperclass();
+		getSubterm(term, subterms, sort);
+		return subterms;
+	}
+	
+	public void getSubterm(E term, List<E> terms, Class<?> sort) {
+		int childCount = getChildCount(term);
+		for (int i = 0; i < childCount; i++) {
+			E c = getChildAt(term, i); 
+			if (c.getClass().getSuperclass().equals(sort) && !isConstant(c)) {
+				terms.add(c);
+			} else if (!isConstant(c)) {
+				// recursively retrieve subterms
+				getSubterm(c, terms, sort);
 			}
 		}
-		return subterms;
 	}
 	
 	public E getChildAt(E term, int i) {

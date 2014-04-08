@@ -3,7 +3,7 @@ package propcheck.quickcheck;
 import propcheck.assertion.NotTestedSkip;
 import propcheck.generator.quickcheck.RandomGenerator1;
 import propcheck.property.Property;
-import propcheck.shrink.PropcheckShink;
+import propcheck.shrink.PropcheckShrink;
 import propcheck.shrink.Shrink;
 import tom.library.enumerator.Enumeration;
 
