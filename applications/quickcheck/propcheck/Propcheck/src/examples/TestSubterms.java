@@ -14,7 +14,7 @@ import tom.library.enumerator.LazyList;
 import tom.library.sl.Visitable;
 import examples.lists.alist.types.AList;
 import examples.lists.alist.types.Elem;
-import examples.lists.blist.blist.types.BList;
+import examples.lists.blist.types.BList;
 
 public class TestSubterms {
 	public static void main(String[] args) {
