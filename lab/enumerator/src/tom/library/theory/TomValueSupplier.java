@@ -66,14 +66,14 @@ public class TomValueSupplier extends ParameterSupplier {
 //					System.out.println("CHANGED : " + numbersamples + " samples");
 				}
 //				System.out.println("CARD for  " + i + " = " + card);
-				System.out.println("Max nb samples for  " + i + "-th part with card "+card+" = " + maxnumbersamples);
+//				System.out.println("Max nb samples for  " + i + "-th part with card "+card+" = " + maxnumbersamples);
 
 				while (!done) {
 					if (!exhaustive) {
 						j = nextRandomBigInteger(card);
 					}
 					final BigInteger jj = j;
-					System.out.println("   Select index " + jj);
+//					System.out.println("   Select index " + jj);
 					PotentialAssignment assignment = new PotentialAssignment() {
 						@Override
 						public Object getValue()
