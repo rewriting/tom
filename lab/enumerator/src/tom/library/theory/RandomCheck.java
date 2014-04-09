@@ -16,6 +16,7 @@ import java.lang.annotation.Target;
 public @interface RandomCheck {
 
 	public int sampleSize() default 10;
+	public int minSampleSize() default 0;
 	public int numberSamples() default 1;
 		
 }

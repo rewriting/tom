@@ -37,7 +37,7 @@ public class AListTest {
 
 
 	@Theory
-	public void testAListIndexOf(@TomForAll @RandomCheck(sampleSize = 10) AList l, @TomForAll @RandomCheck(sampleSize = 10) Elem e1, @TomForAll @RandomCheck(sampleSize = 10) Elem e2) {
+	public void testAListIndexOf(@TomForAll @RandomCheck(minSampleSize = 10, sampleSize = 20) AList l, @TomForAll @RandomCheck(sampleSize = 10) Elem e1, @TomForAll @RandomCheck(sampleSize = 10) Elem e2) {
 		assumeTrue(!DemoAList.isEmpty(l) && DemoAList.contains(l, e1));
 		
 		assertSame("BAD: e1="+e1+" e2="+e2+" l="+l,  DemoAList.getIndexOf(l, e1) + 1, DemoAList.getIndexOf(DemoAList.addFirst(l, e2), e1));

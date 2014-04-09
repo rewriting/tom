@@ -29,16 +29,21 @@ public class TomValueSupplier extends ParameterSupplier {
 			ParameterSignature signature) {
 		boolean exhaustive = false;
 		int samplesize = 1;
+		int minsamplesize = 0;
 		int maxnumbersamples = 1;
 		if (signature.getAnnotation(ExhaustiveCheck.class) != null) {
 			exhaustive = true;
 			samplesize = signature.getAnnotation(ExhaustiveCheck.class)
 					.maxDepth();
+			minsamplesize = signature.getAnnotation(ExhaustiveCheck.class)
+					.minSampleSize();
 		}
 		if (signature.getAnnotation(RandomCheck.class) != null) {
 			exhaustive = false;
 			samplesize = signature.getAnnotation(RandomCheck.class)
 					.sampleSize();
+			minsamplesize = signature.getAnnotation(RandomCheck.class)
+					.minSampleSize();
 			maxnumbersamples = signature.getAnnotation(RandomCheck.class)
 					.numberSamples();
 		}
@@ -49,10 +54,15 @@ public class TomValueSupplier extends ParameterSupplier {
 		List<PotentialAssignment> l = new ArrayList<PotentialAssignment>();
 		LazyList<?> parts = enumeration.parts();
 
-		for (int i = 0; i < samplesize; i++) {
+		// skip the first minsamplesize
+		for (int i = 0; i < minsamplesize; i++) {
+			parts = parts.tail();
+		}
+		for (int i = minsamplesize; i < samplesize; i++) {
 			if (parts.isEmpty())
 				break;
 			final Finite<?> part = (Finite<?>) parts.head();
+			// potential problem if parts finite
 			parts = parts.tail();
 
 			BigInteger card = part.getCard();
