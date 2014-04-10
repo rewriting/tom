@@ -16,6 +16,7 @@ import java.lang.annotation.Target;
 
 public @interface ExhaustiveCheck {
 
+	public int  minSampleSize() default 0;
 	public int 	maxDepth() default 100;
 	
 }
