@@ -10,20 +10,20 @@ public class SubtermTraverser<E> {
 	private final static String METHOD_GET_ENUMERATION = "getEnumeration";
 	private final static String METHOD_GET_CHILDCOUNT = "getChildCount";
 	private final static String METHOD_GET_CHILDAT = "getChildAt";
-	
+
 	private List<E> constants = null;
-	
+
 	protected SubtermTraverser(E rootTerm) {
 		if (constants == null) {
 			constants = new ArrayList<E>();
 		}
 		constants = getConstants(rootTerm);
 	}
-	
+
 	public static <E> SubtermTraverser<E> make(E rootTerm) {
 		return new SubtermTraverser<E>(rootTerm);
 	}
-	
+
 	/**
 	 * If the input term does not have constants (constructors without parameters) then it will return empty list
 	 * 
@@ -33,7 +33,7 @@ public class SubtermTraverser<E> {
 	public List<E> getConstants(E term) {
 		List<E> csts = new ArrayList<E>();
 		Enumeration<E> en = getEnumerationFromTerm(term);
-		
+
 		if (en != null) {
 			BigInteger card = en.parts().head().getCard();
 			BigInteger bigIndex = BigInteger.ZERO; 
@@ -43,18 +43,18 @@ public class SubtermTraverser<E> {
 				bigIndex = bigIndex.add(BigInteger.ONE);
 			}
 		}
-		
+
 		// clear the list if the input term is a constant
 		/*if (csts.contains(term)) {
 			csts.clear();
 		}*/
 		return csts;
 	}
-	
+
 	public List<E> getConstants() {
 		return new ArrayList<E>(constants);
 	}
-	
+
 	/**
 	 * Get enumeration for a term, if a term does not have an enumeration (not a tom term) then
 	 * it will return null
@@ -72,7 +72,12 @@ public class SubtermTraverser<E> {
 		}
 		return en;
 	}
-	
+
+	/**
+	 * Returns subterms having the same type as the root
+	 * @param term
+	 * @return
+	 */
 	public List<E> getSubterms(E term) {
 		/*Class<?> sort = term.getClass().getSuperclass();
 		List<E> subterms = new ArrayList<E>();
@@ -83,7 +88,7 @@ public class SubtermTraverser<E> {
 				subterms.add(c);
 			} else if (!isConstant(c)) {
 				// recursively retrieve subterms
-				
+
 			}
 		}*/
 		List<E> subterms = new ArrayList<E>();
@@ -91,7 +96,17 @@ public class SubtermTraverser<E> {
 		getSubterm(term, subterms, sort);
 		return subterms;
 	}
-	
+
+	public List<?> getImmediateSubterms(E term) {
+		List subterms = new ArrayList();
+		int childCount = getChildCount(term);
+		for (int i = 0; i < childCount; i++) {
+			Object c = getChildAt(term, i);
+			subterms.add(c);
+		}
+		return subterms;
+	}
+
 	public void getSubterm(E term, List<E> terms, Class<?> sort) {
 		int childCount = getChildCount(term);
 		for (int i = 0; i < childCount; i++) {
@@ -104,7 +119,7 @@ public class SubtermTraverser<E> {
 			}
 		}
 	}
-	
+
 	public E getChildAt(E term, int i) {
 		Class<?>[] typeParams = {int.class};
 		Object[] valueParams = {i};
@@ -117,7 +132,7 @@ public class SubtermTraverser<E> {
 		}
 		return cast(result);
 	}
-	
+
 	public int getChildCount(E term) {
 		int childcount = 0;
 		try {
@@ -128,11 +143,11 @@ public class SubtermTraverser<E> {
 		}
 		return childcount;
 	}
-	
+
 	public boolean isConstant(E term) {
 		return constants.contains(term);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public E cast(Object object) {
 		return (E) object;
