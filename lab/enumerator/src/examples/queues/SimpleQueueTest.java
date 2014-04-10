@@ -17,9 +17,12 @@ import com.pholser.junit.quickcheck.From;
 import tom.library.enumerator.Combinators;
 import tom.library.enumerator.Enumeration;
 import tom.library.theory.Enum;
+import tom.library.theory.ExhaustiveCheck;
 import tom.library.theory.ExhaustiveForAll;
+import tom.library.theory.RandomCheck;
 import tom.library.theory.RandomForAll;
 import tom.library.theory.TomCheck;
+import tom.library.theory.TomForAll;
 import examples.junit.quickcheck.ExpGenerator;
 import examples.queues.queue.types.*;
 
@@ -30,7 +33,7 @@ public class SimpleQueueTest {
 	@Enum public static Enumeration<Elem> enumeration2 = Elem.getEnumeration();
 	@Enum public static Enumeration<Integer> enumeration5 = Combinators.makeint();
 	
-	@Theory
+	//@Theory
 	public void testInsertElemEmpty(@RandomForAll(sampleSize=100) Elem e) {
         SimpleQueue sq = new SimpleQueue();
         try {
@@ -45,7 +48,7 @@ public class SimpleQueueTest {
         }
 	}
 	
-	@Theory
+	//@Theory
 	public void testInsertIntQueue(
 			@RandomForAll(sampleSize=100) Integer v,
 			@RandomForAll(sampleSize=100) Queue q
@@ -64,7 +67,9 @@ public class SimpleQueueTest {
 	
 	@Theory
 	public void testRemoveQueue(
-			@RandomForAll(sampleSize=1000) Queue q
+			//@RandomForAll(sampleSize=1000) Queue q
+			//@TomForAll @RandomCheck(sampleSize=1000) Queue q
+			@TomForAll @ExhaustiveCheck(maxDepth=12) Queue q
 			) {
         try {
         	SimpleQueue sq = SimpleQueue.makeFromQueue(q);
@@ -74,7 +79,7 @@ public class SimpleQueueTest {
         	sq.remove();
         	assertEquals(oldSize - 1, sq.size());
         } catch(Exception ex) {
-    		//System.out.println("elim " + e);
+    		//System.out.println("elim " + q);
 
         }
 	}

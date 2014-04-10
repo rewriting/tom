@@ -27,14 +27,14 @@ public class SimpleQueue {
 	public static int makeFromElem(Elem e) throws Exception {
 		if(e.isval()) {
 			return e.getv();
-		} else if(e.istop()) {
+		}/* else if(e.istop()) {
 			SimpleQueue sq = makeFromQueue(e.getq());
 			if(sq.size() > 0) {
 				return sq.top();
 			} else {
 				throw new Exception();
 			}
-		}
+		}*/
 		throw new RuntimeException("should not be there");	
 	}
 	

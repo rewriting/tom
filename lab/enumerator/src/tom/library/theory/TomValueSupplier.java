@@ -89,6 +89,17 @@ public class TomValueSupplier extends ParameterSupplier {
 						public Object getValue()
 								throws CouldNotGenerateValueException {
 							return part.get(jj);
+							/*
+							BigInteger j = jj;
+							for(int n=0 ; n<10 ; n++) {
+								Object res = part.get(j);
+								if(res != null) {
+									return res;
+								}
+								j = j.add(BigInteger.ONE);
+							}
+							return null;
+							*/
 						}
 
 						@Override

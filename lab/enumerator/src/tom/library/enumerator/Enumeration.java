@@ -37,7 +37,7 @@ public class Enumeration<A> {
     }
 
     public A get(BigInteger i) {
-        return index(parts(), i);
+    	return index(parts(), i);
     }
 
     public Enumeration<A> plus(final Enumeration<A> other) {

@@ -11,7 +11,55 @@ public final class remove extends examples.queues.queue.types.Queue implements t
   private remove() {}
   private int hashCode;
   private static remove gomProto = new remove();
-    private examples.queues.queue.types.Queue _q;
+  
+private static boolean tom_equal_term_int(int t1, int t2) {return  t1==t2 ;}private static boolean tom_is_sort_int(int t) {return  true ;} private static boolean tom_equal_term_Queue(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_Queue(Object t) {return  (t instanceof examples.queues.queue.types.Queue) ;}private static boolean tom_equal_term_Elem(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_Elem(Object t) {return  (t instanceof examples.queues.queue.types.Elem) ;}private static boolean tom_is_fun_sym_empty( examples.queues.queue.types.Queue  t) {return  (t instanceof examples.queues.queue.types.queue.empty) ;}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  private examples.queues.queue.types.Queue _q;
 
   /**
    * Constructor that builds a term rooted by remove
@@ -19,7 +67,16 @@ public final class remove extends examples.queues.queue.types.Queue implements t
    * @return a term rooted by remove
    */
 
-  public static remove make(examples.queues.queue.types.Queue _q) {
+    public static examples.queues.queue.types.Queue make(examples.queues.queue.types.Queue q) {
+  if (true) {{
+  {{if (tom_is_sort_Queue(q)) {if (tom_is_sort_Queue((( examples.queues.queue.types.Queue )q))) {if (tom_is_fun_sym_empty((( examples.queues.queue.types.Queue )(( examples.queues.queue.types.Queue )q)))) {
+ /*throw new RuntimeException("Bad value: " + q); */}}}}}
+
+}}
+      return realMake( q);
+    }
+  
+  private static remove realMake(examples.queues.queue.types.Queue _q) {
 
     // use the proto as a model
     gomProto.initHashCode( _q);
