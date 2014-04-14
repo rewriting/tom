@@ -9,3 +9,8 @@ abstract syntax
   Elem = val(v:int)
        | top(q:Queue)
 
+remove:make(q) {
+  %match(q) {
+    empty() -> { /*throw new RuntimeException("Bad value: " + q); */}
+  }
+}

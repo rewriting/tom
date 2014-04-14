@@ -45,7 +45,12 @@ public class Finite<A> {
 	 * retrieve an element
 	 */
 	public A get(BigInteger i) {
-		return (A) eval(i);
+		try {
+			return (A) eval(i);
+		} catch(RuntimeException e) {
+			//System.out.println("abort: " + i);
+			return null;
+		}
 	}
 
 	/**
