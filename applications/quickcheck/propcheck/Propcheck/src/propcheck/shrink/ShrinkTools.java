@@ -2,6 +2,8 @@ package propcheck.shrink;
 
 import java.lang.reflect.InvocationTargetException;
 
+import propcheck.shrink.ShrinkException;
+
 public final class ShrinkTools {
 
 	/**
