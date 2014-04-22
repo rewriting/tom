@@ -4,163 +4,124 @@ import java.util.ArrayList;
 import java.util.List;
 
 import tom.library.sl.Visitable;
+import zipper.Zipper;
+import zipper.ZipperException;
 
-/**
- * alg:
- * 
- * get children
- * for each children
- * 	while child has next subterm
- * 		substitute term's child with its subterms
- * @author nauval
- *
- * @param <A>
- */
-public class TermReducer<A> {
-	private A rootTerm;
-	private List<Pair<?>> subterms = null; 
-	private List<?> rootSubterms = null;
-	private SubtermTraverser<A> traverser;
-
-	private int index;
-	private boolean newInit = true;
+public class TermReducer<T> {
+	private List<T> terms;
 	
-	public TermReducer(A term) {
-		init(term);
+	public TermReducer() {
+		terms = new ArrayList<T>();
 	}
-
+	
 	/**
-	 * get immediate subterms 
+	 * Returns list of reduced terms from a term
 	 * @param term
+	 * @return list of reduced term
+	 * @throws ShrinkException 
 	 */
-	void init(A term) {
-		rootTerm = term;
-		if (subterms == null) {
-			subterms = new ArrayList<Pair<?>>();
+	public List<T> reduce(T term) throws ShrinkException {
+		terms.clear();
+		if (term instanceof Visitable) {
+			
+			Visitable t = (Visitable) term;
+			List<T> constants = getConstants(t);
+			if (!constants.contains(t)) {
+				terms.addAll(getConstants(t));
+				getReducedTerms((List<Visitable>) terms, t, t.getClass().getSuperclass());
+				if (terms.isEmpty()) {
+					terms.add(term);
+				}
+			}
+			return terms;
+		} else {
+			terms.add(term);
+			return terms;
 		}
-		//		if (rootSubterms == null) {
-		//			rootSubterms = new ArrayList();
-		//		}
-
-		index = 0;
-		buildSubterms();
-		newInit = false;
 	}
-
-	public void buildSubterms() {
-		traverser = SubtermTraverser.make(rootTerm);
-		rootSubterms = traverser.getImmediateSubterms(rootTerm);
-
-		// build constants as the first substituted subterms
-		if (newInit) {
-			for (int i = 0; i < rootSubterms.size(); i++) {
-				subterms.addAll(getConstantsSubterms(rootSubterms.get(i), i));
+	
+	/**
+	 * Explodes the term to many smaller terms but not all possible smaller terms.
+	 * 
+	 * @param term
+	 * @return list of smaller terms
+	 * @throws ShrinkException 
+	 * @throws ZipperException 
+	 */
+	public List<T> explode(T term) throws ZipperException, ShrinkException {
+		terms.clear();
+		if (term instanceof Visitable) {
+			Visitable t = (Visitable) term;
+			Zipper<TNode> tree = Zipper.zip(TreeTools.buildTree(t));
+			explodeRec(tree);
+			if (terms.isEmpty()) {
+				terms.add(term);
+			}
+			return terms;
+		} else {
+			terms.add(term);
+			return terms;
+		}
+		
+	}
+	
+	public void explodeRec(Zipper<TNode> zip) throws ZipperException, ShrinkException {
+		TNode node = zip.getNode().getSource();
+		for (int i = 0; i < node.getChildren().size(); i++) {
+			TNode child = (TNode) node.getChildren().get(i);
+			Zipper<TNode> z = zip.down(i);
+			if (!z.isLeaf()) {
+				List<? extends Visitable> constants = (List<? extends Visitable>) getConstants(child.getTerm());
+				if (constants.size() > 0) {
+					terms.addAll((List<T>)buildTerm(z, constants));
+				}
+				explodeRec(z);
 			}
 		}
-
-		// build first level pair of index and subterms
-		for (int i = 0; i < rootSubterms.size(); i++) {
-			subterms.addAll(getSubterms(rootSubterms.get(i), i));
-		}
 	}
-
-	public <E> List<Pair<E>> getConstantsSubterms(E term, int childIndex) {
-		List<Pair<E>> pairs = new ArrayList<Pair<E>>();
-		SubtermTraverser<E> t = SubtermTraverser.make(term);
-		if (t.getConstants().contains(term)) {
-			return pairs;
-		}
-		for (E constant : t.getConstants()) {
-			pairs.add(new Pair<E>(childIndex, constant));
-		}
-		return pairs;
-	}
-
-	public <E> List<Pair<E>> getSubterms(E term, int childIndex) {
-		List<Pair<E>> pairs = new ArrayList<Pair<E>>();
-		SubtermTraverser<E> t = SubtermTraverser.make(term);
-		List<E> sts = t.getSubterms(term);
-		// add constants
-		//		if (!t.getConstants().contains(term)) {
-		//			List<E> csts = t.getConstants();
-		//			for (E e : csts) {
-		//				pairs.add(new Pair<E>(childIndex, e));
-		//			}
-		//		}
-		//		System.out.println("TermReducer.getSubterms()");
-		//		System.out.println("immediate st: " + term);
-		for (E e : sts) {
-			//			System.out.println("term: " + term + "\npair[" + childIndex + ", " + e + "]");
-			pairs.add(new Pair<E>(childIndex, e));
-		}
-		return pairs;
-	}
-
-	/**
-	 * 
-	 *  
-	 * @return reduced term
-	 */
-	public A reduce() {
-		A term = replaceSubterm(rootTerm);
-		rootTerm = term;
-		if (index == subterms.size()) {
-			buildSubterms();
-		}
-		return term;
-	}
-
-	public A replaceSubterm(A term) {
-		Pair<?> pair = subterms.get(index++);
-		A reducedTerm = null;
+	
+	public List<T> getConstants(Visitable child) {
+		List<T> res = null;
 		try {
-			reducedTerm = (A) ShrinkTools.invokeMethod(term, "setChildAt", new Class<?>[] {int.class, Visitable.class}, new Object[] {pair.getIndex(), pair.getTerm()});
+			res = (List<T>) TermClass.make(child).getConstants();
 		} catch (ShrinkException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			if (res == null) {
+				res = new ArrayList<T>();
+			}
 		}
-		return reducedTerm;
+		return res;
 	}
-
-	public boolean isReducable() {
-		if (index < subterms.size()) {
-			return true;
-		} else {
-			return false;
+	
+	protected List<? extends Visitable> getReducedTerms(List<Visitable> results, Visitable term, Class<?> sort) throws ShrinkException {
+		for (int i = 0; i < term.getChildCount(); i++) {
+			Visitable v = term.getChildAt(i);
+			List<? extends Visitable> constants = (List<? extends Visitable>) getConstants(v);
+			if (v.getClass().getSuperclass().equals(sort) && !constants.contains(v)) {
+				results.add(v);
+			} else if (!constants.contains(v)) {
+				getReducedTerms(results, v, sort);
+			}
 		}
+		return results;
 	}
-
-	public A getRootTerm() {
-		return rootTerm;
-	}
-
-	public void setRootTerm(A rootTerm) {
-		this.rootTerm = rootTerm;
-	}
-}
-
-class Pair<A> {
-	private int index;
-	private A term;
-
-	public Pair(int index, A term) {
-		this.index = index;
-		this.term = term;
-	}
-
-	public A getTerm() {
-		return term;
-	}
-
-	public void setTerm(A term) {
-		this.term = term;
-	}
-
-	public int getIndex() {
-		return index;
-	}
-
-	public void setIndex(int index) {
-		this.index = index;
+	
+	public List<Visitable> buildTerm(Zipper<TNode> zip, List<? extends Visitable> terms) throws ZipperException {
+		List<Visitable> results = new ArrayList<Visitable>();
+		Visitable tmp = null;
+		for (Visitable t : terms) {
+			Zipper<TNode> z = zip;
+			while (!z.isTop()) {
+				int idx = z.getNode().getSource().getIndex();
+				z = z.up();
+				TNode n = z.getNode().getSource();
+				if (tmp == null) {
+					tmp = n.getTerm().setChildAt(idx, t);
+				} else {
+					tmp = n.getTerm().setChildAt(idx, tmp);
+				}
+			}
+			results.add(tmp);
+		}
+		return results;
 	}
 }

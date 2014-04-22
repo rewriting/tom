@@ -3,8 +3,6 @@ package propcheck.quickcheck;
 import propcheck.assertion.NotTestedSkip;
 import propcheck.generator.quickcheck.RandomGenerator1;
 import propcheck.property.Property;
-import propcheck.shrink.PropcheckShrink;
-import propcheck.shrink.Shrink;
 import tom.library.enumerator.Enumeration;
 
 class QuickcheckRunner1<A> extends BasicRunner {
@@ -58,8 +56,9 @@ class QuickcheckRunner1<A> extends BasicRunner {
 		printResult(generatedTest, tested, errorFound);
 		if (errorFound) {
 			printCounterModel(input);
+			shrink(input);
 		}
-		shrink(input);
+		
 	}
 	
 	void shrink(A input) {
