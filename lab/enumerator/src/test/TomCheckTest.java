@@ -1,6 +1,7 @@
 package test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assume.*;
 
 import org.junit.contrib.theories.Theory;
 import org.junit.runner.RunWith;
@@ -41,17 +42,17 @@ public class TomCheckTest {
 		}
 	}
 
-	@Theory
+	//@Theory
 	public void testTom1(@TomForAll @RandomCheck(sampleSize = 10) Tree<Nat> t) {
 		System.out.println(t);
 	}
 
-	@Theory
+	//@Theory
 	public void testTom2(@TomForAll @ExhaustiveCheck(maxDepth = 10) Tree<Nat> t) {
 		System.out.println(t);
 	}
 	
-	@Theory
+	//@Theory
 	public void testPlusOne1(@ExhaustiveForAll(maxDepth = 20) Tree<Nat> t) {
 		// just test if the size is preserved by plusOne
 		System.out.println(t);
@@ -59,13 +60,15 @@ public class TomCheckTest {
 	}
 
 	@Theory
-	public void testPlusOne2(@RandomForAll(sampleSize = 20) Tree<Nat> t) {
+	public void testPlusOne2(@RandomForAll(sampleSize = 15) Tree<Nat> t, @RandomForAll(sampleSize = 15) Tree<Nat> t2) {
 		// just test if the size is preserved by plusOne
-		System.out.println(t);
+		//System.out.println(t + " | " + t.size());
+		assumeTrue(t.size() > 2);
 		assertEquals(plusOne(t).size(), t.size());
+		assertEquals(plusOne(t2).size(), t2.size());
 	}
 
-	@Theory
+	//@Theory
 	public void testString(@RandomForAll(sampleSize = 50) String s) {
 		System.out.println(s);
 	}
@@ -75,7 +78,4 @@ public class TomCheckTest {
 			@RandomForAll(sampleSize = 5) Integer i) {
 		System.out.println(s + " " + i);
 	}
-
-
-
 }
