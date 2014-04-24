@@ -27,22 +27,22 @@ public class TermReducerTest {
 		AList term = AList.fromString("con(cs(3),con(cs(6),empty()))");
 		AList expected1 = AList.fromString("empty()");
 		AList expected2 = AList.fromString("con(cs(6),empty())");
-		List<PotentialAssignment> assignments = TermReducer.build(term, AList.getEnumeration()).getValueSources();
-		for (PotentialAssignment potentialAssignment : assignments) {
-			System.out.println(potentialAssignment.getValue());
+		List<Object> assignments = TermReducer.build(term, AList.getEnumeration()).getInputValues();
+		for (Object potentialAssignment : assignments) {
+			System.out.println(potentialAssignment);
 		}
 		assertThat(assignments.size(), is(2));
-		assertThat((Visitable) assignments.get(0).getValue(), is((Visitable)expected1));
-		assertThat((Visitable) assignments.get(1).getValue(), is((Visitable)expected2));
+		assertThat((Visitable) assignments.get(0), is((Visitable)expected1));
+		assertThat((Visitable) assignments.get(1), is((Visitable)expected2));
 	}
 	
 	@Test
 	public void testGetValueSourcesCS() throws Throwable {
 		Elem term = Elem.fromString("cs(3)");
 		Elem expected1 = Elem.fromString("cs(3)");
-		List<PotentialAssignment> assignments = TermReducer.build(term, Elem.getEnumeration()).getValueSources();
+		List<Object> assignments = TermReducer.build(term, Elem.getEnumeration()).getInputValues();
 		assertThat(assignments.size(), is(1));
-		assertThat((Visitable) assignments.get(0).getValue(), is((Visitable)expected1));
+		assertThat((Visitable) assignments.get(0), is((Visitable)expected1));
 		
 	}
 

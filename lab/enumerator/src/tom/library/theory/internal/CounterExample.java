@@ -45,10 +45,22 @@ public class CounterExample {
 	public boolean isSmallerThan(CounterExample counterExample) {
 		int total1 = 0, total2 = 0;
 		for (int i = 0; i < fUnassigned.size(); i++) {
-			total1 += CounterExample.size((Visitable) fUnassigned.get(i));
-			total2 += CounterExample.size((Visitable) counterExample.fUnassigned.get(i));
+			total1 += calculateTermSize(fUnassigned.get(i));
+			total2 += calculateTermSize(counterExample.fUnassigned.get(i));
 		}
 		return total1 < total2;
+	}
+	
+	private int calculateTermSize(Object term) {
+		if (isInstanceofVisitable(term)) {
+			return CounterExample.size((Visitable) term);
+		} else {
+			return 0;
+		}
+	}
+	
+	private boolean isInstanceofVisitable(Object term) {
+		return term instanceof Visitable;
 	}
 	
 	public static int size(Visitable term) {
@@ -72,5 +84,9 @@ public class CounterExample {
 			s += sizeRec(s, v);
 		}
 		return s;
+	}
+	
+	public Object[] getCounterExamples() {
+		return fUnassigned.toArray();
 	}
 }

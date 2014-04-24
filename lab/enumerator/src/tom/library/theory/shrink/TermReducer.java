@@ -4,40 +4,38 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.contrib.theories.PotentialAssignment;
-
 import tom.library.enumerator.Enumeration;
 import tom.library.sl.Visitable;
 
 public class TermReducer {
 	private Visitable root;
 	private Enumeration<?> enumeration;
-	private List<Visitable> inputs;
-	private List<Visitable> terminals;
+	private List<Object> inputs;
+	private List<Object> terminals;
 	
-	private TermReducer(Object root, Enumeration<?> enumeration) throws Throwable {
+	private TermReducer(Object root, Enumeration<?> enumeration) throws ShrinkException {
 		initialize(root, enumeration);
 	}
 	
-	public static TermReducer build(Object term, Enumeration<?> enumeration) throws Throwable {
+	public static TermReducer build(Object term, Enumeration<?> enumeration) throws ShrinkException {
 		return new TermReducer(term, enumeration);
 	}
 
-	private void initialize(Object root, Enumeration<?> enumeration) throws Throwable {
+	private void initialize(Object root, Enumeration<?> enumeration) throws ShrinkException {
 		initializeLists();
 		this.enumeration = enumeration;
 		if (!isInstanceOfVisitable(root)) {
-			throw new Throwable(root + " is not algabreic term");
+			throw new ShrinkException(root + "is not a term");
 		}
 		this.root = (Visitable) root;
 	}
 	
 	private void initializeLists() {
 		if (inputs == null) {
-			inputs = new ArrayList<Visitable>();
+			inputs = new ArrayList<Object>();
 		}
 		if (terminals == null) {
-			terminals = new ArrayList<Visitable>();
+			terminals = new ArrayList<Object>();
 		}
 	}
 
@@ -45,9 +43,9 @@ public class TermReducer {
 		return object instanceof Visitable;
 	}
 	
-	public List<PotentialAssignment> getValueSources() {
+	public List<Object> getInputValues() {
 		buildInputValues();
-		return buildValueSources();
+		return inputs;
 	}
 	
 	private void buildInputValues() {
@@ -56,26 +54,6 @@ public class TermReducer {
 		inputs.addAll(0, terminals);
 	}
 
-	private List<PotentialAssignment> buildValueSources() {
-		List<PotentialAssignment> assignments = new ArrayList<PotentialAssignment>();
-		
-		for (final Visitable visitable : inputs) {
-			PotentialAssignment assignment = new PotentialAssignment() {
-				
-				@Override
-				public Object getValue() throws CouldNotGenerateValueException {
-					return visitable;
-				}
-				
-				@Override
-				public String getDescription() throws CouldNotGenerateValueException {
-					return null;
-				}
-			}; 
-			assignments.add(assignment);
-		}
-		return assignments;
-	}
 	
 	private void getSubtermsWithSameType() {
 		getSubtermsWithSameType(root);

@@ -10,7 +10,18 @@ public class ParameterizedAssertionFailure extends AssertionError {
 	public ParameterizedAssertionFailure(Throwable targetException, String methodName, Object... params) {
 		super(buildDescription(methodName, params), targetException);
 	}
+	
+	public ParameterizedAssertionFailure(Throwable targetException, String methodName, int shrunkCount, Object[] initialParams, Object... params) {
+		super(buildDescriptionWithShrink(methodName, shrunkCount, initialParams, params));
+	}
 
+	public static String buildDescriptionWithShrink(String methodName, int shrunkCount, 
+			Object[] initialCounterExamples, Object...params) {
+		return String.format("\n%s(%s)\nCounter example:\n%s\nShrunk %s times, counter example:\n%s", 
+					methodName, join(", ", initialCounterExamples), join("\n", initialCounterExamples),
+					shrunkCount, join("\n ", params));
+	}
+	
 	public static String buildDescription(String methodName, Object...params) {
 		return String.format("\n%s(%s)\nCounter example:\n%s", methodName, join(", ", params), join("\n", params));
 	}

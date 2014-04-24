@@ -11,46 +11,46 @@ import tom.library.enumerator.Enumeration;
 import tom.library.theory.TomCheck;
 
 public class ShrinkValueSupplier {
-//	private List<Object> counterExamples;
+	// TODO make TermReducer.getValueSource() returns only list of reduced terms
+	// and build the PotentialAssigment here.
 	
-//	public ShrinkValueSupplier(Object... counterExamples) {
-//		this.counterExamples = Arrays.asList(counterExamples);
-//	}
-	
-	public List<PotentialAssignment> getNextPotentialSources(ParameterSignature parameter, Object cex) throws Throwable {
+	public List<PotentialAssignment> getNextPotentialSources(ParameterSignature parameter, Object cex) {
 			return getReducedTermsAsSources(parameter, cex);
 	}
 	
-	protected List<PotentialAssignment> getReducedTermsAsSources(ParameterSignature parameter, Object term) throws Throwable {
-		return TermReducer.build(term, getInitializedEnumeration(parameter)).getValueSources();
+	protected List<PotentialAssignment> getReducedTermsAsSources(ParameterSignature parameter, Object term) {
+		TermReducer reducer;
+		try {
+			reducer = TermReducer.build(term, getInitializedEnumeration(parameter));
+		} catch (ShrinkException e) {
+			return buildValueSources(Arrays.asList(term));
+		} 
+		return buildValueSources(reducer.getInputValues());
 	}
 
 	protected Enumeration<?> getInitializedEnumeration(ParameterSignature parameter) {
 		return TomCheck.get(parameter.getType());
 	}
 	
-//	protected boolean isFixPoint(List<Object> params) {
-//		boolean fp = true;
-//		for (int i = 0; i < params.size(); i++) {
-//			if (!params.get(i).equals(counterExamples.get(i))) {
-//				fp = false;
-//				break;
-//			}
-//		}
-//		return fp;
-//	}
-//	
-//	public List<Object> getCounterExamples() {
-//		return counterExamples;
-//	}
-
-//	public void setCounterExamples(List<Object> counterExamples) {
-////		fixPoint = isFixPoint(counterExamples);
-//		this.counterExamples = counterExamples;
-//	}
-//	
-//	public void setCounterExamples(Object... counterExamples) {
-////		fixPoint = isFixPoint(Arrays.asList(counterExamples));
-//		this.counterExamples = Arrays.asList(counterExamples);
-//	}
+	private List<PotentialAssignment> buildValueSources(List<Object> inputs) {
+		List<PotentialAssignment> assignments = new ArrayList<PotentialAssignment>();
+		
+		for (final Object input : inputs) {
+			PotentialAssignment assignment = new PotentialAssignment() {
+				
+				@Override
+				public Object getValue() throws CouldNotGenerateValueException {
+					return input;
+				}
+				
+				@Override
+				public String getDescription() throws CouldNotGenerateValueException {
+					return null;
+				}
+			}; 
+			assignments.add(assignment);
+		}
+		return assignments;
+	}
+	
 }

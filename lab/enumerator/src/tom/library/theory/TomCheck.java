@@ -11,13 +11,12 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.contrib.theories.PotentialAssignment;
+import org.junit.contrib.theories.PotentialAssignment.CouldNotGenerateValueException;
 import org.junit.contrib.theories.Theories;
 import org.junit.contrib.theories.Theory;
-import org.junit.contrib.theories.PotentialAssignment.CouldNotGenerateValueException;
 import org.junit.contrib.theories.internal.Assignments;
 import org.junit.contrib.theories.internal.ParameterizedAssertionError;
 import org.junit.internal.AssumptionViolatedException;
-import org.junit.internal.runners.model.EachTestNotifier;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
@@ -30,7 +29,6 @@ import tom.library.enumerator.Enumeration;
 import tom.library.theory.internal.CounterExample;
 import tom.library.theory.internal.ParameterizedAssertionFailure;
 import tom.library.theory.shrink.ShrinkValueSupplier;
-import tom.library.theory.shrink.TermReducer;
 
 public final class TomCheck extends Theories {
 
@@ -140,6 +138,7 @@ public final class TomCheck extends Theories {
 	    private int fSuccesses = 0;
 	    private int fAssumtionViolated = 0;
 	    private int fFailures = 0;
+	    private int fShrunkCount = 0;
 	    
 	    private ShrinkValueSupplier shrinkSupplier;
 
@@ -252,26 +251,31 @@ public final class TomCheck extends Theories {
 	    protected void handleParameterizedFailure(Throwable e, Object... params) throws Throwable {
 	    	// add shrinking function here
 	    	// get shrinked supplier
-	    	initializeShrinkSupplier(params);
+	    	initializeShrinkFields(params);
 	    	doShrink(counterExample);
 	    	throwParameterizedAssertionFailure(e, params);
 		}
 
-	    protected void initializeShrinkSupplier(Object...params) {
+	    protected void initializeShrinkFields(Object...params) {
 	    	if (shrinkSupplier == null) {
 				shrinkSupplier = new ShrinkValueSupplier();
 			} 
 	    	if (counterExample == null) {
 				counterExample = CounterExample.build(params);
+				initialCounterExample = counterExample;
 			}
 	    }
-	    
+	    private CounterExample initialCounterExample;
 	    private CounterExample counterExample;
 	    
 	    // TODO rename method
 	    protected void doShrink(CounterExample counterExamples) throws Throwable {
 	    	runShrinkWithAssigments(Assignments.allUnassigned(fTestMethod.getMethod(), getTestClass()), counterExamples);
 	    }
+
+		protected void increaseShrunkCount() {
+			fShrunkCount++;
+		}
 	    
 		protected void runShrinkWithAssigments(Assignments parameterAssigments, CounterExample counterExamples) throws Throwable {
 			if (!parameterAssigments.isComplete()) {
@@ -350,6 +354,7 @@ public final class TomCheck extends Theories {
 //				System.out.println(object);
 //			}
 			if (temp.isSmallerThan(counterExample)) {
+				increaseShrunkCount();
 				counterExample = temp;
 				doShrink(counterExample);
 				throwParameterizedAssertionFailure(e, params);
@@ -361,9 +366,9 @@ public final class TomCheck extends Theories {
 			if (params.length == 0) {
 	            throw e;
 	        }
-			throw new ParameterizedAssertionFailure(e, fTestMethod.getName(), params);
+			throw new ParameterizedAssertionFailure(e, fTestMethod.getName(), fShrunkCount, initialCounterExample.getCounterExamples(), params);
 		}
-	    
+		
 	    protected void reportParameterizedError(Throwable e, Object... params) throws Throwable {
 	    	if (params.length == 0) {
 	            throw e;
