@@ -11,8 +11,6 @@ import tom.library.enumerator.Enumeration;
 import tom.library.theory.TomCheck;
 
 public class ShrinkValueSupplier {
-	// TODO make TermReducer.getValueSource() returns only list of reduced terms
-	// and build the PotentialAssigment here.
 	
 	public List<PotentialAssignment> getNextPotentialSources(ParameterSignature parameter, Object cex) {
 			return getReducedTermsAsSources(parameter, cex);

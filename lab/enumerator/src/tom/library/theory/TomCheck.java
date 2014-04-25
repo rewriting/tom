@@ -27,8 +27,7 @@ import org.junit.runners.model.TestClass;
 
 import tom.library.enumerator.Enumeration;
 import tom.library.theory.internal.CounterExample;
-import tom.library.theory.internal.ParameterizedAssertionFailure;
-import tom.library.theory.shrink.ShrinkValueSupplier;
+import tom.library.theory.shrink.ShrinkTheoryAnchor;
 
 public final class TomCheck extends Theories {
 
@@ -116,10 +115,11 @@ public final class TomCheck extends Theories {
 	}
 
 	protected void printGeneratedDataStatistic(final FrameworkMethod method, final TheoryAnchor anchor) {
-		System.out.println(String.format("%s\nGenerated test data: %s\nTested data: %s", 
+		System.out.println(String.format("%s\nGenerated test data: %s\nTested data: %s\nUntested data: %s\n", 
 						method.getName(),
 						getTotalGeneratedDataFromTheoryAnchor(anchor), 
-						getTotalTestedDataFromTheoryAnchor(anchor)));
+						getTotalTestedDataFromTheoryAnchor(anchor),
+						getTotalUntestedDataFromTheoryAnchor(anchor)));
 	}
 
 	protected int getTotalTestedDataFromTheoryAnchor(TheoryAnchor anchor) {
@@ -130,6 +130,10 @@ public final class TomCheck extends Theories {
 		return getTotalTestedDataFromTheoryAnchor(anchor) + anchor.fAssumtionViolated;
 	}
 	
+	protected int getTotalUntestedDataFromTheoryAnchor(TheoryAnchor anchor) {
+		return anchor.fAssumtionViolated;
+	}
+	
 	public static class TheoryAnchor extends Statement {
 	    private final FrameworkMethod fTestMethod;
 	    private final TestClass fTestClass;
@@ -138,9 +142,6 @@ public final class TomCheck extends Theories {
 	    private int fSuccesses = 0;
 	    private int fAssumtionViolated = 0;
 	    private int fFailures = 0;
-	    private int fShrunkCount = 0;
-	    
-	    private ShrinkValueSupplier shrinkSupplier;
 
 	    public TheoryAnchor(FrameworkMethod method, TestClass testClass) {
 	        fTestMethod = method;
@@ -249,126 +250,16 @@ public final class TomCheck extends Theories {
 	    }
 	    
 	    protected void handleParameterizedFailure(Throwable e, Object... params) throws Throwable {
-	    	// add shrinking function here
-	    	// get shrinked supplier
-	    	initializeShrinkFields(params);
-	    	doShrink(counterExample);
-	    	throwParameterizedAssertionFailure(e, params);
+	    	doShrink(CounterExample.build(params));
 		}
 
-	    protected void initializeShrinkFields(Object...params) {
-	    	if (shrinkSupplier == null) {
-				shrinkSupplier = new ShrinkValueSupplier();
-			} 
-	    	if (counterExample == null) {
-				counterExample = CounterExample.build(params);
-				initialCounterExample = counterExample;
-			}
-	    }
-	    private CounterExample initialCounterExample;
-	    private CounterExample counterExample;
 	    
 	    // TODO rename method
 	    protected void doShrink(CounterExample counterExamples) throws Throwable {
-	    	runShrinkWithAssigments(Assignments.allUnassigned(fTestMethod.getMethod(), getTestClass()), counterExamples);
+	    	ShrinkTheoryAnchor anchor = new ShrinkTheoryAnchor(fTestMethod, fTestClass, counterExamples);
+	    	anchor.evaluate();
 	    }
 
-		protected void increaseShrunkCount() {
-			fShrunkCount++;
-		}
-	    
-		protected void runShrinkWithAssigments(Assignments parameterAssigments, CounterExample counterExamples) throws Throwable {
-			if (!parameterAssigments.isComplete()) {
-				runShrinkWithIncompleteAssignment(parameterAssigments, counterExamples);
-			} else {
-				runShrinkWithCompleteAssignment(parameterAssigments);
-			}
-		}
-
-		protected void runShrinkWithIncompleteAssignment(Assignments incomplete, CounterExample counterExamples) throws Throwable {
-			// TODO this is where the hard part begins, need to define how to assign the value to the assigments
-			// exploit nextUnassigned() and fetch it to shrink value supplier
-			// create another class that abstracts TermReducer. It should takes the counter model 
-			// its input
-		
-			for (PotentialAssignment source : shrinkSupplier.getNextPotentialSources(incomplete.nextUnassigned(), counterExamples.getCounterExampleObject())) {
-//				System.out.println(source.getValue());
-				runShrinkWithAssigments(incomplete.assignNext(source), counterExamples.nextCounterExample());
-			}
-		}
-		
-		protected void runShrinkWithCompleteAssignment(final Assignments complete) throws Throwable {
-			statementShrinkForCompleteAssignment(complete).evaluate();
-	    }
-		
-		private Statement statementShrinkForCompleteAssignment(final Assignments complete)
-	            throws InitializationError {
-	        return new BlockJUnit4ClassRunner(getTestClass().getJavaClass()) {
-	            @Override
-	            protected void collectInitializationErrors(List<Throwable> errors) {
-	                // do nothing
-	            }
-
-	            @Override
-	            public Statement methodBlock(FrameworkMethod method) {
-	                final Statement statement = super.methodBlock(method);
-	                
-	                return new Statement() {
-	                    @Override
-	                    public void evaluate() throws Throwable {
-	                        try {
-//	                        	System.out
-//										.println("TomCheck.TheoryAnchor.statementShrinkForCompleteAssignment()");
-	                            statement.evaluate();
-	                            //handleDataPointSuccess();
-	                        } catch (AssumptionViolatedException e) {
-	                        	//increaseAssumtionViolationCounter();
-	                            handleAssumptionViolation(e);
-	                        } catch (Throwable e) {
-	                        	//increaseFailureCounter();
-	                        	handleShrinkParameterizedFailure(e, complete.getMethodArguments(nullsOk()));
-	                        }
-	                    }
-	                };
-	            }
-	            
-	            @Override
-	            protected Statement methodInvoker(FrameworkMethod method, Object test) {
-	                return methodWithCompleteParameters(method, complete, test);
-	            }
-
-	            @Override
-	            public Object createTest() throws Exception {
-	                return getTestClass().getOnlyConstructor().newInstance(
-	                        complete.getConstructorArguments(nullsOk()));
-	            }
-	        }.methodBlock(fTestMethod);
-	    }
-		
-		protected void handleShrinkParameterizedFailure(Throwable e, Object...params) throws Throwable {
-			// do shrinking again
-			CounterExample temp = CounterExample.build(params);
-//			System.out
-//			.println("TomCheck.TheoryAnchor.handleShrinkParameterizedFailure()");
-//			for (Object object : params) {
-//				System.out.println(object);
-//			}
-			if (temp.isSmallerThan(counterExample)) {
-				increaseShrunkCount();
-				counterExample = temp;
-				doShrink(counterExample);
-				throwParameterizedAssertionFailure(e, params);
-			}
-			//throwParameterizedAssertionFailure(e, params);
-		}
-		
-		protected void throwParameterizedAssertionFailure(Throwable e, Object... params) throws Throwable {
-			if (params.length == 0) {
-	            throw e;
-	        }
-			throw new ParameterizedAssertionFailure(e, fTestMethod.getName(), fShrunkCount, initialCounterExample.getCounterExamples(), params);
-		}
-		
 	    protected void reportParameterizedError(Throwable e, Object... params) throws Throwable {
 	    	if (params.length == 0) {
 	            throw e;
