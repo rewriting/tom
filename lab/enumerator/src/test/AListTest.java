@@ -42,7 +42,6 @@ public class AListTest {
 				DemoAList.addFirst(list, e2), e1));
 	}
 
-	
 	@Theory
 	public void testInsertWithIndex(@TomForAll @RandomCheck(minSampleSize=50, sampleSize = 100) AList list,
 			@RandomForAll(sampleSize = 10) Elem element,
@@ -56,7 +55,7 @@ public class AListTest {
 	}
 
 	@Theory
-	public void testInsertTom(@TomForAll @RandomCheck(minSampleSize=25, sampleSize = 30) AList list,
+	public void testInsertTom(@TomForAll @RandomCheck(minSampleSize=90, sampleSize = 100) AList list,
 			@TomForAll @RandomCheck(sampleSize = 10) Elem e1,
 			@TomForAll @RandomCheck(sampleSize = 10) Elem e2) {
 		assumeThat(true, is(not(DemoAList.isEmpty(list))));

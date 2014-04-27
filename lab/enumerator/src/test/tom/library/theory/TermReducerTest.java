@@ -1,14 +1,12 @@
 package test.tom.library.theory;
 
-import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 import java.util.List;
 
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.contrib.theories.PotentialAssignment;
 
 import tom.library.sl.Visitable;
 import tom.library.theory.shrink.TermReducer;
@@ -16,11 +14,6 @@ import examples.lists.alist.types.AList;
 import examples.lists.alist.types.Elem;
 
 public class TermReducerTest {
-	
-	@Before
-	public void setUp() {
-		
-	}
 	
 	@Test
 	public void testGetValueSources() throws Throwable {

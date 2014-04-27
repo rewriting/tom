@@ -27,7 +27,7 @@ import org.junit.runners.model.TestClass;
 
 import tom.library.enumerator.Enumeration;
 import tom.library.theory.internal.CounterExample;
-import tom.library.theory.shrink.ShrinkTheoryAnchor;
+import tom.library.theory.shrink.FirstStepShrink;
 
 public final class TomCheck extends Theories {
 
@@ -256,8 +256,7 @@ public final class TomCheck extends Theories {
 	    
 	    // TODO rename method
 	    protected void doShrink(CounterExample counterExamples) throws Throwable {
-	    	ShrinkTheoryAnchor anchor = new ShrinkTheoryAnchor(fTestMethod, fTestClass, counterExamples);
-	    	anchor.evaluate();
+	    	FirstStepShrink.build(fTestMethod, fTestClass, counterExamples).evaluate();
 	    }
 
 	    protected void reportParameterizedError(Throwable e, Object... params) throws Throwable {

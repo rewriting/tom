@@ -1,11 +1,11 @@
 package tom.library.theory.shrink;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
 import tom.library.enumerator.Enumeration;
 import tom.library.sl.Visitable;
+import tom.library.theory.shrink.tools.TermClass;
 
 public class TermReducer {
 	private Visitable root;
@@ -19,6 +19,11 @@ public class TermReducer {
 	
 	public static TermReducer build(Object term, Enumeration<?> enumeration) throws ShrinkException {
 		return new TermReducer(term, enumeration);
+	}
+
+	public List<Object> getInputValues() {
+		buildInputValues();
+		return inputs;
 	}
 
 	private void initialize(Object root, Enumeration<?> enumeration) throws ShrinkException {
@@ -43,10 +48,6 @@ public class TermReducer {
 		return object instanceof Visitable;
 	}
 	
-	public List<Object> getInputValues() {
-		buildInputValues();
-		return inputs;
-	}
 	
 	private void buildInputValues() {
 		terminals.addAll(getTerminalConstructorFromEnumeration());
@@ -84,13 +85,6 @@ public class TermReducer {
 	}
 	
 	public List<Visitable> getTerminalConstructorFromEnumeration() {
-		List<Visitable> constants = new ArrayList<Visitable>();
-		BigInteger card = enumeration.parts().head().getCard();
-		BigInteger index = BigInteger.ZERO;
-		while (card.compareTo(index) > 0) {
-			constants.add((Visitable) enumeration.get(index));
-			index = index.add(BigInteger.ONE);
-		}
-		return constants;
+		return TermClass.getTerminalConstructorFromEnumeration(enumeration);
 	}
 }

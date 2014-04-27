@@ -12,18 +12,18 @@ import tom.library.theory.TomCheck;
 
 public class ShrinkValueSupplier {
 	
-	public List<PotentialAssignment> getNextPotentialSources(ParameterSignature parameter, Object cex) {
-			return getReducedTermsAsSources(parameter, cex);
+	public List<PotentialAssignment> getNextReducedPotentialSources(ParameterSignature parameter, Object counterExample) {
+			return getReducedTermsAsSources(parameter, counterExample);
 	}
 	
 	protected List<PotentialAssignment> getReducedTermsAsSources(ParameterSignature parameter, Object term) {
 		TermReducer reducer;
 		try {
 			reducer = TermReducer.build(term, getInitializedEnumeration(parameter));
+			return buildValueSources(reducer.getInputValues());
 		} catch (ShrinkException e) {
 			return buildValueSources(Arrays.asList(term));
-		} 
-		return buildValueSources(reducer.getInputValues());
+		}
 	}
 
 	protected Enumeration<?> getInitializedEnumeration(ParameterSignature parameter) {
@@ -49,6 +49,20 @@ public class ShrinkValueSupplier {
 			assignments.add(assignment);
 		}
 		return assignments;
+	}
+	
+	public List<PotentialAssignment> getNextExplodedPotentialSources(Object counterExample) {
+		return getExplodedTerms(counterExample);
+	}
+	
+	protected List<PotentialAssignment> getExplodedTerms(Object term) {
+		TermExploder exploder;
+		try {
+			exploder = TermExploder.build(term);
+			return buildValueSources(exploder.explodeTermToSmallerTerms());
+		} catch (ShrinkException e) {
+			return buildValueSources(Arrays.asList(term));
+		} 
 	}
 	
 }

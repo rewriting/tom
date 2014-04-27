@@ -89,4 +89,15 @@ public class CounterExample {
 	public Object[] getCounterExamples() {
 		return fUnassigned.toArray();
 	}
+	
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		for (Object c : fUnassigned) {
+			if (sb.length() > 0) {
+				sb.append(", ");
+			}
+			sb.append(c);
+		}
+		return sb.toString();
+	}
 }
