@@ -6,3 +6,5 @@ module examples.lists.AList
         | con(head:Elem, tail:AList)
 	
 	Elem = cs(i:int)
+	
+//	Elem = cs(name:String)
