@@ -24,19 +24,21 @@ public class AListTest {
 	@Enum 
 	public static Enumeration<Elem> enumerationElem = Elem.getEnumeration();
 
-//	@Theory
-	public void testAListPrintRandom(@TomForAll @RandomCheck(sampleSize = 10) AList l) {
+	@Theory
+	public void testAListPrintRandom(@TomForAll @RandomCheck(sampleSize = 20) AList l) {
+		assumeTrue(!DemoAList.isEmpty(l));
+
 		System.out.println("Random: "+l);
 	}
 
 
-//	@Theory
-	public void testAListPrintExhaustive(@TomForAll @ExhaustiveCheck(maxDepth = 10) AList l) {
+	@Theory
+	public void testAListPrintExhaustive(@TomForAll @ExhaustiveCheck(maxDepth = 5) AList l) {
 		System.out.println("Exhaustive "+l);
 	}
 
 
-	@Theory
+//	@Theory
 	public void testAListIndexOf(@TomForAll @RandomCheck(minSampleSize = 10, sampleSize = 20) AList l, @TomForAll @RandomCheck(sampleSize = 10) Elem e1, @TomForAll @RandomCheck(sampleSize = 10) Elem e2) {
 		assumeTrue(!DemoAList.isEmpty(l) && DemoAList.contains(l, e1));
 		
