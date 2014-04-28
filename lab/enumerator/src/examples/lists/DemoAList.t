@@ -155,6 +155,7 @@ public class DemoAList {
 
 	public static void main(String args[]) {    
 
+    /*
 		AList alist1 = `con(cs(4),con(cs(3),con(cs(5),con(cs(8),empty()))));
 		AList alist2 = `con(cs(0),empty());
 		AList alist3 = `empty();
@@ -238,6 +239,7 @@ public class DemoAList {
 		System.out.println("Response: " + b);
 
 		System.out.print("\n");
+    */
 	}
-
+    
 }

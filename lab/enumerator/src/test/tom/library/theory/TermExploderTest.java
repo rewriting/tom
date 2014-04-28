@@ -11,7 +11,7 @@ import org.junit.Test;
 
 import tom.library.theory.shrink.ShrinkException;
 import tom.library.theory.shrink.TermExploder;
-import examples.data.types.types.D;
+import examples.data.mutual.recursive.types.D;
 import examples.lists.alist.types.AList;
 import examples.lists.alist.types.Elem;
 

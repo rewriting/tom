@@ -94,6 +94,7 @@ public final class TomCheck extends Theories {
 	}
 
 	@Override
+	// just for printing statistics
 	protected void runChild(final FrameworkMethod method, RunNotifier notifier) {
 		Description description = describeChild(method);
 		Statement statement = methodBlock(method);
@@ -106,10 +107,13 @@ public final class TomCheck extends Theories {
 	}
 	
 	@Override
+	// same as original code - just to be sure we use the inner class from TomCheck
     public Statement methodBlock(FrameworkMethod method) {
         return new TheoryAnchor(method, getTestClass());
     }
 	
+	// protected in BlockJUnit4ClasRunner (parent of Theories) but not overridden in Theories
+	// same code as in BlockJUnit4ClasRunner
 	protected boolean isIgnored(FrameworkMethod child) {
 		 return child.getAnnotation(Ignore.class) != null;
 	}
@@ -140,19 +144,22 @@ public final class TomCheck extends Theories {
 	    private final List<AssumptionViolatedException> fInvalidParameters =
 	            new ArrayList<AssumptionViolatedException>();
 	    private int fSuccesses = 0;
-	    private int fAssumtionViolated = 0;
-	    private int fFailures = 0;
+	    private int fAssumtionViolated = 0; // new field for statistics
+	    private int fFailures = 0; // new field for statistics
 
+	    // exactly as in the original TheoryAnchor (form Theories)
 	    public TheoryAnchor(FrameworkMethod method, TestClass testClass) {
 	        fTestMethod = method;
 	        fTestClass = testClass;
 	    }
-
+	    
+	    // exactly as in the original TheoryAnchor (form Theories)
 	    private TestClass getTestClass() {
 	        return fTestClass;
 	    }
 
 	    @Override
+	    // exactly as in the original TheoryAnchor (form Theories)
 	    public void evaluate() throws Throwable {
 	        runWithAssignment(Assignments.allUnassigned(fTestMethod.getMethod(), getTestClass()));
 
@@ -162,6 +169,7 @@ public final class TomCheck extends Theories {
 	        }
 	    }
 
+	    // exactly as in the original TheoryAnchor (form Theories)
 	    protected void runWithAssignment(Assignments parameterAssignment) throws Throwable {
 	        if (!parameterAssignment.isComplete()) {
 	            runWithIncompleteAssignment(parameterAssignment);
@@ -170,12 +178,14 @@ public final class TomCheck extends Theories {
 	        }
 	    }
 
+	    // exactly as in the original TheoryAnchor (form Theories)
 	    protected void runWithIncompleteAssignment(Assignments incomplete) throws Throwable {
 	        for (PotentialAssignment source : incomplete.potentialsForNextUnassigned()) {
 	            runWithAssignment(incomplete.assignNext(source));
 	        }
 	    }
 
+	    // exactly as in the original TheoryAnchor (form Theories)
 		protected void runWithCompleteAssignment(final Assignments complete) throws Throwable {
 	        statementForCompleteAssignment(complete).evaluate();
 	    }
@@ -199,10 +209,14 @@ public final class TomCheck extends Theories {
 	                            statement.evaluate();
 	                            handleDataPointSuccess();
 	                        } catch (AssumptionViolatedException e) {
+	                        	// increase counter
 	                        	increaseAssumtionViolationCounter();
+	                        	// handle as before
 	                            handleAssumptionViolation(e);
 	                        } catch (Throwable e) {
+	                        	// increase counter
 	                        	increaseFailureCounter();
+	                        	// do shrinking instead of sending an error
 	                        	handleParameterizedFailure(e, complete.getMethodArguments(nullsOk()));
 	                        }
 	                    }
@@ -259,6 +273,7 @@ public final class TomCheck extends Theories {
 	    	FirstStepShrink.build(fTestMethod, fTestClass, counterExamples).evaluate();
 	    }
 
+	    // exactly as in the original TheoryAnchor (form Theories) - to remove?
 	    protected void reportParameterizedError(Throwable e, Object... params) throws Throwable {
 	    	if (params.length == 0) {
 	            throw e;
@@ -267,11 +282,13 @@ public final class TomCheck extends Theories {
 	        throw new ParameterizedAssertionError(e, fTestMethod.getName(), params);
 	    }
 
+	    // exactly as in the original TheoryAnchor (form Theories)
 	    private boolean nullsOk() {
 	        Theory annotation = fTestMethod.getMethod().getAnnotation(Theory.class);
 	        return annotation != null && annotation.nullsAccepted();
 	    }
 
+	    // exactly as in the original TheoryAnchor (form Theories)
 	    protected void handleDataPointSuccess() {
 	        fSuccesses++;
 	    }
