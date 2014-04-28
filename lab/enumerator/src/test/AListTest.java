@@ -2,6 +2,7 @@ package test;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.number.OrderingComparison.*;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeThat;
 
@@ -41,11 +42,11 @@ public class AListTest {
 				DemoAList.addFirst(list, e2), e1));
 	}
 
-	@Ignore
 	@Theory
-	public void testInsertWithIndex(@RandomForAll(sampleSize = 10) AList list,
+	public void testInsertWithIndex(@TomForAll @RandomCheck(minSampleSize=50, sampleSize = 100) AList list,
 			@RandomForAll(sampleSize = 10) Elem element,
 			@RandomForAll(sampleSize = 10) Integer index) {
+		assumeThat(index, greaterThanOrEqualTo(0));
 		assumeThat(true, is(not(DemoAList.isEmpty(list))));
 		assumeThat(true, is(DemoAList.size(list) > index));
 		assertTrue(DemoAList.getIndexOf(list, DemoAList.get(list, index)) + 1 == DemoAList
@@ -54,7 +55,7 @@ public class AListTest {
 	}
 
 	@Theory
-	public void testInsertTom(@TomForAll @RandomCheck(minSampleSize=20, sampleSize = 30) AList list,
+	public void testInsertTom(@TomForAll @RandomCheck(minSampleSize=90, sampleSize = 100) AList list,
 			@TomForAll @RandomCheck(sampleSize = 10) Elem e1,
 			@TomForAll @RandomCheck(sampleSize = 10) Elem e2) {
 		assumeThat(true, is(not(DemoAList.isEmpty(list))));
@@ -62,5 +63,4 @@ public class AListTest {
 		assertTrue(DemoAList.getIndexOf(list, e1) + 1 == DemoAList.getIndexOf(
 				DemoAList.addFirst(list, e2), e1));
 	}
-
 }
