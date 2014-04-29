@@ -42,7 +42,7 @@ public class AListTest {
 				DemoAList.addFirst(list, e2), e1));
 	}
 
-	@Ignore
+	
 	@Theory
 	public void testInsertWithIndex(@TomForAll @RandomCheck(minSampleSize=50, sampleSize = 100) AList list,
 			@RandomForAll(sampleSize = 10) Elem element,

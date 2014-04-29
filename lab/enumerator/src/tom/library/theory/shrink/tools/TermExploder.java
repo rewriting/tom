@@ -1,14 +1,14 @@
-package tom.library.theory.shrink;
+package tom.library.theory.shrink.tools;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import tom.library.sl.Visitable;
+import tom.library.theory.shrink.ShrinkException;
 import tom.library.theory.shrink.ds.TermNode;
 import tom.library.theory.shrink.ds.TermTreeBuilder;
 import tom.library.theory.shrink.ds.zipper.Zipper;
 import tom.library.theory.shrink.ds.zipper.ZipperException;
-import tom.library.theory.shrink.tools.TermClass;
 
 public class TermExploder {
 	private List<Object> explodedTerms;

@@ -9,7 +9,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import tom.library.sl.Visitable;
-import tom.library.theory.shrink.TermReducer;
+import tom.library.theory.shrink.tools.TermReducer;
 import examples.lists.alist.types.AList;
 import examples.lists.alist.types.Elem;
 

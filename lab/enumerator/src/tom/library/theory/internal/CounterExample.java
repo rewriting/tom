@@ -20,7 +20,7 @@ public class CounterExample {
 		return new CounterExample(fUnassigned.subList(1, fUnassigned.size()));
 	}
 	
-	public Object getCounterExampleObject() {
+	public Object getCounterExample() {
 		return fUnassigned.get(0);
 	}
 	

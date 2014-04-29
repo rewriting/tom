@@ -1,11 +1,11 @@
-package tom.library.theory.shrink;
+package tom.library.theory.shrink.tools;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import tom.library.enumerator.Enumeration;
 import tom.library.sl.Visitable;
-import tom.library.theory.shrink.tools.TermClass;
+import tom.library.theory.shrink.ShrinkException;
 
 public class TermReducer {
 	private Visitable root;
