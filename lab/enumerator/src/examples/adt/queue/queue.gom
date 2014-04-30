@@ -1,0 +1,9 @@
+module examples.adt.queue.Queue
+imports int
+abstract syntax
+
+  Queue = empty()
+        | list(e:Elem, q:Queue)
+
+  Elem = val(v:int)
+

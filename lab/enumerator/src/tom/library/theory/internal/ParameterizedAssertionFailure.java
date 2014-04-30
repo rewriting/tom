@@ -8,18 +8,28 @@ public class ParameterizedAssertionFailure extends AssertionError {
 	private static final long serialVersionUID = 1L;
 
 	public ParameterizedAssertionFailure(Throwable targetException, String methodName, Object... params) {
-		super(buildDescription(methodName, params), targetException);
+		super(buildDescription(targetException, methodName, params), targetException);
 	}
 	
 	public ParameterizedAssertionFailure(Throwable targetException, String methodName, int shrunkCount, Object[] initialParams, Object... params) {
-		super(buildDescriptionWithShrink(methodName, shrunkCount, initialParams, params));
+		super(buildDescriptionWithShrink(targetException, methodName, shrunkCount, initialParams, params));
 	}
 
+	public static String buildDescriptionWithShrink(Throwable targetException, String methodName, int shrunkCount, 
+			Object[] initialCounterExamples, Object...params) {
+		return String.format("\nError: %s%s", targetException.getMessage(), 
+				buildDescriptionWithShrink(methodName, shrunkCount, initialCounterExamples, params));
+	}
+	
 	public static String buildDescriptionWithShrink(String methodName, int shrunkCount, 
 			Object[] initialCounterExamples, Object...params) {
 		return String.format("\n%s(%s)\nCounter example:\n%s\nShrunk %s times, counter example:\n%s", 
 					methodName, join(", ", initialCounterExamples), join("\n", initialCounterExamples),
 					shrunkCount, join("\n ", params));
+	}
+	
+	public static String buildDescription(Throwable targetException, String methodName, Object...params) {
+		return String.format("\n%s%s", targetException.getMessage(), buildDescription(methodName, params));
 	}
 	
 	public static String buildDescription(String methodName, Object...params) {
