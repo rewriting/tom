@@ -47,8 +47,11 @@ public class SimpleQueueTest {
 	}
 	
 	@Theory
-	public void testFront(@TomForAll @RandomCheck(minSampleSize=50, sampleSize = 100) Elem element) throws EmptyQueueException {
+	public void testFront(@TomForAll @RandomCheck(minSampleSize=50, sampleSize = 100) Elem element,
+			@TomForAll @RandomCheck(minSampleSize=50, sampleSize = 100) Elem element2) 
+					throws EmptyQueueException {
 		classUnderTest.enqueue(element);
+		classUnderTest.enqueue(element2);
 		assertThat(classUnderTest.isEmpty(), is(false));
 		assertThat(classUnderTest.front(), is(element));
 	}
@@ -75,18 +78,19 @@ public class SimpleQueueTest {
 	
 	@Theory
 	public void testAssociativityEnqueDequeue(
-			@TomForAll @RandomCheck(minSampleSize=50, sampleSize = 100) Elem element,
-			@TomForAll @RandomCheck(minSampleSize=10, sampleSize = 20) Queue queue) throws EmptyQueueException {
+			@TomForAll @RandomCheck(sampleSize = 10) Elem element,
+			@TomForAll @RandomCheck(minSampleSize=25, sampleSize = 30) Queue queue) throws EmptyQueueException {
 		SimpleQueue q1 = SimpleQueue.createQueue(queue);
 		SimpleQueue q2 = SimpleQueue.createQueue(queue);
-		//System.out.println("q1 #1: " + q1.getQueue());
+		System.out.println("before q1: " + q1.getQueue());
 		assumeThat(queue.isempty(), is(false));
 		q1.enqueue(element);
 		q1.dequeue();
+		System.out.println("after q1: " + q1.getQueue());
+		
 		q2.dequeue();
 		q2.enqueue(element);
-		//System.out.println("q1: " + q1.getQueue());
-		//System.out.println("q2: " + q2.getQueue());
+		
 		assertThat(q1.getQueue(), is(q2.getQueue()));
 	}
 }

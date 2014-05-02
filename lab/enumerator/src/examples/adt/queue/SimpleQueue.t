@@ -33,7 +33,9 @@ public class SimpleQueue {
 	}
 
 	public Elem front() throws EmptyQueueException {
-		return getFront(queue);
+		//return getFront(queue);
+		// wrong implementation, it should be using getFront()
+		return getFrontFalse(queue);
 	}
 
 	protected Elem getFront(Queue q) throws EmptyQueueException {
@@ -48,9 +50,22 @@ public class SimpleQueue {
 		throw new EmptyQueueException(); 
 	}
 
+	/*
+	 *Wrong implementation of getFront
+	 */
+	protected Elem getFrontFalse(Queue q) throws EmptyQueueException {
+		%match(q) {
+			list(x,y) -> { return `x; }
+		}
+		throw new EmptyQueueException(); 
+	}
+
 	public Elem dequeue() throws EmptyQueueException {
-		Elem elem = getFront(queue);
-		queue = removeFirst(queue);
+		//Elem elem = getFront(queue);
+		Elem elem = front(); 
+		//queue = removeFirst(queue);
+		// wrong implementation, for test's sake, it should use removeFirst()
+		queue = removeLast(queue);
 		return elem;
 	}
 	
@@ -63,6 +78,12 @@ public class SimpleQueue {
 		throw new EmptyQueueException();
 	}
 
+	protected Queue removeLast(Queue q) throws EmptyQueueException {
+		%match(q) {
+			list(x,y) -> { return `y; }
+		}
+		throw new EmptyQueueException();
+	}
 	public Queue getQueue() {
 		return queue;
 	}
