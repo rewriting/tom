@@ -1,6 +1,7 @@
 package tom.library.theory;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -105,6 +106,7 @@ public final class TomCheck extends Theories {
 	@Override
 	// same as original code - just to be sure we use the inner class from TomCheck
     public Statement methodBlock(FrameworkMethod method) {
+		// get shrink annotation
         return new TheoryAnchor(method, getTestClass());
     }
 	
@@ -136,17 +138,46 @@ public final class TomCheck extends Theories {
 	
 	public static class TheoryAnchor extends Statement {
 		private TestObject testObject;
-	    private ShrinkHandler shrinkHandler;
+	    //private ShrinkHandler shrinkHandler;
 	    private ExecutionHandler handler;
 	    
 	    public TheoryAnchor(FrameworkMethod method, TestClass testClass) {
 	       testObject = new TestObject(method, testClass);
 	    }
 	    
+		private ShrinkHandler newHandlerInstance() {
+			ShrinkHandler handler = null;
+			try {
+				handler = getShrinkHandlerClass().getConstructor(TestObject.class).newInstance(testObject);
+			} catch (InstantiationException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			} catch (NoSuchMethodException e) {
+				e.printStackTrace();
+			} catch (SecurityException e) {
+				e.printStackTrace();
+			}
+			return handler;
+		}
+	    
+	    private Class<? extends ShrinkHandler> getShrinkHandlerClass() {
+	    	Class<? extends ShrinkHandler> shrinkClass;
+	    	if (testObject.getMethod().getAnnotation(Shrink.class) != null) {
+	    		shrinkClass = testObject.getMethod().getAnnotation(Shrink.class).handler();
+			} else {
+				shrinkClass = DefaultShrinkHandler.class;
+			}
+	    	return shrinkClass;
+	    }
+	    
 	    @Override
 	    public void evaluate() throws Throwable {
-	    	shrinkHandler = new DefaultShrinkHandler(testObject);
-	    	handler = new ExecutionHandler(shrinkHandler);
+	    	handler = new ExecutionHandler(newHandlerInstance());
 	    	AssignmentRunner runner = new AssignmentRunner(testObject, handler);
 	    	runner.runWithAssignment(getUnassignedAssignments());
 	    	

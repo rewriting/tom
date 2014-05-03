@@ -17,8 +17,12 @@ import examples.adt.queue.queue.types.Queue;
 import tom.library.enumerator.Enumeration;
 import tom.library.theory.Enum;
 import tom.library.theory.RandomCheck;
+import tom.library.theory.Shrink;
 import tom.library.theory.TomCheck;
 import tom.library.theory.TomForAll;
+import tom.library.theory.internal.CounterExample;
+import tom.library.theory.internal.TestObject;
+import tom.library.theory.shrink.DefaultShrinkHandler;
 
 @RunWith(TomCheck.class)
 public class SimpleQueueTest {
@@ -82,15 +86,44 @@ public class SimpleQueueTest {
 			@TomForAll @RandomCheck(minSampleSize=25, sampleSize = 30) Queue queue) throws EmptyQueueException {
 		SimpleQueue q1 = SimpleQueue.createQueue(queue);
 		SimpleQueue q2 = SimpleQueue.createQueue(queue);
-		System.out.println("before q1: " + q1.getQueue());
+		
 		assumeThat(queue.isempty(), is(false));
 		q1.enqueue(element);
 		q1.dequeue();
-		System.out.println("after q1: " + q1.getQueue());
 		
 		q2.dequeue();
 		q2.enqueue(element);
 		
 		assertThat(q1.getQueue(), is(q2.getQueue()));
+	}
+	
+	@Theory
+	@Shrink(handler=CustomShrinkHandler.class)
+	public void testAssociativityEnqueDequeueWithCustomShrink(
+			@TomForAll @RandomCheck(sampleSize = 10) Elem element,
+			@TomForAll @RandomCheck(minSampleSize=25, sampleSize = 30) Queue queue) throws EmptyQueueException {
+		SimpleQueue q1 = SimpleQueue.createQueue(queue);
+		SimpleQueue q2 = SimpleQueue.createQueue(queue);
+		
+		assumeThat(queue.isempty(), is(false));
+		q1.enqueue(element);
+		q1.dequeue();
+		
+		q2.dequeue();
+		q2.enqueue(element);
+		
+		assertThat(q1.getQueue(), is(q2.getQueue()));
+	}
+	
+	public static class CustomShrinkHandler extends DefaultShrinkHandler {
+
+		public CustomShrinkHandler(TestObject testObject) {
+			super(testObject);
+		}
+		
+		@Override
+		public void shrink(CounterExample counterExample) throws Throwable {
+			// do nothing, no shrink defined
+		}
 	}
 }

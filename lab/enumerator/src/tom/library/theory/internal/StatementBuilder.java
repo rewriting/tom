@@ -28,7 +28,7 @@ public class StatementBuilder {
             }
 
             @Override
-            public Statement methodBlock(FrameworkMethod method) {
+            public Statement methodBlock(final FrameworkMethod method) {
                 final Statement statement = super.methodBlock(method);
                 
                 return new Statement() {
@@ -40,7 +40,7 @@ public class StatementBuilder {
                         } catch (AssumptionViolatedException e) {
                         	handler.handleAssumptionViolation(e);
                         } catch (Throwable e) {
-                        	handler.handleFailures(e, complete.getMethodArguments(nullsOk()));
+                        	handler.handleFailures(e, method.getName(), complete.getMethodArguments(nullsOk()));
                         }
                     }
                 };
@@ -75,7 +75,7 @@ public class StatementBuilder {
 	    }
 	 
 	 private boolean nullsOk() {
-	        Theory annotation = testObject.getFrameworkMethod().getMethod().getAnnotation(Theory.class);
+	        Theory annotation = testObject.getMethod().getAnnotation(Theory.class);
 	        return annotation != null && annotation.nullsAccepted();
 	    }
 }

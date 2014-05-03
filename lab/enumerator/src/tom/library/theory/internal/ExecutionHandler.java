@@ -32,10 +32,18 @@ public class ExecutionHandler {
 		increaseAssumtionViolationCount();
 	}
 	
-	public void handleFailures(Throwable e, Object...params) throws Throwable {
+	public void handleFailures(Throwable e, String methodName, Object...params) throws Throwable {
 		increaseFailureCount();
 		counterExample = CounterExample.build(params);
 		shrinkHandler.shrink(counterExample);
+		throwParameterizedAssertionFailure(e, methodName, params);
+	}
+	
+	protected void throwParameterizedAssertionFailure(Throwable e, String methodName, Object... params) throws Throwable {
+		if (params.length == 0) {
+			throw e;
+		}
+		throw new ParameterizedAssertionFailure(e, methodName, params);
 	}
 	
 	protected void increaseAssumtionViolationCount() {

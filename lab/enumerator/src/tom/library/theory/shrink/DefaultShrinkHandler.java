@@ -28,11 +28,11 @@ public class DefaultShrinkHandler implements ShrinkHandler {
 	protected void doFirstStep() throws Exception, Throwable {
 		ExecutionHandler handler = new ExecutionHandler(this) {
 			@Override
-			public void handleFailures(Throwable e, Object... params) throws Throwable {
+			public void handleFailures(Throwable e, String methodName, Object... params) throws Throwable {
 				repeatFirstStep(e, params);
 				// Chain the second step directly after the first step is finished.
 				doSecondStep();
-				throwParameterizedAssertionFailure(e, params);
+				throwParameterizedAssertionFailureWithCounterExamples(e, params);
 			}
 		};
 		evaluateAssignment(handler, new ReducedTermsParameterSupplier());
@@ -41,11 +41,11 @@ public class DefaultShrinkHandler implements ShrinkHandler {
 	protected void doSecondStep() throws Throwable {
 		ExecutionHandler handler = new ExecutionHandler(this) {
 			@Override
-			public void handleFailures(Throwable e, Object... params) throws Throwable {
+			public void handleFailures(Throwable e, String methodName, Object... params) throws Throwable {
 				repeatSecondStep(e, params);
 				// If there is another step after second step, it should be placed here
 				// before throwing the exception.
-				throwParameterizedAssertionFailure(e, params);
+				throwParameterizedAssertionFailureWithCounterExamples(e, params);
 			}
 		};
 		evaluateAssignment(handler, new ExplodedTermParameterSupplier());
@@ -88,7 +88,7 @@ public class DefaultShrinkHandler implements ShrinkHandler {
 		currentCounterExample = counterExample;
 	}
 	
-	protected void throwParameterizedAssertionFailure(Throwable e, Object... params) throws Throwable {
+	protected void throwParameterizedAssertionFailureWithCounterExamples(Throwable e, Object... params) throws Throwable {
 		if (params.length == 0) {
 			throw e;
 		}
