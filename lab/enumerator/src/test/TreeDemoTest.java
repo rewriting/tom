@@ -1,0 +1,74 @@
+package test;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.*;
+import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.number.OrderingComparison.*;
+
+import org.junit.contrib.theories.Theory;
+import org.junit.runner.RunWith;
+
+import examples.DemoTree;
+import examples.adt.TreeDemo;
+import examples.adt.TreeDemo.EmptyQueueException;
+import examples.adt.tree.types.Node;
+import examples.adt.tree.types.Tree;
+import tom.library.enumerator.Enumeration;
+import tom.library.theory.Enum;
+import tom.library.theory.RandomCheck;
+import tom.library.theory.TomCheck;
+import tom.library.theory.TomForAll;
+
+@RunWith(TomCheck.class)
+public class TreeDemoTest {
+	@Enum public static Enumeration<Tree> enumTree = Tree.getEnumeration();
+	@Enum public static Enumeration<Node> enumNode = Node.getEnumeration();
+	
+	@Theory
+	public void testCreateNotEmpty(
+			@TomForAll @RandomCheck(minSampleSize=20, sampleSize = 30) Node node,
+			@TomForAll @RandomCheck(minSampleSize=20, sampleSize = 30) Tree left,
+			@TomForAll @RandomCheck(minSampleSize=20, sampleSize = 30) Tree right) {
+		Tree result = TreeDemo.createTree(node, left, right);
+		assertThat(TreeDemo.isEmpty(result), equalTo(false));
+	}
+	
+	@Theory
+	public void testGetRootFromEmpty() {
+		try {
+			TreeDemo.getRootNode(Tree.fromString("empty()"));
+		} catch (Exception e) {
+			assertThat(e, instanceOf(TreeDemo.EmptyQueueException.class));
+		}
+	}
+	
+	@Theory
+	public void testGetRootFromCreateTree(
+			@TomForAll @RandomCheck(minSampleSize=20, sampleSize = 30) Node node,
+			@TomForAll @RandomCheck(minSampleSize=20, sampleSize = 30) Tree left,
+			@TomForAll @RandomCheck(minSampleSize=20, sampleSize = 30) Tree right) throws EmptyQueueException {
+		Tree result = TreeDemo.createTree(node, left, right);
+		Node root = TreeDemo.getRootNode(result);
+		assertThat(root, equalTo(node));
+	}
+	
+	@Theory
+	public void testDetachLeftSubtreeFromCreateTree(
+			@TomForAll @RandomCheck(minSampleSize=20, sampleSize = 30) Node node,
+			@TomForAll @RandomCheck(minSampleSize=20, sampleSize = 30) Tree left,
+			@TomForAll @RandomCheck(minSampleSize=20, sampleSize = 30) Tree right) throws EmptyQueueException {
+		Tree result = TreeDemo.createTree(node, left, right);
+		Tree l = TreeDemo.detachLeftSubtree(result);
+		assertThat(l, equalTo(left));
+	}
+	
+	@Theory
+	public void testDetachRightSubtreeFromCreateTree(
+			@TomForAll @RandomCheck(minSampleSize=20, sampleSize = 30) Node node,
+			@TomForAll @RandomCheck(minSampleSize=20, sampleSize = 30) Tree left,
+			@TomForAll @RandomCheck(minSampleSize=20, sampleSize = 30) Tree right) throws EmptyQueueException {
+		Tree result = TreeDemo.createTree(node, left, right);
+		Tree r = TreeDemo.detachRightSubtree(result);
+		assertThat(r, equalTo(right));
+	}
+}

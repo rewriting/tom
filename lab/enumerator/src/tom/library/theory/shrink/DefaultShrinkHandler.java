@@ -62,6 +62,7 @@ public class DefaultShrinkHandler implements ShrinkHandler {
 	}
 	
 	protected void repeatFirstStep(Throwable e, Object... params) throws Throwable {
+		// TODO revise so it can be as planned
 		CounterExample temp = CounterExample.build(params);
 		if (temp.isSmallerThan(currentCounterExample)) {
 			increaseShrunkCount();
@@ -72,6 +73,7 @@ public class DefaultShrinkHandler implements ShrinkHandler {
 	
 	protected void repeatSecondStep(Throwable e, Object... params) throws Throwable {
 		CounterExample temp = CounterExample.build(params);
+		// TODO revise so it can be as planned
 		if (temp.isSmallerThan(currentCounterExample)) {
 			increaseShrunkCount();
 			currentCounterExample = temp;
