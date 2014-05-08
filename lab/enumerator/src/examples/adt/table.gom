@@ -1,0 +1,12 @@
+module examples.adt.Table
+imports int String
+abstract syntax
+
+Table = empty()
+	| table(Element:Elem, Tail:Table)
+
+Elem = elem(Key:Key, Value:Val)
+
+Key = key(Val:String)
+
+Val = val(Val:int)

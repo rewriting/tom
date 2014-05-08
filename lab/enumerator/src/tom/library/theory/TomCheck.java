@@ -182,7 +182,7 @@ public final class TomCheck extends Theories {
 	    	runner.runWithAssignment(getUnassignedAssignments());
 	    	
 	        if (handler.getSuccessCount() == 0) {
-	            Assert.fail("Never found parameters that satisfied method assumptions."
+	            Assert.fail("Never found parameters that satisfied method assumptions.\n"
 	                    + "  Violated assumptions: " + handler.getInvalidParameters());
 	        }
 	    }
