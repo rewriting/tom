@@ -26,6 +26,15 @@ public class SimpleTable {
 					
 	}
 
+	public Val getValue(Key key) {
+		for (Elem e : data) {
+			if (e.getKey() == key) {
+				return e.getValue();
+			}
+		}
+		return null;
+	}
+
 	/**
 	* Wrong implementation, should check if the key is present first
 	*/
@@ -35,7 +44,8 @@ public class SimpleTable {
 	}
 		
 	public void remove(Key key) {
-		for (Elem e : data) {
+		List<Elem> tmp = new ArrayList<Elem>(data);
+		for (Elem e : tmp) {
 			if (e.getKey() == key) {
 				data.remove(e);
 			}
@@ -54,10 +64,25 @@ public class SimpleTable {
 	public void fromTable(Table table) {
 		%match(table) {
 			table(x, t) -> { 
+				if(data.contains(`x)) {
+					data.remove(`x);
+				}
 				data.add(`x);
 				`fromTable(t);
 			}
 		}
+	}
+
+	public List<Elem> getData() {
+		return data;
+	}
+
+	public Table toTable() {
+		Table result = `empty();
+		for (Elem e : data) {
+			result = `table(e, result);
+		} 
+		return result;
 	}
 }
 

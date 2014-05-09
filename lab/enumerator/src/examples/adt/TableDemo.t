@@ -5,6 +5,15 @@ import examples.adt.table.types.*;
 public class TableDemo {
 	%include{ table/Table.tom }
 
+	public static Table evaluate(Table table) {
+		%match(table) {
+			table(elem(k, v), t) -> {
+				return `add(evaluate(t), k, v);	
+			}
+		}
+		return table;
+	}
+
 	public static boolean isEmpty(Table table) {
 		return table.isempty();
 	}
@@ -30,7 +39,7 @@ public class TableDemo {
 		return false;
 	}
 
-	public static Table add(Table table, Key k, Val v) throws Exception {
+	public static Table add(Table table, Key k, Val v) {
 		if(isEmpty(table)) {
 			return `table(elem(k, v), table);
 		} else {
@@ -39,7 +48,7 @@ public class TableDemo {
 		}
 	}
 
-	public static Table remove(Table table, Key key) throws Exception {
+	public static Table remove(Table table, Key key) {
 		%match(table) {
 			table(e@elem(k,_), tail) -> {
 				if(`k == key) {
