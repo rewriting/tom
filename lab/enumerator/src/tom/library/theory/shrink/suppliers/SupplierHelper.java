@@ -6,7 +6,7 @@ import java.util.List;
 import org.junit.contrib.theories.PotentialAssignment;
 
 public class SupplierHelper {
-	public static List<PotentialAssignment> buildPotentialAssignments(List<Object> inputs) {
+	public static List<PotentialAssignment> buildPotentialAssignments(List<? extends Object> inputs) {
 		List<PotentialAssignment> assignments = new ArrayList<PotentialAssignment>();
 		
 		for (final Object input : inputs) {

@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import tom.library.sl.Visitable;
+import tom.library.theory.shrink.tools.VisitableTools;
 
 public class CounterExample {
 	private final List<Object> fUnassigned;
@@ -53,7 +54,12 @@ public class CounterExample {
 	
 	private int calculateTermSize(Object term) {
 		if (isInstanceofVisitable(term)) {
-			return CounterExample.size((Visitable) term);
+			return VisitableTools.size((Visitable) term);
+		} else if (isInstanceOfString(term)) {
+			String value = (String) term;
+			return value.length();
+		} else if (isInstanceOfInteger(term)) {
+			return Math.abs((int) term);
 		} else {
 			return 0;
 		}
@@ -63,27 +69,12 @@ public class CounterExample {
 		return term instanceof Visitable;
 	}
 	
-	public static int size(Visitable term) {
-		if (term == null) {
-			return Integer.MAX_VALUE;
-		}
-		if (term instanceof Visitable) {
-			Visitable t = (Visitable) term;
-			int size = sizeRec(0, t);
-			return size;
-		} else {
-			return 0;
-		}
+	private boolean isInstanceOfString(Object term) {
+		return term instanceof String;
 	}
 	
-	private static int sizeRec(int s, Visitable term) {
-		if (term.getChildCount() == 0) {
-			return 1;
-		}
-		for (Visitable v : term.getChildren()) {
-			s += sizeRec(s, v);
-		}
-		return s;
+	private boolean isInstanceOfInteger(Object term) {
+		return term instanceof Integer;
 	}
 	
 	public Object[] getCounterExamples() {

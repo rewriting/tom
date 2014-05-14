@@ -16,6 +16,20 @@ import examples.lists.alist.types.Elem;
 public class TermReducerTest {
 	
 	@Test
+	public void testGetValueSourcesDebug1() throws Throwable {
+		AList term = AList.fromString("con(cs(7),con(cs(2),con(cs(2),con(cs(-6),con(cs(1),con(cs(0),con(cs(0),con(cs(-2),con(cs(-3),empty())))))))))");
+		AList expected1 = AList.fromString("empty()");
+		AList expected2 = AList.fromString("con(cs(7),empty())");
+		List<Object> assignments = TermReducer.build(term, AList.getEnumeration()).getInputValues();
+		for (Object potentialAssignment : assignments) {
+			System.out.println(potentialAssignment);
+		}
+		//assertThat(assignments.size(), is(2));
+		assertThat((Visitable) assignments.get(0), is((Visitable)expected1));
+		assertThat((Visitable) assignments.get(1), is((Visitable)expected2));
+	}
+	
+	@Test
 	public void testGetValueSources() throws Throwable {
 		AList term = AList.fromString("con(cs(3),con(cs(6),empty()))");
 		AList expected1 = AList.fromString("empty()");
