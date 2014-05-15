@@ -1,4 +1,4 @@
-package tom.library.theory.shrink.tools;
+package tom.library.theory.shrink.suppliers.reducers;
 
 import static tom.library.theory.shrink.tools.VisitableTools.getValueFromTermInteger;
 import static tom.library.theory.shrink.tools.VisitableTools.getValueFromTermString;

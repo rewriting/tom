@@ -4,7 +4,6 @@ package test;
 import static org.junit.Assert.*;
 import static org.junit.Assume.*;
 import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.number.OrderingComparison.*;
 
 import org.junit.Ignore;
 import org.junit.contrib.theories.Theory;
@@ -16,7 +15,6 @@ import examples.adt.table.types.Elem;
 import examples.adt.table.types.Key;
 import examples.adt.table.types.Table;
 import examples.adt.table.types.Val;
-import examples.adt.table.types.table.empty;
 import tom.library.enumerator.Enumeration;
 import tom.library.theory.Enum;
 import tom.library.theory.RandomCheck;

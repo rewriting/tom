@@ -6,9 +6,7 @@ import tom.library.theory.internal.CounterExample;
 import tom.library.theory.internal.ExecutionHandler;
 import tom.library.theory.internal.ParameterizedAssertionFailure;
 import tom.library.theory.internal.TestObject;
-import tom.library.theory.shrink.suppliers.ExplodedTermParameterSupplier;
-import tom.library.theory.shrink.suppliers.ReducedTermsParameterSupplier;
-import tom.library.theory.shrink.suppliers.ReducedValueParameterSupplier;
+import tom.library.theory.shrink.suppliers.ShrunkenTermsParameterSupplier;
 
 public class DefaultShrinkHandler implements ShrinkHandler {
 	private TestObject testObject;
@@ -23,51 +21,27 @@ public class DefaultShrinkHandler implements ShrinkHandler {
 	@Override
 	public void shrink(CounterExample counterExample) throws Throwable {
 		initializeCounterExamples(counterExample);
-		handleFirstStepShrink();
-		handleSecondStepShrink();
-		handleThirdStepShrink();
+		handleShrink();
 	}
 	
-	protected void handleFirstStepShrink() throws Exception, Throwable {
+	protected void handleShrink() throws Exception, Throwable {
 		ExecutionHandler handler = new ExecutionHandler(this) {
 			@Override
 			public void handleFailures(Throwable e, String methodName, Object... params) throws Throwable {
-				repeatFirstStep(e, params);
-				// Chain the second step directly after the first step is finished.
-				handleSecondStepShrink();
-				throwParameterizedAssertionFailureWithCounterExamples(e, params);
+				repeatShrink(e, params);
 			}
 		};
-		evaluateAssignment(handler, new ReducedTermsParameterSupplier());
+		evaluateAssignment(handler, new ShrunkenTermsParameterSupplier());
 	}
 	
-	protected void handleSecondStepShrink() throws Throwable {
-		ExecutionHandler handler = new ExecutionHandler(this) {
-			@Override
-			public void handleFailures(Throwable e, String methodName, Object... params) throws Throwable {
-				repeatSecondStep(e, params);
-				// If there is another step after second step, it should be placed here
-				// before throwing the exception.
-				handleThirdStepShrink();
-				throwParameterizedAssertionFailureWithCounterExamples(e, params);
-			}
-		};
-		evaluateAssignment(handler, new ExplodedTermParameterSupplier());
-	}
-
-	protected void handleThirdStepShrink() throws Throwable{
-		ExecutionHandler handler = new ExecutionHandler(this) {
-			@Override
-			public void handleFailures(Throwable e, String methodName, Object... params) throws Throwable {
-				System.out
-						.println("handleThirdStepShrink().handleFailures()");
-				repeatThirdStep(e, params);
-				// If there is another step after second step, it should be placed here
-				// before throwing the exception.
-				throwParameterizedAssertionFailureWithCounterExamples(e, params);
-			}
-		};
-		evaluateAssignment(handler, new ReducedValueParameterSupplier());
+	protected void repeatShrink(Throwable e, Object... params) throws Throwable {
+		CounterExample temp = CounterExample.build(params);
+		if (temp.isSmallerThan(currentCounterExample)) {
+			increaseShrunkCount();
+			currentCounterExample = temp;
+			handleShrink();
+		}
+		throwParameterizedAssertionFailureWithCounterExamples(e, params);
 	}
 	
 	private void evaluateAssignment(ExecutionHandler handler,
@@ -78,36 +52,6 @@ public class DefaultShrinkHandler implements ShrinkHandler {
 
 	private Assignments getUnassignedAssignments() throws Exception {
 		return Assignments.allUnassigned(testObject.getMethod(), testObject.getTestClass());
-	}
-	
-	protected void repeatFirstStep(Throwable e, Object... params) throws Throwable {
-		// TODO revise so it can be as planned
-		CounterExample temp = CounterExample.build(params);
-		if (temp.isSmallerThan(currentCounterExample)) {
-			increaseShrunkCount();
-			currentCounterExample = temp;
-			handleFirstStepShrink();
-		}
-	}
-	
-	protected void repeatSecondStep(Throwable e, Object... params) throws Throwable {
-		CounterExample temp = CounterExample.build(params);
-		// TODO revise so it can be as planned
-		if (temp.isSmallerThan(currentCounterExample)) {
-			increaseShrunkCount();
-			currentCounterExample = temp;
-			handleSecondStepShrink();
-		}
-	}
-	
-	protected void repeatThirdStep(Throwable e, Object... params) throws Throwable {
-		CounterExample temp = CounterExample.build(params);
-		// TODO revise so it can be as planned
-		if (temp.isSmallerThan(currentCounterExample)) {
-			increaseShrunkCount();
-			currentCounterExample = temp;
-			handleThirdStepShrink();
-		}
 	}
 	
 	private void increaseShrunkCount() {

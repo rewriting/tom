@@ -11,7 +11,7 @@ import org.junit.Test;
 
 import tom.library.sl.Visitable;
 import tom.library.sl.VisitableBuiltin;
-import tom.library.theory.shrink.tools.StringReducer;
+import tom.library.theory.shrink.suppliers.reducers.StringReducer;
 
 public class StringReducerTest {
 

@@ -56,7 +56,7 @@ public class AListTest {
 		assertThat(lhs, equalTo(rhs));
 	}
 
-	@Ignore
+	
 	@Theory
 	public void testInsertTom(@TomForAll @RandomCheck(minSampleSize=90, sampleSize = 100) AList list,
 			@TomForAll @RandomCheck(sampleSize = 10) Elem e1,

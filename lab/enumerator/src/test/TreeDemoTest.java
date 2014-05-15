@@ -1,14 +1,11 @@
 package test;
 
 import static org.junit.Assert.*;
-import static org.junit.Assume.*;
 import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.number.OrderingComparison.*;
 
 import org.junit.contrib.theories.Theory;
 import org.junit.runner.RunWith;
 
-import examples.DemoTree;
 import examples.adt.TreeDemo;
 import examples.adt.TreeDemo.EmptyQueueException;
 import examples.adt.tree.types.Node;

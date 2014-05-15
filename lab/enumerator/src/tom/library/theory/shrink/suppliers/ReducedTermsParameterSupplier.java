@@ -10,7 +10,7 @@ import tom.library.enumerator.Enumeration;
 import tom.library.theory.TomCheck;
 import tom.library.theory.shrink.ShrinkException;
 import tom.library.theory.shrink.ShrinkParameterSupplier;
-import tom.library.theory.shrink.tools.TermReducer;
+import tom.library.theory.shrink.suppliers.reducers.TermReducer;
 
 public class ReducedTermsParameterSupplier implements ShrinkParameterSupplier{
 

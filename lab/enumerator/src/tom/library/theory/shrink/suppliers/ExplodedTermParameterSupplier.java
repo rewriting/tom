@@ -8,7 +8,7 @@ import org.junit.contrib.theories.PotentialAssignment;
 
 import tom.library.theory.shrink.ShrinkException;
 import tom.library.theory.shrink.ShrinkParameterSupplier;
-import tom.library.theory.shrink.tools.TermExploder;
+import tom.library.theory.shrink.suppliers.reducers.TermExploder;
 
 public class ExplodedTermParameterSupplier implements ShrinkParameterSupplier {
 

@@ -3,10 +3,8 @@ package test;
 import static org.junit.Assert.*;
 import static org.junit.Assume.*;
 import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.number.OrderingComparison.*;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.contrib.theories.Theory;
 import org.junit.runner.RunWith;
 
@@ -21,6 +19,7 @@ import tom.library.theory.Shrink;
 import tom.library.theory.TomCheck;
 import tom.library.theory.TomForAll;
 import tom.library.theory.internal.CounterExample;
+import tom.library.theory.internal.ParameterizedAssertionFailure;
 import tom.library.theory.internal.TestObject;
 import tom.library.theory.shrink.DefaultShrinkHandler;
 
@@ -124,6 +123,7 @@ public class SimpleQueueTest {
 		@Override
 		public void shrink(CounterExample counterExample) throws Throwable {
 			// do nothing, no shrink defined
+			throw new ParameterizedAssertionFailure(new Exception("no shrink"), "", counterExample.getCounterExamples());
 		}
 	}
 }

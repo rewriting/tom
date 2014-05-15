@@ -1,10 +1,11 @@
-package tom.library.theory.shrink.tools;
+package tom.library.theory.shrink.suppliers.reducers;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import tom.library.sl.Visitable;
 import tom.library.sl.VisitableBuiltin;
+import tom.library.theory.shrink.tools.RandomValueGenerator;
 
 public class IntegerReducer  {
 	

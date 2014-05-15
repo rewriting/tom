@@ -11,7 +11,7 @@ import org.junit.Test;
 
 import tom.library.sl.Visitable;
 import tom.library.theory.shrink.ShrinkException;
-import tom.library.theory.shrink.tools.TermValueReducer;
+import tom.library.theory.shrink.suppliers.reducers.TermValueReducer;
 import examples.lists.alist.types.AList;
 import examples.lists.alist.types.Elem;
 
@@ -99,18 +99,9 @@ public class TermValueReducerTest {
 	}
 	
 	@Test(expected=ShrinkException.class)
-	public void testBuildTermsWithReducedInteger() throws ShrinkException {
-		System.out
-				.println("TermValueReducerTest.testBuildTermsWithReducedCsNegative()");
+	public void testBuildTermsWithReducedIntegerExpectsException() throws ShrinkException {
 		int term = 6;
 		TermValueReducer reducer = TermValueReducer.build(term);
-		List<Object> results = reducer.buildTermsWithReducedValue();
-		
-		for (Object object : results) {
-			System.out.println(object);
-			Visitable v = (Visitable) object;
-			
-		}
-		
+		reducer.buildTermsWithReducedValue();
 	}
 }

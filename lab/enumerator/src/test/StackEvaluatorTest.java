@@ -1,9 +1,7 @@
 package test;
 
 import static org.junit.Assert.*;
-import static org.junit.Assume.*;
 import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.number.OrderingComparison.*;
 
 import org.junit.contrib.theories.Theory;
 import org.junit.runner.RunWith;
@@ -39,8 +37,8 @@ public class StackEvaluatorTest {
 			@TomForAll @RandomCheck(sampleSize = 10) Elem e) throws EmptyStackException {
 		Stack stack = StackEvaluator.push(s, e);
 		Elem elem = StackEvaluator.top(stack);
-		assertThat(StackEvaluator.isEmpty(s), is(not(true)));
-		assertThat(elem, is(e));
+		assertThat(StackEvaluator.isEmpty(s), is(not(equalTo(true))));
+		assertThat(elem, is(equalTo(e)));
 	}
 	
 	@Theory

@@ -12,7 +12,7 @@ import org.junit.contrib.theories.PotentialAssignment.CouldNotGenerateValueExcep
 
 import tom.library.sl.Visitable;
 import tom.library.sl.VisitableBuiltin;
-import tom.library.theory.shrink.tools.IntegerReducer;
+import tom.library.theory.shrink.suppliers.reducers.IntegerReducer;
 
 public class IntegerReducerTest {
 

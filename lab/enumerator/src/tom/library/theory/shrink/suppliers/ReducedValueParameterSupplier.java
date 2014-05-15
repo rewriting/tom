@@ -8,9 +8,9 @@ import org.junit.contrib.theories.PotentialAssignment;
 
 import tom.library.theory.shrink.ShrinkException;
 import tom.library.theory.shrink.ShrinkParameterSupplier;
-import tom.library.theory.shrink.tools.IntegerReducer;
-import tom.library.theory.shrink.tools.StringReducer;
-import tom.library.theory.shrink.tools.TermValueReducer;
+import tom.library.theory.shrink.suppliers.reducers.IntegerReducer;
+import tom.library.theory.shrink.suppliers.reducers.StringReducer;
+import tom.library.theory.shrink.suppliers.reducers.TermValueReducer;
 
 public class ReducedValueParameterSupplier implements ShrinkParameterSupplier {
 

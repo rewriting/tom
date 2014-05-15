@@ -10,7 +10,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import tom.library.theory.shrink.ShrinkException;
-import tom.library.theory.shrink.tools.TermExploder;
+import tom.library.theory.shrink.suppliers.reducers.TermExploder;
 import examples.data.mutual.recursive.types.D;
 import examples.lists.alist.types.AList;
 import examples.lists.alist.types.Elem;

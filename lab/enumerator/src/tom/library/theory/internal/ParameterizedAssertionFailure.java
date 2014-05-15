@@ -8,8 +8,7 @@ public class ParameterizedAssertionFailure extends AssertionError {
 	private static final long serialVersionUID = 1L;
 
 	public ParameterizedAssertionFailure(Throwable targetException, String methodName, Object... params) {
-		//super(buildDescription(targetException, methodName, params), targetException);
-		super(buildDescription(targetException, methodName, params));
+		super(buildDescription(targetException, methodName, params), targetException);
 	}
 	
 	public ParameterizedAssertionFailure(Throwable targetException, String methodName, int shrunkCount, Object[] initialParams, Object... params) {

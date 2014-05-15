@@ -14,7 +14,6 @@ import org.junit.contrib.theories.PotentialAssignment.CouldNotGenerateValueExcep
 import examples.lists.alist.types.AList;
 import examples.lists.alist.types.Elem;
 import tom.library.sl.Visitable;
-import tom.library.sl.VisitableBuiltin;
 import tom.library.theory.shrink.suppliers.ReducedValueParameterSupplier;
 
 public class ReducedValueParameterSupplierTest {
@@ -51,9 +50,7 @@ public class ReducedValueParameterSupplierTest {
 		int term = 6;
 		List<PotentialAssignment> results = classUnderTest.getValueSources(null, term);
 		for (PotentialAssignment pa : results) {
-			System.out.println(pa.getValue());
-			VisitableBuiltin<Integer> res = (VisitableBuiltin<Integer>) pa.getValue();
-			assertThat(res.toString(), size(res), lessThan(6));
+			assertThat((Integer) pa.getValue(), lessThan(term));
 		}
 	}
 }
