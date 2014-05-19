@@ -18,6 +18,27 @@ import examples.lists.alist.types.Elem;
 public class TermValueReducerTest {
 
 	@Test
+	public void testBuildTermsWithReducedValueCs78() throws ShrinkException {
+		AList term = AList.fromString("con(cs(78),empty())");
+		TermValueReducer reducer = TermValueReducer.build(term);
+		List<Object> results = reducer.buildTermsWithReducedValue();
+		assertThat(results.size(), equalTo(10));
+
+		for (Object object : results) {
+			System.out.println(object);
+		}
+		
+//		Object expected0 = AList.fromString("con(cs(0),empty())");
+//		assertThat(results.get(0), equalTo(expected0));
+//		
+//		Object expected1 = AList.fromString("con(cs(1),empty())");
+//		assertThat(results.get(1), equalTo(expected1));
+//		
+//		Object expected2 = AList.fromString("con(cs(2),empty())");
+//		assertThat(results.get(2), equalTo(expected2));
+	}
+	
+	@Test
 	public void testBuildTermsWithReducedValue() throws ShrinkException {
 		AList term = AList.fromString("con(cs(3),empty())");
 		TermValueReducer reducer = TermValueReducer.build(term);

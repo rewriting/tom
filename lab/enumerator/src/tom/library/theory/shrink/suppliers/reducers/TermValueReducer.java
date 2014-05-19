@@ -105,7 +105,7 @@ public class TermValueReducer {
 			values.addAll(IntegerReducer.build().getReducedVisitableValue(value));
 		} else if (isValueInstanceOfString(term)) {
 			String value = getValueFromTermString(term);
-			values.addAll(StringReducer.build().getReducedVisitableValue(value));
+			values.addAll(StringReducer.build().getReducedVisitableValues(value));
 		}
 		return values;
 	}

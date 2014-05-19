@@ -30,7 +30,7 @@ public class ReducedValueParameterSupplier implements ShrinkParameterSupplier {
 			List<? extends Object> inputs = IntegerReducer.build().getReducedIntegerValue((int) counterExample);
 			return SupplierHelper.buildPotentialAssignments(inputs);
 		} else if (isInstanceOfString(counterExample)) {
-			List<? extends Object> inputs = StringReducer.build().getReducedStringValue((String) counterExample);
+			List<? extends Object> inputs = StringReducer.build().getReducedStringValues((String) counterExample);
 			return SupplierHelper.buildPotentialAssignments(inputs);
 		} else {
 			return SupplierHelper.buildPotentialAssignments(Arrays.asList(counterExample));

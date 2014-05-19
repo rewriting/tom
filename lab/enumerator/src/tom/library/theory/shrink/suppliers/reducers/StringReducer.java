@@ -17,14 +17,14 @@ public class StringReducer {
 		return new StringReducer();
 	}
 	
-	public List<Visitable> getReducedVisitableValue(String value) {
+	public List<Visitable> getReducedVisitableValues(String value) {
 		return buildReducedValue(value);
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<String> getReducedStringValue(String value) {
+	public List<String> getReducedStringValues(String value) {
 		List<String> results = new ArrayList<String>();
-		for(Visitable v : getReducedVisitableValue(value)) {
+		for(Visitable v : getReducedVisitableValues(value)) {
 			VisitableBuiltin<String> vs = (VisitableBuiltin<String>) v;
 			results.add(vs.getBuiltin());
 		}
@@ -65,9 +65,6 @@ public class StringReducer {
 				width = tmp > term.length()? term.length(): tmp; 
 			}
 			int substringTo = getRandomValue(part, width);
-			System.out.println("part: " + part);
-			System.out.println("width: " + width);
-			System.out.println("substringTo: " + substringTo);
 			results.add(new VisitableBuiltin<String>(term.substring(0, substringTo)));
 		}
 		return results;

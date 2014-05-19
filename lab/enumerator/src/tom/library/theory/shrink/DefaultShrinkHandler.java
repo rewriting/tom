@@ -24,7 +24,7 @@ public class DefaultShrinkHandler implements ShrinkHandler {
 		handleShrink();
 	}
 	
-	protected void handleShrink() throws Exception, Throwable {
+	protected void handleShrink() throws Throwable {
 		ExecutionHandler handler = new ExecutionHandler(this) {
 			@Override
 			public void handleFailures(Throwable e, String methodName, Object... params) throws Throwable {
