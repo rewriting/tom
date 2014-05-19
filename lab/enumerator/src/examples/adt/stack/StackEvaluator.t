@@ -17,7 +17,7 @@ public class StackEvaluator {
 		%match(stack) {
 			push(x, _) -> { return `x; }
 // 			pop(x) -> { return `top(x); }
-		}
+		} 
 		throw new EmptyStackException();
 	}
 

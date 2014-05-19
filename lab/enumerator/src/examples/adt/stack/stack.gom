@@ -4,5 +4,5 @@ abstract syntax
 
 Stack = empty()
 	| push(element:Elem, stack:Stack)
-
+  
 Elem = val(val:int)
