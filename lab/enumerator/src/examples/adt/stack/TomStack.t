@@ -1,10 +1,10 @@
 package examples.adt.stack;
 
-import examples.adt.stack.stackgom.types.*;
+import examples.adt.stack.stack.types.*;
 
 public class TomStack implements IStack {
 
-	%include{ stackgom/StackGom.tom }
+	%include{ stack/Stack.tom }
 
 	private Stack stack;
 
@@ -13,22 +13,32 @@ public class TomStack implements IStack {
 	}
 
 	@Override
+	public  IStack empty() {
+		return new TomStack();
+	}
+
+	@Override
+	public void push(Integer elem) {
+		stack = `push(val(elem), stack);
+	}
+
+	@Override
 	public boolean isEmpty() {
 		return stack.isempty();
 	}
 
 	@Override
-	public Elem top() throws EmptyStackException {
+	public Integer top() throws EmptyStackException {
 		%match(stack) {
-			push(x, y) -> { return `x; }
+			push(val(x), y) -> { return `x; }
 		}
 		throw new EmptyStackException();
 	}
 
 	@Override
-	public Elem pop() throws EmptyStackException {
+	public Integer pop() throws EmptyStackException {
 		%match(stack) {
-			push(x, y) -> { 
+			push(val(x), y) -> { 
 				stack = `y;
 				return `x;
 			}
@@ -37,16 +47,8 @@ public class TomStack implements IStack {
 	}
 
 	@Override
-	public void push(Elem elem) {
-		stack = `push(elem, stack);
-	}
-
-	@Override
 	public int size() {
-		%match(stack) {
-			push(x, y) -> { return 1 + `calculateSize(y); }
-		}
-		return 0;
+		return calculateSize(stack);
 	}
 
 	private int calculateSize(Stack s) {
@@ -56,9 +58,11 @@ public class TomStack implements IStack {
 		return 0;
 	}
 
-	@Override
-	public Stack getStack() {
-		return stack;
-	}
+
+// 	@Override
+// 	public Stack getStack() {
+// 		return stack;
+// 	}
+
 }
 

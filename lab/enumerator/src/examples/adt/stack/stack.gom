@@ -6,4 +6,3 @@ Stack = empty()
 	| push(element:Elem, stack:Stack)
   
 Elem = val(val:int)
-	| top(stack:Stack)
