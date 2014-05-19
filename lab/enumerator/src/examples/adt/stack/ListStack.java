@@ -9,10 +9,10 @@ import examples.adt.stack.stackgom.types.stack.empty;
 
 public class ListStack implements IStack {
 
-	private List<Elem> stack;
+	private List<Integer> stack;
 	
 	public ListStack() {
-		stack = new ArrayList<Elem>();
+		stack = new ArrayList<Integer>();
 	}
 	
 	@Override
@@ -21,7 +21,7 @@ public class ListStack implements IStack {
 	}
 
 	@Override
-	public Elem top() throws EmptyStackException {
+	public Integer top() throws EmptyStackException {
 		if (isEmpty()) {
 			throw new EmptyStackException();
 		}
@@ -29,17 +29,17 @@ public class ListStack implements IStack {
 	}
 
 	@Override
-	public Elem pop() throws EmptyStackException {
+	public Integer pop() throws EmptyStackException {
 		if (isEmpty()) {
 			throw new EmptyStackException();
 		}
-		Elem e = top();
+		Integer e = top();
 		stack.remove(size() - 1);
 		return e;
 	}
 
 	@Override
-	public void push(Elem elem) {
+	public void push(Integer elem) {
 		stack.add(elem);
 	}
 
@@ -49,12 +49,17 @@ public class ListStack implements IStack {
 	}
 
 	@Override
-	public Stack getStack() {
-		Stack s = empty.make();
-		for (Elem e : stack) {
-			s = examples.adt.stack.stackgom.types.stack.push.make(e, s);
-		}
-		return s;
+	public IStack empty() {
+		return new ListStack();
 	}
+
+//	@Override
+//	public Stack getStack() {
+//		Stack s = empty.make();
+//		for (Integer e : stack) {
+//			s = examples.adt.stack.stackgom.types.stack.push.make(e, s);
+//		}
+//		return s;
+//	}
 
 }
