@@ -9,4 +9,4 @@ Elem = elem(Key:Key, Value:Val)
 
 Key = key(Val:int)
 
-Val = val(Val:String)
+Val = val(Val:int)
