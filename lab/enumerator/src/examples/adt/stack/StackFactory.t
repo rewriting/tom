@@ -26,7 +26,7 @@ public class StackFactory {
 		return tStack;
 	}
 
-	protected void evaluateStack(TomStack object, Stack s) throws Exception {
+	protected void evaluateStack(IStack object, Stack s) throws Exception {
 		%match(s) {
 			push(x, y) -> {
 				Elem e = null;
@@ -47,5 +47,11 @@ public class StackFactory {
 			top(push(x, y)) -> { return `x; }
 		}
 		throw new EmptyStackException("Evaluate top on empty stack or bad term occured: " + e);
+	}
+
+	public IStack createListStack(Stack s) throws Exception {
+		ListStack lStack = new ListStack();
+		evaluateStack(lStack, s);
+		return lStack;
 	}
 }
