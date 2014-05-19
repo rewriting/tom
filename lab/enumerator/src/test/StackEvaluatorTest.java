@@ -20,7 +20,7 @@ import examples.adt.stack.stack.types.Elem;
 import examples.adt.stack.stack.types.Stack;
 
 @RunWith(TomCheck.class)
-public class StackTest {
+public class StackEvaluatorTest {
 	@Enum
 	public static Enumeration<Stack> enumStack = Stack.getEnumeration();
 	@Enum
