@@ -3,7 +3,6 @@ imports int
 abstract syntax
 
 Stack = empty()
-	| pop(stack:Stack)
 	| push(element:Elem, stack:Stack)
 
 Elem = val(val:int)

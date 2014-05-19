@@ -39,7 +39,7 @@ public class StackEvaluatorTest {
 	}
 
 	@Test(expected = EmptyStackException.class)
-	public void testEmptyPop() {
+	public void testEmptyPop()  throws EmptyStackException {
 		Stack s = StackEvaluator.createEmpty();
 		StackEvaluator.pop(s);
 	}
@@ -65,7 +65,7 @@ public class StackEvaluatorTest {
 
 	@Theory
 	public void testPopSize(
-			@TomForAll @RandomCheck(minSampleSize = 25, sampleSize = 30) Stack s) {
+			@TomForAll @RandomCheck(minSampleSize = 25, sampleSize = 30) Stack s)  throws EmptyStackException {
 		assertTrue(!(StackEvaluator.isEmpty(s)));
 		assertThat(StackEvaluator.size(StackEvaluator.pop(s)), is(StackEvaluator.size(s)-1));
 	}
@@ -73,7 +73,7 @@ public class StackEvaluatorTest {
 	@Theory
 	public void testPopPush(
 			@TomForAll @RandomCheck(minSampleSize = 25, sampleSize = 30) Stack s,
-			@TomForAll @RandomCheck(sampleSize = 10) Elem e) {
+			@TomForAll @RandomCheck(sampleSize = 10) Elem e)  throws EmptyStackException {
 		assertThat(StackEvaluator.pop(StackEvaluator.push(s, e)), is(s));
 	}
 
