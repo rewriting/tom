@@ -4,8 +4,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.*;
+import static org.junit.Assume.assumeThat;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -20,10 +19,8 @@ import tom.library.theory.TomForAll;
 import examples.adt.stack.EmptyStackException;
 import examples.adt.stack.IStack;
 import examples.adt.stack.StackFactory;
-import examples.adt.stack.TomStack;
 import examples.adt.stack.stack.types.Elem;
 import examples.adt.stack.stack.types.Stack;
-//import examples.adt.stack.StackFactory;
 
 @RunWith(TomCheck.class)
 public class StackTest {
@@ -37,8 +34,8 @@ public class StackTest {
 
 	@Before
 	public void setUp() {
-		init = new TomStack();
-		factory = StackFactory.getInstance();
+		factory = StackFactory.getInstance(StackFactory.LIST);
+		init = factory.makeStack();
 	}
 
 	@Test
