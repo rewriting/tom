@@ -2,6 +2,8 @@ package examples.adt.stack;
 
 import examples.adt.stack.stack.types.Elem;
 import examples.adt.stack.stack.types.Stack;
+import examples.adt.stack.stacklanguage.types.ElemL;
+import examples.adt.stack.stacklanguage.types.StackL;
 
 public class StackFactory {
 	private static StackFactory TOM_INSTANCE;
@@ -51,7 +53,7 @@ public class StackFactory {
 		if (objectTOM != null) {
 			object = objectTOM;
 		} else if (objectLIST != null) {
-			object =  objectLIST;
+			object = objectLIST;
 		}
 		if (s.isempty()) {
 			object = object.empty();
@@ -70,4 +72,33 @@ public class StackFactory {
 		return n;
 	}
 
+	public IStack evaluateStack(StackL s) {
+		IStack object = null;
+		if (objectTOM != null) {
+			object = objectTOM;
+		} else if (objectLIST != null) {
+			object = objectLIST;
+		}
+
+		if (s.isempty()) {
+			object = object.empty();
+		} else if (s.ispush()) {
+			ElemL elem = s.getelement();
+			StackL y = s.getstack();
+			Integer n = elem.getval();
+			object = evaluateStack(y);
+			object.push(n);
+		} else if (s.ispop()) {
+			StackL y = s.getstack();
+			object = evaluateStack(y);
+			try {
+				object.pop();
+			} catch (EmptyStackException e) {
+				// replace mal-formed programs with empty programs 
+				// shouldn't be really tested -> generate stacks that don't pass the implication test
+				object = object.empty();
+			}
+		}
+		return object;
+	}
 }

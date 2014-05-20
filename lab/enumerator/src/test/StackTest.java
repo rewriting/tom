@@ -21,6 +21,8 @@ import examples.adt.stack.IStack;
 import examples.adt.stack.StackFactory;
 import examples.adt.stack.stack.types.Elem;
 import examples.adt.stack.stack.types.Stack;
+import examples.adt.stack.stacklanguage.types.ElemL;
+import examples.adt.stack.stacklanguage.types.StackL;
 
 @RunWith(TomCheck.class)
 public class StackTest {
@@ -28,6 +30,10 @@ public class StackTest {
 	public static Enumeration<Stack> enumStack = Stack.getEnumeration();
 	@Enum
 	public static Enumeration<Elem> enumElem = Elem.getEnumeration();
+	@Enum
+	public static Enumeration<StackL> enumStackL = StackL.getEnumeration();
+	@Enum
+	public static Enumeration<ElemL> enumElemL = ElemL.getEnumeration();
 
 	private IStack init;
 	private StackFactory factory;
@@ -121,11 +127,30 @@ public class StackTest {
 	}
 
 	@Theory
-	public void testSameIsEmpty(
-			@TomForAll @RandomCheck(minSampleSize = 25, sampleSize = 30) Stack gs)
+	public void testSameBehaviour(
+			@TomForAll @RandomCheck(minSampleSize = 25, sampleSize = 30) StackL gs)
 			throws EmptyStackException {
-		IStack s = factory.makeStack(gs);
-		IStack sBis = factoryBis.makeStack(gs);
+		IStack s = factory.evaluateStack(gs);
+		IStack sBis = factoryBis.evaluateStack(gs);
+		
 		assertThat(s.isEmpty(), is(sBis.isEmpty()));
+		
+		assertThat(s.size(), is(sBis.size()));
+		
+		assumeThat(s.isEmpty(), equalTo(false));
+		assertThat(s.top(), is(sBis.top()));
+
+		Integer sRes = s.pop();
+		Integer sBisRes = sBis.pop();
+		//same result
+		assertThat(sRes, is(sBisRes));
+		//same side-effect
+		assertThat(s.isEmpty(), is(sBis.isEmpty()));
+		
+		assertThat(s.size(), is(sBis.size()));
+		
+		assumeThat(s.isEmpty(), equalTo(false));
+		assertThat(s.top(), is(sBis.top()));
+
 	}
 }
