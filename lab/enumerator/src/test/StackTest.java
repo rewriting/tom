@@ -19,7 +19,7 @@ import tom.library.theory.TomCheck;
 import tom.library.theory.TomForAll;
 import examples.adt.stack.EmptyStackException;
 import examples.adt.stack.IStack;
-import examples.adt.stack.MyFactory;
+import examples.adt.stack.StackFactory;
 import examples.adt.stack.TomStack;
 import examples.adt.stack.stack.types.Elem;
 import examples.adt.stack.stack.types.Stack;
@@ -33,12 +33,12 @@ public class StackTest {
 	public static Enumeration<Elem> enumElem = Elem.getEnumeration();
 
 	private IStack init;
-	private MyFactory factory;
+	private StackFactory factory;
 
 	@Before
 	public void setUp() {
 		init = new TomStack();
-		factory = MyFactory.getInstance();
+		factory = StackFactory.getInstance();
 	}
 
 	@Test
