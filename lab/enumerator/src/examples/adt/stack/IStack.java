@@ -10,5 +10,4 @@ public interface IStack {
 	public Integer top() throws EmptyStackException;
 	public Integer pop() throws EmptyStackException;
 	public int size();
-//	public Stack getStack();
 }

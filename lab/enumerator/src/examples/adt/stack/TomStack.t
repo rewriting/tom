@@ -59,6 +59,35 @@ public class TomStack implements IStack {
 	}
 
 
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj){
+			return true;
+    }
+		if (obj == null){
+			return false;
+    }
+		if (getClass() != obj.getClass()){
+			return false;
+    }
+		IStack other = (IStack) obj;
+		if (this.isEmpty()) {
+      return other.isEmpty();
+    }else{
+      try{
+        if (this.top().equals(other.top())) {
+          this.pop();
+          other.pop();
+          return this.equals(other);
+        }else{
+          return false;
+        } 
+      }catch(EmptyStackException e){
+        return false;
+      }
+    }
+	}
+
 // 	@Override
 // 	public Stack getStack() {
 // 		return stack;

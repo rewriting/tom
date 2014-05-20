@@ -1,20 +1,26 @@
 package examples.adt.stack;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
-
-import examples.adt.stack.stackgom.types.Elem;
-import examples.adt.stack.stackgom.types.Stack;
-import examples.adt.stack.stackgom.types.stack.empty;
 
 public class ListStack implements IStack {
 
 	private List<Integer> stack;
-	
+
 	public ListStack() {
-		stack = new ArrayList<Integer>();
+		stack = new LinkedList<Integer>();
 	}
-	
+
+	@Override
+	public IStack empty() {
+		return new ListStack();
+	}
+
+	@Override
+	public void push(Integer elem) {
+		stack.add(elem);
+	}
+
 	@Override
 	public boolean isEmpty() {
 		return stack.isEmpty();
@@ -30,17 +36,9 @@ public class ListStack implements IStack {
 
 	@Override
 	public Integer pop() throws EmptyStackException {
-		if (isEmpty()) {
-			throw new EmptyStackException();
-		}
 		Integer e = top();
 		stack.remove(size() - 1);
 		return e;
-	}
-
-	@Override
-	public void push(Integer elem) {
-		stack.add(elem);
 	}
 
 	@Override
@@ -48,18 +46,34 @@ public class ListStack implements IStack {
 		return stack.size();
 	}
 
+	// could be moved to the interface
 	@Override
-	public IStack empty() {
-		return new ListStack();
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		IStack other = (IStack) obj;
+		if (this.isEmpty()) {
+			return other.isEmpty();
+		} else {
+			try {
+				if (this.top().equals(other.top())) {
+					this.pop();
+					other.pop();
+					return this.equals(other);
+				} else {
+					return false;
+				}
+			} catch (EmptyStackException e) {
+				return false;
+			}
+		}
 	}
-
-//	@Override
-//	public Stack getStack() {
-//		Stack s = empty.make();
-//		for (Integer e : stack) {
-//			s = examples.adt.stack.stackgom.types.stack.push.make(e, s);
-//		}
-//		return s;
-//	}
 
 }

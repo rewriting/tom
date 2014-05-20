@@ -19,9 +19,11 @@ import tom.library.theory.TomCheck;
 import tom.library.theory.TomForAll;
 import examples.adt.stack.EmptyStackException;
 import examples.adt.stack.IStack;
+import examples.adt.stack.MyFactory;
 import examples.adt.stack.TomStack;
 import examples.adt.stack.stack.types.Elem;
 import examples.adt.stack.stack.types.Stack;
+//import examples.adt.stack.StackFactory;
 
 @RunWith(TomCheck.class)
 public class StackTest {
@@ -30,17 +32,13 @@ public class StackTest {
 	@Enum
 	public static Enumeration<Elem> enumElem = Elem.getEnumeration();
 
-	IStack init;
+	private IStack init;
+	private MyFactory factory;
 
 	@Before
 	public void setUp() {
 		init = new TomStack();
-	}
-
-	private TomStack makeStack(Stack stack) {
-		TomStack res = null;
-		return res;
-
+		factory = MyFactory.getInstance();
 	}
 
 	@Test
@@ -70,52 +68,57 @@ public class StackTest {
 	@Theory
 	public void testNonEmptySize(
 			@TomForAll @RandomCheck(minSampleSize = 25, sampleSize = 30) Stack gs) {
-		IStack s=makeStack(gs);
-		assumeThat(s.isEmpty(), equalTo(true));
+		IStack s = factory.makeStack(gs);
+		assumeThat(s.isEmpty(), equalTo(false));
 		assertThat(s.size(), is(not(0)));
 	}
 
-	// @Theory
-	// public void testPushSize(
-	// @TomForAll @RandomCheck(minSampleSize = 25, sampleSize = 30) Stack s,
-	// @TomForAll @RandomCheck(sampleSize = 10) Elem e) {
-	// assertThat(StackEvaluator.size(StackEvaluator.push(s, e)),
-	// is(StackEvaluator.size(s) + 1));
-	// }
-	//
-	// @Theory
-	// public void testPopSize(
-	// @TomForAll @RandomCheck(minSampleSize = 25, sampleSize = 30) Stack s)
-	// throws EmptyStackException {
-	// assertTrue(!(StackEvaluator.isEmpty(s)));
-	// assertThat(StackEvaluator.size(StackEvaluator.pop(s)),
-	// is(StackEvaluator.size(s) - 1));
-	// }
-	//
-	// @Theory
-	// public void testPopPush(
-	// @TomForAll @RandomCheck(minSampleSize = 25, sampleSize = 30) Stack s,
-	// @TomForAll @RandomCheck(sampleSize = 10) Elem e)
-	// throws EmptyStackException {
-	// assertThat(StackEvaluator.pop(StackEvaluator.push(s, e)), is(s));
-	// }
-	//
-	// @Theory
-	// public void testTop(
-	// @TomForAll @RandomCheck(minSampleSize = 25, sampleSize = 30) Stack s,
-	// @TomForAll @RandomCheck(sampleSize = 10) Elem e)
-	// throws EmptyStackException {
-	// assertThat(StackEvaluator.top(StackEvaluator.push(s, e)), is(e));
-	// }
-	//
-	// @Theory
-	// public void testEvaluateSize(
-	// @TomForAll @RandomCheck(minSampleSize = 25, sampleSize = 30) Stack s) {
-	// Stack result = StackEvaluator.evaluate(s);
-	// int size1 = StackEvaluator.size(s);
-	// int size2 = StackEvaluator.size(result);
-	// System.out.println("s: " + s + " - " + size1);
-	// System.out.println("result: " + result + " - " + size2);
-	// assertThat(size1, is(size2));
-	// }
+	@Theory
+	public void testPushSize(
+			@TomForAll @RandomCheck(minSampleSize = 25, sampleSize = 30) Stack gs,
+			@TomForAll @RandomCheck(sampleSize = 10) Elem e) {
+		IStack s = factory.makeStack(gs);
+		Integer n = factory.makeInteger(e);
+		int initSize = s.size();
+		s.push(n);
+		int finalSize = s.size();
+		assertThat(finalSize, is(initSize + 1));
+	}
+
+	@Theory
+	public void testPopSize(
+			@TomForAll @RandomCheck(minSampleSize = 25, sampleSize = 30) Stack gs)
+			throws EmptyStackException {
+		IStack s = factory.makeStack(gs);
+		assumeThat(s.isEmpty(), equalTo(false));
+		int initSize = s.size();
+		s.pop();
+		int finalSize = s.size();
+		assertThat(finalSize, is(initSize - 1));
+	}
+
+	@Theory
+	public void testPopPush(
+			@TomForAll @RandomCheck(minSampleSize = 25, sampleSize = 30) Stack gs,
+			@TomForAll @RandomCheck(sampleSize = 10) Elem e)
+			throws EmptyStackException {
+		IStack s = factory.makeStack(gs);
+		IStack sclone = factory.makeStack(gs);
+		Integer n = factory.makeInteger(e);
+		s.push(n);
+		s.pop();
+		assertThat(s, is(sclone));
+	}
+
+	@Theory
+	public void testTop(
+			@TomForAll @RandomCheck(minSampleSize = 25, sampleSize = 30) Stack gs,
+			@TomForAll @RandomCheck(sampleSize = 10) Elem e)
+			throws EmptyStackException {
+		IStack s = factory.makeStack(gs);
+		Integer n = factory.makeInteger(e);
+		s.push(n);
+		assertThat(s.top(), is(n));
+	}
+
 }
