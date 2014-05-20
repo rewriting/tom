@@ -4,35 +4,61 @@ import examples.adt.stack.stack.types.Elem;
 import examples.adt.stack.stack.types.Stack;
 
 public class StackFactory {
-	private static StackFactory INSTANCE;
+	private static StackFactory TOM_INSTANCE;
+	private static StackFactory LIST_INSTANCE;
 	public static int TOM = 1;
 	public static int LIST = 2;
 	public static int ARRAY = 3;
 
-	private IStack object = null;
+	private IStack objectTOM = null;
+	private IStack objectLIST = null;
+	private IStack objectARRAY = null;
 
 	private StackFactory(int type) {
 		if (type == TOM) {
-			object = new TomStack();
+			objectTOM = new TomStack();
 		} else if (type == LIST) {
-			object = new ListStack();
+			objectLIST = new ListStack();
 		} else if (type == ARRAY) {
-			object = new ArrayStack();
+			objectARRAY = new ArrayStack();
 		}
 	}
 
 	public static StackFactory getInstance(int type) {
-		if (INSTANCE == null) {
-			INSTANCE = new StackFactory(type);
+		if (type == TOM) {
+			if (TOM_INSTANCE == null) {
+				TOM_INSTANCE = new StackFactory(type);
+			}
+			return TOM_INSTANCE;
+		} else if (type == LIST) {
+			if (LIST_INSTANCE == null) {
+				LIST_INSTANCE = new StackFactory(type);
+			}
+			return LIST_INSTANCE;
 		}
-		return INSTANCE;
+		// to do it better
+		return null;
 	}
 
 	public IStack makeStack() {
-		return object;
+		if (objectTOM != null) {
+			return objectTOM;
+		} else if (objectLIST != null) {
+			return objectLIST;
+		} else if (objectARRAY != null) {
+			return objectARRAY;}
+		// to do it better
+		return null;
 	}
 
 	public IStack makeStack(Stack s) {
+		IStack object = null;
+		if (objectTOM != null) {
+			object = objectTOM;
+		} else if (objectLIST != null) {
+			object =  objectLIST;
+		} else if (objectARRAY != null) {
+			object =  objectARRAY;}
 		if (s.isempty()) {
 			object = object.empty();
 		} else if (s.ispush()) {
