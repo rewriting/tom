@@ -7,6 +7,7 @@ public class StackFactory {
 	private static StackFactory INSTANCE;
 	public static int TOM = 1;
 	public static int LIST = 2;
+	public static int ARRAY = 3;
 
 	private IStack object = null;
 
@@ -15,6 +16,8 @@ public class StackFactory {
 			object = new TomStack();
 		} else if (type == LIST) {
 			object = new ListStack();
+		} else if (type == ARRAY) {
+			object = new ArrayStack();
 		}
 	}
 

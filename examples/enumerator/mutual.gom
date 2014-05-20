@@ -5,3 +5,4 @@ abstract syntax
 A = a() | foo(b:B) | hoo(a:A,v:int)
 B = b() | grr(a:A)
 
+L = conc(A*)

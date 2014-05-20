@@ -34,7 +34,7 @@ public class StackTest {
 
 	@Before
 	public void setUp() {
-		factory = StackFactory.getInstance(StackFactory.LIST);
+		factory = StackFactory.getInstance(StackFactory.ARRAY);
 		init = factory.makeStack();
 	}
 
