@@ -31,10 +31,12 @@ public class StackTest {
 
 	private IStack init;
 	private StackFactory factory;
+	private StackFactory factoryBis;
 
 	@Before
 	public void setUp() {
 		factory = StackFactory.getInstance(StackFactory.LIST);
+		factoryBis = StackFactory.getInstance(StackFactory.TOM);
 		init = factory.makeStack();
 	}
 
@@ -118,4 +120,12 @@ public class StackTest {
 		assertThat(s.top(), is(n));
 	}
 
+	@Theory
+	public void testSameIsEmpty(
+			@TomForAll @RandomCheck(minSampleSize = 25, sampleSize = 30) Stack gs)
+			throws EmptyStackException {
+		IStack s = factory.makeStack(gs);
+		IStack sBis = factoryBis.makeStack(gs);
+		assertThat(s.isEmpty(), is(sBis.isEmpty()));
+	}
 }
