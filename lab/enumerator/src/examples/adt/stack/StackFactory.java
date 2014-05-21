@@ -14,18 +14,10 @@ public class StackFactory {
 	public static int LIST = 2;
 	public static int ARRAY = 3;
 
-	private IStack objectTOM = null;
-	private IStack objectLIST = null;
-	private IStack objectARRAY = null;
+	private int type = -1;
 
 	private StackFactory(int type) {
-		if (type == TOM) {
-			objectTOM = new TomStack();
-		} else if (type == LIST) {
-			objectLIST = new ListStack();
-		} else if (type == ARRAY) {
-			objectARRAY = new ArrayStack();
-		}
+		this.type = type;
 	}
 
 	public static StackFactory getInstance(int type) {
@@ -50,26 +42,31 @@ public class StackFactory {
 	}
 
 	public IStack makeStack() {
-		if (objectTOM != null) {
-			return objectTOM;
-		} else if (objectLIST != null) {
-			return objectLIST;
-		} else if (objectARRAY != null) {
-			return objectARRAY;
+		IStack object = null;
+		if (this.type == TOM) {
+			object = new TomStack();
+		} else if (this.type == LIST) {
+			object = new ListStack();
+		} else if (this.type == ARRAY) {
+			object = new ArrayStack();
 		}
 		// to do it better
-		return null;
+		return object;
 	}
 
 	public IStack makeStack(Stack s) {
 		IStack object = null;
-		if (objectTOM != null) {
-			object = objectTOM;
-		} else if (objectLIST != null) {
-			object =  objectLIST;
-		} else if (objectARRAY != null) {
-			object =  objectARRAY;
-		} else if (s.ispush()) {
+		if (this.type == TOM) {
+			object = new TomStack();
+		} else if (this.type == LIST) {
+			object = new ListStack();
+		} else if (this.type == ARRAY) {
+			object = new ArrayStack();
+		}
+
+		if (s.isempty()) {
+			object = object.empty();
+		}else if (s.ispush()) {
 			Elem elem = s.getelement();
 			Stack y = s.getstack();
 			Integer n = elem.getval();
@@ -86,10 +83,12 @@ public class StackFactory {
 
 	public IStack evaluateStack(StackL s) {
 		IStack object = null;
-		if (objectTOM != null) {
-			object = objectTOM;
-		} else if (objectLIST != null) {
-			object = objectLIST;
+		if (this.type == TOM) {
+			object = new TomStack();
+		} else if (this.type == LIST) {
+			object = new ListStack();
+		} else if (this.type == ARRAY) {
+			object = new ArrayStack();
 		}
 
 		if (s.isempty()) {
@@ -106,8 +105,9 @@ public class StackFactory {
 			try {
 				object.pop();
 			} catch (EmptyStackException e) {
-				// replace mal-formed programs with empty programs 
-				// shouldn't be really tested -> generate stacks that don't pass the implication test
+				// replace mal-formed programs with empty programs
+				// shouldn't be really tested -> generate stacks that don't pass
+				// the implication test
 				object = object.empty();
 			}
 		}
