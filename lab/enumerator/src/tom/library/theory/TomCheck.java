@@ -117,11 +117,15 @@ public final class TomCheck extends Theories {
 	}
 
 	protected void printGeneratedDataStatistic(final FrameworkMethod method, final TheoryAnchor anchor) {
-		System.out.println(String.format("%s\nGenerated test data: %s\nTested data: %s\nUntested data: %s\n", 
-						method.getName(),
-						getTotalGeneratedDataFromTheoryAnchor(anchor), 
-						getTotalTestedDataFromTheoryAnchor(anchor),
-						getTotalUntestedDataFromTheoryAnchor(anchor)));
+		System.out.println(String.format("%s\nGenerated test data: %s"
+				+ "\nTested data: %s"
+				+ "\nUntested data: %s"
+				+ "\nBad input: %s \n", 
+				method.getName(),
+				getTotalGeneratedDataFromTheoryAnchor(anchor), 
+				getTotalTestedDataFromTheoryAnchor(anchor),
+				getTotalUntestedDataFromTheoryAnchor(anchor),
+				getTotalBadInputFromTheoryAnchor(anchor)));
 	}
 
 	protected int getTotalTestedDataFromTheoryAnchor(TheoryAnchor anchor) {
@@ -129,11 +133,15 @@ public final class TomCheck extends Theories {
 	}
 
 	protected int getTotalGeneratedDataFromTheoryAnchor(TheoryAnchor anchor) {
-		return getTotalTestedDataFromTheoryAnchor(anchor) + anchor.getViolationAssumptionCount();
+		return anchor.getTotalGeneratedData();
 	}
 	
 	protected int getTotalUntestedDataFromTheoryAnchor(TheoryAnchor anchor) {
 		return anchor.getViolationAssumptionCount();
+	}
+	
+	protected int getTotalBadInputFromTheoryAnchor(TheoryAnchor anchor) {
+		return anchor.getBadInputCount();
 	}
 	
 	public static class TheoryAnchor extends Statement {
@@ -182,7 +190,7 @@ public final class TomCheck extends Theories {
 	    	runner.runWithAssignment(getUnassignedAssignments());
 	    	
 	        if (handler.getSuccessCount() == 0) {
-	            Assert.fail("Never found parameters that satisfied method assumptions.\n"
+	            Assert.fail("Never found parameters that satisfied method assumptions or parameters are bad.\n"
 	                    + "  Violated assumptions: " + handler.getInvalidParameters());
 	        }
 	    }
@@ -202,6 +210,18 @@ public final class TomCheck extends Theories {
 		
 		public int getFailureCount() {
 			return handler.getFailureCount();
+		}
+		
+		public int getBadInputCount() {
+			return handler.getBadInputCount();
+		}
+		
+		public int getTotalGeneratedData() {
+			int total = handler.getSuccessCount();
+			total += handler.getFailureCount();
+			total += handler.getAssumptionViolationCount();
+			total += handler.getBadInputCount();
+			return total;
 		}
 	}
 }
