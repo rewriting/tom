@@ -8,6 +8,8 @@ import examples.adt.stack.stacklanguage.types.StackL;
 public class StackFactory {
 	private static StackFactory TOM_INSTANCE;
 	private static StackFactory LIST_INSTANCE;
+	private static StackFactory ARRAY_INSTANCE;
+
 	public static int TOM = 1;
 	public static int LIST = 2;
 	public static int ARRAY = 3;
@@ -37,6 +39,11 @@ public class StackFactory {
 				LIST_INSTANCE = new StackFactory(type);
 			}
 			return LIST_INSTANCE;
+		} else if (type == ARRAY) {
+			if (ARRAY_INSTANCE == null) {
+				ARRAY_INSTANCE = new StackFactory(type);
+			}
+			return ARRAY_INSTANCE;
 		}
 		// to do it better
 		return null;

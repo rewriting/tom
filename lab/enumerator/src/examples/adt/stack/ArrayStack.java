@@ -6,6 +6,7 @@ public class ArrayStack implements IStack {
 	private int index;
 	private int size;
 	private final static int SIZE = 8;
+	
 	public ArrayStack() {
 		stack = new int[SIZE];
 		index = 0;
@@ -19,8 +20,8 @@ public class ArrayStack implements IStack {
 
 	@Override
 	public void push(Integer elem) {
-		stack[index] = elem;
-		index = (index + 1) % SIZE;
+		stack[index++] = elem;
+		index %= SIZE;
 		size++;
 	}
 
@@ -34,14 +35,12 @@ public class ArrayStack implements IStack {
 		if (isEmpty()) {
 			throw new EmptyStackException();
 		}
-		int res = stack[index];
-		return res;
+		return stack[index];
 	}
 
 	@Override
 	public Integer pop() throws EmptyStackException {
-		Integer e = top();
-		int res = stack[index];
+		Integer res = top();
 		index = (index - 1) % SIZE;
 		size--;
 		return res;

@@ -36,14 +36,14 @@ public class StackTest {
 	public static Enumeration<ElemL> enumElemL = ElemL.getEnumeration();
 
 	private IStack init;
-	private StackFactory factory;
-	private StackFactory factoryBis;
+	private StackFactory factory1;
+	private StackFactory factory2;
 
 	@Before
 	public void setUp() {
-		factory = StackFactory.getInstance(StackFactory.LIST);
-		factoryBis = StackFactory.getInstance(StackFactory.TOM);
-		init = factory.makeStack();
+		factory1 = StackFactory.getInstance(StackFactory.ARRAY);
+		factory2 = StackFactory.getInstance(StackFactory.TOM);
+		init = factory1.makeStack();
 	}
 
 	@Test
@@ -73,7 +73,7 @@ public class StackTest {
 	@Theory
 	public void testNonEmptySize(
 			@TomForAll @RandomCheck(minSampleSize = 25, sampleSize = 30) Stack gs) {
-		IStack s = factory.makeStack(gs);
+		IStack s = factory1.makeStack(gs);
 		assumeThat(s.isEmpty(), equalTo(false));
 		assertThat(s.size(), is(not(0)));
 	}
@@ -82,8 +82,8 @@ public class StackTest {
 	public void testPushSize(
 			@TomForAll @RandomCheck(minSampleSize = 25, sampleSize = 30) Stack gs,
 			@TomForAll @RandomCheck(sampleSize = 10) Elem e) {
-		IStack s = factory.makeStack(gs);
-		Integer n = factory.makeInteger(e);
+		IStack s = factory1.makeStack(gs);
+		Integer n = factory1.makeInteger(e);
 		int initSize = s.size();
 		s.push(n);
 		int finalSize = s.size();
@@ -94,7 +94,7 @@ public class StackTest {
 	public void testPopSize(
 			@TomForAll @RandomCheck(minSampleSize = 25, sampleSize = 30) Stack gs)
 			throws EmptyStackException {
-		IStack s = factory.makeStack(gs);
+		IStack s = factory1.makeStack(gs);
 		assumeThat(s.isEmpty(), equalTo(false));
 		int initSize = s.size();
 		s.pop();
@@ -107,9 +107,9 @@ public class StackTest {
 			@TomForAll @RandomCheck(minSampleSize = 25, sampleSize = 30) Stack gs,
 			@TomForAll @RandomCheck(sampleSize = 10) Elem e)
 			throws EmptyStackException {
-		IStack s = factory.makeStack(gs);
-		IStack sclone = factory.makeStack(gs);
-		Integer n = factory.makeInteger(e);
+		IStack s = factory1.makeStack(gs);
+		IStack sclone = factory1.makeStack(gs);
+		Integer n = factory1.makeInteger(e);
 		s.push(n);
 		s.pop();
 		assertThat(s, is(sclone));
@@ -120,8 +120,8 @@ public class StackTest {
 			@TomForAll @RandomCheck(minSampleSize = 25, sampleSize = 30) Stack gs,
 			@TomForAll @RandomCheck(sampleSize = 10) Elem e)
 			throws EmptyStackException {
-		IStack s = factory.makeStack(gs);
-		Integer n = factory.makeInteger(e);
+		IStack s = factory1.makeStack(gs);
+		Integer n = factory1.makeInteger(e);
 		s.push(n);
 		assertThat(s.top(), is(n));
 	}
@@ -130,27 +130,27 @@ public class StackTest {
 	public void testSameBehaviour(
 			@TomForAll @RandomCheck(minSampleSize = 25, sampleSize = 30) StackL gs)
 			throws EmptyStackException {
-		IStack s = factory.evaluateStack(gs);
-		IStack sBis = factoryBis.evaluateStack(gs);
+		IStack stack1 = factory1.evaluateStack(gs);
+		IStack stack2 = factory2.evaluateStack(gs);
 		
-		assertThat(s.isEmpty(), is(sBis.isEmpty()));
+		assertThat(stack1.isEmpty(), is(stack2.isEmpty()));
 		
-		assertThat(s.size(), is(sBis.size()));
+		assertThat(stack1.size(), is(stack2.size()));
 		
-		assumeThat(s.isEmpty(), equalTo(false));
-		assertThat(s.top(), is(sBis.top()));
+		assumeThat(stack1.isEmpty(), equalTo(false));
+		assertThat(stack1.top(), is(stack2.top()));
 
-		Integer sRes = s.pop();
-		Integer sBisRes = sBis.pop();
+		Integer sRes = stack1.pop();
+		Integer sBisRes = stack2.pop();
 		//same result
 		assertThat(sRes, is(sBisRes));
 		//same side-effect
-		assertThat(s.isEmpty(), is(sBis.isEmpty()));
+		assertThat(stack1.isEmpty(), is(stack2.isEmpty()));
 		
-		assertThat(s.size(), is(sBis.size()));
+		assertThat(stack1.size(), is(stack2.size()));
 		
-		assumeThat(s.isEmpty(), equalTo(false));
-		assertThat(s.top(), is(sBis.top()));
+		assumeThat(stack1.isEmpty(), equalTo(false));
+		assertThat(stack1.top(), is(stack2.top()));
 
 	}
 }
