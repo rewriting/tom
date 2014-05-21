@@ -1,0 +1,9 @@
+module examples.adt.stack.StackLanguage
+imports int
+abstract syntax
+
+StackL = empty()
+	| push(element:ElemL, stack:StackL)
+	| pop(stack:StackL)
+  
+ElemL = val(val:int)
