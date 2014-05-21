@@ -32,11 +32,14 @@ public class Mutual {
     testEnumerator(Combinators.makeString(), "String", 5);
     testEnumerator(A.getEnumeration(), "A", 10);
     testEnumerator(B.getEnumeration(), "B", 10);
+    testEnumerator(L.getEnumeration(), "L", 10);
    
     Enumeration<A> enumA = A.getEnumeration(); 
     System.out.println("#trees of size 500 = card(parts[500]) = " + enumA.parts().index(BigInteger.valueOf(500)).getCard());
     Enumeration<B> enumB = B.getEnumeration();
     System.out.println("#trees of size 500 = card(parts[500]) = " + enumB.parts().index(BigInteger.valueOf(500)).getCard());
+    Enumeration<L> enumL = L.getEnumeration();
+    System.out.println("#trees of size 500 = card(parts[500]) = " + enumL.parts().index(BigInteger.valueOf(500)).getCard());
 
     
 /*

@@ -8,17 +8,23 @@ import examples.adt.stack.stacklanguage.types.StackL;
 public class StackFactory {
 	private static StackFactory TOM_INSTANCE;
 	private static StackFactory LIST_INSTANCE;
+	private static StackFactory ARRAY_INSTANCE;
+
 	public static int TOM = 1;
 	public static int LIST = 2;
+	public static int ARRAY = 3;
 
 	private IStack objectTOM = null;
 	private IStack objectLIST = null;
+	private IStack objectARRAY = null;
 
 	private StackFactory(int type) {
 		if (type == TOM) {
 			objectTOM = new TomStack();
 		} else if (type == LIST) {
 			objectLIST = new ListStack();
+		} else if (type == ARRAY) {
+			objectARRAY = new ArrayStack();
 		}
 	}
 
@@ -33,6 +39,11 @@ public class StackFactory {
 				LIST_INSTANCE = new StackFactory(type);
 			}
 			return LIST_INSTANCE;
+		} else if (type == ARRAY) {
+			if (ARRAY_INSTANCE == null) {
+				ARRAY_INSTANCE = new StackFactory(type);
+			}
+			return ARRAY_INSTANCE;
 		}
 		// to do it better
 		return null;
@@ -43,6 +54,8 @@ public class StackFactory {
 			return objectTOM;
 		} else if (objectLIST != null) {
 			return objectLIST;
+		} else if (objectARRAY != null) {
+			return objectARRAY;
 		}
 		// to do it better
 		return null;
@@ -53,10 +66,9 @@ public class StackFactory {
 		if (objectTOM != null) {
 			object = objectTOM;
 		} else if (objectLIST != null) {
-			object = objectLIST;
-		}
-		if (s.isempty()) {
-			object = object.empty();
+			object =  objectLIST;
+		} else if (objectARRAY != null) {
+			object =  objectARRAY;
 		} else if (s.ispush()) {
 			Elem elem = s.getelement();
 			Stack y = s.getstack();
