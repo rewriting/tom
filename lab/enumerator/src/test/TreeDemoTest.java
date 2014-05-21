@@ -23,9 +23,9 @@ public class TreeDemoTest {
 	
 	@Theory
 	public void testCreateNotEmpty(
-			@TomForAll @RandomCheck(minSampleSize=20, sampleSize = 30) Node node,
-			@TomForAll @RandomCheck(minSampleSize=20, sampleSize = 30) Tree left,
-			@TomForAll @RandomCheck(minSampleSize=20, sampleSize = 30) Tree right) {
+			@TomForAll @RandomCheck(minSampleSize=20, maxSampleSize = 30) Node node,
+			@TomForAll @RandomCheck(minSampleSize=20, maxSampleSize = 30) Tree left,
+			@TomForAll @RandomCheck(minSampleSize=20, maxSampleSize = 30) Tree right) {
 		Tree result = TreeDemo.createTree(node, left, right);
 		assertThat(TreeDemo.isEmpty(result), equalTo(false));
 	}
@@ -41,9 +41,9 @@ public class TreeDemoTest {
 	
 	@Theory
 	public void testGetRootFromCreateTree(
-			@TomForAll @RandomCheck(minSampleSize=20, sampleSize = 30) Node node,
-			@TomForAll @RandomCheck(minSampleSize=20, sampleSize = 30) Tree left,
-			@TomForAll @RandomCheck(minSampleSize=20, sampleSize = 30) Tree right) throws EmptyQueueException {
+			@TomForAll @RandomCheck(minSampleSize=20, maxSampleSize = 30) Node node,
+			@TomForAll @RandomCheck(minSampleSize=20, maxSampleSize = 30) Tree left,
+			@TomForAll @RandomCheck(minSampleSize=20, maxSampleSize = 30) Tree right) throws EmptyQueueException {
 		Tree result = TreeDemo.createTree(node, left, right);
 		Node root = TreeDemo.getRootNode(result);
 		assertThat(root, equalTo(node));
@@ -51,9 +51,9 @@ public class TreeDemoTest {
 	
 	@Theory
 	public void testDetachLeftSubtreeFromCreateTree(
-			@TomForAll @RandomCheck(minSampleSize=20, sampleSize = 30) Node node,
-			@TomForAll @RandomCheck(minSampleSize=20, sampleSize = 30) Tree left,
-			@TomForAll @RandomCheck(minSampleSize=20, sampleSize = 30) Tree right) throws EmptyQueueException {
+			@TomForAll @RandomCheck(minSampleSize=20, maxSampleSize = 30) Node node,
+			@TomForAll @RandomCheck(minSampleSize=20, maxSampleSize = 30) Tree left,
+			@TomForAll @RandomCheck(minSampleSize=20, maxSampleSize = 30) Tree right) throws EmptyQueueException {
 		Tree result = TreeDemo.createTree(node, left, right);
 		Tree l = TreeDemo.detachLeftSubtree(result);
 		assertThat(l, equalTo(left));
@@ -61,9 +61,9 @@ public class TreeDemoTest {
 	
 	@Theory
 	public void testDetachRightSubtreeFromCreateTree(
-			@TomForAll @RandomCheck(minSampleSize=20, sampleSize = 30) Node node,
-			@TomForAll @RandomCheck(minSampleSize=20, sampleSize = 30) Tree left,
-			@TomForAll @RandomCheck(minSampleSize=20, sampleSize = 30) Tree right) throws EmptyQueueException {
+			@TomForAll @RandomCheck(minSampleSize=20, maxSampleSize = 30) Node node,
+			@TomForAll @RandomCheck(minSampleSize=20, maxSampleSize = 30) Tree left,
+			@TomForAll @RandomCheck(minSampleSize=20, maxSampleSize = 30) Tree right) throws EmptyQueueException {
 		Tree result = TreeDemo.createTree(node, left, right);
 		Tree r = TreeDemo.detachRightSubtree(result);
 		assertThat(r, equalTo(right));

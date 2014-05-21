@@ -25,7 +25,7 @@ public class AListTest {
 	public static Enumeration<Elem> enumerationElem = Elem.getEnumeration();
 
 	@Theory
-	public void testAListPrintRandom(@TomForAll @RandomCheck(sampleSize = 20) AList l) {
+	public void testAListPrintRandom(@TomForAll @RandomCheck(maxSampleSize = 20) AList l) {
 		assumeTrue(!DemoAList.isEmpty(l));
 
 		System.out.println("Random: "+l);
@@ -39,7 +39,7 @@ public class AListTest {
 
 
 //	@Theory
-	public void testAListIndexOf(@TomForAll @RandomCheck(minSampleSize = 10, sampleSize = 20) AList l, @TomForAll @RandomCheck(sampleSize = 10) Elem e1, @TomForAll @RandomCheck(sampleSize = 10) Elem e2) {
+	public void testAListIndexOf(@TomForAll @RandomCheck(minSampleSize = 10, maxSampleSize = 20) AList l, @TomForAll @RandomCheck(maxSampleSize = 10) Elem e1, @TomForAll @RandomCheck(maxSampleSize = 10) Elem e2) {
 		assumeTrue(!DemoAList.isEmpty(l) && DemoAList.contains(l, e1));
 		
 		assertSame("BAD: e1="+e1+" e2="+e2+" l="+l,  DemoAList.getIndexOf(l, e1) + 1, DemoAList.getIndexOf(DemoAList.addFirst(l, e2), e1));

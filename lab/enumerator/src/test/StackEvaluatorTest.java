@@ -51,43 +51,43 @@ public class StackEvaluatorTest {
 	}
 
 	@Theory
-	public void testNonEmptySize(@TomForAll @RandomCheck(minSampleSize = 25, sampleSize = 30) Stack s) {
+	public void testNonEmptySize(@TomForAll @RandomCheck(minSampleSize = 25, maxSampleSize = 30) Stack s) {
 		assertTrue(!(StackEvaluator.isEmpty(s)));
 		assertThat(StackEvaluator.size(s), is(not(0)));
 	}
 
 	@Theory
 	public void testPushSize(
-			@TomForAll @RandomCheck(minSampleSize = 25, sampleSize = 30) Stack s,
-			@TomForAll @RandomCheck(sampleSize = 10) Elem e) {
+			@TomForAll @RandomCheck(minSampleSize = 25, maxSampleSize = 30) Stack s,
+			@TomForAll @RandomCheck(maxSampleSize = 10) Elem e) {
 		assertThat(StackEvaluator.size(StackEvaluator.push(s, e)), is(StackEvaluator.size(s)+1));
 	}
 
 	@Theory
 	public void testPopSize(
-			@TomForAll @RandomCheck(minSampleSize = 25, sampleSize = 30) Stack s)  throws EmptyStackException {
+			@TomForAll @RandomCheck(minSampleSize = 25, maxSampleSize = 30) Stack s)  throws EmptyStackException {
 		assertTrue(!(StackEvaluator.isEmpty(s)));
 		assertThat(StackEvaluator.size(StackEvaluator.pop(s)), is(StackEvaluator.size(s)-1));
 	}
 
 	@Theory
 	public void testPopPush(
-			@TomForAll @RandomCheck(minSampleSize = 25, sampleSize = 30) Stack s,
-			@TomForAll @RandomCheck(sampleSize = 10) Elem e)  throws EmptyStackException {
+			@TomForAll @RandomCheck(minSampleSize = 25, maxSampleSize = 30) Stack s,
+			@TomForAll @RandomCheck(maxSampleSize = 10) Elem e)  throws EmptyStackException {
 		assertThat(StackEvaluator.pop(StackEvaluator.push(s, e)), is(s));
 	}
 
 	@Theory
 	public void testTop(
-			@TomForAll @RandomCheck(minSampleSize = 25, sampleSize = 30) Stack s,
-			@TomForAll @RandomCheck(sampleSize = 10) Elem e)
+			@TomForAll @RandomCheck(minSampleSize = 25, maxSampleSize = 30) Stack s,
+			@TomForAll @RandomCheck(maxSampleSize = 10) Elem e)
 			throws EmptyStackException {
 		assertThat(StackEvaluator.top(StackEvaluator.push(s, e)), is(e));
 	}
 
 	@Theory
 	public void testEvaluateSize(
-			@TomForAll @RandomCheck(minSampleSize = 25, sampleSize = 30) Stack s) {
+			@TomForAll @RandomCheck(minSampleSize = 25, maxSampleSize = 30) Stack s) {
 		Stack result = StackEvaluator.evaluate(s);
 		int size1 = StackEvaluator.size(s);
 		int size2 = StackEvaluator.size(result);

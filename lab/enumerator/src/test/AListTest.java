@@ -43,7 +43,7 @@ public class AListTest {
 
 	
 	@Theory
-	public void testInsertWithIndex(@TomForAll @RandomCheck(minSampleSize=50, sampleSize = 100) AList list,
+	public void testInsertWithIndex(@TomForAll @RandomCheck(minSampleSize=50, maxSampleSize = 100) AList list,
 			@RandomForAll(sampleSize = 10) Elem element,
 			@RandomForAll(sampleSize = 10) Integer index) {
 		assumeThat(index, greaterThanOrEqualTo(0));
@@ -58,9 +58,9 @@ public class AListTest {
 
 	
 	@Theory
-	public void testInsertTom(@TomForAll @RandomCheck(minSampleSize=90, sampleSize = 100) AList list,
-			@TomForAll @RandomCheck(sampleSize = 10) Elem e1,
-			@TomForAll @RandomCheck(sampleSize = 10) Elem e2) {
+	public void testInsertTom(@TomForAll @RandomCheck(minSampleSize=90, maxSampleSize = 100) AList list,
+			@TomForAll @RandomCheck(maxSampleSize = 10) Elem e1,
+			@TomForAll @RandomCheck(maxSampleSize = 10) Elem e2) {
 		assumeThat(true, is(not(DemoAList.isEmpty(list))));
 		assumeThat(true, is(DemoAList.contains(list, e1)));
 		int lhs = DemoAList.getIndexOf(list, e1) + 1;

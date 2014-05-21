@@ -74,7 +74,7 @@ public class StackTest {
 
 	@Theory
 	public void testNonEmptySize(
-			@TomForAll @RandomCheck(minSampleSize = 25, sampleSize = 30) Stack gs) {
+			@TomForAll @RandomCheck(minSampleSize = 25, maxSampleSize = 30) Stack gs) {
 		IStack s = factory1.makeStack(gs);
 		assumeThat(s.isEmpty(), equalTo(false));
 		assertThat(s.size(), is(not(0)));
@@ -82,8 +82,8 @@ public class StackTest {
 
 	@Theory
 	public void testPushSize(
-			@TomForAll @RandomCheck(minSampleSize = 25, sampleSize = 30) Stack gs,
-			@TomForAll @RandomCheck(sampleSize = 10) Elem e) {
+			@TomForAll @RandomCheck(minSampleSize = 25, maxSampleSize = 30) Stack gs,
+			@TomForAll @RandomCheck(maxSampleSize = 10) Elem e) {
 		IStack s = factory1.makeStack(gs);
 		Integer n = factory1.makeInteger(e);
 		int initSize = s.size();
@@ -94,7 +94,7 @@ public class StackTest {
 
 	@Theory
 	public void testPopSize(
-			@TomForAll @RandomCheck(minSampleSize = 25, sampleSize = 30) Stack gs)
+			@TomForAll @RandomCheck(minSampleSize = 25, maxSampleSize = 50, numberOfSamples = 100) Stack gs)
 			throws EmptyStackException {
 		IStack s = factory1.makeStack(gs);
 		assumeThat(s.isEmpty(), equalTo(false));
@@ -106,8 +106,8 @@ public class StackTest {
 
 	@Theory
 	public void testPopPush(
-			@TomForAll @RandomCheck(minSampleSize = 25, sampleSize = 30) Stack gs,
-			@TomForAll @RandomCheck(sampleSize = 10) Elem e)
+			@TomForAll @RandomCheck(minSampleSize = 25, maxSampleSize = 30) Stack gs,
+			@TomForAll @RandomCheck(maxSampleSize = 10) Elem e)
 			throws EmptyStackException {
 		IStack s = factory1.makeStack(gs);
 		IStack sclone = factory1.makeStack(gs);
@@ -119,8 +119,8 @@ public class StackTest {
 
 	@Theory
 	public void testTop(
-			@TomForAll @RandomCheck(minSampleSize = 25, sampleSize = 30) Stack gs,
-			@TomForAll @RandomCheck(sampleSize = 10) Elem e)
+			@TomForAll @RandomCheck(minSampleSize = 25, maxSampleSize = 50) Stack gs,
+			@TomForAll @RandomCheck(maxSampleSize = 10) Elem e)
 			throws EmptyStackException {
 		IStack s = factory1.makeStack(gs);
 		Integer n = factory1.makeInteger(e);
@@ -131,7 +131,7 @@ public class StackTest {
 	//@Ignore
 	@Theory
 	public void testSameBehaviour(
-			@TomForAll @RandomCheck(minSampleSize = 25, sampleSize = 30) StackL gs)
+			@TomForAll @RandomCheck(minSampleSize = 25, maxSampleSize = 30) StackL gs)
 			throws EmptyStackException, BadInputException {
 		IStack stack1 = factory1.evaluateStack(gs);
 		IStack stack2 = factory2.evaluateStack(gs);

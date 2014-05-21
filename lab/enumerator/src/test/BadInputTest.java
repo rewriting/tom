@@ -23,7 +23,7 @@ public class BadInputTest {
 	
 	@Theory
 	public void testBadInputFailure(
-			@TomForAll @RandomCheck(sampleSize = 30) Integer input)
+			@TomForAll @RandomCheck(maxSampleSize = 30) Integer input)
 			throws EmptyStackException, BadInputException {
 		if (Math.abs(input) < 5) {
 			throw new BadInputException();

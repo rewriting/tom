@@ -32,7 +32,7 @@ public class TableDemoTest {
 	@Ignore
 	@Theory
 	public void testAddValue(
-			@TomForAll @RandomCheck(minSampleSize=20, sampleSize = 30) Table table, 
+			@TomForAll @RandomCheck(minSampleSize=20, maxSampleSize = 30) Table table, 
 			@RandomForAll(sampleSize = 30) Key key, 
 			@RandomForAll(sampleSize = 30) Val val) throws Exception {
 		Table result = TableDemo.evaluate(table);
@@ -44,10 +44,10 @@ public class TableDemoTest {
 	@Ignore
 	@Theory
 	public void testAddValueWith2keys(
-			@TomForAll @RandomCheck(minSampleSize=0, sampleSize = 10) Table table, 
-			@TomForAll @RandomCheck(minSampleSize=0, sampleSize = 10) Key key, 
-			@TomForAll @RandomCheck(minSampleSize=0, sampleSize = 10) Key key2, 
-			@TomForAll @RandomCheck(minSampleSize=0, sampleSize = 10) Val val) throws Exception {
+			@TomForAll @RandomCheck(minSampleSize=0, maxSampleSize = 10) Table table, 
+			@TomForAll @RandomCheck(minSampleSize=0, maxSampleSize = 10) Key key, 
+			@TomForAll @RandomCheck(minSampleSize=0, maxSampleSize = 10) Key key2, 
+			@TomForAll @RandomCheck(minSampleSize=0, maxSampleSize = 10) Val val) throws Exception {
 		Table result = TableDemo.evaluate(table);
 		
 		assumeThat(result.isempty(), equalTo(false));
@@ -63,9 +63,9 @@ public class TableDemoTest {
 	@Ignore
 	@Theory
 	public void testDeleteAdd(
-			@TomForAll @RandomCheck(minSampleSize=0, sampleSize = 10) Table table, 
-			@TomForAll @RandomCheck(minSampleSize=0, sampleSize = 10) Key key,  
-			@TomForAll @RandomCheck(minSampleSize=0, sampleSize = 10) Val val) throws Exception {
+			@TomForAll @RandomCheck(minSampleSize=0, maxSampleSize = 10) Table table, 
+			@TomForAll @RandomCheck(minSampleSize=0, maxSampleSize = 10) Key key,  
+			@TomForAll @RandomCheck(minSampleSize=0, maxSampleSize = 10) Val val) throws Exception {
 		Table result = TableDemo.evaluate(table);
 		assumeThat(TableDemo.has(result, key), equalTo(false));
 		Table t = TableDemo.remove(TableDemo.add(result, key, val), key);
@@ -75,10 +75,10 @@ public class TableDemoTest {
 	@Ignore
 	@Theory
 	public void testDeleteAddWith2Keys(
-			@TomForAll @RandomCheck(minSampleSize=0, sampleSize = 10) Table table, 
-			@TomForAll @RandomCheck(minSampleSize=0, sampleSize = 10) Key key, 
-			@TomForAll @RandomCheck(minSampleSize=0, sampleSize = 10) Key key2, 
-			@TomForAll @RandomCheck(minSampleSize=0, sampleSize = 10) Val val) throws Exception {
+			@TomForAll @RandomCheck(minSampleSize=0, maxSampleSize = 10) Table table, 
+			@TomForAll @RandomCheck(minSampleSize=0, maxSampleSize = 10) Key key, 
+			@TomForAll @RandomCheck(minSampleSize=0, maxSampleSize = 10) Key key2, 
+			@TomForAll @RandomCheck(minSampleSize=0, maxSampleSize = 10) Val val) throws Exception {
 		
 		Table result = TableDemo.evaluate(table);
 		assumeThat(result.isempty(), equalTo(false));
@@ -93,9 +93,9 @@ public class TableDemoTest {
 	@Ignore
 	@Theory
 	public void testHas(
-			@TomForAll @RandomCheck(minSampleSize=0, sampleSize = 10) Table table, 
-			@TomForAll @RandomCheck(minSampleSize=0, sampleSize = 10) Key key, 
-			@TomForAll @RandomCheck(minSampleSize=0, sampleSize = 10) Val val) throws Exception {
+			@TomForAll @RandomCheck(minSampleSize=0, maxSampleSize = 10) Table table, 
+			@TomForAll @RandomCheck(minSampleSize=0, maxSampleSize = 10) Key key, 
+			@TomForAll @RandomCheck(minSampleSize=0, maxSampleSize = 10) Val val) throws Exception {
 		
 		Table result = TableDemo.evaluate(table);
 		Table t = TableDemo.add(result, key, val);
@@ -105,10 +105,10 @@ public class TableDemoTest {
 	@Ignore
 	@Theory
 	public void testHasWith2Keys(
-			@TomForAll @RandomCheck(minSampleSize=0, sampleSize = 10) Table table, 
-			@TomForAll @RandomCheck(minSampleSize=0, sampleSize = 10) Key key, 
-			@TomForAll @RandomCheck(minSampleSize=0, sampleSize = 10) Key key2, 
-			@TomForAll @RandomCheck(minSampleSize=0, sampleSize = 10) Val val) throws Exception {
+			@TomForAll @RandomCheck(minSampleSize=0, maxSampleSize = 10) Table table, 
+			@TomForAll @RandomCheck(minSampleSize=0, maxSampleSize = 10) Key key, 
+			@TomForAll @RandomCheck(minSampleSize=0, maxSampleSize = 10) Key key2, 
+			@TomForAll @RandomCheck(minSampleSize=0, maxSampleSize = 10) Val val) throws Exception {
 		Table result = TableDemo.evaluate(table);
 		assumeThat(result.isempty(), equalTo(false));
 		assumeThat(key, not(equalTo(key2)));
@@ -119,7 +119,7 @@ public class TableDemoTest {
 	@Ignore
 	@Theory
 	public void testEvaluate(
-			@TomForAll @RandomCheck(minSampleSize=980, sampleSize = 1000) Table table) throws Exception {
+			@TomForAll @RandomCheck(minSampleSize=980, maxSampleSize = 1000) Table table) throws Exception {
 		System.out.println("table: " + table);
 		Table result = TableDemo.evaluate(table);
 		System.out.println("result: " + result);
@@ -129,7 +129,7 @@ public class TableDemoTest {
 	@Ignore
 	@Theory
 	public void testComparisonAddValue(
-			@TomForAll @RandomCheck(minSampleSize=20, sampleSize = 30) Table table, 
+			@TomForAll @RandomCheck(minSampleSize=20, maxSampleSize = 30) Table table, 
 			@RandomForAll(sampleSize = 30) Key key, 
 			@RandomForAll(sampleSize = 30) Val val) throws Exception {
 		Table result = TableDemo.evaluate(table);
@@ -149,10 +149,10 @@ public class TableDemoTest {
 	@Ignore
 	@Theory
 	public void testComparisonAddValueWith2keys(
-			@TomForAll @RandomCheck(minSampleSize=0, sampleSize = 10) Table table, 
-			@TomForAll @RandomCheck(minSampleSize=0, sampleSize = 10) Key key, 
-			@TomForAll @RandomCheck(minSampleSize=0, sampleSize = 10) Key key2, 
-			@TomForAll @RandomCheck(minSampleSize=0, sampleSize = 10) Val val) throws Exception {
+			@TomForAll @RandomCheck(minSampleSize=0, maxSampleSize = 10) Table table, 
+			@TomForAll @RandomCheck(minSampleSize=0, maxSampleSize = 10) Key key, 
+			@TomForAll @RandomCheck(minSampleSize=0, maxSampleSize = 10) Key key2, 
+			@TomForAll @RandomCheck(minSampleSize=0, maxSampleSize = 10) Val val) throws Exception {
 		Table result = TableDemo.evaluate(table);
 		
 		assumeThat(result.isempty(), equalTo(false));
@@ -179,10 +179,10 @@ public class TableDemoTest {
 	@Ignore
 	@Theory
 	public void testComparisonDeleteAddWith2Keys(
-			@TomForAll @RandomCheck(minSampleSize=0, sampleSize = 10) Table table, 
-			@TomForAll @RandomCheck(minSampleSize=0, sampleSize = 10) Key key, 
-			@TomForAll @RandomCheck(minSampleSize=0, sampleSize = 10) Key key2, 
-			@TomForAll @RandomCheck(minSampleSize=0, sampleSize = 10) Val val) throws Exception {
+			@TomForAll @RandomCheck(minSampleSize=0, maxSampleSize = 10) Table table, 
+			@TomForAll @RandomCheck(minSampleSize=0, maxSampleSize = 10) Key key, 
+			@TomForAll @RandomCheck(minSampleSize=0, maxSampleSize = 10) Key key2, 
+			@TomForAll @RandomCheck(minSampleSize=0, maxSampleSize = 10) Val val) throws Exception {
 		
 		Table result = TableDemo.evaluate(table);
 		assumeThat(result.isempty(), equalTo(false));
@@ -212,9 +212,9 @@ public class TableDemoTest {
 	
 	@Theory
 	public void testComparisonDeleteAdd(
-			@TomForAll @RandomCheck(minSampleSize=990, sampleSize = 1000) Table table, 
-			@TomForAll @RandomCheck(minSampleSize=0, sampleSize = 10) Key key,  
-			@TomForAll @RandomCheck(minSampleSize=0, sampleSize = 10) Val val) throws Exception {
+			@TomForAll @RandomCheck(minSampleSize=990, maxSampleSize = 1000) Table table, 
+			@TomForAll @RandomCheck(minSampleSize=0, maxSampleSize = 10) Key key,  
+			@TomForAll @RandomCheck(minSampleSize=0, maxSampleSize = 10) Val val) throws Exception {
 		Table result = TableDemo.evaluate(table);
 		
 		assumeThat(TableDemo.has(result, key), equalTo(false));

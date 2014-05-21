@@ -5,10 +5,14 @@ public class ArrayStack implements IStack {
 	private int[] stack;
 	private int index;
 	private int size;
-	private final static int SIZE = 8;
+	private final static int SIZE = 10;
 
 	public ArrayStack() {
 		stack = new int[SIZE];
+		/* initial code:
+		 index = 0;
+		 size = 0;
+		 */
 		index = 0;
 		size = 0;
 	}
@@ -20,6 +24,11 @@ public class ArrayStack implements IStack {
 
 	@Override
 	public void push(Integer elem) {
+		/* initial code:
+		 stack[index++] = elem;
+		index %= SIZE;
+		size++;
+		 */
 		stack[index++] = elem;
 		index %= SIZE;
 		size++;
@@ -35,11 +44,20 @@ public class ArrayStack implements IStack {
 		if (isEmpty()) {
 			throw new EmptyStackException();
 		}
-		return stack[index];
+		/* initial code:
+		 		return stack[index];
+		 */
+		return stack[index - 1]; // -1 to fix the BUG
 	}
 
 	@Override
 	public Integer pop() throws EmptyStackException {
+		/* initial code:
+		 Integer res = top();
+		index = (index - 1) % SIZE;
+		size--;
+		return res;
+		 */
 		Integer res = top();
 		index = (index - 1) % SIZE;
 		size--;
@@ -89,6 +107,7 @@ public class ArrayStack implements IStack {
 
 		stack = stack.empty();
 		stack.push(2);
+		System.out.println(stack);
 		System.out.println("Before: "+stack.top());
 		stack.push(1);
 		stack.pop();

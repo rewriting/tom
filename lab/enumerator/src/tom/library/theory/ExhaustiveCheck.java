@@ -15,8 +15,9 @@ import java.lang.annotation.Target;
 @Retention(RUNTIME)
 
 public @interface ExhaustiveCheck {
-
-	public int  minSampleSize() default 0;
-	public int 	maxDepth() default 100;
 	
+	public int minSampleSize() default 0;    // minimal size of the example
+	public int maxSampleSize() default 10;   // maximal size of the example
+	public int numberOfSamples() default 0;  // maximal number of samples (0 means no limit)	
+
 }

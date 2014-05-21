@@ -50,8 +50,8 @@ public class SimpleQueueTest {
 	}
 	
 	@Theory
-	public void testFront(@TomForAll @RandomCheck(minSampleSize=50, sampleSize = 100) Elem element,
-			@TomForAll @RandomCheck(minSampleSize=50, sampleSize = 100) Elem element2) 
+	public void testFront(@TomForAll @RandomCheck(minSampleSize=50, maxSampleSize = 100) Elem element,
+			@TomForAll @RandomCheck(minSampleSize=50, maxSampleSize = 100) Elem element2) 
 					throws EmptyQueueException {
 		classUnderTest.enqueue(element);
 		classUnderTest.enqueue(element2);
@@ -69,7 +69,7 @@ public class SimpleQueueTest {
 	}
 	
 	@Theory
-	public void testDequeue(@TomForAll @RandomCheck(minSampleSize=50, sampleSize = 100) Elem element) {
+	public void testDequeue(@TomForAll @RandomCheck(minSampleSize=50, maxSampleSize = 100) Elem element) {
 		try {
 			classUnderTest.enqueue(element);
 			classUnderTest.dequeue();
@@ -81,8 +81,8 @@ public class SimpleQueueTest {
 	
 	@Theory
 	public void testAssociativityEnqueDequeue(
-			@TomForAll @RandomCheck(sampleSize = 10) Elem element,
-			@TomForAll @RandomCheck(minSampleSize=25, sampleSize = 30) Queue queue) throws EmptyQueueException {
+			@TomForAll @RandomCheck(maxSampleSize = 10) Elem element,
+			@TomForAll @RandomCheck(minSampleSize=25, maxSampleSize = 30) Queue queue) throws EmptyQueueException {
 		SimpleQueue q1 = SimpleQueue.createQueue(queue);
 		SimpleQueue q2 = SimpleQueue.createQueue(queue);
 		
@@ -99,8 +99,8 @@ public class SimpleQueueTest {
 	@Theory
 	@Shrink(handler=CustomShrinkHandler.class)
 	public void testAssociativityEnqueDequeueWithCustomShrink(
-			@TomForAll @RandomCheck(sampleSize = 10) Elem element,
-			@TomForAll @RandomCheck(minSampleSize=25, sampleSize = 30) Queue queue) throws EmptyQueueException {
+			@TomForAll @RandomCheck(maxSampleSize = 10) Elem element,
+			@TomForAll @RandomCheck(minSampleSize=25, maxSampleSize = 30) Queue queue) throws EmptyQueueException {
 		SimpleQueue q1 = SimpleQueue.createQueue(queue);
 		SimpleQueue q2 = SimpleQueue.createQueue(queue);
 		
