@@ -6,7 +6,7 @@ public class ArrayStack implements IStack {
 	private int index;
 	private int size;
 	private final static int SIZE = 8;
-	
+
 	public ArrayStack() {
 		stack = new int[SIZE];
 		index = 0;
@@ -79,6 +79,20 @@ public class ArrayStack implements IStack {
 				return false;
 			}
 		}
+	}
+
+	public static void main(String[] args) throws EmptyStackException {
+		IStack stack = new ArrayStack();
+		stack = stack.empty();
+		stack.push(1);
+		System.out.println(stack.top());
+
+		stack = stack.empty();
+		stack.push(2);
+		System.out.println("Before: "+stack.top());
+		stack.push(1);
+		stack.pop();
+		System.out.println("After :"+stack.top());
 	}
 
 }

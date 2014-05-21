@@ -7,6 +7,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assume.assumeThat;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.contrib.theories.Theory;
 import org.junit.runner.RunWith;
@@ -126,6 +127,7 @@ public class StackTest {
 		assertThat(s.top(), is(n));
 	}
 
+	@Ignore
 	@Theory
 	public void testSameBehaviour(
 			@TomForAll @RandomCheck(minSampleSize = 25, sampleSize = 30) StackL gs)
