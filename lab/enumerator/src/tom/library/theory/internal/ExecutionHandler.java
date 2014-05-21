@@ -11,6 +11,7 @@ public class ExecutionHandler {
 	private int successCount;
 	private int assumptionViolationCount;
 	private int failureCount;
+	private int badInputCount;
 	
 	private final List<AssumptionViolatedException> invalidParameters =
             new ArrayList<AssumptionViolatedException>();
@@ -27,17 +28,37 @@ public class ExecutionHandler {
 		increaseSuccessCount();
 	}
 	
+	protected void increaseSuccessCount() {
+    	successCount++;
+    }
+	
 	public void handleAssumptionViolation(AssumptionViolatedException exception) {
 		invalidParameters.add(exception);
 		increaseAssumtionViolationCount();
 	}
 	
-	public void handleFailures(Throwable e, String methodName, Object...params) throws Throwable {
+	protected void increaseAssumtionViolationCount() {
+		assumptionViolationCount++;
+    }
+	
+	public void handleBadInputFailures() {
+		increateBadInputCount();
+	}
+	
+	protected void increateBadInputCount() {
+		badInputCount++;
+	}
+
+	public void handleFailures(Throwable exception, String methodName, Object...params) throws Throwable {
 		increaseFailureCount();
 		counterExample = CounterExample.build(params);
 		shrinkHandler.shrink(counterExample);
-		throwParameterizedAssertionFailure(e, methodName, params);
+		throwParameterizedAssertionFailure(exception, methodName, params);
 	}
+	
+	protected void increaseFailureCount() {
+    	failureCount++;
+    }
 	
 	protected void throwParameterizedAssertionFailure(Throwable e, String methodName, Object... params) throws Throwable {
 		if (params.length == 0) {
@@ -45,18 +66,6 @@ public class ExecutionHandler {
 		}
 		throw new ParameterizedAssertionFailure(e, methodName, params);
 	}
-	
-	protected void increaseAssumtionViolationCount() {
-		assumptionViolationCount++;
-    }
-
-    protected void increaseFailureCount() {
-    	failureCount++;
-    }
-    
-    protected void increaseSuccessCount() {
-    	successCount++;
-    }
 
 	public int getSuccessCount() {
 		return successCount;
@@ -77,5 +86,19 @@ public class ExecutionHandler {
 	
 	public CounterExample getCounterExample() {
 		return counterExample;
+	}
+
+	/**
+	 * @return the badInputCount
+	 */
+	public int getBadInputCount() {
+		return badInputCount;
+	}
+
+	/**
+	 * @param badInputCount the badInputCount to set
+	 */
+	public void setBadInputCount(int badInputCount) {
+		this.badInputCount = badInputCount;
 	}
 }

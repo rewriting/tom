@@ -117,11 +117,15 @@ public final class TomCheck extends Theories {
 	}
 
 	protected void printGeneratedDataStatistic(final FrameworkMethod method, final TheoryAnchor anchor) {
-		System.out.println(String.format("%s\nGenerated test data: %s\nTested data: %s\nUntested data: %s\n", 
-						method.getName(),
-						getTotalGeneratedDataFromTheoryAnchor(anchor), 
-						getTotalTestedDataFromTheoryAnchor(anchor),
-						getTotalUntestedDataFromTheoryAnchor(anchor)));
+		System.out.println(String.format("%s\nGenerated test data: %s"
+				+ "\nTested data: %s"
+				+ "\nUntested data: %s"
+				+ "\nBad input: %s \n", 
+				method.getName(),
+				getTotalGeneratedDataFromTheoryAnchor(anchor), 
+				getTotalTestedDataFromTheoryAnchor(anchor),
+				getTotalUntestedDataFromTheoryAnchor(anchor),
+				getTotalBadInputFromTheoryAnchor(anchor)));
 	}
 
 	protected int getTotalTestedDataFromTheoryAnchor(TheoryAnchor anchor) {
@@ -134,6 +138,10 @@ public final class TomCheck extends Theories {
 	
 	protected int getTotalUntestedDataFromTheoryAnchor(TheoryAnchor anchor) {
 		return anchor.getViolationAssumptionCount();
+	}
+	
+	protected int getTotalBadInputFromTheoryAnchor(TheoryAnchor anchor) {
+		return anchor.getBadInputCount();
 	}
 	
 	public static class TheoryAnchor extends Statement {
@@ -202,6 +210,10 @@ public final class TomCheck extends Theories {
 		
 		public int getFailureCount() {
 			return handler.getFailureCount();
+		}
+		
+		public int getBadInputCount() {
+			return handler.getBadInputCount();
 		}
 	}
 }

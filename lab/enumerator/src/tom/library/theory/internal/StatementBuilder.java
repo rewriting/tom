@@ -11,6 +11,8 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 
+import tom.library.theory.BadInputFailure;
+
 public class StatementBuilder {
 	private TestObject testObject;
 	private ExecutionHandler handler;
@@ -39,6 +41,8 @@ public class StatementBuilder {
                             handler.handleSuccess();
                         } catch (AssumptionViolatedException e) {
                         	handler.handleAssumptionViolation(e);
+                        } catch (BadInputFailure e) {
+                        	handler.handleBadInputFailures();
                         } catch (Throwable e) {
                         	handler.handleFailures(e, method.getName(), complete.getMethodArguments(nullsOk()));
                         }
