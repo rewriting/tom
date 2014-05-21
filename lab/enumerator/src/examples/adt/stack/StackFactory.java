@@ -1,5 +1,6 @@
 package examples.adt.stack;
 
+import tom.library.theory.BadInputException;
 import examples.adt.stack.stack.types.Elem;
 import examples.adt.stack.stack.types.Stack;
 import examples.adt.stack.stacklanguage.types.ElemL;
@@ -81,7 +82,7 @@ public class StackFactory {
 		return n;
 	}
 
-	public IStack evaluateStack(StackL s) {
+	public IStack evaluateStack(StackL s) throws BadInputException {
 		IStack object = null;
 		if (this.type == TOM) {
 			object = new TomStack();
@@ -105,10 +106,8 @@ public class StackFactory {
 			try {
 				object.pop();
 			} catch (EmptyStackException e) {
-				// replace mal-formed programs with empty programs
-				// shouldn't be really tested -> generate stacks that don't pass
-				// the implication test
-				object = object.empty();
+				// throw an exception to skip the particular test
+				throw new BadInputException();
 			}
 		}
 		return object;

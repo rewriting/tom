@@ -13,6 +13,7 @@ import org.junit.contrib.theories.Theory;
 import org.junit.runner.RunWith;
 
 import tom.library.enumerator.Enumeration;
+import tom.library.theory.BadInputException;
 import tom.library.theory.Enum;
 import tom.library.theory.RandomCheck;
 import tom.library.theory.TomCheck;
@@ -127,11 +128,11 @@ public class StackTest {
 		assertThat(s.top(), is(n));
 	}
 
-	@Ignore
+	//@Ignore
 	@Theory
 	public void testSameBehaviour(
 			@TomForAll @RandomCheck(minSampleSize = 25, sampleSize = 30) StackL gs)
-			throws EmptyStackException {
+			throws EmptyStackException, BadInputException {
 		IStack stack1 = factory1.evaluateStack(gs);
 		IStack stack2 = factory2.evaluateStack(gs);
 		

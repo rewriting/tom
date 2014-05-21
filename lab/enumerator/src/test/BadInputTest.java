@@ -11,7 +11,7 @@ import org.junit.runner.RunWith;
 import examples.adt.stack.EmptyStackException;
 import tom.library.enumerator.Combinators;
 import tom.library.enumerator.Enumeration;
-import tom.library.theory.BadInputFailure;
+import tom.library.theory.BadInputException;
 import tom.library.theory.Enum;
 import tom.library.theory.RandomCheck;
 import tom.library.theory.TomCheck;
@@ -24,9 +24,9 @@ public class BadInputTest {
 	@Theory
 	public void testBadInputFailure(
 			@TomForAll @RandomCheck(sampleSize = 30) Integer input)
-			throws EmptyStackException, BadInputFailure {
+			throws EmptyStackException, BadInputException {
 		if (Math.abs(input) < 5) {
-			throw new BadInputFailure();
+			throw new BadInputException();
 		}
 		assertThat(Math.abs(input), is(greaterThanOrEqualTo(5)));
 	}

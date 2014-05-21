@@ -7,15 +7,15 @@ package tom.library.theory;
  * @author nauval
  *
  */
-public class BadInputFailure extends Throwable {
+public class BadInputException extends Exception {
 
 	private static final long serialVersionUID = 1L;
 	
-	public BadInputFailure() {
+	public BadInputException() {
 		super("Bad input, the test is skipped");
 	}
 	
-	public BadInputFailure(String message) {
+	public BadInputException(String message) {
 		super(message);
 	}
 }
