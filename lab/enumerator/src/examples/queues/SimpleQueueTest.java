@@ -69,7 +69,7 @@ public class SimpleQueueTest {
 	public void testRemoveQueue(
 			//@RandomForAll(sampleSize=1000) Queue q
 			//@TomForAll @RandomCheck(sampleSize=1000) Queue q
-			@TomForAll @ExhaustiveCheck(maxDepth=12) Queue q
+			@TomForAll @ExhaustiveCheck(maxSampleSize=12) Queue q
 			) {
         try {
         	SimpleQueue sq = SimpleQueue.makeFromQueue(q);

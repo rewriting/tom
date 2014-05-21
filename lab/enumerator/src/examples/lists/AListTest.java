@@ -33,7 +33,7 @@ public class AListTest {
 
 
 	@Theory
-	public void testAListPrintExhaustive(@TomForAll @ExhaustiveCheck(maxDepth = 5) AList l) {
+	public void testAListPrintExhaustive(@TomForAll @ExhaustiveCheck(maxSampleSize = 5) AList l) {
 		System.out.println("Exhaustive "+l);
 	}
 
