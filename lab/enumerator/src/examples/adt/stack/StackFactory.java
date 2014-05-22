@@ -1,7 +1,7 @@
 package examples.adt.stack;
 
 import tom.library.theory.BadInputException;
-import examples.adt.stack.stack.types.Elem;
+import examples.adt.queue.queue.types.Elem;
 import examples.adt.stack.stack.types.Stack;
 import examples.adt.stack.stacklanguage.types.ElemL;
 import examples.adt.stack.stacklanguage.types.StackL;
@@ -60,19 +60,14 @@ public class StackFactory {
 		if (s.isempty()) {
 			object = object.empty(); // or makeStack() directly
 		} else if (s.ispush()) {
-			Elem elem = s.getelement();
 			Stack y = s.getstack();
-			Integer n = elem.getval();
+			Integer n = s.getelement();
 			object = makeStack(y);
 			object.push(n);
 		}
 		return object;
 	}
 
-	public Integer makeInteger(Elem elem) {
-		Integer n = elem.getval();
-		return n;
-	}
 
 	public IStack evaluateStack(StackL s) throws BadInputException {
 		IStack object = null;

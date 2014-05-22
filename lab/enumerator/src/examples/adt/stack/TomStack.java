@@ -4,7 +4,7 @@ import examples.adt.stack.stack.types.*;
 
 public class TomStack implements IStack {
 
-	private static boolean tom_equal_term_int(int t1, int t2) {return  t1==t2 ;}private static boolean tom_is_sort_int(int t) {return  true ;} private static boolean tom_equal_term_Stack(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_Stack(Object t) {return  (t instanceof examples.adt.stack.stack.types.Stack) ;}private static boolean tom_equal_term_Elem(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_Elem(Object t) {return  (t instanceof examples.adt.stack.stack.types.Elem) ;}private static  examples.adt.stack.stack.types.Stack  tom_make_empty() { return  examples.adt.stack.stack.types.stack.empty.make() ;}private static boolean tom_is_fun_sym_push( examples.adt.stack.stack.types.Stack  t) {return  (t instanceof examples.adt.stack.stack.types.stack.push) ;}private static  examples.adt.stack.stack.types.Stack  tom_make_push( examples.adt.stack.stack.types.Elem  t0,  examples.adt.stack.stack.types.Stack  t1) { return  examples.adt.stack.stack.types.stack.push.make(t0, t1) ;}private static  examples.adt.stack.stack.types.Elem  tom_get_slot_push_element( examples.adt.stack.stack.types.Stack  t) {return  t.getelement() ;}private static  examples.adt.stack.stack.types.Stack  tom_get_slot_push_stack( examples.adt.stack.stack.types.Stack  t) {return  t.getstack() ;}private static boolean tom_is_fun_sym_val( examples.adt.stack.stack.types.Elem  t) {return  (t instanceof examples.adt.stack.stack.types.elem.val) ;}private static  examples.adt.stack.stack.types.Elem  tom_make_val( int  t0) { return  examples.adt.stack.stack.types.elem.val.make(t0) ;}private static  int  tom_get_slot_val_val( examples.adt.stack.stack.types.Elem  t) {return  t.getval() ;}  
+	private static boolean tom_equal_term_int(int t1, int t2) {return  t1==t2 ;}private static boolean tom_is_sort_int(int t) {return  true ;} private static boolean tom_equal_term_Stack(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_Stack(Object t) {return  (t instanceof examples.adt.stack.stack.types.Stack) ;}private static  examples.adt.stack.stack.types.Stack  tom_make_empty() { return  examples.adt.stack.stack.types.stack.empty.make() ;}private static boolean tom_is_fun_sym_push( examples.adt.stack.stack.types.Stack  t) {return  (t instanceof examples.adt.stack.stack.types.stack.push) ;}private static  examples.adt.stack.stack.types.Stack  tom_make_push( int  t0,  examples.adt.stack.stack.types.Stack  t1) { return  examples.adt.stack.stack.types.stack.push.make(t0, t1) ;}private static  int  tom_get_slot_push_element( examples.adt.stack.stack.types.Stack  t) {return  t.getelement() ;}private static  examples.adt.stack.stack.types.Stack  tom_get_slot_push_stack( examples.adt.stack.stack.types.Stack  t) {return  t.getstack() ;}  
 
 	private Stack stack;
 
@@ -19,7 +19,7 @@ public class TomStack implements IStack {
 
 	@Override
 	public void push(Integer elem) {
-		stack = tom_make_push(tom_make_val(elem),stack);
+		stack = tom_make_push(elem,stack);
 	}
 
 	@Override
@@ -29,19 +29,19 @@ public class TomStack implements IStack {
 
 	@Override
 	public Integer top() throws EmptyStackException {
-		{{if (tom_is_sort_Stack(stack)) {if (tom_is_sort_Stack((( examples.adt.stack.stack.types.Stack )stack))) {if (tom_is_fun_sym_push((( examples.adt.stack.stack.types.Stack )(( examples.adt.stack.stack.types.Stack )stack)))) { examples.adt.stack.stack.types.Elem  tomMatch1_1=tom_get_slot_push_element((( examples.adt.stack.stack.types.Stack )stack));if (tom_is_sort_Elem(tomMatch1_1)) {if (tom_is_fun_sym_val((( examples.adt.stack.stack.types.Elem )tomMatch1_1))) {
- return tom_get_slot_val_val(tomMatch1_1); }}}}}}}
+		{{if (tom_is_sort_Stack(stack)) {if (tom_is_sort_Stack((( examples.adt.stack.stack.types.Stack )stack))) {if (tom_is_fun_sym_push((( examples.adt.stack.stack.types.Stack )(( examples.adt.stack.stack.types.Stack )stack)))) {
+ return tom_get_slot_push_element((( examples.adt.stack.stack.types.Stack )stack)); }}}}}
 
 		throw new EmptyStackException();
 	}
 
 	@Override
 	public Integer pop() throws EmptyStackException {
-		{{if (tom_is_sort_Stack(stack)) {if (tom_is_sort_Stack((( examples.adt.stack.stack.types.Stack )stack))) {if (tom_is_fun_sym_push((( examples.adt.stack.stack.types.Stack )(( examples.adt.stack.stack.types.Stack )stack)))) { examples.adt.stack.stack.types.Elem  tomMatch2_1=tom_get_slot_push_element((( examples.adt.stack.stack.types.Stack )stack));if (tom_is_sort_Elem(tomMatch2_1)) {if (tom_is_fun_sym_val((( examples.adt.stack.stack.types.Elem )tomMatch2_1))) {
+		{{if (tom_is_sort_Stack(stack)) {if (tom_is_sort_Stack((( examples.adt.stack.stack.types.Stack )stack))) {if (tom_is_fun_sym_push((( examples.adt.stack.stack.types.Stack )(( examples.adt.stack.stack.types.Stack )stack)))) {
  
 				stack = tom_get_slot_push_stack((( examples.adt.stack.stack.types.Stack )stack));
-				return tom_get_slot_val_val(tomMatch2_1);
-			}}}}}}}
+				return tom_get_slot_push_element((( examples.adt.stack.stack.types.Stack )stack));
+			}}}}}
 
 		throw new EmptyStackException();
 	}

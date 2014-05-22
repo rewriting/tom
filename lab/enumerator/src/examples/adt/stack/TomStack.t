@@ -19,7 +19,7 @@ public class TomStack implements IStack {
 
 	@Override
 	public void push(Integer elem) {
-		stack = `push(val(elem), stack);
+		stack = `push(elem, stack);
 	}
 
 	@Override
@@ -30,7 +30,7 @@ public class TomStack implements IStack {
 	@Override
 	public Integer top() throws EmptyStackException {
 		%match(stack) {
-			push(val(x), y) -> { return `x; }
+			push(x, y) -> { return `x; }
 		}
 		throw new EmptyStackException();
 	}
@@ -38,7 +38,7 @@ public class TomStack implements IStack {
 	@Override
 	public Integer pop() throws EmptyStackException {
 		%match(stack) {
-			push(val(x), y) -> { 
+			push(x, y) -> { 
 				stack = `y;
 				return `x;
 			}

@@ -3,6 +3,5 @@ imports int
 abstract syntax
 
 Stack = empty()
-	| push(element:Elem, stack:Stack)
+	| push(element:int, stack:Stack)
   
-Elem = val(val:int)
