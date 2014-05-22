@@ -37,7 +37,7 @@ public class RandomValueSupplier extends ParameterSupplier {
 			parts = parts.tail();
 			BigInteger card = part.getCard();
 			if (! card.equals(BigInteger.ZERO)) {
-				i ++;
+				i++;
 				final BigInteger j = nextRandomBigInteger(card);	
 				PotentialAssignment assignment = new PotentialAssignment() {
 

@@ -25,81 +25,92 @@ public class TomValueSupplier extends ParameterSupplier {
 	}
 
 	@Override
-	public List<PotentialAssignment> getValueSources(
-			ParameterSignature signature) {
+	public List<PotentialAssignment> getValueSources(ParameterSignature signature) {
+		
+		/** exhaustive or random mode */
 		boolean exhaustive = false;
-		int samplesize = 1;
-		int minsamplesize = 0;
-		int maxnumbersamples = 1;
-		if (signature.getAnnotation(ExhaustiveCheck.class) != null) {
+		
+		/** skip parts until minSampleSize */
+		int minSampleSize = 0;
+		
+		/** explore parts up to maxSampleSize */
+		int maxSampleSize = 1;
+		
+		/** maximal number of selected samples */
+		int totalNumberOfSamples = 0;
+
+		ExhaustiveCheck exhaustiveCheckAnnotation = signature.getAnnotation(ExhaustiveCheck.class);
+		RandomCheck randomCheckAnnotation = signature.getAnnotation(RandomCheck.class);
+		if (exhaustiveCheckAnnotation != null) {
 			exhaustive = true;
-			samplesize = signature.getAnnotation(ExhaustiveCheck.class)
-					.maxDepth();
-			minsamplesize = signature.getAnnotation(ExhaustiveCheck.class)
-					.minSampleSize();
+			minSampleSize = exhaustiveCheckAnnotation.minSampleSize();
+			maxSampleSize = exhaustiveCheckAnnotation.maxSampleSize();
+			totalNumberOfSamples = exhaustiveCheckAnnotation.numberOfSamples();
+			if(totalNumberOfSamples == 0) {
+				totalNumberOfSamples = Integer.MAX_VALUE;
+			} 
 		}
-		if (signature.getAnnotation(RandomCheck.class) != null) {
+		if (randomCheckAnnotation != null) {
 			exhaustive = false;
-			samplesize = signature.getAnnotation(RandomCheck.class)
-					.sampleSize();
-			minsamplesize = signature.getAnnotation(RandomCheck.class)
-					.minSampleSize();
-			maxnumbersamples = signature.getAnnotation(RandomCheck.class)
-					.numberSamples();
+			minSampleSize = randomCheckAnnotation.minSampleSize();
+			maxSampleSize = randomCheckAnnotation.maxSampleSize();
+			totalNumberOfSamples = randomCheckAnnotation.numberOfSamples();
 		}
 
-//		System.out.println("EXHAUSTIVE = " + exhaustive + " : " + maxnumbersamples + " samples");
+		//System.out.println("EXHAUSTIVE = " + exhaustive + " ; " + totalNumberOfSamples + " samples");
 		
 		final Enumeration<?> enumeration = TomCheck.get(signature.getType());
 		List<PotentialAssignment> l = new ArrayList<PotentialAssignment>();
 		LazyList<?> parts = enumeration.parts();
 
-		// skip the first minsamplesize
-		for (int i = 0; i < minsamplesize; i++) {
+		/** skip parts until minSampleSize */
+		for (int i = 0; i < minSampleSize; i++) {
 			parts = parts.tail();
 		}
-		for (int i = minsamplesize; i < samplesize; i++) {
-			if (parts.isEmpty())
-				break;
+		
+		int builtSamples = 0;
+		for (int i = minSampleSize; i < maxSampleSize && !parts.isEmpty() 
+				&& builtSamples < totalNumberOfSamples ; i++) {
+			
 			final Finite<?> part = (Finite<?>) parts.head();
-			// potential problem if parts finite
 			parts = parts.tail();
 
 			BigInteger card = part.getCard();
-			if (!card.equals(BigInteger.ZERO)) {
-				BigInteger j = BigInteger.ZERO;
-				boolean done = false;
-				int numbersamples = maxnumbersamples;
-				int initialnumbersamples = 0;
-				if (!exhaustive && card.compareTo(BigInteger.valueOf(maxnumbersamples)) < 0) {
-					numbersamples = card.intValue();
-//					System.out.println("CHANGED : " + numbersamples + " samples");
+			if (card.equals(BigInteger.ZERO)) {
+				/* empty part, do nothing */
+			} else {
+				/*
+				 * case random: numberofSamplesInThisPart = MIN(numberOfSamplesPerPart, card)
+				 */
+				int numberOfSamplesInThisPart = totalNumberOfSamples - builtSamples;
+				
+				if(!exhaustive) {
+					numberOfSamplesInThisPart = 1 + (totalNumberOfSamples - builtSamples) 
+							/ (maxSampleSize - i);
 				}
-//				System.out.println("CARD for  " + i + " = " + card);
-//				System.out.println("Max nb samples for  " + i + "-th part with card "+card+" = " + maxnumbersamples);
+				
+				if (card.compareTo(BigInteger.valueOf(numberOfSamplesInThisPart)) < 0) {
+					numberOfSamplesInThisPart = card.intValue();
+				}
+				//System.out.println("card number: " + i);
+				//System.out.println("card = " + card + " ; numberOfSamplesInThisPart = " + numberOfSamplesInThisPart);
+				
+				BigInteger j = BigInteger.ONE.negate();
+				int builtSamplesInThisPart = 0;
 
-				while (!done) {
-					if (!exhaustive) {
+				while (builtSamplesInThisPart < numberOfSamplesInThisPart
+						&& builtSamples < totalNumberOfSamples) {
+					if(exhaustive) {
+						j = j.add(BigInteger.ONE);
+					} else {
 						j = nextRandomBigInteger(card);
 					}
 					final BigInteger jj = j;
-//					System.out.println("   Select index " + jj);
 					PotentialAssignment assignment = new PotentialAssignment() {
 						@Override
 						public Object getValue()
 								throws CouldNotGenerateValueException {
 							return part.get(jj);
-							/*
-							BigInteger j = jj;
-							for(int n=0 ; n<10 ; n++) {
-								Object res = part.get(j);
-								if(res != null) {
-									return res;
-								}
-								j = j.add(BigInteger.ONE);
-							}
-							return null;
-							*/
 						}
 
 						@Override
@@ -109,17 +120,8 @@ public class TomValueSupplier extends ParameterSupplier {
 						}
 					};
 					l.add(assignment);
-					j = j.add(BigInteger.ONE);
-					initialnumbersamples++;
-					if (exhaustive) {
-//						System.out.println("J (" + i +") = " + j);
-//						System.out.println("card  = " + card);
-						done = j.compareTo(card) == 0;
-					} else {
-//						System.out.println("INS  = " + initialnumbersamples);
-//						System.out.println("NS  = " + numbersamples);
-						done = numbersamples == initialnumbersamples;
-					}
+					builtSamplesInThisPart++;
+					builtSamples++;
 				}
 
 			}

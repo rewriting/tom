@@ -15,8 +15,8 @@ import java.lang.annotation.Target;
 @Retention(RUNTIME)
 public @interface RandomCheck {
 
-	public int sampleSize() default 10;
-	public int minSampleSize() default 0;
-	public int numberSamples() default 1;
+	public int minSampleSize() default 0;   // minimal size of the example
+	public int maxSampleSize() default 100;  // maximal size of the example
+	public int numberOfSamples() default 100; // maximal number of samples
 		
 }

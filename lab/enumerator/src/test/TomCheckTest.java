@@ -42,24 +42,24 @@ public class TomCheckTest {
 		}
 	}
 
-	//@Theory
-	public void testTom1(@TomForAll @RandomCheck(sampleSize = 10) Tree<Nat> t) {
-		System.out.println(t);
+	@Theory
+	public void testTom1(@TomForAll @RandomCheck(maxSampleSize = 20, numberOfSamples = 30) Tree<Nat> t) {
+		System.out.println("testTom1: " + t);
 	}
 
 	//@Theory
-	public void testTom2(@TomForAll @ExhaustiveCheck(maxDepth = 10) Tree<Nat> t) {
-		System.out.println(t);
+	public void testTom2(@TomForAll @ExhaustiveCheck(maxSampleSize = 15, numberOfSamples = 200) Tree<Nat> t) {
+		System.out.println("testTom2: " + t);
 	}
 	
 	//@Theory
 	public void testPlusOne1(@ExhaustiveForAll(maxDepth = 20) Tree<Nat> t) {
 		// just test if the size is preserved by plusOne
-		System.out.println(t);
+		System.out.println("testPlusOne1: " + t);
 		assertEquals(plusOne(t).size(), t.size());
 	}
 
-	@Theory
+	//@Theory
 	public void testPlusOne2(@RandomForAll(sampleSize = 15) Tree<Nat> t, @RandomForAll(sampleSize = 15) Tree<Nat> t2) {
 		// just test if the size is preserved by plusOne
 		//System.out.println(t + " | " + t.size());
@@ -73,7 +73,7 @@ public class TomCheckTest {
 		System.out.println(s);
 	}
 
-	@Theory
+	//@Theory
 	public void testMulti(@RandomForAll(sampleSize = 10) String s,
 			@RandomForAll(sampleSize = 5) Integer i) {
 		System.out.println(s + " " + i);
