@@ -130,9 +130,12 @@ public class StackTest {
 			@ForSome(maxSampleSize = 10) Elem e)
 					throws EmptyStackException {
 		/*
-		 * Found bug, Index array of bound exception.
-		 * Use term to reply the bug.
+		 * Found a bug, Index array of bound exception, in ArrayStack.
+		 * Use the defined term to replay the bug. 
+		 * 
+		 * The bug happens when the input's size is 9.
 		 */
+		
 		//tack term = Stack.fromString("push(val(-2),push(val(-1),push(val(3),push(val(0),push(val(-1),push(val(-1),push(val(1),push(val(-1),push(val(6),empty())))))))))");
 		//IStack s = factory1.makeStack(term);
 		
