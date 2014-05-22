@@ -8,20 +8,18 @@ import org.junit.internal.AssumptionViolatedException;
 import tom.library.theory.shrink.ShrinkHandler;
 
 public class ExecutionHandler {
-	private int successCount;
-	private int assumptionViolationCount;
-	private int failureCount;
-	private int badInputCount;
-	
+
 	private final List<AssumptionViolatedException> invalidParameters =
-            new ArrayList<AssumptionViolatedException>();
+			new ArrayList<AssumptionViolatedException>();
 	
-	private ShrinkHandler shrinkHandler;
 	
+	private ShrinkHandler shrinkHandler;	
 	private CounterExample counterExample;
+	private Statistic statistic;
 	
 	public ExecutionHandler(ShrinkHandler handler) {
 		shrinkHandler = handler;
+		statistic = new Statistic();
 	}
 	
 	public void handleSuccess() {
@@ -29,7 +27,7 @@ public class ExecutionHandler {
 	}
 	
 	protected void increaseSuccessCount() {
-    	successCount++;
+    	statistic.increaseSuccessCount();
     }
 	
 	public void handleAssumptionViolation(AssumptionViolatedException exception) {
@@ -38,7 +36,7 @@ public class ExecutionHandler {
 	}
 	
 	protected void increaseAssumtionViolationCount() {
-		assumptionViolationCount++;
+		statistic.increaseAssumptionViolationCount();
     }
 	
 	public void handleBadInputFailures() {
@@ -46,7 +44,7 @@ public class ExecutionHandler {
 	}
 	
 	protected void increateBadInputCount() {
-		badInputCount++;
+		statistic.increaseBadInputCount();
 	}
 
 	public void handleFailures(Throwable exception, String methodName, Object...params) throws Throwable {
@@ -57,7 +55,7 @@ public class ExecutionHandler {
 	}
 	
 	protected void increaseFailureCount() {
-    	failureCount++;
+    	statistic.increaseFailureCount();
     }
 	
 	protected void throwParameterizedAssertionFailure(Throwable e, String methodName, Object... params) throws Throwable {
@@ -67,19 +65,6 @@ public class ExecutionHandler {
 		throw new ParameterizedAssertionFailure(e, methodName, params);
 	}
 
-	public int getSuccessCount() {
-		return successCount;
-	}
-
-	public int getAssumptionViolationCount() {
-		return assumptionViolationCount;
-	}
-
-
-	public int getFailureCount() {
-		return failureCount;
-	}
-
 	public List<AssumptionViolatedException> getInvalidParameters() {
 		return invalidParameters;
 	}
@@ -87,18 +72,12 @@ public class ExecutionHandler {
 	public CounterExample getCounterExample() {
 		return counterExample;
 	}
-
-	/**
-	 * @return the badInputCount
-	 */
-	public int getBadInputCount() {
-		return badInputCount;
+	
+	public Statistic getStatistic() {
+		return statistic;
 	}
-
-	/**
-	 * @param badInputCount the badInputCount to set
-	 */
-	public void setBadInputCount(int badInputCount) {
-		this.badInputCount = badInputCount;
+	
+	public boolean isTestNeverSucceed() {
+		return statistic.getSuccessCount() == 0? true : false;
 	}
 }
