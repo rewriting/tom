@@ -17,8 +17,6 @@ import tom.library.theory.ForSome;
 
 @RunWith(TomCheck.class)
 public class TreeDemoTest {
-	@Enum public static Enumeration<Tree> enumTree = Tree.getEnumeration();
-	@Enum public static Enumeration<Node> enumNode = Node.getEnumeration();
 	
 	@Theory
 	public void testCreateNotEmpty(

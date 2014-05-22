@@ -17,6 +17,7 @@ import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 import org.junit.runners.model.TestClass;
 
+import tom.library.enumerator.Combinators;
 import tom.library.enumerator.Enumeration;
 import tom.library.theory.internal.AssignmentRunner;
 import tom.library.theory.internal.ExecutionHandler;
@@ -69,24 +70,75 @@ public final class TomCheck extends Theories {
 		}
 	}
 
+	/*
+	 * code for Combinators.methodName()
+	 */
+	private static Enumeration<?> getCombinator(String methodName) {
+		Class<?> c;
+		try {
+			//c = Class.forName("jtom.library.enumerator.Combinator");
+			c = Combinators.class;
+			//Object t = c.newInstance();
+			Method[] allMethods = c.getDeclaredMethods();
+			for (Method m : allMethods) {
+				if(m.getName().equals(methodName)) {
+					Enumeration<?> myEnum = (Enumeration<?>) m.invoke(null, null); // static + no parameter
+					return myEnum;
+				}
+			}
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	public static void initEnumerations(Class<?> testclass) {
 		map = new HashMap<Type, Enumeration<?>>();
+		
+		map.put(int.class, getCombinator("makeint"));
+		map.put(Integer.class, getCombinator("makeInteger"));
+		map.put(String.class, getCombinator("makeString"));
+		map.put(Boolean.class, getCombinator("makeBoolean"));
+		map.put(Character.class, getCombinator("makeCharacter"));
+		map.put(Long.class, getCombinator("makeLong"));
+		map.put(long.class, getCombinator("makelong"));
+		//map.put(Float.class, getCombinator("makeFloat"));
+		//map.put(float.class, getCombinator("makefloat"));
+				
+		/*
+		 * retrieve enumerations from @Enum annotations
+		 */
+		Field[] fields = testclass.getFields();
+		for(Field field: fields) {
+			if (field.getAnnotation(Enum.class) != null) {
+				try {
+					ParameterizedType fieldType = (ParameterizedType) field.getGenericType();
+					Type dataType = fieldType.getActualTypeArguments()[0];
+					map.put(dataType, (Enumeration<?>) field.get(null));
+				} catch (IllegalArgumentException | IllegalAccessException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		/*
+		 * retrieve enumerations from type of parameters
+		 */
 		for (Method method : testclass.getMethods()) {
 			if (method.getAnnotation(Theory.class) != null) {
 				Class[] parameterTypes = method.getParameterTypes();
-				Type[] genericParameterTypes = method.getGenericParameterTypes();
 
 				Annotation[][] parameterAnnotations = method.getParameterAnnotations();
 
 				for (int i = 0; i < parameterTypes.length; i++) {
 					if (parameterAnnotations[i].length > 0) {
-						Type key = genericParameterTypes[i];
+						Type key = parameterTypes[i];
 						
-						//System.out.println(key + " ; " +  parameterTypes[i] + " ; " + parameterAnnotations[i][0]);
+						System.out.println(key + " ; " +  parameterTypes[i] + " ; " + parameterAnnotations[i][0]);
 						
 						for (Annotation annotation : parameterAnnotations[i]) {
 							if (annotation.annotationType().equals(ForSome.class) && !map.containsKey(key)) {
-								try {
+								try {									
 									Method getEnumeration = parameterTypes[i].getMethod("getEnumeration", null);
 									Enumeration<?> myEnum = (Enumeration<?>) getEnumeration.invoke(null, null); // static + no parameter
 									map.put(key, myEnum);
@@ -94,19 +146,14 @@ public final class TomCheck extends Theories {
 										| IllegalArgumentException | InvocationTargetException e) {
 									e.printStackTrace();
 								}
-
 							}
 						}
-						
 					} else {
 						// no annotation
 					}
 				}
 				
 				//System.out.println("print map " + map.keySet());
-
-				
-
 			}
 
 		}

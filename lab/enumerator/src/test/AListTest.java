@@ -20,12 +20,6 @@ import examples.lists.alist.types.Elem;
 
 @RunWith(TomCheck.class)
 public class AListTest {
-	@Enum
-	public static Enumeration<AList> alistEnum = AList.getEnumeration();
-	@Enum
-	public static Enumeration<Elem> elemEnum = Elem.getEnumeration();
-	@Enum
-	public static Enumeration<Integer> intEnum = Combinators.makeInteger();
 
 	@Ignore
 	@Theory

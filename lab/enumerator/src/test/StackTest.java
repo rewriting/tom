@@ -27,14 +27,6 @@ import examples.adt.stack.stacklanguage.types.StackL;
 
 @RunWith(TomCheck.class)
 public class StackTest {
-	@Enum
-	public static Enumeration<Stack> enumStack = Stack.getEnumeration();
-	@Enum
-	public static Enumeration<Elem> enumElem = Elem.getEnumeration();
-	@Enum
-	public static Enumeration<StackL> enumStackL = StackL.getEnumeration();
-	@Enum
-	public static Enumeration<ElemL> enumElemL = ElemL.getEnumeration();
 
 	private IStack init;
 	private StackFactory factory1;

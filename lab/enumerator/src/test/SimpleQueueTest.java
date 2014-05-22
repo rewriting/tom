@@ -26,9 +26,6 @@ import tom.library.theory.shrink.DefaultShrinkHandler;
 public class SimpleQueueTest {
 	private SimpleQueue classUnderTest;
 	
-	@Enum public static Enumeration<Elem> enumElem = Elem.getEnumeration(); 
-	@Enum public static Enumeration<Queue> enumQueue = Queue.getEnumeration();
-	
 	@Before
 	public void setUp() throws Exception {
 		classUnderTest = SimpleQueue.createQueue();

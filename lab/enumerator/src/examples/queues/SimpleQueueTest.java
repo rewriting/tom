@@ -17,10 +17,6 @@ import examples.queues.queue.types.Queue;
 @RunWith(TomCheck.class)
 public class SimpleQueueTest {
 	
-	@Enum public static Enumeration<Queue> enumeration1 = Queue.getEnumeration();
-	@Enum public static Enumeration<Elem> enumeration2 = Elem.getEnumeration();
-	@Enum public static Enumeration<Integer> enumeration5 = Combinators.makeint();
-	
 	//@Theory
 	public void testInsertElemEmpty(@ForSome(maxSampleSize=100) Elem e) {
         SimpleQueue sq = new SimpleQueue();

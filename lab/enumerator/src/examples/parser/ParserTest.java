@@ -20,14 +20,6 @@ import examples.parser.rec.types.Table;
 @RunWith(TomCheck.class)
 public class ParserTest {
 	
-	@Enum public static Enumeration<Exp> enumeration1 = Exp.getEnumeration();
-	@Enum public static Enumeration<ExpList> enumeration2 = ExpList.getEnumeration();
-	@Enum public static Enumeration<Stm> enumeration3 = Stm.getEnumeration();
-	@Enum public static Enumeration<Table> enumeration4 = Table.getEnumeration();
-	@Enum public static Enumeration<Integer> enumeration5 = Combinators.makeint();
-	@Enum public static Enumeration<String> enumeration6 = Combinators.makeString();
-	
-
 	/*
 	@Theory
 	public void testExp(@ForAll(sampleSize=100) @From({ ExpGenerator.class }) Exp n) {

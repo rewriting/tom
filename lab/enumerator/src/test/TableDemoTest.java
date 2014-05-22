@@ -22,11 +22,6 @@ import tom.library.theory.ForSome;
 
 @RunWith(TomCheck.class)
 public class TableDemoTest {
-	@Enum public static Enumeration<Table> enumTable = Table.getEnumeration();
-	@Enum public static Enumeration<Elem> enumElem = Elem.getEnumeration();
-	@Enum public static Enumeration<Key> enumKey = Key.getEnumeration();
-	@Enum public static Enumeration<Val> enumVal = Val.getEnumeration();
-	
 	@Ignore
 	@Theory
 	public void testAddValue(

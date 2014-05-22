@@ -18,8 +18,6 @@ import tom.library.theory.ForSome;
 
 @RunWith(TomCheck.class)
 public class BadInputTest {
-	@Enum public static Enumeration<Integer> enumInt = Combinators.makeint();
-	
 	@Theory
 	public void testBadInputFailure(
 			@ForSome(maxSampleSize = 30) Integer input)
