@@ -9,7 +9,7 @@ import org.junit.runner.RunWith;
 import tom.library.enumerator.Enumeration;
 import tom.library.theory.Enum;
 import tom.library.theory.TomCheck;
-import tom.library.theory.TomForAll;
+import tom.library.theory.ForSome;
 import examples.lists.alist.types.AList;
 import examples.lists.alist.types.Elem;
 
@@ -23,7 +23,7 @@ public class AListTest {
 	public static Enumeration<Elem> enumerationElem = Elem.getEnumeration();
 
 	@Theory
-	public void testAListPrintRandom(@TomForAll(maxSampleSize = 20) AList l) {
+	public void testAListPrintRandom(@ForSome(maxSampleSize = 20) AList l) {
 		assumeTrue(!DemoAList.isEmpty(l));
 
 		System.out.println("Random: "+l);
@@ -31,13 +31,13 @@ public class AListTest {
 
 
 	@Theory
-	public void testAListPrintExhaustive(@TomForAll(exhaustive=true, maxSampleSize = 5) AList l) {
+	public void testAListPrintExhaustive(@ForSome(exhaustive=true, maxSampleSize = 5) AList l) {
 		System.out.println("Exhaustive "+l);
 	}
 
 
 //	@Theory
-	public void testAListIndexOf(@TomForAll(minSampleSize = 10, maxSampleSize = 20) AList l, @TomForAll(maxSampleSize = 10) Elem e1, @TomForAll(maxSampleSize = 10) Elem e2) {
+	public void testAListIndexOf(@ForSome(minSampleSize = 10, maxSampleSize = 20) AList l, @ForSome(maxSampleSize = 10) Elem e1, @ForSome(maxSampleSize = 10) Elem e2) {
 		assumeTrue(!DemoAList.isEmpty(l) && DemoAList.contains(l, e1));
 		
 		assertSame("BAD: e1="+e1+" e2="+e2+" l="+l,  DemoAList.getIndexOf(l, e1) + 1, DemoAList.getIndexOf(DemoAList.addFirst(l, e2), e1));

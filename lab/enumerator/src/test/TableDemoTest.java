@@ -18,7 +18,7 @@ import examples.adt.table.types.Val;
 import tom.library.enumerator.Enumeration;
 import tom.library.theory.Enum;
 import tom.library.theory.TomCheck;
-import tom.library.theory.TomForAll;
+import tom.library.theory.ForSome;
 
 @RunWith(TomCheck.class)
 public class TableDemoTest {
@@ -30,9 +30,9 @@ public class TableDemoTest {
 	@Ignore
 	@Theory
 	public void testAddValue(
-			@TomForAll(minSampleSize=20, maxSampleSize = 30) Table table, 
-			@TomForAll(maxSampleSize = 30) Key key, 
-			@TomForAll(maxSampleSize = 30) Val val) throws Exception {
+			@ForSome(minSampleSize=20, maxSampleSize = 30) Table table, 
+			@ForSome(maxSampleSize = 30) Key key, 
+			@ForSome(maxSampleSize = 30) Val val) throws Exception {
 		Table result = TableDemo.evaluate(table);
 		Table add = TableDemo.add(result, key, val);
 		Val v = TableDemo.value(add, key);
@@ -42,10 +42,10 @@ public class TableDemoTest {
 	@Ignore
 	@Theory
 	public void testAddValueWith2keys(
-			@TomForAll(minSampleSize=0, maxSampleSize = 10) Table table, 
-			@TomForAll(minSampleSize=0, maxSampleSize = 10) Key key, 
-			@TomForAll(minSampleSize=0, maxSampleSize = 10) Key key2, 
-			@TomForAll(minSampleSize=0, maxSampleSize = 10) Val val) throws Exception {
+			@ForSome(minSampleSize=0, maxSampleSize = 10) Table table, 
+			@ForSome(minSampleSize=0, maxSampleSize = 10) Key key, 
+			@ForSome(minSampleSize=0, maxSampleSize = 10) Key key2, 
+			@ForSome(minSampleSize=0, maxSampleSize = 10) Val val) throws Exception {
 		Table result = TableDemo.evaluate(table);
 		
 		assumeThat(result.isempty(), equalTo(false));
@@ -61,9 +61,9 @@ public class TableDemoTest {
 	@Ignore
 	@Theory
 	public void testDeleteAdd(
-			@TomForAll(minSampleSize=0, maxSampleSize = 10) Table table, 
-			@TomForAll(minSampleSize=0, maxSampleSize = 10) Key key,  
-			@TomForAll(minSampleSize=0, maxSampleSize = 10) Val val) throws Exception {
+			@ForSome(minSampleSize=0, maxSampleSize = 10) Table table, 
+			@ForSome(minSampleSize=0, maxSampleSize = 10) Key key,  
+			@ForSome(minSampleSize=0, maxSampleSize = 10) Val val) throws Exception {
 		Table result = TableDemo.evaluate(table);
 		assumeThat(TableDemo.has(result, key), equalTo(false));
 		Table t = TableDemo.remove(TableDemo.add(result, key, val), key);
@@ -73,10 +73,10 @@ public class TableDemoTest {
 	@Ignore
 	@Theory
 	public void testDeleteAddWith2Keys(
-			@TomForAll(minSampleSize=0, maxSampleSize = 10) Table table, 
-			@TomForAll(minSampleSize=0, maxSampleSize = 10) Key key, 
-			@TomForAll(minSampleSize=0, maxSampleSize = 10) Key key2, 
-			@TomForAll(minSampleSize=0, maxSampleSize = 10) Val val) throws Exception {
+			@ForSome(minSampleSize=0, maxSampleSize = 10) Table table, 
+			@ForSome(minSampleSize=0, maxSampleSize = 10) Key key, 
+			@ForSome(minSampleSize=0, maxSampleSize = 10) Key key2, 
+			@ForSome(minSampleSize=0, maxSampleSize = 10) Val val) throws Exception {
 		
 		Table result = TableDemo.evaluate(table);
 		assumeThat(result.isempty(), equalTo(false));
@@ -91,9 +91,9 @@ public class TableDemoTest {
 	@Ignore
 	@Theory
 	public void testHas(
-			@TomForAll(minSampleSize=0, maxSampleSize = 10) Table table, 
-			@TomForAll(minSampleSize=0, maxSampleSize = 10) Key key, 
-			@TomForAll(minSampleSize=0, maxSampleSize = 10) Val val) throws Exception {
+			@ForSome(minSampleSize=0, maxSampleSize = 10) Table table, 
+			@ForSome(minSampleSize=0, maxSampleSize = 10) Key key, 
+			@ForSome(minSampleSize=0, maxSampleSize = 10) Val val) throws Exception {
 		
 		Table result = TableDemo.evaluate(table);
 		Table t = TableDemo.add(result, key, val);
@@ -103,10 +103,10 @@ public class TableDemoTest {
 	@Ignore
 	@Theory
 	public void testHasWith2Keys(
-			@TomForAll(minSampleSize=0, maxSampleSize = 10) Table table, 
-			@TomForAll(minSampleSize=0, maxSampleSize = 10) Key key, 
-			@TomForAll(minSampleSize=0, maxSampleSize = 10) Key key2, 
-			@TomForAll(minSampleSize=0, maxSampleSize = 10) Val val) throws Exception {
+			@ForSome(minSampleSize=0, maxSampleSize = 10) Table table, 
+			@ForSome(minSampleSize=0, maxSampleSize = 10) Key key, 
+			@ForSome(minSampleSize=0, maxSampleSize = 10) Key key2, 
+			@ForSome(minSampleSize=0, maxSampleSize = 10) Val val) throws Exception {
 		Table result = TableDemo.evaluate(table);
 		assumeThat(result.isempty(), equalTo(false));
 		assumeThat(key, not(equalTo(key2)));
@@ -117,7 +117,7 @@ public class TableDemoTest {
 	@Ignore
 	@Theory
 	public void testEvaluate(
-			@TomForAll(minSampleSize=980, maxSampleSize = 1000) Table table) throws Exception {
+			@ForSome(minSampleSize=980, maxSampleSize = 1000) Table table) throws Exception {
 		System.out.println("table: " + table);
 		Table result = TableDemo.evaluate(table);
 		System.out.println("result: " + result);
@@ -127,9 +127,9 @@ public class TableDemoTest {
 	@Ignore
 	@Theory
 	public void testComparisonAddValue(
-			@TomForAll(minSampleSize=20, maxSampleSize = 30) Table table, 
-			@TomForAll(maxSampleSize = 30) Key key, 
-			@TomForAll(maxSampleSize = 30) Val val) throws Exception {
+			@ForSome(minSampleSize=20, maxSampleSize = 30) Table table, 
+			@ForSome(maxSampleSize = 30) Key key, 
+			@ForSome(maxSampleSize = 30) Val val) throws Exception {
 		Table result = TableDemo.evaluate(table);
 		Table add = TableDemo.add(result, key, val);
 		Val v = TableDemo.value(add, key);
@@ -147,10 +147,10 @@ public class TableDemoTest {
 	@Ignore
 	@Theory
 	public void testComparisonAddValueWith2keys(
-			@TomForAll(minSampleSize=0, maxSampleSize = 10) Table table, 
-			@TomForAll(minSampleSize=0, maxSampleSize = 10) Key key, 
-			@TomForAll(minSampleSize=0, maxSampleSize = 10) Key key2, 
-			@TomForAll(minSampleSize=0, maxSampleSize = 10) Val val) throws Exception {
+			@ForSome(minSampleSize=0, maxSampleSize = 10) Table table, 
+			@ForSome(minSampleSize=0, maxSampleSize = 10) Key key, 
+			@ForSome(minSampleSize=0, maxSampleSize = 10) Key key2, 
+			@ForSome(minSampleSize=0, maxSampleSize = 10) Val val) throws Exception {
 		Table result = TableDemo.evaluate(table);
 		
 		assumeThat(result.isempty(), equalTo(false));
@@ -177,10 +177,10 @@ public class TableDemoTest {
 	@Ignore
 	@Theory
 	public void testComparisonDeleteAddWith2Keys(
-			@TomForAll(minSampleSize=0, maxSampleSize = 10) Table table, 
-			@TomForAll(minSampleSize=0, maxSampleSize = 10) Key key, 
-			@TomForAll(minSampleSize=0, maxSampleSize = 10) Key key2, 
-			@TomForAll(minSampleSize=0, maxSampleSize = 10) Val val) throws Exception {
+			@ForSome(minSampleSize=0, maxSampleSize = 10) Table table, 
+			@ForSome(minSampleSize=0, maxSampleSize = 10) Key key, 
+			@ForSome(minSampleSize=0, maxSampleSize = 10) Key key2, 
+			@ForSome(minSampleSize=0, maxSampleSize = 10) Val val) throws Exception {
 		
 		Table result = TableDemo.evaluate(table);
 		assumeThat(result.isempty(), equalTo(false));
@@ -210,9 +210,9 @@ public class TableDemoTest {
 	
 	@Theory
 	public void testComparisonDeleteAdd(
-			@TomForAll(minSampleSize=990, maxSampleSize = 1000) Table table, 
-			@TomForAll(minSampleSize=0, maxSampleSize = 10) Key key,  
-			@TomForAll(minSampleSize=0, maxSampleSize = 10) Val val) throws Exception {
+			@ForSome(minSampleSize=990, maxSampleSize = 1000) Table table, 
+			@ForSome(minSampleSize=0, maxSampleSize = 10) Key key,  
+			@ForSome(minSampleSize=0, maxSampleSize = 10) Val val) throws Exception {
 		Table result = TableDemo.evaluate(table);
 		
 		assumeThat(TableDemo.has(result, key), equalTo(false));

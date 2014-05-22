@@ -13,7 +13,7 @@ import tom.library.enumerator.Combinators;
 import tom.library.enumerator.Enumeration;
 import tom.library.theory.Enum;
 import tom.library.theory.TomCheck;
-import tom.library.theory.TomForAll;
+import tom.library.theory.ForSome;
 import examples.lists.DemoAList;
 import examples.lists.alist.types.AList;
 import examples.lists.alist.types.Elem;
@@ -30,9 +30,9 @@ public class AListTest {
 	@Ignore
 	@Theory
 	public void testInsertWith2Elements(
-			@TomForAll(maxSampleSize = 10)  AList list,
-			@TomForAll(maxSampleSize = 10)  Elem e1,
-			@TomForAll(maxSampleSize = 10)  Elem e2) {
+			@ForSome(maxSampleSize = 10)  AList list,
+			@ForSome(maxSampleSize = 10)  Elem e1,
+			@ForSome(maxSampleSize = 10)  Elem e2) {
 		assumeThat(true, is(not(DemoAList.isEmpty(list))));
 		assumeThat(true, is(DemoAList.contains(list, e1)));
 		assertTrue(DemoAList.getIndexOf(list, e1) + 1 == DemoAList.getIndexOf(
@@ -41,9 +41,9 @@ public class AListTest {
 
 	
 	@Theory
-	public void testInsertWithIndex(@TomForAll(minSampleSize=50, maxSampleSize = 100) AList list,
-			@TomForAll(maxSampleSize = 10) Elem element,
-			@TomForAll(maxSampleSize = 10) Integer index) {
+	public void testInsertWithIndex(@ForSome(minSampleSize=50, maxSampleSize = 100) AList list,
+			@ForSome(maxSampleSize = 10) Elem element,
+			@ForSome(maxSampleSize = 10) Integer index) {
 		assumeThat(index, greaterThanOrEqualTo(0));
 		assumeThat(true, is(not(DemoAList.isEmpty(list))));
 		assumeThat(true, is(DemoAList.size(list) > index));
@@ -56,9 +56,9 @@ public class AListTest {
 
 	
 	@Theory
-	public void testInsertTom(@TomForAll(minSampleSize=90, maxSampleSize = 100) AList list,
-			@TomForAll(maxSampleSize = 10) Elem e1,
-			@TomForAll(maxSampleSize = 10) Elem e2) {
+	public void testInsertTom(@ForSome(minSampleSize=90, maxSampleSize = 100) AList list,
+			@ForSome(maxSampleSize = 10) Elem e1,
+			@ForSome(maxSampleSize = 10) Elem e2) {
 		assumeThat(true, is(not(DemoAList.isEmpty(list))));
 		assumeThat(true, is(DemoAList.contains(list, e1)));
 		int lhs = DemoAList.getIndexOf(list, e1) + 1;

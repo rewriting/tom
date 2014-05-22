@@ -1,26 +1,17 @@
 package examples.parser;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeTrue;
+
 import org.junit.contrib.theories.Theory;
 import org.junit.runner.RunWith;
-import org.junit.Assume;
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.assumeTrue;
-import static org.junit.Assert.fail;
-
-import com.pholser.junit.quickcheck.ForAll;
-import com.pholser.junit.quickcheck.From;
 
 import tom.library.enumerator.Combinators;
 import tom.library.enumerator.Enumeration;
 import tom.library.theory.Enum;
+import tom.library.theory.ForSome;
 import tom.library.theory.TomCheck;
-import tom.library.theory.old.ExhaustiveForAll;
-import tom.library.theory.old.RandomForAll;
-import examples.junit.quickcheck.ExpGenerator;
 import examples.parser.rec.types.Exp;
 import examples.parser.rec.types.ExpList;
 import examples.parser.rec.types.Stm;
@@ -51,21 +42,21 @@ public class ParserTest {
 */
 	/*
 	@Theory
-	public void testExpList(@RandomForAll(sampleSize=100) ExpList n) {
+	public void testExpList(@ForSome(maxSampleSize=100) ExpList n) {
 		System.out.println("Quick: "+n);
 	}
 	
 	@Theory
-	public void testExpList(@RandomForAll(sampleSize=100) Stm n) {
+	public void testExpList(@ForSome(maxSampleSize=100) Stm n) {
 		System.out.println("Quick: "+n);
 	}
 	*/
 	
 	@Theory
 	public void testInsertTable(
-			@RandomForAll(sampleSize=5) String name,
-			@RandomForAll(sampleSize=5) Integer value,
-			@RandomForAll(sampleSize=5) Table table
+			@ForSome(maxSampleSize=5) String name,
+			@ForSome(maxSampleSize=5) Integer value,
+			@ForSome(maxSampleSize=5) Table table
 			) {
         Table newTable = examples.parser.rec.types.table.Table.make(name, value, table);
 		//System.out.println("'" + name + "' " + value + " " + table);
@@ -74,9 +65,9 @@ public class ParserTest {
 	
 	@Theory
 	public void testOverideTable(
-			@RandomForAll(sampleSize=5) String name,
-			@RandomForAll(sampleSize=5) Integer value,
-			@RandomForAll(sampleSize=50) Table table
+			@ForSome(maxSampleSize=5) String name,
+			@ForSome(maxSampleSize=5) Integer value,
+			@ForSome(maxSampleSize=50) Table table
 			) {
 		Integer old = Main.lookup(table, name);
 		//System.out.println(old);
@@ -89,8 +80,8 @@ public class ParserTest {
 	
 	@Theory
 	public void testInterpPrint(
-			@RandomForAll(sampleSize=10) ExpList explist,
-			@RandomForAll(sampleSize=10) Table table
+			@ForSome(maxSampleSize=10) ExpList explist,
+			@ForSome(maxSampleSize=10) Table table
 			) {
         Table newTable = Main.interpPrint(explist,table);
 		System.out.println(explist + " " + table);

@@ -9,9 +9,8 @@ import org.junit.runner.RunWith;
 import tom.library.enumerator.Combinators;
 import tom.library.enumerator.Enumeration;
 import tom.library.theory.Enum;
+import tom.library.theory.ForSome;
 import tom.library.theory.TomCheck;
-import tom.library.theory.TomForAll;
-import tom.library.theory.old.RandomForAll;
 import examples.queues.queue.types.Elem;
 import examples.queues.queue.types.Queue;
 
@@ -23,7 +22,7 @@ public class SimpleQueueTest {
 	@Enum public static Enumeration<Integer> enumeration5 = Combinators.makeint();
 	
 	//@Theory
-	public void testInsertElemEmpty(@RandomForAll(sampleSize=100) Elem e) {
+	public void testInsertElemEmpty(@ForSome(maxSampleSize=100) Elem e) {
         SimpleQueue sq = new SimpleQueue();
         try {
         	int v = SimpleQueue.makeFromElem(e);
@@ -39,8 +38,8 @@ public class SimpleQueueTest {
 	
 	//@Theory
 	public void testInsertIntQueue(
-			@RandomForAll(sampleSize=100) Integer v,
-			@RandomForAll(sampleSize=100) Queue q
+			@ForSome(maxSampleSize=100) Integer v,
+			@ForSome(maxSampleSize=100) Queue q
 			) {
         try {
         	SimpleQueue sq = SimpleQueue.makeFromQueue(q);
@@ -58,7 +57,7 @@ public class SimpleQueueTest {
 	public void testRemoveQueue(
 			//@RandomForAll(sampleSize=1000) Queue q
 			//@TomForAll @RandomCheck(sampleSize=1000) Queue q
-			@TomForAll(exhaustive=true, maxSampleSize=12) Queue q
+			@ForSome(exhaustive=true, maxSampleSize=12) Queue q
 			) {
         try {
         	SimpleQueue sq = SimpleQueue.makeFromQueue(q);

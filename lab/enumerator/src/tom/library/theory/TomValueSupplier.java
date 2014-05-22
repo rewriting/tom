@@ -26,7 +26,7 @@ public class TomValueSupplier extends ParameterSupplier {
 
 	@Override
 	public List<PotentialAssignment> getValueSources(ParameterSignature signature) {
-		TomForAll tomForAllAnnotation = signature.getAnnotation(TomForAll.class);
+		ForSome tomForAllAnnotation = signature.getAnnotation(ForSome.class);
 
 		/** exhaustive or random mode */
 		boolean exhaustive = tomForAllAnnotation.exhaustive();

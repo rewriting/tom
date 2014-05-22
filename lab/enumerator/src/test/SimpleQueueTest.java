@@ -16,7 +16,7 @@ import tom.library.enumerator.Enumeration;
 import tom.library.theory.Enum;
 import tom.library.theory.Shrink;
 import tom.library.theory.TomCheck;
-import tom.library.theory.TomForAll;
+import tom.library.theory.ForSome;
 import tom.library.theory.internal.CounterExample;
 import tom.library.theory.internal.ParameterizedAssertionFailure;
 import tom.library.theory.internal.TestObject;
@@ -49,8 +49,8 @@ public class SimpleQueueTest {
 	}
 	
 	@Theory
-	public void testFront(@TomForAll(minSampleSize=50, maxSampleSize = 100) Elem element,
-			@TomForAll(minSampleSize=50, maxSampleSize = 100) Elem element2) 
+	public void testFront(@ForSome(minSampleSize=50, maxSampleSize = 100) Elem element,
+			@ForSome(minSampleSize=50, maxSampleSize = 100) Elem element2) 
 					throws EmptyQueueException {
 		classUnderTest.enqueue(element);
 		classUnderTest.enqueue(element2);
@@ -68,7 +68,7 @@ public class SimpleQueueTest {
 	}
 	
 	@Theory
-	public void testDequeue(@TomForAll(minSampleSize=50, maxSampleSize = 100) Elem element) {
+	public void testDequeue(@ForSome(minSampleSize=50, maxSampleSize = 100) Elem element) {
 		try {
 			classUnderTest.enqueue(element);
 			classUnderTest.dequeue();
@@ -80,8 +80,8 @@ public class SimpleQueueTest {
 	
 	@Theory
 	public void testAssociativityEnqueDequeue(
-			@TomForAll(maxSampleSize = 10) Elem element,
-			@TomForAll(minSampleSize=25, maxSampleSize = 30) Queue queue) throws EmptyQueueException {
+			@ForSome(maxSampleSize = 10) Elem element,
+			@ForSome(minSampleSize=25, maxSampleSize = 30) Queue queue) throws EmptyQueueException {
 		SimpleQueue q1 = SimpleQueue.createQueue(queue);
 		SimpleQueue q2 = SimpleQueue.createQueue(queue);
 		
@@ -98,8 +98,8 @@ public class SimpleQueueTest {
 	@Theory
 	@Shrink(handler=CustomShrinkHandler.class)
 	public void testAssociativityEnqueDequeueWithCustomShrink(
-			@TomForAll(maxSampleSize = 10) Elem element,
-			@TomForAll(minSampleSize=25, maxSampleSize = 30) Queue queue) throws EmptyQueueException {
+			@ForSome(maxSampleSize = 10) Elem element,
+			@ForSome(minSampleSize=25, maxSampleSize = 30) Queue queue) throws EmptyQueueException {
 		SimpleQueue q1 = SimpleQueue.createQueue(queue);
 		SimpleQueue q2 = SimpleQueue.createQueue(queue);
 		

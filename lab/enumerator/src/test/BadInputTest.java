@@ -14,7 +14,7 @@ import tom.library.enumerator.Enumeration;
 import tom.library.theory.BadInputException;
 import tom.library.theory.Enum;
 import tom.library.theory.TomCheck;
-import tom.library.theory.TomForAll;
+import tom.library.theory.ForSome;
 
 @RunWith(TomCheck.class)
 public class BadInputTest {
@@ -22,7 +22,7 @@ public class BadInputTest {
 	
 	@Theory
 	public void testBadInputFailure(
-			@TomForAll(maxSampleSize = 30) Integer input)
+			@ForSome(maxSampleSize = 30) Integer input)
 			throws EmptyStackException, BadInputException {
 		if (Math.abs(input) < 5) {
 			throw new BadInputException();
