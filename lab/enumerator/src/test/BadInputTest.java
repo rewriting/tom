@@ -1,10 +1,10 @@
 package test;
 
 import static org.junit.Assert.*;
+import static org.junit.Assume.*;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.number.OrderingComparison.*;
 
-import org.hamcrest.core.IsInstanceOf;
 import org.junit.contrib.theories.Theory;
 import org.junit.runner.RunWith;
 
@@ -22,6 +22,7 @@ public class BadInputTest {
 	public void testBadInputFailure(
 			@ForSome(maxSampleSize = 30) Integer input)
 			throws EmptyStackException, BadInputException {
+		assumeThat(Math.abs(input), greaterThan(3));
 		if (Math.abs(input) < 5) {
 			throw new BadInputException();
 		}

@@ -134,7 +134,7 @@ public final class TomCheck extends Theories {
 					if (parameterAnnotations[i].length > 0) {
 						Type key = parameterTypes[i];
 						
-						System.out.println(key + " ; " +  parameterTypes[i] + " ; " + parameterAnnotations[i][0]);
+						//System.out.println(key + " ; " +  parameterTypes[i] + " ; " + parameterAnnotations[i][0]);
 						
 						for (Annotation annotation : parameterAnnotations[i]) {
 							if (annotation.annotationType().equals(ForSome.class) && !map.containsKey(key)) {
@@ -164,65 +164,39 @@ public final class TomCheck extends Theories {
 	protected void runChild(final FrameworkMethod method, RunNotifier notifier) {
 		Description description = describeChild(method);
 		Statement statement = methodBlock(method);
-		if (isIgnored(method)) {
-			notifier.fireTestIgnored(description);
-		} else {
-			runLeaf(statement, description, notifier);
-			printGeneratedDataStatistic(method, (TheoryAnchor) statement);
-		}
+        if (isIgnored(method)) {
+            notifier.fireTestIgnored(description);
+        } else {
+            runLeaf(statement, description, notifier);
+            printGeneratedDataStatistic((TheoryAnchor) statement);
+        }        
 	}
 
 	@Override
-	// same as original code - just to be sure we use the inner class from
-	// TomCheck
-	public Statement methodBlock(FrameworkMethod method) {
-		// get shrink annotation
+	// same as original code - just to be sure we use the inner class from TomCheck
+    public Statement methodBlock(FrameworkMethod method) {
 		return new TheoryAnchor(method, getTestClass());
-	}
-
-	// protected in BlockJUnit4ClasRunner (parent of Theories) but not
-	// overridden in Theories
+    }
+	
+	// protected in BlockJUnit4ClasRunner (parent of Theories) but not overridden in Theories
 	// same code as in BlockJUnit4ClasRunner
 	protected boolean isIgnored(FrameworkMethod child) {
 		return child.getAnnotation(Ignore.class) != null;
 	}
 
-	protected void printGeneratedDataStatistic(final FrameworkMethod method,
-			final TheoryAnchor anchor) {
-		System.out.println(String.format("%s\nGenerated test data: %s"
-				+ "\nTested data: %s" + "\nUntested data: %s"
-				+ "\nBad input: %s \n", method.getName(),
-				getTotalGeneratedDataFromTheoryAnchor(anchor),
-				getTotalTestedDataFromTheoryAnchor(anchor),
-				getTotalUntestedDataFromTheoryAnchor(anchor),
-				getTotalBadInputFromTheoryAnchor(anchor)));
-	}
-
-	protected int getTotalTestedDataFromTheoryAnchor(TheoryAnchor anchor) {
-		return anchor.getSuccessCount() + anchor.getFailureCount();
-	}
-
-	protected int getTotalGeneratedDataFromTheoryAnchor(TheoryAnchor anchor) {
-		return anchor.getTotalGeneratedData();
-	}
-
-	protected int getTotalUntestedDataFromTheoryAnchor(TheoryAnchor anchor) {
-		return anchor.getViolationAssumptionCount();
-	}
-
-	protected int getTotalBadInputFromTheoryAnchor(TheoryAnchor anchor) {
-		return anchor.getBadInputCount();
+	protected void printGeneratedDataStatistic(final TheoryAnchor anchor) {
+		System.out.println(anchor.generateStatistic() + "\n");
 	}
 
 	public static class TheoryAnchor extends Statement {
 		private TestObject testObject;
-		// private ShrinkHandler shrinkHandler;
-		private ExecutionHandler handler;
-
-		public TheoryAnchor(FrameworkMethod method, TestClass testClass) {
-			testObject = new TestObject(method, testClass);
-		}
-
+	    private ExecutionHandler handler;
+	    
+	    public TheoryAnchor(FrameworkMethod method, TestClass testClass) {
+	       testObject = new TestObject(method, testClass);
+	    }
+	    
+	    // TODO move to another class!!
 		private ShrinkHandler newHandlerInstance() {
 			ShrinkHandler handler = null;
 			try {
@@ -252,49 +226,30 @@ public final class TomCheck extends Theories {
 			} else {
 				shrinkClass = DefaultShrinkHandler.class;
 			}
-			return shrinkClass;
-		}
-
-		@Override
-		public void evaluate() throws Throwable {
-			handler = new ExecutionHandler(newHandlerInstance());
-			AssignmentRunner runner = new AssignmentRunner(testObject, handler);
-			runner.runWithAssignment(getUnassignedAssignments());
-
-			if (handler.getSuccessCount() == 0) {
-				Assert.fail("Never found parameters that satisfied method assumptions or parameters are bad.\n"
-						+ "  Violated assumptions: "
-						+ handler.getInvalidParameters());
-			}
-		}
+	    	return shrinkClass;
+	    }
+	    
+	    @Override
+	    public void evaluate() throws Throwable {
+	    	handler = new ExecutionHandler(newHandlerInstance());
+	    	AssignmentRunner runner = new AssignmentRunner(testObject, handler);
+	    	runner.runWithAssignment(getUnassignedAssignments());
+	    	
+	        if (handler.isTestNeverSucceed()) {
+	            Assert.fail("Never found parameters that satisfied method assumptions or parameters are bad.\n"
+	                    + "  Violated assumptions: " + handler.getInvalidParameters());
+	        }
+	    }
 
 		private Assignments getUnassignedAssignments() throws Exception {
 			return Assignments.allUnassigned(testObject.getMethod(),
 					testObject.getTestClass());
 		}
-
-		public int getSuccessCount() {
-			return handler.getSuccessCount();
-		}
-
-		public int getViolationAssumptionCount() {
-			return handler.getAssumptionViolationCount();
-		}
-
-		public int getFailureCount() {
-			return handler.getFailureCount();
-		}
-
-		public int getBadInputCount() {
-			return handler.getBadInputCount();
-		}
-
-		public int getTotalGeneratedData() {
-			int total = handler.getSuccessCount();
-			total += handler.getFailureCount();
-			total += handler.getAssumptionViolationCount();
-			total += handler.getBadInputCount();
-			return total;
+		
+		public String generateStatistic() {
+			return String.format("Testing %s().\n%s", 
+					testObject.getMethodName(), 
+					handler.getStatistic().generateStatistic());
 		}
 	}
 }
