@@ -23,15 +23,15 @@ public class AListTest {
 	public static Enumeration<Elem> enumerationElem = Elem.getEnumeration();
 
 	@Theory
-	public void testAListPrintRandom(@ForSome(maxSampleSize = 20) AList l) {
+	public void testAListPrintRandom(@ForSome(maxSampleSize = 20, numberOfSamples=21) AList l) {
 		assumeTrue(!DemoAList.isEmpty(l));
 
 		System.out.println("Random: "+l);
 	}
 
 
-	@Theory
-	public void testAListPrintExhaustive(@ForSome(exhaustive=true, maxSampleSize = 5) AList l) {
+	//@Theory
+	public void testAListPrintExhaustive(@ForSome(exhaustive=true, maxSampleSize = 20, numberOfSamples=50) AList l) {
 		System.out.println("Exhaustive "+l);
 	}
 
