@@ -903,6 +903,12 @@
         includes="tom/library/**/*.class"
         excludes="tom/library/**/adt/**/*.class"/>
     </jar>
+    <!--
+    <jar jarfile="${src.dist.lib}/runtime/tom-tiny-library.jar">
+      <fileset dir="${src.build}" includes="tom/library/sl/**/*.class"/>
+      <fileset dir="${src.build}" includes="tom/library/utils/**/*.class"/>
+    </jar>
+    -->
     <jar jarfile="${src.dist.lib}/runtime/TNode-${src.version}.jar">
       <fileset dir="${src.build}" includes="tom/library/adt/tnode/**/*.class"/>
     </jar>

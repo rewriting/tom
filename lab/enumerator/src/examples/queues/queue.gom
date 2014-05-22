@@ -11,6 +11,8 @@ abstract syntax
 
 remove:make(q) {
   %match(q) {
-    empty() -> { /*throw new RuntimeException("Bad value: " + q); */}
+    empty() -> { /*throw new RuntimeException(); */
+                 /*throw new RuntimeException("Bad value: " + q); */
+               }
   }
 }

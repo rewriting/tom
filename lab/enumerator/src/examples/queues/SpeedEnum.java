@@ -9,7 +9,7 @@ import examples.queues.queue.types.*;
 public class SpeedEnum {
 
 	public static void main(String[] args) {
-		int nb = 3000;
+		int nb = 2000;
 		BigInteger TWO = BigInteger.ONE.add(BigInteger.ONE);
 		
 		Enumeration<Queue> e = Queue.getEnumeration();
@@ -19,7 +19,7 @@ public class SpeedEnum {
 			Queue q = e.get(index);
 			//System.out.println(q);
 			
-			//index = index.add(BigInteger.ONE);
+			//index = index.add(TWO);
 			index = index.multiply(TWO);
 		}
 		long stop = System.currentTimeMillis();

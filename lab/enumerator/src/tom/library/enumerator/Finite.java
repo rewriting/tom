@@ -45,12 +45,17 @@ public class Finite<A> {
 	 * retrieve an element
 	 */
 	public A get(BigInteger i) {
+		return (A) eval(i);
+/*
 		try {
 			return (A) eval(i);
 		} catch(RuntimeException e) {
 			//System.out.println("abort: " + i);
+			e.printStackTrace();
+
 			return null;
 		}
+		*/
 	}
 
 	/**
@@ -121,16 +126,16 @@ public class Finite<A> {
 	private Object eval(BigInteger index) {
 		Stack<Instruction> stack = new Stack<Instruction>();
 		stack.push(new IDone());
-		
+
 		Operation op = this.operation;
 		Object val = null;
 		boolean evalOp = true;
-		while(true) {
-			if(evalOp) {
-				switch(op.getCode()) {
+		while (true) {
+			if (evalOp) {
+				switch (op.getCode()) {
 				case Operation.ADD:
 					OAdd add = (OAdd) op;
-					if(index.compareTo(add.finite1.card) < 0) {
+					if (index.compareTo(add.finite1.card) < 0) {
 						op = add.finite1.operation;
 					} else {
 						op = add.finite2.operation;
@@ -141,11 +146,12 @@ public class Finite<A> {
 					throw new RuntimeException("index out of range");
 				case Operation.MULT:
 					OMult mul = (OMult) op;
-					BigInteger[] qr = index.divideAndRemainder(mul.finite2.card);
+					BigInteger[] qr = index
+							.divideAndRemainder(mul.finite2.card);
 					final BigInteger q = qr[0];
 					final BigInteger r = qr[1];
 					index = q;
-					stack.push(new IP2(mul.finite2,r));
+					stack.push(new IP2(mul.finite2, r));
 					op = mul.finite1.operation;
 					break;
 				case Operation.SINGLETON:
@@ -165,12 +171,17 @@ public class Finite<A> {
 				}
 			} else {
 				Instruction inst = stack.pop();
-				switch(inst.getCode()) {
+				switch (inst.getCode()) {
 				case Instruction.DONE:
 					return val;
 				case Instruction.MAP:
 					IMap map = (IMap) inst;
-					val = map.fun.apply(val);
+					try {
+						val = map.fun.apply(val);
+					} catch(RuntimeException ex) {
+						//System.out.println("catch");
+						return null;
+					}
 					break;
 				case Instruction.P1:
 					IP1 p1 = (IP1) inst;

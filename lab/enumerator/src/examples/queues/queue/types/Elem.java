@@ -197,7 +197,7 @@ public abstract class Elem extends examples.queues.queue.QueueAbstractType  {
    */
 
   protected static tom.library.enumerator.Enumeration<examples.queues.queue.types.Elem> enumElem = null;
-  public static final tom.library.enumerator.Enumeration<examples.queues.queue.types.Elem> tmpenumElem = new tom.library.enumerator.Enumeration<examples.queues.queue.types.Elem>((tom.library.enumerator.LazyList<tom.library.enumerator.Finite<examples.queues.queue.types.Elem>>) null);
+  static final tom.library.enumerator.Enumeration<examples.queues.queue.types.Elem> tmpenumElem = new tom.library.enumerator.Enumeration<examples.queues.queue.types.Elem>((tom.library.enumerator.LazyList<tom.library.enumerator.Finite<examples.queues.queue.types.Elem>>) null);
 
   public static tom.library.enumerator.Enumeration<examples.queues.queue.types.Elem> getEnumeration() {
     if(enumElem == null) { 

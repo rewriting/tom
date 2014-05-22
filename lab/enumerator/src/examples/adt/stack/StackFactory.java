@@ -10,9 +10,9 @@ public class StackFactory {
 	private static StackFactory LIST_INSTANCE;
 	private static StackFactory ARRAY_INSTANCE;
 
-	public static int TOM = 1;
-	public static int LIST = 2;
-	public static int ARRAY = 3;
+	public final static int TOM = 1;
+	public final static int LIST = 2;
+	public final static int ARRAY = 3;
 
 	private int type = -1;
 
@@ -55,18 +55,10 @@ public class StackFactory {
 	}
 
 	public IStack makeStack(Stack s) {
-		IStack object = null;
-		if (this.type == TOM) {
-			object = new TomStack();
-		} else if (this.type == LIST) {
-			object = new ListStack();
-		} else if (this.type == ARRAY) {
-			object = new ArrayStack();
-		}
-
+		IStack object = makeStack();
 		if (s.isempty()) {
-			object = object.empty();
-		}else if (s.ispush()) {
+			object = object.empty(); // or makeStack() directly
+		} else if (s.ispush()) {
 			Elem elem = s.getelement();
 			Stack y = s.getstack();
 			Integer n = elem.getval();
