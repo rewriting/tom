@@ -9,12 +9,10 @@ import org.junit.runner.RunWith;
 import tom.library.enumerator.Combinators;
 import tom.library.enumerator.Enumeration;
 import tom.library.theory.Enum;
-import tom.library.theory.ExhaustiveCheck;
-import tom.library.theory.ExhaustiveForAll;
-import tom.library.theory.RandomCheck;
-import tom.library.theory.RandomForAll;
 import tom.library.theory.TomCheck;
 import tom.library.theory.TomForAll;
+import tom.library.theory.old.ExhaustiveForAll;
+import tom.library.theory.old.RandomForAll;
 import examples.data.treenat.Fork;
 import examples.data.treenat.Leaf;
 import examples.data.treenat.Nat;
@@ -43,12 +41,12 @@ public class TomCheckTest {
 	}
 
 	@Theory
-	public void testTom1(@TomForAll @RandomCheck(maxSampleSize = 20, numberOfSamples = 30) Tree<Nat> t) {
+	public void testTom1(@TomForAll(maxSampleSize = 20, numberOfSamples = 30) Tree<Nat> t) {
 		System.out.println("testTom1: " + t);
 	}
 
 	//@Theory
-	public void testTom2(@TomForAll @ExhaustiveCheck(maxSampleSize = 15, numberOfSamples = 200) Tree<Nat> t) {
+	public void testTom2(@TomForAll(exhaustive=true, maxSampleSize = 15, numberOfSamples = 200) Tree<Nat> t) {
 		System.out.println("testTom2: " + t);
 	}
 	

@@ -13,7 +13,6 @@ import tom.library.enumerator.Combinators;
 import tom.library.enumerator.Enumeration;
 import tom.library.theory.BadInputException;
 import tom.library.theory.Enum;
-import tom.library.theory.RandomCheck;
 import tom.library.theory.TomCheck;
 import tom.library.theory.TomForAll;
 
@@ -23,7 +22,7 @@ public class BadInputTest {
 	
 	@Theory
 	public void testBadInputFailure(
-			@TomForAll @RandomCheck(maxSampleSize = 30) Integer input)
+			@TomForAll(maxSampleSize = 30) Integer input)
 			throws EmptyStackException, BadInputException {
 		if (Math.abs(input) < 5) {
 			throw new BadInputException();

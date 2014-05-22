@@ -1,30 +1,19 @@
 package examples.queues;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assume.assumeTrue;
+
 import org.junit.contrib.theories.Theory;
 import org.junit.runner.RunWith;
-import org.junit.Assume;
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.assumeTrue;
-import static org.junit.Assert.fail;
-
-import com.pholser.junit.quickcheck.ForAll;
-import com.pholser.junit.quickcheck.From;
 
 import tom.library.enumerator.Combinators;
 import tom.library.enumerator.Enumeration;
 import tom.library.theory.Enum;
-import tom.library.theory.ExhaustiveCheck;
-import tom.library.theory.ExhaustiveForAll;
-import tom.library.theory.RandomCheck;
-import tom.library.theory.RandomForAll;
 import tom.library.theory.TomCheck;
 import tom.library.theory.TomForAll;
-import examples.junit.quickcheck.ExpGenerator;
-import examples.queues.queue.types.*;
+import tom.library.theory.old.RandomForAll;
+import examples.queues.queue.types.Elem;
+import examples.queues.queue.types.Queue;
 
 @RunWith(TomCheck.class)
 public class SimpleQueueTest {
@@ -69,7 +58,7 @@ public class SimpleQueueTest {
 	public void testRemoveQueue(
 			//@RandomForAll(sampleSize=1000) Queue q
 			//@TomForAll @RandomCheck(sampleSize=1000) Queue q
-			@TomForAll @ExhaustiveCheck(maxSampleSize=12) Queue q
+			@TomForAll(exhaustive=true, maxSampleSize=12) Queue q
 			) {
         try {
         	SimpleQueue sq = SimpleQueue.makeFromQueue(q);

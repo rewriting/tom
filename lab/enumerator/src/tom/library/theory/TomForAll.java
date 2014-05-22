@@ -21,6 +21,9 @@ import org.junit.contrib.theories.ParametersSuppliedBy;
 @Retention(RUNTIME)
 public @interface TomForAll {
 
-	public int sampleSize() default 100;
+	public boolean exhaustive() default false;    // random enumeration by default
+	public int minSampleSize() default 0;    // minimal size of the example
+	public int maxSampleSize() default 10;   // maximal size of the example
+	public int numberOfSamples() default 0;  // maximal number of samples (0 means no limit for exhaustive, and one per part in random)	
 
 }
