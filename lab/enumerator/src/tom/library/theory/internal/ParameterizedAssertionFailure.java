@@ -17,8 +17,14 @@ public class ParameterizedAssertionFailure extends AssertionError {
 
 	public static String buildDescriptionWithShrink(Throwable targetException, String methodName, int shrunkCount, 
 			Object[] initialCounterExamples, Object...params) {
-		return String.format("\nError: %s%s", targetException.getMessage(), 
+		return String.format("\nError: %s%s%s", 
+				getExceptionSimpleName(targetException),
+				targetException.getMessage(), 
 				buildDescriptionWithShrink(methodName, shrunkCount, initialCounterExamples, params));
+	}
+	
+	private static String getExceptionSimpleName(Throwable exception) {
+		return exception.getClass().getSimpleName() + ": ";
 	}
 	
 	public static String buildDescriptionWithShrink(String methodName, int shrunkCount, 

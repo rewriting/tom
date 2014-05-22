@@ -47,30 +47,35 @@ public class StackTest {
 		init = factory1.makeStack();
 	}
 
+	//	@Ignore
 	@Test
 	public void testIsEmptyEmpty() {
 		IStack s = init.empty();
 		assertThat(s.isEmpty(), is(true));
 	}
 
+	//	@Ignore
 	@Test
 	public void testEmptySize() {
 		IStack s = init.empty();
 		assertThat(s.size(), is(0));
 	}
 
+	@Ignore
 	@Test(expected = EmptyStackException.class)
 	public void testEmptyPop() throws EmptyStackException {
 		IStack s = init.empty();
 		s.pop();
 	}
 
+	//	@Ignore
 	@Test(expected = EmptyStackException.class)
 	public void testEmptyTop() throws EmptyStackException {
 		IStack s = init.empty();
 		s.top();
 	}
 
+	//	@Ignore
 	@Theory
 	public void testNonEmptySize(
 			@ForSome(minSampleSize = 25, maxSampleSize = 30) Stack gs) {
@@ -79,6 +84,7 @@ public class StackTest {
 		assertThat(s.size(), is(not(0)));
 	}
 
+	//	@Ignore
 	@Theory
 	public void testPushSize(
 			@ForSome(minSampleSize = 25, maxSampleSize = 30) Stack gs,
@@ -91,10 +97,11 @@ public class StackTest {
 		assertThat(finalSize, is(initSize + 1));
 	}
 
+	//	@Ignore
 	@Theory
 	public void testPopSize(
 			@ForSome(minSampleSize = 25, maxSampleSize = 50, numberOfSamples = 100) Stack gs)
-			throws EmptyStackException {
+					throws EmptyStackException {
 		IStack s = factory1.makeStack(gs);
 		assumeThat(s.isEmpty(), equalTo(false));
 		int initSize = s.size();
@@ -103,11 +110,12 @@ public class StackTest {
 		assertThat(finalSize, is(initSize - 1));
 	}
 
+	//	@Ignore
 	@Theory
 	public void testPopPush(
 			@ForSome(minSampleSize = 25, maxSampleSize = 30) Stack gs,
 			@ForSome(maxSampleSize = 10) Elem e)
-			throws EmptyStackException {
+					throws EmptyStackException {
 		IStack s = factory1.makeStack(gs);
 		IStack sclone = factory1.makeStack(gs);
 		Integer n = factory1.makeInteger(e);
@@ -120,25 +128,37 @@ public class StackTest {
 	public void testTop(
 			@ForSome(minSampleSize = 25, maxSampleSize = 50) Stack gs,
 			@ForSome(maxSampleSize = 10) Elem e)
-			throws EmptyStackException {
+					throws EmptyStackException {
+		/*
+		 * Found bug, Index array of bound exception.
+		 * Use term to reply the bug.
+		 */
+		//tack term = Stack.fromString("push(val(-2),push(val(-1),push(val(3),push(val(0),push(val(-1),push(val(-1),push(val(1),push(val(-1),push(val(6),empty())))))))))");
+		//IStack s = factory1.makeStack(term);
+		
 		IStack s = factory1.makeStack(gs);
 		Integer n = factory1.makeInteger(e);
 		s.push(n);
+		Integer es = s.top();
+		if (es != n) {
+			System.out.println(es);
+			System.out.println(n);
+		}
 		assertThat(s.top(), is(n));
 	}
 
-	//@Ignore
+	//	@Ignore
 	@Theory
 	public void testSameBehaviour(
 			@ForSome(minSampleSize = 25, maxSampleSize = 30) StackL gs)
-			throws EmptyStackException, BadInputException {
+					throws EmptyStackException, BadInputException {
 		IStack stack1 = factory1.evaluateStack(gs);
 		IStack stack2 = factory2.evaluateStack(gs);
-		
+
 		assertThat(stack1.isEmpty(), is(stack2.isEmpty()));
-		
+
 		assertThat(stack1.size(), is(stack2.size()));
-		
+
 		assumeThat(stack1.isEmpty(), equalTo(false));
 		assertThat(stack1.top(), is(stack2.top()));
 
@@ -148,9 +168,9 @@ public class StackTest {
 		assertThat(sRes, is(sBisRes));
 		//same side-effect
 		assertThat(stack1.isEmpty(), is(stack2.isEmpty()));
-		
+
 		assertThat(stack1.size(), is(stack2.size()));
-		
+
 		assumeThat(stack1.isEmpty(), equalTo(false));
 		assertThat(stack1.top(), is(stack2.top()));
 

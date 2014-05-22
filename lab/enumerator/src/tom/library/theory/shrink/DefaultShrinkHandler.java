@@ -35,10 +35,10 @@ public class DefaultShrinkHandler implements ShrinkHandler {
 	}
 	
 	protected void repeatShrink(Throwable e, Object... params) throws Throwable {
-		CounterExample temp = CounterExample.build(params);
-		if (temp.isSmallerThan(currentCounterExample)) {
+		CounterExample temporaryCounterExample = CounterExample.build(params);
+		if (temporaryCounterExample.isSmallerThan(currentCounterExample)) {
 			increaseShrunkCount();
-			currentCounterExample = temp;
+			currentCounterExample = temporaryCounterExample;
 			handleShrink();
 		}
 		throwParameterizedAssertionFailureWithCounterExamples(e, params);
