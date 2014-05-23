@@ -41,39 +41,22 @@ public class Shrink {
 
   %strategy ReplaceSubtermByConstant(t:ATerm, constants:Collection, c:Collection) extends `Identity() {
     visit ATerm {
-      at@ATermAppl[] -> { 
+      at@(ATermAppl|ATermInt)[] -> { 
         if(`at != `t) {
+          Position pos = getEnvironment().getPosition();
+          System.out.println("pos = " + pos);
+          for(Object o:constants) {
+            ATerm cst = (ATerm)o;
+            ATerm res = pos.getReplace(cst).visit(t, new LocalIntrospector());
+            try {
+              Tree tr = Tree.fromTerm(res);
+              c.add(tr);
+              //System.out.println("add tree = " + tr);
+            } catch(Exception e) {
 
-          System.out.println("t = " + t);
-          System.out.println("p = " + getEnvironment().getPosition());
-          System.out.println("p.omega = " + getEnvironment().getPosition().getSubterm().visit(t,
-                new LocalIntrospector()));
-          //for(Object o:constants) {
-          ATerm cst = (ATerm)constants.toArray()[0]; //(ATerm)o;
-          System.out.println("cst = " + cst);
-
-
-          ATerm res = getEnvironment()
-            .getPosition()
-            .getReplace(cst)
-            .visit(t, new LocalIntrospector());
-
-          System.out.println(t.getChildCount());
-          for(int i = 0 ; i < t.getChildCount() ; i ++) {
-            System.out.println(t.getChildAt(i));
-          }
-
-          System.out.println(res);
-
-          c.add(res);
-
-          try {
-            Tree tr = Tree.fromTerm(res);
-            System.out.println("*** res = " + tr);
-          } catch(Exception e) {
+            }
 
           }
-
         }
       }
     }
@@ -86,28 +69,27 @@ public class Shrink {
     ATerm at = t.toATerm();
     System.out.println("at = " + at);
 
-    Collection<ATerm> bag = new HashSet<ATerm>();
+    Collection<ATerm> bagPhase1 = new HashSet<ATerm>();
+    Collection<ATerm> bagPhase2 = new HashSet<ATerm>();
     Collection<ATerm> constants = new HashSet<ATerm>();
+    Introspector introspector = new LocalIntrospector();
     try {
-      `TopDown(CollectConstant(at,constants)).visit(at, new LocalIntrospector());
-      `TopDown(CollectSubterm(at,bag)).visit(at, new LocalIntrospector());
-      `TopDown(ReplaceSubtermByConstant(at,constants,bag)).visit(at, new LocalIntrospector());
+      `TopDown(CollectConstant(at,constants)).visit(at, introspector);
+      `TopDown(CollectSubterm(at,bagPhase1)).visit(at, introspector);
+      bagPhase1.add(at);
+      for(ATerm tt: bagPhase1) {
+        `TopDown(ReplaceSubtermByConstant(tt,constants,bagPhase2)).visit(tt, introspector);
+      }
+      bagPhase2.addAll(bagPhase1);
     } catch (VisitFailure e) {
       e.printStackTrace();
     }
 
     System.out.println("constants = " + constants);
-    System.out.println("bag.size = " + bag.size());
-    for(ATerm tt: bag) {
-      try {
-        Tree tr = Tree.fromTerm(tt);
-        System.out.println("tree = " + tr);
-      } catch(Exception e) {
-
-      }
-    }
+    System.out.println("bag1       = " + bagPhase1);
+    System.out.println("bag2       = " + bagPhase2);
 
 
   }
 
-}
+  }

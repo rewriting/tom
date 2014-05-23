@@ -100,7 +100,7 @@
 
 %op ATerm ATermAppl(fun: AFun, args: ATermList  ) {
   is_fsym(t) { $t instanceof aterm.ATermAppl }
-  make(f,args) { aterm.pure.SingletonFactory.getInstance().makeAppl($f,$args) }
+  make(f,args) { aterm.pure.SingletonFactory.getInstance().makeApplList($f,$args) }
   get_slot(fun, t) { ((aterm.ATermAppl)$t).getAFun() }
   get_slot(args, t) { ((aterm.ATermAppl)$t).getArguments() }
 }

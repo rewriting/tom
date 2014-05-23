@@ -311,13 +311,10 @@ public class Position implements Cloneable, Path {
     return getOmega(
         new Identity() {
           public int visit(Introspector i) {
-            System.out.println("getReplace before = " + environment.getSubject());
             environment.setSubject(t);
-            System.out.println("getReplace after = " + environment.getSubject());
             return Environment.SUCCESS;
           }
           public Object visitLight(Object x, Introspector i) {
-            System.out.println("getReplace x = " + x);
             return t;
           }
         });
