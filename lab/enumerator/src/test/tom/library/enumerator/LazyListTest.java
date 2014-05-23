@@ -1,4 +1,4 @@
-package test;
+package test.tom.library.enumerator;
 
 import static org.junit.Assert.*;
 

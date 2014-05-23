@@ -1,4 +1,4 @@
-package test;
+package test.tom.library.enumerator;
 
 import static java.math.BigInteger.ONE;
 import static java.math.BigInteger.ZERO;

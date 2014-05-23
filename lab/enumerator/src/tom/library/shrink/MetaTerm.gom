@@ -1,0 +1,10 @@
+module tom.library.shrink.MetaTerm
+imports String int
+abstract syntax
+
+Term = Appl(Symbol:Symbol, Args:TermList)
+     | Var(Name:String)
+
+Symbol = Fun(SymbolName:String, TypeName:String)
+
+TermList = TermList(Term*)
