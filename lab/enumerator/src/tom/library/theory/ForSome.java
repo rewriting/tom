@@ -16,11 +16,14 @@ import org.junit.contrib.theories.ParametersSuppliedBy;
  * in SmallCheck.
  */
 
-@ParametersSuppliedBy(TomValueSupplier.class)
+@ParametersSuppliedBy(ForSomeValueSupplier.class)
 @Target(PARAMETER)
 @Retention(RUNTIME)
-public @interface TomForAll {
+public @interface ForSome {
 
-	public int sampleSize() default 100;
+	public boolean exhaustive() default false;    // random enumeration by default
+	public int minSampleSize() default 0;    // minimal size of the example
+	public int maxSampleSize() default 10;   // maximal size of the example
+	public int numberOfSamples() default 0;  // maximal number of samples (0 means no limit for exhaustive, and one per part in random)	
 
 }

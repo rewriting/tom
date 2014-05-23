@@ -210,7 +210,7 @@ public abstract class Queue extends examples.queues.queue.QueueAbstractType  {
    */
 
   protected static tom.library.enumerator.Enumeration<examples.queues.queue.types.Queue> enumQueue = null;
-  public static final tom.library.enumerator.Enumeration<examples.queues.queue.types.Queue> tmpenumQueue = new tom.library.enumerator.Enumeration<examples.queues.queue.types.Queue>((tom.library.enumerator.LazyList<tom.library.enumerator.Finite<examples.queues.queue.types.Queue>>) null);
+  static final tom.library.enumerator.Enumeration<examples.queues.queue.types.Queue> tmpenumQueue = new tom.library.enumerator.Enumeration<examples.queues.queue.types.Queue>((tom.library.enumerator.LazyList<tom.library.enumerator.Finite<examples.queues.queue.types.Queue>>) null);
 
   public static tom.library.enumerator.Enumeration<examples.queues.queue.types.Queue> getEnumeration() {
     if(enumQueue == null) { 

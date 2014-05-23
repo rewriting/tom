@@ -1,16 +1,14 @@
 package tom.library.theory;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.*;
 import java.util.HashMap;
 import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.contrib.theories.Theories;
+import org.junit.contrib.theories.Theory;
 import org.junit.contrib.theories.internal.Assignments;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
@@ -19,6 +17,7 @@ import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 import org.junit.runners.model.TestClass;
 
+import tom.library.enumerator.Combinators;
 import tom.library.enumerator.Enumeration;
 import tom.library.theory.internal.AssignmentRunner;
 import tom.library.theory.internal.ExecutionHandler;
@@ -27,14 +26,14 @@ import tom.library.theory.shrink.DefaultShrinkHandler;
 import tom.library.theory.shrink.ShrinkHandler;
 
 public final class TomCheck extends Theories {
+	private static HashMap<Type, Enumeration<?>> map;
 
-	private static HashMap<Type, Enumeration<?>> enumerations;
 	public TomCheck(Class<?> klass) throws InitializationError {
 		super(klass);
 	}
 
 	public static Enumeration<?> get(Type type) {
-		return enumerations.get(type);
+		return map.get(type);
 	}
 
 	@Override
@@ -57,37 +56,107 @@ public final class TomCheck extends Theories {
 				continue;
 			}
 			if (!Modifier.isStatic(field.getModifiers())) {
-				errors.add(new Error("Enum field " + field.getName() + " must be static"));
+				errors.add(new Error("Enum field " + field.getName()
+						+ " must be static"));
 			}
 			if (!Modifier.isPublic(field.getModifiers())) {
-				errors.add(new Error("Enum field " + field.getName() + " must be public"));
+				errors.add(new Error("Enum field " + field.getName()
+						+ " must be public"));
 			}
-			if (! field.getType().equals(Enumeration.class)) {
-				errors.add(new Error("Enum field " + field.getName() + " must be of type Enumeration<?>"));
+			if (!field.getType().equals(Enumeration.class)) {
+				errors.add(new Error("Enum field " + field.getName()
+						+ " must be of type Enumeration<?>"));
 			}
 		}
 	}
 
-
-
+	/*
+	 * code for Combinators.methodName()
+	 */
+	private static Enumeration<?> getCombinator(String methodName) {
+		Class<?> c;
+		try {
+			//c = Class.forName("jtom.library.enumerator.Combinator");
+			c = Combinators.class;
+			//Object t = c.newInstance();
+			Method[] allMethods = c.getDeclaredMethods();
+			for (Method m : allMethods) {
+				if(m.getName().equals(methodName)) {
+					Enumeration<?> myEnum = (Enumeration<?>) m.invoke(null, null); // static + no parameter
+					return myEnum;
+				}
+			}
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	public static void initEnumerations(Class<?> testclass) {
-		enumerations = new HashMap<Type, Enumeration<?>>();
+		map = new HashMap<Type, Enumeration<?>>();
+		
+		map.put(int.class, getCombinator("makeint"));
+		map.put(Integer.class, getCombinator("makeInteger"));
+		map.put(String.class, getCombinator("makeString"));
+		map.put(Boolean.class, getCombinator("makeBoolean"));
+		map.put(Character.class, getCombinator("makeCharacter"));
+		map.put(Long.class, getCombinator("makeLong"));
+		map.put(long.class, getCombinator("makelong"));
+		//map.put(Float.class, getCombinator("makeFloat"));
+		//map.put(float.class, getCombinator("makefloat"));
+				
+		/*
+		 * retrieve enumerations from @Enum annotations
+		 */
 		Field[] fields = testclass.getFields();
 		for(Field field: fields) {
 			if (field.getAnnotation(Enum.class) != null) {
 				try {
 					ParameterizedType fieldType = (ParameterizedType) field.getGenericType();
 					Type dataType = fieldType.getActualTypeArguments()[0];
-					enumerations.put(dataType, (Enumeration<?>) field.get(null));
-				} catch (IllegalArgumentException e) {
-					e.printStackTrace();
-				} catch (IllegalAccessException e) {
+					map.put(dataType, (Enumeration<?>) field.get(null));
+				} catch (IllegalArgumentException | IllegalAccessException e) {
 					e.printStackTrace();
 				}
 			}
+		}
+		
+		/*
+		 * retrieve enumerations from type of parameters
+		 */
+		for (Method method : testclass.getMethods()) {
+			if (method.getAnnotation(Theory.class) != null) {
+				Class[] parameterTypes = method.getParameterTypes();
+
+				Annotation[][] parameterAnnotations = method.getParameterAnnotations();
+
+				for (int i = 0; i < parameterTypes.length; i++) {
+					if (parameterAnnotations[i].length > 0) {
+						Type key = parameterTypes[i];
+						
+						//System.out.println(key + " ; " +  parameterTypes[i] + " ; " + parameterAnnotations[i][0]);
+						
+						for (Annotation annotation : parameterAnnotations[i]) {
+							if (annotation.annotationType().equals(ForSome.class) && !map.containsKey(key)) {
+								try {									
+									Method getEnumeration = parameterTypes[i].getMethod("getEnumeration", null);
+									Enumeration<?> myEnum = (Enumeration<?>) getEnumeration.invoke(null, null); // static + no parameter
+									map.put(key, myEnum);
+								} catch (NoSuchMethodException | SecurityException | IllegalAccessException
+										| IllegalArgumentException | InvocationTargetException e) {
+									e.printStackTrace();
+								}
+							}
+						}
+					} else {
+						// no annotation
+					}
+				}
+				
+				//System.out.println("print map " + map.keySet());
+			}
 
 		}
-
 	}
 
 	@Override
@@ -99,64 +168,40 @@ public final class TomCheck extends Theories {
             notifier.fireTestIgnored(description);
         } else {
             runLeaf(statement, description, notifier);
-            printGeneratedDataStatistic(method, (TheoryAnchor) statement);
+            printGeneratedDataStatistic((TheoryAnchor) statement);
         }        
 	}
-	
+
 	@Override
 	// same as original code - just to be sure we use the inner class from TomCheck
     public Statement methodBlock(FrameworkMethod method) {
-		// get shrink annotation
-        return new TheoryAnchor(method, getTestClass());
+		return new TheoryAnchor(method, getTestClass());
     }
 	
 	// protected in BlockJUnit4ClasRunner (parent of Theories) but not overridden in Theories
 	// same code as in BlockJUnit4ClasRunner
 	protected boolean isIgnored(FrameworkMethod child) {
-		 return child.getAnnotation(Ignore.class) != null;
+		return child.getAnnotation(Ignore.class) != null;
 	}
 
-	protected void printGeneratedDataStatistic(final FrameworkMethod method, final TheoryAnchor anchor) {
-		System.out.println(String.format("%s\nGenerated test data: %s"
-				+ "\nTested data: %s"
-				+ "\nUntested data: %s"
-				+ "\nBad input: %s \n", 
-				method.getName(),
-				getTotalGeneratedDataFromTheoryAnchor(anchor), 
-				getTotalTestedDataFromTheoryAnchor(anchor),
-				getTotalUntestedDataFromTheoryAnchor(anchor),
-				getTotalBadInputFromTheoryAnchor(anchor)));
+	protected void printGeneratedDataStatistic(final TheoryAnchor anchor) {
+		System.out.println(anchor.generateStatistic() + "\n");
 	}
 
-	protected int getTotalTestedDataFromTheoryAnchor(TheoryAnchor anchor) {
-		return anchor.getSuccessCount() + anchor.getFailureCount();
-	}
-
-	protected int getTotalGeneratedDataFromTheoryAnchor(TheoryAnchor anchor) {
-		return anchor.getTotalGeneratedData();
-	}
-	
-	protected int getTotalUntestedDataFromTheoryAnchor(TheoryAnchor anchor) {
-		return anchor.getViolationAssumptionCount();
-	}
-	
-	protected int getTotalBadInputFromTheoryAnchor(TheoryAnchor anchor) {
-		return anchor.getBadInputCount();
-	}
-	
 	public static class TheoryAnchor extends Statement {
 		private TestObject testObject;
-	    //private ShrinkHandler shrinkHandler;
 	    private ExecutionHandler handler;
 	    
 	    public TheoryAnchor(FrameworkMethod method, TestClass testClass) {
 	       testObject = new TestObject(method, testClass);
 	    }
 	    
+	    // TODO move to another class!!
 		private ShrinkHandler newHandlerInstance() {
 			ShrinkHandler handler = null;
 			try {
-				handler = getShrinkHandlerClass().getConstructor(TestObject.class).newInstance(testObject);
+				handler = getShrinkHandlerClass().getConstructor(
+						TestObject.class).newInstance(testObject);
 			} catch (InstantiationException e) {
 				e.printStackTrace();
 			} catch (IllegalAccessException e) {
@@ -172,11 +217,12 @@ public final class TomCheck extends Theories {
 			}
 			return handler;
 		}
-	    
-	    private Class<? extends ShrinkHandler> getShrinkHandlerClass() {
-	    	Class<? extends ShrinkHandler> shrinkClass;
-	    	if (testObject.getMethod().getAnnotation(Shrink.class) != null) {
-	    		shrinkClass = testObject.getMethod().getAnnotation(Shrink.class).handler();
+
+		private Class<? extends ShrinkHandler> getShrinkHandlerClass() {
+			Class<? extends ShrinkHandler> shrinkClass;
+			if (testObject.getMethod().getAnnotation(Shrink.class) != null) {
+				shrinkClass = testObject.getMethod()
+						.getAnnotation(Shrink.class).handler();
 			} else {
 				shrinkClass = DefaultShrinkHandler.class;
 			}
@@ -189,39 +235,21 @@ public final class TomCheck extends Theories {
 	    	AssignmentRunner runner = new AssignmentRunner(testObject, handler);
 	    	runner.runWithAssignment(getUnassignedAssignments());
 	    	
-	        if (handler.getSuccessCount() == 0) {
+	        if (handler.isTestNeverSucceed()) {
 	            Assert.fail("Never found parameters that satisfied method assumptions or parameters are bad.\n"
 	                    + "  Violated assumptions: " + handler.getInvalidParameters());
 	        }
 	    }
 
-
 		private Assignments getUnassignedAssignments() throws Exception {
-			return Assignments.allUnassigned(testObject.getMethod(), testObject.getTestClass());
+			return Assignments.allUnassigned(testObject.getMethod(),
+					testObject.getTestClass());
 		}
 		
-		public int getSuccessCount() {
-			return handler.getSuccessCount();
-		}
-		
-		public int getViolationAssumptionCount() {
-			return handler.getAssumptionViolationCount();
-		}
-		
-		public int getFailureCount() {
-			return handler.getFailureCount();
-		}
-		
-		public int getBadInputCount() {
-			return handler.getBadInputCount();
-		}
-		
-		public int getTotalGeneratedData() {
-			int total = handler.getSuccessCount();
-			total += handler.getFailureCount();
-			total += handler.getAssumptionViolationCount();
-			total += handler.getBadInputCount();
-			return total;
+		public String generateStatistic() {
+			return String.format("Testing %s().\n%s", 
+					testObject.getMethodName(), 
+					handler.getStatistic().generateStatistic());
 		}
 	}
 }

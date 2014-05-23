@@ -1,7 +1,7 @@
 package test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assume.*;
+import static org.junit.Assume.assumeTrue;
 
 import org.junit.contrib.theories.Theory;
 import org.junit.runner.RunWith;
@@ -9,12 +9,8 @@ import org.junit.runner.RunWith;
 import tom.library.enumerator.Combinators;
 import tom.library.enumerator.Enumeration;
 import tom.library.theory.Enum;
-import tom.library.theory.ExhaustiveCheck;
-import tom.library.theory.ExhaustiveForAll;
-import tom.library.theory.RandomCheck;
-import tom.library.theory.RandomForAll;
+import tom.library.theory.ForSome;
 import tom.library.theory.TomCheck;
-import tom.library.theory.TomForAll;
 import examples.data.treenat.Fork;
 import examples.data.treenat.Leaf;
 import examples.data.treenat.Nat;
@@ -43,24 +39,24 @@ public class TomCheckTest {
 	}
 
 	@Theory
-	public void testTom1(@TomForAll @RandomCheck(maxSampleSize = 20, numberOfSamples = 30) Tree<Nat> t) {
+	public void testTom1(@ForSome(maxSampleSize = 20, numberOfSamples = 30) Tree<Nat> t) {
 		System.out.println("testTom1: " + t);
 	}
 
 	//@Theory
-	public void testTom2(@TomForAll @ExhaustiveCheck(maxSampleSize = 15, numberOfSamples = 200) Tree<Nat> t) {
+	public void testTom2(@ForSome(exhaustive=true, maxSampleSize = 15, numberOfSamples = 200) Tree<Nat> t) {
 		System.out.println("testTom2: " + t);
 	}
 	
 	//@Theory
-	public void testPlusOne1(@ExhaustiveForAll(maxDepth = 20) Tree<Nat> t) {
+	public void testPlusOne1(@ForSome(exhaustive=true, maxSampleSize = 20) Tree<Nat> t) {
 		// just test if the size is preserved by plusOne
 		System.out.println("testPlusOne1: " + t);
 		assertEquals(plusOne(t).size(), t.size());
 	}
 
 	//@Theory
-	public void testPlusOne2(@RandomForAll(sampleSize = 15) Tree<Nat> t, @RandomForAll(sampleSize = 15) Tree<Nat> t2) {
+	public void testPlusOne2(@ForSome(maxSampleSize = 15) Tree<Nat> t, @ForSome(maxSampleSize = 15) Tree<Nat> t2) {
 		// just test if the size is preserved by plusOne
 		//System.out.println(t + " | " + t.size());
 		assumeTrue(t.size() > 2);
@@ -69,13 +65,13 @@ public class TomCheckTest {
 	}
 
 	//@Theory
-	public void testString(@RandomForAll(sampleSize = 50) String s) {
+	public void testString(@ForSome(maxSampleSize = 50) String s) {
 		System.out.println(s);
 	}
 
 	//@Theory
-	public void testMulti(@RandomForAll(sampleSize = 10) String s,
-			@RandomForAll(sampleSize = 5) Integer i) {
+	public void testMulti(@ForSome(maxSampleSize = 10) String s,
+			@ForSome(maxSampleSize = 5) Integer i) {
 		System.out.println(s + " " + i);
 	}
 }

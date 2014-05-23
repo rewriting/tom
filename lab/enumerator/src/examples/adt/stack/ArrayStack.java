@@ -5,7 +5,7 @@ public class ArrayStack implements IStack {
 	private int[] stack;
 	private int index;
 	private int size;
-	private final static int SIZE = 10;
+	private final static int SIZE = 5;
 
 	public ArrayStack() {
 		stack = new int[SIZE];
@@ -44,10 +44,10 @@ public class ArrayStack implements IStack {
 		if (isEmpty()) {
 			throw new EmptyStackException();
 		}
-		/* initial code:
-		 		return stack[index];
-		 */
-		return stack[index - 1]; // -1 to fix the BUG
+		// initial code:
+//		 		return stack[index-1];
+		 
+		return stack[(SIZE+index-1)%SIZE]; // -1 to fix the BUG
 	}
 
 	@Override
@@ -112,6 +112,10 @@ public class ArrayStack implements IStack {
 		stack.push(1);
 		stack.pop();
 		System.out.println("After :"+stack.top());
+
+		int n=5;
+		System.out.println("After :"+int.class);
+		
 	}
 
 }

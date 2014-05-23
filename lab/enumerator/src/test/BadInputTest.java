@@ -1,10 +1,10 @@
 package test;
 
 import static org.junit.Assert.*;
+import static org.junit.Assume.*;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.number.OrderingComparison.*;
 
-import org.hamcrest.core.IsInstanceOf;
 import org.junit.contrib.theories.Theory;
 import org.junit.runner.RunWith;
 
@@ -13,18 +13,16 @@ import tom.library.enumerator.Combinators;
 import tom.library.enumerator.Enumeration;
 import tom.library.theory.BadInputException;
 import tom.library.theory.Enum;
-import tom.library.theory.RandomCheck;
 import tom.library.theory.TomCheck;
-import tom.library.theory.TomForAll;
+import tom.library.theory.ForSome;
 
 @RunWith(TomCheck.class)
 public class BadInputTest {
-	@Enum public static Enumeration<Integer> enumInt = Combinators.makeint();
-	
 	@Theory
 	public void testBadInputFailure(
-			@TomForAll @RandomCheck(maxSampleSize = 30) Integer input)
+			@ForSome(maxSampleSize = 30) Integer input)
 			throws EmptyStackException, BadInputException {
+		assumeThat(Math.abs(input), greaterThan(3));
 		if (Math.abs(input) < 5) {
 			throw new BadInputException();
 		}

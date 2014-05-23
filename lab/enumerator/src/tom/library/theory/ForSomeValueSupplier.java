@@ -13,7 +13,7 @@ import tom.library.enumerator.Enumeration;
 import tom.library.enumerator.Finite;
 import tom.library.enumerator.LazyList;
 
-public class TomValueSupplier extends ParameterSupplier {
+public class ForSomeValueSupplier extends ParameterSupplier {
 
 	private BigInteger nextRandomBigInteger(BigInteger n) {
 		Random rand = new Random();
@@ -26,35 +26,34 @@ public class TomValueSupplier extends ParameterSupplier {
 
 	@Override
 	public List<PotentialAssignment> getValueSources(ParameterSignature signature) {
-		
+		ForSome tomForAllAnnotation = signature.getAnnotation(ForSome.class);
+
 		/** exhaustive or random mode */
-		boolean exhaustive = false;
+		boolean exhaustive = tomForAllAnnotation.exhaustive();
 		
 		/** skip parts until minSampleSize */
-		int minSampleSize = 0;
+		int minSampleSize = tomForAllAnnotation.minSampleSize();
 		
 		/** explore parts up to maxSampleSize */
-		int maxSampleSize = 1;
+		int maxSampleSize = tomForAllAnnotation.maxSampleSize();
 		
 		/** maximal number of selected samples */
-		int totalNumberOfSamples = 0;
+		int totalNumberOfSamples = tomForAllAnnotation.numberOfSamples();
 
-		ExhaustiveCheck exhaustiveCheckAnnotation = signature.getAnnotation(ExhaustiveCheck.class);
-		RandomCheck randomCheckAnnotation = signature.getAnnotation(RandomCheck.class);
-		if (exhaustiveCheckAnnotation != null) {
-			exhaustive = true;
-			minSampleSize = exhaustiveCheckAnnotation.minSampleSize();
-			maxSampleSize = exhaustiveCheckAnnotation.maxSampleSize();
-			totalNumberOfSamples = exhaustiveCheckAnnotation.numberOfSamples();
+
+		
+		if (exhaustive) {		
 			if(totalNumberOfSamples == 0) {
 				totalNumberOfSamples = Integer.MAX_VALUE;
 			} 
-		}
-		if (randomCheckAnnotation != null) {
-			exhaustive = false;
-			minSampleSize = randomCheckAnnotation.minSampleSize();
-			maxSampleSize = randomCheckAnnotation.maxSampleSize();
-			totalNumberOfSamples = randomCheckAnnotation.numberOfSamples();
+		} else {
+			if(totalNumberOfSamples == 0) {
+				/*
+				 * goal: select one sample per part (like QuickCheck)
+				 * may select more than one sample when some parts are empty
+				 */
+				totalNumberOfSamples = maxSampleSize - minSampleSize;
+			}
 		}
 
 		//System.out.println("EXHAUSTIVE = " + exhaustive + " ; " + totalNumberOfSamples + " samples");
@@ -79,14 +78,14 @@ public class TomValueSupplier extends ParameterSupplier {
 			if (card.equals(BigInteger.ZERO)) {
 				/* empty part, do nothing */
 			} else {
-				/*
-				 * case random: numberofSamplesInThisPart = MIN(numberOfSamplesPerPart, card)
-				 */
 				int numberOfSamplesInThisPart = totalNumberOfSamples - builtSamples;
 				
 				if(!exhaustive) {
-					numberOfSamplesInThisPart = 1 + (totalNumberOfSamples - builtSamples) 
-							/ (maxSampleSize - i);
+					numberOfSamplesInThisPart = (totalNumberOfSamples - builtSamples) / (maxSampleSize - i);
+					if(numberOfSamplesInThisPart < 1) {
+						/* minimum number of sample is 1 */
+						numberOfSamplesInThisPart = 1;
+					}
 				}
 				
 				if (card.compareTo(BigInteger.valueOf(numberOfSamplesInThisPart)) < 0) {
