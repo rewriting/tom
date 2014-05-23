@@ -37,7 +37,7 @@
 %typeterm ATermList {
   implement { aterm.ATermList }
   is_sort(t) { $t instanceof aterm.ATermList }
-  equals(l1,l2) { $l1==$l2 }
+  equals(l1,l2) { $l1 == $l2 }
 }
 
 %typeterm AFun {
@@ -60,7 +60,7 @@
 
 /** ATermList **/
 
-%oplist ATerm ATermList (ATerm*) {
+%oplist ATerm ATermList(ATerm*) {
   is_fsym(t) { $t instanceof aterm.ATermList }
   make_empty() { aterm.pure.SingletonFactory.getInstance().makeList() }
   make_insert(e,l) { ((ATermList)$l).insert($e) }
@@ -69,7 +69,7 @@
   is_empty(t) { ((ATermList)$t).isEmpty() }
 }
 
-%oplist ATermList concATerm (ATerm*) {
+%oplist ATermList concATerm(ATerm*) {
   is_fsym(t) { $t instanceof aterm.ATermList } 
   make_empty() { aterm.pure.SingletonFactory.getInstance().makeList() }
   make_insert(e,l) { $l.insert($e) }
