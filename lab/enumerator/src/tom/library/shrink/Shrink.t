@@ -10,7 +10,7 @@ import examples.adt.tree.types.*;
 
 import tom.library.sl.Visitable;
 import tom.library.sl.VisitableBuiltin;
-import tom.library.shrink.metaterm.types.*;
+//import tom.library.shrink.metaterm.types.*;
 import tom.library.sl.*;
 
 import java.util.*;
@@ -44,37 +44,36 @@ public class Shrink {
       at@ATermAppl[] -> { 
         if(`at != `t) {
 
-System.out.println("t = " + t);
-									System.out.println("p = " + getEnvironment().getPosition());
-									System.out.println("p.omega = " + getEnvironment().getPosition().getSubterm().visit(t,
-											new LocalIntrospector()));
-									//for(Object o:constants) {
-									ATerm cst = (ATerm)constants.toArray()[0]; //(ATerm)o;
-									System.out.println("cst = " + cst);
-									
+          System.out.println("t = " + t);
+          System.out.println("p = " + getEnvironment().getPosition());
+          System.out.println("p.omega = " + getEnvironment().getPosition().getSubterm().visit(t,
+                new LocalIntrospector()));
+          //for(Object o:constants) {
+          ATerm cst = (ATerm)constants.toArray()[0]; //(ATerm)o;
+          System.out.println("cst = " + cst);
 
-									ATerm res = getEnvironment()
-											.getPosition()
-											.getReplace(cst)
-											.visit(t, new LocalIntrospector());
-									
-									System.out.println(t.getChildCount());
-									for(int i = 0 ; i < t.getChildCount() ; i ++) {
-										System.out.println(t.getChildAt(i));
-									}
 
-									System.out.println(res);
+          ATerm res = getEnvironment()
+            .getPosition()
+            .getReplace(cst)
+            .visit(t, new LocalIntrospector());
 
-										c.add(res);
-										
-										try {
-											Tree tr = Tree.fromTerm(res);
-											System.out.println("*** res = " + tr);
-										} catch(Exception e) {
-											
-										}
+          System.out.println(t.getChildCount());
+          for(int i = 0 ; i < t.getChildCount() ; i ++) {
+            System.out.println(t.getChildAt(i));
+          }
+
+          System.out.println(res);
+
+          c.add(res);
+
+          try {
+            Tree tr = Tree.fromTerm(res);
+            System.out.println("*** res = " + tr);
+          } catch(Exception e) {
 
           }
+
         }
       }
     }
@@ -87,8 +86,8 @@ System.out.println("t = " + t);
     ATerm at = t.toATerm();
     System.out.println("at = " + at);
 
-    Collection bag = new HashSet();
-    Collection constants = new HashSet();
+    Collection<ATerm> bag = new HashSet<ATerm>();
+    Collection<ATerm> constants = new HashSet<ATerm>();
     try {
       `TopDown(CollectConstant(at,constants)).visit(at, new LocalIntrospector());
       `TopDown(CollectSubterm(at,bag)).visit(at, new LocalIntrospector());
@@ -96,17 +95,17 @@ System.out.println("t = " + t);
     } catch (VisitFailure e) {
       e.printStackTrace();
     }
-    
+
     System.out.println("constants = " + constants);
-		System.out.println("bag.size = " + bag.size());
-		for(ATerm tt: bag) {
-			try {
-				Tree tr = Tree.fromTerm(tt);
-				System.out.println("tree = " + tr);
-			} catch(Exception e) {
-				
-			}
-		}
+    System.out.println("bag.size = " + bag.size());
+    for(ATerm tt: bag) {
+      try {
+        Tree tr = Tree.fromTerm(tt);
+        System.out.println("tree = " + tr);
+      } catch(Exception e) {
+
+      }
+    }
 
 
   }
