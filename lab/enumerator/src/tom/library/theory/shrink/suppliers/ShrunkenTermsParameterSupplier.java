@@ -24,8 +24,8 @@ public class ShrunkenTermsParameterSupplier implements ShrinkParameterSupplier{
 
 	@Override
 	public List<PotentialAssignment> getValueSources(
-			ParameterSignature signature, Object counterExample) {
-		return buildValueSources(signature, counterExample);
+			Object counterExample) {
+		return null;//buildValueSources(signature, counterExample);
 	}
 	
 	protected List<PotentialAssignment> buildValueSources(ParameterSignature signature, Object counterExample) {
@@ -34,9 +34,9 @@ public class ShrunkenTermsParameterSupplier implements ShrinkParameterSupplier{
 		ShrinkParameterSupplier explodedTermsSupplier = new ExplodedTermParameterSupplier();
 		ShrinkParameterSupplier reducedValueSupplier = new ReducedValueParameterSupplier();
 		
-		inputs.addAll(reducedTermsSupplier.getValueSources(signature, counterExample));
-		inputs.addAll(explodedTermsSupplier.getValueSources(signature, counterExample));
-		inputs.addAll(reducedValueSupplier.getValueSources(signature, counterExample));
+		inputs.addAll(reducedTermsSupplier.getValueSources(counterExample));
+		inputs.addAll(explodedTermsSupplier.getValueSources(counterExample));
+		inputs.addAll(reducedValueSupplier.getValueSources(counterExample));
 		
 		return inputs;
 	}

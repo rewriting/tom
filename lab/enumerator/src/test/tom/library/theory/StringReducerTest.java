@@ -1,70 +1,59 @@
 package test.tom.library.theory;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.number.OrderingComparison.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.number.OrderingComparison.lessThan;
+import static org.junit.Assert.assertThat;
 
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import tom.library.sl.Visitable;
-import tom.library.sl.VisitableBuiltin;
-import tom.library.theory.shrink.suppliers.reducers.StringReducer;
+import tom.library.theory.shrink.suppliers.reducers2.StringReducer;
 
 public class StringReducerTest {
 
+	private StringReducer classUnderTest;
+	
 	@Before
 	public void setUp() throws Exception {
+		classUnderTest = new StringReducer();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
-	public void testGetReducedValue() {
-		System.out.println("StringReducerTest.testGetReducedValue()");
-		String term = "hello";
-		List<Visitable> results = StringReducer.build().getReducedVisitableValues(term);
-		assertThat("size should be 5",results.size(), equalTo(5));
-		for (Visitable visitable : results) {
-			System.out.println(visitable);
-			VisitableBuiltin<String> res = (VisitableBuiltin<String>) visitable;
-			assertThat(res.getBuiltin().length(), lessThan(term.length()));
-		}
+	public void testReduceEmptyString() {
+		String value = "";
+		
+		List<String> results = classUnderTest.reduce(value);
+		
+		assertThat(results.size(), is(0));
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Test
-	public void testGetReducedValue12() {
-		System.out.println("StringReducerTest.testGetReducedValue12()");
-		String term = "aaaaaaaaaaaa";
-		List<Visitable> results = StringReducer.build().getReducedVisitableValues(term);
-		assertThat("size should be 10",results.size(), equalTo(10));
-		for (Visitable visitable : results) {
-			System.out.println(visitable);
-			VisitableBuiltin<String> res = (VisitableBuiltin<String>) visitable;
-			assertThat(res.getBuiltin().length(), lessThan(term.length()));
-		}
-	}
-	
-	@SuppressWarnings("unchecked")
-	@Test
-	public void testGetReducedValueBig() {
-		System.out.println("StringReducerTest.testGetReducedValue()");
-		String term = "Lorem ipsum dolor sit amet, eu nam dico populo quaeque, no justo doming vis. Ad harum viderer democritum nam. Aliquam consulatu eum id, suavitate theophrastus pri et, et sit iudico doctus nominati. Ex sonet accusam his, ne vix virtute voluptatum, id augue persius quaestio vix. Vix adversarium deterruisset id.";
-		List<Visitable> results = StringReducer.build().getReducedVisitableValues(term);
-		assertThat("size should be 10",results.size(), equalTo(10));
-		for (Visitable visitable : results) {
-			System.out.println(visitable);
-			VisitableBuiltin<String> res = (VisitableBuiltin<String>) visitable;
-			assertThat(res.getBuiltin().length(), lessThan(term.length()));
+	public void testReduceSmallString() {
+		String value = "small";
+		
+		List<String> results = classUnderTest.reduce(value);
+		
+		assertThat(results.size(), is(value.length()));
+		for (String val : results) {
+			assertThat(val.length(), lessThan(value.length()));
 		}
 	}
 	
 	@Test
-	public void testGetReducedValueEmpty() {
-		List<Visitable> results = StringReducer.build().getReducedVisitableValues("");
-		assertThat("size should be 0",results.size(), equalTo(0));
+	public void testReduceBigString() {
+		String value = "Lorem ipsum dolor sit amet, eu nam dico populo quaeque, "
+				+ "no justo doming vis. Ad harum viderer democritum nam. Aliquam "
+				+ "consulatu eum id, suavitate theophrastus pri et, et sit iudico "
+				+ "doctus nominati. Ex sonet accusam his, ne vix virtute voluptatum, "
+				+ "id augue persius quaestio vix. Vix adversarium deterruisset id.";
+		
+		List<String> results = classUnderTest.reduce(value);
+		
+		assertThat(results.size(), is(10));
+		for (String val : results) {
+			assertThat(val.length(), lessThan(value.length()));
+		}
 	}
-
 }

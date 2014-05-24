@@ -1,4 +1,4 @@
-package test.tom.library.theory;
+package test.tom.library.theory.unused;
 
 import static org.junit.Assert.*;
 import static org.hamcrest.number.OrderingComparison.*;
@@ -27,7 +27,7 @@ public class ReducedValueParameterSupplierTest {
 	@Test
 	public void testGetValueSourcesTerm1() throws CouldNotGenerateValueException {
 		AList term = AList.fromString("con(cs(-1),con(cs(1),con(cs(0),con(cs(-1),con(cs(0),con(cs(-2),con(cs(1),con(cs(1),con(cs(0),con(cs(-1),con(cs(-2),con(cs(0),con(cs(1),empty())))))))))))))");
-		List<PotentialAssignment> results = classUnderTest.getValueSources(null, term);
+		List<PotentialAssignment> results = classUnderTest.getValueSources(term);
 		for (PotentialAssignment pa : results) {
 			Visitable res = (Visitable) pa.getValue();
 			assertThat(res.toString(), size(res), lessThan(size(term)));
@@ -37,7 +37,7 @@ public class ReducedValueParameterSupplierTest {
 	@Test
 	public void testGetValueSourcesTerm2() throws CouldNotGenerateValueException {
 		Elem term = Elem.fromString("cs(-2)");
-		List<PotentialAssignment> results = classUnderTest.getValueSources(null, term);
+		List<PotentialAssignment> results = classUnderTest.getValueSources(term);
 		for (PotentialAssignment pa : results) {
 			System.out.println(pa.getValue());
 			Visitable res = (Visitable) pa.getValue();
@@ -48,7 +48,7 @@ public class ReducedValueParameterSupplierTest {
 	@Test
 	public void testGetValueSourcesInteger() throws CouldNotGenerateValueException {
 		int term = 6;
-		List<PotentialAssignment> results = classUnderTest.getValueSources(null, term);
+		List<PotentialAssignment> results = classUnderTest.getValueSources(term);
 		for (PotentialAssignment pa : results) {
 			assertThat((Integer) pa.getValue(), lessThan(term));
 		}

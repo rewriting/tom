@@ -59,21 +59,22 @@ public class TermReducer {
 	
 	private void getSubtermsWithSameType() {
 		getSubtermsWithSameType(root);
-		if (inputs.size() == 0) {
+		if (inputs.isEmpty()) {
 			inputs.add(root);
 		}
 	}
 
 	private void getSubtermsWithSameType(Visitable term) {
 		for (Visitable child : term.getChildren()) {
-			if (isChildHasSameTypeAsRoot(child)) {
+			if (isChildHasSameTypeAsRootAndNotConstructor(child)) {
 				inputs.add(child);
-			} 
-			getSubtermsWithSameType(child);
+			} else {
+				getSubtermsWithSameType(child);
+			}
 		}
 	}
 	
-	private boolean isChildHasSameTypeAsRoot(Visitable term) {
+	private boolean isChildHasSameTypeAsRootAndNotConstructor(Visitable term) {
 		return isTermHaveTheSameSortAsRoot(term) && !isTerminalConstructor(term);
 	}
 	
@@ -87,5 +88,9 @@ public class TermReducer {
 	
 	public List<Visitable> getTerminalConstructorFromEnumeration() {
 		return TermClass.getTerminalConstructorFromEnumeration(enumeration);
+	}
+	
+	public void setRoot(Object root) throws ShrinkException {
+		initialize(root, enumeration);
 	}
 }

@@ -6,7 +6,8 @@ import tom.library.theory.internal.CounterExample;
 import tom.library.theory.internal.ExecutionHandler;
 import tom.library.theory.internal.ParameterizedAssertionFailure;
 import tom.library.theory.internal.TestObject;
-import tom.library.theory.shrink.suppliers.ShrunkenTermsParameterSupplier;
+import tom.library.theory.shrink.suppliers.BigShrinkValueSupplier;
+import tom.library.theory.shrink.suppliers.ShrinkValueSupplier;
 
 public class DefaultShrinkHandler implements ShrinkHandler {
 	private TestObject testObject;
@@ -28,10 +29,14 @@ public class DefaultShrinkHandler implements ShrinkHandler {
 		ExecutionHandler handler = new ExecutionHandler(this) {
 			@Override
 			public void handleFailures(Throwable e, String methodName, Object... params) throws Throwable {
-				repeatShrink(e, params);
+				/*
+				 * use sorted shrink value supplier, no repeat
+				 */
+				// repeatShrink(e, params);
+				throwParameterizedAssertionFailureWithCounterExamples(e, params);
 			}
 		};
-		evaluateAssignment(handler, new ShrunkenTermsParameterSupplier());
+		evaluateAssignment(handler, new BigShrinkValueSupplier());
 	}
 	
 	protected void repeatShrink(Throwable e, Object... params) throws Throwable {

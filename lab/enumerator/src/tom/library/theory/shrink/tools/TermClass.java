@@ -37,11 +37,17 @@ public class TermClass {
 		return (Enumeration<?>) MethodInvoker.invokeStaticMethodFromSuperclass(getKlass(), METHOD_GET_ENUMERATION);
 	}
 	
-	public List<Visitable> getTerminalConstructor() throws Exception {
-		if (enumeration == null) {
-			enumeration = getEnumerationFromClass();
+	public List<Visitable> getTerminalConstructor() {
+		List<Visitable> results = new ArrayList<Visitable>();
+		try {
+			if (enumeration == null) {
+				enumeration = getEnumerationFromClass();
+			}
+			results = TermClass.getTerminalConstructorFromEnumeration(enumeration);
+		} catch (Exception e) {
+			// do nothing, the return value should be an empty list
 		}
-		return TermClass.getTerminalConstructorFromEnumeration(enumeration);
+		return results;
 	}
 	
 	public static List<Visitable> getTerminalConstructorFromEnumeration(Enumeration<?> enumeration) {

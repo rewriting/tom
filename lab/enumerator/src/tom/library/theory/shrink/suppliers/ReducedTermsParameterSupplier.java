@@ -16,8 +16,8 @@ public class ReducedTermsParameterSupplier implements ShrinkParameterSupplier{
 
 	@Override
 	public List<PotentialAssignment> getValueSources(
-			ParameterSignature signature, Object counterExample) {
-		return getReducedTermsAsSources(signature, counterExample);
+			Object counterExample) {
+		return null;//getReducedTermsAsSources(signature, counterExample);
 	}
 	
 	protected List<PotentialAssignment> getReducedTermsAsSources(ParameterSignature parameter, Object term) {

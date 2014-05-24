@@ -1,12 +1,14 @@
 package tom.library.theory.shrink.suppliers;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.contrib.theories.PotentialAssignment;
 
 public class SupplierHelper {
-	public static List<PotentialAssignment> buildPotentialAssignments(List<? extends Object> inputs) {
+	
+	public static<T> List<PotentialAssignment> buildPotentialAssignments(List<T> inputs) {
 		List<PotentialAssignment> assignments = new ArrayList<PotentialAssignment>();
 		
 		for (final Object input : inputs) {
@@ -25,5 +27,9 @@ public class SupplierHelper {
 			assignments.add(assignment);
 		}
 		return assignments;
+	}
+	
+	public static<T> List<PotentialAssignment> buildPotentialAssignments(T[] inputs) {
+		return buildPotentialAssignments(Arrays.asList(inputs));
 	}
 }

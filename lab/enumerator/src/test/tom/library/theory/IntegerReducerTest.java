@@ -1,90 +1,92 @@
 package test.tom.library.theory;
 
+import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.number.OrderingComparison.*;
-import static org.junit.Assert.*;
 
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.contrib.theories.PotentialAssignment.CouldNotGenerateValueException;
 
-import tom.library.sl.Visitable;
-import tom.library.sl.VisitableBuiltin;
-import tom.library.theory.shrink.suppliers.reducers.IntegerReducer;
+import tom.library.theory.shrink.suppliers.reducers2.IntegerReducer;
 
 public class IntegerReducerTest {
-
+	
 	private IntegerReducer classUnderTest;
 	
 	@Before
 	public void setUp() throws Exception {
 		classUnderTest = new IntegerReducer();
 	}
+	
+	@Test
+	public void testReduce0() {
+		int value = 0;
+		
+		List<Integer> results = classUnderTest.reduce(value);
+		
+		assertThat(results.size(), is(0));
+		
+	}
 
-	@SuppressWarnings("unchecked")
 	@Test
-	public void testGetValueSourcesSmall() throws CouldNotGenerateValueException {
-		List<Visitable> result = classUnderTest.getReducedVisitableValue(2);
-		assertThat(result.size(), equalTo(2));
-		VisitableBuiltin<Integer> res0 = (VisitableBuiltin<Integer>) result.get(0);
-		VisitableBuiltin<Integer> res1 = (VisitableBuiltin<Integer>) result.get(1);
-		System.out.println(res0);
-		System.out.println(res1);
-		assertThat(res0.getBuiltin(), allOf(greaterThanOrEqualTo(0), lessThan(2)));
-		assertThat(res1.getBuiltin(), allOf(greaterThanOrEqualTo(0), lessThan(2)));
-	}
-	
-	@SuppressWarnings("unchecked")
-	@Test
-	public void testGetValueSourcesMedium() throws CouldNotGenerateValueException {
-		System.out.println("IntegerReducerTest.testGetValueSourcesMedium()");
-		List<Visitable> results = classUnderTest.getReducedVisitableValue(13);
-		assertThat(results.size(), equalTo(10));
-		for (Visitable visitable : results) {
-			System.out.println(visitable);
-			VisitableBuiltin<Integer> res = (VisitableBuiltin<Integer>) visitable;
-			assertThat(res.getBuiltin(), allOf(greaterThanOrEqualTo(0), lessThan(13)));
+	public void testReduce10() {
+		int value = 10;
+		
+		List<Integer> results = classUnderTest.reduce(value);
+		
+		assertThat(results.size(), is(10));
+		for (Integer val : results) {
+			assertThat(val, lessThan(value));
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Test
-	public void testGetValueSources() throws CouldNotGenerateValueException {
-		System.out.println("IntegerReducerTest.testGetValueSources()");
-		List<Visitable> results = classUnderTest.getReducedVisitableValue(100);
-		assertThat(results.size(), equalTo(10));
-		for (Visitable visitable : results) {
-			System.out.println(visitable);
-			VisitableBuiltin<Integer> res = (VisitableBuiltin<Integer>) visitable;
-			assertThat(res.getBuiltin(), allOf(greaterThanOrEqualTo(0), lessThan(100)));
-		}
-	}
-	
-	@SuppressWarnings("unchecked")
-	@Test
-	public void testGetValueSources78() throws CouldNotGenerateValueException {
-		System.out.println("IntegerReducerTest.testGetValueSources78()");
-		List<Visitable> results = classUnderTest.getReducedVisitableValue(78);
-		assertThat(results.size(), equalTo(10));
-		for (Visitable visitable : results) {
-			System.out.println(visitable);
-			VisitableBuiltin<Integer> res = (VisitableBuiltin<Integer>) visitable;
-			assertThat(res.getBuiltin(), allOf(greaterThanOrEqualTo(0), lessThan(78)));
+	public void testReduceLessThan10() {
+		int value = 8;
+		
+		List<Integer> results = classUnderTest.reduce(value);
+		
+		assertThat(results.size(), is(8));
+		for (Integer val : results) {
+			assertThat(val, lessThan(value));
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
-	public void testGetValueSourcesNegative() throws CouldNotGenerateValueException {
-		System.out.println("IntegerReducerTest.testGetValueSourcesNegative()");
-		List<Visitable> results = classUnderTest.getReducedVisitableValue(-50);
-		assertThat(results.size(), equalTo(10));
-		for (Visitable visitable : results) {
-			System.out.println(visitable);
-			VisitableBuiltin<Integer> res = (VisitableBuiltin<Integer>) visitable;
-			assertThat(res.getBuiltin(), allOf(lessThanOrEqualTo(0), greaterThan(-50)));
+	public void testReduceNegative() {
+		int value = -8;
+		
+		List<Integer> results = classUnderTest.reduce(value);
+		
+		assertThat(results.size(), is(8));
+		for (Integer val : results) {
+			assertThat(val, allOf(greaterThan(value), lessThanOrEqualTo(0)));
+		}
+	}
+	
+	@Test
+	public void testReduceMoreThan10() {
+		int value = 300;
+		
+		List<Integer> results = classUnderTest.reduce(value);
+		
+		assertThat(results.size(), is(10));
+		for (Integer val : results) {
+			assertThat(val, lessThanOrEqualTo(value));
+		}
+	}
+	
+	@Test
+	public void testReduceNegativeMoreThan10() {
+		int value = -450;
+		
+		List<Integer> results = classUnderTest.reduce(value);
+		
+		assertThat(results.size(), is(10));
+		for (Integer val : results) {
+			assertThat(val, allOf(greaterThan(value), lessThanOrEqualTo(0)));
 		}
 	}
 }

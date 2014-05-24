@@ -17,6 +17,10 @@ public class TermExploder {
 	private Visitable term;
 	
 	private TermExploder(Object term) throws ShrinkException {
+		initialize(term);
+	}
+
+	private void initialize(Object term) throws ShrinkException {
 		if (!isInstanceOfVisitable(term)) {
 			throw new ShrinkException(term + " is not a term");
 		}
@@ -92,5 +96,9 @@ public class TermExploder {
 			results.add(tmp);
 		}
 		return results;
+	}
+	
+	public void setTerm(Object object) throws ShrinkException {
+		initialize(object);
 	}
 }

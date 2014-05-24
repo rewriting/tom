@@ -41,7 +41,7 @@ public class ShrinkAssignmentRunner {
 
 	private List<PotentialAssignment> getValueSources(Assignments incomplete,
 			CounterExample counterExample) {
-		return supplier.getValueSources(incomplete.nextUnassigned(), counterExample.getCounterExample());
+		return supplier.getValueSources(counterExample.getCounterExample());
 	}
 	
 	protected void runWithCompleteAssignment(final Assignments complete) throws Throwable {

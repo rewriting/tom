@@ -1,4 +1,4 @@
-package test.tom.library.theory;
+package test.tom.library.theory.unused;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
