@@ -1,4 +1,4 @@
-package tom.library.theory.shrink.suppliers.reducers2;
+package tom.library.theory.shrink.suppliers.reducers;
 
 import java.util.ArrayList;
 import java.util.List;

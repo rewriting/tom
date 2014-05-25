@@ -12,7 +12,7 @@ import org.junit.Test;
 
 import examples.lists.alist.types.AList;
 import tom.library.sl.Visitable;
-import tom.library.theory.shrink.suppliers.reducers2.ValueReducer;
+import tom.library.theory.shrink.suppliers.reducers.ValueReducer;
 
 public class ValueReducerTest {
 	

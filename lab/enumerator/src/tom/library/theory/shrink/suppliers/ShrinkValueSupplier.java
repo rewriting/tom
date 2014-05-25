@@ -10,13 +10,12 @@ import java.util.TreeSet;
 import org.junit.contrib.theories.PotentialAssignment;
 
 import tom.library.sl.Visitable;
-import tom.library.theory.shrink.ShrinkParameterSupplier;
-import tom.library.theory.shrink.suppliers.reducers2.ExplotionReducer;
-import tom.library.theory.shrink.suppliers.reducers2.IntegerReducer;
-import tom.library.theory.shrink.suppliers.reducers2.Reducer;
-import tom.library.theory.shrink.suppliers.reducers2.StringReducer;
-import tom.library.theory.shrink.suppliers.reducers2.SubtermReducer;
-import tom.library.theory.shrink.suppliers.reducers2.ValueReducer;
+import tom.library.theory.shrink.suppliers.reducers.ExplotionReducer;
+import tom.library.theory.shrink.suppliers.reducers.IntegerReducer;
+import tom.library.theory.shrink.suppliers.reducers.Reducer;
+import tom.library.theory.shrink.suppliers.reducers.StringReducer;
+import tom.library.theory.shrink.suppliers.reducers.SubtermReducer;
+import tom.library.theory.shrink.suppliers.reducers.ValueReducer;
 
 public class ShrinkValueSupplier implements ShrinkParameterSupplier {
 

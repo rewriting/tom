@@ -7,6 +7,7 @@ import tom.library.theory.internal.ExecutionHandler;
 import tom.library.theory.internal.ParameterizedAssertionFailure;
 import tom.library.theory.internal.TestObject;
 import tom.library.theory.shrink.suppliers.BigShrinkValueSupplier;
+import tom.library.theory.shrink.suppliers.ShrinkParameterSupplier;
 import tom.library.theory.shrink.suppliers.ShrinkValueSupplier;
 
 public class DefaultShrinkHandler implements ShrinkHandler {
@@ -30,13 +31,29 @@ public class DefaultShrinkHandler implements ShrinkHandler {
 			@Override
 			public void handleFailures(Throwable e, String methodName, Object... params) throws Throwable {
 				/*
-				 * use sorted shrink value supplier, no repeat
+				 * use repeatShrink() and comment the method for throwing failure 
+				 * if use the previous version of shrink.
 				 */
-				// repeatShrink(e, params);
-				throwParameterizedAssertionFailureWithCounterExamples(e, params);
+				 repeatShrink(e, params);
+				
+				/*
+				 * un-comment  throwParameterizedAssertionFailureWithCounterExamples() 
+				 * when use the new version.
+				 */
+				//throwParameterizedAssertionFailureWithCounterExamples(e, params);
 			}
 		};
-		evaluateAssignment(handler, new BigShrinkValueSupplier());
+		/*
+		 * To use previous version, use
+		 * evaluateAssignment(handler, new ShrinkValueSupplier());
+		 * 
+		 * BigShrinkValueSupplier() generates large number of smaller terms
+		 * from the counter-example and sort them. 
+		 */
+		//evaluateAssignment(handler, new BigShrinkValueSupplier());
+		evaluateAssignment(handler, new ShrinkValueSupplier());
+		
+		
 	}
 	
 	protected void repeatShrink(Throwable e, Object... params) throws Throwable {

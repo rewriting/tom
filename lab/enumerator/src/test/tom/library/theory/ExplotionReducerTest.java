@@ -13,7 +13,7 @@ import org.junit.Test;
 import examples.data.mutual.recursive.types.D;
 import examples.lists.alist.types.AList;
 import tom.library.sl.Visitable;
-import tom.library.theory.shrink.suppliers.reducers2.ExplotionReducer;
+import tom.library.theory.shrink.suppliers.reducers.ExplotionReducer;
 
 public class ExplotionReducerTest {
 	

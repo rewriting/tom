@@ -10,6 +10,7 @@ import tom.library.theory.internal.CounterExample;
 import tom.library.theory.internal.ExecutionHandler;
 import tom.library.theory.internal.StatementBuilder;
 import tom.library.theory.internal.TestObject;
+import tom.library.theory.shrink.suppliers.ShrinkParameterSupplier;
 
 public class ShrinkAssignmentRunner {
 	private ShrinkParameterSupplier supplier;

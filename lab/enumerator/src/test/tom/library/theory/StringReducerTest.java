@@ -9,7 +9,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import tom.library.theory.shrink.suppliers.reducers2.StringReducer;
+import tom.library.theory.shrink.suppliers.reducers.StringReducer;
 
 public class StringReducerTest {
 

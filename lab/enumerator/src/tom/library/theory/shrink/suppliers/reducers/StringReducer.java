@@ -3,71 +3,59 @@ package tom.library.theory.shrink.suppliers.reducers;
 import java.util.ArrayList;
 import java.util.List;
 
-import tom.library.sl.Visitable;
-import tom.library.sl.VisitableBuiltin;
 import tom.library.theory.shrink.tools.RandomValueGenerator;
 
-public class StringReducer {
-	
+public class StringReducer implements Reducer<String>{
+
 	private static final int PART = 3;
-	private static final int MAX_NUMBER_OF_VALUES = 10;
-	private static final int PART_CARDINALITY = MAX_NUMBER_OF_VALUES/PART;
-
-	public static StringReducer build() {
-		return new StringReducer();
+	private static final int MAX_NUMBER = 10;
+	private static final int PART_CARDINALITY = MAX_NUMBER/PART;
+	
+	private List<String> results;
+	
+	private String value;
+	
+	public StringReducer() {
+		results = new ArrayList<String>();
 	}
 	
-	public List<Visitable> getReducedVisitableValues(String value) {
-		return buildReducedValue(value);
-	}
-	
-	@SuppressWarnings("unchecked")
-	public List<String> getReducedStringValues(String value) {
-		List<String> results = new ArrayList<String>();
-		for(Visitable v : getReducedVisitableValues(value)) {
-			VisitableBuiltin<String> vs = (VisitableBuiltin<String>) v;
-			results.add(vs.getBuiltin());
-		}
-		if (results.isEmpty()) {
-			results.add(value);
-		}
+	@Override
+	public List<String> reduce(String value) {
+		results.clear();
+		this.value = value;
+		buildReducedValue();
 		return results;
 	}
-	
-	private List<Visitable> buildReducedValue(String term) {
-		List<Visitable> inputs = new ArrayList<Visitable>();
-		if (term.length() <= MAX_NUMBER_OF_VALUES) {
-			inputs.addAll(generateSubstring(term));
+
+	private void buildReducedValue() {
+		if (value.length() <= MAX_NUMBER) {
+			generateSubstring();
 		} else {
-			inputs.addAll(generateRandomSubstring(term));
+			generateRandomSubstring();
 		}
-		return inputs;
 	}
 
-	private List<Visitable> generateSubstring(String term) {
-		List<Visitable> results = new ArrayList<Visitable>();
-		for (int i = 0; i < term.length(); i++) {
-			results.add(new VisitableBuiltin<String>(term.substring(0, i)));
+	private void generateSubstring() {
+		for (int i = 0; i < value.length(); i++) {
+			results.add(value.substring(0, i));
 		}
-		return results;
 	}
 
-	private List<Visitable> generateRandomSubstring(String term) {
-		List<Visitable> results = new ArrayList<Visitable>();
+	private void generateRandomSubstring() {
 		int part = 0;
-		int offset = term.length()/PART;
+		int offset = value.length()/PART;
 		int width = part + offset;
-		for (int i = 0; i < MAX_NUMBER_OF_VALUES; i++) {
+		for (int i = 0; i < MAX_NUMBER; i++) {
 			if (i % PART_CARDINALITY == 0 && i > 0) {
 				int tmp = part + offset;
-				part += tmp >= term.length()? offset/2 : offset;
+				part += tmp >= value.length()? offset/2 : offset;
 				tmp = part + offset;
-				width = tmp > term.length()? term.length(): tmp; 
+				width = tmp > value.length()? value.length(): tmp; 
 			}
 			int substringTo = getRandomValue(part, width);
-			results.add(new VisitableBuiltin<String>(term.substring(0, substringTo)));
+			String newValue = value.substring(0, substringTo);
+			results.add(newValue);
 		}
-		return results;
 	}
 	
 	private int getRandomValue(int min, int max) {
