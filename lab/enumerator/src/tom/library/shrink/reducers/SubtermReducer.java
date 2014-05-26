@@ -1,10 +1,10 @@
-package tom.library.theory.shrink.suppliers.reducers;
+package tom.library.shrink.reducers;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import tom.library.shrink.tools.TermClass;
 import tom.library.sl.Visitable;
-import tom.library.theory.shrink.tools.TermClass;
 /**
  * Reduces a given term to its terminal constructor and immediate sub-terms that have same type
  * 

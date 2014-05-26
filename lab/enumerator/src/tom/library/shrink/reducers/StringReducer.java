@@ -1,9 +1,9 @@
-package tom.library.theory.shrink.suppliers.reducers;
+package tom.library.shrink.reducers;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import tom.library.theory.shrink.tools.RandomValueGenerator;
+import tom.library.shrink.tools.RandomValueGenerator;
 
 public class StringReducer implements Reducer<String>{
 

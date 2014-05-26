@@ -3,7 +3,7 @@ package test.tom.library.theory;
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.number.OrderingComparison.*;
-import static tom.library.theory.shrink.tools.VisitableTools.*;
+import static tom.library.shrink.tools.VisitableTools.*;
 
 import java.util.List;
 
@@ -11,8 +11,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import examples.lists.alist.types.AList;
+import tom.library.shrink.reducers.ValueReducer;
 import tom.library.sl.Visitable;
-import tom.library.theory.shrink.suppliers.reducers.ValueReducer;
 
 public class ValueReducerTest {
 	

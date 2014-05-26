@@ -3,8 +3,8 @@ package tom.library.theory.internal;
 import java.util.Arrays;
 import java.util.List;
 
+import tom.library.theory.tools.TheoryVisitableTools;
 import tom.library.sl.Visitable;
-import tom.library.theory.shrink.tools.VisitableTools;
 
 public class CounterExample {
 	private final List<Object> fUnassigned;
@@ -54,7 +54,7 @@ public class CounterExample {
 	
 	private int calculateTermSize(Object term) {
 		if (isInstanceofVisitable(term)) {
-			return VisitableTools.size((Visitable) term);
+			return TheoryVisitableTools.size((Visitable) term);
 		} else if (isInstanceOfString(term)) {
 			String value = (String) term;
 			return value.length();

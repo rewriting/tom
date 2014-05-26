@@ -1,15 +1,15 @@
-package tom.library.theory.shrink.suppliers.reducers;
+package tom.library.shrink.reducers;
 
-import static tom.library.theory.shrink.tools.VisitableTools.*;
+import static tom.library.shrink.tools.VisitableTools.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import tom.library.shrink.ds.TermNode;
+import tom.library.shrink.ds.TermTreeBuilder;
+import tom.library.shrink.ds.zipper.Zipper;
+import tom.library.shrink.ds.zipper.ZipperException;
 import tom.library.sl.Visitable;
-import tom.library.theory.shrink.ds.TermNode;
-import tom.library.theory.shrink.ds.TermTreeBuilder;
-import tom.library.theory.shrink.ds.zipper.Zipper;
-import tom.library.theory.shrink.ds.zipper.ZipperException;
 
 public class ValueReducer implements Reducer<Visitable> {
 	

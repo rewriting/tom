@@ -1,5 +1,5 @@
 
-package tom.library.theory.shrink.tools;
+package tom.library.shrink.tools;
 
 import java.math.BigInteger;
 import java.util.ArrayList;

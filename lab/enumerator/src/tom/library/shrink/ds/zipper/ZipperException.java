@@ -1,4 +1,4 @@
-package tom.library.theory.shrink.ds.zipper;
+package tom.library.shrink.ds.zipper;
 
 public class ZipperException extends Exception {
 	

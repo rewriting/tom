@@ -1,15 +1,15 @@
-package tom.library.theory.shrink.ds;
+package tom.library.shrink.ds;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class ExpandingList<T> {
+public class ExpandingSet<T> {
 	
 	private int index;
 	private List<T> list;
 	
-	public ExpandingList() {
+	public ExpandingSet() {
 		list = new ArrayList<T>();
 	}
 	

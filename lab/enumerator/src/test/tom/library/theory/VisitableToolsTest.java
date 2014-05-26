@@ -1,7 +1,7 @@
 package test.tom.library.theory;
 
 import static org.junit.Assert.*;
-import static tom.library.theory.shrink.tools.VisitableTools.*;
+import static tom.library.shrink.tools.VisitableTools.*;
 import static org.hamcrest.CoreMatchers.*;
 
 import org.junit.Test;

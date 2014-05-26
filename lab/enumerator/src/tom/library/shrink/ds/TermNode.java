@@ -1,11 +1,11 @@
-package tom.library.theory.shrink.ds;
+package tom.library.shrink.ds;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import tom.library.shrink.ds.zipper.Node;
 import tom.library.sl.Visitable;
-import tom.library.theory.shrink.ds.zipper.Node;
 
 public class TermNode implements Node{
 	private List<TermNode> children;

@@ -1,13 +1,13 @@
-package tom.library.theory.shrink.suppliers.reducers;
+package tom.library.shrink.reducers;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import tom.library.shrink.ds.TermNode;
+import tom.library.shrink.ds.TermTreeBuilder;
+import tom.library.shrink.ds.zipper.Zipper;
+import tom.library.shrink.tools.TermClass;
 import tom.library.sl.Visitable;
-import tom.library.theory.shrink.ds.TermNode;
-import tom.library.theory.shrink.ds.TermTreeBuilder;
-import tom.library.theory.shrink.ds.zipper.Zipper;
-import tom.library.theory.shrink.tools.TermClass;
 
 public class ExplotionReducer implements Reducer<Visitable> {
 

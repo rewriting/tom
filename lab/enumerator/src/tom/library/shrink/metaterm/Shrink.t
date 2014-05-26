@@ -1,4 +1,4 @@
-package tom.library.shrink;
+package tom.library.shrink.metaterm;
 
 /*
  * Should be compiled with -gi option

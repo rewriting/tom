@@ -3,7 +3,7 @@ package test.tom.library.theory;
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.number.OrderingComparison.*;
-import static tom.library.theory.shrink.tools.VisitableTools.*;
+import static tom.library.shrink.tools.VisitableTools.*;
 
 import java.util.List;
 
@@ -12,8 +12,8 @@ import org.junit.Test;
 
 import examples.data.mutual.recursive.types.D;
 import examples.lists.alist.types.AList;
+import tom.library.shrink.reducers.ExplotionReducer;
 import tom.library.sl.Visitable;
-import tom.library.theory.shrink.suppliers.reducers.ExplotionReducer;
 
 public class ExplotionReducerTest {
 	

@@ -1,12 +1,9 @@
-package tom.library.theory.shrink.tools;
-
-import java.util.ArrayList;
-import java.util.List;
+package tom.library.theory.tools;
 
 import tom.library.sl.Visitable;
 import tom.library.sl.VisitableBuiltin;
 
-public class VisitableTools {
+public class TheoryVisitableTools {
 	private static int size = 0;
 	private static int val = 0;
 	
@@ -111,21 +108,5 @@ public class VisitableTools {
 	
 	public static boolean isInstanceOfVisitable(Object term) {
 		return term instanceof Visitable;
-	}
-	
-	public static<T> List<Visitable> buildVisitableFromPrimitives(T[] values) {
-		List<Visitable> visitables = new ArrayList<Visitable>();
-		for (int i = 0; i < values.length; i++) {
-			visitables.add(new VisitableBuiltin<T>(values[i]));
-		}
-		return visitables;
-	}
-	
-	public static<T> List<Visitable> buildVisitableFromPrimitives(List<T> values) {
-		List<Visitable> visitables = new ArrayList<Visitable>();
-		for (T value : values) {
-			visitables.add(new VisitableBuiltin<T>(value));
-		}
-		return visitables;
 	}
 }

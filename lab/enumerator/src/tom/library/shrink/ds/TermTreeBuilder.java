@@ -1,4 +1,4 @@
-package tom.library.theory.shrink.ds;
+package tom.library.shrink.ds;
 
 import tom.library.sl.Visitable;
 

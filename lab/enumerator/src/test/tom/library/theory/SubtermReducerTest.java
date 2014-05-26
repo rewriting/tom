@@ -11,8 +11,8 @@ import org.junit.Test;
 
 import examples.data.mutual.recursive.types.D;
 import examples.lists.alist.types.AList;
+import tom.library.shrink.reducers.SubtermReducer;
 import tom.library.sl.Visitable;
-import tom.library.theory.shrink.suppliers.reducers.SubtermReducer;
 
 public class SubtermReducerTest {
 

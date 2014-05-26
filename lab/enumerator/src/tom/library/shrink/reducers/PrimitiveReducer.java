@@ -1,6 +1,6 @@
-package tom.library.theory.shrink.suppliers.reducers;
+package tom.library.shrink.reducers;
 
-import static tom.library.theory.shrink.tools.VisitableTools.*;
+import static tom.library.shrink.tools.VisitableTools.*;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package tom.library.theory.shrink.ds.zipper;
+package tom.library.shrink.ds.zipper;
 
 import java.util.ArrayList;
 import java.util.List;

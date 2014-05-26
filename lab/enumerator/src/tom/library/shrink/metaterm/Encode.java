@@ -1,4 +1,4 @@
-package tom.library.shrink;
+package tom.library.shrink.metaterm;
 
 import aterm.AFun;
 import aterm.ATerm;
@@ -6,11 +6,11 @@ import aterm.ATermFactory;
 import examples.adt.tree.types.*;
 import tom.library.sl.Visitable;
 import tom.library.sl.VisitableBuiltin;
-import tom.library.shrink.metaterm.types.*;
-import tom.library.shrink.metaterm.types.symbol.Fun;
-import tom.library.shrink.metaterm.types.term.Appl;
-import tom.library.shrink.metaterm.types.termlist.EmptyTermList;
-import tom.library.shrink.metaterm.types.termlist.ConsTermList;
+import tom.library.shrink.metaterm.metaterm.types.*;
+import tom.library.shrink.metaterm.metaterm.types.symbol.Fun;
+import tom.library.shrink.metaterm.metaterm.types.term.Appl;
+import tom.library.shrink.metaterm.metaterm.types.termlist.ConsTermList;
+import tom.library.shrink.metaterm.metaterm.types.termlist.EmptyTermList;
 
 public class Encode {
 
