@@ -68,7 +68,6 @@ public class StackFactory {
 		return object;
 	}
 
-
 	public IStack evaluateStack(StackL s) throws BadInputException {
 		IStack object = null;
 		if (this.type == TOM) {
@@ -84,7 +83,8 @@ public class StackFactory {
 		} else if (s.ispush()) {
 			ElemL elem = s.getelement();
 			StackL y = s.getstack();
-			Integer n = elem.getval();
+			// Integer n = elem.getval();
+			Integer n = evaluateElem(elem);
 			object = evaluateStack(y);
 			object.push(n);
 		} else if (s.ispop()) {
@@ -97,6 +97,25 @@ public class StackFactory {
 				throw new BadInputException();
 			}
 		}
+		return object;
+	}
+
+	public Integer evaluateElem(ElemL elem) throws BadInputException {
+		Integer object = null;
+		if (elem.isval()) {
+			object = elem.getval();
+		}
+		// if we add top to the language (in which case we get a lot of bad formed stacks)
+//		else if (elem.istop()) {
+//			StackL y = elem.getstack();
+//			IStack evaly = evaluateStack(y);
+//			try {
+//				object = evaly.top();
+//			} catch (EmptyStackException e) {
+//				// throw an exception to skip the particular test
+//				throw new BadInputException();
+//			}
+//		}
 		return object;
 	}
 }

@@ -7,3 +7,4 @@ StackL = empty()
 	| pop(stack:StackL)
   
 ElemL = val(val:int)
+//	| top(stack:StackL)

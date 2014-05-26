@@ -6,24 +6,19 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assume.assumeThat;
 
-import java.util.ArrayList;
-
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.contrib.theories.Theory;
 import org.junit.runner.RunWith;
 
-import tom.library.enumerator.Enumeration;
 import tom.library.theory.BadInputException;
-import tom.library.theory.Enum;
-import tom.library.theory.TomCheck;
 import tom.library.theory.ForSome;
+import tom.library.theory.TomCheck;
 import examples.adt.stack.EmptyStackException;
 import examples.adt.stack.IStack;
 import examples.adt.stack.StackFactory;
 import examples.adt.stack.stack.types.Stack;
-import examples.adt.stack.stacklanguage.types.ElemL;
 import examples.adt.stack.stacklanguage.types.StackL;
 
 @RunWith(TomCheck.class)
@@ -113,8 +108,7 @@ public class StackTest {
 		assertThat(s, is(sclone));
 	}
 
-	@Theory
-	public void testTop(
+	@Theory public void testTop(
 			@ForSome(minSampleSize = 25, maxSampleSize = 50) Stack gs,
 			@ForSome(maxSampleSize = 10) int n) throws EmptyStackException {
 		IStack s = factory1.makeStack(gs);
