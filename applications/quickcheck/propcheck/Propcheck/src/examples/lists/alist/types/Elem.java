@@ -1,6 +1,8 @@
 
 package examples.lists.alist.types;
 
+import java.math.BigInteger;
+
 
 public abstract class Elem extends examples.lists.alist.AListAbstractType  {
   /**
