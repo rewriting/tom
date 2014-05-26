@@ -19,7 +19,7 @@ import static examples.adt.stack.StackEvaluator.*;
 @RunWith(TomCheck.class)
 public class TomStackEvaluatorTest {
 
-	%include{ ../examples/adt/stack/stack/Stack.tom }
+//	%include{ ../examples/adt/stack/stack/Stack.tom }
 
 
 	@Theory
