@@ -7,6 +7,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assume.assumeThat;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.contrib.theories.Theory;
@@ -24,12 +25,12 @@ import examples.adt.stack.stacklanguage.types.StackL;
 @RunWith(TomCheck.class)
 public class StackTest {
 
-	private IStack init;
-	private StackFactory factory1;
-	private StackFactory factory2;
+	private static IStack init;
+	private static StackFactory factory1;
+	private static StackFactory factory2;
 
-	@Before
-	public void setUp() {
+	@BeforeClass
+	public static void setUp() {
 		factory1 = StackFactory.getInstance(StackFactory.ARRAY);
 		factory2 = StackFactory.getInstance(StackFactory.TOM);
 		init = factory1.makeStack();
