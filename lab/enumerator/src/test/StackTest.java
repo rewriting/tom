@@ -130,17 +130,20 @@ public class StackTest {
 		 assumeThat(stack1.isEmpty(), equalTo(false));
 		 assertThat(stack1.top(), is(stack2.top()));
 
-		Integer sRes = stack1.pop();
-		Integer sBisRes = stack2.pop();
-		// same result
-		assertThat(sRes, is(sBisRes));
-		// same side-effect
-		assertThat(stack1.isEmpty(), is(stack2.isEmpty()));
 
-		assertThat(stack1.size(), is(stack2.size()));
-
-		assumeThat(stack1.isEmpty(), equalTo(false));
-		assertThat(stack1.top(), is(stack2.top()));
+		 assertThat(stack1.pop(), is(stack2.pop()));
+		 
+//		Integer sRes = stack1.pop();
+//		Integer sBisRes = stack2.pop();
+//		// same result
+//		assertThat(sRes, is(sBisRes));
+//		// same side-effect
+//		assertThat(stack1.isEmpty(), is(stack2.isEmpty()));
+//
+//		assertThat(stack1.size(), is(stack2.size()));
+//
+//		assumeThat(stack1.isEmpty(), equalTo(false));
+//		assertThat(stack1.top(), is(stack2.top()));
 
 	}
 }

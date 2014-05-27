@@ -36,10 +36,11 @@ public class ListStack implements IStack {
 	}
 
 	@Override
-	public Integer pop() throws EmptyStackException {
-		Integer e = top();
+	public ListStack pop() throws EmptyStackException {
+//		Integer e = top();
 		stack.remove(size() - 1);
-		return e;
+		return this;
+//		return e;
 	}
 
 	@Override

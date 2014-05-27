@@ -52,17 +52,18 @@ public class ArrayStack implements IStack {
 	}
 
 	@Override
-	public Integer pop() throws EmptyStackException {
+	public ArrayStack pop() throws EmptyStackException {
 		/* initial code:
 		 Integer res = top();
 		index = (index - 1) % SIZE;
 		size--;
 		return res;
 		 */
-		Integer res = top();
+//		Integer res = top();
 		index = (index - 1) % SIZE;
 		size--;
-		return res;
+		return this;
+//		return res;
 	}
 
 	@Override

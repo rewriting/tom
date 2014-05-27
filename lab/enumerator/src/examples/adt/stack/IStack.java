@@ -8,6 +8,6 @@ public interface IStack {
 	public IStack push(Integer elem);
 	public boolean isEmpty();
 	public Integer top() throws EmptyStackException;
-	public Integer pop() throws EmptyStackException;
+	public IStack pop() throws EmptyStackException;
 	public int size();
 }

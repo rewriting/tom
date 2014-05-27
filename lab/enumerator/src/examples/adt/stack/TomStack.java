@@ -20,7 +20,7 @@ public class TomStack implements IStack {
 	@Override
 	public TomStack push(Integer elem) {
 		stack = tom_make_push(elem,stack);
-		return this;
+    return this;
 	}
 
 	@Override
@@ -37,11 +37,12 @@ public class TomStack implements IStack {
 	}
 
 	@Override
-	public Integer pop() throws EmptyStackException {
+	public TomStack pop() throws EmptyStackException {
 		{{if (tom_is_sort_Stack(stack)) {if (tom_is_sort_Stack((( examples.adt.stack.stack.types.Stack )stack))) {if (tom_is_fun_sym_push((( examples.adt.stack.stack.types.Stack )(( examples.adt.stack.stack.types.Stack )stack)))) {
  
 				stack = tom_get_slot_push_stack((( examples.adt.stack.stack.types.Stack )stack));
-				return tom_get_slot_push_element((( examples.adt.stack.stack.types.Stack )stack));
+// 				return `x;
+				return this;
 			}}}}}
 
 		throw new EmptyStackException();
