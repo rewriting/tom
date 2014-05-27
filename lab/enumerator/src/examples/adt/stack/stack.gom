@@ -3,5 +3,31 @@ imports int
 abstract syntax
 
 Stack = empty()
-	| push(element:int, stack:Stack)
-  
+      | push(element:int, stack:Stack)
+
+
+sort Stack:import() {
+  import examples.adt.stack.EmptyStackException;
+  }
+
+sort Stack:block() {
+
+  public int top() throws EmptyStackException {
+    %match(this) {
+      push(x, _) -> { return `x; }
+    }
+    throw new EmptyStackException();
+  }
+
+  public Stack pop() throws EmptyStackException {
+    %match(this) {
+      push(_, y) -> { return `y; }
+    }
+    throw new EmptyStackException();
+  }
+
+  public Stack push(int element) {
+    return `push(element, this);
+  }
+
+}

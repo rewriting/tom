@@ -146,4 +146,16 @@ public class StackTest {
 //		assertThat(stack1.top(), is(stack2.top()));
 
 	}
+	
+	
+	/*
+	 * TEST GOM IMPLEMENTATION
+	 */
+	@Theory public void testTopGom(
+			@ForSome(minSampleSize = 25, maxSampleSize = 50) Stack gs,
+			@ForSome(maxSampleSize = 10) int n) throws EmptyStackException {
+		assertThat(gs.push(n).top(), is(n));
+	}
+	
+	
 }
