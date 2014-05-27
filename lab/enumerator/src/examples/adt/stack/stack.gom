@@ -8,11 +8,26 @@ Stack = empty()
 
 sort Stack:import() {
   import examples.adt.stack.EmptyStackException;
+  import examples.adt.stack.IStack;
   }
+
+sort Stack:interface() { IStack }
 
 sort Stack:block() {
 
-  public int top() throws EmptyStackException {
+  public IStack empty() {
+    return `empty();
+  }
+
+  public IStack push(Integer element) {
+    return `push(element, this);
+  }
+
+	public boolean isEmpty() {
+		return this.isempty();
+	}
+
+  public Integer top() throws EmptyStackException {
     %match(this) {
       push(x, _) -> { return `x; }
     }
@@ -26,8 +41,12 @@ sort Stack:block() {
     throw new EmptyStackException();
   }
 
-  public Stack push(int element) {
-    return `push(element, this);
-  }
+	public  int size() {
+		%match(this) {
+			empty() -> { return 0; }
+			push(_, y) -> { return 1 + `y.size(); } 
+		}
+		throw new RuntimeException("bad term " + this);
+	}
 
 }

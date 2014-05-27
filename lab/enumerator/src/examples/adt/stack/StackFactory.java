@@ -3,6 +3,7 @@ package examples.adt.stack;
 import tom.library.theory.BadInputException;
 import examples.adt.queue.queue.types.Elem;
 import examples.adt.stack.stack.types.Stack;
+import examples.adt.stack.stack.types.stack.empty;
 import examples.adt.stack.stacklanguage.types.ElemL;
 import examples.adt.stack.stacklanguage.types.StackL;
 
@@ -10,10 +11,12 @@ public class StackFactory {
 	private static StackFactory TOM_INSTANCE;
 	private static StackFactory LIST_INSTANCE;
 	private static StackFactory ARRAY_INSTANCE;
+	private static StackFactory GOM_INSTANCE;
 
 	public final static int TOM = 1;
 	public final static int LIST = 2;
 	public final static int ARRAY = 3;
+	public final static int GOM = 4;
 
 	private int type = -1;
 
@@ -37,6 +40,11 @@ public class StackFactory {
 				ARRAY_INSTANCE = new StackFactory(type);
 			}
 			return ARRAY_INSTANCE;
+		} else if (type == GOM) {
+			if (GOM_INSTANCE == null) {
+				GOM_INSTANCE = new StackFactory(type);
+			}
+			return GOM_INSTANCE;
 		}
 		// to do it better
 		return null;
@@ -50,12 +58,17 @@ public class StackFactory {
 			object = new ListStack();
 		} else if (this.type == ARRAY) {
 			object = new ArrayStack();
+		} else if (this.type == GOM) {
+			object = Stack.fromString("empty()");
 		}
 		// to do it better
 		return object;
 	}
 
 	public IStack makeStack(Stack s) {
+		if (this.type == GOM) {
+			return s;
+		}
 		IStack object = makeStack();
 		if (s.isempty()) {
 			object = object.empty(); // or makeStack() directly
@@ -68,6 +81,7 @@ public class StackFactory {
 		return object;
 	}
 
+	// should be fixed for GOM
 	public IStack evaluateStack(StackL s) throws BadInputException {
 		IStack object = null;
 		if (this.type == TOM) {
@@ -76,6 +90,8 @@ public class StackFactory {
 			object = new ListStack();
 		} else if (this.type == ARRAY) {
 			object = new ArrayStack();
+		} else if (this.type == GOM) {
+			object = Stack.fromString("empty()");
 		}
 
 		if (s.isempty()) {
@@ -105,17 +121,18 @@ public class StackFactory {
 		if (elem.isval()) {
 			object = elem.getval();
 		}
-		// if we add top to the language (in which case we get a lot of bad formed stacks)
-//		else if (elem.istop()) {
-//			StackL y = elem.getstack();
-//			IStack evaly = evaluateStack(y);
-//			try {
-//				object = evaly.top();
-//			} catch (EmptyStackException e) {
-//				// throw an exception to skip the particular test
-//				throw new BadInputException();
-//			}
-//		}
+		// if we add top to the language (in which case we get a lot of bad
+		// formed stacks)
+		// else if (elem.istop()) {
+		// StackL y = elem.getstack();
+		// IStack evaly = evaluateStack(y);
+		// try {
+		// object = evaly.top();
+		// } catch (EmptyStackException e) {
+		// // throw an exception to skip the particular test
+		// throw new BadInputException();
+		// }
+		// }
 		return object;
 	}
 }

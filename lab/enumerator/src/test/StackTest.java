@@ -79,8 +79,8 @@ public class StackTest {
 			@ForSome(maxSampleSize = 10) int n) {
 		IStack s = factory1.makeStack(gs);
 		int initSize = s.size();
-		s.push(n);
-		int finalSize = s.size();
+//		s.push(n);
+		int finalSize = s.push(n).size();
 		assertThat(finalSize, is(initSize + 1));
 	}
 
@@ -92,8 +92,8 @@ public class StackTest {
 		IStack s = factory1.makeStack(gs);
 		assumeThat(s.isEmpty(), equalTo(false));
 		int initSize = s.size();
-		s.pop();
-		assertThat(s.size(), is(initSize - 1));
+//		s.pop();
+		assertThat(s.pop().size(), is(initSize - 1));
 	}
 
 	// @Ignore
@@ -116,6 +116,7 @@ public class StackTest {
 		assertThat(s.push(n).top(), is(n));
 	}
 
+	// doesn't work for GOM (see StackFactory) 
 	@Theory
 	public void testSameBehaviour(
 			@ForSome(minSampleSize = 25, maxSampleSize = 30, numberOfSamples = 20) StackL gs)
@@ -123,6 +124,7 @@ public class StackTest {
 		IStack stack1 = factory1.evaluateStack(gs);
 		IStack stack2 = factory2.evaluateStack(gs);
 
+		
 		 assertThat(stack1.isEmpty(), is(stack2.isEmpty()));
 		
 		 assertThat(stack1.size(), is(stack2.size()));
@@ -151,11 +153,12 @@ public class StackTest {
 	/*
 	 * TEST GOM IMPLEMENTATION
 	 */
-	@Theory public void testTopGom(
-			@ForSome(minSampleSize = 25, maxSampleSize = 50) Stack gs,
-			@ForSome(maxSampleSize = 10) int n) throws EmptyStackException {
-		assertThat(gs.push(n).top(), is(n));
-	}
+	// use GOM for factory1 instead
+//	@Theory public void testTopGom(
+//			@ForSome(minSampleSize = 25, maxSampleSize = 50) Stack gs,
+//			@ForSome(maxSampleSize = 10) int n) throws EmptyStackException {
+//		assertThat(gs.push(n).top(), is(n));
+//	}
 	
 	
 }
