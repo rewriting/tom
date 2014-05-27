@@ -14,7 +14,7 @@ import tom.library.enumerator.Enumeration;
 import tom.library.theory.Enum;
 import tom.library.theory.TomCheck;
 import tom.library.theory.ForSome;
-import examples.lists.DemoAList;
+import static examples.lists.DemoAList.*;
 import examples.lists.alist.types.AList;
 import examples.lists.alist.types.Elem;
 
@@ -27,10 +27,10 @@ public class AListTest {
 			@ForSome(maxSampleSize = 10)  AList list,
 			@ForSome(maxSampleSize = 10)  Elem e1,
 			@ForSome(maxSampleSize = 10)  Elem e2) {
-		assumeThat(true, is(not(DemoAList.isEmpty(list))));
-		assumeThat(true, is(DemoAList.contains(list, e1)));
-		assertTrue(DemoAList.getIndexOf(list, e1) + 1 == DemoAList.getIndexOf(
-				DemoAList.addFirst(list, e2), e1));
+		assumeThat(true, is(not(isEmpty(list))));
+		assumeThat(true, is(contains(list, e1)));
+		assertTrue(getIndexOf(list, e1) + 1 == getIndexOf(
+				addFirst(list, e2), e1));
 	}
 
 	
@@ -39,24 +39,23 @@ public class AListTest {
 			@ForSome(maxSampleSize = 10) Elem element,
 			@ForSome(maxSampleSize = 10) Integer index) {
 		assumeThat(index, greaterThanOrEqualTo(0));
-		assumeThat(true, is(not(DemoAList.isEmpty(list))));
-		assumeThat(true, is(DemoAList.size(list) > index));
-		int lhs = DemoAList.getIndexOf(list, DemoAList.get(list, index)) + 1;
-		int rhs = DemoAList
-				.getIndexOf(DemoAList.addFirst(list, element),
-						DemoAList.get(list, index));
+		assumeThat(true, is(not(isEmpty(list))));
+		assumeThat(true, is(size(list) > index));
+		int lhs = getIndexOf(list, get(list, index)) + 1;
+		int rhs = getIndexOf(addFirst(list, element),
+						get(list, index));
 		assertThat(lhs, equalTo(rhs));
 	}
 
 	
 	@Theory
-	public void testInsertTom(@ForSome(minSampleSize=90, maxSampleSize = 100) AList list,
+	public void testInsertTom(@ForSome(minSampleSize=0, maxSampleSize = 10) AList list,
 			@ForSome(maxSampleSize = 10) Elem e1,
 			@ForSome(maxSampleSize = 10) Elem e2) {
-		assumeThat(true, is(not(DemoAList.isEmpty(list))));
-		assumeThat(true, is(DemoAList.contains(list, e1)));
-		int lhs = DemoAList.getIndexOf(list, e1) + 1;
-		int rhs = DemoAList.getIndexOf(DemoAList.addFirst(list, e2), e1);
-		assertThat(lhs, equalTo(rhs));
+		assumeThat(isEmpty(list), is(false));
+		assumeThat(contains(list, e1),is(true));
+		// uncomment to get the right specification
+//		assumeThat(contains(list, e2),is(false));
+		assertThat(getIndexOf(list, e1) + 1, equalTo(getIndexOf(addFirst(list, e2), e1)));
 	}
 }

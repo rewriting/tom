@@ -30,7 +30,7 @@ public class TomStackEvaluatorTest {
 
 	@Theory
 	public void testNonEmptySize(
-			@ForSome(minSampleSize = 25, maxSampleSize = 30) Stack s) {
+			@ForSome(minSampleSize = 0, maxSampleSize = 10) Stack s) {
 		assumeThat(isEmpty(s), equalTo(false));
 		assertThat(size(s), is(not(0)));
 	}
