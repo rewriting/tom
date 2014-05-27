@@ -17,8 +17,9 @@ public class ListStack implements IStack {
 	}
 
 	@Override
-	public void push(Integer elem) {
+	public ListStack push(Integer elem) {
 		stack.add(elem);
+		return this;
 	}
 
 	@Override

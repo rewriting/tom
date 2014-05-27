@@ -5,7 +5,7 @@ package examples.adt.stack;
 
 public interface IStack {
 	public IStack empty();
-	public void push(Integer elem);
+	public IStack push(Integer elem);
 	public boolean isEmpty();
 	public Integer top() throws EmptyStackException;
 	public Integer pop() throws EmptyStackException;

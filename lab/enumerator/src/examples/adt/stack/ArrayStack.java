@@ -23,7 +23,7 @@ public class ArrayStack implements IStack {
 	}
 
 	@Override
-	public void push(Integer elem) {
+	public ArrayStack push(Integer elem) {
 		/* initial code:
 		 stack[index++] = elem;
 		index %= SIZE;
@@ -32,6 +32,7 @@ public class ArrayStack implements IStack {
 		stack[index++] = elem;
 		index %= SIZE;
 		size++;
+		return this;
 	}
 
 	@Override

@@ -1,5 +1,8 @@
 package examples.junit.quickcheck;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
 import org.junit.contrib.theories.DataPoint;
 import org.junit.contrib.theories.DataPoints;
 import org.junit.contrib.theories.Theories;
@@ -11,9 +14,6 @@ import com.pholser.junit.quickcheck.From;
 
 import examples.adt.stack.ArrayStack;
 import examples.adt.stack.EmptyStackException;
-import examples.adt.stack.stack.types.Stack;
-import static org.junit.Assert.assertThat;
-import static org.hamcrest.CoreMatchers.is;
 
 @RunWith(Theories.class)
 public class QuickCheckExample {

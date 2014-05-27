@@ -18,8 +18,9 @@ public class TomStack implements IStack {
 	}
 
 	@Override
-	public void push(Integer elem) {
+	public TomStack push(Integer elem) {
 		stack = tom_make_push(elem,stack);
+		return this;
 	}
 
 	@Override
