@@ -19,7 +19,7 @@ public class TomStack implements IStack {
 
 	@Override
 	public TomStack push(Integer elem) {
-		stack = `push(elem, stack);
+		stack = `push(stack, elem);
     return this;
 	}
 
@@ -31,7 +31,7 @@ public class TomStack implements IStack {
 	@Override
 	public Integer top() throws EmptyStackException {
 		%match(stack) {
-			push(x, y) -> { return `x; }
+			push(_, e) -> { return `e; }
 		}
 		throw new EmptyStackException();
 	}
@@ -39,9 +39,8 @@ public class TomStack implements IStack {
 	@Override
 	public TomStack pop() throws EmptyStackException {
 		%match(stack) {
-			push(x, y) -> { 
-				stack = `y;
-// 				return `x;
+			push(s, _) -> { 
+				stack = `s;
 				return this;
 			}
 		}
@@ -55,7 +54,7 @@ public class TomStack implements IStack {
 
 	private int calculateSize(Stack s) {
 		%match(s) {
-			push(x, y) -> { return 1 + `calculateSize(y); }
+			push(x, _) -> { return 1 + `calculateSize(x); }
 		}
 		return 0;
 	}

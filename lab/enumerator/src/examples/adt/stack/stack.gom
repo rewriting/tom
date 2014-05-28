@@ -3,7 +3,7 @@ imports int
 abstract syntax
 
 Stack = empty()
-      | push(element:int, stack:Stack)
+      | push(stack:Stack, element:int)
 
 
 sort Stack:import() {
@@ -20,33 +20,33 @@ sort Stack:block() {
   }
 
   public IStack push(Integer element) {
-    return `push(element, this);
+    return `push(this, element);
   }
 
-	public boolean isEmpty() {
-		return this.isempty();
-	}
+  public boolean isEmpty() {
+    return this.isempty();
+  }
 
   public Integer top() throws EmptyStackException {
     %match(this) {
-      push(x, _) -> { return `x; }
+      push(_, e) -> { return `e; }
     }
     throw new EmptyStackException();
   }
 
   public Stack pop() throws EmptyStackException {
     %match(this) {
-      push(_, y) -> { return `y; }
+      push(s, _) -> { return `s; }
     }
     throw new EmptyStackException();
   }
 
-	public  int size() {
-		%match(this) {
-			empty() -> { return 0; }
-			push(_, y) -> { return 1 + `y.size(); } 
-		}
-		throw new RuntimeException("bad term " + this);
-	}
+  public  int size() {
+    %match(this) {
+      empty()    -> { return 0; }
+      push(s, _) -> { return 1 + `s.size(); } 
+    }
+    throw new RuntimeException("bad term " + this);
+  }
 
 }
