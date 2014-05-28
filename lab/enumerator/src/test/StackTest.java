@@ -110,7 +110,8 @@ public class StackTest {
 	}
 
 	@Theory public void testTop(
-			@ForSome(minSampleSize = 10, maxSampleSize = 100) Stack gs,
+//			@ForSome(exhaustive=true, numberOfSamples=100) Stack gs,
+			@ForSome(minSampleSize = 0, maxSampleSize = 100) Stack gs,
 			@ForSome(maxSampleSize = 10) int n) throws EmptyStackException {
 		IStack s = factory1.makeStack(gs);
 //		s.push(n);

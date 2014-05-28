@@ -45,8 +45,8 @@ public class ArrayStack implements IStack {
 			throw new EmptyStackException();
 		}
 		// initial code:
- 		return stack[index];
-// 		return stack[index-1];
+// 		return stack[index];
+ 		return stack[index-1];
 //		return stack[(SIZE+index-1)%SIZE]; // -1 to fix the BUG
 	}
 
