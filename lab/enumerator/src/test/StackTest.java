@@ -69,7 +69,7 @@ public class StackTest {
 	public void testNonEmptySize(
 			@ForSome(minSampleSize = 25, maxSampleSize = 30) Stack gs) {
 		IStack s = factory1.makeStack(gs);
-		assumeThat(s.isEmpty(), equalTo(false));
+		assumeThat(s.isEmpty(), is(false));
 		assertThat(s.size(), is(not(0)));
 	}
 
@@ -100,13 +100,13 @@ public class StackTest {
 	// @Ignore
 	@Theory
 	public void testPopPush(
-			@ForSome(minSampleSize = 25, maxSampleSize = 30) Stack gs,
+			@ForSome(minSampleSize = 0, maxSampleSize = 10) Stack gs,
 			@ForSome(maxSampleSize = 10) int n) throws EmptyStackException {
 		IStack s = factory1.makeStack(gs);
 		IStack sclone = factory1.makeStack(gs);
-		s.push(n);
-		s.pop();
-		assertThat(s, is(sclone));
+//		s.push(n);
+//		s.pop();
+		assertThat(s.push(n).pop(), is(sclone));
 	}
 
 	@Theory public void testTop(
