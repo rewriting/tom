@@ -4,7 +4,7 @@ public class ArrayStack implements IStack {
 
 	private int[] stack;
 	private int index, size;
-	private final static int SIZE = 10;
+	private final static int SIZE = 5;
 
 	public ArrayStack() {
 		stack = new int[SIZE];
@@ -47,7 +47,6 @@ public class ArrayStack implements IStack {
 		// initial code:
  		return stack[index];
 // 		return stack[index-1];
-		 
 //		return stack[(SIZE+index-1)%SIZE]; // -1 to fix the BUG
 	}
 
