@@ -1,10 +1,15 @@
 package test;
 
+import static examples.adt.stack.StackEvaluator.isEmpty;
+import static examples.adt.stack.StackEvaluator.pop;
+import static examples.adt.stack.StackEvaluator.push;
+import static examples.adt.stack.StackEvaluator.size;
+import static examples.adt.stack.StackEvaluator.top;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assume.assumeThat;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assume.assumeThat;
 
 import org.junit.contrib.theories.Theory;
 import org.junit.runner.RunWith;
@@ -12,9 +17,7 @@ import org.junit.runner.RunWith;
 import tom.library.theory.ForSome;
 import tom.library.theory.TomCheck;
 import examples.adt.stack.EmptyStackException;
-import examples.adt.stack.IStack;
-import examples.adt.stack.stack.types.*;
-import static examples.adt.stack.StackEvaluator.*;
+import examples.adt.stack.stack.types.Stack;
 
 @RunWith(TomCheck.class)
 public class TomStackEvaluatorTest {
