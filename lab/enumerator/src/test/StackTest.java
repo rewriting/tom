@@ -2,11 +2,10 @@ package test;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.number.OrderingComparison.greaterThan;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assume.assumeThat;
 
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -70,7 +69,7 @@ public class StackTest {
 			@ForSome(minSampleSize = 25, maxSampleSize = 30) Stack gs) {
 		IStack s = factory1.makeStack(gs);
 		assumeThat(s.isEmpty(), is(false));
-		assertThat(s.size(), is(not(0)));
+		assertThat(s.size(), greaterThan(0));
 	}
 
 	// @Ignore
