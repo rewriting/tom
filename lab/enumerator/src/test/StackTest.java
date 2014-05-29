@@ -24,16 +24,16 @@ import examples.adt.stack.stacklanguage.types.StackL;
 @RunWith(TomCheck.class)
 public class StackTest {
 
-	private static IStack init;
-	private static StackFactory factory1;
-	private static StackFactory factory2;
+	private static StackFactory factory1= StackFactory.getInstance(StackFactory.ARRAY);
+	private static StackFactory factory2= StackFactory.getInstance(StackFactory.ARRAY);
+	private static IStack init= factory1.makeStack();
 
-	@BeforeClass
-	public static void setUp() {
-		factory1 = StackFactory.getInstance(StackFactory.ARRAY);
-		factory2 = StackFactory.getInstance(StackFactory.TOM);
-		init = factory1.makeStack();
-	}
+//	@BeforeClass
+//	public static void setUp() {
+//		factory1 = StackFactory.getInstance(StackFactory.ARRAY);
+//		factory2 = StackFactory.getInstance(StackFactory.ARRAY);;
+//		init = factory1.makeStack();
+//	}
 
 	// @Ignore
 	@Test
