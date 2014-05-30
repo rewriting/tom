@@ -102,9 +102,11 @@ public class StackTest {
 			@ForSome(minSampleSize = 0, maxSampleSize = 30) Stack gs,
 			@ForSome(maxSampleSize = 10) int n) throws EmptyStackException {
 		IStack s = factory1.makeStack(gs);
+
 		IStack sclone = factory1.makeStack(gs);
 //		s.push(n);
 //		s.pop();
+
 		assertThat(s.push(n).pop(), is(sclone));
 	}
 

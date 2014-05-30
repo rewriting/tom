@@ -6,7 +6,7 @@ public class ArrayStack implements IStack {
 
 	private int[] stack;
 	private int index, size;
-	private final static int SIZE = 8;
+	private final static int SIZE = 5;
 
 	public ArrayStack() {
 		stack = new int[SIZE];
