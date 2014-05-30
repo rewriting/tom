@@ -100,7 +100,7 @@ public class StackTest {
 	// @Ignore
 	@Theory
 	public void testPopPush(
-			@ForSome(minSampleSize = 0, maxSampleSize = 100) Stack gs,
+			@ForSome(minSampleSize = 0, maxSampleSize = 30) Stack gs,
 			@ForSome(maxSampleSize = 10) int n) throws EmptyStackException {
 		IStack s = factory1.makeStack(gs);
 		IStack sclone = factory1.makeStack(gs);
@@ -152,6 +152,10 @@ public class StackTest {
 
 	}
 	
+	@Theory public void testATerm(
+			@ForSome(maxSampleSize = 100, numberOfSamples=2000) Stack gs) {
+		assertThat(Stack.fromTerm(gs.toATerm()), is(gs));
+	}
 	
 	/*
 	 * TEST GOM IMPLEMENTATION

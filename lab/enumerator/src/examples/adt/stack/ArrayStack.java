@@ -1,17 +1,15 @@
 package examples.adt.stack;
 
+import java.util.Arrays;
+
 public class ArrayStack implements IStack {
 
 	private int[] stack;
 	private int index, size;
-	private final static int SIZE = 5;
+	private final static int SIZE = 8;
 
 	public ArrayStack() {
 		stack = new int[SIZE];
-		/* initial code:
-		 index = 0;
-		 size = 0;
-		 */
 		index = 0;
 		size = 0;
 	}
@@ -23,13 +21,8 @@ public class ArrayStack implements IStack {
 
 	@Override
 	public ArrayStack push(Integer elem) {
-		/* initial code:
-		 stack[index++] = elem;
-		index %= SIZE;
-		size++;
-		 */
-		stack[index++] = elem;
-		index %= SIZE;
+		stack[index] = elem;
+		index = (index+1) % SIZE;
 		size++;
 		return this;
 	}
@@ -46,23 +39,18 @@ public class ArrayStack implements IStack {
 		}
 		// initial code:
 // 		return stack[index];
- 		return stack[index-1];
-//		return stack[(SIZE+index-1)%SIZE]; // -1 to fix the BUG
+// 		return stack[index-1];
+		return stack[(SIZE+index-1)%SIZE]; // -1 to fix the BUG
 	}
 
 	@Override
 	public ArrayStack pop() throws EmptyStackException {
-		/* initial code:
-		 Integer res = top();
-		index = (index - 1) % SIZE;
-		size--;
-		return res;
-		 */
-//		Integer res = top();
+		if (isEmpty()) {
+			throw new EmptyStackException();
+		}
 		index = (index - 1) % SIZE;
 		size--;
 		return this;
-//		return res;
 	}
 
 	@Override
