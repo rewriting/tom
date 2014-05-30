@@ -2,6 +2,8 @@ package examples.adt.stack;
 
 import java.util.Arrays;
 
+import examples.adt.stack.stack.types.Stack;
+
 public class ArrayStack implements IStack {
 
 	private int[] stack;
@@ -72,6 +74,16 @@ public class ArrayStack implements IStack {
 		return size;
 	}
 
+	@Override
+	public ArrayStack clone(){
+		ArrayStack clone = new ArrayStack();
+		clone.size=this.size;
+		clone.index=this.index;
+		for(int i=0; i<SIZE; i++){
+			clone.stack[i]=this.stack[i];
+		}
+		return clone;
+	}
 	// could be moved to the interface
 	@Override
 	public boolean equals(Object obj) {
@@ -84,15 +96,17 @@ public class ArrayStack implements IStack {
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		IStack other = (IStack) obj;
-		if (this.isEmpty()) {
-			return other.isEmpty();
+		ArrayStack other = (ArrayStack) obj;
+		ArrayStack otherc = other.clone();
+		ArrayStack thisc = this.clone();
+		if (thisc.isEmpty()) {
+			return otherc.isEmpty();
 		} else {
 			try {
-				if (this.top().equals(other.top())) {
-					this.pop();
-					other.pop();
-					return this.equals(other);
+				if (thisc.top().equals(otherc.top())) {
+					thisc.pop();
+					otherc.pop();
+					return thisc.equals(otherc);
 				} else {
 					return false;
 				}
@@ -111,8 +125,8 @@ public class ArrayStack implements IStack {
 	public static void main(String[] args) throws EmptyStackException {
 		IStack stack = new ArrayStack();
 		stack = stack.empty();
-		stack.push(1);
-		System.out.println(stack.top());
+		stack.push(1).push(2).push(3).push(4).push(5);
+		System.out.println(stack);
 
 		stack = stack.empty();
 		stack.push(2);
@@ -124,6 +138,10 @@ public class ArrayStack implements IStack {
 
 		int n=5;
 		System.out.println("After :"+int.class);
+		
+		 StackFactory factory = StackFactory.getInstance(StackFactory.ARRAY);
+		 IStack s = factory.makeStack( Stack.fromString("push(push(push(push(push(empty(),1),-1),0),0),0)"));
+			System.out.println(s);
 		
 	}
 
