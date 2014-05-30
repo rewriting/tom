@@ -1,5 +1,7 @@
 package examples.adt.stack;
 
+import java.util.Arrays;
+
 public class ArrayStack implements IStack {
 
 	private int[] stack;
@@ -46,8 +48,8 @@ public class ArrayStack implements IStack {
 		}
 		// initial code:
 // 		return stack[index];
- 		return stack[index-1];
-//		return stack[(SIZE+index-1)%SIZE]; // -1 to fix the BUG
+// 		return stack[index-1];
+		return stack[(SIZE+index-1)%SIZE]; // -1 to fix the BUG
 	}
 
 	@Override
@@ -98,6 +100,12 @@ public class ArrayStack implements IStack {
 				return false;
 			}
 		}
+	}
+
+	@Override
+	public String toString() {
+		return "ArrayStack [stack=" + Arrays.toString(stack) + ", index="
+				+ index + ", size=" + size + "]";
 	}
 
 	public static void main(String[] args) throws EmptyStackException {
