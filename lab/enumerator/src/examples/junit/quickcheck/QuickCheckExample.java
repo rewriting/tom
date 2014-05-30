@@ -21,7 +21,7 @@ public class QuickCheckExample {
 	@DataPoint
 	public static ArrayStack stack = new ArrayStack();
 	@DataPoints
-	public static int[] n = { 1, 2, 3 };
+	public static int [] n = { 1, 2, 3, 4 };
 
 	@Theory
 	public void testTop(ArrayStack s, int n) throws EmptyStackException {

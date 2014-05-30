@@ -2,11 +2,10 @@ package test;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.number.OrderingComparison.greaterThan;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assume.assumeThat;
 
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -25,16 +24,16 @@ import examples.adt.stack.stacklanguage.types.StackL;
 @RunWith(TomCheck.class)
 public class StackTest {
 
-	private static IStack init;
-	private static StackFactory factory1;
-	private static StackFactory factory2;
+	private static StackFactory factory1= StackFactory.getInstance(StackFactory.ARRAY);
+	private static StackFactory factory2= StackFactory.getInstance(StackFactory.ARRAY);
+	private static IStack init= factory1.makeStack();
 
-	@BeforeClass
-	public static void setUp() {
-		factory1 = StackFactory.getInstance(StackFactory.ARRAY);
-		factory2 = StackFactory.getInstance(StackFactory.TOM);
-		init = factory1.makeStack();
-	}
+//	@BeforeClass
+//	public static void setUp() {
+//		factory1 = StackFactory.getInstance(StackFactory.ARRAY);
+//		factory2 = StackFactory.getInstance(StackFactory.ARRAY);;
+//		init = factory1.makeStack();
+//	}
 
 	// @Ignore
 	@Test
@@ -70,7 +69,7 @@ public class StackTest {
 			@ForSome(minSampleSize = 25, maxSampleSize = 30) Stack gs) {
 		IStack s = factory1.makeStack(gs);
 		assumeThat(s.isEmpty(), is(false));
-		assertThat(s.size(), is(not(0)));
+		assertThat(s.size(), greaterThan(0));
 	}
 
 	// @Ignore

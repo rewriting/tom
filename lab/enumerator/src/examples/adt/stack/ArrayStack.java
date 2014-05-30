@@ -88,6 +88,12 @@ public class ArrayStack implements IStack {
 		}
 	}
 
+	@Override
+	public String toString() {
+		return "ArrayStack [stack=" + Arrays.toString(stack) + ", index="
+				+ index + ", size=" + size + "]";
+	}
+
 	public static void main(String[] args) throws EmptyStackException {
 		IStack stack = new ArrayStack();
 		stack = stack.empty();
