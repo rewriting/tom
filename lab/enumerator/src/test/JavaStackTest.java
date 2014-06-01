@@ -48,17 +48,14 @@ public class JavaStackTest {
 	}
 
 	@Theory
-	public void testNonEmptySize(
-			@ForSome(minSampleSize = 25, maxSampleSize = 30) Stack gs) {
+	public void testNonEmptySize(@ForSome Stack gs) {
 		IStack s = factory.makeStack(gs);
 		assumeThat(s.isEmpty(), is(false));
 		assertThat(s.size(), greaterThan(0));
 	}
 
 	@Theory
-	public void testPushSize(
-			@ForSome(minSampleSize = 25, maxSampleSize = 30) Stack gs,
-			@ForSome(maxSampleSize = 10) int n) {
+	public void testPushSize(@ForSome Stack gs, @ForSome int n) {
 		IStack s = factory.makeStack(gs);
 		int initSize = s.size();
 		int finalSize = s.push(n).size();
@@ -66,8 +63,7 @@ public class JavaStackTest {
 	}
 
 	@Theory
-	public void testPopSize(
-			@ForSome(minSampleSize = 0, maxSampleSize = 50, numberOfSamples = 100) Stack gs)
+	public void testPopSize(@ForSome Stack gs)
 			throws EmptyStackException {
 		IStack s = factory.makeStack(gs);
 		assumeThat(s.isEmpty(), equalTo(false));
@@ -76,23 +72,17 @@ public class JavaStackTest {
 	}
 
 	@Theory
-	public void testPopPush(
-			@ForSome(minSampleSize = 0, maxSampleSize = 30) Stack gs,
-			@ForSome(maxSampleSize = 10) int n) throws EmptyStackException {
+	public void testPopPush(@ForSome Stack gs, @ForSome int n) 
+			throws EmptyStackException {
 		IStack s = factory.makeStack(gs);
 		IStack sclone = factory.makeStack(gs);
 		assertThat(s.push(n).pop(), is(sclone));
 	}
 
-	@Theory public void testTop(
-			@ForSome(minSampleSize = 0, maxSampleSize = 100) Stack gs,
-			@ForSome(maxSampleSize = 10) int n) throws EmptyStackException {
+	@Theory public void testTop(@ForSome Stack gs, @ForSome int n) 
+					throws EmptyStackException {
 		IStack s = factory.makeStack(gs);
 		assertThat(s.push(n).top(), is(n));
 	}
-	
-	@Theory public void testATerm(
-			@ForSome(maxSampleSize = 100, numberOfSamples=2000) Stack gs) {
-		assertThat(Stack.fromTerm(gs.toATerm()), is(gs));
-	}
+
 }
