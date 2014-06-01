@@ -21,31 +21,7 @@ import examples.adt.stack.stack.types.Stack;
 public class JavaStackTest {
 
 	private static StackFactory factory= StackFactory.getInstance(StackFactory.ARRAY);
-	private static IStack init= factory.makeStack();
-
-	@Test
-	public void testIsEmptyEmpty() {
-		IStack s = init.empty();
-		assertThat(s.isEmpty(), is(true));
-	}
-
-	@Test
-	public void testEmptySize() {
-		IStack s = init.empty();
-		assertThat(s.size(), is(0));
-	}
-
-	@Test(expected = EmptyStackException.class)
-	public void testEmptyPop() throws EmptyStackException {
-		IStack s = init.empty();
-		s.pop();
-	}
-
-	@Test(expected = EmptyStackException.class)
-	public void testEmptyTop() throws EmptyStackException {
-		IStack s = init.empty();
-		s.top();
-	}
+	private static IStack init = factory.makeStack();
 
 	@Theory
 	public void testNonEmptySize(@ForSome Stack gs) {
@@ -84,5 +60,30 @@ public class JavaStackTest {
 		IStack s = factory.makeStack(gs);
 		assertThat(s.push(n).top(), is(n));
 	}
+	
+	@Test
+	public void testIsEmptyEmpty() {
+		IStack s = init.empty();
+		assertThat(s.isEmpty(), is(true));
+	}
+
+	@Test
+	public void testEmptySize() {
+		IStack s = init.empty();
+		assertThat(s.size(), is(0));
+	}
+
+	@Test(expected = EmptyStackException.class)
+	public void testEmptyPop() throws EmptyStackException {
+		IStack s = init.empty();
+		s.pop();
+	}
+
+	@Test(expected = EmptyStackException.class)
+	public void testEmptyTop() throws EmptyStackException {
+		IStack s = init.empty();
+		s.top();
+	}
+
 
 }

@@ -14,33 +14,31 @@ import tom.library.theory.ForSome;
 import tom.library.theory.PropCheck;
 import examples.adt.stack.EmptyStackException;
 import examples.adt.stack.stack.types.Stack;
+import examples.adt.stack.stack.types.stack.empty;
 
 @RunWith(PropCheck.class)
 public class TomStackTest {
-
-	private static Stack init = Stack.fromString("empty()");
-
 	@Test
 	public void testIsEmptyEmpty() {
-		Stack s = init.empty();
+		Stack s = empty.make();
 		assertThat(s.isEmpty(), is(true));
 	}
 
 	@Test
 	public void testEmptySize() {
-		Stack s = init.empty();
+		Stack s = empty.make();
 		assertThat(s.size(), is(0));
 	}
 
 	@Test(expected = EmptyStackException.class)
 	public void testEmptyPop() throws EmptyStackException {
-		Stack s = init.empty();
+		Stack s = empty.make();
 		s.pop();
 	}
 
 	@Test(expected = EmptyStackException.class)
 	public void testEmptyTop() throws EmptyStackException {
-		Stack s = init.empty();
+		Stack s = empty.make();
 		s.top();
 	}
 
@@ -51,7 +49,8 @@ public class TomStackTest {
 	}
 
 	@Theory
-	public void testPushSize(@ForSome(maxSampleSize = 30) Stack s, @ForSome(maxSampleSize = 10) int n) {
+	public void testPushSize(@ForSome(maxSampleSize = 30) Stack s, 
+			                 @ForSome(maxSampleSize = 10) int n) {
 		int initSize = s.size();
 		int finalSize = s.push(n).size();
 		assertThat(finalSize, is(initSize + 1));
@@ -65,12 +64,13 @@ public class TomStackTest {
 	}
 
 	@Theory
-	public void testPopPush(@ForSome(maxSampleSize = 100) Stack s, @ForSome(maxSampleSize = 10) int n) throws EmptyStackException {
-		Stack ls = s;
-		assertThat(ls.push(n).pop(), is(ls));
+	public void testPopPush(@ForSome(maxSampleSize = 100) Stack s, 
+			                @ForSome(maxSampleSize = 10) int n) throws EmptyStackException {
+		assertThat(s.push(n).pop(), is(s));
 	}
 
-	@Theory public void testTop(@ForSome(maxSampleSize = 100) Stack s, @ForSome(maxSampleSize = 10) int n) throws EmptyStackException {
+	@Theory public void testTop(@ForSome(maxSampleSize = 100) Stack s, 
+			                    @ForSome(maxSampleSize = 10) int n) throws EmptyStackException {
 		assertThat(s.push(n).top(), is(n));
 	}
 }

@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.TreeSet;
 
+import tom.library.shrink.metaterm.TomShrink;
 import tom.library.shrink.reducers.ExplotionReducer;
 import tom.library.shrink.reducers.IntegerReducer;
 import tom.library.shrink.reducers.Reducer;
@@ -55,9 +56,15 @@ public class SimpleShrink implements Shrink {
 	private void buildSmallerTerms(Object object) {
 		if (isInstanceOfVisitable(object)) {
 			Visitable term = (Visitable) object;
+
+			// try to substitute SimpleShrink by TomShrink
+			//TomShrink ts = new TomShrink();
+			//terms.addAll(ts.shrink(term));
+			
 			terms.addAll(subtermReducer.reduce(term));
 			terms.addAll(explotionReducer.reduce(term));
 			terms.addAll(valueReducer.reduce(term));
+			
 		} else {
 			reducePrimitives(object);
 		}

@@ -52,8 +52,8 @@ public class DefaultShrinkHandler implements ShrinkHandler {
 		 * BigShrinkValueSupplier() generates large number of smaller terms
 		 * from the counter-example and sort them. 
 		 */
-		evaluateAssignment(handler, new BigShrinkValueSupplier());
-		//evaluateAssignment(handler, new ShrinkValueSupplier());
+		//evaluateAssignment(handler, new BigShrinkValueSupplier());
+		evaluateAssignment(handler, new ShrinkValueSupplier());
 		//evaluateAssignment(handler, new TomShrinkValueSupplier());
 
 	}

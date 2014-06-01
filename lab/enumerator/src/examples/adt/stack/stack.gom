@@ -5,7 +5,6 @@ abstract syntax
 Stack = empty()
       | push(stack:Stack, element:int)
 
-
 sort Stack:block() {
 
   public Stack empty() {
