@@ -6,4 +6,3 @@ Tree = empty()
 	| tree(node:Node, left:Tree, right:Tree)
 
 Node = val(val:int)
-     | name(name:String)

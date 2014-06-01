@@ -118,14 +118,27 @@ public class Demo {
 			tparts=tparts.tail();
 		}
 
+		long start = System.currentTimeMillis();
 		BigInteger card50 = treeEnum.parts().index(BigInteger.valueOf(50)).getCard();
 		System.out.println("#trees of size 50 = card(parts[50]) = " + card50);
+		long stop = System.currentTimeMillis();
+		System.out.println(stop - start);
+		start = System.currentTimeMillis();
 		System.out.println("#trees of size 500 = card(parts[500]) = " + treeEnum.parts().index(BigInteger.valueOf(500)).getCard());
-
-		int n = 650;
+		stop = System.currentTimeMillis();
+		System.out.println(stop - start);
+		
+		System.out.println(treeEnum.get(BigInteger.valueOf(10)));
+		
+		int n = 100;
 		BigInteger i = java.math.BigInteger.TEN.pow(n);
+		start = System.currentTimeMillis();
 		Tree<Nat> t = treeEnum.get(i);
+		stop = System.currentTimeMillis();
+
 		System.out.println("10^" + n + "-th tree has size " + t.size());
+		System.out.println(stop - start);
+
 		System.out.println("t = " + t);
 
 	}
