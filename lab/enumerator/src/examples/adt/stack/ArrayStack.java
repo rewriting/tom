@@ -39,11 +39,12 @@ public class ArrayStack implements IStack {
 		if (isEmpty()) {
 			throw new EmptyStackException();
 		}
-		// initial code:
-// 		return stack[index];
-// 		return stack[index-1];
-		return stack[(SIZE+index-1)%SIZE]; // -1 to fix the BUG
+
+ 		return stack[index-1];
 	}
+
+	
+	//return stack[(SIZE+index-1)%SIZE]; // -1 to fix the BUG
 
 	@Override
 	public ArrayStack pop() throws EmptyStackException {

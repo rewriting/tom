@@ -24,9 +24,9 @@ import examples.adt.stack.stacklanguage.types.StackL;
 @RunWith(PropCheck.class)
 public class StackTest {
 
-	private static StackFactory factory1= StackFactory.getInstance(StackFactory.ARRAY);
+	private static StackFactory factory= StackFactory.getInstance(StackFactory.ARRAY);
 	private static StackFactory factory2= StackFactory.getInstance(StackFactory.ARRAY);
-	private static IStack init= factory1.makeStack();
+	private static IStack init= factory.makeStack();
 
 //	@BeforeClass
 //	public static void setUp() {
@@ -67,7 +67,7 @@ public class StackTest {
 	@Theory
 	public void testNonEmptySize(
 			@ForSome(minSampleSize = 25, maxSampleSize = 30) Stack gs) {
-		IStack s = factory1.makeStack(gs);
+		IStack s = factory.makeStack(gs);
 		assumeThat(s.isEmpty(), is(false));
 		assertThat(s.size(), greaterThan(0));
 	}
@@ -77,7 +77,7 @@ public class StackTest {
 	public void testPushSize(
 			@ForSome(minSampleSize = 25, maxSampleSize = 30) Stack gs,
 			@ForSome(maxSampleSize = 10) int n) {
-		IStack s = factory1.makeStack(gs);
+		IStack s = factory.makeStack(gs);
 		int initSize = s.size();
 //		s.push(n);
 		int finalSize = s.push(n).size();
@@ -89,43 +89,43 @@ public class StackTest {
 	public void testPopSize(
 			@ForSome(minSampleSize = 0, maxSampleSize = 50, numberOfSamples = 100) Stack gs)
 			throws EmptyStackException {
-		IStack s = factory1.makeStack(gs);
+		IStack s = factory.makeStack(gs);
 		assumeThat(s.isEmpty(), equalTo(false));
 		int initSize = s.size();
 //		s.pop();
 		assertThat(s.pop().size(), is(initSize - 1));
 	}
 
-	// @Ignore
 	@Theory
 	public void testPopPush(
 			@ForSome(minSampleSize = 0, maxSampleSize = 30) Stack gs,
 			@ForSome(maxSampleSize = 10) int n) throws EmptyStackException {
-		IStack s = factory1.makeStack(gs);
-
-		IStack sclone = factory1.makeStack(gs);
-//		s.push(n);
-//		s.pop();
-
+		IStack s = factory.makeStack(gs);
+		IStack sclone = factory.makeStack(gs);
 		assertThat(s.push(n).pop(), is(sclone));
 	}
 
 	@Theory public void testTop(
-//			@ForSome(exhaustive=true, numberOfSamples=100) Stack gs,
 			@ForSome(minSampleSize = 0, maxSampleSize = 100) Stack gs,
 			@ForSome(maxSampleSize = 10) int n) throws EmptyStackException {
-		IStack s = factory1.makeStack(gs);
-//		s.push(n);
+		IStack s = factory.makeStack(gs);
 		assertThat(s.push(n).top(), is(n));
 	}
-
+	
+	@Theory public void testATerm(
+			@ForSome(maxSampleSize = 100, numberOfSamples=2000) Stack gs) {
+		assertThat(Stack.fromTerm(gs.toATerm()), is(gs));
+	}
+	
+	
+	
 	// doesn't work for GOM (see StackFactory) 
 	@Ignore
 	@Theory
 	public void testSameBehaviour(
 			@ForSome(minSampleSize = 25, maxSampleSize = 30, numberOfSamples = 20) StackL gs)
 			throws EmptyStackException, BadInputException {
-		IStack stack1 = factory1.evaluateStack(gs);
+		IStack stack1 = factory.evaluateStack(gs);
 		IStack stack2 = factory2.evaluateStack(gs);
 
 		
@@ -153,10 +153,7 @@ public class StackTest {
 
 	}
 	
-	@Theory public void testATerm(
-			@ForSome(maxSampleSize = 100, numberOfSamples=2000) Stack gs) {
-		assertThat(Stack.fromTerm(gs.toATerm()), is(gs));
-	}
+	
 	
 	/*
 	 * TEST GOM IMPLEMENTATION

@@ -9,6 +9,7 @@ import tom.library.theory.internal.TestObject;
 import tom.library.theory.shrink.suppliers.BigShrinkValueSupplier;
 import tom.library.theory.shrink.suppliers.ShrinkParameterSupplier;
 import tom.library.theory.shrink.suppliers.ShrinkValueSupplier;
+import tom.library.theory.shrink.suppliers.TomShrinkValueSupplier;
 
 public class DefaultShrinkHandler implements ShrinkHandler {
 	private TestObject testObject;
@@ -53,8 +54,8 @@ public class DefaultShrinkHandler implements ShrinkHandler {
 		 */
 		evaluateAssignment(handler, new BigShrinkValueSupplier());
 		//evaluateAssignment(handler, new ShrinkValueSupplier());
-		
-		
+		//evaluateAssignment(handler, new TomShrinkValueSupplier());
+
 	}
 	
 	protected void repeatShrink(Throwable e, Object... params) throws Throwable {

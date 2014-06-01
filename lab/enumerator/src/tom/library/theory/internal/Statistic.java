@@ -36,7 +36,7 @@ public class Statistic {
 				badInputCount));
 		*/
 		sb.append(String.format("Statistic: "
-				+ "\n%s test data are generated:"
+				+ "\n%s test data are generated"
 				+ " (tested/assumption violation/bad input): %s/%s/%s", 
 				calculateTotalGeneratedData(),
 				calculateTotalTestedData(),
