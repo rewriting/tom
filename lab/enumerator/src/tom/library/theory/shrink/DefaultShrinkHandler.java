@@ -34,14 +34,14 @@ public class DefaultShrinkHandler implements ShrinkHandler {
 				 * use repeatShrink() and comment the method for throwing failure 
 				 * if use the previous version of shrink.
 				 */
-				 //repeatShrink(e, params);
+				 repeatShrink(e, params);
 				
 				/*
 				 * un-comment  throwParameterizedAssertionFailureWithCounterExamples() 
 				 * when use the new version.
 				 */
-				increaseShrunkCount();
-				throwParameterizedAssertionFailureWithCounterExamples(e, params);
+				//increaseShrunkCount();
+				//throwParameterizedAssertionFailureWithCounterExamples(e, params);
 			}
 		};
 		/*
@@ -51,8 +51,8 @@ public class DefaultShrinkHandler implements ShrinkHandler {
 		 * BigShrinkValueSupplier() generates large number of smaller terms
 		 * from the counter-example and sort them. 
 		 */
-		evaluateAssignment(handler, new BigShrinkValueSupplier());
-		//evaluateAssignment(handler, new ShrinkValueSupplier());
+		//evaluateAssignment(handler, new BigShrinkValueSupplier());
+		evaluateAssignment(handler, new ShrinkValueSupplier());
 		
 		
 	}
