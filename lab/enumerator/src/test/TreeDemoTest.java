@@ -13,10 +13,10 @@ import examples.adt.tree.types.Node;
 import examples.adt.tree.types.Tree;
 import tom.library.enumerator.Enumeration;
 import tom.library.theory.Enum;
-import tom.library.theory.TomCheck;
+import tom.library.theory.PropCheck;
 import tom.library.theory.ForSome;
 
-@RunWith(TomCheck.class)
+@RunWith(PropCheck.class)
 public class TreeDemoTest {
 	
 	@Theory

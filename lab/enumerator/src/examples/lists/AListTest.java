@@ -9,13 +9,13 @@ import org.junit.runner.RunWith;
 import tom.library.enumerator.Combinators;
 import tom.library.enumerator.Enumeration;
 import tom.library.theory.Enum;
-import tom.library.theory.TomCheck;
+import tom.library.theory.PropCheck;
 import tom.library.theory.ForSome;
 import examples.lists.alist.types.AList;
 import examples.lists.alist.types.Elem;
 
 // project should be linked with tom/applications/quickcheck/propcheck/Propcheck/src
-@RunWith(TomCheck.class)
+@RunWith(PropCheck.class)
 public class AListTest {
 	
 	//@Enum public static Enumeration<Integer> ei = Combinators.makePositiveInteger();

@@ -14,14 +14,14 @@ import org.junit.runner.RunWith;
 
 import tom.library.theory.BadInputException;
 import tom.library.theory.ForSome;
-import tom.library.theory.TomCheck;
+import tom.library.theory.PropCheck;
 import examples.adt.stack.EmptyStackException;
 import examples.adt.stack.IStack;
 import examples.adt.stack.StackFactory;
 import examples.adt.stack.stack.types.Stack;
 import examples.adt.stack.stacklanguage.types.StackL;
 
-@RunWith(TomCheck.class)
+@RunWith(PropCheck.class)
 public class StackTest {
 
 	private static StackFactory factory1= StackFactory.getInstance(StackFactory.ARRAY);

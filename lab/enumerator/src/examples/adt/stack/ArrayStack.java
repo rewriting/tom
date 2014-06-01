@@ -75,30 +75,28 @@ public class ArrayStack implements IStack {
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
-		}
-		if (obj == null) {
+		} else if (obj == null) {
 			return false;
-		}
-		if (getClass() != obj.getClass()) {
+		} else if (getClass() != obj.getClass()) {
 			return false;
 		}
 		ArrayStack other = (ArrayStack) obj;
+		if (this.isEmpty()) {
+			return other.isEmpty();
+		}
+
 		ArrayStack otherc = other.clone();
 		ArrayStack thisc = this.clone();
-		if (thisc.isEmpty()) {
-			return otherc.isEmpty();
-		} else {
-			try {
-				if (thisc.top().equals(otherc.top())) {
-					thisc.pop();
-					otherc.pop();
-					return thisc.equals(otherc);
-				} else {
-					return false;
-				}
-			} catch (EmptyStackException e) {
+		try {
+			if (thisc.top().equals(otherc.top())) {
+				thisc.pop();
+				otherc.pop();
+				return thisc.equals(otherc);
+			} else {
 				return false;
 			}
+		} catch (EmptyStackException e) {
+			return false;
 		}
 	}
 

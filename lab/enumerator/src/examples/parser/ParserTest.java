@@ -11,13 +11,13 @@ import tom.library.enumerator.Combinators;
 import tom.library.enumerator.Enumeration;
 import tom.library.theory.Enum;
 import tom.library.theory.ForSome;
-import tom.library.theory.TomCheck;
+import tom.library.theory.PropCheck;
 import examples.parser.rec.types.Exp;
 import examples.parser.rec.types.ExpList;
 import examples.parser.rec.types.Stm;
 import examples.parser.rec.types.Table;
 
-@RunWith(TomCheck.class)
+@RunWith(PropCheck.class)
 public class ParserTest {
 	
 	/*

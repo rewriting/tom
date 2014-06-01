@@ -24,6 +24,7 @@ public class Statistic {
 	
 	public String generateStatistic() {
 		StringBuilder sb = new StringBuilder();
+		/*
 		sb.append(String.format("Statistic: "
 				+ "\n%s test data are generated:"
 				+ "\n%s data are tested"
@@ -33,6 +34,15 @@ public class Statistic {
 				calculateTotalTestedData(),
 				assumptionViolationCount,
 				badInputCount));
+		*/
+		sb.append(String.format("Statistic: "
+				+ "\n%s test data are generated:"
+				+ " (tested/assumption violation/bad input): %s/%s/%s", 
+				calculateTotalGeneratedData(),
+				calculateTotalTestedData(),
+				assumptionViolationCount,
+				badInputCount));
+		
 		return sb.toString();
 	}
 	

@@ -10,14 +10,14 @@ import tom.library.enumerator.Combinators;
 import tom.library.enumerator.Enumeration;
 import tom.library.theory.Enum;
 import tom.library.theory.ForSome;
-import tom.library.theory.TomCheck;
+import tom.library.theory.PropCheck;
 import examples.data.treenat.Fork;
 import examples.data.treenat.Leaf;
 import examples.data.treenat.Nat;
 import examples.data.treenat.Suc;
 import examples.data.treenat.Tree;
 
-@RunWith(TomCheck.class)
+@RunWith(PropCheck.class)
 public class TomCheckTest {
 
 	@Enum public static Enumeration<Tree<Nat>> treeEnum = Tree.getEnumeration(Nat.getEnumeration());
