@@ -51,7 +51,7 @@ public class LineItem {
 	}
 	@Override
 	public String toString() {
-		return "LineItem [item=" + item + ", quantity=" + quantity + "]";
+		return "[" + item + ", quantity=" + quantity + "]";
 	}
 	
 	

@@ -93,4 +93,24 @@ public class Inventory {
 	public boolean has(int id) {
 		return has(new Item(id, 0));
 	}
+	
+	public void addAll(Collection<LineItem> items) {
+		inventory.addAll(items);
+	}
+	
+	public Collection<LineItem> getInventory() {
+		return inventory;
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		for (LineItem li : inventory) {
+			if (sb.length() > 0) {
+				sb.append(", ");
+			}
+			sb.append(li);
+		}
+		return "[" + sb.toString() + "]";
+	}
 }

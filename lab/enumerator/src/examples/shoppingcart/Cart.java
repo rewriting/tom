@@ -31,6 +31,10 @@ public class Cart {
 		}
 	}
 	
+	public void addToCart(LineItem lineItem) {
+		items.add(lineItem);
+	}
+	
 	public void addToCart(Item item, int quantity) {
 		items.add(new LineItem(item, quantity));
 	}
@@ -49,5 +53,7 @@ public class Cart {
 		throw new InventoryException("Item: " + item + " not found in the cart");
 	}
 	
-	
+	public Collection<LineItem> getLineItems() {
+		return items;
+	}
 }

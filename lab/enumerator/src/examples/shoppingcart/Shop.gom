@@ -1,0 +1,111 @@
+module examples.shoppingcart.Shop
+imports int
+abstract syntax
+
+Inventory = EmptyInv()
+		| Inv(LineItem:LineItem, Inventory:Inventory)
+
+ShoppingCart = EmptyCart()
+		| Cart(LineItem:LineItem, ShoppingCart:ShoppingCart)
+
+LineItem = Line(Item:Item, Quantity:int)
+
+Item = Product(Id:int, Price:int)
+
+Line:make(item, quantity) {
+	int newQuantity = 1;
+	if (quantity < 0) {
+		newQuantity = Math.abs(quantity);
+	} else if (quantity > 0) {
+		newQuantity = quantity;
+	} 
+	return realMake(item, newQuantity);
+}
+
+Product:make(id, price) {
+	int newId = 1;
+	int newPrice = 1;
+	if (id < 0) {
+		newId = Math.abs(id);
+	} else if (id > 0) {
+		newId = id;
+	} 
+	if (price < 0) {
+		newPrice = Math.abs(price);
+	} else if (price > 0) {
+		newPrice = price;
+	} 
+	return realMake(newId, newPrice);
+}
+
+sort Inventory:import() {
+	import examples.shoppingcart.*;
+	import java.util.*;
+}
+
+sort Inventory:block() {
+	%include { java/util/types/Collection.tom }
+	
+	public examples.shoppingcart.Inventory translateInventory() {
+		examples.shoppingcart.Inventory inv = new examples.shoppingcart.Inventory();
+		buildInventory(this, inv);
+		return inv;
+	}
+	
+	private void buildInventory(Inventory inventory, examples.shoppingcart.Inventory inv) {
+		%match(inventory) {
+			Inv(x, y) -> {
+				examples.shoppingcart.LineItem li = `x.translateLineItem(); 
+				inv.add(li.getItem(), li.getQuantity());
+				buildInventory(`y, inv);
+			}
+		}
+		return;
+	}
+}
+
+sort ShoppingCart:import() {
+	import examples.shoppingcart.*;
+	import java.util.*;
+}
+
+sort ShoppingCart:block() {
+	public examples.shoppingcart.Cart translateCart() {
+		examples.shoppingcart.Cart cart = new examples.shoppingcart.Cart();
+		buildCart(cart, this);
+		return cart;
+	}
+	
+	private void buildCart(examples.shoppingcart.Cart cart, ShoppingCart shoppingCart) {
+		%match(shoppingCart) {
+			EmptyCart() -> { return; }
+			Cart(lineItem, y) -> {
+				cart.addToCart(`lineItem.translateLineItem()); 
+				buildCart(cart, `y);
+			}
+		}
+	}
+}
+
+sort LineItem:import() {
+	import examples.shoppingcart.*;
+	import java.util.*;
+}
+
+sort LineItem:block() {
+	public examples.shoppingcart.LineItem translateLineItem() {
+		%match(this) {
+			Line(item, quantity) -> { return new examples.shoppingcart.LineItem(`item.translateItem(), `quantity); }
+		} 
+		return null;
+	}
+}
+
+sort Item:block() {
+	public examples.shoppingcart.Item translateItem() {
+		%match(this) {
+			Product(id, price) -> { return new examples.shoppingcart.Item(`id, `price); } 
+		}
+		return null;
+	}
+}
