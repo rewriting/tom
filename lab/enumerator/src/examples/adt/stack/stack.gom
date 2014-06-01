@@ -5,13 +5,14 @@ abstract syntax
 Stack = empty()
       | push(stack:Stack, element:int)
 
+
 sort Stack:block() {
 
-  public IStack empty() {
+  public Stack empty() {
     return `empty();
   }
 
-  public IStack push(Integer element) {
+  public Stack push(Integer element) {
     return `push(this, element);
   }
 
