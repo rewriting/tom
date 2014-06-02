@@ -1,6 +1,6 @@
-package examples.adt;
+package examples.adt.table;
 
-import examples.adt.table.types.*;
+import examples.adt.table.table.types.*;
 
 public class TableDemo {
 	%include{ table/Table.tom }

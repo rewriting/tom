@@ -1,10 +1,10 @@
-package examples.adt;
+package examples.adt.table;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import examples.adt.table.types.*;
-import examples.adt.table.types.elem.elem;
+import examples.adt.table.table.types.*;
+import examples.adt.table.table.types.elem.elem;
 
 public class SimpleTable {
 	%include{ table/Table.tom }
