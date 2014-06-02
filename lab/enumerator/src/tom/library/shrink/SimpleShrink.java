@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.TreeSet;
 
+import tom.library.shrink.metaterm.TomShrink;
 import tom.library.shrink.reducers.ExplotionReducer;
 import tom.library.shrink.reducers.IntegerReducer;
 import tom.library.shrink.reducers.Reducer;
@@ -15,6 +16,19 @@ import tom.library.shrink.reducers.SubtermReducer;
 import tom.library.shrink.reducers.ValueReducer;
 import tom.library.sl.Visitable;
 
+/**
+ * Generates terms from a given counter-example. The steps that are used in this process are:
+ * <ul>
+ * <li>Get immediate sub-terms that have the same type with the counter-examples</li>
+ * <li>Replace subterms with their terminal constructor</li>
+ * <li>Generate terms that have smaller int/String values based on the given counter-example</li>
+ * </ul>
+ * By using this process, the shrink mechanism should be done repetitively, i.e. the new counter-examples
+ * need to be shrunk again using this class until no smaller counter-example found.
+ * 
+ * @author nauval
+ *
+ */
 public class SimpleShrink implements Shrink {
 
 	private Collection<Object> terms;
@@ -39,7 +53,8 @@ public class SimpleShrink implements Shrink {
 	public Collection<Object> shrink(Object term) {
 		terms.clear();
 		buildSmallerTerms(term);
-		addTermIfBuiltTermsIsEmpty(term);
+		terms.add(term);
+		//addTermIfBuiltTermsIsEmpty(term);
 		return terms;
 	}
 	
@@ -48,16 +63,23 @@ public class SimpleShrink implements Shrink {
 			Comparator<? super Object> comparator) {
 		terms = new TreeSet<Object>(comparator);
 		buildSmallerTerms(term);
-		addTermIfBuiltTermsIsEmpty(term);
+		//addTermIfBuiltTermsIsEmpty(term);
+		terms.add(term);
 		return terms;
 	}
 
 	private void buildSmallerTerms(Object object) {
 		if (isInstanceOfVisitable(object)) {
 			Visitable term = (Visitable) object;
+
+			// try to substitute SimpleShrink by TomShrink
+			//TomShrink ts = new TomShrink();
+			//terms.addAll(ts.shrink(term));
+			
 			terms.addAll(subtermReducer.reduce(term));
 			terms.addAll(explotionReducer.reduce(term));
 			terms.addAll(valueReducer.reduce(term));
+			
 		} else {
 			reducePrimitives(object);
 		}

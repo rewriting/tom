@@ -10,11 +10,11 @@ import tom.library.enumerator.Combinators;
 import tom.library.enumerator.Enumeration;
 import tom.library.theory.Enum;
 import tom.library.theory.ForSome;
-import tom.library.theory.TomCheck;
+import tom.library.theory.PropCheck;
 import examples.queues.queue.types.Elem;
 import examples.queues.queue.types.Queue;
 
-@RunWith(TomCheck.class)
+@RunWith(PropCheck.class)
 public class SimpleQueueTest {
 	
 	//@Theory

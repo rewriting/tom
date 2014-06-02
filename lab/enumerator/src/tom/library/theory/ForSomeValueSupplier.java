@@ -58,7 +58,7 @@ public class ForSomeValueSupplier extends ParameterSupplier {
 
 		//System.out.println("EXHAUSTIVE = " + exhaustive + " ; " + totalNumberOfSamples + " samples");
 		
-		final Enumeration<?> enumeration = TomCheck.get(signature.getType());
+		final Enumeration<?> enumeration = PropCheck.get(signature.getType());
 		List<PotentialAssignment> l = new ArrayList<PotentialAssignment>();
 		LazyList<?> parts = enumeration.parts();
 

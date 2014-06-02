@@ -25,10 +25,23 @@ import tom.library.theory.internal.TestObject;
 import tom.library.theory.shrink.DefaultShrinkHandler;
 import tom.library.theory.shrink.ShrinkHandler;
 
-public final class TomCheck extends Theories {
+/**
+ * <p>
+ * The test runner that extends {@code Theories} where the calls to evaluate a {@code Statement} 
+ * of a test method is located. To use this class as a runner, a JUnit test class should be marked with {@code PropCheck.class}
+ * in the class definition:
+ * </p>
+ * <pre>
+{@code @RunWith(PropCheck.class) 
+public class FooTest {
+	....
+}
+</pre>
+ */
+public final class PropCheck extends Theories {
 	private static HashMap<Type, Enumeration<?>> map;
 
-	public TomCheck(Class<?> klass) throws InitializationError {
+	public PropCheck(Class<?> klass) throws InitializationError {
 		super(klass);
 	}
 
@@ -38,7 +51,7 @@ public final class TomCheck extends Theories {
 
 	@Override
 	public void run(RunNotifier notifier) {
-		TomCheck.initEnumerations(getTestClass().getJavaClass());
+		PropCheck.initEnumerations(getTestClass().getJavaClass());
 		super.run(notifier);
 	}
 
@@ -197,6 +210,8 @@ public final class TomCheck extends Theories {
 	    }
 	    
 	    // TODO move to another class!!
+	    // instantiate shrink handler, if none is specified, then 
+	    // the default DefaultShrinkHandler will be used.
 		private ShrinkHandler newHandlerInstance() {
 			ShrinkHandler handler = null;
 			try {
@@ -246,6 +261,10 @@ public final class TomCheck extends Theories {
 					testObject.getTestClass());
 		}
 		
+		/**
+		 * Generates the statistics of the test
+		 * @return a readable statistic format
+		 */
 		public String generateStatistic() {
 			return String.format("Testing %s().\n%s", 
 					testObject.getMethodName(), 

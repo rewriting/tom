@@ -4,6 +4,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 
+/**
+ * Extends {@code AssertionError} that is used when the test is fail.
+ * @author nauval
+ *
+ */
 public class ParameterizedAssertionFailure extends AssertionError {
 	private static final long serialVersionUID = 1L;
 
@@ -29,7 +34,7 @@ public class ParameterizedAssertionFailure extends AssertionError {
 	
 	public static String buildDescriptionWithShrink(String methodName, int shrunkCount, 
 			Object[] initialCounterExamples, Object...params) {
-		return String.format("\n%s(%s)\nCounter example:\n%s\nShrunk %s times, counter example:\n%s", 
+		return String.format("\n%s(%s)\nCounter-example:\n%s\nShrunk %s times, counter example:\n%s", 
 					methodName, join(", ", initialCounterExamples), join("\n", initialCounterExamples),
 					shrunkCount, join("\n ", params));
 	}
@@ -39,7 +44,7 @@ public class ParameterizedAssertionFailure extends AssertionError {
 	}
 	
 	public static String buildDescription(String methodName, Object...params) {
-		return String.format("\n%s(%s)\nCounter example:\n%s", methodName, join(", ", params), join("\n", params));
+		return String.format("\n%s(%s)\nCounter-example: %s", methodName, join(", ", params), join(", ", params));
 	}
 	
 	public static String join(String delimiter, Object... params) {

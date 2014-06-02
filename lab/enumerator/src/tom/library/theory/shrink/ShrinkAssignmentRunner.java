@@ -6,12 +6,21 @@ import org.junit.contrib.theories.PotentialAssignment;
 import org.junit.contrib.theories.internal.Assignments;
 import org.junit.runners.model.Statement;
 
+import tom.library.theory.internal.AssignmentRunner;
 import tom.library.theory.internal.CounterExample;
 import tom.library.theory.internal.ExecutionHandler;
 import tom.library.theory.internal.StatementBuilder;
 import tom.library.theory.internal.TestObject;
 import tom.library.theory.shrink.suppliers.ShrinkParameterSupplier;
 
+/**
+ * Similar to {@code AssignmentRunner}, this class assigns values to test method's parameter.
+ * However, the values are generated based on the given counter-example. The value generation
+ * process is taken care of by an instance of {@code ShrinkParameterSupplier}.
+ * 
+ * @author nauval
+ *
+ */
 public class ShrinkAssignmentRunner {
 	private ShrinkParameterSupplier supplier;
 	private TestObject testObject;

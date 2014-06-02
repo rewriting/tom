@@ -13,6 +13,22 @@ import org.junit.runners.model.Statement;
 
 import tom.library.theory.BadInputException;
 
+/**
+ * This class is where the behaviour of a test is defined, i.e. 
+ * how a test method is evaluate and what should be done if a test
+ * is fail.
+ * 
+ * </br>
+ * 
+ * The {@code Statement} is built on top of the default {@code Statement}  
+ * generated from {@code BlockJUnit4ClassRunner}'s {@code methodBlock()}. 
+ * The default {@code Statement} includes the default behaviour such as
+ * handles when a test expects an exception, a test with {@code @Before}
+ * and {@code @After} and a test with rules.
+ * 
+ * @author nauval
+ *
+ */
 public class StatementBuilder {
 	private TestObject testObject;
 	private ExecutionHandler handler;

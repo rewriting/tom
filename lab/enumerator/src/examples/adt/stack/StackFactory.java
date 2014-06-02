@@ -1,9 +1,7 @@
 package examples.adt.stack;
 
 import tom.library.theory.BadInputException;
-import examples.adt.queue.queue.types.Elem;
 import examples.adt.stack.stack.types.Stack;
-import examples.adt.stack.stack.types.stack.empty;
 import examples.adt.stack.stacklanguage.types.ElemL;
 import examples.adt.stack.stacklanguage.types.StackL;
 

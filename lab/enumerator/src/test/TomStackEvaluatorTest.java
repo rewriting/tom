@@ -15,11 +15,11 @@ import org.junit.contrib.theories.Theory;
 import org.junit.runner.RunWith;
 
 import tom.library.theory.ForSome;
-import tom.library.theory.TomCheck;
+import tom.library.theory.PropCheck;
 import examples.adt.stack.EmptyStackException;
 import examples.adt.stack.stack.types.Stack;
 
-@RunWith(TomCheck.class)
+@RunWith(PropCheck.class)
 public class TomStackEvaluatorTest {
 
 	// %include{ ../examples/adt/stack/stack/Stack.tom }

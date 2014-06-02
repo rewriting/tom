@@ -1,5 +1,5 @@
 module examples.adt.Tree
-imports int
+imports int String
 abstract syntax
 
 Tree = empty()

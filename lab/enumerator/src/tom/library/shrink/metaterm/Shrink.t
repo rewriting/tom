@@ -1,6 +1,7 @@
 package tom.library.shrink.metaterm;
 
 /*
+ * This is a prototype --- not used by the PropCheck framework
  * Should be compiled with -gi option
  */
 import aterm.*;

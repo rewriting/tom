@@ -6,6 +6,11 @@ import java.util.List;
 
 import org.junit.contrib.theories.PotentialAssignment;
 
+/**
+ * Helper class to transform a list of inputs to a list of {@code PotentialAssignment}
+ * @author nauval
+ *
+ */
 public class SupplierHelper {
 	
 	public static<T> List<PotentialAssignment> buildPotentialAssignments(List<T> inputs) {

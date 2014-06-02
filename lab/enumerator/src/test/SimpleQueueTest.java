@@ -15,14 +15,14 @@ import examples.adt.queue.queue.types.Queue;
 import tom.library.enumerator.Enumeration;
 import tom.library.theory.Enum;
 import tom.library.theory.Shrink;
-import tom.library.theory.TomCheck;
+import tom.library.theory.PropCheck;
 import tom.library.theory.ForSome;
 import tom.library.theory.internal.CounterExample;
 import tom.library.theory.internal.ParameterizedAssertionFailure;
 import tom.library.theory.internal.TestObject;
 import tom.library.theory.shrink.DefaultShrinkHandler;
 
-@RunWith(TomCheck.class)
+@RunWith(PropCheck.class)
 public class SimpleQueueTest {
 	private SimpleQueue classUnderTest;
 	
@@ -117,9 +117,9 @@ public class SimpleQueueTest {
 		}
 		
 		@Override
-		public void shrink(CounterExample counterExample) throws Throwable {
+		public void shrink(Throwable e, CounterExample counterExample) throws Throwable {
 			// do nothing, no shrink defined
-			throw new ParameterizedAssertionFailure(new Exception("no shrink"), "", counterExample.getCounterExamples());
+			throw new ParameterizedAssertionFailure(e, "", counterExample.getCounterExamples());
 		}
 	}
 }
