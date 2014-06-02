@@ -1,26 +1,27 @@
 package test;
 
-import static org.junit.Assert.*;
-import static org.junit.Assume.*;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeThat;
 
 import org.junit.Before;
 import org.junit.contrib.theories.Theory;
 import org.junit.runner.RunWith;
 
-import examples.adt.queue.SimpleQueue;
-import examples.adt.queue.SimpleQueue.EmptyQueueException;
-import examples.adt.queue.queue.types.Elem;
-import examples.adt.queue.queue.types.Queue;
-import tom.library.enumerator.Enumeration;
-import tom.library.theory.Enum;
-import tom.library.theory.Shrink;
-import tom.library.theory.PropCheck;
 import tom.library.theory.ForSome;
+import tom.library.theory.PropCheck;
+import tom.library.theory.Shrink;
 import tom.library.theory.internal.CounterExample;
 import tom.library.theory.internal.ParameterizedAssertionFailure;
 import tom.library.theory.internal.TestObject;
 import tom.library.theory.shrink.DefaultShrinkHandler;
+import examples.adt.queue.SimpleQueue;
+import examples.adt.queue.SimpleQueue.EmptyQueueException;
+import examples.adt.queue.queue.types.Elem;
+import examples.adt.queue.queue.types.Queue;
 
 @RunWith(PropCheck.class)
 public class SimpleQueueTest {

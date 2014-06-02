@@ -1,24 +1,24 @@
 package test;
 
 
-import static org.junit.Assert.*;
-import static org.junit.Assume.*;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assume.assumeThat;
 
 import org.junit.Ignore;
 import org.junit.contrib.theories.Theory;
 import org.junit.runner.RunWith;
 
-import examples.adt.SimpleTable;
-import examples.adt.TableDemo;
-import examples.adt.table.types.Elem;
-import examples.adt.table.types.Key;
-import examples.adt.table.types.Table;
-import examples.adt.table.types.Val;
-import tom.library.enumerator.Enumeration;
-import tom.library.theory.Enum;
-import tom.library.theory.PropCheck;
 import tom.library.theory.ForSome;
+import tom.library.theory.PropCheck;
+import examples.adt.table.SimpleTable;
+import examples.adt.table.TableDemo;
+import examples.adt.table.table.types.Elem;
+import examples.adt.table.table.types.Key;
+import examples.adt.table.table.types.Table;
+import examples.adt.table.table.types.Val;
 
 @RunWith(PropCheck.class)
 public class TableDemoTest {

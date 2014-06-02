@@ -1,4 +1,4 @@
-module examples.adt.Table
+module examples.adt.table.Table
 imports int String
 abstract syntax
 
