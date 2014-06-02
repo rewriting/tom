@@ -39,7 +39,8 @@ public class SimpleShrink implements Shrink {
 	public Collection<Object> shrink(Object term) {
 		terms.clear();
 		buildSmallerTerms(term);
-		addTermIfBuiltTermsIsEmpty(term);
+		terms.add(term);
+		//addTermIfBuiltTermsIsEmpty(term);
 		return terms;
 	}
 	
@@ -48,7 +49,8 @@ public class SimpleShrink implements Shrink {
 			Comparator<? super Object> comparator) {
 		terms = new TreeSet<Object>(comparator);
 		buildSmallerTerms(term);
-		addTermIfBuiltTermsIsEmpty(term);
+		//addTermIfBuiltTermsIsEmpty(term);
+		terms.add(term);
 		return terms;
 	}
 

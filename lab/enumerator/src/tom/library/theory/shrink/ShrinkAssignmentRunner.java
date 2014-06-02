@@ -36,6 +36,7 @@ public class ShrinkAssignmentRunner {
 	public void runWithIncompleteAssignment(Assignments incomplete, CounterExample counterExample)
 			throws Throwable {
 		for (PotentialAssignment source : getValueSources(incomplete, counterExample)) {
+			System.out.println("source: " + source.getValue());
             runWithAssignment(incomplete.assignNext(source), counterExample.nextCounterExample());
         }
 	}
@@ -48,6 +49,8 @@ public class ShrinkAssignmentRunner {
 	protected void runWithCompleteAssignment(final Assignments complete) throws Throwable {
 		StatementBuilder builder = new StatementBuilder(testObject, handler);
 		Statement statement = builder.buildStatementForCompleteAssignment(complete);
+		System.out
+				.println("ShrinkAssignmentRunner.runWithCompleteAssignment()");
 		statement.evaluate();
     }
 

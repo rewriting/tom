@@ -21,12 +21,14 @@ public class DefaultShrinkHandler implements ShrinkHandler {
 	}
 	
 	@Override
-	public void shrink(CounterExample counterExample) throws Throwable {
+	public void shrink(Throwable e, CounterExample counterExample) throws Throwable {
 		initializeCounterExamples(counterExample);
 		handleShrink();
+		throwParameterizedAssertionFailureWithCounterExamples(e, counterExample.getCounterExamples());
 	}
 	
 	protected void handleShrink() throws Throwable {
+		System.out.println("DefaultShrinkHandler.handleShrink()");
 		ExecutionHandler handler = new ExecutionHandler(this) {
 			@Override
 			public void handleFailures(Throwable e, String methodName, Object... params) throws Throwable {
@@ -34,6 +36,8 @@ public class DefaultShrinkHandler implements ShrinkHandler {
 				 * use repeatShrink() and comment the method for throwing failure 
 				 * if use the previous version of shrink.
 				 */
+				System.out
+						.println("DefaultShrinkHandler.handleShrink().new ExecutionHandler() {...}.handleFailures()");
 				 repeatShrink(e, params);
 				
 				/*
@@ -59,7 +63,8 @@ public class DefaultShrinkHandler implements ShrinkHandler {
 	
 	protected void repeatShrink(Throwable e, Object... params) throws Throwable {
 		CounterExample temporaryCounterExample = CounterExample.build(params);
-		
+		System.out.println("temp: " + temporaryCounterExample);
+		System.out.println("curr: " + currentCounterExample);
 		//if (temporaryCounterExample.isSmallerThan(currentCounterExample)) {
 		if (!temporaryCounterExample.isEqualsTo(currentCounterExample)) {
 			increaseShrunkCount();

@@ -35,14 +35,14 @@ public class StackTest {
 //		init = factory1.makeStack();
 //	}
 
-	// @Ignore
+	 @Ignore
 	@Test
 	public void testIsEmptyEmpty() {
 		IStack s = init.empty();
 		assertThat(s.isEmpty(), is(true));
 	}
 
-	// @Ignore
+	 @Ignore
 	@Test
 	public void testEmptySize() {
 		IStack s = init.empty();
@@ -56,14 +56,14 @@ public class StackTest {
 		s.pop();
 	}
 
-	// @Ignore
+	 @Ignore
 	@Test(expected = EmptyStackException.class)
 	public void testEmptyTop() throws EmptyStackException {
 		IStack s = init.empty();
 		s.top();
 	}
 
-	// @Ignore
+	@Ignore
 	@Theory
 	public void testNonEmptySize(
 			@ForSome(minSampleSize = 25, maxSampleSize = 30) Stack gs) {
@@ -72,7 +72,7 @@ public class StackTest {
 		assertThat(s.size(), greaterThan(0));
 	}
 
-	// @Ignore
+	 @Ignore
 	@Theory
 	public void testPushSize(
 			@ForSome(minSampleSize = 25, maxSampleSize = 30) Stack gs,
@@ -84,7 +84,7 @@ public class StackTest {
 		assertThat(finalSize, is(initSize + 1));
 	}
 
-	// @Ignore
+	 @Ignore
 	@Theory
 	public void testPopSize(
 			@ForSome(minSampleSize = 0, maxSampleSize = 50, numberOfSamples = 100) Stack gs)
@@ -99,7 +99,7 @@ public class StackTest {
 	// @Ignore
 	@Theory
 	public void testPopPush(
-			@ForSome(minSampleSize = 0, maxSampleSize = 100) Stack gs,
+			@ForSome(minSampleSize = 13, maxSampleSize = 20) Stack gs,
 			@ForSome(maxSampleSize = 10) int n) throws EmptyStackException {
 		IStack s = factory1.makeStack(gs);
 		IStack sclone = factory1.makeStack(gs);
@@ -108,6 +108,7 @@ public class StackTest {
 		assertThat(s.push(n).pop(), is(sclone));
 	}
 
+	@Ignore
 	@Theory public void testTop(
 //			@ForSome(exhaustive=true, numberOfSamples=100) Stack gs,
 			@ForSome(minSampleSize = 0, maxSampleSize = 100) Stack gs,

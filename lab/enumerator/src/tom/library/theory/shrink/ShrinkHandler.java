@@ -8,5 +8,5 @@ public interface ShrinkHandler {
 	 * @param counterExample
 	 * @throws Throwable
 	 */
-	public void shrink(CounterExample counterExample) throws Throwable;
+	public void shrink(Throwable e, CounterExample counterExample) throws Throwable;
 }

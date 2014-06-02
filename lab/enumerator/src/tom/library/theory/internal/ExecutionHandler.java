@@ -50,7 +50,7 @@ public class ExecutionHandler {
 	public void handleFailures(Throwable exception, String methodName, Object...params) throws Throwable {
 		increaseFailureCount();
 		counterExample = CounterExample.build(params);
-		shrinkHandler.shrink(counterExample);
+		shrinkHandler.shrink(exception, counterExample);
 		throwParameterizedAssertionFailure(exception, methodName, params);
 	}
 	
