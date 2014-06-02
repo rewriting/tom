@@ -6,7 +6,7 @@ import static org.hamcrest.CoreMatchers.*;
 
 import org.junit.Test;
 
-import examples.adt.table.types.Val;
+import examples.adt.table.table.types.Val;
 import examples.lists.alist.types.AList;
 import examples.lists.alist.types.Elem;
 
