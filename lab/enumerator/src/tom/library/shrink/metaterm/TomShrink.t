@@ -17,6 +17,7 @@ import java.lang.reflect.Method;
 import java.util.*;
 
 import tom.library.shrink.Shrink;
+import java.lang.reflect.InvocationTargetException;
 
 public class TomShrink implements Shrink {
   %include { int.tom }
