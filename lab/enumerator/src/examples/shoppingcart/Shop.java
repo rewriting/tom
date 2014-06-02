@@ -13,28 +13,40 @@ public class Shop {
 		carts = new ArrayList<Cart>();
 	}
 	
-	public void buy(Cart cart) throws InventoryException {
+	public Shop buy(Cart cart) {
 		// re-calculate the quantity
 		for (LineItem lineItem : cart.getLineItems()) {
-			inventory.get(lineItem.getItem(), lineItem.getQuantity());
+			try {
+				inventory.get(lineItem.getItem(), lineItem.getQuantity());
+			} catch (InventoryException e) {
+				// do nothing
+			}
 		}
 		// put the cart in the list
 		carts.add(cart);
+		return this;
 	}
 	
-	public void addInventory(Item item, int quantity) {
+	public Shop addInventory(Item item, int quantity) {
 		inventory.add(item, quantity);
+		return this;
 	}
 	
-	public int getInventoryQuantity(Item item) throws InventoryException {
-		return inventory.getItemQuantity(item);
+	public int getInventoryQuantity(Item item) {
+		try {
+			return inventory.getItemQuantity(item);
+		} catch (InventoryException e) {
+			return 0;
+		}
 	}
 	
-	public void addInventory(Collection<LineItem> items) {
+	public Shop addInventory(Collection<LineItem> items) {
 		inventory.addAll(items);
+		return this;
 	}
 	
-	public void setInventory(Inventory inventory) {
+	public Shop setInventory(Inventory inventory) {
 		this.inventory = inventory;
+		return this;
 	}
 }

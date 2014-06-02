@@ -43,15 +43,15 @@ public class Cart {
 		items.remove(new LineItem(item, 0));
 	}
 	
-	public int getItemQuantity(Item item) throws InventoryException {
-		for (Iterator<LineItem> iterator = items.iterator(); iterator.hasNext();) {
-			LineItem lineItem = iterator.next();
-			if (lineItem.getItem().equals(item)) {
-				return lineItem.getQuantity();
-			}
-		}
-		throw new InventoryException("Item: " + item + " not found in the cart");
-	}
+//	public int getItemQuantity(Item item) throws InventoryException {
+//		for (Iterator<LineItem> iterator = items.iterator(); iterator.hasNext();) {
+//			LineItem lineItem = iterator.next();
+//			if (lineItem.getItem().equals(item)) {
+//				return lineItem.getQuantity();
+//			}
+//		}
+//		throw new InventoryException("Item: " + item + " not found in the cart");
+//	}
 	
 	public Collection<LineItem> getLineItems() {
 		return items;
