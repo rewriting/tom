@@ -117,9 +117,9 @@ public class SimpleQueueTest {
 		}
 		
 		@Override
-		public void shrink(CounterExample counterExample) throws Throwable {
+		public void shrink(Throwable e, CounterExample counterExample) throws Throwable {
 			// do nothing, no shrink defined
-			throw new ParameterizedAssertionFailure(new Exception("no shrink"), "", counterExample.getCounterExamples());
+			throw new ParameterizedAssertionFailure(e, "", counterExample.getCounterExamples());
 		}
 	}
 }

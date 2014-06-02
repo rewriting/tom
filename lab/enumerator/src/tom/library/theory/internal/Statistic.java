@@ -1,5 +1,15 @@
 package tom.library.theory.internal;
-
+/**
+ * Records the statistic of a test including number of test that are successful, 
+ * number of tests that are skipped due to assumption violation, 
+ * number of failures and number of test that has bad input data. </br>
+ * 
+ * {@code generateStatistic()} is the method to format the statistic
+ * into a human readable format.
+ * 
+ * @author nauval
+ *
+ */
 public class Statistic {
 	private int successCount;
 	private int assumptionViolationCount;

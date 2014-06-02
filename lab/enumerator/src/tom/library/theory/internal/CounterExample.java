@@ -6,6 +6,12 @@ import java.util.List;
 import tom.library.theory.tools.TheoryVisitableTools;
 import tom.library.sl.Visitable;
 
+/**
+ * Stores counter-examples of a test. 
+ * 
+ * @author nauval
+ *
+ */
 public class CounterExample {
 	private final List<Object> fUnassigned;
 	

@@ -4,6 +4,14 @@ import org.junit.contrib.theories.PotentialAssignment;
 import org.junit.contrib.theories.internal.Assignments;
 import org.junit.runners.model.Statement;
 
+/**
+ * Assigns test method's parameters with values generated from
+ * a value supplier. All values are combined in every possible 
+ * combination by this class.
+ * 
+ * @author nauval
+ *
+ */
 public class AssignmentRunner {
 	private TestObject testObject;
 	private ExecutionHandler handler;
@@ -13,6 +21,13 @@ public class AssignmentRunner {
 		this.handler = handler;
 	}
 
+	/**
+	 * Assigns test method's parameters with values and then runs the 
+	 * test methods after the assigment complete.
+	 * 
+	 * @param parameterAssignment
+	 * @throws Throwable
+	 */
 	public void runWithAssignment(Assignments parameterAssignment) throws Throwable {
 		if (!parameterAssignment.isComplete()) {
 			runWithIncompleteAssignment(parameterAssignment);
@@ -21,6 +36,13 @@ public class AssignmentRunner {
 		}
 	}
 
+	/**
+	 * Retrieves potentials assignment values for a parameter and then assign the  
+	 * value to the parameter.
+	 * 
+	 * @param incomplete
+	 * @throws Throwable
+	 */
 	protected void runWithIncompleteAssignment(Assignments incomplete) throws Throwable {
 		for (PotentialAssignment source : incomplete.potentialsForNextUnassigned()) {
 			runWithAssignment(incomplete.assignNext(source));

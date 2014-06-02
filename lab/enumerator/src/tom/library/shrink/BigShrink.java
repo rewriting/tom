@@ -16,6 +16,20 @@ import tom.library.shrink.reducers.SubtermReducer;
 import tom.library.shrink.reducers.ValueReducer;
 import tom.library.sl.Visitable;
 
+/**
+ * Generates terms from a given counter-example. The process includes:
+ * <ul>
+ * <li>Get immediate sub-terms that have the same type as the counter-example</li>
+ * <li>Replace sub-terms with its terminal constants</li>
+ * <li>Generate smaller terms with smaller integer/String values</li>
+ * </ul>
+ * Above steps will be iterated until all the generated terms cannot be reduced any longer.
+ * The final result is a considerably big list of terms that are smaller or equal to the
+ * counter-example.
+ * 
+ * @author nauval
+ *
+ */
 public class BigShrink implements Shrink{
 
 	private ExpandingSet<Object> toExplore;

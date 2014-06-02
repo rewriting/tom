@@ -2,9 +2,16 @@ package tom.library.theory.shrink;
 
 import tom.library.theory.internal.CounterExample;
 
+/**
+ * Interface to create a shrink handler.
+ * 
+ * @author nauval
+ *
+ */
 public interface ShrinkHandler {
 	/**
-	 * TODO write javadocs
+	 * Performs shrink mechanism from the given counter-example.
+	 * 
 	 * @param counterExample
 	 * @throws Throwable
 	 */
