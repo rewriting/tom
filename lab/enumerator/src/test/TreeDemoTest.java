@@ -8,14 +8,15 @@ import org.junit.runner.RunWith;
 
 import examples.adt.TreeDemo;
 import examples.adt.TreeDemo.EmptyQueueException;
+import examples.adt.stack.stack.types.Stack;
 import examples.adt.tree.types.Node;
 import examples.adt.tree.types.Tree;
 import tom.library.enumerator.Enumeration;
 import tom.library.theory.Enum;
-import tom.library.theory.TomCheck;
+import tom.library.theory.PropCheck;
 import tom.library.theory.ForSome;
 
-@RunWith(TomCheck.class)
+@RunWith(PropCheck.class)
 public class TreeDemoTest {
 	
 	@Theory
@@ -64,5 +65,10 @@ public class TreeDemoTest {
 		Tree result = TreeDemo.createTree(node, left, right);
 		Tree r = TreeDemo.detachRightSubtree(result);
 		assertThat(r, equalTo(right));
+	}
+	
+	@Theory public void testATerm(
+			@ForSome(maxSampleSize = 1000, numberOfSamples=2000) Tree t) {
+		assertThat(Tree.fromTerm(t.toATerm()), is(t));
 	}
 }

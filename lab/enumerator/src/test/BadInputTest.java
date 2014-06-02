@@ -13,10 +13,10 @@ import tom.library.enumerator.Combinators;
 import tom.library.enumerator.Enumeration;
 import tom.library.theory.BadInputException;
 import tom.library.theory.Enum;
-import tom.library.theory.TomCheck;
+import tom.library.theory.PropCheck;
 import tom.library.theory.ForSome;
 
-@RunWith(TomCheck.class)
+@RunWith(PropCheck.class)
 public class BadInputTest {
 	@Theory
 	public void testBadInputFailure(

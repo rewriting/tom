@@ -36,7 +36,11 @@ public class ShrinkAssignmentRunner {
 	public void runWithIncompleteAssignment(Assignments incomplete, CounterExample counterExample)
 			throws Throwable {
 		for (PotentialAssignment source : getValueSources(incomplete, counterExample)) {
+<<<<<<< HEAD
 			System.out.println("source: " + source.getValue());
+=======
+			//System.out.println("source = " + source);
+>>>>>>> bb87681621c54be2faaac2ed62b90b3e049811b2
             runWithAssignment(incomplete.assignNext(source), counterExample.nextCounterExample());
         }
 	}

@@ -25,10 +25,10 @@ import tom.library.theory.internal.TestObject;
 import tom.library.theory.shrink.DefaultShrinkHandler;
 import tom.library.theory.shrink.ShrinkHandler;
 
-public final class TomCheck extends Theories {
+public final class PropCheck extends Theories {
 	private static HashMap<Type, Enumeration<?>> map;
 
-	public TomCheck(Class<?> klass) throws InitializationError {
+	public PropCheck(Class<?> klass) throws InitializationError {
 		super(klass);
 	}
 
@@ -38,7 +38,7 @@ public final class TomCheck extends Theories {
 
 	@Override
 	public void run(RunNotifier notifier) {
-		TomCheck.initEnumerations(getTestClass().getJavaClass());
+		PropCheck.initEnumerations(getTestClass().getJavaClass());
 		super.run(notifier);
 	}
 

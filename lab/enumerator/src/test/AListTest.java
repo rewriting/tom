@@ -20,11 +20,11 @@ import org.junit.contrib.theories.Theory;
 import org.junit.runner.RunWith;
 
 import tom.library.theory.ForSome;
-import tom.library.theory.TomCheck;
+import tom.library.theory.PropCheck;
 import examples.lists.alist.types.AList;
 import examples.lists.alist.types.Elem;
 
-@RunWith(TomCheck.class)
+@RunWith(PropCheck.class)
 public class AListTest {
 
 	@Ignore

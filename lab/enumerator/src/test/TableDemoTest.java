@@ -17,10 +17,10 @@ import examples.adt.table.types.Table;
 import examples.adt.table.types.Val;
 import tom.library.enumerator.Enumeration;
 import tom.library.theory.Enum;
-import tom.library.theory.TomCheck;
+import tom.library.theory.PropCheck;
 import tom.library.theory.ForSome;
 
-@RunWith(TomCheck.class)
+@RunWith(PropCheck.class)
 public class TableDemoTest {
 	@Ignore
 	@Theory

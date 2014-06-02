@@ -12,10 +12,6 @@ public class ArrayStack implements IStack {
 
 	public ArrayStack() {
 		stack = new int[SIZE];
-		/* initial code:
-		 index = 0;
-		 size = 0;
-		 */
 		index = 0;
 		size = 0;
 	}
@@ -27,13 +23,8 @@ public class ArrayStack implements IStack {
 
 	@Override
 	public ArrayStack push(Integer elem) {
-		/* initial code:
-		 stack[index++] = elem;
-		index %= SIZE;
-		size++;
-		 */
-		stack[index++] = elem;
-		index %= SIZE;
+		stack[index] = elem;
+		index = (index+1) % SIZE;
 		size++;
 		return this;
 	}
@@ -48,25 +39,23 @@ public class ArrayStack implements IStack {
 		if (isEmpty()) {
 			throw new EmptyStackException();
 		}
-		// initial code:
-// 		return stack[index];
+
+ 		return stack[index];
 // 		return stack[index-1];
-		return stack[(SIZE+index-1)%SIZE]; // -1 to fix the BUG
+//		return stack[(SIZE+index-1)%SIZE]; 
 	}
+
+	
+	//return stack[(SIZE+index-1)%SIZE]; // -1 to fix the BUG
 
 	@Override
 	public ArrayStack pop() throws EmptyStackException {
-		/* initial code:
-		 Integer res = top();
-		index = (index - 1) % SIZE;
-		size--;
-		return res;
-		 */
-//		Integer res = top();
+		if (isEmpty()) {
+			throw new EmptyStackException();
+		}
 		index = (index - 1) % SIZE;
 		size--;
 		return this;
-//		return res;
 	}
 
 	@Override
@@ -89,30 +78,28 @@ public class ArrayStack implements IStack {
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
-		}
-		if (obj == null) {
+		} else if (obj == null) {
 			return false;
-		}
-		if (getClass() != obj.getClass()) {
+		} else if (getClass() != obj.getClass()) {
 			return false;
 		}
 		ArrayStack other = (ArrayStack) obj;
+		if (this.isEmpty()) {
+			return other.isEmpty();
+		}
+
 		ArrayStack otherc = other.clone();
 		ArrayStack thisc = this.clone();
-		if (thisc.isEmpty()) {
-			return otherc.isEmpty();
-		} else {
-			try {
-				if (thisc.top().equals(otherc.top())) {
-					thisc.pop();
-					otherc.pop();
-					return thisc.equals(otherc);
-				} else {
-					return false;
-				}
-			} catch (EmptyStackException e) {
+		try {
+			if (thisc.top().equals(otherc.top())) {
+				thisc.pop();
+				otherc.pop();
+				return thisc.equals(otherc);
+			} else {
 				return false;
 			}
+		} catch (EmptyStackException e) {
+			return false;
 		}
 	}
 
