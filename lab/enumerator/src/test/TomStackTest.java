@@ -13,6 +13,7 @@ import org.junit.runner.RunWith;
 import tom.library.theory.ForSome;
 import tom.library.theory.PropCheck;
 import examples.adt.stack.EmptyStackException;
+import examples.adt.stack.IStack;
 import examples.adt.stack.stack.types.Stack;
 import examples.adt.stack.stack.types.stack.empty;
 
@@ -66,7 +67,7 @@ public class TomStackTest {
 	@Theory
 	public void testPopPush(@ForSome(maxSampleSize = 100) Stack s, 
 			                @ForSome(maxSampleSize = 10) int n) throws EmptyStackException {
-		assertThat(s.push(n).pop(), is(s));
+		assertThat(s.push(n).pop(), is((IStack)s));
 	}
 
 	@Theory public void testTop(@ForSome(maxSampleSize = 100) Stack s, 
