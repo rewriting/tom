@@ -4,6 +4,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 
+/**
+ * Extends {@code AssertionError} that is used when the test is fail.
+ * @author nauval
+ *
+ */
 public class ParameterizedAssertionFailure extends AssertionError {
 	private static final long serialVersionUID = 1L;
 

@@ -10,6 +10,13 @@ import tom.library.shrink.Shrink;
 import tom.library.sl.Visitable;
 import tom.library.theory.tools.TheoryVisitableTools;
 
+/**
+ * An implementation of {@code ShrinkParameterSupplier} that uses
+ * {@link BigShrink} to generate smaller counter examples.
+ * 
+ * @author nauval
+ *
+ */
 public class BigShrinkValueSupplier implements ShrinkParameterSupplier {
 	
 	@Override

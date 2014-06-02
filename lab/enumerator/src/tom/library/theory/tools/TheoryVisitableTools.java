@@ -3,6 +3,12 @@ package tom.library.theory.tools;
 import tom.library.sl.Visitable;
 import tom.library.sl.VisitableBuiltin;
 
+/**
+ * Tools to deal with {@code Visitable}.
+ * 
+ * @author nauval
+ *
+ */
 public class TheoryVisitableTools {
 	private static int size = 0;
 	private static int val = 0;

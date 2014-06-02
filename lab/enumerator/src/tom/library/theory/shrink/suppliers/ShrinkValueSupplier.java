@@ -5,11 +5,18 @@ import java.util.List;
 
 import org.junit.contrib.theories.PotentialAssignment;
 
+import tom.library.shrink.BigShrink;
 import tom.library.shrink.Shrink;
 import tom.library.shrink.SimpleShrink;
 import tom.library.sl.Visitable;
 import tom.library.theory.tools.TheoryVisitableTools;
 
+/**
+ * An implementation of {@code ShrinkParameterSupplier} where it uses
+ * {@link SimpleShrink} to generates smaller counter examples.
+ * @author nauval
+ *
+ */
 public class ShrinkValueSupplier implements ShrinkParameterSupplier {
 
 	@Override
