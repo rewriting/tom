@@ -1,6 +1,8 @@
-package examples.adt;
+package examples.adt.tree;
 
-import examples.adt.tree.types.*;
+import java.math.BigInteger;
+import tom.library.enumerator.Enumeration;
+import examples.adt.tree.tree.types.*;
 
 public class TreeDemo {
 	%include{ tree/Tree.tom }
@@ -74,5 +76,15 @@ public class TreeDemo {
 		public EmptyQueueException(String message) {
 			super(message);
 		}
+	}
+
+  public static void main(String[] args) {
+		Enumeration<Tree> treeEnum = Tree.getEnumeration();
+		for(int i=0 ; i<10 ; i++) {
+			System.out.println(i + " --> " + treeEnum.get(BigInteger.valueOf(i)));
+		}
+		int n = 100;
+		BigInteger i = java.math.BigInteger.TEN.pow(n);
+		System.out.println("10^" + n + "-th tree has size " + treeEnum.get(i));
 	}
 } 

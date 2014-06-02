@@ -1,20 +1,19 @@
 package test;
 
-import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 import org.junit.contrib.theories.Theory;
 import org.junit.runner.RunWith;
 
-import examples.adt.TreeDemo;
-import examples.adt.TreeDemo.EmptyQueueException;
-import examples.adt.stack.stack.types.Stack;
-import examples.adt.tree.types.Node;
-import examples.adt.tree.types.Tree;
-import tom.library.enumerator.Enumeration;
-import tom.library.theory.Enum;
-import tom.library.theory.PropCheck;
 import tom.library.theory.ForSome;
+import tom.library.theory.PropCheck;
+import examples.adt.tree.TreeDemo;
+import examples.adt.tree.TreeDemo.EmptyQueueException;
+import examples.adt.tree.tree.types.Node;
+import examples.adt.tree.tree.types.Tree;
 
 @RunWith(PropCheck.class)
 public class TreeDemoTest {
