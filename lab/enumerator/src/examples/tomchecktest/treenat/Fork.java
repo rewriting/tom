@@ -1,4 +1,4 @@
-package examples.data.treenat;
+package examples.tomchecktest.treenat;
 
 
 public class Fork<A> extends Tree<A> {

@@ -1,4 +1,4 @@
-package examples.data.treenat;
+package examples.tomchecktest.treenat;
 
 import tom.library.enumerator.Enumeration;
 import tom.library.enumerator.F;
