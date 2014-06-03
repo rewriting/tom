@@ -10,5 +10,7 @@ rm -r examples/adt/table/table
 
 rm -r examples/adt/tree/tree
 
+rm -r examples/adt/list/alist 
+
 rm -r examples/shop/shop
 

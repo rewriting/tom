@@ -11,6 +11,9 @@ tom examples/adt/table/TableDemo.t
 gom examples/adt/tree/tree.gom 
 tom examples/adt/tree/TreeDemo.t 
 
+gom examples/adt/list/AList.gom 
+tom examples/adt/list/DemoAList.t 
+
 gom examples/shop/Shop.gom
 
 # tom -gi tom/library/shrink/metaterm/Shrink.t
