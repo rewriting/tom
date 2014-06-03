@@ -1,4 +1,4 @@
-module examples.queues.Queue
+module examples.adt.queue.QueueLanguage
 imports int
 abstract syntax
 

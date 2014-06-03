@@ -3,6 +3,7 @@ gom examples/adt/stack/stackLanguage.gom
 
 gom examples/adt/queue/queue.gom 
 tom examples/adt/queue/SimpleQueue.t 
+gom examples/adt/queue/queueLanguage.gom
 
 gom examples/adt/table/table.gom 
 tom examples/adt/table/SimpleTable.t 

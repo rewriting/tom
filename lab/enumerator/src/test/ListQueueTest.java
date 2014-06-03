@@ -1,4 +1,4 @@
-package examples.queues;
+package test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assume.assumeTrue;
@@ -6,22 +6,21 @@ import static org.junit.Assume.assumeTrue;
 import org.junit.contrib.theories.Theory;
 import org.junit.runner.RunWith;
 
-import tom.library.enumerator.Combinators;
-import tom.library.enumerator.Enumeration;
-import tom.library.theory.Enum;
 import tom.library.theory.ForSome;
 import tom.library.theory.PropCheck;
-import examples.queues.queue.types.Elem;
-import examples.queues.queue.types.Queue;
+import examples.adt.queue.ListQueue;
+import examples.adt.queue.queuelanguage.types.Elem;
+import examples.adt.queue.queuelanguage.types.Queue;
+
 
 @RunWith(PropCheck.class)
-public class SimpleQueueTest {
+public class ListQueueTest {
 	
 	//@Theory
 	public void testInsertElemEmpty(@ForSome(maxSampleSize=100) Elem e) {
-        SimpleQueue sq = new SimpleQueue();
+        ListQueue sq = new ListQueue();
         try {
-        	int v = SimpleQueue.makeFromElem(e);
+        	int v = ListQueue.makeFromElem(e);
     		System.out.println("addEmpty " + e);
 
         	sq.add(v);
@@ -38,7 +37,7 @@ public class SimpleQueueTest {
 			@ForSome(maxSampleSize=100) Queue q
 			) {
         try {
-        	SimpleQueue sq = SimpleQueue.makeFromQueue(q);
+        	ListQueue sq = ListQueue.makeFromQueue(q);
     		System.out.println("add " + q);
     		int oldSize = sq.size();
         	sq.add(v);
@@ -56,7 +55,7 @@ public class SimpleQueueTest {
 			@ForSome(exhaustive=true, maxSampleSize=12) Queue q
 			) {
         try {
-        	SimpleQueue sq = SimpleQueue.makeFromQueue(q);
+        	ListQueue sq = ListQueue.makeFromQueue(q);
         	assumeTrue(sq.size() > 0);
     		System.out.println("remove " + q);
     		int oldSize = sq.size();
