@@ -1,4 +1,4 @@
-package examples.junit.quickcheck;
+package test.junit.quickcheck;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -14,9 +14,10 @@ import com.pholser.junit.quickcheck.From;
 
 import examples.adt.stack.ArrayStack;
 import examples.adt.stack.EmptyStackException;
+import examples.parser.rec.types.Exp;
 
 @RunWith(Theories.class)
-public class QuickCheckExample {
+public class JunitQuickCheckExampleTest {
 
 	@DataPoint
 	public static ArrayStack stack = new ArrayStack();
@@ -37,4 +38,9 @@ public class QuickCheckExample {
 		System.out.println("Quick: " + n);
 	}
 
+	@Theory
+	public void testExp(@ForAll(sampleSize = 10) @From({ ExpGenerator.class }) Exp n) {
+		System.out.println("Exp: " + n);
+	}
+	
 }

@@ -1,4 +1,4 @@
-package examples.junit.quickcheck;
+package test.junit.quickcheck;
 
 import java.math.BigInteger;
 

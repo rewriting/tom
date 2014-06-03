@@ -1,4 +1,4 @@
-package examples.jcheck;
+package test.jcheck;
 
 import org.jcheck.annotations.Configuration;
 import org.jcheck.annotations.Generator;

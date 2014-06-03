@@ -1,4 +1,4 @@
-package examples.jcheck;
+package test.jcheck;
 
 import java.math.BigInteger;
 import java.util.Random;
