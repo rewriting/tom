@@ -1,12 +1,13 @@
 package tom.library.shrink.metaterm;
 
 /*
+ * This is a prototype --- not used by the PropCheck framework
  * Should be compiled with -gi option
  */
 import aterm.*;
 import aterm.pure.PureFactory;
 
-import examples.adt.tree.types.*;
+import examples.adt.tree.tree.types.*;
 
 import tom.library.sl.Visitable;
 import tom.library.sl.VisitableBuiltin;

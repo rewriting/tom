@@ -1,4 +1,4 @@
-module examples.adt.Tree
+module examples.adt.tree.Tree
 imports int String
 abstract syntax
 
