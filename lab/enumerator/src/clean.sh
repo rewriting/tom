@@ -15,3 +15,4 @@ rm -r examples/adt/list/alist
 
 rm -r examples/shop/shop
 
+rm -r examples/parser/rec 

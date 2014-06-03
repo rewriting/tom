@@ -17,5 +17,8 @@ tom examples/adt/list/DemoAList.t
 
 gom examples/shop/Shop.gom
 
+gom examples/parser/Rec.gom 
+
 # tom -gi tom/library/shrink/metaterm/Shrink.t
 # tom -gi tom/library/shrink/metaterm/TomShrink.t
+
