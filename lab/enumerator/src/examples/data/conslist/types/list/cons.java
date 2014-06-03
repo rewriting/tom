@@ -220,9 +220,9 @@ buffer.append(",");
   }
   
   /**
-   * Returns the attribute examples.conslist.types.Elem
+   * Returns the attribute examples.data.conslist.types.Elem
    *
-   * @return the attribute examples.conslist.types.Elem
+   * @return the attribute examples.data.conslist.types.Elem
    */
   @Override
   public examples.data.conslist.types.Elem gete() {
@@ -230,10 +230,10 @@ buffer.append(",");
   }
 
   /**
-   * Sets and returns the attribute examples.conslist.types.List
+   * Sets and returns the attribute examples.data.conslist.types.List
    *
    * @param set_arg the argument to set
-   * @return the attribute examples.conslist.types.Elem which just has been set
+   * @return the attribute examples.data.conslist.types.Elem which just has been set
    */
   @Override
   public examples.data.conslist.types.List sete(examples.data.conslist.types.Elem set_arg) {
@@ -241,9 +241,9 @@ buffer.append(",");
   }
   
   /**
-   * Returns the attribute examples.conslist.types.List
+   * Returns the attribute examples.data.conslist.types.List
    *
-   * @return the attribute examples.conslist.types.List
+   * @return the attribute examples.data.conslist.types.List
    */
   @Override
   public examples.data.conslist.types.List getl() {
@@ -251,10 +251,10 @@ buffer.append(",");
   }
 
   /**
-   * Sets and returns the attribute examples.conslist.types.List
+   * Sets and returns the attribute examples.data.conslist.types.List
    *
    * @param set_arg the argument to set
-   * @return the attribute examples.conslist.types.List which just has been set
+   * @return the attribute examples.data.conslist.types.List which just has been set
    */
   @Override
   public examples.data.conslist.types.List setl(examples.data.conslist.types.List set_arg) {
@@ -280,7 +280,7 @@ buffer.append(",");
   }
 
   /**
-   * Apply a conversion on the ATerm contained in the String and returns a examples.conslist.types.List from it
+   * Apply a conversion on the ATerm contained in the String and returns a examples.data.conslist.types.List from it
    *
    * @param trm ATerm to convert into a Gom term
    * @param atConv ATerm Converter used to convert the ATerm
@@ -377,7 +377,7 @@ examples.data.conslist.types.Elem.fromTerm(appl.getArgument(0),atConv), examples
     int a, b, c;
     /* Set up the internal state */
     a = 0x9e3779b9; /* the golden ratio; an arbitrary value */
-    b = (-510144754<<8);
+    b = (1993351840<<8);
     c = getArity();
     /* -------------------------------------- handle most of the key */
     /* ------------------------------------ handle the last 11 bytes */
@@ -408,11 +408,11 @@ examples.data.conslist.types.Elem.fromTerm(appl.getArgument(0),atConv), examples
             return 
         new tom.library.enumerator.F<tom.library.enumerator.Enumeration<examples.data.conslist.types.List>,tom.library.enumerator.Enumeration<examples.data.conslist.types.List>>() {
           public tom.library.enumerator.Enumeration<examples.data.conslist.types.List> apply(final tom.library.enumerator.Enumeration<examples.data.conslist.types.List> t2) {
-            return tom.library.enumerator.Enumeration.apply(tom.library.enumerator.Enumeration.apply(tom.library.enumerator.Enumeration.singleton((tom.library.enumerator.F<examples.data.conslist.types.Elem,tom.library.enumerator.F<examples.data.conslist.types.List, examples.data.conslist.types.List>>)
-        new tom.library.enumerator.F<examples.data.conslist.types.Elem,tom.library.enumerator.F<examples.data.conslist.types.List, examples.data.conslist.types.List>>() {
-          public tom.library.enumerator.F<examples.data.conslist.types.List, examples.data.conslist.types.List> apply(final examples.data.conslist.types.Elem t1) {
+            return tom.library.enumerator.Enumeration.apply(tom.library.enumerator.Enumeration.apply(tom.library.enumerator.Enumeration.singleton((tom.library.enumerator.F<examples.data.conslist.types.Elem,tom.library.enumerator.F<examples.data.conslist.types.List,examples.data.conslist.types.List>>) 
+        new tom.library.enumerator.F<examples.data.conslist.types.Elem,tom.library.enumerator.F<examples.data.conslist.types.List,examples.data.conslist.types.List>>() {
+          public tom.library.enumerator.F<examples.data.conslist.types.List,examples.data.conslist.types.List> apply(final examples.data.conslist.types.Elem t1) {
             return 
-        new tom.library.enumerator.F<examples.data.conslist.types.List, examples.data.conslist.types.List>() {
+        new tom.library.enumerator.F<examples.data.conslist.types.List,examples.data.conslist.types.List>() {
           public examples.data.conslist.types.List apply(final examples.data.conslist.types.List t2) {
             return make(t1,t2);
           }

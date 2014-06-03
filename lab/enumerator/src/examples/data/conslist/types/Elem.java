@@ -72,7 +72,7 @@ public abstract class Elem extends examples.data.conslist.ConsListAbstractType  
   }
 
   /**
-   * Returns a examples.conslist.types.Elem from an ATerm without any conversion
+   * Returns a examples.data.conslist.types.Elem from an ATerm without any conversion
    *
    * @param trm ATerm to handle to retrieve a Gom term
    * @return the term from the ATerm
@@ -82,7 +82,7 @@ public abstract class Elem extends examples.data.conslist.ConsListAbstractType  
   }
 
   /**
-   * Returns a examples.conslist.types.Elem from a String without any conversion
+   * Returns a examples.data.conslist.types.Elem from a String without any conversion
    *
    * @param s String containing the ATerm
    * @return the term from the String
@@ -92,7 +92,7 @@ public abstract class Elem extends examples.data.conslist.ConsListAbstractType  
   }
 
   /**
-   * Returns a examples.conslist.types.Elem from a Stream without any conversion
+   * Returns a examples.data.conslist.types.Elem from a Stream without any conversion
    *
    * @param stream stream containing the ATerm
    * @return the term from the Stream
@@ -103,7 +103,7 @@ public abstract class Elem extends examples.data.conslist.ConsListAbstractType  
   }
 
   /**
-   * Apply a conversion on the ATerm and returns a examples.conslist.types.Elem
+   * Apply a conversion on the ATerm and returns a examples.data.conslist.types.Elem
    *
    * @param trm ATerm to convert into a Gom term
    * @param atConv ATermConverter used to convert the ATerm
@@ -133,13 +133,13 @@ public abstract class Elem extends examples.data.conslist.ConsListAbstractType  
       case 1:
         return results.get(0);
       default:
-        java.util.logging.Logger.getLogger("Elem").log(java.util.logging.Level.WARNING,"There were many possibilities ({0}) in {1} but the first one was chosen: {2}",new Object[] {results.toString(), "examples.conslist.types.Elem", results.get(0).toString()});
+        java.util.logging.Logger.getLogger("Elem").log(java.util.logging.Level.WARNING,"There were many possibilities ({0}) in {1} but the first one was chosen: {2}",new Object[] {results.toString(), "examples.data.conslist.types.Elem", results.get(0).toString()});
         return results.get(0);
     }
   }
 
   /**
-   * Apply a conversion on the ATerm contained in the String and returns a examples.conslist.types.Elem from it
+   * Apply a conversion on the ATerm contained in the String and returns a examples.data.conslist.types.Elem from it
    *
    * @param s String containing the ATerm
    * @param atConv ATerm Converter used to convert the ATerm
@@ -150,7 +150,7 @@ public abstract class Elem extends examples.data.conslist.ConsListAbstractType  
   }
 
   /**
-   * Apply a conversion on the ATerm contained in the Stream and returns a examples.conslist.types.Elem from it
+   * Apply a conversion on the ATerm contained in the Stream and returns a examples.data.conslist.types.Elem from it
    *
    * @param stream stream containing the ATerm
    * @param atConv ATerm Converter used to convert the ATerm

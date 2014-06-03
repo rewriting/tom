@@ -184,7 +184,7 @@ public final class b extends examples.data.conslist.types.Elem implements tom.li
   }
 
   /**
-   * Apply a conversion on the ATerm contained in the String and returns a examples.conslist.types.Elem from it
+   * Apply a conversion on the ATerm contained in the String and returns a examples.data.conslist.types.Elem from it
    *
    * @param trm ATerm to convert into a Gom term
    * @param atConv ATerm Converter used to convert the ATerm
@@ -277,7 +277,7 @@ public final class b extends examples.data.conslist.types.Elem implements tom.li
     int a, b, c;
     /* Set up the internal state */
     a = 0x9e3779b9; /* the golden ratio; an arbitrary value */
-    b = (-1145095940<<8);
+    b = (-1665528823<<8);
     c = getArity();
     /* -------------------------------------- handle most of the key */
     /* ------------------------------------ handle the last 11 bytes */

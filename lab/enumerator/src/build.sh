@@ -19,6 +19,11 @@ gom examples/shop/Shop.gom
 
 gom examples/parser/Rec.gom 
 
+gom examples/mutual.gom 
+gom examples/conslist.gom 
+gom examples/Recursive.gom 
+
+
 # tom -gi tom/library/shrink/metaterm/Shrink.t
 # tom -gi tom/library/shrink/metaterm/TomShrink.t
 

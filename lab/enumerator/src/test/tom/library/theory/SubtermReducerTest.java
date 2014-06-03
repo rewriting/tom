@@ -1,18 +1,17 @@
 package test.tom.library.theory;
 
-import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.number.OrderingComparison.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import examples.adt.list.alist.types.AList;
-import examples.data.mutual.recursive.types.D;
 import tom.library.shrink.reducers.SubtermReducer;
 import tom.library.sl.Visitable;
+import examples.adt.list.alist.types.AList;
+import examples.data.recursive.types.D;
 
 public class SubtermReducerTest {
 

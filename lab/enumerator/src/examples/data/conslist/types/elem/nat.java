@@ -211,7 +211,7 @@ public final class nat extends examples.data.conslist.types.Elem implements tom.
   }
 
   /**
-   * Sets and returns the attribute examples.conslist.types.Elem
+   * Sets and returns the attribute examples.data.conslist.types.Elem
    *
    * @param set_arg the argument to set
    * @return the attribute int which just has been set
@@ -240,7 +240,7 @@ public final class nat extends examples.data.conslist.types.Elem implements tom.
   }
 
   /**
-   * Apply a conversion on the ATerm contained in the String and returns a examples.conslist.types.Elem from it
+   * Apply a conversion on the ATerm contained in the String and returns a examples.data.conslist.types.Elem from it
    *
    * @param trm ATerm to convert into a Gom term
    * @param atConv ATerm Converter used to convert the ATerm
@@ -335,7 +335,7 @@ convertATermToInt(appl.getArgument(0), atConv)
     int a, b, c;
     /* Set up the internal state */
     a = 0x9e3779b9; /* the golden ratio; an arbitrary value */
-    b = (-401019975<<8);
+    b = (467899637<<8);
     c = getArity();
     /* -------------------------------------- handle most of the key */
     /* ------------------------------------ handle the last 11 bytes */
@@ -362,8 +362,8 @@ convertATermToInt(appl.getArgument(0), atConv)
     return 
         new tom.library.enumerator.F<tom.library.enumerator.Enumeration<java.lang.Integer>,tom.library.enumerator.Enumeration<examples.data.conslist.types.Elem>>() {
           public tom.library.enumerator.Enumeration<examples.data.conslist.types.Elem> apply(final tom.library.enumerator.Enumeration<java.lang.Integer> t1) {
-            return tom.library.enumerator.Enumeration.apply(tom.library.enumerator.Enumeration.singleton((tom.library.enumerator.F<java.lang.Integer, examples.data.conslist.types.Elem>)
-        new tom.library.enumerator.F<java.lang.Integer, examples.data.conslist.types.Elem>() {
+            return tom.library.enumerator.Enumeration.apply(tom.library.enumerator.Enumeration.singleton((tom.library.enumerator.F<java.lang.Integer,examples.data.conslist.types.Elem>) 
+        new tom.library.enumerator.F<java.lang.Integer,examples.data.conslist.types.Elem>() {
           public examples.data.conslist.types.Elem apply(final java.lang.Integer t1) {
             return make(java.lang.Integer.valueOf(t1));
           }

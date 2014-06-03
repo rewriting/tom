@@ -184,7 +184,7 @@ public final class nil extends examples.data.conslist.types.List implements tom.
   }
 
   /**
-   * Apply a conversion on the ATerm contained in the String and returns a examples.conslist.types.List from it
+   * Apply a conversion on the ATerm contained in the String and returns a examples.data.conslist.types.List from it
    *
    * @param trm ATerm to convert into a Gom term
    * @param atConv ATerm Converter used to convert the ATerm
@@ -277,7 +277,7 @@ public final class nil extends examples.data.conslist.types.List implements tom.
     int a, b, c;
     /* Set up the internal state */
     a = 0x9e3779b9; /* the golden ratio; an arbitrary value */
-    b = (-1313143225<<8);
+    b = (1633555057<<8);
     c = getArity();
     /* -------------------------------------- handle most of the key */
     /* ------------------------------------ handle the last 11 bytes */

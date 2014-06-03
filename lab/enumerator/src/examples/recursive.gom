@@ -1,4 +1,4 @@
-module examples.data.mutual.Recursive
+module examples.data.Recursive
 imports int
 abstract syntax
 

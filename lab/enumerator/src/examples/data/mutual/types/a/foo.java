@@ -203,9 +203,9 @@ public final class foo extends examples.data.mutual.types.A implements tom.libra
   }
   
   /**
-   * Returns the attribute examples.mutual.types.B
+   * Returns the attribute examples.data.mutual.types.B
    *
-   * @return the attribute examples.mutual.types.B
+   * @return the attribute examples.data.mutual.types.B
    */
   @Override
   public examples.data.mutual.types.B getb() {
@@ -213,10 +213,10 @@ public final class foo extends examples.data.mutual.types.A implements tom.libra
   }
 
   /**
-   * Sets and returns the attribute examples.mutual.types.A
+   * Sets and returns the attribute examples.data.mutual.types.A
    *
    * @param set_arg the argument to set
-   * @return the attribute examples.mutual.types.B which just has been set
+   * @return the attribute examples.data.mutual.types.B which just has been set
    */
   @Override
   public examples.data.mutual.types.A setb(examples.data.mutual.types.B set_arg) {
@@ -242,7 +242,7 @@ public final class foo extends examples.data.mutual.types.A implements tom.libra
   }
 
   /**
-   * Apply a conversion on the ATerm contained in the String and returns a examples.mutual.types.A from it
+   * Apply a conversion on the ATerm contained in the String and returns a examples.data.mutual.types.A from it
    *
    * @param trm ATerm to convert into a Gom term
    * @param atConv ATerm Converter used to convert the ATerm
@@ -337,7 +337,7 @@ examples.data.mutual.types.B.fromTerm(appl.getArgument(0),atConv)
     int a, b, c;
     /* Set up the internal state */
     a = 0x9e3779b9; /* the golden ratio; an arbitrary value */
-    b = (-1107918191<<8);
+    b = (-1136406804<<8);
     c = getArity();
     /* -------------------------------------- handle most of the key */
     /* ------------------------------------ handle the last 11 bytes */
@@ -364,8 +364,8 @@ examples.data.mutual.types.B.fromTerm(appl.getArgument(0),atConv)
     return 
         new tom.library.enumerator.F<tom.library.enumerator.Enumeration<examples.data.mutual.types.B>,tom.library.enumerator.Enumeration<examples.data.mutual.types.A>>() {
           public tom.library.enumerator.Enumeration<examples.data.mutual.types.A> apply(final tom.library.enumerator.Enumeration<examples.data.mutual.types.B> t1) {
-            return tom.library.enumerator.Enumeration.apply(tom.library.enumerator.Enumeration.singleton((tom.library.enumerator.F<examples.data.mutual.types.B, examples.data.mutual.types.A>)
-        new tom.library.enumerator.F<examples.data.mutual.types.B, examples.data.mutual.types.A>() {
+            return tom.library.enumerator.Enumeration.apply(tom.library.enumerator.Enumeration.singleton((tom.library.enumerator.F<examples.data.mutual.types.B,examples.data.mutual.types.A>) 
+        new tom.library.enumerator.F<examples.data.mutual.types.B,examples.data.mutual.types.A>() {
           public examples.data.mutual.types.A apply(final examples.data.mutual.types.B t1) {
             return make(t1);
           }

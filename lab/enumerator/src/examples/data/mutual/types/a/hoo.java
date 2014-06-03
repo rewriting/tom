@@ -218,9 +218,9 @@ buffer.append(",");
   }
   
   /**
-   * Returns the attribute examples.mutual.types.A
+   * Returns the attribute examples.data.mutual.types.A
    *
-   * @return the attribute examples.mutual.types.A
+   * @return the attribute examples.data.mutual.types.A
    */
   @Override
   public examples.data.mutual.types.A geta() {
@@ -228,10 +228,10 @@ buffer.append(",");
   }
 
   /**
-   * Sets and returns the attribute examples.mutual.types.A
+   * Sets and returns the attribute examples.data.mutual.types.A
    *
    * @param set_arg the argument to set
-   * @return the attribute examples.mutual.types.A which just has been set
+   * @return the attribute examples.data.mutual.types.A which just has been set
    */
   @Override
   public examples.data.mutual.types.A seta(examples.data.mutual.types.A set_arg) {
@@ -249,7 +249,7 @@ buffer.append(",");
   }
 
   /**
-   * Sets and returns the attribute examples.mutual.types.A
+   * Sets and returns the attribute examples.data.mutual.types.A
    *
    * @param set_arg the argument to set
    * @return the attribute int which just has been set
@@ -278,7 +278,7 @@ buffer.append(",");
   }
 
   /**
-   * Apply a conversion on the ATerm contained in the String and returns a examples.mutual.types.A from it
+   * Apply a conversion on the ATerm contained in the String and returns a examples.data.mutual.types.A from it
    *
    * @param trm ATerm to convert into a Gom term
    * @param atConv ATerm Converter used to convert the ATerm
@@ -375,7 +375,7 @@ examples.data.mutual.types.A.fromTerm(appl.getArgument(0),atConv), convertATermT
     int a, b, c;
     /* Set up the internal state */
     a = 0x9e3779b9; /* the golden ratio; an arbitrary value */
-    b = (-270269203<<8);
+    b = (-42209323<<8);
     c = getArity();
     /* -------------------------------------- handle most of the key */
     /* ------------------------------------ handle the last 11 bytes */
@@ -406,11 +406,11 @@ examples.data.mutual.types.A.fromTerm(appl.getArgument(0),atConv), convertATermT
             return 
         new tom.library.enumerator.F<tom.library.enumerator.Enumeration<java.lang.Integer>,tom.library.enumerator.Enumeration<examples.data.mutual.types.A>>() {
           public tom.library.enumerator.Enumeration<examples.data.mutual.types.A> apply(final tom.library.enumerator.Enumeration<java.lang.Integer> t2) {
-            return tom.library.enumerator.Enumeration.apply(tom.library.enumerator.Enumeration.apply(tom.library.enumerator.Enumeration.singleton((tom.library.enumerator.F<examples.data.mutual.types.A,tom.library.enumerator.F<java.lang.Integer, examples.data.mutual.types.A>>)
-        new tom.library.enumerator.F<examples.data.mutual.types.A,tom.library.enumerator.F<java.lang.Integer, examples.data.mutual.types.A>>() {
-          public tom.library.enumerator.F<java.lang.Integer, examples.data.mutual.types.A> apply(final examples.data.mutual.types.A t1) {
+            return tom.library.enumerator.Enumeration.apply(tom.library.enumerator.Enumeration.apply(tom.library.enumerator.Enumeration.singleton((tom.library.enumerator.F<examples.data.mutual.types.A,tom.library.enumerator.F<java.lang.Integer,examples.data.mutual.types.A>>) 
+        new tom.library.enumerator.F<examples.data.mutual.types.A,tom.library.enumerator.F<java.lang.Integer,examples.data.mutual.types.A>>() {
+          public tom.library.enumerator.F<java.lang.Integer,examples.data.mutual.types.A> apply(final examples.data.mutual.types.A t1) {
             return 
-        new tom.library.enumerator.F<java.lang.Integer, examples.data.mutual.types.A>() {
+        new tom.library.enumerator.F<java.lang.Integer,examples.data.mutual.types.A>() {
           public examples.data.mutual.types.A apply(final java.lang.Integer t2) {
             return make(t1,java.lang.Integer.valueOf(t2));
           }

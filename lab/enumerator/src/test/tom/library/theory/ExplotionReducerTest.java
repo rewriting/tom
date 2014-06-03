@@ -11,7 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import examples.adt.list.alist.types.AList;
-import examples.data.mutual.recursive.types.D;
+import examples.data.recursive.types.D;
 import tom.library.shrink.reducers.ExplotionReducer;
 import tom.library.sl.Visitable;
 
