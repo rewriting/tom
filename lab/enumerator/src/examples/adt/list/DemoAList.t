@@ -1,8 +1,8 @@
-package examples.lists;
+package examples.adt.list;
 
-import examples.lists.alist.types.*;
-import examples.lists.alist.types.alist.*;
-import examples.lists.alist.types.elem.*;
+import examples.adt.list.alist.types.*;
+import examples.adt.list.alist.types.alist.*;
+import examples.adt.list.alist.types.elem.*;
 
 public class DemoAList {
 

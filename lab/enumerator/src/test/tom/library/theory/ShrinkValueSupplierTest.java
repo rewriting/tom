@@ -14,7 +14,7 @@ import org.junit.contrib.theories.PotentialAssignment.CouldNotGenerateValueExcep
 import tom.library.sl.Visitable;
 import tom.library.theory.shrink.suppliers.BigShrinkValueSupplier;
 import tom.library.theory.shrink.suppliers.ShrinkValueSupplier;
-import examples.lists.alist.types.AList;
+import examples.adt.list.alist.types.AList;
 
 public class ShrinkValueSupplierTest {
 

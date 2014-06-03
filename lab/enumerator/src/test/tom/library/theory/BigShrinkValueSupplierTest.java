@@ -16,7 +16,7 @@ import org.junit.Test;
 import org.junit.contrib.theories.PotentialAssignment;
 import org.junit.contrib.theories.PotentialAssignment.CouldNotGenerateValueException;
 
-import examples.lists.alist.types.AList;
+import examples.adt.list.alist.types.AList;
 import tom.library.sl.Visitable;
 import tom.library.theory.shrink.suppliers.BigShrinkValueSupplier;
 

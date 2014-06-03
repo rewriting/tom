@@ -6,9 +6,9 @@ import static org.hamcrest.CoreMatchers.*;
 
 import org.junit.Test;
 
+import examples.adt.list.alist.types.AList;
+import examples.adt.list.alist.types.Elem;
 import examples.adt.table.table.types.Val;
-import examples.lists.alist.types.AList;
-import examples.lists.alist.types.Elem;
 
 public class VisitableToolsTest {
 

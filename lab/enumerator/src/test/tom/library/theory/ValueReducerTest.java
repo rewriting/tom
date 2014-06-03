@@ -10,7 +10,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import examples.lists.alist.types.AList;
+import examples.adt.list.alist.types.AList;
 import tom.library.shrink.reducers.ValueReducer;
 import tom.library.sl.Visitable;
 

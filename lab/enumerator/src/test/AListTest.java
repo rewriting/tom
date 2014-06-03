@@ -1,11 +1,11 @@
 package test;
 
-import static examples.lists.DemoAList.addFirst;
-import static examples.lists.DemoAList.contains;
-import static examples.lists.DemoAList.get;
-import static examples.lists.DemoAList.getIndexOf;
-import static examples.lists.DemoAList.isEmpty;
-import static examples.lists.DemoAList.size;
+import static examples.adt.list.DemoAList.addFirst;
+import static examples.adt.list.DemoAList.contains;
+import static examples.adt.list.DemoAList.get;
+import static examples.adt.list.DemoAList.getIndexOf;
+import static examples.adt.list.DemoAList.isEmpty;
+import static examples.adt.list.DemoAList.size;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
@@ -21,8 +21,8 @@ import org.junit.runner.RunWith;
 
 import tom.library.theory.ForSome;
 import tom.library.theory.PropCheck;
-import examples.lists.alist.types.AList;
-import examples.lists.alist.types.Elem;
+import examples.adt.list.alist.types.AList;
+import examples.adt.list.alist.types.Elem;
 
 @RunWith(PropCheck.class)
 public class AListTest {
