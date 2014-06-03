@@ -42,11 +42,25 @@ public class Inventory {
 	
 	public LineItem get(Item item, int quantity) throws InventoryException {
 		if (has(item)) {
-			/**
+			/*
 			 * fix bug revealed by testInventoryGetItemFromInventoryWithQuantity()
+			 * add: reduceItemQuantity(item, quantity);
 			 */
-			reduceItemQuantity(item, quantity);
-			return new LineItem(item, quantity);
+			//reduceItemQuantity(item, quantity);
+			//return new LineItem(item, quantity);
+			
+			/*
+			 * fix bug revealed by testInventoryNeverNegative()
+			 */
+			int returnedQty = 0;
+			int itemQty = getItemQuantity(item); 
+			if (itemQty <= quantity) {
+				returnedQty = itemQty;
+			} else {
+				returnedQty = quantity;
+			}
+			reduceItemQuantity(item, returnedQty);
+			return new LineItem(item, returnedQty);
 		} else {
 			throw new InventoryException("no item: " + item + " in inventory");
 		}

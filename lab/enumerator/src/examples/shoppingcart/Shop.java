@@ -14,16 +14,22 @@ public class Shop {
 	}
 	
 	public Shop buy(Cart cart) {
+		Cart boughtItems = new Cart();
 		// re-calculate the quantity
 		for (LineItem lineItem : cart.getLineItems()) {
 			try {
-				inventory.get(lineItem.getItem(), lineItem.getQuantity());
+				/*
+				 * Bug after revealed after fix for inventoryNeverNegative()
+				 */
+				//inventory.get(lineItem.getItem(), lineItem.getQuantity())
+				boughtItems.addToCart(inventory.get(lineItem.getItem(), lineItem.getQuantity()));
 			} catch (InventoryException e) {
 				// do nothing
 			}
 		}
 		// put the cart in the list
-		carts.add(cart);
+		//carts.add(cart);
+		carts.add(boughtItems);
 		return this;
 	}
 	
@@ -48,5 +54,9 @@ public class Shop {
 	public Shop setInventory(Inventory inventory) {
 		this.inventory = inventory;
 		return this;
+	}
+	
+	public Cart getLatestSell() {
+		return carts.get(carts.size() - 1);
 	}
 }

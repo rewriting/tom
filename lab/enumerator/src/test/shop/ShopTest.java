@@ -7,6 +7,7 @@ import static org.hamcrest.number.OrderingComparison.*;
 
 import java.util.Collection;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -15,6 +16,7 @@ import org.junit.runner.RunWith;
 
 import tom.library.theory.ForSome;
 import tom.library.theory.PropCheck;
+import examples.shoppingcart.Cart;
 import examples.shoppingcart.InventoryException;
 import examples.shoppingcart.LineItem;
 import examples.shoppingcart.Shop;
@@ -77,7 +79,6 @@ public class ShopTest {
 		
 		examples.shoppingcart.Inventory inv = inventory.translateInventory();
 		examples.shoppingcart.Item it = item.translateItem();
-		examples.shoppingcart.Inventory invClone = inventory.translateInventory();
 		
 		assumeThat(inv.has(it), is(false));
 		assumeThat(quantity, greaterThanOrEqualTo(0));
@@ -92,7 +93,7 @@ public class ShopTest {
 	 * minus the taken quantity 
 	 * 
 	 * </p>
-	 * has(inventory, item) && (quantity > 0) => 
+	 * has(inventory, item) && (getItemQuantity(inventory, item) >= quantity) => 
 	 * getItemQuantity(get(inventory, item, quantity), item) =  getItemQuantity(inventory, item) - quantity 
 	 * 
 	 * @param inventory
@@ -109,7 +110,7 @@ public class ShopTest {
 		examples.shoppingcart.Inventory invClone = inventory.translateInventory();
 		
 		assumeThat(inv.has(it), is(true));
-		assumeThat(quantity, greaterThan(0));
+		assumeThat(inv.getItemQuantity(it), greaterThanOrEqualTo(quantity));
 		
 		inv.get(it, quantity);
 		
@@ -119,7 +120,9 @@ public class ShopTest {
 	/**
 	 * 
 	 * ForAll item in cart, 
-	 * getItemQuantity(getInventory(buy(inventory, cart)), item) = getItemQuantity(inventory, item) + getQuantity(cart, item)
+	 * has(inventory, item) => 
+	 * getItemQuantity(getInventory(buy(inventory, cart)), item) = getItemQuantity(inventory, item) - getQuantity(cart', item)
+	 * where cart' = getLatestSell(buy(inventory, cart))
 	 * 
 	 * @param inventory
 	 * @param cart
@@ -134,13 +137,51 @@ public class ShopTest {
 		examples.shoppingcart.Cart crt = cart.translateCart();
 		examples.shoppingcart.Inventory invClone = inventory.translateInventory();
 		
+		for (examples.shoppingcart.LineItem li : crt.getLineItems()) {
+			examples.shoppingcart.Item item = li.getItem();
+			assumeThat(inv.has(item), is(true));
+		}
+		
+		/*
+		 * 
 		classUnderTest.setInventory(inv).buy(crt);
 		for (examples.shoppingcart.LineItem li : crt.getLineItems()) {
 			examples.shoppingcart.Item item = li.getItem();
 			int cartItemQuantity = li.getQuantity();
-			assertThat(classUnderTest.getInventoryQuantity(item), is(invClone.getItemQuantity(item) + cartItemQuantity));
+			assertThat(classUnderTest.getInventoryQuantity(item), is(invClone.getItemQuantity(item) - cartItemQuantity));
+		}
+		*/
+		classUnderTest.setInventory(inv).buy(crt);
+		for (examples.shoppingcart.LineItem li : crt.getLineItems()) {
+			examples.shoppingcart.Item item = li.getItem();
+			int cartItemQuantity = li.getQuantity();
+			assertThat(classUnderTest.getInventoryQuantity(item), is(invClone.getItemQuantity(item) - cartItemQuantity));
 		}
 	}
+	
+	/**
+	 * 
+	 * 
+	 * @param inventory
+	 * @param item
+	 * @param quantity
+	 */
+	@Theory
+	public void testInventoryNeverNegative(
+			@ForSome(minSampleSize = 30, maxSampleSize = 60) Inventory inventory,
+			@ForSome(minSampleSize = 30, maxSampleSize = 60) Item item,
+			@ForSome(minSampleSize = 30, maxSampleSize = 60) Integer quantity) {
+		examples.shoppingcart.Item it = item.translateItem();
+		Cart cart = new Cart();
+		cart.addToCart(it, quantity);
+		
+		classUnderTest.setInventory(inventory.translateInventory());
+		
+		classUnderTest.buy(cart);
+		
+		assertThat(classUnderTest.getInventoryQuantity(it), greaterThanOrEqualTo(0));
+	}
+	
 	
 	@Ignore
 	@Theory
