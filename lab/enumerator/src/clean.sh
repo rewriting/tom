@@ -8,4 +8,4 @@ rm -r examples/adt/table/table
 rm -r examples/adt/table/SimpleTable.java 
 rm -r examples/adt/table/TableDemo.java 
 
-rm -r examples/shoppingcart/shop
+rm -r examples/shop/shop

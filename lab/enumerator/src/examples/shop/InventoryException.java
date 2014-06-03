@@ -1,4 +1,4 @@
-package examples.shoppingcart;
+package examples.shop;
 
 public class InventoryException extends Exception {
 

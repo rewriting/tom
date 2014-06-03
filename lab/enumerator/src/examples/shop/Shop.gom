@@ -1,4 +1,4 @@
-module examples.shoppingcart.Shop
+module examples.shop.Shop
 imports int
 abstract syntax
 
@@ -39,23 +39,23 @@ Product:make(id, price) {
 }
 
 sort Inventory:import() {
-	import examples.shoppingcart.*;
+	import examples.shop.*;
 	import java.util.*;
 }
 
 sort Inventory:block() {
 	%include { java/util/types/Collection.tom }
 	
-	public examples.shoppingcart.Inventory translateInventory() {
-		examples.shoppingcart.Inventory inv = new examples.shoppingcart.Inventory();
+	public examples.shop.Inventory translateInventory() {
+		examples.shop.Inventory inv = new examples.shop.Inventory();
 		buildInventory(this, inv);
 		return inv;
 	}
 	
-	private void buildInventory(Inventory inventory, examples.shoppingcart.Inventory inv) {
+	private void buildInventory(Inventory inventory, examples.shop.Inventory inv) {
 		%match(inventory) {
 			Inv(x, y) -> {
-				examples.shoppingcart.LineItem li = `x.translateLineItem(); 
+				examples.shop.LineItem li = `x.translateLineItem(); 
 				inv.add(li.getItem(), li.getQuantity());
 				buildInventory(`y, inv);
 			}
@@ -65,18 +65,18 @@ sort Inventory:block() {
 }
 
 sort ShoppingCart:import() {
-	import examples.shoppingcart.*;
+	import examples.shop.*;
 	import java.util.*;
 }
 
 sort ShoppingCart:block() {
-	public examples.shoppingcart.Cart translateCart() {
-		examples.shoppingcart.Cart cart = new examples.shoppingcart.Cart();
+	public examples.shop.Cart translateCart() {
+		examples.shop.Cart cart = new examples.shop.Cart();
 		buildCart(cart, this);
 		return cart;
 	}
 	
-	private void buildCart(examples.shoppingcart.Cart cart, ShoppingCart shoppingCart) {
+	private void buildCart(examples.shop.Cart cart, ShoppingCart shoppingCart) {
 		%match(shoppingCart) {
 			EmptyCart() -> { return; }
 			Cart(lineItem, y) -> {
@@ -88,23 +88,23 @@ sort ShoppingCart:block() {
 }
 
 sort LineItem:import() {
-	import examples.shoppingcart.*;
+	import examples.shop.*;
 	import java.util.*;
 }
 
 sort LineItem:block() {
-	public examples.shoppingcart.LineItem translateLineItem() {
+	public examples.shop.LineItem translateLineItem() {
 		%match(this) {
-			Line(item, quantity) -> { return new examples.shoppingcart.LineItem(`item.translateItem(), `quantity); }
+			Line(item, quantity) -> { return new examples.shop.LineItem(`item.translateItem(), `quantity); }
 		} 
 		return null;
 	}
 }
 
 sort Item:block() {
-	public examples.shoppingcart.Item translateItem() {
+	public examples.shop.Item translateItem() {
 		%match(this) {
-			Product(id, price) -> { return new examples.shoppingcart.Item(`id, `price); } 
+			Product(id, price) -> { return new examples.shop.Item(`id, `price); } 
 		}
 		return null;
 	}

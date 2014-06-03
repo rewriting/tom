@@ -1,0 +1,72 @@
+
+%include { int.tom }
+
+%typeterm Inventory {
+  implement { examples.shop.shop.types.Inventory }
+  is_sort(t) { ($t instanceof examples.shop.shop.types.Inventory) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm ShoppingCart {
+  implement { examples.shop.shop.types.ShoppingCart }
+  is_sort(t) { ($t instanceof examples.shop.shop.types.ShoppingCart) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm LineItem {
+  implement { examples.shop.shop.types.LineItem }
+  is_sort(t) { ($t instanceof examples.shop.shop.types.LineItem) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm Item {
+  implement { examples.shop.shop.types.Item }
+  is_sort(t) { ($t instanceof examples.shop.shop.types.Item) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+%op Inventory EmptyInv() {
+  is_fsym(t) { ($t instanceof examples.shop.shop.types.inventory.EmptyInv) }
+  make() { examples.shop.shop.types.inventory.EmptyInv.make() }
+}
+
+%op Inventory Inv(LineItem:LineItem, Inventory:Inventory) {
+  is_fsym(t) { ($t instanceof examples.shop.shop.types.inventory.Inv) }
+  get_slot(LineItem, t) { $t.getLineItem() }
+  get_slot(Inventory, t) { $t.getInventory() }
+  make(t0, t1) { examples.shop.shop.types.inventory.Inv.make($t0, $t1) }
+}
+
+%op ShoppingCart EmptyCart() {
+  is_fsym(t) { ($t instanceof examples.shop.shop.types.shoppingcart.EmptyCart) }
+  make() { examples.shop.shop.types.shoppingcart.EmptyCart.make() }
+}
+
+%op ShoppingCart Cart(LineItem:LineItem, ShoppingCart:ShoppingCart) {
+  is_fsym(t) { ($t instanceof examples.shop.shop.types.shoppingcart.Cart) }
+  get_slot(LineItem, t) { $t.getLineItem() }
+  get_slot(ShoppingCart, t) { $t.getShoppingCart() }
+  make(t0, t1) { examples.shop.shop.types.shoppingcart.Cart.make($t0, $t1) }
+}
+
+%op LineItem Line(Item:Item, Quantity:int) {
+  is_fsym(t) { ($t instanceof examples.shop.shop.types.lineitem.Line) }
+  get_slot(Item, t) { $t.getItem() }
+  get_slot(Quantity, t) { $t.getQuantity() }
+  make(t0, t1) { examples.shop.shop.types.lineitem.Line.make($t0, $t1) }
+}
+
+%op Item Product(Id:int, Price:int) {
+  is_fsym(t) { ($t instanceof examples.shop.shop.types.item.Product) }
+  get_slot(Id, t) { $t.getId() }
+  get_slot(Price, t) { $t.getPrice() }
+  make(t0, t1) { examples.shop.shop.types.item.Product.make($t0, $t1) }
+}
+

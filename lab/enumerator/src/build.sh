@@ -8,4 +8,4 @@ gom examples/adt/table/table.gom
 tom examples/adt/table/SimpleTable.t 
 tom examples/adt/table/TableDemo.t 
 
-gom examples/shoppingcart/Shop.gom
+gom examples/shop/Shop.gom
