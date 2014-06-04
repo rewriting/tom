@@ -5,11 +5,8 @@ import static org.junit.Assume.*;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.number.OrderingComparison.*;
 
-import java.util.Collection;
-
 import org.junit.Before;
 import org.junit.Ignore;
-import org.junit.Test;
 import org.junit.contrib.theories.Theory;
 import org.junit.runner.RunWith;
 
@@ -17,8 +14,8 @@ import tom.library.theory.ForSome;
 import tom.library.theory.PropCheck;
 import examples.shop.Cart;
 import examples.shop.InventoryException;
-import examples.shop.LineItem;
 import examples.shop.Shop;
+import examples.shop.ShopFactory;
 import examples.shop.shop.types.Inventory;
 import examples.shop.shop.types.Item;
 import examples.shop.shop.types.ShoppingCart;
@@ -26,11 +23,12 @@ import examples.shop.shop.types.ShoppingCart;
 @RunWith(PropCheck.class)
 public class ShopTest {
 
-	private Shop classUnderTest;
-	
+	//private Shop classUnderTest;
+	private ShopFactory factory;
 	@Before
 	public void setUp() throws Exception {
-		classUnderTest = new Shop();
+		//classUnderTest = new Shop();
+		factory = ShopFactory.getInstance();
 	}
 
 	/**
@@ -50,9 +48,9 @@ public class ShopTest {
 			@ForSome(minSampleSize = 30, maxSampleSize = 60) Item item,
 			@ForSome(minSampleSize = 30, maxSampleSize = 60) Integer quantity) throws InventoryException {
 		
-		examples.shop.Inventory inv = inventory.translateInventory();
-		examples.shop.Item it = item.translateItem();
-		examples.shop.Inventory invClone = inventory.translateInventory();
+		examples.shop.Inventory inv = factory.makeInventory(inventory);
+		examples.shop.Item it = factory.makeItem(item);
+		examples.shop.Inventory invClone = factory.makeInventory(inventory);
 		
 		assumeThat(inv.has(it), is(true));
 		assumeThat(quantity, greaterThan(0));
@@ -76,8 +74,8 @@ public class ShopTest {
 			@ForSome(minSampleSize = 30, maxSampleSize = 60) Item item,
 			@ForSome(minSampleSize = 30, maxSampleSize = 60) Integer quantity) throws InventoryException {
 		
-		examples.shop.Inventory inv = inventory.translateInventory();
-		examples.shop.Item it = item.translateItem();
+		examples.shop.Inventory inv = factory.makeInventory(inventory);
+		examples.shop.Item it = factory.makeItem(item);
 		
 		assumeThat(inv.has(it), is(false));
 		assumeThat(quantity, greaterThanOrEqualTo(0));
@@ -104,9 +102,9 @@ public class ShopTest {
 			@ForSome(minSampleSize = 30, maxSampleSize = 60) Item item,
 			@ForSome(minSampleSize = 30, maxSampleSize = 60) Integer quantity) throws InventoryException {
 		
-		examples.shop.Inventory inv = inventory.translateInventory();
-		examples.shop.Item it = item.translateItem();
-		examples.shop.Inventory invClone = inventory.translateInventory();
+		examples.shop.Inventory inv = factory.makeInventory(inventory);
+		examples.shop.Item it = factory.makeItem(item);
+		examples.shop.Inventory invClone = factory.makeInventory(inventory);
 		
 		assumeThat(inv.has(it), is(true));
 		assumeThat(inv.getItemQuantity(it), greaterThanOrEqualTo(quantity));
@@ -129,16 +127,17 @@ public class ShopTest {
 	 */
 	@Theory
 	public void testBuy(
-			@ForSome(minSampleSize = 30, maxSampleSize = 60) Inventory inventory,
-			@ForSome(minSampleSize = 30, maxSampleSize = 60) ShoppingCart cart) throws InventoryException {
+			@ForSome(minSampleSize = 0, maxSampleSize = 30) Inventory inventory,
+			@ForSome(minSampleSize = 0, maxSampleSize = 20) ShoppingCart cart) throws InventoryException {
 		
-		examples.shop.Inventory inv = inventory.translateInventory();
-		examples.shop.Cart crt = cart.translateCart();
-		examples.shop.Inventory invClone = inventory.translateInventory();
+		//examples.shop.Inventory inv = factory.makeInventory(inventory);
+		Shop shop = factory.makeShop(inventory);
+		examples.shop.Cart crt = factory.makeCart(cart);
+		examples.shop.Inventory invClone = factory.makeInventory(inventory);
 		
 		for (examples.shop.LineItem li : crt.getLineItems()) {
 			examples.shop.Item item = li.getItem();
-			assumeThat(inv.has(item), is(true));
+			assumeThat(shop.has(item), is(true));
 		}
 		
 		/*
@@ -149,13 +148,14 @@ public class ShopTest {
 			int cartItemQuantity = li.getQuantity();
 			assertThat(classUnderTest.getInventoryQuantity(item), is(invClone.getItemQuantity(item) - cartItemQuantity));
 		}
-		*/
-		classUnderTest.setInventory(inv).buy(crt);
-		Cart boughtItems = classUnderTest.getLatestSell();
+		 */
+		//classUnderTest.setInventory(inv).buy(crt);
+		shop.buy(crt);
+		Cart boughtItems = shop.getLatestSell();
 		for (examples.shop.LineItem li : boughtItems.getLineItems()) {
 			examples.shop.Item item = li.getItem();
 			int cartItemQuantity = li.getQuantity();
-			assertThat(classUnderTest.getInventoryQuantity(item), is(invClone.getItemQuantity(item) - cartItemQuantity));
+			assertThat(shop.getInventoryQuantity(item), is(invClone.getItemQuantity(item) - cartItemQuantity));
 		}
 	}
 	
@@ -174,12 +174,12 @@ public class ShopTest {
 		examples.shop.Item it = item.translateItem();
 		Cart cart = new Cart();
 		cart.addToCart(it, quantity);
+		Shop shop = factory.makeShop(inventory);
+		//classUnderTest.setInventory(inventory.translateInventory());
 		
-		classUnderTest.setInventory(inventory.translateInventory());
+		shop.buy(cart);
 		
-		classUnderTest.buy(cart);
-		
-		assertThat(classUnderTest.getInventoryQuantity(it), greaterThanOrEqualTo(0));
+		assertThat(shop.getInventoryQuantity(it), greaterThanOrEqualTo(0));
 	}
 	
 	

@@ -59,4 +59,8 @@ public class Shop {
 	public Cart getLatestSell() {
 		return carts.get(carts.size() - 1);
 	}
+	
+	public boolean has(Item item) {
+		return inventory.has(item);
+	}
 }

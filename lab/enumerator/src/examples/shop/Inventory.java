@@ -11,6 +11,11 @@ public class Inventory {
 		inventory = new HashSet<LineItem>();
 	}
 	
+	public Inventory add(LineItem lineItem) {
+		add(lineItem.getItem(), lineItem.getQuantity());
+		return this;
+	}
+	
 	public Inventory add(Item item, int quantity) {
 		if (has(item)) {
 			addItemQuantity(item, quantity);
