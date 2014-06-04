@@ -139,7 +139,7 @@ public final class PropCheck extends Theories {
 		 */
 		for (Method method : testclass.getMethods()) {
 			if (method.getAnnotation(Theory.class) != null) {
-				Class[] parameterTypes = method.getParameterTypes();
+				Class<?>[] parameterTypes = method.getParameterTypes();
 
 				Annotation[][] parameterAnnotations = method.getParameterAnnotations();
 
