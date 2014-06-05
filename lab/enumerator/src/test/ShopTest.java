@@ -171,7 +171,7 @@ public class ShopTest {
 			@ForSome(minSampleSize = 30, maxSampleSize = 60) Inventory inventory,
 			@ForSome(minSampleSize = 30, maxSampleSize = 60) Item item,
 			@ForSome(minSampleSize = 30, maxSampleSize = 60) Integer quantity) {
-		examples.shop.Item it = item.translateItem();
+		examples.shop.Item it = factory.makeItem(item);
 		Cart cart = new Cart();
 		cart.addToCart(it, quantity);
 		Shop shop = factory.makeShop(inventory);
@@ -187,7 +187,7 @@ public class ShopTest {
 	@Theory
 	public void testInventory(@ForSome(minSampleSize = 30, maxSampleSize = 102) Inventory inventory) {
 		System.out.println(inventory);
-		examples.shop.Inventory inv = inventory.translateInventory();
+		examples.shop.Inventory inv = factory.makeInventory(inventory);
 		System.out.println(inv);
 		fail("Not yet implemented");
 	}
@@ -196,7 +196,7 @@ public class ShopTest {
 	@Theory
 	public void testCart(@ForSome(minSampleSize = 30, maxSampleSize = 102) Inventory inventory) {
 		System.out.println(inventory);
-		examples.shop.Inventory inv = inventory.translateInventory();
+		examples.shop.Inventory inv = factory.makeInventory(inventory);
 		System.out.println(inv);
 		fail("Not yet implemented");
 	}

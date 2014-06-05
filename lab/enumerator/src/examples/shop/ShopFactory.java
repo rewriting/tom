@@ -3,6 +3,8 @@ package examples.shop;
 public class ShopFactory {
 	private static ShopFactory INSTANCE;
 
+	private ShopFactory() {}
+	
 	public static ShopFactory getInstance() {
 		if (INSTANCE == null) {
 			INSTANCE = new ShopFactory();
@@ -12,7 +14,11 @@ public class ShopFactory {
 	
 	public Shop makeShop(examples.shop.shop.types.Inventory inventoryGom) {
 		Inventory inventory = new Inventory();
-		buildInventory(inventoryGom, inventory);
+		//buildInventory(inventoryGom, inventory);
+		while (!inventoryGom.isEmptyInv()) {
+			inventory.add(makeLineItem(inventoryGom.getLineItem()));
+			inventoryGom = inventoryGom.getInventory();
+		}
 		Shop shop = new Shop();
 		shop.setInventory(inventory);
 		return shop;
@@ -20,17 +26,22 @@ public class ShopFactory {
 	
 	public Inventory makeInventory(examples.shop.shop.types.Inventory inventoryGom) {
 		Inventory inventory = new Inventory();
-		buildInventory(inventoryGom, inventory);
+		//buildInventory(inventoryGom, inventory);
+		System.out.println(inventoryGom);
+		while (!inventoryGom.isEmptyInv()) {
+			inventory.add(makeLineItem(inventoryGom.getLineItem()));
+			inventoryGom = inventoryGom.getInventory();
+		}
 		return inventory;
 	}
 	
-	private void buildInventory(examples.shop.shop.types.Inventory inventoryGom, Inventory inventory) {
-		if (inventoryGom.isInv()) {
-			inventory.add(makeLineItem(inventoryGom.getLineItem()));
-			examples.shop.shop.types.Inventory tail = inventoryGom.getInventory();
-			buildInventory(tail, inventory);
-		}
-	}
+//	private void buildInventory(examples.shop.shop.types.Inventory inventoryGom, Inventory inventory) {
+//		if (inventoryGom.isInv()) {
+//			inventory.add(makeLineItem(inventoryGom.getLineItem()));
+//			examples.shop.shop.types.Inventory tail = inventoryGom.getInventory();
+//			buildInventory(tail, inventory);
+//		}
+//	}
 	
 	public Cart makeCart(examples.shop.shop.types.ShoppingCart cartGom) {
 		Cart cart = new Cart();
