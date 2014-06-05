@@ -258,7 +258,7 @@ public final class PropCheck extends Theories {
 		public String generateStatistic() {
 			return String.format("Testing %s().\n%s", 
 					testObject.getMethodName(), 
-					handler.getStatistic().generateStatistic());
+					handler.generateTestStatistics());
 		}
 	}
 }

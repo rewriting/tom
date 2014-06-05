@@ -95,6 +95,10 @@ public class ExecutionHandler {
 		return statistic;
 	}
 	
+	public String generateTestStatistics() {
+		return statistic.generateStatistic();
+	}
+	
 	public boolean isTestNeverSucceed() {
 		return statistic.getSuccessCount() == 0? true : false;
 	}

@@ -11,7 +11,7 @@ ShoppingCart = EmptyCart()
 LineItem = Line(Item:Item, Quantity:int)
 
 Item = Product(Id:int, Price:int)
-
+/*
 Line:make(item, quantity) {
 	int newQuantity = 1;
 	if (quantity < 0) {
@@ -109,3 +109,4 @@ sort Item:block() {
 		return null;
 	}
 }
+*/
