@@ -212,22 +212,12 @@ public final class PropCheck extends Theories {
 	    // TODO move to another class!!
 	    // instantiate shrink handler, if none is specified, then 
 	    // the default DefaultShrinkHandler will be used.
-		private ShrinkHandler newHandlerInstance() {
+	    private ShrinkHandler newHandlerInstance() {
 			ShrinkHandler handler = null;
 			try {
 				handler = getShrinkHandlerClass().getConstructor(
 						TestObject.class).newInstance(testObject);
-			} catch (InstantiationException e) {
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-			} catch (IllegalArgumentException e) {
-				e.printStackTrace();
-			} catch (InvocationTargetException e) {
-				e.printStackTrace();
-			} catch (NoSuchMethodException e) {
-				e.printStackTrace();
-			} catch (SecurityException e) {
+			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
 				e.printStackTrace();
 			}
 			return handler;
