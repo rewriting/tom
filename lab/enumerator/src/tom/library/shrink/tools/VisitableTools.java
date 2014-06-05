@@ -6,6 +6,13 @@ import java.util.List;
 import tom.library.sl.Visitable;
 import tom.library.sl.VisitableBuiltin;
 
+/**
+ * <p>
+ * A helper class to deal with an instance of {@code Visitable} object
+ * </p>
+ * @author nauval
+ *
+ */
 public class VisitableTools {
 	private static int size = 0;
 	private static int val = 0;

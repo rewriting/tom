@@ -3,7 +3,7 @@ package tom.library.shrink.reducers;
 import java.util.ArrayList;
 import java.util.List;
 
-import tom.library.shrink.tools.TermClass;
+import tom.library.shrink.tools.TermWrapper;
 import tom.library.sl.Visitable;
 /**
  * Reduces a given term to its terminal constructor and immediate sub-terms that have same type
@@ -64,7 +64,7 @@ public class SubtermReducer implements Reducer<Visitable> {
 	}
 	
 	private void addTerminalConstructor() {
-		terminals.addAll(TermClass.build(root).getTerminalConstructor());
+		terminals.addAll(TermWrapper.build(root).getTerminalConstructor());
 		results.addAll(terminals);
 	}
 }

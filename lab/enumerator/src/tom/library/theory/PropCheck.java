@@ -27,8 +27,8 @@ import tom.library.theory.shrink.ShrinkHandler;
 
 /**
  * <p>
- * The test runner that extends {@code Theories} where the calls to evaluate a {@code Statement} 
- * of a test method is located. To use this class as a runner, a JUnit test class should be marked with {@code PropCheck.class}
+ * The test runner that extends {@code Theories} where the evaluation of a {@code Statement} 
+ * is located. To use this class as a runner, a JUnit test class should be marked with {@code PropCheck.class}
  * in the class definition:
  * </p>
  * <pre>

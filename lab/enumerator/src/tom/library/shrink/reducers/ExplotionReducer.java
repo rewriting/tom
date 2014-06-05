@@ -6,7 +6,7 @@ import java.util.List;
 import tom.library.shrink.ds.TermNode;
 import tom.library.shrink.ds.TermTreeBuilder;
 import tom.library.shrink.ds.zipper.Zipper;
-import tom.library.shrink.tools.TermClass;
+import tom.library.shrink.tools.TermWrapper;
 import tom.library.sl.Visitable;
 
 public class ExplotionReducer implements Reducer<Visitable> {
@@ -65,7 +65,7 @@ public class ExplotionReducer implements Reducer<Visitable> {
 	}
 	
 	protected List<Visitable> getConstructorTerminalsFromTerm(Visitable term) {
-		return TermClass.build(term).getTerminalConstructor();
+		return TermWrapper.build(term).getTerminalConstructor();
 	}
 	
 	protected List<Visitable> buildTermFromZip(Zipper<TermNode> zipper) throws Exception {
