@@ -44,7 +44,7 @@ public class ShopTest {
 	 */
 	@Theory
 	public void testInventoryAddItemQuantity(
-			@ForSome(minSampleSize = 30, maxSampleSize = 60) Inventory inventory,
+			@ForSome(minSampleSize = 0, maxSampleSize = 60) Inventory inventory,
 			@ForSome(minSampleSize = 30, maxSampleSize = 60) Item item,
 			@ForSome(minSampleSize = 30, maxSampleSize = 60) Integer quantity) throws InventoryException {
 		
@@ -199,5 +199,12 @@ public class ShopTest {
 		examples.shop.Inventory inv = inventory.translateInventory();
 		System.out.println(inv);
 		fail("Not yet implemented");
+	}
+	
+
+	@Theory
+	public void testBoutique(@ForSome(minSampleSize = 1, maxSampleSize = 100) examples.shop.boutique.types.Inventory inventory) {
+		System.out.println(inventory);
+		
 	}
 }
