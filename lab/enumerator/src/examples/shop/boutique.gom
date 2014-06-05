@@ -1,0 +1,11 @@
+module examples.shop.Boutique
+imports int
+abstract syntax
+
+LineItem = lineItem(item:Item, quantity:int)
+
+Item = item(id:int, price:int)
+
+Inventory = items(LineItem*)
+
+ShoppingCart = items(LineItem*)
