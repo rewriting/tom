@@ -14,18 +14,29 @@ Carts = carts(ShoppingCart*)
 Shop = shop(inventory:Inventory, carts:Carts)
 
 
-// shop:make(i,cs) {
-//   %match(Inventory e, Carts cs) {
-//     _,_ -> { return realMake(e,`carts()); }
+// items:make_insert(e,l) {
+//   %match(LineItem e) {
+//     _ -> { return `items(); }
 //   }
-
-// // //   if(!l.isEmptyConcCop()) {
-// // //     if (0 < e.compareToLPO(l.getHeadConcCop())) {
-// // //       structure.structures.types.StrucCop newTail = l.getTailConcCop();
-// // //       newTail = `ConcCop(e,newTail*);
-// // //       return realMake(l.getHeadConcCop(), newTail);
-// // //     } else {
-// // //       return realMake(e,l);
-// // //     }
-// // //   }
 // }
+
+
+shop:make(i,cs) {
+  examples.shop.boutique.types.Inventory inv = examples.shop.boutique.types.Shop.fix(i,cs);
+  return realMake(inv,cs);
+}
+
+
+sort Shop:block() {
+
+  public static Inventory fix(Inventory i, Carts cs) {
+//     %match(i,cs) {
+//       !items(I1*, item(id,_),I2*), 
+//         carts(C1*, items(I1*, item(id,q),I2*), C2*) -> { return `fix(items(I1*, item(id,q),I2*),cs); }
+//     }
+//     return i;
+
+    return `items();
+  }
+
+}
