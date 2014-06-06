@@ -55,15 +55,12 @@ public class Omega extends AbstractStrategyCombinator {
   }
 
   public <T> T visitLight(T any, Introspector introspector) throws VisitFailure {
-    System.out.println("Omega " + indexPosition + " of " + any);
     if(indexPosition==0) {
       return arguments[ARG].visitLight(any,introspector);
     } else if(indexPosition>0 && indexPosition<=introspector.getChildCount(any)) {
       int childNumber = indexPosition-1;
       Object newChild = arguments[ARG].visitLight(introspector.getChildAt(any,childNumber),introspector);
-      System.out.println("setChildAt(" + any + ", " + childNumber + ", " + newChild + ")");
       T res = introspector.setChildAt(any,childNumber,newChild);
-      System.out.println("res = " + res);
       return res;
     } else {
       throw new VisitFailure();
