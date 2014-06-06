@@ -59,9 +59,9 @@ public class ShopFactory {
 	// make inventories from (Assoc) list of lineItems
 	public Cart makeCart(examples.shop.boutique.types.ShoppingCart boutiqueShoppingCart) {
 		Cart cart = new Cart();
-		while (boutiqueShoppingCart.isConsitems()) {
-			cart.addToCart(makeLineItem(boutiqueShoppingCart.getHeaditems()));
-			boutiqueShoppingCart = boutiqueShoppingCart.getTailitems();
+		while (boutiqueShoppingCart.isConslines()) {
+			cart.addToCart(makeLineItem(boutiqueShoppingCart.getHeadlines()));
+			boutiqueShoppingCart = boutiqueShoppingCart.getTaillines();
 		}
 		return cart;
 	}

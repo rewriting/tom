@@ -5,14 +5,14 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 public class Cart {
-	private Collection<LineItem> items;
+	private Collection<LineItem> lines;
 	
 	public Cart() {
-		items = new HashSet<LineItem>();
+		lines = new HashSet<LineItem>();
 	}
 	
 	public void increaseQuantity(Item item) {
-		for (Iterator<LineItem> iterator = items.iterator(); iterator.hasNext();) {
+		for (Iterator<LineItem> iterator = lines.iterator(); iterator.hasNext();) {
 			LineItem lineItem = iterator.next();
 			if (lineItem.getItem().equals(item)) {
 				int oldQuantity = lineItem.getQuantity();
@@ -22,7 +22,7 @@ public class Cart {
 	}
 	
 	public void decreaseQuantity(Item item) {
-		for (Iterator<LineItem> iterator = items.iterator(); iterator.hasNext();) {
+		for (Iterator<LineItem> iterator = lines.iterator(); iterator.hasNext();) {
 			LineItem lineItem = iterator.next();
 			if (lineItem.getItem().equals(item)) {
 				int oldQuantity = lineItem.getQuantity();
@@ -32,19 +32,19 @@ public class Cart {
 	}
 	
 	public void addToCart(LineItem lineItem) {
-		items.add(lineItem);
+		lines.add(lineItem);
 	}
 	
 	public void addToCart(Item item, int quantity) {
-		items.add(new LineItem(item, quantity));
+		lines.add(new LineItem(item, quantity));
 	}
 	
 	public void removeFromCart(Item item) {
-		items.remove(new LineItem(item, 0));
+		lines.remove(new LineItem(item, 0));
 	}
 	
 //	public int getItemQuantity(Item item) throws InventoryException {
-//		for (Iterator<LineItem> iterator = items.iterator(); iterator.hasNext();) {
+//		for (Iterator<LineItem> iterator = lines.iterator(); iterator.hasNext();) {
 //			LineItem lineItem = iterator.next();
 //			if (lineItem.getItem().equals(item)) {
 //				return lineItem.getQuantity();
@@ -54,6 +54,6 @@ public class Cart {
 //	}
 	
 	public Collection<LineItem> getLineItems() {
-		return items;
+		return lines;
 	}
 }

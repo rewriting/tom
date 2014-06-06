@@ -8,4 +8,24 @@ Item = item(id:int, price:int)
 
 Inventory = items(LineItem*)
 
-ShoppingCart = items(LineItem*)
+ShoppingCart = lines(LineItem*)
+
+Carts = carts(ShoppingCart*)
+Shop = shop(inventory:Inventory, carts:Carts)
+
+
+// shop:make(i,cs) {
+//   %match(Inventory e, Carts cs) {
+//     _,_ -> { return realMake(e,`carts()); }
+//   }
+
+// // //   if(!l.isEmptyConcCop()) {
+// // //     if (0 < e.compareToLPO(l.getHeadConcCop())) {
+// // //       structure.structures.types.StrucCop newTail = l.getTailConcCop();
+// // //       newTail = `ConcCop(e,newTail*);
+// // //       return realMake(l.getHeadConcCop(), newTail);
+// // //     } else {
+// // //       return realMake(e,l);
+// // //     }
+// // //   }
+// }

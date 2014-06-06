@@ -16,9 +16,9 @@ import examples.shop.Cart;
 import examples.shop.InventoryException;
 import examples.shop.Shop;
 import examples.shop.ShopFactory;
-import examples.shop.shop.types.Inventory;
-import examples.shop.shop.types.Item;
-import examples.shop.shop.types.ShoppingCart;
+import examples.shop.boutique.types.Inventory;
+import examples.shop.boutique.types.Item;
+import examples.shop.boutique.types.ShoppingCart;
 
 @RunWith(PropCheck.class)
 public class ShopTest {
