@@ -18,7 +18,6 @@ import examples.shop.Shop;
 import examples.shop.ShopFactory;
 import examples.shop.boutique.types.Inventory;
 import examples.shop.boutique.types.Item;
-import examples.shop.boutique.types.ShoppingCart;
 
 @RunWith(PropCheck.class)
 public class ShopTest {
@@ -128,7 +127,7 @@ public class ShopTest {
 	@Theory
 	public void testBuy(
 			@ForSome(minSampleSize = 0, maxSampleSize = 30) Inventory inventory,
-			@ForSome(minSampleSize = 0, maxSampleSize = 20) ShoppingCart cart) throws InventoryException {
+			@ForSome(minSampleSize = 0, maxSampleSize = 20) Inventory cart) throws InventoryException {
 		
 		//examples.shop.Inventory inv = factory.makeInventory(inventory);
 		Shop shop = factory.makeShop(inventory);
