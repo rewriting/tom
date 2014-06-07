@@ -202,10 +202,4 @@ public class ShopTest {
 	}
 	
 
-	@Ignore
-	@Theory
-	public void testBoutique(@ForSome(minSampleSize = 1, maxSampleSize = 100) examples.shop.boutique.types.Inventory inventory) {
-		System.out.println(inventory);
-		
-	}
 }

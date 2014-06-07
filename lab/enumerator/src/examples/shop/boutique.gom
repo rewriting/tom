@@ -14,29 +14,87 @@ Carts = carts(ShoppingCart*)
 Shop = shop(inventory:Inventory, carts:Carts)
 
 
-// items:make_insert(e,l) {
-//   %match(LineItem e) {
-//     _ -> { return `items(); }
+// inventories should contain only one line per item
+items:make_insert(e,l) {
+  %match(LineItem e, Inventory l) {
+    lineItem(item(id,p), q), items(IL1*, lineItem(item(id,p2),q2), IL2*) -> { 
+      return `items(IL1*, lineItem(item(id,p),q+q2), IL2*); 
+    }
+  }
+  return realMake(e,l);
+}
+
+
+// inventories should contain only one line per item
+lines:make_insert(e,l) {
+  %match(LineItem e, ShoppingCart l) {
+    lineItem(item(id,p), q), lines(IL1*, lineItem(item(id,p2),q2), IL2*) -> { 
+      return `lines(IL1*, lineItem(item(id,p),q+q2), IL2*); 
+    }
+  }
+  return realMake(e,l);
+}
+
+// should do the same for shopping carts
+
+// carts should only contain items from the inventory and in less quantity
+// items should have same price in carts and inventory
+shop:make(i,cs) {
+  //   examples.shop.boutique.types.Inventory inv = examples.shop.boutique.types.Shop.fix(i,cs);
+  %match(Carts cs, Inventory i) {
+    scarts@carts(C1*, lines(I1*, it@lineItem(item(id,p),q), I2*), C2*),
+           !items(IL1*, lineItem(item(id,_),_), IL2*) -> {
+      return `shop(items(it,i*), scarts ); 
+    }
+    
+    scarts@carts(C1*, lines(I1*, lineItem(item(id,p),q), I2*), C2*),
+           items(IL1*, lineItem(item(id,pi),qi), IL2*) -> {
+      if(`qi<`q){
+        return `shop( items(IL1*, lineItem(item(id,p),qi+q), IL2*), scarts );
+      }else if(`pi!=`p){
+        return `shop( items(IL1*, lineItem(item(id,p),qi), IL2*), scarts );
+      }
+    }
+  }
+  return realMake(i,cs);
+}
+
+
+// sort Shop:block() {
+//   public static Inventory fix(Inventory i, Carts cs) {
+//     %match(Carts cs, Inventory i) {
+//       carts(C1*, lines(I1*, it@lineItem(item(id,p),q), I2*), C2*),
+//         !items(IL1*, lineItem(item(id,_),_), IL2*) -> {
+//              return `fix(items(it,i*), carts(C1*, lines(I1*, it, I2*), C2*) ); 
+//       }
+//       carts(C1*, lines(I1*, it@lineItem(item(id,p),q), I2*), C2*),
+//         items(IL1*, lineItem(item(id,pi),qi), IL2*) -> {
+//         if(`qi<`q){
+//           return `fix( items(IL1*, lineItem(item(id,p),qi+q), IL2*),
+//                        carts(C1*, lines(I1*, lineItem(item(id,p),q), I2*), C2*));
+//         }
+//       }
+//     }
+//     return i;
 //   }
 // }
 
 
-shop:make(i,cs) {
-  examples.shop.boutique.types.Inventory inv = examples.shop.boutique.types.Shop.fix(i,cs);
-  return realMake(inv,cs);
-}
 
 
-sort Shop:block() {
-
-  public static Inventory fix(Inventory i, Carts cs) {
-//     %match(i,cs) {
-//       !items(I1*, item(id,_),I2*), 
-//         carts(C1*, items(I1*, item(id,q),I2*), C2*) -> { return `fix(items(I1*, item(id,q),I2*),cs); }
+// sort Shop:block() {
+//   public static Inventory fix(Inventory i, Carts cs) {
+//     %match(Carts cs) {
+//       carts(C1*, lines(I1*, it@lineItem(item(id,p),q), I2*), C2*) -> { 
+//         %match(Inventory i) {
+//           !items(IL1*, lineItem(item(id,_),_), IL2*) -> {
+//             return `fix(items(it,i*), carts(C1*, lines(I1*, I2*), C2*) ); 
+//           }
+//         }
+//       }
 //     }
 //     return i;
+//   }
+// }
 
-    return `items();
-  }
 
-}
