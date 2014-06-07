@@ -34,16 +34,61 @@ shop:make(i,cs) {
            !items(IL1*, lineItem(item(id,_),_), IL2*) -> {
       return `shop(items(it,i*), scarts ); 
     }
-    
+
+    // stack overflow    
+    // prices for same id can have different prices in different carts
     scarts@carts(C1*, items(I1*, lineItem(item(id,p),q), I2*), C2*),
            items(IL1*, lineItem(item(id,pi),qi), IL2*) -> {
       if(`qi<`q){
+        System.out.println("QTS: "+`qi+" < " +`q);
         return `shop( items(IL1*, lineItem(item(id,p),qi+q), IL2*), scarts );
       }else if(`pi!=`p){
+        System.out.println("INV: "+`items(IL1*, lineItem(item(id,p),qi), IL2*));
+        System.out.println("CARTS: "+`scarts);
+        System.out.println("PRICES: "+`pi+" != " +`p);
         return `shop( items(IL1*, lineItem(item(id,p),qi), IL2*), scarts );
       }
     }
   }
   return realMake(i,cs);
 }
+
+
+// sort Shop:block() {
+//   public static Inventory fix(Inventory i, Carts cs) {
+//     %match(Carts cs, Inventory i) {
+//       carts(C1*, items(I1*, it@lineItem(item(id,p),q), I2*), C2*),
+//         !items(IL1*, lineItem(item(id,_),_), IL2*) -> {
+//              return `fix(items(it,i*), carts(C1*, items(I1*, it, I2*), C2*) ); 
+//       }
+//       carts(C1*, items(I1*, it@lineItem(item(id,p),q), I2*), C2*),
+//         items(IL1*, lineItem(item(id,pi),qi), IL2*) -> {
+//         if(`qi<`q){
+//           return `fix( items(IL1*, lineItem(item(id,p),qi+q), IL2*),
+//                        carts(C1*, items(I1*, lineItem(item(id,p),q), I2*), C2*));
+//         }
+//       }
+//     }
+//     return i;
+//   }
+// }
+
+
+
+
+// sort Shop:block() {
+//   public static Inventory fix(Inventory i, Carts cs) {
+//     %match(Carts cs) {
+//       carts(C1*, items(I1*, it@lineItem(item(id,p),q), I2*), C2*) -> { 
+//         %match(Inventory i) {
+//           !items(IL1*, lineItem(item(id,_),_), IL2*) -> {
+//             return `fix(items(it,i*), carts(C1*, items(I1*, I2*), C2*) ); 
+//           }
+//         }
+//       }
+//     }
+//     return i;
+//   }
+// }
+
 
