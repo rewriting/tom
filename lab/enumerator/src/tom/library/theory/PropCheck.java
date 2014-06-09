@@ -212,7 +212,7 @@ public final class PropCheck extends Theories {
 	    // TODO move to another class!!
 	    // instantiate shrink handler, if none is specified, then 
 	    // the default DefaultShrinkHandler will be used.
-	    private ShrinkHandler newHandlerInstance() {
+	    private ShrinkHandler newShrinkHandlerInstance() {
 			ShrinkHandler handler = null;
 			try {
 				handler = getShrinkHandlerClass().getConstructor(
@@ -236,7 +236,7 @@ public final class PropCheck extends Theories {
 	    
 	    @Override
 	    public void evaluate() throws Throwable {
-	    	handler = new ExecutionHandler(newHandlerInstance());
+	    	handler = new ExecutionHandler(newShrinkHandlerInstance());
 	    	AssignmentRunner runner = new AssignmentRunner(testObject, handler);
 	    	runner.runWithAssignment(getUnassignedAssignments());
 	    	
