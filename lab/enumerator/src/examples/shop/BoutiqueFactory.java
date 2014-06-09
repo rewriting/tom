@@ -17,7 +17,7 @@ public class BoutiqueFactory {
 	}
 	
 	public LineItem makeLineItem(examples.shop.boutique.types.LineItem boutiqueLineItem) {
-		return new LineItem(makeItem(boutiqueLineItem.getitem()), boutiqueLineItem.getquantity());
+		return new LineItem(makeItem(boutiqueLineItem.getitem()), Math.abs(boutiqueLineItem.getquantity()));
 	}
 	
 	public Inventory makeInventory(examples.shop.boutique.types.Inventory boutiqueInventory) {

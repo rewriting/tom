@@ -27,7 +27,7 @@ public class ShopFactory {
 	public Inventory makeInventory(examples.shop.shop.types.Inventory inventoryGom) {
 		Inventory inventory = new Inventory();
 		//buildInventory(inventoryGom, inventory);
-		System.out.println(inventoryGom);
+		//System.out.println(inventoryGom);
 		while (!inventoryGom.isEmptyInv()) {
 			inventory.add(makeLineItem(inventoryGom.getLineItem()));
 			inventoryGom = inventoryGom.getInventory();

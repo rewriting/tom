@@ -20,11 +20,12 @@ public class Inventory {
 	}
 
 	public Inventory add(Item item, int quantity) {
-		if (has(item)) {
-			addItemQuantity(item, quantity);
-		} else {
-			addNewItem(item, quantity);
-		}
+		//if (has(item)) {
+		//	addItemQuantity(item, quantity);
+		//} else {
+		//	addNewItem(item, quantity);
+		//}
+		addNewItem(item, quantity);
 		return this;
 	}
 
@@ -61,13 +62,14 @@ public class Inventory {
 			/*
 			 * fix bug revealed by testInventoryNeverNegative()
 			 */
-			int returnedQty = 0;
+//			int returnedQty = 0;
+//			if (itemQty <= quantity) {
+//				returnedQty = itemQty;
+//			} else {
+//				returnedQty = quantity;
+//			}
 			int itemQty = getItemQuantity(item);
-			if (itemQty <= quantity) {
-				returnedQty = itemQty;
-			} else {
-				returnedQty = quantity;
-			}
+			int returnedQty = itemQty <= quantity? itemQty : quantity;
 			reduceItemQuantity(item, returnedQty);
 			return new LineItem(item, returnedQty);
 		} else {
