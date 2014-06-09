@@ -17,7 +17,7 @@ public class ShopFactory {
 	// there should be some tests with items built out of possibly negative 
 	// integers so we van test the behavior in these cases
 	public Item makeItem(examples.shop.boutique.types.Item item) {
-		return new Item(Math.abs(item.getid()), Math.abs(item.getprice()));
+		return new Item(item.getid(), item.getprice());
 	}
 
 	public Item makeItem(examples.shop.shop.types.Item item) {
@@ -28,7 +28,7 @@ public class ShopFactory {
 	// take the absolute value to avoid quantities
 	// could be generated automatically from the class LineItem
 	public LineItem makeLineItem(examples.shop.boutique.types.LineItem lineItem) {
-		return new LineItem(makeItem(lineItem.getitem()), Math.abs(lineItem.getquantity()));
+		return new LineItem(makeItem(lineItem.getitem()), lineItem.getquantity());
 	}
 
 	public LineItem makeLineItem(examples.shop.shop.types.LineItem lineItem) {

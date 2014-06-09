@@ -2,17 +2,25 @@ module examples.shop.Boutique
 imports int
 abstract syntax
 
-LineItem = lineItem(item:Item, quantity:int)
-
 Item = item(id:int, price:int)
 
-Inventory = items(LineItem*)
+LineItem = lineItem(item:Item, quantity:int)
 
-//ShoppingCart = lines(LineItem*)
+Inventory = items(LineItem*)
 
 Carts = carts(Inventory*)
 Shop = shop(inventory:Inventory, carts:Carts)
 
+
+// positive ids and prices
+item:make(id,p) {
+  return realMake(Math.abs(id),Math.abs(p));
+}
+
+// positive ids and prices
+lineItem:make(it,q) {
+  return realMake(it,Math.abs(q));
+}
 
 // inventories should contain only one line per item
 items:make_insert(e,l) {
@@ -24,71 +32,39 @@ items:make_insert(e,l) {
   return realMake(e,l);
 }
 
+// same price for the same id in all carts
+carts:make_insert(e,l) {
+  %match(Inventory e, Carts l) {
+    items(IL1*, lineItem(item(id,p2),q2), IL2*) , ocarts@carts(C1*, items(I1*, lineItem(item(id,p1),q1), I2*), C2*)  -> { 
+      if(`p1!=`p2){
+        return `carts(items(IL1*, lineItem(item(id,p1),q2), IL2*), ocarts); 
+      }
+    }
+  }
+  return realMake(e,l);
+}
+
 
 // carts should only contain items from the inventory and in less quantity
 // items should have same price in carts and inventory
+// TODO: sum of quantities in carts = quantity in inventory
+// TODO: quantities (in carts) bigger than 0
 shop:make(i,cs) {
-  //   examples.shop.boutique.types.Inventory inv = examples.shop.boutique.types.Shop.fix(i,cs);
   %match(Carts cs, Inventory i) {
+
     scarts@carts(C1*, items(I1*, it@lineItem(item(id,p),q), I2*), C2*),
            !items(IL1*, lineItem(item(id,_),_), IL2*) -> {
       return `shop(items(it,i*), scarts ); 
     }
 
-    // stack overflow    
-    // prices for same id can have different prices in different carts
     scarts@carts(C1*, items(I1*, lineItem(item(id,p),q), I2*), C2*),
            items(IL1*, lineItem(item(id,pi),qi), IL2*) -> {
       if(`qi<`q){
-        System.out.println("QTS: "+`qi+" < " +`q);
-        return `shop( items(IL1*, lineItem(item(id,p),qi+q), IL2*), scarts );
+        return `shop( items(IL1*, lineItem(item(id,p),qi+q+2), IL2*), scarts );
       }else if(`pi!=`p){
-        System.out.println("INV: "+`items(IL1*, lineItem(item(id,p),qi), IL2*));
-        System.out.println("CARTS: "+`scarts);
-        System.out.println("PRICES: "+`pi+" != " +`p);
         return `shop( items(IL1*, lineItem(item(id,p),qi), IL2*), scarts );
       }
     }
   }
   return realMake(i,cs);
 }
-
-
-// sort Shop:block() {
-//   public static Inventory fix(Inventory i, Carts cs) {
-//     %match(Carts cs, Inventory i) {
-//       carts(C1*, items(I1*, it@lineItem(item(id,p),q), I2*), C2*),
-//         !items(IL1*, lineItem(item(id,_),_), IL2*) -> {
-//              return `fix(items(it,i*), carts(C1*, items(I1*, it, I2*), C2*) ); 
-//       }
-//       carts(C1*, items(I1*, it@lineItem(item(id,p),q), I2*), C2*),
-//         items(IL1*, lineItem(item(id,pi),qi), IL2*) -> {
-//         if(`qi<`q){
-//           return `fix( items(IL1*, lineItem(item(id,p),qi+q), IL2*),
-//                        carts(C1*, items(I1*, lineItem(item(id,p),q), I2*), C2*));
-//         }
-//       }
-//     }
-//     return i;
-//   }
-// }
-
-
-
-
-// sort Shop:block() {
-//   public static Inventory fix(Inventory i, Carts cs) {
-//     %match(Carts cs) {
-//       carts(C1*, items(I1*, it@lineItem(item(id,p),q), I2*), C2*) -> { 
-//         %match(Inventory i) {
-//           !items(IL1*, lineItem(item(id,_),_), IL2*) -> {
-//             return `fix(items(it,i*), carts(C1*, items(I1*, I2*), C2*) ); 
-//           }
-//         }
-//       }
-//     }
-//     return i;
-//   }
-// }
-
-
