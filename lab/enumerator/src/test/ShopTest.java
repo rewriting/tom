@@ -12,26 +12,22 @@ import org.junit.runner.RunWith;
 
 import tom.library.theory.ForSome;
 import tom.library.theory.PropCheck;
-import examples.shop.BoutiqueFactory;
 import examples.shop.Cart;
 import examples.shop.InventoryException;
-import examples.shop.LineItem;
 import examples.shop.Shop;
 import examples.shop.ShopFactory;
-import examples.shop.shop.types.Inventory;
-import examples.shop.shop.types.Item;
-import examples.shop.shop.types.ShoppingCart;
+import examples.shop.boutique.types.Inventory;
+import examples.shop.boutique.types.Item;
 
 @RunWith(PropCheck.class)
 public class ShopTest {
 
+	//private Shop classUnderTest;
 	private ShopFactory factory;
-	private BoutiqueFactory boutiqueFactory;
-	
 	@Before
 	public void setUp() throws Exception {
+		//classUnderTest = new Shop();
 		factory = ShopFactory.getInstance();
-		boutiqueFactory = BoutiqueFactory.getInstance();
 	}
 
 	/**
@@ -48,8 +44,8 @@ public class ShopTest {
 	@Theory
 	public void testInventoryAddItemQuantity(
 			@ForSome(minSampleSize = 0, maxSampleSize = 60) Inventory inventory,
-			@ForSome(minSampleSize = 0, maxSampleSize = 60) Item item,
-			@ForSome(minSampleSize = 0, maxSampleSize = 60) Integer quantity) throws InventoryException {
+			@ForSome(minSampleSize = 30, maxSampleSize = 60) Item item,
+			@ForSome(minSampleSize = 30, maxSampleSize = 60) Integer quantity) throws InventoryException {
 		
 		examples.shop.Inventory inv = factory.makeInventory(inventory);
 		examples.shop.Item it = factory.makeItem(item);
@@ -131,7 +127,7 @@ public class ShopTest {
 	@Theory
 	public void testBuy(
 			@ForSome(minSampleSize = 0, maxSampleSize = 30) Inventory inventory,
-			@ForSome(minSampleSize = 0, maxSampleSize = 20) ShoppingCart cart) throws InventoryException {
+			@ForSome(minSampleSize = 0, maxSampleSize = 20) Inventory cart) throws InventoryException {
 		
 		//examples.shop.Inventory inv = factory.makeInventory(inventory);
 		Shop shop = factory.makeShop(inventory);
@@ -178,6 +174,7 @@ public class ShopTest {
 		Cart cart = new Cart();
 		cart.addToCart(it, quantity);
 		Shop shop = factory.makeShop(inventory);
+		//classUnderTest.setInventory(inventory.translateInventory());
 		
 		shop.buy(cart);
 		
@@ -204,15 +201,4 @@ public class ShopTest {
 	}
 	
 
-	@Theory
-	public void testBoutique(@ForSome(minSampleSize = 1, maxSampleSize = 100) examples.shop.boutique.types.Inventory inventory) {
-		System.out.println(inventory);
-		
-	}
-	
-	@Theory
-	public void testBoutiqueInventory(@ForSome(minSampleSize = 1, maxSampleSize = 100) examples.shop.boutique.types.Inventory inventory) {
-		examples.shop.Inventory inv = boutiqueFactory.makeInventory(inventory);
-		System.out.println(inv);
-	}
 }

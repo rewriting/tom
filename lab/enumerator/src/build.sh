@@ -15,7 +15,8 @@ tom examples/adt/tree/TreeDemo.t
 gom examples/adt/list/AList.gom 
 tom examples/adt/list/DemoAList.t 
 
-gom examples/shop/Shop.gom
+gom examples/shop/shop.gom
+gom examples/shop/boutique.gom
 
 gom examples/parser/Rec.gom 
 
