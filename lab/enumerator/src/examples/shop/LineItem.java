@@ -18,8 +18,9 @@ public class LineItem {
 	public int getQuantity() {
 		return quantity;
 	}
-	public void setQuantity(int quantity) {
+	public LineItem setQuantity(int quantity) {
 		this.quantity = quantity;
+		return this;
 	}
 	@Override
 	public int hashCode() {

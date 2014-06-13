@@ -5,21 +5,28 @@ public class Item {
 	private int price;
 	
 	public Item(int id, int price) {
-		this.id = id;
-		this.price = price;
+		if (price < 0) {
+			this.price = 0;
+			this.id = -1;
+		} else {
+			this.price = price;
+			this.id = id;
+		}
 	}
 	
 	public int getId() {
 		return id;
 	}
-	public void setId(int id) {
+	public Item setId(int id) {
 		this.id = id;
+		return this;
 	}
 	public int getPrice() {
 		return price;
 	}
-	public void setPrice(int price) {
+	public Item setPrice(int price) {
 		this.price = price;
+		return this;
 	}
 	
 	@Override
