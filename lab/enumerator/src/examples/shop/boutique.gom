@@ -8,7 +8,10 @@ LineItem = lineItem(item:Item, quantity:int)
 
 Inventory = items(LineItem*)
 
-Carts = carts(Inventory*)
+//Lines = lines(Inventory*)
+
+Carts = carts(id:int, line:Inventory)
+
 Shop = shop(inventory:Inventory, carts:Carts)
 
 
@@ -32,10 +35,11 @@ items:make_insert(e,l) {
   return realMake(e,l);
 }
 
+/*
 // same price for the same id in all carts
 carts:make_insert(e,l) {
   %match(Inventory e, Carts l) {
-    items(IL1*, lineItem(item(id,p2),q2), IL2*) , ocarts@carts(C1*, items(I1*, lineItem(item(id,p1),q1), I2*), C2*)  -> { 
+    items(IL1*, lineItem(item(id,p2),q2), IL2*) , ocarts@carts(C1*, items(id, I1*, lineItem(item(id,p1),q1), I2*), C2*)  -> { 
       if(`p1!=`p2){
         return `carts(items(IL1*, lineItem(item(id,p1),q2), IL2*), ocarts); 
       }
@@ -43,7 +47,24 @@ carts:make_insert(e,l) {
   }
   return realMake(e,l);
 }
+*/
 
+// same price for the same id in all lines of a cart
+/*lines:make_insert(e,l) {
+  %match(Inventory e, Lines l) {
+    items(IL1*, lineItem(item(id,p2),q2), IL2*) , olines@lines(C1*, items(I1*, lineItem(item(id,p1),q1), I2*), C2*)  -> { 
+      if(`p1!=`p2){
+        return `lines(items(IL1*, lineItem(item(id,p1),q2), IL2*), olines); 
+      }
+    }
+  }
+  return realMake(e,l);
+}
+*/
+// positives id for carts
+carts:make(id, l) {
+	return realMake(Math.abs(id), l);
+}
 
 // carts should only contain items from the inventory and in less quantity
 // items should have same price in carts and inventory
@@ -52,12 +73,12 @@ carts:make_insert(e,l) {
 shop:make(i,cs) {
   %match(Carts cs, Inventory i) {
 
-    scarts@carts(C1*, items(I1*, it@lineItem(item(id,p),q), I2*), C2*),
+    scarts@carts(id, items(I1*, it@lineItem(item(id,p),q), I2*)),
            !items(IL1*, lineItem(item(id,_),_), IL2*) -> {
       return `shop(items(it,i*), scarts ); 
     }
 
-    scarts@carts(C1*, items(I1*, lineItem(item(id,p),q), I2*), C2*),
+    scarts@carts(id, items(I1*, lineItem(item(id,p),q), I2*)),
            items(IL1*, lineItem(item(id,pi),qi), IL2*) -> {
       if(`qi<`q){
         return `shop( items(IL1*, lineItem(item(id,p),qi+q+2), IL2*), scarts );

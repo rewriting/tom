@@ -1,5 +1,6 @@
 package examples.shop;
 
+
 public class ShopFactory {
 	private static ShopFactory INSTANCE;
 	
@@ -55,26 +56,34 @@ public class ShopFactory {
 		return inventory;
 	}
 	
+	public Inventory makeInventory() {
+		return new Inventory();
+	}
 
 	// make inventories from (Assoc) list of lineItems
-	public Cart makeCart(examples.shop.boutique.types.Inventory boutiqueShoppingCart) {
-		Cart cart = new Cart();
-		while (boutiqueShoppingCart.isConsitems()) {
-			cart.addToCart(makeLineItem(boutiqueShoppingCart.getHeaditems()));
-			boutiqueShoppingCart = boutiqueShoppingCart.getTailitems();
+	public Cart makeCart(examples.shop.boutique.types.Carts boutiqueShoppingCart) {
+		Cart cart = new Cart(boutiqueShoppingCart.getid());
+		examples.shop.boutique.types.Inventory lines = boutiqueShoppingCart.getline();
+		while (lines.isConsitems()) {
+			cart.add(makeLineItem(lines.getHeaditems()));
+			lines = lines.getTailitems();
 		}
 		return cart;
 	}
-	
 
-	public Cart makeCart(examples.shop.shop.types.ShoppingCart boutiqueShoppingCart) {
-		Cart cart = new Cart();
-		while (!boutiqueShoppingCart.isEmptyCart()) {
-			cart.addToCart(makeLineItem(boutiqueShoppingCart.getLineItem()));
-			boutiqueShoppingCart = boutiqueShoppingCart.getShoppingCart();
-		}
-		return cart;
+	public Cart makeCart() {
+		return new Cart(0);
 	}
+
+//	
+//	public Cart makeCart(examples.shop.shop.types.ShoppingCart boutiqueShoppingCart) {
+//		Cart cart = new Cart(0);
+//		while (!boutiqueShoppingCart.isEmptyCart()) {
+//			cart.add(makeLineItem(boutiqueShoppingCart.getLineItem()));
+//			boutiqueShoppingCart = boutiqueShoppingCart.getShoppingCart();
+//		}
+//		return cart;
+//	}
 	
 	
 
@@ -92,6 +101,11 @@ public class ShopFactory {
 		shop.setInventory(inventory);
 		return shop;
 	}
+
+	public Shop makeShop() {
+		return new Shop();
+	}
+
 	
 	
 }
