@@ -1,7 +1,6 @@
 package examples.shop;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class Shop {
@@ -18,15 +17,36 @@ public class Shop {
 	}
 	
 	public Shop buy(int id, Item item, int quantity) {
-		inventory.add(new LineItem(item, -quantity));
+		/*
+		 * bug revealed with test: testBuyWithNoQuantityInInventory.
+		 * It should look if the inventory quantity is 0 first.
+		 */
+		int invItem = getInvQuantity(item);
+		if (invItem <= 0) {
+			return this;
+		}
+		/*
+		 * bug revealed by test testBuyWithQuantityGreaterThanInventory.
+		 * It should check if the requested quantity > inventory.
+		 */
+		// fix testBuyWithQuantityGreaterThanInventory
+		int reducedQuantity = invItem < quantity ? invItem : quantity;
+		inventory.add(new LineItem(item, reducedQuantity * -1));
+		
 		Cart cart = new Cart(id);
-		cart.add(new LineItem(item, quantity));
+		cart.add(new LineItem(item, reducedQuantity));
 		carts.add(cart);
+		
 		return this;
 	}
 	
 	public int getInvQuantity(Item item) {
-		return inventory.getQuantity(item);
+		// as the spec says empty inv = 0 instead -1
+		// as in inventory
+		// return inventory.getQuantity(item);
+		// fix
+		int quantity = inventory.getQuantity(item);
+		return quantity < 0 ? 0 : quantity;
 	}
 	
 	public int getCartQuantity(Item item) {

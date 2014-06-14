@@ -92,7 +92,7 @@ public class ShopTest {
 		
 		assertThat(shop.buy(id, shopItem, quantity).getInvQuantity(shopItem), 
 				is(shopInit.getInvQuantity(shopItem) - quantity));
-		assertThat(shop.getCartQuantity(shopItem), is(shopInit.getCartQuantity(shopItem) - quantity));
+		assertThat(shop.getCartQuantity(shopItem), is(shopInit.getCartQuantity(shopItem) + quantity));
 	}
 	
 	/**
@@ -120,9 +120,9 @@ public class ShopTest {
 	
 	/**
 	 * quantity > 0 and getInvQuantity(shop, item) < quantity and contains(inventory(shop), item) = true ⇒
-	 * getInvQuantity(buy(shop, id, item, quantity), item) = 0∧
-	 * getCartQuantity(buy(shop, id, item, quantity), item) = getCartQuantity(shop, item)+
-	 * getInvQuantity(shop, item)
+	 * getInvQuantity(buy(shop, id, item, quantity), item) = 0 ∧
+	 * getCartQuantity(buy(shop, id, item, quantity), item) = getInvQuantity(shop, item) + getCartQuantity(shop, item) 
+	 * 
 	 * 
 	 */
 	@Theory
@@ -138,6 +138,7 @@ public class ShopTest {
 		
 		assumeThat(quantity, greaterThan(0));
 		assumeThat(shop.getInvQuantity(shopItem), lessThan(quantity));
+//		assumeThat(shop.getInvQuantity(shopItem), allOf(lessThan(quantity), greaterThan(0)));
 		assumeThat(shop.inventory().contains(shopItem), is(true));
 		
 		assertThat(shop.buy(id, shopItem, quantity).getInvQuantity(shopItem), is(0));
