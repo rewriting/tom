@@ -18,81 +18,26 @@ public class Inventory {
 	public Inventory add(LineItem lineItem) {
 		/*
 		 * bug found, test testGetQuantityItemInInventory
+		 * add item directly instead of add the quantity if exist
 		 */
-		add(lineItem.getItem(), lineItem.getQuantity());
-		return this;
-	}
-
-	public Inventory add(Item item, int quantity) {
-		//if (has(item)) {
-		//	addItemQuantity(item, quantity);
-		//} else {
-		//	addNewItem(item, quantity);
-		//}
-		addNewItem(item, quantity);
-		return this;
-	}
-
-	private Inventory addItemQuantity(Item item, int quantity) {
-		for (Iterator<LineItem> iterator = items.iterator(); iterator.hasNext();) {
-			LineItem lineItem = iterator.next();
-			if (lineItem.getItem().equals(item)) {
-				/*
-				 * lineItem.setQuantity(quantity);
-				 */
-
-				int oldQuantity = lineItem.getQuantity();
-				lineItem.setQuantity(oldQuantity + quantity);
-			}
-		}
-		return this;
-	}
-
-	private Inventory addNewItem(Item item, int quantity) {
-		items.add(new LineItem(item, quantity));
-		return this;
-	}
-
-	public LineItem get(Item item, int quantity) throws InventoryException {
-		if (contains(item)) {
-			/*
-			 * fix bug revealed by
-			 * testInventoryGetItemFromInventoryWithQuantity() add:
-			 * reduceItemQuantity(item, quantity);
-			 */
-			// reduceItemQuantity(item, quantity);
-			// return new LineItem(item, quantity);
-
-			/*
-			 * fix bug revealed by testInventoryNeverNegative()
-			 */
-//			int returnedQty = 0;
-//			if (itemQty <= quantity) {
-//				returnedQty = itemQty;
-//			} else {
-//				returnedQty = quantity;
-//			}
-			int itemQty = getQuantity(item);
-			int returnedQty = itemQty <= quantity? itemQty : quantity;
-			reduceItemQuantity(item, returnedQty);
-			return new LineItem(item, returnedQty);
+		// fix
+		if (contains(lineItem.getItem())) {
+			addLineItemQuantity(lineItem);
 		} else {
-			throw new InventoryException("no item: " + item + " in items");
+			items.add(lineItem);
 		}
+		return this;
 	}
 
-	private void reduceItemQuantity(Item item, int quantity) {
+	private void addLineItemQuantity(LineItem lineItem) {
 		for (Iterator<LineItem> iterator = items.iterator(); iterator.hasNext();) {
-			LineItem lineItem = iterator.next();
-			if (lineItem.getItem().equals(item)) {
-				int oldQuantity = lineItem.getQuantity();
-				lineItem.setQuantity(oldQuantity - quantity);
+			LineItem li = iterator.next();
+			if (li.equals(lineItem)) {
+				int quantity = li.getQuantity() + lineItem.getQuantity();
+				li.setQuantity(quantity);
+				break;
 			}
 		}
-	}
-
-	public LineItem get(int id, int quantity) throws InventoryException {
-		return get(new Item(id, 0), quantity);
 	}
 
 	public Inventory delete(Item item) {
@@ -135,25 +80,10 @@ public class Inventory {
 		return quantity;
 	}
 
-	public int getItemQuantity(int id) {
-		return getQuantity(new Item(id, 0));
-	}
+
 
 	public boolean contains(Item item) {
 		return items.contains(new LineItem(item, 0));
-	}
-
-	public boolean has(int id) {
-		return contains(new Item(id, 0));
-	}
-
-	public Inventory addAll(Collection<LineItem> items) {
-		this.items.addAll(items);
-		return this;
-	}
-
-	public Collection<LineItem> getInventory() {
-		return items;
 	}
 
 	@Override
@@ -197,5 +127,94 @@ public class Inventory {
 		}
 		return "[" + sb.toString() + "]";
 	}
+
+//	public int getItemQuantity(int id) {
+//	return getQuantity(new Item(id, 0));
+//}
+	
+//	public boolean has(int id) {
+//		return contains(new Item(id, 0));
+//	}
+//
+//	public Inventory addAll(Collection<LineItem> items) {
+//		this.items.addAll(items);
+//		return this;
+//	}
+
+//	public Collection<LineItem> getInventory() {
+//		return items;
+//	}
+
+//	public Inventory add(Item item, int quantity) {
+//	//if (has(item)) {
+//	//	addItemQuantity(item, quantity);
+//	//} else {
+//	//	addNewItem(item, quantity);
+//	//}
+//	addNewItem(item, quantity);
+//	return this;
+//}
+
+//private Inventory addItemQuantity(Item item, int quantity) {
+//	for (Iterator<LineItem> iterator = items.iterator(); iterator.hasNext();) {
+//		LineItem lineItem = iterator.next();
+//		if (lineItem.getItem().equals(item)) {
+//			/*
+//			 * lineItem.setQuantity(quantity);
+//			 */
+//
+//			int oldQuantity = lineItem.getQuantity();
+//			lineItem.setQuantity(oldQuantity + quantity);
+//		}
+//	}
+//	return this;
+//}
+//
+//private Inventory addNewItem(Item item, int quantity) {
+//	items.add(new LineItem(item, quantity));
+//	return this;
+//}
+
+//public LineItem get(Item item, int quantity) throws InventoryException {
+//	if (contains(item)) {
+		/*
+		 * fix bug revealed by
+		 * testInventoryGetItemFromInventoryWithQuantity() add:
+		 * reduceItemQuantity(item, quantity);
+		 */
+		// reduceItemQuantity(item, quantity);
+		// return new LineItem(item, quantity);
+
+		/*
+		 * fix bug revealed by testInventoryNeverNegative()
+		 */
+//		int returnedQty = 0;
+//		if (itemQty <= quantity) {
+//			returnedQty = itemQty;
+//		} else {
+//			returnedQty = quantity;
+//		}
+//		int itemQty = getQuantity(item);
+//		int returnedQty = itemQty <= quantity? itemQty : quantity;
+//		reduceItemQuantity(item, returnedQty);
+//		return new LineItem(item, returnedQty);
+//	} else {
+//		throw new InventoryException("no item: " + item + " in items");
+//	}
+//}
+
+//private void reduceItemQuantity(Item item, int quantity) {
+//	for (Iterator<LineItem> iterator = items.iterator(); iterator.hasNext();) {
+//		LineItem lineItem = iterator.next();
+//		if (lineItem.getItem().equals(item)) {
+//			int oldQuantity = lineItem.getQuantity();
+//			lineItem.setQuantity(oldQuantity - quantity);
+//		}
+//	}
+//}
+//
+//public LineItem get(int id, int quantity) throws InventoryException {
+//	return get(new Item(id, 0), quantity);
+//}
 
 }

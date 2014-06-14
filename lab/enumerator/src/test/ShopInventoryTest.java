@@ -113,7 +113,7 @@ public class ShopInventoryTest {
 	}
 	
 	/**
-	 * getItem(lineItem) = item ∧ inventory ̸= empty ⇒
+	 * getItem(lineItem) = item ∧ inventory ̸= empty (add) and contains(inventory, item) = true ⇒
 	 * getQuantity(add(inventory, lineItem), item) = getQuantity(inventory, item) + getQuantity(lineItem)
 	 */
 	@Theory
@@ -123,15 +123,17 @@ public class ShopInventoryTest {
 			@ForSome(minSampleSize = 0, maxSampleSize = 20) Item item) {
 		
 		examples.shop.Inventory shopInventory = factory.makeInventory(inventory);
+		examples.shop.Inventory shopInventoryInitial = factory.makeInventory(inventory);
 		examples.shop.LineItem shopLineItem = factory.makeLineItem(lineItem);
 		examples.shop.Item shopItem = factory.makeItem(item);
 		
 		assumeThat(shopLineItem.getItem(), is(shopItem));
 		assumeThat(shopInventory.isEmpty(), is(false));
+		assumeThat(shopInventory.contains(shopItem), is(true));
 		
 		assertThat(
 				shopInventory.add(shopLineItem).getQuantity(shopItem), 
-				is(shopLineItem.getQuantity() + shopLineItem.getQuantity()));
+				is(shopInventoryInitial.getQuantity(shopItem) + shopLineItem.getQuantity()));
 	}
 	
 	@Theory

@@ -19,10 +19,32 @@ public class Cart {
 	
 
 	public Cart add(LineItem lineItem) {
-		lines.add(lineItem);
+		/*
+		 * bug revealed after testGetQuantityAddCart:
+		 * It should add the quantity if the item
+		 * is present, instead of just adding the line item
+		 * 
+		 * lines.add(lineItem);
+		 */
+		if (contains(lineItem.getItem())) {
+			addLineItemQuantity(lineItem);
+		} else {
+			lines.add(lineItem);
+		}
 		return this;
 	}
 	
+	private void addLineItemQuantity(LineItem lineItem) {
+		for (Iterator<LineItem> iterator = lines.iterator(); iterator.hasNext();) {
+			LineItem li = iterator.next();
+			if (li.equals(lineItem)) {
+				int quantity = li.getQuantity() + lineItem.getQuantity();
+				li.setQuantity(quantity);
+				break;
+			}
+		}
+	}
+
 	public boolean contains(Item item) {
 		return lines.contains(new LineItem(item, 0));
 	}
@@ -33,6 +55,7 @@ public class Cart {
 			LineItem lineItem = iterator.next();
 			if (lineItem.getItem().equals(item)) {
 				quantity = lineItem.getQuantity();
+				break;
 			}
 		}
 		return quantity;

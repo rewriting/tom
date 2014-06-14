@@ -106,7 +106,7 @@ public class ShopCartTest {
 	}
 	
 	/**
-	 * getItem(lineItem) = item ∧ isEmpty(cart) = false ⇒
+	 * getItem(lineItem) = item ∧ isEmpty(cart) = false (add) contains(cart, item) = true ⇒
 	 * getQuantity(add(cart, lineItem), item) = getQuantity(cart, item) + getQuantity(lineItem)
 	 */
 	@Theory
@@ -116,13 +116,15 @@ public class ShopCartTest {
 			@ForSome(minSampleSize = 0, maxSampleSize = 20) Item item
 			) {
 		Cart shopCart = factory.makeCart(carts);
+		Cart shopCartInitial = factory.makeCart(carts);
 		examples.shop.LineItem shopLineItem = factory.makeLineItem(lineItem);
 		examples.shop.Item shopItem = factory.makeItem(item);
 		
 		assumeThat(shopLineItem.getItem(), is(shopItem));
 		assumeThat(shopCart.isEmpty(), is(false));
+		assumeThat(shopCart.contains(shopItem), is(true));
 		
 		assertThat(shopCart.add(shopLineItem).getQuantity(shopItem), 
-				is(shopCart.getQuantity(shopItem) + shopLineItem.getQuantity()));
+				is(shopCartInitial.getQuantity(shopItem) + shopLineItem.getQuantity()));
 	}
 }
