@@ -31,6 +31,7 @@ public class Shop {
 		 */
 		// fix testBuyWithQuantityGreaterThanInventory
 		int reducedQuantity = invItem < quantity ? invItem : quantity;
+		//int reducedQuantity = quantity;
 		inventory.add(new LineItem(item, reducedQuantity * -1));
 		
 		Cart cart = new Cart(id);
@@ -107,6 +108,9 @@ public class Shop {
 		return this;
 	}
 	
+	public Inventory getInventory() {
+		return inventory;
+	}
 	public Cart getLatestSell() {
 		return carts.get(carts.size() - 1);
 	}

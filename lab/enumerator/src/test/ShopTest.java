@@ -77,7 +77,7 @@ public class ShopTest {
 	 * getCartQuantity(buy(shop, id, item, quantity), item) = getCartQuantity(shop, item) + quantity
 	 */
 	@Theory
-	public void testBuy(
+	public void testBuyA(
 			@ForSome(minSampleSize=0, maxSampleSize=20) Inventory inventory,
 			@ForSome(minSampleSize=0, maxSampleSize=20) Item item,
 			@ForSome(minSampleSize=0, maxSampleSize=20) int quantity,
@@ -144,5 +144,42 @@ public class ShopTest {
 		assertThat(shop.buy(id, shopItem, quantity).getInvQuantity(shopItem), is(0));
 		assertThat(shop.getCartQuantity(shopItem), 
 				is(shopInit.getCartQuantity(shopItem) + shopInit.getInvQuantity(shopItem)));
+	}
+	
+	/**
+	 * quantity > 0 ⇒
+	 * getInvQuantity(shop, item) - getInvQuantity(buy(shop, id, item, quantity), item) = 
+	 * getCartQuantity(buy(shop, id, item, quantity), item) - getCartQuantity(shop, item)
+	 */
+	@Theory
+	public void testBuy(
+			@ForSome Inventory inventory,
+			@ForSome Item item,
+			@ForSome int quantity) {
+		int id = 0;
+		Shop shop = factory.makeShop(inventory);
+		Shop shopInit = factory.makeShop(inventory);
+		examples.shop.Item shopItem = factory.makeItem(item);
+		
+		//assumeThat(shop.getInvQuantity(shopItem), greaterThan(quantity));
+		assumeThat(quantity, greaterThan(0));
+		
+		assertThat(shopInit.getInvQuantity(shopItem) - shop.buy(id, shopItem, quantity).getInvQuantity(shopItem), 
+				is(shop.getCartQuantity(shopItem) - shopInit.getCartQuantity(shopItem)));
+	}
+	
+	@Theory
+	public void testBuyEmpty(
+			@ForSome Item item,
+			@ForSome int quantity) {
+		int id = 0;
+		Shop shop = init.empty();
+		examples.shop.Item shopItem = factory.makeItem(item);
+		
+		//assumeThat(shop.getInvQuantity(shopItem), greaterThan(quantity));
+		assumeThat(quantity, greaterThan(0));
+		
+		assertThat(shop.buy(id, shopItem, quantity).getInvQuantity(shopItem), 
+				is(0));
 	}
 }
