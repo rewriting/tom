@@ -13,6 +13,7 @@ public class Tree<E> {
 		this.left = null;
 		this.right = null;
 	}
+
 	public Tree(E elem, Tree<E> left, Tree<E> right) {
 		super();
 		this.elem = elem;
@@ -48,8 +49,18 @@ public class Tree<E> {
 	// print
 	@Override
 	public String toString() {
-		return "Tree[" + elem + ", " + left + ", " + right + "]";
+		String ls,rs;
+		if (this.left == null) {
+			ls = "_";
+		}else{
+			ls = left.toString();
+		}
+		if (this.right == null) {
+			rs = "_";
+		}else{
+			rs = right.toString();
+		}
+		return "Tree[" + elem + ", " + ls + ", " + rs + "]";
 	}
-	
-	
+
 }
