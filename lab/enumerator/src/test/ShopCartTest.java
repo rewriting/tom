@@ -13,7 +13,6 @@ import org.junit.runner.RunWith;
 import tom.library.theory.ForSome;
 import tom.library.theory.PropCheck;
 import examples.shop.Cart;
-import examples.shop.ShopException;
 import examples.shop.ShopFactory;
 import examples.shop.boutique.types.Carts;
 import examples.shop.boutique.types.Inventory;
@@ -44,7 +43,7 @@ public class ShopCartTest {
 	}
 	
 	/**
-	 * getQuantity(empty, item) = −1
+	 * getQuantity(empty, item) = ���1
 	 */
 	@Test
 	public void testGetQuantityEmpty() {
@@ -71,7 +70,7 @@ public class ShopCartTest {
 	}
 	
 	/**
-	 * getItem(lineItem) = item ⇒ contains(add(cart, lineItem), item) = true
+	 * getItem(lineItem) = item ��� contains(add(cart, lineItem), item) = true
 	 */
 	@Theory
 	public void testContainsAdd(
@@ -89,7 +88,7 @@ public class ShopCartTest {
 	}
 	
 	/**
-	 * getItem(lineItem) = item ⇒ getQuantity(add(empty, lineItem), item) = getQuantity(lineItem)
+	 * getItem(lineItem) = item ��� getQuantity(add(empty, lineItem), item) = getQuantity(lineItem)
 	 */
 	@Theory
 	public void testGetQuantityAdd(
@@ -106,7 +105,7 @@ public class ShopCartTest {
 	}
 	
 	/**
-	 * getItem(lineItem) = item ∧ isEmpty(cart) = false (add) contains(cart, item) = true ⇒
+	 * getItem(lineItem) = item ��� isEmpty(cart) = false (add) contains(cart, item) = true ���
 	 * getQuantity(add(cart, lineItem), item) = getQuantity(cart, item) + getQuantity(lineItem)
 	 */
 	@Theory
