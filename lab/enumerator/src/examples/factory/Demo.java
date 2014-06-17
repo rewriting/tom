@@ -40,5 +40,14 @@ public class Demo {
 			partsTreeC = partsTreeC.tail();
 		}
 
+
+		// Cars
+		Enumeration<Car> enumCar = CarFactory.getEnumeration();
+		LazyList<Finite<Car>> partsCar = enumCar.parts();
+		for (int i = 0; i < 8 && !partsCar.isEmpty(); i++) {
+			System.out.println(i + " --> " + partsCar.head());
+			partsCar = partsCar.tail();
+		}
+
 	}
 }
