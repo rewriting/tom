@@ -1,7 +1,6 @@
 package examples.factory;
 
 import tom.library.enumerator.Enumeration;
-import tom.library.enumerator.F;
 
 public class ColorFactory {
 

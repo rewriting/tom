@@ -12,7 +12,7 @@ public class TreeFactory {
 		
 		final Enumeration<Tree<T>> emptyEnum = Enumeration.singleton(null);
 
-		final F<T, F<Tree<T>, F<Tree<T>, Tree<T>>>> _fork = new F<T, F<Tree<T>, F<Tree<T>, Tree<T>>>>() {
+		final F<T, F<Tree<T>, F<Tree<T>, Tree<T>>>> _tree = new F<T, F<Tree<T>, F<Tree<T>, Tree<T>>>>() {
 			public F<Tree<T>, F<Tree<T>, Tree<T>>> apply(final T e) {
 				return new F<Tree<T>, F<Tree<T>, Tree<T>>>(){
 					public F<Tree<T>, Tree<T>> apply(final Tree<T> l) {
@@ -26,15 +26,15 @@ public class TreeFactory {
 			}
 		};
 		
-		F<Enumeration<Tree<T>>, Enumeration<Tree<T>>> forkEnum = new F<Enumeration<Tree<T>>, Enumeration<Tree<T>>>() {
+		F<Enumeration<Tree<T>>, Enumeration<Tree<T>>> treeEnum = new F<Enumeration<Tree<T>>, Enumeration<Tree<T>>>() {
 			public Enumeration<Tree<T>> apply(final Enumeration<Tree<T>> t) {
 				return emptyEnum.plus(
 						Enumeration.apply(Enumeration.apply(Enumeration.apply(
-								Enumeration.singleton(_fork), enumeration), t), t))
+								Enumeration.singleton(_tree), enumeration), t), t))
 						.pay();
 			}
 		};
-		enumRes=Enumeration.fix(forkEnum);
+		enumRes=Enumeration.fix(treeEnum);
 		
 		return enumRes;
 	}

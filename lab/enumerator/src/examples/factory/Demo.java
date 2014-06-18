@@ -5,6 +5,9 @@ import tom.library.enumerator.Enumeration;
 import tom.library.enumerator.Finite;
 import tom.library.enumerator.LazyList;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Demo {
 	public static void main(String[] args) {
 
@@ -40,7 +43,6 @@ public class Demo {
 			partsTreeC = partsTreeC.tail();
 		}
 
-
 		// Cars
 		Enumeration<Car> enumCar = CarFactory.getEnumeration();
 		LazyList<Finite<Car>> partsCar = enumCar.parts();
@@ -48,6 +50,24 @@ public class Demo {
 			System.out.println(i + " --> " + partsCar.head());
 			partsCar = partsCar.tail();
 		}
+
+		// (Array)List of Integeres
+		Enumeration<List<Integer>> enumArrayList = ListFactory.getEnumeration(enumInt);
+		LazyList<Finite<List<Integer>>> partsArrayList = enumArrayList.parts();
+		for (int i = 0; i < 8 && !partsArrayList.isEmpty(); i++) {
+			System.out.println(i + " --> " + partsArrayList.head());
+			partsArrayList = partsArrayList.tail();
+		}
+
+		// Cars
+		Enumeration<Garage> enumGarage = GarageFactory.getEnumeration();
+		LazyList<Finite<Garage>> partsGarage = enumGarage.parts();
+		for (int i = 0; i < 8 && !partsGarage.isEmpty(); i++) {
+			System.out.println(i + " --> " + partsGarage.head());
+			partsGarage = partsGarage.tail();
+		}
+		
+
 
 	}
 }

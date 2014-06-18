@@ -12,7 +12,7 @@ public class CarFactory {
 
 		final Enumeration<Car> emptyEnum = Enumeration.singleton(null);
 
-		final F<Integer, F<Color, Car>> _fork = new F<Integer, F<Color, Car>>() {
+		final F<Integer, F<Color, Car>> _car = new F<Integer, F<Color, Car>>() {
 			public F<Color, Car> apply(final Integer n) {
 				return new F<Color, Car>() {
 					public Car apply(final Color c) {
@@ -22,18 +22,11 @@ public class CarFactory {
 			}
 		};
 
-		// F<Enumeration<Car>, Enumeration<Car>> forkEnum = new
-		// F<Enumeration<Car>, Enumeration<Car>>() {
-		// public Enumeration<Car> apply(final Enumeration<Car> t) {
-		// return emptyEnum.plus(
-		// Enumeration.apply(Enumeration.apply(Enumeration.apply(
-		// Enumeration.singleton(_fork), enumeration), t), t))
-		// .pay();
-		// }
-		// };
-
-		enumRes = Enumeration.apply(Enumeration.apply(Enumeration.singleton(_fork),
+		enumRes = 
+//				emptyEnum.plus(
+						Enumeration.apply(Enumeration.apply(Enumeration.singleton(_car),
 						Combinators.makeInteger()),ColorFactory.getEnumeration());
+//						);
 
 		return enumRes;
 	}
