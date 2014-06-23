@@ -3,6 +3,7 @@ PropCheck
 
 What is it?
 -----------
+
 PropCheck is a property-based testing framework heavily influenced by
 Haslell's QuickCheck. Property-based testing is an approach where
 a property is tested against (supposedly) many data. In the approach
@@ -19,8 +20,10 @@ the statistics corresponding to the number of data generated, data not tested
 due to violation of assumptions and due to marked as bad input.
 
 
+
 Examples
 --------
+
 As it is built on top of JUnit, to define a test is similar to JUnit's, only
 that the test class needs to be annotated with @RunWith(PropCheck.class) in
 its definition:
@@ -48,8 +51,9 @@ condition ``isEmpty(s) = false''. Lastly, JUnit's ``Assertion'' is used to asser
 the property given the test data.
 
 
-Contain of packages:
---------------------
+Packages
+--------
+
 The packages are structured as follows:
 
 # tom.library.theory
@@ -162,14 +166,52 @@ The packages are structured as follows:
 	  A helper class to deal with instance of the type ``Visitable''.
 
 
+
 How it works?
 -------------
+  _________        ___________         ___________
+ |         |      |           |       |           |
+ | Client  |----->| JUnitCore |------>| PropCheck |
+ |_________|      |___________|       |___________|
+
+When a client runs tests, by default the first class to be called
+is the ``JUnitCore'' class. In the class, each test class is examined 
+and an appropriate runner will be instantiate reflectively, when a 
+test class annotated with @RunWith(PropCheck.class) then an instance
+of class PropCheck will be instantiated and used as the ``Runner''
+for that particular test class.
+
+The method ``run()'' in class PropCheck is where the executions of
+a test class is started. When it is called, class PropCheck will 
+look for methods annotated by either @Test or @Theory in the tested 
+class and execute them one by one. @Test methods are tested without 
+generating test data. For @Theory, PropCheck gets each theory parameter
+and assigns generated test data to it. Precisely, PropCheck examines
+the theory method and gets the parameter reflectively and for each
+parameter it check whether it is annotated by @ForSome or not. If 
+a parameter is annotated with the annotation then PropCheck inspects 
+the annotation to get the ``ParameterSupplier'' defined by annotation
+@ParameterSuppliedBy in the @ForSome source:
+
+@ParametersSuppliedBy(ForSomeValueSupplier.class) // tells PropCheck to use the defined class to generate test data for the annotated parameter
+@Target(PARAMETER)
+@Retention(RUNTIME)
+public @interface ForSome {
+
+	public boolean exhaustive() default false;    // random enumeration by default
+	public int minSampleSize() default 0;    // minimal size of the example
+	public int maxSampleSize() default 10;   // maximal size of the example
+	public int numberOfSamples() default 0;  // maximal number of samples (0 means no limit for exhaustive, and one per part in random)	
+
+}
 
 
-
-Related works?
+Related works
 -------------
 1. QuickCheck
+		<https://hackage.haskell.org/package/QuickCheck>
 2. JUnit-quickcheck
+		<https://github.com/pholser/junit-quickcheck>
 3. JCheck
+		<http://www.jcheck.org/>
 
