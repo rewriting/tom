@@ -11,6 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import examples.adt.list.alist.types.AList;
+import examples.adt.stack.stack.types.Stack;
 import tom.library.shrink.reducers.ValueReducer;
 import tom.library.sl.Visitable;
 
@@ -83,6 +84,20 @@ public class ValueReducerTest {
 		assertThat(results.size(), equalTo(10));
 
 		for (Visitable v : results) {
+			assertThat(size(v), lessThan(size(term)));
+		}
+	}
+	
+	@Test
+	public void testReduceStack() {
+		Stack term = Stack.fromString("push(push(push(push(empty, 1), 0), 2), -2)");
+		
+		List<Visitable> results = classUnderTest.reduce(term);
+		
+		//assertThat(results.size(), equalTo(10));
+
+		for (Visitable v : results) {
+			System.out.println(v);
 			assertThat(size(v), lessThan(size(term)));
 		}
 	}

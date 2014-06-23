@@ -1,30 +1,36 @@
 package tom.library.shrink.reducers;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
+import java.util.HashSet;
 
 import tom.library.shrink.tools.RandomValueGenerator;
 
-
-public class IntegerReducer implements Reducer<Integer>{
+public class IntegerReducerDecorator extends ReducerDecorator{
 
 	private static final int PART = 3;
 	private static final int MAX_NUMBER = 10;
 	private static final int PART_CARDINALITY = MAX_NUMBER/PART;
 	
-	private List<Integer> results;
-	
+	private Collection<Integer> results;
 	private int value;
 	
-	public IntegerReducer() {
-		results = new ArrayList<Integer>();
+	public IntegerReducerDecorator(Reducer reducer) {
+		super(reducer);
+		results = new HashSet<Integer>();
+		value = (int) reducer.getTerm();
 	}
-	
-	public List<Integer> reduce(Integer value) {
-		this.value = value;
-		results.clear();
+
+	@Override
+	public Object getTerm() {
+		return value;
+	}
+
+	@Override
+	public Collection<Object> reduce() {
 		reduceIntegerValues();
-		return results;
+		Collection<Object> terms = reducer.reduce();
+		terms.addAll(results);
+		return terms;
 	}
 
 	private void reduceIntegerValues() {
@@ -39,6 +45,9 @@ public class IntegerReducer implements Reducer<Integer>{
 		int absValue = Math.abs(value);
 		for (int i = 0; i < absValue; i++) {
 			int newValue = value < 0? i * -1 : i;
+			while (results.contains(newValue)) {
+				newValue = value < 0? i * -1 : i;
+			}
 			results.add(newValue);
 		}
 	}
@@ -57,6 +66,10 @@ public class IntegerReducer implements Reducer<Integer>{
 			}
 			int tempValue = getRandomValue(part, width);
 			int newValue = value < 0? tempValue * -1 : tempValue;
+			while (results.contains(newValue)) {
+				tempValue = getRandomValue(part, width);
+				newValue = value < 0? tempValue * -1 : tempValue;
+			}
 			results.add(newValue);
 		}
 	}

@@ -7,14 +7,15 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.TreeSet;
 
-import tom.library.shrink.metaterm.TomShrink;
-import tom.library.shrink.reducers.ExplotionReducer;
-import tom.library.shrink.reducers.IntegerReducer;
+import tom.library.shrink.reducers.BaseReducer;
+import tom.library.shrink.reducers.ConstansReducersDecorator;
+import tom.library.shrink.reducers.IntegerReducerDecorator;
 import tom.library.shrink.reducers.Reducer;
-import tom.library.shrink.reducers.StringReducer;
-import tom.library.shrink.reducers.SubtermReducer;
-import tom.library.shrink.reducers.ValueReducer;
-import tom.library.sl.Visitable;
+import tom.library.shrink.reducers.StringReducerDecorator;
+import tom.library.shrink.reducers.SubtermsReducerDecorator;
+import tom.library.shrink.reducers.ValueReducerDecorator;
+
+
 
 /**
  * Generates terms from a given counter-example. The steps that are used in this process are:
@@ -32,69 +33,41 @@ import tom.library.sl.Visitable;
 public class SimpleShrink implements Shrink {
 
 	private Collection<Object> terms;
-	
-	private Reducer<Visitable> subtermReducer;
-	private Reducer<Visitable> explotionReducer;
-	private Reducer<Visitable> valueReducer;
-	private Reducer<String> stringReducer;
-	private Reducer<Integer> intReducer;
-	
+
+	private Reducer reducer;
+
 	public SimpleShrink() {
-		terms = new HashSet<Object>();
 		
-		subtermReducer = new SubtermReducer();
-		explotionReducer = new ExplotionReducer();
-		valueReducer = new ValueReducer();
-		stringReducer = new StringReducer();
-		intReducer = new IntegerReducer();
 	}
-	
+
 	@Override
 	public Collection<Object> shrink(Object term) {
-		terms.clear();
+		terms = new HashSet<Object>();
 		buildSmallerTerms(term);
-		terms.add(term);
-		//addTermIfBuiltTermsIsEmpty(term);
 		return terms;
 	}
-	
+
+
+
 	@Override
 	public Collection<Object> shrink(Object term,
 			Comparator<? super Object> comparator) {
 		terms = new TreeSet<Object>(comparator);
 		buildSmallerTerms(term);
-		//addTermIfBuiltTermsIsEmpty(term);
-		terms.add(term);
 		return terms;
 	}
 
-	private void buildSmallerTerms(Object object) {
-		if (isInstanceOfVisitable(object)) {
-			Visitable term = (Visitable) object;
+	private void buildSmallerTerms(Object term) {
+		if (isInstanceOfVisitable(term)) {
+			buildReducerForVisitable(term);
+		} else if (isInstanceOfString(term)) {
+			buildReducerForString(term);
+		} else if (isInstanceOfInteger(term)) {
+			buildReducerForInteger(term);
+		}
+		terms.addAll(reducer.reduce());
+	}
 
-			// try to substitute SimpleShrink by TomShrink
-			//TomShrink ts = new TomShrink();
-			//terms.addAll(ts.shrink(term));
-			
-			terms.addAll(subtermReducer.reduce(term));
-			terms.addAll(explotionReducer.reduce(term));
-			terms.addAll(valueReducer.reduce(term));
-			
-		} else {
-			reducePrimitives(object);
-		}
-	}
-	
-	private void reducePrimitives(Object object) {
-		if (isInstanceOfString(object)) {
-			String term = (String) object;
-			terms.addAll(stringReducer.reduce(term));
-		} else if (isInstanceOfInteger(object)) {
-			int term = (int) object;
-			terms.addAll(intReducer.reduce(term));
-		}
-	}
-	
 	private boolean isInstanceOfString(Object term) {
 		return term instanceof String;
 	}
@@ -103,9 +76,20 @@ public class SimpleShrink implements Shrink {
 		return term instanceof Integer;
 	}
 	
-	private void addTermIfBuiltTermsIsEmpty(Object term) {
-		if (terms.isEmpty()) {
-			terms.add(term);
-		}
+	private void buildReducerForVisitable(Object term) {
+		reducer = new BaseReducer(term);
+		reducer = new SubtermsReducerDecorator(reducer);
+		reducer = new ConstansReducersDecorator(reducer);
+		reducer = new ValueReducerDecorator(reducer);
+	}
+
+	private void buildReducerForString(Object term) {
+		reducer = new BaseReducer(term);
+		reducer = new StringReducerDecorator(reducer);
+	}
+	
+	private void buildReducerForInteger(Object term) {
+		reducer = new BaseReducer(term);
+		reducer = new IntegerReducerDecorator(reducer);
 	}
 }

@@ -1,8 +1,8 @@
 package tom.library.shrink.reducers;
 
-import static tom.library.shrink.tools.VisitableTools.*;
-
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 import tom.library.shrink.ds.TermNode;
@@ -11,26 +11,30 @@ import tom.library.shrink.ds.zipper.Zipper;
 import tom.library.shrink.ds.zipper.ZipperException;
 import tom.library.sl.Visitable;
 
-public class ValueReducer implements Reducer<Visitable> {
-	
-	private List<Visitable> results;
-	private Visitable root;
+public class ValueReducerDecorator extends ReducerDecorator {
 
-	private void initialize(Visitable root) {
-		this.root = root;
-		if (results == null) {
-			results = new ArrayList<Visitable>();
-		} else {
-			results.clear();
-		}
-	}
+	private Collection<Visitable> results;
+	private Visitable term;
 	
+	public ValueReducerDecorator(Reducer reducer) {
+		super(reducer);
+		results = new HashSet<Visitable>();
+		term = (Visitable) reducer.getTerm();
+	}
+
 	@Override
-	public List<Visitable> reduce(Visitable term) {
-		initialize(term);
-		Zipper<TermNode> zipper = Zipper.zip(TermTreeBuilder.buildTree(root));
+	public Object getTerm() {
+		return term;
+	}
+
+	@Override
+	public Collection<Object> reduce() {
+		Zipper<TermNode> zipper = Zipper.zip(TermTreeBuilder.buildTree(term));
 		reduceValue(zipper);
-		return results;
+		Collection<Object> terms = reducer.reduce();
+		//terms.removeAll(results);
+		terms.addAll(results);
+		return terms;
 	}
 
 	private void reduceValue(Zipper<TermNode> zip) {
@@ -83,17 +87,19 @@ public class ValueReducer implements Reducer<Visitable> {
 		}
 	}
 
-	private List<Visitable> calculateReducedValue(Visitable term) {
-		List<Visitable> values = new ArrayList<Visitable>();
-		PrimitiveReducer reducer = new PrimitiveReducer();
-		if (isValueInstanceOfInteger(term)) {
-			values.addAll(reducer.reduce(term));
-		} else if (isValueInstanceOfString(term)) {
-			values.addAll(reducer.reduce(term));
-		}
+	private Collection<Visitable> calculateReducedValue(Visitable term) {
+		Collection<Visitable> values = new HashSet<Visitable>();
+		Reducer reducer = new PrimitiveVisitableReducerDecorator(new BaseReducer(term));
+		addValues(values, reducer.reduce());
 		return values;
 	}
 	
+	private void addValues(Collection<Visitable> values, Collection<Object> reducedTerms) {
+		for (Object object : reducedTerms) {
+			values.add((Visitable) object);
+		}
+	}
+
 	private Visitable getTerm(Zipper<TermNode> zipper) {
 		return zipper.getNode().getSource().getTerm();
 	}

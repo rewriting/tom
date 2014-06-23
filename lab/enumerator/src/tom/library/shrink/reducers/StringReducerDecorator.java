@@ -1,30 +1,37 @@
 package tom.library.shrink.reducers;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
+import java.util.HashSet;
 
 import tom.library.shrink.tools.RandomValueGenerator;
 
-public class StringReducer implements Reducer<String>{
+public class StringReducerDecorator extends ReducerDecorator {
 
 	private static final int PART = 3;
 	private static final int MAX_NUMBER = 10;
 	private static final int PART_CARDINALITY = MAX_NUMBER/PART;
 	
-	private List<String> results;
-	
+	private Collection<String> results;
 	private String value;
 	
-	public StringReducer() {
-		results = new ArrayList<String>();
-	}
 	
+	public StringReducerDecorator(Reducer reducer) {
+		super(reducer);
+		results = new HashSet<String>();
+		value = (String) reducer.getTerm();
+	}
+
 	@Override
-	public List<String> reduce(String value) {
-		results.clear();
-		this.value = value;
+	public Object getTerm() {
+		return value;
+	}
+
+	@Override
+	public Collection<Object> reduce() {
 		buildReducedValue();
-		return results;
+		Collection<Object> terms = reducer.reduce();
+		terms.addAll(results);
+		return terms;
 	}
 
 	private void buildReducedValue() {

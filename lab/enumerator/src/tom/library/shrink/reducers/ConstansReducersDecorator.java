@@ -1,6 +1,8 @@
 package tom.library.shrink.reducers;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 import tom.library.shrink.ds.TermNode;
@@ -9,35 +11,35 @@ import tom.library.shrink.ds.zipper.Zipper;
 import tom.library.shrink.tools.TermWrapper;
 import tom.library.sl.Visitable;
 
-public class ExplotionReducer implements Reducer<Visitable> {
+public class ConstansReducersDecorator extends ReducerDecorator {
 
-	private List<Visitable> results;
-	private List<Visitable> terminalConstructors;
+	private Collection<Visitable> results;
+	private Collection<Visitable> terminals;
+	private Visitable term;
 	
-	private void initialize() {
-		if (results == null) {
-			results = new ArrayList<Visitable>();
-		} else {
-			results.clear();
-		}
-		
-		if (terminalConstructors == null) {
-			terminalConstructors = new ArrayList<Visitable>();
-		} else {
-			terminalConstructors.clear();
-		}
+	public ConstansReducersDecorator(Reducer reducer) {
+		super(reducer);
+		results = new HashSet<Visitable>();
+		terminals = new HashSet<Visitable>();
+		term = (Visitable) reducer.getTerm();
 	}
-	
+
 	@Override
-	public List<Visitable> reduce(Visitable term) {
-		initialize();
+	public Object getTerm() {
+		return term;
+	}
+
+	@Override
+	public Collection<Object> reduce() {
 		Zipper<TermNode> zipper = Zipper.zip(TermTreeBuilder.buildTree(term));
 		try {
 			explode(zipper);
 		} catch (Exception e) {
 			// do nothing, return empty result
 		}
-		return results;
+		Collection<Object> terms = reducer.reduce();
+		terms.addAll(results);
+		return terms;
 	}
 	
 	private void explode(Zipper<TermNode> zip) throws Exception {
@@ -56,12 +58,12 @@ public class ExplotionReducer implements Reducer<Visitable> {
 	}
 	
 	protected boolean isTerminalEmpty() {
-		return terminalConstructors.isEmpty();
+		return terminals.isEmpty();
 	}
 	
 	protected void buildTerminalFormTerm(Visitable term) {
-		terminalConstructors.clear();
-		terminalConstructors.addAll(getConstructorTerminalsFromTerm(term));
+		terminals.clear();
+		terminals.addAll(getConstructorTerminalsFromTerm(term));
 	}
 	
 	protected List<Visitable> getConstructorTerminalsFromTerm(Visitable term) {
@@ -71,7 +73,7 @@ public class ExplotionReducer implements Reducer<Visitable> {
 	protected List<Visitable> buildTermFromZip(Zipper<TermNode> zipper) throws Exception {
 		List<Visitable> results = new ArrayList<Visitable>();
 		Visitable tmp = null;
-		for (Visitable t : terminalConstructors) {
+		for (Visitable t : terminals) {
 			Zipper<TermNode> z = zipper;
 			while (!z.isTop()) {
 				int idx = z.getNode().getSource().getIndex();
