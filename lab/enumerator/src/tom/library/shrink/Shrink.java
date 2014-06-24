@@ -4,7 +4,8 @@ import java.util.Collection;
 import java.util.Comparator;
 
 /**
- * Shrinks a given term to a smaller terms.
+ * Shrinks a given term to a smaller terms. The implementing class
+ * should also handle primitive types.
  * 
  * @author nauval
  *

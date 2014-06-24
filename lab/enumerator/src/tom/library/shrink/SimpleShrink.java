@@ -18,6 +18,7 @@ import tom.library.shrink.reducers.ValueReducerDecorator;
 
 
 /**
+ * <p>
  * Generates terms from a given counter-example. The steps that are used in this process are:
  * <ul>
  * <li>Get immediate sub-terms that have the same type with the counter-examples</li>
@@ -26,6 +27,13 @@ import tom.library.shrink.reducers.ValueReducerDecorator;
  * </ul>
  * By using this process, the shrink mechanism should be done repetitively, i.e. the new counter-examples
  * need to be shrunk again using this class until no smaller counter-example found.
+ * </p>
+ * 
+ * <p>
+ * To apply the rules, {@code SimpleShrink} uses a {@code Reducer}. {@code Reducer}
+ * is an interface to reduce a given term to some smaller terms. A decorator pattern
+ * has been used to build the reducers.
+ * </p>
  * 
  * @author nauval
  *
