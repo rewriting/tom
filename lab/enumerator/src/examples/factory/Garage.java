@@ -12,7 +12,10 @@ public class Garage {
 		cars = new ArrayList<Car>();
 	}
 
-	public Garage(List<Car> cars){
+	// @Generator(canBeNull=false)
+	public Garage(
+			// @Enumerate(memberCanBeNull=false)
+			List<Car> cars){
 		this.cars = cars;
 	}
 

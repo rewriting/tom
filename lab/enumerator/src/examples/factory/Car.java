@@ -4,8 +4,12 @@ public class Car {
 	private int no;
 	private Color color;
 
-	
-	public Car(int no, Color color) {
+	// @Generator(canBeNull=true)
+	public Car(
+			//@Enumerate(maxSize=4)
+			int no, 
+			//@Enumerate
+			Color color) {
 		this.no = no;
 		this.color = color;
 	}
