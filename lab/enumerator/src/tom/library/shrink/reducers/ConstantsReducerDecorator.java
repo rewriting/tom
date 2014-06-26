@@ -11,13 +11,13 @@ import tom.library.shrink.ds.zipper.Zipper;
 import tom.library.shrink.tools.TermWrapper;
 import tom.library.sl.Visitable;
 
-public class ConstansReducersDecorator extends ReducerDecorator {
+public class ConstantsReducerDecorator extends ReducerDecorator {
 
 	private Collection<Visitable> results;
 	private Collection<Visitable> terminals;
 	private Visitable term;
 	
-	public ConstansReducersDecorator(Reducer reducer) {
+	public ConstantsReducerDecorator(Reducer reducer) {
 		super(reducer);
 		results = new HashSet<Visitable>();
 		terminals = new HashSet<Visitable>();

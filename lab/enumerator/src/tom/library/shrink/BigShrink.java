@@ -9,7 +9,7 @@ import java.util.TreeSet;
 
 import tom.library.shrink.ds.ExpandingSet;
 import tom.library.shrink.reducers.BaseReducer;
-import tom.library.shrink.reducers.ConstansReducersDecorator;
+import tom.library.shrink.reducers.ConstantsReducerDecorator;
 import tom.library.shrink.reducers.IntegerReducerDecorator;
 import tom.library.shrink.reducers.Reducer;
 import tom.library.shrink.reducers.StringReducerDecorator;
@@ -29,7 +29,7 @@ import tom.library.sl.Visitable;
  * counter-example.
  * 
  * <p>
- * Note: this approach takes too much time, especially during the computation of the last rule
+ * Note: this approach is experimental. It takes too much time, especially during the computation of the last rule
  * </p>
  * @author nauval
  *
@@ -88,7 +88,7 @@ public class BigShrink implements Shrink{
 			// first step
 			reducer = new SubtermsReducerDecorator(reducer);
 			// second step
-			reducer = new ConstansReducersDecorator(reducer);
+			reducer = new ConstantsReducerDecorator(reducer);
 			
 			// third step, this makes the generation process takes 
 			// too long. 

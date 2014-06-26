@@ -8,7 +8,7 @@ import java.util.HashSet;
 import java.util.TreeSet;
 
 import tom.library.shrink.reducers.BaseReducer;
-import tom.library.shrink.reducers.ConstansReducersDecorator;
+import tom.library.shrink.reducers.ConstantsReducerDecorator;
 import tom.library.shrink.reducers.IntegerReducerDecorator;
 import tom.library.shrink.reducers.Reducer;
 import tom.library.shrink.reducers.StringReducerDecorator;
@@ -87,7 +87,7 @@ public class SimpleShrink implements Shrink {
 	private void buildReducerForVisitable(Object term) {
 		reducer = new BaseReducer(term);
 		reducer = new SubtermsReducerDecorator(reducer);
-		reducer = new ConstansReducersDecorator(reducer);
+		reducer = new ConstantsReducerDecorator(reducer);
 		reducer = new ValueReducerDecorator(reducer);
 	}
 

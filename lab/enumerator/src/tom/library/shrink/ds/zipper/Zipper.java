@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * TODO Too much generics, simplify
+ * <p>
+ * An implementation of the <a href="http://www.st.cs.uni-sb.de/edu/seminare/2005/advanced-fp/docs/huet-zipper.pdf">
+ * Zipper</a> data structure
+ * </p>
  * @author nauval
  *
  * @param <T>
