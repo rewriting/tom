@@ -1,19 +1,11 @@
 package tom.library.shrink;
 
-import static tom.library.shrink.tools.VisitableTools.isInstanceOfVisitable;
-
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.TreeSet;
 
-import tom.library.shrink.reducers.BaseReducer;
-import tom.library.shrink.reducers.ConstantsReducerDecorator;
-import tom.library.shrink.reducers.IntegerReducerDecorator;
-import tom.library.shrink.reducers.Reducer;
-import tom.library.shrink.reducers.StringReducerDecorator;
-import tom.library.shrink.reducers.SubtermsReducerDecorator;
-import tom.library.shrink.reducers.ValueReducerDecorator;
+import tom.library.shrink.reducers.ReducerFactory;
 
 
 
@@ -32,7 +24,8 @@ import tom.library.shrink.reducers.ValueReducerDecorator;
  * <p>
  * To apply the rules, {@code SimpleShrink} uses a {@code Reducer}. {@code Reducer}
  * is an interface to reduce a given term to some smaller terms. A decorator pattern
- * has been used to build the reducers.
+ * has been used to build the reducers. A {@code ReducerFactory} is used to
+ * create the appropriate reducer for a given term.
  * </p>
  * 
  * @author nauval
@@ -40,64 +33,26 @@ import tom.library.shrink.reducers.ValueReducerDecorator;
  */
 public class SimpleShrink implements Shrink {
 
-	private Collection<Object> terms;
 
-	private Reducer reducer;
-
-	public SimpleShrink() {
-		
-	}
-
+	/**
+	 * Returns an unsorted collection of terms after the mutation process. 
+	 */
 	@Override
 	public Collection<Object> shrink(Object term) {
-		terms = new HashSet<Object>();
-		buildSmallerTerms(term);
+		Collection<Object> terms = new HashSet<Object>();
+		terms.addAll(ReducerFactory.getInstance(term).createReducer().reduce());
 		return terms;
 	}
 
 
-
+	/**
+	 * Returns a sorted collection of terms after the mutation process
+	 */
 	@Override
 	public Collection<Object> shrink(Object term,
 			Comparator<? super Object> comparator) {
-		terms = new TreeSet<Object>(comparator);
-		buildSmallerTerms(term);
+		Collection<Object>  terms = new TreeSet<Object>(comparator);
+		terms.addAll(ReducerFactory.getInstance(term).createReducer().reduce());
 		return terms;
-	}
-
-	private void buildSmallerTerms(Object term) {
-		if (isInstanceOfVisitable(term)) {
-			buildReducerForVisitable(term);
-		} else if (isInstanceOfString(term)) {
-			buildReducerForString(term);
-		} else if (isInstanceOfInteger(term)) {
-			buildReducerForInteger(term);
-		}
-		terms.addAll(reducer.reduce());
-	}
-
-	private boolean isInstanceOfString(Object term) {
-		return term instanceof String;
-	}
-
-	private boolean isInstanceOfInteger(Object term) {
-		return term instanceof Integer;
-	}
-	
-	private void buildReducerForVisitable(Object term) {
-		reducer = new BaseReducer(term);
-		reducer = new SubtermsReducerDecorator(reducer);
-		reducer = new ConstantsReducerDecorator(reducer);
-		reducer = new ValueReducerDecorator(reducer);
-	}
-
-	private void buildReducerForString(Object term) {
-		reducer = new BaseReducer(term);
-		reducer = new StringReducerDecorator(reducer);
-	}
-	
-	private void buildReducerForInteger(Object term) {
-		reducer = new BaseReducer(term);
-		reducer = new IntegerReducerDecorator(reducer);
 	}
 }
