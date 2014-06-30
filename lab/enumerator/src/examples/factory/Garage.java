@@ -3,19 +3,20 @@ package examples.factory;
 import java.util.ArrayList;
 import java.util.List;
 
+import examples.factory.generation.Enumerate;
+import examples.factory.generation.Generator;
+
 public class Garage {
 	// a car can appear twice!
 	// use Set if otherwise and change the Factory accordingly
 	private List<Car> cars;
-	
-	public Garage(){
+
+	public Garage() {
 		cars = new ArrayList<Car>();
 	}
 
-	// @Generator(canBeNull=false)
-	public Garage(
-			// @Enumerate(memberCanBeNull=false)
-			List<Car> cars){
+	@Generator(canBeNull = false)
+	public Garage(@Enumerate(memberCanBeNull = false) List<Car> cars) {
 		this.cars = cars;
 	}
 
@@ -23,6 +24,5 @@ public class Garage {
 	public String toString() {
 		return "Garage [cars=" + cars + "]";
 	}
-	
-	
+
 }
