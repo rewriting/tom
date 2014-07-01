@@ -1,7 +1,6 @@
 package examples.factory.generation;
 
 import examples.factory.generation.Enumerate;
-import examples.factory.generation.Generator;
 
 import java.lang.annotation.Annotation;
 import java.util.List;

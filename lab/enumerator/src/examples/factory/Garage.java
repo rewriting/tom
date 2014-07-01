@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import examples.factory.generation.Enumerate;
-import examples.factory.generation.Generator;
+import examples.factory.generation.EnumerateGenerator;
 
 public class Garage {
 	// a car can appear twice!
@@ -15,7 +15,7 @@ public class Garage {
 		cars = new ArrayList<Car>();
 	}
 
-	@Generator(canBeNull = false)
+	@EnumerateGenerator(canBeNull = false)
 	public Garage(@Enumerate(memberCanBeNull = false) List<Car> cars) {
 		this.cars = cars;
 	}

@@ -30,7 +30,7 @@ public class MyIntrospection {
 	public static Constructor extraireConstructor(Class c){
 		int i=0;
 		while(i<c.getConstructors().length){
-			if(c.getConstructors()[i].getAnnotation(Generator.class)!=null){
+			if(c.getConstructors()[i].getAnnotation(EnumerateGenerator.class)!=null){
 				return c.getConstructors()[i];
 			}
 			i++;

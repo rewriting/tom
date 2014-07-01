@@ -1,14 +1,14 @@
 package examples.factory;
 
 import examples.factory.generation.Enumerate;
-import examples.factory.generation.Generator;
+import examples.factory.generation.EnumerateGenerator;
 
 public class Student {
 
 	private int no;
 	private String name;
 
-	@Generator(canBeNull = true)
+	@EnumerateGenerator(canBeNull = true)
 	public Student(@Enumerate(maxSize = 4) int no,
 			@Enumerate(maxSize = 2) String string) {
 		this.no = no;
