@@ -61,7 +61,8 @@ public abstract class AbstractGeneratorFactory {
 	
 	protected StringBuilder lesImports(Class<?>c){
 		StringBuilder sb=new StringBuilder();
-		appendLine(sb, "package "+c.getPackage().getName()+";");
+		appendLine(sb, "package "+c.getPackage().getName()+".tests;");
+		appendLine(sb, "import "+c.getCanonicalName()+";"+ENDL);
 		for(String s:genererListImport(c)){
 			appendLine(sb, "import "+s+";"+ENDL);
 		}
