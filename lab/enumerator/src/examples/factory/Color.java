@@ -1,5 +1,8 @@
 package examples.factory;
 
+import examples.factory.generation.EnumerateStatic;
+
+@EnumerateStatic
 public class Color {
 	public static final Color RED = new Color(1);
 	public static final Color GREEN = new Color(2);

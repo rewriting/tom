@@ -3,19 +3,21 @@ package examples.factory.generation;
 import examples.factory.generation.Enumerate;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
 import java.util.List;
 
 public class FieldConstructor {
 	private List<Annotation> annotation;
 	private Class typeChamp;
 	private String nameField;
+	private Type typePamaretered;
 	
-	
-	public FieldConstructor(List<Annotation> annotation, Class typeChamp,String nameField) {
+	public FieldConstructor(List<Annotation> annotation, Class typeChamp,String nameField,Type typePamaretered) {
 		super();
 		this.annotation = annotation;
 		this.typeChamp = typeChamp;
 		this.nameField=nameField;
+		this.typePamaretered=typePamaretered;
 	}
 	public String getNameField() {
 		return nameField;
@@ -30,6 +32,12 @@ public class FieldConstructor {
 		this.annotation = annotation;
 	}
 	
+	public Type getParameter() {
+		return typePamaretered;
+	}
+	public void setParameter(Type parameter) {
+		this.typePamaretered = typePamaretered;
+	}
 	public boolean containsAnnotation(Class annot){
 		boolean b=false;
 		int i=0;
@@ -49,8 +57,10 @@ public class FieldConstructor {
 	@Override
 	public String toString() {
 		return "FieldConstructor [annotation=" + annotation + ", typeChamp="
-				+ typeChamp + "]";
+				+ typeChamp + ", nameField=" + nameField + ", parameter="
+				+ typePamaretered + "]";
 	}
+
 	
 	
 }

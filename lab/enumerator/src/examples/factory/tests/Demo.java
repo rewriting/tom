@@ -4,6 +4,7 @@ import tom.library.enumerator.Combinators;
 import tom.library.enumerator.Enumeration;
 import tom.library.enumerator.Finite;
 import tom.library.enumerator.LazyList;
+import examples.factory.Car;
 import examples.factory.Student;
 
 public class Demo {
@@ -18,12 +19,19 @@ public class Demo {
 		}
 
 		// Students
-//		Enumeration<Student> enumStudent = StudentFactory.getEnumeration();
-//		LazyList<Finite<Student>> partsStudent = enumStudent.parts();
-//		for (int i = 0; i < 8 && !partsStudent.isEmpty(); i++) {
-//			System.out.println(i + " --> " + partsStudent.head());
-//			partsStudent = partsStudent.tail();
-//		}
+		Enumeration<Student> enumStudent = StudentFactory.getEnumeration();
+		LazyList<Finite<Student>> partsStudent = enumStudent.parts();
+		for (int i = 0; i < 8 && !partsStudent.isEmpty(); i++) {
+			System.out.println(i + " --> " + partsStudent.head());
+			partsStudent = partsStudent.tail();
+		}
+		
+		Enumeration<Car> enumCar = CarFactory.getEnumeration();
+		LazyList<Finite<Car>> partsCar = enumCar.parts();
+		for (int i = 0; i < 8 && !partsCar.isEmpty(); i++) {
+			System.out.println(i + " --> " + partsCar.head());
+			partsCar = partsCar.tail();
+		}
 
 
 	}

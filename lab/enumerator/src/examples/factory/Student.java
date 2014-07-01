@@ -9,7 +9,7 @@ public class Student {
 	private String name;
 
 	@EnumerateGenerator(canBeNull = true)
-	public Student(@Enumerate(maxSize = 4) int no,
+	public Student(@Enumerate(maxSize = 8) int no,
 			@Enumerate(maxSize = 2) String string) {
 		this.no = no;
 		this.name = string;

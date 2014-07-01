@@ -10,13 +10,13 @@ import examples.factory.Color;
 
 public class StaticFactory extends AbstractGeneratorFactory{
 
-	protected StringBuilder lesImports(Class<?>c){
-		StringBuilder sb=super.appendImports(c);
-		appendLine(sb, makeImport(List.class));
-		appendLine(sb, makeImport(Field.class));
-		appendLine(sb, makeImport(MyIntrospection.class));
-		appendLine(sb, makeImport(FieldConstructor.class));
-		
+	@Override
+	protected StringBuilder appendImports(Class<?>c,String packagePath){
+		StringBuilder sb=super.appendImports(c,packagePath);
+		appendln(sb, makeImport(List.class));
+		appendln(sb, makeImport(Field.class));
+		appendln(sb, makeImport(MyIntrospection.class));
+		appendln(sb, makeImport(FieldConstructor.class));
 		
 		return sb;
 	}
@@ -24,18 +24,19 @@ public class StaticFactory extends AbstractGeneratorFactory{
 	
 	
 	@Override
-	protected StringBuilder core(Class<?> c) throws IOException {
+	protected StringBuilder core(FieldConstructor fc,String packagePath) throws IOException {
 		// TODO Auto-generated method stub
+		Class<?>c=fc.getTypeChamp();
 		String CLASSNAME=c.getSimpleName();
 		
 		StringBuilder sb=new StringBuilder();
 		
-		appendLine(sb, "public static final Enumeration<"+CLASSNAME+"> getEnumeration() {");
-		appendLine(sb, "Enumeration<"+CLASSNAME+"> enumRes = null;");
-		appendLine(sb, "try{");
-		appendLine(sb, "final Enumeration<"+CLASSNAME+"> emptyEnum = Enumeration.singleton(null);");
+		appendln(sb, "public static final Enumeration<"+CLASSNAME+"> getEnumeration() {");
+		appendln(sb, "Enumeration<"+CLASSNAME+"> enumRes = null;");
+		appendln(sb, "try{");
+		appendln(sb, "final Enumeration<"+CLASSNAME+"> emptyEnum = Enumeration.singleton(null);");
 		int a=0;
-		List<Field> listFC=MyIntrospection.recupererTousChampEnumerateStatic(c);
+		List<Field> listFC=MyIntrospection.getAllFieldFromEnumerateStaticClass(c);
 		Map<String,Object>map=MyIntrospection.getValueStatic(c);
 		
 		try {
@@ -46,37 +47,37 @@ public class StaticFactory extends AbstractGeneratorFactory{
 			e.printStackTrace();
 		}
 		
-		for(Field fc:listFC){
-			appendLine(sb, "final Enumeration<"+CLASSNAME+"> "+fc.getName()+"Enum = Enumeration.singleton("+fc.getName()+");");
+		for(Field f:listFC){
+			appendln(sb, "final Enumeration<"+CLASSNAME+"> "+f.getName()+"Enum = Enumeration.singleton("+f.getName()+");");
 			a++;
 		}
 		
-		if(!listFC.isEmpty())appendLine(sb, "enumRes = "+listFC.get(a-1).getName()+"Enum;");
+		if(!listFC.isEmpty())appendln(sb, "enumRes = "+listFC.get(a-1).getName()+"Enum;");
 		for(int i=a-2;i>=0;i--){
-			appendLine(sb, "enumRes = enumRes.pay().plus("+listFC.get(i).getName()+"Enum);");
+			appendln(sb, "enumRes = enumRes.pay().plus("+listFC.get(i).getName()+"Enum);");
 		}
 		
-		appendLine(sb, "}catch(ClassNotFoundException | IllegalArgumentException| IllegalAccessException e){");
+		appendln(sb, "}catch(ClassNotFoundException | IllegalArgumentException| IllegalAccessException e){");
 		
-		appendLine(sb, "}");
-		appendLine(sb, "return enumRes;");
-		appendLine(sb, "}");
+		appendln(sb, "}");
+		appendln(sb, "return enumRes;");
+		appendln(sb, "}");
 		
 		return sb;
 	}
 	
 	public StringBuilder lesStatics(Class c) throws NoSuchFieldException, SecurityException, ClassNotFoundException{
 		StringBuilder sb=new StringBuilder();
-		appendLine(sb, "Object obj=Class.forName(\""+c.getCanonicalName()+"\");");
-		appendLine(sb, "List<Field> listFC=MyIntrospection.recupererTousChampEnumerateStatic("+c.getCanonicalName()+".class);");
-		List<Field> listFC=MyIntrospection.recupererTousChampEnumerateStatic(c);
+		appendln(sb, "Object obj=Class.forName(\""+c.getCanonicalName()+"\");");
+		appendln(sb, "List<Field> listFC=MyIntrospection.recupererTousChampEnumerateStatic("+c.getCanonicalName()+".class);");
+		List<Field> listFC=MyIntrospection.getAllFieldFromEnumerateStaticClass(c);
 		
-		appendLine(sb, "Field f;");
+		appendln(sb, "Field f;");
 		for(Field fc:listFC){
-			appendLine(sb, "f=MyIntrospection.getField("+fc.getType().getCanonicalName()+".class,\""+fc.getName()+"\");");
+			appendln(sb, "f=MyIntrospection.getField("+fc.getType().getCanonicalName()+".class,\""+fc.getName()+"\");");
 		//c.getCLASS() n'est peut etre pas bon faudrait peut etre faire plus de reflection
 			String clas=fc.getType().getCanonicalName();
-			appendLine(sb, clas+" "+fc.getName()+"=("+clas+")f.get(obj);");
+			appendln(sb, clas+" "+fc.getName()+"=("+clas+")f.get(obj);");
 		}
 		
 		return sb;
