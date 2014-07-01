@@ -3,6 +3,7 @@ package examples.factory.generation;
 import java.io.IOException;
 
 import examples.factory.Garage;
+import examples.factory.Student;
 
 public class GeneratorFactory extends AbstractGeneratorFactory{
 	
@@ -19,7 +20,7 @@ public class GeneratorFactory extends AbstractGeneratorFactory{
 
 	public static void main(String args[]) throws IOException{
 		GeneratorFactory gf=new GeneratorFactory();
-		gf.generate(Garage.class);
+		gf.generate(Student.class);
 		
 	}
 
