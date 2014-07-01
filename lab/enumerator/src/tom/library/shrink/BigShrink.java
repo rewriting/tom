@@ -12,6 +12,7 @@ import tom.library.shrink.reducers.BaseReducer;
 import tom.library.shrink.reducers.ConstantsReducerDecorator;
 import tom.library.shrink.reducers.IntegerReducerDecorator;
 import tom.library.shrink.reducers.Reducer;
+import tom.library.shrink.reducers.ReducerFactory;
 import tom.library.shrink.reducers.StringReducerDecorator;
 import tom.library.shrink.reducers.SubtermsReducerDecorator;
 import tom.library.shrink.reducers.ValueReducerDecorator;
@@ -84,16 +85,17 @@ public class BigShrink implements Shrink{
 		toExplore.add(term);
 		while (toExplore.hasNext()) {
 			Visitable iteratedTerm = (Visitable) toExplore.getNext();
-			reducer = new BaseReducer(iteratedTerm);
+			//reducer = new BaseReducer(iteratedTerm);
 			// first step
-			reducer = new SubtermsReducerDecorator(reducer);
+			//reducer = new SubtermsReducerDecorator(reducer);
 			// second step
-			reducer = new ConstantsReducerDecorator(reducer);
+			//reducer = new ConstantsReducerDecorator(reducer);
 			
 			// third step, this makes the generation process takes 
 			// too long. 
-			reducer = new ValueReducerDecorator(reducer);
-			Collection<Object> result = reducer.reduce();
+			//reducer = new ValueReducerDecorator(reducer);
+			//Collection<Object> result = reducer.reduce();
+			Collection<Object> result = ReducerFactory.getInstance(iteratedTerm).createReducer().reduce();
 			result.remove(iteratedTerm);
 			toExplore.addAll(result);
 			

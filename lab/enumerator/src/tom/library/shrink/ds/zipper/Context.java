@@ -3,6 +3,12 @@ package tom.library.shrink.ds.zipper;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A context of a {@code Zipper}'s node (location) which contains its parent and its siblings (left and right).
+ * This context is used to traverse down or up out of a location.
+ * @author nauval
+ *
+ */
 public class Context {
 	protected static final Context TOP = new Context(null, null, null, null);
 	

@@ -1,9 +1,11 @@
 package tom.library.shrink.reducers;
 
+import tom.library.sl.VisitableBuiltin;
+
 /**
  * A factory to create a reducer for a given term.
  * As the instance of this factory is tied down to
- * a term, it does not use the singleton approach
+ * a term, it does not use the singleton pattern
  * and return a new instance when {@code getInstance}
  * method is called.
  * 
@@ -14,6 +16,7 @@ public class ReducerFactory {
 	
 	private enum TermType{
 		VISITABLE,
+		VISITABLE_BUILTIN,
 		INTEGER,
 		STRING
 	}
@@ -38,6 +41,13 @@ public class ReducerFactory {
 			return new ReducerFactory(term, TermType.STRING);
 		} else if (term instanceof Integer) {
 			return new ReducerFactory(term, TermType.INTEGER);
+		} else if (term instanceof VisitableBuiltin<?>) {
+			/*
+			 * This block is to handle the VisitableBuiltin type,
+			 * An instance of Visitable which contains a value
+			 * instead of term, i.e. the leaf of a term.
+			 */
+			return new ReducerFactory(term, TermType.VISITABLE_BUILTIN);
 		}
 		return new ReducerFactory(term, TermType.VISITABLE);
 	}
@@ -53,9 +63,22 @@ public class ReducerFactory {
 			return buildIntegerReducer();
 		case STRING:
 			return buildStringReducer();
+		case VISITABLE_BUILTIN:
+			return buildVisitableBuiltinReducer();
 		default:
 			return buildVisitableReducer();
 		}
+	}
+
+	/**
+	 * Returns a {@code PrimitiveVisitableReducerDecorator}, 
+	 * a {@code Reducer} for {@code VisitableBuiltin}
+	 * @return
+	 */
+	private Reducer buildVisitableBuiltinReducer() {
+		Reducer reducer = new BaseReducer(term);
+		reducer = new PrimitiveVisitableReducerDecorator(reducer);
+		return reducer;
 	}
 
 	/**

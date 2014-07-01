@@ -5,6 +5,13 @@ import java.util.HashSet;
 
 import tom.library.shrink.tools.RandomValueGenerator;
 
+/**
+ * A {@code Reducer} to reduce an integer value into smaller integers.
+ * It is done by generating random number between 0 to the given integer.
+ * The class uses the absolute value in the process, therefore -1 < -4.
+ * @author nauval
+ *
+ */
 public class IntegerReducerDecorator extends ReducerDecorator{
 
 	private static final int PART = 3;
@@ -25,6 +32,12 @@ public class IntegerReducerDecorator extends ReducerDecorator{
 		return value;
 	}
 
+	/**
+	 * Returns a {@code Collection} of reduced integers out of an integer.
+	 * If the integer is less then {@code MAX_NUMBER} then a sequence of 
+	 * integers from 0 to its value are generated otherwise
+	 * a {@code MAX_NUMBER} of integers will be generated randomly.
+	 */
 	@Override
 	public Collection<Object> reduce() {
 		reduceIntegerValues();
@@ -33,6 +46,7 @@ public class IntegerReducerDecorator extends ReducerDecorator{
 		return terms;
 	}
 
+	
 	private void reduceIntegerValues() {
 		if (Math.abs(value) < MAX_NUMBER) {
 			generateSequentialInteger();
@@ -41,6 +55,9 @@ public class IntegerReducerDecorator extends ReducerDecorator{
 		}
 	}
 
+	/**
+	 * Generates smaller integers sequentially
+	 */
 	private void generateSequentialInteger() {
 		int absValue = Math.abs(value);
 		for (int i = 0; i < absValue; i++) {
@@ -52,6 +69,13 @@ public class IntegerReducerDecorator extends ReducerDecorator{
 		}
 	}
 	
+	/**
+	 * Generates smaller integers randomly. To ensure that the random
+	 * generated integers not concentrated somewhere between 0 and 
+	 * the given integer, first the range is divided by part, and for
+	 * each part the method calculates how many integers needs to be
+	 * generated and generate them randomly.
+	 */
 	private void generateRandomInteger() {
 		int part = 0;
 		int absTerm = Math.abs(value);

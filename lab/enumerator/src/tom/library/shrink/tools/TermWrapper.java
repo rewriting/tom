@@ -10,7 +10,8 @@ import tom.library.sl.Visitable;
 
 /**
  * <p>
- * Wrapper for a term where reflection calls are made.
+ * A wrapper for a term where reflection calls are made.
+ * 
  * </p>
  * @author nauval
  *
@@ -37,7 +38,9 @@ public class TermWrapper {
 	
 	/**
 	 * <p>
-	 * Returns the enumeration of the given class.
+	 * Returns the enumeration of the given class. This is done by
+	 * invoking the method {@code getEnumeration} reflectively out
+	 * of the wrapped term.
 	 * </p>
 	 * @return enumeration
 	 * @throws Exception 
@@ -48,11 +51,14 @@ public class TermWrapper {
 	
 	/**
 	 * <p>
-	 * Returns a list of terminal constructors of the wrapped term
+	 * Returns a list of terminal constructors of the wrapped term.
+	 * First it tries to get the enumeration out of the term
+	 * and use it to calculate the terminal constructors (constants) 
+	 * from the enumeration.
 	 * </p>
 	 * @return list of terminal constructors
 	 */
-	public List<Visitable> getTerminalConstructor() {
+	public List<Visitable> getTerminalConstructors() {
 		List<Visitable> results = new ArrayList<Visitable>();
 		try {
 			if (enumeration == null) {
@@ -67,7 +73,8 @@ public class TermWrapper {
 	
 	/**
 	 * <p>
-	 * Returns a list of terminal constructors from the given enumeration object
+	 * Returns a list of terminal constructors (constants) from the given enumeration object.
+	 * Constants are terms at the part of size 0 (i.e. the first part) in an enumeration.
 	 * </p>
 	 * @param enumeration
 	 * @return

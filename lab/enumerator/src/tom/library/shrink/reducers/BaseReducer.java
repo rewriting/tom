@@ -3,6 +3,19 @@ package tom.library.shrink.reducers;
 import java.util.Collection;
 import java.util.HashSet;
 
+/**
+ * <p>
+ * A base implementation {@code Reducer} interface.
+ * The {@code reduce} method does not reduce the term,
+ * it only returns a {@code Collection} containing 
+ * only the term itself. This is done to make sure
+ * that the original term is included as the reduced 
+ * term to ensure termination in the Shrink mechanism 
+ * process in PropCheck
+ * </p>
+ * @author nauval
+ *
+ */
 public class BaseReducer implements Reducer {
 
 	private Collection<Object> terms;
