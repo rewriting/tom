@@ -39,15 +39,27 @@ public abstract class AbstractGeneratorFactory {
 		this.imports=new ArrayList<Class<?>>();
 	}
 	
-	protected StringBuilder generer(Class<?> c) throws IOException{
+	/***
+	 * Contain all the lines that we need to write in a file 
+	 * Return the text of the factory of the class
+	 * @param c
+	 * @return
+	 * @throws IOException
+	 */
+	private StringBuilder appendGenerateFactory(Class<?> c) throws IOException{
 		StringBuilder sb=new StringBuilder();
-		sb.append(lesImports(c));
-		sb.append(laClasse(c));
-		
+		sb.append(appendImports(c));
+		sb.append(appendClass(c));
 		return sb;
 	}
 	
-	protected StringBuilder laClasse(Class<?>c) throws IOException{
+	/**
+	 * create the structur of the class in parameter and call core to fill it.
+	 * @param c
+	 * @return
+	 * @throws IOException
+	 */
+	protected StringBuilder appendClass(Class<?>c) throws IOException{
 		StringBuilder sb=new StringBuilder();
 		appendLine(sb,"public class "+c.getSimpleName()+"Factory{");
 		sb.append(core(c));
@@ -58,8 +70,12 @@ public abstract class AbstractGeneratorFactory {
 	
 	protected abstract StringBuilder core(Class<?>c) throws IOException;
 
-	
-	protected StringBuilder lesImports(Class<?>c){
+	/***
+	 * create the import line for the class that we want to generate
+	 * @param c : return the StringBuilder that contains the line to generate
+	 * @return
+	 */
+	protected StringBuilder appendImports(Class<?>c){
 		StringBuilder sb=new StringBuilder();
 		appendLine(sb, "package "+c.getPackage().getName()+".tests;");
 		appendLine(sb, "import "+c.getCanonicalName()+";"+ENDL);
@@ -87,12 +103,16 @@ public abstract class AbstractGeneratorFactory {
 		}
 		return sortie;
 	}
-	
+	/***
+	 * 
+	 * @param c
+	 * @throws IOException
+	 */
 	public void generateFile(Class<?> c) throws IOException{
 		if(!traite.contains(c)){
 			traite.add(c);
 			PrintWriter pw=new PrintWriter(new BufferedWriter(new FileWriter(new File("src/examples/factory/tests/"+nomClasse(c)+"Factory.java"))));
-			pw.print(generer(c));
+			pw.print(appendGenerateFactory(c));
 			pw.close();
 		}
 	}

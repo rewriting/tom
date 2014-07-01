@@ -11,7 +11,7 @@ import examples.factory.Color;
 public class StaticFactory extends AbstractGeneratorFactory{
 
 	protected StringBuilder lesImports(Class<?>c){
-		StringBuilder sb=super.lesImports(c);
+		StringBuilder sb=super.appendImports(c);
 		appendLine(sb, makeImport(List.class));
 		appendLine(sb, makeImport(Field.class));
 		appendLine(sb, makeImport(MyIntrospection.class));
