@@ -30,15 +30,11 @@ public abstract class AbstractGeneratorFactory {
 	public static String ENDL=System.getProperty("line.separator");
 	public static String TAB="\t";
 
-	// contains the classes that are already been treated
-	private List<Class<?>> traite;
-	
 	/**
 	 * Constuctor
 	 */
 	public AbstractGeneratorFactory(){
 		super();
-		this.traite=new ArrayList<Class<?>>();
 	}
 	
 	/***
@@ -47,21 +43,76 @@ public abstract class AbstractGeneratorFactory {
 	 * @param c
 	 * @return
 	 * @throws IOException
+	 * @throws ClassNotFoundException 
 	 */
-	private StringBuilder appendGenerateFactory(FieldConstructor fc,String packagePath) throws IOException{
+	public StringBuilder appendGenerateFactory(Class c,String packagePath) throws IOException, ClassNotFoundException{
 		StringBuilder sb=new StringBuilder();
-		sb.append(appendImports(fc.getTypeChamp(),packagePath));
-		sb.append(appendClass(fc,packagePath));
+		sb.append(appendImports(c,packagePath));
+		sb.append(appendClass(new FieldConstructor(null, c, null, null),packagePath));
 		return sb;
 	}
+	/**************************************IMPORTS************************************/
+	/**
+	 * return the line to write to import this class
+	 * @param c
+	 * @return
+	 */
+	public String makeImport(Class c){
+		return "import "+c.getCanonicalName()+";";
+	}
+	
+	/***
+	 * generate the list of all import class that the Factory needs
+	 * @param c
+	 * @return
+	 */
+	protected List<Class>generateListImport(Class<?>c){
+		List<FieldConstructor>list=MyIntrospection.getAllParameterFieldFromConstructorEnumerator(c);
+		List<Class>sortie=new ArrayList<Class>();
+		for(FieldConstructor fc:list){
+			if(!isPrimitive(fc.getTypeChamp())){
+				Class cla=fc.getTypeChamp();
+				if(!sortie.contains(cla)){
+					sortie.add(cla);
+				}
+				sortie.addAll(generateListImport(fc.getTypeChamp()));
+			}
+		}
+		return sortie;
+	}
+	
+	/***
+	 * create the import line for the class that we want to generate
+	 * @param c : return the StringBuilder that contains the line to generate
+	 * @return
+	 */
+	protected StringBuilder appendImports(Class<?>c,String packagePath){
+		StringBuilder sb=new StringBuilder();
+		appendln(sb, "package "+packagePath+";");
+		
+		appendln(sb, makeImport(c));
+		for(Class cla:generateListImport(c)){
+			appendln(sb, makeImport(cla));
+		}
+		
+		//Default Import
+		appendln(sb, makeImport(Combinators.class));
+		appendln(sb, makeImport(Enumeration.class));
+		appendln(sb, makeImport(F.class));
+		appendln(sb, makeImport(BigInteger.class));
+		return sb;
+	}
+	
+	/*****************************CLASS*********************************************************/
 	
 	/**
 	 * create the structur of the class in parameter and call core to fill it.
 	 * @param c
 	 * @return
 	 * @throws IOException
+	 * @throws ClassNotFoundException 
 	 */
-	protected StringBuilder appendClass(FieldConstructor fc,String packagePath) throws IOException{
+	protected StringBuilder appendClass(FieldConstructor fc,String packagePath) throws IOException, ClassNotFoundException{
 		StringBuilder sb=new StringBuilder();
 		appendln(sb,"public class "+fc.getTypeChamp().getSimpleName()+"Factory{");
 		sb.append(core(fc,packagePath));
@@ -74,78 +125,14 @@ public abstract class AbstractGeneratorFactory {
 	 * @param c
 	 * @return
 	 * @throws IOException
+	 * @throws ClassNotFoundException 
 	 */
-	protected abstract StringBuilder core(FieldConstructor fc,String packagePath) throws IOException;
+	protected abstract StringBuilder core(FieldConstructor fc,String packagePath) throws IOException, ClassNotFoundException;
 
-	/***
-	 * create the import line for the class that we want to generate
-	 * @param c : return the StringBuilder that contains the line to generate
-	 * @return
-	 */
-	protected StringBuilder appendImports(Class<?>c,String packagePath){
-		StringBuilder sb=new StringBuilder();
-		appendln(sb, "package "+packagePath+";");
-		appendln(sb, "import "+c.getCanonicalName()+";"+ENDL);
-		for(String s:generateListImport(c)){
-			appendln(sb, "import "+s+";"+ENDL);
-		}
-		appendln(sb, makeImport(Combinators.class));
-		appendln(sb, makeImport(Enumeration.class));
-		appendln(sb, makeImport(F.class));
-		appendln(sb, makeImport(BigInteger.class));
-		return sb;
-	}
-	/***
-	 * generate the list of all import class that the Factory needs
-	 * @param c
-	 * @return
-	 */
-	public List<String>generateListImport(Class<?>c){
-		List<FieldConstructor>list=MyIntrospection.getAllParameterFieldFromConstructorEnumerator(c);
-		List<String>sortie=new ArrayList<String>();
-		for(FieldConstructor fc:list){
-			if(!isPrimitive(fc.getTypeChamp())){
-				String s=fc.getTypeChamp().getCanonicalName();
-				if(!sortie.contains(s)){
-					sortie.add(s);
-				}
-				sortie.addAll(generateListImport(fc.getTypeChamp()));
-			}
-		}
-		return sortie;
-	}
-	/***
-	 * 
-	 * @param c
-	 * @throws IOException
-	 */
-	protected void generateFile(FieldConstructor fc,String packagePath) throws IOException{
-		if(!traite.contains(fc.getTypeChamp())){
-			traite.add(fc.getTypeChamp());
-			PrintWriter pw=new PrintWriter(new BufferedWriter(new FileWriter(new File("src/examples/factory/tests/"+className(fc.getTypeChamp())+"Factory.java"))));
-			pw.print(appendGenerateFactory(fc,packagePath));
-			pw.close();
-		}
-	}
-	/**
-	 * Function that to must be call to generate the factory of the class in parameter
-	 * @param c
-	 * @throws IOException
-	 */
-	public void generate(Class<?> c,String packagePath) throws IOException{
-		AbstractGeneratorFactory agf=null;
-		System.out.println(c);
-		if(List.class.isAssignableFrom(c)){
-			System.out.println("BIOOOo");
-			agf=new ListFactory();
-		}else if(c.getAnnotation(EnumerateStatic.class)!=null){
-			agf=new StaticFactory();
-		}else{
-			agf=new ClassFactory();
-		}
-		agf.generateFile(new FieldConstructor(null,c,null,null),packagePath);
-	}
-	
+
+
+
+	/**************************************------******************************************************/
 	
 	/**
 	 * makes the same that append and acts of sb but appends a ENDL at the end
@@ -191,7 +178,7 @@ public abstract class AbstractGeneratorFactory {
 	 * @param c
 	 * @return
 	 */
-	protected static String className(Class<?> c){
+	public static String className(Class<?> c){
 		String str[]={"int","long","byte","float","double","boolean","String"};
 		String str2[]={INTEGER,LONG,BYTE,FLOAT,DOUBLE,BOOLEAN,STRING};
 		for(int i=0;i<str.length;i++){
@@ -218,13 +205,6 @@ public abstract class AbstractGeneratorFactory {
 		}
 		return false;
 	}
-	/**
-	 * return the line to write to import this class
-	 * @param c
-	 * @return
-	 */
-	protected static String makeImport(Class c){
-		return "import "+c.getCanonicalName()+";";
-	}
+
 	
 }

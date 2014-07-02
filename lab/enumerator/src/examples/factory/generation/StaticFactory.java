@@ -69,7 +69,7 @@ public class StaticFactory extends AbstractGeneratorFactory{
 	public StringBuilder lesStatics(Class c) throws NoSuchFieldException, SecurityException, ClassNotFoundException{
 		StringBuilder sb=new StringBuilder();
 		appendln(sb, "Object obj=Class.forName(\""+c.getCanonicalName()+"\");");
-		appendln(sb, "List<Field> listFC=MyIntrospection.recupererTousChampEnumerateStatic("+c.getCanonicalName()+".class);");
+		appendln(sb, "List<Field> listFC=MyIntrospection.getAllFieldFromEnumerateStaticClass("+c.getCanonicalName()+".class);");
 		List<Field> listFC=MyIntrospection.getAllFieldFromEnumerateStaticClass(c);
 		
 		appendln(sb, "Field f;");
