@@ -8,13 +8,8 @@ public class Car {
 	private Color color;
 	private Student driver;
 
-<<<<<<< HEAD
 //	@EnumerateGenerator(canBeNull = true)
 	public Car(@Enumerate(maxSize = 8) int no, @Enumerate Color color) {
-=======
-	@EnumerateGenerator(canBeNull = true)
-	public Car(@Enumerate(maxSize = 8) int no,Color color) {
->>>>>>> 5526a6d0a1cc7b0935b6966a33295bf3b9ddff19
 		this.no = no;
 		this.color = color;
 	}
