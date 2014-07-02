@@ -1,5 +1,7 @@
 package examples.factory;
 
+import examples.factory.generation.EnumerateGenerator;
+
 public class Tree<E> {
 	private E elem;
 	private Tree<E> left, right;
@@ -13,7 +15,8 @@ public class Tree<E> {
 		this.left = null;
 		this.right = null;
 	}
-
+	
+	@EnumerateGenerator
 	public Tree(E elem, Tree<E> left, Tree<E> right) {
 		super();
 		this.elem = elem;
