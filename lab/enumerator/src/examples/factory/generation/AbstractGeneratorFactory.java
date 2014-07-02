@@ -47,8 +47,9 @@ public abstract class AbstractGeneratorFactory {
 	 * @param c
 	 * @return
 	 * @throws IOException
+	 * @throws ClassNotFoundException 
 	 */
-	private StringBuilder appendGenerateFactory(FieldConstructor fc,String packagePath) throws IOException{
+	private StringBuilder appendGenerateFactory(FieldConstructor fc,String packagePath) throws IOException, ClassNotFoundException{
 		StringBuilder sb=new StringBuilder();
 		sb.append(appendImports(fc.getTypeChamp(),packagePath));
 		sb.append(appendClass(fc,packagePath));
@@ -60,8 +61,9 @@ public abstract class AbstractGeneratorFactory {
 	 * @param c
 	 * @return
 	 * @throws IOException
+	 * @throws ClassNotFoundException 
 	 */
-	protected StringBuilder appendClass(FieldConstructor fc,String packagePath) throws IOException{
+	protected StringBuilder appendClass(FieldConstructor fc,String packagePath) throws IOException, ClassNotFoundException{
 		StringBuilder sb=new StringBuilder();
 		appendln(sb,"public class "+fc.getTypeChamp().getSimpleName()+"Factory{");
 		sb.append(core(fc,packagePath));
@@ -74,8 +76,9 @@ public abstract class AbstractGeneratorFactory {
 	 * @param c
 	 * @return
 	 * @throws IOException
+	 * @throws ClassNotFoundException 
 	 */
-	protected abstract StringBuilder core(FieldConstructor fc,String packagePath) throws IOException;
+	protected abstract StringBuilder core(FieldConstructor fc,String packagePath) throws IOException, ClassNotFoundException;
 
 	/***
 	 * create the import line for the class that we want to generate
@@ -118,8 +121,9 @@ public abstract class AbstractGeneratorFactory {
 	 * 
 	 * @param c
 	 * @throws IOException
+	 * @throws ClassNotFoundException 
 	 */
-	protected void generateFile(FieldConstructor fc,String packagePath) throws IOException{
+	protected void generateFile(FieldConstructor fc,String packagePath) throws IOException, ClassNotFoundException{
 		if(!traite.contains(fc.getTypeChamp())){
 			traite.add(fc.getTypeChamp());
 			PrintWriter pw=new PrintWriter(new BufferedWriter(new FileWriter(new File("src/examples/factory/tests/"+className(fc.getTypeChamp())+"Factory.java"))));
@@ -131,8 +135,9 @@ public abstract class AbstractGeneratorFactory {
 	 * Function that to must be call to generate the factory of the class in parameter
 	 * @param c
 	 * @throws IOException
+	 * @throws ClassNotFoundException 
 	 */
-	public void generate(Class<?> c,String packagePath) throws IOException{
+	public void generate(Class<?> c,String packagePath) throws IOException, ClassNotFoundException{
 		AbstractGeneratorFactory agf=null;
 		System.out.println(c);
 		if(List.class.isAssignableFrom(c)){

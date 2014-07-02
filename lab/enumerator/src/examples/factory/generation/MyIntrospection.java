@@ -45,6 +45,7 @@ public class MyIntrospection {
 				for(Annotation annot:cons.getParameterAnnotations()[i]){
 					annotations.add(annot);
 				}
+				System.out.println(genericType.get(i)+" GTTTTTT");
 				f.add(new FieldConstructor(annotations, type,"arg"+r++,genericType.get(i)));
 			}
 		}

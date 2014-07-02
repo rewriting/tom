@@ -2,6 +2,7 @@ package examples.factory.generation;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -10,22 +11,24 @@ import java.util.List;
 
 import tom.library.enumerator.Combinators;
 import tom.library.enumerator.Enumeration;
+import examples.factory.Car;
+import examples.factory.Color;
 import examples.factory.generation.Enumerate;
 
 public class ClassFactory extends AbstractGeneratorFactory{
 
-	
-	
-	
+
+
+
 	@Override
-	protected StringBuilder core(FieldConstructor fc,String packagePath) throws IOException{
+	protected StringBuilder core(FieldConstructor fc,String packagePath) throws IOException, ClassNotFoundException{
 		// TODO Auto-generated method stub
 		Class c=fc.getTypeChamp();
 		String NOMCLASSE=c.getSimpleName();
 		StringBuilder sb=new StringBuilder();
 		//faire un cas si c'est un type primitif ou non.
 		//debut classe
-		
+
 
 		//debut methode enumeration
 		appendln(sb,"public static final Enumeration<"+NOMCLASSE+"> getEnumeration(){");
@@ -44,27 +47,27 @@ public class ClassFactory extends AbstractGeneratorFactory{
 
 		for(FieldConstructor f:makeList(c)){
 			if(!f.getTypeChamp().equals(c)){
-			appendln(sb, makeEnumetator(c,f,packagePath));
+				appendln(sb, makeEnumetator(c,f,packagePath));
 			}
 		}
 		List<FieldConstructor>list=makeList(c);
-		
+
 		Collections.reverse(list);
 		appendln(sb, "enumRes = "+makeEnumeratorFinal(list, fc, 1)+";");
-		
+
 		appendln(sb, "if (canBeNull) {");
 		appendln(sb, "final Enumeration<"+classNameWithParameter(fc)+"> emptyEnum = Enumeration.singleton(null);");
 		appendln(sb, "enumRes = emptyEnum.plus(enumRes);");
 		appendln(sb, "}");
-		
+
 		appendln(sb, "return enumRes;");
-		
+
 		sb.append("}"+ENDL);
 		//fin classe
 		return sb;
 	}
-	
-	
+
+
 	public String makeEnumeratorFinal(List<FieldConstructor> list,FieldConstructor fc,int index){
 		StringBuilder sb=new StringBuilder();
 		if(index<list.size()){
@@ -72,10 +75,10 @@ public class ClassFactory extends AbstractGeneratorFactory{
 		}else{
 			sb.append("Enumeration.singleton(_"+classNameWithParameter(fc).toLowerCase()+")");
 		}
-		
+
 		return sb+"";
 	}
-	
+
 
 	public String listArgs(List<FieldConstructor>list){
 		StringBuilder sb=new StringBuilder();
@@ -101,9 +104,7 @@ public class ClassFactory extends AbstractGeneratorFactory{
 		List<FieldConstructor>stack=new ArrayList<FieldConstructor>();
 		List<FieldConstructor>list=MyIntrospection.getAllParameterFieldFromConstructorEnumerator(c);
 		for(FieldConstructor s:list){
-			if(s.containsAnnotation(Enumerate.class)){
-				stack.add(s);
-			}
+			stack.add(s);
 		}
 		stack.add(new FieldConstructor(null, c, null,null));
 
@@ -157,11 +158,11 @@ public class ClassFactory extends AbstractGeneratorFactory{
 	}
 
 
-	public String makeEnumetator(Object o,FieldConstructor fc,String packagePath) throws IOException{
-		
+	public String makeEnumetator(Object o,FieldConstructor fc,String packagePath) throws IOException, ClassNotFoundException{
+
 		// //@Enumerate(maxSize=4)
 		// int no,
-		
+
 		StringBuilder sb=new StringBuilder();
 		sb.append("final Enumeration<"+classNameWithParameter(fc)+"> "+fc.getNameField()+" = ");
 		if(isPrimitive(fc.getTypeChamp())){
@@ -169,46 +170,91 @@ public class ClassFactory extends AbstractGeneratorFactory{
 			if(((Enumerate)getAnnotation(fc.getAnnotation(),Enumerate.class))!=null&&
 					((Enumerate)getAnnotation(fc.getAnnotation(),Enumerate.class)).maxSize()>0){
 				sb.append(".take(BigInteger.valueOf("+((Enumerate)getAnnotation(fc.getAnnotation(),Enumerate.class)).maxSize()+"))");
-				System.out.println("BROOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOo");
 			}
 			sb.append(")");
 		}
 		else if(!o.getClass().equals(fc.getTypeChamp())){
-			sb.append(className(fc.getTypeChamp())+"Factory.getEnumeration("+makeEnum2(fc.getParameter()+"")+")");
+			System.out.println("PARAM "+fc.getParameter());
+			sb.append(treatClassNameWithGenericType(fc.getParameter()+"",packagePath));
+			System.out.println("AFTER PARAM "+treatClassNameWithGenericType(fc.getParameter()+"",packagePath));
 			generate(fc.getTypeChamp(),packagePath);
 		}
 		sb.append(";");
 		return sb+"";
-		
+
 	}
 	/***
 	 * sert a faire ListFactory......
 	 * @param t
 	 * @return
+	 * @throws ClassNotFoundException 
+	 * @throws IOException 
 	 */
-	public String makeEnum2(String t){
-		if(t.contains("<")){
-			String nom=t.substring(t.indexOf("<"));
-			t=t.substring(t.indexOf("<")+1,t.length()-1);
-			int i=0;
-			int ac=-1;
-			while(i<t.length()){
-				if(t.charAt(i)=='>'){
-					ac=i;
-				}
-				i++;
+	public String treatClassNameWithGenericType(String type,String packagePath) throws IOException{
+
+		String genericType=getStringGenericType(type);
+		String classType=getStringClassFromType(type);
+		String classTypeSimpleName=classType;
+		try{
+			Class nc=Class.forName(classType+"");
+			if(!nc.isPrimitive()){
+				generate(nc, packagePath);
 			}
-			if(ac!=-1){
-				t=t.substring(0, ac-1);
+			classTypeSimpleName=nc.getSimpleName();
+		}catch(ClassNotFoundException e){
+			e.printStackTrace();
+		}
+		System.out.println("TT SS "+classTypeSimpleName);
+		if(genericType==null){
+			return classTypeSimpleName+"Factory.getEnumeration()";
+		}
+		return packagePath+"."+classTypeSimpleName+"Factory.getEnumeration("+treatClassNameWithGenericType(genericType,packagePath)+")";//t => nom
+	}
+
+	/**
+	 * get the String between < > for example "List<Car>" will return "Car"
+	 * @param s
+	 * @return
+	 */
+	public String getStringGenericType(String t){
+		//	System.out.println("T1 "+t);
+		int i=0;
+		int ac=-1;
+		while(i<t.length()){
+			if(t.charAt(i)=='>'){
+				ac=i;
 			}
-			System.out.println("T   "+t);
-			return t+"Factory.getEnumeration("+makeEnum2(t)+")";
-			
+			i++;
+		}
+		if(ac!=-1){
+			//	System.out.println("AC");
+			t=t.substring(t.indexOf("<")+1, ac);
+			return t+"";
 		}else{
-			return "";
+			return null;
 		}
 	}
-	
+	/***
+	 * Return the class string from a Type cast to String for example List<Car> will return List
+	 * This function complete the getStringGenericType function 
+	 * @param type
+	 * @return
+	 */
+	public String getStringClassFromType(String type){
+		if(type.contains("<")){
+			return removeWordClass(type.substring(0, type.indexOf("<")));
+		}else{
+			return removeWordClass(type);
+		}
+	}
+	private String removeWordClass(String name){
+		if(name.contains("class ")){
+			System.out.println("RWC   == "+name+"   "+name.indexOf("class ")+" "+name.substring(name.indexOf("class ")+"class ".length(), name.length()));
+			return name.substring(name.indexOf("class ")+"class ".length(), name.length());
+		}
+		return name;
+	}
+
 	public Annotation getAnnotation(List<Annotation>list,Class annot){
 		for(Annotation an:list){
 			System.out.println("ANNOOO "+an);
@@ -218,5 +264,5 @@ public class ClassFactory extends AbstractGeneratorFactory{
 		}
 		return null;
 	}
-	
+
 }
