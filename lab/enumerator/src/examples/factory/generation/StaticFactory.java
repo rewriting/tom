@@ -8,7 +8,7 @@ import java.util.Map;
 import tom.library.enumerator.Enumeration;
 import examples.factory.Color;
 
-public class StaticFactory extends AbstractGeneratorFactory{
+public class StaticFactory extends AbstractEnumeratorGenerator{
 
 	@Override
 	protected StringBuilder appendImports(Class<?>c,String packagePath){

@@ -10,14 +10,14 @@ public class GeneratorFactory {
 		ListFactory, StaticFactory, ClassFactory;
 	}
 
-	private static Map<FactoryType, AbstractGeneratorFactory> factories = new HashMap<FactoryType, AbstractGeneratorFactory>();
+	private static Map<FactoryType, AbstractEnumeratorGenerator> factories = new HashMap<FactoryType, AbstractEnumeratorGenerator>();
 	static{
 		factories.put(FactoryType.ListFactory, new ListFactory());
 		factories.put(FactoryType.ClassFactory, new ClassFactory());
 		factories.put(FactoryType.StaticFactory, new StaticFactory());
 	}
 
-	public static AbstractGeneratorFactory getGenerator(Class<?> c) {
+	public static AbstractEnumeratorGenerator getGenerator(Class<?> c) {
 		// should handle potential errors here:
 		// -- no annotation?
 		// -- no constructor with an annotation

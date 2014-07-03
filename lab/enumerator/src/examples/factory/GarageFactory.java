@@ -9,7 +9,7 @@ public class GarageFactory {
 
 	public static final Enumeration<Garage> getEnumeration() {
 		boolean canBeNull = false;
-		// if(@Generator(canBeNull))
+		// if(@PlayWithGenerators(canBeNull))
 		// canBeNull = true;
 		return getEnumeration(canBeNull);
 	}

@@ -16,7 +16,7 @@ import examples.factory.Car;
 import examples.factory.Color;
 import examples.factory.generation.Enumerate;
 
-public class ClassFactory extends AbstractGeneratorFactory{
+public class ClassFactory extends AbstractEnumeratorGenerator{
 
 
 
@@ -34,7 +34,7 @@ public class ClassFactory extends AbstractGeneratorFactory{
 		//debut methode enumeration
 		appendln(sb,"public static final Enumeration<"+NOMCLASSE+"> getEnumeration(){");
 		appendln(sb,"boolean canBeNull = false;");
-		appendln(sb,"// if(@Generator(canBeNull)){");
+		appendln(sb,"// if(@PlayWithGenerators(canBeNull)){");
 		appendln(sb,"    canBeNull = true;");
 		appendln(sb,"// }");
 		appendln(sb,"return getEnumeration(canBeNull);");
@@ -178,7 +178,8 @@ public class ClassFactory extends AbstractGeneratorFactory{
 			System.out.println("PARAM "+fc.getParameter());
 			sb.append(treatClassNameWithGenericType(fc.getParameter()+"",packagePath, classLists));
 			System.out.println("AFTER PARAM "+treatClassNameWithGenericType(fc.getParameter()+"",packagePath, classLists));
-			Generator.generateFactoryCode(fc.getTypeChamp(), packagePath, classLists);
+//			PlayWithGenerators.generateFactoryCode(fc.getTypeChamp(), packagePath, classLists);
+			GeneratorFactory.getGenerator(fc.getTypeChamp()).generateEnumerator(fc.getTypeChamp(), packagePath, classLists);
 		}
 		sb.append(";");
 		return sb+"";
@@ -199,7 +200,9 @@ public class ClassFactory extends AbstractGeneratorFactory{
 		try{
 			Class<?> nc=Class.forName(classType+"");
 			if(!nc.isPrimitive()){
-				Generator.generateFactoryCode(nc, packagePath, classLists);
+//				PlayWithGenerators.generateFactoryCode(nc, packagePath, classLists);
+				GeneratorFactory.getGenerator(nc).generateEnumerator(nc, packagePath, classLists);
+
 			}
 			classTypeSimpleName=nc.getSimpleName();
 		}catch(ClassNotFoundException e){

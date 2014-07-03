@@ -9,7 +9,7 @@ import examples.factory.Garage;
 import tom.library.enumerator.Enumeration;
 import tom.library.enumerator.F;
 
-public class ListFactory extends AbstractGeneratorFactory{
+public class ListFactory extends AbstractEnumeratorGenerator{
 
 	protected StringBuilder appendImports(Class<?>c,String packagePath){
 		StringBuilder sb=super.appendImports(c, packagePath);
@@ -25,7 +25,7 @@ public class ListFactory extends AbstractGeneratorFactory{
 		StringBuilder sb=new StringBuilder();
 		/*appendln(sb, "			public static final Enumeration<Garage> getEnumeration() {");
 		appendln(sb, "		boolean canBeNull = false;");
-		appendln(sb, "		// if(@Generator(canBeNull))");
+		appendln(sb, "		// if(@PlayWithGenerators(canBeNull))");
 		appendln(sb, "		// canBeNull = true;");
 		appendln(sb, "		return getEnumeration(canBeNull);");
 		appendln(sb, "	}");*/
