@@ -178,7 +178,7 @@ public class ClassFactory extends AbstractGeneratorFactory{
 			System.out.println("PARAM "+fc.getParameter());
 			sb.append(treatClassNameWithGenericType(fc.getParameter()+"",packagePath, classLists));
 			System.out.println("AFTER PARAM "+treatClassNameWithGenericType(fc.getParameter()+"",packagePath, classLists));
-			Generator.generate(fc.getTypeChamp(), packagePath, classLists);
+			Generator.generateFactoryCode(fc.getTypeChamp(), packagePath, classLists);
 		}
 		sb.append(";");
 		return sb+"";
@@ -199,7 +199,7 @@ public class ClassFactory extends AbstractGeneratorFactory{
 		try{
 			Class<?> nc=Class.forName(classType+"");
 			if(!nc.isPrimitive()){
-				Generator.generate(nc, packagePath, classLists);
+				Generator.generateFactoryCode(nc, packagePath, classLists);
 			}
 			classTypeSimpleName=nc.getSimpleName();
 		}catch(ClassNotFoundException e){

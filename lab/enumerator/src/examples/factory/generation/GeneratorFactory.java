@@ -5,50 +5,37 @@ import java.util.List;
 import java.util.Map;
 
 public class GeneratorFactory {
-	private static GeneratorFactory instance;
-	
-	private Map<EnumFactory,AbstractGeneratorFactory> factories;
-	
-	private GeneratorFactory(){
-		this.factories=new HashMap<EnumFactory, AbstractGeneratorFactory>();
+
+	private enum FactoryType {
+		ListFactory, StaticFactory, ClassFactory;
 	}
-	
-	public AbstractGeneratorFactory getFactory(Class c){
-		EnumFactory enumFactory=whichEnumFactory(c);
-		if(!this.factories.containsKey(enumFactory)){
-			
-			AbstractGeneratorFactory agf;
-			if(enumFactory==EnumFactory.ListFactory){
-				agf=new ListFactory();
-			}else if(enumFactory==EnumFactory.ClassFactory){
-				agf=new ClassFactory();
-			}else if(enumFactory==EnumFactory.StaticFactory){
-				agf=new StaticFactory();
-			}else{
+
+	private static Map<FactoryType, AbstractGeneratorFactory> factories = new HashMap<FactoryType, AbstractGeneratorFactory>();
+	static{
+		factories.put(FactoryType.ListFactory, new ListFactory());
+		factories.put(FactoryType.ClassFactory, new ClassFactory());
+		factories.put(FactoryType.StaticFactory, new StaticFactory());
+	}
+
+	public static AbstractGeneratorFactory getGenerator(Class<?> c) {
+		// should handle potential errors here:
+		// -- no annotation?
+		// -- no constructor with an annotation
+		// ...
+		FactoryType factoryType = null;
+		if (List.class.isAssignableFrom(c)) {
+			factoryType = FactoryType.ListFactory;
+		} else if (c.getAnnotation(EnumerateStatic.class) != null) {
+			factoryType = FactoryType.StaticFactory;
+		} else {
+			factoryType = FactoryType.ClassFactory;
+		}
+		System.out.println("CLASS " + c + " ENUM " + factoryType);
+		
+		if (!factories.containsKey(factoryType)) {
 				throw new UnsupportedOperationException("Must not be here");
-			}
-			this.factories.put(enumFactory,agf);
 		}
-		return this.factories.get(enumFactory);
+		return factories.get(factoryType);
 	}
-	
-	private EnumFactory whichEnumFactory(Class c){
-		EnumFactory enumFactory=null;
-		if(List.class.isAssignableFrom(c)){
-			enumFactory=EnumFactory.ListFactory;
-		}else if(c.getAnnotation(EnumerateStatic.class)!=null){
-			enumFactory=EnumFactory.StaticFactory;
-		}else{
-			enumFactory=EnumFactory.ClassFactory;
-		}
-		System.out.println("CLASS "+c+" ENUM "+enumFactory);
-		return enumFactory;
-	}
-	
-	public static GeneratorFactory getInstance(){
-		if(instance==null){
-			instance=new GeneratorFactory();
-		}
-		return instance;
-	}
+
 }
