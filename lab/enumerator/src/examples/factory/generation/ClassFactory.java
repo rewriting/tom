@@ -8,6 +8,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import tom.library.enumerator.Combinators;
 import tom.library.enumerator.Enumeration;
@@ -21,7 +22,7 @@ public class ClassFactory extends AbstractGeneratorFactory{
 
 
 	@Override
-	protected StringBuilder core(FieldConstructor fc,String packagePath) throws IOException, ClassNotFoundException{
+	protected StringBuilder core(FieldConstructor fc,String packagePath, Map<Class<?>,StringBuilder> classLists) throws IOException, ClassNotFoundException{
 		// TODO Auto-generated method stub
 		Class c=fc.getTypeChamp();
 		String NOMCLASSE=c.getSimpleName();
@@ -47,7 +48,7 @@ public class ClassFactory extends AbstractGeneratorFactory{
 
 		for(FieldConstructor f:makeList(c)){
 			if(!f.getTypeChamp().equals(c)){
-				appendln(sb, makeEnumetator(c,f,packagePath));
+				appendln(sb, makeEnumetator(c,f,packagePath, classLists));
 			}
 		}
 		List<FieldConstructor>list=makeList(c);
@@ -158,7 +159,7 @@ public class ClassFactory extends AbstractGeneratorFactory{
 	}
 
 
-	public String makeEnumetator(Object o,FieldConstructor fc,String packagePath) throws IOException, ClassNotFoundException{
+	public String makeEnumetator(Object o, FieldConstructor fc, String packagePath, Map<Class<?>,StringBuilder> classLists) throws IOException, ClassNotFoundException{
 
 		// //@Enumerate(maxSize=4)
 		// int no,
@@ -175,9 +176,9 @@ public class ClassFactory extends AbstractGeneratorFactory{
 		}
 		else if(!o.getClass().equals(fc.getTypeChamp())){
 			System.out.println("PARAM "+fc.getParameter());
-			sb.append(treatClassNameWithGenericType(fc.getParameter()+"",packagePath));
-			System.out.println("AFTER PARAM "+treatClassNameWithGenericType(fc.getParameter()+"",packagePath));
-			Generator.getInstance().generate(fc.getTypeChamp(), packagePath);
+			sb.append(treatClassNameWithGenericType(fc.getParameter()+"",packagePath, classLists));
+			System.out.println("AFTER PARAM "+treatClassNameWithGenericType(fc.getParameter()+"",packagePath, classLists));
+			Generator.generate(fc.getTypeChamp(), packagePath, classLists);
 		}
 		sb.append(";");
 		return sb+"";
@@ -190,15 +191,15 @@ public class ClassFactory extends AbstractGeneratorFactory{
 	 * @throws ClassNotFoundException 
 	 * @throws IOException 
 	 */
-	public String treatClassNameWithGenericType(String type,String packagePath) throws IOException{
+	public String treatClassNameWithGenericType(String type, String packagePath, Map<Class<?>,StringBuilder> classLists) throws IOException{
 
 		String genericType=getStringGenericType(type);
 		String classType=getStringClassFromType(type);
 		String classTypeSimpleName=classType;
 		try{
-			Class nc=Class.forName(classType+"");
+			Class<?> nc=Class.forName(classType+"");
 			if(!nc.isPrimitive()){
-				Generator.getInstance().generate(nc, packagePath);
+				Generator.generate(nc, packagePath, classLists);
 			}
 			classTypeSimpleName=nc.getSimpleName();
 		}catch(ClassNotFoundException e){
@@ -208,7 +209,7 @@ public class ClassFactory extends AbstractGeneratorFactory{
 		if(genericType==null){
 			return classTypeSimpleName+"Factory.getEnumeration()";
 		}
-		return packagePath+"."+classTypeSimpleName+"Factory.getEnumeration("+treatClassNameWithGenericType(genericType,packagePath)+")";//t => nom
+		return packagePath+"."+classTypeSimpleName+"Factory.getEnumeration("+treatClassNameWithGenericType(genericType,packagePath,classLists)+")";//t => nom
 	}
 
 	/**

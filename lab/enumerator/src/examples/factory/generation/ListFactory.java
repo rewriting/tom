@@ -3,9 +3,9 @@ package examples.factory.generation;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import examples.factory.Garage;
-
 import tom.library.enumerator.Enumeration;
 import tom.library.enumerator.F;
 
@@ -19,7 +19,7 @@ public class ListFactory extends AbstractGeneratorFactory{
 	}
 	
 	@Override
-	protected StringBuilder core(FieldConstructor fc, String packagePath)
+	protected StringBuilder core(FieldConstructor fc, String packagePath, Map<Class<?>,StringBuilder> classLists)
 			throws IOException {
 		// TODO Auto-generated method stub
 		StringBuilder sb=new StringBuilder();

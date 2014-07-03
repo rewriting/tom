@@ -24,7 +24,7 @@ public class StaticFactory extends AbstractGeneratorFactory{
 	
 	
 	@Override
-	protected StringBuilder core(FieldConstructor fc,String packagePath) throws IOException {
+	protected StringBuilder core(FieldConstructor fc,String packagePath, Map<Class<?>,StringBuilder> classLists) throws IOException {
 		// TODO Auto-generated method stub
 		Class<?>c=fc.getTypeChamp();
 		String CLASSNAME=c.getSimpleName();

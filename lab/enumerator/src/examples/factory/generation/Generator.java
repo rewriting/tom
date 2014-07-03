@@ -29,6 +29,8 @@ public class Generator {
 	 */
 	public static Map<Class<?>,StringBuilder> generate(Class<?> c,String packagePath, Map<Class<?>,StringBuilder> classLists) throws ClassNotFoundException, IOException{
 		if(!classLists.containsKey(c)){
+			// if other classes need it they shouldn't try to build it
+			classLists.put(c, null);
 			StringBuilder sb=GeneratorFactory.getInstance().getFactory(c).appendGenerateFactory(c, packagePath, classLists);
 			classLists.put(c, sb);
 		}
@@ -43,16 +45,18 @@ public class Generator {
 	 */
 	private static void generateFile(Map<Class<?>,StringBuilder> classLists, String packagePath) throws IOException, ClassNotFoundException{
 		for(Class<?> c:classLists.keySet()){
-			PrintWriter pw=new PrintWriter(new BufferedWriter(new FileWriter(new File("src/examples/factory/tests/"+AbstractGeneratorFactory.className(c)+"Factory.java"))));
+			// TODO: change hard-coded with classList
+			PrintWriter pw=new PrintWriter(new BufferedWriter(new FileWriter(new File("src/examples/factory/tests/"+c.getSimpleName()+"Factory.java"))));
+			//			PrintWriter pw=new PrintWriter(new BufferedWriter(new FileWriter(new File("src/examples/factory/tests/"+AbstractGeneratorFactory.className(c)+"Factory.java"))));
 			pw.print(classLists.get(c));
 			pw.close();
 		}
 	}
 	
 	public static void main(String args[]) throws IOException, ClassNotFoundException{
-		Generator.run(Car.class,"examples.factory.tests");
-		Generator.run(Garage.class,"examples.factory.tests");
-		Generator.run(Garage2.class,"examples.factory.tests");
+//		Generator.run(Car.class,"examples.factory.tests");
+//		Generator.run(Garage.class,"examples.factory.tests");
+//		Generator.run(Garage2.class,"examples.factory.tests");
 		Generator.run(Student.class,"examples.factory.tests");
 	//	main.run(Tree.class, "examples.factory.tests");
 	}

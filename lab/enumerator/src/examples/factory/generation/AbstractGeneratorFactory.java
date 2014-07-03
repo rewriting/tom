@@ -1,20 +1,15 @@
 package examples.factory.generation;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.lang.reflect.Type;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import tom.library.enumerator.Combinators;
 import tom.library.enumerator.Enumeration;
 import tom.library.enumerator.F;
-
-import examples.factory.generation.EnumerateStatic;
 
 public abstract class AbstractGeneratorFactory {
 	
@@ -41,14 +36,15 @@ public abstract class AbstractGeneratorFactory {
 	 * Contain all the lines that we need to write in a file 
 	 * Return the text of the factory of the class
 	 * @param c
+	 * @param classLists 
 	 * @return
 	 * @throws IOException
 	 * @throws ClassNotFoundException 
 	 */
-	public StringBuilder appendGenerateFactory(Class c,String packagePath) throws IOException, ClassNotFoundException{
+	public StringBuilder appendGenerateFactory(Class c, String packagePath, Map<Class<?>, StringBuilder> classLists) throws IOException, ClassNotFoundException{
 		StringBuilder sb=new StringBuilder();
 		sb.append(appendImports(c,packagePath));
-		sb.append(appendClass(new FieldConstructor(null, c, null, null),packagePath));
+		sb.append(appendClass(new FieldConstructor(null, c, null, null),packagePath, classLists));
 		return sb;
 	}
 	/**************************************IMPORTS************************************/
@@ -112,10 +108,10 @@ public abstract class AbstractGeneratorFactory {
 	 * @throws IOException
 	 * @throws ClassNotFoundException 
 	 */
-	protected StringBuilder appendClass(FieldConstructor fc,String packagePath) throws IOException, ClassNotFoundException{
+	protected StringBuilder appendClass(FieldConstructor fc,String packagePath, Map<Class<?>,StringBuilder> classLists) throws IOException, ClassNotFoundException{
 		StringBuilder sb=new StringBuilder();
 		appendln(sb,"public class "+fc.getTypeChamp().getSimpleName()+"Factory{");
-		sb.append(core(fc,packagePath));
+		sb.append(core(fc,packagePath, classLists));
 		appendln(sb, "}");
 		return sb;
 	}
@@ -127,7 +123,7 @@ public abstract class AbstractGeneratorFactory {
 	 * @throws IOException
 	 * @throws ClassNotFoundException 
 	 */
-	protected abstract StringBuilder core(FieldConstructor fc,String packagePath) throws IOException, ClassNotFoundException;
+	protected abstract StringBuilder core(FieldConstructor fc,String packagePath, Map<Class<?>,StringBuilder> classLists) throws IOException, ClassNotFoundException;
 
 
 
@@ -168,7 +164,7 @@ public abstract class AbstractGeneratorFactory {
 			sb.append(className(fc.getTypeChamp()));
 		}
 
-		System.out.println("SB  °  "+sb);
+		System.out.println("SB  ��  "+sb);
 		
 		return sb+"";
 	}
