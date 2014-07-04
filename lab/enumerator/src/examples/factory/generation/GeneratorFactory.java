@@ -17,7 +17,7 @@ public class GeneratorFactory {
 		factories.put(FactoryType.StaticFactory, new StaticFactory());
 	}
 
-	public static AbstractEnumeratorGenerator getGenerator(Class<?> c) {
+	public static AbstractEnumeratorGenerator getGenerator(Class<?> c) throws GeneratorFactoryException {
 		// should handle potential errors here:
 		// -- no annotation?
 		// -- no constructor with an annotation
@@ -27,8 +27,10 @@ public class GeneratorFactory {
 			factoryType = FactoryType.ListFactory;
 		} else if (c.getAnnotation(EnumerateStatic.class) != null) {
 			factoryType = FactoryType.StaticFactory;
-		} else {
+		} else if(constructorContainsAnnotation(c,EnumerateGenerator.class)){
 			factoryType = FactoryType.ClassFactory;
+		}else {
+			throw new GeneratorFactoryException("Class target : "+c);
 		}
 		System.out.println("CLASS " + c + " ENUM " + factoryType);
 		
@@ -36,6 +38,10 @@ public class GeneratorFactory {
 				throw new UnsupportedOperationException("Must not be here");
 		}
 		return factories.get(factoryType);
+	}
+	
+	public static boolean constructorContainsAnnotation(Class target,Class enumerator){
+		return true;//TODO : to do
 	}
 
 }

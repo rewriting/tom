@@ -9,21 +9,31 @@ import java.util.List;
 public class FieldConstructor {
 	private List<Annotation> annotation;
 	private Class typeChamp;
-	private String nameField;
 	private Type typePamaretered;
+	private Type genericParameterType;
 	
-	public FieldConstructor(List<Annotation> annotation, Class typeChamp,String nameField,Type typePamaretered) {
+	public FieldConstructor(Class<?> typeChamp){
+		this.typeChamp=typeChamp;
+	}
+	
+	public FieldConstructor(List<Annotation> annotation, Class<?> typeChamp,Type typePamaretered,Type genericParameterType) {
 		super();
 		this.annotation = annotation;
 		this.typeChamp = typeChamp;
-		this.nameField=nameField;
 		this.typePamaretered=typePamaretered;
+		this.genericParameterType=genericParameterType;
 	}
-	public String getNameField() {
-		return nameField;
+	public Type getTypePamaretered() {
+		return typePamaretered;
 	}
-	public void setNameField(String nameField) {
-		this.nameField = nameField;
+	public void setTypePamaretered(Type typePamaretered) {
+		this.typePamaretered = typePamaretered;
+	}
+	public Type getGenericParameterType() {
+		return genericParameterType;
+	}
+	public void setGenericParameterType(Type genericParameterType) {
+		this.genericParameterType = genericParameterType;
 	}
 	public List<Annotation> getAnnotation() {
 		return annotation;
@@ -54,12 +64,15 @@ public class FieldConstructor {
 	public void setTypeChamp(Class typeChamp) {
 		this.typeChamp = typeChamp;
 	}
+
 	@Override
 	public String toString() {
 		return "FieldConstructor [annotation=" + annotation + ", typeChamp="
-				+ typeChamp + ", nameField=" + nameField + ", parameter="
-				+ typePamaretered + "]";
+				+ typeChamp + ", typePamaretered="
+				+ typePamaretered + ", genericParameterType="
+				+ genericParameterType + "]";
 	}
+
 
 	
 	

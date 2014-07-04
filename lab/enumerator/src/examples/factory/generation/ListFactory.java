@@ -14,6 +14,7 @@ public class ListFactory extends AbstractEnumeratorGenerator{
 	protected StringBuilder appendImports(Class<?>c,String packagePath){
 		StringBuilder sb=super.appendImports(c, packagePath);
 		appendln(sb, makeImport(ArrayList.class));
+		appendln(sb, makeImport(List.class));
 		
 		return sb;
 	}

@@ -2,6 +2,7 @@ package examples.factory.generation;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,16 +14,9 @@ import tom.library.enumerator.F;
 
 public abstract class AbstractEnumeratorGenerator {
 
-	public static String INTEGER = Integer.class.getSimpleName();
-	public static String LONG = Long.class.getSimpleName();
-	public static String BYTE = Byte.class.getSimpleName();
-	public static String FLOAT = Float.class.getSimpleName();
-	public static String DOUBLE = Double.class.getSimpleName();
-	public static String BOOLEAN = Boolean.class.getSimpleName();
-	public static String STRING = String.class.getSimpleName();
-
-	public static String ENDL = System.getProperty("line.separator");
-	public static String TAB = "\t";
+	public static final String ENDL = System.getProperty("line.separator");
+	public static final String TAB = "\t";
+	
 
 	/**
 	 * Constuctor
@@ -40,9 +34,10 @@ public abstract class AbstractEnumeratorGenerator {
 	 * @return
 	 * @throws IOException
 	 * @throws ClassNotFoundException
+	 * @throws GeneratorFactoryException 
 	 */
 	public StringBuilder generateEnumerator(Class<?> targetClass, String packagePath, Map<Class<?>, StringBuilder> existingFactories)
-			throws IOException, ClassNotFoundException {
+			throws IOException, ClassNotFoundException, GeneratorFactoryException {
 		// if it has been already generated just return it
 		if (existingFactories.containsKey(targetClass)) {
 			return existingFactories.get(targetClass);
@@ -53,7 +48,7 @@ public abstract class AbstractEnumeratorGenerator {
 		// build the enumerator code
 		StringBuilder enumeratorCode = new StringBuilder();
 		enumeratorCode.append(appendImports(targetClass, packagePath));
-		enumeratorCode.append(appendClass(new FieldConstructor(null, targetClass, null,null), packagePath, existingFactories));
+		enumeratorCode.append(appendClass(new FieldConstructor(targetClass), packagePath, existingFactories));
 		// add the code to the map
 		existingFactories.put(targetClass, enumeratorCode);
 		return enumeratorCode;
@@ -76,20 +71,16 @@ public abstract class AbstractEnumeratorGenerator {
 	 * @param c
 	 * @return
 	 */
-	protected List<Class> generateListImport(Class<?> c) {
-		List<FieldConstructor> list = MyIntrospection
-				.getAllParameterFieldFromConstructorEnumerator(c);
-		List<Class> sortie = new ArrayList<Class>();
-		for (FieldConstructor fc : list) {
-			if (!isPrimitive(fc.getTypeChamp())) {
-				Class cla = fc.getTypeChamp();
-				if (!sortie.contains(cla)) {
-					sortie.add(cla);
+	protected void generateListImport(Class<?> c,List<Class<?>> existingImport) {
+		List<Class<?>> list = MyIntrospection.getClassFromConstructorEnumerator(c);
+		for (Class cla : list) {
+			if (!Tools.isPrimitive(cla)) {
+				if (!existingImport.contains(cla)) {
+					existingImport.add(cla);
+					generateListImport(cla,existingImport);
 				}
-				sortie.addAll(generateListImport(fc.getTypeChamp()));
 			}
 		}
-		return sortie;
 	}
 
 	/***
@@ -100,20 +91,25 @@ public abstract class AbstractEnumeratorGenerator {
 	 * @return
 	 */
 	protected StringBuilder appendImports(Class<?> c, String packagePath) {
-		StringBuilder sb = new StringBuilder();
-		appendln(sb, "package " + packagePath + ";");
+		StringBuilder generatorHeader = new StringBuilder();
+		appendln(generatorHeader, "package " + packagePath + ";");
+		appendln(generatorHeader, "");
+		
+		// Default Import
+		appendln(generatorHeader, makeImport(Combinators.class));
+		appendln(generatorHeader, makeImport(Enumeration.class));
+		appendln(generatorHeader, makeImport(F.class));
+		appendln(generatorHeader, makeImport(BigInteger.class));
 
-		appendln(sb, makeImport(c));
-		for (Class cla : generateListImport(c)) {
-			appendln(sb, makeImport(cla));
+		appendln(generatorHeader, makeImport(c));
+		List<Class<?>> generateImport=new ArrayList<Class<?>>();
+		generateListImport(c,generateImport);
+		for (Class<?> cla : generateImport) {
+			appendln(generatorHeader, makeImport(cla));
 		}
 
-		// Default Import
-		appendln(sb, makeImport(Combinators.class));
-		appendln(sb, makeImport(Enumeration.class));
-		appendln(sb, makeImport(F.class));
-		appendln(sb, makeImport(BigInteger.class));
-		return sb;
+
+		return generatorHeader;
 	}
 
 	/***************************** CLASS *********************************************************/
@@ -125,16 +121,17 @@ public abstract class AbstractEnumeratorGenerator {
 	 * @return
 	 * @throws IOException
 	 * @throws ClassNotFoundException
+	 * @throws GeneratorFactoryException 
 	 */
 	protected StringBuilder appendClass(FieldConstructor fc,
 			String packagePath, Map<Class<?>, StringBuilder> classLists)
-			throws IOException, ClassNotFoundException {
-		StringBuilder sb = new StringBuilder();
-		appendln(sb, "public class " + fc.getTypeChamp().getSimpleName()
+			throws IOException, ClassNotFoundException, GeneratorFactoryException {
+		StringBuilder generatorClass = new StringBuilder();
+		appendln(generatorClass, "public class " + fc.getTypeChamp().getSimpleName()
 				+ "Factory{");
-		sb.append(core(fc, packagePath, classLists));
-		appendln(sb, "}");
-		return sb;
+		generatorClass.append(core(fc, packagePath, classLists));
+		appendln(generatorClass, "}");
+		return generatorClass;
 	}
 
 	/**
@@ -144,10 +141,32 @@ public abstract class AbstractEnumeratorGenerator {
 	 * @return
 	 * @throws IOException
 	 * @throws ClassNotFoundException
+	 * @throws GeneratorFactoryException 
 	 */
 	protected abstract StringBuilder core(FieldConstructor fc,
 			String packagePath, Map<Class<?>, StringBuilder> classLists)
-			throws IOException, ClassNotFoundException;
+			throws IOException, ClassNotFoundException, GeneratorFactoryException;
+	
+	
+	
+	
+	
+	protected static String getStringTypeParametersOfTheClass(Class<?> c){
+		StringBuilder typeParameters=new StringBuilder();
+		if(c.getTypeParameters().length>0){
+			typeParameters.append("<");
+			for(int i=0;i<c.getTypeParameters().length;i++){
+				typeParameters.append(c.getTypeParameters()[i]);
+				if(i<c.getTypeParameters().length-1){
+					typeParameters.append(",");
+				}
+			}
+			typeParameters.append(">");
+		}
+		;
+		return typeParameters+"";
+//		return "";
+	}
 
 	/************************************** ------ ******************************************************/
 
@@ -176,61 +195,6 @@ public abstract class AbstractEnumeratorGenerator {
 		return sb + "";
 	}
 
-	public static String classNameWithParameter(FieldConstructor fc) {
-		Type l = fc.getParameter();
 
-		StringBuilder sb = new StringBuilder();
-
-		if (l != null && (l + "").contains("<")) {
-			sb.append(l);
-		} else {
-			sb.append(className(fc.getTypeChamp()));
-		}
-
-		System.out.println("SB  ��  " + sb);
-
-		return sb + "";
-	}
-
-	/**
-	 * allow to obtain the class names for example the primitve "int" will be
-	 * return like the class "int"
-	 * 
-	 * @param c
-	 * @return
-	 */
-	public static String className(Class<?> c) {
-		String str[] = { "int", "long", "byte", "float", "double", "boolean",
-				"String" };
-		String str2[] = { INTEGER, LONG, BYTE, FLOAT, DOUBLE, BOOLEAN, STRING };
-		for (int i = 0; i < str.length; i++) {
-			String s = str[i];
-			if (c != null
-					&& c.getSimpleName().toUpperCase().equals(s.toUpperCase())) {
-				return str2[i];
-			}
-		}
-		return c.getSimpleName();
-	}
-
-	/**
-	 * can be call to know if the class belong to the primitive set return True
-	 * if that is right
-	 * 
-	 * @param canonicalName
-	 * @return
-	 */
-	public static boolean isPrimitive(Class c) {
-		String str[] = { "int", "long", "byte", "float", "double", "boolean",
-				"String" };
-		for (int i = 0; i < str.length; i++) {
-			String s = str[i];
-			if (c != null
-					&& c.getSimpleName().toUpperCase().equals(s.toUpperCase())) {
-				return true;
-			}
-		}
-		return false;
-	}
 
 }

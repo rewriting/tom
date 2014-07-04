@@ -30,23 +30,35 @@ public class MyIntrospection {
 		return null;
 	}
 
+	
+	public static List<Class<?>> getClassFromConstructorEnumerator(Class<?> c){
+		List<Class<?>>listClass=new ArrayList<Class<?>>();
+		Constructor<?> cons=extractConstructorWithEnumerateGenerator(c);
+		if(cons!=null){
+			for(Class<?> nc:cons.getParameterTypes()){
+				listClass.add(nc);
+			}
+		}
+		
+		return listClass;
+	}
+	
 
 	public static List<FieldConstructor> getAllParameterFieldFromConstructorEnumerator(Class<?> c){
 		List<FieldConstructor>f=new ArrayList<FieldConstructor>();
-		int r=0;
 		//rechercher le constructeur concerne( le premier avec annotation
-		Constructor cons=extractConstructorWithEnumerateGenerator(c);
+		Constructor<?> cons=extractConstructorWithEnumerateGenerator(c);
 		if(cons!=null){//manque les enumerator
 			List<Type>genericType=getGenericTypeFieldClass(cons);
 			cons.getParameterAnnotations();
 			for(int i=0;i<cons.getParameterTypes().length;i++){
-				Class type=cons.getParameterTypes()[i];
+				Class<?> type=cons.getParameterTypes()[i];
+				Type genericParameterType=cons.getGenericParameterTypes()[i];
 				List<Annotation> annotations=new ArrayList<Annotation>();
 				for(Annotation annot:cons.getParameterAnnotations()[i]){
 					annotations.add(annot);
 				}
-				System.out.println(genericType.get(i)+" GTTTTTT");
-				f.add(new FieldConstructor(annotations, type,"arg"+r++,genericType.get(i)));
+				f.add(new FieldConstructor(annotations, type,genericType.get(i),genericParameterType));
 			}
 		}
 		return f;
@@ -67,8 +79,9 @@ public class MyIntrospection {
 		}
 		return liste;
 	}
+	
 
-	public static List<Field> getAllFieldClass(Class<?> c){
+	/*public static List<Field> getAllFieldClass(Class<?> c){
 		List<Field>f=new ArrayList<Field>();
 		for(Field fi:c.getDeclaredFields()){
 			if(!AlreadyContainFieldWithName(f,fi))f.add(fi);
@@ -80,7 +93,7 @@ public class MyIntrospection {
 			}
 		}
 		return f;
-	}
+	}*/
 
 	public static boolean AlreadyContainFieldWithName(List<Field> l,Field nom){
 		for(Field f:l){
@@ -132,6 +145,10 @@ public class MyIntrospection {
 	}
 
 
+
+
+
+
 	public static Field getField(Class c,String nom){
 		int i=0;
 		Field listF[]=c.getFields();
@@ -146,10 +163,6 @@ public class MyIntrospection {
 		return f;
 
 	}
-
-
-
-
 
 
 
