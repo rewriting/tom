@@ -47,12 +47,73 @@ public abstract class AbstractEnumeratorGenerator {
 		existingFactories.put(targetClass, null);
 		// build the enumerator code
 		StringBuilder enumeratorCode = new StringBuilder();
-		enumeratorCode.append(appendImports(targetClass, packagePath));
+		enumeratorCode.append("package " + packagePath + ";"+ENDL+ENDL);
+		enumeratorCode.append(generateImports(targetClass));
 		enumeratorCode.append(appendClass(new FieldConstructor(targetClass), packagePath, existingFactories));
 		// add the code to the map
 		existingFactories.put(targetClass, enumeratorCode);
 		return enumeratorCode;
 	}
+
+
+	/***
+	 * create the import line for the class that we want to generate
+	 * 
+	 * @param c
+	 *            : return the StringBuilder that contains the line to generate
+	 * @return
+	 */
+	protected StringBuilder generateImports(Class<?> c) {
+		StringBuilder generatorHeader = new StringBuilder();
+		
+		// all imports for enumerations (some can be unused)
+		generatorHeader.append("import " + Combinators.class.getCanonicalName()+";"+ENDL);
+		generatorHeader.append("import " + Enumeration.class.getCanonicalName()+";"+ENDL);
+		generatorHeader.append("import " + F.class.getCanonicalName()+";"+ENDL);
+		generatorHeader.append("import " + BigInteger.class.getCanonicalName()+";"+ENDL);
+		// import the class to be enumerated
+		generatorHeader.append("import " + c.getCanonicalName()+";"+ENDL);
+		// import the classes used in the profile of the constructor to be used for the enumeration
+		// TODO: how to import the other classes potentially used in the constructor? another annotation?
+		for (Class<?> cla : MyIntrospection.getClassFromConstructorEnumerator(c)) {
+			// TODO: isPrimitive = int, long, byte, float, double, boolean, short, char   OU   java.lang.*
+			if (!Tools.isPrimitive(cla)) {
+				generatorHeader.append("import " + cla.getCanonicalName()+";"+ENDL);
+			}
+		}
+//		for (Class<?> cla : generateListImport(c)) {
+//			generatorHeader.append("import " + cla.getCanonicalName()+";"+ENDL);
+//		}
+		return generatorHeader;
+	}
+
+	/***
+	 * generate the list of all import class that the Factory needs
+	 * 
+	 * @param c
+	 * @return
+	 */
+//	protected List<Class<?>> generateListImport(Class<?> c) {
+//		List<Class<?>> usedClasses = MyIntrospection.getClassFromConstructorEnumerator(c);
+////		List<Class<?>> existingImport=new ArrayList<Class<?>>();
+//		for (Class<?> cla : usedClasses) {
+//			// TODO: isPrimitive = int, long, byte, float, double, boolean, short, char   OU   java.lang.*
+//			if (Tools.isPrimitive(cla)) {
+//				usedClasses.remove(cla);
+//			}
+//			
+////			if (!Tools.isPrimitive(cla)) {
+////				if (!existingImport.contains(cla)) {
+////					existingImport.add(cla);
+////				}
+////			}
+//		}
+//		return usedClasses;
+////		return existingImport;
+//
+//	}
+
+	
 
 	/************************************** IMPORTS ************************************/
 	/**
@@ -65,53 +126,7 @@ public abstract class AbstractEnumeratorGenerator {
 		return "import " + c.getCanonicalName() + ";";
 	}
 
-	/***
-	 * generate the list of all import class that the Factory needs
-	 * 
-	 * @param c
-	 * @return
-	 */
-	protected void generateListImport(Class<?> c,List<Class<?>> existingImport) {
-		List<Class<?>> list = MyIntrospection.getClassFromConstructorEnumerator(c);
-		for (Class cla : list) {
-			if (!Tools.isPrimitive(cla)) {
-				if (!existingImport.contains(cla)) {
-					existingImport.add(cla);
-					generateListImport(cla,existingImport);
-				}
-			}
-		}
-	}
-
-	/***
-	 * create the import line for the class that we want to generate
-	 * 
-	 * @param c
-	 *            : return the StringBuilder that contains the line to generate
-	 * @return
-	 */
-	protected StringBuilder appendImports(Class<?> c, String packagePath) {
-		StringBuilder generatorHeader = new StringBuilder();
-		appendln(generatorHeader, "package " + packagePath + ";");
-		appendln(generatorHeader, "");
-		
-		// Default Import
-		appendln(generatorHeader, makeImport(Combinators.class));
-		appendln(generatorHeader, makeImport(Enumeration.class));
-		appendln(generatorHeader, makeImport(F.class));
-		appendln(generatorHeader, makeImport(BigInteger.class));
-
-		appendln(generatorHeader, makeImport(c));
-		List<Class<?>> generateImport=new ArrayList<Class<?>>();
-		generateListImport(c,generateImport);
-		for (Class<?> cla : generateImport) {
-			appendln(generatorHeader, makeImport(cla));
-		}
-
-
-		return generatorHeader;
-	}
-
+	
 	/***************************** CLASS *********************************************************/
 
 	/**

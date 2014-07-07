@@ -36,12 +36,12 @@ public class PlayWithGenerators {
 	}
 	
 	public static void main(String args[]) throws IOException, ClassNotFoundException, GeneratorFactoryException{
-		PlayWithGenerators.generateFactoryFiles(Car.class,"examples.factory.tests");
-		PlayWithGenerators.generateFactoryFiles(Garage.class,"examples.factory.tests");
-		PlayWithGenerators.generateFactoryFiles(Garage2.class,"examples.factory.tests");
+//		PlayWithGenerators.generateFactoryFiles(Car.class,"examples.factory.tests");
+//		PlayWithGenerators.generateFactoryFiles(Garage.class,"examples.factory.tests");
+//		PlayWithGenerators.generateFactoryFiles(Garage2.class,"examples.factory.tests");
 		PlayWithGenerators.generateFactoryFiles(Student.class,"examples.factory.tests");
-		
-		PlayWithGenerators.generateFactoryFiles(Tree.class,"examples.factory.tests");
+//		
+//		PlayWithGenerators.generateFactoryFiles(Tree.class,"examples.factory.tests");
 	}
 	
 }

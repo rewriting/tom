@@ -11,8 +11,8 @@ import examples.factory.Color;
 public class StaticFactory extends AbstractEnumeratorGenerator{
 
 	@Override
-	protected StringBuilder appendImports(Class<?>c,String packagePath){
-		StringBuilder sb=super.appendImports(c,packagePath);
+	protected StringBuilder generateImports(Class<?>c){
+		StringBuilder sb=super.generateImports(c);
 		appendln(sb, makeImport(List.class));
 		appendln(sb, makeImport(Field.class));
 		appendln(sb, makeImport(MyIntrospection.class));
