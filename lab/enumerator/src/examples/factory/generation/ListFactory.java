@@ -11,8 +11,8 @@ import tom.library.enumerator.F;
 
 public class ListFactory extends AbstractEnumeratorGenerator{
 
-	protected StringBuilder generateImports(Class<?>c){
-		StringBuilder sb=super.generateImports(c);
+	protected StringBuilder generateParticularImports(Class<?>c){
+		StringBuilder sb = new StringBuilder();
 		appendln(sb, "import " + ArrayList.class.getCanonicalName() + ";" );
 		appendln(sb, "import " + List.class.getCanonicalName() + ";" );
 		

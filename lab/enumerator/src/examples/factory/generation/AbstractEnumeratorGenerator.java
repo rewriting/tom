@@ -59,7 +59,7 @@ public abstract class AbstractEnumeratorGenerator {
 	 *            : return the StringBuilder that contains the line to generate
 	 * @return
 	 */
-	protected StringBuilder generateImports(Class<?> class2enumerate) {
+	private StringBuilder generateImports(Class<?> class2enumerate) {
 		StringBuilder generatorHeader = new StringBuilder();
 		
 		// all imports for enumerations (some can be unused)
@@ -77,9 +77,13 @@ public abstract class AbstractEnumeratorGenerator {
 				generatorHeader.append("import " + cla.getCanonicalName()+";"+ENDL);
 			}
 		}
+		generatorHeader.append(generateParticularImports(class2enumerate));
 		return generatorHeader;
 	}
 
+	protected abstract StringBuilder generateParticularImports(Class<?> class2enumerate);
+	
+	
 	protected StringBuilder generateClass(FieldConstructor class2enumerate, String packagePath, Map<Class<?>, StringBuilder> existingFactories)
 			throws IOException, ClassNotFoundException, GeneratorFactoryException {
 		StringBuilder generatorClass = new StringBuilder();

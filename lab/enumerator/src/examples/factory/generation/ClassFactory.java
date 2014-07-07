@@ -20,10 +20,15 @@ import examples.factory.generation.Enumerate;
 
 public class ClassFactory extends AbstractEnumeratorGenerator{
 
+
+	@Override
+	protected  StringBuilder generateParticularImports(Class<?> class2enumerate){
+		return new StringBuilder("");
+	}
+	
+	
 	@Override
 	protected StringBuilder generateClassBody(FieldConstructor fc,String packagePath, Map<Class<?>,StringBuilder> classLists) throws IOException, ClassNotFoundException, GeneratorFactoryException{
-		// TODO Auto-generated method stub
-
 		StringBuilder sb=new StringBuilder();
 		//faire un cas si c'est un type primitif ou non.
 		//debut classe
@@ -33,6 +38,7 @@ public class ClassFactory extends AbstractEnumeratorGenerator{
 		//debut methode enumeration
 		appendln(sb,"public static final "+preBuiltEnumeration1(fc.getTypeChamp())+" getEnumeration(){");
 		appendln(sb,"boolean canBeNull = false;");
+		// TODO: generate "canBeNull = true;" if  canBeNull==true in the annotation Enumerate
 		appendln(sb,"// if(@PlayWithGenerators(canBeNull)){");
 		appendln(sb,"    canBeNull = true;");
 		appendln(sb,"// }");
