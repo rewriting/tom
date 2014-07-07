@@ -75,9 +75,14 @@ public abstract class AbstractEnumeratorGenerator {
 		generatorHeader.append("import " + c.getCanonicalName()+";"+ENDL);
 		// import the classes used in the profile of the constructor to be used for the enumeration
 		// TODO: how to import the other classes potentially used in the constructor? another annotation?
+		// I don't know if it s possible to import the classes that are used in the core of the constructor.
+		// I have never seen this possibility in the reflect package.
+		// Actually I thought that if I have the parameter classes that will not need the rest.
+		// But if we need if that can be a problem
 		for (Class<?> cla : MyIntrospection.getClassFromConstructorEnumerator(c)) {
 			// TODO: isPrimitive = int, long, byte, float, double, boolean, short, char   OU   java.lang.*
-			if (!Tools.isPrimitive(cla)) {
+			// Actually it s just int, long, byte, float, double, boolean, short, char that are considered as Primitive
+			if (!Tools.isLanguage(cla)) {
 				generatorHeader.append("import " + cla.getCanonicalName()+";"+ENDL);
 			}
 		}

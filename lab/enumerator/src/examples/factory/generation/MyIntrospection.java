@@ -19,10 +19,10 @@ public class MyIntrospection {
 
 	/*********************************************************************************/
 
-	public static Constructor extractConstructorWithEnumerateGenerator(Class c){
+	public static Constructor extractConstructorWithEnumerateGenerator(Class c,Class enumerator){
 		int i=0;
 		while(i<c.getConstructors().length){
-			if(c.getConstructors()[i].getAnnotation(EnumerateGenerator.class)!=null){
+			if(c.getConstructors()[i].getAnnotation(enumerator)!=null){
 				return c.getConstructors()[i];
 			}
 			i++;
@@ -33,7 +33,7 @@ public class MyIntrospection {
 	
 	public static List<Class<?>> getClassFromConstructorEnumerator(Class<?> c){
 		List<Class<?>>listClass=new ArrayList<Class<?>>();
-		Constructor<?> cons=extractConstructorWithEnumerateGenerator(c);
+		Constructor<?> cons=extractConstructorWithEnumerateGenerator(c,EnumerateGenerator.class);
 		if(cons!=null){
 			for(Class<?> nc:cons.getParameterTypes()){
 				listClass.add(nc);
@@ -47,7 +47,7 @@ public class MyIntrospection {
 	public static List<FieldConstructor> getAllParameterFieldFromConstructorEnumerator(Class<?> c){
 		List<FieldConstructor>f=new ArrayList<FieldConstructor>();
 		//rechercher le constructeur concerne( le premier avec annotation
-		Constructor<?> cons=extractConstructorWithEnumerateGenerator(c);
+		Constructor<?> cons=extractConstructorWithEnumerateGenerator(c,EnumerateGenerator.class);
 		if(cons!=null){//manque les enumerator
 			List<Type>genericType=getGenericTypeFieldClass(cons);
 			cons.getParameterAnnotations();

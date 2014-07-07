@@ -41,7 +41,9 @@ public class GeneratorFactory {
 	}
 	
 	public static boolean constructorContainsAnnotation(Class target,Class enumerator){
-		return true;//TODO : to do
+		
+		
+		return MyIntrospection.extractConstructorWithEnumerateGenerator(target,enumerator)!=null;//TODO : to do
 	}
 
 }

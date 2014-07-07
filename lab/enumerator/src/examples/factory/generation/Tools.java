@@ -14,7 +14,7 @@ public class Tools {
 	public static final String STRING = String.class.getSimpleName();
 
 	public static final String PRIMITIVESTRING[] = { "int", "long", "byte", "float", "double", "boolean",
-	"String" };
+	"String"};
 	public static final String PRIMITIVESTRINGSIMPLE[] = { INTEGER, LONG, BYTE, FLOAT, DOUBLE, BOOLEAN, STRING };
 	
 	/**
@@ -51,6 +51,10 @@ public class Tools {
 			}
 		}
 		return false;
+	}
+	
+	public static boolean isLanguage(Class c) {
+		return c.getCanonicalName().contains("java.lang.");
 	}
 	
 
