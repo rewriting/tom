@@ -76,4 +76,22 @@ public class Tools {
 		
 		return sb+"";
 	}
+	
+
+	protected static String getStringTypeParametersOfTheClass(Class<?> c){
+		StringBuilder typeParameters=new StringBuilder();
+		if(c.getTypeParameters().length>0){
+			typeParameters.append("<");
+			for(int i=0;i<c.getTypeParameters().length;i++){
+				typeParameters.append(c.getTypeParameters()[i]);
+				if(i<c.getTypeParameters().length-1){
+					typeParameters.append(",");
+				}
+			}
+			typeParameters.append(">");
+		}
+		;
+		return typeParameters+"";
+//		return "";
+	}
 }

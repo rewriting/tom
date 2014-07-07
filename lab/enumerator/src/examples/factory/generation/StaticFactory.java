@@ -24,7 +24,7 @@ public class StaticFactory extends AbstractEnumeratorGenerator{
 	
 	
 	@Override
-	protected StringBuilder core(FieldConstructor fc,String packagePath, Map<Class<?>,StringBuilder> classLists) throws IOException {
+	protected StringBuilder generateClassBody(FieldConstructor fc,String packagePath, Map<Class<?>,StringBuilder> classLists) throws IOException {
 		// TODO Auto-generated method stub
 		Class<?>c=fc.getTypeChamp();
 		String CLASSNAME=c.getSimpleName();
@@ -83,5 +83,16 @@ public class StaticFactory extends AbstractEnumeratorGenerator{
 		return sb;
 	}
 
+
+	/************************************** IMPORTS ************************************/
+	/**
+	 * return the line to write to import this class
+	 * 
+	 * @param c
+	 * @return
+	 */
+	public String makeImport(Class c) {
+		return "import " + c.getCanonicalName() + ";";
+	}
 
 }

@@ -210,7 +210,7 @@ public abstract class ClassFactory extends AbstractEnumeratorGenerator{
 	
 	
 	@Override
-	protected StringBuilder core(FieldConstructor fc,String packagePath, Map<Class<?>,StringBuilder> classLists) throws IOException, ClassNotFoundException, GeneratorFactoryException{
+	protected StringBuilder generateClassBody(FieldConstructor fc,String packagePath, Map<Class<?>,StringBuilder> classLists) throws IOException, ClassNotFoundException, GeneratorFactoryException{
 		// TODO Auto-generated method stub
 
 		StringBuilder sb=new StringBuilder();

@@ -13,14 +13,14 @@ public class ListFactory extends AbstractEnumeratorGenerator{
 
 	protected StringBuilder generateImports(Class<?>c){
 		StringBuilder sb=super.generateImports(c);
-		appendln(sb, makeImport(ArrayList.class));
-		appendln(sb, makeImport(List.class));
+		appendln(sb, "import " + ArrayList.class.getCanonicalName() + ";" );
+		appendln(sb, "import " + List.class.getCanonicalName() + ";" );
 		
 		return sb;
 	}
 	
 	@Override
-	protected StringBuilder core(FieldConstructor fc, String packagePath, Map<Class<?>,StringBuilder> classLists)
+	protected StringBuilder generateClassBody(FieldConstructor fc, String packagePath, Map<Class<?>,StringBuilder> classLists)
 			throws IOException {
 		// TODO Auto-generated method stub
 		StringBuilder sb=new StringBuilder();
@@ -67,5 +67,6 @@ public class ListFactory extends AbstractEnumeratorGenerator{
 		
 		return sb;
 	}
+
 
 }

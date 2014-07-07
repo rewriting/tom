@@ -21,7 +21,7 @@ import examples.factory.generation.Enumerate;
 public class ClassFactory extends AbstractEnumeratorGenerator{
 
 	@Override
-	protected StringBuilder core(FieldConstructor fc,String packagePath, Map<Class<?>,StringBuilder> classLists) throws IOException, ClassNotFoundException, GeneratorFactoryException{
+	protected StringBuilder generateClassBody(FieldConstructor fc,String packagePath, Map<Class<?>,StringBuilder> classLists) throws IOException, ClassNotFoundException, GeneratorFactoryException{
 		// TODO Auto-generated method stub
 
 		StringBuilder sb=new StringBuilder();
@@ -50,7 +50,7 @@ public class ClassFactory extends AbstractEnumeratorGenerator{
 		StringBuilder sb=new StringBuilder();
 		
 		Class<?> c=fc.getTypeChamp();
-		String typeParameters=getStringTypeParametersOfTheClass(c);
+		String typeParameters=Tools.getStringTypeParametersOfTheClass(c);
 		
 		appendln(sb,"public static final "+typeParameters+preBuiltEnumeration1(fc.getTypeChamp())+" getEnumeration(boolean canBeNull) {");
 		appendln(sb, preBuiltEnumeration1(fc.getTypeChamp())+" enumRes = null;");
@@ -318,5 +318,7 @@ public class ClassFactory extends AbstractEnumeratorGenerator{
 		}
 		return null;
 	}
+	
+	
 
 }
