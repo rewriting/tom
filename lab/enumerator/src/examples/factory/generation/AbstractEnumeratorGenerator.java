@@ -1,25 +1,34 @@
 package examples.factory.generation;
 
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.math.BigInteger;
 import java.util.Map;
 
 import tom.library.enumerator.Combinators;
 import tom.library.enumerator.Enumeration;
 import tom.library.enumerator.F;
+import tom.library.theory.ForSome;
 
 public abstract class AbstractEnumeratorGenerator {
 
 	public static final String ENDL = System.getProperty("line.separator");
 	public static final String TAB = "\t";
 	
+	private boolean canBeNull;
 
 	/**
 	 * Constuctor
 	 */
-	public AbstractEnumeratorGenerator() {
-		super();
-	}
+//	public AbstractEnumeratorGenerator(Class<?> class2enumerate) {
+//		super();
+//		this.canBeNull=true;
+//		for(Constructor<?> constructor: class2enumerate.getConstructors()){
+//			if(constructor.getAnnotation(EnumerateGenerator.class)!=null){
+//				this.canBeNull = constructor.getAnnotation(EnumerateGenerator.class).canBeNull();
+//			}
+//		}
+//	}
 
 	/***
 	 * Contain all the lines that we need to write in a file Return the text of
