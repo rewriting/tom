@@ -1,5 +1,7 @@
 package examples.factory;
 
+import java.util.ArrayList;
+
 import examples.factory.generation.Enumerate;
 import examples.factory.generation.EnumerateGenerator;
 
@@ -13,6 +15,7 @@ public class Student {
 			@Enumerate(maxSize = 4) String string) {
 		this.no = no;
 		this.name = string;
+		new ArrayList<Integer>();
 	}
 
 	@Override
