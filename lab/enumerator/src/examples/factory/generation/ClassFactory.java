@@ -21,6 +21,11 @@ import examples.factory.generation.Enumerate;
 public class ClassFactory extends AbstractEnumeratorGenerator{
 
 
+//	public ClassFactory(Class<?> class2enumerate) {
+//		super(class2enumerate);
+//	}
+
+
 	@Override
 	protected  StringBuilder generateParticularImports(Class<?> class2enumerate){
 		return new StringBuilder("");
@@ -166,12 +171,7 @@ public class ClassFactory extends AbstractEnumeratorGenerator{
 		return ecrireF1(listClass, index);
 	}
 	
-	public static void main(String args[]){
-		ClassFactory cf=new ClassFactory();
-		System.out.println(cf.listArgs(2));
-		
-	}
-
+	
 
 	public void makeF(StringBuilder sb,Class<?> c,List<Class<?>>list,int index){
 		Class<?> nextClass=list.get(index-1);
