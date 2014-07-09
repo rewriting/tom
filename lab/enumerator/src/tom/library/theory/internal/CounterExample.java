@@ -3,12 +3,20 @@ package tom.library.theory.internal;
 import java.util.Arrays;
 import java.util.List;
 
+import tom.library.theory.shrink.ShrinkAssignmentRunner;
 import tom.library.theory.tools.TheoryVisitableTools;
 import tom.library.sl.Visitable;
 
 /**
- * Stores counter-examples of a test. 
- * 
+ * <p>
+ * Stores a counter-example of each theory's parameters.
+ * This class is used when generating counter-examples
+ * candidate and assign them to appropriate theory's
+ * parameter that happens in {@link ShrinkAssignmentRunner} class.
+ * A method to check whether the counter-examples contained in the class
+ * is smaller than a given {@code CounterExample} is also provided 
+ * in the class.
+ * </p>
  * @author nauval
  *
  */
@@ -19,14 +27,31 @@ public class CounterExample {
 		fUnassigned = counterExamples;
 	}
 	
+	/**
+	 * Returns a new instance of the {@code CounterExample} containing
+	 * the given objects.
+	 * 
+	 * @param counterExamples
+	 * @return
+	 */
 	public static CounterExample build(Object...counterExamples) {
 		return new CounterExample(Arrays.asList(counterExamples));
 	}
 	
+	/**
+	 * Returns a new instance of {@code CounterExample} containing
+	 * only the next counter-examples, i.e. counter-examples of next
+	 * parameters.
+	 * @return
+	 */
 	public CounterExample nextCounterExample() {
 		return new CounterExample(fUnassigned.subList(1, fUnassigned.size()));
 	}
 	
+	/**
+	 * Return a counter-example of the current theory's parameter.
+	 * @return
+	 */
 	public Object getCounterExample() {
 		return fUnassigned.get(0);
 	}
@@ -35,6 +60,18 @@ public class CounterExample {
 		return fUnassigned.isEmpty();
 	}
 	
+	/**
+	 * <p>
+	 * Returns true if the aggregated size of the contained counter-examples
+	 * is equal to the aggregated size of a given {@code CounterExample}
+	 * </p>
+	 * <p>
+	 * To ensure that the {@code CounterExample}s are comparable, both need
+	 * to have the same number of counter-examples inside.
+	 * </p>
+	 * @param counterExample
+	 * @return
+	 */
 	public boolean isEqualsTo(CounterExample counterExample) {
 		boolean equal = true;
 		if (fUnassigned.size() != counterExample.fUnassigned.size()) {
@@ -47,40 +84,6 @@ public class CounterExample {
 			}
 		}
 		return equal;
-	}
-	
-	public boolean isSmallerThan(CounterExample counterExample) {
-		int total1 = 0, total2 = 0;
-		for (int i = 0; i < fUnassigned.size(); i++) {
-			total1 += calculateTermSize(fUnassigned.get(i));
-			total2 += calculateTermSize(counterExample.fUnassigned.get(i));
-		}
-		return total1 < total2;
-	}
-	
-	private int calculateTermSize(Object term) {
-		if (isInstanceofVisitable(term)) {
-			return TheoryVisitableTools.size((Visitable) term);
-		} else if (isInstanceOfString(term)) {
-			String value = (String) term;
-			return value.length();
-		} else if (isInstanceOfInteger(term)) {
-			return Math.abs((int) term);
-		} else {
-			return 0;
-		}
-	}
-	
-	private boolean isInstanceofVisitable(Object term) {
-		return term instanceof Visitable;
-	}
-	
-	private boolean isInstanceOfString(Object term) {
-		return term instanceof String;
-	}
-	
-	private boolean isInstanceOfInteger(Object term) {
-		return term instanceof Integer;
 	}
 	
 	public Object[] getCounterExamples() {

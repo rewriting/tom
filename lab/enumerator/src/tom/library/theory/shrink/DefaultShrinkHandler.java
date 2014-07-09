@@ -72,7 +72,6 @@ public class DefaultShrinkHandler implements ShrinkHandler {
 	
 	protected void repeatShrink(Throwable e, Object... params) throws Throwable {
 		CounterExample temporaryCounterExample = CounterExample.build(params);
-		//if (temporaryCounterExample.isSmallerThan(currentCounterExample)) {
 		if (!temporaryCounterExample.isEqualsTo(currentCounterExample)) {
 			increaseShrunkCount();
 			currentCounterExample = temporaryCounterExample;
