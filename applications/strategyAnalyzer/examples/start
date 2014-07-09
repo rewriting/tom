@@ -1,3 +1,10 @@
+
+let S=signature {a:0, b:0, c:0, s:0, f:1} in
+let r1 = { f(s()) -> a() } in 
+let r2 = { f(x) -> b() } in 
+// r1 <+ r2
+all(r1)
+
 //let R1 = { f(x) -> x } in 
 //let R2 = { b() -> c() } in 
 //R1;(R1<+R2);R1
@@ -164,9 +171,3 @@
 // let obu4 = mu y.(one(y)<+r4) in
 // let obu = obu1 <+ obu2 <+ obu3 <+ obu4 in
 // mu x .((obu;x) <+ identity)
-
-let S=signature {a:0, b:0, c:0, s:0, f:1} in
-let r1 = { f(s(x)) -> a() } in 
-let r2 = { f(x) -> b() } in 
-r1 <+ r2
-
