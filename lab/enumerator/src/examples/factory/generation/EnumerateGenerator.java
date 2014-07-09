@@ -5,6 +5,6 @@ import java.lang.annotation.RetentionPolicy;
 
 //@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Generator {
+public @interface EnumerateGenerator {
 	boolean canBeNull() default true;
 }

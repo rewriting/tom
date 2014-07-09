@@ -4,33 +4,25 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import examples.factory.Car;
+import examples.factory.Garage;
+import examples.factory.Student;
+
 public class MyIntrospection {
 
 	/*********************************************************************************/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	public static Constructor extraireConstructor(Class c){
+	public static Constructor extractConstructorWithEnumerateGenerator(Class c,Class enumerator){
 		int i=0;
 		while(i<c.getConstructors().length){
-			if(c.getConstructors()[i].getAnnotation(Generator.class)!=null){
+			if(c.getConstructors()[i].getAnnotation(enumerator)!=null){
 				return c.getConstructors()[i];
 			}
 			i++;
@@ -38,50 +30,91 @@ public class MyIntrospection {
 		return null;
 	}
 
+	
+	public static List<Class<?>> getClassFromConstructorEnumerator(Class<?> c){
+		List<Class<?>>listClass=new ArrayList<Class<?>>();
+		Constructor<?> cons=extractConstructorWithEnumerateGenerator(c,EnumerateGenerator.class);
+		if(cons!=null){
+			for(Class<?> nc:cons.getParameterTypes()){
+				listClass.add(nc);
+			}
+		}
+		
+		return listClass;
+	}
+	
 
-	public static List<FieldConstructor> recupererTousChampConstructorEnumerator(Class<?> c){
+	public static List<FieldConstructor> getAllParameterFieldFromConstructorEnumerator(Class<?> c){
 		List<FieldConstructor>f=new ArrayList<FieldConstructor>();
-		int r=0;
 		//rechercher le constructeur concerne( le premier avec annotation
-		Constructor cons=extraireConstructor(c);
+		Constructor<?> cons=extractConstructorWithEnumerateGenerator(c,EnumerateGenerator.class);
 		if(cons!=null){//manque les enumerator
+			List<Type>genericType=getGenericTypeFieldClass(cons);
 			cons.getParameterAnnotations();
 			for(int i=0;i<cons.getParameterTypes().length;i++){
-				Class type=cons.getParameterTypes()[i];
-
+				Class<?> type=cons.getParameterTypes()[i];
+				Type genericParameterType=cons.getGenericParameterTypes()[i];
 				List<Annotation> annotations=new ArrayList<Annotation>();
 				for(Annotation annot:cons.getParameterAnnotations()[i]){
 					annotations.add(annot);
 				}
-				//Annotation annot[]=new Annotation[]
-				f.add(new FieldConstructor(annotations, type,"arg"+r++));
-
+				f.add(new FieldConstructor(annotations, type,genericType.get(i),genericParameterType));
 			}
 		}
-
 		return f;
 	}
+	
+	public static void main(String args[]) throws NoSuchMethodException, SecurityException{
+		List<FieldConstructor> l=getAllParameterFieldFromConstructorEnumerator(Student.class);
+		for(FieldConstructor fc:l){
+			System.out.println(fc);
+		}
+	}
 
-	public static List<Field> recupererTousChampEnumerateStatic(Class<?>c){
+	
+	public static List<Type> getGenericTypeFieldClass(Constructor c){
+		List<Type> liste=new ArrayList<Type>();
+		for(Type t:c.getGenericParameterTypes()){
+			liste.add(t);
+		}
+		return liste;
+	}
+	
+
+	/*public static List<Field> getAllFieldClass(Class<?> c){
+		List<Field>f=new ArrayList<Field>();
+		for(Field fi:c.getDeclaredFields()){
+			if(!AlreadyContainFieldWithName(f,fi))f.add(fi);
+		}
+		if(c.getSuperclass()!=null&&!c.getSuperclass().equals(Object.class)){
+			List<Field> newf=getAllFieldClass(c.getSuperclass());
+			for(Field fi:newf){
+				if(!AlreadyContainFieldWithName(f,fi))f.add(fi);
+			}
+		}
+		return f;
+	}*/
+
+	public static boolean AlreadyContainFieldWithName(List<Field> l,Field nom){
+		for(Field f:l){
+			if(f.getName().equals(nom.getName())){
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public static List<Field> getAllFieldFromEnumerateStaticClass(Class<?>c){
 		List<Field>fc=new ArrayList<Field>();
-
-		Map<String,Object> value=getValueStatic(c);
-		System.out.println("MAP");
-		System.out.println(value);
-
 		for(Field f:c.getDeclaredFields()){
-
 			if(Modifier.isStatic(f.getModifiers())){
-				System.out.println("F = "+f.getName());
 				List<Annotation> annotations=new ArrayList<Annotation>();
 				for(Annotation annot:f.getAnnotations()){
 					annotations.add(annot);
 				}
-			//	fc.add(new FieldConstructor(annotations, f.getType(), f.getName()));
 				fc.add(f);
 			}
 		}
-
 		return fc;
 	}
 
@@ -112,6 +145,10 @@ public class MyIntrospection {
 	}
 
 
+
+
+
+
 	public static Field getField(Class c,String nom){
 		int i=0;
 		Field listF[]=c.getFields();
@@ -126,10 +163,6 @@ public class MyIntrospection {
 		return f;
 
 	}
-
-
-
-
 
 
 

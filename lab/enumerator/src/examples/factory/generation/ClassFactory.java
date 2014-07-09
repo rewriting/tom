@@ -2,144 +2,195 @@ package examples.factory.generation;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import tom.library.enumerator.Combinators;
 import tom.library.enumerator.Enumeration;
+import examples.factory.Car;
+import examples.factory.Color;
+import examples.factory.Garage;
+import examples.factory.Student;
 import examples.factory.generation.Enumerate;
 
-public class ClassFactory extends AbstractGeneratorFactory{
+public class ClassFactory extends AbstractEnumeratorGenerator{
 
-	
+
+//	public ClassFactory(Class<?> class2enumerate) {
+//		super(class2enumerate);
+//	}
+
+
+	@Override
+	protected  StringBuilder generateParticularImports(Class<?> class2enumerate){
+		return new StringBuilder("");
+	}
 	
 	
 	@Override
-	protected StringBuilder core(Class c) throws IOException{
-		// TODO Auto-generated method stub
-		
-		String NOMCLASSE=c.getSimpleName();
+	protected StringBuilder generateClassBody(FieldConstructor fc,String packagePath, Map<Class<?>,StringBuilder> classLists) throws IOException, ClassNotFoundException, GeneratorFactoryException{
 		StringBuilder sb=new StringBuilder();
 		//faire un cas si c'est un type primitif ou non.
 		//debut classe
-		
+
+
 
 		//debut methode enumeration
-		appendLine(sb,"public static final Enumeration<"+NOMCLASSE+"> getEnumeration(){");
-		appendLine(sb,"boolean canBeNull = false;");
-		appendLine(sb,"// if(@Generator(canBeNull)){");
-		appendLine(sb,"    canBeNull = true;");
-		appendLine(sb,"// }");
-		appendLine(sb,"return getEnumeration(canBeNull);");
-		appendLine(sb,"}");
+		appendln(sb,"public static final "+preBuiltEnumeration1(fc.getTypeChamp())+" getEnumeration(){");
+		appendln(sb,"boolean canBeNull = false;");
+		// TODO: generate "canBeNull = true;" if  canBeNull==true in the annotation Enumerate
+		appendln(sb,"// if(@PlayWithGenerators(canBeNull)){");
+		appendln(sb,"    canBeNull = true;");
+		appendln(sb,"// }");
+		appendln(sb,"return getEnumeration(canBeNull);");
+		appendln(sb,"}");
 		//fin methode enumeration
 
-		appendLine(sb,"public static final Enumeration<"+NOMCLASSE+"> getEnumeration(boolean canBeNull) {");
-		appendLine(sb, "Enumeration<"+NOMCLASSE+"> enumRes = null;");
+		appendln(sb, makeEnumerator(fc,packagePath,classLists));
 
-		makeF(sb,c);
-
-		for(FieldConstructor fc:makeList(c)){
-			if(!fc.getTypeChamp().equals(c)){
-			appendLine(sb, makeEnumetator(c,fc));
-			}
-		}
-		List<FieldConstructor>list=makeList(c);
-		
-		Collections.reverse(list);
-		appendLine(sb, "enumRes = "+makeEnumeratorFinal(list, c, 1)+";");
-		
-		appendLine(sb, "if (canBeNull) {");
-		appendLine(sb, "final Enumeration<"+nomClasse(c)+"> emptyEnum = Enumeration.singleton(null);");
-		appendLine(sb, "enumRes = emptyEnum.plus(enumRes);");
-		appendLine(sb, "}");
-		
-		appendLine(sb, "return enumRes;");
-		
-		sb.append("}"+ENDL);
 		//fin classe
 		return sb;
 	}
 	
-
-	
-	public String makeEnumeratorFinal(List<FieldConstructor> list,Class c,int index){
+	public String makeEnumerator(FieldConstructor fc,String packagePath, Map<Class<?>,StringBuilder> classLists) throws ClassNotFoundException, IOException, GeneratorFactoryException{
 		StringBuilder sb=new StringBuilder();
-		if(index<list.size()){
-			sb.append("Enumeration.apply("+makeEnumeratorFinal(list,c,index+1)+","+list.get(index).getNameField()+")");
-		}else{
-			sb.append("Enumeration.singleton(_"+nomClasse(c).toLowerCase()+")");
-		}
+		
+		Class<?> c=fc.getTypeChamp();
+		String typeParameters=Tools.getStringTypeParametersOfTheClass(c);
+		
+		appendln(sb,"public static final "+typeParameters+preBuiltEnumeration1(fc.getTypeChamp())+" getEnumeration(boolean canBeNull) {");
+		appendln(sb, preBuiltEnumeration1(fc.getTypeChamp())+" enumRes = null;");
+		appendln(sb,makeF(c));
+		appendln(sb, makePostEnumerator(c, packagePath, classLists));
+		appendln(sb, makeEnd(fc));
+		sb.append("}"+ENDL);
 		
 		return sb+"";
 	}
 	
+	public static String classNameWithParameter(FieldConstructor fc) {
+		Type l = fc.getParameter();
+		String typeParameters=/*getStringTypeParametersOfTheClass(fc.getTypeChamp())*/"";
+		StringBuilder sb = new StringBuilder();
 
-	public String listArgs(List<FieldConstructor>list){
+		if (l != null && (l + "").contains("<")) {
+			System.out.println("A");
+			sb.append(l);
+		}else {
+			System.out.println("AA");
+			sb.append(Tools.className(fc.getTypeChamp())+typeParameters);
+		}
+		System.out.println(" BBB "+sb);
+		return sb + "";
+	}
+	
+	public String makeEnd(FieldConstructor fc){
 		StringBuilder sb=new StringBuilder();
-		int i=0;;
-		for(FieldConstructor f:list){
-			if(f.getNameField()!=null){
-				sb.append(f.getNameField());
-				if(i<list.size()-2){
-					sb.append(", ");
-				}
+		
+		
+		List<Class<?>>list=MyIntrospection.getClassFromConstructorEnumerator(fc.getTypeChamp());
+		int numberOfParameters=list.size();
+		
+		Collections.reverse(list);
+		appendln(sb, "enumRes = "+makeEnumeratorFinal(fc.getTypeChamp(),numberOfParameters,  1)+";");
+
+		appendln(sb, "if (canBeNull) {");
+		appendln(sb, "final Enumeration<"+classNameWithParameter(fc)+"> emptyEnum = Enumeration.singleton(null);");
+		appendln(sb, "enumRes = emptyEnum.plus(enumRes);");
+		appendln(sb, "}");
+
+		appendln(sb, "return enumRes;");
+		
+		return sb+"";
+	}
+	
+	public String makePostEnumerator(Class<?> c,String packagePath,Map<Class<?>,StringBuilder> classLists) throws ClassNotFoundException, IOException, GeneratorFactoryException{
+		StringBuilder sb=new StringBuilder();
+		List<FieldConstructor>list=MyIntrospection.getAllParameterFieldFromConstructorEnumerator(c);
+		for(int i=0;i<list.size();i++){
+			if(!list.get(i).getTypeChamp().equals(c)){
+				appendln(sb, makeEnumetator(c,list,i,packagePath, classLists));
 			}
-			i++;
 		}
 		return sb+"";
 	}
 
-	/**
-	 * ne renvoie que la list des FieldConstructeor possedant l'annotation Enumerate
-	 * @param o
-	 * @return
-	 */
-	public List<FieldConstructor> makeList(Class c){
-		List<FieldConstructor>stack=new ArrayList<FieldConstructor>();
-		List<FieldConstructor>list=MyIntrospection.recupererTousChampConstructorEnumerator(c);
-		for(FieldConstructor s:list){
-			if(s.containsAnnotation(Enumerate.class)){
-				stack.add(s);
+	public String makeEnumeratorFinal(Class c,int numberOfParameters,int index){
+		StringBuilder sb=new StringBuilder();
+		if(index-1<numberOfParameters){
+			sb.append("Enumeration.apply("+makeEnumeratorFinal(c,numberOfParameters,index+1)+", arg"+(numberOfParameters-index)+")");
+		}else{
+			sb.append("Enumeration.singleton(_"+c.getSimpleName().toLowerCase()+")");
+		}
+
+		return sb+"";
+	}
+
+
+	public String listArgs(int numberArgs){
+		StringBuilder sb=new StringBuilder();
+		for(int i=0;i<numberArgs;i++){
+			sb.append("arg"+i);
+			if(i<numberArgs-1){
+				sb.append(", ");
 			}
 		}
-		stack.add(new FieldConstructor(null, c, null));
-
-		return stack;
-	}
-
-	public void makeF(StringBuilder sb,Class c){
-		List<FieldConstructor>list=makeList(c);
-		String F1=ecrireF1(list,0);
-		sb.append(getTab(0)+"final "+F1+" _"+nomClasse(c).toLowerCase()+"= new "+F1+"()");
-		if(list.size()>1){
-			appendLine(sb,"{");
-			makeF(sb,list,1);
-			appendLine(sb,"};");
-		}else{
-			appendLine(sb,getTab(0)+";");
-		}
+		return sb+"";
 	}
 
 
 
-	public void makeF(StringBuilder sb,List<FieldConstructor>list,int index){
-		appendLine(sb, getTab(index)+"public "+ecrireF1(list,index)+" apply (final "+nomClasse(list.get(index-1).getTypeChamp())+" "+list.get(index-1).getNameField()+"){");
-
-		if(index+1<list.size()){
-			appendLine(sb, getTab(index+1)+" return new "+ecrireF1(list,index)+"(){");
-			makeF(sb, list, index+1);
-			appendLine(sb, getTab(index+1)+"};");
-
+	public String makeF(Class<?> c){
+		StringBuilder sb=new StringBuilder();
+		List<Class<?>>list=MyIntrospection.getClassFromConstructorEnumerator(c);
+		String F1=ecrireF0(c,0);
+		sb.append("final "+F1+" _"+c.getSimpleName().toLowerCase()+"= new "+F1+"()");
+		if(list.size()>0){
+			appendln(sb,"{");
+			makeF(sb,c,list,1);
+			appendln(sb,"};");
 		}else{
-			appendLine(sb,getTab(index+1)+"return new "+nomClasse(list.get(index).getTypeChamp())+"("+listArgs(list)+");");
+			appendln(sb,";");
 		}
+		return sb+"";
 
-		appendLine(sb, getTab(index)+"}");
+	}
+
+	public String ecrireF0(Class c,int index){
+		List<String> listClass=new ArrayList<String>();
+		for(FieldConstructor fc:MyIntrospection.getAllParameterFieldFromConstructorEnumerator(c)){
+			listClass.add(classNameWithParameter(fc));
+		}
+		listClass.add(c.getCanonicalName());//+getStringTypeParametersOfTheClass(c));
+		
+		return ecrireF1(listClass, index);
+	}
+	
+	
+
+	public void makeF(StringBuilder sb,Class<?> c,List<Class<?>>list,int index){
+		Class<?> nextClass=list.get(index-1);
+		appendln(sb, "public "+ecrireF0(c,index)+" apply (final "+Tools.className(nextClass)+/*getStringTypeParametersOfTheClass(nextClass)*/""+" arg"+(index-1)+"){");
+		makeG(sb, c, list, index);
+		appendln(sb, "}");
 		//DANGER ICI avec simpleNAME
 
+	}
+
+	public void makeG(StringBuilder sb,Class c,List<Class<?>>list,int index){
+		if(index<list.size()){
+			appendln(sb, " return new "+ecrireF0(c,index)+"(){");
+			makeF(sb, c,list, index+1);
+			appendln(sb, "};");
+
+		}else{
+			appendln(sb,"return new "+Tools.className(c)+/*getStringTypeParametersOfTheClass(c)*/""+"("+listArgs(list.size())+");");
+		}
 	}
 
 	/***
@@ -148,47 +199,125 @@ public class ClassFactory extends AbstractGeneratorFactory{
 	 * @param index
 	 * @return
 	 */
-	public String ecrireF1(List<FieldConstructor>list,int index){
+	public String ecrireF1(List<String>list,int index){
 		if(index+1<list.size()){
-			Class actuel=list.get(index).getTypeChamp();
-			List<FieldConstructor> cloner=new ArrayList<FieldConstructor>(list);
-			return "F<"+nomClasse(actuel)+", "+ecrireF1(list,index+1)+">";
+			return "F<"+list.get(index)+", "+ecrireF1(list,index+1)+">";
 		}else{
-			return nomClasse(list.get(index).getTypeChamp());
+			return list.get(index);
 		}
 	}
 
+	
 
-	public String makeEnumetator(Object o,FieldConstructor fc) throws IOException{
-		
+	public String makeEnumetator(Object o,List<FieldConstructor> listField, int index, String packagePath, Map<Class<?>,StringBuilder> classLists) throws IOException, ClassNotFoundException, GeneratorFactoryException{
+
 		// //@Enumerate(maxSize=4)
 		// int no,
-		final Enumeration<Integer> noEnum = new Enumeration<Integer>(
-				Combinators.makeInteger().parts().take(BigInteger.valueOf(4)));
 		
+		
+		//Annotation ann[]=
+		
+		FieldConstructor fc=listField.get(index);
+
 		StringBuilder sb=new StringBuilder();
-		sb.append("final Enumeration<"+nomClasse(fc.getTypeChamp())+"> "+fc.getNameField()+" = ");
-		if(isPrimitive(fc.getTypeChamp().getSimpleName())){
-			sb.append("new Enumeration<"+nomClasse(fc.getTypeChamp())+">("+"Combinators.make"+nomClasse(fc.getTypeChamp())+"().parts()");
+		sb.append("final Enumeration<"+classNameWithParameter(fc)+/*getStringTypeParametersOfTheClass(fc.getTypeChamp())*/""+"> arg"+index+" = ");
+		if(Tools.isPrimitive(fc.getTypeChamp())){
+			sb.append("new Enumeration<"+classNameWithParameter(fc)+">("+"Combinators.make"+Tools.className(fc.getTypeChamp())+"().parts()");
 			if(((Enumerate)getAnnotation(fc.getAnnotation(),Enumerate.class))!=null&&
 					((Enumerate)getAnnotation(fc.getAnnotation(),Enumerate.class)).maxSize()>0){
-		//TODO: a rajouter quand ca marchera		sb.append(".take(BigInteger.valueOf("+((Enumerate)getAnnotation(fc.getAnnotation(),Enumerate.class)).maxSize()+"))");
-				System.out.println("BROOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOo");
+				sb.append(".take(BigInteger.valueOf("+((Enumerate)getAnnotation(fc.getAnnotation(),Enumerate.class)).maxSize()+"))");
 			}
 			sb.append(")");
 		}
 		else if(!o.getClass().equals(fc.getTypeChamp())){
-			sb.append(nomClasse(fc.getTypeChamp())+"Factory.getEnumeration()");
-			generate(fc.getTypeChamp());
+			sb.append(treatClassNameWithGenericType(fc.getParameter()+"",packagePath, classLists));
+			GeneratorFactory.getGenerator(fc.getTypeChamp()).generateEnumerator(fc.getTypeChamp(), packagePath, classLists);
 		}
 		sb.append(";");
 		return sb+"";
-		
+
 	}
-	
+
+
+
+	protected static String preBuiltEnumeration1(Class c){
+		String NOMCLASSE=c.getSimpleName();
+		String typeParameters=/*getStringTypeParametersOfTheClass(c)*/"";
+		return " Enumeration<"+NOMCLASSE+typeParameters+">";
+	}
+
+	/***
+	 * sert a faire ListFactory......
+	 * @param t
+	 * @return
+	 * @throws ClassNotFoundException 
+	 * @throws IOException 
+	 * @throws GeneratorFactoryException 
+	 */
+	public String treatClassNameWithGenericType(String type, String packagePath, Map<Class<?>,StringBuilder> classLists) throws IOException, GeneratorFactoryException{
+
+		String genericType=getStringGenericType(type);
+		String classType=getStringClassFromType(type);
+		String classTypeSimpleName=classType;
+		try{
+			Class<?> nc=Class.forName(classType+"");
+			if(!nc.isPrimitive()){
+				GeneratorFactory.getGenerator(nc).generateEnumerator(nc, packagePath, classLists);
+
+			}
+			classTypeSimpleName=nc.getSimpleName();
+		}catch(ClassNotFoundException e){
+			e.printStackTrace();
+		}
+		if(genericType==null){
+			return classTypeSimpleName+"Factory.getEnumeration()";
+		}
+		return packagePath+"."+classTypeSimpleName+"Factory.getEnumeration("+treatClassNameWithGenericType(genericType,packagePath,classLists)+")";//t => nom
+	}
+
+	/**
+	 * get the String between < > for example "List<Car>" will return "Car"
+	 * @param s
+	 * @return
+	 */
+	public String getStringGenericType(String t){
+		int i=0;
+		int ac=-1;
+		while(i<t.length()){
+			if(t.charAt(i)=='>'){
+				ac=i;
+			}
+			i++;
+		}
+		if(ac!=-1){
+			t=t.substring(t.indexOf("<")+1, ac);
+			return t+"";
+		}else{
+			return null;
+		}
+	}
+	/***
+	 * Return the class string from a Type cast to String for example List<Car> will return List
+	 * This function complete the getStringGenericType function 
+	 * @param type
+	 * @return
+	 */
+	public String getStringClassFromType(String type){
+		if(type.contains("<")){
+			return removeWordClass(type.substring(0, type.indexOf("<")));
+		}else{
+			return removeWordClass(type);
+		}
+	}
+	private String removeWordClass(String name){
+		if(name.contains("class ")){
+			return name.substring(name.indexOf("class ")+"class ".length(), name.length());
+		}
+		return name;
+	}
+
 	public Annotation getAnnotation(List<Annotation>list,Class annot){
 		for(Annotation an:list){
-			System.out.println("ANNOOO "+an);
 			if(an.annotationType().getSimpleName().equals(annot.getSimpleName())){
 				return an;
 			}
@@ -196,4 +325,6 @@ public class ClassFactory extends AbstractGeneratorFactory{
 		return null;
 	}
 	
+	
+
 }
