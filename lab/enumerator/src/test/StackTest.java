@@ -27,7 +27,7 @@ public class StackTest {
 	private static StackFactory factory= StackFactory.getInstance(StackFactory.ARRAY);
 	private static StackFactory factory2= StackFactory.getInstance(StackFactory.ARRAY);
 	private static IStack init= factory.makeStack();
-
+ 
 //	@BeforeClass
 //	public static void setUp() {
 //		factory1 = StackFactory.getInstance(StackFactory.ARRAY);
