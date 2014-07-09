@@ -21,9 +21,9 @@ import examples.factory.generation.Enumerate;
 public class ClassFactory extends AbstractEnumeratorGenerator{
 
 
-//	public ClassFactory(Class<?> class2enumerate) {
-//		super(class2enumerate);
-//	}
+	public ClassFactory(Class<?> class2enumerate) {
+		super(class2enumerate);
+	}
 
 
 	@Override
@@ -44,9 +44,11 @@ public class ClassFactory extends AbstractEnumeratorGenerator{
 		appendln(sb,"public static final "+preBuiltEnumeration1(fc.getTypeChamp())+" getEnumeration(){");
 		appendln(sb,"boolean canBeNull = false;");
 		// TODO: generate "canBeNull = true;" if  canBeNull==true in the annotation Enumerate
-		appendln(sb,"// if(@PlayWithGenerators(canBeNull)){");
-		appendln(sb,"    canBeNull = true;");
-		appendln(sb,"// }");
+		if(canBeNull){
+			//		appendln(sb,"// if(@PlayWithGenerators(canBeNull)){");
+			appendln(sb,"    canBeNull = true;");
+			//		appendln(sb,"// }");
+		}
 		appendln(sb,"return getEnumeration(canBeNull);");
 		appendln(sb,"}");
 		//fin methode enumeration
