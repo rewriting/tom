@@ -7,6 +7,14 @@ import java.util.List;
 import tom.library.shrink.ds.zipper.Node;
 import tom.library.sl.Visitable;
 
+/**
+ * <p>
+ * A tree that implements zipper's Node interface. It wraps a Gom
+ * term and its position relative to its parent (child at).
+ * </p>
+ * @author nauval
+ *
+ */
 public class TermNode implements Node{
 	private List<TermNode> children;
 	private Visitable term;

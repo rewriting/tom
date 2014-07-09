@@ -8,12 +8,14 @@ import java.util.HashSet;
 import java.util.TreeSet;
 
 import tom.library.shrink.ds.ExpandingSet;
-import tom.library.shrink.reducers.ExplotionReducer;
-import tom.library.shrink.reducers.IntegerReducer;
+import tom.library.shrink.reducers.BaseReducer;
+import tom.library.shrink.reducers.ConstantsReducerDecorator;
+import tom.library.shrink.reducers.IntegerReducerDecorator;
 import tom.library.shrink.reducers.Reducer;
-import tom.library.shrink.reducers.StringReducer;
-import tom.library.shrink.reducers.SubtermReducer;
-import tom.library.shrink.reducers.ValueReducer;
+import tom.library.shrink.reducers.ReducerFactory;
+import tom.library.shrink.reducers.StringReducerDecorator;
+import tom.library.shrink.reducers.SubtermsReducerDecorator;
+import tom.library.shrink.reducers.ValueReducerDecorator;
 import tom.library.sl.Visitable;
 
 /**
@@ -27,6 +29,9 @@ import tom.library.sl.Visitable;
  * The final result is a considerably big list of terms that are smaller or equal to the
  * counter-example.
  * 
+ * <p>
+ * Note: this approach is experimental. It takes too much time, especially during the computation of the last rule
+ * </p>
  * @author nauval
  *
  */
@@ -35,21 +40,11 @@ public class BigShrink implements Shrink{
 	private ExpandingSet<Object> toExplore;
 	private Collection<Object> terms;
 	
-	private Reducer<Visitable> subtermReducer;
-	private Reducer<Visitable> explotionReducer;
-	private Reducer<Visitable> valueReducer;
-	private Reducer<String> stringReducer;
-	private Reducer<Integer> intReducer;
+	private Reducer reducer;
 	
 	public BigShrink() {
 		toExplore = new ExpandingSet<Object>();
 		terms = new HashSet<Object>();
-		
-		subtermReducer = new SubtermReducer();
-		explotionReducer = new ExplotionReducer();
-		valueReducer = new ValueReducer();
-		stringReducer = new StringReducer();
-		intReducer = new IntegerReducer();
 	}
 	
 	@Override
@@ -90,14 +85,20 @@ public class BigShrink implements Shrink{
 		toExplore.add(term);
 		while (toExplore.hasNext()) {
 			Visitable iteratedTerm = (Visitable) toExplore.getNext();
-			
+			//reducer = new BaseReducer(iteratedTerm);
 			// first step
-			toExplore.addAll(subtermReducer.reduce(iteratedTerm));
+			//reducer = new SubtermsReducerDecorator(reducer);
 			// second step
-			toExplore.addAll(explotionReducer.reduce(iteratedTerm));
+			//reducer = new ConstantsReducerDecorator(reducer);
+			
 			// third step, this makes the generation process takes 
 			// too long. 
-			//toExplore.addAll(valueReducer.reduce(iteratedTerm));
+			//reducer = new ValueReducerDecorator(reducer);
+			//Collection<Object> result = reducer.reduce();
+			Collection<Object> result = ReducerFactory.getInstance(iteratedTerm).createReducer().reduce();
+			result.remove(iteratedTerm);
+			toExplore.addAll(result);
+			
 			// add iteratedTerm to explored
 			terms.add(iteratedTerm);
 		}
@@ -120,12 +121,14 @@ public class BigShrink implements Shrink{
 	}
 	
 	private void exploreStringTerm(String term) {
-		terms.addAll(stringReducer.reduce(term));
+		reducer = new StringReducerDecorator(new BaseReducer(term));
+		terms.addAll(reducer.reduce());
 		addTermIfBuiltTermsIsEmpty(term);
 	}
 	
 	private void exploreIntegerTerm(Integer term) {
-		terms.addAll(intReducer.reduce(term));
+		reducer = new IntegerReducerDecorator(new BaseReducer(term));
+		terms.addAll(reducer.reduce());
 		addTermIfBuiltTermsIsEmpty(term);
 	}
 	

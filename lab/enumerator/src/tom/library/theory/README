@@ -1,0 +1,217 @@
+PropCheck
+---------
+
+What is it?
+-----------
+
+PropCheck is a property-based testing framework heavily influenced by
+Haslell's QuickCheck. Property-based testing is an approach where
+a property is tested against (supposedly) many data. In the approach
+the data are generated independently and possibly automatically. 
+
+This framework is built on top of JUnit theories, a parameterized
+testing approach in JUnit. Besides JUnit, this framework depends on JavaFeat
+technology to generate test data. JavaFeat is a term generator, given an integer
+it returns a term at that position (?). 
+
+As in Haskell's QuickCheck, PropCheck tries to find a smaller counter-exampler
+when a test fails to make bugs apparent to developers. For each test, it prints
+the statistics corresponding to the number of data generated, data not tested
+due to violation of assumptions and due to marked as bad input.
+
+
+
+Examples
+--------
+
+As it is built on top of JUnit, to define a test is similar to JUnit's, only
+that the test class needs to be annotated with @RunWith(PropCheck.class) in
+its definition:
+
+	@RunWith(PropCheck.class)
+	public class StackTest {
+		@Theory
+		public void testTop(@ForSome Stack s, @ForSome int n) {
+			assumeThat(s.isEmpty(), is(false));
+			assertThat(s.push(n).top(), is(n));
+		}
+	}
+
+A property is defined as a theory, a parameterized test method annotated 
+with annotation @Theory. The theory testTop() represents a universally 
+quantified property of a stack:
+
+	For all s of sort Stack, n of sort Integer: 
+	isEmpty(s) = false ==> top(push(s, n)) = n
+
+The translation from the formal definition of above property to theory testTop()
+is quite straight forward. The annotation @ForSome marks a theory parameter to be 
+universally quantified. The theory uses JUnit's ``Assumption'' to represent the
+condition ``isEmpty(s) = false''. Lastly, JUnit's ``Assertion'' is used to assert
+the property given the test data.
+
+
+Packages
+--------
+
+The packages are structured as follows:
+
+# tom.library.theory
+	The facade of the framework where all the classes and annotations needed
+	to run a property-based testing using PropCheck is defined. This package
+	includes:
+	- Class PropCheck: 
+	  the main runner class of the framework, which is called
+	  when a test is taken place. This class extends JUnit's ``Theories''' whose 
+	  superclass is the JUnit's class ``Runner''. This class has a static
+	  inner class named ``TheoryAnchor'' that extends JUnit's ``Statmentment''.
+	  The class ``TheoryAnchor'' is where the high level process of test data
+	  assignment (to each theory parameter) and their execution.
+	- Annotation @ForSome: 
+	  the annotation to mark a theory parameter to be 
+	  supplied with the generated data. It has four elements (parameters) 
+	  where users can play with to change the data generation's behaviour:
+	  * exhaustive -> random data generation as default
+	  * minSampleSize -> minimal size of the sample data
+	  * maxSampleSize -> maximal size of the sample data
+	  * maximalNumberOfSample -> maximal number of sample data generated
+	- Annotation @Enum (may soon be deprecated): 
+	  marks the initiation ofa term's enumeration.
+	- Class BadInputException: 
+	  an exception to mark that a test data is bad
+	  and tell PropCheck to skip the current test. The definition of bad
+	  data is left to the users.
+	- Annotation @Shrink: 
+	  annotation to hook a user defined shrink mechanism to the PropCheck.
+
+# tom.library.theory.internal
+	Internally used classes.
+	- Class AssigmentRunner:
+	  Assigns test method's parameters with values generated from
+	  a value supplier. All values are combined in every possible 
+	  combination by this class.
+	- Class CounterExample:
+	  A wrapper class of a counter-example
+	- Class ExecutionHandler:
+	  Handles the actions when a ``Statement'' is evaluated. An instance of
+	  this class is particularly used in class ``StatementBuilder''.
+	- Class StatementBuilder:
+	  This class is where the behaviour of a test is defined, i.e.
+	  how a test method is evaluate and what should be done if a test fails.
+	  This is done by creating a new ``Statement'' and define the appropriate
+	  actions (defined in class ExecutionHandler) when a test succeed, violates 
+	  an assumption, marked as bad input or fails. 
+	  The ``Statement'' creation process is done through calling the 
+	  method methodBlock() of an instance of class ``BlockJUnit4ClassRunner''
+	  to include JUnit's default test behaviour such as when @Before or @After
+	  are used, when a test expecting an exception, etc <http://junit.sourceforge.net/javadoc/org/junit/runners/BlockJUnit4ClassRunner.html#methodBlock(org.junit.runners.model.FrameworkMethod)>
+	- Class Statistic:
+	  A data structure to record a test/theory execution's statistics
+	- Class TestObject:
+	  A data structure containing the current test method and the current test
+	  class.
+
+# tom.library.theory.shrink
+	Package for the shrink mechanism.
+	- Interface ShrinkHandler:
+	  The interface of a shrink handler providing a single method ``shrink()'' 
+	  to be implemented by its concrete implementation class.
+	- Class DefaultShrinkHandler:
+	  Default implementation of interface ShrinkHandler. 
+	  When a counter-example is received, the theory will be tested again
+	  using smaller terms as counter-example candidates (by using mutation
+	  rules). The generation  of the counter-example candidates is handled 
+	  by an instance of interface ``ShrinkParameterSupplier''. These 
+	  candidates are then tested again. When a test
+	  fails again, the new counter example will be used as the basis of
+	  the counter-example candidates generation for the next iteration.
+	  This process will be repeated until a fix point is reached, i.e, 
+	  the previous counter-example is equal to the new one. This is done
+	  because the counter-example candidates are sorted based on their size.
+	- Class ShrinkException:
+	  Exception class fro shrink.
+	- Class ShrinkAssignmentRunner:
+	  Similar to ``AssignmentRunner'', this class assigns values to 
+	  theory parameters. However, it takes a counter-example into account
+	  as the basis of smaller counter-example candidates generation. 
+	  
+# tom.library.theory.shrink.suppliers
+	Suppliers for the shrink mechanism
+	- Interface ShrinkParameterSupplier:
+	  The interface that needs to be implemented by a parameter supplier for
+	  a shrink mechanism.
+	- Class ShrinkValueSupplier:
+	  The supplier that is used in the default mechanism of shrink. It uses
+	  the class ``SimpleShrink'' to mutate the given counter-example to 
+	  several smaller counter-example candidates. Those mutation rules are:
+	  - Get subterms and constant with the same type 
+	  - Replace subterms with their constants
+	  - Generate terms with smaller values
+	- Class BigShrinkValueSupplier (experimental):
+	  A supplier that uses the ``BigShrink'' mutation to generate smaller
+	  counter-example candidates. The mutation rules are similar to 
+	  ``SimpleShrink'' but they are done repeatedly to create a large 
+	  number of candidates and sort them. Using this approach, the shrink
+	  should be done only once. However, the mechanism takes too much time,
+	  therefore it needs enhancement in the future.
+	- Class TomShrinkValueSupplier:
+	  The supplier for the Tom implementation of the mutation rules in
+	  Tom.
+	- Class SupplierHelper:
+	  Helper class to transform a list of inputs to a list of 
+	  ``PotentialAssignment''s
+	
+# tom.library.theory.tools
+	- Class TheoryVisitableTools
+	  A helper class to deal with instance of the type ``Visitable''.
+
+
+
+How it works?
+-------------
+  _________        ___________         ___________
+ |         |      |           |       |           |
+ | Client  |----->| JUnitCore |------>| PropCheck |
+ |_________|      |___________|       |___________|
+
+When a client runs tests, by default the first class to be called
+is the ``JUnitCore'' class. In the class, each test class is examined 
+and an appropriate runner will be instantiate reflectively, when a 
+test class annotated with @RunWith(PropCheck.class) then an instance
+of class PropCheck will be instantiated and used as the ``Runner''
+for that particular test class.
+
+The method ``run()'' in class PropCheck is where the executions of
+a test class is started. When it is called, class PropCheck will 
+look for methods annotated by either @Test or @Theory in the tested 
+class and execute them one by one. @Test methods are tested without 
+generating test data. For @Theory, PropCheck gets each theory parameter
+and assigns generated test data to it. Precisely, PropCheck examines
+the theory method and gets the parameter reflectively and for each
+parameter it check whether it is annotated by @ForSome or not. If 
+a parameter is annotated with the annotation then PropCheck inspects 
+the annotation to get the ``ParameterSupplier'' defined by annotation
+@ParameterSuppliedBy in the @ForSome source:
+
+@ParametersSuppliedBy(ForSomeValueSupplier.class) // tells PropCheck to use the defined class to generate test data for the annotated parameter
+@Target(PARAMETER)
+@Retention(RUNTIME)
+public @interface ForSome {
+
+	public boolean exhaustive() default false;    // random enumeration by default
+	public int minSampleSize() default 0;    // minimal size of the example
+	public int maxSampleSize() default 10;   // maximal size of the example
+	public int numberOfSamples() default 0;  // maximal number of samples (0 means no limit for exhaustive, and one per part in random)	
+
+}
+
+
+Related works
+-------------
+1. QuickCheck
+		<https://hackage.haskell.org/package/QuickCheck>
+2. JUnit-quickcheck
+		<https://github.com/pholser/junit-quickcheck>
+3. JCheck
+		<http://www.jcheck.org/>
+

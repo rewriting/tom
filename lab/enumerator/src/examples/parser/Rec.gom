@@ -1,4 +1,4 @@
-module parser.Rec 
+module examples.parser.Rec 
 imports int String
 abstract syntax
   Stm = Seq(Stm*)

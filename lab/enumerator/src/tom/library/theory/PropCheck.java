@@ -27,8 +27,8 @@ import tom.library.theory.shrink.ShrinkHandler;
 
 /**
  * <p>
- * The test runner that extends {@code Theories} where the calls to evaluate a {@code Statement} 
- * of a test method is located. To use this class as a runner, a JUnit test class should be marked with {@code PropCheck.class}
+ * The test runner that extends {@code Theories} where the evaluation of a {@code Statement} 
+ * is located. To use this class as a runner, a JUnit test class should be marked with {@code PropCheck.class}
  * in the class definition:
  * </p>
  * <pre>
@@ -139,7 +139,7 @@ public final class PropCheck extends Theories {
 		 */
 		for (Method method : testclass.getMethods()) {
 			if (method.getAnnotation(Theory.class) != null) {
-				Class[] parameterTypes = method.getParameterTypes();
+				Class<?>[] parameterTypes = method.getParameterTypes();
 
 				Annotation[][] parameterAnnotations = method.getParameterAnnotations();
 
@@ -212,22 +212,12 @@ public final class PropCheck extends Theories {
 	    // TODO move to another class!!
 	    // instantiate shrink handler, if none is specified, then 
 	    // the default DefaultShrinkHandler will be used.
-		private ShrinkHandler newHandlerInstance() {
+	    private ShrinkHandler newShrinkHandlerInstance() {
 			ShrinkHandler handler = null;
 			try {
 				handler = getShrinkHandlerClass().getConstructor(
 						TestObject.class).newInstance(testObject);
-			} catch (InstantiationException e) {
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-			} catch (IllegalArgumentException e) {
-				e.printStackTrace();
-			} catch (InvocationTargetException e) {
-				e.printStackTrace();
-			} catch (NoSuchMethodException e) {
-				e.printStackTrace();
-			} catch (SecurityException e) {
+			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
 				e.printStackTrace();
 			}
 			return handler;
@@ -246,7 +236,7 @@ public final class PropCheck extends Theories {
 	    
 	    @Override
 	    public void evaluate() throws Throwable {
-	    	handler = new ExecutionHandler(newHandlerInstance());
+	    	handler = new ExecutionHandler(newShrinkHandlerInstance());
 	    	AssignmentRunner runner = new AssignmentRunner(testObject, handler);
 	    	runner.runWithAssignment(getUnassignedAssignments());
 	    	
@@ -268,7 +258,7 @@ public final class PropCheck extends Theories {
 		public String generateStatistic() {
 			return String.format("Testing %s().\n%s", 
 					testObject.getMethodName(), 
-					handler.getStatistic().generateStatistic());
+					handler.generateTestStatistics());
 		}
 	}
 }

@@ -1,0 +1,18 @@
+module examples.adt.queue.QueueLanguage
+imports int
+abstract syntax
+
+  Queue = empty()
+        | add(e:Elem, q:Queue)
+        | remove(q:Queue)
+
+  Elem = val(v:int)
+       | top(q:Queue)
+
+remove:make(q) {
+  %match(q) {
+    empty() -> { /*throw new RuntimeException(); */
+                 /*throw new RuntimeException("Bad value: " + q); */
+               }
+  }
+}

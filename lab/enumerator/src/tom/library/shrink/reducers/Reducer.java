@@ -1,13 +1,12 @@
 package tom.library.shrink.reducers;
 
-import java.util.List;
-
-public interface Reducer<T> {
-	/**
-	 * Reduces a term to smaller terms.
-	 * 
-	 * @param term
-	 * @return list of reduced terms
-	 */
-	public List<T> reduce(T term);
+import java.util.Collection;
+/**
+ * The interface to reduce a term to smaller terms.
+ * @author nauval
+ *
+ */
+public interface Reducer {
+	public Object getTerm();
+	public Collection<Object> reduce();
 }

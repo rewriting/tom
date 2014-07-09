@@ -3,6 +3,12 @@ package tom.library.shrink.ds.zipper;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * An internally used tree like structure for the {@code Zipper}.
+ * @author nauval
+ *
+ * @param <T>
+ */
 public class InternalNode<T extends Node> implements Node {
 
 	private final T node;

@@ -5,8 +5,6 @@ import static org.junit.Assume.*;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.number.OrderingComparison.*;
 
-import java.util.Collection;
-
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -17,187 +15,171 @@ import tom.library.theory.ForSome;
 import tom.library.theory.PropCheck;
 import examples.shop.Cart;
 import examples.shop.InventoryException;
-import examples.shop.LineItem;
 import examples.shop.Shop;
-import examples.shop.shop.types.Inventory;
-import examples.shop.shop.types.Item;
-import examples.shop.shop.types.ShoppingCart;
+import examples.shop.ShopFactory;
+import examples.shop.boutique.types.Inventory;
+import examples.shop.boutique.types.Item;
 
 @RunWith(PropCheck.class)
 public class ShopTest {
 
-	private Shop classUnderTest;
+	private ShopFactory factory;
+	private Shop init;
+	private examples.shop.Item dummyItem;
 	
 	@Before
 	public void setUp() throws Exception {
-		classUnderTest = new Shop();
+		factory = ShopFactory.getInstance();
+		init = factory.makeShop();
+		dummyItem = new examples.shop.Item(2, 3);
 	}
 
 	/**
-	 * <p>
-	 * Total quantity of the added items in the inventory 
-	 * should be equal to the new item's quantity plus the original quantity.
-	 * </p>
-	 * has(inventory, item) && (quantity >= 0) => 
-	 * getItemQuantity(add(inventory, item, quantity), item) = getItemQuantity(inventory, item) + quantity
-	 * 
-	 * @param inventory
-	 * @throws InventoryException 
+	 * isEmpty(empty) = true
+	 */
+	@Test
+	public void testIsEmpty() {
+		Shop empty = init.empty();
+		assertThat(empty.isEmpty(), is(true));
+	}
+	
+	/**
+	 * getInvQuantity(empty, item) = 0
+	 */
+	@Test
+	public void testInvQuantityEmpty() {
+		Shop empty = init.empty();
+		assertThat(empty.getInvQuantity(dummyItem), is(0));
+	}
+	
+	/**
+	 * getCartQuantity(empty, item) = 0
+	 */
+	@Test
+	public void testCartQuantityEmpty() {
+		Shop empty = init.empty();
+		assertThat(empty.getCartQuantity(dummyItem), is(0));
+	}
+	/**
+	 * isEmpty(inventory(shop)) = isEmpty(shop)
 	 */
 	@Theory
-	public void testInventoryAddItemQuantity(
-			@ForSome(minSampleSize = 30, maxSampleSize = 60) Inventory inventory,
-			@ForSome(minSampleSize = 30, maxSampleSize = 60) Item item,
-			@ForSome(minSampleSize = 30, maxSampleSize = 60) Integer quantity) throws InventoryException {
+	public void testShopInventoryRelation(
+			@ForSome(minSampleSize=0, maxSampleSize=20) Inventory inventory) {
+		Shop shop = factory.makeShop(inventory);
 		
-		examples.shop.Inventory inv = inventory.translateInventory();
-		examples.shop.Item it = item.translateItem();
-		examples.shop.Inventory invClone = inventory.translateInventory();
+		assertThat(shop.inventory().isEmpty(), is(shop.isEmpty()));
+	}
+	
+	/**
+	 * getInvQuantity(shop, item) > quantity ∧ quantity > 0 ⇒
+	 * getInvQuantity(buy(shop, id, item, quantity), item) = getInvQuantity(shop, item) − quantity ∧
+	 * getCartQuantity(buy(shop, id, item, quantity), item) = getCartQuantity(shop, item) + quantity
+	 */
+	@Theory
+	public void testBuyA(
+			@ForSome(minSampleSize=0, maxSampleSize=20) Inventory inventory,
+			@ForSome(minSampleSize=0, maxSampleSize=20) Item item,
+			@ForSome(minSampleSize=0, maxSampleSize=20) int quantity,
+			@ForSome(minSampleSize=0, maxSampleSize=20) int id) {
+		Shop shop = factory.makeShop(inventory);
+		Shop shopInit = factory.makeShop(inventory);
 		
-		assumeThat(inv.has(it), is(true));
+		examples.shop.Item shopItem = factory.makeItem(item);
+		
+		assumeThat(shop.getInvQuantity(shopItem), greaterThan(quantity));
 		assumeThat(quantity, greaterThan(0));
 		
-		assertThat(inv.add(it, quantity).getItemQuantity(it), is(invClone.getItemQuantity(it) + quantity));
+		assertThat(shop.buy(id, shopItem, quantity).getInvQuantity(shopItem), 
+				is(shopInit.getInvQuantity(shopItem) - quantity));
+		assertThat(shop.getCartQuantity(shopItem), is(shopInit.getCartQuantity(shopItem) + quantity));
 	}
 	
 	/**
-	 * <p>
-	 * The the quantity of a new item should be equal to the quantity
-	 * </p>
-	 * !has(inventory, item) && (quantity >= 0) => 
-	 * getItemQuantity(add(inventory, item, quantity), item) = quantity
+	 * getInvQuantity(shop, item) = 0 and quantity > 0 ⇒
+	 * getCartQuantity(buy(shop, id, item, quantity), item) = getCartQuantity(shop, item)
 	 * 
-	 * @param inventory
-	 * @throws InventoryException 
 	 */
 	@Theory
-	public void testInventoryAddNewItem(
-			@ForSome(minSampleSize = 30, maxSampleSize = 60) Inventory inventory,
-			@ForSome(minSampleSize = 30, maxSampleSize = 60) Item item,
-			@ForSome(minSampleSize = 30, maxSampleSize = 60) Integer quantity) throws InventoryException {
+	public void testBuyWithNoQuantityInInventory(
+			@ForSome(minSampleSize=0, maxSampleSize=20) Inventory inventory,
+			@ForSome(minSampleSize=0, maxSampleSize=20) Item item,
+			@ForSome(minSampleSize=0, maxSampleSize=20) int quantity,
+			@ForSome(minSampleSize=0, maxSampleSize=20) int id) {
+		Shop shop = factory.makeShop(inventory);
+		Shop shopInit = factory.makeShop(inventory);
 		
-		examples.shop.Inventory inv = inventory.translateInventory();
-		examples.shop.Item it = item.translateItem();
+		examples.shop.Item shopItem = factory.makeItem(item);
 		
-		assumeThat(inv.has(it), is(false));
-		assumeThat(quantity, greaterThanOrEqualTo(0));
+		assumeThat(shop.getInvQuantity(shopItem), is(0));
+		assumeThat(quantity, greaterThan(0));
 		
-		assertThat(inv.add(it, quantity).getItemQuantity(it), is(quantity));
+		assertThat(shop.buy(id, shopItem, quantity).getCartQuantity(shopItem), 
+				is(shopInit.getCartQuantity(shopItem)));
 	}
 	
 	/**
-	 * <p>
-	 * Quantity of an item after being taken form an inventory 
-	 * should be equal to the initial item quantity in inventory 
-	 * minus the taken quantity 
+	 * quantity > 0 and getInvQuantity(shop, item) < quantity and contains(inventory(shop), item) = true ⇒
+	 * getInvQuantity(buy(shop, id, item, quantity), item) = 0 ∧
+	 * getCartQuantity(buy(shop, id, item, quantity), item) = getInvQuantity(shop, item) + getCartQuantity(shop, item) 
 	 * 
-	 * </p>
-	 * has(inventory, item) && (getItemQuantity(inventory, item) >= quantity) => 
-	 * getItemQuantity(get(inventory, item, quantity), item) =  getItemQuantity(inventory, item) - quantity 
 	 * 
-	 * @param inventory
-	 * @throws InventoryException 
 	 */
 	@Theory
-	public void testInventoryGetItemFromInventoryWithQuantity(
-			@ForSome(minSampleSize = 30, maxSampleSize = 60) Inventory inventory,
-			@ForSome(minSampleSize = 30, maxSampleSize = 60) Item item,
-			@ForSome(minSampleSize = 30, maxSampleSize = 60) Integer quantity) throws InventoryException {
+	public void testBuyWithQuantityGreaterThanInventory(
+			@ForSome(minSampleSize=0, maxSampleSize=20) Inventory inventory,
+			@ForSome(minSampleSize=0, maxSampleSize=20) Item item,
+			@ForSome(minSampleSize=0, maxSampleSize=20) int quantity,
+			@ForSome(minSampleSize=0, maxSampleSize=20) int id) {
+		Shop shop = factory.makeShop(inventory);
+		Shop shopInit = factory.makeShop(inventory);
 		
-		examples.shop.Inventory inv = inventory.translateInventory();
-		examples.shop.Item it = item.translateItem();
-		examples.shop.Inventory invClone = inventory.translateInventory();
+		examples.shop.Item shopItem = factory.makeItem(item);
 		
-		assumeThat(inv.has(it), is(true));
-		assumeThat(inv.getItemQuantity(it), greaterThanOrEqualTo(quantity));
+		assumeThat(quantity, greaterThan(0));
+		assumeThat(shop.getInvQuantity(shopItem), lessThan(quantity));
+//		assumeThat(shop.getInvQuantity(shopItem), allOf(lessThan(quantity), greaterThan(0)));
+		assumeThat(shop.inventory().contains(shopItem), is(true));
 		
-		inv.get(it, quantity);
-		
-		assertThat(inv.getItemQuantity(it), is(invClone.getItemQuantity(it) - quantity));
+		assertThat(shop.buy(id, shopItem, quantity).getInvQuantity(shopItem), is(0));
+		assertThat(shop.getCartQuantity(shopItem), 
+				is(shopInit.getCartQuantity(shopItem) + shopInit.getInvQuantity(shopItem)));
 	}
 	
 	/**
-	 * 
-	 * ForAll item in cart, 
-	 * has(inventory, item) => 
-	 * getItemQuantity(getInventory(buy(inventory, cart)), item) = getItemQuantity(inventory, item) - getQuantity(cart', item)
-	 * where cart' = getLatestSell(buy(inventory, cart))
-	 * 
-	 * @param inventory
-	 * @param cart
-	 * @throws InventoryException
+	 * quantity > 0 ⇒
+	 * getInvQuantity(shop, item) - getInvQuantity(buy(shop, id, item, quantity), item) = 
+	 * getCartQuantity(buy(shop, id, item, quantity), item) - getCartQuantity(shop, item)
 	 */
 	@Theory
 	public void testBuy(
-			@ForSome(minSampleSize = 30, maxSampleSize = 60) Inventory inventory,
-			@ForSome(minSampleSize = 30, maxSampleSize = 60) ShoppingCart cart) throws InventoryException {
+			@ForSome Inventory inventory,
+			@ForSome Item item,
+			@ForSome int quantity) {
+		int id = 0;
+		Shop shop = factory.makeShop(inventory);
+		Shop shopInit = factory.makeShop(inventory);
+		examples.shop.Item shopItem = factory.makeItem(item);
 		
-		examples.shop.Inventory inv = inventory.translateInventory();
-		examples.shop.Cart crt = cart.translateCart();
-		examples.shop.Inventory invClone = inventory.translateInventory();
+		//assumeThat(shop.getInvQuantity(shopItem), greaterThan(quantity));
+		assumeThat(quantity, greaterThan(0));
 		
-		for (examples.shop.LineItem li : crt.getLineItems()) {
-			examples.shop.Item item = li.getItem();
-			assumeThat(inv.has(item), is(true));
-		}
-		
-		/*
-		 * 
-		classUnderTest.setInventory(inv).buy(crt);
-		for (examples.shoppingcart.LineItem li : crt.getLineItems()) {
-			examples.shoppingcart.Item item = li.getItem();
-			int cartItemQuantity = li.getQuantity();
-			assertThat(classUnderTest.getInventoryQuantity(item), is(invClone.getItemQuantity(item) - cartItemQuantity));
-		}
-		*/
-		classUnderTest.setInventory(inv).buy(crt);
-		Cart boughtItems = classUnderTest.getLatestSell();
-		for (examples.shop.LineItem li : boughtItems.getLineItems()) {
-			examples.shop.Item item = li.getItem();
-			int cartItemQuantity = li.getQuantity();
-			assertThat(classUnderTest.getInventoryQuantity(item), is(invClone.getItemQuantity(item) - cartItemQuantity));
-		}
+		assertThat(shopInit.getInvQuantity(shopItem) - shop.buy(id, shopItem, quantity).getInvQuantity(shopItem), 
+				is(shop.getCartQuantity(shopItem) - shopInit.getCartQuantity(shopItem)));
 	}
 	
-	/**
-	 * 
-	 * 
-	 * @param inventory
-	 * @param item
-	 * @param quantity
-	 */
 	@Theory
-	public void testInventoryNeverNegative(
-			@ForSome(minSampleSize = 30, maxSampleSize = 60) Inventory inventory,
-			@ForSome(minSampleSize = 30, maxSampleSize = 60) Item item,
-			@ForSome(minSampleSize = 30, maxSampleSize = 60) Integer quantity) {
-		examples.shop.Item it = item.translateItem();
-		Cart cart = new Cart();
-		cart.addToCart(it, quantity);
+	public void testBuyEmpty(
+			@ForSome Item item,
+			@ForSome int quantity) {
+		int id = 0;
+		Shop shop = init.empty();
+		examples.shop.Item shopItem = factory.makeItem(item);
 		
-		classUnderTest.setInventory(inventory.translateInventory());
+		//assumeThat(shop.getInvQuantity(shopItem), greaterThan(quantity));
+		assumeThat(quantity, greaterThan(0));
 		
-		classUnderTest.buy(cart);
-		
-		assertThat(classUnderTest.getInventoryQuantity(it), greaterThanOrEqualTo(0));
-	}
-	
-	
-	@Ignore
-	@Theory
-	public void testInventory(@ForSome(minSampleSize = 30, maxSampleSize = 102) Inventory inventory) {
-		System.out.println(inventory);
-		examples.shop.Inventory inv = inventory.translateInventory();
-		System.out.println(inv);
-		fail("Not yet implemented");
-	}
-
-	@Ignore
-	@Theory
-	public void testCart(@ForSome(minSampleSize = 30, maxSampleSize = 102) Inventory inventory) {
-		System.out.println(inventory);
-		examples.shop.Inventory inv = inventory.translateInventory();
-		System.out.println(inv);
-		fail("Not yet implemented");
+		assertThat(shop.buy(id, shopItem, quantity).getInvQuantity(shopItem), 
+				is(0));
 	}
 }

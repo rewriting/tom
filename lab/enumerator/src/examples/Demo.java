@@ -4,8 +4,8 @@ import tom.library.enumerator.*;
 
 import java.math.BigInteger;
 
-import examples.data.treenat.Nat;
-import examples.data.treenat.Tree;
+import examples.tomchecktest.treenat.Nat;
+import examples.tomchecktest.treenat.Tree;
 
 public class Demo {
 

@@ -12,6 +12,7 @@ LineItem = Line(Item:Item, Quantity:int)
 
 Item = Product(Id:int, Price:int)
 
+
 Line:make(item, quantity) {
 	int newQuantity = 1;
 	if (quantity < 0) {
@@ -36,76 +37,4 @@ Product:make(id, price) {
 		newPrice = price;
 	} 
 	return realMake(newId, newPrice);
-}
-
-sort Inventory:import() {
-	import examples.shop.*;
-	import java.util.*;
-}
-
-sort Inventory:block() {
-	%include { java/util/types/Collection.tom }
-	
-	public examples.shop.Inventory translateInventory() {
-		examples.shop.Inventory inv = new examples.shop.Inventory();
-		buildInventory(this, inv);
-		return inv;
-	}
-	
-	private void buildInventory(Inventory inventory, examples.shop.Inventory inv) {
-		%match(inventory) {
-			Inv(x, y) -> {
-				examples.shop.LineItem li = `x.translateLineItem(); 
-				inv.add(li.getItem(), li.getQuantity());
-				buildInventory(`y, inv);
-			}
-		}
-		return;
-	}
-}
-
-sort ShoppingCart:import() {
-	import examples.shop.*;
-	import java.util.*;
-}
-
-sort ShoppingCart:block() {
-	public examples.shop.Cart translateCart() {
-		examples.shop.Cart cart = new examples.shop.Cart();
-		buildCart(cart, this);
-		return cart;
-	}
-	
-	private void buildCart(examples.shop.Cart cart, ShoppingCart shoppingCart) {
-		%match(shoppingCart) {
-			EmptyCart() -> { return; }
-			Cart(lineItem, y) -> {
-				cart.addToCart(`lineItem.translateLineItem()); 
-				buildCart(cart, `y);
-			}
-		}
-	}
-}
-
-sort LineItem:import() {
-	import examples.shop.*;
-	import java.util.*;
-}
-
-sort LineItem:block() {
-	public examples.shop.LineItem translateLineItem() {
-		%match(this) {
-			Line(item, quantity) -> { return new examples.shop.LineItem(`item.translateItem(), `quantity); }
-		} 
-		return null;
-	}
-}
-
-sort Item:block() {
-	public examples.shop.Item translateItem() {
-		%match(this) {
-			Product(id, price) -> { return new examples.shop.Item(`id, `price); } 
-		}
-		return null;
-	}
 }
