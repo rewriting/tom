@@ -233,7 +233,7 @@ public class ClassFactory extends AbstractEnumeratorGenerator{
 		}
 		else if(!o.getClass().equals(fc.getTypeChamp())){
 			sb.append(treatClassNameWithGenericType(fc.getParameter()+"",packagePath, classLists));
-			GeneratorFactory.getGenerator(fc.getTypeChamp()).generateEnumerator(fc.getTypeChamp(), packagePath, classLists);
+			GeneratorFactory.getGenerator(fc.getTypeChamp()).generateEnumerator(packagePath, classLists);
 		}
 		sb.append(";");
 		return sb+"";
@@ -264,7 +264,7 @@ public class ClassFactory extends AbstractEnumeratorGenerator{
 		try{
 			Class<?> nc=Class.forName(classType+"");
 			if(!nc.isPrimitive()){
-				GeneratorFactory.getGenerator(nc).generateEnumerator(nc, packagePath, classLists);
+				GeneratorFactory.getGenerator(nc).generateEnumerator(packagePath, classLists);
 
 			}
 			classTypeSimpleName=nc.getSimpleName();

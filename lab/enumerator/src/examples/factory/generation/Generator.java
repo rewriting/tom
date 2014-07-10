@@ -12,20 +12,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import javax.naming.OperationNotSupportedException;
-
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import tom.library.enumerator.Combinators;
 import tom.library.enumerator.Enumeration;
 import tom.library.enumerator.F;
 
 
 public class Generator {
+	public static final String ENDL = System.getProperty("line.separator");
 
 	protected Class<?> class2enumerate;
 
-	protected Constructor<?> constructor2Class2Enumerate;
+	protected Constructor<?> constructor4Enumerate;
+	protected List<Class<?>> constructorParameters;
+	protected List<List<Annotation>> constructorParametersAnnotations;
 
+//	protected Map<Class<?>, Annotation[]> constructorParameters;
 
 	protected StringBuilder enumeratorCode;
 
@@ -34,81 +35,95 @@ public class Generator {
 	//is used to have a schema of stringClassName
 	protected List<ParaType> paraType;
 
-	protected List<Class<?>> listParameterType;
-
-	public static final String ENDL = System.getProperty("line.separator");
-
-	protected Annotation annotationConstructor;//Not null if the annotation is EnumerateGenerator
-
-	protected List<List<Annotation>> listAnnotationParameterType;
 
 	protected boolean isParametrized;
 
 	public final static String PACKAGELIBRARY="examples.factory";
 	
-	public Generator(Class<?>c){
+	public Generator(Class<?> class2enumerate){
 
-		this.class2enumerate=c;
+		this.class2enumerate=class2enumerate;
 
 		this.enumeratorCode=new StringBuilder();
+		
 		this.isParametrized=class2enumerate.getTypeParameters().length!=0;
 
-		this.annotationConstructor=null;
-		chooseConstructor();
+		this.constructor4Enumerate=chooseConstructor();
 		createListParameterType();
 
-		this.paraType=ParaType.createParaTypeforConstructorParameter(constructor2Class2Enumerate);
-
-		this.canBeNull=annotationConstructor!=null&&((EnumerateGenerator)annotationConstructor).canBeNull();
-
+		this.paraType=ParaType.createParaTypeforConstructorParameter(constructor4Enumerate);
 
 	}
 
 	private void createListParameterType(){
-		this.listParameterType=new ArrayList<Class<?>>();
-		this.listAnnotationParameterType=new ArrayList<List<Annotation>>();
+		this.constructorParameters=new ArrayList<Class<?>>();
+		this.constructorParametersAnnotations=new ArrayList<List<Annotation>>();
 
-		Class<?> tclass[]=constructor2Class2Enumerate.getParameterTypes();
-
-
-		for(int i=0;i<tclass.length;i++){
-			listParameterType.add(tclass[i]);
+		int i=0;
+		for(Class<?> param: constructor4Enumerate.getParameterTypes()){
+			constructorParameters.add(param);
 
 			List<Annotation> annotations=new ArrayList<Annotation>();
-			for(Annotation annot:constructor2Class2Enumerate.getParameterAnnotations()[i]){
+			for(Annotation annot:constructor4Enumerate.getParameterAnnotations()[i++]){
 				annotations.add(annot);
 			}
-			listAnnotationParameterType.add(annotations);
-
+			constructorParametersAnnotations.add(annotations);
 		}
-
 	}
 
-	private void chooseConstructor(){
-		int i=0;
+	private Constructor<?> chooseConstructor(){
+		Constructor<?> constructor=null;
 		int maxLenght=-1;
-		int indexMaxLenght=-1;//index of the constructor with the longest list of Parameter Type
-		Constructor<?> cons[]=class2enumerate.getConstructors();// array of all constructor of the class
-		while(i<cons.length&&constructor2Class2Enumerate==null){
-			Constructor<?> currentCons=cons[i];//current constructor
-			if(currentCons.getAnnotation(EnumerateGenerator.class)!=null){
-				constructor2Class2Enumerate=currentCons;
-				annotationConstructor=currentCons.getAnnotation(EnumerateGenerator.class);
+		
+		for(Constructor<?> constr: class2enumerate.getConstructors()){
+			if(constr.getAnnotation(EnumerateGenerator.class)!=null){
+				constructor=constr;
+				this.canBeNull = constr.getAnnotation(EnumerateGenerator.class).canBeNull();
+				break;
+			}else{
+				if(maxLenght<constr.getParameterTypes().length){
+					maxLenght=constr.getParameterTypes().length;
+					constructor=constr;
+				}
 			}
-			if(maxLenght<currentCons.getParameterTypes().length){
-				indexMaxLenght=i;
-				maxLenght=currentCons.getParameterTypes().length;
-			}
-			i++;
 		}
-		if(constructor2Class2Enumerate==null&&indexMaxLenght!=-1){
-			constructor2Class2Enumerate=cons[indexMaxLenght];
-		}
-
-		System.out.println(maxLenght+" "+indexMaxLenght+" "+cons);
+		return constructor;
 	}
 
 	/*********************************END ---- initialization----**************************************/
+
+
+	/***
+	 * Contain all the lines that we need to write in a file Return the text of
+	 * the factory of the class
+	 * 
+	 * @param c
+	 * @param existingFactories
+	 * @return
+	 * @throws ClassNotFoundException
+	 * @throws GeneratorFactoryException 
+	 */
+	public Map<Class<?>, StringBuilder> generateEnumerator(String packagePath, Map<Class<?>, StringBuilder> existingFactories)
+			throws ClassNotFoundException, GeneratorFactoryException {
+		// if it has been already generated just return it
+		if (existingFactories.containsKey(this.class2enumerate)) {
+			return existingFactories;
+		}
+		
+		// if other classes need it they shouldn't try to build it
+		existingFactories.put(class2enumerate, null);
+		// build the enumerator code
+		generatePackage(packagePath);
+		generateImport();
+		generateClass(packagePath);
+
+		// add the code to the map
+		System.out.println("PUT "+class2enumerate);
+		existingFactories.put(class2enumerate, enumeratorCode);
+
+		generateDependancies(packagePath,existingFactories);
+		return existingFactories;
+	}
 
 
 	private void generatePackage(String packagePath){
@@ -130,34 +145,14 @@ public class Generator {
 		enumeratorCode.append("import " + class2enumerate.getCanonicalName()+";"+ENDL);
 		// import the classes used in the profile of the constructor to be used for the enumeration
 
-		for (Class<?> cla : listParameterType) {
+		for (Class<?> cla : constructorParameters) {
 			// TODO: isPrimitive = int, long, byte, float, double, boolean, short, char   OU   java.lang.*
 			// Actually it s just int, long, byte, float, double, boolean, short, char that are considered as Primitive
 			if (!Tools.isLanguage(cla)&&!Tools.isPrimitive(cla)) {
 				enumeratorCode.append("import " + cla.getCanonicalName()+";"+ENDL);
 			}
 		}
-		generateParticularImports();
 	}
-	
-
-
-	protected void generateParticularImports(){
-	/*	boolean containsCollection=false;
-		Class<?> cla=null;
-		int i=0;
-		while(i<listParameterType.size()&&!containsCollection){
-			containsCollection=List.class.isAssignableFrom(listParameterType.get(i));
-			if(containsCollection){
-				cla=listParameterType.get(i);
-			}
-			i++;
-		}
-		if(containsCollection){
-			enumeratorCode.append("import "+cla.getSimpleName()+"Factory;"+ENDL);
-		}*/
-	}
-
 
 	protected StringBuilder generateClass(String packagePath)
 			throws ClassNotFoundException, GeneratorFactoryException {
@@ -292,13 +287,13 @@ public class Generator {
 
 	protected void generateEnum(String packagePath){
 
-		if(listParameterType.contains(class2enumerate)){
+		if(constructorParameters.contains(class2enumerate)){
 			recursiveCall();
 		}
 
 		for(int i=0;i<paraType.size();i++){
 			ParaType pt=paraType.get(i);
-			Class<?> cla=listParameterType.get(i);
+			Class<?> cla=constructorParameters.get(i);
 			Enumerate annotation=getEnumerateAnnotation(i);
 
 			//case : the Parameter is the class that we want to generate the Factory
@@ -373,7 +368,7 @@ public class Generator {
 	}
 
 	private Enumerate getEnumerateAnnotation(int index){
-		for(Annotation an:listAnnotationParameterType.get(index)){
+		for(Annotation an:constructorParametersAnnotations.get(index)){
 			if(an.annotationType().getSimpleName().equals(Enumerate.class.getSimpleName())){
 				return (Enumerate)an;
 			}
@@ -386,13 +381,13 @@ public class Generator {
 
 
 		int countReelEnumerator=0;
-		for(Class<?> c:listParameterType){
+		for(Class<?> c:constructorParameters){
 			if(c!=class2enumerate&&c!=Object.class){
 				countReelEnumerator++;
 			}
 		}
 
-		if(listParameterType.contains(class2enumerate)){
+		if(constructorParameters.contains(class2enumerate)){
 			codeEnumerationApply="Enumeration.fix("+variableNameRefactoring(class2enumerate.getCanonicalName().toLowerCase())+"_Enum)";
 		}else{
 			codeEnumerationApply="Enumeration.singleton("+variableNameRefactoring(class2enumerate.getCanonicalName().toLowerCase())+")";
@@ -454,41 +449,9 @@ public class Generator {
 
 
 
-	/***
-	 * Contain all the lines that we need to write in a file Return the text of
-	 * the factory of the class
-	 * 
-	 * @param c
-	 * @param existingFactories
-	 * @return
-	 * @throws ClassNotFoundException
-	 * @throws GeneratorFactoryException 
-	 */
-	public void generateEnumerator(String packagePath,Map<Class<?>, StringBuilder> existingFactories)
-			throws ClassNotFoundException, GeneratorFactoryException {
-		// if it has been already generated just return it
-		/*	if (existingFactories.containsKey(class2enumerate)) {
-			return existingFactories.get(class2enumerate);
-		}*/
-		
-		// if other classes need it they shouldn't try to build it
-		existingFactories.put(class2enumerate, null);
-		// build the enumerator code
-		generatePackage(packagePath);
-		generateImport();
-		generateClass(packagePath);
-
-		// add the code to the map
-		System.out.println("PUT "+class2enumerate);
-		existingFactories.put(class2enumerate, enumeratorCode);
-
-		generateDependancies(packagePath,existingFactories);
-
-	}
-
 	public void generateDependancies(String packagePath,Map<Class<?>, StringBuilder> existingFactories) throws ClassNotFoundException, GeneratorFactoryException{
-		for(int i=0;i<listParameterType.size();i++){
-			Class<?> c=listParameterType.get(i);
+		for(int i=0;i<constructorParameters.size();i++){
+			Class<?> c=constructorParameters.get(i);
 			if(paraType.get(i) instanceof ParaTypeClass &&!existingFactories.containsKey(c)&&!Tools.isPrimitive(c)){
 				if(!Collection.class.isAssignableFrom(c)){
 					GeneratorFactory.getGenerator(c).generateEnumerator(packagePath,existingFactories);
