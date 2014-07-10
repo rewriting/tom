@@ -40,7 +40,7 @@ public class PlayWithGenerators {
 
 	public static void main(String args[]) throws IOException, ClassNotFoundException, GeneratorFactoryException{
 		String packagePath="examples.factory.tests";
-		PlayWithGenerators.generateFactoryFiles(Car.class,packagePath);
+//		PlayWithGenerators.generateFactoryFiles(Car.class,packagePath);
 //		PlayWithGenerators.generateFactoryFiles(Garage.class,packagePath);
 //		PlayWithGenerators.generateFactoryFiles(Garage2.class,packagePath);
 		PlayWithGenerators.generateFactoryFiles(Student.class,packagePath);
