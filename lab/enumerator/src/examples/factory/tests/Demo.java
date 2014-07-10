@@ -10,7 +10,7 @@ import examples.factory.Student;
 public class Demo {
 	public static void main(String[] args) {
 
-		// Integeres
+		// Integers
 		Enumeration<Integer> enumInt = Combinators.makeInteger();
 		LazyList<Finite<Integer>> parts = enumInt.parts();
 		for (int i = 0; i < 8 && !parts.isEmpty(); i++) {
