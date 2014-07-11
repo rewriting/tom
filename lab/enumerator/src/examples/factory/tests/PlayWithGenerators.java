@@ -24,9 +24,9 @@ public class PlayWithGenerators {
 		if(!Collection.class.isAssignableFrom(targetClass)){
 			Map<Class<?>,StringBuilder> existingdCode = new HashMap<Class<?>, StringBuilder>();
 
+			System.out.println("GENERATOR = "+GeneratorFactory.getGenerator(targetClass));
 			Map<Class<?>,StringBuilder>  generatedCode=GeneratorFactory.getGenerator(targetClass).generateEnumerator(packagePath,existingdCode);
 
-			System.out.println("REDDDDFDD");
 			// create files with the generated code
 			for(Class<?> c:generatedCode.keySet()){
 				// TODO: change hard-coded with classList
@@ -47,7 +47,7 @@ public class PlayWithGenerators {
 
 		////PlayWithGenerators.generateFactoryFiles(T3.class,"examples.factory.tests");
 		//		
-//		PlayWithGenerators.generateFactoryFiles(Tree.class,packagePath);
+		PlayWithGenerators.generateFactoryFiles(Tree.class,packagePath);
 		//		PlayWithGenerators.generateFactoryFiles(ParametrizedClass2.class,"examples.factory.tests");
 	}
 

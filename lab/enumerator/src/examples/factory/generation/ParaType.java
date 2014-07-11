@@ -92,13 +92,6 @@ public 	abstract class ParaType{
 		System.out.println(ParaType.createParaType(List.class).getStringClass());
 	}
 
-	public static List<ParaType> createParaTypeforConstructorParameter(Constructor<?> cons){
-		List<ParaType> list=new ArrayList<ParaType>();
-		for(Type t:cons.getGenericParameterTypes()){
-			list.add(createParaType(t));
-		}
-		return list;
-	}
 
 	public static List<ParaType> createParaTypeforClassWithEnumerateGenerator(Class<?> c){
 		Constructor<?>cons=extractConstructorWithEnumerateGenerator(c, EnumerateGenerator.class);

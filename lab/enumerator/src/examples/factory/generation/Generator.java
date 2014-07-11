@@ -4,6 +4,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -58,14 +59,22 @@ public class Generator {
 		this.constructorParametersAnnotations=new ArrayList<Annotation[]>();
 		int i=0;
 		for(Class<?> param: constructor4Enumerate.getParameterTypes()){
-			constructorParameters.add(param);
-			constructorParametersAnnotations.add(constructor4Enumerate.getParameterAnnotations()[i++]);
+			this.constructorParameters.add(param);
+			this.constructorParametersAnnotations.add(constructor4Enumerate.getParameterAnnotations()[i++]);
+		}
+		this.paraType=new ArrayList<ParaType>();
+		for(Type t:constructor4Enumerate.getGenericParameterTypes()){
+			this.paraType.add(ParaType.createParaType(t));
 		}
 
 		// TODO
 		this.enumeratorCode=new StringBuilder();
 		this.isParametrized=class2enumerate.getTypeParameters().length!=0;
-		this.paraType=ParaType.createParaTypeforConstructorParameter(constructor4Enumerate);
+
+		for(Type t:constructor4Enumerate.getGenericParameterTypes()){
+			System.out.println(t);
+		}
+		
 	}
 
 
@@ -432,6 +441,17 @@ public class Generator {
 			}
 		}
 
+	}
+
+
+	@Override
+	public String toString() {
+		return "Generator [class2enumerate=" + class2enumerate
+				+ ", constructor4Enumerate=" + constructor4Enumerate
+				+ ", constructorParameters=" + constructorParameters
+				+ ", constructorParametersAnnotations="
+				+ constructorParametersAnnotations + ", canBeNull=" + canBeNull
+				+ ", paraType=" + paraType + "]";
 	}
 
 
