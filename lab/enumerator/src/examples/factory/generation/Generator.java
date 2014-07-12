@@ -181,8 +181,10 @@ public class Generator {
 		
 		enumeratorCode.append("public static final " + classTypeParameters
 				+ "Enumeration<"
-				+ ParaType.createParaType(class2enumerate).getStringClass()
+				+ class2enumerate.getCanonicalName()+classTypeParameters
+//				+ ParaType.createParaType(class2enumerate).getStringClass()
 				+ "> getEnumeration(");
+		// TODO - if several type parameters then several arguments
 		if (isParametrized) {
 			enumeratorCode.append("final Enumeration" + classTypeParameters
 					+ " enumeration");
