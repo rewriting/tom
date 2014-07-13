@@ -25,7 +25,6 @@ public class PlayWithGenerators {
 		if(!Collection.class.isAssignableFrom(targetClass)){
 			Map<Class<?>,StringBuilder> existingdCode = new HashMap<Class<?>, StringBuilder>();
 
-			System.out.println("GENERATOR = "+GeneratorFactory.getGenerator(targetClass));
 			Map<Class<?>,StringBuilder>  generatedCode=GeneratorFactory.getGenerator(targetClass).generateEnumerator(packagePath,existingdCode);
 
 			// create files with the generated code
@@ -42,7 +41,7 @@ public class PlayWithGenerators {
 	public static void main(String args[]) throws IOException, ClassNotFoundException, GeneratorFactoryException{
 		String packagePath="examples.factory.tests";
 //		PlayWithGenerators.generateFactoryFiles(Car.class,packagePath);
-//		PlayWithGenerators.generateFactoryFiles(Garage.class,packagePath);
+		PlayWithGenerators.generateFactoryFiles(Garage.class,packagePath);
 //		PlayWithGenerators.generateFactoryFiles(Garage2.class,packagePath);
 		PlayWithGenerators.generateFactoryFiles(Student.class,packagePath);
 

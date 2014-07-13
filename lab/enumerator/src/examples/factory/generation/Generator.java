@@ -26,6 +26,7 @@ public class Generator {
 	private Constructor<?> constructor4Enumerate;
 	private final List<Class<?>> constructorParameters;
 	private final List<Annotation[]> constructorParametersAnnotations;
+	private final List<Type> constructorParametersTypes;
 
 	protected boolean canBeNull;
 
@@ -81,15 +82,18 @@ public class Generator {
 		for (Type t : constructor4Enumerate.getGenericParameterTypes()) {
 			this.paraType.add(ParaType.createParaType(t));
 		}
+		this.constructorParametersTypes = new ArrayList<Type>();
+		for (Type t : constructor4Enumerate.getGenericParameterTypes()) {
+			this.constructorParametersTypes.add(t);
+		}
 
 		// TODO
 		this.enumeratorCode = new StringBuilder();
 		this.isParametrized = class2enumerate.getTypeParameters().length != 0;
 
-		for (Type t : constructor4Enumerate.getGenericParameterTypes()) {
-			System.out.println(t);
-		}
-
+		System.out.println("CLASS:"+class2enumerate);	
+		System.out.println("Params:"+constructorParameters);
+		System.out.println("Params types:"+constructorParametersTypes);
 	}
 
 	/***
@@ -289,8 +293,10 @@ public class Generator {
 		return sb + "";
 	}
 
+
 	/****************************************** END ---- GenerateFunction---- **********************************************************/
 
+	
 	/************************************* GENERATE ENUMERATOR **************************************/
 
 	protected void generateEnum(String packagePath) {
