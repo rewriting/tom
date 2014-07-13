@@ -14,6 +14,7 @@ import examples.factory.Garage;
 import examples.factory.Garage2;
 import examples.factory.Student;
 import examples.factory.Tree;
+import examples.factory.TrickyTree;
 import examples.factory.generation.GeneratorFactory;
 import examples.factory.generation.GeneratorFactoryException;
 import examples.factory.generation.Tools;
@@ -47,8 +48,10 @@ public class PlayWithGenerators {
 
 		////PlayWithGenerators.generateFactoryFiles(T3.class,"examples.factory.tests");
 		//		
-		PlayWithGenerators.generateFactoryFiles(Tree.class,packagePath);
-		//		PlayWithGenerators.generateFactoryFiles(ParametrizedClass2.class,"examples.factory.tests");
+		PlayWithGenerators.generateFactoryFiles(Tree.class,packagePath);		
+
+		// TODO: check it
+//		PlayWithGenerators.generateFactoryFiles(TrickyTree.class,packagePath);
 	}
 
 }

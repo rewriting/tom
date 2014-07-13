@@ -21,6 +21,7 @@ public class Generator {
 	public static final String ENDL = System.getProperty("line.separator");
 
 	private final Class<?> class2enumerate;
+	private String classTypeParameters;
 
 	private Constructor<?> constructor4Enumerate;
 	private final List<Class<?>> constructorParameters;
@@ -38,6 +39,20 @@ public class Generator {
 	public Generator(Class<?> class2enumerate) {
 		this.class2enumerate = class2enumerate;
 
+		// build type parameters (if any)
+		this.classTypeParameters="";
+		int i = 0;
+		for (TypeVariable<?> tv : class2enumerate.getTypeParameters()) {
+			this.classTypeParameters = classTypeParameters + tv.getName();
+			if (i < class2enumerate.getTypeParameters().length - 1) {
+				this.classTypeParameters += ",";
+			}
+			i++;
+		}
+		if (i > 0) { // if at least one type parameter
+			this.classTypeParameters = "<" + classTypeParameters + ">";
+		}
+		
 		// choose the constructor used for generating the instances
 		int maxLenght = -1;
 		for (Constructor<?> constr : class2enumerate.getConstructors()) {
@@ -57,11 +72,10 @@ public class Generator {
 		// store the parameters of the constructor and their annotations
 		this.constructorParameters = new ArrayList<Class<?>>();
 		this.constructorParametersAnnotations = new ArrayList<Annotation[]>();
-		int i = 0;
+		i = 0;
 		for (Class<?> param : constructor4Enumerate.getParameterTypes()) {
 			this.constructorParameters.add(param);
-			this.constructorParametersAnnotations.add(constructor4Enumerate
-					.getParameterAnnotations()[i++]);
+			this.constructorParametersAnnotations.add(constructor4Enumerate.getParameterAnnotations()[i++]);
 		}
 		this.paraType = new ArrayList<ParaType>();
 		for (Type t : constructor4Enumerate.getGenericParameterTypes()) {
@@ -164,29 +178,15 @@ public class Generator {
 	 */
 	protected StringBuilder generateClassBody(String packagePath)
 			throws ClassNotFoundException, GeneratorFactoryException {
-		// build type parameters (if any)
-		String classTypeParameters = "";
-		int i = 0;
-		for (TypeVariable<?> tv : class2enumerate.getTypeParameters()) {
-			System.out.println("TypeVriables = " + tv);
-			classTypeParameters = classTypeParameters + tv.getName();
-			if (i < class2enumerate.getTypeParameters().length - 1) {
-				classTypeParameters += ",";
-			}
-			i++;
-		}
-		if (i > 0) { // if at least one type parameter
-			classTypeParameters = "<" + classTypeParameters + ">";
-		}
 		
-		enumeratorCode.append("public static final " + classTypeParameters
+		enumeratorCode.append("public static final " + this.classTypeParameters
 				+ "Enumeration<"
-				+ class2enumerate.getCanonicalName()+classTypeParameters
+				+ class2enumerate.getCanonicalName()+this.classTypeParameters
 //				+ ParaType.createParaType(class2enumerate).getStringClass()
 				+ "> getEnumeration(");
-		// TODO - if several type parameters then several arguments
+		// TODO - if several type parameters then several arguments (as for classTypeParameters in constructor)
 		if (isParametrized) {
-			enumeratorCode.append("final Enumeration" + classTypeParameters
+			enumeratorCode.append("final Enumeration" + this.classTypeParameters
 					+ " enumeration");
 		}
 		enumeratorCode.append("){" + ENDL);
@@ -197,25 +197,23 @@ public class Generator {
 		}
 
 		enumeratorCode.append("}" + ENDL);
-		// }else{
-
-		// System.out.println("In Progress");
-		// throw new NotImplementedException();
-		// }
+		
 		return enumeratorCode;
 	}
 
 	protected void generateEnumerationBody(String packagePath)
 			throws ClassNotFoundException, GeneratorFactoryException {
-		if (canBeNull || isParametrized) {
-			String cl = ParaType.createParaType(class2enumerate)
-					.getStringClass();
-			enumeratorCode.append("final Enumeration<" + cl
+//		if (canBeNull || isParametrized) {
+//			String cl = 
+					// ParaType.createParaType(class2enumerate).getStringClass();
+
+			enumeratorCode.append("final Enumeration<" + class2enumerate.getCanonicalName()+this.classTypeParameters
 					+ "> emptyEnum = Enumeration.singleton(null);" + ENDL);
 
-		}
+//		}
 		enumeratorCode.append("Enumeration<"
-				+ ParaType.createParaType(class2enumerate).getStringClass()
+//				+ ParaType.createParaType(class2enumerate).getStringClass()
+				+ class2enumerate.getCanonicalName()+this.classTypeParameters
 				+ "> enumRes = null;" + ENDL);
 		generateEnumerationFunction();
 		generateEnum(packagePath);
