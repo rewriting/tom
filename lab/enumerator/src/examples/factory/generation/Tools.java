@@ -25,6 +25,15 @@ public class Tools {
 	 * @return
 	 */
 	public static String className(Class<?> c) {
+		String refactoring=refactoringOfPrimitive(c);
+		if(refactoring!=null){
+			return refactoring;
+		}
+		return c.getCanonicalName()/*+AbstractEnumeratorGenerator.getStringTypeParametersOfTheClass(c)*/;//(modifier le abstract car mal place
+	}
+	
+	
+	public static String refactoringOfPrimitive(Class<?> c){
 		for (int i = 0; i < PRIMITIVESTRING.length; i++) {
 			String s = PRIMITIVESTRING[i];
 			if (c != null
@@ -32,8 +41,9 @@ public class Tools {
 				return PRIMITIVESTRINGSIMPLE[i];
 			}
 		}
-		return c.getCanonicalName()/*+AbstractEnumeratorGenerator.getStringTypeParametersOfTheClass(c)*/;//(modifier le abstract car mal place
+		return null;
 	}
+	
 
 	/**
 	 * can be call to know if the class belong to the primitive set return True

@@ -15,6 +15,10 @@ public class Color {
 		this.color = color;
 	}
 
+	public Color() {
+		this.color = 1;
+	}
+
 	@Override
 	public String toString() {
 		String res = "";

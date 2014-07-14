@@ -67,13 +67,13 @@ public class Demo {
 			partsGarage = partsGarage.tail();
 		}
 
-//		// Student
-//		Enumeration<Student> enumStudent = StudentFactory.getEnumeration();
-//		LazyList<Finite<Student>> partsStudent = enumStudent.parts();
-//		for (int i = 0; i < 8 && !partsStudent.isEmpty(); i++) {
-//			System.out.println(i + " --> " + partsStudent.head());
-//			partsStudent = partsStudent.tail();
-//		}
+		// Student
+		Enumeration<Student> enumStudent = StudentFactory.getEnumeration();
+		LazyList<Finite<Student>> partsStudent = enumStudent.parts();
+		for (int i = 0; i < 8 && !partsStudent.isEmpty(); i++) {
+			System.out.println(i + " --> " + partsStudent.head());
+			partsStudent = partsStudent.tail();
+		}
 		
 
 

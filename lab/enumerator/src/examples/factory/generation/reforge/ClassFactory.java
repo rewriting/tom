@@ -191,6 +191,11 @@ class T1TopNormalDecorator extends T1Decorator{
 
 public abstract class ClassFactory extends AbstractEnumeratorGenerator{
 
+	public ClassFactory(Class<?> class2enumerate) {
+		super(class2enumerate);
+		// TODO Auto-generated constructor stub
+	}
+
 	private T1 t1;
 	
 	public abstract String r1();

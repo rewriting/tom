@@ -10,7 +10,7 @@ public class StudentFactory {
 		public static final Enumeration<Student> getEnumeration() {
 			boolean canBeNull = false;
 			// if(@Generator(canBeNull)){
-			     canBeNull = true;
+//			     canBeNull = true;
 		    // }
 			return getEnumeration(canBeNull);
 		}

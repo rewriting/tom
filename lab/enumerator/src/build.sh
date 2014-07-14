@@ -22,7 +22,7 @@ gom examples/parser/Rec.gom
 
 gom examples/mutual.gom 
 gom examples/conslist.gom 
-gom examples/Recursive.gom 
+gom examples/recursive.gom 
 
 
 # tom -gi tom/library/shrink/metaterm/Shrink.t

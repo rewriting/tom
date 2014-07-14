@@ -15,20 +15,20 @@ public abstract class AbstractEnumeratorGenerator {
 	public static final String ENDL = System.getProperty("line.separator");
 	public static final String TAB = "\t";
 	
-	private boolean canBeNull;
+	protected boolean canBeNull;
 
 	/**
 	 * Constuctor
 	 */
-//	public AbstractEnumeratorGenerator(Class<?> class2enumerate) {
-//		super();
-//		this.canBeNull=true;
-//		for(Constructor<?> constructor: class2enumerate.getConstructors()){
-//			if(constructor.getAnnotation(EnumerateGenerator.class)!=null){
-//				this.canBeNull = constructor.getAnnotation(EnumerateGenerator.class).canBeNull();
-//			}
-//		}
-//	}
+	public AbstractEnumeratorGenerator(Class<?> class2enumerate) {
+		super();
+		// TODO: handle Exceptions
+		for(Constructor<?> constructor: class2enumerate.getConstructors()){
+			if(constructor.getAnnotation(EnumerateGenerator.class)!=null){
+				this.canBeNull = constructor.getAnnotation(EnumerateGenerator.class).canBeNull();
+			}
+		}
+	}
 
 	/***
 	 * Contain all the lines that we need to write in a file Return the text of
@@ -82,7 +82,7 @@ public abstract class AbstractEnumeratorGenerator {
 		for (Class<?> cla : MyIntrospection.getClassFromConstructorEnumerator(class2enumerate)) {
 			// TODO: isPrimitive = int, long, byte, float, double, boolean, short, char   OU   java.lang.*
 			// Actually it s just int, long, byte, float, double, boolean, short, char that are considered as Primitive
-			if (!Tools.isLanguage(cla)) {
+			if (!Tools.isLanguage(cla) && !Tools.isPrimitive(cla)) {
 				generatorHeader.append("import " + cla.getCanonicalName()+";"+ENDL);
 			}
 		}
