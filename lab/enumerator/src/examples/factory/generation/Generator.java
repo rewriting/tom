@@ -55,6 +55,7 @@ public class Generator {
 		}
 		
 		// choose the constructor used for generating the instances
+		// TODO: what if the selected constructor has an argument of type interface/abstract class
 		int maxLenght = -1;
 		for (Constructor<?> constr : class2enumerate.getConstructors()) {
 			if (constr.getAnnotation(EnumerateGenerator.class) != null) {
@@ -145,21 +146,21 @@ public class Generator {
 
 		// import the class to be enumerated
 		// really needed?
-		generatorHeader.append("import " + class2enumerate.getCanonicalName()
-				+ ";" + ENDL);
+//		generatorHeader.append("import " + class2enumerate.getCanonicalName()
+//				+ ";" + ENDL);
 
 		// import the classes used in the profile of the constructor to be used
 		// for the enumeration
-		for (Class<?> cla : constructorParameters) {
-			// TODO: isPrimitive = int, long, byte, float, double, boolean,
-			// short, char OU java.lang.*
-			// Actually it s just int, long, byte, float, double, boolean,
-			// short, char that are considered as Primitive
-			if (!Tools.isLanguage(cla) && !Tools.isPrimitive(cla)) {
-				generatorHeader.append("import " + cla.getCanonicalName() + ";"
-						+ ENDL);
-			}
-		}
+//		for (Class<?> cla : constructorParameters) {
+//			// TODO: isPrimitive = int, long, byte, float, double, boolean,
+//			// short, char OU java.lang.*
+//			// Actually it s just int, long, byte, float, double, boolean,
+//			// short, char that are considered as Primitive
+//			if (!Tools.isLanguage(cla) && !Tools.isPrimitive(cla)) {
+//				generatorHeader.append("import " + cla.getCanonicalName() + ";"
+//						+ ENDL);
+//			}
+//		}
 		return generatorHeader;
 	}
 
@@ -210,7 +211,6 @@ public class Generator {
 //		if (canBeNull || isParametrized) {
 //			String cl = 
 					// ParaType.createParaType(class2enumerate).getStringClass();
-
 			enumeratorCode.append("final Enumeration<" + class2enumerate.getCanonicalName()+this.classTypeParameters
 					+ "> emptyEnum = Enumeration.singleton(null);" + ENDL);
 
@@ -228,8 +228,7 @@ public class Generator {
 		enumeratorCode.append("final "
 				+ getParameterList(0)
 				+ " "
-				+ variableNameRefactoring(class2enumerate.getCanonicalName()
-						.toLowerCase()) + " = new " + getParameterList(0)
+				+ variableName4Class() + " = new " + getParameterList(0)
 				+ "() {" + ENDL);
 		enumeratorCode.append(generateEnumerationFunction(1));
 		enumeratorCode.append("};" + ENDL);
@@ -260,7 +259,9 @@ public class Generator {
 		return sb + "";
 	}
 
-	public static String variableNameRefactoring(String canonicalName) {
+	
+	public  String variableName4Class() {
+		String canonicalName=this.class2enumerate.getCanonicalName().toLowerCase();
 		StringBuilder sb = new StringBuilder();
 		String l[] = canonicalName.split(Pattern.quote("."));
 		for (String s : l) {
@@ -385,7 +386,7 @@ public class Generator {
 				+ ">, Enumeration<"
 				+ cl
 				+ ">> "
-				+ variableNameRefactoring(class2enumerate.getCanonicalName())
+				+ variableName4Class()
 						.toLowerCase() + "_Enum = new F<Enumeration<" + cl
 				+ ">, Enumeration<" + cl + ">>() {" + ENDL);
 		enumeratorCode.append("	public Enumeration<" + cl
@@ -395,8 +396,7 @@ public class Generator {
 				.append("				Enumeration.apply(Enumeration.apply(Enumeration.apply("
 						+ ENDL);
 		enumeratorCode.append("						Enumeration.singleton("
-				+ variableNameRefactoring(class2enumerate.getCanonicalName()
-						.toLowerCase()) + "), enumeration), t), t))" + ENDL);
+				+ variableName4Class() + "), enumeration), t), t))" + ENDL);
 		enumeratorCode.append("				.pay();" + ENDL);
 		enumeratorCode.append("	}" + ENDL);
 		enumeratorCode.append("};" + ENDL);
@@ -424,12 +424,10 @@ public class Generator {
 
 		if (constructorParameters.contains(class2enumerate)) {
 			codeEnumerationApply = "Enumeration.fix("
-					+ variableNameRefactoring(class2enumerate
-							.getCanonicalName().toLowerCase()) + "_Enum)";
+					+ variableName4Class() + "_Enum)";
 		} else {
 			codeEnumerationApply = "Enumeration.singleton("
-					+ variableNameRefactoring(class2enumerate
-							.getCanonicalName().toLowerCase()) + ")";
+					+ variableName4Class() + ")";
 		}
 
 		for (int i = 0; i < countReelEnumerator; i++) {
