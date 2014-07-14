@@ -13,6 +13,14 @@ import org.junit.contrib.theories.PotentialAssignment;
  */
 public class SupplierHelper {
 	
+	/**
+	 * Returns a list of {@code PotentialAssignment}s from a given list of inputs.
+	 * {@code PotentialAssignment} is a wrapper for a value that will be injected
+	 * to a parameter.
+	 * 
+	 * @param inputs
+	 * @return a list of {@code PotentialAssignment}s
+	 */
 	public static<T> List<PotentialAssignment> buildPotentialAssignments(List<T> inputs) {
 		List<PotentialAssignment> assignments = new ArrayList<PotentialAssignment>();
 		
@@ -34,6 +42,14 @@ public class SupplierHelper {
 		return assignments;
 	}
 	
+	/**
+	 * Returns a list of {@code PotentialAssignment}s from the given inputs.
+	 * {@code PotentialAssignment} is a wrapper for a value that will be injected
+	 * to a parameter.
+	 * 
+	 * @param inputs
+	 * @return a list of {@code PotentialAssignment}s
+	 */
 	public static<T> List<PotentialAssignment> buildPotentialAssignments(T[] inputs) {
 		return buildPotentialAssignments(Arrays.asList(inputs));
 	}

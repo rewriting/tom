@@ -14,7 +14,7 @@ import org.junit.runners.model.Statement;
 import tom.library.theory.BadInputException;
 
 /**
- * This class is where the behaviour of a test is defined, i.e. 
+ * This class is where the behavior at runtime of a test is defined, i.e. 
  * how a test method is evaluate and what should be done if a test
  * is fail.
  * 
@@ -38,6 +38,12 @@ public class StatementBuilder {
 		this.handler = handler;
 	}
 	
+	/**
+	 * Returns a {@code Statement} from a given test method
+	 * @param complete
+	 * @return
+	 * @throws InitializationError
+	 */
 	public Statement buildStatementForCompleteAssignment(final Assignments complete) throws InitializationError {
 		return new BlockJUnit4ClassRunner(testObject.getTestClass().getJavaClass()) {
             @Override
@@ -79,6 +85,17 @@ public class StatementBuilder {
         }.methodBlock(testObject.getFrameworkMethod());
 	}
 	
+	/**
+	 * Returns a new {@code Statement} when it is evaluated it invokes
+	 * the given {@code FrameworkMethod} from the given {@code Object} 
+	 * instance and with values of the method's parameters extracted
+	 * from the given {@code Assignments}.
+	 *  
+	 * @param method
+	 * @param complete
+	 * @param freshInstance
+	 * @return
+	 */
 	 protected Statement methodWithCompleteParameters(final FrameworkMethod method,
 	            final Assignments complete, final Object freshInstance) {
 	        return new Statement() {

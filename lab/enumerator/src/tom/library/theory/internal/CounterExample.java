@@ -13,9 +13,6 @@ import tom.library.sl.Visitable;
  * This class is used when generating counter-examples
  * candidate and assign them to appropriate theory's
  * parameter that happens in {@link ShrinkAssignmentRunner} class.
- * A method to check whether the counter-examples contained in the class
- * is smaller than a given {@code CounterExample} is also provided 
- * in the class.
  * </p>
  * @author nauval
  *
@@ -49,7 +46,7 @@ public class CounterExample {
 	}
 	
 	/**
-	 * Return a counter-example of the current theory's parameter.
+	 * Returns the contained counter-example of the current theory's parameter.
 	 * @return
 	 */
 	public Object getCounterExample() {
@@ -86,6 +83,10 @@ public class CounterExample {
 		return equal;
 	}
 	
+	/**
+	 * Returns arrays of contained counter-examples
+	 * @return arrays of counter-examples' objects
+	 */
 	public Object[] getCounterExamples() {
 		return fUnassigned.toArray();
 	}
