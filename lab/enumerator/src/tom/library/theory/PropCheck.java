@@ -209,7 +209,6 @@ public final class PropCheck extends Theories {
 	       testObject = new TestObject(method, testClass);
 	    }
 	    
-	    // TODO move to another class!!
 	    // instantiate shrink handler, if none is specified, then 
 	    // the default DefaultShrinkHandler will be used.
 	    private ShrinkHandler newShrinkHandlerInstance() {
@@ -225,7 +224,11 @@ public final class PropCheck extends Theories {
 
 		private Class<? extends ShrinkHandler> getShrinkHandlerClass() {
 			Class<? extends ShrinkHandler> shrinkClass;
-			if (testObject.getMethod().getAnnotation(Shrink.class) != null) {
+			// handles the @Shrink when it is declared in a class level
+			if (testObject.getTestClass().getJavaClass().getAnnotation(Shrink.class) != null) {
+				shrinkClass = testObject.getTestClass().getJavaClass()
+						.getAnnotation(Shrink.class).handler();
+			} else if (testObject.getMethod().getAnnotation(Shrink.class) != null) {
 				shrinkClass = testObject.getMethod()
 						.getAnnotation(Shrink.class).handler();
 			} else {
