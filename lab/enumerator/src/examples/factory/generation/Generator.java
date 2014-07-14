@@ -55,6 +55,7 @@ public class Generator {
 		}
 		
 		// choose the constructor used for generating the instances
+		// TODO: what if the selected constructor has an argument of type interface/abstract class
 		int maxLenght = -1;
 		for (Constructor<?> constr : class2enumerate.getConstructors()) {
 			if (constr.getAnnotation(EnumerateGenerator.class) != null) {
