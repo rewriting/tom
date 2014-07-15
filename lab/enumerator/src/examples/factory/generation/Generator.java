@@ -148,8 +148,8 @@ public class Generator {
 
 		// import the class to be enumerated
 		// really needed?
-//		generatorHeader.append("import " + class2enumerate.getCanonicalName()
-//				+ ";" + ENDL);
+		generatorHeader.append("import " + class2enumerate.getCanonicalName()
+				+ ";" + ENDL);
 
 		// import the classes used in the profile of the constructor to be used
 		// for the enumeration
@@ -266,7 +266,7 @@ public class Generator {
 	}
 
 	
-	public  String variableName4Class() {
+	private String variableName4Class() {
 		String canonicalName=this.class2enumerate.getCanonicalName().toLowerCase();
 		StringBuilder sb = new StringBuilder();
 		String l[] = canonicalName.split(Pattern.quote("."));
@@ -278,7 +278,7 @@ public class Generator {
 
 	private String listArgs() {
 		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < paraType.size(); i++) {
+		for (int i = 0; i < this.constructorParameters.size(); i++) {
 			sb.append("arg" + i);
 			if (i < paraType.size() - 1) {
 				sb.append(", ");
@@ -348,27 +348,35 @@ public class Generator {
 
 	protected void generateEnum(String packagePath) {
 
+		// TODO: constructor contains other type parameters than the class
 		if (constructorParameters.contains(class2enumerate)) {
 			recursiveCall();
 		}
 
-		for (int i = 0; i < paraType.size(); i++) {
+		for (int i = 0; i < this.constructorParameters.size(); i++) {
 			ParaType pt = paraType.get(i);
-			Class<?> cla = constructorParameters.get(i);
+			Class<?> cla = this.constructorParameters.get(i);
+			Type paramType = this.constructorParametersTypes.get(i);
+			
 			Enumerate annotation = getEnumerateAnnotation(i);
 
 			// case : the Parameter is the class that we want to generate the
 			// Factory
 
-			if (cla != class2enumerate) {
+//			if (cla != class2enumerate) {
+		    if (!class2enumerate.equals(cla)) {
 
-				if (Tools.isPrimitive(cla)) {
+//				if (Tools.isPrimitive(cla)) {
+			    if (Tools.isBasicType(paramType)) {
 					enumeratorCode.append("final Enumeration<"
-							+ pt.getStringClass() + "> arg" + i + " = ");
+//							+ pt.getStringClass() + "> arg" + i + " = ");
+							+ Tools.name4PrimitiveType(paramType) + "> arg" + i + " = ");
 					enumeratorCode.append("new Enumeration <"
-							+ pt.getStringClass() + ">(");
+//							+ pt.getStringClass() + ">(");
+							+ Tools.name4PrimitiveType(paramType) + ">(");
 					enumeratorCode.append("Combinators.make"
-							+ paraType.get(i).getStringClass() + "().parts()");
+//							+ paraType.get(i).getStringClass() + "().parts()");
+							+ Tools.name4PrimitiveType(paramType) + "().parts()");
 
 					if (annotation != null && annotation.maxSize() > 0) {//
 						// make anything
@@ -376,7 +384,23 @@ public class Generator {
 								+ annotation.maxSize() + "))");
 					}
 					enumeratorCode.append(");" + ENDL);
+				} else if(cla.equals(String.class)){
+					enumeratorCode.append("final Enumeration<"
+							+ typeName4Parameter(i) + "> arg" + i + " = ");
+					enumeratorCode.append("new Enumeration <"
+							+ typeName4Parameter(i) + ">(");
+					enumeratorCode.append("Combinators.make"
+							+ "String" + "().parts()");
+
+					if (annotation != null && annotation.maxSize() > 0) {//
+						// make anything
+						enumeratorCode.append(".take(BigInteger.valueOf("
+								+ annotation.maxSize() + "))");
+					}
+					enumeratorCode.append(");" + ENDL);
+					
 				} else if (List.class.isAssignableFrom(cla)) {
+				
 					// PACKAGELIBRARY
 
 					enumeratorCode.append("Enumeration<" + pt.getStringClass()
@@ -386,9 +410,10 @@ public class Generator {
 
 				} else if (pt instanceof ParaTypeClass) {
 					enumeratorCode.append("final Enumeration<"
-							+ pt.getStringClass() + "> arg" + i + " = ");
+//							+ pt.getStringClass() + "> arg" + i + " = ");
+							+ typeName4Parameter(i) + "> arg" + i + " = ");
 					enumeratorCode.append(packagePath + "."
-							+ cla.getSimpleName() + "Factory.getEnumeration();"
+							+ this.constructorParameters.get(i).getSimpleName() + "Factory.getEnumeration();"
 							+ ENDL);
 				}
 			}
@@ -423,7 +448,8 @@ public class Generator {
 	}
 
 	private void recursiveCall() {
-		String cl = ParaType.createParaType(class2enumerate).getStringClass();
+//		String cl = ParaType.createParaType(class2enumerate).getStringClass();
+		String cl = class2enumerate.getCanonicalName()+this.classTypeParameters;
 
 		enumeratorCode.append("// recursive call" + ENDL);
 
