@@ -5,11 +5,11 @@ import java.util.List;
 
 public class Shop {
 	private Inventory inventory;
-	private List<Cart> carts;
+	private List<Cart> selling;
 	
 	public Shop() {
 		inventory = new Inventory();
-		carts = new ArrayList<Cart>();
+		selling = new ArrayList<Cart>();
 	}
 	
 	public Shop empty() {
@@ -36,7 +36,7 @@ public class Shop {
 		
 		Cart cart = new Cart(id);
 		cart.add(new LineItem(item, reducedQuantity));
-		carts.add(cart);
+		selling.add(cart);
 		
 		return this;
 	}
@@ -52,7 +52,7 @@ public class Shop {
 	
 	public int getCartQuantity(Item item) {
 		int sum = 0;
-		for (Cart cart : carts) {
+		for (Cart cart : selling) {
 			sum += cart.getQuantity(item);
 		}
 		return sum;
@@ -108,11 +108,21 @@ public class Shop {
 		return this;
 	}
 	
+	public Shop setSelling(List<Cart> selling) {
+		this.selling = selling;
+		return this;
+	}
+	
 	public Inventory getInventory() {
 		return inventory;
 	}
-	public Cart getLatestSell() {
-		return carts.get(carts.size() - 1);
+	
+	public List<Cart> getSelling() {
+		return selling;
+	}
+	
+	public Cart getLatestSelling() {
+		return selling.get(selling.size() - 1);
 	}
 	
 	public boolean has(Item item) {

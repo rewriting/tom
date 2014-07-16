@@ -1,5 +1,8 @@
 package examples.shop;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class ShopFactory {
 	private static ShopFactory INSTANCE;
@@ -75,18 +78,6 @@ public class ShopFactory {
 		return new Cart(0);
 	}
 
-//	
-//	public Cart makeCart(examples.shop.shop.types.ShoppingCart boutiqueShoppingCart) {
-//		Cart cart = new Cart(0);
-//		while (!boutiqueShoppingCart.isEmptyCart()) {
-//			cart.add(makeLineItem(boutiqueShoppingCart.getLineItem()));
-//			boutiqueShoppingCart = boutiqueShoppingCart.getShoppingCart();
-//		}
-//		return cart;
-//	}
-	
-	
-
 	// how to generate shops with non-empty cart ?
 	public Shop makeShop(examples.shop.boutique.types.Inventory inventoryGom) {
 		Inventory inventory = makeInventory(inventoryGom);
@@ -102,6 +93,23 @@ public class ShopFactory {
 		return shop;
 	}
 
+	public Shop makeShop(examples.shop.boutique.types.Shop shopGom) {
+		Shop shop = new Shop();
+		examples.shop.boutique.types.Inventory invGom = shopGom.getinventory();
+		shop.setInventory(makeInventory(invGom));
+		
+		examples.shop.boutique.types.Selling sellingGom = shopGom.getselling();
+		List<Cart> selling = new ArrayList<Cart>();
+		
+		while (sellingGom.isConsselling()) {
+			selling.add(makeCart(sellingGom.getHeadselling()));
+			sellingGom = sellingGom.getTailselling();
+		}
+		
+		shop.setSelling(selling);
+		return shop;
+	}
+	
 	public Shop makeShop() {
 		return new Shop();
 	}

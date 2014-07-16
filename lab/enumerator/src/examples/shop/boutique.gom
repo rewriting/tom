@@ -2,17 +2,18 @@ module examples.shop.Boutique
 imports int
 abstract syntax
 
+// item
 Item = item(id:int, price:int)
-
+// line items
 LineItem = lineItem(item:Item, quantity:int)
-
+// inventory
 Inventory = items(LineItem*)
-
-//Lines = lines(Inventory*)
-
+// carts => buyer's cart
 Carts = carts(id:int, line:Inventory)
-
-Shop = shop(inventory:Inventory, carts:Carts)
+// selling
+Selling = selling(Carts*)
+// shop containing inventory and selling
+Shop = shop(inventory:Inventory, selling:Selling)
 
 
 // positive ids and prices
@@ -66,26 +67,24 @@ carts:make(id, l) {
 	return realMake(Math.abs(id), l);
 }
 
-// carts should only contain items from the inventory and in less quantity
+// carts should only contain items from the inventory
 // items should have same price in carts and inventory
 // TODO: sum of quantities in carts = quantity in inventory
 // TODO: quantities (in carts) bigger than 0
-shop:make(i,cs) {
-  %match(Carts cs, Inventory i) {
+shop:make(i,s) {
+  %match(Selling s, Inventory i) {
 
-    scarts@carts(id, items(I1*, it@lineItem(item(id,p),q), I2*)),
-           !items(IL1*, lineItem(item(id,_),_), IL2*) -> {
-      return `shop(items(it,i*), scarts ); 
-    }
+		sselling@selling(C1*, carts(id, items(I1*, it@lineItem(item(id,p), q), I2*)), C2*),
+		!items(IL1*, lineItem(item(id,_),_), IL2*) -> {
+			return `shop(items(it,i*), sselling);
+		}
 
-    scarts@carts(id, items(I1*, lineItem(item(id,p),q), I2*)),
-           items(IL1*, lineItem(item(id,pi),qi), IL2*) -> {
-      if(`qi<`q){
-        return `shop( items(IL1*, lineItem(item(id,p),qi+q+2), IL2*), scarts );
-      }else if(`pi!=`p){
-        return `shop( items(IL1*, lineItem(item(id,p),qi), IL2*), scarts );
+		sselling@selling(C1*, carts(id, items(I1*, it@lineItem(item(id,p), q), I2*)), C2*),
+		items(IL1*, lineItem(item(id,pi),qi), IL2*) -> {
+			if(`pi!=`p){
+        return `shop( items(IL1*, lineItem(item(id,p),qi), IL2*), sselling );
       }
-    }
+		}
   }
-  return realMake(i,cs);
+  return realMake(i,s);
 }
